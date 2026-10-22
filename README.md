@@ -164,6 +164,9 @@ against hundreds of other GPUs.
 
 - [docs/mining_rig.md](docs/mining_rig.md): hardware specification and measured characteristics of the rig.
 - [docs/setup.md](docs/setup.md): operating system, driver, CUDA and llama.cpp setup, with the pitfalls.
+- [docs/experiments.md](docs/experiments.md): status of all 81 planned experiments, plus the ones added since.
+- [docs/releasing-quants.md](docs/releasing-quants.md): checklist and model-card template for publishing quants tuned
+  for these cards.
 - [docs/benchmarks/](docs/benchmarks/): one document per benchmark, with setup, commands, full results and
   interpretation.
 - [docs/research/](docs/research/): an October 2026 survey of MoE models, inference engines, multi-GPU behaviour on
