@@ -1,7 +1,7 @@
 # llms-on-crypto-mining-rigs
 
 Running LLMs on old crypto-mining hardware. The current rig is a Manli M-P106L9-N6G with nine
-NVIDIA P106-090 6 GB cards; its verified hardware notes are in `docs/mining_rig.md`. Read them before
+NVIDIA P106-090 6 GB cards; its hardware spec is in `docs/mining_rig.md`. Read it before
 reasoning about performance: every GPU sits on a PCIe 1.0 x1 link, there is no GPU peer-to-peer, each
 card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
 
@@ -18,5 +18,6 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
 - Never commit hostnames, tailnet or domain names, usernames, IP or MAC addresses, GPU UUIDs or serial
   numbers, whether in docs, scripts, logs or commit messages.
 - Keep raw command output out of the repo; summarize what it shows instead.
-- When documenting hardware, prefer measurements taken on the rig over spec sheets and GPU databases,
-  and mark anything that can't be checked from software as a manufacturer spec.
+- When documenting hardware, prefer measurements taken on the rig over spec sheets and GPU databases.
+- Write docs as finished specs: state the correct facts plainly. Don't add review commentary,
+  verification markers, or notes about what an earlier version or another source claimed.
