@@ -93,6 +93,11 @@ EXTRA="--output-tensor-type q8_0 --tensor-type ffn_down_exps=q8_0" \
   scripts/quantize_docker.sh <llama.cpp source> <models folder> flint-Q8_0.gguf flint-q4_1-downq8.gguf Q4_1 imatrix.gguf
 ```
 
+To see how an existing quant is built, [scripts/gguf_mix.py](../scripts/gguf_mix.py) lists which format each kind of
+tensor uses and its share of the file, reading only the header. For Flint, Unsloth's UD-Q4_K_XL keeps attention and
+the shared expert at Q8_0 in most layers and gives the experts Q5_K or IQ4_XS layer by layer; that allocation, more
+than the format of any single tensor, is what keeps it close to the reference.
+
 `--tensor-type` takes a pattern matched against tensor names (`ffn_down_exps`, `attn_q`, `ffn_gate_shexp`, …), so
 different parts of the model can get different formats. Quantizing a 40B model takes 3–8 minutes on a desktop CPU and
 needs free disk space for the output (25–30 GB here).
