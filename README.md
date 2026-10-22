@@ -111,7 +111,8 @@ against hundreds of other GPUs.
    but gives both conversations the full 262,144 tokens.
 9. **Flint is the fastest model so far.** Released two days before these tests, it uses 2.5 B of its 39.8 B parameters
    per token and keeps most of its attention local. With the CUDA-graphs build it generates 28 tokens/s (22.5 on real
-   chat requests with the full 262,144-token context loaded), 1.4 times Qwen3.6-35B-A3B.
+   chat requests with the full 262,144-token context loaded), 1.4 times Qwen3.6-35B-A3B. One copy on all nine cards
+   can serve two conversations with 262,144 tokens of context each at 21–24 tokens/s each, 35–42 tokens/s in total.
 10. **Software settings nearly double the speed.** A Q4_0 file, the CUDA-graphs build, multi-token prediction and
     sampling on the GPU (`-bs`) take Qwen3.6-35B-A3B from 15.5 to 27.7 tokens/s on real chat requests and the dense
     Qwen3.8-27B from 3.9 to 7.5. Dense models want fewer drafted tokens (1–2) than llama.cpp's default of 3, because on
@@ -144,10 +145,8 @@ against hundreds of other GPUs.
 
 - More 2026 MoE models and quantizations: Flint at Unsloth's UD-Q4_K_XL and at Q8_0, Ornith-1.5-35B-A3B and a
   Qwen3.8-to-35B-A3B distillation.
-- Further speed-ups surveyed in [dense_27b_speedups.md](docs/research/notes/dense_27b_speedups.md): a probability
-  threshold for drafted tokens (`--spec-draft-p-min`), keeping lightly loaded cards from clocking down, and Q4_1 or
-  Q8_0 files whose multi-token steps are cheaper.
-- Two copies of Flint are not possible (each needs five cards); measure one Flint with two parallel slots instead.
+- Further speed-ups surveyed in [dense_27b_speedups.md](docs/research/notes/dense_27b_speedups.md): keeping lightly
+  loaded cards from clocking down, and Q4_1 or Q8_0 files whose multi-token steps are cheaper.
 - Quality checks (perplexity and KL divergence) for the fast quantizations against higher-precision references.
 - The [research survey](docs/research/moe-inference-on-the-p106-rig.md) behind this plan: which 2026 MoE models fit
   the rig, which inference engines can run on these cards, 82 claims to test and an 81-experiment backlog.
