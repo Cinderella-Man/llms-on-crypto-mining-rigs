@@ -16,8 +16,8 @@ and I-quants (Q4_K_M, IQ4_XS and the "dynamic" mixes such as Unsloth's UD files)
 that squeeze out more quality per gigabyte. On a modern GPU unpacking any of them is nearly free, so the smallest file
 of a given quality wins. On the P106-090, with only 5 streaming multiprocessors, unpacking costs real time: the same
 model generates text **~1.5 times faster** from a simple-format file than from a K-quant file of the same size
-([single-card calibration](benchmarks/2026-10-22-single-card-calibration.md),
-[Flint](benchmarks/2026-10-22-flint.md#quantization-speed-against-quality)). The best file for this rig is often not
+([single-card calibration](../docs/benchmarks/2026-10-22-single-card-calibration.md),
+[Flint](../docs/benchmarks/2026-10-22-flint.md#quantization-speed-against-quality)). The best file for this rig is often not
 the one that is best elsewhere, so it pays to measure, and sometimes to make your own.
 
 ## Measuring quality on an ordinary PC
@@ -119,8 +119,8 @@ Then measure it like any other quant: quality on the PC, speed on the rig.
 - **Some formats need llama.cpp workarounds.** llama.cpp protects Flint's Q4_x/Q5_x expert down-projections from a
   16-bit overflow with an extra rescaling step that costs speed; with that step removed, a Q4_1 file produced
   nonsense (NaN). Formats such as Q8_0 and IQ4_NL don't need the step
-  ([Flint](benchmarks/2026-10-22-flint.md#the-moe-down-projection-rescale)).
+  ([Flint](../docs/benchmarks/2026-10-22-flint.md#the-moe-down-projection-rescale)).
 - **Requantizing from Q8_0 adds a small error** on top of the new format's own. It's fine for experiments; use the
   original weights for anything you publish.
 - **A rig-tuned quant is not better everywhere.** On modern GPUs and Macs, a larger simple-format file is only slower.
-  See the [release checklist](releasing-quants.md) before sharing one.
+  See the [release checklist](releasing.md) before sharing one.
