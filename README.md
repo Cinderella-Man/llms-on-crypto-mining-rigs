@@ -164,6 +164,8 @@ against hundreds of other GPUs.
 
 - [docs/mining_rig.md](docs/mining_rig.md): hardware specification and measured characteristics of the rig.
 - [docs/setup.md](docs/setup.md): operating system, driver, CUDA and llama.cpp setup, with the pitfalls.
+- [docs/vulkan_on_the_rig.md](docs/vulkan_on_the_rig.md): llama.cpp's Vulkan backend on these cards: build, what the
+  rig needs, which of Flint's operations it supports, and an A/B test against CUDA.
 - [quants/](quants/): **subproject: quants for old GPUs**. Making and measuring model files that run fast on these
   cards without losing more quality than necessary: results, recipes, tools and plan.
 - [quants/guide.md](quants/guide.md): how to compare quants (quality on any PC, speed on the rig) and how

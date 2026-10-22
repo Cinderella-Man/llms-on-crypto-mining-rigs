@@ -14,6 +14,7 @@
 #   git-ref               llama.cpp branch, tag or commit (default: master)
 #   --cuda-graphs-pascal  also apply llama.cpp PR #27721, which re-enables CUDA graphs on Pascal (compute 6.1)
 # Env PATCHES: extra patch files (paths relative to $WORK, applied with git apply), e.g. PATCHES=patches/x.diff
+#     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`)
 # Output: $WORK/llama.cpp-<date>-<sha>[-graphs61][-<patch>].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to
 # ~/llama-builds).
 # On the rig: tar xzf <tarball> -C /opt && /opt/<name>/bin/llama-server --list-devices
@@ -25,7 +26,7 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 WORK=${WORK:-$HOME/llama-builds}
 mkdir -p "$WORK/ccache"
 
-docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
     -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
@@ -54,14 +55,15 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e HOS
         -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=61 -DGGML_CUDA_NCCL=OFF -DCMAKE_CUDA_FLAGS=-Wno-deprecated-gpu-targets \
         -DGGML_NATIVE=OFF -DGGML_SSE42=ON -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_AVX512=OFF \
         -DGGML_FMA=OFF -DGGML_F16C=OFF -DGGML_BMI2=OFF -DGGML_AVX_VNNI=OFF \
-        -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=OFF \
+        -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=$([ "$TESTS" = 1 ] && echo ON || echo OFF) \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
     cmake --build build -j "$(nproc)" --target llama-bench llama-server llama-cli llama-completion \
-        llama-perplexity llama-batched-bench llama-gguf > /dev/null
+        llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) > /dev/null
 
     out=/work/$name
     rm -rf "$out" && mkdir -p "$out/bin"
     cp build/bin/llama-* "$out/bin/"
+    [ "$TESTS" = 1 ] && cp build/bin/test-backend-ops "$out/bin/"
     {
         echo "name: $name"
         echo "ref: $REF"
