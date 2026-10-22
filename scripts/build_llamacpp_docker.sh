@@ -13,7 +13,9 @@
 # Usage: scripts/build_llamacpp_docker.sh [git-ref] [--cuda-graphs-pascal]
 #   git-ref               llama.cpp branch, tag or commit (default: master)
 #   --cuda-graphs-pascal  also apply llama.cpp PR #27721, which re-enables CUDA graphs on Pascal (compute 6.1)
-# Output: $WORK/llama.cpp-<date>-<sha>[-graphs61].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to ~/llama-builds).
+# Env PATCHES: extra patch files (paths relative to $WORK, applied with git apply), e.g. PATCHES=patches/x.diff
+# Output: $WORK/llama.cpp-<date>-<sha>[-graphs61][-<patch>].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to
+# ~/llama-builds).
 # On the rig: tar xzf <tarball> -C /opt && /opt/<name>/bin/llama-server --list-devices
 set -euo pipefail
 
@@ -23,7 +25,7 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 WORK=${WORK:-$HOME/llama-builds}
 mkdir -p "$WORK/ccache"
 
-docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
     -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
@@ -43,6 +45,10 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e HOST_UID="$(id -u)" -e HOST_G
         grep -q "cc < GGML_CUDA_CC_DP4A) {" ggml/src/ggml-cuda/ggml-cuda.cu || { echo "patch failed"; exit 1; }
         name=$name-graphs61
     fi
+    for p in $PATCHES; do
+        git apply -v "/work/$p"
+        name=$name-$(basename "$p" .diff)
+    done
 
     cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
         -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=61 -DGGML_CUDA_NCCL=OFF -DCMAKE_CUDA_FLAGS=-Wno-deprecated-gpu-targets \

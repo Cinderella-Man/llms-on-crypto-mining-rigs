@@ -118,6 +118,12 @@ against hundreds of other GPUs.
     Qwen3.8-27B from 3.9 to 7.5. Dense models want fewer drafted tokens (1–2) than llama.cpp's default of 3, because on
     these cards checking several tokens at once costs noticeably more than checking one
     ([speed-ups](docs/benchmarks/2026-10-22-speedups.md)).
+11. **For one model, the file format is a speed/fidelity dial.** For Flint at ~25 GB: the makers' Q4_1 generates 24.3
+    tokens/s on real requests, a Q5_0 made with an importance matrix 18.9, and Unsloth's K-quant-based UD-Q4_K_XL 15.8;
+    their predictions agree with the 8-bit reference's top token 78.6 %, 85.0 % and 87.6 % of the time. Q4_0 breaks
+    Flint, and using fewer experts per token costs far more quality than the 4–9 % speed it gains
+    ([Flint](docs/benchmarks/2026-10-22-flint.md); the scripts to make and score quants on any PC are in
+    [scripts/](scripts/)).
 
 ## How to read the numbers
 
