@@ -1,0 +1,13 @@
+# Research notes: MoE inference on the P106 rig
+
+These are the underlying research notes that the report [Fitting 2026's MoE models onto nine P106s](../moe-inference-on-the-p106-rig.md) synthesises, one note per topic, compiled as of 2026-10-22. They hold the full source lists, per-quant file sizes, tables and arithmetic that the report summarises, along with each topic's own claims to test and experiment ideas. Nothing in them was measured on the rig unless stated; measured results are in [docs/benchmarks/](../../benchmarks/), and the hardware is described in the [hardware spec](../../mining_rig.md).
+
+- [models_small_moe.md](models_small_moe.md): catalogue of small and mid-size MoE models (up to ~40B total), with GGUF sizes, disk and VRAM fit, KV-cache cost and decode-speed ceilings.
+- [models_large_moe_and_compression.md](models_large_moe_and_compression.md): 40–150B+ "stretch" MoE models, per-layer packing into nine 6 GB cards, and MoE compression (low-bit quants, expert pruning and merging, expert-count overrides).
+- [multigpu_pascal_performance.md](multigpu_pascal_performance.md): where decode and prefill time goes on Pascal over PCIe 1.0 x1 without P2P: bandwidth efficiency, kernel-launch overhead, split modes and tuning knobs.
+- [engines_llamacpp_family.md](engines_llamacpp_family.md): mainline llama.cpp on sm_61, ik_llama.cpp, Pascal patch forks, the Vulkan and RPC backends, and wrappers.
+- [engines_other.md](engines_other.md): every inference engine outside the llama.cpp family (vLLM and its Pascal forks, SGLang, ExLlama, MLC-LLM, Strata, Maya and others), checked against the rig.
+- [engine_infer.md](engine_infer.md): ninfer (the engine referred to as "infer"), the similarly named DeepInfer, and their feasibility on sm_61.
+- [distributed_inference.md](distributed_inference.md): splitting a model across machines, mainly llama.cpp RPC between the rig and a more powerful PC on the same LAN, with a network cost model.
+- [ops_and_benchmarking.md](ops_and_benchmarking.md): storing, moving and loading models on a small disk, building sm_61 engines off the rig, and methods for measuring speed and quality.
+- [dense_27b_speedups.md](dense_27b_speedups.md): techniques for faster generation of the dense Qwen3.8-27B: speculative decoding (MTP, DFlash, DSpark, draft models, n-gram), tensor parallelism over x1 links, quant formats for 5-SM cards, activation sparsity, runtime levers and pruned variants, with ranked experiments.

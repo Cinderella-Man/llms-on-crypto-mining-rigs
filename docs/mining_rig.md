@@ -93,13 +93,23 @@ Each switch uplink is shared by four GPUs.
 The GPUs have no peer-to-peer access, so all GPU-to-GPU traffic passes through host memory. In
 `nvidia-smi topo -m`, GPUs behind the same switch show as `PIX` and all other pairs as `PHB`.
 
+PCIe power saving (ASPM) is disabled on every GPU link, every switch port and every root port; the root ports don't
+support ASPM at all. The network controller's root port runs at PCIe 1.0 x1 (250 MB/s), still twice what Gigabit
+Ethernet needs.
+
 ## Power and cooling
 
 - **Power supply:** 1600 W, sold separately. Nine GPUs at their 75 W limit draw at most 675 W.
 - **GPU power input:** 7 × 6-pin 12 V connectors.
 - **Fans:** ten 90 mm, 4800 rpm chassis fans, five intake and five exhaust, cool the GPUs and the
   board. The fans are not monitored or controlled by the OS.
-- **GPU temperatures:** 23–30 °C at idle.
+- **GPU temperatures:** 23–30 °C at idle; 46–57 °C peak per card during sustained single-card inference.
+- **Clocks under load:** compute work runs in the P0 performance state with the full memory clock (4004 MHz,
+  sampled as 4006 MHz). The only supported memory clocks are 4004 and 405 MHz, and application clocks are not
+  supported.
+- **Power limit under load:** a card generating text draws ~60–70 W on average and spends much of its time at the
+  75 W limit, which pulls the core clock down to ~1700–1760 MHz from its 1911 MHz maximum
+  ([single-card calibration](benchmarks/2026-10-22-single-card-calibration.md)).
 
 ## Workload characteristics
 
@@ -121,7 +131,11 @@ other workloads they set the limits:
   a legacy branch that gets occasional fixes, such as for newer Linux kernels.
 - **CUDA:** CUDA 12.x is the last toolkit line that supports Pascal. Build for `sm_61` with CUDA 12.9,
   even though the 580 driver reports CUDA 13.0.
-- **Tested configuration:** Ubuntu 24.04 LTS, NVIDIA driver 580.178.04, CUDA 12.9.
+- **Tested configuration:** Ubuntu 24.04 LTS, NVIDIA driver 580.178.04, CUDA 12.9.2.
+- **Usable GPU memory:** with the desktop session running, Xorg holds 4 MiB per card, and a CUDA program sees
+  6019 MiB free of 6068 MiB on each card before allocating anything.
+- **CUDA graphs:** llama.cpp disables CUDA graphs on Pascal GPUs at runtime, whatever its build options say
+  ([small MoE benchmark](benchmarks/2026-10-22-small-moe-overhead.md)).
 
 ## Mining performance
 
