@@ -127,6 +127,9 @@ the model split over four cards, each card still runs its own graph segment and 
 
 ### Qwen3.8-27B with multi-token prediction: first attempt
 
+*Follow-up: with a Q4_0 file, the CUDA-graphs build and two drafted tokens per step, the dense model reaches 7.5
+tokens/s; see [speed-ups](2026-10-22-speedups.md).*
+
 The dense model on five cards through `llama-server`, 128 generated tokens per prompt, with Unsloth's separate MTP head
 file and llama.cpp's default of 3 drafted tokens per step:
 

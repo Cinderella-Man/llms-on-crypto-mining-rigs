@@ -54,8 +54,9 @@ install the driver, CUDA and llama.cpp on it, and fit everything on the 64 GB di
 
 | Model | Type | Parameters used per token / stored | Native context | Context tested | Cards | Prompt processing (tokens/s) | Generation (tokens/s) | Details |
 |---|---|---|---|---|---|---|---|---|
-| Qwen3.6-35B-A3B, Q4_0 | MoE | 3 B / 35.5 B | 262,144 | up to 262,144 (fits) | 4–9 | 215–232 | **18.5** with an empty context; 14.0 at 32k and 8.1 at 64k tokens of context; **22.3 with multi-token prediction** on real chat requests | [Qwen baselines](docs/benchmarks/2026-10-22-qwen-baselines.md) |
-| Qwen3.8-27B, UD-Q4_K_M | dense | 27.3 B / 27.3 B | 262,144 | 640 | 4 | 51 | 3.9; 4.2–4.9 with multi-token prediction (first attempt, 5 cards) | [Qwen baselines](docs/benchmarks/2026-10-22-qwen-baselines.md) |
+| Flint, Q4_1 (released 2026-10-20) | MoE | ~2.5 B / 39.8 B | 262,144 | up to 262,144 (fits on 9 cards, 33.9 GB) | 5–9 | 161–171 | **27.9–28.1** with the CUDA-graphs build (24.6 without); 19.5 at 32k tokens of context; **24.3 on real chat requests** at 262k context with backend sampling | [Flint](docs/benchmarks/2026-10-22-flint.md), [speed-ups](docs/benchmarks/2026-10-22-speedups.md) |
+| Qwen3.6-35B-A3B, Q4_0 | MoE | 3 B / 35.5 B | 262,144 | up to 262,144 (fits) | 4–9 | 215–247 | **18.5** with an empty context (19.6 with CUDA graphs); 14.0 at 32k and 8.1 at 64k tokens of context; **27.7 on real chat requests** with CUDA graphs, multi-token prediction and backend sampling | [Qwen baselines](docs/benchmarks/2026-10-22-qwen-baselines.md), [speed-ups](docs/benchmarks/2026-10-22-speedups.md) |
+| Qwen3.8-27B, Q4_0 (UD-Q4_K_M at first) | dense | 27.3 B / 27.3 B | 262,144 | 32,768 | 4 | 51–54 | 3.9 (UD-Q4_K_M), 4.3 (Q4_0 + CUDA graphs); **7.5 on real chat requests** with multi-token prediction (2 drafted tokens) | [Qwen baselines](docs/benchmarks/2026-10-22-qwen-baselines.md), [speed-ups](docs/benchmarks/2026-10-22-speedups.md) |
 
 ### Calibration and small models
 
@@ -108,6 +109,14 @@ against hundreds of other GPUs.
    one on cards 0–4 with 262,144 tokens of context and one on cards 5–8 with 131,072. Each keeps ~16 tokens/s while the
    other is busy, 31–35 tokens/s in total. One copy serving two requests at once manages only 23–24 tokens/s in total,
    but gives both conversations the full 262,144 tokens.
+9. **Flint is the fastest model so far.** Released two days before these tests, it uses 2.5 B of its 39.8 B parameters
+   per token and keeps most of its attention local. With the CUDA-graphs build it generates 28 tokens/s (22.5 on real
+   chat requests with the full 262,144-token context loaded), 1.4 times Qwen3.6-35B-A3B.
+10. **Software settings nearly double the speed.** A Q4_0 file, the CUDA-graphs build, multi-token prediction and
+    sampling on the GPU (`-bs`) take Qwen3.6-35B-A3B from 15.5 to 27.7 tokens/s on real chat requests and the dense
+    Qwen3.8-27B from 3.9 to 7.5. Dense models want fewer drafted tokens (1–2) than llama.cpp's default of 3, because on
+    these cards checking several tokens at once costs noticeably more than checking one
+    ([speed-ups](docs/benchmarks/2026-10-22-speedups.md)).
 
 ## How to read the numbers
 
@@ -133,11 +142,13 @@ against hundreds of other GPUs.
 
 ## Next steps
 
-- More 2026 MoE models: Flint (40 B parameters, 2.5 B per token, support added to llama.cpp on 2026-10-21),
-  Ornith-1.5-35B-A3B and a Qwen3.8-to-35B-A3B distillation.
-- Making the dense Qwen3.8-27B faster: tuned multi-token prediction (fewer drafted tokens), a Q4_0 file, backend
-  sampling; the options are surveyed in [dense_27b_speedups.md](docs/research/notes/dense_27b_speedups.md).
-- Combining what works: the CUDA-graphs build, multi-token prediction and backend sampling together.
+- More 2026 MoE models and quantizations: Flint at Unsloth's UD-Q4_K_XL and at Q8_0, Ornith-1.5-35B-A3B and a
+  Qwen3.8-to-35B-A3B distillation.
+- Further speed-ups surveyed in [dense_27b_speedups.md](docs/research/notes/dense_27b_speedups.md): a probability
+  threshold for drafted tokens (`--spec-draft-p-min`), keeping lightly loaded cards from clocking down, and Q4_1 or
+  Q8_0 files whose multi-token steps are cheaper.
+- Two copies of Flint are not possible (each needs five cards); measure one Flint with two parallel slots instead.
+- Quality checks (perplexity and KL divergence) for the fast quantizations against higher-precision references.
 - The [research survey](docs/research/moe-inference-on-the-p106-rig.md) behind this plan: which 2026 MoE models fit
   the rig, which inference engines can run on these cards, 82 claims to test and an 81-experiment backlog.
 - Then the optimisation levers: CUDA graphs on Pascal and fewer, fused GPU operations, compression formats suited to
