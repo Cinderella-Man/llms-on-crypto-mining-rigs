@@ -50,7 +50,7 @@ listed at the end.
 |---|---|---|---|
 | E2.1 | CUDA graphs on sm_61 | done | +7 % Qwen3.6, +14 % Flint, +16 % small MoE |
 | E2.2 | Host-side profiling | open | |
-| E2.3 | Pascal kernel patches | partial | CUDA-graphs patch adopted; the MoE down-projection rescale removal tested (see added experiments) |
+| E2.3 | Pascal kernel patches | partial | CUDA-graphs patch adopted; MoE down-projection rescale switch built and tested (see added experiments); open Pascal PRs not yet built |
 | E2.4 | Build-flag variants | open | |
 | E2.5 | Quant ladder and format comparison | done | Llama-2-7B Q4_0/Q4_K_M/Q8_0; Flint Q4_1/Q5_0/UD-Q4_K_XL/Q4_0 |
 | E2.6 | MTP speculative decoding | done | Qwen3.6 +44 %; dense 27B ~1.7× with 1–2 drafts |
@@ -82,7 +82,7 @@ listed at the end.
 | E3.8 | Qwen3.5-122B ik IQ2_KL | open | |
 | E3.9 | Qwen3.5-122B with MTP | open | |
 | E3.10 | Qwen3.8-Flash-Next GSQ-RCO-Coder | open | |
-| E3.11 | Custom MoE-aware requant | partial | Flint imatrix Q5_0/Q4_1 made and scored; rescale-safe mixes in progress |
+| E3.11 | Custom MoE-aware requant | partial | Flint imatrix Q5_0/Q4_1/Q4_0 made and scored; two rescale-safe mixes (Q8_0 or IQ4_NL down-projections) made, being scored |
 | E3.12 | DIY REAP/REAM on the workstation | open | |
 | E3.13 | Layer pruning data point | open | |
 | E3.14 | RPC build, enumeration and hardening | open | |
@@ -123,5 +123,39 @@ listed at the end.
 | Multi-token verify cost on 5-SM cards | 2/3/4/8 tokens per step cost 1.33/1.71/1.74/2.69× one token for the dense 27B |
 | Flint baseline | 28 tok/s, full 262k context ([Flint](benchmarks/2026-10-22-flint.md)) |
 | Flint quantization comparison on a separate PC | [scripts/quality_kld.sh](../scripts/quality_kld.sh), [scripts/quantize_docker.sh](../scripts/quantize_docker.sh) |
-| MoE down-projection rescale removal (Flint) | +8–11 % speed, but NaN output with Q4_1: unsafe for Q4_x/Q5_x down-projections |
+| MoE down-projection rescale removal (Flint) | +8–11 % speed, but NaN output with Q4_1: unsafe for Q4_x/Q5_x down-projections; Q8_0 +5 % ([Flint](benchmarks/2026-10-22-flint.md#the-moe-down-projection-rescale)) |
 | Two copies vs one copy with two slots | See E2.10 |
+
+## Focus from here: two MoE tracks, tuned deep
+
+Rather than trying every model, the next work goes deep on two MoE families, adapting both the model files and
+llama.cpp to these cards.
+
+**Track 1: Flint** (28 tokens/s; [Flint](benchmarks/2026-10-22-flint.md),
+[research](research/notes/flint_speedups.md))
+
+1. Score the two rescale-safe quants already made (imatrix Q4_1 with IQ4_NL or Q8_0 expert down-projections) and
+   measure their speed on the rig with the rescale switched off; IQ4_NL may decode slowly on 5-SM cards
+   ([tqLLM note](research/notes/tqllm.md)).
+2. Confirm on the GPUs that Q8_0 without the rescale gives the same perplexity as with it.
+3. Build the makers' distillation-tuned Q4_1 with only the expert down-projections converted to Q8_0, so their tuning
+   survives and the rescale can be skipped safely.
+4. Test per-tensor format choices that matter for speed: attention is 35 % of the bytes read per token, the output head
+   12 % (a Q4_0 or Q8_0 head instead of Q6_K).
+5. A cheaper rescale in llama.cpp itself (one fused kernel instead of ~11 operations, or 32-bit block sums), which
+   would help every Flint user.
+6. N-gram drafting for edit-heavy agent output, and 3–4 parallel slots.
+
+**Track 2: Qwen3.6-35B-A3B and its derivatives** (27.7 tokens/s on real requests with multi-token prediction;
+Ornith-1.5-35B-A3B and the Qwen3.8-35B-A3B distillation share the architecture)
+
+1. Quality check of the Q4_0 file against Q8_0, and imatrix quants in fast formats that keep the MTP layer.
+2. A rotated q4_0 KV cache to give a four-card copy the full 262,144-token context, and its interaction with MTP.
+3. Baselines of Ornith-1.5 and the Qwen3.8 distillation with the same speed-ups.
+
+**Software for both tracks**
+
+1. Profile one generated token per model with Nsight Systems to find where the time goes.
+2. Build and measure open llama.cpp Pascal patches: #30334 (MMVQ fusion check for compute capability 6.1), #30235
+   (Pascal MMQ tile configuration), #20831 (dynamic MMVQ warp count for narrow matrices).
+3. Fuse operations where the profile shows per-operation overhead dominating.
