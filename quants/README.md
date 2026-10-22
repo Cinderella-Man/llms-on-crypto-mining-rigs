@@ -38,10 +38,14 @@ speed with llama.cpp `d77256999` + CUDA graphs on 9 × P106-090.
 | Q4_1 + imatrix, expert down-projections IQ4_NL | here | 24.3 GB | 80.5 % | 0.281 | to measure | to measure |
 | Q4_1 | Flint's makers | 26.0 GB | 78.6 % | 0.316 | **24.3 tok/s** | **27.9–28.1 tok/s** |
 | Q4_0 + imatrix | here | 22.6 GB | 71.4 % | 0.566 | — (unusable) | — |
-| UD-mirror v1 (UD-Q4_K_XL's allocation in fast formats) | here | ~27 GB | being measured | | | |
+| **UD-mirror v1** (UD-Q4_K_XL's allocation in fast formats) | here | 27.0 GB | **87.4 %** | **0.129** | to measure | to measure |
 
 The makers' Q4_1 was tuned by distillation after quantizing, so its distance from Q8_0 overstates its real-task loss
 (see [the Flint research notes](../docs/research/notes/flint_speedups.md)).
+
+**UD-mirror v1 keeps Unsloth's quality in formats these cards decode quickly**: 87.4 % top-token agreement and mean
+KL divergence 0.129, against 87.6 % and 0.124 for UD-Q4_K_XL (perplexity +3.8 % vs +3.3 %; the differences are within
+about two standard errors). Its speed on the rig is the next measurement.
 
 What we have learned:
 - **Simple formats are fast here; K-quants are not.** Q4_1 and Q5_0 beat UD-Q4_K_XL on speed by 20–50 %.
@@ -55,7 +59,7 @@ What we have learned:
 
 ## Next steps
 
-1. Score UD-mirror v1 ([recipe](recipes/flint-udmirror-v1.txt)), then measure its speed on the rig.
+1. Measure UD-mirror v1's speed on the rig ([recipe](recipes/flint-udmirror-v1.txt); quality already matches UD-Q4_K_XL).
 2. Variants of the mirror: attention at Q5_0 instead of Q8_0 (attention is ~4 % of the file but ~35 % of what each token
    reads); expert down-projections at Q8_0 with the rescale step off.
 3. The makers' distillation-tuned Q4_1 with only the expert down-projections widened to Q8_0.
