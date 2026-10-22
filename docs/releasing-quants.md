@@ -18,6 +18,11 @@ Nothing has been published yet.
 - [ ] **A clear win**: faster than the best published file at similar quality, or better quality at similar speed.
 - [ ] **License check**: the base model's license allows redistribution of modified weights (Flint: Apache-2.0); credit
       the base model and any importance matrix used.
+- [ ] **Say who it is for.** A file tuned for 5-SM Pascal cards is usually *not* better elsewhere: modern GPUs and
+      Apple Silicon unpack K-quants almost for free, so there a larger Pascal-friendly file is only slower and uses
+      more memory. If the speed-up depends on a patched llama.cpp (for example skipping Flint's MoE down-projection
+      rescale), state the required build; on stock llama.cpp the file brings no speed gain. Point everyone else to
+      the original or to general-purpose quants.
 
 ## Recipe
 
