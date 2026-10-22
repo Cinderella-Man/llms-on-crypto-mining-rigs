@@ -122,8 +122,8 @@ against hundreds of other GPUs.
     tokens/s on real requests, a Q5_0 made with an importance matrix 18.9, and Unsloth's K-quant-based UD-Q4_K_XL 15.8;
     their predictions agree with the 8-bit reference's top token 78.6 %, 85.0 % and 87.6 % of the time. Q4_0 breaks
     Flint, and using fewer experts per token costs far more quality than the 4–9 % speed it gains
-    ([Flint](docs/benchmarks/2026-10-22-flint.md); the scripts to make and score quants on any PC are in
-    [scripts/](scripts/)).
+    ([Flint](docs/benchmarks/2026-10-22-flint.md); how to score and make quants on any PC:
+    [docs/quantization.md](docs/quantization.md)).
 
 ## How to read the numbers
 
@@ -164,6 +164,8 @@ against hundreds of other GPUs.
 
 - [docs/mining_rig.md](docs/mining_rig.md): hardware specification and measured characteristics of the rig.
 - [docs/setup.md](docs/setup.md): operating system, driver, CUDA and llama.cpp setup, with the pitfalls.
+- [docs/quantization.md](docs/quantization.md): how to compare quants (quality on any PC, speed on the rig) and how
+  to make your own, with the traps found so far.
 - [docs/experiments.md](docs/experiments.md): status of all 81 planned experiments, plus the ones added since.
 - [docs/releasing-quants.md](docs/releasing-quants.md): checklist and model-card template for publishing quants tuned
   for these cards.
