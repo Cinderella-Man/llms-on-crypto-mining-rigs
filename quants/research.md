@@ -13,6 +13,25 @@ The levers fall into three classes:
 - **B. New formats and kernels.** Block layouts and decode kernels written for 5-SM Pascal cards.
 - **C. Retraining.** Draft models for speculative decoding, quantization-aware recovery, retraining after pruning.
 
+In short:
+
+- **The cards are limited by instructions, not memory bandwidth.** llama.cpp's matrix-vector kernel spends most of its
+  instructions on address arithmetic, so a Pascal-specific kernel and launch shape are the biggest levers (expected
+  +20–45 %), ahead of any format. Measuring that on the rig comes first.
+- **Measured, file only, exact:** Flint's rescale step can go (Q8_0 down-projections in three layers, +8 %), the makers'
+  Q4_1 fits a group-64 format (−9.4 % bytes), fused Q/K/V and an F16 router change nothing but speed. Combined:
+  "makers-fast", 23.9 GB, same quality, expected ≥ 30 tok/s against 28.
+- **Measured, mixes:** spending 8 bits only where each millisecond buys the most quality reaches Unsloth's UD-Q4_K_XL
+  quality at a predicted 23 tok/s against its 18.8. Rotations, better rounding and a 4-bit head don't help; Q4_0 works
+  once seven dominant-channel tensors stay 8-bit.
+- **Quality has a noise floor on Flint:** rounding differences flip its expert choices, so the same file differs by KLD
+  0.065 between two GPU models. On 300 tool-calling tasks every finalist is within noise of BF16; the makers' file, worst
+  by KLD, is as good as any.
+- **Qwen3.6:** its "Q4_0" file keeps a Q6_K head; as Q8_0 it is expected +13 % faster at identical quality, and a mix
+  from its own sensitivity sweep beats the published file on both speed and quality.
+- **Retraining:** an EAGLE-3 draft head could give 1.3–2×; a one-hour rig test decides whether 5–6 days of training are
+  worth it.
+
 The detailed research behind this page is in four notes: [file-only levers](../docs/research/notes/quant_speed_a_file_only.md),
 [formats and kernels](../docs/research/notes/quant_speed_b_formats_kernels.md),
 [retraining](../docs/research/notes/quant_speed_c_retraining.md) and
@@ -32,7 +51,7 @@ lever against Flint's BF16 weights; the files combining the exact levers are in 
 | An EAGLE-3 draft head for Flint (speculative decoding) | C | expected 1.3–2× in real chat, if verifying 2–3 extra tokens stays cheap on the rig | exact (only speed changes) | 2–4 days of training on a 7-GPU machine | has its own MTP head already |
 | Pascal launch shape for the same kernel: 2 warps instead of 4 at one token, no idle warps for 512-wide inputs (PR [#25479](https://github.com/ggml-org/llama.cpp/pull/25479)) | B | expected +5–20 % | exact | hours | yes |
 | Remove the MoE down-projection rescale: Q8_0 expert down-projections in the three layers where Flint's activations overflow (46–48), then `LLAMA_NO_MOE_DOWN_RESCALE=1` | A + small patch | measured +8 % (Q4_1) and +11 % (Q5_0) for the switch alone | exact: same KLD, no NaN in 41,000 tokens | done (file tool + patch) | no rescale there |
-| A speed-aware mix: spend 8 bits only where each millisecond buys the most quality | A | measured quality, predicted speed: UD-Q4_K_XL's quality at 23.2 tok/s (Unsloth's file: 18.8), or 26.7 tok/s at KLD 0.219 | from KLD 0.127 to 0.219 | done (recipes) | yes |
+| A speed-aware mix: spend 8 bits only where each millisecond buys the most quality | A | measured quality, predicted speed: UD-Q4_K_XL's quality at 23.0 tok/s (Unsloth's file: 18.8), or 26.7 tok/s at KLD 0.219 | from KLD 0.120 to 0.219 | done (recipes) | yes |
 | 4-bit attention and shared expert at UD-Q4_K_XL quality, via partial retraining | C | expected UD-Q4_K_XL quality at 1.5–1.7 GB per token instead of 2.3 (≈ +20 % over UD-mirror v1) | the open question; rotations don't do it | days | yes |
 | Group-64 Q4_1 (`Q4_1_64`): the makers' file is group-64 data stored as group-32 | B | −9.4 % bytes per token; expected +2–4 % with today's kernel, ~+10 % with a Pascal kernel | exact for the makers' file (verified on GPUs) | prototype built | no |
 | Fused Q/K/V tensor (`attn_qkv`) | A | expected +3–4 % (~200 fewer kernel launches per token) | exact (verified) | done (file tool) | partly |
@@ -139,8 +158,9 @@ cost model's prediction for llama-bench tg128 on the rig.
 
 S4 and the mirror recipes keep Unsloth's quality about 23 % faster than Unsloth's own file; S4 is even closer to the
 original weights than UD-Q4_K_XL (88.7 % against 87.7 % same top token). Every mix here beats a single fast format at
-the same speed. Between 23 and 27 tok/s the choice is a straight trade of speed for fidelity.
-<!-- S4 and the v6-imatrix mirrors go here -->
+the same speed. Between 23 and 27 tok/s the choice is a straight trade of speed for fidelity. An importance matrix
+computed from the BF16 weights with bartowski's calibration text scores the same as Unsloth's in these recipes
+([Q12](experiments.md)).
 
 ### Removing the MoE down-projection rescale
 
@@ -289,8 +309,9 @@ the boundary, where the 6th-ranked expert flips (in layer 2, token 3 uses expert
 layer 10, expert 81 or 178). Near-ties between the 6th and 7th router scores are common enough that rounding noise
 swaps experts in several layers per token, and each swap changes everything after it.
 
-Q8_0, the closest a quant gets to the original weights, therefore already sits at KLD 0.052 and 93.3 % same top token
-against BF16 (perplexity +3.3 %). That is the floor for any Flint file, and two files whose KLDs differ by less than a few
+The same holds between GPUs: the makers' file computed with RTX 3090 kernels against the same file computed with V100
+kernels differs by KLD 0.065 and 91.3 % same top token. Q8_0, the closest a quant gets to the original weights,
+therefore already sits at KLD 0.052 and 93.3 % same top token against BF16 (perplexity +3.3 %). That is the floor for any Flint file, and two files whose KLDs differ by less than a few
 hundredths are not distinguishable by KLD. All scores on this page come from the same GPU build against the same BF16
 reference.
 
@@ -299,8 +320,6 @@ Task checks see the same picture. On 300 BFCL v3 tool-calling tasks ([Q30](exper
 uncertainty: the makers' Q4_1 83.0 %, makers-fast 83.3 %, UD-mirror v1 rescale-free 83.0 %, S4 82.0 %, S1 78.3 %. The
 makers' file, worst by KLD, is as good as any on tasks, which is what its distillation tuning was for. Two runs of the
 same file on two GPU types agree on only 80 % of the calls, so finer comparisons need thousands of tasks.
-The same holds between GPUs: the makers' file computed with RTX 3090 kernels against the same file computed with V100
-kernels differs by KLD 0.065 and 91.3 % same top token.
 
 ## Carry-over to Qwen3.6-35B-A3B
 
