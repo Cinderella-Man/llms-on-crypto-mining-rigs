@@ -12,6 +12,22 @@
 //     the activation scale, which every row shares.
 //   - Partial sums are reduced with warp shuffles inside the sub-group; no shared memory, no __syncthreads.
 //
+//   - Q5_0: the fifth bits are not moved next to their nibbles. The block's sum splits as
+//     sum(nibble * a) + 16 * sum(bit * a); (qh >> j) & 0x01010101 holds the fifth bits of weights j, 8+j, 16+j, 24+j,
+//     so the activations are regrouped the same way (two 4 x 4 byte transposes per block, shared by all rows).
+//   - Q5_K and IQ4_XS: each lane takes one 256-weight super-block per iteration (C = 1). Q5_K's activation sums
+//     (for the mins) are computed once per chunk and shared by all rows. IQ4_XS looks its 4-bit indices up with
+//     __byte_perm in a table held in registers; the activations are pre-permuted into the order the lookup produces,
+//     which saves llama.cpp's two re-ordering byte permutes per word.
+//
+// Variant (e), "rl_rRcC": row-local planes. Each row keeps its byte range but holds its codes first and its scales
+// after them (Q8_0 [codes nb x 32][d nb x 2], Q4_1 [codes nb x 16][dm nb x 4], Q5_0 [codes nb x 16][qh nb x 4]
+// [d nb x 2]), so every code load is a 128-bit load that the lanes of a lane group coalesce. Same work split as (c).
+//
+// Variant (f), "st_rRcC": the unchanged GGUF blocks, staged through shared memory. Each lane group copies the contiguous
+// segment its lanes are about to read (lpr chunks of C blocks per row) with coalesced 128-bit loads, then every lane
+// reads its own blocks from shared memory. This gets (e)'s coalesced loads without any repacking.
+//
 // Variant (d), "soa_rR": weights repacked into a structure of arrays (Q4_1 with group 32 or group 64).
 //   - Nibble plane: 16 bytes per 32 weights; for group 64 the two 16-byte halves of a group live in two planes, so that
 //     lane l reading group g + l touches consecutive 16-byte chunks: every weight load is a fully coalesced 128-bit load.
@@ -85,10 +101,23 @@ static __device__ __forceinline__ uint32_t u16_at(const uint32_t * w, const int 
 // Activation chunk: NA Q8_1 blocks, already split into quants and float scales.
 template <int NA>
 struct act_chunk {
-    int   u[NA][8];
-    float d16[NA]; // d8 / 16 (4-bit types) or d8 (Q8_0)
-    float s[NA];   // s8 (Q4_1, Q4_1_64) or -8 * s8 (Q4_0)
+    int   u[NA][8];  // IQ4_XS: pre-permuted for the table lookup
+    int   t[NA][8];  // Q5_0 only: t[j] = bytes a[j], a[8+j], a[16+j], a[24+j]
+    float d16[NA];   // d8 / 16 (4- and 5-bit legacy types) or d8 (Q8_0, Q5_K, IQ4_XS)
+    float s[NA];     // s8 (Q4_1, Q4_1_64), -8 * s8 (Q4_0), -16 * s8 (Q5_0), d8 * sum of the int8 values (Q5_K)
 };
+
+// 4 x 4 byte transpose: out[j] = bytes j of x0, x1, x2, x3.
+static __device__ __forceinline__ void transpose4(const uint32_t x0, const uint32_t x1, const uint32_t x2, const uint32_t x3, int * out) {
+    const uint32_t a = __byte_perm(x0, x1, 0x5140);
+    const uint32_t b = __byte_perm(x0, x1, 0x7362);
+    const uint32_t c = __byte_perm(x2, x3, 0x5140);
+    const uint32_t d = __byte_perm(x2, x3, 0x7362);
+    out[0] = (int) __byte_perm(a, c, 0x5410);
+    out[1] = (int) __byte_perm(a, c, 0x7632);
+    out[2] = (int) __byte_perm(b, d, 0x5410);
+    out[3] = (int) __byte_perm(b, d, 0x7632);
+}
 
 template <int T, int NA>
 static __device__ __forceinline__ void load_act(act_chunk<NA> & a, const uint8_t * p) {
@@ -104,6 +133,32 @@ static __device__ __forceinline__ void load_act(act_chunk<NA> & a, const uint8_t
         const float d8 = h2f_lo(w[9*b]);
         const float s8 = h2f_hi(w[9*b]);
         if constexpr (T == T_Q8_0) {
+            a.d16[b] = d8;
+            a.s[b]   = 0.0f;
+        } else if constexpr (T == T_Q5_0) {
+            a.d16[b] = d8 * 0.0625f;
+            a.s[b]   = -16.0f * s8;
+            transpose4(a.u[b][0], a.u[b][2], a.u[b][4], a.u[b][6], a.t[b] + 0);
+            transpose4(a.u[b][1], a.u[b][3], a.u[b][5], a.u[b][7], a.t[b] + 4);
+        } else if constexpr (T == T_Q5_K) {
+            int sum = 0;
+#pragma unroll
+            for (int k = 0; k < 8; ++k) {
+                sum = dp4a_ss(0x01010101, a.u[b][k], sum);
+            }
+            a.d16[b] = d8;
+            a.s[b]   = d8 * (float) sum;
+        } else if constexpr (T == T_IQ4_XS) {
+            int p[8];
+#pragma unroll
+            for (int k = 0; k < 4; ++k) {
+                p[2*k + 0] = (int) __byte_perm(a.u[b][k], a.u[b][k + 4], 0x5140);
+                p[2*k + 1] = (int) __byte_perm(a.u[b][k], a.u[b][k + 4], 0x7362);
+            }
+#pragma unroll
+            for (int k = 0; k < 8; ++k) {
+                a.u[b][k] = p[k];
+            }
             a.d16[b] = d8;
             a.s[b]   = 0.0f;
         } else if constexpr (T == T_Q4_0) {
@@ -131,6 +186,70 @@ static __device__ __forceinline__ int q4_isum16(const uint32_t q0, const uint32_
     return (lo << 4) + hi;
 }
 
+// One Q5_0 block: d (16 bits), qh, 4 nibble words; activation block b of the chunk.
+template <int NA>
+static __device__ __forceinline__ float dot_q5_0(const uint32_t d16bits, const uint32_t qh, const uint32_t q0, const uint32_t q1,
+                                                 const uint32_t q2, const uint32_t q3, const act_chunk<NA> & a, const int b, float acc) {
+    int hsum = 0;
+#pragma unroll
+    for (int j = 0; j < 8; ++j) {
+        hsum = dp4a_ss((int) ((qh >> j) & 0x01010101), a.t[b][j], hsum);
+    }
+    const int isum16 = q4_isum16(q0, q1, q2, q3, a.u[b]) + (hsum << 8);
+    return fmaf(h2f_lo(d16bits), fmaf((float) isum16, a.d16[b], a.s[b]), acc);
+}
+
+// One Q5_K super-block as 44 words: dm, 3 words of scales, 8 words qh, 32 words qs.
+static __device__ __forceinline__ float dot_q5_K(const uint32_t * w, const act_chunk<8> & a, float acc) {
+    const uint32_t sc_lo = w[1] & 0x3f3f3f3f;                                    // scales of sub-blocks 0..3
+    const uint32_t m_lo  = w[2] & 0x3f3f3f3f;                                    // mins of sub-blocks 0..3
+    const uint32_t sc_hi = (w[3] & 0x0f0f0f0f) | ((w[1] >> 2) & 0x30303030);    // scales of 4..7
+    const uint32_t m_hi  = ((w[3] >> 4) & 0x0f0f0f0f) | ((w[2] >> 2) & 0x30303030);
+    float sumd = 0.0f;
+    float summ = 0.0f;
+#pragma unroll
+    for (int s = 0; s < 8; ++s) {
+        int isum = 0;
+#pragma unroll
+        for (int k = 0; k < 8; ++k) {
+            const uint32_t q   = w[12 + 8*(s/2) + k];
+            const uint32_t nib = (s & 1) ? (q >> 4) & 0x0F0F0F0F : q & 0x0F0F0F0F;
+            const uint32_t hb  = s <= 4 ? (w[4 + k] << (4 - s)) & 0x10101010 : (w[4 + k] >> (s - 4)) & 0x10101010;
+            isum = dp4a_ss((int) (nib | hb), a.u[s][k], isum);
+        }
+        const int sc = (int) (((s < 4 ? sc_lo : sc_hi) >> (8 * (s & 3))) & 0xff);
+        const int m  = (int) (((s < 4 ? m_lo  : m_hi ) >> (8 * (s & 3))) & 0xff);
+        sumd = fmaf(a.d16[s], (float) (isum * sc), sumd);
+        summ = fmaf((float) m, a.s[s], summ);
+    }
+    return acc + h2f_lo(w[0]) * sumd - h2f_hi(w[0]) * summ;
+}
+
+// One IQ4_XS super-block as 34 words: d | scales_h << 16, scales_l, 32 words qs.
+static __device__ __forceinline__ float dot_iq4_xs(const uint32_t * w, const act_chunk<8> & a, float acc) {
+    // kvalues_iq4nl as four words
+    constexpr uint32_t t0 = 0xBFAD9881u, t1 = 0xF6EADDCFu, t2 = 0x26190D01u, t3 = 0x71594535u;
+    const uint32_t sh = w[0] >> 16;
+    const uint32_t sl = w[1];
+    float sumf = 0.0f;
+#pragma unroll
+    for (int ib = 0; ib < 8; ++ib) {
+        int isum = 0;
+#pragma unroll
+        for (int j = 0; j < 4; ++j) {
+            const uint32_t q4  = w[2 + 4*ib + j];
+            const uint32_t sel = 0x32103210 | ((q4 & 0x88888888) >> 1);
+            const uint32_t r0  = __byte_perm(__byte_perm(t0, t1, q4), __byte_perm(t2, t3, q4), sel);
+            const uint32_t r1  = __byte_perm(__byte_perm(t0, t1, q4 >> 16), __byte_perm(t2, t3, q4 >> 16), sel >> 16);
+            isum = dp4a_ss((int) r0, a.u[ib][2*j + 0], isum);
+            isum = dp4a_ss((int) r1, a.u[ib][2*j + 1], isum);
+        }
+        const int ls = (int) (((sl >> (4 * ib)) & 0xF) | (((sh >> (2 * ib)) & 3) << 4));
+        sumf = fmaf(a.d16[ib], (float) (isum * (ls - 32)), sumf);
+    }
+    return fmaf(h2f_lo(w[0]), sumf, acc);
+}
+
 // Dot product of one weight chunk (C blocks as raw words) with the matching activation chunk, added to acc.
 template <int T, int C>
 static __device__ __forceinline__ float dot_chunk(const uint32_t * w, const act_chunk<C * traits<T>::qk / 32> & a, float acc) {
@@ -155,6 +274,13 @@ static __device__ __forceinline__ float dot_chunk(const uint32_t * w, const act_
                 isum = dp4a_ss((int) word_at(w, o + 2 + 4*k), a.u[b][k], isum);
             }
             acc = fmaf((float) isum, d * a.d16[b], acc);
+        } else if constexpr (T == T_Q5_0) {
+            acc = dot_q5_0(u16_at(w, o), word_at(w, o + 2), word_at(w, o + 6), word_at(w, o + 10), word_at(w, o + 14),
+                           word_at(w, o + 18), a, b, acc);
+        } else if constexpr (T == T_Q5_K) {
+            acc = dot_q5_K(w, a, acc);
+        } else if constexpr (T == T_IQ4_XS) {
+            acc = dot_iq4_xs(w, a, acc);
         } else { // T_Q4_1_64
             const uint32_t dm = word_at(w, o);
             const int i0 = q4_isum16(word_at(w, o +  4), word_at(w, o +  8), word_at(w, o + 12), word_at(w, o + 16), a.u[2*b + 0]);
@@ -277,6 +403,304 @@ static __global__ void mmvq_rows(const args p) {
             }
             d[row0 + i] = r;
         }
+    }
+}
+
+// ---- (f) staged through shared memory --------------------------------------------------------------------------------
+
+// Read NB bytes (a multiple of 4) from shared memory aligned to AL bytes into 32-bit words.
+template <int NB, int AL>
+static __device__ __forceinline__ void lds_words(uint32_t * w, const uint8_t * p) {
+    if constexpr (AL >= 16 && NB % 16 == 0) {
+#pragma unroll
+        for (int i = 0; i < NB/16; ++i) {
+            const uint4 v = ((const uint4 *) p)[i];
+            w[4*i+0] = v.x; w[4*i+1] = v.y; w[4*i+2] = v.z; w[4*i+3] = v.w;
+        }
+    } else if constexpr (AL >= 8 && NB % 8 == 0) {
+#pragma unroll
+        for (int i = 0; i < NB/8; ++i) {
+            const uint2 v = ((const uint2 *) p)[i];
+            w[2*i+0] = v.x; w[2*i+1] = v.y;
+        }
+    } else {
+#pragma unroll
+        for (int i = 0; i < NB/4; ++i) {
+            w[i] = ((const uint32_t *) p)[i];
+        }
+    }
+}
+
+// Variant (f), "st_rRcC": the GGUF blocks as they are, but each lane group first copies its rows' current segment
+// (lpr chunks of C blocks, contiguous in memory) into shared memory with coalesced 128-bit loads, then every lane reads
+// its own C blocks from there. Same work split and arithmetic as (c). Needs lpr * C * block bytes to be a multiple
+// of 16 and 16-byte-aligned rows.
+template <int T, int R, int C, int NW, bool GATE>
+__launch_bounds__(NW * 32)
+static __global__ void mmvq_staged(const args p) {
+    constexpr int QK = traits<T>::qk;
+    constexpr int BS = traits<T>::bs;
+    constexpr int NA = C * QK / 32;
+    constexpr int WB = C * BS;
+    constexpr int M  = GATE ? 2 : 1;
+    constexpr int NU = (WB + 15) / 16;  // 16-byte units per lane per segment (the last one predicated)
+    __shared__ uint4 sm[NW][32 * R * M * WB / 16];
+
+    const int lane = threadIdx.x;
+    const int lpr_log2 = p.lpr_log2;
+    const int lpr = 1 << lpr_log2;
+    const int sl  = lane & (lpr - 1);
+    const int grp = lane >> lpr_log2;
+    const int row0 = (((blockIdx.x * NW + threadIdx.y) << (5 - lpr_log2)) + grp) * R;
+    const int seg_units = (lpr * WB) >> 4;
+
+    const int ch = blockIdx.y;
+    const size_t e = p.ids ? (size_t) p.ids[ch] : 0;
+
+    const uint8_t * rw[M][R];
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+        const size_t off = e * p.expert_bytes + (size_t) min(row0 + i, p.nrows - 1) * p.row_bytes;
+        rw[0][i] = p.w + off;
+        if constexpr (GATE) {
+            rw[M - 1][i] = p.wg + off;
+        }
+    }
+    uint8_t * smw = (uint8_t *) sm[threadIdx.y] + (size_t) grp * R * M * lpr * WB;
+    const uint8_t * yp = p.y + (size_t) ch * p.y_chan_bytes + (size_t) sl * (NA * 36);
+    const int ystep = (NA * 36) << lpr_log2;
+
+    float acc[M][R];
+#pragma unroll
+    for (int m = 0; m < M; ++m) {
+#pragma unroll
+        for (int i = 0; i < R; ++i) {
+            acc[m][i] = 0.0f;
+        }
+    }
+
+    int seg_off = 0;
+    for (int it = 0; it < p.niter; ++it) {
+#pragma unroll
+        for (int m = 0; m < M; ++m) {
+#pragma unroll
+            for (int i = 0; i < R; ++i) {
+                uint4 * dsm = (uint4 *) (smw + (m * R + i) * lpr * WB);
+                const uint4 * src = (const uint4 *) (rw[m][i] + seg_off);
+#pragma unroll
+                for (int j = 0; j < NU; ++j) {
+                    const int u = sl + j * lpr;
+                    if (j < NU - 1 || u < seg_units) {
+                        dsm[u] = __ldg(src + u);
+                    }
+                }
+            }
+        }
+        __syncwarp();
+        act_chunk<NA> a;
+        load_act<T, NA>(a, yp);
+#pragma unroll
+        for (int m = 0; m < M; ++m) {
+#pragma unroll
+            for (int i = 0; i < R; ++i) {
+                uint32_t w[WB / 4];
+                lds_words<WB, cgcd(WB, 16)>(w, smw + (m * R + i) * lpr * WB + sl * WB);
+                acc[m][i] = dot_chunk<T, C>(w, a, acc[m][i]);
+            }
+        }
+        __syncwarp();
+        seg_off += lpr * WB;
+        yp += ystep;
+    }
+
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+#pragma unroll
+        for (int off = 16; off > 0; off >>= 1) {
+            if (off < lpr) {
+#pragma unroll
+                for (int m = 0; m < M; ++m) {
+                    acc[m][i] += __shfl_xor_sync(0xffffffff, acc[m][i], off);
+                }
+            }
+        }
+    }
+
+    float * d = p.dst + (size_t) ch * p.dst_chan_stride;
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+        if ((i & (lpr - 1)) == sl && row0 + i < p.nrows) {
+            float r = acc[0][i];
+            if constexpr (GATE) {
+                r *= silu(acc[M - 1][i]);
+            }
+            d[row0 + i] = r;
+        }
+    }
+}
+
+// ---- (e) row-local planes ------------------------------------------------------------------------------------------
+
+// Plane geometry of one row of nb blocks: code bytes per block (CS), scale-plane bytes per block (S1: Q8_0 d, Q4_1 dm,
+// Q5_0 qh) and a second scale plane (S2: Q5_0 d).
+template <int T> struct rl_traits;
+template <> struct rl_traits<T_Q8_0> { static constexpr int CS = 32; static constexpr int S1 = 2; static constexpr int S2 = 0; };
+template <> struct rl_traits<T_Q4_1> { static constexpr int CS = 16; static constexpr int S1 = 4; static constexpr int S2 = 0; };
+template <> struct rl_traits<T_Q5_0> { static constexpr int CS = 16; static constexpr int S1 = 4; static constexpr int S2 = 2; };
+
+// Same arguments as (c); row_bytes and expert_bytes are unchanged by the repack, nb = blocks per row.
+template <int T, int R, int C, int NW, bool GATE>
+__launch_bounds__(NW * 32)
+static __global__ void mmvq_rowplanes(const args p, const int nb) {
+    using rt = rl_traits<T>;
+    constexpr int CB  = C * rt::CS;                 // code bytes per chunk
+    constexpr int SB1 = C * rt::S1;
+    constexpr int SB2 = C * rt::S2;
+    constexpr int NA  = C;
+
+    const int lane = threadIdx.x;
+    const int lpr_log2 = p.lpr_log2;
+    const int lpr = 1 << lpr_log2;
+    const int sl  = lane & (lpr - 1);
+    const int row0 = (((blockIdx.x * NW + threadIdx.y) << (5 - lpr_log2)) + (lane >> lpr_log2)) * R;
+
+    const int ch = blockIdx.y;
+    const size_t e = p.ids ? (size_t) p.ids[ch] : 0;
+
+    const uint8_t * rw[R];
+    [[maybe_unused]] const uint8_t * rg[R];
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+        const size_t off = e * p.expert_bytes + (size_t) min(row0 + i, p.nrows - 1) * p.row_bytes;
+        rw[i] = p.w + off;
+        if constexpr (GATE) {
+            rg[i] = p.wg + off;
+        }
+    }
+    // offsets inside a row, advanced per iteration
+    int oc  = sl * CB;
+    int os1 = nb * rt::CS + sl * SB1;
+    int os2 = nb * (rt::CS + rt::S1) + sl * SB2;
+    const uint8_t * yp = p.y + (size_t) ch * p.y_chan_bytes + (size_t) sl * (NA * 36);
+    const int ystep = (NA * 36) << lpr_log2;
+
+    float acc[R];
+    [[maybe_unused]] float accg[R];
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+        acc[i] = 0.0f;
+        accg[i] = 0.0f;
+    }
+
+    for (int it = 0; it < p.niter; ++it) {
+        uint32_t wc[GATE ? 2 : 1][R][CB / 4];
+        uint32_t ws1[GATE ? 2 : 1][R][SB1 >= 4 ? SB1 / 4 : 1];
+        [[maybe_unused]] uint32_t ws2[GATE ? 2 : 1][R][SB2 >= 4 ? SB2 / 4 : 1];
+#pragma unroll
+        for (int m = 0; m < (GATE ? 2 : 1); ++m) {
+#pragma unroll
+            for (int i = 0; i < R; ++i) {
+                const uint8_t * base = m == 0 ? rw[i] : rg[i];
+                ldg_words<CB, 16>(wc[m][i], base + oc);
+                if constexpr (SB1 >= 4) {
+                    ldg_words<SB1, cgcd(SB1, 16)>(ws1[m][i], base + os1);
+                } else {
+                    ws1[m][i][0] = __ldg((const unsigned short *) (base + os1));
+                }
+                if constexpr (SB2 >= 4) {
+                    ldg_words<SB2, cgcd(SB2, 16)>(ws2[m][i], base + os2);
+                }
+            }
+        }
+        act_chunk<NA> a;
+        load_act<T, NA>(a, yp);
+#pragma unroll
+        for (int m = 0; m < (GATE ? 2 : 1); ++m) {
+#pragma unroll
+            for (int i = 0; i < R; ++i) {
+                float r = m == 0 ? acc[i] : accg[i];
+#pragma unroll
+                for (int b = 0; b < C; ++b) {
+                    if constexpr (T == T_Q8_0) {
+                        const float d = h2f_lo(u16_at(ws1[m][i], 2*b));
+                        int isum = 0;
+#pragma unroll
+                        for (int k = 0; k < 8; ++k) {
+                            isum = dp4a_ss((int) wc[m][i][8*b + k], a.u[b][k], isum);
+                        }
+                        r = fmaf((float) isum, d * a.d16[b], r);
+                    } else if constexpr (T == T_Q4_1) {
+                        const uint32_t dm = ws1[m][i][b];
+                        const int isum = q4_isum16(wc[m][i][4*b], wc[m][i][4*b + 1], wc[m][i][4*b + 2], wc[m][i][4*b + 3], a.u[b]);
+                        r = fmaf((float) isum, h2f_lo(dm) * a.d16[b], r);
+                        r = fmaf(h2f_hi(dm), a.s[b], r);
+                    } else { // T_Q5_0
+                        r = dot_q5_0(u16_at(ws2[m][i], 2*b), ws1[m][i][b], wc[m][i][4*b], wc[m][i][4*b + 1], wc[m][i][4*b + 2],
+                                     wc[m][i][4*b + 3], a, b, r);
+                    }
+                }
+                if (m == 0) {
+                    acc[i] = r;
+                } else {
+                    accg[i] = r;
+                }
+            }
+        }
+        oc  += CB << lpr_log2;
+        os1 += SB1 << lpr_log2;
+        os2 += SB2 << lpr_log2;
+        yp  += ystep;
+    }
+
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+#pragma unroll
+        for (int off = 16; off > 0; off >>= 1) {
+            if (off < lpr) {
+                acc[i] += __shfl_xor_sync(0xffffffff, acc[i], off);
+                if constexpr (GATE) {
+                    accg[i] += __shfl_xor_sync(0xffffffff, accg[i], off);
+                }
+            }
+        }
+    }
+
+    float * d = p.dst + (size_t) ch * p.dst_chan_stride;
+#pragma unroll
+    for (int i = 0; i < R; ++i) {
+        if ((i & (lpr - 1)) == sl && row0 + i < p.nrows) {
+            float r = acc[i];
+            if constexpr (GATE) {
+                r *= silu(accg[i]);
+            }
+            d[row0 + i] = r;
+        }
+    }
+}
+
+// Repack nrows_total rows of GGUF blocks into row-local planes (out of place). One thread per block.
+template <int T>
+static __global__ void repack_rowplanes(const uint8_t * __restrict__ src, uint8_t * __restrict__ dst, const size_t nrows_total, const int nb) {
+    using rt = rl_traits<T>;
+    constexpr int BS = traits<T>::bs;
+    const size_t i = (size_t) blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= nrows_total * nb) {
+        return;
+    }
+    const size_t r = i / nb;
+    const int    b = (int) (i % nb);
+    const uint8_t * s = src + i * BS;
+    uint8_t * row = dst + r * (size_t) nb * BS;
+    // GGUF field order: Q8_0 [d][qs], Q4_1 [dm][qs], Q5_0 [d][qh][qs]
+    constexpr int hdr = BS - rt::CS;
+    for (int k = 0; k < rt::CS; ++k) {
+        row[b * rt::CS + k] = s[hdr + k];
+    }
+    if constexpr (T == T_Q5_0) {
+        for (int k = 0; k < 4; ++k) row[nb * rt::CS + b * 4 + k] = s[2 + k];
+        for (int k = 0; k < 2; ++k) row[nb * (rt::CS + 4) + b * 2 + k] = s[k];
+    } else {
+        for (int k = 0; k < rt::S1; ++k) row[nb * rt::CS + b * rt::S1 + k] = s[k];
     }
 }
 

@@ -53,7 +53,7 @@ bool is_glu(shape_kind k) { return k == S_DENSE_GLU || k == S_MOE_GLU; }
 
 // ---- variants --------------------------------------------------------------------------------------------------
 
-enum variant_kind { V_LLAMA, V_PR25479, V_ROWS, V_SOA };
+enum variant_kind { V_LLAMA, V_LLAMA_SK, V_PR25479, V_ROWS, V_RL, V_ST, V_SOA };
 
 struct variant_def {
     const char * name;
@@ -64,23 +64,40 @@ struct variant_def {
 
 const variant_def VARIANTS[] = {
     { "llama",   V_LLAMA,   0, 0, "(a) llama.cpp d77256999 MMVQ, Pascal launch shape: 4 warps, 1 row/block (small K: 4 rows/block)" },
+    { "llama_sk", V_LLAMA_SK, 0, 0, "(a) with the small-K shape also for IQ4_XS (Q47; llama.cpp excludes IQ4_XS on Pascal); IQ4_XS only" },
     { "pr25479", V_PR25479, 0, 0, "(b) same kernel, PR #25479 shape: 2 warps at one token (small K: 2 rows/block)" },
+    { "p_r1c1",  V_ROWS,    1, 1, "(c) tuned, K-/I-quants: 1 row per lane group, one 256-weight super-block per lane per iteration" },
+    { "p_r2c1",  V_ROWS,    2, 1, "(c) tuned, K-/I-quants: 2 rows per lane group, one super-block per lane" },
     { "p_r1c2",  V_ROWS,    1, 2, "(c) tuned: 1 row per lane group, 2 blocks per lane per iteration" },
     { "p_r2c2",  V_ROWS,    2, 2, "(c) tuned: 2 rows share the activations, 2 blocks per lane" },
     { "p_r4c2",  V_ROWS,    4, 2, "(c) tuned: 4 rows share the activations, 2 blocks per lane" },
     { "p_r2c4",  V_ROWS,    2, 4, "(c) tuned: 2 rows, 4 blocks per lane (128-bit loads for Q4_1)" },
+    { "rl_r1c2", V_RL,      1, 2, "(e) row-local planes (Q8_0, Q4_1, Q5_0): codes then scales within each row, 128-bit code loads; 1 row, 2 blocks per lane" },
+    { "rl_r2c2", V_RL,      2, 2, "(e) row-local planes, 2 rows, 2 blocks per lane" },
+    { "rl_r4c2", V_RL,      4, 2, "(e) row-local planes, 4 rows, 2 blocks per lane" },
+    { "rl_r2c4", V_RL,      2, 4, "(e) row-local planes, 2 rows, 4 blocks per lane" },
+    { "st_r1c2", V_ST,      1, 2, "(f) unchanged blocks staged through shared memory with coalesced 128-bit loads; 1 row, 2 blocks per lane" },
+    { "st_r2c2", V_ST,      2, 2, "(f) staged, 2 rows, 2 blocks per lane" },
+    { "st_r4c2", V_ST,      4, 2, "(f) staged, 4 rows, 2 blocks per lane" },
+    { "st_r2c4", V_ST,      2, 4, "(f) staged, 2 rows, 4 blocks per lane" },
     { "soa_r2",  V_SOA,     2, 0, "(d) SoA repack (Q4_1, Q4_1_64 only), 128-bit coalesced loads, FP32 activation sums, 2 rows" },
     { "soa_r4",  V_SOA,     4, 0, "(d) SoA repack, 4 rows" },
 };
 
 // ---- kernel dispatch -------------------------------------------------------------------------------------------
 
+// K-/I-quants take one super-block per lane (C = 1); the 32-weight types take 2 or 4 blocks.
 template <int T, bool G>
 const void * rows_kernel(int R, int C) {
-    if (R == 1 && C == 2) return (const void *) pascal::mmvq_rows<T, 1, 2, NW, G>;
-    if (R == 2 && C == 2) return (const void *) pascal::mmvq_rows<T, 2, 2, NW, G>;
-    if (R == 4 && C == 2) return (const void *) pascal::mmvq_rows<T, 4, 2, NW, G>;
-    if (R == 2 && C == 4) return (const void *) pascal::mmvq_rows<T, 2, 4, NW, G>;
+    if constexpr (traits<T>::qk == QK_K) {
+        if (R == 1 && C == 1) return (const void *) pascal::mmvq_rows<T, 1, 1, NW, G>;
+        if (R == 2 && C == 1) return (const void *) pascal::mmvq_rows<T, 2, 1, NW, G>;
+    } else {
+        if (R == 1 && C == 2) return (const void *) pascal::mmvq_rows<T, 1, 2, NW, G>;
+        if (R == 2 && C == 2) return (const void *) pascal::mmvq_rows<T, 2, 2, NW, G>;
+        if (R == 4 && C == 2) return (const void *) pascal::mmvq_rows<T, 4, 2, NW, G>;
+        if (R == 2 && C == 4) return (const void *) pascal::mmvq_rows<T, 2, 4, NW, G>;
+    }
     return nullptr;
 }
 
@@ -90,8 +107,69 @@ const void * rows_kernel_rt(int T, bool G, int R, int C) {
         case T_Q4_1:    return G ? rows_kernel<T_Q4_1, true>(R, C)    : rows_kernel<T_Q4_1, false>(R, C);
         case T_Q8_0:    return G ? rows_kernel<T_Q8_0, true>(R, C)    : rows_kernel<T_Q8_0, false>(R, C);
         case T_Q4_1_64: return G ? rows_kernel<T_Q4_1_64, true>(R, C) : rows_kernel<T_Q4_1_64, false>(R, C);
+        case T_Q5_0:    return G ? rows_kernel<T_Q5_0, true>(R, C)    : rows_kernel<T_Q5_0, false>(R, C);
+        case T_Q5_K:    return G ? rows_kernel<T_Q5_K, true>(R, C)    : rows_kernel<T_Q5_K, false>(R, C);
+        case T_IQ4_XS:  return G ? rows_kernel<T_IQ4_XS, true>(R, C)  : rows_kernel<T_IQ4_XS, false>(R, C);
     }
     return nullptr;
+}
+
+// (f) instances whose shared memory (NW warps x 32 lanes x R rows x C blocks, twice with the gate) fits in 48 KB
+template <int T, int R, int C, bool G>
+const void * st_instance() {
+    if constexpr (NW * 32 * R * (G ? 2 : 1) * C * traits<T>::bs <= 48 * 1024) {
+        return (const void *) pascal::mmvq_staged<T, R, C, NW, G>;
+    }
+    return nullptr;
+}
+
+template <int T, bool G>
+const void * st_kernel(int R, int C) {
+    if constexpr (traits<T>::qk != QK_K) {
+        if (R == 1 && C == 2) return st_instance<T, 1, 2, G>();
+        if (R == 2 && C == 2) return st_instance<T, 2, 2, G>();
+        if (R == 4 && C == 2) return st_instance<T, 4, 2, G>();
+        if (R == 2 && C == 4) return st_instance<T, 2, 4, G>();
+    }
+    return nullptr;
+}
+
+const void * st_kernel_rt(int T, bool G, int R, int C) {
+    switch (T) {
+        case T_Q4_0: return G ? st_kernel<T_Q4_0, true>(R, C) : st_kernel<T_Q4_0, false>(R, C);
+        case T_Q4_1: return G ? st_kernel<T_Q4_1, true>(R, C) : st_kernel<T_Q4_1, false>(R, C);
+        case T_Q8_0: return G ? st_kernel<T_Q8_0, true>(R, C) : st_kernel<T_Q8_0, false>(R, C);
+        case T_Q5_0: return G ? st_kernel<T_Q5_0, true>(R, C) : st_kernel<T_Q5_0, false>(R, C);
+    }
+    return nullptr;
+}
+
+template <int T, bool G>
+const void * rl_kernel(int R, int C) {
+    if (R == 1 && C == 2) return (const void *) pascal::mmvq_rowplanes<T, 1, 2, NW, G>;
+    if (R == 2 && C == 2) return (const void *) pascal::mmvq_rowplanes<T, 2, 2, NW, G>;
+    if (R == 4 && C == 2) return (const void *) pascal::mmvq_rowplanes<T, 4, 2, NW, G>;
+    if (R == 2 && C == 4) return (const void *) pascal::mmvq_rowplanes<T, 2, 4, NW, G>;
+    return nullptr;
+}
+
+const void * rl_kernel_rt(int T, bool G, int R, int C) {
+    switch (T) {
+        case T_Q8_0: return G ? rl_kernel<T_Q8_0, true>(R, C) : rl_kernel<T_Q8_0, false>(R, C);
+        case T_Q4_1: return G ? rl_kernel<T_Q4_1, true>(R, C) : rl_kernel<T_Q4_1, false>(R, C);
+        case T_Q5_0: return G ? rl_kernel<T_Q5_0, true>(R, C) : rl_kernel<T_Q5_0, false>(R, C);
+    }
+    return nullptr;
+}
+
+void repack_rl_rt(int T, const uint8_t * src, uint8_t * dst, size_t nrows_total, int nb, cudaStream_t s) {
+    const size_t n = nrows_total * nb;
+    const unsigned g = (unsigned) ((n + 255) / 256);
+    switch (T) {
+        case T_Q8_0: pascal::repack_rowplanes<T_Q8_0><<<g, 256, 0, s>>>(src, dst, nrows_total, nb); break;
+        case T_Q4_1: pascal::repack_rowplanes<T_Q4_1><<<g, 256, 0, s>>>(src, dst, nrows_total, nb); break;
+        case T_Q5_0: pascal::repack_rowplanes<T_Q5_0><<<g, 256, 0, s>>>(src, dst, nrows_total, nb); break;
+    }
 }
 
 const void * soa_kernel_rt(int S, bool G, int R) {
@@ -107,6 +185,9 @@ llama::launch_shape llama_plan_rt(int T, const llama::call_args & a) {
         case T_Q4_0:    return llama::plan<T_Q4_0, table>(a);
         case T_Q4_1:    return llama::plan<T_Q4_1, table>(a);
         case T_Q8_0:    return llama::plan<T_Q8_0, table>(a);
+        case T_Q5_0:    return llama::plan<T_Q5_0, table>(a);
+        case T_Q5_K:    return llama::plan<T_Q5_K, table>(a);
+        case T_IQ4_XS:  return llama::plan<T_IQ4_XS, table>(a);
         default:        return llama::plan<T_Q4_1_64, table>(a);
     }
 }
@@ -117,6 +198,9 @@ void llama_launch_rt(int T, const llama::call_args & a, cudaStream_t s) {
         case T_Q4_0:    llama::launch<T_Q4_0, table>(a, s); break;
         case T_Q4_1:    llama::launch<T_Q4_1, table>(a, s); break;
         case T_Q8_0:    llama::launch<T_Q8_0, table>(a, s); break;
+        case T_Q5_0:    llama::launch<T_Q5_0, table>(a, s); break;
+        case T_Q5_K:    llama::launch<T_Q5_K, table>(a, s); break;
+        case T_IQ4_XS:  llama::launch<T_IQ4_XS, table>(a, s); break;
         default:        llama::launch<T_Q4_1_64, table>(a, s); break;
     }
 }
@@ -238,6 +322,7 @@ struct result {
     double bytes = 0;            // weight bytes read per call
     double us_med = 0, us_min = 0, us_max = 0;
     bool timed = false;
+    bool small_k = false;        // llama.cpp's small-K launch shape (variant llama)
     double err = 0;              // max |gpu - ref| / bound
     bool pass = false;
     int regs = 0, blocks_per_sm = 0, threads = 0;
@@ -245,7 +330,7 @@ struct result {
 };
 
 struct options {
-    std::vector<std::string> types = { "q4_1", "q4_0", "q8_0", "q4_1_64" };
+    std::vector<std::string> types = { "q4_1", "q4_0", "q8_0", "q4_1_64", "q5_0", "q5_K", "iq4_xs" };
     std::vector<std::string> variants;
     std::vector<std::string> shapes;
     int reps = 30;
@@ -258,7 +343,7 @@ struct options {
 
 void usage() {
     printf("usage: mmvq_pascal [options]\n"
-           "  --types LIST     weight types, comma-separated (default q4_1,q4_0,q8_0,q4_1_64)\n"
+           "  --types LIST     weight types, comma-separated (default q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs)\n"
            "  --variants LIST  kernel variants (default all; see --list)\n"
            "  --shapes LIST    shapes (default all; see --list)\n"
            "  --reps N         timed graph launches per kernel, median reported (default 30)\n"
@@ -566,8 +651,9 @@ int main(int argc, char ** argv) {
             ref_out ref_q81, ref_soa;
             bool have_q81 = false, have_soa = false;
 
-            // SoA planes, built on first use
+            // SoA planes and row-local planes, built on first use
             std::vector<dev_buf> soa_qs_up, soa_dm_up, soa_qs_gate, soa_dm_gate;
+            std::vector<dev_buf> rl_up, rl_gate;
             const int S = T == T_Q4_1_64 ? 2 : 1;
             const int ngroups = c.K / (32 * S);
 
@@ -576,6 +662,8 @@ int main(int argc, char ** argv) {
                 for (const auto & v : VARIANTS) if (vname == v.name) vd = &v;
                 if (!vd) { fprintf(stderr, "unknown variant %s\n", vname.c_str()); return 1; }
                 if (vd->kind == V_SOA && T != T_Q4_1 && T != T_Q4_1_64) continue;
+                if (vd->kind == V_RL && T != T_Q8_0 && T != T_Q4_1 && T != T_Q5_0) continue;
+                if (vd->kind == V_LLAMA_SK && T != T_IQ4_XS) continue;
 
                 result res;
                 res.shape = sh.name; res.type = tname; res.variant = vd->name;
@@ -588,7 +676,7 @@ int main(int argc, char ** argv) {
                 double tol = 1e-5;
 
                 const int qk = type_qk(T);
-                if (vd->kind == V_LLAMA || vd->kind == V_PR25479) {
+                if (vd->kind == V_LLAMA || vd->kind == V_LLAMA_SK || vd->kind == V_PR25479) {
                     llama::call_args a;
                     a.vy = c.y_q81.as<block_q8_1>();
                     a.ncols_x = c.K;
@@ -609,9 +697,11 @@ int main(int argc, char ** argv) {
                         a.stride_channel_dst = c.N;
                     }
                     a.dst = c.dst.as<float>();
+                    a.iq_small_k = vd->kind == V_LLAMA_SK;
                     const bool pr = vd->kind == V_PR25479;
                     const auto ls = pr ? llama_plan_rt<llama::MMVQ_PARAMETERS_PASCAL_DP4A>(T, a) : llama_plan_rt<llama::MMVQ_PARAMETERS_GENERIC>(T, a);
                     func = ls.func; grid = ls.grid; block = ls.block;
+                    res.small_k = !pr && grid.x != (unsigned) c.N;
                     launch = [&c, a, pr, T](cudaStream_t st, int j) {
                         llama::call_args b = a;
                         const int cp = j % c.ncopies;
@@ -622,13 +712,14 @@ int main(int argc, char ** argv) {
                         else    llama_launch_rt<llama::MMVQ_PARAMETERS_GENERIC>(T, b, st);
                     };
                     if (llama_fast_fp16 && (T == T_Q4_1 || T == T_Q4_1_64)) tol = 2e-3;
-                } else if (vd->kind == V_ROWS) {
+                } else if (vd->kind == V_ROWS || vd->kind == V_ST) {
                     const int blocks = c.K / qk;
                     const int chunks = blocks / vd->C;
                     if (chunks < 1 || blocks % vd->C) continue;
                     int lpr = 1;
                     while (lpr < 32 && lpr * 2 <= chunks) lpr *= 2;
                     if (chunks % lpr) continue;
+                    if (vd->kind == V_ST && (lpr * vd->C * type_bs(T)) % 16) continue;
                     int lpr_log2 = 0;
                     while ((1 << lpr_log2) < lpr) lpr_log2++;
                     pascal::args p;
@@ -641,7 +732,7 @@ int main(int argc, char ** argv) {
                     p.dst_chan_stride = c.N;
                     p.lpr_log2 = lpr_log2;
                     p.niter = chunks / lpr;
-                    func = rows_kernel_rt(T, c.glu, vd->R, vd->C);
+                    func = vd->kind == V_ST ? st_kernel_rt(T, c.glu, vd->R, vd->C) : rows_kernel_rt(T, c.glu, vd->R, vd->C);
                     const int rows_per_block = NW * (32 / lpr) * vd->R;
                     grid = dim3((c.N + rows_per_block - 1) / rows_per_block, c.nchan, 1);
                     block = dim3(32, NW, 1);
@@ -652,6 +743,51 @@ int main(int argc, char ** argv) {
                         q.wg = c.glu ? c.w_gate[cp].as<uint8_t>() : nullptr;
                         q.ids = c.moe ? c.ids.as<int>() + (j % c.nidsets) * c.nused : nullptr;
                         void * params[] = { &q };
+                        CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                    };
+                } else if (vd->kind == V_RL) {
+                    const int blocks = c.K / qk;
+                    const int chunks = blocks / vd->C;
+                    if (chunks < 1 || blocks % vd->C) continue;
+                    int lpr = 1;
+                    while (lpr < 32 && lpr * 2 <= chunks) lpr *= 2;
+                    if (chunks % lpr) continue;
+                    int lpr_log2 = 0;
+                    while ((1 << lpr_log2) < lpr) lpr_log2++;
+                    if (rl_up.empty()) {
+                        const size_t nrows_total = (size_t) c.nexp * c.N;
+                        for (int cp = 0; cp < c.ncopies; ++cp) {
+                            for (int m = 0; m < nmats; ++m) {
+                                dev_buf b(c.mat_bytes);
+                                repack_rl_rt(T, (m == 0 ? c.w_up[cp] : c.w_gate[cp]).as<uint8_t>(), b.as<uint8_t>(), nrows_total, blocks, s);
+                                CUDA_CHECK(cudaGetLastError());
+                                (m == 0 ? rl_up : rl_gate).push_back(std::move(b));
+                            }
+                        }
+                        CUDA_CHECK(cudaStreamSynchronize(s));
+                    }
+                    pascal::args p;
+                    p.y = c.y_q81.as<uint8_t>();
+                    p.dst = c.dst.as<float>();
+                    p.nrows = c.N;
+                    p.row_bytes = (int) c.rbytes;
+                    p.expert_bytes = c.moe ? (size_t) c.N * c.rbytes : 0;
+                    p.y_chan_bytes = sh.kind == S_MOE_DOWN ? (c.K / 32) * 36 : 0;
+                    p.dst_chan_stride = c.N;
+                    p.lpr_log2 = lpr_log2;
+                    p.niter = chunks / lpr;
+                    func = rl_kernel_rt(T, c.glu, vd->R, vd->C);
+                    const int rows_per_block = NW * (32 / lpr) * vd->R;
+                    grid = dim3((c.N + rows_per_block - 1) / rows_per_block, c.nchan, 1);
+                    block = dim3(32, NW, 1);
+                    launch = [&c, &rl_up, &rl_gate, p, blocks, func, grid, block](cudaStream_t st, int j) {
+                        pascal::args q = p;
+                        int nb = blocks;
+                        const int cp = j % c.ncopies;
+                        q.w = rl_up[cp].as<uint8_t>();
+                        q.wg = c.glu ? rl_gate[cp].as<uint8_t>() : nullptr;
+                        q.ids = c.moe ? c.ids.as<int>() + (j % c.nidsets) * c.nused : nullptr;
+                        void * params[] = { &q, &nb };
                         CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
                     };
                 } else { // V_SOA
@@ -762,9 +898,33 @@ int main(int argc, char ** argv) {
         t.nshapes++;
         t.pass &= r.pass;
     }
+    // Synthetic row "widek": llama.cpp with the fork's wide-rows launch shape, i.e. per shape the small-K shape where
+    // llama.cpp's rule applies (variant llama) and 2 warps elsewhere (variant pr25479).
+    for (const auto & tn : opt.types) {
+        total t;
+        for (const auto & sh : SHAPES) {
+            if (!contains(opt.shapes, sh.name)) continue;
+            const result * rl = nullptr;
+            const result * rp = nullptr;
+            for (const auto & r : results) {
+                if (r.type != tn || r.shape != sh.name || !r.timed) continue;
+                if (r.variant == "llama") rl = &r;
+                if (r.variant == "pr25479") rp = &r;
+            }
+            if (!rl || !rp) continue;
+            const result * pick = rl->small_k ? rl : rp;
+            t.us += pick->us_med * pick->calls;
+            t.bytes += pick->bytes * pick->calls;
+            t.pass &= pick->pass;
+            t.nshapes++;
+        }
+        if (t.nshapes == 0) continue;
+        totals[{ tn, "widek" }] = t;
+        combos.push_back({ tn, "widek" });
+    }
     // Synthetic rows: per type and shape, the fastest correct tuned kernel, as a llama.cpp port could pick per shape.
     {
-        const char * names[2] = { "best(c)", "best(cd)" };
+        const char * names[2] = { "best(c)", "best(c-f)" };
         for (int which = 0; which < 2; ++which) {
             for (const auto & tn : opt.types) {
                 total t;
@@ -774,7 +934,7 @@ int main(int argc, char ** argv) {
                     for (const auto & r : results) {
                         if (r.type != tn || r.shape != sh.name || !r.pass || !r.timed) continue;
                         const bool is_c = r.variant.rfind("p_", 0) == 0;
-                        const bool is_d = r.variant.rfind("soa_", 0) == 0;
+                        const bool is_d = r.variant.rfind("soa_", 0) == 0 || r.variant.rfind("rl_", 0) == 0 || r.variant.rfind("st_", 0) == 0;
                         if (!(is_c || (which == 1 && is_d))) continue;
                         if (!best || r.us_med < best->us_med) best = &r;
                     }
@@ -786,7 +946,7 @@ int main(int argc, char ** argv) {
                 if (t.nshapes == 0) continue;
                 if (which == 1) {
                     bool has_d = false;
-                    for (const auto & r : results) has_d |= r.type == tn && r.variant.rfind("soa_", 0) == 0;
+                    for (const auto & r : results) has_d |= r.type == tn && (r.variant.rfind("soa_", 0) == 0 || r.variant.rfind("rl_", 0) == 0 || r.variant.rfind("st_", 0) == 0);
                     if (!has_d) continue;
                 }
                 totals[{ tn, names[which] }] = t;
@@ -802,7 +962,8 @@ int main(int argc, char ** argv) {
     if (!opt.check_only) {
         printf("\nPer-token matvec time: sum over shapes of us/call x calls/token (49 attention layers, 47 MoE layers, one\n"
                "output head; dense layers 0-1, the router and all non-matvec ops are not included).\n"
-               "best(c) / best(cd): fastest correct tuned kernel per shape among (c) / among (c) and (d).\n");
+               "best(c) / best(c-f): fastest correct tuned kernel per shape among (c) / among (c), (d), (e) and (f).\n"
+               "widek: llama.cpp's kernel with the wide-rows launch shape (small-K shape where llama.cpp applies it, else 2 warps).\n");
         printf("%-8s %-8s %10s %10s %8s %10s %12s\n", "type", "variant", "ms/token", "MB/token", "GB/s", "vs llama", "vs q4_1 llama");
         const auto base_q41 = totals.find({ "q4_1", "llama" });
         for (const auto & k : combos) {

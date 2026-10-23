@@ -39,6 +39,9 @@ call reads 6 of them, selected by an ids array.
 | `q4_0` | 18 | `half d`, then 16 bytes of nibbles (same order). Value `d*(q - 8)`. |
 | `q8_0` | 34 | `half d`, then 32 int8. Value `d*q`. |
 | `q4_1_64` | 18 | 36 bytes per 64 weights: one `half2 (d, m)`, then two 16-byte halves packed like Q4_1 ([patches/q4_1_64-type.diff](../../patches/q4_1_64-type.diff)). Holds the makers' group-64 Flint weights exactly. |
+| `q5_0` | 22 | `half d`, 4 bytes `qh` (bit j = fifth bit of weight j), then 16 bytes of nibbles as in Q4_0. Value `d*(q - 16)`. Flint's S4-L0 file stores its routed experts' gate/up in it. |
+| `q5_K` | 22 | 176 bytes per 256 weights: `half2 (d, dmin)`, 12 bytes of 6-bit sub-block scales and mins, 32 bytes `qh`, 128 bytes of nibbles. Value `d*sc*q - dmin*m` per 32-weight sub-block. Used by Unsloth's UD-Q4_K_XL. |
+| `iq4_xs` | 17 | 136 bytes per 256 weights: `half d`, 6-bit sub-block scales (`scales_h`, `scales_l`), 128 bytes of 4-bit indices into a fixed non-linear table (`kvalues_iq4nl`). Used by UD-Q4_K_XL. |
 
 Activations are quantized exactly as llama.cpp does it (`quantize_q8_1`): blocks of 32 int8 with `half2 (d, s)`, where s
 is the FP16 sum of the 32 unquantized values.
@@ -50,6 +53,10 @@ is the FP16 sum of the 32 unquantized values.
 | `llama` | (a) llama.cpp's MMVQ copied from commit `d77256999`, with the launch shape a compute 6.1 card gets: 4 warps per block, 1 row per block, and for small K ("small-K" rule) 4 rows per block. Verified bit-identical to llama.cpp (see [Checking correctness](#checking-correctness)). |
 | `pr25479` | (b) the same kernel with the launch shape of llama.cpp PR #25479: 2 warps per block at one token. |
 | `p_r1c2`, `p_r2c2`, `p_r4c2`, `p_r2c4` | (c) Pascal-tuned kernel on the unchanged block formats. A warp is split into lane groups sized to K; each group owns R rows that share one load of the activations (2R weight rows when gate and up are fused); each lane takes C consecutive blocks per iteration and loads them with the widest loads their alignment allows (`q4_1` at C = 4: five 128-bit loads per 128 weights). Row pointers are computed once and advanced by a constant; nibbles are unpacked with two masks per word (an unsigned-by-signed dp4a on the high nibbles, with the factor 16 folded into the activation scale); partial sums are reduced with warp shuffles, with no shared memory or `__syncthreads`. |
+| `p_r1c1`, `p_r2c1` | (c) for the 256-weight K-/I-quants: each lane takes one super-block per iteration. Q5_K's activation sums (for its mins) are computed once per chunk and shared by all rows; IQ4_XS looks its indices up with `__byte_perm` in a table held in registers, with the activations pre-permuted into the order the lookup produces. |
+| `llama_sk` | (a) for `iq4_xs` with llama.cpp's small-K shape, which llama.cpp withholds from IQ4_XS on Pascal (experiment Q47). |
+| `rl_r1c2`, `rl_r2c2`, `rl_r4c2`, `rl_r2c4` | (e) row-local planes (`q8_0`, `q4_1`, `q5_0`): each row keeps its byte range but holds all its codes first and its scales after them, so every code load is a 128-bit load. Needs a load-time repack. |
+| `st_r1c2`, `st_r2c2`, `st_r4c2`, `st_r2c4` | (f) staged loads (`q8_0`, `q4_0`, `q4_1`, `q5_0`): the unchanged GGUF blocks; each lane group first copies the contiguous row segment its lanes are about to read into shared memory with coalesced 128-bit loads, then every lane reads its own blocks from there. No repack. |
 | `soa_r2`, `soa_r4` | (d) structure-of-arrays repack of `q4_1` (group 32) and `q4_1_64` (group 64): one plane of 16-byte nibble chunks arranged so that each weight load is a fully coalesced 128-bit load, and one plane of `half2 (d, m)` scales. Activations use the same idea: an int8 plane and a `float2 (d, s)` plane, so the block sum is FP32 (which also removes the FP16 overflow that forces llama.cpp's Flint rescale). R rows per lane group as in (c). |
 
 **Method:**
@@ -68,9 +75,10 @@ is the FP16 sum of the 32 unquantized values.
 - GB/s = weight bytes per call / time per call. `%peak` is that against 173 GB/s (`--ref-gbs` changes it).
 - Per-token total = Σ over the shapes of time per call × calls per token. It covers the matrix-vector products of the
   49 attention layers, the 47 MoE layers and the output head. It leaves out layers 0–1 (dense FFN), the router (F32 in
-  the makers' file), the per-call `quantize_q8_1` launches and all non-matvec work. `best(c)` and `best(cd)` take,
-  per shape, the fastest correct variant among (c), or among (c) and (d): a llama.cpp port could pick parameters per
-  shape the same way.
+  the makers' file), the per-call `quantize_q8_1` launches and all non-matvec work. `best(c)` and `best(c-f)` take,
+  per shape, the fastest correct variant among (c), or among (c) to (f): a llama.cpp port could pick parameters per
+  shape the same way. `widek` is llama.cpp's kernel with the launch shape of the wide-rows build (2 warps per block,
+  except where llama.cpp's small-K rule applies), assembled per shape from `llama` and `pr25479`.
 - Before anything is timed, the program streams memory for ~2 s so the card reaches its sustained clock, then records
   two reference points: the cost of an empty kernel node in a CUDA graph and the streaming-read bandwidth of a plain
   copy-style kernel (128-bit loads, read-only and plain load paths). The latter is the practical ceiling for any
@@ -116,7 +124,7 @@ Useful options (`--help` lists all):
 | Option | Effect |
 |---|---|
 | `--check-only` | correctness checks only, no timing (a few seconds) |
-| `--types q4_1,q8_0` | subset of weight types (default `q4_1,q4_0,q8_0,q4_1_64`) |
+| `--types q4_1,q8_0` | subset of weight types (default `q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs`) |
 | `--variants llama,p_r2c2` | subset of variants (default all) |
 | `--shapes attn_q,moe_down` | subset of shapes (default all) |
 | `--reps 30`, `--batch 64` | timed graph launches, calls per graph |
@@ -261,13 +269,63 @@ None of the refutation conditions occurred. In a real token the matrix-vector pr
 (20 of the makers' file's 35.6 ms per token), so a llama.cpp kernel at these speeds would take the makers' Q4_1 from
 28 to about 36–38 tok/s, and further with the rescale removed and the group-64 type.
 
+### Q5_0, K-/I-quants, row-local planes and staged loads
+
+A second run added the formats of the files at the quality bar (Q5_0 in Flint's S4-L0; Q5_K and IQ4_XS in Unsloth's
+UD-Q4_K_XL) and two ways around the 2-byte alignment that holds Q8_0, Q4_0 and Q5_0 back in (c). Every variant passes
+the correctness check. Matrix-vector time per Flint token on one P106-090 (`widek` = llama.cpp's kernel with the
+wide-rows launch shape, the best llama.cpp build so far):
+
+| Type | `llama` | `widek` | best (c) | best (e), row-local planes | best (f), staged | best of all |
+|---|---|---|---|---|---|---|
+| `q8_0` | 35.4 ms | 28.1 ms | 23.2 ms (1.53×) | 18.4 ms (1.92×) | **17.1 ms (2.07×, 150 GB/s)** | 16.7 ms (2.13×) |
+| `q5_0` | 28.4 ms | 25.2 ms | 14.3 ms (1.98×) | 11.9 ms (2.38×) | 12.6 ms (2.28×) | 11.4 ms (2.49×) |
+| `q4_0` | 24.1 ms | 19.8 ms | 12.4 ms (1.94×) | — | 10.3 ms (2.33×) | 10.1 ms (2.38×) |
+| `q4_1` | 20.3 ms | 16.9 ms | 11.4 ms (1.77×) | 10.5 ms (1.93×) | 10.6 ms (1.91×) | 10.0 ms (2.04×) |
+| `q5_K` | 31.6 ms | 27.7 ms | 13.9 ms (2.27×, 120 GB/s) | — | — | |
+| `iq4_xs` | 34.9 ms | 26.6 ms | 13.7 ms (2.55×, 94 GB/s) | — | — | |
+
+GB/s per shape for `q8_0` (and `q5_0`), best variant of each kind:
+
+| Shape | `llama` | `pr25479` | best (c) | best (e) | best (f) |
+|---|---|---|---|---|---|
+| `attn_q` | 63 (58) | 99 (73) | 116 (120) | 149 (148) | 155 (138) |
+| `attn_kv` | 56 (58) | 85 (70) | 89 (87) | 108 (104) | 117 (98) |
+| `attn_output` | 99 (80) | 102 (79) | 104 (119) | 136 (154) | 156 (144) |
+| `moe_gate_up` | 78 (53) | 90 (65) | 116 (117) | 147 (150) | 160 (138) |
+| `moe_down` | 81 (44) | 43 (40) | 105 (118) | 153 (144) | 146 (132) |
+| `shexp_gate_up` | 81 (62) | 89 (62) | 110 (105) | 136 (138) | 151 (130) |
+| `shexp_down` | 42 (68) | 61 (56) | 94 (103) | 127 (128) | 138 (117) |
+| `output` | 63 (60) | 103 (75) | 127 (134) | 158 (158) | 165 (143) |
+
+What this shows:
+
+1. **Q8_0 was held back by its loads, not by its arithmetic.** With the same blocks staged through shared memory, Q8_0
+   goes from 1.53× to 2.07× and is the fastest format per byte. In (c), each lane's 32-bit loads at a 68-byte stride
+   touch a new cache line almost every time; staged, the lane group reads its segment contiguously.
+2. **Staging needs no repack.** (f) matches or beats the row-local planes (e) for Q8_0 and Q4_0 and comes within 6 %
+   for Q5_0, without touching the weights in memory, so prompt processing (MMQ), row lookup and dequantization keep
+   reading the GGUF layout. Row-local planes in turn match the tensor-wide planes of (d) (`q4_1`: 10.5 against
+   10.8 ms), so a repack, if it ever comes, can keep each row in place.
+3. **Q5_0's fifth bit is cheap once it stays in place.** The tuned Q5_0 kernel splits each block's sum into
+   sum(nibble × a) + 16 × sum(bit × a), with `(qh >> j) & 0x01010101` against activations regrouped by two 4 × 4 byte
+   transposes per block, and reaches 1.98× (2.28× staged) against llama.cpp's per-bit shift/and/or. The gate (≥ 1.5×
+   on the gate/up shape) is passed: 117 against 53 GB/s.
+4. **K- and I-quants pass their gates** (Q5_K ≥ 110, IQ4_XS ≥ 90 GB/s): Q5_K 120 GB/s overall (123 on the expert
+   gate/up, 125 on the expert down-projection), IQ4_XS 94 (93, 102). IQ4_XS's fused gate/up needs one row per lane
+   group: at two rows it takes 255 registers and drops to 40 GB/s.
+5. **llama.cpp's small-K shape for IQ4_XS (Q47) cuts both ways.** IQ4_XS's 256-weight blocks put every row up to
+   K = 2048 under the small-K rule. Allowing it doubles the down-projections (`moe_down` 14 → 29 GB/s, `shexp_down`
+   25 → 50) and the unfused K = 2048 products (`attn_q` 43 → 81) but slows the fused gate/up (52 → 34): a one-line
+   change would need to exclude fused calls.
+
 ## Files
 
 | File | Contents |
 |---|---|
 | `src/common.cuh` | block layouts (identical to ggml's), type traits |
 | `src/llama_mmvq.cuh` | (a)/(b): llama.cpp's MMVQ and `quantize_q8_1`, copied from `d77256999` (MIT, the ggml authors), Pascal paths only |
-| `src/pascal_mmvq.cuh` | (c) tuned kernel, (d) SoA kernel, SoA activation quantizer and repack |
+| `src/pascal_mmvq.cuh` | (c) tuned kernel (all seven types), (d) SoA kernel, SoA activation quantizer and repack, (e) row-local-plane kernel and repack, (f) staged kernel |
 | `src/data.cuh` | random weight/activation generation on the GPU, CPU reference dot products |
 | `src/main.cu` | shapes, variants, correctness check, timing, totals, CSV |
 | `build.sh` | Docker build of `build/mmvq_pascal` |

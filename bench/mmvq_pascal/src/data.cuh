@@ -19,31 +19,35 @@ static __host__ __device__ __forceinline__ uint32_t hash_u32(uint64_t x) {
 static __host__ __device__ __forceinline__ float u01(uint32_t h) { return (h >> 8) * (1.0f / 16777216.0f); }
 
 // Fill nblocks weight blocks of the given type. Scales are positive FP16 normals; Q4_1 minimums are negative, as in
-// real affine quants (m ~ -8 d). Quants are uniform random.
+// real affine quants (m ~ -8 d). Quants, the Q5 fifth bits and the K/I-quant sub-block scales are uniform random.
 static __global__ void gen_blocks(uint8_t * __restrict__ dst, const size_t nblocks, const int type, const uint64_t seed) {
-    const int bs = type == T_Q4_0 ? 18 : type == T_Q4_1 ? 20 : type == T_Q8_0 ? 34 : 36;
+    const int bs = type_bs(type);
     for (size_t b = (size_t) blockIdx.x * blockDim.x + threadIdx.x; b < nblocks; b += (size_t) gridDim.x * blockDim.x) {
         uint8_t * p = dst + b * bs;
         const uint64_t base = seed * 0x2545F4914F6CDD1Dull + b * 64;
         const float r0 = u01(hash_u32(base + 0));
         const float r1 = u01(hash_u32(base + 1));
-        int nq = 0;
         int qoff = 0;
-        if (type == T_Q4_0 || type == T_Q8_0) {
-            const float d = type == T_Q4_0 ? (0.5f + r0) * (1.0f / 64.0f) : (0.5f + r0) * (1.0f / 512.0f);
+        if (type == T_Q4_0 || type == T_Q8_0 || type == T_Q5_0 || type == T_IQ4_XS) {
+            const float d = type == T_Q4_0 ? (0.5f + r0) * (1.0f / 64.0f) : type == T_Q8_0 ? (0.5f + r0) * (1.0f / 512.0f)
+                          : type == T_Q5_0 ? (0.5f + r0) * (1.0f / 128.0f) : (0.5f + r0) * (1.0f / 8192.0f);
             *(half *) p = __float2half(d);
-            nq = type == T_Q4_0 ? 16 : 32;
             qoff = 2;
+        } else if (type == T_Q5_K) {
+            const float d    = (0.5f + r0) * (1.0f / 2048.0f);
+            const float dmin = (0.5f + r1) * (1.0f / 2048.0f);
+            *(half2 *) p = __halves2half2(__float2half(d), __float2half(dmin));
+            qoff = 4;
         } else {
             const float d = (0.5f + r0) * (1.0f / 64.0f);
             const float m = -d * (6.0f + 4.0f * r1);
             *(half2 *) p = __halves2half2(__float2half(d), __float2half(m));
-            nq = type == T_Q4_1 ? 16 : 32;
             qoff = 4;
         }
+        const int nq = bs - qoff;
         for (int j = 0; j < nq; j += 4) {
             uint32_t h = hash_u32(base + 2 + j);
-            for (int k = 0; k < 4; ++k) {
+            for (int k = 0; k < 4 && j + k < nq; ++k) {
                 uint8_t v = (uint8_t) (h >> (8 * k));
                 if (type == T_Q8_0 && v == 0x80) {
                     v = 0x81; // keep int8 quants in [-127, 127] like ggml's Q8_0
@@ -164,6 +168,76 @@ static double ref_dot(int type, const uint8_t * row, const act_host & a, int vec
                 }
             }
             break;
+        case T_Q5_0:
+            for (int ib = 0; ib < K / 32; ++ib) {
+                const uint8_t * b = row + (size_t) ib * 22;
+                const double d = half_bits_to_float(rd_u16(b));
+                const uint32_t qh = (uint32_t) b[2] | ((uint32_t) b[3] << 8) | ((uint32_t) b[4] << 16) | ((uint32_t) b[5] << 24);
+                int sumi = 0;
+                for (int j = 0; j < 16; ++j) {
+                    const int q0 = (b[6 + j] & 15) | (((qh >> j) & 1) << 4);
+                    const int q1 = (b[6 + j] >> 4) | (((qh >> (j + 16)) & 1) << 4);
+                    sumi += q0 * q8[32 * ib + j] + q1 * q8[32 * ib + j + 16];
+                }
+                const double t1 = d * d8[ib] * sumi;
+                const double t2 = -16.0 * d * s8[ib];
+                acc += t1 + t2;
+                as += fabs(t1) + fabs(t2);
+            }
+            break;
+        case T_Q5_K:
+            for (int sb = 0; sb < K / 256; ++sb) {
+                const uint8_t * b = row + (size_t) sb * 176;
+                const double d    = half_bits_to_float(rd_u16(b));
+                const double dmin = half_bits_to_float(rd_u16(b + 2));
+                const uint8_t * sc = b + 4;
+                const uint8_t * qh = b + 16;
+                const uint8_t * qs = b + 48;
+                for (int s = 0; s < 8; ++s) {
+                    int scv, mv;
+                    if (s < 4) {
+                        scv = sc[s] & 63;
+                        mv  = sc[s + 4] & 63;
+                    } else {
+                        scv = (sc[s + 4] & 0xF) | ((sc[s - 4] >> 6) << 4);
+                        mv  = (sc[s + 4] >> 4) | ((sc[s] >> 6) << 4);
+                    }
+                    const int ib = 8 * sb + s;
+                    int sumi = 0, suma = 0;
+                    for (int l = 0; l < 32; ++l) {
+                        const int q = ((qs[32 * (s / 2) + l] >> (4 * (s % 2))) & 15) | (((qh[l] >> s) & 1) << 4);
+                        sumi += q * q8[32 * ib + l];
+                        suma += q8[32 * ib + l];
+                    }
+                    const double t1 = d * scv * d8[ib] * sumi;
+                    const double t2 = -dmin * mv * d8[ib] * suma;
+                    acc += t1 + t2;
+                    as += fabs(t1) + fabs(t2);
+                }
+            }
+            break;
+        case T_IQ4_XS: {
+            static const int kv[16] = { -127, -104, -83, -65, -49, -35, -22, -10, 1, 13, 25, 38, 53, 69, 89, 113 };
+            for (int sb = 0; sb < K / 256; ++sb) {
+                const uint8_t * b = row + (size_t) sb * 136;
+                const double d = half_bits_to_float(rd_u16(b));
+                const int scales_h = rd_u16(b + 2);
+                const uint8_t * scales_l = b + 4;
+                const uint8_t * qs = b + 8;
+                for (int j8 = 0; j8 < 8; ++j8) {
+                    const int ls = ((scales_l[j8 / 2] >> (4 * (j8 % 2))) & 0xF) | (((scales_h >> (2 * j8)) & 3) << 4);
+                    const int ib = 8 * sb + j8;
+                    int sumi = 0;
+                    for (int j = 0; j < 16; ++j) {
+                        sumi += kv[qs[16 * j8 + j] & 15] * q8[32 * ib + j] + kv[qs[16 * j8 + j] >> 4] * q8[32 * ib + j + 16];
+                    }
+                    const double t = d * (ls - 32) * d8[ib] * sumi;
+                    acc += t;
+                    as += fabs(t);
+                }
+            }
+            break;
+        }
     }
     *absum = as;
     return acc;

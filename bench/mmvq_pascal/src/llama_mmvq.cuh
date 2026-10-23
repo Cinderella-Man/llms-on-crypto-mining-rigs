@@ -2,7 +2,9 @@
 //
 // Copied from llama.cpp (https://github.com/ggml-org/llama.cpp) at commit d77256999 (2026-10-22):
 //   ggml/src/ggml-cuda/mmvq.cu       mul_mat_vec_q, calc_nwarps, calc_rows_per_block, the small-K rule
-//   ggml/src/ggml-cuda/vecdotq.cuh   get_int_b2/b4, vec_dot_q4_0/q4_1/q8_0_q8_1 and their _impl functions
+//   ggml/src/ggml-cuda/vecdotq.cuh   get_int_b2/b4, get_int_from_table_16, vec_dot_q4_0/q4_1/q5_0/q8_0/q5_K/iq4_xs_q8_1
+//                                    and their _impl functions
+//   ggml/src/ggml-common.h           kvalues_iq4nl
 //   ggml/src/ggml-cuda/quantize.cu   quantize_q8_1
 //   ggml/src/ggml-cuda/common.cuh    ggml_cuda_dp4a, warp reductions, fastdiv, FAST_FP16_AVAILABLE
 //   ggml/src/ggml-cuda/unary.cuh     ggml_cuda_op_silu_single
@@ -10,8 +12,8 @@
 // llama.cpp PR #25479 (2 warps per block at one token on compute capability 6.1/6.2).
 // llama.cpp is MIT-licensed, Copyright (c) 2023-2026 The ggml authors.
 //
-// Only the paths a Pascal (compute 6.1) card takes for one token (ncols_dst == 1) with Q4_0, Q4_1, Q8_0 and
-// Q4_1_64 weights are kept. Code for other architectures (HIP, MUSA, DGX Spark prefetch, NVFP4 scales, PDL) and
+// Only the paths a Pascal (compute 6.1) card takes for one token (ncols_dst == 1) with Q4_0, Q4_1, Q5_0, Q8_0, Q5_K,
+// IQ4_XS and Q4_1_64 weights are kept. Code for other architectures (HIP, MUSA, DGX Spark prefetch, NVFP4 scales, PDL) and
 // GLU variants other than SwiGLU are left out; everything kept is unchanged, so the arithmetic, the summation order
 // and the launch shapes are the same as llama.cpp's. Compile with -use_fast_math, as llama.cpp does.
 #pragma once
@@ -106,6 +108,42 @@ static __device__ __forceinline__ int get_int_b4(const void * x, const int & i32
 #define VDR_Q4_1_Q8_1_MMVQ 2
 #define VDR_Q4_1_64_Q8_1_MMVQ 2
 #define VDR_Q8_0_Q8_1_MMVQ 2
+#define VDR_Q5_0_Q8_1_MMVQ 2
+#define VDR_Q5_K_Q8_1_MMVQ 2
+#define VDR_IQ4_XS_Q8_1_MMVQ 4
+
+static const __device__ int8_t kvalues_iq4nl[16] = {
+    -127, -104, -83, -65, -49, -35, -22, -10, 1, 13, 25, 38, 53, 69, 89, 113,
+};
+
+// q4 contains 8 indices with 4 bit each.
+// This function selects those bytes from table that are at those indices and returns them as int2.
+// The first int contains the bytes with even indices in q4, the second int contains the bytes with odd indices in q4.
+static __device__ __forceinline__ int2 get_int_from_table_16(const int & q4, const int8_t * table) {
+    // CUDA does not have an instruction for selecting bytes with 4 bit indices.
+    // However, __byte_perm is an instruction that selects bytes with 3 bit indices that can be used instead.
+    const uint32_t * table32 = (const uint32_t *) table;
+
+    // __byte_perm selects bytes based on the lower 16 bits in its third argument.
+    // Therefore, do 2 iterations over the 32 bits in q4 with 0 and 16 shift.
+    // To handle the fourth bit, first call _byte_perm both for the low and the high 64 bit of table, using the low 3 bits.
+    // Then, call __byte_perm again to select from the low and high bytes based on the fourth bit.
+    uint32_t tmp[2];
+    const uint32_t low_high_selection_indices = (0x32103210 | ((q4 & 0x88888888) >> 1));
+#pragma unroll
+    for (uint32_t i = 0; i < 2; ++i) {
+        const uint32_t shift = 16 * i;
+
+        const uint32_t low  = __byte_perm(table32[0], table32[1], q4 >> shift);
+        const uint32_t high = __byte_perm(table32[2], table32[3], q4 >> shift);
+        tmp[i] = __byte_perm(low, high, low_high_selection_indices >> shift);
+    }
+
+    // tmp contains the bytes from tyble in the same order as the 4 bit indices in q4.
+    // However, for the result we need ints with all even/odd 4 bit indices in q4.
+    // Therefore, 2 more calls to __byte_perm to put the bytes in the correct order.
+    return make_int2(__byte_perm(tmp[0], tmp[1], 0x6420), __byte_perm(tmp[0], tmp[1], 0x7531));
+}
 
 template <int vdr> static __device__ __forceinline__ float vec_dot_q4_0_q8_1_impl(
     const int * v, const int * u, const float & d4, const half2 & ds8) {
@@ -170,6 +208,66 @@ template <typename T, int vdr> static __device__ __forceinline__ T vec_dot_q8_0_
     }
 
     return d8_0*d8_1 * ((T) sumi);
+}
+
+template <int vdr> static __device__ __forceinline__ float vec_dot_q5_0_q8_1_impl(
+    const int * vl, const int * vh, const int * u, const float & d5, const half2 & ds8) {
+
+    int sumi = 0;
+
+#pragma unroll
+    for (int i = 0; i < vdr; ++i) {
+        int vi0 = (vl[i] >>  0) & 0x0F0F0F0F; // lower 4 qs bits, still need qh as 5th bits
+        vi0    |= (vh[i] <<  4) & 0x00000010; // 0 ->  4
+        vi0    |= (vh[i] << 11) & 0x00001000; // 1 -> 12
+        vi0    |= (vh[i] << 18) & 0x00100000; // 2 -> 20
+        vi0    |= (vh[i] << 25) & 0x10000000; // 3 -> 28
+        sumi = ggml_cuda_dp4a(vi0, u[2*i+0], sumi); // SIMD dot product of quantized values
+
+        int vi1 = (vl[i] >>  4) & 0x0F0F0F0F; // upper 4 qs bits, still need qh as 5th bits
+        vi1    |= (vh[i] >> 12) & 0x00000010; // 16 ->  4
+        vi1    |= (vh[i] >>  5) & 0x00001000; // 17 -> 12
+        vi1    |= (vh[i] <<  2) & 0x00100000; // 18 -> 20
+        vi1    |= (vh[i] <<  9) & 0x10000000; // 19 -> 28
+        sumi = ggml_cuda_dp4a(vi1, u[2*i+1], sumi); // SIMD dot product of quantized values
+    }
+
+    const float2 ds8f = __half22float2(ds8);
+
+    // second part effectively subtracts 16 from each quant value
+    return d5 * (sumi * ds8f.x - (16*vdr/QI5_0) * ds8f.y);
+}
+
+// contiguous v/x values
+static __device__ __forceinline__ float vec_dot_q5_K_q8_1_impl_vmmq(
+    const int * __restrict__ vl, const int * __restrict__ vh, const int * __restrict__ u, const uint8_t * __restrict__ sc,
+    const uint8_t * __restrict__ m, const half2 & dm5, const float * __restrict__ d8) {
+
+    float sumf_d = 0.0f;
+    float sumf_m = 0.0f;
+
+#pragma unroll
+    for (int i = 0; i < QR5_K; ++i) {
+        const int vl0i = (vl[0] >> (4*i)) & 0x0F0F0F0F;
+        const int vl1i = (vl[1] >> (4*i)) & 0x0F0F0F0F;
+
+        const int vh0i = ((vh[0] >> i) << 4) & 0x10101010;
+        const int vh1i = ((vh[1] >> i) << 4) & 0x10101010;
+
+        const int v0i = vl0i | vh0i;
+        const int v1i = vl1i | vh1i;
+
+        const int dot1 = ggml_cuda_dp4a(v0i, u[2*i+0], ggml_cuda_dp4a(v1i, u[2*i+1], 0)); // SIMD dot product
+        const int dot2 = ggml_cuda_dp4a(0x01010101, u[2*i+0], ggml_cuda_dp4a(0x01010101, u[2*i+1], 0)); // sum of u
+
+        sumf_d += d8[i] * (dot1 * sc[i]);
+        sumf_m += d8[i] * (dot2 * m[i]);
+
+    }
+
+    const float2 dm5f = __half22float2(dm5);
+
+    return dm5f.x*sumf_d - dm5f.y*sumf_m;
 }
 
 static __device__ __forceinline__ float vec_dot_q4_0_q8_1(
@@ -247,6 +345,102 @@ static __device__ __forceinline__ float vec_dot_q8_0_q8_1(
     return vec_dot_q8_0_q8_1_impl<float, VDR_Q8_0_Q8_1_MMVQ>(v, u, bq8_0->d, __low2half(bq8_1->ds));
 }
 
+static __device__ __forceinline__ float vec_dot_q5_0_q8_1(
+    const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs) {
+
+    const block_q5_0 * bq5_0 = (const block_q5_0 *) vbq + kbx;
+
+    int vl[VDR_Q5_0_Q8_1_MMVQ];
+    int vh[VDR_Q5_0_Q8_1_MMVQ];
+    int  u[2*VDR_Q5_0_Q8_1_MMVQ];
+
+#pragma unroll
+    for (int i = 0; i < VDR_Q5_0_Q8_1_MMVQ; ++i) {
+        vl[i]    = get_int_b2(bq5_0->qs, iqs + i);
+        vh[i]    = get_int_b2(bq5_0->qh, 0) >> (4 * (iqs + i));
+        u[2*i+0] = get_int_b4(bq8_1->qs, iqs + i);
+        u[2*i+1] = get_int_b4(bq8_1->qs, iqs + i + QI5_0);
+    }
+
+    return vec_dot_q5_0_q8_1_impl<VDR_Q5_0_Q8_1_MMVQ>(vl, vh, u, __half2float(bq5_0->d), bq8_1->ds);
+}
+
+static __device__ __forceinline__ float vec_dot_q5_K_q8_1(
+    const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs) {
+
+    const block_q5_K * bq5_K = (const block_q5_K *) vbq + kbx;
+
+    int   vl[2];
+    int   vh[2];
+    int    u[2*QR5_K];
+    float d8[QR5_K];
+
+    const int bq8_offset = QR5_K * ((iqs/2) / (QI8_1/2));
+    const int * ql = (const int *)(bq5_K->qs + 16 * bq8_offset + 4 * ((iqs/2)%4));
+    const int * qh = (const int *)(bq5_K->qh + 4 * ((iqs/2)%4));
+
+    vl[0] = ql[0];
+    vl[1] = ql[4];
+
+    vh[0] = qh[0] >> bq8_offset;
+    vh[1] = qh[4] >> bq8_offset;
+
+    // same as q4_K
+    const uint16_t * scales = (const uint16_t *)bq5_K->scales;
+    const int j  = bq8_offset/2;
+    const int jm = j & 1;
+
+    const uint32_t s0 = scales[jm + 0];
+    const uint32_t s2 = scales[jm + 2];
+    const uint32_t s4 = scales[jm + 4];
+
+    const uint32_t hi = (uint32_t) -(int32_t) (j >= 2);
+
+    uint16_t aux[2];
+    aux[0] = (uint16_t) (((s0 & 0x3f3f) & ~hi) | ((((s4 >> 0) & 0x0f0f) | ((s0 & 0xc0c0) >> 2)) & hi));
+    aux[1] = (uint16_t) (((s2 & 0x3f3f) & ~hi) | ((((s4 >> 4) & 0x0f0f) | ((s2 & 0xc0c0) >> 2)) & hi));
+
+    const uint8_t * sc = (const uint8_t *)aux;
+    const uint8_t * m  = sc + 2;
+
+#pragma unroll
+    for (int i = 0; i < QR5_K; ++i) {
+        const block_q8_1 * bq8i = bq8_1 + bq8_offset + i;
+        d8[i] = __low2float(bq8i->ds);
+
+        const int * q8 = (const int *)bq8i->qs + ((iqs/2)%4);
+        u[2*i+0] = q8[0];
+        u[2*i+1] = q8[4];
+    }
+
+    return vec_dot_q5_K_q8_1_impl_vmmq(vl, vh, u, sc, m, bq5_K->dm, d8);
+}
+
+static __device__ __forceinline__ float vec_dot_iq4_xs_q8_1(
+    const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs) {
+
+    const block_iq4_xs * bq4 = (const block_iq4_xs *) vbq + kbx;
+
+    int sumi = 0;
+#pragma unroll
+    for (int j = 0; j < 4; ++j) {
+        const int aux_q4 = get_int_b4(bq4->qs, iqs + j);
+        const int2 v = get_int_from_table_16(aux_q4, kvalues_iq4nl);
+
+        const int u0 = get_int_b4(bq8_1[iqs/4].qs, j + 0);
+        const int u1 = get_int_b4(bq8_1[iqs/4].qs, j + 4);
+
+        sumi = ggml_cuda_dp4a(v.x, u0, sumi);
+        sumi = ggml_cuda_dp4a(v.y, u1, sumi);
+    }
+
+    const int ls = ((bq4->scales_l[iqs/8] >> (iqs & 0x04)) & 0x0F) | (((bq4->scales_h >> (iqs/2)) & 0x03) << 4);
+    sumi *= ls - 32;
+
+    const float d = __half2float(bq4->d) * __low2float(bq8_1[iqs/4].ds);
+    return d * sumi;
+}
+
 // ---- mmvq.cu -------------------------------------------------------------------------------------------------
 
 typedef float (*vec_dot_q_cuda_t)(const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs);
@@ -257,6 +451,9 @@ static constexpr __device__ vec_dot_q_cuda_t get_vec_dot_q_cuda(int type) {
         case T_Q4_1:    return vec_dot_q4_1_q8_1;
         case T_Q4_1_64: return vec_dot_q4_1_64_q8_1;
         case T_Q8_0:    return vec_dot_q8_0_q8_1;
+        case T_Q5_0:    return vec_dot_q5_0_q8_1;
+        case T_Q5_K:    return vec_dot_q5_K_q8_1;
+        case T_IQ4_XS:  return vec_dot_iq4_xs_q8_1;
         default:        return nullptr;
     }
 }
@@ -267,6 +464,9 @@ static constexpr __host__ __device__ int get_vdr_mmvq(int type) {
         case T_Q4_1:    return VDR_Q4_1_Q8_1_MMVQ;
         case T_Q4_1_64: return VDR_Q4_1_64_Q8_1_MMVQ;
         case T_Q8_0:    return VDR_Q8_0_Q8_1_MMVQ;
+        case T_Q5_0:    return VDR_Q5_0_Q8_1_MMVQ;
+        case T_Q5_K:    return VDR_Q5_K_Q8_1_MMVQ;
+        case T_IQ4_XS:  return VDR_IQ4_XS_Q8_1_MMVQ;
         default:        return 1;
     }
 }
@@ -609,7 +809,17 @@ struct call_args {
     int stride_channel_x = 0;   // blocks per expert
     int stride_channel_y = 0;
     int stride_channel_dst = 0;
+    bool iq_small_k = false;    // Q47: small-K shape for IQ4_XS too
 };
+
+// should_use_small_k at one token on a compute 6.1 card: of the types here only IQ4_XS is on an exclusion list
+// (iq_slow_other, which d77256999 also applies to Pascal). iq_small_k lifts that exclusion (experiment Q47).
+template <int type, int table_id>
+static bool use_small_k(int blocks_per_row_x, int blocks_per_iter_1warp, bool iq_small_k) {
+    const int nwarps = calc_nwarps(type, 1, table_id);
+    const bool use = nwarps > 1 && blocks_per_row_x < nwarps * blocks_per_iter_1warp;
+    return use && (type != T_IQ4_XS || iq_small_k);
+}
 
 struct launch_shape {
     const void * func;
@@ -625,9 +835,7 @@ static launch_shape plan(const call_args & a) {
     constexpr int vdr = get_vdr_mmvq(type);
     const int blocks_per_row_x      = a.ncols_x / qk;
     const int blocks_per_iter_1warp = vdr * 32 / qi;
-    const int nwarps0 = calc_nwarps(type, 1, table_id);
-    // should_use_small_k: none of Q4_0/Q4_1/Q8_0/Q4_1_64 is on the Pascal or IQ exclusion lists.
-    const bool small_k = nwarps0 > 1 && blocks_per_row_x < nwarps0 * blocks_per_iter_1warp;
+    const bool small_k = use_small_k<type, table_id>(blocks_per_row_x, blocks_per_iter_1warp, a.iq_small_k);
     const int nwarps = calc_nwarps(type, 1, table_id);
     const int rpb = calc_rows_per_block(1, table_id, small_k, nwarps);
     const int64_t nblocks = (a.nrows_x + rpb - 1) / rpb;
@@ -652,8 +860,7 @@ static void launch(const call_args & a, cudaStream_t stream) {
     constexpr int vdr = get_vdr_mmvq(type);
     const int blocks_per_row_x      = a.ncols_x / qk;
     const int blocks_per_iter_1warp = vdr * 32 / qi;
-    const int nwarps0 = calc_nwarps(type, 1, table_id);
-    const bool small_k = nwarps0 > 1 && blocks_per_row_x < nwarps0 * blocks_per_iter_1warp;
+    const bool small_k = use_small_k<type, table_id>(blocks_per_row_x, blocks_per_iter_1warp, a.iq_small_k);
     const launch_shape s = plan<type, table_id>(a);
 
     const bool has_ids = a.ids != nullptr;

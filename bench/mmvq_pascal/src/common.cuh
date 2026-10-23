@@ -21,7 +21,10 @@
 namespace mb {
 
 // Weight types. The numbering is this program's own; the byte layouts match ggml-common.h.
-enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_COUNT = 4 };
+enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4, T_Q5_K = 5, T_IQ4_XS = 6, T_COUNT = 7 };
+
+// K-quants and I-quants: super-blocks of 256 weights in 8 sub-blocks of 32.
+#define QK_K 256
 
 #define QK4_0    32
 #define QR4_0    2
@@ -35,6 +38,13 @@ enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_COUNT = 
 #define QK8_0    32
 #define QR8_0    1
 #define QI8_0    (QK8_0 / (4 * QR8_0))
+#define QK5_0    32
+#define QR5_0    2
+#define QI5_0    (QK5_0 / (4 * QR5_0))
+#define QR5_K    2
+#define QI5_K    (QK_K / (4 * QR5_K))
+#define QR4_XS   2
+#define QI4_XS   (QK_K / (4 * QR4_XS))
 #define QK8_1    32
 #define QR8_1    1
 #define QI8_1    (QK8_1 / (4 * QR8_1))
@@ -69,6 +79,37 @@ struct block_q4_1_64 {
 };
 static_assert(sizeof(block_q4_1_64) == 36, "q4_1_64 size");
 
+// 22 bytes per 32 weights: fp16 scale d, 4 bytes qh (bit j = fifth bit of weight j), then 16 bytes of nibbles in Q4_0's
+// order. Value = d * ((nibble | fifth bit << 4) - 16).
+struct block_q5_0 {
+    half    d;
+    uint8_t qh[4];
+    uint8_t qs[QK5_0 / 2];
+};
+static_assert(sizeof(block_q5_0) == 22, "q5_0 size");
+
+// 176 bytes per 256 weights: half2 (d, dmin), 12 bytes of 6-bit sub-block scales and mins, 32 bytes qh, 128 bytes qs.
+// Sub-block s (32 weights) takes the low (s even) or high (s odd) nibbles of qs[32 (s/2) .. 32 (s/2) + 31], and bit s of
+// qh[0..31] as fifth bit. Value = d * sc[s] * q - dmin * m[s].
+struct block_q5_K {
+    half2   dm;
+    uint8_t scales[12];
+    uint8_t qh[QK_K / 8];
+    uint8_t qs[QK_K / 2];
+};
+static_assert(sizeof(block_q5_K) == 176, "q5_K size");
+
+// 136 bytes per 256 weights: fp16 d, 16 bits scales_h, 4 bytes scales_l, 128 bytes qs. Sub-block ib takes qs[16 ib ..],
+// packed like Q4_0; its 6-bit scale is ls = low nibble of scales_l[ib/2] (high nibble for odd ib) | 2 bits of scales_h
+// << 4. Value = d * (ls - 32) * kvalues_iq4nl[nibble].
+struct block_iq4_xs {
+    half     d;
+    uint16_t scales_h;
+    uint8_t  scales_l[QK_K / 64];
+    uint8_t  qs[QK_K / 2];
+};
+static_assert(sizeof(block_iq4_xs) == 136, "iq4_xs size");
+
 // Activation block as llama.cpp's CUDA backend builds it: half2 (d, s) with s = fp16 of the sum of the 32 unquantized
 // floats, then 32 int8 values. 36 bytes per 32 activations.
 struct block_q8_1 {
@@ -82,6 +123,9 @@ template <> struct traits<T_Q4_0>    { static constexpr int qk = QK4_0;    stati
 template <> struct traits<T_Q4_1>    { static constexpr int qk = QK4_1;    static constexpr int qi = QI4_1;    static constexpr int bs = 20; };
 template <> struct traits<T_Q8_0>    { static constexpr int qk = QK8_0;    static constexpr int qi = QI8_0;    static constexpr int bs = 34; };
 template <> struct traits<T_Q4_1_64> { static constexpr int qk = QK4_1_64; static constexpr int qi = QI4_1_64; static constexpr int bs = 36; };
+template <> struct traits<T_Q5_0>    { static constexpr int qk = QK5_0;    static constexpr int qi = QI5_0;    static constexpr int bs = 22; };
+template <> struct traits<T_Q5_K>    { static constexpr int qk = QK_K;     static constexpr int qi = QI5_K;    static constexpr int bs = 176; };
+template <> struct traits<T_IQ4_XS>  { static constexpr int qk = QK_K;     static constexpr int qi = QI4_XS;   static constexpr int bs = 136; };
 
 inline const char * type_name(int t) {
     switch (t) {
@@ -89,16 +133,23 @@ inline const char * type_name(int t) {
         case T_Q4_1:    return "q4_1";
         case T_Q8_0:    return "q8_0";
         case T_Q4_1_64: return "q4_1_64";
+        case T_Q5_0:    return "q5_0";
+        case T_Q5_K:    return "q5_K";
+        case T_IQ4_XS:  return "iq4_xs";
         default:        return "?";
     }
 }
-inline int type_qk(int t) { return t == T_Q4_1_64 ? 64 : 32; }
-inline int type_bs(int t) {
+__host__ __device__ inline bool type_is_k(int t) { return t == T_Q5_K || t == T_IQ4_XS; }
+__host__ __device__ inline int type_qk(int t) { return type_is_k(t) ? QK_K : t == T_Q4_1_64 ? 64 : 32; }
+__host__ __device__ inline int type_bs(int t) {
     switch (t) {
         case T_Q4_0:    return 18;
         case T_Q4_1:    return 20;
         case T_Q8_0:    return 34;
         case T_Q4_1_64: return 36;
+        case T_Q5_0:    return 22;
+        case T_Q5_K:    return 176;
+        case T_IQ4_XS:  return 136;
         default:        return 0;
     }
 }
