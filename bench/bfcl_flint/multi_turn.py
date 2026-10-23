@@ -12,7 +12,7 @@ Scoring re-decodes the stored raw text, as BFCL's eval_runner does, so a parser 
 
 usage:
   python multi_turn.py run URL TEMPLATE.jinja OUT.jsonl [--attempts 1-5] [--conc 8] [--n-predict 4096]
-                          [--scenarios N [--seed S] | --ids FILE]
+                          [--scenarios N [--seed S] | --ids FILE] [--shuffle SEED] [--part I/N]
   python multi_turn.py score OUT_DIR FILE=RAW.jsonl [FILE=RAW.jsonl ...]
   python multi_turn.py selftest TEMPLATE.jinja      # ground truth replayed through the loop; all 800 must pass
 """
@@ -167,6 +167,10 @@ def cmd_run(args):
         picked = random.Random(args.seed).sample(range(200), args.scenarios)
         ids = {f"{cat}_{n}" for cat in bc.MULTI_TURN for n in picked}
     entries = load_entries(ids, read_ids(args.exclude))
+    if args.shuffle is not None:  # a seeded random order, sliced: see run.py
+        random.Random(args.shuffle).shuffle(entries)
+    i, n = map(int, args.part.split("/"))
+    entries = entries[(i - 1) * len(entries) // n:i * len(entries) // n]
     attempts = bc.parse_attempts(args.attempts)
     done = set()
     try:
@@ -179,7 +183,8 @@ def cmd_run(args):
         "lane": "bfcl_multi_turn", "tasks_sha256": bc.sha256_of(e["id"] for e in entries), "n_tasks": len(entries),
         "template_sha256": hashlib.sha256(open(args.template, "rb").read()).hexdigest(), "attempts": attempts,
         "seed_offset": args.seed_offset, "n_predict": args.n_predict, "cache_prompt": not args.no_cache_prompt,
-        "max_steps_per_turn": bc.MAXIMUM_STEP_LIMIT}), open(args.out + ".manifest.json", "w"), indent=1)
+        "max_steps_per_turn": bc.MAXIMUM_STEP_LIMIT, "shuffle": args.shuffle, "part": args.part}),
+        open(args.out + ".manifest.json", "w"), indent=1)
     print(f"slot n_ctx={slot_ctx}, todo={len(todo)}/{len(entries) * len(attempts)}", flush=True)
     lock = threading.Lock()
     out = open(args.out, "a")
@@ -319,6 +324,8 @@ def main():
     r.add_argument("--ids", help="file with the task IDs to run (one per line)")
     r.add_argument("--scenarios", type=int, default=0, help="a seeded sample of N of the 200 scenarios")
     r.add_argument("--seed", type=int, default=0)
+    r.add_argument("--shuffle", type=int)
+    r.add_argument("--part", default="1/1")
     r.add_argument("--exclude", default=EXCLUDED)
     s = sub.add_parser("score")
     s.add_argument("out_dir")

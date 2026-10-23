@@ -4,10 +4,14 @@ two files' attempts share their random numbers. Resumable: (task, attempt) pairs
 Attempts run in order (all tasks of attempt 1 first), so a stopped run still holds whole attempts.
 
 usage: python run.py URL TASKS.jsonl OUT.jsonl [--attempts 1-5] [--conc 8] [--n-predict 4096] [--cache-prompt]
-Writes OUT and OUT.manifest.json (server, build, sampling, task-list hash).
+                     [--shuffle SEED] [--part I/N]
+Writes OUT and OUT.manifest.json (server, build, sampling, task-list hash). --shuffle puts the tasks in a seeded random
+order and --part I/N keeps the I-th of N equal slices of it, so that two files run slice by slice in turn hold
+paired results on a random sample of tasks whenever the runs stop.
 """
 import argparse
 import json
+import random
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
@@ -22,9 +26,15 @@ ap.add_argument("--seed-offset", type=int, default=0)
 ap.add_argument("--conc", type=int, default=8, help="requests in flight; match llama-server's -np")
 ap.add_argument("--n-predict", type=int, default=4096)
 ap.add_argument("--cache-prompt", action="store_true", help="let the server reuse a slot's prompt cache")
+ap.add_argument("--shuffle", type=int)
+ap.add_argument("--part", default="1/1")
 args = ap.parse_args()
 
 tasks = [json.loads(line) for line in open(args.tasks)]
+if args.shuffle is not None:
+    random.Random(args.shuffle).shuffle(tasks)
+i, n = map(int, args.part.split("/"))
+tasks = tasks[(i - 1) * len(tasks) // n:i * len(tasks) // n]
 attempts = parse_attempts(args.attempts)
 done = set()
 try:
@@ -36,7 +46,8 @@ todo = [(t, a) for a in attempts for t in tasks if (t["id"], a) not in done]
 slot_ctx = server_props(args.url)["n_ctx_slot"]
 json.dump(manifest(args.url, {"lane": "bfcl_single_turn", "tasks_sha256": sha256_of(
     {"id": t["id"], "prompt": t["prompt"]} for t in tasks), "n_tasks": len(tasks), "attempts": attempts,
-    "seed_offset": args.seed_offset, "n_predict": args.n_predict, "cache_prompt": args.cache_prompt}),
+    "seed_offset": args.seed_offset, "n_predict": args.n_predict, "cache_prompt": args.cache_prompt,
+    "shuffle": args.shuffle, "part": args.part}),
     open(args.out + ".manifest.json", "w"), indent=1)
 print(f"slot n_ctx={slot_ctx}, todo={len(todo)}/{len(tasks) * len(attempts)}", flush=True)
 
