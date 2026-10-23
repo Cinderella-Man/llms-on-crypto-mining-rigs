@@ -184,7 +184,9 @@ The exact rows really are the full head's numbers: the candidates' logits match 
 because each row goes through the same kernel with the same arithmetic. The UD-Q4_K_XL row uses a screen calibrated
 on another quant's hidden states. `llama-server` with backend sampling (`-bs`) answered 24 requests (the 8 prompts
 greedy, sampled with a seed, and sampled with `n_probs`, which needs the full head) byte-identically with and without
-`LLAMA_SCREEN_HEAD=1`.
+`LLAMA_SCREEN_HEAD=1`; its log shows the screen on for the greedy and sampled requests and off for each `n_probs` one
+(8 switches each way). `test-backend-ops` passes the screened head's ops against the CPU backend with both kernel
+sets: `mul_mat_id` over 32,768 one-row Q8_0 experts, top-256 of 150,144, `set_rows` and `fill`.
 
 ### Measuring it on the rig
 
