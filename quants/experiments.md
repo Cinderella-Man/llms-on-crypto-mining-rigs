@@ -13,15 +13,17 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-23, 15:40):** rig and quant machine free. The fork's Pascal kernels cover Q4_0/Q4_1/Q5_0/Q8_0/Q5_K/
-IQ4_XS (S4-L0 37.4, UD-Q4_K_XL 34.1, Unsloth's Q8_0 35.9 tok/s); next: speculative-decoding measurements (Q19, Q43),
-S5 on the new build, Q4_1_64. Keep this line current: say what is running, where, and since when.
+**Now (2026-10-23, 16:40):** rig and quant machine free. The fork's Pascal kernels cover Q4_0/Q4_1/Q5_0/Q8_0/Q5_K/
+IQ4_XS (S4-L0 37.4, UD-Q4_K_XL 34.1, Unsloth's Q8_0 35.9 tok/s). Next: step 0, the speculation gate (Q51 on the
+quant machine, Q19 stage 1 on the rig); then Q43, S5 on the new build, Q4_1_64. Keep this line current: say what is
+running, where, and since when.
 
 Every speed figure for the new files is still a prediction ([token_cost.py](../scripts/token_cost.py)); step 1 measures
 them, and the steps after it depend on what it shows.
 
 | Step | What | Experiments | Where | Decides |
 |---|---|---|---|---|
+| 0 | Speculation gate, first: how many experts consecutive Flint tokens share, then the verify cost of 1–8 tokens on the fork build (Q19 stage 1) | Q51, Q19 | quant machine 1–2 h, then rig ~2 h | Draft lengths for step 9; whether a deduplicating multi-token `MUL_MAT_ID` kernel pays; with synthetic acceptance, whether step 6 goes ahead ([HyperQwen lessons](../docs/research/notes/hyperqwen_lessons.md)) |
 | 1 | Measure on the rig: kernel microbenchmark (done), 2-warp build (done), makers-fast (done); still to do: the files at the quality bar (S4-L0 against UD-Q4_K_XL, same build), per-format speed, the other engine switches, drafter go/no-go, Qwen3.6 files | Q25 ✓, Q34 (part), Q28 ✓, Q36 files, Q10, Q19, Q29/Q31/Q33, Q43 | rig, ~1 day | Calibrates the cost model; gated step 5 (passed) and gates step 6 |
 | 2 | Exact tweaks on the BF16-derived finalists | Q35 ✓ (F16 router on S4: same quality, +1 %) | quant machine, ~1 h | — |
 | 3 | Per-layer allocation search, Flint then Qwen3.6 | Q36 ✓ (reduced), Q45 | quant machine, hours | Mixes at the quality bar that are cheaper than S4 |
@@ -30,8 +32,11 @@ them, and the steps after it depend on what it shows.
 | 6 | EAGLE-3 draft head for Flint | Q20 | quant machine, 5–6 days | Only if Q19 says GO (≥ 1.4× expected, ≥ 1.15× pessimistic) |
 | 7 | Partial quantization-aware recovery, pilot | Q40 | quant machine, 1–2 days | Whether retraining reaches UD-Q4_K_XL quality at 4 bits |
 | 8 | Larger task checks, then release | Q41, Q42 | quant machine, then Hugging Face | Which files to publish |
+| 9 | Copy-gated drafting: CUDA graphs for each verify length, then HyperQwen's lookup controller for n-gram drafts (long block only after two fully accepted steps) | Q52, Q53 | code, fork `pascal-p106`, 2–4 days | Speed on file rewrites, edits and agent sessions (expected ≥ 2× on rewrites, ±2 % on chat); only if step 0 leaves extra verify positions affordable |
+| 10 | Serving costs for agent use: attention at 32k–64k of context, tool requests without backend sampling | Q54, Q55 | rig, 1 h each | The next fork project: a GQA-aware Pascal attention kernel if attention is ≥ 30 % of a token at 32k, a GPU top-k path for tool requests if they lose ≥ 8 % |
+| 11 | GPTQ-rounded output head (optional) | Q56 | quant machine, ~1 day | ~3 % on S4-L0 if it stays within noise of the quality bar |
 
-Steps 2–4 can run in parallel after step 1; 5 and 6 depend on its gates; 7 and 8 run when the quant machine is free.
+Step 0 runs first and gates 6 and 9. Steps 2–4 can run in parallel after step 1; 5 and 6 depend on its gates; 7, 8 and 11 run when the quant machine is free; 10 can run whenever the rig is.
 
 ## Registry
 
