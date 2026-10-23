@@ -21,8 +21,8 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
   for one sequence. Guessers: the copy lookup, llama.cpp's `ngram-simple`, any llama.cpp drafter (`ngram-map-k`,
   `ngram-mod`, …), and an oracle that replays a reference run with a chosen share of wrong guesses. A job list runs many
   configurations with one model load.
-- **Correctness.** 78 pipelined runs of Flint (UD-Q4_K_XL), 20,280 generated tokens, 17,400 guesses of which 2,247 were
-  wrong and 4,902 tokens were dropped: every run gave plain decoding's tokens, bit-identical logits for every token, the
+- **Correctness.** 89 pipelined runs of Flint (UD-Q4_K_XL), 21,688 generated tokens, 18,390 guesses of which 2,401 were
+  wrong and 5,208 tokens were dropped: every run gave plain decoding's tokens, bit-identical logits for every token, the
   same KV state after generation and the same logits for probe tokens decoded afterwards. Layouts: the CPU alone, two
   RTX 3090s (two stages), four virtual devices on them (four stages, every hop between the two GPUs), and a sliding-
   window cache small enough to wrap; greedy with host or GPU sampling, and temperature 1 with a fixed seed. Every
@@ -198,6 +198,7 @@ Model: Flint UD-Q4_K_XL (49 layers, 35 of them with a 513-token sliding window, 
 | Layout | Sampling | Pipelined runs | Tokens | Guesses | Wrong | Dropped tokens | Result |
 |---|---|---|---|---|---|---|---|
 | CPU only (no overlap: the executor's logic) | greedy, host | 11 | 1,408 | 880 | 168 | 336 | all same |
+| CPU only | T 1, top-k 20, top-p 0.95, seed 42 | 11 | 1,408 | 990 | 154 | 306 | all same |
 | CPU only, `-ub 16`: 768-cell window cache, wraps during generation | greedy, host | 5 | 3,000 | 2,489 | 427 | 1,275 | all same |
 | two RTX 3090s, two stages | greedy, host | 19 | 4,864 | 4,331 | 510 | 1,016 | all same |
 | four virtual devices on the two GPUs, four stages | greedy, host | 19 | 4,864 | 4,331 | 510 | 1,016 | all same |
