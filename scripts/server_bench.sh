@@ -18,7 +18,8 @@
 #
 # Host-RAM safety: --cache-ram 0 and --ctx-checkpoints 0 are always passed (llama-server defaults to an 8 GiB prompt
 # cache and 32 context checkpoints per slot in host RAM); later SERVER_ARGS override them.
-# Env: GPUS (CUDA_VISIBLE_DEVICES, default all), MAX_TOKENS (default 256), PORT (default 8089), LLAMA_DIR or BIN.
+# Env: GPUS (CUDA_VISIBLE_DEVICES, default all), MAX_TOKENS (default 256), PORT (default 8089), LLAMA_DIR or BIN,
+# WARMUP=1 (one untimed short request before the four prompts).
 set -u
 
 BIN=${BIN:-${LLAMA_DIR:-$HOME/llama.cpp}/build/bin}
@@ -138,7 +139,7 @@ print(f"conversation: {time.time() - t_chat:.0f} s; generated {gen_n} tokens at 
 EOF
 elif [ "$PROMPTS" != none ]; then
     python3 - "$PORT" "$MAX_TOKENS" "$OUT" <<'EOF' | tee -a "$OUT/summary.txt"
-import json, sys, urllib.request
+import json, os, sys, urllib.request
 port, max_tokens, out = sys.argv[1], int(sys.argv[2]), sys.argv[3]
 prompts = {
     "code": "Write a Python function that merges overlapping intervals, with type hints and three unit tests.",
@@ -149,6 +150,11 @@ prompts = {
                "3 GB of memory, but this board carries 6 GB. Each card has five streaming multiprocessors and reads its "
                "memory at about 173 GB/s.'",
 }
+if os.environ.get("WARMUP", "0") != "0":  # one untimed request first: CUDA graph capture, first-request allocations
+    body = json.dumps({"messages": [{"role": "user", "content": "Say hello."}], "max_tokens": 32, "temperature": 0,
+                       "cache_prompt": False}).encode()
+    urllib.request.urlopen(urllib.request.Request(f"http://127.0.0.1:{port}/v1/chat/completions", body,
+                                                  {"Content-Type": "application/json"}), timeout=1800).read()
 tot_n = tot_ms = 0
 for name, text in prompts.items():
     body = json.dumps({"messages": [{"role": "user", "content": text}], "max_tokens": max_tokens,
