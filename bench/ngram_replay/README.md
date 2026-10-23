@@ -18,7 +18,8 @@ only if a verify of 16–64 tokens costs close to the prompt-processing rate per
 previous token, each an ordinary one-token step, n-gram guesses give 1.34× overall and 4.0× on file rewrites on six
 cards (50 and 151 tokens/s against 37.3), 1.41× and 7.3× on nine cards with a lighter last card, without any training.
 A trained one-token drafter needs a per-token acceptance of ~0.4 for 1.5× and ~0.6 for 2×; behind the copy lookup,
-p = 0.7 gives 2.3–2.9×.
+p = 0.7 gives 2.3–2.9×. Guessing fresh text from 1–8-token continuation counts (the request's own, plus a table of
+other outputs) lifts the n-gram result to 1.44× on six cards and 1.54× on nine (Q96).
 
 ## Method
 
@@ -456,6 +457,79 @@ A drafter right with probability p at every token, all workloads (tokens/s in br
 - What the model cannot settle, to measure on the rig next (the note's experiment 2): the cycle time, clocks and power
   with every card busy, and the host's rate of stage launches (one per card per token on a 2-core Celeron).
 
+## A continuation table behind the copy lookup (Q96)
+
+Fresh text is where Q87's guessers miss: the copy lookup guesses only inside copies, and `ngram-cache` only where its
+1–4-gram counts pass their thresholds. [Unconventional ideas](../../docs/research/notes/unconventional_ideas.md) (idea 4)
+proposes a datastore of Flint's own outputs behind the copy lookup: the most frequent next token after the longest
+matching context.
+
+### Method
+
+- **The table.** Next-token counts after every 1- to 8-token context of the generated tokens of Q51's transcripts. Each
+  transcript is replayed against the table of the other 37 (leave one out, ~64k tokens), so a guess never comes from the
+  text being guessed. Smaller tables (a quarter and half of the transcripts, chosen at random) give the effect of size.
+- **Guessers.** The table's most frequent continuation of the longest context it has seen, which always guesses; the
+  same with the current request's own counts added ("request counts", the prompt and output so far, contexts up to 8
+  tokens); the request counts alone; each behind the copy lookup (match ≥ 4); and a variant that guesses only when its
+  token holds at least 30 % of the context's counts.
+- **Accuracy.** One token ahead on the transcript's own prefix, split into fresh text and copied text (copies of ≥ 8
+  tokens, as above), alongside the pipeline runs of Q87's model.
+
+### Results
+
+Guessed right one token ahead (all classes; fresh text by class):
+
+| Guesser | Right, all tokens | Fresh text: guessed | Fresh text: right | Copied text: right | Fresh right: chat / code / edits / agent |
+|---|---|---|---|---|---|
+| Copy ≥ 4 | 25.2 % | 8.5 % | 3.0 % | 83.0 % | 2.2 / 2.6 / 4.9 / 3.4 % |
+| `ngram-cache` counts | 32.2 % | 27.6 % | 11.8 % | 85.2 % | 10.5 / 10.4 / 15.4 / 13.5 % |
+| Table alone (held out) | 14.5 % | 82.2 % | 12.0 % | 21.0 % | 11.2 / 9.6 / 13.9 / 24.7 % |
+| Request counts alone | 39.1 % | 72.1 % | 18.9 % | 91.7 % | 17.0 / 17.8 / 23.3 / 19.9 % |
+| Table + request counts | 39.5 % | 91.2 % | 20.4 % | 89.5 % | 17.8 / 18.8 / 24.7 / 28.0 % |
+| Copy ≥ 4, else table + request counts | 39.8 % | 91.2 % | 20.3 % | 90.5 % | 17.9 / 18.9 / 24.6 / 27.9 % |
+| Copy ≥ 4, else table + request counts, share ≥ 0.3 | 38.0 % | 60.4 % | 18.0 % | 90.2 % | 15.4 / 16.5 / 22.4 / 26.2 % |
+
+Table size (tokens in the table, ~20k / ~35k / ~64k), fresh text right: the table alone 7.5 / 9.6 / 12.0 %, the table
+with request counts 19.1 / 19.6 / 20.4 %.
+
+Pipelined speed-up, six cards, depth 5:
+
+| Guesser | Chat | Code | Edits | Agent | All | File rewrites | Right guesses | Wrong guesses | Cancelled card-ms per token |
+|---|---|---|---|---|---|---|---|---|---|
+| Copy ≥ 4, else `ngram-cache` (Q87) | 1.11 | 1.26 | 1.74 | 1.21 | 1.34 | 4.04 | 33 % | 13 % | 8.8 |
+| Table alone (held out) | 1.10 | 1.07 | 1.18 | 1.30 | 1.12 | 1.17 | 15 % | 68 % | 46.5 |
+| Copy ≥ 4, else table | 1.12 | 1.25 | 1.72 | 1.34 | 1.35 | 4.02 | 34 % | 54 % | 36.8 |
+| Copy ≥ 4, else request counts | 1.18 | 1.34 | 1.86 | 1.29 | 1.43 | 4.05 | 39 % | 40 % | 27.8 |
+| **Copy ≥ 4, else table + request counts** | 1.18 | 1.35 | 1.85 | 1.37 | 1.44 | 4.08 | 40 % | 54 % | 37.0 |
+| Copy ≥ 4, else table + request counts, share ≥ 0.3 | 1.16 | 1.32 | 1.83 | 1.35 | 1.41 | 4.08 | 38 % | 33 % | 21.6 |
+| Copy ≥ 4, else `ngram-cache`, else table | 1.17 | 1.33 | 1.83 | 1.37 | 1.42 | 4.08 | 39 % | 51 % | 35.2 |
+
+Tokens per second, copy ≥ 4 then table + request counts against Q87's guesser:
+
+| Setup | Guesser | Chat | Code | Edits | Agent | All | File rewrites |
+|---|---|---|---|---|---|---|---|
+| 6 cards (37.3 plain) | Q87: copy ≥ 4, else `ngram-cache` | 41 | 47 | 65 | 45 | 50 | 151 |
+| 6 cards | Copy ≥ 4, else table + request counts | 44 | 50 | 69 | 51 | 54 | 152 |
+| 9 cards, 6/6/6/6/5/5/5/5/5 (32.0 plain) | Q87 | 36 | 41 | 59 | 39 | 44 | 173 |
+| 9 cards, 6/6/6/6/5/5/5/5/5 | Copy ≥ 4, else table + request counts | 38 | 44 | 64 | 45 | 48 | 175 |
+| 9 cards, 6/6/6/6/6/6/6/5/2 (32.0 plain) | Q87 | 36 | 42 | 62 | 40 | 45 | 233 |
+| 9 cards, 6/6/6/6/6/6/6/5/2 | Copy ≥ 4, else table + request counts | 39 | 45 | 68 | 46 | 49 | 237 |
+
+- **1.44× overall on six cards against Q87's 1.34×** (1.49× and 1.54× on the nine-card setups against 1.38× and
+  1.41×). Chat rises from 1.11× to 1.18×, code from 1.26× to 1.35×, agent turns from 1.21× to 1.37×.
+- **Most of it comes from the request's own counts, guessed always.** Counting every 1–8-token context of the request
+  and always guessing (18.9 % right on fresh text) does what `ngram-cache`'s thresholded 1–4-gram counts (11.8 %) don't:
+  1.43× overall without any table.
+- **The table of other outputs adds little at this size**: +1.5 points on fresh text overall, but +8 points on agent turns
+  (19.9 → 28.0 %, 1.29× → 1.37×), whose tool-call formats repeat across requests. Doubling the table adds ~0.65 points
+  with the request counts and ~2.2 points alone; whether the 20–50 M tokens the note plans keep that up is what the
+  generated datastore will show.
+- **The note's gate, ≥ 0.2 right on fresh text, is met at 20.3–20.4 %**, short of its 1.45× overall (1.44×).
+- **Always guessing costs card work:** 37 ms of cancelled stages per token on six cards, more than a token's own GPU
+  time. Guessing only at a ≥ 30 % share cuts it to 22 ms for 0.03× of speed. With every stage 10 % slower (the power
+  limit), copy then table + request counts gives 1.32× (Q87's guesser: 1.23×).
+
 ## Gaps
 
 - **File rewrites are 2,159 tokens from three files.** Flint reasoned 1,200–3,000+ tokens before every rewrite, and five
@@ -494,7 +568,7 @@ python -I replay.py gen.jsonl --out q64.json > q64.md             # ~1 min on on
 # with the rig's verify step times (Q19 stage 1, ms) and llama-bench pp-n as upper bounds above them
 python -I replay.py gen.jsonl --vn 1=25.9,2.9=57.7,4.05=92.1 --vn-cap 5=163.6,6=170.0,7=207.6,8=212.1 > q64_measured.md
 LLAMA_DIR=<llama.cpp fork checkout> bash fork_check.sh gen.jsonl  # needs g++; checks the ports against the fork's C++
-python -I pipeline_sim.py gen.jsonl --out q87.json > q87.md       # pipelined speculation, ~2 min
+python -I pipeline_sim.py gen.jsonl --out q87.json --jobs 8 --accuracy > q87.md   # pipelined speculation, ~1 min on 8 cores
 ```
 
 `replay.py` prints the copy-structure tables and, per class, per segment and for the file rewrites, every drafter
@@ -503,4 +577,5 @@ setting with its draft share, acceptance, tokens per step, widths and speed-up a
 JSON, including the full width histograms. `--only REGEX` limits the drafter settings, `--dump-steps FILE` writes every
 step. `pipeline_sim.py` prints the card setups and, for every setup, guesser, depth and sensitivity run, the speed-up per
 workload with the shares of right and wrong guesses; `--out` adds tokens/s; the setups, hop, gap and head time are
-constants at the top of the script.
+constants at the top of the script. `--accuracy` adds the one-token accuracy of the guessers on fresh and copied text
+and the table-size curve; `--only REGEX` limits the runs.
