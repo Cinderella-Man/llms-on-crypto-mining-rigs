@@ -21,14 +21,17 @@ In short:
 - **The cards are limited by instructions, not memory bandwidth** (measured): llama.cpp's matrix-vector kernel reaches
   75 GB/s of the card's 179 GB/s on Flint's Q4_1 shapes; Pascal-tuned kernels reach 132–142 GB/s, 1.75–1.89× faster
   (Q8_0 1.52×). A Pascal kernel in llama.cpp is the biggest lever for every file.
-- **Measured, engine only, exact:** llama.cpp with 2 warps per block at one token (PR #25479's launch shape) generates
-  13–15 % faster: the makers' Q4_1 28.1 → 31.8 tok/s.
+- **Measured, engine only, exact:** CUDA graphs on Pascal plus 2 warps per block at one token (PR #25479's launch
+  shape) take Unsloth's UD-Q4_K_XL from 17.6 tok/s on stock llama.cpp to 24.8 (+41 %); the makers' Q4_1 gains 13 %
+  from the launch shape alone (28.1 → 31.8).
 - **Measured, file only, exact:** Flint's rescale step can go (Q8_0 down-projections in three layers), the makers'
   Q4_1 fits a group-64 format, fused Q/K/V and an F16 router change nothing but speed. Combined in "makers-fast":
   30.9 tok/s against 28.1, 35.5 with the 2-warp build. Below the quality bar, but the same changes apply to any file.
 - **Mixes at the bar:** spending 8 bits only where each millisecond buys the most quality reaches UD-Q4_K_XL's quality
-  at a predicted 23–24 tok/s against its 17.4–19.0. Per-layer allocation shows where: layers 0–24 carry Flint's 4-bit
-  sensitivity, and attention output in layers 33–48 can drop to Q4_1 for free (S4-L0). Rotations, better rounding, a
+  faster than UD-Q4_K_XL on any build: S4-L0 (KLD 0.123, 88.7 % same top token) runs 23.1 tok/s against 19.5 on the
+  CUDA-graphs build and 28.0 against 24.8 with the launch-shape patch, +60 % over UD-Q4_K_XL on stock llama.cpp.
+  Per-layer allocation shows where the bits matter: layers 0–24 carry Flint's 4-bit sensitivity, attention output in
+  layers 33–48 can drop to Q4_1 for free, and attention q at Q8_0 in layers 0–24 buys S5 (KLD 0.108). Rotations, better rounding, a
   4-bit head and the makers' tuned tensors don't help.
 - **Quality has a noise floor on Flint:** rounding differences flip its expert choices, so the same file differs by KLD
   0.065 between two GPU models. On 300 tool-calling tasks every finalist is within noise of BF16.

@@ -28,8 +28,9 @@ quants for that trade-off, so this subproject makes them.
 
 Against [Flint](https://huggingface.co/RecursiveSI/flint)'s original BF16 weights (39.8 B parameters, 2.5 B per token):
 80 × 512 tokens of wikitext-2, all files scored with the same CUDA build on the same quant machine. Speed is llama.cpp
-`d77256999` + CUDA graphs on the P106-090 rig, `llama-bench` tg128 on six cards unless noted; "2-warp" is the same
-build with [2 warps per block at one token](../patches/mmvq-pascal-2warps.diff). Where a file was not measured on the rig
+`d77256999` on the P106-090 rig, `llama-bench` tg128 on six cards unless noted: "stock" is upstream llama.cpp, the
+next column adds CUDA graphs on Pascal, "2-warp" adds [2 warps per block at one token](../patches/mmvq-pascal-2warps.diff)
+and "2-warp wide rows" uses 2 warps only for rows of ≥ 2048 values ([patch](../patches/mmvq-pascal-2warps-widek.diff)). Where a file was not measured on the rig
 yet, the [cost model](../scripts/token_cost.py)'s prediction for the standard build is given (marked "pred.").
 "Rescale-free" files run with `LLAMA_NO_MOE_DOWN_RESCALE=1`
 ([why](research.md#removing-the-moe-down-projection-rescale)). Recipes are in [recipes/](recipes/) and every run in
@@ -39,13 +40,14 @@ yet, the [cost model](../scripts/token_cost.py)'s prediction for the standard bu
 file that is faster but ~9 points worse in token agreement, such as the makers' own Q4_1, is not a substitute, so the
 work here aims at UD-Q4_K_XL quality or better, faster than UD-Q4_K_XL on the same build.
 
-| File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | tg128 | tg128, 2-warp | tg128, 2-warp wide rows |
-|---|---|---|---|---|---|---|---|---|
-| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | 20.5 (9 cards) | — | — |
-| **UD-Q4_K_XL** (the bar) | Unsloth | 25.1 GB | 87.7 % | 0.120 | +3.9 % | 19.5 | **24.8** | 24.6 |
-| **S4-L0** (S4, attention output Q4_1 in layers 33–48, F16 router; rescale-free) | here | 32.5 GB | **88.7 %** | 0.123 | **+3.1 %** | 23.1 | 26.3 | **28.0** |
-| S4 (speed-aware mix, rescale-free) | here | 32.6 GB | 88.7 % | 0.120 | +3.4 % | 23.0 pred. | — | — |
-| UD-mirror v1, rescale-free | here | 27.4 GB | 87.5 % | 0.127 | +4.0 % | 23.2 pred. | — | — |
+| File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | tg128, stock llama.cpp | tg128 | tg128, 2-warp | tg128, 2-warp wide rows |
+|---|---|---|---|---|---|---|---|---|---|
+| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | — | 20.5 (9 cards) | — | — |
+| **UD-Q4_K_XL** (the bar) | Unsloth | 25.1 GB | 87.7 % | 0.120 | +3.9 % | 17.6 | 19.5 | **24.8** | 24.6 |
+| **S4-L0** (S4, attention output Q4_1 in layers 33–48, F16 router; rescale-free) | here | 32.5 GB | **88.7 %** | 0.123 | **+3.1 %** | — | 23.1 | 26.3 | **28.0** |
+| **S5** (S4-L0 + attention q Q8_0 in layers 0–24, F16 router; rescale-free) | here | 32.6 GB | **89.1 %** | **0.105** | +3.5 % | — | 23.0 pred. | — | — |
+| S4 (speed-aware mix, rescale-free) | here | 32.6 GB | 88.7 % | 0.120 | +3.4 % | — | 23.0 pred. | — | — |
+| UD-mirror v1, rescale-free | here | 27.4 GB | 87.5 % | 0.127 | +4.0 % | — | 23.2 pred. | — | — |
 
 Below the bar, kept for reference:
 
