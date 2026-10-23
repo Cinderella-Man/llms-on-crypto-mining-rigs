@@ -76,6 +76,8 @@ const variant_def VARIANTS[] = {
     { "rl_r2c2", V_RL,      2, 2, "(e) row-local planes, 2 rows, 2 blocks per lane" },
     { "rl_r4c2", V_RL,      4, 2, "(e) row-local planes, 4 rows, 2 blocks per lane" },
     { "rl_r2c4", V_RL,      2, 4, "(e) row-local planes, 2 rows, 4 blocks per lane" },
+    { "st_r1c1", V_ST,      1, 1, "(f) staged, K-/I-quants: 1 row, one super-block per lane" },
+    { "st_r2c1", V_ST,      2, 1, "(f) staged, K-/I-quants: 2 rows, one super-block per lane" },
     { "st_r1c2", V_ST,      1, 2, "(f) unchanged blocks staged through shared memory with coalesced 128-bit loads; 1 row, 2 blocks per lane" },
     { "st_r2c2", V_ST,      2, 2, "(f) staged, 2 rows, 2 blocks per lane" },
     { "st_r4c2", V_ST,      4, 2, "(f) staged, 4 rows, 2 blocks per lane" },
@@ -125,7 +127,10 @@ const void * st_instance() {
 
 template <int T, bool G>
 const void * st_kernel(int R, int C) {
-    if constexpr (traits<T>::qk != QK_K) {
+    if constexpr (traits<T>::qk == QK_K) {
+        if (R == 1 && C == 1) return st_instance<T, 1, 1, G>();
+        if (R == 2 && C == 1) return st_instance<T, 2, 1, G>();
+    } else {
         if (R == 1 && C == 2) return st_instance<T, 1, 2, G>();
         if (R == 2 && C == 2) return st_instance<T, 2, 2, G>();
         if (R == 4 && C == 2) return st_instance<T, 4, 2, G>();
@@ -140,6 +145,8 @@ const void * st_kernel_rt(int T, bool G, int R, int C) {
         case T_Q4_1: return G ? st_kernel<T_Q4_1, true>(R, C) : st_kernel<T_Q4_1, false>(R, C);
         case T_Q8_0: return G ? st_kernel<T_Q8_0, true>(R, C) : st_kernel<T_Q8_0, false>(R, C);
         case T_Q5_0: return G ? st_kernel<T_Q5_0, true>(R, C) : st_kernel<T_Q5_0, false>(R, C);
+        case T_Q5_K: return G ? st_kernel<T_Q5_K, true>(R, C) : st_kernel<T_Q5_K, false>(R, C);
+        case T_IQ4_XS: return G ? st_kernel<T_IQ4_XS, true>(R, C) : st_kernel<T_IQ4_XS, false>(R, C);
     }
     return nullptr;
 }

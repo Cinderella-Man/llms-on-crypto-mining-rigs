@@ -56,7 +56,7 @@ is the FP16 sum of the 32 unquantized values.
 | `p_r1c1`, `p_r2c1` | (c) for the 256-weight K-/I-quants: each lane takes one super-block per iteration. Q5_K's activation sums (for its mins) are computed once per chunk and shared by all rows; IQ4_XS looks its indices up with `__byte_perm` in a table held in registers, with the activations pre-permuted into the order the lookup produces. |
 | `llama_sk` | (a) for `iq4_xs` with llama.cpp's small-K shape, which llama.cpp withholds from IQ4_XS on Pascal (experiment Q47). |
 | `rl_r1c2`, `rl_r2c2`, `rl_r4c2`, `rl_r2c4` | (e) row-local planes (`q8_0`, `q4_1`, `q5_0`): each row keeps its byte range but holds all its codes first and its scales after them, so every code load is a 128-bit load. Needs a load-time repack. |
-| `st_r1c2`, `st_r2c2`, `st_r4c2`, `st_r2c4` | (f) staged loads (`q8_0`, `q4_0`, `q4_1`, `q5_0`): the unchanged GGUF blocks; each lane group first copies the contiguous row segment its lanes are about to read into shared memory with coalesced 128-bit loads, then every lane reads its own blocks from there. No repack. |
+| `st_r1c2`, `st_r2c2`, `st_r4c2`, `st_r2c4`, `st_r1c1`, `st_r2c1` | (f) staged loads (`q8_0`, `q4_0`, `q4_1`, `q5_0`; `c1` for `q5_K`, `iq4_xs`): the unchanged GGUF blocks; each lane group first copies the contiguous row segment its lanes are about to read into shared memory with coalesced 128-bit loads, then every lane reads its own blocks from there. No repack. |
 | `soa_r2`, `soa_r4` | (d) structure-of-arrays repack of `q4_1` (group 32) and `q4_1_64` (group 64): one plane of 16-byte nibble chunks arranged so that each weight load is a fully coalesced 128-bit load, and one plane of `half2 (d, m)` scales. Activations use the same idea: an int8 plane and a `float2 (d, s)` plane, so the block sum is FP32 (which also removes the FP16 overflow that forces llama.cpp's Flint rescale). R rows per lane group as in (c). |
 
 **Method:**
@@ -282,8 +282,8 @@ wide-rows launch shape, the best llama.cpp build so far):
 | `q5_0` | 28.4 ms | 25.2 ms | 14.3 ms (1.98×) | 11.9 ms (2.38×) | 12.6 ms (2.28×) | 11.4 ms (2.49×) |
 | `q4_0` | 24.1 ms | 19.8 ms | 12.4 ms (1.94×) | — | 10.3 ms (2.33×) | 10.1 ms (2.38×) |
 | `q4_1` | 20.3 ms | 16.9 ms | 11.4 ms (1.77×) | 10.5 ms (1.93×) | 10.6 ms (1.91×) | 10.0 ms (2.04×) |
-| `q5_K` | 31.6 ms | 27.7 ms | 13.9 ms (2.27×, 120 GB/s) | — | — | |
-| `iq4_xs` | 34.9 ms | 26.6 ms | 13.7 ms (2.55×, 94 GB/s) | — | — | |
+| `q5_K` | 31.5 ms | 27.5 ms | 13.9 ms (2.27×, 120 GB/s) | — | 13.0 ms (2.42×, 128 GB/s) | 12.9 ms (2.44×) |
+| `iq4_xs` | 34.7 ms | 26.6 ms | 13.6 ms (2.56×, 94 GB/s) | — | 12.3 ms (2.82×, 104 GB/s) | 12.0 ms (2.90×) |
 
 GB/s per shape for `q8_0` (and `q5_0`), best variant of each kind:
 
@@ -311,9 +311,11 @@ What this shows:
    sum(nibble × a) + 16 × sum(bit × a), with `(qh >> j) & 0x01010101` against activations regrouped by two 4 × 4 byte
    transposes per block, and reaches 1.98× (2.28× staged) against llama.cpp's per-bit shift/and/or. The gate (≥ 1.5×
    on the gate/up shape) is passed: 117 against 53 GB/s.
-4. **K- and I-quants pass their gates** (Q5_K ≥ 110, IQ4_XS ≥ 90 GB/s): Q5_K 120 GB/s overall (123 on the expert
-   gate/up, 125 on the expert down-projection), IQ4_XS 94 (93, 102). IQ4_XS's fused gate/up needs one row per lane
-   group: at two rows it takes 255 registers and drops to 40 GB/s.
+4. **K- and I-quants pass their gates** (Q5_K ≥ 110, IQ4_XS ≥ 90 GB/s) with one super-block per lane: Q5_K 120 GB/s
+   overall with direct loads (123 on the expert gate/up, 125 on the expert down-projection), IQ4_XS 94 (93, 102).
+   Staged with one row per lane group they reach 128 and 104 GB/s; IQ4_XS's unfused products gain most (attn_q
+   100 → 123, expert down 103 → 117), while its fused gate/up stays faster with direct loads (94 against 87). At two
+   rows the fused IQ4_XS kernel takes 255 registers and drops to 40 GB/s.
 5. **llama.cpp's small-K shape for IQ4_XS (Q47) cuts both ways.** IQ4_XS's 256-weight blocks put every row up to
    K = 2048 under the small-K rule. Allowing it doubles the down-projections (`moe_down` 14 → 29 GB/s, `shexp_down`
    25 → 50) and the unfused K = 2048 products (`attn_q` 43 → 81) but slows the fused gate/up (52 → 34): a one-line
