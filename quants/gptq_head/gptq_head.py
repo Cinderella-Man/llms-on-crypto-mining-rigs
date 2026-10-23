@@ -13,7 +13,8 @@
 #   gptq_head.py full <file.gguf> <head.q5_0> <out.gguf>       the file with output.weight replaced, one file
 #
 # x.f32 files come from llama-head-dump (head_dump/): float32 rows of n_embd values plus an .idx file of
-# {sequence, position, token}; rows at position 0 are left out of H.
+# {sequence, position, token}; rows at position 0 are left out of H. hessian and proxy take x.f32@ids (only these
+# sequences or chunks, e.g. @8,9,18-19) or x.f32@!ids (all but these), to keep held-out sequences out of H.
 # Modes: rtn = llama-quantize's Q5_0 without an importance matrix (quantize_row_q5_0_ref, byte-identical);
 # imat = llama-quantize's Q5_0 with an importance matrix holding diag(H) (quantize_row_q5_0_impl); gptq = GPTQ
 # (Frantar et al. 2022) in column order with lazy 32-column block updates, one group = one Q5_0 block. A group's scale
@@ -217,11 +218,22 @@ def head_f32(t, rows=None):
     return dequantize(np.ascontiguousarray(data), t.tensor_type)
 
 
-def load_x(path):
+def load_x(spec):
+    """x.f32 rows; spec = path, path@ids (only these sequences/chunks) or path@!ids (all but these), ids = 1,2,5-9
+    -> rows [n, n_embd] (memmap), idx [n, 3], selected [n] bool"""
+    path, _, ids = spec.partition('@')
     x = np.memmap(path, np.float32, 'r')
     idx = np.fromfile(path + '.idx', np.int32).reshape(-1, 3)
     n_embd = x.size // len(idx)
-    return x.reshape(len(idx), n_embd), idx
+    sel = np.ones(len(idx), bool)
+    if ids:
+        neg = ids.startswith('!')
+        want = set()
+        for part in ids.lstrip('!').split(','):
+            lo, _, hi = part.partition('-')
+            want.update(range(int(lo), int(hi or lo) + 1))
+        sel = np.isin(idx[:, 0], list(want)) != neg
+    return x.reshape(len(idx), n_embd), idx, sel
 
 
 # ---- workers for quant ----
@@ -289,8 +301,8 @@ def cmd_quant(a):
 def cmd_hessian(a):
     H, cnt = None, 0
     for p in a.x:
-        x, idx = load_x(p)
-        keep = np.flatnonzero(idx[:, 1] > 0)
+        x, idx, sel = load_x(p)
+        keep = np.flatnonzero((idx[:, 1] > 0) & sel)
         for i in range(0, len(keep), 16384):
             xc = np.asarray(x[keep[i:i + 16384]], np.float64)
             H = xc.T @ xc if H is None else H + xc.T @ xc
@@ -307,10 +319,10 @@ def cmd_proxy(a):
     r, t = head_tensor(a.ref)
     rows, n = int(t.shape[1]), int(t.shape[0])
     Wref = head_f32(t)
-    x, idx = load_x(a.x)
-    sel = np.flatnonzero(idx[:, 1] >= a.min_pos)[:a.rows]
+    x, idx, keep = load_x(a.x)
+    sel = np.flatnonzero((idx[:, 1] >= a.min_pos) & keep)[:a.rows]
     X = np.asarray(x[sel], np.float32)
-    print(f'{len(sel)} held-out rows (positions >= {a.min_pos})')
+    print(f'{a.x}: {len(sel)} held-out rows (positions >= {a.min_pos}) from {len(np.unique(idx[sel, 0]))} sequences')
     cands = []
     for c in a.cand:
         if c == 'bf16':
@@ -347,7 +359,7 @@ def cmd_checkdump(a):
     """the dump is right if the dumped rows times the model's own head give the logits the model computed"""
     t = head_tensor(a.model)[1]
     W = head_f32(t)
-    x, idx = load_x(a.x)
+    x, idx, _ = load_x(a.x)
     rows = np.fromfile(a.x + '.logits.idx', np.int64)
     L = np.fromfile(a.x + '.logits', np.float32).reshape(len(rows), -1)
     Z = np.asarray(x[rows], np.float32) @ W.T
