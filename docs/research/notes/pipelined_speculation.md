@@ -17,7 +17,7 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
 
 - **What exists.** A pipelined decoding API in the fork (`llama_pipe_init`, `llama_pipe_submit`,
   `llama_pipe_get_logits`, `llama_pipe_get_sampled`, `llama_pipe_drain`; branch `pascal-p106-v2-pipespec`, commit
-  733093c58) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
+  a7204884d) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
   for one sequence. Guessers: the copy lookup, llama.cpp's `ngram-simple`, any llama.cpp drafter (`ngram-map-k`,
   `ngram-mod`, …), and an oracle that replays a reference run with a chosen share of wrong guesses. A job list runs many
   configurations with one model load.
@@ -36,6 +36,11 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
 - **The output is plain decoding's output.** Each token is sampled once, in order, from logits computed by the same
   graph, kernels and KV cell layout as plain decoding, with the same sampler state, so greedy and seeded sampling give
   the same tokens, with bit-identical logits.
+- **Several samples of one request share the same cards.** A race of k samples (Q93: keep the first to finish its
+  reasoning) runs one token of each sample in flight; the cards hold about S_eff tokens, so guesses and race samples
+  share one budget: race samples while Flint reasons, where guesses are rarely right, and all of it as guesses for the
+  winner after `</think>`. 31 pipelined races of 3–4 samples (8,164 sample tokens; winners 0, 1 and 2) were
+  bit-identical to the same races decoded plainly, round robin.
 - **Next:** time it on the rig ([plan](../../../bench/pipespec/README.md#rig-plan)): the all-right oracle shows the
   pipeline's ceiling (event model: 2×/3×/4×/4.5× at D = 1/2/3/4+ on six cards), the all-wrong oracle the cost of wrong
   guesses, and the copy lookup the real gain per kind of prompt.
@@ -179,6 +184,31 @@ The model has no host contention and no power limit; the rig measures both.
 | `spec` | any llama.cpp drafter (`--pipe-spec ngram-map-k`, `ngram-mod`, …) through `common_speculative`; one draft per committed state, consumed one guess at a time | committed only (stateful drafters must not see tokens that may be dropped) |
 | `oracle` | a reference run's tokens, a share `--pipe-miss` made wrong on purpose | – |
 
+### Several samples of one request (race)
+
+Q93 found that on Flint, keeping whichever of k sampled attempts closes its reasoning (`</think>`) first loses no task
+accuracy (+3.2 points at k = 5, with 56 % of a single attempt's reasoning tokens; k = 3 at 64 %). On a layer split those
+k samples cost almost nothing extra, because the idle cards that guesses would use can carry the other samples instead:
+
+- The prompt is decoded once in sequence 0 and given to sequences 1..k−1 with `llama_memory_seq_cp` (a unified KV cache:
+  the prompt's cells get k sequence ids, nothing is copied). Each sample has its own sampler and seed.
+- Each sample keeps one token in flight. Tokens are submitted round robin (the next token of a sample as soon as its
+  previous one is sampled), so the cards work on different samples' tokens at once. While k ≤ S_eff each sample runs at
+  the speed of plain decoding, and the race ends after min over the samples of their reasoning length, not the average.
+- When a sample emits the stop text, the other samples' tokens still in flight finish and are ignored, their sequences
+  are removed (`llama_memory_seq_rm(mem, s, -1, -1)`; the shared prompt cells keep the winner's id), and the winner
+  continues alone, now with guesses.
+- Guesses and race samples share one budget: about S_eff tokens in flight, one per slowest stage, of which the race takes
+  one per sample and the guesses the rest (summed over the samples, guesses + samples ≤ S_eff keeps wrong guesses free).
+  In fresh text, most of Flint's reasoning, a 6-token match precedes only 1–6 % of tokens
+  ([ngram_replay](../../../bench/ngram_replay/README.md)), so the budget goes to samples there: k = 4 on six cards (S_eff 4.2), up to k = 5–8 on nine. After `</think>` the
+  winner takes it all as guesses (D = S_eff − 1), where answers often copy code from the reasoning.
+- The submission order of the pipelined race is the order of a plain round-robin race (one `llama_decode` per token,
+  sample 0, 1, …, k−1, 0, …), so both put every token in the same KV cell and give bit-identical results; the extra
+  in-flight tokens of the losers at the end are removed with their sequences. That is how the race is checked.
+- `llama-pipespec --pipe-race k --pipe-race-stop '</think>'` (job keys `race`, `race_stop`) runs it; host sampling only,
+  since sampling on the GPU would need a random draw per sequence and position.
+
 ## Correctness
 
 Method ([check_identity.sh](../../../bench/pipespec/check_identity.sh)): one `llama-pipespec` process decodes the prompt
@@ -209,6 +239,18 @@ Model: Flint UD-Q4_K_XL (49 layers, 35 of them with a 513-token sliding window, 
 that did not match. With T 1 the oracle replays the sampled plain run and was right on 254 of 255 tokens at 0 % injected
 misses: the random draws line up position by position. Every process finished within its timeout (no deadlock).
 
+Races ([above](#several-samples-of-one-request-race)), checked with `RACE=K` against the same race decoded plainly,
+round robin: four stages on the two GPUs, temperature 1, the winner continuing with the oracle, copy lookup,
+`ngram-simple` and `ngram-map-k` guessers at depths 1–3:
+
+| Race | Prompt, stop | Seeds | Pipelined runs | Winners | Sample tokens | Result |
+|---|---|---|---|---|---|---|
+| 3 samples | short question, `</think>` | 42 | 11 | 0 | 3,509 | all same |
+| 4 samples | `rewrite.txt`, the first "." | 42 | 5 | 0 | 105 | all same |
+| 4 samples | short question, `</think>` | 1, 2, 3 | 15 | 1, 0, 2 | 4,550 | all same |
+
+"Same" covers the winner, every sample's tokens and logits, and the winner's tokens, logits, KV state and probe.
+
 The checks ran on two RTX 3090s of a 7-GPU machine used for quality work, where no speed is measured; the Pascal
 kernels are exercised on the rig ([plan](../../../bench/pipespec/README.md#rig-plan), step 1).
 
@@ -223,7 +265,7 @@ kernels are exercised on the rig ([plan](../../../bench/pipespec/README.md#rig-p
   applied to sampled tokens only (sample-and-match keeps them exact), and `--ctx-checkpoints` taken at committed
   positions only.
 - **Several sequences:** independent conversations staggered by one stage keep every card busy with no guessing at all;
-  the slots already allow it, the loop doesn't.
+  the slots and the race loop already do this for samples of one request, a server would do it across its slots.
 - **Per-stage launch** if depths beyond S_eff − 1 are wanted (the host would launch stage j of a token only after stage
   j − 1 finished and the token is still valid).
 - **Recurrent models:** per-token state snapshots and rollback.

@@ -9,6 +9,7 @@ Design, prior work and results: [pipelined_speculation.md](../../docs/research/n
 |---|---|
 | [check_identity.sh](check_identity.sh) | Plain run plus ~20 pipelined runs (oracle with 0/10/50 % wrong guesses, copy lookup, ngram-simple, ngram-map-k at depths 1–3, depth 0) in one process; compares tokens, per-token logits hashes, the KV state after generation and probe logits with the plain run |
 | [rig_run.sh](rig_run.sh) | The timing matrix for the rig: plain, depth 0, copy lookup at depths 1–5 and three drafters at depth 3 on three prompts, oracle ceilings and the cost of wrong guesses; writes `summary.tsv` with speed-ups and an identity check per job |
+| [rig_race.sh](rig_race.sh) | Races of K samples of one request on the rig (Q93): time until the first sample closes its reasoning, against one sample alone, with the plain round-robin race as the identity check |
 | [drop_vs_cancel.py](drop_vs_cancel.py) | Event model of the cards: speed-up with every guess right, 70 % right and every guess wrong, when wrong guesses run to the end (this executor) or are skipped per card (ideal cancellation) |
 | [traces.py](traces.py) | Per job: tokens/s and the median time from one sampled token to the next, split by whether a right guess (one pipeline cycle), a wrong one (a full pass plus the dropped work) or none (a full pass) was in flight behind it |
 | [prompts/](prompts/) | `chat.txt` (an explanation, little to copy), `edit.txt` (add type hints to a 90-line script: partial copy), `rewrite.txt` (rename two variables in a 53-line script: almost all copy) |
@@ -28,6 +29,10 @@ llama-pipespec -m <gguf> -ngl 99 -fa on -c 8192 [--temp 0 | --temp 1 --seed 42 .
   probe=<hash>` line. `hits`/`misses` count guesses that were checked; `wasted` counts dropped tokens.
 - `--pipe-trace` writes one line per sampled token: microseconds since the start, guesses in flight, and `h` (the guess
   behind it was right), `m` (wrong), `n` (no guess), `p` (plain).
+- `--pipe-race K` (job key `race`): K samples of the request (seeds seed … seed + K − 1, sharing the prompt's KV cells)
+  until one emits `--pipe-race-stop` (default `</think>`), then the winner continues alone with the job's guesser. Plain
+  mode decodes the samples round robin; pipe mode keeps one token of each in flight. `check_identity.sh` checks it with
+  `RACE=K`. Host sampling only.
 - `--pipe-backend-greedy`: greedy sampling on the last card in both modes (llama.cpp's backend sampling), so only a token
   id comes back instead of the logits (Flint: 150,144 floats, 0.6 MB per token, ~3 ms on a PCIe 1.0 x1 link, queued on
   the last card behind every token's compute). `rig_run.sh` uses it unless `BG=0`.
@@ -37,17 +42,16 @@ llama-pipespec -m <gguf> -ngl 99 -fa on -c 8192 [--temp 0 | --temp 1 --seed 42 .
 Run from the private repository's root (the `rig` SSH alias). Expected numbers come from the event model in the note;
 the rig decides.
 
-**0. Install.** The fork's commit 733093c58 is built as `llama.cpp-20261023-733093c58-pascal-p106-v2-pipespec.tar.gz`
-(by `TESTS=1 llms-on-crypto-mining-rigs/scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-pipespec`; rebuild the
-same way after new commits, ~5 min with ccache):
+**0. Install.** The fork's commit a7204884d is built as `llama.cpp-20261023-a7204884d-pascal-p106-v2-pipespec.tar.gz`
+(by `TESTS=1 llms-on-crypto-mining-rigs/scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-pipespec` on a Linux PC
+with Docker; rebuild the same way after new commits). Copy it to the rig's `/opt/llama-builds/`, then:
 
 ```
-scp ~/llama-builds/llama.cpp-20261023-733093c58-pascal-p106-v2-pipespec.tar.gz rig:/opt/llama-builds/
-ssh rig 'cd /opt/llama-builds && tar xzf llama.cpp-20261023-733093c58-pascal-p106-v2-pipespec.tar.gz && ls llama.cpp-20261023-733093c58-pascal-p106-v2-pipespec/bin/llama-pipespec'
+ssh rig 'cd /opt/llama-builds && tar xzf llama.cpp-20261023-a7204884d-pascal-p106-v2-pipespec.tar.gz && ls llama.cpp-20261023-a7204884d-pascal-p106-v2-pipespec/bin/llama-pipespec'
 scp -r llms-on-crypto-mining-rigs/bench/pipespec rig:/tmp/
 ```
 
-The commands below use `$B`; set it in your shell first: `B=/opt/llama-builds/llama.cpp-20261023-733093c58-pascal-p106-v2-pipespec/bin`.
+The commands below use `$B`; set it in your shell first: `B=/opt/llama-builds/llama.cpp-20261023-a7204884d-pascal-p106-v2-pipespec/bin`.
 
 **1. Identity on the P106 kernels** (six cards, S4-L0, ~5 min each plus the model load), sampling on the host and
 on the last card. Every row must say `same`:
@@ -86,7 +90,16 @@ ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=s4
     > /tmp/pipespec/s4l0-6c-host.out 2>&1 < /dev/null &"
 ```
 
-**5. Collect and clean up:**
+**5. Races (Q93)**, on six cards with S4-L0, K = 2, 3, 4 at temperature 1 on a short question (each seed ~15 min;
+`SEEDS=1` for a first look). `race_tok_s` against the single sample's `tok_s` shows whether K samples run at the speed
+of one; `t_race` against the single sample's time to `</think>` is the wall-clock gain:
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=s4l0-6c-race GPUS=0,1,2,3,4,5 \
+    ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_race.sh > /tmp/pipespec/s4l0-6c-race.out 2>&1 < /dev/null &"
+```
+
+**6. Collect and clean up:**
 
 ```
 mkdir -p results/2026-10-24_q87_pipespec && scp -r rig:/tmp/pipespec/out rig:/tmp/pipespec/*.out results/2026-10-24_q87_pipespec/

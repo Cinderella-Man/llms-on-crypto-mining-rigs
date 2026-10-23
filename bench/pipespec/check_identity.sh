@@ -19,6 +19,10 @@
 #   [SPEED=1] bench/pipespec/check_identity.sh
 # SAMPLING='--temp 1 --top-k 20 --top-p 0.95 --min-p 0 --seed 42' checks sampling with a fixed seed: the plain run
 # then also fixes what the oracle replays. SPEED=0 leaves the tokens/s column out.
+# RACE=K checks a race of K samples (seeds seed..seed+K-1) until one emits RACE_STOP (default "</think>"), after which
+# the winner continues alone: the plain run decodes the samples round robin, the pipelined runs keep one token of each
+# in flight and use the guessers on the winner. Also compared: the winner and every sample's tokens and logits (race).
+# Use it with temperature sampling.
 # With the layers split over several GPUs (or over virtual devices, GGML_CUDA_DEVICES=N on one GPU) every hop between
 # stages is exercised.
 set -uo pipefail
@@ -34,10 +38,13 @@ PROBE=${PROBE:-8}
 OUT=${OUT:-/tmp/pipespec_check}
 TIMEOUT=${TIMEOUT:-1800}
 SPEED=${SPEED:-1}
+RACE=${RACE:-0}
+RACE_STOP=${RACE_STOP:-</think>}
 mkdir -p "$OUT"
 
 jobs=$OUT/jobs.txt
 common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
+[ "$RACE" -gt 1 ] && common="$common race=$RACE race_stop=$RACE_STOP"
 {
     echo "name=plain mode=plain $common out=$OUT/plain.tok"
     echo "name=pipe-d0 mode=pipe depth=0 guess=none $common"
@@ -63,17 +70,17 @@ grep -o 'PIPESPEC.*' "$OUT/run.log" > "$OUT/results.txt"
 field() { echo " $1" | grep -o " $2=[^ ]*" | cut -d= -f2; }
 ref=$(grep 'name=plain ' "$OUT/results.txt")
 [ -n "$ref" ] || { echo "no plain run"; exit 1; }
-printf '%-16s %6s %6s %6s %6s %7s %7s  %-6s %-6s %-6s %-6s  %s\n' run n_gen guess hits misses wasted tok/s tokens logits state probe verdict
+printf '%-16s %6s %6s %6s %6s %7s %7s  %-6s %-6s %-6s %-6s %-6s %-6s  %s\n' run n_gen guess hits misses wasted tok/s tokens logits state probe winner race verdict
 fail=0
 while read -r line; do
     verdict=same
     cols=()
-    for k in tokens logits state probe; do
+    for k in tokens logits state probe winner race_hash; do
         if [ "$(field "$line" $k)" = "$(field "$ref" $k)" ]; then cols+=(same); else cols+=(DIFF); verdict=DIFF; fi
     done
     [ "$verdict" = DIFF ] && fail=1
     speed=-; [ "$SPEED" = 1 ] && speed=$(field "$line" tok_s)
-    printf '%-16s %6s %6s %6s %6s %7s %7s  %-6s %-6s %-6s %-6s  %s\n' "$(field "$line" name)" "$(field "$line" n_gen)" \
+    printf '%-16s %6s %6s %6s %6s %7s %7s  %-6s %-6s %-6s %-6s %-6s %-6s  %s\n' "$(field "$line" name)" "$(field "$line" n_gen)" \
         "$(field "$line" guesses)" "$(field "$line" hits)" "$(field "$line" misses)" "$(field "$line" wasted)" "$speed" \
         "${cols[@]}" "$verdict"
 done < "$OUT/results.txt"

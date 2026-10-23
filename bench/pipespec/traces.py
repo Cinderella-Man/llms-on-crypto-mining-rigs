@@ -3,10 +3,12 @@
 
 Each trace row is one sampled token: microseconds since the first submit, guesses in flight when it was sampled, and
 the outcome for the token after it: h (a right guess was already in flight), m (a wrong one: dropped), n (no guess),
-p (plain decoding). The time from one sampled token to the next is attributed to the earlier token's outcome:
+p (plain decoding), r (a token of one of the raced samples). The time from one sampled token to the next is attributed
+to the earlier token's outcome:
   after h  the next token was already on its way: one pipeline cycle;
   after m  the next token starts from card 1: a full pass, like plain decoding, plus the cost of the dropped guesses;
-  after n  the same full pass without dropped guesses.
+  after n  the same full pass without dropped guesses;
+  after r  the next raced token, usually another sample's: with K samples in flight, a full pass divided by up to K.
 Usage: traces.py <dir or .trace files>...
 """
 import os
@@ -31,12 +33,12 @@ def main(args):
             files += sorted(os.path.join(a, x) for x in os.listdir(a) if x.endswith(".trace"))
         else:
             files.append(a)
-    print(f"{'job':28} {'tokens':>6} {'tok/s':>7} {'median ms':>9}  {'after h':>13} {'after m':>13} {'after n':>13}")
+    print(f"{'job':28} {'tokens':>6} {'tok/s':>7} {'median ms':>9}  {'after h':>13} {'after m':>13} {'after n':>13} {'after r':>13}")
     for p in files:
         rows = load(p)
         if len(rows) < 3:
             continue
-        gaps = {"h": [], "m": [], "n": [], "p": []}
+        gaps = {"h": [], "m": [], "n": [], "p": [], "r": []}
         all_gaps = []
         for (t0, _, o0), (t1, _, _) in zip(rows, rows[1:]):
             g = (t1 - t0) / 1000.0
@@ -50,7 +52,7 @@ def main(args):
             return f"{len(v):4d} x {statistics.median(v):5.2f}" if v else f"{'-':>13}"
 
         name = os.path.basename(p)[: -len(".trace")]
-        print(f"{name:28} {len(rows):6d} {rate:7.2f} {statistics.median(all_gaps):9.2f}  {cell('h')} {cell('m')} {cell('n')}")
+        print(f"{name:28} {len(rows):6d} {rate:7.2f} {statistics.median(all_gaps):9.2f}  {cell('h')} {cell('m')} {cell('n')} {cell('r')}")
     print("after X: number of intervals x median ms")
 
 
