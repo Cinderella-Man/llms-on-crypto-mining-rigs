@@ -7,9 +7,11 @@
 #   MODEL=... TAG=mtp SERVER_ARGS="-c 32768 --spec-type draft-mtp -md /mnt/models/mtp.gguf" bash scripts/server_bench.sh
 #   PROMPTS=none: only load the model and record memory (for context-size fit tests)
 #   PROMPTS=chat: instead of the four one-shot prompts, one conversation of five user messages that build on each other,
-#     sent the way a chat client sends them: every request carries the whole history (the visible answers, without
-#     their reasoning) and the server reuses what it has cached. Sampling: the model's GGUF defaults
-#     (general.sampling.*) or TEMP/TOP_P/TOP_K, fixed seeds. Per turn it reports the new prompt tokens and the time to
+#     sent the way a chat client sends them: every request carries the whole history, each answer with its reasoning
+#     as `reasoning_content` (KEEP_REASONING=0 resends the visible answers only), and the server reuses what it has
+#     cached. Sampling: the model's GGUF defaults (general.sampling.*) or TEMP/TOP_P/TOP_K/MIN_P, fixed seeds; min-p is
+#     0 unless the GGUF or MIN_P sets it (llama-server's own default is 0.05; Flint's makers use 0). Per turn it reports
+#     the new prompt tokens and the time to
 #     the first token, the generated tokens (reasoning + answer) and their speed; transcript in chat.json. Models with
 #     sliding-window attention can reuse the cache only through context checkpoints: pass --ctx-checkpoints N (a few)
 #     in SERVER_ARGS, or every turn re-processes the whole history. Use MAX_TOKENS of 2048 or more for reasoning models.
@@ -85,8 +87,11 @@ def gguf_sampling(path):
 g = gguf_sampling(model)
 sampling = {"temperature": float(os.environ.get("TEMP", g.get("temp", 0.8))),
             "top_p": float(os.environ.get("TOP_P", g.get("top_p", 0.95))),
-            "top_k": int(os.environ.get("TOP_K", g.get("top_k", 40)))}
-print("sampling: " + ", ".join(f"{k} {v:g}" for k, v in sampling.items()) + f"; up to {max_tokens} tokens per reply")
+            "top_k": int(os.environ.get("TOP_K", g.get("top_k", 40))),
+            "min_p": float(os.environ.get("MIN_P", g.get("min_p", 0.0)))}
+keep_reasoning = os.environ.get("KEEP_REASONING", "1") != "0"
+print("sampling: " + ", ".join(f"{k} {v:g}" for k, v in sampling.items()) + f"; up to {max_tokens} tokens per reply; "
+      + ("reasoning kept in the history" if keep_reasoning else "history without reasoning"))
 
 turns = [
     "I have an old crypto-mining rig: nine NVIDIA P106 cards with 6 GB each, all on PCIe x1 risers, a 2-core Celeron "
@@ -117,7 +122,9 @@ for i, text in enumerate(turns, 1):
     msg, t = r["choices"][0]["message"], r.get("timings", {})
     answer = msg.get("content") or ""
     n_answer = len(post("/tokenize", {"content": answer})["tokens"]) if answer else 0
-    messages.append({"role": "assistant", "content": answer})
+    reasoning = msg.get("reasoning_content") or ""
+    messages.append({"role": "assistant", "content": answer,
+                     **({"reasoning_content": reasoning} if keep_reasoning and reasoning else {})})
     log.append({"turn": i, "wall_s": wall, "response": r})
     gen_n += t.get("predicted_n", 0); gen_ms += t.get("predicted_ms", 0)
     new_n += t.get("prompt_n", 0); new_ms += t.get("prompt_ms", 0)
@@ -125,7 +132,7 @@ for i, text in enumerate(turns, 1):
           f"{t.get('prompt_per_second', 0):5.1f} t/s, first token after {t.get('prompt_ms', 0) / 1000:4.1f} s | generated "
           f"{t.get('predicted_n', 0):4d} tok ({n_answer} answer) at {t.get('predicted_per_second', 0):5.2f} t/s, "
           f"{r['choices'][0].get('finish_reason')} | {wall:5.1f} s")
-json.dump({"sampling": sampling, "messages": messages, "turns": log}, open(f"{out}/chat.json", "w"), indent=1)
+json.dump({"sampling": sampling, "keep_reasoning": keep_reasoning, "messages": messages, "turns": log}, open(f"{out}/chat.json", "w"), indent=1)
 print(f"conversation: {time.time() - t_chat:.0f} s; generated {gen_n} tokens at {1000 * gen_n / gen_ms:.2f} t/s; "
       f"{new_n} new prompt tokens at {1000 * new_n / new_ms:.1f} t/s, {new_ms / 1000:.1f} s waiting for first tokens")
 EOF
