@@ -2,8 +2,9 @@
 
 Reads the per_attempt.csv files of bench/bfcl_flint (single- and multi-turn) and bench/livecodebench_flint, one
 row per task, file and attempt. For every lane and every file against the reference file:
-- pass@1 per task is the mean over that file's attempts; the paired difference is taken per task, then averaged
-  (Miller, arXiv 2411.00640: average the K samples first, then the standard error across tasks);
+- pass@1 per task is the mean over that file's attempts; the paired difference is taken per task over the attempts
+  both files have for it (so runs still in progress compare like with like), then averaged (Miller, arXiv
+  2411.00640: average the K samples first, then the standard error across tasks);
 - standard error plain and clustered by the `cluster` column, 90 % and 95 % intervals with the larger of the two,
   and a task-level bootstrap interval;
 - the non-inferiority verdict: the lower 90 % bound above -margin;
@@ -48,6 +49,13 @@ def per_task(tasks, field):
     return {t: sum(v[field] for v in a.values()) / len(a) for t, a in tasks.items()}
 
 
+def matched(a, b, field):
+    """A task's mean in both files over the attempts both have."""
+    shared = set(a) & set(b)
+    return (sum(a[x][field] for x in shared) / len(shared) - sum(b[x][field] for x in shared) / len(shared),
+            len(shared))
+
+
 def within_var(tasks):
     """E[p(1-p)] from K attempts per task (unbiased), the per-sample noise left after pairing."""
     vals = []
@@ -84,32 +92,35 @@ for lane in sorted(runs):
         continue
     m, gate = margins.get(lane, 3.0), gates.get(lane, 0.5)
     print(f"## {lane} (reference {args.ref}, margin {m} points, process gate +{gate} points)\n")
-    print("| File | tasks | K | pass@1 | E[p(1-p)] | self-discordance | Δ pass@1 | SE (clustered) | 90 % | 95 % | "
-          "bootstrap 90 % | verdict | Δ malformed+runaway | upper 90 % | gate |")
-    print("|---" * 15 + "|")
+    print("| File | tasks | K | pass@1 | E[p(1-p)] | self-discordance | paired tasks (samples) | Δ pass@1 | "
+          "SE (clustered) | 90 % | 95 % | bootstrap 90 % | verdict | Δ malformed+runaway | upper 90 % | gate |")
+    print("|---" * 16 + "|")
     ref = files[args.ref]
     for f in [args.ref] + sorted(x for x in files if x != args.ref):
         tasks = files[f]
-        common = sorted(set(tasks) & set(ref))
+        common = sorted(t for t in set(tasks) & set(ref) if set(tasks[t]) & set(ref[t]))
         k = int(np.median([len(a) for a in tasks.values()]))
         pf, rf = per_task(tasks, 0), per_task(ref, 0)
         head = (f"| {f} | {len(tasks)} | {k} | {100 * sum(pf.values()) / len(pf):.2f} | {within_var(tasks):.3f} | "
                 f"{100 * self_discordance(tasks):.1f} % |")
         if f == args.ref:
-            print(head + " — |" * 9)
+            print(head + " — |" * 10)
+            continue
+        if len(common) < 2:
+            print(head + " 0 | no attempts shared with the reference |" + " — |" * 8)
             continue
         cl = [clusters[lane][t] for t in common]
-        d = np.array([pf[t] - rf[t] for t in common]) * 100
+        dm = [matched(tasks[t], ref[t], 0) for t in common]
+        d = np.array([x for x, _ in dm]) * 100
         mean, se, se_cl = paired(d, cl)
         s = max(se, se_cl)
         boot = np.array([d[rng.integers(0, len(d), len(d))].mean() for _ in range(args.bootstrap)])
         lo90, hi90 = mean - 1.645 * s, mean + 1.645 * s
         ok = lo90 > -m
-        qf, qr = per_task(tasks, 1), per_task(ref, 1)
-        g = np.array([qf[t] - qr[t] for t in common]) * 100
+        g = np.array([matched(tasks[t], ref[t], 1)[0] for t in common]) * 100
         gmean, gse, gse_cl = paired(g, cl)
         gup = gmean + 1.645 * max(gse, gse_cl)
-        print(head + f" {mean:+.2f} | {se:.2f} ({se_cl:.2f}) | {lo90:+.2f} to {hi90:+.2f} | "
+        print(head + f" {len(common)} ({sum(n for _, n in dm)}) | {mean:+.2f} | {se:.2f} ({se_cl:.2f}) | {lo90:+.2f} to {hi90:+.2f} | "
               f"{mean - 1.96 * s:+.2f} to {mean + 1.96 * s:+.2f} | "
               f"{np.percentile(boot, 5):+.2f} to {np.percentile(boot, 95):+.2f} | {'pass' if ok else 'FAIL'} | "
               f"{gmean:+.2f} | {gup:+.2f} | {'pass' if gup <= gate else 'FAIL'} |")
