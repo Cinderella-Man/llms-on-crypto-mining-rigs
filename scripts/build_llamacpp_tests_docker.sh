@@ -28,7 +28,7 @@ docker run --rm -v "$SRC:/src:ro" -v "$OUT:/out" -e ARCHS="61-virtual;$HOST_ARCH
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache \
         > /out/cmake.log 2>&1
     cmake --build /out/build -j "$(nproc)" \
-        --target test-backend-ops test-export-graph-ops llama-bench llama-perplexity > /out/build.log 2>&1 \
+        --target test-backend-ops test-export-graph-ops llama-bench llama-perplexity llama-server > /out/build.log 2>&1 \
         || { tail -40 /out/build.log; exit 1; }
     cp -L /usr/local/cuda/lib64/libcudart.so.12 /usr/local/cuda/lib64/libcublas.so.12 /usr/local/cuda/lib64/libcublasLt.so.12 /out/cuda12-libs/
     chown -R "$HOST_UID:$HOST_GID" /out

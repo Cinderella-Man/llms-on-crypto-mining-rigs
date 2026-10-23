@@ -13,10 +13,11 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-23, 16:40):** rig and quant machine free. The fork's Pascal kernels cover Q4_0/Q4_1/Q5_0/Q8_0/Q5_K/
-IQ4_XS (S4-L0 37.4, UD-Q4_K_XL 34.1, Unsloth's Q8_0 35.9 tok/s). Next: step 0, the speculation gate (Q51 on the
-quant machine, Q19 stage 1 on the rig); then Q43, S5 on the new build, Q4_1_64. Keep this line current: say what is
-running, where, and since when.
+**Now (2026-10-23, 18:10):** rig and quant machine free (the real-chat benchmark Q58 used the rig until 18:02). The
+fork's Pascal kernels cover Q4_0/Q4_1/Q5_0/Q8_0/Q5_K/IQ4_XS: in a real chat on 9 cards at 262k context it generates
+twice as fast as stock llama.cpp with every file (Miner S4-L0 31.9, Unsloth's Q8_0 29.6, UD-Q4_K_XL 28.0 tok/s). Next:
+step 0, the speculation gate (Q51 on the quant machine, Q19 stage 1 on the rig); then Q43, S5 on the new build,
+Q4_1_64. Keep this line current: say what is running, where, and since when.
 
 Every speed figure for the new files is still a prediction ([token_cost.py](../scripts/token_cost.py)); step 1 measures
 them, and the steps after it depend on what it shows.
@@ -100,6 +101,7 @@ the rig (llama.cpp `d77256999` + CUDA graphs, `-bs`, 262,144-token context) unle
 | Q55 | What do tool requests lose without backend sampling? llama.cpp turns `-bs` off for any request with a grammar, so every tool request copies 600 KB of logits per sampled position over the x1 link and runs top-k on the host (est. ~11 % per token, (k + 1)× per verify step) | planned | | rig: the same prompt with and without `tools`, `-bs` on, 1 h. If ≥ 8 %: GPU top-k, copy 40 candidates, grammar on the host, full row only on rejection (fork, ~2 days) ([HyperQwen lessons](../docs/research/notes/hyperqwen_lessons.md)) |
 | Q56 | A GPTQ-rounded Q4_1 output head for S4-L0 (−0.13 GB per token, ~3 %). Round-to-nearest Q4_1 failed (Q18: KLD 0.280 → 0.338) | planned (optional) | | quant machine: GPTQ on captured final hidden states, blocks written by script, KLD against BF16 ([HyperQwen lessons](../docs/research/notes/hyperqwen_lessons.md)) |
 | Q57 | Can Project Maya's VRAM–RAM–NVMe expert tiering, or its GLM-5.3-Flash quants, make the rig faster? | done (no run needed) | No. The quants are ordinary GGUFs (IQ2/IQ3 experts); the NVMe part is the engine's expert cache, which solves capacity, and the rig's models already fit in VRAM. The rig has no NVMe (AHCI SATA only, ~485 MB/s), every GPU link is PCIe 1.0 x1 (~190 MB/s; one Q8_0 Flint expert miss ≈ 18 ms, two thirds of a token), 3.8 GB RAM, no AVX. GLM-5.3-Flash with Maya-style tiering would decode at ~0.4–1 tok/s. Carried over: one activation rounding per call (Q38) and a cumulative-confidence draft cutoff (Q43/Q53) | Maya source at `8412d5e`, model card, rig I/O figures; [note](../docs/research/notes/maya_expert_tiering.md) |
+| Q58 | Real chat with Flint, stock llama.cpp against this project's fork: one conversation of five messages, all nine cards, 262,144-token context, Flint's sampling defaults, same flags and seeds for both engines | done | Generation over the whole conversation, stock → fork: **Unsloth UD-Q4_K_XL 14.20 → 27.97 tok/s (1.97×), Unsloth Q8_0 14.78 → 29.55 (2.00×), Miner S4-L0 (Q4) 16.06 → 31.86 (1.98×)**. Time to first token unchanged (prompt processing runs on the unchanged batched kernels, 80–85 tokens/s). Flint thinks 600–7,900 tokens per reply; conversation times differ with how long it thinks (S4-L0: 20,354 tokens on stock, 12,185 on the fork), so speeds are the comparison | [benchmark](../docs/benchmarks/2026-10-23-flint-chat.md), [server_bench.sh](../scripts/server_bench.sh) `PROMPTS=chat` |
 
 ### Qwen3.6-35B-A3B
 
