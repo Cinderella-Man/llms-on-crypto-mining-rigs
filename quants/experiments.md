@@ -13,14 +13,13 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-23, 21:40):** results of the evening, and the new direction. Speculation is parked: verify steps cost
-2.2–3.6× a plain token on the fork, so EAGLE-3 is dropped (Q19, Q20) and n-gram drafting gives ~1.03× (Q64); it returns
-only with multi-token Pascal kernels. The fork made Q5_0 nearly as cheap as Q4_1, so better mixes replace S4-L0 and S5
-(Q73: G3 0.101 KLD at 2.33 GB per token, F3 0.107 at 2.29; rig speed pending). Engine: shared-expert fusion +0.7 % (Q50),
-FP32 activation sums exact and in A/B (Q76); q8_0 KV costs no quality but 30 % speed (Q54, Q62). Running overnight on
-the quant machine: Q73 round 3, KLD checks of the Q50/Q76 builds, then Q41's pilot and main task runs (UD-Q4_K_XL
-against G3, the makers' sampling) on two GPU sets until 08:00. Rig: last jobs (Q54 on 9 cards, Qwen3.6 MTP rerun)
-until ~22:00. Keep this line current: say what is running, where, and since when.
+**Now (2026-10-23, 22:00):** the rig is off for the night. Its last results: speculation is parked for Flint (Q19, Q20,
+Q64) and for Qwen3.6 too (Q43: MTP 1.04× on the fork); long context on 9 cards gives 23.3 tok/s at 32k but 3.6 at 64k
+(Q54, a cliff to profile first); FP32 activation sums make UD-Q4_K_XL 9.6 % faster (Q76). Running overnight on the
+quant machine until 08:00: Q73 round 4 (CPU), KLD checks of the v2 engine builds and Q41's task checks (UD-Q4_K_XL
+against G3, the makers' sampling) on two GPU sets. Next rig session: speed of the Q73 frontier (G1, G3, G4, H3, F3)
+against UD-Q4_K_XL on the `pascal-p106-v2` build, then the 64k profile, Q55, Q65, Q68. Keep this line current: say
+what is running, where, and since when.
 
 Every speed figure for the new files is still a prediction ([token_cost.py](../scripts/token_cost.py)); step 1 measures
 them, and the steps after it depend on what it shows.
@@ -132,4 +131,4 @@ the rig (llama.cpp `d77256999` + CUDA graphs, `-bs`, 262,144-token context) unle
 | Q31 | A speed-aware mix for Qwen3.6: imatrix Q4_0 (bartowski's importance matrix) with attention, `ssm_out`, the shared expert and the head at Q8_0 | done (quality) | KLD 0.020 / 94.1 % against Q8_0, half the original Q4_0's 0.036 / 92.0 %, at a predicted 20.2 tok/s (original 20.8). 21.1 GB | [recipe](recipes/qwen36-mix-a.txt), base Q4_0, bartowski's importance matrix, from bartowski's Q8_0 |
 | Q32 | Which tensor class carries Qwen3.6's 4-bit quality loss? Imatrix Q4_0 everywhere (head Q8_0; bartowski's importance matrix), then one class at a time raised to Q8_0 | done | KLD against Q8_0 (base 0.049 / 90.6 %): `ssm_out` 0.040, full attention (10 layers) 0.043, expert gate+up 0.043, linear-attention qkv 0.045, shared expert 0.046, expert down 0.046, linear-attention gate 0.048; head lowered to Q4_0 0.058. Gain per ms of decode time: `ssm_out` 0.0052, shared expert 0.0035, full attention 0.0030, everything else ~0.001 | quantizer `--tensor-type <class>=q8_0` from bartowski's Q8_0 |
 | Q33 | Qwen3.6 mix B from Q32's ranking: imatrix Q4_0 with `ssm_out`, the shared expert, full attention and the head at Q8_0 | done (quality) | KLD 0.029 / 92.8 % against Q8_0, better than bartowski's Q4_0 (0.036 / 92.0 %) at a higher predicted speed (22.5 against 20.8 tok/s); 20.7 GB. Rig speed pending | [recipe](recipes/qwen36-mix-b.txt), base Q4_0, bartowski's importance matrix, from bartowski's Q8_0 |
-| Q43 | Qwen3.6's MTP draft head with a 32k-token vocabulary (llama.cpp PR #29143): smaller draft head, same verified output | running | Fork build, 5 cards, 4 prompts × 512 tokens at T 0: plain 25.6 tok/s, MTP with 2 drafted tokens 31.7 (1.24×), 82 % of drafts accepted. The plain run's first two prompts were slowed by warm-up; the other two give ~1.1×. Rerun with a warm-up request queued. Expected +9–13 % with MTP, no training | rig, together with Q29's speed test. Keep the rows most frequent in Qwen3.6's own generated text, not in web text, and also run `--spec-draft-sampling probabilistic` at T 1.0 (HyperQwen: greedy drafts ~15 % slower at T > 0; [HyperQwen lessons](../docs/research/notes/hyperqwen_lessons.md)) |
+| Q43 | Qwen3.6's MTP draft head with a 32k-token vocabulary (llama.cpp PR #29143): smaller draft head, same verified output | done | **MTP gives 1.04× on the fork build.** bartowski's Q4_0 + MTP file, 5 cards, 4 prompts × 512 tokens at T 0 after a warm-up request: plain 31.1 tok/s, 2 drafted tokens 32.4, 82 % of drafts accepted (per prompt 0.89–1.13×). A first run without the warm-up showed 1.24× because its plain run was still warming up. The fork's single-token kernels make plain decode fast while verify steps run on llama.cpp's stock multi-token kernels (as for Flint, Q19), so the 32k draft vocabulary and the noK draft file are not worth pursuing until multi-token Pascal kernels exist. Expected +9–13 % with MTP, no training | rig, together with Q29's speed test. Keep the rows most frequent in Qwen3.6's own generated text, not in web text, and also run `--spec-draft-sampling probabilistic` at T 1.0 (HyperQwen: greedy drafts ~15 % slower at T > 0; [HyperQwen lessons](../docs/research/notes/hyperqwen_lessons.md)) |
