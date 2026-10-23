@@ -38,8 +38,9 @@ Starting point on the rig, measured: in a five-turn chat on nine cards at 262,14
   GGUF.**
   - The MLX export (`RecursiveSI/flint-int4`) is group-64 affine INT4 with BF16 scale and bias for every projection,
     expert and the output head, INT8 embeddings, and `"scale_rule": "mse"`.
-  - rec names it a quantization-aware-trained model (`QATModel`), and the GGUF card says its Q4_1 holds "the MLX
-    export's trained INT4 codes".
+  - Despite rec's class name `QATModel` and the GGUF card's "trained INT4 codes", the codes are an MSE-scaled
+    round-to-nearest quantization of the published BF16 weights, and the makers' Q4_1 holds them exactly (measured,
+    [Q74](../../../quants/experiments.md)). KLD against BF16 is therefore a fair test of the makers' files.
   - Repacking 64-weight groups into Q4_1's 32-weight blocks duplicates every scale and offset: 5.0 bits per weight
     instead of 4.5 (est.).
 - **rec never stores anything in FP16 and never rescales activations.** Hidden states, activations, KV and logits are
@@ -205,13 +206,26 @@ Decode attention (`megakernel.py:619-693, 868-903, 1133-1146`):
   - Projections, experts and the output head: group-64 affine INT4, with a BF16 scale and bias per 64 weights.
   - Embeddings: INT8. Norms, sinks and the router stay floating point.
   - The config's `mlx_export` block: `bits 4`, `embedding_bits 8`, `routed_expert_bits 4`, `scale_rule "mse"`.
-- **How the weights were made.** rec names the checkpoint a quantization-aware-trained model (`QATModel`, `QATSession`,
-  `quantized.py:16, 98`). The INT4 model card does not say how it was produced. The GGUF card says "Q4_1 stores the MLX
-  export's trained INT4 codes with FP16 scales and offsets".
-- **Group 64 as Q4_1 (est.).** Group-64 affine with BF16 scale and bias costs 4 + 32/64 = 4.5 bits per weight. Q4_1
-  stores an FP16 scale and minimum per 32 weights (5.0 bits per weight). Each group of 64 therefore becomes two Q4_1
-  blocks with the same scale and offset, which is the layout found in the makers' GGUF. The repack is exact wherever the
-  BF16 scale and bias are representable in FP16.
+- **How the weights were made.** rec names the checkpoint class `QATModel` (`QATSession`, `quantized.py:16, 98`) and the
+  GGUF card speaks of "trained INT4 codes", but the INT4 model card does not say how it was produced. Measured on
+  68.2 M weights (Q74: routed experts and attention output of layers 3, 24 and 45, attention v of layer 24, two slices of
+  the output head), the codes are round-to-nearest of the published BF16 weights at the export's own MSE-fitted scale and
+  bias:
+  - 1.0–2.2 % of codes differ from rounding the BF16 value (0.09 % in the output head, all ties), each by one step, with
+    the BF16 value a median 0.015 step past the rounding midpoint;
+  - |w_bf16 − w_int4| has a median of 0.239 step and a 99th percentile of 0.52–0.55, and the per-group mean error shows no
+    drift, as plain rounding gives;
+  - the INT4 error relative to BF16 (0.086) equals rounding at the same scales and is 4 % below min-max rounding;
+  - in 3–10 % of groups the codes order two weights differently from BF16, which only a perturbation of ~0.01 step
+    explains (a very light change to the weights or a different master copy), about 30 times below the rounding error.
+
+  Neither quantization-aware training nor GPTQ/AWQ-style rounding shows up: those move 10–40 % of codes or rescale
+  channels.
+- **Group 64 as Q4_1.** Group-64 affine with BF16 scale and bias costs 4 + 32/64 = 4.5 bits per weight. Q4_1 stores an
+  FP16 scale and minimum per 32 weights (5.0 bits per weight). The makers' GGUF stores each group of 64 as two Q4_1 blocks
+  with the same scale and offset, and the repack is exact (Q74): every code is identical, every FP16 scale and offset is
+  the BF16 value converted without loss, and the dequantized weights agree bit for bit. Its `token_embd` is F32, equal to
+  the export's dequantized INT8 embeddings.
 - **No other formats or tools.** rec has no GGUF loader and no quantization or conversion tool;
   `packaging/mlx-model-manifest.py` only pins file hashes.
 - **An unused cache class.** `model.py:40-105` defines a quantized KV cache (8-bit keys, 4-bit values, group 64; the
@@ -383,8 +397,8 @@ Not possible:
 ### Facts that bear on this project's assumptions
 
 - **No MTP head:** confirmed by the strict load, the config and the SGLang kit (section 3).
-- **Group-64 layout:** explained. The makers' Q4_1 repacks the MLX export's group-64 INT4 codes, which rec's code treats
-  as quantization-aware-trained (section 2).
+- **Group-64 layout:** explained. The makers' Q4_1 is an exact repack of the MLX export's group-64 INT4 codes, which are
+  round-to-nearest of the BF16 weights, not quantization-aware-trained, so KLD against BF16 judges them fairly (section 2).
 - **Down-projection overflow:** the makers' own engine has no rescale and no FP16 storage. The overflow comes from FP16
   block sums in llama.cpp, not from the model.
 - **Sampling:** the makers use min-p 0. llama-server's default min-p 0.05 was in force in Q58, and in the replay of
@@ -398,10 +412,7 @@ Not possible:
 
 ## Not verified
 
-- Whether `flint-int4` came from quantization-aware training. The evidence is the code's names and comments and the GGUF
-  card's "trained INT4 codes"; no model card says so.
-- Whether the makers' Q4_1 GGUF holds exactly `flint-int4`'s codes, scales and offsets. Comparing one expert tensor of
-  each would settle it in about an hour.
+- Where the ~0.01-step difference between the quantized weights and the BF16 file comes from.
 - Which llama.cpp build, file, flags and KV type produced the README chart's llama.cpp curve.
 - The KV and weight read rates of section 5. They are derived from the chart and assume 28 KiB per context token and the
   same KV size for llama.cpp.
