@@ -67,7 +67,8 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TES
         $([ -n "$SCHED_COPIES" ] && echo -DGGML_SCHED_MAX_COPIES=$SCHED_COPIES) \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
     cmake --build build -j "$(nproc)" --target llama-bench llama-server llama-cli llama-completion \
-        llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) > /dev/null
+        llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) \
+        $([ -d examples/pipespec ] && echo llama-pipespec) > /dev/null
 
     out=/work/$name
     rm -rf "$out" && mkdir -p "$out/bin"

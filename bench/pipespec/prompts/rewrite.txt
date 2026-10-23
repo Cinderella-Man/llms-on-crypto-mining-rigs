@@ -1,0 +1,57 @@
+Rename the variable `plan` to `layout` and the variable `readers` to `sources` everywhere in this Python script. Change nothing else. Reply with the complete updated file in one code block.
+
+```python
+#!/usr/bin/env python3
+# Builds a GGUF from the tensors of several quants of the same model: every tensor comes byte for byte from the base
+# file unless a rule names another file for it. Because llama-quantize quantizes each tensor on its own (given the same
+# source weights and importance matrix), a composed file is identical to what llama-quantize would produce with the
+# equivalent per-tensor overrides, but it takes a minute of copying instead of a full quantization. Used for per-layer
+# allocation searches: start from one mix and take single layers' tensors from a cheaper or a better one.
+#
+#   compose_gguf.py <base.gguf> <out.gguf> <regex>=<other.gguf> [...]
+#   e.g. compose_gguf.py flint-mixS4.gguf out.gguf 'blk\.(2|3|4)\.ffn_(gate|up)_exps=flint-mixS2.gguf'
+# The first matching rule wins (re.search against the tensor name). Metadata comes from the base file. Needs numpy and
+# gguf-py (PYTHONPATH=<llama.cpp>/gguf-py; a tree with the Q4_1_64 patch for files that use that type).
+import re, sys
+import gguf
+
+src, dst, args = sys.argv[1], sys.argv[2], sys.argv[3:]
+rules = []
+readers = {}
+for a in args:
+    pat, path = a.rsplit('=', 1)
+    if path not in readers:
+        readers[path] = {t.name: t for t in gguf.GGUFReader(path).tensors}
+    rules.append((re.compile(pat), path))
+r = gguf.GGUFReader(src)
+arch = r.get_field(gguf.Keys.General.ARCHITECTURE).contents()
+
+plan, counts = [], {p: 0 for _, p in rules}
+for t in r.tensors:
+    for pat, path in rules:
+        if pat.search(t.name):
+            o = readers[path].get(t.name)
+            if o is None or list(o.shape) != list(t.shape):
+                sys.exit(f'{t.name}: missing or shaped differently in {path}')
+            plan.append(o)
+            counts[path] += 1
+            break
+    else:
+        plan.append(t)
+
+w = gguf.GGUFWriter(dst, arch=arch, endianess=r.endianess)
+for field in r.fields.values():
+    if field.name == gguf.Keys.General.ARCHITECTURE or field.name.startswith('GGUF.'):
+        continue
+    vt = field.types[0]
+    w.add_key_value(field.name, field.contents(), vt, sub_type=field.types[-1] if vt == gguf.GGUFValueType.ARRAY else None)
+for t in plan:
+    w.add_tensor_info(t.name, t.data.shape, t.data.dtype, t.data.nbytes, t.tensor_type)
+w.write_header_to_file(); w.write_kv_data_to_file(); w.write_ti_data_to_file()
+for t in plan:
+    w.write_tensor_data(t.data, tensor_endianess=r.endianess)
+w.close()
+for path, n in counts.items():
+    print(f'{n} tensors from {path}')
+print(f'{len(plan) - sum(counts.values())} tensors from {src}')
+```
