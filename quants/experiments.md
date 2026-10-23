@@ -13,33 +13,53 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-23, 22:00):** the rig is off for the night. Its last results: speculation is parked for Flint (Q19, Q20,
-Q64) and for Qwen3.6 too (Q43: MTP 1.04× on the fork); long context on 9 cards gives 23.3 tok/s at 32k but 3.6 at 64k
-(Q54, a cliff to profile first); FP32 activation sums make UD-Q4_K_XL 9.6 % faster (Q76). Running overnight on the
-quant machine until 08:00: Q73 round 4 (CPU), KLD checks of the v2 engine builds and Q41's task checks (UD-Q4_K_XL
-against G3, the makers' sampling) on two GPU sets. Next rig session: speed of the Q73 frontier (G1, G3, G4, H3, F3)
-against UD-Q4_K_XL on the `pascal-p106-v2` build, then the 64k profile, Q55, Q65, Q68. Keep this line current: say
-what is running, where, and since when.
+**Now (2026-10-24, 01:00):** the rig is off until the next session; the 7-GPU quant machine works until 12:00. On it:
+Q41's task checks (UD-Q4_K_XL against G3, GPUs 0–4), and on GPUs 5–6 Q77's round-5 mixes, Q56's GPTQ head on H3, and
+the correctness tests of Q78 (multi-token kernels), Q87 (pipelined speculation executor) and Q88 (persistent kernel).
+Research runs in hourly rounds ([research notes](../docs/research/notes/README.md)); each round can change the
+priorities below, and every such change is logged under "Decision log". Keep this line current: say what is running,
+where, and since when.
 
-Every speed figure for the new files is still a prediction ([token_cost.py](../scripts/token_cost.py)); step 1 measures
-them, and the steps after it depend on what it shows.
+### Priorities (v2)
 
-| Step | What | Experiments | Where | Decides |
-|---|---|---|---|---|
-| 0 | Speculation gate, first: how many experts consecutive Flint tokens share, then the verify cost of 1–8 tokens on the fork build (Q19 stage 1) | Q51, Q19 | quant machine 1–2 h, then rig ~2 h | Draft lengths for step 9; whether a deduplicating multi-token `MUL_MAT_ID` kernel pays; with synthetic acceptance, whether step 6 goes ahead ([HyperQwen lessons](../docs/research/notes/hyperqwen_lessons.md)) |
-| 1 | Measure on the rig: kernel microbenchmark (done), 2-warp build (done), makers-fast (done); still to do: the files at the quality bar (S4-L0 against UD-Q4_K_XL, same build), per-format speed, the other engine switches, drafter go/no-go, Qwen3.6 files | Q25 ✓, Q34 (part), Q28 ✓, Q36 files, Q10, Q19, Q29/Q31/Q33, Q43 | rig, ~1 day | Calibrates the cost model; gated step 5 (passed) and gates step 6 |
-| 2 | Exact tweaks on the BF16-derived finalists | Q35 ✓ (F16 router on S4: same quality, +1 %) | quant machine, ~1 h | — |
-| 3 | Per-layer allocation search, Flint then Qwen3.6 | Q36 ✓ (reduced), Q45 | quant machine, hours | Mixes at the quality bar that are cheaper than S4 |
-| 4 | Shared expert as routed experts | Q37 | code, 1–2 days | — |
-| 5 | Pascal kernel in llama.cpp: Q8_0, Q4_1, Q4_0, Q5_0, Q5_K and IQ4_XS (done), then Q4_1_64 | Q38 ✓, Q46 ✓, Q47, Q49 (partly) | code, fork `pascal-p106` | S4-L0 tg128 29.2 → **37.4 tok/s** on one binary (+28 %; +33 % over the wide-rows build), above the predicted 34–36; Unsloth's Q8_0 on 9 cards 26.9 → **35.9**; UD-Q4_K_XL 24.5 → **34.1** (17.6 on stock llama.cpp) ([design](../docs/research/notes/pascal_mmvq_integration.md)). Staged loads made the repack (Q39) unnecessary. Next: the K-/I-quant kernels for UD-Q4_K_XL |
-| 6 | EAGLE-3 draft head for Flint | Q20 | quant machine, 5–6 days | Only if Q19 says GO (≥ 1.4× expected, ≥ 1.15× pessimistic) |
-| 7 | Partial quantization-aware recovery, pilot | Q40 | quant machine, 1–2 days | Whether retraining reaches UD-Q4_K_XL quality at 4 bits |
-| 8 | Larger task checks, then release | Q41, Q42 | quant machine, then Hugging Face | Which files to publish |
-| 9 | Copy-gated drafting: CUDA graphs for each verify length, then HyperQwen's lookup controller for n-gram drafts (long block only after two fully accepted steps) | Q52, Q53 | code, fork `pascal-p106`, 2–4 days | Speed on file rewrites, edits and agent sessions (expected ≥ 2× on rewrites, ±2 % on chat); only if step 0 leaves extra verify positions affordable |
-| 10 | Serving costs for agent use: attention at 32k–64k of context, tool requests without backend sampling | Q54, Q55 | rig, 1 h each | The next fork project: a GQA-aware Pascal attention kernel if attention is ≥ 30 % of a token at 32k, a GPU top-k path for tool requests if they lose ≥ 8 % |
-| 11 | GPTQ-rounded output head (optional) | Q56 | quant machine, ~1 day | ~3 % on S4-L0 if it stays within noise of the quality bar |
+The list is ordered by expected value for the v2 release: Flint faster than Unsloth's UD-Q4_K_XL at its quality,
+measured on this rig against stock llama.cpp and against UD-Q4_K_XL on the same build.
 
-Step 0 runs first and gates 6 and 9. Steps 2–4 can run in parallel after step 1; 5 and 6 depend on its gates; 7, 8 and 11 run when the quant machine is free; 10 can run whenever the rig is.
+| # | Goal | Experiments | State | Next step | Where |
+|---|---|---|---|---|---|
+| 1 | **Release file:** G3 or a lighter variant with the GPTQ Q5_0 head, at UD-Q4_K_XL quality or better | Q41, Q56, Q73, Q77, Q42 | G3 non-inferior on the first BFCL pair; G3 + GPTQ head KLD 0.106 at 2.21 GB per token; K1/K2/H3 + head being scored | Rig speed of G3(+head), K1, K2, H3(+head) against UD-Q4_K_XL on `pascal-p106-v2`; finish Q41 (E1, E2, E3) | rig; quant machine |
+| 2 | **Pipelined speculation:** keep the idle cards busy with guessed tokens | Q87, then Q20 as a one-token drafter | simulated 1.34× untrained, 2.3× at 70 % acceptance; executor being proven correct | rig timing of the executor; if it holds, train the drafter | code; rig; quant machine |
+| 3 | **Engine, fixed cost and multi-token steps** | Q88, Q78, Q76 ✓, Q50 ✓ | FP32 sums +9.6 % and shared-expert fusion +0.7 % on `pascal-p106-v2`; persistent kernel bit-exact on a test GPU; multi-token kernels pass correctness | rig A/B of the persistent kernel and the multi-token kernels; rerun Q19's verify costs with them | rig |
+| 4 | **Long context** | Q79, Q54, then Q59/Q60 | 32k fine (23.3 tok/s, 9 cards); the 64k drop is most likely llama-bench's saved state swapping the host | rig check without saved state; build the attention kernel only if attention is ≥ 30 % of a token at depth | rig |
+| 5 | **Formats** | Q90, Q91, Q56 ✓ (head) | Q6_K far gentler than Q5_0 (needs a Pascal 6-bit kernel); screened head offline | decide on a Pascal 6-bit kernel after round-5 mixes; Q91's recall numbers | quant machine; code |
+| 6 | **Prompt processing** | Q89, Q80 | builds with 2 and 1 scheduler copies ready | rig grid copies × `-ub` | rig |
+| 7 | **Agent serving** | Q55, Q65, Q68, Q67 | planned | rig measurements, then GPU-side grammar masks | rig; code |
+| 8 | **Qwen3.6 track** | Q82, Q43 | Unsloth UD-Q4_K_XL KLD 0.013 sets its bar; MTP parked (1.04×) | rig speed of UD-Q4_K_XL on the fork | rig |
+| 9 | **Owner decisions** | Q83, Q86 | planned | headless mode, RAM, memory clock | rig, owner |
+
+Parked: batched speculation plumbing (Q52, Q53) until Q78 lowers verify costs; Q37 (shared expert as routed experts),
+superseded by Q50 and Q88; Q40 (quantization-aware recovery), since Q5_0 at ~1.1× Q4_1's cost reaches the bar without
+retraining.
+
+### Decision log
+
+Every strategic decision, newest last: what was decided, on what evidence, and what it changed.
+
+| Date | Decision | Evidence | Effect |
+|---|---|---|---|
+| 2026-10-23 | The quality bar is Unsloth's UD-Q4_K_XL (KLD 0.120 against BF16) | users run Unsloth's files; a ~9-point token-agreement gap is not worth speed | the makers' Q4_1 tier (S1, S2, makers-fast, Q4_0 variants) out of focus |
+| 2026-10-23 | v2 work on the public repo's `v2` branch and on the fork's `pascal-p106-v2`; v1 (`main`, `pascal-p106`) stays as released | v1 released at `1a35d59` | five post-v1 commits stay on `main`; feature branches land on `pascal-p106-v2` |
+| 2026-10-23 | Q41 runs the makers' way (T 1.0, top-p 0.95, top-k 20, min-p 0, ≥ 5 attempts, reasoning kept) | the makers' engine and cards (rec note) | chat benchmarks also switched to min-p 0 and kept reasoning (Q75) |
+| 2026-10-23 | The makers' Q4_1 and makers-fast stay out of Q41 | Q74: their INT4 is plain round-to-nearest of BF16, so KLD judges it fairly | Q41 compares UD-Q4_K_XL with our own candidates only |
+| 2026-10-23 | Batched speculation parked; EAGLE-3 training dropped | Q19 (a 3-token verify costs 2.2×), Q64 (n-gram ~1.03×), Q43 (MTP 1.04×) | Q20 dropped as a batched drafter; Q52/Q53 parked |
+| 2026-10-23 | S4-L0 and S5 are no longer candidates; G3 is | Q73/Q77: with the fork's kernels Q5_0 costs ~1.1× Q4_1, so G3 (KLD 0.101) beats S5 for fewer bytes | Q41's main runs compare G3 with UD-Q4_K_XL |
+| 2026-10-23 | FP32 activation sums and shared-expert fusion go onto `pascal-p106-v2` (cherry-picked, no merge into v1) | Q76: +9.6 % for UD-Q4_K_XL, output identical; Q50: +0.7 % | UD-Q4_K_XL now matches S4-L0's speed; a custom file must beat it on the v2 build |
+| 2026-10-23 | The output head stays Q8_0 unless GPTQ-rounded | Q73 round 3 (round-to-nearest Q5_0 head +0.023 KLD); Q56 (GPTQ +0.002) | release candidates get the GPTQ Q5_0 head |
+| 2026-10-23 | Pipelined speculation becomes the top speed project; Q20 revived as a one-token drafter if it pays | breakthrough research note; Q87 simulator (1.34× untrained, 2.3× at 70 %) | executor built (Q87); drafter training waits for its rig timing |
+| 2026-10-23 | The attention kernel (Q59/Q60) waits | Q79: the 64k drop is most likely a host-memory artefact of llama-bench | rig rerun first |
+| 2026-10-24 | Q6_K-like 6-bit is worth a Pascal kernel candidate slot | Q90: all of G3's Q8_0 tensors in Q6_K cost +0.014 KLD for ~0.26 GB less per token | priority 5; decided after the round-5 mixes |
+| 2026-10-24 | No compute on the laptop; all builds and GPU work on the quant machine | the laptop overheated (2026-10-23) | rig tarballs are built on the quant machine too |
+| 2026-10-24 | Research runs in hourly rounds until ~13:00, each building on the previous notes | the user's request | new rows from each round; priorities re-ranked here |
 
 ## Registry
 
