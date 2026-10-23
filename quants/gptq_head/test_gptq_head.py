@@ -75,6 +75,36 @@ def synthetic():
     check(np.abs(c.astype(int) - c0).max() <= 1, f'... and within one step of llama-quantize ({100 * (c != c0).mean():.2f} % differ)')
 
 
+def q4_0():
+    from gguf.quants import quantize, dequantize
+    import gguf
+    rng = np.random.default_rng(1)
+    x = (rng.standard_normal((256, 512)) * 0.02).astype(np.float32)
+    c, d = g.rtn_ref(x, 16)
+    mine = g.pack(c, d, 'q4_0')
+    ref = quantize(x, gguf.GGMLQuantizationType.Q4_0)
+    check(np.array_equal(mine, ref.reshape(mine.shape)), f'Q4_0 round-to-nearest byte-identical to gguf-py '
+          f'({(mine != ref.reshape(mine.shape)).sum()} bytes differ)')
+    check(np.array_equal(g.unpack(mine, 512), dequantize(ref, gguf.GGMLQuantizationType.Q4_0).reshape(256, 512)),
+          'Q4_0 unpack equals gguf-py dequantize')
+    c5, d5 = g.rtn_ref(x)
+    check(np.array_equal(g.pack(c5, d5), quantize(x, gguf.GGMLQuantizationType.Q5_0).reshape(256, -1)),
+          'Q5_0 round-to-nearest byte-identical to gguf-py')
+    n = 512
+    A = rng.standard_normal((n, n)) * 0.3 + np.eye(n)
+    X = rng.standard_normal((20000, n)) @ A
+    H = X.T @ X / len(X)
+    Hd = H + 0.01 * np.diag(H).mean() * np.eye(n)
+    L = np.linalg.cholesky(Hd); Li = np.linalg.inv(L)
+    U = np.linalg.cholesky(Li.T @ Li).T.astype(np.float32)
+    H32 = H.astype(np.float32)
+    o_rtn = g.objective(x, g.unpack(mine, n), H32)
+    cg, dg = g.gptq_rows(np.ascontiguousarray(x.T), U, np.diag(H).astype(np.float32), 'search', nlev=16)
+    o_g = g.objective(x, g.unpack(g.pack(cg, dg, 'q4_0'), n), H32)
+    print(f'      Q4_0 objective: rtn {o_rtn:.3g}, gptq {o_g:.3g}, codes {cg.min()}..{cg.max()}')
+    check(o_g < o_rtn / 2 and cg.max() <= 15, 'Q4_0 gptq at least 2x better than round-to-nearest, codes in 0..15')
+
+
 def real(bf16, qfile):
     import gguf
     t = g.head_tensor(qfile, 'token_embd.weight')[1]
@@ -105,6 +135,7 @@ def real(bf16, qfile):
 
 
 synthetic()
+q4_0()
 if len(sys.argv) == 3:
     real(sys.argv[1], sys.argv[2])
 print('all passed' if not fails else f'{len(fails)} FAILED')

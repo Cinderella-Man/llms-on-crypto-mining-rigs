@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-# GPTQ rounding of a GGUF output head to Q5_0 (or round-to-nearest for comparison), checked offline on held-out
-# activations and written as a two-file split GGUF whose first file is shared between candidates.
+# GPTQ rounding of a GGUF output head to Q5_0 or Q4_0 (or round-to-nearest for comparison), checked offline on
+# held-out activations and written as a two-file split GGUF whose first file is shared between candidates.
 #
 #   gptq_head.py hessian <out H.npy> <x.f32> [...]             H = sum of x x^T over the dumped rows (float64)
 #   gptq_head.py quant <src.gguf> <out.q5_0> --mode rtn|imat|gptq [--hessian H.npy] [--damp 0.01] [--scale max|search]
-#                [--act-order] [--refit N] [--workers 8] [--tensor output.weight]   a tensor of src in Q5_0, raw blocks
+#                [--act-order] [--refit N] [--type q5_0|q4_0] [--workers 8] [--tensor output.weight]
+#                                                              a tensor of src in Q5_0 (or Q4_0), raw blocks
 #   gptq_head.py proxy <ref.gguf> <x.f32> <a.q5_0|q8_0:file.gguf|bf16> [...] [--rows 10240]
 #                                                              KLD / same top token of the head alone, base = ref's head
 #   gptq_head.py checkdump <model.gguf> <x.f32>                 dumped rows x the model's head vs the model's own logits
 #   gptq_head.py base <file.gguf> <out-base.gguf>              the file without output.weight, as split 1 of 2
 #   gptq_head.py shard <base.gguf> <head.q5_0> <dir> <name>    <dir>/<name>-0000{1,2}-of-00002.gguf (1 = link to base)
 #   gptq_head.py full <file.gguf> <head.q5_0> <out.gguf>       the file with output.weight replaced, one file
+#   gptq_head.py verify <file.gguf> <head.q5_0> <out.gguf>     out = file with that head: same metadata, same tensors
+#                                                              byte for byte except output.weight = head (Q5_0)
 #
 # x.f32 files come from llama-head-dump (head_dump/): float32 rows of n_embd values plus an .idx file of
 # {sequence, position, token}; rows at position 0 are left out of H. hessian and proxy take x.f32@ids (only these
@@ -22,48 +25,67 @@
 # search = the imat rule weighted by diag(H). --act-order processes columns by decreasing diag(H) with scales fixed
 # beforehand from the original weights. --refit N then sets each block's scale by least squares under H for the codes
 # found, N times, with a GPTQ pass for the new scales between two refits.
+# --type q4_0 does the same with Q4_0 blocks (4-bit codes, largest magnitude -> -8). Raw block files are told apart by
+# their size.
 # Needs numpy and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py).
 import argparse, os, sys
 import numpy as np
 
 QK = 32
-BLOCK = np.dtype([('d', '<f2'), ('qh', '<u4'), ('qs', 'u1', 16)])  # block_q5_0, 22 bytes
-assert BLOCK.itemsize == 22
+BLOCKS = {  # block_q5_0 (22 bytes) and block_q4_0 (18 bytes)
+    'q5_0': np.dtype([('d', '<f2'), ('qh', '<u4'), ('qs', 'u1', 16)]),
+    'q4_0': np.dtype([('d', '<f2'), ('qs', 'u1', 16)]),
+}
+LEVELS = {'q5_0': 32, 'q4_0': 16}
+BLOCK = BLOCKS['q5_0']
+assert BLOCK.itemsize == 22 and BLOCKS['q4_0'].itemsize == 18
 
 
-# ---- Q5_0 blocks ----
+def raw_type(nbytes, rows, n):
+    """which block type a raw file of nbytes holds for a rows x n tensor"""
+    for ty, b in BLOCKS.items():
+        if nbytes == rows * (n // QK) * b.itemsize:
+            return ty
+    sys.exit(f'{nbytes} bytes is neither Q5_0 nor Q4_0 for {rows} x {n}')
 
-def pack(codes, d):
-    """codes uint8 [rows, n] in 0..31, d float16 [rows, n/32] -> block_q5_0 bytes [rows, n/32*22]"""
+
+# ---- Q5_0 / Q4_0 blocks ----
+
+def pack(codes, d, ty='q5_0'):
+    """codes uint8 [rows, n] in 0..31 (0..15), d float16 [rows, n/32] -> block bytes [rows, n/32*22 (18)]"""
     r, n = codes.shape
     c = codes.reshape(r, n // QK, QK).astype(np.uint32)
-    out = np.empty((r, n // QK), BLOCK)
+    out = np.empty((r, n // QK), BLOCKS[ty])
     out['d'] = d
     out['qs'] = (c[:, :, :16] & 15) | ((c[:, :, 16:] & 15) << 4)
-    out['qh'] = ((c >> 4) << np.arange(QK, dtype=np.uint32)).sum(axis=2, dtype=np.uint32)
+    if ty == 'q5_0':
+        out['qh'] = ((c >> 4) << np.arange(QK, dtype=np.uint32)).sum(axis=2, dtype=np.uint32)
     return out.view(np.uint8).reshape(r, -1)
 
 
 def unpack(raw, n):
-    """block_q5_0 bytes [rows, n/32*22] -> float32 [rows, n]"""
-    b = np.ascontiguousarray(raw).view(BLOCK).reshape(raw.shape[0], n // QK)
-    lo = np.concatenate([b['qs'] & 15, b['qs'] >> 4], axis=2).astype(np.int32)
-    hi = ((b['qh'][:, :, None] >> np.arange(QK, dtype=np.uint32)) & 1).astype(np.int32)
-    q = (lo | (hi << 4)) - 16
+    """block_q5_0 or block_q4_0 bytes [rows, n/32*22 (18)] -> float32 [rows, n]"""
+    ty = raw_type(raw.size, raw.shape[0], n)
+    b = np.ascontiguousarray(raw).view(BLOCKS[ty]).reshape(raw.shape[0], n // QK)
+    q = np.concatenate([b['qs'] & 15, b['qs'] >> 4], axis=2).astype(np.int32)
+    if ty == 'q5_0':
+        q |= ((b['qh'][:, :, None] >> np.arange(QK, dtype=np.uint32)) & 1).astype(np.int32) << 4
+    q -= LEVELS[ty] // 2
     return (q * b['d'].astype(np.float32)[:, :, None]).reshape(raw.shape[0], n)
 
 
-def rtn_ref(x):
-    """quantize_row_q5_0_ref: x float32 [rows, n] -> codes, d (float16)"""
+def rtn_ref(x, nlev=32):
+    """quantize_row_q5_0_ref (nlev 32) or quantize_row_q4_0_ref (nlev 16): x float32 [rows, n] -> codes, d (float16)"""
     r, n = x.shape
+    half = nlev // 2
     g = x.reshape(r, n // QK, QK)
     i = np.abs(g).argmax(axis=2)
     mx = np.take_along_axis(g, i[:, :, None], axis=2)[:, :, 0]
-    d = (mx / np.float32(-16)).astype(np.float32)
+    d = (mx / np.float32(-half)).astype(np.float32)
     with np.errstate(divide='ignore'):
         idd = np.where(d != 0, np.float32(1) / d, np.float32(0)).astype(np.float32)
-    q = (g * idd[:, :, None] + np.float32(16.5)).astype(np.int8)
-    q = np.minimum(q, 31).astype(np.uint8)
+    q = (g * idd[:, :, None] + np.float32(half + 0.5)).astype(np.int8)
+    q = np.minimum(q, nlev - 1).astype(np.uint8)
     return q.reshape(r, n), d.astype(np.float16)
 
 
@@ -100,8 +122,9 @@ def make_qx_quants(x, w, nmax=16):
     return (bestL + nmax).astype(np.uint8), scale
 
 
-def imat(x, qw):
-    """quantize_row_q5_0_impl with importance weights qw [n]: x float32 [rows, n] -> codes, d (float16)"""
+def imat(x, qw, nlev=32):
+    """quantize_row_q5_0_impl (q4_0_impl for nlev 16) with importance weights qw [n]: x float32 [rows, n] -> codes,
+    d (float16)"""
     r, n = x.shape
     sigma2 = (x.astype(np.float64) ** 2).sum(axis=1) / n
     codes = np.empty((r, n), np.uint8)
@@ -109,32 +132,34 @@ def imat(x, qw):
     for b in range(n // QK):
         xb = x[:, b * QK:(b + 1) * QK]
         w = (qw[b * QK:(b + 1) * QK][None, :] * np.sqrt(sigma2[:, None] + xb.astype(np.float64) ** 2)).astype(np.float32)
-        codes[:, b * QK:(b + 1) * QK], sc = make_qx_quants(xb, w)
+        codes[:, b * QK:(b + 1) * QK], sc = make_qx_quants(xb, w, nlev // 2)
         d[:, b] = sc.astype(np.float16)
     return codes, d
 
 
 # ---- GPTQ ----
 
-def group_scale(g, w, mode):
+def group_scale(g, w, mode, nlev=32):
     """g float32 [32, rows] (one group, transposed), w = diag(H) for its columns -> d float32 [rows] (fp16-exact)"""
     if mode == 'max':
         i = np.abs(g).argmax(axis=0)
-        d = g[i, np.arange(g.shape[1])] / np.float32(-16)
+        d = g[i, np.arange(g.shape[1])] / np.float32(-(nlev // 2))
     else:
-        _, d = make_qx_quants(np.ascontiguousarray(g.T), np.broadcast_to(w[None, :], (g.shape[1], QK)).astype(np.float32))
+        _, d = make_qx_quants(np.ascontiguousarray(g.T), np.broadcast_to(w[None, :], (g.shape[1], QK)).astype(np.float32),
+                              nlev // 2)
     return d.astype(np.float16).astype(np.float32)
 
 
-def quant_col(w, d):
-    """nearest Q5_0 code for each row's weight w with that row's scale d -> codes uint8, dequantized float32"""
+def quant_col(w, d, nlev=32):
+    """nearest code for each row's weight w with that row's scale d -> codes uint8, dequantized float32"""
+    half = nlev // 2
     with np.errstate(divide='ignore', invalid='ignore'):
-        q = np.floor(w / d + np.float32(16.5))
-    q = np.where(d != 0, np.clip(q, 0, 31), 16).astype(np.uint8)
-    return q, (q.astype(np.float32) - 16) * d
+        q = np.floor(w / d + np.float32(half + 0.5))
+    q = np.where(d != 0, np.clip(q, 0, nlev - 1), half).astype(np.uint8)
+    return q, (q.astype(np.float32) - half) * d
 
 
-def gptq_rows(Wt, U, hdiag, scale_mode, perm=None, d_fixed=None):
+def gptq_rows(Wt, U, hdiag, scale_mode, perm=None, d_fixed=None, nlev=32):
     """GPTQ on Wt float32 [n, rows] (transposed head rows, modified in place), U = upper Cholesky factor of H^-1 in
     processing order, perm = processing order (None = column order), d_fixed = scales [rows, n/32] to use instead of
     choosing them -> codes uint8 [rows, n], d float16 [rows, n/32]"""
@@ -146,7 +171,7 @@ def gptq_rows(Wt, U, hdiag, scale_mode, perm=None, d_fixed=None):
     elif perm is not None:
         # act-order: scales fixed from the original weights, in the original column order
         for b in range(n // QK):
-            d[b] = group_scale(Wt[b * QK:(b + 1) * QK], hdiag[b * QK:(b + 1) * QK], scale_mode)
+            d[b] = group_scale(Wt[b * QK:(b + 1) * QK], hdiag[b * QK:(b + 1) * QK], scale_mode, nlev)
     if perm is not None:
         Wt = Wt[perm]
         dcol = d[perm // QK]
@@ -154,11 +179,11 @@ def gptq_rows(Wt, U, hdiag, scale_mode, perm=None, d_fixed=None):
         i2 = i1 + QK
         W1 = Wt[i1:i2]
         if perm is None and d_fixed is None:
-            d[i1 // QK] = group_scale(W1, hdiag[i1:i2], scale_mode)
+            d[i1 // QK] = group_scale(W1, hdiag[i1:i2], scale_mode, nlev)
         E = np.empty((QK, r), np.float32)
         for i in range(QK):
             dc = d[i1 // QK] if perm is None else dcol[i1 + i]
-            q, deq = quant_col(W1[i], dc)
+            q, deq = quant_col(W1[i], dc, nlev)
             codes[i1 + i] = q
             e = (W1[i] - deq) / U[i1 + i, i1 + i]
             W1[i + 1:] -= U[i1 + i, i1 + i + 1:i2][:, None] * e[None, :]
@@ -172,7 +197,7 @@ def gptq_rows(Wt, U, hdiag, scale_mode, perm=None, d_fixed=None):
     return np.ascontiguousarray(codes.T), np.ascontiguousarray(d.T).astype(np.float16)
 
 
-def refit_scales(W, codes, H, sub=256):
+def refit_scales(W, codes, H, sub=256, nlev=32):
     """least-squares block scales for fixed codes: per row, d minimizing (w - Q d)^T H (w - Q d), where column g of Q
     holds block g's codes - 16 -> d float32 [rows, n/32], rounded to float16"""
     r, n = W.shape
@@ -180,7 +205,7 @@ def refit_scales(W, codes, H, sub=256):
     out = np.empty((r, G), np.float32)
     Hg = [np.ascontiguousarray(H[:, g * QK:(g + 1) * QK].T) for g in range(G)]   # [32, n] per block
     for a in range(0, r, sub):
-        Q = codes[a:a + sub].astype(np.float32) - 16                                # [s, n]
+        Q = codes[a:a + sub].astype(np.float32) - nlev // 2                         # [s, n]
         s = len(Q)
         T = np.empty((s, n, G), np.float32)                                         # T[r, i, h] = sum_{j in h} H_ij Q_rj
         for h in range(G):
@@ -241,9 +266,9 @@ def load_x(spec):
 _W = {}
 
 
-def _init(src, tensor, hpath, damp, mode, scale_mode, act_order, refit):
+def _init(src, tensor, hpath, damp, mode, scale_mode, act_order, refit, ty='q5_0'):
     _W['t'] = head_tensor(src, tensor)[1]
-    _W['mode'], _W['scale'], _W['refit'] = mode, scale_mode, refit
+    _W['mode'], _W['scale'], _W['refit'], _W['ty'] = mode, scale_mode, refit, ty
     if hpath:
         H = np.load(hpath)
         n = H.shape[0]
@@ -265,20 +290,21 @@ def _init(src, tensor, hpath, damp, mode, scale_mode, act_order, refit):
 def _work(rng):
     a, b = rng
     W = head_f32(_W['t'], slice(a, b))
-    mode = _W['mode']
+    mode, ty = _W['mode'], _W['ty']
+    nlev = LEVELS[ty]
     if mode == 'rtn':
-        codes, d = rtn_ref(W)
+        codes, d = rtn_ref(W, nlev)
     elif mode == 'imat':
-        codes, d = imat(W, _W['hdiag'])
+        codes, d = imat(W, _W['hdiag'], nlev)
     else:
-        codes, d = gptq_rows(np.ascontiguousarray(W.T), _W['U'], _W['hdiag'], _W['scale'], _W['perm'])
+        codes, d = gptq_rows(np.ascontiguousarray(W.T), _W['U'], _W['hdiag'], _W['scale'], _W['perm'], nlev=nlev)
         for k in range(_W['refit']):
             # least-squares scales for these codes; between refits, GPTQ codes for the new scales
-            d = refit_scales(W, codes, _W['H'])
+            d = refit_scales(W, codes, _W['H'], nlev=nlev)
             if k + 1 < _W['refit']:
-                codes, d = gptq_rows(np.ascontiguousarray(W.T), _W['U'], _W['hdiag'], _W['scale'], _W['perm'], d)
+                codes, d = gptq_rows(np.ascontiguousarray(W.T), _W['U'], _W['hdiag'], _W['scale'], _W['perm'], d, nlev)
             d = d.astype(np.float16)
-    return a, pack(codes, d)
+    return a, pack(codes, d, ty)
 
 
 def cmd_quant(a):
@@ -286,16 +312,16 @@ def cmd_quant(a):
     t = head_tensor(a.src, a.tensor)[1]
     rows, n = int(t.shape[1]), int(t.shape[0])
     chunks = [(i, min(i + a.chunk, rows)) for i in range(0, rows, a.chunk)]
-    out = np.memmap(a.out, np.uint8, 'w+', shape=(rows, n // QK * BLOCK.itemsize))
+    out = np.memmap(a.out, np.uint8, 'w+', shape=(rows, n // QK * BLOCKS[a.type].itemsize))
     os.environ['OPENBLAS_NUM_THREADS'] = '1'
     ctx = mp.get_context('spawn')
-    with ctx.Pool(a.workers, _init, (a.src, a.tensor, a.hessian, a.damp, a.mode, a.scale, a.act_order, a.refit)) as pool:
+    with ctx.Pool(a.workers, _init, (a.src, a.tensor, a.hessian, a.damp, a.mode, a.scale, a.act_order, a.refit, a.type)) as pool:
         for k, (i, blocks) in enumerate(pool.imap_unordered(_work, chunks)):
             out[i:i + len(blocks)] = blocks
             if k % 8 == 0:
                 print(f'{k + 1}/{len(chunks)} chunks', file=sys.stderr, flush=True)
     out.flush()
-    print(f'{a.out}: {rows} rows, mode {a.mode}')
+    print(f'{a.out}: {rows} rows, {a.type}, mode {a.mode}')
 
 
 def cmd_hessian(a):
@@ -402,8 +428,9 @@ def _split_kv(w, no, count, n_tensors):
     w.add_int32('split.tensors.count', n_tensors)
 
 
-def _head_info(w, gguf, raw):
-    w.add_tensor_info('output.weight', raw.shape, np.dtype(np.uint8), raw.nbytes, gguf.GGMLQuantizationType.Q5_0)
+def _head_info(w, gguf, raw, n_embd=2048):
+    ty = raw_type(raw.size, raw.shape[0], n_embd)
+    w.add_tensor_info('output.weight', raw.shape, np.dtype(np.uint8), raw.nbytes, gguf.GGMLQuantizationType[ty.upper()])
 
 
 def cmd_base(a):
@@ -426,7 +453,8 @@ def cmd_shard(a):
     import gguf
     r = gguf.GGUFReader(a.base)
     raw = np.fromfile(a.head, np.uint8)
-    raw = raw.reshape(raw.size // (a.n_embd // QK * BLOCK.itemsize), -1)
+    rows = int(next(t for t in r.tensors if t.name == 'token_embd.weight').shape[1])   # = the head's rows
+    raw = raw.reshape(rows, -1)
     os.makedirs(a.dir, exist_ok=True)
     p1 = os.path.join(a.dir, f'{a.name}-00001-of-00002.gguf')
     p2 = os.path.join(a.dir, f'{a.name}-00002-of-00002.gguf')
@@ -435,7 +463,7 @@ def cmd_shard(a):
     os.symlink(os.path.relpath(a.base, a.dir), p1)
     w, gguf = _writer(r, p2)
     _split_kv(w, 1, 2, r.get_field('split.tensors.count').contents())
-    _head_info(w, gguf, raw)
+    _head_info(w, gguf, raw, a.n_embd)
     w.write_header_to_file(); w.write_kv_data_to_file(); w.write_ti_data_to_file()
     w.write_tensor_data(raw)
     w.close()
@@ -462,6 +490,41 @@ def cmd_full(a):
     print(f'{a.out}: output.weight -> Q5_0 from {a.head}')
 
 
+def cmd_verify(a):
+    import gguf
+    r0, r1 = gguf.GGUFReader(a.src), gguf.GGUFReader(a.out)
+    bad = []
+    k0 = {k: f for k, f in r0.fields.items() if not k.startswith('GGUF.')}
+    k1 = {k: f for k, f in r1.fields.items() if not k.startswith('GGUF.')}
+    if list(k0) != list(k1):
+        bad.append(f'metadata keys differ: {set(k0) ^ set(k1)}')
+    for k in k0.keys() & k1.keys():
+        a0, a1 = k0[k].contents(), k1[k].contents()
+        if a0 != a1 or k0[k].types != k1[k].types:
+            bad.append(f'metadata {k} differs')
+    n0, n1 = [t.name for t in r0.tensors], [t.name for t in r1.tensors]
+    if n0 != n1:
+        bad.append('tensor names or order differ')
+    t1 = {t.name: t for t in r1.tensors}
+    head = np.fromfile(a.head, np.uint8)
+    for t in r0.tensors:
+        u = t1.get(t.name)
+        if u is None:
+            continue
+        if t.name == 'output.weight':
+            ty = raw_type(head.size, int(t.shape[1]), int(t.shape[0]))
+            ok = (u.tensor_type == gguf.GGMLQuantizationType[ty.upper()] and list(u.shape) == list(t.shape)
+                  and np.array_equal(np.asarray(u.data).reshape(-1), head))
+        else:
+            ok = (u.tensor_type == t.tensor_type and list(u.shape) == list(t.shape)
+                  and np.array_equal(np.asarray(u.data).reshape(-1), np.asarray(t.data).reshape(-1)))
+        if not ok:
+            bad.append(f'tensor {t.name} differs')
+    print(f'{a.out}: {len(n1)} tensors, {len(k1)} metadata keys checked against {a.src} and {a.head}')
+    print('\n'.join(bad) if bad else 'identical except output.weight = the given head')
+    sys.exit(1 if bad else 0)
+
+
 def main():
     p = argparse.ArgumentParser()
     s = p.add_subparsers(dest='cmd', required=True)
@@ -470,7 +533,7 @@ def main():
     q.add_argument('--mode', choices=['rtn', 'imat', 'gptq'], required=True); q.add_argument('--hessian')
     q.add_argument('--damp', type=float, default=0.01); q.add_argument('--scale', choices=['max', 'search'], default='max')
     q.add_argument('--act-order', action='store_true'); q.add_argument('--refit', type=int, default=0)
-    q.add_argument('--workers', type=int, default=8)
+    q.add_argument('--type', choices=list(BLOCKS), default='q5_0'); q.add_argument('--workers', type=int, default=8)
     q.add_argument('--chunk', type=int, default=2048); q.add_argument('--tensor', default='output.weight')
     q = s.add_parser('proxy'); q.add_argument('ref'); q.add_argument('x'); q.add_argument('cand', nargs='+')
     q.add_argument('--rows', type=int, default=10240); q.add_argument('--min-pos', type=int, default=256)
@@ -479,6 +542,7 @@ def main():
     q = s.add_parser('shard'); q.add_argument('base'); q.add_argument('head'); q.add_argument('dir'); q.add_argument('name')
     q.add_argument('--n-embd', type=int, default=2048)
     q = s.add_parser('full'); q.add_argument('src'); q.add_argument('head'); q.add_argument('out')
+    q = s.add_parser('verify'); q.add_argument('src'); q.add_argument('head'); q.add_argument('out')
     a = p.parse_args()
     if a.cmd == 'quant' and a.mode != 'rtn' and not a.hessian:
         sys.exit('--hessian is needed for imat and gptq')
