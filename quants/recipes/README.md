@@ -10,6 +10,7 @@ table.
 | [flint-udmirror-v1-nr.txt](flint-udmirror-v1-nr.txt) | Flint BF16 | Q4_1 | Unsloth's | UD-mirror v1 with Q8_0 expert down-projections in layers 46–48, so it runs with the rescale switched off (`LLAMA_NO_MOE_DOWN_RESCALE=1`) |
 | [flint-udmirror-v2-nr.txt](flint-udmirror-v2-nr.txt) | Flint BF16 | Q4_1 | Unsloth's | v1-nr with attention q at Q4_1 instead of Q8_0 (~1 tok/s faster, KLD 0.142 instead of 0.127) |
 | [flint-speed-s1.txt](flint-speed-s1.txt) … [s4](flint-speed-s4.txt) | Flint BF16 | Q4_1 | Unsloth's | Speed-aware mixes built from the per-class sensitivity sweep, all rescale-free: S1 = Q8_0 attention k/v, shared expert, dense layers, head; S2 = S1 + attention output; S3 = S2 + expert down-projections; S4 = S3 + Q5_0 expert gate/up. Scores in [experiments.md](../experiments.md) (Q27) |
+| [qwen36-mix-a.txt](qwen36-mix-a.txt), [qwen36-mix-b.txt](qwen36-mix-b.txt) | Qwen3.6-35B-A3B Q8_0 (bartowski) | Q4_0 | bartowski's | Mixes from the Qwen3.6 sensitivity sweep (Q32): B = `ssm_out`, shared expert, full attention, head at Q8_0; A = B plus the linear-attention qkv and gate |
 
 ```bash
 EXTRA="$(cat quants/recipes/flint-udmirror-v1.txt)" \

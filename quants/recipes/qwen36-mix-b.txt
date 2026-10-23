@@ -1,0 +1,1 @@
+--output-tensor-type q8_0 --tensor-type ssm_out\.weight=q8_0 --tensor-type _shexp=q8_0 --tensor-type attn_(q|k|v|output)\.weight=q8_0

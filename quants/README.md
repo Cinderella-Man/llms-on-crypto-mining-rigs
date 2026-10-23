@@ -82,10 +82,12 @@ except where measured.
 |---|---|---|---|---|
 | Q4_0 (bartowski; head and four attention q tensors Q6_K) | 20.8 GB | 92.0 % | 0.036 | 19.6 measured, 20.8 pred. |
 | Same file with every Q6_K tensor as Q8_0 | 21.0 GB | 92.0 % | 0.037 | 23.6 pred. |
-| Mix A: imatrix Q4_0, attention, `ssm_out`, shared expert and head Q8_0 | 21.1 GB | **94.1 %** | **0.020** | 20.2 pred. |
+| Mix B: imatrix Q4_0, `ssm_out`, shared expert, full attention and head Q8_0 | 20.7 GB | 92.8 % | 0.029 | 22.5 pred. |
+| Mix A: mix B plus Q8_0 linear-attention qkv and gate | 21.1 GB | **94.1 %** | **0.020** | 20.2 pred. |
 
 The K-quant leftovers in a "Q4_0" file are worth +13 % at no quality cost; the MTP draft file carries the same Q6_K head
-([experiments.md](experiments.md), Q29 and Q31).
+([experiments.md](experiments.md), Q29 and Q31–Q33). Qwen3.6's cheapest quality is `ssm_out`, the shared expert and its 10
+full-attention layers at Q8_0 (Q32); like Flint's, its head must stay at 8 bits.
 
 ## Next steps
 
