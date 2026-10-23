@@ -26,44 +26,61 @@ quants for that trade-off, so this subproject makes them.
 
 ## Results so far: Flint
 
-Against Unsloth's Q8_0 of [Flint](https://huggingface.co/RecursiveSI/flint) (39.8 B parameters, 2.5 B per token);
-speed with llama.cpp `d77256999` + CUDA graphs on 9 × P106-090.
+Against [Flint](https://huggingface.co/RecursiveSI/flint)'s original BF16 weights (39.8 B parameters, 2.5 B per token):
+80 × 512 tokens of wikitext-2, all files scored with the same CUDA build on the same quant machine. Speed is llama.cpp
+`d77256999` + CUDA graphs on 9 × P106-090: real chat requests and `llama-bench` tg128 where measured, otherwise the
+[cost model](../scripts/token_cost.py)'s prediction for tg128 (marked "pred."). "Rescale-free" files run with
+`LLAMA_NO_MOE_DOWN_RESCALE=1` ([why](research.md#removing-the-moe-down-projection-rescale)). Recipes are in
+[recipes/](recipes/) and every run in [experiments.md](experiments.md).
 
-| File | Made by | Size | Same top token | Mean KL divergence | Real chat speed | Generation (tg128) |
-|---|---|---|---|---|---|---|
-| UD-Q4_K_XL | Unsloth | 25.1 GB | **87.6 %** | **0.124** | 15.8 tok/s | 17.4–19.0 tok/s |
-| Q5_0 + imatrix | here | 27.6 GB | 85.0 % | 0.177 | 18.9 tok/s | 22.3–22.8 tok/s |
-| Q4_1 + imatrix, expert down-projections Q8_0 | here | 30.6 GB | 81.5 % | 0.257 | to measure | to measure |
-| Q4_1 + imatrix | here | 25.0 GB | 80.9 % | 0.280 | to measure | to measure |
-| Q4_1 + imatrix, expert down-projections IQ4_NL | here | 24.3 GB | 80.5 % | 0.281 | to measure | to measure |
-| Q4_1 | Flint's makers | 26.0 GB | 78.6 % | 0.316 | **24.3 tok/s** | **27.9–28.1 tok/s** |
-| Q4_0 + imatrix | here | 22.6 GB | 71.4 % | 0.566 | — (unusable) | — |
-| **UD-mirror v1** (UD-Q4_K_XL's allocation in fast formats) | here | 27.0 GB | **87.4 %** | **0.129** | to measure | to measure |
+| File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | Real chat | tg128 |
+|---|---|---|---|---|---|---|---|
+| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | — | 20.5 (9 cards) |
+| UD-Q4_K_XL | Unsloth | 25.1 GB | 87.7 % | 0.120 | +3.9 % | 15.8 | 17.4–19.0 |
+| **S4** (speed-aware mix, rescale-free) | here | 32.6 GB | **88.7 %** | **0.120** | **+3.4 %** | to measure | 23.0 pred. |
+| **UD-mirror v1, rescale-free** | here | 27.4 GB | 87.5 % | 0.127 | +4.0 % | to measure | 23.2 pred. |
+| UD-mirror v2, rescale-free (attention q at Q4_1) | here | 27.2 GB | 87.1 % | 0.142 | +3.6 % | to measure | 24.4 pred. |
+| S3 (speed-aware mix, rescale-free) | here | 31.0 GB | 87.1 % | 0.149 | +4.7 % | to measure | 24.3 pred. |
+| S2 (speed-aware mix, rescale-free) | here | 25.8 GB | 85.7 % | 0.178 | +5.4 % | to measure | 25.2 pred. |
+| Q5_0 + imatrix | here | 27.6 GB | 84.5 % | 0.185 | +5.7 % | 18.9 | 22.3–22.8 |
+| S1 (speed-aware mix, rescale-free) | here | 25.6 GB | 83.6 % | 0.219 | +4.6 % | to measure | 26.7 pred. |
+| Q4_1 + imatrix | here | 25.0 GB | 81.0 % | 0.280 | +9.5 % | to measure | 27.1 pred. |
+| Q4_0 + imatrix, seven dominant-channel tensors at Q8_0, rescale-free | here | 23.1 GB | 80.2 % | 0.315 | +3.8 % | to measure | to measure |
+| Q4_1 | Flint's makers | 26.0 GB | 78.4 % | 0.322 | +4.5 % | **24.3** | **27.9–28.1** |
+| **Makers' Q4_1, rescale-free, F16 router** | here | 26.3 GB | 78.5 % | 0.322 | +4.3 % | to measure | 30.5 pred. |
+| Makers' Q4_1 as group-64 (`Q4_1_64`, same weights) | here | 23.5 GB | 78.7 % | 0.314 | +4.4 % | to measure | needs the [patch](../patches/q4_1_64-type.diff) |
+| **Makers-fast**: all of the above plus fused Q/K/V, rescale-free | here | 23.9 GB | 78.9 % | 0.315 | +4.1 % | to measure | 30.4+ pred.; needs the patch |
+| Q4_0 + imatrix | here | 22.6 GB | 71.7 % | 0.565 | +45 % | — (unusable) | — |
 
-The makers' Q4_1 was tuned by distillation after quantizing, so its distance from Q8_0 overstates its real-task loss
-(see [the Flint research notes](../docs/research/notes/flint_speedups.md)).
-
-**UD-mirror v1 keeps Unsloth's quality in formats these cards decode quickly**: 87.4 % top-token agreement and mean
-KL divergence 0.129, against 87.6 % and 0.124 for UD-Q4_K_XL (perplexity +3.8 % vs +3.3 %; the differences are within
-about two standard errors). Its speed on the rig is the next measurement.
+The makers' Q4_1 was tuned by distillation after quantizing, so its distance from BF16 overstates its real-task loss
+(see [the Flint research notes](../docs/research/notes/flint_speedups.md)). Two Flint files whose KLDs differ by less
+than a few hundredths are not distinguishable: the same file computed on two different GPUs already differs by KLD 0.065
+([noise floor](research.md#measuring-quality-on-flint-the-noise-floor)).
 
 What we have learned:
-- **Simple formats are fast here; K-quants are not.** Q4_1 and Q5_0 beat UD-Q4_K_XL on speed by 20–50 %.
-- **Unsloth's quality comes from where it spends bits**, not from K-quant formats as such: attention and the shared
-  expert at Q8_0 in most layers, and the experts at 4–5.5 bits chosen layer by layer
-  ([scripts/gguf_mix.py](../scripts/gguf_mix.py) shows this for any file).
-- **Q4_0 breaks Flint** (no per-block offset); Q4_1 is fine.
-- **Flint's 4- and 5-bit expert down-projections need llama.cpp's rescale step**, which costs 5–11 % speed; formats
-  such as Q8_0 and IQ4_NL don't
-  ([Flint](../docs/benchmarks/2026-10-22-flint.md#the-moe-down-projection-rescale), [patch](../patches/)).
+- **These cards are limited by instructions, not memory bandwidth**, so simple formats are fast and K-quants are not:
+  Q4_1 and Q8_0 decode at ~0.4 of the 173 GB/s peak on Flint, Q5_0 at 0.30, K-quants and I-quants at 0.19
+  ([research](research.md#where-a-tokens-time-goes)).
+- **Where the bits go matters more than the format.** The cheapest quality is attention k/v and the shared expert at
+  Q8_0; attention q at Q8_0 buys almost nothing; the output head must stay Q8_0 unless it was trained at 4 bits.
+  The speed-aware mixes S1–S4 and the mirrors all beat a single fast format at the same speed.
+- **Flint's rescale step can go**: only the expert down-projections of layers 46–48 overflow, so Q8_0 there (+8 MB per
+  token) lets `LLAMA_NO_MOE_DOWN_RESCALE=1` remove ~470 kernel launches per token (+8 % measured) with identical output.
+- **Q4_0 fails on Flint through seven dominant-channel tensors**, not through its missing offset; keep those at Q8_0.
+- **Hadamard rotations don't help Flint's 4-bit files** in llama.cpp (they help only plain Q4_0), because its 8-bit
+  activation blocks absorb the spread-out outlier channels.
+- **The makers' Q4_1 is group-64 data** stored as group-32: the same weights fit in 23.5 GB with a group-64 type.
 
 ## Next steps
 
-1. Measure UD-mirror v1's speed on the rig ([recipe](recipes/flint-udmirror-v1.txt); quality already matches UD-Q4_K_XL).
-2. Variants of the mirror: attention at Q5_0 instead of Q8_0 (attention is ~4 % of the file but ~35 % of what each token
-   reads); expert down-projections at Q8_0 with the rescale step off.
-3. The makers' distillation-tuned Q4_1 with only the expert down-projections widened to Q8_0.
-4. Task-based quality checks for the best two or three files.
+The ranked list of every lever is in [research.md](research.md). In order:
+
+1. Rig speed of the finalists: UD-mirror v1 rescale-free, S4, S2, the makers' file rescale-free with an F16 router, and
+   its group-64 and fused-QKV versions ([experiments.md](experiments.md), Q9 and Q27).
+2. The matrix-vector microbenchmark at Flint's shapes ([bench/mmvq_pascal](../bench/mmvq_pascal/)), which decides
+   whether a Pascal-specific kernel (+20–45 % expected for every file) is worth writing.
+3. The drafter check for an EAGLE-3 head ([bench/eagle3_flint](../bench/eagle3_flint/)).
+4. Task-based quality checks (BFCL tool calls) for the best two or three files.
 5. The same treatment for the Qwen3.6-35B-A3B family.
 
 ## Tools

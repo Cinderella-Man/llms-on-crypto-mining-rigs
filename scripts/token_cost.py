@@ -16,7 +16,8 @@ T = {0: ('F32', 1, 4), 1: ('F16', 1, 2), 2: ('Q4_0', 32, 18), 3: ('Q4_1', 32, 20
      8: ('Q8_0', 32, 34), 10: ('Q2_K', 256, 84), 11: ('Q3_K', 256, 110), 12: ('Q4_K', 256, 144), 13: ('Q5_K', 256, 176),
      14: ('Q6_K', 256, 210), 16: ('IQ2_XXS', 256, 66), 17: ('IQ2_XS', 256, 74), 18: ('IQ3_XXS', 256, 98), 19: ('IQ1_S', 256, 50),
      20: ('IQ4_NL', 32, 18), 21: ('IQ3_S', 256, 110), 22: ('IQ2_S', 256, 82), 23: ('IQ4_XS', 256, 136), 29: ('IQ1_M', 256, 56),
-     30: ('BF16', 1, 2), 39: ('MXFP4', 32, 17), 40: ('NVFP4', 64, 36)}
+     30: ('BF16', 1, 2), 39: ('MXFP4', 32, 17), 40: ('NVFP4', 64, 36),
+     43: ('Q4_1_64', 64, 36)}   # Q4_1_64 exists only with patches/q4_1_64-type.diff
 # Fractions of 173 GB/s, fitted to llama-bench tg128 of four Flint files on the rig (llama.cpp d77256999 + CUDA graphs:
 # makers' Q4_1 35.8 ms/token, imatrix Q5_0 44.8, Unsloth Q8_0 48.8, UD-Q4_K_XL 52.6) with 11 ms of fixed time per
 # token. The K-/I-quant value is one number for Q4_K, Q5_K, Q6_K, IQ4_XS and IQ3_S together. Formats marked "guess"
@@ -24,8 +25,9 @@ T = {0: ('F32', 1, 4), 1: ('F16', 1, 2), 2: ('Q4_0', 32, 18), 3: ('Q4_1', 32, 20
 # 0.54 with Q8_0: Flint's many small expert matrices are decoded less efficiently.
 EFF = {'Q4_1': 0.38, 'Q8_0': 0.41, 'Q5_0': 0.30, 'Q4_K': 0.19, 'Q5_K': 0.19, 'Q6_K': 0.19, 'IQ4_XS': 0.19, 'IQ3_S': 0.19,
        'F32': 0.60, 'BF16': 0.50, 'F16': 0.50,
-       'Q4_0': 0.40, 'Q5_1': 0.29, 'IQ4_NL': 0.30, 'MXFP4': 0.30, 'NVFP4': 0.28}   # these five: guesses
-GUESSED = {'Q4_0', 'Q5_1', 'IQ4_NL', 'MXFP4', 'NVFP4', 'F32', 'BF16', 'F16'}
+       'Q4_0': 0.40, 'Q5_1': 0.29, 'IQ4_NL': 0.30, 'MXFP4': 0.30, 'NVFP4': 0.28,   # these five: guesses
+       'Q4_1_64': 0.34}   # guess: same time per weight as Q4_1 with llama.cpp's kernel, so 10 % less per byte
+GUESSED = {'Q4_0', 'Q5_1', 'IQ4_NL', 'MXFP4', 'NVFP4', 'F32', 'BF16', 'F16', 'Q4_1_64'}
 
 def header(path):
     f = open(path, 'rb')

@@ -114,8 +114,14 @@ Then measure it like any other quant: quality on the PC, speed on the rig.
 
 ## Traps found so far
 
-- **Q4_0 can break a model.** Q4_0 blocks have a scale but no offset. For Flint that pushed perplexity up 45 %; Q4_1,
-  which has an offset, was fine. Always measure.
+- **A format can break a model through a few tensors.** Plain Q4_0 pushed Flint's perplexity up 45 %, but the damage
+  came from seven tensors whose inputs carry a few huge activation channels; with those at Q8_0, Q4_0 scores +3.4 %.
+  Measure a whole-file failure tensor class by tensor class before blaming the format
+  ([research](research.md#rounding)).
+- **Flint's quality numbers have a noise floor.** Changing only the arithmetic (CPU against GPU, one GPU model against
+  another) moves Flint's output by KLD 0.06–0.09, because near-ties in its expert choice flip. Compare files scored on
+  the same build and hardware, and treat KLD differences of a few hundredths as noise
+  ([research](research.md#measuring-quality-on-flint-the-noise-floor)).
 - **Some formats need llama.cpp workarounds.** llama.cpp protects Flint's Q4_x/Q5_x expert down-projections from a
   16-bit overflow with an extra rescaling step that costs speed; with that step removed, a Q4_1 file produced
   nonsense (NaN). Formats such as Q8_0 and IQ4_NL don't need the step

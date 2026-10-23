@@ -1,0 +1,1 @@
+--output-tensor-type q8_0 --tensor-type blk\.(46|47|48)\.ffn_down_exps\.weight=q8_0 --tensor-type attn_(k|v)\.weight=q8_0 --tensor-type _shexp=q8_0 --tensor-type blk\.[01]\.ffn_(gate|up|down)\.weight=q8_0
