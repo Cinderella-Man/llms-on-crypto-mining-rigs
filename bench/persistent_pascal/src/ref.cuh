@@ -32,8 +32,8 @@ static void deq_row(const int type, const uint8_t * row, const int K, double * o
                 const double d = mb::half_bits_to_float(mb::rd_u16(b));
                 const uint32_t qh = (uint32_t) b[2] | ((uint32_t) b[3] << 8) | ((uint32_t) b[4] << 16) | ((uint32_t) b[5] << 24);
                 for (int j = 0; j < 16; ++j) {
-                    o[j]      = d * (((b[6 + j] & 15) | (((qh >> j) & 1) << 4)) - 16);
-                    o[j + 16] = d * (((b[6 + j] >> 4) | (((qh >> (j + 16)) & 1) << 4)) - 16);
+                    o[j]      = d * ((int) ((b[6 + j] & 15) | (((qh >> j) & 1) << 4)) - 16);
+                    o[j + 16] = d * ((int) ((b[6 + j] >> 4) | (((qh >> (j + 16)) & 1) << 4)) - 16);
                 }
             } break;
             case mb::T_Q4_0: {
@@ -56,6 +56,53 @@ static void deq_row(const int type, const uint8_t * row, const int K, double * o
                 exit(1);
         }
     }
+}
+
+// The dequantization above against mmvq_pascal's ref_dot (an independent implementation, checked against the same
+// kernels there), on random rows of K weights and random activations whose block sums are exact. Returns the worst
+// |difference| / sum of |terms|.
+static double ref_selftest(const int type, const int K, const uint64_t seed) {
+    uint64_t st = seed * 0x9E3779B97F4A7C15ull + 1;
+    auto rnd = [&]() { st = st * 6364136223846793005ull + 1442695040888963407ull; return (uint32_t) (st >> 33); };
+    const int bs = mb::type_bs(type);
+    std::vector<uint8_t> row((size_t) K / 32 * bs);
+    for (auto & b : row) b = (uint8_t) rnd();
+    for (int ib = 0; ib < K / 32; ++ib) {
+        uint8_t * b = row.data() + (size_t) ib * bs;
+        const uint16_t d = (uint16_t) (0x2000 | (rnd() & 0x3ff));  // FP16 in [2^-7, 2^-6)
+        b[0] = d & 0xff; b[1] = d >> 8;
+        if (type == mb::T_Q4_1) {
+            const uint16_t m = (uint16_t) (0xA400 | (rnd() & 0x3ff)); // negative minimum
+            b[2] = m & 0xff; b[3] = m >> 8;
+        }
+        if (type == mb::T_Q8_0) {
+            for (int j = 0; j < 32; ++j) if (b[2 + j] == 0x80) b[2 + j] = 0x81;
+        }
+    }
+    mb::act_host a;
+    a.K = K; a.nvec = 1;
+    a.q.resize(K); a.d.resize(K / 32); a.s.resize(K / 32);
+    std::vector<double> ad(K);
+    for (int ib = 0; ib < K / 32; ++ib) {
+        a.d[ib] = 0.01f + (rnd() & 0xff) * 1e-4f;
+        int sum = 0;
+        for (int j = 0; j < 32; ++j) {
+            a.q[32 * ib + j] = (int8_t) ((int) (rnd() % 255) - 127);
+            sum += a.q[32 * ib + j];
+            ad[32 * ib + j] = (double) a.d[ib] * a.q[32 * ib + j];
+        }
+        a.s[ib] = a.d[ib] * (float) sum;
+    }
+    std::vector<double> w(K);
+    deq_row(type, row.data(), K, w.data());
+    double mine = 0.0, absum = 0.0;
+    for (int k = 0; k < K; ++k) {
+        mine += w[k] * ad[k];
+        absum += fabs(w[k] * ad[k]);
+    }
+    double absum2 = 0.0;
+    const double theirs = mb::ref_dot(type, row.data(), a, 0, &absum2);
+    return fabs(mine - theirs) / std::max(absum, 1e-30);
 }
 
 // Q8_1 blocks as the activations the fork's kernels multiply with: d8 * q (the block sum is taken from the int8 values).
@@ -89,9 +136,13 @@ struct stage_stat {
     std::string name;
     double worst = 0.0;   // max err/tol
     long   n = 0, fails = 0, notes = 0;
-    void add(const double err, const double tol) {
+    int    at0 = -1, at1 = -1;      // where the worst one is (stage-specific: expert slot / block, row / value)
+    double got = 0.0, want = 0.0;   // and its values
+    void add(const double err, const double tol, const int a0 = -1, const int a1 = -1, const double g = 0.0, const double w = 0.0) {
         const double r = tol > 0 ? err / tol : (err > 0 ? INFINITY : 0.0);
-        worst = std::max(worst, r);
+        if (!(r <= worst)) {
+            worst = r; at0 = a0; at1 = a1; got = g; want = w;
+        }
         ++n;
         if (!(r <= 1.0)) ++fails;
     }
@@ -245,7 +296,7 @@ static void check_stages(check_report & rep, host_layer & L, const std::vector<f
                 s += t;
                 as += fabs(t);
             }
-            st.add(fabs(o.logits[r] - s), 1e-5 * as + 1e-30);
+            st.add(fabs(o.logits[r] - s), 1e-5 * as + 1e-30, r, -1, o.logits[r], s);
         }
     }
     // top-6: the same set as a double-precision sort of the GPU's logits (order and near-ties tolerated), and the
@@ -295,7 +346,7 @@ static void check_stages(check_report & rep, host_layer & L, const std::vector<f
                 const double u = dotd(L.up_e[id].data() + (size_t) r * H, ayq.data(), H, &au);
                 const double ref = u * silud(g);
                 const double tol = 1e-5 * (au * fabs(silud(g)) + 1.1 * ag * fabs(u)) + 1e-6 * fabs(ref) + 1e-30;
-                st.add(fabs(o.act[e * F + r] - ref), tol);
+                st.add(fabs(o.act[e * F + r] - ref), tol, e, r, o.act[e * F + r], ref);
             }
         }
     }
@@ -308,7 +359,7 @@ static void check_stages(check_report & rep, host_layer & L, const std::vector<f
             for (int r = 0; r < H; ++r) {
                 double as;
                 const double ref = dotd(L.down_e[id].data() + (size_t) r * F, a.data(), F, &as);
-                st.add(fabs(o.dexp[(size_t) e * H + r] - ref), 1e-5 * as + 1e-30);
+                st.add(fabs(o.dexp[(size_t) e * H + r] - ref), 1e-5 * as + 1e-30, e, r, o.dexp[(size_t) e * H + r], ref);
             }
         }
     }
@@ -321,7 +372,7 @@ static void check_stages(check_report & rep, host_layer & L, const std::vector<f
             const double u = dotd(L.up_sh.data() + (size_t) r * H, ayq.data(), H, &au);
             const double ref = u * silud(g);
             const double tol = 1e-5 * (au * fabs(silud(g)) + 1.1 * ag * fabs(u)) + 1e-6 * fabs(ref) + 1e-30;
-            st.add(fabs(o.sact[r] - ref), tol);
+            st.add(fabs(o.sact[r] - ref), tol, -1, r, o.sact[r], ref);
         }
     }
     check_quant(rep.get("quant shared"), o.sact.data(), o.sq.data(), FS);

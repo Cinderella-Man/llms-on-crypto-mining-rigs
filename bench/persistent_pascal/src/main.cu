@@ -251,6 +251,7 @@ struct options {
     int  variant = -1;           // persistent kernel variant to time (-1: both)
     bool check_only = false;
     bool no_check = false;
+    bool smoke = false;          // run the timing code path once, time nothing
     bool trace = true;
     const char * csv = nullptr;
 };
@@ -267,6 +268,7 @@ void usage() {
            "  --variant r1|r2    time only this persistent variant (default both; the checks always run both)\n"
            "  --check-only       correctness checks only\n"
            "  --no-check         skip the checks (timing only)\n"
+           "  --smoke            run the timing code path once without timing anything (a functional check of it)\n"
            "  --no-trace         skip the traced run of the persistent kernel\n"
            "  --csv FILE         write results as CSV\n");
 }
@@ -297,6 +299,8 @@ __global__ void k_read(const uint4 * __restrict__ p, size_t n, unsigned * out) {
 }
 
 // Capture `launch` once as a CUDA graph, launch it 3 times to warm up, then time `reps` launches (ms each).
+bool g_smoke = false;  // --smoke: launch each graph once, take no times
+
 std::vector<double> time_graph(const std::function<void(cudaStream_t)> & launch, int reps, cudaStream_t s) {
     cudaGraph_t g;
     cudaGraphExec_t ge;
@@ -304,6 +308,13 @@ std::vector<double> time_graph(const std::function<void(cudaStream_t)> & launch,
     launch(s);
     CUDA_CHECK(cudaStreamEndCapture(s, &g));
     CUDA_CHECK(cudaGraphInstantiate(&ge, g, 0));
+    if (g_smoke) {
+        CUDA_CHECK(cudaGraphLaunch(ge, s));
+        CUDA_CHECK(cudaStreamSynchronize(s));
+        CUDA_CHECK(cudaGraphExecDestroy(ge));
+        CUDA_CHECK(cudaGraphDestroy(g));
+        return std::vector<double>(std::max(1, reps), 1.0);
+    }
     for (int w = 0; w < 3; ++w) {
         CUDA_CHECK(cudaGraphLaunch(ge, s));
     }
@@ -364,6 +375,7 @@ int main(int argc, char ** argv) {
         }
         else if (a == "--check-only") opt.check_only = true;
         else if (a == "--no-check") opt.no_check = true;
+        else if (a == "--smoke") opt.smoke = true;
         else if (a == "--no-trace") opt.trace = false;
         else if (a == "--csv") opt.csv = next();
         else { usage(); return a == "--help" || a == "-h" ? 0 : 1; }
@@ -499,6 +511,19 @@ int main(int argc, char ** argv) {
     // ---- checks -----------------------------------------------------------------------------------------------------------
     if (!opt.no_check) {
         printf("\n== checks ==\n");
+        {
+            // the CPU reference's dequantization against mmvq_pascal's ref_dot, for every weight type the layer uses
+            const int types[] = { fmt.tgu, fmt.tdn, fmt.tsh };
+            double worst = 0.0;
+            for (int t : types) {
+                for (int k = 0; k < 8; ++k) worst = std::max(worst, ref_selftest(t, H, 1000 * t + k));
+            }
+            const bool ok = worst <= 1e-6;  // ref_dot rounds the block sums it is given to FP32
+            printf("CPU reference self-test (dequantization against mmvq_pascal's ref_dot): worst %.2g of the sum of |terms|: %s\n",
+                   worst, ok ? "PASS" : "FAIL");
+            csv_row("check", "ref_selftest_worst", worst, "ratio");
+            if (!ok) all_ok = false;
+        }
         check_report rep_base, rep_pers[NV];
         int bit_identical[NV] = {}, bit_total = 0;
         std::vector<std::string> diffs;
@@ -595,6 +620,9 @@ int main(int argc, char ** argv) {
             for (auto & st : rep.st) {
                 const std::string note = st.notes ? ", " + std::to_string(st.notes) + " at a rounding boundary or near-tie" : "";
                 printf("  %-20s %8.3f  (%ld values%s%s)\n", st.name.c_str(), st.worst, st.n, st.fails ? ", FAIL" : "", note.c_str());
+                if (st.fails && st.at1 >= 0) {
+                    printf("    worst at [%d][%d]: got %.9g, want %.9g\n", st.at0, st.at1, st.got, st.want);
+                }
                 csv_row("stage", title + ": " + st.name, st.worst, "err/tol");
             }
             if (!rep.ok()) all_ok = false;
@@ -669,6 +697,7 @@ int main(int argc, char ** argv) {
                 bb.out = xa.as<float>() + (size_t) (i + 1) * H;
                 op.baseline(sets[i % opt.sets].w, xa.as<float>() + (size_t) i * H, bb, s, 0x1fff);
             }
+            CUDA_CHECK(cudaStreamSynchronize(s));
             std::vector<float> oa((size_t) (L + 1) * H), ob2((size_t) (L + 1) * H);
             CUDA_CHECK(cudaMemcpy(oa.data(), xa.p, oa.size() * 4, cudaMemcpyDeviceToHost));
             double rms = 0.0;
@@ -694,12 +723,18 @@ int main(int argc, char ** argv) {
 
     // ---- timing -------------------------------------------------------------------------------------------------------------
     if (!opt.check_only) {
+        g_smoke = opt.smoke;
+        const bool show = !opt.smoke;  // print and record times
         printf("\n== timing ==\n");
+        if (opt.smoke) {
+            printf("smoke run: every graph below is captured and launched once; nothing is timed\n");
+        }
         const int L = opt.chain;
         dev_buf xs((size_t) (L + 1) * H * 4);
         gen_input(xs.as<float>(), 4321);
         CUDA_CHECK(cudaStreamSynchronize(s));
-        {
+        std::vector<float> chain_want((size_t) (L + 1) * H), chain_got((size_t) (L + 1) * H);
+        if (show) {
             const size_t nbytes = (size_t) 256 << 20;
             dev_buf rb(nbytes), ro(64);
             const int g = prop.multiProcessorCount * 16;
@@ -726,10 +761,13 @@ int main(int argc, char ** argv) {
         CUDA_CHECK(cudaMemset(sync, 0, N_SYNC * sizeof(unsigned)));
         printf("%d layers per CUDA graph, %d weight sets in turn, median of %d graph launches:\n", L, opt.sets, opt.reps);
         const std::vector<double> tb = time_graph(chain_base, opt.reps, s);
+        CUDA_CHECK(cudaMemcpy(chain_want.data(), xs.p, chain_want.size() * 4, cudaMemcpyDeviceToHost));
         const double ub = median(tb) * 1000.0 / L, ubmin = *std::min_element(tb.begin(), tb.end()) * 1000.0 / L;
-        printf("  %-34s %8.1f us per layer (min %.1f), %6.1f GB/s\n", "multi-launch (13 kernels)", ub, ubmin, lbytes / (ub * 1e3));
-        csv_row("timing", "multi_launch us_per_layer", ub, "us");
-        csv_row("timing", "multi_launch us_per_layer_min", ubmin, "us");
+        if (show) {
+            printf("  %-34s %8.1f us per layer (min %.1f), %6.1f GB/s\n", "multi-launch (13 kernels)", ub, ubmin, lbytes / (ub * 1e3));
+            csv_row("timing", "multi_launch us_per_layer", ub, "us");
+            csv_row("timing", "multi_launch us_per_layer_min", ubmin, "us");
+        }
         for (int v = 0; v < NV; ++v) {
             if ((opt.variant >= 0 && v != opt.variant) || occ[v] < 1) continue;
             auto chain_pk = [&](cudaStream_t st) {
@@ -746,6 +784,13 @@ int main(int argc, char ** argv) {
                 CUDA_CHECK(cudaMemset(sync, 0, N_SYNC * sizeof(unsigned)));
                 continue;
             }
+            // the timed graph's own outputs: every layer of the chain as the 13-launch graph left it
+            CUDA_CHECK(cudaMemcpy(chain_got.data(), xs.p, chain_got.size() * 4, cudaMemcpyDeviceToHost));
+            const bool same = bytes_equal(chain_got.data(), chain_want.data(), chain_got.size() * 4);
+            printf("  persistent %s graph of %d layers: outputs %s the 13-launch graph's\n", VARIANT_NAMES[v], L,
+                   same ? "identical to" : "DIFFERENT from");
+            if (!same) all_ok = false;
+            if (!show) continue;
             const double up = median(tp) * 1000.0 / L, upmin = *std::min_element(tp.begin(), tp.end()) * 1000.0 / L;
             char name[64];
             snprintf(name, sizeof name, "persistent %s (%d blocks)", VARIANT_NAMES[v], grid_of[v]);
@@ -770,10 +815,14 @@ int main(int argc, char ** argv) {
             };
             const double us = median(time_graph(one, std::max(5, opt.reps / 3), s)) * 1000.0 / L;
             sum += us;
-            printf("  %2d %-20s %7.1f\n", k + 1, STEP_NAMES[k], us);
-            csv_row("multi_launch_kernel", STEP_NAMES[k], us, "us");
+            if (show) {
+                printf("  %2d %-20s %7.1f\n", k + 1, STEP_NAMES[k], us);
+                csv_row("multi_launch_kernel", STEP_NAMES[k], us, "us");
+            }
         }
-        printf("     %-20s %7.1f (the whole layer in one graph: %.1f)\n", "sum", sum, ub);
+        if (show) {
+            printf("     %-20s %7.1f (the whole layer in one graph: %.1f)\n", "sum", sum, ub);
+        }
 
         // traced runs: where the persistent kernel's time goes
         for (int v = 0; v < NV && opt.trace; ++v) {
@@ -798,6 +847,17 @@ int main(int argc, char ** argv) {
                 }
             }
             for (auto & x : acc) x /= nt;
+            {
+                // every item counted once per launch, every event after the start
+                const int want_items[5] = { N_RT, N_SG, N_EG, N_SD, N_ED };
+                bool ok = true;
+                for (int c = 0; c < 5; ++c) ok &= acc[TR_CLASS + 4 * c + 3] == want_items[c];
+                const int events[] = { TR_PROLOGUE, TR_TOPK, TR_SACT, TR_EACT_FIRST, TR_EACT_LAST, TR_COMB_FIRST, TR_COMB_LAST, TR_EXIT };
+                for (int e : events) ok &= acc[e] >= 0.0 && acc[e] < 1e7;
+                printf("persistent %s, traced build: item counts and event order %s\n", VARIANT_NAMES[v], ok ? "consistent" : "WRONG");
+                if (!ok) all_ok = false;
+            }
+            if (!show) continue;
             printf("persistent %s, traced (%d single launches; us from the first block's start, %%globaltimer):\n", VARIANT_NAMES[v], nt);
             printf("  prologue (norm, quantization) done by %7.1f\n", acc[TR_PROLOGUE]);
             const char * cls[5] = { "router", "shared gate/up", "routed gate/up", "shared down", "routed down" };

@@ -262,13 +262,13 @@ static __global__ void k_moe_layer(const pk_args a) {
         float xq[NQ], mq[NQ];                // this lane's value of each, loaded before the reduction
 #pragma unroll
         for (int k = 0; k < NQ; ++k) {
-            xq[k] = a.x[(warp + k * PK_NW) * 32 + lane];
-            mq[k] = a.w.norm_w[(warp + k * PK_NW) * 32 + lane];
+            xq[k] = __ldg(a.x + (warp + k * PK_NW) * 32 + lane);
+            mq[k] = __ldg(a.w.norm_w + (warp + k * PK_NW) * 32 + lane);
         }
         const float4 * x4 = (const float4 *) a.x;
 #pragma unroll
         for (int v = 0; v < VPT; ++v) {
-            float tmp = rms_norm_partial(x4[tid + v * PK_THREADS]);
+            float tmp = rms_norm_partial(__ldg(x4 + tid + v * PK_THREADS));
             tmp = warp_reduce_sum(tmp);
             if (lane == 0) {
                 s_red[(tid + v * PK_THREADS) / 32] = tmp;
@@ -345,7 +345,7 @@ static __global__ void k_moe_layer(const pk_args a) {
             const float moe = moe_weighted_sum<KU>(v, w, a.expert_scale, 0);
             float result = __ldcg(&a.b.sd[r]);  // shared down product, then its fused add of the routed sum
             result += moe;
-            a.b.out[r] = op_add(result, a.x[r]);
+            a.b.out[r] = op_add(result, __ldg(a.x + r));
         }
         if constexpr (TRACE) {
             if (lane == 0) {
@@ -374,14 +374,14 @@ static __global__ void k_moe_layer(const pk_args a) {
                 const float2 * x2 = (const float2 *) a.x;
                 const float2 * m2 = (const float2 *) a.w.norm_w;
                 const auto xn2 = [&](const int c) {
-                    const float2 xi = x2[c];
-                    const float2 m  = m2[c];
+                    const float2 xi = __ldg(x2 + c);  // read-only during the kernel: cached in L1
+                    const float2 m  = __ldg(m2 + c);
                     return make_float2(rms_norm_apply1(scale, xi.x, m.x), rms_norm_apply1(scale, xi.y, m.y));
                 };
                 float s[8];
 #pragma unroll
                 for (int vw = 0; vw < 8; ++vw) {
-                    s[vw] = mmvf_partial<TR, H / 2>(xr, xn2, a.ncols / 2, vw * 32 + lane, 256);
+                    s[vw] = mmvf_partial<TR, H / 2, true>(xr, xn2, a.ncols / 2, vw * 32 + lane, 256);
                 }
 #pragma unroll
                 for (int vw = 0; vw < 8; ++vw) {

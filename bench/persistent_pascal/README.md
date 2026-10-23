@@ -54,9 +54,9 @@ number:
 | routed down | 1,536 | 8 rows of one expert, by row group: g0 e0..e5, g1 e0..e5, … | that expert's activations only |
 
 A warp takes the next item from a counter in global memory, and claims its following item before it works on the
-current one, so the atomic's latency hides behind the work. Every block first computes the RMS norm and the Q8_1
-quantization of the layer input into its own shared memory (the norm needs the whole vector, and doing it per block
-costs one 8 KB read instead of a dependency).
+current one, so the atomic's latency hides behind the work. Every block first computes the RMS norm of the layer
+input and its Q8_1 copy into its own shared memory (the norm needs the whole vector, and doing it per block costs one
+8 KB read instead of a dependency).
 
 **Dependencies are counters, not barriers.** There is no grid-wide barrier:
 - the warp that finishes the last router item computes the top-6 and publishes it; until then the shared expert's
@@ -82,7 +82,9 @@ the next launch.
 
 **Same arithmetic, bit for bit.** Every product, reduction, quantization and sum is the same device function the
 13-launch path calls ([src/fork_kernels.cuh](src/fork_kernels.cuh), copied from the fork), fed with the same values:
-- the norm runs 256 threads standing in for the norm kernel's 512, with the same warp and block reductions;
+- the norm runs 256 threads standing in for the norm kernel's 512, with the same warp and block reductions; the normed
+  values are not stored: the quantization and the router recompute each one from the input with the same two
+  multiplies;
 - a router row is one warp standing in for `mul_mat_vec_f`'s 256-thread block: eight partial sums per lane, then the
   same two butterfly reductions;
 - each expert row is computed by the fork's lane split (lanes per row, blocks per lane, staged loads, reduction order);
@@ -135,6 +137,7 @@ and shared memory per kernel; `build/sm61.sass` is the sm_61 disassembly. The bu
 ```
 bench/persistent_pascal/build/persistent_pascal --check-only --sets 2 --trials 3                        # native code
 CUDA_FORCE_PTX_JIT=1 bench/persistent_pascal/build/persistent_pascal --check-only --sets 2 --trials 3   # the Pascal code path, JIT-compiled from compute_61 PTX
+bench/persistent_pascal/build/persistent_pascal --no-check --smoke --sets 2 --chain 8                   # the timing code path, once, untimed
 ```
 
 Random weights in the layer's formats, random inputs; every check prints its own line and the program exits with
@@ -154,8 +157,26 @@ status 2 if any fails:
 - **Fault injection**: the top-6 is never published; every wait must time out, the host must detect it and fall back to
   the 13-launch path with the correct output, and the next launch must work again.
 - **Chains** of 16 layers, each fed the previous output: every layer's output identical between the paths.
+- **The CPU reference itself**: its dequantization of each weight type the layer uses against `mmvq_pascal`'s
+  `ref_dot` on random rows.
+- **The timing code path** (`--smoke`, and on every timing run): the 47-layer CUDA graphs of the persistent kernel must
+  leave every layer's output identical to the 13-launch graph's, and the traced build must count every work item once.
+  `--smoke` captures and launches each graph once and times nothing.
 
-RESULTS_CHECK
+**Results** on an RTX 3090, natively (sm_86) and through the compute_61 PTX (the P106's code path), for both formats,
+with two weight sets and three random inputs each:
+- Both variants are identical to the 13-launch path bit for bit in all 6 evaluations of every run, in every intermediate
+  and the output; the 16-layer chains are identical at every layer, and so are the CUDA graphs the timing captures
+  (`--smoke`, 8 layers).
+- Every grid size, from 1 block (8 warps) to 5,248 blocks (64 per SM, 41,984 warps), gives the same output, and the
+  counters are back at zero after each run.
+- Fault injection: the timeout is detected, the fallback output is correct, and the next launch is correct again.
+- Stage checks, worst error over tolerance (the same for both paths): router, top-6 and every product ≤ 0.004, norm
+  0.04, weighted sum and output ≤ 0.25, the Q8_1 quantizations ≤ 0.95 (the FP16 rounding of each block's scale).
+- The CPU reference's dequantization agrees with `mmvq_pascal`'s `ref_dot` to 2.6·10⁻⁹ of the sum of |terms|.
+- Against a double-precision layer with unquantized activations, the layer's update (output minus input) is off by
+  1.1–1.2 % (relative L2), the cost of 8-bit activations in both paths; the expert sets agree in every evaluation.
+- On the RTX 3090 the persistent kernel gets 2 blocks per SM (16 warps), a grid of 164 blocks for the 2,944 items.
 
 ## Running on the rig
 
@@ -190,8 +211,8 @@ and how many polls the waits took.
   gate/up 30, shared down 16, router ~10–15 µs) plus ~25–35 µs for the eight small kernels. If it comes out near the
   real token's ~245 µs instead, the bench reproduces the slowdown the fork's routed calls show in real tokens.
 - Persistent: the 23.07 MB at 140–155 GB/s plus a few µs of prologue and tail: **150–170 µs per layer**.
-- So a saving of ~25–40 µs per layer against the bench's own baseline, 1.15–1.25×, and of 75–95 µs against the real
-  token's layer, i.e. **1.2–4.5 ms per token** over 47 layers: 26.8 → 22.5–25.6 ms on six cards (+5 to +19 %).
+- So a saving of 20–40 µs per layer against the bench's own baseline (1.12–1.27×) and of 75–95 µs against the real
+  token's layer, i.e. **0.9–4.5 ms per token** over 47 layers: 26.8 → 22.3–25.9 ms on six cards (+4 to +20 %).
 
 **How it scales to a token.** Layer split runs the cards one after another, so a token's time is the sum over all its
 layers: the per-layer saving × 47 is the saving per token whatever the card count (six or nine cards only change how
@@ -217,7 +238,8 @@ limit.
 | `--grid N` | blocks of the persistent kernel (default: resident blocks per SM × SMs) |
 | `--variant r1\|r2` | time one persistent variant only (default both) |
 | `--check-only`, `--no-check`, `--no-trace` | skip timing, the checks, or the traced runs |
-| `--csv FILE` | results as CSV (`section,name,value,unit` per row) |
+| `--smoke` | run the timing code path once without timing anything |
+| `--csv FILE` | results as CSV (`device,code_arch,format,router,section,name,value,unit`) |
 
 ## Files
 

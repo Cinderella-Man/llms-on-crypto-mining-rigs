@@ -247,6 +247,38 @@ the last card samples on the GPU.
 top-6, fused Q5_0 gate/up + SwiGLU, Q8_0 down, shared expert, weighted sum) as one persistent kernel against the sum of
 the fork's kernels for the same layer, with 6 random experts out of 256 per call. Gate: ≥ 1.3×.
 
+**Prototype (2026-10-24): [bench/persistent_pascal](../../../bench/persistent_pascal/).** One MoE layer at one token as
+one launch, next to the same layer as the fork's 13 launches in the same binary, for S4-L0's formats and for G3's
+layers 9–45:
+- **Design.** 2,944 warp-sized work items, numbered so that every dependency points to an earlier item (router rows,
+  shared gate/up, routed gate/up expert by expert, shared down, routed down by 8-row group), taken from a counter in
+  global memory. Dependencies are counters, not barriers: the warp that finishes the last router item computes the
+  top-6; the warp that finishes an expert's last gate/up item quantizes that expert's activations, so each expert is a
+  team and its down projection starts without waiting for the other five; the warp that adds the seventh contribution
+  to an 8-row output group (six experts and the shared expert) writes those rows. The shared expert's gate/up fills
+  the wait for the top-6.
+- **No deadlock, no residency assumption.** With no grid barrier, the smallest unfinished item always has its inputs
+  and a warp working on it, so the kernel completes at any grid size, including more blocks than fit at once; it needs
+  no cooperative launch. A wait past a poll limit sets an error flag and the host falls back to the 13 launches.
+- **Same arithmetic.** Every reduction, quantization and product is the fork's device code with the same inputs and
+  order, so the output equals the 13-launch path's bit for bit, and a model would give the same logits.
+- **Resources on the P106.** 128 registers, 37 or 47 KB of shared memory per 256-thread block: 2 blocks (16 warps) per
+  SM, where the fork's product kernels run 20.
+- **Checked** on an RTX 3090 natively and through the compute_61 PTX, both formats: identical bit for bit to the
+  13-launch path in every intermediate and the output, at every grid size from 1 to 5,248 blocks, through chains of
+  16 layers and in the captured timing graphs; every stage within tolerance of a double-precision reference; a fault
+  injected into the top-6 is detected and the 13 launches take over with the correct output.
+- **Expected on one P106 (est.).** 150–170 µs per S4-L0 layer (23.07 MB at 140–155 GB/s plus a few µs of prologue and
+  tail), against ~190 µs for the bench's 13 launches and ~245 µs for the real token's layer (the fork's event profile,
+  overhead removed): 0.9–4.5 ms per token over 47 layers, +4 to +20 %. Against the bench's own 13 launches that is
+  1.12–1.27×, below the 1.3× gate; against the real token's layer it passes. The rig run settles which baseline the
+  bench reproduces; its trace shows where any remaining time goes (waits for the top-6 or an expert's activations, the
+  prologue, the tail). Commands: the bench's README, "Running on the rig".
+- **Next, if it passes.** Attention adds three layer-wide dependencies per layer (all 32 heads before the output
+  projection, all 2,048 residual rows before the FFN norm, and the same before the next layer's norm), each published
+  by the warp that completes it as the top-6 is here; per-KV-head attention items with rec's layout; and prefetching
+  the next phase's weight rows into L2 while a warp waits. Then one kernel per card per token.
+
 ## 3. Attention mask computed on the card
 
 **Mechanism.** Flint's masks are positional: causal for the 14 full-attention layers, causal plus a 513-token window for

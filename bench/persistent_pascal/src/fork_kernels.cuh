@@ -117,9 +117,9 @@ static __global__ void k_rms_norm_mul(const float * x, float * dst, const int nc
 
 // One thread's partial dot product of a weight row (T = half or float) with the F32 activations, which y2(col2) returns
 // as a float2: columns 2 * col2 and 2 * col2 + 1 for col2 = tid, tid + block_size, ... NC2 > 0 makes the column count a
-// compile-time constant (the persistent kernel), so the loop unrolls and its loads can be issued together; the
-// arithmetic is the same.
-template <typename T, int NC2 = 0, typename Y2>
+// compile-time constant (the persistent kernel), so the loop unrolls and its loads can be issued together, and
+// LDG reads the weights through the read-only path; the arithmetic is the same.
+template <typename T, int NC2 = 0, bool LDG = false, typename Y2>
 static __device__ __forceinline__ float mmvf_partial(const T * x, const Y2 & y2, const int ncols2_rt, const int tid, const int block_size) {
     const int ncols2 = NC2 > 0 ? NC2 : ncols2_rt;
     float sumf = 0.0f;
@@ -127,7 +127,7 @@ static __device__ __forceinline__ float mmvf_partial(const T * x, const Y2 & y2,
         const float2 * x2 = (const float2 *) x;
 #pragma unroll
         for (int col2 = tid; col2 < ncols2; col2 += block_size) {
-            const float2 tmpx = x2[col2];
+            const float2 tmpx = LDG ? __ldg(x2 + col2) : x2[col2];
             const float2 tmpy = y2(col2);
             sumf += tmpx.x*tmpy.x;
             sumf += tmpx.y*tmpy.y;
@@ -136,7 +136,7 @@ static __device__ __forceinline__ float mmvf_partial(const T * x, const Y2 & y2,
         const half2 * x2 = (const half2 *) x;
 #pragma unroll
         for (int col2 = tid; col2 < ncols2; col2 += block_size) {
-            const float2 tmpx = __half22float2(x2[col2]);
+            const float2 tmpx = __half22float2(LDG ? __ldg(x2 + col2) : x2[col2]);
             const float2 tmpy = y2(col2);
             sumf += tmpx.x*tmpy.x;
             sumf += tmpx.y*tmpy.y;
