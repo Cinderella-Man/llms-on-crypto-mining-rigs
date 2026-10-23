@@ -89,3 +89,44 @@ Act-order (columns by decreasing diag(H)) gives nothing here (0.00314 in both or
 **Recipe:** GPTQ with search scales, 1 % damping, column order, H from the model's own head inputs on ~250k tokens of
 wikitext-2 train plus ~80k tokens of the model's own outputs; `run.sh` with `GPTQ_ARGS="--scale search"` (pass
 `SEQS=` for the model's own outputs). The head shrinks from 0.327 to 0.211 GB, −0.116 GB per token.
+
+**In whole mixes** (same GPUs, same scoring): G3 0.1040 / 89.09 % / +2.87 % at 2.327 GB per token becomes 0.1063 /
+88.86 % / +2.73 % at 2.212 GB with the GPTQ head (+0.0024 KLD, as on F3), which is fewer bytes and lower KLD than H3
+(0.1150 / 88.46 % at 2.216 GB). The head was calibrated on F3's head inputs and reused unchanged for G3: the mixes
+differ only in their bodies, and a head calibrated on another text domain loses only ~0.001 (above).
+
+## Results: a screened head (2026-10-24)
+
+A screened head keeps the exact Q8_0 head in memory but reads it only for a few candidate rows: a cheaper copy of the
+head (the screen) ranks all 150,144 tokens, and exact logits are computed for the screen's top M. Greedy decoding
+needs the exact top token among the candidates; the makers' sampler (top-k 20, top-p 0.95, T 1.0) needs the exact top
+20, since it renormalizes over them. `screen_head.py` measures both on held-out head inputs (the 40 wikitext chunks
+and the 8 held-out transcripts, 40,527 rows; screens calibrated without them), with the exact head itself as a control
+screen, which scores 1 everywhere.
+
+| Screen | Screen bytes (share of Q8_0) | Full top-20 in top M: M = 64 / 128 / 256 / 512 / 1,024 | M needed, 99.9 % of rows | Sampled token in top 64 |
+|---|---|---|---|---|
+| GPTQ Q5_0 | 211 MB (64.7 %) | 99.998 / 100 / 100 / 100 / 100 % | 30 | 100 % |
+| **GPTQ Q4_0** | **173 MB (52.9 %)** | 99.980 / 99.993 / **100** / 100 / 100 % | 43 | 100 % |
+| Q4_0, round to nearest | 173 MB (52.9 %) | 97.76 / 99.59 / 99.93 / 99.985 / 99.995 % | 229 | 99.975 % |
+| Q4_1, round to nearest | 192 MB (58.8 %) | 99.10 / 99.84 / 99.97 / 99.995 / 100 % | 145 | 99.986 % |
+| rank 512 under H (Q8_0 factors) | 83 MB (25.3 %) | 9.2 / 26.1 / 47.4 / 67.1 / 81.5 % | > 4,096 | 95.7 % |
+| rank 256 under H (Q8_0 factors) | 41 MB (12.7 %) | 2.7 / 9.3 / 21.1 / 37.6 / 55.7 % | > 4,096 | 87.1 % |
+
+"Sampled token" is the probability that the token the makers' sampler draws is among the candidates. The exact top
+token is among the top 64 of every 4-bit screen on every row (Q4_1: all but one).
+
+- **A GPTQ Q4_0 screen with M = 256 is exact for the makers' sampler on all 40,527 rows**, and so is GPTQ Q5_0 from
+  M = 128. Reads per token: 173 MB + 256 rows × 2,176 bytes = 174 MB, 53 % of the Q8_0 head (−0.153 GB per token,
+  against −0.116 GB for the GPTQ Q5_0 head alone, which is not exact). Logits outside the candidates come from the
+  screen; the head-only KLD of that mix against the exact head is 0.0001 (Q4_0 GPTQ, M = 256), against 0.0029 for
+  the GPTQ Q5_0 head alone.
+- GPTQ is what makes 4 bits work as a screen: round-to-nearest Q4_0 misses the full top-20 on 0.07 % of rows at
+  M = 256 and still on 0.005 % at M = 1,024.
+- **Low-rank screens fail.** The head's H-weighted energy is 99.4 % in its top 64 directions, but that energy is the
+  few outlier input dimensions, which shift all logits alike; the directions that separate tokens are spread out.
+  Rank 512 (a quarter of the bytes) misses the full top-20 on 18.5 % of rows even at M = 1,024, and rank 64 finds the
+  exact top token in its top 64 on only 60 % of rows.
+- Costs not measured here: the screened head needs both copies in memory (+173 MB on the card holding the head) and
+  a top-M selection over 150,144 scores per token on the GPU. Whether that selection plus the gather of M rows costs
+  less than reading 0.153 GB (~1 ms at the fork's ~150 GB/s) has to be measured on the rig.
