@@ -1,61 +1,59 @@
-"""Send every pre-rendered prompt to llama-server's native /completion endpoint (greedy)
-and store the raw text. Resumable: tasks already in OUT are skipped.
+"""Send every pre-rendered prompt to llama-server's native /completion endpoint with the makers' sampling, K times,
+and store the raw text. Attempt n samples with seed n + --seed-offset, the same seed for every task and file, so
+two files' attempts share their random numbers. Resumable: (task, attempt) pairs already in OUT are skipped.
+Attempts run in order (all tasks of attempt 1 first), so a stopped run still holds whole attempts.
 
-usage: python run.py URL TASKS.jsonl OUT.jsonl [CONCURRENCY] [N_PREDICT]
+usage: python run.py URL TASKS.jsonl OUT.jsonl [--attempts 1-5] [--conc 8] [--n-predict 4096] [--cache-prompt]
+Writes OUT and OUT.manifest.json (server, build, sampling, task-list hash).
 """
+import argparse
 import json
-import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
-import requests
+from bfcl_common import complete, count_tokens, manifest, parse_attempts, server_props, sha256_of
 
-url, tasks_path, out_path = sys.argv[1], sys.argv[2], sys.argv[3]
-conc = int(sys.argv[4]) if len(sys.argv) > 4 else 2
-n_predict_max = int(sys.argv[5]) if len(sys.argv) > 5 else 4096
+ap = argparse.ArgumentParser()
+ap.add_argument("url")
+ap.add_argument("tasks")
+ap.add_argument("out")
+ap.add_argument("--attempts", default="1-5")
+ap.add_argument("--seed-offset", type=int, default=0)
+ap.add_argument("--conc", type=int, default=8, help="requests in flight; match llama-server's -np")
+ap.add_argument("--n-predict", type=int, default=4096)
+ap.add_argument("--cache-prompt", action="store_true", help="let the server reuse a slot's prompt cache")
+args = ap.parse_args()
 
-tasks = [json.loads(l) for l in open(tasks_path)]
+tasks = [json.loads(line) for line in open(args.tasks)]
+attempts = parse_attempts(args.attempts)
 done = set()
 try:
-    done = {json.loads(l)["id"] for l in open(out_path)}
+    done = {(r["id"], r["attempt"]) for r in map(json.loads, open(args.out))}
 except FileNotFoundError:
     pass
-todo = [t for t in tasks if t["id"] not in done]
+todo = [(t, a) for a in attempts for t in tasks if (t["id"], a) not in done]
 
-props = requests.get(f"{url}/props", timeout=30).json()
-slot_ctx = props["default_generation_settings"]["n_ctx"]
-print(f"slot n_ctx={slot_ctx}, todo={len(todo)}/{len(tasks)}", flush=True)
+slot_ctx = server_props(args.url)["n_ctx_slot"]
+json.dump(manifest(args.url, {"lane": "bfcl_single_turn", "tasks_sha256": sha256_of(
+    {"id": t["id"], "prompt": t["prompt"]} for t in tasks), "n_tasks": len(tasks), "attempts": attempts,
+    "seed_offset": args.seed_offset, "n_predict": args.n_predict, "cache_prompt": args.cache_prompt}),
+    open(args.out + ".manifest.json", "w"), indent=1)
+print(f"slot n_ctx={slot_ctx}, todo={len(todo)}/{len(tasks) * len(attempts)}", flush=True)
 
 lock = threading.Lock()
-out = open(out_path, "a")
+out = open(args.out, "a")
 
 
-def one(t):
-    toks = requests.post(f"{url}/tokenize", json={"content": t["prompt"]}, timeout=120).json()["tokens"]
-    n_prompt = len(toks)
-    n_predict = min(n_predict_max, slot_ctx - n_prompt - 8)
-    rec = {"id": t["id"], "category": t["category"], "n_prompt": n_prompt, "n_predict": n_predict}
+def one(item):
+    t, a = item
+    n_prompt = count_tokens(args.url, t["prompt"])
+    n_predict = min(args.n_predict, slot_ctx - n_prompt - 8)
+    rec = {"id": t["id"], "category": t["category"], "attempt": a, "seed": a + args.seed_offset,
+           "n_prompt": n_prompt, "n_predict": n_predict}
     if n_predict < 256:
         rec.update(error="prompt too long", content="")
     else:
-        r = requests.post(f"{url}/completion", json={
-            "prompt": t["prompt"],
-            "n_predict": n_predict,
-            "temperature": 0.0,
-            "cache_prompt": False,
-            "seed": 0,
-            "stream": False,
-        }, timeout=3600)
-        r.raise_for_status()
-        j = r.json()
-        rec.update(
-            content=j["content"],
-            tokens_predicted=j.get("tokens_predicted"),
-            tokens_evaluated=j.get("tokens_evaluated"),
-            stop_type=j.get("stop_type"),
-            stopping_word=j.get("stopping_word"),
-            truncated=j.get("truncated"),
-        )
+        rec.update(complete(args.url, t["prompt"], n_predict, rec["seed"], args.cache_prompt))
     with lock:
         out.write(json.dumps(rec, ensure_ascii=False) + "\n")
         out.flush()
@@ -63,9 +61,9 @@ def one(t):
 
 
 n = 0
-with ThreadPoolExecutor(conc) as ex:
+with ThreadPoolExecutor(args.conc) as ex:
     for rec in ex.map(one, todo):
         n += 1
-        if n % 25 == 0 or n == len(todo):
-            print(f"{n}/{len(todo)} {rec['id']} stop={rec.get('stop_type')}", flush=True)
-print("DONE", out_path, flush=True)
+        if n % 100 == 0 or n == len(todo):
+            print(f"{n}/{len(todo)} {rec['id']} attempt={rec['attempt']} stop={rec.get('stop_type')}", flush=True)
+print("DONE", args.out, flush=True)

@@ -1,22 +1,29 @@
-"""Shared pieces: BFCL v3 checker imports (from the bfcl-eval 3.0.0 wheel, unpacked),
-Flint chat-template rendering (same Jinja environment as HF transformers) and the
-Flint tool-call decoder.
+"""Shared pieces: BFCL v4 imports (from the bfcl-eval 2026.3.23 wheel, unpacked) and Flint's tool-call parser.
+Template rendering and the llama-server client with the makers' sampling are in ../flint_client.py.
+
+The parser follows the one in Recursive's own engine (rec, engine/src/rec_mlx/chat.py, parse_tool_call): a call is
+`<tool_call>NAME<arg_key>K</arg_key><arg_value>V</arg_value>...</tool_call>`, a value stays a raw string when the
+tool's schema accepts a string and is parsed as JSON otherwise (kept raw if that fails), and `null` becomes None only
+when the schema accepts null. Reasoning is the `<think>` block; calls inside it are not calls.
 
 Heavy modules that the checker never uses for Python categories are stubbed:
-- bfcl.constants.model_config (imports every API SDK): replaced by a mapping whose
-  entries all say underscore_to_dot=True, the setting BFCL uses for OpenAI-style FC
-  models (tool names have "." replaced by "_").
+- bfcl_eval.constants.model_config (imports every API SDK): replaced by a mapping whose entries all say
+  underscore_to_dot=True, the setting BFCL uses for OpenAI-style FC models (tool names have "." replaced by "_").
 - the Java/JavaScript tree-sitter parsers.
 """
-import os
-import ast
 import copy
 import json
+import os
 import re
 import sys
 import types
 
-BFCL_ROOT = os.environ.get("BFCL_ROOT", "/bfcl/pkgs/v3")  # the unpacked bfcl-eval==3.0.0 wheel
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import flint_client  # noqa: E402
+from flint_client import (SAMPLING, complete, count_tokens, make_template, parse_attempts,  # noqa: E402,F401
+                          server_props, sha256_of)
+
+BFCL_ROOT = os.environ.get("BFCL_ROOT", "/bfcl/pkgs/v4")  # the unpacked bfcl-eval==2026.3.23 wheel
 sys.path.insert(0, BFCL_ROOT)
 
 
@@ -29,122 +36,177 @@ class _Map(dict):
         return _Cfg()
 
 
-_m = types.ModuleType("bfcl.constants.model_config")
+_m = types.ModuleType("bfcl_eval.constants.model_config")
 _m.MODEL_CONFIG_MAPPING = _Map()
-sys.modules["bfcl.constants.model_config"] = _m
+sys.modules["bfcl_eval.constants.model_config"] = _m
 for _name, _fn in [
-    ("bfcl.model_handler.parser.java_parser", "parse_java_function_call"),
-    ("bfcl.model_handler.parser.js_parser", "parse_javascript_function_call"),
+    ("bfcl_eval.model_handler.parser.java_parser", "parse_java_function_call"),
+    ("bfcl_eval.model_handler.parser.js_parser", "parse_javascript_function_call"),
 ]:
     _mm = types.ModuleType(_name)
     setattr(_mm, _fn, None)
     sys.modules[_name] = _mm
 
-from bfcl.eval_checker.ast_eval.ast_checker import ast_checker  # noqa: E402
-from bfcl.model_handler.utils import (  # noqa: E402
-    convert_to_tool,
-    func_doc_language_specific_pre_processing,
+from bfcl_eval.constants.default_prompts import (  # noqa: E402
+    DEFAULT_USER_PROMPT_FOR_ADDITIONAL_FUNCTION_FC,
+    MAXIMUM_STEP_LIMIT,
 )
-from bfcl.constants.type_mappings import GORILLA_TO_OPENAPI  # noqa: E402
-from bfcl.model_handler.model_style import ModelStyle  # noqa: E402
-from bfcl.utils import is_function_calling_format_output, is_empty_output  # noqa: E402
+from bfcl_eval.constants.enums import Language, ModelStyle  # noqa: E402
+from bfcl_eval.constants.type_mappings import GORILLA_TO_OPENAPI  # noqa: E402
+from bfcl_eval.eval_checker.ast_eval.ast_checker import ast_checker  # noqa: E402
+from bfcl_eval.model_handler.utils import convert_to_function_call, convert_to_tool  # noqa: E402
+from bfcl_eval.utils import (  # noqa: E402
+    is_empty_output,
+    is_function_calling_format_output,
+    load_dataset_entry,
+    load_ground_truth_entry,
+)
 
-CATEGORIES = [
-    "simple",
+BFCL_VERSION = "bfcl-eval 2026.3.23"
+MODEL = "flint-FC"
+
+# BFCL v4's judge-free single-turn Python categories (3,491 tasks) and its multi-turn categories (800 tasks)
+SINGLE_TURN = [
+    "simple_python",
     "multiple",
     "parallel",
     "parallel_multiple",
+    "irrelevance",
     "live_simple",
     "live_multiple",
-    "irrelevance",
+    "live_parallel",
+    "live_parallel_multiple",
     "live_irrelevance",
+    "live_relevance",
 ]
-# Per-category counts inferred from terelabs' comparison.csv (their percentages are
-# multiples of 2, 2.5, 2.5, 2.5, 2.5, 2.5, 5, 5 and the counts must add up to 300).
-COUNTS = {
-    "simple": 50,
-    "multiple": 50,
-    "parallel": 40,
-    "parallel_multiple": 40,
-    "live_simple": 40,
-    "live_multiple": 40,
-    "irrelevance": 20,
-    "live_irrelevance": 20,
-}
+MULTI_TURN = ["multi_turn_base", "multi_turn_miss_func", "multi_turn_miss_param", "multi_turn_long_context"]
 
 
-def load_jsonl(path):
-    with open(path) as f:
-        return [json.loads(line) for line in f if line.strip()]
+def live_cluster(task_id):
+    """Live tasks are named <category>_<index>-<source>-<n>; tasks from one source share a cluster."""
+    m = re.match(r"(live_\w+?)_\d+-(\d+)-\d+$", task_id)
+    return f"{m.group(1)}-{m.group(2)}" if m else task_id
 
 
-# ---------------------------------------------------------------- chat template
-def make_template(template_str):
-    from jinja2.ext import loopcontrols
-    from jinja2.sandbox import ImmutableSandboxedEnvironment
-
-    def tojson(x, ensure_ascii=False, indent=None, separators=None, sort_keys=False):
-        return json.dumps(x, ensure_ascii=ensure_ascii, indent=indent,
-                          separators=separators, sort_keys=sort_keys)
-
-    def raise_exception(message):
-        raise RuntimeError(message)
-
-    # Same settings as transformers' _compile_jinja_template
-    env = ImmutableSandboxedEnvironment(trim_blocks=True, lstrip_blocks=True,
-                                        extensions=[loopcontrols])
-    env.filters["tojson"] = tojson
-    env.globals["raise_exception"] = raise_exception
-    return env.from_string(template_str)
+# ---------------------------------------------------------------- tools and parser
+def build_tools(functions):
+    """BFCL's tool list for an OpenAI chat-completions client (the language hint is already in the docs)."""
+    return convert_to_tool(copy.deepcopy(functions), GORILLA_TO_OPENAPI, ModelStyle.OPENAI_COMPLETIONS)
 
 
-def build_tools(functions, category):
-    """BFCL FC-mode tool list for an OpenAI-compatible client."""
-    fn = func_doc_language_specific_pre_processing(copy.deepcopy(functions), category)
-    return convert_to_tool(fn, GORILLA_TO_OPENAPI, ModelStyle.OpenAI)
+_CALL = re.compile(r"\s*([^<\s]+)\s*((?:<arg_key>.*?</arg_key>\s*<arg_value>.*?</arg_value>\s*)*)", re.S)
+_ARGUMENT = re.compile(r"<arg_key>(.*?)</arg_key>\s*<arg_value>(.*?)</arg_value>", re.S)
+_MARKERS = ("<tool_call>", "</tool_call>", "<arg_key>", "</arg_key>", "<arg_value>", "</arg_value>", "<think>",
+            "</think>", "<|")
 
 
-# ---------------------------------------------------------------- decoder
-_CALL_RE = re.compile(r"<tool_call>(.*?)(?:</tool_call>|$)", re.S)
-_ARG_RE = re.compile(r"<arg_key>(.*?)</arg_key>\s*<arg_value>(.*?)</arg_value>", re.S)
+def _accepts(schema, kind):
+    types_ = schema.get("type")
+    if types_ == kind or (isinstance(types_, list) and kind in types_):
+        return True
+    if kind == "string" and any(isinstance(value, str) for value in schema.get("enum", ())):
+        return True
+    return any(_accepts(option, kind) for key in ("anyOf", "oneOf") for option in schema.get(key, ()))
 
 
-def _convert(value, ptype):
-    v = value.strip()
-    if v == "null":  # the template writes None as null, whatever the declared type
-        return None
-    if ptype == "string":
-        return v
-    try:
-        return json.loads(v)
-    except Exception:
-        pass
-    try:
-        return ast.literal_eval(v)
-    except Exception:
-        return v
-
-
-def decode_flint(text, tools):
-    """Flint / GLM-4.5 style: <tool_call>name<arg_key>k</arg_key><arg_value>v</arg_value>...</tool_call>.
-    The template writes string values raw and everything else as JSON, so values whose
-    schema type is string are kept verbatim (except a bare null, which becomes None) and
-    the rest are parsed as JSON (then as a Python literal, then kept as a string)."""
-    if "</think>" in text:
-        text = text.split("</think>")[-1]
-    schema = {}
-    for t in tools:
+def _tool_properties(tools):
+    out = {}
+    for t in tools or ():
         f = t.get("function", t)
-        schema[f["name"]] = f.get("parameters", {}).get("properties", {})
-    calls = []
-    for m in _CALL_RE.finditer(text):
-        body = m.group(1)
-        i = body.find("<arg_key>")
-        name = (body if i < 0 else body[:i]).strip()
-        props = schema.get(name, {})
-        args = {}
-        for km in _ARG_RE.finditer(body):
-            k = km.group(1).strip()
-            args[k] = _convert(km.group(2), props.get(k, {}).get("type"))
-        calls.append({name: args})
-    return calls
+        out[f["name"]] = f.get("parameters", {}).get("properties", {})
+    return out
+
+
+def parse_tool_call(text, properties_by_name):
+    """rec's parse_tool_call: the text between <tool_call> and </tool_call>, typed by the tool's schema."""
+    call = _CALL.fullmatch(text)
+    if call is None:
+        raise ValueError(f"Malformed Flint tool call: {text!r}")
+    name = call[1]
+    properties = properties_by_name.get(name, {})
+    arguments = {}
+    for key, value in _ARGUMENT.findall(call[2]):
+        schema = properties.get(key, {})
+        if value == "null" and _accepts(schema, "null"):
+            value = None
+        elif not _accepts(schema, "string"):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError:
+                pass
+        arguments[key] = value
+    return {"name": name, "arguments": arguments}
+
+
+def split_output(text, tools):
+    """Split one generated assistant turn into reasoning, content and tool calls, and flag process failures.
+
+    The reasoning runs to the last </think>. rec's grammar allows a single </think>; without it Flint sometimes
+    closes its reasoning, thinks on and closes it again, and llama-server still finds the calls after it.
+
+    Returns a dict: reasoning, content, calls ([{name, arguments}]), and the flags
+    - malformed: a call that rec's parser rejects, a <tool_call> without </tool_call>, or a stray protocol marker
+      outside the reasoning (the decoder then fails, as BFCL counts an undecodable answer);
+    - think_open: the reasoning never closed (the turn ran out of tokens while thinking);
+    - extra_think_close: </think> written more than once;
+    - call_in_think: a <tool_call> inside the reasoning (it is not a call);
+    - unknown_function / unknown_arg: number of calls to a function that is not offered, and of argument names
+      that are not in the function's schema."""
+    reasoning, content = "", text
+    think_open = False
+    if "</think>" in text:
+        reasoning, content = text.rsplit("</think>", 1)
+        reasoning = reasoning.split("<think>", 1)[-1]
+    elif text.lstrip().startswith("<think>"):
+        reasoning, content, think_open = text.lstrip()[len("<think>"):], "", True
+    props = _tool_properties(tools)
+    calls, outside, malformed = [], [], False
+    rest = content
+    while "<tool_call>" in rest:
+        before, rest = rest.split("<tool_call>", 1)
+        outside.append(before)
+        body, sep, rest = rest.partition("</tool_call>")
+        if not sep:
+            malformed = True
+            break
+        try:
+            calls.append(parse_tool_call(body, props))
+        except ValueError:
+            malformed = True
+    outside.append(rest)
+    plain = "".join(outside)
+    if any(m in plain for m in _MARKERS):
+        malformed = True
+    return {
+        "reasoning": reasoning,
+        "content": content if malformed else plain,
+        "calls": calls,
+        "malformed": malformed,
+        "think_open": think_open,
+        "extra_think_close": "</think>" in reasoning,
+        "call_in_think": "<tool_call>" in reasoning,
+        "unknown_function": sum(c["name"] not in props for c in calls),
+        "unknown_arg": sum(k not in props.get(c["name"], {}) for c in calls if c["name"] in props
+                           for k in c["arguments"]),
+    }
+
+
+def decode_ast(parsed):
+    """BFCL's AST format [{name: {arg: value}}]; an undecodable answer raises, as a handler's decode_ast does."""
+    if parsed["malformed"]:
+        raise ValueError("malformed tool call")
+    return [{c["name"]: c["arguments"]} for c in parsed["calls"]]
+
+
+def assistant_message(parsed):
+    """The assistant turn as an OpenAI-style message, the way a client of rec's API sends it back: reasoning kept."""
+    msg = {"role": "assistant", "content": parsed["content"]}
+    if parsed["reasoning"]:
+        msg["reasoning_content"] = parsed["reasoning"]
+    if parsed["calls"] and not parsed["malformed"]:
+        msg["tool_calls"] = [{"type": "function", "function": c} for c in parsed["calls"]]
+    return msg
+
+
+def manifest(url, extra):
+    return flint_client.manifest(url, {"bfcl": BFCL_VERSION, **extra})

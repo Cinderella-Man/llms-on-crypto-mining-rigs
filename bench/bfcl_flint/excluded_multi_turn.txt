@@ -1,0 +1,3 @@
+# BFCL v4 multi-turn tasks left out of every run (multi_turn.py reads this file; --exclude '' keeps them).
+# 800 - 1 = 799 tasks remain. selftest replays all 800 and expects exactly these to fail.
+multi_turn_miss_func_49   the ground truth calls tail in turn 1; tail is held out until turn 3, so only a call to a function that is not offered passes

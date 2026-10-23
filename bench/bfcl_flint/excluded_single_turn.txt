@@ -1,0 +1,18 @@
+# BFCL v4 single-turn tasks that fail selftest.py (the ground truth replayed in Flint's format), left out of every
+# run: prepare.py --exclude excluded_single_turn.txt. 3,491 - 14 = 3,477 tasks remain.
+# Ground truth contradicts the function's own schema, so no answer can pass:
+live_simple_106-63-0      required parameter auto_loan_payment_start missing from the ground truth
+live_simple_112-68-0      required parameter acc_routing_start missing from the ground truth
+live_multiple_507-149-4   required parameter origin_airport missing from the ground truth
+live_multiple_964-207-0   ground truth uses question, the function requires statement
+live_multiple_862-181-3   ground truth uses journey_start_time, which the function does not have
+live_multiple_552-153-1   is_unisex is a string enum ("True"/"False"/"dontcare"); the ground truth wants boolean True
+live_multiple_731-167-2   in_unit_laundry is a string enum; the ground truth wants boolean True
+live_multiple_733-167-4   in_unit_laundry is a string enum; the ground truth wants boolean True
+live_multiple_735-167-6   in_unit_laundry is a string enum; the ground truth wants boolean True
+live_multiple_595-158-1   number_of_rooms is a string enum ("1"/"2"/"3"/"dontcare"); the ground truth wants integer 2
+live_multiple_596-158-2   number_of_rooms is a string enum; the ground truth wants integer 1
+# rec's parser cannot return the expected type:
+live_simple_71-35-0       metrics is an array with a string enum, so the value stays a raw string
+live_multiple_152-58-6    metrics is an array with a string enum, so the value stays a raw string
+live_multiple_1038-265-0  start_date is a string whose only accepted value is None; null stays the string "null"
