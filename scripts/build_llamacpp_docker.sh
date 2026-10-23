@@ -11,7 +11,9 @@
 #     CUDA 12.9 installation.
 #
 # Usage: scripts/build_llamacpp_docker.sh [git-ref] [--cuda-graphs-pascal]
-#   git-ref               llama.cpp branch, tag or commit (default: master)
+#   git-ref               llama.cpp branch, tag or commit (default: master); a branch of a fork as <remote>/<branch>,
+#                         e.g. fork/pascal-p106, once the fork is a remote of $WORK/src with an https fetch URL
+#                         (git -C ~/llama-builds/src remote add fork https://github.com/<you>/llama.cpp)
 #   --cuda-graphs-pascal  also apply llama.cpp PR #27721, which re-enables CUDA graphs on Pascal (compute 6.1)
 # Env PATCHES: extra patch files (paths relative to $WORK, applied with git apply), e.g. PATCHES=patches/x.diff
 #     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`)
@@ -34,11 +36,14 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TES
     [ -d /work/src/.git ] || git clone -q https://github.com/ggml-org/llama.cpp /work/src
     cd /work/src
     git config --global --add safe.directory /work/src
-    git fetch -q origin && git checkout -q --force "$REF" && git reset -q --hard
+    git fetch -q origin
+    case "$REF" in */*) git fetch -q "${REF%%/*}" ;; esac
+    git checkout -q --force "$REF" && git reset -q --hard
     git clean -qfdx
     [ "$REF" = master ] && git reset -q --hard origin/master
     sha=$(git rev-parse --short=9 HEAD)
     name=llama.cpp-$(date +%Y%m%d)-$sha
+    case "$REF" in */*) name=$name-${REF##*/} ;; esac
 
     if [ "$PATCH" = --cuda-graphs-pascal ]; then
         curl -sL https://patch-diff.githubusercontent.com/raw/ggml-org/llama.cpp/pull/27721.diff | git apply -v \
