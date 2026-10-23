@@ -102,11 +102,14 @@ def complete(url, prompt, n_predict, seed, cache_prompt):
 
 
 def manifest(url, extra):
-    """What a run needs to be reproducible; written next to the raw output."""
+    """What a run needs to be reproducible; written next to the raw output. Outside a git checkout the harness
+    commit is read from a COMMIT file next to this one (write it when copying the harness elsewhere)."""
+    here = os.path.dirname(os.path.abspath(__file__))
     try:
-        commit = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(__file__)), "rev-parse", "HEAD"],
-                                capture_output=True, text=True).stdout.strip()
+        commit = subprocess.run(["git", "-C", here, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     except OSError:
-        commit = None
+        commit = ""
+    if not commit and os.path.exists(os.path.join(here, "COMMIT")):
+        commit = open(os.path.join(here, "COMMIT")).read().strip()
     return {"date": datetime.datetime.now().isoformat(timespec="seconds"), "harness_commit": commit,
             "sampling": SAMPLING, "server": server_props(url), **extra}

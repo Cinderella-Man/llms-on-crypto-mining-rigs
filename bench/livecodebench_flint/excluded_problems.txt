@@ -1,0 +1,8 @@
+# LiveCodeBench problems left out of every run (prepare.py reads this file; --exclude '' keeps them).
+# 454 - 4 = 450 problems remain in the 2024-08-01 to 2025-04-30 window.
+# These accept any answer within an error tolerance, but LiveCodeBench's grader compares output lines as exact
+# decimals, so it grades the print format instead of the answer (correct answers printed with other digits fail):
+abc374_d   absolute or relative error up to 1e-6
+abc375_b   absolute or relative error up to 1e-6
+abc385_f   absolute or relative error up to 1e-9
+abc392_d   absolute or relative error up to 1e-8
