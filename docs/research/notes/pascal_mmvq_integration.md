@@ -20,13 +20,14 @@ Code references:
 - **Where.** One call in `ggml_cuda_mul_mat_vec_q`, after the activations are quantized and right before the stock
   kernel would be launched. Operator selection, fusion matching and the routing of expert (`MUL_MAT_ID`) products
   stay as they are. Any call the new kernel doesn't cover falls through to the stock kernel unchanged.
-- **Which types.** Q8_0, Q4_1, Q4_0 and Q5_0 are ported; Q4_1_64 (a fork-only type) is next.
+- **Which types.** Q8_0, Q4_1, Q4_0 and Q5_0 are ported; Q5_K and IQ4_XS (UD-Q4_K_XL's experts, kernels ready in the
+  benchmark) come next, then Q4_1_64 (a fork-only type).
   - The file at the quality bar reads 66 % of its bytes as Q8_0, so Q8_0 carries the largest share of the gain.
   - Q5_0 uses a cheaper way to apply its fifth bit (section 5).
 - **Measured gain.** llama-bench tg128 on 6 P106-090 cards, S4-L0, one binary with the kernels switched off and on:
-  **29.2 → 37.4 tok/s (+28 %)**; against the wide-rows build, the best before the port, 28.0 → 37.4 (+33 %). Prompt
-  processing is unchanged. Without Q5_0 the port gives 35.5. In the microbenchmark Q8_0 runs at 150 GB/s, 2.07× the
-  stock kernel.
+  **29.2 → 37.4 tok/s (+28 %)**; against the wide-rows build, the best before the port, 28.0 → 37.4 (+33 %). Unsloth's
+  Q8_0 on 9 cards: 26.9 → 35.9 (+33 %). Prompt processing is unchanged. In the microbenchmark Q8_0 runs at 150 GB/s,
+  2.07× the stock kernel.
 - **No repack needed.** Staged loads reach the speed that row-local or tensor-wide weight planes reach (Q8_0 17.1
   against 18.4 ms per Flint token in the microbenchmark), so the load-time repack of Q39 is no longer needed for decode
   speed.
@@ -451,10 +452,17 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
    and 50 fusion cases, Q4_0 29 and 42, Q4_1 30 and 42).
 5. **Output of a real model.** S4-L0 on 6 cards, 4 × 512 tokens of wikitext-2 evaluated one token per ubatch
    (`llama-perplexity -b 512 -ub 1`), so that every token goes through the one-token kernels; a plain perplexity run
-   uses the batched kernels and never reaches them. Against the stock kernels on the same binary: KLD 0.075, same top
-   token 92.1 %, perplexity 22.56 against 22.30. Flint's outputs move this much from rounding alone: the same file on
-   two GPU types differs by KLD 0.065 / 91.3 % ([experiments.md](../../../quants/experiments.md), Q21), because small
-   differences flip the 6th-ranked expert.
+   uses the batched kernels and never reaches them. The Pascal kernels differ from llama.cpp's kernel exactly as much
+   as two launch shapes of llama.cpp's kernel differ from each other, which is pure summation order:
+
+   | Pair | Mean KLD | Same top token | Perplexity |
+   |---|---|---|---|
+   | stock, 2 warps against stock, 4 warps | 0.067 | 92.9 % | 22.30 against 22.41 |
+   | Pascal kernels against stock, 4 warps | 0.062 | 92.8 % | 22.56 against 22.41 |
+   | Pascal kernels against stock, 2 warps | 0.075 | 92.1 % | 22.56 against 22.30 |
+
+   Flint's outputs move this much from rounding alone, because small differences flip the 6th-ranked expert; the same
+   file on two GPU types differs by KLD 0.065 / 91.3 % ([experiments.md](../../../quants/experiments.md), Q21).
 
 ## 10. Gain per token
 
@@ -497,10 +505,11 @@ the event overhead: the ported attention q by ~13 µs, the routed down-projectio
 ~33 µs, the output head by 11 %. The routed experts lose the most; their weights are spread over 285–370 MB per layer
 and card, against the benchmark's few copies.
 
-**Wall time against GPU time.** The kernels cut the profiled GPU time by 8.2 ms (Q8_0, Q4_1, Q4_0) and 3.3 ms more
-(Q5_0), but the token time by 6.1 and 1.4 ms. Either the unprofiled kernels gain less than the profiled ones, or the
-host's per-token work (graph build, CUDA-graph checks, six graph launches on a 2-core Celeron) now overlaps less with
-the GPU chain; experiment Q49 measures which.
+**Wall time against GPU time.** The kernels cut the profiled GPU time by 11.4 ms per token, but llama-bench's token
+time by 7.5 ms (Q49). The host is not the limit within a token: `GGML_CUDA_PROFILE_HOST` shows it launching all six
+cards' graphs within ~1.9 ms of the token's start, while each card computes for 4–8 ms. CUDA events themselves change
+the timing on these cards (even 12 per token slow S4-L0 from 37.4 to 23.4 tok/s), so event timings compare kernels
+with each other but don't give absolute token time; what the unprofiled run overlaps is still open.
 
 **What it changes for the file side.** With the Pascal kernels Q8_0, Q5_0 and Q4_1 decode at about the same bandwidth
 (150, 138 and 145 GB/s on the large shapes in the benchmark), so decode time follows bytes: Q8_0 costs 1.7× Q4_1 per
@@ -517,7 +526,7 @@ and the per-layer allocations of Q36 and Q45 redone with them.
 | 2 | Port as `mmvq-pascal.cu` for Q4_0, Q4_1 and Q8_0: decision point, force switch, `MUL_MAT` and one-token `MUL_MAT_ID` | `test-backend-ops` passes with the force switch, native and through the PTX JIT | done |
 | 3 | Fusions: gate + GLU, biases, `shared_up` | `MUL_MAT_VEC_FUSION`, `MUL_MAT_ID_FUSION`, `MUL_MAT_ID_SHARED`, `MUL_MAT_ADD` pass | done |
 | 4 | Tests at Flint's shapes, S4-L0's exported operations | all pass | done; bit-identity against the standalone kernels not checked (both pass the CPU references) |
-| 5 | Rig: `test-backend-ops` on a P106; tg128 for S4-L0 and other files; KLD against the stock kernels | S4-L0 ≥ 15 % faster than the wide-rows build at unchanged output | S4-L0 done: +33 % (37.4 against 28.0 tok/s); other files and the noise floor of the output check running |
+| 5 | Rig: `test-backend-ops` on a P106; tg128 for S4-L0 and other files; KLD against the stock kernels | S4-L0 ≥ 15 % faster than the wide-rows build at unchanged output | done: S4-L0 +33 % (37.4 against 28.0 tok/s), output within summation-order noise (section 9); other files in section 10 |
 | 6 | Q5_0 in the port | tests pass; S4-L0 tg128 measured again | done: 35.5 → 37.4 tok/s |
 | 7 | Q5_K and IQ4_XS in the port, from the benchmark's kernels (Q46) | tests pass; UD-Q4_K_XL measured | next |
 | 8 | Q4_1_64 in the port (fork only) | tests pass; makers' file in Q4_1_64 measured | |
@@ -557,8 +566,8 @@ speed of the plane layouts.
 - **The benchmark predicts the direction but not the exact size.** In the real token the ported calls take 13–35 µs
   longer than in the benchmark at the same shapes (section 10), and the wall time per token falls less than the GPU
   time (Q49). Kernel work should be judged on llama-bench, not on the benchmark alone.
-- **The host may now set the pace.** If the 2-core host's per-token work (graph build, CUDA-graph checks, six graph
-  launches) is close to the GPU chain, faster kernels gain less on the wall clock; experiment Q49 measures it.
+- **Profiling perturbs the token.** CUDA events slow these cards' tokens markedly (Q49), so kernel savings measured with
+  the event profilers overstate the wall-clock gain (11.4 ms GPU time for 7.5 ms on S4-L0).
 - **Register pressure.** Fused Q8_0 at R = 2 reached 254 registers with direct loads; the port uses R = 1 for fused
   Q8_0 and Q5_0. Staged shared memory (17 KB per block for Q8_0) limits a P106-090 SM to 5 such blocks.
 - **Fallback coverage.** Widths that don't split into whole chunks, unaligned views and more than one column keep the
