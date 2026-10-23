@@ -17,6 +17,8 @@
 #   --cuda-graphs-pascal  also apply llama.cpp PR #27721, which re-enables CUDA graphs on Pascal (compute 6.1)
 # Env PATCHES: extra patch files (paths relative to $WORK, applied with git apply), e.g. PATCHES=patches/x.diff
 #     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`)
+#     SCHED_COPIES=N: ggml scheduler input copies for pipeline parallelism (default 4); each copy holds the inputs of
+#     one ubatch, the attention mask included, so fewer copies leave room for a larger -ub at long context
 # Output: $WORK/llama.cpp-<date>-<sha>[-graphs61][-<patch>].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to
 # ~/llama-builds).
 # On the rig: tar xzf <tarball> -C /opt && /opt/<name>/bin/llama-server --list-devices
@@ -28,7 +30,7 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 WORK=${WORK:-$HOME/llama-builds}
 mkdir -p "$WORK/ccache"
 
-docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
     -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
@@ -51,6 +53,7 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TES
         grep -q "cc < GGML_CUDA_CC_DP4A) {" ggml/src/ggml-cuda/ggml-cuda.cu || { echo "patch failed"; exit 1; }
         name=$name-graphs61
     fi
+    [ -n "$SCHED_COPIES" ] && name=$name-sched$SCHED_COPIES
     for p in $PATCHES; do
         git apply -v "/work/$p"
         name=$name-$(basename "$p" .diff)
@@ -61,6 +64,7 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TES
         -DGGML_NATIVE=OFF -DGGML_SSE42=ON -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_AVX512=OFF \
         -DGGML_FMA=OFF -DGGML_F16C=OFF -DGGML_BMI2=OFF -DGGML_AVX_VNNI=OFF \
         -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=$([ "$TESTS" = 1 ] && echo ON || echo OFF) \
+        $([ -n "$SCHED_COPIES" ] && echo -DGGML_SCHED_MAX_COPIES=$SCHED_COPIES) \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
     cmake --build build -j "$(nproc)" --target llama-bench llama-server llama-cli llama-completion \
         llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) > /dev/null
