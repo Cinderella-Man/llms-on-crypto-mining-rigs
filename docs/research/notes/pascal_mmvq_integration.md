@@ -12,26 +12,26 @@ Code references:
 
 ## Summary
 
-- **What.** A second single-token matrix-vector kernel in the CUDA backend, used only on compute capability 6.1. It is
-  the benchmark's variant (c): lane groups sized to the row width, several rows per lane group sharing one load of the
-  activations, several weight blocks per lane with the widest loads their alignment allows, and pointer arithmetic
-  hoisted out of the loop. It reads the GGUF blocks as they are, so it needs no repacking.
-- **Where.** One decision in `ggml_cuda_mul_mat_vec_q` (`mmvq.cu:1455`), after the fusion arguments are checked and
-  before anything is launched. Operator selection, fusion matching and the routing of expert (`MUL_MAT_ID`) products
+- **What.** A second single-token matrix-vector kernel in the CUDA backend, used on compute capability 6.1
+  (`ggml/src/ggml-cuda/mmvq-pascal.cu` on the fork's `pascal-p106` branch). It is the benchmark's variant (f): lane
+  groups sized to the row width, several rows per lane group sharing one load of the activations, several weight
+  blocks per lane, pointer arithmetic hoisted out of the loop, and each lane group staging its rows' next segment
+  through shared memory with coalesced 128-bit loads. It reads the GGUF blocks as they are, so it needs no repacking.
+- **Where.** One call in `ggml_cuda_mul_mat_vec_q`, after the activations are quantized and right before the stock
+  kernel would be launched. Operator selection, fusion matching and the routing of expert (`MUL_MAT_ID`) products
   stay as they are. Any call the new kernel doesn't cover falls through to the stock kernel unchanged.
-- **Which types.** Q8_0 and Q4_1 first (Q4_0 comes with them), then Q5_0, then Q4_1_64.
+- **Which types.** Q8_0, Q4_1, Q4_0 and Q5_0 are ported; Q4_1_64 (a fork-only type) is next.
   - The file at the quality bar reads 66 % of its bytes as Q8_0, so Q8_0 carries the largest share of the gain.
-  - Q4_1 is the type the benchmark's kernel was developed and verified on.
-  - Q5_0 has no tuned kernel yet. It gets one in the benchmark first, built on a cheaper way to apply its fifth bit.
-  - Q4_1_64 is not an upstream type, so it stays in the fork.
-- **Expected gain.** On S4-L0 the best current build (2 warps per block, but llama.cpp's small-K shape for narrow rows)
-  runs at 28.0 tok/s in llama-bench; the standard build runs at 23.1.
-  - The port is expected to reach about **34–36 tok/s (+20–27 %)**, and about 29–30 tok/s in a real chat at 262k
-    context. Over a third of the gain needs the Q5_0 kernel.
-  - Separate weight planes (Q39, mostly for Q8_0) would add a projected 2.5–4 ms per token, to about 37–42 tok/s.
-- **Effort.** About 8 working days for Q38 including Q5_0, and 4–6 more for Q39.
+  - Q5_0 uses a cheaper way to apply its fifth bit (section 5).
+- **Measured gain.** llama-bench tg128 on 6 P106-090 cards, S4-L0, one binary with the kernels switched off and on:
+  **29.2 → 37.4 tok/s (+28 %)**; against the wide-rows build, the best before the port, 28.0 → 37.4 (+33 %). Prompt
+  processing is unchanged. Without Q5_0 the port gives 35.5. In the microbenchmark Q8_0 runs at 150 GB/s, 2.07× the
+  stock kernel.
+- **No repack needed.** Staged loads reach the speed that row-local or tensor-wide weight planes reach (Q8_0 17.1
+  against 18.4 ms per Flint token in the microbenchmark), so the load-time repack of Q39 is no longer needed for decode
+  speed.
 - **Upstream.** Four separate PRs: the launch shape, the Pascal kernel, one activation quantization per shared input,
-  and FP32 activation sums. The repack and Q4_1_64 stay in the fork.
+  and FP32 activation sums. Q4_1_64 stays in the fork.
 
 ## 1. Background
 
@@ -169,119 +169,106 @@ selected by `get_device_table_id` (device side `:106-122`, host side `:124-144`)
 
 ## 3. Where the compute-6.1 path hooks in
 
-**The decision point.** A new function, called in `ggml_cuda_mul_mat_vec_q` right after the fusion block (after
-`mmvq.cu:1538`), before the padding clear and the quantization:
+**The decision point.** One call in `ggml_cuda_mul_mat_vec_q`, after the activations are quantized to Q8_1 and right
+before `mul_mat_vec_q_switch_type`. It takes the same arguments (strides in blocks, the quantized activations, the
+device-side fusion arguments) and returns false for anything it doesn't cover:
 
 ```cpp
-if (ggml_cuda_mmvq_pascal_supported(src0, src1, ids, dst, fusion_local, cc)) {
-    ggml_cuda_mmvq_pascal(ctx, src0, src1, ids, dst, fusion_local);   // quantizes src1 itself, then launches
+if (ggml_cuda_mmvq_pascal(
+        src0->data, src0->type, src1_q8_1.get(), ids_d, fusion_local, dst_d, ne00, ne01, ncols_dst, s01,
+        ne02, nchannels_y, nchannels_dst, s02, stride_channel_y, stride_channel_dst, ne03, ne3, s03, s13, s3, stream)) {
     return;
 }
 ```
 
-Deciding here rather than inside `mul_mat_vec_q_switch_ncols_dst` has three advantages:
-- All tensors are still at hand (types, `nb[]` strides, data pointers), so alignment can be checked exactly.
-- The activation format can change later (FP32 sums, section 8) without touching the stock path.
-- One quantization per shared input (section 8) needs this point too.
+Placed here, the port reuses llama.cpp's quantization, its MUL_MAT/MUL_MAT_ID stride mapping and every fusion check,
+and the diff to `mmvq.cu` is an include and these five lines. A change of the activation format (FP32 sums, one
+quantization per shared input, section 8) moves the call above the quantization.
 
-**The predicate** (`ggml_cuda_mmvq_pascal_supported`) is true when all of these hold; otherwise the stock path runs as
-today:
+**What it takes.** The kernel runs a call when all of these hold; otherwise the stock path runs as before:
 - the device is compute 6.1, or the force switch below is set;
-- `src0->type` is one of the ported types;
+- the weight type is Q4_0, Q4_1, Q5_0 or Q8_0;
 - one destination column: `ne11 == 1` for `MUL_MAT`, `ne2 == 1` for `MUL_MAT_ID`;
-- `x_scale` and `gate_scale` are null;
-- the row width K splits into `C`-block chunks that the chosen lane-group size divides. This holds for every Flint and
-  Qwen3.6 width (512, 1024, 2048, 4096, 6144).
-- `src0->data`, `nb01`, `nb02` and `nb03` are multiples of the alignment the chosen `C` needs: 16 bytes for Q4_1 at
-  C = 4, 4 bytes for Q8_0 at C = 2, 8 bytes for Q5_0 at C = 4. Views with padded rows (`test-backend-ops` builds them
-  with `k_v`, `m_v`, `pad`) fail this check and fall back.
+- `x_scale` and `gate_scale` are null (they exist only for NVFP4);
+- the blocks per row split into `C`-block chunks; `lpr` is then the largest power of two up to 32 that divides the
+  chunks per row, so any row width works;
+- staged loads need 16-byte-aligned weights, rows, expert and sample strides and a staged segment (`lpr` chunks) that
+  is a multiple of 16 bytes; where that fails the same shape runs with direct loads, which need only the chunk's own
+  alignment; where that fails too (views with padded rows, as `test-backend-ops` builds with `k_v`, `m_v`, `pad`), the
+  stock kernel runs.
 
-**A parameter table id.** Add `MMVQ_PARAMETERS_PASCAL_DP4A` to `get_device_table_id` for compute 6.1, on the host side
-(`mmvq.cu:124-144`) and the device side (`:106-122`, `__CUDA_ARCH__ == 610`). The id is what PR #25479 introduces for the
-2-warp launch shape, so both changes share one switch. The 2-warp shape stays useful for the types the new kernel doesn't
-cover: UD-Q4_K_XL, which is K-quants and I-quants, gained 26–27 % from it. The repository's 2-warp patches
-([every width](../../../patches/mmvq-pascal-2warps.diff), [wide rows](../../../patches/mmvq-pascal-2warps-widek.diff))
-edit the generic table and only work in sm_61-only builds. A separate id fixes that.
+**The launch shape of the stock kernel.** The fork's wide-rows commit (2 warps per block where the small-K rule doesn't
+apply) edits llama.cpp's generic parameter table, which is right for an sm_61-only build and wrong for every other GPU.
+An upstream PR would add `MMVQ_PARAMETERS_PASCAL_DP4A` to `get_device_table_id` instead (host side and device side,
+`__CUDA_ARCH__ == 610`), the id PR #25479 introduces. The stock kernel still runs everything the new kernel doesn't
+cover, such as UD-Q4_K_XL's K- and I-quants, which gained 26–27 % from the 2-warp shape.
 
 **A switch for testing.** `GGML_CUDA_MMVQ_PASCAL` = `0` (off), `1` (default: compute 6.1 only) or `2` (any NVIDIA GPU).
 With `2`, a modern GPU runs the Pascal kernel natively and, with `CUDA_FORCE_PTX_JIT=1`, from the compute_61 PTX. That
-tests correctness without the rig. The new kernel's template parameters (warps per block, R, C) must not depend on
-`__CUDA_ARCH__`, so the host and the device always agree on the block size, including under the PTX JIT.
+tests correctness without the rig, and `0` gives the stock kernels on the same binary for speed comparisons. The
+kernel's template parameters (warps per block, R, C) don't depend on `__CUDA_ARCH__`, so the host and the device always
+agree on the block size, including under the PTX JIT.
 
-**New files.** `mmvq-pascal.cuh` and `mmvq-pascal.cu` hold the kernel and its launcher. The diff to `mmvq.cu` is the
-predicate call, the table id and the factored-out epilogue (section 6), about 40 lines.
+**Files.** `mmvq-pascal.cuh` and `mmvq-pascal.cu` hold the kernel and its launcher. HIP and MUSA builds compile a stub
+that returns false.
 
 ## 4. The kernel inside llama.cpp
 
-**Signature.** `mul_mat_vec_q_pascal<type, R, C, gate, has_fusion>` takes the same arguments as `mul_mat_vec_q`
-(`mmvq.cu:623-629`): weights, Q8_1 activations, ids, fusion struct, destination, and the row, column, channel and sample
-strides with their fastdiv ratios. It adds `lpr_log2` and `niter`. Strides arrive in blocks, as in the stock kernel. The
-launcher converts them to bytes once per call (row bytes = `stride_row_x * sizeof(block)`, the expert stride likewise).
-`gate` is a template parameter, unlike in the stock kernel, where `use_gate` is checked at run time: the gate doubles
-the weight registers, so the compiler must know. Warps per block are fixed at 4, as in the benchmark (`main.cu:21`).
+**Signature.** `mul_mat_vec_q_pascal<type, R, C, staged, fusion>` takes one argument struct (byte strides for the
+weights and activations, float strides for the destination, the fastdiv ratios of the stock kernel, `lpr_log2` and
+`niter`) and the device-side fusion struct. `fusion` is plain, bias only, or gate + GLU: the gate doubles the weight
+loads and accumulators, so the compiler must know. Warps per block are fixed at 4.
 
-**Prologue.** Copied from `mmvq.cu:650-667`:
+**Prologue.** The same as `mul_mat_vec_q`'s:
 - the shared-expert slice (`blockIdx.y == gridDim.y - 1` with `shared_up`);
 - the expert from `ids[channel_dst]`;
 - the activation channel `channel_dst % nchannels_y`;
-- samples through `sample_ratio`.
+- channels and samples through `channel_ratio` and `sample_ratio`.
 
-This is the only place the expert path differs from a dense product. The benchmark's kernel already reads
-`ids[blockIdx.y]` and a per-channel activation stride (`pascal_mmvq.cuh:206-219`).
+**Main loop and reduction.** Per iteration, each lane group copies the segment its lanes are about to read (lpr chunks
+of C blocks per row, contiguous in memory) into its own part of shared memory with 128-bit loads, `__syncwarp()`, and
+each lane reads its C blocks from there. Only lanes of one warp share a segment, so no `__syncthreads` is needed. Row
+pointers are clamped to the last row, so lane groups at the end of the matrix don't branch; only the store is guarded.
+The reduction uses warp shuffles inside the lane group.
 
-**Main loop and reduction.** Taken unchanged from `mmvq_rows` (`pascal_mmvq.cuh:231-268`). Row pointers are clamped to
-the last row (`:213`), so blocks at the end of the matrix don't branch. Only the store is guarded (`:273`).
+**Epilogue.** The stock kernel's result handling (bias, gate bias, SWIGLU, GEGLU, SWIGLU_OAI, SWIGLU_CLAMP) is repeated
+in the new file, from lane `i` of each lane group after the reduction. Keeping a copy rather than factoring it out of
+`mul_mat_vec_q` leaves the stock kernel's code untouched.
 
-**Epilogue.** The stock kernel's result handling (`mmvq.cu:831-864`: bias, gate bias, the four GLU ops) moves into a
-`__device__` function that both kernels call. The Pascal kernel calls it from lane `i` of each lane group after the
-shuffle reduction. The stock kernel calls it where it does today.
+**Launch parameters.** Measured best per type at Flint's shapes (GB/s on the P106-090 in brackets, from the
+microbenchmark's variant (f)):
 
-**Launch parameters.** Chosen per type and per fused/unfused from the measured best per shape (GB/s on the P106-090 in
-brackets). `lpr` is the largest power of two up to 32 that divides the chunks per row.
+| Type | Unfused | Fused gate/up |
+|---|---|---|
+| Q8_0 | R = 2, C = 2 (113–165) | R = 1, C = 2 (151–160) |
+| Q4_0 | R = 2, C = 2 (89–142) | R = 2, C = 2 (132–145) |
+| Q4_1 | R = 2, C = 4 (100–159) | R = 2, C = 2 (140–150) |
+| Q5_0 | R = 2, C = 2 (98–144) | R = 1, C = 2 (130–138) |
 
-| Type | Unfused | Fused gate/up | Where the simple rule loses |
-|---|---|---|---|
-| Q4_1 | R = 2, C = 4 (101–159) | R = 2, C = 4 (107–126) | nowhere: the fastest (c) variant on every shape |
-| Q8_0 | R = 2, C = 2 (91–128); R = 4 for N ≤ 512 (85) | R = 1, C = 2 (108–118) | fused at R = 2 needs 254 registers and drops to 86–90 GB/s |
-| Q4_0 | R = 2, C = 4 at K = 2048 with N > 512 (109–132); R = 4, C = 2 otherwise (84–106) | R = 2, C = 4 (97–114) | moe_down: R = 1, C = 2 is 5 % faster |
-| Q4_1_64 | R = 2, C = 4 (72–160) | R = 1, C = 2 (123–137) | attn_kv: R = 4, C = 2 is 9 % faster |
-| Q5_0 | to be measured (section 5) | to be measured | — |
+Staged shared memory per block is 4 warps × 32 lanes × R × C × block bytes (twice with the gate): 17 KB for Q8_0.
 
-The lane groups make the small-K rule unnecessary. At K = 512, Q4_1 with C = 4 has 4 chunks per row, so `lpr` = 4, and
-each warp computes 16 rows with every lane busy. The expert down-projection reaches 139 GB/s this way, against 57 for the
+The lane groups make the small-K rule unnecessary. At K = 512, Q8_0 with C = 2 has 8 chunks per row, so `lpr` = 8, and
+each warp computes 8 rows with every lane busy. The expert down-projection reaches 142 GB/s this way, against 81 for the
 stock kernel's small-K shape.
 
 **Constraints that carry over.**
 - The kernel runs inside CUDA graphs like the stock one: no host synchronization, and the activation buffer comes from
   the pool.
-- `ggml_cuda_pdl_sync` is a no-op before Hopper and can be called for uniformity.
-- Register counts in the benchmark range from 40 to 164 (Q4_1 fused at R = 2, C = 4: 164 registers, 3 blocks per SM),
-  and the table above already reflects them.
+- `ggml_cuda_pdl_sync` is a no-op before Hopper and is called for uniformity.
 
 ## 5. Which types, in which order
 
-Matrix-vector time per S4-L0 token by format, from section 10's table:
+S4-L0 reads 65.8 % of its bytes as Q8_0, 18.6 % as Q5_0 (the routed experts' gate/up) and 15.6 % as Q4_1. The port
+took them in this order:
 
-| Format | Share of bytes | Stock kernel | Wide rows | Ported (c) | Saved against wide rows |
-|---|---|---|---|---|---|
-| Q8_0 | 65.8 % | 19.9 ms | 16.3 ms | 13.5 ms | 2.7 ms |
-| Q5_0 | 18.6 % | ~7.1 ms (estimated) | ~6.0 ms (estimated) | ~3.8 ms (estimated) | ~2.2 ms |
-| Q4_1 | 15.6 % | 4.6 ms | 3.4 ms | 2.4 ms | 1.0 ms |
-
-The wide-rows build, the current best, already has the launch-shape part of the gain. The last column is what the port
-adds on top of it.
-
-1. **Q8_0 and Q4_1 together, with Q4_0.** The benchmark's kernel already implements all three, so porting them is one
-   piece of work.
-   - Q8_0 saves the most on the quality-bar file, with Q5_0 close behind.
-   - Q4_1 is the bring-up type: the benchmark was built around it, and the makers' Flint file is all Q4_1, a second
-     end-to-end check. That file saves 8.5 ms per token.
-   - Q4_0 is the base type of the Qwen3.6 mixes ([recipes](../../../quants/recipes/README.md)) and gains 1.93×.
-2. **Q5_0** is the second-largest share of S4-L0, but no tuned Q5_0 kernel exists. It is built and measured in the
-   benchmark first (step 1 of section 11), then ported.
+1. **Q8_0, Q4_1 and Q4_0 together.** One kernel template covers all three. Q8_0 saves the most on the quality-bar file;
+   Q4_1 is the makers' Flint file and attention q in S4-L0; Q4_0 is the base type of the Qwen3.6 mixes
+   ([recipes](../../../quants/recipes/README.md)). On S4-L0 these three took tg128 from 29.2 to 35.5 tok/s.
+2. **Q5_0**, with the fifth-bit dot product below, first in the benchmark (2.28× the stock kernel staged), then in the
+   port: 35.5 → 37.4 tok/s.
 3. **Q4_1_64** is this project's own type ([patch](../../../patches/q4_1_64-type.diff)). It holds the makers' group-64
-   weights exactly and reaches the highest speed (2.10×), but upstream llama.cpp doesn't have it. It is a 0.5-day
-   addition to the fork.
+   weights exactly and is the fastest type in the benchmark (2.10× with planes), but upstream llama.cpp doesn't have it,
+   so it stays in the fork.
 
 **A cheaper Q5_0 dot product.**
 - The obstacle: a Q5_0 block is `half d`, 4 bytes `qh` with the fifth bit of each of the 32 weights, then 16 bytes of
@@ -297,11 +284,11 @@ adds on top of it.
   - With the 0x0F/0xF0 nibble masks of `q4_isum16`, the block's integer sum in the ×16 domain is
     `(lo << 4) + hi + (hsum << 8)`. Its magnitude stays below 2.1 M.
   - The result is `d * (isum16 * d8/16 - 16 * s8)`, like Q4_0's `-8 * s8` (`pascal_mmvq.cuh:146-149`).
-- The estimate: about 50 instructions per 32 weights per row (2.4 per byte, against 8.7 today), so the kernel should be
-  limited by bandwidth like Q4_1's.
+- About 50 instructions per 32 weights per row (2.4 per byte, against 8.7 for llama.cpp's), so the kernel is limited by
+  loads like Q4_1's: in the benchmark it reaches 117 GB/s on the expert gate/up shape with direct loads and 138 staged,
+  against 53 for the stock kernel.
 - It needs whole blocks per lane. The stock kernel's half-block split (`vdr` = 2) can't form these byte groups, so the
   trick belongs to the Pascal kernel.
-- The load: C = 4 gives 88-byte chunks read with eleven 64-bit loads.
 
 ## 6. Keeping the fusions and the expert path
 
@@ -311,7 +298,7 @@ keeps working throughout the work, at stock speed until the Pascal kernel covers
 
 | Fusion or path | How the Pascal kernel keeps it |
 |---|---|
-| gate + up + GLU (`gate`, `glu_op`, `glu_limit`) | `gate = true` instantiation: the gate rows load next to the up rows and share the activation registers, as in the benchmark (`pascal_mmvq.cuh:233-252`); the shared epilogue applies SWIGLU, GEGLU, SWIGLU_OAI or SWIGLU_CLAMP |
+| gate + up + GLU (`gate`, `glu_op`, `glu_limit`) | gate instantiation: the gate rows load next to the up rows and share the activation registers; the epilogue applies SWIGLU, GEGLU, SWIGLU_OAI or SWIGLU_CLAMP as `mul_mat_vec_q` does |
 | biases (`x_bias`, `gate_bias`, also `ADD_ID` for experts) | read per row in the epilogue, with `channel_bias = ids ? channel_x : channel_dst` as at `mmvq.cu:708` |
 | routed + shared gate/up (`shared_up`) | the launcher adds one `blockIdx.y` slice, and the prologue swaps in the shared weights, output and column stride, as at `mmvq.cu:650-656`. `nrows` is the same for both, by the assertions at `mmvq.cu:1491-1506` |
 | per-lane scales (`x_scale`, `gate_scale`) | NVFP4 only; the predicate refuses them |
@@ -320,14 +307,21 @@ keeps working throughout the work, at stock speed until the Pascal kernel covers
 | `MUL_MAT`, 2–8 columns (speculative decoding) | unchanged in Q38; the lane-group design extends to several columns later |
 | `GGML_CUDA_DISABLE_FUSION=1` | still turns fusion off (`ggml-cuda.cu:172`); unfused calls take the Pascal path one by one |
 
+In Flint's real graph, llama.cpp fuses the routed experts' gate/up and the first dense layer, but not the shared
+expert's gate/up or the second dense layer: the profile (section 10) shows them as two matrix products and a separate
+SWIGLU. The fusion matcher needs gate, up and GLU as adjacent nodes, which they are not there. Fusing them would save 47
+launches, activation quantizations and SWIGLU kernels per token.
+
 ## 7. Separate planes and load-time repacking
 
-**Q38 needs no repacking.** Variant (c) reads the GGUF block layout as it is.
+**Decode speed needs no repacking.** The plane layouts of variants (d) and (e) give every lane 128-bit loads, which
+is what held Q8_0 back in (c): its 34-byte blocks are only 2-byte aligned, so direct loads are 32 bits wide and strided.
+Staging the unchanged blocks through shared memory (f) gets the same coalesced loads and is as fast or faster: Q8_0
+17.1 ms per Flint token staged, 18.4 with row-local planes, 23.2 with direct loads. Q39 is therefore not needed for the
+matrix-vector kernels. The design below stays the reference for a repack, should another reader ever need planes.
 
-**The plane layout of variant (d) does.** A GGUF stores blocks of interleaved scales and codes, and a new GGUF type is
-not an option: it would break every other backend and tool. The planes therefore have to be produced in GPU memory after
-loading. That repack is experiment Q39. For S4-L0 it matters mainly for Q8_0: Q8_0 has the cheapest arithmetic of all
-types (8 `dp4a` per 32 weights, no unpacking), and only its 34-byte alignment keeps (c) at 106 GB/s on average.
+**The plane layout itself.** A GGUF stores blocks of interleaved scales and codes, and a new GGUF type is not an option:
+it would break every other backend and tool. Planes would have to be produced in GPU memory after loading.
 
 ### How llama.cpp's SYCL backend does it
 
@@ -428,125 +422,110 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
 
 1. **Existing cases**, on any NVIDIA GPU with the force switch, natively and through the compute_61 PTX:
    ```bash
-   GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 -o MUL_MAT,MUL_MAT_ID,MUL_MAT_ID_FUSION,MUL_MAT_ID_SHARED,MUL_MAT_VEC_FUSION,MUL_MAT_ADD
+   GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 -o MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_FUSION,MUL_MAT_ID_SHARED,MUL_MAT_ADD
    ```
    ```bash
-   CUDA_FORCE_PTX_JIT=1 GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 -o MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION
+   CUDA_FORCE_PTX_JIT=1 GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 -o MUL_MAT,MUL_MAT_ID,MUL_MAT_ADD -p 'type_a=(q8_0|q4_0|q4_1|q5_0),.*,n=1,'
    ```
-   - `-p 'type_a=q8_0'` narrows to one type. `MUL_MAT_VEC_FUSION` (`:7743`) covers gate/GLU/bias for `MUL_MAT` and
-     `MUL_MAT_ID` with batch dimensions. `MUL_MAT_ID_SHARED` (`:5810-5841`) covers the routed + shared launch.
-   - The existing cases are small (16–32 rows, K = 256), so they mostly test the edges: tails, fallbacks and views.
-2. **Cases at Flint's shapes**, added to `make_test_cases_eval`, for Q4_0, Q4_1, Q5_0 and Q8_0:
-   - `test_mul_mat` with (rows, K) = (4096, 2048), (512, 2048), (2048, 4096), (2048, 1024), (6144, 2048),
-     (2048, 6144), and an odd row count such as (4097, 2048);
-   - `test_mul_mat_id` with 32 experts, 6 used, 512 × 2048 with a broadcast input and 2048 × 512 with one input per
-     expert;
-   - `test_mul_mat_vec_fusion` with `use_id` at 512 × 2048.
-3. **The model's own operations.** `test-export-graph-ops` (`tests/test-export-graph-ops.cpp:128`) loads a GGUF on the
-   CPU and writes every distinct operation of its prompt and generation graphs, with real shapes and types. Fused
-   patterns are not single operations, so items 1 and 2 cover them.
+   - On an RTX 5070 Laptop GPU all 4,899 cases pass natively, with the kernels forced on and off.
+   - Through the PTX JIT the full list can't run: llama.cpp's own batched kernels (an MXFP4 MMQ case, a multi-token
+     MoE case) fail under the JIT with the Pascal kernels switched off too. The one-token cases of the ported types
+     (`-p` above, and `-p 'type=(q8_0|q4_0|q4_1|q5_0),.*m=1,'` for the fusion tests) all pass.
+   - A deliberately wrong kernel (results × 1.1, or Q5_0's fifth bits weighted 8 instead of 16) fails 223 cases across
+     `MUL_MAT`, `MUL_MAT_ID`, the GLU fusions and the routed + shared expert launch, so the tests reach the kernel.
+2. **Cases at Flint's shapes**, added to `make_test_cases_eval` for Q4_0, Q4_1, Q5_0 and Q8_0: `test_mul_mat` at
+   (rows, K) = (4096, 2048), (512, 2048), (2048, 4096), (2048, 1024), (6144, 2048), (2048, 6144), (4097, 2048);
+   `test_mul_mat_id` with 32 experts, 6 used, 512 × 2048 with a broadcast input and 2048 × 512 with one input per
+   expert; `test_mul_mat_vec_fusion` at 512 × 2048 with ids and 1024 × 2048 without. They pass natively and through
+   the PTX JIT.
+3. **The model's own operations.** `test-export-graph-ops` reads only a GGUF's metadata, so a sparse file with S4-L0's
+   first 64 MB and its full length is enough. Its 24 distinct matrix products (one token and 512 tokens, the 150,144-row
+   output head included) pass with the kernels forced on and off, the 12 one-token ones also through the PTX JIT.
+   Replaying the other exported operations fails on a `GET_ROWS` with random indices, with or without the kernels.
    ```bash
    build/bin/test-export-graph-ops -m flint-s4-l0.gguf -o flint-s4-l0-ops.txt
+   grep -E '^(29|30) ' flint-s4-l0-ops.txt > flint-s4-l0-matmul.txt   # GGML_OP_MUL_MAT, GGML_OP_MUL_MAT_ID
+   GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 --test-file flint-s4-l0-matmul.txt
    ```
-   ```bash
-   GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 --test-file flint-s4-l0-ops.txt
-   ```
-4. **Bit-identity with the benchmark.** [bench/mmvq_pascal/verify](../../../bench/mmvq_pascal/README.md#checking-correctness)
-   already links a static ggml build and runs `MUL_MAT`, `MUL_MAT_ID` and the fused path at every benchmark shape. Built
-   against the ported tree, it compares the port with the standalone (c) kernels at the same R, C and `lpr`, which must
-   agree bit for bit.
-5. **On a P106-090.** The same `test-backend-ops` commands without the force switch (the CPU reference is slow on the
-   rig's 2-core host, so filter by type). Then a KLD/perplexity run of S4-L0 against the wide-rows build
-   ([scripts/quality_kld.sh](../../../scripts/quality_kld.sh)): the difference must stay within run-to-run noise.
+4. **On a P106-090.** The one-token cases of item 1 for Q8_0, Q4_0 and Q4_1 pass without the force switch (Q8_0 30
+   and 50 fusion cases, Q4_0 29 and 42, Q4_1 30 and 42).
+5. **Output of a real model.** S4-L0 on 6 cards, 4 × 512 tokens of wikitext-2 evaluated one token per ubatch
+   (`llama-perplexity -b 512 -ub 1`), so that every token goes through the one-token kernels; a plain perplexity run
+   uses the batched kernels and never reaches them. Against the stock kernels on the same binary: KLD 0.075, same top
+   token 92.1 %, perplexity 22.56 against 22.30. Flint's outputs move this much from rounding alone: the same file on
+   two GPU types differs by KLD 0.065 / 91.3 % ([experiments.md](../../../quants/experiments.md), Q21), because small
+   differences flip the 6th-ranked expert.
 
-## 10. Expected gain per token
+## 10. Gain per token
 
-Matrix-vector time per S4-L0 token, from the benchmark:
-- "Stock" is llama.cpp's kernel with its own launch shape.
-- "Wide rows" is the same kernel with the launch shape of the current best build: 2 warps per block, except where
-  llama.cpp's small-K rule applies (K < 1024 for Q8_0, K < 2048 for Q4_1 and Q5_0). On S4-L0 the rule covers only the
-  routed down-projection.
-- "Ported" is the best variant (c) per shape, with the launch parameters of section 4.
+**Measured.** llama-bench (`-fa on -p 512 -n 128 -r 3`) on the fork build, one binary with `GGML_CUDA_MMVQ_PASCAL=0`
+(llama.cpp's kernel with the wide-rows launch shape) and `=1` (the Pascal kernels):
 
-| Tensors | Format | Stock | Wide rows | Ported (c) | Basis |
+| File | Cards | Stock kernel | Pascal kernels | Gain |
+|---|---|---|---|---|
+| S4-L0 (rescale off) | 6 | 29.20 tok/s | **37.37** | +28 % |
+| makers' Q4_1 (rescale on) | 5 | 32.20 | **39.59** | +23 % |
+| UD-Q4_K_XL (rescale on; only its Q8_0 tensors take the new kernel) | 6 | 24.50 | **27.48** | +12 % |
+| Qwen3.6-35B-A3B Q4_0 (bartowski) | 4 | 22.79 | **29.04** | +27 % |
+| Unsloth's Q8_0 (rescale off) | 9 | 26.92 | **35.89** | +33 % |
+
+Prompt processing is unchanged (it runs on MMQ). On S4-L0 the port without Q5_0 gives 35.51 tok/s.
+
+**Where it comes from.** GPU time per S4-L0 token from the fork's event profiler (`GGML_CUDA_PROFILE`, 24 tokens, sum
+over the 6 cards). Every launch carries 5–8 µs of event overhead in these numbers, the same for both columns, so the
+differences are exact and the totals are higher than the unprofiled token time:
+
+| Tensors | Launches per token | Stock µs/launch | Pascal µs/launch | Stock ms | Pascal ms |
 |---|---|---|---|---|---|
-| attention q | Q4_1 | 3.76 ms | 2.65 ms | 1.78 ms | measured, 49 × (76.6 / 54.2 / 36.4 µs) |
-| attention k, v | Q8_0 | 1.94 | 1.33 | 1.28 | measured, 98 × (19.8 / 13.5 / 13.1 µs) |
-| attention output, 0–32 | Q8_0 | 2.95 | 2.91 | 2.86 | measured, 33 × (89.4 / 88.2 / 86.6 µs) |
-| attention output, 33–48 | Q4_1 | 0.84 | 0.79 | 0.62 | measured, 16 × (52.7 / 49.1 / 38.6 µs) |
-| dense FFN, 0–1 | Q8_0 | ~0.94 | ~0.85 | ~0.75 | estimated from the nearest measured Q8_0 shapes (85, 95 and 107 GB/s) |
-| routed gate/up | Q5_0 | ~7.1 (6.1–8.2) | ~6.0 | ~3.8 (3.3–4.2) | estimated: stock at 1.4–1.75× Q4_1's time per weight (token-cost model, instruction counts); wide rows at 0.85× stock, the ratio Q4_1 and Q8_0 show on this shape; ported at 100–130 GB/s |
-| routed down | Q8_0 | 3.89 | 3.89 | 3.00 | measured, 47 × (82.8 / 82.8 / 63.8 µs); small-K shape in both stock columns |
-| shared gate/up | Q8_0 | 2.54 | 2.34 | 1.94 | measured, 47 × (54.0 / 49.9 / 41.2 µs) |
-| shared down | Q8_0 | 2.51 | 1.75 | 1.15 | measured, 47 × (53.5 / 37.3 / 24.4 µs) |
-| output head | Q8_0 | 5.16 | 3.18 | 2.56 | measured |
-| **Total** | | **31.6 ms** | **25.7 ms** | **19.7 ms** | |
+| attention q (Q4_1) | 49 | 75.7 | 54.7 | 3.71 | 2.68 |
+| attention k, v (Q8_0) | 98 | 25.7 | 21.3 | 2.52 | 2.09 |
+| attention output, layers 0–32 (Q8_0, + residual add) | 33 | 114.6 | 81.6 | 3.78 | 2.69 |
+| attention output, layers 33–48 (Q4_1, + residual add) | 16 | 71.6 | 58.3 | 1.15 | 0.93 |
+| routed experts gate/up (Q5_0, fused) | 47 | 174.4 | 106.6 | 8.20 | 5.01 |
+| routed experts down (Q8_0) | 47 | 110.9 | 63.0 | 5.21 | 2.96 |
+| shared expert gate, up (Q8_0, unfused) | 94 | 36.6 | 28.3 | 3.44 | 2.66 |
+| shared expert down (Q8_0, + add) | 47 | 55.6 | 36.2 | 2.61 | 1.70 |
+| dense FFN, layers 0–1 (Q8_0) | 5 | 200.5 | 124.9 | 1.00 | 0.62 |
+| output head (Q8_0) | 1 | 3289.6 | 2196.9 | 3.29 | 2.20 |
+| router (F16, stock kernel) | 47 | 25.8 | 25.2 | 1.21 | 1.18 |
+| **matrix products** | | | | **36.12** | **24.73** |
+| everything else (norms, attention, router top-k, adds, copies) | | | | 8.05 | 7.96 |
+| **total GPU time per token** | | | | **44.17** | **32.70** |
 
-**From kernel time to tokens per second.** Three builds with the stock kernel have been measured on the rig (llama-bench
-tg128, 6 cards). For each, the benchmark gives a matrix-vector time:
+**Against the benchmark.** The real calls are slower than the benchmark's at the same shapes and speeds, by more than
+the event overhead: the ported attention q by ~13 µs, the routed down-projection by ~25 µs, the routed gate/up by
+~33 µs, the output head by 11 %. The routed experts lose the most; their weights are spread over 285–370 MB per layer
+and card, against the benchmark's few copies.
 
-| Build | Launch shape at one token | S4-L0 measured | Benchmark matrix-vector time |
-|---|---|---|---|
-| standard | 4 warps, small-K rule | 23.09 tok/s (43.3 ms) | 31.6 ms |
-| 2 warps ([patch](../../../patches/mmvq-pascal-2warps.diff)) | 2 warps at every row width | 26.29 tok/s (38.0 ms) | 29.2 ms |
-| wide rows ([patch](../../../patches/mmvq-pascal-2warps-widek.diff)) | 2 warps, small-K shape where the rule applies | 28.02 tok/s (35.7 ms) | 25.7 ms |
+**Wall time against GPU time.** The kernels cut the profiled GPU time by 8.2 ms (Q8_0, Q4_1, Q4_0) and 3.3 ms more
+(Q5_0), but the token time by 6.1 and 1.4 ms. Either the unprofiled kernels gain less than the profiled ones, or the
+host's per-token work (graph build, CUDA-graph checks, six graph launches on a 2-core Celeron) now overlaps less with
+the GPU chain; experiment Q49 measures which.
 
-These calibrate the benchmark in both directions:
-- **The narrow down-projection.** The benchmark finds 2 warps 1.9× slower than the small-K shape for the routed
-  down-projection (Q8_0 at K = 512) and predicts 3.5 ms for restoring it. Going from the 2-warp to the wide-rows build
-  gained 2.35 ms end to end.
-- **The wide shapes.** The changes on rows of 2048 and more (standard to wide rows) gained 7.6 ms end to end against
-  5.9 ms predicted, 1.3× the benchmark.
-
-The wide-rows build is the current best and the closest reference. The port's benchmark time is 6.0 ms below it, which
-carried over at 1.0–1.3× gives 29.7–28.0 ms per token:
-- **34–36 tok/s on S4-L0, +20–27 % over the wide-rows build's 28.0**, against 24.8 for UD-Q4_K_XL on its best build.
-- By format, the 6.0 ms are Q8_0 2.7 ms, Q5_0 ~2.2 ms (estimated) and Q4_1 1.0 ms. Without Q5_0 (steps 2–5 of
-  section 11) the port reaches about 31–32 tok/s.
-- In a real chat at 262k context on 9 cards, where the wide-rows build gives 24.72 tok/s, the same saving gives about
-  29–30.5 tok/s.
-- Prompt processing is unchanged.
-
-**Q39 on top** (a projection: no plane kernel for Q8_0 or Q5_0 has been measured yet):
-- Q8_0 planes at the bandwidth Q4_1 planes reach (129–162 GB/s on large shapes, 88–111 on the 1–2 MB ones) save
-  2–3 ms.
-- Q5_0 planes save 0.5–0.9 ms.
-- Q4_1 planes save about 0.05 ms: its blocks are already 4-byte aligned, and (c) is within 3 % of (d) on S4-L0's
-  shapes.
-
-That is about 37–42 tok/s. One quantization per shared input adds 0.7–1.0 ms on top.
-
-**The makers' Q4_1 file.** It measures 28.07 tok/s (rescale on). The port saves 8.5 ms of its 20.0 ms matrix-vector time,
-for about 37 tok/s. Planes plus group-64 compaction reach 38. FP32 sums remove the rescale's 2.4–2.8 ms, for about
-42 tok/s.
-
-**What it changes for the file side.** The token-cost model in [scripts/token_cost.py](../../../scripts/token_cost.py)
-prices each format by its decode efficiency, and the port moves those prices:
-- Stock: Q8_0 costs 1.75× Q4_1 per parameter on S4-L0's shapes (72 and 74 GB/s).
-- Ported (c): 2.3× (106 and 142 GB/s), so Q8_0-heavy mixes gain less than Q4_1-heavy ones.
-- With Q8_0 planes: back to about 1.8×.
-
-After step 5 the efficiencies should be refitted to the new build, and the per-layer allocation of Q36 and Q45 redone
-with them.
+**What it changes for the file side.** With the Pascal kernels Q8_0, Q5_0 and Q4_1 decode at about the same bandwidth
+(150, 138 and 145 GB/s on the large shapes in the benchmark), so decode time follows bytes: Q8_0 costs 1.7× Q4_1 per
+parameter (34 against 20 bytes per 32 weights) and Q5_0 1.1×, where the stock kernel charged Q5_0 nearly Q8_0's price
+(Q45). The efficiencies in [scripts/token_cost.py](../../../scripts/token_cost.py) should be refitted to the fork build,
+and the per-layer allocations of Q36 and Q45 redone with them.
 
 ## 11. Implementation plan
 
-| Step | Work | Effort | Done when |
+| Step | Work | Done when | Status |
 |---|---|---|---|
-| 0 | Time every kernel of one real S4-L0 token on the standard and the wide-rows build, with a CUDA trace tool that supports sm_61 | 0.5 day, rig | it is known which wide shapes gain more end to end than the benchmark predicts (1.3× in total), and the real Q5_0 gate/up time is known |
-| 1 | Benchmark additions: Q5_0 (stock, 2 warps, tuned with the fifth-bit dot product of section 5, C = 2 and 4); row-local planes for Q8_0, Q5_0 and Q4_1 against variant (d) | 1–1.5 days + 15 min on the rig | Q5_0 tuned ≥ 1.5× stock on the gate/up shape; row-local planes within 3 % of tensor-wide planes |
-| 2 | Port (c) as `mmvq-pascal.cu` for Q4_0, Q4_1 and Q8_0: decision point, predicate, table id, force switch, `MUL_MAT` and one-token `MUL_MAT_ID`; fused calls fall back for now | 1.5–2 days | `test-backend-ops` `MUL_MAT`/`MUL_MAT_ID` pass with the force switch, native and through the PTX JIT |
-| 3 | Fusions: `gate = true` kernels, shared epilogue, biases, `shared_up` | 1 day | `MUL_MAT_VEC_FUSION`, `MUL_MAT_ID_FUSION`, `MUL_MAT_ID_SHARED`, `MUL_MAT_ADD` pass |
-| 4 | Tests at Flint's shapes, bit-identity against the benchmark, `test-export-graph-ops` files for S4-L0 and a Qwen3.6 mix | 1 day | all pass; the port and the standalone kernels agree bit for bit |
-| 5 | Rig: `test-backend-ops` on a P106; tg128 for S4-L0, the makers' Q4_1 and a Qwen3.6 Q4_0 mix; KLD against the wide-rows build | 0.5 day | S4-L0 ≥ 10 % faster than the wide-rows build (28.0 tok/s) at unchanged KLD; refit `token_cost.py` |
-| 6 | Q5_0 in the port, from step 1's kernel | 1 day | tests pass; S4-L0 tg128 measured again |
-| 7 | Q4_1_64 in the port (fork only) | 0.5 day | tests pass; makers' file in Q4_1_64 measured |
-| 8 | One activation quantization per shared input | 1–2 days | 145 fewer launches per Flint token; tests and KLD unchanged |
-| 9 | FP32 activation sums in the Pascal kernels and MMQ's `DS4` layout; drop the rescale where safe | 1–2 days | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD |
-| 10 | Q39: row-local planes, repack before the first graph, planar matrix-vector kernels, planar MMQ loaders, row lookup, dequantization, `get_tensor` inverse, opt-in switch | 4–6 days | all tests pass with `GGML_CUDA_PASCAL_REPACK=2`; prompt processing no slower; tg gain measured |
+| 0 | Time every kernel of one real S4-L0 token | the real per-call times are known next to the benchmark's | done: nvprof and Nsight Systems refuse the P106 (a CMP mining card), so the fork times launch groups with CUDA events itself (`GGML_CUDA_PROFILE`, section 10) |
+| 1 | Benchmark additions: Q5_0 (stock, 2 warps, tuned with the fifth-bit dot product), row-local planes, Q5_K and IQ4_XS (Q46) | Q5_0 tuned ≥ 1.5× stock on the gate/up shape; row-local planes within 3 % of tensor-wide planes | done: Q5_0 2.2× on the gate/up shape; row-local planes 3 % faster than tensor-wide ones; staged loads (f) added and as fast as planes |
+| 2 | Port as `mmvq-pascal.cu` for Q4_0, Q4_1 and Q8_0: decision point, force switch, `MUL_MAT` and one-token `MUL_MAT_ID` | `test-backend-ops` passes with the force switch, native and through the PTX JIT | done |
+| 3 | Fusions: gate + GLU, biases, `shared_up` | `MUL_MAT_VEC_FUSION`, `MUL_MAT_ID_FUSION`, `MUL_MAT_ID_SHARED`, `MUL_MAT_ADD` pass | done |
+| 4 | Tests at Flint's shapes, S4-L0's exported operations | all pass | done; bit-identity against the standalone kernels not checked (both pass the CPU references) |
+| 5 | Rig: `test-backend-ops` on a P106; tg128 for S4-L0 and other files; KLD against the stock kernels | S4-L0 ≥ 15 % faster than the wide-rows build at unchanged output | S4-L0 done: +33 % (37.4 against 28.0 tok/s); other files and the noise floor of the output check running |
+| 6 | Q5_0 in the port | tests pass; S4-L0 tg128 measured again | done: 35.5 → 37.4 tok/s |
+| 7 | Q5_K and IQ4_XS in the port, from the benchmark's kernels (Q46) | tests pass; UD-Q4_K_XL measured | next |
+| 8 | Q4_1_64 in the port (fork only) | tests pass; makers' file in Q4_1_64 measured | |
+| 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | |
+| 10 | FP32 activation sums in the Pascal kernels and MMQ's `DS4` layout; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | |
 
-Steps 2–7 are Q38 proper (about 6 days, plus 1.5–2 for steps 0–1). Steps 8 and 9 are independent of the kernel and can go
-in any order. Step 10 is Q39.
+Steps 9 and 10 are independent of the kernel and can go in any order. The repack of section 7 (Q39) is not planned:
+staged loads made it unnecessary for decode speed.
 
 ## 12. Upstream PRs
 
@@ -558,8 +537,9 @@ Each of these stands alone and can be reviewed separately:
      UD-Q4_K_XL 24.58 against 19.53.
    - These are the data PR #25479 lacks. Small, and the most likely to be accepted.
 2. **The Pascal kernel** for Q4_0, Q4_1, Q5_0 and Q8_0 (steps 2–4 and 6 without Q4_1_64).
-   - A new file selected through the table id, which falls back to the stock kernel for everything else, with the
-     Flint-shape test cases. Upstream already carries device-specific MMVQ tables (Turing, RDNA, GB10).
+   - A new file, called for compute 6.1, which falls back to the stock kernel for everything else, with the Flint-shape
+     test cases. Upstream already carries device-specific MMVQ tables (Turing, RDNA, GB10).
+   - On S4-L0 it gives 37.4 against 29.2 tok/s on the same binary.
    - It needs measurements on at least one larger compute 6.1 card (a GTX 10-series card or a P40). Those cards have
      2–4× less bandwidth per SM than the P106-090 and are less limited by instruction issue, so the PR must show no
      regression there, or restrict itself by SM count.
@@ -568,24 +548,21 @@ Each of these stands alone and can be reviewed separately:
 4. **FP32 activation sums.** Closes the overflow that the Flint, Mistral4 and Mellum rescale works around. It competes
    with the open BF16 proposal (#22571) and touches every Q8_1 reader, MMQ included.
 
-The repack (step 10) and Q4_1_64 stay in the fork. In the discussion of an earlier CUDA repack PoC (#20563), the
-maintainers asked for a baseline without repacking first; PR 2 would provide that baseline, but the repack touches too
-many readers for an architecture this old. Q4_1_64 is a new GGUF type.
+Q4_1_64 stays in the fork: it is a new GGUF type. In the discussion of an earlier CUDA repack PoC (#20563), the
+maintainers asked for a baseline without repacking first; PR 2 is that baseline, and on this card it already reaches the
+speed of the plane layouts.
 
 ## 13. Risks
 
-- **The benchmark predicts the direction but not the exact size** (section 10).
-  - Launch-shape changes on wide rows gained 1.3× the predicted time end to end.
-  - Restoring the small-K shape for the narrow down-projection gained two thirds of it.
-  - The estimate's 1.0–1.3× range covers this. Step 0 shows which shapes account for the difference before the port
-    starts.
-- **The Q5_0 numbers are estimates.** If step 1 finds the fifth-bit dot product short of 1.5×, the alternative is a
-  load-time permutation of the 32 `qh` bits (same 22-byte block, so it can be done in place). That makes the fifth-bit
-  term one shift and one mask per word, and belongs with step 10.
-- **Register pressure.** Fused Q8_0 at R = 2 reached 254 registers. The table uses R = 1 there, and Q5_0's transposed
-  activation words should be built per block inside the loop, not held for the whole chunk.
-- **Fallback coverage.** Widths that don't split into whole chunks, unaligned views and more than one column all keep
-  the stock kernel. That is correct but slower; tail handling in the last iteration can widen coverage
-  later.
-- **Maintenance.** The kernel lives in its own file. The hook in `mmvq.cu` is a predicate call and a table id, so
-  rebasing touches little. The shared epilogue keeps the GLU handling in one place.
+- **The benchmark predicts the direction but not the exact size.** In the real token the ported calls take 13–35 µs
+  longer than in the benchmark at the same shapes (section 10), and the wall time per token falls less than the GPU
+  time (Q49). Kernel work should be judged on llama-bench, not on the benchmark alone.
+- **The host may now set the pace.** If the 2-core host's per-token work (graph build, CUDA-graph checks, six graph
+  launches) is close to the GPU chain, faster kernels gain less on the wall clock; experiment Q49 measures it.
+- **Register pressure.** Fused Q8_0 at R = 2 reached 254 registers with direct loads; the port uses R = 1 for fused
+  Q8_0 and Q5_0. Staged shared memory (17 KB per block for Q8_0) limits a P106-090 SM to 5 such blocks.
+- **Fallback coverage.** Widths that don't split into whole chunks, unaligned views and more than one column keep the
+  stock kernel. That is correct but slower; tail handling in the last iteration can widen coverage later.
+- **Maintenance.** The kernel lives in its own file, and the hook in `mmvq.cu` is an include and one call, so rebasing
+  touches little. The GLU epilogue exists twice (stock kernel and new file) and must follow upstream changes to the GLU
+  ops.

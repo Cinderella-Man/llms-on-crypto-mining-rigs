@@ -10,9 +10,15 @@ build script itself (`--cuda-graphs-pascal`); when it no longer applies, the scr
 The same changes are kept as one commit each on the `pascal-p106` branch of
 [a llama.cpp fork](https://github.com/Cinderella-Man/llama.cpp/tree/pascal-p106), on top of upstream `d77256999`: CUDA
 graphs on compute 6.1, the rescale switch, Flint's `prism.hadamard` support, `Q4_1_64` and the wide-rows launch shape.
-New Pascal work (the matrix-vector kernel of [the design note](../docs/research/notes/pascal_mmvq_integration.md))
-lands there first. Build it with
-`git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/llama.cpp` and
+New Pascal work lands there first and only there:
+- **Pascal single-token matrix-vector kernels** for Q4_0, Q4_1, Q5_0 and Q8_0 (`ggml/src/ggml-cuda/mmvq-pascal.cu`,
+  [design note](../docs/research/notes/pascal_mmvq_integration.md)). On by default on compute 6.1;
+  `GGML_CUDA_MMVQ_PASCAL=0` switches them off, `=2` forces them on any NVIDIA GPU (for tests).
+- **`GGML_CUDA_PROFILE=<file>`**: GPU time of every launch group from CUDA events, for the GPUs NVIDIA's profilers
+  refuse (the CMP mining cards). Summarize with [scripts/cuda_profile_summary.py](../scripts/cuda_profile_summary.py).
+- `test-backend-ops` cases at the shapes of a large MoE model.
+
+Build it with `git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/llama.cpp` and
 `TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106` (no `PATCHES`, no `--cuda-graphs-pascal`).
 
 | Patch | What it does | Tested against |

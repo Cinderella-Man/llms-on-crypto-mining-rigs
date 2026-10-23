@@ -11,6 +11,12 @@ then summarize the steady-state tokens (the last --tokens evaluations of every d
 
     scripts/cuda_profile_summary.py /tmp/prof.csv --tokens 24
 
+A GGML_CUDA_PROFILE_HOST=<file> trace (one line per graph evaluation and device: host time at entry to and exit from
+the backend's graph_compute, GPU time of the evaluation) is recognized by its header and summarized as a timeline:
+wall time per token, the GPU chain (the devices run one after the other, so their GPU times add up) and the host time
+spent inside graph_compute. If the wall time is well above the GPU chain, the GPUs wait for the host or for the
+copies between them.
+
 Labels look like "MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_up_exps:q5_0:2048x512 ffn_gate_exps:q5_0:2048x512": the ops of the
 group, then each matrix product's weight (layer number removed), type and shape (K x N). The time of a matrix product
 includes the quantization of its activations, which runs in the same group. Every group boundary is a CUDA event, which
@@ -31,6 +37,8 @@ def main():
     args = ap.parse_args()
 
     rows = list(csv.DictReader(open(args.csv)))
+    if rows and "host_enter_ms" in rows[0]:
+        return host_summary(rows, args.tokens)
     evals = defaultdict(set)
     for r in rows:
         evals[int(r["device"])].add(int(r["eval"]))
@@ -69,6 +77,32 @@ def main():
     print(f"{'ms/token':>9} {'%':>6} {'calls/tok':>9} {'us/call':>9}  label")
     for label, (us, n) in sorted(per_label.items(), key=lambda kv: -kv[1][0])[:args.top]:
         print(f"{us / n_tok / 1000:9.3f} {100 * us / total:6.2f} {n / n_tok:9.1f} {us / n:9.2f}  {label}")
+
+
+def host_summary(rows, n_tokens):
+    by_dev = defaultdict(dict)
+    for r in rows:
+        by_dev[int(r["device"])][int(r["eval"])] = (float(r["host_enter_ms"]), float(r["host_exit_ms"]), float(r["gpu_us"]))
+    devs = sorted(by_dev)
+    n_eval = min(len(v) for v in by_dev.values())
+    evals = list(range(n_eval - n_tokens, n_eval))
+    d0 = devs[0]
+    wall = (by_dev[d0][evals[-1]][0] - by_dev[d0][evals[0]][0]) / (len(evals) - 1)
+    gpu = {d: sum(by_dev[d][e][2] for e in evals) / len(evals) / 1000 for d in devs}
+    host_in = {d: sum(by_dev[d][e][1] - by_dev[d][e][0] for e in evals) / len(evals) for d in devs}
+    # when each device's evaluation is entered, relative to the first device's, and how long the host takes from the
+    # first device's entry to the last device's exit
+    lead = {d: sum(by_dev[d][e][0] - by_dev[d0][e][0] for e in evals) / len(evals) for d in devs}
+    span = sum(by_dev[devs[-1]][e][1] - by_dev[d0][e][0] for e in evals) / len(evals)
+    chain = sum(gpu.values())
+    print(f"devices: {len(devs)}, steady-state tokens: {len(evals)}")
+    print(f"wall time per token:                         {wall:7.2f} ms")
+    print(f"GPU chain per token (sum over devices):      {chain:7.2f} ms  ({100 * chain / wall:.0f} % of the wall time)")
+    print(f"host time inside graph_compute, all devices: {sum(host_in.values()):7.2f} ms")
+    print(f"host: first device entered to last exited:   {span:7.2f} ms")
+    print(f"{'device':>6} {'GPU ms':>8} {'host in compute ms':>18} {'entered after device ' + str(d0) + ' (ms)':>28}")
+    for d in devs:
+        print(f"{d:6d} {gpu[d]:8.2f} {host_in[d]:18.3f} {lead[d]:28.2f}")
 
 
 if __name__ == "__main__":
