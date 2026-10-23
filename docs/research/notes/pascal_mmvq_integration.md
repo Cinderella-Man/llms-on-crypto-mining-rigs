@@ -20,13 +20,14 @@ Code references:
 - **Where.** One call in `ggml_cuda_mul_mat_vec_q`, after the activations are quantized and right before the stock
   kernel would be launched. Operator selection, fusion matching and the routing of expert (`MUL_MAT_ID`) products
   stay as they are. Any call the new kernel doesn't cover falls through to the stock kernel unchanged.
-- **Which types.** Q8_0, Q4_1, Q4_0 and Q5_0 are ported; Q5_K and IQ4_XS (UD-Q4_K_XL's experts, kernels ready in the
-  benchmark) come next, then Q4_1_64 (a fork-only type).
+- **Which types.** Q8_0, Q4_1, Q4_0, Q5_0, Q5_K and IQ4_XS are ported: all of S4-L0's quantized bytes and 96 % of
+  Unsloth's UD-Q4_K_XL (the rest is its BF16 router and a few Q4_K, IQ3_S and Q6_K tensors). Q4_1_64 (a fork-only type)
+  is next.
   - The file at the quality bar reads 66 % of its bytes as Q8_0, so Q8_0 carries the largest share of the gain.
   - Q5_0 uses a cheaper way to apply its fifth bit (section 5).
 - **Measured gain.** llama-bench tg128 on 6 P106-090 cards, S4-L0, one binary with the kernels switched off and on:
   **29.2 → 37.4 tok/s (+28 %)**; against the wide-rows build, the best before the port, 28.0 → 37.4 (+33 %). Unsloth's
-  Q8_0 on 9 cards: 26.9 → 35.9 (+33 %). Prompt processing is unchanged. In the microbenchmark Q8_0 runs at 150 GB/s,
+  UD-Q4_K_XL: 24.5 → 34.1 (+39 %; 17.6 on stock llama.cpp). Unsloth's Q8_0 on 9 cards: 26.9 → 35.9 (+33 %). Prompt processing is unchanged. In the microbenchmark Q8_0 runs at 150 GB/s,
   2.07× the stock kernel.
 - **No repack needed.** Staged loads reach the speed that row-local or tensor-wide weight planes reach (Q8_0 17.1
   against 18.4 ms per Flint token in the microbenchmark), so the load-time repack of Q39 is no longer needed for decode
@@ -188,7 +189,7 @@ quantization per shared input, section 8) moves the call above the quantization.
 
 **What it takes.** The kernel runs a call when all of these hold; otherwise the stock path runs as before:
 - the device is compute 6.1, or the force switch below is set;
-- the weight type is Q4_0, Q4_1, Q5_0 or Q8_0;
+- the weight type is Q4_0, Q4_1, Q5_0, Q8_0, Q5_K or IQ4_XS;
 - one destination column: `ne11 == 1` for `MUL_MAT`, `ne2 == 1` for `MUL_MAT_ID`;
 - `x_scale` and `gate_scale` are null (they exist only for NVFP4);
 - the blocks per row split into `C`-block chunks; `lpr` is then the largest power of two up to 32 that divides the
@@ -245,8 +246,17 @@ microbenchmark's variant (f)):
 | Q4_0 | R = 2, C = 2 (89–142) | R = 2, C = 2 (132–145) |
 | Q4_1 | R = 2, C = 4 (100–159) | R = 2, C = 2 (140–150) |
 | Q5_0 | R = 2, C = 2 (98–144) | R = 1, C = 2 (130–138) |
+| Q5_K | R = 1, one super-block per lane (97–151) | the same (110–121) |
+| IQ4_XS | R = 1, one super-block per lane (75–133) | the same with direct loads (86–94) |
 
-Staged shared memory per block is 4 warps × 32 lanes × R × C × block bytes (twice with the gate): 17 KB for Q8_0.
+Staged shared memory per block is 4 warps × 32 lanes × R × C × block bytes (twice with the gate): 17 KB for Q8_0,
+45 KB for Q5_K's fused gate/up.
+
+**Q5_K and IQ4_XS** take one 256-weight super-block per lane, so each lane reads 8 activation blocks per iteration.
+Q5_K's mins need the sum of the quantized activations; as in `vec_dot_q5_K_q8_1` it is computed with
+`dp4a(0x01010101, u)`, once per super-block and shared by all rows. IQ4_XS's 4-bit indices select from a 16-entry table
+with `__byte_perm` on four table words held in registers; the activations are permuted once per block into the order
+the lookup produces (weights 4k, 4k+16, 4k+1, 4k+17, …), which saves llama.cpp's two re-ordering permutes per word.
 
 The lane groups make the small-K rule unnecessary. At K = 512, Q8_0 with C = 2 has 8 chunks per row, so `lpr` = 8, and
 each warp computes 8 rows with every lane busy. The expert down-projection reaches 142 GB/s this way, against 81 for the
@@ -267,7 +277,9 @@ took them in this order:
    ([recipes](../../../quants/recipes/README.md)). On S4-L0 these three took tg128 from 29.2 to 35.5 tok/s.
 2. **Q5_0**, with the fifth-bit dot product below, first in the benchmark (2.28× the stock kernel staged), then in the
    port: 35.5 → 37.4 tok/s.
-3. **Q4_1_64** is this project's own type ([patch](../../../patches/q4_1_64-type.diff)). It holds the makers' group-64
+3. **Q5_K and IQ4_XS**, the K- and I-quants of Unsloth's UD-Q4_K_XL (29 % of its bytes; the rest is mostly Q8_0), from
+   the benchmark's kernels (Q46): 2.44× and 2.90× the stock kernel there.
+4. **Q4_1_64** is this project's own type ([patch](../../../patches/q4_1_64-type.diff)). It holds the makers' group-64
    weights exactly and is the fastest type in the benchmark (2.10× with planes), but upstream llama.cpp doesn't have it,
    so it stays in the fork.
 
@@ -442,14 +454,16 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
 3. **The model's own operations.** `test-export-graph-ops` reads only a GGUF's metadata, so a sparse file with S4-L0's
    first 64 MB and its full length is enough. Its 24 distinct matrix products (one token and 512 tokens, the 150,144-row
    output head included) pass with the kernels forced on and off, the 12 one-token ones also through the PTX JIT.
+   UD-Q4_K_XL's 48 pass the same way, except 3 that fail identically with and without the kernels because the replay's
+   random K-quant blocks produce NaN scales (the CPU reference is NaN too).
    Replaying the other exported operations fails on a `GET_ROWS` with random indices, with or without the kernels.
    ```bash
    build/bin/test-export-graph-ops -m flint-s4-l0.gguf -o flint-s4-l0-ops.txt
    grep -E '^(29|30) ' flint-s4-l0-ops.txt > flint-s4-l0-matmul.txt   # GGML_OP_MUL_MAT, GGML_OP_MUL_MAT_ID
    GGML_CUDA_MMVQ_PASCAL=2 build/bin/test-backend-ops -b CUDA0 --test-file flint-s4-l0-matmul.txt
    ```
-4. **On a P106-090.** The one-token cases of item 1 for Q8_0, Q4_0 and Q4_1 pass without the force switch (Q8_0 30
-   and 50 fusion cases, Q4_0 29 and 42, Q4_1 30 and 42).
+4. **On a P106-090.** The one-token cases of item 1 pass without the force switch for all six types (Q8_0 30 and 50
+   fusion cases, Q4_0 29 and 42, Q4_1 30 and 42, Q5_0 14 and 2, Q5_K 15 and 2, IQ4_XS 13 and 2).
 5. **Output of a real model.** S4-L0 on 6 cards, 4 × 512 tokens of wikitext-2 evaluated one token per ubatch
    (`llama-perplexity -b 512 -ub 1`), so that every token goes through the one-token kernels; a plain perplexity run
    uses the batched kernels and never reaches them. The Pascal kernels differ from llama.cpp's kernel exactly as much
@@ -460,6 +474,14 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
    | stock, 2 warps against stock, 4 warps | 0.067 | 92.9 % | 22.30 against 22.41 |
    | Pascal kernels against stock, 4 warps | 0.062 | 92.8 % | 22.56 against 22.41 |
    | Pascal kernels against stock, 2 warps | 0.075 | 92.1 % | 22.56 against 22.30 |
+
+   UD-Q4_K_XL, with the Q5_K and IQ4_XS kernels, the same way:
+
+   | Pair | Mean KLD | Same top token | Perplexity |
+   |---|---|---|---|
+   | stock, 2 warps against stock, 4 warps | 0.060 | 92.6 % | 22.67 against 23.26 |
+   | Pascal kernels against stock, 4 warps | 0.062 | 92.3 % | 23.26 against 23.26 |
+   | Pascal kernels against stock, 2 warps | 0.053 | 92.5 % | 23.26 against 22.67 |
 
    Flint's outputs move this much from rounding alone, because small differences flip the 6th-ranked expert; the same
    file on two GPU types differs by KLD 0.065 / 91.3 % ([experiments.md](../../../quants/experiments.md), Q21).
@@ -473,11 +495,13 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
 |---|---|---|---|---|
 | S4-L0 (rescale off) | 6 | 29.20 tok/s | **37.37** | +28 % |
 | makers' Q4_1 (rescale on) | 5 | 32.20 | **39.59** | +23 % |
-| UD-Q4_K_XL (rescale on; only its Q8_0 tensors take the new kernel) | 6 | 24.50 | **27.48** | +12 % |
+| UD-Q4_K_XL (rescale on) | 6 | 24.49 | **34.06** | +39 % |
 | Qwen3.6-35B-A3B Q4_0 (bartowski) | 4 | 22.79 | **29.04** | +27 % |
 | Unsloth's Q8_0 (rescale off) | 9 | 26.92 | **35.89** | +33 % |
 
-Prompt processing is unchanged (it runs on MMQ). On S4-L0 the port without Q5_0 gives 35.51 tok/s.
+Prompt processing is unchanged (it runs on MMQ). On S4-L0 the port without Q5_0 gives 35.51 tok/s; UD-Q4_K_XL with only
+its Q8_0 part ported gave 27.48, and stock llama.cpp gives it 17.56, so Unsloth's file now runs 1.94× as fast. Its
+profiled GPU time per token goes from 55.8 to 40.3 ms: Q8_0 20.5 → 14.6, Q5_K 11.8 → 6.2, IQ4_XS 7.1 → 3.3 ms.
 
 **Where it comes from.** GPU time per S4-L0 token from the fork's event profiler (`GGML_CUDA_PROFILE`, 24 tokens, sum
 over the 6 cards). Every launch carries 5–8 µs of event overhead in these numbers, the same for both columns, so the
@@ -528,7 +552,7 @@ and the per-layer allocations of Q36 and Q45 redone with them.
 | 4 | Tests at Flint's shapes, S4-L0's exported operations | all pass | done; bit-identity against the standalone kernels not checked (both pass the CPU references) |
 | 5 | Rig: `test-backend-ops` on a P106; tg128 for S4-L0 and other files; KLD against the stock kernels | S4-L0 ≥ 15 % faster than the wide-rows build at unchanged output | done: S4-L0 +33 % (37.4 against 28.0 tok/s), output within summation-order noise (section 9); other files in section 10 |
 | 6 | Q5_0 in the port | tests pass; S4-L0 tg128 measured again | done: 35.5 → 37.4 tok/s |
-| 7 | Q5_K and IQ4_XS in the port, from the benchmark's kernels (Q46) | tests pass; UD-Q4_K_XL measured | next |
+| 7 | Q5_K and IQ4_XS in the port, from the benchmark's kernels (Q46) | tests pass; UD-Q4_K_XL measured | done (section 10) |
 | 8 | Q4_1_64 in the port (fork only) | tests pass; makers' file in Q4_1_64 measured | |
 | 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | |
 | 10 | FP32 activation sums in the Pascal kernels and MMQ's `DS4` layout; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | |
