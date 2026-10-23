@@ -13,9 +13,9 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-23, 09:40):** rig: real chat at 262k for UD-Q4_K_XL and S4-L0, then Unsloth's Q8_0, all on the
-wide-rows build, until ~10:00. Quant machine: free (workers and containers stopped, NVMe scratch cleared); S5 is on its HDD. Keep this line current: say what
-is running, where, and since when.
+**Now (2026-10-23, 09:55):** rig: Unsloth's Q8_0 on the wide-rows build with the rescale off (tg128, then real chat at
+262k on 9 cards), until ~10:20; it already runs 25.2 tok/s with the rescale on, faster than UD-Q4_K_XL's best. Quant
+machine: free. Keep this line current: say what is running, where, and since when.
 
 Every speed figure for the new files is still a prediction ([token_cost.py](../scripts/token_cost.py)); step 1 measures
 them, and the steps after it depend on what it shows.
