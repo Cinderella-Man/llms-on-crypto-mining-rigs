@@ -49,6 +49,10 @@ work here aims at UD-Q4_K_XL quality or better, faster than UD-Q4_K_XL on the sa
 | S4 (speed-aware mix, rescale-free) | here | 32.6 GB | 88.7 % | 0.120 | +3.4 % | — | 23.0 pred. | — | — |
 | UD-mirror v1, rescale-free | here | 27.4 GB | 87.5 % | 0.127 | +4.0 % | — | 23.2 pred. | — | — |
 
+Real chat requests at the full 262,144-token context on all nine cards (`-b 512 -ub 128 -bs`, four prompts of 256
+tokens, [server_bench.sh](../scripts/server_bench.sh)), same wide-rows build: **S4-L0 24.7 tok/s, UD-Q4_K_XL 20.4**
+(UD-Q4_K_XL on the CUDA-graphs build without the launch-shape patch: 15.8).
+
 Below the bar, kept for reference:
 
 | File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | tg128 | tg128, 2-warp |
