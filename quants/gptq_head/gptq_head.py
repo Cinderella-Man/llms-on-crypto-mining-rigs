@@ -363,6 +363,10 @@ def cmd_checkdump(a):
     sh = np.asarray(x[np.clip(rows - 1, 0, None)], np.float32) @ W.T
     rel_sh = np.sqrt(((sh - L) ** 2).sum(axis=1) / (L ** 2).sum(axis=1))
     print(f'control, rows shifted by one: rel rms diff median {np.median(rel_sh):.2e}')
+    # the model computes its logits from 8-bit-quantized activations, so a correct dump agrees to ~1 %, not exactly
+    ok = np.median(rel) < 0.03 and (Z.argmax(1) == L.argmax(1)).mean() >= 0.97 and np.median(rel_sh) > 10 * np.median(rel)
+    print('dump OK' if ok else 'DUMP DOES NOT MATCH THE MODEL')
+    sys.exit(0 if ok else 1)
 
 
 def _writer(r, path):
