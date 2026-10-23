@@ -73,6 +73,20 @@ What we have learned:
   activation blocks absorb the spread-out outlier channels.
 - **The makers' Q4_1 is group-64 data** stored as group-32: the same weights fit in 23.5 GB with a group-64 type.
 
+## Results so far: Qwen3.6-35B-A3B
+
+Against bartowski's Q8_0 (80 × 512 tokens of wikitext-2, same quant machine); speed is the cost model's tg128 prediction
+except where measured.
+
+| File | Size | Same top token | Mean KLD | tg128 |
+|---|---|---|---|---|
+| Q4_0 (bartowski; head and four attention q tensors Q6_K) | 20.8 GB | 92.0 % | 0.036 | 19.6 measured, 20.8 pred. |
+| Same file with every Q6_K tensor as Q8_0 | 21.0 GB | 92.0 % | 0.037 | 23.6 pred. |
+| Mix A: imatrix Q4_0, attention, `ssm_out`, shared expert and head Q8_0 | 21.1 GB | **94.1 %** | **0.020** | 20.2 pred. |
+
+The K-quant leftovers in a "Q4_0" file are worth +13 % at no quality cost; the MTP draft file carries the same Q6_K head
+([experiments.md](experiments.md), Q29 and Q31).
+
 ## Next steps
 
 The ranked list of every lever is in [research.md](research.md). In order:
