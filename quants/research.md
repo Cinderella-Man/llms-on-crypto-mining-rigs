@@ -292,7 +292,13 @@ swaps experts in several layers per token, and each swap changes everything afte
 Q8_0, the closest a quant gets to the original weights, therefore already sits at KLD 0.052 and 93.3 % same top token
 against BF16 (perplexity +3.3 %). That is the floor for any Flint file, and two files whose KLDs differ by less than a few
 hundredths are not distinguishable by KLD. All scores on this page come from the same GPU build against the same BF16
-reference. Task checks remain necessary before any release ([releasing.md](releasing.md)).
+reference.
+
+Task checks see the same picture. On 300 BFCL v3 tool-calling tasks ([Q30](experiments.md),
+[bench/bfcl_flint](../bench/bfcl_flint/)), BF16 calls 80.7 % correctly and every finalist lands within the ±4–5-point
+uncertainty: the makers' Q4_1 83.0 %, makers-fast 83.3 %, UD-mirror v1 rescale-free 83.0 %, S4 82.0 %, S1 78.3 %. The
+makers' file, worst by KLD, is as good as any on tasks, which is what its distillation tuning was for. Two runs of the
+same file on two GPU types agree on only 80 % of the calls, so finer comparisons need thousands of tasks.
 The same holds between GPUs: the makers' file computed with RTX 3090 kernels against the same file computed with V100
 kernels differs by KLD 0.065 and 91.3 % same top token.
 
@@ -324,7 +330,7 @@ On the rig, in this order (commands in [experiments.md](experiments.md) and the 
 4. The drafter check ([bench/eagle3_flint](../bench/eagle3_flint/)): verification cost of 1–8 tokens and the step time
    of a random-weight EAGLE-3 head, which decide whether a trained head is worth 5–6 days.
 
-On the quant machine: task checks of the finalists (tool calling), and partial recovery of attention and the shared
+On the quant machine: larger task checks, and partial recovery of attention and the shared
 expert to 4 bits by retraining, the one route left to UD-Q4_K_XL quality at Q4_1 speed.
 
 ## Sources

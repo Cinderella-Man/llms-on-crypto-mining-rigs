@@ -49,11 +49,13 @@ Against [Flint](https://huggingface.co/RecursiveSI/flint)'s original BF16 weight
 | Q4_1 | Flint's makers | 26.0 GB | 78.4 % | 0.322 | +4.5 % | **24.3** | **27.9–28.1** |
 | **Makers' Q4_1, rescale-free, F16 router** | here | 26.3 GB | 78.5 % | 0.322 | +4.3 % | to measure | 30.5 pred. |
 | Makers' Q4_1 as group-64 (`Q4_1_64`, same weights) | here | 23.5 GB | 78.7 % | 0.314 | +4.4 % | to measure | needs the [patch](../patches/q4_1_64-type.diff) |
-| **Makers-fast**: all of the above plus fused Q/K/V, rescale-free | here | 23.9 GB | 78.9 % | 0.315 | +4.1 % | to measure | 30.4+ pred.; needs the patch |
+| **Makers-fast**: all of the above plus fused Q/K/V, rescale-free | here | 23.9 GB | 78.9 % | 0.315 | +3.9 % | to measure | 30.4+ pred.; needs the patch |
 | Q4_0 + imatrix | here | 22.6 GB | 71.7 % | 0.565 | +45 % | — (unusable) | — |
 
-The makers' Q4_1 was tuned by distillation after quantizing, so its distance from BF16 overstates its real-task loss
-(see [the Flint research notes](../docs/research/notes/flint_speedups.md)). Two Flint files whose KLDs differ by less
+The makers' Q4_1 was tuned by distillation after quantizing, so its distance from BF16 overstates its real-task loss.
+A tool-calling check confirms it: on 300 BFCL v3 tasks ([bench/bfcl_flint](../bench/bfcl_flint/)) BF16 calls 80.7 %
+correctly, the makers' Q4_1 83.0 %, makers-fast 83.3 %, UD-mirror v1 rescale-free 83.0 %, S4 82.0 % and S1 78.3 %,
+all within the ±4–5-point uncertainty of 300 tasks. Two Flint files whose KLDs differ by less
 than a few hundredths are not distinguishable: the same file computed on two different GPUs already differs by KLD 0.065
 ([noise floor](research.md#measuring-quality-on-flint-the-noise-floor)).
 
@@ -80,7 +82,7 @@ The ranked list of every lever is in [research.md](research.md). In order:
 2. The matrix-vector microbenchmark at Flint's shapes ([bench/mmvq_pascal](../bench/mmvq_pascal/)), which decides
    whether a Pascal-specific kernel (+20–45 % expected for every file) is worth writing.
 3. The drafter check for an EAGLE-3 head ([bench/eagle3_flint](../bench/eagle3_flint/)).
-4. Task-based quality checks (BFCL tool calls) for the best two or three files.
+4. Larger task checks (~2,000 tasks) to separate files a few points apart.
 5. The same treatment for the Qwen3.6-35B-A3B family.
 
 ## Tools
