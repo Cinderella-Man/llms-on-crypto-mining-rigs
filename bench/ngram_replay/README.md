@@ -8,6 +8,11 @@ This replays every n-gram drafter in llama.cpp, and the copy-gated `ngram-copy` 
 itself, with exact acceptance, and turns the step counts into speed-ups with a verify-cost table (registry row Q64 in
 [quants/experiments.md](../../quants/experiments.md)).
 
+**Result.** At the verify cost measured on the rig, only 2-token drafts pay. `ngram-copy` limited to 2-token drafts gives
+1.03× overall and 1.26× on file rewrites, the level of a perfect copy drafter at that width. Q53's 7-token blocks and
+every llama.cpp drafter setting lose (0.54–0.97× overall). Blocks of 31–63 tokens would give 2.1–2.7× on file rewrites
+only if a verify of 16–64 tokens costs close to the prompt-processing rate per token, which is not measured yet.
+
 ## Method
 
 - **Data.** Q51's transcripts ([expert_overlap](../expert_overlap/README.md)): 38 prompts (10 chat, 10 code writing,
@@ -45,11 +50,41 @@ itself, with exact acceptance, and turns the step counts into speed-ups with a v
 
 ### Cost model
 
-Speed-up = (decode steps without drafting) / Σ over steps of v(width) + graph costs, where v(n) is the time of a decode
-step that verifies n tokens, in T1 (one plain token with the fork's Pascal kernels: 26.8 ms for the S4-L0 mix on six
-cards). Until the rig's measurement (Q19 stage 1) arrives, the curves are those of
-[speculation plumbing](../../docs/research/notes/speculation_plumbing.md) section 6.1, which are estimates, not
-measurements:
+Speed-up = (decode steps without drafting) / (Σ over steps of v(width) + graph costs), where v(n) is the time of a
+decode step that verifies n tokens, in T1 (one plain decode step).
+
+**Measured on the rig** (Q19 stage 1, 2026-10-23): the S4-L0 mix on six cards, fork `eeaa59660`, llama-server with
+backend sampling (`-bs`) and synthetic full acceptance (the synth part of
+[verify_cost.sh](../eagle3_flint/verify_cost.sh): `ngram-simple` drafts with size-n 1 and `--spec-synth-len`). These are
+real server steps, so CUDA graph re-captures and the whole verify path are included.
+
+| Mean verify width | 1 | 2.90 | 4.05 |
+|---|---|---|---|
+| Step time | 25.9 ms (38.6 tokens/s) | 57.7 ms | 92.1 ms |
+| v, T1 | 1 | 2.23 | 3.56 |
+
+- The widths are the mean verify lengths of runs set to 3 and 5 tokens.
+- llama-bench gives upper bounds for single widths: prompt steps without CUDA graphs take 163.6, 170.0, 207.6 and
+  212.1 ms for 5, 6, 7 and 8 tokens. Its 1-token prompt step takes 57.0 ms against 30.8 ms per generated token, so a
+  prompt step carries far more than a server verify.
+- A profile of the 4-token prompt step puts 52 % of the GPU time in llama.cpp's stock multi-token expert kernels
+  (gate/up 25.7 ms, down 16.7 ms).
+- The curve **measured** interpolates linearly between the three points and continues the last segment above 4.05
+  tokens, +1.16 T1 per token; up to 8 tokens that stays below the llama-bench bounds. Nothing is measured above 8, so two
+  extensions bracket it: **last slope** keeps +1.16 T1 per token, **prompt rate** (`measured+pp` in the script's
+  output) adds only 0.197 T1 per token above 8, the pp512 rate.
+
+| n | 2 | 3 | 4 | 5 | 8 | 16 | 32 | 64 |
+|---|---|---|---|---|---|---|---|---|
+| v(n), T1 | 1.65 | 2.34 | 3.50 | 4.65 | 8.12 | 17.4 / 9.69 | 35.8 / 12.8 | 72.8 / 19.2 |
+| Tokens per T1 if every drafted token is accepted | 1.22 | 1.28 | 1.14 | 1.07 | 0.99 | 0.92 / 1.65 | 0.89 / 2.49 | 0.88 / 3.34 |
+
+v(2)–v(4) are interpolated (v(2) between 1 and 2.9 tokens, the least certain), v(5)–v(8) extrapolated, and above 8 the
+two extensions are given as last slope / prompt rate. A fully accepted 2-token draft (width 3) gives 1.28 tokens per T1,
+the most of any width up to 8; at width 8 even full acceptance is slower than plain decoding.
+
+**Model curves**, from before the measurement ([speculation plumbing](../../docs/research/notes/speculation_plumbing.md)
+section 6.1). They show what the drafters would give if multi-token verifies were as cheap as the note assumed:
 
 | Curve | v(2) | v(3) | v(8) | v(16) | v(32) | v(49) | v(65) | Basis |
 |---|---|---|---|---|---|---|---|---|
@@ -58,14 +93,16 @@ measurements:
 | Q51 | 1.63 | 1.99 | 3.30 | 4.95 | 7.74 | 9.75 | 12.8 | Bytes read, with the distinct experts Q51 measured for n tokens |
 | pessimistic | 1.68 | 2.07 | 3.89 | 6.39 | 10.2 | 12.9 | 14.6 | Bytes read, with random routing |
 
-- Every n ≥ 2 runs llama.cpp's stock multi-token kernels, hence the base of 1.28 T1 (the kernels-off token).
+- T1 there is 26.8 ms (llama-bench). Every n ≥ 2 runs llama.cpp's stock multi-token kernels, hence the base of 1.28 T1
+  (the token without the fork's Pascal kernels).
 - No verify is cheaper per token than prompt processing: v(n) ≥ 0.197 n T1 (~190 tokens/s pp512 against 37.4 tokens/s
   decoding). This floor sets the optimistic curve from n = 10 on; the other curves above n = 16 extend their formulas.
-- **Graph costs.** With Q52 (one CUDA graph and one built graph per verify width) a change of width costs nothing. Without
-  it ("today"), the step that changes the width costs a rebuild and an uncaptured step (0.15 + 0.18 T1) and the next
-  step of the same width a capture (0.35 T1), as in the note's section 1.6.
-- `--vn 1=26.8,2=...,8=...` adds a measured table as the curve "measured" (any unit, divided by v(1); beyond its last
-  point it extends the last segment's slope, never below the prompt-processing floor).
+- At n = 3 and 4 the measured costs are 1.4 and 1.8 times the mid curve's.
+
+**Graph costs.** With Q52 (one CUDA graph and one built graph per verify width) a change of width costs nothing. Without
+it ("without Q52"), the step that changes the width costs a rebuild and an uncaptured step (0.15 + 0.18 T1) and the next
+step of the same width a capture (0.35 T1), as in the note's section 1.6. The measured points are steady runs at one
+width, so these switching costs come on top of them.
 
 ## Results
 
@@ -98,7 +135,64 @@ measurements:
   then a rewrite. False matches in fresh text are rarer than assumed (1–6 % of steps against 3–8 %) and less often right
   (14–22 % against 35–40 %).
 
-### Speed-up by drafter (mid curve, with Q52)
+### Speed-up at the measured verify cost
+
+With Q52, at the measured curve (last slope above 8 tokens); the mid model curve in brackets:
+
+| Drafter | Chat | Code | Edits | Agent | All | File rewrites | All, without Q52 |
+|---|---|---|---|---|---|---|---|
+| `ngram-copy` (Q53 design: 2, then 7) | 0.99 (1.00) | 0.97 (1.08) | 0.94 (1.33) | 0.98 (1.04) | 0.97 (1.13) | 0.97 (2.71) | 0.94 |
+| **`ngram-copy`, 2 tokens only** | 0.99 (1.00) | 1.02 (1.06) | 1.08 (1.22) | 1.00 (1.03) | 1.03 (1.09) | 1.26 (1.72) | 1.01 |
+| `ngram-copy`, 1 token only | 1.00 (1.00) | 1.02 (1.04) | 1.07 (1.12) | 1.01 (1.02) | 1.03 (1.05) | 1.20 (1.33) | 1.01 |
+| `ngram-copy`, 2, then 3 | 0.99 (1.00) | 1.00 (1.07) | 1.03 (1.26) | 1.00 (1.04) | 1.01 (1.11) | 1.13 (2.01) | 0.99 |
+| `ngram-copy`, 2, then 5 | 0.99 (1.00) | 0.98 (1.08) | 0.98 (1.31) | 0.99 (1.04) | 0.98 (1.13) | 1.01 (2.40) | 0.96 |
+| `ngram-copy`, tiers 2/7/15/31 | 0.99 (1.00) | 0.95 (1.08) | 0.89 (1.36) | 0.98 (1.04) | 0.94 (1.14) | 0.87 (3.52) | 0.92 |
+| `ngram-map-k` 4/8 | 0.83 (0.98) | 0.82 (1.08) | 0.78 (1.34) | 0.78 (1.03) | 0.80 (1.13) | 0.92 (2.79) | 0.78 |
+| `ngram-mod` 12/2/8 | 1.00 (1.00) | 0.96 (1.06) | 0.92 (1.28) | 0.98 (1.02) | 0.95 (1.11) | 0.95 (2.74) | 0.95 |
+| `ngram-mod` 24/48/64 (default) | 1.00 (1.00) | 0.87 (1.01) | 0.79 (1.20) | 0.97 (1.00) | 0.87 (1.07) | 0.82 (3.37) | 0.87 |
+| `ngram-simple` 12/48 (default) | 0.99 (1.00) | 0.76 (1.01) | 0.62 (1.19) | 0.84 (1.00) | 0.75 (1.07) | 0.79 (3.42) | 0.74 |
+| `ngram-cache` | 0.58 (0.92) | 0.50 (0.95) | 0.55 (1.22) | 0.53 (0.95) | 0.54 (1.02) | 0.80 (2.46) | 0.51 |
+| Bound: oracle copy ≤ 2, after 6 | 1.00 (1.01) | 1.03 (1.07) | 1.10 (1.23) | 1.02 (1.04) | 1.05 (1.10) | 1.27 (1.73) | 1.03 |
+| Bound: oracle copy ≤ 3, after 6 | 1.00 (1.01) | 1.02 (1.09) | 1.06 (1.29) | 1.01 (1.05) | 1.03 (1.13) | 1.14 (2.04) | 1.01 |
+| Bound: oracle copy ≤ 7, after 6 | 1.00 (1.01) | 1.00 (1.11) | 1.00 (1.39) | 1.00 (1.06) | 1.00 (1.16) | 0.99 (2.78) | 0.99 |
+| Bound: oracle copy ≤ 31, after 6 | 1.00 (1.01) | 0.99 (1.12) | 0.96 (1.47) | 1.00 (1.06) | 0.98 (1.19) | 0.90 (3.82) | 0.97 |
+| Bound: oracle copy ≤ 63 | 1.00 (1.03) | 0.98 (1.20) | 0.94 (1.68) | 0.99 (1.12) | 0.97 (1.27) | 0.88 (4.33) | 0.96 |
+
+Drafters with verifies wider than 8 tokens, at the two extensions (with Q52):
+
+| Drafter | Steps wider than 8 | All, last slope | All, prompt rate | File rewrites, last slope | File rewrites, prompt rate |
+|---|---|---|---|---|---|
+| `ngram-copy`, tiers 2/7/15/31 | 0.7 % | 0.94 | 1.02 | 0.87 | 2.08 |
+| `ngram-copy`, tiers 2/63 | 1.0 % | 0.70 | 1.01 | 0.77 | 2.62 |
+| `ngram-map-k` 4/8 | 7.0 % | 0.80 | 0.84 | 0.92 | 1.02 |
+| `ngram-mod` 12/2/8 | 2.7 % | 0.95 | 0.97 | 0.95 | 1.05 |
+| `ngram-mod` 24/48/64 (default) | 0.4 % | 0.87 | 1.05 | 0.82 | 2.69 |
+| `ngram-simple` 12/48 (default) | 1.1 % | 0.75 | 1.02 | 0.79 | 2.49 |
+| `ngram-cache` | 18.9 % | 0.54 | 0.58 | 0.80 | 0.89 |
+| Bound: oracle copy ≤ 31, after 6 | 1.1 % | 0.98 | 1.11 | 0.90 | 2.34 |
+| Bound: oracle copy ≤ 63 | 1.8 % | 0.97 | 1.17 | 0.88 | 3.20 |
+
+- **Only 2-token drafts pay, and little.** `ngram-copy` with 2-token drafts and no long state gives chat 0.99, code
+  1.02, edits 1.08, file rewrites 1.26, 1.03 overall (1.01 without Q52), within 0.02 of the bound for a perfect copy
+  drafter at that width (oracle ≤ 2 after 6: 1.05 overall, 1.27 on rewrites). At the measured widths no drafter can do
+  much better: even a fully accepted 2-token draft gives only 1.28 tokens per T1.
+- **Q53's long state loses**: an 8-token verify costs 8.1 T1 for at most 8 tokens, so Q53 as designed gives 0.97
+  overall and 0.97 on rewrites; a long block of 3 tokens (width 4) is break-even (1.01).
+- **Every llama.cpp drafter setting loses** on code, edits and overall at the last slope: `ngram-mod` 12/2/8 0.95,
+  `ngram-mod`'s default 0.87, `ngram-map-k` 4/8 0.80, `ngram-simple`'s default 0.75, `ngram-cache` 0.54. The best of
+  the 15, `ngram-map-k4v` 8/8 with min hits 2, gives 0.97. Only chat stays at ~1.00, for the settings that rarely draft.
+- **Wide blocks depend on the unmeasured widths.** At the prompt-rate extension the 48–64-token defaults give 2.5–2.7× on
+  rewrites and 1.02–1.05 overall, the tiered controller 2.1×; at the last slope they lose 6–30 % overall.
+- **Why:** above width 3 each verified token costs 1.16 T1, more than a plain token, because every width ≥ 2 runs
+  llama.cpp's stock multi-token kernels; the expert products alone take 52 % of a 4-token step.
+
+At 38.6 tokens/s (the rig's plain step), 2-token `ngram-copy` would give ~38 tokens/s on chat, ~39 on code, ~42 on
+Flint's edits and ~49 on file rewrites.
+
+### Speed-up by drafter at the model curves (mid curve, with Q52)
+
+What the drafters would give if multi-token verifies were as cheap as the model curves assume, e.g. with multi-column
+Pascal kernels; at the rig's current cost, see the previous section.
 
 | Drafter | Steps with a draft | Accepted / drafted | Tokens per step | Chat | Code | Edits | Agent | All | File rewrites | All, without Q52 |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -140,7 +234,7 @@ Width of the verify steps over all classes: Q53 verifies 1 token at 93.5 % of st
 tiered controller 1 / 3 / 8 / 16 / 32 tokens at 94.6 / 3.4 / 1.3 / 0.4 / 0.3 %; `ngram-mod`'s default 1 or 65 tokens
 (99.6 / 0.4 %); `ngram-simple`'s default 1 or 49 (98.9 / 1.0 %).
 
-### Expected speed-up ranges
+### Speed-up ranges at the model curves
 
 Speed-up at the optimistic / mid / Q51 / pessimistic curves, with Q52:
 
@@ -151,81 +245,96 @@ Speed-up at the optimistic / mid / Q51 / pessimistic curves, with Q52:
 | `ngram-copy`, tiers 2/7/15/31 | 1.01 / 1.00 / 1.00 / 1.00 | 1.11 / 1.08 / 1.07 / 1.05 | 1.45 / 1.36 / 1.32 / 1.25 | 1.06 / 1.04 / 1.03 / 1.02 | 1.17 / 1.14 / 1.12 / 1.10 | 4.31 / 3.52 / 3.43 / 2.71 |
 
 At the 32 tokens/s of the five-turn chat benchmark, the tiered controller would give ~32 tokens/s on chat, 34–36 on code,
-40–46 on Flint's edits and 87–138 on file rewrites (model, not measured).
+40–46 on Flint's edits and 87–138 on file rewrites at these curves.
 
 ### `ngram-copy` settings
 
-One parameter changed from Q53's design at a time; mid curve with Q52 unless stated:
+One parameter changed from Q53's design at a time, with Q52 unless stated. "All", "Edits" and "File rewrites" are at the
+measured curve (last slope above 8 tokens), "prompt rate" at its other extension, "mid" at the model's mid curve:
 
-| Setting | Chat, pessimistic | Code | Edits | All | File rewrites | All, Q51 curve | File rewrites, Q51 curve | All, without Q52 |
-|---|---|---|---|---|---|---|---|---|
-| Q53 design (6/12, k 2/7, enter 2, hold 2) | 1.00 | 1.08 | 1.33 | 1.13 | 2.71 | 1.11 | 2.28 | 1.10 |
-| k_short 1 | 1.00 | 1.08 | 1.32 | 1.13 | 2.69 | 1.10 | 2.26 | 1.10 |
-| k_short 3 | 1.00 | 1.09 | 1.33 | 1.13 | 2.70 | 1.11 | 2.27 | 1.11 |
-| k_long 5 | 1.00 | 1.08 | 1.31 | 1.13 | 2.40 | 1.10 | 1.98 | 1.10 |
-| k_long 11 | 1.00 | 1.08 | 1.34 | 1.14 | 2.99 | 1.11 | 2.54 | 1.10 |
-| k_long 15 | 1.00 | 1.08 | 1.34 | 1.13 | 3.22 | 1.11 | 2.89 | 1.10 |
-| k_long 31 | 0.99 | 1.06 | 1.29 | 1.11 | 3.38 | 1.10 | 3.35 | 1.09 |
-| no long state (k 2 only) | 1.00 | 1.06 | 1.22 | 1.09 | 1.72 | 1.07 | 1.48 | 1.07 |
-| n_strong 4 | 0.98 | 1.09 | 1.36 | 1.14 | 2.72 | 1.10 | 2.28 | 1.09 |
-| n_strong 8 | 1.00 | 1.07 | 1.30 | 1.12 | 2.68 | 1.10 | 2.26 | 1.10 |
-| n_longest 24 | 1.00 | 1.08 | 1.33 | 1.13 | 2.72 | 1.11 | 2.28 | 1.10 |
-| enter 1 | 0.99 | 1.09 | 1.34 | 1.14 | 2.71 | 1.11 | 2.28 | 1.11 |
-| enter 3 | 1.00 | 1.08 | 1.32 | 1.13 | 2.67 | 1.10 | 2.25 | 1.10 |
-| hold 0 | 1.00 | 1.08 | 1.33 | 1.13 | 2.69 | 1.10 | 2.26 | 1.10 |
-| hold 4 | 1.00 | 1.08 | 1.33 | 1.13 | 2.71 | 1.11 | 2.28 | 1.10 |
-| long at once (k 7 on any match) | 0.98 | 1.09 | 1.33 | 1.13 | 2.72 | 1.10 | 2.29 | 1.11 |
-| long only, from a 12-token match | 1.00 | 1.06 | 1.27 | 1.11 | 2.65 | 1.09 | 2.25 | 1.10 |
-| tiers 2/7/15 | 1.00 | 1.08 | 1.35 | 1.14 | 3.22 | 1.12 | 2.88 | 1.11 |
-| **tiers 2/7/15/31** | 1.00 | 1.08 | 1.36 | 1.14 | 3.52 | 1.12 | 3.43 | 1.11 |
-| tiers 2/7/15/63 | 1.00 | 1.08 | 1.35 | 1.14 | 3.64 | 1.12 | 3.89 | 1.11 |
-| tiers 2/7/31 | 1.00 | 1.08 | 1.35 | 1.14 | 3.53 | 1.12 | 3.47 | 1.11 |
-| tiers 2/7/15/31, n_strong 4 | 0.98 | 1.09 | 1.39 | 1.15 | 3.48 | 1.12 | 3.40 | 1.09 |
+| Setting | All | Edits | File rewrites | All, prompt rate | File rewrites, prompt rate | All, mid | File rewrites, mid | Chat, pessimistic | All, measured, without Q52 |
+|---|---|---|---|---|---|---|---|---|---|
+| Q53 design (6/12, k 2/7, enter 2, hold 2) | 0.97 | 0.94 | 0.97 | 0.97 | 0.97 | 1.13 | 2.71 | 1.00 | 0.94 |
+| k_short 1 | 0.96 | 0.93 | 0.96 | 0.96 | 0.96 | 1.13 | 2.69 | 1.00 | 0.93 |
+| k_short 3 | 0.95 | 0.93 | 0.96 | 0.95 | 0.96 | 1.13 | 2.70 | 1.00 | 0.93 |
+| k_long 3 | 1.01 | 1.03 | 1.13 | 1.01 | 1.13 | 1.11 | 2.01 | 1.00 | 0.99 |
+| k_long 4 | 0.99 | 1.00 | 1.07 | 0.99 | 1.07 | 1.12 | 2.25 | 1.00 | 0.97 |
+| k_long 5 | 0.98 | 0.98 | 1.01 | 0.98 | 1.01 | 1.13 | 2.40 | 1.00 | 0.96 |
+| k_long 11 | 0.93 | 0.88 | 0.91 | 1.00 | 1.28 | 1.14 | 2.99 | 1.00 | 0.91 |
+| k_long 15 | 0.91 | 0.85 | 0.89 | 1.02 | 1.55 | 1.13 | 3.22 | 1.00 | 0.89 |
+| k_long 31 | 0.82 | 0.72 | 0.81 | 1.03 | 2.13 | 1.11 | 3.38 | 0.99 | 0.81 |
+| **no long state (k 2 only)** | 1.03 | 1.08 | 1.26 | 1.03 | 1.26 | 1.09 | 1.72 | 1.00 | 1.01 |
+| no long state (k 1 only) | 1.03 | 1.07 | 1.20 | 1.03 | 1.20 | 1.05 | 1.33 | 1.00 | 1.01 |
+| n_strong 4 | 0.94 | 0.92 | 0.96 | 0.94 | 0.96 | 1.14 | 2.72 | 0.98 | 0.90 |
+| n_strong 8 | 0.97 | 0.95 | 0.97 | 0.97 | 0.97 | 1.12 | 2.68 | 1.00 | 0.96 |
+| n_longest 24 | 0.97 | 0.95 | 0.98 | 0.97 | 0.98 | 1.13 | 2.72 | 1.00 | 0.94 |
+| enter 1 | 0.95 | 0.92 | 0.96 | 0.95 | 0.96 | 1.14 | 2.71 | 0.99 | 0.93 |
+| enter 3 | 0.97 | 0.95 | 0.97 | 0.97 | 0.97 | 1.13 | 2.67 | 1.00 | 0.95 |
+| hold 0 | 0.97 | 0.95 | 0.98 | 0.97 | 0.98 | 1.13 | 2.69 | 1.00 | 0.95 |
+| hold 4 | 0.96 | 0.94 | 0.97 | 0.96 | 0.97 | 1.13 | 2.71 | 1.00 | 0.94 |
+| long at once (k 7 on any match) | 0.90 | 0.86 | 0.96 | 0.90 | 0.96 | 1.13 | 2.72 | 0.98 | 0.88 |
+| long only, from a 12-token match | 0.96 | 0.94 | 0.97 | 0.96 | 0.97 | 1.11 | 2.65 | 1.00 | 0.96 |
+| tiers 2/7/15 | 0.95 | 0.91 | 0.90 | 1.01 | 1.53 | 1.14 | 3.22 | 1.00 | 0.92 |
+| tiers 2/7/15/31 | 0.94 | 0.89 | 0.87 | 1.02 | 2.08 | 1.14 | 3.52 | 1.00 | 0.92 |
+| tiers 2/7/15/63 | 0.92 | 0.86 | 0.84 | 1.02 | 2.50 | 1.14 | 3.64 | 1.00 | 0.90 |
+| tiers 2/7/31 | 0.92 | 0.86 | 0.87 | 1.02 | 2.12 | 1.14 | 3.53 | 1.00 | 0.90 |
+| tiers 2/15/31 | 0.89 | 0.82 | 0.83 | 1.03 | 2.10 | 1.13 | 3.44 | 1.00 | 0.87 |
+| tiers 2/63 | 0.70 | 0.57 | 0.77 | 1.01 | 2.62 | 1.07 | 3.42 | 0.99 | 0.69 |
+| tiers 2/7/15/31, n_strong 4 | 0.91 | 0.86 | 0.84 | 0.99 | 2.02 | 1.15 | 3.48 | 0.98 | 0.87 |
 
-- Outside file rewrites the controller's parameters move the classes by ≤ 1 %, except n_strong 4 (+1–3 % on code and
-  edits at the mid curve, −2 % on chat at the pessimistic curve and −3 % overall without Q52).
+- **At the measured cost the long state is what loses.** Without it the controller gives 1.03 overall; long blocks of
+  4–8 tokens cost more than they yield, and a 3-token block (width 4) is break-even. The other parameters move the
+  overall result by ≤ 2 %; n_strong 4 and drafting long at once lose 3–7 %.
 - Entering the long state by match length adds nothing: a match grows from 6 to 9 to 12 tokens over the two fully
   accepted short steps, so the controller is already long when the match reaches 12.
-- The long state matters (without it: rewrites 1.72, edits 1.22); a single long block of 15 or 31 tokens helps rewrites
-  but costs a little elsewhere; climbing through tiers keeps both.
+- **At the prompt-rate extension**, blocks of 31–63 tokens give 2.1–2.6× on rewrites while the overall result stays at
+  1.01–1.03; at the last slope the same settings lose 6–30 % overall.
+- **At the model curves** the long state matters (without it: rewrites 1.72 instead of 2.71) and tiers lift rewrites to
+  3.52; the parameters other than the block lengths move the classes by ≤ 1 %.
 
 ## What it means for Q53
 
-- **Add tiers above 7: 15 and 31 drafted tokens (verify widths 16 and 32), one tier up after every two fully accepted
-  steps, back to 2 tokens as the long state falls back.** File rewrites gain 30 % (2.71 → 3.52 at the mid curve, 2.28 →
-  3.43 at Q51's), everything else stays within ±1 %. The note's conclusion that blocks above 7 need expert locality does
-  not hold for verbatim copies: when nearly every drafted token is accepted, a wide verify approaches the
-  prompt-processing rate per token.
-- **Costs to check before taking them:** Q52 then keeps five widths (1, 3, 8, 16, 32), within PR #31004's 8 graphs per
-  card; backend sampling builds 1 + 31 = 32 sampler chains into every graph, plain steps included (cost unmeasured);
-  and the attention masks crossing every x1 link grow with width × context, 2 MiB per card for a 32-token step at 32k
-  (Q65). Until Q65 measures that, cap the top tier by context depth.
-- **Keep the rest of the design:** the 6-token minimum match (fresh text has a match before only 1–6 % of tokens, and
-  its continuation is right 14–22 % of the time), the 12-token longest match, 2-token short drafts, entry after two full
-  steps and a hold of 2.
-- **Replace the workload table** with the measured one above, and the expected gains: chat 1.00, new code 1.05–1.11,
-  Flint's whole-file edits as it does them (91 % reasoning) 1.25–1.45, file rewrites 2.7–4.3, single agent turns
-  1.02–1.06 (tiered controller, with Q52).
-- **Without any fork change**, `--spec-default` (`ngram-mod` 24/48/64) is the safe choice for Flint today: never below
-  1.00 on any class at any curve, 1.07–1.08 overall and 3.4–3.7× on file rewrites. It puts 65 sampler chains into every
-  graph with `-bs` and 65-token verifies against the masks, both unmeasured on the rig.
-- **Q19 stage 1** should measure v(16) and v(32), not only 1–8: the tier decision rests on them.
+- **At the measured verify cost, drop the long state: draft 2 tokens per match (verify width 3) and nothing longer.** It
+  gives 1.03 overall (chat 0.99, code 1.02, edits 1.08, file rewrites 1.26), within 0.02 of the bound for that width,
+  and stays at 1.03 under both extensions above 8 tokens. Q53 as designed gives 0.97. With one draft width, Q52 needs
+  only two graph shapes (1 and 3) and is worth 1.01 → 1.03.
+- **Keep the 6-token minimum match** (fresh text has a match before only 1–6 % of tokens, and its continuation is right
+  14–22 % of the time) **and the 12-token longest match.** 2-token drafts beat 1-token drafts on rewrites (1.26 against
+  1.20) and tie elsewhere.
+- **Wide blocks are a bet on v(16)–v(64).** If a verify of 16–64 tokens costs close to the prompt-processing rate per
+  token, blocks of 31–63 tokens on long copies give 2.1–2.6× on rewrites at no cost elsewhere (overall 1.01–1.03, against
+  1.03 without them); if the measured slope continues, they lose 6–30 %. Measure v(16), v(32) and v(64) the same way (server synth
+  runs) before building more than the 2-token drafter. Blocks of 4–8 tokens lose under both extensions.
+- **If wide blocks pay, add them as a tier above the 2-token drafts, without the 7-token tier**: 2/15/31 or 2/63 avoid
+  the 8-token verifies that cost more than they yield. Their costs: more graph shapes for Q52, 32–64 sampler chains in
+  every graph with `-bs` (plain steps included, unmeasured), and attention masks crossing every x1 link that grow with
+  width × context, 2 MiB per card for a 32-token step at 32k (Q65).
+- **The multi-token kernels decide how much speculation can give Flint on this rig.** At n = 3 and 4 the measured verify
+  costs 1.4 and 1.8 times the model's mid curve, and the stock multi-token expert products take 52 % of a 4-token step.
+  At the mid curve's costs Q53 would give 1.13 overall and 2.7× on rewrites (tiers 2/7/15/31: 1.14 and 3.5×).
+- **Replace the workload table** with the measured copy structure above.
+- **With stock drafters, leave speculation off for Flint.** At the measured cost every llama.cpp setting replayed here
+  loses overall (0.54–0.97). `--spec-default` (`ngram-mod` 24/48/64) loses 13 % at the last slope and gains 5 % (2.7× on
+  rewrites) at the prompt rate, so it too waits for v(16)–v(64).
 
 ## Gaps
 
 - **File rewrites are 2,159 tokens from three files.** Flint reasoned 1,200–3,000+ tokens before every rewrite, and five
   of the eight edit prompts ran out of their 3,072 tokens while still reasoning. The rewrite numbers are the ones with
   the most leverage and the least data. With room for a full rewrite after the reasoning, rewrites would be 25–35 % of an
-  edit output instead of 9 %, and the edit class would move from 1.36 to ~1.5–1.6 at the mid curve (harmonic mix of the
-  measured reasoning and rewrite rates).
+  edit output instead of 9 %, and the edit class would move from 1.08 to ~1.10–1.12 at the measured cost with 2-token
+  drafts (1.36 to ~1.5–1.6 for the tiered controller at the mid curve; harmonic mix of the reasoning and rewrite rates).
 - **No real agent sessions.** The agent class is 10 single turns (6 first turns, 4 after one `read_file` result): 2,953
   tokens, 89 % reasoning, 320 tokens of tool calls (paths, shell commands, search patterns), none of them an edit. Real
   coding-agent sessions emit edit calls whose arguments copy file contents (old and new strings, whole files), carry
   20–100k tokens of tool output and earlier turns, and drop earlier reasoning. A session's speed-up is the harmonic mix
-  1 / Σ (share / speed-up) of its parts: 60 % reasoning at 1.3, 25 % copied tool arguments at 3.5 and 15 % prose at 1.0
-  give 1.46; the measured single turns give 1.04. The share of copied tool arguments decides it, and no transcript here
-  measures it. Next data: two or three recorded coding-agent sessions replayed with their tool outputs (the replayed agent
+  1 / Σ (share / speed-up) of its parts: 60 % reasoning, 25 % copied tool arguments and 15 % prose give 1.09 at the
+  measured cost with 2-token drafts (1.06, 1.26 and 1.0 for the parts) and 1.46 at the mid curve with the tiered
+  controller (1.3, 3.5 and 1.0); the single turns here give 1.00 and 1.04. The share of copied tool arguments decides
+  it, and no transcript here measures it. Next data: two or three recorded coding-agent sessions replayed with their tool outputs (the replayed agent
   set Q53's rig test already needs), then this replay on them.
+- **Verify cost.** v(2) is interpolated and every width above 4 extrapolated from the server measurements; the
+  conclusions about blocks wider than 8 tokens rest on which extension holds.
 - **Long contexts.** All prompts are under 2,100 tokens. A long context offers more true and more false matches; the
   replay does not show how many.
 - **Multi-turn chat**, where earlier answers stay in the context, is not covered.
@@ -240,11 +349,13 @@ One parameter changed from Q53's design at a time; mid curve with Q52 unless sta
 ```bash
 # the transcripts: bench/expert_overlap's generate.py writes gen.jsonl
 python -I replay.py gen.jsonl --out q64.json > q64.md             # ~1 min on one core, standard library only
-python -I replay.py gen.jsonl --vn 1=26.8,2=...,8=... > q64_measured.md   # with the rig's v(n), in ms or T1
+# with the rig's verify step times (Q19 stage 1, ms) and llama-bench pp-n as upper bounds above them
+python -I replay.py gen.jsonl --vn 1=25.9,2.9=57.7,4.05=92.1 --vn-cap 5=163.6,6=170.0,7=207.6,8=212.1 > q64_measured.md
 LLAMA_DIR=<llama.cpp fork checkout> bash fork_check.sh gen.jsonl  # needs g++; checks the ports against the fork's C++
 ```
 
 `replay.py` prints the copy-structure tables and, per class, per segment and for the file rewrites, every drafter
-setting with its draft share, acceptance, tokens per step, widths and speed-up at each curve; `--out` writes the same as
+setting with its draft share, acceptance, tokens per step, widths and speed-up at each curve (`measured` and
+`measured+pp` when `--vn` is given); `--out` writes the same as
 JSON, including the full width histograms. `--only REGEX` limits the drafter settings, `--dump-steps FILE` writes every
 step.

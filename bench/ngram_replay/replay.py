@@ -15,8 +15,11 @@ common/speculative.cpp (ngram-mod), common/ngram-cache.cpp (ngram-cache), plus t
 a drafter hears back only after a non-empty draft (tools/server/server-context.cpp). fork_check.cpp replays the same
 transcripts through the fork's own C++ and must print the same steps (see the README).
 
-usage: python replay.py GEN.jsonl [--out RESULTS.json] [--vn 1=26.8,2=33.0,...] [--only REGEX] [--dump-steps FILE]
-  --vn          a measured verify-cost table v(n) (any unit; divided by v(1)), added as the curve "measured"
+usage: python replay.py GEN.jsonl [--out RESULTS.json] [--vn 1=25.9,2.9=57.7,...] [--vn-cap 5=163.6,...] [--only REGEX]
+                         [--dump-steps FILE]
+  --vn          measured verify step times v(n) (any unit; divided by v(1)), added as the curves "measured" (the last
+                slope continued) and "measured+pp" (the prompt-processing rate per token beyond the measured widths)
+  --vn-cap      upper bounds on v(n) at single widths in the same unit (e.g. llama-bench pp-n), applied when extrapolating
   --only        replay only the drafter settings whose name matches REGEX
   --dump-steps  write every step as "<setting> TAB <transcript> TAB <position> TAB <drafted> TAB <accepted>"
   --no-copy     skip the copy-structure pass
@@ -479,6 +482,9 @@ def drafter_settings():
         ("ngram-copy k_long 15", lambda: NgramCopy(k_long=15)),
         ("ngram-copy k_long 31", lambda: NgramCopy(k_long=31)),
         ("ngram-copy no long (k 2)", lambda: NgramCopy(k_long=2)),
+        ("ngram-copy no long (k 1)", lambda: NgramCopy(k_short=1, k_long=1)),
+        ("ngram-copy k_long 3", lambda: NgramCopy(k_long=3)),
+        ("ngram-copy k_long 4", lambda: NgramCopy(k_long=4)),
         ("ngram-copy n_strong 4", lambda: NgramCopy(n_strong=4)),
         ("ngram-copy n_strong 8", lambda: NgramCopy(n_strong=8)),
         ("ngram-copy n_longest 24", lambda: NgramCopy(n_longest=24)),
@@ -493,9 +499,13 @@ def drafter_settings():
         ("ngram-copy tiers 2/7/15/63", lambda: NgramCopy(tiers=(2, 7, 15, 63))),
         ("ngram-copy tiers 2/7/31", lambda: NgramCopy(tiers=(2, 7, 31))),
         ("ngram-copy tiers 2/7/15/31, n_strong 4", lambda: NgramCopy(n_strong=4, tiers=(2, 7, 15, 31))),
+        ("ngram-copy tiers 2/15/31", lambda: NgramCopy(tiers=(2, 15, 31))),
+        ("ngram-copy tiers 2/63", lambda: NgramCopy(tiers=(2, 63))),
         ("oracle copy <= 7 (bound)", lambda: OracleCopy(7)),
         ("oracle copy <= 15 (bound)", lambda: OracleCopy(15)),
         ("oracle copy <= 63 (bound)", lambda: OracleCopy(63)),
+        ("oracle copy <= 2, after 6 (bound)", lambda: OracleCopy(2, 6)),
+        ("oracle copy <= 3, after 6 (bound)", lambda: OracleCopy(3, 6)),
         ("oracle copy <= 7, after 6 (bound)", lambda: OracleCopy(7, 6)),
         ("oracle copy <= 31, after 6 (bound)", lambda: OracleCopy(31, 6)),
     ]
@@ -625,22 +635,33 @@ def model_curves():
     }
 
 
-def measured_curve(spec):
-    """v(n) from "1=26.8,2=33.0,..." (any unit), divided by v(1); linear between points, beyond the last one along the
-    last segment's slope, never below the prompt-processing floor."""
-    pts = sorted((int(k), float(v)) for k, v in (x.split("=") for x in spec.split(",")))
-    v1 = dict(pts)[1]
-    pts = [(n, v / v1) for n, v in pts]
+def parse_points(spec):
+    return sorted((float(k), float(v)) for k, v in (x.split("=") for x in spec.split(",")))
 
-    def v(n):
+
+def measured_curves(spec, cap_spec=None):
+    """Two curves from measured step times "1=25.9,2.9=57.7,..." (widths may be averages; any unit, divided by v(1)):
+    linear between the points; beyond the last one along the last segment's slope, but never above an upper bound from
+    cap_spec at the same width (e.g. llama-bench pp-n times, same unit). "measured" keeps that slope at every width;
+    "measured+pp" adds only the prompt-processing rate per token beyond the last width with a point or a bound."""
+    pts = parse_points(spec)
+    v1 = dict(pts)[1.0]
+    pts = [(n, v / v1) for n, v in pts]
+    caps = {int(n): v / v1 for n, v in parse_points(cap_spec)} if cap_spec else {}
+    n_last = max([pts[-1][0]] + list(caps))
+
+    def slope(n):
         if n == 1:
             return 1.0
-        for (n0, v0), (n1, v1_) in zip(pts, pts[1:]):
+        for (n0, a0), (n1, a1) in zip(pts, pts[1:]):
             if n0 <= n <= n1:
-                return v0 + (v1_ - v0) * (n - n0) / (n1 - n0)
-        (n0, v0), (n1, v1_) = pts[-2], pts[-1]
-        return max(v1_ + (v1_ - v0) / (n1 - n0) * (n - n1), PP_FLOOR * n)
-    return v
+                return a0 + (a1 - a0) * (n - n0) / (n1 - n0)
+        (n0, a0), (n1, a1) = pts[-2], pts[-1]
+        return min(a1 + (a1 - a0) / (n1 - n0) * (n - n1), caps.get(n, math.inf))
+
+    def pp_beyond(n):
+        return slope(n) if n <= n_last else slope(n_last) + PP_FLOOR * (n - n_last)
+    return {"measured": slope, "measured+pp": pp_beyond}
 
 
 # Host costs of a change of verify width (speculation_plumbing.md 1.6), in T1: graph rebuild R, eager step U, capture C
@@ -839,6 +860,7 @@ def main():
     ap.add_argument("gen")
     ap.add_argument("--out")
     ap.add_argument("--vn")
+    ap.add_argument("--vn-cap")
     ap.add_argument("--only")
     ap.add_argument("--dump-steps")
     ap.add_argument("--no-copy", action="store_true", help="skip the copy-structure pass")
@@ -847,7 +869,7 @@ def main():
     rows = load(args.gen)
     curves = model_curves()
     if args.vn:
-        curves = {"measured": measured_curve(args.vn), **curves}
+        curves = {**measured_curves(args.vn, args.vn_cap), **curves}
     curves = {c: functools.lru_cache(maxsize=None)(v) for c, v in curves.items()}
     res = {"curves": {c: {n: round(v(n), 3) for n in (2, 3, 4, 8, 16, 32, 49, 65)} for c, v in curves.items()},
            "copy": {} if args.no_copy else copy_report(rows), "drafters": {}}
