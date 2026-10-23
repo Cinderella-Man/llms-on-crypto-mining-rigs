@@ -19,6 +19,8 @@
 #     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`)
 #     SCHED_COPIES=N: ggml scheduler input copies for pipeline parallelism (default 4); each copy holds the inputs of
 #     one ubatch, the attention mask included, so fewer copies leave room for a larger -ub at long context
+#     JOBS=N: parallel compile jobs (default: all cores), e.g. on a shared build machine
+#     DOCKER_ARGS: extra `docker run` arguments, e.g. a label the build machine's policy asks for
 # Output: $WORK/llama.cpp-<date>-<sha>[-graphs61][-<patch>].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to
 # ~/llama-builds).
 # On the rig: tar xzf <tarball> -C /opt && /opt/<name>/bin/llama-server --list-devices
@@ -30,7 +32,7 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 WORK=${WORK:-$HOME/llama-builds}
 mkdir -p "$WORK/ccache"
 
-docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+docker run --rm ${DOCKER_ARGS:-} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
     -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
@@ -66,9 +68,9 @@ docker run --rm -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TES
         -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=$([ "$TESTS" = 1 ] && echo ON || echo OFF) \
         $([ -n "$SCHED_COPIES" ] && echo -DGGML_SCHED_MAX_COPIES=$SCHED_COPIES) \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
-    cmake --build build -j "$(nproc)" --target llama-bench llama-server llama-cli llama-completion \
+    cmake --build build -j "${JOBS:-$(nproc)}" --target llama-bench llama-server llama-cli llama-completion \
         llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) \
-        $([ -d examples/pipespec ] && echo llama-pipespec) > /dev/null
+        $([ -d examples/pipespec ] && echo llama-pipespec) $([ -d examples/screen-check ] && echo llama-screen-check) > /dev/null
 
     out=/work/$name
     rm -rf "$out" && mkdir -p "$out/bin"

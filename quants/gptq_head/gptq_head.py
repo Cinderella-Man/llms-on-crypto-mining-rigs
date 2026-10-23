@@ -14,6 +14,14 @@
 #   gptq_head.py full <file.gguf> <head.q5_0> <out.gguf>       the file with output.weight replaced, one file
 #   gptq_head.py verify <file.gguf> <head.q5_0> <out.gguf>     out = file with that head: same metadata, same tensors
 #                                                              byte for byte except output.weight = head (Q5_0)
+#   gptq_head.py screen <file.gguf> <screen.q4_0> <out.gguf> [--top-m 256]
+#                                                              the file plus output_screen.weight (the screened head of
+#                                                              our llama.cpp fork) and <arch>.output_screen.top_m
+#   gptq_head.py verifyscreen <file.gguf> <screen.q4_0> <out.gguf> [--top-m 256]
+#                                                              out = file + that screen, everything else byte for byte
+#   gptq_head.py screenfile <file.gguf> <screen.q4_0> <out.gguf> [--top-m 256]
+#                                                              a small GGUF with only output_screen.weight, for the fork's
+#                                                              LLAMA_SCREEN_HEAD_FILE (adds the screen to file unchanged)
 #
 # x.f32 files come from llama-head-dump (head_dump/): float32 rows of n_embd values plus an .idx file of
 # {sequence, position, token}; rows at position 0 are left out of H. hessian and proxy take x.f32@ids (only these
@@ -490,6 +498,88 @@ def cmd_full(a):
     print(f'{a.out}: output.weight -> Q5_0 from {a.head}')
 
 
+def cmd_screen(a):
+    import gguf
+    r = gguf.GGUFReader(a.src)
+    t0 = next(t for t in r.tensors if t.name == 'output.weight')
+    if any(t.name == 'output_screen.weight' for t in r.tensors):
+        sys.exit(f'{a.src} already has output_screen.weight')
+    raw = np.fromfile(a.head, np.uint8).reshape(int(t0.shape[1]), -1)
+    ty = raw_type(raw.size, raw.shape[0], int(t0.shape[0]))
+    w, gguf = _writer(r, a.out)
+    _copy_kv(r, w, gguf)
+    arch = r.get_field(gguf.Keys.General.ARCHITECTURE).contents()
+    w.add_uint32(f'{arch}.output_screen.top_m', a.top_m)
+    for t in r.tensors:
+        w.add_tensor_info(t.name, t.data.shape, t.data.dtype, t.data.nbytes, t.tensor_type)
+        if t.name == 'output.weight':
+            w.add_tensor_info('output_screen.weight', raw.shape, np.dtype(np.uint8), raw.nbytes,
+                              gguf.GGMLQuantizationType[ty.upper()])
+    w.write_header_to_file(); w.write_kv_data_to_file(); w.write_ti_data_to_file()
+    for t in r.tensors:
+        w.write_tensor_data(t.data, tensor_endianess=r.endianess)
+        if t.name == 'output.weight':
+            w.write_tensor_data(raw)
+    w.close()
+    print(f'{a.out}: + output_screen.weight ({ty}) from {a.head}, {arch}.output_screen.top_m = {a.top_m}')
+
+
+def cmd_screenfile(a):
+    import gguf
+    r = gguf.GGUFReader(a.src)
+    t0 = next(t for t in r.tensors if t.name == 'output.weight')
+    raw = np.fromfile(a.head, np.uint8).reshape(int(t0.shape[1]), -1)
+    ty = raw_type(raw.size, raw.shape[0], int(t0.shape[0]))
+    w, gguf = _writer(r, a.out)
+    arch = r.get_field(gguf.Keys.General.ARCHITECTURE).contents()
+    w.add_uint32(f'{arch}.output_screen.top_m', a.top_m)
+    w.add_tensor_info('output_screen.weight', raw.shape, np.dtype(np.uint8), raw.nbytes, gguf.GGMLQuantizationType[ty.upper()])
+    w.write_header_to_file(); w.write_kv_data_to_file(); w.write_ti_data_to_file()
+    w.write_tensor_data(raw)
+    w.close()
+    print(f'{a.out}: output_screen.weight ({ty}, {raw.nbytes / 1e6:.1f} MB) for {a.src}, top_m {a.top_m}')
+
+
+def cmd_verifyscreen(a):
+    import gguf
+    r0, r1 = gguf.GGUFReader(a.src), gguf.GGUFReader(a.out)
+    bad = []
+    arch = r0.get_field(gguf.Keys.General.ARCHITECTURE).contents()
+    key = f'{arch}.output_screen.top_m'
+    k0 = {k: f for k, f in r0.fields.items() if not k.startswith('GGUF.')}
+    k1 = {k: f for k, f in r1.fields.items() if not k.startswith('GGUF.') and k != key}
+    if list(k0) != list(k1):
+        bad.append(f'metadata keys differ: {set(k0) ^ set(k1)}')
+    for k in k0.keys() & k1.keys():
+        if k0[k].contents() != k1[k].contents() or k0[k].types != k1[k].types:
+            bad.append(f'metadata {k} differs')
+    if key not in r1.fields or r1.fields[key].contents() != a.top_m:
+        bad.append(f'{key} missing or not {a.top_m}')
+    n0 = [t.name for t in r0.tensors]
+    n1 = [t.name for t in r1.tensors if t.name != 'output_screen.weight']
+    if n0 != n1:
+        bad.append('tensor names or order differ')
+    t1 = {t.name: t for t in r1.tensors}
+    for t in r0.tensors:
+        u = t1.get(t.name)
+        if u is None or u.tensor_type != t.tensor_type or list(u.shape) != list(t.shape) or \
+                not np.array_equal(np.asarray(u.data).reshape(-1), np.asarray(t.data).reshape(-1)):
+            bad.append(f'tensor {t.name} differs')
+    sc = t1.get('output_screen.weight')
+    head = np.fromfile(a.head, np.uint8)
+    t0 = t1['output.weight']
+    if sc is None:
+        bad.append('output_screen.weight missing')
+    else:
+        ty = raw_type(head.size, int(t0.shape[1]), int(t0.shape[0]))
+        if sc.tensor_type != gguf.GGMLQuantizationType[ty.upper()] or list(sc.shape) != list(t0.shape) or \
+                not np.array_equal(np.asarray(sc.data).reshape(-1), head):
+            bad.append('output_screen.weight differs from the screen file')
+    print(f'{a.out}: {len(r1.tensors)} tensors checked against {a.src} + {a.head}')
+    print('\n'.join(bad) if bad else f'identical except output_screen.weight = the given screen, {key} = {a.top_m}')
+    sys.exit(1 if bad else 0)
+
+
 def cmd_verify(a):
     import gguf
     r0, r1 = gguf.GGUFReader(a.src), gguf.GGUFReader(a.out)
@@ -543,6 +633,9 @@ def main():
     q.add_argument('--n-embd', type=int, default=2048)
     q = s.add_parser('full'); q.add_argument('src'); q.add_argument('head'); q.add_argument('out')
     q = s.add_parser('verify'); q.add_argument('src'); q.add_argument('head'); q.add_argument('out')
+    for c in ('screen', 'verifyscreen', 'screenfile'):
+        q = s.add_parser(c); q.add_argument('src'); q.add_argument('head'); q.add_argument('out')
+        q.add_argument('--top-m', type=int, default=256)
     a = p.parse_args()
     if a.cmd == 'quant' and a.mode != 'rtn' and not a.hessian:
         sys.exit('--hessian is needed for imat and gptq')

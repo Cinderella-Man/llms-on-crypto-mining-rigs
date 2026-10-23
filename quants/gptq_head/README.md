@@ -138,3 +138,72 @@ token is among the top 64 of every 4-bit screen on every row (Q4_1: all but one)
 - Costs not measured here: the screened head needs both copies in memory (+173 MB on the card holding the head) and
   a top-M selection over 150,144 scores per token on the GPU. Whether that selection plus the gather of M rows costs
   less than reading 0.153 GB (~1 ms at the fork's ~150 GB/s) has to be measured on the rig.
+
+## The screened head in the engine (2026-10-24)
+
+Our llama.cpp fork (branch `pascal-p106-v2-screenhead`) runs the screened head. A model gets it from an extra tensor,
+`output_screen.weight` (same shape as `output.weight`, here GPTQ Q4_0), either inside the GGUF or from a side file:
+
+```bash
+# build the screen: GPTQ Q4_0 from the BF16 head, H from your quant's head inputs (see "How it works")
+python3 gptq_head.py quant flint-BF16.gguf screen.q4_0 --type q4_0 --mode gptq --scale search --hessian H.npy
+# either: a copy of the model with the screen inside (checked byte for byte with verifyscreen)
+python3 gptq_head.py screen model.gguf screen.q4_0 model-screen.gguf --top-m 256
+# or: a 173 MB side file that works with any Flint GGUF whose head is the usual 150,144 x 2,048
+python3 gptq_head.py screenfile model.gguf screen.q4_0 flint-output-screen.gguf --top-m 256
+```
+
+At run time `LLAMA_SCREEN_HEAD=1` turns it on (`LLAMA_SCREEN_HEAD_FILE=flint-output-screen.gguf` adds the side file,
+`LLAMA_SCREEN_HEAD_M` overrides the number of candidates M, 256 by default). For a batch with one output row, the graph
+then computes the screen's logits, picks its top M on the GPU (llama.cpp's radix top-k), computes those M rows of the
+Q8_0 head through the same matrix-vector kernel as the full head (the head viewed as 150,144 one-row "experts" of a
+`mul_mat_id`), and gives every other token −∞. Everything downstream, including backend sampling (`-bs`), sees an
+ordinary logits row.
+
+When it is used:
+- only for output rows of the plain head product, one at a time (decoding, the last token of a prompt); perplexity,
+  batched outputs and speculative verification keep the full head;
+- `llama-cli`, `llama-completion` and the other tools keep it only if their sampling settings can't see a difference:
+  greedy, or top-k with 1 ≤ k ≤ M before any sampler that reads the normalized distribution (the makers' top-k 20 →
+  top-p 0.95 → T 1.0 qualifies); no token probabilities, grammar, positive logit bias, mirostat or raising penalties.
+  Otherwise they switch it off with a warning. The reasoning-budget sampler works with it: a token it forces counts
+  as the only choice even when the screen left it without a logit;
+- `llama-server` decides for every batch: on only if every request with a row in the batch qualifies.
+
+**Checked on the quant machine** (RTX 3090s, `llama-screen-check`; 8 prompts of prose, code, maths, chat and SQL,
+128 tokens each; the screen is the GPTQ Q4_0 one, M = 256):
+
+| Model | Kernels | Steps | Candidate logits bit-identical to the full head | Full top-20 among the candidates | Greedy tokens | Seeded makers' sampling |
+|---|---|---|---|---|---|---|
+| G3 + screen in the file | Pascal one-token kernels (forced) | 1,024 | 262,144 of 262,144 | 1,024 of 1,024 | identical | identical |
+| G3 + screen in the file | llama.cpp's own kernels | 1,024 | 262,144 of 262,144 | 1,024 of 1,024 | identical | identical |
+| G3 + side file | Pascal one-token kernels (forced) | 1,024 | 262,144 of 262,144 | 1,024 of 1,024 | identical | identical |
+| UD-Q4_K_XL + side file | Pascal one-token kernels (forced) | 1,024 | 262,144 of 262,144 | 1,024 of 1,024 | identical | identical |
+
+The exact rows really are the full head's numbers: the candidates' logits match bit for bit, not within a tolerance,
+because each row goes through the same kernel with the same arithmetic. The UD-Q4_K_XL row uses a screen calibrated
+on another quant's hidden states. `llama-server` with backend sampling (`-bs`) answered 24 requests (the 8 prompts
+greedy, sampled with a seed, and sampled with `n_probs`, which needs the full head) byte-identically with and without
+`LLAMA_SCREEN_HEAD=1`.
+
+### Measuring it on the rig
+
+The screened head saves bytes only if the top-M selection and the few extra kernel launches cost less than reading
+0.153 GB (~1 ms per token at the fork's ~150 GB/s on large shapes), so it has to be measured on the P106s. With a
+build of the branch in `/opt/llama-builds/<build>` and the side file next to the models:
+
+```bash
+# correctness on the Pascal cards themselves: bit-identical candidate logits, same tokens (greedy and seeded)
+ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf \
+  /opt/llama-builds/<build>/bin/llama-screen-check -m <dir>/flint-S4L0.gguf -f <dir>/prompts.txt -n 64 -ngl 99 \
+  -fa on -c 4096 --temp 1.0 --top-k 20 --top-p 0.95 --min-p 0 --seed 1234"
+# speed: tg128 with the screen off and on, same binary, cards and flags
+for s in 0 1; do ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 LLAMA_SCREEN_HEAD=$s \
+  LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf BIN=/opt/llama-builds/<build>/bin \
+  MODEL=<dir>/flint-S4L0.gguf TAG=screen$s GPU_SETS='0,1,2,3,4,5' BENCH_ARGS='-ngl 99 -fa on -p 0 -n 128 -r 3' \
+  bash -s" < scripts/bench.sh; done
+```
+
+The same pair for UD-Q4_K_XL (without `LLAMA_NO_MOE_DOWN_RESCALE`) and G3 tells whether the gain holds across mixes,
+and `GGML_CUDA_PROFILE=<file>` on one tg32 run shows what the screen, the top-M and the exact rows cost on the card
+that holds the head. The screen adds 173 MB on that card, so a tight `-ts` split may need one step less there.
