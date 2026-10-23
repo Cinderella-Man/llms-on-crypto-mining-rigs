@@ -85,6 +85,8 @@ and the cards hold 54 GB.
 - The split cost model takes the routed mass of rank r as (r+1)^−1.2. It matched measured hit rates of 99.0–99.5 % on
   a two-GPU split that held nearly all experts (`src/program/generate.cpp`).
 - For GLM, the study estimates ~25 % of experts in VRAM → ~70 % of reads; it is an estimate, not a measurement.
+- Flint's routing is flatter still (measured, [Q51](../../../bench/expert_overlap/)): the most-used 25 % of a layer's
+  experts take 44 % of the routed reads over 65,558 generated tokens, and all but two of 12,032 experts are used.
 - The GLM profile shipped with Maya ranks experts and is not a frequency table: its counts give exactly 2x − x² of the
   reads for the top x of experts (my calc), which is a linear ramp.
 

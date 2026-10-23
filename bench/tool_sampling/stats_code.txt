@@ -1,0 +1,51 @@
+"""Running statistics with Welford's algorithm."""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass, field
+from typing import Iterable
+
+
+@dataclass
+class RunningStats:
+    """Accumulates count, mean and variance in one pass."""
+
+    count: int = 0
+    mean: float = 0.0
+    _m2: float = field(default=0.0, repr=False)
+
+    def push(self, x: float) -> None:
+        self.count += 1
+        delta = x - self.mean
+        self.mean += delta / self.count
+        self._m2 += delta * (x - self.mean)
+
+    def extend(self, xs: Iterable[float]) -> None:
+        for x in xs:
+            self.push(x)
+
+    @property
+    def variance(self) -> float:
+        if self.count < 2:
+            return 0.0
+        return self._m2 / (self.count - 1)
+
+    @property
+    def stdev(self) -> float:
+        return math.sqrt(self.variance)
+
+    def merge(self, other: "RunningStats") -> "RunningStats":
+        if other.count == 0:
+            return self
+        n = self.count + other.count
+        delta = other.mean - self.mean
+        mean = self.mean + delta * other.count / n
+        m2 = self._m2 + other._m2 + delta * delta * self.count * other.count / n
+        return RunningStats(n, mean, m2)
+
+
+if __name__ == "__main__":
+    rs = RunningStats()
+    rs.extend([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
+    print(rs.count, rs.mean, rs.variance, rs.stdev)
