@@ -90,7 +90,7 @@ Act-order (columns by decreasing diag(H)) gives nothing here (0.00314 in both or
 wikitext-2 train plus ~80k tokens of the model's own outputs; `run.sh` with `GPTQ_ARGS="--scale search"` (pass
 `SEQS=` for the model's own outputs). The head shrinks from 0.327 to 0.211 GB, −0.116 GB per token.
 
-**In whole mixes** (same GPUs, same scoring; GB read per token from `scripts/token_cost.py`):
+**In whole mixes** (same GPUs, same scoring; GB read per token from [token_cost.py](../../scripts/token_cost.py)):
 
 | Mix | Head | KLD | Same top token | PPL vs BF16 | GB per token |
 |---|---|---|---|---|---|
