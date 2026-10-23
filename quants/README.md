@@ -91,15 +91,8 @@ full-attention layers at Q8_0 (Q32); like Flint's, its head must stay at 8 bits.
 
 ## Next steps
 
-The ranked list of every lever is in [research.md](research.md). In order:
-
-1. Rig speed of the finalists: UD-mirror v1 rescale-free, S4, S2, the makers' file rescale-free with an F16 router, and
-   its group-64 and fused-QKV versions ([experiments.md](experiments.md), Q9 and Q27).
-2. The matrix-vector microbenchmark at Flint's shapes ([bench/mmvq_pascal](../bench/mmvq_pascal/)), which decides
-   whether a Pascal-specific kernel (+20–45 % expected for every file) is worth writing.
-3. The drafter check for an EAGLE-3 head ([bench/eagle3_flint](../bench/eagle3_flint/)).
-4. Larger task checks (~2,000 tasks) to separate files a few points apart.
-5. The same treatment for the Qwen3.6-35B-A3B family.
+What is running now, what comes next and in which order, with the decision gates: [experiments.md](experiments.md#plan).
+Every experiment done so far, with its result, is in the same file.
 
 ## Tools
 

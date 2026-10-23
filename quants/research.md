@@ -337,21 +337,10 @@ same file on two GPU types agree on only 80 % of the calls, so finer comparisons
 
 ## What to run next
 
-On the rig, in this order (commands in [experiments.md](experiments.md) and the bench folders):
-
-1. The matrix-vector microbenchmark at Flint's shapes ([bench/mmvq_pascal](../bench/mmvq_pascal/)) and
-   `test-backend-ops -o MUL_MAT perf` for each format on one card. They test the instruction-bound model and decide
-   whether the Pascal kernel is worth writing.
-2. Speed of the finalists, rescale off: makers-fast ([Q28](experiments.md)), the makers' file with only the layers
-   46–48 and router changes, UD-mirror v1 rescale-free, S4, S1, S2, the protected Q4_0. Each against its predicted
-   tg128 in the tables above.
-3. Launch shape (#25479), `GGML_CUDA_GRAPH_OPT`, `GGML_CUDA_DISABLE_FUSION`, and the Vulkan backend
-   ([guide](../docs/vulkan_on_the_rig.md)).
-4. The drafter check ([bench/eagle3_flint](../bench/eagle3_flint/)): verification cost of 1–8 tokens and the step time
-   of a random-weight EAGLE-3 head, which decide whether a trained head is worth 5–6 days.
-
-On the quant machine: larger task checks, and partial recovery of attention and the shared
-expert to 4 bits by retraining, the one route left to UD-Q4_K_XL quality at Q4_1 speed.
+The plan, with its order and decision gates, is kept in one place: the top of [experiments.md](experiments.md#plan).
+In short: measure everything predicted here on the rig first (kernel microbenchmark, finalist speeds, engine variants,
+drafter go/no-go), then the exact file tweaks and a per-layer allocation search, the shared-expert merge, and, depending
+on what the rig shows, the Pascal kernel and the EAGLE-3 head.
 
 ## Sources
 

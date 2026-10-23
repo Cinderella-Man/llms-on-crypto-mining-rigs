@@ -16,6 +16,11 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
   driver branch the last driver line that support Pascal.
 - Remove anything you leave on the rig, such as test binaries in `/tmp`.
 
+## Quant work
+
+- Plan and status of the quants subproject live at the top of `quants/experiments.md` ("Plan", with a "Now" line). Read
+  it before starting anything; when you start or stop an experiment, update the "Now" line and the experiment's row.
+
 ## This repo is public
 
 - Never commit hostnames, tailnet or domain names, usernames, IP or MAC addresses, GPU UUIDs or serial
