@@ -90,10 +90,18 @@ Act-order (columns by decreasing diag(H)) gives nothing here (0.00314 in both or
 wikitext-2 train plus ~80k tokens of the model's own outputs; `run.sh` with `GPTQ_ARGS="--scale search"` (pass
 `SEQS=` for the model's own outputs). The head shrinks from 0.327 to 0.211 GB, −0.116 GB per token.
 
-**In whole mixes** (same GPUs, same scoring): G3 0.1040 / 89.09 % / +2.87 % at 2.327 GB per token becomes 0.1063 /
-88.86 % / +2.73 % at 2.212 GB with the GPTQ head (+0.0024 KLD, as on F3), which is fewer bytes and lower KLD than H3
-(0.1150 / 88.46 % at 2.216 GB). The head was calibrated on F3's head inputs and reused unchanged for G3: the mixes
-differ only in their bodies, and a head calibrated on another text domain loses only ~0.001 (above).
+**In whole mixes** (same GPUs, same scoring; GB read per token from `scripts/token_cost.py`):
+
+| Mix | Head | KLD | Same top token | PPL vs BF16 | GB per token |
+|---|---|---|---|---|---|
+| G3 | Q8_0 | 0.1040 | 89.09 % | +2.87 % | 2.327 |
+| G3 | GPTQ Q5_0 | 0.1063 | 88.86 % | +2.73 % | 2.212 |
+| H3 | Q8_0 | 0.1150 | 88.46 % | +1.64 % | 2.216 |
+| H3 | GPTQ Q5_0 | 0.1172 | 88.29 % | +1.47 % | 2.101 |
+
+The GPTQ head costs +0.0021 to +0.0024 KLD in every mix, as on F3. G3 with it reads fewer bytes than H3 at lower
+KLD. The head was calibrated on F3's head inputs and reused unchanged for G3 and H3: the mixes differ only in their
+bodies, and a head calibrated on another text domain loses only ~0.001 (above).
 
 ## Results: a screened head (2026-10-24)
 
