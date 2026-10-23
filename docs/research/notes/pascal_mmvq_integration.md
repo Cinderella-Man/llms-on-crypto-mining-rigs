@@ -725,6 +725,11 @@ On an RTX 5070 Laptop GPU with the kernels forced (`GGML_CUDA_MMVQ_PASCAL=2`):
   the PTX, with and without staged activations; llama.cpp's own kernels differ in 84 of them.
 - The single-token kernels compile to the same SASS as on `pascal-p106-v2`.
 
+On an RTX 3090 (sm_86) of the 7-GPU quant machine, with the kernels forced: the same 1–4-token cases of the six types
+(622 products, 290 fusions, 22 routed + shared launches), the exported S4-L0 and UD-Q4_K_XL products at 2–4 tokens and
+the bit-identity check (126 of 126 identical) all pass, natively and through the compute_61 PTX, with and without
+staged activations; with the kernels off the products, fusions and exported products pass as well.
+
 ### Expected effect on a verify step
 
 A model, to be replaced by the rig's numbers. GPU time of one step of S4-L0 on 6 cards, summed over the cards, without
