@@ -6,12 +6,19 @@ n tokens costs a lot, and only drafts that are almost always accepted pay. The c
 This replays every n-gram drafter in llama.cpp, and the copy-gated `ngram-copy` drafter designed for Q53
 ([speculation plumbing](../../docs/research/notes/speculation_plumbing.md) section 5), on transcripts Flint generated
 itself, with exact acceptance, and turns the step counts into speed-ups with a verify-cost table (registry row Q64 in
-[quants/experiments.md](../../quants/experiments.md)).
+[quants/experiments.md](../../quants/experiments.md)). [pipeline_sim.py](pipeline_sim.py) replays the same transcripts
+through a model of pipelined speculation, where no batched verify step exists (Q87).
 
-**Result.** At the verify cost measured on the rig, only 2-token drafts pay. `ngram-copy` limited to 2-token drafts gives
+**Result, batched verification.** At the verify cost measured on the rig, only 2-token drafts pay. `ngram-copy` limited to 2-token drafts gives
 1.03× overall and 1.26× on file rewrites, the level of a perfect copy drafter at that width. Q53's 7-token blocks and
 every llama.cpp drafter setting lose (0.54–0.97× overall). Blocks of 31–63 tokens would give 2.1–2.7× on file rewrites
 only if a verify of 16–64 tokens costs close to the prompt-processing rate per token, which is not measured yet.
+
+**Result, pipelined speculation (simulated).** When guesses enter the first card while later cards still finish the
+previous token, each an ordinary one-token step, n-gram guesses give 1.34× overall and 4.0× on file rewrites on six
+cards (50 and 151 tokens/s against 37.3), 1.41× and 7.3× on nine cards with a lighter last card, without any training.
+A trained one-token drafter needs a per-token acceptance of ~0.4 for 1.5× and ~0.6 for 2×; behind the copy lookup,
+p = 0.7 gives 2.3–2.9×.
 
 ## Method
 
@@ -294,6 +301,9 @@ measured curve (last slope above 8 tokens), "prompt rate" at its other extension
 
 ## What it means for Q53
 
+These points hold for batched verification. Pipelined speculation (next section) has no draft length or verify width,
+and long copies pay in full there.
+
 - **At the measured verify cost, drop the long state: draft 2 tokens per match (verify width 3) and nothing longer.** It
   gives 1.03 overall (chat 0.99, code 1.02, edits 1.08, file rewrites 1.26), within 0.02 of the bound for that width,
   and stays at 1.03 under both extensions above 8 tokens. Q53 as designed gives 0.97. With one draft width, Q52 needs
@@ -317,6 +327,135 @@ measured curve (last slope above 8 tokens), "prompt rate" at its other extension
   loses overall (0.54–0.97). `--spec-default` (`ngram-mod` 24/48/64) loses 13 % at the last slope and gains 5 % (2.7× on
   rewrites) at the prompt rate, so it too waits for v(16)–v(64).
 
+## Pipelined speculation (Q87)
+
+Batched verification checks a draft in one multi-token step, which costs 2.2–3.6 plain steps on these cards. Pipelined
+speculation has no such step ([breakthrough candidates](../../docs/research/notes/breakthrough_candidates.md),
+candidate 1). On a layer split only one card works at a time, so a guess for token t+1 enters card 1 as soon as card 1
+has finished token t, while the later cards still work on t; the next guess follows one stage later, up to one per card.
+Every guess is an ordinary one-token step on the fork's kernels. The last card samples the real token: a matching guess
+is already on its way, a wrong one is cancelled with everything behind it. Sample-and-match keeps the output identical
+to plain decoding.
+
+### Model
+
+[pipeline_sim.py](pipeline_sim.py) replays each transcript through an event-by-event model of the cards:
+- **Stage times.** Card j runs one stage per token: its layers times a per-layer time, plus 2.5 ms for the output head
+  and sampling on the last card. A hop between cards (activations staged through the host, event query, launch) costs
+  0.3 ms, and the host needs 1.5 ms from a sample to the next launch on card 1. The per-layer time follows from the
+  measured time per plain token, which is that gap plus the stages and the hops.
+- **Pipeline.** A token starts on a card one hop after it has left the previous card and the card has finished the token
+  before it. Up to `depth` guesses (cards − 1 unless stated) are in flight past the newest verified token; a guess enters
+  card 1 one hop after card 1 is free and a slot is open. After a miss, or when there is no guess, the sampled token
+  enters 1.5 ms after its sample.
+- **Cancellation.** A miss cancels every token behind it: stages already running finish (CUDA work cannot be
+  withdrawn), stages not yet started are dropped. With these stage times card 1 has always finished the cancelled guesses
+  before the sampled token arrives, so a wrong guess costs card work but no time.
+- **Guessers** see the verified tokens plus the guesses in flight:
+  - the copy lookup of `ngram-copy` at minimum match lengths 2–12 (it agrees with the replay's `ngram-copy` lookup at
+    every position checked);
+  - a fixed 4-token key, the lookup `ngram-simple` and `ngram-map-k` use;
+  - `ngram-cache`'s 1–4-gram counts, alone and behind the copy lookup;
+  - a drafter that is right with probability p at every token (an oracle with a fixed acceptance: the target for a
+    trained one-token drafter), alone and behind the copy lookup.
+- **Card setups:**
+
+| Setup | Time per plain token | Stage ms per card | Plain tokens/s | Every card busy: one token per slowest stage + hop |
+|---|---|---|---|---|
+| 6 cards, 9/8/8/8/8/8 layers | 26.8 ms (llama-bench) | 3.91 / 3.48 / 3.48 / 3.48 / 3.48 / 5.98 | 37.3 | 159 tokens/s (4.3×) |
+| 9 cards, 6/6/6/6/5/5/5/5/5 layers | 31.3 ms (real chat, Q58) | 3.05 (4 cards) / 2.54 (4 cards) / 5.04 | 32.0 | 187 (5.9×) |
+| 9 cards, 6/6/6/6/6/6/6/5/2 layers | 31.3 ms | 3.05 (7 cards) / 2.54 / 3.52 | 32.0 | 262 (8.2×) |
+
+The output head makes the last card the slowest stage. On six cards the VRAM leaves no room to move layers off it (a
+MoE layer holds ~0.7 GB, 8–9 layers per card); on nine cards it does.
+
+### Results
+
+Speed-up over plain decoding on six cards, depth 5:
+
+| Guesser | Chat | Code | Edits | Agent | All | File rewrites | Right guesses | Wrong guesses | Cancelled card-ms per token |
+|---|---|---|---|---|---|---|---|---|---|
+| Copy lookup, match ≥ 2 | 1.11 | 1.26 | 1.75 | 1.21 | 1.35 | 4.01 | 34 % | 16 % | 11.4 |
+| Copy lookup, match ≥ 3 | 1.06 | 1.20 | 1.65 | 1.15 | 1.28 | 3.97 | 29 % | 8 % | 5.5 |
+| Copy lookup, match ≥ 4 | 1.03 | 1.17 | 1.58 | 1.11 | 1.24 | 3.94 | 25 % | 5 % | 3.3 |
+| Copy lookup, match ≥ 6 (Q53's gate) | 1.01 | 1.13 | 1.49 | 1.07 | 1.19 | 3.86 | 21 % | 2 % | 1.6 |
+| Copy lookup, match ≥ 8 | 1.00 | 1.11 | 1.43 | 1.05 | 1.17 | 3.78 | 19 % | 1 % | 1.0 |
+| Copy lookup, match = 12 | 1.00 | 1.08 | 1.36 | 1.03 | 1.14 | 3.66 | 16 % | 1 % | 0.6 |
+| Fixed 4-token key (`ngram-simple` / `ngram-map-k` lookup) | 1.03 | 1.16 | 1.53 | 1.11 | 1.23 | 3.34 | 24 % | 6 % | 4.1 |
+| `ngram-cache` counts | 1.11 | 1.25 | 1.68 | 1.21 | 1.33 | 3.46 | 32 % | 13 % | 8.8 |
+| **Copy ≥ 4, else `ngram-cache`** | 1.11 | 1.26 | 1.74 | 1.21 | 1.34 | 4.04 | 33 % | 13 % | 8.8 |
+| Copy ≥ 4, else a drafter with p = 0.5 | 1.61 | 1.79 | 2.20 | 1.68 | 1.85 | 4.04 | 60 % | 40 % | 27.9 |
+| Copy ≥ 4, else a drafter with p = 0.7 | 2.09 | 2.27 | 2.61 | 2.16 | 2.32 | 4.09 | 74 % | 26 % | 18.3 |
+
+The two nine-card setups, depth 8:
+
+| Guesser | Chat | Code | Edits | Agent | All | File rewrites |
+|---|---|---|---|---|---|---|
+| 6/6/6/6/5/5/5/5/5: copy lookup, match ≥ 2 | 1.12 | 1.29 | 1.87 | 1.23 | 1.39 | 5.35 |
+| 6/6/6/6/5/5/5/5/5: copy lookup, match ≥ 6 | 1.01 | 1.14 | 1.55 | 1.08 | 1.21 | 5.06 |
+| 6/6/6/6/5/5/5/5/5: **copy ≥ 4, else `ngram-cache`** | 1.12 | 1.28 | 1.85 | 1.24 | 1.38 | 5.41 |
+| 6/6/6/6/6/6/6/5/2: copy lookup, match ≥ 2 | 1.13 | 1.31 | 1.97 | 1.25 | 1.42 | 7.19 |
+| 6/6/6/6/6/6/6/5/2: copy lookup, match ≥ 6 | 1.01 | 1.15 | 1.60 | 1.08 | 1.23 | 6.65 |
+| 6/6/6/6/6/6/6/5/2: **copy ≥ 4, else `ngram-cache`** | 1.13 | 1.31 | 1.95 | 1.25 | 1.41 | 7.30 |
+
+Tokens per second:
+
+| Setup and guesser | Chat | Code | Edits | Agent | All | File rewrites |
+|---|---|---|---|---|---|---|
+| Plain decoding, six cards | 37.3 | 37.3 | 37.3 | 37.3 | 37.3 | 37.3 |
+| Six cards, copy ≥ 4, else `ngram-cache` | 41 | 47 | 65 | 45 | 50 | 151 |
+| Six cards, copy ≥ 4, else a drafter with p = 0.7 | 78 | 85 | 97 | 81 | 87 | 153 |
+| Plain decoding, nine cards | 32.0 | 32.0 | 32.0 | 32.0 | 32.0 | 32.0 |
+| Nine cards (6/…/5/2), copy ≥ 4, else `ngram-cache` | 36 | 42 | 62 | 40 | 45 | 233 |
+| Nine cards (6/…/5/2), copy ≥ 4, else a drafter with p = 0.7 | 80 | 89 | 109 | 83 | 92 | 239 |
+
+A drafter right with probability p at every token, all workloads (tokens/s in brackets):
+
+| p | 6 cards | 9 cards, 6/6/6/6/5/5/5/5/5 | 9 cards, 6/6/6/6/6/6/6/5/2 |
+|---|---|---|---|
+| 0.3 | 1.30 (48) | 1.33 (42) | 1.35 (43) |
+| 0.4 | 1.44 (54) | 1.49 (48) | 1.54 (49) |
+| 0.5 | 1.61 (60) | 1.70 (54) | 1.77 (57) |
+| 0.6 | 1.85 (69) | 1.99 (63) | 2.11 (67) |
+| 0.7 | 2.15 (80) | 2.38 (76) | 2.59 (83) |
+| 0.8 | 2.59 (97) | 2.98 (95) | 3.37 (108) |
+| 0.9 | 3.21 (120) | 3.94 (126) | 4.76 (152) |
+| 0.95 | 3.66 (137) | 4.71 (150) | 6.01 (192) |
+| Copy ≥ 4, else p = 0.5 | 1.85 (69) | 1.99 (64) | 2.12 (68) |
+| Copy ≥ 4, else p = 0.7 | 2.32 (87) | 2.61 (83) | 2.88 (92) |
+
+- **n-gram guesses pay without training: 1.34× overall** on six cards with the copy lookup backed by `ngram-cache`,
+  1.38–1.41× on nine. Chat gains 11 %, code 26 %, Flint's edits 74 %.
+- **Long copies pay in full.** File rewrites run at 4.0× on six cards, close to the 4.3× ceiling set by the last card,
+  and at 7.3× on nine cards with a lighter last card, against 1.26× with batched verification.
+- **Guess often.** A wrong guess costs no time here, so a low match threshold wins: the copy lookup gives 1.35× from a
+  2-token match, 1.19× from Q53's 6 and 1.14× from 12. `ngram-cache`, the worst drafter with batched verification
+  (0.54×), is among the best guessers. The cost moves to the cards: the best guessers cancel 9–11 ms of stages per token,
+  about a third of a token's GPU work, which a power-limited card may pay in clock speed (sensitivity below).
+- **A trained one-token drafter** needs a per-token acceptance of 0.38–0.44 for 1.5× and 0.57–0.65 for 2× on its own.
+  Behind the copy lookup, p = 0.5 gives 1.85–2.12× and p = 0.7 gives 2.32–2.88× (2.6–3.4× on edits). SPD measured
+  0.72–0.75 on a dense 4B model; the research note places Flint at 0.5–0.7.
+- **Depth.** On six cards three guesses in flight give nearly everything (1.34× overall and 3.97× on rewrites at depth
+  3, 1.34× and 4.04× at 5). On nine cards with a lighter last card, rewrites keep gaining up to depth 8 (4.88× at 4,
+  7.30× at 8).
+- **Sensitivity.** With the time per plain token fixed, the hop moves little: 0.1–1.0 ms gives 1.34× overall and
+  4.07–3.97× on rewrites. If every stage ran 10 % slower while speculating (the 75 W limit at full duty), the best
+  n-gram guesser would give 1.23× (chat 1.02×, rewrites 3.69×) and a p = 0.7 drafter 1.97×.
+
+### What it means
+
+- Q53's design questions (draft lengths, tiers, verify widths, Q52's per-width graphs) belong to batched verification.
+  Pipelined, every guess is one token; what counts is how often a guess is right and how much card work wrong ones cost.
+- n-gram guessing gives 1.3–1.4× overall and 4–7× on file rewrites with no training, against 1.03× and 1.26× batched.
+  It needs the executor the research note designs ("Design in the fork"), not a new drafter: the copy lookup with
+  `ngram-cache` behind it.
+- A trained one-token drafter (Q20) is worth reviving if it reaches p ≈ 0.5 on Flint's output: that gives 1.85× behind
+  the copy lookup on six cards, 2.0–2.1× on nine.
+- On nine cards, a split that takes layers off the last card raises the ceiling from 5.9× to 8.2×: the output head
+  makes the last card the slowest stage.
+- What the model cannot settle, to measure on the rig next (the note's experiment 2): the cycle time, clocks and power
+  with every card busy, and the host's rate of stage launches (one per card per token on a 2-core Celeron).
+
 ## Gaps
 
 - **File rewrites are 2,159 tokens from three files.** Flint reasoned 1,200–3,000+ tokens before every rewrite, and five
@@ -335,6 +474,9 @@ measured curve (last slope above 8 tokens), "prompt rate" at its other extension
   set Q53's rig test already needs), then this replay on them.
 - **Verify cost.** v(2) is interpolated and every width above 4 extrapolated from the server measurements; the
   conclusions about blocks wider than 8 tokens rest on which extension holds.
+- **The pipeline is a model.** Its stage times come from layer counts and the measured time per token, not from a
+  rig run with every card busy; the host's cost per stage launch, the attention-mask copies to every card for every
+  token in flight, and clock speed under the power limit are not in it.
 - **Long contexts.** All prompts are under 2,100 tokens. A long context offers more true and more false matches; the
   replay does not show how many.
 - **Multi-turn chat**, where earlier answers stay in the context, is not covered.
@@ -352,10 +494,13 @@ python -I replay.py gen.jsonl --out q64.json > q64.md             # ~1 min on on
 # with the rig's verify step times (Q19 stage 1, ms) and llama-bench pp-n as upper bounds above them
 python -I replay.py gen.jsonl --vn 1=25.9,2.9=57.7,4.05=92.1 --vn-cap 5=163.6,6=170.0,7=207.6,8=212.1 > q64_measured.md
 LLAMA_DIR=<llama.cpp fork checkout> bash fork_check.sh gen.jsonl  # needs g++; checks the ports against the fork's C++
+python -I pipeline_sim.py gen.jsonl --out q87.json > q87.md       # pipelined speculation, ~2 min
 ```
 
 `replay.py` prints the copy-structure tables and, per class, per segment and for the file rewrites, every drafter
 setting with its draft share, acceptance, tokens per step, widths and speed-up at each curve (`measured` and
 `measured+pp` when `--vn` is given); `--out` writes the same as
 JSON, including the full width histograms. `--only REGEX` limits the drafter settings, `--dump-steps FILE` writes every
-step.
+step. `pipeline_sim.py` prints the card setups and, for every setup, guesser, depth and sensitivity run, the speed-up per
+workload with the shares of right and wrong guesses; `--out` adds tokens/s; the setups, hop, gap and head time are
+constants at the top of the script.
