@@ -19,7 +19,8 @@ previous token, each an ordinary one-token step, n-gram guesses give 1.34× over
 cards (50 and 151 tokens/s against 37.3), 1.41× and 7.3× on nine cards with a lighter last card, without any training.
 A trained one-token drafter needs a per-token acceptance of ~0.4 for 1.5× and ~0.6 for 2×; behind the copy lookup,
 p = 0.7 gives 2.3–2.9×. Guessing fresh text from 1–8-token continuation counts (the request's own, plus a table of
-other outputs) lifts the n-gram result to 1.44× on six cards and 1.54× on nine (Q96).
+other outputs) lifts the n-gram result to 1.44× on six cards and 1.54× on nine (Q96). Gumbel-coupled sampling adds
+nothing to those guessers but lifts a near-Flint drafter's acceptance from at most 0.90 towards 1.
 
 ## Method
 
@@ -530,6 +531,52 @@ Tokens per second, copy ≥ 4 then table + request counts against Q87's guesser:
   time. Guessing only at a ≥ 30 % share cuts it to 22 ms for 0.03× of speed. With every stage 10 % slower (the power
   limit), copy then table + request counts gives 1.32× (Q87's guesser: 1.23×).
 
+### Gumbel-coupled guesses
+
+- **Coupling.** The sampler draws each token as the argmax of log p + G over the tokens Flint's sampler chain keeps,
+  where G is Gumbel noise keyed by position and token: an exact sample, so the output does not change. A guesser with a
+  distribution q guesses the argmax of log q + G with the same noise. With G = −log E and E exponential, token i wins
+  both draws when every other token's E exceeds E_i · max(p_j/p_i, q_j/q_i), so the guess matches with probability
+  Σ_i 1 / Σ_j max(p_j/p_i, q_j/q_i); an uncoupled top guess matches with p(top guess).
+- **Flint's p.** [logit_dump](logit_dump/logit_dump.cpp) (`llama-logit-dump`) ran Flint Q8_0 over the 38 transcripts
+  (teacher forcing, two GPUs of the quant machine) and kept the top-20 log-probabilities at every generated position;
+  the chain the transcripts were sampled with (temperature 1, top-k 20, top-p 0.95, min-p 0.05) gives p. 99.81 % of the
+  transcripts' tokens lie in the kept set.
+- **Flint is nearly deterministic at its own settings:** the kept set holds 1.69 tokens on average, the most likely
+  token holds 0.90 of the probability on average, and it was the sample 89.7 % of the time.
+
+One token ahead, expected share guessed right (%), along the transcripts:
+
+| Output | Flint's own top token | Copy, else table + request counts: top guess | coupled | coupled, counts squared | coupled, counts to the 8th | Drafter σ 0: top / coupled | σ 0.5 | σ 1 | σ 2 |
+|---|---|---|---|---|---|---|---|---|---|
+| Chat | 87.4 | 20.3 | 18.1 | 19.2 | 20.1 | 87.4 / 98.2 | 86.4 / 93.6 | 84.0 / 89.0 | 77.4 / 80.3 |
+| Code | 90.2 | 33.5 | 32.4 | 33.3 | 33.8 | 90.2 / 98.9 | 89.3 / 95.3 | 87.8 / 92.0 | 83.1 / 85.7 |
+| Edits | 92.6 | 60.1 | 59.6 | 60.1 | 60.4 | 92.6 / 99.1 | 92.0 / 96.3 | 90.6 / 93.7 | 87.3 / 88.9 |
+| Agent | 82.9 | 35.8 | 35.4 | 36.1 | 36.3 | 82.9 / 97.7 | 81.7 / 91.7 | 79.2 / 86.4 | 72.4 / 76.5 |
+| All | 90.0 | 39.7 | 38.6 | 39.4 | 39.9 | 90.0 / 98.7 | 89.2 / 95.1 | 87.4 / 91.5 | 82.6 / 85.0 |
+
+"Drafter σ" models a trained one-token drafter: Flint's own top-20 log-probabilities with Gaussian noise of σ nats
+added, untruncated (σ 0 is Flint itself; with the same truncation as p it would match every time).
+
+Pipelined speed-up, top guess (expected) against coupled guess:
+
+| Setup | Guesser | Chat | Code | Edits | Agent | All | File rewrites |
+|---|---|---|---|---|---|---|---|
+| 6 cards | Copy ≥ 4, else table + request counts: top guess | 1.18 | 1.35 | 1.85 | 1.37 | 1.44 | 4.08 |
+| 6 cards | the same, coupled | 1.16 | 1.33 | 1.84 | 1.37 | 1.42 | 4.08 |
+| 6 cards | Copy ≥ 4, else `ngram-cache`: top guess / coupled | 1.11 / 1.11 | 1.26 / 1.25 | 1.74 / 1.73 | 1.21 / 1.21 | 1.34 / 1.34 | 4.04 / 4.04 |
+| 9 cards, 6/6/6/6/6/6/6/5/2 | Copy ≥ 4, else table + request counts: top guess | 1.22 | 1.42 | 2.11 | 1.45 | 1.54 | 7.43 |
+| 9 cards, 6/6/6/6/6/6/6/5/2 | the same, coupled | 1.19 | 1.40 | 2.09 | 1.45 | 1.51 | 7.46 |
+
+- **Coupling does not help count-based guessers.** Their counts spread over continuations where Flint is sure, so a
+  coupled guess follows the counts' spread where the top guess would have matched Flint's top token: 39.7 → 38.6 % right,
+  1.44× → 1.42× on six cards. Sharpened counts only catch up with the top guess (39.9 % at the 8th power).
+- **It helps a drafter whose distribution is close to Flint's**: +6 points at σ 0.5 (89.2 → 95.1 %), +4 at σ 1, +2.4 at
+  σ 2. On the oracle sweep above that is worth +0.15–0.5× on six cards (p 0.87 → 0.92 at σ 1: ~3.05× → ~3.3×).
+- **Without coupling, Flint's own top-token probability caps any drafter**: 0.90 on average, 0.83 on agent turns.
+  Coupling lifts that cap to 1, so a trained pipeline drafter (Q20) should output a calibrated distribution and be
+  coupled; the n-gram and table guessers should guess their top token.
+
 ## Gaps
 
 - **File rewrites are 2,159 tokens from three files.** Flint reasoned 1,200–3,000+ tokens before every rewrite, and five
@@ -569,6 +616,10 @@ python -I replay.py gen.jsonl --out q64.json > q64.md             # ~1 min on on
 python -I replay.py gen.jsonl --vn 1=25.9,2.9=57.7,4.05=92.1 --vn-cap 5=163.6,6=170.0,7=207.6,8=212.1 > q64_measured.md
 LLAMA_DIR=<llama.cpp fork checkout> bash fork_check.sh gen.jsonl  # needs g++; checks the ports against the fork's C++
 python -I pipeline_sim.py gen.jsonl --out q87.json --jobs 8 --accuracy > q87.md   # pipelined speculation, ~1 min on 8 cores
+# Flint's top-20 log-probabilities along the transcripts: build logit_dump/ inside a llama.cpp tree (as its CMakeLists
+# says), then LOGIT_IN=seqs.txt LOGIT_OUT=top20.bin llama-logit-dump -m flint-Q8_0.gguf -ngl 99 -c 6144 -fa on
+python -I pipeline_sim.py gen.jsonl --jobs 8 --topk top20.bin --only 'Gumbel|expected' > q96_coupled.md
+python -I pipeline_sim.py gen.jsonl --topk top20.bin --coupling-study > q96_coupling_study.md
 ```
 
 `replay.py` prints the copy-structure tables and, per class, per segment and for the file rewrites, every drafter

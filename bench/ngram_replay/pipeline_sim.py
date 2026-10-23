@@ -582,6 +582,45 @@ class Runs:
         return self.n[cfg][key] * plain / self.t[cfg][key] if self.t[cfg][key] else 0.0
 
 
+def coupling_study(rows, topk, table, seed=7):
+    """Expected one-token hit rates along the transcripts, top guess against Gumbel-coupled guess:
+    - the table + request counts guesser behind the copy lookup, its counts sharpened to q**alpha;
+    - a drafter whose distribution is Flint's own top-20 log-probabilities with Gaussian noise of scale sigma added
+      (sigma 0: the drafter is Flint), the model of a trained one-token drafter."""
+    rng = random.Random(seed)
+    alphas, sigmas = (1, 2, 4, 8), (0.0, 0.5, 1.0, 2.0)
+    acc = defaultdict(Counter)
+    for ri, row in enumerate(rows):
+        prompt, gen = row["prompt_tokens"], row["gen_tokens"]
+        full = prompt + gen
+        g = ChainGuesser(CopyGuesser(4), TableGuesser(table.held_out(ri), request=True))
+        g.begin(full, SeqIndex(full))
+        for j in range(1, len(gen)):
+            toks, lps = topk[ri][j]
+            p = sampler_probs(toks, lps)
+            c = acc[row["category"]]
+            c["n"] += 1
+            c["p_top"] += max(p.values())
+            q = g.dist(full, len(prompt) + j, [])
+            if q is not None:
+                best = max(q.items(), key=lambda kv: kv[1])[0]
+                c["table_top"] += p.get(best, 0.0)
+                for a in alphas:
+                    c[f"table_coupled_a{a}"] += coupled_match(p, {t: w ** a for t, w in q.items()})
+            for sg in sigmas:
+                noisy = {t: lp + sg * rng.gauss(0.0, 1.0) for t, lp in zip(toks, lps)}
+                best = max(noisy.items(), key=lambda kv: kv[1])[0]
+                c[f"drafter_top_s{sg}"] += p.get(best, 0.0)
+                m = max(noisy.values())
+                c[f"drafter_coupled_s{sg}"] += coupled_match(p, {t: math.exp(v - m) for t, v in noisy.items()})
+        print(f"coupling study {row['id']}", file=sys.stderr)
+    out = {}
+    for key in list(acc) + ["all"]:
+        c = sum(acc.values(), Counter()) if key == "all" else acc[key]
+        out[key] = {k: v / c["n"] for k, v in c.items() if k != "n"}
+    return out
+
+
 def build_configs(setups, coupled=False):
     """(name, setup index, factory(env), depth, hop, gap, stage scale) for every run."""
     copy_cache = lambda e: ChainGuesser(CopyGuesser(4), CacheGuesser())     # noqa: E731
@@ -718,6 +757,7 @@ def main():
     ap.add_argument("--jobs", type=int, default=1, help="worker processes (each takes a share of the transcripts)")
     ap.add_argument("--accuracy", action="store_true", help="also the one-token accuracy of the guessers")
     ap.add_argument("--topk", help="llama-logit-dump output along the same transcripts: adds Gumbel-coupled guessing")
+    ap.add_argument("--coupling-study", action="store_true", help="with --topk: only the one-token coupling study")
     args = ap.parse_args()
     rows = replay.load(args.gen)
     setups = SETUPS
@@ -728,6 +768,18 @@ def main():
         topk = [dump[i] for i in range(len(rows))]
         for row, recs in zip(rows, topk):
             assert len(recs) == len(row["gen_tokens"]), row["id"]
+    if args.coupling_study:
+        res = coupling_study(rows, topk, table)
+        if args.out:
+            with open(args.out, "w") as f:
+                json.dump(res, f, indent=1)
+        cols = ["p_top", "table_top"] + [f"table_coupled_a{a}" for a in (1, 2, 4, 8)] + \
+            [f"drafter_{m}_s{sg}" for sg in (0.0, 0.5, 1.0, 2.0) for m in ("top", "coupled")]
+        print("| Class | " + " | ".join(cols) + " |")
+        print("|---|" + "---|" * len(cols))
+        for key in ("chat", "code", "edit", "agent", "all"):
+            print(f"| {key} | " + " | ".join(f"{100 * res[key].get(c, 0):.1f}" for c in cols) + " |")
+        return
     configs = build_configs(setups, coupled=topk is not None)
     if args.only:
         configs = [c for c in configs if re.search(args.only, c[0])]
