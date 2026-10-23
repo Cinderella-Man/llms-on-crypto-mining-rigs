@@ -51,9 +51,15 @@ work here aims at UD-Q4_K_XL quality or better, faster than UD-Q4_K_XL on the sa
 
 Real chat requests at the full 262,144-token context on all nine cards (`-b 512 -ub 128 -bs`, four prompts of 256
 tokens, [server_bench.sh](../scripts/server_bench.sh)), same wide-rows build: **S4-L0 24.7 tok/s, UD-Q4_K_XL 20.4**
-(UD-Q4_K_XL on the CUDA-graphs build without the launch-shape patch: 15.8). Unsloth's Q8_0 fits only half that context
-on nine cards (131,072 tokens; at 262,144 the KV cache or attention's temporary buffers run out of memory) and runs
-22.9 tok/s there with the rescale off.
+(UD-Q4_K_XL on the CUDA-graphs build without the launch-shape patch: 15.8). Unsloth's Q8_0 also fits the full context on
+nine cards once its layers are split by memory instead of by count (`-ts 6,6,5,5,6,5,5,6,6`, below) and runs **22.6
+tok/s** there with the rescale off: near-original quality at full context, faster than UD-Q4_K_XL.
+
+Why the split: llama.cpp gives each card the same number of layers, but Flint's layers differ. At Q8_0 each expert layer
+holds ~842 MiB of weights, and the 14 full-attention layers (0, 1, 5, 9, …, 45, 48) each add ~512 MiB of KV cache at
+262,144 tokens (16-bit), while the 35 sliding-window layers need almost none. The default split puts six expert layers
+and two full-attention layers on one card (~6.3 GB of a 6 GB card); the split above moves the boundaries so no card needs
+more than ~5.9 GB.
 
 Below the bar, kept for reference:
 
