@@ -18,8 +18,8 @@ and the five files in [patches/](../../../patches/README.md). The rig is nine P1
 | MMVQ fusion on cc 6.1 | [#30334](https://github.com/ggml-org/llama.cpp/issues/30334) (issue, no replies) | Gate unchanged in master | There is no patch | Measure first |
 
 Master moved 15 commits past the base `d77256999`. None touches `ggml/src/ggml-cuda/`, `ggml-quants`, `ggml.c` or
-`llama-graph.cpp`. Of the files the diffs modify only `src/llama-model.cpp` (an mlock hunk) and `tests/test-backend-ops.cpp`
-(a SYCL test hunk) changed, away from the diffs' hunks. All five diffs pass `git apply --check` against `d77256999` and
+`llama-graph.cpp`. Of the 24 files the diffs modify only `src/llama-model.cpp` (an mlock hunk), `tests/test-backend-ops.cpp`
+(a SYCL test hunk) and `gguf-py/gguf/constants.py` (one line) changed, none inside a hunk of ours. All five diffs pass `git apply --check` against `d77256999` and
 against `f64a49819`. The diffs of #27721, #25479, #20831, #22571 and #21652 fail against `f64a49819`.
 
 ## What a pull request to llama.cpp has to look like
@@ -31,7 +31,7 @@ These rules decide the route for every change below ([CONTRIBUTING.md](https://g
   are prohibited and get the PR closed; AI use in code must be disclosed in the PR template. The draft texts below
   hold the numbers and the structure, and have to be rewritten in the contributor's own words. They use ASCII only,
   as AGENTS.md asks (`-`, `->`, `x`, no em dashes or arrows).
-- **One open PR for a new contributor.** The bot comments when a second one is opened.
+- **One open PR for a contributor without a merged PR.** The bot comments when a second one is opened.
 - **Comment on an existing PR instead of opening a duplicate.** [#27721](https://github.com/ggml-org/llama.cpp/pull/27721) and [#25479](https://github.com/ggml-org/llama.cpp/pull/25479)
   are the same changes as ours.
 - **Features start with an issue.** Bug fixes need a test that fails before and passes after.
@@ -58,11 +58,13 @@ one-line change (`cc < GGML_CUDA_CC_DP4A`) still applies by hand; `scripts/build
 **Evidence already in the PR.**
 
 - GTX 1080 (author), CUDA 12.4: `test-backend-ops` 13348/13348; identical perplexity with and without graphs on six models;
-  10 of 10 greedy generations identical. Generation +6 % (dense 9B Q5_K_M) to +48 % (Ling-3.0-tiny Q6_K, 24 MoE layers);
+  10 of 10 greedy generations identical. Generation +6 % (dense 9B Q5_K_M) to +48 % (Ling-3.0-tiny Q6_K);
   prompt processing unchanged. The gain follows the number of graph nodes.
 - P102-100 (hschougaard), driver 580, CUDA 12.9: Ling-3.0-tiny Q8_0 tg128 70.80 -> 88.42, pp512 unchanged.
-- P100 (dfriehs), sm_60: regressions for single-card and `-sm layer` runs, about -3 % for most quants on two cards; so the
-  gate must stay off for cc 6.0. The PR's `cc < DP4A` does that. dfriehs also asked for an opt-in switch for P100.
+- P100 (dfriehs), sm_60: every quant tested regressed on a single card and with `-sm layer`, and most by about 3 % on two cards
+  with `-sm tensor`; four cards with `-sm tensor` collapsed without graphs (Q8_0 39.58 tokens/s against 61.44 with `-sm layer`)
+  and graphs fixed that (70.62). So the gate stays off for cc 6.0, which the PR's `cc < DP4A` does. dfriehs also asked for an
+  opt-in switch for P100.
 - History: graphs were turned off before Ampere in 2024 ([#6766](https://github.com/ggml-org/llama.cpp/pull/6766), P40, dense, ~700 nodes,
   53.84 -> 51.67 tok/s). [#25749](https://github.com/ggml-org/llama.cpp/pull/25749) re-enabled them for Volta and Turing on 2026-07-16 with approvals from Gaessler and am17an;
   Gaessler's reason: the old decision predates the current graph logic and nobody had re-measured. That is the argument
@@ -73,7 +75,7 @@ one-line change (`cc < GGML_CUDA_CC_DP4A`) still applies by hand; `scripts/build
 - The gate also enables cc 6.2 (Jetson TX2), which nobody has tested.
 - A crash report on Volta after #25749 ([#26119](https://github.com/ggml-org/llama.cpp/issues/26119), closed) blamed graph capture with speculative decoding and a
   vision projector, through a cuBLAS workspace allocated inside capture. Pascal reviewers may ask for speculative
-  decoding with graphs. The rig runs Qwen3.6 with multi-token prediction on the graphs build (23.4 -> 27.7 tok/s with
+  decoding with graphs. The rig runs Qwen3.6-35B-A3B with multi-token prediction on the graphs build (23.4 tokens/s, 27.7 with
   backend sampling), without a crash.
 - Memory: about 128 bytes per graph node per graph (ORippler); a 1.5k-node graph costs ~180 kB.
 - [#30804](https://github.com/ggml-org/llama.cpp/pull/30804) (open) splits graphs into chunks; [#26771](https://github.com/ggml-org/llama.cpp/pull/26771) (merged 2026-10-20) recaptures after a pool flush.
@@ -134,7 +136,7 @@ condition. Both change the table that Ampere and newer GPUs use, which is why th
 Evidence: GTX 1060 6 GB (10 SMs), Llama-3.2-3B, `llama-bench -p 0 -n 128 -r 10`, six paired A/B iterations: Q4_0 +4.6 %,
 Q4_K_M +5.4 %, Q5_K_M +3.2 %, Q8_0 +2.5 %, Q6_K -0.3 %, geomean +3.1 %; prefill flat at pp512, pp512 with `-ub 128`, and pp2048. Reviews: Gaessler asked
 on 2026-07-10 why it was a draft; the author marked it ready and pinged on 2026-07-23; no maintainer has replied since, and
-the only later event is a mention in #30334 on 2026-10-11. The diff conflicts with master: `calc_nwarps` gained the
+the PR was last updated on 2026-10-11, the day #30334 linked to it. The diff conflicts with master: `calc_nwarps` gained the
 arguments `type`, `small_k` and `halve_iters`, `calc_rows_per_block` gained `type`, and master has a GB10 table that
 doubles warps by the same kind of K-loop rule.
 
@@ -144,12 +146,14 @@ inconsistent gain (2026-04-05); last comment 2026-09-14. The P40 rows in Gaessle
 restricted change does not touch Pascal; they are regression controls, not Pascal results. It is the precedent for the
 wide-row rule, in the opposite direction: fewer warps for narrow matrices.
 
-**What is already in master.** [#20905](https://github.com/ggml-org/llama.cpp/pull/20905) (merged 2026-03-29) added the small-K rule and a Pascal-or-older exclusion list (`IQ3_S`,
-`Q2_K`, `Q3_K` never use small-K when `cc < VOLTA`). [#27828](https://github.com/ggml-org/llama.cpp/pull/27828) (merged 2026-10-10, dfriehs) made P100 always use MMVQ for expert products up to
-batch 8. Its author tried to cut the warp count on cc 6.0 as well and found gains for some types, but regressions on
-larger models, and left it for later; the PR also asked for tests on sm_61 and sm_70 of the small-K type filter and the
-halved warps. [#30517](https://github.com/ggml-org/llama.cpp/pull/30517) (merged 2026-10-17) gives low-bit types (`Q1_0`, `Q2_K`, `Q3_K`, `IQ1_S`, `IQ1_M`) two rows per block at one token,
-but only in the generic table, measured on Ampere and newer.
+**What is already in master.** `mul_mat_vec_q_switch_ncols_dst` has a small-K rule (more rows per block when the row is short)
+with a Pascal-or-older exclusion list (`IQ3_S`, `Q2_K`, `Q3_K` never use it when `cc < VOLTA`); that is the place where Pascal-specific
+rules already live. [#20905](https://github.com/ggml-org/llama.cpp/pull/20905) (merged 2026-03-29) added a dedicated multi-token MoE kernel and a batch limit for Pascal and older.
+[#27828](https://github.com/ggml-org/llama.cpp/pull/27828) (merged 2026-10-10, dfriehs) made P100 always use MMVQ for expert products up to batch 8. While that PR was open its
+author found that halving the warps helped some types at one token, asked for sm_61 and sm_70 tests of the small-K type
+filter and the halved warps, and then dropped the warp tuning from the merged change after regressions on larger models.
+[#30517](https://github.com/ggml-org/llama.cpp/pull/30517) (merged 2026-10-17) gives low-bit types (`Q1_0`, `Q2_K`, `Q3_K`, `IQ1_S`, `IQ1_M`) two rows per block at one token, but only
+in the generic table, measured on Ampere and newer NVIDIA cards and one AMD APU.
 
 **Rig measurements** (P106-090, `llama-bench` tg128; the baseline is the CUDA-graphs build, since upstream master has graphs
 off on Pascal and the effects add):
@@ -182,14 +186,16 @@ so the kernel is instruction-bound on this card; the cause of the gain per warp 
 
 **Evidence to collect.**
 
+- Re-measure on a clean master plus only the change under review. The rig numbers above come from builds that also carry the
+  other local diffs (they do not touch the plain Q4_1, Q4_K, Q5_K, Q6_K, IQ4_XS or Q8_0 paths, but a reviewer will ask).
 - `test-backend-ops -b CUDA0 -o MUL_MAT,MUL_MAT_ID` passing on the P106-090 (the change only reorders the reduction); add
   perf cases for the shapes where the rule flips (K = 512, 1024, 2048, 4096, one column, plus `MUL_MAT_ID` with 256 experts, 6 used) and run
   `test-backend-ops perf -b CUDA0 -o MUL_MAT` before and after.
 - `llama-bench -ngl 99 -fa 1 -p 512 -n 128 -r 5`, plus `-d 0,4096`, base against patch, alternating runs, on a dense and a MoE
   model, for every type in the whitelist; report pp512 as the no-regression control, as #25479 did.
 - `llama-perplexity` on one file: equal to within the reduction-order noise.
-- Run a build with `-DCMAKE_CUDA_ARCHITECTURES=61-real;86` or similar and check that a non-Pascal card keeps its numbers (the table
-  must be invisible to them).
+- Build for `61-real` and for one newer architecture, and check that the newer card keeps its numbers (the table must be
+  invisible to it).
 
 **Draft PR text** (supersedes or builds on #25479; ask its author first):
 
@@ -203,7 +209,7 @@ Title: `CUDA: MMVQ parameters for Pascal (cc 6.1/6.2), 2 warps for single-token 
 >
 > ## Additional information
 > P106-090 (GP106, 5 SMs, 173 GB/s), CUDA 12.9.2, llama-bench tg128, base = master + CUDA graphs:
-> Flint UD-Q4_K_XL 19.53 -> 24.58 t/s (+26 %); Flint makers' Q4_1 28.07 -> 31.82 (+13 %, 2 warps for all rows); a Q4_1/Q8_0
+> Flint UD-Q4_K_XL 19.53 -> 24.58 t/s (+26 %); Flint makers' Q4_1 28.07 -> 31.82 (+13 %, 2 warps for all rows); a Q4_1/Q5_0/Q8_0
 > mix 23.09 -> 28.02 (+21 %). [sweep over types on Ling-3.0-tiny, dense model, GTX 1060 / P40 numbers]. pp512 unchanged.
 > test-backend-ops MUL_MAT/MUL_MAT_ID on CUDA0 passes [counts]. Perplexity [numbers].
 >
@@ -214,8 +220,8 @@ Title: `CUDA: MMVQ parameters for Pascal (cc 6.1/6.2), 2 warps for single-token 
 
 **What master does.** Flint, Mistral 4 and Mellum divide the input of the expert down-projection, per expert and token, by a
 power of two and multiply the output back (`build_amax_src1_f16` in `src/llama-graph.cpp`, from [#30861](https://github.com/ggml-org/llama.cpp/pull/30861), merged 2026-10-21).
-The factor is `2^ceil(log2(max|x| / 1024))`, clamped to [1, 2^127], so that the 16-bit sum of 32 values in a Q8_1 block cannot
-exceed the FP16 range (headroom of 32 over the 32768 limit). A comment above the call marks it as a stopgap until
+The factor is `2^ceil(log2(max|x| / 1024))`, clamped to [1, 2^127]. The divisor is 1024, not the 32768 that the
+FP16 range of a single value would allow, to leave a factor of 32 for the 16-bit sum of 32 values in a Q8_1 block. A comment above the call marks it as a stopgap until
 backends accept a BF16 source precision for that matrix product ([#30656](https://github.com/ggml-org/llama.cpp/pull/30656) thread). Flint support ([#30928](https://github.com/ggml-org/llama.cpp/pull/30928), merged
 2026-10-21) uses the helper and states that the scaling costs 10 to 30 % and has to be addressed in follow-up PRs.
 
@@ -277,19 +283,20 @@ change of ours depends on it.
 
 ## `q4_1_64-type.diff`
 
-Adds `GGML_TYPE_Q4_1_64` (id 43, equal to `GGML_TYPE_COUNT` in master) across 23 files: CPU quantizer and dot product,
+Adds `GGML_TYPE_Q4_1_64` (id 43, equal to `GGML_TYPE_COUNT` in master) across 22 files: CPU quantizer and dot product,
 CUDA MMVQ, dequantization and row lookup, `gguf-py`, `llama-quant`, `llama-model-loader`, `quantize` and a `test-backend-ops` case. It has no MMQ
 kernel, so prompts fall back to dequantize plus cuBLAS (about 40 % slower prefill). Benefit on the rig: the makers' Flint
-Q4_1 is group-64 data stored with group-32 scales; the new type holds it exactly in 9.4 % fewer bytes, and the 7 % decode gain over
-Q4_1 comes with a Pascal kernel.
+Q4_1 is group-64 data stored with group-32 scales; the new type holds it exactly in 9.4 % fewer bytes. With a Pascal kernel
+it decodes 7 % faster than Q4_1 in the microbenchmark; with llama.cpp's own kernel style the gain was estimated at 2 to 4 %.
 
 Upstream outlook, from the rules and precedents:
 
 - The extra criteria for a new type (Hugging Face model, perplexity and KL divergence against BF16 and against similar-size
   types, CPU performance) apply, plus an issue first.
-- Prism ML's own maintainers answered a request to merge their group-128 types (`PQ2_0`, `PTQ1_0`) by saying new types add
-  maintenance and might stay in their fork ([#29077](https://github.com/ggml-org/llama.cpp/pull/29077) closed; [#29672](https://github.com/ggml-org/llama.cpp/pull/29672) still open with a naming discussion and no maintainer review). A type
-  for one model's quantization-aware training layout is a harder case still.
+- When a third party proposed Prism ML's group-128 types (`PQ2_0`, `PTQ1_0`) in [#29077](https://github.com/ggml-org/llama.cpp/pull/29077), CISC asked to leave it to Prism ML, and a
+  Prism ML engineer replied that the types might stay fork-only because a new type adds maintenance. The PR was closed; Prism ML
+  later proposed `PTQ1_0` itself in [#29672](https://github.com/ggml-org/llama.cpp/pull/29672), which is open with a naming discussion and no review from the owners. A type for one
+  model's quantization-aware training layout is a harder case still.
 - Master still has `GGML_TYPE_COUNT = 43`. When upstream adds a type, id 43 collides with ours, and GGUF files written with the old id
   would be read as another type. If the fork distributes files, choose an id far from the count (Prism's fork uses 142 and 143).
 
@@ -312,10 +319,9 @@ Title: `ggml : add Q4_1_64 (Q4_1 with one scale and offset per 64 weights)`
 
 Adds `LLM_ARCH_FLINT` to the architectures `load_hparams_hadamard` accepts. Master keeps that list to Llama, Qwen3, Qwen3-MoE,
 Qwen3.5 (dense and MoE) and Qwen3-Next, because only the matmul helpers `build_lora_mm`/`build_lora_mm_id` apply the input transform, and a
-runtime check (`llama_verify_hadamard_graph`) refuses graphs that read a folded table without the inverse. The mechanism
-came with Prism Bonsai 2 ([#29600](https://github.com/ggml-org/llama.cpp/pull/29600), merged 2026-10-08; [#30910](https://github.com/ggml-org/llama.cpp/pull/30910), LoRA on folded weights, merged 2026-10-22).
-Flint's graph (`src/models/flint.cpp`) goes through `build_attn`, `build_ffn`, `build_moe_ffn` and `build_lora_mm` for the head. The
-Flint support in master (#30928) landed one day before this note.
+graph check in `llama-context.cpp` (`llama_verify_hadamard_graph`) refuses graphs that read a folded table without the inverse. The mechanism
+came with Prism Bonsai 2 ([#29600](https://github.com/ggml-org/llama.cpp/pull/29600), merged 2026-10-11; [#30910](https://github.com/ggml-org/llama.cpp/pull/30910), LoRA on folded weights, merged 2026-10-22).
+Flint's graph (`src/models/flint.cpp`) goes through `build_attn`, `build_ffn`, `build_moe_ffn` and, for the head, `build_lora_mm`.
 
 An architecture whitelist is only justified by a published file that needs it; no Flint GGUF carries `prism.hadamard` metadata and the
 rig's rotation experiments did not improve quality or speed ([quants/research.md](../../../quants/research.md)). Keep it local. If a rotated Flint file is ever published, the PR is one line plus
@@ -336,7 +342,7 @@ Title: `llama : accept prism.hadamard metadata for Flint`
 |---|---|---|
 | `moe-down-rescale-env.diff` | `src/llama-graph.cpp` | Applies. The lines are the post-#30861 code. Disappears when upstream removes the stopgap |
 | `flint-prism-hadamard.diff` | `src/llama-model.cpp` | Applies; the master hunk that differs is the mlock block, 150 lines away |
-| `q4_1_64-type.diff` | 23 files incl. `ggml.h`, `ggml-common.h`, `mmvq.cu`, `vecdotq.cuh`, `test-backend-ops.cpp` | Applies. Type id 43 collides with the next upstream type; shares `mmvq.cu` with the warp diffs (apply the type first) |
+| `q4_1_64-type.diff` | 22 files incl. `ggml.h`, `ggml-common.h`, `mmvq.cu`, `vecdotq.cuh`, `test-backend-ops.cpp` | Applies. Type id 43 collides with the next upstream type; shares `mmvq.cu` with the warp diffs (apply the type first) |
 | `mmvq-pascal-2warps.diff`, `-widek.diff` | `mmvq.cu` | Apply. Alternatives: use one. Behavior conflicts: both change the generic table that all other NVIDIA GPUs use; #30517's two-row rule for low-bit types combines with 2 warps unmeasured; the widek diff changes the small-K decision for the generic table |
 | CUDA-graphs gate | `ggml-cuda.cu` | #27721's diff fails (stale context); the `sed` in the build script works |
 
@@ -345,7 +351,8 @@ Title: `llama : accept prism.hadamard metadata for Flint`
 1. Add the rig data to #27721 and ask a CUDA maintainer to review. This costs no PR slot. If the author is not active, open the
    rebased replacement as the first PR.
 2. Prepare the Pascal-table change on a branch while collecting the evidence above; ask the author of #25479 whether to extend it or
-   to take over. It is the larger win (+13 to +27 %), and the one most likely to be asked for more data.
+   to take over. It is the larger win (+13 to +27 %), and the one most likely to be asked for more data. The Pascal kernel
+   that would follow it as a separate PR is designed in [pascal_mmvq_integration.md](pascal_mmvq_integration.md).
 3. Post the rescale cost where #30928's follow-up is discussed; wait for the Q8_1 sum design.
 4. Keep `q4_1_64-type.diff`, `flint-prism-hadamard.diff` and the environment switch in a fork. In a fork, the commit order is graphs,
    Pascal table, then the three local diffs.
