@@ -383,8 +383,8 @@ In short, the engine is now the bigger lever than the file:
 - **Small upstreamable fixes:** the launch shape for compute 6.1 (2 warps only for wide rows), CUDA graphs on Pascal, and
   IQ4_XS in the small-K rule. llama.cpp accepts no AI-written pull-request text, so these need posts written by a
   person ([upstream status](../docs/research/notes/upstream_pascal_patches.md)).
-- **With nine cards, Unsloth's Q8_0 is a serious option:** it runs 25.2 tok/s on the wide-rows build, faster than
-  UD-Q4_K_XL at its best, at KLD 0.052. The 4-bit mixes matter for six-card setups or two models side by side.
+- **With nine cards, Unsloth's Q8_0 is a serious option:** it runs 26.8 tok/s on the wide-rows build with the rescale
+  off, faster than UD-Q4_K_XL at its best, at KLD 0.052. The 4-bit mixes matter for six-card setups or two models side by side.
 
 ## Sources
 
