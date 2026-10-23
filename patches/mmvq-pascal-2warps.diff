@@ -1,0 +1,11 @@
+--- a/ggml/src/ggml-cuda/mmvq.cu
++++ b/ggml/src/ggml-cuda/mmvq.cu
+@@ -453,6 +453,8 @@
+     if (table_id == MMVQ_PARAMETERS_GENERIC) {
+         switch (ncols_dst) {
+             case 1:
++                // 5-SM Pascal cards: 2 warps per block at one token (llama.cpp PR #25479; this build targets sm_61 only)
++                return 2;
+             case 2:
+             case 3:
+             case 4:

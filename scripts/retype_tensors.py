@@ -4,8 +4,9 @@
 # Q4_1) exactly as it is except for the tensors you name, e.g. widening the expert down-projections to Q8_0 so that
 # llama.cpp's rescale step can be switched off safely.
 #
-#   retype_tensors.py <in.gguf> <out.gguf> <regex>=<type> [<regex>=<type> ...]
+#   retype_tensors.py <in.gguf> <out.gguf> <regex>=<type>[@<from type>] [...]
 #   e.g. retype_tensors.py flint-int4-q4_1.gguf flint-q4_1-downq8.gguf 'ffn_down_exps=Q8_0'
+#        retype_tensors.py qwen-Q4_0.gguf qwen-Q4_0-noK.gguf '.=Q8_0@Q6_K'   (every Q6_K tensor to Q8_0, nothing else)
 # Types: any format gguf-py can quantize (F32, F16, BF16, Q4_0, Q4_1, Q5_0, Q5_1, Q8_0, ...); the first matching
 # pattern wins (matched with re.search against the tensor name). Needs numpy and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py).
 import re, sys
@@ -14,13 +15,17 @@ import gguf
 from gguf.quants import quantize, dequantize
 
 src, dst, rules = sys.argv[1], sys.argv[2], sys.argv[3:]
-rules = [(re.compile(k), gguf.GGMLQuantizationType[v.upper()]) for k, v in (x.split('=', 1) for x in rules)]
+def rule(x):
+    k, v = x.split('=', 1)
+    v, _, frm = v.partition('@')
+    return re.compile(k), gguf.GGMLQuantizationType[v.upper()], gguf.GGMLQuantizationType[frm.upper()] if frm else None
+rules = [rule(x) for x in rules]
 r = gguf.GGUFReader(src)
 arch = r.get_field(gguf.Keys.General.ARCHITECTURE).contents()
 
 def target(t):
-    for pat, ty in rules:
-        if pat.search(t.name):
+    for pat, ty, frm in rules:
+        if pat.search(t.name) and (frm is None or t.tensor_type == frm):
             return ty
     return None
 

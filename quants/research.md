@@ -307,6 +307,7 @@ kernels differs by KLD 0.065 and 91.3 % same top token.
 | Rotations, online Hadamard | Yes, and llama.cpp already accepts `prism.hadamard` for it |
 | Draft heads | Already has an MTP head; a 32k draft vocabulary for it is worth +9–13 % ([#29143](https://github.com/ggml-org/llama.cpp/pull/29143)); a DFlash drafter exists ([z-lab](https://huggingface.co/z-lab/Qwen3.6-35B-A3B-DFlash)) |
 | Partial recovery to 4 bits | Improves quality rather than speed: Qwen3.6 already runs Q4_0 |
+| K-quant leftovers in "Q4_0" files | Yes, and bigger: bartowski's Qwen3.6 Q4_0 keeps its 248k-token head and four attention q tensors in Q6_K, 22.7 % of each token's bytes. Re-expressed as Q8_0 ([Q29](experiments.md)) the cost model predicts 23.6 instead of 20.8 tok/s; the MTP draft file has the same Q6_K head |
 
 ## What to run next
 
