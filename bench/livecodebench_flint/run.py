@@ -3,12 +3,15 @@ and a 32,768-token budget (reasoning plus answer), and store the raw text. Attem
 --seed-offset, the same seed for every problem and file. Resumable: (problem, attempt) pairs already in OUT are
 skipped. Attempts run in order, so a stopped run still holds whole attempts.
 
-usage: python run.py URL TASKS.jsonl OUT.jsonl [--attempts 1-5] [--conc 8] [--n-predict 32768]
-Writes OUT and OUT.manifest.json. Refuses to start if a server slot cannot hold the longest prompt plus the budget,
+usage: python run.py URL TASKS.jsonl OUT.jsonl [--attempts 1-5] [--conc 8] [--n-predict 32768] [--shuffle SEED]
+                     [--part I/N]
+Writes OUT and OUT.manifest.json. --shuffle and --part select a slice of the problems in a seeded random order, as in
+../bfcl_flint/run.py. Refuses to start if a server slot cannot hold the longest prompt plus the budget,
 so that every file gets the same budget.
 """
 import argparse
 import json
+import random
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
@@ -23,9 +26,15 @@ ap.add_argument("--seed-offset", type=int, default=0)
 ap.add_argument("--conc", type=int, default=8, help="requests in flight; match llama-server's -np")
 ap.add_argument("--n-predict", type=int, default=32768)
 ap.add_argument("--cache-prompt", action="store_true")
+ap.add_argument("--shuffle", type=int)
+ap.add_argument("--part", default="1/1")
 args = ap.parse_args()
 
 tasks = [json.loads(line) for line in open(args.tasks)]
+if args.shuffle is not None:
+    random.Random(args.shuffle).shuffle(tasks)
+i, n = map(int, args.part.split("/"))
+tasks = tasks[(i - 1) * len(tasks) // n:i * len(tasks) // n]
 attempts = parse_attempts(args.attempts)
 done = set()
 try:
@@ -41,7 +50,8 @@ if slot_ctx < need:
     raise SystemExit(f"slot n_ctx {slot_ctx} < {need} (longest prompt + budget): raise llama-server's -c")
 json.dump(manifest(args.url, {"lane": "livecodebench", "tasks_sha256": sha256_of(
     {"id": t["id"], "prompt": t["prompt"]} for t in tasks), "n_tasks": len(tasks), "attempts": attempts,
-    "seed_offset": args.seed_offset, "n_predict": args.n_predict, "cache_prompt": args.cache_prompt}),
+    "seed_offset": args.seed_offset, "n_predict": args.n_predict, "cache_prompt": args.cache_prompt,
+    "shuffle": args.shuffle, "part": args.part}),
     open(args.out + ".manifest.json", "w"), indent=1)
 print(f"slot n_ctx={slot_ctx}, longest prompt {max(n_prompt.values())}, todo={len(todo)}/{len(tasks) * len(attempts)}",
       flush=True)
