@@ -15,18 +15,23 @@ The levers fall into three classes:
 
 In short:
 
-- **The cards are limited by instructions, not memory bandwidth.** llama.cpp's matrix-vector kernel spends most of its
-  instructions on address arithmetic, so a Pascal-specific kernel and launch shape are the biggest levers (expected
-  +20–45 %), ahead of any format. Measuring that on the rig comes first.
-- **Measured, file only, exact:** Flint's rescale step can go (Q8_0 down-projections in three layers, +8 %), the makers'
-  Q4_1 fits a group-64 format (−9.4 % bytes), fused Q/K/V and an F16 router change nothing but speed. Combined:
-  "makers-fast", 23.9 GB, same quality, expected ≥ 30 tok/s against 28.
-- **Measured, mixes:** spending 8 bits only where each millisecond buys the most quality reaches Unsloth's UD-Q4_K_XL
-  quality at a predicted 23 tok/s against its 18.8. Rotations, better rounding and a 4-bit head don't help; Q4_0 works
-  once seven dominant-channel tensors stay 8-bit.
+- **The quality bar is Unsloth's UD-Q4_K_XL** (KLD 0.120 and 87.7 % same top token against BF16). Files ~9 points
+  below it in token agreement, such as the makers' Q4_1, are not worth their extra speed; every lever is judged by how
+  fast it makes a file at that quality.
+- **The cards are limited by instructions, not memory bandwidth** (measured): llama.cpp's matrix-vector kernel reaches
+  75 GB/s of the card's 179 GB/s on Flint's Q4_1 shapes; Pascal-tuned kernels reach 132–142 GB/s, 1.75–1.89× faster
+  (Q8_0 1.52×). A Pascal kernel in llama.cpp is the biggest lever for every file.
+- **Measured, engine only, exact:** llama.cpp with 2 warps per block at one token (PR #25479's launch shape) generates
+  13–15 % faster: the makers' Q4_1 28.1 → 31.8 tok/s.
+- **Measured, file only, exact:** Flint's rescale step can go (Q8_0 down-projections in three layers), the makers'
+  Q4_1 fits a group-64 format, fused Q/K/V and an F16 router change nothing but speed. Combined in "makers-fast":
+  30.9 tok/s against 28.1, 35.5 with the 2-warp build. Below the quality bar, but the same changes apply to any file.
+- **Mixes at the bar:** spending 8 bits only where each millisecond buys the most quality reaches UD-Q4_K_XL's quality
+  at a predicted 23–24 tok/s against its 17.4–19.0. Per-layer allocation shows where: layers 0–24 carry Flint's 4-bit
+  sensitivity, and attention output in layers 33–48 can drop to Q4_1 for free (S4-L0). Rotations, better rounding, a
+  4-bit head and the makers' tuned tensors don't help.
 - **Quality has a noise floor on Flint:** rounding differences flip its expert choices, so the same file differs by KLD
-  0.065 between two GPU models. On 300 tool-calling tasks every finalist is within noise of BF16; the makers' file, worst
-  by KLD, is as good as any.
+  0.065 between two GPU models. On 300 tool-calling tasks every finalist is within noise of BF16.
 - **Qwen3.6:** its "Q4_0" file keeps a Q6_K head; as Q8_0 it is expected +13 % faster at identical quality, and a mix
   from its own sensitivity sweep beats the published file on both speed and quality.
 - **Retraining:** an EAGLE-3 draft head could give 1.3–2×; a one-hour rig test decides whether 5–6 days of training are
@@ -47,13 +52,13 @@ lever against Flint's BF16 weights; the files combining the exact levers are in 
 
 | Lever | Class | Expected or measured effect | Quality | Effort | Qwen3.6 |
 |---|---|---|---|---|---|
-| A Pascal-specific matrix-vector kernel for the existing formats: several rows per warp, cheaper addressing, wide loads | B | expected +20–45 % (34–40 tok/s), for every file | exact | days (llama.cpp fork) | yes |
+| A Pascal-specific matrix-vector kernel for the existing formats: several rows per warp, cheaper addressing, wide loads | B | measured in a standalone benchmark: 1.75–1.89× faster matrix-vector products for Q4_1, 1.52× for Q8_0; expected +30–35 % per token (36–38 tok/s for the makers' file), for every file | exact | days (llama.cpp fork) | yes |
 | An EAGLE-3 draft head for Flint (speculative decoding) | C | expected 1.3–2× in real chat, if verifying 2–3 extra tokens stays cheap on the rig | exact (only speed changes) | 2–4 days of training on a 7-GPU machine | has its own MTP head already |
-| Pascal launch shape for the same kernel: 2 warps instead of 4 at one token, no idle warps for 512-wide inputs (PR [#25479](https://github.com/ggml-org/llama.cpp/pull/25479)) | B | expected +5–20 % | exact | hours | yes |
+| Pascal launch shape for the same kernel: 2 warps instead of 4 at one token (PR [#25479](https://github.com/ggml-org/llama.cpp/pull/25479)) | B | measured +13.4 % (makers' Q4_1, 28.1 → 31.8 tok/s) and +14.9 % (makers-fast, 30.9 → 35.5) | exact | done ([patch](../patches/mmvq-pascal-2warps.diff)) | yes |
 | Remove the MoE down-projection rescale: Q8_0 expert down-projections in the three layers where Flint's activations overflow (46–48), then `LLAMA_NO_MOE_DOWN_RESCALE=1` | A + small patch | measured +8 % (Q4_1) and +11 % (Q5_0) for the switch alone | exact: same KLD, no NaN in 41,000 tokens | done (file tool + patch) | no rescale there |
 | A speed-aware mix: spend 8 bits only where each millisecond buys the most quality | A | measured quality, predicted speed: UD-Q4_K_XL's quality at 23.0 tok/s (Unsloth's file: 18.8), or 26.7 tok/s at KLD 0.219 | from KLD 0.120 to 0.219 | done (recipes) | yes |
 | 4-bit attention and shared expert at UD-Q4_K_XL quality, via partial retraining | C | expected UD-Q4_K_XL quality at 1.5–1.7 GB per token instead of 2.3 (≈ +20 % over UD-mirror v1) | the open question; rotations don't do it | days | yes |
-| Group-64 Q4_1 (`Q4_1_64`): the makers' file is group-64 data stored as group-32 | B | −9.4 % bytes per token; expected +2–4 % with today's kernel, ~+10 % with a Pascal kernel | exact for the makers' file (verified on GPUs) | prototype built | no |
+| Group-64 Q4_1 (`Q4_1_64`): the makers' file is group-64 data stored as group-32 | B | −9.4 % bytes per token; measured together with the rescale removal, F16 router and fused Q/K/V: +10.1 % (makers-fast); 7 % faster than Q4_1 with a Pascal kernel. Prompt processing 40 % slower until it has a batched kernel | exact for the makers' file (verified on GPUs) | prototype built | no |
 | Fused Q/K/V tensor (`attn_qkv`) | A | expected +3–4 % (~200 fewer kernel launches per token) | exact (verified) | done (file tool) | partly |
 | Router weights F32 → F16 in the makers' file | A | expected +1.8 % | noise level (verified) | done (file tool) | n/a (already 16-bit) |
 | Vulkan backend instead of CUDA | engine | unknown; +11–47 % on a GTX 1060 (same GP106 chip) in [#19817](https://github.com/ggml-org/llama.cpp/issues/19817) | exact | hours (build) | yes |
@@ -161,6 +166,32 @@ original weights than UD-Q4_K_XL (88.7 % against 87.7 % same top token). Every m
 the same speed. Between 23 and 27 tok/s the choice is a straight trade of speed for fidelity. An importance matrix
 computed from the BF16 weights with bartowski's calibration text scores the same as Unsloth's in these recipes
 ([Q12](experiments.md)).
+
+### Per-layer allocation
+
+S4's three costliest upgrades over S1 are attention output at Q8_0 (2.25 ms per token), expert down-projections at Q8_0
+(1.6 ms) and expert gate/up at Q5_0 (2.2 ms). Experiment [Q36](experiments.md) lowered each one back to Q4_1 in one
+group of eight layers at a time and measured the KLD change against S4 on the same GPUs. Composing those files from
+the tensors of S1, S2 and S4 ([compose_gguf.py](../scripts/compose_gguf.py)) takes a minute each instead of a full
+quantization and gives the same bytes, because llama-quantize quantizes each tensor on its own.
+
+| Layers | 0–8 | 9–16 | 17–24 | 25–32 | 33–40 | 41–48 |
+|---|---|---|---|---|---|---|
+| Attention output Q8_0 → Q4_1 | +0.012 | +0.017 | +0.018 | +0.006 | **+0.001** | **+0.002** |
+| Expert down-projections Q8_0 → Q4_1 | +0.009 | +0.014 | +0.007 | +0.004 | +0.004 | +0.002 (41–45) |
+| Expert gate/up Q5_0 → Q4_1 | +0.009 (2–8) | +0.008 | +0.007 | +0.005 | +0.005 | +0.004 |
+
+Flint's 4-bit sensitivity sits in layers 0–24 for every tensor class, and the early groups don't add up: four
+attention-output groups alone cost more than lowering all 49 layers at once (+0.040), because any change flips some
+expert choices. The late groups do add up. Attention output in layers 33–48 is free, which gives **S4-L0**: KLD 0.123,
+88.7 % same top token, perplexity +3.1 % against BF16 (UD-Q4_K_XL: 0.120, 87.7 %, +3.9 %), predicted 23.7 tok/s with
+an F16 router. Lowering the down-projections in layers 25–45 as well (L1) costs +0.009 more (0.132, 87.7 %, 24.1
+tok/s), below the bar.
+
+Taking the makers' distillation-tuned tensors into a BF16-derived file doesn't work either way
+([Q44](experiments.md)): their routed experts in S4 score KLD 0.208 (S2, with imatrix Q4_1 experts at the same cost:
+0.178), their 4-bit head 0.238 with perplexity +14 %, their attention 0.199. The makers' tensors were tuned together and
+only work in their own file.
 
 ### Removing the MoE down-projection rescale
 

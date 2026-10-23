@@ -10,6 +10,8 @@ table.
 | [flint-udmirror-v1-nr.txt](flint-udmirror-v1-nr.txt) | Flint BF16 | Q4_1 | Unsloth's | UD-mirror v1 with Q8_0 expert down-projections in layers 46–48, so it runs with the rescale switched off (`LLAMA_NO_MOE_DOWN_RESCALE=1`) |
 | [flint-udmirror-v2-nr.txt](flint-udmirror-v2-nr.txt) | Flint BF16 | Q4_1 | Unsloth's | v1-nr with attention q at Q4_1 instead of Q8_0 (~1 tok/s faster, KLD 0.142 instead of 0.127) |
 | [flint-speed-s1.txt](flint-speed-s1.txt) … [s4](flint-speed-s4.txt) | Flint BF16 | Q4_1 | Unsloth's | Speed-aware mixes built from the per-class sensitivity sweep, all rescale-free: S1 = Q8_0 attention k/v, shared expert, dense layers, head; S2 = S1 + attention output; S3 = S2 + expert down-projections; S4 = S3 + Q5_0 expert gate/up. Scores in [experiments.md](../experiments.md) (Q27) |
+| [flint-speed-s4-l0.txt](flint-speed-s4-l0.txt) | Flint BF16 | Q4_1 | Unsloth's | S4 with attention output Q4_1 in layers 33–48, where the per-layer search (Q36) found it free; then `retype_tensors.py <out> <final> 'ffn_gate_inp=F16'` for the F16 router. UD-Q4_K_XL quality, measured 23.1 tok/s (28.0 with the wide-rows 2-warp build) |
+| [flint-speed-s5.txt](flint-speed-s5.txt) | Flint BF16 | Q4_1 | Unsloth's | S4-L0 plus attention q Q8_0 in layers 0–24 (Q45): better than UD-Q4_K_XL (KLD 0.108 against 0.120) at ~2 % below S4-L0's speed; F16 router as for S4-L0 |
 | [qwen36-mix-a.txt](qwen36-mix-a.txt), [qwen36-mix-b.txt](qwen36-mix-b.txt) | Qwen3.6-35B-A3B Q8_0 (bartowski) | Q4_0 | bartowski's | Mixes from the Qwen3.6 sensitivity sweep (Q32): B = `ssm_out`, shared expert, full attention, head at Q8_0; A = B plus the linear-attention qkv and gate |
 
 ```bash

@@ -219,7 +219,47 @@ coalescing matter.
 
 ## Results on the P106-090
 
-Pending the first rig run.
+One card of the rig (compute 6.1, 5 SMs, 1531 MHz maximum clock): every variant passes the correctness check, an empty
+CUDA-graph node costs 1.85 µs, and a plain streaming read reaches 179 GB/s, the practical ceiling.
+
+Matrix-vector time per Flint token (all shapes × calls per token):
+
+| Type | `llama` | `pr25479` | best tuned (c) | best of (c) and (d) | Bytes per token |
+|---|---|---|---|---|---|
+| `q4_1` | 20.0 ms (75 GB/s) | 17.3 ms (1.16×) | 11.5 ms (1.75×) | 10.6 ms (1.89×, 142 GB/s) | 1510 MB |
+| `q4_1_64` | 21.2 ms | 18.2 ms (1.16×) | 10.6 ms (1.99×) | 10.1 ms (2.10×) | 1359 MB |
+| `q4_0` | 24.3 ms | 19.7 ms (1.23×) | 12.6 ms (1.93×) | — | 1359 MB |
+| `q8_0` | 35.3 ms | 31.7 ms (1.11×) | 23.3 ms (1.52×) | — | 2566 MB |
+
+GB/s per shape for `q4_1`:
+
+| Shape | `llama` | `pr25479` | `p_r2c4` | `soa_r2` |
+|---|---|---|---|---|
+| `attn_q` (K = 2048) | 68 | 97 | 144 | 142 |
+| `attn_kv` (K = 2048) | 60 | 76 | 101 | 88 |
+| `attn_output` (K = 4096) | 100 | 107 | 136 | 145 |
+| `moe_gate_up` (K = 2048) | 84 | 103 | 126 | 149 |
+| `moe_down` (K = 512) | 57 | 52 | 139 | 129 |
+| `shexp_gate_up` (K = 2048) | 89 | 101 | 107 | 133 |
+| `shexp_down` (K = 1024) | 83 | 61 | 115 | 111 |
+| `output` (K = 2048) | 69 | 96 | 159 | 156 |
+
+The issue-bound model holds on every point it predicted:
+
+1. llama.cpp's kernel takes 20.0 ms per token for Q4_1 (predicted 20–24), `attn_output` (K = 4096, more work per
+   thread) runs 1.46× the GB/s of `attn_q`, and `moe_down` is the slowest shape.
+2. The 2-warp launch shape of PR #25479 is 1.16× faster in total, all of it on the K = 2048 and 4096 shapes; on the
+   narrow `moe_down` and `shexp_down` it is slower (52 against 57 and 61 against 83 GB/s). A launch rule that keeps 4
+   warps for K ≤ 1024 would gain a little more.
+3. The tuned kernels reach 1.75× (`q4_1`) to 2.10× (`q4_1_64`) and up to 159 GB/s, 89 % of the streaming-read ceiling:
+   load-instruction count and coalescing were the limit (`p_r2c4` and the plane layout are well ahead of `p_r2c2`).
+4. With llama.cpp's kernel, fewer bytes don't help: `q4_1_64` is 6 % slower than `q4_1`, `q4_0` 21 % slower. With the
+   tuned kernels time follows bytes for `q4_1_64` (7 % faster than `q4_1`), not yet for `q4_0` (10 % slower) or `q8_0`
+   (2.0× the time of `q4_1` for 1.7× the bytes).
+
+None of the refutation conditions occurred. In a real token the matrix-vector products are about 55 % of the time
+(20 of the makers' file's 35.6 ms per token), so a llama.cpp kernel at these speeds would take the makers' Q4_1 from
+28 to about 36–38 tok/s, and further with the rescale removed and the group-64 type.
 
 ## Files
 

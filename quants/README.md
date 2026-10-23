@@ -28,28 +28,37 @@ quants for that trade-off, so this subproject makes them.
 
 Against [Flint](https://huggingface.co/RecursiveSI/flint)'s original BF16 weights (39.8 B parameters, 2.5 B per token):
 80 × 512 tokens of wikitext-2, all files scored with the same CUDA build on the same quant machine. Speed is llama.cpp
-`d77256999` + CUDA graphs on 9 × P106-090: real chat requests and `llama-bench` tg128 where measured, otherwise the
-[cost model](../scripts/token_cost.py)'s prediction for tg128 (marked "pred."). "Rescale-free" files run with
-`LLAMA_NO_MOE_DOWN_RESCALE=1` ([why](research.md#removing-the-moe-down-projection-rescale)). Recipes are in
-[recipes/](recipes/) and every run in [experiments.md](experiments.md).
+`d77256999` + CUDA graphs on the P106-090 rig, `llama-bench` tg128 on six cards unless noted; "2-warp" is the same
+build with [2 warps per block at one token](../patches/mmvq-pascal-2warps.diff). Where a file was not measured on the rig
+yet, the [cost model](../scripts/token_cost.py)'s prediction for the standard build is given (marked "pred.").
+"Rescale-free" files run with `LLAMA_NO_MOE_DOWN_RESCALE=1`
+([why](research.md#removing-the-moe-down-projection-rescale)). Recipes are in [recipes/](recipes/) and every run in
+[experiments.md](experiments.md).
 
-| File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | Real chat | tg128 |
+**The bar is Unsloth's UD-Q4_K_XL.** It is what people download, and it agrees with BF16 on 87.7 % of next tokens. A
+file that is faster but ~9 points worse in token agreement, such as the makers' own Q4_1, is not a substitute, so the
+work here aims at UD-Q4_K_XL quality or better, faster than UD-Q4_K_XL on the same build.
+
+| File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | tg128 | tg128, 2-warp | tg128, 2-warp wide rows |
+|---|---|---|---|---|---|---|---|---|
+| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | 20.5 (9 cards) | — | — |
+| **UD-Q4_K_XL** (the bar) | Unsloth | 25.1 GB | 87.7 % | 0.120 | +3.9 % | 19.5 | **24.8** | 24.6 |
+| **S4-L0** (S4, attention output Q4_1 in layers 33–48, F16 router; rescale-free) | here | 32.5 GB | **88.7 %** | 0.123 | **+3.1 %** | 23.1 | 26.3 | **28.0** |
+| S4 (speed-aware mix, rescale-free) | here | 32.6 GB | 88.7 % | 0.120 | +3.4 % | 23.0 pred. | — | — |
+| UD-mirror v1, rescale-free | here | 27.4 GB | 87.5 % | 0.127 | +4.0 % | 23.2 pred. | — | — |
+
+Below the bar, kept for reference:
+
+| File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | tg128 | tg128, 2-warp |
 |---|---|---|---|---|---|---|---|
-| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | — | 20.5 (9 cards) |
-| UD-Q4_K_XL | Unsloth | 25.1 GB | 87.7 % | 0.120 | +3.9 % | 15.8 | 17.4–19.0 |
-| **S4** (speed-aware mix, rescale-free) | here | 32.6 GB | **88.7 %** | **0.120** | **+3.4 %** | to measure | 23.0 pred. |
-| **UD-mirror v1, rescale-free** | here | 27.4 GB | 87.5 % | 0.127 | +4.0 % | to measure | 23.2 pred. |
-| UD-mirror v2, rescale-free (attention q at Q4_1) | here | 27.2 GB | 87.1 % | 0.142 | +3.6 % | to measure | 24.4 pred. |
-| S3 (speed-aware mix, rescale-free) | here | 31.0 GB | 87.1 % | 0.149 | +4.7 % | to measure | 24.3 pred. |
-| S2 (speed-aware mix, rescale-free) | here | 25.8 GB | 85.7 % | 0.178 | +5.4 % | to measure | 25.2 pred. |
-| Q5_0 + imatrix | here | 27.6 GB | 84.5 % | 0.185 | +5.7 % | 18.9 | 22.3–22.8 |
-| S1 (speed-aware mix, rescale-free) | here | 25.6 GB | 83.6 % | 0.219 | +4.6 % | to measure | 26.7 pred. |
-| Q4_1 + imatrix | here | 25.0 GB | 81.0 % | 0.280 | +9.5 % | to measure | 27.1 pred. |
-| Q4_0 + imatrix, seven dominant-channel tensors at Q8_0, rescale-free | here | 23.1 GB | 80.2 % | 0.315 | +3.8 % | to measure | to measure |
-| Q4_1 | Flint's makers | 26.0 GB | 78.4 % | 0.322 | +4.5 % | **24.3** | **27.9–28.1** |
-| **Makers' Q4_1, rescale-free, F16 router** | here | 26.3 GB | 78.5 % | 0.322 | +4.3 % | to measure | 30.5 pred. |
-| Makers' Q4_1 as group-64 (`Q4_1_64`, same weights) | here | 23.5 GB | 78.7 % | 0.314 | +4.4 % | to measure | needs the [patch](../patches/q4_1_64-type.diff) |
-| **Makers-fast**: all of the above plus fused Q/K/V, rescale-free | here | 23.9 GB | 78.9 % | 0.315 | +3.9 % | to measure | 30.4+ pred.; needs the patch |
+| S4-L1 (L0 + Q4_1 expert down-projections in layers 25–45) | here | 30.0 GB | 87.7 % | 0.132 | +3.5 % | 24.1 pred. | — |
+| UD-mirror v2, rescale-free (attention q at Q4_1) | here | 27.2 GB | 87.1 % | 0.142 | +3.6 % | 24.4 pred. | — |
+| S3, S2, S1 (speed-aware mixes, rescale-free) | here | 31.0 / 25.8 / 25.6 GB | 87.1 / 85.7 / 83.6 % | 0.149 / 0.178 / 0.219 | +4.7 / +5.4 / +4.6 % | 24.3 / 25.2 / 26.7 pred. | — |
+| Q5_0 + imatrix | here | 27.6 GB | 84.5 % | 0.185 | +5.7 % | 22.3–22.8 (5–9 cards) | — |
+| Q4_1 + imatrix | here | 25.0 GB | 81.0 % | 0.280 | +9.5 % | 27.1 pred. | — |
+| Q4_0 + imatrix, seven dominant-channel tensors at Q8_0, rescale-free | here | 23.1 GB | 80.2 % | 0.315 | +3.8 % | — | — |
+| Q4_1 | Flint's makers | 26.0 GB | 78.4 % | 0.322 | +4.5 % | 28.1 (5 cards) | 31.8 (5 cards) |
+| Makers-fast: makers' Q4_1 rescale-free, F16 router, group-64 (`Q4_1_64`), fused Q/K/V | here | 23.9 GB | 78.9 % | 0.315 | +3.9 % | 30.9 (5 cards) | 35.5 (5 cards) |
 | Q4_0 + imatrix | here | 22.6 GB | 71.7 % | 0.565 | +45 % | — (unusable) | — |
 
 The makers' Q4_1 was tuned by distillation after quantizing, so its distance from BF16 overstates its real-task loss.
@@ -62,16 +71,23 @@ than a few hundredths are not distinguishable: the same file computed on two dif
 What we have learned:
 - **These cards are limited by instructions, not memory bandwidth**, so simple formats are fast and K-quants are not:
   Q4_1 and Q8_0 decode at ~0.4 of the 173 GB/s peak on Flint, Q5_0 at 0.30, K-quants and I-quants at 0.19
-  ([research](research.md#where-a-tokens-time-goes)).
-- **Where the bits go matters more than the format.** The cheapest quality is attention k/v and the shared expert at
-  Q8_0; attention q at Q8_0 buys almost nothing; the output head must stay Q8_0 unless it was trained at 4 bits.
-  The speed-aware mixes S1–S4 and the mirrors all beat a single fast format at the same speed.
+  ([research](research.md#where-a-tokens-time-goes)). llama.cpp's matrix-vector kernel reaches 75 GB/s of the card's
+  179 GB/s; Pascal-tuned kernels reach 132–142 GB/s ([benchmark](../bench/mmvq_pascal/#results-on-the-p106-090)).
+- **The launch shape alone is worth 13–27 %**: 2 warps per block instead of 4 at one token takes the makers' Q4_1 from
+  28.1 to 31.8 tok/s and UD-Q4_K_XL from 19.5 to 24.8. Any comparison between files has to use the same build.
+- **Where the bits go matters more than the format, and layers 0–24 matter most.** Lowering attention output, expert
+  down-projections or expert gate/up to Q4_1 costs 0.007–0.018 KLD per 8-layer group in layers 0–24 and 0.001–0.006 in
+  layers 25–48; attention q at Q8_0 in layers 0–16 alone takes KLD from 0.123 to 0.111. The output head must stay Q8_0
+  unless it was trained at 4 bits.
+- **Q5_0 is a poor deal on these cards**: it costs 1.4× Q4_1's decode time per weight, close to Q8_0's 1.6×, for much
+  less precision than Q8_0.
 - **Flint's rescale step can go**: only the expert down-projections of layers 46–48 overflow, so Q8_0 there (+8 MB per
   token) lets `LLAMA_NO_MOE_DOWN_RESCALE=1` remove ~470 kernel launches per token (+8 % measured) with identical output.
+- **The makers' tuned tensors only work in their own file**: their experts, head or attention moved into a file made
+  from BF16 make it worse.
 - **Q4_0 fails on Flint through seven dominant-channel tensors**, not through its missing offset; keep those at Q8_0.
 - **Hadamard rotations don't help Flint's 4-bit files** in llama.cpp (they help only plain Q4_0), because its 8-bit
   activation blocks absorb the spread-out outlier channels.
-- **The makers' Q4_1 is group-64 data** stored as group-32: the same weights fit in 23.5 GB with a group-64 type.
 
 ## Results so far: Qwen3.6-35B-A3B
 
@@ -102,6 +118,9 @@ Every experiment done so far, with its result, is in the same file.
 | [quantize_docker.sh](../scripts/quantize_docker.sh) | any PC with Docker | Builds a quant with llama.cpp's `llama-quantize`, optionally with an importance matrix and per-tensor formats |
 | [mirror_recipe.py](../scripts/mirror_recipe.py) | any PC | Re-expresses an existing quant's per-tensor formats in other formats, as `llama-quantize` options |
 | [gguf_mix.py](../scripts/gguf_mix.py) | any PC | Shows which format each kind of tensor uses in a GGUF file |
+| [compose_gguf.py](../scripts/compose_gguf.py) | any PC | Builds a GGUF from the tensors of several quants of the same model (per-layer searches without re-quantizing) |
+| [retype_tensors.py](../scripts/retype_tensors.py) | any PC | Converts selected tensors of a GGUF to another format and copies the rest byte for byte (e.g. an F16 router) |
+| [token_cost.py](../scripts/token_cost.py) | any PC | Bytes read per token by format and a predicted decode speed on the rig, from the GGUF header |
 | [bench.sh](../scripts/bench.sh), [server_bench.sh](../scripts/server_bench.sh) | the rig | Speed: raw generation and real chat requests |
 
 Recipes for the quants made here are in [recipes/](recipes/). Nothing has been published yet; the
