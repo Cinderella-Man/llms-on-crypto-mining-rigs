@@ -212,3 +212,20 @@ more than reruns do.
 The assumptions are the note's §7.5, per 8-slot server: ~400 tokens/s aggregate decode and ~3,000 tokens/s prompt
 processing; output ~200 tokens per single-turn request; ~2,700 output tokens per multi-turn task. These are job
 times for scheduling on the quant machine, not speed results.
+
+**All of Q41 (est.).** S4-L0 and S5 against UD-Q4_K_XL, with Unsloth's Q8_0 as the anchor and BF16 on E1 only.
+LiveCodeBench (E3) figures are from [its harness](../livecodebench_flint/README.md); they depend on Flint's
+unmeasured tokens per sample, 8k or 15k.
+
+| Files | Lanes and attempts | Server-hours at 8k | at 15k |
+|---|---|---|---|
+| UD-Q4_K_XL, S4-L0, S5 | E1 + E2 + E3, K = 5 (3.4 + 12 + 17 or 31 each) | ~97 | ~139 |
+| Q8_0 (anchor, context only) | E1 + E2 + E3, K = 2 | ~13 | ~19 |
+| BF16 (reference) | E1, K = 2, on the 5-card set | ~1.4 | ~1.4 |
+| Pilot | as above, plus S4-L0 on the E1 pilot | ~6 | ~9 |
+| **Total** | | **~118** | **~168** |
+
+- That is ~40 to 56 hours of wall time on the quant machine's three servers, and ~270 to 390 GPU-hours.
+- Every further candidate at K = 5 adds 32 to 46 server-hours.
+- If the pilot allows K = 3 on E2 and K = 4 on E3, each of the three main files drops to ~24 server-hours (~35 at
+  15k), and the total to ~93 (~135).
