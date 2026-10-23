@@ -51,7 +51,9 @@ work here aims at UD-Q4_K_XL quality or better, faster than UD-Q4_K_XL on the sa
 
 Real chat requests at the full 262,144-token context on all nine cards (`-b 512 -ub 128 -bs`, four prompts of 256
 tokens, [server_bench.sh](../scripts/server_bench.sh)), same wide-rows build: **S4-L0 24.7 tok/s, UD-Q4_K_XL 20.4**
-(UD-Q4_K_XL on the CUDA-graphs build without the launch-shape patch: 15.8).
+(UD-Q4_K_XL on the CUDA-graphs build without the launch-shape patch: 15.8). Unsloth's Q8_0 fits only half that context
+on nine cards (131,072 tokens; at 262,144 the KV cache or attention's temporary buffers run out of memory) and runs
+22.9 tok/s there with the rescale off.
 
 Below the bar, kept for reference:
 

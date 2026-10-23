@@ -384,7 +384,8 @@ In short, the engine is now the bigger lever than the file:
   IQ4_XS in the small-K rule. llama.cpp accepts no AI-written pull-request text, so these need posts written by a
   person ([upstream status](../docs/research/notes/upstream_pascal_patches.md)).
 - **With nine cards, Unsloth's Q8_0 is a serious option:** it runs 26.8 tok/s on the wide-rows build with the rescale
-  off, faster than UD-Q4_K_XL at its best, at KLD 0.052. The 4-bit mixes matter for six-card setups or two models side by side.
+  off, faster than UD-Q4_K_XL at its best, at KLD 0.052, but fits only 131k tokens of context (22.9 tok/s in real
+  chat). The 4-bit mixes keep the full 262k context, and matter for six-card setups or two models side by side.
 
 ## Sources
 
