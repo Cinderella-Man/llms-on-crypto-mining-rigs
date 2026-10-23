@@ -321,6 +321,29 @@ What this shows:
    25 → 50) and the unfused K = 2048 products (`attn_q` 43 → 81) but slows the fused gate/up (52 → 34): a one-line
    change would need to exclude fused calls.
 
+## Several tokens per step: the fork's kernels
+
+The fork's branch `pascal-p106-v2-multicol` extends the ported kernels to 2–4 tokens per step (a speculative-decoding
+verify step), reading every weight row and every distinct expert once per step; the design is in
+[pascal_mmvq_integration.md](../../docs/research/notes/pascal_mmvq_integration.md) section 14. These kernels are timed
+with the fork's own `test-backend-ops` instead of this benchmark, so the measurement runs the code that llama.cpp
+runs:
+
+- `multitoken_perf.sh` runs on the rig: Flint's dense and expert products at 1–4 tokens on one card, with llama.cpp's
+  kernels, the Pascal kernels, and the Pascal kernels with staged activations (`GGML_CUDA_MMVQ_PASCAL_STAGE_ACT=1`).
+  `multitoken_perf_table.py` turns its logs into tables: time per call, speed-up, and the cost of an n-token call
+  relative to one token.
+- `verify/multitoken_bitid.cpp` (built by `verify/build_multitoken_bitid.sh` against a test build from
+  `scripts/build_llamacpp_tests_docker.sh`) checks that every 2–4-token product equals the single-token products of
+  its columns bit for bit.
+
+```bash
+ssh rig "BIN=/opt/llama-builds/<build>/bin bash -s" < bench/mmvq_pascal/multitoken_perf.sh
+```
+```bash
+scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py mmvq_multitoken
+```
+
 ## Files
 
 | File | Contents |
@@ -331,4 +354,5 @@ What this shows:
 | `src/data.cuh` | random weight/activation generation on the GPU, CPU reference dot products |
 | `src/main.cu` | shapes, variants, correctness check, timing, totals, CSV |
 | `build.sh` | Docker build of `build/mmvq_pascal` |
-| `verify/` | bit-exactness check against a static llama.cpp build |
+| `verify/` | bit-exactness check against a static llama.cpp build; `multitoken_bitid.cpp`: the fork's 2–4-token products against its single-token ones |
+| `multitoken_perf.sh`, `multitoken_perf_table.py` | timing of the fork's kernels at 1–4 tokens per step on the rig, and its tables |

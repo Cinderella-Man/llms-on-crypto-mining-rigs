@@ -29,6 +29,9 @@ Code references:
   **29.2 → 37.4 tok/s (+28 %)**; against the wide-rows build, the best before the port, 28.0 → 37.4 (+33 %). Unsloth's
   UD-Q4_K_XL: 24.5 → 34.1 (+39 %; 17.6 on stock llama.cpp). Unsloth's Q8_0 on 9 cards: 26.9 → 35.9 (+33 %). Prompt processing is unchanged. In the microbenchmark Q8_0 runs at 150 GB/s,
   2.07× the stock kernel.
+- **Several tokens per step.** 2–4 tokens (a speculative-decoding verify step, a prompt's last tokens) run a
+  multi-token variant on the fork's branch `pascal-p106-v2-multicol`. It reads every weight row once per step, and for
+  expert products every distinct expert once, and gives each token the single-token result bit for bit (section 14).
 - **No repack needed.** Staged loads reach the speed that row-local or tensor-wide weight planes reach (Q8_0 17.1
   against 18.4 ms per Flint token in the microbenchmark), so the load-time repack of Q39 is no longer needed for decode
   speed.
@@ -578,6 +581,7 @@ and the per-layer allocations of Q36 and Q45 redone with them.
 | 8 | Q4_1_64 in the port (fork only) | tests pass; makers' file in Q4_1_64 measured | |
 | 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | |
 | 10 | FP32 activation sums in the Pascal kernels; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | Pascal kernels done (branch `pascal-p106-fp32sums`); batches keep the rescale (`LLAMA_NO_MOE_DOWN_RESCALE=tg`), MMQ's `DS4` layout unchanged; on the laptop no NaN and output identical to the rescaled one (section 8); rig speed and KLD pending |
+| 11 | 2–4 tokens per step for `MUL_MAT` and `MUL_MAT_ID`, each distinct expert read once (Q78) | tests pass; verify-step cost of S4-L0 measured on the rig | kernels and laptop tests done (branch `pascal-p106-v2-multicol`, section 14); rig pending |
 
 Steps 9 and 10 are independent of the kernel and can go in any order. The repack of section 7 (Q39) is not planned:
 staged loads made it unnecessary for decode speed.
@@ -617,8 +621,169 @@ speed of the plane layouts.
   the event profilers overstate the wall-clock gain (11.4 ms GPU time for 7.5 ms on S4-L0).
 - **Register pressure.** Fused Q8_0 at R = 2 reached 254 registers with direct loads; the port uses R = 1 for fused
   Q8_0 and Q5_0. Staged shared memory (17 KB per block for Q8_0) limits a P106-090 SM to 5 such blocks.
-- **Fallback coverage.** Widths that don't split into whole chunks, unaligned views and more than one column keep the
+- **Fallback coverage.** Widths that don't split into whole chunks, unaligned views and more than four tokens keep the
   stock kernel. That is correct but slower; tail handling in the last iteration can widen coverage later.
 - **Maintenance.** The kernel lives in its own file, and the hook in `mmvq.cu` is an include and one call, so rebasing
-  touches little. The GLU epilogue exists twice (stock kernel and new file) and must follow upstream changes to the GLU
-  ops.
+  touches little. The GLU epilogue exists three times (stock kernel, single-token and multi-token Pascal kernels) and
+  must follow upstream changes to the GLU ops.
+
+## 14. Several tokens per step (Q78)
+
+A speculative-decoding verify step, the last few tokens of a prompt and two-slot serving multiply 2–8 tokens by every
+weight matrix. The kernels of sections 2–13 take one token; wider products fell back to llama.cpp's `mul_mat_vec_q`
+(dense) and `mul_mat_vec_q_moe` (experts, one warp per token and expert slot). On S4-L0 (6 cards) a 4-token step then
+spent 52 % of its GPU time in the stock MoE kernels, and a verify step of 3 and 4 tokens cost 2.2× and 3.6× a plain
+token (Q19). The fork's branch `pascal-p106-v2-multicol` extends the kernels to 2–4 tokens.
+
+### Design
+
+- **The same kernel with a token loop inside.** `mul_mat_vec_q_pascal_mc` keeps the single-token kernel's lane groups,
+  launch shapes (`mmvqp_choose`) and staging. In every iteration a lane group stages its weight segment once, then loads
+  one token's activations after another and multiplies them by each row's chunk. The compiler keeps the chunks in
+  registers across the tokens (the shared-memory loads per iteration are the same at 4 tokens as at 1 in the sm_61
+  SASS), so every weight row is read once per step; activations are read once per token and iteration and shared by
+  the rows of the lane group.
+- **Experts: one read per distinct expert.** For `MUL_MAT_ID` the grid has one block per (token, slot) entry of `ids`,
+  plus one for the shared expert in the routed + shared launch. The block whose entry is the first to pick an expert
+  serves that entry and every later one that picked the same expert, up to 4 entries in all (a fifth starts a new
+  group, which happens only when a token picks an expert more than once); every other block finds an earlier entry
+  with its expert and exits before loading anything. Each block works this out from `ids` (24 entries for Flint at 4
+  tokens), so there is no extra kernel or host step, and the launch stays capturable in a CUDA graph.
+  - The products are bandwidth-bound, so the bytes decide. Flint's 2 and 4 consecutive tokens touch 11.1 and 20.1
+    distinct experts per layer (Q51), so the expert bytes of a step fall by 7.5 % and 16 % against reading 6 experts
+    per token. When no expert is shared, the kernel does exactly what one launch of single-token products would.
+  - A block serves 1.08 (2 tokens) to 1.19 (4 tokens) tokens on average, so the expert products keep the single-token
+    instruction cost per byte.
+- **The same arithmetic per token.** Each token's dot products run the single-token code with the same lane mapping and
+  summation order, so each column of a 2–4-token product equals the single-token product of that column bit for bit.
+  A verify step's matrix products therefore reproduce plain decoding's; attention over several query rows and the
+  F16 router still run llama.cpp's batched kernels.
+- **What carries over.** Gate + GLU fusion, biases, the routed + shared expert launch and the FP32 activation sums of
+  section 8 work at 2–4 tokens as at one. `LLAMA_NO_MOE_DOWN_RESCALE=tg` is unchanged: it drops the rescale only for
+  one-token batches.
+- **Limits.** Up to 4 tokens (`MMVQP_MAX_COLS`): 5–8 tokens still run llama.cpp's kernels, and on compute 6.1 the
+  expert products go to MMQ above 4 tokens for Q8_0, above 5 for Q5_K and IQ4_XS and above 6 for Q4_0, Q4_1 and Q5_0
+  (`get_mmvq_mmid_max_batch`). llama.cpp fuses dense gate/up products only at one token, so at 2–4 tokens the shared
+  expert's gate and up are two products. Widths that don't split into whole chunks keep the stock kernel, as at one
+  token.
+
+### Instruction cost
+
+Main loop of each kernel in the sm_61 SASS, lane-instructions per weight byte at the shapes `mmvqp_choose` picks
+(4 tokens = all four served), with the issue limit this implies (1.107 T lane-instructions per second, ~83 % usable,
+see [bench/mmvq_pascal](../../../bench/mmvq_pascal/README.md#expected-results)) against the card's ~173 GB/s:
+
+| Type, product | Registers, single- / multi-token kernel | Instructions per byte, 1 / 4 tokens | Issue limit at 4 tokens |
+|---|---|---|---|
+| Q8_0, dense | 102 / 113 | 1.2 / 2.6 | ~350 GB/s |
+| Q8_0, fused gate/up | 95 / 116 | 1.2 / 2.7 | ~350 GB/s |
+| Q4_1, dense | 118 / 176 | 1.9 / 5.1 | ~180 GB/s |
+| Q4_0, dense | 86 / 116 | 2.5 / 6.2 | ~150 GB/s |
+| Q5_0, dense | 90 / 151 | 3.6 / 8.9 | ~100 GB/s |
+| Q5_0, fused gate/up | 84 / 148 | 3.6 / 9.1 | ~100 GB/s |
+| Q5_K, dense | 142 / 197 | 3.2 / 7.0 | ~130 GB/s |
+| IQ4_XS, dense | 96 / 193 | 5.3 / 9.7 | ~95 GB/s |
+
+- Q8_0 and Q4_1 stay far from the issue limit at 4 tokens. Dense Q5_0, Q5_K and IQ4_XS products reach it, which matters
+  little for Flint's files: their Q5_0 is expert gate/up only (1.2 tokens per expert block), and UD-Q4_K_XL's Q5_K and
+  IQ4_XS are mostly experts too.
+- The other open cost is the activation loads. Every lane loads its own activation blocks for each token at a stride of
+  72 bytes (two blocks per lane for Q8_0, Q5_0 and Q4_0), so at 4 tokens the kernel issues as many strided loads per
+  iteration as the single-token kernel's direct-load variant (c) issued for its weights, which made Q8_0 36 % slower
+  than staged loads in the microbenchmark (23.2 against 17.1 ms per token). Those activation loads hit L1 and L2, which
+  may make them cheaper than (c)'s.
+- `GGML_CUDA_MMVQ_PASCAL_STAGE_ACT=1` selects a variant that copies each token's activation segment into shared memory
+  with coalesced 128-bit loads, for every shape where it fits next to the staged weights (all but Q5_K and the staged
+  IQ4_XS shape). Q8_0 then issues 30 global loads per iteration instead of 46, at 3.9 instructions per byte instead of
+  2.6 and 26 KB of shared memory per block instead of 17 KB (3 blocks per SM instead of 4). Its results are the same bit
+  for bit. It is off by default; the rig decides.
+
+### Tests
+
+On an RTX 5070 Laptop GPU with the kernels forced (`GGML_CUDA_MMVQ_PASCAL=2`):
+
+- `test-backend-ops` passes all 5,227 `MUL_MAT`, `MUL_MAT_ID`, `MUL_MAT_VEC_FUSION`, `MUL_MAT_ID_FUSION`,
+  `MUL_MAT_ID_SHARED` and `MUL_MAT_ADD` cases, with and without staged activations, and all 5,155 with the kernels off
+  (the 72 large-activation cases run only where the kernels are active). The Flint-shape products, expert products,
+  fused expert gate/up and large-activation products of section 9 now run at 1–4 tokens; the routed + shared expert
+  launch and repeated expert ids (mostly expert 0, so one expert serves up to 30 entries of a step) run at 2–4 tokens,
+  for the six types.
+- Through the compute_61 PTX (`CUDA_FORCE_PTX_JIT=1`) the 1–4-token cases of the six types pass (622 products, 290
+  fusions, 22 routed + shared launches), with and without staged activations.
+- Mutations reach the new code: results × 1.1 in the multi-token kernel fail 602 cases, every one of them a 2–4-token
+  case of the six types (the 10 that still pass have K = 32 or 96, which the kernels leave to llama.cpp). Corrupting
+  only the second to fourth token a block serves fails 121 of the 126 two-to-four-token `MUL_MAT_ID` cases, so the
+  tests do exercise experts shared between tokens. A wrong lane offset in the staged-activation path fails 475 cases
+  with the switch on and none with it off.
+- S4-L0's and UD-Q4_K_XL's own products at 2, 3 and 4 tokens per step, exported with `test-export-graph-ops -ub N`
+  from the sparse header copies (13 and 24 distinct products: attention, shared expert, dense FFN, router, experts and
+  output head), pass with the kernels forced and off; the quantized ones also through the PTX (the F16/BF16 router's
+  batched kernel has no compute_61 code, with or without these kernels).
+- [bench/mmvq_pascal/verify/multitoken_bitid.cpp](../../../bench/mmvq_pascal/verify/multitoken_bitid.cpp) compares
+  every 2–4-token product with the single-token products of its columns (dense products at five shapes, expert
+  down-projection, fused expert gate/up + SwiGLU, six types: 126 comparisons). All are identical, natively and through
+  the PTX, with and without staged activations; llama.cpp's own kernels differ in 84 of them.
+- The single-token kernels compile to the same SASS as on `pascal-p106-v2`.
+
+### Expected effect on a verify step
+
+A model, to be replaced by the rig's numbers. GPU time of one step of S4-L0 on 6 cards, summed over the cards, without
+the profiler's ~6.5 µs per launch; inputs: the one-token profile of section 10, Q19's profile of a 4-token step with
+llama.cpp's kernels, Q51's expert counts, and a per-byte slowdown of the dense products between none and 1.4× at 4
+tokens (variant (c)'s penalty, the pessimistic case for the strided activation loads):
+
+| Tokens per step | GPU time with the Pascal kernels | Ratio to one token |
+|---|---|---|
+| 1 | 26.1 ms | 1.00 |
+| 2 | 34–38 ms | 1.30–1.44 |
+| 3 | 40–47 ms | 1.55–1.80 |
+| 4 | 47–56 ms | 1.79–2.14 |
+
+- With llama.cpp's kernels the 4-token step of Q19's profile took 74.5 ms (2.9× a token).
+- At 4 tokens: experts 24.7–28.4 ms (a token's 7.4 ms × 3.35 for the distinct experts × up to 1.15), dense products
+  13.4–18.7, the F16 router 2.2 and everything else 6.5. The experts dominate: with 256 experts and little locality,
+  4 tokens read 3.35× a token's expert bytes whatever the kernel does.
+- Perfect drafts could at most gain n × 26.1 ms / v(n) on the GPU side: 1.4–1.5× at 2 tokens, 1.7–2.0× at 3 and
+  1.9–2.2× at 4. The server's step adds host time on top: Q19's steps of 4.05 tokens took 92.1 ms against ~75 ms of GPU
+  time for 4 tokens. If those ~15–20 ms stay, a 4-token step takes ~65–75 ms (2.5–2.9× a plain token instead of
+  3.55×), and perfect 3-token drafts give at most ~1.4–1.6× instead of 1.14×. Real acceptance is lower; Q20 and Q53
+  depend on the measured v(n).
+
+### Measuring it on the rig
+
+Build: `TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-multicol`, unpacked to `/opt/llama-builds/` on the
+rig. Below, `B` is its `bin` directory and `M` the S4-L0 file; S4-L0 runs with `LLAMA_NO_MOE_DOWN_RESCALE=1`.
+
+1. **Kernel times**, one card, three runs (llama.cpp's kernels, the Pascal kernels, and with staged activations):
+   ```bash
+   ssh rig "BIN=$B bash -s" < bench/mmvq_pascal/multitoken_perf.sh
+   ```
+   ```bash
+   scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py mmvq_multitoken
+   ```
+   Expected: dense Q8_0 products at 4 tokens cost 1.0–1.4× one token ("on x1"), the expert products ~3.3×; the
+   variant that wins becomes the default.
+2. **Correctness on a P106** (the kernels run without the force switch; the CPU references take a while on the rig's
+   two cores):
+   ```bash
+   ssh rig "$B/test-backend-ops -b CUDA0 -o MUL_MAT,MUL_MAT_ID -p 'type_a=(q8_0|q5_0|q4_1|q5_K|iq4_xs),type_b=f32,(m=(4096|512|2048|4097),n=[24],k=(1024|2048|4096),bs|n_mats=32,n_used=6,b=[01],m=(512|2048),n=[24],)'"
+   ```
+   and the same with `GGML_CUDA_MMVQ_PASCAL_STAGE_ACT=1`.
+3. **Step cost of S4-L0**, 6 cards, with the kernels on and off (`GGML_CUDA_MMVQ_PASCAL=0`), and with staged
+   activations if step 1 favours them: llama-bench pp1–pp8 and tg64, and the server with synthetic full acceptance at
+   1–4 tokens per step (every step stays within the multi-token kernels' 4 tokens; Q19 measured widths 3 and 5):
+   ```bash
+   ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 BIN=$B MODEL=$M GPUS=0,1,2,3,4,5 PARTS=bench TAG=q78_on bash -s" < bench/eagle3_flint/verify_cost.sh
+   ```
+   ```bash
+   ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 BIN=$B MODEL=$M GPUS=0,1,2,3,4,5 PARTS=synth WIDTHS='1 2 3 4' CTX=8192 TAG=q78_synth_on bash -s" < bench/eagle3_flint/verify_cost.sh
+   ```
+   Every width reloads the model (~7 minutes from a slow USB stick).
+4. **Where the time goes** in a 4-token step, against Q19's profile:
+   ```bash
+   ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 GGML_CUDA_PROFILE=/tmp/q78-prof-pp4.csv $B/llama-bench -m $M -ngl 99 -fa on -ub 128 -p 4 -n 0 -r 24"
+   ```
+5. **Output** with 4-token batches on real text: `llama-perplexity -c 512 --chunks 4 -b 512 -ub 4` with the kernels on,
+   against a KL-divergence base saved from the same command with the kernels off; expect the summation-order noise of
+   section 9 (mean KLD ~0.06–0.08).
+6. UD-Q4_K_XL (Q5_K and IQ4_XS kernels) with `PARTS=bench`, kernels on and off.
