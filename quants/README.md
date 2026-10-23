@@ -42,7 +42,7 @@ work here aims at UD-Q4_K_XL quality or better, faster than UD-Q4_K_XL on the sa
 
 | File | Made by | Size | Same top token | Mean KLD | Perplexity vs BF16 | tg128, stock llama.cpp | tg128 | tg128, 2-warp | tg128, 2-warp wide rows |
 |---|---|---|---|---|---|---|---|---|---|
-| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | — | 20.5 (9 cards) | — | — |
+| Q8_0 | Unsloth | 42.3 GB | 93.3 % | 0.052 | +3.3 % | — | 20.5 (9 cards) | — | **25.2 (9 cards)** |
 | **UD-Q4_K_XL** (the bar) | Unsloth | 25.1 GB | 87.7 % | 0.120 | +3.9 % | 17.6 | 19.5 | **24.8** | 24.6 |
 | **S4-L0** (S4, attention output Q4_1 in layers 33–48, F16 router; rescale-free) | here | 32.5 GB | **88.7 %** | 0.123 | **+3.1 %** | — | 23.1 | 26.3 | **28.0** |
 | **S5** (S4-L0 + attention q Q8_0 in layers 0–24, F16 router; rescale-free) | here | 32.6 GB | **89.1 %** | **0.105** | +3.5 % | — | 23.0 pred. | — | — |
