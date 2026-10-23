@@ -9,7 +9,7 @@
 # Pipelined runs, for each depth in DEPTHS:
 #   - an oracle that replays the plain run's tokens with a share MISSES of the guesses made wrong on purpose (exercises
 #     dropping guesses and rolling back their KV cells at a known rate);
-#   - the copy lookup (match >= 2), ngram-simple (4/16) and ngram-map-k drafters;
+#   - the copy lookup (match >= 2), ngram-simple (4/16) and ngram-map-k (4/8) drafters;
 # plus depth 0 (the pipelined API without guesses). One process runs all of them with one model load; a timeout catches
 # deadlocks.
 #
@@ -53,13 +53,14 @@ common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
 
 # shellcheck disable=SC2086
 timeout "$TIMEOUT" "$BIN/llama-pipespec" -m "$MODEL" $ARGS $SAMPLING \
-    --spec-ngram-simple-size-n 4 --spec-ngram-simple-size-m 16 --pipe-jobs "$jobs" > "$OUT/run.log" 2>&1
+    --spec-ngram-simple-size-n 4 --spec-ngram-simple-size-m 16 \
+    --spec-ngram-map-k-size-n 4 --spec-ngram-map-k-size-m 8 --pipe-jobs "$jobs" > "$OUT/run.log" 2>&1
 rc=$?
 [ $rc -eq 124 ] && echo "TIMEOUT after $TIMEOUT s (deadlock?)"
 [ $rc -ne 0 ] && { echo "llama-pipespec exit $rc"; grep -E "error|failed|ERR" "$OUT/run.log" | tail -5; }
 grep -o 'PIPESPEC.*' "$OUT/run.log" > "$OUT/results.txt"
 
-field() { echo "$1" | grep -o "$2=[^ ]*" | cut -d= -f2; }
+field() { echo " $1" | grep -o " $2=[^ ]*" | cut -d= -f2; }
 ref=$(grep 'name=plain ' "$OUT/results.txt")
 [ -n "$ref" ] || { echo "no plain run"; exit 1; }
 printf '%-16s %6s %6s %6s %6s %7s %7s  %-6s %-6s %-6s %-6s  %s\n' run n_gen guess hits misses wasted tok/s tokens logits state probe verdict

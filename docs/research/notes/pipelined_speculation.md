@@ -15,12 +15,18 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
 
 ## Summary
 
-- **What exists.** A pipelined decoding API in the fork (`llama_pipe_init`, `llama_pipe_submit`, `llama_pipe_get_logits`,
-  `llama_pipe_drain`) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses
-  in flight for one sequence. Guessers: the copy lookup, llama.cpp's `ngram-simple`, any llama.cpp drafter
-  (`ngram-map-k`, `ngram-mod`, …), and an oracle that replays a reference run with a chosen share of wrong guesses.
-  A job list runs many configurations with one model load.
-- **Correctness.** RESULTS_PLACEHOLDER
+- **What exists.** A pipelined decoding API in the fork (`llama_pipe_init`, `llama_pipe_submit`,
+  `llama_pipe_get_logits`, `llama_pipe_get_sampled`, `llama_pipe_drain`; branch `pascal-p106-v2-pipespec`, commit
+  733093c58) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
+  for one sequence. Guessers: the copy lookup, llama.cpp's `ngram-simple`, any llama.cpp drafter (`ngram-map-k`,
+  `ngram-mod`, …), and an oracle that replays a reference run with a chosen share of wrong guesses. A job list runs many
+  configurations with one model load.
+- **Correctness.** 78 pipelined runs of Flint (UD-Q4_K_XL), 20,280 generated tokens, 17,400 guesses of which 2,247 were
+  wrong and 4,902 tokens were dropped: every run gave plain decoding's tokens, bit-identical logits for every token, the
+  same KV state after generation and the same logits for probe tokens decoded afterwards. Layouts: the CPU alone, two
+  RTX 3090s (two stages), four virtual devices on them (four stages, every hop between the two GPUs), and a sliding-
+  window cache small enough to wrap; greedy with host or GPU sampling, and temperature 1 with a fixed seed. Every
+  process finished within its timeout. Speed was not measured (the machine used for these checks is not the rig).
 - **Wrong guesses are dropped, not withdrawn.** All stages of a token are queued when it is submitted, and a wrong
   guess simply runs to the end while its result is ignored. Because every guess runs ahead of the corrected token on
   every card, spaced by at least one stage time, this costs nothing while D ≤ S_eff − 1 (S_eff = sum of stage times /
@@ -103,7 +109,9 @@ buffers are never overwritten while in use, and the scheduler can skip its host-
 
 `llama_pipe_submit(ctx, slot, token, pos, seq)` does what `llama_decode` does for one token (memory slot, graph,
 inputs, queued splits), then queues the logits copy and records the slot's event; it returns without waiting.
-`llama_pipe_get_logits(ctx, slot)` waits for that event. `llama_decode` drains all slots first.
+`llama_pipe_get_logits(ctx, slot)` waits for that event. With a backend sampler (`llama_set_sampler`, as llama-server's
+`-bs` uses) the graph ends in the sampler and only the token id comes back: `llama_pipe_get_sampled(ctx, slot)`.
+`llama_decode` drains all slots first.
 
 ### The loop (one sequence)
 
@@ -124,8 +132,9 @@ the pipeline can hold, D > S_eff − 1. PipeInfer's per-stage skipping, or a hos
 once stage j − 1 has finished and the token is still valid, would save card time (power) but no wall time below that
 depth.
 
-Event model of the cards (stage times of [ngram_replay](../../../bench/ngram_replay/README.md#model) with 0.3 ms per hop
-and 1.5 ms of host time per sample; i.i.d. guesses right with probability p; speed-up over plain decoding):
+Event model of the cards ([drop_vs_cancel.py](../../../bench/pipespec/drop_vs_cancel.py); stage times of
+[ngram_replay](../../../bench/ngram_replay/README.md#model) with 0.3 ms per hop and 1.5 ms of host time per sample;
+i.i.d. guesses right with probability p; speed-up over plain decoding):
 
 | Cards (layers per card) | S_eff | D | Every guess right | p = 0.7 dropped (cancelled) | Every guess wrong |
 |---|---|---|---|---|---|
@@ -157,9 +166,7 @@ The model has no host contention and no power limit; the rig measures both.
 - **Sliding window.** A guess judges sliding-window reuse against its own position, D positions ahead of the committed
   one. That is safe as long as the cell it overwrites is older than every window a re-submitted token needs: cells are
   reused oldest first and the window cache has n_ubatch spare cells, so `llama_pipe_init` requires n_ubatch ≥ number of
-  slots for a sliding-window model (the default 512 is far above it). The purge that comes with such an overwrite can
-  remove up to D old, already masked positions earlier than plain decoding would; attention is unaffected, but a dump of
-  the sequence state can differ in those masked cells.
+  slots for a sliding-window model (the default 512 is far above it).
 - **Recurrent layers** (Qwen3.6's Gated DeltaNet) can't be truncated by position; they need a state snapshot per
   in-flight token (SPD's ring of states). Not implemented.
 
@@ -174,15 +181,43 @@ The model has no host contention and no power limit; the rig measures both.
 
 ## Correctness
 
-CORRECTNESS_PLACEHOLDER
+Method ([check_identity.sh](../../../bench/pipespec/check_identity.sh)): one `llama-pipespec` process decodes the prompt
+and generates with plain decoding (one `llama_decode` per token), then repeats the same prompt pipelined: depth 0 (the
+API without guesses), an oracle that replays the plain output with 0 %, 10 % or 50 % of its guesses made wrong on
+purpose (wrong at the same positions in every run), and the copy lookup (match ≥ 2), `ngram-simple` (4/16) and
+`ngram-map-k` (4/8) guessers, at depths 1–3. Each run is compared with the plain run on:
+- **tokens**: the generated token ids;
+- **logits**: a hash of the full logits row each token was sampled from (a hash of the token id with GPU sampling);
+- **state**: the sequence's KV state after generation (`llama_state_seq_get_data`: cell positions and K/V rows);
+- **probe**: eight more tokens decoded with `llama_decode` after generation; their logits read every KV cell that is
+  still visible, so a cell left behind or overwritten by a dropped guess would change them.
+
+Model: Flint UD-Q4_K_XL (49 layers, 35 of them with a 513-token sliding window, 150,144-token vocabulary), the
+`rewrite.txt` prompt in Flint's chat template (750 tokens), flash attention, 4,096-token context.
+
+| Layout | Sampling | Pipelined runs | Tokens | Guesses | Wrong | Dropped tokens | Result |
+|---|---|---|---|---|---|---|---|
+| CPU only (no overlap: the executor's logic) | greedy, host | 11 | 1,408 | 880 | 168 | 336 | all same |
+| CPU only, `-ub 16`: 768-cell window cache, wraps during generation | greedy, host | 5 | 3,000 | 2,489 | 427 | 1,275 | all same |
+| two RTX 3090s, two stages | greedy, host | 19 | 4,864 | 4,331 | 510 | 1,016 | all same |
+| four virtual devices on the two GPUs, four stages | greedy, host | 19 | 4,864 | 4,331 | 510 | 1,016 | all same |
+| four stages | greedy on the GPU | 11 | 2,816 | 2,333 | 296 | 589 | all same |
+| four stages | T 1, top-k 20, top-p 0.95, seed 42 | 13 | 3,328 | 3,036 | 336 | 670 | all same |
+
+"Guesses" counts submitted guesses, including those dropped before they were checked; "wrong" counts checked guesses
+that did not match. With T 1 the oracle replays the sampled plain run and was right on 254 of 255 tokens at 0 % injected
+misses: the random draws line up position by position. Every process finished within its timeout (no deadlock).
+
+The checks ran on two RTX 3090s of a 7-GPU machine used for quality work, where no speed is measured; the Pascal
+kernels are exercised on the rig ([plan](../../../bench/pipespec/README.md#rig-plan), step 1).
 
 ## What a production version needs
 
-- **Sampling on the GPU.** The executor copies each token's full logits to the host (Flint: 151,936 floats, 0.6 MB, ~3
-  ms on a PCIe 1.0 x1 link) and samples there; the last card's stream carries that copy for every token, guesses
-  included. llama-server's backend sampling returns one token id instead. Greedy needs nothing more; seeded sampling needs
-  a random draw tied to the position (or the transactional draws backend sampling already has for speculative decoding)
-  because guesses are submitted, and their inputs set, before earlier tokens are sampled.
+- **Seeded sampling on the GPU.** Host sampling copies each token's full logits to the host (Flint: 150,144 floats,
+  0.6 MB, ~3 ms on a PCIe 1.0 x1 link), queued on the last card behind every token, guesses included. Greedy sampling on
+  the GPU is implemented (one token id per token). Temperature sampling on the GPU sets its random draw as a graph input
+  when the token is submitted, which for a guess is before the earlier tokens are sampled; it needs a draw tied to the
+  position (or the transactional draws backend sampling already keeps for speculative decoding).
 - **llama-server integration:** a window per slot, guesses from the slot's prompt + output, the grammar and stop checks
   applied to sampled tokens only (sample-and-match keeps them exact), and `--ctx-checkpoints` taken at committed
   positions only.

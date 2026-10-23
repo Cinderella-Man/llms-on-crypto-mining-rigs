@@ -4,7 +4,7 @@
 #   - a warm-up;
 #   - for each prompt (chat, whole-file edit, rename-and-rewrite): plain decoding (the reference), the pipelined API
 #     without guesses (its own overhead), the copy lookup (match >= 2) at depths DEPTHS, and at depth 3 the copy lookup
-#     with match >= 4, ngram-simple 4/16 and ngram-map-k;
+#     with match >= 4, ngram-simple 4/16 and ngram-map-k 4/8;
 #   - on the chat prompt, an oracle that replays the plain output: all guesses right at every depth (the pipeline's
 #     ceiling: one token per slowest stage), and 30 % / 100 % of them wrong at depth 3 (the cost of wrong guesses).
 # Every pipelined job is checked against the plain job of its prompt: same tokens and bit-identical logits.
@@ -15,7 +15,10 @@
 #       [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [TS=6,6,6,6,6,6,6,5,2] bash /tmp/pipespec/rig_run.sh \
 #       > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # Optional: N (tokens per job, 512), DEPTHS ('1 2 3 4 5'), PROMPTS ('chat edit rewrite'), CTX (8192),
-# SAMPLING ('--temp 0'), EXTRA_ARGS. Output: /tmp/pipespec/out/<TAG>/{jobs.txt,run.log,results.txt,summary.tsv,*.trace}.
+# BG (1: greedy sampling on the last card in both modes, as llama-server's backend sampling does, so only a token id
+# crosses the link instead of 0.6 MB of logits; 0: logits to the host and sampling there), SAMPLING ('--temp 0'),
+# EXTRA_ARGS. Output: /tmp/pipespec/out/<TAG>/{jobs.txt,run.log,results.txt,summary.tsv,*.trace}; summarize the traces
+# with bench/pipespec/traces.py.
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -25,6 +28,7 @@ DEPTHS=${DEPTHS:-1 2 3 4 5}
 PROMPTS=${PROMPTS:-chat edit rewrite}
 CTX=${CTX:-8192}
 SAMPLING=${SAMPLING:---temp 0}
+BG=${BG:-1}
 OUT=$HERE/out/$TAG
 mkdir -p "$OUT"
 
@@ -57,7 +61,9 @@ jobs=$OUT/jobs.txt
 echo "$(date -Is) start $TAG: $(wc -l < "$jobs") jobs, GPUs $GPUS"
 # shellcheck disable=SC2086
 env ${ENVS:-} CUDA_VISIBLE_DEVICES="$GPUS" timeout 7200 "$BIN/llama-pipespec" -m "$MODEL" -ngl 99 -fa on -c "$CTX" \
-    ${TS:+-ts $TS} ${EXTRA_ARGS:-} $SAMPLING --spec-ngram-simple-size-n 4 --spec-ngram-simple-size-m 16 \
+    ${TS:+-ts $TS} ${EXTRA_ARGS:-} $SAMPLING $([ "$BG" = 1 ] && echo --pipe-backend-greedy) \
+    --spec-ngram-simple-size-n 4 --spec-ngram-simple-size-m 16 \
+    --spec-ngram-map-k-size-n 4 --spec-ngram-map-k-size-m 8 \
     --pipe-slots $((2*(dmax + 1))) --pipe-jobs "$jobs" > "$OUT/run.log" 2>&1
 echo "$(date -Is) exit $? $TAG"
 grep -o 'PIPESPEC.*' "$OUT/run.log" > "$OUT/results.txt"
