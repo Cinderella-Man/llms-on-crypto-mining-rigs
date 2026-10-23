@@ -184,8 +184,9 @@ if (ggml_cuda_mmvq_pascal(
 ```
 
 Placed here, the port reuses llama.cpp's quantization, its MUL_MAT/MUL_MAT_ID stride mapping and every fusion check,
-and the diff to `mmvq.cu` is an include and these five lines. A change of the activation format (FP32 sums, one
-quantization per shared input, section 8) moves the call above the quantization.
+and the diff to `mmvq.cu` is an include and these five lines. One quantization per shared input (section 8) moves the
+call above the quantization; the FP32 activation sums didn't need that, because the kernels compute them from the int8
+values.
 
 **What it takes.** The kernel runs a call when all of these hold; otherwise the stock path runs as before:
 - the device is compute 6.1, or the force switch below is set;
@@ -416,15 +417,29 @@ These are independent of the weight kernel. Both use the decision point of secti
   - Keeping the last quantized input per device, keyed by the `src1` tensor and cleared after every node that writes
     memory, saves 98 + 47 = 145 launches per token. The survey estimates 0.7–1.0 ms.
   - It helps every GPU at one token, not just Pascal.
-- **FP32 activation sums.** Q8_1 stores the block sum `s` in FP16 (`quantize.cu:100`), which overflows on Flint's
-  expert down-projection inputs. That overflow is why llama.cpp rescales Flint's MoE down-projections, which costs
-  2.4–2.8 ms per token.
-  - In the Pascal kernels the activation block can become 40 bytes with `float d, s`. Two such blocks are 80 bytes, read
-    as five 128-bit loads.
-  - S4-L0 doesn't need it: its down-projections are Q8_0, whose dot product doesn't use `s`, so it already runs without
-    the rescale.
-  - It matters for the makers' Q4_1 file and for any mix with 4- or 5-bit down-projections. Dropping the rescale also
-    needs FP32 sums in MMQ's `DS4` activation layout (`mmq.cuh:20`), because prompts go through MMQ.
+- **FP32 activation sums** (fork branch `pascal-p106-fp32sums`). Q8_1 stores each 32-value block's sum `s` in FP16
+  (`quantize.cu:100`), next to its scale `d`. Flint's routed expert down-projection inputs reach a per-channel RMS of
+  25,600 in layer 46 and 48,400 in layer 48 (Unsloth's importance matrix; 1,100 in layer 47, at most 2,200 for every
+  other matrix product's input), so `s` becomes infinite and every dot product that reads it returns inf or NaN. That is
+  the overflow llama.cpp's rescale of Flint's MoE down-projections prevents, at 2.4–2.8 ms per token.
+  - The Pascal kernels no longer read `s`. When a lane loads an activation block it computes the block's int8 sum with
+    eight `dp4a(0x01010101, u)`, as Q5_K already did, and uses `d · Σq` in FP32 for the offsets of Q4_0 and Q5_0 and the
+    mins of Q4_1 and Q5_K. The R rows of the lane group (2R with the gate) share it, so it costs no memory traffic and
+    8 `dp4a` per activation block. The result is the exact dot product with the quantized activations, where the stock
+    kernel combines them with the unquantized sum. `d` stays FP16; it overflows only above an activation of
+    127 × 65,504 ≈ 8.3 M.
+  - Batches still read FP16 sums: `mul_mat_vec_q` for 2–6 tokens (Q4_0, Q4_1, Q5_0, Q5_1; at one token too for Q5_1 and
+    Q4_1_64, which the Pascal kernels don't cover) and MMQ's `DS4` layout (`mmq.cuh:20`; Q4_1, Q5_1, Q4_K, Q5_K, and Q4_0
+    on GPUs without tensor cores, compute 6.1 included). The rescale therefore stays for batches, where its ~470 small
+    launches are about 0.2 % of a 512-token ubatch (est.). The fork's `LLAMA_NO_MOE_DOWN_RESCALE=tg` drops it only where
+    the down-projection has one token; `=1` drops it everywhere, which is safe only for Q8_0, Q6_K, IQ4_XS, IQ4_NL and
+    MXFP4 down-projections.
+  - The rescale divides by a power of two and multiplies back, which is exact, so with FP32 sums the one-token output is
+    the same with and without it. On an RTX 5070 Laptop GPU (Flint's layers 45–48 on the GPU with the kernels forced,
+    the rest on the CPU, one 512-token wikitext-2 chunk evaluated a token at a time), the makers' Q4_1 gives PPL 18.2197
+    with the rescale, with `tg` and with no rescale at all; the build before the change gives NaN without it. Evaluated
+    512 tokens per ubatch without the rescale, it still gives NaN (MMQ), and so does UD-Q4_K_XL (Q5_K down-projection in
+    layer 46).
 
 ## 9. Verifying correctness
 
@@ -485,6 +500,13 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
 
    Flint's outputs move this much from rounding alone, because small differences flip the 6th-ranked expert; the same
    file on two GPU types differs by KLD 0.065 / 91.3 % ([experiments.md](../../../quants/experiments.md), Q21).
+6. **Activations past FP16's range** (FP32 activation sums, section 8). `test_mul_mat_large_act` runs one-token
+   `MUL_MAT` (2048 rows, K = 1024 and 4096) and `MUL_MAT_ID` (6 of 32 experts, K = 512) with one activation of 250,000
+   alone in its block and a whole block at ±10,400 in every row. It checks the result against a double-precision
+   product computed on the host, because the CPU backend's own Q8_1 sums (used for Q4_1) overflow too, and it runs only
+   where the CUDA backend reports the `MMVQ_PASCAL` feature. Before the change Q4_0, Q4_1 and Q5_0 returned NaN or inf;
+   with it all six types pass, natively and through the PTX JIT. With the change, all 4,939 `MUL_MAT*` cases of item 1
+   pass natively on the laptop, and the one-token cases and S4-L0's and UD-Q4_K_XL's replayed products pass as before.
 
 ## 10. Gain per token
 
@@ -555,7 +577,7 @@ and the per-layer allocations of Q36 and Q45 redone with them.
 | 7 | Q5_K and IQ4_XS in the port, from the benchmark's kernels (Q46) | tests pass; UD-Q4_K_XL measured | done (section 10) |
 | 8 | Q4_1_64 in the port (fork only) | tests pass; makers' file in Q4_1_64 measured | |
 | 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | |
-| 10 | FP32 activation sums in the Pascal kernels and MMQ's `DS4` layout; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | |
+| 10 | FP32 activation sums in the Pascal kernels; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | Pascal kernels done (branch `pascal-p106-fp32sums`); batches keep the rescale (`LLAMA_NO_MOE_DOWN_RESCALE=tg`), MMQ's `DS4` layout unchanged; on the laptop no NaN and output identical to the rescaled one (section 8); rig speed and KLD pending |
 
 Steps 9 and 10 are independent of the kernel and can go in any order. The repack of section 7 (Q39) is not planned:
 staged loads made it unnecessary for decode speed.
@@ -578,8 +600,9 @@ Each of these stands alone and can be reviewed separately:
      regression there, or restrict itself by SM count.
 3. **One activation quantization per shared input.** Not specific to any architecture, and continues mainline's
    gate/up de-duplication.
-4. **FP32 activation sums.** Closes the overflow that the Flint, Mistral4 and Mellum rescale works around. It competes
-   with the open BF16 proposal (#22571) and touches every Q8_1 reader, MMQ included.
+4. **FP32 activation sums.** Closes the overflow that the Flint, Mistral4 and Mellum rescale works around. Inside the
+   Pascal kernel it is local (the sums come from the int8 values, section 8); as an upstream change it competes with the
+   open BF16 proposal (#22571) and touches every Q8_1 reader, MMQ included.
 
 Q4_1_64 stays in the fork: it is a new GGUF type. In the discussion of an earlier CUDA repack PoC (#20563), the
 maintainers asked for a baseline without repacking first; PR 2 is that baseline, and on this card it already reaches the
