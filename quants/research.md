@@ -372,9 +372,19 @@ same file on two GPU types agree on only 80 % of the calls, so finer comparisons
 ## What to run next
 
 The plan, with its order and decision gates, is kept in one place: the top of [experiments.md](experiments.md#plan).
-In short: measure everything predicted here on the rig first (kernel microbenchmark, finalist speeds, engine variants,
-drafter go/no-go), then the exact file tweaks and a per-layer allocation search, the shared-expert merge, and, depending
-on what the rig shows, the Pascal kernel and the EAGLE-3 head.
+In short, the engine is now the bigger lever than the file:
+
+- **A Pascal matrix-vector kernel in llama.cpp, Q8_0 first.** Q8_0 is two thirds of the bytes a token reads in both
+  UD-Q4_K_XL and S4-L0. The [design note](../docs/research/notes/pascal_mmvq_integration.md) puts S4-L0 at 34–36 tok/s
+  with the ported kernels (28.0 today), in about 8 days of work, and splits it into four upstream pull requests.
+- **Pascal kernels for Q5_K and IQ4_XS**, benchmarked first. If they reach the tuned kernels' bandwidth, Unsloth's own
+  UD-Q4_K_XL gets to an estimated 31–33 tok/s, the same as the simple-format route, for everyone who downloads standard
+  files ([K-quant note](../docs/research/notes/kquant_decode_pascal.md)). Until then S4-L0 is the faster file at the bar.
+- **Small upstreamable fixes:** the launch shape for compute 6.1 (2 warps only for wide rows), CUDA graphs on Pascal, and
+  IQ4_XS in the small-K rule. llama.cpp accepts no AI-written pull-request text, so these need posts written by a
+  person ([upstream status](../docs/research/notes/upstream_pascal_patches.md)).
+- **With nine cards, Unsloth's Q8_0 is a serious option:** it runs 25.2 tok/s on the wide-rows build, faster than
+  UD-Q4_K_XL at its best, at KLD 0.052. The 4-bit mixes matter for six-card setups or two models side by side.
 
 ## Sources
 
