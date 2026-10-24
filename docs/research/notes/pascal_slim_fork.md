@@ -392,6 +392,35 @@ forced on), K2h-r16 in a two-card layer split:
   plain decoding in tokens, logits, KV state and probe logits;
 - greedy `llama-completion`, 2 × 128 tokens: identical.
 
+Greedy text with `--context-shift` past a 256-token context and logits with 19 of 49 layers on the CPU (`-ngl 30`) were
+identical too (G3), and the checks above passed again after C7's executor fixes (fed tokens, KV-step buffer growth)
+joined the branch (`f1b67d8b8`), fed tokens included.
+
+## 9. Built: the attention block in two launches (C2's first part, Q152)
+
+Fork `pascal-p106-v2-next`, `d379da309` (`GGML_CUDA_ATTN_BLOCK`: on by default on compute 6.1, `0` off, `2` any GPU).
+On Flint's 35 RoPE layers the six launches between the attention norm and the attention become two:
+- the Q, K and V products of the same Q8_1 activations run as one launch (`mul_mat_vec_q_pascal_qkv`): row blocks for
+  Q, then K, then V, each running the single-token Pascal kernel's body with the shape `ggml_cuda_mmvq_pascal` would
+  choose, so every row is computed as before. Types: the Q5_0/Q8_0 mixes of K2h-r16 and G3, and Q8_0 and Q5_K of
+  UD-Q4_K_XL;
+- Q's and K's norm, multiply and RoPE and both F16 cache writes run as one epilogue (`attn_epilogue_f32`), one block
+  per head plus one for V, with `rms_norm_mul_rope_f32`'s arithmetic.
+
+The products go to a scratch buffer, not to their tensors: the graph allocator gives V's and K's products the memory of
+Q's product and intermediates, which are dead in node order by the time V and K are computed, and a first version that
+wrote all three at once overwrote Q's product (K2h-r16's perplexity 112.6 instead of 21.9). Layers without RoPE keep the
+per-op path: their norms and cache writes would need the products in their tensors. 140 launches fewer per token.
+
+Checks (V100s through the compute-6.1 PTX, Pascal kernels forced, block forced on and off):
+- the logits of 2 × 128 tokens are byte-identical with the block on and off for K2h-r16, G3 and UD-Q4_K_XL, and with it
+  off byte-identical to the build before (the shared kernel bodies change nothing);
+- greedy text, `llama-pipespec` plain and pipelined at depth 3, and `check_identity.sh` with every switch on, fed tokens
+  included (15 runs): identical;
+- `test-backend-ops` on the touched ops: MUL_MAT one-token cases 725/725, ROPE 450/450, RMS_NORM 53/53, SET_ROWS 159/159;
+- the sm_61 code of the existing kernels: all 48 RoPE kernels identical; 135 of the 155 Pascal matrix-vector kernels
+  identical, the other 20 (bias and gate epilogues of the R = 2 shapes) differ only in the polarity of one predicate.
+
 ## What this changes in the plan
 
 - **The host is not the next single-stream lever after B2:** ≤ 0.3 ms of serial host time per token remains, against
