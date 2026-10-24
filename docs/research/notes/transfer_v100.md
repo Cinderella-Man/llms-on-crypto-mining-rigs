@@ -102,8 +102,9 @@ Starting point:
     throughput;
   - **16 GB cards:** at least two for UD.
 - **Two cards and NVLink.** Decode on a layer split runs at one card's speed. Every per-card gain above applies, the
-  host-staged hop costs est. 20–60 µs per token, and NVLink changes nothing for decode. NVLink matters for `-sm tensor`
-  (Flint is supported): est. 1.3–1.7× prefill but only 0.9–1.15× decode, because both cards still run every kernel.
+  host-staged hop costs est. 20–60 µs per token, and NVLink changes nothing for decode. `-sm tensor` is not available
+  for Flint: upstream PR #31081 (merged 2026-10-24) denies it for architectures with the MoE amax rescaling, Flint
+  included, so NVLink pairs gain nothing over PCIe for Flint today.
   Pipelined speculation (Q87) needs a layer split, so it applies only to two-card setups: est. 1.1–1.25× with copy and
   table guesses, ~1.45× with a drafter at p 0.7 (two stages cap it at 2×).
 - **Upstream, in order:**
@@ -450,7 +451,7 @@ move these numbers; compare only within one setup.
 | 2 | Second build with `-DGGML_CUDA_FORCE_MMQ=ON` for prompt-heavy and batched work (agents, many requests) | prefill +30–70 %; batched steps of 24–32 +15 % from PR #31047 | one build | evidence from V100 forks and PR #31047's table |
 | 3 | Copy-gated n-gram speculation in llama-server | 1.1–1.2× overall, ~1.4× on edits, 2–3× on rewrites | flags | upstream feature; Flint's step costs on Volta unmeasured |
 | 4 | The persistent MoE-layer kernel (`GGML_CUDA_PERSISTENT_MOE=2`, `pers` branch) | +5–15 % | one build + self-check | correct through compute_61 PTX on V100s; native speed unmeasured |
-| 5 | Two cards: one copy per card (Q4-class files), or Q8_0 layer split for fidelity; NVLink pairs try `-sm tensor` for prompts | 2× total; tensor split prefill 1.3–1.7× | flags | — |
+| 5 | Two cards: one copy per card (Q4-class files), or a Q8_0 layer split for fidelity (`-sm tensor` is denied for Flint upstream, PR #31081) | 2× total throughput | flags | — |
 | 6 | Tool requests: GPU sampling with a host grammar check (Q67) | +3–6 % on x16, +8–13 % on x1/x4 | days (fork) | not built |
 | 7 | A trained one-token Flint head as a speculative drafter (Q20's head U through the EAGLE-3 path) | 1.4–1.65× | weeks | pilot training running on the quant machine |
 | 8 | First-finish race of two samples | 1.1–1.2× per answer | a script | offline gate passed (Q93) |
@@ -563,7 +564,6 @@ Send the same requests (a chat question, a code task, a whole-file edit, a renam
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1 $B/llama-bench -m flint-Q8_0.gguf -ngl 99 -fa on -p 512,2048 -n 128 -sm layer -r 3 -o md
-CUDA_VISIBLE_DEVICES=0,1 $B/llama-bench -m flint-Q8_0.gguf -ngl 99 -fa on -p 512,2048 -n 128 -sm tensor -r 3 -o md   # NVLink, NCCL build
 ```
 
 - For pipelined speculation, build `pascal-p106-v2-pipespec2` and run
@@ -604,8 +604,6 @@ CUDA_VISIBLE_DEVICES=0,1 $B/llama-bench -m flint-Q8_0.gguf -ngl 99 -fa on -p 512
 - The causes of today's slow batched generation: the run logged neither its full flags (`-kvu`, slots) nor its prompt
   share, so the ranking is code reading plus PR #31047's V100 table.
 - Forced MMQ for Flint's prompts: evidence from Ornith, gemma4 and other V100 forks.
-- `-sm tensor` for Flint on an NVLink pair; the internal AllReduce exchanges activations in BF16 by default
-  (`v2:ggml-cuda/allreduce.cu` init), so its output differs from a layer split in the last bits.
 - FP16 overflow in FP16 engines: inferred from the importance matrix's channel RMS; nothing was run.
 - TLB effects with a 23–27 GiB file.
 - The 16 GB and expert-offload rows of the fits table: arithmetic.
