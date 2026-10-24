@@ -16,7 +16,7 @@
 #
 # Env: BIN (required), GPU (CUDA_VISIBLE_DEVICES, default 0), OUT (default /tmp/mmvq_multitoken), TYPES (regex of the
 # weight types, default all six), MODE_ON (GGML_CUDA_MMVQ_PASCAL for "on" and "stage": default 1, compute 6.1 only;
-# 2 forces the kernels on any NVIDIA GPU).
+# 2 forces the kernels on any NVIDIA GPU), RUNS (which of off, on, stage to run; default all three).
 # Most of the time goes into initializing the random weights on the host. Nothing else should run meanwhile.
 set -euo pipefail
 
@@ -25,6 +25,7 @@ GPU=${GPU:-0}
 OUT=${OUT:-/tmp/mmvq_multitoken}
 MODE_ON=${MODE_ON:-1}
 T=${TYPES:-'(q8_0|q5_0|q4_1|q4_0|q5_K|iq4_xs)'}
+RUNS=${RUNS:-off on stage}
 mkdir -p "$OUT"
 
 # op|filter on the case's parameters
@@ -44,7 +45,12 @@ run() { # <label> <env assignments...>
 }
 
 nvidia-smi --query-gpu=index,name,clocks.max.sm,clocks.max.mem --format=csv,noheader -i "$GPU" > "$OUT/gpu.txt" 2>&1 || true
-run off   GGML_CUDA_MMVQ_PASCAL=0
-run on    GGML_CUDA_MMVQ_PASCAL="$MODE_ON"
-run stage GGML_CUDA_MMVQ_PASCAL="$MODE_ON" GGML_CUDA_MMVQ_PASCAL_STAGE_ACT=1
+for r in $RUNS; do
+    case $r in
+    off)   run off   GGML_CUDA_MMVQ_PASCAL=0 ;;
+    on)    run on    GGML_CUDA_MMVQ_PASCAL="$MODE_ON" ;;
+    stage) run stage GGML_CUDA_MMVQ_PASCAL="$MODE_ON" GGML_CUDA_MMVQ_PASCAL_STAGE_ACT=1 ;;
+    *)     echo "unknown run $r" >&2; exit 1 ;;
+    esac
+done
 echo "logs in $OUT"
