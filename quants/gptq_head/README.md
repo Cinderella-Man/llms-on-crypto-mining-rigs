@@ -251,3 +251,40 @@ round-to-nearest's error there; on the shared expert and k/v it removes 45 %.
 - The proxy, the head-only error weighted by the captured Hessian, again ranks the groups correctly and is
   conservative: GPTQ recovers at least what it predicts.
 - Together the three groups save 53 MB per token at +0.0087 KLD with GPTQ, against +0.0246 with round to nearest.
+
+## GPTQ for K2h's body (Q112 E2/E3, Q114): tools and checks (2026-10-24)
+
+The next steps apply the same rounding to K2h, the lead mix: its 120 always-read tensors that are already Q5_0
+(attention q in layers 0–8 and 25–48, k/v/output 33–48, the shared expert 33–45: GPTQ at the same type, so no byte
+change), its routed experts (Q5_0 gate/up 9–48 and down 2–45), and, for E3, the always-read tensors it keeps in Q8_0.
+
+- **Per-expert Hessians.** `act_hessian/` has an expert mode (`HESS_EXPERTS=9,25,...`): each token's `ffn_norm` row is
+  added to the Hessian of every expert the router chose for it (`ffn_moe_topk`), and each `ffn_moe_swiglu` row to
+  the down-projection Hessian of the expert that produced it. Rows are buffered per expert and added in blocks;
+  the output keeps one packed upper triangle per expert (4.3 GB per layer for gate/up, float64).
+- **Checked against numpy.** `HESS_DUMP` writes the rows and expert ids a short run used, and
+  `act_hessian/check_hessians.py` recomputes every Hessian from them. On K2h (4 chunks of 512 tokens, layers 9 and 47,
+  CPU build): the worst expert differs by 1.4 × 10⁻⁷ (gate/up) and 1.8 × 10⁻⁷ (down) of the largest entry, row
+  counts are exact, and the experts' gate/up Hessians sum to 6 × the all-token Hessian within 7 × 10⁻⁸.
+- **The round-to-nearest baseline is llama-quantize's own bytes.** `imat_ggml` in gptq_head.py computes Q5_0 (or Q4_0)
+  with an importance matrix in ggml's float32 arithmetic and summation order. It reproduces every row of K2h's Q5_0
+  tensors that `test_gptq_head.py` checks (attention, shared expert, and expert slices in layers 9 and 47, with
+  Unsloth's importance matrix), so K2h's Q5_0 tensors are exactly llama-quantize's output and the proxy's baseline is
+  the mix itself. The float64 version `imat` gives the same error but only 68–95 % of the same rows, because near-ties
+  fall either way.
+- **Reproducible GPTQ needs a fixed BLAS thread count.** The block updates' summation order changes with the number
+  of OpenBLAS threads: 8 instead of 12 threads changes 2.5–4.5 % of the Q5_0 blocks (same proxy error to three
+  digits). With 12 threads, `gptq_body.py` reproduces E1's tensors byte for byte. The jobs pin the thread count.
+- **`gptq_body.py`** takes named groups (`k2h_q`, `k2h_kvo`, `k2h_sh`, all three as `k2h_q5`; `k2h_q8` for every
+  always-read tensor K2h keeps in Q8_0) or a regex, maps each tensor to the graph tensor that feeds it, and runs
+  tensors in parallel with `--workers`. The "= mix" column gives the share of rows where round to nearest reproduces
+  the mix's bytes (100 % when the mix holds that type).
+- **`gptq_experts.py`** is the offline expert check (Q114): for chosen layers and a sample of experts spread over the
+  ranking by routed rows, the H-weighted output error of the mix, round to nearest and GPTQ for gate, up and down,
+  summed over each expert's rows, so the layer ratio weights experts by use. Experts with fewer rows than inputs get
+  the all-token Hessian blended in and 10 × damping. Kill: GPTQ / round-to-nearest error above 0.85.
+
+Planned runs: Hessians of K2h with F16 routers (the release candidate) on the same wikitext-2 train text as E1; per-expert
+Hessians for layers 9, 25, 41 and 47 from 1.02 M tokens, about 24,000 rows per expert; the expert check on 64 experts
+per layer; K2h with GPTQ on its 120 Q5_0 always-read tensors, scored against K2h on the same GPUs; and the
+round-to-nearest/GPTQ ratio for every Q8_0 always-read tensor, which E3 uses to rank demotions.

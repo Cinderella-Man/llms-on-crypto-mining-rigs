@@ -5,6 +5,10 @@
 #   test_gptq_head.py <bf16.gguf> <q.gguf>     real files as well: round-to-nearest of bf16's token_embd.weight must be
 #                                              byte-identical to q's (a llama-quantize Q5_0 file whose token embedding
 #                                              had no importance matrix), and GPTQ with H = I must equal it in error
+#   test_gptq_head.py <bf16.gguf> <q.gguf> <imatrix.gguf>
+#                                              and imat_ggml must reproduce q's Q5_0 tensors that llama-quantize made with
+#                                              that importance matrix (attention, shared expert, expert slices), byte for
+#                                              byte (imat, with float64 sums, is printed for comparison)
 # Needs numpy and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py).
 import os, sys, tempfile, subprocess
 import numpy as np
@@ -134,9 +138,39 @@ def real(bf16, qfile):
               f'quant --mode gptq with H = I equals rtn (error {eb / np.linalg.norm(W):.5f} vs {ea / np.linalg.norm(W):.5f})')
 
 
+def real_imat(bf16, qfile, imatrix):
+    import gguf
+    bt = {t.name: t for t in gguf.GGUFReader(bf16).tensors}
+    qt = {t.name: t for t in gguf.GGUFReader(qfile).tensors}
+    it = {t.name: t for t in gguf.GGUFReader(imatrix).tensors}
+    cases = [(n, None) for n in ('blk.33.attn_k.weight', 'blk.40.ffn_gate_shexp.weight', 'blk.44.ffn_down_shexp.weight',
+                                 'blk.0.attn_q.weight')]
+    cases += [(n, e) for n in ('blk.9.ffn_gate_exps.weight', 'blk.47.ffn_up_exps.weight', 'blk.9.ffn_down_exps.weight')
+              for e in (0, 1, 2)]
+    for name, e in cases:
+        q = qt.get(name)
+        if q is None or q.tensor_type != gguf.GGMLQuantizationType.Q5_0:
+            print(f'skip  {name}: not Q5_0 in {qfile}')
+            continue
+        t = bt[name]
+        n = int(t.shape[0])
+        W = g.head_f32(t, rows=e).reshape(-1, n)
+        s2 = np.asarray(it[name + '.in_sum2'].data).reshape(-1, n)[0 if e is None else e]
+        cnt = float(np.asarray(it[name + '.counts'].data).reshape(-1)[0 if e is None else e])
+        theirs = np.asarray(q.data if e is None else q.data[e]).reshape(len(W), -1)
+        share = {}
+        for label, fn in (('imat_ggml', g.imat_ggml), ('imat', g.imat)):
+            share[label] = (g.pack(*fn(W, g.imatrix_weights(s2, cnt))).reshape(len(W), -1) == theirs).all(axis=1).mean()
+        tag = name if e is None else f'{name}[{e}]'
+        check(share['imat_ggml'] == 1, f'imat_ggml byte-identical to llama-quantize on {tag} ({len(W)} rows; identical '
+              f'rows: imat_ggml {100 * share["imat_ggml"]:.2f} %, imat {100 * share["imat"]:.2f} %)')
+
+
 synthetic()
 q4_0()
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
     real(sys.argv[1], sys.argv[2])
+if len(sys.argv) == 4:
+    real_imat(sys.argv[1], sys.argv[2], sys.argv[3])
 print('all passed' if not fails else f'{len(fails)} FAILED')
 sys.exit(1 if fails else 0)

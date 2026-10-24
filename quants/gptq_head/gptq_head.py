@@ -132,7 +132,8 @@ def make_qx_quants(x, w, nmax=16):
 
 def imat(x, qw, nlev=32):
     """quantize_row_q5_0_impl (q4_0_impl for nlev 16) with importance weights qw [n]: x float32 [rows, n] -> codes,
-    d (float16)"""
+    d (float16). The rule with float64 and pairwise sums: the same error as llama-quantize's, but near-ties fall either
+    way, so not its bytes; imat_ggml reproduces them"""
     r, n = x.shape
     sigma2 = (x.astype(np.float64) ** 2).sum(axis=1) / n
     codes = np.empty((r, n), np.uint8)
@@ -143,6 +144,75 @@ def imat(x, qw, nlev=32):
         codes[:, b * QK:(b + 1) * QK], sc = make_qx_quants(xb, w, nlev // 2)
         d[:, b] = sc.astype(np.float16)
     return codes, d
+
+
+def make_qx_quants_ggml(x, w, nmax=16):
+    """ggml make_qx_quants(n, nmax, x, L, rmse_type=1, qw) in ggml's float32 arithmetic and summation order, on rows of
+    one block: x, w float32 [rows, 32] -> codes uint8 [rows, 32], scale float32 [rows]"""
+    f = np.float32
+    r, n = x.shape
+    ax = np.abs(x)
+    i = ax.argmax(axis=1)                                   # first index of the largest magnitude, as ggml's strict >
+    mx = x[np.arange(r), i]
+    zero = ax[np.arange(r), i] < f(1e-15)                   # GROUP_MAX_EPS: codes 0, scale 0
+    mx = np.where(zero, f(1), mx)
+
+    def fit(iscale):
+        L = np.empty((r, n), f)
+        sumlx = np.zeros(r, f)
+        suml2 = np.zeros(r, f)
+        for k in range(n):                                  # sequential float32 sums, (w * x) * l and (w * l) * l
+            l = np.clip(np.rint(iscale * x[:, k]), -nmax, nmax - 1).astype(f)
+            L[:, k] = l
+            sumlx = sumlx + w[:, k] * x[:, k] * l
+            suml2 = suml2 + w[:, k] * l * l
+        return L, sumlx, suml2
+
+    with np.errstate(divide='ignore', invalid='ignore'):
+        L, sumlx, suml2 = fit(f(-nmax) / mx)
+        scale = np.where(suml2 != 0, sumlx / suml2, f(0)).astype(f)
+        best = scale * sumlx
+        bestL = L.copy()
+        for s in range(-9, 10):
+            if s == 0:
+                continue
+            L, sumlx, suml2 = fit(-(f(nmax) + f(0.1) * f(s)) / mx)
+            ok = (suml2 > 0) & (sumlx * sumlx > best * suml2)
+            sc = np.where(suml2 != 0, sumlx / suml2, f(0)).astype(f)
+            bestL[ok] = L[ok]
+            scale = np.where(ok, sc, scale)
+            best = np.where(ok, sc * sumlx, best)
+    scale = np.where(zero, f(0), scale).astype(f)
+    codes = np.where(zero[:, None], 0, bestL + nmax)
+    return codes.astype(np.uint8), scale
+
+
+def imat_ggml(x, qw, nlev=32):
+    """quantize_row_q5_0_impl (q4_0_impl for nlev 16) with importance weights qw [n] as ggml computes it (float32,
+    sequential sums, no fused multiply-adds): x float32 [rows, n] -> codes, d (float16): llama-quantize's bytes
+    (test_gptq_head.py checks them against a llama-quantize file)"""
+    f = np.float32
+    x = np.ascontiguousarray(x, f)
+    qw = np.asarray(qw, f)
+    r, n = x.shape
+    s = np.zeros(r, f)
+    for j in range(n):
+        s = s + x[:, j] * x[:, j]
+    sigma2 = s / f(n)
+    codes = np.empty((r, n), np.uint8)
+    d = np.empty((r, n // QK), np.float16)
+    for b in range(n // QK):
+        xb = x[:, b * QK:(b + 1) * QK]
+        w = qw[b * QK:(b + 1) * QK][None, :] * np.sqrt(sigma2[:, None] + xb * xb)
+        codes[:, b * QK:(b + 1) * QK], sc = make_qx_quants_ggml(xb, w.astype(f), nlev // 2)
+        d[:, b] = sc.astype(np.float16)
+    return codes, d
+
+
+def imatrix_weights(sums, count):
+    """llama-quantize's importance weights from an imatrix GGUF entry: in_sum2 / count in float32, 1 without data"""
+    sums = np.asarray(sums, np.float32)
+    return sums / np.float32(count) if count > 0 else np.ones_like(sums)
 
 
 # ---- GPTQ ----
