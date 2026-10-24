@@ -586,7 +586,8 @@ answers that use the same tools. Tables, the held-out check and the cost are in
 [pipelined_speculation.md](../../docs/research/notes/pipelined_speculation.md) ("A datastore of Flint's own answers").
 
 - [datastore.cpp](datastore.cpp): the store (a library for ctypes and a `datastore build` command); it counts its work
-  per lookup instead of timing it.
+  per lookup instead of timing it. `datastore build` writes the file that the fork's `llama-server --pipe-store` and
+  `llama-pipespec --pipe-store` memory-map (header `PIPESTO1`).
 - [datastore_corpus.py](datastore_corpus.py): token streams from generated answers in bench/staircase_drafter's format,
   leaving out any answer whose prompt shares a 12-word span with a Q51 prompt.
 - [datastore_sim.py](datastore_sim.py): a brute-force self-test of the store, the one-token accuracy of chains with the

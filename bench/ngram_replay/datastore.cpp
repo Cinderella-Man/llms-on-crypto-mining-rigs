@@ -11,6 +11,9 @@
 //         g++ -O2 -std=c++17 -o datastore datastore.cpp -DDS_MAIN                 (the command-line tool)
 // Tool:   datastore build TOKENS.i32 MAX_TOKENS OUT.ds    (TOKENS.i32: int32 tokens, answers separated by -1; the first
 //                                                          MAX_TOKENS tokens, cut at an answer boundary)
+// File:   the 8 bytes "PIPESTO1", the token count n (int64), n tokens of the stream reversed, n suffix-array entries
+//         (int32 each, little-endian): the format the fork's llama-server and llama-pipespec read with --pipe-store
+//         (common/pipe-store.cpp), memory-mapped.
 // The library counts its work (ds_stats): suffix-array probes of the binary searches and entries scanned to count next
 // tokens. Each probe reads one suffix-array entry and one token at a random place in the store, so the counts give the
 // lookup cost on another machine from its memory latency, without timing anything here.
@@ -22,6 +25,7 @@
 #include <unordered_map>
 #include <vector>
 
+static const char    DS_MAGIC[8] = { 'P', 'I', 'P', 'E', 'S', 'T', 'O', '1' };
 static const int32_t DS_SEP      = -1;    // between answers: a context never matches across it
 static const int32_t DS_END      = -2;    // past the end of the stream
 static const int64_t DS_SCAN_MAX = 2048;  // ranges larger than this are counted once and cached
@@ -121,11 +125,11 @@ int ds_save(void * h, const char * path) {
         return -1;
     }
     const int64_t n = ds->rev.size();
-    fwrite(&n, sizeof(n), 1, f);
-    fwrite(ds->rev.data(), sizeof(int32_t), n, f);
-    fwrite(ds->sa.data(), sizeof(int32_t), n, f);
-    fclose(f);
-    return 0;
+    const bool ok = fwrite(DS_MAGIC, 1, sizeof(DS_MAGIC), f) == sizeof(DS_MAGIC) &&
+                    fwrite(&n, sizeof(n), 1, f) == 1 &&
+                    fwrite(ds->rev.data(), sizeof(int32_t), n, f) == (size_t) n &&
+                    fwrite(ds->sa.data(), sizeof(int32_t), n, f) == (size_t) n;
+    return fclose(f) == 0 && ok ? 0 : -1;
 }
 
 void * ds_load(const char * path) {
@@ -133,8 +137,10 @@ void * ds_load(const char * path) {
     if (!f) {
         return nullptr;
     }
+    char    magic[sizeof(DS_MAGIC)];
     int64_t n = 0;
-    if (fread(&n, sizeof(n), 1, f) != 1) {
+    if (fread(magic, 1, sizeof(magic), f) != sizeof(magic) || memcmp(magic, DS_MAGIC, sizeof(magic)) != 0 ||
+            fread(&n, sizeof(n), 1, f) != 1 || n <= 0) {
         fclose(f);
         return nullptr;
     }

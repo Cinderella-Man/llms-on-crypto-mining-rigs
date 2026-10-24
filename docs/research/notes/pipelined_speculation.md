@@ -190,7 +190,7 @@ The model has no host contention and no power limit; the rig measures both.
 | `--pipe-guess` | Source | History it sees |
 |---|---|---|
 | `copy` | the token after the longest earlier match of the history's suffix (up to 12 tokens, newest on ties), if at least `--pipe-copy-min` long | committed + in flight |
-| `cont` | Q96: `copy` if it finds a match of at least `--pipe-copy-min` (4), else the most frequent continuation of the longest 1–8-token context in the request so far, plus the counts of a table of other outputs (`--pipe-table`) if given | committed + in flight (counts from committed tokens) |
+| `cont` | Q96: `copy` if it finds a match of at least `--pipe-copy-min` (4), else the most frequent continuation of the longest 1–8-token context in the request so far, plus the counts of a table of other outputs (`--pipe-table`) if given. With `--pipe-store FILE` (Q161, below): after the copy lookup, the request's continuations of 2-token or longer contexts, then the store, then the request's continuations of any context | committed + in flight (counts from committed tokens) |
 | `ngram-simple` | llama.cpp's `common_ngram_simple_draft` (`--spec-ngram-simple-size-n/-m`) | committed + in flight |
 | `spec` | any llama.cpp drafter (`--pipe-spec ngram-map-k`, `ngram-mod`, …) through `common_speculative`; one draft per committed state, consumed one guess at a time | committed only (stateful drafters must not see tokens that may be dropped) |
 | `oracle` | a reference run's tokens, a share `--pipe-miss` made wrong on purpose | – |
@@ -261,6 +261,15 @@ all classes from 1.46 to 1.54.
   generated tokens. At about 90 ns per random memory access on the Celeron's single DDR4-2133 channel (an assumed
   figure), that is est. 30–50 µs per lookup and 15–40 µs per generated token, under 0.3 % of a token's time. The store
   is built offline on any PC (`datastore build`, prefix doubling) and copied to the rig.
+
+**In the engine** (fork branch `pascal-p106-v2-q161`): `llama-server --pipe-store FILE` and `llama-pipespec --pipe-store
+FILE` (job key `store=0` leaves it out of a job) add the store to `cont` in the chain above. `common_pipe_store`
+(`common/pipe-store.cpp`) memory-maps the file: the 8 bytes `PIPESTO1`, the token count, the reversed tokens and the
+suffix array (int32 each), as `datastore build` writes it. Pages come in as lookups touch them, so a 110 MB store costs
+the rig's 4 GB of RAM at most its size, in page cache the kernel can drop. All of a server's slots share one store, and
+the cache of large ranges takes a lock. The server's log line per request counts the store's guesses ("pipelined = …,
+S from the store"). The store holds token ids, so it fits only models with Flint's vocabulary; with another model it
+guesses wrong and changes nothing else. On the CPU the outputs stay identical (Checks, below).
 
 ### Several samples of one request (race)
 
@@ -508,6 +517,20 @@ returned what the server with one token in flight and no guess returned for 8 of
 (reasoning, content and calls). 1,816 of the 2,444 tokens ran pipelined (3,759 guesses: 415 right, 830 wrong); the
 628 tokens of the calls ran batched, with 4 grammar rejections resampled from the fetched row.
 
+The continuation store (`--pipe-store`, branch `pascal-p106-v2-q161`) on granite on the CPU, with a store built the same
+way from granite's own answers to the four prompts at six other seeds (6,168 tokens; the Flint store's tokens mean
+nothing in granite's vocabulary). The store answered often:
+
+| Check | Runs | Store guesses | Result |
+|---|---|---|---|
+| check_server.sh, `cont` at depths 3 and 8 (chat, rewrite, edit at T 0 and T 1; streamed; stop string) | 22 requests | up to 179 per request | all identical to one token in flight without guesses; T 0 also to a server without `--pipe-depth` |
+| check_identity.sh, chat and code prompts, T 1 seed 42, depths 1, 3, 8 (host sampling), and depth 3 with the temperature chain on the device | 41 runs (34 + 7) | 65–187 per `cont` run | all equal to plain decoding (tokens, logits, KV state, probe) |
+| check_identity.sh, rewrite prompt, T 0 | 14 runs | 0 (the copy lookup covers it) | all equal |
+| check_streams.sh, N = 3 with the temperature chain on the device | 21 conversation runs | 43–63 per chat or code conversation | all equal to their plain runs |
+
+The Flint store file itself, replayed through datastore_sim.py on Q51's transcripts, gives the accuracy of the
+simulation above to the last digit (43.5 % right, the store supplying 26.0 % of the guesses at 27.9 % right).
+
 ## Measuring it on the rig
 
 The executor is exact; what the rig has to show is its speed. Everything below runs `llama-pipespec` from the build of
@@ -735,6 +758,21 @@ eight-conversation mix. `all` measures prefill throughput when nothing else is d
 long prompts and the job's tokens per second. `arrive` brings each prompt in while the others decode, so the comparison
 between `k8`, `k8g1` and `k8s` there is decode priority. Every `same_as_plain` must read `yes`. A configuration whose
 chunk slots do not fit next to the model stops at its start (`run-<config>.log`), and the next one runs.
+
+**4e. The continuation store in llama-server (Q161)** (the build of `pascal-p106-v2-q161`, which also carries Q155 and
+the tool-request pipelining, `llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161`, and a store of 13.8 M tokens of Flint
+answers, `flint-answers-clean-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
+
+```
+B=/opt/llama-builds/llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161/bin; M=<K2h-r16>
+S=/opt/llama-builds/stores/flint-answers-clean-13.8M.pstore
+ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=store-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3 3s' \\
+    STORE=$S ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/store-9c.out 2>&1 < /dev/null &"
+```
+
+`d3s x` against `d3 x` is the store's gain per request: chat, code and edit prompts and the coding-agent tool request,
+at T 0 and T 1. The simulation expects ~5 % on chat, code and edits and more on the tool request. The guesses column
+counts the store's guesses (right / wrong / from the store). Every `identical` must read `yes`.
 
 **5. Collect and clean up:**
 
