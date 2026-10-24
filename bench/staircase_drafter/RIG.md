@@ -21,7 +21,10 @@ norm's weight folded into the projection after it, the anchor embeddings, the ou
 vocabulary (draft id to Flint token id), and the metadata the executor needs: sizes, the anchor layers (inputs of layers
 9, 17, 25, 33, 41, then the final state after Flint's output norm), whether the head is fused, the anchor of committed
 rows, the staircase of the tokens in flight (from the head's profile, e.g. `L9,L17,L33,L41` for head A) and alpha (the
-guess is drawn from q^alpha). A two-layer head with 40,000 draft ids is 0.20 GB at Q8_0.
+guess is drawn from q^alpha). The default stores the matrices as Q8_0 and the output head as F16 (`--f16 head`): a
+two-layer fused head with 40,000 draft ids is 0.29 GB. On a trained head and Flint's real hidden states, a Q8_0 output
+head moves the logits by ~0.16 rms (the most likely id unchanged, its probability by up to 0.07), an F16 one by ~0.035;
+the other matrices in F16 change nothing measurable. All Q8_0 (`--f16 ''`) is 0.22 GB.
 
 ## What runs where
 

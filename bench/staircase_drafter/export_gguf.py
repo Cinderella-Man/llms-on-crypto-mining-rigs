@@ -22,7 +22,8 @@ Metadata (staircase.*): sizes, rms_eps, rope_theta (interleaved pairs: ggml rope
 inputs the anchors read; the final state after Flint's output norm is the last anchor), fuse, committed (the anchor of
 committed rows), stair (anchors of the tokens in flight, newest first, from the head's profile), alpha (the guess is
 drawn from q^alpha), profile.
-2-D and 3-D matrices are stored as --type (q8_0, f16 or f32), everything else as f32.
+2-D and 3-D matrices are stored as --type (q8_0, f16 or f32), the groups in --f16 (default: the output head) as f16,
+everything else as f32.
 """
 import argparse
 import json
@@ -46,8 +47,9 @@ def profile_stair(profile):
 
 
 def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=None, head_dim=128, rms_eps=1e-6,
-           rope_theta=1e5, committed=None):
-    """sd: the head's state dict (name -> numpy float32), head: profile name (drafter.PROFILES)."""
+           rope_theta=1e5, committed=None, f16=()):
+    """sd: the head's state dict (name -> numpy float32), head: profile name (drafter.PROFILES). f16: matrix groups
+    (emb, anc, fuse, blk, head) stored as f16 whatever qtype is."""
     import gguf
     import drafter
 
@@ -103,9 +105,10 @@ def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=N
     q8 = gguf.GGMLQuantizationType.Q8_0
     for name, m in mats.items():
         m = np.ascontiguousarray(m, dtype=np.float32)
-        if qtype == "q8_0":
+        group = name.split(".")[1]   # emb, anc, fuse, blk, head
+        if qtype == "q8_0" and group not in f16:
             w.add_tensor(name, gguf.quants.quantize(m, q8), raw_dtype=q8)
-        elif qtype == "f16":
+        elif qtype == "f16" or group in f16:
             w.add_tensor(name, m.astype(np.float16))
         else:
             w.add_tensor(name, m)
@@ -117,7 +120,7 @@ def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=N
     w.write_tensors_to_file()
     w.close()
     return {"d": d, "n_layer": n_layer, "n_vocab": len(vocab), "fuse": bool(fuse), "stair": stair, "committed": committed,
-            "alpha": alpha, "type": qtype}
+            "alpha": alpha, "type": qtype, "f16": sorted(f16)}
 
 
 def state_dict_numpy(path):
@@ -136,12 +139,16 @@ def main():
     ap.add_argument("--type", default="q8_0", choices=("q8_0", "f16", "f32"))
     ap.add_argument("--alpha", type=float, default=3.0, help="q^alpha before the draw (score.py --alpha)")
     ap.add_argument("--stair", help="anchors of the tokens in flight, newest first (default: from the head's profile)")
+    ap.add_argument("--f16", default="head",
+                    help="matrix groups kept in f16 with --type q8_0: emb,anc,fuse,blk,head (default head: a q8_0 output "
+                         "head moves a trained head's logits by ~0.16 rms, an f16 one by ~0.035; '' for all q8_0)")
     args = ap.parse_args()
     cfg = json.load(open(os.path.join(args.head, "config.json")))
     sd = state_dict_numpy(args.weights or os.path.join(args.head, "head.pt"))
     vocab = np.load(args.vocab)
     info = export(sd, cfg["head"], cfg["args"].get("layers", 2), cfg["args"].get("fuse", False), vocab, args.out,
-                  qtype=args.type, alpha=args.alpha, stair=args.stair.split(",") if args.stair else None)
+                  qtype=args.type, alpha=args.alpha, stair=args.stair.split(",") if args.stair else None,
+                  f16=tuple(g for g in args.f16.split(",") if g))
     info["bytes"] = os.path.getsize(args.out)
     print(json.dumps(info))
 

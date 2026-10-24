@@ -125,7 +125,8 @@ def cmd_head(args):
     vocab = np.sort(rng.choice(args.target_vocab, args.draft_vocab, replace=False)).astype(np.int64)
     # the embedding table is the target's; a small stand-in is enough to build the head
     model, _ = random_model(args.d, args.layers, args.fuse, 8, args.draft_vocab, args.ffn, args.seed)
-    info = export_gguf.export(state_numpy(model), args.head, args.layers, args.fuse, vocab, args.out, qtype=args.type)
+    info = export_gguf.export(state_numpy(model), args.head, args.layers, args.fuse, vocab, args.out, qtype=args.type,
+                              f16=tuple(g for g in args.f16.split(",") if g))
     info["bytes"] = os.path.getsize(args.out)
     print(json.dumps(info))
 
@@ -137,7 +138,8 @@ def cmd_case(args):
     vocab = np.sort(rng.choice(args.table_vocab, V, replace=False)).astype(np.int64)
     model, emb = random_model(args.d, args.layers, args.fuse, args.table_vocab, V, args.ffn, args.seed)
     gguf_path = os.path.join(args.out, "drafter.gguf")
-    info = export_gguf.export(state_numpy(model), args.head, args.layers, args.fuse, vocab, gguf_path, qtype=args.type)
+    info = export_gguf.export(state_numpy(model), args.head, args.layers, args.fuse, vocab, gguf_path, qtype=args.type,
+                              f16=tuple(g for g in args.f16.split(",") if g))
 
     d, P = args.d, args.prompt
     windows = [int(x) for x in args.windows.split(",")]
@@ -175,7 +177,8 @@ def cmd_real(args):
     model.eval()
     gguf_path = os.path.join(args.out, "drafter.gguf")
     info = export_gguf.export({k: v.float().numpy() for k, v in sd_t.items() if hasattr(v, "float")}, cfg["head"],
-                              layers, fuse, vocab, gguf_path, qtype=args.type)
+                              layers, fuse, vocab, gguf_path, qtype=args.type,
+                              f16=tuple(g for g in args.f16.split(",") if g))
 
     rec = feats.FeatFile(args.feats)[args.seq]
     windows = [int(x) for x in args.windows.split(",")]
@@ -221,6 +224,7 @@ def main():
     ap.add_argument("--prompt", type=int, default=300)
     ap.add_argument("--windows", default="4,4,4,5,6,1,2,4,4", help="tokens in flight per guess")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--f16", default="", help="matrix groups kept in f16 with --type q8_0 (export_gguf.py --f16)")
     # real
     ap.add_argument("--weights", help="train.py output folder (config.json, head.pt)")
     ap.add_argument("--vocab")
