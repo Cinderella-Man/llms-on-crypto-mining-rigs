@@ -15,6 +15,8 @@ usage:
                           [--scenarios N [--seed S] | --ids FILE] [--shuffle SEED] [--part I/N]
   python multi_turn.py score OUT_DIR FILE=RAW.jsonl [FILE=RAW.jsonl ...]
   python multi_turn.py selftest TEMPLATE.jinja      # ground truth replayed through the loop; all 800 must pass
+  python multi_turn.py render TEMPLATE.jinja OUT.jsonl FILE=RAW.jsonl [...] [--min-tokens N]
+      # stored conversations as the token stream the model saw (long-context KLD material, Q106)
 """
 import argparse
 import ast
@@ -216,6 +218,42 @@ def cmd_run(args):
     print("DONE", args.out, flush=True)
 
 
+# ---------------------------------------------------------------- render
+def cmd_render(args):
+    """Each stored attempt replayed through converse() with its recorded outputs, so that BFCL's backends regenerate
+    the tool results: the last step's prompt (the whole history with every reasoning block, as the model saw it) and
+    the last step's output. n_prompt is the server's token count of that prompt, for the caller to check the
+    rendering against."""
+    tmpl = bc.make_template(open(args.template).read())
+    entries = {e["id"]: e for e in load_entries(exclude=read_ids(args.exclude))}
+    out = open(args.out, "w")
+    n = 0
+    for spec in args.raw:
+        name, path = spec.split("=", 1)
+        for line in open(path):
+            rec = json.loads(line)
+            steps = [s for t in rec["turns"] for s in t]
+            if rec["id"] not in entries or not steps or any(s.get("error") for s in steps):
+                continue
+            if steps[-1]["n_prompt"] + steps[-1]["tokens_predicted"] < args.min_tokens:
+                continue
+            stored, prompts = iter(steps), []
+
+            def generate(prompt, messages, tools):
+                prompts.append(prompt)
+                return dict(next(stored))  # StopIteration: the replay took a step the run did not
+
+            res = converse(entries[rec["id"]], tmpl, generate, f"render_{name}_a{rec['attempt']}")
+            if next(stored, None) is not None or [len(t) for t in res["turns"]] != [len(t) for t in rec["turns"]]:
+                sys.exit(f"{name} {rec['id']} attempt {rec['attempt']}: the replay does not follow the stored steps")
+            out.write(json.dumps({"file": name, "id": rec["id"], "attempt": rec["attempt"],
+                                  "n_steps": len(steps), "n_prompt": steps[-1]["n_prompt"],
+                                  "tokens_predicted": steps[-1]["tokens_predicted"],
+                                  "prompt": prompts[-1], "output": steps[-1]["content"]}, ensure_ascii=False) + "\n")
+            n += 1
+    print(f"{n} conversations rendered to {args.out}")
+
+
 # ---------------------------------------------------------------- score
 def row(entry, file, rec):
     ok, err, flags = evaluate(entry, rec)
@@ -333,8 +371,14 @@ def main():
     s.add_argument("--exclude", default=EXCLUDED)
     t = sub.add_parser("selftest")
     t.add_argument("template")
+    d = sub.add_parser("render")
+    d.add_argument("template")
+    d.add_argument("out")
+    d.add_argument("raw", nargs="+", help="FILE=RAW.jsonl")
+    d.add_argument("--min-tokens", type=int, default=0, help="only conversations at least this long (prompt + output)")
+    d.add_argument("--exclude", default=EXCLUDED)
     args = ap.parse_args()
-    {"run": cmd_run, "score": cmd_score, "selftest": cmd_selftest}[args.cmd](args)
+    {"run": cmd_run, "score": cmd_score, "selftest": cmd_selftest, "render": cmd_render}[args.cmd](args)
 
 
 if __name__ == "__main__":

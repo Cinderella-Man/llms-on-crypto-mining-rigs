@@ -1,0 +1,120 @@
+diff -ru a/common/arg.cpp b/common/arg.cpp
+--- a/common/arg.cpp	2026-10-24 04:26:02.706973814 +0200
++++ b/common/arg.cpp	2026-10-24 04:26:02.716594895 +0200
+@@ -3229,7 +3229,7 @@
+         [](common_params & params) {
+             params.parse_special = true;
+         }
+-    ).set_examples({LLAMA_EXAMPLE_IMATRIX}));
++    ).set_examples({LLAMA_EXAMPLE_IMATRIX, LLAMA_EXAMPLE_PERPLEXITY}));
+     add_opt(common_arg(
+         {"--ids"},
+         string_format("only print the token IDs, in a Python-parseable list form like [1, 2, 3] (default: %s)", params.tokenize_ids ? "true" : "false"),
+diff -ru a/tools/perplexity/perplexity.cpp b/tools/perplexity/perplexity.cpp
+--- a/tools/perplexity/perplexity.cpp	2026-10-24 04:26:02.708000136 +0200
++++ b/tools/perplexity/perplexity.cpp	2026-10-24 04:26:02.718646808 +0200
+@@ -188,7 +188,9 @@
+     size_t count            = 0.0;
+ };
+ 
+-static std::pair<double, float> log_softmax(int n_vocab, const float * logits, const uint16_t * base_log_prob, int tok, kl_divergence_result & kld) {
++// extra (if not null) gets this token's {nll, nll_base, same top token} for the per-token dump (LLAMA_KLD_DUMP)
++static std::pair<double, float> log_softmax(int n_vocab, const float * logits, const uint16_t * base_log_prob, int tok, kl_divergence_result & kld,
++        float * extra = nullptr) {
+     float max_logit = logits[0];
+     int imax = 0;
+     for (int i = 1; i < n_vocab; ++i) {
+@@ -239,6 +241,12 @@
+         ++kld.n_same_top;
+     }
+ 
++    if (extra) {
++        extra[0] = nll;
++        extra[1] = nll_base;
++        extra[2] = imax == imax_base ? 1.0f : 0.0f;
++    }
++
+     const float p_base = expf(-nll_base);
+     const float p = expf(-nll);
+     const float p_diff = p - p_base;
+@@ -253,11 +261,11 @@
+ 
+ static void process_logits(int n_vocab, const float * logits, const int * tokens, int n_token,
+         std::vector<std::thread> & workers, const std::vector<uint16_t> & base_log_probs, kl_divergence_result & kld,
+-        float * kld_values, float * p_diff_values) {
++        float * kld_values, float * p_diff_values, float * extra_values = nullptr) {
+     std::mutex mutex;
+     const int nv = 2*((n_vocab + 1)/2) + 4;
+     int counter = 0;
+-    auto compute = [&mutex, &counter, &base_log_probs, &kld, n_vocab, logits, tokens, n_token, nv, kld_values, p_diff_values] () {
++    auto compute = [&mutex, &counter, &base_log_probs, &kld, n_vocab, logits, tokens, n_token, nv, kld_values, p_diff_values, extra_values] () {
+         kl_divergence_result local_kld;
+         while (true) {
+             std::unique_lock<std::mutex> lock(mutex);
+@@ -279,7 +287,8 @@
+                 break;
+             }
+             lock.unlock();
+-            std::pair<double, float> v = log_softmax(n_vocab, logits + size_t(i)*n_vocab, base_log_probs.data() + size_t(i)*nv, tokens[i+1], local_kld);
++            std::pair<double, float> v = log_softmax(n_vocab, logits + size_t(i)*n_vocab, base_log_probs.data() + size_t(i)*nv, tokens[i+1], local_kld,
++                    extra_values ? extra_values + 3*size_t(i) : nullptr);
+             kld_values[i]    = (float)v.first;
+             p_diff_values[i] = v.second;
+         }
+@@ -307,7 +316,7 @@
+ 
+     LOG_INF("%s: tokenizing the input ..\n", __func__);
+ 
+-    std::vector<llama_token> tokens = common_tokenize(ctx, params.prompt, true);
++    std::vector<llama_token> tokens = common_tokenize(ctx, params.prompt, true, params.parse_special);
+ 
+     const int n_ctx = llama_n_ctx(ctx);
+ 
+@@ -470,7 +479,7 @@
+     auto tim1 = std::chrono::high_resolution_clock::now();
+     LOG_INF("%s: tokenizing the input ..\n", __func__);
+ 
+-    std::vector<llama_token> tokens = common_tokenize(ctx, params.prompt, true);
++    std::vector<llama_token> tokens = common_tokenize(ctx, params.prompt, true, params.parse_special);
+ 
+     auto tim2 = std::chrono::high_resolution_clock::now();
+     LOG_INF("%s: tokenization took %g ms\n",__func__,1e-3*std::chrono::duration_cast<std::chrono::microseconds>(tim2-tim1).count());
+@@ -1769,6 +1778,19 @@
+     auto    kld_ptr =    kld_values.data();
+     auto p_diff_ptr = p_diff_values.data();
+ 
++    // per-token dump: LLAMA_KLD_DUMP=<file> gets one line per scored token
++    std::ofstream dump;
++    std::vector<float> extra_values;
++    if (const char * dump_path = getenv("LLAMA_KLD_DUMP")) {
++        dump.open(dump_path);
++        if (!dump) {
++            LOG_ERR("%s: cannot open %s\n", __func__, dump_path);
++            return;
++        }
++        dump << "chunk\tpos\ttoken\tkld\tp_diff\tsame_top\tnll\tnll_base\n";
++        extra_values.resize(3*size_t(n_ctx - 1 - n_ctx/2));
++    }
++
+     const int first = n_ctx/2;
+ 
+     for (int i = 0; i < n_chunk; i += n_seq) {
+@@ -1847,7 +1869,17 @@
+             const float * all_logits = num_batches > 1 ? logits.data() : llama_get_logits_ith(ctx, seq*n_ctx + first);
+ 
+             process_logits(n_vocab, all_logits, tokens.data() + start + seq*n_ctx + first, n_ctx - 1 - first,
+-                    workers, log_probs_uint16, kld, kld_ptr, p_diff_ptr);
++                    workers, log_probs_uint16, kld, kld_ptr, p_diff_ptr, dump.is_open() ? extra_values.data() : nullptr);
++            if (dump.is_open()) {
++                // pos = position in the chunk of the scored (predicted) token
++                char line[160];
++                for (int k = 0; k < n_ctx - 1 - first; ++k) {
++                    snprintf(line, sizeof(line), "%d\t%d\t%d\t%.6g\t%.6g\t%d\t%.6g\t%.6g\n", i + seq, first + k + 1,
++                            tokens[start + seq*n_ctx + first + k + 1], kld_ptr[k], p_diff_ptr[k], (int) extra_values[3*k + 2],
++                            extra_values[3*k], extra_values[3*k + 1]);
++                    dump << line;
++                }
++            }
+             p_diff_ptr += n_ctx - 1 - first;
+             kld_ptr    += n_ctx - 1 - first;
+ 
