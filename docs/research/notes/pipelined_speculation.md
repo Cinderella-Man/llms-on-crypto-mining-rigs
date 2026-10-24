@@ -688,8 +688,9 @@ ssh rig 'grep -h "pipelined =" /tmp/server_bench/serve-9c-d*/*.log /tmp/tool_req
 ```
 
 What to read:
-- **Chat:** tokens per second per turn at depth 0 against 3 and 5. rig_run.sh's `cont` gains (1.3–1.55× at the best
-  depth) are the expectation for the reasoning-heavy turns.
+- **Chat:** tokens per second per turn at depth 0 against 3 and 5. rig_run.sh's `cont` gains at the best depth (from
+  the traces: chat 1.38×, code 1.35–1.43×, edits 1.41–1.44×, rewrites 1.72–1.84× on K2h-r16, six and nine cards) are the
+  expectation for the reasoning-heavy turns.
 - **Identity:** the transcripts at depths 3 and 5 (`chat.json`) must be identical, since both use position-keyed draws.
   Depth 0 uses the server's ordinary draws, so its output differs at temperature 1, with the same distribution.
 - **The tool request:** "auto" with backend sampling at depth 3 against depth 0. The log's "pipelined" line counts the
@@ -752,6 +753,14 @@ with them the build's `BUILDINFO.txt`, the model file names and the card set; su
 `python3 -I bench/pipespec/traces.py out/<TAG>`.
 
 ### Reading the results
+
+`tok_s` and `speedup` in summary.tsv come from the traces: generated tokens per second from a job's first sampled token
+to its last. llama-pipespec's own rate (`tok_s_tgen`) also counted the wait for the first token until fork commit
+`99c3a7c00`: `llama_decode` returns before the cards finish the prompt, so that wait held 0.1–3.3 s of the 750- and
+2,076-token prompts, a different share in every job. On those prompts it put plain decoding 1–19 % low and the
+pipelined jobs up to a third low. Edit speed-ups read up to 0.14 too high, rewrite speed-ups up to 0.8 too low. On the
+short chat and code prompts the wait was 0.3–0.5 s: 2–6 % at plain decoding's speed, up to ~20 % for the fast oracle
+jobs with every guess right.
 
 | Rows | Question | Expected (event model) | If not |
 |---|---|---|---|

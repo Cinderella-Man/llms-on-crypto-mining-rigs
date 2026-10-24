@@ -22,6 +22,10 @@
 # EXTRA_ARGS. Output in /tmp/pipespec/out/<TAG>/: jobs.txt, run.log, results.txt (one PIPESPEC line per job),
 # summary.tsv, plain.jsonl (the plain outputs), gpu.csv, host.csv (the process's CPU use each second, % of one core),
 # *.trace (summarize with traces.py).
+# summary.tsv's tok_s and speedup come from each job's trace: generated tokens per second from its first sampled token to
+# its last. llama-pipespec's own tok_s (column tok_s_tgen) also counts the wait for its first token, which can include
+# up to several seconds of the prompt still running on the cards (llama_decode returns before they finish), so it is
+# low by a varying amount on the long prompts.
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -53,9 +57,9 @@ jobs=$OUT/jobs.txt
         for D in $DEPTHS; do
             echo "name=cont-d$D-$P mode=pipe depth=$D guess=cont copy_min=4 $c trace=$OUT/cont-d$D-$P.trace"
         done
-        echo "name=copy2-d3-$P mode=pipe depth=3 guess=copy copy_min=2 $c"
-        echo "name=copy4-d3-$P mode=pipe depth=3 guess=copy copy_min=4 $c"
-        echo "name=mapk-d3-$P mode=pipe depth=3 guess=spec spec=ngram-map-k $c"
+        echo "name=copy2-d3-$P mode=pipe depth=3 guess=copy copy_min=2 $c trace=$OUT/copy2-d3-$P.trace"
+        echo "name=copy4-d3-$P mode=pipe depth=3 guess=copy copy_min=4 $c trace=$OUT/copy4-d3-$P.trace"
+        echo "name=mapk-d3-$P mode=pipe depth=3 guess=spec spec=ngram-map-k $c trace=$OUT/mapk-d3-$P.trace"
     done
     P=$(echo "$PROMPTS" | awk '{print $1}')
     c="prompt=$HERE/prompts/$P.txt chat=1 n=$N"
@@ -73,7 +77,7 @@ if [ -n "$TABLE" ]; then
     for P in $PROMPTS; do
         c="prompt=$HERE/prompts/$P.txt chat=1 n=$N"
         echo "name=plain-$P mode=plain $c" >> "$jobs_table"
-        echo "name=conttab-d3-$P mode=pipe depth=3 guess=cont copy_min=4 $c" >> "$jobs_table"
+        echo "name=conttab-d3-$P mode=pipe depth=3 guess=cont copy_min=4 $c trace=$OUT/conttab-d3-$P.trace" >> "$jobs_table"
     done
 fi
 
@@ -114,20 +118,33 @@ if [ -s "$jobs_table" ]; then
 fi
 [ -n "$gpu_pid" ] && kill "$gpu_pid" 2>/dev/null
 
-# summary: speed-up against the plain job of the same prompt, and whether tokens and logits match it
+# per job with a trace: generated tokens per second from its first sampled token to its last
+for t in "$OUT"/*.trace; do
+    [ -e "$t" ] || continue
+    awk -v name="$(basename "$t" .trace)" 'NR == 2 { t0 = $1 } NR > 1 { t1 = $1; n++ }
+        END { if (n > 2 && t1 > t0) printf "%s %.3f\n", name, 1e6 * (n - 1) / (t1 - t0) }' "$t"
+done > "$OUT/trace_rates.txt"
+
+# summary: speed-up against the plain job of the same prompt, from the traces' rates when both jobs have a trace, else
+# from llama-pipespec's tok_s (column basis), and whether tokens and logits match it
 awk '
 function f(k,   i, a) { for (i = 1; i <= NF; i++) { split($i, a, "="); if (a[1] == k) return a[2] } return "" }
+FNR == NR { tr[$1] = $2; next }
 { name = f("name"); n = split(name, parts, "-"); prompt = parts[n]
-  row[NR] = $0; nm[NR] = name; pr[NR] = prompt
-  if (name ~ /^plain-/) { base[prompt] = f("tok_s"); tok[prompt] = f("tokens"); lg[prompt] = f("logits") } }
+  row[++nr] = $0; nm[nr] = name; pr[nr] = prompt
+  rate[nr] = (name in tr) ? tr[name] : f("tok_s"); traced[nr] = (name in tr)
+  if (name ~ /^plain-/) { base[prompt] = rate[nr]; btr[prompt] = traced[nr]; btg[prompt] = f("tok_s")
+                          tok[prompt] = f("tokens"); lg[prompt] = f("logits") } }
 END {
-  print "name\tprompt\tguess\tdepth\tn_gen\ttok_s\tspeedup\thits\tmisses\twasted\tavg_inflight\tsame_as_plain"
-  for (i = 1; i <= NR; i++) {
+  print "name\tprompt\tguess\tdepth\tn_gen\ttok_s\tspeedup\tbasis\ttok_s_tgen\thits\tmisses\twasted\tavg_inflight\tsame_as_plain"
+  for (i = 1; i <= nr; i++) {
     $0 = row[i]; p = pr[i]
-    sp = (base[p] > 0) ? sprintf("%.3f", f("tok_s") / base[p]) : "-"
+    both = traced[i] && btr[p]
+    basis = both ? "trace" : "tgen"
+    sp = both ? (base[p] > 0 ? sprintf("%.3f", rate[i] / base[p]) : "-") : (btg[p] > 0 ? sprintf("%.3f", f("tok_s") / btg[p]) : "-")
     same = (f("tokens") == tok[p] && f("logits") == lg[p]) ? "yes" : "NO"
     if (nm[i] == "warm") { sp = "-"; same = "-" }
-    print nm[i] "\t" p "\t" f("guess") "\t" f("depth") "\t" f("n_gen") "\t" f("tok_s") "\t" sp "\t" f("hits") "\t" f("misses") "\t" f("wasted") "\t" f("avg_inflight_guesses") "\t" same
+    print nm[i] "\t" p "\t" f("guess") "\t" f("depth") "\t" f("n_gen") "\t" rate[i] "\t" sp "\t" basis "\t" f("tok_s") "\t" f("hits") "\t" f("misses") "\t" f("wasted") "\t" f("avg_inflight_guesses") "\t" same
   }
-}' "$OUT/results.txt" > "$OUT/summary.tsv"
+}' "$OUT/trace_rates.txt" "$OUT/results.txt" > "$OUT/summary.tsv"
 column -t -s "$(printf '\t')" "$OUT/summary.tsv"
