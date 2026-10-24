@@ -9,7 +9,8 @@ before any rig run: a small transformer that, for every earlier token, reads the
 exists when the guess is made (a "staircase": the newest token has only passed card 1, the one before it card 2 or 3,
 and so on; older tokens are complete).
 
-Results are in [pipeline drafter](../../docs/research/notes/pipeline_drafter.md), section "D1 results".
+The process, the methods tried, results per card count and open questions are kept in one living document:
+[Building a drafter for pipelined speculation](../../docs/drafter.md).
 
 ## Pipeline
 
