@@ -3,11 +3,14 @@
 # llama.cpp loads <name>-00001-of-00002.gguf and finds <name>-00002-of-00002.gguf next to it.
 #
 #   split_compose.py base SRC.gguf OUT-base.gguf REGEX            SRC without the tensors REGEX matches, as split 1 of 2
-#   split_compose.py shard BASE.gguf SRC.gguf DIR NAME REGEX [DONOR.gguf]
+#   split_compose.py shard BASE.gguf SRC.gguf DIR NAME REGEX [DONOR.gguf[@DREGEX][,DONOR2.gguf[@DREGEX2],...]]
 #       DIR/NAME-00001-of-00002.gguf = link to BASE; DIR/NAME-00002-of-00002.gguf = every tensor REGEX matches, from
-#       DONOR when it has the tensor, else from SRC
-#   split_compose.py verify SRC.gguf DIR/NAME-00001-of-00002.gguf [DONOR.gguf]
-#       the two files together hold every tensor of SRC exactly once, each byte for byte SRC's or the donor's
+#       the first donor that has the tensor (only the tensors its DREGEX matches, when given), else from SRC
+#   split_compose.py verify SRC.gguf DIR/NAME-00001-of-00002.gguf [DONOR.gguf[,...]]
+#       the two files together hold every tensor of SRC exactly once, each byte for byte SRC's or the first donor's
+#       that has it
+# One base serves every variant whose changed tensors REGEX covers: the base leaves out all of REGEX's tensors, and
+# each variant's second file holds them, from its donors or from SRC.
 # Needs numpy and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py).
 import os, re, sys
 import numpy as np
@@ -45,10 +48,22 @@ def base(src, out, regex):
     print(f'{out}: {len(keep)} of {len(r.tensors)} tensors ({len(r.tensors) - len(keep)} left for the second files)')
 
 
+def donor_tensors(donors):
+    """the donors' tensors by name, the first donor that has a name winning; "path@regex" keeps only matching names"""
+    dt = {}
+    for spec in (donors.split(',') if donors else []):
+        p, _, rx = spec.partition('@')
+        pat = re.compile(rx) if rx else None
+        for t in gguf.GGUFReader(p).tensors:
+            if pat is None or pat.search(t.name):
+                dt.setdefault(t.name, t)
+    return dt
+
+
 def shard(base_path, src, d, name, regex, donor=None):
     r = gguf.GGUFReader(src)
     pat = re.compile(regex)
-    dt = {t.name: t for t in gguf.GGUFReader(donor).tensors} if donor else {}
+    dt = donor_tensors(donor)
     take = [dt.get(t.name, t) for t in r.tensors if pat.search(t.name)]
     os.makedirs(d, exist_ok=True)
     p1 = os.path.join(d, f'{name}-00001-of-00002.gguf')
@@ -75,7 +90,7 @@ def verify(src, first, donor=None):
             if t.name in have:
                 sys.exit(f'{t.name} is in both files')
             have[t.name] = t
-    dt = {t.name: t for t in gguf.GGUFReader(donor).tensors} if donor else {}
+    dt = donor_tensors(donor)
     rs = gguf.GGUFReader(src).tensors
     if len(have) != len(rs):
         sys.exit(f'{len(have)} tensors in the split, {len(rs)} in {src}')

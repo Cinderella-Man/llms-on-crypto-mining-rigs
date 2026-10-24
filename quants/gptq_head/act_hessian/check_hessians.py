@@ -7,6 +7,8 @@
 #   - the sum of the experts' gate/up Hessians = n_used x the all-token Hessian.
 #
 #   check_hessians.py HESS_DIR L
+#   check_hessians.py --compare DIR_A DIR_B      every .h64 / .e64 in both: same shapes and row counts, largest
+#                                                difference relative to the largest entry (two builds, same run)
 #
 # Needs a run with HESS_TENSORS=ffn_norm-L HESS_EXPERTS=L HESS_DUMP=ffn_norm-L,ffn_moe_topk-L,ffn_moe_swiglu-L.
 import os, sys
@@ -32,7 +34,32 @@ def rel(a, b):
     return float(np.abs(a - b).max() / max(np.abs(b).max(), 1e-30))
 
 
+def compare(da, db, tol=1e-5):
+    names = sorted(set(f for f in os.listdir(da) if f.endswith(('.h64', '.e64'))) &
+                   set(f for f in os.listdir(db) if f.endswith(('.h64', '.e64'))))
+    worst = 0.0
+    for f in names:
+        pa, pb = os.path.join(da, f), os.path.join(db, f)
+        if f.endswith('.h64'):
+            ha, hb = (np.fromfile(p, np.int64, 2) for p in (pa, pb))
+            if not np.array_equal(ha, hb):
+                sys.exit(f'{f}: headers differ {ha} {hb}')
+            a, b = (np.memmap(p, np.float64, 'r', offset=16) for p in (pa, pb))
+        else:
+            na, ra, a = e64(pa)
+            nb, rb, b = e64(pb)
+            if na != nb or not np.array_equal(ra, rb):
+                sys.exit(f'{f}: sizes or row counts differ')
+        e = rel(np.asarray(a), np.asarray(b))
+        worst = max(worst, e)
+        print(f'{f}: {e:.2e}')
+    print(f'{len(names)} files, worst {worst:.2e} (tolerance {tol:.0e}): ' + ('ALL OK' if worst <= tol and names else 'CHECK FAILED'))
+    sys.exit(0 if worst <= tol and names else 1)
+
+
 def main():
+    if sys.argv[1] == '--compare':
+        compare(sys.argv[2], sys.argv[3])
     d, L = sys.argv[1], int(sys.argv[2])
     with open(os.path.join(d, f'ffn_norm-{L}.h64'), 'rb') as f:
         n, rows = (int(x) for x in np.fromfile(f, np.int64, 2))

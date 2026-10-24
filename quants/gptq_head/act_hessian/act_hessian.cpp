@@ -20,6 +20,9 @@
 // into float64. HESS_EXP_OUT/experts-L-gate_up.e64 and experts-L-down.e64 hold int64 n, int64 n_expert,
 // int64 rows[n_expert], then per expert the upper triangle of H row by row (i <= j), n(n+1)/2 float64.
 //
+// Built with HESS_BLAS (CMake option HESS_BLAS_LIB, a static OpenBLAS), each block's float32 Gram matrix comes from
+// cblas_ssyrk; otherwise from plain OpenMP loops. Either way it is added into float64.
+//
 // HESS_DUMP=name,...: also append the rows each listed tensor contributed (float32, first row of a chunk left out) to
 // HESS_OUT/<name>.rows.f32, or the expert ids of ffn_moe_topk-L to HESS_OUT/<name>.ids.i32 (n_used per row), so the
 // Hessians can be recomputed independently on a short run.
@@ -41,8 +44,35 @@
 #include <string>
 #include <vector>
 
-// h += xt xt^T over m rows; xt is [n, m] (one input channel per row); full n*n storage or packed upper triangle
-static void add_gram(const float * xt, int64_t n, int64_t m, double * h, bool packed) {
+#ifdef HESS_BLAS
+#include <cblas.h>
+#endif
+
+static void transpose(const float * rows, int64_t m, int64_t n, std::vector<float> & xt) {
+    xt.resize(n * m);
+    for (int64_t k = 0; k < m; ++k) {
+        for (int64_t i = 0; i < n; ++i) {
+            xt[i * m + k] = rows[k * n + i];
+        }
+    }
+}
+
+// h += x^T x over the m rows of x ([m, n], row-major), into the upper triangle of h: full n*n storage or packed
+static void add_gram(const float * rows, int64_t n, int64_t m, double * h, bool packed, std::vector<float> & work) {
+#ifdef HESS_BLAS
+    work.resize(n * n);
+    cblas_ssyrk(CblasRowMajor, CblasUpper, CblasTrans, (int) n, (int) m, 1.0f, rows, (int) n, 0.0f, work.data(), (int) n);
+#pragma omp parallel for schedule(dynamic, 16)
+    for (int64_t i = 0; i < n; ++i) {
+        double * hi = packed ? h + i * n - i * (i - 1) / 2 - i : h + i * n;
+        const float * gi = work.data() + i * n;
+        for (int64_t j = i; j < n; ++j) {
+            hi[j] += gi[j];
+        }
+    }
+#else
+    transpose(rows, m, n, work);
+    const float * xt = work.data();
 #pragma omp parallel for schedule(dynamic, 16)
     for (int64_t i = 0; i < n; ++i) {
         const float * a = xt + i * m;
@@ -57,15 +87,7 @@ static void add_gram(const float * xt, int64_t n, int64_t m, double * h, bool pa
             hi[j] += s;
         }
     }
-}
-
-static void transpose(const float * rows, int64_t m, int64_t n, std::vector<float> & xt) {
-    xt.resize(n * m);
-    for (int64_t k = 0; k < m; ++k) {
-        for (int64_t i = 0; i < n; ++i) {
-            xt[i * m + k] = rows[k * n + i];
-        }
-    }
+#endif
 }
 
 struct hess {
@@ -92,8 +114,7 @@ struct expert_hess {
         if (m == 0) {
             return;
         }
-        transpose(buf[e].data(), m, n, xt);
-        add_gram(xt.data(), n, m, h[e].data(), true);
+        add_gram(buf[e].data(), n, m, h[e].data(), true, xt);
         rows[e] += m;
         buf[e].clear();
     }
@@ -120,7 +141,7 @@ struct state {
     int64_t n_expert = 0;
     int64_t flush_rows = 512;
     bool skip_first = false;    // the ubatch starts a chunk: leave its first row out
-    std::vector<float> raw, xt; // [rows, n] as read, [n, rows] transposed
+    std::vector<float> raw, xt; // [rows, n] as read; add_gram's work buffer
 };
 
 // "ffn_norm-12" -> ("ffn_norm", 12)
@@ -265,8 +286,7 @@ static bool hess_cb(struct ggml_tensor * t, bool ask, void * user_data) {
     read_rows(st, t);
     const int64_t r0 = st->skip_first ? 1 : 0;
     const int64_t m  = ggml_nrows(t) - r0;
-    transpose(st->raw.data() + r0 * n, m, n, st->xt);
-    add_gram(st->xt.data(), n, m, H.h.data(), false);
+    add_gram(st->raw.data() + r0 * n, n, m, H.h.data(), false, st->xt);
     H.rows += m;
     return true;
 }

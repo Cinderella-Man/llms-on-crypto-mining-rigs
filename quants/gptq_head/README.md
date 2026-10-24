@@ -284,7 +284,17 @@ change), its routed experts (Q5_0 gate/up 9–48 and down 2–45), and, for E3, 
   summed over each expert's rows, so the layer ratio weights experts by use. Experts with fewer rows than inputs get
   the all-token Hessian blended in and 10 × damping. Kill: GPTQ / round-to-nearest error above 0.85.
 
-Planned runs: Hessians of K2h with F16 routers (the release candidate) on the same wikitext-2 train text as E1; per-expert
-Hessians for layers 9, 25, 41 and 47 from 1.02 M tokens, about 24,000 rows per expert; the expert check on 64 experts
-per layer; K2h with GPTQ on its 120 Q5_0 always-read tensors, scored against K2h on the same GPUs; and the
-round-to-nearest/GPTQ ratio for every Q8_0 always-read tensor, which E3 uses to rank demotions.
+- **Variants without rewriting 30 GB.** `split_compose.py base` writes the model once without every always-read
+  matrix (attention, shared expert, dense FFN: the tensors any always-read variant may change). Each variant is then
+  a second file holding those 343 matrices (1.18 GB for K2, against 29.5 GB for the whole file), from one or more donors: `DONOR.gguf@REGEX` takes
+  only the matching tensors, so one GPTQ donor of all Q8_0 always-read tensors serves every demotion candidate.
+  `test_split_compose.py` checks it on synthetic files.
+- **Faster capture.** Built with `-DHESS_BLAS_LIB=<static OpenBLAS, OpenMP build>`, act_hessian takes each block's
+  Gram matrix from `cblas_ssyrk` instead of its own loops (still added into float64), so the capture holds the GPUs
+  for less time. `check_hessians.py --compare` compares two runs file by file.
+
+Planned runs, on K2 with F16 routers (the lead body; its body tensors are K2h's): Hessians of all 196 always-read
+inputs on the same wikitext-2 train text as E1; per-expert Hessians for layers 9, 25, 41 and 47 from 1.02 M tokens,
+about 24,000 rows per expert; the expert check on 64 experts per layer; the file with GPTQ on its 120 Q5_0
+always-read tensors, scored against the plain file on the same GPUs; and the round-to-nearest/GPTQ ratio for every
+Q8_0 always-read tensor, which E3 uses to rank demotions.
