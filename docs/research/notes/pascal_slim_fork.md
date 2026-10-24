@@ -359,6 +359,39 @@ the serial host path by ~10 % (est. 10–40 µs), below what llama-bench can res
 5. **B7 and B8** only if a host trace after steps 1–3 still shows ≥ 0.1 ms serial in the server or in `llama_decode`.
 6. **C3, A1, A2 and A3** at release time; **C4** with the executor's llama-server integration.
 
+## 8. Built: B2, B3, B5 and B6 (Q150)
+
+One commit on the unified v2 build (fork `pascal-p106-v2-next`, `2d6363023`). Each piece has an off switch, and all are
+on by default where every CUDA device has compute capability 6.1: the CUDA backend reports a `COMPUTE_6_1` feature, which
+llama.cpp reads.
+- **B2, the input layer on card 1:** `LLAMA_INPUT_ON_GPU` defaults to on there; `0` turns it off, and elsewhere it stays
+  off unless set.
+- **B5, packed uploads in plain decoding** (`LLAMA_INPUT_UPLOAD`, 2 or 0): an evaluation that `process_ubatch` submits
+  with nothing in flight runs the scheduler with `caller_sync` and input upload mode 2, so each split's host inputs go up
+  in one asynchronous copy from pinned staging memory instead of an event wait and a synchronous copy per input.
+  `caller_sync` is set before the graph is allocated (the packs are laid out then) and cleared after the submission, so
+  the K-shift and training keep the waits. In mode 2 the scheduler copies an input that has no pack synchronously:
+  `llama_decode`'s next micro-batch may overwrite a host input before an asynchronous copy from it has run, which is also
+  why plain decoding does not offer mode 1.
+- **B3, synchronize once:** `synchronize()` returns at once when nothing was submitted since the last one (every
+  submission, the K-shift included, marks the context in flight), and a reused graph skips its synchronize sweep when
+  nothing is in flight, so a served token sweeps the backends once instead of four times. The sweep still covers every
+  backend: syncing only the last split's backend would rest on the layer split's chain of hop events.
+  `LLAMA_INPUT_UPLOAD=0` restores the four sweeps.
+- **B6, the node order:** `build_attn` with a sliding-window cache expands Q, V, then K, as the plain-cache `build_attn`
+  does, so K's `RMS_NORM, MUL, ROPE, VIEW, SET_ROWS` are adjacent and upstream's fused kernel writes K into the cache on
+  Flint's 35 RoPE layers.
+
+Checks on two V100s through the compute-6.1 PTX (Pascal kernels and the persistent MoE kernel forced, the switches
+forced on), K2h-r16 in a two-card layer split:
+- the logits of 2 × 128 tokens are byte-identical to the build before, with each switch alone and with all of them, at
+  1 and at 32 tokens per micro-batch; with only the node order changed, so B6's fused cache write is exact;
+- `llama-pipespec` plain decoding (one `llama_decode` per token after a synchronize, so packed uploads at every token):
+  160 tokens and their per-token logit hashes identical; [check_identity.sh](../../../bench/pipespec/check_identity.sh)
+  with everything on: 14 pipelined runs (oracle, copy, continuation and n-gram guesses at depths 1 and 3) identical to
+  plain decoding in tokens, logits, KV state and probe logits;
+- greedy `llama-completion`, 2 × 128 tokens: identical.
+
 ## What this changes in the plan
 
 - **The host is not the next single-stream lever after B2:** ≤ 0.3 ms of serial host time per token remains, against
@@ -402,8 +435,8 @@ the serial host path by ~10 % (est. 10–40 µs), below what llama-bench can res
   inferred, as is TILE's ~35–38 µs at 256 cells.
 - That the attention slope below the window comes from TILE's parallel-block choice; that the executor's +9.7 ms per
   slot splits between rebuild and eager evaluation in any particular way.
-- That B6's fused cache write is bit-identical to the separate `SET_ROWS` (it should be: same arithmetic and F16
-  conversion).
+- Q150's per-token synchronize and copy counts, its behaviour across a context shift and with partial offload, and its
+  time per token on the rig.
 - Whether a staged peer copy without P2P needs a driver host thread (Q81).
 - C2's and C3's savings; the size and build-time effect of A1 and A2.
 
