@@ -1,0 +1,18 @@
+{
+  "stub": "robot_name.py",
+  "test_file": "robot_name_test.py",
+  "helpers": [],
+  "total_tests": 4,
+  "visible_tests": 2,
+  "test_cmd": "pytest",
+  "id": "python-robot-name",
+  "track": "python",
+  "slug": "robot-name",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/robot-name"
+  },
+  "reference_lines": 30
+}

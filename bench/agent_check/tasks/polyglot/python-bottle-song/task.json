@@ -1,0 +1,18 @@
+{
+  "stub": "bottle_song.py",
+  "test_file": "bottle_song_test.py",
+  "helpers": [],
+  "total_tests": 7,
+  "visible_tests": 3,
+  "test_cmd": "pytest",
+  "id": "python-bottle-song",
+  "track": "python",
+  "slug": "bottle-song",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/bottle-song"
+  },
+  "reference_lines": 29
+}

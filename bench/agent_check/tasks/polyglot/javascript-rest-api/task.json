@@ -1,0 +1,18 @@
+{
+  "stub": "rest-api.js",
+  "test_file": "rest-api.spec.js",
+  "helpers": [],
+  "total_tests": 9,
+  "visible_tests": 3,
+  "test_cmd": "npm test",
+  "id": "javascript-rest-api",
+  "track": "javascript",
+  "slug": "rest-api",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/rest-api"
+  },
+  "reference_lines": 94
+}

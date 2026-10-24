@@ -1,0 +1,18 @@
+{
+  "stub": "zipper.js",
+  "test_file": "zipper.spec.js",
+  "helpers": [],
+  "total_tests": 20,
+  "visible_tests": 7,
+  "test_cmd": "npm test",
+  "id": "javascript-zipper",
+  "track": "javascript",
+  "slug": "zipper",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/zipper"
+  },
+  "reference_lines": 71
+}

@@ -1,0 +1,18 @@
+{
+  "stub": "pig_latin.py",
+  "test_file": "pig_latin_test.py",
+  "helpers": [],
+  "total_tests": 23,
+  "visible_tests": 8,
+  "test_cmd": "pytest",
+  "id": "python-pig-latin",
+  "track": "python",
+  "slug": "pig-latin",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/pig-latin"
+  },
+  "reference_lines": 16
+}

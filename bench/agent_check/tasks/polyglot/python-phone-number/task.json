@@ -1,0 +1,18 @@
+{
+  "stub": "phone_number.py",
+  "test_file": "phone_number_test.py",
+  "helpers": [],
+  "total_tests": 21,
+  "visible_tests": 7,
+  "test_cmd": "pytest",
+  "id": "python-phone-number",
+  "track": "python",
+  "slug": "phone-number",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/phone-number"
+  },
+  "reference_lines": 40
+}

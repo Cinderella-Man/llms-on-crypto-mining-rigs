@@ -1,0 +1,18 @@
+{
+  "stub": "proverb.py",
+  "test_file": "proverb_test.py",
+  "helpers": [],
+  "total_tests": 8,
+  "visible_tests": 3,
+  "test_cmd": "pytest",
+  "id": "python-proverb",
+  "track": "python",
+  "slug": "proverb",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/proverb"
+  },
+  "reference_lines": 11
+}

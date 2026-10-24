@@ -1,0 +1,11 @@
+{
+  "name": "agent-check-shared",
+  "private": true,
+  "devDependencies": {
+    "@exercism/babel-preset-javascript": "0.5.1",
+    "@jest/globals": "30.3.0",
+    "babel-jest": "30.3.0",
+    "core-js": "3.46.0",
+    "jest": "30.2.0"
+  }
+}

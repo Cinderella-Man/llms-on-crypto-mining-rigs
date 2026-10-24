@@ -1,0 +1,18 @@
+{
+  "stub": "zebra_puzzle.py",
+  "test_file": "zebra_puzzle_test.py",
+  "helpers": [],
+  "total_tests": 2,
+  "visible_tests": 1,
+  "test_cmd": "pytest",
+  "id": "python-zebra-puzzle",
+  "track": "python",
+  "slug": "zebra-puzzle",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/zebra-puzzle"
+  },
+  "reference_lines": 44
+}

@@ -1,0 +1,18 @@
+{
+  "stub": "complex-numbers.js",
+  "test_file": "complex-numbers.spec.js",
+  "helpers": [],
+  "total_tests": 40,
+  "visible_tests": 15,
+  "test_cmd": "npm test",
+  "id": "javascript-complex-numbers",
+  "track": "javascript",
+  "slug": "complex-numbers",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/complex-numbers"
+  },
+  "reference_lines": 38
+}

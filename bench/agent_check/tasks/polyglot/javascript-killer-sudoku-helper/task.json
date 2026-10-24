@@ -1,0 +1,18 @@
+{
+  "stub": "killer-sudoku-helper.js",
+  "test_file": "killer-sudoku-helper.spec.js",
+  "helpers": [],
+  "total_tests": 13,
+  "visible_tests": 5,
+  "test_cmd": "npm test",
+  "id": "javascript-killer-sudoku-helper",
+  "track": "javascript",
+  "slug": "killer-sudoku-helper",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/killer-sudoku-helper"
+  },
+  "reference_lines": 25
+}

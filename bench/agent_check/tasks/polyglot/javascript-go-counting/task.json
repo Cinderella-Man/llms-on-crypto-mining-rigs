@@ -1,0 +1,18 @@
+{
+  "stub": "go-counting.js",
+  "test_file": "go-counting.spec.js",
+  "helpers": [],
+  "total_tests": 11,
+  "visible_tests": 4,
+  "test_cmd": "npm test",
+  "id": "javascript-go-counting",
+  "track": "javascript",
+  "slug": "go-counting",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/go-counting"
+  },
+  "reference_lines": 130
+}

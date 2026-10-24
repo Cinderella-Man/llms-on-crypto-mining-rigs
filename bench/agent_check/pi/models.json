@@ -1,0 +1,28 @@
+{
+  "providers": {
+    "agent-check": {
+      "baseUrl": "http://127.0.0.1:8080/v1",
+      "api": "openai-completions",
+      "apiKey": "none",
+      "models": [
+        {
+          "id": "flint",
+          "name": "Flint (llama-server)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 262144,
+          "maxTokens": 32768,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "compat": {
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": false,
+            "supportsStrictMode": false,
+            "supportsUsageInStreaming": true,
+            "maxTokensField": "max_tokens"
+          }
+        }
+      ]
+    }
+  }
+}

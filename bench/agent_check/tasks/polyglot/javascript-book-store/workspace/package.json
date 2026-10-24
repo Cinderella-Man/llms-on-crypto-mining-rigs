@@ -1,0 +1,8 @@
+{
+  "name": "exercise",
+  "private": true,
+  "description": "Exercism exercise (MIT); tests run with jest from a shared node_modules.",
+  "scripts": {
+    "test": "jest"
+  }
+}

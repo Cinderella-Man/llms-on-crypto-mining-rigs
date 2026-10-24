@@ -1,0 +1,18 @@
+{
+  "stub": "bottle-song.js",
+  "test_file": "bottle-song.spec.js",
+  "helpers": [],
+  "total_tests": 7,
+  "visible_tests": 3,
+  "test_cmd": "npm test",
+  "id": "javascript-bottle-song",
+  "track": "javascript",
+  "slug": "bottle-song",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/bottle-song"
+  },
+  "reference_lines": 35
+}

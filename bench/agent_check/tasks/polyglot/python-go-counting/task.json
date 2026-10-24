@@ -1,0 +1,18 @@
+{
+  "stub": "go_counting.py",
+  "test_file": "go_counting_test.py",
+  "helpers": [],
+  "total_tests": 11,
+  "visible_tests": 4,
+  "test_cmd": "pytest",
+  "id": "python-go-counting",
+  "track": "python",
+  "slug": "go-counting",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/go-counting"
+  },
+  "reference_lines": 52
+}

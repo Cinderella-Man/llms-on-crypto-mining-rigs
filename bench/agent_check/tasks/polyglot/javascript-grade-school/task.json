@@ -1,0 +1,18 @@
+{
+  "stub": "grade-school.js",
+  "test_file": "grade-school.spec.js",
+  "helpers": [],
+  "total_tests": 20,
+  "visible_tests": 7,
+  "test_cmd": "npm test",
+  "id": "javascript-grade-school",
+  "track": "javascript",
+  "slug": "grade-school",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/grade-school"
+  },
+  "reference_lines": 30
+}

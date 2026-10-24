@@ -1,0 +1,18 @@
+{
+  "stub": "affine-cipher.js",
+  "test_file": "affine-cipher.spec.js",
+  "helpers": [],
+  "total_tests": 16,
+  "visible_tests": 6,
+  "test_cmd": "npm test",
+  "id": "javascript-affine-cipher",
+  "track": "javascript",
+  "slug": "affine-cipher",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/affine-cipher"
+  },
+  "reference_lines": 79
+}

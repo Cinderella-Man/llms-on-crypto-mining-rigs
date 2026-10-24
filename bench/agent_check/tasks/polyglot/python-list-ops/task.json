@@ -1,0 +1,18 @@
+{
+  "stub": "list_ops.py",
+  "test_file": "list_ops_test.py",
+  "helpers": [],
+  "total_tests": 25,
+  "visible_tests": 9,
+  "test_cmd": "pytest",
+  "id": "python-list-ops",
+  "track": "python",
+  "slug": "list-ops",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/list-ops"
+  },
+  "reference_lines": 22
+}

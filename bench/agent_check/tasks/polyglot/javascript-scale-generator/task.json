@@ -1,0 +1,18 @@
+{
+  "stub": "scale-generator.js",
+  "test_file": "scale-generator.spec.js",
+  "helpers": [],
+  "total_tests": 19,
+  "visible_tests": 7,
+  "test_cmd": "npm test",
+  "id": "javascript-scale-generator",
+  "track": "javascript",
+  "slug": "scale-generator",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/scale-generator"
+  },
+  "reference_lines": 45
+}

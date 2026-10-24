@@ -1,0 +1,18 @@
+{
+  "stub": "zebra-puzzle.js",
+  "test_file": "zebra-puzzle.spec.js",
+  "helpers": [],
+  "total_tests": 2,
+  "visible_tests": 1,
+  "test_cmd": "npm test",
+  "id": "javascript-zebra-puzzle",
+  "track": "javascript",
+  "slug": "zebra-puzzle",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/zebra-puzzle"
+  },
+  "reference_lines": 150
+}

@@ -1,0 +1,18 @@
+{
+  "stub": "rational-numbers.js",
+  "test_file": "rational-numbers.spec.js",
+  "helpers": [],
+  "total_tests": 43,
+  "visible_tests": 17,
+  "test_cmd": "npm test",
+  "id": "javascript-rational-numbers",
+  "track": "javascript",
+  "slug": "rational-numbers",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/rational-numbers"
+  },
+  "reference_lines": 83
+}

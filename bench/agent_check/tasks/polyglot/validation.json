@@ -1,0 +1,2385 @@
+{
+ "sandbox": "bwrap",
+ "n": 82,
+ "ok": 82,
+ "tasks": [
+  {
+   "id": "javascript-palindrome-products",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 12,
+    "n_fail": 0,
+    "n_total": 12,
+    "seconds": 1.1
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 12,
+    "n_total": 12,
+    "seconds": 0.93
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 1.31
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-food-chain",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 10,
+    "n_fail": 0,
+    "n_total": 10,
+    "seconds": 0.36
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 10,
+    "n_total": 10,
+    "seconds": 0.35
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.33
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-twelve-days",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 15,
+    "n_fail": 0,
+    "n_total": 15,
+    "seconds": 0.92
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 15,
+    "n_total": 15,
+    "seconds": 0.84
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.87
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-pig-latin",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.39
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 23,
+    "n_total": 23,
+    "seconds": 0.44
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.47
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-rest-api",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.9
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 9,
+    "n_total": 9,
+    "seconds": 0.83
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.86
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-wordy",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 27,
+    "n_fail": 0,
+    "n_total": 27,
+    "seconds": 0.81
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 27,
+    "n_total": 27,
+    "seconds": 0.89
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.78
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-phone-number",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 21,
+    "n_fail": 0,
+    "n_total": 21,
+    "seconds": 0.34
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 21,
+    "n_total": 21,
+    "seconds": 0.42
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.37
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-alphametics",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 3.81
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 9,
+    "n_total": 9,
+    "seconds": 0.91
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 1.92
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-simple-linked-list",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.37
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.37
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.39
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-say",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.9
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.9
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.82
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-scale-generator",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 17,
+    "n_fail": 0,
+    "n_total": 17,
+    "seconds": 0.51
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 17,
+    "n_total": 17,
+    "seconds": 0.38
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.36
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-grade-school",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.93
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.89
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.8
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-simple-linked-list",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.86
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 23,
+    "n_total": 23,
+    "seconds": 0.79
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.77
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-zebra-puzzle",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 2,
+    "n_fail": 0,
+    "n_total": 2,
+    "seconds": 0.34
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 2,
+    "n_total": 2,
+    "seconds": 0.38
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 1,
+    "n_fail": 0,
+    "n_total": 1,
+    "seconds": 0.35
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-food-chain",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 10,
+    "n_fail": 0,
+    "n_total": 10,
+    "seconds": 0.84
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 10,
+    "n_total": 10,
+    "seconds": 1.0
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.9
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-rest-api",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.37
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 9,
+    "n_total": 9,
+    "seconds": 0.46
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.43
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-rectangles",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 14,
+    "n_fail": 0,
+    "n_total": 14,
+    "seconds": 1.02
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 14,
+    "n_total": 14,
+    "seconds": 0.9
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.86
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-house",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 14,
+    "n_fail": 0,
+    "n_total": 14,
+    "seconds": 0.85
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 14,
+    "n_total": 14,
+    "seconds": 0.85
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.78
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-variable-length-quantity",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 0.36
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 31,
+    "n_total": 31,
+    "seconds": 0.5
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.33
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-zebra-puzzle",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 2,
+    "n_fail": 0,
+    "n_total": 2,
+    "seconds": 0.87
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 2,
+    "n_total": 2,
+    "seconds": 0.88
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 1,
+    "n_fail": 0,
+    "n_total": 1,
+    "seconds": 0.96
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-grep",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 25,
+    "n_fail": 0,
+    "n_total": 25,
+    "seconds": 0.4
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 25,
+    "n_total": 25,
+    "seconds": 0.52
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.54
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-killer-sudoku-helper",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.95
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 13,
+    "n_total": 13,
+    "seconds": 1.02
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.75
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-two-bucket",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.63
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 11,
+    "n_total": 11,
+    "seconds": 0.38
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.4
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-resistor-color-trio",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.82
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 11,
+    "n_total": 11,
+    "seconds": 1.02
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.95
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-forth",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 55,
+    "n_fail": 0,
+    "n_total": 55,
+    "seconds": 1.0
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 55,
+    "n_total": 55,
+    "seconds": 0.97
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.96
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-proverb",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.34
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 8,
+    "n_total": 8,
+    "seconds": 0.41
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.34
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-binary",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 10,
+    "n_fail": 0,
+    "n_total": 10,
+    "seconds": 0.77
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 10,
+    "n_total": 10,
+    "seconds": 0.79
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.76
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-wordy",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 0.44
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 31,
+    "n_total": 31,
+    "seconds": 0.42
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.38
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-parallel-letter-frequency",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 1.35
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 13,
+    "n_total": 13,
+    "seconds": 0.89
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 1.27
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-grep",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 25,
+    "n_fail": 0,
+    "n_total": 25,
+    "seconds": 1.68
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 3,
+    "n_fail": 22,
+    "n_total": 25,
+    "seconds": 1.81
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.95
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-react",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 14,
+    "n_fail": 0,
+    "n_total": 14,
+    "seconds": 0.41
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 2,
+    "n_fail": 12,
+    "n_total": 14,
+    "seconds": 0.43
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.31
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-bottle-song",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.75
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 7,
+    "n_total": 7,
+    "seconds": 0.8
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.76
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-list-ops",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 25,
+    "n_fail": 0,
+    "n_total": 25,
+    "seconds": 0.39
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 25,
+    "n_total": 25,
+    "seconds": 0.37
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.38
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-promises",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 27,
+    "n_fail": 0,
+    "n_total": 27,
+    "seconds": 1.04
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 1,
+    "n_total": 1,
+    "seconds": 0.85
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.99
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-poker",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 37,
+    "n_fail": 0,
+    "n_total": 37,
+    "seconds": 0.42
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 37,
+    "n_total": 37,
+    "seconds": 0.48
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.38
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-bowling",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 1.0
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 31,
+    "n_total": 31,
+    "seconds": 0.93
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.89
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-triangle",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 21,
+    "n_fail": 0,
+    "n_total": 21,
+    "seconds": 0.93
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 21,
+    "n_total": 21,
+    "seconds": 0.85
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.81
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-pov",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 15,
+    "n_fail": 0,
+    "n_total": 15,
+    "seconds": 0.36
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 15,
+    "n_total": 15,
+    "seconds": 0.42
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.33
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-ocr-numbers",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 16,
+    "n_fail": 0,
+    "n_total": 16,
+    "seconds": 0.75
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 16,
+    "n_total": 16,
+    "seconds": 1.0
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.81
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-dominoes",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.49
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 6,
+    "n_fail": 7,
+    "n_total": 13,
+    "seconds": 0.54
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.39
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-two-bucket",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 1.0
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 2,
+    "n_fail": 9,
+    "n_total": 11,
+    "seconds": 0.92
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.98
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-sum-of-multiples",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 16,
+    "n_fail": 0,
+    "n_total": 16,
+    "seconds": 1.01
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 16,
+    "n_total": 16,
+    "seconds": 0.92
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.96
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-zipper",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 14,
+    "n_fail": 0,
+    "n_total": 14,
+    "seconds": 0.41
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 14,
+    "n_total": 14,
+    "seconds": 0.47
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.43
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-scale-generator",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 19,
+    "n_fail": 0,
+    "n_total": 19,
+    "seconds": 0.88
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 19,
+    "n_total": 19,
+    "seconds": 0.85
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.74
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-bowling",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 0.48
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 31,
+    "n_total": 31,
+    "seconds": 0.46
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.39
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-affine-cipher",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 16,
+    "n_fail": 0,
+    "n_total": 16,
+    "seconds": 0.86
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 16,
+    "n_total": 16,
+    "seconds": 0.92
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.92
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-space-age",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.85
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 9,
+    "n_total": 9,
+    "seconds": 0.89
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.93
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-beer-song",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.43
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 8,
+    "n_total": 8,
+    "seconds": 0.45
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.51
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-meetup",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 95,
+    "n_fail": 0,
+    "n_total": 95,
+    "seconds": 0.9
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 95,
+    "n_total": 95,
+    "seconds": 0.98
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 32,
+    "n_fail": 0,
+    "n_total": 32,
+    "seconds": 0.75
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-robot-name",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.43
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 4,
+    "n_total": 4,
+    "seconds": 0.36
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 2,
+    "n_fail": 0,
+    "n_total": 2,
+    "seconds": 0.36
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-word-search",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 26,
+    "n_fail": 0,
+    "n_total": 26,
+    "seconds": 0.78
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 26,
+    "n_total": 26,
+    "seconds": 0.83
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.98
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-paasio",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 25,
+    "n_fail": 0,
+    "n_total": 25,
+    "seconds": 0.65
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 25,
+    "n_total": 25,
+    "seconds": 0.56
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.56
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-phone-number",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 18,
+    "n_fail": 0,
+    "n_total": 18,
+    "seconds": 1.12
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 18,
+    "n_total": 18,
+    "seconds": 0.95
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.85
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-connect",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 12,
+    "n_fail": 0,
+    "n_total": 12,
+    "seconds": 1.01
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 12,
+    "n_total": 12,
+    "seconds": 0.87
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.79
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-grade-school",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.34
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.45
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.39
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-list-ops",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 22,
+    "n_fail": 0,
+    "n_total": 22,
+    "seconds": 0.82
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 22,
+    "n_total": 22,
+    "seconds": 0.79
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.99
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-affine-cipher",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 16,
+    "n_fail": 0,
+    "n_total": 16,
+    "seconds": 0.42
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 16,
+    "n_total": 16,
+    "seconds": 0.37
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.5
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-complex-numbers",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 40,
+    "n_fail": 0,
+    "n_total": 40,
+    "seconds": 0.96
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 40,
+    "n_total": 40,
+    "seconds": 0.91
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 15,
+    "n_fail": 0,
+    "n_total": 15,
+    "seconds": 0.79
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-book-store",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 17,
+    "n_fail": 0,
+    "n_total": 17,
+    "seconds": 0.93
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 17,
+    "n_total": 17,
+    "seconds": 0.8
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 6,
+    "n_fail": 0,
+    "n_total": 6,
+    "seconds": 0.77
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-connect",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 12,
+    "n_fail": 0,
+    "n_total": 12,
+    "seconds": 0.34
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 12,
+    "n_total": 12,
+    "seconds": 0.38
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.34
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-rational-numbers",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 43,
+    "n_fail": 0,
+    "n_total": 43,
+    "seconds": 0.75
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 43,
+    "n_total": 43,
+    "seconds": 0.9
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 17,
+    "n_fail": 0,
+    "n_total": 17,
+    "seconds": 0.87
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-book-store",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.52
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.4
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.42
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-pig-latin",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.84
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 23,
+    "n_total": 23,
+    "seconds": 0.8
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 0.92
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-tree-building",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.37
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 7,
+    "n_fail": 6,
+    "n_total": 13,
+    "seconds": 0.44
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.35
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-robot-name",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 1.39
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 1,
+    "n_fail": 7,
+    "n_total": 8,
+    "seconds": 0.89
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 1.47
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-poker",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 37,
+    "n_fail": 0,
+    "n_total": 37,
+    "seconds": 0.83
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 37,
+    "n_total": 37,
+    "seconds": 1.03
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.92
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-sgf-parsing",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.45
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 23,
+    "n_total": 23,
+    "seconds": 0.4
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.41
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-beer-song",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.8
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 8,
+    "n_total": 8,
+    "seconds": 0.77
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.91
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-transpose",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 12,
+    "n_fail": 0,
+    "n_total": 12,
+    "seconds": 0.33
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 12,
+    "n_total": 12,
+    "seconds": 0.44
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.5
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-queen-attack",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.98
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.9
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 8,
+    "n_fail": 0,
+    "n_total": 8,
+    "seconds": 0.91
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-zipper",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 0.95
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 20,
+    "n_total": 20,
+    "seconds": 0.87
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.91
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-dot-dsl",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 12,
+    "n_fail": 0,
+    "n_total": 12,
+    "seconds": 0.42
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 12,
+    "n_total": 12,
+    "seconds": 0.42
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.38
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-state-of-tic-tac-toe",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 29,
+    "n_fail": 0,
+    "n_total": 29,
+    "seconds": 0.84
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 29,
+    "n_total": 29,
+    "seconds": 0.75
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 10,
+    "n_fail": 0,
+    "n_total": 10,
+    "seconds": 0.87
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-forth",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 54,
+    "n_fail": 0,
+    "n_total": 54,
+    "seconds": 0.34
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 54,
+    "n_total": 54,
+    "seconds": 0.59
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 18,
+    "n_fail": 0,
+    "n_total": 18,
+    "seconds": 0.44
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-variable-length-quantity",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 0.83
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 31,
+    "n_total": 31,
+    "seconds": 0.95
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.83
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-bottle-song",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.43
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 7,
+    "n_total": 7,
+    "seconds": 0.45
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.48
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-go-counting",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.81
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 11,
+    "n_total": 11,
+    "seconds": 0.95
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.96
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-transpose",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.97
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 13,
+    "n_total": 13,
+    "seconds": 0.89
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.76
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-hangman",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 7,
+    "n_fail": 0,
+    "n_total": 7,
+    "seconds": 0.33
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 7,
+    "n_total": 7,
+    "seconds": 0.39
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 3,
+    "n_fail": 0,
+    "n_total": 3,
+    "seconds": 0.38
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-tournament",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 12,
+    "n_fail": 0,
+    "n_total": 12,
+    "seconds": 0.84
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 12,
+    "n_total": 12,
+    "seconds": 1.01
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.86
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "python-go-counting",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 11,
+    "n_fail": 0,
+    "n_total": 11,
+    "seconds": 0.47
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 1,
+    "n_total": 1,
+    "seconds": 0.41
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 4,
+    "n_fail": 0,
+    "n_total": 4,
+    "seconds": 0.55
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "javascript-react",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 13,
+    "n_fail": 0,
+    "n_total": 13,
+    "seconds": 0.94
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 0,
+    "n_fail": 13,
+    "n_total": 13,
+    "seconds": 0.74
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 5,
+    "n_fail": 0,
+    "n_total": 5,
+    "seconds": 0.73
+   },
+   "subset_ok": true,
+   "ok": true
+  }
+ ]
+}

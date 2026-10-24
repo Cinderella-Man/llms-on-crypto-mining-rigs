@@ -1,0 +1,18 @@
+{
+  "stub": "react.py",
+  "test_file": "react_test.py",
+  "helpers": [],
+  "total_tests": 14,
+  "visible_tests": 5,
+  "test_cmd": "pytest",
+  "id": "python-react",
+  "track": "python",
+  "slug": "react",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/react"
+  },
+  "reference_lines": 45
+}

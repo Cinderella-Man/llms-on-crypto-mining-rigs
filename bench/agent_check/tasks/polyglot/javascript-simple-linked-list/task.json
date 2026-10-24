@@ -1,0 +1,18 @@
+{
+  "stub": "simple-linked-list.js",
+  "test_file": "simple-linked-list.spec.js",
+  "helpers": [],
+  "total_tests": 23,
+  "visible_tests": 9,
+  "test_cmd": "npm test",
+  "id": "javascript-simple-linked-list",
+  "track": "javascript",
+  "slug": "simple-linked-list",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/simple-linked-list"
+  },
+  "reference_lines": 41
+}

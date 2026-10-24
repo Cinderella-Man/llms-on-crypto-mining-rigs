@@ -1,0 +1,18 @@
+{
+  "stub": "hangman.py",
+  "test_file": "hangman_test.py",
+  "helpers": [],
+  "total_tests": 7,
+  "visible_tests": 3,
+  "test_cmd": "pytest",
+  "id": "python-hangman",
+  "track": "python",
+  "slug": "hangman",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/hangman"
+  },
+  "reference_lines": 41
+}

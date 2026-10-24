@@ -1,0 +1,18 @@
+{
+  "stub": "beer_song.py",
+  "test_file": "beer_song_test.py",
+  "helpers": [],
+  "total_tests": 8,
+  "visible_tests": 3,
+  "test_cmd": "pytest",
+  "id": "python-beer-song",
+  "track": "python",
+  "slug": "beer-song",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/beer-song"
+  },
+  "reference_lines": 28
+}

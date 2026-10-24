@@ -1,0 +1,18 @@
+{
+  "stub": "dot_dsl.py",
+  "test_file": "dot_dsl_test.py",
+  "helpers": [],
+  "total_tests": 12,
+  "visible_tests": 4,
+  "test_cmd": "pytest",
+  "id": "python-dot-dsl",
+  "track": "python",
+  "slug": "dot-dsl",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/dot-dsl"
+  },
+  "reference_lines": 43
+}

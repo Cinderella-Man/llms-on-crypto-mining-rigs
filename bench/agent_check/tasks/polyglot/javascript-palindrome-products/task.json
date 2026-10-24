@@ -1,0 +1,18 @@
+{
+  "stub": "palindrome-products.js",
+  "test_file": "palindrome-products.spec.js",
+  "helpers": [],
+  "total_tests": 12,
+  "visible_tests": 5,
+  "test_cmd": "npm test",
+  "id": "javascript-palindrome-products",
+  "track": "javascript",
+  "slug": "palindrome-products",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/palindrome-products"
+  },
+  "reference_lines": 38
+}

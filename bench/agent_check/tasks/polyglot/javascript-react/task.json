@@ -1,0 +1,18 @@
+{
+  "stub": "react.js",
+  "test_file": "react.spec.js",
+  "helpers": [],
+  "total_tests": 13,
+  "visible_tests": 5,
+  "test_cmd": "npm test",
+  "id": "javascript-react",
+  "track": "javascript",
+  "slug": "react",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/react"
+  },
+  "reference_lines": 97
+}

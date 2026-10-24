@@ -1,0 +1,18 @@
+{
+  "stub": "resistor-color-trio.js",
+  "test_file": "resistor-color-trio.spec.js",
+  "helpers": [],
+  "total_tests": 11,
+  "visible_tests": 4,
+  "test_cmd": "npm test",
+  "id": "javascript-resistor-color-trio",
+  "track": "javascript",
+  "slug": "resistor-color-trio",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/resistor-color-trio"
+  },
+  "reference_lines": 70
+}

@@ -1,0 +1,18 @@
+{
+  "stub": "sum-of-multiples.js",
+  "test_file": "sum-of-multiples.spec.js",
+  "helpers": [],
+  "total_tests": 16,
+  "visible_tests": 6,
+  "test_cmd": "npm test",
+  "id": "javascript-sum-of-multiples",
+  "track": "javascript",
+  "slug": "sum-of-multiples",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/sum-of-multiples"
+  },
+  "reference_lines": 9
+}

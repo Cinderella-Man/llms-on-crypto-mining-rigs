@@ -1,0 +1,18 @@
+{
+  "stub": "bowling.py",
+  "test_file": "bowling_test.py",
+  "helpers": [],
+  "total_tests": 31,
+  "visible_tests": 11,
+  "test_cmd": "pytest",
+  "id": "python-bowling",
+  "track": "python",
+  "slug": "bowling",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/bowling"
+  },
+  "reference_lines": 80
+}

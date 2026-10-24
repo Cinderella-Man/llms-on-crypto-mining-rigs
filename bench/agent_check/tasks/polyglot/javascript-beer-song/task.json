@@ -1,0 +1,18 @@
+{
+  "stub": "beer-song.js",
+  "test_file": "beer-song.spec.js",
+  "helpers": [],
+  "total_tests": 8,
+  "visible_tests": 3,
+  "test_cmd": "npm test",
+  "id": "javascript-beer-song",
+  "track": "javascript",
+  "slug": "beer-song",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/beer-song"
+  },
+  "reference_lines": 41
+}

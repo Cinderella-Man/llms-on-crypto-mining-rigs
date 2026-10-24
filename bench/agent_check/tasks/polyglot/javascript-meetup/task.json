@@ -1,0 +1,18 @@
+{
+  "stub": "meetup.js",
+  "test_file": "meetup.spec.js",
+  "helpers": [],
+  "total_tests": 95,
+  "visible_tests": 32,
+  "test_cmd": "npm test",
+  "id": "javascript-meetup",
+  "track": "javascript",
+  "slug": "meetup",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/meetup"
+  },
+  "reference_lines": 55
+}

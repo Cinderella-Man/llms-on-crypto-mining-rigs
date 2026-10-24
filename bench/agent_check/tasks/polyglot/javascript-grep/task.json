@@ -1,0 +1,18 @@
+{
+  "stub": "grep.js",
+  "test_file": "grep.spec.js",
+  "helpers": [],
+  "total_tests": 25,
+  "visible_tests": 9,
+  "test_cmd": "npm test",
+  "id": "javascript-grep",
+  "track": "javascript",
+  "slug": "grep",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/grep"
+  },
+  "reference_lines": 98
+}

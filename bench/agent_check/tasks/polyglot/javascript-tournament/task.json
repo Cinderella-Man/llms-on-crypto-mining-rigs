@@ -1,0 +1,18 @@
+{
+  "stub": "tournament.js",
+  "test_file": "tournament.spec.js",
+  "helpers": [],
+  "total_tests": 12,
+  "visible_tests": 4,
+  "test_cmd": "npm test",
+  "id": "javascript-tournament",
+  "track": "javascript",
+  "slug": "tournament",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/tournament"
+  },
+  "reference_lines": 68
+}

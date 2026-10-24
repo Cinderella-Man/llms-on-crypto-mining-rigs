@@ -1,0 +1,18 @@
+{
+  "stub": "sgf_parsing.py",
+  "test_file": "sgf_parsing_test.py",
+  "helpers": [],
+  "total_tests": 23,
+  "visible_tests": 8,
+  "test_cmd": "pytest",
+  "id": "python-sgf-parsing",
+  "track": "python",
+  "slug": "sgf-parsing",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/sgf-parsing"
+  },
+  "reference_lines": 95
+}

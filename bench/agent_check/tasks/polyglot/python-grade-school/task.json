@@ -1,0 +1,18 @@
+{
+  "stub": "grade_school.py",
+  "test_file": "grade_school_test.py",
+  "helpers": [],
+  "total_tests": 20,
+  "visible_tests": 7,
+  "test_cmd": "pytest",
+  "id": "python-grade-school",
+  "track": "python",
+  "slug": "grade-school",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/grade-school"
+  },
+  "reference_lines": 26
+}

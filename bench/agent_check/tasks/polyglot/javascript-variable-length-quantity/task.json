@@ -1,0 +1,18 @@
+{
+  "stub": "variable-length-quantity.js",
+  "test_file": "variable-length-quantity.spec.js",
+  "helpers": [],
+  "total_tests": 31,
+  "visible_tests": 11,
+  "test_cmd": "npm test",
+  "id": "javascript-variable-length-quantity",
+  "track": "javascript",
+  "slug": "variable-length-quantity",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/variable-length-quantity"
+  },
+  "reference_lines": 42
+}

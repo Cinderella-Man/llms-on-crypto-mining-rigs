@@ -1,0 +1,18 @@
+{
+  "stub": "rectangles.js",
+  "test_file": "rectangles.spec.js",
+  "helpers": [],
+  "total_tests": 14,
+  "visible_tests": 5,
+  "test_cmd": "npm test",
+  "id": "javascript-rectangles",
+  "track": "javascript",
+  "slug": "rectangles",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/rectangles"
+  },
+  "reference_lines": 40
+}

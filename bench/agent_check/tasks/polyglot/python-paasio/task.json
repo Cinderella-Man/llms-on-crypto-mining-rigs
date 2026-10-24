@@ -1,0 +1,20 @@
+{
+  "stub": "paasio.py",
+  "test_file": "paasio_test.py",
+  "helpers": [
+    "test_utils.py"
+  ],
+  "total_tests": 25,
+  "visible_tests": 9,
+  "test_cmd": "pytest",
+  "id": "python-paasio",
+  "track": "python",
+  "slug": "paasio",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/paasio"
+  },
+  "reference_lines": 78
+}

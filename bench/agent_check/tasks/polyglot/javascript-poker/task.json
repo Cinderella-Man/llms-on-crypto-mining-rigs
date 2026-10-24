@@ -1,0 +1,18 @@
+{
+  "stub": "poker.js",
+  "test_file": "poker.spec.js",
+  "helpers": [],
+  "total_tests": 37,
+  "visible_tests": 13,
+  "test_cmd": "npm test",
+  "id": "javascript-poker",
+  "track": "javascript",
+  "slug": "poker",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/poker"
+  },
+  "reference_lines": 185
+}

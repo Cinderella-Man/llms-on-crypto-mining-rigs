@@ -1,0 +1,18 @@
+{
+  "stub": "food_chain.py",
+  "test_file": "food_chain_test.py",
+  "helpers": [],
+  "total_tests": 10,
+  "visible_tests": 4,
+  "test_cmd": "pytest",
+  "id": "python-food-chain",
+  "track": "python",
+  "slug": "food-chain",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/food-chain"
+  },
+  "reference_lines": 49
+}

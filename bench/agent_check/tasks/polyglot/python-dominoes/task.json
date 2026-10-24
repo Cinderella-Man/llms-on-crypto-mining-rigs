@@ -1,0 +1,18 @@
+{
+  "stub": "dominoes.py",
+  "test_file": "dominoes_test.py",
+  "helpers": [],
+  "total_tests": 13,
+  "visible_tests": 5,
+  "test_cmd": "pytest",
+  "id": "python-dominoes",
+  "track": "python",
+  "slug": "dominoes",
+  "family": "polyglot",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/dominoes"
+  },
+  "reference_lines": 24
+}
