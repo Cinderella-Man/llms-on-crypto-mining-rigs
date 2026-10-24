@@ -2,7 +2,7 @@
 # Long-context KLD analysis: per-token dumps of llama-perplexity --kl-divergence (LLAMA_KLD_DUMP, see README.md) for
 # several files against one reference, compared chunk by chunk with a reference file (UD-Q4_K_XL in Q106).
 #
-#   analyze.py --ref NAME [--chunks CHUNKS.jsonl --model MODEL.gguf] NAME=DUMP.tsv [...]
+#   analyze.py --ref NAME [--chunks CHUNKS.jsonl --model MODEL.gguf] [--only-chunks 0,1,3,...] NAME=DUMP.tsv [...]
 #
 # For every file: mean KLD and same-top rate over the scored tokens; the paired comparison with --ref by chunk (mean of
 # the per-chunk ratios is not used: the ratio of means, with a bootstrap interval over chunks, and the mean and
@@ -10,6 +10,8 @@
 # vocabulary), the same split by token class: tool schemas, user turns, tool output, reasoning, calls, answers, chat
 # markup, the first token after each </think> (call or answer), and long-range copies (the token ends an 8-token run
 # that already appeared ending more than 512 tokens earlier). Every dump's token ids are checked against the chunks.
+# --only-chunks keeps those chunks of dumps made on a full text and renumbers them in that order, to compare with dumps
+# made on a subset_eval.py subset (whose chunks.jsonl then goes to --chunks).
 # Needs numpy (and gguf-py with --model).
 import argparse, json, sys
 from collections import defaultdict
@@ -113,14 +115,21 @@ def paired(kld_by_chunk, ref_by_chunk, rng, n_boot=2000):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--ref', required=True)
-    ap.add_argument('--chunks'); ap.add_argument('--model')
+    ap.add_argument('--chunks'); ap.add_argument('--model'); ap.add_argument('--only-chunks')
     ap.add_argument('dumps', nargs='+')
     a = ap.parse_args()
     rng = np.random.default_rng(0)
     dumps = {}
     for s in a.dumps:
         name, path = s.split('=', 1)
-        dumps[name] = load_dump(path)
+        d = load_dump(path)
+        if a.only_chunks:
+            keep = [int(x) for x in a.only_chunks.split(',')]
+            order = {c: i for i, c in enumerate(keep)}
+            d = d[np.isin(d['chunk'], keep)]
+            d['chunk'] = np.array([order[int(c)] for c in d['chunk']])
+            d = d[np.lexsort((d['pos'], d['chunk']))]
+        dumps[name] = d
     names = list(dumps)
     if a.ref not in dumps:
         sys.exit(f'--ref {a.ref} has no dump')
