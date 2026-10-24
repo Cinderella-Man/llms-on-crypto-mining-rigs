@@ -53,8 +53,9 @@ From the makers' `config.json` and the Q4_K_M file's GGUF header:
 - **The server handles the hybrid memory:** context checkpoints of the recurrent state (`--ctx-checkpoints`) for prompt
   reuse, and rollback of speculative drafts up to the number of states the memory keeps. Nothing is missing for plain
   decoding.
-- **What the fork still lacks for a hybrid model** is its own multi-card work, shared with Qwen3.6: the on-card
-  attention mask and the ring of recurrent states that pipelined speculation needs
+- **The fork's multi-card work for a hybrid model**, shared with Qwen3.6, is built and waits for its rig timing
+  ([Q162](../../quants/experiments.md#registry), fork branch `pascal-p106-v2-hybrid`): the on-card attention mask for
+  the hybrid cache, and recurrent state groups that let pipelined speculation drop wrong guesses
   ([model branches](../../docs/research/notes/model_branches.md), section 2.1). MTP gains little on the rig today
   (1.04× on Qwen3.6, [Q43](../../quants/experiments.md#registry)), so it isn't part of the first run.
 
@@ -107,4 +108,5 @@ Decode, single stream, five cards, est. from the speed model in
 1. **A first rig run with no new code**: bartowski's Q4_0 and the makers' Q4_K_M on five cards, stock llama.cpp against
    the v2 engine ([Q159](../../quants/experiments.md#registry)).
 2. **The Pascal Q6_K and Q4_K kernels** ([Q101, Q149](../../quants/experiments.md#registry)), shared with Qwen3.6.
-3. **Hybrid-model support** for the on-card attention mask and pipelined speculation, also shared with Qwen3.6.
+3. **Hybrid-model support** for the on-card attention mask and pipelined speculation, also shared with Qwen3.6: built,
+   rig timing next ([Q162](../../quants/experiments.md#registry)).

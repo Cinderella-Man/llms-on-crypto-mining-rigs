@@ -182,8 +182,27 @@ The model has no host contention and no power limit; the rig measures both.
   layout kept as plain decoding's ring, the cell at `head` always holds the oldest position. The window cache has
   n_ubatch spare cells, so `llama_pipe_init` requires n_ubatch ≥ number of slots for a sliding-window model; the default
   512 is far above it.
-- **Recurrent layers** (Qwen3.6's Gated DeltaNet) can't be truncated by position; they need a state snapshot per
-  in-flight token (SPD's ring of states). Not implemented.
+- **Recurrent layers** (the Gated DeltaNet layers of Qwen3.5/3.6, Ornith and Qwen3.8; fork branch
+  `pascal-p106-v2-hybrid`, Q162) can't be truncated by position: a sequence has one state, and every token rewrites it.
+  - **One state group per slot.** `llama_pipe_init` gives the recurrent memory one group of state rows per slot plus a
+    stash group; plain decoding writes group 0. Each slot writes its tokens' states to its own group, at an offset
+    that is a constant of the slot's graph, so graph reuse, CUDA graphs and the fused gated-delta-net state write stay
+    as in plain decoding. A token reads its source state from whichever group holds it, through the `s_copy`
+    indirection that llama.cpp already uses to pick each step's source state.
+  - **Rollback.** Per sequence the memory records which position's state each group holds. Dropping a wrong guess
+    (`seq_rm(seq, p, -1)`) moves the sequence back to the group that holds position p − 1; nothing is copied.
+  - **What stays.** A slot is reused only after the executor has read its token, so the states of tokens in flight
+    are never overwritten. The one older state a rollback may still need is the one before the oldest unread token (a
+    wrong guess behind it, llama-server's slot leaving pipelined decoding, an executor's cleanup at the end of a
+    request). If its slot is about to be reused, the context copies that state to the stash group first, on the same
+    devices and ahead of the new evaluation. The executors' slot rotation never does that in steady state; the first
+    pipelined token after a prompt does it once (slot 0 reuses group 0). `llama-pipe-recurrent-check` forces these
+    copies and the rollbacks that read them.
+  - **Memory.** A group is one sequence's state: ~63 MiB for Qwen3.6 (30 layers × 2 MiB of delta-net state and 96 KiB
+    of convolution history). llama-server's 2 × (D + 1) slots plus the stash are 9 groups at D = 3, ~570 MiB spread
+    over the cards that hold the recurrent layers (~63 MiB per card on nine cards).
+  - Only the delta-net models (`qwen35`, `qwen35moe`, `qwen3next`) write their states this way; `llama_pipe_init`
+    refuses other recurrent architectures, and upstream's rollback snapshots (`n_rs_seq` > 0) can't be combined with it.
 
 ### Guessers
 
@@ -369,6 +388,21 @@ Model: Flint UD-Q4_K_XL (49 layers, 35 of them with a 513-token sliding window, 
 "Guesses" counts submitted guesses, including those dropped before they were checked; "wrong" counts checked guesses
 that did not match. With T 1 the oracle replays the sampled plain run and was right on 254 of 255 tokens at 0 % injected
 misses: the random draws line up position by position. Every process finished within its timeout (no deadlock).
+
+**Hybrid models (Q162, fork branch `pascal-p106-v2-hybrid`).** The same checks on Qwen3.6-35B-A3B Q4_0 (40 layers, 30 of
+them Gated DeltaNet, 248,320-token vocabulary), the `rewrite.txt` prompt in its chat template (804 tokens), 64 tokens per
+run, 2,048-token context; the state hash then covers the recurrent states too:
+
+| Layout | Mask | Sampling | Depths | Pipelined runs | Tokens | Guesses | Wrong | Dropped tokens | Result |
+|---|---|---|---|---|---|---|---|---|---|
+| CPU only | host | greedy | 3 | 6 | 384 | 328 | 63 | 187 | all same |
+| CPU only | host | T 1, top-k 20, top-p 0.95, seed 42 | 1, 3 | 11 | 704 | 510 | 104 | 206 | all same |
+| CPU only | host | greedy | 1, 2, 4 | 19 | 1,216 | 975 | 132 | 306 | all same |
+| CPU only | host (`LLAMA_GPU_KQ_MASK=0`) | greedy | 1, 2, 3 | 22 | 1,408 | 1,192 | 204 | 406 | all same |
+
+On this prompt the first 64 tokens are a stereotyped reasoning preamble, and T 1 sampled the greedy tokens. Plain decoding
+with the mask built on the device (every step compared with the host mask, `LLAMA_GPU_KQ_MASK_CHECK=1`) gives the host
+mask's tokens, logits, state and probe; the graphs then hold one mask node per attention layer and no host mask input.
 
 Races ([above](#several-samples-of-one-request-race)), checked with `RACE=K` against the same race decoded plainly,
 round robin: four stages on the two GPUs, temperature 1, the winner continuing with the oracle, copy lookup,
@@ -854,7 +888,8 @@ python3 -I bench/ngram_replay/pipeline_sim.py <results>/out/s4l0-6c/plain.jsonl 
   the slots and the race loop already do this for samples of one request, a server would do it across its slots.
 - **Per-stage launch** if depths beyond S_eff − 1 are wanted (the host would launch stage j of a token only after stage
   j − 1 finished and the token is still valid).
-- **Recurrent models:** per-token state snapshots and rollback.
+- **Recurrent models:** built for the delta-net hybrids ([KV cache](#kv-cache), Q162); other recurrent architectures
+  (Mamba, RWKV, …) would need their state writes moved to the slot's group the same way.
 - **Input copies:** on `pascal-p106-v2-pipespec` every in-flight token copies its inputs (masks, positions, cell
   indices, the embedding row) to every card synchronously at submit time, so host time per token grows with the number
   of cards and the context. `pascal-p106-v2-pipespec2` uploads each card's inputs in one asynchronous copy and can feed

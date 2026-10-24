@@ -67,9 +67,11 @@ Conventions are those of the other notes:
     (read), types that the v2 kernels don't cover at all. Even bartowski's Qwen3.6 Q4_0 reads 20 % of its bytes in a
     Q6_K head (read). Landing the built Q6_K kernel (Q101) gives est. +12–18 % on Qwen3.6 Q4_0; a new Pascal Q4_K kernel
     with it gives est. 1.5–1.7× on the Q4_K_M files of every model, dense ones included.
-  - **Hybrid recurrent models** (the Qwen3.5/3.6, Ornith and Qwen3.8 line): the on-card mask needs the hybrid input wired
-    (est. 0.5–1 day); pipelined speculation needs a ring of recurrent states, one per in-flight token (est. 3–5 days).
-    Upstream's rollback snapshots only cover the tokens of one verify batch (`pipe2:src/llama-memory-recurrent.cpp:200-218`).
+  - **Hybrid recurrent models** (the Qwen3.5/3.6, Ornith and Qwen3.8 line): the on-card mask and pipelined speculation
+    are built for them (Q162, fork branch `pascal-p106-v2-hybrid`; rig timing pending). The hybrid input passes the
+    device-mask flag, and token batches of M-RoPE models qualify for the device mask. Each pipe slot keeps its own group
+    of recurrent states, so a wrong guess rolls back to the group that holds the state before it; upstream's rollback
+    snapshots only cover the tokens of one verify batch (`pipe2:src/llama-memory-recurrent.cpp:200-218`).
   - **gpt-oss:** an MXFP4 kernel (est. 3–5 days, est. +15–25 %) and a launch shape for rows of 2,880.
   - **The persistent MoE kernel:** one shape-class template row per model family (hidden size, experts, top-k, widths,
     router kind, shared-expert kind) plus four-type combinations; est. +3–5 % per model, worth doing only after Flint's
@@ -156,8 +158,8 @@ and 8.1 at 64k of context (stock); MTP 1.04× on the fork (Q43); Unsloth's UD-Q4
 | Norm writes Q8_1 (Q100) | yes (2,048) | none | ~0 (none measurable on Flint, Q117) | — |
 | Screened head | engine yes | a Qwen3.6 screen file (248,320 × 2,048; a GPTQ Q4_0 screen is 286 MB) checked for exactness against the Q6_K head | +2–4 % (Flint measured +1.5–2.3 %) | 1 day on the quant machine |
 | PR #31047 (prompts) | yes | none | +20–30 % prompt speed | — |
-| On-card attention mask | no (hybrid memory keeps the host mask) | pass the device-mask flag for the hybrid cache's attention part (`mask2:src/llama-graph.cpp:4249` against `:3412`) and set its cell inputs (`:1345-1349`) | −0.3 ms per card with attention layers per token at 32k: ~3 % on 5 cards; ~10 % at 131k | 0.5–1 day |
-| Pipelined speculation, rollback | no: a recurrent state can't drop a tail | a ring of D + 1 recurrent states per sequence (~60 MiB each, ≤ 540 MiB over the cards); the `s_copy` indirection that already picks each step's source state (`mask2:src/llama-graph.cpp:1361-1368`) is the hook | 1.3–1.4× on 6 cards (Flint: 1.34–1.41×) | 3–5 days |
+| On-card attention mask | built (Q162, fork branch `pascal-p106-v2-hybrid`; rig timing pending) | the hybrid cache's attention part passes the device-mask flag and fills its input (`mask2:src/llama-graph.cpp:4249` against `:3412`, `:1345-1349`); and every ubatch of these models carries four M-RoPE position sections, which made the device mask refuse all of them: token batches now qualify (the host mask's 2D rule only orders equal positions, which text never has) | −0.3 ms per card with attention layers per token at 32k: ~3 % on 5 cards; ~10 % at 131k | done |
+| Pipelined speculation, rollback | built (Q162, fork branch `pascal-p106-v2-hybrid`; rig timing pending) | a group of recurrent states per pipe slot: each slot writes its tokens' states to its own group, each token reads its source state through the `s_copy` indirection (`mask2:src/llama-graph.cpp:1361-1368`), a wrong guess moves the sequence back to the group holding the state before it; ~63 MiB per group, 9 groups (~570 MiB over the cards) for llama-server at depth 3 ([pipelined speculation](pipelined_speculation.md#kv-cache)) | 1.3–1.4× on 6 cards (Flint: 1.34–1.41×) | done |
 | CPU-free loop (packed uploads Q120, device-fed token Q121) | after the rollback | none beyond it | streams of conversations +21 % at 8 (as Flint, Q120) | — |
 | GPU sampling for tools (Q67) | yes | none | +15–22 % on tool requests (logits copy 993 KB: est. 4.7 ms, plus host sampling) | planned |
 | MTP + multi-token kernels | yes | rerun Q43 on the combined build; the 32k draft vocabulary (Q43) cuts each draft's 0.417 GB head read | 1.15–1.3× (a P40 measured 1.36× at 2 drafts) | rig only |
@@ -248,7 +250,7 @@ The same architecture as Qwen3.5-122B-A10B: a hybrid like Qwen3.6, at hidden 3,0
 | FP32 sums, rescale | correctness only | — | 0 |
 | Persistent MoE kernel | no | H = 3,072, 1,024-wide experts, IQ2 device functions | far |
 | Norm writes Q8_1 | yes (3,072) | none | ~0 |
-| On-card mask, pipelined speculation | no (hybrid) | as Qwen3.6 (§2.1); a recurrent snapshot is ~144 MiB (36 × 4 MiB), so a ring of 6–9 costs 0.9–1.3 GB on cards that a 2-bit file already fills | as Qwen3.6, if memory allows |
+| On-card mask, pipelined speculation | yes, built for the family (Q162) | none; a state group is ~144 MiB (36 × 4 MiB), so llama-server's 9 groups at depth 3 cost 1.3 GB on cards that a 2-bit file already fills (depth 1: 5 groups, 0.7 GB) | as Qwen3.6, if memory allows |
 | Screened head | engine yes | a screen file (248,320 × 3,072) | +2–3 % |
 | PR #31047, GPU sampling for tools | yes | none | as Qwen3.6 |
 
@@ -266,8 +268,8 @@ tok/s with CUDA graphs.
 | FP32 sums, shared-expert fusion, persistent kernel, PR #31047 | — | — |
 | Norm writes Q8_1 | yes (4,096), ~0 | no (5,120) |
 | Screened head | small: 3 % of the bytes (32k vocabulary), ~7 % for 128k-vocabulary Llama 3 | 7 % of the bytes (Q6_K head) |
-| On-card mask | yes | no (hybrid) |
-| Pipelined speculation | only on a split of ≥ 2 cards; a 7 B fits one, so spreading it for depth: est. 1.1–1.3× | needs the recurrent ring; then est. 1.2–1.45× on 4–6 cards (each card's stage is long against the ~1 ms hand-off) |
+| On-card mask | yes | yes (Q162) |
+| Pipelined speculation | only on a split of ≥ 2 cards; a 7 B fits one, so spreading it for depth: est. 1.1–1.3× | yes (Q162, recurrent state groups); est. 1.2–1.45× on 4–6 cards (each card's stage is long against the ~1 ms hand-off) |
 
 The dense model is the cheapest clean A/B on the rig: one card, the llama.cpp CUDA scoreboard's own model, Q4_0 and
 Q4_K_M, stock against the fork. It also shows the Pascal kernels' gain on wide dense matrices, which no Flint run does.
@@ -420,7 +422,7 @@ GLM-4.7-Flash a fourth if wanted.
 | 1 | Land the Pascal Q6_K kernel (Q101) | every Q4-type download's head; 27–39 % of Q4_K_M files | Qwen3.6 Q4_0 +12–18 %; Q4_K_M files +15–20 %; Qwen3-30B Q4_0 +8–10 % | 0.5 day after the microbenchmark gate | the gate (≥ 130 GB/s) |
 | 2 | Pascal Q4_K kernel: 1–4 tokens, `MUL_MAT` and `MUL_MAT_ID`, gate/GLU fusion, routed + shared launch; from the Q5_K kernel | all Q4_K_M files, dense included | with item 1: qwen35moe Q4_K_M 1.5–1.7× (19–23 → 30–36 tok/s), Qwen3-30B Q4_K_M 1.5–1.75×, dense Q4_K_M 1.6–1.9× | 2–3 days + microbenchmark + tests | Q4_K in `bench/mmvq_pascal` first (gate ≥ 120 GB/s at K = 512 and 2,048) |
 | 3 | GPU sampling for tool requests (Q67, planned) | all | Qwen3.6 +15–22 % on tool requests, others +12–16 % | 2–3 days (planned) | — |
-| 4 | Hybrid memory: device mask for the hybrid cache, then a ring of recurrent states for the executor | qwen35moe family, Ornith-122B, Qwen3.8-27B | mask ~3 % at 32k and ~10 % at 131k; pipelined decoding 1.3–1.4× on 6 cards | 0.5–1 day + 3–5 days | — |
+| 4 | Hybrid memory: device mask for the hybrid cache, then recurrent state groups for the executor | qwen35moe family, Ornith-122B, Qwen3.8-27B | mask ~3 % at 32k and ~10 % at 131k; pipelined decoding 1.3–1.4× on 6 cards | built (Q162); rig timing next | — |
 | 5 | Launch shapes by row width: K = 768, 1,408, 2,880 and other block counts that aren't 2^k | gpt-oss, Qwen3-30B downs, GLM | unknown until the sweep | 0.5–1 day + sweep | microbenchmark sweep at those widths |
 | 6 | Pascal MXFP4 kernel | gpt-oss-20b (and MXFP4_MOE files of other models) | +15–25 % on gpt-oss-20b | 3–5 days | item 5 |
 | 7 | Persistent kernel: shape-class refactor, then the qwen35moe-35B and qwen3moe-30B rows | qwen35moe family, Qwen3-30B | +3–5 % per model | 2–3 days + 2–4 days per row | Flint's rig timing (Q88); items 1–2 for the Q4_K_M combinations |
