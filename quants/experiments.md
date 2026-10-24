@@ -13,12 +13,12 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-24, 09:55):** the rig is on since 09:39 and runs the prepared runbook one block at a time: Q118
-(server gap) since 09:45, then Q117 (the v2 engine against stock and v1), long context, the release candidates (Q125), the pipelined executor. The
-7-GPU quant machine: Q41's pre-registered miss_param test on GPUs 0–4 until ~12:00 (UD-Q4_K_XL against G3); on GPUs 5–6 since 09:45 the staircase drafter pilot (Q20, D1, owner-approved; all seven GPUs from 12:00, est. ~10 h, no hard stop).
-Lead release candidate: K2h (passes single-turn non-inferiority, KLD 0.109 at 2.14 GB per token; level with
-UD-Q4_K_XL at 8k on agent text, Q106). Research runs in hourly rounds (round 12: free hardware tuning on the rig); each
-round can change the priorities below, and every change is logged under "Decision log". Keep this line current: say
+**Now (2026-10-24, 12:55):** the rig has been on since 09:39 and runs `QUEUES.md`'s list one task at a time: Q118, Q117
+(with its tg-only check) and Q55 are done; the release candidates are being copied over for Q125, then Q141 (cold clocks),
+the pipelined executor and long context follow. The 7-GPU quant machine runs the staircase drafter pilot (Q20) on all
+seven GPUs (generation until ~13:30, then dump and training, verdict ~19:30); the V100s go to Q126/Q127 and Q112 E2 from
+~13:30. The hourly research rounds ended at 12:51 (16 rounds; Q87–Q143). v2.0's proposed shape: the combined engine
+build with Unsloth's UD-Q4_K_XL and the screened-head side file; the owner decides. Keep this line current: say
 what is running, where, and since when.
 
 ### Priorities (v2)
