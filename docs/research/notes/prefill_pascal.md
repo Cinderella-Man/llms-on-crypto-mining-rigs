@@ -94,7 +94,7 @@ whose context ends at 8k or 32k, each change on top of the rows above it (est.).
 
 | # | Change | Expected prefill gain at 8k / 32k (est.) | Effort | First experiment | Kill criterion |
 |---|---|---|---|---|---|
-| 1 | **MMQ expert tiles sized by tokens per expert, only tiles with work launched**: cherry-pick upstream PR #31047 (`mmq.cu`, `mmq.cuh`, `mmid.cu`) | 1.6–2.0× / 1.3–1.5×; card time −45–60 % at ≤ 8k; tiny prompts 2–4× | ½–1 day: cherry-pick, `test-backend-ops -o MUL_MAT_ID`, rig A/B | E3: the E1 grid on `pascal-p106-v2-mmqlin` against `pascal-p106-v2`, 1-copy builds first (no overlap effects) | pp2048 at `-ub 128` < 1.15× faster, or MUL_MAT_ID's profiled share not at least halved |
+| 1 | **MMQ expert tiles sized by tokens per expert, only tiles with work launched**: cherry-pick upstream PR #31047 (`mmq.cu`, `mmq.cuh`, `mmid.cu`) | 1.6–2.0× / 1.3–1.5×; card time −45–60 % at ≤ 8k; tiny prompts 2–4× | ½–1 day: cherry-pick, `test-backend-ops -o MUL_MAT_ID`, rig A/B | E3: the E1 grid on `pascal-p106-v2-prefill` against `pascal-p106-v2`, 1-copy builds first (no overlap effects) | pp2048 at `-ub 128` < 1.15× faster, or MUL_MAT_ID's profiled share not at least halved |
 | 2 | **Keep the micro-batch pipeline full**: no graph reuse (rebuild instead of a full wait) for prompt micro-batches under pipeline parallelism (`src/llama-context.cpp:1537`); `-ub 256` where host RAM allows | 1.4–1.8× / 1.1–1.3× (host mask copies cap it at depth until row 3) | Hours (one condition); `-ub 256` is a flag | E1: `LLAMA_GRAPH_REUSE_DISABLE=1` at `-ub 128`, and `-ub 256`/`512` with 4 copies | pp8192 at `-ub 512` with 4 copies < 1.5× pp512 (overlap does not happen) |
 | 3 | **Mask built on each card** from cell and token positions (a small op that expands 4 B per cell into the f16 mask), later inside the attention kernels | 1.05–1.15× / 1.3–1.5×; 1.5–2× at 131k; `-ub 512` × 4 copies at 262k | 2–3 days (graph op); 3–5 days in-kernel (breakthrough candidate 3) | E2's host timeline at 32k: gap between card splits | Mask copies < 10 % of wall time at 32k |
 | 4 | **Per-request fixed cost**: reserve once with a backend sampler attached, one checkpoint per prompt with an asynchronous copy, no separate 4-token tail | −0.5–1.5 s per request (est.): 1.3–1.6× on BFCL-like tool turns of ~200 new tokens | 1–2 days (server, llama-context) | E6: llama-server `-lv 4`, ± `-bs`, `--ctx-checkpoints 0/4` | Per-request intercept < 0.5 s without `-bs` and checkpoints |
@@ -266,7 +266,7 @@ For an agent turn of ~200 new tokens this fixed part is as large as the per-toke
 - **Exactness:** each output still sums over K in the same order inside one thread, so results should be bit-identical;
   `test-backend-ops` and a 4 × 512-token perplexity on the rig confirm it.
 - **Fit with the fork:** the fork never touched MMQ, `mmid.cu` or the config tables, and the PR targets master of the same
-  week, so the cherry-pick should be close to clean (to verify).
+  week; both commits cherry-pick without conflicts ("E3 and E4 built", section 6).
 
 ### 2.5 Tile retuning for Pascal
 
@@ -509,15 +509,81 @@ host gaps at depth. Predictions:
 ~0.4 s per 128-token micro-batch between card splits (mask copies). The profiler waits after every evaluation, so it
 measures shares, not overlap.
 
-**E3. PR #31047 (laptop or quant machine 1 day, rig 1 h).** Branch `pascal-p106-v2-mmqlin` off `pascal-p106-v2` with the
-two commits; `test-backend-ops -o MUL_MAT_ID` and `-o MUL_MAT` natively and through the compute_61 PTX; a bit-identity
-check of the expert products against the base branch; rig: E1's grid on the 1-copy build first (no overlap effects), then
-the 4-copy build; a 4 × 512-token perplexity with `-ub 128` against the base. Expected (est.): 1-copy pp8192 at ub 128
-80–95 → 160–200 tok/s, at ub 512 160–175 → 200–240; tiny prompts 2–4× faster.
+**E3. PR #31047 (laptop or quant machine 1 day, rig 1 h).** Branch `pascal-p106-v2-prefill` off `pascal-p106-v2` with
+the two commits (built: see below); `test-backend-ops -o MUL_MAT_ID` and `-o MUL_MAT` natively and through the
+compute_61 PTX; a bit-identity check of the expert products against the base branch; rig: E1's grid on the 1-copy build
+first (no overlap effects), then the 4-copy build; a 4 × 512-token perplexity with `-ub 128` against the base. Expected
+(est.): 1-copy pp8192 at ub 128 80–95 → 160–200 tok/s, at ub 512 160–175 → 200–240; tiny prompts 2–4× faster.
 
-**E4. Reuse fix (fork, hours).** In `process_ubatch` skip reuse when `cparams.pipeline_parallel && ubatch.n_tokens > 1`
-(prompt graphs rebuild, ~3–5 ms of host time each; decode keeps reuse and its CUDA graphs). Same rows as E1's
-`LLAMA_GRAPH_REUSE_DISABLE=1` run; tg128 must not move.
+**E4. Reuse fix (fork, hours).** In `process_ubatch` reuse a graph under pipeline parallelism only when no
+micro-batch is in flight (built: see below): prompt graphs after the first rebuild, ~3–5 ms of host time each; decode
+keeps reuse and its CUDA graphs. Same rows as E1's `LLAMA_GRAPH_REUSE_DISABLE=1` run; tg128 must not move.
+
+**E3 and E4 built (Q108, Q109, fork branch `pascal-p106-v2-prefill`, commit `82bbb3aa4`, off `pascal-p106-v2`).**
+- **Row 1 (Q108).** PR #31047's two commits, "CUDA: linearize MoE data layout for MMQ/MMF" and "Apply MMQ tile size
+  optimization more generally", cherry-pick without conflicts: neither the fork nor the 16 upstream commits between the
+  fork's base and the PR's base touch `mmq.cu`, `mmq.cuh`, `mmf.cu`, `mmf.cuh`, `mmid.cu` or `mmid.cuh`.
+- **Row 2 (Q109): a graph is reused only when nothing is in flight.** `llama_context` sets a flag after each
+  `graph_compute` and clears it in `synchronize()`; under pipeline parallelism `process_ubatch` reuses the previous
+  graph only while the flag is clear and rebuilds it otherwise.
+  - A rebuilt graph goes through `ggml_backend_sched_alloc_graph`, which moves to the scheduler's next input copy, so
+    micro-batches overlap up to `n_copies` deep. That is the path every micro-batch at `-ub` ≥ 256 already takes, so it
+    adds no new synchronization case.
+  - When the flag is clear the reuse wait (`ggml_backend_sched_synchronize`) has nothing left to wait for. That is the
+    case of token generation and speculative verify steps: one micro-batch per decode call, after the caller has read
+    the previous logits. They keep their reused graphs and CUDA graphs.
+  - Results do not change: the same kernels run on the same inputs, only the host stops waiting.
+  - **Not E4's `ubatch.n_tokens > 1` rule:** that rule would also rebuild the 2–5-token verify steps of speculative
+    decoding and the multi-token kernels (Q78, Q87), which run after a synchronize and gain nothing from a rebuild.
+  - **Not reuse with per-copy graphs:** keeping `n_copies` reusable graphs, each bound to its own input copy, would
+    also save the rebuild's host time (~3–5 ms per micro-batch, est.). It needs per-copy graph results in
+    `llama_context` and a way to pin the scheduler's input copy. Worth doing only if E2 shows host time setting the
+    rate at `-ub 128` once the wait is gone.
+  - Any other path that synchronizes the scheduler leaves the flag set, which costs at most one rebuild.
+- **Tests** (a 7-GPU quant machine, RTX 3090s; correctness only):
+  - `test-backend-ops`, native sm_86 code (MMQ with tensor cores, MMF for F16/BF16): `MUL_MAT_ID` for Q8_0, Q4_0,
+    Q4_1, Q5_0, Q5_K, IQ4_XS, Q6_K, Q4_K, F16, BF16 and F32 at every batch size (608 cases, among them 92 new ones at
+    9–512 tokens with Flint's routing of 256 experts, top 6), `MUL_MAT_ID_FUSION` (13) and `MUL_MAT` for the same types
+    (1,600) all pass.
+  - The same with a build that has only compute_61 PTX: the driver compiles the Pascal code and ggml's host code, which
+    then sees 6.1 as the highest compiled architecture, takes the Pascal decisions too (`dp4a` MMQ with its tile sizes,
+    no MMF, no stream-k). `MUL_MAT` and `MUL_MAT_ID_FUSION` pass, and so does `MUL_MAT_ID` for every type but Q8_0,
+    whose run stops at its first 5-token case with a launch error, in the base built the same way as well: the host
+    reads compute 8.6 and sends Q8_0 batches of up to 8 tokens to the few-token MoE kernel (`get_mmvq_mmid_max_batch`
+    in `mmvq.cu`), whose Pascal build allows 4 (`get_mmvq_mmid_max_batch_for_device`). On a compute 6.1 card both read
+    the same table.
+  - G3 split by layer over two RTX 3090s, llama-perplexity over 8 × 512 tokens at `-ub 128` and `-ub 512`: the branch
+    reproduces the base's perplexity in every chunk and writes byte-identical reference-logit files. Compared with the
+    base it gives the same KLD statistics as the base compared with itself (mean 0, maximum 6 × 10⁻⁵ from the rounding
+    of the stored logits, the same top token everywhere), so the logits are identical. With
+    `LLAMA_GRAPH_REUSE_DISABLE=1` they are identical as well.
+- **Measuring it on the rig.** On nine cards. `V2` and `PF` are the `bin/` of the `pascal-p106-v2` and
+  `pascal-p106-v2-prefill` tarballs, `V2S1` and `PFS1` their 1-copy builds (`…-sched1`), `MODEL` S4-L0 for continuity
+  (then G3h/K2h), `WIKI` wikitext-2's `wiki.test.raw`:
+
+  ```bash
+  export LLAMA_NO_MOE_DOWN_RESCALE=1
+  # 1. same results: 4 x 512 tokens at -ub 128 (expect KLD 0 and 100 % same top token)
+  PPL="-m $MODEL -ngl 99 -fa on -f $WIKI -c 512 --chunks 4 -b 512 -ub 128 --kl-divergence-base /tmp/pf.kld"
+  $V2/llama-perplexity $PPL && $PF/llama-perplexity $PPL --kl-divergence
+  rm /tmp/pf.kld
+  # 2. the prompt grid, 1-copy builds first, then 4 copies (E1's rows for V2 and V2S1)
+  for B in $V2S1 $PFS1 $V2 $PF; do
+    $B/llama-bench -m $MODEL -ngl 99 -fa on -p 512,2048,8192 -n 0 -b 8192 -ub 128,256,512 -r 2 -o jsonl
+  done
+  # 3. row 2 alone: V2 without any reuse at -ub 128
+  LLAMA_GRAPH_REUSE_DISABLE=1 $V2/llama-bench -m $MODEL -ngl 99 -fa on -p 2048,8192 -n 0 -b 8192 -ub 128 -r 2 -o jsonl
+  # 4. generation must not move
+  for B in $V2 $PF; do $B/llama-bench -m $MODEL -ngl 99 -fa on -p 0 -n 128 -r 3 -o jsonl; done
+  ```
+
+  Reading it:
+  - At `-ub` 256 and 512 nothing is reused mid-prompt, so `PF` against `V2` (and `PFS1` against `V2S1`) is row 1 alone.
+    pp512 at `-ub 512` is one micro-batch, so it shows row 1 without any overlap.
+  - At `-ub 128` step 3 against `V2` is row 2 alone, and `PF` against step 3 is row 1. On the 1-copy builds row 2
+    replaces a full wait every second micro-batch by each card's wait for its own previous micro-batch.
+  - Expected (est., pp8192, sections 3.3 and 6): `V2` at `-ub 128` 125–170 tok/s, step 3 200–310, `PF` 1.5–2× step 3;
+    `PF` at `-ub 512` 1.2–1.4× `V2`; tg128 within noise.
 
 **E5. Mask on the card (fork, 2–3 days, then rig).** The mask input becomes per-cell positions and sequence ids (4–8 B per
 cell, per copy) plus the micro-batch's positions; a `KQ_MASK` op (CPU reference and CUDA kernel) expands them on each card
@@ -614,7 +680,8 @@ time both with host memory logged; then send the same prompt plus one turn and c
 - That the reuse wait is what limits overlap at `-ub 128`; host waits on events or copies could limit it too (E1 tells).
 - TILE's prompt throughput (~1 TFLOPS assumed) and its shared-memory limit at 32 rows.
 - Mask copies at ~190 MB/s one card after another; copies behind a shared switch may be slower.
-- PR #31047's gain on 5 SMs, its cherry-pick onto the fork, and bit-identity of its results.
+- PR #31047's gain on 5 SMs, and bit-identity of its results on a compute 6.1 card itself (the checks under "E3 and
+  E4 built" ran on RTX 3090s; step 1 of its rig commands is the check).
 - The decomposition of the ~2.2 s per request (re-reserve, checkpoints, tails, fill and drain).
 - Expert bytes per token assume independent routing and ~2.3 MB per expert; MMQ streaming at 120–140 GB/s is assumed.
 - TurboPrefill's mechanism and settings on the P104 rigs; its page gives speeds, not configurations.
