@@ -124,12 +124,14 @@ Useful options (`--help` lists all):
 | Option | Effect |
 |---|---|
 | `--check-only` | correctness checks only, no timing (a few seconds) |
-| `--types q4_1,q8_0` | subset of weight types (default `q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs`) |
+| `--types q4_1,q8_0` | subset of weight types (default `q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs,q6_K`) |
 | `--variants llama,p_r2c2` | subset of variants (default all) |
 | `--shapes attn_q,moe_down` | subset of shapes (default all) |
 | `--reps 30`, `--batch 64` | timed graph launches, calls per graph |
 | `--verbose` | print the largest deviations the correctness check finds |
 | `--list` | list shapes and variants |
+| `--spread N`, `--spread-gb X` | N weight sets per shape, or as many as fill X GB, cycled call by call, with fresh expert ids for every call (Q99, below) |
+| `--tlb-probe` | pointer-chase probe of the GPU's address translation instead of the kernels (Q99, below) |
 
 The program exits with status 2 if any correctness check fails.
 
@@ -321,6 +323,79 @@ What this shows:
    25 → 50) and the unfused K = 2048 products (`attn_q` 43 → 81) but slows the fused gate/up (52 → 34): a one-line
    change would need to exclude fused calls.
 
+## Q6_K (Q101)
+
+`q6_K` is the 6-bit rung considered for the tensors that Flint's best files keep in Q8_0 (Q90: +0.014 KLD for all of
+G3's Q8_0 tensors except the head, ~0.26 GB less per token). Its 210-byte super-blocks (128 bytes `ql`, 64 bytes `qh`,
+16 int8 scales, FP16 `d`) are only 2-byte aligned, so it has only the staged variant (`st_r1c1`) besides llama.cpp's:
+
+- One super-block per lane. The lane group stages its segment with 16-byte loads where the rows and the segment allow
+  it, else with 8- or 4-byte loads (K = 1024 and 512 give 840- and 420-byte rows).
+- A lane whose super-block starts at an odd half-word in shared memory reads the 53 words around it and shifts them by
+  2 bytes (one `PRMT` per word).
+- The fused gate/up stages the up and the gate segment one after the other in the same buffer: 27 KB of shared memory
+  per block instead of 54 KB, which would not fit Pascal's 48 KB.
+- The 6-bit codes are the low or high nibbles of `ql` OR-ed with a 2-bit field of `qh` moved to bits 4–5, one dp4a
+  per 4 weights. The offset −32 comes from the activations' half-block sums (32 × the sum of 16 int8 values), computed
+  once per chunk and shared by all rows, where llama.cpp spends a second dp4a per word with `0xE0E0E0E0`.
+
+Static count in the sm_61 SASS, main loop per weight byte: 3.2 lane-instructions for a plain product and 2.9 for the
+fused gate/up (Q5_K: 3.1 and 2.8), 3.5 and 3.9 with 8- and 4-byte staging. Q5_K's 3.1 runs at 120–128 GB/s, so Q6_K is
+expected near 125–135 GB/s. Every Q6_K case passes the CPU reference at all eight shapes, through the compute_61 PTX
+on an RTX 3090. The gate for the fork (Q101) is ≥ 130 GB/s on the dense K = 2048 shapes:
+
+```bash
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --types q6_K,q5_K,q8_0 --csv /tmp/q101.csv' | tee q101_rig.txt
+```
+
+## Memory system: spread weights and a TLB probe (Q99)
+
+In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
+~1.3–2.0 µs per 2 MiB page a call touches ([Pascal forks and quants](../../docs/research/notes/pascal_forks_and_quants.md),
+section 3): a card sweeps ~5.4 GB of weights per token, while Pascal's second-level TLB covers ~2 GiB (measured on
+GP100 and GP104), and the benchmark's working sets stay under ~1.2 GB and are replayed. Two modes test that:
+
+- `--spread N` or `--spread-gb X` (test E2): N weight sets of every matrix of a shape, or as many as fill X GB (at most
+  4,096), up to `--spread-max-gb` (default 5) and the free memory. A MoE matrix's set holds all 256 experts, so N sets
+  are N layers' worth; a dense shape needs many sets to sweep gigabytes (~950 of `attn_q` for 5 GB). The sets of a
+  matrix lie back to back in one allocation, so they sweep one contiguous range of 2 MiB pages. Call j of a graph uses
+  set j mod N (the graph then holds at least N calls), and before each graph launch one small kernel copies the
+  next slot of a pool of expert ids into the buffer the calls read, so every call of every launch picks fresh experts.
+  With `--check-only` the results are checked against the CPU reference and one id refresh against the pool. The CSV
+  gains `weight_sets` and `swept_bytes`.
+- `--tlb-probe` (test E1): one thread follows chains of dependent loads through L2: slots 2 MiB (the page size of
+  `cudaMalloc`) or 32 MiB apart over footprints from 16 MiB to 5.5 GiB, and one slot in each of N random 2 MiB pages of
+  the buffer (N = 8 … 2,560). After a warm-up pass the slots sit in L2, so a step costs an L2 hit while the
+  translations hit and adds a page walk where they miss. Every chain runs alone and again while the other four SMs
+  stream reads. `--tlb-max-gb` caps the buffer (default 5); with `--check-only` each chain is walked once around and
+  checked, untimed.
+
+Rig commands (one card, nothing else on it; the binary needs only the driver):
+
+```bash
+ssh rig 'mkdir -p /tmp/q99'
+scp bench/mmvq_pascal/build/mmvq_pascal rig:/tmp/q99/
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/q99/mmvq_pascal --tlb-probe --csv /tmp/q99/tlb.csv' | tee q99_tlb.txt
+```
+```bash
+for gb in 0.5 1 2 3 4 5; do ssh rig "CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/q99/mmvq_pascal --types q5_0,q8_0,q4_1 --variants st_r1c2,st_r2c2,st_r2c4 --shapes moe_gate_up,moe_down,attn_q,attn_output,output --spread-gb $gb --csv /tmp/q99/spread$gb.csv" | tee q99_spread$gb.txt; done
+```
+```bash
+scp 'rig:/tmp/q99/*.csv' . && ssh rig 'rm -rf /tmp/q99'
+```
+
+The variants are the shapes `mmvqp_choose` picks in the fork for S4-L0's types: Q5_0 fused gate/up `st_r1c2`, Q8_0
+`st_r2c2` (fused `st_r1c2`), Q4_1 `st_r2c4`. What decides:
+
+- **TLB probe.** The footprint at which a 2 MiB-stride step gets slower is the TLB reach in pages; the 32 MiB-stride
+  curve shows whether the L2 TLB counts 32 MiB regions (the second knee of GP100/GP104) or pages. The step time beyond
+  the knee, minus the step time before it, is the page walk, alone and under load.
+- **Spread.** Under the TLB model, a call at 0.5 GB (one set of the MoE matrices: 352 MiB of Q5_0 gate/up, 272 MiB of
+  Q8_0 down) is no slower than in the default mode, and calls get ~1.3–2.0 µs slower per page they touch (16 for the
+  gate/up call, 9 for the down call, ~3.5 for `attn_q`) once the sweep passes the L2 TLB's reach: +20–30 µs on the MoE
+  shapes and ~+10 % on the head at ~5 GB. The research note's kill criterion: MoE calls at 5 GB less than 10 µs slower
+  than at 0.5 GB.
+
 ## Several tokens per step: the fork's kernels
 
 The fork's branch `pascal-p106-v2-multicol` extends the ported kernels to 2–4 tokens per step (a speculative-decoding
@@ -350,8 +425,9 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 |---|---|
 | `src/common.cuh` | block layouts (identical to ggml's), type traits |
 | `src/llama_mmvq.cuh` | (a)/(b): llama.cpp's MMVQ and `quantize_q8_1`, copied from `d77256999` (MIT, the ggml authors), Pascal paths only |
-| `src/pascal_mmvq.cuh` | (c) tuned kernel (all seven types), (d) SoA kernel, SoA activation quantizer and repack, (e) row-local-plane kernel and repack, (f) staged kernel |
+| `src/pascal_mmvq.cuh` | (c) tuned kernel (all seven types but Q6_K), (d) SoA kernel, SoA activation quantizer and repack, (e) row-local-plane kernel and repack, (f) staged kernel (all eight types) |
 | `src/data.cuh` | random weight/activation generation on the GPU, CPU reference dot products |
+| `src/memsys.cuh` | `--tlb-probe`: pointer chases over strides and random pages, alone and under a streaming load |
 | `src/main.cu` | shapes, variants, correctness check, timing, totals, CSV |
 | `build.sh` | Docker build of `build/mmvq_pascal` |
 | `verify/` | bit-exactness check against a static llama.cpp build; `multitoken_bitid.cpp`: the fork's 2–4-token products against its single-token ones |

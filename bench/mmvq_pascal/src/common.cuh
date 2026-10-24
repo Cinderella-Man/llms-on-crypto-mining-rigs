@@ -21,7 +21,7 @@
 namespace mb {
 
 // Weight types. The numbering is this program's own; the byte layouts match ggml-common.h.
-enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4, T_Q5_K = 5, T_IQ4_XS = 6, T_COUNT = 7 };
+enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4, T_Q5_K = 5, T_IQ4_XS = 6, T_Q6_K = 7, T_COUNT = 8 };
 
 // K-quants and I-quants: super-blocks of 256 weights in 8 sub-blocks of 32.
 #define QK_K 256
@@ -45,6 +45,8 @@ enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4
 #define QI5_K    (QK_K / (4 * QR5_K))
 #define QR4_XS   2
 #define QI4_XS   (QK_K / (4 * QR4_XS))
+#define QR6_K    2
+#define QI6_K    (QK_K / (4 * QR6_K))
 #define QK8_1    32
 #define QR8_1    1
 #define QI8_1    (QK8_1 / (4 * QR8_1))
@@ -110,6 +112,18 @@ struct block_iq4_xs {
 };
 static_assert(sizeof(block_iq4_xs) == 136, "iq4_xs size");
 
+// 210 bytes per 256 weights (2-byte aligned): 128 bytes ql, 64 bytes qh, 16 int8 scales, fp16 d. Weights 128 h + 32 k + l
+// (half h = 0..1, k = 0..3, l = 0..31) take the low (k < 2) or high (k >= 2) nibble of ql[64 h + 32 (k & 1) + l] and bits
+// 2k, 2k + 1 of qh[32 h + l]; each 16 weights share one scale, sub-block s = 4h + k (32 weights) uses scales[2s] for
+// l < 16 and scales[2s + 1] for l >= 16. Value = d * scale * (q - 32).
+struct block_q6_K {
+    uint8_t ql[QK_K / 2];
+    uint8_t qh[QK_K / 4];
+    int8_t  scales[QK_K / 16];
+    half    d;
+};
+static_assert(sizeof(block_q6_K) == 210, "q6_K size");
+
 // Activation block as llama.cpp's CUDA backend builds it: half2 (d, s) with s = fp16 of the sum of the 32 unquantized
 // floats, then 32 int8 values. 36 bytes per 32 activations.
 struct block_q8_1 {
@@ -126,6 +140,7 @@ template <> struct traits<T_Q4_1_64> { static constexpr int qk = QK4_1_64; stati
 template <> struct traits<T_Q5_0>    { static constexpr int qk = QK5_0;    static constexpr int qi = QI5_0;    static constexpr int bs = 22; };
 template <> struct traits<T_Q5_K>    { static constexpr int qk = QK_K;     static constexpr int qi = QI5_K;    static constexpr int bs = 176; };
 template <> struct traits<T_IQ4_XS>  { static constexpr int qk = QK_K;     static constexpr int qi = QI4_XS;   static constexpr int bs = 136; };
+template <> struct traits<T_Q6_K>    { static constexpr int qk = QK_K;     static constexpr int qi = QI6_K;    static constexpr int bs = 210; };
 
 inline const char * type_name(int t) {
     switch (t) {
@@ -136,10 +151,11 @@ inline const char * type_name(int t) {
         case T_Q5_0:    return "q5_0";
         case T_Q5_K:    return "q5_K";
         case T_IQ4_XS:  return "iq4_xs";
+        case T_Q6_K:    return "q6_K";
         default:        return "?";
     }
 }
-__host__ __device__ inline bool type_is_k(int t) { return t == T_Q5_K || t == T_IQ4_XS; }
+__host__ __device__ inline bool type_is_k(int t) { return t == T_Q5_K || t == T_IQ4_XS || t == T_Q6_K; }
 __host__ __device__ inline int type_qk(int t) { return type_is_k(t) ? QK_K : t == T_Q4_1_64 ? 64 : 32; }
 __host__ __device__ inline int type_bs(int t) {
     switch (t) {
@@ -150,6 +166,7 @@ __host__ __device__ inline int type_bs(int t) {
         case T_Q5_0:    return 22;
         case T_Q5_K:    return 176;
         case T_IQ4_XS:  return 136;
+        case T_Q6_K:    return 210;
         default:        return 0;
     }
 }

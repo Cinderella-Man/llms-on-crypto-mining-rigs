@@ -1,10 +1,11 @@
-// Bit-identity check of the fork's multi-token Pascal kernels (mmvq-pascal.cu, branch pascal-p106-v2-multicol): each
-// product of n = 2..4 tokens must equal, bit for bit, the n single-token products of the same columns, on CUDA0.
-// Covers MUL_MAT at Flint's dense shapes, MUL_MAT_ID (6 of 32 experts, tokens that share experts) and the fused
-// MUL_MAT_ID gate/up + SWIGLU, for Q8_0, Q5_0, Q4_1, Q4_0, Q5_K and IQ4_XS. Run with GGML_CUDA_MMVQ_PASCAL=2 on a newer
-// GPU (add CUDA_FORCE_PTX_JIT=1 for the compute 6.1 code path) or as is on a P106. With GGML_CUDA_MMVQ_PASCAL=0 the
-// stock kernels run, whose multi-token and single-token kernels sum in different orders: most comparisons then differ.
-// Build: verify/build_multitoken_bitid.sh. Exit status 1 if any comparison differs.
+// Bit-identity check of the fork's multi-token Pascal kernels (mmvq-pascal.cu, branch pascal-p106-v2-multicol; Q6_K from
+// pascal-p106-v2-q6k): each product of n = 2..4 tokens must equal, bit for bit, the n single-token products of the same
+// columns, on CUDA0. Covers MUL_MAT at Flint's dense shapes, MUL_MAT_ID (6 of 32 experts, tokens that share experts) and
+// the fused MUL_MAT_ID gate/up + SWIGLU, for Q8_0, Q5_0, Q4_1, Q4_0, Q5_K, IQ4_XS and Q6_K. Run with
+// GGML_CUDA_MMVQ_PASCAL=2 on a newer GPU (add CUDA_FORCE_PTX_JIT=1 for the compute 6.1 code path) or as is on a P106.
+// With GGML_CUDA_MMVQ_PASCAL=0 the stock kernels run, whose multi-token and single-token kernels sum in different
+// orders: most comparisons then differ. Build: verify/build_multitoken_bitid.sh. Exit status 1 if any comparison
+// differs.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -78,7 +79,8 @@ static void report(const char * what, ggml_type type, int n, int64_t m, int64_t 
 int main() {
     ggml_backend_t be = ggml_backend_cuda_init(0);
     GGML_ASSERT(be);
-    const ggml_type types[] = { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS };
+    const ggml_type types[] = { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS,
+                                GGML_TYPE_Q6_K };
 
     for (ggml_type type : types) {
         // weights live in their own context and buffer

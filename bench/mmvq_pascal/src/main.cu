@@ -4,6 +4,7 @@
 #include "common.cuh"
 #include "data.cuh"
 #include "llama_mmvq.cuh"
+#include "memsys.cuh"
 #include "pascal_mmvq.cuh"
 
 #include <algorithm>
@@ -88,10 +89,13 @@ const variant_def VARIANTS[] = {
 
 // ---- kernel dispatch -------------------------------------------------------------------------------------------
 
-// K-/I-quants take one super-block per lane (C = 1); the 32-weight types take 2 or 4 blocks.
+// K-/I-quants take one super-block per lane (C = 1); the 32-weight types take 2 or 4 blocks. Q6_K's 2-byte-aligned
+// super-blocks have no direct-load variant.
 template <int T, bool G>
 const void * rows_kernel(int R, int C) {
-    if constexpr (traits<T>::qk == QK_K) {
+    if constexpr (T == T_Q6_K) {
+        return nullptr;
+    } else if constexpr (traits<T>::qk == QK_K) {
         if (R == 1 && C == 1) return (const void *) pascal::mmvq_rows<T, 1, 1, NW, G>;
         if (R == 2 && C == 1) return (const void *) pascal::mmvq_rows<T, 2, 1, NW, G>;
     } else {
@@ -112,25 +116,33 @@ const void * rows_kernel_rt(int T, bool G, int R, int C) {
         case T_Q5_0:    return G ? rows_kernel<T_Q5_0, true>(R, C)    : rows_kernel<T_Q5_0, false>(R, C);
         case T_Q5_K:    return G ? rows_kernel<T_Q5_K, true>(R, C)    : rows_kernel<T_Q5_K, false>(R, C);
         case T_IQ4_XS:  return G ? rows_kernel<T_IQ4_XS, true>(R, C)  : rows_kernel<T_IQ4_XS, false>(R, C);
+        case T_Q6_K:    return nullptr;
     }
     return nullptr;
 }
 
-// (f) instances whose shared memory (NW warps x 32 lanes x R rows x C blocks, twice with the gate) fits in 48 KB
-template <int T, int R, int C, bool G>
+// (f) instances whose shared memory (NW warps x 32 lanes x R rows x C blocks, twice with the gate except for Q6_K, which
+// stages gate and up one after the other) fits in 48 KB; SU =
+// bytes per staging load (16, or 8 and 4 for Q6_K's rows that are only 8- or 4-byte aligned)
+template <int T, int R, int C, bool G, int SU = 16>
 const void * st_instance() {
-    if constexpr (NW * 32 * R * (G ? 2 : 1) * C * traits<T>::bs <= 48 * 1024) {
-        return (const void *) pascal::mmvq_staged<T, R, C, NW, G>;
+    if constexpr (NW * (32 * R * (G && T != T_Q6_K ? 2 : 1) * C * traits<T>::bs + (T == T_Q6_K ? 16 : 0)) <= 48 * 1024) {
+        return (const void *) pascal::mmvq_staged<T, R, C, NW, G, SU>;
     }
     return nullptr;
 }
 
 template <int T, bool G>
-const void * st_kernel(int R, int C) {
-    if constexpr (traits<T>::qk == QK_K) {
+const void * st_kernel(int R, int C, int SU) {
+    if constexpr (T == T_Q6_K) {
+        if (R == 1 && C == 1) return SU == 16 ? st_instance<T, 1, 1, G, 16>() : SU == 8 ? st_instance<T, 1, 1, G, 8>() : st_instance<T, 1, 1, G, 4>();
+        if (R == 2 && C == 1) return SU == 16 ? st_instance<T, 2, 1, G, 16>() : SU == 8 ? st_instance<T, 2, 1, G, 8>() : st_instance<T, 2, 1, G, 4>();
+    } else if constexpr (traits<T>::qk == QK_K) {
+        if (SU != 16) return nullptr;
         if (R == 1 && C == 1) return st_instance<T, 1, 1, G>();
         if (R == 2 && C == 1) return st_instance<T, 2, 1, G>();
     } else {
+        if (SU != 16) return nullptr;
         if (R == 1 && C == 2) return st_instance<T, 1, 2, G>();
         if (R == 2 && C == 2) return st_instance<T, 2, 2, G>();
         if (R == 4 && C == 2) return st_instance<T, 4, 2, G>();
@@ -139,14 +151,15 @@ const void * st_kernel(int R, int C) {
     return nullptr;
 }
 
-const void * st_kernel_rt(int T, bool G, int R, int C) {
+const void * st_kernel_rt(int T, bool G, int R, int C, int SU) {
     switch (T) {
-        case T_Q4_0: return G ? st_kernel<T_Q4_0, true>(R, C) : st_kernel<T_Q4_0, false>(R, C);
-        case T_Q4_1: return G ? st_kernel<T_Q4_1, true>(R, C) : st_kernel<T_Q4_1, false>(R, C);
-        case T_Q8_0: return G ? st_kernel<T_Q8_0, true>(R, C) : st_kernel<T_Q8_0, false>(R, C);
-        case T_Q5_0: return G ? st_kernel<T_Q5_0, true>(R, C) : st_kernel<T_Q5_0, false>(R, C);
-        case T_Q5_K: return G ? st_kernel<T_Q5_K, true>(R, C) : st_kernel<T_Q5_K, false>(R, C);
-        case T_IQ4_XS: return G ? st_kernel<T_IQ4_XS, true>(R, C) : st_kernel<T_IQ4_XS, false>(R, C);
+        case T_Q4_0: return G ? st_kernel<T_Q4_0, true>(R, C, SU) : st_kernel<T_Q4_0, false>(R, C, SU);
+        case T_Q4_1: return G ? st_kernel<T_Q4_1, true>(R, C, SU) : st_kernel<T_Q4_1, false>(R, C, SU);
+        case T_Q8_0: return G ? st_kernel<T_Q8_0, true>(R, C, SU) : st_kernel<T_Q8_0, false>(R, C, SU);
+        case T_Q5_0: return G ? st_kernel<T_Q5_0, true>(R, C, SU) : st_kernel<T_Q5_0, false>(R, C, SU);
+        case T_Q5_K: return G ? st_kernel<T_Q5_K, true>(R, C, SU) : st_kernel<T_Q5_K, false>(R, C, SU);
+        case T_IQ4_XS: return G ? st_kernel<T_IQ4_XS, true>(R, C, SU) : st_kernel<T_IQ4_XS, false>(R, C, SU);
+        case T_Q6_K: return G ? st_kernel<T_Q6_K, true>(R, C, SU) : st_kernel<T_Q6_K, false>(R, C, SU);
     }
     return nullptr;
 }
@@ -195,6 +208,7 @@ llama::launch_shape llama_plan_rt(int T, const llama::call_args & a) {
         case T_Q5_0:    return llama::plan<T_Q5_0, table>(a);
         case T_Q5_K:    return llama::plan<T_Q5_K, table>(a);
         case T_IQ4_XS:  return llama::plan<T_IQ4_XS, table>(a);
+        case T_Q6_K:    return llama::plan<T_Q6_K, table>(a);
         default:        return llama::plan<T_Q4_1_64, table>(a);
     }
 }
@@ -208,6 +222,7 @@ void llama_launch_rt(int T, const llama::call_args & a, cudaStream_t s) {
         case T_Q5_0:    llama::launch<T_Q5_0, table>(a, s); break;
         case T_Q5_K:    llama::launch<T_Q5_K, table>(a, s); break;
         case T_IQ4_XS:  llama::launch<T_IQ4_XS, table>(a, s); break;
+        case T_Q6_K:    llama::launch<T_Q6_K, table>(a, s); break;
         default:        llama::launch<T_Q4_1_64, table>(a, s); break;
     }
 }
@@ -286,12 +301,34 @@ __global__ void k_read(const uint4 * __restrict__ p, size_t n, unsigned * out) {
     }
 }
 
-// Run `launch(stream, j)` for j = 0..batch-1 as one CUDA graph; time `reps` launches of the graph.
-// Returns per-call times in microseconds (graph time / batch).
-std::vector<double> time_graph(const std::function<void(cudaStream_t, int)> & launch, int batch, int reps, cudaStream_t s) {
+// --spread: at the start of every graph launch, copy the next id slot of the pool (n ints: one set of expert ids per
+// call of the graph) into the ids buffer the calls read, so every call of every launch picks fresh experts. Slot 0 is
+// what the buffer holds before the first launch (the correctness check uses it).
+__global__ void k_ids_refresh(const int * __restrict__ pool, int * __restrict__ buf, unsigned * counter, const int n, const int nslots) {
+    __shared__ unsigned slot;
+    if (threadIdx.x == 0) {
+        slot = (*counter + 1) % nslots;
+    }
+    __syncthreads();
+    for (int i = threadIdx.x; i < n; i += blockDim.x) {
+        buf[i] = pool[(size_t) slot * n + i];
+    }
+    __syncthreads();
+    if (threadIdx.x == 0) {
+        *counter = slot;
+    }
+}
+
+// Run `launch(stream, j)` for j = 0..batch-1 as one CUDA graph, after `prologue` if given; time `reps` launches of the
+// graph. Returns per-call times in microseconds (graph time / batch).
+std::vector<double> time_graph(const std::function<void(cudaStream_t, int)> & launch, int batch, int reps, cudaStream_t s,
+                               const std::function<void(cudaStream_t)> & prologue = nullptr) {
     cudaGraph_t g;
     cudaGraphExec_t ge;
     CUDA_CHECK(cudaStreamBeginCapture(s, cudaStreamCaptureModeThreadLocal));
+    if (prologue) {
+        prologue(s);
+    }
     for (int j = 0; j < batch; ++j) {
         launch(s, j);
     }
@@ -334,10 +371,12 @@ struct result {
     bool pass = false;
     int regs = 0, blocks_per_sm = 0, threads = 0;
     long grid = 0;
+    int ncopies = 1;             // weight sets cycled call by call
+    double set_bytes = 0;        // bytes of all weight sets of the shape (the footprint the calls sweep)
 };
 
 struct options {
-    std::vector<std::string> types = { "q4_1", "q4_0", "q8_0", "q4_1_64", "q5_0", "q5_K", "iq4_xs" };
+    std::vector<std::string> types = { "q4_1", "q4_0", "q8_0", "q4_1_64", "q5_0", "q5_K", "iq4_xs", "q6_K" };
     std::vector<std::string> variants;
     std::vector<std::string> shapes;
     int reps = 30;
@@ -346,11 +385,16 @@ struct options {
     double ref_gbs = 173.0;
     std::string csv;
     uint64_t seed = 1234;
+    int spread = 0;              // weight sets per shape, cycled call by call, with fresh expert ids per call
+    double spread_gb = 0.0;      // or as many sets as fill this many GB
+    double spread_max_gb = 5.0;
+    bool tlb_probe = false;
+    double tlb_max_gb = 5.0;
 };
 
 void usage() {
     printf("usage: mmvq_pascal [options]\n"
-           "  --types LIST     weight types, comma-separated (default q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs)\n"
+           "  --types LIST     weight types, comma-separated (default q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs,q6_K)\n"
            "  --variants LIST  kernel variants (default all; see --list)\n"
            "  --shapes LIST    shapes (default all; see --list)\n"
            "  --reps N         timed graph launches per kernel, median reported (default 30)\n"
@@ -360,6 +404,15 @@ void usage() {
            "  --ref-gbs X      bandwidth for the %%-of-peak column (default 173)\n"
            "  --csv FILE       also write all results as CSV\n"
            "  --seed N         random seed (default 1234)\n"
+           "  --spread N       N weight sets per shape (each holding all experts of a MoE matrix), cycled call by call,\n"
+           "                   with fresh random expert ids for every call; the sets stop at --spread-max-gb (default 5)\n"
+           "                   and the free device memory. Without it: one set for MoE shapes (64 replayed id sets) and\n"
+           "                   >= 64 MB, <= 1.2 GB of copies for dense shapes\n"
+           "  --spread-gb X    as --spread, with as many sets as fill X GB (at least one, at most 4096 per shape), so\n"
+           "                   that small and large shapes sweep the same footprint\n"
+           "  --tlb-probe      pointer-chase probe of the address translation instead of the matrix-vector kernels\n"
+           "                   (2 MiB and 32 MiB strides over growing footprints, random 2 MiB pages; alone and under load)\n"
+           "  --tlb-max-gb X   largest chase buffer (default 5); --check-only walks every chain once, untimed\n"
            "  --list           list shapes and variants\n");
 }
 
@@ -390,7 +443,8 @@ struct case_data {
     size_t rbytes = 0, mat_bytes = 0;   // row bytes, bytes of one matrix (all experts)
     int ncopies = 1, nidsets = 1;
     bool glu = false, moe = false;
-    std::vector<dev_buf> w_up, w_gate;  // per copy
+    std::vector<dev_buf> w_up, w_gate;  // per copy (with --spread: one buffer per matrix holding all sets back to back)
+    std::vector<uint8_t *> up, gate;    // the weights of each copy
     dev_buf x, y_q81, a_q, a_ds, ids, dst;
     std::vector<int> ids_host;          // nidsets * nused
     double bytes_per_call = 0;
@@ -399,26 +453,26 @@ struct case_data {
     std::vector<uint8_t> w_host_up, w_host_gate; // checked rows (dense) or the selected experts (MoE), contiguous
 };
 
-void fetch_rows(const case_data & c, const dev_buf & buf, std::vector<uint8_t> & host) {
+void fetch_rows(const case_data & c, const uint8_t * buf, std::vector<uint8_t> & host) {
     if (c.moe) {
         host.resize((size_t) c.nused * c.N * c.rbytes);
         for (int j = 0; j < c.nused; ++j) {
             const int e = c.ids_host[j];
-            CUDA_CHECK(cudaMemcpy(host.data() + (size_t) j * c.N * c.rbytes, buf.as<uint8_t>() + (size_t) e * c.N * c.rbytes,
+            CUDA_CHECK(cudaMemcpy(host.data() + (size_t) j * c.N * c.rbytes, buf + (size_t) e * c.N * c.rbytes,
                                   (size_t) c.N * c.rbytes, cudaMemcpyDeviceToHost));
         }
         return;
     }
     host.resize(c.check_rows.size() * c.rbytes);
     if ((int) c.check_rows.size() == c.N) {
-        CUDA_CHECK(cudaMemcpy(host.data(), buf.p, (size_t) c.N * c.rbytes, cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(host.data(), buf, (size_t) c.N * c.rbytes, cudaMemcpyDeviceToHost));
         return;
     }
     // evenly strided sample plus the last row
     const int stride = c.check_rows.size() > 1 ? c.check_rows[1] - c.check_rows[0] : 1;
     const size_t n_strided = c.check_rows.size() - 1;
-    CUDA_CHECK(cudaMemcpy2D(host.data(), c.rbytes, buf.p, c.rbytes * stride, c.rbytes, n_strided, cudaMemcpyDeviceToHost));
-    CUDA_CHECK(cudaMemcpy(host.data() + n_strided * c.rbytes, buf.as<uint8_t>() + (size_t) c.check_rows.back() * c.rbytes,
+    CUDA_CHECK(cudaMemcpy2D(host.data(), c.rbytes, buf, c.rbytes * stride, c.rbytes, n_strided, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(host.data() + n_strided * c.rbytes, buf + (size_t) c.check_rows.back() * c.rbytes,
                           c.rbytes, cudaMemcpyDeviceToHost));
 }
 
@@ -499,6 +553,11 @@ int main(int argc, char ** argv) {
         else if (a == "--ref-gbs") opt.ref_gbs = atof(next().c_str());
         else if (a == "--csv") opt.csv = next();
         else if (a == "--seed") opt.seed = strtoull(next().c_str(), nullptr, 10);
+        else if (a == "--spread") opt.spread = std::max(0, atoi(next().c_str()));
+        else if (a == "--spread-gb") opt.spread_gb = atof(next().c_str());
+        else if (a == "--spread-max-gb") opt.spread_max_gb = atof(next().c_str());
+        else if (a == "--tlb-probe") opt.tlb_probe = true;
+        else if (a == "--tlb-max-gb") opt.tlb_max_gb = atof(next().c_str());
         else if (a == "--list") { list_all(); return 0; }
         else { usage(); return a == "--help" || a == "-h" ? 0 : 1; }
     }
@@ -532,6 +591,37 @@ int main(int argc, char ** argv) {
 
     cudaStream_t s;
     CUDA_CHECK(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking));
+
+    if (opt.tlb_probe) {
+        const auto res = memsys::tlb_probe((size_t) (opt.tlb_max_gb * (double) (1ull << 30)), opt.check_only, s);
+        bool ok = true;
+        if (opt.check_only) {
+            for (const auto & r : res) ok &= r.ok;
+            printf("tlb probe: %zu chains walked once around, %s\n", res.size(), ok ? "all end where they started" : "FAILURES");
+        } else {
+            printf("\n%-7s %10s %10s %7s %7s %10s %10s %12s %12s\n", "chase", "MiB", "stride", "slots", "steps", "ns/step",
+                   "cyc/step", "ns (loaded)", "cyc (loaded)");
+            for (const auto & r : res) {
+                printf("%-7s %10.0f %10s %7d %7d %10.1f %10.1f %12.1f %12.1f\n", r.kind.c_str(), r.footprint / 1048576.0,
+                       r.kind == "stride" ? (std::to_string(r.stride >> 20) + " MiB").c_str() : "random", r.slots, r.steps,
+                       r.ns, r.cycles, r.ns_loaded, r.cycles_loaded);
+            }
+        }
+        if (!opt.csv.empty()) {
+            FILE * f = fopen(opt.csv.c_str(), "w");
+            if (!f) { fprintf(stderr, "cannot write %s\n", opt.csv.c_str()); return 1; }
+            fprintf(f, "device,code_arch,chase,footprint_bytes,stride_bytes,slots,steps,ns_per_step,cycles_per_step,"
+                       "ns_per_step_loaded,cycles_per_step_loaded,check\n");
+            for (const auto & r : res) {
+                fprintf(f, "\"%s\",%d,%s,%zu,%zu,%d,%d,%.3f,%.3f,%.3f,%.3f,%s\n", prop.name, code_arch, r.kind.c_str(), r.footprint,
+                        r.stride, r.slots, r.steps, r.ns, r.cycles, r.ns_loaded, r.cycles_loaded, r.ok ? "PASS" : "FAIL");
+            }
+            fclose(f);
+            printf("\nCSV written to %s\n", opt.csv.c_str());
+        }
+        CUDA_CHECK(cudaStreamDestroy(s));
+        return ok ? 0 : 2;
+    }
 
     // Reference points: graph node overhead and streaming read bandwidth. Streaming for ~2 s first also brings the
     // GPU to its sustained clock before anything is timed.
@@ -578,8 +668,21 @@ int main(int argc, char ** argv) {
             c.mat_bytes = (size_t) c.nexp * c.N * c.rbytes;
             const int nmats = c.glu ? 2 : 1;
             c.bytes_per_call = (double) nmats * c.nused * c.N * c.rbytes;
-            const int batch = c.bytes_per_call > 32e6 ? std::min(opt.batch, 8) : opt.batch;
-            if (c.moe) {
+            int batch = c.bytes_per_call > 32e6 ? std::min(opt.batch, 8) : opt.batch;
+            int npool = 1; // --spread: id slots of batch sets each
+            const bool spread = opt.spread > 0 || opt.spread_gb > 0;
+            if (spread) {
+                // N full weight sets, within the cap and the free memory; every call of a graph takes the next set
+                size_t free_b = 0, total_b = 0;
+                CUDA_CHECK(cudaMemGetInfo(&free_b, &total_b));
+                const double set_b = (double) nmats * c.mat_bytes;
+                const double cap = std::min(opt.spread_max_gb * 1e9, (double) free_b - 0.4e9);
+                const int want = opt.spread_gb > 0 ? std::min(4096, std::max(1, (int) (opt.spread_gb * 1e9 / set_b))) : opt.spread;
+                c.ncopies = std::max(1, std::min(want, (int) (cap / set_b)));
+                batch = std::max(batch, c.ncopies);
+                c.nidsets = batch;
+                npool = opt.reps + 8;
+            } else if (c.moe) {
                 c.ncopies = 1;
                 c.nidsets = batch;
             } else {
@@ -589,15 +692,28 @@ int main(int argc, char ** argv) {
                 while (c.ncopies > 1 && (double) c.ncopies * nmats * c.mat_bytes > 1.2e9) c.ncopies--;
             }
 
-            // weights
+            // weights: one buffer per copy and matrix, or with --spread all copies of a matrix back to back in one buffer,
+            // so that N copies take N times the bytes and sweep one contiguous range of 2 MiB pages
+            const size_t set_stride = (c.mat_bytes + 255) / 256 * 256;
+            if (spread) {
+                for (int m = 0; m < nmats; ++m) {
+                    (m == 0 ? c.w_up : c.w_gate).push_back(dev_buf(set_stride * c.ncopies));
+                }
+            }
             for (int cp = 0; cp < c.ncopies; ++cp) {
                 for (int m = 0; m < nmats; ++m) {
-                    dev_buf b(c.mat_bytes);
+                    uint8_t * w;
+                    if (spread) {
+                        w = (m == 0 ? c.w_up : c.w_gate)[0].as<uint8_t>() + (size_t) cp * set_stride;
+                    } else {
+                        (m == 0 ? c.w_up : c.w_gate).push_back(dev_buf(c.mat_bytes));
+                        w = (m == 0 ? c.w_up : c.w_gate).back().as<uint8_t>();
+                    }
                     const size_t nblocks = c.mat_bytes / type_bs(T);
-                    gen_blocks<<<prop.multiProcessorCount * 32, 256, 0, s>>>(b.as<uint8_t>(), nblocks, T,
+                    gen_blocks<<<prop.multiProcessorCount * 32, 256, 0, s>>>(w, nblocks, T,
                         opt.seed * 1000003ull + (uint64_t) (&sh - SHAPES) * 101 + T * 13 + cp * 7 + m);
                     CUDA_CHECK(cudaGetLastError());
-                    (m == 0 ? c.w_up : c.w_gate).push_back(std::move(b));
+                    (m == 0 ? c.up : c.gate).push_back(w);
                 }
             }
             // activations: float input, llama Q8_1, SoA int8 + float2
@@ -612,10 +728,13 @@ int main(int argc, char ** argv) {
             c.a_ds = dev_buf(nx / 32 * sizeof(float2));
             pascal::quantize_soa<<<(unsigned) ((nx + 255) / 256), 256, 0, s>>>(c.x.as<float>(), c.a_q.as<int8_t>(), c.a_ds.as<float2>(), c.K, c.nvec);
             CUDA_CHECK(cudaGetLastError());
-            // expert ids: nidsets sets of nused distinct experts
+            // expert ids: nidsets sets of nused distinct experts (npool times as many with --spread: slot 0 goes into the
+            // ids buffer, the others are copied there one slot per graph launch)
+            dev_buf ids_pool, ids_counter;
+            std::vector<int> pool_host;
             if (c.moe) {
                 uint64_t h = opt.seed * 31 + 17;
-                for (int st = 0; st < c.nidsets; ++st) {
+                for (int st = 0; st < c.nidsets * npool; ++st) {
                     std::vector<int> pick;
                     while ((int) pick.size() < c.nused) {
                         h = h * 6364136223846793005ull + 1442695040888963407ull;
@@ -624,8 +743,38 @@ int main(int argc, char ** argv) {
                     }
                     c.ids_host.insert(c.ids_host.end(), pick.begin(), pick.end());
                 }
+                if (npool > 1) {
+                    ids_pool = dev_buf(c.ids_host.size() * sizeof(int));
+                    CUDA_CHECK(cudaMemcpy(ids_pool.p, c.ids_host.data(), c.ids_host.size() * sizeof(int), cudaMemcpyHostToDevice));
+                    ids_counter = dev_buf(sizeof(unsigned));
+                    pool_host = c.ids_host;
+                    c.ids_host.resize((size_t) c.nidsets * c.nused);
+                }
                 c.ids = dev_buf(c.ids_host.size() * sizeof(int));
                 CUDA_CHECK(cudaMemcpy(c.ids.p, c.ids_host.data(), c.ids_host.size() * sizeof(int), cudaMemcpyHostToDevice));
+            }
+            std::function<void(cudaStream_t)> prologue;
+            if (npool > 1 && c.moe) {
+                const int n_ids = c.nidsets * c.nused;
+                prologue = [&ids_pool, &ids_counter, &c, n_ids, npool](cudaStream_t st) {
+                    k_ids_refresh<<<1, 256, 0, st>>>(ids_pool.as<int>(), c.ids.as<int>(), ids_counter.as<unsigned>(), n_ids, npool);
+                };
+            }
+            if (spread) {
+                printf("%-14s %-8s spread: %d weight set%s, %.2f GB swept, %s\n", sh.name, tname.c_str(), c.ncopies,
+                       c.ncopies == 1 ? "" : "s", (double) c.ncopies * nmats * c.mat_bytes / 1e9,
+                       c.moe ? "fresh expert ids for every call" : "one set per call in turn");
+                if (prologue && opt.check_only) {
+                    // one refresh must bring slot 1 of the pool into the ids buffer
+                    prologue(s);
+                    CUDA_CHECK(cudaGetLastError());
+                    std::vector<int> got(c.ids_host.size());
+                    CUDA_CHECK(cudaMemcpyAsync(got.data(), c.ids.p, got.size() * sizeof(int), cudaMemcpyDeviceToHost, s));
+                    CUDA_CHECK(cudaStreamSynchronize(s));
+                    const bool ok = std::equal(got.begin(), got.end(), pool_host.begin() + got.size());
+                    printf("%-14s %-8s spread: expert id refresh %s\n", sh.name, tname.c_str(), ok ? "PASS" : "FAIL");
+                    any_fail |= !ok;
+                }
             }
             c.dst = dev_buf((size_t) c.nchan * c.N * sizeof(float));
             CUDA_CHECK(cudaStreamSynchronize(s));
@@ -639,8 +788,8 @@ int main(int argc, char ** argv) {
                     c.check_rows.push_back(c.N - 1);
                 }
             }
-            fetch_rows(c, c.w_up[0], c.w_host_up);
-            if (c.glu) fetch_rows(c, c.w_gate[0], c.w_host_gate);
+            fetch_rows(c, c.up[0], c.w_host_up);
+            if (c.glu) fetch_rows(c, c.gate[0], c.w_host_gate);
 
             // activations as the kernels see them
             std::vector<block_q8_1> yq(nx / 32);
@@ -676,6 +825,7 @@ int main(int argc, char ** argv) {
                 res.shape = sh.name; res.type = tname; res.variant = vd->name;
                 res.K = c.K; res.N = c.N; res.experts = c.moe ? c.nexp : 0; res.used = c.moe ? c.nused : 0;
                 res.calls = sh.calls; res.bytes = c.bytes_per_call;
+                res.ncopies = c.ncopies; res.set_bytes = (double) c.ncopies * nmats * c.mat_bytes;
 
                 std::function<void(cudaStream_t, int)> launch;
                 const void * func = nullptr;
@@ -712,8 +862,8 @@ int main(int argc, char ** argv) {
                     launch = [&c, a, pr, T](cudaStream_t st, int j) {
                         llama::call_args b = a;
                         const int cp = j % c.ncopies;
-                        b.vx = c.w_up[cp].p;
-                        b.vgate = c.glu ? c.w_gate[cp].p : nullptr;
+                        b.vx = c.up[cp];
+                        b.vgate = c.glu ? c.gate[cp] : nullptr;
                         b.ids = c.moe ? c.ids.as<int>() + (j % c.nidsets) * c.nused : nullptr;
                         if (pr) llama_launch_rt<llama::MMVQ_PARAMETERS_PASCAL_DP4A>(T, b, st);
                         else    llama_launch_rt<llama::MMVQ_PARAMETERS_GENERIC>(T, b, st);
@@ -726,7 +876,15 @@ int main(int argc, char ** argv) {
                     int lpr = 1;
                     while (lpr < 32 && lpr * 2 <= chunks) lpr *= 2;
                     if (chunks % lpr) continue;
-                    if (vd->kind == V_ST && (lpr * vd->C * type_bs(T)) % 16) continue;
+                    // staging loads: the widest of 16, 8, 4 bytes that divides the segment and the row (8 and 4: Q6_K only)
+                    int su = 0;
+                    if (vd->kind == V_ST) {
+                        const size_t seg = (size_t) lpr * vd->C * type_bs(T);
+                        for (int u : { 16, 8, 4 }) {
+                            if (seg % u == 0 && c.rbytes % u == 0) { su = u; break; }
+                        }
+                        if (su == 0 || (su != 16 && T != T_Q6_K)) continue;
+                    }
                     int lpr_log2 = 0;
                     while ((1 << lpr_log2) < lpr) lpr_log2++;
                     pascal::args p;
@@ -739,15 +897,15 @@ int main(int argc, char ** argv) {
                     p.dst_chan_stride = c.N;
                     p.lpr_log2 = lpr_log2;
                     p.niter = chunks / lpr;
-                    func = vd->kind == V_ST ? st_kernel_rt(T, c.glu, vd->R, vd->C) : rows_kernel_rt(T, c.glu, vd->R, vd->C);
+                    func = vd->kind == V_ST ? st_kernel_rt(T, c.glu, vd->R, vd->C, su) : rows_kernel_rt(T, c.glu, vd->R, vd->C);
                     const int rows_per_block = NW * (32 / lpr) * vd->R;
                     grid = dim3((c.N + rows_per_block - 1) / rows_per_block, c.nchan, 1);
                     block = dim3(32, NW, 1);
                     launch = [&c, p, func, grid, block](cudaStream_t st, int j) {
                         pascal::args q = p;
                         const int cp = j % c.ncopies;
-                        q.w = c.w_up[cp].as<uint8_t>();
-                        q.wg = c.glu ? c.w_gate[cp].as<uint8_t>() : nullptr;
+                        q.w = c.up[cp];
+                        q.wg = c.glu ? c.gate[cp] : nullptr;
                         q.ids = c.moe ? c.ids.as<int>() + (j % c.nidsets) * c.nused : nullptr;
                         void * params[] = { &q };
                         CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
@@ -766,7 +924,7 @@ int main(int argc, char ** argv) {
                         for (int cp = 0; cp < c.ncopies; ++cp) {
                             for (int m = 0; m < nmats; ++m) {
                                 dev_buf b(c.mat_bytes);
-                                repack_rl_rt(T, (m == 0 ? c.w_up[cp] : c.w_gate[cp]).as<uint8_t>(), b.as<uint8_t>(), nrows_total, blocks, s);
+                                repack_rl_rt(T, m == 0 ? c.up[cp] : c.gate[cp], b.as<uint8_t>(), nrows_total, blocks, s);
                                 CUDA_CHECK(cudaGetLastError());
                                 (m == 0 ? rl_up : rl_gate).push_back(std::move(b));
                             }
@@ -803,11 +961,11 @@ int main(int argc, char ** argv) {
                         for (int cp = 0; cp < c.ncopies; ++cp) {
                             for (int m = 0; m < nmats; ++m) {
                                 dev_buf qs(nrows_total * c.K / 2), dm(nrows_total * ngroups * 4);
-                                const dev_buf & src = m == 0 ? c.w_up[cp] : c.w_gate[cp];
+                                const uint8_t * src = m == 0 ? c.up[cp] : c.gate[cp];
                                 const size_t nb = nrows_total * ngroups;
                                 const unsigned g = (unsigned) ((nb + 255) / 256);
-                                if (S == 1) pascal::repack_soa<1><<<g, 256, 0, s>>>(src.as<uint8_t>(), qs.as<uint8_t>(), dm.as<uint8_t>(), nrows_total, ngroups);
-                                else        pascal::repack_soa<2><<<g, 256, 0, s>>>(src.as<uint8_t>(), qs.as<uint8_t>(), dm.as<uint8_t>(), nrows_total, ngroups);
+                                if (S == 1) pascal::repack_soa<1><<<g, 256, 0, s>>>(src, qs.as<uint8_t>(), dm.as<uint8_t>(), nrows_total, ngroups);
+                                else        pascal::repack_soa<2><<<g, 256, 0, s>>>(src, qs.as<uint8_t>(), dm.as<uint8_t>(), nrows_total, ngroups);
                                 CUDA_CHECK(cudaGetLastError());
                                 (m == 0 ? soa_qs_up : soa_qs_gate).push_back(std::move(qs));
                                 (m == 0 ? soa_dm_up : soa_dm_gate).push_back(std::move(dm));
@@ -857,7 +1015,11 @@ int main(int argc, char ** argv) {
                 CUDA_CHECK(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&res.blocks_per_sm, func, res.threads, 0));
                 res.grid = (long) grid.x * grid.y;
 
-                // correctness: one call on copy 0 / id set 0
+                // correctness: one call on copy 0 / id set 0 (--spread: the previous variant's timing moved the ids on)
+                if (prologue) {
+                    CUDA_CHECK(cudaMemcpyAsync(c.ids.p, c.ids_host.data(), c.ids_host.size() * sizeof(int), cudaMemcpyHostToDevice, s));
+                    CUDA_CHECK(cudaMemsetAsync(ids_counter.p, 0, sizeof(unsigned), s));
+                }
                 CUDA_CHECK(cudaMemsetAsync(c.dst.p, 0xff, c.dst.n, s));
                 launch(s, 0);
                 CUDA_CHECK(cudaGetLastError());
@@ -872,7 +1034,7 @@ int main(int argc, char ** argv) {
                 any_fail |= !res.pass;
 
                 if (!opt.check_only) {
-                    const auto t = time_graph(launch, batch, opt.reps, s);
+                    const auto t = time_graph(launch, batch, opt.reps, s, prologue);
                     res.us_med = median(t);
                     res.us_min = *std::min_element(t.begin(), t.end());
                     res.us_max = *std::max_element(t.begin(), t.end());
@@ -992,26 +1154,27 @@ int main(int argc, char ** argv) {
         FILE * f = fopen(opt.csv.c_str(), "w");
         if (!f) { fprintf(stderr, "cannot write %s\n", opt.csv.c_str()); return 1; }
         fprintf(f, "device,code_arch,shape,K,N,experts,used,calls_per_token,type,variant,bytes_per_call,us_median,us_min,us_max,"
-                   "gbs,pct_of_ref,ref_gbs,regs,blocks_per_sm,threads_per_block,grid_blocks,err_over_tol,check\n");
+                   "gbs,pct_of_ref,ref_gbs,regs,blocks_per_sm,threads_per_block,grid_blocks,err_over_tol,check,weight_sets,"
+                   "swept_bytes\n");
         for (const auto & r : results) {
             const double gbs = r.timed ? r.bytes / (r.us_med * 1e3) : 0.0;
-            fprintf(f, "\"%s\",%d,%s,%d,%d,%d,%d,%d,%s,%s,%.0f,%.3f,%.3f,%.3f,%.2f,%.2f,%.1f,%d,%d,%d,%ld,%.4f,%s\n", prop.name, code_arch,
-                    r.shape.c_str(), r.K, r.N, r.experts, r.used, r.calls, r.type.c_str(), r.variant.c_str(), r.bytes, r.us_med, r.us_min,
-                    r.us_max, gbs, 100.0 * gbs / opt.ref_gbs, opt.ref_gbs, r.regs, r.blocks_per_sm, r.threads, r.grid, r.err,
-                    r.pass ? "PASS" : "FAIL");
+            fprintf(f, "\"%s\",%d,%s,%d,%d,%d,%d,%d,%s,%s,%.0f,%.3f,%.3f,%.3f,%.2f,%.2f,%.1f,%d,%d,%d,%ld,%.4f,%s,%d,%.0f\n", prop.name,
+                    code_arch, r.shape.c_str(), r.K, r.N, r.experts, r.used, r.calls, r.type.c_str(), r.variant.c_str(), r.bytes, r.us_med,
+                    r.us_min, r.us_max, gbs, 100.0 * gbs / opt.ref_gbs, opt.ref_gbs, r.regs, r.blocks_per_sm, r.threads, r.grid, r.err,
+                    r.pass ? "PASS" : "FAIL", r.ncopies, r.set_bytes);
         }
         for (const auto & k : combos) {
             const auto & t = totals[k];
             if (t.nshapes != nshapes_sel || opt.check_only) continue;
-            fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,0,0,1,%s,%s,%.0f,%.3f,,,%.2f,%.2f,%.1f,,,,,,%s\n", prop.name, code_arch, k.first.c_str(),
+            fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,0,0,1,%s,%s,%.0f,%.3f,,,%.2f,%.2f,%.1f,,,,,,%s,,\n", prop.name, code_arch, k.first.c_str(),
                     k.second.c_str(), t.bytes, t.us, t.bytes / (t.us * 1e3), 100.0 * t.bytes / (t.us * 1e3) / opt.ref_gbs, opt.ref_gbs,
                     t.pass ? "PASS" : "FAIL");
         }
         if (!opt.check_only) {
-            fprintf(f, "\"%s\",%d,GRAPH_NODE_OVERHEAD,0,0,0,0,0,-,-,0,%.3f,,,,,,,,,,,\n", prop.name, code_arch, node_us);
-            fprintf(f, "\"%s\",%d,STREAM_READ_LDG,0,0,0,0,0,-,-,%zu,,,,%.2f,%.2f,%.1f,,,,,,\n", prop.name, code_arch, (size_t) 256 << 20, read_gbs,
+            fprintf(f, "\"%s\",%d,GRAPH_NODE_OVERHEAD,0,0,0,0,0,-,-,0,%.3f,,,,,,,,,,,,,\n", prop.name, code_arch, node_us);
+            fprintf(f, "\"%s\",%d,STREAM_READ_LDG,0,0,0,0,0,-,-,%zu,,,,%.2f,%.2f,%.1f,,,,,,,,\n", prop.name, code_arch, (size_t) 256 << 20, read_gbs,
                     100.0 * read_gbs / opt.ref_gbs, opt.ref_gbs);
-            fprintf(f, "\"%s\",%d,STREAM_READ_PLAIN,0,0,0,0,0,-,-,%zu,,,,%.2f,%.2f,%.1f,,,,,,\n", prop.name, code_arch, (size_t) 256 << 20,
+            fprintf(f, "\"%s\",%d,STREAM_READ_PLAIN,0,0,0,0,0,-,-,%zu,,,,%.2f,%.2f,%.1f,,,,,,,,\n", prop.name, code_arch, (size_t) 256 << 20,
                     read_plain_gbs, 100.0 * read_plain_gbs / opt.ref_gbs, opt.ref_gbs);
         }
         fclose(f);

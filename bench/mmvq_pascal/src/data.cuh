@@ -38,13 +38,17 @@ static __global__ void gen_blocks(uint8_t * __restrict__ dst, const size_t nbloc
             const float dmin = (0.5f + r1) * (1.0f / 2048.0f);
             *(half2 *) p = __halves2half2(__float2half(d), __float2half(dmin));
             qoff = 4;
+        } else if (type == T_Q6_K) {
+            // d comes last; ql, qh and the int8 scales are filled with random bytes below
+            const float d = (0.5f + r0) * (1.0f / 8192.0f);
+            *(half *) (p + 208) = __float2half(d); // 210-byte blocks: p + 208 is 2-byte aligned
         } else {
             const float d = (0.5f + r0) * (1.0f / 64.0f);
             const float m = -d * (6.0f + 4.0f * r1);
             *(half2 *) p = __halves2half2(__float2half(d), __float2half(m));
             qoff = 4;
         }
-        const int nq = bs - qoff;
+        const int nq = type == T_Q6_K ? 208 : bs - qoff;
         for (int j = 0; j < nq; j += 4) {
             uint32_t h = hash_u32(base + 2 + j);
             for (int k = 0; k < 4 && j + k < nq; ++k) {
@@ -213,6 +217,30 @@ static double ref_dot(int type, const uint8_t * row, const act_host & a, int vec
                     const double t2 = -dmin * mv * d8[ib] * suma;
                     acc += t1 + t2;
                     as += fabs(t1) + fabs(t2);
+                }
+            }
+            break;
+        case T_Q6_K:
+            for (int sb = 0; sb < K / 256; ++sb) {
+                const uint8_t * b = row + (size_t) sb * 210;
+                const double d = half_bits_to_float(rd_u16(b + 208));
+                const uint8_t * ql = b;
+                const uint8_t * qh = b + 128;
+                const int8_t  * sc = (const int8_t *) (b + 192);
+                for (int s = 0; s < 8; ++s) {
+                    const int h = s / 4, k = s % 4;
+                    const int ib = 8 * sb + s;
+                    for (int g = 0; g < 2; ++g) {
+                        int sumi = 0;
+                        for (int l = 16 * g; l < 16 * g + 16; ++l) {
+                            const int lo = ql[64 * h + 32 * (k & 1) + l];
+                            const int q  = ((k < 2 ? lo : lo >> 4) & 15) | (((qh[32 * h + l] >> (2 * k)) & 3) << 4);
+                            sumi += (q - 32) * q8[32 * ib + l];
+                        }
+                        const double t = d * sc[2 * s + g] * d8[ib] * sumi;
+                        acc += t;
+                        as += fabs(t);
+                    }
                 }
             }
             break;

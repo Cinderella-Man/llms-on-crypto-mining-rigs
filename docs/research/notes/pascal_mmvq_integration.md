@@ -21,8 +21,9 @@ Code references:
   kernel would be launched. Operator selection, fusion matching and the routing of expert (`MUL_MAT_ID`) products
   stay as they are. Any call the new kernel doesn't cover falls through to the stock kernel unchanged.
 - **Which types.** Q8_0, Q4_1, Q4_0, Q5_0, Q5_K and IQ4_XS are ported: all of S4-L0's quantized bytes and 96 % of
-  Unsloth's UD-Q4_K_XL (the rest is its BF16 router and a few Q4_K, IQ3_S and Q6_K tensors). Q4_1_64 (a fork-only type)
-  is next.
+  Unsloth's UD-Q4_K_XL (the rest is its BF16 router and a few Q4_K, IQ3_S and Q6_K tensors). Q6_K, the 6-bit rung
+  for files that would otherwise keep Q8_0 (Q101), is on the fork's branch `pascal-p106-v2-q6k` (section 15). Q4_1_64
+  (a fork-only type) is next.
   - The file at the quality bar reads 66 % of its bytes as Q8_0, so Q8_0 carries the largest share of the gain.
   - Q5_0 uses a cheaper way to apply its fifth bit (section 5).
 - **Measured gain.** llama-bench tg128 on 6 P106-090 cards, S4-L0, one binary with the kernels switched off and on:
@@ -622,6 +623,7 @@ and the per-layer allocations of Q36 and Q45 redone with them.
 | 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | done by the norm (Q100, branch `pascal-p106-v2-normq8`, section 8): 287 fewer launches per S4-L0 token on six cards, also the residual adds; tests and logits unchanged on an RTX 3090; rig speed pending |
 | 10 | FP32 activation sums in the Pascal kernels; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | Pascal kernels done (branch `pascal-p106-fp32sums`); batches keep the rescale (`LLAMA_NO_MOE_DOWN_RESCALE=tg`), MMQ's `DS4` layout unchanged; on the laptop no NaN and output identical to the rescaled one (section 8); rig speed and KLD pending |
 | 11 | 2–4 tokens per step for `MUL_MAT` and `MUL_MAT_ID`, each distinct expert read once (Q78) | tests pass; verify-step cost of S4-L0 measured on the rig | kernels and laptop tests done (branch `pascal-p106-v2-multicol`, section 14); rig pending |
+| 12 | Q6_K in the port, 1–4 tokens (Q101) | tests pass; ≥ 130 GB/s on the dense K = 2048 shapes in the microbenchmark; then a Q6_K mix (Q90) on the rig | kernels and tests done (branch `pascal-p106-v2-q6k`, section 15); rig pending |
 
 Steps 9 and 10 are independent of the kernel and can go in any order. The repack of section 7 (Q39) is not planned:
 staged loads made it unnecessary for decode speed.
@@ -832,3 +834,45 @@ rig. Below, `B` is its `bin` directory and `M` the S4-L0 file; S4-L0 runs with `
    against a KL-divergence base saved from the same command with the kernels off; expect the summation-order noise of
    section 9 (mean KLD ~0.06–0.08).
 6. UD-Q4_K_XL (Q5_K and IQ4_XS kernels) with `PARTS=bench`, kernels on and off.
+
+## 15. Q6_K (Q101)
+
+Q90 found that G3 with every Q8_0 tensor except the head in Q6_K costs +0.014 KLD (0.118 against 0.104) for ~0.26 GB
+less per token, so a Q6_K kernel decides whether that saving becomes speed. Without one, Q6_K runs llama.cpp's
+kernel, which reads its 2-byte-aligned blocks with 16-bit loads. The fork's branch `pascal-p106-v2-q6k` (on top of
+`pascal-p106-v2-multicol`) adds Q6_K to the Pascal kernels for 1–4 tokens, `MUL_MAT` and `MUL_MAT_ID`, including the
+gate/GLU fusion and the routed + shared expert launch. The microbenchmark has the same kernel as `q6_K` / `st_r1c1`.
+
+- **Layout.** A super-block of 256 weights is 210 bytes: 128 bytes `ql` (low 4 bits), 64 bytes `qh` (high 2 bits), 16
+  int8 scales (one per 16 weights) and an FP16 `d`. It is only 2-byte aligned, so Q6_K has no direct-load shape.
+- **Staging.** One super-block per lane, one row per lane group, as Q5_K. The lane group stages its segment with
+  16-byte loads where the rows and the segment allow it (K a multiple of 2,048: Flint's attention, shared expert gate/up
+  and head) and with 8- or 4-byte loads where they are only 8- or 4-byte aligned (K = 1,024: the shared expert's down;
+  K = 512: an expert's down). A lane whose block starts at an odd half-word in shared memory reads the 53 words around
+  it and shifts them by 2 bytes, one `PRMT` per word.
+- **Fused gate/up.** Staging both matrices of a row would take 54 KB of shared memory per block, over Pascal's 48 KB,
+  so the kernel stages the up segment, multiplies, then stages the gate segment into the same buffer: 27 KB per block,
+  3 blocks per SM.
+- **Arithmetic.** A 6-bit code is a nibble of `ql` OR-ed with a 2-bit field of `qh` moved into bits 4–5 (masks and one
+  shift), one dp4a per 4 weights. The offset −32 comes from the activations' half-block sums (32 × the sum of 16 int8
+  values, computed once per activation load and shared by all rows) instead of llama.cpp's second dp4a per word with
+  `0xE0E0E0E0`. The sums come from the int8 values, so Q6_K is safe from the FP16 overflow of section 8 as well.
+- **Cost.** In the sm_61 SASS the main loop needs 3.2 lane-instructions per weight byte for a plain product and 2.9
+  for the fused gate/up (Q5_K: 3.1 and 2.8, measured at 120–128 GB/s), 3.5 and 3.9 with 8- and 4-byte staging. The
+  single-token kernel takes 132–138 registers (Q5_K 142), without spills. Expected 120–135 GB/s. At 125 GB/s Q6_K
+  would save ~0.5 ms per token over Q8_0 at 150 GB/s on G3-6's 0.875 GB, at 140 GB/s ~1.3 ms (the research note's
+  estimate).
+- **Unchanged.** The other types' kernels compile to the same SASS as on `pascal-p106-v2-multicol` (155 of 155).
+- **Tests.** Q6_K joins the Flint-shape cases of sections 9 and 14 (1–4 tokens, expert products, fused gate/up, large
+  activations, routed + shared, repeated expert ids).
+  - On an RTX 3090 with the kernels forced, natively (sm_86) and through the compute_61 PTX, with staged activations
+    off and on: the 1–4-token cases of the seven types pass (697 products, 295 fusions, 25 routed + shared launches),
+    as do S4-L0's and UD-Q4_K_XL's exported products at 2–4 tokens (UD-Q4_K_XL's own Q6_K expert down-projections
+    included) and the bit-identity check (147 comparisons, Q6_K included).
+  - With Q6_K's result scaled by 1.1, 57 of its 75 products fail with the kernels forced (the other 18 have K = 256,
+    whose 210-byte rows the kernels leave to llama.cpp), all 8 fused and routed + shared cases fail, and so does
+    UD-Q4_K_XL's Q6_K product in each replay; with the kernels off everything passes.
+  - In the microbenchmark every Q6_K case matches the CPU reference at all eight shapes.
+- **Rig.** The microbenchmark gate first (≥ 130 GB/s on the dense K = 2,048 shapes; command in
+  [bench/mmvq_pascal](../../../bench/mmvq_pascal/README.md#q6_k-q101)). If it passes, llama-bench tg128 of a G3-6 mix
+  (G3 with its non-head Q8_0 tensors in Q6_K) against G3, kernels on, on the same cards.

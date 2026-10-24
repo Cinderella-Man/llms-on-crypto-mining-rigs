@@ -2,7 +2,7 @@
 //
 // Copied from llama.cpp (https://github.com/ggml-org/llama.cpp) at commit d77256999 (2026-10-22):
 //   ggml/src/ggml-cuda/mmvq.cu       mul_mat_vec_q, calc_nwarps, calc_rows_per_block, the small-K rule
-//   ggml/src/ggml-cuda/vecdotq.cuh   get_int_b2/b4, get_int_from_table_16, vec_dot_q4_0/q4_1/q5_0/q8_0/q5_K/iq4_xs_q8_1
+//   ggml/src/ggml-cuda/vecdotq.cuh   get_int_b2/b4, get_int_from_table_16, vec_dot_q4_0/q4_1/q5_0/q8_0/q5_K/iq4_xs/q6_K_q8_1
 //                                    and their _impl functions
 //   ggml/src/ggml-common.h           kvalues_iq4nl
 //   ggml/src/ggml-cuda/quantize.cu   quantize_q8_1
@@ -13,7 +13,7 @@
 // llama.cpp is MIT-licensed, Copyright (c) 2023-2026 The ggml authors.
 //
 // Only the paths a Pascal (compute 6.1) card takes for one token (ncols_dst == 1) with Q4_0, Q4_1, Q5_0, Q8_0, Q5_K,
-// IQ4_XS and Q4_1_64 weights are kept. Code for other architectures (HIP, MUSA, DGX Spark prefetch, NVFP4 scales, PDL) and
+// IQ4_XS, Q6_K and Q4_1_64 weights are kept. Code for other architectures (HIP, MUSA, DGX Spark prefetch, NVFP4 scales, PDL) and
 // GLU variants other than SwiGLU are left out; everything kept is unchanged, so the arithmetic, the summation order
 // and the launch shapes are the same as llama.cpp's. Compile with -use_fast_math, as llama.cpp does.
 #pragma once
@@ -111,6 +111,7 @@ static __device__ __forceinline__ int get_int_b4(const void * x, const int & i32
 #define VDR_Q5_0_Q8_1_MMVQ 2
 #define VDR_Q5_K_Q8_1_MMVQ 2
 #define VDR_IQ4_XS_Q8_1_MMVQ 4
+#define VDR_Q6_K_Q8_1_MMVQ 2
 
 static const __device__ int8_t kvalues_iq4nl[16] = {
     -127, -104, -83, -65, -49, -35, -22, -10, 1, 13, 25, 38, 53, 69, 89, 113,
@@ -441,6 +442,68 @@ static __device__ __forceinline__ float vec_dot_iq4_xs_q8_1(
     return d * sumi;
 }
 
+// contiguous v/x values
+static __device__ __forceinline__ float vec_dot_q6_K_q8_1_impl_mmvq(
+    const int * __restrict__ vl, const int * __restrict__ vh, const int * __restrict__ u, const int8_t * __restrict__ scales,
+    const float & d, const float * __restrict__ d8) {
+
+    float sumf = 0.0f;
+
+#pragma unroll
+    for (int i = 0; i < QR6_K; ++i) {
+        const int sc = scales[4*i];
+
+        int sumi = 0;
+#pragma unroll
+        for (int j = 0; j < VDR_Q6_K_Q8_1_MMVQ; ++j) {
+            const int vil = (vl[j] >> (4*i)) & 0x0F0F0F0F;
+            const int vih = ((vh[j] >> (4*i)) << 4) & 0x30303030;
+
+            // (vil | vih) - 32 for each byte, the - 32 is done by the second dp4a
+            sumi = ggml_cuda_dp4a(vil | vih,  u[VDR_Q6_K_Q8_1_MMVQ*i + j], sumi); // SIMD dot product
+            sumi = ggml_cuda_dp4a(0xE0E0E0E0, u[VDR_Q6_K_Q8_1_MMVQ*i + j], sumi);
+        }
+
+        sumf += d8[i] * (sumi * sc);
+    }
+
+    return d*sumf;
+}
+
+static __device__ __forceinline__ float vec_dot_q6_K_q8_1(
+    const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs) {
+
+    const block_q6_K * bq6_K = (const block_q6_K *) vbq + kbx;
+
+    const int bq8_offset = 2 * QR6_K * (iqs / (QI6_K/2)) + (iqs % (QI6_K/2)) / (QI6_K/4);
+    const int scale_offset = (QI6_K/4) * (iqs / (QI6_K/2)) + (iqs % (QI6_K/2)) / (QI6_K/8);
+    const int vh_shift = 2 * ((iqs % (QI6_K/2)) / (QI6_K/4));
+
+    int vl[VDR_Q6_K_Q8_1_MMVQ];
+    int vh[VDR_Q6_K_Q8_1_MMVQ];
+#pragma unroll
+    for (int j = 0; j < VDR_Q6_K_Q8_1_MMVQ; ++j) {
+        vl[j] = get_int_b2(bq6_K->ql, iqs + j);
+        vh[j] = get_int_b2(bq6_K->qh, (QI6_K/4) * (iqs / (QI6_K/2)) + iqs % (QI6_K/4) + j) >> vh_shift;
+    }
+
+    const int8_t * scales = bq6_K->scales + scale_offset;
+
+    int    u[VDR_Q6_K_Q8_1_MMVQ*QR6_K];
+    float d8[QR6_K];
+
+#pragma unroll
+    for (int i = 0; i < QR6_K; ++i) {
+#pragma unroll
+        for (int j = 0; j < VDR_Q6_K_Q8_1_MMVQ; ++j) {
+            u[VDR_Q6_K_Q8_1_MMVQ*i + j] = get_int_b4(bq8_1[bq8_offset + 2*i].qs, iqs % QI8_1 + j);
+        }
+        d8[i] = __low2float(bq8_1[bq8_offset + 2*i].ds);
+    }
+
+    return vec_dot_q6_K_q8_1_impl_mmvq(vl, vh, u, scales, bq6_K->d, d8);
+}
+
 // ---- mmvq.cu -------------------------------------------------------------------------------------------------
 
 typedef float (*vec_dot_q_cuda_t)(const void * __restrict__ vbq, const block_q8_1 * __restrict__ bq8_1, const int & kbx, const int & iqs);
@@ -454,6 +517,7 @@ static constexpr __device__ vec_dot_q_cuda_t get_vec_dot_q_cuda(int type) {
         case T_Q5_0:    return vec_dot_q5_0_q8_1;
         case T_Q5_K:    return vec_dot_q5_K_q8_1;
         case T_IQ4_XS:  return vec_dot_iq4_xs_q8_1;
+        case T_Q6_K:    return vec_dot_q6_K_q8_1;
         default:        return nullptr;
     }
 }
@@ -467,6 +531,7 @@ static constexpr __host__ __device__ int get_vdr_mmvq(int type) {
         case T_Q5_0:    return VDR_Q5_0_Q8_1_MMVQ;
         case T_Q5_K:    return VDR_Q5_K_Q8_1_MMVQ;
         case T_IQ4_XS:  return VDR_IQ4_XS_Q8_1_MMVQ;
+        case T_Q6_K:    return VDR_Q6_K_Q8_1_MMVQ;
         default:        return 1;
     }
 }
