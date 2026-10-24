@@ -89,3 +89,8 @@ the GPU instead of sending 150,000 scores per token over the slow link. Miner S4
 - [docs/mining_rig.md](docs/mining_rig.md) (hardware, measured), [docs/setup.md](docs/setup.md) (OS, driver, CUDA,
   llama.cpp), [docs/research/](docs/research/) (surveys and research notes), [scripts/](scripts/) (everything used to
   measure).
+
+## License
+
+The scripts, benchmarks and documentation in this repository are released under the [MIT License](LICENSE). Model
+weights, llama.cpp and NVIDIA's libraries keep their own licences: Flint is Apache-2.0, llama.cpp is MIT.
