@@ -23,6 +23,11 @@ there, against a reference model, with the token-level detail to see where a dif
   with a bootstrap interval over chunks, by position and by token class (tool schemas, user turns, tool output,
   reasoning, calls, answers, markup, the first token after each `</think>`, and long-range copies: tokens that end an
   8-token run first seen more than 512 tokens earlier, the needles only the global-attention layers can reach).
+- **`analyze.py --pooled --diff A-B,...`** adds token-pooled ratios (sums over a group's tokens) for read, written,
+  tool-schema, tool-output and user tokens, and paired differences between two files in units of the reference
+  file's KLD on each group. Intervals and standard errors come both from chunks and from clusters of chunks:
+  conversations of the same scenario share their tool schemas, so chunks whose token prefixes agree into the scored
+  half are resampled together (Q106's 24 chunks form 15 such clusters).
 - **`stop_decision.py`** reads the same dumps at the positions that decide how long Flint reasons: every `</think>`
   that closes a reasoning block (where the producing model chose to stop) and every hesitation marker in the
   reasoning ("wait", "but", "maybe", "actually", ...: the word list of [answer_time](../answer_time/lengths.py), at

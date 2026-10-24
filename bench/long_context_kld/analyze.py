@@ -2,7 +2,8 @@
 # Long-context KLD analysis: per-token dumps of llama-perplexity --kl-divergence (LLAMA_KLD_DUMP, see README.md) for
 # several files against one reference, compared chunk by chunk with a reference file (UD-Q4_K_XL in Q106).
 #
-#   analyze.py --ref NAME [--chunks CHUNKS.jsonl --model MODEL.gguf] [--only-chunks 0,1,3,...] NAME=DUMP.tsv [...]
+#   analyze.py --ref NAME [--chunks CHUNKS.jsonl --model MODEL.gguf] [--only-chunks 0,1,3,...] [--pooled]
+#              [--diff A-B,C-D] NAME=DUMP.tsv [...]
 #
 # For every file: mean KLD and same-top rate over the scored tokens; the paired comparison with --ref by chunk (mean of
 # the per-chunk ratios is not used: the ratio of means, with a bootstrap interval over chunks, and the mean and
@@ -12,6 +13,11 @@
 # that already appeared ending more than 512 tokens earlier). Every dump's token ids are checked against the chunks.
 # --only-chunks keeps those chunks of dumps made on a full text and renumbers them in that order, to compare with dumps
 # made on a subset_eval.py subset (whose chunks.jsonl then goes to --chunks).
+# With --chunks, --pooled adds token-pooled ratios (sums over the group's tokens) for read, written, tool-schema, tool
+# output and user tokens, with bootstrap intervals over chunks and over clusters of chunks: chunks whose token prefixes
+# agree into the scored half (same scenario, same tool schemas) are not independent, so they are resampled together.
+# --diff A-B adds the paired difference of two files on the same groups in units of --ref's KLD there,
+# sum(A - B) / sum(ref), with standard errors over chunks and over those clusters.
 # Needs numpy (and gguf-py with --model).
 import argparse, json, sys
 from collections import defaultdict
@@ -24,6 +30,10 @@ CLASSES = ['tools/system', 'user', 'tool output', 'reasoning', 'call', 'answer',
 # what the model reads (prefilled, never sampled in an agent loop) and what it writes (sampled)
 GROUPS = {'read (tools, user, tool output)': ['tools/system', 'user', 'tool output'],
           'written (reasoning, calls, answers)': ['reasoning', 'call', 'answer']}
+
+
+POOLED = {'read': ['tools/system', 'user', 'tool output'], 'written': ['reasoning', 'call', 'answer'],
+          'tool schemas and system text': ['tools/system'], 'tool output': ['tool output'], 'user': ['user']}
 
 
 def load_dump(path):
@@ -154,10 +164,47 @@ def paired(kld_by_chunk, ref_by_chunk, rng, n_boot=2000):
     return ratio, np.percentile(boots, [2.5, 97.5]), d.mean(), d.std(ddof=1) / np.sqrt(len(d))
 
 
+def prefix_clusters(token_lists, min_shared):
+    """groups of chunk indices linked by a shared token prefix of at least min_shared tokens (union-find)"""
+    arr = [np.asarray(t) for t in token_lists]
+    par = list(range(len(arr)))
+
+    def find(x):
+        while par[x] != x:
+            par[x] = par[par[x]]
+            x = par[x]
+        return x
+    for i in range(len(arr)):
+        for j in range(i + 1, len(arr)):
+            m = min(len(arr[i]), len(arr[j]))
+            neq = np.nonzero(arr[i][:m] != arr[j][:m])[0]
+            if (neq[0] if len(neq) else m) >= min_shared:
+                par[find(i)] = find(j)
+    groups = defaultdict(list)
+    for i in range(len(arr)):
+        groups[find(i)].append(i)
+    return sorted(groups.values())
+
+
+def pooled_ratio(sa, sb, groups, rng, n_boot=4000):
+    """sum(a) / sum(b) from per-chunk sums, with a bootstrap that resamples groups of chunks"""
+    ga = np.array([sa[g].sum() for g in groups])
+    gb = np.array([sb[g].sum() for g in groups])
+    idx = rng.integers(0, len(groups), size=(n_boot, len(groups)))
+    return ga.sum() / gb.sum(), np.percentile(ga[idx].sum(1) / gb[idx].sum(1), [2.5, 97.5])
+
+
+def sum_se(s, groups):
+    """standard error of the sum of per-chunk values s, with groups of chunks as the independent units"""
+    g = np.array([s[x].sum() for x in groups])
+    return float(np.sqrt(g.var(ddof=1) * len(g)))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--ref', required=True)
     ap.add_argument('--chunks'); ap.add_argument('--model'); ap.add_argument('--only-chunks')
+    ap.add_argument('--pooled', action='store_true'); ap.add_argument('--diff')
     ap.add_argument('dumps', nargs='+')
     a = ap.parse_args()
     rng = np.random.default_rng(0)
@@ -244,6 +291,53 @@ def main():
             m = cls[c]
             if m.any():
                 print(f'| {c} | ' + ' | '.join(f'{100 * dumps[n]["same_top"][m].mean():.2f} %' for n in names) + ' |')
+    if cls is not None and (a.pooled or a.diff):
+        clusters = prefix_clusters([m['tokens'] for m in meta], int(ref['pos'].min()) + 1)
+        singles = [[c] for c in chunks]
+        gmask = {}
+        for g, members in POOLED.items():
+            m = np.zeros(len(ref), bool)
+            for c in members:
+                m |= cls[c]
+            gmask[g] = m
+        nch = max(chunks) + 1
+
+        def per_chunk_sums(v, m):
+            return np.bincount(ref['chunk'][m], weights=v[m], minlength=nch)
+        print(f'\n{len(clusters)} clusters of chunks sharing a prefix into the scored half: '
+              + ' '.join('[' + ','.join(map(str, g)) + ']' for g in clusters))
+    if cls is not None and a.pooled:
+        print(f'\nToken-pooled ratios to {a.ref} (sum over the group\'s tokens), 95 % bootstrap over {len(chunks)} chunks / '
+              f'over {len(clusters)} clusters:\n')
+        print('| Group | Tokens | ' + ' | '.join(f'{n}/{a.ref}' for n in names if n != a.ref) + ' |')
+        print('|---|---|' + '---|' * (len(names) - 1))
+        for g, m in gmask.items():
+            sb = per_chunk_sums(ref['kld'], m)
+            cells = []
+            for n in names:
+                if n == a.ref:
+                    continue
+                sa = per_chunk_sums(dumps[n]['kld'], m)
+                r, ci = pooled_ratio(sa, sb, singles, rng)
+                _, cc = pooled_ratio(sa, sb, clusters, rng)
+                cells.append(f'{r:.3f} ({ci[0]:.3f}-{ci[1]:.3f} / {cc[0]:.3f}-{cc[1]:.3f})')
+            print(f'| {g} | {m.sum()} | ' + ' | '.join(cells) + ' |')
+    if cls is not None and a.diff:
+        pairs = [x.split('-') for x in a.diff.split(',')]
+        for x in pairs:
+            if len(x) != 2 or x[0] not in dumps or x[1] not in dumps:
+                sys.exit(f'--diff {"-".join(x)}: needs two dump names joined by "-"')
+        print(f'\nPaired differences in units of {a.ref}\'s KLD on the group, sum(A - B) / sum({a.ref}), '
+              f'± SE over {len(chunks)} chunks / over {len(clusters)} clusters:\n')
+        print('| A - B | ' + ' | '.join(gmask) + ' |')
+        print('|---|' + '---|' * len(gmask))
+        for x, y in pairs:
+            cells = []
+            for g, m in gmask.items():
+                s = per_chunk_sums(dumps[x]['kld'] - dumps[y]['kld'], m)
+                base = ref['kld'][m].sum()
+                cells.append(f'{s.sum() / base:+.4f} ± {sum_se(s, singles) / base:.4f} / {sum_se(s, clusters) / base:.4f}')
+            print(f'| {x} - {y} | ' + ' | '.join(cells) + ' |')
     nan = {n: int((~np.isfinite(d['kld'])).sum()) for n, d in dumps.items()}
     print(f'\nNon-finite KLD values: {nan}')
 
