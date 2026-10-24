@@ -18,15 +18,22 @@ import random
 from prompts import TOOL_SYSTEM, shard
 
 
+TYPE_MAP = {"dict": "object", "int": "integer", "float": "number", "bool": "boolean", "list": "array", "tuple": "array",
+            "str": "string", "any": None}
+
+
 def fix_schema(x):
-    """BFCL-style "dict" types to JSON-schema "object", recursively; drop null "required" fields."""
+    """Python-style type names (BFCL's "dict", ToolACE's "int", "float", ...) to JSON-schema types, recursively; drop
+    null "required" fields and "any" types. llama-server rejects a request whose tool schema it cannot parse."""
     if isinstance(x, dict):
         out = {}
         for k, v in x.items():
             if k == "required" and v is None:
                 continue
-            if k == "type" and v == "dict":
-                v = "object"
+            if k == "type" and isinstance(v, str) and v in TYPE_MAP:
+                v = TYPE_MAP[v]
+                if v is None:
+                    continue
             out[k] = fix_schema(v)
         return out
     if isinstance(x, list):

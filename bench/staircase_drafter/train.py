@@ -6,7 +6,8 @@ FLINT_DIR holds flint_weights.py's output. The schedule is time-based: linear wa
 --minutes, so a run ends on time whatever the GPU. Every 3 % of the sequences (every 33rd) are held out for validation.
 OUT_DIR gets head.pt (the weights with the best validation acceptance of the first window, without Flint's embedding
 table), head-last.pt, config.json, log.jsonl and ckpt.pt (weights, optimizer and scaler state, step and elapsed time,
-written every --ckpt-every minutes). --resume continues from ckpt.pt: the time budget counts the time already spent, so
+written every --ckpt-every minutes). Creating OUT_DIR/STOP ends the run early with its final evaluation and save.
+--resume continues from ckpt.pt: the time budget counts the time already spent, so
 a larger --minutes extends a run, and new --feats files continue it on more data.
 """
 import argparse
@@ -290,7 +291,7 @@ def main():
             if b is None:
                 break
             elapsed = time.time() - t_start
-            if elapsed > budget:
+            if elapsed > budget or os.path.exists(os.path.join(args.out, "STOP")):
                 done = True
                 stop.set()
                 break

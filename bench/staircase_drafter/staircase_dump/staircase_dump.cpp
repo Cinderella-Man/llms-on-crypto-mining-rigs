@@ -21,6 +21,9 @@
 //   the others:
 //         fp16 scale[n_tok - b], uint8 h[n_tok - b][n_embd]
 //   int32 top_ids[n_gen][k], float32 top_lp[n_gen][k]   n_gen = n_tok - n_prompt; row i predicts generated token i
+// DUMP_GPU_TOPK=1 computes the top-k log-probabilities on the card holding the output head (a backend sampler: log-softmax
+// over the whole vocabulary, top-k, gather), so ~160 B per position cross the PCIe link instead of all logits (600 KB);
+// use -b equal to -ub (every position is an output, and the backend builds one chain per possible output row).
 // DUMP_OUT2 gets a second copy of each record with only the DUMP_LAYERS2 layers (a subset of DUMP_LAYERS), e.g. a
 // training subset on a fast disk next to a superset on a large one.
 // FP8 is E4M3 (torch.float8_e4m3fn) with one scale per row: x = fp8 * scale, scale = max|x| / 448. Earlier prompt
@@ -34,6 +37,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <chrono>
 #include <clocale>
 #include <cmath>
 #include <cstdint>
@@ -174,6 +178,56 @@ static std::vector<int32_t> scan_and_trim(const char * path, bool verbose) {
     return ids;
 }
 
+// backend sampler that leaves the top-k log-probabilities over the whole vocabulary (in data->logits) and their token
+// ids (in data->candidates); the CPU fallback only keeps the k largest logits
+struct toplp_ctx {
+    int32_t k;
+};
+
+static const char * toplp_name(const llama_sampler * /*smpl*/) {
+    return "q20-top-logprobs";
+}
+
+static void toplp_apply(llama_sampler * smpl, llama_token_data_array * cur_p) {
+    const size_t k = std::min<size_t>(((toplp_ctx *) smpl->ctx)->k, cur_p->size);
+    std::partial_sort(cur_p->data, cur_p->data + k, cur_p->data + cur_p->size,
+                      [](const llama_token_data & a, const llama_token_data & b) { return a.logit > b.logit; });
+    cur_p->size   = k;
+    cur_p->sorted = true;
+}
+
+static void toplp_free(llama_sampler * smpl) {
+    delete (toplp_ctx *) smpl->ctx;
+}
+
+static bool toplp_backend_init(llama_sampler * /*smpl*/, ggml_backend_buffer_type_t /*buft*/, uint32_t /*n_out*/) {
+    return true;
+}
+
+static void toplp_backend_apply(llama_sampler * smpl, ggml_context * ctx, ggml_cgraph * /*gf*/, llama_sampler_data * data) {
+    const int32_t k = ((toplp_ctx *) smpl->ctx)->k;
+    ggml_tensor * logits = ggml_reshape_1d(ctx, data->logits, ggml_nelements(data->logits));
+    ggml_tensor * lp     = ggml_log(ctx, ggml_soft_max(ctx, logits));
+    ggml_tensor * top    = ggml_top_k(ctx, logits, k);
+    data->logits     = ggml_get_rows(ctx, ggml_reshape_2d(ctx, lp, 1, lp->ne[0]), top);
+    data->candidates = top;
+}
+
+static llama_sampler_i toplp_iface = {
+    /* .name              = */ toplp_name,
+    /* .accept            = */ nullptr,
+    /* .apply             = */ toplp_apply,
+    /* .reset             = */ nullptr,
+    /* .clone             = */ nullptr,
+    /* .free              = */ toplp_free,
+    /* .backend_init      = */ toplp_backend_init,
+    /* .backend_accept    = */ nullptr,
+    /* .backend_apply     = */ toplp_backend_apply,
+    /* .backend_set_input = */ nullptr,
+    /* .backend_reset     = */ nullptr,
+    /* .copy_state        = */ nullptr,
+};
+
 template <typename F> static void parallel_for(int n, int n_threads, F f) {
     std::atomic<int> next{0};
     std::vector<std::thread> ts;
@@ -240,9 +294,28 @@ int main(int argc, char ** argv) {
     llama_numa_init(params.numa);
     params.warmup = false;
 
-    auto llama_init = common_init_from_params(params);
-    llama_model   * model = llama_init->model();
-    llama_context * ctx   = llama_init->context();
+    const bool gpu_topk = getenv("DUMP_GPU_TOPK") && atoi(getenv("DUMP_GPU_TOPK")) != 0;
+    llama_model   * model = nullptr;
+    llama_context * ctx   = nullptr;
+    common_init_result_ptr llama_init;
+    llama_sampler_seq_config sampler_cfg = {0, nullptr};
+    if (gpu_topk) {
+        model = llama_model_load_from_file(params.model.path.c_str(), common_model_params_to_llama(params));
+        if (model != nullptr) {
+            llama_context_params cparams  = common_context_params_to_llama(params);
+            cparams.embeddings            = true;
+            cparams.n_outputs_max_per_seq = cparams.n_batch;
+            sampler_cfg.sampler = llama_sampler_chain_init(llama_sampler_chain_default_params());
+            llama_sampler_chain_add(sampler_cfg.sampler, llama_sampler_init(&toplp_iface, new toplp_ctx{k}));
+            cparams.samplers   = &sampler_cfg;
+            cparams.n_samplers = 1;
+            ctx = llama_init_from_model(model, cparams);
+        }
+    } else {
+        llama_init = common_init_from_params(params);
+        model = llama_init->model();
+        ctx   = llama_init->context();
+    }
     if (model == nullptr || ctx == nullptr) {
         fprintf(stderr, "failed to load the model\n");
         return 1;
@@ -271,6 +344,8 @@ int main(int argc, char ** argv) {
     std::ifstream in(in_path);
     std::string line;
     int n_seq = 0;
+    int64_t n_done_tok = 0;
+    const auto t_start = std::chrono::steady_clock::now();
     while (std::getline(in, line)) {
         std::istringstream ss(line);
         int32_t seq_id = 0, n_prompt = 0;
@@ -350,7 +425,24 @@ int main(int argc, char ** argv) {
             }
             // position p predicts token p + 1: rows n_prompt - 1 .. n_tok - 2 predict the generated tokens
             const int32_t g0 = std::max(0, n_prompt - 1 - i0), g1 = std::min(n, n_tok - 1 - i0);
-            if (g0 < g1) {
+            if (g0 < g1 && gpu_topk) {
+                for (int32_t j = g0; j < g1; ++j) {
+                    const float *       lps = llama_get_sampled_logits_ith(ctx, j);
+                    const llama_token * ids = llama_get_sampled_candidates_ith(ctx, j);
+                    const int32_t       c   = (int32_t) llama_get_sampled_logits_count_ith(ctx, j);
+                    std::vector<std::pair<float, int32_t>> best;
+                    for (int32_t i = 0; i < c; ++i) {
+                        best.emplace_back(lps[i], ids[i]);
+                    }
+                    std::sort(best.begin(), best.end(), [](auto & a, auto & b) { return a.first > b.first; });
+                    best.resize(k, {-INFINITY, 0});
+                    const size_t g = (size_t) (i0 + j - (n_prompt - 1));
+                    for (int i = 0; i < k; ++i) {
+                        top_ids[g * k + i] = best[i].second;
+                        top_lp[g * k + i]  = best[i].first;
+                    }
+                }
+            } else if (g0 < g1) {
                 parallel_for(g1 - g0, n_thr, [&](int c) {
                     const int32_t j = g0 + c;
                     const float * logits = llama_get_logits_ith(ctx, j);
@@ -421,15 +513,23 @@ int main(int argc, char ** argv) {
             write_record(out2, sel2);
         }
         ++n_seq;
+        n_done_tok += n_tok;
         fprintf(stderr, "sequence %d: %d tokens (%d prompt)\n", seq_id, n_tok, n_prompt);
     }
 
     llama_batch_free(batch);
+    if (gpu_topk) {
+        llama_free(ctx);
+        llama_sampler_free(sampler_cfg.sampler);
+        llama_model_free(model);
+    }
     fclose(out);
     if (out2) {
         fclose(out2);
     }
-    fprintf(stderr, "done: %d sequences\n", n_seq);
+    const double secs = std::chrono::duration<double>(std::chrono::steady_clock::now() - t_start).count();
+    fprintf(stderr, "done: %d sequences, %lld tokens in %.1f s (%.0f tokens/s, model loading excluded)\n", n_seq,
+            (long long) n_done_tok, secs, n_done_tok / std::max(secs, 1e-9));
     llama_backend_free();
     return 0;
 }
