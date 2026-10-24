@@ -512,8 +512,11 @@ Changes #2 and #3 exist in `llama-pipespec`, on the fork's branch `pascal-p106-v
   device-sampled output of `slot_src`, which may still be in flight. When a slot's graph is allocated, the context looks
   up the token input's copy on the one card that reads the token ids (`ggml_backend_sched_get_input_copy`). For a fed
   submission the scheduler skips that copy's upload (`ggml_backend_sched_set_input_skip`; in mode 2 the packed upload
-  goes around it), and the context queues `ggml_backend_tensor_copy_async` from `slot_src`'s sampled-id tensor on the last
-  card to it: a 4-byte peer copy on the last card's stream, whose event card 1's stream waits for. The host does not wait.
+  goes around it). Card 1's stream then waits for `slot_src`'s output event, which follows the sampled id's copy into
+  pinned host memory on the last card, and uploads the 4 bytes from there (fork commit `ae0d40c1f`). The host does not
+  wait. The first version queued a peer copy on the last card's stream instead. There it waited for everything submitted
+  to that card since, which in streams mode is the other conversations' tokens, so every fed token drained the pipeline.
+  The rig measured 22 tok/s at N = 4 and at N = 8, against 42 and 66 without feeding (Q156).
   It refuses with an error, before anything is computed for the token, when the CPU or more than one card reads the token
   ids (the lookup on the CPU, or per-layer token embeddings elsewhere) or the source has no one-token sampler output.
 - **The executor** (`--pipe-feed`, job key `feed`):

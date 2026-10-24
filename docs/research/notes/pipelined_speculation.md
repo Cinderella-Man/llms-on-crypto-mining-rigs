@@ -369,6 +369,15 @@ llama-server -m <gguf> -ngl 99 -fa on -c 262144 -bs --pipe-depth 3 [--pipe-guess
   host time per guess.
 - **Pipe slots:** 2 × (depth + 1). Each holds the compute buffers of a one-token graph on every card. A model with
   sliding-window layers needs `-ub` of at least that many (the default 512 is enough).
+- **Floor** (`--pipe-floor N`, Q154): when the guesser has nothing, a filler token (the last one in the window) keeps N
+  guesses in flight. It is almost always wrong, but idle cards drop to their 1,354 MHz base clock: with every guess
+  wrong at depth 3, nine cards still ran 1.24× plain decoding, from the clocks alone. `llama-pipespec` takes
+  `--pipe-floor` (job key `floor`) too.
+- **KV steps** (Q153): each time n_kv grows by a step (256 cells), every pipe slot's graph is rebuilt and its CUDA
+  graphs re-captured once. On the rig at depth 8 that is 18 tokens at about +9.7 ms each. The packed upload buffers
+  now grow to twice their size, so they are rarely replaced (replacing them synchronized every card; fork commit
+  `e3f497d6f`). `LLAMA_KV_PAD=1024` makes the steps four times rarer, at the cost of attention over up to 768 masked
+  cells in the full-attention layers. Plain and pipelined decoding see the same n_kv, so the output stays identical.
 - The server log prints, per request, the guesses and how many were right and wrong ("pipelined = …").
 
 - **Tool requests** (with Q67): on `pascal-p106-v2-pipeserve-tools` (commit `ba83d3a1f`, the server branch plus Q67's
@@ -592,6 +601,28 @@ What to read:
 - **The tool request:** "auto" with backend sampling at depth 3 against depth 0. The log's "pipelined" line counts the
   guesses before the call; the call itself runs batched.
 - **Fallback:** a request that does not qualify (penalties on, `n_probs`) shows no guesses.
+
+**4c. The fixes after the first rig runs** (the build of `pascal-p106-v2-pipeserve` with Q153, Q154 and Q156,
+`llama.cpp-20261024-2650855b2-pascal-p106-v2-pipeserve`; ~1 h):
+
+```
+B=/opt/llama-builds/llama.cpp-20261024-2650855b2-pascal-p106-v2-pipeserve/bin; M=<K2h-r16>
+# Q156: fed tokens in streams mode (n4-fed and n8-fed must now be at least n4 and n8)
+ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=fedfix-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 CONFIGS=u2f NS='4 8' \
+    ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_hostloop.sh > /tmp/pipespec/fedfix-9c.out 2>&1 < /dev/null &"
+# Q153: depth 8 on the edit prompt, KV steps of 256 against 1024 (traces.py: the slow tokens after each step)
+for pad in 256 1024; do
+  ssh rig "env BIN=$B MODEL=$M TAG=kvpad$pad-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 PROMPTS=edit DEPTHS='8' \
+      ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1 LLAMA_KV_PAD=$pad' bash /tmp/pipespec/rig_run.sh > /tmp/pipespec/kvpad$pad-9c.out 2>&1"
+done
+# Q154: the floor in the server, fillers only (no guesser) at depth 3, against depth 0
+ssh rig "env BIN=$B MODEL=$M TAG=floor-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3' GUESS=none \
+    EXTRA_ARGS='--pipe-floor 3' ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/floor-9c.out 2>&1"
+```
+
+Every identity column must read `yes`. The fed runs report tok/s per configuration in `summary.tsv`. The KV-pad pair
+compares `tok_s` of `cont-d8-edit`, and `traces.py` shows the gap to the next token after the 256-token steps. The floor
+run gives the speed-up of fillers alone over depth 0.
 
 **5. Collect and clean up:**
 

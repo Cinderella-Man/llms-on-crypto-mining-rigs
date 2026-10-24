@@ -17,7 +17,7 @@
 #   scp -r bench/pipespec rig:/tmp/
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5,6,7,8 \
 #       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [DEPTHS='0 1 2 3'] [GUESS=cont] [CTX=32768] \
-#       [MAX_TOKENS=768] [TOOL_MAX_TOKENS=2048] [SEED=1] bash /tmp/pipespec/rig_server.sh \
+#       [MAX_TOKENS=768] [TOOL_MAX_TOKENS=2048] [SEED=1] [EXTRA_ARGS='--pipe-floor 3'] bash /tmp/pipespec/rig_server.sh \
 #       > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # Output in /tmp/pipespec/out/<TAG>/: server-d<D>.log, results.jsonl (one line per request and depth), summary.tsv
 # (tok/s per request and depth, the speed-up over depth 0, guesses right and wrong, identity), printed at the end.
@@ -39,7 +39,7 @@ echo "$(date -Is) start $TAG: depths $DEPTHS, GPUs $GPUS, model $MODEL"
 
 for d in $DEPTHS; do
     pipe=""
-    [ "$d" -gt 0 ] && pipe="--pipe-depth $d --pipe-guess $GUESS"
+    [ "$d" -gt 0 ] && pipe="--pipe-depth $d --pipe-guess $GUESS ${EXTRA_ARGS:-}"
     # shellcheck disable=SC2086
     env ${ENVS:-} CUDA_VISIBLE_DEVICES="$GPUS" "$BIN/llama-server" -m "$MODEL" -ngl 99 -fa on -c "$CTX" -b 512 -ub 128 \
         -np 1 -bs --cache-ram 0 --ctx-checkpoints 0 --no-webui --host 127.0.0.1 --port "$PORT" ${TS:+-ts $TS} \

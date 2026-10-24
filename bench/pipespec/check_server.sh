@@ -9,11 +9,12 @@
 # /v1/chat/completions, at temperature 0 and at the makers' sampling (T 1, top-p 0.95, top-k 20, min-p 0) with seeds
 # SEEDS, NTOK tokens; one streamed request; one request with a stop string taken from the reference's output, so that
 # a stop arrives with guesses in flight. The server log must show guesses, right and wrong ones ("pipelined = ...").
+# FLOORS adds configurations with no guesser and --pipe-floor F (every guess a filler token, Q154).
 #
 # Usage (environment variables):
 #   BIN=<dir with llama-server> MODEL=<gguf> [ARGS='-ngl 99 -fa on -c 8192'] [DEPTHS='3 5 8'] [GUESSES='cont copy']
 #   [PROMPTS='prompts/chat.txt prompts/rewrite.txt prompts/edit.txt'] [SEEDS='1 2'] [NTOK=256] [PORT=8099]
-#   [OUT=/tmp/pipespec_server] [KEEP_SPEED=0] bench/pipespec/check_server.sh
+#   [FLOORS='3'] [OUT=/tmp/pipespec_server] [KEEP_SPEED=0] bench/pipespec/check_server.sh
 # The server runs with -bs (backend sampling) and -np 1. A model with sliding-window layers needs -ub of at least
 # 2 × (depth + 1) in ARGS. Exit status 0 when every configuration matches.
 set -uo pipefail
@@ -28,6 +29,7 @@ NTOK=${NTOK:-256}
 PORT=${PORT:-8099}
 OUT=${OUT:-/tmp/pipespec_server}
 KEEP_SPEED=${KEEP_SPEED:-0}
+FLOORS=${FLOORS-3}
 mkdir -p "$OUT"
 
 # run_config <name> <server args...>: starts the server, sends every request, writes $OUT/<name>.jsonl
@@ -133,6 +135,12 @@ for g in $GUESSES; do
         compare "d$d-$g" "$OUT/reference.jsonl" || fail=1
         grep -o "pipelined = .*" "$OUT/d$d-$g.log" | awk '{g += $3; h += $5; m += $7} END {printf "%24s guesses %d, right %d, wrong %d\n", "", g, h, m}'
     done
+done
+
+for f in $FLOORS; do
+    run_config "floor$f" --pipe-depth "$f" --pipe-guess none --pipe-floor "$f" || fail=1
+    compare "floor$f" "$OUT/reference.jsonl" || fail=1
+    grep -o "pipelined = .*" "$OUT/floor$f.log" | awk '{g += $3; h += $5; m += $7} END {printf "%24s guesses %d, right %d, wrong %d\n", "", g, h, m}'
 done
 
 # temperature 0 is the same with and without --pipe-depth

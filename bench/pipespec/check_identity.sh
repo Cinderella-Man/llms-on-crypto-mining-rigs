@@ -26,7 +26,8 @@
 # Use it with temperature sampling.
 # FEED=1 adds pipe-d0-fed: depth 0 with every next token fed on the devices (llama_pipe_submit_fed), which needs a
 # sampler on the device (--pipe-backend-greedy or --pipe-backend-sample in ARGS) and LLAMA_INPUT_ON_GPU=1.
-# Environment variables of llama.cpp pass through (e.g. LLAMA_PIPE_UPLOAD=0|1|2, LLAMA_INPUT_ON_GPU=1).
+# FLOOR=F adds floorF: depth F, no guesser, every guess a filler token (--pipe-floor, Q154).
+# Environment variables of llama.cpp pass through (e.g. LLAMA_PIPE_UPLOAD=0|1|2, LLAMA_INPUT_ON_GPU=1, LLAMA_KV_PAD=1024).
 # With the layers split over several GPUs (or over virtual devices, GGML_CUDA_DEVICES=N on one GPU) every hop between
 # stages is exercised.
 set -uo pipefail
@@ -45,6 +46,7 @@ SPEED=${SPEED:-1}
 RACE=${RACE:-0}
 RACE_STOP=${RACE_STOP:-</think>}
 FEED=${FEED:-0}
+FLOOR=${FLOOR:-}
 mkdir -p "$OUT"
 
 jobs=$OUT/jobs.txt
@@ -54,6 +56,7 @@ common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
     echo "name=plain mode=plain $common out=$OUT/plain.tok"
     echo "name=pipe-d0 mode=pipe depth=0 guess=none $common"
     [ "$FEED" = 1 ] && echo "name=pipe-d0-fed mode=pipe depth=0 guess=none feed=1 $common"
+    [ -n "$FLOOR" ] && echo "name=floor$FLOOR mode=pipe depth=$FLOOR guess=none floor=$FLOOR $common"
     for D in $DEPTHS; do
         for M in $MISSES; do
             echo "name=oracle-d$D-m$M mode=pipe depth=$D guess=oracle oracle=@plain miss=$M $common"
