@@ -962,3 +962,147 @@ switches below, each one's share:
     Q108 (prefill note, E3/E4), the mask's gain at 32k and beyond (E5's rig run); 2–4-token steps as in section 14.
   - Q110's deep-context run (llama-batched-bench at `-npp 32768`, prefill note E5) and the executor's runs
     (`llama-pipespec`, [pipelined speculation](pipelined_speculation.md)) use the same binaries.
+
+## 17. One launch per MoE layer (Q88)
+
+[bench/persistent_pascal](../../../bench/persistent_pascal/) computes one Flint MoE layer at one token in a single
+persistent kernel, bit-identical to the fork's chain of launches. This section is the design for building that kernel
+into the fork, so that every one-token step runs each MoE layer as one launch. Fork branch:
+`pascal-p106-v2-persistent`, off `pascal-p106-v2-combined` (section 16).
+
+### What a MoE layer costs today
+
+In the combined build a one-token step runs 10 launches per MoE layer, 470 per token:
+
+| # | Launch | Graph nodes |
+|---|---|---|
+| 1 | RMS norm × weight, writing the Q8_1 copy (Q100) | `RMS_NORM`, `MUL` |
+| 2 | router, `mul_mat_vec_f` (256-thread blocks) | `MUL_MAT` |
+| 3 | sigmoid, top-6, normalization (`topk_moe`) | `UNARY`, `RESHAPE`, `ARGSORT`, `VIEW`, `GET_ROWS`, `RESHAPE`, `SUM_ROWS`, `CLAMP`, `DIV`, `RESHAPE` |
+| 4 | routed gate/up + SwiGLU, reading the norm's Q8_1 copy | `RESHAPE`, `MUL_MAT_ID` × 2, `GLU` |
+| 5–6 | quantization of the six SwiGLU outputs; routed down | `MUL_MAT_ID` |
+| 7 | weighted sum of the six experts | `MUL`, `VIEW` × 6, `ADD` × 5 |
+| 8 | shared gate/up + SwiGLU, reading the norm's Q8_1 copy | `MUL_MAT` × 2, `GLU` |
+| 9–10 | quantization of the shared SwiGLU output; shared down + the routed sum | `MUL_MAT`, `ADD` |
+
+That is 35 graph nodes from the FFN norm to `ffn_out`. The residual add (`l_out`) follows, and the next layer's norm
+absorbs it (Q100), except at a card boundary. The node order above is what llama.cpp builds for Flint at one token: the
+routed part comes from `build_moe_ffn`'s explicit expansions, and the shared expert and both adds from the depth-first
+walk of the next layer, which reaches `l_out` through the attention norm before anything else.
+
+### Where it hooks in
+
+- **A graph pattern in the CUDA backend, not a new ggml op.** `ggml_cuda_try_fuse` tries the pattern at every
+  `RMS_NORM` before its other fusions. It walks the 35 nodes structurally:
+  - the norm of one F32 row of 2,048 and its weight;
+  - a router of 2,048 × 256 (F16, BF16 or F32);
+  - the top-k chain that `ggml_cuda_topk_moe_fusion` accepts, with sigmoid gating, weight normalization, no selection
+    bias and no group selection (an optional `SCALE` is read as `scale_val`);
+  - gate, up and down `MUL_MAT_ID` of 256 experts with 512 rows, 6 used, reading those ids;
+  - `ggml_cuda_match_moe_weighted_reduction` with no expert scale;
+  - the shared expert (1,024 rows) on the norm's output and the final `ADD`.
+  - Gate and up may come in either order, as the existing gate/up fusion allows. View nodes that touch none of the
+    layer's tensors may sit in between. `ggml_can_fuse_subgraph_ext` checks that only `ffn_out` is read outside the
+    layer, and that no intermediate is a graph output.
+- **One kernel for the whole layer.** It reads the layer input `x` (the residual stream), the norm weight and the
+  weights, and writes `ffn_out`. The residual add stays where it is, in the next norm.
+- **Memory.** No intermediate of the layer is computed, so the kernel only needs `ffn_out` not to overlap `x`. That
+  always holds, because `x` is read again by the residual add after it. Counters and scratch (router logits, ids and
+  weights, the six SwiGLU outputs and their Q8_1 copies, the six down outputs, the shared expert's activations; ~80 KB)
+  live in a buffer per backend context, allocated at first use. Two contexts on one device therefore never share
+  counters.
+- **Every condition or the old path.** The pattern runs only if all of these hold:
+  - the switch is on;
+  - the GPU is compute 6.1 (or forced);
+  - fusion is enabled and no concurrent streams are active;
+  - one token;
+  - Flint's shapes;
+  - the layer's (gate/up, down, shared) types are an instantiated combination;
+  - weights and rows are 16-byte aligned;
+  - the MoE down rescale is off at one token (`LLAMA_NO_MOE_DOWN_RESCALE=tg` or `1`; with it on, its extra nodes
+    don't match).
+  If any one fails, the nodes run one by one as before.
+- **Q100's residual fusion** (`ADD` + `RMS_NORM` + `MUL`) is skipped when its norm starts a matched layer: the add then
+  runs alone and the layer gets the persistent kernel. In Flint's graph the add before the FFN norm is already fused
+  into the attention output product, so this case does not arise there.
+
+### The kernel
+
+- **The prototype's design, unchanged.**
+  - 2,944 warp-sized work items in dependency order, taken from a counter.
+  - The shared expert's gate/up fills the wait for the top-6.
+  - Each expert's down projection starts once its own activations are quantized.
+  - The warp that brings an 8-row output group to seven contributions writes those rows.
+  - There is no grid barrier, so the kernel completes at any grid size and needs no cooperative launch.
+  - The grid is the number of resident blocks (from the occupancy API, once per kernel and device).
+  - The last warp out resets the counters, so consecutive layers and CUDA graph replays need no host step.
+- **Shared arithmetic.** The Pascal products' device functions move from `mmvq-pascal.cu` into
+  `mmvq-pascal-impl.cuh`, used by both files. The per-op kernels must compile to the same SASS as before the move.
+  - The persistent kernel uses the same blocks per lane (`C`) as `mmvqp_choose` for each type and product, so lanes
+    per row and every row's summation order are the same. Rows per lane group and staged or direct loads may differ,
+    since they don't change any row's sum.
+  - Activations written during the launch are read with `ld.global.cg`.
+  - The norm, the router (with the BF16 path of `mul_mat_vec_f`), `topk_moe`, the Q8_1 quantization and the weighted
+    sum are copies of the fork's code with its reduction orders, as in the prototype.
+  - The Pascal products never read the FP16 block sums, so Q100's own block-sum order doesn't matter.
+- **Types.** The router type is a runtime branch inside the router items, since those items are light. The
+  (gate/up, down, shared) types are template parameters, one kernel per combination that Flint files use:
+
+  | File | Router | Combinations (layers) | Layers covered |
+  |---|---|---|---|
+  | K2h-r16 | F16 | (Q5_0, Q5_0, Q8_0) 24, (Q5_0, Q5_0, Q5_0) 13, (Q8_0, Q5_0, Q8_0) 7, (Q5_0, Q8_0, Q8_0) 3 | 47 of 47 |
+  | G3 | F32 | three of K2h's | 47 of 47 |
+  | S4-L0 | F16 | (Q5_0, Q8_0, Q8_0) | 47 of 47 |
+  | UD-Q4_K_XL | BF16 | (Q5_K, Q5_K, Q8_0) 15, (IQ4_XS, IQ4_XS, Q8_0) 9, (IQ4_XS, IQ4_XS, Q5_K) 6, (IQ4_XS, Q5_K, Q5_K) 5, (IQ4_XS, Q5_K, Q8_0) 4, (Q5_K, Q8_0, Q8_0), (Q5_K, Q5_K, Q5_K), (IQ4_XS, IQ4_XS, IQ4_XS) | 42 of 47 |
+
+  - UD-Q4_K_XL's other five layers have Q4_K or IQ3_S gate/up (4) or a Q6_K down (1). The Pascal kernels of this build
+    don't cover those types, so those layers keep the per-op path.
+  - Thirteen kernels in all.
+- **K-quants need a different shape.**
+  - Q5_K and IQ4_XS take one 256-weight super-block per lane (`C` = 1), so staging a lane group's gate and up rows
+    takes 11 KB per warp, 90 KB per 8-warp block: over Pascal's 48 KB. Their gate/up items therefore stage up and gate
+    one after the other through one buffer (5.6 KB per warp).
+  - Q5_K's single-token kernel takes 142 registers, over the 128 that two 256-thread blocks per SM allow. The K-quant
+    kernels may need one block per SM (8 warps) at up to 255 registers. The prototype's `--grid 5` run on the rig
+    shows whether 8 warps per SM stream as fast as 16.
+- **Timeouts.**
+  - A wait past the poll limit (seconds) sets an error word in mapped host memory, and every warp leaves.
+  - The next graph evaluation finds the word and aborts with a message that names the switch.
+  - The kernel cannot deadlock, so this only catches bugs.
+  - Under CUDA graphs the host can't check every launch and fall back in time, as the prototype's host did.
+
+### Switches
+
+- `GGML_CUDA_PERSISTENT_MOE`: `0` off (the default until the rig confirms the gain), `1` on for compute 6.1, `2` on
+  any NVIDIA GPU (for testing natively and through the compute_61 PTX).
+- `GGML_CUDA_PERSISTENT_MOE_CHECK=1`: the self-check. Every matched layer runs the persistent kernel into a scratch
+  output, then the per-op path as usual, and a third kernel compares the two outputs bit for bit on the device. Per
+  graph evaluation the log shows how many layers matched and how many differed. CUDA graphs are off in this mode.
+- `GGML_CUDA_PERSISTENT_MOE_GRID=N`: grid override, for tests.
+
+### Tests
+
+- **Unchanged code.** The per-op kernels of `mmvq-pascal.cu` must compile to the same SASS as on the combined branch.
+- **test-backend-ops `MOE_LAYER`.** A Flint-shaped layer subgraph (norm to `ffn_out`, the residual add after it) for
+  each of the thirteen combinations and each router type. The router weights give the top-6 clear margins, so that the
+  CPU reference and the GPU pick the same experts. Each case runs:
+  - with the switch at `2` and at `0`;
+  - with the self-check;
+  - with the grid forced to 1, 2 and 64 blocks per SM;
+  - natively (sm_86) and through the compute_61 PTX.
+- **A deliberately wrong kernel** (one expert's routing weight × 1.0001) must fail these cases and the self-check.
+- **Real files on two RTX 3090s**, G3, K2h-r16 and UD-Q4_K_XL:
+  - `llama-perplexity -ub 1`: the self-check reports zero differing layers, and the logits written with
+    `--kl-divergence-base` are byte-identical with the switch on and off;
+  - greedy `llama-completion`, 8 prompts × 128 tokens: byte-identical text;
+  - `GGML_CUDA_GRAPH_DEBUG`: graph replays per token unchanged;
+  - `llama-pipespec` at depth 3: the same tokens and logit hashes as plain decoding. Each card runs its own context,
+    so pipelined one-token steps use the kernel too.
+
+### Expected gain (est.)
+
+- In the prototype's estimate a layer streams in 150–170 µs, against ~245 µs for the real token's layer, the fork's
+  event profile with its overhead removed.
+- Nine of the ten launches per layer go: 423 fewer per token on any card count. Their ramps and tails go with them.
+- On 9 cards K2h-r16's 25.4 ms token (39.3 tok/s) would lose 0.9–4.5 ms: 41–48 tok/s. The rig's one-card A/B of the
+  prototype gives the per-layer number this rests on.
