@@ -209,3 +209,45 @@ for s in 0 1; do ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 LLAMA_SCREEN_HEAD=$s \
 The same pair for UD-Q4_K_XL (without `LLAMA_NO_MOE_DOWN_RESCALE`) and G3 tells whether the gain holds across mixes,
 and `GGML_CUDA_PROFILE=<file>` on one tg32 run shows what the screen, the top-M and the exact rows cost on the card
 that holds the head. The screen adds 173 MB on that card, so a tight `-ts` split may need one step less there.
+
+## GPTQ for body tensors (Q112, E1, 2026-10-24)
+
+The same rounding for three groups of G3's always-read Q8_0 tensors whose round-to-nearest Q5_0 cost Q77 measured
+(on the same GPUs, KLD against BF16, 80 × 512 wikitext-2): attention output in layers 0–8 (+0.0105), the shared
+expert in layers 9–16 (+0.0071) and attention k/v in layers 9–16 (+0.0070), against G3's 0.1040.
+
+- **Hessians** from G3's own forward pass (`act_hessian/`, a llama.cpp example: H = Σ x xᵀ of chosen graph tensors,
+  accumulated during the pass) on 500 chunks of 512 tokens of wikitext-2 train: `kqv_out-N` (attention output's
+  input, 4,096 values), `attn_norm-N` (k/v), `ffn_norm-N` (shared expert gate/up), `ffn_swiglu-N` (its down
+  projection, 1,024 values).
+- **Rounding** with `gptq_body.py` (gptq_head.py's GPTQ: searched Q5_0 block scales, column order, 1 % damping), and
+  the same H-weighted relative output error as for the head, for the tensor as G3 holds it (Q8_0), for
+  llama-quantize's round-to-nearest Q5_0 with Unsloth's importance matrix, and for GPTQ Q5_0.
+- **Files** with `split_compose.py`: one shared first file (G3 without the 49 tensors of the three groups) and, per
+  group, a small second file with that group in GPTQ Q5_0 and G3's own tensors for the other two; each checked tensor
+  for tensor.
+
+| Group | Tensors | Error left by GPTQ (share of round-to-nearest's, output-weighted) | per tensor |
+|---|---|---|---|
+| Attention output 0–8 | 9 | **0.294** | 0.13–0.36 |
+| Shared expert 9–16 | 24 | 0.552 | gate/up 0.54–0.57, down 0.61–0.69 |
+| Attention k/v 9–16 | 16 | 0.546 | 0.53–0.57 |
+
+Attention output reads the most lopsided inputs (Q56's head showed the same pattern), and GPTQ removes 71 % of
+round-to-nearest's error there; on the shared expert and k/v it removes 45 %.
+
+**Full model** (KLD against BF16, 80 × 512 wikitext-2 test, rescale off, the GPUs that scored Q77's references; G3
+0.1040 there). Recovery f = (round to nearest − GPTQ) / (round to nearest − G3):
+
+| G3 with the group in Q5_0 | Bytes saved per token | Round to nearest (Q77) | GPTQ | Recovery f | Proxy predicted |
+|---|---|---|---|---|---|
+| Attention output 0–8 | 28 MB | 0.1145 (+0.0105) | **0.1062 (+0.0022)** | **0.79** | 0.71 |
+| Shared expert 9–16 | 19 MB | 0.1111 (+0.0071) | **0.1066 (+0.0026)** | **0.63** | 0.45 |
+| Attention k/v 9–16 | 6 MB | 0.1110 (+0.0070) | **0.1078 (+0.0039)** | **0.45** | 0.45 |
+
+- **E1 passes** (rule: f ≥ 0.4 in two groups; kill: f < 0.25 in all three). With a paired noise of about 0.002 on the
+  differences, attention output (0.0083 recovered) and the shared expert (0.0045) are clear; k/v (0.0032) is less
+  sure.
+- The proxy, the head-only error weighted by the captured Hessian, again ranks the groups correctly and is
+  conservative: GPTQ recovers at least what it predicts.
+- Together the three groups save 53 MB per token at +0.0087 KLD with GPTQ, against +0.0246 with round to nearest.
