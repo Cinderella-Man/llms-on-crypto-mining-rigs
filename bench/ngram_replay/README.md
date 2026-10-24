@@ -577,6 +577,21 @@ Pipelined speed-up, top guess (expected) against coupled guess:
   Coupling lifts that cap to 1, so a trained pipeline drafter (Q20) should output a calibrated distribution and be
   coupled; the n-gram and table guessers should guess their top token.
 
+## A datastore of Flint's own answers (Q161)
+
+A suffix array over 3–14 M generated tokens of other Flint answers, asked after the request's own counts of contexts of
+2 tokens or more: chat, code and edits gain ~5 % over `cont` at depths 1–4 on nine cards, all classes 1.44 → 1.52 at
+depth 3, and more data barely helps (1.50 → 1.52 from 3 to 13.8 M tokens). Tool calls gain 1.18 → 1.74, but only from
+answers that use the same tools. Tables, the held-out check and the cost are in
+[pipelined_speculation.md](../../docs/research/notes/pipelined_speculation.md) ("A datastore of Flint's own answers").
+
+- [datastore.cpp](datastore.cpp): the store (a library for ctypes and a `datastore build` command); it counts its work
+  per lookup instead of timing it.
+- [datastore_corpus.py](datastore_corpus.py): token streams from generated answers in bench/staircase_drafter's format,
+  leaving out any answer whose prompt shares a 12-word span with a Q51 prompt.
+- [datastore_sim.py](datastore_sim.py): a brute-force self-test of the store, the one-token accuracy of chains with the
+  store (per stage), and pipeline_sim.py's nine-card model.
+
 ## Gaps
 
 - **File rewrites are 2,159 tokens from three files.** Flint reasoned 1,200–3,000+ tokens before every rewrite, and five
@@ -620,6 +635,12 @@ python -I pipeline_sim.py gen.jsonl --out q87.json --jobs 8 --accuracy > q87.md 
 # says), then LOGIT_IN=seqs.txt LOGIT_OUT=top20.bin llama-logit-dump -m flint-Q8_0.gguf -ngl 99 -c 6144 -fa on
 python -I pipeline_sim.py gen.jsonl --jobs 8 --topk top20.bin --only 'Gumbel|expected' > q96_coupled.md
 python -I pipeline_sim.py gen.jsonl --topk top20.bin --coupling-study > q96_coupling_study.md
+# Q161: the datastore (standard library Python; g++ for the store)
+g++ -O2 -std=c++17 -shared -fPIC -o libdatastore.so datastore.cpp && g++ -O2 -std=c++17 -DDS_MAIN -o datastore datastore.cpp
+python -I datastore_corpus.py corpus <prompts.jsonl> <q51 prompts.jsonl> <generated answers .jsonl ...>
+./datastore build corpus/clean.i32 14000000 clean-14M.ds          # the first 14 M tokens; 3000000 for a 3 M store
+python -I datastore_sim.py gen.jsonl --lib ./libdatastore.so --store clean-14M=clean-14M.ds --selftest corpus/clean.i32 \
+    --policies 'L >= 2, share >= 0.3' --kinds ds,req2ds --accuracy --sim --depths 1,2,3,4 --jobs 8 --out q161.json
 ```
 
 `replay.py` prints the copy-structure tables and, per class, per segment and for the file rewrites, every drafter

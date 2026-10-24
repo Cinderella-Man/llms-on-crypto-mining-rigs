@@ -195,6 +195,73 @@ The model has no host contention and no power limit; the rig measures both.
 | `spec` | any llama.cpp drafter (`--pipe-spec ngram-map-k`, `ngram-mod`, …) through `common_speculative`; one draft per committed state, consumed one guess at a time | committed only (stateful drafters must not see tokens that may be dropped) |
 | `oracle` | a reference run's tokens, a share `--pipe-miss` made wrong on purpose | – |
 
+### A datastore of Flint's own answers (Q161, simulated)
+
+A third stage for `cont` that learns from Flint's past output: a suffix array over the generated tokens of many Flint
+answers ([datastore.cpp](../../../bench/ngram_replay/datastore.cpp)). Its guess is the most frequent next token after
+the longest context, up to 32 tokens, that occurs in the store, as SuffixDecoding (arXiv 2411.04975) scores
+continuations by frequency. It runs on the host and takes no card time.
+
+- **Data.** The answers generated for the staircase drafter (Q20): 11,949 answers, 14.5 M tokens, from Flint Q8_0 and
+  G3 at T 1, top-k 20, top-p 0.95. An answer is left out when its prompt shares any 12-word span with a Q51 prompt's
+  user or tool messages ([datastore_corpus.py](../../../bench/ngram_replay/datastore_corpus.py)). That removes the 352
+  edit answers whose instructions repeat Q51's word for word and leaves 11,597 answers, 13.8 M tokens. The agent prompts
+  of both sets define the same four tools. Stores of 3, 7 and 13.8 M tokens are nested shuffled subsets. Two more stores
+  are for comparison: every answer (`all`), and the clean set without the agent and tool-call answers (`noagent`).
+- **Replay.** Q51's 38 held-out transcripts go through pipeline_sim.py's guessers and pipeline model
+  ([datastore_sim.py](../../../bench/ngram_replay/datastore_sim.py); a brute-force scan of a 600k-token store confirms
+  every query). A plain longest-match guess everywhere loses to the request's own counts. Two rules make the store
+  pay: use it only when the context has at least 2 tokens and its top continuation holds at least 30 % of its
+  occurrences, and ask it after the request's own counts of contexts of 2 tokens or more.
+- **The chain:** copy lookup ≥ 4, else the request's counts (context ≥ 2 tokens), else the store, else the request's
+  counts (any context).
+
+One token ahead on the true prefix (right guesses, %):
+
+| Guesser | Chat | Code | Edits | Agent | All | Fresh text | Tool calls |
+|---|---|---|---|---|---|---|---|
+| `cont` today (copy ≥ 4, else request counts) | 19.6 | 33.3 | 60.2 | 29.4 | 39.2 | 19.0 | 20.3 |
+| the chain, 3 M clean tokens | 23.4 | 36.7 | 62.4 | 37.5 | 42.5 | 23.7 | 53.8 |
+| the chain, 13.8 M clean tokens | 24.5 | 38.0 | 62.9 | 38.7 | 43.5 | 25.0 | 54.7 |
+| copy ≥ 4, else the store, else request counts (13.8 M) | 23.0 | 36.4 | 60.9 | 37.4 | 41.8 | 23.6 | 57.8 |
+| bound: the better of the store's and the request's guess at every token (13.8 M) | 30.3 | 43.4 | 66.5 | 44.9 | 48.4 | 31.3 | 63.7 |
+
+Speed-up over plain decoding, simulated, nine cards with 6/6/6/6/5/5/5/5/5 layers:
+
+| Guesser | Depth | Chat | Code | Edits | Agent | All | File rewrites | Tool calls |
+|---|---|---|---|---|---|---|---|---|
+| `cont` today | 1 | 1.14 | 1.24 | 1.49 | 1.22 | 1.29 | 2.05 | 1.15 |
+| the chain, 13.8 M | 1 | 1.19 | 1.30 | 1.53 | 1.31 | 1.34 | 2.06 | 1.46 |
+| `cont` today | 2 | 1.18 | 1.32 | 1.73 | 1.28 | 1.40 | 3.03 | 1.18 |
+| the chain, 13.8 M | 2 | 1.23 | 1.39 | 1.80 | 1.41 | 1.46 | 3.06 | 1.67 |
+| `cont` today | 3 | 1.19 | 1.36 | 1.87 | 1.30 | 1.44 | 3.96 | 1.18 |
+| the chain, 3 M | 3 | 1.24 | 1.41 | 1.94 | 1.42 | 1.50 | 4.00 | 1.72 |
+| the chain, 7 M | 3 | 1.24 | 1.42 | 1.94 | 1.44 | 1.51 | 4.01 | 1.76 |
+| the chain, 13.8 M | 3 | 1.25 | 1.43 | 1.95 | 1.45 | 1.52 | 4.02 | 1.74 |
+| the chain, 13.0 M without agent and tool-call answers | 3 | 1.25 | 1.43 | 1.95 | 1.36 | 1.52 | 4.02 | 1.24 |
+| `cont` today | 4 | 1.19 | 1.37 | 1.96 | 1.32 | 1.47 | 4.87 | 1.18 |
+| the chain, 13.8 M | 4 | 1.25 | 1.45 | 2.05 | 1.46 | 1.55 | 4.97 | 1.78 |
+
+With the head and two layers on the last card the picture is the same: at depth 3, chat goes from 1.20 to 1.26 and
+all classes from 1.46 to 1.54.
+
+- **It adds ~5 %, not 15–30 %.** Chat, code and edits gain 4–6 % at depths 2–4 and 3–5 % at depth 1, all classes
+  1.44 → 1.52 at depth 3. File rewrites stay where the copy lookup puts them. On fresh text the chain is right 25 % of
+  the time against 19 % for `cont`; the staircase drafter's coupled acceptance on fresh text was 0.46 at 8.6 M tokens
+  of the same data (Q20).
+- **More data barely helps.** At depth 3, all classes go 1.50, 1.51, 1.52 at 3, 7 and 13.8 M tokens; one-token
+  accuracy rises ~0.5 points per doubling. Doubling to ~28 M tokens overnight would add an estimated ~0.01.
+- **Tool calls gain from answers with the same tools.** 1.18 → 1.74 at depth 3, but 1.24 when the store holds no agent
+  or tool-call answers. Q51's agent turns and the generated agent prompts share their four tools. A store of one agent
+  harness's own past answers would see that gain; for a new tool set expect the smaller one.
+- **Leaving Q51's instructions in changes little:** with every answer (`all`, 14.5 M), edits rise by 0.01–0.02.
+- **Cost.** 8 bytes per stored token: 110 MB at 13.8 M tokens, 220 MB at 28 M. The rig's 4 GB of RAM holds it, and
+  the store can be read with mmap. A lookup at 13.8 M tokens takes 84 suffix-array probes and scans 360 entries to
+  count next tokens; a cache of 643 frequent contexts covers the large ranges. The chain asks the store for half the
+  generated tokens. At about 90 ns per random memory access on the Celeron's single DDR4-2133 channel (an assumed
+  figure), that is est. 30–50 µs per lookup and 15–40 µs per generated token, under 0.3 % of a token's time. The store
+  is built offline on any PC (`datastore build`, prefix doubling) and copied to the rig.
+
 ### Several samples of one request (race)
 
 Q93 found that on Flint, keeping whichever of k sampled attempts closes its reasoning (`</think>`) first loses no task
