@@ -19,6 +19,9 @@ MARKERS = [b'<|system|>', b'<|user|>', b'<|assistant|>', b'<|observation|>', b'<
            b'<tool_call>', b'</tool_call>', b'<tool_response>', b'</tool_response>']
 CLASSES = ['tools/system', 'user', 'tool output', 'reasoning', 'call', 'answer', 'markup', 'after </think>',
            'long-range copy']
+# what the model reads (prefilled, never sampled in an agent loop) and what it writes (sampled)
+GROUPS = {'read (tools, user, tool output)': ['tools/system', 'user', 'tool output'],
+          'written (reasoning, calls, answers)': ['reasoning', 'call', 'answer']}
 
 
 def load_dump(path):
@@ -191,6 +194,24 @@ def main():
             vals = {n: dumps[n]['kld'][m].mean() for n in names}
             print(f'| {c} | {m.sum()} ({100 * m.mean():.1f} %) | ' + ' | '.join(f'{vals[n]:.4f}' for n in names) + ' | '
                   + ' | '.join(f'{vals[n] / vals[a.ref]:.3f}' for n in names if n != a.ref) + ' |')
+        print('\nRead against written, paired by chunk (chunks with tokens of the group):\n')
+        print('| Group | Tokens | ' + ' | '.join(f'{n} KLD' for n in names) + ' | '
+              + ' | '.join(f'{n}/{a.ref} (95 % bootstrap)' for n in names if n != a.ref) + ' |')
+        print('|---|---|' + '---|' * (2 * len(names) - 1))
+        for g, members in GROUPS.items():
+            m = np.zeros(len(ref), bool)
+            for c in members:
+                m |= cls[c]
+            use = [c for c in chunks if (m & (ref['chunk'] == c)).any()]
+            pc = {n: [dumps[n]['kld'][m & (dumps[n]['chunk'] == c)].mean() for c in use] for n in names}
+            cells = []
+            for n in names:
+                if n == a.ref:
+                    continue
+                ratio, ci, _, _ = paired(pc[n], pc[a.ref], rng)
+                cells.append(f'{ratio:.3f} ({ci[0]:.3f}-{ci[1]:.3f})')
+            print(f'| {g} | {m.sum()} ({100 * m.mean():.1f} %) | ' + ' | '.join(f'{dumps[n]["kld"][m].mean():.4f}' for n in names)
+                  + ' | ' + ' | '.join(cells) + ' |')
         print('\nSame top token by class:\n')
         print('| Class | ' + ' | '.join(names) + ' |')
         print('|---|' + '---|' * len(names))
