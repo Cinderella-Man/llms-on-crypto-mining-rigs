@@ -1,1 +1,1 @@
-I run a small home server with a few old GPUs. Explain, in plain terms, what a bloom filter is, how its false-positive rate depends on its size and number of hash functions, and give one realistic example where it saves memory compared with a hash set.
+Explain how a Bloom filter works, when it is the right tool, and when it is not.

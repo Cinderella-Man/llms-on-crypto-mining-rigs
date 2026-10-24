@@ -9,7 +9,8 @@
 # Pipelined runs, for each depth in DEPTHS:
 #   - an oracle that replays the plain run's tokens with a share MISSES of the guesses made wrong on purpose (exercises
 #     dropping guesses and rolling back their KV cells at a known rate);
-#   - the copy lookup (match >= 2), ngram-simple (4/16) and ngram-map-k (4/8) drafters;
+#   - the copy lookup (match >= 2), copy >= 4 else continuation counts (cont), ngram-simple (4/16) and ngram-map-k
+#     (4/8);
 # plus depth 0 (the pipelined API without guesses). One process runs all of them with one model load; a timeout catches
 # deadlocks.
 #
@@ -19,7 +20,7 @@
 #   [SPEED=1] bench/pipespec/check_identity.sh
 # SAMPLING='--temp 1 --top-k 20 --top-p 0.95 --min-p 0 --seed 42' checks sampling with a fixed seed: the plain run
 # then also fixes what the oracle replays. SPEED=0 leaves the tokens/s column out.
-# RACE=K checks a race of K samples (seeds seed..seed+K-1) until one emits RACE_STOP (default "</think>"), after which
+# RACE=K (1 = a single sample timed to the stop text) checks a race of K samples (seeds seed..seed+K-1) until one emits RACE_STOP (default "</think>"), after which
 # the winner continues alone: the plain run decodes the samples round robin, the pipelined runs keep one token of each
 # in flight and use the guessers on the winner. Also compared: the winner and every sample's tokens and logits (race).
 # Use it with temperature sampling.
@@ -44,7 +45,7 @@ mkdir -p "$OUT"
 
 jobs=$OUT/jobs.txt
 common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
-[ "$RACE" -gt 1 ] && common="$common race=$RACE race_stop=$RACE_STOP"
+[ "$RACE" -ge 1 ] && common="$common race=$RACE race_stop=$RACE_STOP"
 {
     echo "name=plain mode=plain $common out=$OUT/plain.tok"
     echo "name=pipe-d0 mode=pipe depth=0 guess=none $common"
@@ -53,6 +54,7 @@ common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
             echo "name=oracle-d$D-m$M mode=pipe depth=$D guess=oracle oracle=@plain miss=$M $common"
         done
         echo "name=copy2-d$D mode=pipe depth=$D guess=copy copy_min=2 $common"
+        echo "name=cont4-d$D mode=pipe depth=$D guess=cont copy_min=4 $common"
         echo "name=simple-d$D mode=pipe depth=$D guess=ngram-simple $common"
         echo "name=mapk-d$D mode=pipe depth=$D guess=spec spec=ngram-map-k $common"
     done

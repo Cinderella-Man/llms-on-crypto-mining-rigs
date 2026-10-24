@@ -17,7 +17,7 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
 
 - **What exists.** A pipelined decoding API in the fork (`llama_pipe_init`, `llama_pipe_submit`,
   `llama_pipe_get_logits`, `llama_pipe_get_sampled`, `llama_pipe_drain`; branch `pascal-p106-v2-pipespec`, commit
-  a7204884d) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
+  d83a7e5f2) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
   for one sequence. Guessers: the copy lookup, llama.cpp's `ngram-simple`, any llama.cpp drafter (`ngram-map-k`,
   `ngram-mod`, …), and an oracle that replays a reference run with a chosen share of wrong guesses. A job list runs many
   configurations with one model load.
@@ -41,7 +41,7 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
   share one budget: race samples while Flint reasons, where guesses are rarely right, and all of it as guesses for the
   winner after `</think>`. 31 pipelined races of 3–4 samples (8,164 sample tokens; winners 0, 1 and 2) were
   bit-identical to the same races decoded plainly, round robin.
-- **Next:** time it on the rig ([plan](../../../bench/pipespec/README.md#rig-plan)): the all-right oracle shows the
+- **Next:** time it on the rig ([plan](#measuring-it-on-the-rig)): the all-right oracle shows the
   pipeline's ceiling (event model: 2×/3×/4×/4.5× at D = 1/2/3/4+ on six cards), the all-wrong oracle the cost of wrong
   guesses, and the copy lookup the real gain per kind of prompt.
 
@@ -179,7 +179,8 @@ The model has no host contention and no power limit; the rig measures both.
 
 | `--pipe-guess` | Source | History it sees |
 |---|---|---|
-| `copy` | the token after the longest earlier match of the history's suffix, if at least `--pipe-copy-min` long | committed + in flight |
+| `copy` | the token after the longest earlier match of the history's suffix (up to 12 tokens, newest on ties), if at least `--pipe-copy-min` long | committed + in flight |
+| `cont` | Q96: `copy` if it finds a match of at least `--pipe-copy-min` (4), else the most frequent continuation of the longest 1–8-token context in the request so far, plus the counts of a table of other outputs (`--pipe-table`) if given | committed + in flight (counts from committed tokens) |
 | `ngram-simple` | llama.cpp's `common_ngram_simple_draft` (`--spec-ngram-simple-size-n/-m`) | committed + in flight |
 | `spec` | any llama.cpp drafter (`--pipe-spec ngram-map-k`, `ngram-mod`, …) through `common_speculative`; one draft per committed state, consumed one guess at a time | committed only (stateful drafters must not see tokens that may be dropped) |
 | `oracle` | a reference run's tokens, a share `--pipe-miss` made wrong on purpose | – |
@@ -251,8 +252,144 @@ round robin: four stages on the two GPUs, temperature 1, the winner continuing w
 
 "Same" covers the winner, every sample's tokens and logits, and the winner's tokens, logits, KV state and probe.
 
+The `cont` guesser was checked the same way on the two GPUs (greedy, depths 1 and 3, without and with a continuation
+table of Q51's transcripts), and a single sample through the race path (`race=1`) on four stages: all same.
+
 The checks ran on two RTX 3090s of a 7-GPU machine used for quality work, where no speed is measured; the Pascal
-kernels are exercised on the rig ([plan](../../../bench/pipespec/README.md#rig-plan), step 1).
+kernels are exercised on the rig ([plan](#measuring-it-on-the-rig), step 1).
+
+## Measuring it on the rig
+
+The executor is exact; what the rig has to show is its speed. Everything below runs `llama-pipespec` from the build of
+the fork's commit d83a7e5f2, `llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec.tar.gz` (made with
+`TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-pipespec`), and the scripts in
+[bench/pipespec](../../../bench/pipespec/README.md). Commands run from a checkout of this repository on the machine that
+reaches the rig as `ssh rig`; `$B` is expanded there. One run at a time, nothing else on the cards; each run loads its
+model once (minutes from a USB stick) and prints a summary table when it ends.
+
+**0. Install** (copy the tarball to the rig's `/opt/llama-builds/` first):
+
+```
+ssh rig 'cd /opt/llama-builds && tar xzf llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec.tar.gz && ls llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec/bin/llama-pipespec'
+scp -r bench/pipespec rig:/tmp/
+B=/opt/llama-builds/llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec/bin
+```
+
+**1. Identity on the P106 kernels** (six cards, S4-L0, 128 tokens, ~5 min each): sampling on the host, then on the last
+card. Every row must say `same`; stop and keep `run.log` if one does not.
+
+```
+ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf \
+    ARGS='-ngl 99 -fa on -c 4096' N=128 DEPTHS='1 3 5' MISSES='0 0.3' OUT=/tmp/pipespec/check-s4l0 \
+    bash /tmp/pipespec/check_identity.sh"
+ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf \
+    ARGS='-ngl 99 -fa on -c 4096 --pipe-backend-greedy' N=128 DEPTHS='1 3 5' MISSES='0 0.3' \
+    OUT=/tmp/pipespec/check-s4l0-bg bash /tmp/pipespec/check_identity.sh"
+```
+
+**2. Plain against pipelined** ([rig_run.sh](../../../bench/pipespec/rig_run.sh), ~25 min per run plus the load). Per
+run, 52 jobs of 512 tokens, greedy on the last card (`BG=1`, as llama-server's `-bs`):
+- four prompts ([prompts/](../../../bench/pipespec/prompts/), in Flint's chat template): `chat` (an explanation, Q51's
+  first chat prompt), `code` (an LRU cache with tests, Q51's first code prompt), `edit` (Q51's first edit instruction,
+  type hints and docstrings, on a 90-line script of this repository) and `rewrite` (rename two variables in a 53-line
+  script);
+- per prompt: plain decoding (the reference, also written to `plain.jsonl`), the pipelined API without guesses (`d0`),
+  the Q96 guesser (copy lookup ≥ 4, else the most frequent continuation of the longest 1–8-token context in the request
+  so far; `cont`) at D = 1–5, and at D = 3 the copy lookup alone (≥ 2, ≥ 4) and `ngram-map-k` 4/8;
+- on the chat prompt: the oracle with every guess right (the ceiling) and every guess wrong (the cost of wrong guesses)
+  at D = 1–5, and 30 % wrong at D = 3.
+
+| Run | `TAG` | `MODEL` | `GPUS` | extra |
+|---|---|---|---|---|
+| S4-L0, six cards | `s4l0-6c` | `/mnt/models2/flint/flint-S4L0.gguf` | `0,1,2,3,4,5` | |
+| S4-L0, nine cards | `s4l0-9c` | same | `0,1,2,3,4,5,6,7,8` | `DEPTHS='1 2 3 4 5 6 8'` |
+| S4-L0, nine cards, light last card | `s4l0-9c-light` | same | all nine | `TS=6,6,6,6,6,6,6,5,2 DEPTHS='1 2 3 4 5 6 8'` |
+| G3, six cards | `g3-6c` | G3 on a stick | `0,1,2,3,4,5` | |
+| G3, nine cards | `g3-9c` | same | all nine | `DEPTHS='1 2 3 4 5 6 8'` |
+
+All with `ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1` (both files are scored with the rescale off). The first row in full; the
+others change only the variables of the table:
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=s4l0-6c GPUS=0,1,2,3,4,5 \
+    ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_run.sh > /tmp/pipespec/s4l0-6c.out 2>&1 < /dev/null &"
+ssh rig 'tail -3 /tmp/pipespec/s4l0-6c.out'
+```
+
+Optional, the continuation table of Q96 on top (`TABLE=/tmp/pipespec/table.txt`, adds `conttab-d3-*` rows): make it
+from Q51's transcripts without the transcripts of the same prompts, `python3 -I bench/pipespec/make_table.py
+<Q51 gen.jsonl> table.txt --exclude '^(chat_0|code_0|edit_)'`, and copy it to `/tmp/pipespec/` on the rig.
+
+**3. Host sampling once** (logits to the host for every token, the path without `-bs`):
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=s4l0-6c-host BG=0 GPUS=0,1,2,3,4,5 \
+    PROMPTS=rewrite DEPTHS='1 3 5' ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_run.sh \
+    > /tmp/pipespec/s4l0-6c-host.out 2>&1 < /dev/null &"
+```
+
+**4. Races, K = 2 and 3** ([rig_race.sh](../../../bench/pipespec/rig_race.sh); temperature 1, top-k 20, top-p 0.95;
+seeds 1–3; the short question in `prompts/short.txt`; ~15 min per seed): each seed runs one sample alone (`race1`,
+timed to its `</think>` the same way) and races of 2 and 3, all plainly and pipelined.
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=s4l0-6c-race GPUS=0,1,2,3,4,5 \
+    RACES='2 3' ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_race.sh > /tmp/pipespec/s4l0-6c-race.out 2>&1 < /dev/null &"
+```
+
+**5. Collect and clean up:**
+
+```
+mkdir -p <results> && scp -r rig:/tmp/pipespec/out rig:/tmp/pipespec/*.out <results>/
+ssh rig 'rm -rf /tmp/pipespec'
+```
+
+### What to log
+
+Per run, in `out/<TAG>/`: `summary.tsv` (speed-up against the plain job of the same prompt, right and wrong guesses,
+dropped tokens, and `same_as_plain`), `results.txt` (one `PIPESPEC` line per job: tokens/s, hashes, race fields),
+`run.log`, `plain.jsonl` (the plain outputs, for the simulator), one `.trace` per timed job (time of every sampled token
+and what was in flight behind it) and `gpu.csv` (clock, power, temperature and load of every card each second). Keep
+with them the build's `BUILDINFO.txt`, the model file names and the card set; summarize the traces with
+`python3 -I bench/pipespec/traces.py out/<TAG>`.
+
+### Reading the results
+
+| Rows | Question | Expected (event model) | If not |
+|---|---|---|---|
+| `same_as_plain` | Is every pipelined job plain decoding's output? | `yes` | a bug: keep `run.log` and the jobs |
+| `d0-*` | Does the pipelined API cost anything by itself? | 0.98–1.02 | host time per submit: the traces' gaps after `n` |
+| `oracle-dD-m0-chat` | The ceiling, one token per slowest stage | six cards 2.0 / 3.0 / 4.0 / 4.5 / 4.5 at D = 1–5; nine cards up to 6.2 (even split) and 8.9 (light last card) | per-stage overheads (launches per slot, mask copies, hops) or the clock under load (`gpu.csv`) |
+| `oracle-dD-m1-chat` | Do wrong guesses cost nothing at D ≤ S_eff − 1? | six cards ≥ 0.98 up to D = 3, then 0.90 and 0.75 at D = 4, 5 | the host or the last card is the bottleneck |
+| `cont-dD-*` | The real gain per kind of prompt | simulator (Q96, six cards, D = 5): chat 1.18, code 1.35, edits 1.85, rewrites ~4 | compare with the simulator on the same outputs (below) |
+| `copy2/copy4/mapk-d3-*` | Does the continuation fallback pay over the copy lookup alone and over `ngram-map-k`? | cont ≥ copy4 ≥ mapk | – |
+| `race1/raceK-pipe` | Does a race of K run at the speed of one sample, and how much earlier does it end? | `race_tok_s` of race K ≈ K × that of race 1; `t_race` of race K below race 1 (Q93: 64 % of the reasoning at K = 3) | K > S_eff, or the host |
+
+Then choose D per card count (the event model says D ≤ 3 on six cards, where the output head makes the last card the
+slowest stage) and whether the next step is a per-stage launch (if `oracle-d4/d5-m1-chat` lose), sampling on the GPU for
+temperature sampling, or the staircase drafter of [pipeline_drafter.md](pipeline_drafter.md).
+
+### Comparing with the simulator
+
+[pipeline_sim.py](../../../bench/ngram_replay/pipeline_sim.py) replays a transcript through the event model with the
+same guessers. Fed with the rig's own outputs it predicts the right and wrong guesses exactly (the executor's copy lookup
+and continuation counts are the simulator's: on a 256-token rewrite output both gave 179 right and 38 wrong for `cont`,
+167 and 14 for copy ≥ 2), so any difference in speed comes from timing alone:
+
+```
+python3 -I bench/ngram_replay/pipeline_sim.py <results>/out/s4l0-6c/plain.jsonl \
+    --setup "s4l0-6c=<ms per plain token>:9,8,8,8,8,8" --depths 1,2,3,4,5 \
+    --only 'request counts \(no table\)|copy, match >= (2|4) \|' --out sim-s4l0-6c.json
+```
+
+- `<ms per plain token>`: 1000 / the mean tokens/s of the `plain-*` rows. Layers per card: 9/8/8/8/8/8 on six cards,
+  6/6/6/6/5/5/5/5/5 on nine, 6/6/6/6/6/6/6/5/2 with the light last card.
+- Compare per class (chat, code, edit; `rewrite` is filed as edit) and per depth: the simulator's right and wrong guess
+  shares against `hits`/`misses` over `n_gen` (they should agree), then its speed-up against `cont-dD-*`.
+- The simulator assumes 0.3 ms per hop and 1.5 ms of host time per sample (`--hop`, `--gap`). If the measured ceiling
+  (`oracle-dD-m0-chat` at the largest depth) is below the simulator's "one token per slowest stage + hop" (its setup
+  table), raise `--hop` until the two match, then compare the guessers again. The simulator withdraws wrong guesses per
+  card, the executor drops them; the two agree only while D ≤ S_eff − 1.
 
 ## What a production version needs
 

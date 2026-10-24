@@ -30,6 +30,10 @@ The model, per transcript:
   computed exactly from Flint's top-20 log-probabilities (logit_dump/), and the pipeline replays it with fixed draws.
 
 usage: python pipeline_sim.py GEN.jsonl [--out RESULTS.json] [--only REGEX] [--jobs N] [--accuracy] [--topk TOP.bin]
+                              [--setup NAME=TOTAL_MS:L1,L2,...]... [--depths D1,D2,...] [--hop MS] [--gap MS]
+--setup replaces the built-in card setups with measured ones (plain time per token, layers per card; repeatable),
+--depths runs every n-gram guesser at those depths too, and --hop/--gap set the hop between cards and the host's time
+from a sample to the next launch, e.g. to replay a rig run of bench/pipespec on its own outputs.
 """
 import argparse
 import bisect
@@ -621,7 +625,7 @@ def coupling_study(rows, topk, table, seed=7):
     return out
 
 
-def build_configs(setups, coupled=False):
+def build_configs(setups, coupled=False, depths=()):
     """(name, setup index, factory(env), depth, hop, gap, stage scale) for every run."""
     copy_cache = lambda e: ChainGuesser(CopyGuesser(4), CacheGuesser())     # noqa: E731
     configs = []
@@ -656,6 +660,13 @@ def build_configs(setups, coupled=False):
                                     1.0))
                 configs.append((f"{sname} | {gname} | depth {S - 1} | stages x1.1", si, make, S - 1, HOP_MS, GAP_MS,
                                 1.1))
+        names = {c[0] for c in configs}
+        for d in depths:
+            for gname, make in guessers():
+                name = f"{sname} | {gname} | depth {d}"
+                if name not in names:
+                    configs.append((name, si, make, d, HOP_MS, GAP_MS, 1.0))
+                    names.add(name)
     return configs
 
 
@@ -750,6 +761,7 @@ def accuracy(rows, tables):
 
 
 def main():
+    global HOP_MS, GAP_MS
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("gen")
     ap.add_argument("--out")
@@ -758,9 +770,26 @@ def main():
     ap.add_argument("--accuracy", action="store_true", help="also the one-token accuracy of the guessers")
     ap.add_argument("--topk", help="llama-logit-dump output along the same transcripts: adds Gumbel-coupled guessing")
     ap.add_argument("--coupling-study", action="store_true", help="with --topk: only the one-token coupling study")
+    ap.add_argument("--setup", action="append",
+                    help="NAME=TOTAL_MS:L1,L2,...: a measured card setup (plain ms per token, layers per card) in place "
+                         "of the built-in ones; repeatable")
+    ap.add_argument("--depths", help="comma-separated depths at which every n-gram guesser also runs")
+    ap.add_argument("--hop", type=float, help=f"ms from one card to the next (default {HOP_MS})")
+    ap.add_argument("--gap", type=float, help=f"host ms from a sample to the next launch on card 1 (default {GAP_MS})")
     args = ap.parse_args()
+    if args.hop is not None:
+        HOP_MS = args.hop
+    if args.gap is not None:
+        GAP_MS = args.gap
     rows = replay.load(args.gen)
     setups = SETUPS
+    if args.setup:
+        setups = []
+        for spec in args.setup:
+            name, rest = spec.rsplit("=", 1)
+            total, layers = rest.split(":")
+            setups.append((name, float(total), [int(x) for x in layers.split(",")]))
+    depths = [int(x) for x in args.depths.split(",")] if args.depths else []
     table = ContinuationTable(rows)
     topk = None
     if args.topk:
@@ -780,7 +809,7 @@ def main():
         for key in ("chat", "code", "edit", "agent", "all"):
             print(f"| {key} | " + " | ".join(f"{100 * res[key].get(c, 0):.1f}" for c in cols) + " |")
         return
-    configs = build_configs(setups, coupled=topk is not None)
+    configs = build_configs(setups, coupled=topk is not None, depths=depths)
     if args.only:
         configs = [c for c in configs if re.search(args.only, c[0])]
 
@@ -812,7 +841,7 @@ def main():
 
     res = {"setups": [], "configs": {}, "table_tokens": table.tokens}
     for sname, total, layers in setups:
-        st = stage_times(total, layers)
+        st = stage_times(total, layers, HOP_MS, GAP_MS)
         res["setups"].append({"name": sname, "total_ms": total, "layers": layers,
                               "stage_ms": [round(x, 3) for x in st], "hop_ms": HOP_MS, "gap_ms": GAP_MS,
                               "plain_tok_s": round(1000 / total, 2),

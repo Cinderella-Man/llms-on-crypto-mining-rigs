@@ -1,6 +1,6 @@
-Add type hints to every function in this Python script and add a one-line docstring to each function that lacks one. Change nothing else. Reply with the complete updated file in one code block.
+Here is token_cost.py:
 
-```python
+```
 #!/usr/bin/env python3
 # Bytes of weights read per generated token, by tensor kind and by format, from a GGUF header alone (pure Python),
 # and a predicted decode time per token on the P106-090 rig:
@@ -92,3 +92,5 @@ for path in a.files:
         if b / tot >= 0.005:
             print(f'   {k:22s} {b/1e9:6.3f} GB  {100*b/tot:5.1f} %  {"/".join(sorted(fmts[k]))}')
 ```
+
+Add type hints to every function and add a docstring to each one. Output the complete updated file.
