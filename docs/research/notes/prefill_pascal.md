@@ -547,16 +547,18 @@ keeps reuse and its CUDA graphs. Same rows as E1's `LLAMA_GRAPH_REUSE_DISABLE=1`
     (1,600) all pass.
   - The same with a build that has only compute_61 PTX: the driver compiles the Pascal code and ggml's host code, which
     then sees 6.1 as the highest compiled architecture, takes the Pascal decisions too (`dp4a` MMQ with its tile sizes,
-    no MMF, no stream-k). `MUL_MAT` and `MUL_MAT_ID_FUSION` pass, and so does `MUL_MAT_ID` for every type but Q8_0,
-    whose run stops at its first 5-token case with a launch error, in the base built the same way as well: the host
-    reads compute 8.6 and sends Q8_0 batches of up to 8 tokens to the few-token MoE kernel (`get_mmvq_mmid_max_batch`
-    in `mmvq.cu`), whose Pascal build allows 4 (`get_mmvq_mmid_max_batch_for_device`). On a compute 6.1 card both read
+    no MMF, no stream-k). `MUL_MAT` and `MUL_MAT_ID_FUSION` pass, and so does `MUL_MAT_ID` for every type, Q8_0
+    without its 5–8-token cases. Those stop with a launch error in the base built the same way as well: the host reads
+    compute 8.6 and sends Q8_0 batches of up to 8 tokens to the few-token MoE kernel (`get_mmvq_mmid_max_batch` in
+    `mmvq.cu`), whose Pascal build allows 4 (`get_mmvq_mmid_max_batch_for_device`). On a compute 6.1 card both read
     the same table.
-  - G3 split by layer over two RTX 3090s, llama-perplexity over 8 × 512 tokens at `-ub 128` and `-ub 512`: the branch
-    reproduces the base's perplexity in every chunk and writes byte-identical reference-logit files. Compared with the
-    base it gives the same KLD statistics as the base compared with itself (mean 0, maximum 6 × 10⁻⁵ from the rounding
-    of the stored logits, the same top token everywhere), so the logits are identical. With
-    `LLAMA_GRAPH_REUSE_DISABLE=1` they are identical as well.
+  - G3 split by layer over two RTX 3090s (pipeline parallelism on, four input copies), llama-perplexity over
+    8 × 512 tokens at `-ub 128` and `-ub 512`: the branch reproduces the base's perplexity in every chunk and writes
+    byte-identical reference-logit files. Compared with the base it gives the same KLD statistics as the base compared
+    with itself (mean 0, maximum 6 × 10⁻⁵ from the rounding of the stored logits, the same top token everywhere), so
+    the logits are identical. With `LLAMA_GRAPH_REUSE_DISABLE=1` they are identical as well. At `-ub 128` the base
+    reuses the graph for two of each chunk's four micro-batches, each time after the full wait, and the branch for
+    none.
 - **Measuring it on the rig.** On nine cards. `V2` and `PF` are the `bin/` of the `pascal-p106-v2` and
   `pascal-p106-v2-prefill` tarballs, `V2S1` and `PFS1` their 1-copy builds (`…-sched1`), `MODEL` S4-L0 for continuity
   (then G3h/K2h), `WIKI` wikitext-2's `wiki.test.raw`:
