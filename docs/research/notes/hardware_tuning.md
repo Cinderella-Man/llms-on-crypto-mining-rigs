@@ -44,7 +44,7 @@ read-only inventory E0.1, and the `nvidia-smi` logs recorded with the Q38 rig ru
 - **Safety is proved by bit-exact output, not by "no crash".** GDDR5's CRC protects only the data bus: a weak cell, an
   address or command error, or a bit flipped while weights load leaves wrong weights in VRAM for the whole session.
   The fork's decode is deterministic, so with stable memory a one-token KLD run against a stock base file gives exactly
-  0 and the same top token everywhere. The protocol: one card, +200 steps, a streaming-bandwidth and kernel sweep per
+  the statistics of a stock rerun and the same top token everywhere. The protocol: one card, +200 steps, a streaming-bandwidth and kernel sweep per
   step, a CUDA pattern test, the exact-KLD check on Flint, an hour's soak, then one step back for margin, card by card.
 - **Power and core clocks have nothing to give the fork's layer split today.** Busy cards run at their top boost bin
   (1,835–1,903 MHz) at 33–38 W average and ≤ 36 °C; the 75 W cap is active in under 4 % of busy samples. A higher power
@@ -313,8 +313,10 @@ MHz (inventory), so under the fork's layer split a busy card already runs at its
   token. Bandwidth that stops rising (replays, if EDC is on) is an early sign, not a guarantee.
 - **The fork makes silent errors visible.** Its decode is deterministic: the same build, file, card set and inputs give
   byte-identical logits (shown in the [prefill](prefill_pascal.md) and [pipelined speculation](pipelined_speculation.md)
-  checks). With stable memory, a run against a stock KLD base file gives KLD exactly 0, `same top p` 100 %. Any nonzero
-  value is an error on some card in the run. One-token steps (`-ub 1`) exercise the decode kernels; a few thousand tokens
+  checks). With stable memory, a run against a stock KLD base file gives exactly the statistics of a stock rerun against
+  the same file, with `same top p` 100 %. llama-perplexity stores the base log-probabilities in 16 bits, so identical
+  logits still show `Mean KLD` 0.000000 and a maximum of ~1e-5, not 0. Any difference from the stock rerun's statistics
+  is an error on some card in the run. One-token steps (`-ub 1`) exercise the decode kernels; a few thousand tokens
   route through nearly every expert, so most of the card's weights are read.
 - **Hangs:** a memory clock far past the margin can stop the card (Xid 79 "fallen off the bus", or 13/31/43 in a CUDA
   process). `nvidia-smi --gpu-reset` needs every process off the card, Xorg included, and its support on this GeForce-class
@@ -332,9 +334,9 @@ kernel log scanned for Xid after every step (`journalctl -k --since '-10 min' | 
 | 1 | Stock baselines on the card: `bench/mmvq_pascal` with its correctness check and timing (streaming read, Q8_0/Q5_0/Q4_1 kernels); two stock Flint `-ub 1` KLD runs on six cards, the second against the first's base file | ~25 min (one model load) | the second stock run gives KLD 0 and 100 % same top token (determinism proved on the rig) |
 | 2 | Offset sweep on the card: +200, +400, … up to the reported range (+1,000, at most +1,200), each with the bench (check + timing) | ~5 min per step | correctness check passes; no Xid; streaming GB/s rises with the clock |
 | 3 | Pattern test at the highest clean step: `cuda_memtest` (tests 0–8 and 10: walking ones on the address lines, own-address, moving inversions, random patterns), one pass, built from source for `sm_61` | est. 10–20 min | no error |
-| 4 | Flint `-ub 1` KLD at that step against the stock base (six cards, the card in the set) | ~6 min + load | KLD exactly 0, 100 % same top token |
-| 5 | Margin: set one step lower (−200, ~2.5 %); 1-hour soak repeating stage 4 in a loop | 1 h | every run exactly 0; GPU temperature < 70 °C; no Xid |
-| 6 | After every card: the nine-card `-ub 1` KLD run and tg128 against stock on six and nine cards | ~30 min | exact 0; tg128 gain ≥ 2 % (else restore stock everywhere) |
+| 4 | Flint `-ub 1` KLD at that step against the stock base (six cards, the card in the set) | ~6 min + load | statistics identical to the stock rerun's, 100 % same top token |
+| 5 | Margin: set one step lower (−200, ~2.5 %); 1-hour soak repeating stage 4 in a loop | 1 h | every run identical to the stock rerun; GPU temperature < 70 °C; no Xid |
+| 6 | After every card: the nine-card `-ub 1` KLD run and tg128 against stock on six and nine cards | ~30 min | identical to stock; tg128 gain ≥ 2 % (else restore stock everywhere) |
 
 - **Step size and margin.** +200 is ~2.5 % of the memory clock; the final setting is one step below the last step that
   passed stages 2–4, because rare errors at the edge can take hours to show (memtest_vulkan's authors note errors that
@@ -372,6 +374,10 @@ kernel log scanned for Xid after every step (`journalctl -k --since '-10 min' | 
 ## 7. Plan (question 7)
 
 ### 7.1 First experiments
+
+[bench/mem_offset](../../../bench/mem_offset/README.md) packs M0–M3 and the soak (stages 0–5) into one kit: the NVML
+script with a read-only probe and a measured unit for the offset, the step script with a reset trap, the mmvq and
+`cuda_memtest` binaries for sm_61, and the exact check. The commands below show the same steps by hand.
 
 `B=/opt/llama-builds/llama.cpp-20261023-032b130f4-pascal-p106-v2/bin`, `M` the six-card Flint file used in the session
 (UD-Q4_K_XL or S4-L0), `WIKI` wikitext-2's `wiki.test.raw`, `E="LLAMA_NO_MOE_DOWN_RESCALE=1"` (`=tg` for UD-Q4_K_XL),
@@ -420,7 +426,8 @@ ssh rig "python3 /tmp/oc/nvml_memoc.py 0 mem <step> && $E CUDA_VISIBLE_DEVICES=0
 # afterwards: rm -rf /tmp/oc on the rig (the base file is ~0.6 GB)
 ```
 
-Pass: "Mean KLD" 0 and "Same top p" 100 % in both comparisons. GPU0 holds the first ~8 layers in the six-card split.
+Pass: the offset run's statistics block equals the stock rerun's, digit for digit, with "Same top p" 100 % (section 5.1).
+GPU0 holds the first ~8 layers in the six-card split.
 
 **M5, the payoff (~15 min):** with the validated offsets, `llama-bench -p 0 -n 128 -r 3` on six and nine cards against the
 same run at stock; the kill criterion of row 1 applies here.
