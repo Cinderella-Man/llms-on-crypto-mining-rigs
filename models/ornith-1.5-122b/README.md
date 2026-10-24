@@ -28,9 +28,9 @@ Details: [model branches](../../docs/research/notes/model_branches.md), section 
 
 ## What's next
 
-1. **Ornith-1.5-35B-A3B first.** The smaller Ornith has the shapes of Qwen3.6-35B-A3B (its Q4_K_M file is 21.7 GB), so
-   it fits four or five cards with its full context and gains from the same work as
-   [Qwen3.6](../qwen3.6-35b-a3b/README.md) ([Q159](../../quants/experiments.md#registry)).
+1. **[Ornith-1.5-35B](../ornith-1.5-35b/README.md) first.** The smaller Ornith has the shapes of Qwen3.6-35B-A3B, so it
+   fits four or five cards with its full context and gains from the same work as Qwen3.6
+   ([Q159](../../quants/experiments.md#registry)).
 2. **A first rig run of the 122B with no new code**, using the smallest file that fits
    ([Q158](../../quants/experiments.md#registry)).
 3. Then the kernels its files need, in the order that run shows.
