@@ -323,10 +323,12 @@ def main():
                 cells.append(f'{r:.3f} ({ci[0]:.3f}-{ci[1]:.3f} / {cc[0]:.3f}-{cc[1]:.3f})')
             print(f'| {g} | {m.sum()} | ' + ' | '.join(cells) + ' |')
     if cls is not None and a.diff:
-        pairs = [x.split('-') for x in a.diff.split(',')]
-        for x in pairs:
-            if len(x) != 2 or x[0] not in dumps or x[1] not in dumps:
-                sys.exit(f'--diff {"-".join(x)}: needs two dump names joined by "-"')
+        pairs = []
+        for x in a.diff.split(','):   # names may contain "-": take the split where both sides are dump names
+            cut = [i for i, ch in enumerate(x) if ch == '-' and x[:i] in dumps and x[i + 1:] in dumps]
+            if len(cut) != 1:
+                sys.exit(f'--diff {x}: needs two dump names joined by "-"')
+            pairs.append((x[:cut[0]], x[cut[0] + 1:]))
         print(f'\nPaired differences in units of {a.ref}\'s KLD on the group, sum(A - B) / sum({a.ref}), '
               f'± SE over {len(chunks)} chunks / over {len(clusters)} clusters:\n')
         print('| A - B | ' + ' | '.join(gmask) + ' |')
