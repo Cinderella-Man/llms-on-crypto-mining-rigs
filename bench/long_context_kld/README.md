@@ -176,3 +176,29 @@ Difference in log-probability of the actual token, file minus UD-Q4_K_XL, in nat
   interval excludes 0, K2hg at markers (−0.017, −0.029 to −0.004): fewer hesitation markers, and a third of the
   threshold.
 
+### K2 with the Q8_0 head and F16 routers (Q126)
+
+K2-r16 is K2 (Q77's round-5 mix; K2h is the same file with the GPTQ Q5_0 head) with its Q8_0 head and F16 routers.
+With the screened head, which is exact, it is the lead file for our engine. All files below ran on the same two V100s with the same sm_70
+build and flags, against the same Q8_0 reference; UD-Q4_K_XL was rescored there because the card type alone moves every
+file's KLD by 1–3 %. Token-pooled ratios to UD-Q4_K_XL, 95 % bootstrap over the clusters of chunks that share tool
+schemas, on the 23 chunks where every file is finite (see the last point):
+
+| File | KLD | Written | Read | Tool schemas | Tool output |
+|---|---|---|---|---|---|
+| UD-Q4_K_XL | 0.487 | 1 | 1 | 1 | 1 |
+| K2-r16 | 0.518 | **0.929 (0.890–0.968)** | 1.068 (1.043–1.094) | 1.074 (1.042–1.109) | 1.045 |
+| K2h (GPTQ Q5_0 head, F32 routers) | 0.513 | 1.003 (0.963–1.040) | 1.056 (1.022–1.081) | 1.064 (1.021–1.099) | 1.023 |
+
+- **K2-r16 writes 7 % better than UD-Q4_K_XL and reads tool schemas 7 % worse.** On all 24 chunks: written 0.930
+  (0.893–0.965), read 1.068, schemas 1.074.
+- **The Q8_0 head takes back what the GPTQ head cost on written tokens:** K2-r16 − K2h is −0.074 ± 0.012 of
+  UD-Q4_K_XL's written KLD, the same size as G3h − G3 (+0.073). The F16 routers move read and schema tokens by
+  +0.012 ± 0.008 and +0.011 ± 0.010, within the routing-flip noise.
+- **The card type moves files together on written tokens but not quite on read tokens.** On the RTX 3090s, UD-Q4_K_XL
+  and K2h each have 2.6 % more written-token KLD than on the V100s; their read ratio is 1.034 there and 1.056 here.
+  Compare files only on the same cards.
+- **K2h gave NaN for every scored token of one chunk on the V100s** (`multi_turn_long_context_10`, MoE
+  down-projection rescale off); K2-r16, whose body differs from K2h's only in the router's precision, and
+  UD-Q4_K_XL with the rescale on were finite on the same chunk.
+
