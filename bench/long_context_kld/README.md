@@ -198,7 +198,32 @@ schemas, on the 23 chunks where every file is finite (see the last point):
 - **The card type moves files together on written tokens but not quite on read tokens.** On the RTX 3090s, UD-Q4_K_XL
   and K2h each have 2.6 % more written-token KLD than on the V100s; their read ratio is 1.034 there and 1.056 here.
   Compare files only on the same cards.
-- **K2h gave NaN for every scored token of one chunk on the V100s** (`multi_turn_long_context_10`, MoE
-  down-projection rescale off); K2-r16, whose body differs from K2h's only in the router's precision, and
-  UD-Q4_K_XL with the rescale on were finite on the same chunk.
+- **With the MoE down-projection rescale off, a file can turn NaN on some inputs.** K2h gave NaN for every scored
+  token of one chunk on the V100s (`multi_turn_long_context_10`), and so did G3 with UD-Q4_K_XL's attention (Q127
+  below). On that chunk both are finite with the rescale on; K2-r16, whose body differs from K2h's only in the
+  router's precision, happened to be finite with it off. The rescale only acts where FP16 would overflow: G3 with it
+  on is bit-identical to G3 with it off on all 24 chunks. Run every file with the rescale on.
+
+### Which tensors carry UD-Q4_K_XL's edge on tool schemas (Q127)
+
+Three probes from G3 (Q8_0 head, F32 routers; probes, not candidates), each scored on the same V100s as G3 and
+UD-Q4_K_XL. Paired differences to G3 in units of UD-Q4_K_XL's KLD on the group, ± standard error over chunks / over
+the clusters of chunks that share tool schemas (G3 + UD's attention on the 23 finite chunks):
+
+| Probe | Tool schemas | Written | Read |
+|---|---|---|---|
+| G3 + UD-Q4_K_XL's attention (all q, k, v, output: 196 tensors) | +0.010 ± 0.011 / 0.016 | +0.002 ± 0.010 / 0.012 | +0.005 ± 0.010 / 0.015 |
+| G3 + UD-Q4_K_XL's routed experts (141 tensors; rescale on) | +0.019 ± 0.011 / 0.018 | **+0.166 ± 0.029 / 0.032** | +0.013 ± 0.011 / 0.017 |
+| G3a: G3 + Q8_0 for the 19 sliding-layer attention tensors UD-Q4_K_XL keeps at Q8_0 | +0.003 ± 0.002 / 0.003 | −0.010 ± 0.005 / 0.005 | +0.002 ± 0.002 / 0.003 |
+| G3 with the rescale on | 0 | 0 | 0 |
+
+On these cards G3 itself is 1.032 of UD-Q4_K_XL on tool schemas (0.994–1.063 by clusters), 1.025 on read tokens and
+0.852 on written tokens.
+
+- **No probe moves tool-schema tokens toward UD-Q4_K_XL.** Its attention, its experts, the attention precision it
+  keeps in the sliding layers, and the rescale each leave G3's schema ratio where it was or raise it. The schema gap
+  is not attributable to a tensor class, so no bytes should be spent chasing it.
+- **G3's advantage on written tokens comes from its routed experts.** With UD-Q4_K_XL's experts (IQ4_XS, Q4_K and Q5_K
+  at fewer bytes) G3 writes at UD-Q4_K_XL's level: written ratio 1.018.
+- Q8_0 for the 19 sliding-layer attention tensors buys −1 % on written tokens for 60 MB per token.
 
