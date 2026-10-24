@@ -525,6 +525,40 @@ into the f16 tensor, which the allocator then holds once per card instead of onc
 to the host's for causal, sliding-window and several streams; then llama-batched-bench at `-c 32768/131072`,
 `-npp 32768` / `131072`, `-ub 256/512`, four copies, against the base.
 
+**E5 built (Q110, fork branch `pascal-p106-v2-gpumask`, commit `21c7364b4`).**
+- **The op.** `GGML_OP_KQ_MASK` (CPU reference and CUDA kernel) takes I32 cell data `[n_kv, 2, n_stream]` (the cell's
+  position; bit b set when the cell holds the micro-batch's sequence of index b, none for an empty cell) and I32 token
+  data `[n_tps, 2, n_stream]` (position; sequence index), and writes the f16 or f32 mask by the host's rule: 0 where the
+  token and the cell share a sequence, the cell is not later than the token and lies inside the sliding window
+  (standard, chunked or symmetric), −∞ elsewhere.
+- **The graph.** For the sliding-window cache pair (Flint's), the attention input takes these two small inputs instead of
+  the two masks; `build_attn` makes one mask node per layer, and the scheduler callback places it on that layer's card
+  (as it places the norms), so every card expands its own mask. Per micro-batch a card then receives 8 bytes per cell
+  instead of 2 bytes per cell and token, and the mask sits once in its compute buffer instead of once per pipeline copy;
+  the host no longer fills it either.
+- **When.** Micro-batches of at least `LLAMA_GPU_KQ_MASK` tokens (default 32; 0 off, 1 always) with causal attention, no
+  ALiBi or M-RoPE and at most 32 sequences. The rest keeps the host mask, decode included: one token's mask is 2 bytes per
+  cell, less than the cell data. `LLAMA_GPU_KQ_MASK_CHECK=1` expands each micro-batch's inputs on the host by the op's
+  rule and aborts if a single value differs from the host mask.
+- **Checked on an RTX 3090** (natively and through the compute_61 PTX for the op): `test-backend-ops -o KQ_MASK`, 20 cases
+  (no window, 513-token, chunked and symmetric windows; 1–32 sequences, 1–4 streams), exact against the CPU. G3 on two
+  cards, flash attention on: prefill with one sequence (`-c 1024 -ub 256`), four sequences in four streams and in one
+  unified stream, one-token decode and four-sequence decode steps (the last two with `LLAMA_GPU_KQ_MASK=1`). All 1,606
+  masks the check expanded (both caches of every micro-batch) were identical to the host's, and each run's perplexity
+  equals the host-mask run's to every printed digit, with the same top token everywhere and KLD at the base file's
+  storage floor.
+- **Expected on the rig (est., from section 1.4's table, nine cards, `-ub 128`):** mask copies 3.2 → ~0.1 ms per prompt
+  token at 32k and 12.5 → ~0.4 ms at 131k; card time 20–22 → 17–19 ms and 52–54 → 40–42 ms; more on the wall clock
+  where the host's synchronous copies set the pace, and `-ub 512` with four copies at 262k without 1 GiB of pinned host
+  mask. The expansion itself writes the mask once per layer on its card (~55 µs per full-attention layer at 32k and
+  `-ub 128`, est.). Rig run: llama-batched-bench at `-npp 32768` (`-ub 128/512`) and `131072` (`-ub 128/256`) with
+  `LLAMA_GPU_KQ_MASK=0` and the default, whose generation column also gives decode at that depth, and the KLD check
+  with `-ub 512`.
+- **Not yet covered:** the plain (non-sliding-window) KV cache input, which other architectures use, and decode at depth.
+  At one token per step the host still copies n_kv × 2 bytes to every card: est. 3 ms per token at 32k and 12 ms at 131k
+  on nine cards. Removing that needs the cell data resident on each card and updated only for the cells a step writes
+  (a scatter next to the K/V writes, a full upload after `seq_rm`, `seq_cp`, a shift or a defragmentation).
+
 **E6. Fixed cost per request (rig, ~30 min).** llama-server with `-lv 4` (timestamps for `sched_reserve` and checkpoint
 traces), a two-turn chat with `server_bench.sh`, four runs: ± `-bs` × `--ctx-checkpoints 0/4`. Expected: `-bs` adds one
 re-reserve per request (0.1–0.5 s), each checkpoint 0.2–0.3 s.

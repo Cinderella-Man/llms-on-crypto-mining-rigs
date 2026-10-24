@@ -281,6 +281,10 @@ layers 9–45:
 
 ## 3. Attention mask computed on the card
 
+Built as a graph op (Q110, fork branch `pascal-p106-v2-gpumask`): each card expands its masks from 8 bytes per cell for
+prompt micro-batches, with logits identical to the host-mask path; rig speed pending ([prefill note](prefill_pascal.md),
+E5). Inside the attention kernel and for decode at depth it is still open.
+
 **Mechanism.** Flint's masks are positional: causal for the 14 full-attention layers, causal plus a 513-token window for
 the others, one sequence. The flash-attention kernel can compute them from the query's position and the cell positions
 (plus a per-cell sequence id for several slots) instead of reading an f16 matrix.
