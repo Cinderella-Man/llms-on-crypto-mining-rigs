@@ -16,13 +16,14 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 | | |
 |---|---|
 | Engine | the v2 Pascal engine ([how to get it](../../README.md#run-it)) |
-| Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have |
+| Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
 | Cards | all nine for the full 262,144-token context; six run one short conversation about as fast and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
 
 Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB) is the near-lossless alternative: on the v1
 engine it ran as fast as UD-Q4_K_XL ([below](#how-it-got-here)); on v2 it is not measured yet. **K2h-r16**, this
-project's own Flint file, is ~4 % faster than UD-Q4_K_XL at better measured fidelity; it is not published yet.
+project's own Flint file, is ~4 % faster than UD-Q4_K_XL at better measured fidelity; it is not published yet
+(RIG-TBD: its download link, if the release includes it).
 
 ## Command lines
 
@@ -61,14 +62,30 @@ warm-up, because idle cards sit at a lower clock.
 | v1 engine (released 2026-10-23) | 32.6 | |
 | v2: + FP32 activation sums, shared-expert fusion | 36.5 | |
 | v2: + prompt-processing changes | 37.5 | 39.3 |
-| **v2: + persistent MoE kernel** | **39.8** | **41.5** |
-| v2 with pipelined speculation | | **41–47** (by prompt, below) |
+| v2: + persistent MoE kernel | 39.8 | 41.5 |
+| v2: + pipelined speculation in llama-server (branch `pascal-p106-v2-next`) | 39.9 | 41.8 |
+| **v2 release build** | **RIG-TBD** | **RIG-TBD** |
 
-- The first three rows come from one session, the next two from another
-  ([Q117, Q88, Q125](../../quants/experiments.md#registry)).
+- The first three rows come from one session, the next two from another, the `v2-next` row from a third
+  ([Q117, Q88, Q125, Q160](../../quants/experiments.md#registry)).
 - On six cards the persistent kernel takes UD-Q4_K_XL from 35.8 to 38.2 tok/s and K2h-r16 from 37.4 to 40.7.
-- **Served** (llama-server, `-bs`, one conversation, before the persistent kernel): chat 31.4–34.0 tok/s, requests
-  with tools 29.3–29.6 ([Q118, Q55](../../quants/experiments.md#registry)).
+
+### Served
+
+llama-server, one conversation, GPU sampling (`-bs`), median per request, tok/s
+([Q160](../../quants/experiments.md#registry)):
+
+| Build | UD-Q4_K_XL | K2h-r16 (ours) |
+|---|---|---|
+| v2-next, plain decoding | 36.6 | 39.2 |
+| **v2-next, pipelined speculation (`--pipe-depth 3`)** | **47.3** | **48.5** |
+| v2 release build, `--pipe-depth 3`, the chat command line above | RIG-TBD | RIG-TBD |
+
+- The v2-next rows ran at 8,192 tokens of context: chat, rewrite and edit prompts, each at temperature 0 and with two
+  seeds at the makers' sampling, plus one streamed request. Pipelined speculation gave 1.04–1.18× on chat, 1.04–1.56×
+  on edits and 1.44–2.79× on rewrites, and all ten pipelined answers were identical to the server without it.
+- Requests that carry tools sample on the CPU and decode batched: 29.3–29.6 tok/s on the combined build before the
+  persistent kernel ([Q55](../../quants/experiments.md#registry)).
 
 ### Pipelined speculation
 
@@ -77,27 +94,34 @@ token t+1 enters the first card while the later cards still finish token t, and 
 real token, so the output is plain decoding's output. The guesses come from the conversation itself: the token that
 followed the longest earlier match of the current text, or else the most frequent continuation of the last few tokens.
 
-K2h-r16, 512 generated tokens per prompt, the fork's `llama-pipespec` tool, tok/s
-([Q87](../../quants/experiments.md#registry)):
+Nine cards, 256 generated tokens per prompt at temperature 0, the fork's `llama-pipespec` tool on the `v2-next` build,
+tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/experiments.md#registry)):
 
-| Prompt | 9 cards, plain | 9 cards, pipelined (depth) | 6 cards, plain | 6 cards, pipelined (depth) |
-|---|---|---|---|---|
-| Chat | 31.0 | **42.7** (5) | 32.6 | **44.8** (3) |
-| Code | 31.1 | **44.2** (5) | 34.5 | **46.2** (3) |
-| Edit a file | 26.4 | **40.9** (2) | 28.4 | **39.9** (3) |
-| Rewrite a text | 35.9 | **46.7** (6) | 34.1 | **47.3** (4) |
+| Prompt | UD-Q4_K_XL plain | depth 3 | depth 4 | K2h-r16 plain | depth 3 | depth 4 |
+|---|---|---|---|---|---|---|
+| Chat | 32.2 | 40.4 | 42.5 | 34.3 | 41.8 | 44.4 |
+| Code | 35.2 | 41.3 | 43.4 | 34.7 | 44.2 | 47.0 |
+| Edit a file | 31.8 | 44.2 | 44.6 | 36.3 | 45.3 | 46.2 |
+| Rewrite a text | 35.9 | **60.7** | **63.1** | 39.4 | 51.7 | 52.2 |
 
+- Every output was identical to plain decoding.
 - **Part of the gain is the clock.** In plain decoding each card idles most of every token and drops to its 1,354 MHz
   base clock; with every guess wrong, nine cards still run 1.24× faster. At matched clocks the guesses give 1.10–1.3×
   ([idle cards](../../docs/research/notes/idle_cards.md)).
-- **A trained guesser would pay much more.** With 70 % of guesses right the same pipeline runs 82–84 tok/s.
-- These runs used a build without the persistent kernel; the v2 engine has both.
+- **A trained guesser would pay much more.** With 70 % of guesses right the pipeline runs 82–84 tok/s
+  ([Q87](../../quants/experiments.md#registry)).
 
 ### Prompt processing
 
 UD-Q4_K_XL on nine cards, tok/s for prompts of 512 / 2,048 / 8,192 tokens: stock llama.cpp 185 / 493 / 593, v1
 187 / 494 / 593, v2 228 / 613 / 723. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by
 tokens per expert ([Q117](../../quants/experiments.md#registry)).
+
+### With hardware tuning
+
+A memory clock offset of RIG-TBD MT/s on every card adds RIG-TBD % to v2's generation and RIG-TBD % to served chat on
+UD-Q4_K_XL, with the output unchanged. The full matrix of stock llama.cpp, v1 and v2 with and without it is in the
+[README's hardware-tuning section](../../README.md#hardware-tuning).
 
 ## Quality
 
@@ -151,7 +175,8 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 
 ## Not measured yet
 
-- Served speed with `--pipe-depth`; the tok/s above for pipelined speculation come from `llama-pipespec`.
+- Served speed with `--pipe-depth` at the full 262,144-token context (the measured server ran at 8,192), and the release
+  build's numbers (RIG-TBD).
 - Generation deep into a long context on v2. The v1 engine generated 23.3 tok/s at 32,768 tokens of context with
   Miner S4-L0 ([Q54](../../quants/experiments.md#registry)).
 - Coding-agent tasks end to end, and runs longer than an hour.

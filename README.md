@@ -14,7 +14,7 @@ Generation speed in tokens per second (tok/s) for one conversation, measured on 
 
 | Model | What it is | Speed | Page |
 |---|---|---|---|
-| [![Flint](https://img.shields.io/badge/Flint-v2%20measured-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards: **39.8 tok/s** with Unsloth's UD-Q4_K_XL, against 16.5 on stock llama.cpp; **41.5** with our own file (not published yet); **41–47** with pipelined speculation | [models/flint](models/flint/) |
+| [![Flint](https://img.shields.io/badge/Flint-v2%20measured-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards: **39.9 tok/s** generation with Unsloth's UD-Q4_K_XL, against 16.5 on stock llama.cpp; served chat with pipelined speculation **47.3** (**48.5** with our own file, not published yet) | [models/flint](models/flint/) |
 | [![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-coming%20soon-718096)](models/qwen3.6-35b-a3b/) | 36 B hybrid mixture of experts, 3 B per token, 262,144-token context | Four cards: 29.0 tok/s with the v1 engine, against 18.5 on stock llama.cpp | [models/qwen3.6-35b-a3b](models/qwen3.6-35b-a3b/) |
 | [![Ornith-1.5-35B](https://img.shields.io/badge/Ornith--1.5--35B-coming%20soon-718096)](models/ornith-1.5-35b/) | 35 B hybrid mixture of experts with Qwen3.6's shapes, 3 B per token, 262,144-token context | Not run yet; its 21.7 GB Q4_K_M fits four or five cards (est. 19–23 tok/s today, 30–36 with the planned K-quant kernels) | [models/ornith-1.5-35b](models/ornith-1.5-35b/) |
 | [![Ornith-1.5-122B](https://img.shields.io/badge/Ornith--1.5--122B-coming%20soon-718096)](models/ornith-1.5-122b/) | 122 B hybrid mixture of experts, 10 B per token, for coding agents | Not run yet; fits nine cards only at 2–3 bits per weight (est. 8–16 tok/s) | [models/ornith-1.5-122b](models/ornith-1.5-122b/) |
@@ -56,7 +56,45 @@ The first three rows were measured on six cards with UD-Q4_K_XL, step by step; t
 ## Hardware tuning
 
 What the cards and the host can give on top of the software. These settings apply to stock llama.cpp as much as to the
-fork, and every engine number in this repository is measured without them.
+fork. Every engine number elsewhere in this repository is measured without them, and the tables below never mix the
+two: each engine at stock clocks, each engine tuned, then what the tuning adds to each.
+
+<!-- RIG-TBD: replace the three tables with tables.md from bench/release_matrix (run of 2026-10-25); drop the K2h-r16
+columns if the release ships Unsloth's file only -->
+
+**Stock clocks**, nine cards, Flint, tokens per second:
+
+| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | K2h-r16 generation | K2h-r16 served |
+|---|---|---|---|---|
+| Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v2 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v2 engine, pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD | — | RIG-TBD |
+
+**Tuned: memory +RIG-TBD MT/s on every card**, nine cards, Flint, tokens per second:
+
+| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | K2h-r16 generation | K2h-r16 served |
+|---|---|---|---|---|
+| Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v2 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v2 engine, pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD | — | RIG-TBD |
+
+**What the tuning adds**, each engine against itself at stock clocks:
+
+| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | K2h-r16 generation | K2h-r16 served |
+|---|---|---|---|---|
+| Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v2 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| v2 engine, pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD | — | RIG-TBD |
+
+Generation is `llama-bench`: 128 tokens right after a 512-token prompt, so the cards are at their working clocks.
+Served is llama-server with the model page's chat command line at the full 262,144-token context: the median of chat
+requests of up to 1,000 tokens with the makers' sampling. With the offset, every engine's greedy output stayed identical
+to its output at stock clocks (RIG-TBD). Method and script: [bench/release_matrix](bench/release_matrix/README.md).
+
+The settings, one by one:
 
 | Setting | What it does on this rig | Status |
 |---|---|---|
@@ -75,9 +113,13 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
 
 1. **Driver and system:** Ubuntu 24.04 with NVIDIA driver 580, the last driver branch for Pascal
    ([setup](docs/setup.md)).
-2. **Build the engine** for compute capability 6.1 with CUDA 12.x, on the rig itself (slow on two cores) or on any
-   Linux PC with Docker using [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh). The v2 engine is the
-   fork's branch `pascal-p106-v2-next`; v1, as released on 2026-10-23, is `pascal-p106`.
+2. **Get the engine.** The prebuilt release needs only the driver: download the two archives of the fork's release
+   RIG-TBD (tag and link once published), check them with `sha256sum -c SHA256SUMS`, and unpack both into one folder;
+   then run [scripts/p106_check.sh](scripts/p106_check.sh), which checks the driver, the cards, host memory, the model's
+   read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
+   (slow on two cores) or on any Linux PC with Docker using
+   [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh). The v2 engine is the fork's branch
+   `pascal-p106-v2-next` (RIG-TBD: the release branch or tag); v1, as released on 2026-10-23, is `pascal-p106`.
 
    ```bash
    git clone --branch pascal-p106-v2-next https://github.com/Cinderella-Man/llama.cpp
