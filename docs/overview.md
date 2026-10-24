@@ -2,7 +2,8 @@
 
 Background for the [README](../README.md): why a retired GPU mining rig suits large language models at all, the first
 round of measurements (2026-10-22, stock and lightly patched llama.cpp), what those measurements taught, and the terms
-used throughout this repository. The current headline result is in the README.
+used throughout this repository. Current results are in the README and on each model's page under
+[models/](../models/).
 
 ## Why a mining rig could work for LLMs
 

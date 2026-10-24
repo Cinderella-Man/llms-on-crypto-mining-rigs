@@ -15,6 +15,17 @@ _Avoid_: box, server
 Any other computer used to make and score quants; speed is never measured on it.
 _Avoid_: rig, lab
 
+### Software
+
+**Pascal engine**:
+This project's llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1 and v2 are its
+releases.
+_Avoid_: Flint fork, model branch
+
+**Model page**:
+The folder `models/<model>/` that holds one model's recommended file, command line, and measured speed and quality.
+_Avoid_: profile
+
 ### Model files
 
 **Format**:
