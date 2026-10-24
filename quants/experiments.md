@@ -13,12 +13,12 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-24, 09:15):** the rig is off until the next session (a rig runbook of
-rig tests prepared: Q79, the engine A/Bs Q100/Q92/Q78/Q88/Q99/Q101, the release candidates, Q87/Q104, Q89). The
+**Now (2026-10-24, 09:55):** the rig is on since 09:39 and runs the prepared runbook one block at a time: Q118
+(server gap) since 09:45, then Q117 (the v2 engine against stock and v1), long context, the release candidates (Q125), the pipelined executor. The
 7-GPU quant machine works until 12:00: Q41 task checks on GPUs 0–4 (G3 single-turn at K = 2; new multi-turn
 scenarios, UD-Q4_K_XL against G3); on GPUs 5–6 since 09:45 the staircase drafter pilot (Q20, D1, owner-approved; all seven GPUs from 12:00, est. ~10 h, no hard stop).
 Lead release candidate: K2h (passes single-turn non-inferiority, KLD 0.109 at 2.14 GB per token; level with
-UD-Q4_K_XL at 8k on agent text, Q106). Research runs in hourly rounds (round 11: a long-context-aware mix against UD); each
+UD-Q4_K_XL at 8k on agent text, Q106). Research runs in hourly rounds (round 12: free hardware tuning on the rig); each
 round can change the priorities below, and every change is logged under "Decision log". Keep this line current: say
 what is running, where, and since when.
 
