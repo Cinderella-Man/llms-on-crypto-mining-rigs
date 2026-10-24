@@ -581,6 +581,107 @@ are timed in the microbenchmark of Q59 on one card before the port.
 | — | TILE retile for decode (`half2` tiles, conversion at use, scores in registers) as an upstream PR | 1–2 days | +30–50 % attention for any Pascal card with an f16 cache | Optional; the upstream-friendly part |
 | — | q4_0 KV | — | Same speed as q8_0 in the new kernel; +67 % KLD | Not recommended |
 
+## 9. Prompt kernel for compute 6.1 (Q163)
+
+Reading a long prompt is the other half of long context: on nine cards a 64k-token prompt read at 67.8 tok/s (Q116,
+about 16 minutes), against 714 tok/s for an 8k prompt (Q109). Agents hit this with tool outputs, files and long histories.
+
+### 9.1 What the stock kernel does with a prompt micro-batch
+
+- **Selection.** F16 or Q8_0 K/V with 3 or more query tokens run TILE on compute 6.1 (section 2). With 8 query heads per
+  KV head the launch puts the 8 heads and 4 tokens in one block from 3 tokens up: `flash_attn_tile<128,128,4,8>` for
+  Flint, `<256,256,4,8>` for the Qwen3.6 class (16 query heads, 2 KV heads, head size 256 on 10 attention layers).
+- **FP32 configuration** (`fattn-tile.cuh:131`, `:143`): 256 threads, 2 blocks per SM, 64-key tiles at head 128 and
+  32-key tiles at head 256, K staged in 64-dimension slices, K and V converted to FP32 in shared memory. A Q8_0 cache is
+  first converted into an F16 copy of the whole K and V view on every call.
+- **Register reuse.** Per 2-dimension step each lane loads 2 keys and 4 query columns (12 floats) for 16 FMAs; in P·V it
+  loads 4 values and 4 probabilities (8 floats) per 16 FMAs.
+- **Why that is slow on sm_61 (my calc).** The path from shared memory into registers moves 128 B, 32 floats, per clock and
+  SM, against 128 FMA lanes: a loop is FMA-bound only below 0.25 floats loaded per FMA. The stock layout loads 0.75
+  (scores) and 0.5 (P·V), which caps it at 33 % and 50 % of the FP32 peak, 40 % for the pair, before barriers and the
+  staging.
+- **Measured.** The rig's fills put attention at ~0.33 ms per prompt token per 1k of depth (Q116: 0 → 32k in 306 s,
+  32k → 64k in 661 s). At 229 MFLOP per 1k of depth that is ~0.7 TFLOPS, ~32 % of a P106's FP32 peak (2.2 TFLOPS at
+  ~1.7 GHz), so the kernel runs at about 80 % of its own ceiling.
+
+### 9.2 What the starting points give on this card
+
+- **ik_llama.cpp PR #2142** keeps K and V as F16 in shared memory and converts them at the point of use. On sm_61 a
+  conversion runs at a quarter of the FMA rate and each converted value feeds 4 FMAs in that layout, so the conversions
+  cost about as much issue time as the halved shared-memory traffic saves. Its +4–9 % on a P100 came partly from a second
+  block per SM, which the P100's 64 KB of shared memory needed and a P106 (96 KB) already has; the PR says the same.
+- **ik_llama.cpp PR #2580** sends head-256 prompts from ik_llama.cpp's VEC kernel, which reads K and V once per query
+  column, to its FP32 tile kernel (+95 % at 16k on a P100). Mainline llama.cpp, this fork's base, already runs TILE for
+  head-256 prompts, so that gain is not available here.
+- **Upstream PR #30792** dequantizes Q8_0 into `half2` and asserts FP16 accumulation (finding 4); the new kernel has its
+  own FP32 Q8_0 loader (Q61).
+
+### 9.3 The kernel
+
+Fork branch `pascal-p106-v2-prefill-attn` (off `pascal-p106-v2-next`): `ggml/src/ggml-cuda/fattn-tile-pascal.cu`, hooked
+into the TILE case of `ggml_cuda_flash_attn_ext` and into the F16-copy reservation (`get_alloc_size`).
+
+- **Scope.** FLASH_ATTN_EXT with an F32 query of head size 128 or 256, a multiple of 8 query heads per KV head, F16 or Q8_0
+  K and V (both the same type), an F16 mask, optional sinks, no ALiBi or softcap, a KV length padded to 256, from 9
+  query tokens (3 with Q8_0, where TILE would otherwise convert the whole cache). Anything else runs the stock kernels.
+- **Block.** 4 warps on 32 columns (4 tokens × 8 heads) at head 128, 16 columns (2 tokens × 8 heads) at head 256; 64-key
+  softmax tiles at head 128 (the stock tile), 128 at head 256; 30 KiB of shared memory and at most 168 registers, so 3
+  blocks (12 warps) fit an SM.
+- **Scores.** At head 128 a lane takes 4 keys × the warp's 8 columns over one half of the head dimension (128 FMAs per 48
+  floats loaded, 0.375 per FMA, a 67 % ceiling), and lane l and l ^ 16 then swap the partial sums of each other's columns.
+  At head 256 (and at head 128 with `GGML_CUDA_FATTN_TILE_PASCAL_QK=1`) a lane takes 4 keys × 4 columns over the whole
+  head (0.5 per FMA). All loads are `float4`, conflict-free (padded rows) or broadcast.
+- **Softmax.** Each lane's 4 columns are the same in the score and the output layout, so the running maximum (a shuffle
+  reduction over the 16 or 32 lanes of a column) and the rescale of the output stay in registers, and each warp's
+  probabilities pass through its own slice of shared memory without a block barrier. The maximum offset, the sinks and the
+  split-KV output are those of the stock kernel, so launch_fattn's combine step works unchanged.
+- **P·V.** A lane owns 4 columns × 8 dimensions (two `float4` at 4l and 4l + D/2): 4 probabilities and 8 values per 32
+  FMAs (0.375 per FMA, a 67 % ceiling). Keys are summed in order, as in the stock kernel.
+- **Staging.** K comes in chunks of 16 (head 128) or 8 (head 256) dimensions × all tile keys, V in chunks of 8 or 4 keys ×
+  all dimensions, each thread loading 8 values of one key one chunk ahead into registers: F16 as one 16-byte load,
+  Q8_0 as aligned 32-bit words shifted into place (its 34-byte blocks are only 2-byte aligned) and dequantized in FP32
+  (`d × q`, as the CPU does). A Q8_0 cache therefore needs no F16 copy: at 262k tokens that is 512 MiB less per card that
+  holds a full-attention layer (section 6).
+- **Masked tiles.** A key tile whose mask is -inf for every token of the block is skipped (one vote at the tile's first
+  barrier): about half of Flint's sliding-window ring at `-ub 512` (1,280 cells; a block's 4 tokens see ~516 of them, 9–10
+  of the 20 tiles) and the causal padding of full layers.
+- **Switches.** `GGML_CUDA_FATTN_TILE_PASCAL` 0 off, 1 compute 6.1 only (default), 2 any NVIDIA GPU;
+  `GGML_CUDA_FATTN_TILE_PASCAL_QK` 2 split scores at head 128 (default), 1 plain; `GGML_CUDA_FATTN_TILE_PASCAL_MIN` the
+  fewest query tokens; `GGML_CUDA_FATTN_TILE_PASCAL_FAULT` 1/2/3 (output × 1.05, sinks dropped, last key tile dropped) to
+  check that the tests reach the kernel. A log line names the head size, cache type and score layout on first use.
+- **Numerics.** FP32 throughout. At head 128 with the plain layout the scores, maxima, probabilities and P·V sums are those
+  of the stock kernel bit for bit; only the softmax denominators are summed in a different order. The split layout adds
+  the two halves of each score, and head 256 uses longer softmax tiles than the stock kernel (128 against 32 keys).
+
+### 9.4 Checks (quant machine: a V100 running the compute_61 PTX, kernel forced with `=2`)
+
+- `test-backend-ops -o FLASH_ATTN_EXT`: all 4,172 cases pass with the kernel forced, among them 168 new prompt cases (head
+  128 and 256, F16 and Q8_0, KV 256–4,096, 3–512 tokens, sinks, large logits, causal and 513-key window masks, 16 query
+  heads per KV head, two sequences; ALiBi, softcap, 4 query heads per KV head and an unpadded KV length fall through).
+  The 182 cases at these shapes also pass with the plain score layout and with the kernel off.
+- The tests reach the kernel: with the output scaled by 1.05, or the last key tile of each block dropped, exactly the 145
+  cases the kernel takes fail (the 37 that pass run the stock kernels: decode, ALiBi, softcap, BF16, unpadded KV, F16 at 3
+  tokens); with the sinks dropped, its 66 sink cases fail, all but the large-logit ones, where a sink carries no weight.
+
+### 9.5 Expected speed (my calc) and the rig run
+
+- **SASS (sm_61, CUDA 12.9).** The stock kernel's 64-key tile is one unrolled loop of 3,005 instructions: 2,052 FMAs and
+  448 shared loads, ~2.5 bytes from shared memory per FMA, FMAs 68 % of the instructions. The new kernel's tile at head
+  128 (split) runs 4,096 FMAs in 8 K and 8 V chunk loops of 256 FMAs and 24 `LDS.128` each, 1.5 bytes per FMA, FMAs 74 % of
+  the instructions per tile with the softmax and staging included. 155–168 registers, 30 KiB of shared memory, no spills
+  except 40 bytes in the split Q8_0 instance.
+- **Kernel.** With both loops at a 67 % ceiling against the stock kernel's 40 %, and the same ~80 % of the ceiling reached,
+  attention at depth runs ~1.6× faster (~1.1–1.2 TFLOPS per card). If instruction issue rather than shared memory
+  limited the stock kernel, the gain would be smaller (~1.1–1.3×, from the FMA shares); the rig's kernel test tells the
+  two apart. The skipped tiles of the sliding-window ring save another ~0.3–0.4 ms per prompt token at any depth.
+- **Prompts.** At 64k (Q116's build: ~10.6 of ~14.7 ms per prompt token in attention) 1.6× faster attention gives ~10.7 ms,
+  ~93 tok/s instead of 68 (1.4×); the newer build's faster expert products make attention a larger share and the gain
+  larger.
+- **Rig run** (`T=<tarball> rig_q163.sh` in the private repo; ~80 minutes with 64k): kernel speed on one card for both score
+  layouts against the stock kernel (test-backend-ops perf on the prompt cases), K2h-r16 KLD over one 8k chunk, prompt speed
+  at 8k/32k/64k for K2h-r16 and Qwen3.6 Q4_0-noK on nine cards, and a Q8_0 cache's compute buffers at 64k, kernel off
+  against on in one binary.
+
 ## Sources
 
 llama.cpp, fork base `d77256999` (identical to master `36e36e6` for the attention kernels; P):
