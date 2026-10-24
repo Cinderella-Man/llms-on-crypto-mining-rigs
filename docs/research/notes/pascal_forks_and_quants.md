@@ -41,7 +41,9 @@ Starting point, measured ([registry](../../../quants/experiments.md), [kernel no
   afternoon on one card.
 - **Three ideas from other Pascal forks are worth porting:**
   - **The norm writes the Q8_1 activations directly, with the residual add folded in** (Mrinohk's P100 patches,
-    shinbunbun/sbendhiba's Q8_1 cache, ArtyomITA's GTX 1080 fusions). Est. +4–6 %. It extends Q38 step 9.
+    shinbunbun/sbendhiba's Q8_1 cache, ArtyomITA's GTX 1080 fusions). Est. +4–6 %. It extends Q38 step 9. Built as
+    Q100 (fork branch `pascal-p106-v2-normq8`): 287 fewer launches per S4-L0 token on six cards, logits identical;
+    rig speed pending ([kernel note](pascal_mmvq_integration.md), section 8).
   - **Persistent layer kernels.** This is Q88; Mrinohk measured +36 % decode on 2 × P100 at Qwen3.6's MoE shape, which
     is nearly Flint's.
   - **Upstream PR #28874.** It is exact, and it matters whenever the scheduler runs one pipeline copy: Q89, or any `-ot`.

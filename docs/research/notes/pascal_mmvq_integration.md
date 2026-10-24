@@ -414,12 +414,52 @@ The SYCL backend has done this on Intel GPUs since PR #12035 (Q4_0) and PR #2152
 
 These are independent of the weight kernel. Both use the decision point of section 3.
 
-- **One quantization per shared input.** Every `ggml_cuda_mul_mat_vec_q` call quantizes its own activations
-  (`mmvq.cu:1551-1558`). In Flint, attention q, k and v read the same vector, and so do the routed and the shared gate/up
-  (mainline already shares one quantization between gate and up).
-  - Keeping the last quantized input per device, keyed by the `src1` tensor and cleared after every node that writes
-    memory, saves 98 + 47 = 145 launches per token. The survey estimates 0.7–1.0 ms.
-  - It helps every GPU at one token, not just Pascal.
+- **One quantization per shared input, done by the norm (Q100, fork branch `pascal-p106-v2-normq8`).** Every
+  `ggml_cuda_mul_mat_vec_q` call quantizes its own activations. In Flint, attention q, k and v read the same vector,
+  and so do the routed and the shared gate/up; all of them read the output of an RMS norm.
+  - One S4-L0 token on six cards runs 389 activation quantizations (from the rig's event profile, with Q50's shared
+    gate/up fusion counted in): 147 before Q/K/V (three per layer of the same vector), 47 + 47 + 2 before the routed,
+    shared and dense gate/up, 1 before the output head, and 49 + 47 + 47 + 2 before the attention output and the
+    down-projections, whose inputs no norm produces. 48 residual adds run as their own launch.
+  - The fork's single-row `RMS_NORM` + `MUL` now also writes the row as Q8_1 blocks into a per-device buffer, and when
+    the residual `ADD` comes right before the norm (each layer's `l_out` and the attention norm of the next layer, the
+    last layer's and the output norm), it adds them in the same kernel and writes the sum too, since the residual
+    stream is read again. `mul_mat_vec_q` uses the buffer whenever its `src1` is that norm's output (directly or
+    through a reshape or view of all of it) and skips its quantization. The copy is dropped at the start of each graph
+    evaluation and when any node writes over the norm's output (the shared gate/up's GLU output may reuse that memory,
+    Q50).
+  - The norm keeps `rms_norm_f32`'s layout (one float4 per thread, the same block reduction), and the 8 threads that
+    hold a Q8_1 block reduce its maximum and sum in `quantize_q8_1`'s butterfly order, so the normed row and the blocks
+    are bit-identical to the unfused kernels', and every product sees the same input. One block reads every input
+    before its reduction and writes every output after it, so outputs may overlap inputs (an in-place residual add).
+  - Covered: one row, F32, width a multiple of 512 up to 4,096 (Flint: 2,048); anything else runs as before.
+    `GGML_CUDA_NORM_Q8=0` switches it off; `GGML_CUDA_NORM_Q8_DEBUG=1` logs per graph evaluation how many norms wrote
+    a row and how many products read one or quantized their own input.
+  - Per token on six cards it removes 244 quantizations and 43 adds (48 minus the five card boundaries, where the add
+    and the norm run on different cards): 287 launches. It helps every GPU at one token, not just Pascal.
+  - Checked on an RTX 3090 (fork commit `4d2a419b4`):
+    - `test-backend-ops ADD_RMS_NORM_MUL_Q8` (a layer-shaped graph: the residual read again, the normed row feeding
+      Q/K-like products, a routed and a shared expert pair and an F32 router; 7 weight types, widths 2,048 and 4,096,
+      with and without the add, plus a 1,536-wide and a 2-row case it must leave alone) passes with the Pascal kernels
+      forced, with the stock kernels, with the fusion off and through the compute_61 PTX; the debug counts show one
+      norm writing a row and four products reading it.
+    - The existing RMS_NORM, RMS_NORM_MUL_ADD, RMS_NORM_MUL_ROPE, ADD_RMS_NORM, ADD, MUL, MUL_MAT, MUL_MAT_ID and
+      fusion tests pass, and the one-token products through the compute_61 PTX; S4-L0's exported operations that this
+      touches pass.
+    - G3 on two cards, one token per step (`llama-perplexity -ub 1`, 4 × 128 tokens, Pascal kernels forced): per
+      graph evaluation the norms write 50 + 49 rows (22 + 24 with the residual add; both dense layers' adds are already
+      fused into their down-projections, and the add at the card boundary stays on its own), 123 + 121 products read
+      them, and only the attention output and the down-projections quantize: 244 quantizations fewer per token, as
+      counted above. Perplexity and every KLD statistic against a fusion-off base are the same with the fusion on as
+      with it off, with and without CUDA graphs: the logits are identical.
+  - Rig plan, on one build with the switch, S4-L0 on six cards: tg128 (`llama-bench -p 0 -n 128 -r 3`) with
+    `GGML_CUDA_NORM_Q8=0` and without; a `GGML_CUDA_PROFILE` of 32 tokens, where the 43 lone `ADD l_out` groups become
+    `ADD+RMS_NORM+MUL` groups (924 → 881 launch groups per token; the quantizations run inside the product groups, so
+    the debug counts are the way to see them: `llama-perplexity … -ub 1 -lv 4` with `GGML_CUDA_NORM_Q8_DEBUG=1`); and
+    KLD with `-ub 1` against a `GGML_CUDA_NORM_Q8=0` base, which must equal that base's own floor.
+  - Expected (est.): 287 fewer launches per token on six cards (284 on nine). Each is a tiny kernel in a CUDA graph,
+    ~2.5–3.5 µs with the 1.85 µs per graph node a P106 pays, so 0.7–1.1 ms per token: 26.8 → 25.7–26.1 ms, tg128
+    37.4 → 38.4–39.0 tok/s (+2.7 to +4.3 %). The registry's kill line: fewer than 150 launches removed, or below +1.5 %.
 - **FP32 activation sums** (fork branch `pascal-p106-fp32sums`). Q8_1 stores each 32-value block's sum `s` in FP16
   (`quantize.cu:100`), next to its scale `d`. Flint's routed expert down-projection inputs reach a per-channel RMS of
   25,600 in layer 46 and 48,400 in layer 48 (Unsloth's importance matrix; 1,100 in layer 47, at most 2,200 for every
@@ -579,7 +619,7 @@ and the per-layer allocations of Q36 and Q45 redone with them.
 | 6 | Q5_0 in the port | tests pass; S4-L0 tg128 measured again | done: 35.5 → 37.4 tok/s |
 | 7 | Q5_K and IQ4_XS in the port, from the benchmark's kernels (Q46) | tests pass; UD-Q4_K_XL measured | done (section 10) |
 | 8 | Q4_1_64 in the port (fork only) | tests pass; makers' file in Q4_1_64 measured | |
-| 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | |
+| 9 | One activation quantization per shared input | 145 fewer launches per Flint token; tests and KLD unchanged | done by the norm (Q100, branch `pascal-p106-v2-normq8`, section 8): 287 fewer launches per S4-L0 token on six cards, also the residual adds; tests and logits unchanged on an RTX 3090; rig speed pending |
 | 10 | FP32 activation sums in the Pascal kernels; drop the rescale where safe | makers' Q4_1 runs without the rescale, without NaN, at unchanged KLD | Pascal kernels done (branch `pascal-p106-fp32sums`); batches keep the rescale (`LLAMA_NO_MOE_DOWN_RESCALE=tg`), MMQ's `DS4` layout unchanged; on the laptop no NaN and output identical to the rescaled one (section 8); rig speed and KLD pending |
 | 11 | 2–4 tokens per step for `MUL_MAT` and `MUL_MAT_ID`, each distinct expert read once (Q78) | tests pass; verify-step cost of S4-L0 measured on the rig | kernels and laptop tests done (branch `pascal-p106-v2-multicol`, section 14); rig pending |
 
