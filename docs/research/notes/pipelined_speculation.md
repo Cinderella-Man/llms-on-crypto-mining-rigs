@@ -170,13 +170,18 @@ The model has no host contention and no power limit; the rig measures both.
   submit time, so tokens submitted later never see the dropped cells, while tokens already in flight keep their own
   copies.
 - **Layout.** For bit-identical attention the corrected token must take the cell the dropped guess had, as plain
-  decoding would. `seq_rm` moved `head` to the lowest freed index, which is wrong when the dropped positions wrap around
-  the end of the cache; the fork now moves `head` to the freed cell with the lowest position when the tail of a sequence
-  is removed (same cell as before in every other case).
+  decoding would. Two things in llama.cpp broke that, and the fork fixes both:
+  - `seq_rm` moved `head` to the lowest freed index, which is wrong when the dropped positions wrap around the end of
+    the cache. The fork moves `head` to the freed cell with the lowest position when the tail of a sequence is removed;
+    the cell is the same as before in every other case.
+  - The slot search restarted from cell 0 whenever `head` > used cells + 2 × tokens (commit `fbb1b24f3` fixes this).
+    The dropped guesses' cells count as unused, so with D ≥ 4 of them and `head` on one of the last cells of a full
+    cache, the corrected token went to cell 0. The search now keeps `head` when it points at a free cell.
 - **Sliding window.** A guess judges sliding-window reuse against its own position, D positions ahead of the committed
-  one. That is safe as long as the cell it overwrites is older than every window a re-submitted token needs: cells are
-  reused oldest first and the window cache has n_ubatch spare cells, so `llama_pipe_init` requires n_ubatch ≥ number of
-  slots for a sliding-window model (the default 512 is far above it).
+  one. That is safe as long as the cell it overwrites is older than every window a re-submitted token needs. With the
+  layout kept as plain decoding's ring, the cell at `head` always holds the oldest position. The window cache has
+  n_ubatch spare cells, so `llama_pipe_init` requires n_ubatch ≥ number of slots for a sliding-window model; the default
+  512 is far above it.
 - **Recurrent layers** (Qwen3.6's Gated DeltaNet) can't be truncated by position; they need a state snapshot per
   in-flight token (SPD's ring of states). Not implemented.
 
@@ -308,6 +313,22 @@ input tensors (above), and the graph callback that pinned each layer's `norm` an
 scheduler instead of the slot's, so slot graphs missed that placement and filled the context scheduler's hash table.
 Multi-GPU runs of the streams mode come with the rig.
 
+**The wrapped window cache at depth ≥ 4.** On the rig, K2h-r16 with the edit prompt (2,076 tokens) at depths 4–8
+differed from plain decoding from about the 490th generated token, on six and on nine cards alike. By then the prompt and
+the output fill the window cache (1,280 cells at the default `-ub 512`). Every other row matched. The cause was the slot
+search's restart from cell 0 (KV cache, above): it fires only with at least four freed cells and `head` on one of the
+last cells of a full cache, so depths 1–3 never trigger it.
+
+[check_swa_wrap.sh](../../../bench/pipespec/check_swa_wrap.sh) makes it happen within the first tokens. `-ub 32` shrinks
+the window cache to 768 cells, the 750-token prompt plus 128 generated tokens wrap it, and an oracle that is always wrong
+drops D tokens at every step. On K2h-r16 on the CPU (12 pipelined runs at depths 4 and 8: oracle with all and half of
+the guesses wrong, the copy lookup, `cont`, `ngram-simple`, `ngram-map-k`):
+
+| Build | Runs equal to plain decoding (tokens, logits, KV state, probe) |
+|---|---|
+| before the fix (`f249104ab`) | 3 of 12 (oracle half wrong at depth 4, `ngram-map-k` at both depths) |
+| with the fix (`fbb1b24f3`) | 12 of 12 |
+
 The checks ran on two RTX 3090s of a 7-GPU machine used for quality work, where no speed is measured; the Pascal
 kernels are exercised on the rig ([plan](#measuring-it-on-the-rig), step 1).
 
@@ -319,6 +340,21 @@ the fork's commit a217f42c8, `llama.cpp-20261024-a217f42c8-pascal-p106-v2-pipesp
 [bench/pipespec](../../../bench/pipespec/README.md). Commands run from a checkout of this repository on the machine that
 reaches the rig as `ssh rig`; `$B` is expanded there. One run at a time, nothing else on the cards; each run loads its
 model once (minutes from a USB stick) and prints a summary table when it ends.
+
+**Builds and the window-cache fix.** Builds without fork commit `fbb1b24f3` stop being bit-identical at depth ≥ 4 on a
+model with sliding-window layers once its window cache wraps ([Correctness](#correctness)): a217f42c8 here, and
+`f249104ab`, the Q120/Q121 build of [host decode loop](host_decode_loop.md) §6. Their speeds stand, but their identity
+column is wrong in those rows. `llama.cpp-20261024-74f7c7182-pascal-p106-v2-pipespec2` is the `f249104ab` build with
+the fix. These are the rows that differed on the rig (K2h-r16, edit prompt), run again on it:
+
+```
+B=/opt/llama-builds/llama.cpp-20261024-74f7c7182-pascal-p106-v2-pipespec2/bin
+ssh rig "setsid nohup env BIN=$B MODEL=<K2h-r16> TAG=k2h-6c-swafix GPUS=0,1,2,3,4,5 PROMPTS=edit DEPTHS='3 4 5' \
+    ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_run.sh > /tmp/pipespec/k2h-6c-swafix.out 2>&1 < /dev/null &"
+# nine cards: GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='3 4 5 6 8' TAG=k2h-9c-swafix
+```
+
+Every `same_as_plain` cell in `summary.tsv` must read `yes`.
 
 **0. Install** (copy the tarball to the rig's `/opt/llama-builds/` first):
 
