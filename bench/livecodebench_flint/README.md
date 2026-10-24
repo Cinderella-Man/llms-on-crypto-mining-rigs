@@ -145,3 +145,21 @@ samples on one 8-slot server: ~3.7 server-hours if Flint averages 8k tokens per 
 The assumption is ~300 tokens/s aggregate decode per 8-slot server at these lengths (the note's §7.5). Prompts
 (~1k tokens) are negligible. These are job times for scheduling on the quant machine, not speed results. The whole
 of Q41, all three lanes and every file, is sized in [the BFCL harness's pilot plan](../bfcl_flint/README.md#pilot-plan-q41).
+
+## First runs (Q41, 2026-10-24)
+
+Flint's lengths on LiveCodeBench, from UD-Q4_K_XL on 56 problems at one attempt each (the makers' sampling,
+32,768-token budget):
+
+| | All | Easy (13) | Medium (15) | Hard (28) |
+|---|---|---|---|---|
+| mean output tokens | 12,876 | 1,532 | 8,430 | 20,524 |
+| samples cut at 32,768 tokens | 12.5 % | 0 | 0 | 25 % |
+
+- **Cost.** A file's E3 at K = 5 is ~29 M tokens, 1.6× the 8k assumption above.
+- **Budget.** The budget cuts 12.5 % of samples, far above the pilot plan's 5 % trigger, so files are compared on
+  E3 only at 65,536 tokens (`run.py --n-predict 65536` and a server context of at least 66k per slot).
+- **The first pair at 32k** (UD-Q4_K_XL against G3, same 56 problems, graded offline) shows why. pass@1 was 85.7 %
+  against 80.4 %, but the 3 discordant problems were all hard and all at the budget: G3 was cut off twice and
+  answered wrong at 32,763 tokens once, while UD-Q4_K_XL finished. Exact McNemar p = 0.25. With a 32k cap, small
+  differences in length turn into pass/fail differences.

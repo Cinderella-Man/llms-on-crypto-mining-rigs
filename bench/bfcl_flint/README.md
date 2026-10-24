@@ -229,3 +229,52 @@ unmeasured tokens per sample, 8k or 15k.
 - Every further candidate at K = 5 adds 32 to 46 server-hours.
 - If the pilot allows K = 3 on E2 and K = 4 on E3, each of the three main files drops to ~24 server-hours (~35 at
   15k), and the total to ~93 (~135).
+
+## First runs (Q41, 2026-10-24)
+
+The pilot and the first main runs used two GPU sets of the 7-GPU quant machine (2 × V100; RTX 3090 + 2 × RTX
+3080) and two RTX 3090s for K2h. Every pair runs both files on the same tasks, seeds and server flags. Per-attempt
+results feed [paired_tasks.py](../paired_tasks.py).
+
+### Noise under the makers' sampling
+
+- **E1, all 3,477 tasks:** E[p(1−p)] is 0.076, and two attempts of one file disagree on 15 % of tasks (greedy Q30:
+  0.054 and ~11 %). K = 2 gives 80 % power at the 1.5-point margin.
+- **E2, 100 tasks × 2:** E[p(1−p)] is 0.100 and the self-disagreement 20 %, so the 799-task lane needs K ≈ 2 before
+  scenario clustering.
+- **Shared seeds buy nothing.** Two files' same-seed attempts disagree as often as different-seed attempts (14.3 %
+  against 14.4 %), so attempts can run on any GPU set and seed alignment across files is optional.
+
+### Pairs against UD-Q4_K_XL
+
+| Lane | File | Tasks × K | Δ pass@1 (90 % interval) | Verdict |
+|---|---|---|---|---|
+| E1 single-turn | G3 | 3,477 × 2 | +0.35 (−0.40 to +1.09) | non-inferior at 1.5 points |
+| E1 single-turn | K2h | 3,477 × 1 | +0.14 (−0.87 to +1.16) | non-inferior at 1.5 points |
+| E2 multi-turn | G3 | 458 × 1 | +0.87 (−3.23 to +4.98) | open (margin 3 points) |
+
+- **Format, single-turn:** 0.4–0.8 % malformed answers and ~0.2 % at the token limit per file; `</think>` written
+  twice in ~0.5–1 % of answers.
+- **Format, multi-turn:** a conversation has ~12 steps, so 11–14 % of conversations contain at least one malformed
+  step.
+
+### A category effect that did not replicate
+
+- **Exploratory.** On the 47 miss_param tasks of the first E2 runs, G3 passed 14 against UD-Q4_K_XL's 24 (exact
+  McNemar p 0.013). The category had been picked after looking at the pilot.
+- **Confirmatory.** A pre-registered test on 139 fresh miss_param tasks found the opposite: UD-Q4_K_XL 34, G3 46,
+  one-sided p 0.988 for "G3 passes fewer".
+- **Ask or act** ([ask_rate.py](ask_rate.py)). In the turn that lacks a value, both files call a tool instead of
+  asking about two thirds of the time (UD-Q4_K_XL asked in 37 % of these turns, G3 in 34 %).
+- **Lesson.** Any category-level difference between quants needs a fresh, pre-registered test before it counts.
+
+### First-finish race (Q93)
+
+[race_first_finish.py](../race_first_finish.py) asks what happens if k samples of one request run side by side and
+the first to close its reasoning is kept.
+
+- **Pilot, UD-Q4_K_XL, 376 tasks × 5:** the shortest reasoning of 5 passes 3.2 points more often than a random
+  attempt (+0.5 to +5.8), with 0.56 of the reasoning.
+- **Full pool, k = 2:** +0.2 to +0.4 points (intervals spanning 0), with 0.74 of the reasoning.
+- **Picking by total output instead loses up to 2.6 points.** The race has to end at the first `</think>`, not at
+  the first end of turn.
