@@ -11,13 +11,15 @@
 #                  conversations' tokens
 #   slack          guesses (copy >= 4, else continuation counts, depth 2) in a budget of N + 2 items in flight
 #   nobudget       the same guesser with a budget of one item in flight: a guess never fits, so there is none
+#   fed, fed-arrive  (FEED=1) all and arrive with every next token fed on the devices (llama_pipe_submit_fed): needs a
+#                  sampler on the device (--pipe-backend-sample or --pipe-backend-greedy in ARGS) and LLAMA_INPUT_ON_GPU=1
 # A timeout catches deadlocks.
 #
 # Usage (environment variables):
 #   BIN=<dir with llama-pipespec> MODEL=<gguf> [ARGS='-ngl 99 -fa on'] [N=3] [CTX=4096 per conversation]
 #   [PROMPTS='prompts/chat.txt,prompts/rewrite.txt,prompts/code.txt'] [NTOK=128] [CHUNK=64] [ARRIVE=16]
 #   [SAMPLING='--temp 1 --top-k 20 --top-p 0.95 --min-p 0 --seed 42'] [PROBE=8] [OUT=/tmp/pipespec_streams]
-#   [TIMEOUT=1800] [SPEED=1] bench/pipespec/check_streams.sh
+#   [TIMEOUT=1800] [SPEED=1] [FEED=0] bench/pipespec/check_streams.sh
 # Sampling on the device: ARGS='... --pipe-backend-sample' (or --pipe-backend-greedy with --temp 0).
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}"
@@ -34,6 +36,7 @@ PROBE=${PROBE:-8}
 OUT=${OUT:-/tmp/pipespec_streams}
 TIMEOUT=${TIMEOUT:-1800}
 SPEED=${SPEED:-1}
+FEED=${FEED:-0}
 mkdir -p "$OUT"
 
 seed=$(echo "$SAMPLING" | grep -o -- '--seed [0-9]*' | awk '{print $2}')
@@ -50,6 +53,10 @@ common="n=$NTOK probe=$PROBE chat=1 chunk=$CHUNK"
     echo "name=arrive streams=$N prompts=$PROMPTS seed=$seed depth=0 guess=none arrive=$ARRIVE $common"
     echo "name=slack streams=$N prompts=$PROMPTS seed=$seed depth=2 guess=cont copy_min=4 budget=$((N + 2)) arrive=$ARRIVE $common"
     echo "name=nobudget streams=$N prompts=$PROMPTS seed=$seed depth=2 guess=cont copy_min=4 budget=1 arrive=$ARRIVE $common"
+    if [ "$FEED" = 1 ]; then
+        echo "name=fed streams=$N prompts=$PROMPTS seed=$seed depth=0 guess=none feed=1 $common"
+        echo "name=fed-arrive streams=$N prompts=$PROMPTS seed=$seed depth=0 guess=none feed=1 arrive=$ARRIVE $common"
+    fi
 } > "$jobs"
 
 # shellcheck disable=SC2086
@@ -63,7 +70,9 @@ grep -o 'PIPESPEC.*' "$OUT/run.log" > "$OUT/results.txt"
 field() { echo " $1" | grep -o " $2=[^ ]*" | cut -d= -f2; }
 printf '%-12s %6s %7s %6s %6s %6s %7s  %-6s %-6s %-6s %-6s  %s\n' run n_gen chunks guess hits misses tok/s tokens logits state probe verdict
 fail=0
-for j in all arrive slack nobudget; do
+runs="all arrive slack nobudget"
+[ "$FEED" = 1 ] && runs="$runs fed fed-arrive"
+for j in $runs; do
     for ((c = 0; c < N; c++)); do
         line=$(grep "name=$j-c$c " "$OUT/results.txt")
         ref=$(grep "name=ref-c$c " "$OUT/results.txt")

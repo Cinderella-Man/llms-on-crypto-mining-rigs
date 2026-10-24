@@ -95,8 +95,8 @@ the executor's streams mode (Q104) at N = 8 unless stated.
 | # | Change | Single stream (est.) | N conversations (est.) | Effort | First experiment (rig, ≤ 30 min) | Kill criterion |
 |---|---|---|---|---|---|---|
 | 1 | **Find and cut the server-path gap**: `-t 1` (no OpenMP spinner), explicit `-np`, the submit thread and the server/HTTP threads on separate cores, `--no-mmap` if page faults show (the embedding table is read on the CPU every token) | 0–25 % (up to the ~8–10 ms pre-fork gap; `-t 1` alone est. 0–5 %) | frees 0.3–0.8 of a core | hours (flags) to 2 days (thread placement in the executor) | M0 (section 5.1) | llama-server within 1 ms per token of llama-bench minus the logits copy, and no thread but the main one above 30 % of a core |
-| 2 | **One asynchronous, packed input upload per card per token** from a per-slot pinned staging buffer, on the card's compute stream (then captured as a memcpy node in the card's CUDA graph); with Q116's on-card decode mask | +0.5–1 % (only card 1's copies are serial today) | host per token 3.3–4.2 → 1.0–1.8 ms at 8k, 5.6–6.5 → 1.1–1.9 ms at 32k; one core submits 550–1,000 tok/s, so N = 8 reaches the cards' 235–256 (~210 at 32k) | 3–5 days (`ggml-backend.cpp` input path with `caller_sync` slots, `llama-context` staging; upstream drafts #30685, #29963) | M1 on pipespec streams N = 4: count and time of `cudaStreamSynchronize` calls per token | synchronous copies < 0.5 ms of host time per token |
-| 3 | **Device-fed next token**: the sampler's id copied card-to-card into card 1's token input, the embedding lookup on card 1, the next token enqueued before the current one finishes (an executor slot whose token is the previous slot's sample) | +2–5 % (the sample→launch gap and the CPU embedding split) | lower time between tokens below saturation; no ceiling change | 4–6 days on pipespec (input-layer placement flag ½ day) | M1: time from the sample's synchronize return to the next token's first graph launch | gap < 0.5 ms per token |
+| 2 | **One asynchronous, packed input upload per card per token** from a per-slot pinned staging buffer, on the card's compute stream (then captured as a memcpy node in the card's CUDA graph); with Q116's on-card decode mask. Built in the executor (§6) | +0.5–1 % (only card 1's copies are serial today) | host per token 3.3–4.2 → 1.0–1.8 ms at 8k, 5.6–6.5 → 1.1–1.9 ms at 32k; one core submits 550–1,000 tok/s, so N = 8 reaches the cards' 235–256 (~210 at 32k) | 3–5 days (`ggml-backend.cpp` input path with `caller_sync` slots, `llama-context` staging; upstream drafts #30685, #29963) | M1 on pipespec streams N = 4: count and time of `cudaStreamSynchronize` calls per token | synchronous copies < 0.5 ms of host time per token |
+| 3 | **Device-fed next token**: the sampler's id copied card-to-card into card 1's token input, the embedding lookup on card 1, the next token enqueued before the current one finishes (an executor slot whose token is the previous slot's sample). Built in the executor (§6) | +2–5 % (the sample→launch gap and the CPU embedding split) | lower time between tokens below saturation; no ceiling change | 4–6 days on pipespec (input-layer placement flag ½ day) | M1: time from the sample's synchronize return to the next token's first graph launch | gap < 0.5 ms per token |
 | 4 | **Incremental streaming parse** (parse only when a delimiter token can change the message; plain reasoning and content as appended deltas) and **no whole-prompt detokenize per request** (`server-context.cpp:2376`) | 0–3 % on long streamed replies (CPU contention only) | 3–15 % of a core | 1–2 days | the same 4k-token reply streamed and not streamed, HTTP thread CPU and client-side time between chunks | < 1 % difference and < 5 % of a core |
 | 5 | **Synchronization policy**: keep spin/yield for the submitting thread; blocking sync (PR #26487) only for collector threads, after #2 | blocking now est. −2 to −10 %; 0 after #2 | +0.2–0.5 core after #2 | hours (an `LD_PRELOAD` shim that sets the device flags, or an env switch in the fork) | Spin / default (yield) / BlockingSync, tok/s and CPU per thread | BlockingSync within 1 % and ≥ 30 % of a core saved → adopt; otherwise keep the default |
 | 6 | Hand-off through mapped pinned mailboxes (the producer card writes its 8 KB activation and a flag into pinned host memory, the consumer reads it zero-copy) instead of staged peer copies and events | +0.3–1 % | small | 1–2 weeks | Q81's hop benchmark with a mailbox variant | staged hop ≤ 0.1 ms, or the mailbox not ≥ 30 % faster |
@@ -474,15 +474,148 @@ about a day, built on the quant machine.
 
 Kill criteria are those of the ranking table.
 
+## 6. Built in the executor: packed uploads and fed tokens (Q120, Q121)
+
+Changes #2 and #3 exist in `llama-pipespec`, on the fork's branch `pascal-p106-v2-pipespec2` (off
+`pascal-p106-v2-pipespec`, commit `f249104ab`). `llama_decode` is unchanged: both apply to the executor's slots.
+
+### 6.1 One packed, asynchronous upload per card and token (Q120)
+
+- **Scheduler.** `ggml_backend_sched_set_input_upload(sched, mode)` sets how the host inputs of a scheduler with
+  `caller_sync` (the executor's slots) reach the cards:
+  - 0: one synchronous copy per input (`ggml_backend_tensor_copy`), what `llama_decode` does;
+  - 1: one `ggml_backend_tensor_set_async` per input on the card's stream, for splits after the last CPU split (until that
+    split has run, the CPU allocator may reuse a host input's memory for a later CPU node);
+  - 2: when a slot's graph is allocated, the copies of each card's host inputs get one device buffer of their own
+    (offsets at the buffer type's alignment) and a pinned staging buffer of the same size from the card's host buffer
+    type; at each evaluation the host `memcpy`s the inputs into the staging buffer and issues one `cudaMemcpyAsync` on the
+    card's stream, ahead of the card's graph. Nothing on the host waits.
+- **Default.** The slots use mode 2; `LLAMA_PIPE_UPLOAD=0|1|2` overrides it per process. On nine cards a token's ~45–60
+  synchronous copies become nine asynchronous ones.
+- **Why it is safe.** With `caller_sync` a slot is reused only after its output event, which the last card records after
+  the token's sampling; that sampling depends on every earlier card's work for the token through the hops, so by then
+  every upload of the slot has been read. Staging and device buffers belong to the slot, and an upload precedes the
+  card's compute on the same stream.
+- **CUDA graphs.** The buffers keep their addresses across a slot's evaluations (they only grow), so the cards' graphs
+  stay valid. The upload is one stream operation ahead of the graph launch, not yet a memcpy node inside the graph;
+  capturing it would save that one call per card.
+- **With Q116.** The pack holds whatever host inputs the graph has. With the decode mask built on the card the masks
+  leave the pack and positions and cell indices remain; no code changes are needed for that combination.
+
+### 6.2 The next token fed from card to card (Q121)
+
+- **Embedding lookup on card 1.** `LLAMA_INPUT_ON_GPU=1` assigns the input layer to the first layer's device (after the
+  layer assignment in `src/llama-model.cpp`): `token_embd` and its `get_rows` run on card 1, and the token ids (4 bytes
+  per token) are the embedding's only per-token input. The fork's CUDA `get_rows` covers every quant type it loads. The
+  table takes its size in VRAM on card 1 (section 2.2).
+- **Fed submissions.** `llama_pipe_submit_fed(ctx, slot, slot_src, pos, seq)` submits a token whose id is the
+  device-sampled output of `slot_src`, which may still be in flight. When a slot's graph is allocated, the context looks
+  up the token input's copy on the one card that reads the token ids (`ggml_backend_sched_get_input_copy`). For a fed
+  submission the scheduler skips that copy's upload (`ggml_backend_sched_set_input_skip`; in mode 2 the packed upload
+  goes around it), and the context queues `ggml_backend_tensor_copy_async` from `slot_src`'s sampled-id tensor on the last
+  card to it: a 4-byte peer copy on the last card's stream, whose event card 1's stream waits for. The host does not wait.
+  It refuses with an error, before anything is computed for the token, when the CPU or more than one card reads the token
+  ids (the lookup on the CPU, or per-layer token embeddings elsewhere) or the source has no one-token sampler output.
+- **The executor** (`--pipe-feed`, job key `feed`):
+  - one conversation at depth 0: the host submits token t + 1 fed from t's slot, then waits for t's id, checks it and
+    submits t + 2 fed from t + 1's slot. It stays one token ahead, and the gap from the last card's sample to card 1's
+    next launch is the 4-byte copy instead of the host's event wake-up, input preparation, uploads and launches;
+  - streams mode without guesses: before waiting for the oldest item, its conversation's next token is submitted fed. It
+    enters each card after every item already in flight, the order a host-fed successor would have had, so it does not
+    hold up the other conversations;
+  - on a stop (end of generation or the token limit) the token already in flight is dropped and its cell removed, as for
+    a wrong guess.
+- **Samplers.** The sampler must not read the host's token history (repetition penalties); greedy and the temperature
+  chain (top-k, top-p, min-p, position-keyed draws) qualify.
+- **Host timers.** Pipe and streams jobs report the host time per generated token inside the submit calls
+  (`host_submit_us`: building the inputs, uploads, launches), inside the waits (`host_wait_us`) and the rest
+  (`host_rest_us`, the executor's own work), from `ggml_time_us` around the calls (no CUDA events).
+
+### 6.3 Exactness
+
+[check_hostloop.sh](../../../bench/pipespec/check_hostloop.sh) ran on two RTX 3090s of the 7-GPU quant machine (two
+stages, so every card's uploads, the hop between the cards and the token copy from the second card to the first are
+exercised; no speed is measured there). Each run is compared with plain decoding as in
+[pipelined speculation](pipelined_speculation.md#correctness): the tokens, a hash of each token's logits (of its id with
+sampling on the GPU), the KV state after generation and the logits of eight probe tokens decoded afterwards.
+
+Single sequence: Flint UD-Q4_K_XL, `rewrite.txt` (750 tokens), 256 tokens per run, one process per row. Pipelined runs:
+depth 0, the oracle with 0 % and 50 % of its guesses made wrong, the copy lookup (≥ 2), `cont`, `ngram-simple` and
+`ngram-map-k` at depths 1 and 3, and in the fed rows `d0` with every next token fed on the cards:
+
+| Inputs | Sampling | Pipelined runs | Tokens | Guesses | Wrong | Dropped tokens | Result |
+|---|---|---|---|---|---|---|---|
+| mode 0, synchronous copies | greedy, host | 13 | 3,328 | 2,845 | 372 | 741 | all same |
+| mode 1, an asynchronous copy per input | greedy, host | 13 | 3,328 | 2,845 | 372 | 741 | all same |
+| mode 2, packed | greedy, host | 13 | 3,328 | 2,845 | 372 | 741 | all same |
+| mode 2, lookup on card 1 | greedy, host | 13 | 3,328 | 2,845 | 372 | 741 | all same |
+| mode 2, lookup on card 1, fed | greedy on the GPU | 14 | 3,584 | 2,845 | 372 | 741 | all same |
+| mode 2, lookup on card 1, fed | T 1, top-k 20, top-p 0.95, seed 42, on the GPU | 14 | 3,584 | 2,847 | 362 | 721 | all same |
+
+The plain runs give the same logits in all three upload modes, and with the lookup on card 1 the same logits as with the
+lookup on the CPU, bit for bit, for this model. In each fed run every token after the first came from the previous
+token's sample on the GPU (255 fed submissions; the last one, past the token limit, was dropped).
+
+Streams mode ([check_streams.sh](../../../bench/pipespec/check_streams.sh)): granite-3.1-3b-a800m, 128 tokens per
+conversation, `chat.txt`, `rewrite.txt` and `code.txt` cycled, 64-token prompt chunks, against one plain run per
+conversation. Jobs: all joining at once, joining 16 generated tokens apart, guesses (copy ≥ 4, else continuation counts,
+depth 2) in a budget of N + 2 items, a budget of one item, and (lookup on card 1) the first two again fed:
+
+| N | Sampling | Conversation runs | Tokens | Prompt chunks | Guesses (wrong) | Fed submissions | Result |
+|---|---|---|---|---|---|---|---|
+| 1 | T 1 on the GPU | 6 | 768 | 6 | 101 (43) | 254 | all same |
+| 4 | T 1 on the GPU | 24 | 3,072 | 114 | 325 (94) | 1,016 | all same |
+| 8 | T 1 on the GPU | 48 | 6,144 | 312 | 558 (110) | 2,032 | all same |
+| 4 | T 1 on the host (lookup on the CPU, no fed jobs) | 16 | 2,048 | 76 | 315 (91) | — | all same |
+
+The budget of one item allowed no guess in any run. A fed run with the lookup on the CPU stopped with its error, on the
+GPUs and in a CPU-only process. On the CPU only (no uploads), the identity check (13 pipelined runs on granite) and three
+conversations in the streams mode (12 runs) gave the same output as before the change. Pascal kernels, six or nine
+stages and the host time per token come with the rig (6.4).
+
+### 6.4 Host time per token on the rig
+
+`bench/pipespec/rig_hostloop.sh` runs three processes on the same build, model and cards, with the temperature chain
+sampled on the last card: `u0` (`LLAMA_PIPE_UPLOAD=0`, the synchronous copies), `u2` (packed asynchronous uploads) and
+`u2f` (packed uploads, the embedding lookup on card 1 and the fed jobs). Each runs plain decoding, `d0` (one token in
+flight, host-fed), `d0-fed` (`u2f`), N = 1/4/8 conversations without guesses (and fed in `u2f`), and plain references
+for every conversation. Nine cards, S4-L0, ~25 min:
+
+```bash
+# the tarball: scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-pipespec2, unpacked in /opt/llama-builds on the rig
+B=/opt/llama-builds/llama.cpp-20261024-f249104ab-pascal-p106-v2-pipespec2/bin
+scp -r bench/pipespec rig:/tmp/
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=hostloop-9 GPUS=0,1,2,3,4,5,6,7,8 \
+    TS=6,6,6,6,6,6,6,5,2 ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' NS='1 4 8' CTX=8192 NTOK=512 \
+    bash /tmp/pipespec/rig_hostloop.sh > /tmp/pipespec/hostloop-9.out 2>&1 < /dev/null &"
+ssh rig 'cat /tmp/pipespec/out/hostloop-9/summary.tsv; python3 /tmp/pipespec/traces.py /tmp/pipespec/out/hostloop-9'
+# afterwards: copy /tmp/pipespec/out off the rig, rm -rf /tmp/pipespec
+```
+
+A second run with `CTX=32768 NS='1 4'` shows how the mask fill and its upload grow with the context. Reading
+`summary.tsv` (all columns per generated token):
+- **Change #2:** `submit_us` of `u0` minus `u2`, on `d0` and on `n8`, is the host time the synchronous copies cost. Its
+  kill criterion (below 0.5 ms per token) is read here directly. With N = 8, `tok_s` of `u2` against `u0` shows whether
+  one core now keeps eight conversations fed: the host is busy `submit_us + rest_us` per token, so at `tok_s` tokens per
+  second it uses `tok_s × (submit_us + rest_us) / 10⁶` of a core, which `host-<config>.csv` confirms.
+- **The lookup on card 1 alone:** `d0` of `u2f` against `d0` of `u2` (the CPU split and the embedding row's upload
+  removed, the token ids uploaded instead).
+- **Change #3:** `tok_s` of `d0-fed` against `d0` in `u2f`: 1000/tok_s(`d0`) − 1000/tok_s(`d0-fed`) is the serial gap
+  per token that feeding removed (kill criterion: below 0.5 ms). `traces.py` gives the same from the median time
+  between sampled tokens, `after n` (`d0`) against `after f` (`d0-fed`).
+- **Fed conversations:** `nN-fed` against `nN` in `u2f`. Below saturation (N < S_eff) the fed ones should be faster per
+  conversation; at N = 8 the total should not move unless the host was the limit.
+- `same_as_plain` must read `yes` everywhere: the rig repeats the exactness checks of section 6.3 on its own cards.
+
 ## What this changes in the plan
 
 - **Before any more single-stream engine work is credited on served speed, M0 runs once.** All published speeds are
   non-streaming; llama-bench and llama-server differed by ~8–10 ms per token before the fork, more than most planned
   kernel changes save.
-- **The streams mode of Q87/Q104 needs asynchronous inputs (#2) and Q116 before its llama-server integration**: without
-  them one core cannot feed eight conversations at 8k, and at 32k not even six.
-- **The executor gains a device-fed slot (#3)**, the single-stream use of the same machinery as guesses: the next token
-  is always "guessed" right because it is the sample itself.
+- **The streams mode of Q87/Q104 needs asynchronous inputs (#2, built in §6) and Q116 before its llama-server
+  integration**: without them one core cannot feed eight conversations at 8k, and at 32k not even six.
+- **The executor has a device-fed slot (#3, §6)**, the single-stream use of the same machinery as guesses: the next
+  token is always "guessed" right because it is the sample itself.
 - **Setup guide candidates:** `-t 1`, explicit `-np`, and (if M0 shows faults) `--no-mmap` with a quantized embedding
   table; `server_bench.sh` should also measure a streamed run.
 - **Device-side loops and zero-copy mailboxes stay ideas**, kept for after #2 and #3 and Q81.

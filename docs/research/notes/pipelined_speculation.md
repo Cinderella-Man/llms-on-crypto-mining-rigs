@@ -523,5 +523,8 @@ python3 -I bench/ngram_replay/pipeline_sim.py <results>/out/s4l0-6c/plain.jsonl 
 - **Per-stage launch** if depths beyond S_eff − 1 are wanted (the host would launch stage j of a token only after stage
   j − 1 finished and the token is still valid).
 - **Recurrent models:** per-token state snapshots and rollback.
-- **Mask copies:** every in-flight token copies its masks to every card synchronously at submit time (host time per
-  token grows with the number of cards and the context).
+- **Input copies:** on `pascal-p106-v2-pipespec` every in-flight token copies its inputs (masks, positions, cell
+  indices, the embedding row) to every card synchronously at submit time, so host time per token grows with the number
+  of cards and the context. `pascal-p106-v2-pipespec2` uploads each card's inputs in one asynchronous copy and can feed
+  the next token from card to card without the host ([host decode loop](host_decode_loop.md) §6); the masks are still
+  filled on the host until Q116 builds them on the card.

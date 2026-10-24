@@ -11,6 +11,8 @@ Design, prior work and results: [pipelined_speculation.md](../../docs/research/n
 | [rig_run.sh](rig_run.sh) | The timing matrix for the rig: on four prompts plain, depth 0, the Q96 guesser at depths 1–5 and three other guessers at depth 3; oracle ceilings and the cost of wrong guesses; writes `summary.tsv` (speed-ups, guesses, identity per job), the plain outputs for the simulator, traces and a GPU clock/power log |
 | [check_streams.sh](check_streams.sh) | The streams mode against separate plain runs: every conversation of N (all at once, staggered arrivals, guesses in the slack, a budget of one item) must match a plain run of its prompt, seed and chunk size in its own sequence |
 | [rig_streams.sh](rig_streams.sh) | Several conversations on the rig (Q104): N = 1–8 staggered through the cards, total and per-conversation tokens/s, identity per conversation, GPU and host CPU logs |
+| [check_hostloop.sh](check_hostloop.sh) | The host-side changes of Q120/Q121 against plain decoding: `check_identity.sh` in the three input upload modes, with the embedding lookup on card 1, and with fed tokens (greedy and seeded temperature sampling on the device); `check_streams.sh` at N = 1/4/8 with fed conversations and at N = 4 with host sampling; a fed run that must refuse when the CPU reads the token ids |
+| [rig_hostloop.sh](rig_hostloop.sh) | The host's share of a token on the rig (Q120/Q121): synchronous against packed asynchronous uploads, and host-fed against device-fed tokens, single stream and N = 1/4/8 conversations; per job tokens/s and the host time per token inside the submit calls, inside the waits and the rest, plus identity with plain runs |
 | [rig_race.sh](rig_race.sh) | Races of K samples of one request on the rig (Q93): time until the first sample closes its reasoning, against one sample alone, with the plain round-robin race as the identity check |
 | [drop_vs_cancel.py](drop_vs_cancel.py) | Event model of the cards: speed-up with every guess right, 70 % right and every guess wrong, when wrong guesses run to the end (this executor) or are skipped per card (ideal cancellation) |
 | [make_table.py](make_table.py) | A continuation table for the `cont` guesser (`--pipe-table`) from transcripts in bench/ngram_replay's format, leaving out chosen ones |
@@ -37,7 +39,8 @@ llama-pipespec -m <gguf> -ngl 99 -fa on -c 8192 [--temp 0 | --temp 1 --seed 42 .
 - Every job prints a `PIPESPEC name=… tok_s=… hits=… misses=… wasted=… tokens=<hash> logits=<hash> state=<hash>
   probe=<hash>` line. `hits`/`misses` count guesses that were checked; `wasted` counts dropped tokens.
 - `--pipe-trace` writes one line per sampled token: microseconds since the start, guesses in flight, and `h` (the guess
-  behind it was right), `m` (wrong), `n` (no guess), `p` (plain), `r` (a raced sample's token).
+  behind it was right), `m` (wrong), `n` (no guess), `p` (plain), `r` (a raced sample's token), `f` (the next token was
+  already in flight, fed on the devices).
 - `--pipe-race K` (job key `race`): K samples of the request (seeds seed … seed + K − 1, sharing the prompt's KV cells)
   until one emits `--pipe-race-stop` (default `</think>`), then the winner continues alone with the job's guesser
   (`K = 1`: one sample, timed to the stop text the same way). Plain mode decodes the samples round robin; pipe mode
@@ -54,6 +57,15 @@ llama-pipespec -m <gguf> -ngl 99 -fa on -c 8192 [--temp 0 | --temp 1 --seed 42 .
   are in flight; conversation c joins after `--pipe-arrive` × c generated tokens. One `PIPESPEC` line per conversation
   (`<name>-c<c>`) and a `PIPESPEC_STREAMS` line with the total rate. Job keys `chunk`, `seed` and `seq` make the matching
   plain run.
+- `--pipe-feed` (job key `feed`, branch `pascal-p106-v2-pipespec2`): pipe mode at depth 0 and streams mode without
+  guesses, with a sampler on the device and `LLAMA_INPUT_ON_GPU=1` (the embedding lookup on card 1). A sequence's next
+  token is submitted before its current token is sampled, its id copied from the last card to card 1
+  (`llama_pipe_submit_fed`), so the host stays one token ahead. Trace outcome `f`.
+- Pipe and streams jobs also print the host time per generated token: `host_submit_us` (inside the submit calls),
+  `host_wait_us` (inside the waits for results) and `host_rest_us` (the rest). `LLAMA_PIPE_UPLOAD=0|1|2` sets how the slots
+  upload their host inputs: 0 one synchronous copy each (as `llama_decode`), 1 one asynchronous copy each, 2 (default on
+  `pascal-p106-v2-pipespec2`) each card's inputs in one asynchronous copy. Design and checks:
+  [host_decode_loop.md §6](../../docs/research/notes/host_decode_loop.md#6-built-in-the-executor-packed-uploads-and-fed-tokens-q120-q121).
 
 ## Rig plan
 
