@@ -35,14 +35,47 @@ PROFILES = {
     # T: tokens only
     "T": {"committed": "emb", "windows": {"plain": ["emb"]}},
 }
-# Extra windows a head is scored on without training on them. Nine-card staircases on card 1 after its stage, with
-# each card boundary mapped to the nearest lower dumped layer (card 1's own output, layer 6, maps to the embedding):
-# 6/6/6/6/5/5/5/5/5 (cycle 5.34 ms) and 6/6/6/6/6/6/6/5/2 (cycle 3.82 ms), from the stage times in section 1.
-NINE = ["emb", "L9", "L17", "L33", "L41"]
-NINE_LIGHT = ["emb", "L9", "L17", "L25", "L33", "L41", "L41"]
+SIX_CARD_LAYERS = (9, 17, 25, 33, 41)
+
+
+def staircase(split, layer_ms=None, head_ms=2.5, hop_ms=0.3, max_w=8):
+    """The window of a head on card 1 right after card 1's stage, for a layer split (layers per card, the output head on
+    the last card), newest token first. With every card busy a token enters card 1 once per cycle (slowest stage plus a
+    hop), so the token m cycles older has finished every card that ends within m cycles of card 1's stage. Each depth is
+    the input of the next layer, mapped to the nearest lower six-card anchor (the embedding below layer 9); the window
+    ends at the first token at full depth. Per-layer time as in Q87's simulator: 21.3 ms / 49 layers on six cards,
+    24.9 ms on nine, interpolated for other card counts."""
+    n = len(split)
+    if layer_ms is None:
+        layer_ms = 0.435 + (n - 6) * 0.024
+    stages = [layer_ms * x for x in split]
+    stages[-1] += head_ms
+    cycle = max(stages) + hop_ms
+    ends, t = [], 0.0
+    for s in stages:
+        t += s
+        ends.append(t)
+        t += hop_ms
+    done = [sum(split[:k + 1]) for k in range(n)]
+    win = []
+    for m in range(max_w):
+        k = max(j for j in range(n) if ends[j] <= stages[0] + m * cycle + 1e-9)
+        if k == n - 1:
+            break
+        below = [a for a in SIX_CARD_LAYERS if a <= done[k]]
+        win.append(f"L{below[-1]}" if below else "emb")
+    return win
+
+
+# Layer splits an owner may run (layers per card; the output head on the last card) and their card-1 staircases.
+SPLITS = {"c5": [10, 10, 10, 10, 9], "c6": [9, 8, 8, 8, 8, 8], "c7": [7] * 7, "c8": [7, 6, 6, 6, 6, 6, 6, 6],
+          "c9": [6, 6, 6, 6, 5, 5, 5, 5, 5], "c9light": [6, 6, 6, 6, 6, 6, 6, 5, 2]}
+SPLIT_WINDOWS = {name: staircase(split) for name, split in SPLITS.items()}
+# Extra windows a head is scored on without training on them: the splits' card-1 staircases, a spare card's pre-step
+# and late windows, and the after-miss window with the newest token as its embedding (card 1 below layer 9).
 SCORE_EXTRA = {"A": {"pre": ["emb", "L9", "L25", "L33", "L41"], "late": ["emb", "L17", "L33", "L41"],
-                     "nine": NINE, "nine_light": NINE_LIGHT, "miss_emb": ["emb"]},
-               "B": {"stair": ["L9", "L17", "L33", "L41"], "nine": NINE, "nine_light": NINE_LIGHT}}
+                     "miss_emb": ["emb"], **SPLIT_WINDOWS},
+               "B": {"stair": ["L9", "L17", "L33", "L41"], **SPLIT_WINDOWS}}
 
 
 def rope_tables(pos, dim, theta=1e5):

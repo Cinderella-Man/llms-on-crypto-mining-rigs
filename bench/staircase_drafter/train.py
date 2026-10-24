@@ -46,7 +46,7 @@ class Batch:
     def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False):
         self.n_prompt, self.n_tok = rec.n_prompt, rec.n_tok
         self.tokens = np.array(rec.tokens, np.int64)
-        wmax = max([len(w) for w in profile["windows"].values()] + ([5] if all_anchors else []))
+        wmax = max([len(w) for w in profile["windows"].values()] + ([8] if all_anchors else []))
         t0 = max(rec.n_prompt, wmax, min_target)
         self.tpos = np.arange(t0, rec.n_tok - 1)
         j = self.tpos - rec.n_prompt + 1                      # generated token predicted by each target
@@ -79,10 +79,12 @@ def to_device(b, device, dtype):
 SIX_CARD = ("L9", "L17", "L25", "L33", "L41", "full")
 
 
-def sample_window(profile, rng, probs):
-    """One window for a sequence: the profile's nominal staircase, its after-miss window, or a random staircase that
-    keeps the nominal newest anchor and gives each older token a depth no lower than the newer one's (L17, L25, L33,
-    L41; the first full-depth token ends the window). probs: (p_stair, p_miss, p_random)."""
+def sample_window(profile, rng, probs, p_emb=0.35, max_older=7):
+    """One window for a sequence: the profile's nominal staircase, its after-miss window, or a random staircase. The
+    random one covers any layer split of 5-9 cards under the six-card anchor map: the newest token at L9 or, with
+    probability p_emb, as its embedding (card 1 holding fewer than 9 layers), then 0..max_older older tokens in flight
+    at non-decreasing depths from L9, L17, L25, L33, L41 (older tokens beyond the window are complete).
+    probs: (p_stair, p_miss, p_random)."""
     wins = profile["windows"]
     stair = next((w for n, w in wins.items() if n != "miss"), wins.get("miss"))
     u = rng.random()
@@ -90,10 +92,10 @@ def sample_window(profile, rng, probs):
         return {"sample": stair}
     if u < probs[0] + probs[1] and "miss" in wins:
         return {"sample": wins["miss"]}
-    depths = sorted((rng.choice(["L17", "L25", "L33", "L41", "full"]) for _ in range(4)),
-                    key=lambda a: drafter.ANCHOR_IDS[a])
-    older = [a for a in depths if a != "full"]
-    return {"sample": [stair[0]] + older}
+    newest = "emb" if rng.random() < p_emb else "L9"
+    older = sorted((rng.choice(SIX_CARD[:5]) for _ in range(rng.randint(0, max_older))),
+                   key=lambda a: drafter.ANCHOR_IDS[a])
+    return {"sample": [newest] + older}
 
 
 def fuse_extra(d, anchors, positions):

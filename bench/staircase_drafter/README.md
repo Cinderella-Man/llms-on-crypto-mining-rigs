@@ -97,7 +97,7 @@ paths are placeholders.
    python train.py --head T ... --fp16           # on a V100 (no bfloat16)
    # fine-tune from a trained head: one window per sequence (nominal staircase, after-miss, random staircase),
    # every reached anchor fused, the acceptance-matched loss, noise and dropout against overfitting
-   python train.py --head A ... --init-from heads/A/head.pt --lr 1e-4 --window-sample 0.6,0.25,0.15 \
+   python train.py --head A ... --init-from heads/A/head.pt --lr 1e-4 --window-sample 0.3,0.2,0.5 \
        --fuse --loss lk --eta 3 --noise 0.2 --dropout 0.1 --val-seqs 300
    python check_train.py --feats q51.bin --vocab vocab.npy --flint flint/ --head heads/A/head.pt
    ```
@@ -149,9 +149,21 @@ paths are placeholders.
 | U | final state | L9 | every older token complete (A's inputs after a miss) |
 | T | embedding | embedding | tokens only |
 
-  The windows come from the stage times of the six-card split (section 3.1 of the note). Heads A and B are also scored
-  on nine-card staircases, each card boundary mapped to the nearest lower six-card layer: emb, L9, L17, L33, L41 for
-  6/6/6/6/5/5/5/5/5 layers and emb, L9, L17, L25, L33, L41, L41 for 6/6/6/6/6/6/6/5/2.
+  The windows come from the stage times of the six-card split (section 3.1 of the note). `drafter.staircase(split)`
+  derives the card-1 window of any split the same way, each card boundary mapped to the nearest lower six-card layer
+  (the embedding below layer 9), and heads are also scored on the splits an owner may run:
+
+  | Split (layers per card) | Card-1 window, newest token first |
+  |---|---|
+  | 5 cards, 10/10/10/10/9 | L9, L17, L25, L33 |
+  | 6 cards, 9/8/8/8/8/8 | L9, L17, L33, L41 |
+  | 7 cards, 7 each | emb, L9, L25, L41 |
+  | 8 cards, 7/6/6/6/6/6/6/6 | emb, L9, L25, L33, L41 |
+  | 9 cards, 6/6/6/6/5/5/5/5/5 | emb, L9, L17, L33, L33, L41 |
+  | 9 cards, 6/6/6/6/6/6/6/5/2 | emb, L9, L17, L17, L25, L33, L41, L41 |
+
+  With `--window-sample`, the random share of the windows covers all of them: the newest token at L9 or as its
+  embedding, then up to seven older tokens in flight at non-decreasing depths.
 - **Loss.** Forward KL divergence from Flint's sampler distribution (its top-20 log-probabilities through top-k 20,
   top-p 0.95, min-p 0 at temperature 1; mass outside the vocabulary goes to the "other" class) to the guesser, plus 0.2
   × cross-entropy on the sampled token. AdamW (0.9, 0.95), learning rate 2e-4 with warm-up and a cosine decay over a

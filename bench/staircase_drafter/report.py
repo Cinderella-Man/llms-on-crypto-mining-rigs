@@ -9,11 +9,12 @@ import json
 import sys
 
 ROWS = [("A", "stair", "A: staircase on card 1 (six cards)"), ("A", "miss", "A: after a miss"),
-        ("A", "pre", "A on pre-step inputs"), ("A", "nine", "A: nine-card staircase"),
-        ("A", "nine_light", "A: nine-card staircase, light last card"),
+        ("A", "pre", "A on pre-step inputs"), ("A", "c5", "A: five-card staircase"),
+        ("A", "c7", "A: seven-card staircase"), ("A", "c8", "A: eight-card staircase"),
+        ("A", "c9", "A: nine-card staircase"), ("A", "c9light", "A: nine-card staircase, light last card"),
         ("B", "pre", "B: pre-step (spare card)"), ("B", "late", "B: late pre-step"), ("B", "miss", "B: after a miss"),
-        ("B", "stair", "B on card-1 inputs"), ("B", "nine", "B: nine-card staircase"),
-        ("B", "nine_light", "B: nine-card staircase, light last card"),
+        ("B", "stair", "B on card-1 inputs"), ("B", "c9", "B: nine-card staircase"),
+        ("B", "c9light", "B: nine-card staircase, light last card"),
         ("C", "plain", "C: card 1's output only"), ("U", "miss", "U: older tokens complete"),
         ("T", "plain", "T: tokens only")]
 
