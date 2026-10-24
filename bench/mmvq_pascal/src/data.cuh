@@ -33,7 +33,7 @@ static __global__ void gen_blocks(uint8_t * __restrict__ dst, const size_t nbloc
                           : type == T_Q5_0 ? (0.5f + r0) * (1.0f / 128.0f) : (0.5f + r0) * (1.0f / 8192.0f);
             *(half *) p = __float2half(d);
             qoff = 2;
-        } else if (type == T_Q5_K) {
+        } else if (type == T_Q5_K || type == T_Q4_K) {
             const float d    = (0.5f + r0) * (1.0f / 2048.0f);
             const float dmin = (0.5f + r1) * (1.0f / 2048.0f);
             *(half2 *) p = __halves2half2(__float2half(d), __float2half(dmin));
@@ -210,6 +210,36 @@ static double ref_dot(int type, const uint8_t * row, const act_host & a, int vec
                     int sumi = 0, suma = 0;
                     for (int l = 0; l < 32; ++l) {
                         const int q = ((qs[32 * (s / 2) + l] >> (4 * (s % 2))) & 15) | (((qh[l] >> s) & 1) << 4);
+                        sumi += q * q8[32 * ib + l];
+                        suma += q8[32 * ib + l];
+                    }
+                    const double t1 = d * scv * d8[ib] * sumi;
+                    const double t2 = -dmin * mv * d8[ib] * suma;
+                    acc += t1 + t2;
+                    as += fabs(t1) + fabs(t2);
+                }
+            }
+            break;
+        case T_Q4_K:
+            for (int sb = 0; sb < K / 256; ++sb) {
+                const uint8_t * b = row + (size_t) sb * 144;
+                const double d    = half_bits_to_float(rd_u16(b));
+                const double dmin = half_bits_to_float(rd_u16(b + 2));
+                const uint8_t * sc = b + 4;
+                const uint8_t * qs = b + 16;
+                for (int s = 0; s < 8; ++s) {
+                    int scv, mv;
+                    if (s < 4) {
+                        scv = sc[s] & 63;
+                        mv  = sc[s + 4] & 63;
+                    } else {
+                        scv = (sc[s + 4] & 0xF) | ((sc[s - 4] >> 6) << 4);
+                        mv  = (sc[s + 4] >> 4) | ((sc[s] >> 6) << 4);
+                    }
+                    const int ib = 8 * sb + s;
+                    int sumi = 0, suma = 0;
+                    for (int l = 0; l < 32; ++l) {
+                        const int q = (qs[32 * (s / 2) + l] >> (4 * (s % 2))) & 15;
                         sumi += q * q8[32 * ib + l];
                         suma += q8[32 * ib + l];
                     }

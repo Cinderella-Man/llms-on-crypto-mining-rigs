@@ -15,8 +15,9 @@
 //   - Q5_0: the fifth bits are not moved next to their nibbles. The block's sum splits as
 //     sum(nibble * a) + 16 * sum(bit * a); (qh >> j) & 0x01010101 holds the fifth bits of weights j, 8+j, 16+j, 24+j,
 //     so the activations are regrouped the same way (two 4 x 4 byte transposes per block, shared by all rows).
-//   - Q5_K and IQ4_XS: each lane takes one 256-weight super-block per iteration (C = 1). Q5_K's activation sums
-//     (for the mins) are computed once per chunk and shared by all rows. IQ4_XS looks its 4-bit indices up with
+//   - Q4_K, Q5_K and IQ4_XS: each lane takes one 256-weight super-block per iteration (C = 1). Their activation sums
+//     (for Q4_K's and Q5_K's mins) are computed once per chunk and shared by all rows. Q4_K is Q5_K without the fifth
+//     bit; its high nibbles stay in place and each odd sub-block's sum is shifted right by 4 once. IQ4_XS looks its 4-bit indices up with
 //     __byte_perm in a table held in registers; the activations are pre-permuted into the order the lookup produces,
 //     which saves llama.cpp's two re-ordering byte permutes per word.
 //   - Q6_K (staged variant only: its 210-byte super-blocks are 2-byte aligned): one super-block per lane. The 6-bit
@@ -107,8 +108,8 @@ template <int NA>
 struct act_chunk {
     int   u[NA][8];  // IQ4_XS: pre-permuted for the table lookup
     int   t[NA][8];  // Q5_0: t[j] = bytes a[j], a[8+j], a[16+j], a[24+j]; Q6_K: t[0], t[1] = 32 x the sums of a[0..15], a[16..31]
-    float d16[NA];   // d8 / 16 (4- and 5-bit legacy types) or d8 (Q8_0, Q5_K, IQ4_XS)
-    float s[NA];     // s8 (Q4_1, Q4_1_64), -8 * s8 (Q4_0), -16 * s8 (Q5_0), d8 * sum of the int8 values (Q5_K)
+    float d16[NA];   // d8 / 16 (4- and 5-bit legacy types) or d8 (Q8_0, K-quants, IQ4_XS)
+    float s[NA];     // s8 (Q4_1, Q4_1_64), -8 * s8 (Q4_0), -16 * s8 (Q5_0), d8 * sum of the int8 values (Q4_K, Q5_K)
 };
 
 // 4 x 4 byte transpose: out[j] = bytes j of x0, x1, x2, x3.
@@ -144,7 +145,7 @@ static __device__ __forceinline__ void load_act(act_chunk<NA> & a, const uint8_t
             a.s[b]   = -16.0f * s8;
             transpose4(a.u[b][0], a.u[b][2], a.u[b][4], a.u[b][6], a.t[b] + 0);
             transpose4(a.u[b][1], a.u[b][3], a.u[b][5], a.u[b][7], a.t[b] + 4);
-        } else if constexpr (T == T_Q5_K) {
+        } else if constexpr (T == T_Q5_K || T == T_Q4_K) {
             int sum = 0;
 #pragma unroll
             for (int k = 0; k < 8; ++k) {
@@ -212,6 +213,39 @@ static __device__ __forceinline__ float dot_q5_0(const uint32_t d16bits, const u
     }
     const int isum16 = q4_isum16(q0, q1, q2, q3, a.u[b]) + (hsum << 8);
     return fmaf(h2f_lo(d16bits), fmaf((float) isum16, a.d16[b], a.s[b]), acc);
+}
+
+// One Q4_K super-block as 36 words: dm, 3 words of scales, 32 words qs. Sub-blocks 2j and 2j + 1 take the low and high
+// nibbles of qs words 4 + 8j .. 4 + 8j + 7; the high nibbles stay in place (unsigned-by-signed dp4a on q & 0xF0F0F0F0),
+// and the sub-block's sum, exactly 16 times too large, is shifted right by 4 once.
+static __device__ __forceinline__ float dot_q4_K(const uint32_t * w, const act_chunk<8> & a, float acc) {
+    const uint32_t sc_lo = w[1] & 0x3f3f3f3f;                                    // scales of sub-blocks 0..3
+    const uint32_t m_lo  = w[2] & 0x3f3f3f3f;                                    // mins of sub-blocks 0..3
+    const uint32_t sc_hi = (w[3] & 0x0f0f0f0f) | ((w[1] >> 2) & 0x30303030);    // scales of 4..7
+    const uint32_t m_hi  = ((w[3] >> 4) & 0x0f0f0f0f) | ((w[2] >> 2) & 0x30303030);
+    float sumd = 0.0f;
+    float summ = 0.0f;
+#pragma unroll
+    for (int s = 0; s < 8; ++s) {
+        int isum = 0;
+#pragma unroll
+        for (int k = 0; k < 8; ++k) {
+            const uint32_t q = w[4 + 8*(s/2) + k];
+            if (s & 1) {
+                isum = dp4a_us(q & 0xF0F0F0F0, a.u[s][k], isum);
+            } else {
+                isum = dp4a_ss((int) (q & 0x0F0F0F0F), a.u[s][k], isum);
+            }
+        }
+        if (s & 1) {
+            isum >>= 4;
+        }
+        const int sc = (int) (((s < 4 ? sc_lo : sc_hi) >> (8 * (s & 3))) & 0xff);
+        const int m  = (int) (((s < 4 ? m_lo  : m_hi ) >> (8 * (s & 3))) & 0xff);
+        sumd = fmaf(a.d16[s], (float) (isum * sc), sumd);
+        summ = fmaf((float) m, a.s[s], summ);
+    }
+    return acc + h2f_lo(w[0]) * sumd - h2f_hi(w[0]) * summ;
 }
 
 // One Q5_K super-block as 44 words: dm, 3 words of scales, 8 words qh, 32 words qs.
@@ -324,6 +358,8 @@ static __device__ __forceinline__ float dot_chunk(const uint32_t * w, const act_
         } else if constexpr (T == T_Q5_0) {
             acc = dot_q5_0(u16_at(w, o), word_at(w, o + 2), word_at(w, o + 6), word_at(w, o + 10), word_at(w, o + 14),
                            word_at(w, o + 18), a, b, acc);
+        } else if constexpr (T == T_Q4_K) {
+            acc = dot_q4_K(w, a, acc);
         } else if constexpr (T == T_Q5_K) {
             acc = dot_q5_K(w, a, acc);
         } else if constexpr (T == T_IQ4_XS) {

@@ -42,6 +42,8 @@ call reads 6 of them, selected by an ids array.
 | `q5_0` | 22 | `half d`, 4 bytes `qh` (bit j = fifth bit of weight j), then 16 bytes of nibbles as in Q4_0. Value `d*(q - 16)`. Flint's S4-L0 file stores its routed experts' gate/up in it. |
 | `q5_K` | 22 | 176 bytes per 256 weights: `half2 (d, dmin)`, 12 bytes of 6-bit sub-block scales and mins, 32 bytes `qh`, 128 bytes of nibbles. Value `d*sc*q - dmin*m` per 32-weight sub-block. Used by Unsloth's UD-Q4_K_XL. |
 | `iq4_xs` | 17 | 136 bytes per 256 weights: `half d`, 6-bit sub-block scales (`scales_h`, `scales_l`), 128 bytes of 4-bit indices into a fixed non-linear table (`kvalues_iq4nl`). Used by UD-Q4_K_XL. |
+| `q6_K` | 26.25 | 210 bytes per 256 weights: 128 bytes `ql` (low 4 bits), 64 bytes `qh` (high 2 bits), 16 int8 scales (one per 16 weights), `half d`. Value `d*scale*(q - 32)`. The output head of most Q4 files. |
+| `q4_K` | 18 | 144 bytes per 256 weights: `half2 (d, dmin)`, 12 bytes of 6-bit sub-block scales and mins (packed as in Q5_K), 128 bytes of nibbles; sub-blocks 2j and 2j+1 are the low and high nibbles of the same 32 bytes. Value `d*sc*q - dmin*m` per 32-weight sub-block. The main type of Q4_K_M files. |
 
 Activations are quantized exactly as llama.cpp does it (`quantize_q8_1`): blocks of 32 int8 with `half2 (d, s)`, where s
 is the FP16 sum of the 32 unquantized values.
@@ -124,7 +126,7 @@ Useful options (`--help` lists all):
 | Option | Effect |
 |---|---|
 | `--check-only` | correctness checks only, no timing (a few seconds) |
-| `--types q4_1,q8_0` | subset of weight types (default `q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs,q6_K`) |
+| `--types q4_1,q8_0` | subset of weight types (default `q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs,q6_K,q4_K`) |
 | `--variants llama,p_r2c2` | subset of variants (default all) |
 | `--shapes attn_q,moe_down` | subset of shapes (default all) |
 | `--reps 30`, `--batch 64` | timed graph launches, calls per graph |
@@ -348,6 +350,37 @@ on an RTX 3090. The gate for the fork (Q101) is ≥ 130 GB/s on the dense K = 20
 ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --types q6_K,q5_K,q8_0 --csv /tmp/q101.csv' | tee q101_rig.txt
 ```
 
+## Q4_K (Q149)
+
+Q4_K_M files, what most people download, are mostly Q4_K and Q6_K: a token of Ornith-1.5-35B's Q4_K_M reads 57 % Q4_K
+and 39 % Q6_K. ggml-org's Qwen3.6-35B-A3B Q4_K_M keeps its routed experts in Q4_K (90 % of the file, 22 % of a token's
+2.6 GB), its attention, DeltaNet projections and shared expert in Q8_0 (58 %) and its output head in Q6_K (16 %).
+`q4_K` is Q5_K without the fifth bit, so it gets Q5_K's variants (`p_r1c1`, `p_r2c1`, `st_r1c1`, `st_r2c1`):
+
+- One 144-byte super-block per lane. 144 bytes are 9 × 16, so every row width stages and loads with 128-bit loads.
+  Staged shared memory per block is 18 KB with one row per lane group, 36 KB with a fused gate or two rows (two rows
+  with a gate would need 72 KB and are left out).
+- Sub-blocks 2j and 2j+1 take the low and high nibbles of the same 8 code words. The low nibbles go through a signed
+  dp4a on `q & 0x0F0F0F0F`; the high nibbles stay in place, an unsigned-by-signed dp4a on `q & 0xF0F0F0F0`, and the
+  sub-block's sum, exactly 16 times too large, is shifted right by 4 once instead of shifting all 8 words. That is
+  2 instructions per code word and sub-block, against llama.cpp's shift, mask and dp4a plus a second dp4a for the
+  activation sum.
+- The scales and mins decode 4 per word as Q5_K's do; the mins use the activations' block sums from the int8 values,
+  computed once per chunk and shared by all rows.
+
+Static count in the sm_61 SASS, main loop per weight byte: 2.7 lane-instructions staged and 2.5 with direct loads for a
+plain product, 2.3 and 2.1 for the fused gate/up (Q5_K: 3.1 and 2.9, 2.8 and 2.6), with 96 and 48 registers for the
+plain kernels and no spills. Q5_K runs at 120–128 GB/s with more work per byte, so Q4_K is expected at 125–140 GB/s.
+Every Q4_K case passes the CPU reference at all eight shapes through the compute_61 PTX on an RTX 3090. The gate for
+the fork (Q149) is ≥ 120 GB/s on the dense K = 2048 shapes and the expert shapes, together with Q6_K's ≥ 130 GB/s.
+[`kquant_rig.sh`](kquant_rig.sh) runs both gates, the fork's `test-backend-ops` for Q4_K and Q6_K on a P106, and the
+end-to-end A/B on the rig (Qwen3.6 Q4_K_M with each kernel switched off in turn, Flint UD-Q4_K_XL):
+
+```bash
+scp bench/mmvq_pascal/build/mmvq_pascal bench/mmvq_pascal/kquant_rig.sh rig:/tmp/q149/
+ssh rig 'BIN=/opt/llama-builds/<pascal-p106-v2-kquant build>/bin MMVQ=/tmp/q149/mmvq_pascal QWEN=<Qwen3.6 Q4_K_M> FLINT=<UD-Q4_K_XL> bash /tmp/q149/kquant_rig.sh'
+```
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
@@ -425,10 +458,11 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 |---|---|
 | `src/common.cuh` | block layouts (identical to ggml's), type traits |
 | `src/llama_mmvq.cuh` | (a)/(b): llama.cpp's MMVQ and `quantize_q8_1`, copied from `d77256999` (MIT, the ggml authors), Pascal paths only |
-| `src/pascal_mmvq.cuh` | (c) tuned kernel (all seven types but Q6_K), (d) SoA kernel, SoA activation quantizer and repack, (e) row-local-plane kernel and repack, (f) staged kernel (all eight types) |
+| `src/pascal_mmvq.cuh` | (c) tuned kernel (all eight types but Q6_K), (d) SoA kernel, SoA activation quantizer and repack, (e) row-local-plane kernel and repack, (f) staged kernel (all nine types) |
 | `src/data.cuh` | random weight/activation generation on the GPU, CPU reference dot products |
 | `src/memsys.cuh` | `--tlb-probe`: pointer chases over strides and random pages, alone and under a streaming load |
 | `src/main.cu` | shapes, variants, correctness check, timing, totals, CSV |
 | `build.sh` | Docker build of `build/mmvq_pascal` |
 | `verify/` | bit-exactness check against a static llama.cpp build; `multitoken_bitid.cpp`: the fork's 2–4-token products against its single-token ones |
 | `multitoken_perf.sh`, `multitoken_perf_table.py` | timing of the fork's kernels at 1–4 tokens per step on the rig, and its tables |
+| `kquant_rig.sh` | the Q4_K and Q6_K gates, the fork's Q4_K/Q6_K tests on a P106, and the tg128 A/B of the two kernels on the rig (Q149) |

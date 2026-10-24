@@ -22,8 +22,8 @@ Code references:
   stay as they are. Any call the new kernel doesn't cover falls through to the stock kernel unchanged.
 - **Which types.** Q8_0, Q4_1, Q4_0, Q5_0, Q5_K and IQ4_XS are ported: all of S4-L0's quantized bytes and 96 % of
   Unsloth's UD-Q4_K_XL (the rest is its BF16 router and a few Q4_K, IQ3_S and Q6_K tensors). Q6_K, the 6-bit rung
-  for files that would otherwise keep Q8_0 (Q101), is on the fork's branch `pascal-p106-v2-q6k` (section 15). Q4_1_64
-  (a fork-only type) is next.
+  for files that would otherwise keep Q8_0 (Q101), is on the fork's branch `pascal-p106-v2-q6k` (section 15), and Q4_K,
+  the main type of Q4_K_M files, with it on `pascal-p106-v2-kquant` (section 18). Q4_1_64 (a fork-only type) is next.
   - The file at the quality bar reads 66 % of its bytes as Q8_0, so Q8_0 carries the largest share of the gain.
   - Q5_0 uses a cheaper way to apply its fifth bit (section 5).
 - **Measured gain.** llama-bench tg128 on 6 P106-090 cards, S4-L0, one binary with the kernels switched off and on:
@@ -223,7 +223,9 @@ compute 6.1 only (fork commit `9d5f1530e`):
 
 **A switch for testing.** `GGML_CUDA_MMVQ_PASCAL` = `0` (off), `1` (default: compute 6.1 only) or `2` (any NVIDIA GPU).
 With `2`, a modern GPU runs the Pascal kernel natively and, with `CUDA_FORCE_PTX_JIT=1`, from the compute_61 PTX. That
-tests correctness without the rig, and `0` gives the stock kernels on the same binary for speed comparisons. The
+tests correctness without the rig, and `0` gives the stock kernels on the same binary for speed comparisons.
+`GGML_CUDA_MMVQ_PASCAL_SKIP` (ggml type names, comma-separated, e.g. `q4_K,q6_K`) leaves only the listed types to the
+stock kernels, so one type's kernel can be measured on and off while the others stay on (section 18). The
 kernel's template parameters (warps per block, R, C) don't depend on `__CUDA_ARCH__`, so the host and the device always
 agree on the block size, including under the PTX JIT.
 
@@ -1164,3 +1166,57 @@ llama-bench tg128, warm (pp512 first in the same process), two rounds, one binar
   2.2 ms, more than that: the real token's layers pay more for their launches than the benchmark's chain did.
 - Nine of the ten launches per layer go: 423 fewer per token on any card count.
 - The kernel is on by default on compute 6.1 (`GGML_CUDA_PERSISTENT_MOE=0` turns it off).
+
+## 18. Q4_K (Q149)
+
+Q4_K_M files are what most people download. A token of Ornith-1.5-35B's Q4_K_M reads 57 % Q4_K and 39 % Q6_K, and
+ggml-org's Qwen3.6-35B-A3B Q4_K_M, which keeps its routed experts in Q4_K and every other matrix in Q8_0, reads 22 %
+Q4_K, 16 % Q6_K (the head) and 58 % Q8_0 ([model branches](model_branches.md) §1.2). Without a Pascal kernel, Q4_K
+runs llama.cpp's, at 50–62 GB/s on a P106 with the 2-warp shape ([K-quant decode](kquant_decode_pascal.md) §3). The
+fork's branch `pascal-p106-v2-kquant` (on top of `pascal-p106-v2-q6k`, so that Q4_K and Q6_K travel together) adds Q4_K
+to the Pascal kernels for 1–4 tokens: `MUL_MAT` and `MUL_MAT_ID`, the gate/GLU fusion and the routed + shared expert
+launch. The microbenchmark has the same kernel as `q4_K` / `st_r1c1`.
+
+- **Layout.** A super-block of 256 weights is 144 bytes: `half2 (d, dmin)`, 12 bytes of 6-bit sub-block scales and
+  mins packed as in Q5_K, and 128 bytes of nibbles; sub-blocks 2j and 2j + 1 are the low and high nibbles of the same
+  32 bytes. 144 bytes are 9 × 16, so every row width is 16-byte aligned.
+- **Shape.** Q5_K's: one super-block per lane, one row per lane group, staged through shared memory with 128-bit loads
+  (18 KB per block, 36 KB with the fused gate). Direct loads are the fallback where a view's rows are not 16-byte
+  aligned. The bench's two-row variants (`st_r2c1`, `p_r2c1`) are in the rig run; if one wins, `mmvqp_choose` changes
+  in one line.
+- **Arithmetic.** The low nibbles go through a signed dp4a on `q & 0x0F0F0F0F`. The high nibbles stay in place: an
+  unsigned-by-signed dp4a on `q & 0xF0F0F0F0` gives exactly 16 times the sub-block's sum, which is shifted right by 4
+  once instead of shifting each of its 8 words. That is 2 instructions per code word and sub-block. The scales and
+  mins decode 4 per word as Q5_K's, and the mins use the activations' block sums from the int8 values (FP32, shared by
+  all rows), so large activations stay finite.
+- **Cost.** In the microbenchmark's sm_61 SASS the main loop needs 2.7 lane-instructions per weight byte staged and 2.5
+  with direct loads for a plain product, 2.3 and 2.1 for the fused gate/up (Q5_K: 3.1, 2.9, 2.8 and 2.6, measured at
+  120–128 GB/s). The fork's single-token Q4_K kernels take 125–128 registers (168 with the fused gate), with no local
+  memory. Expected 125–140 GB/s.
+- **Switch.** `GGML_CUDA_MMVQ_PASCAL=0` turns every Pascal kernel off, which on ggml-org's Qwen3.6 file also takes the
+  Q8_0 kernel away from 58 % of the bytes. `GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K`, `=q6_K` or `=q4_K,q6_K` leaves just those
+  types to llama.cpp's kernel.
+- **Unchanged.** The other kernels compile to the same sm_61 SASS as on `pascal-p106-v2-q6k` (173 of 173); the branch
+  adds 15 Q4_K kernels.
+- **Tests,** on an RTX 3090 through the compute_61 PTX of a build for compute 6.1 only (the rig's tarball), Pascal
+  kernels forced (`GGML_CUDA_MMVQ_PASCAL=2`), every `test-backend-ops` case of Q4_K and Q6_K in `MUL_MAT`, `MUL_MAT_ADD`,
+  `MUL_MAT_ID`, `MUL_MAT_VEC_FUSION`, `MUL_MAT_ID_FUSION` and `MUL_MAT_ID_SHARED`, with 5–8-token expert products left out
+  (those abort in PTX-only builds on that card with every kernel, llama.cpp's included):
+  - Q4_K joins the Flint-shape cases of sections 9 and 14 at 1–4 tokens, and new cases at Qwen3.6's shapes (8 of 256
+    experts of width 512, an 8,192-row query, large activations) and at Qwen3-30B-A3B's 768-wide experts (3 super-blocks
+    per row, so one lane per row) cover Q4_K and Q6_K;
+  - forced, with staged activations off and on: 536 of 536 pass (270 products, 151 expert products, 105 fusions, 10
+    routed + shared launches); kernels off: 504 of 504 (the 32 large-activation cases run only with the Pascal kernels);
+  - with Q4_K's result scaled by 1.1, all 258 Q4_K cases of 1–4 tokens fail and every other case passes, so the kernel
+    runs in all of them; with the same build and `GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K` all 536 pass;
+  - in the microbenchmark every Q4_K case matches the CPU reference at all eight shapes (662 of 662 cases for the nine
+    types).
+- **Rig.** [bench/mmvq_pascal/kquant_rig.sh](../../../bench/mmvq_pascal/kquant_rig.sh): the microbenchmark gates (Q4_K
+  ≥ 120 GB/s on the dense K = 2,048 and expert shapes, Q6_K ≥ 130 GB/s), the Q4_K/Q6_K tests on a P106, then tg128 of
+  Qwen3.6 Q4_K_M on 5 cards with the kernels as built, without Q4_K, without Q6_K, without both and with every Pascal
+  kernel off, and Flint UD-Q4_K_XL on 9 cards with and without both.
+  - Expected on Qwen3.6 Q4_K_M (est., the speed model of [model branches](model_branches.md) with ~14 ms fixed per
+    token): llama.cpp's Q4_K and Q6_K kernels take 9.1–11.3 and 6.7–8.3 ms of a 41–45 ms token (22–24 tok/s); at
+    130 GB/s they take 4.4 and 3.2 ms, a 33 ms token, ~30 tok/s: 1.25–1.35×, of which Q4_K is ~60 %.
+  - Flint UD-Q4_K_XL reads ~32 MB of Q4_K and Q6_K per token: at most ~1 %.
+

@@ -21,7 +21,8 @@
 namespace mb {
 
 // Weight types. The numbering is this program's own; the byte layouts match ggml-common.h.
-enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4, T_Q5_K = 5, T_IQ4_XS = 6, T_Q6_K = 7, T_COUNT = 8 };
+enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4, T_Q5_K = 5, T_IQ4_XS = 6, T_Q6_K = 7, T_Q4_K = 8,
+                   T_COUNT = 9 };
 
 // K-quants and I-quants: super-blocks of 256 weights in 8 sub-blocks of 32.
 #define QK_K 256
@@ -41,6 +42,8 @@ enum wtype : int { T_Q4_0 = 0, T_Q4_1 = 1, T_Q8_0 = 2, T_Q4_1_64 = 3, T_Q5_0 = 4
 #define QK5_0    32
 #define QR5_0    2
 #define QI5_0    (QK5_0 / (4 * QR5_0))
+#define QR4_K    2
+#define QI4_K    (QK_K / (4 * QR4_K))
 #define QR5_K    2
 #define QI5_K    (QK_K / (4 * QR5_K))
 #define QR4_XS   2
@@ -90,6 +93,16 @@ struct block_q5_0 {
 };
 static_assert(sizeof(block_q5_0) == 22, "q5_0 size");
 
+// 144 bytes per 256 weights: half2 (d, dmin), 12 bytes of 6-bit sub-block scales and mins (packed as in Q5_K), 128 bytes
+// qs. Sub-block s (32 weights) takes the low (s even) or high (s odd) nibbles of qs[32 (s/2) .. 32 (s/2) + 31].
+// Value = d * sc[s] * q - dmin * m[s].
+struct block_q4_K {
+    half2   dm;
+    uint8_t scales[12];
+    uint8_t qs[QK_K / 2];
+};
+static_assert(sizeof(block_q4_K) == 144, "q4_K size");
+
 // 176 bytes per 256 weights: half2 (d, dmin), 12 bytes of 6-bit sub-block scales and mins, 32 bytes qh, 128 bytes qs.
 // Sub-block s (32 weights) takes the low (s even) or high (s odd) nibbles of qs[32 (s/2) .. 32 (s/2) + 31], and bit s of
 // qh[0..31] as fifth bit. Value = d * sc[s] * q - dmin * m[s].
@@ -138,6 +151,7 @@ template <> struct traits<T_Q4_1>    { static constexpr int qk = QK4_1;    stati
 template <> struct traits<T_Q8_0>    { static constexpr int qk = QK8_0;    static constexpr int qi = QI8_0;    static constexpr int bs = 34; };
 template <> struct traits<T_Q4_1_64> { static constexpr int qk = QK4_1_64; static constexpr int qi = QI4_1_64; static constexpr int bs = 36; };
 template <> struct traits<T_Q5_0>    { static constexpr int qk = QK5_0;    static constexpr int qi = QI5_0;    static constexpr int bs = 22; };
+template <> struct traits<T_Q4_K>    { static constexpr int qk = QK_K;     static constexpr int qi = QI4_K;    static constexpr int bs = 144; };
 template <> struct traits<T_Q5_K>    { static constexpr int qk = QK_K;     static constexpr int qi = QI5_K;    static constexpr int bs = 176; };
 template <> struct traits<T_IQ4_XS>  { static constexpr int qk = QK_K;     static constexpr int qi = QI4_XS;   static constexpr int bs = 136; };
 template <> struct traits<T_Q6_K>    { static constexpr int qk = QK_K;     static constexpr int qi = QI6_K;    static constexpr int bs = 210; };
@@ -152,10 +166,11 @@ inline const char * type_name(int t) {
         case T_Q5_K:    return "q5_K";
         case T_IQ4_XS:  return "iq4_xs";
         case T_Q6_K:    return "q6_K";
+        case T_Q4_K:    return "q4_K";
         default:        return "?";
     }
 }
-__host__ __device__ inline bool type_is_k(int t) { return t == T_Q5_K || t == T_IQ4_XS || t == T_Q6_K; }
+__host__ __device__ inline bool type_is_k(int t) { return t == T_Q5_K || t == T_IQ4_XS || t == T_Q6_K || t == T_Q4_K; }
 __host__ __device__ inline int type_qk(int t) { return type_is_k(t) ? QK_K : t == T_Q4_1_64 ? 64 : 32; }
 __host__ __device__ inline int type_bs(int t) {
     switch (t) {
@@ -167,6 +182,7 @@ __host__ __device__ inline int type_bs(int t) {
         case T_Q5_K:    return 176;
         case T_IQ4_XS:  return 136;
         case T_Q6_K:    return 210;
+        case T_Q4_K:    return 144;
         default:        return 0;
     }
 }

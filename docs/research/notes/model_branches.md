@@ -109,13 +109,14 @@ expert of 1,024, 35 of 49 layers with a 513-token window.
 ### 1.2 What the popular files are made of, and what the Pascal kernels cover
 
 Share of the bytes read per generated token, by type. "v2" covers Q4_0, Q4_1, Q5_0, Q8_0, Q5_K and IQ4_XS
-(`pers:ggml-cuda/mmvq-pascal.cu:650`); "q6k" adds Q6_K (`q6k:ggml-cuda/mmvq-pascal.cu:63`); "Q4_K" is a kernel that
-doesn't exist yet.
+(`pers:ggml-cuda/mmvq-pascal.cu:650`); "q6k" adds Q6_K (`q6k:ggml-cuda/mmvq-pascal.cu:63`); "Q4_K" adds the Q4_K
+kernel of the fork's branch `pascal-p106-v2-kquant` (Q149, [kernel design](pascal_mmvq_integration.md) section 18).
 
 | File | GB per token | Types | v2 | + q6k | + Q4_K |
 |---|---|---|---|---|---|
 | Qwen3.6-35B-A3B Q4_0, bartowski (read) | 2.08 | Q4_0 55 %, Q6_K 23 % (head 20 %), Q8_0 14 %, F32 5 % (router), Q5_0 2 %, Q4_1 1 % | 72 % | 95 % | 95 % |
-| qwen35moe-35B Q4_K_M: Ornith-1.5-35B and the Qwen3.8-35B-A3B distillation (both read; Qwen3.6's Q4_K_M follows the same quantizer rules, est.) | 2.02 | Q4_K 57 %, Q6_K 39 %, F32 4.5 % | 0 % | 39 % | 96 % |
+| qwen35moe-35B Q4_K_M: Ornith-1.5-35B and the Qwen3.8-35B-A3B distillation (both read) | 2.02 | Q4_K 57 %, Q6_K 39 %, F32 4.5 % | 0 % | 39 % | 96 % |
+| Qwen3.6-35B-A3B Q4_K_M, ggml-org (read): routed experts Q4_K, every other matrix Q8_0 | 2.57 | Q8_0 58 %, Q4_K 22 %, Q6_K 16 % (head), F32 3.5 % | 58 % | 74 % | 96 % |
 | Qwen3.6-35B-A3B UD-Q4_K_XL, Unsloth | — | not read | — | — | — |
 | Qwen3-30B-A3B Q4_K_M (est., llama-quant's Q4_K_M rules on the config) | ~1.9 | Q4_K ~70 %, Q6_K ~27 % (head, half the expert downs, half of attn_v), F32 ~3 % | 0 % | ~27 % | ~97 % |
 | Qwen3-30B-A3B Q4_0 (est.) | ~1.85 | Q4_0 ~83 %, Q6_K ~14 % (head), F32 ~3 % | ~83 % | ~97 % | ~97 % |

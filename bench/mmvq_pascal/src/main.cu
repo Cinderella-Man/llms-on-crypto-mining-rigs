@@ -114,6 +114,7 @@ const void * rows_kernel_rt(int T, bool G, int R, int C) {
         case T_Q8_0:    return G ? rows_kernel<T_Q8_0, true>(R, C)    : rows_kernel<T_Q8_0, false>(R, C);
         case T_Q4_1_64: return G ? rows_kernel<T_Q4_1_64, true>(R, C) : rows_kernel<T_Q4_1_64, false>(R, C);
         case T_Q5_0:    return G ? rows_kernel<T_Q5_0, true>(R, C)    : rows_kernel<T_Q5_0, false>(R, C);
+        case T_Q4_K:    return G ? rows_kernel<T_Q4_K, true>(R, C)    : rows_kernel<T_Q4_K, false>(R, C);
         case T_Q5_K:    return G ? rows_kernel<T_Q5_K, true>(R, C)    : rows_kernel<T_Q5_K, false>(R, C);
         case T_IQ4_XS:  return G ? rows_kernel<T_IQ4_XS, true>(R, C)  : rows_kernel<T_IQ4_XS, false>(R, C);
         case T_Q6_K:    return nullptr;
@@ -157,6 +158,7 @@ const void * st_kernel_rt(int T, bool G, int R, int C, int SU) {
         case T_Q4_1: return G ? st_kernel<T_Q4_1, true>(R, C, SU) : st_kernel<T_Q4_1, false>(R, C, SU);
         case T_Q8_0: return G ? st_kernel<T_Q8_0, true>(R, C, SU) : st_kernel<T_Q8_0, false>(R, C, SU);
         case T_Q5_0: return G ? st_kernel<T_Q5_0, true>(R, C, SU) : st_kernel<T_Q5_0, false>(R, C, SU);
+        case T_Q4_K: return G ? st_kernel<T_Q4_K, true>(R, C, SU) : st_kernel<T_Q4_K, false>(R, C, SU);
         case T_Q5_K: return G ? st_kernel<T_Q5_K, true>(R, C, SU) : st_kernel<T_Q5_K, false>(R, C, SU);
         case T_IQ4_XS: return G ? st_kernel<T_IQ4_XS, true>(R, C, SU) : st_kernel<T_IQ4_XS, false>(R, C, SU);
         case T_Q6_K: return G ? st_kernel<T_Q6_K, true>(R, C, SU) : st_kernel<T_Q6_K, false>(R, C, SU);
@@ -206,6 +208,7 @@ llama::launch_shape llama_plan_rt(int T, const llama::call_args & a) {
         case T_Q4_1:    return llama::plan<T_Q4_1, table>(a);
         case T_Q8_0:    return llama::plan<T_Q8_0, table>(a);
         case T_Q5_0:    return llama::plan<T_Q5_0, table>(a);
+        case T_Q4_K:    return llama::plan<T_Q4_K, table>(a);
         case T_Q5_K:    return llama::plan<T_Q5_K, table>(a);
         case T_IQ4_XS:  return llama::plan<T_IQ4_XS, table>(a);
         case T_Q6_K:    return llama::plan<T_Q6_K, table>(a);
@@ -220,6 +223,7 @@ void llama_launch_rt(int T, const llama::call_args & a, cudaStream_t s) {
         case T_Q4_1:    llama::launch<T_Q4_1, table>(a, s); break;
         case T_Q8_0:    llama::launch<T_Q8_0, table>(a, s); break;
         case T_Q5_0:    llama::launch<T_Q5_0, table>(a, s); break;
+        case T_Q4_K:    llama::launch<T_Q4_K, table>(a, s); break;
         case T_Q5_K:    llama::launch<T_Q5_K, table>(a, s); break;
         case T_IQ4_XS:  llama::launch<T_IQ4_XS, table>(a, s); break;
         case T_Q6_K:    llama::launch<T_Q6_K, table>(a, s); break;
@@ -376,7 +380,7 @@ struct result {
 };
 
 struct options {
-    std::vector<std::string> types = { "q4_1", "q4_0", "q8_0", "q4_1_64", "q5_0", "q5_K", "iq4_xs", "q6_K" };
+    std::vector<std::string> types = { "q4_1", "q4_0", "q8_0", "q4_1_64", "q5_0", "q5_K", "iq4_xs", "q6_K", "q4_K" };
     std::vector<std::string> variants;
     std::vector<std::string> shapes;
     int reps = 30;
@@ -394,7 +398,7 @@ struct options {
 
 void usage() {
     printf("usage: mmvq_pascal [options]\n"
-           "  --types LIST     weight types, comma-separated (default q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs,q6_K)\n"
+           "  --types LIST     weight types, comma-separated (default q4_1,q4_0,q8_0,q4_1_64,q5_0,q5_K,iq4_xs,q6_K,q4_K)\n"
            "  --variants LIST  kernel variants (default all; see --list)\n"
            "  --shapes LIST    shapes (default all; see --list)\n"
            "  --reps N         timed graph launches per kernel, median reported (default 30)\n"
