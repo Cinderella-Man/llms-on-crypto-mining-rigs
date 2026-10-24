@@ -593,7 +593,7 @@ into the f16 tensor, which the allocator then holds once per card instead of onc
 to the host's for causal, sliding-window and several streams; then llama-batched-bench at `-c 32768/131072`,
 `-npp 32768` / `131072`, `-ub 256/512`, four copies, against the base.
 
-**E5 built (fork branch `pascal-p106-v2-gpumask2`, commit `6a842d091`; the prompt path first as Q110, decode as Q116).**
+**E5 built (fork branch `pascal-p106-v2-gpumask2`, commit `6f943f792`; the prompt path first as Q110, decode as Q116).**
 - **The op.** `GGML_OP_KQ_MASK` (CPU reference and CUDA kernel) takes F32 cell pairs `[2, n_kv, n_stream]` (the cell's
   position; bit s set when the cell holds sequence s, none for an empty cell; both exact in F32 below 2^24), with any
   strides in the cell and stream dimensions so that it reads a window of a larger array, and I32 token pairs
@@ -622,8 +622,9 @@ to the host's for causal, sliding-window and several streams; then llama-batched
   copy. All of these nodes keep their addresses from step to step, so llama.cpp reuses the graph and CUDA graphs keep
   replaying it; the graph is rebuilt where it was before (when n_kv grows by 256) and once after a full upload.
 - **When.** Every micro-batch with causal attention, no ALiBi or M-RoPE, on offloaded caches with their own cells and at
-  most 24 sequences (`LLAMA_GPU_KQ_MASK=<min tokens>`, default 1; 0 off). The rest keeps the host mask, as do the
-  caches inside the hybrid memory (Qwen3.6's), whose input code reads the mask tensor itself.
+  most 24 sequences, with layer split (`LLAMA_GPU_KQ_MASK=<min tokens>`, default 1; 0 off). The rest keeps the host
+  mask, as do tensor split, whose buffers divide every cache tensor across the cards, and the caches inside the hybrid
+  memory (Qwen3.6's), whose input code reads the mask tensor itself.
   `LLAMA_GPU_KQ_MASK_CHECK=1` synchronizes before each step's inputs, reads every card's copy back, applies the step's
   inputs to it, expands the mask by the op's rule and aborts if a single value differs from the host mask.
 - **Checked, prompt path (Q110, RTX 3090, the op natively and through the compute_61 PTX):** the op exact against the CPU
@@ -638,6 +639,19 @@ to the host's for causal, sliding-window and several streams; then llama-batched
   after every step) and `llama-parallel` (a system prompt copied to four clients' sequences, finished clients removed;
   four streams, and one unified stream) give the host-mask runs' output token for token, with the same number of graph
   reuses.
+- **Checked, cell copies and decode (Q116), on two RTX 3090s:** the op exact against the CPU in 26 cases (13 shapes,
+  including windows of a larger array, f16 and f32), natively and through the compute_61 PTX; `test-llama-archs` as
+  above on each card, both cards layer-split and tensor-split: all 32 pass, 377 masks identical. G3, flash attention
+  on, host mask against device mask under the check: prefill with one sequence and with four (four streams, one
+  unified stream), one-token and four-sequence decode, one sequence decoded token by token to 2,048 (past the 768-cell
+  sliding-window ring) and four unified sequences to 1,024 each in 4-token steps. Every perplexity equals the
+  host-mask run's to every printed digit, with the same top token everywhere and KLD at the base file's storage floor;
+  all 15,524 masks the check expanded from the cards' copies were identical to the host's. Over the long decodes CUDA
+  graphs replayed 4,078 and 2,014 times against the host mask's 4,080 and 2,016, with the same warmups and resets: the
+  copies cost one graph rebuild after a full upload and nothing per token. `llama-parallel` (both stream layouts) and
+  `llama-lookup` (384 drafted tokens, 180 accepted, so 132 steps carried rejected cells in the changed-cell list) give
+  the host-mask output token for token. In a one-token decode graph each card's split has one input fewer than with
+  the host mask (10 and 8 against 11 and 9).
 - **Expected on the rig (est., from section 1.4's table, nine cards):** prompt processing at `-ub 128`: mask copies
   3.2 → ~0.1 ms per prompt token at 32k and 12.5 → ~0.4 ms at 131k; card time 20–22 → 17–19 ms and 52–54 → 40–42 ms;
   more on the wall clock where the host's synchronous copies set the pace, and `-ub 512` with four copies at 262k
