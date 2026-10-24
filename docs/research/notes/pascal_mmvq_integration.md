@@ -876,3 +876,89 @@ gate/GLU fusion and the routed + shared expert launch. The microbenchmark has th
 - **Rig.** The microbenchmark gate first (≥ 130 GB/s on the dense K = 2,048 shapes; command in
   [bench/mmvq_pascal](../../../bench/mmvq_pascal/README.md#q6_k-q101)). If it passes, llama-bench tg128 of a G3-6 mix
   (G3 with its non-head Q8_0 tensors in Q6_K) against G3, kernels on, on the same cards.
+
+## 16. The combined v2 test build (Q117)
+
+The fork's branch `pascal-p106-v2-combined` (off `pascal-p106-v2`) carries every v2 engine piece that waits for the rig,
+cherry-picked in this order with linear history, so one build measures their total and, piece by piece through the
+switches below, each one's share:
+
+| Piece | From branch | Acts on | Switch |
+|---|---|---|---|
+| Q108: MoE tile list for MMQ (llama.cpp PR #31047) | `pascal-p106-v2-prefill` | prompt micro-batches | off: `GGML_CUDA_MMQ_MOE_LEGACY=1` |
+| Q109: graph reuse only with nothing in flight | `pascal-p106-v2-prefill` | prompt micro-batches at `-ub 128`, pipeline parallelism | off: `LLAMA_GRAPH_REUSE_WAIT=1` |
+| Q110: attention mask built on each card | `pascal-p106-v2-gpumask` | micro-batches of ≥ 32 tokens | off: `LLAMA_GPU_KQ_MASK=0` |
+| Q100: the norm writes the Q8_1 copy (section 8) | `pascal-p106-v2-normq8` | one-token steps | off: `GGML_CUDA_NORM_Q8=0` |
+| Q92: screened output head | `pascal-p106-v2-screenhead` | batches with one output row | on: `LLAMA_SCREEN_HEAD=1` and the side file (`LLAMA_SCREEN_HEAD_FILE`) |
+| Q78: 2–4 tokens in the Pascal kernels (section 14) | `pascal-p106-v2-multicol` | 2–4-token steps | off: `GGML_CUDA_MMVQ_PASCAL_MC=0` |
+| Q87/Q96/Q104: pipelined executor | `pascal-p106-v2-pipespec` | `llama-pipespec` only | — |
+
+- **Merging.** Only multicol and normq8 overlap: in `mmvq.cu` the Pascal call takes multicol's arguments and normq8's
+  Q8_1 pointer, which is never more than one row, so 2–4-token steps quantize as before; and the test list keeps both
+  pieces' cases. The executor's changes act through `llama_pipe_*` and `llama_sampler_set_pos`, except the KV cache
+  placing re-decoded tokens of a removed tail on the cells they had (llama-server's speculative rollbacks), which moves
+  cells, not results.
+- **The three switches the pieces lacked** are one commit on the branch:
+  - `GGML_CUDA_MMQ_MOE_LEGACY=1` runs `MUL_MAT_ID` in MMQ as before PR #31047. The tile width is chosen against all
+    tokens again, and the ids helper writes the old tiles: ceil(tokens / width) for every expert from its first
+    column, the ones past its last column empty and returning at once.
+  - `LLAMA_GRAPH_REUSE_WAIT=1` reuses a graph while a micro-batch is in flight, after the full wait.
+  - `GGML_CUDA_MMVQ_PASCAL_MC=0` sends 2–4 tokens to llama.cpp's kernels; one token keeps the Pascal kernels.
+  - `GGML_CUDA_MMVQ_PASCAL=0` still turns every Pascal matrix-vector kernel off, one token included.
+- **Checked** on a 7-GPU quant machine (RTX 3090s, correctness only):
+  - `test-backend-ops`, native sm_86 code: `MUL_MAT_ID` (681 cases, our types plus Q4_K/F16/BF16/F32, every batch
+    size) with the tile list and with `GGML_CUDA_MMQ_MOE_LEGACY=1`, `MUL_MAT_ID_FUSION` (13), `MUL_MAT` (1,726),
+    `KQ_MASK` (20), `ADD_RMS_NORM_MUL_Q8` (32, with the Pascal kernels forced, with and without the norm's Q8_1 copy),
+    the screened head's top 256 of 150,144 and its one-row-expert product, and the 1–4-token cases of section 14 (623
+    products, 290 fusions, 22 routed + shared launches) with the Pascal kernels forced and staged activations off and
+    on: all pass. The same holds with a build that has only compute_61 PTX (the host then takes the Pascal decisions
+    too), Q8_0 `MUL_MAT_ID` without its 5–8-token cases (prefill note, "E3 and E4 built").
+  - With the stock kernels (`GGML_CUDA_MMVQ_PASCAL=0`), `ADD_RMS_NORM_MUL_Q8`'s Q4_1 cases exceed the test's error
+    limit (5 × 10⁻⁴, up to 1.2 × 10⁻³) in about two runs of five, each on fresh random inputs, natively and through the
+    PTX, with the norm's Q8_1 copy on and off alike: llama.cpp's Q4_1 kernel with its FP16 block sums against a tight
+    limit, not the combination. The Pascal kernels pass every run.
+  - With `GGML_CUDA_MMVQ_PASCAL_MC=0` the same 1–4-token cases pass except the 2–4-token large-activation ones of
+    Q4_0, Q4_1 and Q5_0 (27 of 623), which give inf or NaN. That is `pascal-p106-v2` itself: llama.cpp's kernels keep
+    the Q8_1 block sums in FP16 (section 8), and only the Pascal kernels sum in FP32. The `MC=0` arm on the rig
+    therefore runs with Flint's MoE down rescale on (no `LLAMA_NO_MOE_DOWN_RESCALE=1`), in both of its runs.
+  - G3 split by layer over two cards, llama-perplexity over 8 × 512 tokens at `-ub 128` and `-ub 512` (Pascal kernels
+    forced): the combined build at its defaults and with every off switch set writes reference logits byte-identical
+    to `pascal-p106-v2`'s, and at its defaults its KLD statistics against the base equal the base's own floor (maximum
+    6 × 10⁻⁵, the same top token everywhere).
+  - Decoding G3 (Pascal kernels forced): greedy llama-completion of 8 prompts × 128 tokens gives the base's text
+    byte for byte, at the defaults and with every switch off; llama-screen-check passes (262,144 candidate logits
+    bit-identical to the full head's, no prompt diverging); llama-pipespec's pipelined decoding (depth 3) gives plain
+    decoding's 96 tokens and logit hashes.
+- **Measuring it on the rig.** `CB` is the combined tarball's `bin/`, `V2` the `pascal-p106-v2` tarball's, `MODEL`
+  S4-L0 (then G3h/K2h), six cards for decode as in the other engine A/Bs, nine for prompts, `SCREEN` the screen side
+  file:
+
+  ```bash
+  export LLAMA_NO_MOE_DOWN_RESCALE=1
+  OFF="GGML_CUDA_MMQ_MOE_LEGACY=1 LLAMA_GRAPH_REUSE_WAIT=1 LLAMA_GPU_KQ_MASK=0"
+  OFF="$OFF GGML_CUDA_NORM_Q8=0 GGML_CUDA_MMVQ_PASCAL_MC=0"
+  TG="-m $MODEL -ngl 99 -fa on -p 0 -n 128 -r 3 -o jsonl"
+  PP="-m $MODEL -ngl 99 -fa on -p 512,2048,8192 -n 0 -b 8192 -ub 128,256,512 -r 2 -o jsonl"
+  # 1. decode, six cards: V2, all off (= V2), all on, screened head on top, then one piece off at a time
+  $V2/llama-bench $TG; env $OFF $CB/llama-bench $TG; $CB/llama-bench $TG
+  LLAMA_SCREEN_HEAD=1 LLAMA_SCREEN_HEAD_FILE=$SCREEN $CB/llama-bench $TG
+  GGML_CUDA_NORM_Q8=0 $CB/llama-bench $TG
+  # 2. 1-4-token steps (verify steps, several slots): pp1-pp4 with the multi-token kernels on and off, both with the
+  #    MoE down rescale on (llama.cpp's kernels overflow without it, see the checks above)
+  for mc in 1 0; do
+    env -u LLAMA_NO_MOE_DOWN_RESCALE GGML_CUDA_MMVQ_PASCAL_MC=$mc \
+      $CB/llama-bench -m $MODEL -ngl 99 -fa on -p 1,2,3,4 -n 0 -r 5 -o jsonl
+  done
+  # 3. prompts, nine cards: V2, all off, all on, then Q108, Q109 and Q110 off one at a time
+  $V2/llama-bench $PP; env $OFF $CB/llama-bench $PP; $CB/llama-bench $PP
+  for sw in GGML_CUDA_MMQ_MOE_LEGACY=1 LLAMA_GRAPH_REUSE_WAIT=1 LLAMA_GPU_KQ_MASK=0; do
+    env $sw $CB/llama-bench $PP
+  done
+  ```
+
+  - "All off" must match `V2` within noise; if it does not, a piece costs time even when switched off.
+  - Each piece's share is "all on" against "all on but that piece". Expected (est., from each piece's note): decode
+    +3–4 % (Q100) and +6 % with the screened head (Q92); pp8192 at `-ub 128` 1.6–1.8× from Q109 and 1.5–2× more from
+    Q108 (prefill note, E3/E4), the mask's gain at 32k and beyond (E5's rig run); 2–4-token steps as in section 14.
+  - Q110's deep-context run (llama-batched-bench at `-npp 32768`, prefill note E5) and the executor's runs
+    (`llama-pipespec`, [pipelined speculation](pipelined_speculation.md)) use the same binaries.
