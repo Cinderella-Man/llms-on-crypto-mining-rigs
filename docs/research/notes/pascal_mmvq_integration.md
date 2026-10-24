@@ -33,6 +33,10 @@ Code references:
 - **Several tokens per step.** 2–4 tokens (a speculative-decoding verify step, a prompt's last tokens) run a
   multi-token variant on the fork's branch `pascal-p106-v2-multicol`. It reads every weight row once per step, and for
   expert products every distinct expert once, and gives each token the single-token result bit for bit (section 14).
+- **One launch per MoE layer.** On the fork's branch `pascal-p106-v2-persistent`, a one-token step can run each Flint MoE
+  layer (norm, router, top-6, routed and shared experts, weighted sum) as one persistent kernel instead of 10 launches,
+  bit-identical to them, for K2h-r16's, G3's and S4-L0's layers and 42 of UD-Q4_K_XL's 47 (section 17). The rig's
+  one-card A/B of the prototype: 1.16–1.17× per layer, ~1.3 ms per token.
 - **No repack needed.** Staged loads reach the speed that row-local or tensor-wide weight planes reach (Q8_0 17.1
   against 18.4 ms per Flint token in the microbenchmark), so the load-time repack of Q39 is no longer needed for decode
   speed.
@@ -966,9 +970,10 @@ switches below, each one's share:
 ## 17. One launch per MoE layer (Q88)
 
 [bench/persistent_pascal](../../../bench/persistent_pascal/) computes one Flint MoE layer at one token in a single
-persistent kernel, bit-identical to the fork's chain of launches. This section is the design for building that kernel
-into the fork, so that every one-token step runs each MoE layer as one launch. Fork branch:
-`pascal-p106-v2-persistent`, off `pascal-p106-v2-combined` (section 16).
+persistent kernel, bit-identical to the fork's chain of launches. On one P106-090 it takes 171–174 µs per layer against
+199–203 µs for the chain (1.16–1.17×, 1.3–1.4 ms less per token over 47 layers). The fork's branch
+`pascal-p106-v2-persistent` (off `pascal-p106-v2-combined`, section 16) builds the kernel in, so that a one-token step
+runs each MoE layer as one launch, with the same output bit for bit.
 
 ### What a MoE layer costs today
 
@@ -1028,22 +1033,30 @@ walk of the next layer, which reaches `l_out` through the attention norm before 
 
 ### The kernel
 
-- **The prototype's design, unchanged.**
-  - 2,944 warp-sized work items in dependency order, taken from a counter.
+- **The prototype's design.**
+  - Warp-sized work items in dependency order, taken from a counter.
   - The shared expert's gate/up fills the wait for the top-6.
   - Each expert's down projection starts once its own activations are quantized.
-  - The warp that brings an 8-row output group to seven contributions writes those rows.
+  - The warp that brings an output group (8 rows, 16 for K-quant down products) to seven contributions writes those
+    rows.
   - There is no grid barrier, so the kernel completes at any grid size and needs no cooperative launch.
-  - The grid is the number of resident blocks (from the occupancy API, once per kernel and device).
+  - The grid is the number of resident blocks, from the occupancy API, once per kernel and device: two 256-thread
+    blocks per SM, 10 on a P106. One block per SM was slower in the rig's A/B (0.88–0.91× the chain).
   - The last warp out resets the counters, so consecutive layers and CUDA graph replays need no host step.
-- **Shared arithmetic.** The Pascal products' device functions move from `mmvq-pascal.cu` into
-  `mmvq-pascal-impl.cuh`, used by both files. The per-op kernels must compile to the same SASS as before the move.
+- **Shared arithmetic.** The Pascal products' device functions move from `mmvq-pascal.cu` into `mmvq-pascal-impl.cuh`,
+  used by both files. `mmvq-pascal.cu` compiles to the same sm_61 SASS as on the combined branch (155 kernels).
   - The persistent kernel uses the same blocks per lane (`C`) as `mmvqp_choose` for each type and product, so lanes
-    per row and every row's summation order are the same. Rows per lane group and staged or direct loads may differ,
-    since they don't change any row's sum.
+    per row and every row's summation order are the same. Rows per lane group and staged loads may differ, since they
+    don't change any row's sum.
   - Activations written during the launch are read with `ld.global.cg`.
-  - The norm, the router (with the BF16 path of `mul_mat_vec_f`), `topk_moe`, the Q8_1 quantization and the weighted
-    sum are copies of the fork's code with its reduction orders, as in the prototype.
+  - The norm, the router (with the BF16 path of `mul_mat_vec_f`), `topk_moe` and the Q8_1 quantization are copies of the
+    fork's code with its reduction orders, as in the prototype.
+  - The routed experts' weighted sum: `moe_weighted_reduction_f32` compiles to a rounded first product and one FMA per
+    further expert. The kernel writes that order out with `__fmul_rn` and `__fmaf_rn`. Left to the compiler,
+    `e0·w0 + e1·w1` was fused the other way round, and `ffn_out` differed in the last bits while every other stage
+    matched.
+  - An F16 router accumulates in half2 where `mul_mat_vec_f` does: on GPUs with fast FP16 and a build that has code
+    above compute 6.1. On the P106 both accumulate in FP32. So the kernel matches the per-op path on test GPUs too.
   - The Pascal products never read the FP16 block sums, so Q100's own block-sum order doesn't matter.
 - **Types.** The router type is a runtime branch inside the router items, since those items are light. The
   (gate/up, down, shared) types are template parameters, one kernel per combination that Flint files use:
@@ -1057,52 +1070,78 @@ walk of the next layer, which reaches `l_out` through the attention norm before 
 
   - UD-Q4_K_XL's other five layers have Q4_K or IQ3_S gate/up (4) or a Q6_K down (1). The Pascal kernels of this build
     don't cover those types, so those layers keep the per-op path.
-  - Thirteen kernels in all.
-- **K-quants need a different shape.**
-  - Q5_K and IQ4_XS take one 256-weight super-block per lane (`C` = 1), so staging a lane group's gate and up rows
-    takes 11 KB per warp, 90 KB per 8-warp block: over Pascal's 48 KB. Their gate/up items therefore stage up and gate
-    one after the other through one buffer (5.6 KB per warp).
-  - Q5_K's single-token kernel takes 142 registers, over the 128 that two 256-thread blocks per SM allow. The K-quant
-    kernels may need one block per SM (8 warps) at up to 255 registers. The prototype's `--grid 5` run on the rig
-    shows whether 8 warps per SM stream as fast as 16.
+  - Twelve kernels in all: four for K2h-r16, G3 and S4-L0, eight for UD-Q4_K_XL.
+- **Shape per combination** (`moep_cfg`), always two blocks per SM:
+  - Routed gate/up: 2 rows per lane group where the staging buffers still fit (Q5_0: the rig A/B's `r2` shape), else 1
+    (Q8_0).
+  - K-quants (Q5_K, IQ4_XS) take one 256-weight super-block per lane (`C` = 1):
+    - A gate/up pass covers 4 rows of 8 lanes each. Staging a lane group's gate and up rows together would take 11 KB
+      per warp, so the up rows are staged and multiplied first, then the gate rows go through the same buffer
+      (5.6 KB per warp).
+    - A down pass covers 16 rows, so their output groups have 16 rows.
+    - Their weight words are read from shared memory where the dot product uses them, instead of a whole super-block
+      being copied into 44 registers first.
+  - sm_61 resources of all twelve: 128 registers, 37–47.5 KB of shared memory, 2 blocks per SM. The four Q5_0/Q8_0
+    kernels spill nothing; the eight K-quant kernels spill 16–76 bytes.
 - **Timeouts.**
   - A wait past the poll limit (seconds) sets an error word in mapped host memory, and every warp leaves.
   - The next graph evaluation finds the word and aborts with a message that names the switch.
   - The kernel cannot deadlock, so this only catches bugs.
   - Under CUDA graphs the host can't check every launch and fall back in time, as the prototype's host did.
+  - Checked with an injected fault (the top-k never published): the waits time out and the next graph compute aborts
+    with the message.
 
 ### Switches
 
 - `GGML_CUDA_PERSISTENT_MOE`: `0` off (the default until the rig confirms the gain), `1` on for compute 6.1, `2` on
   any NVIDIA GPU (for testing natively and through the compute_61 PTX).
-- `GGML_CUDA_PERSISTENT_MOE_CHECK=1`: the self-check. Every matched layer runs the persistent kernel into a scratch
-  output, then the per-op path as usual, and a third kernel compares the two outputs bit for bit on the device. Per
-  graph evaluation the log shows how many layers matched and how many differed. CUDA graphs are off in this mode.
+- `GGML_CUDA_PERSISTENT_MOE_CHECK=1`: the self-check. Every matched layer runs the persistent kernel into its scratch,
+  then the per-op path as usual. Bit for bit on the device, the check compares every stage the per-op path writes out:
+  router logits, expert ids and weights, routed activations, routed down outputs, shared activations, the routed sum
+  and `ffn_out`. Per graph evaluation the log shows how many layers ran and how many differed, by stage. CUDA graphs are
+  off in this mode.
 - `GGML_CUDA_PERSISTENT_MOE_GRID=N`: grid override, for tests.
+- `GGML_CUDA_PERSISTENT_MOE_FAULT=1|2|3`: a deliberate error (a wait that times out, routing weights off by 10⁻⁴, the
+  shared expert missing from `ffn_out`), to show that the tests catch one.
 
-### Tests
+### Tests and results
 
-- **Unchanged code.** The per-op kernels of `mmvq-pascal.cu` must compile to the same SASS as on the combined branch.
-- **test-backend-ops `MOE_LAYER`.** A Flint-shaped layer subgraph (norm to `ffn_out`, the residual add after it) for
-  each of the thirteen combinations and each router type. The router weights give the top-6 clear margins, so that the
-  CPU reference and the GPU pick the same experts. Each case runs:
-  - with the switch at `2` and at `0`;
-  - with the self-check;
-  - with the grid forced to 1, 2 and 64 blocks per SM;
-  - natively (sm_86) and through the compute_61 PTX.
-- **A deliberately wrong kernel** (one expert's routing weight × 1.0001) must fail these cases and the self-check.
-- **Real files on two RTX 3090s**, G3, K2h-r16 and UD-Q4_K_XL:
-  - `llama-perplexity -ub 1`: the self-check reports zero differing layers, and the logits written with
-    `--kl-divergence-base` are byte-identical with the switch on and off;
-  - greedy `llama-completion`, 8 prompts × 128 tokens: byte-identical text;
-  - `GGML_CUDA_GRAPH_DEBUG`: graph replays per token unchanged;
-  - `llama-pipespec` at depth 3: the same tokens and logit hashes as plain decoding. Each card runs its own context,
-    so pipelined one-token steps use the kernel too.
+- **Unchanged code.** `mmvq-pascal.cu` compiles to the same sm_61 SASS as on the combined branch (155 kernels).
+- **test-backend-ops `MOE_LAYER`.** A Flint-shaped layer, built with the calls and expansion order of `build_moe_ffn`,
+  then the shared expert and the residual add. 17 cases: K2h-r16's, G3's and S4-L0's four combinations with F16 and F32
+  routers and one with BF16, and UD-Q4_K_XL's eight with BF16. Six experts get a clear router lead, so that the CPU
+  reference and the GPU pick the same ones. On an RTX 3090, natively (sm_86) and through the compute_61 PTX:
+  - with the switch at `0` and at `2`, every case passes against the CPU;
+  - the self-check finds every stage of every case identical to the per-op path, at grid sizes of 1, 2 and 3 blocks,
+    the resident maximum and 5,248 blocks (64 per SM);
+  - the deliberate errors are caught: routing weights × 1.0001 make the self-check flag the weights and every later
+    stage in all 9 Q5_0/Q8_0 cases, a missing shared expert fails all 9 against the CPU, and a timeout aborts the next
+    graph compute;
+  - with the switch on, the existing tests the change touches pass: `ADD_RMS_NORM_MUL_Q8` 32/32, `MUL_MAT_ID_FUSION`
+    13/13, `MUL_MAT_ID_SHARED` 30/30, `MOE_REDUCE` 6/6, `TOPK_MOE` 576/576, and the one-token products of the six Pascal
+    types 177/177, natively and through the PTX.
+- **Real files**, split over two V100s, through the compute_61 PTX (the P106's code path; the F16 router accumulates in
+  FP32 there, as on the P106), Pascal kernels forced, one token per step (`llama-perplexity -ub 1`):
+  - G3, 128 tokens: 6,045 layer evaluations, every stage identical;
+  - K2h-r16, 2 × 128 tokens: 11,997 layer evaluations, every stage identical; the logits written with
+    `--kl-divergence-base` (256 one-token steps, CUDA graphs on) are byte-identical with the switch on and off;
+  - UD-Q4_K_XL: open, as are greedy text, CUDA graph counts and `llama-pipespec` on real files. The pipelined executor
+    runs each card in its own context, so its one-token steps use the kernel as well.
+- **Measuring it on the rig.** `B` is the branch's tarball's `bin/`, `M` the model; one binary, switch off against on:
 
-### Expected gain (est.)
+  ```bash
+  export LLAMA_NO_MOE_DOWN_RESCALE=tg
+  # correctness on the P106s: the self-check per graph evaluation, one token per step (must show 0 differed)
+  GGML_CUDA_PERSISTENT_MOE=1 GGML_CUDA_PERSISTENT_MOE_CHECK=1 $B/llama-perplexity -m $M -f wiki.test.raw -c 128 \
+      --chunks 1 -b 128 -ub 1 -ngl 99 -fa on -lv 4 2>&1 | grep -o 'persistent MoE kernel ran.*' | sort | uniq -c
+  # speed: pp512 before tg128 in one process (warm clocks), off and on alternating twice, 6 and 9 cards
+  for s in 0 1 0 1; do GGML_CUDA_PERSISTENT_MOE=$s $B/llama-bench -m $M -ngl 99 -fa on -p 512 -n 128 -r 3; done
+  ```
 
-- In the prototype's estimate a layer streams in 150–170 µs, against ~245 µs for the real token's layer, the fork's
-  event profile with its overhead removed.
-- Nine of the ten launches per layer go: 423 fewer per token on any card count. Their ramps and tails go with them.
-- On 9 cards K2h-r16's 25.4 ms token (39.3 tok/s) would lose 0.9–4.5 ms: 41–48 tok/s. The rig's one-card A/B of the
-  prototype gives the per-layer number this rests on.
+### Expected gain
+
+- The prototype on one P106-090 (rig): S4-L0's layer 198.5 → 171.3 µs (1.16×), G3's 203.1 → 173.8 µs (1.17×), with
+  two blocks per SM and 2 routed gate/up rows per lane group; 1.28 and 1.37 ms less per token over 47 layers.
+- Nine of the ten launches per layer go: 423 fewer per token on any card count.
+- On 9 cards K2h-r16's 25.4 ms token (39.3 tok/s) would lose ~1.3 ms: ~41 tok/s (est.); more if the real token's layer
+  pays more for its launches than the benchmark's chain does (~245 µs in the fork's event profile).
