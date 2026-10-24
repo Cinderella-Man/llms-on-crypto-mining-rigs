@@ -10,7 +10,7 @@ row per task, file and attempt. For every lane and every file against the refere
 - the non-inferiority verdict: the lower 90 % bound above -margin;
 - the process gate: (malformed or runaway) rate per task, its paired difference and the upper 90 % bound against
   the lane's limit (+0.5 points on the BFCL lanes, +2 points on LiveCodeBench, where it is mostly cut-off samples);
-- noise: E[p(1-p)] within tasks and the share of tasks whose attempt-1 and attempt-2 verdicts differ.
+- noise: E[p(1-p)] within tasks and the share of tasks whose first two attempts' verdicts differ.
 
 usage: python paired_tasks.py --ref FILE [--margin LANE=POINTS ...] [--gate LANE=POINTS ...] [--bootstrap N] CSV ...
 Needs numpy.
@@ -68,8 +68,8 @@ def within_var(tasks):
 
 
 def self_discordance(tasks):
-    both = [a for a in tasks.values() if 1 in a and 2 in a]
-    return sum(a[1][0] != a[2][0] for a in both) / len(both) if both else float("nan")
+    pairs = [[a[x][0] for x in sorted(a)[:2]] for a in tasks.values() if len(a) >= 2]
+    return sum(x != y for x, y in pairs) / len(pairs) if pairs else float("nan")
 
 
 def paired(d, cl):
