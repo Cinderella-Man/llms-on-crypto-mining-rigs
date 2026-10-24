@@ -332,6 +332,79 @@ the guesses wrong, the copy lookup, `cont`, `ngram-simple`, `ngram-map-k`):
 The checks ran on two RTX 3090s of a 7-GPU machine used for quality work, where no speed is measured; the Pascal
 kernels are exercised on the rig ([plan](#measuring-it-on-the-rig), step 1).
 
+## llama-server (`--pipe-depth`)
+
+The executor's loop runs inside llama-server on the fork's branch `pascal-p106-v2-pipeserve` (commit `cd49e507c`, off
+`pascal-p106-v2-pipespec2`, so it includes the packed input uploads and the window-cache fix):
+
+```
+llama-server -m <gguf> -ngl 99 -fa on -c 262144 -bs --pipe-depth 3 [--pipe-guess cont|copy|none] [--pipe-copy-min 4] ...
+```
+
+- **When it runs.** A slot that generates alone runs pipelined: its newest sampled token and up to `--pipe-depth`
+  guesses of the tokens after it are in flight in the context's pipe slots, one token is sampled per turn of the server
+  loop, and the next guesses go in before the loop turns. As soon as another slot has work (a prompt, a second
+  conversation), the slot drops what it has in flight, the newest sampled token included, and returns to batched
+  decoding, which decodes that token again; when it generates alone again, it starts a new window.
+- **Which requests.** The request's sampler chain must run entirely on the GPU (`-bs`, and nothing that needs the host:
+  no grammar, so no tool calls, JSON schemas or `response_format`; no `n_probs`; no DRY, XTC, typical-p, top-n-sigma
+  or mirostat). Penalties must be off, because they read the tokens before the one sampled and a guess's evaluation does
+  not have those yet. The makers' settings (T 1, top-p 0.95, top-k 20, min-p 0, penalties off) qualify; every other
+  request decodes batched as before. Speculative decoding with a draft model and multimodal models are not combined
+  with it.
+- **Exactness.** With `--pipe-depth` on, every sampled token's random draw is keyed by its position
+  (`llama_sampler_set_pos`), on the pipelined path and on the batched one alike. The output of a request is therefore
+  the same whatever the depth, the guesser, or how often the slot switches between the two paths. At temperature 0 it
+  is the output of a server without `--pipe-depth`; at temperature 1 it has the same distribution, with other draws.
+- **Stops.** Stop strings, the end-of-generation token, `n_predict` and the time limit are checked on sampled tokens in
+  order, as for batched decoding; a stop drops the guesses in flight. A slot that is released while tokens are in
+  flight (a stop, a cancelled request) keeps its newest sampled token, whose KV cells are being written, and drops
+  the guesses, so the prompt cache stays consistent.
+- **Checkpoints.** llama-server takes context checkpoints while it processes a prompt, never during generation, so
+  they hold committed positions only.
+- **Guesses** (`common_pipe_guesser`): the copy lookup (the token after the longest earlier match of the text's end, up
+  to 12 tokens, at least `--pipe-copy-min`), and with `cont` the most frequent continuation of the last 1–8 tokens in
+  the request when the copy lookup finds nothing. The copy lookup searches the newest 256 occurrences of the last token
+  through an index, and the continuation counts cover the last 32,768 tokens, so an agent's long prompt costs little
+  host time per guess.
+- **Pipe slots:** 2 × (depth + 1). Each holds the compute buffers of a one-token graph on every card. A model with
+  sliding-window layers needs `-ub` of at least that many (the default 512 is enough).
+- The server log prints, per request, the guesses and how many were right and wrong ("pipelined = …").
+
+- **Tool requests** (with Q67): on `pascal-p106-v2-pipeserve-tools` (commit `ba83d3a1f`, the server branch plus Q67's
+  commits) a request with a grammar keeps backend sampling, and its slot runs pipelined while the grammar cannot reject
+  a token: before a lazy grammar's trigger, and inside the reasoning. The token that switches the grammar on (Flint's
+  `<tool_call>`) ends the window: the guesses behind it go, and batched decoding takes over from that token, checking
+  every token against the grammar on the host. The reasoning and the text before a call, most of an agent turn's tokens
+  (§5 of [tool-request sampling](tool_request_sampling.md)), run pipelined; the call's arguments run batched. A finite
+  reasoning budget keeps the request batched, since its forced tokens are applied only by `common_sampler_sample`.
+  Q67's per-request counters cover the tokens sampled on the batched path.
+
+### Checks
+
+[check_server.sh](../../../bench/pipespec/check_server.sh) starts one server per configuration (`-bs`, `-np 1`). It
+sends every prompt as one user message through `/v1/chat/completions`, at temperature 0 and at the makers' sampling with
+fixed seeds, plus one streamed request and one with a stop string taken from the middle of an earlier output, so that
+the stop arrives with guesses in flight. Each configuration must return, for every request, the same reasoning,
+content and token count as the reference, `--pipe-depth 1 --pipe-guess none` (one token in flight, no guess). At
+temperature 0 a server without `--pipe-depth` must agree too. It ran on the CPU of the 7-GPU machine, where the backend
+sampler runs on the CPU backend:
+
+| Model | Configurations | Requests each | Guesses per configuration (right, wrong) | Result |
+|---|---|---|---|---|
+| granite-3.1-3b-a800m, 256 tokens | depths 3, 5, 8 × `cont`, `copy` | 11 (chat, rewrite and edit prompts at T 0 and T 1 with two seeds; streamed; stop string) | `cont` 1,658 / 596, `copy` 1,470 / 35 | all identical |
+| K2h-r16 (sliding-window layers, `-ub 32` so that the window cache wraps), 192 tokens | depths 4, 8, `cont` | 5 (chat and rewrite at T 0 and T 1; streamed) | 246 / 309 | all identical |
+
+At temperature 0 the requests also equal a server without `--pipe-depth` (3 for granite, 2 for K2h-r16). The CUDA run on
+two GPUs is pending.
+
+Tool requests on `pascal-p106-v2-pipeserve-tools`, with
+[grammar_sampling_check.py](../../../bench/tool_sampling/grammar_sampling_check.py): one BFCL task per category with its
+tools (Flint's lazy tool grammar), K2h-r16 on the CPU, T 0 and T 1 with seed 1. The server at depth 4 with `cont`
+returned what the server with one token in flight and no guess returned for 8 of 8 tasks at each temperature
+(reasoning, content and calls). 1,816 of the 2,444 tokens ran pipelined (3,759 guesses: 415 right, 830 wrong); the
+628 tokens of the calls ran batched, with 4 grammar rejections resampled from the fetched row.
+
 ## Measuring it on the rig
 
 The executor is exact; what the rig has to show is its speed. Everything below runs `llama-pipespec` from the build of
@@ -490,6 +563,36 @@ N = 2, 118–128 at 4, 235–256 at 8, each conversation at 29–32. Gates: B at
 cards, and `host.csv` below one core at the ceiling; A's 2-token step on the multi-token build ≤ 1.5 T before groups of
 two are built.
 
+**4b. Served: llama-server with `--pipe-depth`** ([above](#llama-server---pipe-depth); the build of
+`pascal-p106-v2-pipeserve-tools`, `llama.cpp-20261024-ba83d3a1f-pascal-p106-v2-pipeserve-tools`). It runs the five-turn chat of
+[server_bench.sh](../../../scripts/server_bench.sh) (the model's default sampling: T 1, top-p 0.95, top-k 20, min-p 0)
+and the coding-agent tool request of [tool_request_ab.sh](../../../bench/tool_sampling/tool_request_ab.sh), each
+batched and pipelined, on nine cards, then on six (`GPUS=0,1,2,3,4,5`, TAG `…-6c-…`); ~1 h in all:
+
+```
+B=/opt/llama-builds/llama.cpp-20261024-ba83d3a1f-pascal-p106-v2-pipeserve-tools/bin; M=<K2h-r16>
+for d in 0 3 5; do
+  P=$([ $d -gt 0 ] && echo "--pipe-depth $d")
+  ssh rig "env BIN=$B MODEL=$M TAG=serve-9c-d$d PROMPTS=chat MAX_TOKENS=2048 LLAMA_NO_MOE_DOWN_RESCALE=1 \
+      SERVER_ARGS='-c 262144 -b 512 -ub 128 -bs --ctx-checkpoints 4 $P' bash -s" < scripts/server_bench.sh
+done
+for d in 0 3; do
+  P=$([ $d -gt 0 ] && echo "--pipe-depth $d")
+  ssh rig "env BIN=$B MODEL=$M GPUS=0,1,2,3,4,5,6,7,8 TAG=tools-9c-d$d SERVER_ARGS='$P' LLAMA_NO_MOE_DOWN_RESCALE=1 \
+      bash -s" < bench/tool_sampling/tool_request_ab.sh
+done
+ssh rig 'grep -h "pipelined =" /tmp/server_bench/serve-9c-d*/*.log /tmp/tool_request_ab/tools-9c-d*/server.log | head -20'
+```
+
+What to read:
+- **Chat:** tokens per second per turn at depth 0 against 3 and 5. rig_run.sh's `cont` gains (1.3–1.55× at the best
+  depth) are the expectation for the reasoning-heavy turns.
+- **Identity:** the transcripts at depths 3 and 5 (`chat.json`) must be identical, since both use position-keyed draws.
+  Depth 0 uses the server's ordinary draws, so its output differs at temperature 1, with the same distribution.
+- **The tool request:** "auto" with backend sampling at depth 3 against depth 0. The log's "pipelined" line counts the
+  guesses before the call; the call itself runs batched.
+- **Fallback:** a request that does not qualify (penalties on, `n_probs`) shows no guesses.
+
 **5. Collect and clean up:**
 
 ```
@@ -546,14 +649,14 @@ python3 -I bench/ngram_replay/pipeline_sim.py <results>/out/s4l0-6c/plain.jsonl 
 
 ## What a production version needs
 
-- **Seeded sampling on the GPU.** Host sampling copies each token's full logits to the host (Flint: 150,144 floats,
-  0.6 MB, ~3 ms on a PCIe 1.0 x1 link), queued on the last card behind every token, guesses included. Greedy sampling on
-  the GPU is implemented (one token id per token). Temperature sampling on the GPU sets its random draw as a graph input
-  when the token is submitted, which for a guess is before the earlier tokens are sampled; it needs a draw tied to the
-  position (or the transactional draws backend sampling already keeps for speculative decoding).
-- **llama-server integration:** a window per slot, guesses from the slot's prompt + output, the grammar and stop checks
-  applied to sampled tokens only (sample-and-match keeps them exact), and `--ctx-checkpoints` taken at committed
-  positions only.
+- **Seeded sampling on the GPU (built).** Host sampling copies each token's full logits to the host (Flint: 150,144
+  floats, 0.6 MB, ~3 ms on a PCIe 1.0 x1 link), queued on the last card behind every token, guesses included. Greedy
+  sampling and the temperature chain run on the GPU. A guess's random draw is set when it is submitted, before the
+  tokens ahead of it are sampled, so each draw is keyed by the token's position (`llama_sampler_set_pos`): pipelined
+  decoding at T 1 then equals plain decoding with the same keyed draws (`--pipe-backend-sample` in `llama-pipespec`,
+  every eligible request in llama-server).
+- **llama-server integration (built):** [above](#llama-server---pipe-depth), for a slot that generates alone. Still
+  missing: grammars once they can reject (the window stops at a tool call's start), penalties, several slots at once.
 - **Several sequences:** independent conversations staggered by one stage keep every card busy with no guessing at all;
   the slots and the race loop already do this for samples of one request, a server would do it across its slots.
 - **Per-stage launch** if depths beyond S_eff − 1 are wanted (the host would launch stage j of a token only after stage
