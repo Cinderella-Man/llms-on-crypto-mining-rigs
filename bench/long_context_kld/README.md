@@ -78,8 +78,52 @@ scored tokens). "Read" tokens are prefilled text it never samples: tool schemas,
 - **Where the KLD is.** KLD falls along the chunk (UD-Q4_K_XL 0.82 at positions 4,096–5,119, 0.20 at 7,168–8,191)
   because tool schemas come first in most conversations; reasoning carries 0.015–0.018 nats per token, a fiftieth of
   the tool schemas'.
-- **A caveat on the reference.** Q8_0 tensors in a candidate are byte-identical to the reference's and add no
-  divergence. UD-Q4_K_XL keeps attention q, k, v and output in Q8_0 in 42 of 49 layers (Q5_K in the other 7); G3
-  keeps q in Q8_0 only in layers 0–24 (Q5_0 in 25–48) and output in 0–32 (Q5_0 in 33–48). The read-token gap, which
-  runs through long-range attention, is the part this flatters most. A run against BF16 on a few chunks settles it.
+- **The reference.** Unsloth's Q8_0 is not a neutral reference here: against BF16 it has KLD 0.27 on agent text
+  itself (below). Its tensors also differ from our Q8_0 tensors (only 4 of G3's 321 Q8_0 tensors are byte-identical to
+  it), so it is not simply the files' common ancestor. The BF16 check below repeats the comparison without it.
 - Same top token on agent text: 87.7–87.9 % for every file; no non-finite values.
+
+### Against BF16 (bias check)
+
+BF16 reference logits on 12 of the 24 chunks (3 per category, 6 produced by each model; experts of layers 21–48 in
+system RAM), every file rescored against them with the same flags as above. Ratios to UD-Q4_K_XL with 95 % bootstrap
+intervals over the 12 chunks:
+
+| File | KLD | Same top | Ratio | Read tokens | Written tokens | Long-range copies |
+|---|---|---|---|---|---|---|
+| UD-Q4_K_XL | 0.316 | 90.32 % | 1 | 1 (KLD 0.815) | 1 (KLD 0.018) | 1 (KLD 0.975) |
+| Q8_0 (Unsloth) | 0.267 | 92.08 % | 0.845 (0.794–0.872) | 0.837 (0.789–0.884) | 0.537 (0.505–0.572) | 0.874 |
+| G3 | 0.329 | 90.73 % | 1.042 (1.027–1.053) | 1.064 (1.019–1.136) | 0.892 (0.847–0.947) | 1.056 |
+| K2h | 0.327 | 90.43 % | 1.036 (1.020–1.054) | 1.039 (0.999–1.081) | 0.999 (0.948–1.049) | 1.046 |
+
+On the same 12 chunks the Q8_0 reference gives G3/UD-Q4_K_XL 1.012 (0.965–1.062), read 1.029, written 0.901.
+
+- **The read-token gap is real, not the reference's doing.** Against BF16 it is larger (G3 +6.4 % on read tokens,
+  +5.6 % on long-range copies) than against Q8_0 on the same chunks (+2.9 %). The Q8_0 reference was hiding part of
+  it, not creating it.
+- **So is G3's edge on what the model writes:** 0.892 against BF16, 0.901 against Q8_0. K2h is level with
+  UD-Q4_K_XL on written tokens either way.
+- Read tokens are where every quant struggles: even Unsloth's Q8_0 has KLD 0.70 there against BF16, 84 % of
+  UD-Q4_K_XL's, while on written tokens it has half of UD-Q4_K_XL's.
+
+### Global-layer attention in Q8_0 (Q107)
+
+G3g and K2hg are G3 and K2h with every attention tensor (q, k, v, output) of Flint's 14 global layers (0, 1, 5, 9,
+…, 45, 48: no sliding window, no RoPE, the only layers that see more than 512 tokens back) in Q8_0, quantized from
+the same BF16 file (byte-identical to llama-quantize's Q8_0). They test whether the read-token gap comes from those
+layers' precision.
+
+| File | GB per token | 512-token KLD (vs BF16) | Agent 8k vs Q8_0: ratio | read | written | Agent 8k vs BF16: ratio | read | written |
+|---|---|---|---|---|---|---|---|---|
+| G3 | 2.327 | 0.1040 | 1.033 (1.008–1.056) | 1.037 | 0.887 | 1.042 (1.027–1.053) | 1.064 | 0.892 |
+| G3g | 2.365 | 0.1031 | 1.032 (1.006–1.058) | 1.037 | 0.865 | 1.035 (1.023–1.046) | 1.074 | 0.883 |
+| K2h | 2.140 | 0.1092 | 1.032 (1.013–1.051) | 1.046 | 1.013 | 1.036 (1.021–1.054) | 1.039 | 0.999 |
+| K2hg | 2.192 | 0.1089 | 1.049 (1.020–1.073) | 1.055 | 0.999 | 1.050 (1.009–1.070) | 1.073 | 1.005 |
+
+Ratios to UD-Q4_K_XL (24 chunks against Q8_0, 12 against BF16). The 512-token KLD is the 80 × 512 wikitext-2 score
+on the same GPUs (G3 0.1040, K2h 0.1092 there).
+
+- **The global layers' attention precision is not the cause.** Restoring it to Q8_0 leaves the read-token and
+  long-range-copy ratios where they were (G3g 1.049 and K2hg 1.073 on copies against BF16, G3 1.056, K2h 1.046)
+  and costs 38–52 MB per token. It is free at 512 tokens (−0.0009 and −0.0003).
+- Written tokens move by less than their noise (G3g 0.883 against G3's 0.892).
