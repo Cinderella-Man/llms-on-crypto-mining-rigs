@@ -172,6 +172,24 @@ Ranked by what blocks the release, then by order of work. Efforts are (est.) and
   layers 2–45. In v2, `tg` drops the rescale only for one-token steps, where compute 6.1 runs the Pascal kernels with
   FP32 sums (`src/llama-graph.cpp:1829-1841`); it is unsafe on any other GPU and with `GGML_CUDA_MMVQ_PASCAL=0` or
   `GGML_CUDA_MMVQ_PASCAL_MC=0` (Q117).
+- **Where FP16 overflows without the rescale.** The down-projection inputs of Flint's last MoE layers are large. On a
+  long agent conversation (`multi_turn_long_context_10`, K2h in FP32 on the CPU, first 2,048 positions), routed layer
+  46 reaches 1.6 × 10⁴ with 32-value block sums of 3.8 × 10⁴, layer 47 3.5 × 10³, the shared expert of layer 45
+  4.5 × 10³; routed layers 2–45 stay below 450. Three FP16 quantities on that path can overflow:
+  1. block_q8_1's FP16 sum of 32 activations (limit 65,504), read by upstream `mul_mat_vec_q` for Q4_0, Q4_1, Q5_0 and
+     Q5_1 and by MMQ's DS4/D2S6 layouts (Q4_1, Q5_1, Q4_K, Q5_K, Q2_K, and Q4_0 without tensor cores);
+  2. block_q8_1's FP16 scale, max/127 (limit max ≤ 8.3 × 10⁶), read by every type;
+  3. cuBLAS's FP16 GEMM, which converts the activations to FP16 and accumulates in FP16 (`CUBLAS_COMPUTE_16F`).
+     ggml takes it instead of MMQ for batches of 64 or more tokens on GPUs with FP16 tensor cores but no int8 ones
+     (V100). That is how K2h, and G3 with UD's attention, gave NaN on the V100s with the rescale off (Q126, Q127).
+- **On the P106 (compute 6.1) `tg` reaches none of them.** Prompt batches keep the rescale; without FP16 tensor cores
+  they always run MMQ, which for Q5_0 and Q8_0 keeps float scales (D4 layout) and int32 dp4a sums. A one-token step's
+  routed down projection is a six-row `mul_mat_id`, run by `mul_mat_vec_q_pascal_mc` (the persistent MoE kernel uses
+  the same functions): each block's sum is d8 times the sum of its int8 values, in FP32, and block_q8_1's FP16 sum is
+  never read. The one FP16 value left, d8, has 500× headroom over the largest measured input. The magnitudes belong
+  to a token and a layer, not to its position, so a long context does not change this. The shared expert, which the
+  rescale never covers, reads no FP16 sum on these paths either. **Release setting: `LLAMA_NO_MOE_DOWN_RESCALE=tg` on
+  the P106 for every file, never `=1`; on any other GPU leave it unset.**
 - **Speed off the fork.** Simple formats decode a little faster than K-quants even on stock llama.cpp here (S4-L0
   16.06 against UD 14.20 tok/s in the v1 chat benchmark), but the 2× comes from the fork. On modern GPUs and Macs the
   larger file is slower; the card says so.
