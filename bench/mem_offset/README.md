@@ -81,7 +81,7 @@ order:
 | `units` | NVML does not document the offset's unit. Sets a raw +100, samples the memory clock under a short mmvq load against offset 0, then sets 0 again. A clock 50 MHz higher means the raw unit is MT/s; 100 MHz higher means the reported MHz (2 MT/s each). | the clock moves by one of the two | 1 min |
 | `base` | At offset 0: a `cuda_memtest` smoke test on 64 MB; writes the KLD base file (Flint UD-Q4_K_XL, 4,096 one-token steps on cards 0–5), reruns against it for the reference statistics, and hashes a 128-token greedy completion | the smoke test is clean; the stock rerun shows the same top token everywhere (the run is deterministic) | 15 min (3 model loads) |
 | `sweep` | +200, +400, … up to `MAX` (1,200) MT/s; at each step the mmvq sweep (Q8_0, Q5_0, Q4_1, Q5_K and IQ4_XS kernels, each checked against a double-precision CPU reference, then timed; streaming-read GB/s) and an Xid scan of the kernel log | the mmvq checks all pass, no Xid, and the streaming read gains ≥ `MIN_RISE` (0.5 %) over the step before; the first step that fails ends the sweep, and the step before it is BEST | 1–1.5 min per step |
-| `memtest` | `cuda_memtest` at BEST, tests 0–8 and 10, one pass or `MEMTEST_MIN` (10) minutes, whichever ends first | no block reports errors, no Xid; if the program fails without reporting a memory error, the run stops rather than stepping back | 10 min |
+| `memtest` | `cuda_memtest` at BEST, one pass of tests 0–5, 7, 8 and 10, or `MEMTEST_MIN` (10) minutes, whichever ends first. Test 6 (moving inversions with 32-bit patterns) is left out: it takes ~70 % of a pass, est. ~18 min on 6 GB of a P106 (measured on 64 MB of an RTX 3090 and scaled by size and bandwidth); `MEMTEST_ARGS="--disable_all --enable_test 6"` runs it alone | no block reports errors, no Xid; if the program fails without reporting a memory error, the run stops rather than stepping back | 8–10 min |
 | `exact` | At BEST: the KLD run against the stock base file, and the greedy hash | statistics identical to the stock rerun, hash identical | 10 min |
 | `soak` | At BEST: llama-bench repeating a 512-token prompt plus 128 generated tokens on cards 0–5 for `SOAK_MIN` (60) minutes, checking every minute for an Xid, the process and the card's temperature (`TEMP_MAX`, 70 °C); then the KLD run again | the hour completes, no Xid, temperature under the limit, statistics identical afterwards | 65 min |
 
@@ -93,7 +93,7 @@ In `all`, a failed `memtest` or `exact` at BEST steps back 200 MT/s and tests ag
 - the logs of every run sit next to them.
 
 Every value can be changed through the environment: `GPU`, `STEP`, `MAX`, `MIN_RISE`, `MMVQ_ARGS`, `MEMTEST_MIN`,
-`SOAK_MIN`, `TEMP_MAX`, `OUT`, and for the llama.cpp runs `B` (bin directory of the build), `M` (model), `WIKI`,
+`MEMTEST_ARGS`, `SOAK_MIN`, `TEMP_MAX`, `OUT`, and for the llama.cpp runs `B` (bin directory of the build), `M` (model), `WIKI`,
 `DEVS` (the cards; must include the card under test and hold the model) and `E` (extra environment,
 `LLAMA_NO_MOE_DOWN_RESCALE=tg` for UD-Q4_K_XL). The defaults are the v2 base build
 `/opt/llama-builds/llama.cpp-20261023-032b130f4-pascal-p106-v2/bin`, `/mnt/models/unsloth/flint-GGUF/flint-UD-Q4_K_XL.gguf`
@@ -137,4 +137,6 @@ six cards. GPU0 holds the first layers of the six-card split, so its weights tak
   - `set` and `units` on a P106-090: the kit only read the offset APIs on driver 580 on other cards;
   - whether an offset set by one process stays after it exits while Xorg holds the driver (every offset change in
     `steps.log` is followed by a read-back from a new process, and the memory clock under load shows it);
-  - `cuda_memtest`'s run time for 6 GB (it stops after `MEMTEST_MIN` either way).
+  - `cuda_memtest`'s run time for 6 GB of a P106 (it stops after `MEMTEST_MIN` either way). On an RTX 3090 the
+    binaries ran through the compute_61 PTX: `mmvq_pascal --check-only` passes, and a 64 MB `cuda_memtest` pass
+    takes 3.1 s, 2.2 s of it in test 6.

@@ -10,7 +10,9 @@
 #   base     at offset 0: the KLD base file, the stock rerun (reference statistics) and the stock greedy hash
 #   sweep    +STEP MT/s steps up to MAX, each with the mmvq sweep (correctness check, streaming GB/s) and an Xid scan;
 #            the first failure ends it and the last clean step becomes BEST ($OUT/best)
-#   memtest  cuda_memtest at BEST for MEMTEST_MIN minutes
+#   memtest  cuda_memtest at BEST, one pass of tests 0-5, 7, 8 and 10, at most MEMTEST_MIN minutes (test 6, the 32-bit
+#            moving inversions, takes ~70 % of a pass, est. ~18 min on a P106: MEMTEST_ARGS="--disable_all --enable_test 6"
+#            runs it alone)
 #   exact    KLD statistics and greedy hash at BEST against stock
 #   soak     llama-bench (512-token prompt + 128 generated, repeated) at BEST for SOAK_MIN minutes on the cards DEVS,
 #            Xid scan, temperature and power every minute; then the KLD check again
@@ -20,7 +22,7 @@
 # HUP: a trap), and `touch $OUT/STOP` ends the run cleanly at the next check. If the card hangs, the reboot clears it.
 #
 # Env [defaults]: GPU [0], STEP [200], MAX [1200] (MT/s), MIN_RISE [0.5] (% the streaming read must gain per step),
-#   MMVQ_ARGS, MEMTEST_MIN [10], SOAK_MIN [60], TEMP_MAX [70] (°C, GPU), OUT [out/ next to this script], FORCE [0: refuse
+#   MMVQ_ARGS, MEMTEST_MIN [10], MEMTEST_ARGS [--disable_test 6], SOAK_MIN [60], TEMP_MAX [70] (°C, GPU), OUT [out/ next to this script], FORCE [0: refuse
 #   if a compute process is on the card], and exact_check.sh's B, M, WIKI, DEVS, E.
 set -uo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -30,6 +32,7 @@ MAX=${MAX:-1200}
 MIN_RISE=${MIN_RISE:-0.5}
 MMVQ_ARGS=${MMVQ_ARGS:---types q8_0,q5_0,q4_1,q5_K,iq4_xs}
 MEMTEST_MIN=${MEMTEST_MIN:-10}
+MEMTEST_ARGS=${MEMTEST_ARGS:---disable_test 6}
 SOAK_MIN=${SOAK_MIN:-60}
 TEMP_MAX=${TEMP_MAX:-70}
 OUT=${OUT:-$here/out}
@@ -206,9 +209,9 @@ stage_memtest() {
     xid_mark; smi_start
     set_offset "$b" || return 1
     n0=$(smi_lines)
-    log "memtest: cuda_memtest at +$b for up to $MEMTEST_MIN min (tests 0-8 and 10, one pass)"
+    log "memtest: cuda_memtest at +$b for up to $MEMTEST_MIN min, one pass, $MEMTEST_ARGS"
     child timeout "$((MEMTEST_MIN * 60))" env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="$GPU" "$MEMTEST" --device 0 \
-        --num_passes 1 --exit_on_error > "$OUT/memtest_$b.log" 2>&1
+        --num_passes 1 --exit_on_error $MEMTEST_ARGS > "$OUT/memtest_$b.log" 2>&1
     rc=$?
     errs=$(grep -c 'errors found in block' "$OUT/memtest_$b.log")
     set_offset 0

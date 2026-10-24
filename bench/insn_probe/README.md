@@ -52,6 +52,12 @@ same rate in warp instructions, and the ratio to FFMA:
   FFMA does one, so on unthrottled Pascal dp4a runs at FFMA's instruction rate: ratio ~1.
 - A class far below its nominal rate, while FFMA reaches ~128, is a per-class limit.
 
+As a check of the method, an RTX 3090 (compute 8.6, running the compute_61 PTX) gives 123 for FFMA, 1.7 for DFMA and 64
+for dp4a. NVIDIA's GA102 SM has 128 FP32 lanes, 64 of which also run integer instructions such as dp4a, and runs FP64
+at 1/64 of the FP32 rate (2 per clock). Its BFE
+is emulated by several instructions on compute 8.6, so the PTX `bfe` measures low there; on compute 6.1 it is one
+instruction.
+
 ## Building and running
 
 ```bash
