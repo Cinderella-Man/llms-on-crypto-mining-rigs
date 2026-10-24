@@ -18,3 +18,16 @@ side without a GPU. The analysis is in [tool_request_sampling.md](../../docs/res
 Build the C++ bench inside a llama.cpp tree (CPU only is enough): copy this folder to `examples/tool-sampling`, add
 `add_subdirectory(tool-sampling)` to `examples/CMakeLists.txt`, and build the `llama-tool-sampling-bench` target.
 On the rig run it on the Celeron itself (Q68): the workstation figures in the note are scaled by an assumed 4–6×.
+
+Two scripts drive llama-server with real tool requests:
+
+- [tool_request_ab.sh](tool_request_ab.sh) (Q55, Q67) sends one coding-agent request four ways: with and without the tool
+  grammar, with backend sampling on and off. It prints tokens per second for each, and the grammar counters on a
+  build with Q67.
+- [grammar_sampling_check.py](grammar_sampling_check.py) (Q66, Q67) sends BFCL tasks (bench/bfcl_flint's
+  `tasks.jsonl`) to `/v1/chat/completions` with their tools and `tool_choice` "auto", so that llama-server builds
+  Flint's lazy tool grammar, at the makers' sampling. `run` repeats each task per variant (request fields such as
+  `backend_sampling=true` or `tool_choice=none`), temperature and seed. `compare` counts the tasks whose reasoning,
+  content and calls are identical in two variants. `rejects` sums Q67's counters from the responses' timings: the
+  share of tokens sampled while the grammar applied, and how often it rejected the sampled token. Speeds are dropped
+  unless `--keep-speed` is given.

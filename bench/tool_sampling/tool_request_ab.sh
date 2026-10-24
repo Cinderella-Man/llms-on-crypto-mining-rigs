@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-# Q55: what a Flint tool request loses without backend sampling. One llama-server with -bs, the same coding-agent
-# request sent three ways: tool_choice "none" (GPU sampling, same prompt), "none" with "backend_sampling": false (host
-# sampling, no grammar) and "auto" (host sampling with the lazy tool grammar, which switches -bs off). Temperature 0,
-# then 1.0 with fixed seeds, at the makers' top-p 0.95 / top-k 20 / min-p 0. Prints tokens and tok/s per request and
-# counts the server's "not compatible with grammar" warnings (one per "auto" request).
+# Q55/Q67: what a Flint tool request loses without backend sampling. One llama-server with -bs, the same coding-agent
+# request sent four ways: tool_choice "none" (GPU sampling, same prompt), "none" with "backend_sampling": false (host
+# sampling, no grammar), "auto" (the lazy tool grammar with -bs) and "auto" with "backend_sampling": false (host
+# sampling with the grammar). On a build without Q67 the grammar switches -bs off, so both "auto" requests sample on the
+# host and the server logs one "not compatible with grammar" warning per "auto" request. With Q67
+# (pascal-p106-v2-toolsample) the first "auto" request samples on the GPU and checks each token against the grammar on
+# the host; its line then shows the grammar counters. Temperature 0, then 1.0 with fixed seeds, at the makers' top-p
+# 0.95 / top-k 20 / min-p 0. Prints tokens and tok/s per request.
 #
 #   ssh rig "BIN=/opt/llama-builds/<build>/bin MODEL=/mnt/models2/flint/flint-S4L0.gguf GPUS=0,1,2,3,4,5 \
 #       LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" < bench/tool_sampling/tool_request_ab.sh
@@ -66,7 +69,7 @@ MSGS = [{"role": "system", "content": "You are a coding agent. Use the tools."},
 
 with open(f"{out}/results.jsonl", "w") as f:
     for temp, seed in [(0.0, 1), (1.0, 11), (1.0, 12)]:
-        for tc, bs in [("none", True), ("none", False), ("auto", True)]:
+        for tc, bs in [("none", True), ("none", False), ("auto", True), ("auto", False)]:
             body = {"messages": MSGS, "tools": TOOLS, "tool_choice": tc, "backend_sampling": bs, "temperature": temp,
                     "top_p": 0.95, "top_k": 20, "min_p": 0.0, "seed": seed, "max_tokens": max_tokens,
                     "cache_prompt": False}
@@ -77,9 +80,11 @@ with open(f"{out}/results.jsonl", "w") as f:
             calls = len(ch["message"].get("tool_calls") or [])
             f.write(json.dumps({"temp": temp, "seed": seed, "tool_choice": tc, "backend_sampling": bs,
                                 "finish": ch.get("finish_reason"), "tool_calls": calls, "timings": t}) + "\n")
+            q67 = (f", grammar {t['grammar_n']} tok, {t['grammar_rejected_n']} rejected, {t['sampled_on_device']} on the GPU"
+                   if "grammar_n" in t else "")
             print(f"T {temp} seed {seed:2d} tool_choice {tc:4s} backend_sampling {bs!s:5s}: {t['predicted_n']:5d} tok at "
                   f"{t['predicted_per_second']:6.2f} t/s ({1000 / t['predicted_per_second']:5.1f} ms), "
-                  f"{calls} tool calls, {ch.get('finish_reason')}")
+                  f"{calls} tool calls, {ch.get('finish_reason')}{q67}")
 EOF
-echo "grammar warnings (one per \"auto\" request): $(grep -c "not compatible with grammar" "$OUT/server.log")" \
+echo "grammar warnings (one per \"auto\" request without Q67, none with it): $(grep -c "not compatible with grammar" "$OUT/server.log")" \
     | tee -a "$OUT/summary.txt"

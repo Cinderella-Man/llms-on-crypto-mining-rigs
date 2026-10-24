@@ -64,6 +64,7 @@ Conventions are those of the other notes:
    - Per token it adds ~0.02–0.05 ms of host work (est.); a rejection costs what it costs today plus a 2.8 ms row fetch.
    - It subsumes the "lazy-grammar-aware" variant and PR #25919. Effort: 2–3 days in the fork. Expected: tool requests at
      the plain `-bs` speed, +9–11 % (est.).
+   - Built in the fork (Q67, §5), with the screened head kept until the grammar can reject a token.
 6. **Token-mask decoding with llguidance is fast enough on the Celeron, but it is not the first step.**
    - Speed: for the nine-tool grammar and Flint's vocabulary a mask takes 25 µs on average (p99 0.95 ms) on the desktop
      core, est. 0.1–0.15 ms on the Celeron, plus ~0.1 ms to upload 18.8 KB.
@@ -452,7 +453,7 @@ Overlap does not pay here: the mask costs ~0.1 ms against a 27–31 ms token.
 |---|---|---|---|---|
 | 1 | Tool-request A/B on the fork build: one `-bs` server, the same request as `tool_choice` "none" (GPU path, same prompt), "none" with `"backend_sampling": false` (host path, no grammar), and "auto" (host path with the lazy grammar); temperature 0, then 1.0 with fixed seeds | rig, 1 h | (ii) − (i) ≈ 3.0–3.3 ms per token; (iii) − (ii) ≈ 0 at temperature 0 | Whether the ~10 % is real on the fork (Q55); go/no-go for (b) |
 | 2 | Rejection rate and pre-trigger share: count the resample branch (`common/sampling.cpp:671`, a five-line patch printed with the slot's timings) and the tokens before `<tool_call>`, over real agent sessions or BFCL tasks sent to `/v1/chat/completions` with `tools`, at temperature 1.0, top-p 0.95, top-k 20 | quant machine, 2–3 h (`bench/bfcl_flint` renders prompts itself, so it needs a variant that sends `tools`) | Rejections well under 1 % of tokens after the trigger; most tokens before it (claim to test) | Whether (b)'s host fallback is enough (≲ 1 %) or needs llguidance (≳ 2 %); how much (a) alone would give |
-| 3 | Implement (b) in the fork (with #25919 and (a)'s tests), then repeat experiment 1 | fork, 2–3 days; rig 1 h | Variant (iii) within 1–2 % of (i): +9–11 % on tool requests | The new default for agent serving |
+| 3 | Implement (b) in the fork (with #25919 and (a)'s tests), then repeat experiment 1 (built: §5; rig commands in §5.5) | fork, 2–3 days; rig 1 h | Variant (iii) within 1–2 % of (i): +9–11 % on tool requests | The new default for agent serving |
 | 4 | Host-only benchmark on the Celeron: the §2.2 measurements (fill, chain, check, accept, full-row pass, clone) built CPU-only for x86-64-v2 in the rig's Docker image (glibc ≤ 2.38) | rig, 15 min, no GPU | Desktop × 4–6; the full-row pass × 4–10 | Replaces every "(est.)" in §2; the cost of a rejection |
 | 5 | GPU cost of the sampler chain on a P106: `GGML_CUDA_PROFILE` on the `-bs` variant of experiment 1, top-k/argsort/softmax/cumsum/get_rows groups on the last card | rig, 15 min | 0.1–0.5 ms per token | Whether a fused top-k kernel is worth anything |
 | 6 | Speculation with tools after Q52/Q53: `ngram-simple` drafts with fixed synthetic acceptance (`--spec-synth-len`) on a tool request whose `write` argument copies a file from the prompt; host path against (b) | rig, 1 h | (k + 1) × 2.8 ms per step saved | The verify-cost budget of Q53 on agent traffic |
@@ -499,6 +500,171 @@ kill %1; rm -f /tmp/tools_ab.log
   `scripts/cuda_profile_summary.py /tmp/prof.csv --tokens 24 --by op`. `GGML_CUDA_PROFILE_HOST=/tmp/host.csv` gives the
   host timeline: on the host path, the gap between tokens should show the 2.8 ms copy plus the host sampling.
 
+## 5. Built: GPU sampling with a host grammar check (Q67)
+
+Design (b) of §3.2 is in the fork, on branch `pascal-p106-v2-toolsample` (off `pascal-p106-v2`):
+- `e2d587398` is the change and `972ccde20` a warning fix; the rig tarball is built from `972ccde20`;
+- `f11ac1589` adds a switch for tests only.
+
+The combination with the screened head (Q92) is on `pascal-p106-v2-toolsample-screen` (§5.3).
+
+### 5.1 What changed
+
+- **The switch-off is gone.** `common_sampler_init` keeps backend sampling for a sampler with a grammar or a
+  reasoning budget. llama-server binds the request's chain to the context as for chat, because the request's
+  `backend_sampling` field now survives sampler creation; the server's binding code is unchanged.
+  `LLAMA_GRAMMAR_HOST_SAMPLING=1` restores the old switch-off, and a per-request `"backend_sampling": false` still
+  selects the host path.
+- **`common_sampler_sample`** takes the backend sampler's token in place of the host path's first draw:
+  1. if the reasoning budget is forcing a token, the forced token replaces it (on the host path it is the only
+     candidate; this is PR #25919's rule);
+  2. while the grammar cannot reject anything (a lazy grammar before its trigger, or inside the reasoning), the token
+     is returned as it is;
+  3. otherwise the host checks that one token against the grammar, the same single-token check the host path makes;
+  4. on a rejection the host fetches that position's full logits row from the device and runs the host path's
+     resample: the reasoning budget, the grammar over all 150,144 tokens, then every sampler of the chain on the host.
+- **`llama_get_logits_ith_fetch(ctx, i)`** returns an output's full logits row, also for an output a backend sampler
+  sampled. The context records which output rows stayed on the device (every output of a ubatch whose sequences all
+  have backend samplers) and copies one row (600 KB for Flint) when asked. The logits tensor is a graph output, which
+  the sampler subgraph reads through a padded copy, so the device keeps it until the next decode. Rows of an earlier
+  ubatch of the same decode are overwritten by later ubatches; for them the call returns NULL. Generation steps and
+  verify steps fit one ubatch.
+- **Counters (Q66).** Each sampler counts its tokens: drawn on the device, sampled while the grammar could reject them,
+  rejected (and of those, first drawn on the device), forced by the reasoning budget. llama-server prints one line per
+  request with a grammar after its timings and returns `sampled_on_device`, `grammar_n` and `grammar_rejected_n` in the
+  response's `timings`.
+- **Smaller pieces:** `llama_sampler_grammar_awaiting_trigger`, `common_sampler_grammar_active` and
+  `common_reasoning_budget_get_forced`.
+- **Test switch:** `LLAMA_GRAMMAR_TEST_REJECT=N` counts every Nth token the host checks as rejected, on both paths, so
+  that the resample path runs at a known rate (§5.4).
+
+### 5.2 Why the output is llama-server's
+
+llama-server samples from the chain, checks the sampled token against the grammar, and resamples from the masked full
+row if the grammar rejects it (§1.2). Each step of the new path matches one of these:
+
+- **The first draw.** The backend `dist` sampler takes its uniform from the same Mersenne-twister stream as the host
+  `dist` sampler, one draw per sampled token (`llama_sampler_dist_backend_set_input`, `src/llama-sampler.cpp`), and
+  the backend chain runs the same top-k, top-p, min-p and temperature. The backend token is therefore the host path's
+  first draw, up to the rounding of the GPU's softmax and cumulative sum against the host's double-precision sum. A
+  draw within that rounding of a cumulative boundary can pick the neighbouring token, with or without a grammar. The
+  no-grammar baseline in §5.4 measures how often.
+- **The check** is the same call on the same token.
+- **The resample** uses the full row, with the grammar and chain applied on the host exactly as on the host path. It
+  takes the next draw of the stream, as the host path's resample does. In single-output decoding the backend sampler
+  took its draw from the stream before the decode, so the next draw is the same one the host path would use, and the
+  output is identical.
+- **Several outputs per sequence** (a speculative verify step) use transactional draws: the backend sampler draws from
+  a copy of the stream, and a draw is taken from the stream itself only when its token is accepted. Without care the
+  resample would reuse the rejected token's uniform. Conditioned on the rejection, that uniform lies inside the
+  intervals of disallowed tokens, so the resample would be biased. The new path therefore takes that draw from the
+  stream before resampling. The verify step then stops at that row, because the later rows were drawn before the
+  resample took its draw; they are sampled again from fresh draws in the next step. Each token still has its exact
+  distribution, but after such a rejection the random stream runs one draw ahead of the host path's.
+- **The reasoning budget's forced token** is the only candidate on the host path, so taking it is the same.
+- **Callers that mask first** (`grammar_first`, not llama-server) get the full row and the host path's masked sampling.
+  This costs one extra draw from the stream, and the semantics are unchanged.
+- **Not changed:** the rejection-sampling verifier for probabilistic drafters
+  (`common_sampler_sample_and_accept_n_rejection`) runs the same code, reading the backend chain's candidate
+  probabilities as it already does for requests without a grammar.
+
+### 5.3 With the screened head (Q92)
+
+The screen computes exact logits for its top 256 candidates and gives every other token −∞. Q91 showed that the true
+top 20 are among the candidates on every row it checked, so top-k ≤ 20 sampling is exact.
+
+- **Accepted tokens.** A token the grammar accepts is the chain's own draw, exact under the same condition as for chat.
+- **A rejection is different.** The resample needs the 20 best allowed tokens by their exact logits. A rejection
+  happens exactly when the model's own top tokens are disallowed. The allowed ones (a tool name, an argument key,
+  closing punctuation) can then rank anywhere, also below the 256th candidate, where the screened row holds −∞.
+  Q91's evidence covers the unmasked top 20 only.
+- **The fetched screened row is therefore not exact after a rejection.** Nothing bounds how far below the candidates
+  an allowed token's true logit can sit. The certified variant would need one: the gap between the exact and the
+  screen logit of token j is at most ‖w_j − ŵ_j‖·‖h‖ (Cauchy–Schwarz on the head row and its GPTQ copy). With that
+  bound per token, a resample whose 20th allowed logit clears the 256th screen logit by the largest bound is exact,
+  and any other resample would redo the position with the full head. Not built.
+- **The rule that is built** (commit `45d243e80` on `pascal-p106-v2-toolsample-screen`) keeps the screen while the
+  grammar cannot reject a token: before the trigger, and inside the reasoning. The token is then the chain's draw, so
+  the screen is as exact as for chat. llama-server decides per batch, so the batch after `<tool_call>` is computed
+  with the full head, and a rejection there resamples from exact logits. A verify step stops at the row where the
+  grammar becomes active, so that the later rows are recomputed with the full head.
+- **Cost.** The screen applies to the tokens before the call (reasoning and text: §2.4's pre-trigger share, measured
+  in §5.4), and the full head computes the call itself. Switching costs one graph rebuild per tool call.
+
+### 5.4 Checks
+
+The checks ran on the CPU of the 7-GPU quant machine (its GPUs were busy with other work). A CPU-only build runs the
+backend sampler on the CPU backend, which is the GPU path in every step that matters here: the chain runs in the
+sampling graph, the logits stay in the backend's buffer, and a rejection fetches the row from there.
+
+Setup ([grammar_sampling_check.py](../../../bench/tool_sampling/grammar_sampling_check.py)):
+- llama-server with `-bs` and Flint UD-Q4_K_XL;
+- one BFCL task per category (simple, multiple, parallel, parallel_multiple, live_simple, live_multiple, irrelevance,
+  live_irrelevance), sent with its tools and `tool_choice` "auto", so that Flint's lazy grammar applies;
+- the makers' sampling, at most 1,536 tokens per request;
+- each request sent twice to the same server with the same seed: backend sampling on ("device") and off ("host",
+  llama-server's host path).
+
+| Grammar | Sampling | Requests per side | Tokens per side | Tokens while the grammar applied | Rejections | Result |
+|---|---|---|---|---|---|---|
+| tool grammar | T 0 | 8 | 1,575 | 301 | 2 | identical |
+| tool grammar | T 1, seed 1 | 8 | 1,350 | 300 | 2 | identical |
+| none (`tool_choice` "none") | T 0, T 1 | 8, 8 | 1,575, 1,350 | — | — | identical |
+| tool grammar, every third checked token rejected (`LLAMA_GRAMMAR_TEST_REJECT=3`) | T 0 | 8 | 1,575 | 301 | 186 | identical |
+| the same | T 1, seed 1 | 8 | 1,300 | 300 | 151 | identical |
+
+- **What "identical" covers:** the reasoning, the content and the parsed tool calls.
+- **Calls:** 7 of the 8 grammar requests per run made a call; the irrelevance task answered without one.
+- **Rejections:** every rejection resampled from the fetched row to the token the host path picked. That covers the 4
+  natural ones and the 337 forced ones. The test switch counts every token the host checks outside the reasoning, so
+  it also forces resamples before the trigger.
+- **The old switch-off:** llama-server logged no "not compatible with grammar" warning.
+- **granite-3.1-3b-a800m** (40 tasks, five per category, T 0 and T 1) was identical as well. Its template gets no tool
+  grammar in this build (it writes `<tool_call>[…]` as text), so it confirms only the chain without a grammar.
+
+**Q66 from the same runs** (8 tasks, so only a first look):
+- 20.5 % of the tokens were sampled while the grammar could reject them: 13.9 % on simple and 53 % on
+  parallel_multiple, none on the irrelevance task.
+- 4 of those 601 tokens were rejected (0.67 %). At that rate the host fallback costs 0.0067 × (50–150 ms + 2.8 ms),
+  about 0.35–1.0 ms per grammar token, or 0.07–0.2 ms per token of the request.
+
+**Not yet checked on a GPU:**
+- the same comparison on CUDA, whose softmax and cumulative sum may round differently from the CPU backend's at T 1;
+- Q66 over the 300 BFCL pilot tasks;
+- the screened-head combination (screen on against off).
+
+### 5.5 On the rig
+
+Experiment 3 of §4: the A/B of experiment 1 on the new build, plus the host path with the grammar as a fourth variant.
+Build the tarball with `scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-toolsample` (for the screened head,
+`fork/pascal-p106-v2-toolsample-screen`) and unpack it in `/opt/llama-builds` on the rig.
+
+```bash
+B=/opt/llama-builds/llama.cpp-20261024-972ccde20-pascal-p106-v2-toolsample/bin
+# nine cards, then six (GPUS=0,1,2,3,4,5) to line up with llama-bench
+ssh rig "BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf GPUS=0,1,2,3,4,5,6,7,8 TAG=q67-9 \
+    LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" < bench/tool_sampling/tool_request_ab.sh
+# the old switch-off on the same build, for a same-binary reference
+ssh rig "BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q67-9-hostenv LLAMA_GRAMMAR_HOST_SAMPLING=1 \
+    LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" < bench/tool_sampling/tool_request_ab.sh
+# the screened head with a grammar, on the -screen build, with Q92's screen side file next to the models
+B=/opt/llama-builds/llama.cpp-20261024-06a17d382-pascal-p106-v2-toolsample-screen/bin
+ssh rig "BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q67-screen-9 LLAMA_SCREEN_HEAD=1 \
+    LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" \
+    < bench/tool_sampling/tool_request_ab.sh
+ssh rig 'grep -o "screened output head [a-z]*" /tmp/tool_request_ab/q67-screen-9/server.log | uniq -c'
+```
+
+Read `summary.txt`, per temperature and seed:
+- **"auto" with backend sampling** should run within 1–2 % of "none" with backend sampling, and **3.0–3.3 ms per token
+  faster than "auto" without it** (+9–11 %). That decides Q67 for agent serving.
+- The grammar counters on the "auto" lines: every token drawn on the GPU, the grammar tokens (the `write` call's
+  arguments), and the rejections, each of which costs a row fetch plus the full-row grammar pass (§2.2).
+- The warning count must be 0 on the first run and one per "auto" request with `LLAMA_GRAMMAR_HOST_SAMPLING=1`.
+- At temperature 0 all four variants should generate the same tokens, unless the grammar rejected one.
+- With the screen, the server log shows the screen "on" for the reasoning and "off" from the batch after
+  `<tool_call>`.
+
 ## Sources
 
 The fork's tree at upstream `d77256999` (P; line numbers are the fork's; master `36e36e6` is identical in the sampling
@@ -539,4 +705,6 @@ This repository:
 - [Flint benchmark](../../benchmarks/2026-10-22-flint.md).
 - [HyperQwen lessons](hyperqwen_lessons.md) §4: the earlier estimate.
 - [flint_speedups.md](flint_speedups.md): template and tool format.
-- [quants/experiments.md](../../../quants/experiments.md): Q38, Q53, Q55.
+- [quants/experiments.md](../../../quants/experiments.md): Q38, Q53, Q55, Q66, Q67, Q91, Q92.
+- [bench/tool_sampling](../../../bench/tool_sampling/): `tool_request_ab.sh` (experiments 1 and 3) and
+  `grammar_sampling_check.py` (§5.4, Q66).
