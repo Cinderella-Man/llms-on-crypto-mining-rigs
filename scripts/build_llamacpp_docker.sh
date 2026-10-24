@@ -70,7 +70,8 @@ docker run --rm ${DOCKER_ARGS:-} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${P
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
     cmake --build build -j "${JOBS:-$(nproc)}" --target llama-bench llama-server llama-cli llama-completion \
         llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) \
-        $([ -d examples/pipespec ] && echo llama-pipespec) $([ -d examples/screen-check ] && echo llama-screen-check) > /dev/null
+        $([ -d examples/pipespec ] && echo llama-pipespec) $([ -d examples/screen-check ] && echo llama-screen-check) \
+        $(grep -qs llama-pipe-drafter-check examples/pipespec/CMakeLists.txt && echo llama-pipe-drafter-check) > /dev/null
 
     out=/work/$name
     rm -rf "$out" && mkdir -p "$out/bin"

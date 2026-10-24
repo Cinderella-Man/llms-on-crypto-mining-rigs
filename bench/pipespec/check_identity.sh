@@ -27,6 +27,9 @@
 # FEED=1 adds pipe-d0-fed: depth 0 with every next token fed on the devices (llama_pipe_submit_fed), which needs a
 # sampler on the device (--pipe-backend-greedy or --pipe-backend-sample in ARGS) and LLAMA_INPUT_ON_GPU=1.
 # FLOOR=F adds floorF: depth F, no guesser, every guess a filler token (--pipe-floor, Q154).
+# DRAFT=<file> adds stair-dD at each depth: the staircase drafter behind the copy lookup (guess staircase, Q20/D3). A
+# random-weight head of the real shape (bench/staircase_drafter/check_export.py head) is enough: its guesses are wrong,
+# the output must still be plain decoding's. DRAFT_ARGS: more --pipe-draft-* options.
 # Environment variables of llama.cpp pass through (e.g. LLAMA_PIPE_UPLOAD=0|1|2, LLAMA_INPUT_ON_GPU=1, LLAMA_KV_PAD=1024).
 # With the layers split over several GPUs (or over virtual devices, GGML_CUDA_DEVICES=N on one GPU) every hop between
 # stages is exercised.
@@ -57,6 +60,7 @@ common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
     echo "name=pipe-d0 mode=pipe depth=0 guess=none $common"
     [ "$FEED" = 1 ] && echo "name=pipe-d0-fed mode=pipe depth=0 guess=none feed=1 $common"
     [ -n "$FLOOR" ] && echo "name=floor$FLOOR mode=pipe depth=$FLOOR guess=none floor=$FLOOR $common"
+    [ -n "${DRAFT:-}" ] && echo "name=stair-d0 mode=pipe depth=0 guess=staircase copy_min=4 $common"
     for D in $DEPTHS; do
         for M in $MISSES; do
             echo "name=oracle-d$D-m$M mode=pipe depth=$D guess=oracle oracle=@plain miss=$M $common"
@@ -65,13 +69,15 @@ common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
         echo "name=cont4-d$D mode=pipe depth=$D guess=cont copy_min=4 $common"
         echo "name=simple-d$D mode=pipe depth=$D guess=ngram-simple $common"
         echo "name=mapk-d$D mode=pipe depth=$D guess=spec spec=ngram-map-k $common"
+        [ -n "${DRAFT:-}" ] && echo "name=stair-d$D mode=pipe depth=$D guess=staircase copy_min=4 $common"
     done
 } > "$jobs"
 
 # shellcheck disable=SC2086
 timeout "$TIMEOUT" "$BIN/llama-pipespec" -m "$MODEL" $ARGS $SAMPLING \
     --spec-ngram-simple-size-n 4 --spec-ngram-simple-size-m 16 \
-    --spec-ngram-map-k-size-n 4 --spec-ngram-map-k-size-m 8 --pipe-jobs "$jobs" > "$OUT/run.log" 2>&1
+    --spec-ngram-map-k-size-n 4 --spec-ngram-map-k-size-m 8 ${DRAFT:+--pipe-draft $DRAFT} ${DRAFT_ARGS:-} \
+    --pipe-jobs "$jobs" > "$OUT/run.log" 2>&1
 rc=$?
 [ $rc -eq 124 ] && echo "TIMEOUT after $TIMEOUT s (deadlock?)"
 [ $rc -ne 0 ] && { echo "llama-pipespec exit $rc"; grep -E "error|failed|ERR" "$OUT/run.log" | tail -5; }

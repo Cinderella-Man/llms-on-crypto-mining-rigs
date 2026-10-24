@@ -17,7 +17,11 @@
 #       > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # Optional: N (tokens per job, 512), DEPTHS ('1 2 3 4 5'), PROMPTS ('chat code edit rewrite'), CTX (8192),
 # BG (1: greedy sampling on the last card in both modes, as llama-server's backend sampling does, so only a token id
-# crosses the link instead of 0.6 MB of logits; 0: logits to the host and sampling there), SAMPLING ('--temp 0'),
+# crosses the link instead of 0.6 MB of logits; 2: the SAMPLING temperature chain on the last card, each draw keyed by
+# its position; 0: logits to the host and sampling there), SAMPLING ('--temp 0'),
+# DRAFT (a staircase drafter file, bench/staircase_drafter/export_gguf.py: adds stair-dD-<prompt> at DEPTHS, the
+# drafter behind the copy lookup; with BG=2 its guess is drawn with the sampler's own uniform), DRAFT_ARGS (more
+# --pipe-draft-* options, e.g. --pipe-draft-stair L9,L17,L33,L41), ONLY_STAIR (1: plain, cont and stair jobs only),
 # TABLE (a continuation table from make_table.py), GPU_LOG (1: nvidia-smi clocks, power and load every second),
 # EXTRA_ARGS. Output in /tmp/pipespec/out/<TAG>/: jobs.txt, run.log, results.txt (one PIPESPEC line per job),
 # summary.tsv, plain.jsonl (the plain outputs), gpu.csv, host.csv (the process's CPU use each second, % of one core),
@@ -53,21 +57,24 @@ jobs=$OUT/jobs.txt
     for P in $PROMPTS; do
         c="prompt=$HERE/prompts/$P.txt chat=1 n=$N"
         echo "name=plain-$P mode=plain $c trace=$OUT/plain-$P.trace jsonl=$OUT/plain.jsonl cat=$(category "$P")"
-        echo "name=d0-$P mode=pipe depth=0 guess=none $c trace=$OUT/d0-$P.trace"
+        [ "${ONLY_STAIR:-0}" = 1 ] || echo "name=d0-$P mode=pipe depth=0 guess=none $c trace=$OUT/d0-$P.trace"
         for D in $DEPTHS; do
             echo "name=cont-d$D-$P mode=pipe depth=$D guess=cont copy_min=4 $c trace=$OUT/cont-d$D-$P.trace"
+            [ -n "${DRAFT:-}" ] && echo "name=stair-d$D-$P mode=pipe depth=$D guess=staircase copy_min=4 $c trace=$OUT/stair-d$D-$P.trace"
         done
+        [ "${ONLY_STAIR:-0}" = 1 ] && continue
         echo "name=copy2-d3-$P mode=pipe depth=3 guess=copy copy_min=2 $c trace=$OUT/copy2-d3-$P.trace"
         echo "name=copy4-d3-$P mode=pipe depth=3 guess=copy copy_min=4 $c trace=$OUT/copy4-d3-$P.trace"
         echo "name=mapk-d3-$P mode=pipe depth=3 guess=spec spec=ngram-map-k $c trace=$OUT/mapk-d3-$P.trace"
     done
     P=$(echo "$PROMPTS" | awk '{print $1}')
     c="prompt=$HERE/prompts/$P.txt chat=1 n=$N"
-    for D in $DEPTHS; do
+    [ "${ONLY_STAIR:-0}" = 1 ] && DEPTHS_ORACLE="" || DEPTHS_ORACLE=$DEPTHS
+    for D in $DEPTHS_ORACLE; do
         echo "name=oracle-d$D-m0-$P mode=pipe depth=$D guess=oracle oracle=@plain-$P miss=0 $c trace=$OUT/oracle-d$D-m0-$P.trace"
         echo "name=oracle-d$D-m1-$P mode=pipe depth=$D guess=oracle oracle=@plain-$P miss=1 $c trace=$OUT/oracle-d$D-m1-$P.trace"
     done
-    echo "name=oracle-d3-m0.3-$P mode=pipe depth=3 guess=oracle oracle=@plain-$P miss=0.3 $c trace=$OUT/oracle-d3-m0.3-$P.trace"
+    [ "${ONLY_STAIR:-0}" = 1 ] || echo "name=oracle-d3-m0.3-$P mode=pipe depth=3 guess=oracle oracle=@plain-$P miss=0.3 $c trace=$OUT/oracle-d3-m0.3-$P.trace"
 } > "$jobs"
 
 # the table variant runs in a second process (the table is a process setting)
@@ -92,6 +99,7 @@ run() { # jobs file, log, extra args
     # shellcheck disable=SC2086
     env ${ENVS:-} CUDA_VISIBLE_DEVICES="$GPUS" timeout 7200 "$BIN/llama-pipespec" -m "$MODEL" -ngl 99 -fa on -c "$CTX" \
         ${TS:+-ts $TS} ${EXTRA_ARGS:-} $SAMPLING $([ "$BG" = 1 ] && echo --pipe-backend-greedy) \
+        $([ "$BG" = 2 ] && echo --pipe-backend-sample) ${DRAFT:+--pipe-draft $DRAFT} ${DRAFT_ARGS:-} \
         --spec-ngram-map-k-size-n 4 --spec-ngram-map-k-size-m 8 \
         --pipe-slots $((2*(dmax + 1))) $3 --pipe-jobs "$1" > "$2" 2>&1 &
     local pid=$!
