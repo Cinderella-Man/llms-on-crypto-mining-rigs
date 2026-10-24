@@ -290,6 +290,32 @@ def lk_loss(logits, p_draft, sampled, eta=3.0, ce_weight=0.2):
     return (lam * kl + (1 - lam) * (1 - c)).mean() + ce_weight * ce.mean(), kl.mean().detach(), ce.mean().detach()
 
 
+def uniform_match(logits, top_ids_draft, p_kept, alpha=1.0, top_m=16):
+    """Per target: the match probability when the guess and Flint's sample share one uniform u, as llama.cpp's device
+    sampler draws them: Flint takes the first of its kept tokens (descending probability) whose cumulative probability
+    exceeds u; the guesser does the same over its top_m candidates of q^alpha, and takes its best real token when u
+    lands in its tail or on the "other" class. Sum over tokens of the overlap of the two tokens' u-intervals."""
+    q = torch.softmax(alpha * logits.float(), -1)
+    other = q.shape[1] - 1
+    qv, qi = q.topk(top_m, -1)                                          # [T, m], descending
+    q_hi = qv.cumsum(-1)
+    q_lo = q_hi - qv
+    real = qi != other
+    best = torch.where(real, torch.arange(top_m, device=q.device), top_m).min(-1).values.clamp(max=top_m - 1)
+    best_tok = qi.gather(1, best[:, None])                              # [T, 1]
+    eff = torch.where(real, qi, best_tok)                               # "other" counts for the best real token
+    p_hi = p_kept.cumsum(-1)
+    p_lo = p_hi - p_kept
+    ov = (torch.minimum(p_hi[:, :, None], q_hi[:, None, :]) - torch.maximum(p_lo[:, :, None], q_lo[:, None, :])).clamp_min(0)
+    tid = top_ids_draft
+    same = (tid[:, :, None] == eff[:, None, :]) & (tid != other)[:, :, None] & (p_kept > 0)[:, :, None]
+    match = (ov * same).sum((1, 2))
+    tail_lo = q_hi[:, -1:]                                              # [T, 1]: u beyond the top_m mass
+    tail_ov = (p_hi.clamp(max=1.0) - torch.maximum(p_lo, tail_lo)).clamp_min(0)
+    match = match + (tail_ov * ((tid == best_tok) & (tid != other) & (p_kept > 0))).sum(-1)
+    return match
+
+
 def coupled_and_top(logits, top_ids_draft, p_kept, alpha=1.0):
     """Per target: the Gumbel-coupled match probability (pipeline_sim.coupled_match) between Flint's kept distribution
     p_kept [T, k] (zeros for dropped tokens) and the guesser's distribution over the draft vocabulary, and the

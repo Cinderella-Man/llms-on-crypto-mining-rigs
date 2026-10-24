@@ -97,7 +97,7 @@ def main():
         if not args.init_only:
             model.load_state_dict(torch.load(os.path.join(hdir, "head.pt"), map_location=args.device), strict=False)
         model.eval()
-        per = {name: {"coupled": [], "top": [], "conf": []} for name in windows}
+        per = {name: {"coupled": [], "top": [], "conf": [], "uniform": []} for name in windows}
         meta = {"seq": [], "j": [], "copy": [], "seg": [], "cat": []}
         for i in range(min(len(ff), args.max_seqs or len(ff))):
             rec = ff[i]
@@ -112,6 +112,7 @@ def main():
                 per[name]["coupled"].append(c.cpu().numpy())
                 per[name]["top"].append(t.cpu().numpy())
                 per[name]["conf"].append(conf.cpu().numpy())
+                per[name]["uniform"].append(drafter.uniform_match(logits, d["top_draft"], p, alpha=args.alpha).cpu().numpy())
             j = b.tpos - rec.n_prompt + 1
             cat, in_copy, segs = labels[rec.seq_id]
             meta["seq"].append(np.full(len(j), rec.seq_id))
@@ -121,13 +122,13 @@ def main():
             meta["cat"].append(np.array([cat] * len(j)))
         arrs = {k: np.concatenate(v) for k, v in meta.items()}
         for name in windows:
-            for m in ("coupled", "top", "conf"):
+            for m in ("coupled", "top", "conf", "uniform"):
                 arrs[f"{name}/{m}"] = np.concatenate(per[name][m])
         np.savez_compressed(os.path.join(args.out, f"scores-{head}.npz"), **arrs)
         res = {}
         for name in windows:
             r = {}
-            for m in ("coupled", "top"):
+            for m in ("coupled", "top", "uniform"):
                 v = arrs[f"{name}/{m}"]
                 fresh = ~arrs["copy"]
                 r[m] = cluster_ci(v, arrs["seq"])
@@ -144,13 +145,14 @@ def main():
                          "n_positions": int(len(arrs["seq"])), "fresh_share": float((~arrs["copy"]).mean())}
         print(f"\n## head {head} ({hdir}), {len(arrs['seq'])} positions, fresh {100 * (~arrs['copy']).mean():.1f} %")
         print("| Window | Coupled, all | Coupled, fresh | Coupled, copied | Top guess, all | Top, fresh | "
-              "Fresh coupled: chat / code / edit / agent |")
-        print("|---|---|---|---|---|---|---|")
+              "Shared uniform, all / fresh | Fresh coupled: chat / code / edit / agent |")
+        print("|---|---|---|---|---|---|---|---|")
         for name, r in res.items():
             f = lambda x: f"{x[0]:.3f} ({x[1]:.3f}–{x[2]:.3f})"   # noqa: E731
             per_cat = " / ".join(f"{r[f'coupled_fresh_{c}'][0]:.3f}" for c in ("chat", "code", "edit", "agent"))
             print(f"| {name} | {f(r['coupled'])} | {f(r['coupled_fresh'])} | {r['coupled_copy'][0]:.3f} | "
-                  f"{r['top'][0]:.3f} | {r['top_fresh'][0]:.3f} | {per_cat} |")
+                  f"{r['top'][0]:.3f} | {r['top_fresh'][0]:.3f} | {r['uniform'][0]:.3f} / {r['uniform_fresh'][0]:.3f} | "
+                  f"{per_cat} |")
         del model
         torch.cuda.empty_cache() if args.device.startswith("cuda") else None
     json.dump(summary, open(os.path.join(args.out, "summary.json"), "w"), indent=1)
