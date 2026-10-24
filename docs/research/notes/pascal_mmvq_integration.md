@@ -1211,6 +1211,18 @@ launch. The microbenchmark has the same kernel as `q4_K` / `st_r1c1`.
     runs in all of them; with the same build and `GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K` all 536 pass;
   - in the microbenchmark every Q4_K case matches the CPU reference at all eight shapes (662 of 662 cases for the nine
     types).
+- **A real file:** ggml-org's Qwen3.6-35B-A3B Q4_K_M with its last two layers on an RTX 3080 through the compute_61
+  PTX and the other 38 on the CPU (the shared machine allowed 2.5 GB of VRAM), 256 wikitext tokens with the last 128
+  scored. In those two layers the routed experts' gate/up (fused) and down products are Q4_K and every other matrix is
+  Q8_0; the Q6_K head stayed on the CPU.
+  - Pascal kernels off against forced: KLD 0.0019 (maximum 0.035), the same top token for 97.6 % of the tokens, at one
+    token per step; 0.0017 (0.017) and 96.9 % at four tokens per step. Greedy text of two prompts × 48 tokens is
+    byte-identical.
+  - That divergence is the Q8_0 kernel's: forced with `GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K,q6_K` gives the same statistics to
+    five digits. The Q4_K and Q6_K kernels alone, forced against forced with them skipped, give KLD 0.000000 (maximum
+    0.00004), the same top token everywhere and PPL × 1.000005.
+  - Summation order moves this model visibly: llama.cpp's own kernels give PPL 7.149 at one token per step and 7.124 at
+    four.
 - **Rig.** [bench/mmvq_pascal/kquant_rig.sh](../../../bench/mmvq_pascal/kquant_rig.sh): the microbenchmark gates (Q4_K
   ≥ 120 GB/s on the dense K = 2,048 and expert shapes, Q6_K ≥ 130 GB/s), the Q4_K/Q6_K tests on a P106, then tg128 of
   Qwen3.6 Q4_K_M on 5 cards with the kernels as built, without Q4_K, without Q6_K, without both and with every Pascal
