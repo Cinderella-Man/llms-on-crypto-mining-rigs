@@ -17,7 +17,7 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
 
 - **What exists.** A pipelined decoding API in the fork (`llama_pipe_init`, `llama_pipe_submit`,
   `llama_pipe_get_logits`, `llama_pipe_get_sampled`, `llama_pipe_drain`; branch `pascal-p106-v2-pipespec`, commit
-  d83a7e5f2) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
+  a217f42c8) and a tool, `llama-pipespec`, that runs plain decoding or pipelined decoding with up to D guesses in flight
   for one sequence. Guessers: the copy lookup, llama.cpp's `ngram-simple`, any llama.cpp drafter (`ngram-map-k`,
   `ngram-mod`, …), and an oracle that replays a reference run with a chosen share of wrong guesses. A job list runs many
   configurations with one model load.
@@ -41,6 +41,11 @@ correct, how that was checked, and how to time it on the rig. The gain is estima
   share one budget: race samples while Flint reasons, where guesses are rarely right, and all of it as guesses for the
   winner after `</think>`. 31 pipelined races of 3–4 samples (8,164 sample tokens; winners 0, 1 and 2) were
   bit-identical to the same races decoded plainly, round robin.
+- **Several conversations run through the same executor (streams mode, Q104).** One KV stream and one slot range per
+  conversation, prompts entering as pipeline chunks, sampling per sequence on the device with position-keyed draws, and
+  guesses only in what the conversations leave of the budget. 48 conversation runs (three conversations at a time; all at
+  once, staggered arrivals, guesses in the slack, a budget of one item) matched a plain run of each conversation in tokens, logits
+  or sampled ids, KV state and probe, with host sampling and with the temperature and greedy chains on the device.
 - **Next:** time it on the rig ([plan](#measuring-it-on-the-rig)): the all-right oracle shows the
   pipeline's ceiling (event model: 2×/3×/4×/4.5× at D = 1/2/3/4+ on six cards), the all-wrong oracle the cost of wrong
   guesses, and the copy lookup the real gain per kind of prompt.
@@ -210,6 +215,35 @@ k samples cost almost nothing extra, because the idle cards that guesses would u
 - `llama-pipespec --pipe-race k --pipe-race-stop '</think>'` (job keys `race`, `race_stop`) runs it; host sampling only,
   since sampling on the GPU would need a random draw per sequence and position.
 
+### Several conversations (streams mode, Q104)
+
+[Multi-conversation serving](multi_conversation_serving.md) settles how a rig serves several conversations at once: stagger
+them through the cards, one token of each in flight, instead of batching them into one step. `--pipe-streams N` (job key
+`streams`) does that:
+
+- **One KV stream per conversation.** The context is split into N streams (`kv_unified = false`, `-np N`, `-c` = N × one
+  conversation's context); conversation c is sequence c, so a token's attention reads only its own conversation's cells.
+  On a unified cache (the race's mode) every one-token step reads every conversation's KV.
+- **Slots bound to conversations.** Conversation c has its own range of one-token slots, so a slot's graph and CUDA
+  graphs are reused for the same sequence (a graph is reusable only for the same sequence ids); prompt chunks share two
+  chunk slots.
+- **Prompts as pipeline work.** A new conversation's prompt is submitted in chunks of `--pipe-chunk` tokens
+  (`llama_pipe_submit_tokens` on a slot reserved for a chunk) and runs between the other conversations' tokens.
+  `llama_decode` would first drain the pipeline and stop every conversation for the whole prefill. A plain run with the
+  same chunk size computes the same numbers, which is what the check compares against.
+- **Sampling per sequence, on the device if wanted.** Each conversation has its own sampler and seed (seed + c). With
+  `--pipe-backend-sample` the temperature chain runs on the last card: every slot's graph carries only its own
+  sequence's chain, each token's random draw is keyed by (seed, position) with `llama_sampler_set_pos`, and each graph
+  keeps its own sampler input tensors (the fork's `dist` sampler kept only those of the graph built last, so a second
+  graph using the same sampler read a stale draw).
+- **One budget.** A conversation's next token is submitted the moment its previous one is sampled; then prompt chunks;
+  then guesses, copy-lookup guesses of any conversation before continuation guesses, only while fewer than
+  `--pipe-budget` items are in flight. With the budget at S_eff, N ≥ S_eff conversations leave no room for guesses, and
+  a conversation left alone gets the slack back. Section 4 of the serving note ranks the candidates for a free slot.
+- **Not built:** the attention mask on the card (it is still copied from the host to every card for every token),
+  races inside the streams mode (they need several sequences in one stream, or a stream copy per sample), and the
+  llama-server integration.
+
 ## Correctness
 
 Method ([check_identity.sh](../../../bench/pipespec/check_identity.sh)): one `llama-pipespec` process decodes the prompt
@@ -255,13 +289,32 @@ round robin: four stages on the two GPUs, temperature 1, the winner continuing w
 The `cont` guesser was checked the same way on the two GPUs (greedy, depths 1 and 3, without and with a continuation
 table of Q51's transcripts), and a single sample through the race path (`race=1`) on four stages: all same.
 
+Streams mode ([check_streams.sh](../../../bench/pipespec/check_streams.sh)), checked on the CPU of the 7-GPU machine
+(its GPUs were busy) against one plain run per conversation, in that conversation's sequence, with its prompt, seed +
+c and the same 64-token prompt chunks. Three conversations (`chat.txt`, 64 prompt tokens; `rewrite.txt`, 941 tokens in 15
+chunks; `code.txt`, 67 tokens) in four jobs: all joining at once; joining 16 generated tokens apart, so that prompt
+chunks run between the others' tokens; guesses (copy ≥ 4, else continuation counts, depth 2) in a budget of five items in
+flight; and a budget of one item, which must allow no guess:
+
+| Model | Sampling | Conversation runs | Tokens | Prompt chunks | Guesses (wrong) | Dropped tokens | Result |
+|---|---|---|---|---|---|---|---|
+| granite-3.1-3b-a800m (MoE, 2 GB) | host, T 1, seeds 42–44 | 12 | 1,536 | 72 | 266 (67) | 133 | all same |
+| granite-3.1-3b-a800m | device, T 1 | 12 | 1,536 | 72 | 262 (60) | 117 | all same |
+| granite-3.1-3b-a800m | device, greedy | 12 | 1,536 | 72 | 276 (70) | 135 | all same |
+| Flint UD-Q4_K_XL (sliding-window layers) | device, T 1 | 12 | 1,152 | 56 | 188 (53) | 104 | all same |
+
+The budget of one item allowed no guess in any run. Two bugs surfaced on the way and are fixed: the `dist` sampler's
+input tensors (above), and the graph callback that pinned each layer's `norm` and last op to its card on the context's
+scheduler instead of the slot's, so slot graphs missed that placement and filled the context scheduler's hash table.
+Multi-GPU runs of the streams mode come with the rig.
+
 The checks ran on two RTX 3090s of a 7-GPU machine used for quality work, where no speed is measured; the Pascal
 kernels are exercised on the rig ([plan](#measuring-it-on-the-rig), step 1).
 
 ## Measuring it on the rig
 
 The executor is exact; what the rig has to show is its speed. Everything below runs `llama-pipespec` from the build of
-the fork's commit d83a7e5f2, `llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec.tar.gz` (made with
+the fork's commit a217f42c8, `llama.cpp-20261024-a217f42c8-pascal-p106-v2-pipespec.tar.gz` (made with
 `TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-pipespec`), and the scripts in
 [bench/pipespec](../../../bench/pipespec/README.md). Commands run from a checkout of this repository on the machine that
 reaches the rig as `ssh rig`; `$B` is expanded there. One run at a time, nothing else on the cards; each run loads its
@@ -270,9 +323,9 @@ model once (minutes from a USB stick) and prints a summary table when it ends.
 **0. Install** (copy the tarball to the rig's `/opt/llama-builds/` first):
 
 ```
-ssh rig 'cd /opt/llama-builds && tar xzf llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec.tar.gz && ls llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec/bin/llama-pipespec'
+ssh rig 'cd /opt/llama-builds && tar xzf llama.cpp-20261024-a217f42c8-pascal-p106-v2-pipespec.tar.gz && ls llama.cpp-20261024-a217f42c8-pascal-p106-v2-pipespec/bin/llama-pipespec'
 scp -r bench/pipespec rig:/tmp/
-B=/opt/llama-builds/llama.cpp-20261024-d83a7e5f2-pascal-p106-v2-pipespec/bin
+B=/opt/llama-builds/llama.cpp-20261024-a217f42c8-pascal-p106-v2-pipespec/bin
 ```
 
 **1. Identity on the P106 kernels** (six cards, S4-L0, 128 tokens, ~5 min each): sampling on the host, then on the last
@@ -336,6 +389,70 @@ timed to its `</think>` the same way) and races of 2 and 3, all plainly and pipe
 ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=s4l0-6c-race GPUS=0,1,2,3,4,5 \
     RACES='2 3' ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_race.sh > /tmp/pipespec/s4l0-6c-race.out 2>&1 < /dev/null &"
 ```
+
+**Several conversations (Q104, [multi-conversation serving](multi_conversation_serving.md) section 5.1; ~3 h).**
+Experiments A–C need no new code; D times the streams mode. Nine cards with the light last card unless noted.
+
+*A. Step cost of N tokens in one batch* (llama-server's way, ~1 h): `llama-batched-bench` from the v2 build and from the
+multi-token build (`llama.cpp-20261023-032b130f4-pascal-p106-v2` and `llama.cpp-20261023-dca843432-pascal-p106-v2-multicol`);
+`S_TG` per row gives v(N).
+
+```
+for b in llama.cpp-20261023-032b130f4-pascal-p106-v2 llama.cpp-20261023-dca843432-pascal-p106-v2-multicol; do
+  ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 /opt/llama-builds/$b/bin/llama-batched-bench \
+      -m /mnt/models2/flint/flint-S4L0.gguf -ngl 99 -fa on -c 16384 -b 512 -ub 128 -npp 512 -ntg 128 -npl 1,2,3,4,6,8" \
+      > batched-$b-6c.txt
+  ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 /opt/llama-builds/$b/bin/llama-batched-bench -m /mnt/models2/flint/flint-S4L0.gguf \
+      -ngl 99 -fa on -ts 6,6,6,6,6,6,6,5,2 -c 16384 -b 512 -ub 128 -npp 512 -ntg 128 -npl 1,2,4" > batched-$b-9c.txt
+done
+```
+
+*B. The staggered ceiling* (~1 h): with every guess right, depth D keeps D + 1 one-token steps in flight, the card load
+of D + 1 conversations. Greedy on the last card; `host.csv` is the submit thread's CPU.
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q104-ceiling-6c GPUS=0,1,2,3,4,5 \
+    PROMPTS=chat DEPTHS='1 2 3 4 5' ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_run.sh \
+    > /tmp/pipespec/q104-ceiling-6c.out 2>&1 < /dev/null &"
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q104-ceiling-9c GPUS=0,1,2,3,4,5,6,7,8 \
+    TS=6,6,6,6,6,6,6,5,2 PROMPTS=chat DEPTHS='1 2 3 4 5 6 7 8' ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 \
+    bash /tmp/pipespec/rig_run.sh > /tmp/pipespec/q104-ceiling-9c.out 2>&1 < /dev/null &"
+```
+
+Read `oracle-dD-m0-chat` (and `d0-chat` for D = 0). Expected (est.): six cards 75 / 112 / 149 / 159–167 tok/s for 2 / 3 /
+4 / ≥ 5 in flight; nine cards up to 235–256.
+
+*C. N real sequences, host sampling* (~1 h): races with a stop text that never appears run N sequences of their own
+(one shared prompt, a unified cache), one token each in flight, until the first reaches 256 tokens; `race_tok_s` is the
+staggered rate of N sequences.
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q104-seqs-9c GPUS=0,1,2,3,4,5,6,7,8 \
+    TS=6,6,6,6,6,6,6,5,2 RACES='2 3 4 6 8' SEEDS=1 PROMPT=chat N=256 STOP=@@never@@ ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 \
+    bash /tmp/pipespec/rig_race.sh > /tmp/pipespec/q104-seqs-9c.out 2>&1 < /dev/null &"
+```
+
+Expected below B by the logits copy of host sampling (~110 tok/s ceiling on six cards in the note's estimate); the
+difference prices sampling on the device.
+
+*D. Streams mode* ([rig_streams.sh](../../../bench/pipespec/rig_streams.sh), ~45 min per context size): N = 1, 2, 3, 4, 6,
+8 conversations (the four prompts cycled), one KV stream each, sampling on the last card at temperature 1, prompts as
+64-token chunks; guesses in the slack at N = 2 and 4; staggered arrivals at N = 8; every conversation checked against its
+own plain run.
+
+```
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q104-streams-9c-8k GPUS=0,1,2,3,4,5,6,7,8 \
+    TS=6,6,6,6,6,6,6,5,2 CTX=8192 ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_streams.sh \
+    > /tmp/pipespec/q104-streams-9c-8k.out 2>&1 < /dev/null &"
+ssh rig "setsid nohup env BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q104-streams-9c-32k GPUS=0,1,2,3,4,5,6,7,8 \
+    TS=6,6,6,6,6,6,6,5,2 CTX=32768 NS='1 2 4 8' ENVS=LLAMA_NO_MOE_DOWN_RESCALE=1 bash /tmp/pipespec/rig_streams.sh \
+    > /tmp/pipespec/q104-streams-9c-32k.out 2>&1 < /dev/null &"
+```
+
+`summary.tsv`: total tok/s, slowest and median conversation, `same_as_plain`. Expected (est., serving note): 64 tok/s at
+N = 2, 118–128 at 4, 235–256 at 8, each conversation at 29–32. Gates: B at ≥ 3.3× one stream with every card busy on six
+cards, and `host.csv` below one core at the ceiling; A's 2-token step on the multi-token build ≤ 1.5 T before groups of
+two are built.
 
 **5. Collect and clean up:**
 

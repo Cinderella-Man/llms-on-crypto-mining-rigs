@@ -9,6 +9,8 @@ Design, prior work and results: [pipelined_speculation.md](../../docs/research/n
 |---|---|
 | [check_identity.sh](check_identity.sh) | Plain run plus ~25 pipelined runs (oracle with 0/10/50 % wrong guesses, copy lookup, copy ≥ 4 else continuation counts, ngram-simple, ngram-map-k at depths 1–3, depth 0; or a race with `RACE=K`) in one process; compares tokens, per-token logits hashes, the KV state after generation and probe logits with the plain run |
 | [rig_run.sh](rig_run.sh) | The timing matrix for the rig: on four prompts plain, depth 0, the Q96 guesser at depths 1–5 and three other guessers at depth 3; oracle ceilings and the cost of wrong guesses; writes `summary.tsv` (speed-ups, guesses, identity per job), the plain outputs for the simulator, traces and a GPU clock/power log |
+| [check_streams.sh](check_streams.sh) | The streams mode against separate plain runs: every conversation of N (all at once, staggered arrivals, guesses in the slack, a budget of one item) must match a plain run of its prompt, seed and chunk size in its own sequence |
+| [rig_streams.sh](rig_streams.sh) | Several conversations on the rig (Q104): N = 1–8 staggered through the cards, total and per-conversation tokens/s, identity per conversation, GPU and host CPU logs |
 | [rig_race.sh](rig_race.sh) | Races of K samples of one request on the rig (Q93): time until the first sample closes its reasoning, against one sample alone, with the plain round-robin race as the identity check |
 | [drop_vs_cancel.py](drop_vs_cancel.py) | Event model of the cards: speed-up with every guess right, 70 % right and every guess wrong, when wrong guesses run to the end (this executor) or are skipped per card (ideal cancellation) |
 | [make_table.py](make_table.py) | A continuation table for the `cont` guesser (`--pipe-table`) from transcripts in bench/ngram_replay's format, leaving out chosen ones |
@@ -42,7 +44,16 @@ llama-pipespec -m <gguf> -ngl 99 -fa on -c 8192 [--temp 0 | --temp 1 --seed 42 .
   keeps one token of each in flight. `check_identity.sh` checks it with `RACE=K`. Host sampling only.
 - `--pipe-backend-greedy`: greedy sampling on the last card in both modes (llama.cpp's backend sampling), so only a token
   id comes back instead of the logits (Flint: 150,144 floats, 0.6 MB per token, ~3 ms on a PCIe 1.0 x1 link, queued on
-  the last card behind every token's compute). `rig_run.sh` uses it unless `BG=0`.
+  the last card behind every token's compute). `rig_run.sh` uses it unless `BG=0`. `--pipe-backend-sample`: the
+  temperature chain (`--temp`, `--top-k`, `--top-p`, `--min-p`) on the last card, one per sequence, each token's draw keyed
+  by (seed, position).
+- `--pipe-streams N` (job key `streams`): N conversations staggered through the cards, one KV stream each (`-np N`, `-c` =
+  N × one conversation's context), prompts from `--pipe-prompts a.txt,b.txt,...` (cycled), seeds seed + c, prompts
+  submitted as `--pipe-chunk` token chunks between the other conversations' tokens, one token of every generating
+  conversation in flight, guesses (`--pipe-depth`, `--pipe-guess copy|cont`) only while fewer than `--pipe-budget` items
+  are in flight; conversation c joins after `--pipe-arrive` × c generated tokens. One `PIPESPEC` line per conversation
+  (`<name>-c<c>`) and a `PIPESPEC_STREAMS` line with the total rate. Job keys `chunk`, `seed` and `seq` make the matching
+  plain run.
 
 ## Rig plan
 

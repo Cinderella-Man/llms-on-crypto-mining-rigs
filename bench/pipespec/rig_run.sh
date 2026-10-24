@@ -20,7 +20,8 @@
 # crosses the link instead of 0.6 MB of logits; 0: logits to the host and sampling there), SAMPLING ('--temp 0'),
 # TABLE (a continuation table from make_table.py), GPU_LOG (1: nvidia-smi clocks, power and load every second),
 # EXTRA_ARGS. Output in /tmp/pipespec/out/<TAG>/: jobs.txt, run.log, results.txt (one PIPESPEC line per job),
-# summary.tsv, plain.jsonl (the plain outputs), gpu.csv, *.trace (summarize with traces.py).
+# summary.tsv, plain.jsonl (the plain outputs), gpu.csv, host.csv (the process's CPU use each second, % of one core),
+# *.trace (summarize with traces.py).
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -35,7 +36,7 @@ TABLE=${TABLE:-}
 GPU_LOG=${GPU_LOG:-1}
 OUT=$HERE/out/$TAG
 mkdir -p "$OUT"
-rm -f "$OUT/plain.jsonl"
+rm -f "$OUT/plain.jsonl" "$OUT/host.csv"
 
 dmax=3
 for D in $DEPTHS; do [ "$D" -gt "$dmax" ] && dmax=$D; done
@@ -88,7 +89,18 @@ run() { # jobs file, log, extra args
     env ${ENVS:-} CUDA_VISIBLE_DEVICES="$GPUS" timeout 7200 "$BIN/llama-pipespec" -m "$MODEL" -ngl 99 -fa on -c "$CTX" \
         ${TS:+-ts $TS} ${EXTRA_ARGS:-} $SAMPLING $([ "$BG" = 1 ] && echo --pipe-backend-greedy) \
         --spec-ngram-map-k-size-n 4 --spec-ngram-map-k-size-m 8 \
-        --pipe-slots $((2*(dmax + 1))) $3 --pipe-jobs "$1" > "$2" 2>&1
+        --pipe-slots $((2*(dmax + 1))) $3 --pipe-jobs "$1" > "$2" 2>&1 &
+    local pid=$!
+    # the process's CPU use each second (utime + stime from /proc, in % of one core)
+    (
+        hz=$(getconf CLK_TCK); prev=""
+        while kill -0 "$pid" 2>/dev/null; do
+            t=$(awk '{print $14 + $15}' "/proc/$pid/stat" 2>/dev/null) || break
+            [ -n "$prev" ] && echo "$(date +%s) $(( (t - prev) * 100 / hz ))"
+            prev=$t; sleep 1
+        done
+    ) >> "$OUT/host.csv" &
+    wait "$pid"
 }
 
 echo "$(date -Is) start $TAG: $(wc -l < "$jobs") jobs, GPUs $GPUS"

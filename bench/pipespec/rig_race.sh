@@ -13,8 +13,10 @@
 # Run it on the rig, from this repository:
 #   scp -r bench/pipespec rig:/tmp/
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5 \
-#       [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [RACES='2 3'] [SEEDS='1 2 3'] [PROMPT=short] [N=3072] \
+#       [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [RACES='2 3'] [SEEDS='1 2 3'] [PROMPT=short] [N=3072] [STOP='</think>'] \
 #       bash /tmp/pipespec/rig_race.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
+# With STOP set to a text that never appears (e.g. @@never@@) every race runs until its first sample reaches N tokens:
+# K real sequences, one token each in flight, which measures the staggered rate of K sequences with host sampling.
 # Output: /tmp/pipespec/out/<TAG>/{jobs.txt,run.log,results.txt,summary.tsv,*.trace}.
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
@@ -24,6 +26,7 @@ RACES=${RACES:-2 3}
 SEEDS=${SEEDS:-1 2 3}
 PROMPT=${PROMPT:-short}
 N=${N:-3072}
+STOP=${STOP:-</think>}
 CTX=${CTX:-16384}
 OUT=$HERE/out/$TAG
 mkdir -p "$OUT"
@@ -35,7 +38,7 @@ jobs=$OUT/jobs.txt
 {
     echo "name=warm mode=plain prompt=$HERE/prompts/chat.txt chat=1 n=64"
     for S in $SEEDS; do
-        c="prompt=$HERE/prompts/$PROMPT.txt chat=1 n=$N"
+        c="prompt=$HERE/prompts/$PROMPT.txt chat=1 n=$N race_stop=$STOP"
         # the seed is set per process; a job's samples use seed, seed + 1, ... so seeds are spread with an offset
         for K in 1 $RACES; do
             echo "name=s$S-race$K-plain mode=plain race=$K $c"
