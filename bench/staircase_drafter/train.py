@@ -42,10 +42,10 @@ def t2d_table(vocab, n_vocab):
 class Batch:
     """CPU side of one sequence for one head: copies out of the memory map, ready to move to the GPU."""
 
-    def __init__(self, rec, profile, t2d, min_target=8):
+    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False):
         self.n_prompt, self.n_tok = rec.n_prompt, rec.n_tok
         self.tokens = np.array(rec.tokens, np.int64)
-        wmax = max(len(w) for w in profile["windows"].values())
+        wmax = max([len(w) for w in profile["windows"].values()] + ([5] if all_anchors else []))
         t0 = max(rec.n_prompt, wmax, min_target)
         self.tpos = np.arange(t0, rec.n_tok - 1)
         j = self.tpos - rec.n_prompt + 1                      # generated token predicted by each target
@@ -53,6 +53,8 @@ class Batch:
         self.top_lp = np.array(rec.top_lp[j])
         self.sampled = t2d[self.tokens[self.tpos + 1]]
         need = {profile["committed"], "full"} | {a for w in profile["windows"].values() for a in w}
+        if all_anchors:   # fused anchors or sampled windows read every six-card anchor
+            need |= set(SIX_CARD)
         self.arrays = {}
         for a in need - {"emb"}:
             if a == "full":
@@ -73,6 +75,38 @@ def to_device(b, device, dtype):
     return out
 
 
+SIX_CARD = ("L9", "L17", "L25", "L33", "L41", "full")
+
+
+def sample_window(profile, rng, probs):
+    """One window for a sequence: the profile's nominal staircase, its after-miss window, or a random staircase that
+    keeps the nominal newest anchor and gives each older token a depth no lower than the newer one's (L17, L25, L33,
+    L41; the first full-depth token ends the window). probs: (p_stair, p_miss, p_random)."""
+    wins = profile["windows"]
+    stair = next((w for n, w in wins.items() if n != "miss"), wins.get("miss"))
+    u = rng.random()
+    if u < probs[0]:
+        return {"sample": stair}
+    if u < probs[0] + probs[1] and "miss" in wins:
+        return {"sample": wins["miss"]}
+    depths = sorted((rng.choice(["L17", "L25", "L33", "L41", "full"]) for _ in range(4)),
+                    key=lambda a: drafter.ANCHOR_IDS[a])
+    older = [a for a in depths if a != "full"]
+    return {"sample": [stair[0]] + older}
+
+
+def fuse_extra(d, anchors, positions):
+    """For fused anchors: (k, states, mask) for L9..L41 (k = 0..4) at positions [T, W], where the row's own anchor
+    (anchors[j] for column j) is deeper than anchor k."""
+    ids = torch.tensor([drafter.ANCHOR_IDS[a] for a in anchors], device=positions.device)
+    out = []
+    for k, name in enumerate(SIX_CARD[:5]):
+        mask = (ids > k + 1).expand(positions.shape)
+        if mask.any():
+            out.append((k, anchor_rows(d, name, positions, None, None), mask))
+    return out
+
+
 def anchor_rows(d, a, positions, n_embd, dtype):
     """Hidden states of anchor a at absolute positions (any shape); zeros for the embedding-only anchor."""
     if a == "emb":
@@ -81,7 +115,9 @@ def anchor_rows(d, a, positions, n_embd, dtype):
     return x[positions - start]
 
 
-def build_inputs(d, profile, windows, n_embd, dtype):
+def build_inputs(d, profile, windows, n_embd, dtype, fuse=False):
+    """Committed rows, their anchor id, the window inputs and (with fuse) the committed rows' extra anchors: L9 next to
+    the final state, the only shallower anchor stored for every position."""
     N = d["tokens"].shape[0]
     allpos = torch.arange(N, device=d["tokens"].device)
     ca = profile["committed"]
@@ -94,32 +130,39 @@ def build_inputs(d, profile, windows, n_embd, dtype):
             win[name] = (d["tpos"], anchors, None)
             continue
         hw = torch.stack([anchor_rows(d, a, d["tpos"] - j, n_embd, dtype) for j, a in enumerate(anchors)], 1)
-        win[name] = (d["tpos"], anchors, hw)
-    return committed, drafter.ANCHOR_IDS[ca], win
+        if fuse:
+            wpos = d["tpos"][:, None] - torch.arange(len(anchors), device=allpos.device)[None, :]
+            win[name] = (d["tpos"], anchors, hw, fuse_extra(d, anchors, wpos))
+        else:
+            win[name] = (d["tpos"], anchors, hw)
+    cextra = None
+    if fuse and ca == "full":
+        cextra = [(0, anchor_rows(d, "L9", allpos, None, None), torch.ones(N, dtype=torch.bool, device=allpos.device))]
+    return committed, drafter.ANCHOR_IDS[ca], win, cextra
 
 
-def loader(records, profile, t2d, order, q, stop):
+def loader(records, profile, t2d, order, q, stop, all_anchors=False):
     for ff, i in order:
         if stop.is_set():
             return
         try:
-            q.put(Batch(records[ff][i], profile, t2d))
+            q.put(Batch(records[ff][i], profile, t2d, all_anchors=all_anchors))
         except Exception as e:  # noqa: BLE001
             print(f"skip {ff}:{i}: {e}", flush=True)
     q.put(None)
 
 
 @torch.no_grad()
-def evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, max_seqs=60):
+def evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, max_seqs=60, fuse=False):
     model.eval()
     alphas = (1.0, 1.5, 2.0, 3.0, 5.0)
     acc = {name: [0.0, 0.0, 0.0, 0] + [0.0] * len(alphas) for name in windows}
     for ff, i in val[:max_seqs]:
-        b = Batch(files[ff][i], profile, t2d)
+        b = Batch(files[ff][i], profile, t2d, all_anchors=fuse)
         d = to_device(b, device, dtype)
-        committed, ca, win = build_inputs(d, profile, windows, n_embd, dtype)
+        committed, ca, win, cextra = build_inputs(d, profile, windows, n_embd, dtype, fuse)
         with torch.autocast(device.split(":")[0], dtype=dtype):
-            out = model(d["tokens"], committed, ca, win)
+            out = model(d["tokens"], committed, ca, win, committed_extra=cextra)
         p = feats.sampler_dist(d["top_lp"])
         for name, logits in out.items():
             c, t, _ = drafter.coupled_and_top(logits, d["top_draft"], p)
@@ -156,6 +199,15 @@ def main():
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--ckpt-every", type=float, default=30, help="minutes")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--init-from", help="head.pt or ckpt.pt to start from (weights only; new parameters keep their "
+                                         "zero initialization; fresh optimizer and schedule)")
+    ap.add_argument("--window-sample", help="P_STAIR,P_MISS,P_RANDOM: train one window per sequence, drawn this way")
+    ap.add_argument("--loss", choices=("kl", "lk"), default="kl")
+    ap.add_argument("--eta", type=float, default=3.0, help="LK loss: lambda = exp(-eta * coupled match)")
+    ap.add_argument("--fuse", action="store_true", help="give every row each shallower anchor its token has reached")
+    ap.add_argument("--noise", type=float, default=0.0, help="uniform noise amplitude after each anchor's RMS norm")
+    ap.add_argument("--dropout", type=float, default=0.0)
+    ap.add_argument("--val-seqs", type=int, default=60, help="validation sequences for the final evaluation")
     ap.add_argument("--reg", type=float, default=0.0,
                     help="weight of the feature-regression loss (newest row onto Flint's final state of that token)")
     args = ap.parse_args()
@@ -180,7 +232,15 @@ def main():
     n_embd = files[0][0].n_embd
     emb, head_rows, norm_w = load_flint(args.flint, vocab, device)
     t2d = t2d_table(vocab, emb.shape[0])
-    model = drafter.Drafter(emb, head_rows, norm_w, n_layer=args.layers).to(device)
+    model = drafter.Drafter(emb, head_rows, norm_w, n_layer=args.layers, fuse=args.fuse, noise=args.noise,
+                            dropout=args.dropout).to(device)
+    if args.init_from:
+        sd = torch.load(args.init_from, map_location=device)
+        sd = sd.get("model", sd)
+        missing, unexpected = model.load_state_dict(sd, strict=False)
+        print(json.dumps({"init_from": args.init_from, "missing": missing, "unexpected": unexpected}), flush=True)
+    sample_probs = [float(x) for x in args.window_sample.split(",")] if args.window_sample else None
+    all_anchors = args.fuse or sample_probs is not None
     params = [p for p in model.parameters() if p.requires_grad]
     n_params = sum(p.numel() for p in params)
     opt = torch.optim.AdamW(params, lr=args.lr, betas=(0.9, 0.95), weight_decay=0.0)
@@ -221,10 +281,12 @@ def main():
         order = train[:]
         rng.shuffle(order)
         q, stop = queue.Queue(maxsize=6), threading.Event()
-        th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop), daemon=True)
+        th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors), daemon=True)
         th.start()
         while True:
+            tw = time.time()
             b = q.get()
+            sums["wait"] = sums.get("wait", 0.0) + time.time() - tw
             if b is None:
                 break
             elapsed = time.time() - t_start
@@ -237,14 +299,18 @@ def main():
             for g in opt.param_groups:
                 g["lr"] = lr
             d = to_device(b, device, dtype)
-            committed, ca, win = build_inputs(d, profile, windows, n_embd, dtype)
+            step_windows = sample_window(profile, rng, sample_probs) if sample_probs else windows
+            committed, ca, win, cextra = build_inputs(d, profile, step_windows, n_embd, dtype, args.fuse)
             with torch.autocast(device.split(":")[0], dtype=dtype):
-                out = model(d["tokens"], committed, ca, win, return_feats=True)
+                out = model(d["tokens"], committed, ca, win, return_feats=True, committed_extra=cextra)
             p = feats.sampler_dist(d["top_lp"])
             target_f = d["arrays"]["full"][1][d["tpos"]] if args.reg > 0 else None
             loss = 0.0
             for name, (logits, f) in out.items():
-                l, kl, ce = drafter.kl_loss(logits, (d["top_draft"], p), d["sampled"])
+                if args.loss == "lk":
+                    l, kl, ce = drafter.lk_loss(logits, (d["top_draft"], p), d["sampled"], eta=args.eta)
+                else:
+                    l, kl, ce = drafter.kl_loss(logits, (d["top_draft"], p), d["sampled"])
                 if args.reg > 0:
                     rl = drafter.feature_loss(f, target_f)
                     l = l + args.reg * rl
@@ -268,17 +334,17 @@ def main():
                 step += 1
                 if step % 20 == 0:
                     rec = {"t_min": round(elapsed / 60, 2), "epoch": epoch, "step": step, "seqs": seen, "lr": lr,
-                           **{k: sums[k] / max(1, sums["n"]) for k in ("loss", "kl", "ce", "reg") if k in sums}}
+                           **{k: sums[k] / max(1, sums["n"]) for k in ("loss", "kl", "ce", "reg", "wait") if k in sums}}
                     print(json.dumps(rec), flush=True)
                     log.write(json.dumps(rec) + "\n")
                     log.flush()
-                    sums = {"loss": 0.0, "kl": 0.0, "ce": 0.0, "n": 0}
+                    sums = {"loss": 0.0, "kl": 0.0, "ce": 0.0, "n": 0, "wait": 0.0}
             if time.time() - last_ckpt > args.ckpt_every * 60:
                 last_ckpt = time.time()
                 save_ckpt()
             if time.time() - last_eval > args.eval_every * 60:
                 last_eval = time.time()
-                ev = evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd)
+                ev = evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, fuse=args.fuse)
                 rec = {"t_min": round((time.time() - t_start) / 60, 2), "step": step, "seqs": seen, "val": ev}
                 print(json.dumps(rec), flush=True)
                 log.write(json.dumps(rec) + "\n")
@@ -289,7 +355,8 @@ def main():
                     best = primary
                     torch.save(model.state_dict(), os.path.join(args.out, "head.pt"))
         stop.set()
-    ev = evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd)
+    ev = evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, max_seqs=args.val_seqs,
+                  fuse=args.fuse)
     torch.save(model.state_dict(), os.path.join(args.out, "head-last.pt"))
     if ev[next(iter(windows))]["coupled"] > best:
         best = ev[next(iter(windows))]["coupled"]

@@ -92,7 +92,8 @@ def main():
             name, anchors = spec.split("=")
             windows[name] = anchors.split(",")
         prof_all = {"committed": profile["committed"], "windows": windows}
-        model = drafter.Drafter(emb, head_rows, norm_w, n_layer=cfg["args"].get("layers", 2)).to(args.device)
+        fuse = cfg["args"].get("fuse", False)
+        model = drafter.Drafter(emb, head_rows, norm_w, n_layer=cfg["args"].get("layers", 2), fuse=fuse).to(args.device)
         if not args.init_only:
             model.load_state_dict(torch.load(os.path.join(hdir, "head.pt"), map_location=args.device), strict=False)
         model.eval()
@@ -100,11 +101,11 @@ def main():
         meta = {"seq": [], "j": [], "copy": [], "seg": [], "cat": []}
         for i in range(min(len(ff), args.max_seqs or len(ff))):
             rec = ff[i]
-            b = train.Batch(rec, prof_all, t2d, min_target=0)
+            b = train.Batch(rec, prof_all, t2d, min_target=0, all_anchors=fuse)
             d = train.to_device(b, args.device, dtype)
-            committed, ca, win = train.build_inputs(d, prof_all, windows, rec.n_embd, dtype)
+            committed, ca, win, cextra = train.build_inputs(d, prof_all, windows, rec.n_embd, dtype, fuse)
             with torch.no_grad(), torch.autocast(args.device.split(":")[0], dtype=dtype):
-                out = model(d["tokens"], committed, ca, win)
+                out = model(d["tokens"], committed, ca, win, committed_extra=cextra)
             p = feats.sampler_dist(d["top_lp"], min_p=args.min_p)
             for name, logits in out.items():
                 c, t, conf = drafter.coupled_and_top(logits, d["top_draft"], p, alpha=args.alpha)

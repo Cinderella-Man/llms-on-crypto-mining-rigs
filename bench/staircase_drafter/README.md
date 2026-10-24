@@ -92,7 +92,22 @@ paths are placeholders.
    python train.py --head A --feats fast/train-*.bin --vocab vocab.npy --flint flint/ --out heads/A --minutes 300
    python train.py --head A --layers 4 ...       # a larger head
    python train.py --head T ... --fp16           # on a V100 (no bfloat16)
+   # fine-tune from a trained head: one window per sequence (nominal staircase, after-miss, random staircase),
+   # every reached anchor fused, the acceptance-matched loss, noise and dropout against overfitting
+   python train.py --head A ... --init-from heads/A/head.pt --lr 1e-4 --window-sample 0.6,0.25,0.15 \
+       --fuse --loss lk --eta 3 --noise 0.2 --dropout 0.1 --val-seqs 300
+   python check_train.py --feats q51.bin --vocab vocab.npy --flint flint/ --head heads/A/head.pt
    ```
+
+   - `--init-from` loads weights only (new parameters keep their zero initialization, so the warm-started head starts
+     as the checkpoint), with a fresh optimizer and schedule; `--resume` continues the same run.
+   - `--window-sample` trains each sequence on one window instead of all of them: cheaper steps, and a head that reads
+     any staircase (a head trained on fixed windows scores ~0.06 on window shapes it never saw).
+   - `--fuse` gives every row each shallower anchor its token has reached, as SPD does (committed rows get layer 9 next
+     to the final state, the only shallower anchor stored for every position).
+   - `--loss lk` is the hybrid of the LK-losses paper: λ·KL + (1 − λ)·(1 − coupled match), λ = exp(−η·match).
+   - [check_train.py](check_train.py) checks the options: key slicing in the window attention changes nothing, a fused
+     head warm-started from an unfused one reproduces it exactly, the LK loss has finite gradients.
 
 6. **Scoring** ([score.py](score.py)) on Q51's held-out transcripts (dumped the same way), then speed per workload
    through Q87's simulator ([sim.py](sim.py) on top of [pipeline_sim.py](../ngram_replay/pipeline_sim.py)), and the
@@ -158,7 +173,8 @@ paths are placeholders.
 | [flint_weights.py](flint_weights.py) | Flint's embedding table, output head and output norm from the GGUF |
 | [vocab.py](vocab.py) | the guesser's vocabulary and its coverage |
 | [drafter.py](drafter.py) | the model, profiles, losses and coupled acceptance |
-| [train.py](train.py) | training one head, resumable |
+| [train.py](train.py) | training one head, resumable, warm-startable |
+| [check_train.py](check_train.py) | checks of the training options |
 | [score.py](score.py) | per-position acceptance on held-out transcripts, intervals by transcript |
 | [sim.py](sim.py) | speed per workload through Q87's simulator |
 | [report.py](report.py) | tables and gate verdicts from score.py and sim.py |

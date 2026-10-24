@@ -71,9 +71,10 @@ class RMSNorm(nn.Module):
 
 
 class Block(nn.Module):
-    def __init__(self, d, n_head, n_kv, head_dim, ffn):
+    def __init__(self, d, n_head, n_kv, head_dim, ffn, dropout=0.0):
         super().__init__()
         self.n_head, self.n_kv, self.hd = n_head, n_kv, head_dim
+        self.drop = nn.Dropout(dropout)
         self.attn_norm = RMSNorm(d)
         self.wq = nn.Linear(d, n_head * head_dim, bias=False)
         self.wk = nn.Linear(d, n_kv * head_dim, bias=False)
@@ -96,7 +97,7 @@ class Block(nn.Module):
 
     def mlp(self, x):
         h = self.mlp_norm(x)
-        return x + self.w2(F.silu(self.w1(h)) * self.w3(h))
+        return x + self.drop(self.w2(F.silu(self.w1(h)) * self.w3(h)))
 
     def committed(self, x, cos, sin):
         """Causal self-attention over the committed rows x [N, d]; returns the new rows and their keys/values."""
@@ -105,7 +106,7 @@ class Block(nn.Module):
         o = F.scaled_dot_product_attention(q.transpose(0, 1)[None], k.repeat_interleave(rep, 1).transpose(0, 1)[None],
                                            v.repeat_interleave(rep, 1).transpose(0, 1)[None], is_causal=True)
         o = o[0].transpose(0, 1).reshape(x.shape[0], -1)
-        return self.mlp(x + self.wo(o)), k, v
+        return self.mlp(x + self.drop(self.wo(o))), k, v
 
     def window(self, xw, cos, sin, kc, vc, limit, chunk=256):
         """Window rows xw [T, W, d] (offset 0 = newest) of T targets. Row (t, j) attends to committed keys at positions
@@ -114,16 +115,22 @@ class Block(nn.Module):
         T, W = xw.shape[:2]
         rep = self.n_head // self.n_kv
         outs = []
+        lim_all = limit.tolist()
         for t0 in range(0, T, chunk):
             t1 = min(T, t0 + chunk)
+            n_keys = max(1, max(lim_all[t0:t1]) + 1) if SLICE_KEYS else kc.shape[0]   # later keys are masked anyway
+            kc_, vc_ = kc[:n_keys], vc[:n_keys]
             fn = lambda q_, k_, v_, lim, kc_, vc_: _window_attn(q_, k_, v_, lim, kc_, vc_, rep)   # noqa: E731
             if torch.is_grad_enabled():
-                o = checkpoint(fn, q[t0:t1], k[t0:t1], v[t0:t1], limit[t0:t1], kc, vc, use_reentrant=False)
+                o = checkpoint(fn, q[t0:t1], k[t0:t1], v[t0:t1], limit[t0:t1], kc_, vc_, use_reentrant=False)
             else:
-                o = fn(q[t0:t1], k[t0:t1], v[t0:t1], limit[t0:t1], kc, vc)
+                o = fn(q[t0:t1], k[t0:t1], v[t0:t1], limit[t0:t1], kc_, vc_)
             outs.append(o)
         o = torch.cat(outs, 0).reshape(T, W, -1)
-        return self.mlp(xw + self.wo(o))
+        return self.mlp(xw + self.drop(self.wo(o)))
+
+
+SLICE_KEYS = True   # window attention reads committed keys only up to each chunk's last limit (check_train.py compares)
 
 
 def _window_attn(q, k, v, limit, kc, vc, rep):
@@ -148,11 +155,21 @@ def _window_attn(q, k, v, limit, kc, vc, rep):
 
 
 class Drafter(nn.Module):
-    def __init__(self, emb, head_rows, norm_w, n_layer=2, n_head=16, n_kv=4, head_dim=128, ffn=4096):
+    def __init__(self, emb, head_rows, norm_w, n_layer=2, n_head=16, n_kv=4, head_dim=128, ffn=4096, fuse=False,
+                 noise=0.0, dropout=0.0):
         """emb: Flint's input embedding table [n_vocab, d] (frozen); head_rows: Flint's output-head rows for the draft
-        vocabulary [V, d] (an "other" class is added); norm_w: Flint's output-norm weight."""
+        vocabulary [V, d] (an "other" class is added); norm_w: Flint's output-norm weight. fuse: every row also gets
+        the shallower anchors its token has reached (zero-initialized projections, so a warm start is unchanged);
+        noise: uniform noise of this amplitude after each anchor's RMS norm while training; dropout: after attention
+        and the FFN."""
         super().__init__()
         d = emb.shape[1]
+        self.fuse, self.noise = fuse, noise
+        if fuse:   # L9, L17, L25, L33, L41
+            self.fuse_norm = nn.ModuleList(RMSNorm(d) for _ in range(5))
+            self.w_fuse = nn.ModuleList(nn.Linear(d, d, bias=False) for _ in range(5))
+            for w in self.w_fuse:
+                nn.init.zeros_(w.weight)
         self.register_buffer("emb", emb, persistent=False)
         self.emb_norm = RMSNorm(d)
         self.w_emb = nn.Linear(d, d, bias=False)
@@ -160,7 +177,7 @@ class Drafter(nn.Module):
         self.w_anc = nn.ModuleList(nn.Linear(d, d, bias=False) for _ in range(6))
         self.anchor_emb = nn.Embedding(7, d)
         nn.init.zeros_(self.anchor_emb.weight)
-        self.blocks = nn.ModuleList(Block(d, n_head, n_kv, head_dim, ffn) for _ in range(n_layer))
+        self.blocks = nn.ModuleList(Block(d, n_head, n_kv, head_dim, ffn, dropout) for _ in range(n_layer))
         self.norm = RMSNorm(d)
         # Initialization: with the blocks' output projections at zero, a row's prediction starts as Flint's output head
         # on its anchor. Layer inputs are residual-stream states, so an identity projection gives the logit lens of
@@ -182,28 +199,43 @@ class Drafter(nn.Module):
             self.head.bias.zero_()
             self.head.bias[-1] = -4.0
 
-    def rows(self, tokens, anchor, h):
-        """Input rows: tokens [...], anchor ids [...] (0..6), h [..., d] the anchor's hidden state (ignored for 0)."""
+    def _noisy(self, x):
+        if self.training and self.noise > 0:
+            return x + (torch.rand_like(x) * 2 - 1) * self.noise
+        return x
+
+    def rows(self, tokens, anchor, h, extra=None):
+        """Input rows: tokens [...], anchor ids [...] (0..6), h [..., d] the anchor's hidden state (ignored for 0).
+        extra (with fuse): [(k, h_k [..., d], mask [...])] shallower anchors (k = 0..4 for L9..L41) to add where mask."""
         x = self.w_emb(self.emb_norm(self.emb[tokens].to(h.dtype)))
         flat_a, flat_h = anchor.reshape(-1), h.reshape(-1, h.shape[-1])
         add = torch.zeros_like(flat_h)
         for a in range(1, 7):
             idx = (flat_a == a).nonzero(as_tuple=True)[0]
             if idx.numel():
-                add.index_copy_(0, idx, self.w_anc[a - 1](self.anc_norm[a - 1](flat_h[idx])))
+                add.index_copy_(0, idx, self.w_anc[a - 1](self._noisy(self.anc_norm[a - 1](flat_h[idx]))))
+        if self.fuse and extra:
+            for k, hk, mask in extra:
+                idx = mask.reshape(-1).nonzero(as_tuple=True)[0]
+                if idx.numel():
+                    fk = self.w_fuse[k](self._noisy(self.fuse_norm[k](hk.reshape(-1, hk.shape[-1])[idx])))
+                    add = add.index_add(0, idx, fk)
         return x + add.view_as(x) + self.anchor_emb(anchor).to(h.dtype)
 
-    def forward(self, tokens, committed_h, committed_anchor, windows, return_feats=False):
+    def forward(self, tokens, committed_h, committed_anchor, windows, return_feats=False, committed_extra=None):
         """tokens [N]; committed_h [N, d]; committed_anchor: int; windows: {name: (target positions [T],
-        anchors [W], window hidden states [T, W, d])}. Returns {name: logits [T, V+1]} of each window's newest row
+        anchors [W], window hidden states [T, W, d][, extra])}, extra as in rows() for the window rows;
+        committed_extra likewise for the committed rows. Returns {name: logits [T, V+1]} of each window's newest row
         (for a plain window, of the committed rows at the target positions)."""
         N = tokens.shape[0]
         dev = committed_h.device
         pos = torch.arange(N, device=dev)
-        xc = self.rows(tokens, torch.full((N,), committed_anchor, device=dev, dtype=torch.long), committed_h)
+        xc = self.rows(tokens, torch.full((N,), committed_anchor, device=dev, dtype=torch.long), committed_h,
+                       committed_extra)
         cos_c, sin_c = rope_tables(pos, self.blocks[0].hd)
         state = {}
-        for name, (tpos, anchors, hw) in windows.items():
+        for name, win in windows.items():
+            tpos, anchors, hw = win[:3]
             if hw is None:
                 state[name] = None
                 continue
@@ -211,7 +243,7 @@ class Drafter(nn.Module):
             wpos = tpos[:, None] - torch.arange(W, device=dev)[None, :]
             a = torch.tensor([ANCHOR_IDS[x] for x in anchors], device=dev).expand(tpos.shape[0], W)
             cos, sin = rope_tables(wpos, self.blocks[0].hd)
-            state[name] = [self.rows(tokens[wpos], a, hw), cos, sin, tpos - W]
+            state[name] = [self.rows(tokens[wpos], a, hw, win[3] if len(win) > 3 else None), cos, sin, tpos - W]
         for blk in self.blocks:
             xc_new, kc, vc = blk.committed(xc, cos_c, sin_c)
             for name, st in state.items():
@@ -219,7 +251,8 @@ class Drafter(nn.Module):
                     st[0] = blk.window(st[0], st[1], st[2], kc, vc, st[3])
             xc = xc_new
         out = {}
-        for name, (tpos, anchors, hw) in windows.items():
+        for name, win in windows.items():
+            tpos = win[0]
             h = xc[tpos] if state[name] is None else state[name][0][:, 0]
             f = self.norm(h)
             out[name] = (self.head(f).float(), f) if return_feats else self.head(f).float()
@@ -242,6 +275,19 @@ def kl_loss(logits, p_draft, sampled, ce_weight=0.2):
     kl = (probs * (torch.log(probs.clamp_min(1e-12)) - lq)).sum(-1)
     ce = -logq.gather(1, sampled[:, None])[:, 0]
     return kl.mean() + ce_weight * ce.mean(), kl.mean().detach(), ce.mean().detach()
+
+
+def lk_loss(logits, p_draft, sampled, eta=3.0, ce_weight=0.2):
+    """Acceptance-matched hybrid loss (LK losses, arXiv 2602.23881): per position lambda * KL + (1 - lambda) * (1 -
+    coupled match), lambda = exp(-eta * coupled) with the match held constant, so KL leads while acceptance is low and
+    the coupled match itself takes over as it rises; plus cross-entropy on the sampled token."""
+    ids, probs = p_draft
+    logq = torch.log_softmax(logits, -1)
+    kl = (probs * (torch.log(probs.clamp_min(1e-12)) - logq.gather(1, ids))).sum(-1)
+    c = coupled_and_top(logits, ids, probs)[0]
+    lam = torch.exp(-eta * c.detach())
+    ce = -logq.gather(1, sampled[:, None])[:, 0]
+    return (lam * kl + (1 - lam) * (1 - c)).mean() + ce_weight * ce.mean(), kl.mean().detach(), ce.mean().detach()
 
 
 def coupled_and_top(logits, top_ids_draft, p_kept, alpha=1.0):
