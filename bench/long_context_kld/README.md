@@ -23,6 +23,12 @@ there, against a reference model, with the token-level detail to see where a dif
   with a bootstrap interval over chunks, by position and by token class (tool schemas, user turns, tool output,
   reasoning, calls, answers, markup, the first token after each `</think>`, and long-range copies: tokens that end an
   8-token run first seen more than 512 tokens earlier, the needles only the global-attention layers can reach).
+- **`stop_decision.py`** reads the same dumps at the positions that decide how long Flint reasons: every `</think>`
+  that closes a reasoning block (where the producing model chose to stop) and every hesitation marker in the
+  reasoning ("wait", "but", "maybe", "actually", ...: the word list of [answer_time](../answer_time/lengths.py), at
+  the word's first token). It reports each file's log-probability of the actual token there, minus the reference
+  file's and minus the dumps' reference model's, with bootstrap intervals over chunks, overall and by the model that
+  produced the conversation.
 
 ## Running it
 
@@ -39,6 +45,8 @@ LLAMA_KLD_DUMP=dump-x.tsv llama-perplexity -m x.gguf -f agent/eval.txt -c 8192 -
   --kl-divergence-base q8.agent.kld --kl-divergence
 # 5. compare
 python3 analyze.py --ref ud --chunks agent/chunks.jsonl --model flint-Q8_0.gguf ud=dump-ud.tsv x=dump-x.tsv
+python3 stop_decision.py --ref ud --chunks agent/chunks.jsonl --model flint-Q8_0.gguf --base-name Q8_0 \
+  ud=dump-ud.tsv x=dump-x.tsv
 ```
 
 The reference file holds 150,148 16-bit values per scored token: 29.5 GB for 24 chunks of 8,192 tokens. Delete it
@@ -127,3 +135,39 @@ on the same GPUs (G3 0.1040, K2h 0.1092 there).
   long-range-copy ratios where they were (G3g 1.049 and K2hg 1.073 on copies against BF16, G3 1.056, K2h 1.046)
   and costs 38–52 MB per token. It is free at 512 tokens (−0.0009 and −0.0003).
 - Written tokens move by less than their noise (G3g 0.883 against G3's 0.892).
+
+### Where reasoning stops (Q123)
+
+Does a quantized file change where Flint ends its reasoning? A file that gives the actual `</think>` less probability
+than UD-Q4_K_XL at the points where reasoning ended is less willing to stop; one that gives hesitation markers more
+probability re-checks more. Both would lengthen the reasoning, so both are read from the dumps above with
+`stop_decision.py`: 230 stops (every reasoning block in the scored halves is non-empty; 112 in conversations
+produced by G3, 118 by UD-Q4_K_XL) and 842 markers (maybe 272, but 266, actually 104, perhaps 65, however 53,
+wait 43, others 39).
+
+Difference in log-probability of the actual token, file minus UD-Q4_K_XL, in nats, 95 % bootstrap over the 24 chunks:
+
+| File | At `</think>` | At hesitation markers | `</think>` vs Q8_0 | Markers vs Q8_0 |
+|---|---|---|---|---|
+| UD-Q4_K_XL (mean log p) | (−0.163, p 0.889) | (−0.696, p 0.640) | +0.001 | −0.004 |
+| G3 | −0.004 (−0.035 to +0.017) | +0.005 (−0.009 to +0.022) | −0.003 | +0.001 |
+| G3h | +0.005 (−0.021 to +0.026) | −0.010 (−0.027 to +0.011) | +0.007 | −0.014 |
+| K2h | +0.007 (−0.022 to +0.028) | −0.006 (−0.022 to +0.013) | +0.008 | −0.010 |
+| K1h | +0.008 (−0.015 to +0.027) | −0.009 (−0.025 to +0.009) | +0.009 | −0.013 |
+| G3g | −0.007 (−0.035 to +0.014) | +0.002 (−0.010 to +0.017) | −0.006 | −0.002 |
+| K2hg | +0.001 (−0.026 to +0.022) | −0.011 (−0.022 to +0.005) | +0.003 | −0.015 |
+
+- **No file moves the stop decision.** Every shift is under 0.011 nats, a fifth of the 0.05-nat threshold set in
+  advance ([answer time](../../docs/research/notes/answer_time.md)), and every interval covers 0. At the 230 stops
+  every file gives the actual `</think>` 0.886–0.894 probability on average. Quant choice is not a lever on reasoning
+  length; the measured lengths agree (G3/UD-Q4_K_XL 1.000 on 3,477 single-turn tasks).
+- **The producing model shows, but cancels.** Split by producer, files give markers in G3's conversations
+  0.007–0.023 nats more probability than UD-Q4_K_XL does and markers in UD-Q4_K_XL's 0.016–0.035 less; at stops the
+  signs flip (−0.025 to −0.009 in G3's, +0.010 to +0.024 in UD-Q4_K_XL's). With half the conversations from each
+  producer the pooled difference balances it, and every split value stays below 0.05 too.
+- **Against BF16** (the 12 chunks of the bias check): at stops UD-Q4_K_XL −0.002, Q8_0 −0.008, G3 −0.015, K2h −0.005
+  nats; at markers all within ±0.017. The files' own log-probabilities on those chunks are identical to the 24-chunk
+  runs, so the comparisons to UD-Q4_K_XL there are the same numbers on half the chunks. On that half one value's
+  interval excludes 0, K2hg at markers (−0.017, −0.029 to −0.004): fewer hesitation markers, and a third of the
+  threshold.
+

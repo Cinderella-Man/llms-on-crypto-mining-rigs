@@ -518,6 +518,9 @@ is 0.98. It has not yet been run on E2 or E3.
      candidate. Then quant choice is not a length lever, and length enters the release only through section 5.1's
      gate.
    - **If a candidate is below −0.1 nats,** it gets experiment 2 before the decision run.
+   - **Outcome (Q123): closed.** At the 230 stops every file is within ±0.008 nats of UD (K2h +0.007, −0.022 to
+     +0.028; G3 −0.004, −0.035 to +0.017), at the 842 markers within ±0.011, every interval covering 0
+     ([results](../../../bench/long_context_kld/README.md#where-reasoning-stops-q123)).
 2. **E3's budget-decided problems at 64k.**
    - **What:** the 10 hard problems of eighth 1 that hit or nearly hit 32k (arc181_b, arc185_b, abc382_f, the 6 cut
      for both files, abc376_f). K = 4 per file, UD and K2h, the makers' sampling, budget 65,536, on one GPU set.

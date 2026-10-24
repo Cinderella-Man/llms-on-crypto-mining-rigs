@@ -31,6 +31,48 @@ def load_dump(path):
     return d
 
 
+def load_dumps(specs, only_chunks=None):
+    """NAME=DUMP.tsv specs as an ordered dict; only_chunks keeps those chunks, renumbered in that order"""
+    dumps = {}
+    for s in specs:
+        name, path = s.split('=', 1)
+        d = load_dump(path)
+        if only_chunks:
+            keep = [int(x) for x in only_chunks.split(',')]
+            order = {c: i for i, c in enumerate(keep)}
+            d = d[np.isin(d['chunk'], keep)]
+            d['chunk'] = np.array([order[int(c)] for c in d['chunk']])
+            d = d[np.lexsort((d['pos'], d['chunk']))]
+        dumps[name] = d
+    return dumps
+
+
+def check_same_tokens(dumps, ref_name):
+    ref = dumps[ref_name]
+    for n, d in dumps.items():
+        if len(d) != len(ref) or not (np.array_equal(d['chunk'], ref['chunk']) and np.array_equal(d['pos'], ref['pos'])
+                                      and np.array_equal(d['token'], ref['token'])):
+            sys.exit(f'{n}: its scored tokens differ from {ref_name}\'s')
+
+
+def piece_decoder(model):
+    """token id -> its bytes, from the GGUF's vocabulary (needs gguf-py)"""
+    import gguf
+    from build_eval import bytes_decoder
+    r = gguf.GGUFReader(model)
+    tok_strs = r.get_field('tokenizer.ggml.tokens').contents()
+    tok_types = r.get_field('tokenizer.ggml.token_type').contents()
+    dec = bytes_decoder()
+    cache = {}
+
+    def piece(t):
+        if t not in cache:
+            s = tok_strs[t]
+            cache[t] = s.encode('utf-8') if tok_types[t] in (3, 4) else bytes(dec[c] for c in s)
+        return cache[t]
+    return piece
+
+
 def labels_for(tokens, detok_piece):
     """class of every token of one chunk, by the chat markup around it"""
     pieces = [detok_piece(t) for t in tokens]
@@ -119,43 +161,17 @@ def main():
     ap.add_argument('dumps', nargs='+')
     a = ap.parse_args()
     rng = np.random.default_rng(0)
-    dumps = {}
-    for s in a.dumps:
-        name, path = s.split('=', 1)
-        d = load_dump(path)
-        if a.only_chunks:
-            keep = [int(x) for x in a.only_chunks.split(',')]
-            order = {c: i for i, c in enumerate(keep)}
-            d = d[np.isin(d['chunk'], keep)]
-            d['chunk'] = np.array([order[int(c)] for c in d['chunk']])
-            d = d[np.lexsort((d['pos'], d['chunk']))]
-        dumps[name] = d
+    dumps = load_dumps(a.dumps, a.only_chunks)
     names = list(dumps)
     if a.ref not in dumps:
         sys.exit(f'--ref {a.ref} has no dump')
     ref = dumps[a.ref]
-    for n, d in dumps.items():
-        if len(d) != len(ref) or not (np.array_equal(d['chunk'], ref['chunk']) and np.array_equal(d['pos'], ref['pos'])
-                                      and np.array_equal(d['token'], ref['token'])):
-            sys.exit(f'{n}: its scored tokens differ from {a.ref}\'s')
+    check_same_tokens(dumps, a.ref)
     chunks = sorted(set(ref['chunk'].tolist()))
 
     cls = None
     if a.chunks:
-        import gguf
-        from build_eval import bytes_decoder
-        r = gguf.GGUFReader(a.model)
-        tok_strs = r.get_field('tokenizer.ggml.tokens').contents()
-        tok_types = r.get_field('tokenizer.ggml.token_type').contents()
-        dec = bytes_decoder()
-        cache = {}
-
-        def piece(t):
-            if t not in cache:
-                s = tok_strs[t]
-                cache[t] = s.encode('utf-8') if tok_types[t] in (3, 4) else bytes(dec[c] for c in s)
-            return cache[t]
-
+        piece = piece_decoder(a.model)
         meta = [json.loads(l) for l in open(a.chunks)]
         cls = defaultdict(lambda: np.zeros(len(ref), bool))
         row_of = {(c, p): i for i, (c, p) in enumerate(zip(ref['chunk'], ref['pos']))}
