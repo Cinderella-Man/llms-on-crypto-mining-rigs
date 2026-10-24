@@ -23,11 +23,15 @@ paths are placeholders.
    `--extend` writes more prompts (other rows, other files and tasks), deduplicated against an existing file and
    numbered after it, so their answers and dumps join the first ones.
 
+   [tool_prompts.py](tool_prompts.py) adds tool-call prompts from Team-ACE/ToolACE and glaiveai/glaive-function-calling-v2
+   (both Apache-2.0), with their tool lists passed as `tools` so the template writes Flint's own tool format.
+
    ```bash
    pip install huggingface_hub pyarrow
    python prompts.py prompts.jsonl hf-cache /usr/lib/python3.12 /path/to/llama.cpp
    python prompts.py prompts-ext.jsonl hf-cache /usr/lib/python3.12 /path/to/llama.cpp --scale 3 --seed 21 \
        --extend prompts.jsonl
+   cat prompts*.jsonl > used.jsonl && python tool_prompts.py prompts-tools.jsonl hf-cache --extend used.jsonl
    ```
 
 2. **Answers** ([generate.py](generate.py)): Flint in llama-server (`--jinja`), the makers' sampling (temperature 1.0,
@@ -146,6 +150,7 @@ paths are placeholders.
 | File | What it does |
 |---|---|
 | [prompts.py](prompts.py) | training prompt set, and extensions of it |
+| [tool_prompts.py](tool_prompts.py) | tool-call prompts from two public tool-calling sets |
 | [generate.py](generate.py) | answers with exact token ids from llama-server, several copies sharing one prompt file |
 | [staircase_dump/](staircase_dump/) | `llama-staircase-dump`: layer inputs, final state (FP8 + row scale) and top-20 per position |
 | [feats.py](feats.py) | dump reader, `seqs`/`info`/`pack` commands, Flint's sampler chain on top-k log-probabilities |
