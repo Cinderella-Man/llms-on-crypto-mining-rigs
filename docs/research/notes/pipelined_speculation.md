@@ -230,12 +230,27 @@ them through the cards, one token of each in flight, instead of batching them in
   conversation's context); conversation c is sequence c, so a token's attention reads only its own conversation's cells.
   On a unified cache (the race's mode) every one-token step reads every conversation's KV.
 - **Slots bound to conversations.** Conversation c has its own range of one-token slots, so a slot's graph and CUDA
-  graphs are reused for the same sequence (a graph is reusable only for the same sequence ids); prompt chunks share two
-  chunk slots.
+  graphs are reused for the same sequence (a graph is reusable only for the same sequence ids); prompt chunks share
+  `--pipe-chunks` chunk slots (default 2).
 - **Prompts as pipeline work.** A new conversation's prompt is submitted in chunks of `--pipe-chunk` tokens
   (`llama_pipe_submit_tokens` on a slot reserved for a chunk) and runs between the other conversations' tokens.
   `llama_decode` would first drain the pipeline and stop every conversation for the whole prefill. A plain run with the
   same chunk size computes the same numbers, which is what the check compares against.
+- **Several chunks in flight (Q155).** Up to `--pipe-chunks` K chunks run at once (job key `chunks`), prompts in order
+  of arrival, several of one prompt: each card runs a prompt's chunks in submission order, so a chunk's attention on a
+  card finds the KV the previous chunk wrote there. With one chunk per prompt in flight, a prompt occupies one card at a
+  time. `--pipe-chunks-gen` G (job key `chunks_gen`) caps the chunks while any conversation generates.
+- **Chunks below the tokens' priority (Q155).** On one stream per card a token queued behind a chunk waits for it on
+  every card, so each chunk ahead of a token costs that token the chunk's whole pass through the cards (a 64-token
+  chunk holds a P106 for ~0.1 s, est.). `LLAMA_PIPE_CHUNK_STREAM=1` gives the chunk slots a second backend per GPU: the
+  context creates its own GPU backends with the device's greatest stream priority (the CUDA backend's init parameter
+  `priority=high`) and the chunk backends with the default, the lowest. A card then schedules a waiting token's kernels
+  ahead of a chunk's, so tokens overtake the chunks queued before them at kernel boundaries and the chunks fill the
+  time the tokens leave. The two streams share only the weights and the KV cache, where a chunk writes only its own
+  conversation's cells. The loop no longer waits for the oldest item: `llama_pipe_ready` (an event query,
+  `ggml_backend_event_query` in the CUDA backend's procedure table) tells it which items are complete, and it handles
+  the oldest complete item among each conversation's oldest (a conversation's own items still complete in order), else
+  waits for the oldest token or guess, else the oldest chunk.
 - **Sampling per sequence, on the device if wanted.** Each conversation has its own sampler and seed (seed + c). With
   `--pipe-backend-sample` the temperature chain runs on the last card: every slot's graph carries only its own
   sequence's chain, each token's random draw is keyed by (seed, position) with `llama_sampler_set_pos`, and each graph
@@ -246,8 +261,8 @@ them through the cards, one token of each in flight, instead of batching them in
   `--pipe-budget` items are in flight. With the budget at S_eff, N ≥ S_eff conversations leave no room for guesses, and
   a conversation left alone gets the slack back. Section 4 of the serving note ranks the candidates for a free slot.
 - **Not built:** the attention mask on the card (it is still copied from the host to every card for every token),
-  races inside the streams mode (they need several sequences in one stream, or a stream copy per sample), and the
-  llama-server integration.
+  races inside the streams mode (they need several sequences in one stream, or a stream copy per sample), and
+  several conversations in llama-server (its `--pipe-depth` pipelines a slot only while it generates alone).
 
 ## Correctness
 
@@ -312,6 +327,18 @@ The budget of one item allowed no guess in any run. Two bugs surfaced on the way
 input tensors (above), and the graph callback that pinned each layer's `norm` and last op to its card on the context's
 scheduler instead of the slot's, so slot graphs missed that placement and filled the context scheduler's hash table.
 Multi-GPU runs of the streams mode come with the rig.
+
+**Several chunks in flight, items handled out of order (Q155).** Three more jobs in check_streams.sh: `multi` (all
+conversations at once, four 32-token chunks in flight), `multi-arrive` (staggered arrivals) and `multi-gen` (four chunks
+in flight, one while any conversation generates, guesses in the slack). On granite on the CPU: three conversations with
+the temperature chain on the device, where the 941-token `rewrite.txt` prompt takes 30 chunks and has up to four of
+them outstanding at once, first with the default order and then with `PIPESPEC_PICK=newest`, which handles the newest
+complete item first. On the CPU every item is complete when it is submitted, so that order handles the conversations'
+items in the reverse of submission order. Then four conversations with host sampling (`edit.txt` in 78 chunks), newest
+first, with `LLAMA_PIPE_CHUNK_STREAM=1` set. All 70 conversation runs of the seven jobs equal their plain runs in tokens,
+logits, KV state and probe logits, and `check_identity.sh` at depths 1 and 3 and `check_server.sh` at depth 3 still
+match. The chunk streams themselves (two streams per card, their priorities, the event query) run only on a GPU and come
+with the rig run (step 4d).
 
 **The wrapped window cache at depth ≥ 4.** On the rig, K2h-r16 with the edit prompt (2,076 tokens) at depths 4–8
 differed from plain decoding from about the 490th generated token, on six and on nine cards alike. By then the prompt and
@@ -623,6 +650,23 @@ ssh rig "env BIN=$B MODEL=$M TAG=floor-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,
 Every identity column must read `yes`. The fed runs report tok/s per configuration in `summary.tsv`. The KV-pad pair
 compares `tok_s` of `cont-d8-edit`, and `traces.py` shows the gap to the next token after the 256-token steps. The floor
 run gives the speed-up of fillers alone over depth 0.
+
+**4d. Prompt chunks next to decoding conversations (Q155)** (the build of `pascal-p106-v2-q155`, which sits on
+`pascal-p106-v2-pipeserve-tools` and so also serves the tool-request A/B of the tool sampling note,
+`llama.cpp-20261024-98e79d8c9-pascal-p106-v2-q155`; ~20 min):
+
+```
+B=/opt/llama-builds/llama.cpp-20261024-98e79d8c9-pascal-p106-v2-q155/bin; M=<K2h-r16>
+ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=prefill-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 \
+    CONFIGS='k2 k8 k8g1 k4s k8s' ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_prefill.sh \
+    > /tmp/pipespec/prefill-9c.out 2>&1 < /dev/null &"
+```
+
+`k2` is the executor before Q155 (at most one chunk per prompt, two in flight): its `all` job is Q120's
+eight-conversation mix. `all` measures prefill throughput when nothing else is decoding: the first-token times of the
+long prompts and the job's tokens per second. `arrive` brings each prompt in while the others decode, so the comparison
+between `k8`, `k8g1` and `k8s` there is decode priority. Every `same_as_plain` must read `yes`. A configuration whose
+chunk slots do not fit next to the model stops at its start (`run-<config>.log`), and the next one runs.
 
 **5. Collect and clean up:**
 
