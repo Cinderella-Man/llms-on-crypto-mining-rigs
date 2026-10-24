@@ -1100,9 +1100,13 @@ walk of the next layer, which reaches `l_out` through the attention norm before 
 
 ### Switches
 
-- `GGML_CUDA_PERSISTENT_MOE`: `0` off (the default until the rig confirms the gain), `1` on for compute 6.1 only, `2` on
-  any NVIDIA GPU (for testing natively and through the compute_61 PTX); any other value, HIP and MUSA: never. The first
-  use on a device logs it with the device's compute capability.
+- `GGML_CUDA_PERSISTENT_MOE`: `1` on for compute 6.1 only (the default), `0` off, `2` on any NVIDIA GPU (for testing
+  natively and through the compute_61 PTX); any other value, HIP and MUSA: never. The first use on a device logs it with
+  the device's compute capability.
+- The MoE down-projection rescale must be off at one token (`LLAMA_NO_MOE_DOWN_RESCALE=tg`). With it on, its chain sits
+  between the GLU and the down product, the layer keeps the per-op path, and the backend warns once per device. The
+  kernel can't simply skip the rescale: it divides by `exp(k·ln 2)` computed in floating point, so skipping it would not
+  reproduce that path bit for bit.
 - `GGML_CUDA_PERSISTENT_MOE_CHECK=1`: the self-check. Every matched layer runs the persistent kernel into its scratch,
   then the per-op path as usual. Bit for bit on the device, the check compares every stage the per-op path writes out:
   router logits, expert ids and weights, routed activations, routed down outputs, shared activations, the routed sum
@@ -1146,10 +1150,17 @@ walk of the next layer, which reaches `l_out` through the attention norm before 
   for s in 0 1 0 1; do GGML_CUDA_PERSISTENT_MOE=$s $B/llama-bench -m $M -ngl 99 -fa on -p 512 -n 128 -r 3; done
   ```
 
-### Expected gain
+### Gain on the rig
 
-- The prototype on one P106-090 (rig): S4-L0's layer 198.5 → 171.3 µs (1.16×), G3's 203.1 → 173.8 µs (1.17×), with
-  two blocks per SM and 2 routed gate/up rows per lane group; 1.28 and 1.37 ms less per token over 47 layers.
+llama-bench tg128, warm (pp512 first in the same process), two rounds, one binary with the kernel off and on:
+
+| File | 6 cards | 9 cards |
+|---|---|---|
+| K2h-r16 | 37.4 → 40.7 tok/s (+8.8 %) | 39.3 → 41.5 (+5.6 %; 42.1 in round 2) |
+| UD-Q4_K_XL | 35.8 → 38.2 (+6.6 %) | 37.5 → 39.8 (+6.0 %) |
+
+- Prompt processing (pp512) is unchanged, and the self-check on the P106s finds every stage identical.
+- The prototype on one P106-090 predicted 1.28–1.37 ms less per token (1.16–1.17× per layer). On six cards K2h-r16 saves
+  2.2 ms, more than that: the real token's layers pay more for their launches than the benchmark's chain did.
 - Nine of the ten launches per layer go: 423 fewer per token on any card count.
-- On 9 cards K2h-r16's 25.4 ms token (39.3 tok/s) would lose ~1.3 ms: ~41 tok/s (est.); more if the real token's layer
-  pays more for its launches than the benchmark's chain does (~245 µs in the fork's event profile).
+- The kernel is on by default on compute 6.1 (`GGML_CUDA_PERSISTENT_MOE=0` turns it off).
