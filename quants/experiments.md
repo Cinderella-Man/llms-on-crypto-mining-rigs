@@ -18,7 +18,7 @@ rig tests prepared: Q79, the engine A/Bs Q100/Q92/Q78/Q88/Q99/Q101, the release 
 7-GPU quant machine works until 12:00: Q41 task checks on GPUs 0–4 (G3 single-turn at K = 2; new multi-turn
 scenarios, UD-Q4_K_XL against G3); on GPUs 5–6 since 06:00 a BF16 check of Q106's reference, then G3g and K2hg (Q107).
 Lead release candidate: K2h (passes single-turn non-inferiority, KLD 0.109 at 2.14 GB per token; level with
-UD-Q4_K_XL at 8k on agent text, Q106). Research runs in hourly rounds (round 10 done: answer time; round 11 at the next hourly slot); each
+UD-Q4_K_XL at 8k on agent text, Q106). Research runs in hourly rounds (round 11: a long-context-aware mix against UD); each
 round can change the priorities below, and every change is logged under "Decision log". Keep this line current: say
 what is running, where, and since when.
 
