@@ -13,7 +13,7 @@
 # Run it on the rig, from this repository:
 #   scp -r bench/pipespec rig:/tmp/
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5 \
-#       [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [TS=6,6,6,6,6,6,6,5,2] bash /tmp/pipespec/rig_run.sh \
+#       [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [TS=6,6,6,6,6,6,6,5,2] bash /tmp/pipespec/rig_run.sh \
 #       > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # Optional: N (tokens per job, 512), DEPTHS ('1 2 3 4 5'), PROMPTS ('chat code edit rewrite'), CTX (8192),
 # BG (1: greedy sampling on the last card in both modes, as llama-server's backend sampling does, so only a token id

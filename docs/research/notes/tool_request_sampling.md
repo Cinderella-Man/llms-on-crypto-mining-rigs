@@ -643,14 +643,14 @@ Build the tarball with `scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-too
 B=/opt/llama-builds/llama.cpp-20261024-972ccde20-pascal-p106-v2-toolsample/bin
 # nine cards, then six (GPUS=0,1,2,3,4,5) to line up with llama-bench
 ssh rig "BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf GPUS=0,1,2,3,4,5,6,7,8 TAG=q67-9 \
-    LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" < bench/tool_sampling/tool_request_ab.sh
+    LLAMA_NO_MOE_DOWN_RESCALE=tg bash -s" < bench/tool_sampling/tool_request_ab.sh
 # the old switch-off on the same build, for a same-binary reference
 ssh rig "BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q67-9-hostenv LLAMA_GRAMMAR_HOST_SAMPLING=1 \
-    LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" < bench/tool_sampling/tool_request_ab.sh
+    LLAMA_NO_MOE_DOWN_RESCALE=tg bash -s" < bench/tool_sampling/tool_request_ab.sh
 # the screened head with a grammar, on the -screen build, with Q92's screen side file next to the models
 B=/opt/llama-builds/llama.cpp-20261024-06a17d382-pascal-p106-v2-toolsample-screen/bin
 ssh rig "BIN=$B MODEL=/mnt/models2/flint/flint-S4L0.gguf TAG=q67-screen-9 LLAMA_SCREEN_HEAD=1 \
-    LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" \
+    LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf LLAMA_NO_MOE_DOWN_RESCALE=tg bash -s" \
     < bench/tool_sampling/tool_request_ab.sh
 ssh rig 'grep -o "screened output head [a-z]*" /tmp/tool_request_ab/q67-screen-9/server.log | uniq -c'
 ```

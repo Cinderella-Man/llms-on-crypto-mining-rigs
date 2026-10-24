@@ -9,7 +9,7 @@
 # 0.95 / top-k 20 / min-p 0. Prints tokens and tok/s per request.
 #
 #   ssh rig "BIN=/opt/llama-builds/<build>/bin MODEL=/mnt/models2/flint/flint-S4L0.gguf GPUS=0,1,2,3,4,5 \
-#       LLAMA_NO_MOE_DOWN_RESCALE=1 bash -s" < bench/tool_sampling/tool_request_ab.sh
+#       LLAMA_NO_MOE_DOWN_RESCALE=tg bash -s" < bench/tool_sampling/tool_request_ab.sh
 #
 # Results go to /tmp/tool_request_ab/<TAG>/ (summary.txt, results.jsonl, server.log). Host-RAM safety as in
 # scripts/server_bench.sh: --cache-ram 0, --ctx-checkpoints 0 and a watchdog.

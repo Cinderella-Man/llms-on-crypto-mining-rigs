@@ -16,7 +16,7 @@
 # Run it on the rig, from this repository:
 #   scp -r bench/pipespec rig:/tmp/
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5,6,7,8 \
-#       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [NS='1 4 8'] [CTX=8192] [NTOK=512] \
+#       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [NS='1 4 8'] [CTX=8192] [NTOK=512] \
 #       [CONFIGS='u0 u2 u2f'] bash /tmp/pipespec/rig_hostloop.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # CTX is per conversation. Output in /tmp/pipespec/out/<TAG>/: jobs-<config>.txt, run-<config>.log, results-<config>.txt,
 # host-<config>.csv (the process's CPU use each second), gpu.csv, summary.tsv, and traces of the single-stream pipe jobs

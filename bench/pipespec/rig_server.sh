@@ -18,7 +18,7 @@
 # Run it on the rig, from this repository (~35 min on nine cards: four model loads and 16 requests per depth):
 #   scp -r bench/pipespec rig:/tmp/
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5,6,7,8 \
-#       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [DEPTHS='0 1 2 3'] [GUESS=cont] [CTX=32768] \
+#       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [DEPTHS='0 1 2 3'] [GUESS=cont] [CTX=32768] \
 #       [MAX_TOKENS=768] [TOOL_MAX_TOKENS=2048] [SEED=1] [EXTRA_ARGS='--pipe-floor 3'] [STORE=<.pstore file>] \
 #       bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # Output in /tmp/pipespec/out/<TAG>/: server-d<config>.log, results.jsonl (one line per request and configuration),

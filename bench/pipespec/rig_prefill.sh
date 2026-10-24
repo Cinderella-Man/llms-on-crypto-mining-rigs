@@ -22,7 +22,7 @@
 # Run it on the rig, from this repository (~20 min for five configurations):
 #   scp -r bench/pipespec rig:/tmp/
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5,6,7,8 \
-#       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1'] [CONFIGS='k2 k8 k8g1 k4s k8s'] [N=8] [CTX=8192] \
+#       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [CONFIGS='k2 k8 k8g1 k4s k8s'] [N=8] [CTX=8192] \
 #       [NTOK=512] [CHUNK=64] [ARRIVE=64] bash /tmp/pipespec/rig_prefill.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # CTX is per conversation. Each chunk slot holds the compute buffers of a CHUNK-token evaluation on every card, so a
 # large K can fail to fit next to the model: that configuration's process stops at its start and the next one runs.

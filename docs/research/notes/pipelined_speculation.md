@@ -721,21 +721,25 @@ What to read:
 - **Fallback:** a request that does not qualify (penalties on, `n_probs`) shows no guesses.
 
 **4c. The fixes after the first rig runs** (the build of `pascal-p106-v2-pipeserve` with Q153, Q154 and Q156,
-`llama.cpp-20261024-2650855b2-pascal-p106-v2-pipeserve`; ~1 h):
+`llama.cpp-20261024-2650855b2-pascal-p106-v2-pipeserve`; ~1 h). From this step on the commands set
+`LLAMA_NO_MOE_DOWN_RESCALE=tg`: the MoE down-projection rescale is dropped only where that product has one token,
+which the fork's Pascal kernels compute with FP32 block sums. The earlier steps ran with `=1`, which drops it in prompt
+batches too, where MMQ reads FP16 block sums (Q4_1, Q5_1, Q4_K, Q5_K, and Q4_0 without tensor cores). That gave NaN on a
+long-context prompt chunk of K2h-r16 (found on the V100s).
 
 ```
 B=/opt/llama-builds/llama.cpp-20261024-2650855b2-pascal-p106-v2-pipeserve/bin; M=<K2h-r16>
 # Q156: fed tokens in streams mode (n4-fed and n8-fed must now be at least n4 and n8)
 ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=fedfix-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 CONFIGS=u2f NS='4 8' \
-    ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_hostloop.sh > /tmp/pipespec/fedfix-9c.out 2>&1 < /dev/null &"
+    ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_hostloop.sh > /tmp/pipespec/fedfix-9c.out 2>&1 < /dev/null &"
 # Q153: depth 8 on the edit prompt, KV steps of 256 against 1024 (traces.py: the slow tokens after each step)
 for pad in 256 1024; do
   ssh rig "env BIN=$B MODEL=$M TAG=kvpad$pad-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 PROMPTS=edit DEPTHS='8' \
-      ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1 LLAMA_KV_PAD=$pad' bash /tmp/pipespec/rig_run.sh > /tmp/pipespec/kvpad$pad-9c.out 2>&1"
+      ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg LLAMA_KV_PAD=$pad' bash /tmp/pipespec/rig_run.sh > /tmp/pipespec/kvpad$pad-9c.out 2>&1"
 done
 # Q154: the floor in the server, fillers only (no guesser) at depth 3, against depth 0
 ssh rig "env BIN=$B MODEL=$M TAG=floor-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3' GUESS=none \
-    EXTRA_ARGS='--pipe-floor 3' ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/floor-9c.out 2>&1"
+    EXTRA_ARGS='--pipe-floor 3' ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/floor-9c.out 2>&1"
 ```
 
 Every identity column must read `yes`. The fed runs report tok/s per configuration in `summary.tsv`. The KV-pad pair
@@ -749,7 +753,7 @@ run gives the speed-up of fillers alone over depth 0.
 ```
 B=/opt/llama-builds/llama.cpp-20261024-98e79d8c9-pascal-p106-v2-q155/bin; M=<K2h-r16>
 ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=prefill-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 \
-    CONFIGS='k2 k8 k8g1 k4s k8s' ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_prefill.sh \
+    CONFIGS='k2 k8 k8g1 k4s k8s' ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_prefill.sh \
     > /tmp/pipespec/prefill-9c.out 2>&1 < /dev/null &"
 ```
 
@@ -767,7 +771,7 @@ answers, `flint-answers-clean-13.8M.pstore`, 110 MB, copied next to the builds; 
 B=/opt/llama-builds/llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161/bin; M=<K2h-r16>
 S=/opt/llama-builds/stores/flint-answers-clean-13.8M.pstore
 ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=store-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3 3s' \\
-    STORE=$S ENVS='LLAMA_NO_MOE_DOWN_RESCALE=1' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/store-9c.out 2>&1 < /dev/null &"
+    STORE=$S ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/store-9c.out 2>&1 < /dev/null &"
 ```
 
 `d3s x` against `d3 x` is the store's gain per request: chat, code and edit prompts and the coding-agent tool request,
