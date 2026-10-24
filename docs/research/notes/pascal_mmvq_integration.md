@@ -208,11 +208,18 @@ values.
   alignment; where that fails too (views with padded rows, as `test-backend-ops` builds with `k_v`, `m_v`, `pad`), the
   stock kernel runs.
 
-**The launch shape of the stock kernel.** The fork's wide-rows commit (2 warps per block where the small-K rule doesn't
-apply) edits llama.cpp's generic parameter table, which is right for an sm_61-only build and wrong for every other GPU.
-An upstream PR would add `MMVQ_PARAMETERS_PASCAL_DP4A` to `get_device_table_id` instead (host side and device side,
-`__CUDA_ARCH__ == 610`), the id PR #25479 introduces. The stock kernel still runs everything the new kernel doesn't
-cover, such as UD-Q4_K_XL's K- and I-quants, which gained 26–27 % from the 2-warp shape.
+**The launch shape of the stock kernel.** The fork's wide-rows commit gives llama.cpp's kernel 2 warps per block at
+one token where the small-K rule doesn't apply. The stock kernel still runs everything the new kernel doesn't cover,
+such as UD-Q4_K_XL's K- and I-quants, which gained 26–27 % from the 2-warp shape. It applies to code compiled for
+compute 6.1 only (fork commit `9d5f1530e`):
+- a table id of its own, `MMVQ_PARAMETERS_PASCAL_DP4A` (the id PR #25479 introduces), picked on the device by
+  `__CUDA_ARCH__ == 610`;
+- on the host, by the PTX architecture of the code the device runs (`cudaFuncGetAttributes` on a probe kernel), so that
+  host and device pick the same table natively and under `CUDA_FORCE_PTX_JIT=1`, since the kernels' warp counts are
+  fixed at compile time;
+- every other GPU keeps llama.cpp's generic table: on sm_86 the fork's `mmvq.cu` compiles to upstream's SASS for all
+  317 kernels both have (64 differed with the shape in the generic table), and its sm_61 code is unchanged;
+- CUDA graphs, which stock llama.cpp captures from Volta on, are enabled for compute 6.1 exactly (PR #27721).
 
 **A switch for testing.** `GGML_CUDA_MMVQ_PASCAL` = `0` (off), `1` (default: compute 6.1 only) or `2` (any NVIDIA GPU).
 With `2`, a modern GPU runs the Pascal kernel natively and, with `CUDA_FORCE_PTX_JIT=1`, from the compute_61 PTX. That
@@ -1093,8 +1100,9 @@ walk of the next layer, which reaches `l_out` through the attention norm before 
 
 ### Switches
 
-- `GGML_CUDA_PERSISTENT_MOE`: `0` off (the default until the rig confirms the gain), `1` on for compute 6.1, `2` on
-  any NVIDIA GPU (for testing natively and through the compute_61 PTX).
+- `GGML_CUDA_PERSISTENT_MOE`: `0` off (the default until the rig confirms the gain), `1` on for compute 6.1 only, `2` on
+  any NVIDIA GPU (for testing natively and through the compute_61 PTX); any other value, HIP and MUSA: never. The first
+  use on a device logs it with the device's compute capability.
 - `GGML_CUDA_PERSISTENT_MOE_CHECK=1`: the self-check. Every matched layer runs the persistent kernel into its scratch,
   then the per-op path as usual. Bit for bit on the device, the check compares every stage the per-op path writes out:
   router logits, expert ids and weights, routed activations, routed down outputs, shared activations, the routed sum
