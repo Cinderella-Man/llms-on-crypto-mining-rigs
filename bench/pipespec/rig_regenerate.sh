@@ -8,6 +8,7 @@
 #   tile0       GGML_CUDA_FATTN_TILE_PASCAL=0 (compute 6.1's prompt attention kernel off)
 #   hostmask    LLAMA_GPU_KQ_MASK=0 (the attention mask built on the host)
 #   reserve     LLAMA_SAMPLER_RESERVE=1 (a scheduler reserve at every sampler attach and detach)
+#   upload0     LLAMA_INPUT_UPLOAD=0 (host inputs uploaded one at a time; compute 6.1 packs them by default)
 #   plain       no --pipe-depth
 # Run it on the rig, from this repository (~6 min per run on nine cards):
 #   scp -r bench/pipespec rig:/tmp/
@@ -42,6 +43,7 @@ for run in $RUNS; do
         tile0)    envs="GGML_CUDA_FATTN_TILE_PASCAL=0" ;;
         hostmask) envs="LLAMA_GPU_KQ_MASK=0" ;;
         reserve)  envs="LLAMA_SAMPLER_RESERVE=1" ;;
+        upload0)  envs="LLAMA_INPUT_UPLOAD=0" ;;
         plain)    pipe="" ;;
         *) echo "unknown run $run"; continue ;;
     esac

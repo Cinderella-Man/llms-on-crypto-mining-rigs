@@ -10,6 +10,14 @@
 # SEEDS, NTOK tokens; one streamed request; one request with a stop string taken from the reference's output, so that
 # a stop arrives with guesses in flight. The server log must show guesses, right and wrong ones ("pipelined = ...").
 # FLOORS adds configurations with no guesser and --pipe-floor F (every guess a filler token, Q154).
+# The list ends with a chat UI's "regenerate": the first prompt's T 0 request three times in a row, each re-reading a
+# fully cached prompt (one prompt token evaluated again; on a sliding-window model a context checkpoint superseded).
+# A server that dies is reported with its exit status (139: a segfault) and fails the check.
+#
+# The rig's scheduler mode: with two or more cards the scheduler keeps several copies of every split input (pipeline
+# parallelism), and on compute 6.1 llama.cpp uploads the host inputs packed (LLAMA_INPUT_UPLOAD=2 by default there).
+# To cover that combination on other GPUs, run once with LLAMA_INPUT_UPLOAD=2 in the environment and two devices in
+# ARGS (--device CUDA0,CUDA0 makes two of one card).
 #
 # Usage (environment variables):
 #   BIN=<dir with llama-server> MODEL=<gguf> [ARGS='-ngl 99 -fa on -c 8192'] [DEPTHS='3 5 8'] [GUESSES='cont copy']
@@ -93,9 +101,17 @@ except (FileNotFoundError, StopIteration):
 if stop:
     reqs.append((p0.split("/")[-1] + " T1 seed 1 stop", dict(messages=msgs0, temperature=1.0, seed=1, max_tokens=ntok, stop=[stop], **SAMPLING)))
 
+# regenerate: the same request three times, each on a fully cached prompt
+for i in (1, 2, 3):
+    reqs.append((p0.split("/")[-1] + f" T0 regenerate {i}", dict(messages=msgs0, temperature=0.0, seed=1, max_tokens=ntok, **SAMPLING)))
+
 with open(out, "w") as f:
     for name, body in reqs:
-        r = post(body)
+        try:
+            r = post(body)
+        except Exception as e:
+            print(f"request {name}: FAILED ({type(e).__name__}: {e})")
+            sys.exit(1)
         m = r["choices"][0]["message"]
         t = r.get("timings", {})
         row = {"name": name, "reasoning": m.get("reasoning_content") or "", "content": m.get("content") or "",
@@ -105,7 +121,13 @@ with open(out, "w") as f:
         f.write(json.dumps(row) + "\n")
 EOF
     local rc=$?
+    # a server stopped here exits with 0 (or 143); any other status means it died on its own
     kill $srv 2> /dev/null; wait $srv 2> /dev/null
+    local status=$?
+    if [ $status -ne 0 ] && [ $status -ne 143 ]; then
+        echo "$name: the server died (exit status $status; 139 = segfault), log: $OUT/$name.log"
+        rc=1
+    fi
     sed -i -E '/ time =|tokens per second|t\/s/d' "$OUT/$name.log"
     return $rc
 }
@@ -147,9 +169,9 @@ done
 run_config plain || fail=1
 python3 -I - "$OUT/plain.jsonl" "$OUT/reference.jsonl" <<'EOF' || fail=1
 import json, sys
-a = {r["name"]: r for r in map(json.loads, open(sys.argv[1])) if r["name"].endswith(" T0")}
-b = {r["name"]: r for r in map(json.loads, open(sys.argv[2])) if r["name"].endswith(" T0")}
-diff = [k for k in b if (a[k]["reasoning"], a[k]["content"], a[k]["n"]) != (b[k]["reasoning"], b[k]["content"], b[k]["n"])]
+a = {r["name"]: r for r in map(json.loads, open(sys.argv[1])) if " T0" in r["name"]}
+b = {r["name"]: r for r in map(json.loads, open(sys.argv[2])) if " T0" in r["name"]}
+diff = [k for k in b if k not in a or (a[k]["reasoning"], a[k]["content"], a[k]["n"]) != (b[k]["reasoning"], b[k]["content"], b[k]["n"])]
 print(f"{'no --pipe-depth, T 0':24} {len(b) - len(diff)} of {len(b)} requests identical" + (f"; differ: {', '.join(diff)}" if diff else ""))
 sys.exit(1 if diff else 0)
 EOF
