@@ -45,7 +45,8 @@ exactly the tokens of plain decoding. To run it:
 1. **The engine:** the two archives of the fork's release RIG-TBD (tag and link), unpacked into one folder; the rig
    needs NVIDIA's driver 580 and no CUDA toolkit ([Run it](#run-it)).
 2. **The model:** Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB) on nine cards; on six cards
-   our own K2h-r16 (29.4 GB, RIG-TBD: its link) or Unsloth's UD-Q4_K_XL (25.1 GB).
+   our own [K2h-r16](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF) (29.4 GB) or Unsloth's UD-Q4_K_XL
+   (25.1 GB).
 3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
 4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
 

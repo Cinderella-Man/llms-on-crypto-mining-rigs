@@ -26,7 +26,7 @@ longer than reading UD-Q4_K_XL's 2.21 GB.
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
-| Model file, six cards | K2h-r16 (29.4 GB), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine (RIG-TBD: its download link) |
+| Model file, six cards | [K2h-r16](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF) (29.4 GB), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
 | Cards | all nine for Q8_0 at the full 262,144-token context; six run K2h-r16 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
 
@@ -156,7 +156,8 @@ first card in its own CUDA stream; the last card still samples every token, so t
 learned from Flint Q8_0's hidden states and works with any Flint file. How it is built and trained:
 [docs/drafter.md](../../docs/drafter.md).
 
-- **Files** (~0.27 GB each, from the release assets; RIG-TBD: the names follow the release's tag):
+- **Files** (~0.27 GB each, from the release assets or
+  [Hugging Face](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); RIG-TBD: the names follow the release's tag):
   `flint-staircase-drafter-9cards-v2.0.gguf` for nine cards, trained on both nine-card splits;
   `flint-staircase-drafter-v2.0.gguf` for six cards and any other split of 3–12 cards, trained on all of them (a quarter
   of its training each on six and nine cards).
@@ -207,7 +208,7 @@ Against Flint's original 16-bit weights, 80 × 512 tokens of wikitext-2:
 |---|---|---|---|---|
 | Unsloth Q8_0 | 42.3 GB | 93.3 % | 0.052 | +3.3 % |
 | Unsloth UD-Q4_K_XL | 25.1 GB | 87.7 % | 0.120 | +3.9 % |
-| K2h-r16 (ours) | not published | 88.8 % | 0.105 | +2.7 % |
+| K2h-r16 (ours) | 29.4 GB | 88.8 % | 0.105 | +2.7 % |
 
 - **K2h-r16** is a mix of Q5_0 and Q8_0 tensors, formats the Pascal kernels decode fast, made from the original weights
   with Unsloth's importance matrix, with a GPTQ-rounded Q5_0 output head and a 16-bit router. The same tensors with a
