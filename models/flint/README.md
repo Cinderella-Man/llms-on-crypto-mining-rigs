@@ -170,16 +170,17 @@ Served, `--pipe-depth 3`, K2h-r16 at 8,192 tokens of context unless the row says
 requests (chat, code and edit answers of 512 tokens and a coding-agent tool request of 1,536, each at temperature 0 and
 at the makers' sampling) ([Q20](../../quants/experiments.md#registry)):
 
-| | No guessing | Copy lookup and store | **Store, then the drafter** | Copy lookup, then the drafter |
+| | No guessing | Copy lookup, continuations and store | **The same, then the drafter** | The drafter without the store |
 |---|---|---|---|---|
 | **Nine cards, Q8_0 at 262,144 tokens**, `-ts 6,6,5,5,6,5,5,6,6`, nine-card file | RIG-TBD | RIG-TBD | **RIG-TBD** | |
 | Nine cards, `-ts 6,6,6,6,6,6,6,5,2`, nine-card file | 33.4 | 48.6 | **50.4** | 44.4 |
 | Nine cards, `-ts 6,6,6,6,5,5,5,5,5`, nine-card file | 33.4 | 48.6 | **50.3** | |
 | Six cards, general file | 34.3 | 49.0 | **49.5** | |
 
-- **The drafter adds 3.7 % to the store on nine cards** (8.6 % on chat and code at temperature 0) and breaks even on
-  six; 53.8 % of its guesses were right. Run it with the store: without it, the drafter alone (44.4) is slower than
-  the store alone (48.6).
+- **The drafter adds 3.7 % on nine cards** to the copy lookup, continuations and store (8.6 % on chat and code at
+  temperature 0), and 1 % on six cards (49.5 against 49.0); 53.8 % of its guesses were right.
+- **Not measured yet:** the copy lookup and continuations without the store, so what the store and the drafter add on
+  their own is open (RIG-TBD: a rig test of each piece).
 - **One guess costs 5.3–7.3 ms on the first card**, which also runs Flint's first layers; the design estimated
   1.6–2.6 ms. That cost, not the guessing quality, now limits the gain.
 - Every answer was identical to plain decoding in every configuration.
