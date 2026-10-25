@@ -628,10 +628,18 @@ Setup ([grammar_sampling_check.py](../../../bench/tool_sampling/grammar_sampling
 - 4 of those 601 tokens were rejected (0.67 %). At that rate the host fallback costs 0.0067 × (50–150 ms + 2.8 ms),
   about 0.35–1.0 ms per grammar token, or 0.07–0.2 ms per token of the request.
 
-**Not yet checked on a GPU:**
-- the same comparison on CUDA, whose softmax and cumulative sum may round differently from the CPU backend's at T 1;
-- Q66 over the 300 BFCL pilot tasks;
-- the screened-head combination (screen on against off).
+**On CUDA** (one V100 of the 7-GPU machine, the fork's v2 release candidate with this change; Flint UD-Q4_K_XL, one
+BFCL task per category at T 0 and T 1 with seed 1):
+- Backend sampling on against off: 8 of 8 tasks identical at each temperature with the tool grammar, and 8 of 8 without
+  it. All 2,620 tokens were sampled on the device, 542 of them while the grammar applied, with 5 rejections resampled
+  from the fetched row and no switch-off.
+- `LLAMA_GRAMMAR_HOST_SAMPLING=1` gave the host path's output for 8 of 8 tasks at each temperature, and logged its
+  switch-off warning once per grammar request.
+- `LLAMA_GRAMMAR_TEST_REJECT=3`: 385 forced rejections, each resampled from the fetched row; device against host
+  identical for 8 of 8 tasks at each temperature.
+
+**Not yet checked on a GPU:** Q66 over the 300 BFCL pilot tasks, and the screened-head combination (screen on against
+off).
 
 ### 5.5 On the rig
 

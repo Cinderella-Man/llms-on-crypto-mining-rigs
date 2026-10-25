@@ -447,8 +447,10 @@ complete item first. On the CPU every item is complete when it is submitted, so 
 items in the reverse of submission order. Then four conversations with host sampling (`edit.txt` in 78 chunks), newest
 first, with `LLAMA_PIPE_CHUNK_STREAM=1` set. All 70 conversation runs of the seven jobs equal their plain runs in tokens,
 logits, KV state and probe logits, and `check_identity.sh` at depths 1 and 3 and `check_server.sh` at depth 3 still
-match. The chunk streams themselves (two streams per card, their priorities, the event query) run only on a GPU and come
-with the rig run (step 4d).
+match. On one V100 of the 7-GPU machine (the fork's v2 release candidate), the same check with four 32-token chunks in
+flight gave 84 of 84 conversation runs equal to their plain runs on granite, with and without `LLAMA_PIPE_CHUNK_STREAM=1`
+and with sampling on the device and on the host. `pipe_init` reported the second stream ("chunk streams 1"), and Flint G3
+with the chunk streams gave 21 of 21. The timing side (decode priority on the rig's nine cards) is step 4d.
 
 **The wrapped window cache at depth ≥ 4.** On the rig, K2h-r16 with the edit prompt (2,076 tokens) at depths 4–8
 differed from plain decoding from about the 490th generated token, on six and on nine cards alike. By then the prompt and
@@ -541,8 +543,11 @@ sampler runs on the CPU backend:
 | granite-3.1-3b-a800m, 256 tokens | depths 3, 5, 8 × `cont`, `copy` | 11 (chat, rewrite and edit prompts at T 0 and T 1 with two seeds; streamed; stop string) | `cont` 1,658 / 596, `copy` 1,470 / 35 | all identical |
 | K2h-r16 (sliding-window layers, `-ub 32` so that the window cache wraps), 192 tokens | depths 4, 8, `cont` | 5 (chat and rewrite at T 0 and T 1; streamed) | 246 / 309 | all identical |
 
-At temperature 0 the requests also equal a server without `--pipe-depth` (3 for granite, 2 for K2h-r16). The CUDA run on
-two GPUs is pending.
+At temperature 0 the requests also equal a server without `--pipe-depth` (3 for granite, 2 for K2h-r16). On CUDA (one
+V100, the fork's v2 release candidate, Flint UD-Q4_K_XL): one BFCL tool request per category at T 0 and T 1 with seed 1,
+sent to a server at depth 3 with `cont` and the continuation store. Its replies matched those of a server with one
+token in flight and no guess for 8 of 8 tasks at each temperature. The requests ran pipelined until their tool calls
+started (4,551 guesses: 724 right, 1,276 wrong, 1,873 of them from the store).
 
 Tool requests on `pascal-p106-v2-pipeserve-tools`, with
 [grammar_sampling_check.py](../../../bench/tool_sampling/grammar_sampling_check.py): one BFCL task per category with its
