@@ -24,8 +24,9 @@ card 2 or 3, older ones are complete: a "staircase" of depths. The design follow
 design and not EAGLE-3, Medusa or MTP is in [pipeline drafter](research/notes/pipeline_drafter.md). It sits behind the
 copy lookup, which guesses first inside copied text.
 
-| Where we stand (2026-10-25 12:30) | |
+| Where we stand (2026-10-25 13:50) | |
 |---|---|
+| Data (the owner, 2026-10-25 13:40) | Only publishable data sources from now on. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts: **trained on excluded data, not for release**. Their numbers stand as measurements of the method. The heads are retrained (C9) and the store rebuilt (C7) on the strict list: ToolACE, glaive-function-calling-v2, Hermes function calling, NuminaMath, OpenR1, and our own stdlib and llama.cpp edit and agent prompts. Rig tests of the guesser and the drafter wait for them |
 | Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
 | Cost per guess | 5.3–7.3 ms on one P106, 2–3× the design estimate and about one pipeline cycle, on the card that also runs Flint's first stage: the cost, not the acceptance, now caps the gain |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
@@ -427,6 +428,9 @@ All acceptance numbers so far are Gumbel-coupled; the sampler that llama.cpp ser
 
 ## 6. Results and learning curve
 
+Every head in this section was trained on excluded data (ShareGPT, UltraChat and Magicoder prompts among its sources):
+not for release (section 1). The numbers measure the method.
+
 Coupled acceptance with α 3; "–" is not measured. Card count is the split the windows stand for; validation is on the
 row's own window.
 
@@ -472,6 +476,9 @@ row's own window.
 - **In front of the drafter:** the continuation store (Q161, `--pipe-store`) adds ~5 % at no card cost.
 
 ### Served on the rig (2026-10-25)
+
+R2-9, R2-gen and the 13.8 M-token continuation store were trained or built on excluded data: not for release; the
+numbers measure the method and the engine.
 
 rc4 `460160e93`, K2h-r16, llama-server `--pipe-depth 3 -c 8192 -bs`, one request at a time, prompt caching off; chat,
 code and edit answers of 512 tokens and a coding-agent tool request of 1,536 tokens, at T 0 and at the makers' sampling
@@ -563,9 +570,11 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 11. **Overfitting:** with every new data size, dropout or noise against a control, once fresh data stops arriving.
 12. **Generation throughput:** the two-card G3 copy is GPU-bound with its cards taking turns; `-ub 48` did not help.
     A different server (vLLM) is a candidate.
-13. **What each guess source is worth** (owner-approved rig test, `rig_d3_sources.sh`, 2026-10-25 afternoon): the copy
-    lookup alone, with the request's continuations, with the store; the copy lookup then the head; and all of them. It
-    answers whether the head pays off without the store, and whether the store ships.
+13. **What each guess source is worth** (owner-approved rig test, `rig_d3_sources.sh`): the copy lookup alone, with
+    the request's continuations, with the store; the copy lookup then the head; and all of them. It answers whether the
+    head pays off without the store, and whether the store ships. On hold, with the Q8_0 served test and the placement
+    test, until the head and the store are rebuilt on the strict data list (the owner, 2026-10-25 13:40); no testing or
+    benchmarking of the guesser or the drafter until then.
 
 ## 9. Changelog
 
@@ -638,6 +647,10 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   53.8 % of the time, as offline. One guess costs 5.3–7.3 ms on a P106 (est. 1.6–2.6 ms), the limit now. rc4 later
   became `2d53179aa` (C7's allocator fix for a rig-only crash with packed uploads, off the drafter's path; these numbers
   stand).
-- 2026-10-25 14:00 (CET): the guess-sources test prepared (`rig_d3_sources.sh`, owner-approved): copy lookup alone,
+- 2026-10-25 13:32 (CET): the guess-sources test prepared (`rig_d3_sources.sh`, owner-approved): copy lookup alone,
   with the request's continuations, with the store, the copy lookup then the head, and all of them, on the release
   split. Until it runs, the head's worth without the store is not measured.
+- 2026-10-25 13:40: the owner's data rule: only publishable sources. Every head so far and the continuation store were
+  trained or built partly on ShareGPT, UltraChat and Magicoder prompts: trained on excluded data, not for release.
+  C9 retrains the heads and C7 rebuilds the store on the strict list; the guess-sources, Q8_0 served and placement
+  rig tests wait for them, and nothing of the guesser or the drafter is tested or benchmarked until then.
