@@ -122,6 +122,10 @@ Unsloth's importance matrix. The tensors are copied byte for byte and verified.
 (`build_k2h_r16.sh`'s `verify` step). With `HEAD_FROM` every tensor must be equal; with a computed head, every tensor
 but `output.weight`. The header is not compared: names and tool versions in it differ between builds.
 
+**Verified on 2026-10-25:** `build_k2h_r16.sh` with `STEPS="quantize head router verify"` and `HEAD_FROM`, starting
+from the BF16 conversion, rebuilt the file with all 779 tensors equal byte for byte to the shipped K2h-r16
+(`779 tensors compared, 0 differences`). llama-quantize took 11 minutes on 8 CPU threads.
+
 **Quality,** against the BF16 file's logits on 80 × 512 tokens of wikitext-2 test:
 
 ```bash

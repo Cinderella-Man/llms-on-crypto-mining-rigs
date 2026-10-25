@@ -72,6 +72,7 @@ persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `5215256bd` (rc3 
 | What | Value | How | Row |
 |---|---|---|---|
 | K2h-r16 against BF16, 80 × 512 tokens of wikitext-2 test | KLD 0.1048, same top token 88.84 %, PPL +2.65 % | `llama-perplexity --kl-divergence` ([reproduce/model.md](reproduce/model.md)) | Q113 |
+| K2h-r16 rebuilt from the BF16 conversion with the public recipe (head copied), 2026-10-25 | 779 of 779 tensors equal byte for byte | `reproduce/build_k2h_r16.sh` | — |
 | UD-Q4_K_XL / Unsloth Q8_0, the same test | KLD 0.120 / 0.052; 87.7 / 93.3 %; +3.9 / +3.3 % | the same | Q8 |
 | GPTQ Q5_0 head against round-to-nearest, on F3's body | +0.0023 against +0.023 KLD | `quants/gptq_head/run.sh` | Q56 |
 | K2h (32-bit router) on 3,477 single-turn tool-calling tasks (BFCL v4), against UD | +0.14 points, 90 % interval −0.87 to +1.16 (non-inferior at a 1.5-point margin) | [bench/bfcl_flint](../../bench/bfcl_flint/README.md), the makers' sampling | Q41 |
@@ -86,7 +87,9 @@ persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `5215256bd` (rc3 
 |---|---|---|---|
 | R1 (six cards), coupled acceptance on Q51 fresh text / overall | 0.502 / 0.562 | `score.py --alpha 3` ([reproduce/drafter.md](reproduce/drafter.md)) | Q20 |
 | R1, simulated speed on six cards | 1.90× plain (70.9 tok/s) | `sim.py` | Q20 |
-| Release head, per card count | RIG-TBD | `score.py` on `q51-grid.bin` | Q20 |
+| R2-9 (morning winner), nine cards with a light last card / even split | 0.476 / 0.538 fresh / overall; 0.492 / 0.553 | `score.py` on `q51-grid.bin` | Q20 |
+| R2-gen (3–12 cards), nine cards with a light last card | 0.469 / 0.531 | the same | Q20 |
+| Release head, per card count | RIG-TBD | the same | Q20 |
 | The C++ head against PyTorch, 14 cases | all top ids equal on a V100 | `check_export.py case` + `llama-pipe-drafter-check` | Q20 |
 
 ## Hardware (2026-10-24)

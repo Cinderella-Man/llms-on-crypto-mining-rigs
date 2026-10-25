@@ -87,8 +87,9 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
 2. **The GPTQ output head is byte-exact only by copying it.** A head computed from scratch (dumps on GPUs, GPTQ on the
    CPU) is equivalent within noise, not identical: GPU dumps differ in the last bits between GPUs. The calibration
    data is public (wikitext-2 train and the shipped Q51 transcripts).
-3. **The drafter's release head is not chosen yet.** The final round's exact `train.py` arguments and the head's scores
-   come with today's pick (RIG-TBD).
+3. **The drafter's release head is not chosen yet.** The morning round's winner is R2-9, the nine-card head; the final
+   round (15:00) continues it on ~50 M answer tokens, and its winner's exact `train.py` arguments and scores come with
+   the pick (RIG-TBD).
 4. **The drafter's training data is regenerated, not downloaded.** Answers sampled at temperature 1 on GPUs differ
    between machines, so a rebuilt drafter is equivalent, not identical. A sanitized manifest of the answer files
    (prompt numbers, writer, engine commit, token counts, SHA-256 per file) is still private (OWNER-TBD: publish it, or
@@ -113,10 +114,10 @@ way:
 
 | Shipped file | Rebuild guide | Script | Expected checksum | Status |
 |---|---|---|---|---|
-| `llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz` (engine) | [reproduce/engine.md](reproduce/engine.md) | `scripts/build_llamacpp_docker.sh`, then `scripts/package_release.sh` | RIG-TBD (rc4 package) | **gap 1:** the release commit is not public yet. The archive is deterministic for the same binaries (CHECK-TBD); a fresh compile is checked by `BUILDINFO.txt`'s commit and `test-backend-ops`, not by its bytes |
-| `cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz` (CUDA runtime) | [reproduce/engine.md](reproduce/engine.md) | `scripts/package_release.sh` (from NVIDIA's `cuda:12.9.2-devel-ubuntu24.04` image) | RIG-TBD | complete (CHECK-TBD: byte for byte from the same image) |
+| `llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz` (engine) | [reproduce/engine.md](reproduce/engine.md) | `scripts/build_llamacpp_docker.sh`, then `scripts/package_release.sh` | RIG-TBD (rc4 package) | **gap 1:** the release commit is not public yet. Packaging is deterministic: the same binaries give the same archive (two runs on rc3's build, identical bytes). A fresh compile is checked by `BUILDINFO.txt`'s commit and `test-backend-ops`, not by its bytes |
+| `cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz` (CUDA runtime) | [reproduce/engine.md](reproduce/engine.md) | `scripts/package_release.sh` (from NVIDIA's `cuda:12.9.2-devel-ubuntu24.04` image) | `65b46821ab94c5a46ec762f4fc8896de857ada120770d5a2499695ed3277a3bf` (the same for any engine commit packaged as v2.0) | complete: byte for byte from the same image (two runs identical) |
 | `llama-p106-v2.0-tests-ubuntu-cuda12.9-sm61.tar.gz` | [reproduce/engine.md](reproduce/engine.md) | as the engine | RIG-TBD | as the engine |
-| `flint-K2h-r16.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | RIG-TBD (release header); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | CHECK-TBD: the rebuild from BF16 against the shipped tensors; **gap 2:** the output head is byte-exact only when copied |
+| `flint-K2h-r16.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | RIG-TBD (release header); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 2:** the output head is byte-exact only when copied |
 | `flint-staircase-drafter-v2.0.gguf` | [reproduce/drafter.md](reproduce/drafter.md) | `reproduce/drafter_pipeline.sh`, `export_gguf.py` | RIG-TBD | **gaps 3–5:** the head is picked today; regenerated data gives an equivalent head, not the same bytes |
 | The continuation store, if shipped | [reproduce/drafter.md](reproduce/drafter.md), section 9 | `bench/ngram_replay/datastore.cpp` | RIG-TBD | **gap 7** |
 | Release notes | [notes-v2.0.md](../notes-v2.0.md) | `scripts/package_release.sh NOTES_VARIANT=rc4` | — | complete once the numbers are in |

@@ -126,7 +126,7 @@ continues).
 | R2-gen | R1 | `--head A --general --init-from R1/head.pt --lr 1e-4 --warmup 100 --eval-every 20 --val-seqs 300 --minutes 134 --fp16` | superset and grid files d1–d4, 27.6 M | V100 (FP16), ~1.2 passes |
 | R2-69 | R1 | the same with `--cards 6,9` | the same | V100 (FP16) |
 | R2-9 | R1 | the same with `--cards 9` (no `--fp16`) | the same | RTX 3090 (BF16) |
-| Final round | the 09:10 winner | `--init-from R2-x/head.pt`, RIG-TBD (with `--cards 9e,9l,9l` for a nine-card specialist; `--layers 4` and `--loss lk --eta 3` variants) | ~50 M answer tokens | RIG-TBD |
+| Final round | R2-9 (and R2-gen) | R3-9: `--init-from R2-9/head.pt --cards 9e,9l,9l`; variants R3-9L4 (`--layers 4`), R3-9lk (`--loss lk --eta 3`), R3-9l (light split only) and R3-gen (R2-gen continued); RIG-TBD: the exact arguments of the winner | ~50 M answer tokens | RIG-TBD |
 
 - `--general` draws one window per sequence from a random split of 3–12 cards (weights in `train.py`'s
   `CARD_WEIGHTS`: a quarter each on six and nine cards); `--cards` restricts it to the standard splits of those counts.
@@ -147,6 +147,9 @@ python sim.py --gen q51/gen.jsonl --scores scores/sim --jobs 8 --out sim.json
 | Head | Card count | Q51 fresh text | Q51 overall | Simulated speed |
 |---|---|---|---|---|
 | R1 | 6 | 0.502 | 0.562 | 1.90× plain decoding (70.9 tok/s) |
+| R2-9, the morning winner | 9 (6/…/5/2) | 0.476 | 0.538 | — |
+| R2-9 | 9 (even) | 0.492 | 0.553 | — |
+| R2-gen, the runner-up | 9 (6/…/5/2) | 0.469 | 0.531 | — |
 | Release head | 9 (6/…/5/2) | RIG-TBD | RIG-TBD | RIG-TBD |
 | Release head | 6 | RIG-TBD | RIG-TBD | RIG-TBD |
 
