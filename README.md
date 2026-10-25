@@ -21,7 +21,7 @@ RIG-TBD times as fast as stock llama.cpp, with the file most people already have
 | Generation (`llama-bench`, 128 tokens) | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
-| Prompt processing, 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 <!-- begin:drafter -->
 **With the staircase drafter**, served chat reaches **RIG-TBD tok/s** on nine cards and **RIG-TBD** on six. The drafter
@@ -67,7 +67,7 @@ memory. The fork changes that, mostly without regard to which model runs:
 | Pascal matrix-vector kernels for Q4_0, Q4_1, Q5_0, Q8_0, Q5_K and IQ4_XS: lane groups sized to each row, several rows per input load, wide coalesced loads ([design](docs/research/notes/pascal_mmvq_integration.md)) | every file made of these types (Qwen3.6 Q4_0: +27 %) | → 34.1 tok/s (v1) |
 | 32-bit activation sums in those kernels, so llama.cpp's MoE safety rescale can go | the models llama.cpp rescales (Flint among them) | +9.6 % |
 | Shared-expert projections fused with their activation | MoE models with a shared expert | +0.7 % |
-| MoE prompt tiles sized by tokens per expert (upstream PR #31047) | MoE models, prompts | prompts +22–29 % |
+| MoE tiles sized by tokens per expert (upstream PR #31047) | MoE models, prefill | prefill +22–29 % |
 | One persistent kernel per MoE layer at one token, instead of 13 launches | Flint's layer shapes; other models fall back to the normal path | +5.6–8.8 % |
 | A Pascal decode-attention kernel for one token | attention of Flint's shape (head size 128, 8 query heads per KV head); other shapes take the normal path | RIG-TBD |
 | Pascal matrix-vector kernels for Q4_K and Q6_K too | the common Q4_K_M downloads of other models | Flint's UD-Q4_K_XL: est. ≤ 1 % |
@@ -75,7 +75,7 @@ memory. The fork changes that, mostly without regard to which model runs:
 | A trained drafter as the guesser of pipelined speculation (`--pipe-guess staircase`): a small head that reads the hidden states of the tokens in flight | Flint (a drafter is trained per model) | RIG-TBD | <!-- only:drafter -->
 | Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | RIG-TBD (they decoded 12–16 % slower than chat before) |
 | The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 % |
-| A Pascal prompt-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | long prompts RIG-TBD | <!-- only:q163-q111 -->
+| A Pascal prefill-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | prefill of long prompts RIG-TBD | <!-- only:q163-q111 -->
 | Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | RIG-TBD | <!-- only:q163-q111 -->
 
 The first three rows were measured on six cards with UD-Q4_K_XL, step by step; the rest are each change's own gain
@@ -140,11 +140,11 @@ The settings, one by one:
 |---|---|---|
 | **Keep the cards busy** | In a layer split each card idles most of every token and drops to its 1,354 MHz base clock: the same chat prompt decodes at 34.0 tok/s on base-clocked cards against 38.5 at boost. Pipelined speculation keeps tokens in every card; with every guess wrong, nine cards still run 1.24× faster | measured ([idle cards](docs/research/notes/idle_cards.md)) |
 | Memory clock offset through NVML | est. +3–5 % decode: only about half of a token's time streams weights. Applied at run time, cleared by offset 0 or a reboot; [the test kit](bench/mem_offset/) accepts an offset only if the model's output stays bit-identical, since the cards have no ECC | test kit ready, not measured yet |
-| Core clock offset | est. +0.5–2 % decode, +3–5 % prompts; same protocol | planned |
+| Core clock offset | est. +0.5–2 % decode, +3–5 % prefill; same protocol | planned |
 | PowerMizer "Prefer Maximum Performance" | nothing: 29.75 tok/s from idle with it against 29.79 without, 33.25 against 33.30 served | measured, not needed |
 | Power limit | Busy cards draw 35–39 W of their 75 W limit in decode (317–329 W for nine, ~8.9 J per token, hottest card 57 °C); the limit is the cards' maximum and almost never binds | measured |
 | PCIe 2.0 | not possible: the cards themselves advertise only 2.5 GT/s | checked |
-| Host memory (4 GB) | At 262,144 tokens of context llama.cpp's default micro-batch pins ~1 GiB of host memory and the out-of-memory killer takes the server; `-ub 128` and `--cache-ram 0` avoid it with generation speed unchanged (prompts run slower than at `-ub 512`) | measured |
+| Host memory (4 GB) | At 262,144 tokens of context llama.cpp's default micro-batch pins ~1 GiB of host memory and the out-of-memory killer takes the server; `-ub 128` and `--cache-ram 0` avoid it with generation speed unchanged (prefill runs slower than at `-ub 512`) | measured |
 | A quiet host | No apt, snap or copy jobs during timings, and the NVIDIA packages held: a background driver upgrade breaks CUDA until the next reboot | recommended |
 
 Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and tuning](docs/research/notes/power_and_tuning.md).

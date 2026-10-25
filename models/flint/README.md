@@ -44,7 +44,7 @@ llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa 
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
-  512` if the quick-start check shows it fits (faster prompts).
+  512` if the quick-start check shows it fits (faster prefill).
 - **The engine drops llama.cpp's safety rescale of Flint's expert layers by itself** on Pascal cards: its kernels sum in
   32-bit floats, so one-token steps don't need it, and without it each expert layer runs as one persistent kernel.
   `LLAMA_NO_MOE_DOWN_RESCALE=0` keeps the rescale; any value other than `tg` and `0` is unsafe for this file.
@@ -67,7 +67,7 @@ warm-up, because idle cards sit at a lower clock.
 | Stock llama.cpp (`d77256999`) | 16.5 | |
 | v1 engine (released 2026-10-23) | 32.6 | |
 | v2: + FP32 activation sums, shared-expert fusion | 36.5 | |
-| v2: + prompt-processing changes | 37.5 | 39.3 |
+| v2: + prefill changes | 37.5 | 39.3 |
 | v2: + persistent MoE kernel | 39.8 | 41.5 |
 | v2: + pipelined speculation in llama-server (branch `pascal-p106-v2-next`) | 39.9 | 41.8 |
 | **v2 release** | **RIG-TBD** | **RIG-TBD** |
@@ -149,13 +149,14 @@ Served, tok/s, median per request over chat, code, edit and tool prompts at the 
 One guess costs RIG-TBD ms on the first card, and every answer was identical to plain decoding (RIG-TBD).
 <!-- end:drafter -->
 
-### Prompt processing
+### Prefill
 
-UD-Q4_K_XL on nine cards, tok/s for prompts of 512 / 2,048 / 8,192 tokens: stock llama.cpp 185 / 493 / 593, v1
-187 / 494 / 593, v2 228 / 613 / 723. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by
-tokens per expert ([Q117](../../quants/experiments.md#registry)).
+Prefill is the speed at which the engine reads the prompt. UD-Q4_K_XL on nine cards, tok/s at 512 / 2,048 / 8,192
+tokens: stock llama.cpp 185 / 493 / 593, v1 187 / 494 / 593, v2 228 / 613 / 723; so prefill at 8k tokens is 723 tok/s
+against stock's 593. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by tokens per expert
+([Q117](../../quants/experiments.md#registry)).
 
-Long prompts with the release's prompt-attention kernel, K2h-r16 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
+Prefill of long prompts with the release's prefill-attention kernel, K2h-r16 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
 
 ### With hardware tuning
 
@@ -208,16 +209,16 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **FP32 activation sums** in the Pascal kernels, so the expert rescale can go for every file: +9.6 %
   ([note](../../docs/research/notes/v2_synthesis.md)).
 - **The shared expert fused** with its activation: +0.7 %.
-- **PR #31047** for prompts: +22–29 % prompt processing.
+- **PR #31047**: prefill +22–29 %.
 - **The persistent MoE kernel:** each expert layer at one token runs as one kernel instead of 13 launches: +5.6–8.8 %
   per token. It covers Flint's shapes and falls back to the normal path for any other model.
 - **Pipelined speculation** in llama-server (`--pipe-depth`, with `--pipe-floor` and `--pipe-store`).
 - **A Pascal decode-attention kernel** for Flint's attention shape: RIG-TBD.
 - **Tool requests sampled on the GPU**, the grammar checked on the host, pipelined until the tool call: RIG-TBD.
-- **The attention mask built on each card**, for prompts and decoding: decode at 64k tokens of context +12 %
+- **The attention mask built on each card**, for prefill and decoding: decode at 64k tokens of context +12 %
   ([Q116](../../quants/experiments.md#registry)).
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
-- **A Pascal prompt-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:q163-q111 -->
+- **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:q163-q111 -->
 - **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:q163-q111 -->
 - **The staircase drafter**, a trained guesser for pipelined speculation, with its side file: RIG-TBD. <!-- only:drafter -->
 
