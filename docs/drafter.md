@@ -82,8 +82,9 @@ Prompts → answers → dump → train → score → simulate → export → eng
   Tool prompts run at ~210 answer tokens/s (long tool lists, short answers).
 - **Why G3 on two cards is slow:** all 96 slots stay busy, and the server's main thread at 100 % CPU is the CUDA driver
   spin-waiting, not CPU starvation. A 96-token decode batch is one ubatch at `-ub 512`, so the two cards of the layer
-  split take turns and each is ~50 % busy. Under test: `-ub 48`, which splits each decode step into two ubatches that
-  llama.cpp pipelines across the two cards.
+  split take turns and each is ~50 % busy. `-ub 48`, which splits each decode step into two ubatches, made a step
+  slower (~455 ms, cards 31–38 % busy): the two halves ran one after the other, not pipelined, and each read the
+  weights. More throughput needs a server that overlaps the cards, or a model that fits one card per copy.
 - **Pitfalls:**
   - The generator only has to write Flint-like text: the dump re-labels every target with the Q8_0 teacher. A writer
     other than Q8_0 costs est. 1–3 % of acceptance by the literature ([data generation](research/notes/drafter_data_generation.md)),
@@ -420,7 +421,8 @@ row's own window.
 10. **The 13.5 M M0 heads:** U, C and B are scored (section 6). A, the 4-layer A and R0 ran out of memory while scoring
     on 10–12 GB cards and are being rescored.
 11. **Overfitting:** with every new data size, dropout or noise against a control, once fresh data stops arriving.
-12. **Generation throughput:** `-ub 48` on the two-card G3 copy; a different server (vLLM) is a candidate.
+12. **Generation throughput:** the two-card G3 copy is GPU-bound with its cards taking turns; `-ub 48` did not help.
+    A different server (vLLM) is a candidate.
 
 ## 9. Changelog
 
@@ -447,4 +449,5 @@ row's own window.
 - 2026-10-25 01:40: simulation: R1 on six cards gives 1.90× plain decoding (70.9 tok/s).
 - 2026-10-25 01:45: the 06:00 round becomes four depth-general heads (3–12, 6 + 9, 9, 6 cards) on the same data
   (the owner); `--cards`; validation on the head's own card counts; `score.py --window-group`; FP32 on CPUs.
-- 2026-10-25 01:52: the two-card G3 generation copy restarts with `-ub 48`: its cards were taking turns at ~50 % each.
+- 2026-10-25 01:52–02:04: the two-card G3 generation copy tried with `-ub 48` (its cards take turns at ~50 % each):
+  slower (~455 against ~270 ms per decode step), back to `-ub 512`.
