@@ -53,7 +53,7 @@ tensors run on llama.cpp's own kernels until the Pascal kernels below land.
    ([Q149](../../quants/experiments.md#registry)).
 4. **Hybrid-model support** for the on-card attention mask and for pipelined speculation, which keeps a group of
    recurrent states per pipe slot so that wrong guesses can be dropped: built, output identical to plain decoding in the
-   CPU checks, rig timing next ([Q162](../../quants/experiments.md#registry)).
+   CPU and GPU checks, rig timing next ([Q162](../../quants/experiments.md#registry)).
 5. **GPU sampling for tool requests**, worth more here than on Flint: Qwen3.6's 993 KB score row per token would no
    longer cross the PCIe 1.0 link.
 

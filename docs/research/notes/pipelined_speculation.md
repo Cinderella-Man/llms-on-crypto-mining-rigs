@@ -390,19 +390,37 @@ that did not match. With T 1 the oracle replays the sampled plain run and was ri
 misses: the random draws line up position by position. Every process finished within its timeout (no deadlock).
 
 **Hybrid models (Q162, fork branch `pascal-p106-v2-hybrid`).** The same checks on Qwen3.6-35B-A3B Q4_0 (40 layers, 30 of
-them Gated DeltaNet, 248,320-token vocabulary), the `rewrite.txt` prompt in its chat template (804 tokens), 64 tokens per
-run, 2,048-token context; the state hash then covers the recurrent states too:
+them Gated DeltaNet, 248,320-token vocabulary), the `rewrite.txt` prompt in its chat template (804 tokens) unless the row
+says the chat prompt; the state hash then covers the recurrent states too. The CPU runs generate 64 tokens in a
+2,048-token context, the GPU runs 128 tokens in 4,096, on a V100 through the compute_61 PTX with the layers split over virtual devices
+(`GGML_CUDA_DEVICES`). "Device (checked)" compares the mask built on the device with the host mask at every step
+(`LLAMA_GPU_KQ_MASK_CHECK=1`, which aborts on any difference).
 
 | Layout | Mask | Sampling | Depths | Pipelined runs | Tokens | Guesses | Wrong | Dropped tokens | Result |
 |---|---|---|---|---|---|---|---|---|---|
-| CPU only | host | greedy | 3 | 6 | 384 | 328 | 63 | 187 | all same |
+| CPU only | host | greedy | 1–4 | 47 | 3,008 | 2,495 | 399 | 899 | all same |
 | CPU only | host | T 1, top-k 20, top-p 0.95, seed 42 | 1, 3 | 11 | 704 | 510 | 104 | 206 | all same |
-| CPU only | host | greedy | 1, 2, 4 | 19 | 1,216 | 975 | 132 | 306 | all same |
-| CPU only | host (`LLAMA_GPU_KQ_MASK=0`) | greedy | 1, 2, 3 | 22 | 1,408 | 1,192 | 204 | 406 | all same |
+| CPU only | device (checked) | greedy | 1–3 | 22 | 1,408 | 1,192 | 204 | 406 | all same |
+| CPU only | device | greedy | 2, 4 | 11 | 704 | 611 | 104 | 307 | all same |
+| CPU only | device | T 1, seed 42, chat prompt | 3 | 6 | 384 | 215 | 45 | 133 | all same |
+| two virtual devices | host | greedy | 3 | 6 | 768 | 647 | 139 | 416 | all same |
+| two virtual devices | device (checked) | greedy | 3 | 6 | 768 | 647 | 139 | 416 | all same |
+| two virtual devices | device | greedy | 1–4 | 29 | 3,712 | 3,393 | 600 | 1,497 | all same |
+| four virtual devices | device | greedy | 2, 4 | 15 | 1,920 | 1,846 | 300 | 898 | all same |
+| two virtual devices | device | T 1, seed 42, chat prompt | 1, 3 | 15 | 1,920 | 1,244 | 254 | 506 | all same |
+| two virtual devices | device | greedy on the GPU, fed tokens | 0 (fed), 1, 3 | 14 | 1,792 | 1,271 | 278 | 555 | all same but the fed run's state (below) |
 
-On this prompt the first 64 tokens are a stereotyped reasoning preamble, and T 1 sampled the greedy tokens. Plain decoding
-with the mask built on the device (every step compared with the host mask, `LLAMA_GPU_KQ_MASK_CHECK=1`) gives the host
-mask's tokens, logits, state and probe; the graphs then hold one mask node per attention layer and no host mask input.
+- On the rewrite prompt the first 64 tokens are a stereotyped reasoning preamble, and T 1 sampled the greedy tokens; the
+  chat-prompt rows sample other tokens.
+- Plain decoding gives the same tokens, logits, state and probe with the host mask and with the device mask, on the
+  CPU and on two virtual devices. The device-mask graphs hold one mask node per attention layer and no host mask input.
+- The fed run (`pipe-d0-fed`) has the plain run's tokens, sampled ids and probe, and the same 85 MB of KV and recurrent
+  data; its state differs only in 216 bytes of cell metadata. A fed token's batch carries a placeholder id (the real one
+  is copied between the cards), the KV cache keeps each cell's token id, and the state stores it for M-RoPE models.
+  Qwen3.6's graph never reads it.
+- `llama-pipe-recurrent-check` (three slots, every third token submitted to its predecessor's slot, wrong guesses, the
+  token in flight dropped and submitted again or decoded with `llama_decode`), on the CPU (64 tokens: 21 states to the
+  stash, 21 drops) and on two and four virtual devices (96 tokens: 32 and 32): tokens, logits, state and probe identical.
 
 Races ([above](#several-samples-of-one-request-race)), checked with `RACE=K` against the same race decoded plainly,
 round robin: four stages on the two GPUs, temperature 1, the winner continuing with the oracle, copy lookup,
