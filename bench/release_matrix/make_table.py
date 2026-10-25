@@ -110,7 +110,7 @@ def cmd_tables(out):
         print(f"\nGreedy output under the offset identical to stock clocks: {len(same)} of {len(same) + len(diff)} "
               "served configurations" + (": differs for " + ", ".join(f"{k[2]} on {k[1]}" for k in diff) if diff else "")
               + ".")
-    print(f"\nPrompt processing, {pp} tokens, tokens per second:\n")
+    print(f"\nPrefill (reading the prompt), {pp} tokens, tokens per second:\n")
     print("| Engine | " + " | ".join(f"{m}, {b}" for b in blocks for m in models) + " |")
     print("|---|" + "---|" * (len(blocks) * len(models)))
     for cfg in configs:

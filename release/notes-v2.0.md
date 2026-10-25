@@ -15,7 +15,7 @@ Flint on nine P106-090 cards (one PCIe 1.0 lane each, a 2-core Celeron with 4 GB
 | Served chat, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, UD-Q4_K_XL, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
 | Served chat, UD-Q4_K_XL, with the staircase drafter (`--pipe-guess staircase`) | — | — | **RIG-TBD** | <!-- only:drafter -->
-| Prompt processing, 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 RIG-TBD (if the release carries tuned numbers): with a memory clock offset of RIG-TBD MT/s on every card, generation
 rises by RIG-TBD %. The output does not change: the kernels change only the order of additions, and pipelined
@@ -51,12 +51,12 @@ output is the same as without it.
   12–16 % slower than chat. `LLAMA_GRAMMAR_HOST_SAMPLING=1` restores sampling on the host.
 - **Prompt caching for agents:** `--prefix-cache DIR` saves the state of the shared system and tool prompt to a file the first time it is read and restores it into any conversation that starts with it, across server restarts; one checkpoint per request holds the whole sliding-window ring; `--checkpoint-gen` also takes checkpoints while generating, at `</think>` and `<tool_call>`; and a request no longer re-reserves the scheduler before its first token. Agent turns: RIG-TBD. <!-- only:q163-q111 -->
 
-**Prompts, long context and several conversations:**
-- **MoE prompt tiles sized by tokens per expert** (upstream PR #31047): prompts +22–29 %.
-- **The attention mask built on each card** for prompts and for decoding: decode at 64k tokens of context +12 %.
-- **A Pascal prompt-attention kernel** (head size 128 or 256, 8 query heads per KV head) that skips fully masked key tiles and reads a Q8_0 KV cache directly, without an F16 copy: long prompts RIG-TBD faster; on by default on compute 6.1 (`GGML_CUDA_FATTN_TILE_PASCAL=0` turns it off). <!-- only:q163-q111 -->
+**Prefill, long context and several conversations:**
+- **MoE tiles sized by tokens per expert** (upstream PR #31047): prefill +22–29 %.
+- **The attention mask built on each card** for prefill and for decoding: decode at 64k tokens of context +12 %.
+- **A Pascal prefill-attention kernel** (head size 128 or 256, 8 query heads per KV head) that skips fully masked key tiles and reads a Q8_0 KV cache directly, without an F16 copy: prefill of long prompts RIG-TBD faster; on by default on compute 6.1 (`GGML_CUDA_FATTN_TILE_PASCAL=0` turns it off). <!-- only:q163-q111 -->
 - **Several conversations through one pipeline** (the `llama-pipespec` tool's streams mode): conversations staggered
-  through the cards, and a new request's prompt chunks on CUDA streams below the generating tokens' priority, so they
+  through the cards, and a new request's prefill chunks on CUDA streams below the generating tokens' priority, so they
   no longer stall the conversations that are generating.
 
 <!-- begin:drafter -->
