@@ -20,9 +20,11 @@ the cells before that point are still there:
   (the state writer leaves out the ring's cells outside the window, whatever the checkpoint's recorded range says), so it
   serves only a divergence at or after its own point. Hence stock's two checkpoints at each prompt's end, 4 + n_ubatch
   and 4 tokens before it, plus one at user messages. None are taken while generating.
-- **Nothing else crosses requests.** The first request of a session reads its system and tool prompt (BFCL: a median
-  5,033 tokens, 54 % of what a session reads after llama-server's own reuse), as does any session whose slot served
-  another conversation since. `--cache-ram` would copy whole states into the 4 GB host and stays off.
+- **Nothing else crosses conversations.** A new session with the same system and tool prompt as the slot's last one
+  restores the checkpoint at the first user message, if it survived; a session that follows another conversation
+  (another agent, a sub-agent, another project's prompt) or a restart reads its whole system and tool prompt (BFCL: a
+  median 5,033 tokens, 54 % of what a session reads after llama-server's own reuse when 8 slots serve interleaved
+  tasks). `--cache-ram` would copy whole states into the 4 GB host and stays off.
 - **Fixed costs per request:** with backend sampling (`-bs`, the rig's setting) every request that samples on the device
   attaches and detaches its sampler chain (with Q67, tool requests too), and each change marks the scheduler for a full
   reserve: a new scheduler and three worst-case graph builds before the request's first micro-batch. Each of the two end-of-prompt checkpoints waits for the pipeline to
@@ -89,13 +91,16 @@ llama.cpp's own prompt cache does.
 
 ## 4. On the rig
 
-`bench/agent_cache/rig_replay.sh` replays eight BFCL sessions (two tool sets × four, 4–11 requests each) per
-configuration on nine cards with K2h-r16: stock behaviour (a reserve per request, two tail checkpoints, no prefix files
-or generation checkpoints), the agent cache, and both with the client dropping earlier replies' reasoning (what most
-OpenAI-compatible clients do). Each request reuses the server's own last reply, so the replay measures what an agent
-gets: time to first token per request, prompt tokens read per generated token, reuse classes and identical replies.
+`bench/agent_cache/rig_replay.sh` replays eight BFCL sessions (two tool sets × four, alternating, 4–11 requests each)
+per configuration on nine cards with K2h-r16: stock behaviour (a reserve per request, two tail checkpoints, no prefix
+files or generation checkpoints), the agent cache with stock's two tail checkpoints (the exactness arm: the same
+micro-batches as stock, so the same replies), the agent cache, and stock and the agent cache with the client dropping
+earlier replies' reasoning (what most OpenAI-compatible clients do). Each request reuses the server's own last reply, so
+the replay measures what an agent gets: time to first token per request, prompt tokens read, reuse classes and
+identical replies.
 
-Expected (est., from §1 and the rig's prompt speeds): the first request of every session but the first per tool set
-reads ~1 s of state instead of 3.5–4.8k tokens (5–7 s on v2); every request saves one pipeline drain, and every request
-that samples on the device one reserve (0.1–0.5 s); with reasoning kept, prompt tokens read per generated token drop
-from ~4 toward ~1.
+Expected (est., from §1 and the rig's prompt speeds): with the tool sets alternating, stock reads the whole first prompt
+of all eight sessions and the agent cache of two, restoring the other six (~1 s of state instead of
+3.5–4.8k tokens, 5–7 s on v2); every request saves one pipeline drain, and every request that samples on the device one
+reserve (0.1–0.5 s). On a V100 (counts only), one tool set after the other, stock's own checkpoint at the first user
+message already served each next session's prompt: 57.7k against 55.6k prompt tokens read over six sessions.

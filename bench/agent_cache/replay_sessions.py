@@ -1,6 +1,6 @@
 """Replay multi-turn agent sessions against llama-server (Q111): time to first token and prompt tokens read per turn.
 
-    python3 replay_sessions.py pick SESSIONS.jsonl --groups 2 --per-group 4 [--max-steps 14]
+    python3 replay_sessions.py pick SESSIONS.jsonl --groups 2 --per-group 4 [--max-steps 14] [--write OUT.jsonl] [--sequential]
     python3 replay_sessions.py run SESSIONS.jsonl --server http://127.0.0.1:PORT --label LABEL --out OUT.jsonl
                                [--ids ID,ID,...] [--history keep|drop] [--max-tokens 2048] [--greedy]
     python3 replay_sessions.py summary OUT.jsonl [OUT2.jsonl ...] [--reference LABEL]
@@ -196,11 +196,15 @@ def cmd_pick(args):
     for s in sessions:
         groups[json.dumps(s["tool_lists"][0], sort_keys=True)].append(s)
     ranked = sorted(groups.values(), key=lambda g: -len(g))
-    picked = []
+    per_group = []
     for g in ranked[:args.groups]:
         g = sorted(g, key=lambda s: len(s["steps"]))
         step = max(1, len(g) // args.per_group)
-        picked += [s["id"] for s in g[::step][:args.per_group]]
+        per_group.append([s["id"] for s in g[::step][:args.per_group]])
+    # alternating tool sets (A1 B1 A2 B2 ...): each session follows one with another system and tool prompt, as when an
+    # agent, its sub-agents or several projects share one server; one group after another, the slot's own checkpoint at
+    # the first user message already serves the next session's prompt
+    picked = [sid for row in zip(*per_group) for sid in row] if args.interleave else [sid for g in per_group for sid in g]
     print(",".join(picked))
     if args.write:
         with open(args.write, "w") as f:
@@ -263,6 +267,8 @@ def main():
     p.add_argument("--per-group", type=int, default=4)
     p.add_argument("--max-steps", type=int, default=14)
     p.add_argument("--write", help="also write the picked sessions, in order, to this file")
+    p.add_argument("--sequential", dest="interleave", action="store_false",
+                   help="one tool set's sessions after the other's (default: alternating)")
     r = sub.add_parser("run")
     r.add_argument("sessions")
     r.add_argument("--server", required=True)
