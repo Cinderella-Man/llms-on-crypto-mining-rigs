@@ -15,7 +15,7 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `ab4a5cd02`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
+| Engine | the v2 Pascal engine, commit `460160e93`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
@@ -40,7 +40,7 @@ llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa 
 - **`--pipe-depth 3`** sends up to three guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
-- **The drafter:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-v2.0.gguf` for the trained guesser ([below](#the-staircase-drafter)). <!-- only:drafter -->
+- **The drafter:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-v2.0.gguf` for the trained guesser on nine cards ([below](#the-staircase-drafter)). <!-- only:drafter -->
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
@@ -129,15 +129,14 @@ card, older ones are further along: a staircase of depths. The drafter sits behi
 first card in its own CUDA stream; the last card still samples every token, so the output is plain decoding's. How it
 is built and trained: [docs/drafter.md](../../docs/drafter.md).
 
-- **File:** `flint-staircase-drafter-v2.0.gguf`, RIG-TBD MB, from the release assets (RIG-TBD: the name follows the
-  release's tag).
-- **Turn it on:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-v2.0.gguf` to the chat command line
-  above, which already has `--pipe-depth 3`.
-- **Card counts:** RIG-TBD: the shipped head and the splits it was trained on, either depth-general (any split of 3–12
-  cards, a quarter of its training each on six and nine cards) or a head for six and nine cards. The engine builds the
-  drafter's window of hidden states from the run's own layer split.
-- **Acceptance on held-out text** (the share of guesses that match Flint's sample): RIG-TBD on nine cards, RIG-TBD on
-  six.
+- **Files** (~0.27 GB each, from the release assets; RIG-TBD: the names follow the release's tag):
+  `flint-staircase-drafter-9cards-v2.0.gguf` for nine cards, trained on both nine-card splits;
+  `flint-staircase-drafter-v2.0.gguf` for six cards and any other split of 3–12 cards, trained on all of them (a quarter
+  of its training each on six and nine cards).
+- **Turn it on:** add `--pipe-guess staircase --pipe-draft <file>` to the chat command line above, which already has
+  `--pipe-depth 3`. The engine builds the drafter's window of hidden states from the run's own layer split.
+- **Acceptance on held-out text** (the share of guesses that match Flint's sample, outside copied text / overall): 0.476
+  / 0.538 on nine cards with a light last card (`-ts 6,6,6,6,6,6,6,5,2`), 0.523 / 0.583 on six cards.
 
 Served, tok/s, median per request over chat, code, edit and tool prompts at the makers' sampling (RIG-TBD):
 
