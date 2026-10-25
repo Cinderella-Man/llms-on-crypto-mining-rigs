@@ -53,16 +53,29 @@ if has prompts; then
     $PYTHON prompts.py "$DATA/prompts-ext2.jsonl" "$HF" "$STD" "$LLAMA" --scale 6 --seed 22 --extend "$DATA/prompts-all12.jsonl"
     cat "$DATA/prompts.jsonl" "$DATA/prompts-ext.jsonl" "$DATA/prompts-ext2.jsonl" > "$DATA/used.jsonl"
     $PYTHON tool_prompts.py "$DATA/prompts-tools.jsonl" "$HF" --extend "$DATA/used.jsonl"
-    # the strict sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same
+    # the strict sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same. Edit and agent
+    # prompts: the standard library and llama.cpp's own files, not its vendor/ and build folders; from site-packages
+    # only the packages (and vendored folders) under MIT, BSD-2/3-Clause, Apache-2.0 or PSF in drafter.md's table.
     for f in prompts prompts-ext prompts-ext2 prompts-tools; do
         $PYTHON -c '
 import json, sys
 strict = {"NousResearch/hermes-function-calling-v1", "AI-MO/NuminaMath-CoT", "open-r1/OpenR1-Math-220k",
           "Team-ACE/ToolACE", "glaiveai/glaive-function-calling-v2"}
+packages = {"pyarrow", "huggingface_hub", "pip", "fsspec", "httpcore2", "anyio", "httpx2", "yaml", "_yaml", "packaging",
+            "h11", "idna", "click", "filelock", "truststore"}
+not_ok = ("pip/_vendor/resolvelib", "pip/_vendor/certifi", "pyarrow/include/arrow/vendored/portable-snippets",
+          "pyarrow/include/arrow/vendored/strptime.h")
+def keep(r):
+    if r["category"] not in ("edit", "agent"):
+        return r.get("source") in strict
+    p = r["source"].split("/")
+    if p[0] == "site-packages":
+        rest = "/".join(p[1:])
+        return p[1] in packages and not any(rest == x or rest.startswith(x + "/") for x in not_ok)
+    return p[0] != "vendor" and not p[0].startswith("build")
 with open(sys.argv[2], "w") as out:
     for line in open(sys.argv[1]):
-        r = json.loads(line)
-        if r["category"] in ("edit", "agent") or r.get("source") in strict:
+        if keep(json.loads(line)):
             out.write(line)
 ' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl"
         log "$f.strict.jsonl: $(wc -l < "$DATA/$f.strict.jsonl") of $(wc -l < "$DATA/$f.jsonl") prompts"

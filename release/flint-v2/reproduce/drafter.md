@@ -30,7 +30,9 @@ in steps 5 and 6 are theirs. RIG-TBD: the rebuilt heads' runs, arguments and sco
 ## 1. Prompts
 
 All in `bench/staircase_drafter/`; `$HF` is a Hugging Face cache, `$STD` a Python standard library folder (source
-files for edit and agent prompts), `$LLAMA` a llama.cpp tree (more source files).
+files for edit and agent prompts; ours was Python 3.12's in the `python:3.12-slim` image after
+`pip install huggingface_hub pyarrow`, so it held those packages in `site-packages/` too), `$LLAMA` a llama.cpp tree
+(more source files).
 
 | File | Prompts | Command |
 |---|---|---|
@@ -42,7 +44,7 @@ files for edit and agent prompts), `$LLAMA` a llama.cpp tree (more source files)
 **The strict sources: the release uses only prompts whose answers may be published.** Every prompt row records its
 `source`; keep these rows, and only answers to them, before generating, dumping and training. `drafter_pipeline.sh`'s
 prompts step writes each prompt file again as `*.strict.jsonl` with these rows only; every row keeps its id, so its
-seed stays the same. In the four files above that leaves 44,456 of the 76,431 prompts (3,750 / 9,956 / 15,420 /
+seed stays the same. In the four files above that leaves 44,043 of the 76,431 prompts (3,699 / 9,822 / 15,192 /
 15,330); RIG-TBD: the answers and answer tokens the rebuilt heads train on.
 
 | Source (`source` field) | Licence, as its page states it | Prompts for | Script | Prompts kept |
@@ -52,12 +54,64 @@ seed stays the same. In the four files above that leaves 44,456 of the 76,431 pr
 | open-r1/OpenR1-Math-220k | Apache-2.0 | reasoning | `prompts.py` | 2,743 |
 | Team-ACE/ToolACE | Apache-2.0 | tool calls | `tool_prompts.py` | 10,581 |
 | glaiveai/glaive-function-calling-v2 | Apache-2.0 | tool calls | `tool_prompts.py` | 4,749 |
-| Whole-file edits and coding-agent turns (categories `edit` and `agent`; `source` is the file's path) built from the Python standard library and llama.cpp sources | PSF License 2.0; MIT | code | `prompts.py` | 8,699 edits, 9,707 agent turns |
+| Whole-file edits and coding-agent turns (categories `edit` and `agent`; `source` is the file's path) from the Python standard library and llama.cpp's own files | PSF License 2.0; MIT | code | `prompts.py` | 5,236 edits, 5,831 agent turns |
+| The same from packages installed in the Python image (`site-packages/`), only those allowed in the table below | MIT, BSD-2/3-Clause, Apache-2.0, PSF | code | `prompts.py` | 3,275 edits, 3,651 agent turns |
 
 - **Not used:** ShareGPT (Aeala/ShareGPT_Vicuna_unfiltered: conversations shared from ChatGPT, whose reuse terms are
   unclear), and UltraChat 200k and Magicoder Evol-Instruct and OSS-Instruct (MIT and Apache-2.0, but generated with
   OpenAI models). `prompts.py` still draws them, so filter them out. The first heads and the first store were built
   with them and do not ship.
+- **Not used either:** llama.cpp's `vendor/` folder (third-party code under its own licences) and its build folders
+  (generated files), and the site-packages marked "no" below.
+
+**Site-packages, per package.** Agent and whole-file edit prompts built from source files of packages installed in
+the Python image. Licence as the package's METADATA states it (versions as installed when checked, 2026-10-25); pip's
+vendored packages and pyarrow's vendored headers judged one by one. Allowed: MIT, BSD-2/3-Clause, Apache-2.0, PSF.
+
+| Package | Licence | Included | Answers | Answer tokens |
+|---|---|---|---|---|
+| pyarrow 26.0.0 | Apache-2.0 | yes | 2833 | 2.803 M |
+| huggingface_hub 2.3.0 | Apache-2.0 | yes | 837 | 0.867 M |
+| pip 25.0.1 | MIT | yes | 688 | 0.751 M |
+| pip/_vendor/rich (vendored in pip 25.0.1) | MIT | yes | 405 | 0.442 M |
+| tqdm 4.70.1 | MPL-2.0 AND MIT | no | 172 | 0.212 M |
+| pip/_vendor/pygments (vendored in pip 25.0.1) | BSD-2-Clause | yes | 164 | 0.175 M |
+| fsspec 2026.9.0 | BSD-3-Clause | yes | 147 | 0.170 M |
+| httpcore2 2.16.0 | BSD-3-Clause | yes | 155 | 0.160 M |
+| anyio 4.15.1 | MIT | yes | 161 | 0.160 M |
+| pip/_vendor/urllib3 (vendored in pip 25.0.1) | MIT | yes | 122 | 0.137 M |
+| httpx2 2.16.0 | BSD-3-Clause | yes | 110 | 0.117 M |
+| pip/_vendor/requests (vendored in pip 25.0.1) | Apache-2.0 | yes | 98 | 0.109 M |
+| PyYAML 6.0.3 | MIT | yes | 96 | 0.100 M |
+| pip/_vendor/cachecontrol (vendored in pip 25.0.1) | Apache-2.0 | yes | 86 | 0.092 M |
+| pyarrow/include/arrow/vendored/double-conversion | BSD-3-Clause | yes | 76 | 0.075 M |
+| pip/_vendor/packaging (vendored in pip 25.0.1) | Apache-2.0 OR BSD-2-Clause | yes | 65 | 0.072 M |
+| packaging 26.3 | Apache-2.0 OR BSD-2-Clause | yes | 46 | 0.059 M |
+| h11 0.16.0 | MIT | yes | 50 | 0.055 M |
+| idna 3.20 | BSD-3-Clause | yes | 42 | 0.044 M |
+| pip/_vendor/truststore (vendored in pip 25.0.1) | MIT | yes | 34 | 0.040 M |
+| pip/_vendor/resolvelib (vendored in pip 25.0.1) | ISC | no | 41 | 0.040 M |
+| click 8.5.0 | BSD-3-Clause | yes | 31 | 0.034 M |
+| filelock 4.2.4 | MIT | yes | 32 | 0.034 M |
+| pip/_vendor/msgpack (vendored in pip 25.0.1) | Apache-2.0 | yes | 33 | 0.034 M |
+| pip/_vendor/idna (vendored in pip 25.0.1) | BSD-3-Clause | yes | 28 | 0.031 M |
+| truststore 0.10.5 | MIT | yes | 31 | 0.030 M |
+| pyarrow/include/arrow/vendored/datetime | MIT | yes | 22 | 0.024 M |
+| pip/_vendor/platformdirs (vendored in pip 25.0.1) | MIT | yes | 21 | 0.021 M |
+| pip/_vendor/distlib (vendored in pip 25.0.1) | PSF-2.0 | yes | 18 | 0.015 M |
+| pyarrow/include/arrow/vendored/portable-snippets | CC0-1.0 | no | 11 | 0.014 M |
+| pip/_vendor/__init__.py (vendored in pip 25.0.1) | MIT (pip's own) | yes | 10 | 0.014 M |
+| pip/_vendor/certifi (vendored in pip 25.0.1) | MPL-2.0 | no | 12 | 0.013 M |
+| pip/_vendor/distro (vendored in pip 25.0.1) | Apache-2.0 | yes | 13 | 0.013 M |
+| pyarrow/include/arrow/vendored/datetime.h | Apache-2.0 (Arrow's own) | yes | 9 | 0.010 M |
+| pip/_vendor/tomli (vendored in pip 25.0.1) | MIT | yes | 10 | 0.009 M |
+| pyarrow/include/arrow/vendored/strptime.h | unclear (musl/NetBSD origin) | no | 8 | 0.008 M |
+| pip/_vendor/pyproject_hooks (vendored in pip 25.0.1) | MIT | yes | 8 | 0.007 M |
+
+Included: 6481 answers, 6.70 M answer tokens; excluded: 244 answers, 0.29 M.
+
+A different Python image holds other packages and versions: check each one's licence the same way before using its
+files (`drafter_pipeline.sh` keeps only the packages allowed above).
 - `tool_prompts.py` passes ToolACE's and glaive's tool lists as `tools`, with their schema types mapped to JSON Schema
   (without that, 44 % fail to render).
 - The 38 test prompts and their source files ([bench/expert_overlap](../../../bench/expert_overlap/README.md), "Q51")
