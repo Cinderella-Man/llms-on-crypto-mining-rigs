@@ -54,6 +54,35 @@ paths are placeholders.
      24 slots ~370; on two V100s with 48 slots ~150–200 (Volta is slow at batched Q8_0 MoE products). G3 (the
      29.6 GB release-candidate mix) on RTX 3080 + 3080 + 3090 with 28 slots ~420–475.
 
+   **vLLM as the writer** ([vllm/](vllm/)), on cards of compute 7.5 to 8.9 (RTX 20xx/30xx; not V100s, which vLLM's
+   CUDA 13 images don't support): the makers' NVFP4 GGUF (RecursiveSI/flint-nvfp4-gguf, 22.9 GB) runs as W4A16 on
+   Marlin, pipeline-parallel over two 24 GB cards (~12 GB of weights and ~10 GB of KV cache each). On two RTX 3090s
+   with 160 requests in flight it writes ~2.4–2.7k answer tokens/s (vLLM's own log), ~7× the G3 llama-server copy
+   on the same cards (~350). Text from a 4-bit writer is fine here: the Q8_0 dump labels every target.
+
+   ```bash
+   GPUS=2,5 MODEL_DIR=/models/flint-nvfp4 HF_DIR=/models/flint WORK=/work/vllm DATA=/data/q20 OUT=gen-V1 \
+       PROMPTS="prompts-ext.jsonl prompts-ext2.jsonl" bash vllm/run_generation.sh
+   DATA=/data/q20 OUT=gen-V1 bash vllm/stop_generation.sh
+   ```
+
+   - vLLM's Flint model (merged in vLLM PR #62938, nightly images from commit `899a1689`) asserts FlashInfer
+     attention, and vLLM's FlashInfer serves attention sinks only on compute 9.0 and newer.
+     [patch_flint_attention.py](vllm/patch_flint_attention.py) makes it use the standard attention layer whenever the
+     backend is not FlashInfer: Flint's own Triton kernel still applies the q/k norms and RoPE, then
+     `--attention-backend TRITON_ATTN` serves the sinks and the 513-token window. [serve_vllm.sh](vllm/serve_vllm.sh)
+     rebuilds the patched file from the pinned image's copy at every start and mounts it read-only over it.
+   - `HF_DIR` is the BF16 repository's small files (config, tokenizer, chat template); the GGUF carries neither a
+     config vLLM reads nor the tokenizer.
+   - `generate.py --api vllm` builds prompt ids with the Hugging Face chat template; [check_prompts.py](vllm/check_prompts.py)
+     confirms they equal llama-server's (900 of 900 stored rows, 459 of them with tool lists, once string tool-call
+     arguments are parsed into objects as llama-server does). Rows keep llama-server's conventions: the end token stays
+     the last id of an `eos` answer.
+   - [sanity_greedy.py](vllm/sanity_greedy.py) compares greedy answers with a llama-server copy before a run.
+   - Startup takes a few minutes plus the time to read 22.9 GB twice (once per pipeline stage): ~14 min from a busy
+     hard disk. Decode steps run as CUDA graphs; steps with a prompt chunk run eagerly (the model has no
+     `torch.compile` support).
+
 3. **Features** ([staircase_dump/](staircase_dump/), built inside a llama.cpp tree like `bench/ngram_replay/logit_dump`):
    replays each answer from an empty cache with every position as output and saves, per position, layer inputs and
    the final hidden state in FP8 E4M3 with one scale per row, plus the top-20 next-token log-probabilities. The run
@@ -207,7 +236,8 @@ paths are placeholders.
 |---|---|
 | [prompts.py](prompts.py) | training prompt set, and extensions of it |
 | [tool_prompts.py](tool_prompts.py) | tool-call prompts from two public tool-calling sets |
-| [generate.py](generate.py) | answers with exact token ids from llama-server, several copies sharing one prompt file |
+| [generate.py](generate.py) | answers with exact token ids from llama-server or vLLM (`--api vllm`), several copies sharing one prompt file |
+| [vllm/](vllm/) | vLLM as the writer: attention patch for compute < 9.0, server and client scripts, prompt-id and greedy checks |
 | [staircase_dump/](staircase_dump/) | `llama-staircase-dump`: layer inputs, final state (FP8 + row scale) and top-20 per position |
 | [feats.py](feats.py) | dump reader, `seqs`/`info`/`pack` commands, Flint's sampler chain on top-k log-probabilities |
 | [check_dump.py](check_dump.py) | dump checks (FP8 table, output head on the final state, against an earlier logit dump) |
