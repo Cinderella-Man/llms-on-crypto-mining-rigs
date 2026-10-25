@@ -77,7 +77,8 @@ warm-up, because idle cards sit at a lower clock.
 |---|---|---|---|
 | Five-turn chat, **Unsloth Q8_0** (`-ts 6,6,5,5,6,5,5,6,6`) | 14.78 | 29.55 | **RIG-TBD** |
 | Five-turn chat, Unsloth UD-Q4_K_XL | 14.20 | 27.97 | RIG-TBD |
-| Served, Q8_0, `--pipe-depth 3` with the copy lookup and the store | — | — | **RIG-TBD** |
+| Served, Q8_0, plain decoding | — | — | **RIG-TBD** |
+| Served, Q8_0, `--pipe-depth 3` (guesses from the copy lookup and the request's continuation counts) | — | — | **RIG-TBD** |
 | Served, Q8_0, the store, then the drafter | — | — | **RIG-TBD** | <!-- only:drafter -->
 | `llama-bench`, Q8_0 (512-token prompt, then 128 generated) | RIG-TBD | 35.9 | **RIG-TBD** |
 
@@ -160,7 +161,7 @@ learned from Flint Q8_0's hidden states and works with any Flint file. How it is
   [Hugging Face](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); RIG-TBD: their names): one for nine
   cards, trained on the nine-card splits, and one for six cards and any other split of 3–12 cards, trained on all of
   them. Both are trained only on Flint's answers to prompts whose answers may be published
-  ([the sources](../../release/flint-v2/reproduce/drafter.md#1-prompts)).
+  ([the sources](../../release/flint-v2.1/reproduce/drafter.md#1-prompts)).
 - **Turn it on:** add `--pipe-guess staircase --pipe-draft <file>` to the chat command line above, which already has
   `--pipe-depth 3`. The engine builds the drafter's window of hidden states from the run's own layer split.
 
@@ -177,9 +178,10 @@ coding-agent tool request of 1,536, each at temperature 0 and at the makers' sam
 - **One guess costs 5.3–7.3 ms on the first card** (measured with the first heads of the same size), which also runs
   Flint's first layers; the design estimated 1.6–2.6 ms. That cost, more than the guessing quality, limits the gain.
 - The first heads, trained partly on prompts whose answers may not be published, are not shipped; their measurements
-  are in [results.md](../../release/flint-v2/results.md).
+  are in [docs/drafter.md](../../docs/drafter.md).
 - Every answer must be identical to plain decoding in every configuration.
 <!-- end:drafter -->
+**Coming later (v2.1):** a trained guesser, the staircase drafter, that predicts Flint's next token from the hidden states of the tokens in flight, and a store of Flint's earlier answers ([how the drafter works](../../docs/drafter.md)). <!-- only:nodrafter -->
 
 ### Prefill
 
@@ -244,7 +246,7 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **PR #31047**: prefill +22–29 %.
 - **The persistent MoE kernel:** each expert layer at one token runs as one kernel instead of 13 launches: +5.6–8.8 %
   per token. It covers Flint's shapes and falls back to the normal path for any other model.
-- **Pipelined speculation** in llama-server (`--pipe-depth`, with `--pipe-floor` and `--pipe-store`).
+- **Pipelined speculation** in llama-server (`--pipe-depth`, with `--pipe-floor`).
 - **A Pascal decode-attention kernel** for Flint's attention shape: RIG-TBD.
 - **Tool requests sampled on the GPU**, the grammar checked on the host, pipelined until the tool call: RIG-TBD.
 - **The attention mask built on each card**, for prefill and decoding: decode at 64k tokens of context +12 %
@@ -265,7 +267,7 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 ## More
 
 - [release/flint-v2](../../release/flint-v2/README.md): everything about this release in one folder, with the recipes
-  that rebuild K2h-r16 and the drafter from scratch and every number behind the release.
+  that rebuild the engine and K2h-r16 from scratch and every number behind the release.
 - [Benchmarks](../../docs/benchmarks/): [Flint, first measurements](../../docs/benchmarks/2026-10-22-flint.md) (files,
   quality against speed), [the five-turn chat](../../docs/benchmarks/2026-10-23-flint-chat.md).
 - [quants/](../../quants/README.md): making Flint files for these cards; [recipes](../../quants/recipes/); every

@@ -38,6 +38,7 @@ The drafter is a small trained head (a 0.27 GB side file shipped with the releas
 counts) that guesses Flint's next token from the hidden states of the tokens already in flight; the cards check every
 guess ([how it works](models/flint/README.md#the-staircase-drafter)).
 <!-- end:drafter -->
+**Coming later (v2.1):** a trained guesser for pipelined speculation, the staircase drafter, and a store of Flint's earlier answers ([how it works](docs/drafter.md)). <!-- only:nodrafter -->
 
 The answers don't change: the engine's kernels change only the order of additions, and pipelined speculation gives
 exactly the tokens of plain decoding. To run it:
@@ -49,7 +50,7 @@ exactly the tokens of plain decoding. To run it:
 3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
 4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
 
-Everything about this release in one folder, including how to rebuild the model file and the drafter from scratch:
+Everything about this release in one folder, including how to rebuild the engine and the model file from scratch:
 [release/flint-v2](release/flint-v2/README.md).
 
 ## Models
