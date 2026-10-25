@@ -15,6 +15,8 @@ usage:
 """
 import argparse
 import json
+import mmap
+import os
 import sys
 
 import numpy as np
@@ -44,7 +46,9 @@ E4M3 = e4m3_table()
 class Record:
     """One dumped sequence: numpy views into the memory-mapped file."""
 
-    def __init__(self, mm, off):
+    def __init__(self, mm, off, fd=None):
+        """fd: the file opened for reading, for read_rows (None: copy out of the map)."""
+        self.fd = fd
         h = np.frombuffer(mm, np.int32, 8, off)
         assert h[7] in MAGICS, f"bad record at {off}"
         self.off = off
@@ -63,14 +67,16 @@ class Record:
         p += 4 * n
         self.full_scale = np.frombuffer(mm, np.float16, n, p)
         p += 2 * n
+        self.full_off = p
         self.full = np.frombuffer(mm, np.uint8, n * e, p).reshape(n, e)
         p += n * e
-        self.lay_start, self.lay_scale, self.lay = [], [], []
+        self.lay_start, self.lay_scale, self.lay, self.lay_off = [], [], [], []
         for li in range(nl):
             b = starts[li]
             self.lay_start.append(b)
             self.lay_scale.append(np.frombuffer(mm, np.float16, n - b, p))
             p += 2 * (n - b)
+            self.lay_off.append(p)
             self.lay.append(np.frombuffer(mm, np.uint8, (n - b) * e, p).reshape(n - b, e))
             p += (n - b) * e
         g, k = max(0, self.n_gen), self.k
@@ -79,6 +85,26 @@ class Record:
         self.top_lp = np.frombuffer(mm, np.float32, g * k, p).reshape(g, k)
         p += 4 * g * k
         self.end = p
+
+    def read_rows(self, which):
+        """(first position, FP8 rows [rows, n_embd] uint8, row scales float16) of an anchor ("full" or a layer
+        number), copied out. Through FeatFile the rows come with one exact read, without the page cache's read-ahead,
+        which on an HDD set to 8 MB of read-ahead would read several times the block."""
+        if which == "full":
+            b, q, s, off = 0, self.full, self.full_scale, self.full_off
+        else:
+            li = self.layers.index(which)
+            b, q, s, off = self.lay_start[li], self.lay[li], self.lay_scale[li], self.lay_off[li]
+        if self.fd is None:
+            return b, np.array(q), np.array(s)
+        buf = bytearray(q.nbytes)
+        view, got = memoryview(buf), 0
+        while got < q.nbytes:
+            k = os.preadv(self.fd, [view[got:]], off + got)
+            if k <= 0:
+                raise IOError(f"short read at {off + got}")
+            got += k
+        return b, np.frombuffer(buf, np.uint8).reshape(q.shape), np.array(s)
 
     def dequant(self, which, rows=None):
         """float32 [rows, n_embd] of an anchor ("full" or a layer number) at absolute positions `rows`."""
@@ -95,6 +121,10 @@ class FeatFile:
     def __init__(self, path):
         self.path = path
         self.mm = np.memmap(path, np.uint8, mode="r")
+        # each record header would otherwise pull the device's whole read-ahead window (8 MB on our HDDs) into memory;
+        # bulk rows go through read_rows instead
+        self.mm._mmap.madvise(mmap.MADV_RANDOM)
+        self.fd = os.open(path, os.O_RDONLY)
         self.offsets = []
         off = 0
         while off + 32 <= len(self.mm):
@@ -111,7 +141,7 @@ class FeatFile:
         return len(self.offsets)
 
     def __getitem__(self, i):
-        return Record(self.mm, self.offsets[i])
+        return Record(self.mm, self.offsets[i], self.fd)
 
 
 def sampler_dist(lp, top_p=0.95, min_p=0.0):

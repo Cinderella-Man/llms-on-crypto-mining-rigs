@@ -67,11 +67,7 @@ class Batch:
             need |= set(self.window["sample"])
         self.arrays = {}
         for a in need - {"emb"}:
-            if a == "full":
-                self.arrays[a] = (0, np.array(rec.full), np.array(rec.full_scale))
-            else:
-                li = rec.layers.index(int(a[1:]))
-                self.arrays[a] = (rec.lay_start[li], np.array(rec.lay[li]), np.array(rec.lay_scale[li]))
+            self.arrays[a] = rec.read_rows("full" if a == "full" else int(a[1:]))
 
 
 def to_device(b, device, dtype):
