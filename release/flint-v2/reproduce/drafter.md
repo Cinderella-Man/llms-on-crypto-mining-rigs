@@ -9,9 +9,11 @@ options: [bench/staircase_drafter](../../../bench/staircase_drafter/README.md).
 `drafter_pipeline.sh` runs the steps below on one machine, one after another. Here they ran on a 7-GPU machine
 (3 × RTX 3090, 2 × V100 32 GB, 2 × RTX 3080) with several copies in parallel; the commands are the same.
 
-**The release heads:** R2-9 for nine cards and R2-gen for six cards and any other count from 3 to 12 (step 5), the
-winner and the runner-up of the 2026-10-25 morning round. Both are depth-general, unfused, two layers, 40,000 draft ids.
-Everything up to step 5 is shared by both. RIG-TBD: whether the 15:00 round's continuation of R2-9 replaces it.
+**The release heads are being rebuilt** from the strict sources only (step 1): one for nine cards and one for six
+cards and any other count from 3 to 12, with the design and steps of the first heads, R2-9 and R2-gen (the winner and
+the runner-up of the 2026-10-25 morning round: depth-general, unfused, two layers, 40,000 draft ids). The first heads
+were trained partly on answers to prompts whose answers may not be published, so they do not ship; the runs and scores
+in steps 5 and 6 are theirs. RIG-TBD: the rebuilt heads' runs, arguments and scores.
 
 ## What you need
 
@@ -37,18 +39,27 @@ files for edit and agent prompts), `$LLAMA` a llama.cpp tree (more source files)
 | prompts-ext2.jsonl | 34,142 | `cat prompts.jsonl prompts-ext.jsonl > prompts-all12.jsonl; python prompts.py prompts-ext2.jsonl $HF $STD $LLAMA --scale 6 --seed 22 --extend prompts-all12.jsonl` |
 | prompts-tools.jsonl | 15,330 | `cat prompts.jsonl prompts-ext.jsonl prompts-ext2.jsonl > used.jsonl; python tool_prompts.py prompts-tools.jsonl $HF --extend used.jsonl` |
 
-**Sources and licences:**
-- `prompts.py`: ShareGPT, UltraChat, Magicoder Evol and OSS, Hermes function calling, NuminaMath and OpenR1-Math (the
-  datasets' own licences apply to the prompts; only Flint's answers to them are trained on), plus whole-file edits and
-  coding-agent turns built from the Python standard library and the llama.cpp sources.
-- Licences, as each dataset's page states them: UltraChat 200k MIT; Magicoder Evol-Instruct Apache-2.0, OSS-Instruct
-  MIT; Hermes function calling, NuminaMath-CoT, OpenR1-Math, ToolACE and glaive-function-calling-v2 Apache-2.0; Python
-  standard library PSF License 2.0; llama.cpp MIT. ShareGPT (Aeala/ShareGPT_Vicuna_unfiltered) collects conversations
-  shared from ChatGPT, whose reuse terms are unclear: 9,568 of the prompts and 8,865 of the answers (12.62 M answer
-  tokens) come from it. The release heads were trained with them; the dataset, a later release, leaves them out
-  ([draft card](../huggingface/flint-drafter-data/README.md)).
-- `tool_prompts.py`: Team-ACE/ToolACE and glaiveai/glaive-function-calling-v2 (Apache-2.0), with their tool lists passed
-  as `tools` and their schema types mapped to JSON Schema (without that, 44 % fail to render).
+**The strict sources: the release uses only prompts whose answers may be published.** Every prompt row records its
+`source`; keep these rows, and only answers to them, before generating, dumping and training. `drafter_pipeline.sh`'s
+prompts step writes each prompt file again as `*.strict.jsonl` with these rows only; every row keeps its id, so its
+seed stays the same. In the four files above that leaves 44,456 of the 76,431 prompts (3,750 / 9,956 / 15,420 /
+15,330); RIG-TBD: the answers and answer tokens the rebuilt heads train on.
+
+| Source (`source` field) | Licence, as its page states it | Prompts for | Script | Prompts kept |
+|---|---|---|---|---|
+| NousResearch/hermes-function-calling-v1 (single-turn and glaive subsets) | Apache-2.0 | tool calls | `prompts.py` | 4,497 |
+| AI-MO/NuminaMath-CoT | Apache-2.0 | reasoning | `prompts.py` | 3,480 |
+| open-r1/OpenR1-Math-220k | Apache-2.0 | reasoning | `prompts.py` | 2,743 |
+| Team-ACE/ToolACE | Apache-2.0 | tool calls | `tool_prompts.py` | 10,581 |
+| glaiveai/glaive-function-calling-v2 | Apache-2.0 | tool calls | `tool_prompts.py` | 4,749 |
+| Whole-file edits and coding-agent turns (categories `edit` and `agent`; `source` is the file's path) built from the Python standard library and llama.cpp sources | PSF License 2.0; MIT | code | `prompts.py` | 8,699 edits, 9,707 agent turns |
+
+- **Not used:** ShareGPT (Aeala/ShareGPT_Vicuna_unfiltered: conversations shared from ChatGPT, whose reuse terms are
+  unclear), and UltraChat 200k and Magicoder Evol-Instruct and OSS-Instruct (MIT and Apache-2.0, but generated with
+  OpenAI models). `prompts.py` still draws them, so filter them out. The first heads and the first store were built
+  with them and do not ship.
+- `tool_prompts.py` passes ToolACE's and glaive's tool lists as `tools`, with their schema types mapped to JSON Schema
+  (without that, 44 % fail to render).
 - The 38 test prompts and their source files ([bench/expert_overlap](../../../bench/expert_overlap/README.md), "Q51")
   are excluded. Prompt numbers are global: `--extend` numbers after the file it extends.
 
@@ -82,8 +93,9 @@ GPUS=0,1 MODEL_DIR=<flint-nvfp4-gguf> HF_DIR=<RecursiveSI/flint small files> WOR
 `vllm/check_prompts.py` confirms the prompt ids equal llama-server's, and `vllm/sanity_greedy.py` compares greedy
 answers before a run.
 
-**What the release data holds** (answers / answer tokens): Flint Q8_0 7,148 / 8.61 M; G3 14,615 / 9.58 M; UD-Q4_K_XL
-7,763 / 3.73 M; NVFP4 in vLLM 42,185 / 52.74 M; in total 71,711 / 74.66 M. Rates: Q8_0 on two RTX 3090s ~370 answer
+**What the first heads' data held**, all sources (answers / answer tokens): Flint Q8_0 7,148 / 8.61 M; G3 14,615 /
+9.58 M; UD-Q4_K_XL 7,763 / 3.73 M; NVFP4 in vLLM 42,185 / 52.74 M; in total 71,711 / 74.66 M. RIG-TBD: the strict
+subset the rebuilt heads train on. Rates: Q8_0 on two RTX 3090s ~370 answer
 tokens/s, vLLM on two RTX 3090s ~2.4–2.7k. A 4-bit writer is fine: the Q8_0 dump labels every target.
 
 ## 3. The dump
@@ -154,12 +166,14 @@ python sim.py --gen q51/gen.jsonl --scores scores/sim --jobs 8 --out sim.json
 | Head | Card count | Q51 fresh text | Q51 overall | Simulated speed |
 |---|---|---|---|---|
 | R1 | 6 | 0.502 | 0.562 | 1.90× plain decoding (70.9 tok/s) |
-| **R2-9, the nine-card release head** | 9 (6/…/5/2) | 0.476 | 0.538 | RIG-TBD |
+| R2-9, the first nine-card head (not shipped) | 9 (6/…/5/2) | 0.476 | 0.538 | — |
 | R2-9 | 9 (even) | 0.492 | 0.553 | — |
 | R2-9 | 6 | 0.507 | 0.567 | — |
 | R2-gen | 9 (6/…/5/2) / 9 (even) | 0.469 / 0.488 | 0.531 / 0.549 | — |
-| **R2-gen, the release head for six and other counts** | 6 | 0.523 | 0.583 | RIG-TBD |
+| R2-gen, the first head for six and other counts (not shipped) | 6 | 0.523 | 0.583 | — |
 | R2-gen | 3 / 12 | 0.556 / 0.449 | 0.624 / 0.508 | — |
+| **The rebuilt nine-card head**, strict sources | 9 | RIG-TBD | RIG-TBD | RIG-TBD |
+| **The rebuilt general head**, strict sources | 6 | RIG-TBD | RIG-TBD | RIG-TBD |
 
 Acceptance is the share of guesses that equal Flint's sample at the makers' sampling (coupled, α 3); "fresh text" is
 what the copy lookup in front of the drafter cannot guess. The pick is made on the nine-card split with a light last
@@ -168,9 +182,11 @@ card (`-ts 6,6,6,6,6,6,6,5,2`).
 ## 7. Export
 
 ```bash
-PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/R2-9 --vocab vocab.npy --out flint-staircase-drafter-9cards-v2.0.gguf --alpha 3
-PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/R2-gen --vocab vocab.npy --out flint-staircase-drafter-v2.0.gguf --alpha 3
+PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/<nine-card head> --vocab vocab.npy --out <nine-card file> --alpha 3
+PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/<general head> --vocab vocab.npy --out <general file> --alpha 3
 ```
+
+RIG-TBD: the rebuilt heads' folders and the release file names.
 
 `--alpha` is the head's own value (`alpha.txt` in its folder when validation chose one; 3 for every head so far).
 
@@ -194,8 +210,10 @@ step 7.
 ## 9. The continuation store
 
 The release guesser consults, after the conversation itself, a store of Flint's earlier answers (`--pipe-store`): 8
-bytes per token, memory-mapped, built with `bench/ngram_replay/datastore.cpp` from the generated answers; ours holds
-13.8 M tokens (110 MB). How it is built and what it adds (~5 %): [bench/ngram_replay](../../../bench/ngram_replay/README.md).
+bytes per token, memory-mapped, built with `bench/ngram_replay/datastore.cpp` from the generated answers. The release
+store is rebuilt from the strict sources' answers only (RIG-TBD: its size and file name; the first store held 13.8 M
+tokens, 110 MB, from all sources, and does not ship). How it is built:
+[bench/ngram_replay](../../../bench/ngram_replay/README.md).
 
 ## Compute and data, in total
 

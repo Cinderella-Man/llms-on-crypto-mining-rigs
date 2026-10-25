@@ -9,7 +9,7 @@ Apache-2.0 and signed by "Kamil Skowron (@kamilskowron)".
 | Repository | Kind | Files | Folder here |
 |---|---|---|---|
 | `CinderellaMan/Flint-K2h-r16-GGUF` | model | `flint-K2h-r16.gguf` (29.4 GB), `README.md`, `LICENSE`, `CHECKSUMS` | [flint-K2h-r16/](flint-K2h-r16/) |
-| `CinderellaMan/Flint-Staircase-Drafter` | model | `flint-staircase-drafter-9cards-v2.0.gguf` (R2-9) and `flint-staircase-drafter-v2.0.gguf` (R2-gen), ~0.27 GB each, `README.md`, `LICENSE`, `CHECKSUMS`; OWNER-TBD: the answer store `flint-answers-clean-13.8M.pstore` (110 MB) | [flint-staircase-drafter/](flint-staircase-drafter/) |
+| `CinderellaMan/Flint-Staircase-Drafter` | model | **being rebuilt:** the two drafter files, one for nine cards and one for 3–12 cards (RIG-TBD: names), ~0.27 GB each, `README.md`, `LICENSE`, `CHECKSUMS`; OWNER-TBD: the rebuilt answer store (RIG-TBD: name and size) | [flint-staircase-drafter/](flint-staircase-drafter/) |
 | `CinderellaMan/flint-drafter-data` | dataset | **later, not in this release:** publishing the data is parked; the card stays a draft | [flint-drafter-data/](flint-drafter-data/) |
 
 - The engine archives go to the fork's GitHub release, not to Hugging Face ([reproduce/engine.md](../reproduce/engine.md)).
@@ -31,15 +31,15 @@ Apache-2.0 and signed by "Kamil Skowron (@kamilskowron)".
 
 ## Before uploading the drafter
 
-1. Export both heads, R2-9 and R2-gen (`export_gguf.py`, [reproduce/drafter.md](../reproduce/drafter.md), step 7),
-   and run the checks of step 8 on each.
+1. Export both rebuilt heads, trained only on answers to the strict sources (`export_gguf.py`,
+   [reproduce/drafter.md](../reproduce/drafter.md), step 7), and run the checks of step 8 on each. The first heads,
+   R2-9 and R2-gen, are not uploaded: part of their training answers came from prompts whose answers may not be
+   published.
 2. `sha256sum` into `flint-staircase-drafter/CHECKSUMS` and the folder's CHECKSUMS; the same files go into the engine
-   release notes through `package_release.sh` (`DRAFTS="flint-staircase-drafter-9cards-v2.0.gguf=… flint-staircase-drafter-v2.0.gguf=…"`).
-3. The card's card counts, acceptance and speed from today's rig run.
-4. **The answer store (OWNER-TBD):** the drafter's served numbers were measured with it in front, and it is built from
-   Flint's answers (the first 13.8 M tokens of the answer corpus, `bench/ngram_replay/datastore.cpp`), so it waits for
-   the owner's decision on sharing data. Before it ships, check whether those tokens include answers to ShareGPT
-   prompts, which the dataset leaves out; if they do, rebuild the store without them and re-measure.
+   release notes through `package_release.sh` (`DRAFTS="<nine-card file>=… <general file>=…"`).
+3. The card's file names, card counts, acceptance and speed from the rebuilt heads' rig run.
+4. **The answer store (OWNER-TBD):** rebuilt from the strict sources' answers with `bench/ngram_replay/datastore.cpp`;
+   whether it ships waits for the owner. The first store, built partly from other prompts' answers, is not uploaded.
 
 ## Commands (once the above is done)
 
@@ -47,10 +47,10 @@ Apache-2.0 and signed by "Kamil Skowron (@kamilskowron)".
 hf auth login
 hf upload CinderellaMan/Flint-K2h-r16-GGUF flint-K2h-r16.gguf flint-K2h-r16.gguf
 hf upload CinderellaMan/Flint-K2h-r16-GGUF release/flint-v2/huggingface/flint-K2h-r16 .
-hf upload CinderellaMan/Flint-Staircase-Drafter flint-staircase-drafter-9cards-v2.0.gguf flint-staircase-drafter-9cards-v2.0.gguf
-hf upload CinderellaMan/Flint-Staircase-Drafter flint-staircase-drafter-v2.0.gguf flint-staircase-drafter-v2.0.gguf
+hf upload CinderellaMan/Flint-Staircase-Drafter <nine-card file> <nine-card file>
+hf upload CinderellaMan/Flint-Staircase-Drafter <general file> <general file>
 hf upload CinderellaMan/Flint-Staircase-Drafter release/flint-v2/huggingface/flint-staircase-drafter .
-# OWNER-TBD, only if the store ships: hf upload CinderellaMan/Flint-Staircase-Drafter flint-answers-clean-13.8M.pstore flint-answers-clean-13.8M.pstore
+# OWNER-TBD, only if the store ships: hf upload CinderellaMan/Flint-Staircase-Drafter <store file> <store file>
 ```
 
 A 29.4 GB file takes ~40–80 minutes at 50–100 Mbit/s. Hugging Face shows each file's SHA-256 on its page (the LFS
@@ -58,15 +58,15 @@ object ID), which must equal the line in CHECKSUMS; `hf cache verify` checks a d
 
 ## Later, not in this release: the dataset
 
-The draft card [flint-drafter-data/](flint-drafter-data/README.md) describes what the dataset would hold: the prompts
-and Flint's answers without the ShareGPT rows (66,863 prompts; 62,846 answers, 62.05 M answer tokens), the manifest,
-`vocab.npy`, and the heads U, R1, R2-9 and R2-gen with their training checkpoints (~12 GB). Before it goes out:
+The draft card [flint-drafter-data/](flint-drafter-data/README.md) describes what the dataset would hold: the strict
+sources' prompts and Flint's answers to them, the manifest, `vocab.npy`, and the rebuilt heads with their training
+checkpoints (RIG-TBD: counts and sizes after the rebuild). Before it goes out:
 
-- **Leave out every ShareGPT row:** drop the prompts whose `source` is `Aeala/ShareGPT_Vicuna_unfiltered` from the
-  prompt files (9,568), and every answer to those prompt numbers from the answer files (8,865 answers, 12.62 M answer
-  tokens); the card's counts must match.
+- **Only the strict sources:** keep the prompts whose `source` is one of the strict sources
+  ([reproduce/drafter.md](../reproduce/drafter.md#1-prompts)) and only the answers to them; the card's counts must
+  match.
 - The private manifest lists machine paths: copy it with those fields removed (model files by name and SHA-256,
-  engines by commit), and with the ShareGPT answers taken out of its counts.
+  engines by commit).
 - Each head's `config.json` records the training arguments with machine paths (`feats`, `out`, `vocab`, `flint`,
   `init_from`): replace them with file names. `head.pt` and `ckpt.pt` hold only tensors and counters.
 - Drop the snapshot copies (`*.snap*.jsonl`) and keep one file per writer run.

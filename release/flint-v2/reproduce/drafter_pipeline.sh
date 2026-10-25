@@ -8,7 +8,8 @@
 #   release/flint-v2/reproduce/drafter_pipeline.sh
 #
 # Steps (STEPS, default all, in this order):
-#   prompts   prompts.jsonl, prompts-ext.jsonl, prompts-ext2.jsonl, prompts-tools.jsonl (76,431 prompts)
+#   prompts   prompts.jsonl, prompts-ext.jsonl, prompts-ext2.jsonl, prompts-tools.jsonl (76,431 prompts from every
+#             source), then each as *.strict.jsonl with the strict sources only, which the later steps use
 #   answers   Flint's answers from llama-server (the makers' sampling, seed 20000 + prompt number, <= 2,048 tokens)
 #   testset   Q51, the 38 held-out transcripts: shipped in data/q51/ (copied; TESTSET_REBUILD=1 regenerates them)
 #   dump      hidden states (26-layer grid) and top-20 targets from Flint Q8_0, for the answers and for Q51
@@ -18,8 +19,8 @@
 #   export    the GGUF side file for the engine
 #
 # Env [defaults]: DATA, LLAMA, Q8, HF, STD, PYTHON [python3], GPUS [0] (CUDA_VISIBLE_DEVICES for every GPU step),
-#   SLOTS [24] (llama-server slots for the answers), PORT [8001], PROMPT_FILES [all four], U_MIN [300], R1_MIN [480],
-#   GEN_MIN [134], CARDS ("9" for the release's nine-card head R2-9; unset for the 3-12-card head R2-gen; the head goes
+#   SLOTS [24] (llama-server slots for the answers), PORT [8001], PROMPT_FILES [the four strict files], U_MIN [300], R1_MIN [480],
+#   GEN_MIN [134], CARDS ("9" for the nine-card head, as R2-9; unset for the 3-12-card head, as R2-gen; the head goes
 #   to heads/R2-<CARDS or gen> and its export to drafter-<CARDS or gen>.gguf), FP16 [0: 1 on V100s],
 #   STEPS [all]. Data sizes: ~58 GB per million answer tokens for the dump; plan disk accordingly.
 set -euo pipefail
@@ -32,7 +33,7 @@ GPUS=${GPUS:-0}
 SLOTS=${SLOTS:-24}
 PORT=${PORT:-8001}
 STEPS=${STEPS:-prompts answers testset dump vocab train score export}
-PROMPT_FILES=${PROMPT_FILES:-prompts.jsonl prompts-ext.jsonl prompts-ext2.jsonl prompts-tools.jsonl}
+PROMPT_FILES=${PROMPT_FILES:-prompts.strict.jsonl prompts-ext.strict.jsonl prompts-ext2.strict.jsonl prompts-tools.strict.jsonl}
 BIN=$LLAMA/build/bin
 R2=R2-${CARDS:-gen}; R2=${R2//,/}    # R2-gen, R2-9, R2-69
 export PYTHONPATH="$LLAMA/gguf-py${PYTHONPATH:+:$PYTHONPATH}"
@@ -52,6 +53,20 @@ if has prompts; then
     $PYTHON prompts.py "$DATA/prompts-ext2.jsonl" "$HF" "$STD" "$LLAMA" --scale 6 --seed 22 --extend "$DATA/prompts-all12.jsonl"
     cat "$DATA/prompts.jsonl" "$DATA/prompts-ext.jsonl" "$DATA/prompts-ext2.jsonl" > "$DATA/used.jsonl"
     $PYTHON tool_prompts.py "$DATA/prompts-tools.jsonl" "$HF" --extend "$DATA/used.jsonl"
+    # the strict sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same
+    for f in prompts prompts-ext prompts-ext2 prompts-tools; do
+        $PYTHON -c '
+import json, sys
+strict = {"NousResearch/hermes-function-calling-v1", "AI-MO/NuminaMath-CoT", "open-r1/OpenR1-Math-220k",
+          "Team-ACE/ToolACE", "glaiveai/glaive-function-calling-v2"}
+with open(sys.argv[2], "w") as out:
+    for line in open(sys.argv[1]):
+        r = json.loads(line)
+        if r["category"] in ("edit", "agent") or r.get("source") in strict:
+            out.write(line)
+' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl"
+        log "$f.strict.jsonl: $(wc -l < "$DATA/$f.strict.jsonl") of $(wc -l < "$DATA/$f.jsonl") prompts"
+    done
 fi
 
 serve() {  # serve MODEL: llama-server for many slots on GPUS, until stop_server

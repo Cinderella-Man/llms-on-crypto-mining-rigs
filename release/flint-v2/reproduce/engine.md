@@ -50,7 +50,7 @@ release notes from [release/notes-v2.0.md](../../notes-v2.0.md) (`NOTES_VARIANT=
 drafter):
 
 ```bash
-BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 DRAFTS="flint-staircase-drafter-9cards-v2.0.gguf=<R2-9 export> flint-staircase-drafter-v2.0.gguf=<R2-gen export>" scripts/package_release.sh - v2.0 2d53179aa
+BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 DRAFTS="<nine-card file>=<its export> <general file>=<its export>" scripts/package_release.sh - v2.0 2d53179aa
 ```
 
 It checks that the binaries contain no AVX instructions, need glibc 2.38 at most, and find every library in the

@@ -21,7 +21,7 @@ Flint on nine P106-090 cards (one PCIe 1.0 lane each, a 2-core Celeron with 4 GB
 | Served chat at the full context, Q8_0, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
 | Generation, Q8_0 (`llama-bench` tg128) | RIG-TBD | 35.9 | **RIG-TBD** |
 | Generation, UD-Q4_K_XL (`llama-bench` tg128) | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Served chat, K2h-r16, the store and the staircase drafter (`--pipe-guess staircase`, 8k context) | — | — | **50.4** | <!-- only:drafter -->
+| Served chat, the store and the staircase drafter (`--pipe-guess staircase`) | — | — | **RIG-TBD** | <!-- only:drafter -->
 | Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 RIG-TBD (if the release carries tuned numbers): with a memory clock offset of RIG-TBD MT/s on every card, generation
@@ -69,9 +69,9 @@ output is the same as without it.
 <!-- begin:drafter -->
 **The staircase drafter, a trained guesser for pipelined speculation:**
 - A small transformer guesses Flint's next token from the hidden states Flint has already computed for the tokens in flight: the newest token has passed only the first card, older ones are further along, a staircase of depths. It sits behind the copy lookup and runs on the first card in its own CUDA stream; the last card still samples every token, so the output is the same as without it.
-- It ships as two side files (~0.27 GB each), trained on Flint's own answers: `flint-staircase-drafter-9cards-{{VERSION}}.gguf` for nine cards, and `flint-staircase-drafter-{{VERSION}}.gguf`, depth-general, for six cards and any other split of 3–12 cards. Add `--pipe-guess staircase --pipe-draft <file>` next to `--pipe-depth 3`.
+- It ships as two side files (~0.27 GB each), trained on Flint's answers to prompts whose answers may be published: one for nine cards and one, depth-general, for six cards and any other split of 3–12 cards (RIG-TBD: their file names). Add `--pipe-guess staircase --pipe-draft <file>` next to `--pipe-depth 3`.
 - The engine builds the drafter's window of hidden states from the run's own layer split, so no further setting is needed.
-- Served behind the copy lookup, continuations and store (`--pipe-store`), Flint K2h-r16 at 8k context: 50.4 tok/s on nine cards against 48.6 without the drafter and 33.4 without guessing (the drafter adds 3.7 %, 8.6 % on chat and code at temperature 0), and 49.5 against 49.0 on six cards. Without the store the drafter ran at 44.4 tok/s on nine cards. Every answer stayed identical to plain decoding.
+- Served on nine and six cards: RIG-TBD tok/s, against RIG-TBD without the drafter and RIG-TBD without guessing. Every answer stays identical to plain decoding.
 - It guesses for a request that generates alone, like the rest of pipelined speculation.
 <!-- end:drafter -->
 
@@ -99,7 +99,7 @@ context:
 `-ts 6,6,5,5,6,5,5,6,6` splits the layers by memory so that Q8_0 and the full context fit; for a 4-bit file
 (UD-Q4_K_XL, or this project's K2h-r16 on six cards) drop it.
 
-With the drafter, add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-{{VERSION}}.gguf` to that line. <!-- only:drafter -->
+With the drafter, add `--pipe-guess staircase --pipe-draft <the nine-card file>` to that line (RIG-TBD: its name). <!-- only:drafter -->
 The repository's Flint page explains every flag, the six-card and agent variants, and the speed and quality behind them.
 
 ## Assets
