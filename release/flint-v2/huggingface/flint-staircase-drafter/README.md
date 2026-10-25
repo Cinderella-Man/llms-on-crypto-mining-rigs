@@ -97,10 +97,8 @@ release in one folder: [release/flint-v2](https://github.com/Cinderella-Man/llms
 ## Licence and credits
 
 - Apache-2.0 ([LICENSE](LICENSE)). The drafter is trained on Flint's outputs and internal states (Flint is Apache-2.0,
-  by RecursiveSI); the prompts behind those outputs come from public datasets, listed with their licences on
-  [the training data's page](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data).
-- The heads in training format and their training checkpoints are in
-  [the training data](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data) too.
+  by RecursiveSI); the prompts behind those outputs come from public datasets, listed with their licences in
+  [the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md#1-prompts).
 - Made by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X) for
   [LLMs on crypto-mining rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs). Not affiliated with
   RecursiveSI.

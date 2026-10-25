@@ -40,9 +40,13 @@ files for edit and agent prompts), `$LLAMA` a llama.cpp tree (more source files)
 **Sources and licences:**
 - `prompts.py`: ShareGPT, UltraChat, Magicoder Evol and OSS, Hermes function calling, NuminaMath and OpenR1-Math (the
   datasets' own licences apply to the prompts; only Flint's answers to them are trained on), plus whole-file edits and
-  coding-agent turns built from the Python standard library and the llama.cpp sources. The published dataset lists
-  each source with its licence and leaves out the ShareGPT rows (Aeala/ShareGPT_Vicuna_unfiltered, unclear terms);
-  the release heads were trained with them.
+  coding-agent turns built from the Python standard library and the llama.cpp sources.
+- Licences, as each dataset's page states them: UltraChat 200k MIT; Magicoder Evol-Instruct Apache-2.0, OSS-Instruct
+  MIT; Hermes function calling, NuminaMath-CoT, OpenR1-Math, ToolACE and glaive-function-calling-v2 Apache-2.0; Python
+  standard library PSF License 2.0; llama.cpp MIT. ShareGPT (Aeala/ShareGPT_Vicuna_unfiltered) collects conversations
+  shared from ChatGPT, whose reuse terms are unclear: 9,568 of the prompts and 8,865 of the answers (12.62 M answer
+  tokens) come from it. The release heads were trained with them; the dataset, a later release, leaves them out
+  ([draft card](../huggingface/flint-drafter-data/README.md)).
 - `tool_prompts.py`: Team-ACE/ToolACE and glaiveai/glaive-function-calling-v2 (Apache-2.0), with their tool lists passed
   as `tools` and their schema types mapped to JSON Schema (without that, 44 % fail to render).
 - The 38 test prompts and their source files ([bench/expert_overlap](../../../bench/expert_overlap/README.md), "Q51")
@@ -80,9 +84,7 @@ answers before a run.
 
 **What the release data holds** (answers / answer tokens): Flint Q8_0 7,148 / 8.61 M; G3 14,615 / 9.58 M; UD-Q4_K_XL
 7,763 / 3.73 M; NVFP4 in vLLM 42,185 / 52.74 M; in total 71,711 / 74.66 M. Rates: Q8_0 on two RTX 3090s ~370 answer
-tokens/s, vLLM on two RTX 3090s ~2.4–2.7k. A 4-bit writer is fine: the Q8_0 dump labels every target. The
-[published answers](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data) are these without the COUNT-TBD
-answers to ShareGPT prompts.
+tokens/s, vLLM on two RTX 3090s ~2.4–2.7k. A 4-bit writer is fine: the Q8_0 dump labels every target.
 
 ## 3. The dump
 

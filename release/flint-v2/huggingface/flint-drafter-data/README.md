@@ -8,6 +8,8 @@ tags:
   - synthetic
 ---
 
+<!-- Draft for a later release, not part of v2.0: publishing the data is parked (2026-10-25). -->
+
 # Flint drafter data: what the staircase drafter was trained on
 
 The prompts, Flint's answers with their exact token ids, and the trained heads with their training checkpoints behind
@@ -20,8 +22,8 @@ anyone can redo the drafter's training, or continue it from our checkpoints. Eve
 
 | Path | What | Size |
 |---|---|---|
-| `prompts/prompts*.jsonl` | the four prompt files, without the ShareGPT rows (below): 76,431 − COUNT-TBD prompts, each with its category and source | under 0.3 GB |
-| `answers/gen-*.jsonl` | Flint's answers to them with the prompt's and the answer's token ids: 71,711 − COUNT-TBD answers, 74.66 M − COUNT-TBD answer tokens | under 0.6 GB |
+| `prompts/prompts*.jsonl` | the four prompt files, without the ShareGPT rows (below): 66,863 prompts, each with its category and source | under 0.3 GB |
+| `answers/gen-*.jsonl` | Flint's answers to them with the prompt's and the answer's token ids: 62,846 answers, 62.05 M answer tokens | under 0.6 GB |
 | `manifest.json` | one entry per answer file: the writer (model file and SHA-256, engine and commit, server flags), the prompt file, the sampling, the number of answers and answer tokens, the file's SHA-256 | small |
 | `vocab.npy` | the drafter's vocabulary: the 40,000 token ids it can guess | small |
 | `heads/<run>/head.pt` | each run's best weights in PyTorch format; `export_gguf.py` turns one into the GGUF the engine loads | 0.73–0.81 GB each |
@@ -55,22 +57,27 @@ keeps its source in the `source` field.
 | Python standard library source files | Python Software Foundation License 2.0 | whole-file edits and coding-agent turns |
 | llama.cpp source files | MIT | whole-file edits and coding-agent turns |
 
-**Left out: the ShareGPT rows.** The drafter was also trained on Flint's answers to COUNT-TBD prompts from
-[Aeala/ShareGPT_Vicuna_unfiltered](https://huggingface.co/datasets/Aeala/ShareGPT_Vicuna_unfiltered) (COUNT-TBD answer
-tokens). That dataset collects conversations people shared from ChatGPT, and the terms for reusing them are unclear
-whatever its own licence tag says, so neither those prompts nor Flint's answers to them are published. The published heads and checkpoints were trained with them; a head trained on
-this dataset alone is equivalent, not identical.
+**Left out: the ShareGPT rows.** The drafter was also trained on Flint's answers to 9,568 prompts from
+[Aeala/ShareGPT_Vicuna_unfiltered](https://huggingface.co/datasets/Aeala/ShareGPT_Vicuna_unfiltered) (1,100, 3,017
+and 5,451 in the three general prompt files, none in the tool file): 8,865 answers with 12.62 M answer tokens, 16.9 %
+of the training answers. That dataset collects conversations people shared from ChatGPT, and the terms for reusing
+them are unclear whatever its own licence tag says. LMSYS, who collected these conversations to train Vicuna, wrote
+"We will not release the ShareGPT dataset" ([FastChat](https://github.com/lm-sys/FastChat)), and the drafter projects
+this one follows (EAGLE, Medusa, Kangaroo) published their trained heads without republishing it. So do we: the heads
+and checkpoints, trained with those rows, are published; the rows are not. A head trained on this dataset alone is
+equivalent, not identical.
 
 ## Where the answers come from
 
-| Writer | Engine | Answers | Answer tokens |
-|---|---|---|---|
-| Unsloth's Flint Q8_0 | llama.cpp (llama-server) | 7,148 | 8.61 M |
-| G3, this project's mix | llama.cpp | 14,615 | 9.58 M |
-| Unsloth's UD-Q4_K_XL | llama.cpp | 7,763 | 3.73 M |
-| The makers' NVFP4 GGUF | vLLM | 42,185 | 52.74 M |
+| Writer | Engine | Answers here | Answer tokens here | Left out (ShareGPT): answers / tokens |
+|---|---|---|---|---|
+| Unsloth's Flint Q8_0 | llama.cpp (llama-server) | 6,048 | 7.07 M | 1,100 / 1.54 M |
+| G3, this project's mix | llama.cpp | 13,722 | 8.32 M | 893 / 1.26 M |
+| Unsloth's UD-Q4_K_XL | llama.cpp | 7,525 | 3.38 M | 238 / 0.35 M |
+| The makers' NVFP4 GGUF | vLLM | 35,551 | 43.27 M | 6,634 / 9.47 M |
+| **In all** | | **62,846** | **62.05 M** | 8,865 / 12.62 M |
 
-The counts include the ShareGPT answers that are left out (COUNT-TBD per writer). Sampling for every writer:
+The drafter was trained on both columns: 71,711 answers, 74.7 M answer tokens. Sampling for every writer:
 temperature 1.0, top-k 20, top-p 0.95, min-p 0, reasoning kept, at most 2,048 answer tokens, seed 20000 + the prompt's
 number. Answers sampled on GPUs differ between machines in the details, so only these files reproduce the drafter's
 exact training text; the writers and seeds above regenerate an equivalent set.
