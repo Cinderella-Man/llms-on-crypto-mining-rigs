@@ -364,18 +364,23 @@ def feature_loss(f, target):
     return ((f - target) ** 2).mean() / (target ** 2).mean().clamp_min(1e-8)
 
 
-def kl_loss(logits, p_draft, sampled, ce_weight=0.2):
+def _mean(x, weight):
+    return x.mean() if weight is None else (x * weight).sum() / weight.sum().clamp_min(1e-6)
+
+
+def kl_loss(logits, p_draft, sampled, ce_weight=0.2, weight=None):
     """Forward KL from Flint's kept distribution (p_draft [T, k] over draft ids in sampled-order columns, given as
-    (ids [T, k], probs [T, k])) to the guesser, plus cross-entropy on the sampled token's draft id."""
+    (ids [T, k], probs [T, k])) to the guesser, plus cross-entropy on the sampled token's draft id; weight [T]: a
+    weighted mean over targets."""
     ids, probs = p_draft
     logq = torch.log_softmax(logits, -1)
     lq = logq.gather(1, ids)
     kl = (probs * (torch.log(probs.clamp_min(1e-12)) - lq)).sum(-1)
     ce = -logq.gather(1, sampled[:, None])[:, 0]
-    return kl.mean() + ce_weight * ce.mean(), kl.mean().detach(), ce.mean().detach()
+    return _mean(kl, weight) + ce_weight * _mean(ce, weight), kl.mean().detach(), ce.mean().detach()
 
 
-def lk_loss(logits, p_draft, sampled, eta=3.0, ce_weight=0.2):
+def lk_loss(logits, p_draft, sampled, eta=3.0, ce_weight=0.2, weight=None):
     """Acceptance-matched hybrid loss (LK losses, arXiv 2602.23881): per position lambda * KL + (1 - lambda) * (1 -
     coupled match), lambda = exp(-eta * coupled) with the match held constant, so KL leads while acceptance is low and
     the coupled match itself takes over as it rises; plus cross-entropy on the sampled token."""
@@ -385,7 +390,8 @@ def lk_loss(logits, p_draft, sampled, eta=3.0, ce_weight=0.2):
     c = coupled_and_top(logits, ids, probs)[0]
     lam = torch.exp(-eta * c.detach())
     ce = -logq.gather(1, sampled[:, None])[:, 0]
-    return (lam * kl + (1 - lam) * (1 - c)).mean() + ce_weight * ce.mean(), kl.mean().detach(), ce.mean().detach()
+    return (_mean(lam * kl + (1 - lam) * (1 - c), weight) + ce_weight * _mean(ce, weight), kl.mean().detach(),
+            ce.mean().detach())
 
 
 def uniform_match(logits, top_ids_draft, p_kept, alpha=1.0, top_m=16):

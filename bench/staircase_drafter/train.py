@@ -26,6 +26,18 @@ import drafter
 import feats
 
 
+def copy_mask(tokens, n_prompt, n=8):
+    """Answer positions inside a repeat of >= n tokens from the prompt or the earlier output (the copy lookup's
+    territory): every answer position covered by an n-gram that occurred earlier in the sequence. Linear time; it marks
+    the positions of score.py's greedy copy parse up to the copies' boundaries."""
+    s, first = tokens.tolist(), {}
+    mask = np.zeros(len(s), bool)
+    for p in range(len(s) - n + 1):
+        if first.setdefault(tuple(s[p:p + n]), p) < p and p + n > n_prompt:
+            mask[max(p, n_prompt):p + n] = True
+    return mask[n_prompt:]
+
+
 def load_flint(flint_dir, vocab, device):
     emb = torch.from_numpy(np.load(os.path.join(flint_dir, "token_embd.npy"))).to(device)
     out = np.load(os.path.join(flint_dir, "output.npy"), mmap_mode="r")
@@ -43,9 +55,10 @@ def t2d_table(vocab, n_vocab):
 class Batch:
     """CPU side of one sequence for one head: copies out of the memory map, ready to move to the GPU."""
 
-    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False, sampler=None):
+    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False, sampler=None, copy_weight=1.0):
         """sampler: a function of the record's recorded layers returning one window ({"sample": names}); the window
-        is then drawn here, in the loader thread, and only its layers are read."""
+        is then drawn here, in the loader thread, and only its layers are read. copy_weight < 1: loss weight of the
+        targets inside a copy of >= 8 tokens from the prompt or the earlier output (the copy lookup guesses those)."""
         self.n_prompt, self.n_tok = rec.n_prompt, rec.n_tok
         self.tokens = np.array(rec.tokens, np.int64)
         self.window = sampler(rec.layers) if sampler else None
@@ -58,6 +71,9 @@ class Batch:
         self.top_draft = t2d[rec.top_ids[j]]
         self.top_lp = np.array(rec.top_lp[j])
         self.sampled = t2d[self.tokens[self.tpos + 1]]
+        self.weight = None
+        if copy_weight != 1.0:
+            self.weight = np.where(copy_mask(self.tokens, rec.n_prompt)[j], copy_weight, 1.0).astype(np.float32)
         need = {profile["committed"], "full"}
         if not self.window:   # a sampled window is the only one trained: read only its layers
             need |= {a for w in profile["windows"].values() for a in w}
@@ -73,7 +89,8 @@ class Batch:
 def to_device(b, device, dtype):
     out = {"tokens": torch.from_numpy(b.tokens).to(device), "tpos": torch.from_numpy(b.tpos).to(device),
            "top_draft": torch.from_numpy(b.top_draft).to(device), "sampled": torch.from_numpy(b.sampled).to(device),
-           "top_lp": torch.from_numpy(b.top_lp).to(device), "arrays": {}}
+           "top_lp": torch.from_numpy(b.top_lp).to(device), "arrays": {},
+           "weight": None if getattr(b, "weight", None) is None else torch.from_numpy(b.weight).to(device)}
     for a, (start, q, s) in b.arrays.items():
         qt = torch.from_numpy(q).to(device).view(torch.float8_e4m3fn).to(dtype)
         st = torch.from_numpy(s).to(device).to(dtype)
@@ -198,12 +215,13 @@ def build_inputs(d, profile, windows, n_embd, dtype, fuse=False):
     return committed, ca, win, cextra
 
 
-def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=None):
+def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=None, copy_weight=1.0):
     for ff, i in order:
         if stop.is_set():
             return
         try:
-            q.put(Batch(records[ff][i], profile, t2d, all_anchors=all_anchors, sampler=sampler))
+            q.put(Batch(records[ff][i], profile, t2d, all_anchors=all_anchors, sampler=sampler,
+                        copy_weight=copy_weight))
         except Exception as e:  # noqa: BLE001
             print(f"skip {ff}:{i}: {e}", flush=True)
     q.put(None)
@@ -264,6 +282,9 @@ def main():
     ap.add_argument("--fuse", action="store_true", help="give every row each shallower anchor its token has reached")
     ap.add_argument("--noise", type=float, default=0.0, help="uniform noise amplitude after each anchor's RMS norm")
     ap.add_argument("--dropout", type=float, default=0.0)
+    ap.add_argument("--copy-weight", type=float, default=1.0,
+                    help="loss weight of targets inside a copy of >= 8 tokens from the prompt or the earlier output "
+                         "(the copy lookup guesses those; < 1 spends the head on the rest)")
     ap.add_argument("--val-seqs", type=int, default=60, help="validation sequences for the final evaluation")
     ap.add_argument("--general", action="store_true",
                     help="depth-general head: anchors at any recorded layer, windows of random 3-12-card splits "
@@ -365,7 +386,8 @@ def main():
         order = train[:]
         rng.shuffle(order)
         q, stop = queue.Queue(maxsize=6), threading.Event()
-        th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors, general_sampler),
+        th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors, general_sampler,
+                                                   args.copy_weight),
                               daemon=True)
         th.start()
         while True:
@@ -396,9 +418,10 @@ def main():
             loss = 0.0
             for name, (logits, f) in out.items():
                 if args.loss == "lk":
-                    l, kl, ce = drafter.lk_loss(logits, (d["top_draft"], p), d["sampled"], eta=args.eta)
+                    l, kl, ce = drafter.lk_loss(logits, (d["top_draft"], p), d["sampled"], eta=args.eta,
+                                                weight=d["weight"])
                 else:
-                    l, kl, ce = drafter.kl_loss(logits, (d["top_draft"], p), d["sampled"])
+                    l, kl, ce = drafter.kl_loss(logits, (d["top_draft"], p), d["sampled"], weight=d["weight"])
                 if args.reg > 0:
                     rl = drafter.feature_loss(f, target_f)
                     l = l + args.reg * rl
