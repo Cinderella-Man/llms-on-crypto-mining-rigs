@@ -11,97 +11,86 @@ tags:
   - mining-rig
 ---
 
-# Flint K2h-r16 (GGUF): a Flint file for Pascal GPUs and mining rigs
+# Flint K2h-r16: Flint for old NVIDIA cards and crypto-mining rigs
 
-A quantization of [Flint](https://huggingface.co/RecursiveSI/flint), a 39.8 B-parameter mixture-of-experts model that
-uses 2.5 B parameters per token, built for old NVIDIA Pascal GPUs: the P106 and P104 mining cards, the GTX 10 series and
-the Tesla P4/P40. It uses only Q5_0, Q8_0 and 16/32-bit tensors, the formats that the
-[Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) decodes fastest, and reaches lower error
-than Unsloth's UD-Q4_K_XL (KL divergence 0.105 against 0.120) while reading fewer bytes per token.
+**What this is.** [Flint](https://huggingface.co/RecursiveSI/flint) is a 39.8-billion-parameter AI model that thinks
+before it answers, writes code and calls tools, and reads up to 262,144 tokens of context. This file is Flint packed
+into 29.4 GB so that it runs fast on old NVIDIA "Pascal" cards: the P106 and P104 cards of retired mining rigs, the
+GTX 10 series, and the Tesla P4/P40.
 
-This project is not affiliated with Flint's makers or with Unsloth.
+**Why it is faster there.** A model file stores its weights compressed. Modern graphics cards unpack any compression
+format almost for free, so the popular files use elaborate formats that save a little space. Old Pascal mining cards
+have few compute units and spend real time unpacking those formats. This file uses only the two simplest formats
+(Q5_0 and Q8_0), which the [Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) reads at full
+speed. The formats were chosen part by part, so the file stays closer to the original model than the popular 4-bit
+download, Unsloth's UD-Q4_K_XL.
 
-| File | Size | SHA-256 |
-|---|---|---|
-| `flint-K2h-r16.gguf` | 29.4 GB | RIG-TBD (after the release header is written; [CHECKSUMS](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/CHECKSUMS)) |
+**How fast.** On a Manli mining rig with nine P106-090 cards (6 GB each, every card on a single PCIe 1.0 lane, a
+2-core Celeron host): RIG-TBD tokens per second, against RIG-TBD on stock llama.cpp with the usual file.
 
-## Who it is for
+## Run it in three steps
 
-- **Pascal GPUs, above all mining rigs** with several 6–8 GB cards on PCIe x1 links, such as the Manli rig with nine
-  P106-090 cards it was measured on. It needs ~30 GB of GPU memory plus the context: five or six 6 GB cards for short
-  conversations, all nine for the full 262,144-token context.
-- **Other GPUs and Macs** load it too (standard GGUF types, llama.cpp release b11803 or newer), but there the Pascal
-  speed-up doesn't apply, and a K-quant file of the same quality is smaller: use Unsloth's UD-Q4_K_XL instead.
+1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
+   ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
+2. **Download** the Pascal engine (two archives from the
+   [release page](https://github.com/Cinderella-Man/llama.cpp/releases), RIG-TBD: tag), unpack both into one folder,
+   and download `flint-K2h-r16.gguf` from this page.
+3. **Start it**, here on nine cards with the full context:
 
-## Run it
+   ```bash
+   llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+   ```
 
-With the Pascal engine (release archives RIG-TBD), nine cards, the full context:
+   Then open `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`),
+   or point any OpenAI-compatible client at it.
 
-```bash
-llama-server -m flint-K2h-r16.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
-```
+What each flag does, how to run on six cards, and how to use it for coding agents:
+[the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md).
+For even more speed, add the trained guesser from
+[the drafter's page](https://huggingface.co/OWNER-TBD/Flint-Staircase-Drafter).
 
-- `--pipe-depth 3` sends guessed tokens through the idle cards of the layer split; the output stays the same. Add
-  `--pipe-guess staircase --pipe-draft flint-staircase-drafter-v2.0.gguf` for the trained guesser
-  ([its card](../flint-staircase-drafter/README.md)).
-- The engine drops llama.cpp's safety rescale of Flint's expert layers by itself on Pascal cards; don't set
-  `LLAMA_NO_MOE_DOWN_RESCALE` to anything but `tg` or `0` for this file.
-- What every flag does, and the six-card and agent variants:
-  [the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md).
+## What you need
 
-With stock llama.cpp (b11803 or newer), the same line without `--pipe-depth`. The file's header carries the makers'
-sampling (temperature 1.0, top-p 0.95, top-k 20, min-p 0), so no sampling flags are needed.
+- **About 30 GB of GPU memory plus room for the context:** five or six 6 GB cards for short conversations, all nine
+  for the full 262,144 tokens.
+- **The Pascal engine** for the speed. The file also works in stock llama.cpp (release b11803 or newer) and in apps
+  built on it, just without the Pascal speed-up.
+- **On a modern GPU or a Mac, use Unsloth's UD-Q4_K_XL instead:** it is smaller for the same quality there.
 
-## Speed
+## What we measured
 
-Generated tokens per second on nine P106-090 cards (each on a PCIe 1.0 x1 link, a 2-core Celeron host):
+| | This file | Unsloth UD-Q4_K_XL | Unsloth Q8_0 |
+|---|---|---|---|
+| Size | 29.4 GB | 25.1 GB | 42.3 GB |
+| Speed on nine P106-090, Pascal engine | RIG-TBD tok/s | RIG-TBD tok/s | — |
+| Picks the same next word as the original model | 88.8 % | 87.7 % | 93.3 % |
+| Distance from the original (KL divergence, lower is better) | 0.105 | 0.120 | 0.052 |
 
-| | Stock llama.cpp | Pascal engine v2 |
-|---|---|---|
-| Generation (`llama-bench`, 128 tokens after a 512-token prompt) | RIG-TBD | RIG-TBD |
-| Served chat, one conversation | RIG-TBD | RIG-TBD |
-| Served chat with pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD |
-| Served chat with the drafter | — | RIG-TBD |
+- **Tool calling:** on 3,477 single-turn tasks it scores the same as UD-Q4_K_XL (+0.14 points, within the
+  noise), with fewer malformed answers.
+- **The engine does not change the answers:** it only changes the order in which numbers are added up.
 
-On the same engine it is ~4–5 % faster than UD-Q4_K_XL (41.8 against 39.9 tok/s generation on a v2 build before the
-release), because it reads 2.091 GB per token against 2.213.
+Every number with its command, date and conditions:
+[results.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/results.md).
 
-## Quality
+## Rebuild it yourself
 
-Against Flint's original BF16 weights, 80 × 512 tokens of wikitext-2 test:
-
-| File | Size | Same top token | Mean KL divergence | Perplexity change |
-|---|---|---|---|---|
-| **K2h-r16** | 29.4 GB | **88.8 %** | **0.105** | **+2.7 %** |
-| Unsloth UD-Q4_K_XL | 25.1 GB | 87.7 % | 0.120 | +3.9 % |
-| Unsloth Q8_0 | 42.3 GB | 93.3 % | 0.052 | +3.3 % |
-
-Task checks with the makers' sampling (T 1.0, top-p 0.95, top-k 20, min-p 0, reasoning kept):
-- **Single-turn tool calling** (BFCL v4, 3,477 tasks): +0.14 points against UD-Q4_K_XL, 90 % interval −0.87 to +1.16:
-  non-inferior at a 1.5-point margin. Measured on the same tensors with a 32-bit router, which leaves the KL divergence
-  within its noise.
-- **Multi-turn tool calling** (BFCL v4, 458 tasks), on G3, the parent mix: +0.87 points, 90 % interval −3.23 to +4.98.
-- **8k-token agent conversations:** the tokens Flint writes match BF16 as closely as with UD-Q4_K_XL (KL ratio 0.999,
-  the same tensors with a 32-bit router).
-- Reasoning lengths of the parent mix are level with UD-Q4_K_XL's.
-
-## How it was made
-
-From Flint's BF16 weights with llama.cpp `d77256999`: llama-quantize with Unsloth's importance matrix, base Q5_0, Q8_0
-where the per-group measurements showed it pays (attention q in layers 9–24, attention output in 0–32, k and v in 0–32,
-the shared expert outside 33–45, the dense FFNs, expert gate/up in layers 2–8 and expert downs in 46–48); a
-GPTQ-rounded Q5_0 output head (+0.002 KL divergence where round-to-nearest costs +0.023); the 47 routers in F16. The
-complete recipe, the tensor-type map, per-tensor hashes and a script that rebuilds the file and checks it tensor by
-tensor:
-[reproduce/model.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/model.md).
+Everything needed to rebuild this file from Flint's original weights is public: the exact list of formats per
+tensor, a script that runs every step, and per-tensor checksums to compare your result with this file.
+[The rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/model.md),
+and the whole release in one folder:
+[release/flint-v2](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/release/flint-v2).
 
 ## Licence and credits
 
-- **Flint** by RecursiveSI is released under Apache-2.0, and so is this file: [LICENSE](LICENSE). Changes from the
-  original: the weights are quantized to Q5_0 and Q8_0 (the output head GPTQ-rounded to Q5_0, the routers converted to
-  F16) and stored as GGUF. "Flint" and "Recursive" are used only to describe the file's origin.
-- **Unsloth's importance matrix** (`imatrix_unsloth.gguf` from
-  [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF), Apache-2.0) guided the quantization; the file's
-  `quantize.imatrix.*` fields record it.
-- **The GGUF header** says `general.license = apache-2.0`, names Flint by RecursiveSI as the base model, and carries
-  the makers' sampling in `general.sampling.*`. OWNER-TBD: `general.name` and `general.quantized_by`.
+- Flint is made by RecursiveSI and released under Apache-2.0; this file is a quantized derivative under the same
+  licence ([LICENSE](LICENSE)). Changes: the weights are quantized to Q5_0 and Q8_0, the output head rounded with GPTQ,
+  the routers stored in 16-bit floats, all in the GGUF format.
+- Unsloth's importance matrix (Apache-2.0) guided the quantization; the file's header records it.
+- Made by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X) for
+  [LLMs on crypto-mining rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs). Not affiliated with
+  RecursiveSI or Unsloth.
+
+| File | Size | SHA-256 |
+|---|---|---|
+| `flint-K2h-r16.gguf` | 29.4 GB | see [CHECKSUMS](CHECKSUMS) |

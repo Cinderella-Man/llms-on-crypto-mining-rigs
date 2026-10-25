@@ -144,7 +144,7 @@ The BF16 reference run needs ~80 GB of GPU memory across cards; a rebuild with `
 | Step | Time | Output |
 |---|---|---|
 | Download | ~25 min at 50 MB/s | 79.6 GB safetensors |
-| Convert | TBD | 79.6 GB |
-| Quantize | TBD | ~31 GB |
+| Convert | not repeated here | 79.6 GB |
+| Quantize | 11 min on 8 threads of a 12-core desktop CPU, at low priority | 29.6 GB (Q8_0 head, F32 routers) |
 | Head (computed) | one model pass over ~260k tokens on GPUs for the dumps, then minutes of CPU for H and GPTQ | 0.21 GB |
 | Router, header, verify | minutes each | 29.4 GB |

@@ -121,9 +121,11 @@ EOF
     } > /out/CHECKS.txt
     cat /out/CHECKS.txt
     [ "$avx" = 0 ] && [ -z "$missing" ] || { echo "checks failed"; exit 1; }
-    tar czf "/out/$BIN_ASSET" -C "$s/bin" "$P"
-    tar czf "/out/$CUDART_ASSET" -C "$s/cudart" "$P"
-    [ -n "$(ls "$t")" ] && tar czf "/out/$TESTS_ASSET" -C "$s/tests" "$P"
+    # deterministic archives: the same files give the same bytes (sorted names, fixed times and owners, no gzip time)
+    pack() { tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -cf - -C "$1" "$P" | gzip -n -9 > "$2"; }
+    pack "$s/bin" "/out/$BIN_ASSET"
+    pack "$s/cudart" "/out/$CUDART_ASSET"
+    [ -n "$(ls "$t")" ] && pack "$s/tests" "/out/$TESTS_ASSET"
     rm -rf "$s"
     (cd /out && sha256sum *.tar.gz > SHA256SUMS)
     chown -R "$HOST_UID:$HOST_GID" /out
