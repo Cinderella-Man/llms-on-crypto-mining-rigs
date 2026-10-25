@@ -11,6 +11,13 @@ makers; this project is not affiliated with them.
 Speeds on this page were measured on the [reference rig](../../docs/mining_rig.md): nine P106-090 cards, each on a PCIe
 1.0 x1 link, and a 2-core Celeron with 4 GB of RAM. Quality was scored on a separate machine.
 
+**The headline: Flint in near-lossless 8-bit, on all nine cards, at the full 262,144-token context.** Unsloth's Q8_0
+(42.3 GB) picks the original model's next token 93.3 % of the time, against 87.7 % for the usual 4-bit download, and
+on these cards it is also the faster file: in a five-turn chat at the full context the v1 engine generated 29.55 tok/s
+with Q8_0 against 27.97 with UD-Q4_K_XL, and stock llama.cpp 14.78 (v2: RIG-TBD). The Pascal kernels decode Q8_0's
+plain 8-bit blocks with few instructions per byte, at ~150 GB/s of a card's ~179, so reading 2.70 GB per token took no
+longer than reading UD-Q4_K_XL's 2.21 GB.
+
 ## Recommended setup
 
 | | |
@@ -18,14 +25,13 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 | Engine | the v2 Pascal engine, commit `2d53179aa`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
-| Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
-| Cards | all nine for the full 262,144-token context; six run one short conversation about as fast and leave three cards free |
+| Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
+| Model file, six cards | K2h-r16 (29.4 GB), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine (RIG-TBD: its download link) |
+| Cards | all nine for Q8_0 at the full 262,144-token context; six run K2h-r16 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
 
-Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB) is the near-lossless alternative: on the v1
-engine it ran as fast as UD-Q4_K_XL ([below](#how-it-got-here)); on v2 it is not measured yet. **K2h-r16**, this
-project's own Flint file, is ~4 % faster than UD-Q4_K_XL at better measured fidelity; it is not published yet
-(RIG-TBD: its download link, if the release includes it).
+Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have, runs
+too; K2h-r16 is ~4 % faster than it at better measured fidelity.
 
 ## Command lines
 
@@ -34,13 +40,16 @@ in `llama-p106-v2.0/` (RIG-TBD: the folder follows the release's tag; a build fr
 `llama.cpp/build/bin/`):
 
 ```bash
-llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
 ```
 
+- **`-ts 6,6,5,5,6,5,5,6,6`** splits Flint's layers by memory instead of by count, so that the 42.3 GB of weights and
+  the full-context cache fit (llama.cpp's even split puts two full-attention layers on one card, ~6.3 GB). For
+  K2h-r16 or UD-Q4_K_XL drop it and give the file's name instead.
 - **`--pipe-depth 3`** sends up to three guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
-- **The drafter:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-v2.0.gguf` for the trained guesser on nine cards ([below](#the-staircase-drafter)). <!-- only:drafter -->
+- **The drafter:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-v2.0.gguf` for the trained guesser on nine cards ([below](#the-staircase-drafter)); RIG-TBD: whether the first card has room for it next to Q8_0 at the full context. <!-- only:drafter -->
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
@@ -51,8 +60,8 @@ llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa 
 - **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
   tool grammar on the host (RIG-TBD: their speed against chat). Set the client's context window equal to `-c`.
 - **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. RIG-TBD: the time to first token it saves. <!-- only:q163-q111 -->
-- **Six cards:** add `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5` and lower `-c` (UD-Q4_K_XL fits est. ~128k tokens there).
-- **Q8_0** at the full context needs its layers split by memory: add `-ts 6,6,5,5,6,5,5,6,6`.
+- **Six cards:** K2h-r16 or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
+  (UD-Q4_K_XL fits est. ~128k tokens there). Q8_0 needs eight or nine cards.
 
 Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127.0.0.1:8080 <rig>`, then
 `http://127.0.0.1:8080`.
@@ -61,6 +70,23 @@ Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127
 
 Generation speed in tokens per second (tok/s) on nine cards. `llama-bench` numbers are 128 generated tokens after a
 warm-up, because idle cards sit at a lower clock.
+
+### Q8_0 at the full context
+
+| Nine cards, 262,144 tokens of context | Stock llama.cpp | v1 engine | **v2 release** |
+|---|---|---|---|
+| Five-turn chat, **Unsloth Q8_0** (`-ts 6,6,5,5,6,5,5,6,6`) | 14.78 | 29.55 | **RIG-TBD** |
+| Five-turn chat, Unsloth UD-Q4_K_XL | 14.20 | 27.97 | RIG-TBD |
+| Served, Q8_0, `--pipe-depth 3` with the copy lookup and the store | — | — | **RIG-TBD** |
+| Served, Q8_0, the store, then the drafter | — | — | **RIG-TBD** | <!-- only:drafter -->
+| `llama-bench`, Q8_0 (512-token prompt, then 128 generated) | RIG-TBD | 35.9 | **RIG-TBD** |
+
+- The chat rows are the [five-turn chat benchmark](../../docs/benchmarks/2026-10-23-flint-chat.md): one conversation,
+  the same settings and seeds on both engines ([Q58](../../quants/experiments.md#registry)).
+- The `llama-bench` v1 number is v1's kernels just before its release: 26.9 tok/s with them off
+  ([Q38](../../quants/experiments.md#registry)).
+
+### The 4-bit files
 
 | Engine | UD-Q4_K_XL | K2h-r16 (ours) |
 |---|---|---|
@@ -126,8 +152,9 @@ tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/ex
 The release ships a trained guesser for pipelined speculation: a small transformer that predicts Flint's next token
 from the hidden states Flint has already computed for the tokens in flight. The newest token has passed only the first
 card, older ones are further along: a staircase of depths. The drafter sits behind the copy lookup and runs on the
-first card in its own CUDA stream; the last card still samples every token, so the output is plain decoding's. How it
-is built and trained: [docs/drafter.md](../../docs/drafter.md).
+first card in its own CUDA stream; the last card still samples every token, so the output is plain decoding's. It
+learned from Flint Q8_0's hidden states and works with any Flint file. How it is built and trained:
+[docs/drafter.md](../../docs/drafter.md).
 
 - **Files** (~0.27 GB each, from the release assets; RIG-TBD: the names follow the release's tag):
   `flint-staircase-drafter-9cards-v2.0.gguf` for nine cards, trained on both nine-card splits;
@@ -138,12 +165,13 @@ is built and trained: [docs/drafter.md](../../docs/drafter.md).
 - **Acceptance on held-out text** (the share of guesses that match Flint's sample, outside copied text / overall): 0.476
   / 0.538 on nine cards with a light last card (`-ts 6,6,6,6,6,6,6,5,2`), 0.523 / 0.583 on six cards.
 
-Served, K2h-r16, `--pipe-depth 3` at 8,192 tokens of context, tok/s, the median of eight requests (chat, code and
-edit answers of 512 tokens and a coding-agent tool request of 1,536, each at temperature 0 and at the makers'
-sampling) ([Q20](../../quants/experiments.md#registry)):
+Served, `--pipe-depth 3`, K2h-r16 at 8,192 tokens of context unless the row says otherwise, tok/s, the median of eight
+requests (chat, code and edit answers of 512 tokens and a coding-agent tool request of 1,536, each at temperature 0 and
+at the makers' sampling) ([Q20](../../quants/experiments.md#registry)):
 
 | | No guessing | Copy lookup and store | **Store, then the drafter** | Copy lookup, then the drafter |
 |---|---|---|---|---|
+| **Nine cards, Q8_0 at 262,144 tokens**, `-ts 6,6,5,5,6,5,5,6,6`, nine-card file | RIG-TBD | RIG-TBD | **RIG-TBD** | |
 | Nine cards, `-ts 6,6,6,6,6,6,6,5,2`, nine-card file | 33.4 | 48.6 | **50.4** | 44.4 |
 | Nine cards, `-ts 6,6,6,6,5,5,5,5,5`, nine-card file | 33.4 | 48.6 | **50.3** | |
 | Six cards, general file | 34.3 | 49.0 | **49.5** | |
@@ -199,8 +227,8 @@ full context, same settings and seeds on both engines:
 
 | Model file | Stock llama.cpp | v1 engine | Speed-up |
 |---|---|---|---|
-| Unsloth UD-Q4_K_XL | 14.20 tok/s | 27.97 tok/s | 1.97× |
 | Unsloth Q8_0 | 14.78 tok/s | 29.55 tok/s | 2.00× |
+| Unsloth UD-Q4_K_XL | 14.20 tok/s | 27.97 tok/s | 1.97× |
 | Miner S4-L0 (ours, the v1 mix) | 16.06 tok/s | 31.86 tok/s | 1.98× |
 
 v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:

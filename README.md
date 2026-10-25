@@ -11,17 +11,26 @@ such hardware, so the rigs sit idle. This project makes them useful: a llama.cpp
 ## v2: the Flint release
 
 [Flint](models/flint/README.md) is a 39.8 B-parameter mixture-of-experts model that reasons before it answers and reads
-up to 262,144 tokens of context. On the nine cards of the [reference rig](#the-reference-rig), the v2 engine runs it
-RIG-TBD times as fast as stock llama.cpp, with the file most people already have:
+up to 262,144 tokens of context. **On the nine cards of the [reference rig](#the-reference-rig) it runs in
+near-lossless 8-bit with its full context**: Unsloth's Q8_0 (42.3 GB) picks the original model's next token 93.3 % of
+the time, against 87.7 % for the common 4-bit file, and on these cards it is also faster than that 4-bit file:
+
+| Nine P106-090 cards, 262,144 tokens of context, served chat, tokens per second | Stock llama.cpp | v1 engine | **v2** |
+|---|---|---|---|
+| **Unsloth Q8_0** (42.3 GB, near-lossless) | 14.78 | 29.55 | **RIG-TBD** |
+| Unsloth UD-Q4_K_XL (25.1 GB, the common 4-bit file) | 14.20 | 27.97 | RIG-TBD |
+| Q8_0, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
+
+The v1 numbers are a [five-turn chat](docs/benchmarks/2026-10-23-flint-chat.md) with the same settings and seeds on
+both engines. The 4-bit files fit six cards. Generation and prefill, stock llama.cpp against v1 and v2:
 
 <!-- RIG-TBD: the stock-clock block of today's bench/release_matrix run on the release engine -->
 
-| Nine P106-090 cards, Unsloth's UD-Q4_K_XL, tokens per second | Stock llama.cpp | v1 engine | **v2** |
+| Nine P106-090 cards, tokens per second | Stock llama.cpp | v1 engine | **v2** |
 |---|---|---|---|
-| Generation (`llama-bench`, 128 tokens) | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Served chat | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Served chat, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
-| Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Generation (`llama-bench`, 128 tokens), Q8_0 | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Generation, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Prefill (reading the prompt), 512 tokens, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 <!-- begin:drafter -->
 **With the staircase drafter**, served chat with K2h-r16 reaches **50.4 tok/s** on nine cards and **49.5** on six, against
@@ -35,8 +44,8 @@ The answers don't change: the engine's kernels change only the order of addition
 exactly the tokens of plain decoding. To run it:
 1. **The engine:** the two archives of the fork's release RIG-TBD (tag and link), unpacked into one folder; the rig
    needs NVIDIA's driver 580 and no CUDA toolkit ([Run it](#run-it)).
-2. **The model:** Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB). RIG-TBD: our own
-   K2h-r16 file too, if the release includes it.
+2. **The model:** Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB) on nine cards; on six cards
+   our own K2h-r16 (29.4 GB, RIG-TBD: its link) or Unsloth's UD-Q4_K_XL (25.1 GB).
 3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
 4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
 
@@ -49,7 +58,7 @@ Generation speed in tokens per second (tok/s) for one conversation, measured on 
 
 | Model | What it is | Speed | Page |
 |---|---|---|---|
-| [![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards, v2: **RIG-TBD tok/s** generation with Unsloth's UD-Q4_K_XL, against RIG-TBD on stock llama.cpp; **RIG-TBD** served chat with pipelined speculation | [models/flint](models/flint/) |
+| [![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards, near-lossless Q8_0 at the full context: 29.55 tok/s served chat with the v1 engine, against 14.78 on stock llama.cpp; v2 **RIG-TBD** | [models/flint](models/flint/) |
 | [![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-coming%20soon-718096)](models/qwen3.6-35b-a3b/) | 36 B hybrid mixture of experts, 3 B per token, 262,144-token context | Four cards: 29.0 tok/s with the v1 engine, against 18.5 on stock llama.cpp | [models/qwen3.6-35b-a3b](models/qwen3.6-35b-a3b/) |
 | [![Ornith-1.5-35B](https://img.shields.io/badge/Ornith--1.5--35B-coming%20soon-718096)](models/ornith-1.5-35b/) | 35 B hybrid mixture of experts with Qwen3.6's shapes, 3 B per token, 262,144-token context | Not run yet; its 21.7 GB Q4_K_M fits four or five cards (est. 19–23 tok/s today, 30–36 with the planned K-quant kernels) | [models/ornith-1.5-35b](models/ornith-1.5-35b/) |
 | [![Ornith-1.5-122B](https://img.shields.io/badge/Ornith--1.5--122B-coming%20soon-718096)](models/ornith-1.5-122b/) | 122 B hybrid mixture of experts, 10 B per token, for coding agents | Not run yet; fits nine cards only at 2–3 bits per weight (est. 8–16 tok/s) | [models/ornith-1.5-122b](models/ornith-1.5-122b/) |
