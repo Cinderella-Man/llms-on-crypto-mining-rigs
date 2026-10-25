@@ -62,7 +62,10 @@ paths are placeholders.
    6/6/6/6/6/6/6/5/2), so a different staircase never needs a new dump: ~37 KB per answer token. Layers 6 and 9 (card
    1's output) are kept for every position, the rest for the answer. A second output (`DUMP_OUT2`) writes the six-card
    subset (layers 9, 17, 25, 33, 41, ~12 KB per answer token) for training from a fast disk; `feats.py pack` does the
-   same afterwards. [check_dump.py](check_dump.py) verifies a dump: Flint's output head applied to the dumped FP8 final
+   same afterwards. For heads that serve any split from 3 to 12 cards, the dump records a layer grid instead:
+   layers 4, 6, 8, 9, 10, 12, 14, 16, 17, 18, 20, 22, 24, 25, 27, 29, 30, 33, 34, 36, 37, 39, 41, 42, 44 and 47, with
+   4, 6 and 9 kept for every position. That puts a recorded layer at or 1–2 layers below every card boundary of any
+   such split (card 1 ends near layer 4 with 12 cards and near layer 16–17 with 3), ~58 KB per answer token. [check_dump.py](check_dump.py) verifies a dump: Flint's output head applied to the dumped FP8 final
    state must give the dumped top-1 token (98–99 % of positions; the rest are near-ties moved by llama.cpp's 8-bit
    activation quantization in batched products) and log-probabilities within a few thousandths.
 
@@ -101,6 +104,10 @@ paths are placeholders.
    python train.py --head A ... --init-from heads/A/head.pt --lr 1e-4 --window-sample 0.3,0.2,0.5 \
        --fuse --loss lk --eta 3 --noise 0.2 --dropout 0.1 --val-seqs 300
    python check_train.py --feats q51.bin --vocab vocab.npy --flint flint/ --head heads/A/head.pt
+   # one head for every split from 3 to 12 cards, on files with many recorded layers (the superset or the grid)
+   python train.py --head A --feats feats/train-*.bin ... --general --init-from heads/A/head.pt --lr 1e-4
+   python train.py ... --general --cards 6,9     # the same head trained on the six- and nine-card splits only
+   python check_general.py --feats q51.bin --vocab vocab.npy --flint flint/ --head heads/A/head.pt
    ```
 
    - `--init-from` loads weights only (new parameters keep their zero initialization, so the warm-started head starts
@@ -112,6 +119,9 @@ paths are placeholders.
    - `--loss lk` is the hybrid of the LK-losses paper: λ·KL + (1 − λ)·(1 − coupled match), λ = exp(−η·match).
    - [check_train.py](check_train.py) checks the options: key slicing in the window attention changes nothing, a fused
      head warm-started from an unfused one reproduces it exactly, the LK loss has finite gradients.
+   - `--general` trains the depth-general head (see "The guesser"): every sequence gets one window drawn from a random
+     split of 3 to 12 cards, using the layers its file recorded. [check_general.py](check_general.py) checks the
+     sampler's windows and that a general head warm-started from a six-card head reproduces it on six-card windows.
 
 6. **Scoring** ([score.py](score.py)) on Q51's held-out transcripts (dumped the same way), then speed per workload
    through Q87's simulator ([sim.py](sim.py) on top of [pipeline_sim.py](../ngram_replay/pipeline_sim.py)), and the
@@ -123,6 +133,9 @@ paths are placeholders.
    python sim.py --gen q51/gen.jsonl --scores scores/sim --out sim.json     # scores-<head>.npz files
    python report.py scores/A/summary.json sim.json
    ```
+
+   `--window-group` (default 4) sets how many windows share one forward pass. Fewer windows need less memory: a
+   general head's 14 windows at once do not fit a 10 GB card.
 
 ## The guesser
 
@@ -165,6 +178,18 @@ paths are placeholders.
 
   With `--window-sample`, the random share of the windows covers all of them: the newest token at L9 or as its
   embedding, then up to seven older tokens in flight at non-decreasing depths.
+- **Depth-general head** (`--general`). One head serves any split from 3 to 12 cards. Each row's anchor can be any
+  recorded layer input (1–48) or the final state. Anchors share a projection within six depth buckets (layers 1–12,
+  13–20, 21–28, 29–36 and 37–48, and the final state), which start from a six-card head's projections, and every layer
+  has a learned depth embedding that starts at zero. Training draws a split per sequence, with card counts weighted
+  toward what owners run: 6 and 9 cards 25 % each, 3, 4 and 5 cards 8 % each, 7 and 8 cards 6 % each, 10 and 12 cards
+  5 % each, 11 cards 4 %. About 30 % of the draws have a lighter last card. From the split it takes the card-1
+  staircase (60 %), the pre-step window (15 %) or the after-miss window (25 %), with stage times from the per-layer
+  times measured at six and nine cards. Each depth maps to the deepest recorded layer at or below it. `--cards`
+  restricts training to a few card counts and their standard splits (the even split; for nine cards also
+  6/6/6/6/6/6/6/5/2), which measures what specialization buys over the general head. score.py scores
+  such a head per card count on even splits: `g3` … `g12`, `g9light`, and the pre-step and after-miss windows at 6 and
+  9 cards.
 - **Loss.** Forward KL divergence from Flint's sampler distribution (its top-20 log-probabilities through top-k 20,
   top-p 0.95, min-p 0 at temperature 1; mass outside the vocabulary goes to the "other" class) to the guesser, plus 0.2
   × cross-entropy on the sampled token. AdamW (0.9, 0.95), learning rate 2e-4 with warm-up and a cosine decay over a
@@ -192,6 +217,7 @@ paths are placeholders.
 | [drafter.py](drafter.py) | the model, profiles, losses and coupled acceptance |
 | [train.py](train.py) | training one head, resumable, warm-startable |
 | [check_train.py](check_train.py) | checks of the training options |
+| [check_general.py](check_general.py) | checks of the depth-general head (window sampler, warm start from a six-card head) |
 | [score.py](score.py) | per-position acceptance on held-out transcripts, intervals by transcript |
 | [sim.py](sim.py) | speed per workload through Q87's simulator |
 | [report.py](report.py) | tables and gate verdicts from score.py and sim.py |

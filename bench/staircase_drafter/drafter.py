@@ -36,18 +36,31 @@ PROFILES = {
     "T": {"committed": "emb", "windows": {"plain": ["emb"]}},
 }
 SIX_CARD_LAYERS = (9, 17, 25, 33, 41)
+N_LAYERS = 49
+FULL = 49   # anchor index of the final state; 0 is the embedding alone, n the input of layer n
 
 
-def staircase(split, layer_ms=None, head_ms=2.5, hop_ms=0.3, max_w=8):
-    """The window of a head on card 1 right after card 1's stage, for a layer split (layers per card, the output head on
-    the last card), newest token first. With every card busy a token enters card 1 once per cycle (slowest stage plus a
-    hop), so the token m cycles older has finished every card that ends within m cycles of card 1's stage. Each depth is
-    the input of the next layer, mapped to the nearest lower six-card anchor (the embedding below layer 9); the window
-    ends at the first token at full depth. Per-layer time as in Q87's simulator: 21.3 ms / 49 layers on six cards,
-    24.9 ms on nine, interpolated for other card counts."""
+def anchor_index(name):
+    """Depth of an anchor name: 0 for "emb", n for "Ln" (the input of layer n), 49 for "full"."""
+    return 0 if name == "emb" else FULL if name == "full" else int(name[1:])
+
+
+# Depth buckets of the general head: layer inputs 1-12, 13-20, 21-28, 29-36 and 37-48 share the projection of the
+# six-card anchor inside them (L9, L17, L25, L33, L41), the final state keeps its own; a per-depth embedding tells the
+# head which layer each input comes from.
+BUCKET = [-1] + [0] * 12 + [1] * 8 + [2] * 8 + [3] * 8 + [4] * 12 + [5]
+
+
+def split_depths(split, kind="stair", layer_ms=None, head_ms=2.5, hop_ms=0.3, max_w=12):
+    """Depths (layers done: the input of the next layer; 0 = not yet on card 1) of the tokens in flight for a layer split
+    (layers per card, the output head on the last card), newest first, up to the first complete token. With every card
+    busy a token enters card 1 once per cycle (slowest stage plus a hop), so the token m cycles older has finished every
+    card that ends within m cycles. kind "stair": a head on card 1 right after card 1's stage; "pre": a spare card at the
+    start of a cycle; "miss": the first guess after a miss (newest token through card 1, every older one complete).
+    Per-layer time as in Q87's simulator: 21.3 ms / 49 layers on six cards, 24.9 ms on nine, extrapolated."""
     n = len(split)
     if layer_ms is None:
-        layer_ms = 0.435 + (n - 6) * 0.024
+        layer_ms = max(0.3, 0.435 + (n - 6) * 0.024)
     stages = [layer_ms * x for x in split]
     stages[-1] += head_ms
     cycle = max(stages) + hop_ms
@@ -57,14 +70,41 @@ def staircase(split, layer_ms=None, head_ms=2.5, hop_ms=0.3, max_w=8):
         ends.append(t)
         t += hop_ms
     done = [sum(split[:k + 1]) for k in range(n)]
-    win = []
+    if kind == "miss":
+        return [done[0]]
+    t0 = stages[0] if kind == "stair" else 0.0
+    out = []
     for m in range(max_w):
-        k = max(j for j in range(n) if ends[j] <= stages[0] + m * cycle + 1e-9)
-        if k == n - 1:
+        ks = [j for j in range(n) if ends[j] <= t0 + m * cycle + 1e-9]
+        if ks and ks[-1] == n - 1:
             break
-        below = [a for a in SIX_CARD_LAYERS if a <= done[k]]
-        win.append(f"L{below[-1]}" if below else "emb")
-    return win
+        out.append(done[ks[-1]] if ks else 0)
+    return out
+
+
+def depth_name(depth, recorded):
+    """The deepest recorded anchor at or below a depth: "full" for a complete token, "Ln" for the deepest recorded layer
+    input n <= depth, "emb" if none."""
+    if depth >= FULL:
+        return "full"
+    below = [x for x in recorded if x <= depth]
+    return f"L{max(below)}" if below else "emb"
+
+
+def even_split(n, light_last=0):
+    """Layers per card for n cards, as even as possible; light_last > 0 gives the last card (which holds the output
+    head) only that many layers."""
+    rest, cards = (N_LAYERS - light_last, n - 1) if light_last else (N_LAYERS, n)
+    split = [rest // cards] * cards
+    for i in range(rest - sum(split)):
+        split[i] += 1
+    return split + ([light_last] if light_last else [])
+
+
+def staircase(split, layer_ms=None, head_ms=2.5, hop_ms=0.3, max_w=8):
+    """The window of a head on card 1 right after card 1's stage, for a layer split, newest token first, each depth
+    mapped to the nearest lower six-card anchor (the embedding below layer 9)."""
+    return [depth_name(x, SIX_CARD_LAYERS) for x in split_depths(split, "stair", layer_ms, head_ms, hop_ms, max_w)]
 
 
 # Layer splits an owner may run (layers per card; the output head on the last card) and their card-1 staircases.
@@ -189,15 +229,21 @@ def _window_attn(q, k, v, limit, kc, vc, rep):
 
 class Drafter(nn.Module):
     def __init__(self, emb, head_rows, norm_w, n_layer=2, n_head=16, n_kv=4, head_dim=128, ffn=4096, fuse=False,
-                 noise=0.0, dropout=0.0):
+                 noise=0.0, dropout=0.0, general=False):
         """emb: Flint's input embedding table [n_vocab, d] (frozen); head_rows: Flint's output-head rows for the draft
         vocabulary [V, d] (an "other" class is added); norm_w: Flint's output-norm weight. fuse: every row also gets
         the shallower anchors its token has reached (zero-initialized projections, so a warm start is unchanged);
         noise: uniform noise of this amplitude after each anchor's RMS norm while training; dropout: after attention
-        and the FFN."""
+        and the FFN. general: anchors are any layer input (anchor ids = depths 0..49, see anchor_index), projected by the
+        six-card projection of their depth bucket plus a per-depth embedding (init_general copies a six-card head into
+        it)."""
         super().__init__()
         d = emb.shape[1]
-        self.fuse, self.noise = fuse, noise
+        self.fuse, self.noise, self.general = fuse, noise, general
+        if general:
+            self.depth_emb = nn.Embedding(FULL + 1, d)
+            nn.init.zeros_(self.depth_emb.weight)
+            self.register_buffer("bucket", torch.tensor(BUCKET), persistent=False)
         if fuse:   # L9, L17, L25, L33, L41
             self.fuse_norm = nn.ModuleList(RMSNorm(d) for _ in range(5))
             self.w_fuse = nn.ModuleList(nn.Linear(d, d, bias=False) for _ in range(5))
@@ -242,18 +288,34 @@ class Drafter(nn.Module):
         extra (with fuse): [(k, h_k [..., d], mask [...])] shallower anchors (k = 0..4 for L9..L41) to add where mask."""
         x = self.w_emb(self.emb_norm(self.emb[tokens].to(h.dtype)))
         flat_a, flat_h = anchor.reshape(-1), h.reshape(-1, h.shape[-1])
+        proj = self.bucket[flat_a] if self.general else flat_a - 1      # projection index, -1 for the embedding alone
         add = torch.zeros_like(flat_h)
-        for a in range(1, 7):
-            idx = (flat_a == a).nonzero(as_tuple=True)[0]
+        for p in range(6):
+            idx = (proj == p).nonzero(as_tuple=True)[0]
             if idx.numel():
-                add.index_copy_(0, idx, self.w_anc[a - 1](self._noisy(self.anc_norm[a - 1](flat_h[idx]))))
+                add.index_copy_(0, idx, self.w_anc[p](self._noisy(self.anc_norm[p](flat_h[idx]))))
         if self.fuse and extra:
             for k, hk, mask in extra:
                 idx = mask.reshape(-1).nonzero(as_tuple=True)[0]
                 if idx.numel():
                     fk = self.w_fuse[k](self._noisy(self.fuse_norm[k](hk.reshape(-1, hk.shape[-1])[idx])))
                     add = add.index_add(0, idx, fk)
-        return x + add.view_as(x) + self.anchor_emb(anchor).to(h.dtype)
+        depth = self.depth_emb(anchor) if self.general else self.anchor_emb(anchor)
+        return x + add.view_as(x) + depth.to(h.dtype)
+
+    def anchor_id(self, name):
+        """Anchor id of a name: its depth for the general head, else the six-card anchor id."""
+        return anchor_index(name) if self.general else ANCHOR_IDS[name]
+
+    def init_general(self, sd):
+        """Fill the per-depth embedding from a six-card head's anchor embedding (state dict sd): each depth gets its
+        bucket's anchor row, so the general head starts as the six-card head on six-card depths."""
+        if not self.general or "anchor_emb.weight" not in sd:
+            return
+        old = sd["anchor_emb.weight"].to(self.depth_emb.weight)
+        with torch.no_grad():
+            for depth, b in enumerate(BUCKET):
+                self.depth_emb.weight[depth] = old[0 if b < 0 else b + 1]
 
     def forward(self, tokens, committed_h, committed_anchor, windows, return_feats=False, committed_extra=None):
         """tokens [N]; committed_h [N, d]; committed_anchor: int; windows: {name: (target positions [T],
@@ -263,6 +325,8 @@ class Drafter(nn.Module):
         N = tokens.shape[0]
         dev = committed_h.device
         pos = torch.arange(N, device=dev)
+        if isinstance(committed_anchor, str):
+            committed_anchor = self.anchor_id(committed_anchor)
         xc = self.rows(tokens, torch.full((N,), committed_anchor, device=dev, dtype=torch.long), committed_h,
                        committed_extra)
         cos_c, sin_c = rope_tables(pos, self.blocks[0].hd)
@@ -274,7 +338,7 @@ class Drafter(nn.Module):
                 continue
             W = len(anchors)
             wpos = tpos[:, None] - torch.arange(W, device=dev)[None, :]
-            a = torch.tensor([ANCHOR_IDS[x] for x in anchors], device=dev).expand(tpos.shape[0], W)
+            a = torch.tensor([self.anchor_id(x) for x in anchors], device=dev).expand(tpos.shape[0], W)
             cos, sin = rope_tables(wpos, self.blocks[0].hd)
             state[name] = [self.rows(tokens[wpos], a, hw, win[3] if len(win) > 3 else None), cos, sin, tpos - W]
         for blk in self.blocks:

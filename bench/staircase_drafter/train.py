@@ -4,8 +4,8 @@ usage: python train.py --head A --feats F1.bin [F2.bin ...] --vocab vocab.npy --
                        [--minutes 180] [--lr 2e-4] [--accum-targets 8192] [--fp16] [--max-seqs N] [--seed 1]
 FLINT_DIR holds flint_weights.py's output. The schedule is time-based: linear warm-up, then cosine decay to 10 % over
 --minutes, so a run ends on time whatever the GPU. Every 3 % of the sequences (every 33rd) are held out for validation.
-OUT_DIR gets head.pt (the weights with the best validation acceptance of the first window, without Flint's embedding
-table), head-last.pt, config.json, log.jsonl and ckpt.pt (weights, optimizer and scaler state, step and elapsed time,
+OUT_DIR gets head.pt (the weights with the best validation acceptance of the first window, or for --general the mean
+over the staircases of its card counts, without Flint's embedding table), head-last.pt, config.json, log.jsonl and ckpt.pt (weights, optimizer and scaler state, step and elapsed time,
 written every --ckpt-every minutes). Creating OUT_DIR/STOP ends the run early with its final evaluation and save.
 --resume continues from ckpt.pt: the time budget counts the time already spent, so
 a larger --minutes extends a run, and new --feats files continue it on more data.
@@ -43,19 +43,28 @@ def t2d_table(vocab, n_vocab):
 class Batch:
     """CPU side of one sequence for one head: copies out of the memory map, ready to move to the GPU."""
 
-    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False):
+    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False, sampler=None):
+        """sampler: a function of the record's recorded layers returning one window ({"sample": names}); the window
+        is then drawn here, in the loader thread, and only its layers are read."""
         self.n_prompt, self.n_tok = rec.n_prompt, rec.n_tok
         self.tokens = np.array(rec.tokens, np.int64)
-        wmax = max([len(w) for w in profile["windows"].values()] + ([8] if all_anchors else []))
-        t0 = max(rec.n_prompt, wmax, min_target)
+        self.window = sampler(rec.layers) if sampler else None
+        wmax = max([len(w) for w in profile["windows"].values()] + ([8] if all_anchors else [])
+                   + ([len(self.window["sample"])] if self.window else []))
+        # window rows reach back wmax - 1 positions; mid layers are stored from n_prompt - 8 (the dump's margin)
+        t0 = max(rec.n_prompt + max(0, wmax - 9), wmax, min_target)
         self.tpos = np.arange(t0, rec.n_tok - 1)
         j = self.tpos - rec.n_prompt + 1                      # generated token predicted by each target
         self.top_draft = t2d[rec.top_ids[j]]
         self.top_lp = np.array(rec.top_lp[j])
         self.sampled = t2d[self.tokens[self.tpos + 1]]
-        need = {profile["committed"], "full"} | {a for w in profile["windows"].values() for a in w}
+        need = {profile["committed"], "full"}
+        if not self.window:   # a sampled window is the only one trained: read only its layers
+            need |= {a for w in profile["windows"].values() for a in w}
         if all_anchors:   # fused anchors or sampled windows read every six-card anchor
             need |= set(SIX_CARD)
+        if self.window:
+            need |= set(self.window["sample"])
         self.arrays = {}
         for a in need - {"emb"}:
             if a == "full":
@@ -96,6 +105,39 @@ def sample_window(profile, rng, probs, p_emb=0.35, max_older=7):
     older = sorted((rng.choice(SIX_CARD[:5]) for _ in range(rng.randint(0, max_older))),
                    key=lambda a: drafter.ANCHOR_IDS[a])
     return {"sample": [newest] + older}
+
+
+# card counts an owner may run and how often the general sampler draws them (6 and 9 P106 cards first, then 3-5 large
+# cards and 10-12 small ones)
+CARD_WEIGHTS = {3: 0.08, 4: 0.08, 5: 0.08, 6: 0.25, 7: 0.06, 8: 0.06, 9: 0.25, 10: 0.05, 11: 0.04, 12: 0.05}
+
+
+def random_split(n, rng, p_light=0.3):
+    """Layers per card for n cards: as even as possible, with probability p_light a light last card (1-3 layers next to
+    the output head), then up to two single layers moved between random cards (-ts tweaks)."""
+    split = drafter.even_split(n, rng.randint(1, 3) if n >= 3 and rng.random() < p_light else 0)
+    for _ in range(rng.randint(0, 2)):
+        i, j = rng.randrange(n), rng.randrange(n)
+        if i != j and split[i] > 1:
+            split[i] -= 1
+            split[j] += 1
+    return split
+
+
+# the splits owners run per card count, for heads trained on a few card counts only (--cards): the even split, and
+# for nine cards also the one with two layers next to the output head (6/6/6/6/6/6/6/5/2)
+STANDARD_SPLITS = {9: [drafter.even_split(9), drafter.even_split(9, 2)]}
+
+
+def sample_general(recorded, rng, kinds=(0.6, 0.15, 0.25), cards=None):
+    """One window of a random 3-12-card split: card count by CARD_WEIGHTS, a random split, then the head on card 1
+    after its stage, a spare card before the cycle, or the first guess after a miss (probabilities kinds); each depth
+    becomes the deepest recorded layer at or below it. With cards (a list of card counts), the card count is drawn
+    from it uniformly and the split from its STANDARD_SPLITS."""
+    n = rng.choice(cards) if cards else rng.choices(list(CARD_WEIGHTS), weights=list(CARD_WEIGHTS.values()))[0]
+    kind = rng.choices(("stair", "pre", "miss"), weights=kinds)[0]
+    split = rng.choice(STANDARD_SPLITS.get(n, [drafter.even_split(n)])) if cards else random_split(n, rng)
+    return {"sample": [drafter.depth_name(x, recorded) for x in drafter.split_depths(split, kind)]}
 
 
 def fuse_extra(d, anchors, positions):
@@ -141,15 +183,15 @@ def build_inputs(d, profile, windows, n_embd, dtype, fuse=False):
     cextra = None
     if fuse and ca == "full":
         cextra = [(0, anchor_rows(d, "L9", allpos, None, None), torch.ones(N, dtype=torch.bool, device=allpos.device))]
-    return committed, drafter.ANCHOR_IDS[ca], win, cextra
+    return committed, ca, win, cextra
 
 
-def loader(records, profile, t2d, order, q, stop, all_anchors=False):
+def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=None):
     for ff, i in order:
         if stop.is_set():
             return
         try:
-            q.put(Batch(records[ff][i], profile, t2d, all_anchors=all_anchors))
+            q.put(Batch(records[ff][i], profile, t2d, all_anchors=all_anchors, sampler=sampler))
         except Exception as e:  # noqa: BLE001
             print(f"skip {ff}:{i}: {e}", flush=True)
     q.put(None)
@@ -164,7 +206,7 @@ def evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, ma
         b = Batch(files[ff][i], profile, t2d, all_anchors=fuse)
         d = to_device(b, device, dtype)
         committed, ca, win, cextra = build_inputs(d, profile, windows, n_embd, dtype, fuse)
-        with torch.autocast(device.split(":")[0], dtype=dtype):
+        with torch.autocast(device.split(":")[0], dtype=dtype, enabled=dtype != torch.float32):
             out = model(d["tokens"], committed, ca, win, committed_extra=cextra)
         p = feats.sampler_dist(d["top_lp"])
         for name, logits in out.items():
@@ -211,13 +253,19 @@ def main():
     ap.add_argument("--noise", type=float, default=0.0, help="uniform noise amplitude after each anchor's RMS norm")
     ap.add_argument("--dropout", type=float, default=0.0)
     ap.add_argument("--val-seqs", type=int, default=60, help="validation sequences for the final evaluation")
+    ap.add_argument("--general", action="store_true",
+                    help="depth-general head: anchors at any recorded layer, windows of random 3-12-card splits "
+                         "(sample_general); no fused anchors")
+    ap.add_argument("--cards", help="N,N,...: with --general, train on these card counts' standard splits only "
+                                    "(STANDARD_SPLITS), e.g. 6,9")
     ap.add_argument("--reg", type=float, default=0.0,
                     help="weight of the feature-regression loss (newest row onto Flint's final state of that token)")
     args = ap.parse_args()
     torch.manual_seed(args.seed)
     os.makedirs(args.out, exist_ok=True)
     device = args.device
-    dtype = torch.float16 if args.fp16 else torch.bfloat16
+    # FP32 on the CPU (checks): bfloat16 autocast on CPUs without bfloat16 instructions runs nearly single-threaded
+    dtype = torch.float32 if device == "cpu" else torch.float16 if args.fp16 else torch.bfloat16
     torch.backends.cuda.matmul.allow_tf32 = True
     profile = drafter.PROFILES[args.head]
     windows = profile["windows"]
@@ -235,15 +283,36 @@ def main():
     n_embd = files[0][0].n_embd
     emb, head_rows, norm_w = load_flint(args.flint, vocab, device)
     t2d = t2d_table(vocab, emb.shape[0])
+    if args.general and args.fuse:
+        raise SystemExit("--general does not support --fuse")
+    if args.cards and not args.general:
+        raise SystemExit("--cards needs --general")
     model = drafter.Drafter(emb, head_rows, norm_w, n_layer=args.layers, fuse=args.fuse, noise=args.noise,
-                            dropout=args.dropout).to(device)
+                            dropout=args.dropout, general=args.general).to(device)
     if args.init_from:
         sd = torch.load(args.init_from, map_location=device)
         sd = sd.get("model", sd)
         missing, unexpected = model.load_state_dict(sd, strict=False)
+        model.init_general(sd)
         print(json.dumps({"init_from": args.init_from, "missing": missing, "unexpected": unexpected}), flush=True)
     sample_probs = [float(x) for x in args.window_sample.split(",")] if args.window_sample else None
     all_anchors = args.fuse or sample_probs is not None
+    general_sampler = None
+    if args.general:
+        srng = random.Random(args.seed + 7)
+        cards = [int(x) for x in args.cards.split(",")] if args.cards else None
+        general_sampler = lambda layers: sample_general(layers, srng, cards=cards)   # noqa: E731
+    # validation windows; the best checkpoint is the one with the highest mean acceptance over the primary ones
+    eval_profile, primary = profile, [next(iter(windows))]
+    if args.general:   # the staircases of the card counts the head is for (6 and 9 for the 3-12 head)
+        common = sorted(set.intersection(*(set(ff[0].layers) for ff in files)))
+        eval_profile, primary = {"committed": profile["committed"], "windows": dict(windows)}, []
+        for n in cards or (6, 9):
+            for k, split in enumerate(STANDARD_SPLITS.get(n, [drafter.even_split(n)])):
+                name = f"g{n}" + ("light" if k else "")
+                eval_profile["windows"][name] = [drafter.depth_name(x, common) for x in drafter.split_depths(split)]
+                primary.append(name)
+    score_of = lambda ev: sum(ev[w]["coupled"] for w in primary) / len(primary)   # noqa: E731
     params = [p for p in model.parameters() if p.requires_grad]
     n_params = sum(p.numel() for p in params)
     opt = torch.optim.AdamW(params, lr=args.lr, betas=(0.9, 0.95), weight_decay=0.0)
@@ -284,7 +353,8 @@ def main():
         order = train[:]
         rng.shuffle(order)
         q, stop = queue.Queue(maxsize=6), threading.Event()
-        th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors), daemon=True)
+        th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors, general_sampler),
+                              daemon=True)
         th.start()
         while True:
             tw = time.time()
@@ -302,9 +372,12 @@ def main():
             for g in opt.param_groups:
                 g["lr"] = lr
             d = to_device(b, device, dtype)
-            step_windows = sample_window(profile, rng, sample_probs) if sample_probs else windows
+            if b.window:
+                step_windows = b.window
+            else:
+                step_windows = sample_window(profile, rng, sample_probs) if sample_probs else windows
             committed, ca, win, cextra = build_inputs(d, profile, step_windows, n_embd, dtype, args.fuse)
-            with torch.autocast(device.split(":")[0], dtype=dtype):
+            with torch.autocast(device.split(":")[0], dtype=dtype, enabled=dtype != torch.float32):
                 out = model(d["tokens"], committed, ca, win, return_feats=True, committed_extra=cextra)
             p = feats.sampler_dist(d["top_lp"])
             target_f = d["arrays"]["full"][1][d["tpos"]] if args.reg > 0 else None
@@ -347,22 +420,22 @@ def main():
                 save_ckpt()
             if time.time() - last_eval > args.eval_every * 60:
                 last_eval = time.time()
-                ev = evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, fuse=args.fuse)
+                ev = evaluate(model, files, val, eval_profile, eval_profile["windows"], t2d, device, dtype, n_embd,
+                              fuse=args.fuse)
                 rec = {"t_min": round((time.time() - t_start) / 60, 2), "step": step, "seqs": seen, "val": ev}
                 print(json.dumps(rec), flush=True)
                 log.write(json.dumps(rec) + "\n")
                 log.flush()
                 torch.save(model.state_dict(), os.path.join(args.out, "head-last.pt"))
-                primary = ev[next(iter(windows))]["coupled"]
-                if primary > best:
-                    best = primary
+                if score_of(ev) > best:
+                    best = score_of(ev)
                     torch.save(model.state_dict(), os.path.join(args.out, "head.pt"))
         stop.set()
-    ev = evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, max_seqs=args.val_seqs,
-                  fuse=args.fuse)
+    ev = evaluate(model, files, val, eval_profile, eval_profile["windows"], t2d, device, dtype, n_embd,
+                  max_seqs=args.val_seqs, fuse=args.fuse)
     torch.save(model.state_dict(), os.path.join(args.out, "head-last.pt"))
-    if ev[next(iter(windows))]["coupled"] > best:
-        best = ev[next(iter(windows))]["coupled"]
+    if score_of(ev) > best:
+        best = score_of(ev)
         torch.save(model.state_dict(), os.path.join(args.out, "head.pt"))
     save_ckpt()
     rec = {"t_min": round((time.time() - t_start) / 60, 2), "step": step, "seqs": seen, "epochs": epoch,

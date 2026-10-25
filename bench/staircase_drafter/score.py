@@ -72,9 +72,11 @@ def main():
     ap.add_argument("--max-seqs", type=int, default=0)
     ap.add_argument("--alpha", type=float, default=1.0,
                     help="sharpen the guesser's distribution (q^alpha) before coupling; choose it on validation data")
+    ap.add_argument("--window-group", type=int, default=4,
+                    help="windows per forward pass (fewer needs less memory; the committed rows are recomputed per pass)")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    dtype = torch.float16 if args.fp16 else torch.bfloat16
+    dtype = torch.float32 if args.device == "cpu" else torch.float16 if args.fp16 else torch.bfloat16   # as train.py
     vocab = np.load(args.vocab)
     ff = feats.FeatFile(args.feats)
     gen_rows = replay.load(args.gen)
@@ -88,12 +90,24 @@ def main():
         profile = json.loads(json.dumps(drafter.PROFILES[head]))
         windows = dict(profile["windows"])
         windows.update(drafter.SCORE_EXTRA.get(head, {}))
+        general = cfg["args"].get("general", False)
+        if general:   # card-1 staircases per card count, with the test file's recorded layers
+            rec_layers = ff[0].layers
+            for n in (3, 4, 5, 6, 7, 8, 9, 10, 12):
+                windows[f"g{n}"] = [drafter.depth_name(x, rec_layers) for x in drafter.split_depths(drafter.even_split(n))]
+            windows["g9light"] = [drafter.depth_name(x, rec_layers)
+                                  for x in drafter.split_depths(drafter.even_split(9, light_last=2))]
+            for n in (6, 9):
+                for kind in ("pre", "miss"):
+                    windows[f"g{n}{kind}"] = [drafter.depth_name(x, rec_layers)
+                                              for x in drafter.split_depths(drafter.even_split(n), kind)]
         for spec in args.extra:
             name, anchors = spec.split("=")
             windows[name] = anchors.split(",")
         prof_all = {"committed": profile["committed"], "windows": windows}
         fuse = cfg["args"].get("fuse", False)
-        model = drafter.Drafter(emb, head_rows, norm_w, n_layer=cfg["args"].get("layers", 2), fuse=fuse).to(args.device)
+        model = drafter.Drafter(emb, head_rows, norm_w, n_layer=cfg["args"].get("layers", 2), fuse=fuse,
+                                general=general).to(args.device)
         if not args.init_only:
             model.load_state_dict(torch.load(os.path.join(hdir, "head.pt"), map_location=args.device), strict=False)
         model.eval()
@@ -104,15 +118,21 @@ def main():
             b = train.Batch(rec, prof_all, t2d, min_target=0, all_anchors=fuse)
             d = train.to_device(b, args.device, dtype)
             committed, ca, win, cextra = train.build_inputs(d, prof_all, windows, rec.n_embd, dtype, fuse)
-            with torch.no_grad(), torch.autocast(args.device.split(":")[0], dtype=dtype):
-                out = model(d["tokens"], committed, ca, win, committed_extra=cextra)
             p = feats.sampler_dist(d["top_lp"], min_p=args.min_p)
-            for name, logits in out.items():
-                c, t, conf = drafter.coupled_and_top(logits, d["top_draft"], p, alpha=args.alpha)
-                per[name]["coupled"].append(c.cpu().numpy())
-                per[name]["top"].append(t.cpu().numpy())
-                per[name]["conf"].append(conf.cpu().numpy())
-                per[name]["uniform"].append(drafter.uniform_match(logits, d["top_draft"], p, alpha=args.alpha).cpu().numpy())
+            names = list(win)
+            for g in range(0, len(names), args.window_group):   # a few windows per pass bounds the logits' memory
+                with torch.no_grad(), torch.autocast(args.device.split(":")[0], dtype=dtype,
+                                                     enabled=dtype != torch.float32):
+                    out = model(d["tokens"], committed, ca, {n: win[n] for n in names[g:g + args.window_group]},
+                                committed_extra=cextra)
+                for name, logits in out.items():
+                    c, t, conf = drafter.coupled_and_top(logits, d["top_draft"], p, alpha=args.alpha)
+                    per[name]["coupled"].append(c.cpu().numpy())
+                    per[name]["top"].append(t.cpu().numpy())
+                    per[name]["conf"].append(conf.cpu().numpy())
+                    per[name]["uniform"].append(
+                        drafter.uniform_match(logits, d["top_draft"], p, alpha=args.alpha).cpu().numpy())
+                del out
             j = b.tpos - rec.n_prompt + 1
             cat, in_copy, segs = labels[rec.seq_id]
             meta["seq"].append(np.full(len(j), rec.seq_id))

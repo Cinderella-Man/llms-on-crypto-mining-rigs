@@ -17,6 +17,10 @@ ROWS = [("A", "stair", "A: staircase on card 1 (six cards)"), ("A", "miss", "A: 
         ("B", "c9light", "B: nine-card staircase, light last card"),
         ("C", "plain", "C: card 1's output only"), ("U", "miss", "U: older tokens complete"),
         ("T", "plain", "T: tokens only")]
+# a depth-general head (train.py --general): card-1 staircases of even splits, per card count
+GENERAL = [(f"g{n}", f"{n} cards") for n in (3, 4, 5, 6, 7, 8, 9, 10, 12)] + [
+    ("g9light", "9 cards, light last card"), ("g6pre", "6 cards, pre-step inputs"), ("g6miss", "6 cards, after a miss"),
+    ("g9pre", "9 cards, pre-step inputs"), ("g9miss", "9 cards, after a miss")]
 
 
 def fmt(x):
@@ -39,6 +43,20 @@ def main():
         print(f"| {label} | {fmt(r['coupled_fresh'])} | {fmt(r['coupled'])} | {r['coupled_copy'][0]:.3f} | "
               f"{r['top_fresh'][0]:.3f} | {cats} | {segs} |")
     print()
+    for head in s:
+        rows = [(w, label) for w, label in GENERAL if w in s[head]["windows"]]
+        if not rows:
+            continue
+        print(f"Depth-general head {head} ({s[head]['dir']}), card-1 staircase per card count:\n")
+        print("| Cards | Coupled, fresh | Coupled, all | Top guess, fresh | Shared uniform, fresh / all | "
+              "Fresh: chat / code / edit / agent |")
+        print("|---|---|---|---|---|---|")
+        for w, label in rows:
+            r = s[head]["windows"][w]
+            cats = " / ".join(f"{r[f'coupled_fresh_{c}'][0]:.3f}" for c in ("chat", "code", "edit", "agent"))
+            print(f"| {label} | {fmt(r['coupled_fresh'])} | {fmt(r['coupled'])} | {r['top_fresh'][0]:.3f} | "
+                  f"{r['uniform_fresh'][0]:.3f} / {r['uniform'][0]:.3f} | {cats} |")
+        print()
     best_ab = max(((h, w) for h, w in get if h in "AB" and w in ("stair", "pre", "late")),
                   key=lambda k: get[k]["coupled_fresh"][0], default=None)
     if best_ab:

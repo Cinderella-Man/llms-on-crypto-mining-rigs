@@ -26,10 +26,11 @@ copy lookup, which guesses first inside copied text.
 
 | Where we stand (2026-10-25 morning) | |
 |---|---|
-| Best held-out score | 0.463 coupled acceptance on Q51 fresh text, 0.505 overall (M0, head A, 8.6 M tokens, six cards) |
-| Best validation score | 0.568 staircase (M1, run R1, 13.9 M tokens, 120 min); not yet scored on Q51 |
+| Best held-out score | 0.502 coupled acceptance on Q51 fresh text, 0.562 overall (M1, run R1, 13.5 M tokens, six cards); after a miss 0.541 / 0.603 |
+| Best validation score | 0.580 staircase (M1, R1, 180 min) |
+| Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
 | Gate to the rig | ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall, coupled. Not a kill line (decision 2026-10-24 21:25) |
-| Next | M2: one head for any split of 3–12 cards, planned 2026-10-25 06:00 |
+| Next | M2 round of 2026-10-25 06:00: four depth-general heads (3–12 cards, 6 + 9, 9, 6) on the same data |
 | Engine | guesser built (`--pipe-guess staircase`, fork branch `pascal-p106-v2-drafter`); not yet timed on the rig |
 
 Terms used below:
@@ -76,9 +77,13 @@ Prompts → answers → dump → train → score → simulate → export → eng
 - **Tools:** `generate.py` against llama-server (`--jinja -no-kvu -bs --cache-ram 0`), the makers' sampling
   (temperature 1.0, top-k 20, top-p 0.95, min-p 0), reasoning kept, ≤ 2,048 tokens, seed 20000 + prompt number. Several
   server copies share one prompt file; each prompt is claimed by an exclusive file create.
-- **Measured (2026-10-24/25):** G3 on two RTX 3090s at 96 slots, one UD-Q4_K_XL copy per V100 at 48 slots; ~0.75k
-  answer tokens/s in all, ~2.7 M tokens an hour. Tool prompts run at ~210 answer tokens/s (long tool lists, short
-  answers).
+- **Measured (2026-10-25 night):** G3 on two RTX 3090s at 96 slots: ~350 answer tokens/s (a decode step every
+  ~270 ms); one UD-Q4_K_XL copy on a V100 at 48 slots: ~107. In all ~0.46k answer tokens/s, ~1.7 M tokens an hour.
+  Tool prompts run at ~210 answer tokens/s (long tool lists, short answers).
+- **Why G3 on two cards is slow:** all 96 slots stay busy, and the server's main thread at 100 % CPU is the CUDA driver
+  spin-waiting, not CPU starvation. A 96-token decode batch is one ubatch at `-ub 512`, so the two cards of the layer
+  split take turns and each is ~50 % busy. Under test: `-ub 48`, which splits each decode step into two ubatches that
+  llama.cpp pipelines across the two cards.
 - **Pitfalls:**
   - The generator only has to write Flint-like text: the dump re-labels every target with the Q8_0 teacher. A writer
     other than Q8_0 costs est. 1–3 % of acceptance by the literature ([data generation](research/notes/drafter_data_generation.md)),
@@ -96,18 +101,21 @@ Prompts → answers → dump → train → score → simulate → export → eng
   writes a smaller subset for a fast disk.
 - **Measured:**
 
-  | Card set | Tokens/s (prompt + answer) | Answer tokens/s |
-  |---|---|---|
-  | last card on PCIe x8 | ~1,650 | ~1.1–1.2k |
-  | three cards, last on x4 | ~850 | ~0.7k |
-  | V100s on x1 links | ~280 | ~0.2k |
+  | Card set | Layer grid | Tokens/s (prompt + answer) | Answer tokens/s |
+  |---|---|---|---|
+  | last card on PCIe x8 | 17 layers | ~1,650 | ~1.1–1.2k |
+  | last card on PCIe x8 (two 3080s + a 3090) | 26 layers | 1,230 | ~1.0k |
+  | three cards, last on x4 | 17 layers | ~850 | ~0.7k |
+  | V100s on x1 links | 17 layers | ~280 | ~0.2k |
 
-- **Storage:** 37 KB per answer token with the 17-layer grid, ~54 KB with the 26-layer grid (M2), ~12 KB for a
+- **Storage:** 37 KB per answer token with the 17-layer grid, 58 KB with the 26-layer grid (M2), ~12 KB for a
   six-card pack. 70 M tokens at 37 KB is ~2.6 TB.
 - **Pitfalls:**
   - Without help the dump copies all 150,144 logits per position to the host (600 KB). `DUMP_GPU_TOPK=1` (with `-b`
-    equal to `-ub`; v2 commit `d402386`) takes the top-20 on the card and copies ~160 B; it agrees with the host path to
-    2e-6 in log-probability. Otherwise put the card holding the output head on the widest link.
+    equal to `-ub`; v2 commit `d402386`) takes the top-20 on the card and copies ~160 B. On Q51 it gives the same top-1
+    everywhere and the same top-20 as the host path, but with the last card on x8 it ran at 0.89× the host path
+    (1,098 against 1,230 tokens/s; `-b 512` costs more than the logits copy saves), so it pays only on narrow links.
+    Otherwise put the card holding the output head on the widest link.
   - The layer grid fixes which splits a dump can serve. Record every boundary you may need (see M2's grid).
 
 ### Step 4: pack and train
@@ -117,11 +125,16 @@ Prompts → answers → dump → train → score → simulate → export → eng
   Q51), `flint_weights.py`, `train.py` (model in `drafter.py`): BF16 on RTX cards, FP16 with loss scaling on V100s,
   checkpoints every 30 min. `--resume` continues a run; `--init-from` warm-starts a changed model (weights only, new
   parameters at zero, fresh optimizer). M1 options: `--window-sample`, `--fuse`, `--loss lk --eta 3`, `--noise`,
-  `--dropout`, `--val-seqs`; M2 adds `--general`.
+  `--dropout`, `--val-seqs`; M2 adds `--general` and `--cards`. On a CPU (checks) training and scoring run in FP32:
+  BF16 autocast on a CPU without BF16 instructions runs nearly single-threaded.
 - **Measured:** M0's head A 23–25 steps/min on an RTX 3090; M1 44 steps/min. One epoch of 13.9 M tokens is ~1,650 steps
   of ~8k targets, ~38 min under M1.
 - **Pitfalls:**
-  - A 10 GB RTX 3080 can run out of memory with M1's settings (R0 did, at step 1,080).
+  - A 10 GB RTX 3080 can run out of memory with M1's settings (R0 did twice, at step 1,080 and ~30 min into its rerun).
+  - Repeats overfit: U's validation peaked at 0.615 after ~5.6 epochs (180 min) and fell to 0.609 by 240 min with its
+    KL rising from 1.43 to 1.77; R1 was flat after 140 min, with train KL 0.67 against validation 1.69.
+  - Several trainers reading feature files from one HDD can starve. Spread the files over disks, and let a sampled
+    window read only its own layers.
   - The validation split is every 33rd record of the concatenated file list: append new files at the end, or the split
     changes and validation leaks into training.
   - A disk guard that moves packs between disks must leave a symlink at the old path; a container sees that symlink
@@ -135,8 +148,14 @@ Prompts → answers → dump → train → score → simulate → export → eng
   whole transcripts; `report.py` for the gate table.
 - **What to report:** coupled acceptance on fresh text and overall; both couplings (Gumbel and inverse-CDF,
   [section 5](#5-coupling-with-the-sampler)); from M2 on, per card count (3, 4, 5, 6, 7, 8, 9, 10, 12; nine first).
-- **Pitfalls:** validation runs ~0.06 above Q51 fresh text (A at 8.6 M: val 0.527, Q51 fresh 0.463), so only Q51
-  decides. Compare heads paired, per position, not by their single intervals (±0.024 each).
+- **Pitfalls:**
+  - Validation runs 0.06–0.08 above Q51 fresh text (A at 8.6 M: val 0.527, Q51 fresh 0.463; R1: val 0.580, Q51 fresh
+    0.502) and close to Q51 overall (R1 0.562), so only Q51 decides.
+  - Compare heads paired, per position, not by their single intervals (±0.024 each).
+  - All windows' logits at once (40,001 classes × positions × windows) run out of memory on 10–12 GB cards;
+    `--window-group` scores a few windows per pass.
+  - A head scores only on the layers it was trained on: six-card head A gets ~0.05 on 7–9-card windows that read
+    layers it has no trained input for.
 
 ### Step 6: simulate
 
@@ -187,7 +206,7 @@ Prompts → answers → dump → train → score → simulate → export → eng
 |---|---|---|---|
 | [M0](#m0-the-pilot-2026-10-24) | 2026-10-24 | superseded by M1 (2026-10-24 22:00) | first heads: fixed six-card windows, all windows trained per sequence |
 | [M1](#m1-sampled-windows-fused-anchors-warm-starts-2026-10-24-2200) | 2026-10-24 22:00 | current | one sampled window per sequence, fused anchors, warm starts; 1.8× the steps |
-| [M2](#m2-depth-general-for-312-cards-planned-2026-10-25-0600) | planned 2026-10-25 06:00 | planned | layer-indexed anchors, one head for any 3–12-card split |
+| [M2](#m2-depth-general-for-312-cards-planned-2026-10-25-0600) | planned 2026-10-25 06:00 | planned | layer-indexed anchors, one head for any 3–12-card split; specialists on a few card counts for comparison |
 
 ### M0: the pilot (2026-10-24)
 
@@ -226,12 +245,18 @@ Prompts → answers → dump → train → score → simulate → export → eng
   - every anchor a token has reached fused into its row (SPD's design), not only the deepest;
   - options: the LK hybrid loss (KL → coupled match), feature noise, dropout.
 - **Speed:** 44 steps/min against 23–25 for M0.
-- **Runs (13.9 M tokens):**
-  - R1 (fused, warm-started from U): validation staircase 0.538 at 20 min, 0.568 at 120 min, already above M0's best
-    (0.527).
-  - R0 (unfused control) ran out of memory on a 10 GB RTX 3080 at step 1,080.
-- **Learned:** one epoch of 13.9 M tokens is ~1,650 steps (~38 min), so runs on fixed data converge in 2–3 h. Data, not
-  run length, is the limit.
+- **Runs (13.5 M training tokens of the 13.94 M; the rest is validation and answers over 8,192 tokens):**
+  - R1 (fused, warm-started from U), 180 min:
+    - validation staircase 0.538 (20 min), 0.568 (120 min), 0.578 (140 min), 0.580 (180 min);
+    - Q51 at α 3: staircase 0.502 (CI 0.477–0.526) fresh, 0.562 overall; after a miss 0.541 / 0.603;
+    - α 1 is ~0.03 lower.
+  - R0 (unfused control, from U): validation 0.545 at 20 min, against R1's 0.538. It ran out of memory on a 10 GB RTX
+    3080 twice, so there is no longer run.
+- **Learned:**
+  - One epoch of 13.5 M tokens is ~1,650 steps (~38 min), so runs on fixed data converge in 2–3 h and then overfit.
+    Data, not run length, is the limit.
+  - The new recipe added ~+0.04 fresh over the M0 learning curve: 0.502 at 13.5 M, where M0's +0.03 per doubling
+    projects ~0.48.
 
 ### M2: depth-general for 3–12 cards (planned 2026-10-25 06:00)
 
@@ -239,7 +264,9 @@ Prompts → answers → dump → train → score → simulate → export → eng
 
 - **Anchors are layer-indexed:** any layer input 1–48 or the final state. Projections are shared within five depth
   buckets (layer inputs 1–12, 13–20, 21–28, 29–36, 37–48; the final state its own), plus a learned per-layer depth
-  embedding. Warm-started from R1, so it starts as the six-card head on six-card depths.
+  embedding. Warm-started from R1 with its fused-anchor terms dropped (M2 has no fusion), so it starts as R1 without
+  fusion on six-card depths. Checked: a general head loaded from R1 reproduces R1 without fusion exactly (max difference
+  0). After six smoke-test steps it already scores ~0.40 at 7–9 cards on two Q51 transcripts, against 0.05 for head A.
 - **Card count drawn per sequence:**
 
   | Cards | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
@@ -254,10 +281,29 @@ Prompts → answers → dump → train → score → simulate → export → eng
   - d1–d3: a 17-layer superset, every 6- and 9-card boundary: 6, 9, 12, 17, 18, 24, 25, 29, 30, 33, 34, 36, 39, 41,
     42, 44, 47 + final.
   - d4 onward: a 26-layer grid: 4, 6, 8, 9, 10, 12, 14, 16, 17, 18, 20, 22, 24, 25, 27, 29, 30, 33, 34, 36, 37, 39, 41,
-    42, 44, 47 + final; ~54 KB per answer token.
+    42, 44, 47 + final (4, 6 and 9 for every position); 58 KB per answer token. Without L4, 10–12-card windows fall back
+    to the embedding for the newest token.
+  - Q51 is dumped with the 26-layer grid as well (`q51-grid.bin`), so every card count is scored on its own layers.
+- **Specialists (`--cards`):** the same architecture, warm start and data, but trained only on the standard splits of a
+  few card counts (the even split; for nine cards also 6/6/6/6/6/6/6/5/2). They show what specialization buys.
+- **Validation and checkpoint:** the six-card windows plus the staircases of the head's card counts (6 and 9 for the
+  general head). The best checkpoint maximizes the mean over those staircases.
+- **Round of 2026-10-25 06:00–08:15** (the owner's plan, 01:45). Generation and the dump stop at 06:00; data is d1–d4,
+  the same for all four heads:
+
+  | Run | Trained on | GPU |
+  |---|---|---|
+  | R2-gen | 3–12 cards, weights above | RTX 3090 |
+  | R2-69 | the six-card split and both nine-card splits | RTX 3090 |
+  | R2-9 | both nine-card splits | RTX 3090 |
+  | R2-6 | the six-card split | V100 (FP16 with loss scaling) |
+
+  All four are scored at 6 and 9 cards (both nine-card splits, staircase and after-miss); R2-gen also at 3, 4, 5, 7, 8,
+  10 and 12. If a specialist beats the general head by more than ~0.01 at nine cards, per-card-count heads (~0.29 GB
+  each) ship next to the general one.
 - **Scoring:** per card count, 3, 4, 5, 6, 7, 8, 9, 10, 12; nine cards reported first (the reference rig runs nine).
-- **Checks before a long run:** `check_general.py` (valid windows, the card-count mix, and a general head loaded from a
-  six-card head reproducing it on six-card windows).
+- **Checks before a long run:** `check_general.py` (valid windows, the card-count mix, the specialists' windows, and a
+  general head loaded from a six-card head reproducing it on six-card windows).
 
 ## 4. Why the card count matters
 
@@ -294,9 +340,11 @@ All acceptance numbers so far are Gumbel-coupled; the sampler that llama.cpp ser
 | Flint p = (0.6, 0.25, 0.1, 0.05), head with the top two swapped | 0.61 (from the formula) | 0.15 (synthetic check, `check_coupling.py`) |
 
 - Inverse-CDF is fragile: any disagreement in the order of the top tokens moves every boundary after it.
-- **Both couplings are scored** (`score.py`, since v2 `521737d`). If inverse-CDF loses more than ~0.02 against Gumbel on
-  Q51, the fork switches to a position-keyed Gumbel-max sampler. Plain and pipelined outputs then stay identical to
-  each other; only the mapping from a seed to its answer changes.
+- **Both couplings are scored** (`score.py`, since v2 `521737d`). The rule: if inverse-CDF loses more than ~0.02
+  against Gumbel on Q51, the fork switches to a position-keyed Gumbel-max sampler.
+- **Measured on Q51** (2026-10-25, α 3), inverse-CDF against Gumbel: R1 staircase 0.493 against 0.502 fresh and 0.558
+  against 0.562 overall; R1 after a miss 0.531 against 0.541; U 0.530 against 0.537. The loss is 0.007–0.010, under
+  the rule, so the served sampler stays as it is. A trained head mostly agrees with Flint on the order of the top tokens.
 - At temperature 0, and with sampling on the host, the guess is the head's most likely token and the coupling doesn't
   matter.
 
@@ -313,11 +361,23 @@ row's own window.
 | 2026-10-24 | M0, A, window shapes not trained (pre-step, nine-card) | 8.6 M | 6 → others | – | 0.06 | – | Gumbel |
 | 2026-10-24 | M0, B (pre-step) | 8.6 M | 6 (spare card) | 0.436 | 0.380 | 0.405 | Gumbel |
 | 2026-10-24 | M0, T (tokens only) | 3.08 M | any | 0.296 at α 1 | ~0.30 | – | Gumbel |
-| 2026-10-24 | M1, R1 (fused, from U), 20 min | 13.9 M | 6 (card 1) | 0.538 | – | – | Gumbel |
-| 2026-10-24 | M1, R1, 120 min | 13.9 M | 6 (card 1) | 0.568 | – | – | Gumbel |
+| 2026-10-24 | M1, R1 (fused, from U), 20 min | 13.5 M | 6 (card 1) | 0.538 | – | – | Gumbel |
+| 2026-10-24 | M1, R1, 120 min | 13.5 M | 6 (card 1) | 0.568 | – | – | Gumbel |
+| 2026-10-25 | M1, R1, 180 min | 13.5 M | 6 (card 1) | 0.580 | 0.502 (0.477–0.526) | 0.562 (0.526–0.595) | Gumbel |
+| 2026-10-25 | M1, R1, 180 min | 13.5 M | 6 (card 1) | – | 0.493 | 0.558 | inverse-CDF |
+| 2026-10-25 | M1, R1, after-miss inputs | 13.5 M | 6 (card 1) | 0.612 | 0.541 | 0.603 | Gumbel |
+| 2026-10-25 | M1, R0 (unfused, from U), 20 min | 13.5 M | 6 (card 1) | 0.545 | – | – | Gumbel |
+| 2026-10-25 | M0, U (after-miss inputs), 240 min | 13.5 M | 6 (card 1) | 0.615 (peak, 180 min) | 0.537 | 0.593 | Gumbel |
+| 2026-10-25 | M0, C (card 1's output only) | 13.5 M | 6 (card 1) | – | 0.437 | 0.517 | Gumbel |
+| 2026-10-25 | M0, B (pre-step / late / after miss) | 13.5 M | 6 (spare card) | – | 0.300 / 0.316 / 0.331 | 0.303 / 0.323 / 0.339 | Gumbel |
 
-- **Learning curve:** ~+0.03 fresh per doubling of data (0.422 → 0.463 from 3.08 to 8.6 M). With M0's recipe the
-  gate projects to ~60–70 M tokens; with M1's changes est. ~30–40 M ([drafter acceptance](research/notes/drafter_acceptance.md) 2.4).
+- **Learning curve (head A, Q51 fresh):** 0.422 (3.08 M) → 0.463 (8.6 M) with M0, ~+0.03 per doubling of data; 0.502
+  (13.5 M) with M1. At +0.03 per doubling, 24 M tokens project to ~0.53, so reaching 0.55 also needs recipe gains (M2,
+  regularization, a bigger head). With M0's recipe the gate projected to ~60–70 M tokens
+  ([drafter acceptance](research/notes/drafter_acceptance.md) 2.4).
+- **Simulated speed (2026-10-25, R1, six cards, `sim.py`):** 1.90× plain decoding (70.9 tok/s) with the copy lookup in
+  front, against 1.34× (50.1) for the copy lookup with the n-gram cache, 1.44× (53.7) with the continuation table, and
+  1.85× for an oracle right 50 % of the time.
 - **Gate:** ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall. 0.55 gives about 2× in simulation on nine cards and sits near
   the top of what partial-depth inputs give (published early-exit drafters at 6–25 % depth sit near 0.5).
 - **Not a kill line** (the owner, 2026-10-24 21:25: "do not give up on this - we need to make it work"). Missing it means
@@ -328,24 +388,25 @@ row's own window.
 
 | Lesson | Evidence |
 |---|---|
-| Data, not run length, limits the head | +0.03 per doubling; an M1 epoch of 13.9 M takes ~38 min |
+| Data, not run length, limits the head | +0.03 per doubling; an M1 epoch of 13.5 M takes ~38 min; U overfit after ~5.6 epochs |
 | Train on the windows the rig will produce, for every split it may run | M0's A: 0.06 on unseen shapes |
 | Report Q51, not validation | validation ~0.06 above Q51 fresh |
 | Most misses are on tokens Flint is sure of | 55.5 % of Q51's fresh positions have Flint ≥ 0.99 sure, and A gets 0.587 of them: knowledge, not calibration |
 | α sharpening is worth taking, once | +0.06 on val at α 3; α 2 → 3 adds only +0.004 |
 | The writer of the training text matters little; the teacher matters | the dump re-labels targets; est. 1–3 % for a non-Q8_0 writer |
-| The dump, not generation, sets the data rate | 600 KB of logits per position until `DUMP_GPU_TOPK` |
+| With the dump on a wide link, generation sets the data rate | dump ~1.0k answer tokens/s on three cards; generation ~0.46k on three |
 | Keep a slot's KV private in generation | `-kvu` with 64–72 slots crawled |
 | Tool-schema types must be JSON-schema types | 44 % of tool prompts failed before the fix |
 | Keep the exported output head in F16 | all-Q8_0 moves logits 0.16 rms, F16 head 0.035 |
 | The 40k vocabulary is enough for now | it holds 0.971 of Flint's kept probability on fresh text |
-| Inverse-CDF coupling punishes order swaps | 0.15 against Gumbel's 0.61 on a swapped top pair |
+| Inverse-CDF coupling punishes order swaps, but trained heads rarely swap | 0.15 against Gumbel's 0.61 on a swapped top pair; on Q51 only 0.007–0.010 below Gumbel |
 
 ## 8. Open questions and next steps
 
-1. **M2 run and per-card-count scores** (2026-10-25 06:00): does one head lose against six-card-only heads on six and
-   nine cards?
-2. **Score R1 on Q51** with both couplings; decide on the Gumbel-max sampler (the ~0.02 rule).
+1. **M2 round and per-card-count scores** (2026-10-25 06:00–08:30): does the 3–12 head lose against the 6 + 9, 9 and
+   6 specialists at six and nine cards?
+2. ~~Score R1 on Q51 with both couplings; decide on the Gumbel-max sampler~~: done 2026-10-25; inverse-CDF is
+   0.007–0.010 below Gumbel, so the served sampler stays.
 3. **The engine reads the window shape from the run's split** (`-ts` and stage times) instead of the file, and taps
    any recorded layer, for M2's layer-indexed anchors.
 4. **Hidden states from the release file:** the head trains on Q8_0's states and reads the release file's on the rig;
@@ -356,7 +417,10 @@ row's own window.
 7. **More data:** generation and dump continue on every free GPU; each new size is a results row.
 8. **Bigger head:** the 4-layer A (1.85× the training cost per step, est. ~1.6× the guess time) against more data.
 9. **M1's options one by one:** the LK loss, noise and dropout, against a control on the same data.
-10. **The 13.94 M M0 heads** (A, 4-layer A, U, C, B, 300-minute budgets): their final Q51 scores belong in section 6.
+10. **The 13.5 M M0 heads:** U, C and B are scored (section 6). A, the 4-layer A and R0 ran out of memory while scoring
+    on 10–12 GB cards and are being rescored.
+11. **Overfitting:** with every new data size, dropout or noise against a control, once fresh data stops arriving.
+12. **Generation throughput:** `-ub 48` on the two-card G3 copy; a different server (vLLM) is a candidate.
 
 ## 9. Changelog
 
@@ -376,3 +440,11 @@ row's own window.
 - 2026-10-25 01:06: card-1 windows for 5–9-card splits in `drafter.staircase` (v2 `55a9d5c`).
 - 2026-10-25 01:10: the owner requires 3–12 cards; M2 planned for 06:00.
 - 2026-10-25: this document.
+- 2026-10-25 01:14: first Q51 scores of M1: R1 0.502 fresh / 0.562 overall (staircase), 0.541 / 0.603 after a miss;
+  inverse-CDF 0.007–0.010 below Gumbel, so the served sampler stays.
+- 2026-10-25 01:35: the GPU top-k dump gives the same top-20 as the host path but runs at 0.89× with the last card on
+  x8, so it is not used there. The continuous dump d4 starts with the 26-layer grid.
+- 2026-10-25 01:40: simulation: R1 on six cards gives 1.90× plain decoding (70.9 tok/s).
+- 2026-10-25 01:45: the 06:00 round becomes four depth-general heads (3–12, 6 + 9, 9, 6 cards) on the same data
+  (the owner); `--cards`; validation on the head's own card counts; `score.py --window-group`; FP32 on CPUs.
+- 2026-10-25 01:52: the two-card G3 generation copy restarts with `-ub 48`: its cards were taking turns at ~50 % each.
