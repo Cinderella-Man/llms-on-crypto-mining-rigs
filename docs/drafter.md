@@ -494,11 +494,13 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 - **The head on top of the store:** +3.7 % median on the release split (geometric mean over the eight requests
   +4.2 %): chat and code at T 0 +8.6 %, edit and tool at T 0 +2.7–2.9 %, T 1 +0.8–4.7 %. Nine even +3.9 % (geometric
   mean). Six cards +0.4 % (−3.1 % to +4.4 %).
-- **Against no guessing:** store 1.45×, store then head 1.51×, head alone 1.33× on the release split. The store is
-  worth more than the head, and the two add.
-- **Acceptance as served** (R2-9, release split): with the head alone 53.8 % of its guesses are right (T 0 55.2 %,
-  T 1 52.6 %), the same as its offline 0.538 on Q51 overall, though it was trained on Q8_0's hidden states and reads
-  K2h-r16's. Behind the store it guesses the harder positions: 47.1 % (T 0 50.9 %, T 1 43.8 %).
+- **Against no guessing:** copy lookup, continuations and store 1.45×; the same, then the head, 1.51×; the copy lookup,
+  then the head, 1.33× on the release split. The last one has neither the continuations nor the store, so it is not
+  the head's worth without the store; that comparison (copy lookup alone against copy lookup, then the head) is the
+  guess-sources test (`rig_d3_sources.sh`).
+- **Acceptance as served** (R2-9, release split): behind the copy lookup alone 53.8 % of its guesses are right (T 0
+  55.2 %, T 1 52.6 %), the same as its offline 0.538 on Q51 overall, though it was trained on Q8_0's hidden states and
+  reads K2h-r16's. Behind the store it guesses the harder positions: 47.1 % (T 0 50.9 %, T 1 43.8 %).
 - **Windows:** the engine took them from the layers llama actually assigned: `-ts 6,6,6,6,6,6,6,5,2` gives
   7/6/6/6/6/6/6/5/1 and a 7-row window (L6, L12, L18, L25, L30, L37, L47), the even split 6 rows (L6, L12, L18, L30,
   L39, L44), six cards 4 rows (L9, L17, L25, L42).
@@ -528,7 +530,6 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 | Inverse-CDF coupling punishes order swaps, but trained heads rarely swap | 0.15 against Gumbel's 0.61 on a swapped top pair; on Q51 only 0.007–0.010 below Gumbel |
 | The offline score predicts the served acceptance | R2-9 alone on the rig: 53.8 % right, against 0.538 on Q51 overall; Q8_0's hidden states in training, K2h-r16's on the rig |
 | Measure the guess cost before tuning acceptance | 5.3–7.3 ms per guess on a P106 against an estimate of 1.6–2.6 ms; it runs on card 1 next to Flint's first stage and caps the gain at ~4 % on nine cards, ~0 on six |
-| Cheap guessers first, the head for the rest | store alone 1.45×, head alone 1.33×, both 1.51× on nine cards |
 | Take the window from the split the run gets, not the one asked for | `-ts 6,6,6,6,6,6,6,5,2` assigned 7/6/6/6/6/6/6/5/1: 7 rows, not 8 |
 | Check the guesser behind every source that can sit in front of it | with the store, commits piled up between head launches and hit an out-of-bounds read (fixed in `460160e93`) that runs without a store never reached |
 
@@ -549,7 +550,7 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
    K2h-r16's states, its offline 0.538 on Q8_0's.
 5. ~~Cost per guess on a P106~~: 5.3–7.3 ms (section 6), far above card 1's slack; see item 0.
 6. ~~Order of the store and the head~~: built as copy lookup, request continuations, store, then the head (rc4
-   `5215256bd`); on the rig the head adds 3.7 % behind the store, and the store alone is 9 % ahead of the head alone.
+   `5215256bd`); on the rig the head adds 3.7 % behind the store. What each source is worth on its own: item 13.
 7. **More data:** generation and dump continue on every free GPU; each new size is a results row.
 8. **Bigger head:** the 4-layer A (1.85× the training cost per step, est. ~1.6× the guess time) against more data.
    The night's 4-layer run is inconclusive. It and the 2-layer control were both stopped at 75 of 300 minutes, and at
@@ -562,6 +563,9 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 11. **Overfitting:** with every new data size, dropout or noise against a control, once fresh data stops arriving.
 12. **Generation throughput:** the two-card G3 copy is GPU-bound with its cards taking turns; `-ub 48` did not help.
     A different server (vLLM) is a candidate.
+13. **What each guess source is worth** (owner-approved rig test, `rig_d3_sources.sh`, 2026-10-25 afternoon): the copy
+    lookup alone, with the request's continuations, with the store; the copy lookup then the head; and all of them. It
+    answers whether the head pays off without the store, and whether the store ships.
 
 ## 9. Changelog
 
@@ -628,8 +632,12 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   launches); `rig_server.sh` with the four rig configurations identical. R2-9 and R2-gen exported (0.27 GB each).
   The rig test: `rig_server.sh` per split with no guessing, cont + store, staircase + store, staircase alone.
 - 2026-10-25 11:09–12:17 (CET): first served rig result (rc4 `460160e93`, K2h-r16, depth 3). Release split: 50.4 tok/s
-  median with the store and R2-9, 48.6 with the store alone, 44.4 with the head alone, 33.4 with no guessing (+3.7 %
-  for the head; chat and code at T 0 +8.6 %); nine even 50.3 / 48.6 / 33.4; six cards with R2-gen 49.5 / 49.0 / 34.3.
-  Every answer identical in every configuration. The head alone is right 53.8 % of the time, as offline. One guess costs
-  5.3–7.3 ms on a P106 (est. 1.6–2.6 ms), the limit now. rc4 later became `2d53179aa` (C7's allocator fix for a
-  rig-only crash with packed uploads, off the drafter's path; these numbers stand).
+  median with the store and R2-9, 48.6 with the store alone, 44.4 with the copy lookup then the head, 33.4 with no
+  guessing (+3.7 % for the head; chat and code at T 0 +8.6 %); nine even 50.3 / 48.6 / 33.4; six cards with R2-gen
+  49.5 / 49.0 / 34.3. Every answer identical in every configuration. Behind the copy lookup alone the head is right
+  53.8 % of the time, as offline. One guess costs 5.3–7.3 ms on a P106 (est. 1.6–2.6 ms), the limit now. rc4 later
+  became `2d53179aa` (C7's allocator fix for a rig-only crash with packed uploads, off the drafter's path; these numbers
+  stand).
+- 2026-10-25 14:00 (CET): the guess-sources test prepared (`rig_d3_sources.sh`, owner-approved): copy lookup alone,
+  with the request's continuations, with the store, the copy lookup then the head, and all of them, on the release
+  split. Until it runs, the head's worth without the store is not measured.
