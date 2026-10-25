@@ -417,7 +417,9 @@ says the chat prompt; the state hash then covers the recurrent states too. The C
 - The fed run (`pipe-d0-fed`) has the plain run's tokens, sampled ids and probe, and the same 85 MB of KV and recurrent
   data; its state differs only in 216 bytes of cell metadata. A fed token's batch carries a placeholder id (the real one
   is copied between the cards), the KV cache keeps each cell's token id, and the state stores it for M-RoPE models.
-  Qwen3.6's graph never reads it.
+  Qwen3.6's graph never reads it, but models that do (n-gram embeddings) would compute with the placeholder, so
+  `llama_pipe_submit_fed` now refuses every model whose KV cells keep a token (M-RoPE or PLE): fed tokens stay a
+  plain-attention feature.
 - `llama-pipe-recurrent-check` (three slots, every third token submitted to its predecessor's slot, wrong guesses, the
   token in flight dropped and submitted again or decoded with `llama_decode`), on the CPU (64 tokens: 21 states to the
   stash, 21 drops) and on two and four virtual devices (96 tokens: 32 and 32): tokens, logits, state and probe identical.
