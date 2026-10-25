@@ -1,24 +1,28 @@
 """Checks for the rig path of the staircase guesser (Q20/D3).
 
-  python check_export.py case OUT_DIR [--fuse] [--head A] [--type f16] ...
+  python check_export.py case OUT_DIR [--fuse] [--head A] [--general --split 6,6,6,6,5,5,5,5,5] [--type f16] ...
       a random-weight head (every weight random, so every path counts), exported with export_gguf.py, and a test case
       for llama-pipe-drafter-check: a prompt committed in bulk, then guesses with commits and windows of tokens in
-      flight (anchors from the head's staircase), each with the logits drafter.Drafter.forward gives (float32, CPU)
+      flight, each with the logits drafter.Drafter.forward gives (float32, CPU). The windows are the card-1 window of
+      --split (drafter.split_depths, each depth mapped to the deepest anchor the head was trained on at or below it:
+      the six-card anchors, or --recorded for a depth-general head); tokens in flight beyond it read the split's last
+      boundary.
   python check_export.py real OUT_DIR --weights heads/A --vocab vocab.npy --flint FLINT_DIR --feats q51.bin [--seq 0]
-      the same with a trained head and Flint's real hidden states from a llama-staircase-dump file (the anchors the
-      dump stored in FP8, decoded to float32 on both sides)
-  python check_export.py head OUT.gguf [--fuse] [--head A] [--type q8_0] [--target-vocab 150144]
+      the same with a trained six-anchor head and Flint's real hidden states from a llama-staircase-dump file (the
+      anchors the dump stored in FP8, decoded to float32 on both sides), on the six-card split
+  python check_export.py head OUT.gguf [--fuse] [--general] [--head A] [--type q8_0] [--target-vocab 150144]
       a random-weight head of the real shape (2,048 wide, 40,000 draft ids among Flint's ids) for exactness and speed
       checks of the executor (its guesses are wrong, the output must still be plain decoding's)
 
-needs numpy, torch and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py).
+needs numpy, torch and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py). Pass the case's --split to llama-pipe-drafter-check.
 case.bin layout (little-endian):
   int32 header[8] = {0x53434831, n_vocab_table, d, n_prompt, n_steps, n_vocab_draft + 1, n_tap, fuse}
   float32 table[n_vocab_table][d]                  the embedding rows (the case's token ids index this table)
   int32 tok[n_prompt]; float32 full[n_prompt][d]; float32 l9[n_prompt][d]
   per step: int32 n_commit, int32 n_window, then n_commit + n_window rows (commits first, the window oldest first) of
-            {int32 token, int32 pos, float32 taps[n_tap][d]} (taps: the inputs of layers 9, 17, 25, 33, 41 and the final
-            state), then float32 expected[n_vocab_draft + 1] (the newest window row's logits)
+            {int32 token, int32 pos, float32 taps[n_tap][d]}, then float32 expected[n_vocab_draft + 1] (the newest
+            window row's logits). taps: n_tap 6 = the inputs of layers 9, 17, 25, 33, 41 and the final state; n_tap 49
+            = every depth 1..49 (49 = the final state)
 """
 import argparse
 import json
@@ -33,20 +37,21 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import drafter  # noqa: E402
 import export_gguf  # noqa: E402
 
-N_TAP = 6   # L9, L17, L25, L33, L41, full
+SIX = [9, 17, 25, 33, 41, 49]   # the six-anchor tap layout
+RECORDED = "4,6,8,9,10,12,14,16,17,18,20,22,24,25,27,29,30,33,34,36,37,39,41,42,44,47"
 
 
-def random_model(d, n_layer, fuse, n_vocab_table, n_vocab_draft, ffn, seed):
+def random_model(d, n_layer, fuse, n_vocab_table, n_vocab_draft, ffn, seed, general=False):
     g = torch.Generator().manual_seed(seed)
     emb = torch.randn(n_vocab_table, d, generator=g) * 0.02
     head_rows = torch.randn(n_vocab_draft, d, generator=g) * 0.02
     norm_w = 1 + 0.1*torch.randn(d, generator=g)
-    model = drafter.Drafter(emb, head_rows, norm_w, n_layer=n_layer, ffn=ffn, fuse=fuse)
+    model = drafter.Drafter(emb, head_rows, norm_w, n_layer=n_layer, ffn=ffn, fuse=fuse, general=general)
     with torch.no_grad():
         for name, p in model.named_parameters():
             if "norm" in name:
                 p.copy_(1 + 0.1*torch.randn(p.shape, generator=g))
-            elif name.startswith("anchor_emb") or name == "head.bias":
+            elif name.startswith("anchor_emb") or name.startswith("depth_emb") or name == "head.bias":
                 p.copy_(0.1*torch.randn(p.shape, generator=g))
             else:
                 p.copy_(torch.randn(p.shape, generator=g) / np.sqrt(p.shape[-1]))
@@ -58,16 +63,17 @@ def state_numpy(model):
     return {k: v.detach().float().numpy() for k, v in model.state_dict().items()}
 
 
-def write_case(path, model, table, case_tok, model_tok, P, windows, info, taps_of, full, l9, fuse):
+def write_case(path, model, table, case_tok, model_tok, P, windows, stair, deep, committed, layout, taps_of, full, l9, fuse):
     """Writes case.bin: the prompt (positions 0..P-1, committed in bulk), then one guess per entry of windows (tokens in
-    flight), each after committing the oldest token of the previous window. case_tok indexes `table`, model_tok is
-    what the reference model embeds (the same tokens). taps_of(pos, committed) -> float32 [N_TAP, d]; full and l9 are
-    the committed rows' final state and layer-9 input by position."""
-    stair, deepest = info["stair"], "L41"
+    flight), each after committing the oldest token of the previous window. stair: anchor names of the tokens in flight,
+    newest first; deep: the anchor of older tokens in flight; layout: the depth of each tap row. case_tok indexes
+    `table`, model_tok is what the reference model embeds (the same tokens). taps_of(pos, committed) -> float32
+    [len(layout), d]; full and l9 are the committed rows' final state and layer-9 input by position."""
     d = table.shape[1]
     V1 = model.head.weight.shape[0]
+    row_of = {depth: i for i, depth in enumerate(layout)}
     f = open(path, "wb")
-    f.write(struct.pack("<8i", 0x53434831, table.shape[0], d, P, len(windows), V1, N_TAP, int(fuse)))
+    f.write(struct.pack("<8i", 0x53434831, table.shape[0], d, P, len(windows), V1, len(layout), int(fuse)))
     f.write(np.ascontiguousarray(table, dtype=np.float32).tobytes())
     f.write(case_tok[:P].astype(np.int32).tobytes())
     f.write(np.ascontiguousarray(full[:P], dtype=np.float32).tobytes())
@@ -92,12 +98,12 @@ def write_case(path, model, table, case_tok, model_tok, P, windows, info, taps_o
         # reference: committed rows 0 .. c-1 (later rows are masked out for the window), the window newest first
         N = c + w
         tpos = torch.tensor([N - 1])
-        anchors = [stair[j] if j < len(stair) else deepest for j in range(w)]
+        anchors = [stair[j] if j < len(stair) else deep for j in range(w)]
         hw = torch.zeros(1, w, d)
         for j in range(w):                      # offset j = 0 is the newest
             taps = win[w - 1 - j][2]
             if anchors[j] != "emb":
-                hw[0, j] = torch.from_numpy(np.ascontiguousarray(taps[drafter.ANCHOR_IDS[anchors[j]] - 1]))
+                hw[0, j] = torch.from_numpy(np.ascontiguousarray(taps[row_of[drafter.anchor_index(anchors[j])]]))
         window = [tpos, anchors, hw]
         cextra = None
         if fuse:
@@ -106,27 +112,36 @@ def write_case(path, model, table, case_tok, model_tok, P, windows, info, taps_o
             for k in range(5):
                 hk = torch.zeros(1, w, d)
                 for j in range(w):
-                    hk[0, j] = torch.from_numpy(np.ascontiguousarray(win[w - 1 - j][2][k]))
+                    hk[0, j] = torch.from_numpy(np.ascontiguousarray(win[w - 1 - j][2][row_of[SIX[k]]]))
                 extra.append((k, hk, (ids > k + 1)[None, :]))
             window.append(extra)
             cextra = [(0, torch.from_numpy(np.ascontiguousarray(l9[:N], dtype=np.float32)), torch.ones(N, dtype=torch.bool))]
         with torch.no_grad():
-            out = model(tok_t[:N], torch.from_numpy(np.ascontiguousarray(full[:N], dtype=np.float32)),
-                        drafter.ANCHOR_IDS[info["committed"]], {"w": tuple(window)}, committed_extra=cextra)
+            out = model(tok_t[:N], torch.from_numpy(np.ascontiguousarray(full[:N], dtype=np.float32)), committed,
+                        {"w": tuple(window)}, committed_extra=cextra)
         logits = out["w"][0].float().numpy()
         f.write(logits.astype(np.float32).tobytes())
-        results.append({"step": s, "commits": len(commits), "window": w, "top": int(logits.argmax())})
+        results.append({"step": s, "commits": len(commits), "window": w, "anchors": anchors, "top": int(logits.argmax())})
     f.close()
     return results
+
+
+def split_window(split, kind, recorded):
+    """The window names of a split (newest first) and the anchor of older tokens in flight (its last boundary)."""
+    names = [drafter.depth_name(x, recorded) for x in drafter.split_depths(split, kind)]
+    done = np.cumsum(split)
+    deep = drafter.depth_name(int(done[-2]) if len(split) > 1 else 0, recorded)
+    return names or [drafter.depth_name(int(done[0]), recorded)], deep
 
 
 def cmd_head(args):
     rng = np.random.default_rng(args.seed)
     vocab = np.sort(rng.choice(args.target_vocab, args.draft_vocab, replace=False)).astype(np.int64)
     # the embedding table is the target's; a small stand-in is enough to build the head
-    model, _ = random_model(args.d, args.layers, args.fuse, 8, args.draft_vocab, args.ffn, args.seed)
+    model, _ = random_model(args.d, args.layers, args.fuse, 8, args.draft_vocab, args.ffn, args.seed, args.general)
+    recorded = [int(x) for x in args.recorded.split(",")] if args.general else None
     info = export_gguf.export(state_numpy(model), args.head, args.layers, args.fuse, vocab, args.out, qtype=args.type,
-                              f16=tuple(g for g in args.f16.split(",") if g))
+                              f16=tuple(g for g in args.f16.split(",") if g), general=args.general, recorded=recorded)
     info["bytes"] = os.path.getsize(args.out)
     print(json.dumps(info))
 
@@ -136,10 +151,15 @@ def cmd_case(args):
     rng = np.random.default_rng(args.seed)
     V = args.draft_vocab
     vocab = np.sort(rng.choice(args.table_vocab, V, replace=False)).astype(np.int64)
-    model, emb = random_model(args.d, args.layers, args.fuse, args.table_vocab, V, args.ffn, args.seed)
+    model, emb = random_model(args.d, args.layers, args.fuse, args.table_vocab, V, args.ffn, args.seed, args.general)
     gguf_path = os.path.join(args.out, "drafter.gguf")
+    recorded = [int(x) for x in args.recorded.split(",")] if args.general else export_gguf.ANCHOR_LAYERS
     info = export_gguf.export(state_numpy(model), args.head, args.layers, args.fuse, vocab, gguf_path, qtype=args.type,
-                              f16=tuple(g for g in args.f16.split(",") if g))
+                              f16=tuple(g for g in args.f16.split(",") if g), general=args.general,
+                              recorded=recorded if args.general else None)
+    split = [int(x) for x in args.split.split(",")]
+    stair, deep = split_window(split, args.kind, recorded)
+    layout = list(range(1, 50)) if args.general else SIX
 
     d, P = args.d, args.prompt
     windows = [int(x) for x in args.windows.split(",")]
@@ -147,17 +167,19 @@ def cmd_case(args):
     tokens = rng.integers(0, args.table_vocab, T).astype(np.int64)
     full = (rng.standard_normal((T, d))*2).astype(np.float32)
     l9 = (rng.standard_normal((T, d))*5).astype(np.float32)
+    i9, i_full = layout.index(9), layout.index(49)
 
     def taps_of(pos, committed_row):
-        t = (rng.standard_normal((N_TAP, d))*4).astype(np.float32)
+        t = (rng.standard_normal((len(layout), d))*4).astype(np.float32)
         if committed_row:
-            t[0] = l9[pos]
-            t[N_TAP - 1] = full[pos]
+            t[i9] = l9[pos]
+            t[i_full] = full[pos]
         return t
 
-    results = write_case(os.path.join(args.out, "case.bin"), model, emb.numpy(), tokens, tokens, P, windows, info,
-                         taps_of, full, l9, args.fuse)
-    print(json.dumps({"gguf": gguf_path, "case": os.path.join(args.out, "case.bin"), "export": info, "steps": results}))
+    results = write_case(os.path.join(args.out, "case.bin"), model, emb.numpy(), tokens, tokens, P, windows, stair, deep,
+                         model.anchor_id(info["committed"]), layout, taps_of, full, l9, args.fuse)
+    print(json.dumps({"gguf": gguf_path, "case": os.path.join(args.out, "case.bin"), "split": split, "kind": args.kind,
+                      "window": stair, "older": deep, "export": info, "steps": results}))
 
 
 def cmd_real(args):
@@ -191,19 +213,20 @@ def cmd_real(args):
     deep = {L: rec.dequant(L, np.arange(max(P, rec.lay_start[rec.layers.index(L)]), T)) for L in (17, 25, 33, 41)}
 
     def taps_of(pos, committed_row):
-        t = np.zeros((N_TAP, rec.n_embd), np.float32)
+        t = np.zeros((len(SIX), rec.n_embd), np.float32)
         t[0] = l9[pos]
         for k, L in enumerate((17, 25, 33, 41)):
             b = max(P, rec.lay_start[rec.layers.index(L)])
             t[k + 1] = deep[L][pos - b] if pos >= b else 0.0
-        t[N_TAP - 1] = full[pos]
+        t[len(SIX) - 1] = full[pos]
         return t
 
     model_tok = np.array(rec.tokens[:T], np.int64)
     used, case_tok = np.unique(model_tok, return_inverse=True)
     table = emb[torch.from_numpy(used)].numpy()
+    stair, older = split_window([9, 8, 8, 8, 8, 8], "stair", export_gguf.ANCHOR_LAYERS)
     results = write_case(os.path.join(args.out, "case.bin"), model, table, case_tok.astype(np.int64), model_tok, P,
-                         windows, info, taps_of, full, l9, fuse)
+                         windows, stair, older, model.anchor_id(info["committed"]), SIX, taps_of, full, l9, fuse)
     print(json.dumps({"gguf": gguf_path, "case": os.path.join(args.out, "case.bin"), "export": info,
                       "seq": int(rec.seq_id), "prompt": P, "steps": results}))
 
@@ -214,6 +237,10 @@ def main():
     ap.add_argument("out")
     ap.add_argument("--head", default="A", choices=sorted(drafter.PROFILES))
     ap.add_argument("--fuse", action="store_true")
+    ap.add_argument("--general", action="store_true", help="a depth-general head (drafter.Drafter general=True)")
+    ap.add_argument("--recorded", default=RECORDED, help="depth-general heads: the layer inputs it was trained on")
+    ap.add_argument("--split", default="9,8,8,8,8,8", help="case: the layer split the windows come from")
+    ap.add_argument("--kind", default="stair", choices=("stair", "pre"), help="case: a head on card 1 or a spare card")
     ap.add_argument("--type", default=None, choices=("q8_0", "f16", "f32"))
     ap.add_argument("--d", type=int, default=2048)
     ap.add_argument("--layers", type=int, default=2)

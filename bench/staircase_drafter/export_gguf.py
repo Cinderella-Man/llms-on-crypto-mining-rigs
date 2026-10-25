@@ -1,15 +1,16 @@
-"""Export a trained staircase-guesser head (Q20/D1) to the GGUF file the fork's pipelined executor loads
+"""Export a trained staircase-guesser head (Q20) to the GGUF file the fork's pipelined executor loads
 (llama_pipe_draft_init, llama-pipespec / llama-server --pipe-draft).
 
 usage: python export_gguf.py --head heads/A --vocab vocab.npy --out drafter-A.gguf [--weights head.pt] [--type q8_0]
-                             [--alpha 3] [--stair L9,L17,L33,L41]
+                             [--f16 head] [--alpha 3] [--recorded 4,6,8,...]
 needs numpy, torch and gguf-py (PYTHONPATH=<llama.cpp>/gguf-py). --head is a train.py output folder (config.json and
 head.pt, or --weights for another checkpoint: head-last.pt, ckpt.pt).
 
 The file holds the head as drafter.py defines it, with every RMS norm's weight folded into the projection after it:
   sd.emb.weight         [d, d]        w_emb * emb_norm
-  sd.anc.weight         [d, d, 6]     w_anc[k] * anc_norm[k], anchors L9, L17, L25, L33, L41, final state
-  sd.anchor_emb.weight  [d, 7]        anchor embeddings (emb, L9 .. L41, final)
+  sd.anc.weight         [d, d, 6]     w_anc[k] * anc_norm[k]: one per anchor (L9, L17, L25, L33, L41, final state), or
+                                      for a depth-general head one per depth bucket (drafter.BUCKET)
+  sd.anchor_emb.weight  [d, 7 | 50]   the anchor embedding (emb, L9 .. L41, final), or the per-depth embedding (0..49)
   sd.fuse.weight        [d, d, 5]     w_fuse[k] * fuse_norm[k] (fused heads only)
   sd.blk.<i>.wq/wk/wv   [d, n]        times attn_norm
   sd.blk.<i>.wo         [n, d]
@@ -18,10 +19,17 @@ The file holds the head as drafter.py defines it, with every RMS norm's weight f
   sd.head.weight        [d, V + 1]    head * the final norm (V draft ids and the "other" class)
   sd.head.bias          [V + 1]
   sd.vocab              [V] int32     draft id -> Flint token id
-Metadata (staircase.*): sizes, rms_eps, rope_theta (interleaved pairs: ggml rope mode 0), anchor_layers (the layer
-inputs the anchors read; the final state after Flint's output norm is the last anchor), fuse, committed (the anchor of
-committed rows), stair (anchors of the tokens in flight, newest first, from the head's profile), alpha (the guess is
-drawn from q^alpha), profile.
+Metadata (staircase.*):
+  - sizes, rms_eps, rope_theta (interleaved pairs: ggml rope mode 0), fuse, committed (the depth of committed rows),
+    alpha (the guess is drawn from q^alpha), profile, general;
+  - target_layers = 49: depth n is the input of layer n, 49 the final state after Flint's output norm, 0 the
+    embedding alone;
+  - depth_proj, depth_emb_row: the projection and the embedding row of each depth 0..49 (-1 none); fuse_depths: the
+    depths of the fused projections;
+  - recorded: the layer inputs the head was trained on. The engine takes the window from the run's layer split
+    (drafter.split_depths with the stage model in timing: ms per layer at six cards, per extra card, minimum; the
+    output head; a hop) and maps each depth to the deepest recorded one at or below it;
+  - anchor_layers, stair: a six-anchor head's anchors and its profile's six-card window.
 2-D and 3-D matrices are stored as --type (q8_0, f16 or f32), the groups in --f16 (default: the output head) as f16,
 everything else as f32.
 """
@@ -35,10 +43,12 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ANCHOR_LAYERS = [9, 17, 25, 33, 41]       # drafter.ANCHOR_IDS: L9 .. L41, then "full"
+N_TARGET = 49                             # drafter.FULL
+TIMING = [0.435, 0.024, 0.3, 2.5, 0.3]    # drafter.split_depths' defaults
 
 
 def profile_stair(profile):
-    """The anchors of the tokens in flight for the rig: the head's first window that is not the after-miss one."""
+    """The anchors of the tokens in flight on six cards: the head's first window that is not the after-miss one."""
     wins = profile["windows"]
     for name, anchors in wins.items():
         if name != "miss":
@@ -47,14 +57,14 @@ def profile_stair(profile):
 
 
 def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=None, head_dim=128, rms_eps=1e-6,
-           rope_theta=1e5, committed=None, f16=()):
+           rope_theta=1e5, committed=None, f16=(), general=False, recorded=None):
     """sd: the head's state dict (name -> numpy float32), head: profile name (drafter.PROFILES). f16: matrix groups
-    (emb, anc, fuse, blk, head) stored as f16 whatever qtype is."""
+    (emb, anc, fuse, blk, head) stored as f16 whatever qtype is. general: a depth-general head (drafter.Drafter
+    general=True), trained on the layer inputs in recorded."""
     import gguf
     import drafter
 
     profile = drafter.PROFILES[head]
-    stair = stair or profile_stair(profile)
     committed = committed or profile["committed"]
     d = sd["w_emb.weight"].shape[1]
     n_q = sd["blocks.0.wq.weight"].shape[0]
@@ -63,6 +73,25 @@ def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=N
     n_v1 = sd["head.weight"].shape[0]
     assert n_v1 == len(vocab) + 1, (n_v1, len(vocab))
     assert n_q % head_dim == 0 and n_kv % head_dim == 0
+    if general:
+        assert not fuse, "depth-general heads have no fused anchors"
+        assert recorded, "a depth-general head needs its recorded layers"
+        anchor_emb = sd["depth_emb.weight"]
+        depth_proj = list(drafter.BUCKET)
+        depth_emb_row = list(range(N_TARGET + 1))
+        recorded = sorted(int(x) for x in recorded)
+    else:
+        anchor_emb = sd["anchor_emb.weight"]
+        depth_proj = [-1] * (N_TARGET + 1)
+        depth_emb_row = [-1] * (N_TARGET + 1)
+        depth_emb_row[0] = 0
+        for k, layer in enumerate(ANCHOR_LAYERS):
+            depth_proj[layer] = k
+            depth_emb_row[layer] = k + 1
+        depth_proj[N_TARGET] = len(ANCHOR_LAYERS)
+        depth_emb_row[N_TARGET] = len(ANCHOR_LAYERS) + 1
+        recorded = ANCHOR_LAYERS
+        stair = stair or profile_stair(profile)
 
     def fold(w, norm):
         return w * norm[None, :]
@@ -95,12 +124,21 @@ def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=N
     w.add_uint32("staircase.n_vocab", len(vocab))
     w.add_float32("staircase.rms_eps", rms_eps)
     w.add_float32("staircase.rope_theta", rope_theta)
-    w.add_array("staircase.anchor_layers", ANCHOR_LAYERS)
     w.add_bool("staircase.fuse", bool(fuse))
+    w.add_bool("staircase.general", bool(general))
     w.add_string("staircase.committed", committed)
-    w.add_string("staircase.stair", ",".join(stair))
     w.add_float32("staircase.alpha", float(alpha))
     w.add_string("staircase.profile", head)
+    w.add_uint32("staircase.target_layers", N_TARGET)
+    w.add_array("staircase.depth_proj", [int(x) for x in depth_proj])
+    w.add_array("staircase.depth_emb_row", [int(x) for x in depth_emb_row])
+    w.add_array("staircase.recorded", [int(x) for x in recorded])
+    w.add_array("staircase.timing", [float(x) for x in TIMING])
+    if fuse:
+        w.add_array("staircase.fuse_depths", ANCHOR_LAYERS)
+    if not general:
+        w.add_array("staircase.anchor_layers", ANCHOR_LAYERS)
+        w.add_string("staircase.stair", ",".join(stair))
 
     q8 = gguf.GGMLQuantizationType.Q8_0
     for name, m in mats.items():
@@ -112,15 +150,15 @@ def export(sd, head, n_layer, fuse, vocab, out, qtype="q8_0", alpha=3.0, stair=N
             w.add_tensor(name, m.astype(np.float16))
         else:
             w.add_tensor(name, m)
-    w.add_tensor("sd.anchor_emb.weight", np.ascontiguousarray(sd["anchor_emb.weight"], dtype=np.float32))
+    w.add_tensor("sd.anchor_emb.weight", np.ascontiguousarray(anchor_emb, dtype=np.float32))
     w.add_tensor("sd.head.bias", np.ascontiguousarray(sd["head.bias"], dtype=np.float32))
     w.add_tensor("sd.vocab", np.ascontiguousarray(vocab, dtype=np.int32))
     w.write_header_to_file()
     w.write_kv_data_to_file()
     w.write_tensors_to_file()
     w.close()
-    return {"d": d, "n_layer": n_layer, "n_vocab": len(vocab), "fuse": bool(fuse), "stair": stair, "committed": committed,
-            "alpha": alpha, "type": qtype, "f16": sorted(f16)}
+    return {"d": d, "n_layer": n_layer, "n_vocab": len(vocab), "fuse": bool(fuse), "general": bool(general),
+            "stair": stair, "recorded": recorded, "committed": committed, "alpha": alpha, "type": qtype, "f16": sorted(f16)}
 
 
 def state_dict_numpy(path):
@@ -128,6 +166,13 @@ def state_dict_numpy(path):
     sd = torch.load(path, map_location="cpu")
     sd = sd.get("model", sd)
     return {k: v.float().numpy() for k, v in sd.items() if hasattr(v, "float")}
+
+
+def recorded_layers(cfg):
+    """The layer inputs every training dump of a train.py run stored (train.py's `common`)."""
+    import feats
+    sets = [set(feats.FeatFile(p)[0].layers) for p in cfg["args"]["feats"]]
+    return sorted(set.intersection(*sets))
 
 
 def main():
@@ -138,17 +183,24 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--type", default="q8_0", choices=("q8_0", "f16", "f32"))
     ap.add_argument("--alpha", type=float, default=3.0, help="q^alpha before the draw (score.py --alpha)")
-    ap.add_argument("--stair", help="anchors of the tokens in flight, newest first (default: from the head's profile)")
+    ap.add_argument("--stair", help="six-anchor heads: anchors of the tokens in flight on six cards, newest first "
+                                    "(default: from the head's profile); the engine derives the window from the split")
     ap.add_argument("--f16", default="head",
                     help="matrix groups kept in f16 with --type q8_0: emb,anc,fuse,blk,head (default head: a q8_0 output "
                          "head moves a trained head's logits by ~0.16 rms, an f16 one by ~0.035; '' for all q8_0)")
+    ap.add_argument("--recorded", help="depth-general heads: the layer inputs it was trained on (default: the layers "
+                                       "every --feats file of its config stored)")
     args = ap.parse_args()
     cfg = json.load(open(os.path.join(args.head, "config.json")))
     sd = state_dict_numpy(args.weights or os.path.join(args.head, "head.pt"))
     vocab = np.load(args.vocab)
+    general = bool(cfg["args"].get("general", False))
+    recorded = None
+    if general:
+        recorded = [int(x) for x in args.recorded.split(",")] if args.recorded else recorded_layers(cfg)
     info = export(sd, cfg["head"], cfg["args"].get("layers", 2), cfg["args"].get("fuse", False), vocab, args.out,
                   qtype=args.type, alpha=args.alpha, stair=args.stair.split(",") if args.stair else None,
-                  f16=tuple(g for g in args.f16.split(",") if g))
+                  f16=tuple(g for g in args.f16.split(",") if g), general=general, recorded=recorded)
     info["bytes"] = os.path.getsize(args.out)
     print(json.dumps(info))
 

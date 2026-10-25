@@ -31,7 +31,7 @@ copy lookup, which guesses first inside copied text.
 | Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
 | Gate to the rig | ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall, coupled. Not a kill line (decision 2026-10-24 21:25) |
 | Next | M2 round of 2026-10-25 06:00: four depth-general heads (3–12 cards, 6 + 9, 9, 6) on the same data |
-| Engine | guesser built (`--pipe-guess staircase`, fork branch `pascal-p106-v2-drafter`); not yet timed on the rig |
+| Engine | guesser built (`--pipe-guess staircase`, fork branch `pascal-p106-v2-drafter`, `daf310b66`): window from the run's split, six-anchor and depth-general heads, exact against plain decoding; not yet timed on the rig |
 
 Terms used below:
 
@@ -462,8 +462,8 @@ row's own window.
    6 specialists at six and nine cards?
 2. ~~Score R1 on Q51 with both couplings; decide on the Gumbel-max sampler~~: done 2026-10-25; inverse-CDF is
    0.007–0.010 below Gumbel, so the served sampler stays.
-3. **The engine reads the window shape from the run's split** (`-ts` and stage times) instead of the file, and taps
-   any recorded layer, for M2's layer-indexed anchors.
+3. ~~The engine reads the window shape from the run's split and taps any recorded layer~~: done 2026-10-25 03:30
+   (fork `daf310b66`); M2's export loads with no engine change ([step 8](#step-8-engine)).
 4. **Hidden states from the release file:** the head trains on Q8_0's states and reads the release file's on the rig;
    the size of that shift is unmeasured.
 5. **Cost per guess on a P106** and whether the head fits card 1's slack on nine cards (~0.5 ms on the 6/…/5/2 split),
@@ -514,3 +514,11 @@ row's own window.
 - 2026-10-25 02:20 (CET): the dump is now the bottleneck (~540 answer tokens/s on three cards). 9,100 undumped tool
   answers (2.54 M tokens, ~61 % prompt) held back from the d4 queue until the day, so that the night's dump spends its
   time on general answers; `feed_split.py` for several dump instances in the day.
+- 2026-10-25 02:55 (CET): engine checks on the quant machine, random heads of the real shape: the guesser in
+  llama-pipespec equals plain decoding at depths 0–4 (8 runs: heads A, A fused, B; T 0 and T 1 on the device;
+  embeddings on the host and on the device); llama-server `--pipe-guess staircase` at depths 3 and 5 equals the server
+  without guesses on 7 of 7 requests; loading the drafter leaves the logits unchanged.
+- 2026-10-25 03:30 (CET): the engine takes the window from the run's split and reads depth-indexed side files (fork
+  `daf310b66`, export and checks in v2): six-anchor heads keep their six-card staircase, depth-general heads (M2) load
+  with no engine change; the C++ head equals `Drafter.forward` on 3-, 4-, 6-, 9-, 9-light- and 12-card windows and a
+  spare card. Rig tarball `llama.cpp-20261025-daf310b66-pascal-p106-v2-drafter`.
