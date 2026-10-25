@@ -283,19 +283,23 @@ all classes from 1.46 to 1.54.
 
 **The store for release.** The store measured above holds answers to every Q20 prompt set, including ShareGPT,
 UltraChat and Magicoder prompts whose licence or origin is unclear, so it is not distributed. The store for release,
-`flint-answers-core-13.8M.pstore` (14,868 answers, 13.8 M tokens, 110 MB), holds only Flint's answers to our own
-prompts. These are whole-file edits and coding-agent turns on files of the Python standard library, of llama.cpp
-(without its vendored code and build output) and of Python packages under the MIT, BSD, Apache-2.0 or PSF licence. The
-answers come from Flint Q8_0, G3, UD-Q4_K_XL and NVFP4 at the same sampling, with Q51 held out the same way. Data sets of
-model-written prompts (the tool-call sets, NuminaMath-CoT) are left out. Answers to OpenR1-Math's crawled problems add
-nothing on Q51. Simulated at depth 3 on nine cards (6/6/6/6/5/5/5/5/5):
+`flint-answers-release-20261025-13.8M.pstore` (13,702 answers, 13.8 M tokens, 110 MB), holds Flint's answers to two
+kinds of prompt:
+- our own prompts: whole-file edits and coding-agent turns on files of the Python standard library, of llama.cpp
+  (without its vendored code and build output) and of Python packages under the MIT, BSD, Apache-2.0 or PSF licence;
+- maths problems from OpenR1-Math's default set, which were collected from the web rather than written by a model
+  (21 % of its tokens).
+
+The answers come from Flint Q8_0, G3, UD-Q4_K_XL and NVFP4 at the same sampling, with Q51 held out the same way. Data
+sets of model-written prompts (the tool-call sets, NuminaMath-CoT) are left out. Simulated at depth 3 on nine cards
+(6/6/6/6/5/5/5/5/5):
 
 | Store | Chat | Code | Edits | Agent | All | Tool calls |
 |---|---|---|---|---|---|---|
 | none (`cont` today) | 1.19 | 1.36 | 1.87 | 1.30 | 1.44 | 1.18 |
 | every prompt set, 13.8 M | 1.25 | 1.43 | 1.95 | 1.45 | 1.52 | 1.74 |
-| our own prompts (release), 13.8 M | 1.19 | 1.39 | 1.98 | 1.47 | 1.49 | 1.90 |
-| our own prompts and OpenR1-Math, 13.8 M | 1.19 | 1.39 | 1.98 | 1.46 | 1.49 | 1.90 |
+| our own prompts only, 13.8 M | 1.19 | 1.39 | 1.98 | 1.47 | 1.49 | 1.90 |
+| release: our own prompts and OpenR1-Math, 13.8 M | 1.19 | 1.39 | 1.98 | 1.46 | 1.49 | 1.90 |
 
 Without chat answers the store no longer helps chat. Edits, agent turns and tool calls gain more than with every prompt
 set.
@@ -843,11 +847,11 @@ chunk slots do not fit next to the model stops at its start (`run-<config>.log`)
 
 **4e. The continuation store in llama-server (Q161)** (the build of `pascal-p106-v2-q161`, which also carries Q155 and
 the tool-request pipelining, `llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161`, and the store for release,
-`flint-answers-core-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
+`flint-answers-release-20261025-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
 
 ```
 B=/opt/llama-builds/llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161/bin; M=<K2h-r16>
-S=/opt/llama-builds/stores/flint-answers-core-13.8M.pstore
+S=/opt/llama-builds/stores/flint-answers-release-20261025-13.8M.pstore
 ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=store-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3 3s' \\
     STORE=$S ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/store-9c.out 2>&1 < /dev/null &"
 ```
