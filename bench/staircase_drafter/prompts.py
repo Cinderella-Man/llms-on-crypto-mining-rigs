@@ -1,9 +1,20 @@
-"""Build the training prompt set for the staircase guesser (Q20/D1): first user turns from public data sets in the mix
-of the EAGLE-3 plan (chat, code, tool calls, reasoning), plus whole-file edits and coding-agent turns built from local
-source files, as OpenAI-style messages (and tools) that llama-server's /apply-template renders.
+"""Build the training prompt set for the staircase guesser (Q20): first user turns from licence-clean public data sets
+(SETS: OpenR1-Math's crawled competition problems), plus whole-file edits and coding-agent turns built from local source
+files,
+as OpenAI-style messages (and tools) that llama-server's /apply-template renders.
 
-Nothing here overlaps Q51's 38 test prompts (bench/expert_overlap/prompts.py): the data-set rows are other people's
-prompts, and the edit and agent prompts use other source files and other task texts.
+Data sets (the owner's rulings and the data audit, 2026-10-25): only sources that can be published. EXCLUDED_SETS were
+the first runs' mix (the EAGLE-3 plan's) and are not used any more: ShareGPT (scraped chats, unclear terms),
+UltraChat and both Magicoder sets (written by ChatGPT/GPT-3.5), NuminaMath-CoT unfiltered (~45 % of rows written by
+GPT-4: synthetic_math, synthetic_amc, orca_math) and Hermes function calling (LLM-written, generator not named).
+NuminaMath-CoT may only come back with NUMINA_SOURCES (its crawled sources) and the owner's sign-off; maths as a whole
+waits for that sign-off too. For the edit and agent prompts, source
+trees must be ones whose licence allows it (the Python standard library, llama.cpp's own code, permissive packages);
+clean_prompts.py builds code-first prompts on exactly those.
+
+The edit task texts below are also Q51's (bench/expert_overlap/prompts.py), so prompts built here can share 12-word
+spans with Q51's test prompts: drop those before training (the Q51 rule), as clean_prompts.py does by itself. The
+data-set rows are other people's prompts, and the source files differ from Q51's.
 
 usage: python prompts.py OUT.jsonl CACHE_DIR SRC_DIR [SRC_DIR ...] [--scale X] [--seed N] [--extend PROMPTS.jsonl]
   CACHE_DIR: where the data-set shards are downloaded (Hugging Face's parquet conversions, one shard per set)
@@ -19,14 +30,19 @@ import random
 
 SETS = [
     # (category, repo, config/split prefix in refs/convert/parquet, rows at scale 1)
+    ("reason", "open-r1/OpenR1-Math-220k", "default/train/", 300),   # crawled competition problems
+]
+# NuminaMath-CoT, if the owner signs it off, only with rows whose `source` is a crawled one (synthetic_math,
+# synthetic_amc and orca_math are GPT-4's); dataset_rows applies this filter to it
+NUMINA_SOURCES = {"olympiads", "aops_forum", "amc_aime", "cn_k12", "math", "gsm8k"}
+EXCLUDED_SETS = [   # the first runs' mix; not publishable (see the module docstring), kept for the record
     ("chat", "Aeala/ShareGPT_Vicuna_unfiltered", "default/train/", 1100),
     ("chat", "HuggingFaceH4/ultrachat_200k", "default/train_sft/", 900),
     ("code", "ise-uiuc/Magicoder-Evol-Instruct-110K", "default/train/", 900),
     ("code", "ise-uiuc/Magicoder-OSS-Instruct-75K", "default/train/", 500),
     ("tool", "NousResearch/hermes-function-calling-v1", "func_calling_singleturn/train/", 500),
     ("tool", "NousResearch/hermes-function-calling-v1", "glaive_func_calling/train/", 400),
-    ("reason", "AI-MO/NuminaMath-CoT", "default/train/", 350),
-    ("reason", "open-r1/OpenR1-Math-220k", "default/train/", 300),
+    ("reason", "AI-MO/NuminaMath-CoT", "default/train/", 350),   # unfiltered
 ]
 N_EDIT, N_AGENT = 1100, 1100
 
@@ -145,6 +161,8 @@ def dataset_rows(cat, repo, prefix, n, cache, rng):
     for row in table:
         if len(out) >= n:
             break
+        if repo == "AI-MO/NuminaMath-CoT" and row.get("source") not in NUMINA_SOURCES:
+            continue
         system, user = first_user(row)
         if not user or len(user) > 12000 or len(user) < 8:
             continue

@@ -5,14 +5,16 @@ cleared (2026-10-25) and nothing overlaps Q51's test prompts.
   imports, and its class line for a method), from the standard library and the allowed packages, asked for in full;
 - edit: whole-file edits (prompts.py's task texts) on files of the allowed trees;
 - agent: coding-agent turns (prompts.py's tool schema and task texts) on the same files;
-- reason: NuminaMath-CoT and OpenR1-Math-220k problems (Apache-2.0), kept to a small share.
+- reason: OpenR1-Math-220k default problems (crawled competition problems), only with --n-math > 0 once the owner
+  signs maths off.
 Allowed trees: the Python standard library (--stdlib, without site-packages and test folders), llama.cpp without
 vendor/ and build*/ folders (--llama), and the permissively licensed packages in site-packages (--site, ALLOWED_SITE
-minus EXCLUDED_SITE). Files that Q51's prompts are built from are left out (--q51 prompts file with a "source" field).
+minus EXCLUDED_SITE). Files that Q51's prompts are built from are left out (--q51: {"source": name} lines), and so is
+every prompt that shares a 12-word span with a Q51 prompt (--q51-prompts, Q51's prompts file).
 
 usage: python clean_prompts.py OUT.jsonl CACHE --stdlib DIR --llama DIR --site DIR --extend USED.jsonl
-                               [--n-code 12000] [--n-edit 6000] [--n-agent 20000] [--n-math 2500] [--seed 30]
-                               [--q51 Q51_PROMPTS.jsonl]
+                               [--n-code 12000] [--n-edit 6000] [--n-agent 20000] [--n-math 0] [--seed 30]
+                               [--q51 Q51_SOURCES.jsonl] [--q51-prompts Q51_PROMPTS.jsonl]
   --extend: prompts already used (all earlier prompt files concatenated): no duplicates, ids numbered after them
 needs: pip install huggingface_hub pyarrow
 """
@@ -123,10 +125,11 @@ def main():
     ap.add_argument("--site", required=True)
     ap.add_argument("--extend", required=True)
     ap.add_argument("--q51")
+    ap.add_argument("--q51-prompts")
     ap.add_argument("--n-code", type=int, default=12000)
     ap.add_argument("--n-edit", type=int, default=6000)
     ap.add_argument("--n-agent", type=int, default=20000)
-    ap.add_argument("--n-math", type=int, default=2500)
+    ap.add_argument("--n-math", type=int, default=0)
     ap.add_argument("--seed", type=int, default=30)
     args = ap.parse_args()
     rng = random.Random(args.seed)
@@ -172,17 +175,26 @@ def main():
                     {"role": "assistant", "content": "", "tool_calls": [call]},
                     {"role": "tool", "tool_call_id": "call_0", "content": text}]
         rows.append({"category": "agent", "source": name, "tools": P.AGENT_TOOLS, "messages": msgs})
-    for repo, prefix in (("AI-MO/NuminaMath-CoT", "default/train/"), ("open-r1/OpenR1-Math-220k", "default/train/")):
-        got = P.dataset_rows("reason", repo, prefix, args.n_math // 2 + 2000, args.cache, rng)
-        rows += got
+    if args.n_math:
+        rows += P.dataset_rows("reason", "open-r1/OpenR1-Math-220k", "default/train/", args.n_math + 2000, args.cache,
+                               rng)
+    spans = set()   # the Q51 rule: no 12-word span shared with a Q51 prompt (lower-cased, split on whitespace)
+    if args.q51_prompts:
+        for line in open(args.q51_prompts):
+            w = " ".join((m.get("content") or "") for m in json.loads(line)["messages"]).lower().split()
+            spans |= {" ".join(w[i:i + 12]) for i in range(len(w) - 11)}
     old = [json.loads(x) for x in open(args.extend)]
     offset = 1 + max(int(r["id"].split("_")[-1]) for r in old)
     seen = {json.dumps([r["messages"], r.get("tools")], sort_keys=True) for r in old}
-    kept, n_math = [], 0
+    kept, n_math, n_q51 = [], 0, 0
     rng.shuffle(rows)
     for r in rows:
         key = json.dumps([r["messages"], r.get("tools")], sort_keys=True)
         if key in seen or (r["category"] == "reason" and n_math >= args.n_math):
+            continue
+        w = " ".join((m.get("content") or "") for m in r["messages"]).lower().split()
+        if spans and any(" ".join(w[i:i + 12]) in spans for i in range(len(w) - 11)):
+            n_q51 += 1
             continue
         seen.add(key)
         n_math += r["category"] == "reason"
@@ -192,7 +204,7 @@ def main():
             r["id"] = f"{r['category']}_{offset + i}"
             f.write(json.dumps(r) + "\n")
     counts = {c: sum(r["category"] == c for r in kept) for c in ("code", "edit", "agent", "reason")}
-    print(f"{len(kept)} prompts -> {args.out}: {counts}")
+    print(f"{len(kept)} prompts -> {args.out}: {counts}; {n_q51} left out for sharing 12 words with Q51")
 
 
 if __name__ == "__main__":

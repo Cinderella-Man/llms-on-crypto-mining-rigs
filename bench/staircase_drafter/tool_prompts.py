@@ -2,6 +2,9 @@
 public tool-calling sets, rendered as OpenAI-style messages plus `tools`, so llama-server's template writes them in
 Flint's own tool format.
 
+Not used for training at present (the data audit, 2026-10-25): both sets are LLM-written with the generator not
+named, so whether their prompts can be published waits for the owner's decision.
+
 - Team-ACE/ToolACE (Apache-2.0): a JSON array of functions in the system prompt (BFCL-style schemas, "dict" types).
 - glaiveai/glaive-function-calling-v2 (Apache-2.0): function JSON objects in the system prompt, a "USER: ... ASSISTANT:"
   transcript; rows without functions are skipped.

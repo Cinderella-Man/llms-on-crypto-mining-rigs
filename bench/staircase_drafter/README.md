@@ -17,22 +17,22 @@ The process, the methods tried, results per card count and open questions are ke
 All heavy steps run on a GPU machine (here a 7-GPU quant machine; never on the rig). Each step is a plain command;
 paths are placeholders.
 
-1. **Prompts** ([prompts.py](prompts.py)): 7,150 first turns in the mix of the
-   [EAGLE-3 plan](../eagle3_flint/TRAINING_PLAN.md) (ShareGPT, UltraChat, Magicoder Evol and OSS, Hermes function
-   calling, NuminaMath, OpenR1-Math), plus 1,100 whole-file edits and 1,100 coding-agent turns built from source files
-   of a Python standard library and a llama.cpp tree. None of Q51's 38 test prompts or their source files are used.
-   `--extend` writes more prompts (other rows, other files and tasks), deduplicated against an existing file and
-   numbered after it, so their answers and dumps join the first ones.
-
-   [tool_prompts.py](tool_prompts.py) adds tool-call prompts from Team-ACE/ToolACE and glaiveai/glaive-function-calling-v2
-   (both Apache-2.0), with their tool lists passed as `tools` so the template writes Flint's own tool format.
+1. **Prompts**: only sources that can be published.
+   [clean_prompts.py](clean_prompts.py) builds code-first prompts that are clean by construction: "implement this
+   function" stubs (signature, docstring and imports of documented functions), whole-file edits and coding-agent turns
+   on the Python standard library, llama.cpp's own code (not `vendor/` or build folders) and permissively licensed
+   packages (MIT, BSD, Apache-2.0, PSF). It drops every prompt that shares a 12-word span with a Q51 test prompt.
+   [prompts.py](prompts.py) holds the task texts and, as data sets, OpenR1-Math's crawled competition problems; its
+   `EXCLUDED_SETS` list the first runs' mix, which is not publishable and not used: ShareGPT, UltraChat, both
+   Magicoder sets, unfiltered NuminaMath-CoT (NuminaMath only with its crawled `source` rows) and Hermes function
+   calling. [tool_prompts.py](tool_prompts.py) (ToolACE, glaive-function-calling-v2) waits for a decision on those
+   LLM-written sets. `--extend` writes more prompts, deduplicated against an existing file and numbered after it, so
+   their answers and dumps join the first ones.
 
    ```bash
    pip install huggingface_hub pyarrow
-   python prompts.py prompts.jsonl hf-cache /usr/lib/python3.12 /path/to/llama.cpp
-   python prompts.py prompts-ext.jsonl hf-cache /usr/lib/python3.12 /path/to/llama.cpp --scale 3 --seed 21 \
-       --extend prompts.jsonl
-   cat prompts*.jsonl > used.jsonl && python tool_prompts.py prompts-tools.jsonl hf-cache --extend used.jsonl
+   python clean_prompts.py prompts-clean.jsonl hf-cache --stdlib /usr/local/lib/python3.12 --llama /path/to/llama.cpp \
+       --site /usr/local/lib/python3.12/site-packages --extend used.jsonl --q51-prompts q51/prompts.jsonl
    ```
 
 2. **Answers** ([generate.py](generate.py)): Flint in llama-server (`--jinja`), the makers' sampling (temperature 1.0,

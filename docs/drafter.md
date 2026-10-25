@@ -26,7 +26,7 @@ copy lookup, which guesses first inside copied text.
 
 | Where we stand (2026-10-25 13:50) | |
 |---|---|
-| Data (the owner, 2026-10-25 13:40) | Only publishable data sources from now on. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts: **trained on excluded data, not for release**. Their numbers stand as measurements of the method. The heads are retrained (C9) and the store rebuilt (C7) on the strict list: ToolACE, glaive-function-calling-v2, Hermes function calling, NuminaMath, OpenR1, and our own stdlib and llama.cpp edit and agent prompts. Rig tests of the guesser and the drafter wait for them |
+| Data (the owner, 2026-10-25 13:40) | Only publishable data sources from now on. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts: **trained on excluded data, not for release**. Their numbers stand as measurements of the method. The heads are retrained (C9) and the store rebuilt (C7) on data that is clean by construction: our own edit, agent and implement-this-function prompts on the Python standard library, llama.cpp's own code and permissive packages (MIT, BSD, Apache-2.0, PSF), nothing sharing 12 words with Q51. OpenR1-Math (crawled problems) waits for the owner's sign-off on maths; NuminaMath-CoT (~45 % GPT-4-written), ToolACE, glaive v2 and Hermes FC (LLM-written) are out unless the owner decides otherwise. Rig tests of the guesser and the drafter wait for them |
 | Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
 | Cost per guess | 5.3–7.3 ms on one P106, 2–3× the design estimate and about one pipeline cycle, on the card that also runs Flint's first stage: the cost, not the acceptance, now caps the gain |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
@@ -64,10 +64,12 @@ Prompts → answers → dump → train → score → simulate → export → eng
 ### Step 1: prompts
 
 - **In → out:** public datasets → `prompts*.jsonl`.
-- **Tools:** `prompts.py` (7,150 first turns: ShareGPT, UltraChat, Magicoder, Hermes function calling, NuminaMath,
-  OpenR1-Math; 1,100 whole-file edits and 1,100 coding-agent turns built from public source files; `--extend` adds
-  more, deduplicated), `tool_prompts.py` (ToolACE 10,581 and glaive-function-calling-v2 4,749 prompts, both Apache-2.0,
-  their tool lists passed as `tools` so that the chat template writes Flint's own tool format).
+- **Tools:** `clean_prompts.py` (code first, clean by construction: implement-this-function stubs, whole-file edits
+  and coding-agent turns on the standard library, llama.cpp's own code and permissive packages; drops prompts that
+  share 12 words with Q51), `prompts.py` (task texts; OpenR1-Math problems, pending the owner on maths; the first
+  runs' sets, now excluded, listed as `EXCLUDED_SETS`), `tool_prompts.py` (ToolACE, glaive v2; waits for a decision).
+- **Sources:** only what can be published (M3). The first runs' ShareGPT, UltraChat, Magicoder, unfiltered NuminaMath
+  and Hermes prompts are excluded.
 - **Pitfalls:**
   - 44 % of the tool prompts failed to render until the datasets' `"int"`/`"float"` schema types were mapped to
     JSON-schema types (`integer`, `number`).
@@ -387,33 +389,33 @@ Prompts → answers → dump → train → score → simulate → export → eng
 ### M3: licence-clean data (2026-10-25 13:40)
 
 **Running.** The owner, 2026-10-25 13:40: only data that can be published; every earlier head is not for release.
+Lists and counts: `count_strict.py` (one place for every rule below).
 
-- **Sources (strict list):** Team-ACE/ToolACE, glaiveai/glaive-function-calling-v2, NousResearch/hermes-function-calling-v1,
-  AI-MO/NuminaMath-CoT, open-r1/OpenR1-Math-220k (Apache-2.0), and our own whole-file edit and coding-agent prompts
-  from the Python standard library and llama.cpp. Excluded: ShareGPT, UltraChat, both Magicoder sets. Agent and edit
-  prompts built from third-party packages in the Python image (`site-packages`) and from llama.cpp's `vendor/` and
-  build folders are held out pending a ruling.
-- **Clean data on hand:** 35,463 answers, 23.30 M answer tokens (Q8_0 2.56 M, G3 4.54 M, UD-Q4_K_XL 2.41 M, vLLM
-  13.79 M); 18.69 M already dumped, the rest dumped first (feed_split `--only`). Mix: edit 9.70 M, math 7.52 M, tool
-  5.32 M, agent 0.77 M; no chat and no code generation (that category came from Magicoder). Answers to excluded
-  prompts stay in the feature files; `train.py --only <ids>` uses only the listed answers.
+| Source | Status | Answers | Answer tokens |
+|---|---|---|---|
+| Our own edit and agent prompts on the Python standard library | clean by construction (core) | 2,267 | 2.19 M |
+| … on llama.cpp's own code (not `vendor/` or build folders) | core | 7,061 | 6.34 M |
+| … on permissive site-packages (MIT, BSD, Apache-2.0, PSF; the owner's ruling 14:05) | core | 5,894 | 5.61 M |
+| OpenR1-Math-220k default (crawled competition problems) | clean as used; maths waits for the owner | 2,523 | 3.77 M |
+| NuminaMath-CoT (~45 % of rows written by GPT-4) | out unless filtered to crawled sources and signed off | 3,202 | 3.75 M |
+| ToolACE, glaive-function-calling-v2, Hermes function calling (LLM-written, generator not named) | pending, likely out | 19,319 | 5.31 M |
+| Prompts sharing a 12-word span with a Q51 test prompt (the edit task texts are Q51's) | out (keeps Q51 honest) | 1,585 | 2.99 M |
+| llama.cpp `vendor/` and build folders; tqdm (MPL), pip's vendored certifi (MPL) and resolvelib (ISC), two vendored Arrow headers (CC0, unclear) | out | 337 | 0.33 M |
+| ShareGPT, UltraChat, both Magicoder sets | out | 29,523 | 44.37 M |
+
+- **Core:** 15,222 answers, 14.14 M answer tokens (edit 12.59 M, agent 1.55 M); no chat and no code-from-instructions
+  yet. Answers to excluded prompts stay in the feature files; `train.py --only <ids>` uses only the listed ones.
 - **No inheritance:** the heads start from Flint's own weights (logit-lens projections, Flint's output rows), not from
-  R1 or R2; the 40k vocabulary is recounted on clean answers (`vocab.py --only`: Q51 coverage 0.960 against 0.967).
-- **Site-packages ruling (the owner, 14:05):** answers from files of MIT, BSD, Apache-2.0 and PSF packages are in
-  (6,481 answers, 6.70 M tokens: pyarrow, huggingface_hub, pip and most of its vendored packages, fsspec, httpx2,
-  httpcore2, anyio, PyYAML, packaging, h11, idna, click, filelock, truststore); copyleft and others are out (tqdm
-  MPL+MIT, pip's vendored certifi MPL-2.0 and resolvelib ISC, two vendored Arrow headers). Clean total ~30.0 M.
-- **Generic tool-call sets** (ToolACE, glaive v2, Hermes FC, 5.3 M tokens) are held out while an audit checks which
-  model wrote them.
-- **Code first (the owner, 14:10):** edit, agent and code answers are drawn twice per epoch (`train.py
-  --rec-weights`); heads are picked on Q51's code, edit and agent text on the release split, chat reported apart.
-- **New clean text:** `clean_prompts.py` builds prompts that are clean by construction: "implement this function"
-  stubs from documented standard-library and permissive-package functions (signature, docstring, imports), whole-file
-  edits and agent turns on the allowed trees, math capped near 10 %; Q51's files are banned by name. vLLM writes them
-  on two RTX 3090s (first set: 27,854 prompts, ~21 M answer tokens expected).
+  R1 or R2; the vocabulary is counted on the core only (`vocab.py --only`: 39,496 ids, Q51 coverage 0.956).
+- **Code first (the owner, 14:10):** heads are picked on Q51's code, edit and agent text on the release split, chat
+  reported apart; once other data joins, edit, agent and code answers are drawn twice per epoch (`--rec-weights`).
+- **New clean text:** `clean_prompts.py` (implement-this-function stubs from documented standard-library and
+  permissive-package functions, whole-file edits and agent turns on the allowed trees, no maths, nothing sharing 12
+  words with Q51). vLLM writes the first set on two RTX 3090s: 26,172 prompts (7,266 code, 4,955 edit, 13,951 agent),
+  ~19 M answer tokens expected. Generated agent sessions use our own tool schema and system texts.
 - **Runs (R4):** a nine-card specialist weighted to the release split, a 3–12-card head, a copy-weighted and an LK
-  variant, a second seed; from ~14:30 for 4 hours on the clean set without the tool sets; the best continued
-  overnight on the grown clean set.
+  variant and a second seed, from scratch on the core for 4 hours. The new code answers join a retrain (R5) with a
+  vocabulary recounted on core plus code.
 
 ## 4. Why the card count matters
 
@@ -693,3 +695,7 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 - 2026-10-25 14:05–14:15 (CET): site-packages ruling applied (+6.70 M clean, list in the data folder's
   strict-sitepkgs.md); generic tool sets held pending their audit; code first: `--rec-weights`, `clean_prompts.py`,
   vLLM generation of clean code-first prompts on GPUs 2 and 5.
+- 2026-10-25 14:20–14:40 (CET): the data audit (NuminaMath ~45 % GPT-4-written; the tool sets LLM-written; OpenR1
+  clean as used) and the Q51 rule: R4 trains on the core only (15,222 answers, 14.14 M: our own edit and agent
+  prompts on clean trees, nothing sharing 12 words with Q51) with a vocabulary counted on it; `prompts.py` defaults to
+  publishable sources, the first runs' sets kept as `EXCLUDED_SETS`; `clean_prompts.py` drops Q51-overlapping prompts.
