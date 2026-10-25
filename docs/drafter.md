@@ -77,9 +77,17 @@ Prompts → answers → dump → train → score → simulate → export → eng
 - **Tools:** `generate.py` against llama-server (`--jinja -no-kvu -bs --cache-ram 0`), the makers' sampling
   (temperature 1.0, top-k 20, top-p 0.95, min-p 0), reasoning kept, ≤ 2,048 tokens, seed 20000 + prompt number. Several
   server copies share one prompt file; each prompt is claimed by an exclusive file create.
+  On RTX 3090s (and other cards of compute 7.5–8.9) the fastest writer is vLLM: `generate.py --api vllm` against
+  vLLM nightly `c50aca14` with the makers' NVFP4 GGUF (W4A16 on Marlin), pipeline-parallel over two cards,
+  `--attention-backend TRITON_ATTN` and the attention patch ([vllm/](../bench/staircase_drafter/vllm/), one command
+  `vllm/run_generation.sh`).
 - **Measured (2026-10-25 night):** G3 on two RTX 3090s at 96 slots: ~350 answer tokens/s (a decode step every
   ~270 ms); one UD-Q4_K_XL copy on a V100 at 48 slots: ~107. In all ~0.46k answer tokens/s, ~1.7 M tokens an hour.
   Tool prompts run at ~210 answer tokens/s (long tool lists, short answers).
+  vLLM NVFP4 on the same two RTX 3090s with 160 requests in flight: ~2.4–2.7k answer tokens/s in vLLM's log (2.25k
+  averaged over the first 10 minutes), ~7× the G3 copy, ~8–9 M tokens an hour; KV cache 50–75 % full, no preemption.
+  Its answers have G3's shape on the same prompt family: 63 % end at an end token, mean 1,182 tokens (G3: 63 %,
+  1,217).
 - **Why G3 on two cards is slow:** all 96 slots stay busy, and the server's main thread at 100 % CPU is the CUDA driver
   spin-waiting, not CPU starvation. A 96-token decode batch is one ubatch at `-ub 512`, so the two cards of the layer
   split take turns and each is ~50 % busy. `-ub 48`, which splits each decode step into two ubatches, made a step
@@ -91,6 +99,13 @@ Prompts → answers → dump → train → score → simulate → export → eng
     against ~6 % gained per doubling of data.
   - Give every slot its own KV cells (`-no-kvu`); with the unified cache 64–72 slots crawled at ~300 tok/s together.
   - 38 % of answers stop at the 2,048-token cap.
+  - vLLM's Flint model asserts FlashInfer attention, which serves attention sinks only on compute ≥ 9.0. Below that
+    `vllm/patch_flint_attention.py` routes attention through the standard layer, where `TRITON_ATTN` serves the
+    sinks. V100s can't run vLLM's CUDA 13 images at all; they stay on llama.cpp.
+  - The Hugging Face chat template gives llama-server's prompt ids only once string tool-call arguments are parsed
+    into objects (`vllm/check_prompts.py`: 900 of 900 rows).
+  - A client that marks a prompt failed when the server is unreachable burns through the whole prompt pool in
+    minutes after a crash; `generate.py` keeps the claim and retries for 30 minutes.
 
 ### Step 3: dump (teacher targets and hidden states), the bottleneck
 
@@ -451,3 +466,5 @@ row's own window.
   (the owner); `--cards`; validation on the head's own card counts; `score.py --window-group`; FP32 on CPUs.
 - 2026-10-25 01:52–02:04: the two-card G3 generation copy tried with `-ub 48` (its cards take turns at ~50 % each):
   slower (~455 against ~270 ms per decode step), back to `-ub 512`.
+- 2026-10-25 02:47 (CEST): vLLM writes drafter text on two RTX 3090s, the makers' NVFP4 GGUF pipeline-parallel with
+  the attention patch: ~2.4–2.7k answer tokens/s, ~7× the G3 llama.cpp copy on the same cards (v2 `118a5fc`).
