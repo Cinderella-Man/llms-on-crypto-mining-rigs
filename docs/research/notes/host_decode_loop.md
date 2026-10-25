@@ -518,7 +518,10 @@ Changes #2 and #3 exist in `llama-pipespec`, on the fork's branch `pascal-p106-v
   to that card since, which in streams mode is the other conversations' tokens, so every fed token drained the pipeline.
   The rig measured 22 tok/s at N = 4 and at N = 8, against 42 and 66 without feeding (Q156).
   It refuses with an error, before anything is computed for the token, when the CPU or more than one card reads the token
-  ids (the lookup on the CPU, or per-layer token embeddings elsewhere) or the source has no one-token sampler output.
+  ids (the lookup on the CPU, or per-layer token embeddings elsewhere) or the source has no one-token sampler output. It
+  also refuses for models whose KV cells record their token: M-RoPE models, whose saved state carries it, and PLE models,
+  whose n-gram inputs read it back for later tokens. A fed token's cell is written before its id reaches the host
+  (fork commit `327656fb5`). Flint's cells keep no token.
 - **The executor** (`--pipe-feed`, job key `feed`):
   - one conversation at depth 0: the host submits token t + 1 fed from t's slot, then waits for t's id, checks it and
     submits t + 2 fed from t + 1's slot. It stays one token ahead, and the gap from the last card's sample to card 1's
