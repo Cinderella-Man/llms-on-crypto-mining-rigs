@@ -3,8 +3,10 @@
 # from the server's timings, and identity between the depths. Build: fork branch pascal-p106-v2-pipeserve (cd49e507c),
 # which includes the window-cache fix for depths >= 4 (fbb1b24f3), so no depth cap is needed.
 #
-# Per configuration in DEPTHS one server (-bs, -np 1): a depth (0 = off, the reference), or a depth followed by s for
-# that depth with the continuation store STORE (--pipe-store, Q161; fork branch pascal-p106-v2-q161), e.g. DEPTHS='0 3 3s'.
+# Per configuration in DEPTHS one server (-bs, -np 1): a depth (0 = off, the reference), followed by d for the staircase
+# drafter DRAFT instead of GUESS (--pipe-guess staircase --pipe-draft DRAFT DRAFT_ARGS, Q20/D3) and by s for the
+# continuation store STORE (--pipe-store, Q161), e.g. DEPTHS='0 3 3s 3ds'. A d configuration whose server did not load
+# the drafter (it falls back to cont) is skipped.
 # Each runs these requests, at temperature 0 and at the makers' sampling (T 1, top-p 0.95, top-k 20, min-p 0, seed
 # SEED), with prompt caching off:
 #   - chat: prompts/chat.txt, code.txt and edit.txt as one user message each, MAX_TOKENS tokens;
@@ -20,10 +22,11 @@
 #   ssh rig "setsid nohup env BIN=/opt/llama-builds/<build>/bin MODEL=<gguf> TAG=<name> GPUS=0,1,2,3,4,5,6,7,8 \
 #       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [DEPTHS='0 1 2 3'] [GUESS=cont] [CTX=32768] \
 #       [MAX_TOKENS=768] [TOOL_MAX_TOKENS=2048] [SEED=1] [EXTRA_ARGS='--pipe-floor 3'] [STORE=<.pstore file>] \
-#       bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
+#       [DRAFT=<drafter .gguf>] [DRAFT_ARGS='--pipe-draft-dev 0'] bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # Output in /tmp/pipespec/out/<TAG>/: server-d<config>.log, results.jsonl (one line per request and configuration),
-# summary.tsv (tok/s per request and configuration, the speed-up over depth 0, guesses right / wrong / from the store,
-# identity), printed at the end.
+# summary.tsv (tok/s per request and configuration, the speed-up over depth 0, guesses right / wrong / from the store
+# and the drafter's right of its guesses, identity), printed at the end. APPEND=1 adds the configurations to the TAG's
+# earlier results instead of starting over, and the summary covers all of them.
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -37,18 +40,26 @@ SEED=${SEED:-1}
 PORT=${PORT:-8089}
 OUT=$HERE/out/$TAG
 mkdir -p "$OUT"
-: > "$OUT/results.jsonl"
+[ "${APPEND:-0}" = 1 ] || : > "$OUT/results.jsonl"
 echo "$(date -Is) start $TAG: depths $DEPTHS, GPUs $GPUS, model $MODEL"
 
 for cfg in $DEPTHS; do
-    d=${cfg%s}
+    d=${cfg%%[!0-9]*}
+    flags=${cfg#"$d"}
     pipe=""
     store=""
-    if [ "$cfg" != "$d" ]; then
+    guess=$GUESS
+    draft=""
+    case $flags in *s*)
         [ -r "${STORE:-}" ] || { echo "config $cfg: set STORE to a readable .pstore file"; continue; }
-        store="--pipe-store $STORE"
-    fi
-    [ "$d" -gt 0 ] && pipe="--pipe-depth $d --pipe-guess $GUESS $store ${EXTRA_ARGS:-}"
+        store="--pipe-store $STORE" ;;
+    esac
+    case $flags in *d*)
+        [ -r "${DRAFT:-}" ] || { echo "config $cfg: set DRAFT to a readable drafter file"; continue; }
+        guess=staircase
+        draft="--pipe-draft $DRAFT ${DRAFT_ARGS:-}" ;;
+    esac
+    [ "$d" -gt 0 ] && pipe="--pipe-depth $d --pipe-guess $guess $store $draft ${EXTRA_ARGS:-}"
     # shellcheck disable=SC2086
     env ${ENVS:-} CUDA_VISIBLE_DEVICES="$GPUS" "$BIN/llama-server" -m "$MODEL" -ngl 99 -fa on -c "$CTX" -b 512 -ub 128 \
         -np 1 -bs --cache-ram 0 --ctx-checkpoints 0 --no-webui --host 127.0.0.1 --port "$PORT" ${TS:+-ts $TS} \
@@ -73,6 +84,12 @@ for cfg in $DEPTHS; do
         sleep 2
     done
     echo "$(date -Is) config $cfg: server up"
+    if [ -n "$draft" ] && grep -q "needs a drafter" "$OUT/server-d$cfg.log"; then
+        echo "config $cfg: the drafter did not load (the server guesses with cont), skipped"
+        grep -m3 -iE "drafter|out of memory|failed" "$OUT/server-d$cfg.log"
+        kill $srv 2> /dev/null; wait $srv 2> /dev/null
+        continue
+    fi
 
     python3 -u - "$PORT" "$cfg" "$MAX_TOKENS" "$TOOL_MAX_TOKENS" "$SEED" "$OUT/results.jsonl" "$HERE/prompts" <<'EOF'
 import json, sys, urllib.request
@@ -123,16 +140,17 @@ EOF
     kill $srv 2> /dev/null; wait $srv 2> /dev/null
 done
 
-# the "pipelined = G guesses, R right, W wrong[, S from the store]" line of each request, in request order
-python3 - "$OUT" "$DEPTHS" <<'EOF' | tee "$OUT/summary.tsv" | column -t -s "$(printf '\t')"
+# the "pipelined = G guesses, R right, W wrong[, S from the store][; drafter DG guesses, DR right]" line of each request
+python3 - "$OUT" <<'EOF' > "$OUT/summary.tsv"
 import json, re, sys
-out, depths = sys.argv[1], sys.argv[2].split()
+out = sys.argv[1]
 rows = [json.loads(l) for l in open(f"{out}/results.jsonl")]
+depths = list(dict.fromkeys(str(r["depth"]) for r in rows))   # the configurations that ran, in order
 on = [d for d in depths if d != "0"]   # pipelined configurations
 guesses = {}
 for d in on:
     try:
-        lines = re.findall(r"pipelined = +(\d+) guesses, (\d+) right, (\d+) wrong(?:, (\d+) from the store)?",
+        lines = re.findall(r"pipelined = +(\d+) guesses, (\d+) right, (\d+) wrong(?:, (\d+) from the store)?(?:; drafter (\d+) guesses, (\d+) right)?",
                            open(f"{out}/server-d{d}.log").read())
     except FileNotFoundError:
         lines = []
@@ -143,14 +161,14 @@ by = {(str(r["depth"]), r["name"]): r for r in rows}
 names = list(dict.fromkeys(r["name"] for r in rows))
 key = lambda r: (r["reasoning"], r["content"], json.dumps(r["calls"]))
 cols = ["request"] + [f"d{d} tok/s" for d in depths] + [f"d{d} x" for d in on] + \
-       [f"d{d} guesses (right/wrong/store)" for d in on] + ["identical"]
+       [f"d{d} guesses (right/wrong/store, drafter right/guesses)" for d in on] + ["identical"]
 print("\t".join(cols))
 for name in names:
     base = by.get(("0", name))
     rest = [by.get((d, name)) for d in depths]
     line = [name] + [f"{r['tok_s']:.2f}" if r else "-" for r in rest]
     line += [f"{by[(d, name)]['tok_s'] / base['tok_s']:.2f}" if base and (d, name) in by else "-" for d in on]
-    line += ["{}/{}/{}".format(g[1], g[2], g[3] or "-") if (g := guesses.get((d, name))) else "-" for d in on]
+    line += ["{}/{}/{}".format(g[1], g[2], g[3] or "-") + (f" d{g[5]}/{g[4]}" if g[4] and int(g[4]) else "") if (g := guesses.get((d, name))) else "-" for d in on]
     # T 0: every configuration equals depth 0; T 1: the pipelined configurations equal each other
     if name.endswith("T0"):
         ref = base
@@ -162,4 +180,5 @@ for name in names:
     line.append(("yes" if same else "NO") + ("" if name.endswith("T0") else " (depths >= 1)"))
     print("\t".join(line))
 EOF
+column -t -s "$(printf '\t')" "$OUT/summary.tsv" 2> /dev/null || cat "$OUT/summary.tsv"
 echo "$(date -Is) done $TAG"

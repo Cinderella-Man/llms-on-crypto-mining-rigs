@@ -2,9 +2,12 @@
 
 A head trained here ([README](README.md)) becomes a guesser of the pipelined executor (Q87,
 [pipelined speculation](../../docs/research/notes/pipelined_speculation.md)): `llama-pipespec --pipe-guess staircase` and
-`llama-server --pipe-guess staircase`, in the fork branch `pascal-p106-v2-drafter`. The copy lookup goes first; the head
-guesses whenever the lookup has no match of at least `--pipe-copy-min` tokens, as
-[pipeline drafter](../../docs/research/notes/pipeline_drafter.md) recommends. The executor still samples every token and
+`llama-server --pipe-guess staircase`, in the fork branch `pascal-p106-v2-drafter` and the release candidates. The copy
+lookup goes first; the head guesses whenever the lookup has no match of at least `--pipe-copy-min` tokens, as
+[pipeline drafter](../../docs/research/notes/pipeline_drafter.md) recommends. In llama-server with a continuation store
+(`--pipe-store`, Q161) the order is the copy lookup, the request's own continuations of 2-token or longer contexts, the
+store, then the head: the head takes the place of `cont`'s last and weakest guess (the request's continuations of any
+context). The executor still samples every token and
 compares it with the guess, so the output is plain decoding's whatever the head guesses. How the drafter is built and
 where it stands: [docs/drafter.md](../../docs/drafter.md).
 
@@ -120,5 +123,8 @@ BIN=... MODEL=... ARGS='-ngl 99 -fa on -c 8192 -ub 64 --pipe-draft /tmp/rand-G.g
    six-card anchors).
 3. **A spare card**: Flint on six cards (`GPUS=0,...,6 TS=9,8,8,8,8,8,0`), the head on card 7 (`DRAFT_ARGS='--pipe-draft-dev
    6'`, the `pre` window), `LLAMA_INPUT_ON_GPU=0`.
-4. **Served**: [check_server.sh](../pipespec/check_server.sh) with `GUESSES='cont staircase' KEEP_SPEED=1` and
-   `--pipe-draft` in `ARGS`: identity and tokens per second per request.
+4. **Served**: [rig_server.sh](../pipespec/rig_server.sh) with `DEPTHS='0 3s 3ds 3d' STORE=<.pstore> DRAFT=drafter.gguf`:
+   one llama-server per configuration (no guessing; `cont` with the store; the store then the head; the copy lookup then
+   the head), chat, code, edit and a tool request at temperature 0 and at the makers' sampling, tokens per second per
+   request, the guesses each source made and identity (at temperature 0 every configuration returns the text of no
+   guessing; at temperature 1 the pipelined ones agree). Add `-lv 4` (`EXTRA_ARGS`) to see the drafter's load line.
