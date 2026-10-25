@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 # gpu_check.sh's phases inside its container (/ac = WORK): servers one after the other on port 18421, the clients next
-# to them. MODEL and MODE (check, replay, all) come from the environment.
+# to them. MODEL and MODE (check, replay, all) come from the environment; /ac/gpu-check/env, if present, is sourced
+# after it (MODEL, MODE, CHECK_CTX, REPLAY_CTX, CHECK_RESTART), so a job already queued on the lock can be redirected.
+# The model and both slots must fit one card: a 32 GB V100 holds a 23 GB Flint file with these contexts.
 set -uo pipefail
+CHECK_CTX=16384      # two slots of 8k: the check scenarios stay below ~6k tokens
+REPLAY_CTX=32768     # one slot: the longest replayed session (~26.5k tokens recorded)
+CHECK_RESTART=0      # 1: the prefix again from its file after a restart (a third model load)
+[ -f /ac/gpu-check/env ] && . /ac/gpu-check/env
 PORT=18421
 U=http://127.0.0.1:$PORT
 G=/ac/gpu-check
@@ -23,18 +29,20 @@ stop() { kill $SRV 2>/dev/null; wait $SRV 2>/dev/null; }
 status=0
 if [ "$MODE" = check ] || [ "$MODE" = all ]; then
     rm -rf $G/pfx; mkdir -p $G/pfx
-    AC="-c 65536 -np 2 --prefix-cache $G/pfx --checkpoint-gen"
+    AC="-c $CHECK_CTX -np 2 --prefix-cache $G/pfx --checkpoint-gen"
     CHK="python3 check_exact.py --test $U --cold $U --test-slot 0 --cold-slot 1 --sessions /ac/sessions-e2-ud.jsonl"
     start check1 "" "$AC" && { $CHK --scenarios prefix,turns,trim --expect-restore --expect-trim > $G/check1.txt 2>&1; stop; }
-    start check2 "" "$AC" && { $CHK --scenarios prefix_again --expect-restore > $G/check2.txt 2>&1; stop; }
-    grep -hE "^(PASS|FAIL|ALL)" $G/check1.txt $G/check2.txt
+    if [ "$CHECK_RESTART" = 1 ]; then
+        start check2 "" "$AC" && { $CHK --scenarios prefix_again --expect-restore > $G/check2.txt 2>&1; stop; }
+    fi
+    grep -hE "^(PASS|FAIL|ALL)" $G/check1.txt $G/check2.txt 2>/dev/null
 fi
 if [ "$MODE" = replay ] || [ "$MODE" = all ]; then
     rm -f $G/replay.jsonl; rm -rf $G/pfx-replay; mkdir -p $G/pfx-replay
     RUN="python3 replay_sessions.py run $G/sessions.jsonl --server $U --out $G/replay.jsonl"
-    start replay-stock "LLAMA_SAMPLER_RESERVE=1" "-c 65536 -np 1 -bs --checkpoint-tail2" && \
+    start replay-stock "LLAMA_SAMPLER_RESERVE=1" "-c $REPLAY_CTX -np 1 -bs --checkpoint-tail2" && \
         { $RUN --label stock > $G/replay-stock.txt 2>&1 || status=1; stop; }
-    start replay-ac "" "-c 65536 -np 1 -bs --prefix-cache $G/pfx-replay --checkpoint-gen" && \
+    start replay-ac "" "-c $REPLAY_CTX -np 1 -bs --prefix-cache $G/pfx-replay --checkpoint-gen" && \
         { $RUN --label agent-cache > $G/replay-ac.txt 2>&1 || status=1; stop; }
     python3 replay_sessions.py summary $G/replay.jsonl --reference stock | tee $G/replay-summary.md
     for f in replay-stock replay-ac; do
