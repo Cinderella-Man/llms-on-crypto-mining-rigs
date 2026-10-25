@@ -36,7 +36,8 @@ copy lookup, which guesses first inside copied text.
 | Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
 | Gate | the release needs a rig-measured win on the release split (the owner, 2026-10-25 08:15). The offline bar was ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall on six cards |
 | Next | M3, the clean redo: R4 heads from scratch on licence-clean data only (23.3 M answer tokens, clean vocabulary), from ~15:20; first Q51 numbers ~19:45. The 15:00 round on mixed data is cancelled. Then a cheaper guess (section 8) |
-| Engine | rc4 `460160e93` (`--pipe-guess staircase --pipe-draft`, with `--pipe-store` the store before the head): window from the run's split, six-anchor and depth-general heads, exact against plain decoding on the rig |
+| Engine | the drafter code is in the release engine, rc4 (`2d53179aa`, from `460160e93` on): `--pipe-guess staircase --pipe-draft FILE` (with `--pipe-store`, the store before the head), window from the run's split, six-anchor and depth-general heads, exact against plain decoding on the rig. Without a head file it is off: no taps, no memory, the default guesser `cont` unchanged |
+| Release (the owner, 2026-10-25 15:20) | ships without the answer store and without a drafter head: the heads and store so far were trained or built on excluded data. The served release numbers use the built-in guesser (`cont`: copy lookup and the request's own continuations, no data), measured by `results/2026-10-25_release_rig/served_262k.sh` in the private companion repo (no guessing against `--pipe-depth 3`, Q8_0, K2h-r16 and UD-Q4_K_XL at 262,144 tokens). The drafter returns with heads trained on the strict data list (M3) |
 
 Terms used below:
 
