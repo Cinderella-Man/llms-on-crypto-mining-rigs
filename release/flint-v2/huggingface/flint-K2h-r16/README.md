@@ -55,7 +55,7 @@ download, Unsloth's UD-Q4_K_XL.
 What each flag does, how to run on six cards, and how to use it for coding agents:
 [the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md).
 For even more speed, add the trained guesser from
-[the drafter's page](https://huggingface.co/OWNER-TBD/Flint-Staircase-Drafter).
+[the drafter's page](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter).
 
 ## What you need
 

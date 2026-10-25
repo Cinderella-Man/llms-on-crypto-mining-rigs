@@ -11,7 +11,7 @@ tags:
 
 # Flint drafter data: what the staircase drafter was trained on
 
-The answers Flint wrote to train the [staircase drafter](https://huggingface.co/OWNER-TBD/Flint-Staircase-Drafter),
+The answers Flint wrote to train the [staircase drafter](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter),
 described exactly enough to regenerate them, and (OWNER-TBD) the answers themselves. Everything else the drafter needs
 (the hidden-state dumps, 1.3 TB) is recomputed from these answers with one command per file; see
 [the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md).

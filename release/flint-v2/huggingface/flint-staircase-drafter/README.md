@@ -34,7 +34,7 @@ pipelined speculation with the copy lookup and the store.
 
 You need the Pascal engine v2 and a Flint model file: Unsloth's near-lossless
 [Q8_0](https://huggingface.co/unsloth/flint-GGUF) on nine cards (the drafter learned from Q8_0's internal states), or
-[Flint K2h-r16](https://huggingface.co/OWNER-TBD/Flint-K2h-r16-GGUF), which the numbers below were measured with, on
+[Flint K2h-r16](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF), which the numbers below were measured with, on
 six cards or more. Add three options to the usual server command:
 
 ```bash
