@@ -107,6 +107,11 @@ paths are placeholders.
    python check_dump.py fast/train-1.bin flint/
    ```
 
+   Several dump instances can share one pool of answers while generation still runs: [feed_split.py](feed_split.py)
+   appends the next answers to whichever instance's queue runs low, so faster card sets get more. Each instance
+   follows its own list with `DUMP_IN=<(tail -n +1 -F seqs-x.txt)` and appends its log, which tells the feeder what
+   is done. Tool-call answers go last: ~60 % of their tokens are prompt, which the dump replays without training on it.
+
    The dump copies 150,144 logits per position to the host (600 KB per token): put the card holding the output head on
    the widest PCIe link, or set `DUMP_GPU_TOPK=1` (with `-b` equal to `-ub`), which computes the top-20
    log-probabilities on that card through llama.cpp's backend-sampling path and copies ~160 B per position instead.
@@ -241,6 +246,7 @@ paths are placeholders.
 | [staircase_dump/](staircase_dump/) | `llama-staircase-dump`: layer inputs, final state (FP8 + row scale) and top-20 per position |
 | [feats.py](feats.py) | dump reader, `seqs`/`info`/`pack` commands, Flint's sampler chain on top-k log-probabilities |
 | [check_dump.py](check_dump.py) | dump checks (FP8 table, output head on the final state, against an earlier logit dump) |
+| [feed_split.py](feed_split.py) | one pool of answers fed to several dump instances by queue length, tool calls last |
 | [compare_dumps.py](compare_dumps.py) | record-by-record comparison of two dumps of the same sequences |
 | [flint_weights.py](flint_weights.py) | Flint's embedding table, output head and output norm from the GGUF |
 | [vocab.py](vocab.py) | the guesser's vocabulary and its coverage |
