@@ -88,7 +88,6 @@ done
 python3 -I "$HERE/replay_sessions.py" summary "$OUT/replay.jsonl" --reference stock | tee "$OUT/summary.md"
 case " $ARMS " in *" stock-tail1 "*)
     python3 -I "$HERE/replay_sessions.py" summary "$OUT/replay.jsonl" --reference stock-tail1 | tee -a "$OUT/summary.md";; esac
-| tee "$OUT/summary.md"
 case " $ARMS " in *" stock-drop "*)
     python3 -I "$HERE/replay_sessions.py" summary "$OUT/replay.jsonl" --reference stock-drop | tee -a "$OUT/summary.md";; esac
 echo RIG_REPLAY_DONE

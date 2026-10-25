@@ -18,6 +18,7 @@ cell where a fresh context has it, so cached and cold answers agree bit for bit.
 | [cpu_check.sh](cpu_check.sh) | The CPU exactness run: a cold server and the server under test with the agent cache, again after a restart, with stock's two tail checkpoints and per-request reserves, and with `-bs` in both reserve modes. Docker, CPU only |
 | [gpu_check.sh](gpu_check.sh), [gpu_inner.sh](gpu_inner.sh) | The same with the real Flint on one GPU (a test slot and a cold slot of one server), then a short replay (stock behaviour, the exactness control, the agent cache) for the token counts and the replies. One container under an optional `flock` |
 | [rig_replay.sh](rig_replay.sh) | The rig run: the eight sessions per configuration (stock behaviour; stock behaviour with the single tail checkpoint, the exactness control whose replies the agent cache must give; the agent cache; stock and the agent cache with the reasoning dropped from the history; optionally the unmodified base build), K2h-r16 on nine cards, a memory watchdog; writes the replay rows and summaries |
+| [rig_check.sh](rig_check.sh) | Identity against a cold server on the rig: one server with a cache slot and a cold slot, `check_exact.py`'s prefix, turns and trim scenarios on K2h-r16 over nine cards (~6 min) |
 
 ## Exactness, and why the checks run without flash attention on the CPU
 
