@@ -283,15 +283,18 @@ all classes from 1.46 to 1.54.
 
 **The store for release.** The store measured above holds answers to every Q20 prompt set, including ShareGPT,
 UltraChat and Magicoder prompts whose licence or origin is unclear, so it is not distributed. The store for release,
-`flint-answers-release-20261025-13.8M.pstore` (13,702 answers, 13.8 M tokens, 110 MB), holds Flint's answers to two
+`flint-answers-release-20261025b-13.8M.pstore` (13,696 answers, 13.8 M tokens, 110 MB), holds Flint's answers to two
 kinds of prompt:
 - our own prompts: whole-file edits and coding-agent turns on files of the Python standard library, of llama.cpp
   (without its vendored code and build output) and of Python packages under the MIT, BSD, Apache-2.0 or PSF licence;
 - maths problems from OpenR1-Math's default set, which were collected from the web rather than written by a model
   (21 % of its tokens).
 
-The answers come from Flint Q8_0, G3, UD-Q4_K_XL and NVFP4 at the same sampling, with Q51 held out the same way. Data
-sets of model-written prompts (the tool-call sets, NuminaMath-CoT) are left out. Simulated at depth 3 on nine cards
+The answers come from Flint Q8_0, G3, UD-Q4_K_XL and NVFP4 at the same sampling. A prompt is left out when it shares a
+12-word span with a Q51 prompt, either within one user or tool message or across all its messages' text joined (the
+second test also catches agent tasks that repeat a Q51 task's wording). Data sets of model-written prompts (the
+tool-call sets, NuminaMath-CoT) are left out. A manifest next to the store lists every answer with its prompt's source
+and licence. Simulated at depth 3 on nine cards
 (6/6/6/6/5/5/5/5/5):
 
 | Store | Chat | Code | Edits | Agent | All | Tool calls |
@@ -847,11 +850,11 @@ chunk slots do not fit next to the model stops at its start (`run-<config>.log`)
 
 **4e. The continuation store in llama-server (Q161)** (the build of `pascal-p106-v2-q161`, which also carries Q155 and
 the tool-request pipelining, `llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161`, and the store for release,
-`flint-answers-release-20261025-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
+`flint-answers-release-20261025b-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
 
 ```
 B=/opt/llama-builds/llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161/bin; M=<K2h-r16>
-S=/opt/llama-builds/stores/flint-answers-release-20261025-13.8M.pstore
+S=/opt/llama-builds/stores/flint-answers-release-20261025b-13.8M.pstore
 ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=store-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3 3s' \\
     STORE=$S ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/store-9c.out 2>&1 < /dev/null &"
 ```
