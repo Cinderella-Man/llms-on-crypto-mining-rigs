@@ -21,9 +21,10 @@
 #   PREFIX [llama-p106], IMAGE [nvidia/cuda:12.9.2-devel-ubuntu24.04], DOCKER_ARGS (e.g. a label the machine's policy
 #   asks for), TESTS [1], JOBS, NOTES [release/notes-<VERSION>.md in this repository, if present], SRC [the llama.cpp
 #   checkout the build came from: the build folder's sibling src/], NOTES_ONLY [0; 1 rewrites only RELEASE_NOTES.md of
-#   the assets already in OUT, e.g. once the measured numbers are in the template], NOTES_VARIANT: template lines that
-#   end in "<!-- only:X -->" stay (without the marker) when X is NOTES_VARIANT and are dropped otherwise, e.g.
-#   NOTES_VARIANT=rc3 keeps the lines of features only rc3 has, anything else drops them
+#   the assets already in OUT, e.g. once the measured numbers are in the template], NOTES_VARIANT [none]: the engine
+#   variant of the notes, as scripts/release_variant.sh takes it (rc4, rc3, rc1 or a list of tags); tagged lines and
+#   blocks of other variants are removed, DRAFT: the staircase drafter's side file (export_gguf.py's GGUF), copied
+#   unchanged into OUT as DRAFT_NAME [flint-staircase-drafter-<VERSION>.gguf] and added to SHA256SUMS
 # Exit status: 0 assets written and checked, 1 a step failed, 2 usage.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -39,6 +40,7 @@ NOTES=${NOTES:-$here/../release/notes-$VERSION.md}
 BIN_ASSET=$PREFIX-$VERSION-bin-ubuntu-cuda12.9-sm61.tar.gz
 CUDART_ASSET=cudart-$PREFIX-$VERSION-bin-ubuntu-cuda12.9.tar.gz
 TESTS_ASSET=$PREFIX-$VERSION-tests-ubuntu-cuda12.9-sm61.tar.gz
+DRAFT_NAME=${DRAFT_NAME:-flint-staircase-drafter-$VERSION.gguf}
 
 if [ "${NOTES_ONLY:-0}" = 1 ]; then  # refill RELEASE_NOTES.md from the template, for assets already in $OUT
     [ -f "$OUT/SHA256SUMS" ] && [ -f "$OUT/$BIN_ASSET" ] || { echo "no assets in $OUT"; exit 1; }
@@ -129,17 +131,30 @@ EOF
 rm -rf "$lic"
 fi
 
+# the drafter side file, copied unchanged next to the archives
+if [ -n "${DRAFT:-}" ]; then
+    [ "$(head -c 4 "$DRAFT")" = GGUF ] || { echo "DRAFT is not a GGUF file: $DRAFT"; exit 1; }
+    cp "$DRAFT" "$OUT/$DRAFT_NAME"
+    (cd "$OUT" && grep -v " $DRAFT_NAME\$" SHA256SUMS > SHA256SUMS.new; sha256sum "$DRAFT_NAME" >> SHA256SUMS.new; mv SHA256SUMS.new SHA256SUMS)
+    echo "drafter: $DRAFT -> $OUT/$DRAFT_NAME"
+fi
+
 size() { du -m "$OUT/$1" | cut -f1; }
 sha() { grep " $1\$" "$OUT/SHA256SUMS" | cut -d' ' -f1; }
 if [ -f "$NOTES" ]; then
+    draft_fill=()
+    if [ -f "$OUT/$DRAFT_NAME" ]; then
+        draft_fill=(-e "s|{{DRAFT_ASSET}}|$DRAFT_NAME|g" -e "s|{{DRAFT_MB}}|$(size "$DRAFT_NAME")|g"
+                    -e "s|{{DRAFT_SHA256}}|$(sha "$DRAFT_NAME")|g")
+    fi
     sed -e "s|{{VERSION}}|$VERSION|g" -e "s|{{COMMIT}}|$commit|g" -e "s|{{PREFIX}}|$PREFIX|g" \
         -e "s|{{BIN_ASSET}}|$BIN_ASSET|g" -e "s|{{BIN_MB}}|$(size "$BIN_ASSET")|g" -e "s|{{BIN_SHA256}}|$(sha "$BIN_ASSET")|g" \
         -e "s|{{CUDART_ASSET}}|$CUDART_ASSET|g" -e "s|{{CUDART_MB}}|$(size "$CUDART_ASSET")|g" \
-        -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" "$NOTES" \
-        | sed -e "/<!-- only:${NOTES_VARIANT:-} -->\$/s| <!-- only:[A-Za-z0-9_.-]* -->\$||" -e "/<!-- only:[A-Za-z0-9_.-]* -->\$/d" \
-        > "$OUT/RELEASE_NOTES.md"
-    echo "release notes variant: ${NOTES_VARIANT:-none} (kept $(grep -c "<!-- only:${NOTES_VARIANT:-} -->\$" "$NOTES" || true) marked lines, dropped the other $(( $(grep -c '<!-- only:' "$NOTES" || true) - $(grep -c "<!-- only:${NOTES_VARIANT:-} -->\$" "$NOTES" || true) )))"
-    echo "release notes: $OUT/RELEASE_NOTES.md (placeholders left: $(grep -c 'RIG-TBD' "$OUT/RELEASE_NOTES.md"))"
+        -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" "${draft_fill[@]}" "$NOTES" \
+        | bash "$here/release_variant.sh" "${NOTES_VARIANT:-none}" - > "$OUT/RELEASE_NOTES.md"
+    left=$(grep -o '{{[A-Z_0-9]*}}' "$OUT/RELEASE_NOTES.md" | sort -u | tr '\n' ' ' || true)
+    [ -n "$left" ] && echo "WARNING: unfilled fields in the notes: $left(a drafter section without DRAFT?)"
+    echo "release notes: $OUT/RELEASE_NOTES.md (placeholders left: $(grep -c 'RIG-TBD' "$OUT/RELEASE_NOTES.md" || true))"
 else
     echo "no notes template at $NOTES: RELEASE_NOTES.md not written"
 fi

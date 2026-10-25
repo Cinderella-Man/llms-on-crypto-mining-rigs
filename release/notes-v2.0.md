@@ -14,6 +14,7 @@ Flint on nine P106-090 cards (one PCIe 1.0 lane each, a 2-core Celeron with 4 GB
 | Generation, Unsloth UD-Q4_K_XL (`llama-bench` tg128) | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, UD-Q4_K_XL, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
+| Served chat, UD-Q4_K_XL, with the staircase drafter (`--pipe-guess staircase`) | — | — | **RIG-TBD** | <!-- only:drafter -->
 | Prompt processing, 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 RIG-TBD (if the release carries tuned numbers): with a memory clock offset of RIG-TBD MT/s on every card, generation
@@ -48,18 +49,26 @@ output is the same as without it.
 - **Tool requests sample on the GPU:** one token is checked against the grammar on the host, and the full row of scores
   crosses the PCIe link only when the grammar rejects it. Before, every tool request sampled on the CPU and decoded
   12–16 % slower than chat. `LLAMA_GRAMMAR_HOST_SAMPLING=1` restores sampling on the host.
-- **Prompt caching for agents:** `--prefix-cache DIR` saves the state of the shared system and tool prompt to a file the first time it is read and restores it into any conversation that starts with it, across server restarts; one checkpoint per request holds the whole sliding-window ring; `--checkpoint-gen` also takes checkpoints while generating, at `</think>` and `<tool_call>`; and a request no longer re-reserves the scheduler before its first token. Agent turns: RIG-TBD. <!-- only:rc3 -->
+- **Prompt caching for agents:** `--prefix-cache DIR` saves the state of the shared system and tool prompt to a file the first time it is read and restores it into any conversation that starts with it, across server restarts; one checkpoint per request holds the whole sliding-window ring; `--checkpoint-gen` also takes checkpoints while generating, at `</think>` and `<tool_call>`; and a request no longer re-reserves the scheduler before its first token. Agent turns: RIG-TBD. <!-- only:q163-q111 -->
 
 **Prompts, long context and several conversations:**
 - **MoE prompt tiles sized by tokens per expert** (upstream PR #31047): prompts +22–29 %.
 - **The attention mask built on each card** for prompts and for decoding: decode at 64k tokens of context +12 %.
-- **A Pascal prompt-attention kernel** (head size 128 or 256, 8 query heads per KV head) that skips fully masked key tiles and reads a Q8_0 KV cache directly, without an F16 copy: long prompts RIG-TBD faster; on by default on compute 6.1 (`GGML_CUDA_FATTN_TILE_PASCAL=0` turns it off). <!-- only:rc3 -->
+- **A Pascal prompt-attention kernel** (head size 128 or 256, 8 query heads per KV head) that skips fully masked key tiles and reads a Q8_0 KV cache directly, without an F16 copy: long prompts RIG-TBD faster; on by default on compute 6.1 (`GGML_CUDA_FATTN_TILE_PASCAL=0` turns it off). <!-- only:q163-q111 -->
 - **Several conversations through one pipeline** (the `llama-pipespec` tool's streams mode): conversations staggered
   through the cards, and a new request's prompt chunks on CUDA streams below the generating tokens' priority, so they
   no longer stall the conversations that are generating.
 
-**Experimental:** a trained staircase drafter as the guesser (`--pipe-draft FILE` and its options). The code is in this
-build; no drafter file ships with this release.
+<!-- begin:drafter -->
+**The staircase drafter, a trained guesser for pipelined speculation:**
+- A small transformer guesses Flint's next token from the hidden states Flint has already computed for the tokens in flight: the newest token has passed only the first card, older ones are further along, a staircase of depths. It sits behind the copy lookup and runs on the first card in its own CUDA stream; the last card still samples every token, so the output is the same as without it.
+- It ships as a side file, `{{DRAFT_ASSET}}` ({{DRAFT_MB}} MB): add `--pipe-guess staircase --pipe-draft {{DRAFT_ASSET}}` next to `--pipe-depth 3`.
+- Trained on Flint's own answers, for RIG-TBD (the shipped head: depth-general for 3–12 cards, weighted towards six and nine, or a six- and nine-card head). The engine builds the drafter's window of hidden states from the run's own layer split.
+- Served chat with the drafter: RIG-TBD tok/s on nine cards (RIG-TBD × the copy lookup alone) and RIG-TBD on six cards, with every answer identical to plain decoding.
+- It guesses for a request that generates alone, like the rest of pipelined speculation.
+<!-- end:drafter -->
+
+**Experimental:** a trained staircase drafter as the guesser (`--pipe-draft FILE` and its options). The code is in this build; no drafter file ships with this release. <!-- only:nodrafter -->
 
 ## Install
 
@@ -80,6 +89,7 @@ context:
 {{PREFIX}}-{{VERSION}}/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
 ```
 
+With the drafter, add `--pipe-guess staircase --pipe-draft {{DRAFT_ASSET}}` to that line. <!-- only:drafter -->
 The repository's Flint page explains every flag, the six-card and agent variants, and the speed and quality behind them.
 
 ## Assets
@@ -88,6 +98,7 @@ The repository's Flint page explains every flag, the six-card and agent variants
 |---|---|---|
 | `{{BIN_ASSET}}` | {{BIN_MB}} MB | `{{BIN_SHA256}}` |
 | `{{CUDART_ASSET}}` | {{CUDART_MB}} MB | `{{CUDART_SHA256}}` |
+| `{{DRAFT_ASSET}}` | {{DRAFT_MB}} MB | `{{DRAFT_SHA256}}` | <!-- only:drafter -->
 
 `BUILDINFO.txt` in the first archive records the commit, the build image, and that the binaries contain no AVX
 instructions and need glibc 2.38 at most. A third archive carries `test-backend-ops`, llama.cpp's operator tests, for
@@ -99,3 +110,4 @@ The binaries are llama.cpp and ggml with this fork's changes, all under the MIT 
 `THIRD_PARTY_NOTICES.md`). The CUDA runtime libraries in the second archive are NVIDIA's, redistributed unmodified under
 the NVIDIA CUDA Toolkit End User License Agreement (`NVIDIA_CUDA_RUNTIME_NOTICE.md`). Model files are not part of this
 release and keep their own licences.
+The drafter file is a model of this project, trained on Flint's outputs and hidden states: RIG-TBD (its licence, the owner's decision). <!-- only:drafter -->
