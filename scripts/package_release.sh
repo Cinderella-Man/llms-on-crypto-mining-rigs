@@ -21,7 +21,9 @@
 #   PREFIX [llama-p106], IMAGE [nvidia/cuda:12.9.2-devel-ubuntu24.04], DOCKER_ARGS (e.g. a label the machine's policy
 #   asks for), TESTS [1], JOBS, NOTES [release/notes-<VERSION>.md in this repository, if present], SRC [the llama.cpp
 #   checkout the build came from: the build folder's sibling src/], NOTES_ONLY [0; 1 rewrites only RELEASE_NOTES.md of
-#   the assets already in OUT, e.g. once the measured numbers are in the template]
+#   the assets already in OUT, e.g. once the measured numbers are in the template], NOTES_VARIANT: template lines that
+#   end in "<!-- only:X -->" stay (without the marker) when X is NOTES_VARIANT and are dropped otherwise, e.g.
+#   NOTES_VARIANT=rc3 keeps the lines of features only rc3 has, anything else drops them
 # Exit status: 0 assets written and checked, 1 a step failed, 2 usage.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -133,7 +135,10 @@ if [ -f "$NOTES" ]; then
     sed -e "s|{{VERSION}}|$VERSION|g" -e "s|{{COMMIT}}|$commit|g" -e "s|{{PREFIX}}|$PREFIX|g" \
         -e "s|{{BIN_ASSET}}|$BIN_ASSET|g" -e "s|{{BIN_MB}}|$(size "$BIN_ASSET")|g" -e "s|{{BIN_SHA256}}|$(sha "$BIN_ASSET")|g" \
         -e "s|{{CUDART_ASSET}}|$CUDART_ASSET|g" -e "s|{{CUDART_MB}}|$(size "$CUDART_ASSET")|g" \
-        -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" "$NOTES" > "$OUT/RELEASE_NOTES.md"
+        -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" "$NOTES" \
+        | sed -e "/<!-- only:${NOTES_VARIANT:-} -->\$/s| <!-- only:[A-Za-z0-9_.-]* -->\$||" -e "/<!-- only:[A-Za-z0-9_.-]* -->\$/d" \
+        > "$OUT/RELEASE_NOTES.md"
+    echo "release notes variant: ${NOTES_VARIANT:-none} (kept $(grep -c "<!-- only:${NOTES_VARIANT:-} -->\$" "$NOTES" || true) marked lines, dropped the other $(( $(grep -c '<!-- only:' "$NOTES" || true) - $(grep -c "<!-- only:${NOTES_VARIANT:-} -->\$" "$NOTES" || true) )))"
     echo "release notes: $OUT/RELEASE_NOTES.md (placeholders left: $(grep -c 'RIG-TBD' "$OUT/RELEASE_NOTES.md"))"
 else
     echo "no notes template at $NOTES: RELEASE_NOTES.md not written"

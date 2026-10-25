@@ -48,10 +48,12 @@ output is the same as without it.
 - **Tool requests sample on the GPU:** one token is checked against the grammar on the host, and the full row of scores
   crosses the PCIe link only when the grammar rejects it. Before, every tool request sampled on the CPU and decoded
   12–16 % slower than chat. `LLAMA_GRAMMAR_HOST_SAMPLING=1` restores sampling on the host.
+- **Prompt caching for agents:** `--prefix-cache DIR` saves the state of the shared system and tool prompt to a file the first time it is read and restores it into any conversation that starts with it, across server restarts; one checkpoint per request holds the whole sliding-window ring; `--checkpoint-gen` also takes checkpoints while generating, at `</think>` and `<tool_call>`; and a request no longer re-reserves the scheduler before its first token. Agent turns: RIG-TBD. <!-- only:rc3 -->
 
 **Prompts, long context and several conversations:**
 - **MoE prompt tiles sized by tokens per expert** (upstream PR #31047): prompts +22–29 %.
 - **The attention mask built on each card** for prompts and for decoding: decode at 64k tokens of context +12 %.
+- **A Pascal prompt-attention kernel** (head size 128 or 256, 8 query heads per KV head) that skips fully masked key tiles and reads a Q8_0 KV cache directly, without an F16 copy: long prompts RIG-TBD faster; on by default on compute 6.1 (`GGML_CUDA_FATTN_TILE_PASCAL=0` turns it off). <!-- only:rc3 -->
 - **Several conversations through one pipeline** (the `llama-pipespec` tool's streams mode): conversations staggered
   through the cards, and a new request's prompt chunks on CUDA streams below the generating tokens' priority, so they
   no longer stall the conversations that are generating.
