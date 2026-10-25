@@ -282,6 +282,8 @@ def main():
     ap.add_argument("--fuse", action="store_true", help="give every row each shallower anchor its token has reached")
     ap.add_argument("--noise", type=float, default=0.0, help="uniform noise amplitude after each anchor's RMS norm")
     ap.add_argument("--dropout", type=float, default=0.0)
+    ap.add_argument("--only", help="file of answer ids (one per line, e.g. licence-clean answers): use only these "
+                                   "records of the feature files")
     ap.add_argument("--copy-weight", type=float, default=1.0,
                     help="loss weight of targets inside a copy of >= 8 tokens from the prompt or the earlier output "
                          "(the copy lookup guesses those; < 1 spends the head on the rest)")
@@ -307,6 +309,9 @@ def main():
     vocab = np.load(args.vocab)
     files = [feats.FeatFile(p) for p in args.feats]
     allrec = [(fi, i) for fi, ff in enumerate(files) for i in range(len(ff))]
+    if args.only:   # answer ids ("cat_N", the dump's sequence id is N): train and validate on these answers only
+        keep = {int(x.strip().split("_")[-1]) for x in open(args.only) if x.strip()}
+        allrec = [r for r in allrec if files[r[0]][r[1]].seq_id in keep]
     val = [r for k, r in enumerate(allrec) if k % 33 == 0 and files[r[0]][r[1]].n_tok <= args.max_tok]
     train = [r for k, r in enumerate(allrec) if (k % 33 != 0 or len(allrec) < 33)
              and files[r[0]][r[1]].n_tok <= args.max_tok]

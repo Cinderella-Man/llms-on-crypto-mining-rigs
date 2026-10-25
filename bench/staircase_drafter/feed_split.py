@@ -11,6 +11,7 @@ A dump's log must be appended across restarts; it lists "sequence <id>: ..." for
 
 usage: python feed_split.py --gen 'DIR/gen-*.jsonl' --exclude map-d1.jsonl ... --inst NAME:SEQS:MAP:LOG [--inst ...]
                             [--every 120] [--low 300000] [--chunk 600000] [--last tool] [--max-tok 8192] [--stop FILE]
+                            [--only IDS_FILE]
 """
 import argparse
 import collections
@@ -37,7 +38,9 @@ def main():
     ap.add_argument("--last", nargs="*", default=["tool"])
     ap.add_argument("--max-tok", type=int, default=8192)
     ap.add_argument("--stop", default="")
+    ap.add_argument("--only", help="file of answer ids (one per line): feed only these (e.g. licence-clean answers)")
     args = ap.parse_args()
+    only = {x.strip() for x in open(args.only) if x.strip()} if args.only else None
     inst = [dict(zip(("name", "seqs", "map", "log"), x.split(":"))) for x in args.inst]
     taken = set()
     for path in args.exclude + [i["map"] for i in inst if os.path.exists(i["map"])]:
@@ -60,7 +63,7 @@ def main():
                 except ValueError:
                     continue
                 n_gen, n_all = len(r["gen_tokens"]), len(r["prompt_tokens"]) + len(r["gen_tokens"])
-                if r["id"] in taken or n_gen < 2 or n_all > args.max_tok:
+                if r["id"] in taken or n_gen < 2 or n_all > args.max_tok or (only is not None and r["id"] not in only):
                     continue
                 taken.add(r["id"])
                 pool[r["category"] in args.last].append((path, off, len(line), r["id"], n_gen))

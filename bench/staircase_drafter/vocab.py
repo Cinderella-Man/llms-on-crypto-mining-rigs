@@ -2,6 +2,7 @@
 forced in, and report its coverage per prompt class and on held-out transcripts.
 
 usage: python vocab.py OUT.npy GEN.jsonl [GEN.jsonl ...] [--size 32000] [--test TEST_GEN.jsonl] [--force IDS]
+                       [--only IDS_FILE]
 OUT.npy: int64 array of target token ids, sorted by frequency (draft id = index). --force: comma-separated ids to
 include whatever their count (by default Flint's ids 150000-150143, its added and control tokens).
 """
@@ -19,11 +20,18 @@ def main():
     ap.add_argument("--size", type=int, default=32000)
     ap.add_argument("--test")
     ap.add_argument("--force", default="")
+    ap.add_argument("--only", help="file of answer ids (one per line): count only these answers (e.g. licence-clean ones)")
     args = ap.parse_args()
+    only = {x.strip() for x in open(args.only) if x.strip()} if args.only else None
     counts, by_cat = Counter(), {}
     for path in args.gen:
         for line in open(path):
-            r = json.loads(line)
+            try:
+                r = json.loads(line)
+            except ValueError:   # a file still being written
+                continue
+            if only is not None and r["id"] not in only:
+                continue
             counts.update(r["gen_tokens"])
             by_cat.setdefault(r["category"], Counter()).update(r["gen_tokens"])
     force = [int(x) for x in args.force.split(",") if x] or list(range(150000, 150144))

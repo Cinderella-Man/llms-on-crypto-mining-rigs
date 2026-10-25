@@ -35,7 +35,7 @@ copy lookup, which guesses first inside copied text.
 | One head for 3–12 cards | R2-gen: from 0.556 / 0.624 at three cards to 0.449 / 0.508 at twelve (section 6) |
 | Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
 | Gate | the release needs a rig-measured win on the release split (the owner, 2026-10-25 08:15). The offline bar was ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall on six cards |
-| Next | a cheaper guess (section 8); the final round (~15:00, ~50 M tokens) continues R2-9 |
+| Next | M3, the clean redo: R4 heads from scratch on licence-clean data only (23.3 M answer tokens, clean vocabulary), from ~15:20; first Q51 numbers ~19:45. The 15:00 round on mixed data is cancelled. Then a cheaper guess (section 8) |
 | Engine | rc4 `460160e93` (`--pipe-guess staircase --pipe-draft`, with `--pipe-store` the store before the head): window from the run's split, six-anchor and depth-general heads, exact against plain decoding on the rig |
 
 Terms used below:
@@ -278,7 +278,8 @@ Prompts → answers → dump → train → score → simulate → export → eng
 |---|---|---|---|
 | [M0](#m0-the-pilot-2026-10-24) | 2026-10-24 | superseded by M1 (2026-10-24 22:00) | first heads: fixed six-card windows, all windows trained per sequence |
 | [M1](#m1-sampled-windows-fused-anchors-warm-starts-2026-10-24-2200) | 2026-10-24 22:00 | current | one sampled window per sequence, fused anchors, warm starts; 1.8× the steps |
-| [M2](#m2-depth-general-for-312-cards-2026-10-25-0600) | 2026-10-25 06:00 | current | layer-indexed anchors, one head for any 3–12-card split; specialists on a few card counts for comparison |
+| [M2](#m2-depth-general-for-312-cards-2026-10-25-0600) | 2026-10-25 06:00 | method current; its heads trained on excluded data, not for release | layer-indexed anchors, one head for any 3–12-card split; specialists on a few card counts for comparison |
+| [M3](#m3-licence-clean-data-2026-10-25-1340) | 2026-10-25 13:40 | running | M2's method on licence-clean data only, from scratch (no weights from earlier heads), clean vocabulary |
 
 ### M0: the pilot (2026-10-24)
 
@@ -382,6 +383,24 @@ Prompts → answers → dump → train → score → simulate → export → eng
 - **Scoring:** per card count, 3, 4, 5, 6, 7, 8, 9, 10, 12; nine cards reported first (the reference rig runs nine).
 - **Checks before a long run:** `check_general.py` (valid windows, the card-count mix, the specialists' windows, and a
   general head loaded from a six-card head reproducing it on six-card windows).
+
+### M3: licence-clean data (2026-10-25 13:40)
+
+**Running.** The owner, 2026-10-25 13:40: only data that can be published; every earlier head is not for release.
+
+- **Sources (strict list):** Team-ACE/ToolACE, glaiveai/glaive-function-calling-v2, NousResearch/hermes-function-calling-v1,
+  AI-MO/NuminaMath-CoT, open-r1/OpenR1-Math-220k (Apache-2.0), and our own whole-file edit and coding-agent prompts
+  from the Python standard library and llama.cpp. Excluded: ShareGPT, UltraChat, both Magicoder sets. Agent and edit
+  prompts built from third-party packages in the Python image (`site-packages`) and from llama.cpp's `vendor/` and
+  build folders are held out pending a ruling.
+- **Clean data on hand:** 35,463 answers, 23.30 M answer tokens (Q8_0 2.56 M, G3 4.54 M, UD-Q4_K_XL 2.41 M, vLLM
+  13.79 M); 18.69 M already dumped, the rest dumped first (feed_split `--only`). Mix: edit 9.70 M, math 7.52 M, tool
+  5.32 M, agent 0.77 M; no chat and no code generation (that category came from Magicoder). Answers to excluded
+  prompts stay in the feature files; `train.py --only <ids>` uses only the listed answers.
+- **No inheritance:** the heads start from Flint's own weights (logit-lens projections, Flint's output rows), not from
+  R1 or R2; the 40k vocabulary is recounted on clean answers (`vocab.py --only`: Q51 coverage 0.960 against 0.967).
+- **Runs (R4):** a nine-card specialist weighted to the release split, a 3–12-card head, a copy-weighted and an LK
+  variant; from ~15:20, first Q51 numbers ~19:45, the best continued overnight.
 
 ## 4. Why the card count matters
 
@@ -654,3 +673,7 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   trained or built partly on ShareGPT, UltraChat and Magicoder prompts: trained on excluded data, not for release.
   C9 retrains the heads and C7 rebuilds the store on the strict list; the guess-sources, Q8_0 served and placement
   rig tests wait for them, and nothing of the guesser or the drafter is tested or benchmarked until then.
+- 2026-10-25 13:40–14:00 (CET): licence-clean data only (the owner). The 15:00 round on mixed data is cancelled; M3
+  starts: 23.30 M clean answer tokens of 74.67 M (18.69 M dumped), a clean vocabulary, the remaining clean answers
+  dumped first, R4 heads from scratch from ~15:20. `train.py`, `vocab.py`, `feed_split.py` take `--only <ids>`;
+  `train.py --copy-weight` down-weights targets inside copies.
