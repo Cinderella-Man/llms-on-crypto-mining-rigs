@@ -14,6 +14,10 @@
 #          alternating, two rounds. UD-Q4_K_XL reads only ~32 MB of Q4_K and Q6_K per token, so expect at most ~1 %.
 #   text   greedy text, 64 tokens, Qwen3.6 with the kernels as built against GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K,q6_K
 #          (not in the default steps; the same check ran on another GPU through the compute_61 PTX).
+#   router bench/mmvq_pascal --f16 on one card (Q97): the F16 MoE router (2048 -> 256) with llama.cpp's mul_mat_vec_f,
+#          the persistent MoE kernel's router rows as a kernel of their own, and the Pascal F16 kernel (f16_r1/r2/r4).
+#          Decides whether the persistent kernel's router phase is worth a faster order (> ~0.3 ms per token). Needs only
+#          MMVQ (not in the default steps; ~1 minute).
 #
 # Usage:
 #   BIN=/opt/llama-builds/<build>/bin MMVQ=<mmvq_pascal binary> QWEN=<Qwen3.6 Q4_K_M gguf> FLINT=<UD-Q4_K_XL gguf> \
@@ -21,7 +25,7 @@
 # Takes ~20 minutes, plus model loads from slow storage. Nothing else may run on the cards meanwhile.
 set -u
 STEPS=${*:-gates tbo qwen flint}
-BIN=${BIN:?set BIN to the build bin/ directory}
+BIN=${BIN:-}
 OUT=${OUT:-/tmp/q149}
 QWEN_GPUS=${QWEN_GPUS:-0,1,2,3,4}
 FLINT_GPUS=${FLINT_GPUS:-0,1,2,3,4,5,6,7,8}
@@ -59,6 +63,18 @@ if has gates; then
              END { for (k in best) printf "  %-20s %6.1f GB/s  %-8s (llama.cpp %5.1f)\n", k, best[k], v[k], ref[k] }' \
         "$OUT/gates.csv" | sort
     grep -E "^(q4_K|q6_K) " "$OUT/gates.txt" | head -20
+fi
+
+if has router; then
+    MMVQ=${MMVQ:?set MMVQ to the mmvq_pascal binary}
+    echo "== router: mmvq_pascal --f16 on GPU 0 $(date +%T)"
+    CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 "$MMVQ" --f16 --csv "$OUT/router.csv" > "$OUT/router.txt" 2>&1
+    echo "exit $?"
+    grep -E "graph node|streaming|^router|^f16_4096|per Flint token|correctness" "$OUT/router.txt"
+fi
+
+if has tbo || has qwen || has flint || has text; then
+    BIN=${BIN:?set BIN to the build bin/ directory}
 fi
 
 if has tbo; then

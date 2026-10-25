@@ -6,6 +6,7 @@
 #include "llama_mmvq.cuh"
 #include "memsys.cuh"
 #include "pascal_mmvq.cuh"
+#include "f16_mv.cuh"
 
 #include <algorithm>
 #include <cmath>
@@ -394,6 +395,7 @@ struct options {
     double spread_max_gb = 5.0;
     bool tlb_probe = false;
     double tlb_max_gb = 5.0;
+    bool f16 = false;
 };
 
 void usage() {
@@ -417,6 +419,7 @@ void usage() {
            "  --tlb-probe      pointer-chase probe of the address translation instead of the matrix-vector kernels\n"
            "                   (2 MiB and 32 MiB strides over growing footprints, random 2 MiB pages; alone and under load)\n"
            "  --tlb-max-gb X   largest chase buffer (default 5); --check-only walks every chain once, untimed\n"
+           "  --f16            F16 one-token products (the MoE router: 2048 -> 256) instead of the quantized kernels\n"
            "  --list           list shapes and variants\n");
 }
 
@@ -537,6 +540,159 @@ double compare(const case_data & c, const std::vector<float> & out, const ref_ou
     return worst;
 }
 
+// --f16: F16 matrix-vector products of one token (src/f16_mv.cuh) at the router's shape (47 calls per Flint token) and
+// at a 16 MiB shape for the steady-state bandwidth. Copies of the weights cycle call by call (>= 64 MB per shape), so no
+// call finds its weights in L2. Checked against a double-precision CPU product of the same F16 weights and FP32
+// activations (tolerance 1e-5 of the sum of the absolute terms).
+int run_f16(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, const int code_arch) {
+    struct f16_shape { const char * name; int K, N, calls; };
+    const f16_shape shapes[] = { { "router", 2048, 256, 47 }, { "f16_4096", 2048, 4096, 0 } };
+    struct f16_variant { const char * name; int R; };
+    const f16_variant variants[] = { { "mmvf", 0 }, { "moep", -1 }, { "f16_r1", 1 }, { "f16_r2", 2 }, { "f16_r4", 4 } };
+    bool ok = true;
+    FILE * f = nullptr;
+    if (!opt.csv.empty()) {
+        f = fopen(opt.csv.c_str(), "w");
+        if (!f) { fprintf(stderr, "cannot write %s\n", opt.csv.c_str()); return 1; }
+        fprintf(f, "device,code_arch,shape,K,N,calls_per_token,variant,bytes_per_call,us_median,us_min,gbs,regs,grid_blocks,"
+                   "err_over_tol,check\n");
+    }
+    printf("\n%-10s %-8s %10s %9s %9s %7s %5s %7s %9s %s\n", "shape", "variant", "MB/call", "us/call", "us(min)", "GB/s",
+           "regs", "grid", "err/tol", "check");
+    for (const auto & sh : shapes) {
+        const size_t mat = (size_t) sh.K * sh.N;
+        const size_t bytes = mat * sizeof(half);
+        const int ncopies = (int) std::max<size_t>(4, ((size_t) 64 << 20) / bytes);
+        dev_buf w(bytes * ncopies), y(sh.K * sizeof(float)), d(sh.N * sizeof(float)), ones(sh.K * sizeof(float));
+        {
+            // moep's norm weight: all ones (with scale 1 its normed input is y itself, so one reference checks all variants)
+            const std::vector<float> one(sh.K, 1.0f);
+            CUDA_CHECK(cudaMemcpy(ones.p, one.data(), sh.K * sizeof(float), cudaMemcpyHostToDevice));
+        }
+        f16mv::gen_f16<<<256, 256, 0, s>>>(w.as<half>(), mat * ncopies, opt.seed);
+        gen_floats<<<64, 256, 0, s>>>(y.as<float>(), sh.K, opt.seed + 7);
+        CUDA_CHECK(cudaGetLastError());
+        CUDA_CHECK(cudaStreamSynchronize(s));
+        std::vector<half> wh(mat);
+        std::vector<float> yh(sh.K);
+        CUDA_CHECK(cudaMemcpy(wh.data(), w.p, bytes, cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(yh.data(), y.p, sh.K * sizeof(float), cudaMemcpyDeviceToHost));
+        const int row_step = sh.N > 1024 ? 37 : 1;
+        std::vector<double> ref(sh.N), absum(sh.N);
+        for (int r = 0; r < sh.N; r += row_step) {
+            double acc = 0.0, as = 0.0;
+            for (int k = 0; k < sh.K; ++k) {
+                const double t = (double) __half2float(wh[(size_t) r * sh.K + k]) * yh[k];
+                acc += t;
+                as += fabs(t);
+            }
+            ref[r] = acc;
+            absum[r] = as;
+        }
+        for (const auto & v : variants) {
+            const void * func = nullptr;
+            dim3 grid, block;
+            std::function<void(cudaStream_t, int)> launch;
+            if (v.R < 0) {
+                func = (const void *) f16mv::moep_router<NW>;
+                const int items = (sh.N + 1) / 2;
+                grid = dim3((items + NW - 1) / NW, 1, 1);
+                block = dim3(32, NW, 1);
+                const int nrows = sh.N, ncols2 = sh.K / 2;
+                launch = [&w, &y, &d, &ones, func, grid, block, bytes, nrows, ncols2, ncopies](cudaStream_t st, int j) {
+                    const half * x = (const half *) ((const uint8_t *) w.p + (size_t) (j % ncopies) * bytes);
+                    const float * yy = y.as<float>();
+                    const float * mm = ones.as<float>();
+                    float sc = 1.0f;
+                    float * dd = d.as<float>();
+                    int nr = nrows, n2 = ncols2;
+                    void * params[] = { &x, &yy, &mm, &sc, &dd, &nr, &n2 };
+                    CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                };
+            } else if (v.R == 0) {
+                const int bs = f16mv::mmvf_block_size(sh.K);
+                switch (bs) {
+                    case 32:  func = (const void *) f16mv::mmvf_stock<32>;  break;
+                    case 64:  func = (const void *) f16mv::mmvf_stock<64>;  break;
+                    case 128: func = (const void *) f16mv::mmvf_stock<128>; break;
+                    case 256: func = (const void *) f16mv::mmvf_stock<256>; break;
+                    default:  continue;
+                }
+                grid = dim3(sh.N, 1, 1);
+                block = dim3(bs, 1, 1);
+                const int ncols2 = sh.K / 2;
+                const int stride_row = sh.K;
+                launch = [&w, &y, &d, func, grid, block, bytes, ncols2, stride_row, ncopies](cudaStream_t st, int j) {
+                    const half * x = (const half *) ((const uint8_t *) w.p + (size_t) (j % ncopies) * bytes);
+                    const float * yy = y.as<float>();
+                    float * dd = d.as<float>();
+                    int n2 = ncols2, sr = stride_row;
+                    void * params[] = { &x, &yy, &dd, &n2, &sr };
+                    CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                };
+            } else {
+                const int chunks = sh.K / 8;
+                int lpr_log2 = 0;
+                while (lpr_log2 < 5 && chunks % (2 << lpr_log2) == 0) lpr_log2++;
+                const int niter = chunks >> lpr_log2;
+                func = v.R == 1 ? (const void *) f16mv::f16_rows<1, NW> : v.R == 2 ? (const void *) f16mv::f16_rows<2, NW>
+                                                                                   : (const void *) f16mv::f16_rows<4, NW>;
+                const int rows_per_block = NW * (32 >> lpr_log2) * v.R;
+                grid = dim3((sh.N + rows_per_block - 1) / rows_per_block, 1, 1);
+                block = dim3(32, NW, 1);
+                const int nrows = sh.N, row_bytes = sh.K * 2;
+                launch = [&w, &y, &d, func, grid, block, bytes, nrows, row_bytes, lpr_log2, niter, ncopies](cudaStream_t st, int j) {
+                    const uint8_t * x = (const uint8_t *) w.p + (size_t) (j % ncopies) * bytes;
+                    const float * yy = y.as<float>();
+                    float * dd = d.as<float>();
+                    int nr = nrows, rb = row_bytes, ll = lpr_log2, ni = niter;
+                    void * params[] = { &x, &yy, &dd, &nr, &rb, &ll, &ni };
+                    CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                };
+            }
+            // correctness: copy 0
+            CUDA_CHECK(cudaMemsetAsync(d.p, 0xff, sh.N * sizeof(float), s));
+            launch(s, 0);
+            CUDA_CHECK(cudaGetLastError());
+            CUDA_CHECK(cudaStreamSynchronize(s));
+            std::vector<float> got(sh.N);
+            CUDA_CHECK(cudaMemcpy(got.data(), d.p, sh.N * sizeof(float), cudaMemcpyDeviceToHost));
+            double worst = 0.0;
+            for (int r = 0; r < sh.N; r += row_step) {
+                const double bound = 1e-5 * absum[r] + 1e-30;
+                const double e = std::isfinite(got[r]) ? fabs(got[r] - ref[r]) / bound : 1e30;
+                worst = std::max(worst, e);
+            }
+            const bool pass = worst <= 1.0;
+            ok &= pass;
+            cudaFuncAttributes attr;
+            CUDA_CHECK(cudaFuncGetAttributes(&attr, func));
+            double us_med = 0.0, us_min = 0.0, gbs = 0.0;
+            if (!opt.check_only) {
+                const auto t = time_graph(launch, opt.batch, opt.reps, s);
+                us_med = median(t);
+                us_min = *std::min_element(t.begin(), t.end());
+                gbs = bytes / (us_med * 1e3);
+            }
+            printf("%-10s %-8s %10.3f %9.2f %9.2f %7.1f %5d %7u %9.3f %s\n", sh.name, v.name, bytes / 1e6, us_med, us_min, gbs,
+                   attr.numRegs, grid.x, worst, pass ? "PASS" : "FAIL");
+            if (!opt.check_only && sh.calls > 0) {
+                printf("%-10s %-8s %10s %9.1f us per Flint token (%d calls)\n", "", "", "", us_med * sh.calls, sh.calls);
+            }
+            if (f) {
+                fprintf(f, "\"%s\",%d,%s,%d,%d,%d,%s,%zu,%.3f,%.3f,%.2f,%d,%u,%.4f,%s\n", prop.name, code_arch, sh.name, sh.K,
+                        sh.N, sh.calls, v.name, bytes, us_med, us_min, gbs, attr.numRegs, grid.x, worst, pass ? "PASS" : "FAIL");
+            }
+        }
+    }
+    if (f) {
+        fclose(f);
+        printf("\nCSV written to %s\n", opt.csv.c_str());
+    }
+    printf("\ncorrectness: %s\n", ok ? "all variants match the CPU reference" : "FAILURES");
+    return ok ? 0 : 2;
+}
+
 } // namespace
 
 int main(int argc, char ** argv) {
@@ -562,6 +718,7 @@ int main(int argc, char ** argv) {
         else if (a == "--spread-max-gb") opt.spread_max_gb = atof(next().c_str());
         else if (a == "--tlb-probe") opt.tlb_probe = true;
         else if (a == "--tlb-max-gb") opt.tlb_max_gb = atof(next().c_str());
+        else if (a == "--f16") opt.f16 = true;
         else if (a == "--list") { list_all(); return 0; }
         else { usage(); return a == "--help" || a == "-h" ? 0 : 1; }
     }
@@ -646,6 +803,11 @@ int main(int argc, char ** argv) {
         read_plain_gbs = nbytes / (median(time_graph(rdp, 4, 10, s)) * 1e3);
         printf("empty kernel in a CUDA graph: %.2f us per node\n", node_us);
         printf("streaming read of 256 MB with 128-bit loads: %.1f GB/s read-only path (__ldg), %.1f GB/s plain loads\n", read_gbs, read_plain_gbs);
+    }
+    if (opt.f16) {
+        const int rc = run_f16(opt, s, prop, code_arch);
+        CUDA_CHECK(cudaStreamDestroy(s));
+        return rc;
     }
     printf("\n%-14s %-8s %-8s %10s %9s %9s %7s %6s %5s %4s %7s %9s %s\n", "shape", "type", "variant", "MB/call", "us/call",
            "us(min)", "GB/s", "%peak", "regs", "occ", "grid", "err/tol", "check");

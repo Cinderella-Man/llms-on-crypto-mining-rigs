@@ -134,6 +134,7 @@ Useful options (`--help` lists all):
 | `--list` | list shapes and variants |
 | `--spread N`, `--spread-gb X` | N weight sets per shape, or as many as fill X GB, cycled call by call, with fresh expert ids for every call (Q99, below) |
 | `--tlb-probe` | pointer-chase probe of the GPU's address translation instead of the kernels (Q99, below) |
+| `--f16` | F16 one-token products (the MoE router) instead of the quantized kernels (Q97, below) |
 
 The program exits with status 2 if any correctness check fails.
 
@@ -381,6 +382,34 @@ scp bench/mmvq_pascal/build/mmvq_pascal bench/mmvq_pascal/kquant_rig.sh rig:/tmp
 ssh rig 'BIN=/opt/llama-builds/<pascal-p106-v2-kquant build>/bin MMVQ=/tmp/q149/mmvq_pascal QWEN=<Qwen3.6 Q4_K_M> FLINT=<UD-Q4_K_XL> bash /tmp/q149/kquant_rig.sh'
 ```
 
+## The F16 router (Q97)
+
+Flint's files at the quality bar keep the MoE router in F16: 256 rows of 2,048 weights, 1 MiB per layer, 47 layers per
+token. llama.cpp multiplies it with `mul_mat_vec_f`, which gives each row a 256-thread block whose threads read 4 bytes
+per iteration (~50 GB/s on a P106 in the S4-L0 profile). On compute 6.1 the fork's persistent MoE kernel (Q88) computes
+the router inside its own launch, in `mul_mat_vec_f`'s summation order so that it matches the per-op path bit for bit:
+one warp per row, each lane standing in for 8 of the 256 threads. `--f16` ([src/f16_mv.cuh](src/f16_mv.cuh)) times
+three ways to multiply it:
+
+- `mmvf`: `mul_mat_vec_f` as a compute 6.1 card runs it for one token (copied from llama.cpp `d77256999`; FP32
+  accumulation);
+- `moep`: the persistent kernel's router rows as a kernel of their own (work items of 2 rows per warp, the normed input
+  computed on the fly from the layer input and the norm weight): its router phase if it had the whole card;
+- `f16_rR`, a Pascal kernel with the quantized kernels' work split: a lane group sized to the row owns R rows; per
+  iteration each lane reads 8 weights (16 bytes) of each row and the 8 matching FP32 activations (32 bytes), which the R
+  rows share, all as coalesced 128-bit loads; FP32 accumulation, one FMA per weight in column order within the lane,
+  then shuffles across the lane group.
+
+The shapes are the router's (2048 → 256) and 2048 → 4096 for the steady-state bandwidth; copies of the weights cycle
+call by call, and the check compares every row (every 37th of the large shape) with a double-precision product of the
+same F16 weights and FP32 activations. The rig run decides whether the persistent kernel's router rows should take the
+faster order (worth it if `moep` costs more than ~0.3 ms per token and `f16_rR` is clearly faster; the gate for `f16_rR`
+is ≥ 110 GB/s at the router's shape):
+
+```bash
+ssh rig 'MMVQ=/tmp/q149/mmvq_pascal OUT=/tmp/q97 bash /tmp/q149/kquant_rig.sh router'
+```
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
@@ -466,3 +495,4 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `verify/` | bit-exactness check against a static llama.cpp build; `multitoken_bitid.cpp`: the fork's 2–4-token products against its single-token ones |
 | `multitoken_perf.sh`, `multitoken_perf_table.py` | timing of the fork's kernels at 1–4 tokens per step on the rig, and its tables |
 | `kquant_rig.sh` | the Q4_K and Q6_K gates, the fork's Q4_K/Q6_K tests on a P106, and the tg128 A/B of the two kernels on the rig (Q149) |
+| `src/f16_mv.cuh` | `--f16`: llama.cpp's F16 one-token product, the persistent MoE kernel's router rows and the Pascal F16 kernel (Q97); `kquant_rig.sh router` runs it on the rig |
