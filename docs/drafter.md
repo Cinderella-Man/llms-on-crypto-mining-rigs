@@ -133,6 +133,14 @@ Prompts → answers → dump → train → score → simulate → export → eng
     (1,098 against 1,230 tokens/s; `-b 512` costs more than the logits copy saves), so it pays only on narrow links.
     Otherwise put the card holding the output head on the widest link.
   - The layer grid fixes which splits a dump can serve. Record every boundary you may need (see M2's grid).
+  - The dump replays every prompt token but trains only on answer tokens. Tool-call answers are ~60 % prompt (442
+    prompt against 283 answer tokens each); chat and code answers ~10 %. When the dump is the bottleneck, dump general
+    answers first and tool calls later: on 2026-10-25 the d4 queue was 87 % tool answers (the night's generation ran
+    the tool prompt file first) and half of all its tokens were prompt.
+  - Several dump instances share one pool through `feed_split.py`; with generation at ~2.5k answer tokens/s (vLLM) one
+    three-card instance (~0.5–1k) falls behind.
+  - Scanning a big feature file's record headers on a busy HDD takes hours (each header read pulls ~2.4 MB of
+    read-ahead); take the dumped sequence ids from the dump's log instead.
 
 ### Step 4: pack and train
 
@@ -468,3 +476,6 @@ row's own window.
   slower (~455 against ~270 ms per decode step), back to `-ub 512`.
 - 2026-10-25 02:47 (CEST): vLLM writes drafter text on two RTX 3090s, the makers' NVFP4 GGUF pipeline-parallel with
   the attention patch: ~2.4–2.7k answer tokens/s, ~7× the G3 llama.cpp copy on the same cards (v2 `118a5fc`).
+- 2026-10-25 02:20 (CET): the dump is now the bottleneck (~540 answer tokens/s on three cards). 9,100 undumped tool
+  answers (2.54 M tokens, ~61 % prompt) held back from the d4 queue until the day, so that the night's dump spends its
+  time on general answers; `feed_split.py` for several dump instances in the day.
