@@ -23,6 +23,13 @@ RIG-TBD times as fast as stock llama.cpp, with the file most people already have
 | Served chat, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
 | Prompt processing, 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
+<!-- begin:drafter -->
+**With the staircase drafter**, served chat reaches **RIG-TBD tok/s** on nine cards and **RIG-TBD** on six. The drafter
+is a small trained head, a 0.29 GB side file shipped with the release, that guesses Flint's next token from the hidden
+states of the tokens already in flight; the cards check every guess
+([how it works](models/flint/README.md#the-staircase-drafter)).
+<!-- end:drafter -->
+
 The answers don't change: the engine's kernels change only the order of additions, and pipelined speculation gives
 exactly the tokens of plain decoding. To run it:
 1. **The engine:** the two archives of the fork's release RIG-TBD (tag and link), unpacked into one folder; the rig
@@ -30,6 +37,7 @@ exactly the tokens of plain decoding. To run it:
 2. **The model:** Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB). RIG-TBD: our own
    K2h-r16 file too, if the release includes it.
 3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
+4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
 
 ## Models
 
@@ -64,10 +72,11 @@ memory. The fork changes that, mostly without regard to which model runs:
 | A Pascal decode-attention kernel for one token | attention of Flint's shape (head size 128, 8 query heads per KV head); other shapes take the normal path | RIG-TBD |
 | Pascal matrix-vector kernels for Q4_K and Q6_K too | the common Q4_K_M downloads of other models | Flint's UD-Q4_K_XL: est. ≤ 1 % |
 | Pipelined speculation in llama-server (`--pipe-depth`): guessed tokens enter the idle cards of a layer split, checked against the real token | models with an attention-only cache (hybrid models next) | served chat 1.04–1.18×, edits up to 1.56×, rewrites up to 2.79× |
+| A trained drafter as the guesser of pipelined speculation (`--pipe-guess staircase`): a small head that reads the hidden states of the tokens in flight | Flint (a drafter is trained per model) | RIG-TBD | <!-- only:drafter -->
 | Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | RIG-TBD (they decoded 12–16 % slower than chat before) |
 | The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 % |
-| A Pascal prompt-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | long prompts RIG-TBD | <!-- only:rc3 -->
-| Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | RIG-TBD | <!-- only:rc3 -->
+| A Pascal prompt-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | long prompts RIG-TBD | <!-- only:q163-q111 -->
+| Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | RIG-TBD | <!-- only:q163-q111 -->
 
 The first three rows were measured on six cards with UD-Q4_K_XL, step by step; the rest are each change's own gain
 ([Flint page](models/flint/#how-it-got-here)). Of v2's decode gain on Flint, about 87 % comes from the Pascal-only changes
@@ -150,6 +159,7 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
    read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
    (slow on two cores) or on any Linux PC with Docker using
    [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh).
+   The v2 engine is commit `ab4a5cd02` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc4 -->
    The v2 engine is commit `7e6ec762f` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc3 -->
    The v2 engine is commit `594d20e08` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc1 -->
    v1, as released on 2026-10-23, is `pascal-p106`.

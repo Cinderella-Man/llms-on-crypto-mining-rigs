@@ -15,6 +15,7 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 
 | | |
 |---|---|
+| Engine | the v2 Pascal engine, commit `ab4a5cd02`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
@@ -39,6 +40,7 @@ llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa 
 - **`--pipe-depth 3`** sends up to three guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
+- **The drafter:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-v2.0.gguf` for the trained guesser ([below](#the-staircase-drafter)). <!-- only:drafter -->
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
@@ -48,7 +50,7 @@ llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa 
   `LLAMA_NO_MOE_DOWN_RESCALE=0` keeps the rescale; any value other than `tg` and `0` is unsafe for this file.
 - **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
   tool grammar on the host (RIG-TBD: their speed against chat). Set the client's context window equal to `-c`.
-- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. RIG-TBD: the time to first token it saves. <!-- only:rc3 -->
+- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. RIG-TBD: the time to first token it saves. <!-- only:q163-q111 -->
 - **Six cards:** add `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5` and lower `-c` (UD-Q4_K_XL fits est. ~128k tokens there).
 - **Q8_0** at the full context needs its layers split by memory: add `-ts 6,6,5,5,6,5,5,6,6`.
 
@@ -118,13 +120,42 @@ tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/ex
 - **A trained guesser would pay much more.** With 70 % of guesses right the pipeline runs 82–84 tok/s
   ([Q87](../../quants/experiments.md#registry)).
 
+<!-- begin:drafter -->
+### The staircase drafter
+
+The release ships a trained guesser for pipelined speculation: a small transformer that predicts Flint's next token
+from the hidden states Flint has already computed for the tokens in flight. The newest token has passed only the first
+card, older ones are further along: a staircase of depths. The drafter sits behind the copy lookup and runs on the
+first card in its own CUDA stream; the last card still samples every token, so the output is plain decoding's. How it
+is built and trained: [docs/drafter.md](../../docs/drafter.md).
+
+- **File:** `flint-staircase-drafter-v2.0.gguf`, RIG-TBD MB, from the release assets (RIG-TBD: the name follows the
+  release's tag).
+- **Turn it on:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-v2.0.gguf` to the chat command line
+  above, which already has `--pipe-depth 3`.
+- **Card counts:** RIG-TBD: the shipped head and the splits it was trained on, either depth-general (any split of 3–12
+  cards, a quarter of its training each on six and nine cards) or a head for six and nine cards. The engine builds the
+  drafter's window of hidden states from the run's own layer split.
+- **Acceptance on held-out text** (the share of guesses that match Flint's sample): RIG-TBD on nine cards, RIG-TBD on
+  six.
+
+Served, tok/s, median per request over chat, code, edit and tool prompts at the makers' sampling (RIG-TBD):
+
+| | No guessing | Copy lookup and store | **Drafter** |
+|---|---|---|---|
+| Nine cards, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Six cards, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
+
+One guess costs RIG-TBD ms on the first card, and every answer was identical to plain decoding (RIG-TBD).
+<!-- end:drafter -->
+
 ### Prompt processing
 
 UD-Q4_K_XL on nine cards, tok/s for prompts of 512 / 2,048 / 8,192 tokens: stock llama.cpp 185 / 493 / 593, v1
 187 / 494 / 593, v2 228 / 613 / 723. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by
 tokens per expert ([Q117](../../quants/experiments.md#registry)).
 
-Long prompts with the release's prompt-attention kernel, K2h-r16 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:rc3 -->
+Long prompts with the release's prompt-attention kernel, K2h-r16 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
 
 ### With hardware tuning
 
@@ -186,8 +217,9 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **The attention mask built on each card**, for prompts and decoding: decode at 64k tokens of context +12 %
   ([Q116](../../quants/experiments.md#registry)).
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
-- **A Pascal prompt-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:rc3 -->
-- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:rc3 -->
+- **A Pascal prompt-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:q163-q111 -->
+- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:q163-q111 -->
+- **The staircase drafter**, a trained guesser for pipelined speculation, with its side file: RIG-TBD. <!-- only:drafter -->
 
 ## Not measured yet
 
