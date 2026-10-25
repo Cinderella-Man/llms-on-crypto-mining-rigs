@@ -14,7 +14,7 @@ Flint on nine P106-090 cards (one PCIe 1.0 lane each, a 2-core Celeron with 4 GB
 | Generation, Unsloth UD-Q4_K_XL (`llama-bench` tg128) | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, UD-Q4_K_XL, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
-| Served chat, UD-Q4_K_XL, with the staircase drafter (`--pipe-guess staircase`) | — | — | **RIG-TBD** | <!-- only:drafter -->
+| Served chat, K2h-r16, the store and the staircase drafter (`--pipe-guess staircase`, 8k context) | — | — | **50.4** | <!-- only:drafter -->
 | Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 RIG-TBD (if the release carries tuned numbers): with a memory clock offset of RIG-TBD MT/s on every card, generation
@@ -64,7 +64,7 @@ output is the same as without it.
 - A small transformer guesses Flint's next token from the hidden states Flint has already computed for the tokens in flight: the newest token has passed only the first card, older ones are further along, a staircase of depths. It sits behind the copy lookup and runs on the first card in its own CUDA stream; the last card still samples every token, so the output is the same as without it.
 - It ships as two side files (~0.27 GB each), trained on Flint's own answers: `flint-staircase-drafter-9cards-{{VERSION}}.gguf` for nine cards, and `flint-staircase-drafter-{{VERSION}}.gguf`, depth-general, for six cards and any other split of 3–12 cards. Add `--pipe-guess staircase --pipe-draft <file>` next to `--pipe-depth 3`.
 - The engine builds the drafter's window of hidden states from the run's own layer split, so no further setting is needed.
-- Served chat with the drafter: RIG-TBD tok/s on nine cards (RIG-TBD × the copy lookup alone) and RIG-TBD on six cards, with every answer identical to plain decoding.
+- Served with the store in front (`--pipe-store`), Flint K2h-r16 at 8k context: 50.4 tok/s on nine cards against 48.6 with the store alone and 33.4 without guessing (the drafter adds 3.7 %, 8.6 % on chat and code at temperature 0), and 49.5 against 49.0 on six cards. Without the store the drafter alone is slower than the store alone (44.4 on nine cards). Every answer stayed identical to plain decoding.
 - It guesses for a request that generates alone, like the rest of pipelined speculation.
 <!-- end:drafter -->
 

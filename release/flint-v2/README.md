@@ -8,11 +8,11 @@ measured, where every file lives, and how to rebuild the model file and the draf
 
 | Piece | What it is | Where |
 |---|---|---|
-| **Engine** | llama.cpp fork for compute 6.1, commit `460160e93` (rc4: rc3 + the drafter), prebuilt for Ubuntu 24.04+ without AVX, with NVIDIA's CUDA runtime libraries as a second archive | the fork's GitHub release, OWNER-TBD (tag); notes: [release/notes-v2.0.md](../notes-v2.0.md) |
+| **Engine** | llama.cpp fork for compute 6.1, commit `2d53179aa` (rc4: rc3 + the drafter), prebuilt for Ubuntu 24.04+ without AVX, with NVIDIA's CUDA runtime libraries as a second archive | the fork's GitHub release, OWNER-TBD (tag); notes: [release/notes-v2.0.md](../notes-v2.0.md) |
 | **K2h-r16** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB | Hugging Face `OWNER-TBD/Flint-K2h-r16-GGUF`; card: [huggingface/flint-K2h-r16](huggingface/flint-K2h-r16/README.md) |
 | **The staircase drafter** | two ~0.27 GB side files that guess Flint's next token from the hidden states in flight, for `--pipe-guess staircase`: R2-9 for nine cards, R2-gen for six cards and any other count from 3 to 12 | Hugging Face `OWNER-TBD/Flint-Staircase-Drafter`; card: [huggingface/flint-staircase-drafter](huggingface/flint-staircase-drafter/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the no-new-file option: the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (not redistributed) |
-| The continuation store | Flint's earlier answers (13.8 M tokens, 110 MB) for `--pipe-store` | OWNER-TBD: ship it or not |
+| The continuation store | Flint's earlier answers (13.8 M tokens, 110 MB) for `--pipe-store`; the drafter's measured gain is on top of it (without it the drafter alone is slower than the store alone) | OWNER-TBD: ship it with the drafter files |
 | The drafter's data (optional) | the answers' manifest, and possibly the prompt and answer files | Hugging Face dataset `OWNER-TBD/flint-drafter-data`; card: [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md) |
 
 The upload plan, with the checks before each upload: [huggingface/UPLOAD.md](huggingface/UPLOAD.md). Made by Kamil
@@ -45,7 +45,7 @@ headline, nine P106-090 cards:
 | | Stock llama.cpp | v1 | **v2** |
 |---|---|---|---|
 | Generation, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Served chat, K2h-r16, with the drafter | — | — | **RIG-TBD** |
+| Served chat, K2h-r16, with the store and the drafter (8k context) | — | — | **50.4** (48.6 with the store alone, 33.4 without guessing) |
 
 The write-ups behind the work: [docs/research/notes](../../docs/research/notes/README.md) (the v2 synthesis, release
 settings, pipelined speculation, the drafter), [docs/drafter.md](../../docs/drafter.md), and the registry
@@ -82,7 +82,7 @@ produced.
 
 What a stranger cannot yet redo exactly from this repository, and what closes each gap:
 
-1. **The engine's release commit is not public yet.** `460160e93` and the release branch wait for the owner's push to
+1. **The engine's release commit is not public yet.** `2d53179aa` and the release branch wait for the owner's push to
    the fork (OWNER-TBD), and the release archives for the tag.
 2. **The GPTQ output head is byte-exact only by copying it.** A head computed from scratch (dumps on GPUs, GPTQ on the
    CPU) is equivalent within noise, not identical: GPU dumps differ in the last bits between GPUs. The calibration
@@ -101,7 +101,8 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
    machine names; `results.md` gives each number's public command instead (the drafter's served numbers come from
    `bench/pipespec/rig_server.sh` with its `d` configuration).
 7. **The store file** (110 MB of Flint's answers) is built by `bench/ngram_replay/datastore.cpp` from the generated
-   answers, which gap 4 covers; shipping it is OWNER-TBD.
+   answers, which gap 4 covers. The drafter's served gain is measured with it in front, so shipping it next to the
+   drafter files is OWNER-TBD.
 8. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) and the Q51
    dump (`q51-grid.bin`) are regenerated with the commands in the reproduce pages.
 9. **How the mix was found:** the per-group measurements that chose K2h-r16's tensor types (Q73, Q77) ran as private job
