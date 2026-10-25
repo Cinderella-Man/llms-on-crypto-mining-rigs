@@ -533,3 +533,8 @@ row's own window.
   is the 26-layer grid (the export default), and tokens in flight older than the split's window read their final state
   like committed rows (fork `c3a324ba0`). The 14 reference cases pass again on the CPU backend; the one different top
   id, on B's first step, is a near-tie (top two logits 0.0005 apart, error 0.003).
+- 2026-10-25 04:22 (CET): GPU checks of `c3a324ba0` on the quant machine: the 14 cases on the card, every top id equal;
+  llama-pipespec with the guesser equals plain decoding (tokens, logits, KV state, probe) with the depth-general random
+  head on three devices of one card at depths 1, 3 and 5 (tokens in flight beyond the window), and with the fused random
+  head on one device (K2h-r16 alone on a 32 GB card) at depths 1 and 3, T 1 sampled on the card.
+  Rig tarball `llama.cpp-20261025-c3a324ba0-pascal-p106-v2-drafter`.

@@ -84,7 +84,8 @@ F16 change nothing measurable. All Q8_0 (`--f16 ''`) is 0.22 GB.
 | `--pipe-draft-alpha A` | `--pipe-draft-alpha A` | q^A before the draw (default: the file's) |
 | `--pipe-draft-rows N`, `--pipe-draft-topk K`, `--pipe-draft-top1` | | rows per guess (default 8, or depth + 2 rounded up to 8), candidates, most likely token instead of the draw |
 
-The drafter's load line prints the split, the window and the taps. llama-pipespec's `PIPESPEC` line adds
+The drafter's load line prints the split, the window and the taps (llama's info level: add `-lv 4` to llama-pipespec or
+llama-server to see it). llama-pipespec's `PIPESPEC` line adds
 `copy_guesses`, `copy_hits`, `draft_guesses` and `draft_hits`; llama-server's timings print the head's guesses and right
 guesses per request.
 
