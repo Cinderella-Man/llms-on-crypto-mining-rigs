@@ -48,6 +48,7 @@ the history (pruning old tool output, compaction) fall back to the newest checkp
 | `--checkpoint-gen` | Ring checkpoints while generating, at `</think>` and `<tool_call>` (`--checkpoint-gen-at`), once 512 tokens (`--checkpoint-gen-min`) passed since the slot's last checkpoint: a re-rendered reply that differs after the reasoning re-reads only from there, not the reasoning | A drain and an 87.5 MiB copy per checkpoint, only after long reasoning; `--ctx-checkpoints 4` holds at most ~350 MiB |
 | No reserve per request | The scheduler reserve remembers the attached sampler chains by their samplers' names; attaching a covered set or detaching needs no new reserve (a larger top-k grows the allocator's buffers on first use). `LLAMA_SAMPLER_RESERVE=1` restores stock | None |
 | Canonical cell layout | An emptied cache stream restarts at cell 0, and a restored state goes where processing the sequence from its first token puts each cell (position p in cell p, p mod size in the ring), with the head after the newest | None; it also makes stock's checkpoint restores exact |
+| Restores resume after the checkpoint | A sliding-window checkpoint restore resumes at its last position + 1 (stock: at its last position, which a recurrent state needs), so the batch after it is the one that followed the checkpoint when it was taken, and a GPU rounds it the same way | One token less to evaluate per restore |
 | Cache counters | Timings report where the reused cells came from (`cache_src`: none, live, checkpoint, prefix), the restored checkpoint (`cache_ckpt_n`), checkpoints created (`ckpt_created_n`) and restore time (`cache_restore_ms`) | None |
 
 The pipelined generation path (`--pipe-depth`) takes no generation checkpoints; tool requests run batched in this build
@@ -71,6 +72,13 @@ tokenizer, template, window and layer pattern (`make_tiny_flint.py`).
 | Divergence 400 tokens into a 1,500-token reply, from a generation checkpoint | identical |
 | Stock's two tail checkpoints, restored | identical (they differed before the canonical layout) |
 | `-bs`, three tool requests: scheduler reserves 1 instead of 2 on `v2-next`; 2 instead of 4 on the release candidate, whose on-device sampling (Q67) attaches a chain to tool requests too | the same replies |
+
+On a V100 with a real Flint file (Q4_0, 23 GB; one server, a test slot and a cold slot), the saved prefix restored
+into the test slot gives the cold slot's log-probabilities bit for bit (2,869 tokens, 113.5 MiB, 378 ms), as does a
+first chat turn. Two configurations that split a prompt into different micro-batches (one tail checkpoint against
+two) do not: GPU kernels round differently for different batch sizes, so their replies part at the first sampled token
+that the difference tips, from the first request on. A cold server of either configuration agrees with its own cache
+paths; the replay's exactness arm (`agent-tail2`) therefore runs the agent cache with stock's two tail checkpoints.
 
 Before the canonical layout, every restore (stock checkpoints too) differed from the cold server from the first token,
 and the first cut-back design used checkpoints that hold only the window: a restore then lacked most of the window,

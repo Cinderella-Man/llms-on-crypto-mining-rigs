@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 # gpu_check.sh's phases inside its container (/ac = WORK): servers one after the other on port 18421, the clients next
 # to them. MODEL and MODE (check, replay, all) come from the environment; /ac/gpu-check/env, if present, is sourced
-# after it (MODEL, MODE, CHECK_CTX, REPLAY_CTX, CHECK_RESTART), so a job already queued on the lock can be redirected.
+# after it (MODEL, MODE, CHECK_CTX, REPLAY_CTX, CHECK_RESTART, REPLAY_ARMS, SERVER_BIN, FORCE_PASCAL), so a job already
+# queued on the lock can be redirected.
 # The model and both slots must fit one card: a 32 GB V100 holds a 23 GB Flint file with these contexts.
 set -uo pipefail
 CHECK_CTX=16384      # two slots of 8k: the check scenarios stay below ~6k tokens
 REPLAY_CTX=32768     # one slot: the longest replayed session (~26.5k tokens recorded)
 CHECK_RESTART=0      # 1: the prefix again from its file after a restart (a third model load)
+REPLAY_ARMS="stock agent-tail2 agent"  # agent-tail2 splits prompts as stock does, so its replies must equal stock's
+SERVER_BIN=/ac/out-cuda/build/bin/llama-server
+FORCE_PASCAL=1       # 0: the GPU's own kernels instead of the Pascal ones (the server logic is the same)
 [ -f /ac/gpu-check/env ] && . /ac/gpu-check/env
+[ "$FORCE_PASCAL" = 1 ] || unset GGML_CUDA_MMVQ_PASCAL GGML_CUDA_PERSISTENT_MOE LLAMA_INPUT_ON_GPU LLAMA_INPUT_UPLOAD
 PORT=18421
 U=http://127.0.0.1:$PORT
 G=/ac/gpu-check
@@ -19,7 +24,7 @@ cd /ac/bench/agent_cache
 start() { # log env args
     local log=$1 env=$2 args=$3
     # shellcheck disable=SC2086
-    env $env /ac/out-cuda/build/bin/llama-server $COMMON $args > "$G/$log.log" 2>&1 &
+    env $env "$SERVER_BIN" $COMMON $args > "$G/$log.log" 2>&1 &
     SRV=$!
     for _ in $(seq 900); do curl -sf $U/health > /dev/null && return 0; kill -0 $SRV 2>/dev/null || break; sleep 2; done
     echo "$log: server did not start"; tail -20 "$G/$log.log"; return 1
@@ -38,15 +43,22 @@ if [ "$MODE" = check ] || [ "$MODE" = all ]; then
     grep -hE "^(PASS|FAIL|ALL)" $G/check1.txt $G/check2.txt 2>/dev/null
 fi
 if [ "$MODE" = replay ] || [ "$MODE" = all ]; then
-    rm -f $G/replay.jsonl; rm -rf $G/pfx-replay; mkdir -p $G/pfx-replay
+    rm -f $G/replay.jsonl
     RUN="python3 replay_sessions.py run $G/sessions.jsonl --server $U --out $G/replay.jsonl"
-    start replay-stock "LLAMA_SAMPLER_RESERVE=1" "-c $REPLAY_CTX -np 1 -bs --checkpoint-tail2" && \
-        { $RUN --label stock > $G/replay-stock.txt 2>&1 || status=1; stop; }
-    start replay-ac "" "-c $REPLAY_CTX -np 1 -bs --prefix-cache $G/pfx-replay --checkpoint-gen" && \
-        { $RUN --label agent-cache > $G/replay-ac.txt 2>&1 || status=1; stop; }
+    for arm in $REPLAY_ARMS; do
+        case $arm in
+            stock)       env="LLAMA_SAMPLER_RESERVE=1"; args="--checkpoint-tail2";;
+            agent)       env=""; args="--prefix-cache $G/pfx-$arm --checkpoint-gen";;
+            agent-tail2) env=""; args="--prefix-cache $G/pfx-$arm --checkpoint-gen --checkpoint-tail2";;
+            *) echo "unknown arm $arm"; continue;;
+        esac
+        rm -rf $G/pfx-$arm; mkdir -p $G/pfx-$arm
+        start replay-$arm "$env" "-c $REPLAY_CTX -np 1 -bs $args" && { $RUN --label $arm > $G/replay-$arm.txt 2>&1 || status=1; stop; }
+    done
     python3 replay_sessions.py summary $G/replay.jsonl --reference stock | tee $G/replay-summary.md
-    for f in replay-stock replay-ac; do
-        echo "$f: $(grep -c 'sched_reserve: reserving' $G/$f.log) reserves, $(grep -c 'restored context checkpoint' $G/$f.log) checkpoint restores, $(grep -c 'forcing full prompt' $G/$f.log) full re-reads, $(grep -c 'prefix cache: restored' $G/$f.log) prefix restores"
+    for arm in $REPLAY_ARMS; do
+        f=$G/replay-$arm.log
+        echo "$arm: $(grep -c 'sched_reserve: reserving' $f) reserves, $(grep -c 'restored context checkpoint' $f) checkpoint restores, $(grep -c 'forcing full prompt' $f) full re-reads, $(grep -c 'prefix cache: restored' $f) prefix restores, $(grep -c 'CUDA error' $f) CUDA errors"
     done
 fi
 exit $status
