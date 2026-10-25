@@ -232,6 +232,8 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 
 ## More
 
+- [release/flint-v2](../../release/flint-v2/README.md): everything about this release in one folder, with the recipes
+  that rebuild K2h-r16 and the drafter from scratch and every number behind the release.
 - [Benchmarks](../../docs/benchmarks/): [Flint, first measurements](../../docs/benchmarks/2026-10-22-flint.md) (files,
   quality against speed), [the five-turn chat](../../docs/benchmarks/2026-10-23-flint-chat.md).
 - [quants/](../../quants/README.md): making Flint files for these cards; [recipes](../../quants/recipes/); every

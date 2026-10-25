@@ -39,6 +39,9 @@ exactly the tokens of plain decoding. To run it:
 3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
 4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
 
+Everything about this release in one folder, including how to rebuild the model file and the drafter from scratch:
+[release/flint-v2](release/flint-v2/README.md).
+
 ## Models
 
 Generation speed in tokens per second (tok/s) for one conversation, measured on the [reference rig](#the-reference-rig):
