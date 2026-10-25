@@ -125,14 +125,30 @@ def random_split(n, rng, p_light=0.3):
 STANDARD_SPLITS = {9: [drafter.even_split(9), drafter.even_split(9, 2)]}
 
 
+def card_splits(token):
+    """(window name, split) pairs of a --cards token: "N" the standard splits of N cards, "Ne" the even split only,
+    "Nl" the split with two layers on the last card only (named as in score.py: gN, gNlight)."""
+    if token.endswith("e"):
+        return [(f"g{token[:-1]}", drafter.even_split(int(token[:-1])))]
+    if token.endswith("l"):
+        return [(f"g{token[:-1]}light", drafter.even_split(int(token[:-1]), 2))]
+    n = int(token)
+    return [(f"g{n}" + ("light" if k else ""), s) for k, s in enumerate(STANDARD_SPLITS.get(n, [drafter.even_split(n)]))]
+
+
 def sample_general(recorded, rng, kinds=(0.6, 0.15, 0.25), cards=None):
     """One window of a random 3-12-card split: card count by CARD_WEIGHTS, a random split, then the head on card 1
     after its stage, a spare card before the cycle, or the first guess after a miss (probabilities kinds); each depth
-    becomes the deepest recorded layer at or below it. With cards (a list of card counts), the card count is drawn
-    from it uniformly and the split from its STANDARD_SPLITS."""
-    n = rng.choice(cards) if cards else rng.choices(list(CARD_WEIGHTS), weights=list(CARD_WEIGHTS.values()))[0]
-    kind = rng.choices(("stair", "pre", "miss"), weights=kinds)[0]
-    split = rng.choice(STANDARD_SPLITS.get(n, [drafter.even_split(n)])) if cards else random_split(n, rng)
+    becomes the deepest recorded layer at or below it. With cards (a list of --cards tokens, see card_splits;
+    repeating one weights it), the token is drawn from the list uniformly and the split from its splits."""
+    if cards:
+        token = rng.choice(cards)
+        kind = rng.choices(("stair", "pre", "miss"), weights=kinds)[0]
+        split = rng.choice([s for _, s in card_splits(token)])
+    else:
+        n = rng.choices(list(CARD_WEIGHTS), weights=list(CARD_WEIGHTS.values()))[0]
+        kind = rng.choices(("stair", "pre", "miss"), weights=kinds)[0]
+        split = random_split(n, rng)
     return {"sample": [drafter.depth_name(x, recorded) for x in drafter.split_depths(split, kind)]}
 
 
@@ -252,8 +268,9 @@ def main():
     ap.add_argument("--general", action="store_true",
                     help="depth-general head: anchors at any recorded layer, windows of random 3-12-card splits "
                          "(sample_general); no fused anchors")
-    ap.add_argument("--cards", help="N,N,...: with --general, train on these card counts' standard splits only "
-                                    "(STANDARD_SPLITS), e.g. 6,9")
+    ap.add_argument("--cards", help="tokens: with --general, train on these splits only: N = N cards' standard splits "
+                                    "(STANDARD_SPLITS), Ne = the even split, Nl = two layers on the last card; repeats "
+                                    "weight (e.g. 6,9 or 9e,9l,9l)")
     ap.add_argument("--reg", type=float, default=0.0,
                     help="weight of the feature-regression loss (newest row onto Flint's final state of that token)")
     args = ap.parse_args()
@@ -296,16 +313,15 @@ def main():
     general_sampler = None
     if args.general:
         srng = random.Random(args.seed + 7)
-        cards = [int(x) for x in args.cards.split(",")] if args.cards else None
+        cards = args.cards.split(",") if args.cards else None
         general_sampler = lambda layers: sample_general(layers, srng, cards=cards)   # noqa: E731
     # validation windows; the best checkpoint is the one with the highest mean acceptance over the primary ones
     eval_profile, primary = profile, [next(iter(windows))]
     if args.general:   # the staircases of the card counts the head is for (6 and 9 for the 3-12 head)
         common = sorted(set.intersection(*(set(ff[0].layers) for ff in files)))
         eval_profile, primary = {"committed": profile["committed"], "windows": dict(windows)}, []
-        for n in cards or (6, 9):
-            for k, split in enumerate(STANDARD_SPLITS.get(n, [drafter.even_split(n)])):
-                name = f"g{n}" + ("light" if k else "")
+        for token in cards or ("6", "9"):   # a repeated token weights the choice of checkpoint as it weights training
+            for name, split in card_splits(token):
                 eval_profile["windows"][name] = [drafter.depth_name(x, common) for x in drafter.split_depths(split)]
                 primary.append(name)
     score_of = lambda ev: sum(ev[w]["coupled"] for w in primary) / len(primary)   # noqa: E731

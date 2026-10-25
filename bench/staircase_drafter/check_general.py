@@ -43,7 +43,7 @@ def main():
         newest[w[0]] += 1
     print("window lengths:", sorted(lens.items()))
     print("newest anchor:", newest.most_common(8))
-    for cards in ([6], [9], [6, 9]):   # specialists (--cards): only the standard splits' windows
+    for cards in (["6"], ["9"], ["6", "9"], ["9e", "9l", "9l"]):   # specialists (--cards): only their splits' windows
         seen = collections.Counter(tuple(train.sample_general(rec.layers, rng, cards=cards)["sample"])
                                    for _ in range(2000))
         print(f"cards {cards}: {len(seen)} distinct windows:", ", ".join(f"{list(w)} {c}" for w, c in seen.most_common()))
