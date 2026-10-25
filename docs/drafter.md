@@ -24,13 +24,15 @@ card 2 or 3, older ones are complete: a "staircase" of depths. The design follow
 design and not EAGLE-3, Medusa or MTP is in [pipeline drafter](research/notes/pipeline_drafter.md). It sits behind the
 copy lookup, which guesses first inside copied text.
 
-| Where we stand (2026-10-25 morning) | |
+| Where we stand (2026-10-25 09:20) | |
 |---|---|
-| Best held-out score | 0.502 coupled acceptance on Q51 fresh text, 0.562 overall (M1, run R1, 13.5 M tokens, six cards); after a miss 0.541 / 0.603 |
-| Best validation score | 0.580 staircase (M1, R1, 180 min) |
+| Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
+| Best on the release split | M2 run R2-9 (nine-card specialist, 27.6 M tokens): 0.476 coupled acceptance on Q51 fresh text, 0.538 overall; even nine-card split 0.492 / 0.553 |
+| Best on six cards | M2 runs R2-69 / R2-gen: 0.525 / 0.584 and 0.523 / 0.583 (R1: 0.502 / 0.562) |
+| One head for 3–12 cards | R2-gen: from 0.556 / 0.624 at three cards to 0.449 / 0.508 at twelve (section 6) |
 | Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
-| Gate to the rig | ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall, coupled. Not a kill line (decision 2026-10-24 21:25) |
-| Next | M2 round of 2026-10-25 06:00: four depth-general heads (3–12 cards, 6 + 9, 9, 6) on the same data |
+| Gate | the release needs a rig-measured win on the release split (the owner, 2026-10-25 08:15). The offline bar was ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall on six cards |
+| Next | the rig times R2-9 (and R2-gen) today; the final round (~15:00, ~50 M tokens) continues R2-9 |
 | Engine | guesser built (`--pipe-guess staircase`, fork branch `pascal-p106-v2-drafter`, `daf310b66`): window from the run's split, six-anchor and depth-general heads, exact against plain decoding; not yet timed on the rig |
 
 Terms used below:
@@ -269,7 +271,7 @@ The kit (tarball, random heads of the real shape, R1's head, `rig_d3.sh`) is rea
 |---|---|---|---|
 | [M0](#m0-the-pilot-2026-10-24) | 2026-10-24 | superseded by M1 (2026-10-24 22:00) | first heads: fixed six-card windows, all windows trained per sequence |
 | [M1](#m1-sampled-windows-fused-anchors-warm-starts-2026-10-24-2200) | 2026-10-24 22:00 | current | one sampled window per sequence, fused anchors, warm starts; 1.8× the steps |
-| [M2](#m2-depth-general-for-312-cards-planned-2026-10-25-0600) | planned 2026-10-25 06:00 | planned | layer-indexed anchors, one head for any 3–12-card split; specialists on a few card counts for comparison |
+| [M2](#m2-depth-general-for-312-cards-2026-10-25-0600) | 2026-10-25 06:00 | current | layer-indexed anchors, one head for any 3–12-card split; specialists on a few card counts for comparison |
 
 ### M0: the pilot (2026-10-24)
 
@@ -321,9 +323,15 @@ The kit (tarball, random heads of the real shape, R1's head, `rig_d3.sh`) is rea
   - The new recipe added ~+0.04 fresh over the M0 learning curve: 0.502 at 13.5 M, where M0's +0.03 per doubling
     projects ~0.48.
 
-### M2: depth-general for 3–12 cards (planned 2026-10-25 06:00)
+### M2: depth-general for 3–12 cards (2026-10-25 06:00)
 
-**Planned.** Owner requirement of 2026-10-25 01:10: the drafter must serve any split of 3–12 cards.
+**Current.** Owner requirement of 2026-10-25 01:10: the drafter must serve any split of 3–12 cards. Code: v2
+`d8131c0`, `ba83692` (split tokens), `617eb3c` (feature-file reads).
+
+- **Result of the first round** (27.6 M answer tokens, 134 min per head, warm-started from R1): one general head is
+  within 0.008 of the nine-card specialist on the release split. Paired over Q51's positions, R2-9 − R2-gen is
+  +0.0076 at g9light (CI +0.006 … +0.010) and +0.004 on the even nine-card split. The specialist loses 0.015 at six
+  cards, where it wasn't trained. Twice R1's data gave +0.021 at six cards.
 
 - **Anchors are layer-indexed:** any layer input 1–48 or the final state. Projections are shared within five depth
   buckets (layer inputs 1–12, 13–20, 21–28, 29–36, 37–48; the final state its own), plus a learned per-layer depth
@@ -434,11 +442,20 @@ row's own window.
 | 2026-10-25 | M0, C (card 1's output only) | 13.5 M | 6 (card 1) | – | 0.437 | 0.517 | Gumbel |
 | 2026-10-25 | M0, B (pre-step / late / after miss) | 13.5 M | 6 (spare card) | – | 0.300 / 0.316 / 0.331 | 0.303 / 0.323 / 0.339 | Gumbel |
 | 2026-10-25 | M0, 4-layer A, stopped at 75 of 300 min (900 steps, 0.6 epochs) | 13.5 M | 6 (card 1) | 0.385 (60 min) | 0.355 | 0.364 | Gumbel |
+| 2026-10-25 | M2, R2-9 (nine-card specialist, from R1, 134 min, RTX 3090 BF16) | 27.6 M | 9 light (6/…/5/2) | 0.571 | 0.476 (0.455–0.498) | 0.538 (0.503–0.571) | Gumbel |
+| 2026-10-25 | M2, R2-9 | 27.6 M | 9 even | 0.585 | 0.492 | 0.553 | Gumbel |
+| 2026-10-25 | M2, R2-9 | 27.6 M | 6 | 0.594 | 0.507 | 0.567 | Gumbel |
+| 2026-10-25 | M2, R2-69 (6 + 9 cards, from R1, 134 min, V100 FP16) | 27.6 M | 9 light / 9 even / 6 | 0.565 / 0.581 / 0.615 | 0.472 / 0.490 / 0.525 | 0.532 / 0.550 / 0.584 | Gumbel |
+| 2026-10-25 | M2, R2-gen (3–12 cards, from R1, 134 min, V100 FP16) | 27.6 M | 9 light / 9 even / 6 | 0.563 / 0.580 / 0.613 | 0.469 / 0.488 / 0.523 | 0.531 / 0.549 / 0.583 | Gumbel |
+| 2026-10-25 | M2, R2-gen per card count: 3 / 4 / 5 / 7 / 8 / 10 / 12 | 27.6 M | 3–12 | – | 0.556 / 0.529 / 0.521 / 0.495 / 0.488 / 0.451 / 0.449 | 0.624 / 0.587 / 0.582 / 0.560 / 0.549 / 0.510 / 0.508 | Gumbel |
+| 2026-10-25 | M2, all three, after a miss (6 and 9 cards) | 27.6 M | 6, 9 | 0.635–0.650 | 0.547–0.562 | 0.611–0.623 | Gumbel |
+| 2026-10-25 | M2, R2-gen, release split | 27.6 M | 9 light | – | 0.458 | 0.525 | inverse-CDF |
 
 - **Learning curve (head A, Q51 fresh):** 0.422 (3.08 M) → 0.463 (8.6 M) with M0, ~+0.03 per doubling of data; 0.502
-  (13.5 M) with M1. At +0.03 per doubling, 24 M tokens project to ~0.53, so reaching 0.55 also needs recipe gains (M2,
-  regularization, a bigger head). With M0's recipe the gate projected to ~60–70 M tokens
-  ([drafter acceptance](research/notes/drafter_acceptance.md) 2.4).
+  (13.5 M) with M1; 0.523–0.525 (27.6 M) with M2 on the same six-card staircase, +0.021 for one doubling. At that
+  rate ~50 M tokens give ~0.54 and ~75 M ~0.55 on six cards; the release split sits ~0.05 lower (0.476 at 27.6 M).
+  With M0's recipe the gate projected to ~60–70 M tokens ([drafter acceptance](research/notes/drafter_acceptance.md)
+  2.4).
 - **Simulated speed (2026-10-25, R1, six cards, `sim.py`):** 1.90× plain decoding (70.9 tok/s) with the copy lookup in
   front, against 1.34× (50.1) for the copy lookup with the n-gram cache, 1.44× (53.7) with the continuation table, and
   1.85× for an oracle right 50 % of the time.
@@ -540,3 +557,9 @@ row's own window.
   head on three devices of one card at depths 1, 3 and 5 (tokens in flight beyond the window), and with the fused random
   head on one device (K2h-r16 alone on a 32 GB card) at depths 1 and 3, T 1 sampled on the card.
   Rig tarball `llama.cpp-20261025-c3a324ba0-pascal-p106-v2-drafter`.
+- 2026-10-25 06:00–09:17 (CET): the first M2 round on 27.6 M answer tokens, three heads from R1 (R2-gen 3–12 cards,
+  R2-69, R2-9), 134 minutes each; vLLM generated until 07:55. On the release split (nine cards, light last card) R2-9
+  leads with 0.476 / 0.538, R2-gen 0.008 behind (paired), below the ~0.01 that would justify per-card-count heads;
+  six cards 0.525 / 0.584. R2-9 and R2-gen go to the rig.
+- 2026-10-25 08:00–08:15: the owner's cut-off (no more generation, one final round) and decision: the release ships
+  the drafter only as a confirmed rig-measured win on the release split.
