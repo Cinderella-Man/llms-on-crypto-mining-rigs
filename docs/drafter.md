@@ -204,11 +204,13 @@ Prompts → answers → dump → train → score → simulate → export → eng
   |---|---|---|
   | `depth_proj` (depth 0–49 → projection) | L9, L17, L25, L33, L41 and the final state: one each | `drafter.BUCKET`: five buckets plus the final state |
   | `depth_emb_row` (depth → embedding row) | the 7-row anchor embedding | the 50-row depth embedding |
-  | `recorded` (depths trained on) | 9, 17, 25, 33, 41 | the dumps' common layers (e.g. 4, 6, 8, 9, 10, …, 47) |
+  | `recorded` (depths trained on) | 9, 17, 25, 33, 41 | the 26-layer grid: 4, 6, 8, 9, 10, 12, …, 44, 47 |
   | `timing` | `split_depths`' stage model: 0.435 ms per layer at six cards, +0.024 per extra card (min 0.3), head 2.5 ms, hop 0.3 ms | same |
   | others | sizes, `fuse` (+ `fuse_depths`), `committed`, `alpha`, `general`, `target_layers` = 49 | same |
 
-  `export_gguf.py` reads `general` from the run's config and `recorded` from its `--feats` files (or `--recorded`).
+  `export_gguf.py` reads `general` from the run's config and writes the grid as `recorded` (`--recorded` for another
+  set). The grid, not the layers every dump shares: each training record's window reads its own dump's layers, and the
+  grid dumps cover all 26 (`train.py`'s common set only builds the validation windows).
 - **Size:** Q8_0 matrices with an F16 output head (the default since v2 `6362f5d`): 0.29 GB for a two-layer fused head
   with 40,000 ids, 0.27 GB unfused. All-Q8_0 is 0.22 GB but moves the logits by ~0.16 rms (most likely token unchanged,
   its probability by up to 0.07); the F16 head by ~0.035.
@@ -225,19 +227,20 @@ Prompts → answers → dump → train → score → simulate → export → eng
 - **Window shape, from the run's split** (since fork `pascal-p106-v2-drafter` at 2026-10-25 03:00): the engine reads
   the layers per card from the actual device assignment, runs `split_depths` with the file's timing (kind `stair` on a
   card that holds layers, `pre` on a spare card; after a miss the one-row window falls out), and maps each depth to the
-  deepest recorded depth at or below it. Tokens in flight older than the window read the last boundary before the
-  output card. Six-anchor heads go through the same rule with `recorded` = their five anchors, which reproduces their
-  six-card staircase L9, L17, L33, L41. Examples with M2's recorded layers:
+  deepest recorded depth at or below it. The window ends at the first token that has passed the last card, so every
+  older token in flight is complete and reads like a committed row: its final state. Six-anchor heads go through the
+  same rule with `recorded` = their five anchors, which reproduces their six-card staircase L9, L17, L33, L41. Examples
+  with M2's grid:
 
   | Split | Window (newest first) | Older tokens |
   |---|---|---|
-  | 17/16/16 | L17, L33 | L33 |
-  | 13/12/12/12 | L12, L25, L37 | L37 |
-  | 9/8/8/8/8/8 | L9, L17, L33, L41 | L41 |
-  | 9/8/8/8/8/8, spare card | emb, L9, L25, L33, L41 | L41 |
-  | 6/6/6/6/5/5/5/5/5 | L6, L12, L24, L34, L39, L44 | L44 |
-  | 6/6/6/6/6/6/6/5/2 | L6, L12, L18, L24, L30, L36, L42, L47 | L47 |
-  | 5/4/…/4 (12 cards) | L4, L9, L17, L25, L33, L41, L44 | L44 |
+  | 17/16/16 | L17, L33 | final state |
+  | 13/12/12/12 | L12, L25, L37 | final state |
+  | 9/8/8/8/8/8 | L9, L17, L33, L41 | final state |
+  | 9/8/8/8/8/8, spare card | emb, L9, L25, L33, L41 | final state |
+  | 6/6/6/6/5/5/5/5/5 | L6, L12, L24, L34, L39, L44 | final state |
+  | 6/6/6/6/6/6/6/5/2 | L6, L12, L18, L24, L30, L36, L42, L47 | final state |
+  | 5/4/…/4 (12 cards) | L4, L9, L17, L25, L33, L41, L44 | final state |
 
   `--pipe-draft-stair` overrides the window, `--pipe-draft-kind stair|pre` the start.
 - **Coupling:** inverse-CDF with the served sampler's own uniform ([section 5](#5-coupling-with-the-sampler)).
@@ -522,3 +525,7 @@ row's own window.
   `daf310b66`, export and checks in v2): six-anchor heads keep their six-card staircase, depth-general heads (M2) load
   with no engine change; the C++ head equals `Drafter.forward` on 3-, 4-, 6-, 9-, 9-light- and 12-card windows and a
   spare card. Rig tarball `llama.cpp-20261025-daf310b66-pascal-p106-v2-drafter`.
+- 2026-10-25 03:50 (CET): two corrections from C9's review of the side-file fields: a depth-general head's `recorded`
+  is the 26-layer grid (the export default), and tokens in flight older than the split's window read their final state
+  like committed rows (fork `c3a324ba0`). The 14 reference cases pass again on the CPU backend; the one different top
+  id, on B's first step, is a near-tie (top two logits 0.0005 apart, error 0.003).

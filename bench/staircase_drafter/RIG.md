@@ -24,7 +24,7 @@ vocabulary (draft id to Flint token id), and per-depth metadata, so a new head s
   state after Flint's output norm), its projection and its embedding row. A six-anchor head has one projection per
   anchor (L9, L17, L25, L33, L41, final); a depth-general head (`train.py --general`) one per depth bucket and an
   embedding per depth;
-- `recorded`: the depths the head was trained on (for a general head, the layers every training dump stored; or
+- `recorded`: the depths the head was trained on (for a general head the 26-layer grid of its dumps, 4, 6, 8, …, 47; or
   `--recorded`);
 - `timing`: the stage model the engine derives the window from (`drafter.split_depths`);
 - sizes, `fuse`, `committed` (the depth of committed rows), `alpha`.
@@ -40,9 +40,10 @@ F16 change nothing measurable. All Q8_0 (`--f16 ''`) is 0.22 GB.
   token enters card 1 once per cycle, so the token m cycles older has finished every card that ends within m cycles
   (`split_depths` with the file's stage times); each such depth becomes the deepest recorded depth at or below it. A
   head on a card that holds layers starts right after that card's stage (`stair`: the newest token at card 1's
-  output); a head on a spare card starts with the cycle (`pre`: the newest token has only its embedding). Tokens in
-  flight older than the window read the last boundary before the output card. Six cards 9/8/8/8/8/8 give L9, L17, L33,
-  L41; nine cards 6/6/6/6/5/5/5/5/5 give L6, L12, L24, L34, L39, L44 for a head trained on those layers.
+  output); a head on a spare card starts with the cycle (`pre`: the newest token has only its embedding). The window
+  ends at the first token that has passed the last card: every older token in flight is complete and reads its final
+  state, like a committed row. Six cards 9/8/8/8/8/8 give L9, L17, L33, L41; nine cards 6/6/6/6/5/5/5/5/5 give L6, L12,
+  L24, L34, L39, L44 for a head trained on those layers.
 - **Taps.** Every one-token pipe evaluation copies the inputs of the window's layers and its final hidden state (8 KB
   each, float32) into pinned host memory, each on the card that computes it, right after that card's work for the
   token, and records an event: about one row per card per token.

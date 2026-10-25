@@ -45,6 +45,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 ANCHOR_LAYERS = [9, 17, 25, 33, 41]       # drafter.ANCHOR_IDS: L9 .. L41, then "full"
 N_TARGET = 49                             # drafter.FULL
 TIMING = [0.435, 0.024, 0.3, 2.5, 0.3]    # drafter.split_depths' defaults
+# the layer inputs a depth-general head is trained on: the grid dumps store them, and each training record's window
+# reads its own dump's layers (train.py's `common`, the layers every dump stored, only builds the validation windows)
+GRID = [4, 6, 8, 9, 10, 12, 14, 16, 17, 18, 20, 22, 24, 25, 27, 29, 30, 33, 34, 36, 37, 39, 41, 42, 44, 47]
 
 
 def profile_stair(profile):
@@ -168,13 +171,6 @@ def state_dict_numpy(path):
     return {k: v.float().numpy() for k, v in sd.items() if hasattr(v, "float")}
 
 
-def recorded_layers(cfg):
-    """The layer inputs every training dump of a train.py run stored (train.py's `common`)."""
-    import feats
-    sets = [set(feats.FeatFile(p)[0].layers) for p in cfg["args"]["feats"]]
-    return sorted(set.intersection(*sets))
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--head", required=True, help="train.py output folder")
@@ -188,8 +184,8 @@ def main():
     ap.add_argument("--f16", default="head",
                     help="matrix groups kept in f16 with --type q8_0: emb,anc,fuse,blk,head (default head: a q8_0 output "
                          "head moves a trained head's logits by ~0.16 rms, an f16 one by ~0.035; '' for all q8_0)")
-    ap.add_argument("--recorded", help="depth-general heads: the layer inputs it was trained on (default: the layers "
-                                       "every --feats file of its config stored)")
+    ap.add_argument("--recorded", help="depth-general heads: the layer inputs it was trained on (default: the grid, "
+                                       "4,6,8,...,47)")
     args = ap.parse_args()
     cfg = json.load(open(os.path.join(args.head, "config.json")))
     sd = state_dict_numpy(args.weights or os.path.join(args.head, "head.pt"))
@@ -197,7 +193,7 @@ def main():
     general = bool(cfg["args"].get("general", False))
     recorded = None
     if general:
-        recorded = [int(x) for x in args.recorded.split(",")] if args.recorded else recorded_layers(cfg)
+        recorded = [int(x) for x in args.recorded.split(",")] if args.recorded else GRID
     info = export(sd, cfg["head"], cfg["args"].get("layers", 2), cfg["args"].get("fuse", False), vocab, args.out,
                   qtype=args.type, alpha=args.alpha, stair=args.stair.split(",") if args.stair else None,
                   f16=tuple(g for g in args.f16.split(",") if g), general=general, recorded=recorded)

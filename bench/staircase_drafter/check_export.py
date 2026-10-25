@@ -5,8 +5,8 @@
       for llama-pipe-drafter-check: a prompt committed in bulk, then guesses with commits and windows of tokens in
       flight, each with the logits drafter.Drafter.forward gives (float32, CPU). The windows are the card-1 window of
       --split (drafter.split_depths, each depth mapped to the deepest anchor the head was trained on at or below it:
-      the six-card anchors, or --recorded for a depth-general head); tokens in flight beyond it read the split's last
-      boundary.
+      the six-card anchors, or --recorded for a depth-general head); tokens in flight beyond it have passed the last
+      card and read their final state, like committed rows.
   python check_export.py real OUT_DIR --weights heads/A --vocab vocab.npy --flint FLINT_DIR --feats q51.bin [--seq 0]
       the same with a trained six-anchor head and Flint's real hidden states from a llama-staircase-dump file (the
       anchors the dump stored in FP8, decoded to float32 on both sides), on the six-card split
@@ -38,7 +38,7 @@ import drafter  # noqa: E402
 import export_gguf  # noqa: E402
 
 SIX = [9, 17, 25, 33, 41, 49]   # the six-anchor tap layout
-RECORDED = "4,6,8,9,10,12,14,16,17,18,20,22,24,25,27,29,30,33,34,36,37,39,41,42,44,47"
+RECORDED = ",".join(map(str, export_gguf.GRID))
 
 
 def random_model(d, n_layer, fuse, n_vocab_table, n_vocab_draft, ffn, seed, general=False):
@@ -66,9 +66,9 @@ def state_numpy(model):
 def write_case(path, model, table, case_tok, model_tok, P, windows, stair, deep, committed, layout, taps_of, full, l9, fuse):
     """Writes case.bin: the prompt (positions 0..P-1, committed in bulk), then one guess per entry of windows (tokens in
     flight), each after committing the oldest token of the previous window. stair: anchor names of the tokens in flight,
-    newest first; deep: the anchor of older tokens in flight; layout: the depth of each tap row. case_tok indexes
-    `table`, model_tok is what the reference model embeds (the same tokens). taps_of(pos, committed) -> float32
-    [len(layout), d]; full and l9 are the committed rows' final state and layer-9 input by position."""
+    newest first; deep: the anchor of older tokens in flight ("full": complete); layout: the depth of each tap row.
+    case_tok indexes `table`, model_tok is what the reference model embeds (the same tokens). taps_of(pos, committed) ->
+    float32 [len(layout), d]; full and l9 are the committed rows' final state and layer-9 input by position."""
     d = table.shape[1]
     V1 = model.head.weight.shape[0]
     row_of = {depth: i for i, depth in enumerate(layout)}
@@ -107,13 +107,15 @@ def write_case(path, model, table, case_tok, model_tok, P, windows, stair, deep,
         window = [tpos, anchors, hw]
         cextra = None
         if fuse:
+            # tokens in flight: every shallower anchor; complete ones (full) as committed rows: L9 only
             ids = torch.tensor([drafter.ANCHOR_IDS[a] for a in anchors])
+            full_w = torch.tensor([a == "full" for a in anchors])
             extra = []
             for k in range(5):
                 hk = torch.zeros(1, w, d)
                 for j in range(w):
                     hk[0, j] = torch.from_numpy(np.ascontiguousarray(win[w - 1 - j][2][row_of[SIX[k]]]))
-                extra.append((k, hk, (ids > k + 1)[None, :]))
+                extra.append((k, hk, torch.where(full_w, torch.tensor(k == 0), ids > k + 1)[None, :]))
             window.append(extra)
             cextra = [(0, torch.from_numpy(np.ascontiguousarray(l9[:N], dtype=np.float32)), torch.ones(N, dtype=torch.bool))]
         with torch.no_grad():
@@ -127,11 +129,11 @@ def write_case(path, model, table, case_tok, model_tok, P, windows, stair, deep,
 
 
 def split_window(split, kind, recorded):
-    """The window names of a split (newest first) and the anchor of older tokens in flight (its last boundary)."""
+    """The window names of a split (newest first) and the anchor of older tokens in flight: split_depths stops at the
+    first token past the last card, so every older one is complete and reads its final state, like a committed row."""
     names = [drafter.depth_name(x, recorded) for x in drafter.split_depths(split, kind)]
     done = np.cumsum(split)
-    deep = drafter.depth_name(int(done[-2]) if len(split) > 1 else 0, recorded)
-    return names or [drafter.depth_name(int(done[0]), recorded)], deep
+    return names or [drafter.depth_name(int(done[0]), recorded)], "full"
 
 
 def cmd_head(args):
