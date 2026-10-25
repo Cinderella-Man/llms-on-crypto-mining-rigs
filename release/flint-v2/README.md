@@ -2,7 +2,8 @@
 
 The second release of the Pascal engine, tuned and measured on Flint: what ships, what changed since v1, what was
 measured, where every file lives, and how to rebuild the model file and the drafter from scratch. Placeholders:
-`RIG-TBD` is a number from the 2026-10-25 rig run, `OWNER-TBD` a decision of the project's owner.
+`RIG-TBD` is a number from the 2026-10-25 rig run, `OWNER-TBD` a decision of the project's owner, `COUNT-TBD` a count
+of the ShareGPT rows left out of the dataset.
 
 ## The headline: near-lossless Flint on nine mining cards, at full context, faster than 4-bit
 
@@ -36,10 +37,12 @@ in 29.4 GB and fits six cards; and the trained drafter (below).
 | **The staircase drafter** | two ~0.27 GB side files that guess Flint's next token from the hidden states in flight, for `--pipe-guess staircase`: R2-9 for nine cards, R2-gen for six cards and any other count from 3 to 12 | Hugging Face [CinderellaMan/Flint-Staircase-Drafter](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); card: [huggingface/flint-staircase-drafter](huggingface/flint-staircase-drafter/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (not redistributed) |
 | The continuation store | Flint's earlier answers (13.8 M tokens, 110 MB) for `--pipe-store`; the drafter's measured gain is on top of it (without it the drafter alone is slower than the store alone) | OWNER-TBD: ship it with the drafter files |
-| The drafter's data (optional) | the answers' manifest, and possibly the prompt and answer files | Hugging Face dataset [CinderellaMan/flint-drafter-data](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data); card: [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md) |
+| The drafter's data | the prompts and Flint's answers with token ids (without the ShareGPT rows), the heads in training format and their training checkpoints | Hugging Face dataset [CinderellaMan/flint-drafter-data](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data); card: [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md) |
 
-The upload plan, with the checks before each upload: [huggingface/UPLOAD.md](huggingface/UPLOAD.md). Made by Kamil
-Skowron ([@kamilskowron](https://x.com/kamilskowron) on X).
+Everything this project publishes is under Apache-2.0, like Flint itself, and is checked by SHA-256 (in
+[CHECKSUMS](CHECKSUMS) and in each Hugging Face repository; no GPG signatures). Unsloth's files are linked, not
+re-uploaded. The upload plan, with the checks before each upload: [huggingface/UPLOAD.md](huggingface/UPLOAD.md). Made
+by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X).
 
 How to run each: the [Flint page](../../models/flint/README.md#command-lines).
 
@@ -115,10 +118,11 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
 3. **The drafter heads may still change.** The release heads are R2-9 (nine cards) and R2-gen (six cards and other
    counts), with their exact `train.py` arguments in the guide; the final round (15:00) continues R2-9 on ~50 M answer
    tokens, and if its winner replaces R2-9, its arguments and scores replace R2-9's (RIG-TBD).
-4. **The drafter's training data is regenerated, not downloaded.** Answers sampled at temperature 1 on GPUs differ
-   between machines, so a rebuilt drafter is equivalent, not identical. A sanitized manifest of the answer files
-   (prompt numbers, writer, engine commit, token counts, SHA-256 per file) is still private (OWNER-TBD: publish it, or
-   the answers themselves as a dataset).
+4. **The drafter's training data is published without the ShareGPT rows.** The dataset holds the prompts, Flint's
+   answers with their token ids and the manifest, but not the COUNT-TBD answers to ShareGPT prompts (unclear terms),
+   which the release heads were trained with. A head trained on the published data is equivalent, not identical; the
+   published checkpoints let anyone continue our training runs exactly. Regenerating the answers instead gives an
+   equivalent set too: answers sampled at temperature 1 on GPUs differ between machines.
 5. **Parallel orchestration is private.** The project ran generation, dump and training as several copies with
    machine-specific launchers. `reproduce/drafter_pipeline.sh` is the public sequential form of the same commands; it
    has been checked for syntax, not run end to end.
@@ -146,6 +150,7 @@ way:
 | `flint-K2h-r16.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | RIG-TBD (release header); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 2:** the output head is byte-exact only when copied |
 | `flint-staircase-drafter-9cards-v2.0.gguf`, `flint-staircase-drafter-v2.0.gguf` | [reproduce/drafter.md](reproduce/drafter.md) | `reproduce/drafter_pipeline.sh` (`CARDS=9` for the nine-card head), `export_gguf.py` | RIG-TBD | **gaps 3–5:** regenerated data gives equivalent heads, not the same bytes |
 | The continuation store, if shipped | [reproduce/drafter.md](reproduce/drafter.md), section 9 | `bench/ngram_replay/datastore.cpp` | RIG-TBD | **gap 7** |
+| The drafter's dataset (prompts, answers, heads U/R1/R2-9/R2-gen with checkpoints) | [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md), [reproduce/drafter.md](reproduce/drafter.md) | `prompts.py`, `tool_prompts.py`, `generate.py`, `train.py` | the dataset's CHECKSUMS (RIG-TBD) | the original files, not rebuilt; **gap 4:** without the COUNT-TBD ShareGPT rows |
 | Release notes | [notes-v2.0.md](../notes-v2.0.md) | `scripts/package_release.sh NOTES_VARIANT=rc4` | — | complete once the numbers are in |
 | Hugging Face cards | [huggingface/](huggingface/UPLOAD.md) | — | — | complete once the numbers and names are in |
 | The Q51 test set (inputs to the checks) | [reproduce/data/q51](reproduce/data/q51/README.md) | `bench/expert_overlap` | in git | complete |

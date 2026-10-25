@@ -1,0 +1,14 @@
+RIG-TBD  manifest.json
+RIG-TBD  vocab.npy
+RIG-TBD  prompts/prompts.jsonl
+RIG-TBD  prompts/prompts-ext.jsonl
+RIG-TBD  prompts/prompts-ext2.jsonl
+RIG-TBD  prompts/prompts-tools.jsonl
+RIG-TBD  heads/U/head.pt
+RIG-TBD  heads/U/ckpt.pt
+RIG-TBD  heads/R1/head.pt
+RIG-TBD  heads/R1/ckpt.pt
+RIG-TBD  heads/R2-9/head.pt
+RIG-TBD  heads/R2-9/ckpt.pt
+RIG-TBD  heads/R2-gen/head.pt
+RIG-TBD  heads/R2-gen/ckpt.pt

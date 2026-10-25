@@ -109,10 +109,11 @@ against 0.1092 with F32, within the ~0.005 routing-flip noise; [Q113](../../../q
 ### 5. The release header
 
 ```bash
-python scripts/gguf_release_header.py flint-k2h-r16-raw.gguf flint-K2h-r16.gguf --preset flint --name "Flint K2h-r16" --quantized-by "<who>"
+python scripts/gguf_release_header.py flint-k2h-r16-raw.gguf flint-K2h-r16.gguf --preset flint --name "Flint K2h-r16" --quantized-by "Kamil Skowron (@kamilskowron)"
 ```
 
-Sets `general.license = apache-2.0` and the base model (Flint by RecursiveSI), writes the makers' sampling
+Sets `general.quantized_by` (the released file's value above; put your own name in a file you publish yourself),
+`general.license = apache-2.0` and the base model (Flint by RecursiveSI), writes the makers' sampling
 (`general.sampling.temp` 1.0, `top_p` 0.95, `top_k` 20, `min_p` 0), and keeps `quantize.imatrix.*`, which credits
 Unsloth's importance matrix. The tensors are copied byte for byte and verified.
 

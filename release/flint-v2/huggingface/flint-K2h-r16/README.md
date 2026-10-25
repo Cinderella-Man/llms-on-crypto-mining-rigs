@@ -95,10 +95,14 @@ and the whole release in one folder:
   licence ([LICENSE](LICENSE)). Changes: the weights are quantized to Q5_0 and Q8_0, the output head rounded with GPTQ,
   the routers stored in 16-bit floats, all in the GGUF format.
 - Unsloth's importance matrix (Apache-2.0) guided the quantization; the file's header records it.
-- Made by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X) for
+- Quantized by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X), as the file's header says
+  (`general.quantized_by`), for
   [LLMs on crypto-mining rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs). Not affiliated with
   RecursiveSI or Unsloth.
 
 | File | Size | SHA-256 |
 |---|---|---|
 | `flint-K2h-r16.gguf` | 29.4 GB | see [CHECKSUMS](CHECKSUMS) |
+
+Check a download with `sha256sum -c CHECKSUMS`; the same checksums are in the
+[GitHub repository](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/CHECKSUMS).

@@ -122,4 +122,4 @@ The binaries are llama.cpp and ggml with this fork's changes, all under the MIT 
 `THIRD_PARTY_NOTICES.md`). The CUDA runtime libraries in the second archive are NVIDIA's, redistributed unmodified under
 the NVIDIA CUDA Toolkit End User License Agreement (`NVIDIA_CUDA_RUNTIME_NOTICE.md`). Model files are not part of this
 release and keep their own licences.
-The drafter files are models of this project, trained on Flint's outputs and hidden states: OWNER-TBD (their licence). <!-- only:drafter -->
+The drafter files are models of this project, trained on Flint's outputs and hidden states, under Apache-2.0. <!-- only:drafter -->

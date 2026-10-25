@@ -1,6 +1,5 @@
 ---
-license: other
-license_name: OWNER-TBD
+license: apache-2.0
 base_model: RecursiveSI/flint
 pipeline_tag: text-generation
 tags:
@@ -97,8 +96,11 @@ release in one folder: [release/flint-v2](https://github.com/Cinderella-Man/llms
 
 ## Licence and credits
 
-- OWNER-TBD: the licence. The drafter is trained on Flint's outputs and internal states (Flint is Apache-2.0, by
-  RecursiveSI); the prompts behind those outputs come from datasets with their own licences.
+- Apache-2.0 ([LICENSE](LICENSE)). The drafter is trained on Flint's outputs and internal states (Flint is Apache-2.0,
+  by RecursiveSI); the prompts behind those outputs come from public datasets, listed with their licences on
+  [the training data's page](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data).
+- The heads in training format and their training checkpoints are in
+  [the training data](https://huggingface.co/datasets/CinderellaMan/flint-drafter-data) too.
 - Made by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X) for
   [LLMs on crypto-mining rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs). Not affiliated with
   RecursiveSI.
@@ -107,3 +109,6 @@ release in one folder: [release/flint-v2](https://github.com/Cinderella-Man/llms
 |---|---|---|
 | `flint-staircase-drafter-9cards-v2.0.gguf` | RIG-TBD (~0.27 GB) | see [CHECKSUMS](CHECKSUMS) |
 | `flint-staircase-drafter-v2.0.gguf` | RIG-TBD (~0.27 GB) | see [CHECKSUMS](CHECKSUMS) |
+
+Check a download with `sha256sum -c CHECKSUMS`; the same checksums are in the
+[GitHub repository](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/CHECKSUMS).

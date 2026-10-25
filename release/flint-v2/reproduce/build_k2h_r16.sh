@@ -18,7 +18,8 @@
 #
 # Env [defaults]: LLAMA_DIR (llama-quantize in build/bin, convert_hf_to_gguf.py and gguf-py), FLINT_DIR, IMATRIX,
 #   WORK, PYTHON [python3; needs numpy, and torch/safetensors for convert], THREADS [nproc], HEAD_FROM, NAME [Flint
-#   K2h-r16], QUANTIZED_BY [llms-on-crypto-mining-rigs], TRAIN (wikitext-2 train text, for a computed head), STEPS,
+#   K2h-r16], QUANTIZED_BY [Kamil Skowron (@kamilskowron), as in the released file], TRAIN (wikitext-2 train text, for
+#   a computed head), STEPS,
 #   BF16 [WORK/flint-BF16.gguf; point it at an existing conversion to skip convert], QUANTIZE [LLAMA_DIR/build/bin/
 #   llama-quantize]
 # Exit status: 0 done (verify: all compared tensors equal), 1 a step failed or tensors differ.
@@ -31,7 +32,7 @@ PYTHON=${PYTHON:-python3}
 THREADS=${THREADS:-$(nproc)}
 STEPS=${STEPS:-convert quantize head router header verify}
 NAME=${NAME:-Flint K2h-r16}
-QUANTIZED_BY=${QUANTIZED_BY:-llms-on-crypto-mining-rigs}
+QUANTIZED_BY=${QUANTIZED_BY:-Kamil Skowron (@kamilskowron)}
 export PYTHONPATH="$LLAMA_DIR/gguf-py${PYTHONPATH:+:$PYTHONPATH}"
 mkdir -p "$WORK"
 BF16=${BF16:-$WORK/flint-BF16.gguf}
