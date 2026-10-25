@@ -9,11 +9,13 @@ options: [bench/staircase_drafter](../../../bench/staircase_drafter/README.md).
 `drafter_pipeline.sh` runs the steps below on one machine, one after another. Here they ran on a 7-GPU machine
 (3 × RTX 3090, 2 × V100 32 GB, 2 × RTX 3080) with several copies in parallel; the commands are the same.
 
-**The release heads are being rebuilt** from the strict sources only (step 1): one for nine cards and one for six
-cards and any other count from 3 to 12, with the design and steps of the first heads, R2-9 and R2-gen (the winner and
-the runner-up of the 2026-10-25 morning round: depth-general, unfused, two layers, 40,000 draft ids). The first heads
-were trained partly on answers to prompts whose answers may not be published, so they do not ship; the runs and scores
-in steps 5 and 6 are theirs. RIG-TBD: the rebuilt heads' runs, arguments and scores.
+**The release heads are being rebuilt from scratch** on clean data only (step 1): one for nine cards and one for six
+cards and any other count from 3 to 12. They inherit no weights from the first heads (U → R1 → R2-9 and R2-gen, the
+2026-10-25 morning round): they start from Flint's own weights for their projections and output rows, with a
+vocabulary recounted on clean answers (step 4). The design is the same: depth-general, two layers, 40,000 draft ids.
+The first heads were trained partly on answers to prompts whose answers may not be published, so they do not ship;
+the runs and scores in steps 5 and 6 are theirs, kept as method measurements. RIG-TBD: the rebuilt heads' runs,
+arguments and scores.
 
 ## What you need
 
@@ -41,21 +43,22 @@ files for edit and agent prompts; ours was Python 3.12's in the `python:3.12-sli
 | prompts-ext2.jsonl | 34,142 | `cat prompts.jsonl prompts-ext.jsonl > prompts-all12.jsonl; python prompts.py prompts-ext2.jsonl $HF $STD $LLAMA --scale 6 --seed 22 --extend prompts-all12.jsonl` |
 | prompts-tools.jsonl | 15,330 | `cat prompts.jsonl prompts-ext.jsonl prompts-ext2.jsonl > used.jsonl; python tool_prompts.py prompts-tools.jsonl $HF --extend used.jsonl` |
 
-**The strict sources: the release uses only prompts whose answers may be published.** Every prompt row records its
-`source`; keep these rows, and only answers to them, before generating, dumping and training. `drafter_pipeline.sh`'s
-prompts step writes each prompt file again as `*.strict.jsonl` with these rows only; every row keeps its id, so its
-seed stays the same. In the four files above that leaves 44,043 of the 76,431 prompts (3,699 / 9,822 / 15,192 /
-15,330); RIG-TBD: the answers and answer tokens the rebuilt heads train on.
+**Clean sources: the release uses only prompts whose answers may be published.** Every prompt row records its
+`source`; keep the clean rows, and only answers to them, before generating, dumping and training.
+`drafter_pipeline.sh`'s prompts step writes each prompt file again as `*.strict.jsonl` with the clean rows only
+(`UNDER_REVIEW=1` adds the four sources under review); every row keeps its id, so its seed stays the same. In the four
+files above that leaves 20,736 of the 76,431 prompts (2,449 / 6,728 / 11,559 / 0), or 44,043 with the sources under
+review (3,699 / 9,822 / 15,192 / 15,330); RIG-TBD: the answers and answer tokens the rebuilt heads train on.
 
-| Source (`source` field) | Licence, as its page states it | Prompts for | Script | Prompts kept |
-|---|---|---|---|---|
-| NousResearch/hermes-function-calling-v1 (single-turn and glaive subsets) | Apache-2.0 | tool calls | `prompts.py` | 4,497 |
-| AI-MO/NuminaMath-CoT | Apache-2.0 | reasoning | `prompts.py` | 3,480 |
-| open-r1/OpenR1-Math-220k | Apache-2.0 | reasoning | `prompts.py` | 2,743 |
-| Team-ACE/ToolACE | Apache-2.0 | tool calls | `tool_prompts.py` | 10,581 |
-| glaiveai/glaive-function-calling-v2 | Apache-2.0 | tool calls | `tool_prompts.py` | 4,749 |
-| Whole-file edits and coding-agent turns (categories `edit` and `agent`; `source` is the file's path) from the Python standard library and llama.cpp's own files | PSF License 2.0; MIT | code | `prompts.py` | 5,236 edits, 5,831 agent turns |
-| The same from packages installed in the Python image (`site-packages/`), only those allowed in the table below | MIT, BSD-2/3-Clause, Apache-2.0, PSF | code | `prompts.py` | 3,275 edits, 3,651 agent turns |
+| Source (`source` field) | Licence, as its page states it | Prompts for | Script | Prompts | Status |
+|---|---|---|---|---|---|
+| Whole-file edits and coding-agent turns (categories `edit` and `agent`; `source` is the file's path) from the Python standard library and llama.cpp's own files (not `vendor/` or the build folders) | PSF License 2.0; llama.cpp MIT, with some files under Apache-2.0 or Apache-2.0 with LLVM exception | code | `prompts.py` | 5,236 edits, 5,831 agent turns | clean |
+| The same from packages installed in the Python image (`site-packages/`), only those allowed in the table below | MIT, BSD-2/3-Clause, Apache-2.0, PSF | code | `prompts.py` | 3,275 edits, 3,651 agent turns | clean |
+| open-r1/OpenR1-Math-220k (`default` subset) | Apache-2.0 | reasoning | `prompts.py` | 2,743 | clean |
+| AI-MO/NuminaMath-CoT | Apache-2.0 | reasoning | `prompts.py` | 3,480 | under review (owner): about 45 % of its problems were written by GPT-4 |
+| NousResearch/hermes-function-calling-v1 (single-turn and glaive subsets) | Apache-2.0 | tool calls | `prompts.py` | 4,497 | under review (owner): generated by language models it does not name |
+| Team-ACE/ToolACE | Apache-2.0 | tool calls | `tool_prompts.py` | 10,581 | under review (owner): generated by language models it does not name |
+| glaiveai/glaive-function-calling-v2 | Apache-2.0 | tool calls | `tool_prompts.py` | 4,749 | under review (owner): generated by language models it does not name |
 
 - **Not used:** ShareGPT (Aeala/ShareGPT_Vicuna_unfiltered: conversations shared from ChatGPT, whose reuse terms are
   unclear), and UltraChat 200k and Magicoder Evol-Instruct and OSS-Instruct (MIT and Apache-2.0, but generated with
@@ -182,15 +185,21 @@ python check_dump.py feats/train-x.bin flint/
 ## 4. Vocabulary
 
 ```bash
-python vocab.py vocab.npy gen-*.jsonl --size 40000 --test q51/gen.jsonl
+python vocab.py vocab.npy gen-*.jsonl --size 40000 --test q51/gen.jsonl --only clean-ids.txt
 ```
 
-40,000 ids from the first 11.6 M answer tokens plus Flint's added and control tokens; anything else is "other".
+40,000 ids, the most frequent in the clean answers, plus Flint's added and control tokens; anything else is "other".
+`--only` counts only the answers listed in `clean-ids.txt` (one answer id per line), so answer files that also hold
+other prompts' answers can stay as they are; answers generated from the `*.strict.jsonl` files alone need no list.
+The clean vocabulary covers Q51's text at 0.960, against 0.967 for the first heads' vocabulary, which was counted on
+the first 11.6 M answer tokens of the mixed data.
 
 ## 5. Training
 
 `train.py` with `--flint flint/ --vocab vocab.npy`; one head per GPU, checkpoints every 30 minutes (`--resume`
-continues).
+continues). The rebuilt heads train from scratch with `--only clean-ids.txt` (only the listed answers in the feature
+files); RIG-TBD: their runs and arguments. The table is the first heads' chain, on mixed-licence data, kept as a
+method record; none of these heads ships.
 
 | Run | From | Arguments | Data | GPU and time |
 |---|---|---|---|---|
@@ -199,7 +208,7 @@ continues).
 | R2-gen | R1 | `--head A --general --init-from R1/head.pt --lr 1e-4 --warmup 100 --eval-every 20 --val-seqs 300 --minutes 134 --fp16` | superset and grid files d1–d4, 27.6 M | V100 (FP16), ~1.2 passes |
 | R2-69 | R1 | the same with `--cards 6,9` | the same | V100 (FP16) |
 | R2-9 | R1 | the same with `--cards 9` (no `--fp16`) | the same | RTX 3090 (BF16) |
-| Final round | R2-9 (and R2-gen) | R3-9: `--init-from R2-9/head.pt --cards 9e,9l,9l`; variants R3-9L4 (`--layers 4`), R3-9lk (`--loss lk --eta 3`), R3-9l (light split only) and R3-gen (R2-gen continued); RIG-TBD: the exact arguments of the winner | ~50 M answer tokens | RIG-TBD |
+| Final round on mixed data | R2-9 (and R2-gen) | cancelled: the clean rebuild replaces it | — | — |
 
 - `--general` draws one window per sequence from a random split of 3–12 cards (weights in `train.py`'s
   `CARD_WEIGHTS`: a quarter each on six and nine cards); `--cards` restricts it to the standard splits of those counts.
@@ -264,10 +273,12 @@ step 7.
 ## 9. The continuation store
 
 The release guesser consults, after the conversation itself, a store of Flint's earlier answers (`--pipe-store`): 8
-bytes per token, memory-mapped, built with `bench/ngram_replay/datastore.cpp` from the generated answers. The release
-store is rebuilt from the strict sources' answers only (RIG-TBD: its size and file name; the first store held 13.8 M
-tokens, 110 MB, from all sources, and does not ship). How it is built:
-[bench/ngram_replay](../../../bench/ngram_replay/README.md).
+bytes per token, memory-mapped, built with `bench/ngram_replay/datastore.cpp` from the generated answers. The store
+for release, `flint-answers-core-13.8M.pstore` (14,868 answers, 13.8 M tokens, 110 MB), holds only Flint's answers to
+our own code prompts (step 1's first two rows), with Q51 held out. The first store, `flint-answers-clean-13.8M.pstore`,
+was decontaminated against Q51 ("clean" in its name) but built from answers to every prompt set, so it does not ship.
+How it is built: [bench/ngram_replay](../../../bench/ngram_replay/README.md) and
+[the note](../../../docs/research/notes/pipelined_speculation.md) ("The store for release").
 
 ## Compute and data, in total
 

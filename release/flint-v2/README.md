@@ -35,7 +35,7 @@ in 29.4 GB and fits six cards; and the trained drafter (below).
 | **K2h-r16** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-K2h-r16-GGUF](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF); card: [huggingface/flint-K2h-r16](huggingface/flint-K2h-r16/README.md) |
 | **The staircase drafter** | **being rebuilt:** two ~0.27 GB side files that guess Flint's next token from the hidden states in flight, for `--pipe-guess staircase`, one for nine cards and one for any count from 3 to 12, trained again only on answers to prompts whose answers may be published ([reproduce/drafter.md](reproduce/drafter.md#1-prompts)); RIG-TBD: their file names and numbers | Hugging Face [CinderellaMan/Flint-Staircase-Drafter](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); card: [huggingface/flint-staircase-drafter](huggingface/flint-staircase-drafter/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (not redistributed) |
-| The continuation store | **being rebuilt:** Flint's earlier answers for `--pipe-store`, built again from the same publishable prompts; RIG-TBD: its file name, size and numbers | OWNER-TBD: whether it ships; it would ship with the drafter files ([UPLOAD.md](huggingface/UPLOAD.md)) |
+| The continuation store | **rebuilt:** `flint-answers-core-13.8M.pstore` (110 MB), Flint's answers to our own code prompts only, for `--pipe-store`; RIG-TBD: its numbers on the rig | OWNER-TBD: whether it ships; it would ship with the drafter files ([UPLOAD.md](huggingface/UPLOAD.md)) |
 | The drafter's data | **later, not in this release:** the prompts and Flint's answers with token ids, the heads in training format and their training checkpoints | draft card: [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md); how the data is made: [reproduce/drafter.md](reproduce/drafter.md) |
 
 Everything this project publishes is under Apache-2.0, like Flint itself, and is checked by SHA-256 (in
@@ -117,7 +117,7 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
    data is public (wikitext-2 train and the shipped Q51 transcripts).
 3. **The drafter heads are being rebuilt.** The first heads (R2-9, R2-gen) were trained partly on answers to prompts
    whose answers may not be published (ShareGPT, UltraChat, Magicoder), so they don't ship. The release heads are
-   trained again from the strict sources only ([reproduce/drafter.md](reproduce/drafter.md#1-prompts)); RIG-TBD: their
+   trained again from scratch on clean sources only ([reproduce/drafter.md](reproduce/drafter.md#1-prompts)); RIG-TBD: their
    exact `train.py` arguments, scores and file names.
 4. **The drafter's training data is regenerated, not downloaded.** Publishing it is parked for a later release.
    Answers sampled at temperature 1 on GPUs differ between machines, so a drafter rebuilt from regenerated answers is
@@ -129,7 +129,7 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
    machine names; `results.md` gives each number's public command instead (the drafter's served numbers come from
    `bench/pipespec/rig_server.sh` with its `d` configuration).
 7. **The store file** is built by `bench/ngram_replay/datastore.cpp` from the generated answers, which gap 4 covers;
-   it is being rebuilt from the strict sources too. Whether it ships is OWNER-TBD; RIG-TBD: what the copy lookup, the
+   the store for release, `flint-answers-core-13.8M.pstore`, holds only answers to our own code prompts. Whether it ships is OWNER-TBD; RIG-TBD: what the copy lookup, the
    continuations, the store and the drafter each add (a rig test of each piece).
 8. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) and the Q51
    dump (`q51-grid.bin`) are regenerated with the commands in the reproduce pages.
@@ -147,7 +147,7 @@ way:
 | `cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz` (CUDA runtime) | [reproduce/engine.md](reproduce/engine.md) | `scripts/package_release.sh` (from NVIDIA's `cuda:12.9.2-devel-ubuntu24.04` image) | `65b46821ab94c5a46ec762f4fc8896de857ada120770d5a2499695ed3277a3bf` (the same for any engine commit packaged as v2.0) | complete: byte for byte from the same image (two runs identical) |
 | `llama-p106-v2.0-tests-ubuntu-cuda12.9-sm61.tar.gz` | [reproduce/engine.md](reproduce/engine.md) | as the engine | RIG-TBD | as the engine |
 | `flint-K2h-r16.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | RIG-TBD (release header); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 2:** the output head is byte-exact only when copied |
-| The two drafter files (RIG-TBD: names) | [reproduce/drafter.md](reproduce/drafter.md) | `reproduce/drafter_pipeline.sh` (`CARDS=9` for the nine-card head), `export_gguf.py` | RIG-TBD | **gap 3:** being rebuilt from the strict sources; **gaps 4–5:** regenerated data gives equivalent heads, not the same bytes |
+| The two drafter files (RIG-TBD: names) | [reproduce/drafter.md](reproduce/drafter.md) | `reproduce/drafter_pipeline.sh` (`CARDS=9` for the nine-card head), `export_gguf.py` | RIG-TBD | **gap 3:** being rebuilt from the clean sources; **gaps 4–5:** regenerated data gives equivalent heads, not the same bytes |
 | The continuation store, if shipped | [reproduce/drafter.md](reproduce/drafter.md), section 9 | `bench/ngram_replay/datastore.cpp` | RIG-TBD | **gap 7** |
 | Later, not in this release: the drafter's dataset (prompts, answers, heads with checkpoints) | [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md) (draft), [reproduce/drafter.md](reproduce/drafter.md) | `prompts.py`, `tool_prompts.py`, `generate.py`, `train.py` | the dataset's CHECKSUMS, when published | **gap 4:** parked |
 | Release notes | [notes-v2.0.md](../notes-v2.0.md) | `scripts/package_release.sh NOTES_VARIANT=rc4` | — | complete once the numbers are in |

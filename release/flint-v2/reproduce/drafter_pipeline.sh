@@ -9,12 +9,14 @@
 #
 # Steps (STEPS, default all, in this order):
 #   prompts   prompts.jsonl, prompts-ext.jsonl, prompts-ext2.jsonl, prompts-tools.jsonl (76,431 prompts from every
-#             source), then each as *.strict.jsonl with the strict sources only, which the later steps use
+#             source), then each as *.strict.jsonl with the clean sources only, which the later steps use
+#             (UNDER_REVIEW=1 also keeps the four sources under review)
 #   answers   Flint's answers from llama-server (the makers' sampling, seed 20000 + prompt number, <= 2,048 tokens)
 #   testset   Q51, the 38 held-out transcripts: shipped in data/q51/ (copied; TESTSET_REBUILD=1 regenerates them)
 #   dump      hidden states (26-layer grid) and top-20 targets from Flint Q8_0, for the answers and for Q51
 #   vocab     the 40,000-id draft vocabulary
-#   train     U from scratch, R1 from U (six-card windows), then the depth-general head from R1
+#   train     U from scratch, R1 from U (six-card windows), then the depth-general head from R1: the first heads'
+#             chain; the release heads train from scratch instead (drafter.md step 5; RIG-TBD: their arguments)
 #   score     the general head on Q51, per card count
 #   export    the GGUF side file for the engine
 #
@@ -53,14 +55,18 @@ if has prompts; then
     $PYTHON prompts.py "$DATA/prompts-ext2.jsonl" "$HF" "$STD" "$LLAMA" --scale 6 --seed 22 --extend "$DATA/prompts-all12.jsonl"
     cat "$DATA/prompts.jsonl" "$DATA/prompts-ext.jsonl" "$DATA/prompts-ext2.jsonl" > "$DATA/used.jsonl"
     $PYTHON tool_prompts.py "$DATA/prompts-tools.jsonl" "$HF" --extend "$DATA/used.jsonl"
-    # the strict sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same. Edit and agent
+    # the clean sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same. Edit and agent
     # prompts: the standard library and llama.cpp's own files, not its vendor/ and build folders; from site-packages
     # only the packages (and vendored folders) under MIT, BSD-2/3-Clause, Apache-2.0 or PSF in drafter.md's table.
+    # Datasets: OpenR1-Math (default subset); UNDER_REVIEW=1 adds the four under the owner's review (NuminaMath-CoT,
+    # about 45 % GPT-4-written problems; Hermes FC, ToolACE and glaive v2, written by unnamed language models).
     for f in prompts prompts-ext prompts-ext2 prompts-tools; do
         $PYTHON -c '
 import json, sys
-strict = {"NousResearch/hermes-function-calling-v1", "AI-MO/NuminaMath-CoT", "open-r1/OpenR1-Math-220k",
-          "Team-ACE/ToolACE", "glaiveai/glaive-function-calling-v2"}
+strict = {"open-r1/OpenR1-Math-220k"}
+if sys.argv[3] == "1":   # under review (owner)
+    strict |= {"AI-MO/NuminaMath-CoT", "NousResearch/hermes-function-calling-v1", "Team-ACE/ToolACE",
+               "glaiveai/glaive-function-calling-v2"}
 packages = {"pyarrow", "huggingface_hub", "pip", "fsspec", "httpcore2", "anyio", "httpx2", "yaml", "_yaml", "packaging",
             "h11", "idna", "click", "filelock", "truststore"}
 not_ok = ("pip/_vendor/resolvelib", "pip/_vendor/certifi", "pyarrow/include/arrow/vendored/portable-snippets",
@@ -77,7 +83,7 @@ with open(sys.argv[2], "w") as out:
     for line in open(sys.argv[1]):
         if keep(json.loads(line)):
             out.write(line)
-' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl"
+' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl" "${UNDER_REVIEW:-0}"
         log "$f.strict.jsonl: $(wc -l < "$DATA/$f.strict.jsonl") of $(wc -l < "$DATA/$f.jsonl") prompts"
     done
 fi

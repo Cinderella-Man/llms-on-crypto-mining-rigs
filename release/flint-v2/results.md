@@ -29,9 +29,9 @@ Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of c
 ## Measured on the release engine (2026-10-25)
 
 The drafter rows ran on `460160e93`; the release commit `2d53179aa` adds only an allocator fix outside the drafter's
-path. They measure the first heads, R2-9 and R2-gen, which do not ship: part of their training answers came from
-prompts whose answers may not be published. The rebuilt heads, trained only on the strict sources, get their own rows
-(RIG-TBD).
+path. They are method measurements, not release files: they used the first heads, R2-9 and R2-gen, and the first
+store (13.8 M tokens of answers, decontaminated against the Q51 test set), all built from mixed-licence data and none
+of them shipped. The rebuilt heads and store, trained from scratch on clean sources, get their own rows (RIG-TBD).
 
 | What | Value | How | Build | Row |
 |---|---|---|---|---|
@@ -40,8 +40,8 @@ prompts whose answers may not be published. The rebuilt heads, trained only on t
 | The same on six cards | RIG-TBD / RIG-TBD | `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 llama-bench …` | rc4 | — |
 | Prefill at 512 / 2,048 / 8,192 tokens, nine cards | RIG-TBD | `llama-bench -p 512,2048,8192 -n 0 -r 3` | rc4 | — |
 | Served chat, `--pipe-depth 3`, nine and six cards | RIG-TBD | `bench/pipespec/rig_server.sh` | rc4 | — |
-| Served with the drafter, K2h-r16, `--pipe-depth 3 -c 8192`, median of 8 requests (chat, code and edit of 512 tokens, a tool request of 1,536, at T 0 and T 1), nine cards `-ts 6,6,6,6,6,6,6,5,2` with R2-9: no guessing / copy lookup, continuations and store / the store, then the head / copy lookup, then the head | 33.4 / 48.6 / **50.4** / 44.4 tok/s: the head adds 3.7 % to the copy lookup, continuations and store (chat and code at T 0 8.6 %), 1.51× no guessing; 53.8 % of the head's guesses right | `bench/pipespec/rig_server.sh` with `DEPTHS='0 3s 3ds' STORE=… DRAFT=…`, `CTX=8192 MAX_TOKENS=512 TOOL_MAX_TOKENS=1536` | `460160e93` | Q20 |
-| The same, nine cards `-ts 6,6,6,6,5,5,5,5,5` (R2-9) / six cards, llama's split (R2-gen) | 33.4 / 48.6 / 50.3; 34.3 / 49.0 / 49.5 tok/s | the same | `460160e93` | Q20 |
+| Method run, first head and first store (not shipped): served with the drafter, K2h-r16, `--pipe-depth 3 -c 8192`, median of 8 requests (chat, code and edit of 512 tokens, a tool request of 1,536, at T 0 and T 1), nine cards `-ts 6,6,6,6,6,6,6,5,2` with R2-9: no guessing / copy lookup, continuations and store / the store, then the head / copy lookup, then the head | 33.4 / 48.6 / **50.4** / 44.4 tok/s: the head adds 3.7 % to the copy lookup, continuations and store (chat and code at T 0 8.6 %), 1.51× no guessing; 53.8 % of the head's guesses right | `bench/pipespec/rig_server.sh` with `DEPTHS='0 3s 3ds' STORE=… DRAFT=…`, `CTX=8192 MAX_TOKENS=512 TOOL_MAX_TOKENS=1536` | `460160e93` | Q20 |
+| Method run, the same first heads and store: nine cards `-ts 6,6,6,6,5,5,5,5,5` (R2-9) / six cards, llama's split (R2-gen) | 33.4 / 48.6 / 50.3; 34.3 / 49.0 / 49.5 tok/s | the same | `460160e93` | Q20 |
 | Output identity with the drafter | every answer equal in every configuration (at T 0 to no guessing, at T 1 among the pipelined ones); `check_identity.sh` passed | the same; `bench/pipespec/check_identity.sh` | `460160e93` | Q20 |
 | Cost of one drafter guess on one P106: 8 / 6 / 4 rows in the window, at 2,048 and 8,192 committed positions | 6.20 / 5.34 / 5.30 ms; 7.29 / 5.90 / 5.86 ms (the design estimate was 1.6–2.6 ms; this cost now caps the gain) | `llama-pipe-drafter-check drafter.gguf --bench 300 --split 6,6,6,6,6,6,6,5,2 --ctx 2048` (and `--ctx 8192`, other splits) | `460160e93` | Q20 |
 | Eight conversations through one pipeline | RIG-TBD | `bench/pipespec/rig_hostloop.sh` | rc4 | Q155 |
@@ -107,12 +107,15 @@ prompts whose answers may not be published. The rebuilt heads, trained only on t
 
 ## The drafter, offline (2026-10-25, quant machine)
 
+Method measurements of the first heads (U → R1 → R2), trained on mixed-licence data and not shipped; the rebuilt
+heads' scores: RIG-TBD.
+
 | What | Value | How | Row |
 |---|---|---|---|
 | R1 (six cards), coupled acceptance on Q51 fresh text / overall | 0.502 / 0.562 | `score.py --alpha 3` ([reproduce/drafter.md](reproduce/drafter.md)) | Q20 |
 | R1, simulated speed on six cards | 1.90× plain (70.9 tok/s) | `sim.py` | Q20 |
-| R2-9 (the nine-card release head), nine cards with a light last card / even split | 0.476 / 0.538 fresh / overall; 0.492 / 0.553 | `score.py` on `q51-grid.bin` | Q20 |
-| R2-gen (the release head for six and other counts), six cards / nine with a light last card | 0.523 / 0.583; 0.469 / 0.531 | the same | Q20 |
+| R2-9 (a first nine-card head, not shipped), nine cards with a light last card / even split | 0.476 / 0.538 fresh / overall; 0.492 / 0.553 | `score.py` on `q51-grid.bin` | Q20 |
+| R2-gen (a first depth-general head, not shipped), six cards / nine with a light last card | 0.523 / 0.583; 0.469 / 0.531 | the same | Q20 |
 | R2-gen at three / twelve cards | 0.556 / 0.624; 0.449 / 0.508 | the same | Q20 |
 | The C++ head against PyTorch, 14 cases | all top ids equal on a V100 | `check_export.py case` + `llama-pipe-drafter-check` | Q20 |
 
