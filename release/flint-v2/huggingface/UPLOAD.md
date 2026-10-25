@@ -36,7 +36,7 @@ Apache-2.0 and signed by "Kamil Skowron (@kamilskowron)".
 2. `sha256sum` into `flint-staircase-drafter/CHECKSUMS` and the folder's CHECKSUMS; the same files go into the engine
    release notes through `package_release.sh` (`DRAFTS="flint-staircase-drafter-9cards-v2.0.gguf=… flint-staircase-drafter-v2.0.gguf=…"`).
 3. The card's card counts, acceptance and speed from today's rig run.
-4. **The answer store (OWNER-TBD):** the drafter's served gain is measured with it in front, but it is built from
+4. **The answer store (OWNER-TBD):** the drafter's served numbers were measured with it in front, and it is built from
    Flint's answers (the first 13.8 M tokens of the answer corpus, `bench/ngram_replay/datastore.cpp`), so it waits for
    the owner's decision on sharing data. Before it ships, check whether those tokens include answers to ShareGPT
    prompts, which the dataset leaves out; if they do, rebuild the store without them and re-measure.

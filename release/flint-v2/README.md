@@ -35,7 +35,7 @@ in 29.4 GB and fits six cards; and the trained drafter (below).
 | **K2h-r16** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-K2h-r16-GGUF](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF); card: [huggingface/flint-K2h-r16](huggingface/flint-K2h-r16/README.md) |
 | **The staircase drafter** | two ~0.27 GB side files that guess Flint's next token from the hidden states in flight, for `--pipe-guess staircase`: R2-9 for nine cards, R2-gen for six cards and any other count from 3 to 12 | Hugging Face [CinderellaMan/Flint-Staircase-Drafter](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); card: [huggingface/flint-staircase-drafter](huggingface/flint-staircase-drafter/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (not redistributed) |
-| The continuation store | Flint's earlier answers (13.8 M tokens, 110 MB) for `--pipe-store`; the drafter's measured gain is on top of it (without it the drafter alone is slower than the store alone) | OWNER-TBD: it is built from Flint's answers, so it waits for the decision on sharing data; it would ship with the drafter files ([UPLOAD.md](huggingface/UPLOAD.md)) |
+| The continuation store | Flint's earlier answers (13.8 M tokens, 110 MB) for `--pipe-store`; the drafter's served numbers were measured with it in front | OWNER-TBD: it is built from Flint's answers, so it waits for the decision on sharing data; it would ship with the drafter files ([UPLOAD.md](huggingface/UPLOAD.md)) |
 | The drafter's data | **later, not in this release:** the prompts and Flint's answers with token ids (without the ShareGPT rows), the heads in training format and their training checkpoints | draft card: [huggingface/flint-drafter-data](huggingface/flint-drafter-data/README.md); how the data is made: [reproduce/drafter.md](reproduce/drafter.md) |
 
 Everything this project publishes is under Apache-2.0, like Flint itself, and is checked by SHA-256 (in
@@ -72,7 +72,7 @@ the headline above, nine P106-090 cards:
 | Generation (`llama-bench`), Unsloth Q8_0 | RIG-TBD | 35.9 (kernels on, before v1's release) | **RIG-TBD** |
 | Generation, UD-Q4_K_XL | 16.5 | 32.6 | **39.9** (the v2-next build; release build RIG-TBD) |
 | Generation, K2h-r16 | — | — | **41.8** (v2-next; release build RIG-TBD) |
-| Served chat, K2h-r16, with the store and the drafter (8k context) | — | — | **50.4** (48.6 with the store alone, 33.4 without guessing) |
+| Served chat, K2h-r16, with the store and the drafter (8k context) | — | — | **50.4** (48.6 with the copy lookup, continuations and store, 33.4 without guessing) |
 
 The write-ups behind the work: [docs/research/notes](../../docs/research/notes/README.md) (the v2 synthesis, release
 settings, pipelined speculation, the drafter), [docs/drafter.md](../../docs/drafter.md), and the registry
@@ -128,8 +128,8 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
    machine names; `results.md` gives each number's public command instead (the drafter's served numbers come from
    `bench/pipespec/rig_server.sh` with its `d` configuration).
 7. **The store file** (110 MB of Flint's answers) is built by `bench/ngram_replay/datastore.cpp` from the generated
-   answers, which gap 4 covers. The drafter's served gain is measured with it in front, so shipping it next to the
-   drafter files is OWNER-TBD.
+   answers, which gap 4 covers. Whether it ships is OWNER-TBD. The drafter's served numbers were measured with it in
+   front; the copy lookup and continuations without it were not measured (RIG-TBD: a rig test of each piece).
 8. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) and the Q51
    dump (`q51-grid.bin`) are regenerated with the commands in the reproduce pages.
 9. **How the mix was found:** the per-group measurements that chose K2h-r16's tensor types (Q73, Q77) ran as private job
