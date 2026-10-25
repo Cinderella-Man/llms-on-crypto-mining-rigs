@@ -309,8 +309,9 @@ class Drafter(nn.Module):
 
     def init_general(self, sd):
         """Fill the per-depth embedding from a six-card head's anchor embedding (state dict sd): each depth gets its
-        bucket's anchor row, so the general head starts as the six-card head on six-card depths."""
-        if not self.general or "anchor_emb.weight" not in sd:
+        bucket's anchor row, so the general head starts as the six-card head on six-card depths. A general head's own
+        state dict (with depth_emb) is left as loaded."""
+        if not self.general or "anchor_emb.weight" not in sd or "depth_emb.weight" in sd:
             return
         old = sd["anchor_emb.weight"].to(self.depth_emb.weight)
         with torch.no_grad():
