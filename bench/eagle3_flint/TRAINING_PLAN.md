@@ -70,14 +70,17 @@ than the classic ShareGPT + UltraChat recipe.
 
 | Data set (Hugging Face) | Rows | License | Full run | Pilot | Why |
 |---|---|---|---|---|---|
-| [Aeala/ShareGPT_Vicuna_unfiltered](https://huggingface.co/datasets/Aeala/ShareGPT_Vicuna_unfiltered) | 120,675 | Apache-2.0 | 15,000 | 5,000 | Real user chat; EAGLE-3's original data |
+| [Aeala/ShareGPT_Vicuna_unfiltered](https://huggingface.co/datasets/Aeala/ShareGPT_Vicuna_unfiltered) | 120,675 | none that holds: "Apache-2.0" is the uploader's tag on chats scraped from ChatGPT users | excluded | excluded | Real user chat; EAGLE-3's original data, but its reuse terms are unclear |
 | [HuggingFaceH4/ultrachat_200k](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) (`train_sft`) | 207,865 | MIT | 12,000 | 4,000 | Broad instruction following; EAGLE-3's original data |
 | [ise-uiuc/Magicoder-Evol-Instruct-110K](https://huggingface.co/datasets/ise-uiuc/Magicoder-Evol-Instruct-110K) | 111,183 | Apache-2.0 | 10,000 | 3,400 | Code |
 | [ise-uiuc/Magicoder-OSS-Instruct-75K](https://huggingface.co/datasets/ise-uiuc/Magicoder-OSS-Instruct-75K) | 75,197 | MIT | 5,000 | 1,600 | Code grounded in real snippets |
 | [NousResearch/hermes-function-calling-v1](https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1) (all 5 configs) | 11,578 | Apache-2.0 | 11,500 | 3,800 | Tool calls, rendered in Flint's own `<tool_call><arg_key>…` format |
 | [AI-MO/NuminaMath-CoT](https://huggingface.co/datasets/AI-MO/NuminaMath-CoT) | 859,494 | Apache-2.0 | 4,000 | 1,200 | Reasoning |
 | [open-r1/OpenR1-Math-220k](https://huggingface.co/datasets/open-r1/OpenR1-Math-220k) (`default`) | 93,733 | Apache-2.0 | 3,000 | 1,000 | Reasoning |
-| **Total** | | | **60,500** | **20,000** | |
+| **Total** | | | **45,500** | **15,000** | |
+
+The project trains only on prompts whose answers may be published; the sources it uses, and the ones it leaves out
+and why, are in [release/flint-v2/reproduce/drafter.md](../../release/flint-v2/reproduce/drafter.md#1-prompts).
 
 [Salesforce/xlam-function-calling-60k](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k)
 (CC-BY-4.0) is a larger tool-call set but gated behind a form. Own agent transcripts, if available, are the most

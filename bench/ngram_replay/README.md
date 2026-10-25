@@ -584,6 +584,10 @@ A suffix array over 3–14 M generated tokens of other Flint answers, asked afte
 depth 3, and more data barely helps (1.50 → 1.52 from 3 to 13.8 M tokens). Tool calls gain 1.18 → 1.74, but only from
 answers that use the same tools. Tables, the held-out check and the cost are in
 [pipelined_speculation.md](../../docs/research/notes/pipelined_speculation.md) ("A datastore of Flint's own answers").
+"Clean" in the stores' file names (`clean.i32`, `flint-answers-clean-13.8M.pstore`) means decontaminated: answers whose
+prompts share text with the Q51 test prompts are left out. Those stores were built from answers to prompts of mixed
+licences and are not distributed; the store for release holds only answers to our own prompts (the note's "The store
+for release").
 
 - [datastore.cpp](datastore.cpp): the store (a library for ctypes and a `datastore build` command); it counts its work
   per lookup instead of timing it. `datastore build` writes the file that the fork's `llama-server --pipe-store` and
@@ -639,7 +643,7 @@ python -I pipeline_sim.py gen.jsonl --topk top20.bin --coupling-study > q96_coup
 # Q161: the datastore (standard library Python; g++ for the store)
 g++ -O2 -std=c++17 -shared -fPIC -o libdatastore.so datastore.cpp && g++ -O2 -std=c++17 -DDS_MAIN -o datastore datastore.cpp
 python -I datastore_corpus.py corpus <prompts.jsonl> <q51 prompts.jsonl> <generated answers .jsonl ...>
-./datastore build corpus/clean.i32 14000000 clean-14M.ds          # the first 14 M tokens; 3000000 for a 3 M store
+./datastore build corpus/clean.i32 14000000 clean-14M.ds          # decontaminated answers, the first 14 M tokens; 3000000 for a 3 M store
 python -I datastore_sim.py gen.jsonl --lib ./libdatastore.so --store clean-14M=clean-14M.ds --selftest corpus/clean.i32 \
     --policies 'L >= 2, share >= 0.3' --kinds ds,req2ds --accuracy --sim --depths 1,2,3,4 --jobs 8 --out q161.json
 ```
