@@ -221,8 +221,10 @@ Prompts → answers → dump → train → score → simulate → export → eng
 
 ### Step 8: engine
 
-- **Where:** fork branch `pascal-p106-v2-drafter`, included in the combined release candidate `pascal-p106-v2-rc`.
-  `llama-pipespec` and `llama-server` take `--pipe-guess staircase --pipe-draft FILE`.
+- **Where:** fork branch `pascal-p106-v2-drafter` and the release candidate `pascal-p106-v2-rc4` (`460160e93`).
+  `llama-pipespec` and `llama-server` take `--pipe-guess staircase --pipe-draft FILE`. In llama-server with a
+  continuation store (`--pipe-store`) the order is the copy lookup, the request's continuations of 2-token or longer
+  contexts, the store, then the head.
 - **How it runs** ([RIG.md](../bench/staircase_drafter/RIG.md)): every one-token pipe step copies the inputs of the
   window's layers and its final state (8 KB each) to pinned host memory on the card that computes them, one per card;
   the head runs on card 1 in its own CUDA stream (or `--pipe-draft-dev N`), waits for the hidden states it reads, and
@@ -563,3 +565,12 @@ row's own window.
   six cards 0.525 / 0.584. R2-9 and R2-gen go to the rig.
 - 2026-10-25 08:00–08:15: the owner's cut-off (no more generation, one final round) and decision: the release ships
   the drafter only as a confirmed rig-measured win on the release split.
+- 2026-10-25 08:20–09:56 (CET): the served guesser for the release, rc4. llama-server's staircase guesser now takes the
+  store too (copy, the request's continuations, the store, then the head in place of cont's last guess; fork
+  `5215256bd`). The server check found a crash in the drafter path: when the copy lookup or the store guessed a long
+  stretch, the commits pending between head launches overflowed the flush loop (out-of-bounds read, segfault in
+  `launch()`); fixed in `460160e93`. Then on three cards with the store and a random head: staircase with the store
+  equals the no-guess server on 10 of 10 requests at depths 1 and 3 (the replay that crashed before) and on 13 of 13
+  with 512-token chat, code, edit and rewrite answers (rewrites: 440–457 right copy and store guesses, 17–26 head
+  launches); `rig_server.sh` with the four rig configurations identical. R2-9 and R2-gen exported (0.27 GB each).
+  The rig test: `rig_server.sh` per split with no guessing, cont + store, staircase + store, staircase alone.
