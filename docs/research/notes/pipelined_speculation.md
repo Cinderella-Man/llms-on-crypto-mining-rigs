@@ -226,7 +226,7 @@ continuations by frequency. It runs on the host and takes no card time.
   user or tool messages ([datastore_corpus.py](../../../bench/ngram_replay/datastore_corpus.py)). That removes the 352
   edit answers whose instructions repeat Q51's word for word and leaves 11,597 answers, 13.8 M tokens. The agent prompts
   of both sets define the same four tools. Stores of 3, 7 and 13.8 M tokens are nested shuffled subsets. Two more stores
-  are for comparison: every answer (`all`), and the clean set without the agent and tool-call answers (`noagent`).
+  are for comparison: every answer (`all`), and the held-out set without the agent and tool-call answers (`noagent`).
 - **Replay.** Q51's 38 held-out transcripts go through pipeline_sim.py's guessers and pipeline model
   ([datastore_sim.py](../../../bench/ngram_replay/datastore_sim.py); a brute-force scan of a 600k-token store confirms
   every query). A plain longest-match guess everywhere loses to the request's own counts. Two rules make the store
@@ -240,8 +240,8 @@ One token ahead on the true prefix (right guesses, %):
 | Guesser | Chat | Code | Edits | Agent | All | Fresh text | Tool calls |
 |---|---|---|---|---|---|---|---|
 | `cont` today (copy ≥ 4, else request counts) | 19.6 | 33.3 | 60.2 | 29.4 | 39.2 | 19.0 | 20.3 |
-| the chain, 3 M clean tokens | 23.4 | 36.7 | 62.4 | 37.5 | 42.5 | 23.7 | 53.8 |
-| the chain, 13.8 M clean tokens | 24.5 | 38.0 | 62.9 | 38.7 | 43.5 | 25.0 | 54.7 |
+| the chain, 3 M tokens | 23.4 | 36.7 | 62.4 | 37.5 | 42.5 | 23.7 | 53.8 |
+| the chain, 13.8 M tokens | 24.5 | 38.0 | 62.9 | 38.7 | 43.5 | 25.0 | 54.7 |
 | copy ≥ 4, else the store, else request counts (13.8 M) | 23.0 | 36.4 | 60.9 | 37.4 | 41.8 | 23.6 | 57.8 |
 | bound: the better of the store's and the request's guess at every token (13.8 M) | 30.3 | 43.4 | 66.5 | 44.9 | 48.4 | 31.3 | 63.7 |
 
@@ -280,6 +280,25 @@ all classes from 1.46 to 1.54.
   generated tokens. At about 90 ns per random memory access on the Celeron's single DDR4-2133 channel (an assumed
   figure), that is est. 30–50 µs per lookup and 15–40 µs per generated token, under 0.3 % of a token's time. The store
   is built offline on any PC (`datastore build`, prefix doubling) and copied to the rig.
+
+**The store for release.** The store measured above holds answers to every Q20 prompt set, including ShareGPT,
+UltraChat and Magicoder prompts whose licence or origin is unclear, so it is not distributed. The store for release,
+`flint-answers-core-13.8M.pstore` (14,868 answers, 13.8 M tokens, 110 MB), holds only Flint's answers to our own
+prompts. These are whole-file edits and coding-agent turns on files of the Python standard library, of llama.cpp
+(without its vendored code and build output) and of Python packages under the MIT, BSD, Apache-2.0 or PSF licence. The
+answers come from Flint Q8_0, G3, UD-Q4_K_XL and NVFP4 at the same sampling, with Q51 held out the same way. Data sets of
+model-written prompts (the tool-call sets, NuminaMath-CoT) are left out. Answers to OpenR1-Math's crawled problems add
+nothing on Q51. Simulated at depth 3 on nine cards (6/6/6/6/5/5/5/5/5):
+
+| Store | Chat | Code | Edits | Agent | All | Tool calls |
+|---|---|---|---|---|---|---|
+| none (`cont` today) | 1.19 | 1.36 | 1.87 | 1.30 | 1.44 | 1.18 |
+| every prompt set, 13.8 M | 1.25 | 1.43 | 1.95 | 1.45 | 1.52 | 1.74 |
+| our own prompts (release), 13.8 M | 1.19 | 1.39 | 1.98 | 1.47 | 1.49 | 1.90 |
+| our own prompts and OpenR1-Math, 13.8 M | 1.19 | 1.39 | 1.98 | 1.46 | 1.49 | 1.90 |
+
+Without chat answers the store no longer helps chat. Edits, agent turns and tool calls gain more than with every prompt
+set.
 
 **In the engine** (fork branch `pascal-p106-v2-q161`): `llama-server --pipe-store FILE` and `llama-pipespec --pipe-store
 FILE` (job key `store=0` leaves it out of a job) add the store to `cont` in the chain above. `common_pipe_store`
@@ -823,18 +842,19 @@ between `k8`, `k8g1` and `k8s` there is decode priority. Every `same_as_plain` m
 chunk slots do not fit next to the model stops at its start (`run-<config>.log`), and the next one runs.
 
 **4e. The continuation store in llama-server (Q161)** (the build of `pascal-p106-v2-q161`, which also carries Q155 and
-the tool-request pipelining, `llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161`, and a store of 13.8 M tokens of Flint
-answers, `flint-answers-clean-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
+the tool-request pipelining, `llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161`, and the store for release,
+`flint-answers-core-13.8M.pstore`, 110 MB, copied next to the builds; ~30 min):
 
 ```
 B=/opt/llama-builds/llama.cpp-20261024-9d50872e0-pascal-p106-v2-q161/bin; M=<K2h-r16>
-S=/opt/llama-builds/stores/flint-answers-clean-13.8M.pstore
+S=/opt/llama-builds/stores/flint-answers-core-13.8M.pstore
 ssh rig "setsid nohup env BIN=$B MODEL=$M TAG=store-9c GPUS=0,1,2,3,4,5,6,7,8 TS=6,6,6,6,6,6,6,5,2 DEPTHS='0 3 3s' \\
     STORE=$S ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg' bash /tmp/pipespec/rig_server.sh > /tmp/pipespec/store-9c.out 2>&1 < /dev/null &"
 ```
 
 `d3s x` against `d3 x` is the store's gain per request: chat, code and edit prompts and the coding-agent tool request,
-at T 0 and T 1. The simulation expects ~5 % on chat, code and edits and more on the tool request. The guesses column
+at T 0 and T 1. With the store for release, the simulation expects nothing on chat, ~2 % on code, ~6 % on edits and
+more on the tool request. The guesses column
 counts the store's guesses (right / wrong / from the store). Every `identical` must read `yes`.
 
 **5. Collect and clean up:**

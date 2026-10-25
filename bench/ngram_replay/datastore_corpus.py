@@ -12,7 +12,8 @@ instructions and the files they edit, the agent tasks and the files the agents r
 definitions are not compared: they carry no test content (the agent prompts of both sets use the same four tools).
 
 Streams written to OUT_DIR:
-  clean.i32     answers that pass the check
+  clean.i32     answers that pass the check (clean of Q51's test content: the name says nothing about the licences of
+                the prompts the answers were generated from)
   all.i32       every answer
   noagent.i32   clean answers without the agent and tool-call categories (how much of an agent result comes from
                 answers to the same four tools)
