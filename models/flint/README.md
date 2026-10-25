@@ -49,7 +49,7 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
 - **`--pipe-depth 3`** sends up to three guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
-- **The drafter:** add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-v2.0.gguf` for the trained guesser on nine cards ([below](#the-staircase-drafter)); RIG-TBD: whether the first card has room for it next to Q8_0 at the full context. <!-- only:drafter -->
+- **The drafter:** add `--pipe-guess staircase --pipe-draft <the nine-card file>` (RIG-TBD: its name) for the trained guesser on nine cards ([below](#the-staircase-drafter)); RIG-TBD: whether the first card has room for it next to Q8_0 at the full context. <!-- only:drafter -->
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
@@ -157,33 +157,28 @@ learned from Flint Q8_0's hidden states and works with any Flint file. How it is
 [docs/drafter.md](../../docs/drafter.md).
 
 - **Files** (~0.27 GB each, from the release assets or
-  [Hugging Face](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); RIG-TBD: the names follow the release's tag):
-  `flint-staircase-drafter-9cards-v2.0.gguf` for nine cards, trained on both nine-card splits;
-  `flint-staircase-drafter-v2.0.gguf` for six cards and any other split of 3–12 cards, trained on all of them (a quarter
-  of its training each on six and nine cards).
+  [Hugging Face](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); RIG-TBD: their names): one for nine
+  cards, trained on the nine-card splits, and one for six cards and any other split of 3–12 cards, trained on all of
+  them. Both are trained only on Flint's answers to prompts whose answers may be published
+  ([the sources](../../release/flint-v2/reproduce/drafter.md#1-prompts)).
 - **Turn it on:** add `--pipe-guess staircase --pipe-draft <file>` to the chat command line above, which already has
   `--pipe-depth 3`. The engine builds the drafter's window of hidden states from the run's own layer split.
-- **Acceptance on held-out text** (the share of guesses that match Flint's sample, outside copied text / overall): 0.476
-  / 0.538 on nine cards with a light last card (`-ts 6,6,6,6,6,6,6,5,2`), 0.523 / 0.583 on six cards.
 
-Served, `--pipe-depth 3`, K2h-r16 at 8,192 tokens of context unless the row says otherwise, tok/s, the median of eight
-requests (chat, code and edit answers of 512 tokens and a coding-agent tool request of 1,536, each at temperature 0 and
-at the makers' sampling) ([Q20](../../quants/experiments.md#registry)):
+Served, `--pipe-depth 3`, tok/s, the median of eight requests (chat, code and edit answers of 512 tokens and a
+coding-agent tool request of 1,536, each at temperature 0 and at the makers' sampling):
 
-| | No guessing | Copy lookup, continuations and store | **The same, then the drafter** | The drafter without the store |
+| | No guessing | Copy lookup and continuations | With the store | **With the drafter** |
 |---|---|---|---|---|
-| **Nine cards, Q8_0 at 262,144 tokens**, `-ts 6,6,5,5,6,5,5,6,6`, nine-card file | RIG-TBD | RIG-TBD | **RIG-TBD** | |
-| Nine cards, `-ts 6,6,6,6,6,6,6,5,2`, nine-card file | 33.4 | 48.6 | **50.4** | 44.4 |
-| Nine cards, `-ts 6,6,6,6,5,5,5,5,5`, nine-card file | 33.4 | 48.6 | **50.3** | |
-| Six cards, general file | 34.3 | 49.0 | **49.5** | |
+| **Nine cards, Q8_0 at 262,144 tokens**, `-ts 6,6,5,5,6,5,5,6,6`, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Nine cards, K2h-r16, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Six cards, K2h-r16, general file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
-- **The drafter adds 3.7 % on nine cards** to the copy lookup, continuations and store (8.6 % on chat and code at
-  temperature 0), and 1 % on six cards (49.5 against 49.0); 53.8 % of its guesses were right.
-- **Not measured yet:** the copy lookup and continuations without the store, so what the store and the drafter add on
-  their own is open (RIG-TBD: a rig test of each piece).
-- **One guess costs 5.3–7.3 ms on the first card**, which also runs Flint's first layers; the design estimated
-  1.6–2.6 ms. That cost, not the guessing quality, now limits the gain.
-- Every answer was identical to plain decoding in every configuration.
+- RIG-TBD: the share of the drafter's guesses that are right, and its accuracy on held-out text.
+- **One guess costs 5.3–7.3 ms on the first card** (measured with the first heads of the same size), which also runs
+  Flint's first layers; the design estimated 1.6–2.6 ms. That cost, more than the guessing quality, limits the gain.
+- The first heads, trained partly on prompts whose answers may not be published, are not shipped; their measurements
+  are in [results.md](../../release/flint-v2/results.md).
+- Every answer must be identical to plain decoding in every configuration.
 <!-- end:drafter -->
 
 ### Prefill
@@ -257,7 +252,7 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
 - **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:q163-q111 -->
 - **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:q163-q111 -->
-- **The staircase drafter**, a trained guesser for pipelined speculation, with its side files: +3.7 % over the store on nine cards (50.4 tok/s served). <!-- only:drafter -->
+- **The staircase drafter**, a trained guesser for pipelined speculation, with its side files: RIG-TBD. <!-- only:drafter -->
 
 ## Not measured yet
 

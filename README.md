@@ -33,11 +33,10 @@ both engines. The 4-bit files fit six cards. Generation and prefill, stock llama
 | Prefill (reading the prompt), 512 tokens, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 <!-- begin:drafter -->
-**With the staircase drafter**, served chat with K2h-r16 reaches **50.4 tok/s** on nine cards and **49.5** on six, against
-33.4 and 34.3 without guessing (48.6 and 49.0 with the simpler guessers alone, 8,192 tokens of context). The drafter
-is a small trained head (a 0.27 GB side file shipped with the release, one for nine cards and one for other counts) that guesses Flint's next token from the hidden
-states of the tokens already in flight; the cards check every guess
-([how it works](models/flint/README.md#the-staircase-drafter)).
+**With the staircase drafter**, served chat reaches **RIG-TBD tok/s** on nine cards, against RIG-TBD without guessing.
+The drafter is a small trained head (a 0.27 GB side file shipped with the release, one for nine cards and one for other
+counts) that guesses Flint's next token from the hidden states of the tokens already in flight; the cards check every
+guess ([how it works](models/flint/README.md#the-staircase-drafter)).
 <!-- end:drafter -->
 
 The answers don't change: the engine's kernels change only the order of additions, and pipelined speculation gives
