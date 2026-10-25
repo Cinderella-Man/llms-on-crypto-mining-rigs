@@ -14,7 +14,7 @@ such hardware, so the rigs sit idle. This project makes them useful: a llama.cpp
 up to 262,144 tokens of context. On the nine cards of the [reference rig](#the-reference-rig), the v2 engine runs it
 RIG-TBD times as fast as stock llama.cpp, with the file most people already have:
 
-<!-- RIG-TBD: the stock-clock block of today's bench/release_matrix run (rc1 594d20e08) -->
+<!-- RIG-TBD: the stock-clock block of today's bench/release_matrix run on the release engine -->
 
 | Nine P106-090 cards, Unsloth's UD-Q4_K_XL, tokens per second | Stock llama.cpp | v1 engine | **v2** |
 |---|---|---|---|
@@ -66,6 +66,8 @@ memory. The fork changes that, mostly without regard to which model runs:
 | Pipelined speculation in llama-server (`--pipe-depth`): guessed tokens enter the idle cards of a layer split, checked against the real token | models with an attention-only cache (hybrid models next) | served chat 1.04–1.18×, edits up to 1.56×, rewrites up to 2.79× |
 | Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | RIG-TBD (they decoded 12–16 % slower than chat before) |
 | The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 % |
+| A Pascal prompt-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | long prompts RIG-TBD | <!-- only:rc3 -->
+| Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | RIG-TBD | <!-- only:rc3 -->
 
 The first three rows were measured on six cards with UD-Q4_K_XL, step by step; the rest are each change's own gain
 ([Flint page](models/flint/#how-it-got-here)). Of v2's decode gain on Flint, about 87 % comes from the Pascal-only changes
@@ -147,8 +149,10 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
    then run [scripts/p106_check.sh](scripts/p106_check.sh), which checks the driver, the cards, host memory, the model's
    read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
    (slow on two cores) or on any Linux PC with Docker using
-   [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh). The v2 engine is commit `594d20e08` of the
-   fork (RIG-TBD: the release branch or tag); v1, as released on 2026-10-23, is `pascal-p106`.
+   [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh).
+   The v2 engine is commit `7e6ec762f` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc3 -->
+   The v2 engine is commit `594d20e08` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc1 -->
+   v1, as released on 2026-10-23, is `pascal-p106`.
 
    ```bash
    git clone --branch RIG-TBD https://github.com/Cinderella-Man/llama.cpp

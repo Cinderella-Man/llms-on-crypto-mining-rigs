@@ -15,7 +15,8 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) |
+| Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
+| Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
 | Cards | all nine for the full 262,144-token context; six run one short conversation about as fast and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
@@ -47,6 +48,7 @@ llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa 
   `LLAMA_NO_MOE_DOWN_RESCALE=0` keeps the rescale; any value other than `tg` and `0` is unsafe for this file.
 - **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
   tool grammar on the host (RIG-TBD: their speed against chat). Set the client's context window equal to `-c`.
+- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. RIG-TBD: the time to first token it saves. <!-- only:rc3 -->
 - **Six cards:** add `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5` and lower `-c` (UD-Q4_K_XL fits est. ~128k tokens there).
 - **Q8_0** at the full context needs its layers split by memory: add `-ts 6,6,5,5,6,5,5,6,6`.
 
@@ -66,7 +68,7 @@ warm-up, because idle cards sit at a lower clock.
 | v2: + prompt-processing changes | 37.5 | 39.3 |
 | v2: + persistent MoE kernel | 39.8 | 41.5 |
 | v2: + pipelined speculation in llama-server (branch `pascal-p106-v2-next`) | 39.9 | 41.8 |
-| **v2 release (`594d20e08`)** | **RIG-TBD** | **RIG-TBD** |
+| **v2 release** | **RIG-TBD** | **RIG-TBD** |
 
 - The first three rows come from one session, the next two from another, the `v2-next` row from a third
   ([Q117, Q88, Q125, Q160](../../quants/experiments.md#registry)).
@@ -81,8 +83,8 @@ llama-server, one conversation, GPU sampling (`-bs`), median per request, tok/s
 |---|---|---|
 | v2-next, plain decoding | 36.6 | 39.2 |
 | **v2-next, pipelined speculation (`--pipe-depth 3`)** | **47.3** | **48.5** |
-| v2 release (`594d20e08`), plain decoding, the chat command line above | RIG-TBD | RIG-TBD |
-| **v2 release (`594d20e08`), `--pipe-depth 3`, the chat command line above** | **RIG-TBD** | **RIG-TBD** |
+| v2 release, plain decoding, the chat command line above | RIG-TBD | RIG-TBD |
+| **v2 release, `--pipe-depth 3`, the chat command line above** | **RIG-TBD** | **RIG-TBD** |
 | v2 release, a request with tools, `--pipe-depth 3` | RIG-TBD | RIG-TBD |
 
 - The v2-next rows ran at 8,192 tokens of context: chat, rewrite and edit prompts, each at temperature 0 and with two
@@ -121,6 +123,8 @@ tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/ex
 UD-Q4_K_XL on nine cards, tok/s for prompts of 512 / 2,048 / 8,192 tokens: stock llama.cpp 185 / 493 / 593, v1
 187 / 494 / 593, v2 228 / 613 / 723. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by
 tokens per expert ([Q117](../../quants/experiments.md#registry)).
+
+Long prompts with the release's prompt-attention kernel, K2h-r16 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:rc3 -->
 
 ### With hardware tuning
 
@@ -182,6 +186,8 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **The attention mask built on each card**, for prompts and decoding: decode at 64k tokens of context +12 %
   ([Q116](../../quants/experiments.md#registry)).
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
+- **A Pascal prompt-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:rc3 -->
+- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:rc3 -->
 
 ## Not measured yet
 
