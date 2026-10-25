@@ -10,6 +10,22 @@ Builds (fork commits): stock = upstream `d77256999`; v1 = `eeaa59660`; v2 base =
 persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `2d53179aa` (`460160e93` plus an allocator fix off the drafter's path; rc3 `7e6ec762f` without the
 drafter).
 
+## The headline: Flint Q8_0 on nine cards at the full context
+
+Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of context, layers split by memory
+(`-ts 6,6,5,5,6,5,5,6,6`).
+
+| What | Value | How | Build | Row |
+|---|---|---|---|---|
+| Quality against BF16, 80 × 512 tokens of wikitext-2 test: Q8_0 / UD-Q4_K_XL | same top token 93.3 % / 87.7 %; KLD 0.052 / 0.120; PPL +3.3 % / +3.9 % | `llama-perplexity --kl-divergence` | — | Q8 |
+| Five-turn chat at the full context, nine cards: Q8_0 / UD-Q4_K_XL, stock → v1 | 14.78 → **29.55** / 14.20 → 27.97 tok/s (Q8_0 1.06× UD on v1) | `scripts/server_bench.sh PROMPTS=chat`, same settings and seeds on both engines | stock, v1 | Q58 |
+| Generation, Q8_0, nine cards, Pascal kernels off → on | 26.92 → 35.89 tok/s (+33 %) | `llama-bench -n 128`, one binary | v1 kernels | Q38 |
+| Bytes read per generated token: Q8_0 / UD-Q4_K_XL / K2h-r16 | 2.70 / 2.21 / 2.09 GB | `scripts/token_cost.py` | — | — |
+| v2 identity with Q8_0: pipelined output = plain, depths 1 and 3 | RIG-TBD | `bench/pipespec/rig_run.sh` with `TS=6,6,5,5,6,5,5,6,6 DEPTHS='1 3' N=256` | rc4 | — |
+| v2 generation, Q8_0, nine cards, warm: stock / v1 / v2 | RIG-TBD | [bench/release_matrix](../../bench/release_matrix/README.md) with `MODELS=Q8_0=… BENCH_ARGS='-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6,6,5,5,6,5,5,6,6'` | stock, v1, rc4 | — |
+| v2 served at 262k, Q8_0, median of 8 requests: no guessing / copy lookup and store / the store, then the drafter (R2-9) | RIG-TBD / RIG-TBD / RIG-TBD | `bench/pipespec/rig_server.sh` with `CTX=262144 TS=6,6,5,5,6,5,5,6,6 DEPTHS='0 3s 3ds' STORE=… DRAFT=…` | rc4 | Q20 |
+| v2 the same five-turn chat, Q8_0 against UD-Q4_K_XL | RIG-TBD | `scripts/server_bench.sh PROMPTS=chat` | rc4 | — |
+
 ## Measured on the release engine (2026-10-25)
 
 The drafter rows ran on `460160e93`; the release commit `2d53179aa` adds only an allocator fix outside the drafter's

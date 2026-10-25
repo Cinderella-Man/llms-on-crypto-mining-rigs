@@ -32,8 +32,10 @@ pipelined speculation with the copy lookup and the store.
 
 ## Use it
 
-You need the Pascal engine v2 and a Flint model file (we use
-[Flint K2h-r16](https://huggingface.co/OWNER-TBD/Flint-K2h-r16-GGUF); Unsloth's files work too). Add three options to the usual server command:
+You need the Pascal engine v2 and a Flint model file: Unsloth's near-lossless
+[Q8_0](https://huggingface.co/unsloth/flint-GGUF) on nine cards (the drafter learned from Q8_0's internal states), or
+[Flint K2h-r16](https://huggingface.co/OWNER-TBD/Flint-K2h-r16-GGUF), which the numbers below were measured with, on
+six cards or more. Add three options to the usual server command:
 
 ```bash
 llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 3 --pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-v2.0.gguf --pipe-store <store file> --host 127.0.0.1 --port 8080
@@ -41,6 +43,8 @@ llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf -ngl 99 -fa on -c 262144 -np 
 
 - `--pipe-depth 3` keeps three guesses in flight, `--pipe-guess staircase` uses the drafter, `--pipe-draft` names the
   file: the nine-card file on nine cards, the general file on any other count (below).
+- For Q8_0, give `-m flint-Q8_0.gguf` and add `-ts 6,6,5,5,6,5,5,6,6`, which splits its layers by memory so that the
+  full context fits (RIG-TBD: whether the drafter fits next to it at the full context).
 - It helps one conversation at a time. Requests with tools are sped up until the tool call starts.
 - Use it with `--pipe-store`: the store of Flint's earlier answers (OWNER-TBD: shipped next to the drafter files) is
   consulted before the drafter. Without the store the drafter alone reaches 44.4 tokens per second on nine cards,
@@ -60,11 +64,12 @@ general one.
 
 ## What we measured
 
-Tokens per second, Flint K2h-r16 at 8,192 tokens of context, the median of eight requests (chat, code, edit and a
-coding-agent tool request, each at temperature 0 and at the makers' sampling):
+Tokens per second, Flint K2h-r16 at 8,192 tokens of context unless the row says otherwise, the median of eight
+requests (chat, code, edit and a coding-agent tool request, each at temperature 0 and at the makers' sampling):
 
 | | No guessing | Copy lookup and store | **Store, then the drafter** |
 |---|---|---|---|
+| **Nine cards, Unsloth Q8_0 at 262,144 tokens** (`-ts 6,6,5,5,6,5,5,6,6`), nine-card file | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Nine cards (`-ts 6,6,6,6,6,6,6,5,2`), nine-card file | 33.4 | 48.6 | **50.4** |
 | Nine cards, even split, nine-card file | 33.4 | 48.6 | **50.3** |
 | Six cards, general file | 34.3 | 49.0 | **49.5** |

@@ -28,6 +28,14 @@ download, Unsloth's UD-Q4_K_XL.
 **How fast.** On a Manli mining rig with nine P106-090 cards (6 GB each, every card on a single PCIe 1.0 lane, a
 2-core Celeron host): RIG-TBD tokens per second, against RIG-TBD on stock llama.cpp with the usual file.
 
+**Which Flint file should you pick?**
+- **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
+  near-lossless (it picks the original model's next word 93.3 % of the time), it fits the full 262,144-token context
+  on nine cards, and with the Pascal engine it is not slower than the 4-bit files: 29.55 tokens per second against
+  27.97 for UD-Q4_K_XL in a long chat on the v1 engine (v2: RIG-TBD). This is the headline of the release.
+- **Six cards, or more room for the context: this file.** It is a third smaller than Q8_0, closer to the original than
+  UD-Q4_K_XL, and faster than it on the same engine.
+
 ## Run it in three steps
 
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
@@ -62,7 +70,7 @@ For even more speed, add the trained guesser from
 | | This file | Unsloth UD-Q4_K_XL | Unsloth Q8_0 |
 |---|---|---|---|
 | Size | 29.4 GB | 25.1 GB | 42.3 GB |
-| Speed on nine P106-090, Pascal engine | RIG-TBD tok/s | RIG-TBD tok/s | — |
+| Speed on nine P106-090, Pascal engine | RIG-TBD tok/s | RIG-TBD tok/s | RIG-TBD tok/s |
 | Picks the same next word as the original model | 88.8 % | 87.7 % | 93.3 % |
 | Distance from the original (KL divergence, lower is better) | 0.105 | 0.120 | 0.052 |
 

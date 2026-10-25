@@ -7,13 +7,20 @@ Celeron hosts. This release is tuned and measured on Flint; measurements, settin
 
 ## Speed
 
+**Flint in near-lossless 8-bit on nine mining cards at the full 262,144-token context.** Unsloth's Q8_0 (42.3 GB)
+picks the original model's next token 93.3 % of the time (KL divergence 0.052 against the 16-bit weights), against
+87.7 % (0.120) for the common 4-bit file UD-Q4_K_XL, and on these cards it is also the faster of the two (RIG-TBD:
+confirm with the {{VERSION}} rows below; on v1 29.55 against 27.97 tok/s).
+
 Flint on nine P106-090 cards (one PCIe 1.0 lane each, a 2-core Celeron with 4 GB of RAM), tokens per second:
 
 | | Stock llama.cpp | v1 engine | **{{VERSION}}** |
 |---|---|---|---|
-| Generation, Unsloth UD-Q4_K_XL (`llama-bench` tg128) | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Served chat, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Served chat, UD-Q4_K_XL, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
+| **Served chat at the full context, Unsloth Q8_0** (`-ts 6,6,5,5,6,5,5,6,6`) | 14.78 | 29.55 | **RIG-TBD** |
+| Served chat at the full context, Unsloth UD-Q4_K_XL | 14.20 | 27.97 | **RIG-TBD** |
+| Served chat at the full context, Q8_0, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
+| Generation, Q8_0 (`llama-bench` tg128) | RIG-TBD | 35.9 | **RIG-TBD** |
+| Generation, UD-Q4_K_XL (`llama-bench` tg128) | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Served chat, K2h-r16, the store and the staircase drafter (`--pipe-guess staircase`, 8k context) | — | — | **50.4** | <!-- only:drafter -->
 | Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
@@ -82,12 +89,15 @@ tar xzf {{BIN_ASSET}} && tar xzf {{CUDART_ASSET}}
 ```
 
 Both archives unpack into `{{PREFIX}}-{{VERSION}}/`. `scripts/p106_check.sh` in the repository checks the driver, the
-cards, host memory, the model's read speed and the shipped command lines. Flint on nine cards, chat with the full
+cards, host memory, the model's read speed and the shipped command lines. Flint Q8_0 on nine cards, chat with the full
 context:
 
 ```bash
-{{PREFIX}}-{{VERSION}}/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+{{PREFIX}}-{{VERSION}}/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
 ```
+
+`-ts 6,6,5,5,6,5,5,6,6` splits the layers by memory so that Q8_0 and the full context fit; for a 4-bit file
+(UD-Q4_K_XL, or this project's K2h-r16 on six cards) drop it.
 
 With the drafter, add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-{{VERSION}}.gguf` to that line. <!-- only:drafter -->
 The repository's Flint page explains every flag, the six-card and agent variants, and the speed and quality behind them.
