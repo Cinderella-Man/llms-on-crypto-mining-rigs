@@ -8,13 +8,36 @@ compute units, and the host is a 2-core Celeron with 4 GB of RAM. Stock software
 such hardware, so the rigs sit idle. This project makes them useful: a llama.cpp fork tuned for Pascal cards (the
 **Pascal engine**), tested files and command lines for each model, and every measurement behind the numbers.
 
+## v2: the Flint release
+
+[Flint](models/flint/README.md) is a 39.8 B-parameter mixture-of-experts model that reasons before it answers and reads
+up to 262,144 tokens of context. On the nine cards of the [reference rig](#the-reference-rig), the v2 engine runs it
+RIG-TBD times as fast as stock llama.cpp, with the file most people already have:
+
+<!-- RIG-TBD: the stock-clock block of today's bench/release_matrix run (rc1 594d20e08) -->
+
+| Nine P106-090 cards, Unsloth's UD-Q4_K_XL, tokens per second | Stock llama.cpp | v1 engine | **v2** |
+|---|---|---|---|
+| Generation (`llama-bench`, 128 tokens) | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Served chat | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Served chat, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
+| Prompt processing, 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
+
+The answers don't change: the engine's kernels change only the order of additions, and pipelined speculation gives
+exactly the tokens of plain decoding. To run it:
+1. **The engine:** the two archives of the fork's release RIG-TBD (tag and link), unpacked into one folder; the rig
+   needs NVIDIA's driver 580 and no CUDA toolkit ([Run it](#run-it)).
+2. **The model:** Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB). RIG-TBD: our own
+   K2h-r16 file too, if the release includes it.
+3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
+
 ## Models
 
 Generation speed in tokens per second (tok/s) for one conversation, measured on the [reference rig](#the-reference-rig):
 
 | Model | What it is | Speed | Page |
 |---|---|---|---|
-| [![Flint](https://img.shields.io/badge/Flint-v2%20measured-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards: **39.9 tok/s** generation with Unsloth's UD-Q4_K_XL, against 16.5 on stock llama.cpp; served chat with pipelined speculation **47.3** (**48.5** with our own file, not published yet) | [models/flint](models/flint/) |
+| [![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards, v2: **RIG-TBD tok/s** generation with Unsloth's UD-Q4_K_XL, against RIG-TBD on stock llama.cpp; **RIG-TBD** served chat with pipelined speculation | [models/flint](models/flint/) |
 | [![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-coming%20soon-718096)](models/qwen3.6-35b-a3b/) | 36 B hybrid mixture of experts, 3 B per token, 262,144-token context | Four cards: 29.0 tok/s with the v1 engine, against 18.5 on stock llama.cpp | [models/qwen3.6-35b-a3b](models/qwen3.6-35b-a3b/) |
 | [![Ornith-1.5-35B](https://img.shields.io/badge/Ornith--1.5--35B-coming%20soon-718096)](models/ornith-1.5-35b/) | 35 B hybrid mixture of experts with Qwen3.6's shapes, 3 B per token, 262,144-token context | Not run yet; its 21.7 GB Q4_K_M fits four or five cards (est. 19–23 tok/s today, 30–36 with the planned K-quant kernels) | [models/ornith-1.5-35b](models/ornith-1.5-35b/) |
 | [![Ornith-1.5-122B](https://img.shields.io/badge/Ornith--1.5--122B-coming%20soon-718096)](models/ornith-1.5-122b/) | 122 B hybrid mixture of experts, 10 B per token, for coding agents | Not run yet; fits nine cards only at 2–3 bits per weight (est. 8–16 tok/s) | [models/ornith-1.5-122b](models/ornith-1.5-122b/) |
@@ -38,7 +61,11 @@ memory. The fork changes that, mostly without regard to which model runs:
 | Shared-expert projections fused with their activation | MoE models with a shared expert | +0.7 % |
 | MoE prompt tiles sized by tokens per expert (upstream PR #31047) | MoE models, prompts | prompts +22–29 % |
 | One persistent kernel per MoE layer at one token, instead of 13 launches | Flint's layer shapes; other models fall back to the normal path | +5.6–8.8 % |
-| Pipelined speculation: guessed tokens enter the idle cards of a layer split, checked against the real token | models with an attention-only cache (hybrid models next) | 1.3–1.55×, partly from higher clocks |
+| A Pascal decode-attention kernel for one token | attention of Flint's shape (head size 128, 8 query heads per KV head); other shapes take the normal path | RIG-TBD |
+| Pascal matrix-vector kernels for Q4_K and Q6_K too | the common Q4_K_M downloads of other models | Flint's UD-Q4_K_XL: est. ≤ 1 % |
+| Pipelined speculation in llama-server (`--pipe-depth`): guessed tokens enter the idle cards of a layer split, checked against the real token | models with an attention-only cache (hybrid models next) | served chat 1.04–1.18×, edits up to 1.56×, rewrites up to 2.79× |
+| Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | RIG-TBD (they decoded 12–16 % slower than chat before) |
+| The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 % |
 
 The first three rows were measured on six cards with UD-Q4_K_XL, step by step; the rest are each change's own gain
 ([Flint page](models/flint/#how-it-got-here)). Of v2's decode gain on Flint, about 87 % comes from the Pascal-only changes
@@ -60,7 +87,9 @@ fork. Every engine number elsewhere in this repository is measured without them,
 two: each engine at stock clocks, each engine tuned, then what the tuning adds to each.
 
 <!-- RIG-TBD: replace the three tables with tables.md from bench/release_matrix (run of 2026-10-25); drop the K2h-r16
-columns if the release ships Unsloth's file only -->
+columns if the release ships Unsloth's file only; if the release ships before the tuned run, keep the stock-clock table
+and say the tuned tables follow -->
+
 
 **Stock clocks**, nine cards, Flint, tokens per second:
 
@@ -118,11 +147,11 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
    then run [scripts/p106_check.sh](scripts/p106_check.sh), which checks the driver, the cards, host memory, the model's
    read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
    (slow on two cores) or on any Linux PC with Docker using
-   [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh). The v2 engine is the fork's branch
-   `pascal-p106-v2-next` (RIG-TBD: the release branch or tag); v1, as released on 2026-10-23, is `pascal-p106`.
+   [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh). The v2 engine is commit `594d20e08` of the
+   fork (RIG-TBD: the release branch or tag); v1, as released on 2026-10-23, is `pascal-p106`.
 
    ```bash
-   git clone --branch pascal-p106-v2-next https://github.com/Cinderella-Man/llama.cpp
+   git clone --branch RIG-TBD https://github.com/Cinderella-Man/llama.cpp
    ```
 
    ```bash

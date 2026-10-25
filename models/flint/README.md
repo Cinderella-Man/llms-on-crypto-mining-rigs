@@ -1,6 +1,6 @@
 # Flint on Pascal mining rigs
 
-[![Flint](https://img.shields.io/badge/Flint-v2%20measured-2b6cb0)](#speed)
+[![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](#speed)
 
 [Flint](https://huggingface.co/RecursiveSI/flint) is a 39.8 B-parameter mixture-of-experts model that uses 2.5 B
 parameters per token, keeps most of its attention local, and reads up to 262,144 tokens of context. It reasons before
@@ -15,7 +15,7 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine ([how to get it](../../README.md#run-it)) |
+| Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) |
 | Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
 | Cards | all nine for the full 262,144-token context; six run one short conversation about as fast and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
@@ -27,24 +27,26 @@ project's own Flint file, is ~4 % faster than UD-Q4_K_XL at better measured fide
 
 ## Command lines
 
-Chat with the full context on nine cards, served on the rig's loopback address:
+Chat with the full context on nine cards, served on the rig's loopback address, with the release archives unpacked
+in `llama-p106-v2.0/` (RIG-TBD: the folder follows the release's tag; a build from source has the same binary in
+`llama.cpp/build/bin/`):
 
 ```bash
-LLAMA_NO_MOE_DOWN_RESCALE=tg llama.cpp/build/bin/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+llama-p106-v2.0/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
 ```
 
-- **`LLAMA_NO_MOE_DOWN_RESCALE=tg`** switches off a safety rescale that llama.cpp applies to Flint's expert layers. The
-  Pascal kernels sum in 32-bit floats, so one-token steps don't need it, and without it each expert layer runs as one
-  persistent kernel. Use it only with this engine on Pascal cards.
 - **`--pipe-depth 3`** sends up to three guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
-  sampled entirely on the GPU (`-bs`, no grammar, no repetition penalties); every other request decodes as usual.
+  sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
-  context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens.
-- **Agents** (pi, OpenCode): the same line. Every tool request carries a grammar, which makes llama-server sample it on
-  the CPU, so tool requests decode 12–16 % slower than chat and skip pipelined speculation. Set the client's context
-  window equal to `-c`.
+  context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
+  512` if the quick-start check shows it fits (faster prompts).
+- **The engine drops llama.cpp's safety rescale of Flint's expert layers by itself** on Pascal cards: its kernels sum in
+  32-bit floats, so one-token steps don't need it, and without it each expert layer runs as one persistent kernel.
+  `LLAMA_NO_MOE_DOWN_RESCALE=0` keeps the rescale; any value other than `tg` and `0` is unsafe for this file.
+- **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
+  tool grammar on the host (RIG-TBD: their speed against chat). Set the client's context window equal to `-c`.
 - **Six cards:** add `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5` and lower `-c` (UD-Q4_K_XL fits est. ~128k tokens there).
 - **Q8_0** at the full context needs its layers split by memory: add `-ts 6,6,5,5,6,5,5,6,6`.
 
@@ -64,7 +66,7 @@ warm-up, because idle cards sit at a lower clock.
 | v2: + prompt-processing changes | 37.5 | 39.3 |
 | v2: + persistent MoE kernel | 39.8 | 41.5 |
 | v2: + pipelined speculation in llama-server (branch `pascal-p106-v2-next`) | 39.9 | 41.8 |
-| **v2 release build** | **RIG-TBD** | **RIG-TBD** |
+| **v2 release (`594d20e08`)** | **RIG-TBD** | **RIG-TBD** |
 
 - The first three rows come from one session, the next two from another, the `v2-next` row from a third
   ([Q117, Q88, Q125, Q160](../../quants/experiments.md#registry)).
@@ -79,13 +81,16 @@ llama-server, one conversation, GPU sampling (`-bs`), median per request, tok/s
 |---|---|---|
 | v2-next, plain decoding | 36.6 | 39.2 |
 | **v2-next, pipelined speculation (`--pipe-depth 3`)** | **47.3** | **48.5** |
-| v2 release build, `--pipe-depth 3`, the chat command line above | RIG-TBD | RIG-TBD |
+| v2 release (`594d20e08`), plain decoding, the chat command line above | RIG-TBD | RIG-TBD |
+| **v2 release (`594d20e08`), `--pipe-depth 3`, the chat command line above** | **RIG-TBD** | **RIG-TBD** |
+| v2 release, a request with tools, `--pipe-depth 3` | RIG-TBD | RIG-TBD |
 
 - The v2-next rows ran at 8,192 tokens of context: chat, rewrite and edit prompts, each at temperature 0 and with two
   seeds at the makers' sampling, plus one streamed request. Pipelined speculation gave 1.04–1.18× on chat, 1.04–1.56×
   on edits and 1.44–2.79× on rewrites, and all ten pipelined answers were identical to the server without it.
-- Requests that carry tools sample on the CPU and decode batched: 29.3–29.6 tok/s on the combined build before the
-  persistent kernel ([Q55](../../quants/experiments.md#registry)).
+- Before the release build, requests that carry tools sampled on the CPU and decoded 12–16 % slower than chat
+  (29.3–29.6 tok/s on an earlier v2 build, [Q55](../../quants/experiments.md#registry)); the release samples them on the
+  GPU.
 
 ### Pipelined speculation
 
@@ -171,12 +176,17 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **PR #31047** for prompts: +22–29 % prompt processing.
 - **The persistent MoE kernel:** each expert layer at one token runs as one kernel instead of 13 launches: +5.6–8.8 %
   per token. It covers Flint's shapes and falls back to the normal path for any other model.
-- **Pipelined speculation** in llama-server (`--pipe-depth`).
+- **Pipelined speculation** in llama-server (`--pipe-depth`, with `--pipe-floor` and `--pipe-store`).
+- **A Pascal decode-attention kernel** for Flint's attention shape: RIG-TBD.
+- **Tool requests sampled on the GPU**, the grammar checked on the host, pipelined until the tool call: RIG-TBD.
+- **The attention mask built on each card**, for prompts and decoding: decode at 64k tokens of context +12 %
+  ([Q116](../../quants/experiments.md#registry)).
+- **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
 
 ## Not measured yet
 
 - Served speed with `--pipe-depth` at the full 262,144-token context (the measured server ran at 8,192), and the release
-  build's numbers (RIG-TBD).
+  build's numbers (RIG-TBD: delete this item once today's run is in).
 - Generation deep into a long context on v2. The v1 engine generated 23.3 tok/s at 32,768 tokens of context with
   Miner S4-L0 ([Q54](../../quants/experiments.md#registry)).
 - Coding-agent tasks end to end, and runs longer than an hour.
