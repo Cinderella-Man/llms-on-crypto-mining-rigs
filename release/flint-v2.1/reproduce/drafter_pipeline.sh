@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# drafter_pipeline.sh: the staircase drafter from scratch on one machine, step after step (release/flint-v2/reproduce/
+# drafter_pipeline.sh: the staircase drafter from scratch on one machine, step after step (release/flint-v2.1/reproduce/
 # drafter.md). The project ran the same commands with several copies in parallel on a 7-GPU machine; this script is the
 # plain sequential form, so every step and its arguments are in one public place.
 #
 #   DATA=<data dir> LLAMA=<llama.cpp tree with llama-server and llama-staircase-dump built> \
 #   Q8=<flint-Q8_0.gguf> HF=<Hugging Face cache> STD=<python stdlib dir, e.g. /usr/lib/python3.12> \
-#   release/flint-v2/reproduce/drafter_pipeline.sh
+#   release/flint-v2.1/reproduce/drafter_pipeline.sh
 #
 # Steps (STEPS, default all, in this order):
 #   prompts   prompts.jsonl, prompts-ext.jsonl, prompts-ext2.jsonl (61,101 prompts from every source prompts.py draws),
 #             then each as *.strict.jsonl with the clean sources only, without Q51's text (19,084 prompts), which the
 #             later steps use
 #   answers   Flint's answers from llama-server (the makers' sampling, seed 20000 + prompt number, <= 2,048 tokens)
-#   testset   Q51, the 38 held-out transcripts: shipped in data/q51/ (copied; TESTSET_REBUILD=1 regenerates them)
+#   testset   Q51, the 38 held-out transcripts: shipped in release/flint-v2/reproduce/data/q51/ (copied;
+#             TESTSET_REBUILD=1 regenerates them)
 #   dump      hidden states (26-layer grid) and top-20 targets from Flint Q8_0, for the answers and for Q51
 #   vocab     the 40,000-id draft vocabulary
 #   train     U from scratch, R1 from U (six-card windows), then the depth-general head from R1: the first heads'
@@ -29,6 +30,7 @@ set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../../.." && pwd)
 SD=$repo/bench/staircase_drafter
+Q51=$repo/release/flint-v2/reproduce/data/q51    # the held-out test set, shipped with the v2 release folder
 : "${DATA:?DATA: the data directory}" "${LLAMA:?LLAMA: a llama.cpp tree with the tools built}"
 PYTHON=${PYTHON:-python3}
 GPUS=${GPUS:-0}
@@ -89,7 +91,7 @@ with open(sys.argv[2], "w") as out:
     for line in open(sys.argv[1]):
         if keep(json.loads(line)):
             out.write(line)
-' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl" "$here/data/q51/prompts.jsonl"
+' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl" "$Q51/prompts.jsonl"
         log "$f.strict.jsonl: $(wc -l < "$DATA/$f.strict.jsonl") of $(wc -l < "$DATA/$f.jsonl") prompts"
     done
 fi
@@ -122,12 +124,12 @@ if has testset; then
     if [ "${TESTSET_REBUILD:-0}" = 1 ]; then
         log "testset: regenerating the 38 Q51 transcripts (bench/expert_overlap, Unsloth Q8_0)"
         serve "$Q8"
-        $PYTHON "$repo/bench/expert_overlap/generate.py" "http://127.0.0.1:$PORT" "$here/data/q51/prompts.jsonl" \
+        $PYTHON "$repo/bench/expert_overlap/generate.py" "http://127.0.0.1:$PORT" "$Q51/prompts.jsonl" \
             "$DATA/q51/gen.jsonl" "$DATA/q51/seqs.txt" 8 3072
         stop_server
     else
         log "testset: the shipped Q51 transcripts"
-        cp "$here/data/q51/gen.jsonl" "$here/data/q51/seqs.txt" "$DATA/q51/"
+        cp "$Q51/gen.jsonl" "$Q51/seqs.txt" "$DATA/q51/"
     fi
 fi
 

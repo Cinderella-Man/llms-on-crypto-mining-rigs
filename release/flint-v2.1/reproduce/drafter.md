@@ -24,7 +24,7 @@ arguments and scores.
 | Flint for the answers | any faithful Flint GGUF in llama-server (we used Unsloth's Q8_0, our G3 mix and Unsloth's UD-Q4_K_XL), or the makers' NVFP4 GGUF in vLLM on RTX 20xx/30xx cards |
 | Flint for the dump | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): the dump's hidden states and targets come from it |
 | llama.cpp | a tree with `bench/staircase_drafter/staircase_dump/` built as an example (CUDA), and `bench/ngram_replay/datastore.cpp` for the store |
-| The engine | the release engine (`reproduce/engine.md`) for export checks and serving |
+| The engine | the release engine ([release/flint-v2/reproduce/engine.md](../../flint-v2/reproduce/engine.md)) for export checks and serving |
 | Python | PyTorch with CUDA, numpy, huggingface_hub, pyarrow, gguf-py |
 | GPUs | 12–32 GB cards for training (one head per GPU; general heads score with `--window-group 2` on 12 GB), any CUDA cards that hold Flint Q8_0 for the dump |
 | Disk | ~58 GB per million answer tokens for the dump (the 26-layer grid); the release round's 27.6 M answer tokens took ~1.3 TB, on hard disks |

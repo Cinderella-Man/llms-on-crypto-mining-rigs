@@ -46,11 +46,10 @@ cmake -S llama.cpp -B llama.cpp/build -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=
 
 `scripts/package_release.sh` packs a build for GitHub Releases: the binaries with RPATH `$ORIGIN`, NVIDIA's
 redistributable CUDA runtime libraries as a second archive, `test-backend-ops` as a third, `SHA256SUMS`, and the
-release notes from [release/notes-v2.0.md](../../notes-v2.0.md) (`NOTES_VARIANT=rc4`; `DRAFT=<side file>` adds the
-drafter):
+release notes from [release/notes-v2.0.md](../../notes-v2.0.md) (`NOTES_VARIANT=rc4`):
 
 ```bash
-BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 DRAFTS="<nine-card file>=<its export> <general file>=<its export>" scripts/package_release.sh - v2.0 2d53179aa
+BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 scripts/package_release.sh - v2.0 2d53179aa
 ```
 
 It checks that the binaries contain no AVX instructions, need glibc 2.38 at most, and find every library in the
@@ -98,7 +97,8 @@ cards, which NVIDIA's profilers refuse), `LLAMA_GPU_KQ_MASK_CHECK`, and the `_FA
 purpose to show that its tests catch it.
 
 **Not in the release defaults:** the screened output head (`LLAMA_SCREEN_HEAD=1` with `LLAMA_SCREEN_HEAD_FILE`), built
-and exact, but no screen file ships with this release.
+and exact, but no screen file ships with this release. The same holds for `--pipe-store` and `--pipe-draft`: the code is
+in this build, and the store and drafter files come in a later release.
 
 ## Checks anyone can run
 
@@ -106,4 +106,3 @@ and exact, but no screen file ships with this release.
 - `bench/pipespec/check_identity.sh` and `check_server.sh`: pipelined decoding and the server's `--pipe-depth` give
   plain decoding's tokens ([bench/pipespec](../../../bench/pipespec/README.md)).
 - `GGML_CUDA_PERSISTENT_MOE_CHECK=1 llama-perplexity … -ub 1`: every persistent MoE layer equals the per-op path.
-- The drafter's checks: [drafter.md](drafter.md), step 8.

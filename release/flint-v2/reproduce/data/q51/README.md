@@ -1,7 +1,8 @@
 # Q51: 38 held-out Flint transcripts
 
 The test set every drafter score is measured on, and part of the GPTQ head's calibration
-([reproduce/model.md](../../model.md), step 3; [reproduce/drafter.md](../../drafter.md), steps 3 and 6).
+([reproduce/model.md](../../model.md), step 3; the drafter's guide,
+[release/flint-v2.1/reproduce/drafter.md](../../../../flint-v2.1/reproduce/drafter.md), steps 3 and 6).
 
 | File | What |
 |---|---|

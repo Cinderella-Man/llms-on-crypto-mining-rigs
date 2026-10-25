@@ -49,7 +49,7 @@ output is the same as without it.
 - `--pipe-depth N` guesses in flight (3 on nine cards), `--pipe-guess none|copy|cont`, `--pipe-copy-min N`.
 - `--pipe-floor N` keeps at least N guesses in flight, with a filler token when the guesser has none, so idle cards
   don't fall to their base clock.
-- `--pipe-store FILE`: a store of earlier outputs that the guesser consults after the conversation itself.
+- `--pipe-store FILE`: a store of earlier outputs that the guesser consults after the conversation itself. <!-- only:drafter -->
 - For requests sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call.
 
 **Agents:**
@@ -75,7 +75,7 @@ output is the same as without it.
 - It guesses for a request that generates alone, like the rest of pipelined speculation.
 <!-- end:drafter -->
 
-**Experimental:** a trained staircase drafter as the guesser (`--pipe-draft FILE` and its options). The code is in this build; no drafter file ships with this release. <!-- only:nodrafter -->
+**Coming later (v2.1):** a trained guesser, the staircase drafter (`--pipe-draft FILE`), and a store of Flint's earlier answers (`--pipe-store FILE`). The code is in this build; the files come with a later release ([how the drafter works](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/drafter.md)). <!-- only:nodrafter -->
 
 ## Install
 

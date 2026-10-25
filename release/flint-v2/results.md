@@ -7,8 +7,10 @@ row says otherwise; quality is scored on a separate machine against Flint's BF16
 second; "warm" = `llama-bench` with a 512-token prompt run before the 128 generated tokens in the same process.
 
 Builds (fork commits): stock = upstream `d77256999`; v1 = `eeaa59660`; v2 base = `032b130f4`; combined = `b3052a4f8`;
-persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `2d53179aa` (`460160e93` plus an allocator fix off the drafter's path; rc3 `7e6ec762f` without the
-drafter).
+persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `2d53179aa`.
+
+The trained drafter and the store of earlier answers come later (v2.1); their measurements are in
+[docs/drafter.md](../../docs/drafter.md).
 
 ## The headline: Flint Q8_0 on nine cards at the full context
 
@@ -23,34 +25,25 @@ Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of c
 | Bytes read per generated token: Q8_0 / UD-Q4_K_XL / K2h-r16 | 2.70 / 2.21 / 2.09 GB | `scripts/token_cost.py` | — | — |
 | v2 identity with Q8_0: pipelined output = plain, depths 1 and 3 | RIG-TBD | `bench/pipespec/rig_run.sh` with `TS=6,6,5,5,6,5,5,6,6 DEPTHS='1 3' N=256` | rc4 | — |
 | v2 generation, Q8_0, nine cards, warm: stock / v1 / v2 | RIG-TBD | [bench/release_matrix](../../bench/release_matrix/README.md) with `MODELS=Q8_0=… BENCH_ARGS='-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6,6,5,5,6,5,5,6,6'` | stock, v1, rc4 | — |
-| v2 served at 262k, Q8_0, median of 8 requests: no guessing / copy lookup and store / the store, then the rebuilt nine-card drafter | RIG-TBD / RIG-TBD / RIG-TBD | `bench/pipespec/rig_server.sh` with `CTX=262144 TS=6,6,5,5,6,5,5,6,6 DEPTHS='0 3s 3ds' STORE=… DRAFT=…` | rc4 | Q20 |
+| v2 served at 262k, Q8_0, median of 8 requests: plain / `--pipe-depth 3` (copy lookup and continuation counts) | RIG-TBD / RIG-TBD | `bench/pipespec/rig_server.sh` with `CTX=262144 TS=6,6,5,5,6,5,5,6,6 DEPTHS='0 3' GUESS=cont` | rc4 | — |
 | v2 the same five-turn chat, Q8_0 against UD-Q4_K_XL | RIG-TBD | `scripts/server_bench.sh PROMPTS=chat` | rc4 | — |
 
 ## Measured on the release engine (2026-10-25)
-
-The drafter rows ran on `460160e93`; the release commit `2d53179aa` adds only an allocator fix outside the drafter's
-path. They are method measurements, not release files: they used the first heads, R2-9 and R2-gen, and the first
-store (13.8 M tokens of answers, decontaminated against the Q51 test set), all built from mixed-licence data and none
-of them shipped. The rebuilt heads and store, trained from scratch on clean sources, get their own rows (RIG-TBD).
 
 | What | Value | How | Build | Row |
 |---|---|---|---|---|
 | Identity on the P106: persistent-kernel self-check, logits on/off, pipelined output = plain | RIG-TBD | `GGML_CUDA_PERSISTENT_MOE_CHECK=1 llama-perplexity … -ub 1`; `bench/pipespec/check_identity.sh` | rc4 | — |
 | Generation, UD-Q4_K_XL / K2h-r16, nine cards, warm | RIG-TBD / RIG-TBD | `llama-bench -m <file> -ngl 99 -fa on -p 512 -n 128 -r 3` | rc4 | — |
 | The same on six cards | RIG-TBD / RIG-TBD | `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 llama-bench …` | rc4 | — |
+| Stock / v1 / v2 matrix at stock clocks: generation, UD-Q4_K_XL and K2h-r16, nine and six cards | RIG-TBD | [bench/release_matrix](../../bench/release_matrix/README.md) | stock, v1, rc4 | Q42 |
+| Served at 262,144 tokens, nine cards, median of 8 requests, K2h-r16 / UD-Q4_K_XL: plain / `--pipe-depth 3` | RIG-TBD / RIG-TBD; RIG-TBD / RIG-TBD | `bench/pipespec/rig_server.sh` with `CTX=262144 DEPTHS='0 3' GUESS=cont` | rc4 | — |
 | Prefill at 512 / 2,048 / 8,192 tokens, nine cards | RIG-TBD | `llama-bench -p 512,2048,8192 -n 0 -r 3` | rc4 | — |
-| Served chat, `--pipe-depth 3`, nine and six cards | RIG-TBD | `bench/pipespec/rig_server.sh` | rc4 | — |
-| Method run, first head and first store (not shipped): served with the drafter, K2h-r16, `--pipe-depth 3 -c 8192`, median of 8 requests (chat, code and edit of 512 tokens, a tool request of 1,536, at T 0 and T 1), nine cards `-ts 6,6,6,6,6,6,6,5,2` with R2-9: no guessing / copy lookup, continuations and store / the store, then the head / copy lookup, then the head | 33.4 / 48.6 / **50.4** / 44.4 tok/s: the head adds 3.7 % to the copy lookup, continuations and store (chat and code at T 0 8.6 %), 1.51× no guessing; 53.8 % of the head's guesses right | `bench/pipespec/rig_server.sh` with `DEPTHS='0 3s 3ds' STORE=… DRAFT=…`, `CTX=8192 MAX_TOKENS=512 TOOL_MAX_TOKENS=1536` | `460160e93` | Q20 |
-| Method run, the same first heads and store: nine cards `-ts 6,6,6,6,5,5,5,5,5` (R2-9) / six cards, llama's split (R2-gen) | 33.4 / 48.6 / 50.3; 34.3 / 49.0 / 49.5 tok/s | the same | `460160e93` | Q20 |
-| Output identity with the drafter | every answer equal in every configuration (at T 0 to no guessing, at T 1 among the pipelined ones); `check_identity.sh` passed | the same; `bench/pipespec/check_identity.sh` | `460160e93` | Q20 |
-| Cost of one drafter guess on one P106: 8 / 6 / 4 rows in the window, at 2,048 and 8,192 committed positions | 6.20 / 5.34 / 5.30 ms; 7.29 / 5.90 / 5.86 ms (the design estimate was 1.6–2.6 ms; this cost now caps the gain) | `llama-pipe-drafter-check drafter.gguf --bench 300 --split 6,6,6,6,6,6,6,5,2 --ctx 2048` (and `--ctx 8192`, other splits) | `460160e93` | Q20 |
+| Prefill at 8,192 / 32,768 tokens, the prefill-attention kernel off / on, K2h-r16 | RIG-TBD | `GGML_CUDA_FATTN_TILE_PASCAL=0/1 llama-batched-bench` | rc4 | Q163 |
+| Agent sessions replayed with the prompt cache off / on: time to first token, outputs against a cold server | RIG-TBD | `bench/agent_cache/rig_replay.sh`, `rig_check.sh` | rc4 | Q111 |
+| Small bug-fix tasks of 5–10 tool steps for a coding agent, stock against the release engine | RIG-TBD | [bench/agent_check](../../bench/agent_check/README.md) | stock, rc4 | Q131 |
+| The shipped command lines (chat, tools, `-b 2048 -ub 512` at 262k, six cards) and the quick-start check | RIG-TBD | `SERVE=1 scripts/p106_check.sh` | rc4 | Q140 |
 | Eight conversations through one pipeline | RIG-TBD | `bench/pipespec/rig_hostloop.sh` | rc4 | Q155 |
 | Prefill with eight scheduler copies against four | RIG-TBD | `llama-bench -ub 512 -p 8192`, builds with `SCHED_COPIES=4` and `8` | rc4 | Q157 |
-| Prefill-attention kernel on/off, K2h-r16 at 8k and 32k | RIG-TBD | `GGML_CUDA_FATTN_TILE_PASCAL=0/1 llama-batched-bench` | rc4 | Q163 |
-| Agent sessions replayed with the prompt cache on/off, outputs against a cold server | RIG-TBD | `bench/agent_cache/rig_replay.sh`, `rig_check.sh` | rc4 | Q111 |
-| Stock / v1 / v2 matrix at stock clocks: generation and served chat, UD-Q4_K_XL and K2h-r16 | RIG-TBD | [bench/release_matrix](../../bench/release_matrix/README.md) | stock, v1, rc4 | Q42 |
-| The shipped command lines (chat, tools, `-b 2048 -ub 512` at 262k, six cards) and the quick-start check | RIG-TBD | `SERVE=1 scripts/p106_check.sh` | rc4 | Q140 |
-| Bug-fix tasks of 5–10 tool steps, stock against the release engine | RIG-TBD | [bench/agent_check](../../bench/agent_check/README.md) | stock, rc4 | Q131 |
 
 ## Engine speed (2026-10-24)
 
@@ -104,20 +97,6 @@ of them shipped. The rebuilt heads and store, trained from scratch on clean sour
 | 8k-token agent conversations, written tokens, KLD ratio to UD | K2h 0.999 | `bench/long_context_kld/` | Q106 |
 | Reasoning length against UD | level (G3/UD 1.000 on 3,477 tasks) | [answer time](../../docs/research/notes/answer_time.md) | Q123 |
 | The engine changes the answers? | no: kernels change only the order of additions; v2's additions byte-identical in every check; pipelined output identical to plain | operator tests, `check_identity.sh` | Q38, Q117, Q87 |
-
-## The drafter, offline (2026-10-25, quant machine)
-
-Method measurements of the first heads (U → R1 → R2), trained on mixed-licence data and not shipped; the rebuilt
-heads' scores: RIG-TBD.
-
-| What | Value | How | Row |
-|---|---|---|---|
-| R1 (six cards), coupled acceptance on Q51 fresh text / overall | 0.502 / 0.562 | `score.py --alpha 3` ([reproduce/drafter.md](reproduce/drafter.md)) | Q20 |
-| R1, simulated speed on six cards | 1.90× plain (70.9 tok/s) | `sim.py` | Q20 |
-| R2-9 (a first nine-card head, not shipped), nine cards with a light last card / even split | 0.476 / 0.538 fresh / overall; 0.492 / 0.553 | `score.py` on `q51-grid.bin` | Q20 |
-| R2-gen (a first depth-general head, not shipped), six cards / nine with a light last card | 0.523 / 0.583; 0.469 / 0.531 | the same | Q20 |
-| R2-gen at three / twelve cards | 0.556 / 0.624; 0.449 / 0.508 | the same | Q20 |
-| The C++ head against PyTorch, 14 cases | all top ids equal on a V100 | `check_export.py case` + `llama-pipe-drafter-check` | Q20 |
 
 ## Hardware (2026-10-24)
 

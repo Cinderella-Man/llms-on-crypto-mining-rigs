@@ -69,8 +69,8 @@ Tokens per second, the median of eight requests (chat, code, edit and a coding-a
 | Six cards, K2h-r16, general file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 RIG-TBD: the share of the drafter's guesses that were right, the cost of one guess, and its accuracy on 38 held-out
-conversations. Every answer with the drafter must be identical to the answer without it. Every number with its command:
-[results.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/results.md).
+conversations. Every answer with the drafter must be identical to the answer without it. Every run with its numbers:
+[docs/drafter.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/drafter.md).
 
 ## How it was made, and how to make it yourself
 
@@ -141,18 +141,19 @@ vendored headers judged one by one. Allowed: MIT, BSD-2/3-Clause, Apache-2.0, PS
 Included: 6481 answers, 6.70 M answer tokens; excluded: 244 answers, 0.29 M.
 
 </details>
- The whole recipe, from the prompts to the exported
-file, with every command, the compute time and the data sizes:
-[the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md).
+
+The whole recipe, from the prompts to the exported file, with every command, the compute time and the data sizes:
+[the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2.1/reproduce/drafter.md).
 The design and every training run so far:
-[docs/drafter.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/drafter.md). The whole
-release in one folder: [release/flint-v2](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/release/flint-v2).
+[docs/drafter.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/drafter.md). Everything
+about the drafter's release in one folder:
+[release/flint-v2.1](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/release/flint-v2.1).
 
 ## Licence and credits
 
 - Apache-2.0 ([LICENSE](LICENSE)). The drafter is trained on Flint's outputs and internal states (Flint is Apache-2.0,
   by RecursiveSI); the prompts behind those outputs come from public datasets, listed with their licences in
-  [the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md#1-prompts).
+  [the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2.1/reproduce/drafter.md#1-prompts).
 - Made by Kamil Skowron ([@kamilskowron](https://x.com/kamilskowron) on X) for
   [LLMs on crypto-mining rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs). Not affiliated with
   RecursiveSI.
@@ -163,4 +164,4 @@ release in one folder: [release/flint-v2](https://github.com/Cinderella-Man/llms
 | RIG-TBD (the general file) | RIG-TBD (~0.27 GB) | see [CHECKSUMS](CHECKSUMS) |
 
 Check a download with `sha256sum -c CHECKSUMS`; the same checksums are in the
-[GitHub repository](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/CHECKSUMS).
+[GitHub repository](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2.1/huggingface/flint-staircase-drafter/CHECKSUMS).

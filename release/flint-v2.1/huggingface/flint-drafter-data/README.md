@@ -17,7 +17,7 @@ the [staircase drafter](https://huggingface.co/CinderellaMan/Flint-Staircase-Dra
 Flint's next token so that a rig of old graphics cards runs Flint faster. Every prompt comes from a source whose
 answers may be published. With this data and Unsloth's Flint Q8_0 anyone can redo the drafter's training, or continue
 it from our checkpoints. Every step, command and data size is in
-[the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md).
+[the drafter rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2.1/reproduce/drafter.md).
 
 ## What is here
 
@@ -32,7 +32,7 @@ it from our checkpoints. Every step, command and data size is in
 | `heads/<run>/config.json`, `log.jsonl` | the run's settings and its training log | small |
 
 The runs: RIG-TBD, the rebuilt heads' chain from scratch to the two release heads
-([training](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md#5-training)).
+([training](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2.1/reproduce/drafter.md#5-training)).
 
 ## Sources and licences
 
@@ -132,7 +132,7 @@ these files reproduce the drafter's exact training text; the writers and seeds a
 
 - **The hidden-state dumps** (~58 GB per million answer tokens): each answer replayed through Flint Q8_0 with
   `llama-staircase-dump`, which records 26 layers' inputs and the top-20 next-token probabilities per position
-  ([step 3 of the guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/drafter.md#3-the-dump)).
+  ([step 3 of the guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2.1/reproduce/drafter.md#3-the-dump)).
 - **The packed training sets**, written by the same command next to the dumps.
 - **The test set** the drafter is scored on, 38 held-out Flint conversations, is in the GitHub repository
   ([reproduce/data/q51](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/release/flint-v2/reproduce/data/q51)).
