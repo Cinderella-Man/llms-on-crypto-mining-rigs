@@ -1,0 +1,24 @@
+{
+  "stub": "grade-school.js",
+  "test_file": "grade-school.spec.js",
+  "helpers": [],
+  "total_tests": 20,
+  "visible_tests": 20,
+  "test_cmd": "npm test",
+  "id": "bugfix-javascript-grade-school",
+  "track": "javascript",
+  "slug": "grade-school",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/grade-school"
+  },
+  "reference_lines": 30,
+  "source_task": "javascript-grade-school",
+  "bug": {
+    "what": "a student already in another grade can be added again",
+    "old": "    for (const names of this.students.values()) {\n      if (names.has(student)) {\n        return false;\n      }\n    }",
+    "new": "    if (this.students.has(level) && this.students.get(level).has(student)) {\n      return false;\n    }"
+  }
+}

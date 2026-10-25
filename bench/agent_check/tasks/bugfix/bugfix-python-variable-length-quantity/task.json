@@ -1,0 +1,24 @@
+{
+  "stub": "variable_length_quantity.py",
+  "test_file": "variable_length_quantity_test.py",
+  "helpers": [],
+  "total_tests": 31,
+  "visible_tests": 31,
+  "test_cmd": "pytest",
+  "id": "bugfix-python-variable-length-quantity",
+  "track": "python",
+  "slug": "variable-length-quantity",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/variable-length-quantity"
+  },
+  "reference_lines": 23,
+  "source_task": "python-variable-length-quantity",
+  "bug": {
+    "what": "encoding drops a last high-order group equal to 1",
+    "old": "    while number > 0:",
+    "new": "    while number > 1:"
+  }
+}

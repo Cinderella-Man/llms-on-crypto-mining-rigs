@@ -10,8 +10,10 @@ they are compared on identical prompts.
 
 The design, the statistics and the run plan are in
 [agent_workload_check.md](../../docs/research/notes/agent_workload_check.md). Of its suite, this folder implements
-the polyglot family. Asking for missing information is covered by the BFCL multi-turn lane ([below](#the-bfcl-multi-turn-lane)).
-Nothing here needs a GPU on the laptop: pi, the proxy and the exercises' own small test runs are all it does.
+the polyglot family, plus a set of 12 small bug fixes derived from it for the release check
+([below](#the-release-check-one-command-1-h)). Asking for missing information is covered by the BFCL multi-turn lane
+([below](#the-bfcl-multi-turn-lane)). Nothing here needs a GPU on the client: pi, the proxy and the exercises' own
+small test runs are all it does.
 
 ## The task set
 
@@ -48,6 +50,26 @@ Nothing here needs a GPU on the laptop: pi, the proxy and the exercises' own sma
   `AC_NODE_MODULES=$AC_HOME/node/node_modules python3 build_tasks.py <python checkout> <javascript checkout>`, then
   `make_order.py` and `validate.py`.
 
+## The bugfix task set
+
+Small bug fixes in working code, the everyday job of a coding agent: 12 tasks, 6 Python and 6 JavaScript, tracks
+alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [bugfix_bugs.json](bugfix_bugs.json)).
+
+- **The bugs:** each task is a polyglot task's reference solution (Exercism's example solution) with one small change
+  that breaks it, of the kind people make: parentheses lost in a formula, an off-by-one length check, 365 days to the
+  year instead of 365.25, a missing third side in the triangle inequality, a check that looks at the wrong digit,
+  arguments in the wrong order, a duplicate check limited to one group, a lookup after a value was normalized, a sign
+  flipped in a product, a regular expression that lost a group, a signed result where an unsigned one is needed.
+  Each breaks 1 to 8 of the task's tests.
+- **What the agent sees:** the broken file and the task's full test file (every JavaScript test switched on), with
+  Exercism's instructions and the statement: some tests fail, run them, find the bug and fix it, keep the fix small,
+  don't change the tests. A typical fix takes 5 to 10 tool calls: run the tests, read the code, edit, run the tests
+  again.
+- **Success:** the full test file passes and is unchanged, as in the polyglot set.
+- **Validation:** `validate.py --task-set bugfix` checks that the reference solution passes, the broken workspace
+  fails, and the workspace's test file is the full one. All 12 pass (`tasks/bugfix/validation.json`, the Docker image:
+  Python 3.12, node 24).
+
 ## Files
 
 | File | What it does |
@@ -55,12 +77,14 @@ Nothing here needs a GPU on the laptop: pi, the proxy and the exercises' own sma
 | [run.py](run.py) | The runner: one arm (server configuration) at a time, fresh workspace per attempt, pi headless, caps, hidden-test scoring, resumable; infrastructure failures re-run, never scored |
 | [proxy.py](proxy.py) | Pass-through logging proxy between pi and llama-server: timings, usage, cache, first token, tools, the request bodies |
 | [replay.py](replay.py) | Re-sends recorded traces to any server (same prompts, seeds and `max_tokens`); picks traces; summarizes and compares per-token costs |
-| [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list |
+| [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn |
 | [validate.py](validate.py) | Oracle, empty-change and visible-subset checks of every task, no model |
 | [common.py](common.py) | Tasks, the sandbox, the test check, the stream parser |
 | [pi/](pi/) | The agent folder template: `models.json` (Flint as an OpenAI-compatible provider), `settings.json`, the `check.ts` extension |
 | [pilot.sh](pilot.sh), [full_run.sh](full_run.sh), [rig_lib.sh](rig_lib.sh), [rig_server.sh](rig_server.sh) | The rig pilot and full run, one command each, run on the laptop; the server launcher with monitors and the RAM watchdog, run on the rig over ssh |
 | [quant_run.sh](quant_run.sh), [docker/](docker/) | Calibration and file-quality runs on a GPU machine with Docker; the sandbox image |
+| [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
+| [build_bugfix.py](build_bugfix.py), [bugfix_bugs.json](bugfix_bugs.json) | Build the bugfix set from the polyglot tasks and the list of injected bugs |
 | [mock_server.py](mock_server.py), [selftest.sh](selftest.sh), [selftest_pilot.sh](selftest_pilot.sh) | A stand-in for llama-server and the end-to-end tests that use it (no model) |
 | [build_tasks.py](build_tasks.py), [cut_tests.mjs](cut_tests.mjs), [make_order.py](make_order.py) | Build the task set from the Exercism checkouts |
 | [env/](env/) | The shared test environments: jest (locked) and pytest; `env/setup.sh` creates them |
@@ -209,6 +233,65 @@ bench/agent_check/pilot.sh <out folder>
   - replay: within 5 % of the live per-token costs;
   - the server logs' counts of backend-sampling, checkpoint, re-processing and NaN lines.
 - A failing item means fixing and repeating that step, not the whole pilot.
+
+## The release check (one command, ~1 h)
+
+Does a coding agent work on the release engine, and how much sooner is the job done than on stock llama.cpp? The
+12 bugfix tasks run once on each engine, with UD-Q4_K_XL on nine cards and the same template, sampling, context and
+checkpoints:
+
+| Arm | Server | Flags beyond the common ones |
+|---|---|---|
+| `stock` | stock llama.cpp | `-b 2048 -ub 512` |
+| `rel` | the release engine | `-b 2048 -ub 512 --pipe-depth 3` |
+
+- **Common flags:** `-ngl 99 -fa on -c 65536 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format
+  deepseek`, the makers' sampling, `--metrics`. The context is 65,536 tokens because stock llama.cpp keeps an attention
+  mask of context × micro-batch entries in pinned host memory: 264 MiB at 65,536 tokens with `-ub 512`, ~1 GiB at
+  262,144, more than a 4 GB host can spare ([Qwen baselines](../../docs/benchmarks/2026-10-22-qwen-baselines.md#maximum-context-and-how-to-avoid-crashing-a-4-gb-host)).
+  pi's context window is set to match, and a bug fix stays far below it.
+- **Three machines** (any two can be the same):
+  - the rig runs llama-server on its loopback only ([rig_server.sh](rig_server.sh), with its monitors and RAM
+    watchdog);
+  - a client, any Linux machine with Docker, runs pi, the logging proxy and the tests, each in a container
+    ([client_arm.sh](client_arm.sh)), labelled and at a low CPU share (`--cpu-shares 256`), so it can share a machine
+    with other jobs;
+  - the controlling machine runs only ssh: it copies the files over, starts and stops everything, and relays the
+    client's requests to the rig through two forwards, `ssh -L` to the rig and `ssh -R` to the client. Neither the rig
+    nor the client has to reach the other, and the server never listens beyond the rig's loopback.
+- **Run it** from the controlling machine, with the machine-specific values in the environment (the header of
+  [release_check.sh](release_check.sh) lists them: ssh aliases, four ports, folders on the client, the two binaries and
+  the model on the rig):
+
+  ```
+  STEPS=prep bench/agent_check/release_check.sh <out>    # untimed: files, image, task validation; no rig
+  bench/agent_check/release_check.sh <out>               # the check; prep again is a quick no-op
+  ```
+
+| Step | Time (est.) |
+|---|---|
+| Prep: files to the client, the sandbox image (cached), the 12 tasks validated in it | 1 min, before the rig slot |
+| Stock: load, 12 tasks | 2–4 + 25–40 min |
+| Release engine: load, 12 tasks | 2–4 + 12–20 min |
+| Rig logs to the client, reports, results copied to `<out>` | 1 min |
+| **Total on the rig** | **~45–70 min** |
+
+- **Where the times come from:** a fix takes about 6 turns. At ~400 generated tokens per turn, stock's 16.5 tok/s and
+  ~500 prompt tok/s give 2–3.5 min per task; the release engine's ~45 tok/s pipelined gives 1–1.7 min. `TIME_CAP_MIN`
+  (default 15) caps each attempt, and `BUDGET_MIN_stock` / `BUDGET_MIN_rel` stop an arm from starting more tasks after
+  that many minutes, so a slow arm cannot overrun the slot. The comparison then uses the tasks both arms scored.
+- **Outputs** in `<out>`: `compare.md` (per task: result, minutes, turns, tool calls all / failed / malformed and the
+  time ratio; per arm: tasks passed, minutes, time to first token over all turns, the server's prompt and generation
+  speeds; the ratio of total and per-task times; the median time to first token per turn), `res/turns.csv` (every
+  request), `table.md` and `res/attempts.csv`, `gonogo.md` (harness, tool calls, cache paths, the rig's memory and
+  server log lines), the rig's logs in `rig/`, and every attempt's events, session, diff and test output under `res/`.
+- **Times through the relay:** the time to first token is measured at the client, so it includes the relay's two
+  hops (the same for both arms); the server's own prompt time is in `turns.csv` (`prompt_ms`).
+- **Dry run without a model:** point `RIG` at the client and both binaries at [mock_server.py](mock_server.py) (it
+  ignores llama-server's flags), with its failure options among the arm flags, e.g.
+  `STOCK_ARGS='--fail-every 4 --decode-ms 4'`, `REL_ARGS='--drop-every 5 --malformed-every 4'`, `MODEL=/dev/null`.
+  The whole path runs: the relay, the server start and stop with monitors, the client's containers, the re-run of
+  dropped streams, the reports and the copy back.
 
 ## The full run (one command, ~20 h)
 

@@ -23,7 +23,8 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-TASKS = HERE / "tasks" / "polyglot"
+TASK_ROOT = HERE / "tasks"
+TASKS = TASK_ROOT / "polyglot"
 PI_CLI_REL = "node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js"
 SANDBOX_PATH = "/opt/ac-py/bin:/opt/node/bin:/usr/local/bin:/usr/bin:/bin"
 IGNORE = shutil.ignore_patterns("node_modules", "__pycache__", ".pytest_cache", ".ac-*")
@@ -31,14 +32,25 @@ IGNORE = shutil.ignore_patterns("node_modules", "__pycache__", ".pytest_cache", 
 
 # ---------------------------------------------------------------- tasks
 
-def load_tasks(ids=None):
-    """All tasks in run order (tasks/polyglot/order.txt), or the given ids in the given order."""
-    order = [l.strip() for l in (TASKS / "order.txt").read_text().splitlines() if l.strip()]
+def task_dir(task_id):
+    """The folder of a task in any task set (tasks/<set>/<id>); ids are unique across sets. None if not found."""
+    for d in sorted(TASK_ROOT.glob(f"*/{task_id}")):
+        if (d / "task.json").exists():
+            return d
+    return None
+
+
+def load_tasks(ids=None, task_set="polyglot"):
+    """All tasks of a set in run order (tasks/<set>/order.txt), or the given ids (from any set) in the given order."""
+    order = [l.strip() for l in (TASK_ROOT / task_set / "order.txt").read_text().splitlines() if l.strip()]
     ids = ids or order
     out = []
     for i in ids:
-        meta = json.loads((TASKS / i / "task.json").read_text())
-        meta["dir"] = TASKS / i
+        d = task_dir(i)
+        if d is None:
+            raise SystemExit(f"no task {i} under {TASK_ROOT}")
+        meta = json.loads((d / "task.json").read_text())
+        meta["dir"] = d
         out.append(meta)
     return out
 
@@ -89,10 +101,10 @@ class Sandbox:
     """
 
     def __init__(self, kind, node_dir=None, pi_root=None, ac_node=None, ac_py=None, image=None, label=None,
-                 prefix="ac"):
+                 prefix="ac", cpu_shares=None):
         self.kind = kind
         self.node_dir, self.pi_root, self.ac_node, self.ac_py = node_dir, pi_root, ac_node, ac_py
-        self.image, self.label, self.prefix = image, label, prefix
+        self.image, self.label, self.prefix, self.cpu_shares = image, label, prefix, cpu_shares
         if kind in ("bwrap", "none"):
             for name in ("node_dir", "pi_root", "ac_node", "ac_py"):
                 if not getattr(self, name) or not Path(getattr(self, name)).exists():
@@ -100,7 +112,8 @@ class Sandbox:
 
     @classmethod
     def from_args(cls, a):
-        return cls(a.sandbox, a.node_dir, a.pi_root, a.ac_node, a.ac_py, a.image, a.docker_label, a.docker_prefix)
+        return cls(a.sandbox, a.node_dir, a.pi_root, a.ac_node, a.ac_py, a.image, a.docker_label, a.docker_prefix,
+                   a.docker_cpu_shares)
 
     @staticmethod
     def add_args(ap):
@@ -112,6 +125,8 @@ class Sandbox:
         ap.add_argument("--image", default="agent-check:0.87.1", help="docker image (docker/Dockerfile)")
         ap.add_argument("--docker-label", default="pascal-quants=1", help="label on every container")
         ap.add_argument("--docker-prefix", default="ac", help="name prefix of the containers, for cleanup")
+        ap.add_argument("--docker-cpu-shares", type=int, default=None,
+                        help="docker --cpu-shares of every container (e.g. 256 on a machine shared with other jobs)")
 
     def p(self, name):
         """In-sandbox path of a fixed location."""
@@ -177,6 +192,8 @@ class Sandbox:
                 "-v", f"{work}:/work", "-w", "/work"]
         if name:
             argv += ["--name", name]
+        if self.cpu_shares:
+            argv += ["--cpu-shares", str(self.cpu_shares)]
         if session:
             argv += ["-v", f"{Path(session).resolve()}:/session"]
         if agent_dir:

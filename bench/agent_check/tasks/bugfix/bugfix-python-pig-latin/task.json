@@ -1,0 +1,24 @@
+{
+  "stub": "pig_latin.py",
+  "test_file": "pig_latin_test.py",
+  "helpers": [],
+  "total_tests": 23,
+  "visible_tests": 23,
+  "test_cmd": "pytest",
+  "id": "bugfix-python-pig-latin",
+  "track": "python",
+  "slug": "pig-latin",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/pig-latin"
+  },
+  "reference_lines": 16,
+  "source_task": "python-pig-latin",
+  "bug": {
+    "what": "a consonant before \"qu\" is not moved with it",
+    "old": "re.compile('^([^aeiou]?qu|[^aeiouy]+|y(?=[aeiou]))([a-z]*)')",
+    "new": "re.compile('^(qu|[^aeiouy]+|y(?=[aeiou]))([a-z]*)')"
+  }
+}

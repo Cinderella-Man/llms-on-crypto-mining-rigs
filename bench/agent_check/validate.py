@@ -1,12 +1,13 @@
 """Validate every task the way Harbor validates its tasks, with no model:
 - oracle: the workspace with the reference solution and the hidden tests passes;
 - empty change: the untouched workspace with the hidden tests fails;
-- visible: the reference solution also passes the visible tests, and they are a strict subset of the hidden ones.
+- visible: the reference solution also passes the visible tests, and they are a strict subset of the hidden ones
+  (bugfix tasks: the visible test file is the full hidden one, so the untouched workspace fails it too).
 
     python3 validate.py --sandbox bwrap --node-dir … --pi-root … --ac-node … --ac-py … [--tasks id,id] [--jobs 2]
-    python3 validate.py --sandbox docker [--image agent-check:0.87.1]
+    python3 validate.py --sandbox docker [--image agent-check:0.87.1] [--task-set bugfix]
 
-Writes validation.json next to the tasks (tasks/polyglot/validation.json) and exits non-zero if any task fails a check.
+Writes validation.json next to the tasks (tasks/<set>/validation.json) and exits non-zero if any task fails a check.
 The tests run in the sandbox without network.
 """
 import argparse
@@ -17,7 +18,7 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from common import TASKS, Sandbox, load_tasks, make_workspace, run_check
+from common import TASK_ROOT, Sandbox, load_tasks, make_workspace, run_check
 
 
 def validate(task, sb, root):
@@ -35,7 +36,11 @@ def validate(task, sb, root):
         if r["passed"] != want:
             out[name]["output"] = r["output"][-3000:]
     o, v = out["oracle"], out["visible"]
-    out["subset_ok"] = (v["n_total"] or 0) < (o["n_total"] or 0)
+    if task.get("family") == "bugfix":
+        tf = task["test_file"]
+        out["subset_ok"] = (task["dir"] / "workspace" / tf).read_bytes() == (task["dir"] / "hidden" / tf).read_bytes()
+    else:
+        out["subset_ok"] = (v["n_total"] or 0) < (o["n_total"] or 0)
     out["ok"] = o["ok"] and out["empty"]["ok"] and v["ok"] and out["subset_ok"]
     return out
 
@@ -45,10 +50,12 @@ def main():
     Sandbox.add_args(ap)
     ap.add_argument("--tasks", help="comma-separated task ids (default: all)")
     ap.add_argument("--jobs", type=int, default=2)
-    ap.add_argument("--out", type=Path, default=TASKS / "validation.json")
+    ap.add_argument("--task-set", default="polyglot", help="folder under tasks/ (polyglot, bugfix)")
+    ap.add_argument("--out", type=Path, default=None, help="default tasks/<set>/validation.json")
     a = ap.parse_args()
     sb = Sandbox.from_args(a)
-    tasks = load_tasks(a.tasks.split(",") if a.tasks else None)
+    a.out = a.out or TASK_ROOT / a.task_set / "validation.json"
+    tasks = load_tasks(a.tasks.split(",") if a.tasks else None, a.task_set)
     with tempfile.TemporaryDirectory(prefix="ac-validate-") as root:
         with ThreadPoolExecutor(a.jobs) as ex:
             results = list(ex.map(lambda t: validate(t, sb, root), tasks))

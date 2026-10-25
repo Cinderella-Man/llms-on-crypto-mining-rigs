@@ -1,0 +1,12 @@
+bugfix-python-affine-cipher
+bugfix-javascript-space-age
+bugfix-python-phone-number
+bugfix-javascript-triangle
+bugfix-python-variable-length-quantity
+bugfix-javascript-phone-number
+bugfix-python-list-ops
+bugfix-javascript-grade-school
+bugfix-python-scale-generator
+bugfix-javascript-complex-numbers
+bugfix-python-pig-latin
+bugfix-javascript-variable-length-quantity

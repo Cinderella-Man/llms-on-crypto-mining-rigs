@@ -1,6 +1,10 @@
+#!/usr/bin/env python3
 """A stand-in for llama-server, for testing the runner, proxy and replay without a model.
 
     python3 mock_server.py --port 18080 [--fail-every 4] [--drop-every 5] [--malformed-every 6]
+
+It ignores llama-server's own flags (-m, -ngl, -c, …), so rig_server.sh can start it in place of a llama-server
+binary (BIN=…/mock_server.py, its own options among the server flags) for a dry run of the rig scripts.
 
 It speaks llama-server's OpenAI-compatible chat endpoint (streamed and not), /health, /metrics, /v1/models and
 /slots, and ends each response with llama-server's `timings` and `usage`. Its "agent" follows a script keyed on the
@@ -23,7 +27,15 @@ import zlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-TASKS = Path(__file__).resolve().parent / "tasks" / "polyglot"
+TASK_ROOT = Path(__file__).resolve().parent / "tasks"
+
+
+def task_dir(task_id):
+    """The task's folder in any task set, or None (the same lookup as common.task_dir)."""
+    for d in sorted(TASK_ROOT.glob(f"*/{task_id}")) if task_id else []:
+        if (d / "task.json").exists():
+            return d
+    return None
 
 
 class State:
@@ -38,7 +50,8 @@ def crc(s):
 
 def reply_for(task_id, n_assistant, args, try_id):
     """(reasoning, content, tool_calls, drop) for this step of the script."""
-    task = json.loads((TASKS / task_id / "task.json").read_text()) if task_id and (TASKS / task_id).exists() else None
+    tdir = task_dir(task_id)
+    task = json.loads((tdir / "task.json").read_text()) if tdir else None
     stub = task["stub"] if task else "solution.py"
     test_file = task["test_file"] if task else "solution_test.py"
     test_cmd = task["test_cmd"] if task else "pytest"
@@ -54,9 +67,9 @@ def reply_for(task_id, n_assistant, args, try_id):
         return (f"Now read the visible tests in {test_file}.", "", [("read", {"path": test_file})], drop)
     if n_assistant == 2:
         if task and not (args.fail_every and k % args.fail_every == 0):
-            body = (TASKS / task_id / "reference" / stub).read_text()
+            body = (tdir / "reference" / stub).read_text()
         elif task:
-            body = (TASKS / task_id / "workspace" / stub).read_text()
+            body = (tdir / "workspace" / stub).read_text()
         else:
             body = "def solve():\n    return 42\n"
         return ("I know how to solve it; writing the whole file.", "", [("write", {"path": stub, "content": body})],
@@ -187,7 +200,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
+                                 allow_abbrev=False)
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, required=True)
     ap.add_argument("--fail-every", type=int, default=0)
@@ -195,11 +209,12 @@ def main():
     ap.add_argument("--malformed-every", type=int, default=0)
     ap.add_argument("--prefill-ms", type=float, default=0.05)
     ap.add_argument("--decode-ms", type=float, default=1.0)
-    a = ap.parse_args()
+    a, ignored = ap.parse_known_args()
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     srv.args = a
     srv.daemon_threads = True
-    print(f"mock llama-server on {a.host}:{a.port}", flush=True)
+    print(f"mock llama-server on {a.host}:{a.port}" + (f" (ignored: {' '.join(ignored)})" if ignored else ""),
+          flush=True)
     srv.serve_forever()
 
 

@@ -1,0 +1,24 @@
+{
+  "stub": "variable-length-quantity.js",
+  "test_file": "variable-length-quantity.spec.js",
+  "helpers": [],
+  "total_tests": 31,
+  "visible_tests": 31,
+  "test_cmd": "npm test",
+  "id": "bugfix-javascript-variable-length-quantity",
+  "track": "javascript",
+  "slug": "variable-length-quantity",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/variable-length-quantity"
+  },
+  "reference_lines": 42,
+  "source_task": "javascript-variable-length-quantity",
+  "bug": {
+    "what": "decoding returns negative numbers from 2^31 on (signed shift result)",
+    "old": "  return val >>> 0; // convert to unsigned 32-bit",
+    "new": "  return val;"
+  }
+}

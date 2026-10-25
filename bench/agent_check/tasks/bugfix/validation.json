@@ -1,0 +1,355 @@
+{
+ "sandbox": "docker",
+ "n": 12,
+ "ok": 12,
+ "tasks": [
+  {
+   "id": "bugfix-python-affine-cipher",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 16,
+    "n_fail": 0,
+    "n_total": 16,
+    "seconds": 0.85
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 10,
+    "n_fail": 6,
+    "n_total": 16,
+    "seconds": 0.74
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 16,
+    "n_fail": 0,
+    "n_total": 16,
+    "seconds": 0.77
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-javascript-space-age",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 1.93
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 5,
+    "n_fail": 4,
+    "n_total": 9,
+    "seconds": 1.53
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 9,
+    "n_fail": 0,
+    "n_total": 9,
+    "seconds": 1.45
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-python-phone-number",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 21,
+    "n_fail": 0,
+    "n_total": 21,
+    "seconds": 0.75
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 13,
+    "n_fail": 8,
+    "n_total": 21,
+    "seconds": 0.78
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 21,
+    "n_fail": 0,
+    "n_total": 21,
+    "seconds": 0.75
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-javascript-triangle",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 21,
+    "n_fail": 0,
+    "n_total": 21,
+    "seconds": 1.45
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 19,
+    "n_fail": 2,
+    "n_total": 21,
+    "seconds": 1.44
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 21,
+    "n_fail": 0,
+    "n_total": 21,
+    "seconds": 1.37
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-python-variable-length-quantity",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 0.76
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 23,
+    "n_fail": 8,
+    "n_total": 31,
+    "seconds": 0.77
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 0.72
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-javascript-phone-number",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 18,
+    "n_fail": 0,
+    "n_total": 18,
+    "seconds": 1.41
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 16,
+    "n_fail": 2,
+    "n_total": 18,
+    "seconds": 1.37
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 18,
+    "n_fail": 0,
+    "n_total": 18,
+    "seconds": 1.35
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-python-list-ops",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 25,
+    "n_fail": 0,
+    "n_total": 25,
+    "seconds": 0.71
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 23,
+    "n_fail": 2,
+    "n_total": 25,
+    "seconds": 0.76
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 25,
+    "n_fail": 0,
+    "n_total": 25,
+    "seconds": 0.7
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-javascript-grade-school",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 1.41
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 17,
+    "n_fail": 3,
+    "n_total": 20,
+    "seconds": 1.42
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 20,
+    "n_fail": 0,
+    "n_total": 20,
+    "seconds": 1.43
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-python-scale-generator",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 17,
+    "n_fail": 0,
+    "n_total": 17,
+    "seconds": 0.73
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 15,
+    "n_fail": 2,
+    "n_total": 17,
+    "seconds": 0.72
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 17,
+    "n_fail": 0,
+    "n_total": 17,
+    "seconds": 0.72
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-javascript-complex-numbers",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 40,
+    "n_fail": 0,
+    "n_total": 40,
+    "seconds": 1.4
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 38,
+    "n_fail": 2,
+    "n_total": 40,
+    "seconds": 1.45
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 40,
+    "n_fail": 0,
+    "n_total": 40,
+    "seconds": 1.41
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-python-pig-latin",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.74
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 22,
+    "n_fail": 1,
+    "n_total": 23,
+    "seconds": 0.78
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 23,
+    "n_fail": 0,
+    "n_total": 23,
+    "seconds": 0.76
+   },
+   "subset_ok": true,
+   "ok": true
+  },
+  {
+   "id": "bugfix-javascript-variable-length-quantity",
+   "oracle": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 1.4
+   },
+   "empty": {
+    "ok": true,
+    "passed": false,
+    "n_pass": 30,
+    "n_fail": 1,
+    "n_total": 31,
+    "seconds": 1.32
+   },
+   "visible": {
+    "ok": true,
+    "passed": true,
+    "n_pass": 31,
+    "n_fail": 0,
+    "n_total": 31,
+    "seconds": 1.36
+   },
+   "subset_ok": true,
+   "ok": true
+  }
+ ]
+}

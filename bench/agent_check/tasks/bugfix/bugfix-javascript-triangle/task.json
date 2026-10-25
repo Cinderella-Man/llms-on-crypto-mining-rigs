@@ -1,0 +1,24 @@
+{
+  "stub": "triangle.js",
+  "test_file": "triangle.spec.js",
+  "helpers": [],
+  "total_tests": 21,
+  "visible_tests": 21,
+  "test_cmd": "npm test",
+  "id": "bugfix-javascript-triangle",
+  "track": "javascript",
+  "slug": "triangle",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/triangle"
+  },
+  "reference_lines": 32,
+  "source_task": "javascript-triangle",
+  "bug": {
+    "what": "the triangle inequality is checked for two of the three sides",
+    "old": "s1 + s2 >= s3 && s1 + s3 >= s2 && s2 + s3 >= s1;",
+    "new": "s1 + s2 >= s3 && s1 + s3 >= s2;"
+  }
+}

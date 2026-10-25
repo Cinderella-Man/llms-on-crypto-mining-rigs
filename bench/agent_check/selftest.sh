@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # selftest.sh OUT: exercise the runner, proxy, replay and report end to end against mock_server.py (no model, light).
 # Needs the sandbox paths in the environment (see README "Setup"): AC_HOME (env/setup.sh), AC_NODE_DIR, AC_PI_ROOT;
-# or AC_SANDBOX=docker (the docker/Dockerfile image, AC_IMAGE, default agent-check:0.87.1). Uses ports AC_TEST_PORT
+# or AC_SANDBOX=docker (the docker/Dockerfile image, AC_IMAGE, default agent-check:0.87.1; AC_CPU_SHARES sets the
+# containers' --cpu-shares). Uses ports AC_TEST_PORT
 # and AC_TEST_PORT+1 (default 18080/18081) on 127.0.0.1.
 # Checks, and exits non-zero if any fails:
 # - 12 tasks, 3 in flight: the mock solves every task except those it is told to fail (CRC32 0 mod 4), so exactly
@@ -16,7 +17,8 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 P=${AC_TEST_PORT:-18080}
 Q=$((P + 1))
 if [ "${AC_SANDBOX:-bwrap}" = docker ]; then
-  SB=(--sandbox docker --image "${AC_IMAGE:-agent-check:0.87.1}" --docker-prefix acself)
+  SB=(--sandbox docker --image "${AC_IMAGE:-agent-check:0.87.1}" --docker-prefix acself
+      ${AC_CPU_SHARES:+--docker-cpu-shares "$AC_CPU_SHARES"})
 else
   SB=(--sandbox "${AC_SANDBOX:-bwrap}" --node-dir "$AC_NODE_DIR" --pi-root "$AC_PI_ROOT" --ac-node "$AC_HOME/node"
       --ac-py "$AC_HOME/py")

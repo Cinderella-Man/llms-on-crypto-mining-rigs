@@ -1,0 +1,24 @@
+{
+  "stub": "scale_generator.py",
+  "test_file": "scale_generator_test.py",
+  "helpers": [],
+  "total_tests": 17,
+  "visible_tests": 17,
+  "test_cmd": "pytest",
+  "id": "bugfix-python-scale-generator",
+  "track": "python",
+  "slug": "scale-generator",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/scale-generator"
+  },
+  "reference_lines": 23,
+  "source_task": "python-scale-generator",
+  "bug": {
+    "what": "flat keys are looked up after the tonic is capitalized, so minor flat keys use sharps",
+    "old": "if tonic in self.FLAT_KEYS",
+    "new": "if self.tonic in self.FLAT_KEYS"
+  }
+}

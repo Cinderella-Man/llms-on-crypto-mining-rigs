@@ -1,0 +1,24 @@
+{
+  "stub": "list_ops.py",
+  "test_file": "list_ops_test.py",
+  "helpers": [],
+  "total_tests": 25,
+  "visible_tests": 25,
+  "test_cmd": "pytest",
+  "id": "bugfix-python-list-ops",
+  "track": "python",
+  "slug": "list-ops",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/list-ops"
+  },
+  "reference_lines": 22,
+  "source_task": "python-list-ops",
+  "bug": {
+    "what": "foldr passes the element and the accumulator in the wrong order",
+    "old": "return function(foldr(function, list[1:], initial), list[0])",
+    "new": "return function(list[0], foldr(function, list[1:], initial))"
+  }
+}

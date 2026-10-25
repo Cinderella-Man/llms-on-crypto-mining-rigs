@@ -19,8 +19,10 @@ Per attempt (task × attempt number), in RESULTS/<arm>/<task>/a<k>/:
 Infrastructure failures (the server or tunnel unreachable, a broken stream, an HTTP 5xx, pi failing before any reply)
 are never scored: the try's folder is renamed a<k>-t<n>-infra and the attempt runs again (up to --max-infra tries)
 once the server answers /health again. A finished attempt has a result.json and is skipped on the next run, so the
-runner resumes where it stopped. Tasks run in tasks/polyglot/order.txt order; --tasks N takes the first N, A-B
-positions A to B, or a comma list of ids. All tasks of attempt 1 run before attempt 2.
+runner resumes where it stopped. Tasks run in tasks/<set>/order.txt order (--task-set, default polyglot); --tasks N
+takes the first N, A-B positions A to B, or a comma list of ids. All tasks of attempt 1 run before attempt 2.
+--start-deadline-min bounds an arm's time: no attempt starts after that many minutes, and the ones left are reported
+as skipped (a later run with the same command picks them up).
 """
 import argparse
 import json
@@ -62,8 +64,8 @@ def parse_range(s):
     return out
 
 
-def select_tasks(spec):
-    tasks = load_tasks()
+def select_tasks(spec, task_set="polyglot"):
+    tasks = load_tasks(task_set=task_set)
     if spec in (None, "all"):
         return tasks
     if spec.isdigit():
@@ -251,6 +253,10 @@ def attempt(a, sb, task, k, slots, agent_dir):
         return json.loads((adir / "result.json").read_text())
     tries = len(list(tdir.glob(f"a{k}-t*-infra")))
     slot = slots.get()
+    if a.deadline is not None and time.monotonic() > a.deadline:
+        slots.put(slot)
+        log(f"{a.arm}/{task['id']}/a{k} skipped: past the deadline")
+        return dict(arm=a.arm, task_id=task["id"], attempt=k, status="skipped")
     try:
         while True:
             n = tries + 1
@@ -326,7 +332,10 @@ def main():
     ap.add_argument("--arm", required=True, help="name of this server configuration, e.g. v2-ud")
     ap.add_argument("--base-url", required=True, help="OpenAI-compatible base URL pi talks to (the proxy), …/v1")
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument("--task-set", default="polyglot", help="folder under tasks/ (polyglot, bugfix)")
     ap.add_argument("--tasks", default="all", help="all | N (first N) | A-B (positions) | id,id,…")
+    ap.add_argument("--start-deadline-min", type=float, default=None,
+                    help="start no attempt after this many minutes from the runner's start")
     ap.add_argument("--attempts", default="1", help="e.g. 1, 1-2, 3-5")
     ap.add_argument("--parallel", type=int, default=1, help="attempts in flight (the server's slots)")
     ap.add_argument("--turn-cap", type=int, default=40)
@@ -345,7 +354,8 @@ def main():
     a.work_root = a.work_root / a.arm
     a.out.mkdir(parents=True, exist_ok=True)
     agent_dir = write_agent_dir(a.out / "pi-agent" / a.arm, a.base_url, a.context, a.max_tokens)
-    tasks = select_tasks(a.tasks)
+    a.deadline = None if a.start_deadline_min is None else time.monotonic() + 60 * a.start_deadline_min
+    tasks = select_tasks(a.tasks, a.task_set)
     attempts = parse_range(a.attempts)
     jobs = [(t, k) for k in attempts for t in tasks]
     (a.out / a.arm).mkdir(parents=True, exist_ok=True)
@@ -361,7 +371,8 @@ def main():
     scored = [r for r in rows if r.get("status") == "scored"]
     ok = sum(r["success"] for r in scored)
     log(f"arm {a.arm}: {len(scored)} scored, {ok} passed, "
-        f"{sum(1 for r in rows if r.get('status') == 'infra_exhausted')} gave up after infrastructure failures")
+        f"{sum(1 for r in rows if r.get('status') == 'infra_exhausted')} gave up after infrastructure failures, "
+        f"{sum(1 for r in rows if r.get('status') == 'skipped')} skipped past the deadline")
 
 
 if __name__ == "__main__":

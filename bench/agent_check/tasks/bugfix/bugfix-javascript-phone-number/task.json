@@ -1,0 +1,24 @@
+{
+  "stub": "phone-number.js",
+  "test_file": "phone-number.spec.js",
+  "helpers": [],
+  "total_tests": 18,
+  "visible_tests": 18,
+  "test_cmd": "npm test",
+  "id": "bugfix-javascript-phone-number",
+  "track": "javascript",
+  "slug": "phone-number",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/phone-number"
+  },
+  "reference_lines": 33,
+  "source_task": "javascript-phone-number",
+  "bug": {
+    "what": "the exchange-code zero check looks at the wrong digit",
+    "old": "if (strippedNumber.substring(3, 4) === '0') {",
+    "new": "if (strippedNumber.substring(4, 5) === '0') {"
+  }
+}

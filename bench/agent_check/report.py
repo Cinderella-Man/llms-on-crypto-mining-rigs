@@ -3,11 +3,17 @@
     python3 report.py table RESULTS [--log RESULTS/proxy.jsonl …] [--csv RESULTS/attempts.csv]
     python3 report.py gonogo RESULTS --log … [--replay REPLAY.jsonl --replay-label v2-ud --live-arm v2-ud]
                       [--meminfo RIG/meminfo.log] [--server-log RIG/server-*.log …] [--expect-min v2-ud=3.9,v1-ud=5.5]
+    python3 report.py compare RESULTS --log … [--arms stock,rel] [--turns-csv RESULTS/turns.csv]
 
 `table` writes one row per scored attempt in the column layout of ../task_results.py (lane agent_polyglot, file =
 arm, category = track, cluster = task), so ../paired_tasks.py reads it, followed by the agent columns: turns, requests,
 wall-clock split into prefill, decode, fixed per-request cost and the rest (tools and client), prompt tokens processed
 and cached, cache hit rate, peak context, time to first token, and the process failures. It prints a summary per arm.
+
+`compare` puts the arms side by side (the first arm is the reference): per task the result, minutes, turns and tool
+calls (all, failed, malformed) with the time ratio; per arm the tasks passed, minutes, time to first token over all
+turns, the server's prompt and generation speeds and the tool-call failures; the ratio of total and per-task times on
+the tasks every arm scored; and the median time to first token per turn. Every request's row goes to turns.csv.
 
 `gonogo` applies the pilot's checks (agent_workload_check.md §6.3):
 - harness: at least 5 of 6 attempts finish without an infrastructure failure; every request with a proxy row and timings; the proxy's
@@ -27,6 +33,7 @@ and cached, cache hit rate, peak context, time to first token, and the process f
 import argparse
 import csv
 import json
+import math
 import re
 import sys
 from collections import defaultdict
@@ -264,15 +271,124 @@ def cmd_gonogo(a):
     print(f"\n**Overall: {verdict(allok)}**")
 
 
+def pct(xs, q):
+    s = sorted(xs)
+    return s[min(len(s) - 1, int(q * len(s)))] if s else float("nan")
+
+
+def cmd_compare(a):
+    results, rows, infra, exhausted, traces = build(a)
+    arms = a.arms.split(",") if a.arms else list(dict.fromkeys(r["file"] for r in rows))
+    rows = [r for r in rows if r["file"] in arms]
+    by = {(r["file"], r["task_id"]): r for r in rows}
+    first = {}  # tasks in the order they first ran
+    for r in results:
+        if r["arm"] in arms:
+            first[r["task_id"]] = min(first.get(r["task_id"], r["started"]), r["started"])
+    tasks = sorted({r["task_id"] for r in rows}, key=lambda t: first.get(t, ""))
+    reqs = {r["tag"]: traces.get(r["tag"], []) for r in rows}
+    turn_of = lambda q: int(q["tag"].rsplit("/", 1)[1])
+
+    out = a.turns_csv or Path(a.results) / "turns.csv"
+    cols = ["arm", "task_id", "attempt", "turn", "ttft_s", "t_end_s", "prompt_n", "cache_n", "prompt_ms", "predicted_n",
+            "predicted_ms", "finish_reason", "n_tool_calls"]
+    with open(out, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(cols)
+        for r in rows:
+            for q in reqs[r["tag"]]:
+                w.writerow([r["file"], r["task_id"], r["attempt"], turn_of(q), q.get("t_first_token"), q.get("t_end"),
+                            q.get("prompt_n"), q.get("cache_n"), q.get("prompt_ms"), q.get("predicted_n"),
+                            q.get("predicted_ms"), q.get("finish_reason"), q.get("n_tool_calls")])
+
+    def result(r):
+        if r is None:
+            return "—"
+        if r["runaway_kind"]:
+            return f"runaway ({r['runaway_kind']})"
+        return "pass" if r["pass"] else f"fail ({r['n_pass']}/{r['n_total']})"
+
+    print(f"{len(rows)} scored attempts, arms {', '.join(arms)}; {len(infra)} infrastructure tries re-run, "
+          f"{len(exhausted)} attempts given up; per-request rows in {out}\n")
+    print("### Per task\n")
+    print("Minutes from pi's start to its exit; tool calls: all / failed (the tool returned an error) / malformed "
+          "(unknown tool, arguments that fail the schema, or call markup in the text).\n")
+    head = "| task | " + " | ".join(f"{arm}: result, min, turns, tool calls" for arm in arms)
+    if len(arms) > 1:
+        head += " | " + " | ".join(f"time {arms[0]} / {arm}" for arm in arms[1:])
+    print(head + " |")
+    print("|---" * (1 + len(arms) + max(0, len(arms) - 1)) + "|")
+    for t in tasks:
+        cells = []
+        for arm in arms:
+            r = by.get((arm, t))
+            cells.append("—" if r is None else
+                         f"{result(r)}, {r['wall_s'] / 60:.1f}, {r['turns']}, {r['tool_calls']} / {r['tool_errors']} / "
+                         f"{r['unknown_tool'] + r['invalid_args'] + r['markup_in_text']}")
+        for arm in arms[1:]:
+            r0, r1 = by.get((arms[0], t)), by.get((arm, t))
+            cells.append(f"{r0['wall_s'] / r1['wall_s']:.2f}×" if r0 and r1 else "—")
+        print(f"| {t} | " + " | ".join(cells) + " |")
+
+    print("\n### Per arm\n")
+    print("| arm | tasks passed | minutes, all tasks | minutes per task (median) | TTFT per turn s (median, p90) | "
+          "prompt tok/s | generation tok/s | tool calls / failed / malformed | runaways |")
+    print("|---|---|---|---|---|---|---|---|---|")
+    for arm in arms:
+        rr = [r for r in rows if r["file"] == arm]
+        if not rr:
+            continue
+        qs = [q for r in rr for q in reqs[r["tag"]]]
+        ttft = [q["t_first_token"] for q in qs if q.get("t_first_token") is not None]
+        pn, pms = sum(q.get("prompt_n") or 0 for q in qs), sum(q.get("prompt_ms") or 0 for q in qs)
+        gn, gms = sum(q.get("predicted_n") or 0 for q in qs), sum(q.get("predicted_ms") or 0 for q in qs)
+        bad = sum(r["unknown_tool"] + r["invalid_args"] + r["markup_in_text"] for r in rr)
+        print(f"| {arm} | {sum(r['pass'] for r in rr)} / {len(rr)} | {sum(r['wall_s'] for r in rr) / 60:.1f} | "
+              f"{median(r['wall_s'] / 60 for r in rr):.1f} | {median(ttft) if ttft else float('nan'):.2f}, "
+              f"{pct(ttft, 0.9):.2f} | {1000 * pn / pms if pms else float('nan'):.0f} | "
+              f"{1000 * gn / gms if gms else float('nan'):.1f} | {sum(r['tool_calls'] for r in rr)} / "
+              f"{sum(r['tool_errors'] for r in rr)} / {bad} | {sum(r['runaway'] for r in rr)} |")
+    if len(arms) > 1:
+        both = [t for t in tasks if all((arm, t) in by for arm in arms)]
+        print(f"\nTasks scored on every arm: {len(both)}.")
+        for arm in arms[1:]:
+            m0 = sum(by[(arms[0], t)]["wall_s"] for t in both)
+            m1 = sum(by[(arm, t)]["wall_s"] for t in both)
+            ratios = [by[(arms[0], t)]["wall_s"] / by[(arm, t)]["wall_s"] for t in both]
+            gm = 2 ** (sum(math.log2(x) for x in ratios) / len(ratios)) if ratios else float("nan")
+            print(f"- {arm} against {arms[0]}: {m1 / 60:.1f} against {m0 / 60:.1f} minutes in all "
+                  f"({m0 / m1 if m1 else float('nan'):.2f}× faster), per task {gm:.2f}× (geometric mean, "
+                  f"range {min(ratios, default=float('nan')):.2f}–{max(ratios, default=float('nan')):.2f}); passed "
+                  f"{sum(by[(arm, t)]['pass'] for t in both)} against {sum(by[(arms[0], t)]['pass'] for t in both)}")
+
+    print("\n### Time to first token per turn\n")
+    print("Median over tasks of the seconds from the request to its first token as the client sees it (network "
+          "included), and of the prompt tokens the server processed for it (the rest came from its cache).\n")
+    nmax = max((turn_of(q) for qq in reqs.values() for q in qq), default=0)
+    print("| turn | " + " | ".join(f"{arm}: tasks, TTFT s, new prompt tokens" for arm in arms) + " |")
+    print("|---" * (1 + len(arms)) + "|")
+    for k in range(1, nmax + 1):
+        cells = []
+        for arm in arms:
+            qs = [q for r in rows if r["file"] == arm for q in reqs[r["tag"]] if turn_of(q) == k]
+            tt = [q["t_first_token"] for q in qs if q.get("t_first_token") is not None]
+            pn = [q["prompt_n"] for q in qs if q.get("prompt_n") is not None]
+            cells.append(f"{len(qs)}, {median(tt):.2f}, {median(pn):.0f}" if tt and pn else f"{len(qs)}, —, —")
+        print(f"| {k} | " + " | ".join(cells) + " |")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("table", "gonogo"):
+    for name in ("table", "gonogo", "compare"):
         p = sub.add_parser(name)
         p.add_argument("results")
         p.add_argument("--log", nargs="*", default=[])
         if name == "table":
             p.add_argument("--csv", type=Path)
+        elif name == "compare":
+            p.add_argument("--arms", help="arm,arm,… in this order; the first is the reference (default: all)")
+            p.add_argument("--turns-csv", type=Path, help="default RESULTS/turns.csv")
         else:
             p.add_argument("--replay", nargs="*")
             p.add_argument("--replay-label")
@@ -281,7 +397,7 @@ def main():
             p.add_argument("--expect-min", help="arm=minutes,… (the note's estimate per task)")
             p.add_argument("--rtt", type=float, default=0.1, help="network round trip to the server, s")
     a = ap.parse_args()
-    {"table": cmd_table, "gonogo": cmd_gonogo}[a.cmd](a)
+    {"table": cmd_table, "gonogo": cmd_gonogo, "compare": cmd_compare}[a.cmd](a)
 
 
 if __name__ == "__main__":

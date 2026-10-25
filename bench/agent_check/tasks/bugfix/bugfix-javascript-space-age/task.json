@@ -1,0 +1,24 @@
+{
+  "stub": "space-age.js",
+  "test_file": "space-age.spec.js",
+  "helpers": [],
+  "total_tests": 9,
+  "visible_tests": 9,
+  "test_cmd": "npm test",
+  "id": "bugfix-javascript-space-age",
+  "track": "javascript",
+  "slug": "space-age",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/javascript",
+    "commit": "ff04f35158cdf61eebfdf18a774010495a1fd6d9",
+    "path": "exercises/practice/space-age"
+  },
+  "reference_lines": 18,
+  "source_task": "javascript-space-age",
+  "bug": {
+    "what": "an Earth year is taken as 365 days instead of 365.25",
+    "old": "const earthYears = seconds / 31557600;",
+    "new": "const earthYears = seconds / 31536000;"
+  }
+}

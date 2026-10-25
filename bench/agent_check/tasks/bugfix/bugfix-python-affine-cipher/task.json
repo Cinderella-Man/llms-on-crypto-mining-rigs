@@ -1,0 +1,24 @@
+{
+  "stub": "affine_cipher.py",
+  "test_file": "affine_cipher_test.py",
+  "helpers": [],
+  "total_tests": 16,
+  "visible_tests": 16,
+  "test_cmd": "pytest",
+  "id": "bugfix-python-affine-cipher",
+  "track": "python",
+  "slug": "affine-cipher",
+  "family": "bugfix",
+  "source": {
+    "repo": "https://github.com/exercism/python",
+    "commit": "6105f6d9d3ef66ce3d5c8f529d2882af3d76b706",
+    "path": "exercises/practice/affine-cipher"
+  },
+  "reference_lines": 31,
+  "source_task": "python-affine-cipher",
+  "bug": {
+    "what": "decoding multiplies before it subtracts the shift (parentheses lost)",
+    "old": "new = (inverse * (origin - b_key)) % ALPHABET",
+    "new": "new = (inverse * origin - b_key) % ALPHABET"
+  }
+}
