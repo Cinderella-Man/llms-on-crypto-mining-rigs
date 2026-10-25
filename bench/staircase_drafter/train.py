@@ -286,7 +286,7 @@ def main():
     vocab = np.load(args.vocab)
     files = [feats.FeatFile(p) for p in args.feats]
     allrec = [(fi, i) for fi, ff in enumerate(files) for i in range(len(ff))]
-    val = [r for k, r in enumerate(allrec) if k % 33 == 0]
+    val = [r for k, r in enumerate(allrec) if k % 33 == 0 and files[r[0]][r[1]].n_tok <= args.max_tok]
     train = [r for k, r in enumerate(allrec) if (k % 33 != 0 or len(allrec) < 33)
              and files[r[0]][r[1]].n_tok <= args.max_tok]
     rng = random.Random(args.seed)
