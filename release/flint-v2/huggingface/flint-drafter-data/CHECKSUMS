@@ -3,6 +3,6 @@ RIG-TBD  vocab.npy
 RIG-TBD  prompts/prompts.strict.jsonl
 RIG-TBD  prompts/prompts-ext.strict.jsonl
 RIG-TBD  prompts/prompts-ext2.strict.jsonl
-RIG-TBD  prompts/prompts-tools.strict.jsonl
+RIG-TBD  prompts/ (the OpenAssistant prompts, one line per file)
 RIG-TBD  answers/ (one line per file)
 RIG-TBD  heads/ (one line per file)

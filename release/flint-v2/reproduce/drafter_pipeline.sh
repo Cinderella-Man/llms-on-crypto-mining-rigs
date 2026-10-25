@@ -8,9 +8,9 @@
 #   release/flint-v2/reproduce/drafter_pipeline.sh
 #
 # Steps (STEPS, default all, in this order):
-#   prompts   prompts.jsonl, prompts-ext.jsonl, prompts-ext2.jsonl, prompts-tools.jsonl (76,431 prompts from every
-#             source), then each as *.strict.jsonl with the clean sources only, which the later steps use
-#             (UNDER_REVIEW=1 also keeps the four sources under review)
+#   prompts   prompts.jsonl, prompts-ext.jsonl, prompts-ext2.jsonl (61,101 prompts from every source prompts.py draws),
+#             then each as *.strict.jsonl with the clean sources only, without Q51's text (19,084 prompts), which the
+#             later steps use
 #   answers   Flint's answers from llama-server (the makers' sampling, seed 20000 + prompt number, <= 2,048 tokens)
 #   testset   Q51, the 38 held-out transcripts: shipped in data/q51/ (copied; TESTSET_REBUILD=1 regenerates them)
 #   dump      hidden states (26-layer grid) and top-20 targets from Flint Q8_0, for the answers and for Q51
@@ -21,7 +21,7 @@
 #   export    the GGUF side file for the engine
 #
 # Env [defaults]: DATA, LLAMA, Q8, HF, STD, PYTHON [python3], GPUS [0] (CUDA_VISIBLE_DEVICES for every GPU step),
-#   SLOTS [24] (llama-server slots for the answers), PORT [8001], PROMPT_FILES [the four strict files], U_MIN [300], R1_MIN [480],
+#   SLOTS [24] (llama-server slots for the answers), PORT [8001], PROMPT_FILES [the three strict files], U_MIN [300], R1_MIN [480],
 #   GEN_MIN [134], CARDS ("9" for the nine-card head, as R2-9; unset for the 3-12-card head, as R2-gen; the head goes
 #   to heads/R2-<CARDS or gen> and its export to drafter-<CARDS or gen>.gguf), FP16 [0: 1 on V100s],
 #   STEPS [all]. Data sizes: ~58 GB per million answer tokens for the dump; plan disk accordingly.
@@ -35,7 +35,7 @@ GPUS=${GPUS:-0}
 SLOTS=${SLOTS:-24}
 PORT=${PORT:-8001}
 STEPS=${STEPS:-prompts answers testset dump vocab train score export}
-PROMPT_FILES=${PROMPT_FILES:-prompts.strict.jsonl prompts-ext.strict.jsonl prompts-ext2.strict.jsonl prompts-tools.strict.jsonl}
+PROMPT_FILES=${PROMPT_FILES:-prompts.strict.jsonl prompts-ext.strict.jsonl prompts-ext2.strict.jsonl}
 BIN=$LLAMA/build/bin
 R2=R2-${CARDS:-gen}; R2=${R2//,/}    # R2-gen, R2-9, R2-69
 export PYTHONPATH="$LLAMA/gguf-py${PYTHONPATH:+:$PYTHONPATH}"
@@ -53,27 +53,33 @@ if has prompts; then
     $PYTHON prompts.py "$DATA/prompts-ext.jsonl" "$HF" "$STD" "$LLAMA" --scale 3 --seed 21 --extend "$DATA/prompts.jsonl"
     cat "$DATA/prompts.jsonl" "$DATA/prompts-ext.jsonl" > "$DATA/prompts-all12.jsonl"
     $PYTHON prompts.py "$DATA/prompts-ext2.jsonl" "$HF" "$STD" "$LLAMA" --scale 6 --seed 22 --extend "$DATA/prompts-all12.jsonl"
-    cat "$DATA/prompts.jsonl" "$DATA/prompts-ext.jsonl" "$DATA/prompts-ext2.jsonl" > "$DATA/used.jsonl"
-    $PYTHON tool_prompts.py "$DATA/prompts-tools.jsonl" "$HF" --extend "$DATA/used.jsonl"
-    # the clean sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same. Edit and agent
-    # prompts: the standard library and llama.cpp's own files, not its vendor/ and build folders; from site-packages
-    # only the packages (and vendored folders) under MIT, BSD-2/3-Clause, Apache-2.0 or PSF in drafter.md's table.
-    # Datasets: OpenR1-Math (default subset); UNDER_REVIEW=1 adds the four under the owner's review (NuminaMath-CoT,
-    # about 45 % GPT-4-written problems; Hermes FC, ToolACE and glaive v2, written by unnamed language models).
-    for f in prompts prompts-ext prompts-ext2 prompts-tools; do
+    # the clean sources only (drafter.md, step 1): every row keeps its id, so its seed stays the same. Datasets:
+    # OpenR1-Math (default subset). Edit and agent prompts: the standard library and llama.cpp's own files, not its
+    # vendor/ and build folders; from site-packages only the packages (and vendored folders) under MIT, BSD-2/3-Clause,
+    # Apache-2.0 or PSF in drafter.md's table. A prompt that shares a 12-word span with a Q51 test prompt (all messages
+    # joined, lowercased) is left out, so Q51's scores stay honest. RIG-TBD: OpenAssistant/oasst2 root prompts, and
+    # code-generation prompts if the owner adds a source.
+    for f in prompts prompts-ext prompts-ext2; do
         $PYTHON -c '
 import json, sys
-strict = {"open-r1/OpenR1-Math-220k"}
-if sys.argv[3] == "1":   # under review (owner)
-    strict |= {"AI-MO/NuminaMath-CoT", "NousResearch/hermes-function-calling-v1", "Team-ACE/ToolACE",
-               "glaiveai/glaive-function-calling-v2"}
+N = 12
+def words(r):
+    return " ".join((m.get("content") or "") for m in r["messages"]).lower().split()
+datasets = {"open-r1/OpenR1-Math-220k"}
 packages = {"pyarrow", "huggingface_hub", "pip", "fsspec", "httpcore2", "anyio", "httpx2", "yaml", "_yaml", "packaging",
             "h11", "idna", "click", "filelock", "truststore"}
 not_ok = ("pip/_vendor/resolvelib", "pip/_vendor/certifi", "pyarrow/include/arrow/vendored/portable-snippets",
           "pyarrow/include/arrow/vendored/strptime.h")
+spans = set()
+for line in open(sys.argv[3]):
+    w = words(json.loads(line))
+    spans |= {" ".join(w[i:i + N]) for i in range(len(w) - N + 1)}
 def keep(r):
+    w = words(r)
+    if any(" ".join(w[i:i + N]) in spans for i in range(len(w) - N + 1)):
+        return False
     if r["category"] not in ("edit", "agent"):
-        return r.get("source") in strict
+        return r.get("source") in datasets
     p = r["source"].split("/")
     if p[0] == "site-packages":
         rest = "/".join(p[1:])
@@ -83,7 +89,7 @@ with open(sys.argv[2], "w") as out:
     for line in open(sys.argv[1]):
         if keep(json.loads(line)):
             out.write(line)
-' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl" "${UNDER_REVIEW:-0}"
+' "$DATA/$f.jsonl" "$DATA/$f.strict.jsonl" "$here/data/q51/prompts.jsonl"
         log "$f.strict.jsonl: $(wc -l < "$DATA/$f.strict.jsonl") of $(wc -l < "$DATA/$f.jsonl") prompts"
     done
 fi

@@ -64,8 +64,8 @@ sources' prompts and Flint's answers to them, the manifest, `vocab.npy`, and the
 checkpoints (RIG-TBD: counts and sizes after the rebuild). Before it goes out:
 
 - **Only the clean sources:** keep the prompts whose `source` is one of the clean sources
-  ([reproduce/drafter.md](../reproduce/drafter.md#1-prompts)), plus the four under review only if the owner clears
-  them, and only the answers to them; the card's counts must match.
+  ([reproduce/drafter.md](../reproduce/drafter.md#1-prompts)), without the prompts that share text with Q51, and
+  only the answers to them; the card's counts must match.
 - The private manifest lists machine paths: copy it with those fields removed (model files by name and SHA-256,
   engines by commit).
 - Each head's `config.json` records the training arguments with machine paths (`feats`, `out`, `vocab`, `flint`,

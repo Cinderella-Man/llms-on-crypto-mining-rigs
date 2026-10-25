@@ -69,7 +69,7 @@ output is the same as without it.
 <!-- begin:drafter -->
 **The staircase drafter, a trained guesser for pipelined speculation:**
 - A small transformer guesses Flint's next token from the hidden states Flint has already computed for the tokens in flight: the newest token has passed only the first card, older ones are further along, a staircase of depths. It sits behind the copy lookup and runs on the first card in its own CUDA stream; the last card still samples every token, so the output is the same as without it.
-- It ships as two side files (~0.27 GB each), trained on Flint's answers to prompts whose answers may be published (our own code prompts and OpenR1-Math; four more sources are under the owner's review, RIG-TBD): one for nine cards and one, depth-general, for six cards and any other split of 3–12 cards (RIG-TBD: their file names). Add `--pipe-guess staircase --pipe-draft <file>` next to `--pipe-depth 3`.
+- It ships as two side files (~0.27 GB each), trained on Flint's answers to prompts whose answers may be published (the project's own code prompts on permissively licensed files, and public prompt sets cleared for it; RIG-TBD: the release heads' mix): one for nine cards and one, depth-general, for six cards and any other split of 3–12 cards (RIG-TBD: their file names). Add `--pipe-guess staircase --pipe-draft <file>` next to `--pipe-depth 3`.
 - The engine builds the drafter's window of hidden states from the run's own layer split, so no further setting is needed.
 - Served on nine and six cards: RIG-TBD tok/s, against RIG-TBD without the drafter and RIG-TBD without guessing. Every answer stays identical to plain decoding.
 - It guesses for a request that generates alone, like the rest of pipelined speculation.
