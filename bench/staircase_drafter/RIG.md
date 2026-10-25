@@ -44,6 +44,12 @@ F16 change nothing measurable. All Q8_0 (`--f16 ''`) is 0.22 GB.
   ends at the first token that has passed the last card: every older token in flight is complete and reads its final
   state, like a committed row. Six cards 9/8/8/8/8/8 give L9, L17, L33, L41; nine cards 6/6/6/6/5/5/5/5/5 give L6, L12,
   L24, L34, L39, L44 for a head trained on those layers.
+- **Depth.** With every card busy the pipeline holds about as many tokens as the window has rows (measured, Q87: 4.3 on
+  six cards, 5.9 on nine 6/6/6/6/5/5/5/5/5, 8.2 on nine 6/…/5/2; windows of 4, 6 and 8 rows), so up to a
+  `--pipe-depth` of the window plus one every hidden state a guess reads exists when it is launched. Each row reads its
+  own token's state, never a stand-in: at a larger depth the guess waits for the oldest tokens to leave the last card,
+  and the executor, which needs the guess to submit the next token, slows to the pipeline's rate. At a smaller depth
+  the older tokens are deeper than the window says; the head reads the window's depths.
 - **Taps.** Every one-token pipe evaluation copies the inputs of the window's layers and its final hidden state (8 KB
   each, float32) into pinned host memory, each on the card that computes it, right after that card's work for the
   token, and records an event: about one row per card per token.

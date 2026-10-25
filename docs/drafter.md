@@ -243,6 +243,10 @@ Prompts → answers → dump → train → score → simulate → export → eng
   | 5/4/…/4 (12 cards) | L4, L9, L17, L25, L33, L41, L44 | final state |
 
   `--pipe-draft-stair` overrides the window, `--pipe-draft-kind stair|pre` the start.
+- **Depth:** the window matches the tokens a busy pipeline holds (Q87 measured 4.3 on six cards, 5.9 and 8.2 on the two
+  nine-card splits, against windows of 4, 6 and 8 rows), so up to a `--pipe-depth` of the window plus one every state a
+  guess reads exists at launch. Every row reads its own token's state, never a stand-in; at a larger depth the guess
+  waits for the oldest tokens to leave the last card, and the executor slows to the pipeline's rate.
 - **Coupling:** inverse-CDF with the served sampler's own uniform ([section 5](#5-coupling-with-the-sampler)).
 - **Limits:** one sequence (no streams, races or fed tokens); the embedding table on the head's card or in host memory.
 
