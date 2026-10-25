@@ -15,7 +15,7 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `460160e93`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
+| Engine | the v2 Pascal engine, commit `2d53179aa`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file | Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have (RIG-TBD: the release decision, UD-Q4_K_XL alone or with K2h-r16) |
@@ -138,14 +138,22 @@ is built and trained: [docs/drafter.md](../../docs/drafter.md).
 - **Acceptance on held-out text** (the share of guesses that match Flint's sample, outside copied text / overall): 0.476
   / 0.538 on nine cards with a light last card (`-ts 6,6,6,6,6,6,6,5,2`), 0.523 / 0.583 on six cards.
 
-Served, tok/s, median per request over chat, code, edit and tool prompts at the makers' sampling (RIG-TBD):
+Served, K2h-r16, `--pipe-depth 3` at 8,192 tokens of context, tok/s, the median of eight requests (chat, code and
+edit answers of 512 tokens and a coding-agent tool request of 1,536, each at temperature 0 and at the makers'
+sampling) ([Q20](../../quants/experiments.md#registry)):
 
-| | No guessing | Copy lookup and store | **Drafter** |
-|---|---|---|---|
-| Nine cards, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Six cards, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| | No guessing | Copy lookup and store | **Store, then the drafter** | Copy lookup, then the drafter |
+|---|---|---|---|---|
+| Nine cards, `-ts 6,6,6,6,6,6,6,5,2`, nine-card file | 33.4 | 48.6 | **50.4** | 44.4 |
+| Nine cards, `-ts 6,6,6,6,5,5,5,5,5`, nine-card file | 33.4 | 48.6 | **50.3** | |
+| Six cards, general file | 34.3 | 49.0 | **49.5** | |
 
-One guess costs RIG-TBD ms on the first card, and every answer was identical to plain decoding (RIG-TBD).
+- **The drafter adds 3.7 % to the store on nine cards** (8.6 % on chat and code at temperature 0) and breaks even on
+  six; 53.8 % of its guesses were right. Run it with the store: without it, the drafter alone (44.4) is slower than
+  the store alone (48.6).
+- **One guess costs 5.3–7.3 ms on the first card**, which also runs Flint's first layers; the design estimated
+  1.6–2.6 ms. That cost, not the guessing quality, now limits the gain.
+- Every answer was identical to plain decoding in every configuration.
 <!-- end:drafter -->
 
 ### Prefill
@@ -219,7 +227,7 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
 - **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:q163-q111 -->
 - **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:q163-q111 -->
-- **The staircase drafter**, a trained guesser for pipelined speculation, with its side file: RIG-TBD. <!-- only:drafter -->
+- **The staircase drafter**, a trained guesser for pipelined speculation, with its side files: +3.7 % over the store on nine cards (50.4 tok/s served). <!-- only:drafter -->
 
 ## Not measured yet
 

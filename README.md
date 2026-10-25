@@ -24,7 +24,8 @@ RIG-TBD times as fast as stock llama.cpp, with the file most people already have
 | Prefill (reading the prompt), 512 tokens | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 <!-- begin:drafter -->
-**With the staircase drafter**, served chat reaches **RIG-TBD tok/s** on nine cards and **RIG-TBD** on six. The drafter
+**With the staircase drafter**, served chat with K2h-r16 reaches **50.4 tok/s** on nine cards and **49.5** on six, against
+33.4 and 34.3 without guessing (48.6 and 49.0 with the simpler guessers alone, 8,192 tokens of context). The drafter
 is a small trained head (a 0.27 GB side file shipped with the release, one for nine cards and one for other counts) that guesses Flint's next token from the hidden
 states of the tokens already in flight; the cards check every guess
 ([how it works](models/flint/README.md#the-staircase-drafter)).
@@ -162,7 +163,7 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
    read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
    (slow on two cores) or on any Linux PC with Docker using
    [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh).
-   The v2 engine is commit `460160e93` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc4 -->
+   The v2 engine is commit `2d53179aa` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc4 -->
    The v2 engine is commit `7e6ec762f` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc3 -->
    The v2 engine is commit `594d20e08` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc1 -->
    v1, as released on 2026-10-23, is `pascal-p106`.
