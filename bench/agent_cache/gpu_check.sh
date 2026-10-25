@@ -14,9 +14,9 @@
 #   restart (from its file). GPU kernels sum in other orders for other batch sizes, so only paths whose reused cells
 #   come from the same prompt evaluations as a cold slot's are expected to match bit for bit (the prefix restore); the
 #   others report the first token's largest log-probability difference.
-# - replay: replay_sessions.py on SESSIONS sessions (two groups that share a tool list), first as stock llama.cpp serves
-#   them (a reserve per request, two tail checkpoints, no prefix files or generation checkpoints), then with the agent
-#   cache; the summary compares prompt tokens read per generated token, reuse classes and replies.
+# - replay: replay_sessions.py on SESSIONS sessions (two tool sets, alternating) in the arms of gpu_inner.sh's
+#   REPLAY_ARMS: stock behaviour, the exactness control (stock with the single tail checkpoint, whose replies the agent
+#   cache must give) and the agent cache; the summary compares prompt tokens read, reuse classes and replies.
 # The Pascal kernels are forced on (they are written for compute 6.1), as in the rig builds' own checks.
 set -uo pipefail
 WORK=${WORK:?}; GPU=${GPU:?}; MODEL=${MODEL:?}

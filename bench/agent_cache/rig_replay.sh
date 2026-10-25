@@ -4,16 +4,18 @@
 # and server on the loopback.
 #
 #   BIN=<dir with llama-server> MODEL=<flint.gguf> SESSIONS=<sessions.jsonl> OUT=<dir>
-#   [ARMS='stock agent-tail2 agent stock-drop agent-drop'] [STOCK_BIN=<dir>] [CTX=65536] [PORT=18480] bash rig_replay.sh
+#   [ARMS='stock stock-tail1 agent stock-drop agent-drop'] [STOCK_BIN=<dir>] [CTX=65536] [PORT=18480] bash rig_replay.sh
 #
 # Arms, one server each, the same flags apart from these:
 #   stock       as stock llama.cpp serves an agent: a scheduler reserve per request (LLAMA_SAMPLER_RESERVE=1), two
 #               checkpoints at each prompt's end (--checkpoint-tail2), no prefix files, no generation checkpoints
 #   agent       --prefix-cache (an empty folder when the arm starts), one ring checkpoint at each prompt's end,
 #               --checkpoint-gen
-#   agent-tail2 the agent cache with stock's two tail checkpoints: its prompts split into the same micro-batches as the
-#               stock arm's, so its replies must equal stock's (bit-exact cache), except after a generation-checkpoint
-#               restore, which reuses generated cells where stock evaluates the reply again as a prompt
+#   stock-tail1 the exactness control: stock behaviour with the agent cache's single tail checkpoint, so its prompts
+#               split into the same micro-batches as the agent arm's and the agent arm's replies must equal its replies
+#               (the cache is bit-exact; GPUs round by batch size, so stock's two tail checkpoints change the replies),
+#               except after a generation-checkpoint restore, which reuses generated cells that stock-tail1 evaluates
+#               again as a prompt
 #   *-drop      the same, the client sending earlier replies back without their reasoning (most OpenAI-compatible
 #               clients do; the server then reads each reply's visible part again)
 #   v2next      STOCK_BIN's llama-server with the stock arm's flags (the build the agent cache started from)
@@ -24,7 +26,7 @@
 # server-<arm>.log, meminfo.log ("<epoch> <MemAvailable kB>" every 2 s).
 set -uo pipefail
 : "${BIN:?}" "${MODEL:?}" "${SESSIONS:?}" "${OUT:?}"
-ARMS=${ARMS:-stock agent-tail2 agent stock-drop agent-drop}
+ARMS=${ARMS:-stock stock-tail1 agent stock-drop agent-drop}
 CTX=${CTX:-65536}
 PORT=${PORT:-18480}
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -68,8 +70,7 @@ for arm in $ARMS; do
         stock)  bin=$BIN;       env="LLAMA_SAMPLER_RESERVE=1"; args="--checkpoint-tail2";;
         agent)  bin=$BIN;       env=""; rm -rf "$OUT/prefix-$arm"; mkdir -p "$OUT/prefix-$arm"
                 args="--prefix-cache $OUT/prefix-$arm --checkpoint-gen";;
-        agent-tail2) bin=$BIN;  env=""; rm -rf "$OUT/prefix-$arm"; mkdir -p "$OUT/prefix-$arm"
-                args="--prefix-cache $OUT/prefix-$arm --checkpoint-gen --checkpoint-tail2";;
+        stock-tail1) bin=$BIN;  env="LLAMA_SAMPLER_RESERVE=1"; args="";;
         v2next) bin=${STOCK_BIN:?STOCK_BIN for arm v2next}; env=""; args="";;
         *) echo "unknown arm $arm"; continue;;
     esac
@@ -85,6 +86,9 @@ $(grep -c 'prefix cache: restored' "$OUT/server-$arm.log") prefix restores" | te
     du -sh "$OUT/prefix-$arm" 2>/dev/null | tee -a "$OUT/arms.txt"
 done
 python3 -I "$HERE/replay_sessions.py" summary "$OUT/replay.jsonl" --reference stock | tee "$OUT/summary.md"
+case " $ARMS " in *" stock-tail1 "*)
+    python3 -I "$HERE/replay_sessions.py" summary "$OUT/replay.jsonl" --reference stock-tail1 | tee -a "$OUT/summary.md";; esac
+| tee "$OUT/summary.md"
 case " $ARMS " in *" stock-drop "*)
     python3 -I "$HERE/replay_sessions.py" summary "$OUT/replay.jsonl" --reference stock-drop | tee -a "$OUT/summary.md";; esac
 echo RIG_REPLAY_DONE

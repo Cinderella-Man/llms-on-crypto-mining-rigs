@@ -8,7 +8,7 @@ set -uo pipefail
 CHECK_CTX=16384      # two slots of 8k: the check scenarios stay below ~6k tokens
 REPLAY_CTX=32768     # one slot: the longest replayed session (~26.5k tokens recorded)
 CHECK_RESTART=0      # 1: the prefix again from its file after a restart (a third model load)
-REPLAY_ARMS="stock agent-tail2 agent"  # agent-tail2 splits prompts as stock does, so its replies must equal stock's
+REPLAY_ARMS="stock stock-tail1 agent"  # stock-tail1 splits prompts as the agent cache does: its replies must equal agent's
 SERVER_BIN=/ac/out-cuda/build/bin/llama-server
 FORCE_PASCAL=1       # 0: the GPU's own kernels instead of the Pascal ones (the server logic is the same)
 [ -f /ac/gpu-check/env ] && . /ac/gpu-check/env
@@ -50,12 +50,13 @@ if [ "$MODE" = replay ] || [ "$MODE" = all ]; then
             stock)       env="LLAMA_SAMPLER_RESERVE=1"; args="--checkpoint-tail2";;
             agent)       env=""; args="--prefix-cache $G/pfx-$arm --checkpoint-gen";;
             agent-tail2) env=""; args="--prefix-cache $G/pfx-$arm --checkpoint-gen --checkpoint-tail2";;
+            stock-tail1) env="LLAMA_SAMPLER_RESERVE=1"; args="";;
             *) echo "unknown arm $arm"; continue;;
         esac
         rm -rf $G/pfx-$arm; mkdir -p $G/pfx-$arm
         start replay-$arm "$env" "-c $REPLAY_CTX -np 1 -bs $args" && { $RUN --label $arm > $G/replay-$arm.txt 2>&1 || status=1; stop; }
     done
-    python3 replay_sessions.py summary $G/replay.jsonl --reference stock | tee $G/replay-summary.md
+    python3 replay_sessions.py summary $G/replay.jsonl --reference "${REPLAY_ARMS%% *}" | tee $G/replay-summary.md
     for arm in $REPLAY_ARMS; do
         f=$G/replay-$arm.log
         echo "$arm: $(grep -c 'sched_reserve: reserving' $f) reserves, $(grep -c 'restored context checkpoint' $f) checkpoint restores, $(grep -c 'forcing full prompt' $f) full re-reads, $(grep -c 'prefix cache: restored' $f) prefix restores, $(grep -c 'CUDA error' $f) CUDA errors"

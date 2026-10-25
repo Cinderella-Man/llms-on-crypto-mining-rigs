@@ -75,12 +75,16 @@ tokenizer, template, window and layer pattern (`make_tiny_flint.py`).
 | Stock's two tail checkpoints, restored | identical (they differed before the canonical layout) |
 | `-bs`, three tool requests: scheduler reserves 1 instead of 2 on `v2-next`; 2 instead of 4 on the release candidate, whose on-device sampling (Q67) attaches a chain to tool requests too | the same replies |
 
-On a V100 with a real Flint file (Q4_0, 23 GB; one server, a test slot and a cold slot), the saved prefix restored
-into the test slot gives the cold slot's log-probabilities bit for bit (2,869 tokens, 113.5 MiB, 378 ms), as does a
-first chat turn. Two configurations that split a prompt into different micro-batches (one tail checkpoint against
-two) do not: GPU kernels round differently for different batch sizes, so their replies part at the first sampled token
-that the difference tips, from the first request on. A cold server of either configuration agrees with its own cache
-paths; the replay's exactness arm (`agent-tail2`) therefore runs the agent cache with stock's two tail checkpoints.
+On a V100 with a real Flint file (Q4_0, 23 GB; one server, a test slot and a cold slot; the V100's own kernels), the
+saved prefix restored into the test slot gives the cold slot's log-probabilities bit for bit (2,869 tokens, 113.5 MiB,
+~400 ms), as do a first chat turn and a repeated request restored from its tail checkpoint. Paths that evaluate tokens
+in other batches than a cold server does differ in the last bits and then in sampled tokens, as stock llama.cpp's own
+cache does: generated tokens (one at a time, against one batch for the cold server; largest first-token difference among
+the top candidates 0.16 to 2.35 log-probability units, same top token), and a restore cut back into the middle of an
+earlier batch. So do two configurations that split prompts differently: with stock's two tail checkpoints, the one
+4 + n_ubatch tokens before the end falls inside the shared prefix when the user message is short, so the prefix's cells
+depend on the message's length and a saved prefix cannot equal them; the single tail checkpoint never splits the prefix.
+The replay's exactness control (`stock-tail1`) is therefore stock behaviour with the single tail checkpoint.
 
 Before the canonical layout, every restore (stock checkpoints too) differed from the cold server from the first token,
 and the first cut-back design used checkpoints that hold only the window: a restore then lacked most of the window,
@@ -93,8 +97,8 @@ llama.cpp's own prompt cache does.
 
 `bench/agent_cache/rig_replay.sh` replays eight BFCL sessions (two tool sets × four, alternating, 4–11 requests each)
 per configuration on nine cards with K2h-r16: stock behaviour (a reserve per request, two tail checkpoints, no prefix
-files or generation checkpoints), the agent cache with stock's two tail checkpoints (the exactness arm: the same
-micro-batches as stock, so the same replies), the agent cache, and stock and the agent cache with the client dropping
+files or generation checkpoints), stock behaviour with the single tail checkpoint (the exactness control: the agent
+cache's micro-batches, so the agent cache must give its replies), the agent cache, and stock and the agent cache with the client dropping
 earlier replies' reasoning (what most OpenAI-compatible clients do). Each request reuses the server's own last reply, so
 the replay measures what an agent gets: time to first token per request, prompt tokens read, reuse classes and
 identical replies.
