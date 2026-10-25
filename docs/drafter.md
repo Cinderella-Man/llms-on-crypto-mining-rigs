@@ -24,9 +24,11 @@ card 2 or 3, older ones are complete: a "staircase" of depths. The design follow
 design and not EAGLE-3, Medusa or MTP is in [pipeline drafter](research/notes/pipeline_drafter.md). It sits behind the
 copy lookup, which guesses first inside copied text.
 
-| Where we stand (2026-10-25 13:50) | |
+| Where we stand (2026-10-25, drafter work stopped) | |
 |---|---|
-| Data (the owner, 2026-10-25 13:40) | Only publishable data sources from now on. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts: **trained on excluded data, not for release**. Their numbers stand as measurements of the method. The heads are retrained (C9) and the store rebuilt (C7) on data that is clean by construction: our own edit, agent and implement-this-function prompts on the Python standard library, llama.cpp's own code and permissive packages (MIT, BSD, Apache-2.0, PSF), nothing sharing 12 words with Q51. OpenR1-Math (crawled problems) waits for the owner's sign-off on maths; NuminaMath-CoT (~45 % GPT-4-written), ToolACE, glaive v2 and Hermes FC (LLM-written) are out unless the owner decides otherwise. Rig tests of the guesser and the drafter wait for them |
+| Status | **Stopped for the v2.0 release** (the owner: the release is the llama.cpp fork's improvements and our model, nothing else). No drafter or store work runs, and nothing was generated, dumped or trained for v2.1 |
+| Data (the owner, 2026-10-25 15:00) | **All drafter data so far is excluded**: every prompt file, answer, dump, pack, vocabulary, head, checkpoint and store, including the "clean" M3 sets, which were cut from mixed-source files. It is the owner's to delete. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts; their numbers stand as measurements of the method only |
+| v2.1 plan (M4) | start from scratch on approved sources only: [`sources.json`](../bench/staircase_drafter/sources.json) lists them, and the gate [`check_sources.py`](../bench/staircase_drafter/check_sources.py) checks every stage (prompts, answers, dumps, then vocabulary, packs, heads and the store) with a chain of hashed gate records. Both are drafts: written, never run |
 | Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
 | Cost per guess | 5.3–7.3 ms on one P106, 2–3× the design estimate and about one pipeline cycle, on the card that also runs Flint's first stage: the cost, not the acceptance, now caps the gain |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
@@ -35,7 +37,7 @@ copy lookup, which guesses first inside copied text.
 | One head for 3–12 cards | R2-gen: from 0.556 / 0.624 at three cards to 0.449 / 0.508 at twelve (section 6) |
 | Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
 | Gate | the release needs a rig-measured win on the release split (the owner, 2026-10-25 08:15). The offline bar was ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall on six cards |
-| Next | M3, the clean redo: R4 heads from scratch on licence-clean data only (23.3 M answer tokens, clean vocabulary), from ~15:20; first Q51 numbers ~19:45. The 15:00 round on mixed data is cancelled. Then a cheaper guess (section 8) |
+| Next | for v2.1: M4 (section 3), then a cheaper guess (section 8). The M3 redo (R4 heads) never started |
 | Engine | the drafter code is in the release engine, rc4 (`2d53179aa`, from `460160e93` on): `--pipe-guess staircase --pipe-draft FILE` (with `--pipe-store`, the store before the head), window from the run's split, six-anchor and depth-general heads, exact against plain decoding on the rig. Without a head file it is off: no taps, no memory, the default guesser `cont` unchanged |
 | Release (the owner, 2026-10-25 15:20) | ships without the answer store and without a drafter head: the heads and store so far were trained or built on excluded data. The served release numbers use the built-in guesser (`cont`: copy lookup and the request's own continuations, no data), measured by `results/2026-10-25_release_rig/served_262k.sh` in the private companion repo (no guessing against `--pipe-depth 3`, Q8_0, K2h-r16 and UD-Q4_K_XL at 262,144 tokens). The drafter returns with heads trained on the strict data list (M3) |
 
@@ -389,8 +391,10 @@ Prompts → answers → dump → train → score → simulate → export → eng
 
 ### M3: licence-clean data (2026-10-25 13:40)
 
-**Running.** The owner, 2026-10-25 13:40: only data that can be published; every earlier head is not for release.
-Lists and counts: `count_strict.py` (one place for every rule below).
+**Stopped, superseded by M4.** The owner, 2026-10-25 13:40: only data that can be published; every earlier head is
+not for release. At 15:00 the owner went further: all of this data is excluded too and the work starts from scratch
+(M4). The R4 round below never started. The section stays as the record of how the sources were judged. Lists and
+counts: `count_strict.py` (one place for every rule below).
 
 | Source | Status | Answers | Answer tokens |
 |---|---|---|---|
@@ -417,6 +421,38 @@ Lists and counts: `count_strict.py` (one place for every rule below).
 - **Runs (R4):** a nine-card specialist weighted to the release split, a 3–12-card head, a copy-weighted and an LK
   variant and a second seed, from scratch on the core for 4 hours. The new code answers join a retrain (R5) with a
   vocabulary recounted on core plus code.
+
+### M4: from scratch on approved sources (planned for v2.1)
+
+**Planned; not built or run.** The owner, 2026-10-25 15:05: new data for the guesser and the head, from approved
+sources only, and every piece of data checked for whether it can be used and published. Drafter work then stopped for
+the v2.0 release, so nothing below has run.
+
+- **Approved sources** ([`sources.json`](../bench/staircase_drafter/sources.json), one entry per source with its
+  licence, a link to it, who wrote the texts, the filter and the owner's approval date):
+  - our own task texts, system prompts and tool schema (MIT);
+  - the Python 3.12 standard library (PSF-2.0);
+  - llama.cpp's own code at one commit, without `vendor/` and build folders (MIT, a few files Apache-2.0);
+  - the permissive site-packages from a pinned install ([`requirements-prompts.txt`](../bench/staircase_drafter/requirements-prompts.txt));
+    of the vendored code, only the sub-packages judged one by one;
+  - OpenR1-Math-220k default (the problems only);
+  - OpenAssistant/oasst2 root prompter messages (not synthetic, not deleted, passed review).
+
+  Writers: Flint only (the makers' NVFP4 GGUF on vLLM, Unsloth's Q8_0, our own quants), recorded per answer. The file
+  also lists what is excluded and why. Code-generation datasets wait for a research note and the owner's decision.
+- **The gate** ([`check_sources.py`](../bench/staircase_drafter/check_sources.py)) runs after every stage, and the next
+  stage starts only on PASS. For each run it writes a manifest (one row per prompt, answer or dumped record) and a
+  gate record holding the files' hashes, `sources.json`'s hash and the sha256 of each parent gate record.
+  - Prompts: each row names its source, the file or data set row must exist and carry exactly the prompt's text, and
+    no prompt shares 12 words with Q51.
+  - Answers: the prompt passed, the writer is approved, the prompt tokens are the prompt's own, and the decoded answer
+    shares no 12 words with Q51.
+  - Dumps: each record equals a passed answer token for token.
+  - Vocabulary, packs, heads and the store: every file the producing command reads must trace back to a passed
+    parent, an approved Flint file or a test file named as such.
+- **Agent sessions:** our own agent loop, system prompt and tool schema.
+- **Left to do:** `clean_prompts.py` writes `source_id` and `row_id` per prompt; a test run of the gate on each stage;
+  then prompts, generation, dumps, vocabulary and heads from scratch.
 
 ## 4. Why the card count matters
 
@@ -593,7 +629,7 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 5. ~~Cost per guess on a P106~~: 5.3–7.3 ms (section 6), far above card 1's slack; see item 0.
 6. ~~Order of the store and the head~~: built as copy lookup, request continuations, store, then the head (rc4
    `5215256bd`); on the rig the head adds 3.7 % behind the store. What each source is worth on its own: item 13.
-7. **More data:** generation and dump continue on every free GPU; each new size is a results row.
+7. **More data:** stopped; v2.1 rebuilds all data from scratch through the gate (M4).
 8. **Bigger head:** the 4-layer A (1.85× the training cost per step, est. ~1.6× the guess time) against more data.
    The night's 4-layer run is inconclusive. It and the 2-layer control were both stopped at 75 of 300 minutes, and at
    equal steps the 4-layer head was not ahead (val 0.385 at 900 steps against 0.404 at ~920). The clean test is a warm
@@ -700,3 +736,8 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   clean as used) and the Q51 rule: R4 trains on the core only (15,222 answers, 14.14 M: our own edit and agent
   prompts on clean trees, nothing sharing 12 words with Q51) with a vocabulary counted on it; `prompts.py` defaults to
   publishable sources, the first runs' sets kept as `EXCLUDED_SETS`; `clean_prompts.py` drops Q51-overlapping prompts.
+- 2026-10-25 15:00–15:05: the owner: all drafter data so far is excluded, the work starts from scratch on approved
+  sources with every stage checked (M4). All generation, dumps and training stopped; R4 never started.
+  `sources.json`, `requirements-prompts.txt` and the stage gate `check_sources.py` drafted, not run.
+- 2026-10-25, afternoon: the owner: the release is the llama.cpp fork's improvements and our model only. All drafter
+  work stops, the M4 pipeline included; nothing was generated for v2.1.

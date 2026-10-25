@@ -1,0 +1,131 @@
+{
+  "about": "The approved sources of the staircase drafter's training data (Q20). Every prompt, answer, dump, vocabulary, pack, head and store must trace back to an entry here; check_sources.py is the gate that enforces it, and clean_prompts.py builds prompts from these entries only. Nothing is added without the owner's approval (the date per entry).",
+  "updated": "2026-10-25",
+  "q51_rule": "no 12-word span (lower-cased, split on whitespace, all message contents joined) shared with a Q51 test prompt",
+  "trees": {
+    "python-stdlib": {
+      "what": "CPython 3.12.15 Lib/ (/usr/local/lib/python3.12) in python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2",
+      "python": "3.12",
+      "exclude": ["site-packages/*", "test/*", "*/test/*", "tests/*", "*/tests/*", "idlelib/idle_test/*", "*/__pycache__/*", "config-*"]
+    },
+    "llama.cpp": {
+      "what": "git archive of ggml-org/llama.cpp at commit d77256999f211f8c0a5b12d13564f48d685b59e7 (no local changes)",
+      "exclude": ["vendor/*", "build*/*", "node_modules/*", "*/node_modules/*", "test/*", "tests/*", "*/test/*", "*/tests/*"]
+    },
+    "site-packages": {
+      "what": "/usr/local/lib/python3.12/site-packages of the same image after pip install -r requirements-prompts.txt (pip 25.0.1 from the image)",
+      "exclude": ["*/test/*", "*/tests/*", "*/__pycache__/*"]
+    }
+  },
+  "sources": [
+    {
+      "id": "q20-task-texts",
+      "kind": "own",
+      "licence": "MIT",
+      "licence_url": "https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/LICENSE",
+      "written_by": "this repository's authors: the task texts, system prompts and tool schema in prompts.py and clean_prompts.py",
+      "filter": "task texts that share a 12-word span with a Q51 test prompt are not used",
+      "approved": "2026-10-25"
+    },
+    {
+      "id": "python-stdlib",
+      "kind": "source-files",
+      "tree": "python-stdlib",
+      "paths": ["@stdlib-modules"],
+      "licence": "PSF-2.0",
+      "licence_url": "https://docs.python.org/3.12/license.html",
+      "written_by": "CPython developers (human-written source code and docstrings)",
+      "filter": "modules named in Python 3.12's sys.stdlib_module_names; no site-packages, test folders or config-*",
+      "approved": "2026-10-25"
+    },
+    {
+      "id": "llama.cpp",
+      "kind": "source-files",
+      "tree": "llama.cpp",
+      "paths": [""],
+      "licence": "MIT (a few files Apache-2.0)",
+      "licence_url": "https://github.com/ggml-org/llama.cpp/blob/master/LICENSE",
+      "written_by": "llama.cpp contributors (human-written source code)",
+      "filter": "not vendor/ (third-party code), not build*/ (generated files), no test folders",
+      "approved": "2026-10-25"
+    },
+    {"id": "pypi:pyarrow", "kind": "source-files", "tree": "site-packages", "paths": ["pyarrow/"], "exclude": ["pyarrow/include/arrow/vendored/*"], "version": "26.0.0", "licence": "Apache-2.0", "licence_url": "https://github.com/apache/arrow/blob/main/LICENSE.txt", "written_by": "Apache Arrow contributors", "filter": "of the vendored code only the three sub-paths listed separately", "approved": "2026-10-25"},
+    {"id": "pypi:pyarrow/vendored/double-conversion", "kind": "source-files", "tree": "site-packages", "paths": ["pyarrow/include/arrow/vendored/double-conversion/"], "licence": "BSD-3-Clause", "licence_url": "https://github.com/google/double-conversion/blob/master/LICENSE", "written_by": "Google's double-conversion authors", "approved": "2026-10-25"},
+    {"id": "pypi:pyarrow/vendored/datetime", "kind": "source-files", "tree": "site-packages", "paths": ["pyarrow/include/arrow/vendored/datetime/"], "licence": "MIT", "licence_url": "https://github.com/HowardHinnant/date/blob/master/LICENSE.txt", "written_by": "Howard Hinnant's date library authors", "approved": "2026-10-25"},
+    {"id": "pypi:pyarrow/vendored/datetime.h", "kind": "source-files", "tree": "site-packages", "paths": ["pyarrow/include/arrow/vendored/datetime.h"], "licence": "Apache-2.0", "licence_url": "https://github.com/apache/arrow/blob/main/LICENSE.txt", "written_by": "Apache Arrow contributors", "approved": "2026-10-25"},
+    {"id": "pypi:huggingface_hub", "kind": "source-files", "tree": "site-packages", "paths": ["huggingface_hub/"], "version": "2.3.0", "licence": "Apache-2.0", "licence_url": "https://github.com/huggingface/huggingface_hub/blob/main/LICENSE", "written_by": "Hugging Face", "approved": "2026-10-25"},
+    {"id": "pypi:pip", "kind": "source-files", "tree": "site-packages", "paths": ["pip/", "pip/_vendor/__init__.py"], "exclude": ["pip/_vendor/*"], "version": "25.0.1", "licence": "MIT", "licence_url": "https://github.com/pypa/pip/blob/main/LICENSE.txt", "written_by": "pip developers", "filter": "of _vendor/ only pip's own __init__.py and the packages listed separately", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/rich", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/rich/"], "licence": "MIT", "licence_url": "https://github.com/Textualize/rich/blob/master/LICENSE", "written_by": "Will McGugan and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/pygments", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/pygments/"], "licence": "BSD-2-Clause", "licence_url": "https://github.com/pygments/pygments/blob/master/LICENSE", "written_by": "Pygments contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/urllib3", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/urllib3/"], "licence": "MIT", "licence_url": "https://github.com/urllib3/urllib3/blob/main/LICENSE.txt", "written_by": "urllib3 contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/requests", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/requests/"], "licence": "Apache-2.0", "licence_url": "https://github.com/psf/requests/blob/main/LICENSE", "written_by": "Requests contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/cachecontrol", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/cachecontrol/"], "licence": "Apache-2.0", "licence_url": "https://github.com/psf/cachecontrol/blob/master/LICENSE.txt", "written_by": "CacheControl contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/packaging", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/packaging/"], "licence": "Apache-2.0 OR BSD-2-Clause", "licence_url": "https://github.com/pypa/packaging/blob/main/LICENSE", "written_by": "PyPA", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/truststore", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/truststore/"], "licence": "MIT", "licence_url": "https://github.com/sethmlarson/truststore/blob/main/LICENSE", "written_by": "Seth Michael Larson and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/msgpack", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/msgpack/"], "licence": "Apache-2.0", "licence_url": "https://github.com/msgpack/msgpack-python/blob/main/COPYING", "written_by": "msgpack contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/idna", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/idna/"], "licence": "BSD-3-Clause", "licence_url": "https://github.com/kjd/idna/blob/master/LICENSE.md", "written_by": "Kim Davies and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/platformdirs", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/platformdirs/"], "licence": "MIT", "licence_url": "https://github.com/tox-dev/platformdirs/blob/main/LICENSE", "written_by": "platformdirs contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/distlib", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/distlib/"], "licence": "PSF-2.0", "licence_url": "https://github.com/pypa/distlib/blob/master/LICENSE.txt", "written_by": "Vinay Sajip", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/distro", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/distro/"], "licence": "Apache-2.0", "licence_url": "https://github.com/python-distro/distro/blob/master/LICENSE", "written_by": "distro contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/tomli", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/tomli/"], "licence": "MIT", "licence_url": "https://github.com/hukkin/tomli/blob/master/LICENSE", "written_by": "Taneli Hukkinen and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:pip/_vendor/pyproject_hooks", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/pyproject_hooks/"], "licence": "MIT", "licence_url": "https://github.com/pypa/pyproject-hooks/blob/main/LICENSE", "written_by": "PyPA", "approved": "2026-10-25"},
+    {"id": "pypi:fsspec", "kind": "source-files", "tree": "site-packages", "paths": ["fsspec/"], "version": "2026.9.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/fsspec/filesystem_spec/blob/master/LICENSE", "written_by": "fsspec contributors", "approved": "2026-10-25"},
+    {"id": "pypi:httpcore2", "kind": "source-files", "tree": "site-packages", "paths": ["httpcore2/"], "version": "2.16.0", "licence": "BSD-3-Clause", "licence_url": "https://pypi.org/project/httpcore2/2.16.0/", "written_by": "httpcore2 contributors", "approved": "2026-10-25"},
+    {"id": "pypi:httpx2", "kind": "source-files", "tree": "site-packages", "paths": ["httpx2/"], "version": "2.16.0", "licence": "BSD-3-Clause", "licence_url": "https://pypi.org/project/httpx2/2.16.0/", "written_by": "httpx2 contributors", "approved": "2026-10-25"},
+    {"id": "pypi:anyio", "kind": "source-files", "tree": "site-packages", "paths": ["anyio/"], "version": "4.15.1", "licence": "MIT", "licence_url": "https://github.com/agronholm/anyio/blob/master/LICENSE", "written_by": "Alex Grönholm and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:PyYAML", "kind": "source-files", "tree": "site-packages", "paths": ["yaml/", "_yaml/"], "version": "6.0.3", "licence": "MIT", "licence_url": "https://github.com/yaml/pyyaml/blob/main/LICENSE", "written_by": "PyYAML contributors", "approved": "2026-10-25"},
+    {"id": "pypi:packaging", "kind": "source-files", "tree": "site-packages", "paths": ["packaging/"], "version": "26.3", "licence": "Apache-2.0 OR BSD-2-Clause", "licence_url": "https://github.com/pypa/packaging/blob/main/LICENSE", "written_by": "PyPA", "approved": "2026-10-25"},
+    {"id": "pypi:h11", "kind": "source-files", "tree": "site-packages", "paths": ["h11/"], "version": "0.16.0", "licence": "MIT", "licence_url": "https://github.com/python-hyper/h11/blob/master/LICENSE.txt", "written_by": "h11 contributors", "approved": "2026-10-25"},
+    {"id": "pypi:idna", "kind": "source-files", "tree": "site-packages", "paths": ["idna/"], "version": "3.20", "licence": "BSD-3-Clause", "licence_url": "https://github.com/kjd/idna/blob/master/LICENSE.md", "written_by": "Kim Davies and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:click", "kind": "source-files", "tree": "site-packages", "paths": ["click/"], "version": "8.5.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/pallets/click/blob/main/LICENSE.txt", "written_by": "Pallets", "approved": "2026-10-25"},
+    {"id": "pypi:filelock", "kind": "source-files", "tree": "site-packages", "paths": ["filelock/"], "version": "4.2.4", "licence": "MIT", "licence_url": "https://pypi.org/project/filelock/4.2.4/", "written_by": "filelock contributors", "approved": "2026-10-25"},
+    {"id": "pypi:truststore", "kind": "source-files", "tree": "site-packages", "paths": ["truststore/"], "version": "0.10.5", "licence": "MIT", "licence_url": "https://github.com/sethmlarson/truststore/blob/main/LICENSE", "written_by": "Seth Michael Larson and contributors", "approved": "2026-10-25"},
+    {
+      "id": "openr1-math-220k",
+      "kind": "dataset",
+      "repo": "open-r1/OpenR1-Math-220k",
+      "shard": "default/train/",
+      "row_key": "uuid",
+      "text_field": "problem",
+      "match": {},
+      "licence": "Apache-2.0",
+      "licence_url": "https://huggingface.co/datasets/open-r1/OpenR1-Math-220k",
+      "written_by": "maths competition problems collected from public sources (the default config's problem field); the set's model-written solutions are never used",
+      "filter": "the first parquet shard of the default config (refs/convert/parquet); the problem only",
+      "approved": "2026-10-25"
+    },
+    {
+      "id": "oasst2",
+      "kind": "dataset",
+      "repo": "OpenAssistant/oasst2",
+      "shard": "default/train/",
+      "row_key": "message_id",
+      "text_field": "text",
+      "match": {"parent_id": null, "role": "prompter", "synthetic": false, "deleted": false, "review_result": true},
+      "licence": "Apache-2.0",
+      "licence_url": "https://huggingface.co/datasets/OpenAssistant/oasst2",
+      "written_by": "human volunteers of the OpenAssistant project",
+      "filter": "root prompter messages only (parent_id null, role prompter, synthetic false, deleted false, review_result true), all languages",
+      "approved": "2026-10-25"
+    }
+  ],
+  "writers": [
+    {"id": "flint-nvfp4-vllm", "model": "RecursiveSI/flint-nvfp4-gguf (the makers' NVFP4 GGUF), served by vLLM", "files": [{"name": "flint-nvfp4.gguf", "bytes": 22863084160}], "licence": "Apache-2.0", "licence_url": "https://huggingface.co/RecursiveSI/flint", "approved": "2026-10-25"},
+    {"id": "flint-q8_0", "model": "unsloth/flint-GGUF Q8_0, served by llama.cpp", "files": [{"name": "flint-Q8_0.gguf", "bytes": 42301076928}], "licence": "Apache-2.0", "licence_url": "https://huggingface.co/RecursiveSI/flint", "approved": "2026-10-25"},
+    {"id": "flint-own-quant", "model": "our own quants of Flint, served by llama.cpp (the gate records each file's name, size and hash)", "names": ["flint-*.gguf", "Flint-*.gguf"], "licence": "Apache-2.0", "licence_url": "https://huggingface.co/RecursiveSI/flint", "approved": "2026-10-25"}
+  ],
+  "excluded": [
+    {"id": "Aeala/ShareGPT_Vicuna_unfiltered", "reason": "scraped ChatGPT conversations, unclear terms"},
+    {"id": "HuggingFaceH4/ultrachat_200k", "reason": "written by ChatGPT"},
+    {"id": "ise-uiuc/Magicoder-Evol-Instruct-110K", "reason": "written by GPT models"},
+    {"id": "ise-uiuc/Magicoder-OSS-Instruct-75K", "reason": "written by GPT models"},
+    {"id": "AI-MO/NuminaMath-CoT", "reason": "about 45 % of the rows written by GPT-4 (synthetic_math, synthetic_amc, orca_math)"},
+    {"id": "Team-ACE/ToolACE", "reason": "written by language models that are not named"},
+    {"id": "glaiveai/glaive-function-calling-v2", "reason": "written by language models that are not named"},
+    {"id": "NousResearch/hermes-function-calling-v1", "reason": "written by language models that are not named"},
+    {"id": "llama.cpp vendor/ and build*/", "reason": "third-party code under other licences; generated files"},
+    {"id": "site-packages: tqdm, hf_xet, typing_extensions, pip/_vendor/certifi, pip/_vendor/resolvelib, pip/_vendor/pkg_resources, pyarrow's vendored portable-snippets and strptime.h", "reason": "MPL-2.0 (tqdm, certifi), ISC (resolvelib), CC0 (portable-snippets), not judged (the rest)"},
+    {"id": "coding-agent prompts and tool descriptions of other projects", "reason": "not checked; the agent prompts use our own system prompts and tool schema"},
+    {"id": "code-generation datasets", "reason": "waiting for a research note and the owner's decision"}
+  ]
+}
