@@ -399,8 +399,21 @@ Prompts → answers → dump → train → score → simulate → export → eng
   prompts stay in the feature files; `train.py --only <ids>` uses only the listed answers.
 - **No inheritance:** the heads start from Flint's own weights (logit-lens projections, Flint's output rows), not from
   R1 or R2; the 40k vocabulary is recounted on clean answers (`vocab.py --only`: Q51 coverage 0.960 against 0.967).
+- **Site-packages ruling (the owner, 14:05):** answers from files of MIT, BSD, Apache-2.0 and PSF packages are in
+  (6,481 answers, 6.70 M tokens: pyarrow, huggingface_hub, pip and most of its vendored packages, fsspec, httpx2,
+  httpcore2, anyio, PyYAML, packaging, h11, idna, click, filelock, truststore); copyleft and others are out (tqdm
+  MPL+MIT, pip's vendored certifi MPL-2.0 and resolvelib ISC, two vendored Arrow headers). Clean total ~30.0 M.
+- **Generic tool-call sets** (ToolACE, glaive v2, Hermes FC, 5.3 M tokens) are held out while an audit checks which
+  model wrote them.
+- **Code first (the owner, 14:10):** edit, agent and code answers are drawn twice per epoch (`train.py
+  --rec-weights`); heads are picked on Q51's code, edit and agent text on the release split, chat reported apart.
+- **New clean text:** `clean_prompts.py` builds prompts that are clean by construction: "implement this function"
+  stubs from documented standard-library and permissive-package functions (signature, docstring, imports), whole-file
+  edits and agent turns on the allowed trees, math capped near 10 %; Q51's files are banned by name. vLLM writes them
+  on two RTX 3090s (first set: 27,854 prompts, ~21 M answer tokens expected).
 - **Runs (R4):** a nine-card specialist weighted to the release split, a 3–12-card head, a copy-weighted and an LK
-  variant; from ~15:20, first Q51 numbers ~19:45, the best continued overnight.
+  variant, a second seed; from ~14:30 for 4 hours on the clean set without the tool sets; the best continued
+  overnight on the grown clean set.
 
 ## 4. Why the card count matters
 
@@ -677,3 +690,6 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   starts: 23.30 M clean answer tokens of 74.67 M (18.69 M dumped), a clean vocabulary, the remaining clean answers
   dumped first, R4 heads from scratch from ~15:20. `train.py`, `vocab.py`, `feed_split.py` take `--only <ids>`;
   `train.py --copy-weight` down-weights targets inside copies.
+- 2026-10-25 14:05–14:15 (CET): site-packages ruling applied (+6.70 M clean, list in the data folder's
+  strict-sitepkgs.md); generic tool sets held pending their audit; code first: `--rec-weights`, `clean_prompts.py`,
+  vLLM generation of clean code-first prompts on GPUs 2 and 5.
