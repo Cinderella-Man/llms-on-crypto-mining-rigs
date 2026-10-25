@@ -196,33 +196,63 @@ Prompts → answers → dump → train → score → simulate → export → eng
 ### Step 7: export
 
 - **In → out:** `head.pt` + vocabulary + α → one GGUF side file (architecture `staircase-drafter`).
-- **Tools:** `export_gguf.py` (RMS norms folded into the next projection; draft-id → Flint-id table; metadata: anchor
-  layers, fused or not, committed anchor, staircase, α), `check_export.py`, `llama-pipe-drafter-check`.
+- **Tools:** `export_gguf.py`, `check_export.py`, `llama-pipe-drafter-check`.
+- **Side-file format:** the head's matrices with every RMS norm folded into the next projection, the draft-id → Flint-id
+  table, and per-depth metadata, so the engine needs no change for a new head shape:
+
+  | Key | Six-anchor heads (M0, M1) | Depth-general heads (M2) |
+  |---|---|---|
+  | `depth_proj` (depth 0–49 → projection) | L9, L17, L25, L33, L41 and the final state: one each | `drafter.BUCKET`: five buckets plus the final state |
+  | `depth_emb_row` (depth → embedding row) | the 7-row anchor embedding | the 50-row depth embedding |
+  | `recorded` (depths trained on) | 9, 17, 25, 33, 41 | the dumps' common layers (e.g. 4, 6, 8, 9, 10, …, 47) |
+  | `timing` | `split_depths`' stage model: 0.435 ms per layer at six cards, +0.024 per extra card (min 0.3), head 2.5 ms, hop 0.3 ms | same |
+  | others | sizes, `fuse` (+ `fuse_depths`), `committed`, `alpha`, `general`, `target_layers` = 49 | same |
+
+  `export_gguf.py` reads `general` from the run's config and `recorded` from its `--feats` files (or `--recorded`).
 - **Size:** Q8_0 matrices with an F16 output head (the default since v2 `6362f5d`): 0.29 GB for a two-layer fused head
-  with 40,000 ids. All-Q8_0 is 0.22 GB but moves the logits by ~0.16 rms (most likely token unchanged, its probability
-  by up to 0.07); the F16 head by ~0.035.
-- **Pitfall:** today's file format names six-card anchors (L9, L17, L25, L33, L41, final). M2's layer-indexed anchors
-  need the format and the engine extended.
+  with 40,000 ids, 0.27 GB unfused. All-Q8_0 is 0.22 GB but moves the logits by ~0.16 rms (most likely token unchanged,
+  its probability by up to 0.07); the F16 head by ~0.035.
 
 ### Step 8: engine
 
 - **Where:** fork branch `pascal-p106-v2-drafter`, included in the combined release candidate `pascal-p106-v2-rc`.
   `llama-pipespec` and `llama-server` take `--pipe-guess staircase --pipe-draft FILE`.
-- **How it runs** ([RIG.md](../bench/staircase_drafter/RIG.md)): every one-token pipe step copies its anchor layers'
-  inputs and final state (8 KB each) to pinned host memory on the card that computes them; the head runs on card 1 in
-  its own CUDA stream (or `--pipe-draft-dev N`), waits for the anchors it reads, and returns its top 16. A late anchor
-  makes a guess late, never wrong. The executor still samples every token, so the output is plain decoding's.
-- **Window shape:** from the file, or `--pipe-draft-stair` (nine cards today: `emb,L9,L17,L33,L41`). It must come from
-  the run's own split ([section 4](#4-why-the-card-count-matters)).
+- **How it runs** ([RIG.md](../bench/staircase_drafter/RIG.md)): every one-token pipe step copies the inputs of the
+  window's layers and its final state (8 KB each) to pinned host memory on the card that computes them, one per card;
+  the head runs on card 1 in its own CUDA stream (or `--pipe-draft-dev N`), waits for the hidden states it reads, and
+  returns its top 16. A late hidden state makes a guess late, never wrong. The executor still samples every token, so
+  the output is plain decoding's.
+- **Window shape, from the run's split** (since fork `pascal-p106-v2-drafter` at 2026-10-25 03:00): the engine reads
+  the layers per card from the actual device assignment, runs `split_depths` with the file's timing (kind `stair` on a
+  card that holds layers, `pre` on a spare card; after a miss the one-row window falls out), and maps each depth to the
+  deepest recorded depth at or below it. Tokens in flight older than the window read the last boundary before the
+  output card. Six-anchor heads go through the same rule with `recorded` = their five anchors, which reproduces their
+  six-card staircase L9, L17, L33, L41. Examples with M2's recorded layers:
+
+  | Split | Window (newest first) | Older tokens |
+  |---|---|---|
+  | 17/16/16 | L17, L33 | L33 |
+  | 13/12/12/12 | L12, L25, L37 | L37 |
+  | 9/8/8/8/8/8 | L9, L17, L33, L41 | L41 |
+  | 9/8/8/8/8/8, spare card | emb, L9, L25, L33, L41 | L41 |
+  | 6/6/6/6/5/5/5/5/5 | L6, L12, L24, L34, L39, L44 | L44 |
+  | 6/6/6/6/6/6/6/5/2 | L6, L12, L18, L24, L30, L36, L42, L47 | L47 |
+  | 5/4/…/4 (12 cards) | L4, L9, L17, L25, L33, L41, L44 | L44 |
+
+  `--pipe-draft-stair` overrides the window, `--pipe-draft-kind stair|pre` the start.
+- **Coupling:** inverse-CDF with the served sampler's own uniform ([section 5](#5-coupling-with-the-sampler)).
 - **Limits:** one sequence (no streams, races or fed tokens); the embedding table on the head's card or in host memory.
 
 ### Step 9: rig
 
-1. Cost of one guess on one P106 (`llama-pipe-drafter-check --bench 300 --window W --ctx 2048`). Est. 1.6–2.6 ms; card
-   1 has ~2 ms of slack per cycle on six cards, ~0.5 ms on the nine-card 6/…/5/2 split.
+1. Cost of one guess on one P106 (`llama-pipe-drafter-check --bench 300 --split 9,8,8,8,8,8 --ctx 2048`, and the
+   nine-card split; the window length follows the split). Est. 1.6–2.6 ms; card 1 has ~2 ms of slack per cycle on six
+   cards, ~0.5 ms on the nine-card 6/…/5/2 split.
 2. Pipelined decoding next to plain and the `cont` guesser (`rig_run.sh` with `DRAFT=…`), sampling on the last card at
-   temperature 1, identity checked.
+   temperature 1, identity checked; six and nine cards, and the head on a spare card.
 3. Served chat and tool requests against today's guesser (copy lookup + continuation counts + store).
+
+The kit (tarball, random heads of the real shape, R1's head, `rig_d3.sh`) is ready; nothing has run on the rig yet.
 
 ## 3. Methods
 
@@ -394,6 +424,7 @@ row's own window.
 | 2026-10-25 | M0, U (after-miss inputs), 240 min | 13.5 M | 6 (card 1) | 0.615 (peak, 180 min) | 0.537 | 0.593 | Gumbel |
 | 2026-10-25 | M0, C (card 1's output only) | 13.5 M | 6 (card 1) | – | 0.437 | 0.517 | Gumbel |
 | 2026-10-25 | M0, B (pre-step / late / after miss) | 13.5 M | 6 (spare card) | – | 0.300 / 0.316 / 0.331 | 0.303 / 0.323 / 0.339 | Gumbel |
+| 2026-10-25 | M0, 4-layer A, stopped at 75 of 300 min (900 steps, 0.6 epochs) | 13.5 M | 6 (card 1) | 0.385 (60 min) | 0.355 | 0.364 | Gumbel |
 
 - **Learning curve (head A, Q51 fresh):** 0.422 (3.08 M) → 0.463 (8.6 M) with M0, ~+0.03 per doubling of data; 0.502
   (13.5 M) with M1. At +0.03 per doubling, 24 M tokens project to ~0.53, so reaching 0.55 also needs recipe gains (M2,
@@ -440,8 +471,12 @@ row's own window.
 6. **Order of the store and the head** behind the copy lookup.
 7. **More data:** generation and dump continue on every free GPU; each new size is a results row.
 8. **Bigger head:** the 4-layer A (1.85× the training cost per step, est. ~1.6× the guess time) against more data.
+   The night's 4-layer run is inconclusive. It and the 2-layer control were both stopped at 75 of 300 minutes, and at
+   equal steps the 4-layer head was not ahead (val 0.385 at 900 steps against 0.404 at ~920). The clean test is a warm
+   start: `--layers 4 --init-from` a trained 2-layer head. The new blocks' output projections start at zero, so it
+   starts exactly as that head, and training shows what the extra layers add.
 9. **M1's options one by one:** the LK loss, noise and dropout, against a control on the same data.
-10. **The 13.5 M M0 heads:** U, C and B are scored (section 6). A, the 4-layer A and R0 ran out of memory while scoring
+10. **The 13.5 M M0 heads:** U, C, B and the 4-layer A are scored (section 6). A and R0 ran out of memory while scoring
     on 10–12 GB cards and are being rescored.
 11. **Overfitting:** with every new data size, dropout or noise against a control, once fresh data stops arriving.
 12. **Generation throughput:** the two-card G3 copy is GPU-bound with its cards taking turns; `-ub 48` did not help.
