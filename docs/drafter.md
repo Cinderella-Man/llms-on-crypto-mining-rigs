@@ -139,8 +139,10 @@ Prompts → answers → dump → train → score → simulate → export → eng
     the tool prompt file first) and half of all its tokens were prompt.
   - Several dump instances share one pool through `feed_split.py`; with generation at ~2.5k answer tokens/s (vLLM) one
     three-card instance (~0.5–1k) falls behind.
-  - Scanning a big feature file's record headers on a busy HDD takes hours (each header read pulls ~2.4 MB of
-    read-ahead); take the dumped sequence ids from the dump's log instead.
+  - Memory-mapped feature files on an HDD with a large read-ahead (8 MB here) read megabytes for every small access.
+    Every `train.py` start scans all record headers: on 2026-10-25 three trainers read ~71 GB each in 30 minutes
+    before their first step. `feats.py` therefore maps with `MADV_RANDOM` and reads a batch's rows with exact reads
+    (`Record.read_rows`, v2 `617eb3c`); a header scan then costs one page per record.
 
 ### Step 4: pack and train
 
