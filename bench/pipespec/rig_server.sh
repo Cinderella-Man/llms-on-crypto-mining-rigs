@@ -26,7 +26,9 @@
 # Output in /tmp/pipespec/out/<TAG>/: server-d<config>.log, results.jsonl (one line per request and configuration),
 # summary.tsv (tok/s per request and configuration, the speed-up over depth 0, guesses right / wrong / from the store
 # and the drafter's right of its guesses, identity), printed at the end. APPEND=1 adds the configurations to the TAG's
-# earlier results instead of starting over, and the summary covers all of them.
+# earlier results instead of starting over, and the summary covers all of them. REF=<results.jsonl of an earlier run of
+# the same requests> takes that run's depth-0 answers as the reference when this TAG ran no depth 0 (identity at T 0;
+# its tok/s and the speed-ups come from that run).
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -142,9 +144,11 @@ done
 
 # the "pipelined = G guesses, R right, W wrong[, S from the store][; drafter DG guesses, DR right]" line of each request
 python3 - "$OUT" <<'EOF' > "$OUT/summary.tsv"
-import json, re, sys
+import json, os, re, sys
 out = sys.argv[1]
 rows = [json.loads(l) for l in open(f"{out}/results.jsonl")]
+if os.environ.get("REF") and not any(str(r["depth"]) == "0" for r in rows):
+    rows = [r for r in map(json.loads, open(os.environ["REF"])) if str(r["depth"]) == "0"] + rows
 depths = list(dict.fromkeys(str(r["depth"]) for r in rows))   # the configurations that ran, in order
 on = [d for d in depths if d != "0"]   # pipelined configurations
 guesses = {}
