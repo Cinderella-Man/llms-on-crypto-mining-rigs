@@ -284,6 +284,8 @@ def main():
     ap.add_argument("--dropout", type=float, default=0.0)
     ap.add_argument("--only", help="file of answer ids (one per line, e.g. licence-clean answers): use only these "
                                    "records of the feature files")
+    ap.add_argument("--rec-weights", help="file of 'answer_id weight' lines: records drawn that many times per epoch "
+                                          "(fractions drawn at random; default 1), e.g. code and agent answers up")
     ap.add_argument("--copy-weight", type=float, default=1.0,
                     help="loss weight of targets inside a copy of >= 8 tokens from the prompt or the earlier output "
                          "(the copy lookup guesses those; < 1 spends the head on the rest)")
@@ -312,6 +314,12 @@ def main():
     if args.only:   # answer ids ("cat_N", the dump's sequence id is N): train and validate on these answers only
         keep = {int(x.strip().split("_")[-1]) for x in open(args.only) if x.strip()}
         allrec = [r for r in allrec if files[r[0]][r[1]].seq_id in keep]
+    rec_weight = {}
+    if args.rec_weights:   # "answer_id weight" per line: how often a record is drawn per epoch (default 1)
+        for line in open(args.rec_weights):
+            if line.strip():
+                k, w = line.split()
+                rec_weight[int(k.split("_")[-1])] = float(w)
     val = [r for k, r in enumerate(allrec) if k % 33 == 0 and files[r[0]][r[1]].n_tok <= args.max_tok]
     train = [r for k, r in enumerate(allrec) if (k % 33 != 0 or len(allrec) < 33)
              and files[r[0]][r[1]].n_tok <= args.max_tok]
@@ -389,6 +397,9 @@ def main():
     while not done:
         epoch += 1
         order = train[:]
+        if rec_weight:   # weight w: the record comes floor(w) times per epoch, once more with probability w - floor(w)
+            order = [r for r in train for _ in range(int(rec_weight.get(files[r[0]][r[1]].seq_id, 1.0)
+                                                         + rng.random()))]
         rng.shuffle(order)
         q, stop = queue.Queue(maxsize=6), threading.Event()
         th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors, general_sampler,
