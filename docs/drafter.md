@@ -24,16 +24,18 @@ card 2 or 3, older ones are complete: a "staircase" of depths. The design follow
 design and not EAGLE-3, Medusa or MTP is in [pipeline drafter](research/notes/pipeline_drafter.md). It sits behind the
 copy lookup, which guesses first inside copied text.
 
-| Where we stand (2026-10-25 09:20) | |
+| Where we stand (2026-10-25 12:30) | |
 |---|---|
+| Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
+| Cost per guess | 5.3–7.3 ms on one P106, 2–3× the design estimate and about one pipeline cycle, on the card that also runs Flint's first stage: the cost, not the acceptance, now caps the gain |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
 | Best on the release split | M2 run R2-9 (nine-card specialist, 27.6 M tokens): 0.476 coupled acceptance on Q51 fresh text, 0.538 overall; even nine-card split 0.492 / 0.553 |
 | Best on six cards | M2 runs R2-69 / R2-gen: 0.525 / 0.584 and 0.523 / 0.583 (R1: 0.502 / 0.562) |
 | One head for 3–12 cards | R2-gen: from 0.556 / 0.624 at three cards to 0.449 / 0.508 at twelve (section 6) |
 | Simulated speed | R1 on six cards: 1.90× plain decoding (70.9 tok/s), against 1.34× for the copy lookup with the n-gram cache |
 | Gate | the release needs a rig-measured win on the release split (the owner, 2026-10-25 08:15). The offline bar was ≥ 0.55 on Q51 fresh text and ≥ 0.6 overall on six cards |
-| Next | the rig times R2-9 (and R2-gen) today; the final round (~15:00, ~50 M tokens) continues R2-9 |
-| Engine | guesser built (`--pipe-guess staircase`, fork branch `pascal-p106-v2-drafter`, `daf310b66`): window from the run's split, six-anchor and depth-general heads, exact against plain decoding; not yet timed on the rig |
+| Next | a cheaper guess (section 8); the final round (~15:00, ~50 M tokens) continues R2-9 |
+| Engine | rc4 `460160e93` (`--pipe-guess staircase --pipe-draft`, with `--pipe-store` the store before the head): window from the run's split, six-anchor and depth-general heads, exact against plain decoding on the rig |
 
 Terms used below:
 
@@ -258,14 +260,16 @@ Prompts → answers → dump → train → score → simulate → export → eng
 
 ### Step 9: rig
 
-1. Cost of one guess on one P106 (`llama-pipe-drafter-check --bench 300 --split 9,8,8,8,8,8 --ctx 2048`, and the
-   nine-card split; the window length follows the split). Est. 1.6–2.6 ms; card 1 has ~2 ms of slack per cycle on six
-   cards, ~0.5 ms on the nine-card 6/…/5/2 split.
-2. Pipelined decoding next to plain and the `cont` guesser (`rig_run.sh` with `DRAFT=…`), sampling on the last card at
-   temperature 1, identity checked; six and nine cards, and the head on a spare card.
-3. Served chat and tool requests against today's guesser (copy lookup + continuation counts + store).
-
-The kit (tarball, random heads of the real shape, R1's head, `rig_d3.sh`) is ready; nothing has run on the rig yet.
+1. **Cost of one guess** on one P106 with nothing else on it: `llama-pipe-drafter-check drafter.gguf --bench 300
+   --split 6,6,6,6,6,6,6,5,2 --commits 1 --ctx 2048` (and the other splits, `--ctx 8192`). Measured 5.3–7.3 ms
+   (section 6) against an estimate of 1.6–2.6 ms.
+2. **Served:** [rig_server.sh](../bench/pipespec/rig_server.sh) per split with `DEPTHS='0 3s 3ds' STORE=… DRAFT=…`,
+   then staircase alone (`DEPTHS=3d APPEND=1`) on the first split: no guessing, the copy lookup + continuations + store
+   (`cont`), the same then the head, and the copy lookup then the head; chat, code and edit (512 tokens) and a
+   coding-agent tool request (1,536 tokens) at T 0 and at the makers' sampling; identity per request. Nine cards
+   6,…,5,2 and 6,6,6,6,5,5,5,5,5 with R2-9, six cards with R2-gen. Run on 2026-10-25 (section 6).
+3. Pipelined decoding without the server (`rig_run.sh` with `DRAFT=…`) and the head on a spare card: not run; the
+   served test answers the release question.
 
 ## 3. Methods
 
@@ -467,6 +471,45 @@ row's own window.
   more data, a bigger head, and a retrain.
 - **In front of the drafter:** the continuation store (Q161, `--pipe-store`) adds ~5 % at no card cost.
 
+### Served on the rig (2026-10-25)
+
+rc4 `460160e93`, K2h-r16, llama-server `--pipe-depth 3 -c 8192 -bs`, one request at a time, prompt caching off; chat,
+code and edit answers of 512 tokens and a coding-agent tool request of 1,536 tokens, at T 0 and at the makers' sampling
+(T 1, top-k 20, top-p 0.95, min-p 0, seed 1). Generation tok/s from the server's timings; "store" = the copy lookup, the
+request's continuations and the store (`cont` with `--pipe-store`); "head" = `--pipe-guess staircase --pipe-draft`.
+
+| Cards (layers per card as assigned) | Guessers | chat T0 | code T0 | edit T0 | tool T0 | chat T1 | code T1 | edit T1 | tool T1 | Median |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 9, `-ts 6,…,5,2` (7/6/6/6/6/6/6/5/1) | none | 33.3 | 33.6 | 27.2 | 33.6 | 33.8 | 33.9 | 27.3 | 32.6 | 33.4 |
+| | store | 41.8 | 50.1 | 49.3 | 49.3 | 46.5 | 51.2 | 46.6 | 48.0 | 48.6 |
+| | store, then R2-9 | 45.4 | 54.5 | 50.7 | 50.7 | 48.3 | 52.0 | 47.0 | 50.2 | **50.4** |
+| | copy lookup, then R2-9 | 42.6 | 46.3 | 44.9 | 46.9 | 40.4 | 43.9 | 41.4 | 46.0 | 44.4 |
+| 9, `-ts 6,6,6,6,5,5,5,5,5` (7/6/6/6/5/5/5/5/4) | none | 33.4 | 33.7 | 27.4 | 33.5 | 33.8 | 33.9 | 27.4 | 32.2 | 33.4 |
+| | store | 40.9 | 49.2 | 49.2 | 49.2 | 46.9 | 51.3 | 46.7 | 48.0 | 48.6 |
+| | store, then R2-9 | 44.6 | 54.0 | 50.7 | 50.6 | 47.8 | 51.8 | 46.5 | 50.1 | **50.3** |
+| 6, llama's split (9/8/8/9/8/7) | none | 34.4 | 34.3 | 28.9 | 34.5 | 34.7 | 34.5 | 28.7 | 32.8 | 34.3 |
+| | store | 43.9 | 50.8 | 49.5 | 50.0 | 47.9 | 52.1 | 46.9 | 48.5 | 49.0 |
+| | store, then R2-gen | 44.9 | 53.0 | 50.2 | 49.4 | 47.4 | 50.5 | 46.4 | 49.6 | **49.5** |
+
+- **The head on top of the store:** +3.7 % median on the release split (geometric mean over the eight requests
+  +4.2 %): chat and code at T 0 +8.6 %, edit and tool at T 0 +2.7–2.9 %, T 1 +0.8–4.7 %. Nine even +3.9 % (geometric
+  mean). Six cards +0.4 % (−3.1 % to +4.4 %).
+- **Against no guessing:** store 1.45×, store then head 1.51×, head alone 1.33× on the release split. The store is
+  worth more than the head, and the two add.
+- **Acceptance as served** (R2-9, release split): with the head alone 53.8 % of its guesses are right (T 0 55.2 %,
+  T 1 52.6 %), the same as its offline 0.538 on Q51 overall, though it was trained on Q8_0's hidden states and reads
+  K2h-r16's. Behind the store it guesses the harder positions: 47.1 % (T 0 50.9 %, T 1 43.8 %).
+- **Windows:** the engine took them from the layers llama actually assigned: `-ts 6,6,6,6,6,6,6,5,2` gives
+  7/6/6/6/6/6/6/5/1 and a 7-row window (L6, L12, L18, L25, L30, L37, L47), the even split 6 rows (L6, L12, L18, L30,
+  L39, L44), six cards 4 rows (L9, L17, L25, L42).
+- **Cost of one guess** (one P106, nothing else on it, median of 300): 6.20 / 7.29 ms with an 8-row window at 2,048 /
+  8,192 committed positions, 5.34 / 5.90 ms with 6 rows, 5.30 / 5.86 ms with 4 rows. Card 1's own share of a token is
+  ~3.5 ms on nine cards (7 layers at ~0.5 ms); the head runs in its own stream on that card and competes with it. On
+  six cards card 1 holds 9 layers, which fits the gain disappearing there.
+- **Exactness:** every answer equal in every configuration (at T 0 to no guessing; at T 1 the pipelined configurations
+  to each other, their draws keyed by position); the rig's identity step (check_identity, nine cards even and light,
+  greedy and the makers' sampling) passed.
+
 ## 7. Lessons and pitfalls
 
 | Lesson | Evidence |
@@ -483,20 +526,30 @@ row's own window.
 | Keep the exported output head in F16 | all-Q8_0 moves logits 0.16 rms, F16 head 0.035 |
 | The 40k vocabulary is enough for now | it holds 0.971 of Flint's kept probability on fresh text |
 | Inverse-CDF coupling punishes order swaps, but trained heads rarely swap | 0.15 against Gumbel's 0.61 on a swapped top pair; on Q51 only 0.007–0.010 below Gumbel |
+| The offline score predicts the served acceptance | R2-9 alone on the rig: 53.8 % right, against 0.538 on Q51 overall; Q8_0's hidden states in training, K2h-r16's on the rig |
+| Measure the guess cost before tuning acceptance | 5.3–7.3 ms per guess on a P106 against an estimate of 1.6–2.6 ms; it runs on card 1 next to Flint's first stage and caps the gain at ~4 % on nine cards, ~0 on six |
+| Cheap guessers first, the head for the rest | store alone 1.45×, head alone 1.33×, both 1.51× on nine cards |
+| Take the window from the split the run gets, not the one asked for | `-ts 6,6,6,6,6,6,6,5,2` assigned 7/6/6/6/6/6/6/5/1: 7 rows, not 8 |
+| Check the guesser behind every source that can sit in front of it | with the store, commits piled up between head launches and hit an out-of-bounds read (fixed in `460160e93`) that runs without a store never reached |
 
 ## 8. Open questions and next steps
 
-1. **M2 round and per-card-count scores** (2026-10-25 06:00–08:30): does the 3–12 head lose against the 6 + 9, 9 and
-   6 specialists at six and nine cards?
+0. **A cheaper guess** (the limit since the rig run of 2026-10-25): 5.3–7.3 ms per guess on a P106. Est. ~1.5–2 ms of
+   it is reading the 0.27 GB of weights; the rest is launches and small kernels. Candidates: profile the guess
+   (nsys on the P106), one CUDA graph per guess shape, a smaller output head (the 40k-row F16 head is 164 MB of the
+   0.27 GB), one layer, and running the head off card 1: on the light last card of the release split (1 layer there)
+   or on a spare card (six cards for Flint plus the head).
+1. ~~M2 round and per-card-count scores~~: done 2026-10-25 09:17 (section 6); R2-9 for nine cards, R2-gen for six and
+   other counts.
 2. ~~Score R1 on Q51 with both couplings; decide on the Gumbel-max sampler~~: done 2026-10-25; inverse-CDF is
    0.007–0.010 below Gumbel, so the served sampler stays.
 3. ~~The engine reads the window shape from the run's split and taps any recorded layer~~: done 2026-10-25 03:30
    (fork `daf310b66`); M2's export loads with no engine change ([step 8](#step-8-engine)).
-4. **Hidden states from the release file:** the head trains on Q8_0's states and reads the release file's on the rig;
-   the size of that shift is unmeasured.
-5. **Cost per guess on a P106** and whether the head fits card 1's slack on nine cards (~0.5 ms on the 6/…/5/2 split),
-   or needs one layer fewer on card 1.
-6. **Order of the store and the head** behind the copy lookup.
+4. ~~Hidden states from the release file~~: answered on the rig 2026-10-25: R2-9 alone is right 53.8 % of the time on
+   K2h-r16's states, its offline 0.538 on Q8_0's.
+5. ~~Cost per guess on a P106~~: 5.3–7.3 ms (section 6), far above card 1's slack; see item 0.
+6. ~~Order of the store and the head~~: built as copy lookup, request continuations, store, then the head (rc4
+   `5215256bd`); on the rig the head adds 3.7 % behind the store, and the store alone is 9 % ahead of the head alone.
 7. **More data:** generation and dump continue on every free GPU; each new size is a results row.
 8. **Bigger head:** the 4-layer A (1.85× the training cost per step, est. ~1.6× the guess time) against more data.
    The night's 4-layer run is inconclusive. It and the 2-layer control were both stopped at 75 of 300 minutes, and at
@@ -574,3 +627,9 @@ row's own window.
   with 512-token chat, code, edit and rewrite answers (rewrites: 440–457 right copy and store guesses, 17–26 head
   launches); `rig_server.sh` with the four rig configurations identical. R2-9 and R2-gen exported (0.27 GB each).
   The rig test: `rig_server.sh` per split with no guessing, cont + store, staircase + store, staircase alone.
+- 2026-10-25 11:09–12:17 (CET): first served rig result (rc4 `460160e93`, K2h-r16, depth 3). Release split: 50.4 tok/s
+  median with the store and R2-9, 48.6 with the store alone, 44.4 with the head alone, 33.4 with no guessing (+3.7 %
+  for the head; chat and code at T 0 +8.6 %); nine even 50.3 / 48.6 / 33.4; six cards with R2-gen 49.5 / 49.0 / 34.3.
+  Every answer identical in every configuration. The head alone is right 53.8 % of the time, as offline. One guess costs
+  5.3–7.3 ms on a P106 (est. 1.6–2.6 ms), the limit now. rc4 later became `2d53179aa` (C7's allocator fix for a
+  rig-only crash with packed uploads, off the drafter's path; these numbers stand).
