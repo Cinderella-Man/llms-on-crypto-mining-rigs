@@ -19,7 +19,8 @@
 #
 # Env [defaults]: DATA, LLAMA, Q8, HF, STD, PYTHON [python3], GPUS [0] (CUDA_VISIBLE_DEVICES for every GPU step),
 #   SLOTS [24] (llama-server slots for the answers), PORT [8001], PROMPT_FILES [all four], U_MIN [300], R1_MIN [480],
-#   GEN_MIN [134], CARDS (e.g. "6,9" for a specialist head instead of the 3-12-card head), FP16 [0: 1 on V100s],
+#   GEN_MIN [134], CARDS ("9" for the release's nine-card head R2-9; unset for the 3-12-card head R2-gen; the head goes
+#   to heads/R2-<CARDS or gen> and its export to drafter-<CARDS or gen>.gguf), FP16 [0: 1 on V100s],
 #   STEPS [all]. Data sizes: ~58 GB per million answer tokens for the dump; plan disk accordingly.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -33,6 +34,7 @@ PORT=${PORT:-8001}
 STEPS=${STEPS:-prompts answers testset dump vocab train score export}
 PROMPT_FILES=${PROMPT_FILES:-prompts.jsonl prompts-ext.jsonl prompts-ext2.jsonl prompts-tools.jsonl}
 BIN=$LLAMA/build/bin
+R2=R2-${CARDS:-gen}; R2=${R2//,/}    # R2-gen, R2-9, R2-69
 export PYTHONPATH="$LLAMA/gguf-py${PYTHONPATH:+:$PYTHONPATH}"
 mkdir -p "$DATA"/{claims,feats,heads,scores,q51}
 cd "$SD"
@@ -119,20 +121,21 @@ if has train; then
         --feats "$DATA"/pack/train-*.bin "${common[@]}" --out "$DATA/heads/R1" --lr 1e-4 --warmup 100 \
         --minutes "${R1_MIN:-480}" --val-seqs 300 "${fp16[@]}"
     cards=(); [ -n "${CARDS:-}" ] && cards=(--cards "$CARDS")
+    [ -f "$DATA/heads/R1/head.pt" ] || { echo "no R1 head"; exit 1; }
     gpu $PYTHON train.py --head A --general "${cards[@]}" --init-from "$DATA/heads/R1/head.pt" \
-        --feats "$DATA"/feats/train-1.bin "${common[@]}" --out "$DATA/heads/R2" --lr 1e-4 --warmup 100 --eval-every 20 \
+        --feats "$DATA"/feats/train-1.bin "${common[@]}" --out "$DATA/heads/$R2" --lr 1e-4 --warmup 100 --eval-every 20 \
         --val-seqs 300 --minutes "${GEN_MIN:-134}" "${fp16[@]}"
 fi
 
 if has score; then
-    log "score: R2 on Q51"
-    gpu $PYTHON score.py --heads "$DATA/heads/R2" --feats "$DATA/q51-grid.bin" --gen "$DATA/q51/gen.jsonl" "${common[@]}" \
-        --out "$DATA/scores/R2" --alpha 3 --window-group 2
-    $PYTHON report.py "$DATA/scores/R2/summary.json"
+    log "score: $R2 on Q51"
+    gpu $PYTHON score.py --heads "$DATA/heads/$R2" --feats "$DATA/q51-grid.bin" --gen "$DATA/q51/gen.jsonl" "${common[@]}" \
+        --out "$DATA/scores/$R2" --alpha 3 --window-group 2
+    $PYTHON report.py "$DATA/scores/$R2/summary.json"
 fi
 
 if has export; then
-    log "export: $DATA/drafter.gguf"
-    $PYTHON export_gguf.py --head "$DATA/heads/R2" --vocab "$DATA/vocab.npy" --out "$DATA/drafter.gguf" --alpha 3
+    log "export: $DATA/drafter-${R2#R2-}.gguf"
+    $PYTHON export_gguf.py --head "$DATA/heads/$R2" --vocab "$DATA/vocab.npy" --out "$DATA/drafter-${R2#R2-}.gguf" --alpha 3
 fi
 log "done"

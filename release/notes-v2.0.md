@@ -62,8 +62,8 @@ output is the same as without it.
 <!-- begin:drafter -->
 **The staircase drafter, a trained guesser for pipelined speculation:**
 - A small transformer guesses Flint's next token from the hidden states Flint has already computed for the tokens in flight: the newest token has passed only the first card, older ones are further along, a staircase of depths. It sits behind the copy lookup and runs on the first card in its own CUDA stream; the last card still samples every token, so the output is the same as without it.
-- It ships as a side file, `{{DRAFT_ASSET}}` ({{DRAFT_MB}} MB): add `--pipe-guess staircase --pipe-draft {{DRAFT_ASSET}}` next to `--pipe-depth 3`.
-- Trained on Flint's own answers, for RIG-TBD (the shipped head: depth-general for 3–12 cards, weighted towards six and nine, or a six- and nine-card head). The engine builds the drafter's window of hidden states from the run's own layer split.
+- It ships as two side files (~0.27 GB each), trained on Flint's own answers: `flint-staircase-drafter-9cards-{{VERSION}}.gguf` for nine cards, and `flint-staircase-drafter-{{VERSION}}.gguf`, depth-general, for six cards and any other split of 3–12 cards. Add `--pipe-guess staircase --pipe-draft <file>` next to `--pipe-depth 3`.
+- The engine builds the drafter's window of hidden states from the run's own layer split, so no further setting is needed.
 - Served chat with the drafter: RIG-TBD tok/s on nine cards (RIG-TBD × the copy lookup alone) and RIG-TBD on six cards, with every answer identical to plain decoding.
 - It guesses for a request that generates alone, like the rest of pipelined speculation.
 <!-- end:drafter -->
@@ -89,7 +89,7 @@ context:
 {{PREFIX}}-{{VERSION}}/llama-server -m flint-UD-Q4_K_XL.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
 ```
 
-With the drafter, add `--pipe-guess staircase --pipe-draft {{DRAFT_ASSET}}` to that line. <!-- only:drafter -->
+With the drafter, add `--pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-{{VERSION}}.gguf` to that line. <!-- only:drafter -->
 The repository's Flint page explains every flag, the six-card and agent variants, and the speed and quality behind them.
 
 ## Assets
@@ -98,7 +98,9 @@ The repository's Flint page explains every flag, the six-card and agent variants
 |---|---|---|
 | `{{BIN_ASSET}}` | {{BIN_MB}} MB | `{{BIN_SHA256}}` |
 | `{{CUDART_ASSET}}` | {{CUDART_MB}} MB | `{{CUDART_SHA256}}` |
-| `{{DRAFT_ASSET}}` | {{DRAFT_MB}} MB | `{{DRAFT_SHA256}}` | <!-- only:drafter -->
+<!-- begin:drafter -->
+{{DRAFT_ROWS}}
+<!-- end:drafter -->
 
 `BUILDINFO.txt` in the first archive records the commit, the build image, and that the binaries contain no AVX
 instructions and need glibc 2.38 at most. A third archive carries `test-backend-ops`, llama.cpp's operator tests, for
@@ -110,4 +112,4 @@ The binaries are llama.cpp and ggml with this fork's changes, all under the MIT 
 `THIRD_PARTY_NOTICES.md`). The CUDA runtime libraries in the second archive are NVIDIA's, redistributed unmodified under
 the NVIDIA CUDA Toolkit End User License Agreement (`NVIDIA_CUDA_RUNTIME_NOTICE.md`). Model files are not part of this
 release and keep their own licences.
-The drafter file is a model of this project, trained on Flint's outputs and hidden states: RIG-TBD (its licence, the owner's decision). <!-- only:drafter -->
+The drafter files are models of this project, trained on Flint's outputs and hidden states: OWNER-TBD (their licence). <!-- only:drafter -->

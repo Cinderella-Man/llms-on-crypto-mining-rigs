@@ -8,7 +8,7 @@ before each upload. `OWNER-TBD` marks the owner's decisions (the account, the na
 | Repository (proposed) | Kind | Files | Folder here |
 |---|---|---|---|
 | `OWNER-TBD/Flint-K2h-r16-GGUF` | model | `flint-K2h-r16.gguf` (29.4 GB), `README.md`, `LICENSE`, `CHECKSUMS` | [flint-K2h-r16/](flint-K2h-r16/) |
-| `OWNER-TBD/Flint-Staircase-Drafter` | model | `flint-staircase-drafter-v2.0.gguf` (~0.29 GB), `README.md`, `LICENSE` (OWNER-TBD), `CHECKSUMS` | [flint-staircase-drafter/](flint-staircase-drafter/) |
+| `OWNER-TBD/Flint-Staircase-Drafter` | model | `flint-staircase-drafter-9cards-v2.0.gguf` (R2-9) and `flint-staircase-drafter-v2.0.gguf` (R2-gen), ~0.27 GB each, `README.md`, `LICENSE` (OWNER-TBD), `CHECKSUMS` | [flint-staircase-drafter/](flint-staircase-drafter/) |
 | `OWNER-TBD/flint-drafter-data` (optional) | dataset | `manifest.json`; OWNER-TBD: `prompts/*.jsonl` (~0.3 GB), `answers/gen-*.jsonl` (~0.6 GB) | [flint-drafter-data/](flint-drafter-data/) |
 
 The engine archives go to the fork's GitHub release, not to Hugging Face ([reproduce/engine.md](../reproduce/engine.md)).
@@ -27,10 +27,10 @@ The engine archives go to the fork's GitHub release, not to Hugging Face ([repro
 
 ## Before uploading the drafter
 
-1. Export the chosen head (`export_gguf.py`, [reproduce/drafter.md](../reproduce/drafter.md), step 7) and run the
-   checks of step 8 on it.
-2. `sha256sum` into `flint-staircase-drafter/CHECKSUMS` and the folder's CHECKSUMS; the same file goes into the engine
-   release notes through `package_release.sh` (`DRAFT=`).
+1. Export both heads, R2-9 and R2-gen (`export_gguf.py`, [reproduce/drafter.md](../reproduce/drafter.md), step 7),
+   and run the checks of step 8 on each.
+2. `sha256sum` into `flint-staircase-drafter/CHECKSUMS` and the folder's CHECKSUMS; the same files go into the engine
+   release notes through `package_release.sh` (`DRAFTS="flint-staircase-drafter-9cards-v2.0.gguf=… flint-staircase-drafter-v2.0.gguf=…"`).
 3. The card's card counts, acceptance and speed from today's rig run; the licence (OWNER-TBD).
 
 ## Before publishing the dataset
@@ -47,6 +47,7 @@ The engine archives go to the fork's GitHub release, not to Hugging Face ([repro
 hf auth login
 hf upload OWNER-TBD/Flint-K2h-r16-GGUF flint-K2h-r16.gguf flint-K2h-r16.gguf
 hf upload OWNER-TBD/Flint-K2h-r16-GGUF release/flint-v2/huggingface/flint-K2h-r16 .
+hf upload OWNER-TBD/Flint-Staircase-Drafter flint-staircase-drafter-9cards-v2.0.gguf flint-staircase-drafter-9cards-v2.0.gguf
 hf upload OWNER-TBD/Flint-Staircase-Drafter flint-staircase-drafter-v2.0.gguf flint-staircase-drafter-v2.0.gguf
 hf upload OWNER-TBD/Flint-Staircase-Drafter release/flint-v2/huggingface/flint-staircase-drafter .
 hf upload OWNER-TBD/flint-drafter-data release/flint-v2/huggingface/flint-drafter-data . --repo-type dataset

@@ -9,7 +9,7 @@ turned off and compared with stock behaviour.
 | | |
 |---|---|
 | Fork | [Cinderella-Man/llama.cpp](https://github.com/Cinderella-Man/llama.cpp) |
-| Release commit | `5215256bd` (rc4: rc3 + the staircase drafter and its store order), branch `pascal-p106-v2-rc4`. OWNER-TBD: pushed to the fork, the release tag and branch name |
+| Release commit | `460160e93` (rc4: rc3 + the staircase drafter, its store order and the fix of a crash in the drafter path), branch `pascal-p106-v2-rc4`. OWNER-TBD: pushed to the fork, the release tag and branch name |
 | Without the drafter | rc3 `7e6ec762f`, the same engine with the drafter code left out |
 | v1, for comparison | `eeaa59660`, branch `pascal-p106` |
 | Upstream base | `d77256999` |
@@ -50,7 +50,7 @@ release notes from [release/notes-v2.0.md](../../notes-v2.0.md) (`NOTES_VARIANT=
 drafter):
 
 ```bash
-BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 DRAFT=flint-staircase-drafter.gguf scripts/package_release.sh - v2.0 5215256bd
+BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 DRAFTS="flint-staircase-drafter-9cards-v2.0.gguf=<R2-9 export> flint-staircase-drafter-v2.0.gguf=<R2-gen export>" scripts/package_release.sh - v2.0 460160e93
 ```
 
 It checks that the binaries contain no AVX instructions, need glibc 2.38 at most, and find every library in the

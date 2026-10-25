@@ -23,8 +23,9 @@
 #   checkout the build came from: the build folder's sibling src/], NOTES_ONLY [0; 1 rewrites only RELEASE_NOTES.md of
 #   the assets already in OUT, e.g. once the measured numbers are in the template], NOTES_VARIANT [none]: the engine
 #   variant of the notes, as scripts/release_variant.sh takes it (rc4, rc3, rc1 or a list of tags); tagged lines and
-#   blocks of other variants are removed, DRAFT: the staircase drafter's side file (export_gguf.py's GGUF), copied
-#   unchanged into OUT as DRAFT_NAME [flint-staircase-drafter-<VERSION>.gguf] and added to SHA256SUMS
+#   blocks of other variants are removed, DRAFTS: drafter side files (export_gguf.py's GGUFs) as "name=file ...",
+#   each copied unchanged into OUT under its name and added to SHA256SUMS and to the notes' asset table
+#   ({{DRAFT_ROWS}}); DRAFT=<file> adds one as DRAFT_NAME [flint-staircase-drafter-<VERSION>.gguf]
 # Exit status: 0 assets written and checked, 1 a step failed, 2 usage.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -133,29 +134,33 @@ EOF
 rm -rf "$lic"
 fi
 
-# the drafter side file, copied unchanged next to the archives
-if [ -n "${DRAFT:-}" ]; then
-    [ "$(head -c 4 "$DRAFT")" = GGUF ] || { echo "DRAFT is not a GGUF file: $DRAFT"; exit 1; }
-    cp "$DRAFT" "$OUT/$DRAFT_NAME"
-    (cd "$OUT" && grep -v " $DRAFT_NAME\$" SHA256SUMS > SHA256SUMS.new; sha256sum "$DRAFT_NAME" >> SHA256SUMS.new; mv SHA256SUMS.new SHA256SUMS)
-    echo "drafter: $DRAFT -> $OUT/$DRAFT_NAME"
-fi
+# the drafter side files, copied unchanged next to the archives (DRAFT=<file> is DRAFTS="$DRAFT_NAME=<file>")
+[ -n "${DRAFT:-}" ] && DRAFTS="${DRAFTS:+$DRAFTS }$DRAFT_NAME=$DRAFT"
+for d in ${DRAFTS:-}; do
+    name=${d%%=*} file=${d#*=}
+    [ "$(head -c 4 "$file")" = GGUF ] || { echo "not a GGUF file: $file"; exit 1; }
+    cp "$file" "$OUT/$name"
+    (cd "$OUT" && grep -v " $name\$" SHA256SUMS > SHA256SUMS.new; sha256sum "$name" >> SHA256SUMS.new; mv SHA256SUMS.new SHA256SUMS)
+    echo "drafter: $file -> $OUT/$name"
+done
 
 size() { du -m "$OUT/$1" | cut -f1; }
 sha() { grep " $1\$" "$OUT/SHA256SUMS" | cut -d' ' -f1; }
 if [ -f "$NOTES" ]; then
-    draft_fill=()
-    if [ -f "$OUT/$DRAFT_NAME" ]; then
-        draft_fill=(-e "s|{{DRAFT_ASSET}}|$DRAFT_NAME|g" -e "s|{{DRAFT_MB}}|$(size "$DRAFT_NAME")|g"
-                    -e "s|{{DRAFT_SHA256}}|$(sha "$DRAFT_NAME")|g")
-    fi
+    # one asset row per drafter file in OUT, in place of the template line {{DRAFT_ROWS}}
+    rows=$(mktemp)
+    for f in "$OUT"/*.gguf; do
+        [ -f "$f" ] || continue
+        n=$(basename "$f"); echo "| \`$n\` | $(size "$n") MB | \`$(sha "$n")\` |" >> "$rows"
+    done
     sed -e "s|{{VERSION}}|$VERSION|g" -e "s|{{COMMIT}}|$commit|g" -e "s|{{PREFIX}}|$PREFIX|g" \
         -e "s|{{BIN_ASSET}}|$BIN_ASSET|g" -e "s|{{BIN_MB}}|$(size "$BIN_ASSET")|g" -e "s|{{BIN_SHA256}}|$(sha "$BIN_ASSET")|g" \
         -e "s|{{CUDART_ASSET}}|$CUDART_ASSET|g" -e "s|{{CUDART_MB}}|$(size "$CUDART_ASSET")|g" \
-        -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" "${draft_fill[@]}" "$NOTES" \
+        -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" -e "/^{{DRAFT_ROWS}}\$/{r $rows" -e "d}" "$NOTES" \
         | bash "$here/release_variant.sh" "${NOTES_VARIANT:-none}" - > "$OUT/RELEASE_NOTES.md"
+    rm -f "$rows"
     left=$(grep -o '{{[A-Z_0-9]*}}' "$OUT/RELEASE_NOTES.md" | sort -u | tr '\n' ' ' || true)
-    [ -n "$left" ] && echo "WARNING: unfilled fields in the notes: $left(a drafter section without DRAFT?)"
+    [ -n "$left" ] && echo "WARNING: unfilled fields in the notes: $left"
     echo "release notes: $OUT/RELEASE_NOTES.md (placeholders left: $(grep -c 'RIG-TBD' "$OUT/RELEASE_NOTES.md" || true))"
 else
     echo "no notes template at $NOTES: RELEASE_NOTES.md not written"

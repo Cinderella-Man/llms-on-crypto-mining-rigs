@@ -7,7 +7,7 @@ row says otherwise; quality is scored on a separate machine against Flint's BF16
 second; "warm" = `llama-bench` with a 512-token prompt run before the 128 generated tokens in the same process.
 
 Builds (fork commits): stock = upstream `d77256999`; v1 = `eeaa59660`; v2 base = `032b130f4`; combined = `b3052a4f8`;
-persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `5215256bd` (rc3 `7e6ec762f` without the drafter).
+persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `460160e93` (rc3 `7e6ec762f` without the drafter).
 
 ## Measured on the release engine (2026-10-25)
 
@@ -87,9 +87,9 @@ persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `5215256bd` (rc3 
 |---|---|---|---|
 | R1 (six cards), coupled acceptance on Q51 fresh text / overall | 0.502 / 0.562 | `score.py --alpha 3` ([reproduce/drafter.md](reproduce/drafter.md)) | Q20 |
 | R1, simulated speed on six cards | 1.90× plain (70.9 tok/s) | `sim.py` | Q20 |
-| R2-9 (morning winner), nine cards with a light last card / even split | 0.476 / 0.538 fresh / overall; 0.492 / 0.553 | `score.py` on `q51-grid.bin` | Q20 |
-| R2-gen (3–12 cards), nine cards with a light last card | 0.469 / 0.531 | the same | Q20 |
-| Release head, per card count | RIG-TBD | the same | Q20 |
+| R2-9 (the nine-card release head), nine cards with a light last card / even split | 0.476 / 0.538 fresh / overall; 0.492 / 0.553 | `score.py` on `q51-grid.bin` | Q20 |
+| R2-gen (the release head for six and other counts), six cards / nine with a light last card | 0.523 / 0.583; 0.469 / 0.531 | the same | Q20 |
+| R2-gen at three / twelve cards | 0.556 / 0.624; 0.449 / 0.508 | the same | Q20 |
 | The C++ head against PyTorch, 14 cases | all top ids equal on a V100 | `check_export.py case` + `llama-pipe-drafter-check` | Q20 |
 
 ## Hardware (2026-10-24)

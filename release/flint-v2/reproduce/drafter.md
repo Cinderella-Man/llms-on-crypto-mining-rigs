@@ -9,8 +9,9 @@ options: [bench/staircase_drafter](../../../bench/staircase_drafter/README.md).
 `drafter_pipeline.sh` runs the steps below on one machine, one after another. Here they ran on a 7-GPU machine
 (3 × RTX 3090, 2 × V100 32 GB, 2 × RTX 3080) with several copies in parallel; the commands are the same.
 
-**The release head:** RIG-TBD, chosen by today's rig test among the depth-general heads of the 2026-10-25 rounds (see
-step 6). Everything up to step 5 is shared by every candidate.
+**The release heads:** R2-9 for nine cards and R2-gen for six cards and any other count from 3 to 12 (step 5), the
+winner and the runner-up of the 2026-10-25 morning round. Both are depth-general, unfused, two layers, 40,000 draft ids.
+Everything up to step 5 is shared by both. RIG-TBD: whether the 15:00 round's continuation of R2-9 replaces it.
 
 ## What you need
 
@@ -147,11 +148,12 @@ python sim.py --gen q51/gen.jsonl --scores scores/sim --jobs 8 --out sim.json
 | Head | Card count | Q51 fresh text | Q51 overall | Simulated speed |
 |---|---|---|---|---|
 | R1 | 6 | 0.502 | 0.562 | 1.90× plain decoding (70.9 tok/s) |
-| R2-9, the morning winner | 9 (6/…/5/2) | 0.476 | 0.538 | — |
+| **R2-9, the nine-card release head** | 9 (6/…/5/2) | 0.476 | 0.538 | RIG-TBD |
 | R2-9 | 9 (even) | 0.492 | 0.553 | — |
-| R2-gen, the runner-up | 9 (6/…/5/2) | 0.469 | 0.531 | — |
-| Release head | 9 (6/…/5/2) | RIG-TBD | RIG-TBD | RIG-TBD |
-| Release head | 6 | RIG-TBD | RIG-TBD | RIG-TBD |
+| R2-9 | 6 | 0.507 | 0.567 | — |
+| R2-gen | 9 (6/…/5/2) / 9 (even) | 0.469 / 0.488 | 0.531 / 0.549 | — |
+| **R2-gen, the release head for six and other counts** | 6 | 0.523 | 0.583 | RIG-TBD |
+| R2-gen | 3 / 12 | 0.556 / 0.449 | 0.624 / 0.508 | — |
 
 Acceptance is the share of guesses that equal Flint's sample at the makers' sampling (coupled, α 3); "fresh text" is
 what the copy lookup in front of the drafter cannot guess. The pick is made on the nine-card split with a light last
@@ -160,8 +162,11 @@ card (`-ts 6,6,6,6,6,6,6,5,2`).
 ## 7. Export
 
 ```bash
-PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/<release head> --vocab vocab.npy --out drafter.gguf --alpha 3
+PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/R2-9 --vocab vocab.npy --out flint-staircase-drafter-9cards-v2.0.gguf --alpha 3
+PYTHONPATH=<llama.cpp>/gguf-py python export_gguf.py --head heads/R2-gen --vocab vocab.npy --out flint-staircase-drafter-v2.0.gguf --alpha 3
 ```
+
+`--alpha` is the head's own value (`alpha.txt` in its folder when validation chose one; 3 for every head so far).
 
 Q8_0 matrices with the output head in F16 (~0.035 rms logit error on real hidden states), ~0.27–0.29 GB. A
 depth-general head is detected from its config; the side file records the 26-layer grid and the stage timing the

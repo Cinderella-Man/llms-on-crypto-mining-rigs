@@ -14,7 +14,7 @@ tags:
 
 # Flint staircase drafter: a trained guesser that makes Flint faster on multi-GPU rigs
 
-**What this is.** A small add-on file (about 0.29 GB) for running [Flint](https://huggingface.co/RecursiveSI/flint) with
+**What this is.** A small add-on file (about 0.27 GB, in two versions for different card counts) for running [Flint](https://huggingface.co/RecursiveSI/flint) with
 the [Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) on several graphics cards. It guesses
 Flint's next words, and the cards check every guess. Right guesses come almost for free; wrong ones are thrown away. The
 answers are exactly the ones Flint gives without it, only faster.
@@ -34,10 +34,11 @@ You need the Pascal engine v2 and a Flint model file (we use
 [Flint K2h-r16](https://huggingface.co/OWNER-TBD/Flint-K2h-r16-GGUF); Unsloth's files work too). Add three options to the usual server command:
 
 ```bash
-llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 3 --pipe-guess staircase --pipe-draft flint-staircase-drafter-v2.0.gguf --host 127.0.0.1 --port 8080
+llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 3 --pipe-guess staircase --pipe-draft flint-staircase-drafter-9cards-v2.0.gguf --host 127.0.0.1 --port 8080
 ```
 
-- `--pipe-depth 3` keeps three guesses in flight, `--pipe-guess staircase` uses this file, `--pipe-draft` names it.
+- `--pipe-depth 3` keeps three guesses in flight, `--pipe-guess staircase` uses the drafter, `--pipe-draft` names the
+  file: the nine-card file on nine cards, the general file on any other count (below).
 - It helps one conversation at a time. Requests with tools are sped up until the tool call starts.
 - RIG-TBD: with `--pipe-store <file>`, a store of Flint's earlier answers is consulted before the drafter (if the store
   ships with the release).
@@ -45,9 +46,14 @@ llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf -ngl 99 -fa on -c 262144 -np 
 
 ## Card counts
 
-RIG-TBD: the shipped head. It is either one head for any split of 3 to 12 cards (trained with a quarter of its
-examples each on six and nine cards) or a head for six and nine cards. The engine works out from your split which of
-Flint's layers each card holds and feeds the drafter the matching inputs, so you don't configure anything.
+| File | Use it on | Trained on |
+|---|---|---|
+| `flint-staircase-drafter-9cards-v2.0.gguf` | nine cards | both nine-card splits (even, and with a light last card) |
+| `flint-staircase-drafter-v2.0.gguf` | six cards, and any other count from 3 to 12 | every split of 3–12 cards, a quarter of its examples each on six and nine cards |
+
+The engine works out from your split which of Flint's layers each card holds and feeds the drafter the matching
+inputs, so you don't configure anything. On nine cards the nine-card file guesses right a little more often than the
+general one.
 
 ## What we measured
 
@@ -56,6 +62,10 @@ Flint's layers each card holds and feeds the drafter the matching inputs, so you
 | Nine cards, chat, tokens per second | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Six cards, chat, tokens per second | RIG-TBD | RIG-TBD | **RIG-TBD** |
 | Share of the drafter's guesses that were right | — | — | RIG-TBD |
+
+On 38 held-out conversations, the drafter's guess equals Flint's next token 54 % of the time on nine cards (the
+nine-card file) and 58 % on six cards (the general file); on text that can't be copied from earlier in the
+conversation, 48 % and 52 %.
 
 Every answer with the drafter was identical to the answer without it (RIG-TBD). Every number with its command:
 [results.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/results.md).
@@ -80,4 +90,5 @@ release in one folder: [release/flint-v2](https://github.com/Cinderella-Man/llms
 
 | File | Size | SHA-256 |
 |---|---|---|
-| `flint-staircase-drafter-v2.0.gguf` | RIG-TBD (~0.29 GB) | see [CHECKSUMS](CHECKSUMS) |
+| `flint-staircase-drafter-9cards-v2.0.gguf` | RIG-TBD (~0.27 GB) | see [CHECKSUMS](CHECKSUMS) |
+| `flint-staircase-drafter-v2.0.gguf` | RIG-TBD (~0.27 GB) | see [CHECKSUMS](CHECKSUMS) |
