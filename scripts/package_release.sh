@@ -20,7 +20,8 @@
 # Env [defaults]: WORK [~/llama-builds] (build_llamacpp_docker.sh's), OUT [WORK/release-<PREFIX>-<VERSION>],
 #   PREFIX [llama-p106], IMAGE [nvidia/cuda:12.9.2-devel-ubuntu24.04], DOCKER_ARGS (e.g. a label the machine's policy
 #   asks for), TESTS [1], JOBS, NOTES [release/notes-<VERSION>.md in this repository, if present], SRC [the llama.cpp
-#   checkout the build came from: the build folder's sibling src/]
+#   checkout the build came from: the build folder's sibling src/], NOTES_ONLY [0; 1 rewrites only RELEASE_NOTES.md of
+#   the assets already in OUT, e.g. once the measured numbers are in the template]
 # Exit status: 0 assets written and checked, 1 a step failed, 2 usage.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -37,6 +38,10 @@ BIN_ASSET=$PREFIX-$VERSION-bin-ubuntu-cuda12.9-sm61.tar.gz
 CUDART_ASSET=cudart-$PREFIX-$VERSION-bin-ubuntu-cuda12.9.tar.gz
 TESTS_ASSET=$PREFIX-$VERSION-tests-ubuntu-cuda12.9-sm61.tar.gz
 
+if [ "${NOTES_ONLY:-0}" = 1 ]; then  # refill RELEASE_NOTES.md from the template, for assets already in $OUT
+    [ -f "$OUT/SHA256SUMS" ] && [ -f "$OUT/$BIN_ASSET" ] || { echo "no assets in $OUT"; exit 1; }
+    commit=$(tar xzf "$OUT/$BIN_ASSET" -O "$PREFIX-$VERSION/BUILDINFO.txt" | sed -n 's/^commit: \([0-9a-f]*\).*/\1/p')
+else
 if [ -z "${BUILD_DIR:-}" ]; then
     [ "$REF" != - ] || { echo "give a git ref, or BUILD_DIR"; exit 2; }
     log=$(mktemp)
@@ -120,6 +125,7 @@ EOF
     chown -R "$HOST_UID:$HOST_GID" /out
 '
 rm -rf "$lic"
+fi
 
 size() { du -m "$OUT/$1" | cut -f1; }
 sha() { grep " $1\$" "$OUT/SHA256SUMS" | cut -d' ' -f1; }
