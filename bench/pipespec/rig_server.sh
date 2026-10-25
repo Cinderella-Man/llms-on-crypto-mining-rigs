@@ -5,8 +5,8 @@
 #
 # Per configuration in DEPTHS one server (-bs, -np 1): a depth (0 = off, the reference), followed by d for the staircase
 # drafter DRAFT instead of GUESS (--pipe-guess staircase --pipe-draft DRAFT DRAFT_ARGS, Q20/D3) and by s for the
-# continuation store STORE (--pipe-store, Q161), e.g. DEPTHS='0 3 3s 3ds'. A d configuration whose server did not load
-# the drafter (it falls back to cont) is skipped.
+# continuation store STORE (--pipe-store, Q161), or by c for the copy lookup alone (--pipe-guess copy), e.g.
+# DEPTHS='0 3c 3 3s 3d 3ds'. A d configuration whose server did not load the drafter (it falls back to cont) is skipped.
 # Each runs these requests, at temperature 0 and at the makers' sampling (T 1, top-p 0.95, top-k 20, min-p 0, seed
 # SEED), with prompt caching off:
 #   - chat: prompts/chat.txt, code.txt and edit.txt as one user message each, MAX_TOKENS tokens;
@@ -56,6 +56,7 @@ for cfg in $DEPTHS; do
         [ -r "${STORE:-}" ] || { echo "config $cfg: set STORE to a readable .pstore file"; continue; }
         store="--pipe-store $STORE" ;;
     esac
+    case $flags in *c*) guess=copy ;; esac
     case $flags in *d*)
         [ -r "${DRAFT:-}" ] || { echo "config $cfg: set DRAFT to a readable drafter file"; continue; }
         guess=staircase
