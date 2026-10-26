@@ -6,14 +6,18 @@
 #   BIN=<engine>/bin MODEL=<file.gguf> scripts/p106_check.sh
 #                                                           + the engine's libraries and devices, the model's disk and
 #                                                             read speed
-#   BIN=... MODEL=... SERVE=1 scripts/p106_check.sh         + the shipped command lines, each started and sent one
-#                                                             request: chat (9 cards, pipelined), a tool request,
-#                                                             long context with -b 2048 -ub 512, and chat on 6 cards
+#   BIN=... MODEL=... SERVE=1 scripts/p106_check.sh         + the release command line, started and sent one request
+#                                                             each: chat, a tool request and a long prompt on all
+#                                                             cards at the full context, and chat on 6 cards
+#   BIN=... MODEL=<flint-Q8_0.gguf> TS=6,6,5,5,6,5,5,6,6 SERVE=1 scripts/p106_check.sh
+#                                                           Flint Q8_0: its layer split (the six-card run is skipped,
+#                                                             Q8_0 does not fit six cards)
 #
 # Env [defaults]: CARDS [9] cards expected, CARD_NAME [P106-090], SUMS (a SHA256SUMS file: also verify the model,
-#   1.5-3 min for 25 GB on a 2-core Celeron), SERVE [0], CONFIGS [chat9 tools9 long9 chat6], CTX6 [32768] context on six
-#   cards, LONG_TOKENS [16384] prompt length of the long-context request, ENV [LLAMA_NO_MOE_DOWN_RESCALE=tg],
-#   PORT [8091], MIN_AVAIL_MB [300] (a server run whose host MemAvailable falls below this fails)
+#   1.5-3 min for 25 GB on a 2-core Celeron), SERVE [0], CONFIGS [chat9 tools9 long9 chat6], TS (-ts for the runs on all
+#   cards), DEPTH [4] (--pipe-depth), CTX6 [32768] context on six cards, LONG_TOKENS [16384] prompt length of the
+#   long-context request, ENV [LLAMA_NO_MOE_DOWN_RESCALE=tg], PORT [8091], MIN_AVAIL_MB [300] (a server run whose host
+#   MemAvailable falls below this fails)
 # Exit status: 0 no FAIL, 1 at least one FAIL, 2 usage.
 set -uo pipefail
 BIN=${BIN:-}
@@ -23,6 +27,8 @@ CARD_NAME=${CARD_NAME:-P106-090}
 SUMS=${SUMS:-}
 SERVE=${SERVE:-0}
 CONFIGS=${CONFIGS:-chat9 tools9 long9 chat6}
+TS=${TS:-}
+DEPTH=${DEPTH:-4}
 CTX6=${CTX6:-32768}
 LONG_TOKENS=${LONG_TOKENS:-16384}
 ENV=${ENV-LLAMA_NO_MOE_DOWN_RESCALE=tg}
@@ -181,12 +187,15 @@ if [ "$SERVE" = 1 ]; then
     if pgrep -x llama-server > /dev/null; then fail "serve" "a llama-server is already running: stop it first"
     else
         all=$(seq -s, 0 $((CARDS - 1))) six=0,1,2,3,4,5
+        line="-c 262144 -b 512 -ub 128${TS:+ -ts $TS} --pipe-depth $DEPTH"   # the release command line
+        size_mb=$(( $(stat -Lc %s "$MODEL") / 1048576 ))
         for c in $CONFIGS; do
             case $c in
-                chat9) serve_check "chat, $CARDS cards" "$all" "-c 262144 -b 512 -ub 128 --pipe-depth 3" chat ;;
-                tools9) serve_check "tools, $CARDS cards" "$all" "-c 262144 -b 512 -ub 128 --pipe-depth 3" tools ;;
-                long9) serve_check "long, $CARDS cards" "$all" "-c 262144 -b 2048 -ub 512" long ;;
-                chat6) serve_check "chat, 6 cards" "$six" "-c $CTX6 -b 512 -ub 128 --pipe-depth 3" chat ;;
+                chat9) serve_check "chat, $CARDS cards" "$all" "$line" chat ;;
+                tools9) serve_check "tools, $CARDS cards" "$all" "$line" tools ;;
+                long9) serve_check "long, $CARDS cards" "$all" "$line" long ;;
+                chat6) if [ "$size_mb" -gt 33000 ]; then info "serve chat, 6 cards" "skipped: the model ($((size_mb / 1024)) GiB) does not fit six cards"
+                       else serve_check "chat, 6 cards" "$six" "-c $CTX6 -b 512 -ub 128 --pipe-depth $DEPTH" chat; fi ;;
                 *) echo "unknown config $c"; exit 2 ;;
             esac
         done
