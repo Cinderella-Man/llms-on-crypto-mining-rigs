@@ -12,7 +12,9 @@ Tools (the schema the model sees is built from texts.json; the names and paramet
   run_command(command)
 The pi profile (the pi agent's tool names and parameters): read(path, offset, limit), write(path, content),
   edit(path, edits=[{oldText, newText}, ...]), bash(command, timeout).
-Config: test_command (argv list), timeout (s), max_output (characters), max_lines (read_file).
+Config: test_command (argv list), timeout (s), max_output (characters), max_lines (read_file), messages (the tool's
+own lines by id, with {placeholders}: a session's requests carry texts.json's, written by Flint; DEFAULT_MESSAGES
+serve the pipeline's own checks, whose output never enters a dataset).
 """
 import json
 import os
@@ -22,16 +24,48 @@ import sys
 
 ROOT = "/work"
 SCRATCH = "/tmp"
+DEFAULT_MESSAGES = {
+    "path_empty": "path is empty", "path_outside": "{path} is outside the project folder {root}",
+    "path_missing": "{path} does not exist", "is_folder": "{path} is a folder", "not_folder": "{path} is not a folder",
+    "content_type": "content must be a string",
+    "edit_args": "old_string and new_string must be strings, old_string not empty",
+    "edit_count": "old_string occurs {n} times in {path}; it must occur exactly once",
+    "edits_shape": "edits must be a non-empty list of oldText/newText objects",
+    "edit_i_args": "edit {i}: oldText and newText must be strings, oldText not empty",
+    "edit_i_count": "edit {i}: oldText occurs {n} times in {path}; it must occur exactly once",
+    "bad_regex": "bad regular expression: {detail}", "command_empty": "command is empty",
+    "blocked": "only paths inside {root} (and {scratch}) can be used", "unknown_tool": "unknown tool {name}",
+    "no_param": "{tool} has no parameter {param}", "not_integer": "{param} must be an integer",
+    "not_edits": "{param} must be a JSON array of objects with oldText and newText",
+    "missing_param": "missing parameter {params}", "no_result": "the tool produced no result",
+    "timeout": "the tool did not finish within {seconds} s", "wrote": "wrote {n} lines to {path}",
+    "edited": "edited {path}", "applied": "applied {n} edit(s) to {path}", "no_matches": "no matches",
+    "no_output": "(no output)", "exit_code": "[exit code {code}]", "stopped": "[stopped after {seconds} s]",
+    "lines_shown": "[showing lines {first}-{last} of {total}]", "clipped": "[... {n} characters omitted ...]",
+    "more_entries": "[more entries omitted]", "more_matches": "[more matches omitted]",
+}
+MESSAGES = dict(DEFAULT_MESSAGES)
+
+
+def say(key, **values):
+    text = MESSAGES[key]
+    for k, v in values.items():
+        text = text.replace("{" + k + "}", str(v))
+    return text
+
+
+def fail(key, **values):
+    return ValueError("error: " + say(key, **values))
 
 
 def resolve(path, must_exist=True):
     if not isinstance(path, str) or not path.strip():
-        raise ValueError("error: path is empty")
+        raise fail("path_empty")
     p = os.path.realpath(os.path.join(ROOT, path))
     if not (p == ROOT or p.startswith(ROOT + "/") or p.startswith(SCRATCH + "/")):
-        raise ValueError(f"error: {path} is outside the project folder {ROOT}")
+        raise fail("path_outside", path=path, root=ROOT)
     if must_exist and not os.path.exists(p):
-        raise ValueError(f"error: {path} does not exist")
+        raise fail("path_missing", path=path)
     return p
 
 
@@ -44,13 +78,13 @@ def clip(text, limit):
         return text, False
     head = int(limit * 0.6)
     tail = limit - head
-    return f"{text[:head]}\n[... {len(text) - limit} characters omitted ...]\n{text[-tail:]}", True
+    return f"{text[:head]}\n{say('clipped', n=len(text) - limit)}\n{text[-tail:]}", True
 
 
 def read_file(a, c):
     p = resolve(a.get("path"))
     if os.path.isdir(p):
-        raise ValueError(f"error: {a.get('path')} is a folder")
+        raise fail("is_folder", path=a.get("path"))
     with open(p, encoding="utf-8", errors="replace") as f:
         lines = f.read().splitlines(keepends=True)
     s, e = a.get("start_line"), a.get("end_line")
@@ -60,7 +94,7 @@ def read_file(a, c):
     note = ""
     if len(chunk) > c["max_lines"]:
         chunk = chunk[:c["max_lines"]]
-        note = f"\n[showing lines {s}-{s + c['max_lines'] - 1} of {len(lines)}]"
+        note = "\n" + say("lines_shown", first=s, last=s + c["max_lines"] - 1, total=len(lines))
     return "".join(chunk) + note, 0, [rel(p)], []
 
 
@@ -68,46 +102,46 @@ def write_file(a, c):
     p = resolve(a.get("path"), must_exist=False)
     content = a.get("content")
     if not isinstance(content, str):
-        raise ValueError("error: content must be a string")
+        raise fail("content_type")
     os.makedirs(os.path.dirname(p), exist_ok=True)
     with open(p, "w", encoding="utf-8") as f:
         f.write(content)
-    return f"wrote {content.count(chr(10)) + (1 if content and not content.endswith(chr(10)) else 0)} lines to " \
-           f"{rel(p)}", 0, [], [rel(p)]
+    n = content.count(chr(10)) + (1 if content and not content.endswith(chr(10)) else 0)
+    return say("wrote", n=n, path=rel(p)), 0, [], [rel(p)]
 
 
 def edit_file(a, c):
     p = resolve(a.get("path"))
     old, new = a.get("old_string"), a.get("new_string")
     if not isinstance(old, str) or not isinstance(new, str) or not old:
-        raise ValueError("error: old_string and new_string must be strings, old_string not empty")
+        raise fail("edit_args")
     with open(p, encoding="utf-8") as f:
         text = f.read()
     n = text.count(old)
     if n != 1:
-        raise ValueError(f"error: old_string occurs {n} times in {rel(p)}; it must occur exactly once")
+        raise fail("edit_count", n=n, path=rel(p))
     with open(p, "w", encoding="utf-8") as f:
         f.write(text.replace(old, new, 1))
-    return f"edited {rel(p)}", 0, [rel(p)], [rel(p)]
+    return say("edited", path=rel(p)), 0, [rel(p)], [rel(p)]
 
 
 def list_dir(a, c):
     p = resolve(a.get("path") or ".")
     if not os.path.isdir(p):
-        raise ValueError(f"error: {a.get('path')} is not a folder")
+        raise fail("not_folder", path=a.get("path"))
     out = []
     for n in sorted(os.listdir(p)):
         if n in ("__pycache__", ".pytest_cache"):
             continue
         out.append(n + ("/" if os.path.isdir(os.path.join(p, n)) else ""))
-    return "\n".join(out[:500]) + ("\n[more entries omitted]" if len(out) > 500 else ""), 0, [], []
+    return "\n".join(out[:500]) + ("\n" + say("more_entries") if len(out) > 500 else ""), 0, [], []
 
 
 def search(a, c):
     try:
         rx = re.compile(a.get("pattern") or "")
     except re.error as e:
-        raise ValueError(f"error: bad regular expression: {e}")
+        raise fail("bad_regex", detail=e)
     base = resolve(a.get("path") or ".")
     files = [base] if os.path.isfile(base) else []
     if not files:
@@ -127,13 +161,15 @@ def search(a, c):
             continue
         if len(hits) > 200:
             break
-    return ("\n".join(hits[:200]) or "no matches") + ("\n[more matches omitted]" if len(hits) > 200 else ""), \
+    return ("\n".join(hits[:200]) or say("no_matches")) + ("\n" + say("more_matches") if len(hits) > 200 else ""), \
         0, read, []
 
 
 # absolute paths other than /work, /tmp and /dev/null, and ".." at the start of a path: the outputs that enter the
-# data must come from the project's own files (the gate scans them again)
+# data must come from the project's own files (the gate scans them again). URLs are not paths (a URI module's tests
+# are full of them); the container has no network anyway.
 BLOCKED = re.compile(r"(?<![\w.~-])/(?!work\b|tmp\b|dev/null\b)[A-Za-z_]|(?:^|[\s;|&=])\.\.(?:/|\s|$)")
+URL = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*://[^\s'\"]*")
 
 
 def run(argv, c, shell=False):
@@ -146,9 +182,9 @@ def run(argv, c, shell=False):
                            stderr=subprocess.STDOUT, timeout=c["timeout"])
         out, code = r.stdout.decode("utf-8", errors="replace"), r.returncode
     except subprocess.TimeoutExpired as e:
-        out = (e.stdout or b"").decode("utf-8", errors="replace") + f"\n[stopped after {c['timeout']} s]"
+        out = (e.stdout or b"").decode("utf-8", errors="replace") + "\n" + say("stopped", seconds=c["timeout"])
         code = 124
-    return (out if out.strip() else "(no output)") + f"\n[exit code {code}]", code
+    return (out if out.strip() else say("no_output")) + "\n" + say("exit_code", code=code), code
 
 
 def run_tests(a, c):
@@ -161,9 +197,9 @@ def run_tests(a, c):
 def run_command(a, c):
     cmd = a.get("command")
     if not isinstance(cmd, str) or not cmd.strip():
-        raise ValueError("error: command is empty")
-    if BLOCKED.search(cmd):
-        raise ValueError(f"error: only paths inside {ROOT} (and {SCRATCH}) can be used")
+        raise fail("command_empty")
+    if BLOCKED.search(URL.sub("", cmd)):
+        raise fail("blocked", root=ROOT, scratch=SCRATCH)
     out, code = run(["/bin/sh", "-c", cmd], c)
     return out, code, [], []
 
@@ -182,23 +218,23 @@ def edit(a, c):
         try:
             edits = json.loads(edits)
         except ValueError:
-            raise ValueError("error: edits must be a list of {oldText, newText}")
+            raise fail("edits_shape")
     if not isinstance(edits, list) or not edits or not all(isinstance(e, dict) for e in edits):
-        raise ValueError("error: edits must be a non-empty list of {oldText, newText}")
+        raise fail("edits_shape")
     p = resolve(a.get("path"))
     with open(p, encoding="utf-8") as f:
         text = f.read()
     for i, e in enumerate(edits, 1):
         old, new = e.get("oldText"), e.get("newText")
         if not isinstance(old, str) or not isinstance(new, str) or not old:
-            raise ValueError(f"error: edit {i}: oldText and newText must be strings, oldText not empty")
+            raise fail("edit_i_args", i=i)
         n = text.count(old)
         if n != 1:
-            raise ValueError(f"error: edit {i}: oldText occurs {n} times in {rel(p)}; it must occur exactly once")
+            raise fail("edit_i_count", i=i, n=n, path=rel(p))
         text = text.replace(old, new, 1)
     with open(p, "w", encoding="utf-8") as f:
         f.write(text)
-    return f"applied {len(edits)} edit(s) to {rel(p)}", 0, [rel(p)], [rel(p)]
+    return say("applied", n=len(edits), path=rel(p)), 0, [rel(p)], [rel(p)]
 
 
 def bash(a, c):
@@ -216,10 +252,11 @@ def main():
     req = json.loads(sys.stdin.read())
     c = {"test_command": ["python3", "-m", "unittest"], "timeout": 120, "max_output": 20000, "max_lines": 2000}
     c.update(req.get("config") or {})
+    MESSAGES.update(c.get("messages") or {})
     fn = TOOLS.get(req.get("tool"))
     try:
         if fn is None:
-            raise ValueError(f"error: unknown tool {req.get('tool')!r}")
+            raise fail("unknown_tool", name=req.get("tool"))
         out, code, fr, fw = fn(req.get("args") or {}, c)
         ok = True
     except (ValueError, OSError, TypeError) as e:

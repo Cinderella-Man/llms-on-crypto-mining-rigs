@@ -1,0 +1,71 @@
+{
+  "about": "Requests that make Flint write the natural-language texts of the agent harness: the system prompts, the tool and parameter descriptions and the task statement templates (agent.py texts). These requests are configuration: they are sent to Flint and never enter a dataset. What enters the data is Flint's reply (Apache-2.0 model, no restriction on outputs), recorded in texts.json with the seed and a hash of the generated tokens. The owner may replace any text with one written by hand (writer 'owner').",
+  "variants": {"system": 3, "system_pi": 2, "tool": 1, "param": 1, "write_tests": 4, "fix_bug": 6, "implement": 4},
+  "system": "Write the system prompt for an autonomous coding agent. Facts to cover: it works on a software project in the folder /work; it has tools to list folders, read files, search the code, edit and write files, run the project's tests and run shell commands; there is no internet access and nothing can be installed; it should look at the relevant code before changing it, keep changes small and focused, run the tests to check its work, and end with a short summary of what it changed. Write it in the second person, between 60 and 180 words, plain text without headings. Output only the prompt.",
+  "tool": {
+    "read_file": "a tool that returns the text of a file in the project folder; optional first and last line numbers select a range; long files are cut at 2,000 lines",
+    "write_file": "a tool that writes a whole file in the project folder, creating it or replacing its content",
+    "edit_file": "a tool that replaces one exact piece of text in a file with new text; the old text must occur exactly once in the file",
+    "list_dir": "a tool that lists the files and folders in a folder of the project; folders end with a slash",
+    "search": "a tool that searches the project's files for a regular expression and returns matching lines with file names and line numbers",
+    "run_tests": "a tool that runs the project's test suite with python3 -m unittest, optionally only a given test module, class or test, and returns the output",
+    "run_command": "a tool that runs a shell command in the project folder without network access and returns its output; only paths inside the project folder can be used"
+  },
+  "tool_request": "Write the description field of the tool `{tool}` of a coding agent: one or two sentences, at most 30 words, plain English, starting with a verb. The tool is {what}. Output only the description.",
+  "param": {
+    "read_file.path": "path of the file, relative to the project folder",
+    "read_file.start_line": "first line to return, counting from 1 (optional)",
+    "read_file.end_line": "last line to return (optional)",
+    "write_file.path": "path of the file to write, relative to the project folder",
+    "write_file.content": "the complete new content of the file",
+    "edit_file.path": "path of the file to edit",
+    "edit_file.old_string": "the exact text to replace, which must occur exactly once",
+    "edit_file.new_string": "the text that replaces it",
+    "list_dir.path": "folder to list, relative to the project folder (default: the project folder)",
+    "search.pattern": "the regular expression to search for",
+    "search.path": "file or folder to search in (default: the whole project)",
+    "run_tests.target": "test module, class or test name to run, for example tests.test_example (optional; default: all tests)",
+    "run_command.command": "the shell command to run"
+  },
+  "param_request": "Write the description of the parameter `{param}` of the tool `{tool}` of a coding agent: a short phrase of at most 15 words. The parameter is the {what}. Output only the phrase.",
+  "write_tests": "Write a request that a developer could send to a coding agent. The developer wants unit tests for the module in {module_file}: a new test file {test_file} using Python's unittest module, covering the module's public functions and classes including edge cases and errors, and all tests passing when run with {test_command}. The module itself must not be changed. The request must contain the placeholders {module_file}, {test_file} and {test_command} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+  "fix_bug": "Write a request that a developer could send to a coding agent. Some unit tests in {test_file} fail: {failing_tests}. The cause is a bug in {module_file}; the agent should find it and fix it, without changing the tests. The request must not hint at what the bug might be. The request must contain the placeholders {test_file}, {failing_tests} and {module_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+  "implement": "Write a request that a developer could send to a coding agent. The function {function} in {module_file} only raises NotImplementedError; its docstring says what it should do. The agent should implement it so that the tests in {test_file} pass, without changing the tests. The request must contain the placeholders {function}, {module_file} and {test_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+  "system_pi": "Write the system prompt for an autonomous coding agent. Facts to cover: it works on a software project in the folder /work; it has four tools: read (show a file), write (write a whole file), edit (replace exact pieces of text in a file) and bash (run a shell command, which is also how it runs the tests); there is no internet access and nothing can be installed; it should look at the relevant code before changing it, keep changes small and focused, run the tests to check its work, and end with a short summary of what it changed. Write it in the second person, between 60 and 180 words, plain text without headings. Output only the prompt.",
+  "tool_pi": {
+    "read": "a tool that returns the text of a file in the project folder; an optional line offset and line count select a part; long files are cut at 2,000 lines",
+    "write": "a tool that writes a whole file in the project folder, creating it or replacing its content",
+    "edit": "a tool that applies one or more replacements to a file: each replaces one exact piece of text, which must occur exactly once, with new text",
+    "bash": "a tool that runs a shell command in the project folder without network access and returns its output; only paths inside the project folder can be used"
+  },
+  "param_pi": {
+    "read.path": "path of the file to read, relative to the project folder",
+    "read.offset": "line number to start reading from, counting from 1 (optional)",
+    "read.limit": "maximum number of lines to read (optional)",
+    "write.path": "path of the file to write, relative to the project folder",
+    "write.content": "the complete new content of the file",
+    "edit.path": "path of the file to edit",
+    "edit.edits": "list of replacements, each with the old text and the new text",
+    "edit.edits.oldText": "exact text to replace, which must occur exactly once in the file",
+    "edit.edits.newText": "the text that replaces it",
+    "bash.command": "the shell command to run",
+    "bash.timeout": "time limit in seconds (optional)"
+  },
+  "langs": {
+    "elixir": {
+      "variants": {"write_tests": 4, "fix_bug": 4, "implement": 4, "change_note": 1},
+      "tool": {
+        "run_tests": "a tool that runs the project's ExUnit test suite with mix test, optionally only a given test file or the test at a file and line, and returns the output"
+      },
+      "param": {
+        "run_tests.target": "test file, or test file and line, to run, for example test/example_test.exs:12 (optional; default: all tests)"
+      },
+      "write_tests": "Write a request that a developer could send to a coding agent. The developer wants unit tests for the Elixir module in {module_file}: a new test file {test_file} using ExUnit, covering the module's public functions including edge cases and errors, and all tests passing when run with {test_command}. The module itself must not be changed. The request must contain the placeholders {module_file}, {test_file} and {test_command} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+      "fix_bug": "Write a request that a developer could send to a coding agent. Some ExUnit tests of an Elixir project fail: {failing_tests}, run from {test_file}. The cause is a bug in {module_file}; the agent should find it and fix it, without changing the tests or the module's documentation. The request must not hint at what the bug might be. The request must contain the placeholders {test_file}, {failing_tests} and {module_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+      "implement": "Write a request that a developer could send to a coding agent. The Elixir function {function} in {module_file} only raises a \"not implemented\" error; its @doc says what it should do. The agent should implement it so that the tests in {test_file} pass, without changing the tests or the documentation. The request must contain the placeholders {function}, {module_file} and {test_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+      "change_note": "Write one sentence for a comment at the top of a source file that tells its readers the file was changed: it is {source_file} with its modules renamed to {modules}. Plain English, at most 25 words, without a comment marker. The sentence must contain the placeholders {source_file} and {modules} literally, written with the curly braces, each exactly once. Output only the sentence."
+    }
+  },
+  "tones": ["terse and direct", "friendly", "detailed, like a ticket in an issue tracker", "casual, like a chat message to a colleague", "formal", "slightly impatient"],
+  "lengths": ["one sentence", "two or three sentences", "a short paragraph"]
+}

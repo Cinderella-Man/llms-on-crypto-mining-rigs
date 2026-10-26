@@ -40,13 +40,13 @@ in `llama-p106-v2.0/` (RIG-TBD: the folder follows the release's tag; a build fr
 `llama.cpp/build/bin/`):
 
 ```bash
-llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
 ```
 
 - **`-ts 6,6,5,5,6,5,5,6,6`** splits Flint's layers by memory instead of by count, so that the 42.3 GB of weights and
   the full-context cache fit (llama.cpp's even split puts two full-attention layers on one card, ~6.3 GB). For
   K2h-r16 or UD-Q4_K_XL drop it and give the file's name instead.
-- **`--pipe-depth 3`** sends up to three guessed tokens through the idle cards while the later cards finish the current
+- **`--pipe-depth 4`** sends up to four guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
 - **The drafter:** add `--pipe-guess staircase --pipe-draft <the nine-card file>` (RIG-TBD: its name) for the trained guesser on nine cards ([below](#the-staircase-drafter)); RIG-TBD: whether the first card has room for it next to Q8_0 at the full context. <!-- only:drafter -->

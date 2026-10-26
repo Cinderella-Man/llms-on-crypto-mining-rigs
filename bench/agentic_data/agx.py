@@ -15,7 +15,49 @@ import license_scan  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 SANDBOX_IMAGE = "agx-sandbox:py312"
 EX_IMAGE = "agx-sandbox:ex118"   # sandbox/Dockerfile.elixir
-LANG_PREFIX = {"elixir": "ex"}   # texts.json keys of a language's own tool descriptions and templates
+
+
+def _tool_runner():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("agx_tool_runner", os.path.join(HERE, "sandbox", "tools.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+DEFAULT_MESSAGES = _tool_runner().DEFAULT_MESSAGES   # the pipeline's own wording, outside sessions only
+
+
+def text_variant(task):
+    """The texts.json prefix of the run_tests texts a task's test runner needs: "ex" (mix test), "pytest", or None
+    (python3 -m unittest)."""
+    if task.get("lang") == "elixir":
+        return "ex"
+    return "pytest" if "pytest" in " ".join(task.get("test_command") or []) else None
+
+
+def flat_messages(texts):
+    """{id: line} of the tool runner's messages in texts.json (written by Flint); every id the tool runner uses."""
+    m = {k: v["text"] for k, v in (texts.get("messages") or {}).items() if v.get("text")}
+    missing = sorted(set(DEFAULT_MESSAGES) - set(m))
+    if missing:
+        raise SystemExit(f"texts.json has no tool messages for {missing} (agent.py texts with texts_spec.json v2)")
+    return m
+
+
+def ngrams(text, n=5):
+    w = re.findall(r"[a-z0-9]+", text.lower())
+    return {" ".join(w[i:i + n]) for i in range(len(w) - n + 1)}
+
+
+def shared_ngram(text, grams, n=5):
+    """The first run of n words that text shares with grams (a set of ngrams()), or None."""
+    w = re.findall(r"[a-z0-9]+", text.lower())
+    for i in range(len(w) - n + 1):
+        g = " ".join(w[i:i + n])
+        if g in grams:
+            return g
+    return None
 LABEL = "pascal-quants=1"
 END_IDS = [150001, 150003, 150005, 150018]   # <|end_of_text|>, <|user|>, <|observation|>, <|developer|>
 OBSERVATION_ID = 150005
@@ -306,13 +348,20 @@ class Sandbox:
             r = subprocess.run(["docker", "exec", "-i", self.name, "python3", "-I", "/opt/agx/tools.py"], input=req,
                                capture_output=True, text=True, timeout=limit)
             out = json.loads(r.stdout) if r.stdout.strip() else {
-                "ok": False, "output": "error: the tool produced no result", "exit_code": r.returncode,
+                "ok": False, "output": "error: " + self.line("no_result"), "exit_code": r.returncode,
                 "files_read": [], "files_written": [], "truncated": False, "infra": r.stderr[-500:]}
         except subprocess.TimeoutExpired:
-            out = {"ok": False, "output": f"error: the tool did not finish within {limit} s", "exit_code": 124,
+            out = {"ok": False, "output": "error: " + self.line("timeout", seconds=limit), "exit_code": 124,
                    "files_read": [], "files_written": [], "truncated": False, "infra": "timeout"}
         out["ms"] = int((time.time() - t0) * 1000)
         return out
+
+    def line(self, key, **values):
+        """One of the tool runner's messages: the session's (texts.json) or the default."""
+        text = (self.config.get("messages") or DEFAULT_MESSAGES)[key]
+        for k, v in values.items():
+            text = text.replace("{" + k + "}", str(v))
+        return text
 
     def ex_tool(self, cmd, path, timeout=120):
         """The Elixir helper (sandbox/ex_tool.exs) on a file of the workspace: its JSON reply. Not a model tool."""

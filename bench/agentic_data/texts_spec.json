@@ -1,71 +1,119 @@
 {
-  "about": "Requests that make Flint write the natural-language texts of the agent harness: the system prompts, the tool and parameter descriptions and the task statement templates (agent.py texts). These requests are configuration: they are sent to Flint and never enter a dataset. What enters the data is Flint's reply (Apache-2.0 model, no restriction on outputs), recorded in texts.json with the seed and a hash of the generated tokens. The owner may replace any text with one written by hand (writer 'owner').",
-  "variants": {"system": 3, "system_pi": 2, "tool": 1, "param": 1, "write_tests": 4, "fix_bug": 6, "implement": 4},
-  "system": "Write the system prompt for an autonomous coding agent. Facts to cover: it works on a software project in the folder /work; it has tools to list folders, read files, search the code, edit and write files, run the project's tests and run shell commands; there is no internet access and nothing can be installed; it should look at the relevant code before changing it, keep changes small and focused, run the tests to check its work, and end with a short summary of what it changed. Write it in the second person, between 60 and 180 words, plain text without headings. Output only the prompt.",
-  "tool": {
-    "read_file": "a tool that returns the text of a file in the project folder; optional first and last line numbers select a range; long files are cut at 2,000 lines",
-    "write_file": "a tool that writes a whole file in the project folder, creating it or replacing its content",
-    "edit_file": "a tool that replaces one exact piece of text in a file with new text; the old text must occur exactly once in the file",
-    "list_dir": "a tool that lists the files and folders in a folder of the project; folders end with a slash",
-    "search": "a tool that searches the project's files for a regular expression and returns matching lines with file names and line numbers",
-    "run_tests": "a tool that runs the project's test suite with python3 -m unittest, optionally only a given test module, class or test, and returns the output",
-    "run_command": "a tool that runs a shell command in the project folder without network access and returns its output; only paths inside the project folder can be used"
+  "about": "What Flint writes the harness's texts from (agent.py texts): every system prompt, tool and parameter description, task statement template, change note and tool message a session can contain. Each request is a short instruction plus the facts as JSON with plain-word keys: names, parameters, limits, placeholders and values of at most four words, so the request holds no wording to copy. A text passes only if it shares no run of 5 words with any text this pipeline's authors wrote (these instructions and facts, texts_spec_v1.json, the tool runner's default messages), holds no underscore name that is not one of its facts' identifiers, does not describe its own format or name its tone or length, follows a 'wrapped in' format, Flint judges it consistent with its facts and natural, and its placeholders, length and the held-out rule check out; a text that fails only by copying is reworded by Flint. Requests are configuration and never enter a dataset; what enters is Flint's reply, recorded in texts.json with its seed and the hash of the generated tokens.",
+  "version": 2,
+  "instructions": {
+    "system": "Below, as JSON, are the facts of the setting an autonomous coding agent works in. Write the system prompt the agent receives before each task: say what it has and cannot do, and add the working habits you think a careful agent should keep. Address the agent as \"you\", 60 to 180 words, plain text without headings or lists. Write natural sentences in your own words; do not repeat the JSON's keys. Output only the prompt.",
+    "tool": "Below, as JSON, is a tool a coding agent can call. Write the tool's description field: one or two sentences, at most 30 words, on what it does and its limits. Write natural sentences in your own words, not the JSON's keys; tool and parameter names are fine. Output only the description.",
+    "param": "Below, as JSON, is one parameter of a tool a coding agent can call. Write the parameter's description: a plain English phrase of at most 15 words that says what the agent passes in it. Output only the description.",
+    "template": "Below, as JSON, is a coding task. Write the message in which a developer asks a coding agent to do it. The tone and length say how to write it; do not mention them. Each value in curly braces, such as {name}, is a placeholder: put each one in the message exactly once, with its braces. Write natural sentences in your own words; do not repeat the JSON's keys. Output only the message.",
+    "note": "Below, as JSON, is a fact about a source file. Write one sentence of at most 25 words for a comment at the top of that file, stating the fact. Each value in curly braces is a placeholder: put each one in the sentence exactly once, with its braces. Use your own words. Output only the sentence.",
+    "message": "Below, as JSON, is a message a coding agent's tool returns. Write the message as one short line of at most 20 words. Each value in curly braces is a placeholder: put each one in the line exactly once, with its braces; if the JSON has none, the line has no curly braces at all. If the JSON gives characters the line is wrapped in, the line starts and ends with them; do not describe them. Use your own words. Output only the line.",
+    "judge": "Below are facts as JSON and a text written from them. Answer YES if the text states anything the facts contradict, leaves out a fact listed under must mention, or is clumsy or ungrammatical English; otherwise answer NO. Names of tools and parameters (such as read_file or old_string) and values in curly braces may appear in the text but are not required; a parameter's description is a short phrase and need not name its tool, the parameter itself or its type (the schema gives the type). Put YES or NO on the first line, then the reason in one line.",
+    "rephrase": "Reword the text below so that it says the same thing in different words. Keep each value in curly braces exactly as it is. Output only the new text."
   },
-  "tool_request": "Write the description field of the tool `{tool}` of a coding agent: one or two sentences, at most 30 words, plain English, starting with a verb. The tool is {what}. Output only the description.",
-  "param": {
-    "read_file.path": "path of the file, relative to the project folder",
-    "read_file.start_line": "first line to return, counting from 1 (optional)",
-    "read_file.end_line": "last line to return (optional)",
-    "write_file.path": "path of the file to write, relative to the project folder",
-    "write_file.content": "the complete new content of the file",
-    "edit_file.path": "path of the file to edit",
-    "edit_file.old_string": "the exact text to replace, which must occur exactly once",
-    "edit_file.new_string": "the text that replaces it",
-    "list_dir.path": "folder to list, relative to the project folder (default: the project folder)",
-    "search.pattern": "the regular expression to search for",
-    "search.path": "file or folder to search in (default: the whole project)",
-    "run_tests.target": "test module, class or test name to run, for example tests.test_example (optional; default: all tests)",
-    "run_command.command": "the shell command to run"
+  "variants": {"system": 3, "system_pi": 2, "write_tests": 4, "fix_bug": 6, "implement": 4, "change_note": 1},
+  "tones": ["terse", "friendly", "issue-tracker ticket", "casual chat", "formal", "slightly impatient"],
+  "lengths": ["one sentence", "two or three sentences", "a short paragraph"],
+  "system": {
+    "agx": {"role": "autonomous coding agent", "project folder": "/work", "tools": ["list_dir", "read_file", "search", "edit_file", "write_file", "run_tests", "run_command"], "internet access": "none", "can install software": "no", "tasks come from": "a developer", "must mention": ["project folder", "internet access", "can install software"]},
+    "pi": {"role": "autonomous coding agent", "project folder": "/work", "tools": ["read", "write", "edit", "bash"], "tests are run with": "bash", "internet access": "none", "can install software": "no", "tasks come from": "a developer", "must mention": ["project folder", "internet access", "can install software", "tests are run with"]}
   },
-  "param_request": "Write the description of the parameter `{param}` of the tool `{tool}` of a coding agent: a short phrase of at most 15 words. The parameter is the {what}. Output only the phrase.",
-  "write_tests": "Write a request that a developer could send to a coding agent. The developer wants unit tests for the module in {module_file}: a new test file {test_file} using Python's unittest module, covering the module's public functions and classes including edge cases and errors, and all tests passing when run with {test_command}. The module itself must not be changed. The request must contain the placeholders {module_file}, {test_file} and {test_command} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
-  "fix_bug": "Write a request that a developer could send to a coding agent. Some unit tests in {test_file} fail: {failing_tests}. The cause is a bug in {module_file}; the agent should find it and fix it, without changing the tests. The request must not hint at what the bug might be. The request must contain the placeholders {test_file}, {failing_tests} and {module_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
-  "implement": "Write a request that a developer could send to a coding agent. The function {function} in {module_file} only raises NotImplementedError; its docstring says what it should do. The agent should implement it so that the tests in {test_file} pass, without changing the tests. The request must contain the placeholders {function}, {module_file} and {test_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
-  "system_pi": "Write the system prompt for an autonomous coding agent. Facts to cover: it works on a software project in the folder /work; it has four tools: read (show a file), write (write a whole file), edit (replace exact pieces of text in a file) and bash (run a shell command, which is also how it runs the tests); there is no internet access and nothing can be installed; it should look at the relevant code before changing it, keep changes small and focused, run the tests to check its work, and end with a short summary of what it changed. Write it in the second person, between 60 and 180 words, plain text without headings. Output only the prompt.",
-  "tool_pi": {
-    "read": "a tool that returns the text of a file in the project folder; an optional line offset and line count select a part; long files are cut at 2,000 lines",
-    "write": "a tool that writes a whole file in the project folder, creating it or replacing its content",
-    "edit": "a tool that applies one or more replacements to a file: each replaces one exact piece of text, which must occur exactly once, with new text",
-    "bash": "a tool that runs a shell command in the project folder without network access and returns its output; only paths inside the project folder can be used"
-  },
-  "param_pi": {
-    "read.path": "path of the file to read, relative to the project folder",
-    "read.offset": "line number to start reading from, counting from 1 (optional)",
-    "read.limit": "maximum number of lines to read (optional)",
-    "write.path": "path of the file to write, relative to the project folder",
-    "write.content": "the complete new content of the file",
-    "edit.path": "path of the file to edit",
-    "edit.edits": "list of replacements, each with the old text and the new text",
-    "edit.edits.oldText": "exact text to replace, which must occur exactly once in the file",
-    "edit.edits.newText": "the text that replaces it",
-    "bash.command": "the shell command to run",
-    "bash.timeout": "time limit in seconds (optional)"
-  },
-  "langs": {
-    "elixir": {
-      "variants": {"write_tests": 4, "fix_bug": 4, "implement": 4, "change_note": 1},
-      "tool": {
-        "run_tests": "a tool that runs the project's ExUnit test suite with mix test, optionally only a given test file or the test at a file and line, and returns the output"
-      },
-      "param": {
-        "run_tests.target": "test file, or test file and line, to run, for example test/example_test.exs:12 (optional; default: all tests)"
-      },
-      "write_tests": "Write a request that a developer could send to a coding agent. The developer wants unit tests for the Elixir module in {module_file}: a new test file {test_file} using ExUnit, covering the module's public functions including edge cases and errors, and all tests passing when run with {test_command}. The module itself must not be changed. The request must contain the placeholders {module_file}, {test_file} and {test_command} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
-      "fix_bug": "Write a request that a developer could send to a coding agent. Some ExUnit tests of an Elixir project fail: {failing_tests}, run from {test_file}. The cause is a bug in {module_file}; the agent should find it and fix it, without changing the tests or the module's documentation. The request must not hint at what the bug might be. The request must contain the placeholders {test_file}, {failing_tests} and {module_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
-      "implement": "Write a request that a developer could send to a coding agent. The Elixir function {function} in {module_file} only raises a \"not implemented\" error; its @doc says what it should do. The agent should implement it so that the tests in {test_file} pass, without changing the tests or the documentation. The request must contain the placeholders {function}, {module_file} and {test_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
-      "change_note": "Write one sentence for a comment at the top of a source file that tells its readers the file was changed: it is {source_file} with its modules renamed to {modules}. Plain English, at most 25 words, without a comment marker. The sentence must contain the placeholders {source_file} and {modules} literally, written with the curly braces, each exactly once. Output only the sentence."
+  "tools": {
+    "agx": {
+      "read_file": {"parameters": ["path", "start_line", "end_line"], "returns": "file contents", "lines counted from": 1, "most lines per call": 2000, "must mention": ["most lines per call"]},
+      "write_file": {"parameters": ["path", "content"], "writes": "whole file", "missing file": "created", "existing content": "replaced"},
+      "edit_file": {"parameters": ["path", "old_string", "new_string"], "replaces": "old_string by new_string", "old_string occurrences": "exactly one", "must mention": ["old_string occurrences"]},
+      "list_dir": {"parameters": ["path"], "lists": ["files", "folders"], "folder names end with": "/"},
+      "search": {"parameters": ["pattern", "path"], "pattern kind": "regular expression", "returns": ["file name", "line number", "matching line"]},
+      "run_command": {"parameters": ["command"], "runs": "shell command", "working folder": "/work", "network": "none", "usable paths": ["/work", "/tmp"], "must mention": ["network"]}
+    },
+    "pi": {
+      "read": {"parameters": ["path", "offset", "limit"], "returns": "file contents", "offset counted from": 1, "most lines per call": 2000},
+      "write": {"parameters": ["path", "content"], "writes": "whole file", "missing file": "created", "existing content": "replaced"},
+      "edit": {"parameters": ["path", "edits"], "edits": "oldText/newText pairs", "each oldText must occur": "exactly once"},
+      "bash": {"parameters": ["command", "timeout"], "runs": "shell command", "working folder": "/work", "network": "none", "usable paths": ["/work", "/tmp"], "also runs": "the tests", "must mention": ["network"]}
     }
   },
-  "tones": ["terse and direct", "friendly", "detailed, like a ticket in an issue tracker", "casual, like a chat message to a colleague", "formal", "slightly impatient"],
-  "lengths": ["one sentence", "two or three sentences", "a short paragraph"]
+  "params": {
+    "agx": {
+      "read_file.path": {"type": "string", "meaning": "file to read", "relative to": "/work"},
+      "read_file.start_line": {"type": "integer", "optional": "yes", "meaning": "first line shown", "counted from": 1},
+      "read_file.end_line": {"type": "integer", "optional": "yes", "meaning": "last line shown", "default": "end of file"},
+      "write_file.path": {"type": "string", "meaning": "file to write", "relative to": "/work"},
+      "write_file.content": {"type": "string", "meaning": "complete new content"},
+      "edit_file.path": {"type": "string", "meaning": "file to edit", "relative to": "/work"},
+      "edit_file.old_string": {"type": "string", "meaning": "text to replace", "must occur": "exactly once"},
+      "edit_file.new_string": {"type": "string", "meaning": "replacement text"},
+      "list_dir.path": {"type": "string", "optional": "yes", "meaning": "folder to list", "default": "/work"},
+      "search.pattern": {"type": "string", "meaning": "regular expression"},
+      "search.path": {"type": "string", "optional": "yes", "meaning": "file or folder searched", "default": "whole project"},
+      "run_command.command": {"type": "string", "meaning": "shell command"}
+    },
+    "pi": {
+      "read.path": {"type": "string", "meaning": "file to read", "relative to": "/work"},
+      "read.offset": {"type": "integer", "optional": "yes", "meaning": "first line read", "counted from": 1},
+      "read.limit": {"type": "integer", "optional": "yes", "meaning": "most lines read"},
+      "write.path": {"type": "string", "meaning": "file to write", "relative to": "/work"},
+      "write.content": {"type": "string", "meaning": "complete new content"},
+      "edit.path": {"type": "string", "meaning": "file to edit", "relative to": "/work"},
+      "edit.edits": {"type": "array", "meaning": "replacements", "item fields": ["oldText", "newText"]},
+      "edit.edits.oldText": {"type": "string", "meaning": "text to replace", "must occur": "exactly once"},
+      "edit.edits.newText": {"type": "string", "meaning": "replacement text"},
+      "bash.command": {"type": "string", "meaning": "shell command"},
+      "bash.timeout": {"type": "integer", "optional": "yes", "meaning": "time limit", "unit": "seconds"}
+    }
+  },
+  "runners": {
+    "unittest": {"prefix": "", "tool": {"parameters": ["target"], "runs": "the project's tests", "command": "python3 -m unittest", "target": "optional"}, "target": {"type": "string", "optional": "yes", "meaning": "tests to run", "default": "all tests", "examples": ["tests.test_shlex", "tests.test_shlex.TestSplit", "tests.test_shlex.TestSplit.test_quotes"]}},
+    "pytest": {"prefix": "pytest", "tool": {"parameters": ["target"], "runs": "the project's tests", "command": "python3 -m pytest", "target": "optional"}, "target": {"type": "string", "optional": "yes", "meaning": "tests to run", "default": "all tests", "examples": ["tests/test_core.py", "tests/test_core.py::test_open"]}},
+    "mix": {"prefix": "ex", "tool": {"parameters": ["target"], "runs": "the project's tests", "framework": "ExUnit", "command": "mix test", "target": "optional"}, "target": {"type": "string", "optional": "yes", "meaning": "tests to run", "default": "all tests", "examples": ["test/uri_test.exs", "test/uri_test.exs:12"]}}
+  },
+  "tasks": {
+    "python": {
+      "write_tests": {"task": "write unit tests", "module": "{module_file}", "new test file": "{test_file}", "framework": "unittest", "cover": ["public functions", "public classes", "edge cases", "errors"], "module may change": "no", "tests must pass with": "{test_command}"},
+      "fix_bug": {"task": "fix a bug", "failing tests": "{failing_tests}", "test file": "{test_file}", "bug is in": "{module_file}", "tests may change": "no", "hint at the cause": "no"},
+      "implement": {"task": "implement a function", "function": "{function}", "file": "{module_file}", "current body": "raise NotImplementedError", "specified by": "its docstring", "tests to pass": "{test_file}", "tests may change": "no"}
+    },
+    "elixir": {
+      "prefix": "ex",
+      "write_tests": {"task": "write unit tests", "language": "Elixir", "module": "{module_file}", "new test file": "{test_file}", "framework": "ExUnit", "cover": ["public functions", "edge cases", "errors"], "module may change": "no", "tests must pass with": "{test_command}"},
+      "fix_bug": {"task": "fix a bug", "language": "Elixir", "framework": "ExUnit", "failing tests": "{failing_tests}", "test file": "{test_file}", "bug is in": "{module_file}", "tests may change": "no", "documentation may change": "no", "hint at the cause": "no"},
+      "implement": {"task": "implement a function", "language": "Elixir", "function": "{function}", "file": "{module_file}", "current body": "raise \"not implemented\"", "specified by": "its @doc", "tests to pass": "{test_file}", "tests may change": "no", "documentation may change": "no"},
+      "change_note": {"file is": "{source_file}", "change": "modules renamed", "new names": "{modules}"}
+    }
+  },
+  "messages": {
+    "path_empty": {"kind": "error", "argument": "path", "problem": "empty"},
+    "path_outside": {"kind": "error", "path": "{path}", "problem": "outside project folder", "project folder": "{root}"},
+    "path_missing": {"kind": "error", "path": "{path}", "problem": "does not exist"},
+    "is_folder": {"kind": "error", "path": "{path}", "problem": "is a folder", "expected": "file"},
+    "not_folder": {"kind": "error", "path": "{path}", "problem": "not a folder"},
+    "content_type": {"kind": "error", "argument": "content", "required type": "string"},
+    "edit_args": {"kind": "error", "arguments": ["old_string", "new_string"], "required type": "string", "old_string": "not empty"},
+    "edit_count": {"kind": "error", "argument": "old_string", "found": "{n} times", "file": "{path}", "required": "exactly once"},
+    "edits_shape": {"kind": "error", "argument": "edits", "required type": "non-empty array", "item fields": ["oldText", "newText"]},
+    "edit_i_args": {"kind": "error", "edit number": "{i}", "fields": ["oldText", "newText"], "required type": "string", "oldText": "not empty"},
+    "edit_i_count": {"kind": "error", "edit number": "{i}", "field": "oldText", "found": "{n} times", "file": "{path}", "required": "exactly once"},
+    "bad_regex": {"kind": "error", "argument": "pattern", "problem": "invalid regular expression", "details": "{detail}"},
+    "command_empty": {"kind": "error", "argument": "command", "problem": "empty"},
+    "blocked": {"kind": "error", "argument": "command", "usable paths": ["{root}", "{scratch}"]},
+    "unknown_tool": {"kind": "error", "tool": "{name}", "problem": "no such tool"},
+    "no_param": {"kind": "error", "tool": "{tool}", "parameter": "{param}", "problem": "no such parameter"},
+    "not_integer": {"kind": "error", "parameter": "{param}", "required type": "integer"},
+    "not_edits": {"kind": "error", "parameter": "{param}", "required type": "JSON array", "item fields": ["oldText", "newText"]},
+    "missing_param": {"kind": "error", "missing parameters": "{params}"},
+    "no_result": {"kind": "error", "tool": "returned nothing"},
+    "timeout": {"kind": "error", "tool": "did not finish", "time limit": "{seconds} seconds"},
+    "wrote": {"kind": "result", "file": "{path}", "written": "whole file", "lines": "{n}"},
+    "edited": {"kind": "result", "file": "{path}", "edited": "yes"},
+    "applied": {"kind": "result", "file": "{path}", "edits applied": "{n}"},
+    "no_matches": {"kind": "result", "search": "no matching lines"},
+    "no_output": {"kind": "result", "command output": "none", "wrapped in": "( )"},
+    "exit_code": {"kind": "note", "command exit status": "{code}", "wrapped in": "[ ]"},
+    "stopped": {"kind": "note", "command": "stopped", "after": "{seconds} seconds", "wrapped in": "[ ]"},
+    "lines_shown": {"kind": "note", "lines shown": "{first} to {last}", "lines in file": "{total}", "wrapped in": "[ ]"},
+    "clipped": {"kind": "note", "left out": "middle of output", "characters": "{n}", "wrapped in": "[ ]"},
+    "more_entries": {"kind": "note", "listing": "more entries not shown", "wrapped in": "[ ]"},
+    "more_matches": {"kind": "note", "search": "more matches not shown", "wrapped in": "[ ]"}
+  }
 }

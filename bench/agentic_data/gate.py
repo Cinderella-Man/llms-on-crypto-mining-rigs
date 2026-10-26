@@ -41,8 +41,10 @@ import license_scan  # noqa: E402
 LICENCE_LINE = re.compile("|".join(rx for _, rx in license_scan.FAMILIES) +
                           r"|SPDX-License-Identifier|^\W*(?:Copyright\b|\(c\)\s|©)", re.I | re.M)
 ALLOWED_PATHS = ("/work", "/tmp", "/usr/local/lib/python3.12/", "/usr/local/bin/python", "/opt/agx/",
-                 "/bin/sh:", "/usr/local/lib/elixir/", "/usr/local/lib/erlang/")   # CPython, our tool runner, the
-# shell's own error prefix ("/bin/sh: 1: x: not found"), and the Elixir sandbox's runtimes (Apache-2.0)
+                 "/bin/sh:", "/usr/local/lib/elixir/", "/usr/local/lib/erlang/",
+                 *(f"/usr/local/bin/{b}" for b in ("elixir", "elixirc", "iex", "mix", "erl", "erlc", "escript",
+                                                   "epmd")))   # CPython, our tool runner, the shell's own error
+# prefix ("/bin/sh: 1: x: not found"), and the Elixir sandbox's runtimes and their launchers (Apache-2.0)
 ABS_PATH = re.compile(r"(?<![\w.~:/-])(/(?:usr|etc|opt|home|root|var|srv|mnt|lib|bin|sbin|proc|sys|dev|run)\b[^\s'\"]*)")
 
 
@@ -92,8 +94,13 @@ def writer_ok(src, writer):
 
 def texts_ok(texts, src):
     errs = [writer_ok(src, texts["writer"])]
-    for k in ("tools", "params"):
-        errs += [f"texts: {k} {i} has no text" for i, t in texts[k].items() if not t.get("text")]
+    for k in ("tools", "params", "messages"):
+        errs += [f"texts: {k} {i} has no text" for i, t in texts.get(k, {}).items() if not t.get("text")]
+    if texts.get("spec", {}).get("version") != 2:
+        errs.append("texts: not written from texts_spec.json version 2 (facts only, copy check, Flint's judge)")
+    missing = sorted(set(agx.DEFAULT_MESSAGES) - set(texts.get("messages", {})))
+    if missing:
+        errs.append(f"texts: no tool messages for {missing}")
     return [e for e in errs if e]
 
 
@@ -253,8 +260,9 @@ def stage_tasks(a, src, cb, errors, rows, rec, parents):
                 srow = sess_ok.get(t["parent_session"])
                 if srow is None:
                     bad.append(f"parent session {t['parent_session']} not passed")
-                else:
-                    test_rel = t["placeholders"]["test_file"]
+                else:   # the file the stage-1 session wrote (the statement may name the doctests' file instead)
+                    test_rel = next((f["path"] for f in man["files"] if f["role"] == "tests"),
+                                    t["placeholders"]["test_file"])
                     sha = next((f["sha256"] for f in man["files"] if f["path"] == test_rel), None)
                     s = json.load(open(srow["file"]))
                     if s["final_files"].get(test_rel, {}).get("sha256") != sha:
@@ -322,8 +330,10 @@ def stage_sessions(a, src, cb, errors, rows, rec, parents):
         if T is None:
             bad.append("its texts.json is not one of the given texts files")
         else:
-            if s["tools"] != agent.tool_schema(T, s.get("tools_profile", "agx"), t.get("lang")):
+            if s["tools"] != agent.tool_schema(T, s.get("tools_profile", "agx"), agx.text_variant(t)):
                 bad.append("tool schema is not texts.json's")
+            if s.get("tool_messages_sha256") != agx.sha256_text(json.dumps(agx.flat_messages(T), sort_keys=True)):
+                bad.append("the tool runner's messages are not texts.json's")
             system = next((x["text"] for x in T["system"] if x["id"] == s["texts"]["system_id"]), None)
             if s["messages_start"] != [{"role": "system", "content": system},
                                        {"role": "user", "content": t["statement"]}]:

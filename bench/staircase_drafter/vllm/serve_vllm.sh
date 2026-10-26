@@ -8,6 +8,13 @@
 #              the GGUF carries neither a config vLLM reads nor the tokenizer
 #   WORK       where the patched model file and the server log go
 #   MOUNTS     extra "-v a:a" options, so every path the container reads is mounted at the same path
+#   PREFIX_CACHE  1: vLLM's prefix caching on (agent sessions resend their growing history every turn); default
+#              off. Check it against the patched Flint attention first: the same turns, greedy, with and without
+#   PP         pipeline stages (default 2), one per GPU; stages follow the GPUs' PCI bus order
+#   PARTITION  layers per stage, e.g. 11,12,26 for a 10 GB + 12 GB + 24 GB set (default: even). Every stage also holds
+#              the BF16 embedding and output head (1.15 GiB), and all stages get the same number of KV blocks, so
+#              smaller cards take fewer layers.
+# Two servers on one machine need their own NAME, PORT and WORK.
 # Stop: docker stop $NAME. The patched model file is rebuilt from the image's own copy on every start, and
 # patch_flint_attention.py refuses to patch if the image's file changed.
 set -euo pipefail
@@ -28,9 +35,11 @@ python3 "$here/patch_flint_attention.py" "$WORK/model_image.py" "$WORK/model_pat
 docker rm -f "$NAME" 2>/dev/null || true
 # shellcheck disable=SC2086
 docker run -d --name "$NAME" --label pascal-quants=1 --gpus "\"device=$GPUS\"" -e CUDA_DEVICE_ORDER=PCI_BUS_ID \
+    ${PARTITION:+-e VLLM_PP_LAYER_PARTITION=$PARTITION} \
     --restart on-failure:3 --ipc=host --network host ${MOUNTS:-} -v "$MODEL_DIR:$MODEL_DIR:ro" -v "$HF_DIR:$HF_DIR:ro" -v "$WORK:$WORK" \
     -v "$WORK/model_patched.py:$SITE/vllm/models/flint/model.py:ro" \
     "$IMAGE" "$MODEL_DIR" --hf-config-path "$HF_DIR" --tokenizer "$HF_DIR" --served-model-name flint \
-    --pipeline-parallel-size 2 --attention-backend TRITON_ATTN --max-model-len "$MAX_LEN" --max-num-seqs "$MAX_SEQS" \
-    --gpu-memory-utilization "$MEM" --no-enable-prefix-caching --host 127.0.0.1 --port "$PORT"
+    --pipeline-parallel-size "${PP:-2}" --attention-backend TRITON_ATTN --max-model-len "$MAX_LEN" --max-num-seqs "$MAX_SEQS" \
+    --gpu-memory-utilization "$MEM" $([ "${PREFIX_CACHE:-0}" = 1 ] && echo --enable-prefix-caching || echo --no-enable-prefix-caching) \
+    --host 127.0.0.1 --port "$PORT"
 echo "started $NAME on GPUs $GPUS, port $PORT; log: docker logs -f $NAME; ready when curl -s 127.0.0.1:$PORT/health succeeds"

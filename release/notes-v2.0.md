@@ -93,7 +93,7 @@ cards, host memory, the model's read speed and the shipped command lines. Flint 
 context:
 
 ```bash
-{{PREFIX}}-{{VERSION}}/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+{{PREFIX}}-{{VERSION}}/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
 ```
 
 `-ts 6,6,5,5,6,5,5,6,6` splits the layers by memory so that Q8_0 and the full context fit; for a 4-bit file

@@ -59,10 +59,6 @@ PROFILES = {   # tool names and parameter types are fixed here; every descriptio
     },
 }
 TOOL_PARAMS = PROFILES["agx"]
-PLACEHOLDERS = {"write_tests": ["{module_file}", "{test_file}", "{test_command}"],
-                "fix_bug": ["{test_file}", "{failing_tests}", "{module_file}"],
-                "implement": ["{function}", "{module_file}", "{test_file}"],
-                "change_note": ["{source_file}", "{modules}"]}   # the first line of a changed file (workspace.py)
 
 
 def post(url, body, timeout=3600):
@@ -146,11 +142,11 @@ def writer_record(a):
     return rec
 
 
-def tool_schema(texts, profile="agx", lang=None):
+def tool_schema(texts, profile="agx", lp=None):
     """The tools as the model sees them: fixed names and parameters, descriptions from texts.json (keys of the pi
-    profile carry the prefix "pi:"; a language's own descriptions, e.g. run_tests with mix test, the prefix "ex:")."""
+    profile carry the prefix "pi:"; a test runner's own run_tests texts the prefix agx.text_variant gives, e.g. "ex:"
+    for mix test, "pytest:")."""
     pre = "" if profile == "agx" else profile + ":"
-    lp = agx.LANG_PREFIX.get(lang)
 
     def text(kind, key):
         own = f"{lp}:{key}" if lp else None
@@ -173,140 +169,258 @@ def tool_schema(texts, profile="agx", lang=None):
     return tools
 
 
-def coerce(call, profile="agx"):
-    """The call's arguments with integer and array parameters converted; (args, error text or None)."""
+def coerce(call, profile="agx", messages=None):
+    """The call's arguments with integer and array parameters converted; (args, error text or None). The error lines
+    are texts.json's messages (the tool runner's defaults outside sessions)."""
+    def err(key, **values):
+        text = (messages or agx.DEFAULT_MESSAGES)[key]
+        for k, v in values.items():
+            text = text.replace("{" + k + "}", str(v))
+        return None, "error: " + text
     spec = PROFILES[profile].get(call["name"])
     if spec is None:
-        return None, f"error: unknown tool {call['name']!r}"
+        return err("unknown_tool", name=call["name"])
     params, required = spec
     args = {}
     for k, v in call["arguments"].items():
         if k not in params:
-            return None, f"error: {call['name']} has no parameter {k!r}"
+            return err("no_param", tool=call["name"], param=k)
         if params[k] == "integer":
             try:
                 v = int(str(v).strip())
             except ValueError:
-                return None, f"error: {k} must be an integer"
+                return err("not_integer", param=k)
         elif params[k] == "edits":
             try:
                 v = json.loads(v) if isinstance(v, str) else v
             except ValueError:
-                return None, f"error: {k} must be a JSON array of objects with oldText and newText"
+                return err("not_edits", param=k)
         args[k] = v
     missing = [k for k in required if k not in args]
     if missing:
-        return None, f"error: missing parameter {', '.join(missing)}"
+        return err("missing_param", params=", ".join(missing))
     return args, None
 
 
 # ---------------------------------------------------------------- texts: Flint writes the harness's own texts
 
+def spec_items(spec):
+    """(kind, id, instruction, facts, lang, profile, about) for every text texts_spec.json (version 2) asks for.
+    `about` is a line the writer reads before the facts and the judge does not (which tool a parameter belongs to)."""
+    V, tones, lengths = spec["variants"], spec["tones"], spec["lengths"]
+    items = []
+    for prof, facts in spec["system"].items():
+        for v in range(V["system"] if prof == "agx" else V.get(f"system_{prof}", 0)):
+            items.append(("system", f"system-{v}" if prof == "agx" else f"system-{prof}-{v}", "system", facts, None,
+                          prof))
+    for prof, tools in spec["tools"].items():
+        pre = "" if prof == "agx" else prof + ":"
+        items += [("tool", pre + name, "tool", {"tool": name, **f}, None, None) for name, f in tools.items()]
+        for key, f in spec["params"][prof].items():   # "edit.edits.oldText": tool edit, parameter edits.oldText
+            tool, param = key.split(".", 1)
+            items.append(("param", pre + key, "param", f, None, None, f"The parameter {param} of the tool {tool}."))
+    for r in spec["runners"].values():   # run_tests per test runner: unittest, pytest:, ex: (mix test)
+        pre = r["prefix"] + ":" if r["prefix"] else ""
+        items.append(("tool", pre + "run_tests", "tool", {"tool": "run_tests", **r["tool"]}, None, None))
+        items.append(("param", pre + "run_tests.target", "param", r["target"], None, None,
+                      "The parameter target of the tool run_tests."))
+    for lang, tasks in spec["tasks"].items():
+        pre = tasks.get("prefix")
+        for kind, f in tasks.items():
+            if kind == "prefix":
+                continue
+            for v in range(V.get(kind, 0)):
+                facts = f if kind == "change_note" else dict(f, tone=tones[v % len(tones)],
+                                                            length=lengths[v % len(lengths)])
+                items.append((kind, f"{pre}-{kind}-{v}" if pre else f"{kind}-{v}",
+                              "note" if kind == "change_note" else "template", facts,
+                              None if lang == "python" else lang, None))
+    items += [("message", mid, "message", f, None, None) for mid, f in spec["messages"].items()]
+    return [x if len(x) == 7 else x + (None,) for x in items]
+
+
+def authored_grams(spec, extra=()):
+    """The 5-word runs of what Flint is shown that this pipeline's authors wrote: the spec's instructions and facts
+    (and extra request lines). Copying means reusing words of the request; a run shared by chance with texts Flint
+    never sees (texts_spec_v1.json, the tool runner's default messages) is not copying, and texts_report.py shows
+    those overlaps for review. Strings shorter than five words carry no run."""
+    out = [s for s in extra if len(s.split()) >= 5]
+
+    def walk(x):
+        if isinstance(x, str):
+            if len(x.split()) >= 5:
+                out.append(x)
+        elif isinstance(x, dict):
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    walk(spec)
+    grams = set()
+    for s in out:
+        grams |= agx.ngrams(s)
+    return grams, agx.sha256_text(json.dumps(sorted(out)))
+
+
+LIMITS = {"system": (40, 260), "tool": (3, 40), "param": (2, 20), "template": (5, 160), "note": (5, 40),
+          "message": (1, 25)}   # words
+
+
 def cmd_texts(a):
+    """Flint writes every text of texts_spec.json (version 2) from its facts: tries with other seeds, a judge pass by
+    Flint against the facts, and for a text that only failed the copy check, Flint rewording its own text."""
     spec_raw = open(a.spec, "rb").read()
     spec = json.loads(spec_raw)
+    if spec.get("version") != 2:
+        raise SystemExit(f"{a.spec}: texts_spec.json version 2 expected")
+    I = spec["instructions"]
     server = Server(a.server, a.api)
     render = agx.load_template(a.template)
     spans = agx.heldout_spans(a.heldout_q51, a.heldout_tasks)
-    def param_request(k, w):   # "pi:edit.edits.oldText" -> tool edit, parameter oldText
-        tool, param = k.split(":")[-1].split(".")[0], k.split(".")[-1]
-        return spec["param_request"].replace("{tool}", tool).replace("{param}", param).replace("{what}", w)
-    items = [("system", f"system-{v}", spec["system"], "") for v in range(spec["variants"]["system"])]
-    items += [("system", f"system-pi-{v}", spec["system_pi"], "") for v in range(spec["variants"].get("system_pi", 0))]
-    for tools_key, params_key, pre in (("tool", "param", ""), ("tool_pi", "param_pi", "pi:")):
-        items += [("tool", pre + k, spec["tool_request"].replace("{tool}", k).replace("{what}", w), w)
-                  for k, w in spec.get(tools_key, {}).items()]
-        items += [("param", pre + k, param_request(k, w), w) for k, w in spec.get(params_key, {}).items()]
-    for kind in PLACEHOLDERS:
-        for v in range(spec["variants"].get(kind, 0)):
-            req = spec[kind].replace("{tone}", spec["tones"][v % len(spec["tones"])]) \
-                .replace("{length}", spec["lengths"][v % len(spec["lengths"])])
-            items.append((kind, f"{kind}-{v}", req, ""))
-    for lang, ls in spec.get("langs", {}).items():   # a language's own tool descriptions and templates
-        lp = agx.LANG_PREFIX[lang]
-        items += [("tool", f"{lp}:{k}", spec["tool_request"].replace("{tool}", k).replace("{what}", w), w, lang)
-                  for k, w in ls.get("tool", {}).items()]
-        items += [("param", f"{lp}:{k}", param_request(k, w), w, lang) for k, w in ls.get("param", {}).items()]
-        for kind in PLACEHOLDERS:
-            for v in range(ls.get("variants", {}).get(kind, 0)):
-                req = ls[kind].replace("{tone}", spec["tones"][v % len(spec["tones"])]) \
-                    .replace("{length}", spec["lengths"][v % len(spec["lengths"])])
-                items.append((kind, f"{lp}-{kind}-{v}", req, "", lang))
-    items = [x if len(x) == 5 else x + (None,) for x in items]
+    items = spec_items(spec)
+    grams, grams_sha = authored_grams(spec, [x[6] for x in items if x[6]])
+    if a.only:   # a few texts by id (a trial, or a rerun into a separate file)
+        items = [x for x in items if x[1] in set(a.only.split(","))]
     old = json.load(open(a.extend)) if a.extend else None
-    if old:   # keep every text already written; write only the missing ones
-        have = {s["id"] for s in old["system"]} | set(old["tools"]) | set(old["params"]) | \
-            {t["id"] for k in old["templates"] for t in old["templates"][k]}
+    if old:   # keep every text already written; write only the missing ones (and the ones that failed)
+        def written(d):
+            return {k for k, v in d.items() if v.get("text")}
+        have = {s["id"] for s in old["system"]} | written(old["tools"]) | written(old["params"]) | \
+            {t["id"] for k in old["templates"] for t in old["templates"][k]} | written(old.get("messages", {}))
         items = [x for x in items if x[1] not in have]
 
-    def valid(kind, text, what=""):
+    def check(instr, text, facts, about=None):
         if not text or any(s in text for s in ("<tool_call>", "<think>", "</think>", "<|")):
             return "empty or markup"
+        lo, hi = LIMITS[instr]
         n = len(text.split())
-        if kind == "system" and not 40 <= n <= 260:
+        if not lo <= n <= hi:
             return f"{n} words"
-        if kind == "tool" and n > 40 or kind == "param" and n > 20 or kind == "change_note" and n > 40:
-            return f"{n} words"
-        if kind == "change_note" and "\n" in text.strip():
+        if instr in ("tool", "param", "note", "message") and "\n" in text:
             return "more than one line"
-        if what:   # a description must be about its tool or parameter: half of the request's content words
-            want = {w[:5] for w in re.findall(r"[a-z]{4,}", what.lower())} - {"optio", "defau", "relat", "proje"}
-            have = {w[:5] for w in re.findall(r"[a-z]{4,}", text.lower())}
-            if want and len(want & have) < max(1, len(want) // 2):
-                return "not about the requested tool or parameter"
-        if kind in PLACEHOLDERS:
-            for p in PLACEHOLDERS[kind]:
-                if text.count(p) != 1:
-                    return f"placeholder {p} {text.count(p)} times"
-            if set(re.findall(r"\{[^{}]*\}", text)) - set(PLACEHOLDERS[kind]):
-                return "other braces"
-        elif "{" in text or "}" in text:
-            return "braces"
+        want = sorted(set(re.findall(r"\{[a-z_]+\}", json.dumps(facts))))
+        for p in want:
+            if text.count(p) != 1:
+                return f"placeholder {p} {text.count(p)} times"
+        if set(re.findall(r"\{[^{}]*\}", text)) - set(want):
+            return "braces that are not its placeholders"
+        idents = set()   # the facts' identifiers (tool and parameter names, examples), all a text may write with "_"
+
+        def values(x):
+            if isinstance(x, dict):
+                for v in x.values():
+                    values(v)
+            elif isinstance(x, list):
+                for v in x:
+                    values(v)
+            elif isinstance(x, str):
+                idents.add(x)
+                idents.update(re.findall(r"\w+", x))
+        values(facts)
+        values(about or "")   # the tool and parameter names of a parameter's request line
+        stray = [w for w in re.findall(r"(?<![{\w])[A-Za-z]+(?:_[A-Za-z0-9]+)+(?![\w}])", text) if w not in idents]
+        if stray:
+            return f"names that are not its facts' identifiers: {stray[:3]}"
+        wrap = facts.get("wrapped in")
+        if wrap:
+            left, right = wrap.split()
+            if not (text.startswith(left) and text.endswith(right)):
+                return f"not wrapped in {wrap}"
+        if instr == "message" and re.search(r"bracket|parenthes|wrapped|\bstyle\b", text, re.I):
+            return "describes its own format"
+        for label in (facts.get("tone"), facts.get("length")):
+            if instr == "template" and label and label.lower() in text.lower():
+                return f"names its tone or length: {label!r}"
+        hit = agx.shared_ngram(text, grams)
+        if hit:
+            return f"copies: {hit!r}"
         if agx.shared12(text, spans):
             return "shares 12 words with a held-out test"
         return None
 
+    def ask(content, seed):
+        ids = server.tokenize(render([{"role": "user", "content": content}], None))
+        g = server.generate(ids, a.max_gen, seed)
+        _, text, _, _ = agx.parse_reply(g["text"])
+        return g, text.strip().strip('"').strip("`").strip()
+
+    def judge(facts, text, seed):
+        g, reply = ask(f"{I['judge']}\n\nFacts:\n{json.dumps(facts, indent=1, ensure_ascii=False)}\n\nText:\n{text}",
+                       seed)
+        first = (reply.splitlines() or [""])[0].strip().upper()
+        verdict = "ok" if first.startswith("NO") else "problem" if first.startswith("YES") else "unclear"
+        return verdict, reply[:300]
+
     def one(i, item):
-        kind, key, req, what, lang = item
-        ids = server.tokenize(render([{"role": "user", "content": req}], None))
-        tries = []
-        for t in range(a.tries):
-            seed = a.seed + i * 10 + t
-            g = server.generate(ids, a.max_gen, seed)
-            _, content, _, _ = agx.parse_reply(g["text"])
-            text = content.strip().strip('"').strip()
-            bad = valid(kind, text, what) if g["stop"] == "eos" else f"stop {g['stop']}"
-            tries.append({"seed": seed, "gen_tokens": len(g["gen"]), "problem": bad})
+        kind, key, instr, facts, lang, prof, about = item
+        request = f"{I[instr]}\n\n{about + chr(10) if about else ''}{json.dumps(facts, indent=1, ensure_ascii=False)}"
+        tries, copied = [], None
+        steps = [("write", request, t) for t in range(a.tries)]
+        k = 0
+        while k < len(steps):
+            how, content, t = steps[k]
+            k += 1
+            seed = a.seed + i * 100 + k
+            g, text = ask(content, seed)
+            bad = check(instr, text, facts, about) if g["stop"] == "eos" else f"stop {g['stop']}"
+            verdict = reason = None
             if not bad:
-                return {"id": key, "kind": kind, "text": text, "seed": seed,
-                        **({"profile": "pi" if key.startswith("system-pi") else "agx"} if kind == "system" else {}),
-                        **({"lang": lang} if lang else {}),
-                        "request_sha256": agx.sha256_text(req),
+                verdict, reason = judge(facts, text, seed + 50)
+                bad = None if verdict == "ok" else f"judge: {verdict}: {reason[:150]}"
+            tries.append({"how": how, "seed": seed, "gen_tokens": len(g["gen"]), "problem": bad})
+            if not bad:
+                return {"id": key, "kind": kind, "text": text, "seed": seed, "how": how,
+                        **({"profile": prof} if prof else {}), **({"lang": lang} if lang else {}),
+                        "facts_sha256": agx.sha256_text(json.dumps(facts, sort_keys=True)),
+                        "request_sha256": agx.sha256_text(content), "judge": reason,
                         "gen_tokens_sha256": agx.sha256_text(json.dumps(g["gen"])), "tries": tries}
+            if bad.startswith("copies") and copied is None and how == "write":
+                copied = text   # the first text that failed only by copying: Flint rewords it, a.tries times
+            if k == len(steps) and copied is not None and steps[-1][0] == "write":
+                steps += [("rephrase", f"{I['rephrase']}\n\n{copied}", t) for t in range(a.tries)]
         return {"id": key, "kind": kind, "text": None, "tries": tries, **({"lang": lang} if lang else {})}
 
+    done = []
+
+    def logged(i, item):
+        r = one(i, item)
+        done.append(r)
+        with open(a.out + ".partial.jsonl", "a") as f:   # every finished text at once, so a stopped run loses none
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+        why = f": {r['text'][:200]!r}" if r["text"] else \
+            " (" + " | ".join(t["problem"][:160] for t in r["tries"][-2:]) + ")"
+        print(f"{time.strftime('%H:%M:%S')} {len(done)}/{len(items)} {r['id']}: "
+              f"{'ok' if r['text'] else 'FAILED'} after {len(r['tries'])} tries{why}", file=sys.stderr, flush=True)
+        return r
     with concurrent.futures.ThreadPoolExecutor(a.conc) as ex:
-        res = list(ex.map(lambda x: one(*x), enumerate(items)))
-    out = {"about": "The harness's natural-language texts, written by Flint from texts_spec.json's requests "
-                    "(agent.py texts). Only these texts, filled with names from the workspace, enter a session.",
+        res = list(ex.map(lambda x: logged(*x), enumerate(items)))
+    kinds = sorted({x[0] for x in spec_items(spec)} - {"system", "tool", "param", "message"})
+    out = {"about": "The harness's texts, written by Flint from the facts in texts_spec.json (agent.py texts): "
+                    "system prompts, tool and parameter descriptions, statement templates, change notes and the tool "
+                    "runner's messages. Only these texts, filled with names from the workspace, enter a session.",
            "writer": writer_record(a), "server": server.info(), "sampling": agx.SAMPLING,
-           "spec": {"file": os.path.basename(a.spec), "sha256": agx.sha256_bytes(spec_raw)},
+           "spec": {"file": os.path.basename(a.spec), "sha256": agx.sha256_bytes(spec_raw), "version": 2},
+           "checks": {"copy_run_words": 5, "authored_texts_sha256": grams_sha, "judge": "Flint, against the facts"},
            "system": [r for r in res if r["kind"] == "system" and r["text"]],
            "tools": {r["id"]: r for r in res if r["kind"] == "tool"},
            "params": {r["id"]: r for r in res if r["kind"] == "param"},
-           "templates": {k: [r for r in res if r["kind"] == k and r["text"]] for k in PLACEHOLDERS},
+           "templates": {k: [r for r in res if r["kind"] == k and r["text"]] for k in kinds},
+           "messages": {r["id"]: r for r in res if r["kind"] == "message"},
            "failed": [r for r in res if not r["text"]]}
     if old:
         out["system"] = old["system"] + out["system"]
         out["tools"] = {**old["tools"], **out["tools"]}
         out["params"] = {**old["params"], **out["params"]}
-        out["templates"] = {k: old["templates"].get(k, []) + out["templates"][k] for k in PLACEHOLDERS}
+        out["messages"] = {**old.get("messages", {}), **out["messages"]}
+        out["templates"] = {k: old["templates"].get(k, []) + out["templates"].get(k, [])
+                            for k in sorted(set(old["templates"]) | set(out["templates"]))}
         out["extended_from"] = {"file": os.path.basename(a.extend), "sha256": agx.sha256_file(a.extend),
                                 "writer": old["writer"], "server": old["server"]}
     agx.write_json(a.out, out)
-    print(f"{sum(1 for r in res if r['text'])} of {len(res)} texts written; failed: "
-          f"{[r['id'] for r in out['failed']]}")
-    if any(not r["text"] for r in res if r["kind"] in ("tool", "param")):
+    print(f"{sum(1 for r in res if r['text'])} of {len(res)} texts written "
+          f"({sum(1 for r in res if r.get('how') == 'rephrase')} reworded); failed: {[r['id'] for r in out['failed']]}")
+    if any(not r["text"] for r in res if r["kind"] in ("tool", "param", "message")):
         sys.exit(1)
 
 
@@ -364,7 +478,8 @@ def run_session(task, a, server, render, texts, slot, writer, info):
     start = agx.tree_files(work)
     rng = random.Random(f"{a.seed}:{sid}")
     profile = rng.choice(["agx", "pi"]) if a.tools == "mixed" else a.tools
-    tools = tool_schema(texts, profile, task.get("lang"))
+    tools = tool_schema(texts, profile, agx.text_variant(task))
+    tool_lines = agx.flat_messages(texts)   # the tool runner's own lines, written by Flint
     system = rng.choice([s for s in texts["system"] if s.get("profile", "agx") == profile])
     messages = [{"role": "system", "content": system["text"]}, {"role": "user", "content": task["statement"]}]
     prompt_text = render(messages, tools)
@@ -372,7 +487,7 @@ def run_session(task, a, server, render, texts, slot, writer, info):
     srv_text = server.apply_template(messages, tools)
     sb = agx.Sandbox(f"agx-{a.run_tag}-{slot}-{agx.sha256_text(sid)[:10]}", work, task.get("image") or a.image, a.run_tag,
                      config={"test_command": task["test_command"], "timeout": 120, "max_output": 20000,
-                             "max_lines": 2000}).start()
+                             "max_lines": 2000, "messages": tool_lines}).start()
     context, turns, end, t0 = list(prompt_ids), [], None, time.time()
     seed0 = a.seed * 1000 + int(agx.sha256_text(sid)[:6], 16) % 100000 * 100
     last_calls = []
@@ -396,7 +511,7 @@ def run_session(task, a, server, render, texts, slot, writer, info):
             tool_msgs = []
             for i, c in enumerate(calls[:a.max_calls]):
                 cid = f"call_{turn}_{i}"
-                args, err = coerce(c, profile)
+                args, err = coerce(c, profile, tool_lines)
                 res = sb.tool(c["name"], args) if err is None else {
                     "ok": False, "output": err, "exit_code": 1, "files_read": [], "files_written": [],
                     "truncated": False, "ms": 0}
@@ -428,6 +543,7 @@ def run_session(task, a, server, render, texts, slot, writer, info):
             "sampling": agx.SAMPLING, "texts": {"path": os.path.abspath(a.texts), "sha256": agx.sha256_file(a.texts),
                                                "system_id": system["id"]},
             "tools_profile": profile, "lang": task.get("lang", "python"), "tools": tools,
+            "tool_messages_sha256": agx.sha256_text(json.dumps(tool_lines, sort_keys=True)),
             "tools_sha256": agx.sha256_text(json.dumps(tools, sort_keys=True)),
             "messages_start": messages, "prompt_tokens": prompt_ids,
             "template_matches_server": None if srv_text is None else srv_text == prompt_text,
@@ -447,8 +563,9 @@ def cmd_run(a):
     texts = json.load(open(a.texts))
     tasks = agx.read_jsonl(a.tasks)
     for p in ([a.tools] if a.tools != "mixed" else list(PROFILES)):
-        for lang in {t.get("lang") for t in tasks}:
-            tool_schema(texts, p, lang)   # every description the run needs is in texts.json
+        for v in {agx.text_variant(t) for t in tasks}:
+            tool_schema(texts, p, v)   # every description the run needs is in texts.json
+    agx.flat_messages(texts)           # and every line of the tool runner
     render = agx.load_template(a.template)
     server = Server(a.server, a.api)
     info = server.info()
@@ -534,6 +651,7 @@ def main():
             p.add_argument("--heldout-q51")
             p.add_argument("--heldout-tasks")
             p.add_argument("--extend", help="an earlier texts.json: keep its texts, write only the missing ones")
+            p.add_argument("--only", help="comma-separated text ids: write only these")
         else:
             p.add_argument("--tasks", required=True)
             p.add_argument("--texts", required=True)

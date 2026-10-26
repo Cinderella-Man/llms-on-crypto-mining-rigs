@@ -326,15 +326,26 @@ each must contain its placeholders exactly once), filled with names taken from t
 per-task statement (a user-style bug report from the failing output), checked the same way; it must not contain the
 changed line or the fix. Hand-written templates by the owner are the alternative.
 
+**Whose words.** The first texts were written by Flint from requests in prose, and they kept much of that prose: the
+three system prompts share a 32-word run with their request, and tool and parameter descriptions took 59–100 % of
+their words from theirs. The requests were written by an AI assistant, so the texts carried its wording into every
+session. The requests now carry facts as data instead (names, parameters, limits, placeholders, values of at most
+four words) under a short instruction, and a text passes only if it shares no run of 5 words with any text the
+pipeline's authors wrote; Flint judges each text against its facts (replacing the word-overlap meaning check), and
+rewords a text that failed only by copying. The same holds for the tool runner's own lines ("wrote 12 lines to …",
+the error messages): Flint writes them, `tools.py` and the agent loop use them, and the sessions gate checks that a
+session used texts.json's. The pipeline's own words left in a session are identifiers (tool and parameter names, file
+names) and the `error:` prefix of a failed call.
+
 **Risks of Flint-written statements and how they are contained:**
 - *Sameness.* One writer converges on few phrasings (the pilot's templates already repeat "without changing the
   tests"). More variants, tones and lengths, a cap per template, and deduplication by 12-word spans.
 - *Leakage.* A statement that describes the fix makes the session trivial. The pipeline never shows Flint the change
   when it writes templates; per-task statements are rejected if they contain the changed line.
 - *Drift from the request.* Flint may ignore the request: in the pilot's first text run 3 of 13 parameter
-  descriptions described a different parameter ("Maximum number of retry attempts…" for a line number). A meaning
-  check (half the request's content words must appear) catches this; a reviewer pass before the long run is
-  cheaper than a bad schema in 4,000 sessions.
+  descriptions described a different parameter ("Maximum number of retry attempts…" for a line number). Flint's
+  judge pass (the facts and the text: does the text contradict them or leave out a required fact) catches this; a
+  reviewer pass before the long run is cheaper than a bad schema in 4,000 sessions.
 - *Self-reference.* The model writes the tasks it then solves, so the task distribution follows its own idea of a
   task. Mechanical tasks (mutations, removed bodies, failing tests) are independent of Flint; Flint only phrases them.
 
@@ -468,7 +479,7 @@ than the standard library, the agent loop against a 64k context.
 
 | # | Decision | Why | Default if not given |
 |---|---|---|---|
-| 1 | The harness texts in [texts.json](../../../bench/agentic_data/texts.json) (Flint-written: 5 system prompts, 11 tool and 24 parameter descriptions for the two tool profiles, 14 statement templates), or replacements written by hand; the fix-bug templates come again from the reworded request | they are in every session; some phrasings may not be wanted ("Ugh, … just make them pass", a template that speaks of "the agent" in the third person) | the run does not start |
+| 1 | The harness texts, written by Flint from texts_spec.json's facts (version 2: 5 system prompts, 13 tool and 26 parameter descriptions, 28 statement templates and the change note for Python and Elixir, 32 tool runner messages); the first texts.json is retired because it reused the requests' wording | they are in every session | the run does not start |
 | 2 | Retire the AI-assistant-written texts of `prompts.py` and `clean_prompts.py` (`q20-task-texts` in `sources.json`) for all new data; record text writers in `sources.json` | Anthropic's usage policy and the owner's own rule | they stay unused |
 | 3 | Free the RTX 3090s (`./rig apply off`, which stops the `flint-q8-262k` preset) for the run's hours | the preset held GPUs 2, 5, 6 and was in use | the run uses the V100s only (~40–55 h for 30 M tokens) |
 | 4 | The `py312-pytest` environment (pytest, pluggy, iniconfig, pygments, packaging: MIT, BSD; copied from the agent check's image, no download) | fsspec's tests and most packages' tests need pytest | approved 2026-10-26 |

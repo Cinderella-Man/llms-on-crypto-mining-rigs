@@ -14,9 +14,9 @@ a dataset on Hugging Face. Why it is built this way, the licence questions and t
 | Files in the workspace | only files whose [license_scan.py](license_scan.py) verdict is `ok` | `gate.py workspaces` |
 | Tests | the code base's own, or written by Flint in a stage-1 session (Flint is Apache-2.0) | `gate.py tasks` |
 | The pipeline's change (a bug, a removed body) | [tasks.py](tasks.py), recorded as a diff | `gate.py tasks` |
-| System prompt, tool descriptions, task statement templates | written by Flint from [texts_spec.json](texts_spec.json) (`agent.py texts`), or by the owner | `gate.py tasks`, `sessions` |
+| System prompt, tool descriptions, task statement templates, the tool runner's messages | written by Flint from the facts in [texts_spec.json](texts_spec.json) (`agent.py texts`, below), or by the owner | `gate.py tasks`, `sessions` |
 | Task statement | a template filled with names from the workspace | `gate.py tasks` |
-| Tool results | [sandbox/tools.py](sandbox/tools.py) on the workspace, in a container without network | `gate.py sessions` |
+| Tool results | [sandbox/tools.py](sandbox/tools.py) on the workspace, in a container without network; its own lines are texts.json's messages | `gate.py sessions` |
 | Model output | Flint (an approved writer in `../staircase_drafter/sources.json`), exact token ids | `gate.py sessions` |
 
 ## Pipeline
@@ -30,8 +30,12 @@ records) and a manifest, and the next step starts only from passed rows.
    tags, licence-text signatures, copyright lines, vendored folders and folders with a licence of their own;
    workspaces from `ok` files only, with a manifest of every file's origin and hash.
 3. **Server**: llama-server with Flint Q8_0 (or a vLLM server with the NVFP4 GGUF, `API=vllm`).
-4. **Texts** (`agent.py texts`): Flint writes the system prompts, tool and parameter descriptions and task templates;
-   each is checked for its placeholders, length and the held-out rule.
+4. **Texts** (`agent.py texts`): Flint writes the system prompts, tool and parameter descriptions, task templates,
+   change notes and the tool runner's messages. Each request is a short instruction and the facts as JSON (names,
+   parameters, limits, placeholders, values of at most four words), so it holds no wording to copy. A text passes
+   when it shares no run of 5 words with anything the pipeline's authors wrote (the instructions and facts,
+   `texts_spec_v1.json`, the tool runner's default messages), Flint judges it consistent with its facts, and its
+   placeholders, length and the held-out rule check out; Flint rewords a text that failed only by copying.
 5. **Stage 1** (`tasks.py write-tests`, `agent.py run`): write unit tests for a module. Verified: module unchanged,
    test file present, all tests pass.
 6. **Stage 2** (`tasks.py from-sessions`, `agent.py run`): on each passing stage-1 test file, single-token bugs
@@ -100,7 +104,8 @@ with content), `sequence_len`, `gen_ranges`, `seconds`, `limits`.
 | [license_scan.py](license_scan.py) | per-file licence scan of a tree: verdicts and an allow-list |
 | [codebases.json](codebases.json) | code bases and environments: origin, version, licence, attribution, status |
 | [workspace.py](workspace.py) | workspaces from scanned files, with manifests |
-| [texts_spec.json](texts_spec.json) | the requests Flint writes the harness texts from |
+| [texts_spec.json](texts_spec.json) | the facts and instructions Flint writes the harness texts from (version 2; `texts_spec_v1.json` is the first, prose version, kept for the copy check) |
+| [texts_report.py](texts_report.py) | a review table of a texts.json: each text, how it was written, its longest run shared with authored text, Flint's judge note |
 | [tasks.py](tasks.py) | stage-1 and stage-2 tasks, validated in the sandbox |
 | [agent.py](agent.py) | `texts` and `run`: the agent loop against llama-server or vLLM |
 | [sandbox/](sandbox/) | the sandbox images (Python; Elixir in `Dockerfile.elixir`), the tool runner, and `ex_tool.exs`, the Elixir parser helper (renames, mutations, stubs, documentation hashes) |

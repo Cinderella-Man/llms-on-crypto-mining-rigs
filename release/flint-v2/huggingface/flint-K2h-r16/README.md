@@ -46,7 +46,7 @@ download, Unsloth's UD-Q4_K_XL.
 3. **Start it**, here on nine cards with the full context:
 
    ```bash
-   llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 3 --host 127.0.0.1 --port 8080
+   llama-p106-v2.0/llama-server -m flint-K2h-r16.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
    ```
 
    Then open `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`),
