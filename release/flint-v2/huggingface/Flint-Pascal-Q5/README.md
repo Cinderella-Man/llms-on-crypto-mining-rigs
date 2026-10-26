@@ -14,30 +14,32 @@ tags:
 # Flint-Pascal-Q5: Flint for old NVIDIA cards and crypto-mining rigs
 
 **What this is.** [Flint](https://huggingface.co/RecursiveSI/flint) is a 39.8-billion-parameter AI model that thinks
-before it answers, writes code and calls tools, and reads up to 262,144 tokens of context. This file is Flint packed
-into 29.4 GB so that it runs fast on old NVIDIA "Pascal" cards: the P106 and P104 cards of retired mining rigs, the
-GTX 10 series, and the Tesla P4/P40. **Q5** because most of its weights are stored in 5-bit blocks (Q5_0) and the rest
-in 8-bit blocks (Q8_0): 5.9 bits per weight on average, against 6.0 for Unsloth's UD-Q5_K_XL and 8.5 for its Q8_0.
+before it answers, writes code and calls tools, and reads up to 262,144 tokens of context. This file is Flint in
+29.4 GB, made for old NVIDIA "Pascal" cards (compute capability 6.1: the P106 and P104 cards of retired mining rigs, the
+GTX 10 series, the Tesla P4/P40); its speed is measured on P106-090 mining cards only. **Q5** because most of its weights
+are stored in 5-bit blocks (Q5_0) and the rest in 8-bit blocks (Q8_0): 5.9 bits per weight on average, against 6.0 for
+Unsloth's UD-Q5_K_XL and 8.5 for its Q8_0.
 
-**Why it is faster there.** A model file stores its weights compressed. Modern graphics cards unpack any compression
-format almost for free, so the popular files use elaborate formats that save a little space. Old Pascal mining cards
-have few compute units and spend real time unpacking those formats. This file uses only the two simplest formats
-(Q5_0 and Q8_0), which the [Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) reads at full
-speed. The price is some quality: Unsloth's UD-Q5_K_XL, the same size in elaborate formats, stays closer to the
-original model, but on Pascal cards it runs only at the speed of the much larger Q8_0. This file is 22 % faster.
+**Why it is faster there.** A model file stores its weights compressed. Modern GPUs have compute to spare, so the
+popular files use elaborate formats that get more quality out of each bit. Old Pascal mining cards have few compute
+units and spend real time unpacking those formats. This file uses only the two simplest formats (Q5_0 and Q8_0), which
+the [Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) decodes fastest. The price is some
+quality: Unsloth's UD-Q5_K_XL, the same size in elaborate formats, stays closer to the original model, but on these
+cards it ran only at the speed of the much larger Q8_0. In the test below this file is 22 % faster.
 
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
 card on a single PCIe 1.0 lane, a 2-core Celeron host): it generated **53.8 tokens per second** over its sessions and
 finished all twelve tasks in 17 minutes, a median of 1.2 minutes per task. Unsloth's UD-Q5_K_XL in the same test: 44.2
-tokens per second, 25 minutes for the twelve tasks. This file on stock llama.cpp: 15.6 tokens per second.
+tokens per second, 25 minutes for the twelve tasks. This file on stock llama.cpp: 15.6 tokens per second (at 65,536
+tokens of context).
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
   near-lossless (it picks the original model's next word 93.3 % of the time) and fits the full 262,144-token context on
   nine cards; with the Pascal engine it generates 44.6–45.9 tokens per second in the same agent test.
-- **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards, and
-  is about 18 % faster than Q8_0 and 22 % faster than UD-Q5_K_XL on nine, at a lower quality than both (it picks the
-  original's next word 88.8 % of the time, UD-Q5_K_XL 90.7 %).
+- **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards with a
+  shorter context, and is 17–21 % faster than Q8_0 and 22 % faster than UD-Q5_K_XL on nine, at a lower quality than
+  both (it picks the original's next word 88.8 % of the time, UD-Q5_K_XL 90.7 %).
 
 ## Run it in three steps
 
@@ -57,17 +59,17 @@ tokens per second, 25 minutes for the twelve tasks. This file on stock llama.cpp
 
 What each flag does, how to run on six cards, and how to use it for coding agents:
 [the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md).
-A trained guesser that makes it faster still comes in a later release
+A trained guesser for more speed is planned for a later release
 ([how it works](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/drafter.md)).
 
 ## What you need
 
-- **About 30 GB of GPU memory plus room for the context:** five or six 6 GB cards for short conversations, all nine
-  for the full 262,144 tokens.
-- **The Pascal engine** for the speed. The file also works in stock llama.cpp (release b11803 or newer) and in apps
+- **About 30 GB of GPU memory plus room for the context:** six 6 GB cards for shorter conversations, all nine for the
+  full 262,144 tokens.
+- **The Pascal engine** for the speed. The file also works in stock llama.cpp (tested with release b11820) and in apps
   built on it, just without the Pascal speed-up.
-- **On a modern GPU or a Mac, use Unsloth's UD-Q5_K_XL instead:** the same size and closer to the original; this
-  file's speed lead exists only on Pascal cards.
+- **On a modern GPU or a Mac, use Unsloth's UD-Q5_K_XL instead:** the same size and closer to the original; this file
+  is tuned for Pascal cards only.
 
 ## Speed
 
@@ -85,13 +87,15 @@ P106-090, 262,144-token context, the command line above unless noted, 2026-10-26
 | This file, stock llama.cpp, 65,536-token context | 11 (10) | 2.1 | 15.6 | 143 | 4.2 s |
 | Unsloth Q8_0, stock llama.cpp, 65,536-token context | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
 
-- **UD-Q5_K_XL** reads about as many bytes per token as this file, but its K-quant formats take the Pascal cards more
-  work to unpack: it runs at Q8_0's speed.
+- **One run per row** unless noted; two runs of the same setup differed by 3 % (Q8_0: 44.6 and 45.9).
+- **UD-Q5_K_XL** reads about as many bytes per token as this file, but its K-quant blocks take these cards more work to
+  unpack: in this test it ran at Q8_0's speed.
 - **Stock llama.cpp** runs at 65,536 tokens of context, with 35 minutes for the tasks: at 262,144 its attention mask,
-  built on the host, does not fit the rig's 4 GB of RAM. The Pascal engine makes this file 3.4 times as fast.
+  built on the host, does not fit the rig's 4 GB of RAM. In this test the Pascal engine made this file 3.4 times as
+  fast.
 - **Prompt reading** above is the agent's turns, a few hundred to a few thousand new tokens each (85–89 % of every
   prompt comes from the cache). A whole fresh prompt reads faster: 767 tokens per second for 8,192 tokens with this
-  file and larger batches (`-b 8192 -ub 512`, which fit at shorter contexts), against 593 on stock llama.cpp.
+  file and larger batches (`-b 8192 -ub 512`, which fit at shorter contexts), against 593–602 on stock llama.cpp.
 
 ## Quality
 
@@ -105,8 +109,11 @@ Against Flint's original 16-bit weights, 80 × 512 tokens of wikitext-2:
 
 - **UD-Q5_K_XL and this file** were measured side by side in one run, part of their expert weights computed on the
   CPU; with every weight on the GPUs this file measures 0.105 and +2.7 %, and Q8_0's row is from such a run.
-- **The engine does not change the answers.** Its kernels change only the order in which numbers are added up; the
-  pipelined speculation gives the same tokens as plain decoding, checked token by token.
+- **Perplexity** changes by a few percent for every file and does not rank these three reliably; the share of words
+  picked the same and the KL divergence do.
+- **The engine keeps the answers:** its kernels change only the order in which numbers are added up, so results match
+  stock llama.cpp within rounding, and pipelined speculation gives exactly the tokens of plain decoding, checked token
+  by token.
 
 ## How we got there
 
@@ -117,7 +124,7 @@ the leading ones checked on the tool-calling tasks against UD-Q4_K_XL and timed 
 - **Unsloth's importance matrix** weights the rounding toward the inputs that matter.
 - **The output head** is Q5_0 rounded with GPTQ (rounding that corrects each column's error in the next ones).
 - **The router** that picks each token's experts is stored in 16-bit floats.
-- **Only Q5_0 and Q8_0**, so every tensor goes through the Pascal kernels' fastest path, and the persistent expert
+- **Only Q5_0 and Q8_0**, so every quantized weight goes through the Pascal kernels' fastest path, and the persistent expert
   kernel below runs on the file's expert layers.
 
 **The engine** ([the fork](https://github.com/Cinderella-Man/llama.cpp), `pascal-p106` branches). Each step measured
@@ -141,7 +148,8 @@ the search for the file: [quants/](https://github.com/Cinderella-Man/llms-on-cry
 ## Rebuild it yourself
 
 Everything needed to rebuild this file from Flint's original weights is public: the exact list of formats per
-tensor, a script that runs every step, and per-tensor checksums to compare your result with this file.
+tensor, a script that runs every step, and per-tensor checksums to compare your result with this file. An output head
+computed from scratch matches within noise, not bit for bit; taking it from this file gives an identical rebuild.
 [The rebuild guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/reproduce/model.md),
 and the whole release in one folder:
 [release/flint-v2](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/release/flint-v2).
