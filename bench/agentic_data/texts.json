@@ -1,0 +1,868 @@
+{
+ "about": "The harness's natural-language texts, written by Flint from texts_spec.json's requests (agent.py texts). Only these texts, filled with names from the workspace, enter a session. Pilot texts of 2026-10-26 (the agx tool set first, the pi tool set added by agent.py texts --extend), pending the owner's review: until approved, no session for training or publication uses them.",
+ "writer": {
+  "id": "flint-q8_0",
+  "file": "flint-Q8_0.gguf",
+  "bytes": 42301076928,
+  "sha256": "5df42b56859c7b5142228005d7d63c327ec9e34c99c72548016d805309a0d284"
+ },
+ "server": {
+  "engine": "llama.cpp llama-server",
+  "build_info": "b11820-d77256999",
+  "model_file": "flint-Q8_0.gguf",
+  "n_ctx": 32768
+ },
+ "sampling": {
+  "temperature": 1.0,
+  "top_k": 20,
+  "top_p": 0.95,
+  "min_p": 0.0
+ },
+ "spec": {
+  "file": "texts_spec.json",
+  "sha256": "fadfdc9d6349c89854ab16e241ab1edd1794077e26300be0f2112e74a60c66a8"
+ },
+ "system": [
+  {
+   "id": "system-0",
+   "kind": "system",
+   "text": "You are an autonomous coding agent working on the software project in /work. You have tools to list folders, read files, search the code, edit and write files, run the project's tests, and run shell commands. There is no internet access and nothing can be installed. Before changing any code, look at the relevant files and surrounding implementation. Keep changes small and focused on the task. After editing, run the project's tests and any relevant checks to verify your work. If tests fail, fix the issue only if needed and rerun them. Do not make unrelated changes. When finished, end with a short summary of what you changed and why.",
+   "seed": 7100,
+   "request_sha256": "216f935c6437e6f0347d0660f1b9bacd2a2e3deee5b4827b25223c88ed3b438e",
+   "gen_tokens_sha256": "c83a9c28e06d57ff6f5a8ecb4c646a3c417a0dd91e7f4f15e3f6101440dbf6a2",
+   "tries": [
+    {
+     "seed": 7100,
+     "gen_tokens": 765,
+     "problem": null
+    }
+   ]
+  },
+  {
+   "id": "system-1",
+   "kind": "system",
+   "text": "You are an autonomous coding agent working on the software project in /work. You have tools to list folders, read files, search the code, edit and write files, run the project's tests, and run shell commands. There is no internet access and nothing can be installed. Before changing any code, look at the relevant files and surrounding implementation. Keep changes small and focused. Run the project's tests after your changes and run shell commands when useful to verify your work. If tests fail, fix the issue or report it clearly. End with a short summary of what you changed and why. Do not add unrelated modifications.",
+   "seed": 7110,
+   "request_sha256": "216f935c6437e6f0347d0660f1b9bacd2a2e3deee5b4827b25223c88ed3b438e",
+   "gen_tokens_sha256": "c6500ec638175052258651250c0de2611352ee893062cec4d1dce0939887e59f",
+   "tries": [
+    {
+     "seed": 7110,
+     "gen_tokens": 747,
+     "problem": null
+    }
+   ]
+  },
+  {
+   "id": "system-2",
+   "kind": "system",
+   "text": "You are an autonomous coding agent working on the software project in /work. You have tools to list folders, read files, search the code, edit and write files, run the project's tests, and run shell commands. There is no internet access and nothing can be installed. Before changing any code, look at the relevant files and surrounding implementation. Keep changes small and focused on the task. After editing, run the project's tests and any appropriate checks to verify your work. If tests fail, diagnose and fix only what is necessary. When finished, end with a short summary of what you changed and why. Do not add unrelated changes or make speculative edits. If you cannot complete something safely, stop and report the blocker.",
+   "seed": 7120,
+   "request_sha256": "216f935c6437e6f0347d0660f1b9bacd2a2e3deee5b4827b25223c88ed3b438e",
+   "gen_tokens_sha256": "4df9d14b7630cc843728fd9dee41fb61e75467530f83bcdb365723d7f14dcf46",
+   "tries": [
+    {
+     "seed": 7120,
+     "gen_tokens": 842,
+     "problem": null
+    }
+   ]
+  },
+  {
+   "id": "system-pi-0",
+   "kind": "system",
+   "text": "You are an autonomous coding agent working in the project folder /work. You have four tools: read to show a file, write to write a whole file, edit to replace exact pieces of text in a file, and bash to run shell commands, including running the tests. There is no internet access and nothing can be installed. Before you change any code, look at the relevant files first. Keep your changes small and focused. After making changes, run the tests to check your work. When you finish, end with a short summary of what you changed.",
+   "seed": 7100,
+   "profile": "pi",
+   "request_sha256": "3344cacb90f745d0add422b77227c0def5d1026066a8f5f5eeca0d6915732de7",
+   "gen_tokens_sha256": "4d252f9d724d8bad36a86398f435740d6db747095884c0c96d9a701858927b81",
+   "tries": [
+    {
+     "seed": 7100,
+     "gen_tokens": 616,
+     "problem": null
+    }
+   ]
+  },
+  {
+   "id": "system-pi-1",
+   "kind": "system",
+   "text": "You are an autonomous coding agent working on the software project in the folder /work. You have four tools: read, which shows a file; write, which writes a whole file; edit, which replaces exact pieces of text in a file; and bash, which runs a shell command and is also how you run the tests. There is no internet access and nothing can be installed. Before you change any code, look at the relevant files. Keep changes small and focused. Run the tests to check your work, and use bash for that. When you finish, end with a short summary of what you changed. Do not make unrelated changes. If you are unsure, inspect more before editing. Complete the task autonomously.",
+   "seed": 7110,
+   "profile": "pi",
+   "request_sha256": "3344cacb90f745d0add422b77227c0def5d1026066a8f5f5eeca0d6915732de7",
+   "gen_tokens_sha256": "c259d31b267ece1dcb62d0cc252fc177013a33ad1b31862177f42dfcb712f87d",
+   "tries": [
+    {
+     "seed": 7110,
+     "gen_tokens": 893,
+     "problem": null
+    }
+   ]
+  }
+ ],
+ "tools": {
+  "read_file": {
+   "id": "read_file",
+   "kind": "tool",
+   "text": "Read a project's file text, optionally selecting a first and last line range, and truncate files over 2,000 lines.",
+   "seed": 7130,
+   "request_sha256": "0d1740497a0371f425760f56003d9de90515eab37406b6edcd734dea4863622a",
+   "gen_tokens_sha256": "93b99b2a964b29d17f3f06f3a473bb30bd3e6875cf2430ed70ca7051df77a88d",
+   "tries": [
+    {
+     "seed": 7130,
+     "gen_tokens": 856,
+     "problem": null
+    }
+   ]
+  },
+  "write_file": {
+   "id": "write_file",
+   "kind": "tool",
+   "text": "Writes a whole file in the project folder, creating or replacing its content.",
+   "seed": 7140,
+   "request_sha256": "8f68d6e73cfc1f5ad03d30c26c310081e6d60dea19bc1f53717564fe058914e7",
+   "gen_tokens_sha256": "b244ee0bbdd350f8ac3141739356cb96d6711b3e2c1d815a50abf020c1d678e7",
+   "tries": [
+    {
+     "seed": 7140,
+     "gen_tokens": 383,
+     "problem": null
+    }
+   ]
+  },
+  "edit_file": {
+   "id": "edit_file",
+   "kind": "tool",
+   "text": "Replace one exact text snippet in a file with new text, but only if it occurs exactly once.",
+   "seed": 7150,
+   "request_sha256": "264f985d54ef9680babef7080647ee71d28662cb9df5dd798780ff8d0eafc681",
+   "gen_tokens_sha256": "369976cd6ed3453e421ca742d2364393dc7981500617ad1496de55b098e7b284",
+   "tries": [
+    {
+     "seed": 7150,
+     "gen_tokens": 233,
+     "problem": null
+    }
+   ]
+  },
+  "list_dir": {
+   "id": "list_dir",
+   "kind": "tool",
+   "text": "List files and folders in a project folder; folders end with a slash.",
+   "seed": 7160,
+   "request_sha256": "83f036ffdb569dc30ef51d40a87e97511e71da43f8a627ae56e5711ca5aaba20",
+   "gen_tokens_sha256": "c22c8b975bc5a0223eb05f1deb12e8f3a3a8302bd3d2230b05e7fc465d8c4662",
+   "tries": [
+    {
+     "seed": 7160,
+     "gen_tokens": 403,
+     "problem": null
+    }
+   ]
+  },
+  "search": {
+   "id": "search",
+   "kind": "tool",
+   "text": "Search project files for a regular expression and return matching lines with file names and line numbers.",
+   "seed": 7170,
+   "request_sha256": "4ff0bc80de10c83d08e19a3db31bbfbcefc3f754e81fba7ccdc90e87766e0d0f",
+   "gen_tokens_sha256": "5fcbc44d005ccdbd6095c6a913b9863b896c10f67c9aa15eeeadc5ab1984902e",
+   "tries": [
+    {
+     "seed": 7170,
+     "gen_tokens": 242,
+     "problem": null
+    }
+   ]
+  },
+  "run_tests": {
+   "id": "run_tests",
+   "kind": "tool",
+   "text": "Run the project's test suite with python3 -m unittest, optionally targeting a module, class, or test, and return the output.",
+   "seed": 7180,
+   "request_sha256": "d9373edeaa0c97ed2f6c60b918c82574127b6829498e486933105bfaf6248329",
+   "gen_tokens_sha256": "790573db0cb6f7605fa42894f79314c416941c91b8b9939a99ad8e2f9b2383aa",
+   "tries": [
+    {
+     "seed": 7180,
+     "gen_tokens": 352,
+     "problem": null
+    }
+   ]
+  },
+  "run_command": {
+   "id": "run_command",
+   "kind": "tool",
+   "text": "Run a shell command in the project folder without network access, returning its output; use only paths inside the project.",
+   "seed": 7190,
+   "request_sha256": "bc22b88a40e17221208742d23fabe752631f556a7aecd8c5a68ac48f1df72cf4",
+   "gen_tokens_sha256": "a21855bd5549bf531c7394c9fecef137547f3976073708db325f0028945e34a9",
+   "tries": [
+    {
+     "seed": 7190,
+     "gen_tokens": 270,
+     "problem": null
+    }
+   ]
+  },
+  "pi:read": {
+   "id": "pi:read",
+   "kind": "tool",
+   "text": "Read a file from the project folder, optionally choosing a line offset and line count. Long files are cut at 2,000 lines.",
+   "seed": 7120,
+   "request_sha256": "c257628432d7147abffe0c555b9575069a38429fb448628cf0c527210b1ed608",
+   "gen_tokens_sha256": "83276d4981a7dfbad4af82cd409928d094826cdeed99b0456d655574c234431d",
+   "tries": [
+    {
+     "seed": 7120,
+     "gen_tokens": 687,
+     "problem": null
+    }
+   ]
+  },
+  "pi:write": {
+   "id": "pi:write",
+   "kind": "tool",
+   "text": "Writes a complete file into the project folder, creating or replacing its content.",
+   "seed": 7130,
+   "request_sha256": "01eb3fb3378e3355a5eee80fa02db9c39ec89ceb5fd31e24410fec846b984321",
+   "gen_tokens_sha256": "ba709f3d1f01e726e294f2bf1b34551870783dd6f720de8149641b4a019f59ff",
+   "tries": [
+    {
+     "seed": 7130,
+     "gen_tokens": 390,
+     "problem": null
+    }
+   ]
+  },
+  "pi:edit": {
+   "id": "pi:edit",
+   "kind": "tool",
+   "text": "Apply one or more exact text replacements, each used once, to a file.",
+   "seed": 7140,
+   "request_sha256": "1ace8400eb3a111f027b7f5bbfd44bf8260e90b593473735da498878b8ee6a81",
+   "gen_tokens_sha256": "b67546b5dd25f11e68c3c1056b508a47a0a649f80490853e026de0c665696274",
+   "tries": [
+    {
+     "seed": 7140,
+     "gen_tokens": 447,
+     "problem": null
+    }
+   ]
+  },
+  "pi:bash": {
+   "id": "pi:bash",
+   "kind": "tool",
+   "text": "Run a shell command in the project folder without network access, returning its output and allowing only project paths.",
+   "seed": 7150,
+   "request_sha256": "c5d5713a684b5c550c136dc3e8e1079a24ec871c209757d24993aaeb3c02b998",
+   "gen_tokens_sha256": "68033357afc3837fc4fde2974097085feb827dbace6e756c8ca3836352ff8d90",
+   "tries": [
+    {
+     "seed": 7150,
+     "gen_tokens": 264,
+     "problem": null
+    }
+   ]
+  }
+ },
+ "params": {
+  "read_file.path": {
+   "id": "read_file.path",
+   "kind": "param",
+   "text": "Path to the file, relative to the project folder.",
+   "seed": 7200,
+   "request_sha256": "889b5bc56f6d9960ae3260c1a5de2caefe0e1039b6102d69bdd7557cb513bcb4",
+   "gen_tokens_sha256": "6b1a3642a35fa70f69c31b7c1a56b0567bd32ac508cbc7608c89c41d12369e8e",
+   "tries": [
+    {
+     "seed": 7200,
+     "gen_tokens": 174,
+     "problem": null
+    }
+   ]
+  },
+  "read_file.start_line": {
+   "id": "read_file.start_line",
+   "kind": "param",
+   "text": "First line to return, counting from 1; optional.",
+   "seed": 7210,
+   "request_sha256": "7ec1b0a91352aa6d33875fe44fa701cb068dff2c9f0106c1de4e4964d9304a99",
+   "gen_tokens_sha256": "b7c5fbde31fc3e4040b1c94d453df131e115ef52cbce96abe11763aeeaee36ae",
+   "tries": [
+    {
+     "seed": 7210,
+     "gen_tokens": 216,
+     "problem": null
+    }
+   ]
+  },
+  "read_file.end_line": {
+   "id": "read_file.end_line",
+   "kind": "param",
+   "text": "The last line to return; optional, defaults to end of file.",
+   "seed": 7220,
+   "request_sha256": "5c3fa89a7d13aac678bfab48cb0fa82e9fdfe11bea1075d6a196f66f1f110f01",
+   "gen_tokens_sha256": "166862a9051199e14e143693cd06544c907969a06b87cbc5304975ee2e3fe6f4",
+   "tries": [
+    {
+     "seed": 7220,
+     "gen_tokens": 218,
+     "problem": null
+    }
+   ]
+  },
+  "write_file.path": {
+   "id": "write_file.path",
+   "kind": "param",
+   "text": "File path relative to project root to write content.",
+   "seed": 7230,
+   "request_sha256": "ff7c7dae4e7e3f54cc1b03b3aa72708fb41166cb72f1587d6fc70ef865cb7171",
+   "gen_tokens_sha256": "45638c9d461ab124bd176896f6c89b85dddadf34a95ef8400cfc6867bd465ea7",
+   "tries": [
+    {
+     "seed": 7230,
+     "gen_tokens": 245,
+     "problem": null
+    }
+   ]
+  },
+  "write_file.content": {
+   "id": "write_file.content",
+   "kind": "param",
+   "text": "The complete new content to write to the file.",
+   "seed": 7240,
+   "request_sha256": "32222db5d3715a764d3fbcbfb7f6d50a36d4cc147d19261d0cd07e0cd52fd50a",
+   "gen_tokens_sha256": "ea34003de4ad6a03306710811118cf6f6a4fa37e7c740422267a23449a058257",
+   "tries": [
+    {
+     "seed": 7240,
+     "gen_tokens": 172,
+     "problem": null
+    }
+   ]
+  },
+  "edit_file.path": {
+   "id": "edit_file.path",
+   "kind": "param",
+   "text": "The path to the file you want to edit.",
+   "seed": 7250,
+   "request_sha256": "e091b8fe67dbae7d0009276f027a018d6d60064b6d53362b7aa23d38cb0e57ae",
+   "gen_tokens_sha256": "d18aa672d36af2694d577086e091e91e3b748be1e45c06ee850b6b97fba475b4",
+   "tries": [
+    {
+     "seed": 7250,
+     "gen_tokens": 165,
+     "problem": null
+    }
+   ]
+  },
+  "edit_file.old_string": {
+   "id": "edit_file.old_string",
+   "kind": "param",
+   "text": "Exact text to replace; must occur exactly once.",
+   "seed": 7260,
+   "request_sha256": "2c157229692a3e6e55fa6a1715191d9f9a791abb73f6a479bd000f9ddf7a0829",
+   "gen_tokens_sha256": "3799d871e43dd5d37732ff0a7ab1ae842861c626b635da5416ec248ff03e06f8",
+   "tries": [
+    {
+     "seed": 7260,
+     "gen_tokens": 296,
+     "problem": null
+    }
+   ]
+  },
+  "edit_file.new_string": {
+   "id": "edit_file.new_string",
+   "kind": "param",
+   "text": "Exact replacement text for the target string.",
+   "seed": 7270,
+   "request_sha256": "af7a1755948cbc300cc03177c2d57b4523aa8d06392bf6c18f126b63f40d4cbe",
+   "gen_tokens_sha256": "d51bc98709642df4fba3fa665a84323792f39ec011b2a7ee4d1bafe042e25010",
+   "tries": [
+    {
+     "seed": 7270,
+     "gen_tokens": 290,
+     "problem": null
+    }
+   ]
+  },
+  "list_dir.path": {
+   "id": "list_dir.path",
+   "kind": "param",
+   "text": "Directory to list relative to project, defaulting to project root.",
+   "seed": 7280,
+   "request_sha256": "ba179c20542739e2d49f2db4250832b33ba9a6ccbac21e06b1eb47de7ae28b0c",
+   "gen_tokens_sha256": "9265aab78727330904dab4895c1801c8affc99fbe28b34b23bd96e74f130c09c",
+   "tries": [
+    {
+     "seed": 7280,
+     "gen_tokens": 338,
+     "problem": null
+    }
+   ]
+  },
+  "search.pattern": {
+   "id": "search.pattern",
+   "kind": "param",
+   "text": "Regular expression pattern to search for in code.",
+   "seed": 7290,
+   "request_sha256": "897116969378d985edc2450e9b13d49af6399c8abf46b48b4929e654270d3cd8",
+   "gen_tokens_sha256": "6b190eaa1078c74dc427f092b91a1dbccf72c18d804e0151f38750b8a44dceb2",
+   "tries": [
+    {
+     "seed": 7290,
+     "gen_tokens": 156,
+     "problem": null
+    }
+   ]
+  },
+  "search.path": {
+   "id": "search.path",
+   "kind": "param",
+   "text": "File or folder to search in; defaults to the whole project.",
+   "seed": 7300,
+   "request_sha256": "3befc42994a44e68b595a2b34e5a61f2b2c380c04a53bebfff4bb625cc450e6e",
+   "gen_tokens_sha256": "9908121c09f2aa2b9e207b35a445b32b3fcd49d0b4c6f51d1ff498d7a4173ff1",
+   "tries": [
+    {
+     "seed": 7300,
+     "gen_tokens": 151,
+     "problem": null
+    }
+   ]
+  },
+  "run_tests.target": {
+   "id": "run_tests.target",
+   "kind": "param",
+   "text": "Test module, class, or test name to run; defaults to all tests.",
+   "seed": 7310,
+   "request_sha256": "5484745b28c27609f4ca9872ba28876eb827a26b64b3c783ba0120774bea27a2",
+   "gen_tokens_sha256": "8b927a25a3aff48701c6b5737042aa5638128796188721e8288e650c6f165eab",
+   "tries": [
+    {
+     "seed": 7310,
+     "gen_tokens": 256,
+     "problem": null
+    }
+   ]
+  },
+  "run_command.command": {
+   "id": "run_command.command",
+   "kind": "param",
+   "text": "The shell command to run in the terminal.",
+   "seed": 7320,
+   "request_sha256": "c6efcce94a663e6fd30b9cff201c379048892dd1afedafde49590da2ed928d19",
+   "gen_tokens_sha256": "39159b711dd8478d10d747797a29d7b15a0079ed3e966dee61c2b1cae5ce5db9",
+   "tries": [
+    {
+     "seed": 7320,
+     "gen_tokens": 217,
+     "problem": null
+    }
+   ]
+  },
+  "pi:read.path": {
+   "id": "pi:read.path",
+   "kind": "param",
+   "text": "Path of file to read, relative to project folder.",
+   "seed": 7160,
+   "request_sha256": "2cc7223b3be52fd9ae769c21ba0f2656335c84ba511e5296dc9b2660f89df0c4",
+   "gen_tokens_sha256": "273264e31269d91857977ea1e7b2a6ec64a47e564145b54d1e8e22b27e480527",
+   "tries": [
+    {
+     "seed": 7160,
+     "gen_tokens": 214,
+     "problem": null
+    }
+   ]
+  },
+  "pi:read.offset": {
+   "id": "pi:read.offset",
+   "kind": "param",
+   "text": "Line number to start reading from, counting from 1; optional.",
+   "seed": 7170,
+   "request_sha256": "de02cd9d763d34c8e9bce4cb91c68e3c3cc9ebd6445e934f7d050d8dd0f7184a",
+   "gen_tokens_sha256": "e148ca2c411cdffc899b524cfbec4c214b51296e80d197a30a685584e4753a21",
+   "tries": [
+    {
+     "seed": 7170,
+     "gen_tokens": 227,
+     "problem": null
+    }
+   ]
+  },
+  "pi:read.limit": {
+   "id": "pi:read.limit",
+   "kind": "param",
+   "text": "Optional maximum number of lines to read per request.",
+   "seed": 7180,
+   "request_sha256": "7ed04b411fc9f28eebe291f9a0a30e23e112f7107d096292bca496aec2e473c4",
+   "gen_tokens_sha256": "8cd2574ce5eb2f3924f1d5c9d45543114d9708892f99307ded73d8024c70ff34",
+   "tries": [
+    {
+     "seed": 7180,
+     "gen_tokens": 190,
+     "problem": null
+    }
+   ]
+  },
+  "pi:write.path": {
+   "id": "pi:write.path",
+   "kind": "param",
+   "text": "File path relative to the project folder to write.",
+   "seed": 7190,
+   "request_sha256": "e1896a3b673d74d39b2537822466fa7fd41b1c1e9384f2cfc28d59ef7c6ab937",
+   "gen_tokens_sha256": "001cd3cd821e6d797ea48d7b0ca99cbd7e5cd4e62225524cbcf48404de10e689",
+   "tries": [
+    {
+     "seed": 7190,
+     "gen_tokens": 196,
+     "problem": null
+    }
+   ]
+  },
+  "pi:write.content": {
+   "id": "pi:write.content",
+   "kind": "param",
+   "text": "The complete new content to write to the file.",
+   "seed": 7200,
+   "request_sha256": "7906d4565f3bb7f261376f5230a7d6acecd4596e7e3e1e2b91fb98a02391962b",
+   "gen_tokens_sha256": "c0b5efe2e3e3e9dc854b8c5f21f4ecf14968b621b337a83863de2dbe580a3593",
+   "tries": [
+    {
+     "seed": 7200,
+     "gen_tokens": 286,
+     "problem": null
+    }
+   ]
+  },
+  "pi:edit.path": {
+   "id": "pi:edit.path",
+   "kind": "param",
+   "text": "The path of the file you want to edit.",
+   "seed": 7210,
+   "request_sha256": "0bc91aef1849de19681710cc684710b498d951a5fa9f0aa695c2df6f17c45452",
+   "gen_tokens_sha256": "4e2a41ba8da80ba9795128a1f3519bdd3e2cbd71ef7c4b8e1284fae5ae2f8831",
+   "tries": [
+    {
+     "seed": 7210,
+     "gen_tokens": 155,
+     "problem": null
+    }
+   ]
+  },
+  "pi:edit.edits": {
+   "id": "pi:edit.edits",
+   "kind": "param",
+   "text": "List of replacements, each with old and new text.",
+   "seed": 7220,
+   "request_sha256": "542459acf87754de92ea225d1de5e8da6bb4361668b7272778aff66b23158e97",
+   "gen_tokens_sha256": "5535ea2210ee371470f727077114da6d47a491ead4ad04a58f45d0cbf430e9c6",
+   "tries": [
+    {
+     "seed": 7220,
+     "gen_tokens": 216,
+     "problem": null
+    }
+   ]
+  },
+  "pi:edit.edits.oldText": {
+   "id": "pi:edit.edits.oldText",
+   "kind": "param",
+   "text": "Exact text to replace; must occur exactly once in the file.",
+   "seed": 7230,
+   "request_sha256": "bacb26a5150ff8120d96c802fb9fa9696474278e3309fc81a2a905b8684c9360",
+   "gen_tokens_sha256": "ee3cd207147627c9331890d09bfb6a06dffb1f31d087ce97068073710ce74da3",
+   "tries": [
+    {
+     "seed": 7230,
+     "gen_tokens": 199,
+     "problem": null
+    }
+   ]
+  },
+  "pi:edit.edits.newText": {
+   "id": "pi:edit.edits.newText",
+   "kind": "param",
+   "text": "Text to replace the matched text with.",
+   "seed": 7240,
+   "request_sha256": "f73d98a3759bae9e555aff2f000fcba02effe2d24db85c648b9f7049c075c3d7",
+   "gen_tokens_sha256": "dc4cc7f569812c67049912af6f2cafeab3430ab6fe9ba1188122f18fd8b742fb",
+   "tries": [
+    {
+     "seed": 7240,
+     "gen_tokens": 209,
+     "problem": null
+    }
+   ]
+  },
+  "pi:bash.command": {
+   "id": "pi:bash.command",
+   "kind": "param",
+   "text": "The shell command to run in the terminal.",
+   "seed": 7250,
+   "request_sha256": "93d36b78efbb8ff47d250877d137a0574d0217aac92d32468e38b30f350d2ffc",
+   "gen_tokens_sha256": "58d39f5b00d36a1047b1d6d9550be1798fb47d3482316ed1e2537c6f84430d15",
+   "tries": [
+    {
+     "seed": 7250,
+     "gen_tokens": 221,
+     "problem": null
+    }
+   ]
+  },
+  "pi:bash.timeout": {
+   "id": "pi:bash.timeout",
+   "kind": "param",
+   "text": "Optional time limit in seconds for bash command execution.",
+   "seed": 7260,
+   "request_sha256": "35c60bd6ecd671d7be0d7ba0d4f09bdbff668bd57389c7df1fa9100171b5e810",
+   "gen_tokens_sha256": "0c38387a467652858f33a51f5495472e7ed7a605ccbb86ac04f999db806bffe3",
+   "tries": [
+    {
+     "seed": 7260,
+     "gen_tokens": 173,
+     "problem": null
+    }
+   ]
+  }
+ },
+ "templates": {
+  "write_tests": [
+   {
+    "id": "write_tests-0",
+    "kind": "write_tests",
+    "text": "Write a new {test_file} using Python's unittest to cover the public functions and classes in {module_file}, including edge cases and errors, without changing the module, and make all tests pass when run with {test_command}.",
+    "seed": 7330,
+    "request_sha256": "4d36f5f7fdab0fddcf358db0817ecc43c0e4f6f1e2c75c3a9e0a8fae6c3efb0d",
+    "gen_tokens_sha256": "bcfc49b8ae8525774a6259d8a9a42dea5e9d218cd763289cba9e78fb93184f25",
+    "tries": [
+     {
+      "seed": 7330,
+      "gen_tokens": 790,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "write_tests-1",
+    "kind": "write_tests",
+    "text": "Hey, could you please write unit tests for the module in {module_file} and add a new test file {test_file} using Python's unittest module, covering the public functions and classes including edge cases and errors? Make sure all tests pass when run with {test_command}, and please don't change the module itself. Thanks!",
+    "seed": 7340,
+    "request_sha256": "520eeef079c3261d755c577c283c8f325d73e1e0b20e5090fe3bbe4f532c2082",
+    "gen_tokens_sha256": "1058739f5e83971f928de5210ee2738cf0283e9d439313fb10fd0cdd74e849e4",
+    "tries": [
+     {
+      "seed": 7340,
+      "gen_tokens": 819,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "write_tests-2",
+    "kind": "write_tests",
+    "text": "Please add a new test file {test_file} with unit tests for the module in {module_file}, using Python’s `unittest` module, covering all public functions and classes including edge cases and error handling, without changing the module itself, and ensuring all tests pass when run with {test_command}.",
+    "seed": 7350,
+    "request_sha256": "9561a811e8575a0fe054cb702582650bdb21dfc7fbaecde5371b28f93652efa6",
+    "gen_tokens_sha256": "0753484b8a4d62170731f4d8d062234a996a6574af923d56855dac32ad10de34",
+    "tries": [
+     {
+      "seed": 7350,
+      "gen_tokens": 375,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "write_tests-3",
+    "kind": "write_tests",
+    "text": "Hey, can you drop a new unittest file {test_file} for the module in {module_file} that covers all the public functions and classes, edge cases and errors, and makes {test_command} pass without touching the module itself?",
+    "seed": 7360,
+    "request_sha256": "bfffad6b654b6409a616fd9a474ef7b2e5dea6e4f158178fab53227ff64c83db",
+    "gen_tokens_sha256": "f502f4290526ba44922c4e2d606b4b86daacbe0538477411f1eb7d69f98bc68e",
+    "tries": [
+     {
+      "seed": 7360,
+      "gen_tokens": 462,
+      "problem": null
+     }
+    ]
+   }
+  ],
+  "fix_bug": [
+   {
+    "id": "fix_bug-0",
+    "kind": "fix_bug",
+    "text": "Find and fix the bug in {module_file} behind the {failing_tests} failures in {test_file}, without changing the tests.",
+    "seed": 7370,
+    "request_sha256": "783b49c313670e6bbdb3040e5f4f14f6e3d1b402d609a0c75a2ef9e74df5a976",
+    "gen_tokens_sha256": "2a4733ee7cbb77561c2df6fc07f198c5fbd653a26e130f6b2a52ded87376dc8f",
+    "tries": [
+     {
+      "seed": 7370,
+      "gen_tokens": 650,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "fix_bug-1",
+    "kind": "fix_bug",
+    "text": "Hey, some unit tests in {test_file} are failing: {failing_tests}, and it looks like the bug might be in {module_file}. Could you take a look, find the cause, and fix it without changing the tests?",
+    "seed": 7380,
+    "request_sha256": "cdb8f7c13720c3ad2b2f6260ddc0eb60f5f301bad858c926033829a8fc9da1f8",
+    "gen_tokens_sha256": "d2b05f90c9953226ab9aee08297b1f345ec4047f33256f8fce9c9a84f713462d",
+    "tries": [
+     {
+      "seed": 7380,
+      "gen_tokens": 397,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "fix_bug-2",
+    "kind": "fix_bug",
+    "text": "Ticket: Some unit tests in {test_file} are failing — specifically {failing_tests} — and while symptom triage may help, please treat this as a defect to investigate rather than a test expectation issue; the cause is a bug in {module_file}, so please locate the faulty logic, reproduce the failure, implement the smallest correct fix, and verify the suite. Do not change the tests, and do not guess the bug before reproducing it.",
+    "seed": 7390,
+    "request_sha256": "dcd7204242fd7dc25d4cda5f489cce0f1052ab1a5b42bce5c8ec81bab21610a7",
+    "gen_tokens_sha256": "ed2f3e5235973d6cd025a6b3ca94bd012f16f87bd7739949da0ec317571d056b",
+    "tries": [
+     {
+      "seed": 7390,
+      "gen_tokens": 845,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "fix_bug-3",
+    "kind": "fix_bug",
+    "text": "Hey, some unit tests in {test_file} are failing: {failing_tests}, and it looks like the cause is a bug in {module_file} — can you find it and fix it without changing the tests?",
+    "seed": 7400,
+    "request_sha256": "70c8475cdaddac05b7cba5655c03e612318817fe68ae4e6513b8ad0ebfee9027",
+    "gen_tokens_sha256": "034d7dedcf36d6673f0a326937f11ac47d4da147479eeeeb209a13a41766ef69",
+    "tries": [
+     {
+      "seed": 7400,
+      "gen_tokens": 654,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "fix_bug-4",
+    "kind": "fix_bug",
+    "text": "Please investigate and resolve the failing unit tests identified in {test_file}: {failing_tests}. The issue is reportedly located in {module_file}; therefore, implement the necessary correction without altering the tests. Please do not conjecture as to the precise defect prior to verification.",
+    "seed": 7410,
+    "request_sha256": "c7ae538c4a801b2317e7034aa1131e8b653e15559fbef018feda9109b7c78635",
+    "gen_tokens_sha256": "9f75bdf21933f02b46f0cb79b4ab69d3a78d553106bd4f0b120941debbe7d5cf",
+    "tries": [
+     {
+      "seed": 7410,
+      "gen_tokens": 534,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "fix_bug-5",
+    "kind": "fix_bug",
+    "text": "Ugh, some unit tests in {test_file} fail: {failing_tests}, and it’s clearly the bug in {module_file}. Just find it and fix it — don’t touch the tests, don’t guess, just make them pass.",
+    "seed": 7420,
+    "request_sha256": "83ac1894f11fb42f6b935456eb4a8cfaf1c9b4646037c9f12972352d6e88c97b",
+    "gen_tokens_sha256": "d7f8822be905d81bb37f2df7d1d5d071432fbe9a87e737ff02f00c20604651dc",
+    "tries": [
+     {
+      "seed": 7420,
+      "gen_tokens": 476,
+      "problem": null
+     }
+    ]
+   }
+  ],
+  "implement": [
+   {
+    "id": "implement-0",
+    "kind": "implement",
+    "text": "Implement {function} in {module_file} so the tests in {test_file} pass, without changing the tests.",
+    "seed": 7430,
+    "request_sha256": "9a5745780f611d20c43b806ab9651e56704813ba9cdc6db44f1e2bdc2cdbf4cb",
+    "gen_tokens_sha256": "cd120272ecbb9b1d966c3b480b70dbd6776cac2c201b8722ddd6a741c40c6d13",
+    "tries": [
+     {
+      "seed": 7430,
+      "gen_tokens": 165,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "implement-1",
+    "kind": "implement",
+    "text": "Hey, could you take a look at {function} in {module_file}? It only raises NotImplementedError right now, and its docstring tells what it should do, so I’d love for you to implement it so the tests in {test_file} pass without changing the tests!",
+    "seed": 7440,
+    "request_sha256": "8b1330945c93208a13f17b0b980a71354cd9ef53191dbf65644b253fb0758ab7",
+    "gen_tokens_sha256": "82277df2a80525b17b6490d320a4d71d824787914114f39d72d96e9e753547d5",
+    "tries": [
+     {
+      "seed": 7440,
+      "gen_tokens": 371,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "implement-2",
+    "kind": "implement",
+    "text": "Please implement {function} in {module_file}; it currently only raises NotImplementedError, while its docstring specifies the intended behavior. The agent should complete the implementation so the tests in {test_file} pass, without changing the tests.",
+    "seed": 7450,
+    "request_sha256": "47cf78fda79b9472191ab28595a2cdd916418fb0201d2d0b1bd8ffd87ba317fb",
+    "gen_tokens_sha256": "e93de836d0bfc9ce9daf7c0f7883b6a7cf0577308d829bf374ed6562e8f549f1",
+    "tries": [
+     {
+      "seed": 7450,
+      "gen_tokens": 396,
+      "problem": null
+     }
+    ]
+   },
+   {
+    "id": "implement-3",
+    "kind": "implement",
+    "text": "Hey, can you get {function} in {module_file} implemented according to its docstring and make the tests in {test_file} pass, without changing the tests?",
+    "seed": 7460,
+    "request_sha256": "72d23de371d0a0a7dba25e8a32e8d7d2d071b39e736f48eb5d142144fbe88248",
+    "gen_tokens_sha256": "a2509ede17f0333a851938f986cf3df12b7e5a4623d458450d33036ec9f23a5f",
+    "tries": [
+     {
+      "seed": 7460,
+      "gen_tokens": 435,
+      "problem": null
+     }
+    ]
+   }
+  ]
+ },
+ "failed": [],
+ "extended_from": {
+  "file": "texts.json",
+  "sha256": "a47b4330b5df0fa2b5da4082d983e5dc9b50f5b12d06d14ab9dc9835b2b6f5df",
+  "writer": {
+   "id": "flint-q8_0",
+   "file": "flint-Q8_0.gguf",
+   "bytes": 42301076928,
+   "sha256": "5df42b56859c7b5142228005d7d63c327ec9e34c99c72548016d805309a0d284"
+  },
+  "server": {
+   "engine": "llama.cpp llama-server",
+   "build_info": "b11820-d77256999",
+   "model_file": "flint-Q8_0.gguf",
+   "n_ctx": 32768
+  }
+ }
+}

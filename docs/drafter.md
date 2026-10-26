@@ -450,9 +450,16 @@ the v2.0 release, so nothing below has run.
   - Dumps: each record equals a passed answer token for token.
   - Vocabulary, packs, heads and the store: every file the producing command reads must trace back to a passed
     parent, an approved Flint file or a test file named as such.
-- **Agent sessions:** our own agent loop, system prompt and tool schema.
-- **Left to do:** `clean_prompts.py` writes `source_id` and `row_id` per prompt; a test run of the gate on each stage;
-  then prompts, generation, dumps, vocabulary and heads from scratch.
+- **Agent sessions** (2026-10-26, [agentic data pipeline](research/notes/agentic_data_pipeline.md),
+  [bench/agentic_data](../bench/agentic_data/README.md)): our own agent loop in network-less sandboxes on code bases
+  scanned file by file, harness texts written by Flint (the earlier task texts were drafted by an AI assistant and
+  shared Q51's edit instructions), exact token ids, one sequence per session with its generated spans for the dump,
+  per-turn rows for the store, gated at every stage. A 72-minute pilot (Flint Q8_0 on two V100s) made 22 sessions,
+  235k generated tokens, through every gate into a store and the dump's sequence file; not for training until the
+  owner approves the texts.
+- **Left to do:** the owner's approvals (the note's section 8.1); `train.py` reading only the generated spans of a
+  session sequence; `clean_prompts.py` writes `source_id` and `row_id` for the single-turn chat and maths parts; then
+  generation, dumps, vocabulary and heads from scratch.
 
 ## 4. Why the card count matters
 
@@ -741,3 +748,8 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   `sources.json`, `requirements-prompts.txt` and the stage gate `check_sources.py` drafted, not run.
 - 2026-10-25, afternoon: the owner: the release is the llama.cpp fork's improvements and our model only. All drafter
   work stops, the M4 pipeline included; nothing was generated for v2.1.
+- 2026-10-26: the data pipeline for v2.1's agentic sessions ([agentic data pipeline](research/notes/agentic_data_pipeline.md),
+  `bench/agentic_data`): provenance per session, per-file licence scans, Flint-written harness texts, the pi agent's
+  tool names as a profile, and a 72-minute pilot (22 sessions, every gate passed, store built, dump sequences read).
+  `check_sources.py derived` takes `--tool` for programs such as the datastore. Not for training until the owner's
+  approvals.

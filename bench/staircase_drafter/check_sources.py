@@ -18,7 +18,8 @@ and that their sources are still approved, and stores their sha256, so every fil
   dump     feature files (llama-staircase-dump records). Each record is a passed answer, token for token.
   derived  anything built from gated files (--kind vocab, pack, head, store, model, other): --cmd is the exact command
            that wrote it; every file it names must be a parent's file, an approved Flint model file, a test file named
-           with --test (never trained on) or an id list whose ids all belong to the parents.
+           with --test (never trained on) or an id list whose ids all belong to the parents; programs it runs that were
+           built from this repository (e.g. ngram_replay's datastore) are named with --tool and recorded by hash.
 
 usage: python check_sources.py SOURCES.json prompts P.jsonl --q51 Q51.jsonl [--q51-sources S.jsonl]
                                                            --tree NAME=DIR [...] [--hf-cache DIR]
@@ -26,7 +27,7 @@ usage: python check_sources.py SOURCES.json prompts P.jsonl --q51 Q51.jsonl [--q
                                                            --tokenizer FLINT_HF_DIR
        python check_sources.py SOURCES.json dump F.bin [...] --parent G.gate.json [...]
        python check_sources.py SOURCES.json derived OUT [...] --kind KIND --parent X.gate.json [...] --cmd "COMMAND"
-                                                           [--test FILE ...] [--allow-dir DIR ...]
+                                                           [--test FILE ...] [--allow-dir DIR ...] [--tool EXE ...]
   --out GATE.json   the gate record (default: the first file + .gate.json); the manifest is written next to it (.tsv)
 Run with Python 3.12 (sources.json's python-stdlib tree): its sys.stdlib_module_names decides what is standard library.
 """
@@ -360,6 +361,8 @@ def stage_derived(args, src, errors, out_rows, rec, parents, outputs):
     for prec in parents:
         ids.update(parent_rows(prec))
     tests = {os.path.abspath(t) for t in args.test or []}
+    tools = {os.path.abspath(t): file_id(t) for t in args.tool or []}   # programs built from this repository
+    rec["tools"] = list(tools.values())
     allow = {os.path.abspath(d) for d in args.allow_dir or []}
     inputs = []
     for token in shlex.split(args.cmd):
@@ -367,7 +370,7 @@ def stage_derived(args, src, errors, out_rows, rec, parents, outputs):
             if not t or t.startswith("-") or not os.path.exists(t):
                 continue
             ap, role = os.path.abspath(t), None
-            if ap in outputs or ap.endswith(SCRIPT_EXT) or ap == src["path"]:
+            if ap in outputs or ap.endswith(SCRIPT_EXT) or ap == src["path"] or ap in tools:
                 continue
             if ap in files:
                 role = f"parent ({files[ap]['stage']})"
@@ -409,6 +412,8 @@ def main():
     ap.add_argument("--kind", choices=("vocab", "pack", "head", "store", "model", "other"))
     ap.add_argument("--cmd")
     ap.add_argument("--test", nargs="*")
+    ap.add_argument("--tool", nargs="*", help="derived: programs the command runs (built from this repository), "
+                    "recorded with their hashes instead of being traced as data")
     ap.add_argument("--allow-dir", nargs="*")
     args = ap.parse_args()
     if args.stage in ("prompts", "answers") and not args.q51:

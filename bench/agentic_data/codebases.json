@@ -1,0 +1,85 @@
+{
+  "about": "The code bases agent sessions may work on, and the environments they run in (bench/agentic_data). A session's workspace holds only files of an approved code base whose licence scan verdict is ok (license_scan.py); gate.py refuses any other. Each entry pins an exact version, names the approved source in bench/staircase_drafter/sources.json it belongs to, and gives the licence (SPDX), the attribution and the change summary that the published dataset's NOTICE carries. Status 'approved' needs the owner's date; 'proposed' entries are inventoried candidates waiting for the owner.",
+  "updated": "2026-10-26",
+  "rule": "Licence allows redistribution and derivatives (MIT, BSD-2/3-Clause, Apache-2.0, PSF/Python-2.0); no copyleft, no extra usage terms; human-written code of known provenance; files with a notice of another licence, vendored folders, binaries and large data files are left out file by file.",
+  "environments": [
+    {
+      "id": "py312-sandbox",
+      "image": "agx-sandbox:py312, built from python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2 by sandbox/Dockerfile",
+      "components": [
+        {"name": "CPython", "version": "3.12.15", "licence": "Python-2.0", "source_id": "python-stdlib"},
+        {"name": "the tool runner sandbox/tools.py", "licence": "MIT", "source_id": "q20-task-texts"},
+        {"name": "Debian bookworm base system (sh, coreutils)", "licence": "various (runs only; documentation removed)", "source_id": null}
+      ],
+      "status": "approved: python-stdlib (owner, 2026-10-25); the image adds nothing but our tool runner"
+    },
+    {
+      "id": "py312-pytest",
+      "image": "py312-sandbox plus pytest 8.4.2, pluggy, iniconfig, packaging, pygments (the agent check's /opt/ac-py, already on the quant machine)",
+      "components": [
+        {"name": "pytest", "version": "8.4.2", "licence": "MIT"},
+        {"name": "pluggy", "licence": "MIT"},
+        {"name": "iniconfig", "licence": "MIT"},
+        {"name": "packaging", "licence": "Apache-2.0 OR BSD-2-Clause"},
+        {"name": "pygments", "licence": "BSD-2-Clause"}
+      ],
+      "status": "proposed: needed by code bases whose own tests use pytest; pytest's code can appear in test output"
+    }
+  ],
+  "codebases": [
+    {
+      "id": "cpython-3.12.15-lib",
+      "name": "CPython 3.12.15 standard library",
+      "origin": "Lib/ of the python:3.12-slim image, digest sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2 (Python 3.12.15)",
+      "source_id": "python-stdlib",
+      "licence": "Python-2.0",
+      "hf_licence": "other",
+      "attribution": "Copyright (c) 2001, 2002, ..., 2023 Python Software Foundation; All Rights Reserved (the notice as LICENSES/Python-2.0.txt states it). Licensed under the PSF License Agreement (with the BeOpen, CNRI and CWI terms that make up Python's licence), full text in LICENSES/Python-2.0.txt.",
+      "changes": "Each workspace holds one module, copied unchanged into a package folder stdmods/ with empty __init__.py files and a tests/ folder; for repair and implementation tasks this pipeline changed one line of the module or replaced one function body, recorded per row as a diff (the PSF licence's summary of changes).",
+      "scan": "license_scan.py --license PSF: 686 of 731 files ok; 28 carry notices of their own (HPND-style: http.cookies, trace, uu, logging, xml.etree, xmlrpc, platform; MIT: tomllib, tarfile; Apache-2.0: profile, pstats; Apache-2.0 + MIT: three asyncio files; Zlib: sqlite3, turtle; BSD: optparse) and urllib/robotparser.py is GPL-2.0 or PSF; these are left out",
+      "use": "single pure-Python modules with a plain ok verdict and no C accelerator (workspace.py stdlib)",
+      "language": "Python",
+      "tests": "not in the image (the official images remove Lib/test); written by Flint in stage-1 sessions and checked against the unchanged module",
+      "status": "approved: python-stdlib (owner, 2026-10-25)"
+    },
+    {
+      "id": "llama.cpp-d77256999",
+      "name": "llama.cpp at commit d77256999f211f8c0a5b12d13564f48d685b59e7",
+      "origin": "git archive of ggml-org/llama.cpp at d77256999 (2026-10-22)",
+      "source_id": "llama.cpp",
+      "licence": "MIT",
+      "hf_licence": "mit",
+      "attribution": "Copyright (c) 2023-2026 The ggml authors. MIT licence, full text in LICENSES/MIT.txt.",
+      "changes": "Only files with an ok scan verdict; per row the pipeline's change as a diff.",
+      "scan": "license_scan.py --license MIT: 3,708 of 3,880 files ok; 34 ggml-sycl files Apache-2.0 WITH LLVM-exception (Intel), 9 Apache-2.0 (OpenVINO back-end, the Android gradlew, two model chat templates), common/base64.hpp Unlicense, one LGPL mention (Android build file), 37 vendored, 52 binary, 38 over 256 KB",
+      "use": "C/C++ and Python (gguf-py) workspaces; models/templates/ holds other models' chat templates and is left out as a whole",
+      "language": "C++, C, Python, CUDA",
+      "tests": "tests/ (C++, need a CPU build), gguf-py/tests (pytest, numpy)",
+      "status": "approved: llama.cpp (owner, 2026-10-25) for files outside vendor/, build and test folders; its test folders (same licence) need the owner's OK before use"
+    },
+    {
+      "id": "fsspec-2026.9.0",
+      "name": "fsspec 2026.9.0",
+      "origin": "the installed wheel in the vLLM image vllm/vllm-openai@sha256:1440cb63fac5fa19040c295fcd5c6e6d551a506aa72a68fe3425cfd6ef8cf4b8",
+      "source_id": "pypi:fsspec",
+      "licence": "BSD-3-Clause",
+      "hf_licence": "bsd-3-clause",
+      "attribution": "Copyright (c) 2018, Martin Durant. BSD-3-Clause, full text in LICENSES/BSD-3-Clause.txt (from the wheel's dist-info).",
+      "changes": "Only files with an ok scan verdict; per row the pipeline's change as a diff.",
+      "scan": "58 of 58 files ok",
+      "language": "Python",
+      "tests": "fsspec/tests in the wheel (pytest)",
+      "status": "approved: pypi:fsspec 2026.9.0 (owner, 2026-10-25); its tests need the py312-pytest environment"
+    },
+    {"id": "sympy-1.14.0", "name": "SymPy 1.14.0", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "1,526 of 1,561 files ok (14 vendored, 14 in folders with their own licence, 4 binary, 2 large, 1 MIT file)", "language": "Python", "tests": "sympy/*/tests (65 folders; sympy's own runner or pytest)", "status": "proposed"},
+    {"id": "networkx-3.7", "name": "NetworkX 3.7", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "581 of 598 files ok (15 binary, one Creative Commons notice, one flagged 'proprietary' word)", "language": "Python", "tests": "networkx/*/tests (25 folders, pytest)", "status": "proposed"},
+    {"id": "mpmath-1.3.0", "name": "mpmath 1.3.0", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "86 of 87 files ok (1 large)", "language": "Python", "tests": "mpmath/tests (its own runner or pytest)", "status": "proposed"},
+    {"id": "jsonschema-4.26.0", "name": "jsonschema 4.26.0", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "MIT", "hf_licence": "mit", "scan": "38 of 38 files ok", "language": "Python", "tests": "jsonschema/tests (unittest-style, needs referencing and attrs)", "status": "proposed"},
+    {"id": "dill-0.4.1", "name": "dill 0.4.1", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "46 of 46 files ok", "language": "Python", "tests": "dill/tests", "status": "proposed"},
+    {"id": "numpy-2.2.6", "name": "NumPy 2.2.6", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "783 of 868 files ok (50 in folders with their own licence, 33 binary, 2 large)", "language": "Python, C", "tests": "numpy/*/tests (14 folders, pytest)", "status": "proposed"}
+  ],
+  "writers_published_as": {
+    "flint-q8_0": "RecursiveSI/flint (Apache-2.0), Unsloth's Q8_0 GGUF, served by llama.cpp",
+    "flint-nvfp4-vllm": "RecursiveSI/flint (Apache-2.0), the makers' NVFP4 GGUF (RecursiveSI/flint-nvfp4-gguf), served by vLLM"
+  }
+}
