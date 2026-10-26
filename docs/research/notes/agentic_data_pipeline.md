@@ -36,9 +36,11 @@ Tools: [bench/agentic_data](../../../bench/agentic_data/README.md). "(est.)" mar
   keeps its own licence and notices. Ship `LICENSES/<SPDX>.txt`, a NOTICE with every project's attribution and the
   change summaries (PSF and Apache-2.0 ask for them), and per-row licence fields. Scan every file: CPython's library
   has 28 modules with notices of their own, llama.cpp 45 files that are not MIT.
-- **Code bases on hand:** CPython 3.12.15's library and llama.cpp at `d77256999` (approved), fsspec 2026.9.0
-  (approved, its tests in a local image), and six permissive packages with test suites inside local images (SymPy,
-  NetworkX, mpmath, jsonschema, dill, NumPy; need the owner). A list of 20 more to download, each needing approval.
+- **Code bases on hand:** CPython 3.12.15's library, llama.cpp at `d77256999` with its tests, fsspec 2026.9.0 and six
+  permissive packages with their test suites from local images (SymPy, NetworkX, mpmath, jsonschema, dill, NumPy), all
+  approved, with pytest from a local image. Elixir 1.18.4's standard library (246 files, all clean) and Erlang/OTP
+  27's sources sit in a local image too, and an Elixir sandbox built from it runs `mix test` offline (proposed). A list
+  of 20 more to download, each needing approval.
 - **Tasks:** write tests (stage 1), then repair a single-token bug and implement a removed function, checked against
   those tests (stage 2). Statements are Flint-written templates; Flint never sees the answer.
 - **Pilot** (72 minutes on two V100s, Flint Q8_0, eight standard-library modules): 22 sessions, 235k generated
@@ -219,20 +221,45 @@ accepts a list of licences.
 | Code base | Where | Licence | Tests | Status |
 |---|---|---|---|---|
 | CPython 3.12.15 `Lib/` | the pinned `python:3.12-slim` image | Python-2.0 | none (the image removes `Lib/test`); Flint writes them (stage 1) | approved (python-stdlib); 686 `ok` files, single modules |
-| llama.cpp `d77256999` | the quant machine's checkout (`git archive`) | MIT | `tests/` (C++, needs a CPU build), `gguf-py/tests` (pytest, NumPy) | approved outside `vendor/`, build and test folders; the test folders need the owner |
-| fsspec 2026.9.0 | the vLLM image's site-packages | BSD-3-Clause | `fsspec/tests` (pytest) | approved (pypi:fsspec 2026.9.0); needs the pytest environment |
-| SymPy 1.14.0 | the vLLM image | BSD-3-Clause | 65 test folders; its own runner works without pytest | proposed |
-| NetworkX 3.7 | the vLLM image | BSD-3-Clause | 25 test folders (pytest) | proposed |
-| mpmath 1.3.0 | the vLLM image | BSD-3-Clause | `mpmath/tests` | proposed |
-| jsonschema 4.26.0, referencing 0.37.0 | the vLLM image | MIT | unittest-style suites | proposed |
-| dill 0.4.1 | the vLLM image | BSD-3-Clause | `dill/tests` | proposed |
-| NumPy 2.2.6 | the vLLM image | BSD-3-Clause (bundled parts excluded by folder) | 14 test folders (pytest) | proposed |
-| pytest 8.4.2, pluggy, iniconfig, pygments | the agent check's image | MIT, BSD-2-Clause | – | proposed as the `py312-pytest` environment |
+| llama.cpp `d77256999` | the quant machine's checkout (`git archive`) | MIT | `tests/` (C++, needs a CPU build), `gguf-py/tests` (pytest, NumPy) | approved outside `vendor/` and build folders, test folders included |
+| fsspec 2026.9.0 | the vLLM image's site-packages | BSD-3-Clause | `fsspec/tests` (pytest) | approved (pypi:fsspec 2026.9.0) with its tests |
+| SymPy 1.14.0 | the vLLM image | BSD-3-Clause | 65 test folders; its own runner works without pytest | approved with its tests |
+| NetworkX 3.7 | the vLLM image | BSD-3-Clause | 25 test folders (pytest) | approved with its tests |
+| mpmath 1.3.0 | the vLLM image | BSD-3-Clause | `mpmath/tests` | approved with its tests |
+| jsonschema 4.26.0, referencing 0.37.0 | the vLLM image | MIT | unittest-style suites | approved with its tests |
+| dill 0.4.1 | the vLLM image | BSD-3-Clause | `dill/tests` | approved with its tests |
+| NumPy 2.2.6 | the vLLM image | BSD-3-Clause (bundled parts excluded by folder) | 14 test folders (pytest) | approved with its tests |
+| pytest 8.4.2, pluggy, iniconfig, pygments | the agent check's image | MIT, BSD-2-Clause | – | approved as the `py312-pytest` environment |
+| Elixir 1.18.4 standard library (`elixir`, `eex`, `ex_unit`, `logger`, `iex`, `mix`; 246 files, 145k lines) | `/usr/local/src/elixir/lib/*/lib` of the official `elixir:1.18.4-otp-27` image | Apache-2.0 | none (the image removes them); the modules' doctests, and ExUnit tests written by Flint (stage 1) | proposed; 246 of 246 files `ok` |
+| Erlang/OTP 27.3.4.18 library sources (`.erl`, `.hrl`) | the same image | Apache-2.0 | none in the image | proposed after Elixir; 1,445 of 1,465 files `ok` (16 large generated files, 3 with a "proprietary" marker, `leex.erl` with a BSD notice left out) |
+| Erlang/OTP 27.3.4.18 and Elixir 1.18.4 runtimes | the same image, copied into the Python sandbox | Apache-2.0 | – | proposed as the `ex118-sandbox` environment |
 | This repository | the laptop | MIT | few | not proposed: it holds the held-out tests |
 
 Not usable: the Exercism tasks of `bench/agent_check` (MIT) are the agentic-speed evaluation, and Exercism's problem
 specifications are shared by every language track, so no Exercism track may be a workspace. The other projects'
 images on the quant machine belong to its owner's other work, and some of them are AGPL.
+
+**Elixir.** Coding agents are the rig's main use and Elixir is a language its users work in, so Elixir sessions are
+the next language after Python. The official `elixir:1.18.4-otp-27` image is already on the quant machine; it keeps
+Elixir's library sources and removes their tests. [sandbox/Dockerfile.elixir](../../../bench/agentic_data/sandbox/Dockerfile.elixir)
+copies its Erlang/OTP and Elixir runtimes into the Python sandbox's pinned image (which already has the libraries the
+runtime links), so the tool runner stays the same and `mix test` runs with no network. Checked: a Mix project holding
+`OptionParser`'s file, renamed `Stdmods.OptionParser`, compiles and passes its 35 doctests through `tools.py`'s
+`run_tests`, on a read-only root.
+- **Workspaces:** one standard-library module per Mix project, renamed into a `Stdmods` namespace (a copy named
+  `OptionParser` would replace the loaded module that Mix itself uses), with a line at the top saying the file was
+  changed (Apache-2.0 asks for that in changed files). Candidates are modules with public functions and doctests:
+  `OptionParser` (37 doctest lines), `Version` (22), `URI` (53), `Keyword` (137), `Range` (75), `Base` (49),
+  `Calendar.ISO` (159), `Duration` (44), and EEx's compiler with tests from stage 1; not the compiler's own modules
+  (`Kernel`, `Macro`, `Code`).
+- **Tests:** the module's doctests, kept unchanged and checked after the session, plus ExUnit tests Flint writes in
+  stage 1, as for CPython's modules.
+- **Changes:** the same single-token mutations (`<`/`<=`, `==`/`!=`, `and`/`or`, `+`/`-`, small integers,
+  `true`/`false`, a dropped `not`/`!`) and removed bodies (`raise "not implemented"`), found with Elixir's own parser
+  (`Code.string_to_quoted` with column and token metadata) in the sandbox.
+- **Held out:** projects used by the Elixir agent benchmarks we may measure with (Livebook, Plausible Analytics,
+  GenStage, the Nimble libraries) and their task texts; the 12-word rule extends to those texts.
+- **Erlang:** OTP's `.erl` sources first as read-heavy tasks (explain, investigate), later with EUnit.
 
 ### 3.2 Worth adding (each a download, each needs the owner)
 
@@ -259,6 +286,11 @@ Chosen for small, dependency-free test suites that run offline, permissive licen
 | cobra, testify, gjson | Apache-2.0, MIT, MIT | Go | `go test` | a Go toolchain image needed |
 | cJSON | MIT | C | Unity (MIT) | small C library, `make test` |
 | regex, serde_json | MIT OR Apache-2.0 | Rust | `cargo test` | a Rust image needed; long builds |
+| Elixir at the `v1.18.4` tag | Apache-2.0 | Elixir | ExUnit, `lib/*/test` (thousands of tests, no dependencies) | the library's own tests for the local sources, and Elixir's NOTICE file |
+| Jason | Apache-2.0 | Elixir | ExUnit | a JSON parser and encoder |
+| Decimal | Apache-2.0 | Elixir | ExUnit | arbitrary-precision arithmetic |
+| MIME | Apache-2.0 | Elixir | ExUnit | a small lookup library |
+| Earmark Parser | Apache-2.0 | Elixir | ExUnit | a Markdown parser |
 
 Each would be pinned to a release tag and commit, scanned with `license_scan.py`, and entered in `codebases.json`
 before any session. Test dependencies count as the environment: any MPL or GPL test dependency (Hypothesis, for
@@ -426,9 +458,10 @@ than the standard library, the agent loop against a 64k context.
 | 1 | The harness texts in [texts.json](../../../bench/agentic_data/texts.json) (Flint-written: 5 system prompts, 11 tool and 24 parameter descriptions for the two tool profiles, 14 statement templates), or replacements written by hand; the fix-bug templates come again from the reworded request | they are in every session; some phrasings may not be wanted ("Ugh, … just make them pass", a template that speaks of "the agent" in the third person) | the run does not start |
 | 2 | Retire the AI-assistant-written texts of `prompts.py` and `clean_prompts.py` (`q20-task-texts` in `sources.json`) for all new data; record text writers in `sources.json` | Anthropic's usage policy and the owner's own rule | they stay unused |
 | 3 | Free the RTX 3090s (`./rig apply off`, which stops the `flint-q8-262k` preset) for the run's hours | the preset held GPUs 2, 5, 6 and was in use | the run uses the V100s only (~40–55 h for 30 M tokens) |
-| 4 | The `py312-pytest` environment (pytest, pluggy, iniconfig, pygments, packaging: MIT, BSD; copied from the agent check's image, no download) | fsspec's tests and most packages' tests need pytest | the run stays on the standard library |
-| 5 | Test folders of the approved trees (llama.cpp `tests/`, `gguf-py/tests`; fsspec's tests), same licence as the trees | `sources.json` excludes test folders, a filter for the old prompt files | not used |
-| 6 | The local packages: SymPy 1.14.0, NetworkX 3.7, mpmath 1.3.0, jsonschema 4.26.0 (+ referencing), dill 0.4.1, NumPy 2.2.6 (in the vLLM image, scanned) | variety beyond the standard library, real test suites | not used |
+| 4 | The `py312-pytest` environment (pytest, pluggy, iniconfig, pygments, packaging: MIT, BSD; copied from the agent check's image, no download) | fsspec's tests and most packages' tests need pytest | approved 2026-10-26 |
+| 5 | Test folders of the approved trees (llama.cpp `tests/`, `gguf-py/tests`; fsspec's tests), same licence as the trees | `sources.json` excludes test folders, a filter for the old prompt files | approved 2026-10-26 |
+| 6 | The local packages: SymPy 1.14.0, NetworkX 3.7, mpmath 1.3.0, jsonschema 4.26.0 (+ referencing), dill 0.4.1, NumPy 2.2.6 (in the vLLM image, scanned) | variety beyond the standard library, real test suites | approved 2026-10-26, test folders included |
+| 6a | Elixir: the library sources of the local `elixir:1.18.4-otp-27` image (Apache-2.0, 246 files `ok`), the `ex118-sandbox` environment built from it, and Elixir's NOTICE file from the `v1.18.4` tag (one text file); later OTP's sources, and the Elixir downloads of section 3.2 | a second language, the one many of the rig's users write | Python only |
 | 7 | Downloads from section 3.2 (each pinned and scanned before use) | languages other than Python, larger projects | not used |
 | 8 | OpenR1-Math: keep only rows whose `source` is not synthetic, and accept that contest problem texts come from forums and exam papers, or drop maths | the approved split mixes in synthetic problems | maths stays out |
 | 9 | Hugging Face: dataset name, licence metadata (`apache-2.0`, `other`/python-2.0, plus each code base's), whether token ids are published | publication | nothing is uploaded |
@@ -442,7 +475,11 @@ Technical work before the run, no approval needed:
   log, which decides how many sessions fit;
 - `train.py` reading only `gen_ranges` (and optionally `DUMP_RANGES` in the dump);
 - for more than ~15 M tokens: standard-library packages in `workspace.py`, and tasks on code bases with their own
-  test suites (`tasks.py` today derives stage 2 from Flint-written tests only).
+  test suites (`tasks.py` today derives stage 2 from Flint-written tests only);
+- Elixir (after 6a): `workspace.py elixir` (one module per Mix project, the rename and the changed-file line),
+  mutations and removed bodies through an Elixir script in the sandbox, a doctest check in the stage-2 verification,
+  Elixir variants of the write-tests texts in `texts_spec.json` (ExUnit, `mix test`), then a pilot of ~10 sessions to
+  see whether Flint writes passing ExUnit tests before Elixir joins the long run.
 
 ### 8.2 The run
 

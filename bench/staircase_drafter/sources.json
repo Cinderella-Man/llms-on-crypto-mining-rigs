@@ -1,6 +1,6 @@
 {
   "about": "The approved sources of the staircase drafter's training data (Q20). Every prompt, answer, dump, vocabulary, pack, head and store must trace back to an entry here; check_sources.py is the gate that enforces it, and clean_prompts.py builds prompts from these entries only. Nothing is added without the owner's approval (the date per entry).",
-  "updated": "2026-10-25",
+  "updated": "2026-10-26",
   "q51_rule": "no 12-word span (lower-cased, split on whitespace, all message contents joined) shared with a Q51 test prompt",
   "trees": {
     "python-stdlib": {
@@ -15,6 +15,10 @@
     "site-packages": {
       "what": "/usr/local/lib/python3.12/site-packages of the same image after pip install -r requirements-prompts.txt (pip 25.0.1 from the image)",
       "exclude": ["*/test/*", "*/tests/*", "*/__pycache__/*"]
+    },
+    "vllm-site-packages": {
+      "what": "the installed Python packages of vllm/vllm-openai@sha256:1440cb63fac5fa19040c295fcd5c6e6d551a506aa72a68fe3425cfd6ef8cf4b8, test folders included (agentic workspaces, bench/agentic_data)",
+      "exclude": ["*/__pycache__/*"]
     }
   },
   "sources": [
@@ -47,7 +51,8 @@
       "licence_url": "https://github.com/ggml-org/llama.cpp/blob/master/LICENSE",
       "written_by": "llama.cpp contributors (human-written source code)",
       "filter": "not vendor/ (third-party code), not build*/ (generated files), no test folders",
-      "approved": "2026-10-25"
+      "approved": "2026-10-25",
+      "agentic_tests": "tests/ and gguf-py/tests as parts of agentic workspaces (bench/agentic_data), approved 2026-10-26"
     },
     {"id": "pypi:pyarrow", "kind": "source-files", "tree": "site-packages", "paths": ["pyarrow/"], "exclude": ["pyarrow/include/arrow/vendored/*"], "version": "26.0.0", "licence": "Apache-2.0", "licence_url": "https://github.com/apache/arrow/blob/main/LICENSE.txt", "written_by": "Apache Arrow contributors", "filter": "of the vendored code only the three sub-paths listed separately", "approved": "2026-10-25"},
     {"id": "pypi:pyarrow/vendored/double-conversion", "kind": "source-files", "tree": "site-packages", "paths": ["pyarrow/include/arrow/vendored/double-conversion/"], "licence": "BSD-3-Clause", "licence_url": "https://github.com/google/double-conversion/blob/master/LICENSE", "written_by": "Google's double-conversion authors", "approved": "2026-10-25"},
@@ -69,7 +74,7 @@
     {"id": "pypi:pip/_vendor/distro", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/distro/"], "licence": "Apache-2.0", "licence_url": "https://github.com/python-distro/distro/blob/master/LICENSE", "written_by": "distro contributors", "approved": "2026-10-25"},
     {"id": "pypi:pip/_vendor/tomli", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/tomli/"], "licence": "MIT", "licence_url": "https://github.com/hukkin/tomli/blob/master/LICENSE", "written_by": "Taneli Hukkinen and contributors", "approved": "2026-10-25"},
     {"id": "pypi:pip/_vendor/pyproject_hooks", "kind": "source-files", "tree": "site-packages", "paths": ["pip/_vendor/pyproject_hooks/"], "licence": "MIT", "licence_url": "https://github.com/pypa/pyproject-hooks/blob/main/LICENSE", "written_by": "PyPA", "approved": "2026-10-25"},
-    {"id": "pypi:fsspec", "kind": "source-files", "tree": "site-packages", "paths": ["fsspec/"], "version": "2026.9.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/fsspec/filesystem_spec/blob/master/LICENSE", "written_by": "fsspec contributors", "approved": "2026-10-25"},
+    {"id": "pypi:fsspec", "kind": "source-files", "tree": "site-packages", "paths": ["fsspec/"], "version": "2026.9.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/fsspec/filesystem_spec/blob/master/LICENSE", "written_by": "fsspec contributors", "approved": "2026-10-25", "agentic_tests": "fsspec/tests as parts of agentic workspaces, approved 2026-10-26"},
     {"id": "pypi:httpcore2", "kind": "source-files", "tree": "site-packages", "paths": ["httpcore2/"], "version": "2.16.0", "licence": "BSD-3-Clause", "licence_url": "https://pypi.org/project/httpcore2/2.16.0/", "written_by": "httpcore2 contributors", "approved": "2026-10-25"},
     {"id": "pypi:httpx2", "kind": "source-files", "tree": "site-packages", "paths": ["httpx2/"], "version": "2.16.0", "licence": "BSD-3-Clause", "licence_url": "https://pypi.org/project/httpx2/2.16.0/", "written_by": "httpx2 contributors", "approved": "2026-10-25"},
     {"id": "pypi:anyio", "kind": "source-files", "tree": "site-packages", "paths": ["anyio/"], "version": "4.15.1", "licence": "MIT", "licence_url": "https://github.com/agronholm/anyio/blob/master/LICENSE", "written_by": "Alex Grönholm and contributors", "approved": "2026-10-25"},
@@ -80,6 +85,13 @@
     {"id": "pypi:click", "kind": "source-files", "tree": "site-packages", "paths": ["click/"], "version": "8.5.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/pallets/click/blob/main/LICENSE.txt", "written_by": "Pallets", "approved": "2026-10-25"},
     {"id": "pypi:filelock", "kind": "source-files", "tree": "site-packages", "paths": ["filelock/"], "version": "4.2.4", "licence": "MIT", "licence_url": "https://pypi.org/project/filelock/4.2.4/", "written_by": "filelock contributors", "approved": "2026-10-25"},
     {"id": "pypi:truststore", "kind": "source-files", "tree": "site-packages", "paths": ["truststore/"], "version": "0.10.5", "licence": "MIT", "licence_url": "https://github.com/sethmlarson/truststore/blob/main/LICENSE", "written_by": "Seth Michael Larson and contributors", "approved": "2026-10-25"},
+    {"id": "pypi:sympy", "kind": "source-files", "tree": "vllm-site-packages", "paths": ["sympy/"], "version": "1.14.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/sympy/sympy/blob/master/LICENSE", "written_by": "SymPy development team", "filter": "files with a license_scan.py verdict ok; test folders included", "approved": "2026-10-26"},
+    {"id": "pypi:networkx", "kind": "source-files", "tree": "vllm-site-packages", "paths": ["networkx/"], "version": "3.7", "licence": "BSD-3-Clause", "licence_url": "https://github.com/networkx/networkx/blob/main/LICENSE.txt", "written_by": "NetworkX developers", "filter": "files with a license_scan.py verdict ok; test folders included", "approved": "2026-10-26"},
+    {"id": "pypi:mpmath", "kind": "source-files", "tree": "vllm-site-packages", "paths": ["mpmath/"], "version": "1.3.0", "licence": "BSD-3-Clause", "licence_url": "https://github.com/mpmath/mpmath/blob/master/LICENSE", "written_by": "Fredrik Johansson and mpmath contributors", "filter": "files with a license_scan.py verdict ok; test folders included", "approved": "2026-10-26"},
+    {"id": "pypi:jsonschema", "kind": "source-files", "tree": "vllm-site-packages", "paths": ["jsonschema/", "referencing/"], "version": "4.26.0 (referencing 0.37.0)", "licence": "MIT", "licence_url": "https://github.com/python-jsonschema/jsonschema/blob/main/COPYING", "written_by": "Julian Berman and contributors", "filter": "files with a license_scan.py verdict ok; test folders included", "approved": "2026-10-26"},
+    {"id": "pypi:dill", "kind": "source-files", "tree": "vllm-site-packages", "paths": ["dill/"], "version": "0.4.1", "licence": "BSD-3-Clause", "licence_url": "https://github.com/uqfoundation/dill/blob/master/LICENSE", "written_by": "Mike McKerns and The Uncertainty Quantification Foundation", "filter": "files with a license_scan.py verdict ok; test folders included", "approved": "2026-10-26"},
+    {"id": "pypi:numpy", "kind": "source-files", "tree": "vllm-site-packages", "paths": ["numpy/"], "version": "2.2.6", "licence": "BSD-3-Clause", "licence_url": "https://github.com/numpy/numpy/blob/main/LICENSE.txt", "written_by": "NumPy developers", "filter": "files with a license_scan.py verdict ok (bundled parts with their own licence folders left out); test folders included", "approved": "2026-10-26"},
+    {"id": "env:py312-pytest", "kind": "environment", "what": "pytest 8.4.2, pluggy, iniconfig, packaging, pygments from the agent check's local image, added to the sandbox to run test suites; their code can appear in test output", "licence": "MIT, Apache-2.0 OR BSD-2-Clause, BSD-2-Clause", "licence_url": "https://github.com/pytest-dev/pytest/blob/main/LICENSE", "written_by": "pytest-dev, PyPA, Pygments contributors", "approved": "2026-10-26"},
     {
       "id": "openr1-math-220k",
       "kind": "dataset",

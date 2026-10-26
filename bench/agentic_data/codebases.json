@@ -23,7 +23,17 @@
         {"name": "packaging", "licence": "Apache-2.0 OR BSD-2-Clause"},
         {"name": "pygments", "licence": "BSD-2-Clause"}
       ],
-      "status": "proposed: needed by code bases whose own tests use pytest; pytest's code can appear in test output"
+      "status": "approved: owner, 2026-10-26 (built from the local image, no download); pytest's code can appear in test output"
+    },
+    {
+      "id": "ex118-sandbox",
+      "image": "agx-sandbox:ex118, built by sandbox/Dockerfile.elixir: py312-sandbox plus Erlang/OTP and Elixir copied from elixir:1.18.4-otp-27@sha256:a7b2c4772e05616cf0a3323758ba5abc3288af452a33d1263705840a52154e85 (already on the quant machine)",
+      "components": [
+        {"name": "Erlang/OTP", "version": "27.3.4.18", "licence": "Apache-2.0", "source_id": null},
+        {"name": "Elixir (with Mix and ExUnit)", "version": "1.18.4", "licence": "Apache-2.0", "source_id": null},
+        {"name": "the py312-sandbox image (CPython 3.12.15, the tool runner)", "licence": "Python-2.0, MIT", "source_id": "python-stdlib"}
+      ],
+      "status": "proposed: for Elixir workspaces; mix test runs offline with no dependencies (checked 2026-10-26: 35 doctests and a test through tools.py, read-only root, no network)"
     }
   ],
   "codebases": [
@@ -55,7 +65,7 @@
       "use": "C/C++ and Python (gguf-py) workspaces; models/templates/ holds other models' chat templates and is left out as a whole",
       "language": "C++, C, Python, CUDA",
       "tests": "tests/ (C++, need a CPU build), gguf-py/tests (pytest, numpy)",
-      "status": "approved: llama.cpp (owner, 2026-10-25) for files outside vendor/, build and test folders; its test folders (same licence) need the owner's OK before use"
+      "status": "approved: llama.cpp (owner, 2026-10-25) for files outside vendor/ and build folders; its test folders (tests/, gguf-py/tests; same licence) approved by the owner on 2026-10-26"
     },
     {
       "id": "fsspec-2026.9.0",
@@ -69,14 +79,41 @@
       "scan": "58 of 58 files ok",
       "language": "Python",
       "tests": "fsspec/tests in the wheel (pytest)",
-      "status": "approved: pypi:fsspec 2026.9.0 (owner, 2026-10-25); its tests need the py312-pytest environment"
+      "status": "approved: pypi:fsspec 2026.9.0 (owner, 2026-10-25), its tests (owner, 2026-10-26) in the py312-pytest environment"
     },
-    {"id": "sympy-1.14.0", "name": "SymPy 1.14.0", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "1,526 of 1,561 files ok (14 vendored, 14 in folders with their own licence, 4 binary, 2 large, 1 MIT file)", "language": "Python", "tests": "sympy/*/tests (65 folders; sympy's own runner or pytest)", "status": "proposed"},
-    {"id": "networkx-3.7", "name": "NetworkX 3.7", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "581 of 598 files ok (15 binary, one Creative Commons notice, one flagged 'proprietary' word)", "language": "Python", "tests": "networkx/*/tests (25 folders, pytest)", "status": "proposed"},
-    {"id": "mpmath-1.3.0", "name": "mpmath 1.3.0", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "86 of 87 files ok (1 large)", "language": "Python", "tests": "mpmath/tests (its own runner or pytest)", "status": "proposed"},
-    {"id": "jsonschema-4.26.0", "name": "jsonschema 4.26.0", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "MIT", "hf_licence": "mit", "scan": "38 of 38 files ok", "language": "Python", "tests": "jsonschema/tests (unittest-style, needs referencing and attrs)", "status": "proposed"},
-    {"id": "dill-0.4.1", "name": "dill 0.4.1", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "46 of 46 files ok", "language": "Python", "tests": "dill/tests", "status": "proposed"},
-    {"id": "numpy-2.2.6", "name": "NumPy 2.2.6", "origin": "installed wheel in the vLLM image", "source_id": null, "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "783 of 868 files ok (50 in folders with their own licence, 33 binary, 2 large)", "language": "Python, C", "tests": "numpy/*/tests (14 folders, pytest)", "status": "proposed"}
+    {"id": "sympy-1.14.0", "name": "SymPy 1.14.0", "origin": "installed wheel in the vLLM image", "source_id": "pypi:sympy", "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "1,526 of 1,561 files ok (14 vendored, 14 in folders with their own licence, 4 binary, 2 large, 1 MIT file)", "language": "Python", "tests": "sympy/*/tests (65 folders; sympy's own runner or pytest)", "status": "approved: pypi:sympy 1.14.0 with its test folders (owner, 2026-10-26)"},
+    {"id": "networkx-3.7", "name": "NetworkX 3.7", "origin": "installed wheel in the vLLM image", "source_id": "pypi:networkx", "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "581 of 598 files ok (15 binary, one Creative Commons notice, one flagged 'proprietary' word)", "language": "Python", "tests": "networkx/*/tests (25 folders, pytest)", "status": "approved: pypi:networkx 3.7 with its test folders (owner, 2026-10-26)"},
+    {"id": "mpmath-1.3.0", "name": "mpmath 1.3.0", "origin": "installed wheel in the vLLM image", "source_id": "pypi:mpmath", "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "86 of 87 files ok (1 large)", "language": "Python", "tests": "mpmath/tests (its own runner or pytest)", "status": "approved: pypi:mpmath 1.3.0 with its test folders (owner, 2026-10-26)"},
+    {"id": "jsonschema-4.26.0", "name": "jsonschema 4.26.0", "origin": "installed wheel in the vLLM image", "source_id": "pypi:jsonschema", "licence": "MIT", "hf_licence": "mit", "scan": "38 of 38 files ok", "language": "Python", "tests": "jsonschema/tests (unittest-style, needs referencing and attrs)", "status": "approved: pypi:jsonschema 4.26.0 with referencing 0.37.0 and its test folders (owner, 2026-10-26); its other imports (attrs, rpds-py, jsonschema-specifications, all MIT) run in the environment and are not workspaces"},
+    {"id": "dill-0.4.1", "name": "dill 0.4.1", "origin": "installed wheel in the vLLM image", "source_id": "pypi:dill", "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "46 of 46 files ok", "language": "Python", "tests": "dill/tests", "status": "approved: pypi:dill 0.4.1 with its test folders (owner, 2026-10-26)"},
+    {"id": "numpy-2.2.6", "name": "NumPy 2.2.6", "origin": "installed wheel in the vLLM image", "source_id": "pypi:numpy", "licence": "BSD-3-Clause", "hf_licence": "bsd-3-clause", "scan": "783 of 868 files ok (50 in folders with their own licence, 33 binary, 2 large)", "language": "Python, C", "tests": "numpy/*/tests (14 folders, pytest)", "status": "approved: pypi:numpy 2.2.6 with its test folders (owner, 2026-10-26)"},
+    {
+      "id": "elixir-1.18.4-lib",
+      "name": "Elixir 1.18.4 standard library (elixir, eex, ex_unit, logger, iex, mix)",
+      "origin": "/usr/local/src/elixir/lib/*/lib of elixir:1.18.4-otp-27@sha256:a7b2c4772e05616cf0a3323758ba5abc3288af452a33d1263705840a52154e85 (the official image keeps these sources and removes the tests)",
+      "source_id": null,
+      "licence": "Apache-2.0",
+      "hf_licence": "apache-2.0",
+      "attribution": "The copyright notices of Elixir's NOTICE file at the v1.18.4 tag (The Elixir Team, Plataformatec), carried in NOTICE. Apache-2.0, full text in LICENSES/Apache-2.0.txt.",
+      "changes": "Each workspace holds one module file in a Mix project written by this pipeline (mix.exs, test/test_helper.exs); the module is renamed into the Stdmods namespace so it does not collide with the loaded standard library, and the file carries a notice that it was changed (Apache-2.0 section 4(b)); per row the pipeline's change as a diff.",
+      "scan": "license_scan.py --license Apache-2.0: 246 of 246 files ok (no SPDX tags, no other licence's text, no copyright lines of other holders)",
+      "use": "single modules with public functions and doctests, e.g. OptionParser, Version, URI, Keyword, Range, Base, Calendar.ISO, EEx's tokenizer and compiler; not the compiler's own modules (Kernel, Macro, Code)",
+      "language": "Elixir",
+      "tests": "not in the image; the modules' doctests (doctest Stdmods.X runs them: 35 for OptionParser) plus ExUnit tests written by Flint in stage-1 sessions",
+      "status": "proposed: no download; needs the ex118-sandbox environment, Elixir support in workspace.py and tasks.py, Elixir texts, and Elixir's NOTICE text (one small file from the v1.18.4 tag)"
+    },
+    {
+      "id": "otp-27.3.4.18-lib",
+      "name": "Erlang/OTP 27.3.4.18 library sources (.erl, .hrl)",
+      "origin": "/usr/local/lib/erlang/lib/*/src and include of the same elixir:1.18.4-otp-27 image",
+      "source_id": null,
+      "licence": "Apache-2.0",
+      "hf_licence": "apache-2.0",
+      "scan": "license_scan.py --license Apache-2.0: 1,445 of 1,465 files ok; 16 over 256 KB (generated parsers and tables), 3 with a 'proprietary' marker (megaco name resolvers, wxDataObject) and parsetools' leex.erl (a BSD notice) are left out",
+      "language": "Erlang",
+      "tests": "not in the image (OTP's test suites need Common Test and the source tree)",
+      "status": "proposed, after the Elixir library: read-heavy tasks (explain, investigate) first; Erlang test tasks need EUnit support in tasks.py"
+    }
   ],
   "writers_published_as": {
     "flint-q8_0": "RecursiveSI/flint (Apache-2.0), Unsloth's Q8_0 GGUF, served by llama.cpp",
