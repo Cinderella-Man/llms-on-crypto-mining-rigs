@@ -12,7 +12,7 @@ Conventions:
   - These are static counts. Dynamic per-thread counts are estimated by following the code path for a given K (section 1).
 - Source links point to the rig's commit `d77256999` (2026-10-22) unless another date is given.
 
-Starting point (brief and [flint_speedups.md](../../../llms-on-crypto-mining-rigs/docs/research/notes/flint_speedups.md)):
+Starting point (brief and [flint_speedups.md](flint_speedups.md)):
 - The makers' Q4_1 file runs at 27.9 tok/s in llama-bench tg128 (35.8 ms per token on 5 cards with CUDA graphs) and 24.3 tok/s in llama-server with `-bs`.
 - Per token it reads 1.66 GB. That splits into ~23–26 ms of weight reading and ~10–13 ms of fixed cost: ~1,900 launches, of which ~470 come from the MoE down-projection rescale.
 - Single-card efficiency on Llama-2-7B, measured on build `85d5703a3`: Q4_0 42 %, Q4_K_M 35 %, Q8_0 54 %. The Q8_0 run used 2 cards, which relieves the 75 W power cap, so the cores ran at ~1830 MHz against 1710–1760 MHz on one card.
@@ -180,7 +180,7 @@ Notes on the table:
 Issue capacity is 5 SMs × 128 lanes × 1.73 GHz = 1.107 T lane-instructions/s. That gives 18.7 ms at 100 % issue efficiency and 21–25 ms at 76–90 %. The earlier note's ~23–26 ms of "weight reading" is the same quantity: **the per-token matvec time is the instruction time, not the byte time.** At 173 GB/s the bytes would take 9.6 ms.
 
 **Other cards and other measurements:**
-- **P106-100 versus P106-090** (P; [calibration](../../../llms-on-crypto-mining-rigs/docs/benchmarks/2026-10-22-single-card-calibration.md) and [discussion #15013](https://github.com/ggml-org/llama.cpp/discussions/15013)): the same GP106 chip and 192-bit GDDR5 runs Llama-2-7B Q4_0 at ~30.6 tok/s with 10 SMs against 19.45 with 5. That is 1.57× from doubling issue capacity at equal bandwidth.
+- **P106-100 versus P106-090** (P; [calibration](../../benchmarks/2026-10-22-single-card-calibration.md) and [discussion #15013](https://github.com/ggml-org/llama.cpp/discussions/15013)): the same GP106 chip and 192-bit GDDR5 runs Llama-2-7B Q4_0 at ~30.6 tok/s with 10 SMs against 19.45 with 5. That is 1.57× from doubling issue capacity at equal bandwidth.
 - **Tesla P100, sm_60** ([qr0n/p100-llama-cpp](https://github.com/qr0n/p100-llama-cpp) README, 2026-09-07 to 2026-10-16; S/P, a community fork with measurements):
   - `mul_mat_vec_q` is 92 % of decode time and "instruction-issue bound": warp issue at 76–99 % of peak, 27 % of the measured 607 GB/s, 9.25 SASS instructions per weight.
   - P100 has no dp4a, so its per-weight cost is higher than sm_61's.

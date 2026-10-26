@@ -415,7 +415,7 @@ How to read the numbers:
 - **Generation speed depends on how it is measured.** `llama-bench` ran each tg128 after its prompt tests; run alone,
   the same v2 build reads 31.0 tok/s on nine cards. Served chat, 31–34 tok/s, is what a user sees.
 - **The real-chat row comes from two sessions:** stock and v1 from the
-  [five-turn chat benchmark](2026-10-23-flint-chat.md), v2 from 3,000-token requests with the same server settings.
+  [five-turn chat benchmark](../../benchmarks/2026-10-23-flint-chat.md), v2 from 3,000-token requests with the same server settings.
 - **Six cards are as fast as nine for one short conversation.** Nine cards are needed for long contexts and several
   conversations.
 - **Agents run slower than chat.** Every request with tools makes llama-server sample on the CPU, which copies 600 KB

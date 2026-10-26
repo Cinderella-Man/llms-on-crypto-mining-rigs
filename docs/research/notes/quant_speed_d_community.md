@@ -122,7 +122,7 @@ Q4_1, Q5_0 or IQ4_NL decode on a ≤ 6-SM card.
 |---|---|---|---|---|---|---|---|
 | Quadro P1000 | 5 | 82 | 13.99 | 53 | 65 % | 7.2 | 16.4 |
 | GTX 1050 Ti (2026-06-24) | 6 | 112 | 19.1 | 73 | 65 % | 8.7 | 18.7 |
-| **P106-090 (our rig, [calibration](../../../llms-on-crypto-mining-rigs/docs/benchmarks/2026-10-22-single-card-calibration.md))** | **5** | **192 (173 measured)** | **19.45** | **74** | **39 % (43 %)** | **8.6** | **38.4** |
+| **P106-090 (our rig, [calibration](../../benchmarks/2026-10-22-single-card-calibration.md))** | **5** | **192 (173 measured)** | **19.45** | **74** | **39 % (43 %)** | **8.6** | **38.4** |
 | Quadro P2000 | 8 | 140 | 23.63 | 90 | 64 % | 7.6 | 17.5 |
 | GTX 1060 6GB | 10 | 192 | 27.79 | 106 | 55 % | 6.2 | 19.2 |
 | P106-100 | 10 | 192 | 30.40 | 116 | 61 % | 6.8 | 19.2 |
@@ -135,7 +135,7 @@ Q4_1, Q5_0 or IQ4_NL decode on a ≤ 6-SM card.
 | # | Claim | Source | Date | Hardware | Numbers | Cred. |
 |---|---|---|---|---|---|---|
 | F1 | Q4_0 and Q4_K_M decode at the same bytes/s on a P40 | [#30334](https://github.com/ggml-org/llama.cpp/issues/30334) (P) | 2026-10-11 | Tesla P40 | Llama-3.1-8B: Q4_0 52.28, Q4_K_M 48.94 t/s; with files of 4.66 / 4.92 GB that is ~244 vs ~241 GB/s (my calc) | M-same |
-| F2 | On a GTX 1060 Q4_0 leads Q4_K_M by ~6 % per byte | [#25479](https://github.com/ggml-org/llama.cpp/pull/25479) (P) | 2026-07-09 | GTX 1060 6GB (GP106, 10 SMs) | Llama-3.2-3B tg128: Q4_0 49.41, Q4_K_M 43.49, Q5_K_M 39.92, Q6_K 34.10, Q8_0 32.62; ≈ 99 / 93 / 96 / 90 / 114 GB/s ([dense notes §3](../../../llms-on-crypto-mining-rigs/docs/research/notes/dense_27b_speedups.md)) | M-same |
+| F2 | On a GTX 1060 Q4_0 leads Q4_K_M by ~6 % per byte | [#25479](https://github.com/ggml-org/llama.cpp/pull/25479) (P) | 2026-07-09 | GTX 1060 6GB (GP106, 10 SMs) | Llama-3.2-3B tg128: Q4_0 49.41, Q4_K_M 43.49, Q5_K_M 39.92, Q6_K 34.10, Q8_0 32.62; ≈ 99 / 93 / 96 / 90 / 114 GB/s ([dense notes §3](dense_27b_speedups.md)) | M-same |
 | F3 | On our 5-SM card Q4_0 leads Q4_K_M by 22 % per byte, Q8_0 leads both | rig calibration (P) | 2026-10-22 | P106-090 | 73 / 60 / 93 GB/s | M-same |
 | F4 | NVFP4 is the slowest 4-bit file on Pascal; Q6_K matches Q4_K_M per token | [Reddit 1v6llio](https://www.reddit.com/r/LocalLLaMA/comments/1v6llio/) (S) | 2026-07-25 | 1080 Ti + 2 × P102-100, Vulkan b10107, 150 W each | Gemma-4-26B-A4B: Q4_K_M 48.14, Q6_K 49.67, NVFP4 33.28; Qwen3.6-35B-A3B: UD-Q4_K_S 50.48, NVFP4 43.50 t/s | M-same |
 | F5 | MXFP4_MOE and IQ4_NL are slower than UD-Q4_K_S on Pascal | [Reddit 1u7tarc](https://www.reddit.com/r/LocalLLaMA/comments/1u7tarc/) (S) | 2026-06-16 | 3 × GTX 1070, Vulkan b9204, 120 W | Qwen3.6-35B-A3B tg128: MXFP4_MOE 40.24, UD-Q4_K_S 45.30, UD-IQ4_NL 41.70 (files 16.4–20.2 GiB) | M-same |
@@ -202,7 +202,7 @@ has run Vulkan on a 5-SM card or on a 5–9-card Pascal layer split.
   P106-100 in V3) have different instruction mixes from CUDA's MMVQ; neither has been profiled on a 5-SM card.
 - Risks specific to this rig: the 2-core Celeron must record Vulkan command buffers for ~1,900+ nodes per token
   (CPU cost unknown; claim to test); inter-card copies go through the host either way; the brief's Flint rescale is a
-  graph-level op, so Vulkan pays it too ([Flint notes §2](../../../llms-on-crypto-mining-rigs/docs/research/notes/flint_speedups.md)).
+  graph-level op, so Vulkan pays it too ([Flint notes §2](flint_speedups.md)).
 
 ### Gaps
 - No Vulkan number on any ≤ 5-SM Pascal card on Linux; no multi-GPU Vulkan Pascal layer-split decode number for a MoE.
@@ -308,7 +308,7 @@ per-tensor datatype search (for modern GPUs, where it picks IQ+K mixes), and (c)
 | R2 | A 3090 owner found the ByteShape IQ4_XS file the best for hybrid offload of Qwen3.6 | [Reddit 1uxln6i comment](https://www.reddit.com/r/LocalLLaMA/comments/1uxln6i/comment/oxzl5uk/) (S) | 2026-07-16 | RTX 3090 | 96.1 t/s without MTP, 123.0 with n-max 2 | M |
 | R3 | PXQ: learned codebook for expert tensors with per-row FP16 anchors and 4-bit sub-scales per 16 values, backbone kept MXFP4, fused MoE kernels for Pascal/Volta | [wepromen/pxq_llama](https://github.com/wepromen/pxq_llama) (P) | 2026-07-20 | P100, V100, 1080 Ti | PXQ4 4.27 bpw, PXQ3 3.27, PXQ2 2.27; vs upstream ik on a 1080 Ti: decode +25 %, prefill −10 % | M (vendor) |
 | R4 | PXQN tiers "match classic quants at fewer bits" (KLD on Qwen3.8-27B); kernels ship compiled only, encoder via a licence server | [poisonxa16/pxa](https://github.com/poisonxa16/pxa) (P) | 2026-10-22 (v3.1) | P100, V100 | PXQN2 9.6 GB KLD 0.161; PXQN4 15.7 GB KLD 0.0079; plain decode +5–35 % vs their previous release; 1080 Ti and P40 "not measured" for v3 | M (vendor) |
-| R5 | terelabs' Flint recipe keeps attention, dense FFN, shared expert, embedding and head at Q8_0 and compresses only routed experts | [terelabs/flint-GGUF](https://huggingface.co/terelabs/flint-GGUF) (S, already in [Flint notes §5](../../../llms-on-crypto-mining-rigs/docs/research/notes/flint_speedups.md)) | 2026-10-21 | — | KLD/BFCL table in notes | M |
+| R5 | terelabs' Flint recipe keeps attention, dense FFN, shared expert, embedding and head at Q8_0 and compresses only routed experts | [terelabs/flint-GGUF](https://huggingface.co/terelabs/flint-GGUF) (S, already in [Flint notes §5](flint_speedups.md)) | 2026-10-21 | — | KLD/BFCL table in notes | M |
 | R6 | Gemma 4 QAT `q4_0` files are a common choice on old cards | [Reddit 1v6llio comment](https://www.reddit.com/r/LocalLLaMA/comments/1v6llio/comment/ozuhhhz/) and others (S) | 2026-07 | 1080 Ti | — | A |
 | R7 | Unsloth's UD-Q4_K_XL for Flint "already has a lot of IQ4_XS in the later layers" | [unsloth/flint-GGUF discussion #6](https://huggingface.co/unsloth/flint-GGUF/discussions/6) (S) | 2026-10-22 | — | — | A (checkable from the header) |
 
@@ -350,7 +350,7 @@ prefill exists (device order, TurboPrefill) but nothing new for decode.
 
 ### Inferences
 - **X1 vs our rig (my calc):** our bartowski Q4_0 Qwen3.6 runs 18.46 t/s on 4 cards
-  ([baseline](../../../llms-on-crypto-mining-rigs/docs/benchmarks/2026-10-22-qwen-baselines.md)). Ollama's default
+  ([baseline](../../benchmarks/2026-10-22-qwen-baselines.md)). Ollama's default
   is a K-quant, slower per byte on our card. A P106-090 rig doing "30+" would be 1.6× ours; a P106-100 rig doing it
   matches the 1.56× scoreboard ratio. Most likely the poster's cards are P106-100. Claim to check (asking the poster
   for `nvidia-smi -L` would settle it).
@@ -415,7 +415,7 @@ PRs in our notes). Speed reports are from modern GPUs and Macs. The community's 
 | Q5 | 1080 Ti + 2 × P102-100 | UD-Q4_K_S / NVFP4 | Vulkan b10107 | 50.48 / 43.50 | [Reddit 1v6llio](https://www.reddit.com/r/LocalLLaMA/comments/1v6llio/) | 2026-07-25 | M-same |
 | Q6 | 3 × GTX 1070 | MXFP4_MOE / UD-Q4_K_S / UD-IQ4_NL | Vulkan b9204, 120 W | 40.24 / 45.30 / 41.70 | [Reddit 1u7tarc](https://www.reddit.com/r/LocalLLaMA/comments/1u7tarc/) | 2026-06-16 | M-same |
 | Q7 | 9 × P106 (variant?) | Ollama default | Ollama | "30+" | X1 | 2026-10-06 | A |
-| Q8 | 4 × P106-090 (our rig) | bartowski Q4_0 | llama.cpp | 18.46 | [baseline](../../../llms-on-crypto-mining-rigs/docs/benchmarks/2026-10-22-qwen-baselines.md) | 2026-10-22 | M |
+| Q8 | 4 × P106-090 (our rig) | bartowski Q4_0 | llama.cpp | 18.46 | [baseline](../../benchmarks/2026-10-22-qwen-baselines.md) | 2026-10-22 | M |
 | Q9 | 4 × K40c (Kepler) | Q4_K_XL | MTP, BF16 cuBLAS fix (PR closed unmerged) | 17.5 none → 25 with 2 drafts | [Reddit 1uwjd45](https://www.reddit.com/r/LocalLLaMA/comments/1uwjd45/), [PR #25680](https://github.com/ggml-org/llama.cpp/pull/25680) | 2026-07-14 | A |
 | Q10 | 1 × P102-100 | — | — | ~40 | [Reddit 1uvcjd0 comment](https://www.reddit.com/r/LocalLLaMA/comments/1uvcjd0/comment/oxa1twa/) | 2026-07-13 | A |
 | Q11 | RTX 3090 (reference for MTP depth) | ByteShape IQ4_XS | MTP sweep | 96.1 none; n=2 p_min 0: 123.0; n=4/6 at p_min 0.75: 101.7/103.9 | R2 | 2026-07-16 | M-same |

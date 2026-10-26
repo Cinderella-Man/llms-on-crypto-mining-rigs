@@ -80,7 +80,7 @@ than the classic ShareGPT + UltraChat recipe.
 | **Total** | | | **45,500** | **15,000** | |
 
 The project trains only on prompts whose answers may be published; the sources it uses, and the ones it leaves out
-and why, are in [release/flint-v2/reproduce/drafter.md](../../release/flint-v2/reproduce/drafter.md#1-prompts).
+and why, are in [release/flint-v2/reproduce/drafter.md](../../release/flint-v2.1/reproduce/drafter.md#1-prompts).
 
 [Salesforce/xlam-function-calling-60k](https://huggingface.co/datasets/Salesforce/xlam-function-calling-60k)
 (CC-BY-4.0) is a larger tool-call set but gated behind a form. Own agent transcripts, if available, are the most
