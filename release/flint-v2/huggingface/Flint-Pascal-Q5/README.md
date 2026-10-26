@@ -43,8 +43,8 @@ tokens per second, 25 minutes for the twelve tasks. This file on stock llama.cpp
 
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
-2. **Download** the Pascal engine (two archives from the
-   [release page](https://github.com/Cinderella-Man/llama.cpp/releases), RIG-TBD: tag), unpack both into one folder,
+2. **Download** the Pascal engine, Miner Llama v2 (the two archives of its
+   [release](https://github.com/Cinderella-Man/llama.cpp/releases)), unpack both into one folder,
    and download `flint-pascal-Q5.gguf` from this page.
 3. **Start it**, here on nine cards with the full context:
 
