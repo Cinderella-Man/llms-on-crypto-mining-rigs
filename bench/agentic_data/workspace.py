@@ -214,7 +214,8 @@ def cmd_elixir(a):
             continue
         sub = rel.split("/lib/", 2)[-1] if rel.startswith(lib) else rel.split("/lib/", 1)[1]
         m = sub[:-3].replace("/", "_")
-        ws = os.path.join(a.out, m)
+        name = f"ex-{m}"   # the workspace's folder: Python's standard library has modules of the same names (string)
+        ws = os.path.join(a.out, name)
         shutil.rmtree(ws, ignore_errors=True)
         mod_rel = f"lib/{sub}"
         os.makedirs(os.path.dirname(os.path.join(ws, mod_rel)), exist_ok=True)
@@ -224,7 +225,7 @@ def cmd_elixir(a):
         orig = open(src_path, encoding="utf-8").read()
         with open(os.path.join(ws, mod_rel), "w", encoding="utf-8") as f:
             f.write(orig)
-        sb = agx.Sandbox(f"agx-ws-{m[:40]}", ws, a.image, "agx-ws",
+        sb = agx.Sandbox(f"agx-ws-{name[:40]}", ws, a.image, "agx-ws",
                          config={"test_command": ["mix", "test"], "timeout": 300, "max_output": 200000}).start()
         try:
             info = sb.ex_tool("modules", mod_rel)
@@ -281,14 +282,14 @@ def cmd_elixir(a):
                "changes": f"{mod_rel} is Elixir 1.18.4's {rel.removeprefix('lib/')} with its modules renamed into "
                           f"the {agx.EX_NAMESPACE} namespace and a first comment line saying so; the project files "
                           f"are Elixir's mix new output{', its test file reduced to the doctest line' if dt_path else ''}",
-               "test_command": ["mix", "test"], "module": m, "module_file": mod_rel, "modules": mods,
+               "test_command": ["mix", "test"], "name": name, "module": m, "module_file": mod_rel, "modules": mods,
                "doctest_file": dt_path, "doctests": run, "notice_sha256": notice_sha, "licence_sha256": lic_sha,
                "mixnew": mixnew, "change_note": {"id": note["id"], "texts_sha256": agx.sha256_file(a.texts),
                                                  "source_file": f"Elixir 1.18.4 {rel.removeprefix('lib/')}"},
                "origin_files": origin_files}
-        write_manifest(a.out, m, man)
+        write_manifest(a.out, name, man)
         kept += 1
-        print(f"{m}: {row['bytes']} bytes, {n_ref} code references and {n_doc} doctest lines renamed, {run} doctests pass")
+        print(f"{name}: {row['bytes']} bytes, {n_ref} code references and {n_doc} doctest lines renamed, {run} doctests pass")
     print(f"{kept} of {len(rels)} Elixir workspaces kept")
 
 

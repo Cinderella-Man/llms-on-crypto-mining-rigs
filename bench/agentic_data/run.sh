@@ -27,6 +27,9 @@
 #   EX_MODULES    Elixir library modules for workspace.py elixir (option_parser,version,... or all)
 #   EX_NOTICE     Elixir's NOTICE file of the v1.18.4 tag (pinned in codebases.json)
 #   STOP_FILE     create it to start no new sessions (default WORK/STOP)
+#   WS_FROM       another run's WORK whose workspaces this run uses as they are (linked, read-only; its ws.gate.json is
+#                 the parent), in place of the workspaces and ex-workspaces steps: writers sharing one task list through
+#                 CLAIMS build the workspaces once (two builds at a time also collide on the sandboxes' names)
 # Every container carries the label pascal-quants=1 and --cpu-shares 256; the script's own Python runs at nice 19.
 # Quality and token counts only: times on a shared machine are not speed results.
 set -euo pipefail
@@ -53,6 +56,12 @@ PY="nice -n 19 python3 -I"
 mkdir -p "$WORK"
 log() { echo "$(date +%H:%M:%S) $*" | tee -a "$WORK/run.log"; }
 has() { [[ " $STEPS " == *" $1 "* ]]; }
+if [ -n "${WS_FROM:-}" ]; then
+  if [ -e "$WORK/ws" ] && [ ! -L "$WORK/ws" ]; then log "WS_FROM: $WORK/ws is a folder of this run's own"; exit 1; fi
+  ln -sfn "$WS_FROM/ws" "$WORK/ws"; ln -sfn "$WS_FROM/scans" "$WORK/scans"
+  cp "$WS_FROM/ws.gate.json" "$WORK/ws.gate.json"
+  log "workspaces from $WS_FROM"
+fi
 held=(--q51 "$Q51" --agent-tasks "$AGT")
 common=(--server "$URL" --api "$API" --template "$HF_DIR/chat_template.jinja" --writer "$WRITER" --model-file "${MODEL:-}")
 

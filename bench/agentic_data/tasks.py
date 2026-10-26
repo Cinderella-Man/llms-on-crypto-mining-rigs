@@ -183,6 +183,7 @@ def cmd_write_tests(a):
             continue
         man = json.load(open(os.path.join(a.workspaces, f)))
         m = man["module"]
+        w = man.get("name", m)   # the workspace's folder and the tasks' ids (Elixir's: ex-<module>)
         lang = man.get("lang", "python")
         for k in range(a.attempts):   # several attempts per module: other templates and seeds, other test files
             tmpl, tref = pick_template(texts, "write_tests", rng, lang)
@@ -194,9 +195,9 @@ def cmd_write_tests(a):
                 verify["unchanged"] += [p["path"] for p in man["files"] if p["role"] == "scaffold"]
                 verify["min_tests"] = man["doctests"] + 5
             rows.append({
-                "task_id": f"s1-{m}-wt" + (f"-a{k}" if a.attempts > 1 else ""), "type": "write_tests",
+                "task_id": f"s1-{w}-wt" + (f"-a{k}" if a.attempts > 1 else ""), "type": "write_tests",
                 "codebase_id": man["codebase_id"], "source_id": man["source_id"], "licence": man["licence"],
-                "workspace_id": man["workspace_id"], "workspace_dir": os.path.abspath(os.path.join(a.workspaces, m)),
+                "workspace_id": man["workspace_id"], "workspace_dir": os.path.abspath(os.path.join(a.workspaces, w)),
                 "workspace_manifest": {"path": os.path.abspath(os.path.join(a.workspaces, f)), "sha256": man["sha256"]},
                 "parent_session": None, "template": tref, "placeholders": ph, "statement": fill(tmpl, ph),
                 "test_command": man["test_command"], "change": None, "verify": verify,
@@ -228,17 +229,18 @@ def cmd_from_sessions(a):
             continue
         man = json.load(open(t["workspace_manifest"]["path"]))
         m, mod_rel, test_rel = man["module"], man["module_file"], t["placeholders"]["test_file"]
+        w = man.get("name", m)
         lang, image = t.get("lang", "python"), t.get("image") or a.image
         ex = lang == "elixir"
         test_src = s["final_files"][test_rel]["content"]
-        tag = s["session_id"].removeprefix(f"s1-{m}-wt").lstrip("-") or "a0"   # the stage-1 attempt
-        base = os.path.join(a.out, f"base-{m}-{tag}")
+        tag = s["session_id"].removeprefix(f"s1-{w}-wt").lstrip("-") or "a0"   # the stage-1 attempt
+        base = os.path.join(a.out, f"base-{w}-{tag}")
         shutil.rmtree(base, ignore_errors=True)
         shutil.copytree(t["workspace_dir"], base)
         with open(os.path.join(base, test_rel), "w") as fh:
             fh.write(test_src)
         orig = open(os.path.join(base, mod_rel)).read()
-        sb = agx.Sandbox(f"agx-tasks-{m}-{tag}", base, image, "agx-tasks",
+        sb = agx.Sandbox(f"agx-tasks-{w}-{tag}", base, image, "agx-tasks",
                          config={"test_command": t["test_command"], "timeout": 120, "max_output": 200000}).start()
         docs_sha = None
         try:
@@ -279,7 +281,7 @@ def cmd_from_sessions(a):
             sb.stop()
         for typ in ("fix_bug", "implement"):
             for i, (_, name, line, kind, src, fails, code) in enumerate(kept[typ]):
-                tid = f"{a.prefix}-{m}-{tag}-{typ}-{i}"
+                tid = f"{a.prefix}-{w}-{tag}-{typ}-{i}"
                 ws = os.path.join(a.out, tid, "work")
                 shutil.rmtree(os.path.dirname(ws), ignore_errors=True)
                 shutil.copytree(base, ws)
