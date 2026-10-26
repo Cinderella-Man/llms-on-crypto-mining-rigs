@@ -1,153 +1,119 @@
-# LLMs on crypto-mining rigs
+# Miner Llama: LLMs on crypto-mining rigs
 
 <p align="center"><img src="docs/images/miner-llama.jpg" alt="Miner Llama: a llama in a miner's helmet over two crossed pickaxes" width="280"></p>
 
-**Thousands of retired GPU mining rigs built from NVIDIA Pascal cards are collecting dust.** They hold a lot of fast GPU
-memory: a Manli rig with nine P106-090 cards has 54 GB. But every card hangs on a single PCIe 1.0 lane, has only a few
-compute units, and the host is a 2-core Celeron with 4 GB of RAM. Stock software runs today's language models slowly on
-such hardware, so the rigs sit idle. This project makes them useful: a llama.cpp fork tuned for Pascal cards (the
-**Pascal engine**), tested files and command lines for each model, and every measurement behind the numbers.
+**Retired GPU mining rigs can run today's language models.** A Manli rig with nine NVIDIA P106-090 cards has 54 GB of
+GPU memory, but every card sits on a single PCIe 1.0 lane and the host is a 2-core Celeron with 4 GB of RAM, so stock
+software runs models slowly on it. Miner Llama makes such rigs useful: a llama.cpp fork tuned for Pascal cards (the
+"Pascal engine" in the docs), tested model files and command lines, and every measurement behind the numbers.
 
-## v2: the Flint release
+## What it does
 
-[Flint](models/flint/README.md) is a 39.8 B-parameter mixture-of-experts model that reasons before it answers and reads
-up to 262,144 tokens of context. **On the nine cards of the [reference rig](#the-reference-rig) it runs in
-near-lossless 8-bit with its full context, about three times as fast as stock llama.cpp for a coding agent.**
-Unsloth's Q8_0 (42.3 GB) picks the original model's next token 93.3 % of the time, against 87.7 % for the common 4-bit
-file. The measure is a coding agent at work: the [agent check](bench/agent_check/README.md) gives the pi agent twelve
-small bug-fix tasks (Python and JavaScript, real test runs, the context growing every turn) on nine P106-090 cards:
+[Flint](models/flint/README.md), a 39.8B mixture-of-experts model, runs on the nine cards in near-lossless 8-bit
+(Unsloth's Q8_0, 42.3 GB) with its full 262,144-token context. A coding agent fixing twelve small bugs, with tool calls
+and real test runs ([the agent check](bench/agent_check/README.md)):
 
-| A coding agent, nine P106-090 cards | Generation, tokens/s | Minutes per task (median) | Tasks done in 25 min |
+| Engine, Unsloth Q8_0 on nine P106-090 | Generation | Tasks passed | First token per turn |
 |---|---|---|---|
-| **Unsloth Q8_0** (42.3 GB, near-lossless), v2, 262,144 tokens | **44.6–45.9** | **1.1–1.4** | 12 of 12 |
-| [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, ours), v2, 262,144 tokens | **53.8** | 1.2 | 12 of 12, in 17 min |
-| Unsloth UD-Q4_K_XL (25.1 GB, the common 4-bit file), v2, 262,144 tokens | 50.7 | 1.1 | 11, 10 passed |
-| Unsloth Q8_0, stock llama.cpp, 65,536 tokens (35 min) | 14.4 | 2.9 | 9, 8 passed |
+| Stock llama.cpp, 65,536-token context | 14.4 tok/s | 8 of 12 | 3.7 s |
+| Miner Llama v1, 65,536-token context | 25.7 tok/s | 11 of 12 | 3.9 s |
+| **Miner Llama v2**, 262,144-token context | **44.6–45.9 tok/s** | **12 of 12** | **2.6 s** |
 
-Stock llama.cpp runs at 65,536 tokens because at 262,144 its attention mask, built on the host, does not fit the rig's
-4 GB of RAM. Every run, its command and the single-request numbers that explain them:
-[results.md](release/flint-v2/results.md). The 4-bit files fit six cards.
-
-<!-- begin:drafter -->
-**With the staircase drafter**, served chat reaches **RIG-TBD tok/s** on nine cards, against RIG-TBD without guessing.
-The drafter is a small trained head (a 0.27 GB side file shipped with the release, one for nine cards and one for other
-counts) that guesses Flint's next token from the hidden states of the tokens already in flight; the cards check every
-guess ([how it works](models/flint/README.md#the-staircase-drafter)).
-<!-- end:drafter -->
-**Coming later (v2.1):** a trained guesser for pipelined speculation, the staircase drafter, and a store of Flint's earlier answers ([how it works](docs/drafter.md)). <!-- only:nodrafter -->
-
-The answers don't change: the engine's kernels change only the order of additions, and pipelined speculation gives
-exactly the tokens of plain decoding. To run it:
-1. **The engine:** the two archives of the fork's release RIG-TBD (tag and link), unpacked into one folder; the rig
-   needs NVIDIA's driver 580 and no CUDA toolkit ([Run it](#run-it)).
-2. **The model:** Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB) on nine cards; on six cards
-   our own [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16) or Unsloth's UD-Q4_K_XL
-   (25.1 GB).
-3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
-4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
-
-Everything about this release in one folder, including how to rebuild the engine and the model file from scratch:
-[release/flint-v2](release/flint-v2/README.md).
-
-## Models
-
-Generation speed in tokens per second (tok/s) for one conversation, measured on the [reference rig](#the-reference-rig):
-
-| Model | What it is | Speed | Page |
-|---|---|---|---|
-| [![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards, near-lossless Q8_0 at the full context: a coding agent generates **44.6–45.9 tok/s** on v2, against 14.4 on stock llama.cpp; Flint-Pascal-Q5 53.8 | [models/flint](models/flint/) |
-| [![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-coming%20soon-718096)](models/qwen3.6-35b-a3b/) | 36 B hybrid mixture of experts, 3 B per token, 262,144-token context | Four cards: 29.0 tok/s with the v1 engine, against 18.5 on stock llama.cpp | [models/qwen3.6-35b-a3b](models/qwen3.6-35b-a3b/) |
-| [![Ornith-1.5-35B](https://img.shields.io/badge/Ornith--1.5--35B-coming%20soon-718096)](models/ornith-1.5-35b/) | 35 B hybrid mixture of experts with Qwen3.6's shapes, 3 B per token, 262,144-token context | Not run yet; its 21.7 GB Q4_K_M fits four or five cards (est. 19–23 tok/s today, 30–36 with the planned K-quant kernels) | [models/ornith-1.5-35b](models/ornith-1.5-35b/) |
-| [![Ornith-1.5-122B](https://img.shields.io/badge/Ornith--1.5--122B-coming%20soon-718096)](models/ornith-1.5-122b/) | 122 B hybrid mixture of experts, 10 B per token, for coding agents | Not run yet; fits nine cards only at 2–3 bits per weight (est. 8–16 tok/s) | [models/ornith-1.5-122b](models/ornith-1.5-122b/) |
-
-Each model page gives the file to download, the command line, measured speed and quality, and what is not measured
-yet. Model names only identify the models; this project is not affiliated with their makers.
-
-## The Pascal engine
-
-The engine is a [fork of llama.cpp](https://github.com/Cinderella-Man/llama.cpp) for GPUs of compute capability 6.1:
-the P106 and P104 mining cards, the GTX 10 series and the Tesla P4/P40. Upstream llama.cpp switches CUDA graphs off for
-every GPU older than Volta, and its matrix-vector kernels leave a 5-SM card waiting on instruction issue rather than on
-memory. The fork changes that, mostly without regard to which model runs:
-
-| Change | Which models gain | Measured on Flint |
-|---|---|---|
-| CUDA graphs on Pascal: each card's few hundred GPU operations per token replayed as one graph ([upstream PR #27721](https://github.com/ggml-org/llama.cpp/pull/27721)) | every model | 17.6 → 19.5 tok/s |
-| A launch shape for one-token products: 2 warps per block on wide rows, 4 on narrow ones | every model | → 24.5 tok/s |
-| Pascal matrix-vector kernels for Q4_0, Q4_1, Q5_0, Q8_0, Q5_K and IQ4_XS: lane groups sized to each row, several rows per input load, wide coalesced loads ([design](docs/research/notes/pascal_mmvq_integration.md)) | every file made of these types (Qwen3.6 Q4_0: +27 %) | → 34.1 tok/s (v1) |
-| 32-bit activation sums in those kernels, so llama.cpp's MoE safety rescale can go | the models llama.cpp rescales (Flint among them) | +9.6 % |
-| Shared-expert projections fused with their activation | MoE models with a shared expert | +0.7 % |
-| MoE tiles sized by tokens per expert (upstream PR #31047) | MoE models, prefill | prefill +22–29 % |
-| One persistent kernel per MoE layer at one token, instead of 13 launches | Flint's layer shapes; other models fall back to the normal path | +5.6–8.8 % |
-| A Pascal decode-attention kernel for one token | attention of Flint's shape (head size 128, 8 query heads per KV head); other shapes take the normal path | in the build, off by default: it slowed generation in the release test |
-| Pascal matrix-vector kernels for Q4_K and Q6_K too | the common Q4_K_M downloads of other models | Flint's UD-Q4_K_XL: est. ≤ 1 % |
-| Pipelined speculation in llama-server (`--pipe-depth`): guessed tokens enter the idle cards of a layer split, checked against the real token | models with an attention-only cache (hybrid models next) | served chat 1.04–1.18×, edits up to 1.56×, rewrites up to 2.79× |
-| A trained drafter as the guesser of pipelined speculation (`--pipe-guess staircase`): a small head that reads the hidden states of the tokens in flight | Flint (a drafter is trained per model) | RIG-TBD | <!-- only:drafter -->
-| Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | tool requests +13–15 % (they decoded 12–16 % slower than chat before) |
-| The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 %; off by default, because built for every micro-batch it slowed long prompts 3.6× |
-| A Pascal prefill-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | prefill +10 % at 8,192 tokens, +3 % at 32,768 | <!-- only:q163-q111 -->
-| Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | no gain in the agent test; off unless set | <!-- only:q163-q111 -->
-
-The first three rows were measured on six cards with UD-Q4_K_XL, step by step; the rest are each change's own gain
-([Flint page](models/flint/#how-it-got-here)). Of v2's decode gain on Flint, about 87 % comes from the Pascal-only changes
-([fork scope](docs/research/notes/fork_scope.md)).
-
-- **The output stays the same.** The kernels change only the order of additions: outputs match stock llama.cpp within
-  rounding, and llama.cpp's operator tests pass. The v2 additions leave the output unchanged, and pipelined speculation
-  gives exactly the tokens of plain decoding.
-- **Other Pascal cards** (P106-100, P104-100, GTX 1060–1080 Ti, P40) run the same code. They have more compute units
-  per byte of memory bandwidth than the P106-090, so the kernels likely gain less there; none was measured. The P100
-  (compute capability 6.0) gets none of the Pascal pieces.
-- **A profiler that works on mining cards.** NVIDIA's profilers refuse the P106 ("does not support NVIDIA Crypto Mining
-  Processors"); `GGML_CUDA_PROFILE=<file>` times every GPU operation with CUDA events.
-
-## Hardware tuning
-
-What the cards and the host can give on top of the software. These settings apply to stock llama.cpp as much as to the
-fork. Every engine number in this release is measured at the cards' stock clocks, without them: the agent test at the
-top and [results.md](release/flint-v2/results.md). The memory clock offset is set at the rig's own console, so its
-measurement comes with a later release, as each engine at stock clocks against itself tuned
-([bench/release_matrix](bench/release_matrix/README.md), [bench/mem_offset](bench/mem_offset/)).
-
-The settings, one by one:
-
-| Setting | What it does on this rig | Status |
-|---|---|---|
-| **Keep the cards busy** | In a layer split each card idles most of every token and drops to its 1,354 MHz base clock: the same chat prompt decodes at 34.0 tok/s on base-clocked cards against 38.5 at boost. Pipelined speculation keeps tokens in every card; with every guess wrong, nine cards still run 1.24× faster | measured ([idle cards](docs/research/notes/idle_cards.md)) |
-| Memory clock offset through NVML | est. +3–5 % decode: only about half of a token's time streams weights. Applied at run time, cleared by offset 0 or a reboot; [the test kit](bench/mem_offset/) accepts an offset only if the model's output stays bit-identical, since the cards have no ECC | test kit ready, not measured yet |
-| Core clock offset | est. +0.5–2 % decode, +3–5 % prefill; same protocol | planned |
-| PowerMizer "Prefer Maximum Performance" | nothing: 29.75 tok/s from idle with it against 29.79 without, 33.25 against 33.30 served | measured, not needed |
-| Power limit | Busy cards draw 35–39 W of their 75 W limit in decode (317–329 W for nine, ~8.9 J per token, hottest card 57 °C); the limit is the cards' maximum and almost never binds | measured |
-| PCIe 2.0 | not possible: the cards themselves advertise only 2.5 GT/s | checked |
-| Host memory (4 GB) | At 262,144 tokens of context llama.cpp's default micro-batch pins ~1 GiB of host memory and the out-of-memory killer takes the server; `-ub 128` and `--cache-ram 0` avoid it with generation speed unchanged (prefill runs slower than at `-ub 512`) | measured |
-| A quiet host | No apt, snap or copy jobs during timings, and the NVIDIA packages held: a background driver upgrade breaks CUDA until the next reboot | recommended |
-
-Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and tuning](docs/research/notes/power_and_tuning.md).
+More speed or fewer cards: [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, fits
+six cards) generates 53.8 tok/s in the same test, a little further from the original model than Q8_0. Every number
+with its command: [results.md](release/flint-v2/results.md).
 
 ## Run it
 
-1. **Driver and system:** Ubuntu 24.04 with NVIDIA driver 580, the last driver branch for Pascal
-   ([setup](docs/setup.md)).
-2. **Get the engine.** The prebuilt release needs only the driver: download the two archives of the fork's release
-   RIG-TBD (tag and link once published), check them with `sha256sum -c SHA256SUMS`, and unpack both into one folder;
-   then run [scripts/p106_check.sh](scripts/p106_check.sh), which checks the driver, the cards, host memory, the model's
-   read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
-   (slow on two cores) or on any Linux PC with Docker using
-   [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh).
-   The v2 engine is commit `37e717ff6` of the fork, branch `pascal-p106-v2-rc4` (OWNER-TBD: the release tag). <!-- only:rc4 -->
-   The v2 engine is commit `7e6ec762f` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc3 -->
-   The v2 engine is commit `594d20e08` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc1 -->
-   v1, as released on 2026-10-23, is `pascal-p106`.
+You need the rig, a drive it reads fast for the model file (a USB 3 stick works, [storing models](docs/setup.md#storing-models)),
+and a PC to connect from.
+
+1. **Ubuntu 24.04 and NVIDIA's driver 580**, the last driver for Pascal cards. No CUDA toolkit is needed.
 
    ```bash
-   git clone --branch RIG-TBD https://github.com/Cinderella-Man/llama.cpp
+   sudo apt install nvidia-driver-580
+   ```
+
+   Reboot; `nvidia-smi` should list your cards ([setup guide](docs/setup.md)).
+
+2. **Miner Llama v2:** from the [fork's releases](https://github.com/Cinderella-Man/llama.cpp/releases) (OWNER-TBD: the
+   release tag), download the two archives and `SHA256SUMS` into one folder, then:
+
+   ```bash
+   sha256sum -c SHA256SUMS
    ```
 
    ```bash
-   cmake -S llama.cpp -B llama.cpp/build -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=61 && cmake --build llama.cpp/build -j 2 --target llama-server
+   tar xzf llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz && tar xzf cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz
    ```
 
-3. **Pick a model page** for the file and the command line: [Flint](models/flint/#command-lines).
+3. **Flint** (42.3 GB) onto the model drive:
+
+   ```bash
+   wget -c -P /mnt/models https://huggingface.co/unsloth/flint-GGUF/resolve/main/flint-Q8_0.gguf
+   ```
+
+4. **Check the rig** (driver, cards, host memory, the model's read speed):
+
+   ```bash
+   git clone https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs
+   ```
+
+   ```bash
+   BIN=$PWD/llama-p106-v2.0 MODEL=/mnt/models/flint-Q8_0.gguf llms-on-crypto-mining-rigs/scripts/p106_check.sh
+   ```
+
+5. **Start the server:**
+
+   ```bash
+   llama-p106-v2.0/llama-server -m /mnt/models/flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
+   ```
+
+6. **Connect from your PC** through an SSH tunnel, then open `http://127.0.0.1:8080`, or point any OpenAI-compatible
+   client or coding agent at it:
+
+   ```bash
+   ssh -N -L 8080:127.0.0.1:8080 <your rig>
+   ```
+
+What every flag does, six cards, and coding agents: [the Flint page](models/flint/README.md#command-lines). To build
+the engine yourself: [reproduce/engine.md](release/flint-v2/reproduce/engine.md). Coming in v2.1: a trained guesser
+that makes it faster still ([how it works](docs/drafter.md)).
+
+## Models
+
+| Model | What it is | On the reference rig |
+|---|---|---|
+| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v2 release: Q8_0 on nine cards, 44.6–45.9 tok/s for a coding agent |
+| [Qwen3.6-35B-A3B](models/qwen3.6-35b-a3b/) | 36B hybrid mixture of experts, 3B active per token | coming: four cards, 29.0 tok/s with v1 (stock 18.5), one request |
+| [Ornith-1.5-35B](models/ornith-1.5-35b/) | 35B hybrid mixture of experts with Qwen3.6's shapes | coming: not run yet |
+| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | coming: not run yet, fits nine cards only at 2–3 bits |
+
+Each model page gives the file, the command line, speed, quality and what is not measured yet. Model names only
+identify the models; this project is not affiliated with their makers.
+
+## What Miner Llama changes
+
+A [fork of llama.cpp](https://github.com/Cinderella-Man/llama.cpp) for GPUs of compute capability 6.1: the P106 and
+P104 mining cards, the GTX 10 series and the Tesla P4/P40.
+- **v1:** CUDA graphs on Pascal (upstream switches them off before Volta), a launch shape and matrix-vector kernels
+  made for 5-SM cards: 1.8 times stock llama.cpp's speed in the agent test.
+- **v2:** 32-bit sums in those kernels, one persistent kernel per mixture-of-experts layer, the shared expert fused
+  with its activation, tool requests sampled on the GPU, faster prefill, and pipelined speculation: the idle cards of a
+  layer split run guessed tokens, and only those the real pass agrees with are kept (`--pipe-depth 4`).
+- **The answers don't change:** the kernels change only the order of additions, and speculation gives exactly the
+  tokens of plain decoding.
+
+Each change with its measured gain: [the Flint page](models/flint/README.md#how-it-got-here) and
+[the fork's scope](docs/research/notes/fork_scope.md). Other Pascal cards run the same code but were not measured. NVIDIA's
+profilers refuse mining cards; `GGML_CUDA_PROFILE=<file>` times every GPU operation instead.
+
+## Hardware tuning
+
+The numbers above are at the cards' stock clocks. On this rig, keep `-ub 128` and `--cache-ram 0` at the full context
+(the 4 GB host runs out of memory otherwise), keep the host quiet while it works, and hold the NVIDIA packages: a
+background driver upgrade breaks CUDA until the next reboot. Clock offsets are measured in a later release.
+Details: [hardware tuning](docs/research/notes/hardware_tuning.md).
 
 ## The reference rig
 
@@ -159,19 +125,17 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
 | Host | Intel Celeron 3865U (2 cores, 1.8 GHz, no AVX), 4 GB RAM, 64 GB SSD |
 | Software | Ubuntu 24.04, NVIDIA driver 580 and CUDA 12.9 (the last versions that support Pascal) |
 
-It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measured hardware details: [docs/mining_rig.md](docs/mining_rig.md).
+It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measured details: [docs/mining_rig.md](docs/mining_rig.md).
 
 ## More
 
-- [docs/overview.md](docs/overview.md): why a mining rig suits LLMs at all, the first measurements with several models,
-  and the terms used here.
-- [docs/benchmarks/](docs/benchmarks/): one page per benchmark, with setup, commands and full results.
-- [quants/](quants/README.md): making and measuring model files for these cards; every experiment and decision is in the
-  [registry](quants/experiments.md).
-- [docs/research/notes/](docs/research/notes/README.md): research notes behind each change, from kernels to release
-  settings.
-- [bench/](bench/) and [scripts/](scripts/): the tools every measurement here was taken with;
-  [patches/](patches/README.md): patches for stock llama.cpp; [GLOSSARY.md](GLOSSARY.md): terms.
+- [release/flint-v2](release/flint-v2/README.md): the v2 release in one folder, with how to rebuild the engine and the
+  model file from scratch.
+- [docs/overview.md](docs/overview.md): why a mining rig suits LLMs at all, and the terms used here.
+- [docs/benchmarks/](docs/benchmarks/), [bench/](bench/) and [scripts/](scripts/): every benchmark and the tools
+  behind it.
+- [quants/](quants/README.md): making and measuring model files for these cards ([registry](quants/experiments.md)).
+- [docs/research/notes/](docs/research/notes/README.md): the research behind each change; [GLOSSARY.md](GLOSSARY.md).
 
 ## License
 
