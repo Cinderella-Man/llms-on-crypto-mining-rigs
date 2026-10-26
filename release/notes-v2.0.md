@@ -1,8 +1,9 @@
-# Pascal engine {{VERSION}}: llama.cpp for P106 mining rigs and other Pascal GPUs
+# Miner Llama {{VERSION}}: llama.cpp for P106 mining rigs and other Pascal GPUs
 
 A llama.cpp build for NVIDIA GPUs of compute capability 6.1: the P106 and P104 mining cards, the GTX 10 series and the
 Tesla P4/P40. Built from commit `{{COMMIT}}` of this fork, for Linux on x86-64 without AVX, so it runs on mining rigs'
-Celeron hosts. This release is tuned and measured on Flint; measurements, settings and the scripts behind every number:
+Celeron hosts. This release is tuned and measured on Flint, on nine P106-090 cards; other compute-6.1 cards run the same
+code but were not measured. Measurements, settings and the scripts behind every number:
 [llms-on-crypto-mining-rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs).
 
 ## Speed
@@ -10,9 +11,9 @@ Celeron hosts. This release is tuned and measured on Flint; measurements, settin
 **Flint in near-lossless 8-bit on nine mining cards at the full 262,144-token context, about three times as fast as
 stock llama.cpp for a coding agent.** Unsloth's Q8_0 (42.3 GB) picks the original model's next token 93.3 % of the
 time (KL divergence 0.052 against the 16-bit weights), against 87.7 % (0.120) for the common 4-bit file UD-Q4_K_XL; it
-runs within about 15 % of the 4-bit files' speed. The fastest file on these cards is the project's own
-[Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB), closer to the original than
-UD-Q4_K_XL.
+runs 9–17 % slower than the 4-bit files. The fastest file in this test is the project's own
+[Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, 88.8 %): closer to the original
+than UD-Q4_K_XL, a little further than Unsloth's UD-Q5_K_XL (90.7 %), which ran at Q8_0's speed here (44.2 tok/s).
 
 A coding agent ([pi](https://github.com/earendil-works/pi)) fixing twelve small bugs, Python and JavaScript, real test
 runs, the context growing every turn, on nine P106-090 cards (one PCIe 1.0 lane each, a 2-core Celeron with 4 GB of
@@ -26,8 +27,9 @@ RAM). Generation in tokens per second over every request, and minutes per task (
 | Served chat, the store and the staircase drafter (`--pipe-guess staircase`) | — | **RIG-TBD** | <!-- only:drafter -->
 
 Stock llama.cpp runs at 65,536 tokens because at 262,144 its attention mask, built on the host, does not fit 4 GB of
-RAM. Pipelined speculation alone is worth +52 % in this test (29.3 → 44.6 tok/s on Q8_0). The output does not change:
-the kernels change only the order of additions, and pipelined speculation gives exactly the tokens of plain decoding.
+RAM. Pipelined speculation alone is worth +52 % in this test (29.3 → 44.6 tok/s on Q8_0). Results match stock
+llama.cpp within rounding (the kernels change only the order of additions), and pipelined speculation gives exactly the
+tokens of plain decoding.
 
 ## What is new since v1
 
@@ -81,7 +83,7 @@ output is the same as without it.
 
 ## Install
 
-Requirements: Ubuntu 24.04 or later, or Debian 13 (glibc 2.38 or newer), and NVIDIA's proprietary driver 580
+Requirements: Linux with glibc 2.38 or newer (tested on Ubuntu 24.04) and NVIDIA's proprietary driver 580
 (`nvidia-driver-580`, not `-open`). No CUDA toolkit: the second asset carries the CUDA runtime libraries.
 
 ```bash
