@@ -23,7 +23,7 @@ Pascal cards much of a token's time goes into unpacking compressed weights; the 
 format at close to the cards' memory speed, while the elaborate 4-bit formats need more instructions per byte. So the
 file that reads 2.70 GB per token (Q8_0) keeps up with, and on v1 beat, the one that reads 2.21 GB (UD-Q4_K_XL).
 
-The second story is the 4-bit work: K2h-r16, this project's own Flint file, reaches better quality than UD-Q4_K_XL in
+The second story is the 4-bit work: Flint-Pascal-Q5 (recipe K2h-r16), this project's own Flint file, reaches better quality than UD-Q4_K_XL in
 29.4 GB and fits six cards.
 
 ## What ships
@@ -32,7 +32,7 @@ The second story is the 4-bit work: K2h-r16, this project's own Flint file, reac
 |---|---|---|
 | **Engine** | llama.cpp fork for compute 6.1, commit `2d53179aa` (rc4): the Pascal kernels, the persistent MoE kernel, pipelined speculation with guesses from the request itself, the prefill-attention kernel and the prompt cache for agents; prebuilt for Ubuntu 24.04+ without AVX, with NVIDIA's CUDA runtime libraries as a second archive | the fork's GitHub release, OWNER-TBD (tag); notes: [release/notes-v2.0.md](../notes-v2.0.md) |
 | **Unsloth's Flint Q8_0** | the headline file: near-lossless, 42.3 GB, nine cards at the full context | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (linked, not redistributed) |
-| **K2h-r16** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-K2h-r16-GGUF](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF); card: [huggingface/flint-K2h-r16](huggingface/flint-K2h-r16/README.md) |
+| **Flint-Pascal-Q5** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-Pascal-Q5-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF); card: [huggingface/Flint-Pascal-Q5](huggingface/Flint-Pascal-Q5/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (linked, not redistributed) |
 
 **Coming later (v2.1):** a trained guesser for pipelined speculation (the staircase drafter) and a store of Flint's
@@ -72,8 +72,8 @@ the headline above, nine P106-090 cards unless a row says otherwise:
 |---|---|---|---|
 | Generation (`llama-bench`), Unsloth Q8_0 | RIG-TBD | RIG-TBD (35.9 with v1's kernels before its release) | **RIG-TBD** |
 | Generation, UD-Q4_K_XL, nine / six cards | 16.5 / 15.2 | 32.6 / 31.2 | **39.9 / 38.2** (v2-next and the persistent build; release build RIG-TBD) |
-| Generation, K2h-r16, nine / six cards | — | — | **41.8 / 40.7** (v2-next and the persistent build; release build RIG-TBD) |
-| Served at 262,144 tokens, K2h-r16 / UD-Q4_K_XL, plain / `--pipe-depth 3` | — | — | **RIG-TBD** |
+| Generation, Flint-Pascal-Q5, nine / six cards | — | — | **41.8 / 40.7** (v2-next and the persistent build; release build RIG-TBD) |
+| Served at 262,144 tokens, Flint-Pascal-Q5 / UD-Q4_K_XL, plain / `--pipe-depth 3` | — | — | **RIG-TBD** |
 | Prefill at 8,192 / 32,768 tokens, the prefill-attention kernel off / on | — | — | **RIG-TBD** |
 | Agent turns with the prompt cache off / on, time to first token | — | — | **RIG-TBD** |
 | Small bug-fix tasks for a coding agent, stock against v2 | RIG-TBD | — | **RIG-TBD** |
@@ -87,7 +87,7 @@ experiment, Q1–Q163, and the decision log).
 | What | How | Needs |
 |---|---|---|
 | The engine | [reproduce/engine.md](reproduce/engine.md): `scripts/build_llamacpp_docker.sh`, `scripts/package_release.sh` | Docker on any x86-64 Linux PC |
-| K2h-r16 | [reproduce/model.md](reproduce/model.md), `reproduce/build_k2h_r16.sh`: Flint BF16 → llama-quantize with the tensor-type map → GPTQ head → F16 routers → header; checked tensor by tensor against [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | CPU and ~150 GB of disk; GPUs only to compute the head yourself |
+| Flint-Pascal-Q5 | [reproduce/model.md](reproduce/model.md), `reproduce/build_k2h_r16.sh`: Flint BF16 → llama-quantize with the tensor-type map → GPTQ head → F16 routers → header; checked tensor by tensor against [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | CPU and ~150 GB of disk; GPUs only to compute the head yourself |
 
 Big data is not in git. The model files download from Hugging Face; Flint's original weights and Unsloth's importance
 matrix are pinned by revision and SHA-256 ([reproduce/inputs.sha256](reproduce/inputs.sha256)). The one small dataset
@@ -99,7 +99,7 @@ the checks need, the 38 held-out Flint transcripts (part of the output head's ca
 | File | Size | Produced by | SHA-256 |
 |---|---|---|---|
 | Engine archives (binaries, CUDA runtime, tests) | ~230 / 554 / 24 MB | `scripts/package_release.sh` on rc4 | RIG-TBD (rc4 not packaged yet; rc3 and rc1 packages exist) |
-| `flint-K2h-r16.gguf` (release header) | 29.4 GB | `reproduce/build_k2h_r16.sh` | RIG-TBD |
+| `flint-pascal-Q5.gguf` (release header) | 29.4 GB | `reproduce/build_k2h_r16.sh` | RIG-TBD |
 | `flint-q113-K2h-r16.gguf` (the same tensors, the build header) | 29.4 GB | the project's build | in [CHECKSUMS](CHECKSUMS) |
 | `imatrix_unsloth.gguf` (input) | 225 MB | Unsloth | in [CHECKSUMS](CHECKSUMS) |
 | `flint-UD-Q4_K_XL.gguf`, the copy every UD number here was measured with | 25.1 GB | Unsloth | in [CHECKSUMS](CHECKSUMS) |
@@ -120,7 +120,7 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
    machine names; `results.md` gives each number's public command instead.
 4. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) are
    regenerated with the commands in [reproduce/model.md](reproduce/model.md).
-5. **How the mix was found:** the per-group measurements that chose K2h-r16's tensor types (Q73, Q77) ran as private job
+5. **How the mix was found:** the per-group measurements that chose Flint-Pascal-Q5's tensor types (Q73, Q77) ran as private job
    files; their results are in the registry, and the type map, not the search, defines the file.
 
 ## Acceptance check: everything needed to rebuild every shipped file
@@ -133,9 +133,9 @@ way:
 | `llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz` (engine) | [reproduce/engine.md](reproduce/engine.md) | `scripts/build_llamacpp_docker.sh`, then `scripts/package_release.sh` | RIG-TBD (rc4 package) | **gap 1:** the release commit is not public yet. Packaging is deterministic: the same binaries give the same archive (two runs on rc3's build, identical bytes). A fresh compile is checked by `BUILDINFO.txt`'s commit and `test-backend-ops`, not by its bytes |
 | `cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz` (CUDA runtime) | [reproduce/engine.md](reproduce/engine.md) | `scripts/package_release.sh` (from NVIDIA's `cuda:12.9.2-devel-ubuntu24.04` image) | `65b46821ab94c5a46ec762f4fc8896de857ada120770d5a2499695ed3277a3bf` (the same for any engine commit packaged as v2.0) | complete: byte for byte from the same image (two runs identical) |
 | `llama-p106-v2.0-tests-ubuntu-cuda12.9-sm61.tar.gz` | [reproduce/engine.md](reproduce/engine.md) | as the engine | RIG-TBD | as the engine |
-| `flint-K2h-r16.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | RIG-TBD (release header); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 2:** the output head is byte-exact only when copied |
+| `flint-pascal-Q5.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | RIG-TBD (release header); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 2:** the output head is byte-exact only when copied |
 | Release notes | [notes-v2.0.md](../notes-v2.0.md) | `scripts/package_release.sh NOTES_VARIANT=rc4` | — | complete once the numbers are in |
-| The Hugging Face card of K2h-r16 | [huggingface/](huggingface/UPLOAD.md) | — | — | complete once the numbers are in |
+| The Hugging Face card of Flint-Pascal-Q5 | [huggingface/](huggingface/UPLOAD.md) | — | — | complete once the numbers are in |
 | The Q51 test set (inputs to the checks) | [reproduce/data/q51](reproduce/data/q51/README.md) | `bench/expert_overlap` | in git | complete |
 
 ## Not in this release

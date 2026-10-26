@@ -45,7 +45,7 @@ exactly the tokens of plain decoding. To run it:
 1. **The engine:** the two archives of the fork's release RIG-TBD (tag and link), unpacked into one folder; the rig
    needs NVIDIA's driver 580 and no CUDA toolkit ([Run it](#run-it)).
 2. **The model:** Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB) on nine cards; on six cards
-   our own [K2h-r16](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF) (29.4 GB) or Unsloth's UD-Q4_K_XL
+   our own [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16) or Unsloth's UD-Q4_K_XL
    (25.1 GB).
 3. **The command line** on the [Flint page](models/flint/README.md#command-lines), with what every flag does.
 4. **The drafter** (optional): the release's side file, `--pipe-guess staircase --pipe-draft <file>`. <!-- only:drafter -->
@@ -111,14 +111,14 @@ What the cards and the host can give on top of the software. These settings appl
 fork. Every engine number elsewhere in this repository is measured without them, and the tables below never mix the
 two: each engine at stock clocks, each engine tuned, then what the tuning adds to each.
 
-<!-- RIG-TBD: replace the three tables with tables.md from bench/release_matrix (run of 2026-10-25); drop the K2h-r16
+<!-- RIG-TBD: replace the three tables with tables.md from bench/release_matrix (run of 2026-10-25); drop the Flint-Pascal-Q5
 columns if the release ships Unsloth's file only; if the release ships before the tuned run, keep the stock-clock table
 and say the tuned tables follow -->
 
 
 **Stock clocks**, nine cards, Flint, tokens per second:
 
-| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | K2h-r16 generation | K2h-r16 served |
+| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | Flint-Pascal-Q5 generation | Flint-Pascal-Q5 served |
 |---|---|---|---|---|
 | Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
 | v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
@@ -127,7 +127,7 @@ and say the tuned tables follow -->
 
 **Tuned: memory +RIG-TBD MT/s on every card**, nine cards, Flint, tokens per second:
 
-| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | K2h-r16 generation | K2h-r16 served |
+| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | Flint-Pascal-Q5 generation | Flint-Pascal-Q5 served |
 |---|---|---|---|---|
 | Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
 | v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
@@ -136,7 +136,7 @@ and say the tuned tables follow -->
 
 **What the tuning adds**, each engine against itself at stock clocks:
 
-| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | K2h-r16 generation | K2h-r16 served |
+| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | Flint-Pascal-Q5 generation | Flint-Pascal-Q5 served |
 |---|---|---|---|---|
 | Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
 | v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |

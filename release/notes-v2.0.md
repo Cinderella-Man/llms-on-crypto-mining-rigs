@@ -97,7 +97,7 @@ context:
 ```
 
 `-ts 6,6,5,5,6,5,5,6,6` splits the layers by memory so that Q8_0 and the full context fit; for a 4-bit file
-(UD-Q4_K_XL, or this project's K2h-r16 on six cards) drop it.
+(UD-Q4_K_XL, or this project's Flint-Pascal-Q5 on six cards) drop it.
 
 With the drafter, add `--pipe-guess staircase --pipe-draft <the nine-card file>` to that line (RIG-TBD: its name). <!-- only:drafter -->
 The repository's Flint page explains every flag, the six-card and agent variants, and the speed and quality behind them.

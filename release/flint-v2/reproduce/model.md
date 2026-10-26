@@ -1,6 +1,6 @@
-# Rebuilding K2h-r16 from Flint's original weights
+# Rebuilding Flint-Pascal-Q5 (recipe K2h-r16) from Flint's original weights
 
-K2h-r16 is this project's Flint file: Q5_0 and Q8_0 tensors, the formats the Pascal kernels decode fastest, chosen
+Flint-Pascal-Q5 is this project's Flint file: Q5_0 and Q8_0 tensors, the formats the Pascal kernels decode fastest, chosen
 tensor group by tensor group to stay below Unsloth's UD-Q4_K_XL in error (KL divergence 0.105 against 0.120) while
 reading fewer bytes per token. This page rebuilds it from Flint's BF16 weights with public tools, and checks the result
 against the shipped file tensor by tensor.
@@ -79,7 +79,7 @@ llama-quantize quantizes each tensor on its own, so a composed file equals one r
 Round-to-nearest Q5_0 costs +0.023 KLD on Flint's head; GPTQ rounding of the same format costs +0.002
 ([quants/gptq_head](../../../quants/gptq_head/README.md), [Q56](../../../quants/experiments.md#registry)).
 
-- **Byte-exact:** take `output.weight` from the shipped file (`HEAD_FROM=flint-K2h-r16.gguf`).
+- **Byte-exact:** take `output.weight` from the shipped file (`HEAD_FROM=flint-pascal-Q5.gguf`).
 - **From scratch:** `quants/gptq_head/run.sh` on the step-2 body:
   1. `llama-head-dump` (in `quants/gptq_head/head_dump/`, built inside a llama.cpp tree with CUDA) writes the final
      hidden state after the output norm for every token of 500 chunks of 512 tokens of wikitext-2 train (255,500 rows)
@@ -109,7 +109,7 @@ against 0.1092 with F32, within the ~0.005 routing-flip noise; [Q113](../../../q
 ### 5. The release header
 
 ```bash
-python scripts/gguf_release_header.py flint-k2h-r16-raw.gguf flint-K2h-r16.gguf --preset flint --name "Flint K2h-r16" --quantized-by "Kamil Skowron (@kamilskowron)"
+python scripts/gguf_release_header.py flint-k2h-r16-raw.gguf flint-pascal-Q5.gguf --preset flint --name "Flint-Pascal-Q5" --quantized-by "Kamil Skowron (@kamilskowron)"
 ```
 
 Sets `general.quantized_by` (the released file's value above; put your own name in a file you publish yourself),
@@ -119,24 +119,24 @@ Unsloth's importance matrix. The tensors are copied byte for byte and verified.
 
 ## Checking the result
 
-**Tensor by tensor:** `tensor_manifest.py hash flint-K2h-r16.gguf` against [k2h-r16.tensors.tsv](k2h-r16.tensors.tsv)
+**Tensor by tensor:** `tensor_manifest.py hash flint-pascal-Q5.gguf` against [k2h-r16.tensors.tsv](k2h-r16.tensors.tsv)
 (`build_k2h_r16.sh`'s `verify` step). With `HEAD_FROM` every tensor must be equal; with a computed head, every tensor
 but `output.weight`. The header is not compared: names and tool versions in it differ between builds.
 
 **Verified on 2026-10-25:** `build_k2h_r16.sh` with `STEPS="quantize head router verify"` and `HEAD_FROM`, starting
-from the BF16 conversion, rebuilt the file with all 779 tensors equal byte for byte to the shipped K2h-r16
+from the BF16 conversion, rebuilt the file with all 779 tensors equal byte for byte to the shipped Flint-Pascal-Q5
 (`779 tensors compared, 0 differences`). llama-quantize took 11 minutes on 8 CPU threads.
 
 **Quality,** against the BF16 file's logits on 80 × 512 tokens of wikitext-2 test:
 
 ```bash
 llama-perplexity -m flint-BF16.gguf -f wiki.test.raw -c 512 --chunks 80 -ngl 99 -fa on --kl-divergence-base flint-BF16.c512x80.kld
-llama-perplexity -m flint-K2h-r16.gguf -f wiki.test.raw -c 512 --chunks 80 -ngl 99 -fa on --kl-divergence-base flint-BF16.c512x80.kld --kl-divergence
+llama-perplexity -m flint-pascal-Q5.gguf -f wiki.test.raw -c 512 --chunks 80 -ngl 99 -fa on --kl-divergence-base flint-BF16.c512x80.kld --kl-divergence
 ```
 
 | | Mean KLD | Same top token | PPL vs BF16 |
 |---|---|---|---|
-| Shipped K2h-r16 | 0.1048 | 88.84 % | +2.65 % |
+| Shipped Flint-Pascal-Q5 | 0.1048 | 88.84 % | +2.65 % |
 | A rebuild with a computed head | 0.105 ± 0.002 | 88.8 ± 0.2 % | |
 | Unsloth UD-Q4_K_XL, for comparison | 0.120 | 87.7 % | +3.9 % |
 

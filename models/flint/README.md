@@ -26,12 +26,12 @@ longer than reading UD-Q4_K_XL's 2.21 GB.
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
-| Model file, six cards | [K2h-r16](https://huggingface.co/CinderellaMan/Flint-K2h-r16-GGUF) (29.4 GB), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
-| Cards | all nine for Q8_0 at the full 262,144-token context; six run K2h-r16 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
+| Model file, six cards | [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
+| Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint-Pascal-Q5 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
 
 Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have, runs
-too; K2h-r16 is ~4 % faster than it at better measured fidelity.
+too; Flint-Pascal-Q5 is ~4 % faster than it at better measured fidelity.
 
 ## Command lines
 
@@ -45,7 +45,7 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
 
 - **`-ts 6,6,5,5,6,5,5,6,6`** splits Flint's layers by memory instead of by count, so that the 42.3 GB of weights and
   the full-context cache fit (llama.cpp's even split puts two full-attention layers on one card, ~6.3 GB). For
-  K2h-r16 or UD-Q4_K_XL drop it and give the file's name instead.
+  Flint-Pascal-Q5 or UD-Q4_K_XL drop it and give the file's name instead.
 - **`--pipe-depth 4`** sends up to four guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
@@ -60,7 +60,7 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
 - **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
   tool grammar on the host (RIG-TBD: their speed against chat). Set the client's context window equal to `-c`.
 - **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. RIG-TBD: the time to first token it saves. <!-- only:q163-q111 -->
-- **Six cards:** K2h-r16 or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
+- **Six cards:** Flint-Pascal-Q5 or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
   (UD-Q4_K_XL fits est. ~128k tokens there). Q8_0 needs eight or nine cards.
 
 Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127.0.0.1:8080 <rig>`, then
@@ -89,7 +89,7 @@ warm-up, because idle cards sit at a lower clock.
 
 ### The 4-bit files
 
-| Engine | UD-Q4_K_XL | K2h-r16 (ours) |
+| Engine | UD-Q4_K_XL | Flint-Pascal-Q5 (ours) |
 |---|---|---|
 | Stock llama.cpp (`d77256999`) | 16.5 | |
 | v1 engine (released 2026-10-23) | 32.6 | |
@@ -101,14 +101,14 @@ warm-up, because idle cards sit at a lower clock.
 
 - The first three rows come from one session, the next two from another, the `v2-next` row from a third
   ([Q117, Q88, Q125, Q160](../../quants/experiments.md#registry)).
-- On six cards the persistent kernel takes UD-Q4_K_XL from 35.8 to 38.2 tok/s and K2h-r16 from 37.4 to 40.7.
+- On six cards the persistent kernel takes UD-Q4_K_XL from 35.8 to 38.2 tok/s and Flint-Pascal-Q5 from 37.4 to 40.7.
 
 ### Served
 
 llama-server, one conversation, GPU sampling (`-bs`), median per request, tok/s
 ([Q160](../../quants/experiments.md#registry)):
 
-| Build | UD-Q4_K_XL | K2h-r16 (ours) |
+| Build | UD-Q4_K_XL | Flint-Pascal-Q5 (ours) |
 |---|---|---|
 | v2-next, plain decoding | 36.6 | 39.2 |
 | **v2-next, pipelined speculation (`--pipe-depth 3`)** | **47.3** | **48.5** |
@@ -133,7 +133,7 @@ followed the longest earlier match of the current text, or else the most frequen
 Nine cards, 256 generated tokens per prompt at temperature 0, the fork's `llama-pipespec` tool on the `v2-next` build,
 tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/experiments.md#registry)):
 
-| Prompt | UD-Q4_K_XL plain | depth 3 | depth 4 | K2h-r16 plain | depth 3 | depth 4 |
+| Prompt | UD-Q4_K_XL plain | depth 3 | depth 4 | Flint-Pascal-Q5 plain | depth 3 | depth 4 |
 |---|---|---|---|---|---|---|
 | Chat | 32.2 | 40.4 | 42.5 | 34.3 | 41.8 | 44.4 |
 | Code | 35.2 | 41.3 | 43.4 | 34.7 | 44.2 | 47.0 |
@@ -171,8 +171,8 @@ coding-agent tool request of 1,536, each at temperature 0 and at the makers' sam
 | | No guessing | Copy lookup and continuations | With the store | **With the drafter** |
 |---|---|---|---|---|
 | **Nine cards, Q8_0 at 262,144 tokens**, `-ts 6,6,5,5,6,5,5,6,6`, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Nine cards, K2h-r16, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Six cards, K2h-r16, general file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Nine cards, Flint-Pascal-Q5, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
+| Six cards, Flint-Pascal-Q5, general file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
 
 - RIG-TBD: the share of the drafter's guesses that are right, and its accuracy on held-out text.
 - **One guess costs 5.3–7.3 ms on the first card** (measured with the first heads of the same size), which also runs
@@ -190,7 +190,7 @@ tokens: stock llama.cpp 185 / 493 / 593, v1 187 / 494 / 593, v2 228 / 613 / 723;
 against stock's 593. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by tokens per expert
 ([Q117](../../quants/experiments.md#registry)).
 
-Prefill of long prompts with the release's prefill-attention kernel, K2h-r16 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
+Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
 
 ### With hardware tuning
 
@@ -206,9 +206,9 @@ Against Flint's original 16-bit weights, 80 × 512 tokens of wikitext-2:
 |---|---|---|---|---|
 | Unsloth Q8_0 | 42.3 GB | 93.3 % | 0.052 | +3.3 % |
 | Unsloth UD-Q4_K_XL | 25.1 GB | 87.7 % | 0.120 | +3.9 % |
-| K2h-r16 (ours) | 29.4 GB | 88.8 % | 0.105 | +2.7 % |
+| Flint-Pascal-Q5 (ours) | 29.4 GB | 88.8 % | 0.105 | +2.7 % |
 
-- **K2h-r16** is a mix of Q5_0 and Q8_0 tensors, formats the Pascal kernels decode fast, made from the original weights
+- **Flint-Pascal-Q5** is a mix of Q5_0 and Q8_0 tensors, formats the Pascal kernels decode fast, made from the original weights
   with Unsloth's importance matrix, with a GPTQ-rounded Q5_0 output head and a 16-bit router. The same tensors with a
   32-bit router score level with UD-Q4_K_XL on 3,477 single-turn tool-calling tasks (BFCL v4): +0.14 points, 90 %
   interval −0.87 to +1.16 ([Q41](../../quants/experiments.md#registry)). How the files were found:
@@ -267,7 +267,7 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 ## More
 
 - [release/flint-v2](../../release/flint-v2/README.md): everything about this release in one folder, with the recipes
-  that rebuild the engine and K2h-r16 from scratch and every number behind the release.
+  that rebuild the engine and Flint-Pascal-Q5 from scratch and every number behind the release.
 - [Benchmarks](../../docs/benchmarks/): [Flint, first measurements](../../docs/benchmarks/2026-10-22-flint.md) (files,
   quality against speed), [the five-turn chat](../../docs/benchmarks/2026-10-23-flint-chat.md).
 - [quants/](../../quants/README.md): making Flint files for these cards; [recipes](../../quants/recipes/); every
