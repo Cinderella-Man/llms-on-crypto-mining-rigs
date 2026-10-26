@@ -7,10 +7,47 @@ row says otherwise; quality is scored on a separate machine against Flint's BF16
 second; "warm" = `llama-bench` with a 512-token prompt run before the 128 generated tokens in the same process.
 
 Builds (fork commits): stock = upstream `d77256999`; v1 = `eeaa59660`; v2 base = `032b130f4`; combined = `b3052a4f8`;
-persistent = `8de13900f`; v2-next = `62fa5fc3b`; release = rc4 `2d53179aa`.
+persistent = `8de13900f`; v2-next = `62fa5fc3b`; rc4 = `2d53179aa`; release = rc4 `37e717ff6` (`2d53179aa` with the
+defaults the one-by-one test chose, below).
 
 The trained drafter and the store of earlier answers come later (v2.1); their measurements are in
 [docs/drafter.md](../../docs/drafter.md).
+
+## Agentic speed: a coding agent at work (2026-10-26)
+
+The release is chosen and reported on this measure. [bench/agent_check](../../bench/agent_check/README.md) gives the
+pi coding agent twelve small bug-fix tasks (six Python, six JavaScript, real test runs, five to ten tool calls each,
+the context growing every turn) against a llama-server on the rig, 25 minutes for the release engine (35 for stock),
+one attempt per task, and records every request. Nine P106-090, `-np 1 -bs --ctx-checkpoints 4 --cache-ram 0`, the
+makers' sampling. "Tasks" = tasks finished within the time (passed); generation and prompt reading in tokens per second
+over all requests of the run; first token = the median per turn; runaways = sessions stopped at the 12-minute cap.
+
+| File, engine, server settings | Tasks | Minutes per task, median / p90 | Generation | Prompt reading | First token | Runaways |
+|---|---|---|---|---|---|---|
+| Flint-Pascal-Q5, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 / 2.7 | **53.8** | 178 | 2.6 s | 0 |
+| Flint-Pascal-Q5, release, 262k, `--pipe-depth 3` | 10 (10) | 1.0 / 12.0 | 48.6 | 180 | 2.7 s | 1 |
+| Flint-Pascal-Q5, stock, 64k, `-b 2048 -ub 512` | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| UD-Q4_K_XL, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | 11 (10) | 1.1 / 4.1 | 50.7 | 191 | 2.5 s | 1 |
+| UD-Q4_K_XL, stock, 64k, `-b 2048 -ub 512` | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| Q8_0, release, 262k, `-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1 / 3.5, 1.4 / 7.8 | **45.9, 44.6** | 176, 185 | 2.6 s | 0, 0 |
+| Q8_0, the same at `--pipe-depth 3` (two runs) | 11 (11), 10 (9) | 1.0 / 3.6, 1.3 / 12.0 | 44.6, 44.6 | 184, 191 | 2.4, 2.6 s | 0, 1 |
+| Q8_0, the same at `--pipe-depth 2` | 10 (10) | 1.0 / 10.9 | 40.1 | 179 | 2.4 s | 0 |
+| Q8_0, the same without pipelined speculation | 10 (9) | 1.7 / 12.0 | 29.3 | 184 | 2.3 s | 1 |
+| Q8_0, `--pipe-depth 3` with the agent prompt cache (`--prefix-cache --checkpoint-gen`) | 10 (9) | 1.0 / 12.0 | 42.2 | 173 | 2.7 s | 1 |
+| Q8_0, stock, 64k, `-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6` | 9 (8) | 2.9 / 12.0 | 14.4 | 144 | 3.7 s | 1 |
+
+- **The release command line:** depth 4 (Flint-Pascal-Q5 +11 % over depth 3, Q8_0 even; the owner's rule: the depth
+  that wins on both, depth 4 on a tie), `-b 512 -ub 128` (with `-b 2048 -ub 512` at 262,144 tokens the host's 4 GB of
+  RAM ran out while loading, on both files), no agent prompt cache (it cost 11 s of fixed time per task and gained
+  nothing).
+- **Stock llama.cpp at 64k:** at 262,144 tokens its host-side attention mask does not fit the 4 GB host.
+- **Pipelined speculation** is worth +52 % in generation here (Q8_0, 29.3 → 44.6 tokens/s at depth 3); it changes the
+  speed, not the tokens (identity rows below).
+- Commands: `bench/agent_check/release_check.sh` with `ARMS`, `CTX`, `REL_ARGS` / `STOCK_ARGS` as in the table.
+
+Prompt reading as an agent sees it, llama-server, Q8_0, the release command line at depth 3, one request each
+(2026-10-26): a fresh 13,400-token prompt reads at 485 tokens/s; the next turn (+2,000 new tokens, the rest cached)
+gives its first token after 5.8 s; generation at 15,000 tokens of context runs at 37.2 tokens/s.
 
 ## The headline: Flint Q8_0 on nine cards at the full context
 
@@ -23,27 +60,23 @@ Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of c
 | Five-turn chat at the full context, nine cards: Q8_0 / UD-Q4_K_XL, stock → v1 | 14.78 → **29.55** / 14.20 → 27.97 tok/s (Q8_0 1.06× UD on v1) | `scripts/server_bench.sh PROMPTS=chat`, same settings and seeds on both engines | stock, v1 | Q58 |
 | Generation, Q8_0, nine cards, Pascal kernels off → on | 26.92 → 35.89 tok/s (+33 %) | `llama-bench -n 128`, one binary | v1 kernels | Q38 |
 | Bytes read per generated token: Q8_0 / UD-Q4_K_XL / Flint-Pascal-Q5 (recipe K2h-r16; K2h below) | 2.70 / 2.21 / 2.09 GB | `scripts/token_cost.py` | — | — |
-| v2 identity with Q8_0: pipelined output = plain, depths 1 and 3 | RIG-TBD | `bench/pipespec/rig_run.sh` with `TS=6,6,5,5,6,5,5,6,6 DEPTHS='1 3' N=256` | rc4 | — |
-| v2 generation, Q8_0, nine cards, warm: stock / v1 / v2 | RIG-TBD | [bench/release_matrix](../../bench/release_matrix/README.md) with `MODELS=Q8_0=… BENCH_ARGS='-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6,6,5,5,6,5,5,6,6'` | stock, v1, rc4 | — |
-| v2 served at 262k, Q8_0, median of 8 requests: plain / `--pipe-depth 3` (copy lookup and continuation counts) | RIG-TBD / RIG-TBD | `bench/pipespec/rig_server.sh` with `CTX=262144 TS=6,6,5,5,6,5,5,6,6 DEPTHS='0 3' GUESS=cont` | rc4 | — |
-| v2 the same five-turn chat, Q8_0 against UD-Q4_K_XL | RIG-TBD | `scripts/server_bench.sh PROMPTS=chat` | rc4 | — |
+| v2 identity with Q8_0: pipelined output = plain, depths 1 and 3 | 34 of 34 jobs the same as plain; chat / code / edit / rewrite plain 28.8 / 28.8 / 24.0 / 27.6, depth 3 34.4 / 36.2 / 31.7 / 56.9 tok/s | `bench/pipespec/rig_run.sh` with `TS=6,6,5,5,6,5,5,6,6 DEPTHS='1 3' N=256` | rc4 `2d53179aa` | — |
+| v2 generation, Q8_0, nine cards, warm: stock / v1 / release | 18.3 / 32.9 / 34.0 tok/s | `llama-bench -ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6` | stock, v1, release | — |
 
-## Measured on the release engine (2026-10-25)
+## Measured on the release engine (2026-10-25 and 26)
 
 | What | Value | How | Build | Row |
 |---|---|---|---|---|
-| Identity on the P106: persistent-kernel self-check, logits on/off, pipelined output = plain | RIG-TBD | `GGML_CUDA_PERSISTENT_MOE_CHECK=1 llama-perplexity … -ub 1`; `bench/pipespec/check_identity.sh` | rc4 | — |
-| Generation, UD-Q4_K_XL / Flint-Pascal-Q5, nine cards, warm | RIG-TBD / RIG-TBD | `llama-bench -m <file> -ngl 99 -fa on -p 512 -n 128 -r 3` | rc4 | — |
-| The same on six cards | RIG-TBD / RIG-TBD | `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 llama-bench …` | rc4 | — |
-| Stock / v1 / v2 matrix at stock clocks: generation, UD-Q4_K_XL and Flint-Pascal-Q5, nine and six cards | RIG-TBD | [bench/release_matrix](../../bench/release_matrix/README.md) | stock, v1, rc4 | Q42 |
-| Served at 262,144 tokens, nine cards, median of 8 requests, Flint-Pascal-Q5 / UD-Q4_K_XL: plain / `--pipe-depth 3` | RIG-TBD / RIG-TBD; RIG-TBD / RIG-TBD | `bench/pipespec/rig_server.sh` with `CTX=262144 DEPTHS='0 3' GUESS=cont` | rc4 | — |
-| Prefill at 512 / 2,048 / 8,192 tokens, nine cards | RIG-TBD | `llama-bench -p 512,2048,8192 -n 0 -r 3` | rc4 | — |
-| Prefill at 8,192 / 32,768 tokens, the prefill-attention kernel off / on, Flint-Pascal-Q5 | RIG-TBD | `GGML_CUDA_FATTN_TILE_PASCAL=0/1 llama-batched-bench` | rc4 | Q163 |
-| Agent sessions replayed with the prompt cache off / on: time to first token, outputs against a cold server | RIG-TBD | `bench/agent_cache/rig_replay.sh`, `rig_check.sh` | rc4 | Q111 |
-| Small bug-fix tasks of 5–10 tool steps for a coding agent, stock against the release engine | RIG-TBD | [bench/agent_check](../../bench/agent_check/README.md) | stock, rc4 | Q131 |
-| The shipped command lines (chat, tools, `-b 2048 -ub 512` at 262k, six cards) and the quick-start check | RIG-TBD | `SERVE=1 scripts/p106_check.sh` | rc4 | Q140 |
-| Eight conversations through one pipeline | RIG-TBD | `bench/pipespec/rig_hostloop.sh` | rc4 | Q155 |
-| Prefill with eight scheduler copies against four | RIG-TBD | `llama-bench -ub 512 -p 8192`, builds with `SCHED_COPIES=4` and `8` | rc4 | Q157 |
+| Identity on the P106: pipelined output = plain; server checks (pipelined with copy lookup and continuation counts, with a floor, plain at temperature 0) | 34 of 34 jobs the same as plain (Flint-Pascal-Q5, UD-Q4_K_XL); server 13 / 13, 13 / 13, 6 / 6 | `bench/pipespec/check_identity.sh`, `rig_run.sh`, `rig_server.sh` | release | — |
+| Generation, Flint-Pascal-Q5, nine cards, warm | 38.9–40.5 tok/s (two sessions) | `llama-bench -m <file> -ngl 99 -fa on -p 512 -n 128 -r 3` | release | — |
+| The one-by-one test of the v2 switches on rc4 (each switch off against all on, Flint-Pascal-Q5, nine cards) | the Pascal decode-attention kernel, the input layer on the card and packed input uploads slowed generation (tg128 36.8 with them, 40.3 without) and are off by default; the attention mask built on the cards slowed long prompts 3.6× (211 against 764 tok/s at 8,192 tokens) for +1.6–2.3 % in generation and is off by default | `llama-bench` per switch (`GGML_CUDA_FATTN_PASCAL`, `LLAMA_INPUT_ON_GPU`, `LLAMA_INPUT_UPLOAD`, `LLAMA_GPU_KQ_MASK`) | rc4 → release | — |
+| Prompt of 8,192 tokens in whole-prompt batches (`-b 8192 -ub 512`), nine cards: Flint-Pascal-Q5 / Q8_0 | 767 / 801 tok/s (Flint-Pascal-Q5 on stock: 593–602) | `llama-bench -p 8192 -n 0` | release, stock | — |
+| Prefill at 8,192 / 32,768 tokens, the prefill-attention kernel on / off, Flint-Pascal-Q5 | 766 / 461 against 699 / 447 tok/s (+10 % / +3 %) | `GGML_CUDA_FATTN_TILE_PASCAL=1/0 llama-batched-bench` | release | Q163 |
+| The agent prompt cache (`--prefix-cache --checkpoint-gen`) in the agent check, Q8_0 | no gain: 42.2 against 44.6 tok/s, 11 s of fixed time per task; off in the release command line | [bench/agent_check](../../bench/agent_check/README.md) | release | Q111 |
+| Small bug-fix tasks for a coding agent, stock against the release engine | the agentic table above: 14.4 → 44.6–53.8 tok/s, 2.9 → 1.0–1.2 minutes per task | [bench/agent_check](../../bench/agent_check/README.md) | stock, release | Q131 |
+| `-b 2048 -ub 512` at 262,144 tokens | does not load: the host's 4 GB of RAM runs out (Flint-Pascal-Q5, the server killed while loading); Q8_0 loses pipeline parallelism (card 1 lacks room for the 561 MiB compute buffer); `-b 512 -ub 128` is the release line | llama-server at `-c 262144` | release | Q140 |
+| Tool requests sampled on the GPU (the grammar checked on the host) against sampling on the host, Flint-Pascal-Q5 | 37.9 against 33.6 tok/s at temperature 0 (2,011 tokens), 45.3–46.0 against 39.6–40.0 at temperature 1 (+13–15 %); the same tool calls, 0 grammar warnings | llama-server, `LLAMA_GRAMMAR_HOST_SAMPLING=1/0` | release | Q67 |
+| Prefill with eight scheduler copies against four | 765 / 462 against 766 / 461 tok/s at 8,192 / 32,768 tokens: no gain; the release ships four | builds with `SCHED_COPIES=8` and `4` | release | Q157 |
 
 ## Engine speed (2026-10-24)
 
@@ -105,4 +138,4 @@ Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of c
 | PowerMizer "Prefer Maximum Performance", UD, six cards: from idle / served after a minute idle | 29.75 against 29.79 / 33.25 against 33.30 tok/s (no gain) | `nvidia-settings` mode 1 against 2 | Q141 |
 | Power in decode, nine cards | 35–39 W per card, 317–329 W in total, ~8.9 J per token; hottest card 57 °C | `nvidia-smi` every 200 ms | Q143 |
 | PCIe 2.0 | not available: the cards advertise 2.5 GT/s | `lspci -vv` | Q86 |
-| Memory clock offset | RIG-TBD (not in this release) | [bench/mem_offset](../../bench/mem_offset/README.md) | Q133 |
+| Memory clock offset | not measured; not in this release | [bench/mem_offset](../../bench/mem_offset/README.md) | Q133 |

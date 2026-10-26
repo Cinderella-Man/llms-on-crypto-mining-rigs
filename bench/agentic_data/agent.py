@@ -176,7 +176,7 @@ def coerce(call, profile="agx", messages=None):
         text = (messages or agx.DEFAULT_MESSAGES)[key]
         for k, v in values.items():
             text = text.replace("{" + k + "}", str(v))
-        return None, "error: " + text
+        return None, text if text.lower().startswith("error") else "error: " + text
     spec = PROFILES[profile].get(call["name"])
     if spec is None:
         return err("unknown_tool", name=call["name"])

@@ -12,25 +12,21 @@ such hardware, so the rigs sit idle. This project makes them useful: a llama.cpp
 
 [Flint](models/flint/README.md) is a 39.8 B-parameter mixture-of-experts model that reasons before it answers and reads
 up to 262,144 tokens of context. **On the nine cards of the [reference rig](#the-reference-rig) it runs in
-near-lossless 8-bit with its full context**: Unsloth's Q8_0 (42.3 GB) picks the original model's next token 93.3 % of
-the time, against 87.7 % for the common 4-bit file, and on these cards it is also faster than that 4-bit file:
+near-lossless 8-bit with its full context, about three times as fast as stock llama.cpp for a coding agent.**
+Unsloth's Q8_0 (42.3 GB) picks the original model's next token 93.3 % of the time, against 87.7 % for the common 4-bit
+file. The measure is a coding agent at work: the [agent check](bench/agent_check/README.md) gives the pi agent twelve
+small bug-fix tasks (Python and JavaScript, real test runs, the context growing every turn) on nine P106-090 cards:
 
-| Nine P106-090 cards, 262,144 tokens of context, served chat, tokens per second | Stock llama.cpp | v1 engine | **v2** |
+| A coding agent, nine P106-090 cards | Generation, tokens/s | Minutes per task (median) | Tasks done in 25 min |
 |---|---|---|---|
-| **Unsloth Q8_0** (42.3 GB, near-lossless) | 14.78 | 29.55 | **RIG-TBD** |
-| Unsloth UD-Q4_K_XL (25.1 GB, the common 4-bit file) | 14.20 | 27.97 | RIG-TBD |
-| Q8_0, pipelined speculation (`--pipe-depth 3`) | — | — | **RIG-TBD** |
+| **Unsloth Q8_0** (42.3 GB, near-lossless), v2, 262,144 tokens | **44.6–45.9** | **1.1–1.4** | 12 of 12 |
+| [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, ours), v2, 262,144 tokens | **53.8** | 1.2 | 12 of 12, in 17 min |
+| Unsloth UD-Q4_K_XL (25.1 GB, the common 4-bit file), v2, 262,144 tokens | 50.7 | 1.1 | 11, 10 passed |
+| Unsloth Q8_0, stock llama.cpp, 65,536 tokens (35 min) | 14.4 | 2.9 | 9, 8 passed |
 
-The v1 numbers are a [five-turn chat](docs/benchmarks/2026-10-23-flint-chat.md) with the same settings and seeds on
-both engines. The 4-bit files fit six cards. Generation and prefill, stock llama.cpp against v1 and v2:
-
-<!-- RIG-TBD: the stock-clock block of today's bench/release_matrix run on the release engine -->
-
-| Nine P106-090 cards, tokens per second | Stock llama.cpp | v1 engine | **v2** |
-|---|---|---|---|
-| Generation (`llama-bench`, 128 tokens), Q8_0 | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Generation, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Prefill (reading the prompt), 512 tokens, UD-Q4_K_XL | RIG-TBD | RIG-TBD | **RIG-TBD** |
+Stock llama.cpp runs at 65,536 tokens because at 262,144 its attention mask, built on the host, does not fit the rig's
+4 GB of RAM. Every run, its command and the single-request numbers that explain them:
+[results.md](release/flint-v2/results.md). The 4-bit files fit six cards.
 
 <!-- begin:drafter -->
 **With the staircase drafter**, served chat reaches **RIG-TBD tok/s** on nine cards, against RIG-TBD without guessing.
@@ -59,7 +55,7 @@ Generation speed in tokens per second (tok/s) for one conversation, measured on 
 
 | Model | What it is | Speed | Page |
 |---|---|---|---|
-| [![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards, near-lossless Q8_0 at the full context: 29.55 tok/s served chat with the v1 engine, against 14.78 on stock llama.cpp; v2 **RIG-TBD** | [models/flint](models/flint/) |
+| [![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](models/flint/) | 39.8 B mixture of experts, 2.5 B parameters per token, 262,144-token context | Nine cards, near-lossless Q8_0 at the full context: a coding agent generates **44.6–45.9 tok/s** on v2, against 14.4 on stock llama.cpp; Flint-Pascal-Q5 53.8 | [models/flint](models/flint/) |
 | [![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-coming%20soon-718096)](models/qwen3.6-35b-a3b/) | 36 B hybrid mixture of experts, 3 B per token, 262,144-token context | Four cards: 29.0 tok/s with the v1 engine, against 18.5 on stock llama.cpp | [models/qwen3.6-35b-a3b](models/qwen3.6-35b-a3b/) |
 | [![Ornith-1.5-35B](https://img.shields.io/badge/Ornith--1.5--35B-coming%20soon-718096)](models/ornith-1.5-35b/) | 35 B hybrid mixture of experts with Qwen3.6's shapes, 3 B per token, 262,144-token context | Not run yet; its 21.7 GB Q4_K_M fits four or five cards (est. 19–23 tok/s today, 30–36 with the planned K-quant kernels) | [models/ornith-1.5-35b](models/ornith-1.5-35b/) |
 | [![Ornith-1.5-122B](https://img.shields.io/badge/Ornith--1.5--122B-coming%20soon-718096)](models/ornith-1.5-122b/) | 122 B hybrid mixture of experts, 10 B per token, for coding agents | Not run yet; fits nine cards only at 2–3 bits per weight (est. 8–16 tok/s) | [models/ornith-1.5-122b](models/ornith-1.5-122b/) |
@@ -83,14 +79,14 @@ memory. The fork changes that, mostly without regard to which model runs:
 | Shared-expert projections fused with their activation | MoE models with a shared expert | +0.7 % |
 | MoE tiles sized by tokens per expert (upstream PR #31047) | MoE models, prefill | prefill +22–29 % |
 | One persistent kernel per MoE layer at one token, instead of 13 launches | Flint's layer shapes; other models fall back to the normal path | +5.6–8.8 % |
-| A Pascal decode-attention kernel for one token | attention of Flint's shape (head size 128, 8 query heads per KV head); other shapes take the normal path | RIG-TBD |
+| A Pascal decode-attention kernel for one token | attention of Flint's shape (head size 128, 8 query heads per KV head); other shapes take the normal path | in the build, off by default: it slowed generation in the release test |
 | Pascal matrix-vector kernels for Q4_K and Q6_K too | the common Q4_K_M downloads of other models | Flint's UD-Q4_K_XL: est. ≤ 1 % |
 | Pipelined speculation in llama-server (`--pipe-depth`): guessed tokens enter the idle cards of a layer split, checked against the real token | models with an attention-only cache (hybrid models next) | served chat 1.04–1.18×, edits up to 1.56×, rewrites up to 2.79× |
 | A trained drafter as the guesser of pipelined speculation (`--pipe-guess staircase`): a small head that reads the hidden states of the tokens in flight | Flint (a drafter is trained per model) | RIG-TBD | <!-- only:drafter -->
-| Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | RIG-TBD (they decoded 12–16 % slower than chat before) |
-| The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 % |
-| A Pascal prefill-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | prefill of long prompts RIG-TBD | <!-- only:q163-q111 -->
-| Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | RIG-TBD | <!-- only:q163-q111 -->
+| Tool requests sampled on the GPU, with the grammar checked on the host | every model, agent traffic | tool requests +13–15 % (they decoded 12–16 % slower than chat before) |
+| The attention mask built on each card | models with an attention-only cache, long contexts | decode at 64k tokens of context +12 %; off by default, because built for every micro-batch it slowed long prompts 3.6× |
+| A Pascal prefill-attention kernel that skips fully masked key tiles and reads a Q8_0 cache directly | attention with head size 128 or 256 and 8 query heads per KV head | prefill +10 % at 8,192 tokens, +3 % at 32,768 | <!-- only:q163-q111 -->
+| Prompt caching for agents: the shared system and tool prompt restored from a file (`--prefix-cache`), checkpoints that hold the whole sliding-window ring | agent sessions that re-send long prompts | no gain in the agent test; off unless set | <!-- only:q163-q111 -->
 
 The first three rows were measured on six cards with UD-Q4_K_XL, step by step; the rest are each change's own gain
 ([Flint page](models/flint/#how-it-got-here)). Of v2's decode gain on Flint, about 87 % comes from the Pascal-only changes
@@ -108,45 +104,10 @@ The first three rows were measured on six cards with UD-Q4_K_XL, step by step; t
 ## Hardware tuning
 
 What the cards and the host can give on top of the software. These settings apply to stock llama.cpp as much as to the
-fork. Every engine number elsewhere in this repository is measured without them, and the tables below never mix the
-two: each engine at stock clocks, each engine tuned, then what the tuning adds to each.
-
-<!-- RIG-TBD: replace the three tables with tables.md from bench/release_matrix (run of 2026-10-25); drop the Flint-Pascal-Q5
-columns if the release ships Unsloth's file only; if the release ships before the tuned run, keep the stock-clock table
-and say the tuned tables follow -->
-
-
-**Stock clocks**, nine cards, Flint, tokens per second:
-
-| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | Flint-Pascal-Q5 generation | Flint-Pascal-Q5 served |
-|---|---|---|---|---|
-| Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v2 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v2 engine, pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD | — | RIG-TBD |
-
-**Tuned: memory +RIG-TBD MT/s on every card**, nine cards, Flint, tokens per second:
-
-| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | Flint-Pascal-Q5 generation | Flint-Pascal-Q5 served |
-|---|---|---|---|---|
-| Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v2 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v2 engine, pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD | — | RIG-TBD |
-
-**What the tuning adds**, each engine against itself at stock clocks:
-
-| Engine | UD-Q4_K_XL generation | UD-Q4_K_XL served | Flint-Pascal-Q5 generation | Flint-Pascal-Q5 served |
-|---|---|---|---|---|
-| Stock llama.cpp | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v1 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v2 engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| v2 engine, pipelined speculation (`--pipe-depth 3`) | — | RIG-TBD | — | RIG-TBD |
-
-Generation is `llama-bench`: 128 tokens right after a 512-token prompt, so the cards are at their working clocks.
-Served is llama-server with the model page's chat command line at the full 262,144-token context: the median of chat
-requests of up to 1,000 tokens with the makers' sampling. With the offset, every engine's greedy output stayed identical
-to its output at stock clocks (RIG-TBD). Method and script: [bench/release_matrix](bench/release_matrix/README.md).
+fork. Every engine number in this release is measured at the cards' stock clocks, without them: the agent test at the
+top and [results.md](release/flint-v2/results.md). The memory clock offset is set at the rig's own console, so its
+measurement comes with a later release, as each engine at stock clocks against itself tuned
+([bench/release_matrix](bench/release_matrix/README.md), [bench/mem_offset](bench/mem_offset/)).
 
 The settings, one by one:
 
@@ -173,7 +134,7 @@ Details: [hardware tuning](docs/research/notes/hardware_tuning.md), [power and t
    read speed and the shipped command lines. Or build it for compute capability 6.1 with CUDA 12.x, on the rig itself
    (slow on two cores) or on any Linux PC with Docker using
    [scripts/build_llamacpp_docker.sh](scripts/build_llamacpp_docker.sh).
-   The v2 engine is commit `2d53179aa` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc4 -->
+   The v2 engine is commit `37e717ff6` of the fork, branch `pascal-p106-v2-rc4` (OWNER-TBD: the release tag). <!-- only:rc4 -->
    The v2 engine is commit `7e6ec762f` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc3 -->
    The v2 engine is commit `594d20e08` of the fork (RIG-TBD: the release branch or tag). <!-- only:rc1 -->
    v1, as released on 2026-10-23, is `pascal-p106`.

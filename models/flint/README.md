@@ -11,33 +11,33 @@ makers; this project is not affiliated with them.
 Speeds on this page were measured on the [reference rig](../../docs/mining_rig.md): nine P106-090 cards, each on a PCIe
 1.0 x1 link, and a 2-core Celeron with 4 GB of RAM. Quality was scored on a separate machine.
 
-**The headline: Flint in near-lossless 8-bit, on all nine cards, at the full 262,144-token context.** Unsloth's Q8_0
-(42.3 GB) picks the original model's next token 93.3 % of the time, against 87.7 % for the usual 4-bit download, and
-on these cards it is also the faster file: in a five-turn chat at the full context the v1 engine generated 29.55 tok/s
-with Q8_0 against 27.97 with UD-Q4_K_XL, and stock llama.cpp 14.78 (v2: RIG-TBD). The Pascal kernels decode Q8_0's
-plain 8-bit blocks with few instructions per byte, at ~150 GB/s of a card's ~179, so reading 2.70 GB per token took no
-longer than reading UD-Q4_K_XL's 2.21 GB.
+**The headline: Flint in near-lossless 8-bit, on all nine cards, at the full 262,144-token context, about three times
+as fast as stock llama.cpp for a coding agent.** Unsloth's Q8_0 (42.3 GB) picks the original model's next token
+93.3 % of the time, against 87.7 % for the usual 4-bit download. A coding agent fixing twelve small bugs generated
+44.6–45.9 tok/s with it (stock llama.cpp: 14.4) and took a median 1.1–1.4 minutes per task (stock: 2.9). The Pascal
+kernels decode Q8_0's plain 8-bit blocks with few instructions per byte, at ~150 GB/s of a card's ~179, so Q8_0 runs
+within about 15 % of the 4-bit files; the fastest file is the project's own Flint-Pascal-Q5 (53.8 tok/s, all twelve
+tasks in 17 minutes).
 
 ## Recommended setup
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `2d53179aa`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
+| Engine | the v2 Pascal engine, commit `37e717ff6`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
 | Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
 | Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
 | Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
-| Model file, six cards | [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
+| Model file, six cards, or the most speed on nine | [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
 | Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint-Pascal-Q5 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
 
 Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have, runs
-too; Flint-Pascal-Q5 is ~4 % faster than it at better measured fidelity.
+too; Flint-Pascal-Q5 is ~6 % faster than it for a coding agent, at better measured fidelity.
 
 ## Command lines
 
 Chat with the full context on nine cards, served on the rig's loopback address, with the release archives unpacked
-in `llama-p106-v2.0/` (RIG-TBD: the folder follows the release's tag; a build from source has the same binary in
-`llama.cpp/build/bin/`):
+in `llama-p106-v2.0/` (a build from source has the same binary in `llama.cpp/build/bin/`):
 
 ```bash
 llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
@@ -52,14 +52,16 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
 - **The drafter:** add `--pipe-guess staircase --pipe-draft <the nine-card file>` (RIG-TBD: its name) for the trained guesser on nine cards ([below](#the-staircase-drafter)); RIG-TBD: whether the first card has room for it next to Q8_0 at the full context. <!-- only:drafter -->
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
-  context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens. RIG-TBD: `-b 2048 -ub
-  512` if the quick-start check shows it fits (faster prefill).
+  context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens: with `-b 2048 -ub 512`
+  the host ran out of memory while loading Flint-Pascal-Q5, and Q8_0 lost pipeline parallelism. At shorter contexts
+  (`-c 65536`) the larger batches fit and read long prompts faster.
 - **The engine drops llama.cpp's safety rescale of Flint's expert layers by itself** on Pascal cards: its kernels sum in
   32-bit floats, so one-token steps don't need it, and without it each expert layer runs as one persistent kernel.
   `LLAMA_NO_MOE_DOWN_RESCALE=0` keeps the rescale; any value other than `tg` and `0` is unsafe for this file.
 - **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
-  tool grammar on the host (RIG-TBD: their speed against chat). Set the client's context window equal to `-c`.
-- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. RIG-TBD: the time to first token it saves. <!-- only:q163-q111 -->
+  tool grammar on the host: 13–15 % faster than sampling them on the host. Set the client's context window equal to
+  `-c`.
+- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. In the agent test it gained nothing (it added 11 s of fixed time per task), so the line above leaves it out. <!-- only:q163-q111 -->
 - **Six cards:** Flint-Pascal-Q5 or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
   (UD-Q4_K_XL fits est. ~128k tokens there). Q8_0 needs eight or nine cards.
 
@@ -68,23 +70,46 @@ Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127
 
 ## Speed
 
-Generation speed in tokens per second (tok/s) on nine cards. `llama-bench` numbers are 128 generated tokens after a
-warm-up, because idle cards sit at a lower clock.
+### A coding agent at work
 
-### Q8_0 at the full context
+The speed this project optimizes and reports: the [agent check](../../bench/agent_check/README.md) gives the pi coding
+agent twelve small bug-fix tasks (six Python, six JavaScript, real test runs, five to ten tool calls each, the context
+growing every turn) and 25 minutes (stock llama.cpp 35), one attempt per task, nine cards, the command lines above
+(release engine `37e717ff6`, 2026-10-26). Generation and prompt reading in tok/s over every request of the run:
 
-| Nine cards, 262,144 tokens of context | Stock llama.cpp | v1 engine | **v2 release** |
+| File, engine | Tasks done (passed) | Minutes per task, median | Generation | Prompt reading | First token, median |
+|---|---|---|---|---|---|
+| **Flint-Pascal-Q5**, v2, 262k, `--pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 | **53.8** | 178 | 2.6 s |
+| UD-Q4_K_XL, v2, 262k, `--pipe-depth 4` | 11 (10) | 1.1 | 50.7 | 191 | 2.5 s |
+| **Q8_0**, v2, 262k, `--pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1, 1.4 | **45.9, 44.6** | 176, 185 | 2.6 s |
+| Q8_0, v2, 262k, without pipelined speculation | 10 (9) | 1.7 | 29.3 | 184 | 2.3 s |
+| Q8_0, stock llama.cpp, 64k | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
+| Flint-Pascal-Q5, stock llama.cpp, 64k | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| UD-Q4_K_XL, stock llama.cpp, 64k | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+
+- **Depth 4** won on Flint-Pascal-Q5 (+11 % over depth 3: 48.6 tok/s) and tied on Q8_0 (44.6 at depth 3 in two runs);
+  depth 2 gave 40.1 on Q8_0.
+- **Stock llama.cpp** runs at 65,536 tokens: at 262,144 its attention mask, built on the host, does not fit 4 GB.
+- **Prompt reading** here is the agent's turns, a few hundred to a few thousand new tokens each, 84–89 % of each prompt
+  coming from the cache. A fresh 13,400-token prompt reads at 485 tok/s on the Q8_0 line, and the next turn (+2,000
+  tokens) gives its first token after 5.8 s.
+- Every run and its command: [results.md](../../release/flint-v2/results.md#agentic-speed-a-coding-agent-at-work-2026-10-26).
+
+### One request at a time
+
+Generation in tok/s on nine cards for one request; `llama-bench` numbers are 128 generated tokens after a warm-up,
+because idle cards sit at a lower clock. These locate causes; the release is chosen on the agent test above.
+
+| Nine cards | Stock llama.cpp | v1 engine | **v2 release** |
 |---|---|---|---|
-| Five-turn chat, **Unsloth Q8_0** (`-ts 6,6,5,5,6,5,5,6,6`) | 14.78 | 29.55 | **RIG-TBD** |
-| Five-turn chat, Unsloth UD-Q4_K_XL | 14.20 | 27.97 | RIG-TBD |
-| Served, Q8_0, plain decoding | — | — | **RIG-TBD** |
-| Served, Q8_0, `--pipe-depth 3` (guesses from the copy lookup and the request's continuation counts) | — | — | **RIG-TBD** |
-| Served, Q8_0, the store, then the drafter | — | — | **RIG-TBD** | <!-- only:drafter -->
-| `llama-bench`, Q8_0 (512-token prompt, then 128 generated) | RIG-TBD | 35.9 | **RIG-TBD** |
+| Five-turn chat at 262,144 tokens, **Unsloth Q8_0** (`-ts 6,6,5,5,6,5,5,6,6`) | 14.78 | 29.55 | — |
+| Five-turn chat at 262,144 tokens, Unsloth UD-Q4_K_XL | 14.20 | 27.97 | — |
+| `llama-bench`, Q8_0 (512-token prompt, then 128 generated) | 18.3 | 32.9 | **34.0** |
+| llama-server, Q8_0, the command line above at depth 3, at 15,000 tokens of context | — | — | **37.2** |
 
 - The chat rows are the [five-turn chat benchmark](../../docs/benchmarks/2026-10-23-flint-chat.md): one conversation,
   the same settings and seeds on both engines ([Q58](../../quants/experiments.md#registry)).
-- The `llama-bench` v1 number is v1's kernels just before its release: 26.9 tok/s with them off
+- v1's kernels alone took `llama-bench` from 26.9 to 35.9 tok/s just before v1's release
   ([Q38](../../quants/experiments.md#registry)).
 
 ### The 4-bit files
@@ -97,7 +122,7 @@ warm-up, because idle cards sit at a lower clock.
 | v2: + prefill changes | 37.5 | 39.3 |
 | v2: + persistent MoE kernel | 39.8 | 41.5 |
 | v2: + pipelined speculation in llama-server (branch `pascal-p106-v2-next`) | 39.9 | 41.8 |
-| **v2 release** | **RIG-TBD** | **RIG-TBD** |
+| **v2 release** (`37e717ff6`) | — | **38.9–40.5** |
 
 - The first three rows come from one session, the next two from another, the `v2-next` row from a third
   ([Q117, Q88, Q125, Q160](../../quants/experiments.md#registry)).
@@ -112,9 +137,6 @@ llama-server, one conversation, GPU sampling (`-bs`), median per request, tok/s
 |---|---|---|
 | v2-next, plain decoding | 36.6 | 39.2 |
 | **v2-next, pipelined speculation (`--pipe-depth 3`)** | **47.3** | **48.5** |
-| v2 release, plain decoding, the chat command line above | RIG-TBD | RIG-TBD |
-| **v2 release, `--pipe-depth 3`, the chat command line above** | **RIG-TBD** | **RIG-TBD** |
-| v2 release, a request with tools, `--pipe-depth 3` | RIG-TBD | RIG-TBD |
 
 - The v2-next rows ran at 8,192 tokens of context: chat, rewrite and edit prompts, each at temperature 0 and with two
   seeds at the makers' sampling, plus one streamed request. Pipelined speculation gave 1.04–1.18× on chat, 1.04–1.56×
@@ -190,13 +212,12 @@ tokens: stock llama.cpp 185 / 493 / 593, v1 187 / 494 / 593, v2 228 / 613 / 723;
 against stock's 593. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by tokens per expert
 ([Q117](../../quants/experiments.md#registry)).
 
-Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: RIG-TBD tok/s at 8,192 tokens and RIG-TBD at 32,768, against RIG-TBD and RIG-TBD with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
+Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: 766 tok/s at 8,192 tokens and 461 at 32,768, against 699 and 447 with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
 
 ### With hardware tuning
 
-A memory clock offset of RIG-TBD MT/s on every card adds RIG-TBD % to v2's generation and RIG-TBD % to served chat on
-UD-Q4_K_XL, with the output unchanged. The full matrix of stock llama.cpp, v1 and v2 with and without it is in the
-[README's hardware-tuning section](../../README.md#hardware-tuning).
+This release's numbers are at the cards' stock clocks. A memory clock offset is set at the rig's console, so its
+measurement comes with a later release ([bench/mem_offset](../../bench/mem_offset/README.md)).
 
 ## Quality
 
@@ -247,19 +268,20 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 - **The persistent MoE kernel:** each expert layer at one token runs as one kernel instead of 13 launches: +5.6–8.8 %
   per token. It covers Flint's shapes and falls back to the normal path for any other model.
 - **Pipelined speculation** in llama-server (`--pipe-depth`, with `--pipe-floor`).
-- **A Pascal decode-attention kernel** for Flint's attention shape: RIG-TBD.
-- **Tool requests sampled on the GPU**, the grammar checked on the host, pipelined until the tool call: RIG-TBD.
+- **A Pascal decode-attention kernel** for Flint's attention shape: in the build, off by default (`GGML_CUDA_FATTN_PASCAL=1`): it slowed generation in the release test.
+- **Tool requests sampled on the GPU**, the grammar checked on the host, pipelined until the tool call: tool requests +13–15 %.
 - **The attention mask built on each card**, for prefill and decoding: decode at 64k tokens of context +12 %
-  ([Q116](../../quants/experiments.md#registry)).
+  ([Q116](../../quants/experiments.md#registry)); in the build but off by default (`LLAMA_GPU_KQ_MASK=N` for
+  micro-batches of N tokens or more), because built for every micro-batch it slowed long prompts 3.6×.
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
-- **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: RIG-TBD. <!-- only:q163-q111 -->
-- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): RIG-TBD. <!-- only:q163-q111 -->
+- **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: prefill +10 % at 8,192 tokens, +3 % at 32,768. <!-- only:q163-q111 -->
+- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): no gain in the agent test, off unless set. <!-- only:q163-q111 -->
 - **The staircase drafter**, a trained guesser for pipelined speculation, with its side files: RIG-TBD. <!-- only:drafter -->
 
 ## Not measured yet
 
-- Served speed with `--pipe-depth` at the full 262,144-token context (the measured server ran at 8,192), and the release
-  build's numbers (RIG-TBD: delete this item once today's run is in).
+- The agent test on six cards, and with longer tasks that fill more of the 262,144-token context: the twelve tasks
+  above use a small part of it.
 - Generation deep into a long context on v2. The v1 engine generated 23.3 tok/s at 32,768 tokens of context with
   Miner S4-L0 ([Q54](../../quants/experiments.md#registry)).
 - Coding-agent tasks end to end, and runs longer than an hour.

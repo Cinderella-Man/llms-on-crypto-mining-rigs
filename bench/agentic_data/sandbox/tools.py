@@ -54,8 +54,13 @@ def say(key, **values):
     return text
 
 
+def as_error(text):
+    """A failed call's output: the line itself when it already says it is an error, else "error: " in front."""
+    return text if text.lower().startswith("error") else "error: " + text
+
+
 def fail(key, **values):
-    return ValueError("error: " + say(key, **values))
+    return ValueError(as_error(say(key, **values)))
 
 
 def resolve(path, must_exist=True):
@@ -260,7 +265,7 @@ def main():
         out, code, fr, fw = fn(req.get("args") or {}, c)
         ok = True
     except (ValueError, OSError, TypeError) as e:
-        out, code, fr, fw, ok = str(e) if str(e).startswith("error:") else f"error: {e}", 1, [], [], False
+        out, code, fr, fw, ok = as_error(str(e)), 1, [], [], False
     out, cut = clip(out, c["max_output"])
     json.dump({"ok": ok, "output": out, "exit_code": code, "files_read": fr, "files_written": fw, "truncated": cut},
               sys.stdout)

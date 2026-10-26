@@ -2,3 +2,6 @@
 d8cc0ea2d382d9d39d39e9ac362704b26b1ff6dc1974038d527c2f1634ff635d  flint-q113-K2h-r16.gguf
 f7c7c260fcce4a6dae1d2dd62ecfcd6588532ed17f8df01125b9b33f30dd8b01  imatrix_unsloth.gguf
 63c2ecc461ca545134b670c660e76fa20f47240f8d39b6510bfd21c4dd6e072f  flint-UD-Q4_K_XL.gguf
+f213259e52f11a2893be46e69dc1683bc8b98296f07cfb476ff4c19a681baec1  llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz
+65b46821ab94c5a46ec762f4fc8896de857ada120770d5a2499695ed3277a3bf  cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz
+26e0f0633e4ed9967cfbbbf8a2b45bec2c79ae80f526a8ab4afde920f72665fe  llama-p106-v2.0-tests-ubuntu-cuda12.9-sm61.tar.gz

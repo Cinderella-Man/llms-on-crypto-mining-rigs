@@ -348,10 +348,10 @@ class Sandbox:
             r = subprocess.run(["docker", "exec", "-i", self.name, "python3", "-I", "/opt/agx/tools.py"], input=req,
                                capture_output=True, text=True, timeout=limit)
             out = json.loads(r.stdout) if r.stdout.strip() else {
-                "ok": False, "output": "error: " + self.line("no_result"), "exit_code": r.returncode,
+                "ok": False, "output": self.error_line("no_result"), "exit_code": r.returncode,
                 "files_read": [], "files_written": [], "truncated": False, "infra": r.stderr[-500:]}
         except subprocess.TimeoutExpired:
-            out = {"ok": False, "output": "error: " + self.line("timeout", seconds=limit), "exit_code": 124,
+            out = {"ok": False, "output": self.error_line("timeout", seconds=limit), "exit_code": 124,
                    "files_read": [], "files_written": [], "truncated": False, "infra": "timeout"}
         out["ms"] = int((time.time() - t0) * 1000)
         return out
@@ -362,6 +362,11 @@ class Sandbox:
         for k, v in values.items():
             text = text.replace("{" + k + "}", str(v))
         return text
+
+    def error_line(self, key, **values):
+        """A failed call's output (the tool runner's as_error): the line, with "error: " in front unless it says so."""
+        text = self.line(key, **values)
+        return text if text.lower().startswith("error") else "error: " + text
 
     def ex_tool(self, cmd, path, timeout=120):
         """The Elixir helper (sandbox/ex_tool.exs) on a file of the workspace: its JSON reply. Not a model tool."""

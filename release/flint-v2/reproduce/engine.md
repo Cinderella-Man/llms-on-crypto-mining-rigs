@@ -9,7 +9,7 @@ turned off and compared with stock behaviour.
 | | |
 |---|---|
 | Fork | [Cinderella-Man/llama.cpp](https://github.com/Cinderella-Man/llama.cpp) |
-| Release commit | `2d53179aa` (rc4: rc3 + the staircase drafter, its store order, the fix of a crash in the drafter path, and an allocator fix for pipelined decoding), branch `pascal-p106-v2-rc4`. OWNER-TBD: pushed to the fork, the release tag and branch name |
+| Release commit | `37e717ff6`: rc4 (`2d53179aa`: rc3 + the staircase drafter, its store order, the fix of a crash in the drafter path, and an allocator fix for pipelined decoding) with the release defaults the rig chose (decode attention, the input layer on the card, packed uploads and the card-built mask off unless set), branch `pascal-p106-v2-rc4`. OWNER-TBD: pushed to the fork, the release tag and branch name |
 | Without the drafter | rc3 `7e6ec762f`, the same engine with the drafter code left out |
 | v1, for comparison | `eeaa59660`, branch `pascal-p106` |
 | Upstream base | `d77256999` |
@@ -49,7 +49,7 @@ redistributable CUDA runtime libraries as a second archive, `test-backend-ops` a
 release notes from [release/notes-v2.0.md](../../notes-v2.0.md) (`NOTES_VARIANT=rc4`):
 
 ```bash
-BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 scripts/package_release.sh - v2.0 2d53179aa
+BUILD_DIR=<unpacked build> NOTES_VARIANT=rc4 scripts/package_release.sh - v2.0 37e717ff6
 ```
 
 It checks that the binaries contain no AVX instructions, need glibc 2.38 at most, and find every library in the
