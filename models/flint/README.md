@@ -23,9 +23,7 @@ tasks in 17 minutes).
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `37e717ff6`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc4 -->
-| Engine | the v2 Pascal engine, commit `7e6ec762f`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc3 -->
-| Engine | the v2 Pascal engine, commit `594d20e08`: the release archives RIG-TBD (tag and link), or a build from source ([how](../../README.md#run-it)) | <!-- only:rc1 -->
+| Engine | the v2 Pascal engine, commit `37e717ff6`: the [Miner Llama v2.0](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0) release archives (tag `miner-llama-v2.0`), or a build from source ([how](../../README.md#run-it)) |
 | Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
 | Model file, six cards, or the most speed on nine | [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
 | Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint-Pascal-Q5 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
@@ -49,7 +47,6 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
 - **`--pipe-depth 4`** sends up to four guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
-- **The drafter:** add `--pipe-guess staircase --pipe-draft <the nine-card file>` (RIG-TBD: its name) for the trained guesser on nine cards ([below](#the-staircase-drafter)); RIG-TBD: whether the first card has room for it next to Q8_0 at the full context. <!-- only:drafter -->
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens: with `-b 2048 -ub 512`
@@ -61,7 +58,7 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
 - **Agents** (pi, OpenCode): the same line. Tool requests sample on the GPU too, with each token checked against the
   tool grammar on the host: 13–15 % faster than sampling them on the host. Set the client's context window equal to
   `-c`.
-- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. In the agent test it gained nothing (it added 11 s of fixed time per task), so the line above leaves it out. <!-- only:q163-q111 -->
+- **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. In the agent test it gained nothing (it added 11 s of fixed time per task), so the line above leaves it out.
 - **Six cards:** Flint-Pascal-Q5 or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
   (UD-Q4_K_XL fits est. ~128k tokens there). Q8_0 needs eight or nine cards.
 
@@ -170,41 +167,7 @@ tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/ex
 - **A trained guesser would pay much more.** With 70 % of guesses right the pipeline runs 82–84 tok/s
   ([Q87](../../quants/experiments.md#registry)).
 
-<!-- begin:drafter -->
-### The staircase drafter
-
-The release ships a trained guesser for pipelined speculation: a small transformer that predicts Flint's next token
-from the hidden states Flint has already computed for the tokens in flight. The newest token has passed only the first
-card, older ones are further along: a staircase of depths. The drafter sits behind the copy lookup and runs on the
-first card in its own CUDA stream; the last card still samples every token, so the output is plain decoding's. It
-learned from Flint Q8_0's hidden states and works with any Flint file. How it is built and trained:
-[docs/drafter.md](../../docs/drafter.md).
-
-- **Files** (~0.27 GB each, from the release assets or
-  [Hugging Face](https://huggingface.co/CinderellaMan/Flint-Staircase-Drafter); RIG-TBD: their names): one for nine
-  cards, trained on the nine-card splits, and one for six cards and any other split of 3–12 cards, trained on all of
-  them. Both are trained only on Flint's answers to prompts whose answers may be published
-  ([the sources](../../release/flint-v2.1/reproduce/drafter.md#1-prompts)).
-- **Turn it on:** add `--pipe-guess staircase --pipe-draft <file>` to the chat command line above, which already has
-  `--pipe-depth 3`. The engine builds the drafter's window of hidden states from the run's own layer split.
-
-Served, `--pipe-depth 3`, tok/s, the median of eight requests (chat, code and edit answers of 512 tokens and a
-coding-agent tool request of 1,536, each at temperature 0 and at the makers' sampling):
-
-| | No guessing | Copy lookup and continuations | With the store | **With the drafter** |
-|---|---|---|---|---|
-| **Nine cards, Q8_0 at 262,144 tokens**, `-ts 6,6,5,5,6,5,5,6,6`, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Nine cards, Flint-Pascal-Q5, nine-card file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
-| Six cards, Flint-Pascal-Q5, general file | RIG-TBD | RIG-TBD | RIG-TBD | **RIG-TBD** |
-
-- RIG-TBD: the share of the drafter's guesses that are right, and its accuracy on held-out text.
-- **One guess costs 5.3–7.3 ms on the first card** (measured with the first heads of the same size), which also runs
-  Flint's first layers; the design estimated 1.6–2.6 ms. That cost, more than the guessing quality, limits the gain.
-- The first heads, trained partly on prompts whose answers may not be published, are not shipped; their measurements
-  are in [docs/drafter.md](../../docs/drafter.md).
-- Every answer must be identical to plain decoding in every configuration.
-<!-- end:drafter -->
-**Coming later (v2.1):** a trained guesser, the staircase drafter, that predicts Flint's next token from the hidden states of the tokens in flight, and a store of Flint's earlier answers ([how the drafter works](../../docs/drafter.md)). <!-- only:nodrafter -->
+**Coming later (v2.1):** a trained guesser, the staircase drafter, that predicts Flint's next token from the hidden states of the tokens in flight, and a store of Flint's earlier answers ([how the drafter works](../../docs/drafter.md)).
 
 ### Prefill
 
@@ -213,7 +176,7 @@ tokens: stock llama.cpp 185 / 493 / 593, v1 187 / 494 / 593, v2 228 / 613 / 723;
 against stock's 593. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by tokens per expert
 ([Q117](../../quants/experiments.md#registry)).
 
-Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: 766 tok/s at 8,192 tokens and 461 at 32,768, against 699 and 447 with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`). <!-- only:q163-q111 -->
+Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: 766 tok/s at 8,192 tokens and 461 at 32,768, against 699 and 447 with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`).
 
 ### With hardware tuning
 
@@ -275,9 +238,8 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
   ([Q116](../../quants/experiments.md#registry)); in the build but off by default (`LLAMA_GPU_KQ_MASK=N` for
   micro-batches of N tokens or more), because built for every micro-batch it slowed long prompts 3.6×.
 - **Pascal kernels for Q4_K and Q6_K**, for other models' common downloads; est. ≤ 1 % on UD-Q4_K_XL.
-- **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: prefill +10 % at 8,192 tokens, +3 % at 32,768. <!-- only:q163-q111 -->
-- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): no gain in the agent test, off unless set. <!-- only:q163-q111 -->
-- **The staircase drafter**, a trained guesser for pipelined speculation, with its side files: RIG-TBD. <!-- only:drafter -->
+- **A Pascal prefill-attention kernel** for long prompts, which also reads a Q8_0 cache directly: prefill +10 % at 8,192 tokens, +3 % at 32,768.
+- **Prompt caching for agents** (`--prefix-cache`, whole-ring checkpoints, `--checkpoint-gen`): no gain in the agent test, off unless set.
 
 ## Not measured yet
 

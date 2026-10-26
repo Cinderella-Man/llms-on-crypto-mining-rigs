@@ -1,8 +1,7 @@
 # Flint v2 release: everything in one place
 
 The second release of the Pascal engine, tuned and measured on Flint: what ships, what changed since v1, what was
-measured, where every file lives, and how to rebuild the engine and the model file from scratch. Placeholders:
-`RIG-TBD` is a rig number still being measured, `OWNER-TBD` a decision of the project's owner.
+measured, where every file lives, and how to rebuild the engine and the model file from scratch.
 
 ## The headline: near-lossless Flint on nine mining cards at the full context, three times stock speed for an agent
 
@@ -34,7 +33,7 @@ about 15 % of the one that reads 2.21 GB (UD-Q4_K_XL).
 
 | Piece | What it is | Where |
 |---|---|---|
-| **Engine** | llama.cpp fork for compute 6.1, commit `37e717ff6` (rc4 with the release defaults): the Pascal kernels, the persistent MoE kernel, pipelined speculation with guesses from the request itself, GPU sampling for tool requests and the prefill-attention kernel; prebuilt for Ubuntu 24.04+ without AVX, with NVIDIA's CUDA runtime libraries as a second archive | the fork's GitHub release, OWNER-TBD (tag); notes: [release/notes-v2.0.md](../notes-v2.0.md) |
+| **Engine** | llama.cpp fork for compute 6.1, commit `37e717ff6` (tag `miner-llama-v2.0`, rc4 with the release defaults): the Pascal kernels, the persistent MoE kernel, pipelined speculation with guesses from the request itself, GPU sampling for tool requests and the prefill-attention kernel; prebuilt for Ubuntu 24.04+ without AVX, with NVIDIA's CUDA runtime libraries as a second archive | [Miner Llama v2.0](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0), the fork's GitHub release; notes: [release/notes-v2.0.md](../notes-v2.0.md) |
 | **Unsloth's Flint Q8_0** | the headline file: near-lossless, 42.3 GB, nine cards at the full context | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (linked, not redistributed) |
 | **Flint-Pascal-Q5** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-Pascal-Q5-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF); card: [huggingface/Flint-Pascal-Q5](huggingface/Flint-Pascal-Q5/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (linked, not redistributed) |
@@ -118,16 +117,14 @@ produced.
 
 What a stranger cannot yet redo exactly from this repository, and what closes each gap:
 
-1. **The engine's release commit is not public yet.** `37e717ff6` and the release branch wait for the owner's push to
-   the fork (OWNER-TBD), and the release archives for the tag.
-2. **The GPTQ output head is byte-exact only by copying it.** A head computed from scratch (dumps on GPUs, GPTQ on the
+1. **The GPTQ output head is byte-exact only by copying it.** A head computed from scratch (dumps on GPUs, GPTQ on the
    CPU) is equivalent within noise, not identical: GPU dumps differ in the last bits between GPUs. The calibration
    data is public (wikitext-2 train and the shipped Q51 transcripts).
-3. **Rig drivers are private.** The scripts that relayed builds to the rig and looped the public bench scripts contain
+2. **Rig drivers are private.** The scripts that relayed builds to the rig and looped the public bench scripts contain
    machine names; `results.md` gives each number's public command instead.
-4. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) are
+3. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) are
    regenerated with the commands in [reproduce/model.md](reproduce/model.md).
-5. **How the mix was found:** the per-group measurements that chose Flint-Pascal-Q5's tensor types (Q73, Q77) ran as private job
+4. **How the mix was found:** the per-group measurements that chose Flint-Pascal-Q5's tensor types (Q73, Q77) ran as private job
    files; their results are in the registry, and the type map, not the search, defines the file.
 
 ## Acceptance check: everything needed to rebuild every shipped file
@@ -137,10 +134,10 @@ way:
 
 | Shipped file | Rebuild guide | Script | Expected checksum | Status |
 |---|---|---|---|---|
-| `llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz` (engine) | [reproduce/engine.md](reproduce/engine.md) | `scripts/build_llamacpp_docker.sh`, then `scripts/package_release.sh` | `f213259e52f11a2893be46e69dc1683bc8b98296f07cfb476ff4c19a681baec1` | **gap 1:** the release commit is not public yet. Packaging is deterministic: the same binaries give the same archive (two runs on rc3's build, identical bytes). A fresh compile is checked by `BUILDINFO.txt`'s commit and `test-backend-ops`, not by its bytes |
+| `llama-p106-v2.0-bin-ubuntu-cuda12.9-sm61.tar.gz` (engine) | [reproduce/engine.md](reproduce/engine.md) | `scripts/build_llamacpp_docker.sh`, then `scripts/package_release.sh` | `f213259e52f11a2893be46e69dc1683bc8b98296f07cfb476ff4c19a681baec1` | complete: the release commit is public (tag `miner-llama-v2.0`) and the archives are its GitHub release. Packaging is deterministic: the same binaries give the same archive (two runs on rc3's build, identical bytes). A fresh compile is checked by `BUILDINFO.txt`'s commit and `test-backend-ops`, not by its bytes |
 | `cudart-llama-p106-v2.0-bin-ubuntu-cuda12.9.tar.gz` (CUDA runtime) | [reproduce/engine.md](reproduce/engine.md) | `scripts/package_release.sh` (from NVIDIA's `cuda:12.9.2-devel-ubuntu24.04` image) | `65b46821ab94c5a46ec762f4fc8896de857ada120770d5a2499695ed3277a3bf` (the same for any engine commit packaged as v2.0) | complete: byte for byte from the same image (two runs identical) |
 | `llama-p106-v2.0-tests-ubuntu-cuda12.9-sm61.tar.gz` | [reproduce/engine.md](reproduce/engine.md) | as the engine | `26e0f0633e4ed9967cfbbbf8a2b45bec2c79ae80f526a8ab4afde920f72665fe` | as the engine |
-| `flint-pascal-Q5.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | `0163ec541e88a863…` (release header, [CHECKSUMS](CHECKSUMS)); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 2:** the output head is byte-exact only when copied |
+| `flint-pascal-Q5.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | `0163ec541e88a863…` (release header, [CHECKSUMS](CHECKSUMS)); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 1:** the output head is byte-exact only when copied |
 | Release notes | [notes-v2.0.md](../notes-v2.0.md) | `scripts/package_release.sh NOTES_VARIANT=rc4` | — | complete once the numbers are in |
 | The Hugging Face card of Flint-Pascal-Q5 | [huggingface/](huggingface/UPLOAD.md) | — | — | complete once the numbers are in |
 | The Q51 test set (inputs to the checks) | [reproduce/data/q51](reproduce/data/q51/README.md) | `bench/expert_overlap` | in git | complete |

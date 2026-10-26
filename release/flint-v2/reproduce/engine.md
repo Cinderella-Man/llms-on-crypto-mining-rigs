@@ -9,7 +9,7 @@ turned off and compared with stock behaviour.
 | | |
 |---|---|
 | Fork | [Cinderella-Man/llama.cpp](https://github.com/Cinderella-Man/llama.cpp) |
-| Release commit | `37e717ff6`: rc4 (`2d53179aa`: rc3 + the staircase drafter, its store order, the fix of a crash in the drafter path, and an allocator fix for pipelined decoding) with the release defaults the rig chose (decode attention, the input layer on the card, packed uploads and the card-built mask off unless set), branch `pascal-p106-v2-rc4`. OWNER-TBD: pushed to the fork, the release tag and branch name |
+| Release commit | `37e717ff6`, tag [`miner-llama-v2.0`](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0) on branch `pascal-p106-v2`: rc4 (`2d53179aa`: rc3 + the staircase drafter, its store order, the fix of a crash in the drafter path, and an allocator fix for pipelined decoding) with the release defaults the rig chose (decode attention, the input layer on the card, packed uploads and the card-built mask off unless set) |
 | Without the drafter | rc3 `7e6ec762f`, the same engine with the drafter code left out |
 | v1, for comparison | `eeaa59660`, branch `pascal-p106` |
 | Upstream base | `d77256999` |
@@ -29,11 +29,11 @@ On any x86-64 Linux PC with Docker (CUDA 12.9 inside the container, code for com
 userland):
 
 ```bash
-git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/llama.cpp     # once
-TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106-v2-rc4
+git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/llama.cpp && git -C ~/llama-builds/src fetch fork --tags     # once
+TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v2.0
 ```
 
-It writes `llama.cpp-<date>-<commit>-pascal-p106-v2-rc4.tar.gz` with `bin/` and `BUILDINFO.txt` (commit, image, AVX
+It writes `llama.cpp-<date>-<commit>-miner-llama-v2.0.tar.gz` with `bin/` and `BUILDINFO.txt` (commit, image, AVX
 count, highest glibc symbol). `SCHED_COPIES=8` builds the variant with eight scheduler copies for prefill.
 
 On the rig itself (slow on two cores):

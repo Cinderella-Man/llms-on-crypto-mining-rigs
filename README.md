@@ -36,8 +36,8 @@ and a PC to connect from.
 
    Reboot; `nvidia-smi` should list your cards ([setup guide](docs/setup.md)).
 
-2. **Miner Llama v2:** from the [fork's releases](https://github.com/Cinderella-Man/llama.cpp/releases) (OWNER-TBD: the
-   release tag), download the two archives and `SHA256SUMS` into one folder, then:
+2. **Miner Llama v2:** from its [GitHub release](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0), download the two archives and `SHA256SUMS` into one
+   folder, then:
 
    ```bash
    sha256sum -c SHA256SUMS
