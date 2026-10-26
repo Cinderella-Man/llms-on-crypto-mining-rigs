@@ -36,7 +36,7 @@ RIG-TBD tokens per second, RIG-TBD minutes per task.
   near-lossless (it picks the original model's next word 93.3 % of the time) and fits the full 262,144-token context on
   nine cards; with the Pascal engine it generates 44.6–45.9 tokens per second in the same agent test.
 - **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards, is
-  about 18 % faster than Q8_0 on nine, and is closer to the original than UD-Q4_K_XL.
+  about 18 % faster than Q8_0 on nine and 6 % faster than UD-Q4_K_XL, and is closer to the original than UD-Q4_K_XL.
 
 ## Run it in three steps
 
@@ -78,7 +78,7 @@ P106-090, 262,144-token context, the command line above unless noted, 2026-10-26
 | File and engine | Tasks done in the 25 minutes (passed) | Minutes per task (median) | Generation, tokens/s | Prompt reading, tokens/s | First token (median) |
 |---|---|---|---|---|---|
 | **This file, Pascal engine** | **12 (12), all done in 17 min** | 1.2 | **53.8** | 178 | 2.6 s |
-| Unsloth UD-Q4_K_XL, Pascal engine | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| Unsloth UD-Q4_K_XL, Pascal engine | 11 (10) in 27 min | 1.1 | 50.7 | 191 | 2.5 s |
 | Unsloth Q8_0, Pascal engine (two runs) | 12 (12) and 12 (12) | 1.1, 1.4 | 45.9, 44.6 | 176, 185 | 2.6 s |
 | Unsloth UD-Q4_K_XL, stock llama.cpp, 65,536-token context | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
 | Unsloth Q8_0, stock llama.cpp, 65,536-token context | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
