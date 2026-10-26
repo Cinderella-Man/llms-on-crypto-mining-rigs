@@ -36,6 +36,7 @@ over all requests of the run; first token = the median per turn; runaways = sess
 | Q8_0, the same without pipelined speculation | 10 (9) | 1.7 / 12.0 | 29.3 | 184 | 2.3 s | 1 |
 | Q8_0, `--pipe-depth 3` with the agent prompt cache (`--prefix-cache --checkpoint-gen`) | 10 (9) | 1.0 / 12.0 | 42.2 | 173 | 2.7 s | 1 |
 | Q8_0, stock, 64k, `-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6` | 9 (8) | 2.9 / 12.0 | 14.4 | 144 | 3.7 s | 1 |
+| Q8_0, v1 (`eeaa59660`), 64k, `-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6`, 35 minutes like stock | 12 (11) | 1.6 / 3.8 | 25.7 | 146 | 3.9 s | 1 |
 
 - **The release command line:** depth 4 (Flint-Pascal-Q5 +11 % over depth 3, Q8_0 even; the owner's rule: the depth
   that wins on both, depth 4 on a tie), `-b 512 -ub 128` (with `-b 2048 -ub 512` at 262,144 tokens the host's 4 GB of
