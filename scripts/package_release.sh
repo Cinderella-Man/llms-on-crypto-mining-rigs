@@ -7,7 +7,8 @@
 #   cudart-<PREFIX>-<VERSION>-bin-ubuntu-cuda12.9.tar.gz   NVIDIA's redistributable runtime libraries the binaries load
 #                                                          (libcudart, libcublas, libcublasLt), with the EULA notice
 #   <PREFIX>-<VERSION>-tests-ubuntu-cuda12.9-sm61.tar.gz   test-backend-ops, when the build has it (TESTS=1)
-#   SHA256SUMS, RELEASE_NOTES.md (from release/notes-<VERSION>.md with the commit, names, sizes and hashes filled in)
+#   SHA256SUMS, RELEASE_NOTES.md (from release/notes-<VERSION>.md with the commit, names, sizes and hashes filled in,
+#   each paragraph on one line: GitHub release text keeps every line break)
 # All three unpack into one folder, <PREFIX>-<VERSION>/, binaries and libraries side by side, so the rig needs only the
 # NVIDIA driver: no CUDA toolkit. Nothing is uploaded or published.
 #
@@ -157,7 +158,7 @@ if [ -f "$NOTES" ]; then
         -e "s|{{BIN_ASSET}}|$BIN_ASSET|g" -e "s|{{BIN_MB}}|$(size "$BIN_ASSET")|g" -e "s|{{BIN_SHA256}}|$(sha "$BIN_ASSET")|g" \
         -e "s|{{CUDART_ASSET}}|$CUDART_ASSET|g" -e "s|{{CUDART_MB}}|$(size "$CUDART_ASSET")|g" \
         -e "s|{{CUDART_SHA256}}|$(sha "$CUDART_ASSET")|g" -e "/^{{DRAFT_ROWS}}\$/{r $rows" -e "d}" "$NOTES" \
-        | bash "$here/release_variant.sh" "${NOTES_VARIANT:-none}" - > "$OUT/RELEASE_NOTES.md"
+        | bash "$here/release_variant.sh" "${NOTES_VARIANT:-none}" - | python3 "$here/md_unwrap.py" > "$OUT/RELEASE_NOTES.md"
     rm -f "$rows"
     left=$(grep -o '{{[A-Z_0-9]*}}' "$OUT/RELEASE_NOTES.md" | sort -u | tr '\n' ' ' || true)
     [ -n "$left" ] && echo "WARNING: unfilled fields in the notes: $left"
