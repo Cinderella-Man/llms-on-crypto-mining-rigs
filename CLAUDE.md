@@ -16,6 +16,14 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
   driver branch the last driver line that support Pascal.
 - Remove anything you leave on the rig, such as test binaries in `/tmp`.
 
+## Measuring speed
+
+- The speed this project optimizes and reports is realistic agentic speed: a coding agent working through a task
+  (multi-turn, tool calls and their results, a growing context, prompt caching), measured with `bench/agent_check` as
+  time per task, turns, time to first token per turn and tokens per second over the session.
+- Single-request numbers (chat, code or edit tok/s, llama-bench tg128 and pp512) are diagnostics for finding causes.
+  Release settings are chosen on agentic speed, and the README reports agentic speed first.
+
 ## Quant work
 
 - Plan and status of the quants subproject live at the top of `quants/experiments.md` ("Plan", with a "Now" line). Read
