@@ -28,6 +28,7 @@ over all requests of the run; first token = the median per turn; runaways = sess
 | Flint-Pascal-Q5, release, 262k, `--pipe-depth 3` | 10 (10) | 1.0 / 12.0 | 48.6 | 180 | 2.7 s | 1 |
 | Flint-Pascal-Q5, stock, 64k, `-b 2048 -ub 512` | 11 (10) | 2.1 / 6.9 | 15.6 | 143 | 4.2 s | 1 |
 | UD-Q4_K_XL, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | 11 (10) | 1.1 / 4.1 | 50.7 | 191 | 2.5 s | 1 |
+| UD-Q5_K_XL, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | 12 (12) in 24.8 min | 1.0 / 5.2 | 44.2 | 185 | 2.6 s | 0 |
 | UD-Q4_K_XL, stock, 64k, `-b 2048 -ub 512` | 9 (8) | 3.1 / 12.0 | 14.0 | 145 | 3.7 s | 1 |
 | Q8_0, release, 262k, `-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1 / 3.5, 1.4 / 7.8 | **45.9, 44.6** | 176, 185 | 2.6 s | 0, 0 |
 | Q8_0, the same at `--pipe-depth 3` (two runs) | 11 (11), 10 (9) | 1.0 / 3.6, 1.3 / 12.0 | 44.6, 44.6 | 184, 191 | 2.4, 2.6 s | 0, 1 |
@@ -124,6 +125,7 @@ Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of c
 | Flint-Pascal-Q5 against BF16, 80 × 512 tokens of wikitext-2 test | KLD 0.1048, same top token 88.84 %, PPL +2.65 % | `llama-perplexity --kl-divergence` ([reproduce/model.md](reproduce/model.md)) | Q113 |
 | Flint-Pascal-Q5 rebuilt from the BF16 conversion with the public recipe (head copied), 2026-10-25 | 779 of 779 tensors equal byte for byte | `reproduce/build_k2h_r16.sh` | — |
 | UD-Q4_K_XL / Unsloth Q8_0, the same test | KLD 0.120 / 0.052; 87.7 / 93.3 %; +3.9 / +3.3 % | the same | Q8 |
+| UD-Q5_K_XL / Flint-Pascal-Q5 / UD-Q4_K_XL side by side (2026-10-26), the same test on two RTX 3080s with the expert weights of layers 0–21 computed on the CPU (`-ncmoe 22 --no-op-offload`) | KLD 0.0845 / 0.1107 / 0.1207; 90.72 / 88.80 / 87.69 %; +3.1 / +2.4 / +4.3 % | the same, with `-ncmoe 22 -ts 34,15 --no-op-offload` | — |
 | GPTQ Q5_0 head against round-to-nearest, on F3's body | +0.0023 against +0.023 KLD | `quants/gptq_head/run.sh` | Q56 |
 | K2h (32-bit router) on 3,477 single-turn tool-calling tasks (BFCL v4), against UD | +0.14 points, 90 % interval −0.87 to +1.16 (non-inferior at a 1.5-point margin) | [bench/bfcl_flint](../../bench/bfcl_flint/README.md), the makers' sampling | Q41 |
 | G3 (K2h's parent) on 458 multi-turn tasks, against UD | +0.87 points, 90 % interval −3.23 to +4.98 | the same, multi-turn | Q41 |

@@ -81,6 +81,7 @@ growing every turn) and 25 minutes (stock llama.cpp 35), one attempt per task, n
 |---|---|---|---|---|---|
 | **Flint-Pascal-Q5**, v2, 262k, `--pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 | **53.8** | 178 | 2.6 s |
 | UD-Q4_K_XL, v2, 262k, `--pipe-depth 4` | 11 (10) | 1.1 | 50.7 | 191 | 2.5 s |
+| UD-Q5_K_XL, v2, 262k, `--pipe-depth 4` | 12 (12) | 1.0 | 44.2 | 185 | 2.6 s |
 | **Q8_0**, v2, 262k, `--pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1, 1.4 | **45.9, 44.6** | 176, 185 | 2.6 s |
 | Q8_0, v2, 262k, without pipelined speculation | 10 (9) | 1.7 | 29.3 | 184 | 2.3 s |
 | Q8_0, stock llama.cpp, 64k | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |

@@ -17,26 +17,27 @@ tags:
 before it answers, writes code and calls tools, and reads up to 262,144 tokens of context. This file is Flint packed
 into 29.4 GB so that it runs fast on old NVIDIA "Pascal" cards: the P106 and P104 cards of retired mining rigs, the
 GTX 10 series, and the Tesla P4/P40. **Q5** because most of its weights are stored in 5-bit blocks (Q5_0) and the rest
-in 8-bit blocks (Q8_0): 5.9 bits per weight on average, against 5.0 for Unsloth's UD-Q4_K_XL and 8.5 for its Q8_0.
+in 8-bit blocks (Q8_0): 5.9 bits per weight on average, against 6.0 for Unsloth's UD-Q5_K_XL and 8.5 for its Q8_0.
 
 **Why it is faster there.** A model file stores its weights compressed. Modern graphics cards unpack any compression
 format almost for free, so the popular files use elaborate formats that save a little space. Old Pascal mining cards
 have few compute units and spend real time unpacking those formats. This file uses only the two simplest formats
 (Q5_0 and Q8_0), which the [Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) reads at full
-speed. The formats were chosen part by part, so the file stays closer to the original model than the popular 4-bit
-download, Unsloth's UD-Q4_K_XL.
+speed. The price is some quality: Unsloth's UD-Q5_K_XL, the same size in elaborate formats, stays closer to the
+original model, but on Pascal cards it runs only at the speed of the much larger Q8_0. This file is 22 % faster.
 
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
 card on a single PCIe 1.0 lane, a 2-core Celeron host): it generated **53.8 tokens per second** over its sessions and
-finished all twelve tasks in 17 minutes, a median of 1.2 minutes per task. Stock llama.cpp with Unsloth's UD-Q4_K_XL:
-14.0 tokens per second, 3.1 minutes per task (at 65,536 tokens of context; 8 of 12 tasks passed).
+finished all twelve tasks in 17 minutes, a median of 1.2 minutes per task. Unsloth's UD-Q5_K_XL in the same test: 44.2
+tokens per second, 25 minutes for the twelve tasks. This file on stock llama.cpp: 15.6 tokens per second.
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
   near-lossless (it picks the original model's next word 93.3 % of the time) and fits the full 262,144-token context on
   nine cards; with the Pascal engine it generates 44.6–45.9 tokens per second in the same agent test.
-- **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards, is
-  about 18 % faster than Q8_0 on nine and 6 % faster than UD-Q4_K_XL, and is closer to the original than UD-Q4_K_XL.
+- **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards, and
+  is about 18 % faster than Q8_0 and 22 % faster than UD-Q5_K_XL on nine, at a lower quality than both (it picks the
+  original's next word 88.8 % of the time, UD-Q5_K_XL 90.7 %).
 
 ## Run it in three steps
 
@@ -65,7 +66,8 @@ A trained guesser that makes it faster still comes in a later release
   for the full 262,144 tokens.
 - **The Pascal engine** for the speed. The file also works in stock llama.cpp (release b11803 or newer) and in apps
   built on it, just without the Pascal speed-up.
-- **On a modern GPU or a Mac, use Unsloth's UD-Q4_K_XL instead:** it is smaller for the same quality there.
+- **On a modern GPU or a Mac, use Unsloth's UD-Q5_K_XL instead:** the same size and closer to the original; this
+  file's speed lead exists only on Pascal cards.
 
 ## Speed
 
@@ -78,20 +80,18 @@ P106-090, 262,144-token context, the command line above unless noted, 2026-10-26
 | File and engine | Tasks done in the 25 minutes (passed) | Minutes per task (median) | Generation, tokens/s | Prompt reading, tokens/s | First token (median) |
 |---|---|---|---|---|---|
 | **This file, Pascal engine** | **12 (12), all done in 17 min** | 1.2 | **53.8** | 178 | 2.6 s |
-| Unsloth UD-Q4_K_XL, Pascal engine | 11 (10) in 27 min | 1.1 | 50.7 | 191 | 2.5 s |
 | Unsloth Q8_0, Pascal engine (two runs) | 12 (12) and 12 (12) | 1.1, 1.4 | 45.9, 44.6 | 176, 185 | 2.6 s |
+| Unsloth UD-Q5_K_XL, Pascal engine | 12 (12) in 25 min | 1.0 | 44.2 | 185 | 2.6 s |
 | This file, stock llama.cpp, 65,536-token context | 11 (10) | 2.1 | 15.6 | 143 | 4.2 s |
-| Unsloth UD-Q4_K_XL, stock llama.cpp, 65,536-token context | 9 (8) | 3.1 | 14.0 | 145 | 3.7 s |
 | Unsloth Q8_0, stock llama.cpp, 65,536-token context | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
 
+- **UD-Q5_K_XL** reads about as many bytes per token as this file, but its K-quant formats take the Pascal cards more
+  work to unpack: it runs at Q8_0's speed.
 - **Stock llama.cpp** runs at 65,536 tokens of context, with 35 minutes for the tasks: at 262,144 its attention mask,
-  built on the host, does not fit the rig's 4 GB of RAM. On stock llama.cpp this file is 11 % faster than UD-Q4_K_XL (15.6
-  against 14.0 tokens per second); the Pascal engine makes it 3.4 times as fast.
+  built on the host, does not fit the rig's 4 GB of RAM. The Pascal engine makes this file 3.4 times as fast.
 - **Prompt reading** above is the agent's turns, a few hundred to a few thousand new tokens each (85–89 % of every
   prompt comes from the cache). A whole fresh prompt reads faster: 767 tokens per second for 8,192 tokens with this
   file and larger batches (`-b 8192 -ub 512`, which fit at shorter contexts), against 593 on stock llama.cpp.
-- **One request at a time** (`llama-bench`, 128 tokens, the same v2 build for both): 41.5 tokens per second with this
-  file against 39.8 for UD-Q4_K_XL.
 
 ## Quality
 
@@ -100,11 +100,11 @@ Against Flint's original 16-bit weights, 80 × 512 tokens of wikitext-2:
 | File | Size | Picks the same next word as the original | Distance from the original (KL divergence, lower is better) | Perplexity change |
 |---|---|---|---|---|
 | Unsloth Q8_0 | 42.3 GB | 93.3 % | 0.052 | +3.3 % |
-| **This file** | **29.4 GB** | **88.8 %** | **0.105** | **+2.7 %** |
-| Unsloth UD-Q4_K_XL | 25.1 GB | 87.7 % | 0.120 | +3.9 % |
+| Unsloth UD-Q5_K_XL | 29.9 GB | 90.7 % | 0.085 | +3.1 % |
+| **This file** | **29.4 GB** | **88.8 %** | **0.111** | **+2.4 %** |
 
-- **Tool calling:** the same tensors with a 32-bit router score level with UD-Q4_K_XL on 3,477 single-turn
-  tool-calling tasks (BFCL v4): +0.14 points, 90 % interval −0.87 to +1.16, with fewer malformed answers.
+- **UD-Q5_K_XL and this file** were measured side by side in one run, part of their expert weights computed on the
+  CPU; with every weight on the GPUs this file measures 0.105 and +2.7 %, and Q8_0's row is from such a run.
 - **The engine does not change the answers.** Its kernels change only the order in which numbers are added up; the
   pipelined speculation gives the same tokens as plain decoding, checked token by token.
 
