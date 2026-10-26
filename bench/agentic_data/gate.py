@@ -41,7 +41,8 @@ import license_scan  # noqa: E402
 LICENCE_LINE = re.compile("|".join(rx for _, rx in license_scan.FAMILIES) +
                           r"|SPDX-License-Identifier|^\W*(?:Copyright\b|\(c\)\s|©)", re.I | re.M)
 ALLOWED_PATHS = ("/work", "/tmp", "/usr/local/lib/python3.12/", "/usr/local/bin/python", "/opt/agx/",
-                 "/bin/sh:")   # CPython, our tool runner, the shell's own error prefix ("/bin/sh: 1: x: not found")
+                 "/bin/sh:", "/usr/local/lib/elixir/", "/usr/local/lib/erlang/")   # CPython, our tool runner, the
+# shell's own error prefix ("/bin/sh: 1: x: not found"), and the Elixir sandbox's runtimes (Apache-2.0)
 ABS_PATH = re.compile(r"(?<![\w.~:/-])(/(?:usr|etc|opt|home|root|var|srv|mnt|lib|bin|sbin|proc|sys|dev|run)\b[^\s'\"]*)")
 
 
@@ -123,7 +124,46 @@ def foreign_paths(text):
     return sorted({p for p in ABS_PATH.findall(text) if not p.startswith(ALLOWED_PATHS)})[:5]
 
 
+def ex_changed_ok(root, f, man, texts_by_sha):
+    """An Elixir module file is its scanned original with the Stdmods prefix added and texts.json's change note as its
+    first line, and nothing else."""
+    cur = open(os.path.join(root, f["path"]), encoding="utf-8").read()
+    if agx.sha256_file(f["origin"]) != f["origin_sha256"]:
+        return [f"{f['path']}: its original {f['origin']} changed"]
+    orig = open(f["origin"], encoding="utf-8").read()
+    first, _, rest = cur.partition("\n")
+    bad = []
+    if f"{agx.EX_NAMESPACE}." in orig or rest.replace(f"{agx.EX_NAMESPACE}.", "") != orig:
+        bad.append(f"{f['path']}: differs from its original by more than the {agx.EX_NAMESPACE} prefix")
+    cn = man.get("change_note") or {}
+    T = texts_by_sha.get(cn.get("texts_sha256"))
+    tp = None if T is None else next((x for x in T["templates"].get("change_note", []) if x["id"] == cn.get("id")),
+                                     None)
+    if tp is None:
+        bad.append(f"{f['path']}: its change note is not in the given texts files")
+    elif first + "\n" != agx.ex_change_note(tp["text"], cn["source_file"], man["modules"]):
+        bad.append(f"{f['path']}: the first line is not the change note")
+    return bad
+
+
+def ex_found(name, text):
+    """Whether an Elixir test or function name shows in the workspace's text: a test's name (ExUnit puts a describe
+    block's name in front of it: both parts must show), a function's name (Stdmods.URI.parse/1, doctest
+    Stdmods.URI.parse/1 (3)), a module's last part (doctest module Stdmods.URI (1))."""
+    if name.startswith("test "):
+        n = name[len("test "):]
+        return n in text or any(n[:i].strip() in text and n[i:].strip() in text
+                                for i in range(1, len(n)) if n[i] == " ")
+    parts = name.split(" ")
+    if name.startswith("doctest "):
+        leaf = parts[2].split(".")[-1] if parts[1] == "module" else parts[1].rsplit(".", 1)[-1].split("/")[0]
+    else:
+        leaf = name.rsplit(".", 1)[-1].split("/")[0]
+    return leaf in text
+
+
 def stage_workspaces(a, src, cb, errors, rows, rec, parents):
+    texts_by_sha = load_texts(a, src, errors, rec) if a.texts else {}   # Elixir change notes
     scans = {}
     for s in a.scan or []:
         with open(s) as f:
@@ -143,18 +183,32 @@ def stage_workspaces(a, src, cb, errors, rows, rec, parents):
         disk = agx.tree_files(root)
         if {f["path"]: f["sha256"] for f in man["files"]} != disk:
             bad.append("the folder differs from the manifest")
+        ex = man.get("lang") == "elixir"
         for f in man["files"]:
-            if f["role"] in ("code", "licence"):
+            if ex and f["role"] in ("licence", "notice"):   # pinned texts: the Apache-2.0 text, Elixir's NOTICE
+                want = c and c.get(f"{f['role']}_file", {}).get("sha256")
+                if not want or f["sha256"] != want:
+                    bad.append(f"{f['path']}: not the {f['role']} file codebases.json pins")
+            elif f["role"] in ("code", "licence"):
                 rel = os.path.relpath(f["origin"], man["origin"].get("lib") or man["origin"].get("tree"))
                 row = scans.get(rel)
-                if row is None or row["sha256"] != f["sha256"]:
+                if row is None or row["sha256"] != f.get("origin_sha256", f["sha256"]):
                     bad.append(f"{f['path']}: not the scanned file {rel}")
                 elif f["role"] == "code" and row["verdict"] != "ok" and not row["verdict"].startswith("ok:notice"):
                     bad.append(f"{f['path']}: scan verdict {row['verdict']}")
+                if f["role"] == "code" and f.get("origin_sha256"):
+                    bad += ex_changed_ok(root, f, man, texts_by_sha)
                 if f["role"] == "code":
                     hit = agx.shared12(open(os.path.join(root, f["path"]), encoding="utf-8").read(), spans)
                     if hit:
                         bad.append(f"{f['path']} shares 12 words with a held-out test: {hit!r}")
+            elif f["role"] == "scaffold" and ex:   # mix new's files, as Elixir's generator wrote them
+                want = agx.ex_scaffold(f["path"], man)
+                tmpl = man["mixnew"]["files"]
+                if any(agx.sha256_file(os.path.join(man["mixnew"]["dir"], p)) != s for p, s in tmpl.items()):
+                    bad.append("mix new's output changed since the workspaces were built")
+                elif want is None or agx.sha256_text(want) != f["sha256"]:
+                    bad.append(f"{f['path']}: not mix new's file")
             elif f["role"] == "scaffold" and f["bytes"] != 0:
                 bad.append(f"{f['path']}: scaffold file not empty")
         ids.add(man["source_id"])
@@ -225,6 +279,11 @@ def stage_tasks(a, src, cb, errors, rows, rec, parents):
                 for n in names:
                     if k.endswith("_file") and n not in disk and n not in t["verify"].get("exists", []):
                         bad.append(f"{k} {n} not in the workspace")
+                    elif k in ("failing_tests", "function") and t.get("lang") == "elixir":
+                        text = "\n".join(open(os.path.join(t["workspace_dir"], p), encoding="utf-8",
+                                              errors="replace").read() for p in disk if p.endswith((".ex", ".exs")))
+                        if not ex_found(n, text):
+                            bad.append(f"{k} {n} not found in the workspace")
                     elif k in ("failing_tests", "function"):
                         leaf = n.split(".")[-1]
                         if not any(leaf in open(os.path.join(t["workspace_dir"], p), encoding="utf-8",
@@ -263,7 +322,7 @@ def stage_sessions(a, src, cb, errors, rows, rec, parents):
         if T is None:
             bad.append("its texts.json is not one of the given texts files")
         else:
-            if s["tools"] != agent.tool_schema(T, s.get("tools_profile", "agx")):
+            if s["tools"] != agent.tool_schema(T, s.get("tools_profile", "agx"), t.get("lang")):
                 bad.append("tool schema is not texts.json's")
             system = next((x["text"] for x in T["system"] if x["id"] == s["texts"]["system_id"]), None)
             if s["messages_start"] != [{"role": "system", "content": system},

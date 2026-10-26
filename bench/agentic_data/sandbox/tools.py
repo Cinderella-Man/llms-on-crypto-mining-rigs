@@ -139,6 +139,8 @@ BLOCKED = re.compile(r"(?<![\w.~-])/(?!work\b|tmp\b|dev/null\b)[A-Za-z_]|(?:^|[\
 def run(argv, c, shell=False):
     env = {"PATH": "/usr/local/bin:/usr/bin:/bin", "HOME": SCRATCH, "PYTHONDONTWRITEBYTECODE": "1", "LANG": "C.UTF-8",
            "PYTHONPATH": ROOT}
+    # the image's toolchain settings (the Elixir sandbox: Mix's home and build folder in /tmp, crash dumps)
+    env.update({k: v for k, v in os.environ.items() if k.startswith(("MIX_", "HEX_", "ERL_", "ELIXIR_"))})
     try:
         r = subprocess.run(argv, cwd=ROOT, env=env, shell=shell, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT, timeout=c["timeout"])

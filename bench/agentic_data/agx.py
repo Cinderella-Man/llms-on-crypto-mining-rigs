@@ -14,6 +14,8 @@ import license_scan  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SANDBOX_IMAGE = "agx-sandbox:py312"
+EX_IMAGE = "agx-sandbox:ex118"   # sandbox/Dockerfile.elixir
+LANG_PREFIX = {"elixir": "ex"}   # texts.json keys of a language's own tool descriptions and templates
 LABEL = "pascal-quants=1"
 END_IDS = [150001, 150003, 150005, 150018]   # <|end_of_text|>, <|user|>, <|observation|>, <|developer|>
 OBSERVATION_ID = 150005
@@ -111,6 +113,92 @@ def heldout_spans(q51_prompts=None, agent_check_tasks=None):
                 except (UnicodeDecodeError, OSError):
                     pass
     return spans12(texts)
+
+
+def apply_at(src, edits):
+    """src with each (line, column, old, new) edit applied: lines and columns count from 1, columns in characters.
+    An edit whose old text is not at its place is skipped; a dropped `not` takes the spaces after it along.
+    Returns (new source, number applied)."""
+    lines = src.split("\n")
+    n = 0
+    by_line = {}
+    for e in edits:
+        by_line.setdefault(e[0], []).append(e)
+    for ln, es in by_line.items():
+        s = lines[ln - 1]
+        for _, col, old, new in sorted(es, key=lambda e: -e[1]):   # right to left: earlier columns stay valid
+            i = col - 1
+            if s[i:i + len(old)] != old:
+                continue
+            j = i + len(old)
+            if old == "not" and new == "":
+                j += len(s[j:]) - len(s[j:].lstrip(" "))
+            s = s[:i] + new + s[j:]
+            n += 1
+        lines[ln - 1] = s
+    return "\n".join(lines), n
+
+
+# ---- Elixir workspaces (workspace.py elixir): the Mix project around a module comes from Elixir's own generator,
+# `mix new stdmods --module Stdmods` in the sandbox; this pipeline writes no file text of its own
+
+EX_NAMESPACE = "Stdmods"
+EX_MIXNEW = ["mix.exs", ".formatter.exs", "test/test_helper.exs"]   # copied unchanged
+EX_DOCTEST = "test/stdmods_test.exs"   # mix new's test file, its sample test left out and its doctest line naming
+#                                        the workspace's modules
+
+
+def ex_doctest_from(template, modules):
+    """mix new's test file with the workspace's modules in its doctest line and the generated sample test left out:
+    its first two lines (defmodule, use ExUnit.Case), one doctest line per module, its last line (end)."""
+    lines = template.rstrip("\n").split("\n")
+    if len(lines) < 4 or not lines[2].strip().startswith("doctest ") or lines[-1] != "end":
+        raise ValueError("not the test file mix new writes")
+    indent = lines[2][:len(lines[2]) - len(lines[2].lstrip())]
+    return "\n".join(lines[:2] + [f"{indent}doctest {m}" for m in modules] + [lines[-1]]) + "\n"
+
+
+def ex_scaffold(path, man):
+    """The content this pipeline put at path in the Elixir workspace of manifest man (from its mix new output), or
+    None."""
+    d = man.get("mixnew", {}).get("dir")
+    if not d:
+        return None
+    if path in EX_MIXNEW:
+        return open(os.path.join(d, path), encoding="utf-8").read()
+    if path == man.get("doctest_file"):
+        return ex_doctest_from(open(os.path.join(d, EX_DOCTEST), encoding="utf-8").read(), man["modules"])
+    return None
+
+
+def ex_change_note(template, source_file, modules):
+    """The first line of a renamed module file: an Elixir comment holding the texts.json change note (written by Flint
+    or the owner) with its placeholders filled. Apache-2.0 section 4(b) asks changed files to say they were changed."""
+    text = template.replace("{source_file}", source_file).replace("{modules}", ", ".join(modules))
+    return "# " + " ".join(text.split()) + "\n"
+
+
+EX_SUMMARY = re.compile(r"^(?:(\d+) doctests?, )?(?:(\d+) tests?, )?(\d+) failures?(?:, (\d+) invalid)?", re.M)
+EX_FAIL = re.compile(r"^\s+\d+\) ((?:test|doctest) .+) \(([\w.]+)\)\s*$", re.M)
+EX_BROKEN = re.compile(r"== Compilation error|\*\* \((?:CompileError|SyntaxError|TokenMissingError|"
+                       r"MismatchedDelimiterError)")
+
+
+def ex_counts(output):
+    """(tests run, failures) from ExUnit's summary line ("35 doctests, 6 tests, 1 failure"); (0, None) without one.
+    Invalid tests (a failed setup) count as failures."""
+    m = None
+    for m in EX_SUMMARY.finditer(output):
+        pass
+    if m is None:
+        return 0, None
+    d, t, f, inv = (int(x or 0) for x in m.groups())
+    return d + t, f + inv
+
+
+def ex_failing(output):
+    """The failed tests' names as ExUnit prints them ("test parses a switch", "doctest Stdmods.URI.parse/1 (3)")."""
+    return sorted({name for name, _ in EX_FAIL.findall(output)})
 
 
 RESTRICTED = license_scan.RESTRICTED
@@ -225,6 +313,14 @@ class Sandbox:
                    "files_read": [], "files_written": [], "truncated": False, "infra": "timeout"}
         out["ms"] = int((time.time() - t0) * 1000)
         return out
+
+    def ex_tool(self, cmd, path, timeout=120):
+        """The Elixir helper (sandbox/ex_tool.exs) on a file of the workspace: its JSON reply. Not a model tool."""
+        r = subprocess.run(["docker", "exec", self.name, "elixir", "/opt/agx/ex_tool.exs", cmd, path],
+                           capture_output=True, text=True, timeout=timeout)
+        if r.returncode != 0:
+            raise RuntimeError(f"ex_tool {cmd} {path}: {r.stderr.strip()[-500:]}")
+        return json.loads(r.stdout.strip().splitlines()[-1])
 
     def stop(self):
         subprocess.run(["docker", "rm", "-f", self.name], capture_output=True)

@@ -48,7 +48,7 @@ def messages_of(s, upto=None):
     return msgs
 
 
-def notice(codebases, used, name):
+def notice(codebases, used, name, notice_files=None):
     lines = [f"{name}", "",
              "This dataset's own parts (the pipeline's choices and arrangement, the task records and metadata) are "
              "licensed under the Apache License 2.0 (LICENSE). The text the model generated was written by Flint, "
@@ -62,6 +62,10 @@ def notice(codebases, used, name):
         c = codebases[cid]
         lines += [f"* {c['name']} ({c['origin']})", f"  Licence: {c['licence']} (LICENSES/{c['licence']}.txt)",
                   f"  {c['attribution']}", f"  Changes: {c['changes']}", ""]
+        if (notice_files or {}).get(cid):   # the project's own NOTICE file (Apache-2.0 section 4(d)), verbatim
+            lines += [f"  {c['name']}'s NOTICE file:", ""]
+            lines += ["    " + x if x else "" for x in open(notice_files[cid], encoding="utf-8").read().splitlines()]
+            lines += [""]
     lines += ["Per session, the row's task.change field holds the diff this pipeline applied to the workspace before "
               "the session (an injected bug or a removed function body), and the messages show every change the "
               "model made."]
@@ -135,6 +139,7 @@ def main():
     codebases = {c["id"]: c for c in cbj["codebases"]}
     writers = cbj.get("writers_published_as", {})
     licence_text = {}   # code base -> its licence file in a session's workspace (the scanned original)
+    notice_text = {}    # code base -> its NOTICE file in a session's workspace (Elixir's)
     os.makedirs(os.path.join(a.out, "train"), exist_ok=True)
     os.makedirs(os.path.join(a.out, "hf", "data"), exist_ok=True)
     os.makedirs(os.path.join(a.out, "hf", "LICENSES"), exist_ok=True)
@@ -187,6 +192,9 @@ def main():
             lf = next((f["path"] for f in man["files"] if f.get("role") == "licence"), None)
             if lf and t["codebase_id"] not in licence_text:
                 licence_text[t["codebase_id"]] = os.path.join(t["workspace_dir"], lf)
+            nf = next((f["path"] for f in man["files"] if f.get("role") == "notice"), None)
+            if nf and t["codebase_id"] not in notice_text:
+                notice_text[t["codebase_id"]] = os.path.join(t["workspace_dir"], nf)
             types[t["type"]] = types.get(t["type"], 0) + 1
             stats["sessions"] += 1
             stats["passed"] += bool(s["verify"]["passed"])
@@ -204,7 +212,7 @@ def main():
         lic.add(c["licence"])
     shutil.copy(a.apache, os.path.join(hf, "LICENSES", "Apache-2.0.txt"))
     with open(os.path.join(hf, "NOTICE"), "w") as f:
-        f.write(notice(codebases, used, a.name))
+        f.write(notice(codebases, used, a.name, notice_text))
     hf_ids = sorted({"apache-2.0"} | {codebases[c]["hf_licence"] for c in used})
     n = stats["sessions"]
     card = CARD.format(licences="\n".join(f"- {x}" for x in hf_ids), name=a.name,

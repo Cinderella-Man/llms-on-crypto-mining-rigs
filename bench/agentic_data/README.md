@@ -48,6 +48,18 @@ WORK=<out> MODEL=<flint-Q8_0.gguf> HF_DIR=<RecursiveSI/flint small files> Q51=<Q
 LLAMA_SERVER=<llama-server> MOUNTS="-v <dir>:<dir>:ro ..." GPUS=3,4 bash bench/agentic_data/run.sh
 ```
 
+## Elixir
+
+The same pipeline runs on Elixir 1.18.4's standard library (Apache-2.0) in the Elixir sandbox
+([sandbox/Dockerfile.elixir](sandbox/Dockerfile.elixir): Erlang/OTP 27 and Elixir copied from the official image into
+the Python sandbox's image, `mix test` offline, Mix's build folder in `/tmp`). `workspace.py elixir` makes one Mix
+project per module: the module renamed into the `Stdmods` namespace (in code and doctests only) with Flint's change
+note as its first line, and `mix new`'s own project files, its test file reduced to the line that runs the module's
+doctests. Stage 1 asks for ExUnit tests (five beyond the doctests); stage 2's bugs and removed bodies come from
+Elixir's parser (`sandbox/ex_tool.exs`), and its check also requires the module's documentation unchanged. Task rows
+carry `lang` and `image`; the texts carry Elixir's own `run_tests` description and templates (`texts_spec.json`,
+`langs.elixir`). Steps `ex-image` and `ex-workspaces` (after `texts`) with `EX_MODULES` and `EX_NOTICE`.
+
 ## The agent loop
 
 - **Context as token ids.** The first prompt is Flint's chat template (the Hugging Face `chat_template.jinja`,
@@ -91,7 +103,8 @@ with content), `sequence_len`, `gen_ranges`, `seconds`, `limits`.
 | [texts_spec.json](texts_spec.json) | the requests Flint writes the harness texts from |
 | [tasks.py](tasks.py) | stage-1 and stage-2 tasks, validated in the sandbox |
 | [agent.py](agent.py) | `texts` and `run`: the agent loop against llama-server or vLLM |
-| [sandbox/](sandbox/) | the sandbox image and the tool runner |
+| [sandbox/](sandbox/) | the sandbox images (Python; Elixir in `Dockerfile.elixir`), the tool runner, and `ex_tool.exs`, the Elixir parser helper (renames, mutations, stubs, documentation hashes) |
+| [notices/](notices/) | NOTICE files of approved code bases that ask for one (Elixir 1.18.4's) |
 | [gate.py](gate.py) | the gates: workspaces, tasks, sessions, answers, dataset |
 | [export.py](export.py) | store, dump and dataset exports |
 | [agx.py](agx.py) | shared helpers: hashes, the 12-word rule, licence markers, the template, the sandbox |

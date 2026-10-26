@@ -3,8 +3,9 @@
 # The slim image already has the libraries the runtime links (libstdc++, libtinfo, zlib, OpenSSL 3). Left out: OTP's
 # documentation, its C sources and headers outside the runtime, and Elixir's source tree (/usr/local/src/elixir), so
 # whatever a tool output quotes comes from the project in /work, the runtime's own .erl/.ex files or the tool runner.
-# Sessions run it like the Python sandbox (--network none, read-only root, private /tmp); MIX_HOME and HEX_HOME point
-# into /tmp, and projects use no dependencies (mix test runs offline).
+# Sessions run it like the Python sandbox (--network none, read-only root, private /tmp); MIX_HOME, HEX_HOME, Mix's
+# build folder and crash dumps go to /tmp, so /work holds only the project's files, and projects use no dependencies
+# (mix test runs offline). ex_tool.exs is the pipeline's own parser helper (workspace.py, tasks.py, agent.py).
 # Build: docker build --label pascal-quants=1 -f Dockerfile.elixir -t agx-sandbox:ex118 bench/agentic_data/sandbox
 FROM elixir:1.18.4-otp-27@sha256:a7b2c4772e05616cf0a3323758ba5abc3288af452a33d1263705840a52154e85 AS beam
 FROM python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2
@@ -19,6 +20,7 @@ RUN rm -rf /usr/share/doc /usr/share/man /usr/share/info /usr/share/common-licen
  && for b in erl erlc escript epmd; do ln -s ../lib/erlang/bin/$b /usr/local/bin/$b; done \
  && for b in elixir elixirc iex mix; do ln -s ../lib/elixir/bin/$b /usr/local/bin/$b; done \
  && mkdir -p /work /opt/agx
-ENV LANG=C.UTF-8 MIX_HOME=/tmp/mix HEX_HOME=/tmp/hex MIX_ENV=test ELIXIR_ERL_OPTIONS="+fnu"
-COPY tools.py /opt/agx/tools.py
+ENV LANG=C.UTF-8 MIX_HOME=/tmp/mix HEX_HOME=/tmp/hex MIX_ENV=test MIX_BUILD_PATH=/tmp/mixbuild/test \
+    ERL_CRASH_DUMP=/tmp/erl_crash.dump ELIXIR_ERL_OPTIONS="+fnu"
+COPY tools.py ex_tool.exs /opt/agx/
 WORKDIR /work

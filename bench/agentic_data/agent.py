@@ -61,7 +61,8 @@ PROFILES = {   # tool names and parameter types are fixed here; every descriptio
 TOOL_PARAMS = PROFILES["agx"]
 PLACEHOLDERS = {"write_tests": ["{module_file}", "{test_file}", "{test_command}"],
                 "fix_bug": ["{test_file}", "{failing_tests}", "{module_file}"],
-                "implement": ["{function}", "{module_file}", "{test_file}"]}
+                "implement": ["{function}", "{module_file}", "{test_file}"],
+                "change_note": ["{source_file}", "{modules}"]}   # the first line of a changed file (workspace.py)
 
 
 def post(url, body, timeout=3600):
@@ -145,23 +146,28 @@ def writer_record(a):
     return rec
 
 
-def tool_schema(texts, profile="agx"):
+def tool_schema(texts, profile="agx", lang=None):
     """The tools as the model sees them: fixed names and parameters, descriptions from texts.json (keys of the pi
-    profile carry the prefix "pi:")."""
+    profile carry the prefix "pi:"; a language's own descriptions, e.g. run_tests with mix test, the prefix "ex:")."""
     pre = "" if profile == "agx" else profile + ":"
+    lp = agx.LANG_PREFIX.get(lang)
+
+    def text(kind, key):
+        own = f"{lp}:{key}" if lp else None
+        return texts[kind][own if own in texts[kind] else key]["text"]
     tools = []
     for name, (params, required) in PROFILES[profile].items():
         props = {}
         for p, t in params.items():
-            d = texts["params"][f"{pre}{name}.{p}"]["text"]
+            d = text("params", f"{pre}{name}.{p}")
             if t == "edits":
-                item = {k: {"type": "string", "description": texts["params"][f"{pre}{name}.{p}.{k}"]["text"]}
+                item = {k: {"type": "string", "description": text("params", f"{pre}{name}.{p}.{k}")}
                         for k in ("oldText", "newText")}
                 props[p] = {"type": "array", "description": d,
                             "items": {"type": "object", "properties": item, "required": ["oldText", "newText"]}}
             else:
                 props[p] = {"type": t, "description": d}
-        tools.append({"type": "function", "function": {"name": name, "description": texts["tools"][pre + name]["text"],
+        tools.append({"type": "function", "function": {"name": name, "description": text("tools", pre + name),
                                                        "parameters": {"type": "object", "properties": props,
                                                                       "required": required}}})
     return tools
@@ -212,10 +218,21 @@ def cmd_texts(a):
                   for k, w in spec.get(tools_key, {}).items()]
         items += [("param", pre + k, param_request(k, w), w) for k, w in spec.get(params_key, {}).items()]
     for kind in PLACEHOLDERS:
-        for v in range(spec["variants"][kind]):
+        for v in range(spec["variants"].get(kind, 0)):
             req = spec[kind].replace("{tone}", spec["tones"][v % len(spec["tones"])]) \
                 .replace("{length}", spec["lengths"][v % len(spec["lengths"])])
             items.append((kind, f"{kind}-{v}", req, ""))
+    for lang, ls in spec.get("langs", {}).items():   # a language's own tool descriptions and templates
+        lp = agx.LANG_PREFIX[lang]
+        items += [("tool", f"{lp}:{k}", spec["tool_request"].replace("{tool}", k).replace("{what}", w), w, lang)
+                  for k, w in ls.get("tool", {}).items()]
+        items += [("param", f"{lp}:{k}", param_request(k, w), w, lang) for k, w in ls.get("param", {}).items()]
+        for kind in PLACEHOLDERS:
+            for v in range(ls.get("variants", {}).get(kind, 0)):
+                req = ls[kind].replace("{tone}", spec["tones"][v % len(spec["tones"])]) \
+                    .replace("{length}", spec["lengths"][v % len(spec["lengths"])])
+                items.append((kind, f"{lp}-{kind}-{v}", req, "", lang))
+    items = [x if len(x) == 5 else x + (None,) for x in items]
     old = json.load(open(a.extend)) if a.extend else None
     if old:   # keep every text already written; write only the missing ones
         have = {s["id"] for s in old["system"]} | set(old["tools"]) | set(old["params"]) | \
@@ -228,8 +245,10 @@ def cmd_texts(a):
         n = len(text.split())
         if kind == "system" and not 40 <= n <= 260:
             return f"{n} words"
-        if kind == "tool" and n > 40 or kind == "param" and n > 20:
+        if kind == "tool" and n > 40 or kind == "param" and n > 20 or kind == "change_note" and n > 40:
             return f"{n} words"
+        if kind == "change_note" and "\n" in text.strip():
+            return "more than one line"
         if what:   # a description must be about its tool or parameter: half of the request's content words
             want = {w[:5] for w in re.findall(r"[a-z]{4,}", what.lower())} - {"optio", "defau", "relat", "proje"}
             have = {w[:5] for w in re.findall(r"[a-z]{4,}", text.lower())}
@@ -248,7 +267,7 @@ def cmd_texts(a):
         return None
 
     def one(i, item):
-        kind, key, req, what = item
+        kind, key, req, what, lang = item
         ids = server.tokenize(render([{"role": "user", "content": req}], None))
         tries = []
         for t in range(a.tries):
@@ -261,9 +280,10 @@ def cmd_texts(a):
             if not bad:
                 return {"id": key, "kind": kind, "text": text, "seed": seed,
                         **({"profile": "pi" if key.startswith("system-pi") else "agx"} if kind == "system" else {}),
+                        **({"lang": lang} if lang else {}),
                         "request_sha256": agx.sha256_text(req),
                         "gen_tokens_sha256": agx.sha256_text(json.dumps(g["gen"])), "tries": tries}
-        return {"id": key, "kind": kind, "text": None, "tries": tries}
+        return {"id": key, "kind": kind, "text": None, "tries": tries, **({"lang": lang} if lang else {})}
 
     with concurrent.futures.ThreadPoolExecutor(a.conc) as ex:
         res = list(ex.map(lambda x: one(*x), enumerate(items)))
@@ -300,10 +320,22 @@ def verify(task, sb, work, start):
     res = {"unchanged_ok": not changed, "changed": changed}
     r = sb.tool("run_tests", {"target": v.get("target", "")})
     res["exit_code"] = r["exit_code"]
-    m = re.search(r"Ran (\d+) tests?", r["output"])
-    res["tests_run"] = int(m.group(1)) if m else 0
+    if task.get("lang") == "elixir":
+        res["tests_run"] = agx.ex_counts(r["output"])[0]
+    else:
+        m = re.search(r"Ran (\d+) tests?", r["output"])
+        res["tests_run"] = int(m.group(1)) if m else 0
     res["output_tail"] = r["output"][-1500:]
-    res["passed"] = (not changed and r["exit_code"] == 0 and res["tests_run"] >= v.get("min_tests", 1)
+    docs_ok = True
+    if v.get("docs_sha256"):   # Elixir: the module's documentation, and so its doctests, as it was
+        try:
+            res["docs_sha256"] = sb.ex_tool("docs", task["change"]["file"])["sha256"]
+        except (RuntimeError, ValueError) as e:   # the module no longer parses
+            res["docs_sha256"] = None
+            res["docs_error"] = str(e)[:300]
+        docs_ok = res["docs_sha256"] == v["docs_sha256"]
+        res["docs_ok"] = docs_ok
+    res["passed"] = (not changed and docs_ok and r["exit_code"] == 0 and res["tests_run"] >= v.get("min_tests", 1)
                      and all(now.get(p) for p in v.get("exists", [])))
     if v.get("exists") and not all(now.get(p) for p in v["exists"]):
         res["missing"] = [p for p in v["exists"] if not now.get(p)]
@@ -332,13 +364,13 @@ def run_session(task, a, server, render, texts, slot, writer, info):
     start = agx.tree_files(work)
     rng = random.Random(f"{a.seed}:{sid}")
     profile = rng.choice(["agx", "pi"]) if a.tools == "mixed" else a.tools
-    tools = tool_schema(texts, profile)
+    tools = tool_schema(texts, profile, task.get("lang"))
     system = rng.choice([s for s in texts["system"] if s.get("profile", "agx") == profile])
     messages = [{"role": "system", "content": system["text"]}, {"role": "user", "content": task["statement"]}]
     prompt_text = render(messages, tools)
     prompt_ids = server.tokenize(prompt_text)
     srv_text = server.apply_template(messages, tools)
-    sb = agx.Sandbox(f"agx-{a.run_tag}-{slot}-{agx.sha256_text(sid)[:10]}", work, a.image, a.run_tag,
+    sb = agx.Sandbox(f"agx-{a.run_tag}-{slot}-{agx.sha256_text(sid)[:10]}", work, task.get("image") or a.image, a.run_tag,
                      config={"test_command": task["test_command"], "timeout": 120, "max_output": 20000,
                              "max_lines": 2000}).start()
     context, turns, end, t0 = list(prompt_ids), [], None, time.time()
@@ -395,7 +427,7 @@ def run_session(task, a, server, render, texts, slot, writer, info):
     sess = {"session_id": sid, "harness": HARNESS_VERSION, "task": task, "writer": writer, "server": info,
             "sampling": agx.SAMPLING, "texts": {"path": os.path.abspath(a.texts), "sha256": agx.sha256_file(a.texts),
                                                "system_id": system["id"]},
-            "tools_profile": profile, "tools": tools,
+            "tools_profile": profile, "lang": task.get("lang", "python"), "tools": tools,
             "tools_sha256": agx.sha256_text(json.dumps(tools, sort_keys=True)),
             "messages_start": messages, "prompt_tokens": prompt_ids,
             "template_matches_server": None if srv_text is None else srv_text == prompt_text,
@@ -413,13 +445,14 @@ def cmd_run(a):
     if a.claims:
         os.makedirs(a.claims, exist_ok=True)
     texts = json.load(open(a.texts))
+    tasks = agx.read_jsonl(a.tasks)
     for p in ([a.tools] if a.tools != "mixed" else list(PROFILES)):
-        tool_schema(texts, p)   # every description the run needs is in texts.json
+        for lang in {t.get("lang") for t in tasks}:
+            tool_schema(texts, p, lang)   # every description the run needs is in texts.json
     render = agx.load_template(a.template)
     server = Server(a.server, a.api)
     info = server.info()
     writer = writer_record(a)
-    tasks = agx.read_jsonl(a.tasks)
     done = {f.removesuffix(".json") for f in os.listdir(os.path.join(a.out, "sessions")) if f.endswith(".json")
             and not f.endswith(".error.json")}
     # --repeat K runs each task K times (other seeds, other system prompts): sessions <task_id>-r<k>

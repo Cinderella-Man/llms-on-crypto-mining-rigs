@@ -39,7 +39,7 @@ Tools: [bench/agentic_data](../../../bench/agentic_data/README.md). "(est.)" mar
 - **Code bases on hand:** CPython 3.12.15's library, llama.cpp at `d77256999` with its tests, fsspec 2026.9.0 and six
   permissive packages with their test suites from local images (SymPy, NetworkX, mpmath, jsonschema, dill, NumPy), all
   approved, with pytest from a local image. Elixir 1.18.4's standard library (246 files, all clean) and Erlang/OTP
-  27's sources sit in a local image too, and an Elixir sandbox built from it runs `mix test` offline (proposed). A list
+  27's sources sit in a local image too, and an Elixir sandbox built from it runs `mix test` offline (both approved 2026-10-26). A list
   of 20 more to download, each needing approval.
 - **Tasks:** write tests (stage 1), then repair a single-token bug and implement a removed function, checked against
   those tests (stage 2). Statements are Flint-written templates; Flint never sees the answer.
@@ -230,9 +230,9 @@ accepts a list of licences.
 | dill 0.4.1 | the vLLM image | BSD-3-Clause | `dill/tests` | approved with its tests |
 | NumPy 2.2.6 | the vLLM image | BSD-3-Clause (bundled parts excluded by folder) | 14 test folders (pytest) | approved with its tests |
 | pytest 8.4.2, pluggy, iniconfig, pygments | the agent check's image | MIT, BSD-2-Clause | – | approved as the `py312-pytest` environment |
-| Elixir 1.18.4 standard library (`elixir`, `eex`, `ex_unit`, `logger`, `iex`, `mix`; 246 files, 145k lines) | `/usr/local/src/elixir/lib/*/lib` of the official `elixir:1.18.4-otp-27` image | Apache-2.0 | none (the image removes them); the modules' doctests, and ExUnit tests written by Flint (stage 1) | proposed; 246 of 246 files `ok` |
+| Elixir 1.18.4 standard library (`elixir`, `eex`, `ex_unit`, `logger`, `iex`, `mix`; 246 files, 145k lines) | `/usr/local/src/elixir/lib/*/lib` of the official `elixir:1.18.4-otp-27` image | Apache-2.0 | none (the image removes them); the modules' doctests, and ExUnit tests written by Flint (stage 1) | approved (elixir-stdlib, 2026-10-26); 246 of 246 files `ok` |
 | Erlang/OTP 27.3.4.18 library sources (`.erl`, `.hrl`) | the same image | Apache-2.0 | none in the image | proposed after Elixir; 1,445 of 1,465 files `ok` (16 large generated files, 3 with a "proprietary" marker, `leex.erl` with a BSD notice left out) |
-| Erlang/OTP 27.3.4.18 and Elixir 1.18.4 runtimes | the same image, copied into the Python sandbox | Apache-2.0 | – | proposed as the `ex118-sandbox` environment |
+| Erlang/OTP 27.3.4.18 and Elixir 1.18.4 runtimes | the same image, copied into the Python sandbox | Apache-2.0 | – | approved as the `ex118-sandbox` environment (2026-10-26) |
 | This repository | the laptop | MIT | few | not proposed: it holds the held-out tests |
 
 Not usable: the Exercism tasks of `bench/agent_check` (MIT) are the agentic-speed evaluation, and Exercism's problem
@@ -246,17 +246,30 @@ copies its Erlang/OTP and Elixir runtimes into the Python sandbox's pinned image
 runtime links), so the tool runner stays the same and `mix test` runs with no network. Checked: a Mix project holding
 `OptionParser`'s file, renamed `Stdmods.OptionParser`, compiles and passes its 35 doctests through `tools.py`'s
 `run_tests`, on a read-only root.
-- **Workspaces:** one standard-library module per Mix project, renamed into a `Stdmods` namespace (a copy named
-  `OptionParser` would replace the loaded module that Mix itself uses), with a line at the top saying the file was
-  changed (Apache-2.0 asks for that in changed files). Candidates are modules with public functions and doctests:
+- **Every byte of a session must be publishable:** code and documentation from the approved library, project files
+  from Elixir's own generator, wording from Flint (or the owner), the pipeline's changes as mechanical one-token
+  diffs. No text written by another vendor's model enters a workspace or a statement.
+- **Workspaces** (`workspace.py elixir`): one standard-library module per Mix project, renamed into a `Stdmods`
+  namespace (a copy named `OptionParser` would replace the loaded module that Mix itself uses). The rename touches
+  module names in code (found by Elixir's parser) and in doctests, nothing else; the gate checks that removing the
+  prefix gives back the scanned file byte for byte. The file's first line is a comment saying it was changed
+  (Apache-2.0 asks for that in changed files): a one-sentence note Flint writes once, like the statement templates.
+  The project around it is `mix new stdmods --module Stdmods` run in the sandbox: `mix.exs`, `.formatter.exs` and
+  `test/test_helper.exs` unchanged, its `test/stdmods_test.exs` reduced to the line that runs the module's
+  doctests. Elixir's NOTICE and the Apache-2.0 text sit beside them. Candidates are modules with public functions and doctests:
   `OptionParser` (37 doctest lines), `Version` (22), `URI` (53), `Keyword` (137), `Range` (75), `Base` (49),
   `Calendar.ISO` (159), `Duration` (44), and EEx's compiler with tests from stage 1; not the compiler's own modules
   (`Kernel`, `Macro`, `Code`).
-- **Tests:** the module's doctests, kept unchanged and checked after the session, plus ExUnit tests Flint writes in
-  stage 1, as for CPython's modules.
+- **Tests:** the module's doctests (written by the Elixir team in its documentation), plus ExUnit tests Flint
+  writes in stage 1, as for CPython's modules. Stage 1 asks for at least five tests beyond the doctests.
 - **Changes:** the same single-token mutations (`<`/`<=`, `==`/`!=`, `and`/`or`, `+`/`-`, small integers,
   `true`/`false`, a dropped `not`/`!`) and removed bodies (`raise "not implemented"`), found with Elixir's own parser
-  (`Code.string_to_quoted` with column and token metadata) in the sandbox.
+  (`Code.string_to_quoted` with column and token metadata; `sandbox/ex_tool.exs`) and kept when 1 to 30 % of the
+  tests fail. After a stage-2 session the test files, the project files and the module's documentation (a hash of
+  every `@moduledoc`, `@doc` and `@typedoc`) must be unchanged, so a fix cannot edit a doctest instead of the code.
+- **Texts:** Elixir's own `run_tests` description (`mix test`), its write-tests, fix-bug and implement templates and
+  the change note, written by Flint from `texts_spec.json`'s `langs.elixir` requests (`agent.py texts --extend`);
+  the system prompts and the other tool descriptions are shared with Python.
 - **Held out:** projects used by the Elixir agent benchmarks we may measure with (Livebook, Plausible Analytics,
   GenStage, the Nimble libraries) and their task texts; the 12-word rule extends to those texts.
 - **Erlang:** OTP's `.erl` sources first as read-heavy tasks (explain, investigate), later with EUnit.
@@ -461,7 +474,7 @@ than the standard library, the agent loop against a 64k context.
 | 4 | The `py312-pytest` environment (pytest, pluggy, iniconfig, pygments, packaging: MIT, BSD; copied from the agent check's image, no download) | fsspec's tests and most packages' tests need pytest | approved 2026-10-26 |
 | 5 | Test folders of the approved trees (llama.cpp `tests/`, `gguf-py/tests`; fsspec's tests), same licence as the trees | `sources.json` excludes test folders, a filter for the old prompt files | approved 2026-10-26 |
 | 6 | The local packages: SymPy 1.14.0, NetworkX 3.7, mpmath 1.3.0, jsonschema 4.26.0 (+ referencing), dill 0.4.1, NumPy 2.2.6 (in the vLLM image, scanned) | variety beyond the standard library, real test suites | approved 2026-10-26, test folders included |
-| 6a | Elixir: the library sources of the local `elixir:1.18.4-otp-27` image (Apache-2.0, 246 files `ok`), the `ex118-sandbox` environment built from it, and Elixir's NOTICE file from the `v1.18.4` tag (one text file); later OTP's sources, and the Elixir downloads of section 3.2 | a second language, the one many of the rig's users write | Python only |
+| 6a | Elixir: the library sources of the local `elixir:1.18.4-otp-27` image (Apache-2.0, 246 files `ok`), the `ex118-sandbox` environment built from it, and Elixir's NOTICE file from the `v1.18.4` tag (one text file); later OTP's sources, and the Elixir downloads of section 3.2 | a second language, the one many of the rig's users write | approved 2026-10-26 (the library, the sandbox, the NOTICE); OTP and the downloads not yet |
 | 7 | Downloads from section 3.2 (each pinned and scanned before use) | languages other than Python, larger projects | not used |
 | 8 | OpenR1-Math: keep only rows whose `source` is not synthetic, and accept that contest problem texts come from forums and exam papers, or drop maths | the approved split mixes in synthetic problems | maths stays out |
 | 9 | Hugging Face: dataset name, licence metadata (`apache-2.0`, `other`/python-2.0, plus each code base's), whether token ids are published | publication | nothing is uploaded |

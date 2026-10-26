@@ -51,6 +51,21 @@
     "bash.command": "the shell command to run",
     "bash.timeout": "time limit in seconds (optional)"
   },
+  "langs": {
+    "elixir": {
+      "variants": {"write_tests": 4, "fix_bug": 4, "implement": 4, "change_note": 1},
+      "tool": {
+        "run_tests": "a tool that runs the project's ExUnit test suite with mix test, optionally only a given test file or the test at a file and line, and returns the output"
+      },
+      "param": {
+        "run_tests.target": "test file, or test file and line, to run, for example test/example_test.exs:12 (optional; default: all tests)"
+      },
+      "write_tests": "Write a request that a developer could send to a coding agent. The developer wants unit tests for the Elixir module in {module_file}: a new test file {test_file} using ExUnit, covering the module's public functions including edge cases and errors, and all tests passing when run with {test_command}. The module itself must not be changed. The request must contain the placeholders {module_file}, {test_file} and {test_command} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+      "fix_bug": "Write a request that a developer could send to a coding agent. Some ExUnit tests of an Elixir project fail: {failing_tests}, run from {test_file}. The cause is a bug in {module_file}; the agent should find it and fix it, without changing the tests or the module's documentation. The request must not hint at what the bug might be. The request must contain the placeholders {test_file}, {failing_tests} and {module_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+      "implement": "Write a request that a developer could send to a coding agent. The Elixir function {function} in {module_file} only raises a \"not implemented\" error; its @doc says what it should do. The agent should implement it so that the tests in {test_file} pass, without changing the tests or the documentation. The request must contain the placeholders {function}, {module_file} and {test_file} literally, written with the curly braces, each exactly once. Tone: {tone}. Length: {length}. Output only the request.",
+      "change_note": "Write one sentence for a comment at the top of a source file that tells its readers the file was changed: it is {source_file} with its modules renamed to {modules}. Plain English, at most 25 words, without a comment marker. The sentence must contain the placeholders {source_file} and {modules} literally, written with the curly braces, each exactly once. Output only the sentence."
+    }
+  },
   "tones": ["terse and direct", "friendly", "detailed, like a ticket in an issue tracker", "casual, like a chat message to a colleague", "formal", "slightly impatient"],
   "lengths": ["one sentence", "two or three sentences", "a short paragraph"]
 }

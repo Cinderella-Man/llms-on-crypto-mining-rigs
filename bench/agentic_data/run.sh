@@ -21,7 +21,11 @@
 #   TEXTS_FROM    texts step only: an earlier texts.json whose texts are kept (only missing ones are written)
 #   PER_MODULE IMPLEMENT  stage-2 repair and implementation tasks per module (3, 1)
 #   CONC          sessions at a time (default NP); MAX_TURNS MAX_GEN MAX_CTX TIME_CAP (24, 20000, CTX_SLOT, 30 min)
-#   STEPS         default "image workspaces server texts s1 s2 gate export checks stop"; any subset, in order
+#   STEPS         default "image workspaces server texts s1 s2 gate export checks stop"; any subset, in order. Elixir
+#                 adds "ex-image" (sandbox/Dockerfile.elixir) and "ex-workspaces" (after texts: it needs the Elixir
+#                 change note), e.g. STEPS="ex-image server texts ex-workspaces s1 s2 gate export stop"
+#   EX_MODULES    Elixir library modules for workspace.py elixir (option_parser,version,... or all)
+#   EX_NOTICE     Elixir's NOTICE file of the v1.18.4 tag (pinned in codebases.json)
 #   STOP_FILE     create it to start no new sessions (default WORK/STOP)
 # Every container carries the label pascal-quants=1 and --cpu-shares 256; the script's own Python runs at nice 19.
 # Quality and token counts only: times on a shared machine are not speed results.
@@ -40,6 +44,8 @@ STEPS=${STEPS:-image workspaces server texts s1 s2 gate export checks stop}
 STOP_FILE=${STOP_FILE:-$WORK/STOP}
 SERVER_IMAGE=${SERVER_IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 PY_IMAGE=python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2
+EX_BASE=elixir:1.18.4-otp-27@sha256:a7b2c4772e05616cf0a3323758ba5abc3288af452a33d1263705840a52154e85
+EX_IMAGE=agx-sandbox:ex118
 NAME=agx-srv-${GPUS//,/}
 SRC=$HERE/../staircase_drafter/sources.json; CB=$HERE/codebases.json; AGT=$HERE/../agent_check/tasks
 URL=http://127.0.0.1:$PORT
@@ -53,6 +59,12 @@ common=(--server "$URL" --api "$API" --template "$HF_DIR/chat_template.jinja" --
 if has image; then
   log "sandbox image"
   docker build -q --label pascal-quants=1 -t agx-sandbox:py312 "$HERE/sandbox" >> "$WORK/run.log"
+fi
+
+if has ex-image; then
+  log "Elixir sandbox image"
+  docker build -q --label pascal-quants=1 -f "$HERE/sandbox/Dockerfile.elixir" -t "$EX_IMAGE" "$HERE/sandbox" \
+    >> "$WORK/run.log"
 fi
 
 if has workspaces; then
@@ -89,6 +101,26 @@ if has texts; then
   log "Flint writes the harness texts"
   $PY "$HERE/agent.py" texts "${common[@]}" --spec "$HERE/texts_spec.json" --out "$TEXTS" --conc "$CONC" \
     --heldout-q51 "$Q51" --heldout-tasks "$AGT" ${TEXTS_FROM:+--extend "$TEXTS_FROM"} | tee -a "$WORK/run.log"
+fi
+
+if has ex-workspaces; then
+  : "${EX_MODULES:?}" "${EX_NOTICE:?the NOTICE file of Elixir v1.18.4}"
+  log "Elixir: library sources and the Apache-2.0 text from the image, licence scan, workspaces"
+  mkdir -p "$WORK/scans" "$WORK/trees"
+  if [ ! -d "$WORK/trees/elixir-1.18.4" ]; then
+    c=$(docker create --label pascal-quants=1 "$EX_BASE")
+    docker cp "$c:/usr/local/src/elixir" "$WORK/trees/elixir-1.18.4" > /dev/null
+    docker cp "$c:/usr/share/common-licenses/Apache-2.0" "$WORK/trees/Apache-2.0.txt" > /dev/null
+    docker rm "$c" > /dev/null
+  fi
+  docker run --rm --label pascal-quants=1 --cpu-shares 256 --network none -v "$HERE:$HERE:ro" -v "$WORK:$WORK" \
+    "$PY_IMAGE" python3 -I "$HERE/license_scan.py" "$WORK/trees/elixir-1.18.4" --license Apache-2.0 \
+    --out "$WORK/scans/elixir-1.18.4-lib" >> "$WORK/run.log"
+  $PY "$HERE/workspace.py" elixir "$WORK/trees/elixir-1.18.4" --modules "$EX_MODULES" \
+    --scan "$WORK/scans/elixir-1.18.4-lib.tsv" --notice "$EX_NOTICE" --licence-file "$WORK/trees/Apache-2.0.txt" \
+    --texts "$TEXTS" --image "$EX_IMAGE" --out "$WORK/ws" 2>&1 | tee -a "$WORK/run.log"
+  $PY "$HERE/gate.py" workspaces "$WORK"/ws/*.manifest.json --sources "$SRC" --codebases "$CB" --texts "$TEXTS" \
+    --scan "$WORK"/scans/*.tsv "${held[@]}" --out "$WORK/ws.gate.json" | tee -a "$WORK/run.log"
 fi
 
 run_stage() {   # $1 stage folder, $2 tasks file, $3.. extra gate parents

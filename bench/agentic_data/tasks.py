@@ -14,6 +14,12 @@ owner) filled with names from the workspace, and every workspace change is ours,
 Each task row carries its workspace (a ready folder with the change applied, and a manifest naming every file's
 origin), the template id, the placeholders, the statement, the change and its validation.
 
+Elixir workspaces (workspace.py elixir; rows carry lang and image): the test file is test/<module>_test.exs (ExUnit,
+`mix test`, at least five tests beyond the module's doctests), mix new's project files and the doctests' test file must
+stay unchanged, and the changes come from Elixir's own parser (sandbox/ex_tool.exs: the same operator and constant
+mutations, a removed body is `raise "not implemented"`). Stage 2 also checks that the module's documentation, and so
+its doctests, is unchanged after the session.
+
 usage: python tasks.py write-tests --workspaces WS_DIR --texts texts.json --out tasks-s1.jsonl [--seed 1] [--attempts 1]
        python tasks.py from-sessions --sessions SESS_DIR --workspaces WS_DIR --texts texts.json --out DIR
                        [--per-module 3] [--implement 1] [--max-candidates 60] [--seed 2] [--image IMAGE]
@@ -45,9 +51,30 @@ def fill(template, values):
     return out
 
 
-def pick_template(texts, kind, rng):
-    t = rng.choice(texts["templates"][kind])
+def pick_template(texts, kind, rng, lang="python"):
+    """A template of this kind written for the language (texts_spec.json's langs; templates without one are
+    Python's)."""
+    pool = [t for t in texts["templates"][kind] if t.get("lang", "python") == lang]
+    if not pool:
+        raise SystemExit(f"the texts have no {lang} template for {kind}")
+    t = rng.choice(pool)
     return t, {"id": t["id"], "kind": kind, "texts_sha256": TEXTS_SHA}
+
+
+def ex_candidates(sb, mod_rel, orig):
+    """Elixir: [(type, function, line, kind, new source)] from the helper's mutations and stubs of the module."""
+    out = []
+    for c in sb.ex_tool("mutations", mod_rel)["mutations"]:
+        src, n = agx.apply_at(orig, [(c["line"], c["column"], c["old"], c["new"])])
+        if n == 1:
+            out.append(("fix_bug", c["function"], c["line"], c["kind"], src))
+    lines = orig.split("\n")
+    for s in sb.ex_tool("stubs", mod_rel)["stubs"]:
+        body = lines[s["first"] - 1]
+        indent = body[:len(body) - len(body.lstrip())]
+        new = lines[:s["first"] - 1] + [indent + 'raise "not implemented"'] + lines[s["last"]:]
+        out.append(("implement", s["function"], s["first"], "stub", "\n".join(new)))
+    return out
 
 
 def mutations(src):
@@ -156,18 +183,24 @@ def cmd_write_tests(a):
             continue
         man = json.load(open(os.path.join(a.workspaces, f)))
         m = man["module"]
+        lang = man.get("lang", "python")
         for k in range(a.attempts):   # several attempts per module: other templates and seeds, other test files
-            tmpl, tref = pick_template(texts, "write_tests", rng)
-            ph = {"module_file": man["module_file"], "test_file": f"tests/test_{m}.py",
+            tmpl, tref = pick_template(texts, "write_tests", rng, lang)
+            ph = {"module_file": man["module_file"],
+                  "test_file": f"test/{m}_test.exs" if lang == "elixir" else f"tests/test_{m}.py",
                   "test_command": " ".join(man["test_command"])}
+            verify = {"unchanged": [man["module_file"]], "exists": [ph["test_file"]], "target": "", "min_tests": 5}
+            if lang == "elixir":   # the project files and the doctests stay; five tests more than the doctests
+                verify["unchanged"] += [p["path"] for p in man["files"] if p["role"] == "scaffold"]
+                verify["min_tests"] = man["doctests"] + 5
             rows.append({
                 "task_id": f"s1-{m}-wt" + (f"-a{k}" if a.attempts > 1 else ""), "type": "write_tests",
                 "codebase_id": man["codebase_id"], "source_id": man["source_id"], "licence": man["licence"],
                 "workspace_id": man["workspace_id"], "workspace_dir": os.path.abspath(os.path.join(a.workspaces, m)),
                 "workspace_manifest": {"path": os.path.abspath(os.path.join(a.workspaces, f)), "sha256": man["sha256"]},
                 "parent_session": None, "template": tref, "placeholders": ph, "statement": fill(tmpl, ph),
-                "test_command": man["test_command"], "change": None,
-                "verify": {"unchanged": [man["module_file"]], "exists": [ph["test_file"]], "target": "", "min_tests": 5}})
+                "test_command": man["test_command"], "change": None, "verify": verify,
+                **({"lang": lang, "image": man["image"]} if lang != "python" else {})})
     with open(a.out, "w") as f:
         for r in rows:
             f.write(json.dumps(r) + "\n")
@@ -195,6 +228,8 @@ def cmd_from_sessions(a):
             continue
         man = json.load(open(t["workspace_manifest"]["path"]))
         m, mod_rel, test_rel = man["module"], man["module_file"], t["placeholders"]["test_file"]
+        lang, image = t.get("lang", "python"), t.get("image") or a.image
+        ex = lang == "elixir"
         test_src = s["final_files"][test_rel]["content"]
         tag = s["session_id"].removeprefix(f"s1-{m}-wt").lstrip("-") or "a0"   # the stage-1 attempt
         base = os.path.join(a.out, f"base-{m}-{tag}")
@@ -203,17 +238,25 @@ def cmd_from_sessions(a):
         with open(os.path.join(base, test_rel), "w") as fh:
             fh.write(test_src)
         orig = open(os.path.join(base, mod_rel)).read()
-        sb = agx.Sandbox(f"agx-tasks-{m}-{tag}", base, a.image, "agx-tasks",
+        sb = agx.Sandbox(f"agx-tasks-{m}-{tag}", base, image, "agx-tasks",
                          config={"test_command": t["test_command"], "timeout": 120, "max_output": 200000}).start()
+        docs_sha = None
         try:
             r0 = sb.tool("run_tests", {})
-            n_tests = int((re.search(r"Ran (\d+) tests?", r0["output"]) or [0, 0])[1])
+            n_tests = agx.ex_counts(r0["output"])[0] if ex else \
+                int((re.search(r"Ran (\d+) tests?", r0["output"]) or [0, 0])[1])
             if r0["exit_code"] != 0 or n_tests < 5:
                 print(f"{m}: the session's tests do not pass here ({r0['exit_code']}, {n_tests} tests)")
                 continue
-            cands = [("fix_bug", name, line, kind, src) for name, line, kind, src in mutations(orig)]
+            if ex:   # the helper reads the module; the documentation (and its doctests) must stay as it is
+                found = ex_candidates(sb, mod_rel, orig)
+                docs_sha = sb.ex_tool("docs", mod_rel)["sha256"]
+                cands = [c for c in found if c[0] == "fix_bug"]
+                impl = [c for c in found if c[0] == "implement"]
+            else:
+                cands = [("fix_bug", name, line, kind, src) for name, line, kind, src in mutations(orig)]
+                impl = [("implement", name, None, "stub", src) for name, src in stubs(orig)]
             rng.shuffle(cands)
-            impl = [("implement", name, None, "stub", src) for name, src in stubs(orig)]
             rng.shuffle(impl)
             kept = {"fix_bug": [], "implement": []}
             want = {"fix_bug": a.per_module, "implement": a.implement}
@@ -225,10 +268,10 @@ def cmd_from_sessions(a):
                 with open(os.path.join(base, mod_rel), "w") as fh:
                     fh.write(src)
                 r = sb.tool("run_tests", {})
-                fails = failing(r["output"])
+                fails = agx.ex_failing(r["output"]) if ex else failing(r["output"])
+                broken = agx.EX_BROKEN.search(r["output"]) if ex else "SyntaxError" in r["output"]
                 cap = n_tests if typ == "implement" else max(1, int(0.3 * n_tests))   # a stub may fail them all
-                if r["exit_code"] != 0 and 1 <= len(fails) <= cap and \
-                        "SyntaxError" not in r["output"]:
+                if r["exit_code"] != 0 and 1 <= len(fails) <= cap and not broken:
                     kept[typ].append((typ, name, line, kind, src, fails, r["exit_code"]))
             with open(os.path.join(base, mod_rel), "w") as fh:
                 fh.write(orig)
@@ -246,7 +289,7 @@ def cmd_from_sessions(a):
                                                     "b/" + mod_rel, n=1))
                 files = []
                 for rel, sha in agx.tree_files(ws).items():
-                    origin = {"role": "code", "origin": f"{man['workspace_id']} (CPython 3.12.15 Lib)"} \
+                    origin = {"role": "code", "origin": f"{man['workspace_id']} ({man['codebase_id']})"} \
                         if rel == mod_rel else {"role": "tests", "origin": f"session {s['session_id']} (Flint)",
                                                 "writer": s["writer"]["id"]} if rel == test_rel else \
                         next(({"role": x["role"], "origin": x["origin"]} for x in man["files"] if x["path"] == rel),
@@ -261,11 +304,18 @@ def cmd_from_sessions(a):
                 mp = os.path.join(a.out, tid, "manifest.json")
                 with open(mp, "w") as fh:
                     json.dump(tman, fh, indent=1)
-                tmpl, tref = pick_template(texts, typ, rng)
+                tmpl, tref = pick_template(texts, typ, rng, lang)
+                # Elixir: the failing tests may be the module's doctests, which run from mix new's test file
+                shown = man["doctest_file"] if ex and fails[0].startswith("doctest ") and man.get("doctest_file") \
+                    else test_rel
                 if typ == "fix_bug":
-                    ph = {"test_file": test_rel, "failing_tests": ", ".join(fails[:5]), "module_file": mod_rel}
+                    ph = {"test_file": shown, "failing_tests": ", ".join(fails[:5]), "module_file": mod_rel}
                 else:
-                    ph = {"function": name, "module_file": mod_rel, "test_file": test_rel}
+                    ph = {"function": name, "module_file": mod_rel, "test_file": shown}
+                verify = {"unchanged": [test_rel], "exists": [], "target": "", "min_tests": n_tests}
+                if ex:
+                    verify["unchanged"] += [p["path"] for p in man["files"] if p["role"] == "scaffold"]
+                    verify["docs_sha256"] = docs_sha
                 rows.append({"task_id": tid, "type": typ, "codebase_id": man["codebase_id"],
                              "source_id": man["source_id"], "licence": man["licence"], "workspace_id": tid,
                              "workspace_dir": os.path.abspath(ws),
@@ -273,9 +323,10 @@ def cmd_from_sessions(a):
                              "parent_session": s["session_id"], "template": tref, "placeholders": ph,
                              "statement": fill(tmpl, ph), "test_command": t["test_command"],
                              "change": {"file": mod_rel, "function": name, "line": line, "kind": kind, "diff": diff},
-                             "verify": {"unchanged": [test_rel], "exists": [], "target": "", "min_tests": n_tests},
+                             "verify": verify,
                              "validation": {"tests": n_tests, "exit_before": 0, "exit_after": code,
-                                            "failing": fails}})
+                                            "failing": fails},
+                             **({"lang": lang, "image": image} if ex else {})})
         print(f"{m}: {n_tests} tests, {tried} changes tried, kept {len(kept['fix_bug'])} fix_bug and "
               f"{len(kept['implement'])} implement")
     with open(os.path.join(a.out, "tasks.jsonl"), "w") as f:
