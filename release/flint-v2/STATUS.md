@@ -27,7 +27,6 @@ inside `begin:drafter` blocks need nothing: the rc4 variant removes them.
 
 | What fills it | How | Where |
 |---|---|---|
-| Stock llama.cpp with Flint-Pascal-Q5 and with UD-Q4_K_XL, 64k, the coding agent | `bench/agent_check/release_check.sh` with `ARMS=stock CTX=65536 STOCK_ARGS="-b 2048 -ub 512"` | results.md ("Agentic speed"); models/flint/README.md ("A coding agent at work"); release/notes-v2.0.md (speed table); README.md of this folder (headline); the card ("How fast", speed table) |
 | Unsloth's UD-Q5_K_XL, the same size as Flint-Pascal-Q5: KL divergence and the coding agent at depth 4 | `llama-perplexity --kl-divergence` against the BF16 base; `release_check.sh` on the release line | the card, results.md, the Flint page. The Flint-Pascal-Q5 upload waits for it (the owner, 2026-10-26) |
 | Fork push, release tag and links (OWNER-TBD) | the owner | README.md (engine archives, clone branch); models/flint/README.md (engine rows); README.md of this folder (What ships, gap 1); reproduce/engine.md; the card's install step |
 

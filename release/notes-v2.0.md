@@ -21,8 +21,8 @@ RAM). Generation in tokens per second over every request, and minutes per task (
 | | Stock llama.cpp | **{{VERSION}}** |
 |---|---|---|
 | **Unsloth Q8_0**, `-ts 6,6,5,5,6,5,5,6,6` | 14.4 tok/s, 2.9 min (65,536-token context) | **44.6–45.9 tok/s, 1.1–1.4 min** (262,144) |
-| Flint-Pascal-Q5 | RIG-TBD | **53.8 tok/s, 1.2 min** (262,144; all twelve tasks in 17 minutes) |
-| Unsloth UD-Q4_K_XL | RIG-TBD | **50.7 tok/s, 1.1 min** (262,144) |
+| Flint-Pascal-Q5 | 15.6 tok/s, 2.1 min | **53.8 tok/s, 1.2 min** (262,144; all twelve tasks in 17 minutes) |
+| Unsloth UD-Q4_K_XL | 14.0 tok/s, 3.1 min | **50.7 tok/s, 1.1 min** (262,144) |
 | Served chat, the store and the staircase drafter (`--pipe-guess staircase`) | — | **RIG-TBD** | <!-- only:drafter -->
 
 Stock llama.cpp runs at 65,536 tokens because at 262,144 its attention mask, built on the host, does not fit 4 GB of

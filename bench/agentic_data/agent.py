@@ -265,6 +265,8 @@ def authored_grams(spec, extra=()):
 
 LIMITS = {"system": (40, 260), "tool": (3, 40), "param": (2, 20), "template": (5, 160), "note": (5, 40),
           "message": (1, 25)}   # words
+JUDGE_HIDES = ("tool", "type", "optional", "kind", "wrapped in", "tone", "length")   # facts that steer the writing
+# (or the mechanical checks) only: shown to the judge, Flint asked for them in the text (2026-10-26 run: 32 of 105 failed)
 
 
 def cmd_texts(a):
@@ -303,7 +305,10 @@ def cmd_texts(a):
         for p in want:
             if text.count(p) != 1:
                 return f"placeholder {p} {text.count(p)} times"
-        if set(re.findall(r"\{[^{}]*\}", text)) - set(want):
+        rest = text
+        for p in want:
+            rest = rest.replace(p, "")
+        if "{" in rest or "}" in rest:   # also braces around placeholders: "{Error edit {i}: ...}"
             return "braces that are not its placeholders"
         idents = set()   # the facts' identifiers (tool and parameter names, examples), all a text may write with "_"
 
@@ -332,6 +337,8 @@ def cmd_texts(a):
         for label in (facts.get("tone"), facts.get("length")):
             if instr == "template" and label and label.lower() in text.lower():
                 return f"names its tone or length: {label!r}"
+        if instr == "template" and re.search(r"\b(may|can) (be )?chang", text, re.I):   # every task keeps its tests,
+            return "says something may change"   # module or documentation as they are; Flint flipped "may change: no"
         hit = agx.shared_ngram(text, grams)
         if hit:
             return f"copies: {hit!r}"
@@ -346,7 +353,8 @@ def cmd_texts(a):
         return g, text.strip().strip('"').strip("`").strip()
 
     def judge(facts, text, seed):
-        g, reply = ask(f"{I['judge']}\n\nFacts:\n{json.dumps(facts, indent=1, ensure_ascii=False)}\n\nText:\n{text}",
+        shown = {k: v for k, v in facts.items() if k not in JUDGE_HIDES}
+        g, reply = ask(f"{I['judge']}\n\nFacts:\n{json.dumps(shown, indent=1, ensure_ascii=False)}\n\nText:\n{text}",
                        seed)
         first = (reply.splitlines() or [""])[0].strip().upper()
         verdict = "ok" if first.startswith("NO") else "problem" if first.startswith("YES") else "unclear"
@@ -401,7 +409,8 @@ def cmd_texts(a):
                     "runner's messages. Only these texts, filled with names from the workspace, enter a session.",
            "writer": writer_record(a), "server": server.info(), "sampling": agx.SAMPLING,
            "spec": {"file": os.path.basename(a.spec), "sha256": agx.sha256_bytes(spec_raw), "version": 2},
-           "checks": {"copy_run_words": 5, "authored_texts_sha256": grams_sha, "judge": "Flint, against the facts"},
+           "checks": {"copy_run_words": 5, "authored_texts_sha256": grams_sha, "judge": "Flint, against the facts",
+                      "judge_hides": list(JUDGE_HIDES)},
            "system": [r for r in res if r["kind"] == "system" and r["text"]],
            "tools": {r["id"]: r for r in res if r["kind"] == "tool"},
            "params": {r["id"]: r for r in res if r["kind"] == "param"},

@@ -26,9 +26,9 @@ over all requests of the run; first token = the median per turn; runaways = sess
 |---|---|---|---|---|---|---|
 | Flint-Pascal-Q5, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 / 2.7 | **53.8** | 178 | 2.6 s | 0 |
 | Flint-Pascal-Q5, release, 262k, `--pipe-depth 3` | 10 (10) | 1.0 / 12.0 | 48.6 | 180 | 2.7 s | 1 |
-| Flint-Pascal-Q5, stock, 64k, `-b 2048 -ub 512` | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| Flint-Pascal-Q5, stock, 64k, `-b 2048 -ub 512` | 11 (10) | 2.1 / 6.9 | 15.6 | 143 | 4.2 s | 1 |
 | UD-Q4_K_XL, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | 11 (10) | 1.1 / 4.1 | 50.7 | 191 | 2.5 s | 1 |
-| UD-Q4_K_XL, stock, 64k, `-b 2048 -ub 512` | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| UD-Q4_K_XL, stock, 64k, `-b 2048 -ub 512` | 9 (8) | 3.1 / 12.0 | 14.0 | 145 | 3.7 s | 1 |
 | Q8_0, release, 262k, `-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1 / 3.5, 1.4 / 7.8 | **45.9, 44.6** | 176, 185 | 2.6 s | 0, 0 |
 | Q8_0, the same at `--pipe-depth 3` (two runs) | 11 (11), 10 (9) | 1.0 / 3.6, 1.3 / 12.0 | 44.6, 44.6 | 184, 191 | 2.4, 2.6 s | 0, 1 |
 | Q8_0, the same at `--pipe-depth 2` | 10 (10) | 1.0 / 10.9 | 40.1 | 179 | 2.4 s | 0 |

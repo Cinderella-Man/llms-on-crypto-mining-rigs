@@ -84,8 +84,8 @@ growing every turn) and 25 minutes (stock llama.cpp 35), one attempt per task, n
 | **Q8_0**, v2, 262k, `--pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1, 1.4 | **45.9, 44.6** | 176, 185 | 2.6 s |
 | Q8_0, v2, 262k, without pipelined speculation | 10 (9) | 1.7 | 29.3 | 184 | 2.3 s |
 | Q8_0, stock llama.cpp, 64k | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
-| Flint-Pascal-Q5, stock llama.cpp, 64k | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
-| UD-Q4_K_XL, stock llama.cpp, 64k | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| Flint-Pascal-Q5, stock llama.cpp, 64k | 11 (10) | 2.1 | 15.6 | 143 | 4.2 s |
+| UD-Q4_K_XL, stock llama.cpp, 64k | 9 (8) | 3.1 | 14.0 | 145 | 3.7 s |
 
 - **Depth 4** won on Flint-Pascal-Q5 (+11 % over depth 3: 48.6 tok/s) and tied on Q8_0 (44.6 at depth 3 in two runs);
   depth 2 gave 40.1 on Q8_0.

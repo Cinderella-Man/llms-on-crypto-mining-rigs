@@ -8,7 +8,7 @@
     "template": "Below, as JSON, is a coding task. Write the message in which a developer asks a coding agent to do it. The tone and length say how to write it; do not mention them. Each value in curly braces, such as {name}, is a placeholder: put each one in the message exactly once, with its braces. Write natural sentences in your own words; do not repeat the JSON's keys. Output only the message.",
     "note": "Below, as JSON, is a fact about a source file. Write one sentence of at most 25 words for a comment at the top of that file, stating the fact. Each value in curly braces is a placeholder: put each one in the sentence exactly once, with its braces. Use your own words. Output only the sentence.",
     "message": "Below, as JSON, is a message a coding agent's tool returns. Write the message as one short line of at most 20 words. Each value in curly braces is a placeholder: put each one in the line exactly once, with its braces; if the JSON has none, the line has no curly braces at all. If the JSON gives characters the line is wrapped in, the line starts and ends with them; do not describe them. Use your own words. Output only the line.",
-    "judge": "Below are facts as JSON and a text written from them. Answer YES if the text states anything the facts contradict, leaves out a fact listed under must mention, or is clumsy or ungrammatical English; otherwise answer NO. Names of tools and parameters (such as read_file or old_string) and values in curly braces may appear in the text but are not required; a parameter's description is a short phrase and need not name its tool, the parameter itself or its type (the schema gives the type). Put YES or NO on the first line, then the reason in one line.",
+    "judge": "Below are facts as JSON and a text written from them. Answer YES only if the text states something a fact contradicts, leaves out a fact listed under must mention, or is clumsy or ungrammatical English; otherwise answer NO. The text may leave out every other fact, and it may say the facts in its own words: a fact said differently is still kept. Names of tools and parameters (such as read_file or old_string) and values in curly braces may appear in the text but are not required. Put YES or NO on the first line, then the reason in one line.",
     "rephrase": "Reword the text below so that it says the same thing in different words. Keep each value in curly braces exactly as it is. Output only the new text."
   },
   "variants": {"system": 3, "system_pi": 2, "write_tests": 4, "fix_bug": 6, "implement": 4, "change_note": 1},
@@ -31,7 +31,7 @@
       "read": {"parameters": ["path", "offset", "limit"], "returns": "file contents", "offset counted from": 1, "most lines per call": 2000},
       "write": {"parameters": ["path", "content"], "writes": "whole file", "missing file": "created", "existing content": "replaced"},
       "edit": {"parameters": ["path", "edits"], "edits": "oldText/newText pairs", "each oldText must occur": "exactly once"},
-      "bash": {"parameters": ["command", "timeout"], "runs": "shell command", "working folder": "/work", "network": "none", "usable paths": ["/work", "/tmp"], "also runs": "the tests", "must mention": ["network"]}
+      "bash": {"parameters": ["command", "timeout"], "runs": "shell command", "working folder": "/work", "network": "none", "usable paths": ["/work", "/tmp"], "also used for": "running the tests", "must mention": ["network"]}
     }
   },
   "params": {
@@ -70,15 +70,15 @@
   },
   "tasks": {
     "python": {
-      "write_tests": {"task": "write unit tests", "module": "{module_file}", "new test file": "{test_file}", "framework": "unittest", "cover": ["public functions", "public classes", "edge cases", "errors"], "module may change": "no", "tests must pass with": "{test_command}"},
-      "fix_bug": {"task": "fix a bug", "failing tests": "{failing_tests}", "test file": "{test_file}", "bug is in": "{module_file}", "tests may change": "no", "hint at the cause": "no"},
-      "implement": {"task": "implement a function", "function": "{function}", "file": "{module_file}", "current body": "raise NotImplementedError", "specified by": "its docstring", "tests to pass": "{test_file}", "tests may change": "no"}
+      "write_tests": {"task": "write unit tests", "module": "{module_file}", "new test file": "{test_file}", "framework": "unittest", "cover": ["public functions", "public classes", "edge cases", "errors"], "the module": "stays unchanged", "tests must pass with": "{test_command}", "must mention": ["the module"]},
+      "fix_bug": {"task": "fix a bug", "failing tests": "{failing_tests}", "test file": "{test_file}", "bug is in": "{module_file}", "the tests": "stay unchanged", "the bug's cause": "left for the agent to find", "must mention": ["the tests"]},
+      "implement": {"task": "implement a function", "function": "{function}", "file": "{module_file}", "current body": "raise NotImplementedError", "specified by": "its docstring", "tests to pass": "{test_file}", "the tests": "stay unchanged", "must mention": ["the tests"]}
     },
     "elixir": {
       "prefix": "ex",
-      "write_tests": {"task": "write unit tests", "language": "Elixir", "module": "{module_file}", "new test file": "{test_file}", "framework": "ExUnit", "cover": ["public functions", "edge cases", "errors"], "module may change": "no", "tests must pass with": "{test_command}"},
-      "fix_bug": {"task": "fix a bug", "language": "Elixir", "framework": "ExUnit", "failing tests": "{failing_tests}", "test file": "{test_file}", "bug is in": "{module_file}", "tests may change": "no", "documentation may change": "no", "hint at the cause": "no"},
-      "implement": {"task": "implement a function", "language": "Elixir", "function": "{function}", "file": "{module_file}", "current body": "raise \"not implemented\"", "specified by": "its @doc", "tests to pass": "{test_file}", "tests may change": "no", "documentation may change": "no"},
+      "write_tests": {"task": "write unit tests", "language": "Elixir", "module": "{module_file}", "new test file": "{test_file}", "framework": "ExUnit", "cover": ["public functions", "edge cases", "errors"], "the module": "stays unchanged", "tests must pass with": "{test_command}", "must mention": ["the module"]},
+      "fix_bug": {"task": "fix a bug", "language": "Elixir", "framework": "ExUnit", "failing tests": "{failing_tests}", "test file": "{test_file}", "bug is in": "{module_file}", "the tests": "stay unchanged", "the documentation": "stays unchanged", "the bug's cause": "left for the agent to find", "must mention": ["the tests", "the documentation"]},
+      "implement": {"task": "implement a function", "language": "Elixir", "function": "{function}", "file": "{module_file}", "current body": "raise \"not implemented\"", "specified by": "its @doc", "tests to pass": "{test_file}", "the tests": "stay unchanged", "the documentation": "stays unchanged", "must mention": ["the tests", "the documentation"]},
       "change_note": {"file is": "{source_file}", "change": "modules renamed", "new names": "{modules}"}
     }
   },

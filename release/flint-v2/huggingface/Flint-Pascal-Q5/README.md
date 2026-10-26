@@ -29,7 +29,7 @@ download, Unsloth's UD-Q4_K_XL.
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
 card on a single PCIe 1.0 lane, a 2-core Celeron host): it generated **53.8 tokens per second** over its sessions and
 finished all twelve tasks in 17 minutes, a median of 1.2 minutes per task. Stock llama.cpp with Unsloth's UD-Q4_K_XL:
-RIG-TBD tokens per second, RIG-TBD minutes per task.
+14.0 tokens per second, 3.1 minutes per task (at 65,536 tokens of context; 8 of 12 tasks passed).
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
@@ -80,11 +80,13 @@ P106-090, 262,144-token context, the command line above unless noted, 2026-10-26
 | **This file, Pascal engine** | **12 (12), all done in 17 min** | 1.2 | **53.8** | 178 | 2.6 s |
 | Unsloth UD-Q4_K_XL, Pascal engine | 11 (10) in 27 min | 1.1 | 50.7 | 191 | 2.5 s |
 | Unsloth Q8_0, Pascal engine (two runs) | 12 (12) and 12 (12) | 1.1, 1.4 | 45.9, 44.6 | 176, 185 | 2.6 s |
-| Unsloth UD-Q4_K_XL, stock llama.cpp, 65,536-token context | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD | RIG-TBD |
+| This file, stock llama.cpp, 65,536-token context | 11 (10) | 2.1 | 15.6 | 143 | 4.2 s |
+| Unsloth UD-Q4_K_XL, stock llama.cpp, 65,536-token context | 9 (8) | 3.1 | 14.0 | 145 | 3.7 s |
 | Unsloth Q8_0, stock llama.cpp, 65,536-token context | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
 
 - **Stock llama.cpp** runs at 65,536 tokens of context, with 35 minutes for the tasks: at 262,144 its attention mask,
-  built on the host, does not fit the rig's 4 GB of RAM.
+  built on the host, does not fit the rig's 4 GB of RAM. On stock llama.cpp this file is 11 % faster than UD-Q4_K_XL (15.6
+  against 14.0 tokens per second); the Pascal engine makes it 3.4 times as fast.
 - **Prompt reading** above is the agent's turns, a few hundred to a few thousand new tokens each (85–89 % of every
   prompt comes from the cache). A whole fresh prompt reads faster: 767 tokens per second for 8,192 tokens with this
   file and larger batches (`-b 8192 -ub 512`, which fit at shorter contexts), against 593 on stock llama.cpp.

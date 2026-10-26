@@ -20,8 +20,8 @@ tokens per second over every request, and the median minutes per task:
 | Nine P106-090 cards, a coding agent at work | Stock llama.cpp (65,536-token context) | **v2** (262,144-token context) |
 |---|---|---|
 | **Unsloth Q8_0** (42.3 GB, 93.3 % same top token) | 8 of 12, 14.4 tok/s, 2.9 min | **12 of 12, 44.6–45.9 tok/s, 1.1–1.4 min** (two runs) |
-| **Flint-Pascal-Q5** (29.4 GB, 88.8 %) | RIG-TBD | **12 of 12, 53.8 tok/s, 1.2 min** |
-| Unsloth UD-Q4_K_XL (25.1 GB, 87.7 %) | RIG-TBD | 10 of 12, 50.7 tok/s, 1.1 min |
+| **Flint-Pascal-Q5** (29.4 GB, 88.8 %) | 10 of 12, 15.6 tok/s, 2.1 min | **12 of 12, 53.8 tok/s, 1.2 min** |
+| Unsloth UD-Q4_K_XL (25.1 GB, 87.7 %) | 8 of 12, 14.0 tok/s, 3.1 min | 10 of 12, 50.7 tok/s, 1.1 min |
 
 Stock llama.cpp runs at 65,536 tokens because at 262,144 its attention mask, built on the host, does not fit the rig's
 4 GB of RAM. Pipelined speculation alone is worth +52 % in this test (29.3 → 44.6 tok/s on Q8_0); the output does not
