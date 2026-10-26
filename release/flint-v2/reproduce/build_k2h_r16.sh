@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build_k2h_r16.sh: rebuilds the K2h-r16 model file from Flint's original BF16 weights (release/flint-v2/reproduce/
+# build_k2h_r16.sh: rebuilds the Flint-Pascal-Q5 model file (recipe K2h-r16) from Flint's original BF16 weights (release/flint-v2/reproduce/
 # model.md). Every step is a public tool; the result is checked tensor by tensor against the shipped file's manifest.
 #
 #   LLAMA_DIR=<llama.cpp at d77256999, built> FLINT_DIR=<RecursiveSI/flint at 2a247be0c0ae> \
@@ -17,8 +17,8 @@
 #             tensor but output.weight (then check the head with the KLD commands in model.md)
 #
 # Env [defaults]: LLAMA_DIR (llama-quantize in build/bin, convert_hf_to_gguf.py and gguf-py), FLINT_DIR, IMATRIX,
-#   WORK, PYTHON [python3; needs numpy, and torch/safetensors for convert], THREADS [nproc], HEAD_FROM, NAME [Flint
-#   K2h-r16], QUANTIZED_BY [Kamil Skowron (@kamilskowron), as in the released file], TRAIN (wikitext-2 train text, for
+#   WORK, PYTHON [python3; needs numpy, and torch/safetensors for convert], THREADS [nproc], HEAD_FROM, NAME
+#   [Flint-Pascal-Q5], QUANTIZED_BY [Kamil Skowron (@kamilskowron), as in the released file], TRAIN (wikitext-2 train text, for
 #   a computed head), STEPS,
 #   BF16 [WORK/flint-BF16.gguf; point it at an existing conversion to skip convert], QUANTIZE [LLAMA_DIR/build/bin/
 #   llama-quantize]
@@ -31,7 +31,7 @@ repo=$(cd "$here/../../.." && pwd)
 PYTHON=${PYTHON:-python3}
 THREADS=${THREADS:-$(nproc)}
 STEPS=${STEPS:-convert quantize head router header verify}
-NAME=${NAME:-Flint K2h-r16}
+NAME=${NAME:-Flint-Pascal-Q5}
 QUANTIZED_BY=${QUANTIZED_BY:-Kamil Skowron (@kamilskowron)}
 export PYTHONPATH="$LLAMA_DIR/gguf-py${PYTHONPATH:+:$PYTHONPATH}"
 mkdir -p "$WORK"
@@ -40,7 +40,7 @@ QUANTIZE=${QUANTIZE:-$LLAMA_DIR/build/bin/llama-quantize}
 BODY=$WORK/flint-k2-body.gguf
 K2H=$WORK/flint-k2h.gguf
 RAW=$WORK/flint-k2h-r16-raw.gguf
-OUT=$WORK/flint-K2h-r16.gguf
+OUT=$WORK/flint-pascal-Q5.gguf
 has() { case " $STEPS " in *" $1 "*) return 0;; esac; return 1; }
 log() { echo "$(date '+%F %T') $*"; }
 
@@ -79,7 +79,7 @@ fi
 
 if has header; then
     log "header: $NAME, quantized by $QUANTIZED_BY"
-    "$PYTHON" "$repo/scripts/gguf_release_header.py" "$RAW" "$OUT" --preset flint --name "$NAME" --quantized-by "$QUANTIZED_BY"
+    "$PYTHON" "$repo/scripts/gguf_release_header.py" "$RAW" "$OUT" --preset flint --name "$NAME" --quantized-by "$QUANTIZED_BY" --set quantize.imatrix.file=imatrix_unsloth.gguf
 fi
 
 if has verify; then

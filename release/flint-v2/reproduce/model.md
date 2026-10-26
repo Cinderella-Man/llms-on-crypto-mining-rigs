@@ -109,7 +109,7 @@ against 0.1092 with F32, within the ~0.005 routing-flip noise; [Q113](../../../q
 ### 5. The release header
 
 ```bash
-python scripts/gguf_release_header.py flint-k2h-r16-raw.gguf flint-pascal-Q5.gguf --preset flint --name "Flint-Pascal-Q5" --quantized-by "Kamil Skowron (@kamilskowron)"
+python scripts/gguf_release_header.py flint-k2h-r16-raw.gguf flint-pascal-Q5.gguf --preset flint --name "Flint-Pascal-Q5" --quantized-by "Kamil Skowron (@kamilskowron)" --set quantize.imatrix.file=imatrix_unsloth.gguf
 ```
 
 Sets `general.quantized_by` (the released file's value above; put your own name in a file you publish yourself),

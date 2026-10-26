@@ -20,7 +20,7 @@ by "Kamil Skowron (@kamilskowron)".
 ## Before uploading Flint-Pascal-Q5
 
 1. Rewrite the header, verifying the tensors on the way:
-   `scripts/gguf_release_header.py flint-q113-K2h-r16.gguf flint-pascal-Q5.gguf --preset flint --name "Flint-Pascal-Q5" --quantized-by "Kamil Skowron (@kamilskowron)"`.
+   `scripts/gguf_release_header.py flint-q113-K2h-r16.gguf flint-pascal-Q5.gguf --preset flint --name "Flint-Pascal-Q5" --quantized-by "Kamil Skowron (@kamilskowron)" --set quantize.imatrix.file=imatrix_unsloth.gguf`.
 2. Check the tensors against the manifest:
    `release/flint-v2/reproduce/tensor_manifest.py hash flint-pascal-Q5.gguf > t.tsv && release/flint-v2/reproduce/tensor_manifest.py compare release/flint-v2/reproduce/k2h-r16.tensors.tsv t.tsv`
    (0 differences).
