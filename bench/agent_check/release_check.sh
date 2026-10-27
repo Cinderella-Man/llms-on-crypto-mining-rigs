@@ -42,6 +42,13 @@
 #              logs go to CLIENT_OUT/rig and are removed on the rig
 #     report   compare.md (report.py compare), table.md, gonogo.md, on the client in a container
 #     collect  CLIENT_OUT (without the workspaces) copied to OUT here
+#   Replay instead of live attempts (REPLAY_LOG set): in step run each arm's server gets the recorded requests of
+#   REPLAY_TRACES (comma-separated trace tags, e.g. rel/bugfix-python-list-ops/a1/t1) from REPLAY_LOG (a proxy.jsonl
+#   on the client) through replay.py run: the same prompts, a fixed seed per request and the recorded reply lengths, so
+#   two exact engines generate the same tokens and only their speed differs. Rows go to CLIENT_OUT/replay.jsonl
+#   labelled REPLAY_LABEL (default the arm); several runs with the same CLIENT_OUT and other labels add up. Step report
+#   then writes replay.md (replay.py summary: per label the cost per prompt and per generated token, and the ratios to
+#   REPLAY_REF, default the first label, with 95 % intervals over traces).
 # Resumable: run it again with the same CLIENT_OUT and finished attempts are skipped.
 set -uo pipefail
 OUT=$(realpath -m "${1:?usage: release_check.sh OUT}")
@@ -158,7 +165,33 @@ client_arm() {  # client_arm ARM: start client_arm.sh detached on the client, fo
   done
 }
 
-client_stop() {  # stop a client arm still running (this script interrupted)
+client_replay() {  # client_replay ARM: replay.py run detached on the client against the arm's server, followed to its exit
+  local label=${REPLAY_LABEL:-$1} rc
+  cl "mkdir -p $CLIENT_OUT && cd $CAC || exit 1; rm -f $CLIENT_OUT/replay-$label.rc; setsid nohup bash -c \
+    'nice -n 19 python3 -I replay.py run --log $REPLAY_LOG --traces $REPLAY_TRACES \
+    --server http://127.0.0.1:$CLIENT_PORT --label $label --out $CLIENT_OUT/replay.jsonl; \
+    echo \$? > $CLIENT_OUT/replay-$label.rc' > $CLIENT_OUT/replay-$label.log 2>&1 < /dev/null & \
+    echo \$! > $CLIENT_OUT/replay-$label.pid; sleep 1" || { say "could not start the replay for $label"; return 1; }
+  CLIENT_REPLAY=$label
+  say "replay $label: $REPLAY_TRACES"
+  while true; do
+    sleep 15
+    rc=$(cl "cat $CLIENT_OUT/replay-$label.rc 2> /dev/null || { kill -0 \$(cat $CLIENT_OUT/replay-$label.pid) \
+      2> /dev/null && echo running; } || echo gone" 2> /dev/null) || continue
+    case $rc in
+      running) ;;
+      gone) say "replay $label ended without an exit code"; CLIENT_REPLAY=; return 1;;
+      *) CLIENT_REPLAY=; say "replay $label done (exit $rc): $(cl "tail -1 $CLIENT_OUT/replay-$label.log")"
+         [ "$rc" = 0 ]; return;;
+    esac
+  done
+}
+
+client_stop() {  # stop a client arm or replay still running (this script interrupted)
+  if [ -n "${CLIENT_REPLAY:-}" ]; then
+    cl "kill -- -\$(cat $CLIENT_OUT/replay-$CLIENT_REPLAY.pid) 2> /dev/null" 2> /dev/null
+    say "replay $CLIENT_REPLAY stopped"
+  fi
   [ -n "${CLIENT_ARM:-}" ] || return 0
   cl "p=\$(cat $CLIENT_OUT/$CLIENT_ARM.pid 2> /dev/null) && kill -- -\$p 2> /dev/null; sleep 3; \
     docker ps -aq --filter name=^acrel-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
@@ -194,7 +227,11 @@ if has run; then
   for arm in $ARMS; do
     say "arm $arm"
     server_start "$arm" || { say "server $arm did not start; stopping"; exit 1; }
-    client_arm "$arm" || { say "arm $arm failed; stopping"; exit 1; }
+    if [ -n "${REPLAY_LOG:-}" ]; then
+      client_replay "$arm" || { say "replay of $arm failed; stopping"; exit 1; }
+    else
+      client_arm "$arm" || { say "arm $arm failed; stopping"; exit 1; }
+    fi
     server_stop
   done
   rig_end
@@ -202,7 +239,11 @@ if has run; then
   relay_stop
 fi
 
-if has report; then
+if has report && [ -n "${REPLAY_LOG:-}" ]; then
+  say "replay report on the client"
+  cl "cd $CAC && nice -n 19 python3 -I replay.py summary $CLIENT_OUT/replay.jsonl --log $REPLAY_LOG \
+    ${REPLAY_REF:+--reference $REPLAY_REF} > $CLIENT_OUT/replay.md && cat $CLIENT_OUT/replay.md" | tee -a "$OUT/run.log"
+elif has report; then
   say "report on the client"
   cl "docker run --rm --label $LABEL --cpu-shares $CPU_SHARES -v $CLIENT_DIR:$CLIENT_DIR:ro -v $CLIENT_OUT:$CLIENT_OUT \
     $IMAGE bash $CAC/client_report.sh $CLIENT_OUT ${ARMS// /,}" | tee -a "$OUT/run.log"

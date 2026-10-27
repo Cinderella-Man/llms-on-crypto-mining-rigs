@@ -30,6 +30,7 @@ copy lookup, which guesses first inside copied text.
 | Data (the owner, 2026-10-25 15:00) | **All drafter data so far is excluded**: every prompt file, answer, dump, pack, vocabulary, head, checkpoint and store, including the "clean" M3 sets, which were cut from mixed-source files. It is the owner's to delete. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts; their numbers stand as measurements of the method only |
 | v2.1 plan (M4) | start from scratch on approved sources only: [`sources.json`](../bench/staircase_drafter/sources.json) lists them, and the gate [`check_sources.py`](../bench/staircase_drafter/check_sources.py) checks every stage (prompts, answers, dumps, then vocabulary, packs, heads and the store) with a chain of hashed gate records. Both are drafts: written, never run |
 | Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
+| Answer store (2026-10-27) | rebuilt from the 1,177 gated sessions of agentic data run 1 (15.4 M tokens of Flint's own output, 124 MB, publishable): on the agent check, Flint Q8_0 on the release line, **46.9 tok/s** with `--pipe-store` against 45.0 and 46.5 without (the earlier run that day and the same slot: +4.2 % and +0.9 %, within the spread of single live runs); offline on held-out agent sessions +4.3 %. No guess costs card time, so it pays where the head (M4's first heads: 29.7 / 30.7) does not yet ([answer store](benchmarks/2026-10-27-answer-store.md)) |
 | Cost per guess | 5.3–7.3 ms on one P106, 2–3× the design estimate and about one pipeline cycle, on the card that also runs Flint's first stage: the cost, not the acceptance, now caps the gain |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
 | Best on the release split | M2 run R2-9 (nine-card specialist, 27.6 M tokens): 0.476 coupled acceptance on Q51 fresh text, 0.538 overall; even nine-card split 0.492 / 0.553 |
@@ -236,7 +237,10 @@ Prompts → answers → dump → train → score → simulate → export → eng
 - **Where:** fork branch `pascal-p106-v2-drafter` and the release candidate `pascal-p106-v2-rc4` (`460160e93`).
   `llama-pipespec` and `llama-server` take `--pipe-guess staircase --pipe-draft FILE`. In llama-server with a
   continuation store (`--pipe-store`) the order is the copy lookup, the request's continuations of 2-token or longer
-  contexts, the store, then the head.
+  contexts, the store, then the head. The store's thresholds are compiled in: the longest context it holds, up to 32
+  tokens, at least 2 tokens long, and its top continuation at least 30 % of the context's occurrences. On held-out
+  agent sessions they tie for best of 25 threshold pairs, and the store before the request's 2-token contexts is
+  worse ([answer store](benchmarks/2026-10-27-answer-store.md)).
 - **How it runs** ([RIG.md](../bench/staircase_drafter/RIG.md)): every one-token pipe step copies the inputs of the
   window's layers and its final state (8 KB each) to pinned host memory on the card that computes them, one per card;
   the head runs on card 1 in its own CUDA stream (or `--pipe-draft-dev N`), waits for the hidden states it reads, and
@@ -563,7 +567,9 @@ row's own window.
   the top of what partial-depth inputs give (published early-exit drafters at 6–25 % depth sit near 0.5).
 - **Not a kill line** (the owner, 2026-10-24 21:25: "do not give up on this - we need to make it work"). Missing it means
   more data, a bigger head, and a retrain.
-- **In front of the drafter:** the continuation store (Q161, `--pipe-store`) adds ~5 % at no card cost.
+- **In front of the drafter:** the continuation store (Q161, `--pipe-store`) adds ~5 % at no card cost. The store
+  rebuilt from agent sessions (2026-10-27) adds +4.3 % offline on held-out agent sessions and +0.9 to +4.2 % on the
+  agent check (46.9 tok/s against 46.5 and 45.0; [answer store](benchmarks/2026-10-27-answer-store.md)).
 
 ### Served on the rig (2026-10-25)
 
@@ -677,7 +683,9 @@ guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
    K2h-r16's states, its offline 0.538 on Q8_0's.
 5. ~~Cost per guess on a P106~~: 5.3–7.3 ms (section 6), far above card 1's slack; see item 0.
 6. ~~Order of the store and the head~~: built as copy lookup, request continuations, store, then the head (rc4
-   `5215256bd`); on the rig the head adds 3.7 % behind the store. What each source is worth on its own: item 13.
+   `5215256bd`); on the rig the head adds 3.7 % behind the store. What each source is worth on its own: item 13. On
+   agent sessions (2026-10-27) the store sits right after the request's 2-token contexts: before them, 1.8 points fewer
+   right guesses.
 7. **More data:** stopped; v2.1 rebuilds all data from scratch through the gate (M4).
 8. **Bigger head:** the 4-layer A (1.85× the training cost per step, est. ~1.6× the guess time) against more data.
    The night's 4-layer run is inconclusive. It and the 2-layer control were both stopped at 75 of 300 minutes, and at
@@ -694,7 +702,11 @@ guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
     the request's continuations, with the store; the copy lookup then the head; and all of them. It answers whether the
     head pays off without the store, and whether the store ships. On hold, with the Q8_0 served test and the placement
     test, until the head and the store are rebuilt on the strict data list (the owner, 2026-10-25 13:40); no testing or
-    benchmarking of the guesser or the drafter until then.
+    benchmarking of the guesser or the drafter until then. **Partly answered on the agent check (2026-10-27, Flint
+    Q8_0, release line):** `cont` 45.0 tok/s (and 46.5 in the same slot as the store), `cont` with the agentic store 46.9,
+    `cont` then M4's first heads 29.7 / 30.7. The store gains a few percent at no cost and can ship; the head behind the
+    store waits for a cheaper guess (item 0). Offline per source on held-out agent sessions: the copy lookup guesses 52.9 % of positions
+    (81.6 % right), the request's 2-token contexts 23.6 % (42.7 %), the store 13.5 % (34.9 %).
 
 ## 9. Changelog
 
@@ -803,3 +815,10 @@ guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
 - 2026-10-27: M4's first heads (agentic run 1, 240 minutes each) on the agent check: 29.7 and 30.7 tok/s against the
   release line's 45.0. One guess costs 5.3 ms on a P106, and ~25–30 % of guesses are right on agent text, so the head
   slows the agent; the cheaper guess (section 8, item 0) comes before more training pays. Heads continue overnight.
+- 2026-10-27 (evening): the answer store rebuilt from agentic run 1's 1,177 gated sessions (15.4 M tokens, 124 MB;
+  `chain.py` walks its 19 gate records; `heldout_check.py` finds no agent-check or Q51 text in its sessions). Offline
+  on 40 held-out sessions with a store built without their modules (`store_agentic.py`, `datastore_corpus.py
+  --sessions`): right guesses 56.9 → 59.6 %, +4.3 % in the pipeline model at the release split; the engine's
+  thresholds tie for best; +0.4 % per doubling of the store. On the rig's agent check: 46.9 tok/s with the store
+  against 45.0 (the earlier run) and 46.5 (the same slot) without; single live runs cannot separate a few percent
+  ([answer store](benchmarks/2026-10-27-answer-store.md)).

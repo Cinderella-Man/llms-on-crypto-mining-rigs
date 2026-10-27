@@ -1,0 +1,20 @@
+depth	record	gate	stage	verdict	files	source_ids	writers	held_out
+0	store/full/store.gate.json	check_sources.py	derived (store)	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm, flint-q8_0
+1	store/full/corpus.gate.json	check_sources.py	derived (other)	PASS	4	elixir-stdlib, python-stdlib	flint-nvfp4-vllm, flint-q8_0	q51 (test file)
+2	export/train/answers.gate.json	gate.py	answers	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm, flint-q8_0
+2	export/train/turn_prompts.gate.json	gate.py	answers	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm, flint-q8_0
+3	run1-q8/sessions.gate.json	gate.py	sessions	PASS	2	elixir-stdlib, python-stdlib	flint-q8_0	q51, agent_tasks
+3	run1-va/sessions.gate.json	gate.py	sessions	PASS	2	elixir-stdlib, python-stdlib	flint-nvfp4-vllm	q51, agent_tasks
+3	run1-vb/sessions.gate.json	gate.py	sessions	PASS	2	elixir-stdlib, python-stdlib	flint-nvfp4-vllm	q51, agent_tasks
+4	run1-q8/s2/tasks.gate.json	gate.py	tasks	PASS	1	elixir-stdlib, python-stdlib	flint-q8_0	q51, agent_tasks
+4	run1-va/s2/tasks.gate.json	gate.py	tasks	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm, flint-q8_0	q51, agent_tasks
+4	run1-vb/s2/tasks.gate.json	gate.py	tasks	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm, flint-q8_0	q51, agent_tasks
+5	run1-q8/s1/sessions.gate.json	gate.py	sessions	PASS	1	elixir-stdlib, python-stdlib	flint-q8_0	q51, agent_tasks
+5	run1-va/s1/sessions.gate.json	gate.py	sessions	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm	q51, agent_tasks
+5	run1-vb/s1/sessions.gate.json	gate.py	sessions	PASS	1	elixir-stdlib, python-stdlib	flint-nvfp4-vllm	q51, agent_tasks
+6	run1-q8/s1/tasks.gate.json	gate.py	tasks	PASS	1	elixir-stdlib, python-stdlib	flint-q8_0	q51, agent_tasks
+6	run1-va/s1/tasks.gate.json	gate.py	tasks	PASS	1	elixir-stdlib, python-stdlib	flint-q8_0	q51, agent_tasks
+6	run1-vb/s1/tasks.gate.json	gate.py	tasks	PASS	1	elixir-stdlib, python-stdlib	flint-q8_0	q51, agent_tasks
+7	run1-q8/ws.gate.json	gate.py	workspaces	PASS	92	elixir-stdlib, python-stdlib		q51, agent_tasks
+7	run1-va/ws.gate.json	gate.py	workspaces	PASS	92	elixir-stdlib, python-stdlib		q51, agent_tasks
+7	run1-vb/ws.gate.json	gate.py	workspaces	PASS	92	elixir-stdlib, python-stdlib		q51, agent_tasks

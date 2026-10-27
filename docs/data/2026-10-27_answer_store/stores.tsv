@@ -1,0 +1,7 @@
+store	sessions	turns	tokens_with_separators	bytes	sha256	use
+full	1177	18885	15445634	123565088	86c5dedb2bc692c14999dc68c1a837624729ca982486286fceeab88a3ed8c13c	the store to ship; the rig's store arm
+train	1108	17773	14296188	114369520	00d18b954a409035d819c2aff5d2634087ee7dc2eaca11ee939c4e4987a3ddaf	offline estimate on the held-out sessions (69 sessions of the held-out modules left out, 1,112 turns)
+train-1M	(prefix)		999369	7994968		size curve
+train-2M	(prefix)		1999278	15994240		size curve
+train-4M	(prefix)		3997309	31978488		size curve
+train-8M	(prefix)		7992278	63938240		size curve

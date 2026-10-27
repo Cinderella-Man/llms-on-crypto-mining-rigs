@@ -180,6 +180,13 @@ check also has no network. On the quant machine each attempt runs in its own con
   cache and time to first token. It gives each label's ratio to a reference with a 95 % bootstrap interval over
   traces, and "same work" minutes (the reference's token counts priced at each label's costs). The live rows of the
   same traces appear as `live:<arm>`.
+- **`replay.py pick --task-set bugfix`** picks traces of a bugfix run (the default task set is polyglot).
+- **Replays through `release_check.sh`:** with `REPLAY_LOG` (a recorded `proxy.jsonl` on the client) and
+  `REPLAY_TRACES` set, the run step replays those traces to each arm's server on the rig instead of running the tasks,
+  labelled `REPLAY_LABEL`, into `CLIENT_OUT/replay.jsonl`; the report step writes `replay.md` with the ratios to
+  `REPLAY_REF`. Run it once per server setup with the same `CLIENT_OUT`. Pipelined decoding is exact, so two setups of
+  the release engine generate the same tokens for the same seeds, and the ratio of ms per generated token measures the
+  setup alone, without the run-to-run spread of live sessions.
 
 ## Calibration on the quant machine
 

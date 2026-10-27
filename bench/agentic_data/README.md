@@ -113,5 +113,6 @@ with content), `sequence_len`, `gen_ranges`, `seconds`, `limits`.
 | [gate.py](gate.py) | the gates: workspaces, tasks, sessions, answers, dataset |
 | [export.py](export.py) | store, dump and dataset exports; several runs (writers) export as one, with one id range |
 | [heldout.py](heldout.py) | the drafter's held-out sessions: every session of every 20th module (by name hash), never trained on |
+| [heldout_check.py](heldout_check.py) | an independent check that sessions hold no text of the project's own tests: 8- and 12-word spans of the agent check's task files and Q51's prompts, and the agent check's exercise names, in generated text, tool results and statements |
 | [agx.py](agx.py) | shared helpers: hashes, the 12-word rule, licence markers, the template, the sandbox |
 | [run.sh](run.sh) | the whole pipeline in one command |

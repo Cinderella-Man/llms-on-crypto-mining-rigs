@@ -1,0 +1,11 @@
+kind	matched span (lowercased words)	test file	where in the sessions	hits
+12 words	(none)			0
+exercise name	(none of the 27 bugfix names)			0
+8 words	2, 3, 4, 5, 6, 7, 8, 9,	polyglot/javascript-robot-name/reference/robot-name.js	generated text, tool results	59
+8 words	3, 4, 5, 6, 7, 8, 9, 10,	polyglot/javascript-palindrome-products/prompt.md	generated text, tool results	57
+8 words	greater than or equal to the length of	polyglot/javascript-triangle/prompt.md	generated text	5
+8 words	[1, 2, 3, 4, 5, 6, 7, 8,	polyglot/javascript-robot-name/reference/robot-name.js	generated text, tool results	5
+8 words	= none def __enter__(self): return self def __exit__(self,	polyglot/python-paasio/workspace/test_utils.py	generated text	3
+8 words	1 2 3 4 5 6 7 8	polyglot/javascript-meetup/prompt.md	generated text	2
+8 words	2 3 4 5 6 7 8 9	polyglot/javascript-meetup/prompt.md	generated text	1
+8 words	2, 3, 4, 5, 6, 7, 8, 9]`	polyglot/javascript-palindrome-products/prompt.md	generated text	1

@@ -2,6 +2,7 @@
 
     python3 replay.py list --log RESULTS/proxy.jsonl
     python3 replay.py pick --log RESULTS/proxy.jsonl --results RESULTS --arm v2-ud --n 8 [--tasks 1-41] [--shortest]
+                       [--task-set polyglot|bugfix]
     python3 replay.py run --log RESULTS/proxy.jsonl --traces ARM/TASK/a1/t1[,…] --server http://127.0.0.1:PORT
                       --label v1-ud --out REPLAY.jsonl [--stream recorded|on|off] [--ignore-eos] [--erase-slot]
     python3 replay.py summary REPLAY.jsonl [REPLAY2.jsonl …] [--reference v2-ud]
@@ -166,7 +167,7 @@ def cmd_run(a):
 
 def cmd_pick(a):
     traces, _ = load_log(a.log)
-    order = [l.strip() for l in (Path(__file__).resolve().parent / "tasks/polyglot/order.txt").read_text().split()]
+    order = [l.strip() for l in (Path(__file__).resolve().parent / "tasks" / a.task_set / "order.txt").read_text().split()]
     allowed = set(order)
     if a.tasks:
         lo, hi = map(int, a.tasks.split("-"))
@@ -299,6 +300,7 @@ def main():
     p.add_argument("--arm", required=True)
     p.add_argument("--n", type=int, default=8)
     p.add_argument("--tasks", help="A-B: positions in the run order")
+    p.add_argument("--task-set", default="polyglot", help="the task set whose order.txt --tasks counts in")
     p.add_argument("--shortest", action="store_true")
     p = sub.add_parser("summary")
     p.add_argument("files", nargs="+")

@@ -596,6 +596,11 @@ for release").
   leaving out any answer whose prompt shares a 12-word span with a Q51 prompt.
 - [datastore_sim.py](datastore_sim.py): a brute-force self-test of the store, the one-token accuracy of chains with the
   store (per stage), and pipeline_sim.py's nine-card model.
+- [store_agentic.py](store_agentic.py): the same on agent sessions (bench/agentic_data's session rows, one request per
+  generated span) with the engine's guess sources as they are built (the request's counts over the prompt's last 32,768
+  tokens, the store's thresholds), a grid of store thresholds, and the pipeline model on a measured card setup (default:
+  the release split of Flint Q8_0 on nine cards). `datastore_corpus.py --sessions` builds a store without the held-out
+  sessions.
 
 ## Gaps
 
@@ -646,6 +651,12 @@ python -I datastore_corpus.py corpus <prompts.jsonl> <q51 prompts.jsonl> <genera
 ./datastore build corpus/clean.i32 14000000 clean-14M.ds          # decontaminated answers, the first 14 M tokens; 3000000 for a 3 M store
 python -I datastore_sim.py gen.jsonl --lib ./libdatastore.so --store clean-14M=clean-14M.ds --selftest corpus/clean.i32 \
     --policies 'L >= 2, share >= 0.3' --kinds ds,req2ds --accuracy --sim --depths 1,2,3,4 --jobs 8 --out q161.json
+# the store on agent sessions: a store without the held-out sessions (heldout.py's --train list), then the held-out ones
+python -I datastore_corpus.py train-corpus turn_prompts.jsonl <q51 prompts.jsonl> turns.jsonl \
+    --sessions ids/train.txt sessions_seq.jsonl
+./datastore build train-corpus/clean.i32 99999999 train.pstore
+python -I store_agentic.py seqs/test-rows.jsonl --lib ./libdatastore.so --store train=train.pstore --accuracy \
+    --grid 1,2,3,4,6:0,0.2,0.3,0.5,0.7 --sim --depths 3,4 --jobs 8 --out agentic.json > agentic.md
 ```
 
 `replay.py` prints the copy-structure tables and, per class, per segment and for the file rewrites, every drafter

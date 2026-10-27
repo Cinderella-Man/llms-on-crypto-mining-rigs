@@ -20,8 +20,11 @@ Streams written to OUT_DIR:
   index.json    per stream, the answers in order: id, category, source file, tokens, and why answers were left out
 
 usage: python datastore_corpus.py OUT_DIR PROMPTS.jsonl Q51_PROMPTS.jsonl GEN.jsonl [GEN.jsonl ...] [--seed N]
-       [--shingle 12]
+       [--shingle 12] [--sessions IDS SESSIONS_SEQ.jsonl]
   PROMPTS.jsonl: the prompts the answers were generated from (id, messages), to compare with Q51's
+  --sessions: agent turns (bench/agentic_data's turns.jsonl) only of the sessions listed in IDS, one session row id
+              (agentic_N of SESSIONS_SEQ.jsonl) per line, e.g. heldout.py's --train list: a store without the held-out
+              sessions
 """
 import argparse
 import json
@@ -53,9 +56,21 @@ def main():
     ap.add_argument("gen", nargs="+")
     ap.add_argument("--seed", type=int, default=161)
     ap.add_argument("--shingle", type=int, default=12)
+    ap.add_argument("--sessions", nargs=2, metavar=("IDS", "SESSIONS_SEQ"))
     args = ap.parse_args()
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
+
+    keep = None
+    if args.sessions:
+        want = {x.split()[0] for x in open(args.sessions[0]) if x.strip()}
+        keep = set()
+        for line in open(args.sessions[1]):
+            r = json.loads(line)
+            if r["id"] in want:
+                keep.add(r["session_id"])
+        if len(keep) != len(want):
+            raise SystemExit(f"--sessions: {len(want) - len(keep)} of the listed ids are not in {args.sessions[1]}")
 
     test = set()
     for line in open(args.q51_prompts):
@@ -67,7 +82,7 @@ def main():
         r = json.loads(line)
         prompts[r["id"]] = r["messages"]
 
-    answers, seen, dup = [], set(), 0
+    answers, seen, dup, other_sessions = [], set(), 0, 0
     for path in args.gen:
         for line in open(path):
             r = json.loads(line)
@@ -75,6 +90,9 @@ def main():
                 dup += 1
                 continue
             seen.add(r["id"])
+            if keep is not None and r.get("session_id") not in keep:
+                other_sessions += 1
+                continue
             if not r["gen_tokens"]:
                 continue
             answers.append({"id": r["id"], "category": r["category"], "source": r.get("source", ""),
@@ -99,6 +117,9 @@ def main():
     }
     index = {"seed": args.seed, "shingle": args.shingle, "duplicates_skipped": dup, "left_out": why,
              "left_out_by_category": {}, "streams": {}}
+    if keep is not None:
+        index["sessions"] = {"ids": args.sessions[0], "kept": len(keep), "turns_of_other_sessions": other_sessions}
+        print(f"--sessions: {len(keep)} sessions kept, {other_sessions} turns of other sessions left out")
     for a in answers:
         if not a["clean"]:
             c = index["left_out_by_category"]

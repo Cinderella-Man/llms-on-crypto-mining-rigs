@@ -1,0 +1,4 @@
+arm	started	flags beyond the release line	requests	guesses_launched	right	wrong	from_store	right_share_of_resolved	generation_tok_s
+base (the MTP head test's release-line arm, same day)	14:25	none	73	113274	15658	24370	0	0.391	45.0
+store	17:18	--pipe-store agentic-run1.pstore	66	118533	17161	25383	19471	0.403	46.9
+base (same-slot control)	17:50	none	70	126042	19030	26721	0	0.416	46.5
