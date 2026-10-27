@@ -67,10 +67,14 @@ llama-quantize).
 
 Ornith-1.5-122B files, `run/quantize.sh` with the CPU build of `67181fcd9` (its quantizer code is that of `37aae03b2`):
 
-| File | Experts (gate, up / down) | Other tensors | Use |
-|---|---|---|---|
-| c, `Ornith-1.5-122B-N2P-N3P-Q5_0dense.gguf` | N2P / N3P | Q5_0; attention k/v, output head, token embedding Q8_0 | the rig-sized candidate (~45.5 GB on the cards without the embedding and the MTP block) |
-| b, `Ornith-1.5-122B-N2P-N3P-Q8_0dense.gguf` | N2P / N3P | Q8_0, as AD-IQ3_XXS-IQ2_S | isolates the expert formats in KLD against AD |
+| File | Experts (gate, up / down) | Other tensors | Size, md5 | Use |
+|---|---|---|---|---|
+| c, `Ornith-1.5-122B-N2P-N3P-Q5_0dense.gguf` | N2P / N3P | Q5_0; attention k/v, output head, token embedding Q8_0 | 45,362 MiB (3.05 bpw), `a61097be772a5e7b5a8f6b75b28a99ef` | the rig-sized candidate (~45.5 GB on the cards without the embedding and the MTP block) |
+| b, `Ornith-1.5-122B-N2P-N3P-Q8_0dense.gguf` | N2P / N3P | Q8_0, as AD-IQ3_XXS-IQ2_S | | isolates the expert formats in KLD against AD |
+
+File c's tensors: 98 N2P (gate and up of the 48 layers and the MTP block), 49 N3P (down), 354 Q5_0, attention k/v of
+the 13 attention layers, the output head and the token embedding at Q8_0; the router, norms, convolution and SSM tensors
+F32. It took 2 h 44 min on 8 threads at low CPU priority.
 
 ```bash
 QM=<ssh alias> WORK=<work dir> MODELS=<folder with the two Ornith GGUF folders> OUT=<output folder> FILE=c bash run/quantize.sh
