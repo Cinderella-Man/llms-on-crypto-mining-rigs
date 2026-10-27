@@ -61,8 +61,10 @@ per-layer ratios of the paired formats.
 Fork branch `pascal-p106-v3-lowbit` (off `pascal-p106-v3`): `d2c86e307` the types and CPU code, `f40132341` CUDA
 dequantize, get_rows and matrix-vector products, `67181fcd9` MMQ, `2942ef390`, `37aae03b2` and `5fd8ffeec` perf cases
 (8 of 64 experts: fused gate/up 3072 -> 1024, down 1024 -> 3072; dense 3072 -> 8192; 1, 2 and 4 tokens, the shapes of
-the IQ kernels' rig runs on fork branch `pascal-p106-v3-iqmmvq`). Builds with `run/build.sh` (`KIND=cuda`, tarball
-`llama.cpp-20261027-5fd8ffeec-pascal-p106-v3-lowbit.tar.gz`, md5 `16b226cf28506009c46d4192fafe805d`; `KIND=cpu` for
+the IQ kernels' rig runs on fork branch `pascal-p106-v3-iqmmvq`), `d7a75deb3` `GGML_TEST_RAW_QUANT` (random bytes as
+weights for perf runs, from the IQ branch's `82661fcad`). Builds with `run/build.sh` (`KIND=cuda`, tarball
+`llama.cpp-20261027-d7a75deb3-pascal-p106-v3-lowbit.tar.gz`, md5 `b87fddc30c0da6613c9c42ff0b1b9b48`, the rig's; the V100
+correctness run used `5fd8ffeec`'s, md5 `16b226cf28506009c46d4192fafe805d`, with the same kernels; `KIND=cpu` for
 llama-quantize).
 
 Ornith-1.5-122B files, `run/quantize.sh` with the CPU build of `67181fcd9` (its quantizer code is that of `37aae03b2`):
