@@ -1,0 +1,226 @@
+submission	problem	sample	lcb_pass	our_pass	our_error
+R1-0528	abc366_e	9	True	False	Time Limit Exceeded
+R1-0528	abc366_c	9	True	False	Runtime Error
+R1-0528	abc367_e	1	True	False	Time Limit Exceeded
+R1-0528	abc367_e	2	True	False	Time Limit Exceeded
+R1-0528	abc367_e	3	True	False	Time Limit Exceeded
+R1-0528	abc367_e	4	True	False	Time Limit Exceeded
+R1-0528	abc367_e	6	True	False	Time Limit Exceeded
+R1-0528	abc367_e	7	True	False	Time Limit Exceeded
+R1-0528	abc367_e	8	True	False	Time Limit Exceeded
+R1-0528	abc367_e	10	True	False	Time Limit Exceeded
+R1-0528	abc367_g	7	True	False	Time Limit Exceeded
+R1-0528	abc368_g	4	True	False	Time Limit Exceeded
+R1-0528	abc368_c	4	True	False	Time Limit Exceeded
+R1-0528	abc368_c	7	True	False	Time Limit Exceeded
+R1-0528	abc368_c	8	True	False	Time Limit Exceeded
+R1-0528	abc368_c	9	True	False	Time Limit Exceeded
+R1-0528	abc368_e	4	True	False	Time Limit Exceeded
+R1-0528	abc369_e	1	True	False	Time Limit Exceeded
+R1-0528	abc369_e	3	True	False	Time Limit Exceeded
+R1-0528	abc369_e	8	True	False	Time Limit Exceeded
+o4-mini-high	abc369_e	1	True	False	Time Limit Exceeded
+R1-0528	abc370_d	1	True	False	Time Limit Exceeded
+R1-0528	abc370_d	2	True	False	Time Limit Exceeded
+R1-0528	abc370_d	3	True	False	Time Limit Exceeded
+R1-0528	abc370_d	4	True	False	Time Limit Exceeded
+R1-0528	abc370_d	5	True	False	Time Limit Exceeded
+R1-0528	abc370_d	6	True	False	Time Limit Exceeded
+R1-0528	abc370_d	7	True	False	Time Limit Exceeded
+R1-0528	abc370_d	10	True	False	Time Limit Exceeded
+R1-0528	abc370_f	6	True	False	Time Limit Exceeded
+R1-0528	abc372_f	3	True	False	Time Limit Exceeded
+R1-0528	abc372_f	4	True	False	Time Limit Exceeded
+R1-0528	abc372_f	5	True	False	Time Limit Exceeded
+R1-0528	abc372_f	6	True	False	Time Limit Exceeded
+R1-0528	abc372_f	7	True	False	Time Limit Exceeded
+R1-0528	abc372_f	8	True	False	Time Limit Exceeded
+R1-0528	abc373_f	2	True	False	Time Limit Exceeded
+R1-0528	abc373_f	5	True	False	Time Limit Exceeded
+R1-0528	abc373_f	6	True	False	Time Limit Exceeded
+R1-0528	abc373_f	10	True	False	Time Limit Exceeded
+o4-mini-high	abc373_f	1	True	False	Time Limit Exceeded
+R1-0528	abc373_e	1	True	False	Time Limit Exceeded
+R1-0528	abc373_e	2	True	False	Time Limit Exceeded
+R1-0528	abc373_e	3	True	False	Time Limit Exceeded
+R1-0528	abc373_e	5	True	False	Time Limit Exceeded
+R1-0528	abc373_e	6	True	False	Time Limit Exceeded
+R1-0528	abc373_e	7	True	False	Time Limit Exceeded
+R1-0528	abc373_e	8	True	False	Time Limit Exceeded
+R1-0528	abc373_e	9	True	False	Time Limit Exceeded
+o4-mini-high	abc373_e	1	True	False	Time Limit Exceeded
+R1-0528	arc182_e	9	True	False	Time Limit Exceeded
+R1-0528	3551	2	True	False	Time Limit Exceeded
+R1-0528	3485	7	True	False	Time Limit Exceeded
+R1-0528	3528	2	True	False	Time Limit Exceeded
+R1-0528	3528	3	True	False	Time Limit Exceeded
+R1-0528	3528	4	True	False	Time Limit Exceeded
+R1-0528	3528	5	True	False	Time Limit Exceeded
+R1-0528	3528	6	True	False	Time Limit Exceeded
+R1-0528	3528	7	True	False	Time Limit Exceeded
+R1-0528	3528	8	True	False	Time Limit Exceeded
+R1-0528	3528	9	True	False	Time Limit Exceeded
+R1-0528	3528	10	True	False	Time Limit Exceeded
+R1-0528	3560	1	True	False	Time Limit Exceeded
+R1-0528	3559	1	True	False	Time Limit Exceeded
+R1-0528	3559	2	True	False	Time Limit Exceeded
+R1-0528	3559	3	True	False	Time Limit Exceeded
+R1-0528	3559	4	True	False	Time Limit Exceeded
+R1-0528	3559	5	True	False	Time Limit Exceeded
+R1-0528	3559	6	True	False	Time Limit Exceeded
+R1-0528	3559	7	True	False	Time Limit Exceeded
+R1-0528	3559	8	True	False	Time Limit Exceeded
+R1-0528	3559	9	True	False	Time Limit Exceeded
+R1-0528	3559	10	True	False	Time Limit Exceeded
+o4-mini-high	3559	1	True	False	Time Limit Exceeded
+o4-mini-high	3575	1	True	False	Time Limit Exceeded
+R1-0528	3571	1	True	False	Time Limit Exceeded
+R1-0528	3571	5	True	False	Time Limit Exceeded
+R1-0528	3571	6	True	False	Time Limit Exceeded
+R1-0528	3571	8	True	False	Time Limit Exceeded
+R1-0528	3571	9	True	False	Time Limit Exceeded
+R1-0528	3571	10	True	False	Time Limit Exceeded
+R1-0528	3496	8	True	False	Time Limit Exceeded
+R1-0528	3496	9	True	False	Time Limit Exceeded
+R1-0528	abc374_f	3	True	False	Time Limit Exceeded
+R1-0528	abc374_f	4	True	False	Time Limit Exceeded
+R1-0528	abc374_d	1	True	False	Wrong Answer
+R1-0528	abc374_d	2	True	False	Wrong Answer
+R1-0528	abc374_d	3	True	False	Wrong Answer
+R1-0528	abc374_d	4	True	False	Wrong Answer
+R1-0528	abc374_d	5	True	False	Wrong Answer
+R1-0528	abc374_d	6	True	False	Wrong Answer
+R1-0528	abc374_d	7	True	False	Wrong Answer
+R1-0528	abc374_d	8	True	False	Wrong Answer
+R1-0528	abc374_d	10	True	False	Wrong Answer
+R1-0528	abc374_e	6	True	False	Time Limit Exceeded
+R1-0528	abc375_e	1	True	False	Time Limit Exceeded
+R1-0528	abc375_e	2	True	False	Time Limit Exceeded
+R1-0528	abc375_e	3	True	False	Time Limit Exceeded
+R1-0528	abc375_e	4	True	False	Time Limit Exceeded
+R1-0528	abc375_e	5	True	False	Time Limit Exceeded
+R1-0528	abc375_e	6	True	False	Time Limit Exceeded
+R1-0528	abc375_e	7	True	False	Time Limit Exceeded
+R1-0528	abc375_e	8	True	False	Time Limit Exceeded
+R1-0528	abc375_e	10	True	False	Time Limit Exceeded
+o4-mini-high	abc375_e	1	True	False	Time Limit Exceeded
+R1-0528	abc375_c	1	True	False	Time Limit Exceeded
+R1-0528	abc375_c	2	True	False	Time Limit Exceeded
+R1-0528	abc375_c	3	True	False	Wrong Answer
+R1-0528	abc375_c	4	True	False	Time Limit Exceeded
+R1-0528	abc375_c	5	True	False	Wrong Answer
+R1-0528	abc375_c	7	True	False	Time Limit Exceeded
+R1-0528	abc375_c	8	True	False	Time Limit Exceeded
+R1-0528	abc375_c	9	True	False	Wrong Answer
+R1-0528	abc375_c	10	True	False	Wrong Answer
+R1-0528	abc375_g	1	True	False	Time Limit Exceeded
+R1-0528	abc375_g	2	True	False	Time Limit Exceeded
+R1-0528	abc375_g	3	True	False	Time Limit Exceeded
+R1-0528	abc375_g	4	True	False	Time Limit Exceeded
+R1-0528	abc375_g	5	True	False	Time Limit Exceeded
+R1-0528	abc375_g	6	True	False	Time Limit Exceeded
+R1-0528	abc375_g	7	True	False	Time Limit Exceeded
+R1-0528	abc375_g	8	True	False	Time Limit Exceeded
+R1-0528	abc375_g	9	True	False	Time Limit Exceeded
+o4-mini-high	abc375_g	1	True	False	Time Limit Exceeded
+R1-0528	abc375_f	4	True	False	Time Limit Exceeded
+R1-0528	abc375_f	9	True	False	Time Limit Exceeded
+R1-0528	abc375_f	10	True	False	Time Limit Exceeded
+R1-0528	abc377_c	1	True	False	Time Limit Exceeded
+R1-0528	abc377_c	2	True	False	Time Limit Exceeded
+R1-0528	abc377_c	3	True	False	Time Limit Exceeded
+R1-0528	abc377_c	4	True	False	Time Limit Exceeded
+R1-0528	abc377_c	5	True	False	Time Limit Exceeded
+R1-0528	abc377_c	6	True	False	Time Limit Exceeded
+R1-0528	abc377_c	7	True	False	Time Limit Exceeded
+R1-0528	abc377_c	8	True	False	Time Limit Exceeded
+R1-0528	abc377_c	9	True	False	Time Limit Exceeded
+R1-0528	abc377_c	10	True	False	Time Limit Exceeded
+o4-mini-high	abc377_c	1	True	False	Time Limit Exceeded
+R1-0528	abc377_f	1	True	False	Time Limit Exceeded
+R1-0528	abc377_f	2	True	False	Time Limit Exceeded
+R1-0528	abc377_f	3	True	False	Time Limit Exceeded
+R1-0528	abc377_f	5	True	False	Time Limit Exceeded
+R1-0528	abc377_f	7	True	False	Time Limit Exceeded
+R1-0528	abc377_f	9	True	False	Time Limit Exceeded
+R1-0528	abc377_f	10	True	False	Time Limit Exceeded
+R1-0528	abc379_g	6	True	False	Time Limit Exceeded
+o4-mini-high	abc379_g	1	True	False	Time Limit Exceeded
+R1-0528	abc380_f	1	True	False	Time Limit Exceeded
+R1-0528	abc380_f	5	True	False	Time Limit Exceeded
+R1-0528	abc385_f	2	True	False	Wrong Answer
+R1-0528	abc385_f	3	True	False	Wrong Answer
+R1-0528	abc385_f	4	True	False	Wrong Answer
+R1-0528	abc385_f	8	True	False	Wrong Answer
+R1-0528	abc385_c	8	True	False	Time Limit Exceeded
+R1-0528	arc186_d	1	True	False	Time Limit Exceeded
+R1-0528	arc186_d	5	True	False	Time Limit Exceeded
+R1-0528	arc188_d	4	True	False	Time Limit Exceeded
+R1-0528	3608	4	True	False	Time Limit Exceeded
+R1-0528	3608	8	True	False	Time Limit Exceeded
+R1-0528	3631	2	False	True	None
+R1-0528	3631	4	False	True	None
+R1-0528	3631	6	False	True	None
+R1-0528	3631	8	False	True	None
+R1-0528	3647	1	True	False	Time Limit Exceeded
+R1-0528	3647	3	True	False	Time Limit Exceeded
+R1-0528	3647	4	True	False	Time Limit Exceeded
+R1-0528	3647	9	True	False	Time Limit Exceeded
+R1-0528	3686	2	True	False	Time Limit Exceeded
+R1-0528	3686	3	True	False	Time Limit Exceeded
+R1-0528	3686	4	True	False	Time Limit Exceeded
+R1-0528	3690	7	True	False	Time Limit Exceeded
+R1-0528	3699	1	True	False	Time Limit Exceeded
+R1-0528	3699	3	True	False	Time Limit Exceeded
+R1-0528	3699	6	True	False	Time Limit Exceeded
+R1-0528	3700	9	True	False	Time Limit Exceeded
+R1-0528	3700	10	True	False	Time Limit Exceeded
+R1-0528	abc389_e	3	True	False	Time Limit Exceeded
+R1-0528	abc390_e	1	True	False	Time Limit Exceeded
+R1-0528	abc390_e	2	True	False	Time Limit Exceeded
+R1-0528	abc390_e	5	True	False	Time Limit Exceeded
+R1-0528	abc390_g	2	True	False	Time Limit Exceeded
+R1-0528	abc390_g	3	True	False	Time Limit Exceeded
+R1-0528	abc390_g	4	True	False	Time Limit Exceeded
+R1-0528	abc390_g	5	True	False	Time Limit Exceeded
+R1-0528	abc390_g	6	True	False	Time Limit Exceeded
+R1-0528	abc390_g	7	True	False	Time Limit Exceeded
+R1-0528	abc390_g	8	True	False	Time Limit Exceeded
+R1-0528	abc390_g	9	True	False	Time Limit Exceeded
+R1-0528	abc390_g	10	True	False	Time Limit Exceeded
+o4-mini-high	abc390_g	1	True	False	Time Limit Exceeded
+R1-0528	abc390_d	1	True	False	Time Limit Exceeded
+R1-0528	abc390_d	6	True	False	Time Limit Exceeded
+R1-0528	abc390_d	7	True	False	Time Limit Exceeded
+R1-0528	abc391_g	2	True	False	Time Limit Exceeded
+R1-0528	abc391_g	3	True	False	Time Limit Exceeded
+R1-0528	abc391_g	6	True	False	Time Limit Exceeded
+R1-0528	abc391_g	8	True	False	Time Limit Exceeded
+R1-0528	abc391_g	9	True	False	Time Limit Exceeded
+R1-0528	abc391_g	10	True	False	Time Limit Exceeded
+R1-0528	abc392_g	2	False	True	None
+R1-0528	abc392_g	3	True	False	Time Limit Exceeded
+R1-0528	abc392_g	8	True	False	Time Limit Exceeded
+R1-0528	abc392_d	1	True	False	Wrong Answer
+R1-0528	abc392_d	2	True	False	Wrong Answer
+R1-0528	abc392_d	3	True	False	Wrong Answer
+R1-0528	abc392_d	4	True	False	Wrong Answer
+R1-0528	abc392_d	5	True	False	Wrong Answer
+R1-0528	abc392_d	6	True	False	Wrong Answer
+R1-0528	abc392_d	7	True	False	Wrong Answer
+R1-0528	abc392_d	8	True	False	Wrong Answer
+R1-0528	abc392_d	9	True	False	Wrong Answer
+R1-0528	abc392_d	10	True	False	Wrong Answer
+R1-0528	abc393_e	2	True	False	Time Limit Exceeded
+R1-0528	abc393_e	4	True	False	Time Limit Exceeded
+R1-0528	abc393_e	9	True	False	Time Limit Exceeded
+R1-0528	abc393_e	10	True	False	Time Limit Exceeded
+R1-0528	abc400_g	6	True	False	Time Limit Exceeded
+R1-0528	abc400_g	10	True	False	Time Limit Exceeded
+R1-0528	3722	6	True	False	Time Limit Exceeded
+R1-0528	3794	6	False	True	None
+R1-0528	3687	1	False	True	None
+R1-0528	3687	9	False	True	None
+R1-0528	3739	9	True	False	Runtime Error
+R1-0528	3776	3	False	True	None
+R1-0528	3776	6	False	True	None

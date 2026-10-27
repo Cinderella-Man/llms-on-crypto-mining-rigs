@@ -82,3 +82,6 @@ contrast words per 1,000 words):
 python -I reflections.py gen.jsonl flint-Q8_0.gguf --out q94.json      # Q51 transcripts, token ids and vocabulary
 python -I reflections.py --text bfcl_raw/*.jsonl --out q94_bfcl.json   # llama-server outputs, per 1,000 words
 ```
+
+The JSON output of both commands, and of the Q51 transcripts counted as text:
+[docs/data/2026-10-24_q94](../../docs/data/2026-10-24_q94/README.md).

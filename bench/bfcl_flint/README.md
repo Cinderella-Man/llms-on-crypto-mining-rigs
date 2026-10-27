@@ -117,7 +117,7 @@ Process flags are recorded per attempt, separately from the verdict:
   **799 of 800 pass with no process flag.** `multi_turn_miss_func_49` is excluded
   ([excluded_multi_turn.txt](excluded_multi_turn.txt)): its ground truth calls `tail` two turns before `tail` is
   offered. The longest multi-turn prompt is 92,479 characters (~22k tokens, a long_context task).
-- **Q30's raw outputs** (300 v3 tasks, greedy) re-scored with this harness give the same verdict as Q30's decoder on
+- **Q30's raw outputs** (300 v3 tasks, greedy; [verdicts](../../docs/data/2026-10-23_bfcl/README.md)) re-scored with this harness give the same verdict as Q30's decoder on
   all 600 BF16 rows. The makers' Q4_1 differs on 2 of 300 tasks:
   - one answer writes a list as a Python literal (`['Sam', 'Alice']`), which is not JSON;
   - one writes `null` for a string argument.
@@ -154,6 +154,10 @@ python ../paired_tasks.py --ref ref out/st/per_attempt.csv out/mt/per_attempt.cs
 Each run writes a `.manifest.json` next to its raw output. It holds the server's model path, build and slot context,
 the sampling, the task-list hash and the harness commit. Files with the rescale switch run with
 `LLAMA_NO_MOE_DOWN_RESCALE=1` in the server's environment.
+
+[mock_server.py](mock_server.py) stands in for llama-server in a smoke test with no model and no GPU:
+`python mock_server.py 8080 requests.jsonl`, then any of the commands above against `http://127.0.0.1:8080`; it logs
+each request's sampling settings.
 
 ## Where this differs from the makers' engine
 
@@ -234,7 +238,7 @@ unmeasured tokens per sample, 8k or 15k.
 
 The pilot and the first main runs used two GPU sets of the 7-GPU quant machine (2 × V100; RTX 3090 + 2 × RTX
 3080) and two RTX 3090s for K2h. Every pair runs both files on the same tasks, seeds and server flags. Per-attempt
-results feed [paired_tasks.py](../paired_tasks.py).
+results feed [paired_tasks.py](../paired_tasks.py); every verdict, the ID lists and the pre-registration are in [docs/data/2026-10-24_q41](../../docs/data/2026-10-24_q41/README.md) (pilot: [docs/data/2026-10-23_q41_pilot](../../docs/data/2026-10-23_q41_pilot/README.md)).
 
 ### Noise under the makers' sampling
 
@@ -252,6 +256,7 @@ results feed [paired_tasks.py](../paired_tasks.py).
 | E1 single-turn | G3 | 3,477 × 2 | +0.35 (−0.40 to +1.09) | non-inferior at 1.5 points |
 | E1 single-turn | K2h | 3,477 × 1 | +0.14 (−0.87 to +1.16) | non-inferior at 1.5 points |
 | E2 multi-turn | G3 | 458 × 1 | +0.87 (−3.23 to +4.98) | open (margin 3 points) |
+| E2 multi-turn, new scenarios (the pilot's 100 left out) | G3 | 358 × 1 | +3.07 (−1.59 to +7.73) | inside the margin; format gate fails (Δ +1.40, upper +4.81) |
 
 - **Format, single-turn:** 0.4–0.8 % malformed answers and ~0.2 % at the token limit per file; `</think>` written
   twice in ~0.5–1 % of answers.
@@ -266,6 +271,15 @@ results feed [paired_tasks.py](../paired_tasks.py).
   one-sided p 0.988 for "G3 passes fewer".
 - **Ask or act** ([ask_rate.py](ask_rate.py)). In the turn that lacks a value, both files call a tool instead of
   asking about two thirds of the time (UD-Q4_K_XL asked in 37 % of these turns, G3 in 34 %).
+
+  | Set | File | Asked | Pass if asked | Pass if acted |
+  |---|---|---|---|---|
+  | exploratory, 47 tasks | UD-Q4_K_XL | 43.5 % | 75.0 % (15/20) | 34.6 % (9/26) |
+  | exploratory, 47 tasks | G3 | 44.7 % | 38.1 % (8/21) | 23.1 % (6/26) |
+  | pre-registered, 139 tasks | UD-Q4_K_XL | 36.9 % | 44.2 % (23/52) | 12.4 % (11/89) |
+  | pre-registered, 139 tasks | G3 | 33.6 % | 46.8 % (22/47) | 25.8 % (24/93) |
+
+  The exploratory gap after asking (75.0 against 38.1 %) did not replicate on fresh tasks.
 - **Lesson.** Any category-level difference between quants needs a fresh, pre-registered test before it counts.
 
 ### First-finish race (Q93)

@@ -1,0 +1,45 @@
+{
+ "date": "2026-10-23T19:03:46",
+ "harness_commit": null,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0,
+  "typical_p": 1.0,
+  "top_n_sigma": -1.0,
+  "xtc_probability": 0.0,
+  "dry_multiplier": 0.0,
+  "repeat_penalty": 1.0,
+  "presence_penalty": 0.0,
+  "frequency_penalty": 0.0,
+  "mirostat": 0,
+  "samplers": [
+   "top_k",
+   "top_p",
+   "min_p",
+   "temperature"
+  ]
+ },
+ "server": {
+  "total_slots": 8,
+  "model_path": "flint-UD-Q4_K_XL.gguf",
+  "build_info": "b11820-d77256999",
+  "n_ctx_slot": 262144,
+  "chat_template_sha256": "be867446158d546501ed204ea40d581ced1c93a52367bd79e1a86440d57f2931"
+ },
+ "bfcl": "bfcl-eval 2026.3.23",
+ "lane": "bfcl_single_turn",
+ "tasks_sha256": "06327ae39bafa2373492eaba2916f2a691781f27c20d083bcccbc18f4f02498c",
+ "n_tasks": 376,
+ "attempts": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "seed_offset": 0,
+ "n_predict": 4096,
+ "cache_prompt": false
+}

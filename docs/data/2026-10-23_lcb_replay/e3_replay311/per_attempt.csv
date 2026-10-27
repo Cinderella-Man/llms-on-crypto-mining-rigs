@@ -1,0 +1,226 @@
+lane,task_id,cluster,category,file,attempt,seed,pass,malformed,runaway,error_type,prompt_tokens,output_tokens,reasoning_chars,stop_type,n_calls,undecodable,unknown_function,unknown_arg,call_in_think,extra_think_close,platform,contest_date,no_code,lcb_error_code,lcb_error
+livecodebench,abc366_e,abc366,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-10,0,-3,Time Limit Exceeded
+livecodebench,abc366_c,abc366,medium,R1-0528,1,,0,0,0,Runtime Error,,,0,,,,,,,,atcoder,2024-08-10,0,-4,Runtime Error
+livecodebench,abc367_e,abc367,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_e,abc367,hard,R1-0528,8,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-17,0,,
+livecodebench,abc367_g,abc367,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-17,0,-3,Time Limit Exceeded
+livecodebench,abc368_g,abc368,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-24,0,-3,Time Limit Exceeded
+livecodebench,abc368_c,abc368,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-24,0,,
+livecodebench,abc368_c,abc368,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-24,0,,
+livecodebench,abc368_c,abc368,medium,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-24,0,-3,Time Limit Exceeded
+livecodebench,abc368_c,abc368,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-24,0,,
+livecodebench,abc368_e,abc368,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-24,0,,
+livecodebench,abc369_e,abc369,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-31,0,-3,Time Limit Exceeded
+livecodebench,abc369_e,abc369,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-31,0,,
+livecodebench,abc369_e,abc369,hard,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-31,0,-3,Time Limit Exceeded
+livecodebench,abc369_e,abc369,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-08-31,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_d,abc370,medium,R1-0528,8,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-07,0,,
+livecodebench,abc370_f,abc370,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-07,0,-3,Time Limit Exceeded
+livecodebench,abc372_f,abc372,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-21,0,,
+livecodebench,abc372_f,abc372,hard,R1-0528,2,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-21,0,-3,Time Limit Exceeded
+livecodebench,abc372_f,abc372,hard,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-21,0,-3,Time Limit Exceeded
+livecodebench,abc372_f,abc372,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-21,0,,
+livecodebench,abc372_f,abc372,hard,R1-0528,5,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-21,0,-3,Time Limit Exceeded
+livecodebench,abc372_f,abc372,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-21,0,,
+livecodebench,abc373_f,abc373,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_f,abc373,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_f,abc373,hard,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-28,0,-3,Time Limit Exceeded
+livecodebench,abc373_f,abc373,hard,R1-0528,4,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-28,0,-3,Time Limit Exceeded
+livecodebench,abc373_f,abc373,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-09-28,0,-3,Time Limit Exceeded
+livecodebench,abc373_e,abc373,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,R1-0528,8,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,abc373_e,abc373,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-09-28,0,,
+livecodebench,arc182_e,arc182,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-08-11,0,-3,Time Limit Exceeded
+livecodebench,3551,weekly-contest-413,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-08-31,0,,
+livecodebench,3485,weekly-contest-414,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,5,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,6,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,7,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,8,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3528,weekly-contest-414,medium,R1-0528,9,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3560,weekly-contest-414,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-07,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,5,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,6,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,7,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,8,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,9,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,R1-0528,10,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3559,weekly-contest-415,medium,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3575,biweekly-contest-139,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3571,biweekly-contest-139,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3571,biweekly-contest-139,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3571,biweekly-contest-139,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3571,biweekly-contest-139,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3571,biweekly-contest-139,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3571,biweekly-contest-139,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-14,0,,
+livecodebench,3496,weekly-contest-416,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-21,0,,
+livecodebench,3496,weekly-contest-416,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-09-21,0,,
+livecodebench,abc374_f,abc374,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-05,0,,
+livecodebench,abc374_f,abc374,hard,R1-0528,2,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-10-05,0,-3,Time Limit Exceeded
+livecodebench,abc374_d,abc374,medium,R1-0528,1,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,2,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,3,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,4,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,5,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,6,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,7,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,8,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_d,abc374,medium,R1-0528,9,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-05,0,-2,Wrong Answer
+livecodebench,abc374_e,abc374,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-10-05,0,-3,Time Limit Exceeded
+livecodebench,abc375_e,abc375,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,R1-0528,4,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-10-12,0,-3,Time Limit Exceeded
+livecodebench,abc375_e,abc375,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,R1-0528,7,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-10-12,0,-3,Time Limit Exceeded
+livecodebench,abc375_e,abc375,hard,R1-0528,8,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,R1-0528,9,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_e,abc375,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_c,abc375,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_c,abc375,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_c,abc375,medium,R1-0528,3,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-12,0,-2,Wrong Answer
+livecodebench,abc375_c,abc375,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_c,abc375,medium,R1-0528,5,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-12,0,-2,Wrong Answer
+livecodebench,abc375_c,abc375,medium,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_c,abc375,medium,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_c,abc375,medium,R1-0528,8,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-12,0,-2,Wrong Answer
+livecodebench,abc375_c,abc375,medium,R1-0528,9,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-10-12,0,-2,Wrong Answer
+livecodebench,abc375_g,abc375,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,8,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,R1-0528,9,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_g,abc375,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_f,abc375,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc375_f,abc375,hard,R1-0528,2,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-10-12,0,-3,Time Limit Exceeded
+livecodebench,abc375_f,abc375,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-12,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,8,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,9,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,R1-0528,10,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_c,abc377,medium,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc377_f,abc377,hard,R1-0528,7,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-26,0,,
+livecodebench,abc379_g,abc379,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-11-09,0,-3,Time Limit Exceeded
+livecodebench,abc379_g,abc379,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-11-09,0,,
+livecodebench,abc380_f,abc380,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-11-16,0,-3,Time Limit Exceeded
+livecodebench,abc380_f,abc380,hard,R1-0528,2,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2024-11-16,0,-3,Time Limit Exceeded
+livecodebench,abc385_f,abc385,hard,R1-0528,1,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-12-21,0,-2,Wrong Answer
+livecodebench,abc385_f,abc385,hard,R1-0528,2,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-12-21,0,-2,Wrong Answer
+livecodebench,abc385_f,abc385,hard,R1-0528,3,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-12-21,0,-2,Wrong Answer
+livecodebench,abc385_f,abc385,hard,R1-0528,4,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2024-12-21,0,-2,Wrong Answer
+livecodebench,abc385_c,abc385,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-12-21,0,,
+livecodebench,arc186_d,arc186,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-27,0,,
+livecodebench,arc186_d,arc186,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2024-10-27,0,,
+livecodebench,arc188_d,arc188,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2024-11-23,0,,
+livecodebench,3608,weekly-contest-421,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-10-26,0,,
+livecodebench,3608,weekly-contest-421,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-10-26,0,,
+livecodebench,3631,weekly-contest-423,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-09,0,,
+livecodebench,3631,weekly-contest-423,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-09,0,,
+livecodebench,3631,weekly-contest-423,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-09,0,,
+livecodebench,3631,weekly-contest-423,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-09,0,,
+livecodebench,3647,biweekly-contest-144,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-23,0,,
+livecodebench,3647,biweekly-contest-144,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-23,0,,
+livecodebench,3647,biweekly-contest-144,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-23,0,,
+livecodebench,3647,biweekly-contest-144,medium,R1-0528,4,,1,0,0,,,,0,,,,,,,,leetcode,2024-11-23,0,,
+livecodebench,3686,weekly-contest-428,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-14,0,,
+livecodebench,3686,weekly-contest-428,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-14,0,,
+livecodebench,3686,weekly-contest-428,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-14,0,,
+livecodebench,3690,weekly-contest-429,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-21,0,,
+livecodebench,3699,weekly-contest-430,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-28,0,,
+livecodebench,3699,weekly-contest-430,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-28,0,,
+livecodebench,3699,weekly-contest-430,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-28,0,,
+livecodebench,3700,biweekly-contest-146,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-21,0,,
+livecodebench,3700,biweekly-contest-146,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2024-12-21,0,,
+livecodebench,abc389_e,abc389,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-18,0,,
+livecodebench,abc390_e,abc390,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_e,abc390,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_e,abc390,hard,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_g,abc390,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_g,abc390,hard,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,R1-0528,4,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_g,abc390,hard,R1-0528,6,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,R1-0528,7,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,R1-0528,8,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,R1-0528,9,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-01-25,0,-3,Time Limit Exceeded
+livecodebench,abc390_g,abc390,hard,o4-mini-high,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_d,abc390,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_d,abc390,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc390_d,abc390,medium,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2025-01-25,0,,
+livecodebench,abc391_g,abc391,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-01,0,,
+livecodebench,abc391_g,abc391,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-01,0,,
+livecodebench,abc391_g,abc391,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-01,0,,
+livecodebench,abc391_g,abc391,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-01,0,,
+livecodebench,abc391_g,abc391,hard,R1-0528,5,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-01,0,,
+livecodebench,abc391_g,abc391,hard,R1-0528,6,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-01,0,,
+livecodebench,abc392_g,abc392,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-08,0,,
+livecodebench,abc392_g,abc392,hard,R1-0528,2,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-02-08,0,-3,Time Limit Exceeded
+livecodebench,abc392_g,abc392,hard,R1-0528,3,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-02-08,0,-3,Time Limit Exceeded
+livecodebench,abc392_d,abc392,medium,R1-0528,1,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,2,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,3,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,4,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,5,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,6,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,7,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,8,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,9,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc392_d,abc392,medium,R1-0528,10,,0,0,0,Wrong Answer,,,0,,,,,,,,atcoder,2025-02-08,0,-2,Wrong Answer
+livecodebench,abc393_e,abc393,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-15,0,,
+livecodebench,abc393_e,abc393,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-15,0,,
+livecodebench,abc393_e,abc393,hard,R1-0528,3,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-15,0,,
+livecodebench,abc393_e,abc393,hard,R1-0528,4,,1,0,0,,,,0,,,,,,,,atcoder,2025-02-15,0,,
+livecodebench,abc400_g,abc400,hard,R1-0528,1,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-04-05,0,-3,Time Limit Exceeded
+livecodebench,abc400_g,abc400,hard,R1-0528,2,,0,0,0,Time Limit Exceeded,,,0,,,,,,,,atcoder,2025-04-05,0,-3,Time Limit Exceeded
+livecodebench,3722,weekly-contest-439,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2025-03-01,0,,
+livecodebench,3794,weekly-contest-442,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2025-03-22,0,,
+livecodebench,3687,biweekly-contest-148,hard,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2025-01-18,0,,
+livecodebench,3687,biweekly-contest-148,hard,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2025-01-18,0,,
+livecodebench,3739,biweekly-contest-148,hard,R1-0528,1,,0,0,0,Runtime Error,,,0,,,,,,,,leetcode,2025-01-18,0,-4,Runtime Error
+livecodebench,3776,biweekly-contest-151,medium,R1-0528,1,,1,0,0,,,,0,,,,,,,,leetcode,2025-03-01,0,,
+livecodebench,3776,biweekly-contest-151,medium,R1-0528,2,,1,0,0,,,,0,,,,,,,,leetcode,2025-03-01,0,,

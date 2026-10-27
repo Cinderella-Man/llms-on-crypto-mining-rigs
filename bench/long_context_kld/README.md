@@ -148,7 +148,8 @@ than UD-Q4_K_XL at the points where reasoning ended is less willing to stop; one
 probability re-checks more. Both would lengthen the reasoning, so both are read from the dumps above with
 `stop_decision.py`: 230 stops (every reasoning block in the scored halves is non-empty; 112 in conversations
 produced by G3, 118 by UD-Q4_K_XL) and 842 markers (maybe 272, but 266, actually 104, perhaps 65, however 53,
-wait 43, others 39).
+wait 43, others 39). Full tables, with the split by producing model:
+[docs/data/2026-10-24_q123](../../docs/data/2026-10-24_q123/README.md).
 
 Difference in log-probability of the actual token, file minus UD-Q4_K_XL, in nats, 95 % bootstrap over the 24 chunks:
 

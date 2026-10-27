@@ -1,0 +1,101 @@
+{
+ "chat": {
+  "outputs": 10,
+  "reasoning_words": 4643,
+  "reflection_per_1000_words": 3.6614258022830066,
+  "reflection_initial_per_1000_words": 2.369157872065475,
+  "contrast_per_1000_words": 10.768899418479432,
+  "contrast_initial_per_1000_words": 1.0768899418479432,
+  "reflection_sentence_share": 0.019543206969625616,
+  "reflection_paragraph_share": 0.01974923475394396,
+  "words": {
+   "but": 39,
+   "actually": 10,
+   "maybe": 9,
+   "wait": 4,
+   "hmm": 3,
+   "however": 1,
+   "perhaps": 1
+  }
+ },
+ "all": {
+  "outputs": 38,
+  "reasoning_words": 26737,
+  "reflection_per_1000_words": 4.039346224333321,
+  "reflection_initial_per_1000_words": 2.917305606462954,
+  "contrast_per_1000_words": 17.09241874555859,
+  "contrast_initial_per_1000_words": 7.330665370086397,
+  "reflection_sentence_share": 0.025826863528250237,
+  "reflection_paragraph_share": 0.03697325315262756,
+  "words": {
+   "but": 271,
+   "maybe": 167,
+   "actually": 61,
+   "hmm": 18,
+   "wait": 18,
+   "however": 13,
+   "alternatively": 8,
+   "perhaps": 6,
+   "double-check": 2,
+   "reconsider": 1
+  }
+ },
+ "code": {
+  "outputs": 10,
+  "reasoning_words": 7220,
+  "reflection_per_1000_words": 3.8781163434903045,
+  "reflection_initial_per_1000_words": 2.3545706371191137,
+  "contrast_per_1000_words": 13.71191135734072,
+  "contrast_initial_per_1000_words": 3.0470914127423825,
+  "reflection_sentence_share": 0.03586183755216744,
+  "reflection_paragraph_share": 0.02426441289348405,
+  "words": {
+   "but": 60,
+   "maybe": 34,
+   "actually": 19,
+   "alternatively": 5,
+   "wait": 4,
+   "perhaps": 3,
+   "however": 2
+  }
+ },
+ "edit": {
+  "outputs": 8,
+  "reasoning_words": 13146,
+  "reflection_per_1000_words": 2.3581317511029973,
+  "reflection_initial_per_1000_words": 2.1299254526091587,
+  "contrast_per_1000_words": 20.766773162939298,
+  "contrast_initial_per_1000_words": 12.323140118667276,
+  "reflection_sentence_share": 0.011470718257753787,
+  "reflection_paragraph_share": 0.02709462760883222,
+  "words": {
+   "but": 151,
+   "maybe": 110,
+   "actually": 17,
+   "however": 10,
+   "wait": 6,
+   "hmm": 3,
+   "alternatively": 3,
+   "perhaps": 2,
+   "double-check": 2
+  }
+ },
+ "agent": {
+  "outputs": 10,
+  "reasoning_words": 1728,
+  "reflection_per_1000_words": 18.51851851851852,
+  "reflection_initial_per_1000_words": 12.731481481481481,
+  "contrast_per_1000_words": 20.25462962962963,
+  "contrast_initial_per_1000_words": 4.050925925925926,
+  "reflection_sentence_share": 0.11684042453273223,
+  "reflection_paragraph_share": 0.22860899783976707,
+  "words": {
+   "but": 21,
+   "actually": 15,
+   "maybe": 14,
+   "hmm": 12,
+   "wait": 4,
+   "reconsider": 1
+  }
+ }
+}

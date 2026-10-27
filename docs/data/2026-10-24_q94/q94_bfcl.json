@@ -1,0 +1,135 @@
+{
+ "multiple": {
+  "outputs": 202,
+  "reasoning_words": 11166,
+  "reflection_per_1000_words": 0.9851334408024359,
+  "reflection_initial_per_1000_words": 0.4477879276374709,
+  "contrast_per_1000_words": 3.8509761776822495,
+  "contrast_initial_per_1000_words": 0.7164606842199535,
+  "reflection_sentence_share": 0.007253718632072009,
+  "reflection_paragraph_share": 0.0,
+  "words": {
+   "but": 30,
+   "however": 6,
+   "perhaps": 4,
+   "verify": 4,
+   "actually": 3,
+   "maybe": 3,
+   "alternatively": 2,
+   "wait": 2
+  }
+ },
+ "all": {
+  "outputs": 3475,
+  "reasoning_words": 317922,
+  "reflection_per_1000_words": 2.950409219871541,
+  "reflection_initial_per_1000_words": 2.2615610118205094,
+  "contrast_per_1000_words": 14.160706085140381,
+  "contrast_initial_per_1000_words": 5.24342448776744,
+  "reflection_sentence_share": 0.02580575041282741,
+  "reflection_paragraph_share": 0.03779761126602286,
+  "words": {
+   "but": 2291,
+   "maybe": 1464,
+   "actually": 546,
+   "however": 423,
+   "perhaps": 324,
+   "wait": 150,
+   "hmm": 94,
+   "alternatively": 72,
+   "verify": 47,
+   "reconsider": 25,
+   "double-check": 2,
+   "oh": 2
+  }
+ },
+ "live": {
+  "outputs": 2239,
+  "reasoning_words": 224609,
+  "reflection_per_1000_words": 3.410370911227956,
+  "reflection_initial_per_1000_words": 2.6356913569803524,
+  "contrast_per_1000_words": 16.312792452662183,
+  "contrast_initial_per_1000_words": 6.148462439172072,
+  "reflection_sentence_share": 0.029792761119252133,
+  "reflection_paragraph_share": 0.04674096877515914,
+  "words": {
+   "but": 1788,
+   "maybe": 1318,
+   "actually": 451,
+   "however": 304,
+   "perhaps": 254,
+   "wait": 117,
+   "hmm": 81,
+   "alternatively": 56,
+   "verify": 37,
+   "reconsider": 21,
+   "oh": 2,
+   "double-check": 1
+  }
+ },
+ "simple": {
+  "outputs": 394,
+  "reasoning_words": 22594,
+  "reflection_per_1000_words": 0.48685491723466406,
+  "reflection_initial_per_1000_words": 0.30981676551296805,
+  "contrast_per_1000_words": 5.975037620607241,
+  "contrast_initial_per_1000_words": 1.1950075241214482,
+  "reflection_sentence_share": 0.005181002498115327,
+  "reflection_paragraph_share": 0.0004656250461929609,
+  "words": {
+   "but": 93,
+   "maybe": 22,
+   "however": 13,
+   "perhaps": 7,
+   "actually": 5,
+   "wait": 4,
+   "alternatively": 1,
+   "hmm": 1
+  }
+ },
+ "parallel": {
+  "outputs": 416,
+  "reasoning_words": 38124,
+  "reflection_per_1000_words": 2.255796873360613,
+  "reflection_initial_per_1000_words": 1.652502360717658,
+  "contrast_per_1000_words": 8.078900430175217,
+  "contrast_initial_per_1000_words": 3.252544329031581,
+  "reflection_sentence_share": 0.017030122107535586,
+  "reflection_paragraph_share": 0.014297881670377117,
+  "words": {
+   "but": 184,
+   "maybe": 65,
+   "however": 45,
+   "actually": 44,
+   "wait": 20,
+   "perhaps": 14,
+   "hmm": 11,
+   "alternatively": 7,
+   "verify": 3,
+   "reconsider": 1
+  }
+ },
+ "irrelevance": {
+  "outputs": 224,
+  "reasoning_words": 21429,
+  "reflection_per_1000_words": 2.986606934527976,
+  "reflection_initial_per_1000_words": 2.4266181343039808,
+  "contrast_per_1000_words": 16.42633813990387,
+  "contrast_initial_per_1000_words": 5.9265481357039524,
+  "reflection_sentence_share": 0.030685135722715695,
+  "reflection_paragraph_share": 0.04436610969625442,
+  "words": {
+   "but": 196,
+   "maybe": 56,
+   "however": 55,
+   "perhaps": 45,
+   "actually": 43,
+   "wait": 7,
+   "alternatively": 6,
+   "reconsider": 3,
+   "verify": 3,
+   "double-check": 1,
+   "hmm": 1
+  }
+ }
+}

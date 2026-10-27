@@ -1,0 +1,72 @@
+# Q41 main runs (2026-10-23/24): every slice that ran, as main.sh job lines (run from WORK; MODELS as in main.sh).
+# The queue gave each line to the first free worker of its GPU set: 131072-token servers ran on the RTX set
+# (RTX 3090 + 2 x RTX 3080) or, for K2h, on two RTX 3090s; 262144-token servers on the V100 pair; NP=4 lines with
+# 139264 tokens on the RTX set. G3 and K2h run with LLAMA_NO_MOE_DOWN_RESCALE=1, UD-Q4_K_XL without it.
+
+# E1 single-turn, attempts 1 and 3, both halves of the 3,477 tasks
+bash main.sh e1 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 1/2 131072
+bash main.sh e1 g3 $MODELS/flint-q73-G3.gguf 1 1/2 131072 LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e1 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 2/2 131072
+bash main.sh e1 g3 $MODELS/flint-q73-G3.gguf 1 2/2 131072 LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e1 ud $MODELS/flint-UD-Q4_K_XL.gguf 3 1/2 131072
+bash main.sh e1 g3 $MODELS/flint-q73-G3.gguf 3 1/2 131072 LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e1 ud $MODELS/flint-UD-Q4_K_XL.gguf 3 2/2 131072
+bash main.sh e1 g3 $MODELS/flint-q73-G3.gguf 3 2/2 131072 LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e1 k2h $MODELS/flint-q78k-K2h.gguf 1 1/2 131072 LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e1 k2h $MODELS/flint-q78k-K2h.gguf 1 2/2 131072 LLAMA_NO_MOE_DOWN_RESCALE=1
+
+# E3 LiveCodeBench, eighth 1 (eighth 2 ran for UD only and is not scored)
+bash main.sh e3 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 1/8 139264 NP=4
+bash main.sh e3 g3 $MODELS/flint-q73-G3.gguf 1 1/8 139264 NP=4 LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e3 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 2/8 139264 NP=4
+
+# E2 multi-turn, new scenarios (the 699 tasks outside the pilot); slice 3 was stopped before its first task finished
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 1/14 262144 IDS=/v4/e2_new_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 1/14 262144 IDS=/v4/e2_new_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 2/14 262144 IDS=/v4/e2_new_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 2/14 262144 IDS=/v4/e2_new_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 3/14 262144 IDS=/v4/e2_new_ids.txt
+
+# E2 pre-registered miss_param test (PREREG_missparam.md): 139 tasks in 12 parts, each part UD then G3;
+# parts 1-6 on the V100 pair, parts 12-7 on the RTX set
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 1/12 262144 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 1/12 262144 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 2/12 262144 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 2/12 262144 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 3/12 262144 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 3/12 262144 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 4/12 262144 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 4/12 262144 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 5/12 262144 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 5/12 262144 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 6/12 262144 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 6/12 262144 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 12/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 12/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 11/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 11/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 10/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 10/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 9/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 9/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 8/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 8/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 7/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 7/12 139264 NP=4 IDS=/v4/e2_missparam_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+
+# E2 overall tally on the other new-scenario tasks: 411 tasks in 24 parts, UD then G3; parts 1-2 on the V100 pair,
+# parts 24-20 on the RTX set (the rest never started)
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 1/24 262144 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 1/24 262144 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 2/24 262144 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 2/24 262144 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 24/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 24/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 23/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 23/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 22/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 22/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 21/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 21/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1
+bash main.sh e2 ud $MODELS/flint-UD-Q4_K_XL.gguf 1 20/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt
+bash main.sh e2 g3 $MODELS/flint-q73-G3.gguf 1 20/24 139264 NP=4 IDS=/v4/e2_rest_ids.txt LLAMA_NO_MOE_DOWN_RESCALE=1

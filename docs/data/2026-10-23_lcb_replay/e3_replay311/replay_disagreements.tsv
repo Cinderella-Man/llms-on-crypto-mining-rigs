@@ -1,0 +1,73 @@
+submission	problem	sample	lcb_pass	our_pass	our_error
+R1-0528	abc366_e	1	True	False	Time Limit Exceeded
+R1-0528	abc366_c	1	True	False	Runtime Error
+R1-0528	abc367_g	1	True	False	Time Limit Exceeded
+R1-0528	abc368_g	1	True	False	Time Limit Exceeded
+R1-0528	abc368_c	3	True	False	Time Limit Exceeded
+R1-0528	abc369_e	1	True	False	Time Limit Exceeded
+R1-0528	abc369_e	3	True	False	Time Limit Exceeded
+R1-0528	abc370_f	1	True	False	Time Limit Exceeded
+R1-0528	abc372_f	2	True	False	Time Limit Exceeded
+R1-0528	abc372_f	3	True	False	Time Limit Exceeded
+R1-0528	abc372_f	5	True	False	Time Limit Exceeded
+R1-0528	abc373_f	3	True	False	Time Limit Exceeded
+R1-0528	abc373_f	4	True	False	Time Limit Exceeded
+R1-0528	abc373_e	1	True	False	Time Limit Exceeded
+R1-0528	arc182_e	1	True	False	Time Limit Exceeded
+R1-0528	abc374_f	2	True	False	Time Limit Exceeded
+R1-0528	abc374_d	1	True	False	Wrong Answer
+R1-0528	abc374_d	2	True	False	Wrong Answer
+R1-0528	abc374_d	3	True	False	Wrong Answer
+R1-0528	abc374_d	4	True	False	Wrong Answer
+R1-0528	abc374_d	5	True	False	Wrong Answer
+R1-0528	abc374_d	6	True	False	Wrong Answer
+R1-0528	abc374_d	7	True	False	Wrong Answer
+R1-0528	abc374_d	8	True	False	Wrong Answer
+R1-0528	abc374_d	9	True	False	Wrong Answer
+R1-0528	abc374_e	1	True	False	Time Limit Exceeded
+R1-0528	abc375_e	4	True	False	Time Limit Exceeded
+R1-0528	abc375_e	7	True	False	Time Limit Exceeded
+R1-0528	abc375_c	3	True	False	Wrong Answer
+R1-0528	abc375_c	5	True	False	Wrong Answer
+R1-0528	abc375_c	8	True	False	Wrong Answer
+R1-0528	abc375_c	9	True	False	Wrong Answer
+R1-0528	abc375_f	2	True	False	Time Limit Exceeded
+R1-0528	abc379_g	1	True	False	Time Limit Exceeded
+R1-0528	abc380_f	1	True	False	Time Limit Exceeded
+R1-0528	abc380_f	2	True	False	Time Limit Exceeded
+R1-0528	abc385_f	1	True	False	Wrong Answer
+R1-0528	abc385_f	2	True	False	Wrong Answer
+R1-0528	abc385_f	3	True	False	Wrong Answer
+R1-0528	abc385_f	4	True	False	Wrong Answer
+R1-0528	3631	1	False	True	None
+R1-0528	3631	2	False	True	None
+R1-0528	3631	3	False	True	None
+R1-0528	3631	4	False	True	None
+R1-0528	abc390_e	3	True	False	Time Limit Exceeded
+R1-0528	abc390_g	3	True	False	Time Limit Exceeded
+R1-0528	abc390_g	4	True	False	Time Limit Exceeded
+R1-0528	abc390_g	6	True	False	Time Limit Exceeded
+R1-0528	abc390_g	7	True	False	Time Limit Exceeded
+R1-0528	abc390_g	8	True	False	Time Limit Exceeded
+R1-0528	abc390_g	9	True	False	Time Limit Exceeded
+R1-0528	abc392_g	1	False	True	None
+R1-0528	abc392_g	2	True	False	Time Limit Exceeded
+R1-0528	abc392_g	3	True	False	Time Limit Exceeded
+R1-0528	abc392_d	1	True	False	Wrong Answer
+R1-0528	abc392_d	2	True	False	Wrong Answer
+R1-0528	abc392_d	3	True	False	Wrong Answer
+R1-0528	abc392_d	4	True	False	Wrong Answer
+R1-0528	abc392_d	5	True	False	Wrong Answer
+R1-0528	abc392_d	6	True	False	Wrong Answer
+R1-0528	abc392_d	7	True	False	Wrong Answer
+R1-0528	abc392_d	8	True	False	Wrong Answer
+R1-0528	abc392_d	9	True	False	Wrong Answer
+R1-0528	abc392_d	10	True	False	Wrong Answer
+R1-0528	abc400_g	1	True	False	Time Limit Exceeded
+R1-0528	abc400_g	2	True	False	Time Limit Exceeded
+R1-0528	3794	1	False	True	None
+R1-0528	3687	1	False	True	None
+R1-0528	3687	2	False	True	None
+R1-0528	3739	1	True	False	Runtime Error
+R1-0528	3776	1	False	True	None
+R1-0528	3776	2	False	True	None

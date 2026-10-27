@@ -90,8 +90,10 @@ The correct samples serve as reference solutions.
   - pass@1 on the 450 problems: R1-0528 72.6 % here against 73.2 % in LiveCodeBench's grades; o4-mini 80.9 % in
     both.
 - **Load.** The time limits are wall-clock. A first pass at 12 processes on a 32-core workstation, under a load
-  average of 15–40 from other jobs, failed 186 correct samples on time. A second pass over the disagreeing samples,
-  at 4 processes on an idle machine with Python 3.11, passed 153 of them; the table holds its verdicts.
+  average of 15–40 from other jobs, failed 215 samples that LiveCodeBench passed (205 of R1-0528's, 10 of o4-mini's),
+  186 of them on time. A second pass over the 225 disagreeing samples, at 4 processes on an idle machine with
+  Python 3.11, passed 153 of the 215; the table holds its verdicts. Per-sample verdicts of both passes:
+  [docs/data/2026-10-23_lcb_replay](../../docs/data/2026-10-23_lcb_replay/README.md).
 
   Grade every file on the same otherwise idle machine, with the same process count (half the cores or fewer).
 
@@ -162,4 +164,4 @@ Flint's lengths on LiveCodeBench, from UD-Q4_K_XL on 56 problems at one attempt 
 - **The first pair at 32k** (UD-Q4_K_XL against G3, same 56 problems, graded offline) shows why. pass@1 was 85.7 %
   against 80.4 %, but the 3 discordant problems were all hard and all at the budget: G3 was cut off twice and
   answered wrong at 32,763 tokens once, while UD-Q4_K_XL finished. Exact McNemar p = 0.25. With a 32k cap, small
-  differences in length turn into pass/fail differences.
+  differences in length turn into pass/fail differences. Per-problem verdicts: [docs/data/2026-10-24_q41](../../docs/data/2026-10-24_q41/README.md).

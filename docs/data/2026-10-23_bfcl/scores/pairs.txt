@@ -1,0 +1,6 @@
+BF16 vs BF16_rep: n=300 identical text 142 (47.3 %), same calls 261 (87.0 %), correct 242 vs 243 (80.7 % vs 81.0 %), tasks whose verdict flips: 19
+udmirror-v1-nr vs udmirror-v1-nr_rep: n=300 identical text 77 (25.7 %), same calls 256 (85.3 %), correct 249 vs 245 (83.0 % vs 81.7 %), tasks whose verdict flips: 22
+makers-q4_1_v100 vs makers-q4_1_v100_c1: n=300 identical text 137 (45.7 %), same calls 267 (89.0 %), correct 250 vs 251 (83.3 % vs 83.7 %), tasks whose verdict flips: 15
+makers-q4_1 vs makers-q4_1_v100: n=300 identical text 14 (4.7 %), same calls 240 (80.0 %), correct 249 vs 250 (83.0 % vs 83.3 %), tasks whose verdict flips: 29
+mixS4 vs mixS4_gpu012_partial: n=182 identical text 20 (11.0 %), same calls 154 (84.6 %), correct 160 vs 160 (87.9 % vs 87.9 %), tasks whose verdict flips: 14
+makers-q4_1 vs makers-fast: n=300 identical text 13 (4.3 %), same calls 238 (79.3 %), correct 249 vs 250 (83.0 % vs 83.3 %), tasks whose verdict flips: 23
