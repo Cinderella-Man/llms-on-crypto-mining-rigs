@@ -4,7 +4,7 @@
 #   1. install: the CUDA build's tarball from the quality machine to BUILDS on the rig, md5 check, unpack
 #   2. correctness on card 0: test-backend-ops (MUL_MAT, MUL_MAT_ID, MUL_MAT_VEC_FUSION, GET_ROWS) for n2p and n3p
 #   3. kernels on card 0: test-backend-ops perf at Ornith-1.5-122B's shapes (8 of 64 experts: fused gate/up 3072 -> 1024,
-#      down 1024 -> 3072; dense 8192 -> 3072; 1, 2, 4 tokens) for n2p, n3p, iq2_s, iq3_xxs, q2_K, q3_K, q4_0, q8_0 with
+#      down 1024 -> 3072; dense 3072 -> 8192; 1, 2, 4 tokens) for n2p, n3p, iq2_s, iq3_xxs, q2_K, q3_K, q4_0, q8_0 with
 #      the Pascal kernels, then n2p/n3p on llama.cpp's kernel (GGML_CUDA_MMVQ_PASCAL_SKIP=n2p,n3p); the IQ and K types
 #      run llama.cpp's kernel in this build
 #   RIG=rig QM=<ssh alias> WORK=<work dir on QM, as for build.sh> NAME=<build name> MD5=<tarball md5> \
@@ -40,7 +40,7 @@ perf() {  # perf LABEL ENV TYPES
     ssh "$RIG" "cd $BUILDS/$NAME/bin && export CUDA_VISIBLE_DEVICES=0 $2;
       ./test-backend-ops perf -b CUDA0 -o MUL_MAT_ID -p 'type_a=$t,.*n_mats=64,n_used=8';
       ./test-backend-ops perf -b CUDA0 -o MUL_MAT_VEC_FUSION -p '=$t,.*n=1024,k=3072,use_id=1,n_mats=64';
-      ./test-backend-ops perf -b CUDA0 -o MUL_MAT -p 'type_a=$t,.*m=(1024|3072),n=[124],k=(3072|1024|8192),'" 2>&1 \
+      ./test-backend-ops perf -b CUDA0 -o MUL_MAT -p 'type_a=$t,.*m=(1024|3072|8192),n=[124],k=(1024|3072),'" 2>&1 \
       | grep -E "us/run" | sed -E 's/^ +//; s/ +/ /g'
   done
 }

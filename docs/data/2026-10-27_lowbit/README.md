@@ -58,9 +58,11 @@ per-layer ratios of the paired formats.
 ## The N2P/N3P engine and files
 
 Fork branch `pascal-p106-v3-lowbit` (off `pascal-p106-v3`): `d2c86e307` the types and CPU code, `f40132341` CUDA
-dequantize, get_rows and matrix-vector products, `67181fcd9` MMQ, `2942ef390` and `37aae03b2` perf cases. Builds with
-`run/build.sh` (`KIND=cuda`, tarball `llama.cpp-20261027-37aae03b2-pascal-p106-v3-lowbit.tar.gz`, md5
-`0bfdd659a7f17356f5d64076ed279f15`; `KIND=cpu` for llama-quantize).
+dequantize, get_rows and matrix-vector products, `67181fcd9` MMQ, `2942ef390`, `37aae03b2` and `5fd8ffeec` perf cases
+(8 of 64 experts: fused gate/up 3072 -> 1024, down 1024 -> 3072; dense 3072 -> 8192; 1, 2 and 4 tokens, the shapes of
+the IQ kernels' rig runs on fork branch `pascal-p106-v3-iqmmvq`). Builds with `run/build.sh` (`KIND=cuda`, tarball
+`llama.cpp-20261027-5fd8ffeec-pascal-p106-v3-lowbit.tar.gz`, md5 `16b226cf28506009c46d4192fafe805d`; `KIND=cpu` for
+llama-quantize).
 
 Ornith-1.5-122B files, `run/quantize.sh` with the CPU build of `67181fcd9` (its quantizer code is that of `37aae03b2`):
 
