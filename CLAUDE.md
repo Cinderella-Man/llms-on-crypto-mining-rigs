@@ -29,6 +29,21 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
 - Plan and status of the quants subproject live at the top of `quants/experiments.md` ("Plan", with a "Now" line). Read
   it before starting anything; when you start or stop an experiment, update the "Now" line and the experiment's row.
 
+## The data behind every result
+
+Nobody should have to rerun an experiment because its data or method was not published. An experiment is done when,
+in the same change as its result:
+- `docs/data/<date>_<experiment>/` holds a `README.md` (what it measured, a link to the result page, a table of the
+  files, the exact commands, provenance and licence), the curated tables (CSV, TSV, Markdown) and the scripts that ran
+  it in `run/`; reusable tools go to `scripts/` or `bench/<tool>/` instead;
+- the result page (benchmark page, registry row or research note) links the folder, and
+  [docs/data/README.md](docs/data/README.md) has its row.
+
+Scripts take hosts and paths from the environment (`RIG`, `CLIENT`, `WORK`, `MODELS`, `MODEL`, `BIN`, `OUT`), so the
+script that ran is the script committed. A data folder holds tables that summarize raw output, benchmark task IDs with
+the command that rebuilds the task file (not the task text), data whose licence allows publishing, and files under
+1 MB (gzip up to ~3 MB). Pages link only to this repository and public sources.
+
 ## This repo is public
 
 - Never commit hostnames, tailnet or domain names, usernames, IP or MAC addresses, GPU UUIDs or serial
