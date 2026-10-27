@@ -10,7 +10,7 @@ written every --ckpt-every minutes). Creating OUT_DIR/STOP ends the run early wi
 --resume continues from ckpt.pt: the time budget counts the time already spent, so
 a larger --minutes extends a run, and new --feats files continue it on more data.
 Agent sessions (bench/agentic_data): --spans MAP.jsonl trains only on the generated tokens, not the tool results;
---ctx 4096 limits the head's attention to the positions the engine keeps (--pipe-draft-ctx); --chunk-targets 8192
+--ctx 4096 limits the head's attention to the positions the engine keeps (--pipe-draft-ctx); --chunk-targets 4096
 splits a long session into steps of bounded memory; --max-tok must exceed the longest session.
 """
 import argparse

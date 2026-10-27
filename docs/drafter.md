@@ -464,8 +464,8 @@ for the v2.0 release; the agent-session data started on 2026-10-26, and the head
 - **Training on sessions** ([agentic_head.sh](../bench/staircase_drafter/agentic_head.sh)): one export of all writers'
   runs; every session of every 20th module held out for scoring; the dump replays each session once with the tool
   results, and the head trains only on Flint's generated spans (`--spans`). The head attends to the last 4,096
-  committed positions, as the engine's ring does (`--ctx 4096`), and long sessions train in pieces of 16,384 target
-  positions (`--chunk-targets`). Heads: a 3–12-card general head and a nine-card one, from scratch on the grid of M2.
+  committed positions, as the engine's ring does (`--ctx 4096`), and long sessions train in pieces of 4,096 target
+  positions (`--chunk-targets`; pieces of 16,384 ran out of memory on 24 GB cards). Heads: a 3–12-card general head and a nine-card one, from scratch on the grid of M2.
 - **Left to do:** `clean_prompts.py` writes `source_id` and `row_id` for the single-turn chat and maths parts.
 
 ## 4. Why the card count matters

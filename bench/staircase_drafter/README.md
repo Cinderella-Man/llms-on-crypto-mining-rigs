@@ -161,9 +161,9 @@ paths are placeholders.
      `feats.py seqs` or `feed_split.py`) trains only on the tokens Flint generated. `--ctx 4096` lets the head attend
      to the last 4,096 committed positions only, the ring the engine keeps (`--pipe-draft-ctx`, default 4096); sessions
      run to 64k tokens, and full attention would train a head on context it never sees when served. `--chunk-targets
-     16384` splits a session into pieces of at most that many target positions, one step each; with `--ctx` a piece
+     4096` splits a session into pieces of at most that many target positions, one step each; with `--ctx` a piece
      holds only the positions its targets can reach through the head's blocks, so memory stays flat however long the
-     session. [check_ctx.py](check_ctx.py) checks on synthetic data that the windowed attention equals a dense masked
+     session. Pieces of 16,384 targets ran out of memory on a 24 GB card (windows of up to 12 rows per target). [check_ctx.py](check_ctx.py) checks on synthetic data that the windowed attention equals a dense masked
      reference and that a session in pieces gives the same logits as the whole. [agentic_head.sh](agentic_head.sh)
      runs the whole path: one export of several writers' runs, a held-out set of whole modules
      ([heldout.py](../agentic_data/heldout.py)), the dump fed to several GPU sets, the vocabulary, the heads, scores

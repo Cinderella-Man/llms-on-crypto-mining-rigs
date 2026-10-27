@@ -16,7 +16,8 @@
 #               dumps the test files (Q51, held-out sessions) before it joins
 #   HEADS       "name:GPU:train.py options" per head, run at once (default a 3-12-card head and a nine-card one)
 #   MINUTES     training budget per head (default 240); CTX the committed positions the head attends to, as the
-#               engine's --pipe-draft-ctx (default 4096); CHUNK target positions per training piece (16384)
+#               engine's --pipe-draft-ctx (default 4096); CHUNK target positions per training piece (4096; 16384 ran
+#               out of memory on a 24 GB card with 12-row windows)
 #   GRID        the dumped layer inputs (default the 26-layer grid of M2); DCTX the dump's context (66048)
 #   EVERY TAKE  held-out modules: every EVERY-th by hash (20), TAKE sessions of them scored (40)
 #   STEPS       default "export split weights dump vocab train score gguf"; any subset, in order
@@ -29,7 +30,7 @@ BENCH=$(cd "$HERE/.." && pwd)
 FEATS_DIRS=${FEATS_DIRS:-$WORK/feats}
 DUMP_SETS=${DUMP_SETS:-5,6 0,1,2 3,4}
 HEADS=${HEADS:-gen:2:--general|nine:5:--general --cards 9e,9l,9l}
-MINUTES=${MINUTES:-240}; CTX=${CTX:-4096}; CHUNK=${CHUNK:-16384}; DCTX=${DCTX:-66048}
+MINUTES=${MINUTES:-240}; CTX=${CTX:-4096}; CHUNK=${CHUNK:-4096}; DCTX=${DCTX:-66048}
 GRID=${GRID:-4,6,8,9,10,12,14,16,17,18,20,22,24,25,27,29,30,33,34,36,37,39,41,42,44,47}
 EVERY=${EVERY:-20}; TAKE=${TAKE:-40}
 STEPS=${STEPS:-export split weights dump vocab train score gguf}
@@ -157,7 +158,8 @@ if has train; then
     mkdir -p "$H"; echo "$cmd" > "$H/cmd.txt"
     docker rm -f "pq-head-$name" >/dev/null 2>&1 || true
     docker run -d --name "pq-head-$name" --label pascal-quants=1 --cpu-shares 256 --gpus "\"device=$gpu\"" \
-      -e CUDA_DEVICE_ORDER=PCI_BUS_ID --shm-size 8g --network none "${mounts[@]}" -w "$HERE" "$TORCH_IMAGE" \
+      -e CUDA_DEVICE_ORDER=PCI_BUS_ID -e PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True --shm-size 8g --network none \
+      "${mounts[@]}" -w "$HERE" "$TORCH_IMAGE" \
       bash -c "$cmd >> $H/train.log 2>&1" >/dev/null
   done
   for h in "${hs[@]}"; do
