@@ -23,7 +23,8 @@
 #   CONC          sessions at a time (default NP); MAX_TURNS MAX_GEN MAX_CTX TIME_CAP (24, 20000, CTX_SLOT, 30 min)
 #   STEPS         default "image workspaces server texts s1 s2 gate export checks stop"; any subset, in order. Elixir
 #                 adds "ex-image" (sandbox/Dockerfile.elixir) and "ex-workspaces" (after texts: it needs the Elixir
-#                 change note), e.g. STEPS="ex-image server texts ex-workspaces s1 s2 gate export stop"
+#                 change note), e.g. STEPS="ex-image server texts ex-workspaces s1 s2 gate export stop". "s2run"
+#                 runs stage 2's sessions on the task file s2 wrote, without writing it again (a resumed run)
 #   EX_MODULES    Elixir library modules for workspace.py elixir (option_parser,version,... or all)
 #   EX_NOTICE     Elixir's NOTICE file of the v1.18.4 tag (pinned in codebases.json)
 #   STOP_FILE     create it to start no new sessions (default WORK/STOP)
@@ -158,7 +159,13 @@ if has s2; then
   log "stage 2: repair and implementation tasks on the stage-1 tests"
   mkdir -p "$WORK/s2"
   $PY "$HERE/tasks.py" from-sessions --sessions "$WORK/s1/sessions" --workspaces "$WORK/ws" --texts "$TEXTS" \
-    --out "$WORK/s2/tasks" --per-module "$PER_MODULE" --implement "$IMPLEMENT" | tee -a "$WORK/run.log"
+    --out "$WORK/s2/tasks" --per-module "$PER_MODULE" --implement "$IMPLEMENT" --gate "$WORK/s1/sessions.gate.json" \
+    | tee -a "$WORK/run.log"
+  run_stage "$WORK/s2" "$WORK/s2/tasks/tasks.jsonl" "$WORK/s1/sessions.gate.json"
+fi
+
+if has s2run; then   # stage 2's sessions on a task file already written (e.g. resumed after a stop)
+  log "stage 2 on the task file $WORK/s2/tasks/tasks.jsonl"
   run_stage "$WORK/s2" "$WORK/s2/tasks/tasks.jsonl" "$WORK/s1/sessions.gate.json"
 fi
 

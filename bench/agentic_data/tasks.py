@@ -220,12 +220,19 @@ def cmd_from_sessions(a):
     rng = random.Random(a.seed)
     os.makedirs(a.out, exist_ok=True)
     rows = []
+    passed = None
+    if a.gate:
+        lines = open(json.load(open(a.gate))["manifest"]["path"]).read().splitlines()
+        head = lines[0].split("\t")
+        passed = {r["session_id"] for r in (dict(zip(head, x.split("\t"))) for x in lines[1:]) if r["check"] == "ok"}
     for f in sorted(os.listdir(a.sessions)):
         if not f.endswith(".json") or f.endswith(".error.json"):
             continue
         s = json.load(open(os.path.join(a.sessions, f)))
         t = s["task"]
         if t["type"] != "write_tests" or not s["verify"]["passed"]:
+            continue
+        if passed is not None and s["session_id"] not in passed:
             continue
         man = json.load(open(t["workspace_manifest"]["path"]))
         m, mod_rel, test_rel = man["module"], man["module_file"], t["placeholders"]["test_file"]
@@ -361,6 +368,9 @@ def main():
     s.add_argument("--seed", type=int, default=2)
     s.add_argument("--image", default=agx.SANDBOX_IMAGE)
     s.add_argument("--prefix", default="s2", help="task id prefix (another round on the same sessions needs its own)")
+    s.add_argument("--gate", help="the stage-1 sessions gate record: build only on the sessions it passed (a session "
+                                  "whose tests pass can still be excluded, and stage 2's tasks gate needs passed "
+                                  "parents)")
     a = ap.parse_args()
     TEXTS_SHA = agx.sha256_file(a.texts)
     {"write-tests": cmd_write_tests, "from-sessions": cmd_from_sessions}[a.cmd](a)
