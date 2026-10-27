@@ -1,6 +1,7 @@
 # A cheaper guess of Flint's MTP head (2026-10-27)
 
-The data behind [docs/drafter.md](../../drafter.md) section 8, item 0 (a cheaper guess): where one guess of the
+The data behind [A cheaper guess](../../drafter.md#a-cheaper-guess-2026-10-27) in docs/drafter.md (section 6, and
+section 8, item 0): where one guess of the
 staircase head (Flint's MTP head of agentic run 1, the nine-card head) goes on a P106, what a guess may cost on the
 agent check before the head stops paying, and how often the head is right at the positions the server's other
 guessers leave it; then what the options of Miner Llama's branch `pascal-p106-v3-cheapguess` cost (4.77 ms → 2.93 ms
