@@ -565,6 +565,9 @@ def run_session(task, a, server, render, texts, slot, writer, info):
 
 
 def cmd_run(a):
+    # the sandboxes' label and name prefix name this output folder too: writers sharing a task list (CLAIMS) run the
+    # same stage at once, and each one's cleanup at its end must remove only its own sandboxes
+    a.run_tag = f"{a.run_tag}-{agx.sha256_text(os.path.abspath(a.out))[:8]}"
     os.makedirs(os.path.join(a.out, "sessions"), exist_ok=True)
     os.makedirs(a.work, exist_ok=True)
     if a.claims:
