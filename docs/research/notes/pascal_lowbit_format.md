@@ -358,6 +358,8 @@ output relative to the output's energy. It ranks formats on the same weights; it
   and its shifted copy by the lower error.
 - **Rotation:** variants marked `+r256` quantize the matrix after a random-sign 256-point Hadamard rotation of its
   input dimension (undone at run time by rotating the activations) and measure the error after rotating back.
+- **Data:** every row of every run, the fitted tables and the commands are in
+  [docs/data/2026-10-27_lowbit](../../data/2026-10-27_lowbit/README.md).
 
 ### Results
 

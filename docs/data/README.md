@@ -85,6 +85,7 @@ Every mix's exact recipe and score is also in [quants/recipes/flint-mixes.tsv](.
 | Date | Folder | Registry | What it measured | Result | What is here |
 |---|---|---|---|---|---|
 | 2026-10-27 | [2026-10-27_ornith](2026-10-27_ornith/README.md) | Q158 | Ornith-1.5-122B on nine cards: memory projections for 16 configurations, single-request probes, the agent check (stock and v2.0, with and without the MTP head), GPU energy, both files' tensor layouts, the decode profile | [Ornith benchmark](../benchmarks/2026-10-27-ornith-122b.md); [model page](../../models/ornith-1.5-122b/README.md) | per-line agent tables, `agent_power.csv`, `fit_projection.csv`, `serve_probe.csv`, the GGUF headers, the profile, the agent driver; tools in [scripts/](../../scripts/) (`fit_probe.sh`, `serve_probe.sh`, `gguf_summary.py`, `prof_summary.py`, `hf_manifest.py`, `hf_get.sh`) |
+| 2026-10-27 | [2026-10-27_lowbit](2026-10-27_lowbit/README.md) | Q164 | 2-, 3- and 4-bit formats on 84 real expert matrices of Ornith-1.5-122B, importance-weighted reconstruction error (CPU); Miner Llama's N2P/N3P quantizer against the proxy | [pascal_lowbit_format.md](../research/notes/pascal_lowbit_format.md); Q164 | every row of the five proxy runs, the fitted tables, the summary with expert mixes and per-layer ratios, the C-quantizer check, run scripts; the proxy itself in [scripts/](../../scripts/) (`lowbit_proxy.py`, `lowbit_summary.py`) |
 
 ## Rig benchmarks and the first engine work (2026-10-22/23)
 
