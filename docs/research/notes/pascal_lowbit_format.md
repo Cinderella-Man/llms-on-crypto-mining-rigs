@@ -577,3 +577,56 @@ are already written on `pascal-p106-v3-iqmmvq`.
    reference logits exist (the reference run waits for the MTP head training).
 6. **Agent check on the rig**: the 122B in the chosen mix on v3 against AD-IQ3_XXS-IQ2_S on v3 with the IQ Pascal
    kernels, same context and split, paired by task.
+
+## 6. Where the work stands and what comes next
+
+The owner chose to skip the two gates (test plan steps 1 and 2) and build the types. The registry rows are Q164 (this
+note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122B files), Q188 (the P106 run) and Q189
+(the agent check) in [quants/experiments.md](../../../quants/experiments.md); data, commands and every script are in
+[docs/data/2026-10-27_lowbit](../../data/2026-10-27_lowbit/README.md).
+
+**Built.** Fork branch `pascal-p106-v3-lowbit`, cut from `pascal-p106-v3`:
+
+| Commit | What |
+|---|---|
+| `d2c86e307` | the types (ids 500 and 501), block layouts and level tables in `ggml-common.h`, the importance-matrix quantizer in `ggml-quants.c`, CPU dot products against Q8_K |
+| `f40132341` | CUDA dequantize, get_rows, llama.cpp's matrix-vector kernel and the fork's Pascal kernels (`mmvq-pascal-impl.cuh`; N2P's 86-byte blocks staged with 2-byte loads as Q6_K's, N3P with Q4_K's launch shape) |
+| `67181fcd9` | MMQ: both types loaded into the Q8_0 tile layout (`mmq-load-tiles.cuh`); configurations for Pascal and Volta |
+| `2942ef390`, `37aae03b2`, `5fd8ffeec` | `test-backend-ops` cases: correctness at Ornith's shapes, perf at the shapes of the IQ kernels' rig runs |
+| `d7a75deb3` | `GGML_TEST_RAW_QUANT` (random bytes as weights in perf runs), from the IQ kernels' branch |
+
+**Done:**
+- The CPU checks: the C quantizer gives the proxy's errors exactly on 24 real expert matrices.
+- Test plan step 3: the V100 check ([correctness-v100.md](../../data/2026-10-27_lowbit/correctness-v100.md)). MMQ
+  through the compute 6.1 code is left to the P106.
+- File c (45,362 MiB) was made and handed to KLD.
+
+**Running at the time of writing:**
+- File c's KLD against the Q8_0's wiki, agent and code bases.
+- File b's quantization; its KLD follows.
+
+**Next, in order:**
+1. **KLD of c and b** (step 5, on the 122B directly) next to AD-IQ3_XXS-IQ2_S, UD-Q2_K_XL and their Q5_0-dense
+   variants. b against AD shows what the expert formats alone are worth; c against UD and the Q5_0-dense files is the
+   size-matched comparison.
+2. **The P106 run** (step 4, Q188): `run/rig_kernels.sh` with the `d7a75deb3` tarball. It checks correctness on the
+   card, including MMQ, and times the kernels at the IQ kernels' shapes and timing method. Compare the ps per weight with
+   the estimates (3.7 / 4.0) and with the tuned IQ kernels (6.67 / 7.07). If the gain is well under ~1.3×, the IQ
+   kernels (Q166) with Q5_0 dense tensors are the cheaper route to the same speed. The perf cases at 2 and 4 tokens
+   show whether MTP verification needs separate work, as it does for the IQ kernels.
+3. **File d and the per-group mix** (Q187, Q167): d is c with the expert formats swapped, the donor for choosing the
+   format per tensor and 8-layer group within c's bytes.
+4. **The agent check** (step 6, Q189) of the best N2P/N3P file on the rig, if its KLD is below UD-Q2_K_XL's at equal
+   size. Use a build of this branch: it carries the v3 engine as of its cut, but not the IQ kernels, which its files do
+   not need.
+5. **To ship:**
+   - merge the branch into `pascal-p106-v3` after the rig numbers;
+   - push it to the fork;
+   - publish the chosen file with a model card that credits ik_llama.cpp's level tables (MIT).
+
+**Open technical points:**
+- MMQ requantizes N2P's per-8 sub-scales to one scale per 32 weights (≤ 0.4 % of a group's largest value): prompt
+  processing on Pascal sees that small extra error, while decode and dequantize + cuBLAS (V100 KLD) do not.
+- N3P holds four table registers per lane. The P106 timing shows whether register pressure costs occupancy.
+- The quantizer is slow (2 h 44 min for the 122B on 8 threads at low priority), from its 28 grid passes per sub-block
+  and table. It doesn't affect use, only how fast new mixes can be tried.

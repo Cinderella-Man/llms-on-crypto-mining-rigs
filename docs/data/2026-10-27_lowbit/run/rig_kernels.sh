@@ -2,7 +2,8 @@
 # N2P/N3P kernels on the rig (fork branch pascal-p106-v3-lowbit), with nothing else on the rig; the machine that runs this
 # script only relays over ssh.
 #   1. install: the CUDA build's tarball from the quality machine to BUILDS on the rig, md5 check, unpack
-#   2. correctness on card 0: test-backend-ops (MUL_MAT, MUL_MAT_ID, MUL_MAT_VEC_FUSION, GET_ROWS) for n2p and n3p
+#   2. correctness on card 0: test-backend-ops (MUL_MAT, MUL_MAT_ID, MUL_MAT_VEC_FUSION, GET_ROWS) for n2p and n3p, the
+#      cases small enough for the rig's CPU to quantize (the filter of the IQ kernels' P106 check)
 #   3. kernels on card 0: test-backend-ops perf at Ornith-1.5-122B's shapes (8 of 64 experts: fused gate/up 3072 -> 1024,
 #      down 1024 -> 3072; dense 3072 -> 8192; 1, 2, 4 tokens) for n2p, n3p, iq2_s, iq3_xxs, q2_K, q3_K, q4_0, q8_0 with
 #      the Pascal kernels, then n2p/n3p on llama.cpp's kernel (GGML_CUDA_MMVQ_PASCAL_SKIP=n2p,n3p); the IQ and K types
@@ -29,10 +30,13 @@ fi
 
 if has 2; then
   echo "== 2. correctness, card 0 $(date +%T)"
+  # only cases whose weights the rig's CPU quantizes in minutes: the Ornith-sized ones (k or m of 2048 and more, 32 or
+  # more experts) ran natively on a V100 (correctness.sh); the small ones still cover the P106's own MMQ (9+ tokens)
+  small='^(?!.*(k=3072|k=4096|k=2048|k=14336|n_mats=32|n_mats=64|n_mats=128|m=3072|m=4097|m=8192|m=4096)).*=n[23]p,'
   for op in MUL_MAT MUL_MAT_ID MUL_MAT_VEC_FUSION GET_ROWS; do
     echo "-- $op"
-    ssh "$RIG" "cd $BUILDS/$NAME/bin && CUDA_VISIBLE_DEVICES=0 ./test-backend-ops -b CUDA0 -o $op -p '=n[23]p,'" 2>&1 \
-      | grep -E "FAIL|tests passed|Backend .*: (OK|FAIL)" | sort | uniq -c
+    ssh "$RIG" "cd $BUILDS/$NAME/bin && CUDA_VISIBLE_DEVICES=0 ./test-backend-ops -b CUDA0 -o $op -p '$small'" 2>&1 \
+      | grep -E "FAIL|tests passed|Backend .*: (OK|FAIL)|Abort|CUDA error" | sort | uniq -c
   done
 fi
 
