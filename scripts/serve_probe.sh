@@ -9,7 +9,8 @@
 # rig over ssh, with nothing else on the rig:
 #   RIG=rig MODEL=<rig path of the GGUF> BUILDS=<rig folder holding <build>/bin/llama-server> OUT=serve_probe.md \
 #   CONFIGS='label|build|ctx|args|env;...' bash scripts/serve_probe.sh
-# ONLY_LOAD=1 skips the requests (memory fit only). Output appended to OUT; each server's log goes to LOGS (default
+# ONLY_LOAD=1 skips the requests (memory fit only); QUICK=1 runs only the two identity prompts (decode, e.g. under
+# the kernel profiler). Output appended to OUT; each server's log goes to LOGS (default
 # logs/ beside OUT). An env field with GGML_CUDA_PROFILE=/tmp/ornith-prof.csv also fetches that kernel profile and
 # summarizes it with scripts/prof_summary.py (prof-<label>.txt in LOGS).
 set -uo pipefail
@@ -40,7 +41,7 @@ for cfg in "${CFG[@]}"; do
     free -m | sed -n 2p
     curl -sf http://127.0.0.1:$PORT/health > /dev/null || { echo 'server did not start'; tail -5 /tmp/serve_probe.log; exit 0; }
     [ -n '${ONLY_LOAD:-}' ] && exit 0
-    python3 -I - $PORT << 'EOF'
+    python3 -I - $PORT '${QUICK:-}' << 'EOF'
 import glob, json, sys, time, urllib.request
 port = sys.argv[1]
 files = sorted(glob.glob('/usr/lib/python3.12/*.py'))
@@ -61,13 +62,14 @@ def ask(content, n, **kw):
     r = json.load(urllib.request.urlopen(req, timeout=3600))
     return r['timings'], time.time() - t0
 q = '\n\nIn one sentence: which of these files is the longest?'
-t, w = ask(base + q, 16, temperature=0)
-print(f\"fresh   : {t['prompt_n']:6d} new prompt tokens at {t['prompt_per_second']:7.1f} tok/s, wall {w:6.1f} s\")
-t, w = ask(base + '\n' + more + q, 16, temperature=0)
-print(f\"next    : {t['prompt_n']:6d} new prompt tokens at {t['prompt_per_second']:7.1f} tok/s, first token after {t['prompt_ms']/1000:5.1f} s (cached {t.get('cache_n', '?')})\")
-t, w = ask(base + '\n' + more + q, 256, temperature=0.6, top_p=0.95, top_k=20, min_p=0, seed=1)
-extra = ''.join(f', {k} {t[k]}' for k in ('draft_n', 'draft_n_accepted') if k in t)
-print(f\"decode  : {t['predicted_n']:6d} tokens at {t['predicted_per_second']:6.2f} tok/s after {t['prompt_n'] + t.get('cache_n', 0)} tokens of context{extra}\")
+if sys.argv[2:] != ['1']:  # QUICK=1: only the identity prompts
+    t, w = ask(base + q, 16, temperature=0)
+    print(f\"fresh   : {t['prompt_n']:6d} new prompt tokens at {t['prompt_per_second']:7.1f} tok/s, wall {w:6.1f} s\")
+    t, w = ask(base + '\n' + more + q, 16, temperature=0)
+    print(f\"next    : {t['prompt_n']:6d} new prompt tokens at {t['prompt_per_second']:7.1f} tok/s, first token after {t['prompt_ms']/1000:5.1f} s (cached {t.get('cache_n', '?')})\")
+    t, w = ask(base + '\n' + more + q, 256, temperature=0.6, top_p=0.95, top_k=20, min_p=0, seed=1)
+    extra = ''.join(f', {k} {t[k]}' for k in ('draft_n', 'draft_n_accepted') if k in t)
+    print(f\"decode  : {t['predicted_n']:6d} tokens at {t['predicted_per_second']:6.2f} tok/s after {t['prompt_n'] + t.get('cache_n', 0)} tokens of context{extra}\")
 # identity: two fresh prompts at T 0, 192 tokens each; the hash of reasoning + answer compares builds and switches
 import hashlib
 src = open(files[3], errors='replace').read()[:3000]

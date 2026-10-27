@@ -1,0 +1,6 @@
+launch_group,type,layers,weights_per_token,bytes_per_token,ms_per_token_llamacpp,ms_per_token_pascal,speedup,gb_s_llamacpp,gb_s_pascal,ps_per_weight_llamacpp,ps_per_weight_pascal
+ffn_gate_exps+ffn_up_exps+SWIGLU (3072x1024),iq2_s,18,905969664,290193408,10.55,8.97,1.18,27.5,32.4,11.6,9.9
+ffn_gate_exps+ffn_up_exps+SWIGLU (3072x1024),iq3_xxs,14,704643072,269746176,9.11,7.46,1.22,29.6,36.2,12.9,10.6
+ffn_down_exps (1024x3072),iq3_xxs,25,629145600,240844800,14.14,8.11,1.74,17.0,29.7,22.5,12.9
+ffn_down_exps (1024x3072),iq2_s,7,176160768,56426496,3.57,2.00,1.79,15.8,28.2,20.3,11.4
+all launch groups,,,,,110.84,98.81,1.12,,,,
