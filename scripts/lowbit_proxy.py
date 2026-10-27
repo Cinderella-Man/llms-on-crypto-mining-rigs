@@ -35,7 +35,8 @@ from concurrent.futures import ProcessPoolExecutor
 import numpy as np
 
 REF_TYPES = {'Q4_0': 2, 'Q4_1': 3, 'Q5_0': 6, 'Q8_0': 8, 'Q2_K': 10, 'Q3_K': 11, 'Q4_K': 12, 'IQ2_XXS': 16, 'IQ2_XS': 17,
-             'IQ3_XXS': 18, 'IQ3_S': 21, 'IQ2_S': 22, 'IQ4_XS': 23, 'Q2_0': 42}
+             'IQ3_XXS': 18, 'IQ3_S': 21, 'IQ2_S': 22, 'IQ4_XS': 23, 'Q2_0': 42,
+             'N2P': 500, 'N3P': 501}   # the last two only in Miner Llama's libggml-base (fork branch pascal-p106-v3-lowbit)
 
 DEFAULT_FORMATS = (
     'Q4_0,IQ4_XS,Q3_K,IQ3_S,IQ3_XXS,Q2_K,IQ2_S,IQ2_XS,IQ2_XXS,Q2_0,u4a_32,'
