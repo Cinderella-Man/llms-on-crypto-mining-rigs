@@ -13,6 +13,7 @@ with the N2P/N3P types (section "The N2P/N3P engine and files").
 | `proxy-first-layer2.tsv` | the first run, 43 formats on layer 2 only (12 matrices), stopped for time; its six Hadamard-rotated variants are the rotation evidence |
 | `proxy-shift-2layers.tsv` | the first look at the shift bit, layers 10 and 34 (24 matrices) |
 | `c-quantizer.tsv` | fork branch `pascal-p106-v3-lowbit`'s N2P/N3P quantizer (through `libggml-base`) against the proxy's `ik2x_s4x8`/`ik3x_s5x32` on layers 10 and 34: identical errors |
+| `correctness-v100.md` | the CUDA build's test-backend-ops results on a V100 (`run/correctness.sh`): N2P/N3P natively and through the compute 6.1 code, the Q6_K regression, llama.cpp's kernel, memcheck |
 | `summary.txt` | `lowbit_summary.py` over `proxy-main.tsv` and `proxy-shift.tsv` together (per format, the expert mixes), then the per-layer error ratios |
 | `tables.json` | the N2P/N3P-style tables fitted on layer 6 (`nl2`, `nl3`), used by every run |
 | `run/proxy.sh` | the runs: CPU-only `libggml-base`, `scripts/lowbit_proxy.py`, `scripts/lowbit_summary.py` |
