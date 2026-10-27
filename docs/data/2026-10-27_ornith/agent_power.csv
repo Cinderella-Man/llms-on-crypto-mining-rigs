@@ -1,0 +1,47 @@
+arm,task_id,pass,minutes,gpu_samples,gpu_w_mean_9cards,gpu_w_max_9cards,card_w_max,sm_mhz_median_active,energy_wh,output_tokens,j_per_output_token
+stock,(server load and warm-up),,6.0,37,92,235,33.5,1891,9.28,,
+stock,bugfix-python-affine-cipher,yes,7.0,42,277,337,68.9,1354,32.49,1753,66.7
+stock,bugfix-javascript-space-age,yes,2.0,12,288,337,74.1,1493,9.84,429,82.6
+stock,bugfix-python-phone-number,yes,5.4,32,271,343,68.4,1354,24.33,1365,64.2
+stock,bugfix-javascript-triangle,yes,2.4,15,286,341,60.1,1645,11.43,558,73.8
+stock,bugfix-python-variable-length-quantity,yes,2.9,17,276,342,61.3,1354,13.40,692,69.7
+stock,bugfix-javascript-phone-number,yes,3.8,23,277,328,67.7,1354,17.51,955,66.0
+stock,bugfix-python-list-ops,no (time),12.0,72,255,357,68.8,1354,51.09,,
+stock,(all tasks),,35.6,213,270,,,,160.10,,
+stock,(tasks without a runaway),,,,,,,,109.01,5752,68.2
+stock-mtp,(server load and warm-up),,6.2,37,89,235,33.5,1885,9.10,,
+stock-mtp,bugfix-python-affine-cipher,yes,7.5,45,302,379,79.8,1835,37.63,2321,58.4
+stock-mtp,bugfix-javascript-space-age,yes,1.9,11,310,357,70.8,1784,9.74,499,70.3
+stock-mtp,bugfix-python-phone-number,yes,6.5,39,291,356,75.2,1354,31.73,2155,53.0
+stock-mtp,bugfix-javascript-triangle,yes,2.4,15,296,338,75.8,1651,11.83,643,66.2
+stock-mtp,bugfix-python-variable-length-quantity,yes,2.3,13,328,412,73.2,1835,12.40,664,67.2
+stock-mtp,bugfix-javascript-phone-number,yes,3.1,19,300,350,69.4,1759,15.41,918,60.4
+stock-mtp,bugfix-python-list-ops,yes,8.2,49,277,386,71.3,1354,37.91,2626,52.0
+stock-mtp,bugfix-javascript-grade-school,yes,2.1,13,314,431,75.0,1797,11.25,565,71.7
+stock-mtp,bugfix-python-scale-generator,yes,9.9,59,289,387,79.6,1354,47.77,3251,52.9
+stock-mtp,(all tasks),,43.9,263,295,,,,215.67,,
+stock-mtp,(tasks without a runaway),,,,,,,,215.67,13642,56.9
+v2,(server load and warm-up),,6.0,36,88,235,33.4,1898,8.83,,
+v2,bugfix-python-affine-cipher,yes,4.6,28,276,331,70.5,1354,21.08,1779,42.7
+v2,bugfix-javascript-space-age,yes,1.3,8,305,343,64.6,1860,6.77,400,60.9
+v2,bugfix-python-phone-number,yes,4.2,25,279,382,64.7,1354,19.57,1659,42.5
+v2,bugfix-javascript-triangle,yes,1.6,10,280,338,71.0,1354,7.48,530,50.8
+v2,bugfix-python-variable-length-quantity,yes,2.3,13,302,338,65.5,1784,11.50,903,45.9
+v2,bugfix-javascript-phone-number,yes,3.0,18,286,359,68.1,1354,14.15,1202,42.4
+v2,bugfix-python-list-ops,no (time),12.0,72,259,332,66.6,1354,51.89,,
+v2,bugfix-javascript-grade-school,yes,1.7,10,299,340,65.0,1809,8.40,590,51.3
+v2,bugfix-python-scale-generator,no (time),12.0,72,260,355,69.2,1354,52.11,,
+v2,(all tasks),,42.7,256,271,,,,192.95,,
+v2,(tasks without a runaway),,,,,,,,88.95,7063,45.3
+v2-mtp,(server load and warm-up),,6.1,37,93,244,33.6,1885,9.45,,
+v2-mtp,bugfix-python-affine-cipher,yes,3.9,23,293,337,75.6,1468,19.05,1393,49.2
+v2-mtp,bugfix-javascript-space-age,yes,1.4,8,316,369,73.0,1797,7.28,431,60.8
+v2-mtp,bugfix-python-phone-number,yes,4.1,25,295,382,69.0,1354,20.21,1540,47.3
+v2-mtp,bugfix-javascript-triangle,yes,2.0,12,308,418,76.1,1847,10.17,671,54.6
+v2-mtp,bugfix-python-variable-length-quantity,yes,2.5,15,307,477,74.6,1835,12.78,927,49.6
+v2-mtp,bugfix-javascript-phone-number,yes,2.3,14,311,371,71.3,1847,12.01,807,53.6
+v2-mtp,bugfix-python-list-ops,yes,5.6,33,280,346,70.7,1354,26.01,2028,46.2
+v2-mtp,bugfix-javascript-grade-school,yes,1.9,11,327,405,72.7,1873,10.37,675,55.3
+v2-mtp,bugfix-python-scale-generator,no (time),12.0,72,263,346,69.4,1354,52.69,,
+v2-mtp,(all tasks),,35.7,213,287,,,,170.58,,
+v2-mtp,(tasks without a runaway),,,,,,,,117.89,8472,50.1

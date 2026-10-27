@@ -79,3 +79,9 @@ Every mix's exact recipe and score is also in [quants/recipes/flint-mixes.tsv](.
 | 2026-10-24 | [2026-10-24_rig_q141](2026-10-24_rig_q141/README.md) | Q141 | PowerMizer "Prefer Maximum Performance" against Auto: tg128 cold and warm, a served reply after idle, clocks every ~0.2 s | Q141; [power_and_tuning.md](../research/notes/power_and_tuning.md) §3.1 | `clocks_summary.csv` (per mode, step, card), the A/B script |
 | 2026-10-24 | [2026-10-24_research_scratch/power](2026-10-24_research_scratch/power/README.md) | — | power, clocks and power-cap share per llama-bench test, from the 2026-10-22/23 rig traces | [power_and_tuning.md](../research/notes/power_and_tuning.md) | `phases.txt` (220 tests) and the three scripts that made it |
 | 2026-10-24 | — (`2026-10-24_q133_mem_offset`) | Q133 | the memory-offset kit's run plan; nothing ran on the rig | Q133 | nothing: the kit is [bench/mem_offset](../../bench/mem_offset/README.md) |
+
+## Ornith
+
+| Date | Folder | Registry | What it measured | Result | What is here |
+|---|---|---|---|---|---|
+| 2026-10-27 | [2026-10-27_ornith](2026-10-27_ornith/README.md) | Q158 | Ornith-1.5-122B on nine cards: memory projections for 16 configurations, single-request probes, the agent check (stock and v2.0, with and without the MTP head), GPU energy, both files' tensor layouts, the decode profile | [Ornith benchmark](../benchmarks/2026-10-27-ornith-122b.md); [model page](../../models/ornith-1.5-122b/README.md) | per-line agent tables, `agent_power.csv`, `fit_projection.csv`, `serve_probe.csv`, the GGUF headers, the profile, the agent driver; tools in [scripts/](../../scripts/) (`fit_probe.sh`, `serve_probe.sh`, `gguf_summary.py`, `prof_summary.py`, `hf_manifest.py`, `hf_get.sh`) |

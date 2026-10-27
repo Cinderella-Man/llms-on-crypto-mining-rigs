@@ -17,6 +17,7 @@ Llama's Ornith work (v3) starts from these measurements.
 |---|---|
 | Engine | [Miner Llama v2.0](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0) (tag `miner-llama-v2.0`) |
 | Model file | AtomicChat's [Ornith-1.5-122B-AD-IQ3_XXS-IQ2_S](https://huggingface.co/AtomicChat/Ornith-1.5-122B-GGUF) (47.6 GB) |
+| File check | 47,643,074,624 bytes, SHA-256 `f6285e9a98a7cebcbafdbd4cc89d05f47999e7fce3cf9be74a32b7da6aace4ea` (repository revision `6c2d63ef5523`); [scripts/hf_get.sh](../../scripts/hf_get.sh) downloads it pinned and checked |
 | Cards | all nine, split with `-ts 5,6,5,6,5,5,6,5,7` (the default split runs out of memory) |
 | Context | 49,152 tokens with `-ub 512`; up to 122,880 with `-ub 128` (prompts read slower) |
 | Sampling | the makers' settings: temperature 0.6, top-p 0.95, top-k 20, min-p 0 |
@@ -46,8 +47,11 @@ cards, `-c 49152`), 2026-10-27:
 Per task, v2.0 is 1.4× as fast as stock on the tasks both passed, and v2.0 with the MTP head ties v2.0 without it.
 
 Details, the MTP head, memory and where the time goes: [the benchmark](../../docs/benchmarks/2026-10-27-ornith-122b.md).
+Per-task and per-turn data, memory projections and GPU energy:
+[docs/data/2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md).
 
-Unsloth's [UD-Q2_K_XL](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF) (44.5 GB) runs too, with
+Unsloth's [UD-Q2_K_XL](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF) (44.5 GB; 44,533,952,768 bytes, SHA-256
+`93fb32cfb1c31b34df426b4a41d961bdaffcddbbd217d850262136cf3689ba66`, revision `745bd742473a`) runs too, with
 `-ts 8,6,5,5,5,4,5,6,6`: in single requests it decodes ~10 % faster than the AD file and reads prompts slower; it has
 not run the agent check yet.
 
