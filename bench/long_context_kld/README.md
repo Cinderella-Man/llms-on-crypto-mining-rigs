@@ -67,7 +67,10 @@ Reference: Unsloth's Flint Q8_0. Material: 24 conversations of 8,192 tokens from
 for comparison. All files on the same two RTX 3090s with the same build and flags (`-b 2048 -ub 512 -fa on`), the
 rescale on for UD-Q4_K_XL and off for the others. G3h is G3 with the GPTQ Q5_0 output head
 ([gptq_head](../../quants/gptq_head/README.md)); K1h and K2h are later mixes with the same head. Ratios are KLD
-against UD-Q4_K_XL's on the same tokens, with 95 % bootstrap intervals over chunks.
+against UD-Q4_K_XL's on the same tokens, with 95 % bootstrap intervals over chunks. The 24 conversations (`eval.txt`,
+`chunks.jsonl`), the full analysis tables and the job scripts are in
+[docs/data/2026-10-24_q106](../../docs/data/2026-10-24_q106/README.md); Q126's and Q127's are in
+[docs/data/2026-10-24_q127](../../docs/data/2026-10-24_q127/README.md).
 
 | File | Agent text, 8k: KLD | ratio | written tokens: ratio | read tokens: ratio | Wikitext 8k: ratio | Wikitext 512: ratio |
 |---|---|---|---|---|---|---|

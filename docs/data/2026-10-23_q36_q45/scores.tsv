@@ -1,0 +1,42 @@
+file	experiment	gpu_set	what	kld	kld_se	same_top_pct	same_top_se	ppl	ppl_ratio	kld99	gb_per_token
+flint-mixS4_nr_q36a	Q36	lane-a	S4 (lane reference for this GPU set)	0.121884	0.004143	88.794	0.221	21.590317	1.035587	2.289154	
+q36-S4-a1_nr	Q36	lane-a	S4 with attention output Q4_1 in layers 0-8	0.134006	0.004364	88.098	0.227	21.578682	1.035029	2.324696	
+q36-S4-a2_nr	Q36	lane-a	S4 with attention output Q4_1 in layers 9-16	0.139066	0.004831	88.127	0.226	21.609448	1.036505	2.341906	
+q36-S4-a3_nr	Q36	lane-a	S4 with attention output Q4_1 in layers 17-24	0.139615	0.004326	87.466	0.232	21.472492	1.029936	2.210924	
+q36-S4-a4_nr	Q36	lane-a	S4 with attention output Q4_1 in layers 25-32	0.128123	0.004088	87.858	0.229	21.648670	1.038386	2.343771	
+q36-S4-a5_nr	Q36	lane-a	S4 with attention output Q4_1 in layers 33-40	0.123131	0.004129	88.539	0.223	21.512131	1.031837	2.260464	
+q36-S4-a6_nr	Q36	lane-a	S4 with attention output Q4_1 in layers 41-48	0.123772	0.004183	88.799	0.221	21.536893	1.033025	2.339458	
+flint-S4L2_nr_q36a	Q36	lane-a	S4-L2: L1 with expert gate/up Q4_1 in layers 25-48, F16 router	0.144742	0.004224	87.078	0.235	21.490081	1.030779	2.258607	2.159
+flint-mixS4_nr_q36d	Q36	lane-d	S4 (lane reference for this GPU set)	0.119509	0.004273	88.740	0.221	21.559579	1.034113	2.094261	
+q36-S4-d1_nr	Q36	lane-d	S4 with expert down-projections Q4_1 in layers 2-8	0.128952	0.004576	88.765	0.221	21.527909	1.032594	2.139362	
+q36-S4-d2_nr	Q36	lane-d	S4 with expert down-projections Q4_1 in layers 9-16	0.133898	0.004640	88.181	0.226	21.533660	1.032869	2.292780	
+q36-S4-d3_nr	Q36	lane-d	S4 with expert down-projections Q4_1 in layers 17-24	0.126281	0.004396	88.407	0.224	21.557201	1.033999	2.126114	
+q36-S4-d4_nr	Q36	lane-d	S4 with expert down-projections Q4_1 in layers 25-32	0.123166	0.004330	88.627	0.222	21.514872	1.031968	1.991828	
+q36-S4-d5_nr	Q36	lane-d	S4 with expert down-projections Q4_1 in layers 33-40	0.123521	0.004273	88.632	0.222	21.604696	1.036277	2.140408	
+q36-S4-d6_nr	Q36	lane-d	S4 with expert down-projections Q4_1 in layers 41-45	0.121639	0.004277	88.578	0.223	21.530361	1.032711	2.025528	
+flint-S4L0_nr_q36d	Q36	lane-d	S4-L0: S4 with attention output Q4_1 in layers 33-48, F16 router	0.123341	0.004262	88.652	0.222	21.488249	1.030691	2.007413	2.236
+flint-S4L1_nr_q36d	Q36	lane-d	S4-L1: L0 with expert down-projections Q4_1 in layers 25-45, F16 router	0.132017	0.004239	87.676	0.230	21.576475	1.034923	2.078333	2.178
+flint-mixS4-rf16_nr	Q36	lane-d	S4 with an F16 router (retype_tensors.py ffn_gate_inp=F16)	0.121308	0.004301	88.882	0.220	21.567201	1.034478	2.028669	2.295
+flint-mixS4_nr_q36u	Q36	lane-u	S4 (lane reference for this GPU set)	0.117005	0.004228	88.971	0.219	21.484107	1.030493	2.090969	
+q36-S4-u1_nr	Q36	lane-u	S4 with expert gate/up Q4_1 in layers 2-8	0.125744	0.004565	88.750	0.221	21.613834	1.036715	2.206594	
+q36-S4-u2_nr	Q36	lane-u	S4 with expert gate/up Q4_1 in layers 9-16	0.125343	0.004312	88.618	0.222	21.599195	1.036013	2.086250	
+q36-S4-u3_nr	Q36	lane-u	S4 with expert gate/up Q4_1 in layers 17-24	0.123955	0.004352	88.632	0.222	21.702978	1.040991	2.125950	
+q36-S4-u4_nr	Q36	lane-u	S4 with expert gate/up Q4_1 in layers 25-32	0.122027	0.004309	88.941	0.220	21.397688	1.026348	2.060956	
+q36-S4-u5_nr	Q36	lane-u	S4 with expert gate/up Q4_1 in layers 33-40	0.121578	0.004216	88.716	0.222	21.418689	1.027355	2.071133	
+q36-S4-u6_nr	Q36	lane-u	S4 with expert gate/up Q4_1 in layers 41-48	0.121224	0.004184	88.725	0.221	21.555246	1.033905	2.118082	
+q36-S4-hmk1_nr	Q44	lane-a	S4 with the makers' routed experts (gate/up in every layer, down in 2-45)	0.208149	0.005299	84.319	0.255	21.824864	1.046837	2.984133	
+q36-S4-hmk2_nr	Q44	lane-d	S4 with the makers' routed experts, router and expert bias	0.208995	0.005209	84.005	0.257	21.767723	1.044096	3.030929	
+q36-S4-hmk3_nr	Q44	lane-u	S4 with the makers' output head	0.237736	0.004356	78.324	0.288	23.816425	1.142363	2.168104	
+q36-S4-hmk5_nr	Q44	lane-u	S4 with the makers' attention (q, k, v, output)	0.198820	0.005592	84.917	0.251	21.098999	1.012021	3.198587	
+flint-q45-R0_nr	Q45	lane-m	reference: S4-L0's recipe quantized from BF16 (rescale-free; router F32)	0.123082	0.004371	88.525	0.223	21.476057	1.030106	2.151000	2.285
+flint-q45-G1_nr	Q45	lane-m	R0 with expert gate/up Q8_0 in layers 2-24 and Q4_1 in 25-48	0.122205	0.003821	88.475	0.224	21.700961	1.040894	1.993581	2.375
+flint-q45-G2_nr	Q45	lane-m	R0 with expert gate/up Q8_0 in layers 2-16 and Q4_1 in 17-48	0.131302	0.004083	87.887	0.228	21.751721	1.043329	2.104545	2.331
+flint-q45-GQ8_nr	Q45	lane-m	R0 with expert gate/up Q8_0 in every layer (instead of Q5_0)	0.103201	0.003789	90.074	0.209	21.528176	1.032606	1.870466	2.507
+flint-q45-X1_nr	Q45	lane-m	R0 with the shared expert Q4_1 in layers 25-48	0.142089	0.004404	86.838	0.237	22.230944	1.066315	2.139451	2.219
+flint-q45-X2_nr	Q45	lane-m	R0 with attention k/v Q4_1 in layers 25-48	0.131125	0.004571	88.279	0.225	21.741618	1.042844	2.196983	2.263
+flint-q45-Q1_nr	Q45	lane-m	R0 with attention q Q8_0 in layers 0-16	0.111060	0.003862	88.873	0.220	21.348504	1.023988	1.687439	2.348
+flint-q45-Q2_nr	Q45	lane-m	R0 with attention q Q8_0 in layers 0-24 (the S5 recipe)	0.107529	0.003779	89.010	0.219	21.499002	1.031207	1.663662	2.377
+flint-q45-Q1D_nr	Q45	lane-m	Q1 with expert down-projections Q4_1 in layers 25-45	0.122641	0.003932	88.088	0.227	21.475546	1.030082	1.797593	2.290
+flint-q45-Q1U_nr	Q45	lane-m	Q1 with expert gate/up Q4_1 in layers 25-48	0.123248	0.003830	87.868	0.229	21.486804	1.030622	1.720460	2.329
+flint-q45-Q1DU_nr	Q45	lane-m	Q1 with both (down Q4_1 in 25-45, gate/up Q4_1 in 25-48)	0.131408	0.003754	87.270	0.233	21.541281	1.033235	1.809036	2.271
+flint-S5_nr	Q45	lane-m	S5 file: Q2's recipe with an F16 router	0.104661	0.003640	89.083	0.218	21.577161	1.034956	1.644442	2.328

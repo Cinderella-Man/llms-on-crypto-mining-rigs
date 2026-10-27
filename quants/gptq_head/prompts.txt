@@ -1,0 +1,8 @@
+The history of the Roman aqueducts begins in 312 BC, when
+def merge_sorted(a, b):\n    """Merge two sorted lists into one sorted list."""\n
+Explain how a Bloom filter works, when it is the right tool, and when it is not.
+Q: A train leaves at 9:40 and travels 168 km at 72 km/h. When does it arrive?\nA: Let's think step by step.
+User: Write a polite email declining a meeting next Tuesday.\nAssistant:
+In mathematics, a prime number is a natural number greater than 1 that
+SELECT customers.name, COUNT(orders.id) AS n FROM customers
+The three most common mistakes when tuning a PostgreSQL database are

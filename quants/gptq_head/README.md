@@ -170,7 +170,7 @@ When it is used:
   as the only choice even when the screen left it without a logit;
 - `llama-server` decides for every batch: on only if every request with a row in the batch qualifies.
 
-**Checked on the quant machine** (RTX 3090s, `llama-screen-check`; 8 prompts of prose, code, maths, chat and SQL,
+**Checked on the quant machine** (RTX 3090s, `llama-screen-check`; the 8 prompts of [prompts.txt](prompts.txt): prose, code, maths, chat and SQL,
 128 tokens each; the screen is the GPTQ Q4_0 one, M = 256):
 
 | Model | Kernels | Steps | Candidate logits bit-identical to the full head | Full top-20 among the candidates | Greedy tokens | Seeded makers' sampling |
@@ -184,7 +184,7 @@ The exact rows really are the full head's numbers: the candidates' logits match 
 because each row goes through the same kernel with the same arithmetic. The UD-Q4_K_XL row uses a screen calibrated
 on another quant's hidden states. `llama-server` with backend sampling (`-bs`) answered 24 requests (the 8 prompts
 greedy, sampled with a seed, and sampled with `n_probs`, which needs the full head) byte-identically with and without
-`LLAMA_SCREEN_HEAD=1`; its log shows the screen on for the greedy and sampled requests and off for each `n_probs` one
+`LLAMA_SCREEN_HEAD=1` ([screen_server_ab.sh](screen_server_ab.sh)); its log shows the screen on for the greedy and sampled requests and off for each `n_probs` one
 (8 switches each way). `test-backend-ops` passes the screened head's ops against the CPU backend with both kernel
 sets: `mul_mat_id` over 32,768 one-row Q8_0 experts, top-256 of 150,144, `set_rows` and `fill`.
 
@@ -196,6 +196,7 @@ build of the branch in `/opt/llama-builds/<build>` and the side file next to the
 
 ```bash
 # correctness on the Pascal cards themselves: bit-identical candidate logits, same tokens (greedy and seeded)
+# (copy quants/gptq_head/prompts.txt to <dir> first)
 ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf \
   /opt/llama-builds/<build>/bin/llama-screen-check -m <dir>/flint-S4L0.gguf -f <dir>/prompts.txt -n 64 -ngl 99 \
   -fa on -c 4096 --temp 1.0 --top-k 20 --top-p 0.95 --min-p 0 --seed 1234"
@@ -288,10 +289,15 @@ change), its routed experts (Q5_0 gate/up 9–48 and down 2–45), and, for E3, 
   matrix (attention, shared expert, dense FFN: the tensors any always-read variant may change). Each variant is then
   a second file holding those 343 matrices (1.18 GB for K2, against 29.5 GB for the whole file), from one or more donors: `DONOR.gguf@REGEX` takes
   only the matching tensors, so one GPTQ donor of all Q8_0 always-read tensors serves every demotion candidate.
-  `test_split_compose.py` checks it on synthetic files.
+  `test_split_compose.py` checks it on synthetic files. On K2-r16 itself the shared base plus K2-r16's own 343
+  matrices as the second file computes exactly K2-r16: on one 512-token chunk on the CPU, perplexity 19.896902 as in
+  K2-r16's own run, KLD 0 against its logits, the same top token everywhere
+  ([checks](../../docs/data/2026-10-24_q112e2/README.md)).
 - **Faster capture.** Built with `-DHESS_BLAS_LIB=<static OpenBLAS, OpenMP build>`, act_hessian takes each block's
   Gram matrix from `cblas_ssyrk` instead of its own loops (still added into float64), so the capture holds the GPUs
-  for less time. `check_hessians.py --compare` compares two runs file by file.
+  for less time. `check_hessians.py --compare` compares two runs file by file. On K2-r16 (4 chunks of 512 tokens, CPU
+  builds) the BLAS capture matches the numpy recount within 2.6 × 10⁻⁷ and the plain loops within 2.4 × 10⁻⁷ on all
+  10 files.
 
 Planned runs, on K2 with F16 routers (the lead body; its body tensors are K2h's): Hessians of all 196 always-read
 inputs on the same wikitext-2 train text as E1; per-expert Hessians for layers 9, 25, 41 and 47 from 1.02 M tokens,
