@@ -8,7 +8,7 @@
 #   PROXY_PORT     the proxy on this machine's loopback (pi's base URL)
 #   TASK_SET (bugfix), TASKS (all), TIME_CAP_MIN (15), TURN_CAP (40), BUDGET_MIN (none: no attempt starts after it),
 #   CTX (65536, pi's context window = the server's -c), CPU_SHARES (256), IMAGE (agent-check:0.87.1),
-#   LABEL (pascal-quants=1)
+#   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings)
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 : "${OUT:?}" "${ARM:?}" "${UPSTREAM_PORT:?}" "${PROXY_PORT:?}"
@@ -40,9 +40,11 @@ sleep 2
 echo "$(date +%H:%M:%S) $ARM: proxy 127.0.0.1:$PROXY_PORT -> 127.0.0.1:$UPSTREAM_PORT; tasks $TASK_SET/$TASKS"
 DEADLINE=()
 [ -n "${BUDGET_MIN:-}" ] && DEADLINE=(--start-deadline-min "$BUDGET_MIN")
+SAMP=()
+[ -n "${SAMPLING:-}" ] && SAMP=(--sampling "$SAMPLING")
 nice -n 19 python3 "$HERE/run.py" --arm "$ARM" --base-url "http://127.0.0.1:$PROXY_PORT/v1" --out "$OUT/res" \
   --task-set "$TASK_SET" --tasks "$TASKS" --time-cap-min "$TIME_CAP_MIN" --turn-cap "$TURN_CAP" --context "$CTX" \
-  --health-wait-min 5 --work-root "$OUT/work" "${DEADLINE[@]}" --sandbox docker --image "$IMAGE" \
+  --health-wait-min 5 --work-root "$OUT/work" "${DEADLINE[@]}" "${SAMP[@]}" --sandbox docker --image "$IMAGE" \
   --docker-label "$LABEL" --docker-prefix "$PFX" --docker-cpu-shares "$CPU_SHARES"
 rc=$?
 rm -rf "$OUT/work/$ARM"

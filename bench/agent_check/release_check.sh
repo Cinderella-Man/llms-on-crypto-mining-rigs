@@ -32,7 +32,9 @@
 #   STOCK_BIN, REL_BIN, MODEL   on the rig
 #   optional: ARMS ("stock rel"), TASK_SET (bugfix), TASKS (all), CTX (65536), RIG_LOGDIR (/tmp/agent-check-rel),
 #   TIME_CAP_MIN (15), BUDGET_MIN or per arm BUDGET_MIN_stock / BUDGET_MIN_rel (none),
-#   CPU_SHARES (256), IMAGE (agent-check:0.87.1), LABEL (pascal-quants=1)
+#   CPU_SHARES (256), IMAGE (agent-check:0.87.1), LABEL (pascal-quants=1),
+#   SAMPLING (the sampling every request carries, JSON, e.g. '{"temperature":0.6,"top_p":0.95,"top_k":20,"min_p":0}';
+#   default Flint's makers' settings, temperature 1.0, top-p 0.95, top-k 20, min-p 0)
 #   STEPS ("prep run report collect"):
 #     prep     copy the bench files to the client, build the sandbox image there (cached), validate the task set in it;
 #              touches nothing on the rig
@@ -137,7 +139,7 @@ client_arm() {  # client_arm ARM: start client_arm.sh detached on the client, fo
   cl "mkdir -p $CLIENT_OUT && cd $CAC || exit 1; OUT=$CLIENT_OUT ARM=$arm UPSTREAM_PORT=$CLIENT_PORT \
     PROXY_PORT=$PROXY_PORT TASK_SET=$TASK_SET TASKS=$TASKS TIME_CAP_MIN=$TIME_CAP_MIN \
     BUDGET_MIN=${!budget_var:-${BUDGET_MIN:-}} CTX=$CTX CPU_SHARES=$CPU_SHARES IMAGE=$IMAGE LABEL=$LABEL \
-    setsid nohup bash client_arm.sh > $CLIENT_OUT/$arm.log 2>&1 < /dev/null & sleep 1" \
+    SAMPLING='${SAMPLING:-}' setsid nohup bash client_arm.sh > $CLIENT_OUT/$arm.log 2>&1 < /dev/null & sleep 1" \
     || { say "could not start the client for $arm"; return 1; }
   CLIENT_ARM=$arm
   while true; do
