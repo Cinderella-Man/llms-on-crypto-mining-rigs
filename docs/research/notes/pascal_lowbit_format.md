@@ -51,9 +51,10 @@ Conventions, as in the other notes here:
      and 18 % less than AD-IQ3_XXS-IQ2_S's mix at 2.729 bits.
    - Uniform levels and Q2_K/Q3_K lose 11–24 %; Hadamard rotation loses 9 %; mainline's Q2_0 is unusable for
      post-training quantization.
-   - **KLD of the built file (measured, section 6):** the 122B with N2P/N3P experts and Q5_0 dense tensors (45.4 GB)
-     is closer to the Q8_0 than AD-IQ3_XXS-IQ2_S on prose, agent sessions and code. It is behind Unsloth's UD-Q2_K_XL
-     (44.5 GB) on prose and agent sessions and level on code.
+   - **KLD of the built file (measured, section 6):** the 122B with N2P/N3P experts and Q5_0 dense tensors (47.58 GB)
+     is closer to the Q8_0 than AD-IQ3_XXS-IQ2_S, a file of the same size, on prose, agent sessions and code. It is
+     behind Unsloth's UD-Q2_K_XL (44.53 GB) on prose and agent sessions and level on code. UD varies its expert bits
+     by layer.
 5. **Recommendation (section 5):**
    - First, without new code: measure the IQ Pascal kernels on the rig (done since: 6.4–9.2 ps per weight, section 3),
      and move Ornith's dense tensors off Q8_0. Est. −10 to −12 ms of a 118-ms token.
@@ -602,20 +603,23 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
 - The CPU checks: the C quantizer gives the proxy's errors exactly on 24 real expert matrices.
 - Test plan step 3: the V100 check ([correctness-v100.md](../../data/2026-10-27_lowbit/correctness-v100.md)). MMQ
   through the compute 6.1 code is left to the P106.
-- Files c (45,362 MiB) and b (47,024 MiB).
+- Files c (47.58 GB) and b (49.32 GB).
 - **File c's KLD against the Q8_0** ([Ornith KLD data](../../data/2026-10-27_ornith_kld/README.md)), mean KLD ± SE /
-  same top token:
+  same top token; file sizes in GB of 10⁹ bytes, routed-expert bytes from the files' headers
+  ([UD's](../../data/2026-10-27_ornith/header-Ornith-1.5-122B-UD-Q2_K_XL.txt)):
 
-  | File | wiki | agent | code |
-  |---|---|---|---|
-  | UD-Q2_K_XL (44.5 GB) | 0.184 ± 0.003 / 83.5 % | 0.054 ± 0.001 / 94.9 % | 0.071 ± 0.003 / 96.3 % |
-  | file c, N2P-N3P-Q5_0dense (45.4 GB) | 0.203 ± 0.003 / 82.8 % | 0.057 ± 0.001 / 94.7 % | 0.072 ± 0.003 / 96.4 % |
-  | AD-IQ3_XXS-IQ2_S (47.6 GB) | 0.233 ± 0.003 / 81.4 % | 0.066 ± 0.001 / 94.3 % | 0.081 ± 0.003 / 96.2 % |
+  | File | Size | Routed experts | wiki | agent | code |
+  |---|---|---|---|---|---|
+  | UD-Q2_K_XL | 44.53 | 39.98 | 0.184 ± 0.003 / 83.5 % | 0.054 ± 0.001 / 94.9 % | 0.071 ± 0.003 / 96.3 % |
+  | file c, N2P-N3P-Q5_0dense | 47.58 | 42.54 | 0.203 ± 0.003 / 82.8 % | 0.057 ± 0.001 / 94.7 % | 0.072 ± 0.003 / 96.4 % |
+  | AD-IQ3_XXS-IQ2_S | 47.64 | | 0.233 ± 0.003 / 81.4 % | 0.066 ± 0.001 / 94.3 % | 0.081 ± 0.003 / 96.2 % |
 
-  c is ahead of AD on all three texts, as the proxy predicted for N2P/N3P against an IQ2_S/IQ3_XXS mix, but behind
-  Unsloth's UD-Q2_K_XL on prose and about two standard errors behind on agent sessions, for 0.9 GB more. The proxy
-  compared expert formats only; UD's bytes are spread differently across tensors and layers, and that spread is
-  what c lacks. On quality alone c is not a better file than UD; its case is the decode speed.
+  At AD's size c is ahead of AD on all three texts, as the proxy predicted for N2P/N3P against an IQ2_S/IQ3_XXS mix.
+  Unsloth's UD-Q2_K_XL is 3.0 GB smaller and 2.6 GB lighter in routed experts, yet ahead of c on prose and about two
+  standard errors ahead on agent sessions. UD varies its expert formats by layer (IQ1_S to Q8_0 for gate/up, IQ2_XXS to
+  Q8_0 for down), where c uses one format per tensor kind across all layers. The proxy compared formats at one size per
+  tensor; it says nothing about how to spread the bytes over layers, and that spread is what c lacks. On quality alone c
+  is not a better file than UD. Its case is decode speed, and allocating its bits by layer (Q167).
 
 **Running at the time of writing:**
 - File b's KLD.
@@ -623,15 +627,16 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
 
 **Next, in order:**
 1. **KLD of b** against AD: b has AD's dense tensors at Q8_0, so it shows what the expert formats alone are worth.
-   Then **compare per tensor with UD-Q2_K_XL** (its tensor types, from its GGUF header) to see where UD spends the bytes
-   that c spends on its dense tensors and experts.
 2. **The P106 run** (step 4, Q188): `run/rig_kernels.sh` with the `d7a75deb3` tarball. It checks correctness on the
    card, including MMQ, and times the kernels at the IQ kernels' shapes and timing method. Compare the ps per weight with
    the estimates (3.7 / 4.0) and with the tuned IQ kernels (6.67 / 7.07). If the gain is well under ~1.3×, the IQ
    kernels (Q166) with Q5_0 dense tensors are the cheaper route to the same speed. The perf cases at 2 and 4 tokens
    show whether MTP verification needs separate work, as it does for the IQ kernels.
 3. **File d and the per-group mix** (Q187, Q167): d is c with the expert formats swapped, the donor for choosing the
-   format per tensor and 8-layer group within c's bytes. This is the route to closing c's gap to UD.
+   format per tensor and 8-layer group within c's bytes. This is the route to closing c's gap to UD. With only two
+   formats per tensor kind (2.6875 and 3.25 bits) its range is narrower than UD's (IQ1_S to Q8_0); if the mix can't
+   reach UD at c's size, more steps in N2P/N3P's family (a 1.5–2-bit and a 4-bit register-table type) or K/IQ types
+   for some layers are the next options.
 4. **The agent check** (step 6, Q189) of the best N2P/N3P file on the rig, against UD-Q2_K_XL with the IQ kernels.
    c's KLD alone doesn't justify it. It is worth running if the P106 run confirms the speed, or once Q167's mix reaches
    UD's KLD. Use a build of this branch: it carries the v3 engine as of its cut, but not the IQ kernels, which its

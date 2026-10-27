@@ -71,8 +71,8 @@ Ornith-1.5-122B files, `run/quantize.sh` with the CPU build of `67181fcd9` (its 
 
 | File | Experts (gate, up / down) | Other tensors | Size, md5 | Use |
 |---|---|---|---|---|
-| c, `Ornith-1.5-122B-N2P-N3P-Q5_0dense.gguf` | N2P / N3P | Q5_0; attention k/v, output head, token embedding Q8_0 | 45,362 MiB (3.05 bpw), `a61097be772a5e7b5a8f6b75b28a99ef` | the rig-sized candidate (~45.5 GB on the cards without the embedding and the MTP block) |
-| b, `Ornith-1.5-122B-N2P-N3P-Q8_0dense.gguf` | N2P / N3P | Q8_0, as AD-IQ3_XXS-IQ2_S | 47,024 MiB (3.16 bpw) | isolates the expert formats in KLD against AD |
+| c, `Ornith-1.5-122B-N2P-N3P-Q5_0dense.gguf` | N2P / N3P | Q5_0; attention k/v, output head, token embedding Q8_0 | 47.58 GB (45,362 MiB, 3.05 bpw), `a61097be772a5e7b5a8f6b75b28a99ef` | the rig-sized candidate (~45.8 GB on the cards without the token embedding and the MTP block, my calc) |
+| b, `Ornith-1.5-122B-N2P-N3P-Q8_0dense.gguf` | N2P / N3P | Q8_0, as AD-IQ3_XXS-IQ2_S | 49.32 GB (47,024 MiB, 3.16 bpw) | isolates the expert formats in KLD against AD |
 | d, `Ornith-1.5-122B-N3P-N2P-Q5_0dense.gguf` | N3P / N2P | as c | | the other format per expert tensor: a donor for mixes that choose per tensor and layer group (est. ~2.6 GB more than c) |
 
 File c's tensors: 98 N2P (gate and up of the 48 layers and the MTP block), 49 N3P (down), 354 Q5_0, attention k/v of
