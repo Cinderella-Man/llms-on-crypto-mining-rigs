@@ -6,7 +6,7 @@ Q8_0. The BF16 model (244 GB) does not fit the quality machine's 158 GB of VRAM,
 The files:
 - **AD-IQ3_XXS-IQ2_S** (AtomicChat, 47.6 GB);
 - **UD-Q2_K_XL** (Unsloth, 44.5 GB);
-- **N2P-N3P-Q5_0dense** (45.4 GB, 3.05 bits per weight): file c of the
+- **N2P-N3P-Q5_0dense** (47.6 GB, 3.05 bits per weight): file c of the
   [Pascal low-bit format](../../research/notes/pascal_lowbit_format.md), Miner Llama's own N2P (expert gate/up) and N3P
   (expert down) types, the dense tensors at Q5_0, quantized from the Q8_0 with Unsloth's imatrix
   ([its data](../2026-10-27_lowbit/README.md)).
@@ -34,9 +34,12 @@ Against Ornith-1.5-122B Q8_0 (mean KL divergence ± standard error / same top to
 
 - **UD-Q2_K_XL is closer to Q8_0 on all three texts.** Of the two downloaded files it is also the smaller one and decodes
   ~10 % faster on the rig, so it is the better candidate.
-- **N2P-N3P-Q5_0dense sits between the two:** within noise of UD on code, about two standard errors behind it on the
-  agent sessions, and clearly behind on prose, for 0.9 GB more. Its case is speed: its Pascal kernels are estimated to
-  read an expert weight ~1.8× faster than the IQ2_S/IQ3_XXS kernels, which only a rig run can confirm.
+- **N2P-N3P-Q5_0dense beats AD at AD's size but not UD:** closer to Q8_0 than AD on all three texts at the same
+  47.6 GB; against UD it is within noise on code, about two standard errors behind on the agent sessions and clearly
+  behind on prose, for 3.0 GB more. UD spends 2.6 GB less on its routed experts (39.98 against 42.54 GB) and varies
+  their bits by layer, so the per-layer allocation matters more than the format (Q167 tests that). Its other case is
+  speed: its Pascal kernels are estimated to read an expert weight ~1.8× faster than the IQ2_S/IQ3_XXS kernels, which
+  only a rig run can confirm.
 - **A Q5_0 output layer costs nothing measurable:** both files with it score within one standard error of their
   originals on all three texts, and read 524 MB instead of 626 MB (UD's Q6_K) or 811 MB (AD's Q8_0) for every token
   (`run/head_q5_0.py`, then `scripts/compose_gguf.py`; every other tensor byte for byte).
