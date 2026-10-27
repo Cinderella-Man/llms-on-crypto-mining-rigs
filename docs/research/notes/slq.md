@@ -334,7 +334,7 @@ What this suggests (not a measurement):
    - Ornith at ~2.9 bits is farther from its reference, so check additivity with one composed file before spending
      forward passes on random orders.
 3. **A near-Q8_0 Flint file:** the same allocator with Flint's Q8_0 as the reference and Q5_0/Q6_K/Q8_0 as the choices.
-   Worth a row after Ornith; the gain depends on how much of Q8_0's KLD margin the cheaper groups can give up.
+   The gain depends on how much of Q8_0's KLD margin the cheaper groups can give up. Now E3, registry Q168 (section 8).
 4. **Smaller ideas, not ranked:**
    - **EAR as a reported metric** next to KLD. It is easy to explain ("the BF16 model would accept 99 % of this file's
      tokens"), and it can be computed from the KLD base files without new runs of the model.
@@ -346,7 +346,7 @@ What this suggests (not a measurement):
 - Its default calibration text (FineWeb-Edu, ODC-By): this project's KLD bases and Unsloth's importance matrices
   already exist, and any new calibration source needs the publishable-data check first.
 
-### E1: Ornith-1.5-122B allocation across 8-layer groups (recommended)
+### E1: Ornith-1.5-122B allocation across 8-layer groups (recommended; registry Q167)
 
 Builds on the low-bit work ([pascal_lowbit_format.md](pascal_lowbit_format.md)): queue row L3's file c, which uses N2P
 for expert gate/up, N3P for down and Q5_0 for the dense tensors, at ~45.5 GB.
@@ -379,7 +379,7 @@ for expert gate/up, N3P for down and Q5_0 for the dense tensors, at ~45.5 GB.
 **Coordination:** the low-bit session owns the formats and file c; E1 changes only the mix across layers. It reuses
 that session's files and tools and adds one quant (d).
 
-### E2: does an EAR-driven GGUF search beat Unsloth's recipe on this project's test? (optional, needs downloads)
+### E2: does an EAR-driven GGUF search beat Unsloth's recipe on this project's test? (optional, needs downloads; registry Q180)
 
 **Question:** KLD on wikitext-2 80 × 512 and on the agent-session text, against Unsloth's Qwen3.8-27B Q8_0 as the
 base, for:
@@ -448,6 +448,25 @@ question that matters for v3 directly.
 - **The speed of the Kaitchup GGUF on the rig**: it was not run there.
 - **E1's cost and gain**: estimates. Flint's Q77 showed per-byte costs spanning two orders of magnitude between groups,
   but Ornith's spread is unknown until step 2.
+
+## 8. Where this stopped and what is next (2026-10-27, 20:45)
+
+| Item | Registry | State | Next step | Scripts and data |
+|---|---|---|---|---|
+| This note: SLQ read from source and paper, the published models' formats and bytes | Q179 | done | — | [2026-10-27_slq](../../data/2026-10-27_slq/README.md) |
+| E3: a Flint file within noise of Q8_0 at fewer bytes | Q168 | running since 20:31 on three RTX GPUs of the quality machine: the Q8_0 and q8r anchors, then 23 switches (est. end ~23:45) | `collect`, `solve` (least predicted KLD per byte read per token; picks at KLD ≤ 0.055 / 0.060 / 0.065 and files ≤ 33 / 36 / 39 GB), compose and score the picks; the Pascal-Q5 anchor, which checks additivity at the far end (2026-10-28 08:00); then agent text against Q8_0 and the rig's agent check against Q8_0 | [run/](../../data/2026-10-27_flint_near_q8/run/run.sh) (`near_q8.py`, `score.sh`) |
+| E1: Ornith-1.5-122B's N2P/N3P mix per 8-layer group | Q167 | planned | file d (the low-bit work's `quantize.sh FILE=d`, ~2.5 h of CPU); then `push`, `deltas`, `score` (18 switches on the two V100s, est. 5–8 h, from 2026-10-28 08:00), `collect` (with file c's three logs), `solve`, one validation file | [run/](../../data/2026-10-27_ornith_alloc/run/run.sh) (`alloc.py`, `score.sh`) |
+| E2: The Kaitchup's GGUFs against Unsloth's on this project's test | Q180 | planned, optional | the owner's approval of ~107 GB of downloads (section 5) | — |
+
+How to carry on:
+- Each experiment's `run.sh` drives the quality machine over SSH and takes every host and path from the environment
+  (its header lists them).
+- Its state lives in `WORK` on that machine: `run/` (the scripts as pushed), `logs/` (every compose and
+  llama-perplexity log) and the TSVs. Composed files are deleted once scored.
+- A stopped run resumes by starting `score` again; items whose log holds a result are skipped. `collect` rebuilds the
+  tables from the logs.
+- Results land in the experiment's `docs/data/` folder with a README and a row in the data index, and in the registry
+  row.
 
 ## Sources
 

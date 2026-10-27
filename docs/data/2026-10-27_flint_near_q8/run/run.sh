@@ -40,8 +40,8 @@ score)
     TAG=${TAG:-switches}
     ITEMS=${ITEMS:-"q8_0@$BASE pascal-q5@$DONOR q8r= $SWITCHES"}
     ENV="WORK=$WORK BASE=$BASE DONOR=$DONOR REF=$REF BIN=$BIN GGUFPY=$GGUFPY GPUS=$GPUS TS='${TS:-}' \
-PREFETCH=${PREFETCH:-0} EXTRA_MOUNTS='${EXTRA_MOUNTS:-}'"
-    ssh "$QM" "cd $WORK && $ENV nohup bash $WORK/run/score.sh $ITEMS > $WORK/score-$TAG.out 2>&1 < /dev/null &"
+PREFETCH=${PREFETCH:-0} MIN_FREE_GB=${MIN_FREE_GB:-50} EXTRA_MOUNTS='${EXTRA_MOUNTS:-}'"
+    ssh "$QM" "cd $WORK; $ENV nohup bash $WORK/run/score.sh $ITEMS > $WORK/score-$TAG.out 2>&1 < /dev/null &"
     echo "started: $WORK/score-$TAG.out"
     ;;
 collect)

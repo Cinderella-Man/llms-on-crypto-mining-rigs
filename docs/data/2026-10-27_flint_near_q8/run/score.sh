@@ -8,7 +8,7 @@
 #         or NAME@FILE.gguf for an existing file, scored as it is
 # Env: WORK (scratch on fast disk: run/, files/, logs/), BASE (Unsloth's Q8_0), DONOR (Flint-Pascal-Q5), REF (folder with
 #   wikitext-2-raw/wiki.test.raw and flint-BF16.c512x80.kld), BIN (llama-perplexity), GGUFPY (gguf-py), GPUS,
-#   TS (optional -ts split), PREFETCH (0 or 1), EXTRA_MOUNTS.
+#   TS (optional -ts split), PREFETCH (0 or 1), MIN_FREE_GB (default 50), EXTRA_MOUNTS.
 set -euo pipefail
 : "${WORK:?}" "${BASE:?}" "${DONOR:?}" "${REF:?}" "${BIN:?}" "${GGUFPY:?}" "${GPUS:?}"
 IMG_PY=pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime
@@ -28,6 +28,11 @@ compose() {
     local out; out=$(file_of "$1")
     case "$1" in *@*) return 0 ;; esac
     [ -s "$out" ] && return 0
+    # leave MIN_FREE_GB (default 50) free on WORK's disk after writing a file the size of BASE
+    local need avail; need=$(( ${MIN_FREE_GB:-50} + $(stat -L -c %s "$BASE") / 1000000000 + 1 ))
+    while avail=$(df -B1000000000 --output=avail "$WORK" | tail -1 | tr -d ' '); [ "$avail" -lt "$need" ]; do
+        echo "== $(date +%T) waiting: $avail GB free on $WORK, need $need"; sleep 120
+    done
     echo "== $(date +%T) compose $(name_of "$1"): $(switches_of "$1")"
     # shellcheck disable=SC2046
     docker run --rm --label pascal-quants=1 --cpu-shares 256 --network none $MOUNTS -e PYTHONPATH="$GGUFPY" "$IMG_PY" \
