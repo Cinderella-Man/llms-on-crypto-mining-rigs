@@ -1,0 +1,16 @@
+{
+ "tree": "<trees>/elixir-1.18.4",
+ "license": [
+  "Apache-2.0"
+ ],
+ "files": 246,
+ "bytes": 4455728,
+ "verdicts": {
+  "ok": 246
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {},
+ "allowed_files": 246,
+ "allowed_sha256": "367ada8b7e2e8280563255837ff20ff4745a3fcf9c3255b05ec332c72790e496"
+}

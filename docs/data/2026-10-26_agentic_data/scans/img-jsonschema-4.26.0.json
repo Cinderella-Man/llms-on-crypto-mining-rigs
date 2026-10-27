@@ -1,0 +1,16 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/jsonschema",
+ "license": [
+  "MIT"
+ ],
+ "files": 38,
+ "bytes": 463467,
+ "verdicts": {
+  "ok": 38
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {},
+ "allowed_files": 38,
+ "allowed_sha256": "b106f35864638e9431fb7c73355bda26fbf9ca12667fa4bb187c5fd634d9551e"
+}

@@ -1,0 +1,16 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/einops",
+ "license": [
+  "MIT"
+ ],
+ "files": 27,
+ "bytes": 215213,
+ "verdicts": {
+  "ok": 27
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {},
+ "allowed_files": 27,
+ "allowed_sha256": "a9a3dcc6d2d0cccff2596917b83bb119cd078f552db63ae8936b06f43e6a49cb"
+}

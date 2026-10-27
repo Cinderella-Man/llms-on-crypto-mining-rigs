@@ -1,0 +1,60 @@
+workspace	source_file	bytes	code_refs_renamed	doctest_lines_renamed	doctests_pass	status
+base		36385	1	49	49	kept
+calendar		34221	5	9	9	kept
+calendar_date_range		6731	19	0	0	kept
+calendar_iso		64576	1	155	58	kept
+calendar_time_zone_database		4086	3	0	0	kept
+config		11706	4	0	0	kept
+config_reader		4039	1	3	3	kept
+dict		10850	1	0	0	kept
+file_stat		3319	3	0	0	kept
+file_stream		7117	7	0	0	kept
+float		19387	2	43	17	kept
+function		5974	1	11	14	kept
+gen_event_stream		4298	2	0	0	kept
+hash_dict		7356	16	0	0	kept
+hash_set		7383	28	0	0	kept
+integer		11583	3	65	51	kept
+io_ansi		10364	4	2	2	kept
+io_ansi_docs		24765	1	0	0	kept
+json		12871	16	4	4	kept
+kernel_cli		16349	1	0	0	kept
+kernel_lexical_tracker		7236	1	0	0	kept
+kernel_parallel_compiler		33929	1	0	0	kept
+keyword		44034	1	123	82	kept
+list		38398	1	109	115	kept
+map		31917	1	70	57	kept
+map_set		12599	37	64	27	kept
+module_types_apply		34882	1	0	0	kept
+module_types_expr		24270	1	0	0	kept
+module_types_helpers		7484	1	0	0	kept
+module_types_of		15274	1	0	0	kept
+module_types_pattern		25821	1	0	0	kept
+option_parser		30063	1	42	35	kept
+path		28010	2	36	36	kept
+set		3304	1	0	0	kept
+stream_reducers		10430	1	0	0	kept
+string_io		13832	1	18	9	kept
+supervisor_spec		9589	1	0	0	kept
+task_supervisor		22727	3	0	0	kept
+tuple		4521	1	11	7	kept
+uri		31860	21	66	46	kept
+version		21293	20	30	20	kept
+access	lib/elixir/lib/access.ex					skipped: 8 of 50 doctests fail after the rename
+agent	lib/elixir/lib/agent.ex					skipped: 10 of 10 doctests fail after the rename
+bitwise	lib/elixir/lib/bitwise.ex					skipped: does not compile after the rename
+calendar_date	lib/elixir/lib/calendar/date.ex					skipped: does not compile after the rename
+calendar_datetime	lib/elixir/lib/calendar/datetime.ex					skipped: 52 of 90 doctests fail after the rename
+calendar_duration	lib/elixir/lib/calendar/duration.ex					skipped: 3 of 22 doctests fail after the rename
+calendar_naive_datetime	lib/elixir/lib/calendar/naive_datetime.ex					skipped: 31 of 61 doctests fail after the rename
+calendar_time	lib/elixir/lib/calendar/time.ex					skipped: 19 of 43 doctests fail after the rename
+collectable	lib/elixir/lib/collectable.ex					skipped: defines no module at its top level
+gen_event	lib/elixir/lib/gen_event.ex					skipped: does not compile after the rename
+inspect	lib/elixir/lib/inspect.ex					skipped: defines no module at its top level
+module_types_descr	lib/elixir/lib/module/types/descr.ex					skipped: does not compile after the rename
+range	lib/elixir/lib/range.ex					skipped: doctest run did not finish (the renamed module loops)
+record	lib/elixir/lib/record.ex					skipped: 1 of 3 doctests fail after the rename
+regex	lib/elixir/lib/regex.ex					skipped: 39 of 43 doctests fail after the rename
+stream	lib/elixir/lib/stream.ex					skipped: does not compile after the rename
+string	lib/elixir/lib/string.ex					skipped: 22 of 199 doctests fail after the rename
+task	lib/elixir/lib/task.ex					skipped: 3 of 3 doctests fail after the rename

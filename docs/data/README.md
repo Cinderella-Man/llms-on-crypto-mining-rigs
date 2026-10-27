@@ -64,3 +64,9 @@ Every mix's exact recipe and score is also in [quants/recipes/flint-mixes.tsv](.
 | 2026-10-24 | [2026-10-24_q92_screen_head](2026-10-24_q92_screen_head/README.md) | Q92 | the screened head in the engine: identity, server A/B | [quants/gptq_head](../../quants/gptq_head/README.md) | check scripts; the prompts and the server A/B are in `quants/gptq_head/` |
 | 2026-10-24 | [2026-10-24_research_scratch](2026-10-24_research_scratch/ESTIMATES.md) | — | the arithmetic behind "(est.)" figures: GPTQ payoff, the first-finish race, code entropy, UD-Q4_K_XL's tensor map, imatrix structure | [gptq_body.md](../research/notes/gptq_body.md), [unconventional_ideas.md](../research/notes/unconventional_ideas.md), [long_context_quality.md](../research/notes/long_context_quality.md) | the estimate scripts |
 | 2026-10-24 | — (`2026-10-24_resume`, `2026-10-24_storage`) | Q73, Q77, Q90 | nothing new: job recipes and disk moves | Q73, Q77, Q90 | nothing: the recipes are in `flint-mixes.tsv` |
+
+## Agentic data
+
+| Date | Folder | Registry | What it measured | Result | What is here |
+|---|---|---|---|---|---|
+| 2026-10-26 | [2026-10-26_agentic_data](2026-10-26_agentic_data/README.md) | Q165 | the agentic data pipeline: the Python pilot, the licence scans, the Elixir check and pilot, long run 1, the MTP heads' settings | [agentic_data_pipeline.md](../research/notes/agentic_data_pipeline.md); Q165 | the pilot's per-session table, per-module Elixir workspaces, the licence scans (15 summaries and per-file tables), run scripts; the harness texts' report is [bench/agentic_data/texts_report.md](../../bench/agentic_data/texts_report.md) |

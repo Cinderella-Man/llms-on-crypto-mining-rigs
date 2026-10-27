@@ -1,0 +1,19 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/mpmath",
+ "license": [
+  "BSD"
+ ],
+ "files": 87,
+ "bytes": 1932254,
+ "verdicts": {
+  "ok": 86,
+  "exclude:large": 1
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {
+  "2013 Timo Hartmann (thartmann15 at gmail.com)": 2
+ },
+ "allowed_files": 86,
+ "allowed_sha256": "66d4e9a36b3ca5c36dbc30a03849feeef3c4dbbc3e48529b1410213d3fee1921"
+}

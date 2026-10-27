@@ -1,0 +1,28 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/networkx",
+ "license": [
+  "BSD"
+ ],
+ "files": 598,
+ "bytes": 7229088,
+ "verdicts": {
+  "ok": 581,
+  "exclude:binary": 15,
+  "review:CC": 1,
+  "exclude:proprietary": 1
+ },
+ "families": {
+  "public-domain": 5,
+  "CC": 1,
+  "BSD": 1,
+  "proprietary": 1
+ },
+ "own_licence_folders": [],
+ "top_holders": {
+  "2011 Alex Levenson [email]": 2,
+  "2011 Diederik van Liere [email]": 2,
+  "2011 Reya Group <http://www.reyagroup.com>": 2
+ },
+ "allowed_files": 581,
+ "allowed_sha256": "02767de4a54ce557e7e943c05fb3e7691f6adb7402a8abe1b342a01e5ddfa412"
+}

@@ -1,0 +1,64 @@
+{
+ "tree": "<trees>/llama.cpp-d77256999",
+ "license": [
+  "MIT"
+ ],
+ "files": 3880,
+ "bytes": 179291879,
+ "verdicts": {
+  "ok": 3708,
+  "exclude:binary": 52,
+  "exclude:large": 38,
+  "exclude:vendored": 37,
+  "review:Apache-2.0+LicenseRef:LLVM-exception": 34,
+  "review:Apache-2.0": 9,
+  "review:Unlicense": 1,
+  "exclude:LGPL": 1
+ },
+ "families": {
+  "MIT": 73,
+  "Apache-2.0": 44,
+  "LicenseRef:LLVM-exception": 35,
+  "public-domain": 12,
+  "Unlicense": 5,
+  "BSD": 3,
+  "LGPL": 1
+ },
+ "own_licence_folders": [
+  "tools/ui/src/lib/vendors/big-integer",
+  "vendor/hash/sha256",
+  "vendor/hash/xxhash"
+ ],
+ "top_holders": {
+  "(C) 2024 Intel Corporation": 31,
+  "(c) 2023-2026 The ggml authors": 8,
+  "(C) 2025 Intel Corporation": 8,
+  "(C) 2026 Intel Corporation": 5,
+  "(C) 2018-2026 Intel Corporation": 4,
+  "Copyright 2025-2026 Arm Limited and/or its affiliates [email]": 3,
+  "(c) 2023 Georgi Gerganov": 2,
+  "(C) 2025 Codeplay Software Ltd.": 2,
+  "(C) 2012-2023 Yann Collet": 2,
+  "notice, this list of conditions and the following disclaimer": 2,
+  "2013 - 2025 Niels Lohmann <https://nlohmann.me>": 2,
+  "(c) 2005-2025 NVIDIA Corporation": 1,
+  "2015 the original author or authors.": 1,
+  "Copyright 2025 Arm Limited and/or its affiliates [email]": 1,
+  "2024 Mozilla Foundation": 1,
+  "(C) 2018-2024 Intel Corporation": 1,
+  "(c) 2013-2025 Niels Lohmann": 1,
+  "2024 Google AI and The HuggingFace Team. All rights reserved.": 1,
+  "(c) 2025 Michael Mclaughlin": 1,
+  "(c) 2025 Michael Mclaughlin [email]": 1,
+  "(c) 2023 together-science": 1,
+  "(c) 2017 yhirose": 1,
+  "(c) 2026 Yuji Hirose. All rights reserved.": 1,
+  "(c) 2021 William Casarin [email]": 1,
+  "(c) 2012-2021 Yann Collet": 1,
+  "2026 David Reid": 1,
+  "2016 - 2021 Evan Nemerson [email]": 1,
+  "(c) 2017 Sean Barrett": 1
+ },
+ "allowed_files": 3708,
+ "allowed_sha256": "52d9fa569ffee05fd0ba0864372bde1474254d736637c963ba8a61aa999d5f81"
+}

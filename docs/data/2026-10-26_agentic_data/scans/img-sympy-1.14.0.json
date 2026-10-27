@@ -1,0 +1,30 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/sympy",
+ "license": [
+  "BSD"
+ ],
+ "files": 1561,
+ "bytes": 26601980,
+ "verdicts": {
+  "ok": 1526,
+  "exclude:vendored": 14,
+  "exclude:own-licence-folder": 14,
+  "exclude:binary": 4,
+  "exclude:large": 2,
+  "review:MIT": 1
+ },
+ "families": {
+  "MIT": 2
+ },
+ "own_licence_folders": [
+  "parsing/latex"
+ ],
+ "top_holders": {
+  "2016, latex2sympy": 1,
+  "(C) 2008 Jens Rasch [email]": 1,
+  "(C) 2001, 2002 Vasil Yaroshevich": 1,
+  "and other information                                        -->": 1
+ },
+ "allowed_files": 1526,
+ "allowed_sha256": "5a43ab69eaab143b8dd27b09f891ffdfb4d6eab26d66ed878e49d4be3e3bde6a"
+}

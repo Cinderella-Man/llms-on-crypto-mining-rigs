@@ -1,0 +1,16 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/fsspec",
+ "license": [
+  "BSD"
+ ],
+ "files": 58,
+ "bytes": 793243,
+ "verdicts": {
+  "ok": 58
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {},
+ "allowed_files": 58,
+ "allowed_sha256": "5fbe92acc84969ffba8e246c9d5e8dbb50a804f578d267419ecb1b2d70f4ba59"
+}

@@ -1,0 +1,35 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/numpy",
+ "license": [
+  "BSD"
+ ],
+ "files": 868,
+ "bytes": 29492272,
+ "verdicts": {
+  "ok": 783,
+  "exclude:own-licence-folder": 50,
+  "exclude:binary": 33,
+  "exclude:large": 2
+ },
+ "families": {
+  "BSD": 3,
+  "Zlib": 1,
+  "MIT": 1
+ },
+ "own_licence_folders": [
+  "_core/include/numpy/random",
+  "random"
+ ],
+ "top_holders": {
+  "1999 -- 2011 Pearu Peterson all rights reserved.": 14,
+  "2011 -- present NumPy Developers.": 14,
+  "(C) 2010 - 2019 ridiculous_fish, [email]": 2,
+  "(C) 2016 - 2019 Kim Walisch, [email]": 2,
+  "(c) Donald Stufft and individual contributors.": 1,
+  "(c) 2006, University of Georgia and Pierre G.F. Gerard-Marchant": 1,
+  "1999, 2000, 2001 Regents of the University of California.": 1,
+  "(c) 2019 Kevin Sheppard. All rights reserved.**": 1
+ },
+ "allowed_files": 783,
+ "allowed_sha256": "16f1fe4374a7664532e90dd0d7fa898b6da34e8a1f6ce843bf9b38ef0c1033bf"
+}

@@ -1,0 +1,16 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/referencing",
+ "license": [
+  "MIT"
+ ],
+ "files": 15,
+ "bytes": 109797,
+ "verdicts": {
+  "ok": 15
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {},
+ "allowed_files": 15,
+ "allowed_sha256": "06c979aeb5dd224dc1f34bb8a23204fbabc265ef536249ded3f214bb96ad47f5"
+}

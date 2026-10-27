@@ -48,6 +48,9 @@ Tools: [bench/agentic_data](../../../bench/agentic_data/README.md). "(est.)" mar
   test suites for 4 of 8 modules (18–50 tests each); all 14 stage-2 repairs and implementations on those tests
   passed. It found nine problems, all fixed or planned (section 7): most notably, Flint needs ≥ 32k tokens per turn
   and 64k contexts, and it calls tools by the names it knows (`shell`), so the pi agent's tool names are now a profile.
+- **Long run 1** (2026-10-26/27, all seven GPUs, ~9 hours, three writers on one task list): 1,177 sessions through
+  every gate (1,053 verified), 18,885 turns, 15.4 M generated tokens; three bugs fixed on the way (section 8.3). An
+  Elixir pilot before it verified 4 of 7 sessions (section 7).
 - **Plan:** section 8 gives the command, the monitoring, the stop rules, the final gate and the approvals needed first.
 
 ## 1. What was built before, and what went wrong
@@ -326,16 +329,22 @@ each must contain its placeholders exactly once), filled with names taken from t
 per-task statement (a user-style bug report from the failing output), checked the same way; it must not contain the
 changed line or the fix. Hand-written templates by the owner are the alternative.
 
-**Whose words.** The first texts were written by Flint from requests in prose, and they kept much of that prose: the
-three system prompts share a 32-word run with their request, and tool and parameter descriptions took 59–100 % of
-their words from theirs. The requests were written by an AI assistant, so the texts carried its wording into every
-session. The requests now carry facts as data instead (names, parameters, limits, placeholders, values of at most
+**Whose words.** The first texts (`texts_v1.json`, retired) were written by Flint from requests in prose, and they
+kept much of that prose: the three system prompts share a 32-word run with their request and 59–68 % of their words
+are in it (the pi profile's two prompts: a 12-word run, 69–77 %); tool descriptions took 59–100 % of their words from
+their requests, parameter descriptions 29–100 % (`pi:read.offset` is its request word for word), statement templates
+32–100 %. The requests were written by an AI assistant, so the texts carried its wording into every session. A second
+try that named each fact by an identifier failed the other way: the longest run shared with authored text fell to
+5 words, but Flint copied the identifiers into the prose ("working in the project_folder /work", "cannot perform
+installing_software", "tests_run_with bash", `read_file`'s "max_lines_per_call is 2000"), in 6 of 105 texts, 4 of the
+5 system prompts among them. The requests now carry facts as data instead (names, parameters, limits, placeholders, values of at most
 four words) under a short instruction, and a text passes only if it shares no run of 5 words with any text the
 pipeline's authors wrote; Flint judges each text against its facts (replacing the word-overlap meaning check), and
 rewords a text that failed only by copying. The same holds for the tool runner's own lines ("wrote 12 lines to …",
 the error messages): Flint writes them, `tools.py` and the agent loop use them, and the sessions gate checks that a
 session used texts.json's. The pipeline's own words left in a session are identifiers (tool and parameter names, file
-names) and the `error:` prefix of a failed call.
+names) and the `error:` prefix of a failed call. [texts_report.md](../../../bench/agentic_data/texts_report.md) lists
+every current text with how it was written, its longest run shared with authored text and Flint's judge note.
 
 **Risks of Flint-written statements and how they are contained:**
 - *Sameness.* One writer converges on few phrasings (the pilot's templates already repeat "without changing the
@@ -473,6 +482,27 @@ What broke, and what changed:
 Not covered: the vLLM writer (the RTX 3090s were busy), prefix caching in vLLM, the dump itself, code bases other
 than the standard library, the agent loop against a 64k context.
 
+### Elixir: the CPU check and a pilot
+
+**CPU check** (no model; [cputest.sh](../../data/2026-10-26_agentic_data/run/cputest.sh)): of Elixir 1.18.4's 59
+eligible library modules, 41 make a workspace whose doctests pass after the rename into `Stdmods`; 5 do not compile
+after it, 2 define no module at their top level, 10 fail some doctests after it (`Regex` 39 of 43, `DateTime` 52 of
+90) and `Range`'s doctests never finish ([per module](../../data/2026-10-26_agentic_data/elixir_workspaces.tsv)). The
+workspaces gate passed all 41; fixture test files of three modules gave 12 stage-2 tasks with real failing doctests.
+It found two bugs: the tool runner's clean environment dropped `MIX_BUILD_PATH`, so builds landed in `/work`, and a
+helper's `a && b and c`.
+
+**Pilot** (2026-10-26, 81 minutes on the two V100s, Flint Q8_0 with 8 slots of 65,536 tokens, the first texts;
+[settings](../../data/2026-10-26_agentic_data/run/pilot-env.sh)): Flint wrote the 15 Elixir texts on the first pass;
+the workspaces of `OptionParser`, `Version`, `URI` and `Base` passed their gate. Stage 1 (24 turns per session)
+verified 1 of 4 (`Version`): `OptionParser` and `URI` ran out of turns while exploring, `Base` hit the 32k-token turn
+limit. Stage 2 on `Version`'s tests verified 3 of 3 (two bug fixes in 12–13 turns, an implementation from its `@doc`
+in 19). In all 7 sessions, 138 turns, 134,776 generated tokens; 169 tool calls, 23 failed, 8 to the other profile's
+tool names (`shell`). Every gate passed, and the dataset's NOTICE carries Elixir's NOTICE verbatim. Fixed on the way:
+the sessions gate did not know the sandbox's `mix`/`elixir` launchers in `/usr/local/bin` and checked the doctests'
+file instead of Flint's test file, and the tool runner's path guard blocked URLs. The long run then used 48 turns in
+stage 1 and the reviewed texts.
+
 ## 8. The long run
 
 ### 8.1 Approvals first (the owner)
@@ -502,8 +532,8 @@ Technical work before the run, no approval needed:
   test suites (`tasks.py` today derives stage 2 from Flint-written tests only);
 - Elixir (after 6a): `workspace.py elixir` (one module per Mix project, the rename and the changed-file line),
   mutations and removed bodies through an Elixir script in the sandbox, a doctest check in the stage-2 verification,
-  Elixir variants of the write-tests texts in `texts_spec.json` (ExUnit, `mix test`), then a pilot of ~10 sessions to
-  see whether Flint writes passing ExUnit tests before Elixir joins the long run.
+  Elixir variants of the write-tests texts in `texts_spec.json` (ExUnit, `mix test`), then a pilot (done: section 7)
+  before Elixir joins the long run.
 
 ### 8.2 The run
 
@@ -554,6 +584,36 @@ merged set. Stage 2 starts when a run's own stage 1 has finished, from its own s
 4. the dump: `feats.py seqs` on `train/sessions_seq.jsonl`, `llama-staircase-dump` with Q8_0, then
    `check_sources.py dump --parent answers.gate.json`; heads train on the generated spans only.
 
+### 8.3 Run 1
+
+From 2026-10-26 21:28 to 2026-10-27 06:37 on all seven GPUs of the quant machine, three writers worked through one task
+list (a shared `CLAIMS` folder): Flint Q8_0 in llama-server on the two V100s (8 slots of 64k), and Flint NVFP4 in vLLM,
+pipeline-parallel, on two RTX 3090s and on two RTX 3080s plus an RTX 3090. `run.sh` at `d3a92ef` with the reviewed
+texts; 73 standard-library and 19 Elixir modules, three stage-1 attempts each, up to ten repairs and three
+implementations per passing test file, 48 turns and 45 minutes per session.
+
+| Writer | Sessions through every gate |
+|---|---|
+| llama-server, Q8_0, two V100s | 86 |
+| vLLM, NVFP4, two RTX 3090s | 567 |
+| vLLM, NVFP4, two RTX 3080s + an RTX 3090 | 524 |
+| All | **1,177** (1,053 verified), 18,885 turns, 15.4 M generated tokens |
+
+What broke, and what changed:
+1. **One sandbox run tag for all writers.** All three used the tag `agx-s1`, so the first writer to finish stage 1
+   removed the others' 21 sandboxes in its cleanup and 18 sessions failed. Each run now has its own tag (`cb9698c`).
+2. **Stage 2 built tasks on gate-excluded sessions.** Its task builder took every stage-1 session whose tests passed,
+   including sessions the sessions gate had excluded; the tasks gate refused those rows (219 of 687 on one writer, from
+   20 parents) and `run.sh` stopped. The runs resumed on the rows the gate passed
+   ([stage2_resume.sh](../../data/2026-10-26_agentic_data/run/stage2_resume.sh)); `tasks.py --gate` now takes passed
+   parents only, and step `s2run` runs stage 2's sessions on an existing task file (`e1176b5`).
+3. **A dataset-gate false alarm:** one row was excluded because Flint's own reasoning named home folders as places to
+   look. The gate now flags only `/srv`, `/mnt` or `/home` followed by a real folder name (`c5230ed`).
+
+The export for Flint's MTP heads held out 7 of the 74 modules with sessions (40 sessions scored, 681k generated tokens)
+and trained on 1,108 sessions (14.3 M generated tokens); settings and the resume step are in
+[docs/data/2026-10-26_agentic_data](../../data/2026-10-26_agentic_data/README.md).
+
 ## Sources
 
 Licences and policies (primary):
@@ -588,4 +648,5 @@ Licences and policies (primary):
 This repository: [drafter](../../drafter.md), [drafter data generation](drafter_data_generation.md),
 [agent prompt cache](agent_prompt_cache.md), [bench/staircase_drafter](../../../bench/staircase_drafter/README.md),
 [bench/ngram_replay](../../../bench/ngram_replay/README.md), [bench/agent_check](../../../bench/agent_check/README.md),
-registry rows Q20, Q51 and Q161 in [quants/experiments.md](../../../quants/experiments.md).
+registry rows Q20, Q51, Q161 and Q165 in [quants/experiments.md](../../../quants/experiments.md); the pilots' tables,
+the licence scans and run 1's scripts in [docs/data/2026-10-26_agentic_data](../../data/2026-10-26_agentic_data/README.md).

@@ -1,0 +1,19 @@
+{
+ "tree": "/usr/local/lib/python3.12/dist-packages/regex",
+ "license": [
+  "Apache-2.0"
+ ],
+ "files": 5,
+ "bytes": 3003741,
+ "verdicts": {
+  "ok": 4,
+  "exclude:binary": 1
+ },
+ "families": {},
+ "own_licence_folders": [],
+ "top_holders": {
+  "(c) 1998-2001 by Secret Labs AB.  All rights reserved.": 2
+ },
+ "allowed_files": 4,
+ "allowed_sha256": "df4aba04306224145c64ac766f62b08ced9c009710f8d5e94b74d4c5dd314888"
+}
