@@ -19,6 +19,8 @@ cards, 262,144 tokens).
 | `run/build_stores.sh` | both stores, built and gated as `bench/agentic_data/run.sh`'s checks step does, then `chain.py` and `heldout_check.py` |
 | `run/replay.sh` | the offline estimate (held-out sessions with the threshold grid, the size curve, Q51) |
 | `run/rig_test.sh` | the two agent-check arms on the rig, after copying the store to the rig's internal disk and checking its SHA-256 |
+| `run/rig_replay.sh` | the paired test: six recorded traces of the control arm replayed to the release line with and without the store (same prompts, seeds and reply lengths, so both generate the same tokens), through `release_check.sh`'s replay mode |
+| `run/replay_dryrun.sh` | the replay mode's dry run without the rig: the client plays the rig with `mock_server.py` at 20 and 25 ms per token, and the report must give 1.25 |
 
 ## Commands
 
@@ -31,6 +33,12 @@ BENCH=$PWD/bench RUN=<head run> WORK=<out> Q51_GEN=<Q51 gen.jsonl> bash docs/dat
 # the rig: the store arm, then the release line again
 ENV_FILE=<release.env> STORE_SRC=<out>/full/agentic.pstore STORE_DIR=<folder on the rig> CLIENT_ROOT=<client folder> \
   OUT=agent bash docs/data/2026-10-27_answer_store/run/rig_test.sh
+# the paired replay on the rig, from the control arm's recorded requests (its proxy.jsonl on the client)
+ENV_FILE=<release.env> STORE_DIR=<folder on the rig> REPLAY_LOG=<client folder>/out-store-base/proxy.jsonl \
+  CLIENT_ROOT=<client folder> OUT=replay bash docs/data/2026-10-27_answer_store/run/rig_replay.sh
+# the replay mode's dry run (no rig): the client plays the rig with the mock server
+CLIENT=<client> WORK=<scratch folder on the client> REPLAY_LOG=<a proxy.jsonl on the client> \
+  bash docs/data/2026-10-27_answer_store/run/replay_dryrun.sh
 ```
 
 ## Provenance and licence
