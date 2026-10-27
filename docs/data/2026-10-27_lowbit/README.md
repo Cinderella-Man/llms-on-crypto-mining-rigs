@@ -3,7 +3,8 @@
 The data behind [pascal_lowbit_format.md](../../research/notes/pascal_lowbit_format.md) section 4 and registry row Q164
 in [quants/experiments.md](../../../quants/experiments.md): the importance-weighted reconstruction error of 2-, 3- and
 4-bit formats on real routed-expert matrices of Ornith-1.5-122B, and the check that Miner Llama's N2P/N3P quantizer in
-C gives the same errors as the proxy's numpy version. CPU only; no model output and no speed is measured here.
+C gives the same errors as the proxy's numpy version (CPU only), plus the scripts that build, check, time and quantize
+with the N2P/N3P types (section "The N2P/N3P engine and files").
 
 | File | What |
 |---|---|
@@ -16,6 +17,10 @@ C gives the same errors as the proxy's numpy version. CPU only; no model output 
 | `tables.json` | the N2P/N3P-style tables fitted on layer 6 (`nl2`, `nl3`), used by every run |
 | `run/proxy.sh` | the runs: CPU-only `libggml-base`, `scripts/lowbit_proxy.py`, `scripts/lowbit_summary.py` |
 | `run/check_n2p_n3p.py` | the CPU consistency check of N2P/N3P: vec_dot against the dequantized dot product (≤ 1e-5 relative), Gaussian round trip, an importance vector |
+| `run/build.sh` | the builds of fork branch `pascal-p106-v3-lowbit`: CUDA (static, compute 6.1 + sm_70, the rig tarball) and CPU-only (llama-quantize, libggml-base) |
+| `run/correctness.sh` | test-backend-ops for N2P/N3P on a V100: Pascal kernels forced, natively and through the compute 6.1 code, Q6_K regression, llama.cpp's kernel, memcheck |
+| `run/rig_kernels.sh` | the rig: install the tarball, test-backend-ops on a P106, kernel timing at Ornith's shapes against IQ2_S, IQ3_XXS, Q2_K, Q3_K, Q4_0, Q8_0 |
+| `run/quantize.sh` | the Ornith-1.5-122B N2P/N3P files (recipes below) |
 
 TSV columns: `layer`, `expert`, `kind` (gate, up, down), `count` (tokens the importance matrix routed to the expert),
 `format`, `bpw`, `err_imp` (importance-weighted relative error, the result), `err_plain` (unweighted), `seconds`.
@@ -49,3 +54,21 @@ nl3_s6x32+r256,u2s_s4x16+r256,u2a_s4x8+r256,nl2_s4x16+r256` (one argument, witho
 `tables.json`; every later run reused it.
 `summary.txt` is `lowbit_summary.py --ref IQ3_S --mix …` over the main and shift tables concatenated, followed by the
 per-layer ratios of the paired formats.
+
+## The N2P/N3P engine and files
+
+Fork branch `pascal-p106-v3-lowbit` (off `pascal-p106-v3`): `d2c86e307` the types and CPU code, `f40132341` CUDA
+dequantize, get_rows and matrix-vector products, `67181fcd9` MMQ, `2942ef390` and `37aae03b2` perf cases. Builds with
+`run/build.sh` (`KIND=cuda`, tarball `llama.cpp-20261027-37aae03b2-pascal-p106-v3-lowbit.tar.gz`, md5
+`0bfdd659a7f17356f5d64076ed279f15`; `KIND=cpu` for llama-quantize).
+
+Ornith-1.5-122B files, `run/quantize.sh` with the CPU build of `67181fcd9` (its quantizer code is that of `37aae03b2`):
+
+| File | Experts (gate, up / down) | Other tensors | Use |
+|---|---|---|---|
+| c, `Ornith-1.5-122B-N2P-N3P-Q5_0dense.gguf` | N2P / N3P | Q5_0; attention k/v, output head, token embedding Q8_0 | the rig-sized candidate (~45.5 GB on the cards without the embedding and the MTP block) |
+| b, `Ornith-1.5-122B-N2P-N3P-Q8_0dense.gguf` | N2P / N3P | Q8_0, as AD-IQ3_XXS-IQ2_S | isolates the expert formats in KLD against AD |
+
+```bash
+QM=<ssh alias> WORK=<work dir> MODELS=<folder with the two Ornith GGUF folders> OUT=<output folder> FILE=c bash run/quantize.sh
+```
