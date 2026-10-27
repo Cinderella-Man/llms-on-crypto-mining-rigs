@@ -34,7 +34,7 @@ therefore without CUDA graphs. An unmerged llama.cpp change
 | CPU contention | The generation test was repeated while a busy loop occupied one CPU core, then both cores |
 | Graph size | Number of graph nodes read from llama.cpp's verbose log for each model |
 | Monitoring | `nvidia-smi` every 0.25 s: GPU utilisation, clocks, power, throttle reasons |
-| Script | [scripts/launch_overhead_probe.sh](../../scripts/launch_overhead_probe.sh) (`DEPTHS=0,1024` for Llama-2-7B) |
+| Script | [scripts/launch_overhead_probe.sh](../../scripts/launch_overhead_probe.sh) (`DEPTHS=0,1024` for Llama-2-7B); every llama-bench row: [docs/data/2026-10-22_e0.9_launch_overhead](../data/2026-10-22_e0.9_launch_overhead/README.md) |
 
 The models are the ones used in PR #27721, at Q4_K_M quantization so that each fits on one 6 GB card, plus the dense
 Llama-2-7B from the calibration as a control:

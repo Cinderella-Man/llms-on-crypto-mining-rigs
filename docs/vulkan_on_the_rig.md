@@ -128,7 +128,9 @@ Unary operations are accepted for F32 or F16 input and output of the same type (
 
 `test-export-graph-ops` writes every distinct operation of a model's prompt and generation graphs, with its exact
 shapes and parameters, to a file that `test-backend-ops` reads with `--test-file`. It loads the model on the CPU
-only, so any PC with the Vulkan build can run it:
+only, so it needs no GPU but enough RAM for the model: the export of the makers' Q4_1 peaked at 25.7 GB, so it runs on
+a PC with the Vulkan build, not on the 4 GB rig. Both lists for that file are in
+[docs/data/2026-10-23_vulkan_prep](data/2026-10-23_vulkan_prep/README.md):
 
 ```bash
 test-export-graph-ops -m flint-int4-q4_1.gguf -c 4096 -fa on  -o flint-ops-fa-on.txt
@@ -155,7 +157,7 @@ GGML_VK_DISABLE_BFLOAT16=1`, after which the device reports `fp16: 0 | bf16: 0 |
   | 2 × 512 tokens (inside the 513-token window) | 22.63 | 22.55 |
   | 1 × 1,024 tokens (sliding window in effect) | 8.311 | 8.305 |
 
-A per-operation profile of one generated token shows ~38 Vulkan dispatches per MoE layer, of which 11 are the
+A per-operation profile of one generated token ([dispatch list](data/2026-10-23_vulkan_prep/vulkan-perf-logger-decode.txt)) shows ~38 Vulkan dispatches per MoE layer, of which 11 are the
 rescale and 6 the routing. For the whole model that is about 1,800 dispatches per token, close to the ~1,900 kernel
 launches of the CUDA graphs build.
 

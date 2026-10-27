@@ -1,0 +1,18 @@
+load time: 197 s
+  GPU0 4187 MiB
+  GPU1 4221 MiB
+  GPU2 3631 MiB
+  GPU3 4363 MiB
+  GPU4 3315 MiB
+  GPU5 4133 MiB
+  GPU6 3095 MiB
+  GPU7 3481 MiB
+  GPU8 3445 MiB
+  total 33871 MiB
+sampling: temperature 1, top_p 0.95, top_k 20; up to 3072 tokens per reply
+turn 1: context    69 tok,   69 new at  25.1 t/s, first token after  2.8 s | generated 3072 tok (0 answer) at 28.24 t/s, length | 111.7 s
+turn 2: context   107 tok,   43 new at  25.8 t/s, first token after  1.7 s | generated 3072 tok (0 answer) at 28.28 t/s, length | 110.3 s
+turn 3: context   135 tok,   33 new at  22.2 t/s, first token after  1.5 s | generated 3072 tok (0 answer) at 28.30 t/s, length | 110.0 s
+turn 4: context   163 tok,   33 new at  23.0 t/s, first token after  1.4 s | generated 2667 tok (447 answer) at 28.28 t/s, stop |  95.8 s
+turn 5: context   627 tok,  469 new at  68.2 t/s, first token after  6.9 s | generated  958 tok (133 answer) at 28.68 t/s, stop |  40.3 s
+conversation: 468 s; generated 12841 tokens at 28.31 t/s; 647 new prompt tokens at 45.5 t/s, 14.2 s waiting for first tokens

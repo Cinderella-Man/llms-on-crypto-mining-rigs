@@ -1,0 +1,14 @@
+class,type,launches_per_eval,ms_s4l0-pp4
+attention q,q4_1,49,5.84
+"attention k, v",q8_0,98,3.13
+attention output,q8_0,33,4.98
+attention output,q4_1,16,1.61
+routed experts gate/up,q5_0,47,25.65
+routed experts down,q8_0,47,16.73
+"shared expert gate, up",q8_0,94,4.68
+shared expert down,q8_0,47,2.76
+dense FFN,q8_0,6,1.33
+output head,q8_0,1,2.34
+router,f16,47,2.48
+everything else,,587,9.95
+total,,,81.49

@@ -20,8 +20,8 @@ deep). Results live in [benchmarks/](benchmarks/) and, for all work since 2026-1
 | E0.5 | Model library and transfer methods | done | Library on a separate PC; USB 3 sticks moved by hand or filled over the network ([setup](setup.md#storing-models)) |
 | E0.6 | Load path: storage source × load mode | partial | Load times on 9 cards: 199 s for 25.1 GB, 438 s for 32.5 GB, 568 s for 42.3 GB ([Flint chat](benchmarks/2026-10-23-flint-chat.md)); NFS and load modes untested |
 | E0.7 | Results log and canary set | done | Every experiment since 2026-10-22 has a row in the [quant registry](../quants/experiments.md#registry) with its reference, build and result; raw logs are kept per experiment outside the repository |
-| E0.8 | Single-card calibration | done | [single-card calibration](benchmarks/2026-10-22-single-card-calibration.md) |
-| E0.9 | Launch-overhead probes with tiny MoEs | done | [small MoE overhead](benchmarks/2026-10-22-small-moe-overhead.md) |
+| E0.8 | Single-card calibration | done | [single-card calibration](benchmarks/2026-10-22-single-card-calibration.md), [data](data/2026-10-22_e0.8_calibration/README.md) |
+| E0.9 | Launch-overhead probes with tiny MoEs | done | [small MoE overhead](benchmarks/2026-10-22-small-moe-overhead.md), [data](data/2026-10-22_e0.9_launch_overhead/README.md) |
 | E0.10 | Code-path audit | done | CUDA graphs disabled on Pascal upstream; f16 KV runs the TILE flash-attention kernel, q8_0 KV the VEC kernel plus Hadamard rotations ([attention note](research/notes/pascal_attention_long_context.md), [Q54](../quants/experiments.md)); kernel load paths read from the SASS ([Q48](../quants/experiments.md)) |
 | E0.11 | PCIe, host-staging and NCCL microbenchmarks | open | |
 | E0.12 | Thermal steady state and power-log validity | partial | Power, clocks and temperatures logged in every run; generation speed holds through 7–23-minute chats ([Flint chat](benchmarks/2026-10-23-flint-chat.md)); no 30-minute soak or tokens-per-joule figure |

@@ -233,7 +233,7 @@ coalescing matter.
 ## Results on the P106-090
 
 One card of the rig (compute 6.1, 5 SMs, 1531 MHz maximum clock): every variant passes the correctness check, an empty
-CUDA-graph node costs 1.85 µs, and a plain streaming read reaches 179 GB/s, the practical ceiling.
+CUDA-graph node costs 1.85 µs, and a plain streaming read reaches 179 GB/s, the practical ceiling. The CSVs of these runs are in [docs/data/2026-10-23_rig_step1](../../docs/data/2026-10-23_rig_step1/README.md) (first run), [docs/data/2026-10-23_q38](../../docs/data/2026-10-23_q38/README.md) (Q5_0, row-local planes, staged loads) and [docs/data/2026-10-23_q46](../../docs/data/2026-10-23_q46/README.md) (Q5_K, IQ4_XS).
 
 Matrix-vector time per Flint token (all shapes × calls per token):
 
@@ -496,3 +496,4 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `multitoken_perf.sh`, `multitoken_perf_table.py` | timing of the fork's kernels at 1–4 tokens per step on the rig, and its tables |
 | `kquant_rig.sh` | the Q4_K and Q6_K gates, the fork's Q4_K/Q6_K tests on a P106, and the tg128 A/B of the two kernels on the rig (Q149) |
 | `src/f16_mv.cuh` | `--f16`: llama.cpp's F16 one-token product, the persistent MoE kernel's router rows and the Pascal F16 kernel (Q97); `kquant_rig.sh router` runs it on the rig |
+| `tools/` | SASS and register helpers for the fork's Pascal kernels: `regs.py`, `loops.py`, `loops2.py` (registers, spills and main-loop instruction counts from a ptxas log and `cuobjdump -sass`), `classify.py` (sorts a test-backend-ops log's failures into the cases a mutation should hit) (Q78) |

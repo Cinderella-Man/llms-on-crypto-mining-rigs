@@ -50,7 +50,9 @@ Each request carries the whole history the way a chat client sends it: the user'
 answers, without its reasoning. Sampling follows Flint's GGUF defaults (temperature 1.0, top-p 0.95, top-k 20) with seeds
 1001–1005, and a reply may run to 65,536 tokens. Flint reasons before every answer; the longest reply took 7,909
 tokens and every reply ended on its own. The fork's UD-Q4_K_XL run allowed 8,192 tokens per reply, which none of its
-replies reached.
+replies reached. A lower cap does not work for Flint: in an extra run of the fork's UD-Q4_K_XL with 3,072 tokens
+per reply, the first three replies stopped at the cap while Flint was still reasoning, with no answer at all, so
+turns 2–4 started from a history of 107–163 tokens.
 
 **Fairness.** Stock llama.cpp gets every setting the fork gets. Its own switches offer nothing more on these cards: it
 disables CUDA graphs in code for every GPU older than Volta, has no switch for Flint's rescale, and its other CUDA
@@ -151,3 +153,5 @@ ssh rig "LLAMA_NO_MOE_DOWN_RESCALE=1 BIN=/path/to/llama.cpp/build/bin MODEL=/pat
 ```
 
 Drop `LLAMA_NO_MOE_DOWN_RESCALE=1` for UD-Q4_K_XL, and add `-ts 6,6,5,5,6,5,5,6,6` to `SERVER_ARGS` for Q8_0.
+Every run's per-turn table and transcript, and the exact commands, are in
+[docs/data/2026-10-23_chat](../data/2026-10-23_chat/README.md).

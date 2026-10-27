@@ -1,0 +1,12 @@
+model /mnt/models2/flint/flint-S4L0.gguf, GPUs '0,1,2,3,4,5', context 8192, 2026-10-23T20:00:05+02:00
+-- plain: loaded in 436 s ()
+plain                  steps  510 | verified per step 1.00 |   25.9 ms per step | 38.55 tok/s | drafts accepted 0/0
+-- synth_w3: loaded in 435 s (--spec-type ngram-simple --spec-ngram-simple-size-n 1 --spec-ngram-simple-size-m 2 --spec-synth-len 3)
+synth width 3          steps  176 | verified per step 2.90 |   57.7 ms per step | 50.25 tok/s | drafts accepted 334/334
+-- synth_w5: loaded in 437 s (--spec-type ngram-simple --spec-ngram-simple-size-n 1 --spec-ngram-simple-size-m 4 --spec-synth-len 5)
+synth width 5          steps  126 | verified per step 4.05 |   92.1 ms per step | 43.96 tok/s | drafts accepted 384/384
+
+server, backend sampling: verified tokens per step -> ms per step (ratio to plain generation)
+   1.00 ->   25.9 ms  (1.00x)
+   2.90 ->   57.7 ms  (2.22x)
+   4.05 ->   92.1 ms  (3.55x)

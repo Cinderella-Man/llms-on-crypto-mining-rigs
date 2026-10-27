@@ -580,9 +580,9 @@ bits. The integer part of each block's dot product is exact: `(lo << 4) + hi` eq
 
 Prompt processing is unchanged (it runs on MMQ). On S4-L0 the port without Q5_0 gives 35.51 tok/s; UD-Q4_K_XL with only
 its Q8_0 part ported gave 27.48, and stock llama.cpp gives it 17.56, so Unsloth's file now runs 1.94× as fast. Its
-profiled GPU time per token goes from 55.8 to 40.3 ms: Q8_0 20.5 → 14.6, Q5_K 11.8 → 6.2, IQ4_XS 7.1 → 3.3 ms.
+profiled GPU time per token goes from 55.8 to 40.3 ms: Q8_0 20.5 → 14.6, Q5_K 11.8 → 6.2, IQ4_XS 7.1 → 3.3 ms. Per tensor class: [docs/data/2026-10-23_q46](../../data/2026-10-23_q46/README.md).
 
-**Where it comes from.** GPU time per S4-L0 token from the fork's event profiler (`GGML_CUDA_PROFILE`, 24 tokens, sum
+**Where it comes from.** GPU time per S4-L0 token ([data](../../data/2026-10-23_q38/README.md)) from the fork's event profiler (`GGML_CUDA_PROFILE`, 24 tokens, sum
 over the 6 cards). Every launch carries 5–8 µs of event overhead in these numbers, the same for both columns, so the
 differences are exact and the totals are higher than the unprofiled token time:
 

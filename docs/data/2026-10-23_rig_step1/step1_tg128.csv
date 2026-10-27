@@ -1,0 +1,14 @@
+run,build,build_dir,file,file_bytes,rescale,cards,pp512_tok_s,pp512_sd,tg128_tok_s,tg128_sd,tg128_samples
+A,graphs61,llama.cpp-20261022-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type,makers' Q4_1 (flint-int4-q4_1.gguf),25987497088,on,5,169.57,25.46,28.07,0.08,28.16 28.01 28.05
+B,graphs61 + 2 warps,llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps,makers' Q4_1 (flint-int4-q4_1.gguf),25987497088,on,5,169.45,25.27,31.82,0.29,32.15 31.65 31.66
+C,graphs61,llama.cpp-20261022-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type,"makers-fast (Q4_1_64, fused QKV, F16 router)",23875058816,off,5,102.78,9.19,30.91,0.29,30.58 31.06 31.10
+D,graphs61 + 2 warps,llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps,"makers-fast (Q4_1_64, fused QKV, F16 router)",23875058816,off,5,102.79,9.62,35.51,0.39,35.07 35.71 35.76
+E,graphs61,llama.cpp-20261022-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type,Unsloth UD-Q4_K_XL,25049218176,on,6,192.9,11.99,19.53,0.34,19.71 19.74 19.14
+F,graphs61 + 2 warps,llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps,Unsloth UD-Q4_K_XL,25049218176,on,6,193.46,11.16,24.8,0.04,24.80 24.84 24.75
+G,graphs61,llama.cpp-20261022-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type,Miner S4-L0,32460176512,off,6,198.76,12.07,23.09,0.14,23.25 23.02 23.01
+H,graphs61 + 2 warps,llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps,Miner S4-L0,32460176512,off,6,196.49,15.8,26.29,0.02,26.26 26.30 26.29
+I,graphs61 + 2 warps for rows >= 2048 (wide-K),llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps-widek,Miner S4-L0,32460176512,off,6,199.36,10.82,28.02,0.22,28.27 27.91 27.86
+J,graphs61 + 2 warps for rows >= 2048 (wide-K),llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps-widek,Unsloth UD-Q4_K_XL,25049218176,on,6,192.93,11.56,24.58,0.05,24.59 24.63 24.53
+K,stock d77256999,llama.cpp-20261022-d77256999,Unsloth UD-Q4_K_XL,25049218176,on (no switch),6,193.91,9.48,17.56,0.35,17.76 17.76 17.16
+L,graphs61 + 2 warps for rows >= 2048 (wide-K),llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps-widek,Unsloth Q8_0,42295606400,on,9,185.43,19.6,25.15,0.02,25.14 25.15 25.17
+M,graphs61 + 2 warps for rows >= 2048 (wide-K),llama.cpp-20261023-d77256999-graphs61-moe-down-rescale-env-flint-prism-hadamard-q4_1_64-type-mmvq-pascal-2warps-widek,Unsloth Q8_0,42295606400,off,9,188.65,18.24,26.78,0.03,26.75 26.80 26.79

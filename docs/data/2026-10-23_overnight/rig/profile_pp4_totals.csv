@@ -1,0 +1,2 @@
+run,devices,evaluations,gpu_ms_per_eval,gpu_ms_per_eval_by_device,wall_ms_per_eval
+s4l0-pp4,6,24,81.485,14.089 13.453 13.475 15.280 12.824 12.364,130.446

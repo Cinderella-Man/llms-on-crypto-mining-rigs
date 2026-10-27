@@ -39,7 +39,7 @@ memory is reused hundreds of times, and the speed is limited by arithmetic throu
 | Command | `llama-bench -ngl 99 -fa 0,1 -p 512 -n 128 -r 5`, with one card made visible at a time through `CUDA_VISIBLE_DEVICES` |
 | Models | [TheBloke/Llama-2-7B-GGUF](https://huggingface.co/TheBloke/Llama-2-7B-GGUF): Q4_0 (3.83 GB), Q4_K_M (4.08 GB), Q8_0 (7.16 GB); checksums match the published files |
 | Monitoring | `nvidia-smi` sampled every 0.5 s: P-state, SM and memory clocks, power, temperature, utilisation, throttle reasons |
-| Script | [scripts/bench.sh](../../scripts/bench.sh) with `GPU_SETS="0 1 2 3 4 5 6 7 8"` and `BENCH_ARGS="-ngl 99 -fa 0,1 -p 512 -n 128 -r 5"`; the split runs used `GPU_SETS="0,1 0,4 0,1,2,3,4,5,6,7,8"` |
+| Script | [scripts/bench.sh](../../scripts/bench.sh) with `GPU_SETS="0 1 2 3 4 5 6 7 8"` and `BENCH_ARGS="-ngl 99 -fa 0,1 -p 512 -n 128 -r 5"`; the split runs used `GPU_SETS="0,1 0,4 0,1,2,3,4,5,6,7,8"`; power and clock summary per card: [docs/data/2026-10-22_e0.8_calibration](../data/2026-10-22_e0.8_calibration/README.md) |
 
 How to read the result columns:
 

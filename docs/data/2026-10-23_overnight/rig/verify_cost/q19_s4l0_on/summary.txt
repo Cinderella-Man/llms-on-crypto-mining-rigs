@@ -1,0 +1,20 @@
+model /mnt/models2/flint/flint-S4L0.gguf, GPUs '0,1,2,3,4,5', context 32768, 2026-10-23T19:37:14+02:00
+== llama-bench: pp1,2,3,4,5,6,7,8 and tg64, depth 0 (19:37:14)
+tg64: 30.8 ms per token (32.43 tok/s)
+pp1:    57.0 ms per step, 1.00x pp1
+pp2:    94.1 ms per step, 1.65x pp1
+pp3:    86.0 ms per step, 1.51x pp1
+pp4:   117.3 ms per step, 2.06x pp1
+pp5:   163.6 ms per step, 2.87x pp1
+pp6:   170.0 ms per step, 2.98x pp1
+pp7:   207.6 ms per step, 3.64x pp1
+pp8:   212.1 ms per step, 3.72x pp1
+llama-bench: tokens per step -> ms (ratio to pp1)
+      1 ->   57.0 ms  (1.00x)
+      2 ->   94.1 ms  (1.65x)
+      3 ->   86.0 ms  (1.51x)
+      4 ->  117.3 ms  (2.06x)
+      5 ->  163.6 ms  (2.87x)
+      6 ->  170.0 ms  (2.98x)
+      7 ->  207.6 ms  (3.64x)
+      8 ->  212.1 ms  (3.72x)

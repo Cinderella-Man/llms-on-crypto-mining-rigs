@@ -1,0 +1,2413 @@
+{
+ "setups": [
+  {
+   "name": "6 cards, 9/8/8/8/8/8 layers",
+   "total_ms": 26.8,
+   "layers": [
+    9,
+    8,
+    8,
+    8,
+    8,
+    8
+   ],
+   "stage_ms": [
+    3.912,
+    3.478,
+    3.478,
+    3.478,
+    3.478,
+    5.978
+   ],
+   "hop_ms": 0.3,
+   "gap_ms": 1.5,
+   "plain_tok_s": 37.31,
+   "cap_tok_s": 159.3
+  },
+  {
+   "name": "9 cards, 6/6/6/6/5/5/5/5/5 layers",
+   "total_ms": 31.3,
+   "layers": [
+    6,
+    6,
+    6,
+    6,
+    5,
+    5,
+    5,
+    5,
+    5
+   ],
+   "stage_ms": [
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    2.541,
+    2.541,
+    2.541,
+    2.541,
+    5.041
+   ],
+   "hop_ms": 0.3,
+   "gap_ms": 1.5,
+   "plain_tok_s": 31.95,
+   "cap_tok_s": 187.2
+  },
+  {
+   "name": "9 cards, head + 2 layers on the last",
+   "total_ms": 31.3,
+   "layers": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    5,
+    2
+   ],
+   "stage_ms": [
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    2.541,
+    3.516
+   ],
+   "hop_ms": 0.3,
+   "gap_ms": 1.5,
+   "plain_tok_s": 31.95,
+   "cap_tok_s": 262.0
+  }
+ ],
+ "configs": {
+  "6 cards, 9/8/8/8/8/8 layers | copy, match >= 2 | depth 5": {
+   "speedup": {
+    "chat": 1.1119,
+    "code": 1.2588,
+    "edit": 1.7495,
+    "agent": 1.2084,
+    "all": 1.3458,
+    "edit/answer": 4.0139
+   },
+   "tok_s": {
+    "chat": 41.49,
+    "code": 46.97,
+    "edit": 65.28,
+    "agent": 45.09,
+    "all": 50.21,
+    "edit/answer": 149.77
+   },
+   "hit_share": 0.335515873015873,
+   "miss_share": 0.1637973137973138,
+   "wasted_ms_per_token": 11.420208286610324,
+   "cancelled": 53595,
+   "guessed": 75578
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy, match >= 3 | depth 5": {
+   "speedup": {
+    "chat": 1.0621,
+    "code": 1.2022,
+    "edit": 1.6501,
+    "agent": 1.1459,
+    "all": 1.2804,
+    "edit/answer": 3.9743
+   },
+   "tok_s": {
+    "chat": 39.63,
+    "code": 44.86,
+    "edit": 61.57,
+    "agent": 42.76,
+    "all": 47.77,
+    "edit/answer": 148.29
+   },
+   "hit_share": 0.2859432234432234,
+   "miss_share": 0.07788461538461539,
+   "wasted_ms_per_token": 5.489012016894073,
+   "cancelled": 25493,
+   "guessed": 44228
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy, match >= 4 | depth 5": {
+   "speedup": {
+    "chat": 1.0337,
+    "code": 1.1685,
+    "edit": 1.5782,
+    "agent": 1.1093,
+    "all": 1.2391,
+    "edit/answer": 3.941
+   },
+   "tok_s": {
+    "chat": 38.57,
+    "code": 43.6,
+    "edit": 58.89,
+    "agent": 41.39,
+    "all": 46.23,
+    "edit/answer": 147.05
+   },
+   "hit_share": 0.251984126984127,
+   "miss_share": 0.0463980463980464,
+   "wasted_ms_per_token": 3.298730750541558,
+   "cancelled": 15191,
+   "guessed": 31701
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy, match >= 6 | depth 5": {
+   "speedup": {
+    "chat": 1.0123,
+    "code": 1.1298,
+    "edit": 1.4872,
+    "agent": 1.069,
+    "all": 1.1939,
+    "edit/answer": 3.86
+   },
+   "tok_s": {
+    "chat": 37.77,
+    "code": 42.16,
+    "edit": 55.49,
+    "agent": 39.89,
+    "all": 44.55,
+    "edit/answer": 144.03
+   },
+   "hit_share": 0.21204212454212454,
+   "miss_share": 0.021855921855921855,
+   "wasted_ms_per_token": 1.5805023547878263,
+   "cancelled": 7152,
+   "guessed": 21045
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy, match >= 8 | depth 5": {
+   "speedup": {
+    "chat": 1.0045,
+    "code": 1.1063,
+    "edit": 1.4299,
+    "agent": 1.0484,
+    "all": 1.1676,
+    "edit/answer": 3.7824
+   },
+   "tok_s": {
+    "chat": 37.48,
+    "code": 41.28,
+    "edit": 53.35,
+    "agent": 39.12,
+    "all": 43.57,
+    "edit/answer": 141.13
+   },
+   "hit_share": 0.18748473748473748,
+   "miss_share": 0.014316239316239316,
+   "wasted_ms_per_token": 1.0432254989906138,
+   "cancelled": 4682,
+   "guessed": 16966
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy, match = 12 | depth 5": {
+   "speedup": {
+    "chat": 1.0007,
+    "code": 1.0771,
+    "edit": 1.3551,
+    "agent": 1.0294,
+    "all": 1.1361,
+    "edit/answer": 3.6596
+   },
+   "tok_s": {
+    "chat": 37.34,
+    "code": 40.19,
+    "edit": 50.56,
+    "agent": 38.41,
+    "all": 42.39,
+    "edit/answer": 136.55
+   },
+   "hit_share": 0.15645604395604396,
+   "miss_share": 0.008653846153846154,
+   "wasted_ms_per_token": 0.6352355722507363,
+   "cancelled": 2827,
+   "guessed": 13078
+  },
+  "6 cards, 9/8/8/8/8/8 layers | fixed key 4 (ngram-simple/map-k lookup) | depth 5": {
+   "speedup": {
+    "chat": 1.0341,
+    "code": 1.1614,
+    "edit": 1.5306,
+    "agent": 1.1077,
+    "all": 1.2257,
+    "edit/answer": 3.3429
+   },
+   "tok_s": {
+    "chat": 38.59,
+    "code": 43.34,
+    "edit": 57.11,
+    "agent": 41.33,
+    "all": 45.74,
+    "edit/answer": 124.73
+   },
+   "hit_share": 0.240491452991453,
+   "miss_share": 0.05789072039072039,
+   "wasted_ms_per_token": 4.14451951110053,
+   "cancelled": 18954,
+   "guessed": 34711
+  },
+  "6 cards, 9/8/8/8/8/8 layers | ngram-cache counts | depth 5": {
+   "speedup": {
+    "chat": 1.1101,
+    "code": 1.2484,
+    "edit": 1.6825,
+    "agent": 1.211,
+    "all": 1.3266,
+    "edit/answer": 3.4619
+   },
+   "tok_s": {
+    "chat": 41.42,
+    "code": 46.58,
+    "edit": 62.78,
+    "agent": 45.19,
+    "all": 49.5,
+    "edit/answer": 129.18
+   },
+   "hit_share": 0.32150488400488403,
+   "miss_share": 0.1334096459096459,
+   "wasted_ms_per_token": 8.839186850563545,
+   "cancelled": 40864,
+   "guessed": 61929
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 5": {
+   "speedup": {
+    "chat": 1.1108,
+    "code": 1.2564,
+    "edit": 1.7364,
+    "agent": 1.2141,
+    "all": 1.3419,
+    "edit/answer": 4.0427
+   },
+   "tok_s": {
+    "chat": 41.45,
+    "code": 46.88,
+    "edit": 64.79,
+    "agent": 45.3,
+    "all": 50.07,
+    "edit/answer": 150.85
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 8.804342341331363,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.3 | depth 5": {
+   "speedup": {
+    "chat": 1.2909,
+    "code": 1.3032,
+    "edit": 1.2934,
+    "agent": 1.2879,
+    "all": 1.2957,
+    "edit/answer": 1.2889
+   },
+   "tok_s": {
+    "chat": 48.17,
+    "code": 48.63,
+    "edit": 48.26,
+    "agent": 48.06,
+    "all": 48.35,
+    "edit/answer": 48.09
+   },
+   "hit_share": 0.2980006105006105,
+   "miss_share": 0.7014194139194139,
+   "wasted_ms_per_token": 48.25675263510433,
+   "cancelled": 229504,
+   "guessed": 249029
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.4 | depth 5": {
+   "speedup": {
+    "chat": 1.4326,
+    "code": 1.4457,
+    "edit": 1.4373,
+    "agent": 1.4388,
+    "all": 1.4388,
+    "edit/answer": 1.4287
+   },
+   "tok_s": {
+    "chat": 53.45,
+    "code": 53.94,
+    "edit": 53.63,
+    "agent": 53.69,
+    "all": 53.69,
+    "edit/answer": 53.31
+   },
+   "hit_share": 0.39829059829059826,
+   "miss_share": 0.6011294261294261,
+   "wasted_ms_per_token": 41.645570942654516,
+   "cancelled": 196678,
+   "guessed": 222774
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.5 | depth 5": {
+   "speedup": {
+    "chat": 1.608,
+    "code": 1.6205,
+    "edit": 1.6134,
+    "agent": 1.6147,
+    "all": 1.6143,
+    "edit/answer": 1.608
+   },
+   "tok_s": {
+    "chat": 60.0,
+    "code": 60.47,
+    "edit": 60.2,
+    "agent": 60.25,
+    "all": 60.24,
+    "edit/answer": 60.0
+   },
+   "hit_share": 0.49694749694749696,
+   "miss_share": 0.5024725274725275,
+   "wasted_ms_per_token": 35.11396370635594,
+   "cancelled": 164398,
+   "guessed": 196958
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.6 | depth 5": {
+   "speedup": {
+    "chat": 1.837,
+    "code": 1.8531,
+    "edit": 1.8464,
+    "agent": 1.8726,
+    "all": 1.8472,
+    "edit/answer": 1.8679
+   },
+   "tok_s": {
+    "chat": 68.54,
+    "code": 69.15,
+    "edit": 68.9,
+    "agent": 69.87,
+    "all": 68.93,
+    "edit/answer": 69.7
+   },
+   "hit_share": 0.5989468864468864,
+   "miss_share": 0.400473137973138,
+   "wasted_ms_per_token": 28.29873729161669,
+   "cancelled": 131025,
+   "guessed": 170268
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 5": {
+   "speedup": {
+    "chat": 2.1431,
+    "code": 2.1621,
+    "edit": 2.1535,
+    "agent": 2.1552,
+    "all": 2.1536,
+    "edit/answer": 2.1664
+   },
+   "tok_s": {
+    "chat": 79.97,
+    "code": 80.68,
+    "edit": 80.35,
+    "agent": 80.42,
+    "all": 80.36,
+    "edit/answer": 80.84
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 21.45157228825469,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.8 | depth 5": {
+   "speedup": {
+    "chat": 2.5727,
+    "code": 2.5924,
+    "edit": 2.598,
+    "agent": 2.5533,
+    "all": 2.5874,
+    "edit/answer": 2.6096
+   },
+   "tok_s": {
+    "chat": 96.0,
+    "code": 96.73,
+    "edit": 96.94,
+    "agent": 95.27,
+    "all": 96.54,
+    "edit/answer": 97.37
+   },
+   "hit_share": 0.8011752136752137,
+   "miss_share": 0.19824481074481073,
+   "wasted_ms_per_token": 14.395472919937744,
+   "cancelled": 64871,
+   "guessed": 117364
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.9 | depth 5": {
+   "speedup": {
+    "chat": 3.2111,
+    "code": 3.2065,
+    "edit": 3.223,
+    "agent": 3.2101,
+    "all": 3.2139,
+    "edit/answer": 3.2504
+   },
+   "tok_s": {
+    "chat": 119.82,
+    "code": 119.65,
+    "edit": 120.26,
+    "agent": 119.78,
+    "all": 119.92,
+    "edit/answer": 121.28
+   },
+   "hit_share": 0.8995573870573871,
+   "miss_share": 0.09986263736263737,
+   "wasted_ms_per_token": 7.3688507326013095,
+   "cancelled": 32675,
+   "guessed": 91614
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.95 | depth 5": {
+   "speedup": {
+    "chat": 3.6683,
+    "code": 3.6566,
+    "edit": 3.6663,
+    "agent": 3.6752,
+    "all": 3.664,
+    "edit/answer": 3.6932
+   },
+   "tok_s": {
+    "chat": 136.88,
+    "code": 136.44,
+    "edit": 136.8,
+    "agent": 137.13,
+    "all": 136.72,
+    "edit/answer": 137.81
+   },
+   "hit_share": 0.9494810744810744,
+   "miss_share": 0.04993894993894994,
+   "wasted_ms_per_token": 3.7192400201841767,
+   "cancelled": 16341,
+   "guessed": 78551
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else oracle p 0.5 | depth 5": {
+   "speedup": {
+    "chat": 1.6099,
+    "code": 1.7875,
+    "edit": 2.199,
+    "agent": 1.6801,
+    "all": 1.8534,
+    "edit/answer": 4.0369
+   },
+   "tok_s": {
+    "chat": 60.07,
+    "code": 66.7,
+    "edit": 82.05,
+    "agent": 62.69,
+    "all": 69.16,
+    "edit/answer": 150.63
+   },
+   "hit_share": 0.6013125763125763,
+   "miss_share": 0.3981074481074481,
+   "wasted_ms_per_token": 27.864879363830585,
+   "cancelled": 130239,
+   "guessed": 169637
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else oracle p 0.7 | depth 5": {
+   "speedup": {
+    "chat": 2.0913,
+    "code": 2.2672,
+    "edit": 2.608,
+    "agent": 2.1588,
+    "all": 2.3199,
+    "edit/answer": 4.0896
+   },
+   "tok_s": {
+    "chat": 78.03,
+    "code": 84.6,
+    "edit": 97.32,
+    "agent": 80.55,
+    "all": 86.56,
+    "edit/answer": 152.6
+   },
+   "hit_share": 0.742979242979243,
+   "miss_share": 0.2564407814407814,
+   "wasted_ms_per_token": 18.330182309187332,
+   "cancelled": 83889,
+   "guessed": 132569
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 1": {
+   "speedup": {
+    "chat": 1.0854,
+    "code": 1.1768,
+    "edit": 1.4262,
+    "agent": 1.1558,
+    "all": 1.226,
+    "edit/answer": 2.061
+   },
+   "tok_s": {
+    "chat": 40.5,
+    "code": 43.91,
+    "edit": 53.22,
+    "agent": 43.13,
+    "all": 45.75,
+    "edit/answer": 76.9
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 1.9313093369213645,
+   "cancelled": 8516,
+   "guessed": 30317
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 1": {
+   "speedup": {
+    "chat": 1.6511,
+    "code": 1.6555,
+    "edit": 1.6567,
+    "agent": 1.6545,
+    "all": 1.6547,
+    "edit/answer": 1.6666
+   },
+   "tok_s": {
+    "chat": 61.61,
+    "code": 61.77,
+    "edit": 61.82,
+    "agent": 61.73,
+    "all": 61.74,
+    "edit/answer": 62.19
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 4.051370823054401,
+   "cancelled": 19650,
+   "guessed": 65482
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 2": {
+   "speedup": {
+    "chat": 1.1054,
+    "code": 1.2317,
+    "edit": 1.6219,
+    "agent": 1.1972,
+    "all": 1.304,
+    "edit/answer": 3.0385
+   },
+   "tok_s": {
+    "chat": 41.25,
+    "code": 45.96,
+    "edit": 60.52,
+    "agent": 44.67,
+    "all": 48.66,
+    "edit/answer": 113.38
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 3.9444024258050874,
+   "cancelled": 16711,
+   "guessed": 38512
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 2": {
+   "speedup": {
+    "chat": 1.9752,
+    "code": 1.9909,
+    "edit": 1.985,
+    "agent": 1.9881,
+    "all": 1.9845,
+    "edit/answer": 1.9937
+   },
+   "tok_s": {
+    "chat": 73.7,
+    "code": 74.29,
+    "edit": 74.07,
+    "agent": 74.18,
+    "all": 74.05,
+    "edit/answer": 74.39
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 8.599083501532723,
+   "cancelled": 39288,
+   "guessed": 85120
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 3": {
+   "speedup": {
+    "chat": 1.1106,
+    "code": 1.2551,
+    "edit": 1.73,
+    "agent": 1.2133,
+    "all": 1.3399,
+    "edit/answer": 3.9715
+   },
+   "tok_s": {
+    "chat": 41.44,
+    "code": 46.83,
+    "edit": 64.55,
+    "agent": 45.27,
+    "all": 50.0,
+    "edit/answer": 148.19
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 5.790557673618359,
+   "cancelled": 24792,
+   "guessed": 46593
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 3": {
+   "speedup": {
+    "chat": 2.1352,
+    "code": 2.1539,
+    "edit": 2.1456,
+    "agent": 2.1472,
+    "all": 2.1456,
+    "edit/answer": 2.1585
+   },
+   "tok_s": {
+    "chat": 79.67,
+    "code": 80.37,
+    "edit": 80.06,
+    "agent": 80.12,
+    "all": 80.06,
+    "edit/answer": 80.54
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 13.026936906631306,
+   "cancelled": 58908,
+   "guessed": 104740
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 4": {
+   "speedup": {
+    "chat": 1.1108,
+    "code": 1.2564,
+    "edit": 1.7364,
+    "agent": 1.2141,
+    "all": 1.3419,
+    "edit/answer": 4.0427
+   },
+   "tok_s": {
+    "chat": 41.45,
+    "code": 46.88,
+    "edit": 64.79,
+    "agent": 45.3,
+    "all": 50.07,
+    "edit/answer": 150.85
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 7.452306384091416,
+   "cancelled": 32870,
+   "guessed": 54671
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 4": {
+   "speedup": {
+    "chat": 2.1431,
+    "code": 2.1621,
+    "edit": 2.1535,
+    "agent": 2.1552,
+    "all": 2.1536,
+    "edit/answer": 2.1664
+   },
+   "tok_s": {
+    "chat": 79.97,
+    "code": 80.68,
+    "edit": 80.35,
+    "agent": 80.42,
+    "all": 80.36,
+    "edit/answer": 80.84
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 17.509253102339407,
+   "cancelled": 78513,
+   "guessed": 124345
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 5 | hop 0.1": {
+   "speedup": {
+    "chat": 1.1111,
+    "code": 1.2569,
+    "edit": 1.7387,
+    "agent": 1.2146,
+    "all": 1.3427,
+    "edit/answer": 4.0648
+   },
+   "tok_s": {
+    "chat": 41.46,
+    "code": 46.9,
+    "edit": 64.88,
+    "agent": 45.32,
+    "all": 50.1,
+    "edit/answer": 151.67
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 9.217691747027805,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 5 | hop 0.1": {
+   "speedup": {
+    "chat": 2.1475,
+    "code": 2.1666,
+    "edit": 2.1579,
+    "agent": 2.1597,
+    "all": 2.1581,
+    "edit/answer": 2.171
+   },
+   "tok_s": {
+    "chat": 80.13,
+    "code": 80.84,
+    "edit": 80.52,
+    "agent": 80.58,
+    "all": 80.52,
+    "edit/answer": 81.01
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 22.458688358124572,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 5 | hop 0.6": {
+   "speedup": {
+    "chat": 1.1105,
+    "code": 1.2555,
+    "edit": 1.733,
+    "agent": 1.2134,
+    "all": 1.3407,
+    "edit/answer": 4.0099
+   },
+   "tok_s": {
+    "chat": 41.44,
+    "code": 46.85,
+    "edit": 64.66,
+    "agent": 45.28,
+    "all": 50.03,
+    "edit/answer": 149.62
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 7.973988562460539,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 5 | hop 0.6": {
+   "speedup": {
+    "chat": 2.1365,
+    "code": 2.1554,
+    "edit": 2.1468,
+    "agent": 2.1485,
+    "all": 2.1469,
+    "edit/answer": 2.1597
+   },
+   "tok_s": {
+    "chat": 79.72,
+    "code": 80.43,
+    "edit": 80.11,
+    "agent": 80.17,
+    "all": 80.11,
+    "edit/answer": 80.58
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 19.647778649927606,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 5 | hop 1.0": {
+   "speedup": {
+    "chat": 1.1101,
+    "code": 1.2543,
+    "edit": 1.7284,
+    "agent": 1.2125,
+    "all": 1.3391,
+    "edit/answer": 3.9671
+   },
+   "tok_s": {
+    "chat": 41.42,
+    "code": 46.8,
+    "edit": 64.49,
+    "agent": 45.24,
+    "all": 49.96,
+    "edit/answer": 148.02
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 7.068781366023829,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 5 | hop 1.0": {
+   "speedup": {
+    "chat": 2.1278,
+    "code": 2.1465,
+    "edit": 2.138,
+    "agent": 2.1397,
+    "all": 2.1381,
+    "edit/answer": 2.1507
+   },
+   "tok_s": {
+    "chat": 79.4,
+    "code": 80.09,
+    "edit": 79.78,
+    "agent": 79.84,
+    "all": 79.78,
+    "edit/answer": 80.25
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 17.24262727068559,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | depth 5 | stages x1.1": {
+   "speedup": {
+    "chat": 1.02,
+    "code": 1.1534,
+    "edit": 1.5926,
+    "agent": 1.1146,
+    "all": 1.2317,
+    "edit/answer": 3.6927
+   },
+   "tok_s": {
+    "chat": 38.06,
+    "code": 43.04,
+    "edit": 59.43,
+    "agent": 41.59,
+    "all": 45.96,
+    "edit/answer": 137.79
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 9.684776575464161,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "6 cards, 9/8/8/8/8/8 layers | oracle p 0.7 | depth 5 | stages x1.1": {
+   "speedup": {
+    "chat": 1.9642,
+    "code": 1.9816,
+    "edit": 1.9737,
+    "agent": 1.9753,
+    "all": 1.9738,
+    "edit/answer": 1.9856
+   },
+   "tok_s": {
+    "chat": 73.29,
+    "code": 73.94,
+    "edit": 73.65,
+    "agent": 73.71,
+    "all": 73.65,
+    "edit/answer": 74.09
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 23.59672951708946,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy, match >= 2 | depth 8": {
+   "speedup": {
+    "chat": 1.1224,
+    "code": 1.2864,
+    "edit": 1.8657,
+    "agent": 1.2297,
+    "all": 1.3856,
+    "edit/answer": 5.3543
+   },
+   "tok_s": {
+    "chat": 35.86,
+    "code": 41.1,
+    "edit": 59.61,
+    "agent": 39.29,
+    "all": 44.27,
+    "edit/answer": 171.06
+   },
+   "hit_share": 0.335515873015873,
+   "miss_share": 0.1637973137973138,
+   "wasted_ms_per_token": 19.702487198183373,
+   "cancelled": 85679,
+   "guessed": 107662
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy, match >= 3 | depth 8": {
+   "speedup": {
+    "chat": 1.0676,
+    "code": 1.2227,
+    "edit": 1.7442,
+    "agent": 1.16,
+    "all": 1.3109,
+    "edit/answer": 5.2783
+   },
+   "tok_s": {
+    "chat": 34.11,
+    "code": 39.06,
+    "edit": 55.73,
+    "agent": 37.06,
+    "all": 41.88,
+    "edit/answer": 168.63
+   },
+   "hit_share": 0.2859432234432234,
+   "miss_share": 0.07788461538461539,
+   "wasted_ms_per_token": 9.639008652915074,
+   "cancelled": 40768,
+   "guessed": 59503
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy, match >= 4 | depth 8": {
+   "speedup": {
+    "chat": 1.0366,
+    "code": 1.1851,
+    "edit": 1.6578,
+    "agent": 1.1195,
+    "all": 1.2642,
+    "edit/answer": 5.2148
+   },
+   "tok_s": {
+    "chat": 33.12,
+    "code": 37.86,
+    "edit": 52.96,
+    "agent": 35.77,
+    "all": 40.39,
+    "edit/answer": 166.61
+   },
+   "hit_share": 0.251984126984127,
+   "miss_share": 0.0463980463980464,
+   "wasted_ms_per_token": 5.85098966509879,
+   "cancelled": 24292,
+   "guessed": 40802
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy, match >= 6 | depth 8": {
+   "speedup": {
+    "chat": 1.0134,
+    "code": 1.1421,
+    "edit": 1.5499,
+    "agent": 1.0752,
+    "all": 1.2134,
+    "edit/answer": 5.0627
+   },
+   "tok_s": {
+    "chat": 32.38,
+    "code": 36.49,
+    "edit": 49.52,
+    "agent": 34.35,
+    "all": 38.77,
+    "edit/answer": 161.75
+   },
+   "hit_share": 0.21204212454212454,
+   "miss_share": 0.021855921855921855,
+   "wasted_ms_per_token": 2.863017586156302,
+   "cancelled": 11436,
+   "guessed": 25329
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy, match >= 8 | depth 8": {
+   "speedup": {
+    "chat": 1.0048,
+    "code": 1.1161,
+    "edit": 1.4828,
+    "agent": 1.0526,
+    "all": 1.1841,
+    "edit/answer": 4.9192
+   },
+   "tok_s": {
+    "chat": 32.1,
+    "code": 35.66,
+    "edit": 47.37,
+    "agent": 33.63,
+    "all": 37.83,
+    "edit/answer": 157.16
+   },
+   "hit_share": 0.18748473748473748,
+   "miss_share": 0.014316239316239316,
+   "wasted_ms_per_token": 1.9076287657926885,
+   "cancelled": 7490,
+   "guessed": 19774
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy, match = 12 | depth 8": {
+   "speedup": {
+    "chat": 1.0008,
+    "code": 1.084,
+    "edit": 1.3963,
+    "agent": 1.0319,
+    "all": 1.1491,
+    "edit/answer": 4.6973
+   },
+   "tok_s": {
+    "chat": 31.97,
+    "code": 34.63,
+    "edit": 44.61,
+    "agent": 32.97,
+    "all": 36.71,
+    "edit/answer": 150.07
+   },
+   "hit_share": 0.15645604395604396,
+   "miss_share": 0.008653846153846154,
+   "wasted_ms_per_token": 1.1719709202366384,
+   "cancelled": 4522,
+   "guessed": 14773
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | fixed key 4 (ngram-simple/map-k lookup) | depth 8": {
+   "speedup": {
+    "chat": 1.037,
+    "code": 1.1772,
+    "edit": 1.6012,
+    "agent": 1.1177,
+    "all": 1.2492,
+    "edit/answer": 4.1506
+   },
+   "tok_s": {
+    "chat": 33.13,
+    "code": 37.61,
+    "edit": 51.16,
+    "agent": 35.71,
+    "all": 39.91,
+    "edit/answer": 132.61
+   },
+   "hit_share": 0.240491452991453,
+   "miss_share": 0.05789072039072039,
+   "wasted_ms_per_token": 7.409737048668416,
+   "cancelled": 30311,
+   "guessed": 46068
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | ngram-cache counts | depth 8": {
+   "speedup": {
+    "chat": 1.1203,
+    "code": 1.2747,
+    "edit": 1.7836,
+    "agent": 1.2326,
+    "all": 1.3636,
+    "edit/answer": 4.3518
+   },
+   "tok_s": {
+    "chat": 35.79,
+    "code": 40.73,
+    "edit": 56.98,
+    "agent": 39.38,
+    "all": 43.57,
+    "edit/answer": 139.03
+   },
+   "hit_share": 0.32150488400488403,
+   "miss_share": 0.1334096459096459,
+   "wasted_ms_per_token": 15.110062514021788,
+   "cancelled": 63460,
+   "guessed": 84525
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 8": {
+   "speedup": {
+    "chat": 1.1212,
+    "code": 1.2837,
+    "edit": 1.8495,
+    "agent": 1.2361,
+    "all": 1.3811,
+    "edit/answer": 5.4099
+   },
+   "tok_s": {
+    "chat": 35.82,
+    "code": 41.01,
+    "edit": 59.09,
+    "agent": 39.49,
+    "all": 44.13,
+    "edit/answer": 172.84
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 15.264908051137663,
+   "cancelled": 65142,
+   "guessed": 86943
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.3 | depth 8": {
+   "speedup": {
+    "chat": 1.3229,
+    "code": 1.3368,
+    "edit": 1.3258,
+    "agent": 1.3194,
+    "all": 1.3283,
+    "edit/answer": 1.3206
+   },
+   "tok_s": {
+    "chat": 42.26,
+    "code": 42.71,
+    "edit": 42.36,
+    "agent": 42.15,
+    "all": 42.44,
+    "edit/answer": 42.19
+   },
+   "hit_share": 0.2980006105006105,
+   "miss_share": 0.7014194139194139,
+   "wasted_ms_per_token": 81.98863721321635,
+   "cancelled": 366870,
+   "guessed": 386395
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.4 | depth 8": {
+   "speedup": {
+    "chat": 1.486,
+    "code": 1.5013,
+    "edit": 1.4915,
+    "agent": 1.4932,
+    "all": 1.4933,
+    "edit/answer": 1.4815
+   },
+   "tok_s": {
+    "chat": 47.48,
+    "code": 47.96,
+    "edit": 47.65,
+    "agent": 47.71,
+    "all": 47.71,
+    "edit/answer": 47.33
+   },
+   "hit_share": 0.39829059829059826,
+   "miss_share": 0.6011294261294261,
+   "wasted_ms_per_token": 71.59938971750826,
+   "cancelled": 314393,
+   "guessed": 340489
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.5 | depth 8": {
+   "speedup": {
+    "chat": 1.6935,
+    "code": 1.7086,
+    "edit": 1.7,
+    "agent": 1.7015,
+    "all": 1.7011,
+    "edit/answer": 1.6935
+   },
+   "tok_s": {
+    "chat": 54.1,
+    "code": 54.59,
+    "edit": 54.31,
+    "agent": 54.36,
+    "all": 54.35,
+    "edit/answer": 54.1
+   },
+   "hit_share": 0.49694749694749696,
+   "miss_share": 0.5024725274725275,
+   "wasted_ms_per_token": 61.12798450705552,
+   "cancelled": 262784,
+   "guessed": 295344
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.6 | depth 8": {
+   "speedup": {
+    "chat": 1.9742,
+    "code": 1.9944,
+    "edit": 1.9861,
+    "agent": 2.019,
+    "all": 1.9871,
+    "edit/answer": 2.013
+   },
+   "tok_s": {
+    "chat": 63.07,
+    "code": 63.72,
+    "edit": 63.45,
+    "agent": 64.5,
+    "all": 63.48,
+    "edit/answer": 64.31
+   },
+   "hit_share": 0.5989468864468864,
+   "miss_share": 0.400473137973138,
+   "wasted_ms_per_token": 49.941288312076445,
+   "cancelled": 209438,
+   "guessed": 248681
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 8": {
+   "speedup": {
+    "chat": 2.3679,
+    "code": 2.3931,
+    "edit": 2.3817,
+    "agent": 2.384,
+    "all": 2.3818,
+    "edit/answer": 2.3988
+   },
+   "tok_s": {
+    "chat": 75.65,
+    "code": 76.46,
+    "edit": 76.09,
+    "agent": 76.16,
+    "all": 76.1,
+    "edit/answer": 76.64
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 38.40909228529608,
+   "cancelled": 156827,
+   "guessed": 202659
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.8 | depth 8": {
+   "speedup": {
+    "chat": 2.9593,
+    "code": 2.9876,
+    "edit": 2.9956,
+    "agent": 2.9316,
+    "all": 2.9803,
+    "edit/answer": 3.0123
+   },
+   "tok_s": {
+    "chat": 94.55,
+    "code": 95.45,
+    "edit": 95.71,
+    "agent": 93.66,
+    "all": 95.22,
+    "edit/answer": 96.24
+   },
+   "hit_share": 0.8011752136752137,
+   "miss_share": 0.19824481074481073,
+   "wasted_ms_per_token": 26.21516717127625,
+   "cancelled": 103709,
+   "guessed": 156202
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.9 | depth 8": {
+   "speedup": {
+    "chat": 3.9335,
+    "code": 3.9261,
+    "edit": 3.9529,
+    "agent": 3.9319,
+    "all": 3.938,
+    "edit/answer": 3.9976
+   },
+   "tok_s": {
+    "chat": 125.67,
+    "code": 125.43,
+    "edit": 126.29,
+    "agent": 125.62,
+    "all": 125.81,
+    "edit/answer": 127.72
+   },
+   "hit_share": 0.8995573870573871,
+   "miss_share": 0.09986263736263737,
+   "wasted_ms_per_token": 13.656499962623833,
+   "cancelled": 52235,
+   "guessed": 111174
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.95 | depth 8": {
+   "speedup": {
+    "chat": 4.7127,
+    "code": 4.6918,
+    "edit": 4.7093,
+    "agent": 4.725,
+    "all": 4.7052,
+    "edit/answer": 4.7574
+   },
+   "tok_s": {
+    "chat": 150.57,
+    "code": 149.9,
+    "edit": 150.46,
+    "agent": 150.96,
+    "all": 150.33,
+    "edit/answer": 151.99
+   },
+   "hit_share": 0.9494810744810744,
+   "miss_share": 0.04993894993894994,
+   "wasted_ms_per_token": 6.962077166031322,
+   "cancelled": 26126,
+   "guessed": 88336
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else oracle p 0.5 | depth 8": {
+   "speedup": {
+    "chat": 1.6958,
+    "code": 1.9126,
+    "edit": 2.4422,
+    "agent": 1.7807,
+    "all": 1.9948,
+    "edit/answer": 5.3987
+   },
+   "tok_s": {
+    "chat": 54.18,
+    "code": 61.1,
+    "edit": 78.03,
+    "agent": 56.89,
+    "all": 63.73,
+    "edit/answer": 172.48
+   },
+   "hit_share": 0.6013125763125763,
+   "miss_share": 0.3981074481074481,
+   "wasted_ms_per_token": 48.58534863950056,
+   "cancelled": 208164,
+   "guessed": 247562
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else oracle p 0.7 | depth 8": {
+   "speedup": {
+    "chat": 2.2997,
+    "code": 2.5339,
+    "edit": 3.0101,
+    "agent": 2.3888,
+    "all": 2.6055,
+    "edit/answer": 5.5014
+   },
+   "tok_s": {
+    "chat": 73.47,
+    "code": 80.95,
+    "edit": 96.17,
+    "agent": 76.32,
+    "all": 83.24,
+    "edit/answer": 175.76
+   },
+   "hit_share": 0.742979242979243,
+   "miss_share": 0.2564407814407814,
+   "wasted_ms_per_token": 32.782386278708195,
+   "cancelled": 134083,
+   "guessed": 182763
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 1": {
+   "speedup": {
+    "chat": 1.0883,
+    "code": 1.1798,
+    "edit": 1.4279,
+    "agent": 1.1601,
+    "all": 1.2288,
+    "edit/answer": 2.0492
+   },
+   "tok_s": {
+    "chat": 34.77,
+    "code": 37.69,
+    "edit": 45.62,
+    "agent": 37.07,
+    "all": 39.26,
+    "edit/answer": 65.47
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 2.3057830604775753,
+   "cancelled": 8516,
+   "guessed": 30317
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 1": {
+   "speedup": {
+    "chat": 1.6679,
+    "code": 1.6715,
+    "edit": 1.6741,
+    "agent": 1.6709,
+    "all": 1.6714,
+    "edit/answer": 1.6855
+   },
+   "tok_s": {
+    "chat": 53.29,
+    "code": 53.4,
+    "edit": 53.48,
+    "agent": 53.38,
+    "all": 53.4,
+    "edit/answer": 53.85
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 4.689186663677604,
+   "cancelled": 19650,
+   "guessed": 65482
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 2": {
+   "speedup": {
+    "chat": 1.1113,
+    "code": 1.2385,
+    "edit": 1.631,
+    "agent": 1.2052,
+    "all": 1.3113,
+    "edit/answer": 3.0261
+   },
+   "tok_s": {
+    "chat": 35.5,
+    "code": 39.57,
+    "edit": 52.11,
+    "agent": 38.51,
+    "all": 41.89,
+    "edit/answer": 96.68
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 4.7106470995005285,
+   "cancelled": 16711,
+   "guessed": 38512
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 2": {
+   "speedup": {
+    "chat": 2.0286,
+    "code": 2.0462,
+    "edit": 2.0405,
+    "agent": 2.0453,
+    "all": 2.0394,
+    "edit/answer": 2.0487
+   },
+   "tok_s": {
+    "chat": 64.81,
+    "code": 65.37,
+    "edit": 65.19,
+    "agent": 65.35,
+    "all": 65.16,
+    "edit/answer": 65.45
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 9.972137904613998,
+   "cancelled": 39288,
+   "guessed": 85120
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 3": {
+   "speedup": {
+    "chat": 1.1181,
+    "code": 1.2639,
+    "edit": 1.7452,
+    "agent": 1.2231,
+    "all": 1.35,
+    "edit/answer": 3.9589
+   },
+   "tok_s": {
+    "chat": 35.72,
+    "code": 40.38,
+    "edit": 55.76,
+    "agent": 39.08,
+    "all": 43.13,
+    "edit/answer": 126.48
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 7.074087145849483,
+   "cancelled": 24792,
+   "guessed": 46593
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 3": {
+   "speedup": {
+    "chat": 2.2294,
+    "code": 2.2471,
+    "edit": 2.2428,
+    "agent": 2.2425,
+    "all": 2.2406,
+    "edit/answer": 2.2581
+   },
+   "tok_s": {
+    "chat": 71.23,
+    "code": 71.79,
+    "edit": 71.66,
+    "agent": 71.64,
+    "all": 71.59,
+    "edit/answer": 72.14
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 15.292588678330858,
+   "cancelled": 58908,
+   "guessed": 104740
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 4": {
+   "speedup": {
+    "chat": 1.1205,
+    "code": 1.278,
+    "edit": 1.8175,
+    "agent": 1.2328,
+    "all": 1.372,
+    "edit/answer": 4.859
+   },
+   "tok_s": {
+    "chat": 35.8,
+    "code": 40.83,
+    "edit": 58.07,
+    "agent": 39.39,
+    "all": 43.84,
+    "edit/answer": 155.24
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 9.251968490695834,
+   "cancelled": 32870,
+   "guessed": 54671
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 4": {
+   "speedup": {
+    "chat": 2.3312,
+    "code": 2.3548,
+    "edit": 2.3454,
+    "agent": 2.3449,
+    "all": 2.3446,
+    "edit/answer": 2.3624
+   },
+   "tok_s": {
+    "chat": 74.48,
+    "code": 75.23,
+    "edit": 74.93,
+    "agent": 74.92,
+    "all": 74.91,
+    "edit/answer": 75.48
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 20.57474106676195,
+   "cancelled": 78513,
+   "guessed": 124345
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 5": {
+   "speedup": {
+    "chat": 1.1212,
+    "code": 1.2837,
+    "edit": 1.8495,
+    "agent": 1.2361,
+    "all": 1.3811,
+    "edit/answer": 5.4099
+   },
+   "tok_s": {
+    "chat": 35.82,
+    "code": 41.01,
+    "edit": 59.09,
+    "agent": 39.49,
+    "all": 44.13,
+    "edit/answer": 172.84
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 11.12582828736246,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 5": {
+   "speedup": {
+    "chat": 2.3679,
+    "code": 2.3931,
+    "edit": 2.3817,
+    "agent": 2.384,
+    "all": 2.3818,
+    "edit/answer": 2.3988
+   },
+   "tok_s": {
+    "chat": 75.65,
+    "code": 76.46,
+    "edit": 76.09,
+    "agent": 76.16,
+    "all": 76.1,
+    "edit/answer": 76.64
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 25.56605685132307,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 6": {
+   "speedup": {
+    "chat": 1.1212,
+    "code": 1.2837,
+    "edit": 1.8495,
+    "agent": 1.2361,
+    "all": 1.3811,
+    "edit/answer": 5.4099
+   },
+   "tok_s": {
+    "chat": 35.82,
+    "code": 41.01,
+    "edit": 59.09,
+    "agent": 39.49,
+    "all": 44.13,
+    "edit/answer": 172.84
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 12.808878672352241,
+   "cancelled": 49015,
+   "guessed": 70816
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 6": {
+   "speedup": {
+    "chat": 2.3679,
+    "code": 2.3931,
+    "edit": 2.3817,
+    "agent": 2.384,
+    "all": 2.3818,
+    "edit/answer": 2.3988
+   },
+   "tok_s": {
+    "chat": 75.65,
+    "code": 76.46,
+    "edit": 76.09,
+    "agent": 76.16,
+    "all": 76.1,
+    "edit/answer": 76.64
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 30.459788536311684,
+   "cancelled": 117693,
+   "guessed": 163525
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | depth 7": {
+   "speedup": {
+    "chat": 1.1212,
+    "code": 1.2837,
+    "edit": 1.8495,
+    "agent": 1.2361,
+    "all": 1.3811,
+    "edit/answer": 5.4099
+   },
+   "tok_s": {
+    "chat": 35.82,
+    "code": 41.01,
+    "edit": 59.09,
+    "agent": 39.49,
+    "all": 44.13,
+    "edit/answer": 172.84
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 14.201829259180913,
+   "cancelled": 57081,
+   "guessed": 78882
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | oracle p 0.7 | depth 7": {
+   "speedup": {
+    "chat": 2.3679,
+    "code": 2.3931,
+    "edit": 2.3817,
+    "agent": 2.384,
+    "all": 2.3818,
+    "edit/answer": 2.3988
+   },
+   "tok_s": {
+    "chat": 75.65,
+    "code": 76.46,
+    "edit": 76.09,
+    "agent": 76.16,
+    "all": 76.1,
+    "edit/answer": 76.64
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 34.80218789716152,
+   "cancelled": 137266,
+   "guessed": 183098
+  },
+  "9 cards, head + 2 layers on the last | copy, match >= 2 | depth 8": {
+   "speedup": {
+    "chat": 1.1305,
+    "code": 1.3085,
+    "edit": 1.9656,
+    "agent": 1.2465,
+    "all": 1.4177,
+    "edit/answer": 7.1938
+   },
+   "tok_s": {
+    "chat": 36.12,
+    "code": 41.8,
+    "edit": 62.8,
+    "agent": 39.82,
+    "all": 45.29,
+    "edit/answer": 229.83
+   },
+   "hit_share": 0.335515873015873,
+   "miss_share": 0.1637973137973138,
+   "wasted_ms_per_token": 19.214124616888448,
+   "cancelled": 85679,
+   "guessed": 107662
+  },
+  "9 cards, head + 2 layers on the last | copy, match >= 3 | depth 8": {
+   "speedup": {
+    "chat": 1.0718,
+    "code": 1.2389,
+    "edit": 1.824,
+    "agent": 1.171,
+    "all": 1.3353,
+    "edit/answer": 7.0494
+   },
+   "tok_s": {
+    "chat": 34.24,
+    "code": 39.58,
+    "edit": 58.27,
+    "agent": 37.41,
+    "all": 42.66,
+    "edit/answer": 225.22
+   },
+   "hit_share": 0.2859432234432234,
+   "miss_share": 0.07788461538461539,
+   "wasted_ms_per_token": 9.35965070644095,
+   "cancelled": 40768,
+   "guessed": 59503
+  },
+  "9 cards, head + 2 layers on the last | copy, match >= 4 | depth 8": {
+   "speedup": {
+    "chat": 1.0388,
+    "code": 1.1981,
+    "edit": 1.7244,
+    "agent": 1.1274,
+    "all": 1.2841,
+    "edit/answer": 6.9302
+   },
+   "tok_s": {
+    "chat": 33.19,
+    "code": 38.28,
+    "edit": 55.09,
+    "agent": 36.02,
+    "all": 41.03,
+    "edit/answer": 221.41
+   },
+   "hit_share": 0.251984126984127,
+   "miss_share": 0.0463980463980464,
+   "wasted_ms_per_token": 5.638642259104309,
+   "cancelled": 24292,
+   "guessed": 40802
+  },
+  "9 cards, head + 2 layers on the last | copy, match >= 6 | depth 8": {
+   "speedup": {
+    "chat": 1.0142,
+    "code": 1.1517,
+    "edit": 1.6016,
+    "agent": 1.08,
+    "all": 1.2288,
+    "edit/answer": 6.6491
+   },
+   "tok_s": {
+    "chat": 32.4,
+    "code": 36.8,
+    "edit": 51.17,
+    "agent": 34.5,
+    "all": 39.26,
+    "edit/answer": 212.43
+   },
+   "hit_share": 0.21204212454212454,
+   "miss_share": 0.021855921855921855,
+   "wasted_ms_per_token": 2.7219541937669125,
+   "cancelled": 11436,
+   "guessed": 25329
+  },
+  "9 cards, head + 2 layers on the last | copy, match >= 8 | depth 8": {
+   "speedup": {
+    "chat": 1.0051,
+    "code": 1.1238,
+    "edit": 1.5261,
+    "agent": 1.0559,
+    "all": 1.1971,
+    "edit/answer": 6.3899
+   },
+   "tok_s": {
+    "chat": 32.11,
+    "code": 35.9,
+    "edit": 48.76,
+    "agent": 33.73,
+    "all": 38.24,
+    "edit/answer": 204.15
+   },
+   "hit_share": 0.18748473748473748,
+   "miss_share": 0.014316239316239316,
+   "wasted_ms_per_token": 1.7987366375132423,
+   "cancelled": 7490,
+   "guessed": 19774
+  },
+  "9 cards, head + 2 layers on the last | copy, match = 12 | depth 8": {
+   "speedup": {
+    "chat": 1.0008,
+    "code": 1.0894,
+    "edit": 1.4296,
+    "agent": 1.0338,
+    "all": 1.1593,
+    "edit/answer": 6.0001
+   },
+   "tok_s": {
+    "chat": 31.97,
+    "code": 34.81,
+    "edit": 45.67,
+    "agent": 33.03,
+    "all": 37.04,
+    "edit/answer": 191.7
+   },
+   "hit_share": 0.15645604395604396,
+   "miss_share": 0.008653846153846154,
+   "wasted_ms_per_token": 1.0970959482701856,
+   "cancelled": 4522,
+   "guessed": 14773
+  },
+  "9 cards, head + 2 layers on the last | fixed key 4 (ngram-simple/map-k lookup) | depth 8": {
+   "speedup": {
+    "chat": 1.0393,
+    "code": 1.1896,
+    "edit": 1.6598,
+    "agent": 1.1255,
+    "all": 1.2677,
+    "edit/answer": 5.0928
+   },
+   "tok_s": {
+    "chat": 33.2,
+    "code": 38.01,
+    "edit": 53.03,
+    "agent": 35.96,
+    "all": 40.5,
+    "edit/answer": 162.71
+   },
+   "hit_share": 0.240491452991453,
+   "miss_share": 0.05789072039072039,
+   "wasted_ms_per_token": 7.098448269421639,
+   "cancelled": 30311,
+   "guessed": 46068
+  },
+  "9 cards, head + 2 layers on the last | ngram-cache counts | depth 8": {
+   "speedup": {
+    "chat": 1.1283,
+    "code": 1.2956,
+    "edit": 1.8696,
+    "agent": 1.2497,
+    "all": 1.3933,
+    "edit/answer": 5.4183
+   },
+   "tok_s": {
+    "chat": 36.05,
+    "code": 41.39,
+    "edit": 59.73,
+    "agent": 39.93,
+    "all": 44.52,
+    "edit/answer": 173.11
+   },
+   "hit_share": 0.32150488400488403,
+   "miss_share": 0.1334096459096459,
+   "wasted_ms_per_token": 14.731584809754636,
+   "cancelled": 63460,
+   "guessed": 84525
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 8": {
+   "speedup": {
+    "chat": 1.1292,
+    "code": 1.3054,
+    "edit": 1.9466,
+    "agent": 1.2534,
+    "all": 1.4128,
+    "edit/answer": 7.3006
+   },
+   "tok_s": {
+    "chat": 36.08,
+    "code": 41.71,
+    "edit": 62.19,
+    "agent": 40.05,
+    "all": 45.14,
+    "edit/answer": 233.25
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 14.877216397554434,
+   "cancelled": 65142,
+   "guessed": 86943
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.3 | depth 8": {
+   "speedup": {
+    "chat": 1.3484,
+    "code": 1.3638,
+    "edit": 1.3516,
+    "agent": 1.3447,
+    "all": 1.3544,
+    "edit/answer": 1.346
+   },
+   "tok_s": {
+    "chat": 43.08,
+    "code": 43.57,
+    "edit": 43.18,
+    "agent": 42.96,
+    "all": 43.27,
+    "edit/answer": 43.0
+   },
+   "hit_share": 0.2980006105006105,
+   "miss_share": 0.7014194139194139,
+   "wasted_ms_per_token": 80.89074241242396,
+   "cancelled": 366870,
+   "guessed": 386395
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.4 | depth 8": {
+   "speedup": {
+    "chat": 1.5296,
+    "code": 1.5468,
+    "edit": 1.5358,
+    "agent": 1.5377,
+    "all": 1.5378,
+    "edit/answer": 1.5246
+   },
+   "tok_s": {
+    "chat": 48.87,
+    "code": 49.42,
+    "edit": 49.07,
+    "agent": 49.13,
+    "all": 49.13,
+    "edit/answer": 48.71
+   },
+   "hit_share": 0.39829059829059826,
+   "miss_share": 0.6011294261294261,
+   "wasted_ms_per_token": 70.57901463338864,
+   "cancelled": 314393,
+   "guessed": 340489
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.5 | depth 8": {
+   "speedup": {
+    "chat": 1.7654,
+    "code": 1.7828,
+    "edit": 1.7729,
+    "agent": 1.7747,
+    "all": 1.7742,
+    "edit/answer": 1.7654
+   },
+   "tok_s": {
+    "chat": 56.4,
+    "code": 56.96,
+    "edit": 56.64,
+    "agent": 56.7,
+    "all": 56.68,
+    "edit/answer": 56.4
+   },
+   "hit_share": 0.49694749694749696,
+   "miss_share": 0.5024725274725275,
+   "wasted_ms_per_token": 60.036767492762074,
+   "cancelled": 262784,
+   "guessed": 295344
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.6 | depth 8": {
+   "speedup": {
+    "chat": 2.094,
+    "code": 2.1181,
+    "edit": 2.1081,
+    "agent": 2.1475,
+    "all": 2.1093,
+    "edit/answer": 2.1403
+   },
+   "tok_s": {
+    "chat": 66.9,
+    "code": 67.67,
+    "edit": 67.35,
+    "agent": 68.61,
+    "all": 67.39,
+    "edit/answer": 68.38
+   },
+   "hit_share": 0.5989468864468864,
+   "miss_share": 0.400473137973138,
+   "wasted_ms_per_token": 48.681474639343975,
+   "cancelled": 209438,
+   "guessed": 248681
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 8": {
+   "speedup": {
+    "chat": 2.5747,
+    "code": 2.6064,
+    "edit": 2.592,
+    "agent": 2.5948,
+    "all": 2.5922,
+    "edit/answer": 2.6135
+   },
+   "tok_s": {
+    "chat": 82.26,
+    "code": 83.27,
+    "edit": 82.81,
+    "agent": 82.9,
+    "all": 82.82,
+    "edit/answer": 83.5
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 37.05573531063221,
+   "cancelled": 156827,
+   "guessed": 202659
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.8 | depth 8": {
+   "speedup": {
+    "chat": 3.3441,
+    "code": 3.3824,
+    "edit": 3.3933,
+    "agent": 3.3067,
+    "all": 3.3726,
+    "edit/answer": 3.416
+   },
+   "tok_s": {
+    "chat": 106.84,
+    "code": 108.06,
+    "edit": 108.41,
+    "agent": 105.64,
+    "all": 107.75,
+    "edit/answer": 109.14
+   },
+   "hit_share": 0.8011752136752137,
+   "miss_share": 0.19824481074481073,
+   "wasted_ms_per_token": 24.93437392540556,
+   "cancelled": 103709,
+   "guessed": 156202
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.9 | depth 8": {
+   "speedup": {
+    "chat": 4.7522,
+    "code": 4.7407,
+    "edit": 4.7822,
+    "agent": 4.7497,
+    "all": 4.7591,
+    "edit/answer": 4.8517
+   },
+   "tok_s": {
+    "chat": 151.83,
+    "code": 151.46,
+    "edit": 152.79,
+    "agent": 151.75,
+    "all": 152.05,
+    "edit/answer": 155.01
+   },
+   "hit_share": 0.8995573870573871,
+   "miss_share": 0.09986263736263737,
+   "wasted_ms_per_token": 12.760381344846191,
+   "cancelled": 52235,
+   "guessed": 111174
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.95 | depth 8": {
+   "speedup": {
+    "chat": 6.0268,
+    "code": 5.9907,
+    "edit": 6.0208,
+    "agent": 6.0481,
+    "all": 6.0137,
+    "edit/answer": 6.1043
+   },
+   "tok_s": {
+    "chat": 192.55,
+    "code": 191.4,
+    "edit": 192.36,
+    "agent": 193.23,
+    "all": 192.13,
+    "edit/answer": 195.03
+   },
+   "hit_share": 0.9494810744810744,
+   "miss_share": 0.04993894993894994,
+   "wasted_ms_per_token": 6.435276594153851,
+   "cancelled": 26126,
+   "guessed": 88336
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else oracle p 0.5 | depth 8": {
+   "speedup": {
+    "chat": 1.768,
+    "code": 2.0209,
+    "edit": 2.6682,
+    "agent": 1.8662,
+    "all": 2.1186,
+    "edit/answer": 7.279
+   },
+   "tok_s": {
+    "chat": 56.49,
+    "code": 64.56,
+    "edit": 85.25,
+    "agent": 59.62,
+    "all": 67.69,
+    "edit/answer": 232.55
+   },
+   "hit_share": 0.6013125763125763,
+   "miss_share": 0.3981074481074481,
+   "wasted_ms_per_token": 47.61076409138682,
+   "cancelled": 208164,
+   "guessed": 247562
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else oracle p 0.7 | depth 8": {
+   "speedup": {
+    "chat": 2.4897,
+    "code": 2.7847,
+    "edit": 3.413,
+    "agent": 2.6009,
+    "all": 2.8768,
+    "edit/answer": 7.4782
+   },
+   "tok_s": {
+    "chat": 79.54,
+    "code": 88.97,
+    "edit": 109.04,
+    "agent": 83.09,
+    "all": 91.91,
+    "edit/answer": 238.92
+   },
+   "hit_share": 0.742979242979243,
+   "miss_share": 0.2564407814407814,
+   "wasted_ms_per_token": 31.62780397325568,
+   "cancelled": 134083,
+   "guessed": 182763
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 1": {
+   "speedup": {
+    "chat": 1.0909,
+    "code": 1.1829,
+    "edit": 1.4318,
+    "agent": 1.1641,
+    "all": 1.232,
+    "edit/answer": 2.0503
+   },
+   "tok_s": {
+    "chat": 34.85,
+    "code": 37.79,
+    "edit": 45.75,
+    "agent": 37.19,
+    "all": 39.36,
+    "edit/answer": 65.5
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 2.447645305375992,
+   "cancelled": 8516,
+   "guessed": 30317
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 1": {
+   "speedup": {
+    "chat": 1.6851,
+    "code": 1.688,
+    "edit": 1.6916,
+    "agent": 1.6878,
+    "all": 1.6885,
+    "edit/answer": 1.7043
+   },
+   "tok_s": {
+    "chat": 53.84,
+    "code": 53.93,
+    "edit": 54.05,
+    "agent": 53.92,
+    "all": 53.95,
+    "edit/answer": 54.45
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 4.95734516334145,
+   "cancelled": 19650,
+   "guessed": 65482
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 2": {
+   "speedup": {
+    "chat": 1.116,
+    "code": 1.2443,
+    "edit": 1.6402,
+    "agent": 1.2118,
+    "all": 1.3177,
+    "edit/answer": 3.0312
+   },
+   "tok_s": {
+    "chat": 35.65,
+    "code": 39.75,
+    "edit": 52.4,
+    "agent": 38.71,
+    "all": 42.1,
+    "edit/answer": 96.84
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 4.775842771176543,
+   "cancelled": 16711,
+   "guessed": 38512
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 2": {
+   "speedup": {
+    "chat": 2.0748,
+    "code": 2.0941,
+    "edit": 2.0885,
+    "agent": 2.0947,
+    "all": 2.0869,
+    "edit/answer": 2.0964
+   },
+   "tok_s": {
+    "chat": 66.29,
+    "code": 66.9,
+    "edit": 66.73,
+    "agent": 66.92,
+    "all": 66.68,
+    "edit/answer": 66.98
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 10.10478620019587,
+   "cancelled": 39288,
+   "guessed": 85120
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 3": {
+   "speedup": {
+    "chat": 1.1239,
+    "code": 1.2711,
+    "edit": 1.7588,
+    "agent": 1.2309,
+    "all": 1.3583,
+    "edit/answer": 3.9682
+   },
+   "tok_s": {
+    "chat": 35.91,
+    "code": 40.61,
+    "edit": 56.19,
+    "agent": 39.33,
+    "all": 43.4,
+    "edit/answer": 126.78
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 7.07545993122836,
+   "cancelled": 24792,
+   "guessed": 46593
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 3": {
+   "speedup": {
+    "chat": 2.3099,
+    "code": 2.3268,
+    "edit": 2.3259,
+    "agent": 2.3239,
+    "all": 2.3218,
+    "edit/answer": 2.3433
+   },
+   "tok_s": {
+    "chat": 73.8,
+    "code": 74.34,
+    "edit": 74.31,
+    "agent": 74.24,
+    "all": 74.18,
+    "edit/answer": 74.87
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 15.322541769457448,
+   "cancelled": 58908,
+   "guessed": 104740
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 4": {
+   "speedup": {
+    "chat": 1.1272,
+    "code": 1.2867,
+    "edit": 1.8361,
+    "agent": 1.2425,
+    "all": 1.3823,
+    "edit/answer": 4.8788
+   },
+   "tok_s": {
+    "chat": 36.01,
+    "code": 41.11,
+    "edit": 58.66,
+    "agent": 39.7,
+    "all": 44.16,
+    "edit/answer": 155.87
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 9.1456823278802,
+   "cancelled": 32870,
+   "guessed": 54671
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 4": {
+   "speedup": {
+    "chat": 2.4393,
+    "code": 2.4646,
+    "edit": 2.4578,
+    "agent": 2.4508,
+    "all": 2.4547,
+    "edit/answer": 2.4783
+   },
+   "tok_s": {
+    "chat": 77.93,
+    "code": 78.74,
+    "edit": 78.52,
+    "agent": 78.3,
+    "all": 78.43,
+    "edit/answer": 79.18
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 20.499679954406094,
+   "cancelled": 78513,
+   "guessed": 124345
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 5": {
+   "speedup": {
+    "chat": 1.1284,
+    "code": 1.296,
+    "edit": 1.8863,
+    "agent": 1.2483,
+    "all": 1.3968,
+    "edit/answer": 5.7521
+   },
+   "tok_s": {
+    "chat": 36.05,
+    "code": 41.4,
+    "edit": 60.26,
+    "agent": 39.88,
+    "all": 44.63,
+    "edit/answer": 183.77
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 11.021628448087306,
+   "cancelled": 40946,
+   "guessed": 62747
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 5": {
+   "speedup": {
+    "chat": 2.515,
+    "code": 2.5426,
+    "edit": 2.5314,
+    "agent": 2.5334,
+    "all": 2.5308,
+    "edit/answer": 2.5573
+   },
+   "tok_s": {
+    "chat": 80.35,
+    "code": 81.23,
+    "edit": 80.88,
+    "agent": 80.94,
+    "all": 80.86,
+    "edit/answer": 81.7
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 25.359797787258284,
+   "cancelled": 98110,
+   "guessed": 143942
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 6": {
+   "speedup": {
+    "chat": 1.129,
+    "code": 1.3018,
+    "edit": 1.9229,
+    "agent": 1.2517,
+    "all": 1.4066,
+    "edit/answer": 6.5852
+   },
+   "tok_s": {
+    "chat": 36.07,
+    "code": 41.59,
+    "edit": 61.44,
+    "agent": 39.99,
+    "all": 44.94,
+    "edit/answer": 210.39
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 12.587914517460762,
+   "cancelled": 49015,
+   "guessed": 70816
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 6": {
+   "speedup": {
+    "chat": 2.5547,
+    "code": 2.5859,
+    "edit": 2.5722,
+    "agent": 2.5767,
+    "all": 2.5722,
+    "edit/answer": 2.5935
+   },
+   "tok_s": {
+    "chat": 81.62,
+    "code": 82.62,
+    "edit": 82.18,
+    "agent": 82.32,
+    "all": 82.18,
+    "edit/answer": 82.86
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 29.79405743068079,
+   "cancelled": 117693,
+   "guessed": 163525
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | depth 7": {
+   "speedup": {
+    "chat": 1.1292,
+    "code": 1.3054,
+    "edit": 1.9466,
+    "agent": 1.2534,
+    "all": 1.4128,
+    "edit/answer": 7.3006
+   },
+   "tok_s": {
+    "chat": 36.08,
+    "code": 41.71,
+    "edit": 62.19,
+    "agent": 40.05,
+    "all": 45.14,
+    "edit/answer": 233.25
+   },
+   "hit_share": 0.3327380952380952,
+   "miss_share": 0.12997557997557999,
+   "wasted_ms_per_token": 13.85776425955593,
+   "cancelled": 57081,
+   "guessed": 78882
+  },
+  "9 cards, head + 2 layers on the last | oracle p 0.7 | depth 7": {
+   "speedup": {
+    "chat": 2.5747,
+    "code": 2.6064,
+    "edit": 2.592,
+    "agent": 2.5948,
+    "all": 2.5922,
+    "edit/answer": 2.6135
+   },
+   "tok_s": {
+    "chat": 82.26,
+    "code": 83.27,
+    "edit": 82.81,
+    "agent": 82.9,
+    "all": 82.82,
+    "edit/answer": 83.5
+   },
+   "hit_share": 0.6995115995115995,
+   "miss_share": 0.2999084249084249,
+   "wasted_ms_per_token": 33.663675712063586,
+   "cancelled": 137266,
+   "guessed": 183098
+  }
+ }
+}
