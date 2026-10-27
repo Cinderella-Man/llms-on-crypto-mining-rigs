@@ -29,12 +29,17 @@ Against Ornith-1.5-122B Q8_0 (mean KL divergence ± standard error / same top to
 | UD-Q2_K_XL | **0.184 ± 0.003 / 83.5 %** | **0.054 ± 0.001 / 94.9 %** | **0.071 ± 0.003 / 96.3 %** |
 | AD-IQ3_XXS-IQ2_S | 0.233 ± 0.003 / 81.4 % | 0.066 ± 0.001 / 94.3 % | 0.081 ± 0.003 / 96.2 % |
 | N2P-N3P-Q5_0dense | 0.203 ± 0.003 / 82.8 % | 0.057 ± 0.001 / 94.7 % | 0.072 ± 0.003 / 96.4 % |
+| UD-Q2_K_XL, Q5_0 output layer | 0.184 ± 0.003 / 83.6 % | 0.054 ± 0.001 / 94.8 % | 0.071 ± 0.003 / 96.3 % |
+| AD-IQ3_XXS-IQ2_S, Q5_0 output layer | 0.235 ± 0.003 / 81.4 % | 0.066 ± 0.001 / 94.4 % | 0.081 ± 0.003 / 96.3 % |
 
 - **UD-Q2_K_XL is closer to Q8_0 on all three texts.** Of the two downloaded files it is also the smaller one and decodes
   ~10 % faster on the rig, so it is the better candidate.
 - **N2P-N3P-Q5_0dense sits between the two:** within noise of UD on code, about two standard errors behind it on the
   agent sessions, and clearly behind on prose, for 0.9 GB more. Its case is speed: its Pascal kernels are estimated to
   read an expert weight ~1.8× faster than the IQ2_S/IQ3_XXS kernels, which only a rig run can confirm.
+- **A Q5_0 output layer costs nothing measurable:** both files with it score within one standard error of their
+  originals on all three texts, and read 524 MB instead of 626 MB (UD's Q6_K) or 811 MB (AD's Q8_0) for every token
+  (`run/head_q5_0.py`, then `scripts/compose_gguf.py`; every other tensor byte for byte).
 - **Prose shows the largest drift.** Agent sessions and code are far more predictable: the Q8_0's perplexity is 6.25 on
   wikitext, 1.57 on the agent sessions and 1.28 on code (`bases.tsv`).
 - **Perplexity:** UD's falls slightly below the reference's on all three texts (`kld_122b.tsv`, `ppl_q` against
@@ -43,7 +48,6 @@ Against Ornith-1.5-122B Q8_0 (mean KL divergence ± standard error / same top to
   divergences against Flint's BF16.
 
 Pending, added here when they finish:
-- AD and UD with a Q5_0 output layer (`run/head_q5_0.py`);
 - the low-bit format's file b (N2P/N3P experts, dense at Q8_0 as in AD);
 - the Ornith-1.5-35B Q8_0's bases on the same texts.
 
