@@ -5,7 +5,9 @@ section 8, item 0): where one guess of the
 staircase head (Flint's MTP head of agentic run 1, the nine-card head) goes on a P106, what a guess may cost on the
 agent check before the head stops paying, and how often the head is right at the positions the server's other
 guessers leave it; then what the options of Miner Llama's branch `pascal-p106-v3-cheapguess` cost (4.77 ms → 2.93 ms
-per guess) and that they compute what the reference computes. `run/agent.sh` measures them on the agent check.
+per guess) and that they compute what the reference computes. `run/replay.sh` measures them on the agent check
+(planned). Registry rows Q190–Q194 in [quants/experiments.md](../../../quants/experiments.md) (profile, break-even and
+guess order, options, the agent-check replay, the next cuts).
 
 | File | What |
 |---|---|
