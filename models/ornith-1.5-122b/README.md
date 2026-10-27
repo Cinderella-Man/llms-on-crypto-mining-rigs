@@ -47,6 +47,13 @@ Per task, v2.0 is 1.4× as fast as stock on the tasks both passed, and v2.0 with
 
 Details, the MTP head, memory and where the time goes: [the benchmark](../../docs/benchmarks/2026-10-27-ornith-122b.md).
 
+Unsloth's [UD-Q2_K_XL](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF) (44.5 GB) runs too, with
+`-ts 8,6,5,5,5,4,5,6,6`: in single requests it decodes ~10 % faster than the AD file and reads prompts slower; it has
+not run the agent check yet.
+
+**Not measured yet:** how far either 2–3-bit file is from the original weights, and how Ornith compares with Flint on
+coding tasks beyond these twelve.
+
 ## What's next (v3)
 
 1. Pascal kernels for the 2–3-bit expert formats: the routed experts take 43 % of a token and run at a sixth of the
