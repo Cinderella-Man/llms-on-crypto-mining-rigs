@@ -1,0 +1,5 @@
+threads_t,mode,generated_tokens,tok_s,ms_per_token,chunk_gap_median_ms,chunk_gap_p95_ms,wall_s,minor_faults,major_faults,minor_faults_per_token,top_seconds_busy,process_cpu_pct,main_thread_cpu_pct,cuda_threads_cpu_pct,other_threads_cpu_pct,threads,system_user_pct,system_sys_pct,system_iowait_pct,gpu_util_mean_pct,swap_in_kib,swap_out_kib
+2,nostream,1000,31.42,31.83,,,32.72,32578,236,31.7,33,95.1,94.7,0.3,0.1,29,28.2,20.8,2.3,10.4,4372,68
+2,stream,1000,33.31,30.02,30.26,30.78,30.95,28159,15,27.4,31,99.9,98.6,0.3,1.0,29,30.2,21.7,0.2,10.7,452,0
+1,nostream,1000,32.57,30.7,,,31.59,29029,226,28.2,32,96.8,96.4,0.3,0.1,29,29.1,20.8,1.0,10.5,4572,0
+1,stream,1000,33.59,29.77,30.0,30.49,30.68,28812,24,28.0,31,98.7,97.5,0.2,1.0,29,29.9,21.5,0.2,10.8,612,0

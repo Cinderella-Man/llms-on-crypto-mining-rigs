@@ -1,0 +1,65 @@
+experiment,model_file,model_type,size_gib,build,persistent_moe,cards,round,start_time,test,tok_s,sd
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,6,1,16:26:17,pp512,250.50,4.39
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,6,1,16:26:17,tg128,37.26,1.03
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,6,1,16:30:29,pp512,250.34,5.69
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,6,1,16:30:29,tg128,40.54,0.91
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,6,1,16:34:39,pp512,250.48,6.38
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,6,1,16:34:39,tg128,35.78,0.54
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,6,1,16:38:19,pp512,248.96,9.27
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,6,1,16:38:19,tg128,38.26,0.68
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,6,2,16:41:56,pp512,249.93,4.94
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,6,2,16:41:56,tg128,37.61,0.64
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,6,2,16:46:07,pp512,250.49,4.48
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,6,2,16:46:07,tg128,40.92,0.63
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,6,2,16:50:17,pp512,250.10,6.37
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,6,2,16:50:17,tg128,35.87,0.63
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,6,2,16:53:56,pp512,249.73,7.80
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,6,2,16:53:56,tg128,38.15,0.57
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,9,1,16:57:33,pp512,230.78,18.06
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,9,1,16:57:33,tg128,39.55,0.36
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,9,1,17:01:47,pp512,235.59,13.22
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,9,1,17:01:47,tg128,40.93,0.52
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,9,1,17:06:00,pp512,229.66,21.21
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,9,1,17:06:00,tg128,37.54,0.14
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,9,1,17:09:41,pp512,231.18,19.71
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,9,1,17:09:41,tg128,39.83,0.12
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,9,2,17:13:21,pp512,231.19,18.05
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,off,9,2,17:13:21,tg128,39.10,0.48
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,9,2,17:17:34,pp512,233.21,16.79
+Q88 build-in,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-persistent 8de13900f,on,9,2,17:17:34,tg128,42.10,0.40
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,9,2,17:21:47,pp512,229.46,20.44
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,off,9,2,17:21:47,tg128,37.53,0.19
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,9,2,17:25:28,pp512,231.26,19.34
+Q88 build-in,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-persistent 8de13900f,on,9,2,17:25:28,tg128,39.77,0.18
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,1,19:08:16,pp512,251.75,4.06
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,1,19:08:16,tg128,37.77,0.57
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),6,1,19:12:29,pp512,250.81,5.01
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),6,1,19:12:29,tg128,40.71,0.84
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,1,19:16:40,pp512,250.97,7.98
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,1,19:16:40,tg128,35.77,0.54
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),6,1,19:20:19,pp512,250.23,9.18
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),6,1,19:20:19,tg128,38.24,0.59
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,2,19:23:57,pp512,251.84,4.52
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,2,19:23:57,tg128,37.64,0.62
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),6,2,19:28:08,pp512,251.74,4.92
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),6,2,19:28:08,tg128,40.83,0.58
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,2,19:32:17,pp512,251.04,7.91
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),6,2,19:32:17,tg128,35.81,0.55
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),6,2,19:35:56,pp512,251.33,7.04
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),6,2,19:35:56,tg128,38.54,0.93
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,1,19:39:33,pp512,231.63,18.07
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,1,19:39:33,tg128,39.48,0.37
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),9,1,19:43:46,pp512,232.99,17.70
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),9,1,19:43:46,tg128,42.11,0.37
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,1,19:48:01,pp512,231.49,20.22
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,1,19:48:01,tg128,37.59,0.13
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),9,1,19:51:43,pp512,230.25,21.57
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),9,1,19:51:43,tg128,39.85,0.10
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,2,19:55:24,pp512,233.88,17.68
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,2,19:55:24,tg128,39.17,0.47
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),9,2,19:59:37,pp512,235.75,13.88
+Q160 v2-next,flint-q113-K2h-r16.gguf,Q5_0,27.37,pascal-p106-v2-next 62fa5fc3b,on (default),9,2,19:59:37,tg128,41.42,0.57
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,2,20:03:51,pp512,233.39,18.50
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-combined b3052a4f8,off (not in the build),9,2,20:03:51,tg128,37.63,0.12
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),9,2,20:07:32,pp512,231.87,20.78
+Q160 v2-next,flint-UD-Q4_K_XL.gguf,Q4_K - Medium,23.33,pascal-p106-v2-next 62fa5fc3b,on (default),9,2,20:07:32,tg128,39.85,0.13

@@ -27,7 +27,7 @@ and an `nvidia-smi -q` power and temperature query of all nine idle cards taken 
 - **Limits, every card:** power limit 75 W by default, adjustable from 60 to 75 W, enforced 75 W; thermal limits
   83 °C target, 98 °C slowdown, 101 °C shutdown; `fan.speed` reports 0 %.
 - **Decode on the fork, layer split, the tg128 that follows a prompt test:** each card averages 35.5–39.0 W (peaks
-  45–68 W) at its top bin, and the cap shows in 0–1 % of samples. The rig draws 227–251 W of GPU power on six cards
+  45–68 W) at its top bin, and the cap shows in 0–1 % of samples, though at least once in almost every such test (section 1.5). The rig draws 227–251 W of GPU power on six cards
   (three idle cards included) and 317–329 W on nine: 6.2–7.2 J per token on six cards (S4-L0, UD-Q4_K_XL at
   34–37 tok/s), 8.9 J on nine (Q8_0 at 35.9 tok/s).
 - **One card running a whole model alone (stock llama.cpp, Llama-2-7B):** 68–72 W average in tg128 with the cap
@@ -195,6 +195,15 @@ report no memory temperature and no separate memory power.
   ~1.49 × 10^16 µs (centuries) and others 52 s to ~4,100 s since boot, the high values hard to reconcile with
   the sampled cap shares of today's work (not verified either way). Cap shares in this note come from the sampled
   bitmask.
+- **The cap is brief but frequent.** Counted per busy phase instead of per sample
+  ([scripts/smi_phases.py](../../../scripts/smi_phases.py) on the 24 Q38 and step-1 logs;
+  [docs/data/2026-10-24_q108_split](../../data/2026-10-24_q108_split/README.md)), 19 of the 25 llama-bench phases of
+  10 s or more at working clocks have 0x4 in at least one card sample. That is 19 of 21 in the four- to six-card runs
+  and none of 4 in the nine-card Q8_0 runs (~36 W per card). Inside those phases 0–3.6 % of the card samples carry it;
+  over whole logs 0.02–0.34 % of the samples of the cards in use. The table's 1 % counts all 266,202 samples, idle
+  cards and single-card runs included. A busy card touches 75 W for a reading or two (166 readings above 75 W) and the
+  cap engages that briefly, so the phases' mean clock stays at 1,673–1,872 MHz. Decode phases after a prompt run at
+  1,780–1,868 MHz mean and differ by ~5 % between identical runs, the size of Q117's decode gap.
 - **"Reliability voltage" has no NVML bit.** A busy card that is limited by nothing else stops at the top of its
   voltage/frequency table (its top bin) and reports 0x0; that is what Windows tools label a voltage limit. Mask 0x0 is
   also what a lightly loaded card reports while the utilization policy holds it at base clock (section 3.1).

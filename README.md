@@ -136,6 +136,8 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
   behind it.
 - [quants/](quants/README.md): making and measuring model files for these cards ([registry](quants/experiments.md)).
 - [docs/research/notes/](docs/research/notes/README.md): the research behind each change; [GLOSSARY.md](GLOSSARY.md).
+- [docs/data/](docs/data/README.md): the data and method behind every experiment (tables, exact commands, run scripts),
+  and [docs/engine_features.md](docs/engine_features.md): each v2.0 engine feature, how it was checked and measured.
 
 ## License
 

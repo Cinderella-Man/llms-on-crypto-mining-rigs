@@ -16,6 +16,7 @@ and the five files in [patches/](../../../patches/README.md). The rig is nine P1
 | `q4_1_64-type.diff` | none | A new `ggml_type` has a high bar; the Prism ML maintainers kept their group-128 types fork-only | Practically no | Keep in the fork |
 | `flint-prism-hadamard.diff` | [#29600](https://github.com/ggml-org/llama.cpp/pull/29600) (merged, the mechanism) | No Flint file carries the metadata | Only with a published Flint file that needs it | Keep in the fork |
 | MMVQ fusion on cc 6.1 | [#30334](https://github.com/ggml-org/llama.cpp/issues/30334) (issue, no replies) | Gate unchanged in master | There is no patch | Measure first |
+| Allocator leaf check (`ggml_gallocr_needs_realloc` also checks graph leaves; fork `2d53179aa`) | none | The fork's base has the same gap; only the fork's packed input uploads turned it into a crash. Not checked against current master | Yes: a few lines in `ggml-alloc.c` and a `test-alloc` case that crashes without them | After the open PR; low priority, nothing upstream triggers it |
 
 Master moved 15 commits past the base `d77256999`. None touches `ggml/src/ggml-cuda/`, `ggml-quants`, `ggml.c` or
 `llama-graph.cpp`. Of the 24 files the diffs modify only `src/llama-model.cpp` (an mlock hunk), `tests/test-backend-ops.cpp`
@@ -335,6 +336,16 @@ Title: `llama : accept prism.hadamard metadata for Flint`
 >
 > ## Additional information
 > Perplexity and KL divergence of [file] against the unrotated BF16 reference: [..]. test-llama-archs [..].
+
+## The allocator's leaf check (fork `2d53179aa`)
+
+A graph leaf that has memory of its own when the allocator plans (a tensor already placed in a buffer) is recorded as
+such; if the next graph of the same shape has a fresh tensor at that leaf index and no node reads it,
+`ggml_gallocr_needs_realloc`, which checks only nodes and their sources, keeps the stale plan and the allocator indexes
+`buffers[-1]`. The fork's packed uploads with pipeline copies produced exactly that
+([docs/data/2026-10-25_regen_crash](../../data/2026-10-25_regen_crash/README.md)). The fix runs the nodes' test over
+the leaves as well; `test_unread_leaf_needs_memory` builds the scheduler's pattern with the dummy backend. Cost: one
+loop over the leaves per non-reused graph allocation.
 
 ## Conflicts with master, one by one
 

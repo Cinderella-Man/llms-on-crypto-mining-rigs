@@ -1,0 +1,42 @@
+== granite
+device against host
+  T 0.0: 40 of 40 (task, seed) pairs identical (reasoning, content, calls)
+  T 1.0: 40 of 40 (task, seed) pairs identical (reasoning, content, calls)
+device-none against host-none
+  T 0.0: 40 of 40 (task, seed) pairs identical (reasoning, content, calls)
+  T 1.0: 40 of 40 (task, seed) pairs identical (reasoning, content, calls)
+variant device: tokens sampled while the grammar applied, and its rejections of the sampled token
+category             requests  calls   tokens   device  grammar   share rejected of grammar
+variant host: tokens sampled while the grammar applied, and its rejections of the sampled token
+category             requests  calls   tokens   device  grammar   share rejected of grammar
+grammar switch-off warnings: 0
+== flint
+device against host
+  T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+  T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+device-none against host-none
+  T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+  T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+variant device: tokens sampled while the grammar applied, and its rejections of the sampled token
+category             requests  calls   tokens   device  grammar   share rejected of grammar
+irrelevance                 2      0      755      755        0    0.0%        0      0.00%
+live_irrelevance            2      2      309      309       83   26.9%        0      0.00%
+live_multiple               2      2      307      307      102   33.2%        2      1.96%
+live_simple                 2      2      107      107       20   18.7%        0      0.00%
+multiple                    2      2      229      229       52   22.7%        2      3.85%
+parallel                    2      2      628      628      144   22.9%        0      0.00%
+parallel_multiple           2      2      302      302      160   53.0%        0      0.00%
+simple                      2      2      288      288       40   13.9%        0      0.00%
+all                        16     14     2925     2925      601   20.5%        4      0.67%
+variant host: tokens sampled while the grammar applied, and its rejections of the sampled token
+category             requests  calls   tokens   device  grammar   share rejected of grammar
+irrelevance                 2      0      755        0        0    0.0%        0      0.00%
+live_irrelevance            2      2      309        0       83   26.9%        0      0.00%
+live_multiple               2      2      307        0      102   33.2%        2      1.96%
+live_simple                 2      2      107        0       20   18.7%        0      0.00%
+multiple                    2      2      229        0       52   22.7%        2      3.85%
+parallel                    2      2      628        0      144   22.9%        0      0.00%
+parallel_multiple           2      2      302        0      160   53.0%        0      0.00%
+simple                      2      2      288        0       40   13.9%        0      0.00%
+all                        16     14     2925        0      601   20.5%        4      0.67%
+grammar switch-off warnings: 0

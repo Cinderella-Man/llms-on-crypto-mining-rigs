@@ -1,0 +1,17 @@
+Q149 mutation check: scales the fork's Q4_K dot product by 1.1, so every test case the Q4_K kernel takes must fail.
+Apply to fork branch pascal-p106-v2-kquant (58671c135) with git apply, build, then run run_suite.sh at
+GGML_CUDA_MMVQ_PASCAL=2 (and with SKIP=q4_K, which must pass everything).
+
+diff --git a/ggml/src/ggml-cuda/mmvq-pascal.cu b/ggml/src/ggml-cuda/mmvq-pascal.cu
+index 4e15d8ec2..cc6152ed0 100644
+--- a/ggml/src/ggml-cuda/mmvq-pascal.cu
++++ b/ggml/src/ggml-cuda/mmvq-pascal.cu
+@@ -293,7 +293,7 @@ static __device__ __forceinline__ float mmvqp_dot_q4_K(const uint32_t * w, const
+         sumd = fmaf(a.d[a0 + s], (float) (isum * sc), sumd);
+         summ = fmaf((float) m, a.s[a0 + s], summ);
+     }
+-    return acc + mmvqp_h2f_lo(w[0]) * sumd - mmvqp_h2f_hi(w[0]) * summ;
++    return acc + 1.1f * (mmvqp_h2f_lo(w[0]) * sumd - mmvqp_h2f_hi(w[0]) * summ);
+ }
+ 
+ // One Q5_K super-block as 44 words: dm, 3 words of scales, 8 words qh, 32 words qs; activation blocks a0..a0+7.

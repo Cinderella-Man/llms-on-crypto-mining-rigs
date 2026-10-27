@@ -32,7 +32,8 @@ Starting point, measured ([registry](../../../quants/experiments.md), [benchmark
   at 8k on nine cards, against a card ceiling of ~262 tok/s with a light last card.
 - Nsight Systems and nvprof refuse the P106-090 ([experiments tracker](../../experiments.md) E2.2), and CUDA timing events
   change the timing on these cards (12 events per token slowed S4-L0 from 37.4 to 23.4 tok/s, Q49). Neither can give the
-  host's share of a token here.
+  host's share of a token here. Counting calls instead of timing them: [scripts/cudacount.c](../../../scripts/cudacount.c)
+  counts CUDA runtime calls through `LD_PRELOAD`; it has no validated counts yet.
 
 ## Verdict
 

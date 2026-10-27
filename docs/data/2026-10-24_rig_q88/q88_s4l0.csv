@@ -1,0 +1,67 @@
+device,code_arch,format,router,section,name,value,unit
+NVIDIA P106-090,610,s4l0,f16,occupancy,r1 registers,128,count
+NVIDIA P106-090,610,s4l0,f16,occupancy,r1 smem_per_block,37248,B
+NVIDIA P106-090,610,s4l0,f16,occupancy,r1 blocks_per_sm,2,count
+NVIDIA P106-090,610,s4l0,f16,occupancy,r1 grid,10,count
+NVIDIA P106-090,610,s4l0,f16,occupancy,r2 registers,128,count
+NVIDIA P106-090,610,s4l0,f16,occupancy,r2 smem_per_block,47488,B
+NVIDIA P106-090,610,s4l0,f16,occupancy,r2 blocks_per_sm,2,count
+NVIDIA P106-090,610,s4l0,f16,occupancy,r2 grid,10,count
+NVIDIA P106-090,610,s4l0,f16,reference,graph_node_us,1.84,us
+NVIDIA P106-090,610,s4l0,f16,reference,stream_read_gbs,179.03,GB/s
+NVIDIA P106-090,610,s4l0,f16,timing,multi_launch us_per_layer,203.09,us
+NVIDIA P106-090,610,s4l0,f16,timing,multi_launch us_per_layer_min,202.316,us
+NVIDIA P106-090,610,s4l0,f16,timing,r1 us_per_layer,176.03,us
+NVIDIA P106-090,610,s4l0,f16,timing,r1 us_per_layer_min,174.821,us
+NVIDIA P106-090,610,s4l0,f16,timing,r1 speedup,1.15372,x
+NVIDIA P106-090,610,s4l0,f16,timing,r2 us_per_layer,173.84,us
+NVIDIA P106-090,610,s4l0,f16,timing,r2 us_per_layer_min,173.383,us
+NVIDIA P106-090,610,s4l0,f16,timing,r2 speedup,1.16825,x
+NVIDIA P106-090,610,s4l0,f16,timing,bytes_per_layer,2.30687e+07,B
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,rms_norm+mul,2.3966,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,router (mmvf),11.3947,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,topk_moe,3.84545,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,quantize xn,2.24409,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,routed gate/up,66.0153,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,quantize routed,2.35302,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,routed down,44.6094,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,weighted sum,2.33123,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,quantize xn again,2.28766,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,shared gate/up,28.2363,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,quantize shared,2.2223,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,shared down+add,20.0551,us
+NVIDIA P106-090,610,s4l0,f16,multi_launch_kernel,residual add,2.12426,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 router start,4.944,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 router end,36.624,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 router wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r1 shared gate/up start,13.584,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 shared gate/up end,62.608,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 shared gate/up wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r1 routed gate/up start,38.8,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 routed gate/up end,112.528,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 routed gate/up wait_polls,0.125,count
+NVIDIA P106-090,610,s4l0,f16,trace,r1 shared down start,100.496,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 shared down end,123.472,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 shared down wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r1 routed down start,118.608,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 routed down end,177.232,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 routed down wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r1 top6,36.56,us
+NVIDIA P106-090,610,s4l0,f16,trace,r1 end,178.128,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 router start,5.104,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 router end,37.168,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 router wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r2 shared gate/up start,13.68,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 shared gate/up end,65.968,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 shared gate/up wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r2 routed gate/up start,38.704,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 routed gate/up end,109.232,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 routed gate/up wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r2 shared down start,97.264,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 shared down end,120.432,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 shared down wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r2 routed down start,115.824,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 routed down end,174,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 routed down wait_polls,0,count
+NVIDIA P106-090,610,s4l0,f16,trace,r2 top6,37.104,us
+NVIDIA P106-090,610,s4l0,f16,trace,r2 end,174.832,us

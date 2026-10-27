@@ -1,0 +1,6 @@
+mask,prompt_tokens,seconds_logged,mem_available_min_mib,mem_available_median_mib,swap_free_first_mib,swap_free_min_mib,swap_free_drop_mib,swap_used_min_mib,swap_used_max_mib,swapped_in_mib,swapped_out_mib,seconds_with_swap_io,io_wait_mean_pct,block_in_mib
+host,32768,534,1365,1433,3484,3247,237,356,593,177.8,265.4,188,6.0,56325
+cards,32768,531,1489,1556,3485,3246,239,355,594,176.0,257.2,173,6.1,56507
+host,65536,891,1438,1443,3482,3241,242,358,599,126.3,261.1,215,3.6,56253
+cards,65536,891,1573,1575,3477,3239,238,363,601,138.7,263.5,206,3.6,56299
+host,131072,36,1587,2899,3476,3247,230,364,593,21.3,224.0,19,12.9,4060

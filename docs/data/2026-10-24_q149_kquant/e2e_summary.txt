@@ -1,0 +1,75 @@
+== ppl-off1 (== ppl-off1 23:15:12 exit 0 23:21:06)
+   Final estimate: PPL = 7.1492 +/- 1.67554
+== ppl-on1 (== ppl-on1 23:21:06 exit 0 23:28:56)
+   chunk             PPL               ln(PPL(Q)/PPL(base))          KL Divergence              Δp RMS            Same top p
+   Mean PPL(Q)                   :   7.111996 ±   1.672839
+   Mean PPL(base)                :   7.149253 ±   1.675541
+   Cor(ln(PPL(Q)), ln(PPL(base))):  99.97%
+   Mean ln(PPL(Q)/PPL(base))     :  -0.005225 ±   0.006188
+   Mean PPL(Q)/PPL(base)         :   0.994789 ±   0.006155
+   Mean PPL(Q)-PPL(base)         :  -0.037257 ±   0.043789
+   Mean    KLD:   0.001916 ±   0.000353
+   Maximum KLD:   0.035244
+   99.9%   KLD:   0.033458
+   99.0%   KLD:   0.018379
+   Median  KLD:   0.000922
+   Mean    Δp:  0.335 ± 0.146 %
+   Maximum Δp: 10.410%
+   RMS Δp    :  1.678 ± 0.332 %
+   Same top p: 97.638 ± 1.353 %
+== ppl-off4 (== ppl-off4 23:41:24 exit 0 23:44:28)
+   Final estimate: PPL = 7.1237 +/- 1.67758
+== ppl-on4 (== ppl-on4 23:44:28 exit 0 23:47:46)
+   chunk             PPL               ln(PPL(Q)/PPL(base))          KL Divergence              Δp RMS            Same top p
+   Mean PPL(Q)                   :   7.133792 ±   1.675810
+   Mean PPL(base)                :   7.123702 ±   1.677585
+   Cor(ln(PPL(Q)), ln(PPL(base))):  99.98%
+   Mean ln(PPL(Q)/PPL(base))     :   0.001415 ±   0.004826
+   Mean PPL(Q)/PPL(base)         :   1.001416 ±   0.004833
+   Mean PPL(Q)-PPL(base)         :   0.010090 ±   0.034197
+   Mean    KLD:   0.001686 ±   0.000222
+   Maximum KLD:   0.016558
+   99.9%   KLD:   0.016194
+   99.0%   KLD:   0.012839
+   Median  KLD:   0.000995
+   Mean    Δp: -0.021 ± 0.109 %
+   Maximum Δp:  5.652%
+   RMS Δp    :  1.222 ± 0.162 %
+   Same top p: 96.850 ± 1.556 %
+== ppl-skip1 (== ppl-skip1 23:47:48 exit 0 23:54:06)
+   chunk             PPL               ln(PPL(Q)/PPL(base))          KL Divergence              Δp RMS            Same top p
+   Mean PPL(Q)                   :   7.111957 ±   1.672820
+   Mean PPL(base)                :   7.149253 ±   1.675541
+   Cor(ln(PPL(Q)), ln(PPL(base))):  99.97%
+   Mean ln(PPL(Q)/PPL(base))     :  -0.005230 ±   0.006191
+   Mean PPL(Q)/PPL(base)         :   0.994783 ±   0.006159
+   Mean PPL(Q)-PPL(base)         :  -0.037296 ±   0.043815
+   Mean    KLD:   0.001916 ±   0.000353
+   Maximum KLD:   0.035245
+   99.9%   KLD:   0.033458
+   99.0%   KLD:   0.018380
+   Median  KLD:   0.000922
+   Mean    Δp:  0.334 ± 0.146 %
+   Maximum Δp: 10.410%
+   RMS Δp    :  1.678 ± 0.332 %
+   Same top p: 97.638 ± 1.353 %
+== ppl-on-vs-skip1 (== ppl-on-vs-skip1 00:02:29 exit 0 00:08:25)
+   chunk             PPL               ln(PPL(Q)/PPL(base))          KL Divergence              Δp RMS            Same top p
+   Mean PPL(Q)                   :   7.111996 ±   1.672839
+   Mean PPL(base)                :   7.111961 ±   1.672818
+   Cor(ln(PPL(Q)), ln(PPL(base))): 100.00%
+   Mean ln(PPL(Q)/PPL(base))     :   0.000005 ±       -nan
+   Mean PPL(Q)/PPL(base)         :   1.000005 ±       -nan
+   Mean PPL(Q)-PPL(base)         :   0.000035 ±       -nan
+   Mean    KLD:  -0.000001 ±   0.000001
+   Maximum KLD:   0.000041
+   99.9%   KLD:   0.000041
+   99.0%   KLD:   0.000039
+   Median  KLD:  -0.000000
+   Mean    Δp:  0.000 ± 0.000 %
+   Maximum Δp:  0.029%
+   RMS Δp    :  0.003 ± 0.001 %
+   Same top p: 100.000 ± 0.000 %
+== greedy text, kernels off against forced
+   p1: identical (697 bytes)
+   p3: identical (652 bytes)

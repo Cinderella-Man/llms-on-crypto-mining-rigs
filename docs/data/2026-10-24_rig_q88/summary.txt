@@ -1,0 +1,43 @@
+block 8, gpu 0, 2026-10-24 14:40:08
+
+Q101 gate (bench/mmvq_pascal; >= 130 GB/s on the dense K = 2048 shapes, Pascal kernel st_r1c1):
+  streaming read: 
+
+Q101 fork (q6k build, us per call, one token; off = llama.cpp's kernels, on = Pascal):
+
+Q99 spread: MoE and head calls, us per call by swept GB (csv per size in q99_spread*.csv):
+
+Q99 TLB probe: /tmp/b8/rig-block8-20261024/out/q99_tlb.csv
+
+Q103 instruction throughput:
+
+Q88 persistent kernel:
+  weights read per layer and token: 23.069 MB
+  persistent kernel r1 (1 routed gate/up row per warp pass (the fork's launch shape)):
+  persistent kernel r2 (2 routed gate/up rows per warp pass):
+  CPU reference self-test (dequantization against mmvq_pascal's ref_dot): worst 2.6e-09 of the sum of |terms|: PASS
+  checks: PASS
+  weights read per layer and token: 21.758 MB
+  persistent kernel r1 (1 routed gate/up row per warp pass (the fork's launch shape)):
+  persistent kernel r2 (2 routed gate/up rows per warp pass):
+    multi-launch (13 kernels)             198.5 us per layer (min 198.2),  109.6 GB/s
+    persistent r1 (10 blocks)             173.2 us per layer (min 171.9),  125.6 GB/s; 1.146x, saves 25.3 us per layer = 1.19 ms per token (47 layers)
+    persistent r2 (10 blocks)             171.3 us per layer (min 170.9),  127.0 GB/s; 1.159x, saves 27.2 us per layer = 1.28 ms per token (47 layers)
+  weights read per layer and token: 23.069 MB
+  persistent kernel r1 (1 routed gate/up row per warp pass (the fork's launch shape)):
+  persistent kernel r2 (2 routed gate/up rows per warp pass):
+    multi-launch (13 kernels)             203.6 us per layer (min 202.9),  113.3 GB/s
+    persistent r1 (5 blocks)              231.4 us per layer (min 231.1),   99.7 GB/s; 0.880x, saves -27.8 us per layer = -1.31 ms per token (47 layers)
+    persistent r2 (5 blocks)              224.0 us per layer (min 223.6),  103.0 GB/s; 0.909x, saves -20.4 us per layer = -0.96 ms per token (47 layers)
+  weights read per layer and token: 23.069 MB
+  persistent kernel r1 (1 routed gate/up row per warp pass (the fork's launch shape)):
+  persistent kernel r2 (2 routed gate/up rows per warp pass):
+    multi-launch (13 kernels)             203.1 us per layer (min 202.3),  113.6 GB/s
+    persistent r1 (10 blocks)             176.0 us per layer (min 174.8),  131.0 GB/s; 1.154x, saves 27.1 us per layer = 1.27 ms per token (47 layers)
+    persistent r2 (10 blocks)             173.8 us per layer (min 173.4),  132.7 GB/s; 1.168x, saves 29.2 us per layer = 1.37 ms per token (47 layers)
+
+step times:
+  2026-10-24 14:39:51    q88_check: exit 0 after 2 s
+  2026-10-24 14:39:57    q88_s4l0: exit 0 after 6 s
+  2026-10-24 14:40:02    q88_g3: exit 0 after 5 s
+  2026-10-24 14:40:08    q88_grid5: exit 0 after 6 s

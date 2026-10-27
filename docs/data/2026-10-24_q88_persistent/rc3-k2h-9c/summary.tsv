@@ -1,0 +1,4 @@
+name	prompt	guess	depth	n_gen	tok_s	speedup	basis	tok_s_tgen	hits	misses	wasted	avg_inflight	same_as_plain
+warm	warm	-	0	64	32.250	-	tgen	32.250	0	0	0	0.000	-
+plain-chat	chat	-	0	256	32.879	1.000	trace	32.851	0	0	0	0.000	yes
+d0-chat	chat	none	0	256	35.466	1.079	trace	35.432	0	0	0	0.000	yes

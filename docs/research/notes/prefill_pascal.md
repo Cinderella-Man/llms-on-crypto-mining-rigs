@@ -422,7 +422,7 @@ Wall time per prompt token at ~8k on nine cards (est.; overlap factor 1.6–1.8 
 ### 4.3 How much a cache could serve
 
 Q41's E2 pilot logs record, for 200 BFCL v4 multi-turn sessions (2,364 requests, UD-Q4_K_XL, reasoning kept in the
-history), every request's prompt length and generated tokens. Replaying them under four policies (counted per request
+history), every request's prompt length and generated tokens. Replaying them under four policies with [bench/agent_cache/cache_share.py](../../../bench/agent_cache/cache_share.py) (counted per request
 against the previous request of the same session; first request processed in full unless stated):
 
 | Policy | Prompt tokens processed | Share of re-sent tokens | Per generated token |
@@ -664,7 +664,7 @@ to the host's for causal, sliding-window and several streams; then llama-batched
 traces), a two-turn chat with `server_bench.sh`, four runs: ± `-bs` × `--ctx-checkpoints 0/4`. Expected: `-bs` adds one
 re-reserve per request (0.1–0.5 s), each checkpoint 0.2–0.3 s.
 
-**E7. Cache replay of agent transcripts (laptop, offline, minutes).**
+**E7. Cache replay of agent transcripts (CPU, offline, minutes).**
 - **The method of section 4.3:** for each request take the previous request's prompt plus generated tokens and count what
   the live cache, a checkpoint and a saved system prompt would serve.
 - **Re-render check:** render each logged history with Flint's GGUF template (`reasoning_content`, parsed `tool_calls`),

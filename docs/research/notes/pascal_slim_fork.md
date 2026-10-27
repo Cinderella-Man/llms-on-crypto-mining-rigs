@@ -393,8 +393,19 @@ forced on), K2h-r16 in a two-card layer split:
 - greedy `llama-completion`, 2 × 128 tokens: identical.
 
 Greedy text with `--context-shift` past a 256-token context and logits with 19 of 49 layers on the CPU (`-ngl 30`) were
-identical too (G3), and the checks above passed again after C7's executor fixes (fed tokens, KV-step buffer growth)
+identical too (G3), and the checks above passed again after the executor's fixes (fed tokens, KV-step buffer growth)
 joined the branch (`f1b67d8b8`), fed tokens included.
+
+**B5 crashed pipelined decoding on the rig, and v2.0 ships it off.** With two or more cards the scheduler keeps four
+copies of every split input as graph leaves, and only the current copy is read by a node. B5 packs the current copy
+before the graph is allocated, so a plan made inside such an allocation records that leaf as having memory of its own;
+the next graph of the same shape under another current copy has a fresh tensor there, and `ggml_gallocr_needs_realloc`
+checked nodes only, so the allocator used the stale entry (`buffers[-1]`, a segfault in `ggml_gallocr_alloc_graph`).
+It needs compute 6.1, where B5 was the default, and two or more devices, so only the rig showed it: llama-server died
+on the third reuse of a cached prompt, llama-pipespec after three jobs. Fork commit `2d53179aa` (in v2.0) checks the
+leaves too and adds `test_unread_leaf_needs_memory` to test-alloc. v2.0 also leaves B5 and B2 off by default, since
+neither measured faster on the rig ([engine features](../../engine_features.md)). Cause, fix and reproduction:
+[docs/data/2026-10-25_regen_crash](../../data/2026-10-25_regen_crash/README.md).
 
 ## 9. Built: the attention block in two launches (C2's first part, Q152)
 

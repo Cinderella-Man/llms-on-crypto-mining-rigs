@@ -1,0 +1,11 @@
+name	prompt	guess	depth	n_gen	tok_s	speedup	hits	misses	wasted	avg_inflight	same_as_plain
+warm	warm	-	0	64	30.464	-	0	0	0	0.000	-
+plain-edit	edit	-	0	512	27.641	1.000	0	0	0	0.000	yes
+d0-edit	edit	none	0	512	33.599	1.216	0	0	0	0.000	yes
+cont-d8-edit	edit	cont	8	512	34.398	1.244	104	286	2276	6.070	yes
+copy2-d3-edit	edit	copy	3	512	36.373	1.316	69	85	255	0.906	yes
+copy4-d3-edit	edit	copy	3	512	34.828	1.260	22	20	60	0.247	yes
+mapk-d3-edit	edit	spec	3	512	33.915	1.227	19	18	54	0.211	yes
+oracle-d8-m0-edit	edit	oracle	8	512	134.664	4.872	510	0	0	7.945	yes
+oracle-d8-m1-edit	edit	oracle	8	512	26.789	0.969	0	510	4059	7.945	yes
+oracle-d3-m0.3-edit	edit	oracle	3	512	67.485	2.441	358	152	455	2.994	yes

@@ -1,0 +1,27 @@
+The allocator fix for the regenerate crash (fork commit 2d53179aa, in v2.0): ggml_gallocr_needs_realloc also checks
+the graph leaves. Applies to the fork's rc4 parent 460160e93; the commit also adds test_unread_leaf_needs_memory to
+tests/test-alloc.cpp.
+
+diff --git a/ggml/src/ggml-alloc.c b/ggml/src/ggml-alloc.c
+index b0c067b49..409b5de30 100644
+--- a/ggml/src/ggml-alloc.c
++++ b/ggml/src/ggml-alloc.c
+@@ -1046,6 +1046,18 @@ static bool ggml_gallocr_needs_realloc(ggml_gallocr_t galloc, struct ggml_cgraph
+         }
+     }
+ 
++    // a leaf no node reads is not covered above: the scheduler's input copies for the other pipeline copies are such
++    // leaves, and a copy that had memory when the plan was made (a packed upload) is a fresh tensor in the next graph
++    for (int i = 0; i < graph->n_leafs; i++) {
++        struct ggml_tensor * leaf = graph->leafs[i];
++        if (!ggml_gallocr_node_needs_realloc(galloc, leaf, &galloc->leaf_allocs[i].leaf)) {
++#ifndef NDEBUG
++            GGML_LOG_DEBUG("%s: leaf %s is not valid\n", __func__, leaf->name);
++#endif
++            return true;
++        }
++    }
++
+     return false;
+ }
+ 

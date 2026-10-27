@@ -449,6 +449,12 @@ says the chat prompt; the state hash then covers the recurrent states too. The C
 - `llama-pipe-recurrent-check` (three slots, every third token submitted to its predecessor's slot, wrong guesses, the
   token in flight dropped and submitted again or decoded with `llama_decode`), on the CPU (64 tokens: 21 states to the
   stash, 21 drops) and on two and four virtual devices (96 tokens: 32 and 32): tokens, logits, state and probe identical.
+- Two bugs the checks caught on the way: the first pipelined CPU run hit `GGML_ASSERT(backend != nullptr)` in the stash
+  copy, because the CPU buffer type has no device (host buffers now copy synchronously). On a V100 the device mask in
+  check mode aborted in an oracle run with 1 of 1,024 mask values differing (cell 804 still at position 0): the check
+  read the cards' copies while the inputs were set, and only `llama_decode` synchronized first, so with tokens in flight
+  it read before the earlier token's update landed. The fix makes the pipe slots synchronize before setting inputs when
+  `LLAMA_GPU_KQ_MASK_CHECK=1`; it changes nothing outside check mode.
 
 Races ([above](#several-samples-of-one-request-race)), checked with `RACE=K` against the same race decoded plainly,
 round robin: four stages on the two GPUs, temperature 1, the winner continuing with the oracle, copy lookup,

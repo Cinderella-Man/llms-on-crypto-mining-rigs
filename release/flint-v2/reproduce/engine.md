@@ -16,12 +16,12 @@ turned off and compared with stock behaviour.
 
 Each piece came from a feature branch that was checked on its own (operator tests natively and through the compute_61
 PTX, logits byte for byte against the base with every switch off, pipelined output identical to plain decoding) and on
-the P106s before it joined the release branch. The branches and their checks are listed in the
+the P106s before it joined the release branch. The release candidates' own checks on the P106s (rc1–rc4 and the v2.0 commit) and their scripts are in [docs/data/2026-10-24_q88_persistent](../../../docs/data/2026-10-24_q88_persistent/README.md). The branches and their checks are listed in the
 [registry](../../../quants/experiments.md#registry): Q38/Q46 (Pascal kernels), Q76 (FP32 sums), Q50 (shared-expert
 fusion), Q108–Q110 and Q116 (prefill and the card-built mask), Q88 (persistent MoE kernel), Q87, Q104, Q120, Q121,
 Q153–Q156 (pipelined speculation and the server path), Q150–Q152 (host and launch slimming), Q149/Q101 (Q4_K and Q6_K
 kernels), Q151 (decode attention), Q163 (prefill attention), Q67 (GPU sampling for tool requests), Q111 (agent prompt
-cache), Q161 (store), Q20/D3 (drafter).
+cache), Q161 (store), Q20 (drafter).
 
 ## Build
 
@@ -60,7 +60,7 @@ unpacked folder with the system's CUDA libraries removed. The hashes of the publ
 
 Defaults are what the engine does on compute 6.1 without any variable set.
 
-**Speed pieces** (set to 0 to turn one off):
+**Speed pieces** (set to 0 to turn one off, or to 1 to turn on one that is off by default):
 
 | Variable | Default | What it switches |
 |---|---|---|
@@ -68,15 +68,16 @@ Defaults are what the engine does on compute 6.1 without any variable set.
 | `GGML_CUDA_MMVQ_PASCAL_SKIP` | none | weight types left to llama.cpp's kernels, e.g. `q4_K,q6_K` |
 | `GGML_CUDA_MMVQ_PASCAL_MC` | on | the Pascal kernels for steps of 2–4 tokens |
 | `GGML_CUDA_PERSISTENT_MOE` | 1 | one persistent kernel per MoE layer at one token (needs the rescale off, the default here) |
-| `GGML_CUDA_FATTN_PASCAL` | 1 | the decode-attention kernel (head size 128, 8 query heads per KV head) |
+| `GGML_CUDA_FATTN_PASCAL` | 0 | 1: the decode-attention kernel (head size 128, 8 query heads per KV head); off because it slowed generation on the rig ([features](../../../docs/engine_features.md)) |
 | `GGML_CUDA_FATTN_TILE_PASCAL` | 1 | the prefill-attention kernel (head size 128 or 256), also for a Q8_0 cache |
 | `GGML_CUDA_ATTN_BLOCK` | 1 | the attention block of one token in two launches (2 forces it on other GPUs) |
 | `GGML_CUDA_NORM_Q8` | on | the norm writes the Q8_1 activations and absorbs the residual add |
 | `GGML_CUDA_MMQ_MOE_LEGACY` | 0 | 1 restores llama.cpp's MoE prefill tiles (without PR #31047) |
-| `LLAMA_GPU_KQ_MASK` | 1 | the attention mask built on each card; 0 builds it on the host |
+| `LLAMA_GPU_KQ_MASK` | 0 | N: micro-batches of N tokens or more build their attention mask on each card; 0 builds it on the host (built for every micro-batch it read long prompts 3.6× slower) |
 | `LLAMA_GRAPH_REUSE_WAIT` | unset | 1 switches off the graph-reuse change for pipelined prefill micro-batches (Q109) |
-| `LLAMA_INPUT_ON_GPU` | on (6.1) | the embedding row looked up on the first card; 0 on the host (needed for a drafter on a spare card) |
-| `LLAMA_PIPE_UPLOAD`, `LLAMA_INPUT_UPLOAD` | packed | one packed asynchronous upload per card and token; `LLAMA_PIPE_UPLOAD=0` or `1` and `LLAMA_INPUT_UPLOAD=0` restore the separate copies |
+| `LLAMA_INPUT_ON_GPU` | 0 | 1: the embedding row looked up on the first card; leave it off for a drafter on a spare card |
+| `LLAMA_PIPE_UPLOAD` | 2 | pipelined decoding: one packed asynchronous upload per card and token; 1 one asynchronous copy per input, 0 one synchronous copy per input |
+| `LLAMA_INPUT_UPLOAD` | 0 | plain decoding: 1 packs the inputs into one asynchronous upload per card and token; 0 keeps llama.cpp's separate copies |
 | `LLAMA_GRAMMAR_HOST_SAMPLING` | 0 | 1 samples requests with a grammar (tool calls) on the host, as upstream does |
 
 **Numerics:**

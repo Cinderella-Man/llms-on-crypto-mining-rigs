@@ -465,6 +465,21 @@ layers and the dropped combine launches. f16 at 140 GB/s; q8_0 at 90 GB/s of q8_
 - The TILE retile (ik_llama.cpp PR #2142's idea applied to decode) is the smallest upstream change that helps every Pascal
   user with an f16 cache.
 
+### 5.11 Built and measured (Q151)
+
+The kernel is in the fork as `fattn-pascal.cu` (branch `pascal-p106-v2-q151`, `8d30766c2`; in v2.0 behind
+`GGML_CUDA_FATTN_PASCAL`, default off): F16 KV, head 128, 8 query heads per KV head, one token; split keys, last-block
+merge, one launch.
+- **Correct** (V100 through the compute_61 PTX): `FLASH_ATTN_EXT` 24 of 24 Flint-shape cases; dropping the sinks fails
+  exactly the 6 sink cases it takes and dropping the last tile all 18 cases it takes; × 1.01 on the output stays
+  inside the 5e-4 NMSE limit. G3, 4 × 512 tokens at `-ub 1`: mean KLD 0.052 ± 0.008 and same top token 91.2 ± 0.9 %
+  against the stock kernel, where the summation-order reference (stock attention, Pascal matrix-vector kernels against
+  llama.cpp's) gives 0.047 ± 0.007 and 92.7 ± 0.8 %.
+- **Slower on the rig** (release candidate, K2h-r16, nine cards): tg128 36.80 with it against 40.25 without (−9 %), and
+  after 32k tokens of context 15.0 against 25.4 tok/s, against section 5.9's estimate. v2.0 ships it off
+  ([engine features](../../engine_features.md); data: [checks](../../data/2026-10-24_q88_persistent/README.md),
+  [rig](../../data/2026-10-25_release_rig/README.md)).
+
 ## 6. KV memory per card at long context
 
 Per full-attention layer at 262,144 tokens: f16 512 MiB, q8_0 272 MiB, q4_0 144 MiB. The sliding-window cache adds
@@ -677,10 +692,15 @@ into the TILE case of `ggml_cuda_flash_attn_ext` and into the F16-copy reservati
 - **Prompts.** At 64k (Q116's build: ~10.6 of ~14.7 ms per prompt token in attention) 1.6× faster attention gives ~10.7 ms,
   ~93 tok/s instead of 68 (1.4×); the newer build's faster expert products make attention a larger share and the gain
   larger.
-- **Rig run** (`T=<tarball> rig_q163.sh` in the private repo; ~80 minutes with 64k): kernel speed on one card for both score
+- **Rig run** (`T=<tarball>` [rig_q163.sh](../../data/2026-10-24_q163_prefill_attn/run/rig_q163.sh); ~80 minutes with 64k): kernel speed on one card for both score
   layouts against the stock kernel (test-backend-ops perf on the prompt cases), K2h-r16 KLD over one 8k chunk, prompt speed
   at 8k/32k/64k for K2h-r16 and Qwen3.6 Q4_0-noK on nine cards, and a Q8_0 cache's compute buffers at 64k, kernel off
   against on in one binary.
+- **Measured on the rig** (the script's step 2, run inside the release candidates' rig script): K2h-r16 on nine cards,
+  llama-batched-bench `-b 2048 -ub 512`, 8,192 tokens 178.5 → 204.2 tok/s (+14 %), 32,768 tokens 120.6 → 138.7 (+15 %);
+  whole-prompt batches on v2.0 699 → 766 and 447 → 461. The 64k, Qwen3.6 and one-card kernel steps have not run, so the
+  1.4× estimated at 64k is unmeasured. Checks and scripts:
+  [docs/data/2026-10-24_q163_prefill_attn](../../data/2026-10-24_q163_prefill_attn/README.md).
 
 ## Sources
 

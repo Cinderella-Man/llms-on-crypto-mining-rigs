@@ -19,6 +19,7 @@ cell where a fresh context has it, so cached and cold answers agree bit for bit.
 | [gpu_check.sh](gpu_check.sh), [gpu_inner.sh](gpu_inner.sh) | The same with the real Flint on one GPU (a test slot and a cold slot of one server), then a short replay (stock behaviour, the exactness control, the agent cache) for the token counts and the replies. One container under an optional `flock` |
 | [rig_replay.sh](rig_replay.sh) | The rig run: the eight sessions per configuration (stock behaviour; stock behaviour with the single tail checkpoint, the exactness control whose replies the agent cache must give; the agent cache; stock and the agent cache with the reasoning dropped from the history; optionally the unmodified base build), K2h-r16 on nine cards, a memory watchdog; writes the replay rows and summaries |
 | [rig_check.sh](rig_check.sh) | Identity against a cold server on the rig: one server with a cache slot and a cold slot, `check_exact.py`'s prefix, turns and trim scenarios on K2h-r16 over nine cards (~6 min) |
+| [cache_share.py](cache_share.py) | Prompt-token accounting from multi-turn session logs (bench/bfcl_flint's `multi_turn.py run` output): prompt tokens processed with no cache, with llama-server's checkpoint 4 tokens before the previous prompt's end, with the generated turn reused exactly, and with the first request restored from a saved state; the table of [prefill_pascal.md](../../docs/research/notes/prefill_pascal.md) section 4.3 |
 
 ## Exactness, and why the checks run without flash attention on the CPU
 
