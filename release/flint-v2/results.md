@@ -26,30 +26,39 @@ over all requests of the run; first token = the median per turn; runaways = sess
 |---|---|---|---|---|---|---|
 | Flint-Pascal-Q5, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 / 2.7 | **53.8** | 178 | 2.6 s | 0 |
 | Flint-Pascal-Q5, release, 262k, `--pipe-depth 3` | 10 (10) | 1.0 / 12.0 | 48.6 | 180 | 2.7 s | 1 |
-| Flint-Pascal-Q5, stock, 64k, `-b 2048 -ub 512` | 11 (10) | 2.1 / 6.9 | 15.6 | 143 | 4.2 s | 1 |
+| Flint-Pascal-Q5, stock, 64k, `-b 2048 -ub 512` | 11 (10) | 2.1 / 6.9 | 15.6 | 143 | 3.9 s | 1 |
 | UD-Q4_K_XL, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | 11 (10) | 1.1 / 4.1 | 50.7 | 191 | 2.5 s | 1 |
 | UD-Q5_K_XL, release, 262k, `-b 512 -ub 128 --pipe-depth 4` | 12 (12) in 24.8 min | 1.0 / 5.2 | 44.2 | 185 | 2.6 s | 0 |
-| UD-Q4_K_XL, stock, 64k, `-b 2048 -ub 512` | 9 (8) | 3.1 / 12.0 | 14.0 | 145 | 3.7 s | 1 |
+| UD-Q4_K_XL, stock, 64k, `-b 2048 -ub 512` | 9 (8) | 3.1 / 12.0 | 14.0 | 145 | 3.8 s | 1 |
 | Q8_0, release, 262k, `-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1 / 3.5, 1.4 / 7.8 | **45.9, 44.6** | 176, 185 | 2.6 s | 0, 0 |
 | Q8_0, the same at `--pipe-depth 3` (two runs) | 11 (11), 10 (9) | 1.0 / 3.6, 1.3 / 12.0 | 44.6, 44.6 | 184, 191 | 2.4, 2.6 s | 0, 1 |
 | Q8_0, the same at `--pipe-depth 2` | 10 (10) | 1.0 / 10.9 | 40.1 | 179 | 2.4 s | 0 |
 | Q8_0, the same without pipelined speculation | 10 (9) | 1.7 / 12.0 | 29.3 | 184 | 2.3 s | 1 |
 | Q8_0, `--pipe-depth 3` with the agent prompt cache (`--prefix-cache --checkpoint-gen`) | 10 (9) | 1.0 / 12.0 | 42.2 | 173 | 2.7 s | 1 |
 | Q8_0, stock, 64k, `-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6` | 9 (8) | 2.9 / 12.0 | 14.4 | 144 | 3.7 s | 1 |
-| Q8_0, v1 (`eeaa59660`), 64k, `-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6`, 35 minutes like stock | 12 (11) | 1.6 / 3.8 | 25.7 | 146 | 3.9 s | 1 |
+| Q8_0, v1 (`eeaa59660`), 64k, `-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6`, 35 minutes like stock | 12 (11) | 1.6 / 3.8 | 25.7 | 146 | 4.0 s | 1 |
 
 - **The release command line:** depth 4 (Flint-Pascal-Q5 +11 % over depth 3, Q8_0 even; the owner's rule: the depth
   that wins on both, depth 4 on a tie), `-b 512 -ub 128` (with `-b 2048 -ub 512` at 262,144 tokens the host's 4 GB of
   RAM ran out while loading, on both files), no agent prompt cache (it cost 11 s of fixed time per task and gained
   nothing).
 - **Stock llama.cpp at 64k:** at 262,144 tokens its host-side attention mask does not fit the 4 GB host.
+- **Host memory:** at its lowest every run left 643–918 MB of the host's 4 GB available on the release engine at
+  262,144 tokens and 931–984 MB on stock and v1 at 65,536; swap grew by ~250 MB per run. No server reached the RAM
+  watchdog.
 - **Pipelined speculation** is worth +52 % in generation here (Q8_0, 29.3 → 44.6 tokens/s at depth 3); it changes the
   speed, not the tokens (identity rows below).
-- Commands: `bench/agent_check/release_check.sh` with `ARMS`, `CTX`, `REL_ARGS` / `STOCK_ARGS` as in the table.
+- Commands: `bench/agent_check/release_check.sh` with `ARMS`, `CTX`, `REL_ARGS` / `STOCK_ARGS` as in the table; every
+  run's per-task and per-turn tables, the agent's patches and the scripts are in
+  [docs/data/2026-10-26_release_setup](../../docs/data/2026-10-26_release_setup/README.md).
 
 Prompt reading as an agent sees it, llama-server, Q8_0, the release command line at depth 3, one request each
 (2026-10-26): a fresh 13,400-token prompt reads at 485 tokens/s; the next turn (+2,000 new tokens, the rest cached)
 gives its first token after 5.8 s; generation at 15,000 tokens of context runs at 37.2 tokens/s.
+With `-b 2048 -ub 512` the fresh prompt reads faster and the next turn waits longer: 554 tokens/s, 7.3 s and only
+21.6 tokens/s of generation at `-c 131072`; 570 tokens/s, 6.4 s and 38.7 tokens/s at `-c 65536`. llama-batched-bench
+reports about 2.3× less prompt speed than the server with the same flags (214 tokens/s for a 16k prompt), so prompt
+speeds for agents are taken from the server ([scripts/serve_prefill.sh](../../scripts/serve_prefill.sh)).
 
 ## The headline: Flint Q8_0 on nine cards at the full context
 
@@ -72,11 +81,14 @@ Unsloth's Flint Q8_0 (42.3 GB) on all nine P106-090 cards at 262,144 tokens of c
 | Identity on the P106: pipelined output = plain; server checks (pipelined with copy lookup and continuation counts, with a floor, plain at temperature 0) | 34 of 34 jobs the same as plain (Flint-Pascal-Q5, UD-Q4_K_XL); server 13 / 13, 13 / 13, 6 / 6 | `bench/pipespec/check_identity.sh`, `rig_run.sh`, `rig_server.sh` | release | — |
 | Generation, Flint-Pascal-Q5, nine cards, warm | 38.9–40.5 tok/s (two sessions) | `llama-bench -m <file> -ngl 99 -fa on -p 512 -n 128 -r 3` | release | — |
 | The one-by-one test of the v2 switches on rc4 (each switch off against all on, Flint-Pascal-Q5, nine cards) | the Pascal decode-attention kernel, the input layer on the card and packed input uploads slowed generation (tg128 36.8 with them, 40.3 without) and are off by default; the attention mask built on the cards slowed long prompts 3.6× (211 against 764 tok/s at 8,192 tokens) for +1.6–2.3 % in generation and is off by default | `llama-bench` per switch (`GGML_CUDA_FATTN_PASCAL`, `LLAMA_INPUT_ON_GPU`, `LLAMA_INPUT_UPLOAD`, `LLAMA_GPU_KQ_MASK`) | rc4 → release | — |
+| Each v2 switch off on its own on rc4, all others on (tg128, Flint-Pascal-Q5, nine cards; all on 36.8) | Pascal matrix-vector kernels off 31.9 (they give +15.5 %), persistent MoE kernel off 34.0 (+8 %), attention block in one launch 36.5, card-built mask off 36.7; turning the norm + Q8 fusion off (`GGML_CUDA_NORM_Q8=0`) aborts llama-bench with a CUDA memory-pool assertion | `llama-bench -p 512 -n 128 -r 3` per switch ([data](../../docs/data/2026-10-25_release_rig/README.md)) | rc4 `2d53179aa` | Q117 |
+| Generation after 32,768 tokens of context, Flint-Pascal-Q5, nine cards | 25.1 tok/s (25.7 with the card-built mask on); 15.0 on rc4 with the Pascal decode-attention kernel on, 25.4 with it off | `llama-bench -p 0 -n 64 -d 32768 -r 2` | release, rc4 `2d53179aa` | Q151 |
+| One 8,192-token prompt in one batch (`-b 8192 -ub 512`), Flint-Pascal-Q5, per build | stock 602, combined 721, v2-next 720 and 738, rc1 `594d20e08` 188; the release candidate with `LLAMA_GPU_KQ_MASK=0` 764: the slowdown came in with rc1's card-built mask | `llama-bench -p 8192 -n 0 -b 8192 -ub 512 -r 1` on each build | stock … release | Q110 |
 | Prompt of 8,192 tokens in whole-prompt batches (`-b 8192 -ub 512`), nine cards: Flint-Pascal-Q5 / Q8_0 | 767 / 801 tok/s (Flint-Pascal-Q5 on stock: 593–602) | `llama-bench -p 8192 -n 0` | release, stock | — |
-| Prefill at 8,192 / 32,768 tokens, the prefill-attention kernel on / off, Flint-Pascal-Q5 | 766 / 461 against 699 / 447 tok/s (+10 % / +3 %) | `GGML_CUDA_FATTN_TILE_PASCAL=1/0 llama-batched-bench` | release | Q163 |
+| Prefill at 8,192 / 32,768 tokens, the prefill-attention kernel on / off, Flint-Pascal-Q5 | 766 / 461 against 699 / 447 tok/s (+10 % / +3 %) | `llama-bench -p 8192,32768 -n 0 -b 8192 -ub 512 -r 2`, `GGML_CUDA_FATTN_TILE_PASCAL=0` for off | release | Q163 |
 | The agent prompt cache (`--prefix-cache --checkpoint-gen`) in the agent check, Q8_0 | no gain: 42.2 against 44.6 tok/s, 11 s of fixed time per task; off in the release command line | [bench/agent_check](../../bench/agent_check/README.md) | release | Q111 |
 | Small bug-fix tasks for a coding agent, stock against the release engine | the agentic table above: 14.4 → 44.6–53.8 tok/s, 2.9 → 1.0–1.2 minutes per task | [bench/agent_check](../../bench/agent_check/README.md) | stock, release | Q131 |
-| `-b 2048 -ub 512` at 262,144 tokens | does not load: the host's 4 GB of RAM runs out (Flint-Pascal-Q5, the server killed while loading); Q8_0 loses pipeline parallelism (card 1 lacks room for the 561 MiB compute buffer); `-b 512 -ub 128` is the release line | llama-server at `-c 262144` | release | Q140 |
+| Larger batches at 262,144 tokens | `-b 2048 -ub 512` does not load Flint-Pascal-Q5: the host's 4 GB of RAM runs out and the server is killed while loading; Q8_0 at `-b 2048 -ub 256` loses pipeline parallelism (card 1 lacks room for its 561 MiB compute buffer) and reads a 16k-token prompt at 133 against 214 tok/s; `-b 8192 -ub 128` reads at the same 214 as `-b 512 -ub 128`, the release line | llama-server and llama-batched-bench at `-c 262144` ([data](../../docs/data/2026-10-26_release_setup/README.md)) | release | Q140 |
 | Tool requests sampled on the GPU (the grammar checked on the host) against sampling on the host, Flint-Pascal-Q5 | 37.9 against 33.6 tok/s at temperature 0 (2,011 tokens), 45.3–46.0 against 39.6–40.0 at temperature 1 (+13–15 %); the same tool calls, 0 grammar warnings | llama-server, `LLAMA_GRAMMAR_HOST_SAMPLING=1/0` | release | Q67 |
 | Prefill with eight scheduler copies against four | 765 / 462 against 766 / 461 tok/s at 8,192 / 32,768 tokens: no gain; the release ships four | builds with `SCHED_COPIES=8` and `4` | release | Q157 |
 

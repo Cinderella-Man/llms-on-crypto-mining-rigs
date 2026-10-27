@@ -1,0 +1,12 @@
+diff -ruN a/variable-length-quantity.js b/variable-length-quantity.js
+--- a/variable-length-quantity.js
++++ b/variable-length-quantity.js
+@@ -19,7 +19,7 @@
+   let val = 0;
+ 
+   for (let i = 0; i < buf.length; i++) {
+-    val = (val << LENGTH) | (buf[i] & DATA_BITS);
++    val = val * (CONT_BITS) + (buf[i] & DATA_BITS);
+   }
+   return val;
+ };

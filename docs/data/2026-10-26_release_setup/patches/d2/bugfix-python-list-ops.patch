@@ -1,0 +1,18 @@
+diff -ruN a/list_ops.py b/list_ops.py
+--- a/list_ops.py
++++ b/list_ops.py
+@@ -26,10 +26,10 @@
+ 
+ 
+ def foldr(function, list, initial):
+-    if len(list) == 0:
+-        return initial
+-    else:
+-        return function(list[0], foldr(function, list[1:], initial))
++    acc = initial
++    for item in reversed(list):
++        acc = function(acc, item)
++    return acc
+ 
+ 
+ def reverse(list):

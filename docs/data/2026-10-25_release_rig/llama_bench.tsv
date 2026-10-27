@@ -1,0 +1,99 @@
+date	time	step	tool	build	file	switches	args	test	tok_s	sd	label	note
+2026-10-25	14:46	release-matrix	llama-bench	d77256999 (stock)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	185.57		stock, stock clocks	
+2026-10-25	14:46	release-matrix	llama-bench	d77256999 (stock)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	18.26		stock, stock clocks	
+2026-10-25	14:56	release-matrix	llama-bench	eeaa59660 (v1)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	187.55		v1, stock clocks	
+2026-10-25	14:56	release-matrix	llama-bench	eeaa59660 (v1)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	32.92		v1, stock clocks	
+2026-10-25	15:06	release-matrix	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	269.94		v2, stock clocks	
+2026-10-25	15:06	release-matrix	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	30.98		v2, stock clocks	
+2026-10-25	15:16	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	258.54	9.28	all on (1)	
+2026-10-25	15:16	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	36.80	0.56	all on (1)	
+2026-10-25	15:20	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_MMVQ_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	255.82	12.94	GGML_CUDA_MMVQ_PASCAL=0	
+2026-10-25	15:20	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_MMVQ_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	31.85	0.60	GGML_CUDA_MMVQ_PASCAL=0	
+2026-10-25	15:25	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_PERSISTENT_MOE=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	257.66	10.13	GGML_CUDA_PERSISTENT_MOE=0	
+2026-10-25	15:25	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_PERSISTENT_MOE=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	34.03	0.59	GGML_CUDA_PERSISTENT_MOE=0	
+2026-10-25	15:29	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	258.86	10.02	GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	15:29	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	40.25	0.61	GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	15:33	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_ATTN_BLOCK=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	259.15	9.49	GGML_CUDA_ATTN_BLOCK=0	
+2026-10-25	15:33	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_ATTN_BLOCK=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	36.51	0.83	GGML_CUDA_ATTN_BLOCK=0	
+2026-10-25	15:37	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	258.81	10.58	all on (2)	
+2026-10-25	15:37	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	36.80	0.84	all on (2)	
+2026-10-25	15:41	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_NORM_Q8=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	260.34	7.88	GGML_CUDA_NORM_Q8=0	
+2026-10-25	15:41	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_NORM_Q8=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128			GGML_CUDA_NORM_Q8=0	aborted after pp512: GGML_ASSERT in the CUDA memory pool (ggml-cuda.cu:741)
+2026-10-25	15:46	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_INPUT_UPLOAD=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	256.61	13.54	LLAMA_INPUT_UPLOAD=0	
+2026-10-25	15:46	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_INPUT_UPLOAD=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	37.41	0.44	LLAMA_INPUT_UPLOAD=0	
+2026-10-25	15:51	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_INPUT_ON_GPU=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	247.44	14.41	LLAMA_INPUT_ON_GPU=0	
+2026-10-25	15:51	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_INPUT_ON_GPU=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	37.75	0.64	LLAMA_INPUT_ON_GPU=0	
+2026-10-25	15:55	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	258.94	8.26	LLAMA_GPU_KQ_MASK=0	
+2026-10-25	15:55	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	36.68	0.91	LLAMA_GPU_KQ_MASK=0	
+2026-10-25	15:59	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	257.43	11.43	all on (3)	
+2026-10-25	15:59	one-switch-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	37.33	0.49	all on (3)	
+2026-10-25	16:04	decode-32k	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 0 -n 64 -d 32768 -r 2	tg64@d32768	15.04	1.27	32k depth all on	
+2026-10-25	16:12	decode-32k	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 0 -n 64 -d 32768 -r 2	tg64@d32768	25.41	0.76	32k depth GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	16:20	decode-32k	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=0	-ngl 99 -fa on -p 0 -n 64 -d 32768 -r 2	tg64@d32768	15.24	0.36	32k depth LLAMA_GPU_KQ_MASK=0	
+2026-10-25	16:28	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	256.36	11.72	K2h all on	
+2026-10-25	16:28	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	36.84	0.77	K2h all on	
+2026-10-25	16:32	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	261.10	6.51	K2h GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	16:32	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	39.46	0.64	K2h GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	16:36	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	248.99	13.52	K2h GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0	
+2026-10-25	16:36	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	40.26	0.71	K2h GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0	
+2026-10-25	16:41	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	252.79	9.47	K2h GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	
+2026-10-25	16:41	combined-off	llama-bench	2d53179aa (v2-rc4)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	39.42	0.82	K2h GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	
+2026-10-25	16:45	combined-off	llama-bench	62fa5fc3b (v2-next)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	231.83	17.91	K2h v2-next 62fa5fc3b	
+2026-10-25	16:45	combined-off	llama-bench	62fa5fc3b (v2-next)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	42.04	0.35	K2h v2-next 62fa5fc3b	
+2026-10-25	17:07	combined-off	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	273.41	8.62	Q8_0 all on	
+2026-10-25	17:07	combined-off	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	31.05	0.74	Q8_0 all on	
+2026-10-25	17:17	combined-off	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	271.49	8.58	Q8_0 GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	17:17	combined-off	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	33.44	0.88	Q8_0 GGML_CUDA_FATTN_PASCAL=0	
+2026-10-25	17:27	combined-off	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	261.89	11.64	Q8_0 GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	
+2026-10-25	17:27	combined-off	llama-bench	2d53179aa (v2-rc4)	Q8_0	LLAMA_NO_MOE_DOWN_RESCALE=tg GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	33.67	0.91	Q8_0 GGML_CUDA_FATTN_PASCAL=0 LLAMA_INPUT_ON_GPU=0 LLAMA_INPUT_UPLOAD=0	
+2026-10-25	18:23	defaults	llama-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128	pp512	251.19	10.90	K2h-r16	
+2026-10-25	18:23	defaults	llama-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128	tg128	40.27	0.80	K2h-r16	
+2026-10-25	18:27	defaults	llama-bench	bff28aba6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -ts 6/6/5/5/6/5/5/6/6	pp512	257.27	16.45	Q8_0	
+2026-10-25	18:27	defaults	llama-bench	bff28aba6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -ts 6/6/5/5/6/5/5/6/6	tg128	34.85	0.71	Q8_0	
+2026-10-25	18:37	kquant	llama-bench	bff28aba6 (v2-rc4)	UD-Q4_K_XL	-	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	244.71	19.59	UD all on	
+2026-10-25	18:37	kquant	llama-bench	bff28aba6 (v2-rc4)	UD-Q4_K_XL	-	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	39.53	0.34	UD all on	
+2026-10-25	18:41	kquant	llama-bench	bff28aba6 (v2-rc4)	UD-Q4_K_XL	GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K,q6_K	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	242.63	21.92	UD GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K,q6_K	
+2026-10-25	18:41	kquant	llama-bench	bff28aba6 (v2-rc4)	UD-Q4_K_XL	GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K,q6_K	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	39.86	0.18	UD GGML_CUDA_MMVQ_PASCAL_SKIP=q4_K,q6_K	
+2026-10-25	18:45	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -c 8704 -b 2048 -ub 512 -npp 8192 -ntg 32 -npl 1	pp8192	178.53		prompt attention off	
+2026-10-25	18:45	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -c 8704 -b 2048 -ub 512 -npp 8192 -ntg 32 -npl 1	tg32@d8192	30.27		prompt attention off	
+2026-10-25	18:49	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -c 8704 -b 2048 -ub 512 -npp 8192 -ntg 32 -npl 1	pp8192	204.22		prompt attention on	
+2026-10-25	18:49	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -c 8704 -b 2048 -ub 512 -npp 8192 -ntg 32 -npl 1	tg32@d8192	29.13		prompt attention on	
+2026-10-25	18:54	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -c 33280 -b 2048 -ub 512 -npp 32768 -ntg 32 -npl 1	pp32768	120.63		prompt attention off	
+2026-10-25	18:54	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -c 33280 -b 2048 -ub 512 -npp 32768 -ntg 32 -npl 1	tg32@d32768	21.49		prompt attention off	
+2026-10-25	19:02	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -c 33280 -b 2048 -ub 512 -npp 32768 -ntg 32 -npl 1	pp32768	138.73		prompt attention on	
+2026-10-25	19:02	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -c 33280 -b 2048 -ub 512 -npp 32768 -ntg 32 -npl 1	tg32@d32768	21.23		prompt attention on	
+2026-10-25	19:10	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4-sched8)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -c 8704 -b 2048 -ub 512 -npp 8192 -ntg 32 -npl 1	pp8192	178.32		prompt attention off	
+2026-10-25	19:10	prefill-attention	llama-batched-bench	bff28aba6 (v2-rc4-sched8)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -c 8704 -b 2048 -ub 512 -npp 8192 -ntg 32 -npl 1	tg32@d8192	29.99		prompt attention off	
+2026-10-25	19:15	prefill-whole-batch	llama-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512	pp8192	211.23	0.39	K2h-r16 rc4	
+2026-10-25	19:23	prefill-bisect	llama-bench	d77256999 (stock)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512 -r 1	pp8192	602.10	0.00	llama.cpp-20261022-d77256999	
+2026-10-25	19:28	prefill-bisect	llama-bench	b3052a4f8 (v2-combined)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512 -r 1	pp8192	721.41	0.00	llama.cpp-20261024-b3052a4f8-pascal-p106-v2-combined	
+2026-10-25	19:33	prefill-bisect	llama-bench	62fa5fc3b (v2-next)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512 -r 1	pp8192	719.83	0.00	llama.cpp-20261024-62fa5fc3b-pascal-p106-v2-next	
+2026-10-25	19:38	prefill-bisect	llama-bench	d379da309 (v2-next)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512 -r 1	pp8192	738.20	0.00	llama.cpp-20261024-d379da309-pascal-p106-v2-next	
+2026-10-25	19:43	prefill-bisect	llama-bench	594d20e08 (v2-rc)	Flint-Pascal-Q5	LLAMA_NO_MOE_DOWN_RESCALE=tg	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512 -r 1	pp8192	187.91	0.00	llama.cpp-20261024-594d20e08-pascal-p106-v2-rc	
+2026-10-25	19:48	prefill-bisect	llama-bench	bff28aba6 (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=0	-ngl 99 -fa on -p 8192 -n 0 -b 8192 -ub 512 -r 1	pp8192	764.09	0.00	LLAMA_GPU_KQ_MASK=0	
+2026-10-25	20:54	defaults	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512,8192 -n 128 -b 8192 -ub 512 -r 2	pp512	247.62	11.53	K2h-r16	
+2026-10-25	20:54	defaults	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512,8192 -n 128 -b 8192 -ub 512 -r 2	pp8192	766.87	1.08	K2h-r16	
+2026-10-25	20:54	defaults	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512,8192 -n 128 -b 8192 -ub 512 -r 2	tg128	38.87	1.15	K2h-r16	
+2026-10-25	20:59	defaults	llama-bench	37e717ff6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512,8192 -n 128 -b 8192 -ub 512 -r 2 -ts 6/6/5/5/6/5/5/6/6	pp512	252.24	15.52	Q8_0	
+2026-10-25	20:59	defaults	llama-bench	37e717ff6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512,8192 -n 128 -b 8192 -ub 512 -r 2 -ts 6/6/5/5/6/5/5/6/6	pp8192	800.77	0.78	Q8_0	
+2026-10-25	20:59	defaults	llama-bench	37e717ff6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512,8192 -n 128 -b 8192 -ub 512 -r 2 -ts 6/6/5/5/6/5/5/6/6	tg128	33.25	1.36	Q8_0	
+2026-10-25	21:10	prefill-whole-batch	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -n 0 -b 8192 -ub 512 -r 2 -p 8192,32768	pp8192	766.29	0.40	K2h-r16 4 copies	
+2026-10-25	21:10	prefill-whole-batch	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -n 0 -b 8192 -ub 512 -r 2 -p 8192,32768	pp32768	460.96	1.45	K2h-r16 4 copies	
+2026-10-25	21:21	prefill-whole-batch	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -n 0 -b 8192 -ub 512 -r 2 -p 8192,32768	pp8192	699.33	1.80	K2h-r16 4 copies, prompt attention off	
+2026-10-25	21:21	prefill-whole-batch	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	GGML_CUDA_FATTN_TILE_PASCAL=0	-ngl 99 -fa on -n 0 -b 8192 -ub 512 -r 2 -p 8192,32768	pp32768	446.77	1.57	K2h-r16 4 copies, prompt attention off	
+2026-10-25	21:33	prefill-whole-batch	llama-bench	37e717ff6 (v2-rc4-sched8)	Flint-Pascal-Q5	-	-ngl 99 -fa on -n 0 -b 8192 -ub 512 -r 2 -p 8192,32768	pp8192	765.08	2.18	K2h-r16 8 copies	
+2026-10-25	21:33	prefill-whole-batch	llama-bench	37e717ff6 (v2-rc4-sched8)	Flint-Pascal-Q5	-	-ngl 99 -fa on -n 0 -b 8192 -ub 512 -r 2 -p 8192,32768	pp32768	462.05	1.88	K2h-r16 8 copies	
+2026-10-25	21:44	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	251.17	9.33	K2h mask off (1)	
+2026-10-25	21:44	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	40.46	0.92	K2h mask off (1)	
+2026-10-25	21:49	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	246.80	15.14	K2h mask on (1)	
+2026-10-25	21:49	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	41.29	0.60	K2h mask on (1)	
+2026-10-25	21:53	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	251.44	10.60	K2h mask off (2)	
+2026-10-25	21:53	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	40.27	0.85	K2h mask off (2)	
+2026-10-25	21:57	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 512 -n 128 -r 3	pp512	251.11	13.69	K2h mask on (2)	
+2026-10-25	21:57	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 512 -n 128 -r 3	tg128	40.77	0.73	K2h mask on (2)	
+2026-10-25	22:02	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	-	-ngl 99 -fa on -p 0 -n 64 -d 32768 -r 2	tg64@d32768	25.09	1.09	K2h 32k mask off	
+2026-10-25	22:10	card-mask	llama-bench	37e717ff6 (v2-rc4)	Flint-Pascal-Q5	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 0 -n 64 -d 32768 -r 2	tg64@d32768	25.67	0.40	K2h 32k mask on	
+2026-10-25	22:18	card-mask	llama-bench	37e717ff6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	262.17	11.87	Q8_0 mask off	
+2026-10-25	22:18	card-mask	llama-bench	37e717ff6 (v2-rc4)	Q8_0	-	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	34.02	0.77	Q8_0 mask off	
+2026-10-25	22:28	card-mask	llama-bench	37e717ff6 (v2-rc4)	Q8_0	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	pp512	260.29	14.03	Q8_0 mask on	
+2026-10-25	22:28	card-mask	llama-bench	37e717ff6 (v2-rc4)	Q8_0	LLAMA_GPU_KQ_MASK=1	-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6	tg128	34.21	0.73	Q8_0 mask on	

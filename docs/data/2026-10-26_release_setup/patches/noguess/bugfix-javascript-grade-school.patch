@@ -1,0 +1,16 @@
+diff -ruN a/grade-school.js b/grade-school.js
+--- a/grade-school.js
++++ b/grade-school.js
+@@ -4,7 +4,11 @@
+   }
+ 
+   add(student, level) {
+-    if (this.students.has(level) && this.students.get(level).has(student)) {
++    const alreadyEnrolled = [...this.students.values()].some(
++      (students) => students.has(student)
++    );
++
++    if (alreadyEnrolled) {
+       return false;
+     }
+ 

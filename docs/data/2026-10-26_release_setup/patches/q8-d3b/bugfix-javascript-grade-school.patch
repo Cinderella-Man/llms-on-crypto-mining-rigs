@@ -1,0 +1,24 @@
+diff -ruN a/grade-school.js b/grade-school.js
+--- a/grade-school.js
++++ b/grade-school.js
+@@ -1,10 +1,11 @@
+ export class GradeSchool {
+   constructor() {
+     this.students = new Map();
++    this.studentNames = new Set();
+   }
+ 
+   add(student, level) {
+-    if (this.students.has(level) && this.students.get(level).has(student)) {
++    if (this.studentNames.has(student)) {
+       return false;
+     }
+ 
+@@ -13,6 +14,7 @@
+     }
+ 
+     this.students.get(level).add(student);
++    this.studentNames.add(student);
+     return true;
+   }
+ 

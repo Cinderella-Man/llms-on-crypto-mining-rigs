@@ -1,0 +1,5 @@
+date	time	config	build	file	split	context	b	ub	pipe_depth	fresh_prompt_tokens	fresh_prompt_tok_s	fresh_wall_s	next_new_tokens	next_cached_tokens	next_prompt_tok_s	next_first_token_s	decode_tokens	decode_context	decode_tok_s
+2026-10-26	11:34	page 262k	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	512	128	3	13404	485.0	29.7	1951	13390	337.6	5.8	256	15341	37.17
+2026-10-26	11:44	b2048 262k	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	2048	128	3	13404	489.1	29.5	1951	13390	341.5	5.7	256	15341	37.05
+2026-10-26	11:54	ub512 131k	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	131072	2048	512	3	13404	553.6	26.5	1951	13390	265.9	7.3	256	15341	21.55
+2026-10-26	12:05	ub512 64k	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	65536	2048	512	3	13404	570.3	25.7	1951	13390	306.0	6.4	256	15341	38.74

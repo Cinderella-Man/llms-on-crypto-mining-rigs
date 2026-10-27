@@ -1,0 +1,30 @@
+diff -ruN a/scale_generator.py b/scale_generator.py
+--- a/scale_generator.py
++++ b/scale_generator.py
+@@ -2,7 +2,7 @@
+     ASCENDING_INTERVALS = ['m', 'M', 'A']
+     CHROMATIC_SCALE = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+     FLAT_CHROMATIC_SCALE = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab']
+-    FLAT_KEYS = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'd', 'g', 'c', 'f', 'bb', 'eb']
++    FLAT_KEYS = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'D', 'G', 'C', 'F', 'Bb', 'Eb']
+ 
+     def __init__(self, tonic, intervals=None):
+         self.tonic = tonic.capitalize()
+@@ -14,14 +14,12 @@
+ 
+     def interval(self, intervals):
+         last_index = 0
+-        pitches = []
++        pitches = [self.tonic]
+         scale = self._reorder_chromatic_scale()
+ 
+-        for _, interval in enumerate(intervals):
+-            pitches.append(scale[last_index])
++        for interval in intervals:
+             last_index += self.ASCENDING_INTERVALS.index(interval) + 1
+-
+-        pitches.append(self.tonic)
++            pitches.append(scale[last_index % len(scale)])
+ 
+         return pitches
+ 

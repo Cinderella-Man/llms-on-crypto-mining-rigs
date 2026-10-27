@@ -83,7 +83,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [pi/](pi/) | The agent folder template: `models.json` (Flint as an OpenAI-compatible provider), `settings.json`, the `check.ts` extension |
 | [pilot.sh](pilot.sh), [full_run.sh](full_run.sh), [rig_lib.sh](rig_lib.sh), [rig_server.sh](rig_server.sh) | The rig pilot and full run, one command each, run on the laptop; the server launcher with monitors and the RAM watchdog, run on the rig over ssh |
 | [quant_run.sh](quant_run.sh), [docker/](docker/) | Calibration and file-quality runs on a GPU machine with Docker; the sandbox image |
-| [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
+| [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh), [release.env.example](release.env.example) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
 | [build_bugfix.py](build_bugfix.py), [bugfix_bugs.json](bugfix_bugs.json) | Build the bugfix set from the polyglot tasks and the list of injected bugs |
 | [mock_server.py](mock_server.py), [selftest.sh](selftest.sh), [selftest_pilot.sh](selftest_pilot.sh) | A stand-in for llama-server and the end-to-end tests that use it (no model) |
 | [build_tasks.py](build_tasks.py), [cut_tests.mjs](cut_tests.mjs), [make_order.py](make_order.py) | Build the task set from the Exercism checkouts |
@@ -261,7 +261,8 @@ checkpoints:
     nor the client has to reach the other, and the server never listens beyond the rig's loopback.
 - **Run it** from the controlling machine, with the machine-specific values in the environment (the header of
   [release_check.sh](release_check.sh) lists them: ssh aliases, four ports, folders on the client, the two binaries and
-  the model on the rig):
+  the model on the rig; [release.env.example](release.env.example) has the values of the v2.0 runs to copy and fill
+  in):
 
   ```
   STEPS=prep bench/agent_check/release_check.sh <out>    # untimed: files, image, task validation; no rig

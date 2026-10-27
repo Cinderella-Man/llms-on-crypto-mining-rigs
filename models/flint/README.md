@@ -82,8 +82,8 @@ growing every turn) and 25 minutes (stock llama.cpp 35), one attempt per task, n
 | **Q8_0**, v2, 262k, `--pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1, 1.4 | **45.9, 44.6** | 176, 185 | 2.6 s |
 | Q8_0, v2, 262k, without pipelined speculation | 10 (9) | 1.7 | 29.3 | 184 | 2.3 s |
 | Q8_0, stock llama.cpp, 64k | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
-| Flint-Pascal-Q5, stock llama.cpp, 64k | 11 (10) | 2.1 | 15.6 | 143 | 4.2 s |
-| UD-Q4_K_XL, stock llama.cpp, 64k | 9 (8) | 3.1 | 14.0 | 145 | 3.7 s |
+| Flint-Pascal-Q5, stock llama.cpp, 64k | 11 (10) | 2.1 | 15.6 | 143 | 3.9 s |
+| UD-Q4_K_XL, stock llama.cpp, 64k | 9 (8) | 3.1 | 14.0 | 145 | 3.8 s |
 
 - **Depth 4** won on Flint-Pascal-Q5 (+11 % over depth 3: 48.6 tok/s) and tied on Q8_0 (44.6 at depth 3 in two runs);
   depth 2 gave 40.1 on Q8_0.
@@ -178,6 +178,11 @@ against stock's 593. The gain comes from upstream llama.cpp's PR #31047, which s
 
 Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: 766 tok/s at 8,192 tokens and 461 at 32,768, against 699 and 447 with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`).
 
+Generation deep into a long context: after 32,768 tokens of context Flint-Pascal-Q5 on nine cards generates 25.1 tok/s
+on v2 (`llama-bench -p 0 -n 64 -d 32768`), against 15.0 on the release candidate with the Pascal decode-attention kernel
+on (off by default since; `GGML_CUDA_FATTN_PASCAL=1` turns it on) and 23.3 on v1 with Miner S4-L0
+([Q54](../../quants/experiments.md#registry); [data](../../docs/data/2026-10-25_release_rig/README.md)).
+
 ### With hardware tuning
 
 This release's numbers are at the cards' stock clocks. A memory clock offset is set at the rig's console, so its
@@ -245,8 +250,6 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 
 - The agent test on six cards, and with longer tasks that fill more of the 262,144-token context: the twelve tasks
   above use a small part of it.
-- Generation deep into a long context on v2. The v1 engine generated 23.3 tok/s at 32,768 tokens of context with
-  Miner S4-L0 ([Q54](../../quants/experiments.md#registry)).
 - Coding-agent tasks end to end, and runs longer than an hour.
 
 ## More

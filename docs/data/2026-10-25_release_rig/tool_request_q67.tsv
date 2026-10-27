@@ -1,0 +1,25 @@
+tool_request_sampling	temperature	seed	tool_choice	backend_sampling	finish	tool_calls	prompt_tokens	generated_tokens	tok_s	ms_per_token	sampled_on_device	grammar_tokens	grammar_rejected
+GPU (default)	0.0	1	none	true	stop	0	386	2000	38.34	26.08			
+GPU (default)	0.0	1	none	false	stop	0	386	2000	34.37	29.09			
+GPU (default)	0.0	1	auto	true	tool_calls	1	386	2011	37.93	26.36	2011	65	1
+GPU (default)	0.0	1	auto	false	tool_calls	1	386	2011	33.62	29.75	0	65	1
+GPU (default)	1.0	11	none	true	stop	0	386	95	44.47	22.49			
+GPU (default)	1.0	11	none	false	stop	0	386	95	39.20	25.51			
+GPU (default)	1.0	11	auto	true	tool_calls	1	386	95	46.02	21.73	95	36	0
+GPU (default)	1.0	11	auto	false	tool_calls	1	386	95	39.95	25.03	0	36	0
+GPU (default)	1.0	12	none	true	stop	0	386	104	46.33	21.58			
+GPU (default)	1.0	12	none	false	stop	0	386	104	40.30	24.81			
+GPU (default)	1.0	12	auto	true	tool_calls	1	386	113	45.28	22.08	113	41	1
+GPU (default)	1.0	12	auto	false	tool_calls	1	386	113	39.62	25.24	0	41	1
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	0.0	1	none	true	stop	0	386	2000	38.62	25.89			
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	0.0	1	none	false	stop	0	386	2000	34.11	29.32			
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	0.0	1	auto	true	tool_calls	1	386	2011	33.69	29.68	0	65	1
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	0.0	1	auto	false	tool_calls	1	386	2011	33.55	29.80	0	65	1
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	11	none	true	stop	0	386	95	44.81	22.32			
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	11	none	false	stop	0	386	95	39.83	25.11			
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	11	auto	true	tool_calls	1	386	95	40.40	24.75	0	36	0
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	11	auto	false	tool_calls	1	386	95	40.38	24.76	0	36	0
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	12	none	true	stop	0	386	104	46.53	21.49			
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	12	none	false	stop	0	386	104	40.48	24.70			
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	12	auto	true	tool_calls	1	386	113	39.55	25.28	0	41	1
+host (LLAMA_GRAMMAR_HOST_SAMPLING=1)	1.0	12	auto	false	tool_calls	1	386	113	39.73	25.17	0	41	1

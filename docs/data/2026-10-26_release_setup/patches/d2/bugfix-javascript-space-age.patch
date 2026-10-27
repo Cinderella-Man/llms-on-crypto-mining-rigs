@@ -1,0 +1,12 @@
+diff -ruN a/space-age.js b/space-age.js
+--- a/space-age.js
++++ b/space-age.js
+@@ -14,7 +14,7 @@
+     throw new Error('not a planet');
+   }
+ 
+-  const earthYears = seconds / 31536000;
++  const earthYears = seconds / 31557600;
+   const years = earthYears / EARTH_TO_OTHER_PLANETS[planet];
+ 
+   return Number(years.toFixed(2));

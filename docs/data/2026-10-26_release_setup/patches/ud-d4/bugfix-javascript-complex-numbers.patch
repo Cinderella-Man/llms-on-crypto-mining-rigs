@@ -1,0 +1,12 @@
+diff -ruN a/complex-numbers.js b/complex-numbers.js
+--- a/complex-numbers.js
++++ b/complex-numbers.js
+@@ -15,7 +15,7 @@
+   mul(other) {
+     return new ComplexNumber(
+       this.real * other.real - this.imag * other.imag,
+-      this.imag * other.real - this.real * other.imag,
++      this.imag * other.real + this.real * other.imag,
+     );
+   }
+ 

@@ -1,0 +1,12 @@
+diff -ruN a/variable_length_quantity.py b/variable_length_quantity.py
+--- a/variable_length_quantity.py
++++ b/variable_length_quantity.py
+@@ -6,7 +6,7 @@
+     byte_string = [number & SEVEN_BIT_MASK]
+     number >>= 7
+ 
+-    while number > 1:
++    while number > 0:
+         byte_string.append(number & SEVEN_BIT_MASK | EIGHT_BIT_MASK)
+         number >>= 7
+ 

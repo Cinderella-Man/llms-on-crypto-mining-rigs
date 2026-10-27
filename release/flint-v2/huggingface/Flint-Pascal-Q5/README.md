@@ -84,7 +84,7 @@ P106-090, 262,144-token context, the command line above unless noted, 2026-10-26
 | **This file, Pascal engine** | **12 (12), all done in 17 min** | 1.2 | **53.8** | 178 | 2.6 s |
 | Unsloth Q8_0, Pascal engine (two runs) | 12 (12) and 12 (12) | 1.1, 1.4 | 45.9, 44.6 | 176, 185 | 2.6 s |
 | Unsloth UD-Q5_K_XL, Pascal engine | 12 (12) in 25 min | 1.0 | 44.2 | 185 | 2.6 s |
-| This file, stock llama.cpp, 65,536-token context | 11 (10) | 2.1 | 15.6 | 143 | 4.2 s |
+| This file, stock llama.cpp, 65,536-token context | 11 (10) | 2.1 | 15.6 | 143 | 3.9 s |
 | Unsloth Q8_0, stock llama.cpp, 65,536-token context | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
 
 - **One run per row** unless noted; two runs of the same setup differed by 3 % (Q8_0: 44.6 and 45.9).

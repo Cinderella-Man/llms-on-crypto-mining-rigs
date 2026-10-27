@@ -16,7 +16,7 @@ and real test runs ([the agent check](bench/agent_check/README.md)):
 | Engine, Unsloth Q8_0 on nine P106-090 | Generation | Tasks passed | First token per turn |
 |---|---|---|---|
 | Stock llama.cpp, 65,536-token context | 14.4 tok/s | 8 of 12 | 3.7 s |
-| Miner Llama v1, 65,536-token context | 25.7 tok/s | 11 of 12 | 3.9 s |
+| Miner Llama v1, 65,536-token context | 25.7 tok/s | 11 of 12 | 4.0 s |
 | **Miner Llama v2**, 262,144-token context | **44.6–45.9 tok/s** | **12 of 12** | **2.6 s** |
 
 More speed or fewer cards: [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, fits

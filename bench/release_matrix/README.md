@@ -53,9 +53,10 @@ Results go to `/tmp/release_matrix/<TAG>/` on the rig: `tables.md`, `results.tsv
 - **Shorter runs:** `MODELS=UD-Q4_K_XL=/path` for one file, `SERVE="v2 v2+pipe"` for fewer served configurations,
   `ROUNDS=2` for two llama-bench runs per engine in alternating order.
 - **Flint Q8_0 on nine cards:** its layers must be split by memory to fit the full context, so run it on its own with
-  the split in both command lines: `MODELS=Q8_0=/path/flint-Q8_0.gguf BENCH_ARGS='-ngl 99 -fa on -p 512 -n 128 -r 3 -ts
-  6,6,5,5,6,5,5,6,6' SERVER_ARGS='-ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs
-  --ctx-checkpoints 4 --cache-ram 0 --no-webui'`.
+  the split in both command lines, with `/` between the cards for llama-bench (it reads commas as a list of splits to
+  sweep, and then loads the whole model on card 0) and commas for llama-server: `MODELS=Q8_0=/path/flint-Q8_0.gguf
+  BENCH_ARGS='-ngl 99 -fa on -p 512 -n 128 -r 3 -ts 6/6/5/5/6/5/5/6/6' SERVER_ARGS='-ngl 99 -fa on -c 262144 -np 1
+  -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --no-webui'`.
 - **Time (est.):** ~25 min per model and block with the defaults (six model loads of ~2.5 min each, the measurements in
   between), so ~1 h 40 min for two models in both blocks.
 - **Safety:** every offset goes back to 0 when the tuned block ends, and whenever the script ends, fails or is

@@ -1,0 +1,16 @@
+diff -ruN a/grade-school.js b/grade-school.js
+--- a/grade-school.js
++++ b/grade-school.js
+@@ -4,6 +4,12 @@
+   }
+ 
+   add(student, level) {
++    for (const grade of this.students.values()) {
++      if (grade.has(student)) {
++        return false;
++      }
++    }
++
+     if (this.students.has(level) && this.students.get(level).has(student)) {
+       return false;
+     }

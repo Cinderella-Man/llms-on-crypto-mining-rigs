@@ -1,0 +1,10 @@
+date	time	build	file	split	context	b	ub	mask	prompt_tokens	generated	prompt_tok_s	gen_tok_s	pipeline_parallel	note
+2026-10-26	10:18	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	512	128	host	16384	64	213.67	26.50	yes	
+2026-10-26	10:27	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	2048	256	host	16384	64	133.13	23.39	no	card 1 out of memory for its 561 MiB compute buffer: ran without pipeline parallelism
+2026-10-26	10:37	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	2048	512	host	16384	64				no result: the run was stopped
+2026-10-26	10:40	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	8192	128	host	16384	64	213.53	26.54	yes	
+2026-10-26	10:49	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144	8192	192	host	16384	64				no result: the run was stopped
+2026-10-26	10:50	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	262144		128	card	16384	64	217.73	26.59	yes	batch size not recorded
+2026-10-26	10:59	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	32768		128	host	16384	64	212.44	26.63	yes	batch size not recorded
+2026-10-26	11:10	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	20480		512	host	16384	64	178.65	26.07	yes	batch size not recorded
+2026-10-26	11:21	37e717ff6 (v2-rc4)	Q8_0	6,6,5,5,6,5,5,6,6	131072		512	host	16384	64				no result: the run was stopped; batch size not recorded

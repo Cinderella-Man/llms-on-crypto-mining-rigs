@@ -1,0 +1,12 @@
+diff -ruN a/pig_latin.py b/pig_latin.py
+--- a/pig_latin.py
++++ b/pig_latin.py
+@@ -1,7 +1,7 @@
+ import re
+ 
+ 
+-re_cons = re.compile('^(qu|[^aeiouy]+|y(?=[aeiou]))([a-z]*)')
++re_cons = re.compile(r'^(qu|[^aeiouy]*qu|[^aeiouy]+|y[^aeiouy]*)(.*)')
+ re_vowel = re.compile('^([aeiou]|y[^aeiou]|xr)[a-z]*')
+ 
+ 

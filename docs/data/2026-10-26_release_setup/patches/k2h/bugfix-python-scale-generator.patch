@@ -1,0 +1,12 @@
+diff -ruN a/scale_generator.py b/scale_generator.py
+--- a/scale_generator.py
++++ b/scale_generator.py
+@@ -7,7 +7,7 @@
+     def __init__(self, tonic, intervals=None):
+         self.tonic = tonic.capitalize()
+         self.intervals = intervals
+-        self.chromatic_scale = (self.FLAT_CHROMATIC_SCALE if self.tonic in self.FLAT_KEYS else self.CHROMATIC_SCALE)
++        self.chromatic_scale = (self.FLAT_CHROMATIC_SCALE if tonic in self.FLAT_KEYS else self.CHROMATIC_SCALE)
+ 
+     def chromatic(self):
+         return self._reorder_chromatic_scale()
