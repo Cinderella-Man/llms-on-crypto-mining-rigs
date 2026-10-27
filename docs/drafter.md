@@ -695,6 +695,9 @@ nine-card window, the served coupling):
 So the head goes after the copy lookup and the continuations of 2-token or longer contexts, in place of those of a
 1-token context. At its new positions it is right ~3 % less often than at the old ones (est. ~0.19 served). The fork's
 staircase order is now: the copy lookup, the request's continuations of 2-token or longer contexts, the store, the head.
+A gate on the head's confidence adds little: the head where its top probability is at least 0.3, else the 1-token
+continuation, is right 0.265 of the time against 0.244; in place of the 2-token continuations at most +0.006; the copy
+lookup is never worth overriding. The head still has to run to know its confidence, so a gate saves no time.
 
 **What a guess may cost** ([cost_sim.py](../bench/staircase_drafter/cost_sim.py): Q87's simulator with llama-server's
 guess order; the head starts on card 1 when card 1 has finished the token before, holds the card for its time per

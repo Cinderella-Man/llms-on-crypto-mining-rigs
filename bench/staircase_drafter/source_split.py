@@ -63,10 +63,12 @@ def main():
     if key not in z.files:
         raise SystemExit(f"{key} not in {args.scores}: " + ", ".join(sorted({f.split('/')[0] for f in z.files})))
     seq, j, v = z["seq"], z["j"], z[key]
+    conf = z[f"{args.window}/conf"]
     by_seq = defaultdict(list)
     for i in range(len(seq)):
         by_seq[int(seq[i])].append(i)
     acc = defaultdict(lambda: [0, 0.0, 0])   # source -> [positions, head sum, lookup right]
+    per = defaultdict(lambda: ([], [], []))  # source -> (head right, head's top probability, lookup right) per position
     for line in open(args.rows):
         r = json.loads(line)
         sid = int(r["id"].split("_")[-1])
@@ -81,6 +83,10 @@ def main():
             a[0] += 1
             a[1] += float(v[i])
             a[2] += x[1]
+            p = per[x[0]]
+            p[0].append(float(v[i]))
+            p[1].append(float(conf[i]))
+            p[2].append(float(x[1]))
     total = sum(a[0] for a in acc.values())
     print(f"{total} scored positions, window {args.window}, metric {args.metric}")
     print("| source | positions | share | head right | lookup right |")
@@ -92,6 +98,22 @@ def main():
     rest = [acc[s] for s in ("cont2", "cont1", "none")]
     n = sum(a[0] for a in rest)
     print(f"| not copy (the old order's head positions) | {n} | {n / total:.3f} | {sum(a[1] for a in rest) / n:.3f} | |")
+    # the head in place of the lookup wherever its top probability is at least t: right guesses per position, and the
+    # share of positions the head takes
+    ts = (0.0, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.01)
+    print(f"\nThe head where its top probability (at the scored alpha) is at least t, else the lookup: right per position "
+          f"(share the head takes)\n")
+    print("| source | " + " | ".join(f"t {t:g}" for t in ts) + " |")
+    print("|---|" + "---|" * len(ts))
+    for s in ("copy", "cont2", "cont1"):
+        h, c, lk = (np.array(x) for x in per[s])
+        if not len(h):
+            continue
+        cells = []
+        for t in ts:
+            use = c >= t
+            cells.append(f"{np.where(use, h, lk).mean():.3f} ({use.mean():.2f})")
+        print(f"| {s} | " + " | ".join(cells) + " |")
 
 
 main()

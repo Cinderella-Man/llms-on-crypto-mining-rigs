@@ -4,7 +4,7 @@
   served_guesses.tsv  llama-server's per-request guess counts summed per arm (agent check server logs)
   break_even.tsv      cost_sim.py's JSON outputs, one row per configuration
 
-usage: python curate.py OUT_DIR --bench TAG=bench.log ... --served ARM=server.log ... --sim cost.json ...
+usage: python curate.py OUT_DIR --bench TAG=bench.log ... --served ARM=server.log[@match] ... --sim cost.json ...
 """
 import argparse
 import json
@@ -56,10 +56,16 @@ def bench_rows(tag, path):
     return rows
 
 
-def served_rows(arm, path):
+def served_rows(arm, path, match=None):
+    """Sums of the log's per-request counters; with match, only in the sections (one per server start, each opened by a
+    "=== " line naming the binary) whose opening line contains it, e.g. one arm of a replay that shares the log."""
     r = w = dg = dr = n_req = 0
+    take = match is None
     for line in open(path):
-        if "pipelined = " not in line:
+        if line.startswith("=== "):
+            take = match is None or match in line
+            continue
+        if "pipelined = " not in line or not take:
             continue
         f = line.split("pipelined =", 1)[1].split()
         n_req += 1
@@ -90,9 +96,10 @@ def main():
         with open(os.path.join(a.out, "served_guesses.tsv"), "w") as f:
             f.write("arm\trequests\tchecked\tright\tright_share\thead_checked\thead_right\thead_share\t"
                     "lookup_checked\tlookup_right\tlookup_share\n")
-            for spec in a.served:
+            for spec in a.served:   # ARM=path or ARM=path@match
                 arm, path = spec.split("=", 1)
-                f.write("\t".join(served_rows(arm, path)) + "\n")
+                path, _, match = path.partition("@")
+                f.write("\t".join(served_rows(arm, path, match or None)) + "\n")
     if a.sim:
         with open(os.path.join(a.out, "break_even.tsv"), "w") as f:
             keys = None

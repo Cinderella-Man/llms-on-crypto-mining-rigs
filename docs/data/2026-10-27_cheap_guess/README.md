@@ -15,10 +15,10 @@ per guess) and that they compute what the reference computes. `run/agent.sh` mea
 | `profile-q8-ctx2048.txt`, `profile-q8mmq-ctx2048.txt`, `profile-q8split-ctx2048.txt` | the per-kernel trace of the cheap-guess build at 4,352 cells with the Q8_0 output layer, then also MMQ for the 8-row products, or the products in groups of 4 rows |
 | `served_guesses.tsv` | the agent check of the first heads (2026-10-27, [section 6](../../drafter.md#m4-heads-on-the-agent-check-2026-10-27)), llama-server's guess counts summed per arm: checked guesses and right ones, of them the head's and the lookups' (copy lookup and continuations) |
 | `break_even.tsv` | [cost_sim.py](../../../bench/staircase_drafter/cost_sim.py) on the agent check's 204 requests: generation tok/s and the guesses per source for every guess order, head time per guess and acceptance (card 1, then a spare card) |
-| `source_split.md` | [source_split.py](../../../bench/staircase_drafter/source_split.py): the head's offline acceptance on the 40 held-out sessions, split by what the server's lookups would have guessed |
+| `source_split.md` | [source_split.py](../../../bench/staircase_drafter/source_split.py): the head's offline acceptance on the 40 held-out sessions, split by what the server's lookups would have guessed, and a gate on the head's confidence |
 | `shortlist_coverage.txt` | [shortlist_coverage.py](../../../bench/staircase_drafter/shortlist_coverage.py): the share of the held-out sessions' generated tokens the first K draft ids cover |
 | `check.txt` | the C++ head against `drafter.Drafter.forward` per option (random-weight head of the real shape, the release split's windows), on the CPU and on a P106 |
-| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (the agent check), `curate.py` (these tables from the raw outputs) |
+| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `curate.py` (these tables from the raw outputs) |
 
 ## How it was made
 
