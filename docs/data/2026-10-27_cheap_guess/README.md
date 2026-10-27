@@ -3,19 +3,20 @@
 The data behind [docs/drafter.md](../../drafter.md) section 8, item 0 (a cheaper guess): where one guess of the
 staircase head (Flint's MTP head of agentic run 1, the nine-card head) goes on a P106, what a guess may cost on the
 agent check before the head stops paying, and how often the head is right at the positions the server's other
-guessers leave it. The options of Miner Llama's branch `pascal-p106-v3-cheapguess` are checked against the reference
-here (`check.txt`); `run/variants.sh` and `run/agent.sh` measure their cost and their agent-check speed on the rig.
+guessers leave it; then what the options of Miner Llama's branch `pascal-p106-v3-cheapguess` cost (4.77 ms → 2.93 ms
+per guess) and that they compute what the reference computes. `run/agent.sh` measures them on the agent check.
 
 | File | What |
 |---|---|
 | `guess_cost.tsv` | every timing of one guess on one P106 (`llama-pipe-drafter-check --bench`): build, option set and its environment, ring cells, tokens in flight, commits, guesses timed, median / p90 / mean microseconds from the launch to the guess on the host, and the launch call alone |
 | `profile-v20-ctx2048.txt`, `profile-v20-ctx8192.txt` | the per-kernel GPU trace of Miner Llama v2.0's guess (`GGML_CUDA_PROFILE`, last 80 guesses) at 4,352 and 8,448 cells, summarized by [scripts/cuda_profile_summary.py](../../../scripts/cuda_profile_summary.py) |
 | `host-v20-ctx2048.txt`, `host-v20-ctx8192.txt` | the per-evaluation host and GPU trace (`GGML_CUDA_PROFILE_HOST`, last 200 guesses): GPU time per guess and the host's time inside `graph_compute` |
+| `profile-q8-ctx2048.txt`, `profile-q8mmq-ctx2048.txt`, `profile-q8split-ctx2048.txt` | the per-kernel trace of the cheap-guess build at 4,352 cells with the Q8_0 output layer, then also MMQ for the 8-row products, or the products in groups of 4 rows |
 | `served_guesses.tsv` | the agent check of the first heads (2026-10-27, [section 6](../../drafter.md#m4-heads-on-the-agent-check-2026-10-27)), llama-server's guess counts summed per arm: checked guesses and right ones, of them the head's and the lookups' (copy lookup and continuations) |
 | `break_even.tsv` | [cost_sim.py](../../../bench/staircase_drafter/cost_sim.py) on the agent check's 204 requests: generation tok/s and the guesses per source for every guess order, head time per guess and acceptance (card 1, then a spare card) |
 | `source_split.md` | [source_split.py](../../../bench/staircase_drafter/source_split.py): the head's offline acceptance on the 40 held-out sessions, split by what the server's lookups would have guessed |
 | `shortlist_coverage.txt` | [shortlist_coverage.py](../../../bench/staircase_drafter/shortlist_coverage.py): the share of the held-out sessions' generated tokens the first K draft ids cover |
-| `check.txt` | the C++ head against `drafter.Drafter.forward` per option (random-weight head of the real shape, the release split's windows), CPU backend |
+| `check.txt` | the C++ head against `drafter.Drafter.forward` per option (random-weight head of the real shape, the release split's windows), on the CPU and on a P106 |
 | `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (the agent check), `curate.py` (these tables from the raw outputs) |
 
 ## How it was made

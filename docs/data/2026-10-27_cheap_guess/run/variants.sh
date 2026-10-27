@@ -58,9 +58,10 @@ bench v8kq8mmq   "LLAMA_DRAFT_VOCAB=8192 $Q8 $MMQ" 2048
 bench q8mmq8k    "$Q8 $MMQ" 8192
 bench q8mmq-w1   "$Q8 $MMQ" "2048 --window 1"
 bench q8split-w1 "$Q8 LLAMA_DRAFT_SPLIT=4" "2048 --window 1"
-echo "=== traces $(date +%T)"
+echo "=== traces $(date +%T)" | tee -a "$O/bench.log"
 for t in "q8:$Q8" "q8mmq:$Q8 $MMQ" "q8split:$Q8 LLAMA_DRAFT_SPLIT=4"; do
     tag=${t%%:*}; env=${t#*:}
+    echo "--- trace-$tag ($env) ctx 2048 $(date +%T)" | tee -a "$O/bench.log"
     ssh "$RIG" "CUDA_VISIBLE_DEVICES=0 $env GGML_CUDA_PROFILE=$R/prof-$tag.csv $BIN/llama-pipe-drafter-check $HEAD \
         --bench 100 --split $SPLIT --commits 1 --ctx 2048 2>&1 | grep DRAFTER_BENCH" | tee -a "$O/bench.log"
     ssh "$RIG" "cat $R/prof-$tag.csv" > "$O/prof-$tag.csv"

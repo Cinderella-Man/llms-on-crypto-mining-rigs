@@ -13,10 +13,16 @@ import re
 
 
 def bench_rows(tag, path):
-    """A log without labels (the first profile run printed them to the console only) is profile.sh's fixed order: per
-    ring size plain (300 guesses), prof (100), host (300), then window (one token in flight)."""
-    rows, opts, seen = [], "", set()
+    """Rows of a bench log, labelled by the log's headers. The first runs logged some without: profile.sh's in its
+    fixed order (per ring size plain with 300 guesses, prof with 100, host with 300, then window with one token in
+    flight), variants.sh's per-kernel traces (its only 100-guess rows) in its loop's order."""
+    traces = [("trace-q8", "LLAMA_DRAFT_HEAD=q8_0"),
+              ("trace-q8mmq", "LLAMA_DRAFT_HEAD=q8_0 GGML_CUDA_MMVQ_MAX_COLS=4"),
+              ("trace-q8split", "LLAMA_DRAFT_HEAD=q8_0 LLAMA_DRAFT_SPLIT=4")]
+    rows, opts, seen, in_traces, sweep = [], "", set(), False, False
     for line in open(path):
+        if line.startswith("=== cost of one guess"):
+            sweep = True
         m = re.match(r"--- (\S+) \((.*)\) ctx (\S+)", line)
         if m:
             opts = m.group(1) + "\t" + (m.group(2) or "-")
@@ -25,17 +31,26 @@ def bench_rows(tag, path):
         if m:
             opts = f"{m.group(2)}\t-"
             continue
+        if line.startswith("=== traces"):
+            in_traces, opts = True, ""
+            continue
         if "DRAFTER_BENCH" not in line:
             continue
         kv = dict(x.split("=", 1) for x in line.split()[1:] if "=" in x)
         ctx = int(kv["ctx"])
         cells = ((max(4096, ctx + 64) + 32 + 16 + 255) // 256) * 256   # the drafter's ring: n_ctx + window + scratch
+        if sweep and kv["n"] == "100" and not opts.startswith("trace-"):
+            in_traces, opts = True, ""
         o = opts
-        if not o:
+        if not o and in_traces and traces:
+            o = "\t".join(traces.pop(0))
+        elif not o:
             mode = "prof" if kv["n"] == "100" else "window" if kv["window"] == "1" else \
                    "host" if ("plain", cells) in seen else "plain"
             seen.add((mode, cells))
             o = f"{mode}\t-"
+        if in_traces:
+            opts = ""   # every trace has its own header (or its place in the order)
         rows.append([tag, o, str(cells), kv["window"], kv["commits"], kv["n"], kv["median_us"], kv["p90_us"],
                      kv["mean_us"], kv.get("launch_us", "")])
     return rows
