@@ -1,0 +1,7 @@
+pick	resource	bytes	pred_kld	switches
+kld<=0.0610	token	2487445056	0.06096	q4,q5,o5,sh4,head
+kld<=0.0645	token	2400445056	0.06446	q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu5,head
+kld<=0.0680	token	2337445056	0.06778	q3,q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu4,gu5,head
+file<=33GB	file	32883606400	0.08008	q4,q5,gu2,gu3,gu4,gu5,dn2,dn3,dn4,dn5
+file<=36GB	file	35802606400	0.06957	q4,q5,gu3,gu4,gu5,dn3,dn4
+file<=39GB	file	38998606400	0.06202	q4,q5,kv5,sh4,gu4,gu5

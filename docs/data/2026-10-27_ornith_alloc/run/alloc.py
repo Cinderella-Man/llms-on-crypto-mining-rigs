@@ -120,7 +120,7 @@ def cmd_solve(args):
     import numpy as np
     deltas, kld, out = args[0], args[1], args[2]
     opts = dict(zip(args[3::2], args[4::2]))
-    budgets = [float(x) for x in opts.get("--budgets", "0,-0.25e9,-0.5e9").split(",")]
+    budgets = [float(x) for x in opts.get("--budgets", "1e9,0,-1e9,-2e9,-2.7e9").split(",")]
     texts = opts.get("--texts", "wiki,agent,code").split(",")
     base = opts.get("--base", "c")
     dbytes = {r["name"]: int(r["delta_bytes"]) for r in read_tsv(deltas) if r["class"] != "base"}
@@ -135,7 +135,11 @@ def cmd_solve(args):
     tot_b, tot_s = masks @ by, masks @ score
     rows = []
     for budget in budgets:
-        i = int(np.argmin(np.where(tot_b <= budget, tot_s, np.inf)))
+        feasible = np.where(tot_b <= budget, tot_s, np.inf)
+        if not np.isfinite(feasible).any():
+            print(f"budget {budget:.0f}: no set of switches fits")
+            continue
+        i = int(np.argmin(feasible))
         chosen = [names[j] for j in range(len(names)) if masks[i, j]]
         pred = [ref[t] + sum(k[(n, t)] - ref[t] for n in chosen) for t in texts]
         rows.append((f"{budget:.0f}", ",".join(chosen) or "-", f"{tot_b[i]:.0f}", f"{on_card + tot_b[i]:.0f}",

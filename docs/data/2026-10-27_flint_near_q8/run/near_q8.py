@@ -14,10 +14,10 @@ set with the least predicted KLD at each byte level. Groups follow Q36/Q77: laye
                                         count n_used/n_exp of their bytes, the token embedding none), from the headers;
                                         a last row "q8r" with the base's totals
   collect OUT.tsv NAME=LOG...           KLD, same top token, PPL ratio and 99th-percentile KLD from llama-perplexity logs
-  solve DELTAS.tsv KLD.tsv OUT.tsv [--base q8r] [--targets K,...] [--budgets GB,...] [--unit MB]
+  solve DELTAS.tsv KLD.tsv OUT.tsv [--base q8r] [--targets K,+DK,...] [--budgets GB,...] [--unit MB]
                                         the frontier over bytes per token (OUT) and over file bytes
-                                        (OUT stem + -file.tsv), and the picks at each KLD target and file budget
-                                        (OUT stem + -picks.tsv)
+                                        (OUT stem + -file.tsv), and the picks at each KLD target (+DK: the base's
+                                        KLD + DK) and file budget (OUT stem + -picks.tsv)
 Needs gguf-py (PYTHONPATH) for compose and deltas.
 """
 import os
@@ -145,11 +145,13 @@ def cmd_solve(args):
     opts = dict(zip(args[3::2], args[4::2]))
     base = opts.get("--base", "q8r")
     unit = float(opts.get("--unit", "1")) * 1e6
-    targets = [float(x) for x in opts.get("--targets", "0.055,0.060,0.065").split(",")]
     budgets = [float(x) * 1e9 for x in opts.get("--budgets", "33,36,39").split(",")]
     d = {r["name"]: r for r in read_tsv(deltas)}
     k = {r["name"]: float(r["kld"]) for r in read_tsv(kld)}
     ref = k[base]
+    # a target with a leading + is relative to the base's KLD
+    targets = [ref + float(x) if x.startswith("+") else float(x)
+               for x in opts.get("--targets", "+0.003,+0.0065,+0.010").split(",")]
     tot_file, tot_tok = int(d[base]["delta_file_bytes"]), int(d[base]["delta_token_bytes"])
     sw = [n for n in d if n != base and int(d[n]["delta_file_bytes"]) != 0 and n in k]
     picks = []
@@ -171,7 +173,7 @@ def cmd_solve(args):
                 ok = [(s, c, names) for s, c, names in pareto if ref + c <= t]
                 if ok:
                     s, c, names = max(ok)
-                    picks.append((f"kld<={t}", "token", round(total - s * unit), f"{ref + c:.5f}", ",".join(names)))
+                    picks.append((f"kld<={t:.4f}", "token", round(total - s * unit), f"{ref + c:.5f}", ",".join(names)))
         else:
             for b in budgets:
                 ok = [(s, c, names) for s, c, names in pareto if total - s * unit <= b]

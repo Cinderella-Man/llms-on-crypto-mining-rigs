@@ -7,7 +7,8 @@
 # Env: WORK (scratch on fast disk: run/, files/, logs/), FILE_C, FILE_B, FILE_D, KLD (folder with
 #   Ornith-1.5-122B-Q8_0.<text>.kld and the agent and code texts), WIKI (wiki.test.raw), BIN (llama-perplexity that
 #   knows N2P/N3P), GGUFPY (gguf-py that knows N2P/N3P), GPUS (default 3,4), TEXTS (default "wiki agent code"),
-#   EXTRA_MOUNTS (more "-v a:a" for symlinked folders).
+#   PREFETCH (1, the default, composes the next item while the current one is scored; 0 keeps one composed file),
+#   MIN_FREE_GB (default 50), EXTRA_MOUNTS (more "-v a:a" for symlinked folders).
 set -euo pipefail
 : "${WORK:?}" "${FILE_C:?}" "${FILE_B:?}" "${FILE_D:?}" "${KLD:?}" "${WIKI:?}" "${BIN:?}" "${GGUFPY:?}"
 GPUS=${GPUS:-3,4}; TEXTS=${TEXTS:-wiki agent code}
@@ -28,6 +29,11 @@ scored() {
 compose() {
     local out; out=$(file_of "$1")
     [ -s "$out" ] && return 0
+    # leave MIN_FREE_GB (default 50) free on WORK's disk after writing a file the size of file c plus 1 GB
+    local need avail; need=$(( ${MIN_FREE_GB:-50} + $(stat -L -c %s "$FILE_C") / 1000000000 + 2 ))
+    while avail=$(df -B1000000000 --output=avail "$WORK" | tail -1 | tr -d ' '); [ "$avail" -lt "$need" ]; do
+        echo "== $(date +%T) waiting: $avail GB free on $WORK, need $need"; sleep 120
+    done
     echo "== $(date +%T) compose $(name_of "$1"): $(switches_of "$1")"
     # shellcheck disable=SC2046
     docker run --rm --label pascal-quants=1 --cpu-shares 256 --network none $MOUNTS -e PYTHONPATH="$GGUFPY" "$IMG_PY" \
@@ -62,7 +68,7 @@ for i in "${!todo[@]}"; do
     item=${todo[$i]}
     if [ -n "$pid" ]; then wait "$pid"; pid=""; fi
     compose "$item"
-    if [ $((i + 1)) -lt ${#todo[@]} ]; then compose "${todo[$((i + 1))]}" & pid=$!; fi
+    if [ "${PREFETCH:-1}" = 1 ] && [ $((i + 1)) -lt ${#todo[@]} ]; then compose "${todo[$((i + 1))]}" & pid=$!; fi
     score "$item"
     scored "$item" && rm -f "$(file_of "$item")"
 done
