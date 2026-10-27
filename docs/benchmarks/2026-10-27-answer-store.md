@@ -174,6 +174,37 @@ general-purpose speed-up: on chat, code and edit requests (Q51) it gains 0.3–1
    the guesses that came from the store. The store is used with the default guesser (`--pipe-guess cont`) and needs
    `--pipe-depth` (pipelined decoding) on.
 
+## Where this stopped and next steps
+
+Stopped on 2026-10-27 with the offline estimate (registry Q200) and the two live arms (Q201) done. The paired replay
+(Q202) waits for the rig. It replays six recorded traces of the control arm to the release line with and without the
+store, through [release_check.sh](../../bench/agent_check/release_check.sh)'s replay mode (its dry run against the mock
+server passed); the store is already on the rig:
+
+```bash
+ENV_FILE=<release.env> STORE_DIR=<the store's folder on the rig> \
+  REPLAY_LOG=<client folder>/out-store-base/proxy.jsonl CLIENT_ROOT=<client folder> OUT=replay \
+  bash docs/data/2026-10-27_answer_store/run/rig_replay.sh
+```
+
+Its `replay.md` gives the store arm's ms per generated token as a ratio to the release line's, with a 95 % interval
+over the six traces. What it decides:
+
+| Paired ratio, store / release line | Decision |
+|---|---|
+| interval entirely below 1.00 | ship the store with v2.1 and report the replay's gain as its agentic number |
+| interval includes 1.00 | the store is not shown to help on the agent check: it does not go into the release line; it stays an optional download only if the owner wants it for the offline gain on agent sessions |
+| interval entirely above 1.00 | do not ship it: the store's lookups cost time the model does not count (host time per lookup on the 2-core Celeron); measure that next |
+
+After the replay:
+
+1. The owner decides on publishing the store next to Flint-Pascal-Q5 on Hugging Face, with `LICENSE`, `LICENSES/` and
+   `NOTICE` as in [Publishing the store](#publishing-the-store).
+2. A larger store from later data runs: about +0.4 % per doubling of its sessions.
+3. The store on the USB stick instead of the internal disk: not measured.
+4. Flint's MTP head behind the store, once one guess costs less (the cheaper guess, [drafter.md](../drafter.md)
+   section 8, item 0): the head takes the positions the store and the request's own counts leave.
+
 ## Reproduce
 
 Data, tables and the exact commands: [docs/data/2026-10-27_answer_store](../data/2026-10-27_answer_store/README.md).
