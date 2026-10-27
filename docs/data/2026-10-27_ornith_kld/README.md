@@ -9,7 +9,9 @@ The files:
 - **N2P-N3P-Q5_0dense** (47.6 GB, 3.05 bits per weight): file c of the
   [Pascal low-bit format](../../research/notes/pascal_lowbit_format.md), Miner Llama's own N2P (expert gate/up) and N3P
   (expert down) types, the dense tensors at Q5_0, quantized from the Q8_0 with Unsloth's imatrix
-  ([its data](../2026-10-27_lowbit/README.md)).
+  ([its data](../2026-10-27_lowbit/README.md));
+- **N2P-N3P-Q8_0dense** (49.3 GB, 3.16 bits per weight): file b, the same experts with the dense tensors at Q8_0 as in
+  AD.
 
 The texts:
 - **wiki:** the wikitext-2 test file, 80 chunks of 512 tokens (this repository's "within noise" test);
@@ -29,6 +31,7 @@ Against Ornith-1.5-122B Q8_0 (mean KL divergence ± standard error / same top to
 | UD-Q2_K_XL | **0.184 ± 0.003 / 83.5 %** | **0.054 ± 0.001 / 94.9 %** | **0.071 ± 0.003 / 96.3 %** |
 | AD-IQ3_XXS-IQ2_S | 0.233 ± 0.003 / 81.4 % | 0.066 ± 0.001 / 94.3 % | 0.081 ± 0.003 / 96.2 % |
 | N2P-N3P-Q5_0dense | 0.203 ± 0.003 / 82.8 % | 0.057 ± 0.001 / 94.7 % | 0.072 ± 0.003 / 96.4 % |
+| N2P-N3P-Q8_0dense | 0.195 ± 0.003 / 83.2 % | 0.054 ± 0.001 / 94.9 % | 0.070 ± 0.003 / 96.5 % |
 | UD-Q2_K_XL, Q5_0 output layer | 0.184 ± 0.003 / 83.6 % | 0.054 ± 0.001 / 94.8 % | 0.071 ± 0.003 / 96.3 % |
 | AD-IQ3_XXS-IQ2_S, Q5_0 output layer | 0.235 ± 0.003 / 81.4 % | 0.066 ± 0.001 / 94.4 % | 0.081 ± 0.003 / 96.3 % |
 
@@ -40,6 +43,10 @@ Against Ornith-1.5-122B Q8_0 (mean KL divergence ± standard error / same top to
   their bits by layer, so the per-layer allocation matters more than the format (Q167 tests that). Its other case is
   speed: its Pascal kernels are estimated to read an expert weight ~1.8× faster than the IQ2_S/IQ3_XXS kernels, which
   only a rig run can confirm.
+- **N2P-N3P-Q8_0dense ties UD on agent sessions and code** and stays behind it on prose (0.195 against 0.184), for
+  4.8 GB more. Against AD, which has the same Q8_0 dense tensors, it is closer on all three texts, so the N2P/N3P
+  experts beat AD's IQ3_XXS/IQ2_S experts for 1.7 GB more. Against N2P-N3P-Q5_0dense, the dense tensors at Q8_0
+  instead of Q5_0 buy 0.008 on prose and 0.003 on the agent sessions for 1.7 GB.
 - **A Q5_0 output layer costs nothing measurable:** both files with it score within one standard error of their
   originals on all three texts, and read 524 MB instead of 626 MB (UD's Q6_K) or 811 MB (AD's Q8_0) for every token
   (`run/head_q5_0.py`, then `scripts/compose_gguf.py`; every other tensor byte for byte).
@@ -50,9 +57,8 @@ Against Ornith-1.5-122B Q8_0 (mean KL divergence ± standard error / same top to
 - **Across models:** these numbers measure each file against Ornith's own Q8_0 and do not compare with Flint's KL
   divergences against Flint's BF16.
 
-Pending, added here when they finish:
-- the low-bit format's file b (N2P/N3P experts, dense at Q8_0 as in AD);
-- the Ornith-1.5-35B Q8_0's bases on the same texts.
+Pending, added here when they finish: the Ornith-1.5-35B Q8_0's agent and code bases (its wikitext base: perplexity
+7.818 ± 0.146).
 
 ## Files
 
