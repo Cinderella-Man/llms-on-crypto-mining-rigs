@@ -3,10 +3,12 @@ distribution.
 
 usage:
   python feats.py seqs OUT_SEQS.txt OUT_MAP.jsonl GEN.jsonl [GEN.jsonl ...] [--exclude MAP.jsonl ...] [--take N]
-                       [--max-tok N] [--seed N]
+                       [--max-tok N] [--seed N] [--only IDS_FILE]
       seqs.txt lines for the dump ("<seq_id> <n_prompt> <tokens...>") from generate.py's rows, plus a map
       seq_id -> row id and category. The seq_id is the prompt's number (the numeric end of its id), so it is stable
-      across calls; rows already in an --exclude map are left out, and --take picks a random subset.
+      across calls; rows already in an --exclude map are left out, and --take picks a random subset. Agent sessions
+      (bench/agentic_data's sessions_seq.jsonl) keep their generated spans in the map (gen_ranges): the dump replays
+      the tool results too, and training and scoring read only the spans (train.py and score.py --spans).
   python feats.py info FEAT.bin [FEAT.bin ...]
       sequences, tokens and bytes per file, and a decode check of the first record.
   python feats.py pack OUT.bin FEAT.bin [FEAT.bin ...] --layers 9,17,25,33,41
@@ -86,15 +88,19 @@ class Record:
         p += 4 * g * k
         self.end = p
 
-    def read_rows(self, which):
+    def read_rows(self, which, lo=0, hi=None):
         """(first position, FP8 rows [rows, n_embd] uint8, row scales float16) of an anchor ("full" or a layer
-        number), copied out. Through FeatFile the rows come with one exact read, without the page cache's read-ahead,
-        which on an HDD set to 8 MB of read-ahead would read several times the block."""
+        number) for the stored positions in [lo, hi), copied out. Through FeatFile the rows come with one exact read,
+        without the page cache's read-ahead, which on an HDD set to 8 MB of read-ahead would read several times the
+        block."""
         if which == "full":
             b, q, s, off = 0, self.full, self.full_scale, self.full_off
         else:
             li = self.layers.index(which)
             b, q, s, off = self.lay_start[li], self.lay[li], self.lay_scale[li], self.lay_off[li]
+        r0, r1 = max(0, lo - b), max(0, min(len(q), (self.n_tok if hi is None else hi) - b))
+        r1 = max(r0, r1)
+        b, q, s, off = b + r0, q[r0:r1], s[r0:r1], off + r0 * self.n_embd
         if self.fd is None:
             return b, np.array(q), np.array(s)
         buf = bytearray(q.nbytes)
@@ -177,8 +183,10 @@ def cmd_seqs(args):
     done = set()
     for path in args.exclude or []:
         done |= {json.loads(l)["id"] for l in open(path)}
+    only = {x.strip() for x in open(args.only) if x.strip()} if args.only else None
     rows = [r for r in load_gen(args.gen) if r["id"] not in done and len(r["gen_tokens"]) >= 2
-            and len(r["prompt_tokens"]) + len(r["gen_tokens"]) <= args.max_tok]
+            and len(r["prompt_tokens"]) + len(r["gen_tokens"]) <= args.max_tok
+            and (only is None or r["id"] in only)]
     if args.take and args.take < len(rows):
         rows = sorted(random.Random(args.seed).sample(rows, args.take), key=lambda r: int(r["id"].split("_")[-1]))
     with open(args.out_seqs, "w") as f, open(args.out_map, "w") as m:
@@ -186,8 +194,28 @@ def cmd_seqs(args):
             sid = int(r["id"].split("_")[-1])
             f.write(f"{sid} {len(r['prompt_tokens'])} " + " ".join(map(str, r["prompt_tokens"] + r["gen_tokens"])) + "\n")
             m.write(json.dumps({"seq_id": sid, "id": r["id"], "category": r["category"],
-                                "n_prompt": len(r["prompt_tokens"]), "n_gen": len(r["gen_tokens"])}) + "\n")
-    print(f"{len(rows)} sequences, {sum(len(r['gen_tokens']) for r in rows)} generated tokens")
+                                "n_prompt": len(r["prompt_tokens"]), "n_gen": len(r["gen_tokens"]),
+                                **({"gen_ranges": r["gen_ranges"]} if "gen_ranges" in r else {})}) + "\n")
+    n_gen = sum(gen_count(r) for r in rows)
+    print(f"{len(rows)} sequences, {n_gen} generated tokens")
+
+
+def gen_count(r):
+    """Generated tokens of a row: all of gen_tokens, or for an agent session (gen_ranges) the tokens of its spans."""
+    return sum(e - s for s, e in r["gen_ranges"]) if "gen_ranges" in r else len(r["gen_tokens"])
+
+
+def load_spans(paths):
+    """{seq_id: [[start, end), ...]}: the generated spans of agent sessions (absolute token positions) from feats.py
+    seqs or feed_split.py maps, or from the sessions_seq.jsonl rows themselves (seq_id = the id's number); sequences
+    without spans are generated after their prompt throughout."""
+    spans = {}
+    for path in paths or []:
+        for line in open(path):
+            m = json.loads(line)
+            if "gen_ranges" in m:
+                spans[m["seq_id"] if "seq_id" in m else int(m["id"].split("_")[-1])] = m["gen_ranges"]
+    return spans
 
 
 def cmd_info(args):
@@ -254,6 +282,7 @@ def main():
     a.add_argument("--take", type=int, default=0)
     a.add_argument("--seed", type=int, default=1)
     a.add_argument("--max-tok", type=int, default=8192)
+    a.add_argument("--only", help="file of row ids (one per line): only these rows")
     a = sub.add_parser("info")
     a.add_argument("feat", nargs="+")
     a = sub.add_parser("pack")

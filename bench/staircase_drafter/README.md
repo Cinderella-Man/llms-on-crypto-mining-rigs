@@ -156,6 +156,18 @@ paths are placeholders.
    - `--general` trains the depth-general head (see "The guesser"): every sequence gets one window drawn from a random
      split of 3 to 12 cards, using the layers its file recorded. [check_general.py](check_general.py) checks the
      sampler's windows and that a general head warm-started from a six-card head reproduces it on six-card windows.
+   - **Agent sessions** ([bench/agentic_data](../agentic_data/README.md)): one sequence per session, the tool results
+     included, so the dump replays the session once. `--spans` (the export's `sessions_seq.jsonl`, or a map from
+     `feats.py seqs` or `feed_split.py`) trains only on the tokens Flint generated. `--ctx 4096` lets the head attend
+     to the last 4,096 committed positions only, the ring the engine keeps (`--pipe-draft-ctx`, default 4096); sessions
+     run to 64k tokens, and full attention would train a head on context it never sees when served. `--chunk-targets
+     16384` splits a session into pieces of at most that many target positions, one step each; with `--ctx` a piece
+     holds only the positions its targets can reach through the head's blocks, so memory stays flat however long the
+     session. [check_ctx.py](check_ctx.py) checks on synthetic data that the windowed attention equals a dense masked
+     reference and that a session in pieces gives the same logits as the whole. [agentic_head.sh](agentic_head.sh)
+     runs the whole path: one export of several writers' runs, a held-out set of whole modules
+     ([heldout.py](../agentic_data/heldout.py)), the dump fed to several GPU sets, the vocabulary, the heads, scores
+     on Q51 and on the held-out sessions, and the GGUF side files, each gated.
 
 6. **Scoring** ([score.py](score.py)) on Q51's held-out transcripts (dumped the same way), then speed per workload
    through Q87's simulator ([sim.py](sim.py) on top of [pipeline_sim.py](../ngram_replay/pipeline_sim.py)), and the
@@ -251,8 +263,10 @@ paths are placeholders.
 | [flint_weights.py](flint_weights.py) | Flint's embedding table, output head and output norm from the GGUF |
 | [vocab.py](vocab.py) | the guesser's vocabulary and its coverage |
 | [drafter.py](drafter.py) | the model, profiles, losses and coupled acceptance |
-| [train.py](train.py) | training one head, resumable, warm-startable |
+| [train.py](train.py) | training one head, resumable, warm-startable; agent sessions with `--spans`, `--ctx`, `--chunk-targets` |
 | [check_train.py](check_train.py) | checks of the training options |
+| [check_ctx.py](check_ctx.py) | checks of the agent-session path on synthetic data: the head's attention window, pieces, spans |
+| [agentic_head.sh](agentic_head.sh) | the head from agent sessions in one command: export, held-out set, dump, vocabulary, training, scores, GGUF |
 | [check_general.py](check_general.py) | checks of the depth-general head (window sampler, warm start from a six-card head) |
 | [score.py](score.py) | per-position acceptance on held-out transcripts, intervals by transcript |
 | [sim.py](sim.py) | speed per workload through Q87's simulator |

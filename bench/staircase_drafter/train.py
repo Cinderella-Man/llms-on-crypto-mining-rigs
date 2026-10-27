@@ -9,6 +9,9 @@ over the staircases of its card counts, without Flint's embedding table), head-l
 written every --ckpt-every minutes). Creating OUT_DIR/STOP ends the run early with its final evaluation and save.
 --resume continues from ckpt.pt: the time budget counts the time already spent, so
 a larger --minutes extends a run, and new --feats files continue it on more data.
+Agent sessions (bench/agentic_data): --spans MAP.jsonl trains only on the generated tokens, not the tool results;
+--ctx 4096 limits the head's attention to the positions the engine keeps (--pipe-draft-ctx); --chunk-targets 8192
+splits a long session into steps of bounded memory; --max-tok must exceed the longest session.
 """
 import argparse
 import json
@@ -16,14 +19,16 @@ import math
 import os
 import queue
 import random
+import sys
 import threading
 import time
 
 import numpy as np
 import torch
 
-import drafter
-import feats
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import drafter  # noqa: E402
+import feats  # noqa: E402
 
 
 def copy_mask(tokens, n_prompt, n=8):
@@ -55,25 +60,40 @@ def t2d_table(vocab, n_vocab):
 class Batch:
     """CPU side of one sequence for one head: copies out of the memory map, ready to move to the GPU."""
 
-    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False, sampler=None, copy_weight=1.0):
+    def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False, sampler=None, copy_weight=1.0,
+                 spans=None, part=None, ctx=0, n_layer=2):
         """sampler: a function of the record's recorded layers returning one window ({"sample": names}); the window
         is then drawn here, in the loader thread, and only its layers are read. copy_weight < 1: loss weight of the
-        targets inside a copy of >= 8 tokens from the prompt or the earlier output (the copy lookup guesses those)."""
+        targets inside a copy of >= 8 tokens from the prompt or the earlier output (the copy lookup guesses those).
+        spans: the record's generated [start, end) ranges (an agent session): only targets whose next token is
+        generated, not a tool result. part (lo, hi): only targets in [lo, hi), a piece of a long sequence; the batch
+        then holds positions p0 .. the last target, where p0 = 0, or with ctx > 0 (the head attends to the last ctx
+        committed positions) the first position the targets can reach through n_layer blocks. tokens, tpos and the
+        arrays' first positions count from p0."""
         self.n_prompt, self.n_tok = rec.n_prompt, rec.n_tok
-        self.tokens = np.array(rec.tokens, np.int64)
+        tokens = np.array(rec.tokens, np.int64)
         self.window = sampler(rec.layers) if sampler else None
         wmax = max([len(w) for w in profile["windows"].values()] + ([8] if all_anchors else [])
                    + ([len(self.window["sample"])] if self.window else []))
         # window rows reach back wmax - 1 positions; mid layers are stored from n_prompt - 8 (the dump's margin)
         t0 = max(rec.n_prompt + max(0, wmax - 9), wmax, min_target)
-        self.tpos = np.arange(t0, rec.n_tok - 1)
-        j = self.tpos - rec.n_prompt + 1                      # generated token predicted by each target
+        lo, hi = part or (t0, rec.n_tok - 1)
+        tpos = np.arange(max(t0, lo), min(hi, rec.n_tok - 1))
+        if spans is not None:
+            gen = np.zeros(rec.n_tok + 1, bool)
+            for s, e in spans:
+                gen[s:e] = True
+            tpos = tpos[gen[tpos + 1]]
+        j = tpos - rec.n_prompt + 1                           # generated token predicted by each target
         self.top_draft = t2d[rec.top_ids[j]]
         self.top_lp = np.array(rec.top_lp[j])
-        self.sampled = t2d[self.tokens[self.tpos + 1]]
+        self.sampled = t2d[tokens[tpos + 1]]
         self.weight = None
         if copy_weight != 1.0:
-            self.weight = np.where(copy_mask(self.tokens, rec.n_prompt)[j], copy_weight, 1.0).astype(np.float32)
+            self.weight = np.where(copy_mask(tokens, rec.n_prompt)[j], copy_weight, 1.0).astype(np.float32)
+        self.p0 = max(0, lo - wmax - n_layer * ctx) if part and ctx else 0
+        p1 = rec.n_tok if part is None or not len(tpos) else int(tpos[-1]) + 1
+        self.tokens, self.tpos = tokens[self.p0:p1], tpos - self.p0
         need = {profile["committed"], "full"}
         if not self.window:   # a sampled window is the only one trained: read only its layers
             need |= {a for w in profile["windows"].values() for a in w}
@@ -83,7 +103,21 @@ class Batch:
             need |= set(self.window["sample"])
         self.arrays = {}
         for a in need - {"emb"}:
-            self.arrays[a] = rec.read_rows("full" if a == "full" else int(a[1:]))
+            start, q, s = rec.read_rows("full" if a == "full" else int(a[1:]), self.p0, self.p0 + len(self.tokens))
+            self.arrays[a] = (start - self.p0, q, s)
+
+
+def target_parts(rec, chunk):
+    """The pieces of a record's targets, [lo, hi) ranges of at most chunk positions after the prompt (None: the whole
+    record), so that a long agent session trains in several steps of bounded memory."""
+    if not chunk or rec.n_tok - 1 - rec.n_prompt <= chunk:
+        return [None]
+    return [(lo, min(lo + chunk, rec.n_tok - 1)) for lo in range(rec.n_prompt, rec.n_tok - 1, chunk)]
+
+
+def n_targets(rec, spans):
+    """Generated tokens of a record: after its prompt, or inside its spans."""
+    return sum(e - s for s, e in spans[rec.seq_id]) if rec.seq_id in spans else rec.n_gen
 
 
 def to_device(b, device, dtype):
@@ -215,29 +249,40 @@ def build_inputs(d, profile, windows, n_embd, dtype, fuse=False):
     return committed, ca, win, cextra
 
 
-def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=None, copy_weight=1.0):
-    for ff, i in order:
+def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=None, copy_weight=1.0, spans=None,
+           ctx=0, n_layer=2):
+    """Batches of the items in order: (file, record, part), part as in target_parts."""
+    for ff, i, part in order:
         if stop.is_set():
             return
         try:
-            q.put(Batch(records[ff][i], profile, t2d, all_anchors=all_anchors, sampler=sampler,
-                        copy_weight=copy_weight))
+            rec = records[ff][i]
+            b = Batch(rec, profile, t2d, all_anchors=all_anchors, sampler=sampler, copy_weight=copy_weight,
+                      spans=(spans or {}).get(rec.seq_id), part=part, ctx=ctx, n_layer=n_layer)
+            if len(b.tpos):
+                q.put(b)
         except Exception as e:  # noqa: BLE001
             print(f"skip {ff}:{i}: {e}", flush=True)
     q.put(None)
 
 
 @torch.no_grad()
-def evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, max_seqs=60, fuse=False):
+def evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, max_seqs=60, fuse=False, spans=None,
+             ctx=0):
+    """Acceptance on the first max_seqs validation items (file, record, part)."""
     model.eval()
     alphas = (1.0, 1.5, 2.0, 3.0, 5.0)
     acc = {name: [0.0, 0.0, 0.0, 0] + [0.0] * len(alphas) for name in windows}
-    for ff, i in val[:max_seqs]:
-        b = Batch(files[ff][i], profile, t2d, all_anchors=fuse)
+    for ff, i, part in val[:max_seqs]:
+        rec = files[ff][i]
+        b = Batch(rec, profile, t2d, all_anchors=fuse, spans=(spans or {}).get(rec.seq_id), part=part, ctx=ctx,
+                  n_layer=len(model.blocks))
+        if not len(b.tpos):
+            continue
         d = to_device(b, device, dtype)
         committed, ca, win, cextra = build_inputs(d, profile, windows, n_embd, dtype, fuse)
         with torch.autocast(device.split(":")[0], dtype=dtype, enabled=dtype != torch.float32):
-            out = model(d["tokens"], committed, ca, win, committed_extra=cextra)
+            out = model(d["tokens"], committed, ca, win, committed_extra=cextra, ctx=ctx)
         p = feats.sampler_dist(d["top_lp"])
         for name, logits in out.items():
             c, t, _ = drafter.coupled_and_top(logits, d["top_draft"], p)
@@ -250,8 +295,9 @@ def evaluate(model, files, val, profile, windows, t2d, device, dtype, n_embd, ma
             for ai, al in enumerate(alphas):
                 a[4 + ai] += drafter.coupled_and_top(logits, d["top_draft"], p, alpha=al)[0].sum().item()
     model.train()
-    return {name: {"coupled": a[0] / a[3], "top": a[1] / a[3], "kl": a[2] / a[3], "n": a[3],
-                   **{f"coupled_a{al}": a[4 + ai] / a[3] for ai, al in enumerate(alphas)}} for name, a in acc.items()}
+    return {name: {"coupled": a[0] / max(1, a[3]), "top": a[1] / max(1, a[3]), "kl": a[2] / max(1, a[3]), "n": a[3],
+                   **{f"coupled_a{al}": a[4 + ai] / max(1, a[3]) for ai, al in enumerate(alphas)}}
+            for name, a in acc.items()}
 
 
 def main():
@@ -298,6 +344,14 @@ def main():
                                     "weight (e.g. 6,9 or 9e,9l,9l)")
     ap.add_argument("--reg", type=float, default=0.0,
                     help="weight of the feature-regression loss (newest row onto Flint's final state of that token)")
+    ap.add_argument("--spans", nargs="*", default=[],
+                    help="feats.py seqs maps with generated spans (agent sessions): train only on generated tokens")
+    ap.add_argument("--ctx", type=int, default=0,
+                    help="the head attends to the last N committed positions only, as the engine does "
+                         "(--pipe-draft-ctx, default 4096 there); 0 = all")
+    ap.add_argument("--chunk-targets", type=int, default=0,
+                    help="split a record's targets into pieces of at most N positions, one step each (long agent "
+                         "sessions; with --ctx a piece holds only the positions it can see); 0 = whole records")
     args = ap.parse_args()
     torch.manual_seed(args.seed)
     os.makedirs(args.out, exist_ok=True)
@@ -327,6 +381,10 @@ def main():
     rng.shuffle(train)
     if args.max_seqs:
         train = train[:args.max_seqs]
+    spans = feats.load_spans(args.spans)
+    items = lambda recs: [(f, i, part) for f, i in recs   # noqa: E731
+                          for part in target_parts(files[f][i], args.chunk_targets)]
+    val_items, train_items = items(val), items(train)
     n_embd = files[0][0].n_embd
     emb, head_rows, norm_w = load_flint(args.flint, vocab, device)
     t2d = t2d_table(vocab, emb.shape[0])
@@ -364,7 +422,8 @@ def main():
     opt = torch.optim.AdamW(params, lr=args.lr, betas=(0.9, 0.95), weight_decay=0.0)
     scaler = torch.amp.GradScaler(device.split(":")[0], enabled=args.fp16)
     cfg = {"head": args.head, "profile": profile, "vocab": args.vocab, "n_params": n_params, "train_seqs": len(train),
-           "val_seqs": len(val), "train_gen_tokens": int(sum(files[f][i].n_gen for f, i in train)), "args": vars(args)}
+           "val_seqs": len(val), "train_items": len(train_items), "val_items": len(val_items),
+           "train_gen_tokens": int(sum(n_targets(files[f][i], spans) for f, i in train)), "args": vars(args)}
     json.dump(cfg, open(os.path.join(args.out, "config.json"), "w"), indent=1)
     print(json.dumps({k: v for k, v in cfg.items() if k != "args"}), flush=True)
     log = open(os.path.join(args.out, "log.jsonl"), "a")
@@ -396,14 +455,14 @@ def main():
     done = False
     while not done:
         epoch += 1
-        order = train[:]
+        order = train_items[:]
         if rec_weight:   # weight w: the record comes floor(w) times per epoch, once more with probability w - floor(w)
-            order = [r for r in train for _ in range(int(rec_weight.get(files[r[0]][r[1]].seq_id, 1.0)
-                                                         + rng.random()))]
+            order = [r for r in train_items for _ in range(int(rec_weight.get(files[r[0]][r[1]].seq_id, 1.0)
+                                                               + rng.random()))]
         rng.shuffle(order)
         q, stop = queue.Queue(maxsize=6), threading.Event()
         th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors, general_sampler,
-                                                   args.copy_weight),
+                                                   args.copy_weight, spans, args.ctx, args.layers),
                               daemon=True)
         th.start()
         while True:
@@ -428,7 +487,7 @@ def main():
                 step_windows = sample_window(profile, rng, sample_probs) if sample_probs else windows
             committed, ca, win, cextra = build_inputs(d, profile, step_windows, n_embd, dtype, args.fuse)
             with torch.autocast(device.split(":")[0], dtype=dtype, enabled=dtype != torch.float32):
-                out = model(d["tokens"], committed, ca, win, return_feats=True, committed_extra=cextra)
+                out = model(d["tokens"], committed, ca, win, return_feats=True, committed_extra=cextra, ctx=args.ctx)
             p = feats.sampler_dist(d["top_lp"])
             target_f = d["arrays"]["full"][1][d["tpos"]] if args.reg > 0 else None
             loss = 0.0
@@ -471,8 +530,8 @@ def main():
                 save_ckpt()
             if time.time() - last_eval > args.eval_every * 60:
                 last_eval = time.time()
-                ev = evaluate(model, files, val, eval_profile, eval_profile["windows"], t2d, device, dtype, n_embd,
-                              fuse=args.fuse)
+                ev = evaluate(model, files, val_items, eval_profile, eval_profile["windows"], t2d, device, dtype,
+                              n_embd, fuse=args.fuse, spans=spans, ctx=args.ctx)
                 rec = {"t_min": round((time.time() - t_start) / 60, 2), "step": step, "seqs": seen, "val": ev}
                 print(json.dumps(rec), flush=True)
                 log.write(json.dumps(rec) + "\n")
@@ -482,8 +541,8 @@ def main():
                     best = score_of(ev)
                     torch.save(model.state_dict(), os.path.join(args.out, "head.pt"))
         stop.set()
-    ev = evaluate(model, files, val, eval_profile, eval_profile["windows"], t2d, device, dtype, n_embd,
-                  max_seqs=args.val_seqs, fuse=args.fuse)
+    ev = evaluate(model, files, val_items, eval_profile, eval_profile["windows"], t2d, device, dtype, n_embd,
+                  max_seqs=args.val_seqs, fuse=args.fuse, spans=spans, ctx=args.ctx)
     torch.save(model.state_dict(), os.path.join(args.out, "head-last.pt"))
     if score_of(ev) > best:
         best = score_of(ev)

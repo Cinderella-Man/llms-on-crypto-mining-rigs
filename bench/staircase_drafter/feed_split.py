@@ -7,7 +7,8 @@ answers, up to --chunk answer tokens: appended to its map file, then to its sequ
 `tail -F`. Fast instances empty their queues sooner and so get more. Categories in --last go after all others (tool
 calls: most of their tokens are prompt, which the dump replays without training on it).
 
-A dump's log must be appended across restarts; it lists "sequence <id>: ..." for every finished sequence.
+A dump's log must be appended across restarts; it lists "sequence <id>: ..." for every finished sequence. Agent sessions
+(bench/agentic_data's sessions_seq.jsonl) keep their generated spans in the map (gen_ranges, for train.py --spans).
 
 usage: python feed_split.py --gen 'DIR/gen-*.jsonl' --exclude map-d1.jsonl ... --inst NAME:SEQS:MAP:LOG [--inst ...]
                             [--every 120] [--low 300000] [--chunk 600000] [--last tool] [--max-tok 8192] [--stop FILE]
@@ -86,7 +87,8 @@ def main():
                 sid = int(rid.split("_")[-1])
                 seqs.append(f"{sid} {len(r['prompt_tokens'])} " + " ".join(map(str, r["prompt_tokens"] + r["gen_tokens"])))
                 maps.append(json.dumps({"seq_id": sid, "id": rid, "category": r["category"],
-                                        "n_prompt": len(r["prompt_tokens"]), "n_gen": n_gen}))
+                                        "n_prompt": len(r["prompt_tokens"]), "n_gen": n_gen,
+                                        **({"gen_ranges": r["gen_ranges"]} if "gen_ranges" in r else {})}))
                 added += n_gen
             if seqs:
                 with open(i["map"], "a") as f:

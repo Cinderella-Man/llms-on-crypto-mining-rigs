@@ -284,7 +284,8 @@ Prompts → answers → dump → train → score → simulate → export → eng
 | [M0](#m0-the-pilot-2026-10-24) | 2026-10-24 | superseded by M1 (2026-10-24 22:00) | first heads: fixed six-card windows, all windows trained per sequence |
 | [M1](#m1-sampled-windows-fused-anchors-warm-starts-2026-10-24-2200) | 2026-10-24 22:00 | current | one sampled window per sequence, fused anchors, warm starts; 1.8× the steps |
 | [M2](#m2-depth-general-for-312-cards-2026-10-25-0600) | 2026-10-25 06:00 | method current; its heads trained on excluded data, not for release | layer-indexed anchors, one head for any 3–12-card split; specialists on a few card counts for comparison |
-| [M3](#m3-licence-clean-data-2026-10-25-1340) | 2026-10-25 13:40 | running | M2's method on licence-clean data only, from scratch (no weights from earlier heads), clean vocabulary |
+| [M3](#m3-licence-clean-data-2026-10-25-1340) | 2026-10-25 13:40 | stopped, superseded by M4 (2026-10-25 15:00) | M2's method on licence-clean data only, from scratch (no weights from earlier heads), clean vocabulary |
+| [M4](#m4-from-scratch-on-approved-sources-planned-for-v21) | 2026-10-26 | data running | M2's method from scratch on agent sessions from approved sources only, every stage gated; trained on generated spans, with the engine's attention window |
 
 ### M0: the pilot (2026-10-24)
 
@@ -424,9 +425,9 @@ counts: `count_strict.py` (one place for every rule below).
 
 ### M4: from scratch on approved sources (planned for v2.1)
 
-**Planned; not built or run.** The owner, 2026-10-25 15:05: new data for the guesser and the head, from approved
-sources only, and every piece of data checked for whether it can be used and published. Drafter work then stopped for
-the v2.0 release, so nothing below has run.
+**Data running; training prepared.** The owner, 2026-10-25 15:05: new data for the guesser and the head, from
+approved sources only, and every piece of data checked for whether it can be used and published. Drafter work stopped
+for the v2.0 release; the agent-session data started on 2026-10-26, and the head trains on it when it ends.
 
 - **Approved sources** ([`sources.json`](../bench/staircase_drafter/sources.json), one entry per source with its
   licence, a link to it, who wrote the texts, the filter and the owner's approval date):
@@ -457,9 +458,15 @@ the v2.0 release, so nothing below has run.
   per-turn rows for the store, gated at every stage. A 72-minute pilot (Flint Q8_0 on two V100s) made 22 sessions,
   235k generated tokens, through every gate into a store and the dump's sequence file; not for training until the
   owner approves the texts.
-- **Left to do:** the owner's approvals (the note's section 8.1); `train.py` reading only the generated spans of a
-  session sequence; `clean_prompts.py` writes `source_id` and `row_id` for the single-turn chat and maths parts; then
-  generation, dumps, vocabulary and heads from scratch.
+- **Long run 1** (2026-10-26 21:28): three writers on one task list, Flint Q8_0 in llama-server on two V100s and the
+  makers' NVFP4 GGUF in vLLM on two sets of RTX cards; the Python standard library and Elixir's library, stage 1 then
+  stage 2 per writer.
+- **Training on sessions** ([agentic_head.sh](../bench/staircase_drafter/agentic_head.sh)): one export of all writers'
+  runs; every session of every 20th module held out for scoring; the dump replays each session once with the tool
+  results, and the head trains only on Flint's generated spans (`--spans`). The head attends to the last 4,096
+  committed positions, as the engine's ring does (`--ctx 4096`), and long sessions train in pieces of 16,384 target
+  positions (`--chunk-targets`). Heads: a 3–12-card general head and a nine-card one, from scratch on the grid of M2.
+- **Left to do:** `clean_prompts.py` writes `source_id` and `row_id` for the single-turn chat and maths parts.
 
 ## 4. Why the card count matters
 
@@ -753,3 +760,8 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   tool names as a profile, and a 72-minute pilot (22 sessions, every gate passed, store built, dump sequences read).
   `check_sources.py derived` takes `--tool` for programs such as the datastore. Not for training until the owner's
   approvals.
+- 2026-10-27: training on agent sessions prepared while long run 1 generates: `train.py` and `score.py` read only
+  the generated spans (`--spans`), attend to the engine's 4,096-position window (`--ctx`) and take long sessions in
+  pieces (`--chunk-targets`); `export.py` exports several writers' runs as one; `heldout.py` holds out whole modules;
+  `agentic_head.sh` runs export to GGUF. `check_ctx.py` passes on synthetic data (windowed attention 8e-7 from a dense
+  reference, pieces equal to whole sessions), and a short CPU run trains through the whole loop.

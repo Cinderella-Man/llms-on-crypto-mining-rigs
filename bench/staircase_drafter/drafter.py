@@ -172,28 +172,46 @@ class Block(nn.Module):
         h = self.mlp_norm(x)
         return x + self.drop(self.w2(F.silu(self.w1(h)) * self.w3(h)))
 
-    def committed(self, x, cos, sin):
-        """Causal self-attention over the committed rows x [N, d]; returns the new rows and their keys/values."""
+    def committed(self, x, cos, sin, ctx=0):
+        """Causal self-attention over the committed rows x [N, d]; returns the new rows and their keys/values. ctx > 0:
+        each row attends to the last ctx rows only (itself included), the engine's ring of committed positions
+        (--pipe-draft-ctx), computed in blocks of ctx rows."""
         q, k, v = self.qkv(x, cos, sin)
         rep = self.n_head // self.n_kv
-        o = F.scaled_dot_product_attention(q.transpose(0, 1)[None], k.repeat_interleave(rep, 1).transpose(0, 1)[None],
-                                           v.repeat_interleave(rep, 1).transpose(0, 1)[None], is_causal=True)
-        o = o[0].transpose(0, 1).reshape(x.shape[0], -1)
+        N = x.shape[0]
+        qt = q.transpose(0, 1)[None]
+        kt, vt = k.repeat_interleave(rep, 1).transpose(0, 1)[None], v.repeat_interleave(rep, 1).transpose(0, 1)[None]
+        if not ctx or N <= ctx:
+            o = F.scaled_dot_product_attention(qt, kt, vt, is_causal=True)
+        else:
+            outs = []
+            for s in range(0, N, ctx):
+                e, k0 = min(N, s + ctx), max(0, s - ctx + 1)
+                qp = torch.arange(s, e, device=x.device)[:, None]
+                kp = torch.arange(k0, e, device=x.device)[None, :]
+                outs.append(F.scaled_dot_product_attention(qt[:, :, s:e], kt[:, :, k0:e], vt[:, :, k0:e],
+                                                           attn_mask=(kp <= qp) & (kp > qp - ctx)))
+            o = torch.cat(outs, 2)
+        o = o[0].transpose(0, 1).reshape(N, -1)
         return self.mlp(x + self.drop(self.wo(o))), k, v
 
-    def window(self, xw, cos, sin, kc, vc, limit, chunk=256):
+    def window(self, xw, cos, sin, kc, vc, limit, chunk=256, ctx=0):
         """Window rows xw [T, W, d] (offset 0 = newest) of T targets. Row (t, j) attends to committed keys at positions
-        <= limit[t] and to the window rows (t, j') with j' >= j (older or itself)."""
+        <= limit[t] (and > limit[t] - ctx with ctx > 0) and to the window rows (t, j') with j' >= j (older or
+        itself). A chunk's scores take chunk x keys x W x heads values, so long sequences get smaller chunks."""
         q, k, v = self.qkv(xw, cos, sin)                     # [T, W, H, D], [T, W, Hkv, D]
         T, W = xw.shape[:2]
         rep = self.n_head // self.n_kv
+        span = min(kc.shape[0], ctx) if ctx else kc.shape[0]
+        chunk = max(16, min(chunk, (256 * 8192) // max(1, span)))
         outs = []
         lim_all = limit.tolist()
         for t0 in range(0, T, chunk):
             t1 = min(T, t0 + chunk)
             n_keys = max(1, max(lim_all[t0:t1]) + 1) if SLICE_KEYS else kc.shape[0]   # later keys are masked anyway
-            kc_, vc_ = kc[:n_keys], vc[:n_keys]
-            fn = lambda q_, k_, v_, lim, kc_, vc_: _window_attn(q_, k_, v_, lim, kc_, vc_, rep)   # noqa: E731
+            k0 = max(0, min(lim_all[t0:t1]) - ctx + 1) if ctx and SLICE_KEYS else 0   # and so are older ones
+            kc_, vc_ = kc[k0:n_keys], vc[k0:n_keys]
+            fn = lambda q_, k_, v_, lim, kc_, vc_: _window_attn(q_, k_, v_, lim, kc_, vc_, rep, k0, ctx)   # noqa: E731
             if torch.is_grad_enabled():
                 o = checkpoint(fn, q[t0:t1], k[t0:t1], v[t0:t1], limit[t0:t1], kc_, vc_, use_reentrant=False)
             else:
@@ -206,15 +224,18 @@ class Block(nn.Module):
 SLICE_KEYS = True   # window attention reads committed keys only up to each chunk's last limit (check_train.py compares)
 
 
-def _window_attn(q, k, v, limit, kc, vc, rep):
+def _window_attn(q, k, v, limit, kc, vc, rep, k0=0, ctx=0):
+    """kc, vc: the committed keys and values from position k0 on."""
     T, W, H, D = q.shape
     N = kc.shape[0]
     scale = 1.0 / math.sqrt(D)
     kcr = kc.repeat_interleave(rep, 1)                       # [N, H, D]
     vcr = vc.repeat_interleave(rep, 1)
     s_c = torch.einsum("twhd,nhd->thwn", q, kcr) * scale     # [T, H, W, N]
-    pos = torch.arange(N, device=q.device)
+    pos = torch.arange(k0, k0 + N, device=q.device)
     ok_c = pos[None, :] <= limit[:, None]                    # [T, N]
+    if ctx:
+        ok_c &= pos[None, :] > limit[:, None] - ctx
     s_c = s_c.masked_fill(~ok_c[:, None, None, :], float("-inf"))
     kw = k.repeat_interleave(rep, 2)                         # [T, W, H, D]
     vw = v.repeat_interleave(rep, 2)
@@ -318,11 +339,12 @@ class Drafter(nn.Module):
             for depth, b in enumerate(BUCKET):
                 self.depth_emb.weight[depth] = old[0 if b < 0 else b + 1]
 
-    def forward(self, tokens, committed_h, committed_anchor, windows, return_feats=False, committed_extra=None):
+    def forward(self, tokens, committed_h, committed_anchor, windows, return_feats=False, committed_extra=None, ctx=0):
         """tokens [N]; committed_h [N, d]; committed_anchor: int; windows: {name: (target positions [T],
         anchors [W], window hidden states [T, W, d][, extra])}, extra as in rows() for the window rows;
-        committed_extra likewise for the committed rows. Returns {name: logits [T, V+1]} of each window's newest row
-        (for a plain window, of the committed rows at the target positions)."""
+        committed_extra likewise for the committed rows; ctx > 0: attend to the last ctx committed positions only.
+        Returns {name: logits [T, V+1]} of each window's newest row (for a plain window, of the committed rows at the
+        target positions)."""
         N = tokens.shape[0]
         dev = committed_h.device
         pos = torch.arange(N, device=dev)
@@ -343,10 +365,10 @@ class Drafter(nn.Module):
             cos, sin = rope_tables(wpos, self.blocks[0].hd)
             state[name] = [self.rows(tokens[wpos], a, hw, win[3] if len(win) > 3 else None), cos, sin, tpos - W]
         for blk in self.blocks:
-            xc_new, kc, vc = blk.committed(xc, cos_c, sin_c)
+            xc_new, kc, vc = blk.committed(xc, cos_c, sin_c, ctx)
             for name, st in state.items():
                 if st is not None:
-                    st[0] = blk.window(st[0], st[1], st[2], kc, vc, st[3])
+                    st[0] = blk.window(st[0], st[1], st[2], kc, vc, st[3], ctx=ctx)
             xc = xc_new
         out = {}
         for name, win in windows.items():

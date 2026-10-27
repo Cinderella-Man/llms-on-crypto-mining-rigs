@@ -15,7 +15,7 @@ ok.
                             (Apache-2.0, for this dataset's own parts), LICENSES/<SPDX id>.txt (every code base's
                             licence text), NOTICE (attributions and change summaries) and README.md (the card)
 
-usage: python export.py SESSIONS.gate.json --codebases codebases.json --apache LICENSE_APACHE_2.0.txt --out DIR
+usage: python export.py SESSIONS.gate.json [...] --codebases codebases.json --apache LICENSE_APACHE_2.0.txt --out DIR
                         [--name NAME] [--turn-id-offset 300000] [--session-id-offset 400000]
 """
 import argparse
@@ -120,7 +120,8 @@ spans).
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("gate")
+    ap.add_argument("gate", nargs="+", help="passed sessions gate records: several runs (writers) export as one, with "
+                                            "one id range and one dataset")
     ap.add_argument("--codebases", required=True)
     ap.add_argument("--apache", required=True, help="the Apache License 2.0 text")
     ap.add_argument("--out", required=True)
@@ -128,13 +129,14 @@ def main():
     ap.add_argument("--turn-id-offset", type=int, default=300000)
     ap.add_argument("--session-id-offset", type=int, default=400000)
     a = ap.parse_args()
-    rec = json.load(open(a.gate))
-    if rec["stage"] != "sessions" or rec["verdict"] != "PASS":
-        raise SystemExit("the gate record must be a passed sessions record")
-    lines = open(rec["manifest"]["path"]).read().splitlines()
-    head = lines[0].split("\t")
-    ok = [dict(zip(head, x.split("\t"))) for x in lines[1:]]
-    ok = [r for r in ok if r["check"] == "ok"]
+    ok = []
+    for g in a.gate:
+        rec = json.load(open(g))
+        if rec["stage"] != "sessions" or rec["verdict"] != "PASS":
+            raise SystemExit(f"{g}: the gate record must be a passed sessions record")
+        lines = open(rec["manifest"]["path"]).read().splitlines()
+        head = lines[0].split("\t")
+        ok += [r for r in (dict(zip(head, x.split("\t"))) for x in lines[1:]) if r["check"] == "ok"]
     cbj = json.load(open(a.codebases))
     codebases = {c["id"]: c for c in cbj["codebases"]}
     writers = cbj.get("writers_published_as", {})
@@ -145,7 +147,7 @@ def main():
     os.makedirs(os.path.join(a.out, "hf", "LICENSES"), exist_ok=True)
     tid, sidn = a.turn_id_offset, a.session_id_offset
     used, types, stats = set(), {}, {"sessions": 0, "passed": 0, "turns": 0, "gen": 0}
-    writer = None
+    writer_ids, session_ids = set(), set()
     with open(os.path.join(a.out, "train", "turns.jsonl"), "w") as ft, \
             open(os.path.join(a.out, "train", "turn_prompts.jsonl"), "w") as fp, \
             open(os.path.join(a.out, "train", "sessions_seq.jsonl"), "w") as fs, \
@@ -155,6 +157,9 @@ def main():
             s = json.load(open(r["file"]))
             if agx.sha256_file(r["file"]) != r["file_sha256"]:
                 raise SystemExit(f"{r['file']} changed after the gate")
+            if s["session_id"] in session_ids:
+                raise SystemExit(f"session {s['session_id']} appears in two runs")
+            session_ids.add(s["session_id"])
             t = s["task"]
             seq, ranges = agx.session_sequence(s["prompt_tokens"], s["turns"])
             meta = {"category": "agentic", "source": t["codebase_id"], "source_id": t["source_id"],
@@ -200,7 +205,9 @@ def main():
             stats["passed"] += bool(s["verify"]["passed"])
             stats["turns"] += len(s["turns"])
             stats["gen"] += sum(len(x["gen_tokens"]) for x in s["turns"])
-            writer = s["writer"]["id"]
+            writer_ids.add(s["writer"]["id"])
+    if tid >= a.session_id_offset > a.turn_id_offset:
+        raise SystemExit(f"turn ids reach the session ids ({tid}): raise --session-id-offset")
     hf = os.path.join(a.out, "hf")
     shutil.copy(a.apache, os.path.join(hf, "LICENSE"))
     lic = {"Apache-2.0"}
@@ -219,7 +226,8 @@ def main():
                        size="n<1K" if n < 1000 else "1K<n<10K" if n < 10000 else "10K<n<100K",
                        n_sessions=n, n_passed=stats["passed"], n_turns=stats["turns"], n_gen=stats["gen"],
                        codebases=", ".join(f"{codebases[c]['name']} ({codebases[c]['licence']})" for c in sorted(used)),
-                       types=", ".join(f"{k} {v}" for k, v in sorted(types.items())), writer=writer,
+                       types=", ".join(f"{k} {v}" for k, v in sorted(types.items())),
+                       writer=", ".join(sorted(writer_ids)),
                        sampling="temperature 1.0, top-k 20, top-p 0.95, min-p 0")
     if any(codebases[c]["hf_licence"] == "other" for c in used):
         card = card.replace("pretty_name:", "license_name: python-2.0\nlicense_link: LICENSES/Python-2.0.txt\n"

@@ -4,13 +4,23 @@ forced in, and report its coverage per prompt class and on held-out transcripts.
 usage: python vocab.py OUT.npy GEN.jsonl [GEN.jsonl ...] [--size 32000] [--test TEST_GEN.jsonl] [--force IDS]
                        [--only IDS_FILE]
 OUT.npy: int64 array of target token ids, sorted by frequency (draft id = index). --force: comma-separated ids to
-include whatever their count (by default Flint's ids 150000-150143, its added and control tokens).
+include whatever their count (by default Flint's ids 150000-150143, its added and control tokens). Agent sessions'
+rows (sessions_seq.jsonl, with gen_ranges) count only their generated spans, not the tool results.
 """
 import argparse
 import json
 from collections import Counter
 
 import numpy as np
+
+
+def generated(r):
+    """The tokens Flint generated in a row: gen_tokens, or for an agent session (gen_ranges over the whole sequence)
+    the tokens of its spans, without the tool results."""
+    if "gen_ranges" not in r:
+        return r["gen_tokens"]
+    seq = r["prompt_tokens"] + r["gen_tokens"]
+    return [t for s, e in r["gen_ranges"] for t in seq[s:e]]
 
 
 def main():
@@ -32,8 +42,9 @@ def main():
                 continue
             if only is not None and r["id"] not in only:
                 continue
-            counts.update(r["gen_tokens"])
-            by_cat.setdefault(r["category"], Counter()).update(r["gen_tokens"])
+            gen = generated(r)
+            counts.update(gen)
+            by_cat.setdefault(r["category"], Counter()).update(gen)
     force = [int(x) for x in args.force.split(",") if x] or list(range(150000, 150144))
     force = [t for t in force if counts[t] > 0 or not args.force]
     keep = [t for t, _ in counts.most_common()]
@@ -52,8 +63,8 @@ def main():
         tc, tcat = Counter(), {}
         for line in open(args.test):
             r = json.loads(line)
-            tc.update(r["gen_tokens"])
-            tcat.setdefault(r["category"], Counter()).update(r["gen_tokens"])
+            tc.update(generated(r))
+            tcat.setdefault(r["category"], Counter()).update(generated(r))
         n = sum(tc.values())
         print(f"held-out coverage, all: {sum(v for t, v in tc.items() if t in s) / n:.4f} ({n} tokens)")
         for cat, c in sorted(tcat.items()):
