@@ -604,6 +604,34 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   to each other, their draws keyed by position); the rig's identity step (check_identity, nine cards even and light,
   greedy and the makers' sampling) passed.
 
+### M4 heads on the agent check (2026-10-27)
+
+The first heads trained on publishable data: agentic run 1 (1,108 sessions, 14.3 M generated tokens), the 26-layer
+grid, `--ctx 4096`, 240 minutes each (~0.9 epoch), a 3–12-card head (`gen`) and a nine-card head (`nine`), vocabulary
+29,288 ids. Offline at nine cards (coupled acceptance, α 1, all positions / fresh text):
+
+| Head | Validation (sessions of training modules) | Held-out modules (40 sessions) | Q51 |
+|---|---|---|---|
+| nine | 0.365 | 0.277 / 0.235 | 0.156 / 0.141 |
+| gen | 0.343 | 0.256 / 0.218 | 0.145 / 0.135 |
+
+α 3 (the export's) raises validation by ~0.09 (nine 0.455, gen 0.437). Q51 is low because these heads saw only agent
+sessions: their vocabulary misses 14 % of Q51's chat tokens and 5–7 % of the rest.
+
+On the rig (the v2.0 engine, Flint Q8_0, nine cards, 262k, the release line `-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6
+--pipe-depth 4`, the agent check with a 25-minute budget per arm):
+
+| Arm | Tasks passed | Minutes per task (median) | First token per turn (median) | Generation tok/s |
+|---|---|---|---|---|
+| release line | 12 / 12 | 1.2 | 2.30 s | **45.0** |
+| + nine-card head | 10 / 10 | 2.1 | 2.19 s | 29.7 |
+| + 3–12-card head | 8 / 9 (one session ran to its time cap) | 1.5 | 2.78 s | 30.7 |
+
+One guess costs 5.3 ms (both heads, median of 300, one P106, the release split's 6-row window at 8,192 positions).
+At ~25–30 % accepted on agent text that cost outweighs what the right guesses save, so both heads slow the agent a
+third against the copy lookup alone. **More training raises acceptance, but the head pays only with a much cheaper
+guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
+
 ## 7. Lessons and pitfalls
 
 | Lesson | Evidence |
@@ -765,3 +793,6 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
   pieces (`--chunk-targets`); `export.py` exports several writers' runs as one; `heldout.py` holds out whole modules;
   `agentic_head.sh` runs export to GGUF. `check_ctx.py` passes on synthetic data (windowed attention 8e-7 from a dense
   reference, pieces equal to whole sessions), and a short CPU run trains through the whole loop.
+- 2026-10-27: M4's first heads (agentic run 1, 240 minutes each) on the agent check: 29.7 and 30.7 tok/s against the
+  release line's 45.0. One guess costs 5.3 ms on a P106, and ~25–30 % of guesses are right on agent text, so the head
+  slows the agent; the cheaper guess (section 8, item 0) comes before more training pays. Heads continue overnight.
