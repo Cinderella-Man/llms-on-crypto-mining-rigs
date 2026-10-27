@@ -1,0 +1,4 @@
+model	text	chunks	ctx	ppl	ppl_se
+Ornith-1.5-122B-Q8_0	wiki	80	512	6.2469	0.11237
+Ornith-1.5-122B-Q8_0	agent	12	8192	1.5683	0.00887
+Ornith-1.5-122B-Q8_0	code	80	512	1.2785	0.01033
