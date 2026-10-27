@@ -45,6 +45,9 @@ ALLOWED_PATHS = ("/work", "/tmp", "/usr/local/lib/python3.12/", "/usr/local/bin/
                  *(f"/usr/local/bin/{b}" for b in ("elixir", "elixirc", "iex", "mix", "erl", "erlc", "escript",
                                                    "epmd")))   # CPython, our tool runner, the shell's own error
 # prefix ("/bin/sh: 1: x: not found"), and the Elixir sandbox's runtimes and their launchers (Apache-2.0)
+# a folder under /srv, /mnt or /home named in a published row: a real name follows, so the model's own placeholders
+# ("~/.mix would be at /root/.mix or /home/...") pass
+MACHINE_PATH = re.compile(r"/(?:srv|mnt|home)/[A-Za-z0-9_][\w.-]*")
 ABS_PATH = re.compile(r"(?<![\w.~:/-])(/(?:usr|etc|opt|home|root|var|srv|mnt|lib|bin|sbin|proc|sys|dev|run)\b[^\s'\"]*)")
 
 
@@ -480,8 +483,9 @@ def stage_dataset(a, src, cb, errors, rows, rec, parents):
             hit = agx.shared12(" ".join(m.get("content") or "" for m in r["messages"]), spans)
             if hit:
                 bad.append(f"shares 12 words with a held-out test: {hit!r}")
-            if "/srv/" in text or "/mnt/" in text or "/home/" in text:
-                bad.append("machine path in the row")
+            m = MACHINE_PATH.search(text)
+            if m:
+                bad.append(f"machine path in the row: {m[0]!r}")
             ids.add(r["source_id"])
             writers.add(r["writer"])
             rows.append([r["session_id"], r["codebase_id"], r["licence"], os.path.basename(path), "; ".join(bad) or "ok"])
