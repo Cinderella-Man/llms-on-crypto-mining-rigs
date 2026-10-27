@@ -1,0 +1,7 @@
+devices: 1, steady-state tokens: 200
+wall time per token:                            5.47 ms
+GPU chain per token (sum over devices):         4.93 ms  (90 % of the wall time)
+host time inside graph_compute, all devices:    0.06 ms
+host: first device entered to last exited:      0.06 ms
+device   GPU ms host in compute ms  entered after device 0 (ms)
+     0     4.93              0.057                         0.00

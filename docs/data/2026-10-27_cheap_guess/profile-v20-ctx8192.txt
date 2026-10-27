@@ -1,0 +1,59 @@
+devices: 1, steady-state tokens: 80 (last 80 evaluations per device)
+GPU time per token, sum over devices: 5.34 ms
+  device 0: 5.34 ms
+wall time per token (device 0 evaluation to evaluation): 6.00 ms
+
+ ms/token      % calls/tok   us/call  label
+    1.474  27.61       1.0   1474.28  MUL_MAT+ADD sd.head:f16:2048x29289
+    0.608  11.39       1.0    608.35  FLASH_ATTN_EXT node_36
+    0.607  11.37       1.0    607.12  FLASH_ATTN_EXT node_62
+    0.366   6.85       1.0    365.57  MUL_MAT_ID sd.anc:q8_0:2048x2048
+    0.185   3.46       1.0    184.56  MUL_MAT sd.blk.0.w2:q8_0:4096x2048
+    0.185   3.46       1.0    184.51  MUL_MAT sd.blk.1.w2:q8_0:4096x2048
+    0.183   3.43       1.0    182.89  MUL_MAT sd.blk.0.w1:q8_0:2048x4096
+    0.183   3.42       1.0    182.86  MUL_MAT sd.blk.1.w1:q8_0:2048x4096
+    0.183   3.42       1.0    182.67  MUL_MAT sd.blk.1.w3:q8_0:2048x4096
+    0.183   3.42       1.0    182.59  MUL_MAT sd.blk.0.w3:q8_0:2048x4096
+    0.107   2.01       1.0    107.19  MUL_MAT sd.blk.0.wq:q8_0:2048x2048
+    0.104   1.95       1.0    103.97  MUL_MAT sd.emb:q8_0:2048x2048
+    0.103   1.92       1.0    102.73  MUL_MAT sd.blk.1.wo:q8_0:2048x2048
+    0.103   1.92       1.0    102.69  MUL_MAT sd.blk.0.wo:q8_0:2048x2048
+    0.097   1.83       1.0     97.48  MUL_MAT sd.blk.1.wq:q8_0:2048x2048
+    0.048   0.90       1.0     48.12  MUL_MAT sd.blk.0.wk:q8_0:2048x512
+    0.048   0.89       5.0      9.52  SET_ROWS _(view)
+    0.046   0.86       1.0     46.05  GET_ROWS node_0
+    0.046   0.86       1.0     45.73  TOP_K node_77
+    0.041   0.78       1.0     41.40  RMS_NORM node_1
+    0.036   0.67       1.0     35.55  MUL_MAT sd.blk.0.wv:q8_0:2048x512
+    0.034   0.63       1.0     33.69  MUL_MAT sd.blk.1.wv:q8_0:2048x512
+    0.033   0.62       1.0     33.01  MUL_MAT sd.blk.1.wk:q8_0:2048x512
+    0.027   0.51       1.0     27.15  SOFT_MAX node_76
+    0.023   0.43       1.0     23.08  ROPE node_14
+    0.023   0.42       1.0     22.66  ROPE node_18
+    0.014   0.26       1.0     13.80  REPEAT node_27
+    0.014   0.25       1.0     13.58  SUB node_31
+    0.013   0.24       1.0     13.02  SCALE node_32
+    0.013   0.24       1.0     12.71  SCALE node_34
+    0.012   0.22       1.0     11.61  GET_ROWS node_9
+    0.012   0.22       1.0     11.57  GET_ROWS node_3
+    0.011   0.21       1.0     11.11  CPY _(copy)
+    0.011   0.21       1.0     11.05  RMS_NORM node_11
+    0.011   0.20       1.0     10.75  ADD node_8
+    0.011   0.20       1.0     10.56  ADD node_10
+    0.011   0.20       1.0     10.52  SWIGLU node_43
+    0.010   0.19       1.0      9.93  SET_ROWS _(view)_(view)
+    0.010   0.19       1.0      9.93  ROPE node_49
+    0.010   0.18       1.0      9.55  SWIGLU node_69
+    0.009   0.17       1.0      9.23  ADD node_39
+    0.009   0.17       1.0      9.17  ADD node_65
+    0.009   0.17       1.0      9.05  GET_ROWS node_79
+    0.009   0.17       1.0      8.88  RMS_NORM node_4
+    0.009   0.16       1.0      8.58  ADD node_45
+    0.008   0.15       1.0      8.19  GET_ROWS node_72
+    0.008   0.15       1.0      8.09  STEP node_33
+    0.008   0.15       1.0      7.97  ADD node_71
+    0.008   0.14       1.0      7.53  RMS_NORM node_66
+    0.007   0.14       1.0      7.45  RMS_NORM node_46
+    0.007   0.14       1.0      7.27  ROPE node_53
+    0.007   0.14       1.0      7.23  RMS_NORM node_40
+    0.007   0.14       1.0      7.21  RMS_NORM node_73

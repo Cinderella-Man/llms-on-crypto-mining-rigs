@@ -1,0 +1,14 @@
+llama-pipe-drafter-check against drafter.Drafter.forward (float32): a random-weight head of the real shape (2,048 wide,
+2 layers, 4,000 draft ids, F16 output layer, depth-general), check_export.py case --general --split 6,6,5,5,6,5,5,6,5
+--windows 6,6,6,7,1,2,6,6: a 300-position prompt committed in bulk, then 8 guesses with 0-1 commits and 1-7 tokens in
+flight (window L6, L12, L22, L33, L37, L44; older tokens the final state). Pass: the largest logit difference at most
+0.05 standard deviations of the reference's logits and the same most likely id at every step.
+
+CPU backend (branch pascal-p106-v3-cheapguess, the drafter on the CPU, the table looked up on the host):
+option                                        steps  bad  worst (sd)
+LLAMA_DRAFT_PRUNE=0 (every row through every block)  8    0   0.00259
+LLAMA_DRAFT_PRUNE=1 (default: last block on the output row)  8    0   0.00254
+LLAMA_DRAFT_ANC=dense                           8    0   0.00254
+LLAMA_DRAFT_SPLIT=4                             8    0   0.00254
+LLAMA_DRAFT_SPLIT=4 LLAMA_DRAFT_PRUNE=0         8    0   0.00259
+LLAMA_DRAFT_ANC=dense LLAMA_DRAFT_HEAD=q8_0     8    0   0.03795  (the Q8_0 output layer's own rounding; same top ids)

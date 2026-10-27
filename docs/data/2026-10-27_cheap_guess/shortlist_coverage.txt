@@ -1,0 +1,8 @@
+shortlist_coverage.py vocab.npy sessions_seq.jsonl --ids test.txt  (agentic run 1's 40 held-out sessions)
+40 sessions, 681248 generated tokens; in the draft vocabulary (29288 ids): 0.9766
+first   1024 draft ids: 0.7085 of generated tokens
+first   2048 draft ids: 0.7756 of generated tokens
+first   4096 draft ids: 0.8416 of generated tokens
+first   8192 draft ids: 0.9029 of generated tokens
+first  12288 draft ids: 0.9367 of generated tokens
+first  16384 draft ids: 0.9557 of generated tokens

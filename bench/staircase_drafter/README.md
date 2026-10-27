@@ -275,6 +275,10 @@ paths are placeholders.
 | [check_general.py](check_general.py) | checks of the depth-general head (window sampler, warm start from a six-card head) |
 | [score.py](score.py) | per-position acceptance on held-out transcripts, intervals by transcript |
 | [sim.py](sim.py) | speed per workload through Q87's simulator |
+| [cost_sim.py](cost_sim.py) | what a guess may cost: Q87's simulator with llama-server's guess order and the head's time per guess charged, swept over time and acceptance |
+| [agent_tokens.py](agent_tokens.py) | an agent check's requests as token sequences (Flint's chat template) for cost_sim.py |
+| [shortlist_coverage.py](shortlist_coverage.py) | the share of generated tokens the first K draft ids cover (an output head cut to K ids) |
+| [source_split.py](source_split.py) | score.py's per-position acceptance split by what llama-server's lookups would guess there (copy lookup, 2-token or 1-token continuation, none) |
 | [report.py](report.py) | tables and gate verdicts from score.py and sim.py |
 | [q51_sources.py](q51_sources.py) | the files Q51's prompts are built from, for `clean_prompts.py --q51` and `check_sources.py --q51-sources` |
 | [rec_weights.py](rec_weights.py) | the `train.py --rec-weights` file: edit, agent and code answers drawn twice per epoch |
