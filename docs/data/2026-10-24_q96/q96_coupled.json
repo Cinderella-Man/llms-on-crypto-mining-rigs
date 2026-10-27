@@ -1,0 +1,813 @@
+{
+ "setups": [
+  {
+   "name": "6 cards, 9/8/8/8/8/8 layers",
+   "total_ms": 26.8,
+   "layers": [
+    9,
+    8,
+    8,
+    8,
+    8,
+    8
+   ],
+   "stage_ms": [
+    3.912,
+    3.478,
+    3.478,
+    3.478,
+    3.478,
+    5.978
+   ],
+   "hop_ms": 0.3,
+   "gap_ms": 1.5,
+   "plain_tok_s": 37.31,
+   "cap_tok_s": 159.3
+  },
+  {
+   "name": "9 cards, 6/6/6/6/5/5/5/5/5 layers",
+   "total_ms": 31.3,
+   "layers": [
+    6,
+    6,
+    6,
+    6,
+    5,
+    5,
+    5,
+    5,
+    5
+   ],
+   "stage_ms": [
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    2.541,
+    2.541,
+    2.541,
+    2.541,
+    5.041
+   ],
+   "hop_ms": 0.3,
+   "gap_ms": 1.5,
+   "plain_tok_s": 31.95,
+   "cap_tok_s": 187.2
+  },
+  {
+   "name": "9 cards, head + 2 layers on the last",
+   "total_ms": 31.3,
+   "layers": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    5,
+    2
+   ],
+   "stage_ms": [
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    3.049,
+    2.541,
+    3.516
+   ],
+   "hop_ms": 0.3,
+   "gap_ms": 1.5,
+   "plain_tok_s": 31.95,
+   "cap_tok_s": 262.0
+  }
+ ],
+ "configs": {
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | sampled top guess, expected | depth 5": {
+   "speedup": {
+    "chat": 1.1095,
+    "code": 1.2561,
+    "edit": 1.735,
+    "agent": 1.2103,
+    "all": 1.3408,
+    "edit/answer": 4.0427
+   },
+   "tok_s": {
+    "chat": 41.4,
+    "code": 46.87,
+    "edit": 64.74,
+    "agent": 45.16,
+    "all": 50.03,
+    "edit/answer": 150.85
+   },
+   "hit_share": 0.33194444444444443,
+   "miss_share": 0.13076923076923078,
+   "wasted_ms_per_token": 3.9046151977270127,
+   "cancelled": 15618,
+   "guessed": 37367
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else ngram-cache | Gumbel-coupled | depth 5": {
+   "speedup": {
+    "chat": 1.1085,
+    "code": 1.2541,
+    "edit": 1.7331,
+    "agent": 1.2088,
+    "all": 1.3391,
+    "edit/answer": 4.0427
+   },
+   "tok_s": {
+    "chat": 41.36,
+    "code": 46.79,
+    "edit": 64.67,
+    "agent": 45.1,
+    "all": 49.97,
+    "edit/answer": 150.85
+   },
+   "hit_share": 0.3307234432234432,
+   "miss_share": 0.131990231990232,
+   "wasted_ms_per_token": 3.9738331651337453,
+   "cancelled": 15939,
+   "guessed": 37608
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else table | sampled top guess, expected | depth 5": {
+   "speedup": {
+    "chat": 1.1242,
+    "code": 1.2496,
+    "edit": 1.7203,
+    "agent": 1.3324,
+    "all": 1.347,
+    "edit/answer": 4.0196
+   },
+   "tok_s": {
+    "chat": 41.95,
+    "code": 46.63,
+    "edit": 64.19,
+    "agent": 49.72,
+    "all": 50.26,
+    "edit/answer": 149.99
+   },
+   "hit_share": 0.3363858363858364,
+   "miss_share": 0.5374847374847375,
+   "wasted_ms_per_token": 28.941901117585726,
+   "cancelled": 130463,
+   "guessed": 152503
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else table | Gumbel-coupled | depth 5": {
+   "speedup": {
+    "chat": 1.1017,
+    "code": 1.2355,
+    "edit": 1.7085,
+    "agent": 1.3205,
+    "all": 1.3298,
+    "edit/answer": 4.0254
+   },
+   "tok_s": {
+    "chat": 41.11,
+    "code": 46.1,
+    "edit": 63.75,
+    "agent": 49.27,
+    "all": 49.62,
+    "edit/answer": 150.2
+   },
+   "hit_share": 0.3239010989010989,
+   "miss_share": 0.549969474969475,
+   "wasted_ms_per_token": 29.661222620912085,
+   "cancelled": 133732,
+   "guessed": 154954
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else table + request counts | sampled top guess, expected | depth 5": {
+   "speedup": {
+    "chat": 1.1837,
+    "code": 1.3463,
+    "edit": 1.8508,
+    "agent": 1.3732,
+    "all": 1.437,
+    "edit/answer": 4.0778
+   },
+   "tok_s": {
+    "chat": 44.17,
+    "code": 50.23,
+    "edit": 69.06,
+    "agent": 51.24,
+    "all": 53.62,
+    "edit/answer": 152.16
+   },
+   "hit_share": 0.3971306471306471,
+   "miss_share": 0.5381105006105006,
+   "wasted_ms_per_token": 32.459564457646266,
+   "cancelled": 149933,
+   "guessed": 175953
+  },
+  "6 cards, 9/8/8/8/8/8 layers | copy >= 4, else table + request counts | Gumbel-coupled | depth 5": {
+   "speedup": {
+    "chat": 1.1602,
+    "code": 1.3315,
+    "edit": 1.8369,
+    "agent": 1.3678,
+    "all": 1.4189,
+    "edit/answer": 4.0837
+   },
+   "tok_s": {
+    "chat": 43.29,
+    "code": 49.68,
+    "edit": 68.54,
+    "agent": 51.04,
+    "all": 52.94,
+    "edit/answer": 152.38
+   },
+   "hit_share": 0.38554639804639806,
+   "miss_share": 0.5496947496947497,
+   "wasted_ms_per_token": 33.17647762950815,
+   "cancelled": 153303,
+   "guessed": 178564
+  },
+  "6 cards, 9/8/8/8/8/8 layers | table + request counts | sampled top guess, expected | depth 5": {
+   "speedup": {
+    "chat": 1.1826,
+    "code": 1.345,
+    "edit": 1.8364,
+    "agent": 1.3712,
+    "all": 1.4328,
+    "edit/answer": 4.0139
+   },
+   "tok_s": {
+    "chat": 44.13,
+    "code": 50.19,
+    "edit": 68.52,
+    "agent": 51.17,
+    "all": 53.46,
+    "edit/answer": 149.77
+   },
+   "hit_share": 0.39447496947496946,
+   "miss_share": 0.5407661782661782,
+   "wasted_ms_per_token": 32.651846172529936,
+   "cancelled": 150803,
+   "guessed": 176649
+  },
+  "6 cards, 9/8/8/8/8/8 layers | table + request counts | Gumbel-coupled | depth 5": {
+   "speedup": {
+    "chat": 1.1582,
+    "code": 1.3308,
+    "edit": 1.8217,
+    "agent": 1.3683,
+    "all": 1.4146,
+    "edit/answer": 4.0254
+   },
+   "tok_s": {
+    "chat": 43.22,
+    "code": 49.66,
+    "edit": 67.97,
+    "agent": 51.06,
+    "all": 52.78,
+    "edit/answer": 150.2
+   },
+   "hit_share": 0.3827533577533577,
+   "miss_share": 0.55248778998779,
+   "wasted_ms_per_token": 33.376899902812994,
+   "cancelled": 154216,
+   "guessed": 179294
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.1197,
+    "code": 1.2834,
+    "edit": 1.8478,
+    "agent": 1.2318,
+    "all": 1.3799,
+    "edit/answer": 5.4099
+   },
+   "tok_s": {
+    "chat": 35.77,
+    "code": 41.0,
+    "edit": 59.04,
+    "agent": 39.35,
+    "all": 44.09,
+    "edit/answer": 172.84
+   },
+   "hit_share": 0.33194444444444443,
+   "miss_share": 0.13076923076923078,
+   "wasted_ms_per_token": 5.413109908800457,
+   "cancelled": 17822,
+   "guessed": 39571
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else ngram-cache | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1186,
+    "code": 1.2811,
+    "edit": 1.8455,
+    "agent": 1.2301,
+    "all": 1.378,
+    "edit/answer": 5.4099
+   },
+   "tok_s": {
+    "chat": 35.74,
+    "code": 40.93,
+    "edit": 58.96,
+    "agent": 39.3,
+    "all": 44.02,
+    "edit/answer": 172.84
+   },
+   "hit_share": 0.3307234432234432,
+   "miss_share": 0.131990231990232,
+   "wasted_ms_per_token": 5.514843387906405,
+   "cancelled": 18236,
+   "guessed": 39905
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else table | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.1359,
+    "code": 1.2761,
+    "edit": 1.8298,
+    "agent": 1.3702,
+    "all": 1.3869,
+    "edit/answer": 5.3653
+   },
+   "tok_s": {
+    "chat": 36.29,
+    "code": 40.77,
+    "edit": 58.46,
+    "agent": 43.78,
+    "all": 44.31,
+    "edit/answer": 171.42
+   },
+   "hit_share": 0.3363858363858364,
+   "miss_share": 0.5374847374847375,
+   "wasted_ms_per_token": 44.23116038726687,
+   "cancelled": 177071,
+   "guessed": 199111
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else table | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1111,
+    "code": 1.2602,
+    "edit": 1.8154,
+    "agent": 1.3566,
+    "all": 1.3673,
+    "edit/answer": 5.3764
+   },
+   "tok_s": {
+    "chat": 35.5,
+    "code": 40.26,
+    "edit": 58.0,
+    "agent": 43.34,
+    "all": 43.68,
+    "edit/answer": 171.77
+   },
+   "hit_share": 0.3239010989010989,
+   "miss_share": 0.549969474969475,
+   "wasted_ms_per_token": 45.25784873293577,
+   "cancelled": 181465,
+   "guessed": 202687
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else table + request counts | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.2021,
+    "code": 1.3861,
+    "edit": 1.9916,
+    "agent": 1.4171,
+    "all": 1.4911,
+    "edit/answer": 5.4782
+   },
+   "tok_s": {
+    "chat": 38.4,
+    "code": 44.29,
+    "edit": 63.63,
+    "agent": 45.27,
+    "all": 47.64,
+    "edit/answer": 175.02
+   },
+   "hit_share": 0.3971306471306471,
+   "miss_share": 0.5381105006105006,
+   "wasted_ms_per_token": 51.87510082609327,
+   "cancelled": 218383,
+   "guessed": 244403
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else table + request counts | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1758,
+    "code": 1.3692,
+    "edit": 1.9741,
+    "agent": 1.4109,
+    "all": 1.4701,
+    "edit/answer": 5.4898
+   },
+   "tok_s": {
+    "chat": 37.57,
+    "code": 43.74,
+    "edit": 63.07,
+    "agent": 45.08,
+    "all": 46.97,
+    "edit/answer": 175.39
+   },
+   "hit_share": 0.38554639804639806,
+   "miss_share": 0.5496947496947497,
+   "wasted_ms_per_token": 52.91995337150817,
+   "cancelled": 223195,
+   "guessed": 248456
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | table + request counts | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.2008,
+    "code": 1.3847,
+    "edit": 1.9735,
+    "agent": 1.4149,
+    "all": 1.4862,
+    "edit/answer": 5.3543
+   },
+   "tok_s": {
+    "chat": 38.36,
+    "code": 44.24,
+    "edit": 63.05,
+    "agent": 45.2,
+    "all": 47.48,
+    "edit/answer": 171.06
+   },
+   "hit_share": 0.39447496947496946,
+   "miss_share": 0.5407661782661782,
+   "wasted_ms_per_token": 52.22107376471983,
+   "cancelled": 219742,
+   "guessed": 245588
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | table + request counts | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1736,
+    "code": 1.3684,
+    "edit": 1.9551,
+    "agent": 1.4115,
+    "all": 1.4651,
+    "edit/answer": 5.3764
+   },
+   "tok_s": {
+    "chat": 37.5,
+    "code": 43.72,
+    "edit": 62.46,
+    "agent": 45.1,
+    "all": 46.81,
+    "edit/answer": 171.77
+   },
+   "hit_share": 0.3827533577533577,
+   "miss_share": 0.55248778998779,
+   "wasted_ms_per_token": 53.27709473354807,
+   "cancelled": 224622,
+   "guessed": 249700
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.1276,
+    "code": 1.3052,
+    "edit": 1.9447,
+    "agent": 1.2488,
+    "all": 1.4114,
+    "edit/answer": 7.3006
+   },
+   "tok_s": {
+    "chat": 36.03,
+    "code": 41.7,
+    "edit": 62.13,
+    "agent": 39.9,
+    "all": 45.09,
+    "edit/answer": 233.25
+   },
+   "hit_share": 0.33194444444444443,
+   "miss_share": 0.13076923076923078,
+   "wasted_ms_per_token": 5.517379550723901,
+   "cancelled": 17822,
+   "guessed": 39571
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else ngram-cache | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1264,
+    "code": 1.3026,
+    "edit": 1.9419,
+    "agent": 1.2469,
+    "all": 1.4092,
+    "edit/answer": 7.3006
+   },
+   "tok_s": {
+    "chat": 35.99,
+    "code": 41.62,
+    "edit": 62.04,
+    "agent": 39.84,
+    "all": 45.02,
+    "edit/answer": 233.25
+   },
+   "hit_share": 0.3307234432234432,
+   "miss_share": 0.131990231990232,
+   "wasted_ms_per_token": 5.617453278017059,
+   "cancelled": 18236,
+   "guessed": 39905
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else table | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.1451,
+    "code": 1.2971,
+    "edit": 1.9235,
+    "agent": 1.4007,
+    "all": 1.4192,
+    "edit/answer": 7.2149
+   },
+   "tok_s": {
+    "chat": 36.58,
+    "code": 41.44,
+    "edit": 61.45,
+    "agent": 44.75,
+    "all": 45.34,
+    "edit/answer": 230.51
+   },
+   "hit_share": 0.3363858363858364,
+   "miss_share": 0.5374847374847375,
+   "wasted_ms_per_token": 43.557851816581625,
+   "cancelled": 177071,
+   "guessed": 199111
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else table | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1184,
+    "code": 1.2797,
+    "edit": 1.9067,
+    "agent": 1.3857,
+    "all": 1.3974,
+    "edit/answer": 7.2361
+   },
+   "tok_s": {
+    "chat": 35.73,
+    "code": 40.89,
+    "edit": 60.92,
+    "agent": 44.27,
+    "all": 44.65,
+    "edit/answer": 231.19
+   },
+   "hit_share": 0.3239010989010989,
+   "miss_share": 0.549969474969475,
+   "wasted_ms_per_token": 44.51814233388848,
+   "cancelled": 181465,
+   "guessed": 202687
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else table + request counts | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.2165,
+    "code": 1.4183,
+    "edit": 2.1147,
+    "agent": 1.4527,
+    "all": 1.5354,
+    "edit/answer": 7.433
+   },
+   "tok_s": {
+    "chat": 38.87,
+    "code": 45.31,
+    "edit": 67.56,
+    "agent": 46.41,
+    "all": 49.05,
+    "edit/answer": 237.48
+   },
+   "hit_share": 0.3971306471306471,
+   "miss_share": 0.5381105006105006,
+   "wasted_ms_per_token": 50.9320670741219,
+   "cancelled": 218383,
+   "guessed": 244403
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else table + request counts | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1881,
+    "code": 1.3995,
+    "edit": 2.0939,
+    "agent": 1.4458,
+    "all": 1.5118,
+    "edit/answer": 7.4555
+   },
+   "tok_s": {
+    "chat": 37.96,
+    "code": 44.71,
+    "edit": 66.9,
+    "agent": 46.19,
+    "all": 48.3,
+    "edit/answer": 238.2
+   },
+   "hit_share": 0.38554639804639806,
+   "miss_share": 0.5496947496947497,
+   "wasted_ms_per_token": 51.90519352250452,
+   "cancelled": 223195,
+   "guessed": 248456
+  },
+  "9 cards, head + 2 layers on the last | table + request counts | sampled top guess, expected | depth 8": {
+   "speedup": {
+    "chat": 1.2151,
+    "code": 1.4167,
+    "edit": 2.0931,
+    "agent": 1.4502,
+    "all": 1.5299,
+    "edit/answer": 7.1938
+   },
+   "tok_s": {
+    "chat": 38.82,
+    "code": 45.26,
+    "edit": 66.87,
+    "agent": 46.33,
+    "all": 48.88,
+    "edit/answer": 229.83
+   },
+   "hit_share": 0.39447496947496946,
+   "miss_share": 0.5407661782661782,
+   "wasted_ms_per_token": 51.259557823169175,
+   "cancelled": 219742,
+   "guessed": 245588
+  },
+  "9 cards, head + 2 layers on the last | table + request counts | Gumbel-coupled | depth 8": {
+   "speedup": {
+    "chat": 1.1857,
+    "code": 1.3987,
+    "edit": 2.0713,
+    "agent": 1.4464,
+    "all": 1.5062,
+    "edit/answer": 7.2361
+   },
+   "tok_s": {
+    "chat": 37.88,
+    "code": 44.69,
+    "edit": 66.18,
+    "agent": 46.21,
+    "all": 48.12,
+    "edit/answer": 231.19
+   },
+   "hit_share": 0.3827533577533577,
+   "miss_share": 0.55248778998779,
+   "wasted_ms_per_token": 52.24569083131855,
+   "cancelled": 224622,
+   "guessed": 249700
+  }
+ },
+ "table_tokens": 65558,
+ "coupling": {
+  "copy >= 4, else ngram-cache": {
+   "chat": {
+    "top": 0.12914221734382136,
+    "coupled": 0.12784113881859155,
+    "fresh_top": 0.10492738945522276,
+    "fresh_coupled": 0.10381197818191354,
+    "copy_top": 0.7244145135009861,
+    "copy_coupled": 0.7185491831924924
+   },
+   "all": {
+    "top": 0.3324567959865406,
+    "coupled": 0.33106237942373906,
+    "fresh_top": 0.11954262045998328,
+    "fresh_coupled": 0.11807847527128891,
+    "copy_top": 0.8871302060492887,
+    "copy_coupled": 0.885917443031195
+   },
+   "code": {
+    "top": 0.26634094060562824,
+    "coupled": 0.2647505597814339,
+    "fresh_top": 0.10554166432320608,
+    "fresh_coupled": 0.1040216510677433,
+    "copy_top": 0.8543059253851004,
+    "copy_coupled": 0.8524582444819834
+   },
+   "edit": {
+    "top": 0.5540740919153117,
+    "coupled": 0.5528453023995957,
+    "fresh_top": 0.15832416032519792,
+    "fresh_coupled": 0.15663400967821958,
+    "copy_top": 0.9114673081540989,
+    "copy_coupled": 0.9106551639120458
+   },
+   "agent": {
+    "top": 0.22966289193783382,
+    "coupled": 0.22780686183559137,
+    "fresh_top": 0.13658790191875042,
+    "fresh_coupled": 0.13419403857297074,
+    "copy_top": 0.7878922752039479,
+    "copy_coupled": 0.7892619700765697
+   }
+  },
+  "copy >= 4, else table": {
+   "chat": {
+    "top": 0.14396252777793175,
+    "coupled": 0.12047505914794589,
+    "fresh_top": 0.12498214014007838,
+    "fresh_coupled": 0.10136737277939863,
+    "copy_top": 0.6105567560382885,
+    "copy_coupled": 0.5901986678055811
+   },
+   "all": {
+    "top": 0.3364555327525796,
+    "coupled": 0.3241505521148685,
+    "fresh_top": 0.13934393060545586,
+    "fresh_coupled": 0.12327589704934692,
+    "copy_top": 0.8499608653847861,
+    "copy_coupled": 0.8474592028649613
+   },
+   "code": {
+    "top": 0.26040365380533304,
+    "coupled": 0.24806247377805088,
+    "fresh_top": 0.11563207124597516,
+    "fresh_coupled": 0.10018899172095906,
+    "copy_top": 0.7897631341708423,
+    "copy_coupled": 0.7887640965532644
+   },
+   "edit": {
+    "top": 0.547169676191201,
+    "coupled": 0.5425061406042099,
+    "fresh_top": 0.1703556292693208,
+    "fresh_coupled": 0.16288777369409824,
+    "copy_top": 0.8874623039429231,
+    "copy_coupled": 0.8853312891726246
+   },
+   "agent": {
+    "top": 0.32949197106061934,
+    "coupled": 0.32199427991682317,
+    "fresh_top": 0.25378746782629974,
+    "fresh_coupled": 0.2452081791769464,
+    "copy_top": 0.7835395959091095,
+    "copy_coupled": 0.7825289267713921
+   }
+  },
+  "copy >= 4, else table + request counts": {
+   "chat": {
+    "top": 0.2026113798500007,
+    "coupled": 0.18063223859346325,
+    "fresh_top": 0.1800136719286454,
+    "fresh_coupled": 0.15822113920313058,
+    "copy_top": 0.7581300704688092,
+    "copy_coupled": 0.7315635379966341
+   },
+   "all": {
+    "top": 0.39734569000395514,
+    "coupled": 0.3856813285329594,
+    "fresh_top": 0.20474447763385437,
+    "fresh_coupled": 0.18945072477016675,
+    "copy_top": 0.8991007797406555,
+    "copy_coupled": 0.8968915280351704
+   },
+   "code": {
+    "top": 0.33539992621947246,
+    "coupled": 0.3238297391062754,
+    "fresh_top": 0.18880710368761894,
+    "fresh_coupled": 0.1748669670347537,
+    "copy_top": 0.8714187980789299,
+    "copy_coupled": 0.8685143672877433
+   },
+   "edit": {
+    "top": 0.6010556091631123,
+    "coupled": 0.5958818295861364,
+    "fresh_top": 0.24820798053599175,
+    "fresh_coupled": 0.23828452767026329,
+    "copy_top": 0.9197046821536937,
+    "copy_coupled": 0.9188202299454687
+   },
+   "agent": {
+    "top": 0.3576580503675187,
+    "coupled": 0.3539883633084869,
+    "fresh_top": 0.2807197351528573,
+    "fresh_coupled": 0.27551950631213656,
+    "copy_top": 0.819105623372988,
+    "copy_coupled": 0.8246155601278293
+   }
+  },
+  "table + request counts": {
+   "chat": {
+    "top": 0.20161379119013798,
+    "coupled": 0.17897152281395073,
+    "fresh_top": 0.17969399959284016,
+    "fresh_coupled": 0.1569632621360628,
+    "copy_top": 0.7404672877104947,
+    "copy_coupled": 0.7199998517545114
+   },
+   "all": {
+    "top": 0.3946743071089826,
+    "coupled": 0.3827120211869927,
+    "fresh_top": 0.2047008307192534,
+    "fresh_coupled": 0.18923817172141819,
+    "copy_top": 0.889583749892526,
+    "copy_coupled": 0.8867404616402278
+   },
+   "code": {
+    "top": 0.33431853380372334,
+    "coupled": 0.323069121316068,
+    "fresh_top": 0.18852849984411138,
+    "fresh_coupled": 0.17480990057610302,
+    "copy_top": 0.8674019971117758,
+    "copy_coupled": 0.8651812034170191
+   },
+   "edit": {
+    "top": 0.5955243882810569,
+    "coupled": 0.5897363225407469,
+    "fresh_top": 0.24865140605808211,
+    "fresh_coupled": 0.23906383666660072,
+    "copy_top": 0.9087778871380244,
+    "copy_coupled": 0.9064210710875048
+   },
+   "agent": {
+    "top": 0.3565760730306255,
+    "coupled": 0.35282139723013,
+    "fresh_top": 0.2818943662291866,
+    "fresh_coupled": 0.276773910734677,
+    "copy_top": 0.8044893429700615,
+    "copy_coupled": 0.8089261088888775
+   }
+  }
+ }
+}

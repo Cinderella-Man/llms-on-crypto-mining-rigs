@@ -1,0 +1,2534 @@
+{
+ "sim": {
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | cont (copy >= 4, else request counts) | depth 1": {
+   "speedup": {
+    "chat": 1.1423,
+    "code": 1.2446,
+    "edit": 1.493,
+    "agent": 1.215,
+    "all": 1.2903,
+    "edit/answer": 2.0484,
+    "agent/tool": 1.1473
+   },
+   "tok_s": {
+    "chat": 36.5,
+    "code": 39.76,
+    "edit": 47.7,
+    "agent": 38.82,
+    "all": 41.22,
+    "edit/answer": 65.44,
+    "agent/tool": 36.65
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 7.905196232341151
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1715,
+    "code": 1.2705,
+    "edit": 1.5085,
+    "agent": 1.2824,
+    "all": 1.3167,
+    "edit/answer": 2.0552,
+    "agent/tool": 1.4549
+   },
+   "tok_s": {
+    "chat": 37.43,
+    "code": 40.59,
+    "edit": 48.19,
+    "agent": 40.97,
+    "all": 42.07,
+    "edit/answer": 65.66,
+    "agent/tool": 46.48
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 9.243917918818187
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1796,
+    "code": 1.282,
+    "edit": 1.5275,
+    "agent": 1.2937,
+    "all": 1.3293,
+    "edit/answer": 2.0573,
+    "agent/tool": 1.4466
+   },
+   "tok_s": {
+    "chat": 37.69,
+    "code": 40.96,
+    "edit": 48.8,
+    "agent": 41.33,
+    "all": 42.47,
+    "edit/answer": 65.73,
+    "agent/tool": 46.22
+   },
+   "hit_share": 0.4251068376068376,
+   "miss_share": 0.4625915750915751,
+   "wasted_ms_per_token": 8.945627943487318
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1756,
+    "code": 1.2743,
+    "edit": 1.5085,
+    "agent": 1.2914,
+    "all": 1.3198,
+    "edit/answer": 2.0569,
+    "agent/tool": 1.4829
+   },
+   "tok_s": {
+    "chat": 37.56,
+    "code": 40.71,
+    "edit": 48.19,
+    "agent": 41.26,
+    "all": 42.17,
+    "edit/answer": 65.71,
+    "agent/tool": 47.38
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 9.380017567468892
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1861,
+    "code": 1.2868,
+    "edit": 1.5294,
+    "agent": 1.3066,
+    "all": 1.3343,
+    "edit/answer": 2.0577,
+    "agent/tool": 1.4757
+   },
+   "tok_s": {
+    "chat": 37.89,
+    "code": 41.11,
+    "edit": 48.86,
+    "agent": 41.74,
+    "all": 42.63,
+    "edit/answer": 65.74,
+    "agent/tool": 47.15
+   },
+   "hit_share": 0.4292124542124542,
+   "miss_share": 0.46796398046398047,
+   "wasted_ms_per_token": 9.037209015476572
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1802,
+    "code": 1.2837,
+    "edit": 1.5135,
+    "agent": 1.2926,
+    "all": 1.3262,
+    "edit/answer": 2.0589,
+    "agent/tool": 1.4815
+   },
+   "tok_s": {
+    "chat": 37.71,
+    "code": 41.01,
+    "edit": 48.35,
+    "agent": 41.3,
+    "all": 42.37,
+    "edit/answer": 65.78,
+    "agent/tool": 47.33
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 9.390844733500145
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1904,
+    "code": 1.2958,
+    "edit": 1.534,
+    "agent": 1.3079,
+    "all": 1.3402,
+    "edit/answer": 2.0601,
+    "agent/tool": 1.4631
+   },
+   "tok_s": {
+    "chat": 38.03,
+    "code": 41.4,
+    "edit": 49.01,
+    "agent": 41.79,
+    "all": 42.82,
+    "edit/answer": 65.82,
+    "agent/tool": 46.74
+   },
+   "hit_share": 0.43463064713064714,
+   "miss_share": 0.4701159951159951,
+   "wasted_ms_per_token": 9.061252149213603
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1799,
+    "code": 1.2832,
+    "edit": 1.523,
+    "agent": 1.2944,
+    "all": 1.3286,
+    "edit/answer": 2.0593,
+    "agent/tool": 1.4815
+   },
+   "tok_s": {
+    "chat": 37.7,
+    "code": 41.0,
+    "edit": 48.66,
+    "agent": 41.35,
+    "all": 42.45,
+    "edit/answer": 65.79,
+    "agent/tool": 47.33
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 9.350607385813802
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1901,
+    "code": 1.2953,
+    "edit": 1.541,
+    "agent": 1.3087,
+    "all": 1.3419,
+    "edit/answer": 2.0601,
+    "agent/tool": 1.4631
+   },
+   "tok_s": {
+    "chat": 38.02,
+    "code": 41.38,
+    "edit": 49.23,
+    "agent": 41.81,
+    "all": 42.87,
+    "edit/answer": 65.82,
+    "agent/tool": 46.74
+   },
+   "hit_share": 0.4362026862026862,
+   "miss_share": 0.46936813186813187,
+   "wasted_ms_per_token": 9.037829483443986
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1803,
+    "code": 1.2841,
+    "edit": 1.5126,
+    "agent": 1.2378,
+    "all": 1.3234,
+    "edit/answer": 2.0597,
+    "agent/tool": 1.1897
+   },
+   "tok_s": {
+    "chat": 37.71,
+    "code": 41.02,
+    "edit": 48.33,
+    "agent": 39.55,
+    "all": 42.28,
+    "edit/answer": 65.81,
+    "agent/tool": 38.01
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 9.434649771999062
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1904,
+    "code": 1.2958,
+    "edit": 1.5333,
+    "agent": 1.2579,
+    "all": 1.3375,
+    "edit/answer": 2.0601,
+    "agent/tool": 1.1934
+   },
+   "tok_s": {
+    "chat": 38.03,
+    "code": 41.4,
+    "edit": 48.99,
+    "agent": 40.19,
+    "all": 42.73,
+    "edit/answer": 65.82,
+    "agent/tool": 38.13
+   },
+   "hit_share": 0.4318986568986569,
+   "miss_share": 0.4717032967032967,
+   "wasted_ms_per_token": 9.099472976005858
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | cont (copy >= 4, else request counts) | depth 2": {
+   "speedup": {
+    "chat": 1.1773,
+    "code": 1.3229,
+    "edit": 1.7349,
+    "agent": 1.2825,
+    "all": 1.395,
+    "edit/answer": 3.0277,
+    "agent/tool": 1.1783
+   },
+   "tok_s": {
+    "chat": 37.61,
+    "code": 42.26,
+    "edit": 55.43,
+    "agent": 40.97,
+    "all": 44.57,
+    "edit/answer": 96.73,
+    "agent/tool": 37.64
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 16.352309187415592
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2071,
+    "code": 1.3535,
+    "edit": 1.7522,
+    "agent": 1.3744,
+    "all": 1.426,
+    "edit/answer": 3.0454,
+    "agent/tool": 1.6841
+   },
+   "tok_s": {
+    "chat": 38.56,
+    "code": 43.24,
+    "edit": 55.98,
+    "agent": 43.91,
+    "all": 45.56,
+    "edit/answer": 97.3,
+    "agent/tool": 53.81
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 19.244248336702224
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2204,
+    "code": 1.3728,
+    "edit": 1.7888,
+    "agent": 1.3902,
+    "all": 1.4475,
+    "edit/answer": 3.0525,
+    "agent/tool": 1.6564
+   },
+   "tok_s": {
+    "chat": 38.99,
+    "code": 43.86,
+    "edit": 57.15,
+    "agent": 44.42,
+    "all": 46.25,
+    "edit/answer": 97.52,
+    "agent/tool": 52.92
+   },
+   "hit_share": 0.4251068376068376,
+   "miss_share": 0.4625915750915751,
+   "wasted_ms_per_token": 18.596743477615515
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2122,
+    "code": 1.3579,
+    "edit": 1.751,
+    "agent": 1.3826,
+    "all": 1.4297,
+    "edit/answer": 3.047,
+    "agent/tool": 1.7197
+   },
+   "tok_s": {
+    "chat": 38.73,
+    "code": 43.38,
+    "edit": 55.94,
+    "agent": 44.17,
+    "all": 45.68,
+    "edit/answer": 97.35,
+    "agent/tool": 54.94
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 19.528221013685183
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2279,
+    "code": 1.379,
+    "edit": 1.7936,
+    "agent": 1.4035,
+    "all": 1.4543,
+    "edit/answer": 3.0542,
+    "agent/tool": 1.6762
+   },
+   "tok_s": {
+    "chat": 39.23,
+    "code": 44.06,
+    "edit": 57.3,
+    "agent": 44.84,
+    "all": 46.46,
+    "edit/answer": 97.58,
+    "agent/tool": 53.55
+   },
+   "hit_share": 0.4292124542124542,
+   "miss_share": 0.46796398046398047,
+   "wasted_ms_per_token": 18.786226639011957
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2184,
+    "code": 1.3716,
+    "edit": 1.7585,
+    "agent": 1.3876,
+    "all": 1.439,
+    "edit/answer": 3.0522,
+    "agent/tool": 1.7204
+   },
+   "tok_s": {
+    "chat": 38.93,
+    "code": 43.82,
+    "edit": 56.18,
+    "agent": 44.33,
+    "all": 45.97,
+    "edit/answer": 97.52,
+    "agent/tool": 54.96
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 19.54815354713813
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2341,
+    "code": 1.3915,
+    "edit": 1.8013,
+    "agent": 1.4088,
+    "all": 1.4633,
+    "edit/answer": 3.061,
+    "agent/tool": 1.6701
+   },
+   "tok_s": {
+    "chat": 39.43,
+    "code": 44.46,
+    "edit": 57.55,
+    "agent": 45.01,
+    "all": 46.75,
+    "edit/answer": 97.8,
+    "agent/tool": 53.36
+   },
+   "hit_share": 0.43463064713064714,
+   "miss_share": 0.4701159951159951,
+   "wasted_ms_per_token": 18.825572063995143
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2181,
+    "code": 1.3708,
+    "edit": 1.7744,
+    "agent": 1.3905,
+    "all": 1.4425,
+    "edit/answer": 3.0558,
+    "agent/tool": 1.7204
+   },
+   "tok_s": {
+    "chat": 38.92,
+    "code": 43.8,
+    "edit": 56.69,
+    "agent": 44.43,
+    "all": 46.09,
+    "edit/answer": 97.63,
+    "agent/tool": 54.96
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 19.474907303585734
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2338,
+    "code": 1.391,
+    "edit": 1.8128,
+    "agent": 1.4105,
+    "all": 1.4658,
+    "edit/answer": 3.061,
+    "agent/tool": 1.6701
+   },
+   "tok_s": {
+    "chat": 39.42,
+    "code": 44.44,
+    "edit": 57.92,
+    "agent": 45.06,
+    "all": 46.83,
+    "edit/answer": 97.8,
+    "agent/tool": 53.36
+   },
+   "hit_share": 0.4362026862026862,
+   "miss_share": 0.46936813186813187,
+   "wasted_ms_per_token": 18.783768034691086
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2187,
+    "code": 1.3719,
+    "edit": 1.7579,
+    "agent": 1.3027,
+    "all": 1.4346,
+    "edit/answer": 3.0575,
+    "agent/tool": 1.2327
+   },
+   "tok_s": {
+    "chat": 38.94,
+    "code": 43.83,
+    "edit": 56.16,
+    "agent": 41.62,
+    "all": 45.83,
+    "edit/answer": 97.68,
+    "agent/tool": 39.38
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 19.634072848924784
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2341,
+    "code": 1.3912,
+    "edit": 1.8001,
+    "agent": 1.3336,
+    "all": 1.4591,
+    "edit/answer": 3.061,
+    "agent/tool": 1.2388
+   },
+   "tok_s": {
+    "chat": 39.43,
+    "code": 44.45,
+    "edit": 57.51,
+    "agent": 42.61,
+    "all": 46.62,
+    "edit/answer": 97.8,
+    "agent/tool": 39.58
+   },
+   "hit_share": 0.4318986568986569,
+   "miss_share": 0.4717032967032967,
+   "wasted_ms_per_token": 18.90603124766862
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | cont (copy >= 4, else request counts) | depth 3": {
+   "speedup": {
+    "chat": 1.1894,
+    "code": 1.3569,
+    "edit": 1.8717,
+    "agent": 1.3036,
+    "all": 1.4441,
+    "edit/answer": 3.9609,
+    "agent/tool": 1.1805
+   },
+   "tok_s": {
+    "chat": 38.0,
+    "code": 43.35,
+    "edit": 59.8,
+    "agent": 41.65,
+    "all": 46.14,
+    "edit/answer": 126.55,
+    "agent/tool": 37.72
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 24.26416769455934
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2193,
+    "code": 1.3874,
+    "edit": 1.8861,
+    "agent": 1.4052,
+    "all": 1.4755,
+    "edit/answer": 3.9913,
+    "agent/tool": 1.7519
+   },
+   "tok_s": {
+    "chat": 38.96,
+    "code": 44.33,
+    "edit": 60.26,
+    "agent": 44.89,
+    "all": 47.14,
+    "edit/answer": 127.52,
+    "agent/tool": 55.97
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 28.591481927950504
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2353,
+    "code": 1.4106,
+    "edit": 1.936,
+    "agent": 1.4248,
+    "all": 1.5023,
+    "edit/answer": 4.0015,
+    "agent/tool": 1.7208
+   },
+   "tok_s": {
+    "chat": 39.47,
+    "code": 45.07,
+    "edit": 61.85,
+    "agent": 45.52,
+    "all": 48.0,
+    "edit/answer": 127.84,
+    "agent/tool": 54.98
+   },
+   "hit_share": 0.4251221001221001,
+   "miss_share": 0.4625763125763126,
+   "wasted_ms_per_token": 27.64316644241463
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2239,
+    "code": 1.392,
+    "edit": 1.8858,
+    "agent": 1.4152,
+    "all": 1.4794,
+    "edit/answer": 3.9995,
+    "agent/tool": 1.8093
+   },
+   "tok_s": {
+    "chat": 39.1,
+    "code": 44.47,
+    "edit": 60.25,
+    "agent": 45.21,
+    "all": 47.27,
+    "edit/answer": 127.78,
+    "agent/tool": 57.81
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 29.004620524048928
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2431,
+    "code": 1.4175,
+    "edit": 1.9418,
+    "agent": 1.4404,
+    "all": 1.51,
+    "edit/answer": 4.0076,
+    "agent/tool": 1.7627
+   },
+   "tok_s": {
+    "chat": 39.72,
+    "code": 45.29,
+    "edit": 62.04,
+    "agent": 46.02,
+    "all": 48.24,
+    "edit/answer": 128.04,
+    "agent/tool": 56.32
+   },
+   "hit_share": 0.4292429792429792,
+   "miss_share": 0.46793345543345544,
+   "wasted_ms_per_token": 27.92977610825939
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2305,
+    "code": 1.4072,
+    "edit": 1.8956,
+    "agent": 1.422,
+    "all": 1.4901,
+    "edit/answer": 4.0118,
+    "agent/tool": 1.8009
+   },
+   "tok_s": {
+    "chat": 39.31,
+    "code": 44.96,
+    "edit": 60.56,
+    "agent": 45.43,
+    "all": 47.61,
+    "edit/answer": 128.17,
+    "agent/tool": 57.54
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 29.034674441220297
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2495,
+    "code": 1.4316,
+    "edit": 1.9516,
+    "agent": 1.4456,
+    "all": 1.5201,
+    "edit/answer": 4.0241,
+    "agent/tool": 1.7441
+   },
+   "tok_s": {
+    "chat": 39.92,
+    "code": 45.74,
+    "edit": 62.35,
+    "agent": 46.19,
+    "all": 48.57,
+    "edit/answer": 128.57,
+    "agent/tool": 55.72
+   },
+   "hit_share": 0.43466117216117217,
+   "miss_share": 0.4700854700854701,
+   "wasted_ms_per_token": 27.99747691935323
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2301,
+    "code": 1.4064,
+    "edit": 1.9165,
+    "agent": 1.4254,
+    "all": 1.4945,
+    "edit/answer": 4.0159,
+    "agent/tool": 1.8009
+   },
+   "tok_s": {
+    "chat": 39.3,
+    "code": 44.93,
+    "edit": 61.23,
+    "agent": 45.54,
+    "all": 47.75,
+    "edit/answer": 128.3,
+    "agent/tool": 57.54
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 28.93162246768359
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2492,
+    "code": 1.4311,
+    "edit": 1.966,
+    "agent": 1.4474,
+    "all": 1.523,
+    "edit/answer": 4.0241,
+    "agent/tool": 1.7441
+   },
+   "tok_s": {
+    "chat": 39.91,
+    "code": 45.72,
+    "edit": 62.81,
+    "agent": 46.24,
+    "all": 48.66,
+    "edit/answer": 128.57,
+    "agent/tool": 55.72
+   },
+   "hit_share": 0.43623321123321124,
+   "miss_share": 0.46933760683760684,
+   "wasted_ms_per_token": 27.944861235717124
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2309,
+    "code": 1.4075,
+    "edit": 1.8947,
+    "agent": 1.3237,
+    "all": 1.485,
+    "edit/answer": 4.02,
+    "agent/tool": 1.2373
+   },
+   "tok_s": {
+    "chat": 39.32,
+    "code": 44.97,
+    "edit": 60.53,
+    "agent": 42.29,
+    "all": 47.44,
+    "edit/answer": 128.44,
+    "agent/tool": 39.53
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 29.15648781492144
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2495,
+    "code": 1.4313,
+    "edit": 1.9501,
+    "agent": 1.3578,
+    "all": 1.5151,
+    "edit/answer": 4.0241,
+    "agent/tool": 1.2426
+   },
+   "tok_s": {
+    "chat": 39.92,
+    "code": 45.73,
+    "edit": 62.3,
+    "agent": 43.38,
+    "all": 48.4,
+    "edit/answer": 128.57,
+    "agent/tool": 39.7
+   },
+   "hit_share": 0.43192918192918195,
+   "miss_share": 0.47167277167277166,
+   "wasted_ms_per_token": 28.11325624207138
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | cont (copy >= 4, else request counts) | depth 4": {
+   "speedup": {
+    "chat": 1.1934,
+    "code": 1.3745,
+    "edit": 1.959,
+    "agent": 1.3167,
+    "all": 1.4713,
+    "edit/answer": 4.8693,
+    "agent/tool": 1.1837
+   },
+   "tok_s": {
+    "chat": 38.13,
+    "code": 43.91,
+    "edit": 62.59,
+    "agent": 42.07,
+    "all": 47.01,
+    "edit/answer": 155.57,
+    "agent/tool": 37.82
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 31.363391548945312
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2231,
+    "code": 1.405,
+    "edit": 1.9706,
+    "agent": 1.4217,
+    "all": 1.5027,
+    "edit/answer": 4.9153,
+    "agent/tool": 1.8007
+   },
+   "tok_s": {
+    "chat": 39.08,
+    "code": 44.89,
+    "edit": 62.96,
+    "agent": 45.42,
+    "all": 48.01,
+    "edit/answer": 157.04,
+    "agent/tool": 57.53
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 36.928779808653196
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.24,
+    "code": 1.4301,
+    "edit": 2.0304,
+    "agent": 1.4432,
+    "all": 1.5324,
+    "edit/answer": 4.9339,
+    "agent/tool": 1.7579
+   },
+   "tok_s": {
+    "chat": 39.62,
+    "code": 45.69,
+    "edit": 64.87,
+    "agent": 46.11,
+    "all": 48.96,
+    "edit/answer": 157.63,
+    "agent/tool": 56.16
+   },
+   "hit_share": 0.4251221001221001,
+   "miss_share": 0.4625763125763126,
+   "wasted_ms_per_token": 35.75576184872038
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2277,
+    "code": 1.4098,
+    "edit": 1.9693,
+    "agent": 1.4319,
+    "all": 1.5065,
+    "edit/answer": 4.9234,
+    "agent/tool": 1.8681
+   },
+   "tok_s": {
+    "chat": 39.22,
+    "code": 45.04,
+    "edit": 62.92,
+    "agent": 45.75,
+    "all": 48.13,
+    "edit/answer": 157.3,
+    "agent/tool": 59.68
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 37.45836473053485
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2479,
+    "code": 1.4374,
+    "edit": 2.0365,
+    "agent": 1.4595,
+    "all": 1.5404,
+    "edit/answer": 4.9421,
+    "agent/tool": 1.8051
+   },
+   "tok_s": {
+    "chat": 39.87,
+    "code": 45.92,
+    "edit": 65.06,
+    "agent": 46.63,
+    "all": 49.22,
+    "edit/answer": 157.89,
+    "agent/tool": 57.67
+   },
+   "hit_share": 0.4292429792429792,
+   "miss_share": 0.46793345543345544,
+   "wasted_ms_per_token": 36.12919049490477
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2344,
+    "code": 1.4255,
+    "edit": 1.9807,
+    "agent": 1.4393,
+    "all": 1.5178,
+    "edit/answer": 4.9408,
+    "agent/tool": 1.8568
+   },
+   "tok_s": {
+    "chat": 39.44,
+    "code": 45.54,
+    "edit": 63.28,
+    "agent": 45.98,
+    "all": 48.49,
+    "edit/answer": 157.85,
+    "agent/tool": 59.32
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 37.5103599462037
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2544,
+    "code": 1.452,
+    "edit": 2.0479,
+    "agent": 1.4641,
+    "all": 1.5511,
+    "edit/answer": 4.9691,
+    "agent/tool": 1.7769
+   },
+   "tok_s": {
+    "chat": 40.08,
+    "code": 46.39,
+    "edit": 65.43,
+    "agent": 46.78,
+    "all": 49.56,
+    "edit/answer": 158.76,
+    "agent/tool": 56.77
+   },
+   "hit_share": 0.43466117216117217,
+   "miss_share": 0.4700854700854701,
+   "wasted_ms_per_token": 36.228922964816064
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2341,
+    "code": 1.4246,
+    "edit": 2.0052,
+    "agent": 1.4428,
+    "all": 1.5227,
+    "edit/answer": 4.9502,
+    "agent/tool": 1.8568
+   },
+   "tok_s": {
+    "chat": 39.43,
+    "code": 45.52,
+    "edit": 64.06,
+    "agent": 46.09,
+    "all": 48.65,
+    "edit/answer": 158.15,
+    "agent/tool": 59.32
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 37.37793657025962
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.254,
+    "code": 1.4514,
+    "edit": 2.0643,
+    "agent": 1.4659,
+    "all": 1.5543,
+    "edit/answer": 4.9691,
+    "agent/tool": 1.7769
+   },
+   "tok_s": {
+    "chat": 40.06,
+    "code": 46.37,
+    "edit": 65.95,
+    "agent": 46.83,
+    "all": 49.66,
+    "edit/answer": 158.76,
+    "agent/tool": 56.77
+   },
+   "hit_share": 0.43623321123321124,
+   "miss_share": 0.46933760683760684,
+   "wasted_ms_per_token": 36.16662798088831
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2348,
+    "code": 1.4259,
+    "edit": 1.98,
+    "agent": 1.3348,
+    "all": 1.5123,
+    "edit/answer": 4.9597,
+    "agent/tool": 1.2408
+   },
+   "tok_s": {
+    "chat": 39.45,
+    "code": 45.56,
+    "edit": 63.26,
+    "agent": 42.64,
+    "all": 48.32,
+    "edit/answer": 158.46,
+    "agent/tool": 39.64
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 37.651648258231866
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2545,
+    "code": 1.4518,
+    "edit": 2.0463,
+    "agent": 1.3715,
+    "all": 1.5458,
+    "edit/answer": 4.9691,
+    "agent/tool": 1.2448
+   },
+   "tok_s": {
+    "chat": 40.08,
+    "code": 46.38,
+    "edit": 65.38,
+    "agent": 43.82,
+    "all": 49.39,
+    "edit/answer": 158.76,
+    "agent/tool": 39.77
+   },
+   "hit_share": 0.43192918192918195,
+   "miss_share": 0.47167277167277166,
+   "wasted_ms_per_token": 36.36851274578347
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | cont (copy >= 4, else request counts) | depth 8": {
+   "speedup": {
+    "chat": 1.1943,
+    "code": 1.3816,
+    "edit": 1.9976,
+    "agent": 1.3209,
+    "all": 1.4823,
+    "edit/answer": 5.4212,
+    "agent/tool": 1.1841
+   },
+   "tok_s": {
+    "chat": 38.16,
+    "code": 44.14,
+    "edit": 63.82,
+    "agent": 42.2,
+    "all": 47.36,
+    "edit/answer": 173.2,
+    "agent/tool": 37.83
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 47.11755410409954
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2242,
+    "code": 1.4121,
+    "edit": 2.0083,
+    "agent": 1.4273,
+    "all": 1.5139,
+    "edit/answer": 5.4782,
+    "agent/tool": 1.8128
+   },
+   "tok_s": {
+    "chat": 39.11,
+    "code": 45.11,
+    "edit": 64.16,
+    "agent": 45.6,
+    "all": 48.37,
+    "edit/answer": 175.02,
+    "agent/tool": 57.92
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 55.14061598271
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2412,
+    "code": 1.4379,
+    "edit": 2.072,
+    "agent": 1.4488,
+    "all": 1.5446,
+    "edit/answer": 5.5014,
+    "agent/tool": 1.7631
+   },
+   "tok_s": {
+    "chat": 39.65,
+    "code": 45.94,
+    "edit": 66.2,
+    "agent": 46.29,
+    "all": 49.35,
+    "edit/answer": 175.76,
+    "agent/tool": 56.33
+   },
+   "hit_share": 0.4251221001221001,
+   "miss_share": 0.4625763125763126,
+   "wasted_ms_per_token": 53.77848714216109
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2286,
+    "code": 1.417,
+    "edit": 2.0068,
+    "agent": 1.4377,
+    "all": 1.5177,
+    "edit/answer": 5.4898,
+    "agent/tool": 1.8836
+   },
+   "tok_s": {
+    "chat": 39.25,
+    "code": 45.27,
+    "edit": 64.11,
+    "agent": 45.93,
+    "all": 48.49,
+    "edit/answer": 175.39,
+    "agent/tool": 60.18
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 55.90112357036174
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2491,
+    "code": 1.4454,
+    "edit": 2.0785,
+    "agent": 1.4655,
+    "all": 1.5528,
+    "edit/answer": 5.513,
+    "agent/tool": 1.8128
+   },
+   "tok_s": {
+    "chat": 39.91,
+    "code": 46.18,
+    "edit": 66.41,
+    "agent": 46.82,
+    "all": 49.61,
+    "edit/answer": 176.13,
+    "agent/tool": 57.92
+   },
+   "hit_share": 0.42925824175824173,
+   "miss_share": 0.4679181929181929,
+   "wasted_ms_per_token": 54.36423217094289
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2354,
+    "code": 1.4329,
+    "edit": 2.0187,
+    "agent": 1.4453,
+    "all": 1.5293,
+    "edit/answer": 5.513,
+    "agent/tool": 1.8745
+   },
+   "tok_s": {
+    "chat": 39.47,
+    "code": 45.78,
+    "edit": 64.49,
+    "agent": 46.18,
+    "all": 48.86,
+    "edit/answer": 176.13,
+    "agent/tool": 59.89
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 56.08067148843059
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2556,
+    "code": 1.4602,
+    "edit": 2.0903,
+    "agent": 1.4704,
+    "all": 1.5637,
+    "edit/answer": 5.5483,
+    "agent/tool": 1.7876
+   },
+   "tok_s": {
+    "chat": 40.11,
+    "code": 46.65,
+    "edit": 66.78,
+    "agent": 46.98,
+    "all": 49.96,
+    "edit/answer": 177.26,
+    "agent/tool": 57.11
+   },
+   "hit_share": 0.43466117216117217,
+   "miss_share": 0.4700854700854701,
+   "wasted_ms_per_token": 54.59608553866415
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2351,
+    "code": 1.432,
+    "edit": 2.0445,
+    "agent": 1.4488,
+    "all": 1.5343,
+    "edit/answer": 5.5247,
+    "agent/tool": 1.8745
+   },
+   "tok_s": {
+    "chat": 39.46,
+    "code": 45.75,
+    "edit": 65.32,
+    "agent": 46.29,
+    "all": 49.02,
+    "edit/answer": 176.51,
+    "agent/tool": 59.89
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 55.93509419157748
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2552,
+    "code": 1.4596,
+    "edit": 2.1076,
+    "agent": 1.4722,
+    "all": 1.5669,
+    "edit/answer": 5.5483,
+    "agent/tool": 1.7876
+   },
+   "tok_s": {
+    "chat": 40.1,
+    "code": 46.63,
+    "edit": 67.33,
+    "agent": 47.03,
+    "all": 50.06,
+    "edit/answer": 177.26,
+    "agent/tool": 57.11
+   },
+   "hit_share": 0.43623321123321124,
+   "miss_share": 0.46933760683760684,
+   "wasted_ms_per_token": 54.53647407869543
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2358,
+    "code": 1.4333,
+    "edit": 2.018,
+    "agent": 1.3388,
+    "all": 1.5236,
+    "edit/answer": 5.5365,
+    "agent/tool": 1.2413
+   },
+   "tok_s": {
+    "chat": 39.48,
+    "code": 45.79,
+    "edit": 64.47,
+    "agent": 42.77,
+    "all": 48.68,
+    "edit/answer": 176.88,
+    "agent/tool": 39.66
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 56.22844369071812
+  },
+  "9 cards, 6/6/6/6/5/5/5/5/5 layers | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2557,
+    "code": 1.4599,
+    "edit": 2.0886,
+    "agent": 1.376,
+    "all": 1.5582,
+    "edit/answer": 5.5483,
+    "agent/tool": 1.2453
+   },
+   "tok_s": {
+    "chat": 40.12,
+    "code": 46.64,
+    "edit": 66.73,
+    "agent": 43.96,
+    "all": 49.78,
+    "edit/answer": 177.26,
+    "agent/tool": 39.79
+   },
+   "hit_share": 0.43192918192918195,
+   "miss_share": 0.47167277167277166,
+   "wasted_ms_per_token": 54.745982843740116
+  },
+  "9 cards, head + 2 layers on the last | cont (copy >= 4, else request counts) | depth 1": {
+   "speedup": {
+    "chat": 1.147,
+    "code": 1.2504,
+    "edit": 1.4992,
+    "agent": 1.2208,
+    "all": 1.2958,
+    "edit/answer": 2.0492,
+    "agent/tool": 1.1537
+   },
+   "tok_s": {
+    "chat": 36.64,
+    "code": 39.95,
+    "edit": 47.9,
+    "agent": 39.0,
+    "all": 41.4,
+    "edit/answer": 65.47,
+    "agent/tool": 36.86
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 8.415732787623783
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1784,
+    "code": 1.2783,
+    "edit": 1.5166,
+    "agent": 1.2909,
+    "all": 1.3244,
+    "edit/answer": 2.0564,
+    "agent/tool": 1.4656
+   },
+   "tok_s": {
+    "chat": 37.65,
+    "code": 40.84,
+    "edit": 48.45,
+    "agent": 41.24,
+    "all": 42.31,
+    "edit/answer": 65.7,
+    "agent/tool": 46.82
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 9.837031004713102
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1864,
+    "code": 1.2897,
+    "edit": 1.5353,
+    "agent": 1.3024,
+    "all": 1.3368,
+    "edit/answer": 2.0584,
+    "agent/tool": 1.4592
+   },
+   "tok_s": {
+    "chat": 37.9,
+    "code": 41.2,
+    "edit": 49.05,
+    "agent": 41.61,
+    "all": 42.71,
+    "edit/answer": 65.76,
+    "agent/tool": 46.62
+   },
+   "hit_share": 0.4251068376068376,
+   "miss_share": 0.4625915750915751,
+   "wasted_ms_per_token": 9.51982451222583
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1828,
+    "code": 1.2822,
+    "edit": 1.5167,
+    "agent": 1.3007,
+    "all": 1.3278,
+    "edit/answer": 2.0581,
+    "agent/tool": 1.494
+   },
+   "tok_s": {
+    "chat": 37.79,
+    "code": 40.97,
+    "edit": 48.46,
+    "agent": 41.56,
+    "all": 42.42,
+    "edit/answer": 65.75,
+    "agent/tool": 47.73
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 9.981623308667666
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1932,
+    "code": 1.2947,
+    "edit": 1.5373,
+    "agent": 1.3163,
+    "all": 1.3421,
+    "edit/answer": 2.0587,
+    "agent/tool": 1.4901
+   },
+   "tok_s": {
+    "chat": 38.12,
+    "code": 41.36,
+    "edit": 49.12,
+    "agent": 42.05,
+    "all": 42.88,
+    "edit/answer": 65.77,
+    "agent/tool": 47.61
+   },
+   "hit_share": 0.4292124542124542,
+   "miss_share": 0.46796398046398047,
+   "wasted_ms_per_token": 9.616919993275383
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1876,
+    "code": 1.2921,
+    "edit": 1.522,
+    "agent": 1.3015,
+    "all": 1.3343,
+    "edit/answer": 2.0601,
+    "agent/tool": 1.4929
+   },
+   "tok_s": {
+    "chat": 37.94,
+    "code": 41.28,
+    "edit": 48.62,
+    "agent": 41.58,
+    "all": 42.63,
+    "edit/answer": 65.82,
+    "agent/tool": 47.7
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 9.992566812442798
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1976,
+    "code": 1.304,
+    "edit": 1.542,
+    "agent": 1.3175,
+    "all": 1.3482,
+    "edit/answer": 2.0611,
+    "agent/tool": 1.4769
+   },
+   "tok_s": {
+    "chat": 38.26,
+    "code": 41.66,
+    "edit": 49.27,
+    "agent": 42.09,
+    "all": 43.07,
+    "edit/answer": 65.85,
+    "agent/tool": 47.19
+   },
+   "hit_share": 0.43463064713064714,
+   "miss_share": 0.4701159951159951,
+   "wasted_ms_per_token": 9.641986899158631
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1872,
+    "code": 1.2915,
+    "edit": 1.5316,
+    "agent": 1.3033,
+    "all": 1.3368,
+    "edit/answer": 2.0605,
+    "agent/tool": 1.4929
+   },
+   "tok_s": {
+    "chat": 37.93,
+    "code": 41.26,
+    "edit": 48.93,
+    "agent": 41.64,
+    "all": 42.71,
+    "edit/answer": 65.83,
+    "agent/tool": 47.7
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 9.949560626451902
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1973,
+    "code": 1.3035,
+    "edit": 1.5492,
+    "agent": 1.3182,
+    "all": 1.3499,
+    "edit/answer": 2.0611,
+    "agent/tool": 1.4769
+   },
+   "tok_s": {
+    "chat": 38.25,
+    "code": 41.65,
+    "edit": 49.5,
+    "agent": 42.11,
+    "all": 43.13,
+    "edit/answer": 65.85,
+    "agent/tool": 47.19
+   },
+   "hit_share": 0.4362026862026862,
+   "miss_share": 0.46936813186813187,
+   "wasted_ms_per_token": 9.616795899681906
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1877,
+    "code": 1.2924,
+    "edit": 1.521,
+    "agent": 1.246,
+    "all": 1.3314,
+    "edit/answer": 2.0608,
+    "agent/tool": 1.1982
+   },
+   "tok_s": {
+    "chat": 37.94,
+    "code": 41.29,
+    "edit": 48.59,
+    "agent": 39.81,
+    "all": 42.54,
+    "edit/answer": 65.84,
+    "agent/tool": 38.28
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 10.039466434929155
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 1": {
+   "speedup": {
+    "chat": 1.1977,
+    "code": 1.304,
+    "edit": 1.5413,
+    "agent": 1.2663,
+    "all": 1.3455,
+    "edit/answer": 2.0611,
+    "agent/tool": 1.2022
+   },
+   "tok_s": {
+    "chat": 38.26,
+    "code": 41.66,
+    "edit": 49.24,
+    "agent": 40.46,
+    "all": 42.99,
+    "edit/answer": 65.85,
+    "agent/tool": 38.41
+   },
+   "hit_share": 0.4318986568986569,
+   "miss_share": 0.4717032967032967,
+   "wasted_ms_per_token": 9.682883494060325
+  },
+  "9 cards, head + 2 layers on the last | cont (copy >= 4, else request counts) | depth 2": {
+   "speedup": {
+    "chat": 1.1851,
+    "code": 1.333,
+    "edit": 1.7491,
+    "agent": 1.2939,
+    "all": 1.4056,
+    "edit/answer": 3.0324,
+    "agent/tool": 1.1891
+   },
+   "tok_s": {
+    "chat": 37.86,
+    "code": 42.59,
+    "edit": 55.88,
+    "agent": 41.34,
+    "all": 44.91,
+    "edit/answer": 96.88,
+    "agent/tool": 37.99
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 16.56263231666913
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2173,
+    "code": 1.3668,
+    "edit": 1.7703,
+    "agent": 1.3913,
+    "all": 1.4398,
+    "edit/answer": 3.0513,
+    "agent/tool": 1.7207
+   },
+   "tok_s": {
+    "chat": 38.89,
+    "code": 43.67,
+    "edit": 56.56,
+    "agent": 44.45,
+    "all": 46.0,
+    "edit/answer": 97.48,
+    "agent/tool": 54.97
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 19.508901192351832
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2309,
+    "code": 1.3864,
+    "edit": 1.8067,
+    "agent": 1.4073,
+    "all": 1.4615,
+    "edit/answer": 3.0589,
+    "agent/tool": 1.6944
+   },
+   "tok_s": {
+    "chat": 39.33,
+    "code": 44.29,
+    "edit": 57.72,
+    "agent": 44.96,
+    "all": 46.69,
+    "edit/answer": 97.73,
+    "agent/tool": 54.13
+   },
+   "hit_share": 0.4251068376068376,
+   "miss_share": 0.4625915750915751,
+   "wasted_ms_per_token": 18.848444064445317
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2231,
+    "code": 1.3715,
+    "edit": 1.769,
+    "agent": 1.3998,
+    "all": 1.4438,
+    "edit/answer": 3.0525,
+    "agent/tool": 1.7532
+   },
+   "tok_s": {
+    "chat": 39.08,
+    "code": 43.82,
+    "edit": 56.52,
+    "agent": 44.72,
+    "all": 46.13,
+    "edit/answer": 97.52,
+    "agent/tool": 56.01
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 19.797597181736656
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2389,
+    "code": 1.393,
+    "edit": 1.8119,
+    "agent": 1.4212,
+    "all": 1.4688,
+    "edit/answer": 3.0601,
+    "agent/tool": 1.7098
+   },
+   "tok_s": {
+    "chat": 39.58,
+    "code": 44.5,
+    "edit": 57.89,
+    "agent": 45.4,
+    "all": 46.93,
+    "edit/answer": 97.77,
+    "agent/tool": 54.62
+   },
+   "hit_share": 0.4292124542124542,
+   "miss_share": 0.46796398046398047,
+   "wasted_ms_per_token": 19.041425114007964
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2297,
+    "code": 1.3861,
+    "edit": 1.7767,
+    "agent": 1.4046,
+    "all": 1.4536,
+    "edit/answer": 3.0575,
+    "agent/tool": 1.7562
+   },
+   "tok_s": {
+    "chat": 39.29,
+    "code": 44.28,
+    "edit": 56.76,
+    "agent": 44.88,
+    "all": 46.44,
+    "edit/answer": 97.68,
+    "agent/tool": 56.11
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 19.818786162823518
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2456,
+    "code": 1.4063,
+    "edit": 1.8199,
+    "agent": 1.4272,
+    "all": 1.4783,
+    "edit/answer": 3.0663,
+    "agent/tool": 1.7075
+   },
+   "tok_s": {
+    "chat": 39.8,
+    "code": 44.93,
+    "edit": 58.14,
+    "agent": 45.6,
+    "all": 47.23,
+    "edit/answer": 97.97,
+    "agent/tool": 54.55
+   },
+   "hit_share": 0.43463064713064714,
+   "miss_share": 0.4701159951159951,
+   "wasted_ms_per_token": 19.079801057792032
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2293,
+    "code": 1.3852,
+    "edit": 1.793,
+    "agent": 1.4077,
+    "all": 1.4572,
+    "edit/answer": 3.0613,
+    "agent/tool": 1.7562
+   },
+   "tok_s": {
+    "chat": 39.28,
+    "code": 44.26,
+    "edit": 57.28,
+    "agent": 44.98,
+    "all": 46.56,
+    "edit/answer": 97.81,
+    "agent/tool": 56.11
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 19.74536929058007
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2452,
+    "code": 1.4058,
+    "edit": 1.8321,
+    "agent": 1.429,
+    "all": 1.4809,
+    "edit/answer": 3.0663,
+    "agent/tool": 1.7075
+   },
+   "tok_s": {
+    "chat": 39.78,
+    "code": 44.91,
+    "edit": 58.53,
+    "agent": 45.66,
+    "all": 47.31,
+    "edit/answer": 97.97,
+    "agent/tool": 54.55
+   },
+   "hit_share": 0.4362026862026862,
+   "miss_share": 0.46936813186813187,
+   "wasted_ms_per_token": 19.03753167751242
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2299,
+    "code": 1.3863,
+    "edit": 1.776,
+    "agent": 1.3166,
+    "all": 1.4491,
+    "edit/answer": 3.0625,
+    "agent/tool": 1.2474
+   },
+   "tok_s": {
+    "chat": 39.3,
+    "code": 44.29,
+    "edit": 56.74,
+    "agent": 42.06,
+    "all": 46.3,
+    "edit/answer": 97.84,
+    "agent/tool": 39.85
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 19.906179076032764
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 2": {
+   "speedup": {
+    "chat": 1.2456,
+    "code": 1.4059,
+    "edit": 1.8187,
+    "agent": 1.3489,
+    "all": 1.4739,
+    "edit/answer": 3.0663,
+    "agent/tool": 1.2546
+   },
+   "tok_s": {
+    "chat": 39.79,
+    "code": 44.92,
+    "edit": 58.1,
+    "agent": 43.1,
+    "all": 47.09,
+    "edit/answer": 97.97,
+    "agent/tool": 40.08
+   },
+   "hit_share": 0.4318986568986569,
+   "miss_share": 0.4717032967032967,
+   "wasted_ms_per_token": 19.161772632136067
+  },
+  "9 cards, head + 2 layers on the last | cont (copy >= 4, else request counts) | depth 3": {
+   "speedup": {
+    "chat": 1.1996,
+    "code": 1.37,
+    "edit": 1.8924,
+    "agent": 1.3161,
+    "all": 1.4581,
+    "edit/answer": 3.9677,
+    "agent/tool": 1.1908
+   },
+   "tok_s": {
+    "chat": 38.33,
+    "code": 43.77,
+    "edit": 60.46,
+    "agent": 42.05,
+    "all": 46.58,
+    "edit/answer": 126.76,
+    "agent/tool": 38.04
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 24.082711837492617
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2321,
+    "code": 1.4036,
+    "edit": 1.9112,
+    "agent": 1.4249,
+    "all": 1.493,
+    "edit/answer": 3.9999,
+    "agent/tool": 1.7925
+   },
+   "tok_s": {
+    "chat": 39.36,
+    "code": 44.84,
+    "edit": 61.06,
+    "agent": 45.52,
+    "all": 47.7,
+    "edit/answer": 127.79,
+    "agent/tool": 57.27
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 28.426212528981953
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2488,
+    "code": 1.4278,
+    "edit": 1.9614,
+    "agent": 1.4456,
+    "all": 1.5206,
+    "edit/answer": 4.0094,
+    "agent/tool": 1.7685
+   },
+   "tok_s": {
+    "chat": 39.9,
+    "code": 45.62,
+    "edit": 62.67,
+    "agent": 46.18,
+    "all": 48.58,
+    "edit/answer": 128.1,
+    "agent/tool": 56.5
+   },
+   "hit_share": 0.4251221001221001,
+   "miss_share": 0.4625763125763126,
+   "wasted_ms_per_token": 27.47141315318672
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2371,
+    "code": 1.4086,
+    "edit": 1.9116,
+    "agent": 1.4358,
+    "all": 1.4975,
+    "edit/answer": 4.01,
+    "agent/tool": 1.8506
+   },
+   "tok_s": {
+    "chat": 39.53,
+    "code": 45.0,
+    "edit": 61.08,
+    "agent": 45.87,
+    "all": 47.84,
+    "edit/answer": 128.11,
+    "agent/tool": 59.12
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 28.837047637751148
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2572,
+    "code": 1.4351,
+    "edit": 1.9679,
+    "agent": 1.4622,
+    "all": 1.5288,
+    "edit/answer": 4.016,
+    "agent/tool": 1.8118
+   },
+   "tok_s": {
+    "chat": 40.17,
+    "code": 45.85,
+    "edit": 62.87,
+    "agent": 46.71,
+    "all": 48.84,
+    "edit/answer": 128.31,
+    "agent/tool": 57.88
+   },
+   "hit_share": 0.4292429792429792,
+   "miss_share": 0.46793345543345544,
+   "wasted_ms_per_token": 27.760272015413193
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2442,
+    "code": 1.425,
+    "edit": 1.9218,
+    "agent": 1.4429,
+    "all": 1.5089,
+    "edit/answer": 4.0231,
+    "agent/tool": 1.8412
+   },
+   "tok_s": {
+    "chat": 39.75,
+    "code": 45.53,
+    "edit": 61.4,
+    "agent": 46.1,
+    "all": 48.21,
+    "edit/answer": 128.53,
+    "agent/tool": 58.83
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 28.870351255901756
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2641,
+    "code": 1.4503,
+    "edit": 1.9782,
+    "agent": 1.4683,
+    "all": 1.5397,
+    "edit/answer": 4.0322,
+    "agent/tool": 1.7946
+   },
+   "tok_s": {
+    "chat": 40.39,
+    "code": 46.33,
+    "edit": 63.2,
+    "agent": 46.91,
+    "all": 49.19,
+    "edit/answer": 128.82,
+    "agent/tool": 57.34
+   },
+   "hit_share": 0.43466117216117217,
+   "miss_share": 0.4700854700854701,
+   "wasted_ms_per_token": 27.830074661746544
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2438,
+    "code": 1.4241,
+    "edit": 1.9433,
+    "agent": 1.4466,
+    "all": 1.5133,
+    "edit/answer": 4.0261,
+    "agent/tool": 1.8412
+   },
+   "tok_s": {
+    "chat": 39.74,
+    "code": 45.5,
+    "edit": 62.09,
+    "agent": 46.22,
+    "all": 48.35,
+    "edit/answer": 128.63,
+    "agent/tool": 58.83
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 28.770417133901194
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2637,
+    "code": 1.4497,
+    "edit": 1.9935,
+    "agent": 1.4702,
+    "all": 1.5428,
+    "edit/answer": 4.0322,
+    "agent/tool": 1.7946
+   },
+   "tok_s": {
+    "chat": 40.38,
+    "code": 46.32,
+    "edit": 63.69,
+    "agent": 46.97,
+    "all": 49.29,
+    "edit/answer": 128.82,
+    "agent/tool": 57.34
+   },
+   "hit_share": 0.43623321123321124,
+   "miss_share": 0.46933760683760684,
+   "wasted_ms_per_token": 27.77971593034184
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2446,
+    "code": 1.4253,
+    "edit": 1.9206,
+    "agent": 1.3395,
+    "all": 1.5034,
+    "edit/answer": 4.0292,
+    "agent/tool": 1.2521
+   },
+   "tok_s": {
+    "chat": 39.76,
+    "code": 45.54,
+    "edit": 61.36,
+    "agent": 42.8,
+    "all": 48.03,
+    "edit/answer": 128.73,
+    "agent/tool": 40.0
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 28.9918699073184
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 3": {
+   "speedup": {
+    "chat": 1.2641,
+    "code": 1.4499,
+    "edit": 1.9766,
+    "agent": 1.3751,
+    "all": 1.5343,
+    "edit/answer": 4.0322,
+    "agent/tool": 1.2588
+   },
+   "tok_s": {
+    "chat": 40.39,
+    "code": 46.32,
+    "edit": 63.15,
+    "agent": 43.93,
+    "all": 49.02,
+    "edit/answer": 128.82,
+    "agent/tool": 40.22
+   },
+   "hit_share": 0.43192918192918195,
+   "miss_share": 0.47167277167277166,
+   "wasted_ms_per_token": 27.945667844074467
+  },
+  "9 cards, head + 2 layers on the last | cont (copy >= 4, else request counts) | depth 4": {
+   "speedup": {
+    "chat": 1.2051,
+    "code": 1.3895,
+    "edit": 1.9871,
+    "agent": 1.3322,
+    "all": 1.4883,
+    "edit/answer": 4.8924,
+    "agent/tool": 1.1955
+   },
+   "tok_s": {
+    "chat": 38.5,
+    "code": 44.39,
+    "edit": 63.49,
+    "agent": 42.56,
+    "all": 47.55,
+    "edit/answer": 156.31,
+    "agent/tool": 38.2
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 30.632775005623508
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2371,
+    "code": 1.4233,
+    "edit": 2.0025,
+    "agent": 1.4452,
+    "all": 1.523,
+    "edit/answer": 4.9416,
+    "agent/tool": 1.8608
+   },
+   "tok_s": {
+    "chat": 39.52,
+    "code": 45.47,
+    "edit": 63.98,
+    "agent": 46.17,
+    "all": 48.66,
+    "edit/answer": 157.88,
+    "agent/tool": 59.45
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 36.17292573075451
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2551,
+    "code": 1.4495,
+    "edit": 2.0647,
+    "agent": 1.469,
+    "all": 1.5542,
+    "edit/answer": 4.9615,
+    "agent/tool": 1.8273
+   },
+   "tok_s": {
+    "chat": 40.1,
+    "code": 46.31,
+    "edit": 65.96,
+    "agent": 46.93,
+    "all": 49.65,
+    "edit/answer": 158.52,
+    "agent/tool": 58.38
+   },
+   "hit_share": 0.4251221001221001,
+   "miss_share": 0.4625763125763126,
+   "wasted_ms_per_token": 34.99278014504638
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2421,
+    "code": 1.4285,
+    "edit": 2.0015,
+    "agent": 1.4559,
+    "all": 1.5273,
+    "edit/answer": 4.9476,
+    "agent/tool": 1.9318
+   },
+   "tok_s": {
+    "chat": 39.68,
+    "code": 45.64,
+    "edit": 63.95,
+    "agent": 46.51,
+    "all": 48.79,
+    "edit/answer": 158.07,
+    "agent/tool": 61.72
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 36.69624392616511
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2637,
+    "code": 1.4574,
+    "edit": 2.0712,
+    "agent": 1.4864,
+    "all": 1.5629,
+    "edit/answer": 4.9675,
+    "agent/tool": 1.8762
+   },
+   "tok_s": {
+    "chat": 40.37,
+    "code": 46.56,
+    "edit": 66.17,
+    "agent": 47.49,
+    "all": 49.93,
+    "edit/answer": 158.71,
+    "agent/tool": 59.94
+   },
+   "hit_share": 0.4292429792429792,
+   "miss_share": 0.46793345543345544,
+   "wasted_ms_per_token": 35.366968864490616
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2494,
+    "code": 1.4454,
+    "edit": 2.0137,
+    "agent": 1.4636,
+    "all": 1.5395,
+    "edit/answer": 4.9635,
+    "agent/tool": 1.9136
+   },
+   "tok_s": {
+    "chat": 39.92,
+    "code": 46.18,
+    "edit": 64.34,
+    "agent": 46.76,
+    "all": 49.18,
+    "edit/answer": 158.58,
+    "agent/tool": 61.14
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 36.754575670951034
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2708,
+    "code": 1.4731,
+    "edit": 2.0837,
+    "agent": 1.4909,
+    "all": 1.5745,
+    "edit/answer": 4.9938,
+    "agent/tool": 1.8365
+   },
+   "tok_s": {
+    "chat": 40.6,
+    "code": 47.06,
+    "edit": 66.57,
+    "agent": 47.63,
+    "all": 50.3,
+    "edit/answer": 159.55,
+    "agent/tool": 58.67
+   },
+   "hit_share": 0.43466117216117217,
+   "miss_share": 0.4700854700854701,
+   "wasted_ms_per_token": 35.47383671602698
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.249,
+    "code": 1.4445,
+    "edit": 2.0399,
+    "agent": 1.4675,
+    "all": 1.5446,
+    "edit/answer": 4.9736,
+    "agent/tool": 1.9136
+   },
+   "tok_s": {
+    "chat": 39.91,
+    "code": 46.15,
+    "edit": 65.17,
+    "agent": 46.88,
+    "all": 49.35,
+    "edit/answer": 158.9,
+    "agent/tool": 61.14
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 36.622997682612684
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2703,
+    "code": 1.4725,
+    "edit": 2.1013,
+    "agent": 1.4929,
+    "all": 1.5778,
+    "edit/answer": 4.9938,
+    "agent/tool": 1.8365
+   },
+   "tok_s": {
+    "chat": 40.59,
+    "code": 47.05,
+    "edit": 67.14,
+    "agent": 47.7,
+    "all": 50.41,
+    "edit/answer": 159.55,
+    "agent/tool": 58.67
+   },
+   "hit_share": 0.43623321123321124,
+   "miss_share": 0.46933760683760684,
+   "wasted_ms_per_token": 35.41624953280197
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2498,
+    "code": 1.4458,
+    "edit": 2.013,
+    "agent": 1.3525,
+    "all": 1.5336,
+    "edit/answer": 4.9836,
+    "agent/tool": 1.2574
+   },
+   "tok_s": {
+    "chat": 39.93,
+    "code": 46.19,
+    "edit": 64.31,
+    "agent": 43.21,
+    "all": 49.0,
+    "edit/answer": 159.22,
+    "agent/tool": 40.17
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 36.8893490693214
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 4": {
+   "speedup": {
+    "chat": 1.2708,
+    "code": 1.4729,
+    "edit": 2.0819,
+    "agent": 1.3919,
+    "all": 1.5687,
+    "edit/answer": 4.9938,
+    "agent/tool": 1.2617
+   },
+   "tok_s": {
+    "chat": 40.6,
+    "code": 47.06,
+    "edit": 66.51,
+    "agent": 44.47,
+    "all": 50.12,
+    "edit/answer": 159.55,
+    "agent/tool": 40.31
+   },
+   "hit_share": 0.43192918192918195,
+   "miss_share": 0.47167277167277166,
+   "wasted_ms_per_token": 35.60750102790562
+  },
+  "9 cards, head + 2 layers on the last | cont (copy >= 4, else request counts) | depth 8": {
+   "speedup": {
+    "chat": 1.2081,
+    "code": 1.4133,
+    "edit": 2.1219,
+    "agent": 1.3463,
+    "all": 1.5256,
+    "edit/answer": 7.3223,
+    "agent/tool": 1.1971
+   },
+   "tok_s": {
+    "chat": 38.6,
+    "code": 45.15,
+    "edit": 67.79,
+    "agent": 43.01,
+    "all": 48.74,
+    "edit/answer": 233.94,
+    "agent/tool": 38.25
+   },
+   "hit_share": 0.39233821733821733,
+   "miss_share": 0.40332722832722834,
+   "wasted_ms_per_token": 46.05303272411273
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2405,
+    "code": 1.4471,
+    "edit": 2.1348,
+    "agent": 1.4641,
+    "all": 1.561,
+    "edit/answer": 7.433,
+    "agent/tool": 1.9037
+   },
+   "tok_s": {
+    "chat": 39.63,
+    "code": 46.23,
+    "edit": 68.2,
+    "agent": 46.78,
+    "all": 49.87,
+    "edit/answer": 237.48,
+    "agent/tool": 60.82
+   },
+   "hit_share": 0.40927960927960927,
+   "miss_share": 0.47841880341880344,
+   "wasted_ms_per_token": 54.076389325004065
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-3M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.259,
+    "code": 1.4758,
+    "edit": 2.2112,
+    "agent": 1.488,
+    "all": 1.5956,
+    "edit/answer": 7.4782,
+    "agent/tool": 1.8458
+   },
+   "tok_s": {
+    "chat": 40.22,
+    "code": 47.15,
+    "edit": 70.65,
+    "agent": 47.54,
+    "all": 50.98,
+    "edit/answer": 238.92,
+    "agent/tool": 58.97
+   },
+   "hit_share": 0.4251221001221001,
+   "miss_share": 0.4625763125763126,
+   "wasted_ms_per_token": 52.66726003592415
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2454,
+    "code": 1.4525,
+    "edit": 2.1329,
+    "agent": 1.4756,
+    "all": 1.5653,
+    "edit/answer": 7.4555,
+    "agent/tool": 1.9867
+   },
+   "tok_s": {
+    "chat": 39.79,
+    "code": 46.41,
+    "edit": 68.14,
+    "agent": 47.14,
+    "all": 50.01,
+    "edit/answer": 238.2,
+    "agent/tool": 63.47
+   },
+   "hit_share": 0.4112942612942613,
+   "miss_share": 0.4858821733821734,
+   "wasted_ms_per_token": 54.83022688200575
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-7M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2676,
+    "code": 1.4842,
+    "edit": 2.219,
+    "agent": 1.5067,
+    "all": 1.6049,
+    "edit/answer": 7.501,
+    "agent/tool": 1.9037
+   },
+   "tok_s": {
+    "chat": 40.5,
+    "code": 47.42,
+    "edit": 70.9,
+    "agent": 48.14,
+    "all": 51.28,
+    "edit/answer": 239.65,
+    "agent/tool": 60.82
+   },
+   "hit_share": 0.42925824175824173,
+   "miss_share": 0.4679181929181929,
+   "wasted_ms_per_token": 53.24881690592557
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2527,
+    "code": 1.4702,
+    "edit": 2.1471,
+    "agent": 1.4841,
+    "all": 1.5783,
+    "edit/answer": 7.501,
+    "agent/tool": 1.976
+   },
+   "tok_s": {
+    "chat": 40.02,
+    "code": 46.97,
+    "edit": 68.6,
+    "agent": 47.42,
+    "all": 50.43,
+    "edit/answer": 239.65,
+    "agent/tool": 63.13
+   },
+   "hit_share": 0.4172924297924298,
+   "miss_share": 0.48745421245421244,
+   "wasted_ms_per_token": 55.00685084477791
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [clean-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2747,
+    "code": 1.5007,
+    "edit": 2.2333,
+    "agent": 1.5121,
+    "all": 1.6172,
+    "edit/answer": 7.5703,
+    "agent/tool": 1.8743
+   },
+   "tok_s": {
+    "chat": 40.73,
+    "code": 47.95,
+    "edit": 71.35,
+    "agent": 48.31,
+    "all": 51.67,
+    "edit/answer": 241.86,
+    "agent/tool": 59.88
+   },
+   "hit_share": 0.43466117216117217,
+   "miss_share": 0.4700854700854701,
+   "wasted_ms_per_token": 53.477629980606274
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2523,
+    "code": 1.4693,
+    "edit": 2.1781,
+    "agent": 1.488,
+    "all": 1.584,
+    "edit/answer": 7.524,
+    "agent/tool": 1.976
+   },
+   "tok_s": {
+    "chat": 40.01,
+    "code": 46.94,
+    "edit": 69.59,
+    "agent": 47.54,
+    "all": 50.61,
+    "edit/answer": 240.38,
+    "agent/tool": 63.13
+   },
+   "hit_share": 0.4198717948717949,
+   "miss_share": 0.4856990231990232,
+   "wasted_ms_per_token": 54.85938887647393
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [all-14M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2743,
+    "code": 1.5001,
+    "edit": 2.2542,
+    "agent": 1.5142,
+    "all": 1.6209,
+    "edit/answer": 7.5703,
+    "agent/tool": 1.8743
+   },
+   "tok_s": {
+    "chat": 40.71,
+    "code": 47.93,
+    "edit": 72.02,
+    "agent": 48.38,
+    "all": 51.78,
+    "edit/answer": 241.86,
+    "agent/tool": 59.88
+   },
+   "hit_share": 0.43623321123321124,
+   "miss_share": 0.46933760683760684,
+   "wasted_ms_per_token": 53.420570195153566
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2531,
+    "code": 1.4707,
+    "edit": 2.1463,
+    "agent": 1.366,
+    "all": 1.572,
+    "edit/answer": 7.5471,
+    "agent/tool": 1.2591
+   },
+   "tok_s": {
+    "chat": 40.04,
+    "code": 46.99,
+    "edit": 68.57,
+    "agent": 43.64,
+    "all": 50.22,
+    "edit/answer": 241.12,
+    "agent/tool": 40.23
+   },
+   "hit_share": 0.4143772893772894,
+   "miss_share": 0.4892246642246642,
+   "wasted_ms_per_token": 55.153963799850054
+  },
+  "9 cards, head + 2 layers on the last | copy >= 4, else request counts (L >= 2), else datastore [noagent-13M, L >= 2, share >= 0.3], else request counts | depth 8": {
+   "speedup": {
+    "chat": 1.2748,
+    "code": 1.5004,
+    "edit": 2.2313,
+    "agent": 1.4071,
+    "all": 1.611,
+    "edit/answer": 7.5703,
+    "agent/tool": 1.2635
+   },
+   "tok_s": {
+    "chat": 40.73,
+    "code": 47.94,
+    "edit": 71.29,
+    "agent": 44.96,
+    "all": 51.47,
+    "edit/answer": 241.86,
+    "agent/tool": 40.37
+   },
+   "hit_share": 0.43192918192918195,
+   "miss_share": 0.47167277167277166,
+   "wasted_ms_per_token": 53.62809346270246
+  }
+ }
+}

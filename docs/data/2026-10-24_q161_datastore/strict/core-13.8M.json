@@ -1,0 +1,97 @@
+{
+ "pool": "all",
+ "cap": 13798889,
+ "allow": [
+  "files:llama.cpp",
+  "files:python-stdlib",
+  "files:site-packages"
+ ],
+ "ids": "strict-ids-notool.txt",
+ "answers": 14868,
+ "tokens": 13798111,
+ "available_tokens": 14156363,
+ "left_out_q51": 1575,
+ "no_prompt": 0,
+ "share_by_category": {
+  "edit": 0.8892,
+  "agent": 0.1108
+ },
+ "tokens_by_source": {
+  "files:llama.cpp": 6177620,
+  "files:site-packages": 5468110,
+  "files:python-stdlib": 2152381
+ },
+ "clean_sources_seen": {
+  "ise-uiuc/Magicoder-Evol-Instruct-110K": {
+   "tokens": 12901039,
+   "allowed": false
+  },
+  "Aeala/ShareGPT_Vicuna_unfiltered": {
+   "tokens": 12629538,
+   "allowed": false
+  },
+  "HuggingFaceH4/ultrachat_200k": {
+   "tokens": 12222125,
+   "allowed": false
+  },
+  "ise-uiuc/Magicoder-OSS-Instruct-75K": {
+   "tokens": 6653239,
+   "allowed": false
+  },
+  "files:llama.cpp": {
+   "tokens": 6344460,
+   "allowed": true
+  },
+  "files:site-packages": {
+   "tokens": 5846380,
+   "allowed": true
+  },
+  "open-r1/OpenR1-Math-220k": {
+   "tokens": 3773636,
+   "allowed": false
+  },
+  "AI-MO/NuminaMath-CoT": {
+   "tokens": 3749879,
+   "allowed": false
+  },
+  "Team-ACE/ToolACE": {
+   "tokens": 3719961,
+   "allowed": false
+  },
+  "files:python-stdlib": {
+   "tokens": 2195230,
+   "allowed": true
+  },
+  "NousResearch/hermes-function-calling-v1": {
+   "tokens": 998735,
+   "allowed": false
+  },
+  "glaiveai/glaive-function-calling-v2": {
+   "tokens": 619365,
+   "allowed": false
+  },
+  "files:build-output": {
+   "tokens": 78821,
+   "allowed": false
+  },
+  "files:llama.cpp-vendor": {
+   "tokens": 22109,
+   "allowed": false
+  }
+ },
+ "listed": {
+  "ids": 22625,
+  "found": 22625,
+  "not_in_answer_files": 0,
+  "held_out_q51": 1544,
+  "tokens_by_source": {
+   "files:llama.cpp": 7764405,
+   "files:site-packages": 6710276,
+   "open-r1/OpenR1-Math-220k": 3773636,
+   "AI-MO/NuminaMath-CoT": 3749879,
+   "files:python-stdlib": 2584060,
+   "files:build-output": 99311,
+   "files:llama.cpp-vendor": 27774
+  }
+ }
+}

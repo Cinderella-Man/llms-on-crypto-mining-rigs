@@ -21,7 +21,9 @@ paths are placeholders.
    [clean_prompts.py](clean_prompts.py) builds code-first prompts that are clean by construction: "implement this
    function" stubs (signature, docstring and imports of documented functions), whole-file edits and coding-agent turns
    on the Python standard library, llama.cpp's own code (not `vendor/` or build folders) and permissively licensed
-   packages (MIT, BSD, Apache-2.0, PSF). It drops every prompt that shares a 12-word span with a Q51 test prompt.
+   packages (MIT, BSD, Apache-2.0, PSF). It drops every prompt that shares a 12-word span with a Q51 test prompt and,
+   with `--q51`, every prompt on a file Q51's prompts are built from: [q51_sources.py](q51_sources.py) writes that list
+   (`python -I q51_sources.py q51-sources.jsonl`), which `check_sources.py --q51-sources` reads too.
    [prompts.py](prompts.py) holds the task texts and, as data sets, OpenR1-Math's crawled competition problems; its
    `EXCLUDED_SETS` list the first runs' mix, which is not publishable and not used: ShareGPT, UltraChat, both
    Magicoder sets, unfiltered NuminaMath-CoT (NuminaMath only with its crawled `source` rows) and Hermes function
@@ -156,6 +158,9 @@ paths are placeholders.
    - `--general` trains the depth-general head (see "The guesser"): every sequence gets one window drawn from a random
      split of 3 to 12 cards, using the layers its file recorded. [check_general.py](check_general.py) checks the
      sampler's windows and that a general head warm-started from a six-card head reproduces it on six-card windows.
+   - `--rec-weights FILE` (`answer_id weight` per line) draws an answer that many times per epoch;
+     [rec_weights.py](rec_weights.py) writes edit, agent and code answers at 2 and the rest at 1
+     (`python -I rec_weights.py ids.txt rec-weights.txt prompts*.jsonl`).
    - **Agent sessions** ([bench/agentic_data](../agentic_data/README.md)): one sequence per session, the tool results
      included, so the dump replays the session once. `--spans` (the export's `sessions_seq.jsonl`, or a map from
      `feats.py seqs` or `feed_split.py`) trains only on the tokens Flint generated. `--ctx 4096` lets the head attend
@@ -271,3 +276,5 @@ paths are placeholders.
 | [score.py](score.py) | per-position acceptance on held-out transcripts, intervals by transcript |
 | [sim.py](sim.py) | speed per workload through Q87's simulator |
 | [report.py](report.py) | tables and gate verdicts from score.py and sim.py |
+| [q51_sources.py](q51_sources.py) | the files Q51's prompts are built from, for `clean_prompts.py --q51` and `check_sources.py --q51-sources` |
+| [rec_weights.py](rec_weights.py) | the `train.py --rec-weights` file: edit, agent and code answers drawn twice per epoch |

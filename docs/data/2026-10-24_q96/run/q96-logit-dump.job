@@ -1,0 +1,17 @@
+# Q96 (2026-10-24). Needs $WORK/bin/llama-logit-dump (build_logit_dump.sh). Env: GPUS (docker device list), WORK,
+# Q51 (a folder with Q51's seqs.txt, e.g. release/flint-v2/reproduce/data/q51), MODELS (a folder with flint-Q8_0.gguf).
+# Flint Q8_0's top-20 next-token log-probabilities along Q51's 38 transcripts (teacher forcing, one sequence
+# at a time from an empty cache), for the Gumbel-coupled guesses in bench/ngram_replay/pipeline_sim.py --topk.
+# GPUs $GPUS (two RTX 3090s here). Rescale switch unset. No timings are recorded.
+set -euo pipefail
+W=${WORK:?WORK=<work dir with bin/llama-logit-dump>}
+GPUS=${GPUS:?GPUS=<docker device list>}
+rm -f $W/top20.bin $W/top20.bin.partial
+docker run --rm --name q96-logit-dump --label pascal-quants=1 --gpus "\"device=$GPUS\"" -e CUDA_DEVICE_ORDER=PCI_BUS_ID \
+  -e LOGIT_IN=/q51/seqs.txt -e LOGIT_OUT=/w/top20.bin.partial -e LOGIT_K=20 \
+  -v $W:/w -v "${Q51:?}":/q51:ro -v "${MODELS:?}":/models:ro \
+  nvidia/cuda:12.9.2-devel-ubuntu24.04 \
+  /w/bin/llama-logit-dump -m /models/flint-Q8_0.gguf -ngl 99 -c 6144 -b 512 -ub 512 -fa on > $W/dump.log 2>&1
+mv $W/top20.bin.partial $W/top20.bin
+grep -E "^sequence|^done" $W/dump.log | tail -3
+ls -l $W/top20.bin

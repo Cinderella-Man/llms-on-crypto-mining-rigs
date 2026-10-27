@@ -1,0 +1,151 @@
+{
+ "pool": "all",
+ "cap": 13798889,
+ "allow": [
+  "!path:site-packages/pip/_vendor/certifi/",
+  "!path:site-packages/pip/_vendor/resolvelib/",
+  "!path:site-packages/pyarrow/include/arrow/vendored/portable-snippets/",
+  "!path:site-packages/pyarrow/include/arrow/vendored/strptime.h",
+  "files:llama.cpp",
+  "files:python-stdlib",
+  "path:site-packages/_yaml/",
+  "path:site-packages/anyio/",
+  "path:site-packages/click/",
+  "path:site-packages/filelock/",
+  "path:site-packages/fsspec/",
+  "path:site-packages/h11/",
+  "path:site-packages/httpcore2/",
+  "path:site-packages/httpx2/",
+  "path:site-packages/huggingface_hub/",
+  "path:site-packages/idna/",
+  "path:site-packages/packaging/",
+  "path:site-packages/pip/",
+  "path:site-packages/pip/_vendor/cachecontrol/",
+  "path:site-packages/pip/_vendor/distlib/",
+  "path:site-packages/pip/_vendor/distro/",
+  "path:site-packages/pip/_vendor/idna/",
+  "path:site-packages/pip/_vendor/msgpack/",
+  "path:site-packages/pip/_vendor/packaging/",
+  "path:site-packages/pip/_vendor/platformdirs/",
+  "path:site-packages/pip/_vendor/pygments/",
+  "path:site-packages/pip/_vendor/pyproject_hooks/",
+  "path:site-packages/pip/_vendor/requests/",
+  "path:site-packages/pip/_vendor/rich/",
+  "path:site-packages/pip/_vendor/tomli/",
+  "path:site-packages/pip/_vendor/truststore/",
+  "path:site-packages/pip/_vendor/urllib3/",
+  "path:site-packages/pyarrow/",
+  "path:site-packages/pyarrow/include/arrow/vendored/datetime.h",
+  "path:site-packages/pyarrow/include/arrow/vendored/datetime/",
+  "path:site-packages/pyarrow/include/arrow/vendored/double-conversion/",
+  "path:site-packages/truststore/",
+  "path:site-packages/yaml/"
+ ],
+ "ids": null,
+ "answers": 14859,
+ "tokens": 13797089,
+ "available_tokens": 14153292,
+ "left_out_q51": 1585,
+ "no_prompt": 0,
+ "share_by_category": {
+  "edit": 0.8895,
+  "agent": 0.1105
+ },
+ "tokens_by_source": {
+  "files:llama.cpp": 6177969,
+  "files:site-packages": 5468110,
+  "files:python-stdlib": 2151010
+ },
+ "tokens_by_path_rule": {
+  "site-packages/pyarrow/": 2321785,
+  "site-packages/pip/": 1632976,
+  "site-packages/huggingface_hub/": 728884,
+  "site-packages/pip/_vendor/rich/": 375931,
+  "site-packages/pip/_vendor/pygments/": 141930,
+  "site-packages/fsspec/": 135735,
+  "site-packages/httpcore2/": 129862,
+  "site-packages/anyio/": 129361,
+  "site-packages/pip/_vendor/urllib3/": 109748,
+  "site-packages/pip/_vendor/requests/": 91312,
+  "site-packages/httpx2/": 88239,
+  "site-packages/pip/_vendor/cachecontrol/": 73553,
+  "site-packages/yaml/": 71173,
+  "site-packages/packaging/": 53274,
+  "site-packages/pyarrow/include/arrow/vendored/double-conversion/": 53157,
+  "site-packages/pip/_vendor/packaging/": 50816,
+  "site-packages/h11/": 50577,
+  "site-packages/idna/": 36579,
+  "site-packages/pip/_vendor/truststore/": 34613,
+  "site-packages/pip/_vendor/idna/": 30115,
+  "site-packages/click/": 28161,
+  "site-packages/filelock/": 25795,
+  "site-packages/truststore/": 25720,
+  "site-packages/pip/_vendor/msgpack/": 25461,
+  "site-packages/pip/_vendor/platformdirs/": 19152,
+  "site-packages/pyarrow/include/arrow/vendored/datetime/": 17884,
+  "site-packages/pip/_vendor/distlib/": 10949,
+  "site-packages/pyarrow/include/arrow/vendored/datetime.h": 10491,
+  "site-packages/pip/_vendor/distro/": 10388,
+  "site-packages/_yaml/": 9989,
+  "site-packages/pip/_vendor/tomli/": 8545,
+  "site-packages/pip/_vendor/pyproject_hooks/": 7178
+ },
+ "clean_sources_seen": {
+  "ise-uiuc/Magicoder-Evol-Instruct-110K": {
+   "tokens": 12901039,
+   "allowed": false
+  },
+  "Aeala/ShareGPT_Vicuna_unfiltered": {
+   "tokens": 12629538,
+   "allowed": false
+  },
+  "HuggingFaceH4/ultrachat_200k": {
+   "tokens": 12222125,
+   "allowed": false
+  },
+  "ise-uiuc/Magicoder-OSS-Instruct-75K": {
+   "tokens": 6653239,
+   "allowed": false
+  },
+  "files:llama.cpp": {
+   "tokens": 6342760,
+   "allowed": true
+  },
+  "files:site-packages": {
+   "tokens": 5846380,
+   "allowed": "by path rules"
+  },
+  "open-r1/OpenR1-Math-220k": {
+   "tokens": 3773636,
+   "allowed": false
+  },
+  "AI-MO/NuminaMath-CoT": {
+   "tokens": 3749879,
+   "allowed": false
+  },
+  "Team-ACE/ToolACE": {
+   "tokens": 3719961,
+   "allowed": false
+  },
+  "files:python-stdlib": {
+   "tokens": 2193859,
+   "allowed": true
+  },
+  "NousResearch/hermes-function-calling-v1": {
+   "tokens": 998735,
+   "allowed": false
+  },
+  "glaiveai/glaive-function-calling-v2": {
+   "tokens": 619365,
+   "allowed": false
+  },
+  "files:build-output": {
+   "tokens": 78821,
+   "allowed": "by path rules"
+  },
+  "files:llama.cpp-vendor": {
+   "tokens": 22109,
+   "allowed": "by path rules"
+  }
+ }
+}

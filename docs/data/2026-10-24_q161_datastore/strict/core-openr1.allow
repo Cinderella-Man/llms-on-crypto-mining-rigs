@@ -1,0 +1,6 @@
+# core plus maths from OpenR1-Math (default config only: crawled problems; prompts.py drew every OpenR1 row from
+# default/train), in case maths is allowed (audit 2026-10-25). Used with --ids strict-ids-notool.txt.
+files:python-stdlib
+files:llama.cpp
+files:site-packages
+open-r1/OpenR1-Math-220k

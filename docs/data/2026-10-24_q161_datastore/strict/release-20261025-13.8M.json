@@ -1,0 +1,120 @@
+{
+ "pool": "all",
+ "cap": 13798889,
+ "allow": [
+  "!path:site-packages/pip/_vendor/certifi/",
+  "!path:site-packages/pip/_vendor/resolvelib/",
+  "!path:site-packages/pyarrow/include/arrow/vendored/portable-snippets/",
+  "!path:site-packages/pyarrow/include/arrow/vendored/strptime.h",
+  "files:llama.cpp",
+  "files:python-stdlib",
+  "open-r1/OpenR1-Math-220k",
+  "path:site-packages/_yaml/",
+  "path:site-packages/anyio/",
+  "path:site-packages/click/",
+  "path:site-packages/filelock/",
+  "path:site-packages/fsspec/",
+  "path:site-packages/h11/",
+  "path:site-packages/httpcore2/",
+  "path:site-packages/httpx2/",
+  "path:site-packages/huggingface_hub/",
+  "path:site-packages/idna/",
+  "path:site-packages/packaging/",
+  "path:site-packages/pip/",
+  "path:site-packages/pyarrow/",
+  "path:site-packages/truststore/",
+  "path:site-packages/yaml/"
+ ],
+ "ids": null,
+ "answers": 13702,
+ "tokens": 13798379,
+ "available_tokens": 17929999,
+ "left_out_q51": 1575,
+ "no_prompt": 0,
+ "share_by_category": {
+  "edit": 0.6985,
+  "reason": 0.2139,
+  "agent": 0.0876
+ },
+ "tokens_by_source": {
+  "files:llama.cpp": 4832573,
+  "files:site-packages": 4343398,
+  "open-r1/OpenR1-Math-220k": 2952014,
+  "files:python-stdlib": 1670394
+ },
+ "tokens_by_path_rule": {
+  "site-packages/pyarrow/": 1852713,
+  "site-packages/pip/": 1280504,
+  "site-packages/huggingface_hub/": 573671,
+  "site-packages/httpcore2/": 109446,
+  "site-packages/fsspec/": 107147,
+  "site-packages/anyio/": 105281,
+  "site-packages/httpx2/": 69828,
+  "site-packages/yaml/": 54268,
+  "site-packages/h11/": 44464,
+  "site-packages/packaging/": 39336,
+  "site-packages/idna/": 28336,
+  "site-packages/filelock/": 25625,
+  "site-packages/truststore/": 24090,
+  "site-packages/click/": 18700,
+  "site-packages/_yaml/": 9989
+ },
+ "clean_sources_seen": {
+  "ise-uiuc/Magicoder-Evol-Instruct-110K": {
+   "tokens": 12901039,
+   "allowed": false
+  },
+  "Aeala/ShareGPT_Vicuna_unfiltered": {
+   "tokens": 12629538,
+   "allowed": false
+  },
+  "HuggingFaceH4/ultrachat_200k": {
+   "tokens": 12222125,
+   "allowed": false
+  },
+  "ise-uiuc/Magicoder-OSS-Instruct-75K": {
+   "tokens": 6653239,
+   "allowed": false
+  },
+  "files:llama.cpp": {
+   "tokens": 6344460,
+   "allowed": true
+  },
+  "files:site-packages": {
+   "tokens": 5846380,
+   "allowed": "by path rules"
+  },
+  "open-r1/OpenR1-Math-220k": {
+   "tokens": 3773636,
+   "allowed": true
+  },
+  "AI-MO/NuminaMath-CoT": {
+   "tokens": 3749879,
+   "allowed": false
+  },
+  "Team-ACE/ToolACE": {
+   "tokens": 3719961,
+   "allowed": false
+  },
+  "files:python-stdlib": {
+   "tokens": 2195230,
+   "allowed": true
+  },
+  "NousResearch/hermes-function-calling-v1": {
+   "tokens": 998735,
+   "allowed": false
+  },
+  "glaiveai/glaive-function-calling-v2": {
+   "tokens": 619365,
+   "allowed": false
+  },
+  "files:build-output": {
+   "tokens": 78821,
+   "allowed": "by path rules"
+  },
+  "files:llama.cpp-vendor": {
+   "tokens": 22109,
+   "allowed": "by path rules"
+  }
+ }
+}

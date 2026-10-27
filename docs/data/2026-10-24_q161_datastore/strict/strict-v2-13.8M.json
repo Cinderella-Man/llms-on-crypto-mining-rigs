@@ -1,0 +1,105 @@
+{
+ "pool": "all",
+ "cap": 13798889,
+ "allow": null,
+ "ids": "strict-ids.txt",
+ "answers": 20842,
+ "tokens": 13797576,
+ "available_tokens": 27118869,
+ "left_out_q51": 1575,
+ "no_prompt": 0,
+ "share_by_category": {
+  "edit": 0.4647,
+  "reason": 0.2752,
+  "tool": 0.2015,
+  "agent": 0.0586
+ },
+ "tokens_by_source": {
+  "files:llama.cpp": 3189463,
+  "files:site-packages": 2832163,
+  "Team-ACE/ToolACE": 1922563,
+  "open-r1/OpenR1-Math-220k": 1903127,
+  "AI-MO/NuminaMath-CoT": 1894169,
+  "files:python-stdlib": 1143912,
+  "NousResearch/hermes-function-calling-v1": 537024,
+  "glaiveai/glaive-function-calling-v2": 320028,
+  "files:build-output": 43440,
+  "files:llama.cpp-vendor": 11687
+ },
+ "clean_sources_seen": {
+  "ise-uiuc/Magicoder-Evol-Instruct-110K": {
+   "tokens": 12901039,
+   "allowed": true
+  },
+  "Aeala/ShareGPT_Vicuna_unfiltered": {
+   "tokens": 12629538,
+   "allowed": true
+  },
+  "HuggingFaceH4/ultrachat_200k": {
+   "tokens": 12222125,
+   "allowed": true
+  },
+  "ise-uiuc/Magicoder-OSS-Instruct-75K": {
+   "tokens": 6653239,
+   "allowed": true
+  },
+  "files:llama.cpp": {
+   "tokens": 6344460,
+   "allowed": true
+  },
+  "files:site-packages": {
+   "tokens": 5846380,
+   "allowed": true
+  },
+  "open-r1/OpenR1-Math-220k": {
+   "tokens": 3773636,
+   "allowed": true
+  },
+  "AI-MO/NuminaMath-CoT": {
+   "tokens": 3749879,
+   "allowed": true
+  },
+  "Team-ACE/ToolACE": {
+   "tokens": 3719961,
+   "allowed": true
+  },
+  "files:python-stdlib": {
+   "tokens": 2195230,
+   "allowed": true
+  },
+  "NousResearch/hermes-function-calling-v1": {
+   "tokens": 998735,
+   "allowed": true
+  },
+  "glaiveai/glaive-function-calling-v2": {
+   "tokens": 619365,
+   "allowed": true
+  },
+  "files:build-output": {
+   "tokens": 78821,
+   "allowed": true
+  },
+  "files:llama.cpp-vendor": {
+   "tokens": 22109,
+   "allowed": true
+  }
+ },
+ "listed": {
+  "ids": 41944,
+  "found": 41944,
+  "not_in_answer_files": 0,
+  "held_out_q51": 1544,
+  "tokens_by_source": {
+   "files:llama.cpp": 7764405,
+   "files:site-packages": 6710276,
+   "open-r1/OpenR1-Math-220k": 3773636,
+   "AI-MO/NuminaMath-CoT": 3749879,
+   "Team-ACE/ToolACE": 3719961,
+   "files:python-stdlib": 2584060,
+   "NousResearch/hermes-function-calling-v1": 998735,
+   "glaiveai/glaive-function-calling-v2": 619365,
+   "files:build-output": 99311,
+   "files:llama.cpp-vendor": 27774
+  }
+ }
+}

@@ -1,0 +1,9 @@
+request	d0 tok/s	d3s tok/s	d3ds tok/s	d3s x	d3ds x	d3s guesses (right/wrong/store, drafter right/guesses)	d3ds guesses (right/wrong/store, drafter right/guesses)	identical
+chat T0	33.36	40.93	44.62	1.23	1.34	106/317/537	176/334/630 d80/173	yes
+code T0	33.65	49.18	54.01	1.46	1.60	125/290/416	217/293/495 d111/203	yes
+edit T0	27.40	49.18	50.70	1.80	1.85	237/238/371	269/241/419 d40/94	yes
+tool T0	33.46	49.22	50.57	1.47	1.51	400/626/803	515/636/939 d169/314	yes
+chat T1	33.82	46.93	47.83	1.39	1.41	105/310/509	163/347/613 d80/196	yes (depths >= 1)
+code T1	33.86	51.31	51.78	1.52	1.53	126/295/496	176/334/589 d64/178	yes (depths >= 1)
+edit T1	27.41	46.67	46.47	1.70	1.70	206/275/440	233/277/507 d41/107	yes (depths >= 1)
+tool T1	32.16	47.99	50.12	1.49	1.56	471/908/997	624/910/1189 d216/437	yes (depths >= 1)

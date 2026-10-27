@@ -1,0 +1,22 @@
+flint-answers-release-20261025b-13.8M.pstore: 13696 answers, 13798884 tokens (separators included); stream md5 b00959d413fc51a6f19f7ccb168d9e59, store md5 228742795f0907020b2c01effa0e7163
+per source:
+  llama.cpp                                       4831675   35.0%
+  open-r1/OpenR1-Math-220k                        2952014   21.4%
+  site-packages/pyarrow                           1852713   13.4%
+  python stdlib                                   1671797   12.1%
+  site-packages/pip                               1280504    9.3%
+  site-packages/huggingface_hub                    573671    4.2%
+  site-packages/httpcore2                          109446    0.8%
+  site-packages/fsspec                             107147    0.8%
+  site-packages/anyio                              105281    0.8%
+  site-packages/httpx2                              69828    0.5%
+  site-packages/yaml                                54268    0.4%
+  site-packages/h11                                 44464    0.3%
+  site-packages/packaging                           39336    0.3%
+  site-packages/idna                                28336    0.2%
+  site-packages/filelock                            25625    0.2%
+  site-packages/truststore                          24090    0.2%
+  site-packages/click                               18700    0.1%
+  site-packages/_yaml                                9989    0.1%
+per licence: MIT 43.7%, Apache-2.0 39.6%, PSF-2.0 12.2%, BSD-3-Clause 2.9%, BSD-2-Clause 0.8%, Apache-2.0 OR BSD-2-Clause 0.5%, MIT (pip's own) 0.1%, Apache-2.0 (Arrow's own) 0.1%
+PASS

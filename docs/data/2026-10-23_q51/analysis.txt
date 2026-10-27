@@ -1,0 +1,14 @@
+k=6, 47 MoE layers, generated tokens {'chat': 17432, 'code': 21416, 'edit': 23747, 'agent': 2963}
+distinct experts per layer for n consecutive tokens (random routing in the last row):
+scope                 n=1      n=2      n=4      n=8     n=16      adj
+gen/agent            6.00    11.02    19.96    35.29    59.56     0.98
+gen/chat             6.00    10.96    19.84    35.16    59.51     1.04
+gen/code             6.00    11.01    20.03    35.40    59.51     0.99
+gen/edit             6.00    11.16    20.44    36.08    60.14     0.84
+gen/all              6.00    11.05    20.13    35.58    59.74     0.95
+prompt/all           6.00    11.13    20.24    35.56    59.12     0.87
+random               6.00    11.86    23.17    44.24    80.84     0.14
+renormalized weights, mean by rank: [0.305, 0.21, 0.156, 0.125, 0.107, 0.096]
+lightest expert below threshold: {'0.02': 0.002985499927626211, '0.05': 0.06448017769550173, '0.1': 0.528998846563024, '0.15': 0.9807842722344937}
+top-k probability mass: 2.559
+usage: share of routed reads on the top 10/25/50 % of a layer's experts, unused experts: {'0.1': 0.226874302631485, '0.25': 0.4430350126865085, '0.5': 0.7055733659264203, 'unused': 0.0425531914893617}

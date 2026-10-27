@@ -1,0 +1,44 @@
+# The core store (2026-10-25): answers to my own edit and agent prompts only, on the
+# Python standard library, llama.cpp proper (no vendor/, no build outputs) and the packages of the per-package
+# ruling (MIT, BSD-2/3-Clause, Apache-2.0, PSF; table strict-sitepkgs.md). No maths, no tool-call sets.
+# Each entry's comment is the licence the manifest reports for its answers (the longest matching path: entry wins).
+files:python-stdlib                         # PSF-2.0
+files:llama.cpp                             # MIT
+# allowed packages (a package not listed here stays out until it is ruled on)
+path:site-packages/pyarrow/                 # Apache-2.0
+path:site-packages/pyarrow/include/arrow/vendored/double-conversion/   # BSD-3-Clause
+path:site-packages/pyarrow/include/arrow/vendored/datetime/            # MIT
+path:site-packages/pyarrow/include/arrow/vendored/datetime.h           # Apache-2.0
+path:site-packages/huggingface_hub/         # Apache-2.0
+path:site-packages/pip/                     # MIT
+path:site-packages/pip/_vendor/rich/        # MIT
+path:site-packages/pip/_vendor/pygments/    # BSD-2-Clause
+path:site-packages/pip/_vendor/urllib3/     # MIT
+path:site-packages/pip/_vendor/requests/    # Apache-2.0
+path:site-packages/pip/_vendor/cachecontrol/  # Apache-2.0
+path:site-packages/pip/_vendor/packaging/   # Apache-2.0 OR BSD-2-Clause
+path:site-packages/pip/_vendor/truststore/  # MIT
+path:site-packages/pip/_vendor/msgpack/     # Apache-2.0
+path:site-packages/pip/_vendor/idna/        # BSD-3-Clause
+path:site-packages/pip/_vendor/platformdirs/  # MIT
+path:site-packages/pip/_vendor/distlib/     # PSF-2.0
+path:site-packages/pip/_vendor/distro/      # Apache-2.0
+path:site-packages/pip/_vendor/tomli/       # MIT
+path:site-packages/pip/_vendor/pyproject_hooks/  # MIT
+path:site-packages/fsspec/                  # BSD-3-Clause
+path:site-packages/httpcore2/               # BSD-3-Clause
+path:site-packages/anyio/                   # MIT
+path:site-packages/httpx2/                  # BSD-3-Clause
+path:site-packages/yaml/                    # MIT (PyYAML)
+path:site-packages/_yaml/                   # MIT (PyYAML)
+path:site-packages/packaging/               # Apache-2.0 OR BSD-2-Clause
+path:site-packages/h11/                     # MIT
+path:site-packages/idna/                    # BSD-3-Clause
+path:site-packages/click/                   # BSD-3-Clause
+path:site-packages/filelock/                # MIT
+path:site-packages/truststore/              # MIT
+# left out by the ruling (tqdm is not listed: MPL-2.0 AND MIT)
+!path:site-packages/pip/_vendor/certifi/                            # MPL-2.0
+!path:site-packages/pip/_vendor/resolvelib/                         # ISC
+!path:site-packages/pyarrow/include/arrow/vendored/portable-snippets/   # CC0-1.0
+!path:site-packages/pyarrow/include/arrow/vendored/strptime.h       # unclear (musl/NetBSD origin)

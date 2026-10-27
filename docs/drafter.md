@@ -96,8 +96,10 @@ Prompts → answers → dump → train → score → simulate → export → eng
   Tool prompts run at ~210 answer tokens/s (long tool lists, short answers).
   vLLM NVFP4 on the same two RTX 3090s with 160 requests in flight: ~2.4–2.7k answer tokens/s in vLLM's log (2.25k
   averaged over the first 10 minutes), ~7× the G3 copy, ~8–9 M tokens an hour; KV cache 50–75 % full, no preemption.
+  The cache holds 204,344 tokens (9.94 GiB per card next to 11.5 / 12.1 GB of weights, layers 25/24).
   Its answers have G3's shape on the same prompt family: 63 % end at an end token, mean 1,182 tokens (G3: 63 %,
-  1,217).
+  1,217). At T 0 its answers to six prompts match llama-server's UD-Q4_K_XL answers for their first 32, 17, 7, 103, 4
+  and 6 tokens, then go their own way: coherent Flint text, not the same tokens.
 - **Why G3 on two cards is slow:** all 96 slots stay busy, and the server's main thread at 100 % CPU is the CUDA driver
   spin-waiting, not CPU starvation. A 96-token decode batch is one ubatch at `-ub 512`, so the two cards of the layer
   split take turns and each is ~50 % busy. `-ub 48`, which splits each decode step into two ubatches, made a step
@@ -135,7 +137,9 @@ Prompts → answers → dump → train → score → simulate → export → eng
   | V100s on x1 links | 17 layers | ~280 | ~0.2k |
 
 - **Storage:** 37 KB per answer token with the 17-layer grid, 58 KB with the 26-layer grid (M2), ~12 KB for a
-  six-card pack. 70 M tokens at 37 KB is ~2.6 TB.
+  six-card pack. 70 M tokens at 37 KB is ~2.6 TB. Measured: the first dump (2,618 answers, 3.08 M answer tokens) took
+  117 GB; a later one wrote 171 GB in 50 minutes (57 MB/s of features, 13 MB/s of pack); the first round's dumps and
+  packs, with archive copies, came to 4.4 TB.
 - **Pitfalls:**
   - Without help the dump copies all 150,144 logits per position to the host (600 KB). `DUMP_GPU_TOPK=1` (with `-b`
     equal to `-ub`; v2 commit `d402386`) takes the top-20 on the card and copies ~160 B. On Q51 it gives the same top-1
@@ -395,7 +399,8 @@ Prompts → answers → dump → train → score → simulate → export → eng
 **Stopped, superseded by M4.** The owner, 2026-10-25 13:40: only data that can be published; every earlier head is
 not for release. At 15:00 the owner went further: all of this data is excluded too and the work starts from scratch
 (M4). The R4 round below never started. The section stays as the record of how the sources were judged. Lists and
-counts: `count_strict.py` (one place for every rule below).
+counts: [`count_strict.py`](data/2026-10-24_q20_drafter/run/count_strict.py) (one place for every rule below); the
+audit's other scripts and results: [docs/data/2026-10-24_q20_drafter](data/2026-10-24_q20_drafter/README.md).
 
 | Source | Status | Answers | Answer tokens |
 |---|---|---|---|
@@ -407,7 +412,7 @@ counts: `count_strict.py` (one place for every rule below).
 | ToolACE, glaive-function-calling-v2, Hermes function calling (LLM-written, generator not named) | pending, likely out | 19,319 | 5.31 M |
 | Prompts sharing a 12-word span with a Q51 test prompt (the edit task texts are Q51's) | out (keeps Q51 honest) | 1,585 | 2.99 M |
 | llama.cpp `vendor/` and build folders; tqdm (MPL), pip's vendored certifi (MPL) and resolvelib (ISC), two vendored Arrow headers (CC0, unclear) | out | 337 | 0.33 M |
-| ShareGPT, UltraChat, both Magicoder sets | out | 29,523 | 44.37 M |
+| ShareGPT, UltraChat, both Magicoder sets (ShareGPT alone: 8,865 answers, 12.62 M) | out | 29,523 | 44.37 M |
 
 - **Core:** 15,222 answers, 14.14 M answer tokens (edit 12.59 M, agent 1.55 M); no chat and no code-from-instructions
   yet. Answers to excluded prompts stay in the feature files; `train.py --only <ids>` uses only the listed ones.
@@ -563,7 +568,8 @@ row's own window.
 ### Served on the rig (2026-10-25)
 
 R2-9, R2-gen and the 13.8 M-token continuation store were trained or built on excluded data: not for release; the
-numbers measure the method and the engine.
+numbers measure the method and the engine. Per-request tables, the exactness set and the rig scripts:
+[docs/data/2026-10-24_q20_d3](data/2026-10-24_q20_d3/README.md).
 
 rc4 `460160e93`, K2h-r16, llama-server `--pipe-depth 3 -c 8192 -bs`, one request at a time, prompt caching off; chat,
 code and edit answers of 512 tokens and a coding-agent tool request of 1,536 tokens, at T 0 and at the makers' sampling
@@ -589,7 +595,7 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 - **Against no guessing:** copy lookup, continuations and store 1.45×; the same, then the head, 1.51×; the copy lookup,
   then the head, 1.33× on the release split. The last one has neither the continuations nor the store, so it is not
   the head's worth without the store; that comparison (copy lookup alone against copy lookup, then the head) is the
-  guess-sources test (`rig_d3_sources.sh`).
+  guess-sources test ([`rig_d3_sources.sh`](data/2026-10-24_q20_d3/run/rig_d3_sources.sh)).
 - **Acceptance as served** (R2-9, release split): behind the copy lookup alone 53.8 % of its guesses are right (T 0
   55.2 %, T 1 52.6 %), the same as its offline 0.538 on Q51 overall, though it was trained on Q8_0's hidden states and
   reads K2h-r16's. Behind the store it guesses the harder positions: 47.1 % (T 0 50.9 %, T 1 43.8 %).
@@ -683,7 +689,7 @@ guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
 11. **Overfitting:** with every new data size, dropout or noise against a control, once fresh data stops arriving.
 12. **Generation throughput:** the two-card G3 copy is GPU-bound with its cards taking turns; `-ub 48` did not help.
     A different server (vLLM) is a candidate.
-13. **What each guess source is worth** (owner-approved rig test, `rig_d3_sources.sh`): the copy lookup alone, with
+13. **What each guess source is worth** (owner-approved rig test, [`rig_d3_sources.sh`](data/2026-10-24_q20_d3/run/rig_d3_sources.sh)): the copy lookup alone, with
     the request's continuations, with the store; the copy lookup then the head; and all of them. It answers whether the
     head pays off without the store, and whether the store ships. On hold, with the Q8_0 served test and the placement
     test, until the head and the store are rebuilt on the strict data list (the owner, 2026-10-25 13:40); no testing or
@@ -760,7 +766,7 @@ guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
   53.8 % of the time, as offline. One guess costs 5.3–7.3 ms on a P106 (est. 1.6–2.6 ms), the limit now. rc4 later
   became `2d53179aa` (C7's allocator fix for a rig-only crash with packed uploads, off the drafter's path; these numbers
   stand).
-- 2026-10-25 13:32 (CET): the guess-sources test prepared (`rig_d3_sources.sh`, owner-approved): copy lookup alone,
+- 2026-10-25 13:32 (CET): the guess-sources test prepared ([`rig_d3_sources.sh`](data/2026-10-24_q20_d3/run/rig_d3_sources.sh), owner-approved): copy lookup alone,
   with the request's continuations, with the store, the copy lookup then the head, and all of them, on the release
   split. Until it runs, the head's worth without the store is not measured.
 - 2026-10-25 13:40: the owner's data rule: only publishable sources. Every head so far and the continuation store were
@@ -771,8 +777,8 @@ guess** (section 8, item 0). Both heads continue overnight to ~3.6 epochs.
   starts: 23.30 M clean answer tokens of 74.67 M (18.69 M dumped), a clean vocabulary, the remaining clean answers
   dumped first, R4 heads from scratch from ~15:20. `train.py`, `vocab.py`, `feed_split.py` take `--only <ids>`;
   `train.py --copy-weight` down-weights targets inside copies.
-- 2026-10-25 14:05–14:15 (CET): site-packages ruling applied (+6.70 M clean, list in the data folder's
-  strict-sitepkgs.md); generic tool sets held pending their audit; code first: `--rec-weights`, `clean_prompts.py`,
+- 2026-10-25 14:05–14:15 (CET): site-packages ruling applied (+6.70 M clean, list in
+  [strict-sitepkgs.md](data/2026-10-24_q161_datastore/strict/strict-sitepkgs.md)); generic tool sets held pending their audit; code first: `--rec-weights`, `clean_prompts.py`,
   vLLM generation of clean code-first prompts on GPUs 2 and 5.
 - 2026-10-25 14:20–14:40 (CET): the data audit (NuminaMath ~45 % GPT-4-written; the tool sets LLM-written; OpenR1
   clean as used) and the Q51 rule: R4 trains on the core only (15,222 answers, 14.14 M: our own edit and agent

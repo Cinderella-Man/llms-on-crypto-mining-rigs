@@ -1,0 +1,196 @@
+{
+ "same": {
+  "answers": 11949,
+  "left_out": {
+   "shares text with Q51": 352
+  },
+  "clean_tokens_by_source_class": {
+   "data set Aeala/ShareGPT_Vicuna_unfiltered": 2586744,
+   "data set ise-uiuc/Magicoder-Evol-Instruct-110K": 2449702,
+   "data set HuggingFaceH4/ultrachat_200k": 2389637,
+   "llama.cpp": 1480209,
+   "third-party package": 1298326,
+   "data set ise-uiuc/Magicoder-OSS-Instruct-75K": 1250629,
+   "data set open-r1/OpenR1-Math-220k": 767198,
+   "data set AI-MO/NuminaMath-CoT": 660939,
+   "python stdlib": 464079,
+   "data set NousResearch/hermes-function-calling-v1": 418934,
+   "build output": 25449,
+   "llama.cpp vendor": 7043
+  },
+  "unknown_file_sources": []
+ },
+ "clean-same": {
+  "answers": 11597,
+  "tokens": 13798889,
+  "available_tokens": 13798889,
+  "share_by_category": {
+   "chat": 0.3606,
+   "code": 0.2682,
+   "edit": 0.2111,
+   "reason": 0.1035,
+   "tool": 0.0304,
+   "agent": 0.0262
+  },
+  "tokens_by_source": {
+   "Aeala/ShareGPT_Vicuna_unfiltered": 2586744,
+   "ise-uiuc/Magicoder-Evol-Instruct-110K": 2449702,
+   "HuggingFaceH4/ultrachat_200k": 2389637,
+   "llama.cpp": 1480209,
+   "third-party package": 1298326,
+   "ise-uiuc/Magicoder-OSS-Instruct-75K": 1250629,
+   "open-r1/OpenR1-Math-220k": 767198,
+   "AI-MO/NuminaMath-CoT": 660939,
+   "python stdlib": 464079,
+   "NousResearch/hermes-function-calling-v1": 418934,
+   "build output": 25449,
+   "llama.cpp vendor": 7043
+  }
+ },
+ "noshare-same": {
+  "answers": 9761,
+  "tokens": 11212145,
+  "available_tokens": 11212145,
+  "share_by_category": {
+   "code": 0.33,
+   "edit": 0.2598,
+   "chat": 0.2131,
+   "reason": 0.1274,
+   "tool": 0.0374,
+   "agent": 0.0323
+  },
+  "tokens_by_source": {
+   "ise-uiuc/Magicoder-Evol-Instruct-110K": 2449702,
+   "HuggingFaceH4/ultrachat_200k": 2389637,
+   "llama.cpp": 1480209,
+   "third-party package": 1298326,
+   "ise-uiuc/Magicoder-OSS-Instruct-75K": 1250629,
+   "open-r1/OpenR1-Math-220k": 767198,
+   "AI-MO/NuminaMath-CoT": 660939,
+   "python stdlib": 464079,
+   "NousResearch/hermes-function-calling-v1": 418934,
+   "build output": 25449,
+   "llama.cpp vendor": 7043
+  }
+ },
+ "strict-same": {
+  "answers": 4506,
+  "tokens": 3798402,
+  "available_tokens": 3798402,
+  "share_by_category": {
+   "edit": 0.4719,
+   "reason": 0.376,
+   "tool": 0.1103,
+   "agent": 0.0419
+  },
+  "tokens_by_source": {
+   "llama.cpp": 1480209,
+   "open-r1/OpenR1-Math-220k": 767198,
+   "AI-MO/NuminaMath-CoT": 660939,
+   "python stdlib": 464079,
+   "NousResearch/hermes-function-calling-v1": 418934,
+   "llama.cpp vendor": 7043
+  }
+ },
+ "all": {
+  "answers": 71711,
+  "left_out": {
+   "shares text with Q51": 1575
+  },
+  "clean_tokens_by_source_class": {
+   "data set ise-uiuc/Magicoder-Evol-Instruct-110K": 12901039,
+   "data set Aeala/ShareGPT_Vicuna_unfiltered": 12629538,
+   "data set HuggingFaceH4/ultrachat_200k": 12222125,
+   "data set ise-uiuc/Magicoder-OSS-Instruct-75K": 6653239,
+   "llama.cpp": 6344460,
+   "third-party package": 5846380,
+   "data set open-r1/OpenR1-Math-220k": 3773636,
+   "data set AI-MO/NuminaMath-CoT": 3749879,
+   "data set Team-ACE/ToolACE": 3719961,
+   "python stdlib": 2195230,
+   "data set NousResearch/hermes-function-calling-v1": 998735,
+   "data set glaiveai/glaive-function-calling-v2": 619365,
+   "build output": 78821,
+   "llama.cpp vendor": 22109
+  },
+  "unknown_file_sources": []
+ },
+ "clean-all": {
+  "answers": 13504,
+  "tokens": 13797996,
+  "available_tokens": 71754517,
+  "share_by_category": {
+   "chat": 0.3534,
+   "code": 0.2716,
+   "edit": 0.1765,
+   "reason": 0.1009,
+   "tool": 0.0751,
+   "agent": 0.0226
+  },
+  "tokens_by_source": {
+   "ise-uiuc/Magicoder-Evol-Instruct-110K": 2482285,
+   "Aeala/ShareGPT_Vicuna_unfiltered": 2454838,
+   "HuggingFaceH4/ultrachat_200k": 2421222,
+   "ise-uiuc/Magicoder-OSS-Instruct-75K": 1265573,
+   "llama.cpp": 1186285,
+   "third-party package": 1095490,
+   "Team-ACE/ToolACE": 717440,
+   "AI-MO/NuminaMath-CoT": 697108,
+   "open-r1/OpenR1-Math-220k": 694683,
+   "python stdlib": 439126,
+   "NousResearch/hermes-function-calling-v1": 192129,
+   "glaiveai/glaive-function-calling-v2": 125987,
+   "build output": 19454,
+   "llama.cpp vendor": 6376
+  }
+ },
+ "noshare-all": {
+  "answers": 14404,
+  "tokens": 13798404,
+  "available_tokens": 59124979,
+  "share_by_category": {
+   "code": 0.3334,
+   "chat": 0.2133,
+   "edit": 0.2132,
+   "reason": 0.1211,
+   "tool": 0.0914,
+   "agent": 0.0276
+  },
+  "tokens_by_source": {
+   "ise-uiuc/Magicoder-Evol-Instruct-110K": 3038355,
+   "HuggingFaceH4/ultrachat_200k": 2942958,
+   "ise-uiuc/Magicoder-OSS-Instruct-75K": 1561496,
+   "llama.cpp": 1440679,
+   "third-party package": 1315182,
+   "Team-ACE/ToolACE": 872486,
+   "open-r1/OpenR1-Math-220k": 836752,
+   "AI-MO/NuminaMath-CoT": 834369,
+   "python stdlib": 536906,
+   "NousResearch/hermes-function-calling-v1": 235558,
+   "glaiveai/glaive-function-calling-v2": 153523,
+   "build output": 20768,
+   "llama.cpp vendor": 9372
+  }
+ },
+ "strict-all": {
+  "answers": 22376,
+  "tokens": 13797539,
+  "available_tokens": 21423375,
+  "share_by_category": {
+   "edit": 0.3595,
+   "reason": 0.3507,
+   "tool": 0.2534,
+   "agent": 0.0365
+  },
+  "tokens_by_source": {
+   "llama.cpp": 4040292,
+   "open-r1/OpenR1-Math-220k": 2443537,
+   "Team-ACE/ToolACE": 2435829,
+   "AI-MO/NuminaMath-CoT": 2394922,
+   "python stdlib": 1409271,
+   "NousResearch/hermes-function-calling-v1": 663214,
+   "glaiveai/glaive-function-calling-v2": 396684,
+   "llama.cpp vendor": 13790
+  }
+ }
+}

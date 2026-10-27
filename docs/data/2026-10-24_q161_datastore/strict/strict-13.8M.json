@@ -1,0 +1,91 @@
+{
+ "pool": "all",
+ "cap": 13798889,
+ "allow": [
+  "AI-MO/NuminaMath-CoT",
+  "NousResearch/hermes-function-calling-v1",
+  "Team-ACE/ToolACE",
+  "files:llama.cpp",
+  "files:python-stdlib",
+  "glaiveai/glaive-function-calling-v2",
+  "open-r1/OpenR1-Math-220k"
+ ],
+ "answers": 22383,
+ "tokens": 13797929,
+ "available_tokens": 21401266,
+ "left_out_q51": 1575,
+ "no_prompt": 0,
+ "share_by_category": {
+  "edit": 0.3588,
+  "reason": 0.3512,
+  "tool": 0.2537,
+  "agent": 0.0364
+ },
+ "tokens_by_source": {
+  "files:llama.cpp": 4042485,
+  "open-r1/OpenR1-Math-220k": 2446092,
+  "Team-ACE/ToolACE": 2439426,
+  "AI-MO/NuminaMath-CoT": 2399977,
+  "files:python-stdlib": 1409271,
+  "NousResearch/hermes-function-calling-v1": 663471,
+  "glaiveai/glaive-function-calling-v2": 397207
+ },
+ "clean_sources_seen": {
+  "ise-uiuc/Magicoder-Evol-Instruct-110K": {
+   "tokens": 12901039,
+   "allowed": false
+  },
+  "Aeala/ShareGPT_Vicuna_unfiltered": {
+   "tokens": 12629538,
+   "allowed": false
+  },
+  "HuggingFaceH4/ultrachat_200k": {
+   "tokens": 12222125,
+   "allowed": false
+  },
+  "ise-uiuc/Magicoder-OSS-Instruct-75K": {
+   "tokens": 6653239,
+   "allowed": false
+  },
+  "files:llama.cpp": {
+   "tokens": 6344460,
+   "allowed": true
+  },
+  "files:site-packages": {
+   "tokens": 5846380,
+   "allowed": false
+  },
+  "open-r1/OpenR1-Math-220k": {
+   "tokens": 3773636,
+   "allowed": true
+  },
+  "AI-MO/NuminaMath-CoT": {
+   "tokens": 3749879,
+   "allowed": true
+  },
+  "Team-ACE/ToolACE": {
+   "tokens": 3719961,
+   "allowed": true
+  },
+  "files:python-stdlib": {
+   "tokens": 2195230,
+   "allowed": true
+  },
+  "NousResearch/hermes-function-calling-v1": {
+   "tokens": 998735,
+   "allowed": true
+  },
+  "glaiveai/glaive-function-calling-v2": {
+   "tokens": 619365,
+   "allowed": true
+  },
+  "files:build-output": {
+   "tokens": 78821,
+   "allowed": false
+  },
+  "files:llama.cpp-vendor": {
+   "tokens": 22109,
+   "allowed": false
+  }
+ }
+}

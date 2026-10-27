@@ -1,0 +1,12 @@
+Aeala/ShareGPT_Vicuna_unfiltered
+HuggingFaceH4/ultrachat_200k
+ise-uiuc/Magicoder-Evol-Instruct-110K
+ise-uiuc/Magicoder-OSS-Instruct-75K
+NousResearch/hermes-function-calling-v1
+AI-MO/NuminaMath-CoT
+open-r1/OpenR1-Math-220k
+files:python-stdlib
+files:llama.cpp
+files:llama.cpp-vendor
+files:site-packages
+files:build-output
