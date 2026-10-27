@@ -70,3 +70,12 @@ Every mix's exact recipe and score is also in [quants/recipes/flint-mixes.tsv](.
 | Date | Folder | Registry | What it measured | Result | What is here |
 |---|---|---|---|---|---|
 | 2026-10-26 | [2026-10-26_agentic_data](2026-10-26_agentic_data/README.md) | Q165 | the agentic data pipeline: the Python pilot, the licence scans, the Elixir check and pilot, long run 1, the MTP heads' settings | [agentic_data_pipeline.md](../research/notes/agentic_data_pipeline.md); Q165 | the pilot's per-session table, per-module Elixir workspaces, the licence scans (15 summaries and per-file tables), run scripts; the harness texts' report is [bench/agentic_data/texts_report.md](../../bench/agentic_data/texts_report.md) |
+
+## Hardware tuning
+
+| Date | Folder | Registry | What it measured | Result | What is here |
+|---|---|---|---|---|---|
+| 2026-10-24 | [2026-10-24_rig_power](2026-10-24_rig_power/README.md) | — | an idle `nvidia-smi` query of the nine cards: power limits, clocks, P-states, event reasons | [power_and_tuning.md](../research/notes/power_and_tuning.md) | `power_summary_idle.csv` and the query command |
+| 2026-10-24 | [2026-10-24_rig_q141](2026-10-24_rig_q141/README.md) | Q141 | PowerMizer "Prefer Maximum Performance" against Auto: tg128 cold and warm, a served reply after idle, clocks every ~0.2 s | Q141; [power_and_tuning.md](../research/notes/power_and_tuning.md) §3.1 | `clocks_summary.csv` (per mode, step, card), the A/B script |
+| 2026-10-24 | [2026-10-24_research_scratch/power](2026-10-24_research_scratch/power/README.md) | — | power, clocks and power-cap share per llama-bench test, from the 2026-10-22/23 rig traces | [power_and_tuning.md](../research/notes/power_and_tuning.md) | `phases.txt` (220 tests) and the three scripts that made it |
+| 2026-10-24 | — (`2026-10-24_q133_mem_offset`) | Q133 | the memory-offset kit's run plan; nothing ran on the rig | Q133 | nothing: the kit is [bench/mem_offset](../../bench/mem_offset/README.md) |

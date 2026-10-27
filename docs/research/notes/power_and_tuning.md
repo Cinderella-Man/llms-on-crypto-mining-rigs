@@ -65,9 +65,8 @@ and an `nvidia-smi -q` power and temperature query of all nine idle cards taken 
   est. 2.5–2.9 J per token on nine cards at Q104's 235–256 tok/s and 2.8–3.4 J on six cards, against 8.9 J (nine
   cards) and 6.2–7.2 J (six) today, i.e. 1.8–3.6× less energy per token even with the cap binding. Single-stream
   decode on six cards instead of nine already saves 20–30 % per token (measured: 6.2–7.2 against 8.9 J).
-- **Settings, ranked (details in the table):** (1) PowerMizer "Prefer Maximum Performance" for sessions of
-  single-stream or served decode, est. +14–18 % on decode that starts cold, at ~20–27 W more idle power per card while
-  set; (2) the memory offset (Q133), est. +3–5 % decode in the layer split and +2.5–4.5 % under the cap;
+- **Settings, ranked (details in the table):** (1) PowerMizer "Prefer Maximum Performance": measured in Q141, it gives
+  nothing and costs ~20 W per idle card (section 3.1), so it is not a setting to use; (2) the memory offset (Q133), est. +3–5 % decode in the layer split and +2.5–4.5 % under the cap;
   (3) a core offset (Q135), est. +1–2.5 % decode and, under the cap, ~2/3 of the offset in clock, est. +3–4 % prefill
   per +100 MHz; (4) a 60 W power limit in all-busy modes for efficiency, est. +10–20 % tokens per joule (GPU) for
   2.5–5.5 % less decode speed. Persistence mode matters only headless. Fans, temperature targets, locked clocks and
@@ -87,7 +86,7 @@ Q87/Q93/Q104/Q20 or a full prefill pipeline with every card near full duty.
 
 | # | Setting (interface) | Expected effect per mode (est.) | Risk | Reversible at runtime? | Owner approval | First test | Kill criterion |
 |---|---|---|---|---|---|---|---|
-| 1 | **PowerMizer "Prefer Maximum Performance"** per card (`nvidia-settings -a '[gpu:N]/GPUPowerMizerMode=1'`, NV-CONTROL attribute 334) | Layer split, decode starting cold (tg alone, short-prompt chat): **+14–18 %** (29.9 → ~34.7 tok/s on six cards, 31 → ~36 on nine); served chat after a short prompt +7–15 %; decode after a long prompt and all-busy modes 0 %. Idle power +20–27 W per card while set (P0 instead of P8) | Low: stock boost table, no overclock; higher idle power | Yes: set the default mode back (read first) | Yes (changes card behaviour; idle power) | R0 query, R1 cause check, R2 A/B (section 5) | The X server does not expose the cards (then the fallbacks of section 3.1); or tg alone gains < 3 % with the clocks at top bin |
+| 1 | **PowerMizer "Prefer Maximum Performance"** per card (`nvidia-settings -a '[gpu:N]/GPUPowerMizerMode=1'`, NV-CONTROL attribute 334) | Measured (Q141): **no gain** (tg128 from idle 29.79 against 29.75 tok/s, a served reply after a minute idle 33.30 against 33.25, six cards); idle power +~20 W per card while set (P0 instead of P8) | Low: stock boost table, no overclock; higher idle power | Yes: set the default mode back (read first) | Yes (changes card behaviour; idle power) | R0 query, R1 cause check, R2 A/B (section 5) | The X server does not expose the cards (then the fallbacks of section 3.1); or tg alone gains < 3 % with the clocks at top bin |
 | 2 | **Memory clock offset** (NVML `nvmlDeviceSetMemClkVfOffset`, Q133) | Layer split +3–5 % decode at +10 %; all-busy decode +2.5–4.5 % (1–3 W of memory power comes out of the core clock under the cap); prefill 0–3 % | Silent weight corruption; a hang needs a reboot at the console | Yes (offset 0) unless a card hangs | Approved for GPU0 | Q133's kit | Q133's criteria |
 | 3 | **Core clock offset** (NVML `nvmlDeviceSetGpcClkVfOffset` or `nvmlDeviceSetClockOffsets` for P0, Q135) | Per +100 MHz: layer split decode +1–2.5 %, prefill +4–5 %; under the cap ~2/3 of the offset survives as clock: all-busy decode +1–2 %, prefill +3–4 %. On Pascal the offset applies to every performance level, so base-clock decode gains too (1,354 → 1,454 MHz, +7 %) | Core instability: wrong results or Xid errors; a hang needs a reboot | Yes (offset 0) unless a card hangs | Yes; owner at the console | R6: the Q133 kit with `--core`, +25 MHz steps | < 2 % on a full prefill pipeline at +100 MHz, or any exact-check failure at the last clean step minus one |
 | 4 | **Power limit 60 W in all-busy modes** (`nvidia-smi -i N -pl 60`, NVML `nvmlDeviceSetPowerManagementLimit`) | All-busy decode −2.5–5.5 % speed for −14 to −20 % card power (70–75 → 60 W): **tokens per joule +10–20 %** (GPU), +7–17 % at the wall; all-busy prefill −7–10 % speed, +5–15 % tokens per joule (GPU); layer split: no effect | None: clocks stay on the stock curve | Yes (`-pl 75`; any reboot or driver reload resets it) | Yes (a speed-for-energy trade) | R4: 75 against 60 W during the all-busy oracle and pp8192 | GPU tokens per joule +8 % or less, or decode slower by more than 5 % |
@@ -273,13 +272,15 @@ report no memory temperature and no separate memory power.
   process, which is why they show busy cards at their top bin. In those runs light decode held the top bin for the
   whole tg128 (~15 s); how long it holds, and when the policy steps down (as the idle card above did), is not
   documented.
-- **What mode 1 should give (est.):** cold decode at the warm speed, +14–18 % on six or nine cards; a served chat with
-  a short prompt +7–15 %; nothing after a long prompt (agent turns with tool output are usually warm already) and
-  nothing in all-busy modes, where utilization keeps the cards at the top level anyway. Output cannot change: the
-  clocks stay on the stock boost table.
-- **Its cost:** with a client on every card (Xorg holds a context on each), mode 1 is expected to keep the cards in
-  P0 even when nothing runs: est. +20–27 W per card at idle (33 W against 6 W), ~+200–240 W for nine cards. Set it for
-  a session, or only on the cards in use, and put the default back afterwards; R2 measures the idle cost.
+- **Measured (Q141, 2026-10-24): mode 1 gives nothing and costs ~20 W per idle card.** UD-Q4_K_XL on six cards,
+  mode 2 (Auto, the default) against mode 1 on all nine: tg128 from idle 29.79 ± 1.61 against 29.75 ± 1.66 tok/s,
+  tg128 after a 2048-token prompt 35.07 against 34.31, a served 500-token reply after 60 s idle 33.30 against 33.25.
+  Clocks every ~0.23 s: busy cards run at a median 1,847–1,911 MHz in both modes, and in both a card's first busy
+  sample of a step reads 1,354 or 1,493 MHz, so mode 1 does not hold the top bin through the layer split's gaps. What it
+  does hold is P0 at idle: 1,354 MHz SM, the full memory clock and 26 W per card, against P8 at 139 MHz and 5.7–6.0 W
+  under Auto (~+180 W for nine idle cards). The cold start is a `llama-bench` tg-only effect: a served reply after a
+  minute idle runs within ~5 % of the warm tg128. Mode 2 restored on every card; benchmarks warm the cards first.
+  Data: [docs/data/2026-10-24_rig_q141](../../data/2026-10-24_rig_q141/README.md).
 - **Where it can be set.** Only through NV-CONTROL on a running X server that drives the cards, as the desktop user:
 
 ```bash
@@ -495,8 +496,7 @@ come after R3, because they only matter in the regime R3 measures.
   synthesis's "llama-bench state" a mechanism. Q118's conclusion stands (server and llama-bench were both cold), but
   its absolute speeds are cold-decode speeds. Every rig script should log `clocks.sm` with the results and state
   whether decode started cold or warm. The synthesis's clock-logged pair of runs is R1 here.
-- **A new lever ahead of the overclocks:** PowerMizer mode 1 (suggested row Q136: R1, then R2), est. +14–18 % on cold
-  decode with no output risk, if the X server exposes the cards. Headless mode (Q83) waits for its answer.
+- **PowerMizer mode 1 is not a lever:** measured in Q141, it gives nothing (section 3.1).
 - **The executor's power regime (Q87/Q104) needs R3's logging:** `bench/pipespec/rig_run.sh`, `rig_streams.sh` and
   `rig_hostloop.sh` log every second without P-state, memory clock or event reasons; the 200 ms query of 4.1 and the
   counters belong in them.

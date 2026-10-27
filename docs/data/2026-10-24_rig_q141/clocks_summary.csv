@@ -1,0 +1,91 @@
+mode,step,card,state,samples,seconds,sm_mhz_p10,sm_mhz_median,sm_mhz_max,sm_mhz_first_active,mem_mhz_median,power_w_mean,power_w_max,pstates
+2 (Auto),1 idle 60 s then tg128 from idle,0,idle,1014,235,139,139,1860,,405,9.4,32.0,P0:181 P8:833
+2 (Auto),1 idle 60 s then tg128 from idle,0,active,160,37,1354,1860,1860,1354,4006,30.2,31.8,P0:160
+2 (Auto),1 idle 60 s then tg128 from idle,1,idle,1006,233,139,139,1860,,405,9.8,33.5,P0:179 P8:827
+2 (Auto),1 idle 60 s then tg128 from idle,1,active,168,39,1354,1860,1860,1354,4006,31.6,33.3,P0:168
+2 (Auto),1 idle 60 s then tg128 from idle,2,idle,1016,236,139,139,1898,,405,9.4,32.3,P0:179 P8:837
+2 (Auto),1 idle 60 s then tg128 from idle,2,active,158,37,1354,1898,1911,1354,4006,30.5,32.5,P0:158
+2 (Auto),1 idle 60 s then tg128 from idle,3,idle,1007,234,139,139,1911,,405,9.6,33.6,P0:181 P8:826
+2 (Auto),1 idle 60 s then tg128 from idle,3,active,167,39,1354,1911,1911,1354,4006,31.4,33.6,P0:167
+2 (Auto),1 idle 60 s then tg128 from idle,4,idle,1027,238,139,139,1873,,405,9.3,32.3,P0:177 P8:850
+2 (Auto),1 idle 60 s then tg128 from idle,4,active,147,34,1354,1885,1885,1354,4006,30.2,32.2,P0:147
+2 (Auto),1 idle 60 s then tg128 from idle,5,idle,1030,239,139,139,1911,,405,8.2,33.3,P0:95 P8:935
+2 (Auto),1 idle 60 s then tg128 from idle,5,active,144,33,1354,1911,1911,1354,4006,31.9,42.6,P0:144
+2 (Auto),1 idle 60 s then tg128 from idle,6,idle,1174,272,139,139,139,,405,5.7,8.5,P8:1174
+2 (Auto),1 idle 60 s then tg128 from idle,7,idle,1174,272,139,139,139,,405,6.0,8.5,P8:1174
+2 (Auto),1 idle 60 s then tg128 from idle,8,idle,1174,272,139,139,139,,405,5.9,8.8,P8:1174
+2 (Auto),2 tg128 after a 2048-token prompt,0,idle,808,188,139,139,1860,,405,12.6,71.4,P0:253 P8:555
+2 (Auto),2 tg128 after a 2048-token prompt,0,active,189,44,1354,1860,1860,1354,4006,36.1,72.9,P0:189
+2 (Auto),2 tg128 after a 2048-token prompt,1,idle,799,186,139,139,1860,,405,13.4,69.1,P0:257 P8:542
+2 (Auto),2 tg128 after a 2048-token prompt,1,active,198,46,1354,1860,1860,1354,4006,36.2,72.5,P0:198
+2 (Auto),2 tg128 after a 2048-token prompt,2,idle,810,188,139,139,1898,,405,12.6,65.4,P0:253 P8:557
+2 (Auto),2 tg128 after a 2048-token prompt,2,active,187,43,1354,1898,1911,1354,4006,35.1,73.9,P0:187
+2 (Auto),2 tg128 after a 2048-token prompt,3,idle,800,186,139,139,1911,,405,13.1,62.5,P0:254 P8:546
+2 (Auto),2 tg128 after a 2048-token prompt,3,active,197,46,1354,1911,1911,1493,4006,36.9,74.0,P0:197
+2 (Auto),2 tg128 after a 2048-token prompt,4,idle,823,191,139,139,1873,,405,13.2,69.7,P0:273 P8:550
+2 (Auto),2 tg128 after a 2048-token prompt,4,active,174,40,1847,1873,1885,1493,4006,37.4,72.5,P0:174
+2 (Auto),2 tg128 after a 2048-token prompt,5,idle,834,194,139,139,1911,,405,12.9,69.2,P0:235 P8:599
+2 (Auto),2 tg128 after a 2048-token prompt,5,active,163,38,1860,1911,1911,1493,4006,37.1,74.7,P0:163
+2 (Auto),2 tg128 after a 2048-token prompt,6,idle,997,232,139,139,139,,405,5.7,8.4,P8:997
+2 (Auto),2 tg128 after a 2048-token prompt,7,idle,997,232,139,139,139,,405,6.0,8.5,P8:997
+2 (Auto),2 tg128 after a 2048-token prompt,8,idle,997,232,139,139,139,,405,5.8,8.8,P8:997
+2 (Auto),3 server load then 60 s idle then a 500-token reply,0,idle,1049,245,139,139,1860,,405,12.4,32.1,P0:337 P8:712
+2 (Auto),3 server load then 60 s idle then a 500-token reply,0,active,173,40,1354,1860,1860,1493,4006,30.1,34.3,P0:172 P8:1
+2 (Auto),3 server load then 60 s idle then a 500-token reply,1,idle,1039,242,139,139,1860,,405,13.1,41.3,P0:337 P8:702
+2 (Auto),3 server load then 60 s idle then a 500-token reply,1,active,183,43,1354,1860,1860,1493,4006,31.5,33.9,P0:182 P8:1
+2 (Auto),3 server load then 60 s idle then a 500-token reply,2,idle,1053,245,139,139,1898,,405,12.7,32.3,P0:351 P8:702
+2 (Auto),3 server load then 60 s idle then a 500-token reply,2,active,169,39,1354,1898,1898,1493,4006,30.1,32.2,P0:168 P8:1
+2 (Auto),3 server load then 60 s idle then a 500-token reply,3,idle,1046,244,139,139,1911,,405,13.3,33.6,P0:363 P8:683
+2 (Auto),3 server load then 60 s idle then a 500-token reply,3,active,176,41,1354,1911,1911,1493,4006,31.4,37.3,P0:176
+2 (Auto),3 server load then 60 s idle then a 500-token reply,4,idle,1063,248,139,139,1873,,405,11.7,32.5,P0:299 P8:764
+2 (Auto),3 server load then 60 s idle then a 500-token reply,4,active,159,37,1354,1873,1885,1873,4006,30.0,32.5,P0:158 P8:1
+2 (Auto),3 server load then 60 s idle then a 500-token reply,5,idle,1065,248,139,139,1911,,405,10.7,33.6,P0:217 P8:848
+2 (Auto),3 server load then 60 s idle then a 500-token reply,5,active,157,37,1354,1911,1911,1911,4006,31.4,33.8,P0:156 P8:1
+2 (Auto),3 server load then 60 s idle then a 500-token reply,6,idle,1222,285,139,139,1354,,405,5.7,26.1,P0:3 P8:1219
+2 (Auto),3 server load then 60 s idle then a 500-token reply,7,idle,1222,285,139,139,1354,,405,6.0,25.9,P0:2 P8:1220
+2 (Auto),3 server load then 60 s idle then a 500-token reply,8,idle,1222,285,139,139,1354,,405,5.9,25.8,P0:1 P8:1221
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,0,idle,995,233,1354,1354,1860,,4006,26.0,32.2,P0:995
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,0,active,161,38,1354,1860,1860,1354,4006,30.4,32.2,P0:161
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,1,idle,985,231,1354,1354,1847,,4006,27.1,33.4,P0:985
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,1,active,171,40,1354,1847,1860,1354,4006,31.7,33.7,P0:171
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,2,idle,997,234,1354,1354,1898,,4006,26.0,32.5,P0:997
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,2,active,159,37,1354,1898,1898,1354,4006,30.5,32.5,P0:159
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,3,idle,990,232,1354,1354,1898,,4006,26.5,33.8,P0:990
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,3,active,166,39,1354,1898,1911,1354,4006,31.6,33.8,P0:166
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,4,idle,1010,237,1354,1354,1873,,4006,26.1,32.4,P0:1010
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,4,active,146,34,1354,1873,1873,1354,4006,30.3,32.4,P0:146
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,5,idle,1012,237,1354,1354,1911,,4006,26.4,33.9,P0:1012
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,5,active,144,34,1354,1911,1911,1354,4006,32.3,45.5,P0:144
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,6,idle,1156,271,1354,1354,1354,,4006,26.2,26.4,P0:1156
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,7,idle,1156,271,1354,1354,1354,,4006,26.2,26.3,P0:1156
+1 (Prefer Maximum Performance),1 idle 60 s then tg128 from idle,8,idle,1156,271,1354,1354,1354,,4006,26.0,26.1,P0:1156
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,0,idle,862,199,1354,1354,1860,,4006,26.5,44.6,P0:862
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,0,active,192,44,1354,1860,1860,1354,4006,35.3,73.4,P0:192
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,1,idle,850,196,1354,1354,1847,,4006,27.6,63.5,P0:850
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,1,active,204,47,1354,1847,1847,1354,4006,36.5,73.7,P0:204
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,2,idle,865,199,1354,1354,1898,,4006,26.5,70.3,P0:865
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,2,active,189,44,1354,1898,1898,1354,4006,35.2,75.1,P0:189
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,3,idle,854,197,1354,1354,1898,,4006,26.9,72.4,P0:854
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,3,active,200,46,1354,1898,1898,1354,4006,36.6,76.2,P0:200
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,4,idle,880,203,1354,1354,1873,,4006,26.7,69.2,P0:880
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,4,active,174,40,1354,1873,1873,1493,4006,35.3,71.2,P0:174
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,5,idle,884,204,1354,1354,1911,,4006,27.8,75.0,P0:884
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,5,active,170,39,1860,1904,1911,1493,4006,37.9,72.3,P0:170
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,6,idle,1054,243,1354,1354,1354,,4006,26.3,26.4,P0:1054
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,7,idle,1054,243,1354,1354,1354,,4006,26.3,26.4,P0:1054
+1 (Prefer Maximum Performance),2 tg128 after a 2048-token prompt,8,idle,1054,243,1354,1354,1354,,4006,26.1,26.1,P0:1054
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,0,idle,1045,241,1354,1354,1847,,4006,26.1,32.4,P0:1045
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,0,active,176,41,1354,1847,1847,1493,4006,30.4,36.6,P0:176
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,1,idle,1037,239,1354,1354,1847,,4006,27.2,33.9,P0:1037
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,1,active,184,42,1354,1847,1847,1493,4006,32.0,34.9,P0:184
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,2,idle,1047,241,1354,1354,1898,,4006,26.0,32.9,P0:1047
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,2,active,174,40,1354,1898,1898,1493,4006,30.6,32.8,P0:174
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,3,idle,1043,240,1354,1354,1898,,4006,26.5,33.8,P0:1043
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,3,active,178,41,1354,1898,1898,1354,4006,31.5,33.7,P0:178
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,4,idle,1060,244,1354,1354,1873,,4006,26.2,32.5,P0:1060
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,4,active,160,37,1354,1873,1873,1493,4006,30.3,32.5,P0:160
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,5,idle,1063,245,1354,1354,1911,,4006,26.6,35.2,P0:1063
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,5,active,157,36,1354,1911,1911,1354,4006,32.0,34.4,P0:157
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,6,idle,1220,281,1354,1354,1354,,4006,26.3,26.4,P0:1220
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,7,idle,1220,281,1354,1354,1354,,4006,26.3,26.4,P0:1220
+1 (Prefer Maximum Performance),3 server load then 60 s idle then a 500-token reply,8,idle,1220,281,1354,1354,1354,,4006,26.1,26.2,P0:1220
