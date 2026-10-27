@@ -39,8 +39,9 @@ Conventions, as in the other notes here:
    - Without the shift bit (N2, N3) they cost about the same, and so do uniform-level variants (U2, U3).
    - Q2_K and Q3_K are already uniform-level formats: Pascal kernels in the Q4_K style would put them at est. 3.4 and
      4.9 ps per weight with no new type.
-   - The IQ2_S/IQ3_XXS Pascal kernels with tables in shared memory (fork branch `pascal-p106-v3-iqmmvq`, in progress)
-     need est. 2.7–2.9 slot-equivalents per weight plus bank conflicts: est. 5–7 ps per weight.
+   - The IQ2_S/IQ3_XXS Pascal kernels with tables in shared memory (fork branch `pascal-p106-v3-iqmmvq`) measure
+     9.9–12.9 ps per weight on the rig (28–36 GB/s), 1.2–1.7× llama.cpp's kernels: their shared-memory gathers stall on
+     bank conflicts, twice what the slot count alone predicted (5–7 ps).
 4. **Quality proxy (measured, section 4):** importance-weighted reconstruction error of 84 real expert matrices of
    Ornith-1.5-122B, CPU only.
    - Register-table levels match mainline's codebooks at equal size: N2 against IQ2_S at 2.5625 bits, N3-16 against
@@ -51,13 +52,13 @@ Conventions, as in the other notes here:
    - Uniform levels and Q2_K/Q3_K lose 11–24 %; Hadamard rotation loses 9 %; mainline's Q2_0 is unusable for
      post-training quantization.
 5. **Recommendation (section 5):**
-   - First, without new code: measure the IQ Pascal kernels on the rig, and move Ornith's dense tensors off Q8_0. Est.
-     −10 to −12 ms of a 118-ms token, the largest single lever.
+   - First, without new code: measure the IQ Pascal kernels on the rig (done since: 9.9–12.9 ps per weight, section 3),
+     and move Ornith's dense tensors off Q8_0. Est. −10 to −12 ms of a 118-ms token.
    - Then two cheap gates before building anything: N2+/N3+ prototype kernels in `bench/mmvq_pascal` against the IQ
      kernels on one P106, and a simulated-quantization KLD test on Ornith-1.5-35B.
    - Build N2+ and N3+ (~7–8 days) only if they decode ≥ 1.3× faster per weight than the IQ kernels and their KLD is
      at least as good. Expected then: ~12.4 tok/s with Q8_0 dense tensors and ~14.5 with Q5_0 ones, against today's
-     8.5, est. 10.9–11.8 for the IQ kernels and 12.2–13.4 for the IQ kernels with Q5_0 dense tensors.
+     8.5, 9.4 for the IQ kernels (their measured speed) and ~10.4 for the IQ kernels with Q5_0 dense tensors.
 
 ## 1. Why today's 2–3-bit formats are slow on the P106
 
@@ -285,7 +286,10 @@ shifts, plus its 12-byte scale packing: ~88 slot-equivalents, **est. 4.9 ps**.
 `sum(g·u) − 2·sum((g & neg)·u)`): per 32 weights IQ3_XXS needs 8 grid loads and 4 mask loads with their index and
 address arithmetic, 16 dp4a and 8 ANDs, about 93 slot-equivalents (est. 5.2 ps); IQ2_S about 85 (est. 4.7 ps). Random
 gathers from a table in shared memory also conflict on banks (32 banks of 4 bytes; 8-byte entries for IQ2_S), which
-stalls without costing issue slots. **Est. 5–7 ps per weight.**
+stalls without costing issue slots. **Measured on the rig** (UD-Q2_K_XL, 9 × P106, GGML_CUDA_PROFILE, the same binary
+with the kernels on and off): IQ3_XXS down-projections 12.9 ps per weight (llama.cpp's kernel 22.5), IQ2_S fused
+gate/up 9.9 ps (11.6), IQ3_XXS gate/up 10.6 ps, IQ2_S down 11.4 ps; 28–36 GB/s. The stalls double the slot estimate.
+N2P and N3P read no table from memory, so their estimates carry no such term; the rig measures them next.
 
 ### What it means for an Ornith token
 
@@ -295,7 +299,7 @@ time per token at the estimates above (my calc):
 | Experts | ps per weight (gate+up / down) | ms per token | Token time (rest as measured) | tok/s |
 |---|---|---|---|---|
 | Today: IQ2_S / IQ3_XXS, generic kernel (measured) | 10.8 / 20.5 | 50.8 | 117.7 | 8.5 |
-| IQ2_S / IQ3_XXS, shared-memory Pascal kernels | 5–7 | 18–25 | 85–92 | 10.9–11.8 |
+| IQ2_S / IQ3_XXS, shared-memory Pascal kernels (measured per weight) | 9.9 / 12.9 | 39.6 | 106.5 | 9.4 |
 | Q2_K / Q3_K, Pascal kernels | 3.4 / 4.9 | 14.1 | 81.0 | 12.3 |
 | N2 / N3 | 3.5 / 4.0 | 13.3 | 80.2 | 12.5 |
 | N2+ / N3+ | 3.7 / 4.0 | 13.8 | 80.7 | 12.4 |
@@ -453,9 +457,9 @@ of the error, so a mix gains most from giving them more bits.
   error-per-bit curve as mainline's codebooks (section 4), and better than uniform levels or the K-quants. The shift
   bit moves the 3-bit formats ~9–12 % ahead per bit, and the N2+/N3+ mix has 6 % less error than the best IQ mix of
   the same size: worth having, but not a reason on its own to build new types.
-- **Speed: est. 1.3–2× per expert weight over the IQ2_S/IQ3_XXS Pascal kernels with shared-memory tables, and 3–5×
-  over today.** That is ~5–12 ms of an ~85-ms token (est. +6–15 % tok/s), and depends entirely on how fast the IQ
-  kernels of `pascal-p106-v3-iqmmvq` turn out on a P106: if they reach ~4.5 ps per weight, a new format gains under 5 %.
+- **Speed: est. ~3× per expert weight over the IQ2_S/IQ3_XXS Pascal kernels with shared-memory tables (measured
+  9.9–12.9 ps per weight), and 3–5× over today.** That is ~26 ms of a ~107-ms token (est. +30 % tok/s), if N2P and
+  N3P reach their estimates on the rig.
 - **Bits are free in time, bytes are not.** Expert decode in any of these formats is issue-bound (est. 3.5–4 ps per
   weight whether 2.4 or 3.3 bits), so expert bits should be as many as memory allows. The dense tensors are the
   opposite: Q8_0 is bandwidth-bound (7.2 ps per weight in the profile), and moving the 5.35 G dense weights to Q5_0
@@ -467,8 +471,8 @@ Projected decode (my calc; today's other work unchanged, MTP off):
 | Route | Experts | Dense | ms per token | tok/s |
 |---|---|---|---|---|
 | Today (measured) | IQ2_S/IQ3_XXS, generic kernel | Q8_0 | 117.7 | 8.5 |
-| IQ Pascal kernels | IQ2_S/IQ3_XXS, 5–7 ps | Q8_0 | 85–92 | 10.9–11.8 |
-| IQ Pascal kernels + dense Q5_0 | IQ mix at ~2.85 bits, 5–7 ps | Q5_0, head and k/v Q8_0 | 75–82 | 12.2–13.4 |
+| IQ Pascal kernels | IQ2_S/IQ3_XXS, 9.9/12.9 ps (measured) | Q8_0 | 106.5 | 9.4 |
+| IQ Pascal kernels + dense Q5_0 | IQ mix at ~2.85 bits, ~10–13 ps | Q5_0, head and k/v Q8_0 | ~96 | ~10.4 |
 | New register-table formats | N2+/N3+, 3.7/4.0 ps | Q8_0 | 81 | 12.4 |
 | New formats + dense Q5_0 | N2+/N3+ at 2.875 bits | Q5_0 | 69 | 14.5 |
 | Q2_K/Q3_K Pascal kernels + dense Q5_0 | Q2_K/Q3_K, 3.4/4.9 ps | Q5_0, head and k/v Q8_0 | 71 | 14.1 (with ~12 % more expert error at equal size) |
