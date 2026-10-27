@@ -67,6 +67,7 @@ Every mix's exact recipe and score is also in [quants/recipes/flint-mixes.tsv](.
 | 2026-10-24 | [2026-10-24_q92_screen_head](2026-10-24_q92_screen_head/README.md) | Q92 | the screened head in the engine: identity, server A/B | [quants/gptq_head](../../quants/gptq_head/README.md) | check scripts; the prompts and the server A/B are in `quants/gptq_head/` |
 | 2026-10-24 | [2026-10-24_research_scratch](2026-10-24_research_scratch/ESTIMATES.md) | — | the arithmetic behind "(est.)" figures: GPTQ payoff, the first-finish race, code entropy, UD-Q4_K_XL's tensor map, imatrix structure | [gptq_body.md](../research/notes/gptq_body.md), [unconventional_ideas.md](../research/notes/unconventional_ideas.md), [long_context_quality.md](../research/notes/long_context_quality.md) | the estimate scripts |
 | 2026-10-24 | — (`2026-10-24_resume`, `2026-10-24_storage`) | Q73, Q77, Q90 | nothing new: job recipes and disk moves | Q73, Q77, Q90 | nothing: the recipes are in `flint-mixes.tsv` |
+| 2026-10-27 | [2026-10-27_slq](2026-10-27_slq/README.md) | — | the published SLQ models (The Kaitchup's Qwen3.8-27B, vLLM and GGUF): every tensor's format and bytes, the integer grid's bit widths, decoder bytes at equal EAR | [slq.md](../research/notes/slq.md) | per-tensor and per-format tables of the three GGUFs, per-projection bit widths of the three vLLM checkpoints, summaries, run scripts |
 
 ## Agentic data
 
