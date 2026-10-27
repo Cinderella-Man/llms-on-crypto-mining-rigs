@@ -189,6 +189,9 @@ def cmd_seqs(args):
             and (only is None or r["id"] in only)]
     if args.take and args.take < len(rows):
         rows = sorted(random.Random(args.seed).sample(rows, args.take), key=lambda r: int(r["id"].split("_")[-1]))
+    nums = [int(r["id"].split("_")[-1]) for r in rows]
+    if len(set(nums)) != len(nums):   # e.g. Q51 (chat_0, code_0, ...): a dump of it needs its own row numbering
+        raise SystemExit("rows share an id number, so their seq_ids would repeat: number the rows instead")
     with open(args.out_seqs, "w") as f, open(args.out_map, "w") as m:
         for r in rows:
             sid = int(r["id"].split("_")[-1])

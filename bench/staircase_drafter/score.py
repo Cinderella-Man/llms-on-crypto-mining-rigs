@@ -29,11 +29,13 @@ import train  # noqa: E402
 
 
 def position_labels(gen_rows, ff):
-    """Per test sequence (by seq_id, the numeric end of the row's id as in feats.py seqs): category, per generated
-    token in_copy and segment."""
+    """Per test sequence: category, per generated token in_copy and segment. Keyed by seq_id as feats.py seqs numbers
+    it (the numeric end of the row's id), or by row index when those numbers repeat: Q51's ids number each category
+    on its own (chat_0, code_0, ...), and its dump file numbers the rows 0, 1, 2, ..."""
     out = {}
-    for r in gen_rows:
-        sid = int(r["id"].split("_")[-1])
+    nums = [int(r["id"].split("_")[-1]) for r in gen_rows]
+    keys = nums if len(set(nums)) == len(nums) else range(len(gen_rows))
+    for sid, r in zip(keys, gen_rows):
         gen = r["gen_tokens"]
         in_copy = np.zeros(len(gen), bool)
         for start, ln, _ in replay.copy_factors(r["prompt_tokens"], gen, 8):

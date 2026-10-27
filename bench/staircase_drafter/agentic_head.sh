@@ -5,7 +5,7 @@
 #
 #   WORK=<out> RUNS="<agentic run WORK> ..." MODEL=<flint-Q8_0.gguf> HF_DIR=<RecursiveSI/flint small files> \
 #   LLAMA=<llama.cpp tree with build-cuda/bin/llama-staircase-dump> Q51_GEN=<Q51 answers> Q51=<Q51 prompts.jsonl> \
-#   bash bench/staircase_drafter/agentic_head.sh
+#   Q51_SEQS=<Q51's dump input, rows numbered 0, 1, ... in Q51_GEN's order> bash bench/staircase_drafter/agentic_head.sh
 #
 # Environment:
 #   WORK        output folder: export/, ids/, seqs/, flint/, vocab.npy, heads/, scores/, gguf/, head.log
@@ -25,7 +25,7 @@
 set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 BENCH=$(cd "$HERE/.." && pwd)
-: "${WORK:?}" "${RUNS:?}" "${MODEL:?}" "${HF_DIR:?}" "${LLAMA:?}" "${Q51_GEN:?}" "${Q51:?}"
+: "${WORK:?}" "${RUNS:?}" "${MODEL:?}" "${HF_DIR:?}" "${LLAMA:?}" "${Q51_GEN:?}" "${Q51:?}" "${Q51_SEQS:?}"
 FEATS_DIRS=${FEATS_DIRS:-$WORK/feats}
 DUMP_SETS=${DUMP_SETS:-5,6 0,1,2 3,4}
 HEADS=${HEADS:-gen:2:--general|nine:5:--general --cards 9e,9l,9l}
@@ -76,8 +76,9 @@ if has split; then
     | tee -a "$WORK/head.log"
   trun "python -I feats.py seqs $WORK/seqs/test.txt $WORK/seqs/test-map.jsonl $WORK/seqs/test-rows.jsonl \
 --max-tok 1000000" | tee -a "$WORK/head.log"
-  trun "python -I feats.py seqs $WORK/seqs/q51.txt $WORK/seqs/q51-map.jsonl $Q51_GEN --max-tok 1000000" \
-    | tee -a "$WORK/head.log"
+  # Q51's ids number each category on its own (chat_0, code_0, ...): its dump input numbers the rows instead, and
+  # score.py labels it by row
+  cp "$Q51_SEQS" "$WORK/seqs/q51.txt"
 fi
 
 if has weights; then
