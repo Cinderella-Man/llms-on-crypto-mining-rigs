@@ -15,3 +15,17 @@ loads).
 
 Build B stages a fused gate/up's two matrices one after the other in the same buffer (as the Q6_K kernels do) instead
 of both at once.
+
+## Round 2's variants (one-token kernels)
+
+| Variant | Plain or with bias, IQ2_S | Plain or with bias, IQ3_XXS | Fused gate/up, IQ2_S | Fused gate/up, IQ3_XXS |
+|---|---|---|---|---|
+| lut1-mb1-r1 (round 1) | 121–126 | 101–111 | 194–228 | 201–251 |
+| lut0-mb1-r1 | 162–168 | 93–96 | 203–215 | 180–196 |
+| lut1-mb3-r1 | 121–126 | 100–116 | 168 | 168 |
+| **lut0-mb3-r1 (default from `ea55c7865`)** | 157–158 | 90–101 | 167–168 | 168 |
+| lut0-mb4-r1 | 123–125 | 90–101 | 128 + 0–40 bytes of stack | 128 + 8–40 bytes of stack |
+
+No spills apart from mb4's. With the sign masks in registers (lut0), IQ2_S's plain kernels need more registers and
+IQ3_XXS's fewer. The `-r2` variants have the same counts as their `-r1` ones; the persistent variants (`-p<n>`) need
+more registers in most of their plain kernels.

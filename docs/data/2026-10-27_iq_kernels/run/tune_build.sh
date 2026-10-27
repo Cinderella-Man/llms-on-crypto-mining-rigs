@@ -29,7 +29,7 @@ docker run --rm --cpu-shares=256 --label "$LABEL" --name v3iq-tune -e VARIANTS="
         > /out/cmake-tune.log 2>&1 || { tail -20 /out/cmake-tune.log; exit 1; }
     for v in $VARIANTS; do
         lut=$(echo $v | sed -E "s/lut([0-9]+)-.*/\1/"); mb=$(echo $v | sed -E "s/.*-mb([0-9]+)-.*/\1/")
-        r=$(echo $v | sed -E "s/.*-r([0-9]+).*/\1/"); ps=$(echo $v | grep -oE "p[0-9]+$" | tr -d p); ps=${ps:-0}
+        r=$(echo $v | sed -E "s/.*-r([0-9]+).*/\1/"); ps=$(echo $v | sed -nE "s/.*-p([0-9]+)$/\1/p"); ps=${ps:-0}
         sed -i -E "s/^#define MMVQP_IQ_SIGN_LUT [0-9]+/#define MMVQP_IQ_SIGN_LUT $lut/; s/^#define MMVQP_IQ_MIN_BLOCKS [0-9]+/#define MMVQP_IQ_MIN_BLOCKS $mb/; s/^#define MMVQP_IQ_R [0-9]+/#define MMVQP_IQ_R $r/; s/^#define MMVQP_IQ_PERSIST [0-9]+/#define MMVQP_IQ_PERSIST $ps/" $H
         grep -E "^#define MMVQP_IQ_(SIGN_LUT|MIN_BLOCKS|R|PERSIST) " $H | tr "\n" " "; echo
         t0=$(date +%s)

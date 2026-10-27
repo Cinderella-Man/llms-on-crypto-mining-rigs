@@ -26,3 +26,16 @@ both gave the same counts. "Native" runs the sm_70 code; "6.1 code" runs the com
   activation blocks sum past FP16's range, routed + shared expert launches, and tokens that pick the same expert.
 - Under the JIT, prompt-sized batches (9 to 512 tokens) run llama.cpp's own batched kernels, which this branch does
   not change: there Q6_K's MUL_MAT_ID cases fail and the IQ runs abort; they pass natively.
+
+## Round 2's default on a P106
+
+The winning variant `lut0-mb3-r1` (sign masks in registers, registers for three blocks per SM; fork commit
+`ea55c7865` makes it the default) on one P106-090, its own `test-backend-ops` against the rig's CPU. Only cases whose
+weights the 2-core Celeron quantizes in minutes run there; the Ornith-sized cases (k = 2048–4096, 32 or 64 experts) are
+left out by the `-p` filter in the README's commands:
+
+| Operation | IQ2_S and IQ3_XXS cases | Passed |
+|---|---|---|
+| MUL_MAT | 102 | 102 |
+| MUL_MAT_ID | 20 | 20 |
+| MUL_MAT_VEC_FUSION | 2 | 2 |

@@ -6,7 +6,8 @@
 # nothing else on the rig; results in OUT/<candidate>/. CANDS picks the candidates below, in order.
 #   RIG=rig CLIENT=<client ssh alias> CLIENT_WORK=<folder on the client> AD=<rig path of the AD GGUF> \
 #   STOCK=<rig path of stock llama-server> V2=<rig path of Miner Llama v2.0 llama-server> OUT=<local folder> \
-#   CANDS="stock v2 stock-mtp v2-mtp" bash agent_ornith.sh        (UD=<rig path of the UD GGUF> for ud-stock, ud-v2)
+#   CANDS="stock v2 stock-mtp v2-mtp" bash agent_ornith.sh        (UD=<rig path of the UD GGUF> for ud-stock, ud-v2;
+#   also V3=<rig path of a llama-server with the IQ2_S/IQ3_XXS Pascal kernels> for ud-v3)
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/../../../.." && pwd)
 CANDS=${CANDS:?candidates, e.g. "stock"}
@@ -40,6 +41,7 @@ for c in $CANDS; do
     v2-mtp)      ARMS=rel;   CTX=${V2_MTP_CTX:-$V2_CTX}; REL_ARGS="$V2_MTP_LINE" ;;
     ud-stock)    M=${UD:?}; ARMS=stock; CTX=${UD_STOCK_CTX:-$STOCK_CTX}; STOCK_ARGS="${UD_STOCK_LINE:-$STOCK_LINE}" ;;
     ud-v2)       M=${UD:?}; ARMS=rel;   CTX=${UD_V2_CTX:-$V2_CTX}; REL_ARGS="${UD_V2_LINE:-$V2_LINE}" ;;
+    ud-v3)       M=${UD:?}; ARMS=rel;   CTX=${UD_V2_CTX:-$V2_CTX}; REL_BIN=${V3:?}; REL_ARGS="${UD_V2_LINE:-$V2_LINE}" ;;
     *) echo "unknown candidate $c"; continue ;;
   esac
   echo "=== $c: MODEL=$M ARMS=$ARMS CTX=$CTX STOCK_ARGS='$STOCK_ARGS' REL_ARGS='$REL_ARGS' $(date +%T)"

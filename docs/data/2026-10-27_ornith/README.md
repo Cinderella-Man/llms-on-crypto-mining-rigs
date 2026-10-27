@@ -1,16 +1,16 @@
 # Ornith-1.5-122B on nine P106 cards: agent check, memory projections, probes and power (2026-10-27)
 
 The first rig run of Ornith-1.5-122B (registry row Q158): llama.cpp's own memory projection for 16 configurations,
-single-request probes of eight server lines, the agent check on four lines (stock llama.cpp and Miner Llama v2.0, each
-with and without the model's MTP head), GPU power and energy per task, the two GGUF files' tensor layouts and v2.0's
-decode profile. The results are in [the Ornith benchmark](../../benchmarks/2026-10-27-ornith-122b.md) and on
+single-request probes of eight server lines, the agent check on six lines (with AtomicChat's AD-IQ3_XXS-IQ2_S file,
+stock llama.cpp and Miner Llama v2.0, each with and without the model's MTP head; with Unsloth's UD-Q2_K_XL, stock
+and v2.0), GPU power and energy per task (AD lines), the two GGUF files' tensor layouts and v2.0's decode profile. The results are in [the Ornith benchmark](../../benchmarks/2026-10-27-ornith-122b.md) and on
 [the model page](../../../models/ornith-1.5-122b/README.md).
 
 ## More results
 
 - **The harness rates every agent line "Overall: NO-GO", on host memory.** Its memory check asks for at least 600 MB
-  available and no swap growth; the four lines kept 421–595 MB available at their lowest and swapped ~300 MB more
-  during the run. Three lines also fail the proxy-row check, each on a task that ran into the 12-minute cap (the
+  available and no swap growth; the six lines kept 421–595 MB available at their lowest and swapped ~300 MB more
+  during the run. Four lines also fail the proxy-row check, each on a task that ran into the 12-minute cap (the
   request in flight at the cap has no reply).
 
 | Line | Lowest MemAvailable | Swap used | Proxy rows |
@@ -19,6 +19,8 @@ decode profile. The results are in [the Ornith benchmark](../../benchmarks/2026-
 | stock + MTP | 482 MB | 369 → 670 MB | GO |
 | v2.0 | 595 MB | 369 → 696 MB | NO-GO (list-ops, scale-generator) |
 | v2.0 + MTP | 421 MB | 354 → 652 MB | NO-GO (scale-generator) |
+| UD-Q2_K_XL, stock (`ud-stock`) | 564 MB | 356 → 659 MB | NO-GO (scale-generator) |
+| UD-Q2_K_XL, v2.0 (`ud-v2`) | 495 MB | 359 → 660 MB | GO |
 
 - **GPU energy (the nine cards, from `nvidia-smi` every 10 s):** 270–295 W while tasks run, ~90 W while the server
   loads. On the six tasks both passed, stock used 109.0 Wh and v2.0 80.6 Wh (1.35× less); per generated token on the
@@ -39,12 +41,12 @@ decode profile. The results are in [the Ornith benchmark](../../benchmarks/2026-
 | `agent/<line>/validation.txt` | the 12 tasks validated in the sandbox image before the run (the reference solution passes all tests, the empty file fails some, the visible tests run) |
 | `agent/<line>/attempts.csv` | one row per attempt (`bench/agent_check/report.py`'s input): result, tokens, turns, wall, prefill, decode and fixed seconds, cache, tool-call counts, test counts |
 | `agent/<line>/turns.csv` | one row per request: time to first token, end time, new and cached prompt tokens, prompt ms, generated tokens, decode ms, finish reason, tool calls |
-| `agent_power.csv` | per line and task: minutes, samples, the nine cards' mean and peak summed power, the highest card, median SM clock of busy cards, energy (Wh), output tokens and joules per output token (left out for runaways, whose last reply never finished); rows for the server load and for all tasks |
+| `agent_power.csv` | the four AD lines, per line and task: minutes, samples, the nine cards' mean and peak summed power, the highest card, median SM clock of busy cards, energy (Wh), output tokens and joules per output token (left out for runaways, whose last reply never finished); rows for the server load and for all tasks |
 | `fit_projection.csv` | per configuration (file, engine, context, micro-batch, `-ts`, MTP drafts): projected MiB per card, the smallest free MiB and its card, the total, host buffers, and whether every card keeps 150 MiB |
 | `serve_probe.csv` | per server line: status, load seconds, MiB per card after loading, host MemAvailable after loading and after the requests, fresh prompt tok/s, next-turn first token, decode tok/s at 16k with MTP drafts and acceptances, and the two identity prompts' output hash (first 12 hex digits of MD5) and tok/s |
 | `header-Ornith-1.5-122B-AD-IQ3_XXS-IQ2_S.txt`, `header-Ornith-1.5-122B-UD-Q2_K_XL.txt` | [scripts/gguf_summary.py](../../../scripts/gguf_summary.py) on each file: metadata, tensor bytes per role and type, per block |
 | `decode_profile_v2.txt` | [scripts/prof_summary.py](../../../scripts/prof_summary.py) on v2.0's `GGML_CUDA_PROFILE` trace of the `v2-plain-prof` probe: ~591 one-token steps, GPU time per token per card, per first op, per weight type and per launch group |
-| `run/agent_ornith.sh` | the four agent-check lines (and two for UD-Q2_K_XL), with the harness's machine values as variables |
+| `run/agent_ornith.sh` | the agent-check lines (`stock`, `v2`, `stock-mtp`, `v2-mtp` with the AD file; `ud-stock`, `ud-v2` and `ud-v3`, the IQ2_S/IQ3_XXS kernels' build, with UD-Q2_K_XL), with the harness's machine values as variables |
 
 `fit_projection.csv`: per card the main model's memory (weights, context, compute) plus, with the MTP head, the extra
 model's context and compute (it shares the weights). Where llama.cpp printed its own "projected memory use" lines they
@@ -84,6 +86,11 @@ MODEL=... BUILDS=... OUT=serve_probe.md \
 # the agent check, four lines (35-minute budget each)
 CLIENT=<client> CLIENT_WORK=<folder on the client> AD=<rig path> STOCK=<stock llama-server> V2=<v2.0 llama-server> \
   OUT=agent CANDS="stock v2 stock-mtp v2-mtp" bash docs/data/2026-10-27_ornith/run/agent_ornith.sh
+
+# the same with UD-Q2_K_XL, split by bytes
+CLIENT=<client> CLIENT_WORK=<folder on the client> AD=<rig path> UD=<rig path of the UD file> STOCK=... V2=... \
+  UD_STOCK_LINE="-b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off" UD_V2_LINE="-b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off" \
+  OUT=agent CANDS="ud-stock ud-v2" bash docs/data/2026-10-27_ornith/run/agent_ornith.sh
 ```
 
 `fit_projection.csv` and `serve_probe.csv` are those two scripts' logs turned into tables; `agent_power.csv` comes
