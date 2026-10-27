@@ -614,7 +614,8 @@ request's continuations and the store (`cont` with `--pipe-store`); "head" = `--
 
 The first heads trained on publishable data: agentic run 1 (1,108 sessions, 14.3 M generated tokens), the 26-layer
 grid, `--ctx 4096`, 240 minutes each (~0.9 epoch), a 3–12-card head (`gen`) and a nine-card head (`nine`), vocabulary
-29,288 ids. Offline at nine cards (coupled acceptance, α 1, all positions / fresh text):
+29,288 ids. Data, logs and scripts: [docs/data/2026-10-27_mtp_head](data/2026-10-27_mtp_head/README.md). Offline at
+nine cards (coupled acceptance, α 1, all positions / fresh text):
 
 | Head | Validation (sessions of training modules) | Held-out modules (40 sessions) | Q51 |
 |---|---|---|---|

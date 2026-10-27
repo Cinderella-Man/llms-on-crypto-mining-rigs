@@ -1,0 +1,67 @@
+{
+ "head": "A",
+ "profile": {
+  "committed": "full",
+  "windows": {
+   "stair": [
+    "L9",
+    "L17",
+    "L33",
+    "L41"
+   ],
+   "miss": [
+    "L9"
+   ]
+  }
+ },
+ "vocab": "$WORK/vocab.npy",
+ "n_params": 160817769,
+ "train_seqs": 1074,
+ "val_seqs": 34,
+ "train_items": 6624,
+ "val_items": 243,
+ "train_gen_tokens": 13745458,
+ "args": {
+  "head": "A",
+  "feats": [
+   "$WORK/feats/train-d34.bin",
+   "$WORK/feats/train-d56.bin",
+   "$WORK_B/feats/train-d012.bin"
+  ],
+  "vocab": "$WORK/vocab.npy",
+  "flint": "$WORK/flint",
+  "out": "$WORK/heads/gen",
+  "minutes": 240.0,
+  "lr": 0.0002,
+  "warmup": 100,
+  "accum_targets": 8192,
+  "fp16": false,
+  "max_seqs": 0,
+  "max_tok": 1000000,
+  "eval_every": 15,
+  "seed": 1,
+  "layers": 2,
+  "device": "cuda",
+  "ckpt_every": 30,
+  "resume": false,
+  "init_from": null,
+  "window_sample": null,
+  "loss": "kl",
+  "eta": 3.0,
+  "fuse": false,
+  "noise": 0.0,
+  "dropout": 0.0,
+  "only": null,
+  "rec_weights": null,
+  "copy_weight": 1.0,
+  "val_seqs": 60,
+  "general": true,
+  "cards": null,
+  "reg": 0.0,
+  "spans": [
+   "$WORK/export/train/sessions_seq.jsonl"
+  ],
+  "ctx": 4096,
+  "chunk_targets": 4096
+ }
+}
