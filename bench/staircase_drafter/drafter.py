@@ -464,3 +464,12 @@ def coupled_and_top(logits, top_ids_draft, p_kept, alpha=1.0):
     best = q.argmax(-1)
     top = (p_kept * (top_ids_draft == best[:, None]) * in_vocab).sum(-1)
     return coupled, top, q.max(-1).values
+
+
+def overlap(logits, top_ids_draft, p_kept, alpha=1.0):
+    """Per target: sum over Flint's kept tokens of min(p, q^alpha renormalized), the match probability of the best
+    possible coupling (1 minus the total variation between the two distributions); an upper bound for every coupling."""
+    q = torch.softmax(alpha * logits.float(), -1)
+    other = q.shape[1] - 1
+    qk = q.gather(1, top_ids_draft) * (top_ids_draft != other) * (p_kept > 0)
+    return torch.minimum(p_kept, qk).sum(-1)

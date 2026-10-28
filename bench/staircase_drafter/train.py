@@ -3,7 +3,7 @@
 usage: python train.py --head A --feats F1.bin [F2.bin ...] --vocab vocab.npy --flint FLINT_DIR --out OUT_DIR
                        [--minutes 180] [--lr 2e-4] [--accum-targets 8192] [--fp16] [--max-seqs N] [--seed 1]
 FLINT_DIR holds flint_weights.py's output. The schedule is time-based: linear warm-up, then cosine decay to 10 % over
---minutes, so a run ends on time whatever the GPU. Every 3 % of the sequences (every 33rd) are held out for validation.
+--minutes, so a run ends on time whatever the GPU; with --max-steps it follows optimizer steps instead (paired arms). Every 3 % of the sequences (every 33rd) are held out for validation.
 OUT_DIR gets head.pt (the weights with the best validation acceptance of the first window, or for --general the mean
 over the staircases of its card counts, without Flint's embedding table), head-last.pt, config.json, log.jsonl and ckpt.pt (weights, optimizer and scaler state, step and elapsed time,
 written every --ckpt-every minutes). Creating OUT_DIR/STOP ends the run early with its final evaluation and save.
@@ -61,7 +61,7 @@ class Batch:
     """CPU side of one sequence for one head: copies out of the memory map, ready to move to the GPU."""
 
     def __init__(self, rec, profile, t2d, min_target=8, all_anchors=False, sampler=None, copy_weight=1.0,
-                 spans=None, part=None, ctx=0, n_layer=2):
+                 spans=None, part=None, ctx=0, n_layer=2, pos_weight=None):
         """sampler: a function of the record's recorded layers returning one window ({"sample": names}); the window
         is then drawn here, in the loader thread, and only its layers are read. copy_weight < 1: loss weight of the
         targets inside a copy of >= 8 tokens from the prompt or the earlier output (the copy lookup guesses those).
@@ -69,7 +69,8 @@ class Batch:
         generated, not a tool result. part (lo, hi): only targets in [lo, hi), a piece of a long sequence; the batch
         then holds positions p0 .. the last target, where p0 = 0, or with ctx > 0 (the head attends to the last ctx
         committed positions) the first position the targets can reach through n_layer blocks. tokens, tpos and the
-        arrays' first positions count from p0."""
+        arrays' first positions count from p0. pos_weight: a loss weight per generated token of the record (indexed
+        like j below), multiplied into copy_weight's."""
         self.n_prompt, self.n_tok = rec.n_prompt, rec.n_tok
         tokens = np.array(rec.tokens, np.int64)
         self.window = sampler(rec.layers) if sampler else None
@@ -91,6 +92,9 @@ class Batch:
         self.weight = None
         if copy_weight != 1.0:
             self.weight = np.where(copy_mask(tokens, rec.n_prompt)[j], copy_weight, 1.0).astype(np.float32)
+        if pos_weight is not None:
+            w = pos_weight[np.minimum(j, len(pos_weight) - 1)].astype(np.float32)
+            self.weight = w if self.weight is None else self.weight * w
         self.p0 = max(0, lo - wmax - n_layer * ctx) if part and ctx else 0
         p1 = rec.n_tok if part is None or not len(tpos) else int(tpos[-1]) + 1
         self.tokens, self.tpos = tokens[self.p0:p1], tpos - self.p0
@@ -250,7 +254,7 @@ def build_inputs(d, profile, windows, n_embd, dtype, fuse=False):
 
 
 def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=None, copy_weight=1.0, spans=None,
-           ctx=0, n_layer=2):
+           ctx=0, n_layer=2, pos_weights=None):
     """Batches of the items in order: (file, record, part), part as in target_parts."""
     for ff, i, part in order:
         if stop.is_set():
@@ -258,7 +262,8 @@ def loader(records, profile, t2d, order, q, stop, all_anchors=False, sampler=Non
         try:
             rec = records[ff][i]
             b = Batch(rec, profile, t2d, all_anchors=all_anchors, sampler=sampler, copy_weight=copy_weight,
-                      spans=(spans or {}).get(rec.seq_id), part=part, ctx=ctx, n_layer=n_layer)
+                      spans=(spans or {}).get(rec.seq_id), part=part, ctx=ctx, n_layer=n_layer,
+                      pos_weight=(pos_weights or {}).get(rec.seq_id))
             if len(b.tpos):
                 q.put(b)
         except Exception as e:  # noqa: BLE001
@@ -308,6 +313,9 @@ def main():
     ap.add_argument("--flint", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--minutes", type=float, default=180)
+    ap.add_argument("--max-steps", type=int, default=0,
+                    help="a step budget instead of the time budget: the schedule and the end follow optimizer steps "
+                         "(the same run on any GPU, e.g. paired arms); --minutes stays a cap")
     ap.add_argument("--lr", type=float, default=2e-4)
     ap.add_argument("--warmup", type=int, default=100)
     ap.add_argument("--accum-targets", type=int, default=8192)
@@ -332,6 +340,11 @@ def main():
                                    "records of the feature files")
     ap.add_argument("--rec-weights", help="file of 'answer_id weight' lines: records drawn that many times per epoch "
                                           "(fractions drawn at random; default 1), e.g. code and agent answers up")
+    ap.add_argument("--kinds", default="0.6,0.15,0.25",
+                    help="depth-general heads: P_STAIR,P_PRE,P_MISS, the window kinds sample_general draws")
+    ap.add_argument("--source-labels", help="source_labels.py's npz: per record (seq id) a label per generated token")
+    ap.add_argument("--source-weights", help="W_COPY,W_CONT2,W_CONT1,W_NONE,W_OTHER: loss weight per label "
+                                             "(the lookup that would guess there; other = a tool result or unlabelled)")
     ap.add_argument("--copy-weight", type=float, default=1.0,
                     help="loss weight of targets inside a copy of >= 8 tokens from the prompt or the earlier output "
                          "(the copy lookup guesses those; < 1 spends the head on the rest)")
@@ -406,7 +419,15 @@ def main():
     if args.general:
         srng = random.Random(args.seed + 7)
         cards = args.cards.split(",") if args.cards else None
-        general_sampler = lambda layers: sample_general(layers, srng, cards=cards)   # noqa: E731
+        kinds = tuple(float(x) for x in args.kinds.split(","))
+        general_sampler = lambda layers: sample_general(layers, srng, kinds=kinds, cards=cards)   # noqa: E731
+    # per-position loss weights by what llama-server's lookups would guess there (source_labels.py)
+    pos_weights = None
+    if args.source_weights:
+        table = np.array([float(x) for x in args.source_weights.split(",")], np.float32)
+        lab = np.load(args.source_labels)
+        pos_weights = {int(k): table[lab[k]] for k in lab.files}
+        print(json.dumps({"source_weights": table.tolist(), "labelled_records": len(pos_weights)}), flush=True)
     # validation windows; the best checkpoint is the one with the highest mean acceptance over the primary ones
     eval_profile, primary = profile, [next(iter(windows))]
     if args.general:   # the staircases of the card counts the head is for (6 and 9 for the 3-12 head)
@@ -462,7 +483,7 @@ def main():
         rng.shuffle(order)
         q, stop = queue.Queue(maxsize=6), threading.Event()
         th = threading.Thread(target=loader, args=(files, profile, t2d, order, q, stop, all_anchors, general_sampler,
-                                                   args.copy_weight, spans, args.ctx, args.layers),
+                                                   args.copy_weight, spans, args.ctx, args.layers, pos_weights),
                               daemon=True)
         th.start()
         while True:
@@ -472,11 +493,12 @@ def main():
             if b is None:
                 break
             elapsed = time.time() - t_start
-            if elapsed > budget or os.path.exists(os.path.join(args.out, "STOP")):
+            if elapsed > budget or (args.max_steps and step >= args.max_steps) or \
+                    os.path.exists(os.path.join(args.out, "STOP")):
                 done = True
                 stop.set()
                 break
-            frac = elapsed / budget
+            frac = min(1.0, step / args.max_steps) if args.max_steps else elapsed / budget
             lr = args.lr * min(1.0, (step + 1) / args.warmup) * (0.1 + 0.9 * 0.5 * (1 + math.cos(math.pi * frac)))
             for g in opt.param_groups:
                 g["lr"] = lr

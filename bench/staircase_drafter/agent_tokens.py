@@ -6,6 +6,10 @@ request body and its reply per line, gzip). One output row per request: {"id", "
 it has the request).
 
 usage: python agent_tokens.py BODIES.jsonl.gz [BODIES.jsonl.gz ...] --model HF_DIR --out SEQ.jsonl
+                              [--traces TAG,TAG,...] [--id-base N]
+--traces keeps the requests of these traces only (tags as in the proxy log without the request number, e.g.
+rel/bugfix-python-list-ops/a1/t1); --id-base N numbers the rows agentcheck_<N+1>, ... with category "agentic", the
+form feats.py seqs and score.py read (for dumping and scoring the requests like held-out sessions).
 Needs transformers (Flint's tokenizer and chat template from HF_DIR).
 """
 import argparse
@@ -56,7 +60,10 @@ def main():
     ap.add_argument("bodies", nargs="+")
     ap.add_argument("--model", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--traces", help="comma-separated trace tags: keep only their requests")
+    ap.add_argument("--id-base", type=int, default=-1, help="number the rows agentcheck_<N+1>, ... (category agentic)")
     args = ap.parse_args()
+    traces = set(args.traces.split(",")) if args.traces else None
     tok = AutoTokenizer.from_pretrained(args.model)
     n_rows, n_gen, n_pred, n_bad = 0, 0, 0, 0
     with open(args.out, "w") as fo:
@@ -72,6 +79,9 @@ def main():
                 body, reply = r.get("body") or {}, r.get("reply") or (r.get("body") or {}).get("reply")
                 if not body.get("messages") or reply is None:
                     continue
+                tag = meta.get(r["id"], {}).get("tag", "")
+                if traces is not None and tag.rsplit("/", 1)[0] not in traces:
+                    continue
                 msgs, tools = messages(body["messages"]), body.get("tools")
                 prompt = tok.apply_chat_template(msgs, tools=tools, add_generation_prompt=True, tokenize=False)
                 asst = {"role": "assistant", "reasoning_content": reply.get("reasoning_content") or "",
@@ -85,6 +95,8 @@ def main():
                 m = meta.get(r["id"], {})
                 row = {"id": r["id"], "tag": m.get("tag", ""), "prompt_tokens": p_ids, "gen_tokens": g_ids,
                        "predicted_n": m.get("predicted_n")}
+                if args.id_base >= 0:
+                    row.update(rec_id=r["id"], id=f"agentcheck_{args.id_base + n_rows + 1}", category="agentic")
                 fo.write(json.dumps(row) + "\n")
                 n_rows += 1
                 n_gen += len(g_ids)

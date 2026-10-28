@@ -788,6 +788,26 @@ for the release line), so the ratios below are larger than served:
   stream instead of each card's compute stream). The simulator's ceiling with all of it gone, at the head's served
   acceptance (0.248): +5.2 % at 2.93 ms per guess, +5.6 % at 2.2 ms; at 0.30 +7.7 %.
 
+**Where this stopped (2026-10-28).**
+- **Done:** the guess profiled (Q190), the break-even, guess order and confidence gate (Q191), the options (Q192:
+  4.77 → 2.93 ms), the paired replay (Q193: the release line 3.2 % slower with the overnight head, 24.8 % right as
+  served), where the served cost goes (Q194: half following, half guessing, two in three launches wasted).
+- **Prepared, not run:** Q310 (the same replay on three RTX 3090s, sm_86 build `366478ef6`, `run/q310.sh` with a quiet
+  check; it never found the quant machine quiet), Q384 (`run/q384.sh`: the agent check's own traces dumped and scored),
+  Q385 (`score.py` saves `pmax` and `overlap`; the held-out sessions need re-scoring), Q371 + Q372 (`train.py --kinds`,
+  `--source-labels` / `--source-weights`, `--max-steps`; labels from `source_labels.py`). The new options were checked
+  to compile, not run.
+- **Next, in order:** Q310 in a quiet window; Q384 and the Q385 re-score; Q371 + Q372 against a control (the same
+  1,480-minute nine-card head, the same `--max-steps`, kill criteria in their registry rows); the serving cuts of Q194
+  in the fork (launch the head only when a pipe slot will take its guess; commit only the head's 4,096 newest prompt
+  positions; the taps' copies on a copy stream), then the paired replay again; the kernel cuts of section 8, item 0.
+- **Open:** whether the head pays on fast GPUs (Q310); how much of the served/offline gap (0.248 against 0.314) is the
+  check's domain (Q384); whether the serving cuts reach the simulator's ceiling (it was 8 points off before them).
+- **Against the owner's rule** (the head continues only with a credible path to ≥ +5 % on the P106 release line within
+  a week of engine work): the serving cuts are est. 3–4 days of fork work, and with all of them the simulator's ceiling
+  at today's served acceptance is +5.2 %, at the line with no margin; at 0.30 served (the training changes of
+  [mtp_head_research.md](research/notes/mtp_head_research.md)) it is +7.7 %. Q310 is not measured.
+
 ## 7. Lessons and pitfalls
 
 | Lesson | Evidence |

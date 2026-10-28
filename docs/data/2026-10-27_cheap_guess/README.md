@@ -28,7 +28,7 @@ break-even and guess order, options, the agent-check replay, the next cuts).
 | `profile_replay.md` | Q194, where the served cost goes: the paired replay of five traces with three arms, the release line (`base`), the head loaded and following the sequence without guessing (`taps`), the head (`stair`), all with the host trace on |
 | `profile_gpu.md` | `run/prof_compare.py` over the three arms' `GGML_CUDA_PROFILE_HOST` traces: GPU ms per generated token per card and graph evaluations |
 | `profile_served.tsv`, `profile_pair_check.txt` | the three arms' guess counts (`taps` guesses exactly as `base`), and the same-tokens check (0 of 29 requests differ) |
-| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `prof_compare.py` (GPU time per card from host traces), `q310.sh` (the same replay on three RTX 3090s), `curate.py` (these tables from the raw outputs) |
+| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `prof_compare.py` (GPU time per card from host traces), `q310.sh` (the same replay on three RTX 3090s, with a quiet check; prepared, not run), `q384.sh` (the agent check's own traces dumped and scored; prepared, not run), `curate.py` (these tables from the raw outputs) |
 
 ## How it was made
 

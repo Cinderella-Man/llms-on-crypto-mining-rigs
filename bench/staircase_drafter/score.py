@@ -83,6 +83,7 @@ def main():
     ap.add_argument("--ctx", type=int, default=-1,
                     help="committed positions the head attends to (-1: as trained, the head's --ctx; 0: all)")
     ap.add_argument("--chunk-targets", type=int, default=8192, help="score long records in pieces of N positions")
+    ap.add_argument("--only-windows", help="comma-separated window names (e.g. g9,g9miss): score only these")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     dtype = torch.float32 if args.device == "cpu" else torch.float16 if args.fp16 else torch.bfloat16   # as train.py
@@ -122,8 +123,12 @@ def main():
         if not args.init_only:
             model.load_state_dict(torch.load(os.path.join(hdir, "head.pt"), map_location=args.device), strict=False)
         model.eval()
-        per = {name: {"coupled": [], "top": [], "conf": [], "uniform": []} for name in windows}
-        meta = {"seq": [], "j": [], "copy": [], "seg": [], "cat": []}
+        if args.only_windows:
+            keep = args.only_windows.split(",")
+            windows = {n: w for n, w in windows.items() if n in keep}
+            prof_all = {"committed": profile["committed"], "windows": windows}
+        per = {name: {"coupled": [], "top": [], "conf": [], "uniform": [], "overlap": []} for name in windows}
+        meta = {"seq": [], "j": [], "copy": [], "seg": [], "cat": [], "pmax": []}
         items = [(i, part) for i in range(min(len(ff), args.max_seqs or len(ff)))
                  for part in train.target_parts(ff[i], args.chunk_targets)]
         for i, part in items:
@@ -148,7 +153,9 @@ def main():
                     per[name]["conf"].append(conf.cpu().numpy())
                     per[name]["uniform"].append(
                         drafter.uniform_match(logits, d["top_draft"], p, alpha=args.alpha).cpu().numpy())
+                    per[name]["overlap"].append(drafter.overlap(logits, d["top_draft"], p, alpha=args.alpha).cpu().numpy())
                 del out
+            meta["pmax"].append(p.max(-1).values.float().cpu().numpy())
             j = b.tpos + b.p0 - rec.n_prompt + 1
             cat, in_copy, segs = labels[rec.seq_id]
             meta["seq"].append(np.full(len(j), rec.seq_id))
@@ -158,13 +165,13 @@ def main():
             meta["cat"].append(np.array([cat] * len(j)))
         arrs = {k: np.concatenate(v) for k, v in meta.items()}
         for name in windows:
-            for m in ("coupled", "top", "conf", "uniform"):
+            for m in ("coupled", "top", "conf", "uniform", "overlap"):
                 arrs[f"{name}/{m}"] = np.concatenate(per[name][m])
         np.savez_compressed(os.path.join(args.out, f"scores-{head}.npz"), **arrs)
         res = {}
         for name in windows:
             r = {}
-            for m in ("coupled", "top", "uniform"):
+            for m in ("coupled", "top", "uniform", "overlap"):
                 v = arrs[f"{name}/{m}"]
                 fresh = ~arrs["copy"]
                 r[m] = cluster_ci(v, arrs["seq"])
