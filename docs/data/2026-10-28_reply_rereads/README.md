@@ -140,6 +140,60 @@ each prompt, 2 MiB per card at 262,144, which lands in the prompt's 4-token tail
 measured at 32k and 64k tokens. The release line keeps the host mask; a context threshold and a smaller upload (Q361,
 Q430) would reopen it for long sessions.
 
+## Where this stopped (2026-10-28)
+
+**Done:**
+- Q260: the cause (non-canonical token splits) and the fix (`LLAMA_SERVER_TEXT_REUSE=1`), checked on the CPU and
+  measured live on the rig: no reply re-reads; worst first token 60–83 → 12.7 s.
+- Q263: `LLAMA_SERVER_TAIL_CKPT_MIN=4096`, checked on the CPU and measured live: a short turn 684 → 379 ms.
+- Q261: `LLAMA_GPU_KQ_MASK_MAX`, checked on the CPU and two GPUs, measured on the rig: 0.4 % slower at the agent
+  check's context, so it stays off.
+- Q262: the Q8_0 and UD output heads are byte-identical; the screen is off on every agent request (grammar gate).
+- Q264: a plan only (its registry row).
+
+**Half-done:**
+- The fork branches `pascal-p106-v3-textreuse` (`60615dffd`), `pascal-p106-v3-decodemask` (`55143f751`) and
+  `pascal-p106-v3-promptpath` (`8130a649d` = both plus the tail-checkpoint commit) are built and measured but not
+  yet published on the fork, and not yet merged into `pascal-p106-v3`.
+- The two server switches are off by default; whether the v3 release line turns them on (as defaults or on its
+  command line) is open.
+- R18's per-request and per-guess tables (the answer store's `requests.tsv` / `guesses.tsv` layout) are not made;
+  `replay/replay.md` holds the summary, and the identity check (36/36 requests, equal guess counts) is in this page.
+
+**Next, in order:**
+1. Publish the three branches and merge `pascal-p106-v3-promptpath`'s three commits into `pascal-p106-v3`; then make
+   text reuse and the 4,096-token tail spacing the v3 release line's settings (defaults or `release_check.sh`'s
+   `REL_ENV`), and rerun the release-line agent check once on the merged build:
+   `ENV_FILE=… BIN=… CLIENT_ROOT=… ARMS_LIST=trtail bash run/rig_agent.sh`.
+2. Q360, the screened head until the tool-call grammar triggers (C10 in the queue): in
+   `tools/server/server-context.cpp`'s per-batch screen decision, let a slot whose grammar is lazy and not yet
+   triggered (`common_sampler_grammar_active` false) use the screen; drop screened rows still in the pipeline when
+   the grammar triggers. Check exactness against the screen-off server on tool sessions (`check_server.sh`'s pattern
+   with tools), then Q262's paired replay: `rig_replay_mask.sh` with arms base and
+   `LLAMA_SCREEN_HEAD=1 LLAMA_SCREEN_HEAD_FILE=<dir>/flint-output-screen-gptq-q4_0.gguf`. Expected +1.0–1.6 % per
+   generated token. **Kill:** below +0.5 % with identical tokens.
+3. Q264's busy profile, ~30 min of rig time:
+   `GGML_CUDA_PROFILE=$OUT/pp.prof $BIN/llama-bench -m $MODEL -ngl 99 -fa on -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -d 5000,15000 -p 300,800,2000 -n 0 -r 1`,
+   then `scripts/cuda_profile_summary.py` on it, with fresh 8k and 32k prompts (`-d 0 -p 8192,32768`) for comparison.
+   If the cards are mostly idle during short turns, Q363 (smaller micro-batches for short prompts) is next.
+   **Kill Q363** if short turns already keep most cards busy.
+4. Q362 (end-of-prompt checkpoints copied from all cards at once): est. 0.25 s per request and faster restores (a
+   restore takes 305 ms today). **Kill** if a parallel copy does not bring a 52.5 MiB restore under ~100 ms.
+5. R18's tables (requests and guesses per request, from the replay's `replay.jsonl` and the server log), when the
+   quant machine is free.
+6. Q430/Q361 (the card mask only past a context threshold, and a smaller upload), measured on 32k+ traces. **Kill**
+   below +1 % per generated token there.
+7. Q364, offering text reuse to llama.cpp, once the owner agrees.
+
+**Open questions:**
+- What sets the remaining 12–13 s worst first token: a large tool result processed fresh, or a task's first prompt?
+  The arms' per-request rows (`agent/*/turns.csv`) hold the answer.
+- Text reuse with several slots (`-np` > 1): the slot is chosen by token match before the splice, which may pick a
+  less similar slot; only `-np 1` was measured.
+- A client that edits or compacts its history: text reuse keeps ids only where the text matches, so such a session
+  re-reads from the first changed byte, as before; the spaced tail checkpoints can make that fallback up to 4,096
+  tokens longer.
+
 ## Files
 
 | File | What it holds |
