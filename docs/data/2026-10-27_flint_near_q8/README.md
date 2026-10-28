@@ -19,7 +19,7 @@ KLD against BF16, 80 × 512 tokens of wikitext-2, one GPU set (two RTX 3080 and 
 | **p061**: q8r + attention q in 33–48, attention output in 41–48, the shared expert in 33–40, the Q5_0 head | 2.487 | −7.8 % | 42.09 | 0.0610 | **0.0611 ± 0.0028** | 92.14 ± 0.19 % |
 | **p065**: p061 + attention k/v in 33–48, attention output in 33–40, the shared expert in 41–48, experts' gate/up in 41–48 | 2.400 | −11.0 % | 40.43 | 0.0645 | **0.0656 ± 0.0029** | 91.78 ± 0.19 % |
 | **p068**: p065 + attention q in 25–32, experts' gate/up in 33–40 | 2.337 | −13.3 % | 38.79 | 0.0678 | **0.0684 ± 0.0028** | 91.02 ± 0.20 % |
-| Flint-Pascal-Q5 (all 23 switches), for reference | 2.090 | −22.5 % | 29.39 | 0.129 | 08:00 run | |
+| Flint-Pascal-Q5 (all 23 switches), for reference | 2.090 | −22.5 % | 29.39 | 0.129 | 0.1108 ± 0.0037 | 88.44 ± 0.22 % |
 
 - **The costs add near Q8_0.** The three composed files land within 0.0011 of their predictions.
 - **p061 is within noise of Q8_0** on both measures, reading 7.8 % fewer bytes per token.
@@ -27,8 +27,24 @@ KLD against BF16, 80 × 512 tokens of wikitext-2, one GPU set (two RTX 3080 and 
   standard errors of a difference between two files (~0.27 points).
 - **p068** is at the edge on KLD (+0.0057) and 1.4 points lower on same top token: beyond noise. It sits at the 91.3 %
   same-token level that Q21 measured between two GPU types running the same file.
-- **The sum of all 23 costs over-predicts Pascal-Q5** (0.129 against ~0.105–0.111 measured on other GPU sets): far
-  from Q8_0 the costs do not add. The Pascal-Q5 anchor on this GPU set runs on 2026-10-28.
+- **The sum of all 23 costs over-predicts Pascal-Q5** (0.129 against 0.1108 measured on this GPU set): far from Q8_0
+  the costs add to more than the whole, as Q77 found near Flint's bar. So the dynamic program is exact enough near
+  Q8_0 and pessimistic far from it.
+
+**On agent text** (12 × 8,192 tokens of held-out agent sessions; KLD against Q8_0's own logits, same GPU set):
+
+| File | KLD | Same top token |
+|---|---|---|
+| q8r (Q8_0 with F16 routers) | 0.2273 ± 0.0056 | 93.78 ± 0.11 % |
+| p061 | 0.2281 ± 0.0056 | 93.56 ± 0.11 % |
+| p065 | 0.2292 ± 0.0056 | 93.42 ± 0.11 % |
+
+- On long agent text the routers' type alone, BF16 in Unsloth's file against F16 in q8r, moves KLD by 0.227. This
+  is the routing-flip divergence of Q21, which grows with context.
+- p061 and p065 add 0.0008 and 0.0018 on top of it (0.1 and 0.2 standard errors of a difference).
+- Their same top token is 0.22 and 0.37 points below q8r's (1.4 and 2.4 standard errors of a difference, ~0.155
+  points).
+- Both are as close to Q8_0 as Q8_0 with F16 routers is. p065's same top token is again at the edge of noise.
 
 **What the switches cost** (KLD change against q8r; scores in `kld.tsv`, bytes in `deltas.tsv`):
 
@@ -51,7 +67,7 @@ so single costs under ~0.002 are within that noise.
 | File | What |
 |---|---|
 | `deltas.tsv` | per switch: tensors, file bytes and bytes read per token it changes (experts count 6 of 256, `token_cost.py`'s rule; the embedding none), and q8r's totals |
-| `kld.tsv` | every scored file: KLD ± SE, same top token ± SE, PPL ratio to BF16, 99th-percentile KLD (Q8_0, q8r, 23 switches, 3 picks) |
+| `kld.tsv` | every scored file: KLD ± SE, same top token ± SE, PPL ratio, 99th-percentile KLD (Q8_0, q8r, 23 switches, 3 picks and Pascal-Q5 against BF16 on wikitext; `*.agent` rows against Q8_0 on agent text) |
 | `solve.tsv` | the frontier over bytes read per token: for each saving (MB), the least predicted KLD and its switches |
 | `solve-file.tsv` | the same over file bytes |
 | `solve-picks.tsv` | the picks at KLD ≤ q8r + 0.003 / 0.0065 / 0.010 and at files ≤ 33 / 36 / 39 GB |
@@ -82,5 +98,12 @@ run/run.sh deltas
 ITEMS="q8_0@$BASE q8r= head q0 q3 q4 q5 o4 o5 kv4 kv5 sh4 sh5 embd dn0 dn1 dn2 dn3 dn4 dn5 gu1 gu2 gu3 gu4 gu5" TAG=night run/run.sh score
 run/run.sh collect && run/run.sh solve
 ITEMS="p061=q4,q5,o5,sh4,head p065=q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu5,head p068=q3,q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu4,gu5,head" TAG=picks run/run.sh score
+run/run.sh agent_base                    # AGENT_TXT: held-out agent sessions (bench/agentic_data run 1), AGENT_BASE: output
+TEXT=agent ITEMS="q8r= p061=q4,q5,o5,sh4,head p065=q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu5,head" TAG=agent run/run.sh score
+ITEMS="pascal-q5@$DONOR" TAG=anchor run/run.sh score
 run/run.sh collect && run/run.sh fetch
 ```
+
+The agent text is the held-out part of agentic data run 1 (Q165, Flint's own sessions on licence-checked code,
+[2026-10-26_agentic_data](../2026-10-26_agentic_data/README.md)); the KLD base built from it (14.8 GB) is not
+published.

@@ -3,12 +3,14 @@
 # alias QM); the machine that runs this script only copies files over ssh.
 #   push      near_q8.py, score.sh and scripts/compose_gguf.py to WORK/run
 #   deltas    bytes each switch adds (file and per token), from the headers of BASE and DONOR: WORK/deltas.tsv
-#   score     score.sh detached for ITEMS (default: the anchors, then every switch); log WORK/score-<TAG>.out
+#   agent_base  BASE's (Q8_0's) logits on AGENT_TXT at 12 × 8,192 tokens into AGENT_BASE, detached; log next to it
+#   score     score.sh detached for ITEMS (default: the anchors, then every switch); log WORK/score-<TAG>.out;
+#             TEXT=agent scores against AGENT_BASE instead of BF16's wikitext logits
 #   collect   WORK/kld.tsv from WORK/logs
 #   solve     WORK/solve.tsv (frontier per token), solve-file.tsv, solve-picks.tsv; SOLVE_ARGS adds options
 #   fetch     the TSVs to OUT (default: this folder's parent)
 # Env: QM, WORK (scratch on QM, fast disk), BASE (Unsloth's Flint Q8_0 on QM), DONOR (Flint-Pascal-Q5 on QM), REF, BIN,
-#   GGUFPY, GPUS, TS, PREFETCH, EXTRA_MOUNTS (see score.sh), ITEMS, TAG, OUT.
+#   GGUFPY, GPUS, TS, PREFETCH, EXTRA_MOUNTS, TEXT, AGENT_TXT, AGENT_BASE (see score.sh), ITEMS, TAG, OUT.
 set -euo pipefail
 QM=${QM:?ssh alias of the quality machine}
 WORK=${WORK:?scratch dir on QM}
@@ -36,11 +38,23 @@ push)
 deltas)
     py deltas "${BASE:?}" "${DONOR:?}" "$WORK/deltas.tsv"
     ;;
+agent_base)
+    AGENT_TXT=${AGENT_TXT:?} AGENT_BASE=${AGENT_BASE:?}
+    m="-v $(dirname "$AGENT_BASE"):$(dirname "$AGENT_BASE")"
+    for p in "$BASE" "$AGENT_TXT" "$BIN"; do
+        d=$(dirname "$p"); case " $m " in *" -v $d:$d"*) ;; *) m="$m -v $d:$d:ro" ;; esac; done
+    ssh "$QM" "mkdir -p $(dirname "$AGENT_BASE"); cd $(dirname "$AGENT_BASE"); nohup docker run --rm --label pascal-quants=1 \
+        --cpu-shares 256 --gpus '\"device=$GPUS\"' -e CUDA_DEVICE_ORDER=PCI_BUS_ID $m nvidia/cuda:12.9.2-devel-ubuntu24.04 \
+        $BIN -m $BASE -f $AGENT_TXT -c 8192 -b 8192 -ub 512 --chunks 12 -ngl 99 ${TS:+-ts $TS} -fa on \
+        --kl-divergence-base $AGENT_BASE > $AGENT_BASE.log 2>&1 < /dev/null &"
+    echo "started: $AGENT_BASE (log $AGENT_BASE.log)"
+    ;;
 score)
     TAG=${TAG:-switches}
     ITEMS=${ITEMS:-"q8_0@$BASE pascal-q5@$DONOR q8r= $SWITCHES"}
     ENV="WORK=$WORK BASE=$BASE DONOR=$DONOR REF=$REF BIN=$BIN GGUFPY=$GGUFPY GPUS=$GPUS TS='${TS:-}' \
-PREFETCH=${PREFETCH:-0} MIN_FREE_GB=${MIN_FREE_GB:-50} EXTRA_MOUNTS='${EXTRA_MOUNTS:-}'"
+PREFETCH=${PREFETCH:-0} MIN_FREE_GB=${MIN_FREE_GB:-50} EXTRA_MOUNTS='${EXTRA_MOUNTS:-}' TEXT=${TEXT:-wiki} \
+AGENT_TXT=${AGENT_TXT:-} AGENT_BASE=${AGENT_BASE:-}"
     ssh "$QM" "cd $WORK; $ENV nohup bash $WORK/run/score.sh $ITEMS > $WORK/score-$TAG.out 2>&1 < /dev/null &"
     echo "started: $WORK/score-$TAG.out"
     ;;
@@ -55,7 +69,7 @@ fetch)
     for f in deltas kld solve solve-file solve-picks; do ssh "$QM" "cat $WORK/$f.tsv" > "$OUT/$f.tsv"; done
     ;;
 *)
-    echo "usage: $0 push | deltas | score | collect | solve | fetch" >&2
+    echo "usage: $0 push | deltas | agent_base | score | collect | solve | fetch" >&2
     exit 1
     ;;
 esac

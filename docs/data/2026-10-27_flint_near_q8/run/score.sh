@@ -8,21 +8,27 @@
 #         or NAME@FILE.gguf for an existing file, scored as it is
 # Env: WORK (scratch on fast disk: run/, files/, logs/), BASE (Unsloth's Q8_0), DONOR (Flint-Pascal-Q5), REF (folder with
 #   wikitext-2-raw/wiki.test.raw and flint-BF16.c512x80.kld), BIN (llama-perplexity), GGUFPY (gguf-py), GPUS,
-#   TS (optional -ts split), PREFETCH (0 or 1), MIN_FREE_GB (default 50), EXTRA_MOUNTS.
+#   TS (optional -ts split), PREFETCH (0 or 1), MIN_FREE_GB (default 50), EXTRA_MOUNTS; TEXT=agent scores against
+#   AGENT_BASE (Q8_0's logits on AGENT_TXT, run.sh agent_base) at 12 × 8,192 tokens instead, logs kld-<name>.agent.log.
 set -euo pipefail
 : "${WORK:?}" "${BASE:?}" "${DONOR:?}" "${REF:?}" "${BIN:?}" "${GGUFPY:?}" "${GPUS:?}"
+case ${TEXT:-wiki} in
+    wiki)  TXT=$REF/wikitext-2-raw/wiki.test.raw; KBASE=$REF/flint-BF16.c512x80.kld; CTX="-c 512 --chunks 80"; SFX="" ;;
+    agent) TXT=${AGENT_TXT:?}; KBASE=${AGENT_BASE:?}; CTX="-c 8192 -b 8192 -ub 512 --chunks 12"; SFX=".agent" ;;
+    *) echo "TEXT must be wiki or agent" >&2; exit 1 ;;
+esac
 IMG_PY=pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime
 IMG_CUDA=nvidia/cuda:12.9.2-devel-ubuntu24.04
 mkdir -p "$WORK/files" "$WORK/logs"
 MOUNTS="-v $WORK:$WORK ${EXTRA_MOUNTS:-}"
-for p in "$BASE" "$DONOR" "$REF/x" "$BIN" "$GGUFPY/x"; do
+for p in "$BASE" "$DONOR" "$REF/x" "$BIN" "$GGUFPY/x" "$TXT" "$KBASE"; do
     d=$(dirname "$p"); case " $MOUNTS " in *" -v $d:$d"*) ;; *) MOUNTS="$MOUNTS -v $d:$d:ro" ;; esac
 done
 
 name_of() { local n=${1%%=*}; echo "${n%%@*}"; }
 switches_of() { case "$1" in *=*) echo "${1#*=}" | tr , ' ' ;; *) echo "$1" ;; esac; }
 file_of() { case "$1" in *@*) echo "${1#*@}" ;; *) echo "$WORK/files/flint-near-q8-$(name_of "$1").gguf" ;; esac; }
-log_of() { echo "$WORK/logs/kld-$(name_of "$1").log"; }
+log_of() { echo "$WORK/logs/kld-$(name_of "$1")$SFX.log"; }
 scored() { grep -q "Mean    KLD" "$(log_of "$1")" 2>/dev/null; }
 compose() {
     local out; out=$(file_of "$1")
@@ -46,8 +52,8 @@ score() {
     [ -n "${TS:-}" ] && ts="-ts $TS"
     echo "== $(date +%T) score $(name_of "$1")"
     docker run --rm --label pascal-quants=1 --cpu-shares 256 --gpus "\"device=$GPUS\"" -e CUDA_DEVICE_ORDER=PCI_BUS_ID \
-        $MOUNTS $m "$IMG_CUDA" "$BIN" -m "$f" -f "$REF/wikitext-2-raw/wiki.test.raw" -c 512 --chunks 80 -ngl 99 $ts -fa on \
-        --kl-divergence-base "$REF/flint-BF16.c512x80.kld" --kl-divergence > "$(log_of "$1")" 2>&1 \
+        $MOUNTS $m "$IMG_CUDA" "$BIN" -m "$f" -f "$TXT" $CTX -ngl 99 $ts -fa on \
+        --kl-divergence-base "$KBASE" --kl-divergence > "$(log_of "$1")" 2>&1 \
         || { echo "FAILED, see $(log_of "$1")"; tail -3 "$(log_of "$1")"; return 0; }
     grep -E "^(Mean    KLD|Same top p)" "$(log_of "$1")" || true
 }
