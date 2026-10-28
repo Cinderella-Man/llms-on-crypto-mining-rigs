@@ -436,3 +436,29 @@ against (marked parked, with the reason and what would reopen them).
 | Q363 | Short prompts in micro-batches sized to fill the nine-card pipeline: a 300-token turn at `-ub 128` is 3 micro-batches, so at most 3 of 9 cards compute at once; splitting prompts under ~1,000 tokens into ~32-token micro-batches lets every card work. Est. part of Q264's ~5 % of a task | planned | | Q264's busy profile decides; then a server change (the micro-batch size per prompt) |
 | Q364 | Offer `LLAMA_SERVER_TEXT_REUSE` (Q260) to llama.cpp: the cause is general (any model sampled at temperature > 0 behind a server that re-tokenizes the conversation; costly with sliding-window or recurrent memory, which cannot roll back) | planned | | the owner's call, after Q260's rig result |
 | Q365 | Canonical sampling instead (mask tokens that would make the output non-canonical, so the text round-trips): **parked**, it changes what the model samples and costs a host check per token, while Q260's text reuse removes the re-reads exactly. Reopen if a client changes the reply text so that text reuse cannot match | parked | | — |
+| Q370 | A warm-up–stable–decay learning-rate schedule for head rounds, so an extension does not re-warm and dip; finish the current round (~5 epochs) first. Expected +0.02–0.03 held-out (to 0.38–0.39), a ceiling near 0.40 on this data ([MTP head research](../docs/research/notes/mtp_head_research.md)) | planned | | kill: under +0.01 means more epochs on this data are used up |
+| Q371 | Oversample the after-miss window (window kinds 0.4 / 0.1 / 0.5): M4 scores it 0.03 below the staircase (0.247 against 0.277) where every earlier head scored it 0.04–0.07 above. Expected +0.03–0.06 on that window, +0.01–0.03 served | planned | | kill: after-miss still below the staircase |
+| Q372 | Weight the loss by what the server's lookups would guess at each position (×3–4 where only 1-token continuations or nothing would guess): 77 % of today's loss falls on positions the head never serves. Expected +0.01–0.03 there | planned | | kill: under +0.005 |
+| Q373 | The ~10–12 M tool-result positions already in the dump as extra distillation targets (Flint's top-20, no cross-entropy). Expected +0.01–0.03 | planned | | kill: under +0.01 |
+| Q374 | Data run 2 on new, licence-scanned code bases (sympy, numpy, networkx, then OTP and llama.cpp): diversity over volume, ~2× tokens. Expected +0.04–0.07 | planned | | kill: under +0.02 at matched epochs |
+| Q375 | Capacity probe: an offline 6-layer, 2×-FFN head against the 2-layer control on the same data (~50 GPU-hours with Q376–Q377) | planned | | settles under-sized vs data- or information-limited |
+| Q376 | Information probe: tuned-lens probes and after-miss heads per tap depth (L4 … L47, final): how much of Flint's next token each depth already holds | planned | | with Q375 |
+| Q377 | Data and diversity probe: learning curves over shares of sessions and of modules (adding modules should beat adding sessions if unseen code is the binding gap, T2) | planned | | with Q375 |
+| Q378 | The LK loss at the served α 3, plus an α chosen per confidence bin. Expected +0.005–0.02 | planned | | kill: under +0.005 |
+| Q379 | Dropout, noise and EMA, with validation on held-out modules instead of held-out sessions of training modules. Expected +0.005–0.02 | planned | | kill: under +0.005 or the validation/held-out gap unchanged |
+| Q380 | Card-1 multi-tap fusion: card 1's own layers L4 and L6 (newest row) plus the reached layers of the in-flight rows, no extra copy. Expected +0.01–0.03 for +0.1–0.3 ms per guess | planned | | kill: under +0.01 or over 0.3 ms |
+| Q381 | A pointer / copy head, if at least 40 % of the head's misses are tokens already in the context (the head is right 0.310 at copy positions where the copy lookup is right 0.815) | planned | | first measure the in-context share of misses |
+| Q382 | Output-row capacity: a wider last-block FFN or an MLP-only block on the output row only, the cheap route to capacity (2× the whole head is +0.01–0.02 offline for +1–1.2 ms per guess, a net loss on the P106) | planned | | after Q375 |
+| Q383 | Initialize the head from Flint's layers 47–48 (attention and shared expert) | planned | | offline, then Q375's comparison |
+| Q384 | Score the agent check's own six traces offline: splits the gap between served 0.248 and offline 0.314 into domain (three traces are JavaScript, never seen in training) and engine | planned | | quant machine, ~1 h |
+| Q385 | Breakdowns per segment (reasoning, tool call, answer), guess source, Flint's confidence, window and session position, plus Σ min(p, q) in score.py | planned | | feeds Q371, Q372, T3 |
+| Q386 | The scoring window from the actual pipeline state (complete tokens at full depth) instead of the training windows | planned | | score.py |
+| Q387 | Top-2 hit rate in score.py and a hedged-guess simulation (feeds Q276) | planned | | score.py + cost_sim.py |
+| Q388 | Parked: an MoE FFN in the head (SpecForge: dense drafters beat MoE ones at equal compute) | parked | | |
+| Q389 | Parked: online test-time training of the head on the P106 (costs card 1's time) | parked | | |
+| Q390 | Parked: an EAGLE-3 or MTP-style head for Flint on fast GPUs from the same dumps (with Q310's result) | parked | | reopens if Q310 shows fast GPUs pay |
+| Q391 | Parked: step-level reasoning speculation (SpecReason, Lookahead Reasoning): lossy | parked (lossy) | | |
+| Q392 | Parked: separate heads per segment type; Q372's loss weighting covers it more cheaply | parked | | |
+| Q393 | A deeper card 1, or the head after a deeper first stage, simulated in cost_sim.py (more information per guess against later guesses) | planned | | offline |
+| Q394 | Every window row also predicts its own next token (more supervision per step) | planned | | training option |
+| Q395 | KL against Flint's top-20 before top-p instead of after | planned | | training option |

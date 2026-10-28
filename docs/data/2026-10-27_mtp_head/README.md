@@ -28,6 +28,12 @@ control tokens.
 |---|---|---|---|
 | nine | 0.365 | 0.277 / 0.235 | 0.156 / 0.141 |
 | gen | 0.343 | 0.256 / 0.218 | 0.145 / 0.135 |
+| nine, 1,000 minutes (overnight round, 2026-10-28) | 0.524 at 946 min | **0.366 / 0.323** | 0.218 / 0.195 |
+| gen, 1,000 minutes | 0.537 (`stair`) at 948 min | **0.355 / 0.315** | 0.211 / 0.191 |
+
+The overnight round resumed both heads from step 1,704 to 1,000 minutes in all (step ~5,100, epoch 5); validation rose
+the whole time (`offline/train_log_*_overnight.jsonl`). As served on the agent check the nine-card head is right 24.8 %
+of its guesses, and the release line runs 3.2 % slower with it ([cheap guess](../2026-10-27_cheap_guess/README.md)).
 
 - **Sharpening:** α 3 (the export's default) raises validation by ~0.09: nine 0.455, gen 0.437 (`offline/final_alpha.tsv`).
 - **Learning:** validation was still rising when the 240 minutes ended (`offline/val_curve.tsv`).
@@ -57,6 +63,8 @@ uses. The cheaper-guess work starts from that ([2026-10-27_cheap_guess](../2026-
 | `offline/scores_q51.md`, `scores_q51.json` | the same on Q51 |
 | `offline/train_log_gen.jsonl`, `train_log_nine.jsonl` | the 240-minute training logs (every 20 steps; validation every ~15 min; the final evaluation) |
 | `offline/train_log_*_resumed.jsonl` | the same heads resumed for an hour (learning rate restarted toward ~3.6 epochs; stopped at step 1,704) |
+| `offline/train_log_*_overnight.jsonl` | the overnight round, 2026-10-27 19:56 → 2026-10-28 08:05, from step 1,704 to the 1,000-minute budget (validation every ~15 minutes, the final evaluation) |
+| `offline/scores_heldout_1000min.md`, `scores_q51_1000min.md` | `score.py` on the held-out sessions and Q51 for the 1,000-minute heads |
 | `offline/config_gen.json`, `config_nine.json` | `train.py`'s config: profile, sizes, items, every option (`$WORK` = the run folder) |
 | `offline/heldout_session_ids.txt` | the 40 scored held-out sessions (row ids of the export's `sessions_seq.jsonl`) |
 | `agent/{base,nine,gen}/table.md`, `compare.md`, `gonogo.md` | the agent check's reports per arm |

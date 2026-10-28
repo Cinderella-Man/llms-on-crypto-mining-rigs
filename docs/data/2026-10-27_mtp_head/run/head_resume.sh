@@ -28,6 +28,7 @@ start)
         [ -f "$H/ckpt.pt" ] || { echo "no checkpoint in $H"; exit 1; }
         if docker ps --format '{{.Names}}' | grep -qx "pq-head-$name"; then echo "pq-head-$name is running"; exit 1; fi
         [ -d "$H-240min" ] || cp -a "$H" "$H-240min"
+        rm -f "$H/STOP"   # a run stopped through its STOP file would stop again at its first batch
         g=$WORK/gguf/flint-mtp-$name.gguf
         [ -f "$g" ] && [ ! -f "${g%.gguf}-240min.gguf" ] && cp -a "$g" "${g%.gguf}-240min.gguf"
         cmd="$(sed -E "s/--minutes [0-9.]+/--minutes $TOTAL/" "$H/cmd.txt") --resume"
