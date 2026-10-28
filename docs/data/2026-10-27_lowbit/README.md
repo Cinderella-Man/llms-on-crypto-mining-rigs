@@ -73,11 +73,11 @@ Ornith-1.5-122B files, `run/quantize.sh` with the CPU build of `67181fcd9` (its 
 |---|---|---|---|---|
 | c, `Ornith-1.5-122B-N2P-N3P-Q5_0dense.gguf` | N2P / N3P | Q5_0; attention k/v, output head, token embedding Q8_0 | 47.58 GB (45,362 MiB, 3.05 bpw), `a61097be772a5e7b5a8f6b75b28a99ef` | the rig-sized candidate (~45.8 GB on the cards without the token embedding and the MTP block, my calc) |
 | b, `Ornith-1.5-122B-N2P-N3P-Q8_0dense.gguf` | N2P / N3P | Q8_0, as AD-IQ3_XXS-IQ2_S | 49.32 GB (47,024 MiB, 3.16 bpw) | isolates the expert formats in KLD against AD |
-| d, `Ornith-1.5-122B-N3P-N2P-Q5_0dense.gguf` | N3P / N2P | as c | | the other format per expert tensor: a donor for mixes that choose per tensor and layer group (est. ~2.6 GB more than c) |
+| d, `Ornith-1.5-122B-N3P-N2P-Q5_0dense.gguf` | N3P / N2P | as c | 50.35 GB (48,008 MiB, 3.23 bpw) | the other format per expert tensor: a donor for mixes that choose per tensor and layer group |
 
 File c's tensors: 98 N2P (gate and up of the 48 layers and the MTP block), 49 N3P (down), 354 Q5_0, attention k/v of
 the 13 attention layers, the output head and the token embedding at Q8_0; the router, norms, convolution and SSM tensors
-F32. It took 2 h 44 min on 8 threads at low CPU priority; file b 2 h 41 min.
+F32. It took 2 h 44 min on 8 threads at low CPU priority; file b 2 h 41 min, file d 2 h 40 min.
 
 ```bash
 QM=<ssh alias> WORK=<work dir> MODELS=<folder with the two Ornith GGUF folders> OUT=<output folder> FILE=c bash run/quantize.sh   # then FILE=b, FILE=d

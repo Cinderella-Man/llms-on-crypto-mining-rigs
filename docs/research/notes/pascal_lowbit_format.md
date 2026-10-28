@@ -603,7 +603,7 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
 - The CPU checks: the C quantizer gives the proxy's errors exactly on 24 real expert matrices.
 - Test plan step 3: the V100 check ([correctness-v100.md](../../data/2026-10-27_lowbit/correctness-v100.md)). MMQ
   through the compute 6.1 code is left to the P106.
-- Files c (47.58 GB) and b (49.32 GB).
+- Files c (47.58 GB), b (49.32 GB) and d (50.35 GB).
 - **File c's KLD against the Q8_0** ([Ornith KLD data](../../data/2026-10-27_ornith_kld/README.md)), mean KLD ± SE /
   same top token; file sizes in GB of 10⁹ bytes, routed-expert bytes from the files' headers
   ([UD's](../../data/2026-10-27_ornith/header-Ornith-1.5-122B-UD-Q2_K_XL.txt)):
@@ -621,9 +621,7 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
   tensor; it says nothing about how to spread the bytes over layers, and that spread is what c lacks. On quality alone c
   is not a better file than UD. Its case is decode speed, and allocating its bits by layer (Q167).
 
-**Running at the time of writing:**
-- File b's KLD.
-- File d's quantization (the donor for the per-group mix).
+**Running at the time of writing:** file b's KLD.
 
 **Next, in order:**
 1. **KLD of b** against AD: b has AD's dense tensors at Q8_0, so it shows what the expert formats alone are worth.
