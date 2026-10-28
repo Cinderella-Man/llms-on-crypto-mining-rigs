@@ -2,10 +2,13 @@
 // experts the router picked (ffn_moe_topk) and their router probabilities (ffn_moe_weights, before renormalization).
 //
 //   ROUTE_IN=seqs.txt ROUTE_OUT=routes.bin llama-route-dump -m model.gguf -ngl 99 -c 16384 [other common flags]
+//   ROUTE_TEXT=text.txt ROUTE_CHUNK=8192 ROUTE_OUT=routes.bin llama-route-dump -m model.gguf -ngl 99 -c 8192 [...]
 //
 // seqs.txt: one sequence per line, "<seq_id> <n_prompt> <tok0> <tok1> ...", token ids as the model's vocabulary has
 // them (prompt tokens first, then generated tokens). Each sequence starts from an empty KV cache. Every token
 // requests its logits, because llama.cpp computes the last layer only for output rows: keep -b small (512).
+// ROUTE_TEXT instead tokenizes a plain text file and cuts it into sequences of ROUTE_CHUNK tokens (the rest is dropped,
+// as llama-perplexity does), each with n_prompt 0; ROUTE_CHUNKS=<n> keeps the first n.
 // routes.bin: records of six int32 {kind, seq_id, layer, pos0, n_tok, k} followed by a payload:
 //   kind 0: int32 expert ids [n_tok][k]; kind 1: float32 router probabilities [n_tok][k];
 //   kind 2: sequence header with layer = -1, pos0 = n_prompt, n_tok = sequence length, k = 0, no payload.
@@ -17,6 +20,7 @@
 #include "ggml.h"
 #include "ggml-backend.h"
 
+#include <algorithm>
 #include <clocale>
 #include <cstdio>
 #include <cstdlib>
@@ -105,10 +109,11 @@ static bool route_cb(struct ggml_tensor * t, bool ask, void * user_data) {
 int main(int argc, char ** argv) {
     std::setlocale(LC_NUMERIC, "C");
 
-    const char * in_path  = getenv("ROUTE_IN");
-    const char * out_path = getenv("ROUTE_OUT");
-    if (in_path == nullptr || out_path == nullptr) {
-        fprintf(stderr, "set ROUTE_IN and ROUTE_OUT\n");
+    const char * in_path   = getenv("ROUTE_IN");
+    const char * text_path = getenv("ROUTE_TEXT");
+    const char * out_path  = getenv("ROUTE_OUT");
+    if ((in_path == nullptr) == (text_path == nullptr) || out_path == nullptr) {
+        fprintf(stderr, "set ROUTE_OUT and one of ROUTE_IN, ROUTE_TEXT\n");
         return 1;
     }
 
@@ -143,7 +148,37 @@ int main(int argc, char ** argv) {
     const int32_t n_ctx   = (int32_t) llama_n_ctx(ctx);
     llama_batch batch = llama_batch_init(n_batch, 0, 1);
 
-    std::ifstream in(in_path);
+    // ROUTE_TEXT: the text's tokens, cut into lines of the ROUTE_IN format
+    std::istringstream text_seqs;
+    if (text_path != nullptr) {
+        std::ifstream tf(text_path);
+        std::stringstream buf;
+        buf << tf.rdbuf();
+        const std::vector<llama_token> all = common_tokenize(ctx, buf.str(), true);
+        const char * chunk_env = getenv("ROUTE_CHUNK");
+        const char * nchunks_env = getenv("ROUTE_CHUNKS");
+        const size_t chunk = chunk_env ? (size_t) atoi(chunk_env) : (size_t) n_ctx;
+        size_t n_chunks = chunk > 0 ? all.size() / chunk : 0;
+        if (nchunks_env != nullptr) {
+            n_chunks = std::min(n_chunks, (size_t) atoi(nchunks_env));
+        }
+        std::ostringstream lines;
+        for (size_t c = 0; c < n_chunks; ++c) {
+            lines << c << " 0";
+            for (size_t i = 0; i < chunk; ++i) {
+                lines << ' ' << all[c * chunk + i];
+            }
+            lines << '\n';
+        }
+        fprintf(stderr, "%s: %zu tokens, %zu sequences of %zu\n", text_path, all.size(), n_chunks, chunk);
+        text_seqs.str(lines.str());
+    }
+    std::ifstream in_file;
+    if (in_path != nullptr) {
+        in_file.open(in_path);
+    }
+    std::istream & in = in_path != nullptr ? (std::istream &) in_file : (std::istream &) text_seqs;
+
     std::string line;
     int n_seq = 0;
     while (std::getline(in, line)) {

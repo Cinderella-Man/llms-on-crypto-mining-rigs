@@ -1,19 +1,22 @@
-"""Expert overlap between consecutive tokens (Q51), from llama-route-dump's routes.bin and generate.py's gen.jsonl.
+"""Expert overlap between consecutive tokens (Q51, Q411), from llama-route-dump's routes.bin and generate.py's gen.jsonl.
 
 usage: python analyze.py ROUTES.bin GEN.jsonl OUT.json [N_EXPERT]
+       python analyze.py ROUTES.bin - OUT.json [N_EXPERT]    (routes of ROUTE_TEXT chunks: every token counts, category "text")
 
 Reports, for generated tokens (and for prompt tokens, for comparison), per category and per layer:
-- distinct experts touched by n consecutive tokens (n = 1, 2, 4, 8, 16), against independent random routing;
+- distinct experts touched by n consecutive tokens (n = 1 to 8 and 16), against independent random routing and against
+  n tokens drawn at random positions of the same sequence (the layer's own expert popularity, without locality);
 - experts shared by adjacent tokens;
 - the router's top-k weights after renormalization (how light the last experts are);
 - how concentrated each layer's expert use is.
 """
 import json
+import random
 import struct
 import sys
 from collections import defaultdict
 
-WINDOWS = (1, 2, 4, 8, 16)
+WINDOWS = (1, 2, 3, 4, 5, 6, 7, 8, 16)
 
 
 def read_routes(path):
@@ -51,10 +54,13 @@ def random_distinct(n, k, n_expert):
 
 def window_stats(masks, acc, key_prefix):
     """masks: one int bitmask per consecutive position; adds distinct-count sums for each window size to acc."""
-    level = masks
-    width = 1
     unions = {1: masks}
-    while width < max(WINDOWS):
+    level = masks
+    for width in range(2, 9):  # every window up to 8 tokens
+        level = [level[i] | masks[i + width - 1] for i in range(len(level) - 1)]
+        unions[width] = level
+    width = 8
+    while width < max(WINDOWS):  # then by doubling
         level = [level[i] | level[i + width] for i in range(len(level) - width)]
         width *= 2
         unions[width] = level
@@ -70,8 +76,12 @@ def window_stats(masks, acc, key_prefix):
 def main():
     routes_path, gen_path, out_path = sys.argv[1:4]
     n_expert = int(sys.argv[4]) if len(sys.argv) > 4 else 256
-    gen = [json.loads(l) for l in open(gen_path)]
     seqs = read_routes(routes_path)
+    if gen_path == "-":  # ROUTE_TEXT chunks: one category, every position counts as generated
+        gen = [{"category": "text"} for _ in range(max(seqs) + 1)]
+    else:
+        gen = [json.loads(l) for l in open(gen_path)]
+    shuffle_rng = random.Random(411)
     k = next(s["k"] for s in seqs.values() if s["k"])
     layers = sorted({l for s in seqs.values() for l in s["ids"]})
 
@@ -101,6 +111,9 @@ def main():
             for scope in (("gen", cat), ("gen", "all")):
                 window_stats(gen_masks, acc, scope)
             window_stats(prm_masks, acc, ("prompt", "all"))
+            shuffled = gen_masks[:]
+            shuffle_rng.shuffle(shuffled)
+            window_stats(shuffled, acc, ("shuffled", "all"))
             window_stats(gen_masks, acc_layer, layer)
             for m in gen_masks:
                 while m:
@@ -137,6 +150,7 @@ def main():
     for cat in sorted(n_gen_tokens) + ["all"]:
         out["distinct"][f"gen/{cat}"] = table(("gen", cat))
     out["distinct"]["prompt/all"] = table(("prompt", "all"))
+    out["distinct"]["shuffled/all"] = table(("shuffled", "all"))  # generated tokens at random positions of their sequence
     for layer in layers:
         row = {}
         for n in WINDOWS:
@@ -165,6 +179,8 @@ def main():
     print("distinct experts per layer for n consecutive tokens (random routing in the last row):")
     print(f"{'scope':16s}" + "".join(f"{'n=' + str(n):>9s}" for n in WINDOWS) + f"{'adj':>9s}")
     for name, row in out["distinct"].items():
+        if row["1"] is None:  # no such tokens (prompt tokens of ROUTE_TEXT chunks)
+            continue
         print(f"{name:16s}" + "".join(f"{row[str(n)]:9.2f}" for n in WINDOWS) + f"{row['adjacent_shared']:9.2f}")
     print(f"{'random':16s}" + "".join(f"{out['random'][str(n)]:9.2f}" for n in WINDOWS)
           + f"{out['random_adjacent_shared']:9.2f}")

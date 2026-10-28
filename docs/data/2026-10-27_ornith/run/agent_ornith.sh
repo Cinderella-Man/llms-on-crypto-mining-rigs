@@ -9,7 +9,9 @@
 #   CANDS="stock v2 stock-mtp v2-mtp" bash agent_ornith.sh        (UD=<rig path of the UD GGUF> for ud-stock, ud-v2;
 #   also V3=<rig path of a llama-server with the IQ2_S/IQ3_XXS Pascal kernels> for ud-v3; LOWBIT=<rig path of a
 #   llama-server of fork branch pascal-p106-v3-lowbit>, VALID1=<rig path of the N2P/N3P file of
-#   docs/data/2026-10-28_ornith_valid1> and VALID1_LINE=<its server line> for valid1)
+#   docs/data/2026-10-28_ornith_valid1> and VALID1_LINE=<its server line> for valid1; VALID1_MTP_LINE=<a line with
+#   --spec-type draft-mtp> for valid1-mtp, with LOWBIT a server of a branch that holds the N2P/N3P types, e.g.
+#   pascal-p106-v3-mtpk)
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/../../../.." && pwd)
 CANDS=${CANDS:?candidates, e.g. "stock"}
@@ -45,6 +47,7 @@ for c in $CANDS; do
     ud-v2)       M=${UD:?}; ARMS=rel;   CTX=${UD_V2_CTX:-$V2_CTX}; REL_ARGS="${UD_V2_LINE:-$V2_LINE}" ;;
     ud-v3)       M=${UD:?}; ARMS=rel;   CTX=${UD_V2_CTX:-$V2_CTX}; REL_BIN=${V3:?}; REL_ARGS="${UD_V2_LINE:-$V2_LINE}" ;;
     valid1)      M=${VALID1:?}; ARMS=rel; CTX=${VALID1_CTX:-$V2_CTX}; REL_BIN=${LOWBIT:?}; REL_ARGS="${VALID1_LINE:?}" ;;
+    valid1-mtp)  M=${VALID1:?}; ARMS=rel; CTX=${VALID1_MTP_CTX:-${VALID1_CTX:-$V2_CTX}}; REL_BIN=${LOWBIT:?}; REL_ARGS="${VALID1_MTP_LINE:?}" ;;
     *) echo "unknown candidate $c"; continue ;;
   esac
   echo "=== $c: MODEL=$M ARMS=$ARMS CTX=$CTX STOCK_ARGS='$STOCK_ARGS' REL_ARGS='$REL_ARGS' $(date +%T)"

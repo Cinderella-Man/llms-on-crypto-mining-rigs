@@ -17,16 +17,26 @@ _Avoid_: rig, lab
 
 ### Software
 
-**Pascal engine**:
-This project's llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1 and v2 are its
+**Miner Llama**:
+This project and its llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1 and v2 are its
 releases.
-_Avoid_: Flint fork, model branch
+_Avoid_: Pascal engine, Flint fork, model branch
 
 **Model page**:
 The folder `models/<model>/` that holds one model's recommended file, command line, and measured speed and quality.
 _Avoid_: profile
 
 ### Models
+
+**Hybrid model**:
+A model whose layers mix attention, which keeps a cache of every past token, with recurrent layers such as Gated
+DeltaNet, which keep a fixed-size state instead; the Ornith-1.5 and Qwen3.6 models are hybrid.
+_Avoid_: recurrent model, linear-attention model, SSM
+
+**MTP head**:
+A small extra network that predicts the next tokens from the model's own hidden states, for speculative decoding;
+Ornith-1.5 ships one in its files, and for Flint this project trains one.
+_Avoid_: guesser, drafter, draft head
 
 **N-gram table**:
 A model's lookup table of embeddings for hashed sequences of two and three tokens, read a few rows per token and kept

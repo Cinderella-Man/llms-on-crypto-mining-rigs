@@ -9,9 +9,9 @@ set -euo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 LABEL=${LABEL:-pascal-quants=1}
-B=$LLAMA/$BUILD
+B=$(cd "$LLAMA/$BUILD" && pwd)   # BUILD may lie outside the checkout, e.g. ../out/build
 mkdir -p "$(dirname "$OUT")"
-docker run --rm --label "$LABEL" --cpu-shares 256 -v "$LLAMA:$LLAMA:ro" -v "$HERE:/tool:ro" \
+docker run --rm --label "$LABEL" --cpu-shares 256 -v "$LLAMA:$LLAMA:ro" -v "$B:$B:ro" -v "$HERE:/tool:ro" \
     -v "$(dirname "$OUT"):$(dirname "$OUT")" "$IMAGE" bash -euo pipefail -c "
     apt-get update -qq > /dev/null && apt-get install -y -qq libssl-dev > /dev/null
     nice -n 19 g++ -O2 -std=c++17 -fopenmp /tool/${TOOL:-mtp_accept}.cpp -o '$OUT' \
