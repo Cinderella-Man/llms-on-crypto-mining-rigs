@@ -1,0 +1,781 @@
+kernel	type	product	tokens	us_per_call	vs_1_token	ps_per_weight
+MT	n2p	expert gate 3072->1024	1	104.21	1.00	4.14
+MT	n2p	expert down 1024->3072	1	117.35	1.00	4.66
+MT	n2p	expert gate 3072->1024	2	240.85	2.31	
+MT	n2p	expert down 1024->3072	2	296.58	2.53	
+MT	n2p	expert gate 3072->1024	3	352.86	3.39	
+MT	n2p	expert down 1024->3072	3	431.03	3.67	
+MT	n2p	expert gate 3072->1024	4	448.44	4.30	
+MT	n2p	expert down 1024->3072	4	575.15	4.90	
+MT	n2p	dense 3072->1024	1	21.58	1.00	6.86
+MT	n2p	dense 1024->3072	1	21.85	1.00	6.95
+MT	n2p	dense 3072->8192	1	104.77	1.00	4.16
+MT	n2p	dense 3072->1024	2	31.49	1.46	
+MT	n2p	dense 1024->3072	2	33.12	1.52	
+MT	n2p	dense 3072->8192	2	133.98	1.28	
+MT	n2p	dense 3072->1024	3	33.96	1.57	
+MT	n2p	dense 1024->3072	3	35.47	1.62	
+MT	n2p	dense 3072->8192	3	164.12	1.57	
+MT	n2p	dense 3072->1024	4	39.19	1.82	
+MT	n2p	dense 1024->3072	4	40.91	1.87	
+MT	n2p	dense 3072->8192	4	197.81	1.89	
+MT	n3p	expert gate 3072->1024	1	95.74	1.00	3.80
+MT	n3p	expert down 1024->3072	1	107.49	1.00	4.27
+MT	n3p	expert gate 3072->1024	2	239.94	2.51	
+MT	n3p	expert down 1024->3072	2	296.94	2.76	
+MT	n3p	expert gate 3072->1024	3	331.32	3.46	
+MT	n3p	expert down 1024->3072	3	411.21	3.83	
+MT	n3p	expert gate 3072->1024	4	419.18	4.38	
+MT	n3p	expert down 1024->3072	4	554.2	5.16	
+MT	n3p	dense 3072->1024	1	20.45	1.00	6.50
+MT	n3p	dense 1024->3072	1	20.89	1.00	6.64
+MT	n3p	dense 3072->8192	1	96.54	1.00	3.84
+MT	n3p	dense 3072->1024	2	28.84	1.41	
+MT	n3p	dense 1024->3072	2	32.59	1.56	
+MT	n3p	dense 3072->8192	2	126.1	1.31	
+MT	n3p	dense 3072->1024	3	32.89	1.61	
+MT	n3p	dense 1024->3072	3	35.95	1.72	
+MT	n3p	dense 3072->8192	3	155.06	1.61	
+MT	n3p	dense 3072->1024	4	38.87	1.90	
+MT	n3p	dense 1024->3072	4	42.13	2.02	
+MT	n3p	dense 3072->8192	4	194.29	2.01	
+MT	iq2_s	expert gate 3072->1024	1	182.08	1.00	7.24
+MT	iq2_s	expert down 1024->3072	1	231.9	1.00	9.21
+MT	iq2_s	expert gate 3072->1024	2	596.22	3.27	
+MT	iq2_s	expert down 1024->3072	2	473.14	2.04	
+MT	iq2_s	expert gate 3072->1024	3	842.58	4.63	
+MT	iq2_s	expert down 1024->3072	3	651.81	2.81	
+MT	iq2_s	expert gate 3072->1024	4	1094.31	6.01	
+MT	iq2_s	expert down 1024->3072	4	853.36	3.68	
+MT	iq2_s	dense 3072->1024	1	36.95	1.00	11.75
+MT	iq2_s	dense 1024->3072	1	42.88	1.00	13.63
+MT	iq2_s	dense 3072->8192	1	181.37	1.00	7.21
+MT	iq2_s	dense 3072->1024	2	49.09	1.33	
+MT	iq2_s	dense 1024->3072	2	51.14	1.19	
+MT	iq2_s	dense 3072->8192	2	227.93	1.26	
+MT	iq2_s	dense 3072->1024	3	49.9	1.35	
+MT	iq2_s	dense 1024->3072	3	51.5	1.20	
+MT	iq2_s	dense 3072->8192	3	242.36	1.34	
+MT	iq2_s	dense 3072->1024	4	65.79	1.78	
+MT	iq2_s	dense 1024->3072	4	57.61	1.34	
+MT	iq2_s	dense 3072->8192	4	361.97	2.00	
+MT	iq3_xxs	expert gate 3072->1024	1	159.11	1.00	6.32
+MT	iq3_xxs	expert down 1024->3072	1	176.01	1.00	6.99
+MT	iq3_xxs	expert gate 3072->1024	2	474.46	2.98	
+MT	iq3_xxs	expert down 1024->3072	2	548.2	3.11	
+MT	iq3_xxs	expert gate 3072->1024	3	671.23	4.22	
+MT	iq3_xxs	expert down 1024->3072	3	776.14	4.41	
+MT	iq3_xxs	expert gate 3072->1024	4	876.97	5.51	
+MT	iq3_xxs	expert down 1024->3072	4	1036.94	5.89	
+MT	iq3_xxs	dense 3072->1024	1	34.09	1.00	10.84
+MT	iq3_xxs	dense 1024->3072	1	33.51	1.00	10.65
+MT	iq3_xxs	dense 3072->8192	1	159.13	1.00	6.32
+MT	iq3_xxs	dense 3072->1024	2	53.02	1.56	
+MT	iq3_xxs	dense 1024->3072	2	55.47	1.66	
+MT	iq3_xxs	dense 3072->8192	2	253.74	1.59	
+MT	iq3_xxs	dense 3072->1024	3	52.95	1.55	
+MT	iq3_xxs	dense 1024->3072	3	55.62	1.66	
+MT	iq3_xxs	dense 3072->8192	3	266.03	1.67	
+MT	iq3_xxs	dense 3072->1024	4	58.02	1.70	
+MT	iq3_xxs	dense 1024->3072	4	60.04	1.79	
+MT	iq3_xxs	dense 3072->8192	4	301.39	1.89	
+MT	q8_0	expert gate 3072->1024	1	174.24	1.00	6.92
+MT	q8_0	expert down 1024->3072	1	187.14	1.00	7.44
+MT	q8_0	expert gate 3072->1024	2	511.99	2.94	
+MT	q8_0	expert down 1024->3072	2	836.56	4.47	
+MT	q8_0	expert gate 3072->1024	3	679.76	3.90	
+MT	q8_0	expert down 1024->3072	3	1184.89	6.33	
+MT	q8_0	expert gate 3072->1024	4	906.33	5.20	
+MT	q8_0	expert down 1024->3072	4	1573.58	8.41	
+MT	q8_0	dense 3072->1024	1	35.27	1.00	11.21
+MT	q8_0	dense 1024->3072	1	35.77	1.00	11.37
+MT	q8_0	dense 3072->8192	1	174.96	1.00	6.95
+MT	q8_0	dense 8192->3072	1	171.56	1.00	6.82
+MT	q8_0	dense 3072->248320	1	4718.53	1.00	6.19
+MT	q8_0	dense 3072->1024	2	47.75	1.35	
+MT	q8_0	dense 1024->3072	2	64.08	1.79	
+MT	q8_0	dense 3072->8192	2	217.55	1.24	
+MT	q8_0	dense 8192->3072	2	219.28	1.28	
+MT	q8_0	dense 3072->248320	2	6158.81	1.31	
+MT	q8_0	dense 3072->1024	3	42.45	1.20	
+MT	q8_0	dense 1024->3072	3	57.22	1.60	
+MT	q8_0	dense 3072->8192	3	232.2	1.33	
+MT	q8_0	dense 8192->3072	3	307.27	1.79	
+MT	q8_0	dense 3072->248320	3	6616.21	1.40	
+MT	q8_0	dense 3072->1024	4	51.66	1.46	
+MT	q8_0	dense 1024->3072	4	69.9	1.95	
+MT	q8_0	dense 3072->8192	4	304.19	1.74	
+MT	q8_0	dense 8192->3072	4	347.02	2.02	
+MT	q8_0	dense 3072->248320	4	8840.92	1.87	
+MT	q5_0	expert gate 3072->1024	1	119.95	1.00	4.77
+MT	q5_0	expert down 1024->3072	1	146.01	1.00	5.80
+MT	q5_0	expert gate 3072->1024	2	426.75	3.56	
+MT	q5_0	expert down 1024->3072	2	560.84	3.84	
+MT	q5_0	expert gate 3072->1024	3	648.72	5.41	
+MT	q5_0	expert down 1024->3072	3	784.02	5.37	
+MT	q5_0	expert gate 3072->1024	4	830.29	6.92	
+MT	q5_0	expert down 1024->3072	4	1026.78	7.03	
+MT	q5_0	dense 3072->1024	1	26.8	1.00	8.52
+MT	q5_0	dense 1024->3072	1	30.87	1.00	9.81
+MT	q5_0	dense 3072->8192	1	120.49	1.00	4.79
+MT	q5_0	dense 8192->3072	1	120.5	1.00	4.79
+MT	q5_0	dense 3072->248320	1	3303.82	1.00	4.33
+MT	q5_0	dense 3072->1024	2	44.14	1.65	
+MT	q5_0	dense 1024->3072	2	51.79	1.68	
+MT	q5_0	dense 3072->8192	2	192.03	1.59	
+MT	q5_0	dense 8192->3072	2	214.66	1.78	
+MT	q5_0	dense 3072->248320	2	5509.66	1.67	
+MT	q5_0	dense 3072->1024	3	39.98	1.49	
+MT	q5_0	dense 1024->3072	3	52.02	1.69	
+MT	q5_0	dense 3072->8192	3	223.19	1.85	
+MT	q5_0	dense 8192->3072	3	308.52	2.56	
+MT	q5_0	dense 3072->248320	3	6465.28	1.96	
+MT	q5_0	dense 3072->1024	4	51.92	1.94	
+MT	q5_0	dense 1024->3072	4	58.23	1.89	
+MT	q5_0	dense 3072->8192	4	305.88	2.54	
+MT	q5_0	dense 8192->3072	4	353.26	2.93	
+MT	q5_0	dense 3072->248320	4	8915.92	2.70	
+MC	n2p	expert gate 3072->1024	1	104.86	1.00	4.17
+MC	n2p	expert down 1024->3072	1	117.82	1.00	4.68
+MC	n2p	expert gate 3072->1024	2	363.8	3.47	
+MC	n2p	expert down 1024->3072	2	675.01	5.73	
+MC	n2p	expert gate 3072->1024	3	586.08	5.59	
+MC	n2p	expert down 1024->3072	3	1150.48	9.76	
+MC	n2p	expert gate 3072->1024	4	825.33	7.87	
+MC	n2p	expert down 1024->3072	4	1714.61	14.55	
+MC	n2p	dense 3072->1024	1	21.45	1.00	6.82
+MC	n2p	dense 1024->3072	1	21.75	1.00	6.91
+MC	n2p	dense 3072->8192	1	105.14	1.00	4.18
+MC	n2p	dense 3072->1024	2	38.71	1.80	
+MC	n2p	dense 1024->3072	2	44.87	2.06	
+MC	n2p	dense 3072->8192	2	197.83	1.88	
+MC	n2p	dense 3072->1024	3	50.12	2.34	
+MC	n2p	dense 1024->3072	3	51.58	2.37	
+MC	n2p	dense 3072->8192	3	286.47	2.72	
+MC	n2p	dense 3072->1024	4	56.62	2.64	
+MC	n2p	dense 1024->3072	4	59.32	2.73	
+MC	n2p	dense 3072->8192	4	348.73	3.32	
+MC	n3p	expert gate 3072->1024	1	96.27	1.00	3.83
+MC	n3p	expert down 1024->3072	1	108.13	1.00	4.30
+MC	n3p	expert gate 3072->1024	2	342.79	3.56	
+MC	n3p	expert down 1024->3072	2	659.66	6.10	
+MC	n3p	expert gate 3072->1024	3	552.48	5.74	
+MC	n3p	expert down 1024->3072	3	1173.05	10.85	
+MC	n3p	expert gate 3072->1024	4	810.22	8.42	
+MC	n3p	expert down 1024->3072	4	1689.28	15.62	
+MC	n3p	dense 3072->1024	1	20.43	1.00	6.49
+MC	n3p	dense 1024->3072	1	20.73	1.00	6.59
+MC	n3p	dense 3072->8192	1	96.39	1.00	3.83
+MC	n3p	dense 3072->1024	2	35.38	1.73	
+MC	n3p	dense 1024->3072	2	37.86	1.83	
+MC	n3p	dense 3072->8192	2	167.88	1.74	
+MC	n3p	dense 3072->1024	3	42.37	2.07	
+MC	n3p	dense 1024->3072	3	47.43	2.29	
+MC	n3p	dense 3072->8192	3	226.21	2.35	
+MC	n3p	dense 3072->1024	4	51.83	2.54	
+MC	n3p	dense 1024->3072	4	52.79	2.55	
+MC	n3p	dense 3072->8192	4	286.15	2.97	
+MC	iq2_s	expert gate 3072->1024	1	181.74	1.00	7.22
+MC	iq2_s	expert down 1024->3072	1	231.99	1.00	9.22
+MC	iq2_s	expert gate 3072->1024	2	459.01	2.53	
+MC	iq2_s	expert down 1024->3072	2	754.84	3.25	
+MC	iq2_s	expert gate 3072->1024	3	699.1	3.85	
+MC	iq2_s	expert down 1024->3072	3	1212.57	5.23	
+MC	iq2_s	expert gate 3072->1024	4	926.41	5.10	
+MC	iq2_s	expert down 1024->3072	4	1735.97	7.48	
+MC	iq2_s	dense 3072->1024	1	37	1.00	11.76
+MC	iq2_s	dense 1024->3072	1	42.89	1.00	13.63
+MC	iq2_s	dense 3072->8192	1	181.58	1.00	7.22
+MC	iq2_s	dense 3072->1024	2	64.46	1.74	
+MC	iq2_s	dense 1024->3072	2	69.78	1.63	
+MC	iq2_s	dense 3072->8192	2	282.52	1.56	
+MC	iq2_s	dense 3072->1024	3	72.54	1.96	
+MC	iq2_s	dense 1024->3072	3	77.41	1.80	
+MC	iq2_s	dense 3072->8192	3	363.95	2.00	
+MC	iq2_s	dense 3072->1024	4	84.69	2.29	
+MC	iq2_s	dense 1024->3072	4	89.49	2.09	
+MC	iq2_s	dense 3072->8192	4	434.43	2.39	
+MC	iq3_xxs	expert gate 3072->1024	1	159.55	1.00	6.34
+MC	iq3_xxs	expert down 1024->3072	1	175.39	1.00	6.97
+MC	iq3_xxs	expert gate 3072->1024	2	465.57	2.92	
+MC	iq3_xxs	expert down 1024->3072	2	733.53	4.18	
+MC	iq3_xxs	expert gate 3072->1024	3	711.75	4.46	
+MC	iq3_xxs	expert down 1024->3072	3	1155.11	6.59	
+MC	iq3_xxs	expert gate 3072->1024	4	950.64	5.96	
+MC	iq3_xxs	expert down 1024->3072	4	1683.86	9.60	
+MC	iq3_xxs	dense 3072->1024	1	34.08	1.00	10.83
+MC	iq3_xxs	dense 1024->3072	1	33.73	1.00	10.72
+MC	iq3_xxs	dense 3072->8192	1	160.31	1.00	6.37
+MC	iq3_xxs	dense 3072->1024	2	66.36	1.95	
+MC	iq3_xxs	dense 1024->3072	2	69.16	2.05	
+MC	iq3_xxs	dense 3072->8192	2	283.78	1.77	
+MC	iq3_xxs	dense 3072->1024	3	72.56	2.13	
+MC	iq3_xxs	dense 1024->3072	3	76.3	2.26	
+MC	iq3_xxs	dense 3072->8192	3	357.69	2.23	
+MC	iq3_xxs	dense 3072->1024	4	80.33	2.36	
+MC	iq3_xxs	dense 1024->3072	4	88.06	2.61	
+MC	iq3_xxs	dense 3072->8192	4	417.41	2.60	
+MC	q8_0	expert gate 3072->1024	1	174.24	1.00	6.92
+MC	q8_0	expert down 1024->3072	1	187.7	1.00	7.46
+MC	q8_0	expert gate 3072->1024	2	419.4	2.41	
+MC	q8_0	expert down 1024->3072	2	706.58	3.76	
+MC	q8_0	expert gate 3072->1024	3	675.65	3.88	
+MC	q8_0	expert down 1024->3072	3	1168.92	6.23	
+MC	q8_0	expert gate 3072->1024	4	946.2	5.43	
+MC	q8_0	expert down 1024->3072	4	1768.8	9.42	
+MC	q8_0	dense 3072->1024	1	35.21	1.00	11.19
+MC	q8_0	dense 1024->3072	1	35.95	1.00	11.43
+MC	q8_0	dense 3072->8192	1	175.66	1.00	6.98
+MC	q8_0	dense 8192->3072	1	171.73	1.00	6.82
+MC	q8_0	dense 3072->248320	1	4720.3	1.00	6.19
+MC	q8_0	dense 3072->1024	2	48.33	1.37	
+MC	q8_0	dense 1024->3072	2	50.41	1.40	
+MC	q8_0	dense 3072->8192	2	209.3	1.19	
+MC	q8_0	dense 8192->3072	2	208.24	1.21	
+MC	q8_0	dense 3072->248320	2	5817.06	1.23	
+MC	q8_0	dense 3072->1024	3	47.95	1.36	
+MC	q8_0	dense 1024->3072	3	49.03	1.36	
+MC	q8_0	dense 3072->8192	3	242.18	1.38	
+MC	q8_0	dense 8192->3072	3	253.15	1.47	
+MC	q8_0	dense 3072->248320	3	6802.53	1.44	
+MC	q8_0	dense 3072->1024	4	53.84	1.53	
+MC	q8_0	dense 1024->3072	4	57.23	1.59	
+MC	q8_0	dense 3072->8192	4	278.57	1.59	
+MC	q8_0	dense 8192->3072	4	284.94	1.66	
+MC	q8_0	dense 3072->248320	4	7840.26	1.66	
+MC	q5_0	expert gate 3072->1024	1	120.77	1.00	4.80
+MC	q5_0	expert down 1024->3072	1	146.21	1.00	5.81
+MC	q5_0	expert gate 3072->1024	2	439.34	3.64	
+MC	q5_0	expert down 1024->3072	2	805.94	5.51	
+MC	q5_0	expert gate 3072->1024	3	707.09	5.85	
+MC	q5_0	expert down 1024->3072	3	1472.11	10.07	
+MC	q5_0	expert gate 3072->1024	4	1009.88	8.36	
+MC	q5_0	expert down 1024->3072	4	2184.48	14.94	
+MC	q5_0	dense 3072->1024	1	26.72	1.00	8.49
+MC	q5_0	dense 1024->3072	1	30.83	1.00	9.80
+MC	q5_0	dense 3072->8192	1	121.36	1.00	4.82
+MC	q5_0	dense 8192->3072	1	121.15	1.00	4.81
+MC	q5_0	dense 3072->248320	1	3292.27	1.00	4.32
+MC	q5_0	dense 3072->1024	2	45.39	1.70	
+MC	q5_0	dense 1024->3072	2	51.37	1.67	
+MC	q5_0	dense 3072->8192	2	199.18	1.64	
+MC	q5_0	dense 8192->3072	2	215.21	1.78	
+MC	q5_0	dense 3072->248320	2	5762.91	1.75	
+MC	q5_0	dense 3072->1024	3	43.28	1.62	
+MC	q5_0	dense 1024->3072	3	54.51	1.77	
+MC	q5_0	dense 3072->8192	3	246.39	2.03	
+MC	q5_0	dense 8192->3072	3	262.64	2.17	
+MC	q5_0	dense 3072->248320	3	7202.9	2.19	
+MC	q5_0	dense 3072->1024	4	50.57	1.89	
+MC	q5_0	dense 1024->3072	4	61.55	2.00	
+MC	q5_0	dense 3072->8192	4	295.58	2.44	
+MC	q5_0	dense 8192->3072	4	295.34	2.44	
+MC	q5_0	dense 3072->248320	4	8628.82	2.62	
+llama.cpp	n2p	expert gate 3072->1024	1	105.04	1.00	4.17
+llama.cpp	n2p	expert down 1024->3072	1	118.31	1.00	4.70
+llama.cpp	n2p	expert gate 3072->1024	2	245.17	2.33	
+llama.cpp	n2p	expert down 1024->3072	2	290.97	2.46	
+llama.cpp	n2p	expert gate 3072->1024	3	364.85	3.47	
+llama.cpp	n2p	expert down 1024->3072	3	438.44	3.71	
+llama.cpp	n2p	expert gate 3072->1024	4	487.17	4.64	
+llama.cpp	n2p	expert down 1024->3072	4	576.04	4.87	
+llama.cpp	n2p	dense 3072->1024	1	21.46	1.00	6.82
+llama.cpp	n2p	dense 1024->3072	1	21.76	1.00	6.92
+llama.cpp	n2p	dense 3072->8192	1	105.31	1.00	4.18
+llama.cpp	n2p	dense 3072->1024	2	38.1	1.78	
+llama.cpp	n2p	dense 1024->3072	2	75.72	3.48	
+llama.cpp	n2p	dense 3072->8192	2	212.89	2.02	
+llama.cpp	n2p	dense 3072->1024	3	41.31	1.92	
+llama.cpp	n2p	dense 1024->3072	3	76.98	3.54	
+llama.cpp	n2p	dense 3072->8192	3	254.73	2.42	
+llama.cpp	n2p	dense 3072->1024	4	51.78	2.41	
+llama.cpp	n2p	dense 1024->3072	4	96.02	4.41	
+llama.cpp	n2p	dense 3072->8192	4	342.18	3.25	
+llama.cpp	n3p	expert gate 3072->1024	1	96.35	1.00	3.83
+llama.cpp	n3p	expert down 1024->3072	1	108.19	1.00	4.30
+llama.cpp	n3p	expert gate 3072->1024	2	241	2.50	
+llama.cpp	n3p	expert down 1024->3072	2	287.13	2.65	
+llama.cpp	n3p	expert gate 3072->1024	3	359.98	3.74	
+llama.cpp	n3p	expert down 1024->3072	3	428.76	3.96	
+llama.cpp	n3p	expert gate 3072->1024	4	478.39	4.97	
+llama.cpp	n3p	expert down 1024->3072	4	570.58	5.27	
+llama.cpp	n3p	dense 3072->1024	1	20.46	1.00	6.50
+llama.cpp	n3p	dense 1024->3072	1	20.81	1.00	6.62
+llama.cpp	n3p	dense 3072->8192	1	96.63	1.00	3.84
+llama.cpp	n3p	dense 3072->1024	2	34.15	1.67	
+llama.cpp	n3p	dense 1024->3072	2	68.07	3.27	
+llama.cpp	n3p	dense 3072->8192	2	189.41	1.96	
+llama.cpp	n3p	dense 3072->1024	3	40.6	1.98	
+llama.cpp	n3p	dense 1024->3072	3	74.45	3.58	
+llama.cpp	n3p	dense 3072->8192	3	244.46	2.53	
+llama.cpp	n3p	dense 3072->1024	4	50.7	2.48	
+llama.cpp	n3p	dense 1024->3072	4	98.27	4.72	
+llama.cpp	n3p	dense 3072->8192	4	317.54	3.29	
+llama.cpp	iq2_s	expert gate 3072->1024	1	181.38	1.00	7.21
+llama.cpp	iq2_s	expert down 1024->3072	1	231.56	1.00	9.20
+llama.cpp	iq2_s	expert gate 3072->1024	2	426.71	2.35	
+llama.cpp	iq2_s	expert down 1024->3072	2	439.39	1.90	
+llama.cpp	iq2_s	expert gate 3072->1024	3	634.88	3.50	
+llama.cpp	iq2_s	expert down 1024->3072	3	655.4	2.83	
+llama.cpp	iq2_s	expert gate 3072->1024	4	850.29	4.69	
+llama.cpp	iq2_s	expert down 1024->3072	4	878.18	3.79	
+llama.cpp	iq2_s	dense 3072->1024	1	37.07	1.00	11.78
+llama.cpp	iq2_s	dense 1024->3072	1	43.11	1.00	13.70
+llama.cpp	iq2_s	dense 3072->8192	1	181.54	1.00	7.21
+llama.cpp	iq2_s	dense 3072->1024	2	54.11	1.46	
+llama.cpp	iq2_s	dense 1024->3072	2	89.78	2.08	
+llama.cpp	iq2_s	dense 3072->8192	2	318.25	1.75	
+llama.cpp	iq2_s	dense 3072->1024	3	58.73	1.58	
+llama.cpp	iq2_s	dense 1024->3072	3	100.71	2.34	
+llama.cpp	iq2_s	dense 3072->8192	3	364.96	2.01	
+llama.cpp	iq2_s	dense 3072->1024	4	88.61	2.39	
+llama.cpp	iq2_s	dense 1024->3072	4	164.56	3.82	
+llama.cpp	iq2_s	dense 3072->8192	4	588.59	3.24	
+llama.cpp	iq3_xxs	expert gate 3072->1024	1	160.13	1.00	6.36
+llama.cpp	iq3_xxs	expert down 1024->3072	1	177.02	1.00	7.03
+llama.cpp	iq3_xxs	expert gate 3072->1024	2	504.27	3.15	
+llama.cpp	iq3_xxs	expert down 1024->3072	2	521.78	2.95	
+llama.cpp	iq3_xxs	expert gate 3072->1024	3	737.26	4.60	
+llama.cpp	iq3_xxs	expert down 1024->3072	3	773.06	4.37	
+llama.cpp	iq3_xxs	expert gate 3072->1024	4	979.73	6.12	
+llama.cpp	iq3_xxs	expert down 1024->3072	4	1030.21	5.82	
+llama.cpp	iq3_xxs	dense 3072->1024	1	34.05	1.00	10.82
+llama.cpp	iq3_xxs	dense 1024->3072	1	33.79	1.00	10.74
+llama.cpp	iq3_xxs	dense 3072->8192	1	160.68	1.00	6.38
+llama.cpp	iq3_xxs	dense 3072->1024	2	63.39	1.86	
+llama.cpp	iq3_xxs	dense 1024->3072	2	89.71	2.65	
+llama.cpp	iq3_xxs	dense 3072->8192	2	340.73	2.12	
+llama.cpp	iq3_xxs	dense 3072->1024	3	64.75	1.90	
+llama.cpp	iq3_xxs	dense 1024->3072	3	109.25	3.23	
+llama.cpp	iq3_xxs	dense 3072->8192	3	385.27	2.40	
+llama.cpp	iq3_xxs	dense 3072->1024	4	90.56	2.66	
+llama.cpp	iq3_xxs	dense 1024->3072	4	164.57	4.87	
+llama.cpp	iq3_xxs	dense 3072->8192	4	617.65	3.84	
+llama.cpp	q8_0	expert gate 3072->1024	1	174.27	1.00	6.92
+llama.cpp	q8_0	expert down 1024->3072	1	187.82	1.00	7.46
+llama.cpp	q8_0	expert gate 3072->1024	2	448.15	2.57	
+llama.cpp	q8_0	expert down 1024->3072	2	456.18	2.43	
+llama.cpp	q8_0	expert gate 3072->1024	3	660.33	3.79	
+llama.cpp	q8_0	expert down 1024->3072	3	686.37	3.65	
+llama.cpp	q8_0	expert gate 3072->1024	4	874.85	5.02	
+llama.cpp	q8_0	expert down 1024->3072	4	902.3	4.80	
+llama.cpp	q8_0	dense 3072->1024	1	35.27	1.00	11.21
+llama.cpp	q8_0	dense 1024->3072	1	36	1.00	11.44
+llama.cpp	q8_0	dense 3072->8192	1	175.02	1.00	6.95
+llama.cpp	q8_0	dense 8192->3072	1	171.64	1.00	6.82
+llama.cpp	q8_0	dense 3072->248320	1	4719.45	1.00	6.19
+llama.cpp	q8_0	dense 3072->1024	2	50.65	1.44	
+llama.cpp	q8_0	dense 1024->3072	2	63.18	1.75	
+llama.cpp	q8_0	dense 3072->8192	2	278.34	1.59	
+llama.cpp	q8_0	dense 8192->3072	2	274.75	1.60	
+llama.cpp	q8_0	dense 3072->248320	2	8087.45	1.71	
+llama.cpp	q8_0	dense 3072->1024	3	49.87	1.41	
+llama.cpp	q8_0	dense 1024->3072	3	59.4	1.65	
+llama.cpp	q8_0	dense 3072->8192	3	322.24	1.84	
+llama.cpp	q8_0	dense 8192->3072	3	335.93	1.96	
+llama.cpp	q8_0	dense 3072->248320	3	9575.57	2.03	
+llama.cpp	q8_0	dense 3072->1024	4	55.91	1.59	
+llama.cpp	q8_0	dense 1024->3072	4	69.79	1.94	
+llama.cpp	q8_0	dense 3072->8192	4	379.79	2.17	
+llama.cpp	q8_0	dense 8192->3072	4	384.77	2.24	
+llama.cpp	q8_0	dense 3072->248320	4	11387.9	2.41	
+llama.cpp	q5_0	expert gate 3072->1024	1	120.65	1.00	4.79
+llama.cpp	q5_0	expert down 1024->3072	1	145.95	1.00	5.80
+llama.cpp	q5_0	expert gate 3072->1024	2	348.12	2.89	
+llama.cpp	q5_0	expert down 1024->3072	2	403.71	2.77	
+llama.cpp	q5_0	expert gate 3072->1024	3	519.64	4.31	
+llama.cpp	q5_0	expert down 1024->3072	3	595.28	4.08	
+llama.cpp	q5_0	expert gate 3072->1024	4	688.44	5.71	
+llama.cpp	q5_0	expert down 1024->3072	4	809.56	5.55	
+llama.cpp	q5_0	dense 3072->1024	1	26.89	1.00	8.55
+llama.cpp	q5_0	dense 1024->3072	1	30.87	1.00	9.81
+llama.cpp	q5_0	dense 3072->8192	1	121.4	1.00	4.82
+llama.cpp	q5_0	dense 8192->3072	1	121.02	1.00	4.81
+llama.cpp	q5_0	dense 3072->248320	1	3299.98	1.00	4.33
+llama.cpp	q5_0	dense 3072->1024	2	45.16	1.68	
+llama.cpp	q5_0	dense 1024->3072	2	64.51	2.09	
+llama.cpp	q5_0	dense 3072->8192	2	234.05	1.93	
+llama.cpp	q5_0	dense 8192->3072	2	230.91	1.91	
+llama.cpp	q5_0	dense 3072->248320	2	6977.92	2.11	
+llama.cpp	q5_0	dense 3072->1024	3	42.93	1.60	
+llama.cpp	q5_0	dense 1024->3072	3	59.27	1.92	
+llama.cpp	q5_0	dense 3072->8192	3	277.51	2.29	
+llama.cpp	q5_0	dense 8192->3072	3	271.74	2.25	
+llama.cpp	q5_0	dense 3072->248320	3	8196.93	2.48	
+llama.cpp	q5_0	dense 3072->1024	4	48.71	1.81	
+llama.cpp	q5_0	dense 1024->3072	4	70.72	2.29	
+llama.cpp	q5_0	dense 3072->8192	4	324.59	2.67	
+llama.cpp	q5_0	dense 8192->3072	4	306.64	2.53	
+llama.cpp	q5_0	dense 3072->248320	4	9726.75	2.95	
+MT	n2p	fused gate/up 3072->1024	1	278.53	1.00	5.53
+MT	n2p	fused gate/up 3072->1024	2	494.59	1.78	
+MT	n2p	fused gate/up 3072->1024	3	723.97	2.60	
+MT	n2p	fused gate/up 3072->1024	4	882.69	3.17	
+MT	n3p	fused gate/up 3072->1024	1	257.02	1.00	5.11
+MT	n3p	fused gate/up 3072->1024	2	454.66	1.77	
+MT	n3p	fused gate/up 3072->1024	3	661.50	2.57	
+MT	n3p	fused gate/up 3072->1024	4	769.02	2.99	
+MT	iq2_s	fused gate/up 3072->1024	1	336.90	1.00	6.69
+MT	iq2_s	fused gate/up 3072->1024	2	1201.15	3.57	
+MT	iq2_s	fused gate/up 3072->1024	3	1792.00	5.32	
+MT	iq2_s	fused gate/up 3072->1024	4	2236.42	6.64	
+MT	iq3_xxs	fused gate/up 3072->1024	1	361.47	1.00	7.18
+MT	iq3_xxs	fused gate/up 3072->1024	2	1062.91	2.94	
+MT	iq3_xxs	fused gate/up 3072->1024	3	1499.14	4.15	
+MT	iq3_xxs	fused gate/up 3072->1024	4	1737.73	4.81	
+MT	q8_0	fused gate/up 3072->1024	1	337.92	1.00	6.71
+MT	q8_0	fused gate/up 3072->1024	2	927.74	2.75	
+MT	q8_0	fused gate/up 3072->1024	3	1395.71	4.13	
+MT	q8_0	fused gate/up 3072->1024	4	1677.31	4.96	
+MT	q5_0	fused gate/up 3072->1024	1	241.66	1.00	4.80
+MT	q5_0	fused gate/up 3072->1024	2	930.82	3.85	
+MT	q5_0	fused gate/up 3072->1024	3	1347.58	5.58	
+MT	q5_0	fused gate/up 3072->1024	4	1628.16	6.74	
+MC	n2p	fused gate/up 3072->1024	1	278.53	1.00	5.53
+MC	n2p	fused gate/up 3072->1024	2	707.58	2.54	
+MC	n2p	fused gate/up 3072->1024	3	1013.76	3.64	
+MC	n2p	fused gate/up 3072->1024	4	1399.81	5.03	
+MC	n3p	fused gate/up 3072->1024	1	257.02	1.00	5.11
+MC	n3p	fused gate/up 3072->1024	2	599.04	2.33	
+MC	n3p	fused gate/up 3072->1024	3	888.83	3.46	
+MC	n3p	fused gate/up 3072->1024	4	1240.06	4.82	
+MC	iq2_s	fused gate/up 3072->1024	1	337.92	1.00	6.71
+MC	iq2_s	fused gate/up 3072->1024	2	1078.27	3.19	
+MC	iq2_s	fused gate/up 3072->1024	3	1569.79	4.65	
+MC	iq2_s	fused gate/up 3072->1024	4	2156.54	6.38	
+MC	iq3_xxs	fused gate/up 3072->1024	1	361.47	1.00	7.18
+MC	iq3_xxs	fused gate/up 3072->1024	2	1501.18	4.15	
+MC	iq3_xxs	fused gate/up 3072->1024	3	1873.92	5.18	
+MC	iq3_xxs	fused gate/up 3072->1024	4	2458.62	6.80	
+MC	q8_0	fused gate/up 3072->1024	1	336.90	1.00	6.69
+MC	q8_0	fused gate/up 3072->1024	2	910.34	2.70	
+MC	q8_0	fused gate/up 3072->1024	3	1399.81	4.15	
+MC	q8_0	fused gate/up 3072->1024	4	1875.97	5.57	
+MC	q5_0	fused gate/up 3072->1024	1	240.64	1.00	4.78
+MC	q5_0	fused gate/up 3072->1024	2	874.50	3.63	
+MC	q5_0	fused gate/up 3072->1024	3	1538.05	6.39	
+MC	q5_0	fused gate/up 3072->1024	4	2311.17	9.60	
+llama.cpp	n2p	fused gate/up 3072->1024	1	277.50	1.00	5.51
+llama.cpp	n2p	fused gate/up 3072->1024	2	501.76	1.81	
+llama.cpp	n2p	fused gate/up 3072->1024	3	733.18	2.64	
+llama.cpp	n2p	fused gate/up 3072->1024	4	983.04	3.54	
+llama.cpp	n3p	fused gate/up 3072->1024	1	257.02	1.00	5.11
+llama.cpp	n3p	fused gate/up 3072->1024	2	427.01	1.66	
+llama.cpp	n3p	fused gate/up 3072->1024	3	633.86	2.47	
+llama.cpp	n3p	fused gate/up 3072->1024	4	831.49	3.24	
+llama.cpp	iq2_s	fused gate/up 3072->1024	1	339.97	1.00	6.75
+llama.cpp	iq2_s	fused gate/up 3072->1024	2	801.79	2.36	
+llama.cpp	iq2_s	fused gate/up 3072->1024	3	1177.60	3.46	
+llama.cpp	iq2_s	fused gate/up 3072->1024	4	1567.74	4.61	
+llama.cpp	iq3_xxs	fused gate/up 3072->1024	1	362.50	1.00	7.20
+llama.cpp	iq3_xxs	fused gate/up 3072->1024	2	914.43	2.52	
+llama.cpp	iq3_xxs	fused gate/up 3072->1024	3	1350.66	3.73	
+llama.cpp	iq3_xxs	fused gate/up 3072->1024	4	1789.95	4.94	
+llama.cpp	q8_0	fused gate/up 3072->1024	1	340.99	1.00	6.77
+llama.cpp	q8_0	fused gate/up 3072->1024	2	1022.98	3.00	
+llama.cpp	q8_0	fused gate/up 3072->1024	3	1518.59	4.45	
+llama.cpp	q8_0	fused gate/up 3072->1024	4	2014.21	5.91	
+llama.cpp	q5_0	fused gate/up 3072->1024	1	241.66	1.00	4.80
+llama.cpp	q5_0	fused gate/up 3072->1024	2	844.80	3.50	
+llama.cpp	q5_0	fused gate/up 3072->1024	3	1250.30	5.17	
+llama.cpp	q5_0	fused gate/up 3072->1024	4	1657.86	6.86	
+MT RB=1	n2p	expert gate 3072->1024	1	104.61	1.00	4.16
+MT RB=1	n2p	expert down 1024->3072	1	117.46	1.00	4.67
+MT RB=1	n2p	expert gate 3072->1024	2	243.15	2.32	
+MT RB=1	n2p	expert down 1024->3072	2	417.07	3.55	
+MT RB=1	n2p	expert gate 3072->1024	3	350.22	3.35	
+MT RB=1	n2p	expert down 1024->3072	3	600.23	5.11	
+MT RB=1	n2p	expert gate 3072->1024	4	449.22	4.29	
+MT RB=1	n2p	expert down 1024->3072	4	795.67	6.77	
+MT RB=1	n2p	dense 3072->1024	1	21.47	1.00	6.83
+MT RB=1	n2p	dense 1024->3072	1	21.77	1.00	6.92
+MT RB=1	n2p	dense 3072->8192	1	105.04	1.00	4.17
+MT RB=1	n2p	dense 3072->1024	2	31.74	1.48	
+MT RB=1	n2p	dense 1024->3072	2	35.1	1.61	
+MT RB=1	n2p	dense 3072->8192	2	134.36	1.28	
+MT RB=1	n2p	dense 3072->1024	3	34.47	1.61	
+MT RB=1	n2p	dense 1024->3072	3	38.24	1.76	
+MT RB=1	n2p	dense 3072->8192	3	164.57	1.57	
+MT RB=1	n2p	dense 3072->1024	4	39.83	1.86	
+MT RB=1	n2p	dense 1024->3072	4	43.38	1.99	
+MT RB=1	n2p	dense 3072->8192	4	199.76	1.90	
+MT RB=1	n3p	expert gate 3072->1024	1	96.04	1.00	3.82
+MT RB=1	n3p	expert down 1024->3072	1	107.97	1.00	4.29
+MT RB=1	n3p	expert gate 3072->1024	2	228.8	2.38	
+MT RB=1	n3p	expert down 1024->3072	2	403.29	3.74	
+MT RB=1	n3p	expert gate 3072->1024	3	334.72	3.49	
+MT RB=1	n3p	expert down 1024->3072	3	604.5	5.60	
+MT RB=1	n3p	expert gate 3072->1024	4	433.85	4.52	
+MT RB=1	n3p	expert down 1024->3072	4	779.89	7.22	
+MT RB=1	n3p	dense 3072->1024	1	20.41	1.00	6.49
+MT RB=1	n3p	dense 1024->3072	1	20.89	1.00	6.64
+MT RB=1	n3p	dense 3072->8192	1	96.42	1.00	3.83
+MT RB=1	n3p	dense 3072->1024	2	28.55	1.40	
+MT RB=1	n3p	dense 1024->3072	2	34.36	1.64	
+MT RB=1	n3p	dense 3072->8192	2	126.45	1.31	
+MT RB=1	n3p	dense 3072->1024	3	32.85	1.61	
+MT RB=1	n3p	dense 1024->3072	3	38.19	1.83	
+MT RB=1	n3p	dense 3072->8192	3	155.15	1.61	
+MT RB=1	n3p	dense 3072->1024	4	38.85	1.90	
+MT RB=1	n3p	dense 1024->3072	4	43.59	2.09	
+MT RB=1	n3p	dense 3072->8192	4	194.35	2.02	
+MT RB=1	iq3_xxs	expert gate 3072->1024	1	159.49	1.00	6.34
+MT RB=1	iq3_xxs	expert down 1024->3072	1	175.56	1.00	6.98
+MT RB=1	iq3_xxs	expert gate 3072->1024	2	471.45	2.96	
+MT RB=1	iq3_xxs	expert down 1024->3072	2	654.32	3.73	
+MT RB=1	iq3_xxs	expert gate 3072->1024	3	688.04	4.31	
+MT RB=1	iq3_xxs	expert down 1024->3072	3	940.42	5.36	
+MT RB=1	iq3_xxs	expert gate 3072->1024	4	874.71	5.48	
+MT RB=1	iq3_xxs	expert down 1024->3072	4	1228.7	7.00	
+MT RB=1	iq3_xxs	dense 3072->1024	1	34.11	1.00	10.84
+MT RB=1	iq3_xxs	dense 1024->3072	1	33.93	1.00	10.79
+MT RB=1	iq3_xxs	dense 3072->8192	1	159.82	1.00	6.35
+MT RB=1	iq3_xxs	dense 3072->1024	2	52.97	1.55	
+MT RB=1	iq3_xxs	dense 1024->3072	2	55.65	1.64	
+MT RB=1	iq3_xxs	dense 3072->8192	2	253.76	1.59	
+MT RB=1	iq3_xxs	dense 3072->1024	3	52.9	1.55	
+MT RB=1	iq3_xxs	dense 1024->3072	3	56.07	1.65	
+MT RB=1	iq3_xxs	dense 3072->8192	3	265.84	1.66	
+MT RB=1	iq3_xxs	dense 3072->1024	4	57.95	1.70	
+MT RB=1	iq3_xxs	dense 1024->3072	4	63.15	1.86	
+MT RB=1	iq3_xxs	dense 3072->8192	4	301.52	1.89	
+MT RB=2	n2p	expert gate 3072->1024	1	104.9	1.00	4.17
+MT RB=2	n2p	expert down 1024->3072	1	117.75	1.00	4.68
+MT RB=2	n2p	expert gate 3072->1024	2	206.81	1.97	
+MT RB=2	n2p	expert down 1024->3072	2	306.85	2.61	
+MT RB=2	n2p	expert gate 3072->1024	3	303.71	2.90	
+MT RB=2	n2p	expert down 1024->3072	3	437.02	3.71	
+MT RB=2	n2p	expert gate 3072->1024	4	386.63	3.69	
+MT RB=2	n2p	expert down 1024->3072	4	560.09	4.76	
+MT RB=2	n2p	dense 3072->1024	1	21.47	1.00	6.83
+MT RB=2	n2p	dense 1024->3072	1	21.8	1.00	6.93
+MT RB=2	n2p	dense 3072->8192	1	105.1	1.00	4.18
+MT RB=2	n2p	dense 3072->1024	2	33.77	1.57	
+MT RB=2	n2p	dense 1024->3072	2	33.08	1.52	
+MT RB=2	n2p	dense 3072->8192	2	126.96	1.21	
+MT RB=2	n2p	dense 3072->1024	3	40.1	1.87	
+MT RB=2	n2p	dense 1024->3072	3	35.74	1.64	
+MT RB=2	n2p	dense 3072->8192	3	156.72	1.49	
+MT RB=2	n2p	dense 3072->1024	4	46.37	2.16	
+MT RB=2	n2p	dense 1024->3072	4	42.16	1.93	
+MT RB=2	n2p	dense 3072->8192	4	188.98	1.80	
+MT RB=2	n3p	expert gate 3072->1024	1	96.08	1.00	3.82
+MT RB=2	n3p	expert down 1024->3072	1	107.96	1.00	4.29
+MT RB=2	n3p	expert gate 3072->1024	2	201.8	2.10	
+MT RB=2	n3p	expert down 1024->3072	2	289.61	2.68	
+MT RB=2	n3p	expert gate 3072->1024	3	290.49	3.02	
+MT RB=2	n3p	expert down 1024->3072	3	410.93	3.81	
+MT RB=2	n3p	expert gate 3072->1024	4	352.49	3.67	
+MT RB=2	n3p	expert down 1024->3072	4	534.58	4.95	
+MT RB=2	n3p	dense 3072->1024	1	20.44	1.00	6.50
+MT RB=2	n3p	dense 1024->3072	1	20.89	1.00	6.64
+MT RB=2	n3p	dense 3072->8192	1	96.69	1.00	3.84
+MT RB=2	n3p	dense 3072->1024	2	32.01	1.57	
+MT RB=2	n3p	dense 1024->3072	2	32.92	1.58	
+MT RB=2	n3p	dense 3072->8192	2	117.46	1.21	
+MT RB=2	n3p	dense 3072->1024	3	35.63	1.74	
+MT RB=2	n3p	dense 1024->3072	3	36.17	1.73	
+MT RB=2	n3p	dense 3072->8192	3	145.41	1.50	
+MT RB=2	n3p	dense 3072->1024	4	43.29	2.12	
+MT RB=2	n3p	dense 1024->3072	4	42.23	2.02	
+MT RB=2	n3p	dense 3072->8192	4	182.13	1.88	
+MT RB=2	iq3_xxs	expert gate 3072->1024	1	159.84	1.00	6.35
+MT RB=2	iq3_xxs	expert down 1024->3072	1	176.6	1.00	7.02
+MT RB=2	iq3_xxs	expert gate 3072->1024	2	436.67	2.73	
+MT RB=2	iq3_xxs	expert down 1024->3072	2	543.72	3.08	
+MT RB=2	iq3_xxs	expert gate 3072->1024	3	593.57	3.71	
+MT RB=2	iq3_xxs	expert down 1024->3072	3	762.1	4.32	
+MT RB=2	iq3_xxs	expert gate 3072->1024	4	758.71	4.75	
+MT RB=2	iq3_xxs	expert down 1024->3072	4	989.54	5.60	
+MT RB=2	iq3_xxs	dense 3072->1024	1	33.95	1.00	10.79
+MT RB=2	iq3_xxs	dense 1024->3072	1	33.59	1.00	10.68
+MT RB=2	iq3_xxs	dense 3072->8192	1	160.08	1.00	6.36
+MT RB=2	iq3_xxs	dense 3072->1024	2	64.41	1.90	
+MT RB=2	iq3_xxs	dense 1024->3072	2	55.25	1.64	
+MT RB=2	iq3_xxs	dense 3072->8192	2	240.76	1.50	
+MT RB=2	iq3_xxs	dense 3072->1024	3	58.26	1.72	
+MT RB=2	iq3_xxs	dense 1024->3072	3	55.32	1.65	
+MT RB=2	iq3_xxs	dense 3072->8192	3	252.93	1.58	
+MT RB=2	iq3_xxs	dense 3072->1024	4	65.63	1.93	
+MT RB=2	iq3_xxs	dense 1024->3072	4	59.99	1.79	
+MT RB=2	iq3_xxs	dense 3072->8192	4	285.26	1.78	
+MT RB=4	n2p	expert gate 3072->1024	1	105.1	1.00	4.18
+MT RB=4	n2p	expert down 1024->3072	1	118.47	1.00	4.71
+MT RB=4	n2p	expert gate 3072->1024	2	195.11	1.86	
+MT RB=4	n2p	expert down 1024->3072	2	237.39	2.00	
+MT RB=4	n2p	expert gate 3072->1024	3	275.13	2.62	
+MT RB=4	n2p	expert down 1024->3072	3	342.4	2.89	
+MT RB=4	n2p	expert gate 3072->1024	4	352.12	3.35	
+MT RB=4	n2p	expert down 1024->3072	4	444.41	3.75	
+MT RB=4	n2p	dense 3072->1024	1	21.4	1.00	6.80
+MT RB=4	n2p	dense 1024->3072	1	21.73	1.00	6.91
+MT RB=4	n2p	dense 3072->8192	1	105.24	1.00	4.18
+MT RB=4	n2p	dense 3072->1024	2	35.25	1.65	
+MT RB=4	n2p	dense 1024->3072	2	31.94	1.47	
+MT RB=4	n2p	dense 3072->8192	2	128.81	1.22	
+MT RB=4	n2p	dense 3072->1024	3	39.95	1.87	
+MT RB=4	n2p	dense 1024->3072	3	34.23	1.58	
+MT RB=4	n2p	dense 3072->8192	3	161.08	1.53	
+MT RB=4	n2p	dense 3072->1024	4	44.8	2.09	
+MT RB=4	n2p	dense 1024->3072	4	39.08	1.80	
+MT RB=4	n2p	dense 3072->8192	4	196.35	1.87	
+MT RB=4	n3p	expert gate 3072->1024	1	96.38	1.00	3.83
+MT RB=4	n3p	expert down 1024->3072	1	108.33	1.00	4.30
+MT RB=4	n3p	expert gate 3072->1024	2	186.73	1.94	
+MT RB=4	n3p	expert down 1024->3072	2	226.71	2.09	
+MT RB=4	n3p	expert gate 3072->1024	3	269.34	2.79	
+MT RB=4	n3p	expert down 1024->3072	3	333.81	3.08	
+MT RB=4	n3p	expert gate 3072->1024	4	341.06	3.54	
+MT RB=4	n3p	expert down 1024->3072	4	431.99	3.99	
+MT RB=4	n3p	dense 3072->1024	1	20.44	1.00	6.50
+MT RB=4	n3p	dense 1024->3072	1	20.87	1.00	6.63
+MT RB=4	n3p	dense 3072->8192	1	96.77	1.00	3.85
+MT RB=4	n3p	dense 3072->1024	2	29.31	1.43	
+MT RB=4	n3p	dense 1024->3072	2	29.06	1.39	
+MT RB=4	n3p	dense 3072->8192	2	117.63	1.22	
+MT RB=4	n3p	dense 3072->1024	3	35.79	1.75	
+MT RB=4	n3p	dense 1024->3072	3	34.31	1.64	
+MT RB=4	n3p	dense 3072->8192	3	147.73	1.53	
+MT RB=4	n3p	dense 3072->1024	4	43.3	2.12	
+MT RB=4	n3p	dense 1024->3072	4	39.36	1.89	
+MT RB=4	n3p	dense 3072->8192	4	188.19	1.94	
+MT RB=4	iq3_xxs	expert gate 3072->1024	1	160.06	1.00	6.36
+MT RB=4	iq3_xxs	expert down 1024->3072	1	176.94	1.00	7.03
+MT RB=4	iq3_xxs	expert gate 3072->1024	2	413.04	2.58	
+MT RB=4	iq3_xxs	expert down 1024->3072	2	473.72	2.68	
+MT RB=4	iq3_xxs	expert gate 3072->1024	3	588.85	3.68	
+MT RB=4	iq3_xxs	expert down 1024->3072	3	690.48	3.90	
+MT RB=4	iq3_xxs	expert gate 3072->1024	4	736.02	4.60	
+MT RB=4	iq3_xxs	expert down 1024->3072	4	841.5	4.76	
+MT RB=4	iq3_xxs	dense 3072->1024	1	34.01	1.00	10.81
+MT RB=4	iq3_xxs	dense 1024->3072	1	33.88	1.00	10.77
+MT RB=4	iq3_xxs	dense 3072->8192	1	160.89	1.00	6.39
+MT RB=4	iq3_xxs	dense 3072->1024	2	64.62	1.90	
+MT RB=4	iq3_xxs	dense 1024->3072	2	53.79	1.59	
+MT RB=4	iq3_xxs	dense 3072->8192	2	246.46	1.53	
+MT RB=4	iq3_xxs	dense 3072->1024	3	58.58	1.72	
+MT RB=4	iq3_xxs	dense 1024->3072	3	53.59	1.58	
+MT RB=4	iq3_xxs	dense 3072->8192	3	263.36	1.64	
+MT RB=4	iq3_xxs	dense 3072->1024	4	64.49	1.90	
+MT RB=4	iq3_xxs	dense 1024->3072	4	57.92	1.71	
+MT RB=4	iq3_xxs	dense 3072->8192	4	299.73	1.86	
+MT ACT_KB=8	n2p	expert gate 3072->1024	1	105.07	1.00	4.18
+MT ACT_KB=8	n2p	expert down 1024->3072	1	118.36	1.00	4.70
+MT ACT_KB=8	n2p	expert gate 3072->1024	2	266.24	2.53	
+MT ACT_KB=8	n2p	expert down 1024->3072	2	295.96	2.50	
+MT ACT_KB=8	n2p	expert gate 3072->1024	3	381.75	3.63	
+MT ACT_KB=8	n2p	expert down 1024->3072	3	438.07	3.70	
+MT ACT_KB=8	n2p	expert gate 3072->1024	4	495.31	4.71	
+MT ACT_KB=8	n2p	expert down 1024->3072	4	565.92	4.78	
+MT ACT_KB=8	n2p	dense 3072->1024	1	21.41	1.00	6.81
+MT ACT_KB=8	n2p	dense 1024->3072	1	21.73	1.00	6.91
+MT ACT_KB=8	n2p	dense 3072->8192	1	105.42	1.00	4.19
+MT ACT_KB=8	n2p	dense 3072->1024	2	29.57	1.38	
+MT ACT_KB=8	n2p	dense 1024->3072	2	33.17	1.53	
+MT ACT_KB=8	n2p	dense 3072->8192	2	134.94	1.28	
+MT ACT_KB=8	n2p	dense 3072->1024	3	38	1.77	
+MT ACT_KB=8	n2p	dense 1024->3072	3	35.68	1.64	
+MT ACT_KB=8	n2p	dense 3072->8192	3	179.54	1.70	
+MT ACT_KB=8	n2p	dense 3072->1024	4	46.95	2.19	
+MT ACT_KB=8	n2p	dense 1024->3072	4	42.06	1.94	
+MT ACT_KB=8	n2p	dense 3072->8192	4	239.67	2.27	
+MT ACT_KB=8	n3p	expert gate 3072->1024	1	96.31	1.00	3.83
+MT ACT_KB=8	n3p	expert down 1024->3072	1	108.31	1.00	4.30
+MT ACT_KB=8	n3p	expert gate 3072->1024	2	257.6	2.67	
+MT ACT_KB=8	n3p	expert down 1024->3072	2	293.83	2.71	
+MT ACT_KB=8	n3p	expert gate 3072->1024	3	369.66	3.84	
+MT ACT_KB=8	n3p	expert down 1024->3072	3	419.13	3.87	
+MT ACT_KB=8	n3p	expert gate 3072->1024	4	488.41	5.07	
+MT ACT_KB=8	n3p	expert down 1024->3072	4	536.11	4.95	
+MT ACT_KB=8	n3p	dense 3072->1024	1	20.38	1.00	6.48
+MT ACT_KB=8	n3p	dense 1024->3072	1	20.83	1.00	6.62
+MT ACT_KB=8	n3p	dense 3072->8192	1	96.54	1.00	3.84
+MT ACT_KB=8	n3p	dense 3072->1024	2	28.65	1.41	
+MT ACT_KB=8	n3p	dense 1024->3072	2	32.48	1.56	
+MT ACT_KB=8	n3p	dense 3072->8192	2	126.9	1.31	
+MT ACT_KB=8	n3p	dense 3072->1024	3	35.73	1.75	
+MT ACT_KB=8	n3p	dense 1024->3072	3	35.83	1.72	
+MT ACT_KB=8	n3p	dense 3072->8192	3	172.24	1.78	
+MT ACT_KB=8	n3p	dense 3072->1024	4	46.25	2.27	
+MT ACT_KB=8	n3p	dense 1024->3072	4	42.03	2.02	
+MT ACT_KB=8	n3p	dense 3072->8192	4	236.97	2.45	
+MT ACT_KB=8	iq3_xxs	expert gate 3072->1024	1	160.41	1.00	6.37
+MT ACT_KB=8	iq3_xxs	expert down 1024->3072	1	177.2	1.00	7.04
+MT ACT_KB=8	iq3_xxs	expert gate 3072->1024	2	505.58	3.15	
+MT ACT_KB=8	iq3_xxs	expert down 1024->3072	2	555.61	3.14	
+MT ACT_KB=8	iq3_xxs	expert gate 3072->1024	3	725.04	4.52	
+MT ACT_KB=8	iq3_xxs	expert down 1024->3072	3	779.85	4.40	
+MT ACT_KB=8	iq3_xxs	expert gate 3072->1024	4	908.22	5.66	
+MT ACT_KB=8	iq3_xxs	expert down 1024->3072	4	1007.96	5.69	
+MT ACT_KB=8	iq3_xxs	dense 3072->1024	1	34.07	1.00	10.83
+MT ACT_KB=8	iq3_xxs	dense 1024->3072	1	33.84	1.00	10.76
+MT ACT_KB=8	iq3_xxs	dense 3072->8192	1	160.61	1.00	6.38
+MT ACT_KB=8	iq3_xxs	dense 3072->1024	2	53.15	1.56	
+MT ACT_KB=8	iq3_xxs	dense 1024->3072	2	55.47	1.64	
+MT ACT_KB=8	iq3_xxs	dense 3072->8192	2	253.37	1.58	
+MT ACT_KB=8	iq3_xxs	dense 3072->1024	3	55.31	1.62	
+MT ACT_KB=8	iq3_xxs	dense 1024->3072	3	55.51	1.64	
+MT ACT_KB=8	iq3_xxs	dense 3072->8192	3	279.75	1.74	
+MT ACT_KB=8	iq3_xxs	dense 3072->1024	4	66.16	1.94	
+MT ACT_KB=8	iq3_xxs	dense 1024->3072	4	59.9	1.77	
+MT ACT_KB=8	iq3_xxs	dense 3072->8192	4	340.29	2.12	
+MT ACT_KB=32	n2p	expert gate 3072->1024	1	104.99	1.00	4.17
+MT ACT_KB=32	n2p	expert down 1024->3072	1	118.45	1.00	4.71
+MT ACT_KB=32	n2p	expert gate 3072->1024	2	236.88	2.26	
+MT ACT_KB=32	n2p	expert down 1024->3072	2	305.77	2.58	
+MT ACT_KB=32	n2p	expert gate 3072->1024	3	349.14	3.33	
+MT ACT_KB=32	n2p	expert down 1024->3072	3	429.26	3.62	
+MT ACT_KB=32	n2p	expert gate 3072->1024	4	467.12	4.45	
+MT ACT_KB=32	n2p	expert down 1024->3072	4	584.4	4.93	
+MT ACT_KB=32	n2p	dense 3072->1024	1	21.4	1.00	6.80
+MT ACT_KB=32	n2p	dense 1024->3072	1	21.89	1.00	6.96
+MT ACT_KB=32	n2p	dense 3072->8192	1	105.34	1.00	4.19
+MT ACT_KB=32	n2p	dense 3072->1024	2	29.55	1.38	
+MT ACT_KB=32	n2p	dense 1024->3072	2	32.95	1.51	
+MT ACT_KB=32	n2p	dense 3072->8192	2	135.19	1.28	
+MT ACT_KB=32	n2p	dense 3072->1024	3	34.21	1.60	
+MT ACT_KB=32	n2p	dense 1024->3072	3	35.66	1.63	
+MT ACT_KB=32	n2p	dense 3072->8192	3	165.57	1.57	
+MT ACT_KB=32	n2p	dense 3072->1024	4	39.43	1.84	
+MT ACT_KB=32	n2p	dense 1024->3072	4	42.02	1.92	
+MT ACT_KB=32	n2p	dense 3072->8192	4	200.37	1.90	
+MT ACT_KB=32	n3p	expert gate 3072->1024	1	96.39	1.00	3.83
+MT ACT_KB=32	n3p	expert down 1024->3072	1	108.1	1.00	4.30
+MT ACT_KB=32	n3p	expert gate 3072->1024	2	232.37	2.41	
+MT ACT_KB=32	n3p	expert down 1024->3072	2	293.63	2.72	
+MT ACT_KB=32	n3p	expert gate 3072->1024	3	342.56	3.55	
+MT ACT_KB=32	n3p	expert down 1024->3072	3	419.26	3.88	
+MT ACT_KB=32	n3p	expert gate 3072->1024	4	437.09	4.53	
+MT ACT_KB=32	n3p	expert down 1024->3072	4	555.94	5.14	
+MT ACT_KB=32	n3p	dense 3072->1024	1	20.42	1.00	6.49
+MT ACT_KB=32	n3p	dense 1024->3072	1	20.68	1.00	6.57
+MT ACT_KB=32	n3p	dense 3072->8192	1	96.46	1.00	3.83
+MT ACT_KB=32	n3p	dense 3072->1024	2	28.57	1.40	
+MT ACT_KB=32	n3p	dense 1024->3072	2	32.46	1.57	
+MT ACT_KB=32	n3p	dense 3072->8192	2	126.81	1.31	
+MT ACT_KB=32	n3p	dense 3072->1024	3	32.84	1.61	
+MT ACT_KB=32	n3p	dense 1024->3072	3	35.84	1.73	
+MT ACT_KB=32	n3p	dense 3072->8192	3	155.77	1.61	
+MT ACT_KB=32	n3p	dense 3072->1024	4	38.8	1.90	
+MT ACT_KB=32	n3p	dense 1024->3072	4	42	2.03	
+MT ACT_KB=32	n3p	dense 3072->8192	4	193.8	2.01	
+MT ACT_KB=32	iq3_xxs	expert gate 3072->1024	1	159.9	1.00	6.35
+MT ACT_KB=32	iq3_xxs	expert down 1024->3072	1	176.8	1.00	7.03
+MT ACT_KB=32	iq3_xxs	expert gate 3072->1024	2	481.79	3.01	
+MT ACT_KB=32	iq3_xxs	expert down 1024->3072	2	522.63	2.96	
+MT ACT_KB=32	iq3_xxs	expert gate 3072->1024	3	660.28	4.13	
+MT ACT_KB=32	iq3_xxs	expert down 1024->3072	3	783.68	4.43	
+MT ACT_KB=32	iq3_xxs	expert gate 3072->1024	4	871.58	5.45	
+MT ACT_KB=32	iq3_xxs	expert down 1024->3072	4	991.59	5.61	
+MT ACT_KB=32	iq3_xxs	dense 3072->1024	1	34.09	1.00	10.84
+MT ACT_KB=32	iq3_xxs	dense 1024->3072	1	33.58	1.00	10.67
+MT ACT_KB=32	iq3_xxs	dense 3072->8192	1	160.35	1.00	6.37
+MT ACT_KB=32	iq3_xxs	dense 3072->1024	2	53.24	1.56	
+MT ACT_KB=32	iq3_xxs	dense 1024->3072	2	55.44	1.65	
+MT ACT_KB=32	iq3_xxs	dense 3072->8192	2	253.23	1.58	
+MT ACT_KB=32	iq3_xxs	dense 3072->1024	3	52.89	1.55	
+MT ACT_KB=32	iq3_xxs	dense 1024->3072	3	55.48	1.65	
+MT ACT_KB=32	iq3_xxs	dense 3072->8192	3	265.17	1.65	
+MT ACT_KB=32	iq3_xxs	dense 3072->1024	4	57.83	1.70	
+MT ACT_KB=32	iq3_xxs	dense 1024->3072	4	59.88	1.78	
+MT ACT_KB=32	iq3_xxs	dense 3072->8192	4	300.47	1.87	

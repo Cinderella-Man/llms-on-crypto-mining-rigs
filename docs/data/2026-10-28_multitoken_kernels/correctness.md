@@ -41,5 +41,8 @@ Bit identity, every 2–4-token product against its columns' single-token produc
 | ornith, 198 comparisons | 0 differ | 0 differ | 0 differ | 0 differ | 0 differ |
 | flint, 147 comparisons | 0 differ (MT for Q8_0 and Q5_0) | | | 0 differ | |
 
+On a P106-090 (the rig's card 0, `run/rig_kernels.sh` step 2: the 2–4-token cases small enough for its CPU to
+quantize): MUL_MAT 513/513 and MUL_MAT_ID 204/204 with the new kernel and with the earlier one.
+
 compute-sanitizer memcheck, native (N2P down at 4 tokens on 8 of 10 experts, IQ2_S down at 3 tokens on 8 of 8, N3P fused
 gate/up on 8 of 10, Q5_0 dense K = 8192 at 4 tokens, IQ3_XXS shared expert): 0 errors.
