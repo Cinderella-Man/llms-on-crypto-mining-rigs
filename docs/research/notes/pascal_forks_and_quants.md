@@ -366,7 +366,8 @@ On this rig (est.):
 - **Cost on the quant machine.** NanoQuant would need est. days for Flint's ~36,000 expert matrices.
 
 **Verdict.** Not for this rig: the format's decode would fit sm_61, but its quality is an order of magnitude outside
-the bar, its rank cannot rise to where the bar is, and its kernel needs fast FP16.
+the bar, its rank cannot rise to where the bar is, and its kernel needs fast FP16. The same question for
+Qwen3.8-Flash-Next's experts, with NanoQuant's Table 8, DBF and the MoE results: [sub_1_bit_quants.md](sub_1_bit_quants.md).
 
 ### 4.2 Other 2025–2026 formats for low-end hardware
 
