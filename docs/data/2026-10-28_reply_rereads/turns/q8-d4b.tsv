@@ -1,0 +1,66 @@
+tag	prompt_tokens	render_ok	gen	reply_rendered	render_minus_gen	lcp	lcp_err	hist_lcp_ok	div_in_reply	div_from_end	segment	seg_offset_chars	reply_chars	reasoning_chars	content_chars	n_calls	tools	nonstring_args	next_cache_n	restored_pos_max	next_prompt_n	next_prompt_ms	reread_tokens	reread_ms	next_ttft_s	finish
+rel/bugfix-python-affine-cipher/a1/t1/1	2440	1	26	25	0	2466	1.4	1	26	-1	after-reply	0	179	0	0	2	bash,read	0	2465		300	1720.2	0	0.0	1.9063	tool_calls
+rel/bugfix-python-affine-cipher/a1/t1/2	2765	1	26	25	0	2790	1.8	1	25	0	after-call	0	145	30	0	1	read	0	2790		774	3597.9	0	0.0	3.8878	tool_calls
+rel/bugfix-python-affine-cipher/a1/t1/3	3564	1	2868	2867	0	4265	3.4	1	701	2166	reasoning	2447	8300	8172	0	1	bash	0	3560	3559	3276	14462.2	2871	12674.3	14.8317	tool_calls
+rel/bugfix-python-affine-cipher/a1/t1/4	6836	1	2285	2284	0	9121	4.6	1	2285	-1	after-reply	0	6830	5676	131	1	edit	1	9120		20	798.4	0	0.0	1.3844	tool_calls
+rel/bugfix-python-affine-cipher/a1/t1/5	9140	1	96	95	0	9235	4.6	1	95	0	after-call	0	385	257	0	1	bash	0	9235		19	651.4	0	0.0	1.0109	tool_calls
+rel/bugfix-python-affine-cipher/a1/t1/6	9254	1	51	50	0	9303	4.8	1	49	1	after-value	0	243	72	61	1	read	0	9304		276	2549.4	0	0.0	2.7088	tool_calls
+rel/bugfix-javascript-space-age/a1/t1/1	1984	1	36	35	0	2019	1.3	1	35	0	after-call	0	174	25	0	1	bash	0	2019		508	2374.5	0	0.0	2.5716	tool_calls
+rel/bugfix-javascript-space-age/a1/t1/2	2527	1	277	276	0	2803	1.6	1	276	0	after-call	0	923	796	0	1	bash	0	2803		459	2363.8	0	0.0	2.5639	tool_calls
+rel/bugfix-javascript-space-age/a1/t1/3	3262	1	23	22	0	3285	1.9	1	23	-1	after-reply	0	112	0	0	1	bash	0	3284		416	2533.8	0	0.0	2.706	tool_calls
+rel/bugfix-javascript-space-age/a1/t1/4	3700	1	343	342	0	4042	2.0	1	342	0	after-call	0	1137	734	64	1	bash	0	4042		32	782.0	0	0.0	0.9339	tool_calls
+rel/bugfix-javascript-space-age/a1/t1/5	4074	1	408	407	0	4482	2.2	1	408	-1	after-reply	0	1118	706	147	1	edit	1	4481		19	624.9	0	0.0	0.8082	tool_calls
+rel/bugfix-javascript-space-age/a1/t1/6	4500	1	23	22	0	4522	2.3	1	22	0	after-call	0	112	0	0	1	bash	0	4522		135	1466.9	0	0.0	1.6141	tool_calls
+rel/bugfix-python-phone-number/a1/t1/1	2335	1	21	20	0	2354	1.4	1	19	1	after-value	0	128	25	0	1	read	0	2355		411	2312.2	0	0.0	2.4444	tool_calls
+rel/bugfix-python-phone-number/a1/t1/2	2766	1	13	12	0	2778	2.0	1	12	0	after-call	0	93	0	0	1	read	0	2778		1243	5709.7	0	0.0	5.8725	tool_calls
+rel/bugfix-python-phone-number/a1/t1/3	4021	1	2719	2718	0	6740	3.6	1	2719	-1	after-reply	0	9209	9013	49	1	bash	0	6739		418	2552.7	0	0.0	2.7991	tool_calls
+rel/bugfix-python-phone-number/a1/t1/4	7157	1	734	733	0	7890	4.0	1	733	0	after-call	0	2939	387	369	1	edit	1	7890		16	717.5	0	0.0	0.9296	tool_calls
+rel/bugfix-python-phone-number/a1/t1/5	7906	1	27	26	0	7930	4.0	1	24	2	arg-value	55	131	0	0	1	bash	0	7932		20	758.4	0	0.0	0.9998	tool_calls
+rel/bugfix-javascript-triangle/a1/t1/1	1697	1	22	21	0	1719	1.5	1	22	-1	after-reply	0	173	0	0	2	read,read	0	1718		1186	5249.1	0	0.0	5.3688	tool_calls
+rel/bugfix-javascript-triangle/a1/t1/2	2904	1	357	356	0	3259	1.6	1	355	1	after-value	0	1352	874	127	1	edit	1	3260		15	689.0	0	0.0	0.8507	tool_calls
+rel/bugfix-javascript-triangle/a1/t1/3	3275	1	19	18	0	3294	1.8	1	19	-1	after-reply	0	100	0	0	1	bash	0	3293		257	1663.2	0	0.0	1.7993	tool_calls
+rel/bugfix-python-variable-length-quantity/a1/t1/1	2002	1	13	12	0	2014	1.1	1	12	0	after-call	0	100	0	0	1	read	0	2014		192	1303.4	0	0.0	1.4246	tool_calls
+rel/bugfix-python-variable-length-quantity/a1/t1/2	2206	1	14	13	0	2219	1.8	1	13	0	after-call	0	105	0	0	1	read	0	2219		1467	6367.0	0	0.0	6.4882	tool_calls
+rel/bugfix-python-variable-length-quantity/a1/t1/3	3686	1	239	238	0	3925	2.0	1	239	-1	after-reply	0	940	475	229	1	edit	1	3924		17	618.2	0	0.0	0.7781	tool_calls
+rel/bugfix-python-variable-length-quantity/a1/t1/4	3941	1	17	16	0	3957	2.0	1	16	0	after-call	0	118	0	0	1	bash	0	3957		20	628.6	0	0.0	0.7438	tool_calls
+rel/bugfix-javascript-phone-number/a1/t1/1	1838	1	37	36	0	1874	1.5	1	36	0	after-call	0	277	0	0	3	bash,read,read	0	1874		1213	5318.9	0	0.0	5.4485	tool_calls
+rel/bugfix-javascript-phone-number/a1/t1/2	3087	1	766	765	0	3851	2.2	1	764	1	after-value	0	2571	2371	0	1	bash	1	3852		589	3538.2	0	0.0	3.7383	tool_calls
+rel/bugfix-javascript-phone-number/a1/t1/3	4441	1	423	422	0	4862	2.4	1	421	1	after-value	0	1592	970	216	1	edit	1	4863		18	685.6	0	0.0	0.8942	tool_calls
+rel/bugfix-javascript-phone-number/a1/t1/4	4881	1	34	33	0	4913	2.6	1	32	1	after-value	0	185	0	0	1	bash	1	4914		300	2501.5	0	0.0	2.7131	tool_calls
+rel/bugfix-python-list-ops/a1/t1/1	1709	1	26	25	0	1734	1.5	1	25	0	after-call	0	185	0	0	2	read,read	0	1734		1319	5415.2	0	0.0	5.557	tool_calls
+rel/bugfix-python-list-ops/a1/t1/2	3053	1	24	23	0	3077	1.7	1	24	-1	after-reply	0	113	0	0	1	bash	0	3076		336	2274.2	0	0.0	2.4057	tool_calls
+rel/bugfix-python-list-ops/a1/t1/3	3412	1	3861	3858	-2	3629	3.6	1	217	3643	reasoning	767	12851	12371	160	1	edit	1	3408	3407	3880	18155.3	3862	18071.0	18.3688	tool_calls
+rel/bugfix-python-list-ops/a1/t1/4	7288	1	24	23	0	7310	3.7	1	22	1	after-value	0	112	0	0	1	bash	0	7311		20	651.5	0	0.0	0.8687	tool_calls
+rel/bugfix-javascript-grade-school/a1/t1/1	1672	1	28	27	0	1699	1.6	1	27	0	after-call	0	193	0	0	2	read,read	0	1699		1588	6470.3	0	0.0	6.6118	tool_calls
+rel/bugfix-javascript-grade-school/a1/t1/2	3287	1	249	248	0	3534	2.0	1	247	1	after-value	0	1019	892	0	1	bash	0	3535		418	2392.7	0	0.0	2.5632	tool_calls
+rel/bugfix-javascript-grade-school/a1/t1/3	3953	1	225	224	0	4176	2.1	1	223	1	after-value	0	1018	383	216	1	edit	1	4177		19	713.1	0	0.0	0.8863	tool_calls
+rel/bugfix-javascript-grade-school/a1/t1/4	4196	1	23	22	0	4218	2.2	1	22	0	after-call	0	112	0	0	1	bash	0	4218		121	1498.9	0	0.0	1.6063	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/1	2313	1	12	11	0	2323	1.2	1	10	1	after-value	0	84	0	0	1	bash	0	2324		13	570.0	0	0.0	0.6887	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/2	2337	1	28	27	0	2364	1.9	1	27	0	after-call	0	199	0	0	2	read,read	0	2364		1348	6254.2	0	0.0	6.4019	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/3	3712	1	24	23	0	3736	2.1	1	24	-1	after-reply	0	113	0	0	1	bash	0	3735		367	1526.6	0	0.0	1.6972	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/4	4102	1	24	23	0	4124	2.3	1	22	1	after-value	0	113	0	0	1	bash	0	4125		572	3315.6	0	0.0	3.4672	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/5	4697	1	15283	15280	-2	8607	10.0	1	3910	11372	reasoning	11561	45003	44742	0	1	bash	0	4693	4692	15359	80392.0	15284	79999.4	80.9438	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/6	20052	1	204	203	0	20250	10.2	1	198	5	arg-value	197	715	419	0	1	bash	0	20255		113	1844.2	0	0.0	2.2732	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/7	20368	1	1045	1044	0	21411	10.7	1	1043	1	after-value	0	3157	2425	314	1	edit	1	21412		19	706.7	0	0.0	1.0128	tool_calls
+rel/bugfix-python-scale-generator/a1/t1/8	21431	1	24	23	0	21453	10.7	1	22	1	after-value	0	112	0	0	1	bash	0	21454		20	708.5	0	0.0	1.0514	tool_calls
+rel/bugfix-javascript-complex-numbers/a1/t1/1	2129	1	12	11	0	2140	1.2	1	11	0	after-call	0	91	0	0	1	read	0	2140		283	2123.8	0	0.0	2.2639	tool_calls
+rel/bugfix-javascript-complex-numbers/a1/t1/2	2423	1	42	41	0	2464	2.7	1	41	0	after-call	0	248	37	0	2	read,bash	0	2464		3034	13046.5	0	0.0	13.2404	tool_calls
+rel/bugfix-javascript-complex-numbers/a1/t1/3	5498	1	1331	1330	0	6829	3.4	1	1331	-1	after-reply	0	3772	3157	322	1	edit	1	6828		16	618.3	0	0.0	0.8028	tool_calls
+rel/bugfix-javascript-complex-numbers/a1/t1/4	6844	1	19	18	0	6861	3.6	1	17	1	after-value	0	100	0	0	1	bash	0	6862		375	1702.9	0	0.0	1.9123	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/1	2005	1	28	27	0	2033	1.4	1	28	-1	after-reply	0	187	0	0	2	read,read	0	2032		840	3419.8	0	0.0	3.5436	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/2	2872	1	1966	1965	0	4837	2.5	1	1965	0	after-call	0	6174	6048	0	1	bash	0	4837		192	1393.6	0	0.0	1.5758	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/3	5029	1	557	556	0	5584	3.1	1	555	1	after-value	0	1892	1487	0	1	bash	0	5585		647	3854.0	0	0.0	4.0586	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/4	6232	1	3308	3305	-2	6908	4.9	1	676	2631	reasoning	2134	10722	9077	487	1	bash	0	6228	6227	3558	17312.2	3309	16100.6	17.584	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/5	9786	1	2203	2202	0	11986	6.0	1	2200	2	arg-value	888	6882	5821	82	1	bash	0	11988		7	558.6	0	0.0	0.8328	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/6	11995	1	128	127	0	12119	6.1	1	124	3	arg-value	176	481	98	53	1	edit	1	12122		19	670.0	0	0.0	0.9333	tool_calls
+rel/bugfix-python-pig-latin/a1/t1/7	12141	1	23	22	0	12161	6.1	1	20	2	arg-value	34	110	0	0	1	bash	0	12163		20	676.1	0	0.0	0.9669	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/1	1773	1	28	27	0	1800	1.8	1	27	0	after-call	0	205	0	0	2	read,read	0	1800		1763	7365.9	0	0.0	7.496	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/2	3563	1	7995	7994	0	11557	6.0	1	7994	0	after-call	0	19604	19489	0	1	bash	0	11557		482	2991.1	0	0.0	3.3632	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/3	12039	1	1368	1367	0	13407	6.7	1	1368	-1	after-reply	0	4030	3420	57	1	bash	0	13406		43	1021.3	0	0.0	1.2868	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/4	13449	1	1368	1367	0	14818	7.4	1	1369	-2	after-reply	0	4184	2720	86	1	bash	0	14816		48	991.1	0	0.0	1.2993	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/5	14864	1	668	667	0	15532	7.9	1	668	-1	after-reply	0	1673	1240	43	1	bash	0	15531		270	2053.5	0	0.0	2.4171	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/6	15801	1	3754	3753	0	16685	9.8	1	884	2869	reasoning	2599	10484	9453	91	1	bash	0	15797	15796	3839	24000.3	3757	23487.6	24.3605	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/7	19636	1	430	429	0	20064	10.0	1	428	1	after-value	0	1242	943	0	1	bash	0	20065		19	703.5	0	0.0	1.0929	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/8	20084	1	1436	1435	0	21517	10.8	1	1433	2	arg-value	455	4236	3340	350	1	bash	0	21519		61	1364.4	0	0.0	1.7376	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/9	21580	1	1484	1483	0	23060	11.5	1	1480	3	arg-value	129	4699	4109	298	1	edit	1	23063		18	739.6	0	0.0	1.07	tool_calls
+rel/bugfix-javascript-variable-length-quantity/a1/t1/10	23081	1	19	18	0	23103	11.6	1	22	-4	after-reply	0	100	0	0	1	bash	0	23099		194	2214.5	0	0.0	2.7332	tool_calls

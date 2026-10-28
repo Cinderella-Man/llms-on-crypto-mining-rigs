@@ -33,7 +33,7 @@ from [the agent check](../bench/agent_check/README.md), in [results.md](../relea
 | Attention mask built on each card | Q110, Q116 | `LLAMA_GPU_KQ_MASK_CHECK` | decode +1.6 % at short context and +2.3 % after 32k, but long prompts 3.6× slower when built for every micro-batch | built, off (`LLAMA_GPU_KQ_MASK=N`) |
 | Eight scheduler copies for prompts instead of four | Q157 | — | no gain (8k / 32k prompts 765 / 462 against 766 / 461 tok/s) | build option, not shipped |
 | Prompt caching for agents (`--prefix-cache`, `--checkpoint-gen`) | Q111, Q132 | CPU bit-exact | 11 s of fixed time per task in the agent check and no gain | built, off |
-| Screened output head (`LLAMA_SCREEN_HEAD`) | Q92, Q125 | exact | +1.5–2.3 % | built, no screen file shipped |
+| Screened output head (`LLAMA_SCREEN_HEAD`) | Q92, Q125 | exact | +1.5–2.3 % | built, no screen file shipped; off on any request with a grammar, tool requests included (Q262) |
 | Store of earlier answers (`--pipe-store`) and the staircase drafter (`--pipe-draft`) | Q161, Q20 | CPU identity; the drafter's full exactness set | see [docs/drafter.md](drafter.md) | built, files in a later release |
 | Norm writes the Q8_1 activations and absorbs the residual add | Q100 | operator tests | turning it off (`GGML_CUDA_NORM_Q8=0`) aborted with a CUDA-pool assertion on the release candidate: leave it on | on |
 

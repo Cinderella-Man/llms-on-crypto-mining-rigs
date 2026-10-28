@@ -14,7 +14,8 @@
 #
 # Arms (one llama-server each; the same model, template, sampling, context, checkpoints and metrics, COMMON):
 #   stock  STOCK_BIN with STOCK_ARGS (default -b 2048 -ub 512)
-#   rel    REL_BIN with REL_ARGS (default -b 2048 -ub 512 --pipe-depth 3)
+#   rel    REL_BIN with REL_ARGS (default -b 2048 -ub 512 --pipe-depth 3) and the environment variables REL_ENV (e.g.
+#          "LLAMA_SERVER_TEXT_REUSE=1"; default none)
 # The context is CTX (default 65,536; pi's context window is set to match). Stock llama.cpp keeps an attention mask of
 # context × micro-batch entries in pinned host memory: 264 MiB at 65,536 tokens with -ub 512, ~1 GiB at 262,144, which
 # a 4 GB host cannot hold (docs/benchmarks/2026-10-22-qwen-baselines.md). A bug fix stays far below 65,536 tokens.
@@ -70,10 +71,10 @@ say() { echo "$(date +%H:%M:%S) $*" | tee -a "$OUT/run.log"; }
 has() { [[ " $STEPS " == *" $1 "* ]]; }
 cl() { ssh "${SSH_OPTS[@]}" "$CLIENT" "$@"; }
 
-arm_config() {  # sets SERVER_BIN and SERVER_ARGS for an arm
+arm_config() {  # sets SERVER_BIN, SERVER_ENV and SERVER_ARGS for an arm
   case $1 in
-    stock) SERVER_BIN=${STOCK_BIN:-}; SERVER_ARGS="$COMMON $STOCK_ARGS";;
-    rel) SERVER_BIN=${REL_BIN:-}; SERVER_ARGS="$COMMON $REL_ARGS";;
+    stock) SERVER_BIN=${STOCK_BIN:-}; SERVER_ARGS="$COMMON $STOCK_ARGS"; SERVER_ENV="";;
+    rel) SERVER_BIN=${REL_BIN:-}; SERVER_ARGS="$COMMON $REL_ARGS"; SERVER_ENV=${REL_ENV:-};;
     *) say "unknown arm $1"; return 1;;
   esac
   [ -n "$SERVER_BIN" ] && [ -n "${MODEL:-}" ] || { say "binary or MODEL for $1 not set"; return 1; }
@@ -112,8 +113,8 @@ relay_stop() {
 
 server_start() {  # server_start ARM: llama-server on the rig, then /health through the whole relay from the client
   arm_config "$1" || return 1
-  say "starting $1 on the rig: $SERVER_BIN $SERVER_ARGS"
-  ssh "$RIG" "LOGDIR=$RIG_LOGDIR ACTION=start ARM=$1 BIN=$SERVER_BIN MODEL=$MODEL PORT=$RIG_PORT SERVER_ARGS='$SERVER_ARGS' \
+  say "starting $1 on the rig: ${SERVER_ENV:+$SERVER_ENV }$SERVER_BIN $SERVER_ARGS"
+  ssh "$RIG" "LOGDIR=$RIG_LOGDIR ACTION=start ARM=$1 BIN=$SERVER_BIN MODEL=$MODEL PORT=$RIG_PORT SERVER_ENV='$SERVER_ENV' SERVER_ARGS='$SERVER_ARGS' \
     bash -s" < "$HERE/rig_server.sh" 2>&1 | tee -a "$OUT/run.log"
   [ "${PIPESTATUS[0]}" = 0 ] || return 1
   for _ in $(seq 40); do

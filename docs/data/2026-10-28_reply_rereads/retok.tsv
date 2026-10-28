@@ -1,0 +1,1248 @@
+session	turn	n_gen	n_retok	first_diff	diff_from_end	part	n_reasoning
+s1-argparse-wt-a0	0	49	49	-1	-1		16
+s1-argparse-wt-a0	1	45	45	-1	-1		
+s1-argparse-wt-a0	2	58	58	-1	-1		29
+s1-argparse-wt-a0	3	28	28	-1	-1		
+s1-argparse-wt-a0	4	28	28	-1	-1		
+s1-argparse-wt-a0	5	29	29	-1	-1		
+s1-argparse-wt-a0	6	29	29	-1	-1		
+s1-argparse-wt-a0	7	29	29	-1	-1		
+s1-argparse-wt-a0	8	29	29	-1	-1		
+s1-argparse-wt-a0	9	29	29	-1	-1		
+s1-argparse-wt-a0	10	29	29	-1	-1		
+s1-argparse-wt-a0	11	23	23	-1	-1		
+s1-argparse-wt-a0	12	67	67	-1	-1		26
+s1-argparse-wt-a0	13	158	158	-1	-1		72
+s1-argparse-wt-a0	14	348	348	-1	-1		316
+s1-argparse-wt-a0	15	240	240	-1	-1		213
+s1-argparse-wt-a0	16	49	49	-1	-1		15
+s1-argparse-wt-a0	17	1111	1111	-1	-1		963
+s1-argparse-wt-a0	18	321	321	-1	-1		38
+s1-argparse-wt-a0	19	411	411	-1	-1		186
+s1-argparse-wt-a0	20	297	298	243	54	tool-call	86
+s1-argparse-wt-a0	21	388	388	-1	-1		47
+s1-argparse-wt-a0	22	452	452	-1	-1		104
+s1-argparse-wt-a0	23	185	185	-1	-1		99
+s1-argparse-wt-a0	24	527	527	-1	-1		118
+s1-argparse-wt-a0	25	136	136	-1	-1		70
+s1-argparse-wt-a0	26	645	645	-1	-1		275
+s1-argparse-wt-a0	27	306	306	-1	-1		162
+s1-argparse-wt-a0	28	356	356	-1	-1		330
+s1-argparse-wt-a0	29	2561	2561	-1	-1		2446
+s1-argparse-wt-a0	30	208	208	-1	-1		52
+s1-argparse-wt-a0	31	1057	1057	-1	-1		845
+s1-argparse-wt-a0	32	2203	2203	-1	-1		1902
+s1-argparse-wt-a0	33	546	546	-1	-1		210
+s1-argparse-wt-a0	34	305	305	-1	-1		43
+s1-argparse-wt-a0	35	333	333	-1	-1		93
+s1-argparse-wt-a0	36	346	346	-1	-1		67
+s1-argparse-wt-a0	37	722	722	-1	-1		480
+s1-argparse-wt-a0	38	364	364	-1	-1		135
+s1-argparse-wt-a0	39	432	432	-1	-1		131
+s1-argparse-wt-a0	40	1268	1268	-1	-1		926
+s1-argparse-wt-a0	41	1578	1578	-1	-1		1551
+s1-argparse-wt-a0	42	480	479	212	268	tool-call	42
+s1-argparse-wt-a0	43	1494	1494	-1	-1		1323
+s1-argparse-wt-a1	0	43	43	-1	-1		15
+s1-argparse-wt-a1	1	47	47	-1	-1		24
+s1-argparse-wt-a1	2	52	52	-1	-1		23
+s1-argparse-wt-a1	3	47	47	-1	-1		
+s1-argparse-wt-a1	4	62	62	-1	-1		30
+s1-argparse-wt-a1	5	31	31	-1	-1		
+s1-argparse-wt-a1	6	32	32	-1	-1		
+s1-argparse-wt-a1	7	33	33	-1	-1		
+s1-argparse-wt-a1	8	33	33	-1	-1		
+s1-argparse-wt-a1	9	65	65	-1	-1		31
+s1-argparse-wt-a1	10	83	83	-1	-1		22
+s1-argparse-wt-a1	11	86	86	-1	-1		23
+s1-argparse-wt-a1	12	707	707	-1	-1		620
+s1-argparse-wt-a1	13	453	453	-1	-1		419
+s1-argparse-wt-a1	14	5589	5589	-1	-1		3109
+s1-argparse-wt-a1	15	2382	2382	-1	-1		52
+s1-argparse-wt-a1	16	25	25	-1	-1		
+s1-argparse-wt-a1	17	2383	2383	-1	-1		410
+s1-argparse-wt-a1	18	26	26	-1	-1		
+s1-argparse-wt-a1	19	4528	4523	4379	149	tool-call	1819
+s1-argparse-wt-a1	20	49	49	-1	-1		
+s1-argparse-wt-a1	21	5720	5715	2793	2927	tool-call	2482
+s1-argparse-wt-a2	0	58	58	-1	-1		10
+s1-argparse-wt-a2	1	78	78	-1	-1		24
+s1-argparse-wt-a2	2	128	128	-1	-1		83
+s1-argparse-wt-a2	3	48	48	-1	-1		19
+s1-argparse-wt-a2	4	139	139	-1	-1		107
+s1-argparse-wt-a2	5	66	66	-1	-1		
+s1-argparse-wt-a2	6	106	106	-1	-1		48
+s1-argparse-wt-a2	7	191	191	-1	-1		133
+s1-argparse-wt-a2	8	188	188	-1	-1		130
+s1-argparse-wt-a2	9	57	57	-1	-1		
+s1-argparse-wt-a2	10	136	136	-1	-1		57
+s1-argparse-wt-a2	11	4007	4007	-1	-1		2583
+s1-argparse-wt-a2	12	1996	1996	-1	-1		241
+s1-argparse-wt-a2	13	1977	1977	-1	-1		1152
+s1-argparse-wt-a2	14	884	884	-1	-1		68
+s1-argparse-wt-a2	15	21	21	-1	-1		
+s1-argparse-wt-a2	16	572	572	-1	-1		541
+s1-argparse-wt-a2	17	1539	1539	-1	-1		558
+s1-argparse-wt-a2	18	21	21	-1	-1		
+s1-argparse-wt-a2	19	3901	3901	-1	-1		2612
+s1-argparse-wt-a2	20	21	21	-1	-1		
+s1-argparse-wt-a2	21	427	427	-1	-1		94
+s1-argparse-wt-a2	22	21	21	-1	-1		
+s1-argparse-wt-a2	23	1023	1023	-1	-1		776
+s1-argparse-wt-a2	24	21	21	-1	-1		
+s1-argparse-wt-a2	25	2344	2344	-1	-1		2303
+s1-bz2-wt-a0	0	63	63	-1	-1		15
+s1-bz2-wt-a0	1	55	55	-1	-1		15
+s1-bz2-wt-a0	2	728	728	-1	-1		559
+s1-bz2-wt-a0	3	2383	2383	1283	1100	reasoning	1671
+s1-bz2-wt-a0	4	926	926	-1	-1		350
+s1-bz2-wt-a0	5	1296	1296	-1	-1		
+s1-bz2-wt-a0	6	2799	2799	-1	-1		1710
+s1-bz2-wt-a0	7	2756	2756	-1	-1		1892
+s1-bz2-wt-a0	8	3410	3411	2924	486	tool-call	2721
+s1-bz2-wt-a0	9	645	645	-1	-1		159
+s1-bz2-wt-a0	10	5790	5790	-1	-1		5096
+s1-bz2-wt-a1	0	63	63	-1	-1		15
+s1-bz2-wt-a1	1	70	70	-1	-1		24
+s1-bz2-wt-a1	2	94	94	-1	-1		35
+s1-bz2-wt-a1	3	1811	1812	426	1385	reasoning	1309
+s1-bz2-wt-a1	4	730	730	-1	-1		19
+s1-bz2-wt-a1	5	1741	1741	-1	-1		159
+s1-bz2-wt-a1	6	1882	1882	-1	-1		808
+s1-bz2-wt-a1	7	2847	2846	490	2357	reasoning	2080
+s1-bz2-wt-a1	8	510	510	-1	-1		124
+s1-bz2-wt-a1	9	2768	2768	-1	-1		2512
+s1-bz2-wt-a1	10	9585	9581	82	9503	reasoning	5609
+s1-ex-float-wt-a0	0	91	91	-1	-1		19
+s1-ex-float-wt-a0	1	58	58	-1	-1		15
+s1-ex-float-wt-a0	2	3253	3253	1745	1508	reasoning	3159
+s1-ex-float-wt-a0	3	1520	1520	464	1056	reasoning	803
+s1-ex-float-wt-a0	4	2089	2089	27	2062	reasoning	748
+s1-ex-float-wt-a0	5	3310	3310	-1	-1		2415
+s1-ex-float-wt-a0	6	9064	9064	-1	-1		8071
+s1-ex-float-wt-a0	7	7619	7619	-1	-1		7316
+s1-ex-float-wt-a2	0	39	39	-1	-1		14
+s1-ex-float-wt-a2	1	46	46	-1	-1		20
+s1-ex-float-wt-a2	2	46	46	-1	-1		
+s1-ex-float-wt-a2	3	1453	1453	640	813	reasoning	1414
+s1-ex-float-wt-a2	4	1240	1240	-1	-1		152
+s1-ex-float-wt-a2	5	1348	1348	-1	-1		170
+s1-ex-float-wt-a2	6	30	30	-1	-1		
+s1-ex-float-wt-a2	7	1384	1384	-1	-1		40
+s1-ex-float-wt-a2	8	30	30	-1	-1		
+s1-ex-float-wt-a2	9	213	213	-1	-1		39
+s1-ex-float-wt-a2	10	62	62	-1	-1		
+s1-ex-float-wt-a2	11	1367	1367	-1	-1		21
+s1-ex-float-wt-a2	12	30	30	-1	-1		
+s1-ex-float-wt-a2	13	3638	3638	-1	-1		2849
+s1-ex-float-wt-a2	14	31	31	-1	-1		
+s1-ex-float-wt-a2	15	12207	12207	819	11388	reasoning	10118
+s1-ex-function-wt-a0	0	83	83	-1	-1		10
+s1-ex-function-wt-a0	1	39	39	-1	-1		
+s1-ex-function-wt-a0	2	16	16	-1	-1		
+s1-ex-function-wt-a0	3	1834	1834	1611	223	reasoning	1785
+s1-ex-function-wt-a0	4	767	767	-1	-1		255
+s1-ex-function-wt-a0	5	283	283	-1	-1		35
+s1-ex-function-wt-a0	6	483	483	-1	-1		304
+s1-ex-function-wt-a0	7	4181	4181	2367	1814	reasoning	4143
+s1-ex-function-wt-a0	8	914	914	-1	-1		11
+s1-ex-function-wt-a0	9	37	37	-1	-1		
+s1-ex-function-wt-a0	10	341	341	-1	-1		258
+s1-ex-function-wt-a0	11	174	174	-1	-1		104
+s1-ex-function-wt-a0	12	769	769	-1	-1		224
+s1-ex-function-wt-a1	0	81	81	-1	-1		16
+s1-ex-function-wt-a1	1	68	68	-1	-1		25
+s1-ex-function-wt-a1	2	2508	2508	-1	-1		2455
+s1-ex-function-wt-a1	3	1583	1583	-1	-1		755
+s1-ex-function-wt-a1	4	4320	4318	51	4269	reasoning	3895
+s1-ex-function-wt-a1	5	5316	5316	-1	-1		4900
+s1-ex-function-wt-a1	6	2157	2157	-1	-1		941
+s1-ex-function-wt-a1	7	37	37	-1	-1		
+s1-ex-function-wt-a1	8	186	186	-1	-1		107
+s1-ex-function-wt-a1	9	130	130	-1	-1		32
+s1-ex-function-wt-a1	10	155	155	-1	-1		86
+s1-ex-function-wt-a1	11	636	636	-1	-1		199
+s1-ex-map-wt-a0	0	80	80	-1	-1		15
+s1-ex-map-wt-a0	1	66	66	-1	-1		23
+s1-ex-map-wt-a0	2	1945	1945	-1	-1		1858
+s1-ex-map-wt-a0	3	145	145	-1	-1		45
+s1-ex-map-wt-a0	4	322	322	-1	-1		272
+s1-ex-map-wt-a0	5	140	140	-1	-1		95
+s1-ex-map-wt-a0	6	25	25	-1	-1		
+s1-ex-map-wt-a0	7	72	72	-1	-1		27
+s1-ex-map-wt-a0	8	60	60	-1	-1		34
+s1-ex-map-wt-a0	9	6367	6367	-1	-1		4781
+s1-ex-map-wt-a0	10	1591	1591	-1	-1		22
+s1-ex-map-wt-a0	11	1849	1849	-1	-1		238
+s1-ex-map-wt-a0	12	1935	1935	-1	-1		364
+s1-ex-map-wt-a0	13	413	413	-1	-1		359
+s1-ex-map-wt-a0	14	45	45	-1	-1		
+s1-ex-map-wt-a0	15	1639	1639	-1	-1		69
+s1-ex-map-wt-a0	16	2050	2049	1530	520	tool-call	1077
+s1-ex-map-wt-a0	17	1029	1029	-1	-1		946
+s1-ex-map-wt-a0	18	39	39	-1	-1		
+s1-ex-map-wt-a0	19	22707	22706	8230	14477	reasoning	13575
+s1-ex-map_set-wt-a0	0	84	84	-1	-1		10
+s1-ex-map_set-wt-a0	1	40	40	-1	-1		
+s1-ex-map_set-wt-a0	2	52	52	-1	-1		18
+s1-ex-map_set-wt-a0	3	615	615	-1	-1		585
+s1-ex-map_set-wt-a0	4	1729	1729	-1	-1		1401
+s1-ex-map_set-wt-a0	5	1833	1833	-1	-1		1509
+s1-ex-map_set-wt-a0	6	2765	2765	-1	-1		2693
+s1-ex-map_set-wt-a0	7	39	39	-1	-1		
+s1-ex-map_set-wt-a0	8	66	66	-1	-1		
+s1-ex-map_set-wt-a0	9	66	66	-1	-1		32
+s1-ex-map_set-wt-a0	10	52	52	-1	-1		19
+s1-ex-map_set-wt-a0	11	16652	16652	1159	15493	reasoning	7501
+s1-ex-map_set-wt-a0	12	36	36	-1	-1		
+s1-ex-map_set-wt-a0	13	81	81	-1	-1		34
+s1-ex-map_set-wt-a0	14	60	60	-1	-1		31
+s1-ex-map_set-wt-a0	15	481	481	-1	-1		410
+s1-ex-map_set-wt-a0	16	304	304	-1	-1		277
+s1-ex-map_set-wt-a2	0	78	78	-1	-1		16
+s1-ex-map_set-wt-a2	1	40	40	-1	-1		
+s1-ex-map_set-wt-a2	2	56	56	-1	-1		20
+s1-ex-map_set-wt-a2	3	1407	1407	-1	-1		1377
+s1-ex-map_set-wt-a2	4	1351	1351	-1	-1		731
+s1-ex-map_set-wt-a2	5	1232	1232	-1	-1		1200
+s1-ex-map_set-wt-a2	6	3768	3768	925	2843	reasoning	3252
+s1-ex-map_set-wt-a2	7	838	838	-1	-1		406
+s1-ex-map_set-wt-a2	8	10687	10687	-1	-1		6913
+s1-ex-map_set-wt-a2	9	202	202	-1	-1		172
+s1-ex-map_set-wt-a2	10	1026	1026	-1	-1		742
+s1-ex-map_set-wt-a2	11	1043	1043	-1	-1		769
+s1-ex-map_set-wt-a2	12	29	29	-1	-1		
+s1-ex-map_set-wt-a2	13	889	889	231	658	reasoning	777
+s1-ex-map_set-wt-a2	14	623	623	96	527	reasoning	496
+s1-ex-map_set-wt-a2	15	663	663	-1	-1		580
+s1-ex-map_set-wt-a2	16	728	728	-1	-1		622
+s1-ex-string_io-wt-a0	0	87	87	-1	-1		14
+s1-ex-string_io-wt-a0	1	40	40	-1	-1		
+s1-ex-string_io-wt-a0	2	41	41	-1	-1		
+s1-ex-string_io-wt-a0	3	5453	5453	2225	3228	reasoning	5391
+s1-ex-string_io-wt-a0	4	473	473	-1	-1		290
+s1-ex-string_io-wt-a0	5	426	426	-1	-1		11
+s1-ex-string_io-wt-a0	6	809	808	304	505	reasoning	379
+s1-ex-string_io-wt-a0	7	466	466	-1	-1		144
+s1-ex-string_io-wt-a0	8	3742	3744	210	3532	reasoning	3335
+s1-ex-string_io-wt-a0	9	546	546	-1	-1		147
+s1-ex-string_io-wt-a0	10	1981	1984	224	1757	reasoning	1756
+s1-ex-string_io-wt-a0	11	508	508	-1	-1		353
+s1-ex-string_io-wt-a0	12	5683	5686	679	5004	reasoning	3738
+s1-ex-string_io-wt-a0	13	1191	1191	-1	-1		982
+s1-ex-string_io-wt-a0	14	29	29	-1	-1		
+s1-ex-string_io-wt-a0	15	1420	1420	-1	-1		1191
+s1-ex-string_io-wt-a0	16	1197	1197	-1	-1		1053
+s1-ex-tuple-wt-a1	0	73	73	-1	-1		16
+s1-ex-tuple-wt-a1	1	25	25	-1	-1		
+s1-ex-tuple-wt-a1	2	44	44	-1	-1		
+s1-ex-tuple-wt-a1	3	855	855	-1	-1		831
+s1-ex-tuple-wt-a1	4	2946	2945	2506	440	tool-call	2297
+s1-ex-tuple-wt-a1	5	1828	1828	-1	-1		1425
+s1-ex-tuple-wt-a1	6	510	510	-1	-1		73
+s1-ex-tuple-wt-a1	7	412	412	-1	-1		32
+s1-ex-tuple-wt-a1	8	4296	4296	-1	-1		4107
+s1-ex-tuple-wt-a1	9	1795	1795	-1	-1		359
+s1-ex-tuple-wt-a1	10	31	31	-1	-1		
+s1-ex-tuple-wt-a1	11	566	566	-1	-1		488
+s1-ex-tuple-wt-a1	12	57	57	-1	-1		25
+s1-ex-tuple-wt-a1	13	703	703	-1	-1		259
+s1-ex-uri-wt-a1	0	40	40	-1	-1		14
+s1-ex-uri-wt-a1	1	47	47	-1	-1		21
+s1-ex-uri-wt-a1	2	46	46	-1	-1		
+s1-ex-uri-wt-a1	3	190	190	-1	-1		163
+s1-ex-uri-wt-a1	4	83	83	-1	-1		67
+s1-ex-uri-wt-a1	5	272	272	-1	-1		234
+s1-ex-uri-wt-a1	6	34	34	-1	-1		
+s1-ex-uri-wt-a1	7	116	116	-1	-1		65
+s1-ex-uri-wt-a1	8	29	29	-1	-1		
+s1-ex-uri-wt-a1	9	148	148	-1	-1		118
+s1-ex-uri-wt-a1	10	85	85	-1	-1		51
+s1-ex-uri-wt-a1	11	24	24	-1	-1		
+s1-ex-uri-wt-a1	12	6459	6457	961	5498	reasoning	4923
+s1-ex-uri-wt-a1	13	26	26	-1	-1		
+s1-ex-uri-wt-a1	14	2350	2350	-1	-1		1203
+s1-ex-uri-wt-a1	15	27	27	-1	-1		
+s1-ex-uri-wt-a1	16	95	95	-1	-1		76
+s1-ex-uri-wt-a1	17	958	958	-1	-1		
+s1-ex-uri-wt-a1	18	27	27	-1	-1		
+s1-ex-uri-wt-a1	19	8670	8680	2528	6142	reasoning	7570
+s1-ex-uri-wt-a1	20	91	91	-1	-1		
+s1-ex-uri-wt-a1	21	904	904	-1	-1		872
+s1-ex-uri-wt-a1	22	32	32	-1	-1		
+s1-ex-uri-wt-a1	23	77	77	-1	-1		37
+s1-ex-uri-wt-a1	24	33	33	-1	-1		
+s1-ex-uri-wt-a1	25	33	33	-1	-1		
+s1-ex-uri-wt-a1	26	164	164	-1	-1		139
+s1-ex-uri-wt-a1	27	41	41	-1	-1		
+s1-ex-uri-wt-a1	28	171	171	-1	-1		77
+s1-ex-uri-wt-a1	29	25	25	-1	-1		
+s1-ex-uri-wt-a1	30	1664	1668	39	1625	reasoning	1583
+s1-filecmp-wt-a1	0	43	43	-1	-1		16
+s1-filecmp-wt-a1	1	39	39	-1	-1		17
+s1-filecmp-wt-a1	2	24	24	-1	-1		
+s1-filecmp-wt-a1	3	94	94	-1	-1		61
+s1-filecmp-wt-a1	4	4955	4955	-1	-1		4626
+s1-filecmp-wt-a1	5	322	322	-1	-1		25
+s1-filecmp-wt-a1	6	76	76	-1	-1		54
+s1-filecmp-wt-a1	7	358	358	-1	-1		45
+s1-filecmp-wt-a1	8	373	373	-1	-1		72
+s1-filecmp-wt-a1	9	18	18	-1	-1		
+s1-filecmp-wt-a1	10	1382	1382	-1	-1		696
+s1-filecmp-wt-a1	11	111	111	-1	-1		44
+s1-filecmp-wt-a1	12	111	111	-1	-1		
+s1-filecmp-wt-a1	13	18	18	-1	-1		
+s1-filecmp-wt-a1	14	432	432	-1	-1		143
+s1-filecmp-wt-a1	15	323	323	-1	-1		34
+s1-filecmp-wt-a1	16	18	18	-1	-1		
+s1-filecmp-wt-a1	17	4627	4627	-1	-1		4508
+s1-filecmp-wt-a1	18	32	32	-1	-1		
+s1-filecmp-wt-a1	19	1315	1315	-1	-1		1190
+s1-filecmp-wt-a1	20	32	32	-1	-1		
+s1-filecmp-wt-a1	21	14674	14672	7228	7446	reasoning	11079
+s1-getopt-wt-a0	0	62	62	-1	-1		15
+s1-getopt-wt-a0	1	66	66	-1	-1		13
+s1-getopt-wt-a0	2	97	97	-1	-1		56
+s1-getopt-wt-a0	3	5733	5732	2486	3247	reasoning	5249
+s1-getopt-wt-a0	4	597	597	-1	-1		56
+s1-getopt-wt-a0	5	547	547	-1	-1		119
+s1-getopt-wt-a0	6	1171	1171	-1	-1		77
+s1-getopt-wt-a0	7	5141	5140	3903	1238	reasoning	4616
+s1-getopt-wt-a0	8	2972	2972	1928	1044	reasoning	2748
+s1-getopt-wt-a0	9	7184	7191	1363	5821	reasoning	5151
+s1-hashlib-wt-a1	0	74	74	-1	-1		16
+s1-hashlib-wt-a1	1	70	70	-1	-1		14
+s1-hashlib-wt-a1	2	1606	1606	-1	-1		1248
+s1-hashlib-wt-a1	3	498	498	-1	-1		47
+s1-hashlib-wt-a1	4	628	628	-1	-1		237
+s1-hashlib-wt-a1	5	514	514	-1	-1		79
+s1-hashlib-wt-a1	6	1004	1004	-1	-1		648
+s1-hashlib-wt-a1	7	373	373	-1	-1		56
+s1-hashlib-wt-a1	8	712	712	-1	-1		378
+s1-hashlib-wt-a1	9	1070	1070	-1	-1		739
+s1-hashlib-wt-a1	10	499	499	-1	-1		271
+s1-hashlib-wt-a1	11	1344	1344	-1	-1		856
+s1-hashlib-wt-a1	12	7082	7082	-1	-1		6788
+s1-hashlib-wt-a1	13	5412	5412	-1	-1		1697
+s1-hmac-wt-a0	0	46	46	-1	-1		19
+s1-hmac-wt-a0	1	39	39	-1	-1		14
+s1-hmac-wt-a0	2	39	39	-1	-1		14
+s1-hmac-wt-a0	3	52	52	-1	-1		19
+s1-hmac-wt-a0	4	59	59	-1	-1		32
+s1-hmac-wt-a0	5	123	123	-1	-1		117
+s1-hmac-wt-a0	6	112	112	-1	-1		97
+s1-hmac-wt-a0	7	1404	1404	-1	-1		1104
+s1-hmac-wt-a0	8	3113	3113	-1	-1		2291
+s1-hmac-wt-a0	9	1901	1901	-1	-1		1153
+s1-hmac-wt-a0	10	1717	1717	-1	-1		1286
+s1-hmac-wt-a0	11	3062	3062	-1	-1		2634
+s1-hmac-wt-a0	12	2652	2653	1952	700	reasoning	2357
+s1-hmac-wt-a0	13	4081	4083	426	3655	reasoning	1825
+s1-hmac-wt-a0	14	51	51	-1	-1		17
+s1-hmac-wt-a0	15	200	200	-1	-1		144
+s1-hmac-wt-a0	16	625	625	-1	-1		242
+s1-linecache-wt-a0	0	61	61	-1	-1		14
+s1-linecache-wt-a0	1	128	128	-1	-1		13
+s1-linecache-wt-a0	2	10859	10860	2976	7883	reasoning	8812
+s1-linecache-wt-a0	3	47	47	-1	-1		12
+s1-linecache-wt-a0	4	187	187	-1	-1		108
+s1-linecache-wt-a0	5	509	509	-1	-1		61
+s1-netrc-wt-a2	0	37	37	-1	-1		10
+s1-netrc-wt-a2	1	38	38	-1	-1		13
+s1-netrc-wt-a2	2	27	27	-1	-1		
+s1-netrc-wt-a2	3	172	172	-1	-1		126
+s1-netrc-wt-a2	4	49	49	-1	-1		
+s1-netrc-wt-a2	5	34	34	-1	-1		19
+s1-netrc-wt-a2	6	55	55	-1	-1		24
+s1-netrc-wt-a2	7	11490	11501	163	11327	reasoning	11422
+s1-netrc-wt-a2	8	2032	2035	376	1656	tool-call	20
+s1-netrc-wt-a2	9	36	36	-1	-1		
+s1-netrc-wt-a2	10	237	237	-1	-1		70
+s1-netrc-wt-a2	11	156	156	-1	-1		104
+s1-netrc-wt-a2	12	495	495	236	259	text	59
+s1-nntplib-wt-a1	0	65	65	-1	-1		17
+s1-nntplib-wt-a1	1	217	217	-1	-1		88
+s1-nntplib-wt-a1	2	238	238	-1	-1		74
+s1-nntplib-wt-a1	3	567	567	-1	-1		512
+s1-nntplib-wt-a1	4	28	28	-1	-1		
+s1-nntplib-wt-a1	5	28	28	-1	-1		
+s1-nntplib-wt-a1	6	28	28	-1	-1		
+s1-nntplib-wt-a1	7	28	28	-1	-1		
+s1-nntplib-wt-a1	8	29	29	-1	-1		
+s1-nntplib-wt-a1	9	366	366	-1	-1		300
+s1-nntplib-wt-a1	10	253	253	-1	-1		137
+s1-nntplib-wt-a1	11	2285	2284	636	1649	reasoning	2235
+s1-nntplib-wt-a1	12	21857	21856	16534	5323	reasoning	21578
+s1-plistlib-wt-a1	0	76	76	-1	-1		15
+s1-plistlib-wt-a1	1	130	130	-1	-1		58
+s1-plistlib-wt-a1	2	7955	7955	-1	-1		7253
+s1-plistlib-wt-a1	3	1744	1744	-1	-1		683
+s1-plistlib-wt-a1	4	1581	1581	-1	-1		846
+s1-plistlib-wt-a1	5	22	22	-1	-1		
+s1-plistlib-wt-a1	6	2655	2655	-1	-1		1747
+s1-plistlib-wt-a1	7	23	23	-1	-1		
+s1-plistlib-wt-a1	8	3366	3366	-1	-1		2801
+s1-plistlib-wt-a1	9	23	23	-1	-1		
+s1-plistlib-wt-a1	10	9116	9116	-1	-1		4273
+s1-pprint-wt-a2	0	90	90	-1	-1		30
+s1-pprint-wt-a2	1	36	36	-1	-1		16
+s1-pprint-wt-a2	2	15	15	-1	-1		
+s1-pprint-wt-a2	3	1739	1739	-1	-1		1577
+s1-pprint-wt-a2	4	538	538	-1	-1		37
+s1-pprint-wt-a2	5	959	959	-1	-1		387
+s1-pprint-wt-a2	6	1076	1076	-1	-1		196
+s1-pprint-wt-a2	7	2860	2860	443	2417	reasoning	2011
+s1-pprint-wt-a2	8	750	750	-1	-1		13
+s1-pprint-wt-a2	9	805	805	-1	-1		24
+s1-pprint-wt-a2	10	20	20	-1	-1		
+s1-pprint-wt-a2	11	178	178	-1	-1		104
+s1-pprint-wt-a2	12	71	71	-1	-1		45
+s1-pprint-wt-a2	13	73	73	-1	-1		
+s1-pprint-wt-a2	14	1028	1028	-1	-1		246
+s1-pprint-wt-a2	15	20	20	-1	-1		
+s1-pprint-wt-a2	16	4306	4306	-1	-1		3474
+s1-pprint-wt-a2	17	21	21	-1	-1		
+s1-pprint-wt-a2	18	123	124	106	17	tool-call	49
+s1-pprint-wt-a2	19	21	21	-1	-1		
+s1-pprint-wt-a2	20	26	26	-1	-1		
+s1-pprint-wt-a2	21	62	62	-1	-1		
+s1-pprint-wt-a2	22	21	21	-1	-1		
+s1-pprint-wt-a2	23	1781	1781	-1	-1		1468
+s1-pprint-wt-a2	24	21	21	-1	-1		
+s1-pprint-wt-a2	25	358	358	-1	-1		81
+s1-pprint-wt-a2	26	21	21	-1	-1		
+s1-pprint-wt-a2	27	186	186	-1	-1		88
+s1-pprint-wt-a2	28	219	219	-1	-1		115
+s1-pprint-wt-a2	29	657	657	-1	-1		611
+s1-pprint-wt-a2	30	5026	5026	-1	-1		4356
+s1-pprint-wt-a2	31	21	21	-1	-1		
+s1-pprint-wt-a2	32	135	135	-1	-1		29
+s1-pprint-wt-a2	33	21	21	-1	-1		
+s1-pprint-wt-a2	34	9123	9123	-1	-1		6441
+s1-py_compile-wt-a1	0	57	57	-1	-1		14
+s1-py_compile-wt-a1	1	87	87	-1	-1		24
+s1-py_compile-wt-a1	2	3900	3900	-1	-1		3747
+s1-py_compile-wt-a1	3	48	48	-1	-1		18
+s1-py_compile-wt-a1	4	109	109	-1	-1		
+s1-py_compile-wt-a1	5	731	731	-1	-1		362
+s1-py_compile-wt-a1	6	7944	7942	1148	6796	reasoning	5601
+s1-py_compile-wt-a1	7	36	36	-1	-1		
+s1-py_compile-wt-a1	8	472	472	-1	-1		365
+s1-py_compile-wt-a1	9	118	118	-1	-1		
+s1-py_compile-wt-a1	10	161	161	-1	-1		69
+s1-py_compile-wt-a1	11	742	742	-1	-1		386
+s1-py_compile-wt-a1	12	28	28	-1	-1		
+s1-py_compile-wt-a1	13	200	200	-1	-1		102
+s1-py_compile-wt-a1	14	577	577	-1	-1		107
+s1-pyclbr-wt-a0	0	150	150	-1	-1		106
+s1-pyclbr-wt-a0	1	51	51	-1	-1		5
+s1-pyclbr-wt-a0	2	101	101	-1	-1		37
+s1-pyclbr-wt-a0	3	43	43	-1	-1		10
+s1-pyclbr-wt-a0	4	49	49	-1	-1		16
+s1-pyclbr-wt-a0	5	52	52	-1	-1		19
+s1-pyclbr-wt-a0	6	43	43	-1	-1		10
+s1-queue-wt-a0	0	65	65	-1	-1		16
+s1-queue-wt-a0	1	57	57	-1	-1		20
+s1-queue-wt-a0	2	2675	2675	-1	-1		2592
+s1-queue-wt-a0	3	179	179	-1	-1		81
+s1-queue-wt-a0	4	6489	6490	5599	890	reasoning	5812
+s1-queue-wt-a0	5	5910	5910	-1	-1		5755
+s1-queue-wt-a0	6	3279	3279	-1	-1		316
+s1-queue-wt-a0	7	42	42	-1	-1		13
+s1-queue-wt-a0	8	632	632	-1	-1		283
+s1-queue-wt-a0	9	28	28	-1	-1		
+s1-queue-wt-a0	10	219	219	-1	-1		76
+s1-queue-wt-a0	11	637	637	-1	-1		256
+s1-queue-wt-a2	0	61	61	-1	-1		14
+s1-queue-wt-a2	1	73	73	-1	-1		17
+s1-queue-wt-a2	2	1561	1562	307	1254	reasoning	1316
+s1-queue-wt-a2	3	6155	6156	958	5197	reasoning	3643
+s1-queue-wt-a2	4	28	28	-1	-1		
+s1-queue-wt-a2	5	148	148	-1	-1		68
+s1-queue-wt-a2	6	465	465	-1	-1		28
+s1-reprlib-wt-a2	0	43	43	-1	-1		15
+s1-reprlib-wt-a2	1	39	39	-1	-1		14
+s1-reprlib-wt-a2	2	124	124	-1	-1		91
+s1-reprlib-wt-a2	3	6662	6662	2605	4057	reasoning	5895
+s1-reprlib-wt-a2	4	724	724	-1	-1		206
+s1-reprlib-wt-a2	5	1722	1722	-1	-1		1355
+s1-reprlib-wt-a2	6	875	875	-1	-1		600
+s1-reprlib-wt-a2	7	5932	5932	2451	3481	reasoning	5360
+s1-reprlib-wt-a2	8	7190	7189	6468	722	reasoning	7041
+s2-ex-float-a2-fix_bug-0	0	85	85	-1	-1		13
+s2-ex-float-a2-fix_bug-0	1	68	68	-1	-1		12
+s2-ex-float-a2-fix_bug-0	2	40	40	-1	-1		10
+s2-ex-float-a2-fix_bug-0	3	5259	5259	3336	1923	reasoning	4930
+s2-ex-float-a2-fix_bug-0	4	2188	2188	-1	-1		1873
+s2-ex-float-a2-fix_bug-0	5	29	29	-1	-1		
+s2-ex-float-a2-fix_bug-0	6	339	339	-1	-1		91
+s2-ex-float-a2-fix_bug-0	7	591	591	-1	-1		84
+s2-ex-float-a2-fix_bug-0	8	41	41	-1	-1		10
+s2-ex-float-a2-fix_bug-1	0	42	42	-1	-1		13
+s2-ex-float-a2-fix_bug-1	1	580	580	-1	-1		485
+s2-ex-float-a2-fix_bug-1	2	43	43	-1	-1		
+s2-ex-float-a2-fix_bug-1	3	52	52	-1	-1		10
+s2-ex-float-a2-fix_bug-1	4	29	29	-1	-1		
+s2-ex-float-a2-fix_bug-1	5	3320	3320	-1	-1		3263
+s2-ex-float-a2-fix_bug-1	6	382	382	-1	-1		141
+s2-ex-float-a2-fix_bug-1	7	38	38	-1	-1		
+s2-ex-float-a2-fix_bug-1	8	488	488	-1	-1		86
+s2-ex-float-a2-fix_bug-3	0	44	44	-1	-1		16
+s2-ex-float-a2-fix_bug-3	1	39	39	-1	-1		13
+s2-ex-float-a2-fix_bug-3	2	427	427	-1	-1		402
+s2-ex-float-a2-fix_bug-3	3	79	79	-1	-1		34
+s2-ex-float-a2-fix_bug-3	4	53	53	-1	-1		13
+s2-ex-float-a2-fix_bug-3	5	20	20	-1	-1		
+s2-ex-float-a2-fix_bug-3	6	187	187	-1	-1		166
+s2-ex-float-a2-fix_bug-3	7	16626	16626	-1	-1		16548
+s2-ex-float-a2-fix_bug-3	8	310	310	-1	-1		128
+s2-ex-float-a2-fix_bug-3	9	3076	3076	-1	-1		3011
+s2-ex-float-a2-fix_bug-3	10	48	48	-1	-1		21
+s2-ex-float-a2-fix_bug-3	11	26	26	-1	-1		
+s2-ex-float-a2-fix_bug-3	12	63	63	-1	-1		39
+s2-ex-float-a2-fix_bug-3	13	28	28	-1	-1		
+s2-ex-float-a2-fix_bug-3	14	619	619	-1	-1		477
+s2-ex-float-a2-fix_bug-3	15	618	618	-1	-1		282
+s2-ex-float-a2-fix_bug-3	16	108	108	-1	-1		21
+s2-ex-float-a2-fix_bug-3	17	32	32	-1	-1		
+s2-ex-float-a2-fix_bug-3	18	281	281	-1	-1		123
+s2-ex-float-a2-fix_bug-3	19	1269	1269	-1	-1		662
+s2-ex-float-a2-fix_bug-4	0	40	40	-1	-1		13
+s2-ex-float-a2-fix_bug-4	1	160	160	-1	-1		102
+s2-ex-float-a2-fix_bug-4	2	34	34	-1	-1		19
+s2-ex-float-a2-fix_bug-4	3	4216	4216	-1	-1		4073
+s2-ex-float-a2-fix_bug-4	4	1535	1535	-1	-1		1042
+s2-ex-float-a2-fix_bug-4	5	4420	4420	-1	-1		4254
+s2-ex-float-a2-fix_bug-4	6	2795	2795	-1	-1		2006
+s2-ex-float-a2-fix_bug-4	7	806	806	-1	-1		113
+s2-ex-float-a2-fix_bug-4	8	27	27	-1	-1		
+s2-ex-float-a2-fix_bug-4	9	1334	1334	-1	-1		1170
+s2-ex-float-a2-fix_bug-4	10	29	29	-1	-1		
+s2-ex-float-a2-fix_bug-4	11	1329	1329	-1	-1		1126
+s2-ex-float-a2-fix_bug-4	12	1310	1310	-1	-1		906
+s2-ex-float-a2-fix_bug-4	13	34	34	-1	-1		
+s2-ex-float-a2-fix_bug-4	14	880	880	-1	-1		439
+s2-ex-float-a2-fix_bug-4	15	35	35	-1	-1		
+s2-ex-float-a2-fix_bug-4	16	2304	2304	-1	-1		1837
+s2-ex-float-a2-fix_bug-4	17	35	35	-1	-1		
+s2-ex-float-a2-fix_bug-4	18	248	248	-1	-1		144
+s2-ex-float-a2-fix_bug-4	19	91	91	-1	-1		74
+s2-ex-float-a2-fix_bug-4	20	452	452	-1	-1		74
+s2-ex-float-a2-fix_bug-4	21	35	35	-1	-1		
+s2-ex-float-a2-fix_bug-4	22	160	160	-1	-1		82
+s2-ex-float-a2-fix_bug-4	23	302	302	-1	-1		217
+s2-ex-float-a2-fix_bug-4	24	1456	1456	-1	-1		1349
+s2-ex-float-a2-fix_bug-5	0	112	112	88	24	tool-call	15
+s2-ex-float-a2-fix_bug-5	1	56	56	-1	-1		
+s2-ex-float-a2-fix_bug-5	2	777	777	-1	-1		731
+s2-ex-float-a2-fix_bug-5	3	42	42	-1	-1		12
+s2-ex-float-a2-fix_bug-5	4	2629	2630	1193	1436	reasoning	2543
+s2-ex-float-a2-fix_bug-5	5	73	73	-1	-1		14
+s2-ex-float-a2-fix_bug-5	6	155	155	-1	-1		95
+s2-ex-float-a2-fix_bug-5	7	1568	1568	-1	-1		1491
+s2-ex-float-a2-fix_bug-5	8	435	435	-1	-1		346
+s2-ex-float-a2-fix_bug-5	9	1272	1272	-1	-1		1248
+s2-ex-float-a2-fix_bug-5	10	899	899	-1	-1		863
+s2-ex-float-a2-fix_bug-5	11	1105	1105	554	551	reasoning	1028
+s2-ex-float-a2-fix_bug-5	12	2211	2211	1781	430	reasoning	2163
+s2-ex-float-a2-fix_bug-5	13	12630	12630	9764	2866	reasoning	12084
+s2-ex-float-a2-fix_bug-6	0	35	35	-1	-1		10
+s2-ex-float-a2-fix_bug-6	1	41	41	-1	-1		13
+s2-ex-float-a2-fix_bug-6	2	49	49	-1	-1		23
+s2-ex-float-a2-fix_bug-6	3	115	115	-1	-1		94
+s2-ex-float-a2-fix_bug-6	4	301	301	-1	-1		251
+s2-ex-float-a2-fix_bug-6	5	16	16	-1	-1		
+s2-ex-float-a2-fix_bug-6	6	6301	6301	-1	-1		6022
+s2-ex-float-a2-fix_bug-6	7	20	20	-1	-1		
+s2-ex-float-a2-fix_bug-6	8	426	426	-1	-1		28
+s2-ex-float-a2-fix_bug-7	0	42	42	-1	-1		13
+s2-ex-float-a2-fix_bug-7	1	531	531	-1	-1		462
+s2-ex-float-a2-fix_bug-7	2	42	42	-1	-1		12
+s2-ex-float-a2-fix_bug-7	3	248	248	-1	-1		194
+s2-ex-float-a2-fix_bug-7	4	1331	1331	-1	-1		1286
+s2-ex-float-a2-fix_bug-7	5	444	444	-1	-1		174
+s2-ex-float-a2-fix_bug-7	6	91	91	-1	-1		45
+s2-ex-float-a2-fix_bug-7	7	117	117	-1	-1		83
+s2-ex-float-a2-fix_bug-7	8	595	595	-1	-1		523
+s2-ex-float-a2-fix_bug-7	9	146	146	-1	-1		91
+s2-ex-float-a2-fix_bug-7	10	188	188	-1	-1		78
+s2-ex-float-a2-fix_bug-7	11	525	525	-1	-1		388
+s2-ex-float-a2-fix_bug-7	12	67	67	-1	-1		23
+s2-ex-float-a2-fix_bug-7	13	623	623	-1	-1		290
+s2-ex-float-a2-fix_bug-8	0	51	51	-1	-1		10
+s2-ex-float-a2-fix_bug-8	1	139	139	-1	-1		95
+s2-ex-float-a2-fix_bug-8	2	45	45	-1	-1		13
+s2-ex-float-a2-fix_bug-8	3	73	73	-1	-1		14
+s2-ex-float-a2-fix_bug-8	4	101	101	-1	-1		73
+s2-ex-float-a2-fix_bug-8	5	123	123	-1	-1		77
+s2-ex-float-a2-fix_bug-8	6	62	62	-1	-1		
+s2-ex-float-a2-fix_bug-8	7	1561	1561	-1	-1		1505
+s2-ex-float-a2-fix_bug-8	8	47	47	-1	-1		18
+s2-ex-float-a2-fix_bug-8	9	507	507	-1	-1		450
+s2-ex-float-a2-fix_bug-8	10	118	118	-1	-1		58
+s2-ex-float-a2-fix_bug-8	11	2986	2986	-1	-1		2851
+s2-ex-float-a2-fix_bug-8	12	91	91	-1	-1		53
+s2-ex-float-a2-fix_bug-8	13	27	27	-1	-1		
+s2-ex-float-a2-fix_bug-8	14	66	66	-1	-1		37
+s2-ex-float-a2-fix_bug-8	15	77	77	-1	-1		48
+s2-ex-float-a2-fix_bug-8	16	324	324	-1	-1		283
+s2-ex-float-a2-fix_bug-8	17	756	756	-1	-1		709
+s2-ex-float-a2-fix_bug-8	18	25	25	-1	-1		
+s2-ex-float-a2-fix_bug-8	19	55	55	-1	-1		29
+s2-ex-float-a2-fix_bug-8	20	3600	3600	-1	-1		3367
+s2-ex-float-a2-fix_bug-8	21	24	24	-1	-1		
+s2-ex-float-a2-fix_bug-8	22	2782	2782	-1	-1		2738
+s2-ex-float-a2-fix_bug-8	23	2860	2860	-1	-1		2803
+s2-ex-float-a2-fix_bug-8	24	21105	21107	34	21071	reasoning	21058
+s2-ex-float-a2-fix_bug-9	0	116	116	-1	-1		15
+s2-ex-float-a2-fix_bug-9	1	40	40	-1	-1		
+s2-ex-float-a2-fix_bug-9	2	68	68	-1	-1		13
+s2-ex-float-a2-fix_bug-9	3	67	67	-1	-1		25
+s2-ex-float-a2-fix_bug-9	4	693	693	-1	-1		663
+s2-ex-float-a2-fix_bug-9	5	43	43	-1	-1		13
+s2-ex-float-a2-fix_bug-9	6	2063	2063	-1	-1		1975
+s2-ex-float-a2-fix_bug-9	7	98	98	-1	-1		41
+s2-ex-float-a2-fix_bug-9	8	45	45	-1	-1		
+s2-ex-float-a2-fix_bug-9	9	102	102	-1	-1		85
+s2-ex-float-a2-fix_bug-9	10	103	103	-1	-1		78
+s2-ex-float-a2-fix_bug-9	11	225	225	-1	-1		193
+s2-ex-float-a2-fix_bug-9	12	2591	2591	-1	-1		2454
+s2-ex-float-a2-fix_bug-9	13	2066	2066	-1	-1		881
+s2-ex-float-a2-fix_bug-9	14	3641	3641	-1	-1		3302
+s2-ex-float-a2-fix_bug-9	15	360	360	-1	-1		48
+s2-ex-float-a2-fix_bug-9	16	334	334	-1	-1		10
+s2-ex-float-a2-fix_bug-9	17	843	843	-1	-1		763
+s2-ex-float-a2-fix_bug-9	18	139	139	-1	-1		56
+s2-ex-float-a2-fix_bug-9	19	846	846	-1	-1		445
+s2-ex-float-a2-fix_bug-9	20	184	184	-1	-1		114
+s2-ex-float-a2-fix_bug-9	21	263	263	-1	-1		226
+s2-ex-float-a2-fix_bug-9	22	85	85	-1	-1		23
+s2-ex-float-a2-fix_bug-9	23	128	128	-1	-1		86
+s2-ex-float-a2-fix_bug-9	24	2883	2883	-1	-1		
+s2-ex-float-a2-fix_bug-9	25	73	73	-1	-1		47
+s2-ex-float-a2-fix_bug-9	26	88	88	-1	-1		
+s2-ex-float-a2-fix_bug-9	27	454	454	-1	-1		29
+s2-ex-float-a2-fix_bug-9	28	609	609	-1	-1		158
+s2-ex-float-a2-fix_bug-9	29	323	322	301	22	tool-call	270
+s2-ex-float-a2-fix_bug-9	30	266	266	-1	-1		161
+s2-ex-float-a2-fix_bug-9	31	532	532	-1	-1		506
+s2-ex-float-a2-fix_bug-9	32	59	59	-1	-1		
+s2-ex-float-a2-fix_bug-9	33	555	555	-1	-1		191
+s2-ex-float-a2-fix_bug-9	34	4069	4069	-1	-1		3647
+s2-ex-string_io-a0-fix_bug-0	0	80	80	-1	-1		13
+s2-ex-string_io-a0-fix_bug-0	1	48	48	-1	-1		13
+s2-ex-string_io-a0-fix_bug-0	2	160	160	-1	-1		120
+s2-ex-string_io-a0-fix_bug-0	3	126	126	-1	-1		109
+s2-ex-string_io-a0-fix_bug-0	4	1204	1204	-1	-1		1160
+s2-ex-string_io-a0-fix_bug-0	5	361	361	-1	-1		163
+s2-ex-string_io-a0-fix_bug-0	6	39	39	-1	-1		
+s2-ex-string_io-a0-fix_bug-0	7	274	274	-1	-1		25
+s2-ex-string_io-a0-fix_bug-2	0	105	105	-1	-1		16
+s2-ex-string_io-a0-fix_bug-2	1	41	41	-1	-1		
+s2-ex-string_io-a0-fix_bug-2	2	30	30	-1	-1		
+s2-ex-string_io-a0-fix_bug-2	3	2696	2696	-1	-1		2635
+s2-ex-string_io-a0-fix_bug-2	4	64	64	-1	-1		23
+s2-ex-string_io-a0-fix_bug-2	5	1318	1318	-1	-1		1236
+s2-ex-string_io-a0-fix_bug-2	6	720	720	-1	-1		637
+s2-ex-string_io-a0-fix_bug-2	7	605	605	-1	-1		267
+s2-ex-string_io-a0-fix_bug-2	8	40	40	-1	-1		
+s2-ex-string_io-a0-fix_bug-2	9	731	731	-1	-1		225
+s2-ex-string_io-a0-fix_bug-3	0	83	83	-1	-1		10
+s2-ex-string_io-a0-fix_bug-3	1	55	55	-1	-1		
+s2-ex-string_io-a0-fix_bug-3	2	211	211	-1	-1		166
+s2-ex-string_io-a0-fix_bug-3	3	806	806	-1	-1		764
+s2-ex-string_io-a0-fix_bug-3	4	1585	1585	-1	-1		1524
+s2-ex-string_io-a0-fix_bug-3	5	305	305	-1	-1		129
+s2-ex-string_io-a0-fix_bug-3	6	29	29	-1	-1		
+s2-ex-string_io-a0-fix_bug-3	7	137	137	-1	-1		46
+s2-ex-string_io-a0-fix_bug-3	8	103	103	-1	-1		65
+s2-ex-string_io-a0-fix_bug-3	9	823	823	-1	-1		352
+s2-ex-string_io-a0-fix_bug-5	0	45	45	-1	-1		13
+s2-ex-string_io-a0-fix_bug-5	1	216	216	-1	-1		179
+s2-ex-string_io-a0-fix_bug-5	2	50	50	-1	-1		25
+s2-ex-string_io-a0-fix_bug-5	3	23	23	-1	-1		
+s2-ex-string_io-a0-fix_bug-5	4	32	32	-1	-1		
+s2-ex-string_io-a0-fix_bug-5	5	6751	6751	-1	-1		6700
+s2-ex-string_io-a0-fix_bug-5	6	740	740	-1	-1		715
+s2-ex-string_io-a0-fix_bug-5	7	62	62	-1	-1		28
+s2-ex-string_io-a0-fix_bug-5	8	5922	5910	3593	2329	reasoning	5852
+s2-ex-string_io-a0-fix_bug-5	9	122	122	-1	-1		40
+s2-ex-string_io-a0-fix_bug-5	10	3802	3798	3103	699	reasoning	3747
+s2-ex-string_io-a0-fix_bug-5	11	514	514	-1	-1		219
+s2-ex-string_io-a0-fix_bug-5	12	76	76	-1	-1		47
+s2-ex-string_io-a0-fix_bug-5	13	40	40	-1	-1		22
+s2-ex-string_io-a0-fix_bug-5	14	59	59	-1	-1		25
+s2-ex-string_io-a0-fix_bug-5	15	96	96	-1	-1		76
+s2-ex-string_io-a0-fix_bug-5	16	1130	1130	-1	-1		591
+s2-ex-string_io-a0-fix_bug-6	0	42	42	-1	-1		16
+s2-ex-string_io-a0-fix_bug-6	1	94	94	67	27	tool-call	8
+s2-ex-string_io-a0-fix_bug-6	2	45	45	-1	-1		
+s2-ex-string_io-a0-fix_bug-6	3	1433	1433	-1	-1		1408
+s2-ex-string_io-a0-fix_bug-6	4	562	562	-1	-1		531
+s2-ex-string_io-a0-fix_bug-6	5	4110	4110	-1	-1		3998
+s2-ex-string_io-a0-fix_bug-6	6	3167	3167	-1	-1		3051
+s2-ex-string_io-a0-fix_bug-6	7	46	46	-1	-1		24
+s2-ex-string_io-a0-fix_bug-6	8	60	60	-1	-1		
+s2-ex-string_io-a0-fix_bug-6	9	86	86	-1	-1		41
+s2-ex-string_io-a0-fix_bug-6	10	86	86	-1	-1		26
+s2-ex-string_io-a0-fix_bug-6	11	132	132	-1	-1		98
+s2-ex-string_io-a0-fix_bug-6	12	29	29	-1	-1		16
+s2-ex-string_io-a0-fix_bug-6	13	71	71	-1	-1		39
+s2-ex-string_io-a0-fix_bug-6	14	42	42	-1	-1		27
+s2-ex-string_io-a0-fix_bug-6	15	39	39	-1	-1		23
+s2-ex-string_io-a0-fix_bug-6	16	73	73	-1	-1		46
+s2-ex-string_io-a0-fix_bug-6	17	14	14	-1	-1		
+s2-ex-string_io-a0-fix_bug-6	18	71	71	-1	-1		55
+s2-ex-string_io-a0-fix_bug-6	19	15	15	-1	-1		
+s2-ex-string_io-a0-fix_bug-6	20	31	31	-1	-1		18
+s2-ex-string_io-a0-fix_bug-6	21	15	15	-1	-1		
+s2-ex-string_io-a0-fix_bug-6	22	6057	6057	-1	-1		6002
+s2-ex-string_io-a0-fix_bug-6	23	35	35	-1	-1		22
+s2-ex-string_io-a0-fix_bug-6	24	1348	1348	-1	-1		1327
+s2-ex-string_io-a0-fix_bug-6	25	53	53	-1	-1		43
+s2-ex-string_io-a0-fix_bug-6	26	63	63	-1	-1		52
+s2-ex-string_io-a0-fix_bug-6	27	51	51	-1	-1		42
+s2-ex-string_io-a0-fix_bug-6	28	62	62	-1	-1		53
+s2-ex-string_io-a0-fix_bug-6	29	43	43	-1	-1		34
+s2-ex-string_io-a0-fix_bug-6	30	109	109	-1	-1		98
+s2-ex-string_io-a0-fix_bug-6	31	186	186	-1	-1		151
+s2-ex-string_io-a0-fix_bug-6	32	109	109	-1	-1		103
+s2-ex-string_io-a0-fix_bug-6	33	2287	2288	2237	50	reasoning	2274
+s2-ex-string_io-a0-fix_bug-7	0	42	42	-1	-1		16
+s2-ex-string_io-a0-fix_bug-7	1	119	120	89	30	tool-call	32
+s2-ex-string_io-a0-fix_bug-7	2	131	131	-1	-1		60
+s2-ex-string_io-a0-fix_bug-7	3	138	138	-1	-1		122
+s2-ex-string_io-a0-fix_bug-7	4	46	46	-1	-1		14
+s2-ex-string_io-a0-fix_bug-7	5	67	67	-1	-1		51
+s2-ex-string_io-a0-fix_bug-7	6	56	56	-1	-1		42
+s2-ex-string_io-a0-fix_bug-7	7	26	26	-1	-1		11
+s2-ex-string_io-a0-fix_bug-7	8	52	52	-1	-1		23
+s2-ex-string_io-a0-fix_bug-7	9	32	32	-1	-1		
+s2-ex-string_io-a0-fix_bug-7	10	35	35	-1	-1		14
+s2-ex-string_io-a0-fix_bug-7	11	2138	2138	-1	-1		2117
+s2-ex-string_io-a0-fix_bug-7	12	380	380	-1	-1		330
+s2-ex-string_io-a0-fix_bug-7	13	48	48	-1	-1		15
+s2-ex-string_io-a0-fix_bug-7	14	8905	8905	-1	-1		8878
+s2-ex-string_io-a0-fix_bug-7	15	51	51	-1	-1		23
+s2-ex-string_io-a0-fix_bug-7	16	41	41	-1	-1		
+s2-ex-string_io-a0-fix_bug-7	17	49	49	-1	-1		19
+s2-ex-string_io-a0-fix_bug-7	18	53	53	-1	-1		23
+s2-ex-string_io-a0-fix_bug-7	19	4131	4131	-1	-1		4016
+s2-ex-string_io-a0-fix_bug-7	20	26	26	-1	-1		
+s2-ex-string_io-a0-fix_bug-7	21	892	892	-1	-1		484
+s2-ex-string_io-a0-fix_bug-7	22	27	27	-1	-1		
+s2-ex-string_io-a0-fix_bug-7	23	1125	1125	-1	-1		1042
+s2-ex-string_io-a0-fix_bug-7	24	26	26	-1	-1		
+s2-ex-string_io-a0-fix_bug-7	25	1891	1891	-1	-1		1861
+s2-ex-string_io-a0-fix_bug-7	26	200	200	-1	-1		35
+s2-ex-string_io-a0-fix_bug-8	0	47	47	-1	-1		15
+s2-ex-string_io-a0-fix_bug-8	1	140	140	-1	-1		76
+s2-ex-string_io-a0-fix_bug-8	2	3840	3837	176	3664	reasoning	3774
+s2-ex-string_io-a0-fix_bug-8	3	116	116	-1	-1		85
+s2-ex-string_io-a0-fix_bug-8	4	160	160	-1	-1		135
+s2-ex-string_io-a0-fix_bug-8	5	1451	1451	-1	-1		1340
+s2-ex-string_io-a0-fix_bug-8	6	237	237	-1	-1		103
+s2-ex-string_io-a0-fix_bug-8	7	164	164	-1	-1		105
+s2-ex-string_io-a0-fix_bug-8	8	52	52	-1	-1		40
+s2-ex-string_io-a0-fix_bug-8	9	27	27	-1	-1		12
+s2-ex-string_io-a0-fix_bug-8	10	71	71	-1	-1		58
+s2-ex-string_io-a0-fix_bug-8	11	1615	1615	-1	-1		1586
+s2-ex-string_io-a0-fix_bug-8	12	6148	6148	-1	-1		6112
+s2-ex-string_io-a0-fix_bug-8	13	131	131	-1	-1		25
+s2-ex-string_io-a0-fix_bug-8	14	30	30	-1	-1		16
+s2-ex-string_io-a0-fix_bug-8	15	44	44	-1	-1		
+s2-ex-string_io-a0-fix_bug-8	16	248	248	-1	-1		227
+s2-ex-string_io-a0-fix_bug-8	17	42	42	-1	-1		29
+s2-ex-string_io-a0-fix_bug-8	18	3480	3480	-1	-1		3423
+s2-ex-string_io-a0-fix_bug-8	19	143	143	-1	-1		115
+s2-ex-string_io-a0-fix_bug-8	20	35	35	-1	-1		17
+s2-ex-string_io-a0-fix_bug-8	21	2663	2663	-1	-1		2608
+s2-ex-string_io-a0-implement-0	0	106	106	82	24	tool-call	16
+s2-ex-string_io-a0-implement-0	1	129	129	-1	-1		
+s2-ex-string_io-a0-implement-0	2	44	44	-1	-1		
+s2-ex-string_io-a0-implement-0	3	310	310	-1	-1		256
+s2-ex-string_io-a0-implement-0	4	43	43	-1	-1		13
+s2-ex-string_io-a0-implement-0	5	35	35	-1	-1		
+s2-ex-string_io-a0-implement-0	6	5610	5610	-1	-1		5581
+s2-ex-string_io-a0-implement-0	7	1657	1657	-1	-1		1612
+s2-ex-string_io-a0-implement-0	8	1474	1474	810	664	reasoning	1242
+s2-ex-string_io-a0-implement-0	9	29	29	-1	-1		
+s2-ex-string_io-a0-implement-0	10	203	203	-1	-1		146
+s2-ex-string_io-a0-implement-0	11	133	133	-1	-1		48
+s2-ex-string_io-a0-implement-0	12	91	91	-1	-1		32
+s2-ex-string_io-a0-implement-0	13	93	93	-1	-1		45
+s2-ex-string_io-a0-implement-0	14	140	140	-1	-1		58
+s2-ex-string_io-a0-implement-0	15	468	468	-1	-1		395
+s2-ex-string_io-a0-implement-0	16	674	674	-1	-1		243
+s2-ex-string_io-a0-implement-0	17	276	276	-1	-1		13
+s2-ex-tuple-a1-fix_bug-0	0	45	45	-1	-1		13
+s2-ex-tuple-a1-fix_bug-0	1	2934	2934	-1	-1		2911
+s2-ex-tuple-a1-fix_bug-0	2	40	40	-1	-1		16
+s2-ex-tuple-a1-fix_bug-0	3	70	70	-1	-1		24
+s2-ex-tuple-a1-fix_bug-0	4	1114	1114	-1	-1		1055
+s2-ex-tuple-a1-fix_bug-0	5	682	682	-1	-1		457
+s2-ex-tuple-a1-fix_bug-0	6	34	34	-1	-1		
+s2-ex-tuple-a1-fix_bug-0	7	545	545	-1	-1		103
+s2-ex-tuple-a1-fix_bug-1	0	47	47	-1	-1		15
+s2-ex-tuple-a1-fix_bug-1	1	3520	3520	-1	-1		3492
+s2-ex-tuple-a1-fix_bug-1	2	54	54	-1	-1		17
+s2-ex-tuple-a1-fix_bug-1	3	90	90	-1	-1		29
+s2-ex-tuple-a1-fix_bug-1	4	112	112	-1	-1		82
+s2-ex-tuple-a1-fix_bug-1	5	40	40	-1	-1		17
+s2-ex-tuple-a1-fix_bug-1	6	127	127	-1	-1		104
+s2-ex-tuple-a1-fix_bug-1	7	46	46	-1	-1		23
+s2-ex-tuple-a1-fix_bug-1	8	60	60	-1	-1		37
+s2-ex-tuple-a1-fix_bug-1	9	134	134	-1	-1		111
+s2-ex-tuple-a1-fix_bug-1	10	47	47	-1	-1		30
+s2-ex-tuple-a1-fix_bug-1	11	9872	9872	-1	-1		9800
+s2-ex-tuple-a1-fix_bug-1	12	61	61	-1	-1		28
+s2-ex-tuple-a1-fix_bug-1	13	42	42	-1	-1		16
+s2-ex-tuple-a1-fix_bug-1	14	3071	3071	-1	-1		2987
+s2-ex-tuple-a1-fix_bug-1	15	45	45	-1	-1		15
+s2-ex-tuple-a1-fix_bug-1	16	1482	1482	-1	-1		1078
+s2-ex-tuple-a1-fix_bug-1	17	43	43	-1	-1		15
+s2-ex-tuple-a1-fix_bug-1	18	903	903	-1	-1		438
+s2-ex-tuple-a1-fix_bug-2	0	42	42	-1	-1		10
+s2-ex-tuple-a1-fix_bug-2	1	691	691	-1	-1		654
+s2-ex-tuple-a1-fix_bug-2	2	49	49	-1	-1		16
+s2-ex-tuple-a1-fix_bug-2	3	38	38	-1	-1		13
+s2-ex-tuple-a1-fix_bug-2	4	2541	2541	-1	-1		2421
+s2-ex-tuple-a1-fix_bug-2	5	36	36	-1	-1		11
+s2-ex-tuple-a1-fix_bug-2	6	152	152	-1	-1		85
+s2-ex-tuple-a1-fix_bug-2	7	47	47	-1	-1		
+s2-ex-tuple-a1-fix_bug-2	8	911	911	-1	-1		335
+s2-ex-tuple-a1-fix_bug-3	0	102	102	-1	-1		60
+s2-ex-tuple-a1-fix_bug-3	1	166	166	-1	-1		115
+s2-ex-tuple-a1-fix_bug-3	2	32	32	-1	-1		
+s2-ex-tuple-a1-fix_bug-3	3	26	26	-1	-1		13
+s2-ex-tuple-a1-fix_bug-3	4	500	500	-1	-1		392
+s2-ex-tuple-a1-fix_bug-3	5	18	18	-1	-1		5
+s2-ex-tuple-a1-fix_bug-3	6	54	54	-1	-1		36
+s2-ex-tuple-a1-fix_bug-3	7	596	596	-1	-1		406
+s2-ex-tuple-a1-fix_bug-4	0	44	44	-1	-1		12
+s2-ex-tuple-a1-fix_bug-4	1	882	882	-1	-1		788
+s2-ex-tuple-a1-fix_bug-4	2	281	281	-1	-1		244
+s2-ex-tuple-a1-fix_bug-4	3	272	272	-1	-1		158
+s2-ex-tuple-a1-fix_bug-4	4	114	114	-1	-1		87
+s2-ex-tuple-a1-fix_bug-4	5	919	919	-1	-1		848
+s2-ex-tuple-a1-fix_bug-4	6	81	81	-1	-1		60
+s2-ex-tuple-a1-fix_bug-4	7	53	53	-1	-1		37
+s2-ex-tuple-a1-fix_bug-4	8	54	54	-1	-1		30
+s2-ex-tuple-a1-fix_bug-4	9	827	827	-1	-1		774
+s2-ex-tuple-a1-fix_bug-4	10	37	37	-1	-1		11
+s2-ex-tuple-a1-fix_bug-4	11	46	46	-1	-1		33
+s2-ex-tuple-a1-fix_bug-4	12	1071	1071	-1	-1		1021
+s2-ex-tuple-a1-fix_bug-4	13	39	39	-1	-1		9
+s2-ex-tuple-a1-fix_bug-4	14	44	44	-1	-1		25
+s2-ex-tuple-a1-fix_bug-4	15	3576	3576	-1	-1		3511
+s2-ex-tuple-a1-fix_bug-4	16	37	37	-1	-1		9
+s2-ex-tuple-a1-fix_bug-4	17	39	39	-1	-1		10
+s2-ex-tuple-a1-fix_bug-4	18	3281	3281	-1	-1		3215
+s2-ex-tuple-a1-fix_bug-4	19	43	43	-1	-1		30
+s2-ex-tuple-a1-fix_bug-4	20	45	45	-1	-1		28
+s2-ex-tuple-a1-fix_bug-4	21	3164	3164	-1	-1		3102
+s2-ex-tuple-a1-fix_bug-4	22	29	29	-1	-1		10
+s2-ex-tuple-a1-fix_bug-4	23	37	37	-1	-1		
+s2-ex-tuple-a1-fix_bug-4	24	55	55	-1	-1		25
+s2-ex-tuple-a1-fix_bug-4	25	1186	1186	-1	-1		1080
+s2-ex-tuple-a1-fix_bug-4	26	25	25	-1	-1		10
+s2-ex-tuple-a1-fix_bug-4	27	20	20	-1	-1		8
+s2-ex-tuple-a1-fix_bug-4	28	3244	3244	-1	-1		2958
+s2-ex-tuple-a1-fix_bug-4	29	36	36	-1	-1		8
+s2-ex-tuple-a1-fix_bug-4	30	18	18	-1	-1		
+s2-ex-tuple-a1-fix_bug-4	31	747	747	-1	-1		674
+s2-ex-tuple-a1-fix_bug-4	32	46	46	-1	-1		18
+s2-ex-tuple-a1-fix_bug-4	33	459	459	-1	-1		434
+s2-ex-tuple-a1-fix_bug-4	34	40	40	-1	-1		11
+s2-ex-tuple-a1-fix_bug-4	35	708	708	-1	-1		230
+s2-getopt-a0-fix_bug-0	0	61	61	-1	-1		15
+s2-getopt-a0-fix_bug-0	1	15	15	-1	-1		
+s2-getopt-a0-fix_bug-0	2	2321	2321	-1	-1		2263
+s2-getopt-a0-fix_bug-0	3	31	31	-1	-1		
+s2-getopt-a0-fix_bug-0	4	524	524	-1	-1		144
+s2-getopt-a0-fix_bug-0	5	49	49	-1	-1		
+s2-getopt-a0-fix_bug-0	6	90	90	-1	-1		29
+s2-getopt-a0-fix_bug-0	7	798	798	-1	-1		283
+s2-getopt-a0-fix_bug-1	0	68	68	-1	-1		13
+s2-getopt-a0-fix_bug-1	1	1035	1035	-1	-1		931
+s2-getopt-a0-fix_bug-1	2	60	60	-1	-1		28
+s2-getopt-a0-fix_bug-1	3	89	89	-1	-1		43
+s2-getopt-a0-fix_bug-1	4	837	837	-1	-1		622
+s2-getopt-a0-fix_bug-1	5	31	31	-1	-1		
+s2-getopt-a0-fix_bug-1	6	404	404	-1	-1		97
+s2-getopt-a0-fix_bug-2	0	77	77	-1	-1		13
+s2-getopt-a0-fix_bug-2	1	45	45	-1	-1		
+s2-getopt-a0-fix_bug-2	2	1176	1176	-1	-1		1130
+s2-getopt-a0-fix_bug-2	3	1918	1918	940	978	reasoning	1864
+s2-getopt-a0-fix_bug-2	4	419	419	-1	-1		136
+s2-getopt-a0-fix_bug-2	5	41	41	-1	-1		
+s2-getopt-a0-fix_bug-2	6	529	529	-1	-1		88
+s2-getopt-a0-fix_bug-2	7	108	108	-1	-1		47
+s2-getopt-a0-fix_bug-2	8	13	13	-1	-1		
+s2-getopt-a0-fix_bug-3	0	68	68	-1	-1		13
+s2-getopt-a0-fix_bug-3	1	25	25	-1	-1		9
+s2-getopt-a0-fix_bug-3	2	462	461	164	298	reasoning	381
+s2-getopt-a0-fix_bug-3	3	158	158	-1	-1		67
+s2-getopt-a0-fix_bug-3	4	1859	1859	-1	-1		1705
+s2-getopt-a0-fix_bug-3	5	31	31	-1	-1		
+s2-getopt-a0-fix_bug-3	6	74	74	-1	-1		22
+s2-getopt-a0-fix_bug-3	7	552	552	-1	-1		164
+s2-getopt-a0-fix_bug-3	8	51	51	-1	-1		30
+s2-getopt-a0-fix_bug-3	9	103	103	-1	-1		75
+s2-getopt-a0-fix_bug-3	10	258	258	-1	-1		24
+s2-getopt-a0-fix_bug-4	0	47	47	-1	-1		15
+s2-getopt-a0-fix_bug-4	1	2225	2225	-1	-1		2141
+s2-getopt-a0-fix_bug-4	2	986	986	-1	-1		832
+s2-getopt-a0-fix_bug-4	3	3187	3187	-1	-1		2859
+s2-getopt-a0-fix_bug-4	4	4259	4257	1696	2563	reasoning	4141
+s2-getopt-a0-fix_bug-4	5	112	112	-1	-1		88
+s2-getopt-a0-fix_bug-4	6	1639	1639	-1	-1		1573
+s2-getopt-a0-fix_bug-4	7	82	82	-1	-1		53
+s2-getopt-a0-fix_bug-4	8	62	62	-1	-1		38
+s2-getopt-a0-fix_bug-4	9	64	64	-1	-1		40
+s2-getopt-a0-fix_bug-4	10	216	216	-1	-1		180
+s2-getopt-a0-fix_bug-4	11	141	141	-1	-1		120
+s2-getopt-a0-fix_bug-4	12	59	59	-1	-1		21
+s2-getopt-a0-fix_bug-4	13	45	45	-1	-1		6
+s2-getopt-a0-fix_bug-4	14	166	166	-1	-1		143
+s2-getopt-a0-fix_bug-4	15	66	66	-1	-1		52
+s2-getopt-a0-fix_bug-4	16	168	168	-1	-1		129
+s2-getopt-a0-fix_bug-4	17	46	46	-1	-1		16
+s2-getopt-a0-fix_bug-4	18	58	58	-1	-1		22
+s2-getopt-a0-fix_bug-4	19	39	39	-1	-1		26
+s2-getopt-a0-fix_bug-4	20	61	61	-1	-1		25
+s2-getopt-a0-fix_bug-4	21	171	171	-1	-1		139
+s2-getopt-a0-fix_bug-4	22	99	99	-1	-1		63
+s2-getopt-a0-fix_bug-4	23	20	20	-1	-1		
+s2-getopt-a0-fix_bug-4	24	124	124	-1	-1		70
+s2-getopt-a0-fix_bug-4	25	2381	2381	-1	-1		2237
+s2-getopt-a0-fix_bug-4	26	16	16	-1	-1		
+s2-getopt-a0-fix_bug-4	27	500	500	-1	-1		261
+s2-getopt-a0-fix_bug-4	28	58	58	-1	-1		
+s2-getopt-a0-fix_bug-4	29	28	28	-1	-1		
+s2-getopt-a0-fix_bug-4	30	82	82	-1	-1		29
+s2-getopt-a0-fix_bug-4	31	1283	1283	-1	-1		467
+s2-getopt-a0-fix_bug-4	32	61	61	-1	-1		38
+s2-getopt-a0-fix_bug-4	33	304	304	-1	-1		22
+s2-getopt-a0-fix_bug-5	0	47	47	-1	-1		15
+s2-getopt-a0-fix_bug-5	1	3113	3113	-1	-1		3032
+s2-getopt-a0-fix_bug-5	2	1422	1422	-1	-1		1344
+s2-getopt-a0-fix_bug-5	3	6997	6997	-1	-1		6912
+s2-getopt-a0-fix_bug-5	4	85	85	-1	-1		33
+s2-getopt-a0-fix_bug-5	5	360	360	-1	-1		282
+s2-getopt-a0-fix_bug-5	6	55	55	-1	-1		28
+s2-getopt-a0-fix_bug-5	7	544	544	-1	-1		223
+s2-getopt-a0-fix_bug-5	8	63	63	-1	-1		20
+s2-getopt-a0-fix_bug-5	9	184	184	-1	-1		40
+s2-getopt-a0-fix_bug-5	10	181	181	-1	-1		116
+s2-getopt-a0-fix_bug-5	11	819	819	-1	-1		437
+s2-getopt-a0-implement-0	0	45	45	-1	-1		13
+s2-getopt-a0-implement-0	1	4938	4938	-1	-1		4890
+s2-getopt-a0-implement-0	2	85	85	-1	-1		14
+s2-getopt-a0-implement-0	3	149	149	-1	-1		82
+s2-getopt-a0-implement-0	4	47	47	-1	-1		31
+s2-getopt-a0-implement-0	5	58	58	-1	-1		
+s2-getopt-a0-implement-0	6	10091	10091	3677	6414	reasoning	9776
+s2-getopt-a0-implement-0	7	28	28	-1	-1		
+s2-getopt-a0-implement-0	8	68	68	-1	-1		51
+s2-getopt-a0-implement-0	9	134	134	-1	-1		87
+s2-getopt-a0-implement-0	10	501	501	-1	-1		414
+s2-getopt-a0-implement-0	11	152	152	-1	-1		61
+s2-getopt-a0-implement-0	12	33	33	-1	-1		
+s2-getopt-a0-implement-0	13	242	242	-1	-1		77
+s2-getopt-a0-implement-0	14	380	380	-1	-1		355
+s2-getopt-a0-implement-0	15	363	363	-1	-1		39
+s2-getopt-a0-implement-1	0	62	62	-1	-1		15
+s2-getopt-a0-implement-1	1	29	29	-1	-1		13
+s2-getopt-a0-implement-1	2	6369	6369	-1	-1		6263
+s2-getopt-a0-implement-1	3	51	51	-1	-1		19
+s2-getopt-a0-implement-1	4	508	508	-1	-1		118
+s2-getopt-a0-implement-1	5	50	50	-1	-1		22
+s2-getopt-a0-implement-1	6	338	338	-1	-1		75
+s2-getopt-a0-implement-1	7	39	39	-1	-1		
+s2-getopt-a0-implement-1	8	203	203	-1	-1		87
+s2-getopt-a0-implement-1	9	601	601	-1	-1		204
+s2-hmac-a0-fix_bug-0	0	60	60	-1	-1		13
+s2-hmac-a0-fix_bug-0	1	15	15	-1	-1		
+s2-hmac-a0-fix_bug-0	2	571	571	-1	-1		536
+s2-hmac-a0-fix_bug-0	3	31	31	-1	-1		
+s2-hmac-a0-fix_bug-0	4	5194	5194	-1	-1		4934
+s2-hmac-a0-fix_bug-0	5	403	403	-1	-1		171
+s2-hmac-a0-fix_bug-0	6	3392	3392	-1	-1		3276
+s2-hmac-a0-fix_bug-0	7	57	57	-1	-1		29
+s2-hmac-a0-fix_bug-0	8	29	29	-1	-1		
+s2-hmac-a0-fix_bug-0	9	94	94	-1	-1		41
+s2-hmac-a0-fix_bug-0	10	66	66	-1	-1		49
+s2-hmac-a0-fix_bug-0	11	31	31	-1	-1		
+s2-hmac-a0-fix_bug-0	12	540	540	-1	-1		101
+s2-hmac-a0-fix_bug-0	13	218	218	-1	-1		186
+s2-hmac-a0-fix_bug-0	14	127	127	-1	-1		33
+s2-hmac-a0-fix_bug-0	15	406	406	-1	-1		374
+s2-hmac-a0-fix_bug-0	16	664	664	-1	-1		217
+s2-hmac-a0-implement-0	0	38	38	-1	-1		8
+s2-hmac-a0-implement-0	1	1518	1518	-1	-1		1321
+s2-hmac-a0-implement-0	2	1484	1484	-1	-1		1415
+s2-hmac-a0-implement-0	3	31	31	-1	-1		
+s2-hmac-a0-implement-0	4	828	828	-1	-1		598
+s2-hmac-a0-implement-0	5	93	93	-1	-1		61
+s2-hmac-a0-implement-0	6	608	608	-1	-1		311
+s2-hmac-a0-implement-0	7	87	87	-1	-1		55
+s2-hmac-a0-implement-0	8	286	286	-1	-1		
+s2-hmac-a0-implement-1	0	38	38	-1	-1		8
+s2-hmac-a0-implement-1	1	152	152	-1	-1		82
+s2-hmac-a0-implement-1	2	217	217	-1	-1		184
+s2-hmac-a0-implement-1	3	27	27	-1	-1		
+s2-hmac-a0-implement-1	4	321	321	-1	-1		120
+s2-hmac-a0-implement-1	5	27	27	-1	-1		
+s2-hmac-a0-implement-1	6	266	266	-1	-1		12
+s2-linecache-a0-fix_bug-0	0	39	39	-1	-1		9
+s2-linecache-a0-fix_bug-0	1	73	73	-1	-1		20
+s2-linecache-a0-fix_bug-0	2	11	11	-1	-1		
+s2-linecache-a0-fix_bug-0	3	24	24	-1	-1		
+s2-linecache-a0-fix_bug-0	4	84	84	-1	-1		67
+s2-linecache-a0-fix_bug-0	5	16	16	-1	-1		
+s2-linecache-a0-fix_bug-0	6	4675	4675	-1	-1		4643
+s2-linecache-a0-fix_bug-0	7	411	411	-1	-1		125
+s2-linecache-a0-fix_bug-0	8	114	114	-1	-1		20
+s2-linecache-a0-fix_bug-0	9	30	30	-1	-1		
+s2-linecache-a0-fix_bug-0	10	51	51	-1	-1		23
+s2-linecache-a0-fix_bug-0	11	565	565	-1	-1		68
+s2-linecache-a0-fix_bug-1	0	47	47	-1	-1		17
+s2-linecache-a0-fix_bug-1	1	500	500	-1	-1		446
+s2-linecache-a0-fix_bug-1	2	365	365	-1	-1		175
+s2-linecache-a0-fix_bug-1	3	111	111	-1	-1		17
+s2-linecache-a0-fix_bug-1	4	52	52	-1	-1		
+s2-linecache-a0-fix_bug-1	5	82	82	-1	-1		26
+s2-linecache-a0-fix_bug-1	6	481	481	-1	-1		125
+s2-linecache-a0-fix_bug-2	0	62	62	-1	-1		13
+s2-linecache-a0-fix_bug-2	1	69	69	-1	-1		21
+s2-linecache-a0-fix_bug-2	2	271	271	-1	-1		239
+s2-linecache-a0-fix_bug-2	3	362	362	-1	-1		148
+s2-linecache-a0-fix_bug-2	4	42	42	-1	-1		
+s2-linecache-a0-fix_bug-2	5	78	78	-1	-1		23
+s2-linecache-a0-fix_bug-2	6	304	304	-1	-1		
+s2-linecache-a0-fix_bug-3	0	42	42	-1	-1		15
+s2-linecache-a0-fix_bug-3	1	31	31	-1	-1		19
+s2-linecache-a0-fix_bug-3	2	16	16	-1	-1		
+s2-linecache-a0-fix_bug-3	3	1757	1757	-1	-1		1673
+s2-linecache-a0-fix_bug-3	4	316	316	-1	-1		125
+s2-linecache-a0-fix_bug-3	5	114	114	-1	-1		25
+s2-linecache-a0-fix_bug-3	6	39	39	-1	-1		
+s2-linecache-a0-fix_bug-3	7	423	423	-1	-1		120
+s2-linecache-a0-fix_bug-4	0	70	70	-1	-1		16
+s2-linecache-a0-fix_bug-4	1	59	59	-1	-1		10
+s2-linecache-a0-fix_bug-4	2	74	74	-1	-1		42
+s2-linecache-a0-fix_bug-4	3	1707	1707	-1	-1		1631
+s2-linecache-a0-fix_bug-4	4	268	268	-1	-1		107
+s2-linecache-a0-fix_bug-4	5	31	31	-1	-1		
+s2-linecache-a0-fix_bug-4	6	193	193	-1	-1		17
+s2-linecache-a0-implement-0	0	39	39	-1	-1		9
+s2-linecache-a0-implement-0	1	1933	1933	-1	-1		1853
+s2-linecache-a0-implement-0	2	365	365	-1	-1		176
+s2-linecache-a0-implement-0	3	39	39	-1	-1		
+s2-linecache-a0-implement-0	4	31	31	-1	-1		
+s2-linecache-a0-implement-0	5	319	319	-1	-1		14
+s2-linecache-a0-implement-1	0	69	69	-1	-1		15
+s2-linecache-a0-implement-1	1	29	29	-1	-1		
+s2-linecache-a0-implement-1	2	5250	5250	-1	-1		5144
+s2-linecache-a0-implement-1	3	523	523	-1	-1		471
+s2-linecache-a0-implement-1	4	19	19	-1	-1		
+s2-linecache-a0-implement-1	5	23	23	-1	-1		
+s2-linecache-a0-implement-1	6	23	23	-1	-1		
+s2-linecache-a0-implement-1	7	41	41	-1	-1		17
+s2-linecache-a0-implement-1	8	26	26	-1	-1		
+s2-linecache-a0-implement-1	9	148	148	-1	-1		94
+s2-linecache-a0-implement-1	10	57	57	-1	-1		37
+s2-linecache-a0-implement-1	11	47	47	-1	-1		28
+s2-linecache-a0-implement-1	12	94	94	-1	-1		48
+s2-linecache-a0-implement-1	13	116	116	-1	-1		99
+s2-linecache-a0-implement-1	14	236	236	-1	-1		196
+s2-linecache-a0-implement-1	15	2260	2259	2017	243	tool-call	1841
+s2-linecache-a0-implement-1	16	21	21	-1	-1		
+s2-linecache-a0-implement-1	17	59	59	-1	-1		14
+s2-linecache-a0-implement-1	18	192	192	-1	-1		90
+s2-linecache-a0-implement-1	19	242	242	-1	-1		120
+s2-linecache-a0-implement-1	20	614	614	-1	-1		226
+s2-netrc-a2-fix_bug-0	0	47	47	-1	-1		13
+s2-netrc-a2-fix_bug-0	1	1149	1149	-1	-1		1056
+s2-netrc-a2-fix_bug-0	2	42	42	-1	-1		10
+s2-netrc-a2-fix_bug-0	3	1197	1197	-1	-1		1087
+s2-netrc-a2-fix_bug-0	4	1414	1414	-1	-1		1340
+s2-netrc-a2-fix_bug-0	5	170	170	-1	-1		120
+s2-netrc-a2-fix_bug-0	6	28	28	-1	-1		
+s2-netrc-a2-fix_bug-0	7	116	116	-1	-1		69
+s2-netrc-a2-fix_bug-0	8	216	216	-1	-1		120
+s2-netrc-a2-fix_bug-0	9	154	154	-1	-1		76
+s2-netrc-a2-fix_bug-0	10	33	33	-1	-1		21
+s2-netrc-a2-fix_bug-0	11	47	47	-1	-1		29
+s2-netrc-a2-fix_bug-0	12	165	165	-1	-1		65
+s2-netrc-a2-fix_bug-0	13	17	17	-1	-1		
+s2-netrc-a2-fix_bug-0	14	659	659	-1	-1		418
+s2-netrc-a2-fix_bug-0	15	27	27	-1	-1		
+s2-netrc-a2-fix_bug-0	16	75	75	-1	-1		22
+s2-netrc-a2-fix_bug-0	17	660	660	-1	-1		233
+s2-netrc-a2-fix_bug-1	0	39	39	-1	-1		9
+s2-netrc-a2-fix_bug-1	1	147	147	-1	-1		115
+s2-netrc-a2-fix_bug-1	2	908	908	-1	-1		866
+s2-netrc-a2-fix_bug-1	3	350	350	-1	-1		127
+s2-netrc-a2-fix_bug-1	4	73	73	-1	-1		33
+s2-netrc-a2-fix_bug-1	5	73	73	-1	-1		23
+s2-netrc-a2-fix_bug-1	6	460	460	-1	-1		134
+s2-netrc-a2-fix_bug-2	0	42	42	-1	-1		14
+s2-netrc-a2-fix_bug-2	1	1844	1844	-1	-1		1801
+s2-netrc-a2-fix_bug-2	2	27	27	-1	-1		
+s2-netrc-a2-fix_bug-2	3	740	740	-1	-1		500
+s2-netrc-a2-fix_bug-2	4	42	42	-1	-1		
+s2-netrc-a2-fix_bug-2	5	119	119	-1	-1		65
+s2-netrc-a2-fix_bug-2	6	167	167	-1	-1		127
+s2-netrc-a2-fix_bug-2	7	401	401	-1	-1		143
+s2-netrc-a2-fix_bug-3	0	38	38	-1	-1		8
+s2-netrc-a2-fix_bug-3	1	1647	1647	-1	-1		1573
+s2-netrc-a2-fix_bug-3	2	31	31	-1	-1		
+s2-netrc-a2-fix_bug-3	3	5194	5194	-1	-1		4490
+s2-netrc-a2-fix_bug-3	4	40	40	-1	-1		8
+s2-netrc-a2-fix_bug-3	5	76	76	-1	-1		23
+s2-netrc-a2-fix_bug-3	6	92	92	-1	-1		48
+s2-netrc-a2-fix_bug-3	7	379	379	-1	-1		23
+s2-netrc-a2-fix_bug-4	0	48	48	-1	-1		14
+s2-netrc-a2-fix_bug-4	1	29	29	-1	-1		
+s2-netrc-a2-fix_bug-4	2	58	58	-1	-1		12
+s2-netrc-a2-fix_bug-4	3	31	31	-1	-1		
+s2-netrc-a2-fix_bug-4	4	1157	1157	-1	-1		948
+s2-netrc-a2-fix_bug-4	5	2818	2818	-1	-1		2737
+s2-netrc-a2-fix_bug-4	6	396	396	-1	-1		278
+s2-netrc-a2-fix_bug-4	7	1186	1186	-1	-1		839
+s2-netrc-a2-fix_bug-4	8	121	121	-1	-1		
+s2-netrc-a2-fix_bug-4	9	31	31	-1	-1		
+s2-netrc-a2-fix_bug-4	10	98	98	-1	-1		43
+s2-netrc-a2-fix_bug-4	11	493	493	-1	-1		27
+s2-py_compile-a1-fix_bug-0	0	61	61	-1	-1		13
+s2-py_compile-a1-fix_bug-0	1	29	29	-1	-1		
+s2-py_compile-a1-fix_bug-0	2	3363	3363	-1	-1		3302
+s2-py_compile-a1-fix_bug-0	3	1234	1234	-1	-1		1155
+s2-py_compile-a1-fix_bug-0	4	815	815	-1	-1		743
+s2-py_compile-a1-fix_bug-0	5	43	43	-1	-1		
+s2-py_compile-a1-fix_bug-0	6	143	143	-1	-1		93
+s2-py_compile-a1-fix_bug-0	7	586	586	-1	-1		219
+s2-py_compile-a1-fix_bug-0	8	27	27	-1	-1		
+s2-py_compile-a1-fix_bug-0	9	132	132	-1	-1		42
+s2-py_compile-a1-fix_bug-0	10	487	487	-1	-1		83
+s2-py_compile-a1-fix_bug-1	0	24	24	-1	-1		8
+s2-py_compile-a1-fix_bug-1	1	107	107	-1	-1		75
+s2-py_compile-a1-fix_bug-1	2	1267	1267	-1	-1		1178
+s2-py_compile-a1-fix_bug-1	3	111	111	-1	-1		
+s2-py_compile-a1-fix_bug-1	4	186	186	-1	-1		128
+s2-py_compile-a1-fix_bug-1	5	58	58	-1	-1		23
+s2-py_compile-a1-fix_bug-1	6	104	104	-1	-1		65
+s2-py_compile-a1-fix_bug-1	7	76	76	-1	-1		37
+s2-py_compile-a1-fix_bug-1	8	43	43	-1	-1		30
+s2-py_compile-a1-fix_bug-1	9	53	53	-1	-1		14
+s2-py_compile-a1-fix_bug-1	10	48	48	-1	-1		9
+s2-py_compile-a1-fix_bug-1	11	30	30	-1	-1		18
+s2-py_compile-a1-fix_bug-1	12	39	39	-1	-1		
+s2-py_compile-a1-fix_bug-1	13	1563	1563	-1	-1		1498
+s2-py_compile-a1-fix_bug-1	14	47	47	-1	-1		6
+s2-py_compile-a1-fix_bug-1	15	51	51	-1	-1		9
+s2-py_compile-a1-fix_bug-1	16	272	272	-1	-1		222
+s2-py_compile-a1-fix_bug-1	17	522	522	-1	-1		368
+s2-py_compile-a1-fix_bug-1	18	36	36	-1	-1		
+s2-py_compile-a1-fix_bug-1	19	112	112	-1	-1		58
+s2-py_compile-a1-fix_bug-1	20	321	321	-1	-1		25
+s2-py_compile-a1-fix_bug-2	0	67	67	-1	-1		13
+s2-py_compile-a1-fix_bug-2	1	15	15	-1	-1		
+s2-py_compile-a1-fix_bug-2	2	1605	1605	-1	-1		1543
+s2-py_compile-a1-fix_bug-2	3	64	64	-1	-1		
+s2-py_compile-a1-fix_bug-2	4	134	134	-1	-1		102
+s2-py_compile-a1-fix_bug-2	5	157	157	-1	-1		117
+s2-py_compile-a1-fix_bug-2	6	4310	4310	-1	-1		4223
+s2-py_compile-a1-fix_bug-2	7	516	516	-1	-1		348
+s2-py_compile-a1-fix_bug-2	8	47	47	-1	-1		
+s2-py_compile-a1-fix_bug-2	9	128	128	-1	-1		70
+s2-py_compile-a1-fix_bug-2	10	576	576	-1	-1		214
+s2-py_compile-a1-fix_bug-2	11	146	146	-1	-1		10
+s2-py_compile-a1-implement-0	0	62	62	-1	-1		15
+s2-py_compile-a1-implement-0	1	44	44	-1	-1		
+s2-py_compile-a1-implement-0	2	3493	3493	-1	-1		3388
+s2-py_compile-a1-implement-0	3	74	74	-1	-1		24
+s2-py_compile-a1-implement-0	4	65	65	-1	-1		
+s2-py_compile-a1-implement-0	5	79	79	-1	-1		16
+s2-py_compile-a1-implement-0	6	201	201	-1	-1		150
+s2-py_compile-a1-implement-0	7	50	50	-1	-1		
+s2-py_compile-a1-implement-0	8	234	234	-1	-1		47
+s2-py_compile-a1-implement-0	9	183	183	-1	-1		
+s2-py_compile-a1-implement-0	10	380	380	59	321	reasoning	86
+s2-py_compile-a1-implement-0	11	1068	1068	-1	-1		798
+s2-py_compile-a1-implement-0	12	2078	2078	-1	-1		2017
+s2-py_compile-a1-implement-0	13	119	119	-1	-1		44
+s2-py_compile-a1-implement-0	14	108	108	-1	-1		80
+s2-py_compile-a1-implement-0	15	137	137	-1	-1		76
+s2-py_compile-a1-implement-0	16	15	15	-1	-1		
+s2-py_compile-a1-implement-0	17	1255	1255	-1	-1		1125
+s2-py_compile-a1-implement-0	18	589	589	-1	-1		17
+s2-py_compile-a1-implement-0	19	31	31	-1	-1		
+s2-py_compile-a1-implement-0	20	115	115	-1	-1		70
+s2-py_compile-a1-implement-0	21	100	100	-1	-1		51
+s2-py_compile-a1-implement-0	22	346	346	-1	-1		
+s2-queue-a0-fix_bug-0	0	56	56	-1	-1		15
+s2-queue-a0-fix_bug-0	1	1146	1146	-1	-1		1036
+s2-queue-a0-fix_bug-0	2	293	293	-1	-1		100
+s2-queue-a0-fix_bug-0	3	73	73	-1	-1		26
+s2-queue-a0-fix_bug-0	4	127	127	-1	-1		39
+s2-queue-a0-fix_bug-0	5	82	82	-1	-1		47
+s2-queue-a0-fix_bug-0	6	127	127	-1	-1		61
+s2-queue-a0-fix_bug-0	7	42	42	-1	-1		
+s2-queue-a0-fix_bug-0	8	42	42	-1	-1		
+s2-queue-a0-fix_bug-0	9	50	50	-1	-1		21
+s2-queue-a0-fix_bug-0	10	63	63	-1	-1		46
+s2-queue-a0-fix_bug-0	11	798	798	-1	-1		366
+s2-queue-a0-fix_bug-1	0	57	57	-1	-1		15
+s2-queue-a0-fix_bug-1	1	15	15	-1	-1		
+s2-queue-a0-fix_bug-1	2	1490	1490	-1	-1		1438
+s2-queue-a0-fix_bug-1	3	30	30	-1	-1		
+s2-queue-a0-fix_bug-1	4	437	437	-1	-1		163
+s2-queue-a0-fix_bug-1	5	48	48	-1	-1		
+s2-queue-a0-fix_bug-1	6	437	437	-1	-1		73
+s2-queue-a0-fix_bug-2	0	45	45	-1	-1		14
+s2-queue-a0-fix_bug-2	1	1120	1120	-1	-1		1054
+s2-queue-a0-fix_bug-2	2	397	397	-1	-1		222
+s2-queue-a0-fix_bug-2	3	113	113	-1	-1		
+s2-queue-a0-fix_bug-2	4	100	100	-1	-1		21
+s2-queue-a0-fix_bug-2	5	91	91	-1	-1		34
+s2-queue-a0-fix_bug-2	6	442	442	-1	-1		156
+s2-queue-a0-fix_bug-3	0	62	62	-1	-1		15
+s2-queue-a0-fix_bug-3	1	14	14	-1	-1		
+s2-queue-a0-fix_bug-3	2	1586	1586	-1	-1		1498
+s2-queue-a0-fix_bug-3	3	38	38	-1	-1		7
+s2-queue-a0-fix_bug-3	4	1957	1957	-1	-1		1631
+s2-queue-a0-fix_bug-3	5	42	42	-1	-1		
+s2-queue-a0-fix_bug-3	6	512	512	-1	-1		94
+s2-queue-a0-fix_bug-3	7	48	48	-1	-1		17
+s2-queue-a2-fix_bug-0	0	63	63	-1	-1		13
+s2-queue-a2-fix_bug-0	1	66	66	-1	-1		13
+s2-queue-a2-fix_bug-0	2	739	739	-1	-1		516
+s2-queue-a2-fix_bug-0	3	47	47	-1	-1		
+s2-queue-a2-fix_bug-0	4	246	246	-1	-1		14
+s2-queue-a2-fix_bug-1	0	45	45	-1	-1		14
+s2-queue-a2-fix_bug-1	1	1443	1443	-1	-1		1355
+s2-queue-a2-fix_bug-1	2	223	223	-1	-1		163
+s2-queue-a2-fix_bug-1	3	633	633	-1	-1		552
+s2-queue-a2-fix_bug-1	4	163	163	-1	-1		17
+s2-queue-a2-fix_bug-1	5	585	585	-1	-1		532
+s2-queue-a2-fix_bug-1	6	98	98	-1	-1		69
+s2-queue-a2-fix_bug-1	7	54	54	-1	-1		25
+s2-queue-a2-fix_bug-1	8	83	83	-1	-1		66
+s2-queue-a2-fix_bug-1	9	299	299	-1	-1		209
+s2-queue-a2-fix_bug-1	10	816	816	-1	-1		241
+s2-queue-a2-fix_bug-2	0	67	67	-1	-1		13
+s2-queue-a2-fix_bug-2	1	38	38	-1	-1		12
+s2-queue-a2-fix_bug-2	2	1274	1274	-1	-1		1230
+s2-queue-a2-fix_bug-2	3	495	495	-1	-1		216
+s2-queue-a2-fix_bug-2	4	57	57	-1	-1		19
+s2-queue-a2-fix_bug-2	5	443	443	-1	-1		45
+s2-queue-a2-fix_bug-3	0	64	64	-1	-1		15
+s2-queue-a2-fix_bug-3	1	819	819	-1	-1		772
+s2-queue-a2-fix_bug-3	2	44	44	-1	-1		13
+s2-queue-a2-fix_bug-3	3	1563	1563	-1	-1		1473
+s2-queue-a2-fix_bug-3	4	681	681	-1	-1		415
+s2-queue-a2-fix_bug-3	5	30	30	-1	-1		
+s2-queue-a2-fix_bug-3	6	507	507	-1	-1		132

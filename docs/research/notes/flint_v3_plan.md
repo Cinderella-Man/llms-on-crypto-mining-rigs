@@ -22,7 +22,7 @@ From the three release-line runs with per-request rows (2026-10-26 `d4` and `q8-
 | … … card hand-offs and host gap | 2–9 % | 1–4 ms per pass, never measured directly (Q81) | unknown until Q81 |
 | … right-guess cycles (the last card's ~5.3 ms) | ~7 % | the cost simulator | a lighter last card |
 | Prompt processing | 19–21 % | per-request rows | below |
-| … reply re-reads | 5.8–8.5 % | after some long replies the next request re-reads the whole reply: 15,342 tokens in 82 s once; the worst first-token waits, 60–82 s | nearly all of it |
+| … reply re-reads | 5.9–8.3 % | after some long replies the next request re-reads the whole reply: 15,284 tokens in 80 s once; the worst first-token waits, 60–83 s. Flint samples non-canonical token splits (the same text in other ids), and the conversation, sent back as text and tokenized again, stops matching the cache there ([reply re-reads](../../data/2026-10-28_reply_rereads/README.md)) | nearly all of it |
 | … short prompts: micro-batches barely overlap, ~0.6 s floor per request | 11–14 % | 0.55–0.8 s per 128-token micro-batch in a 15–800-token turn, 0.26 s in a fresh 13.4k prompt | ~5 % of a task (est.) |
 | Tools, agent, HTTP | 2–3 % | | ~0 |
 
@@ -45,8 +45,8 @@ From the three release-line runs with per-request rows (2026-10-26 `d4` and `q8-
 | Q168 | p065 or p061: Q8_0's quality at −11.0 / −7.8 % bytes per token | est. +3–9 % generation (bytes-to-speed elasticity 0.3–0.8 on this rig) | the agent check against Q8_0 |
 | Q193, Q169 | the cheaper MTP guess (2.93 ms) with the overnight heads (held-out acceptance 0.366, was 0.277) | simulated +5 %; +8 % at 0.30 right as served, +14 % at 0.40 | the paired replay (its head arm failed to load on 2026-10-28 for host RAM; Q265's check too) |
 | Q202 | the answer store behind the copy lookup | +0.9–4.2 % live, +4.3 % offline | the paired replay |
-| Q262 | the screened-head side file on the Q8_0 release line | measured +1.5–2.3 % on UD | a replay under Q67's tool sampling; the head's md5 against UD's |
-| Q263 | the per-request fixed cost without the prefix cache (`-bs` re-reserve, checkpoints, the 4-token tail, the pipeline fill) | ~1 s per turn ≈ 4–5 % of a task (est.) | an A/B of the pieces already built in Q111's branch |
+| Q262 | the screened-head side file on the Q8_0 release line | measured +1.5–2.3 % on UD; est. +1.0–1.6 % on agent sessions | the heads are byte-identical; the screen is off whenever a grammar is set, so every agent request needs Q360 (the screen until the tool-call grammar triggers) first |
+| Q263 | the end-of-prompt checkpoint and its 4-token tail micro-batch (v2.0 already takes one ring checkpoint and skips the re-reserve) | ~0.3–0.4 s per request, 1.5–2 % of a task (est.) | built: `LLAMA_SERVER_TAIL_CKPT_MIN`, one live agent-check arm |
 | Q133 | memory clock offset | +3–5 % decode, exact when stable | the owner at the console |
 | Q265 | the persistent MoE kernel's switch in v3 builds | up to 8 % if a v3 build runs the per-op path | a log and source check |
 
@@ -54,9 +54,9 @@ From the three release-line runs with per-request rows (2026-10-26 `d4` and `q8-
 
 | Registry | Lever | Expected gain | Needs |
 |---|---|---|---|
-| Q260 | stop the reply re-reads (the chat template's rendering of a reply, likely its tool call, differs from the generated tokens; the template renders 129,890 tokens where the server generated 113,440) | 6–9 % of task time; the worst first token 60–82 s → ~2 s | an offline token-id comparison, then a template fix or a checkpoint before the tool call |
-| Q261 | the decode-only card mask (Q116 without Q110's prompt mask, which share one switch) | measured +1.6–2.3 % at short context, more at depth; exact | split the switch, about a day |
-| Q264 | short agent prompts: micro-batches overlapped as in a fresh prompt | ~5 % of a task (est.) | Q157's busy profile on agent-sized turns first |
+| Q260 | stop the reply re-reads: keep the cached ids where the prompt spells the same text (`LLAMA_SERVER_TEXT_REUSE`) | 5.9–8.3 % of task time; the worst first token 60–83 s → 0.5–3.5 s | built and checked on the CPU; one live agent-check arm |
+| Q261 | the decode-only card mask (`LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16`) | measured +1.6–2.3 % at short context, more at depth; exact; one cell upload per request | built; a GPU check, then a paired replay |
+| Q264 | short agent prompts: micro-batches overlapped as in a fresh prompt (Q363: smaller micro-batches for short prompts) | ~5 % of a task (est.) | Q157's busy profile on agent-sized turns first, after Q260 and Q263 |
 
 ### 3. Diagnostics that decide large engine work
 
@@ -97,8 +97,8 @@ Parked, with the reason in their rows: expert skipping (lossy on Flint's flat ro
 ## What it could add up to
 
 - **Within a few days, from groups 1 and 2:** generation est. +12–20 % (p065, the head, the store, the screened head,
-  the memory clock, the decode mask; these overlap partly), and time per task a further −10–15 % from the re-reads and
-  the per-request cost. About 45 → 52–55 tok/s, with the worst first-token waits gone.
+  the memory clock, the decode mask; these overlap partly), and time per task a further −8–10 % from the re-reads and
+  the end-of-prompt checkpoint. About 45 → 52–55 tok/s, with the worst first-token waits gone.
 - **With group 3's engine work, if the diagnostics confirm:** hand-offs and page walks est. +10–20 % more.
 - **Shorter reasoning** multiplies on top of everything: 15–30 % fewer reasoning tokens at the same pass rate would cut
   time per task by 10–20 % with no change to tok/s.
