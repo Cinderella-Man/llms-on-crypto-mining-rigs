@@ -28,6 +28,10 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
 
 - Plan and status of the quants subproject live at the top of `quants/experiments.md` ("Plan", with a "Now" line). Read
   it before starting anything; when you start or stop an experiment, update the "Now" line and the experiment's row.
+- Every idea gets a registry row as soon as it is written down, however small: in a research note, a result or a
+  message. An idea is not a proposal awaiting discussion. Ideas the evidence argues against are kept as planned rows
+  marked parked, with the reason and what would reopen them. Tracking every idea is what keeps work from being done
+  twice.
 
 ## The data behind every result
 

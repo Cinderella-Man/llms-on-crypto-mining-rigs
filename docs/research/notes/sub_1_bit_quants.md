@@ -419,13 +419,16 @@ What this means:
 
 | Step | Where | Cost | What it settles |
 |---|---|---|---|
-| E1. [Fit probe](../../../scripts/fit_probe.sh) of ISTA IQ3_XXS at 64k/128k/262k, q8_0 cache, with and without the MTP draft | rig | minutes | the real weight ceilings in section 1 |
-| E2. KLD against a Q8_0 reference on wikitext-2, agent sessions and code: ISTA IQ3_XXS, Swift IQ3_XXS/IQ2_XS/Q2_0, pfeifferj 3.5-bit, ISTA IQ3_S as the bound (section 9 of [flash_next_variants.md](flash_next_variants.md)) | quality machine | a Q8_0 reference (~134 GB across seven GPUs), then hours per file | where each file sits under the project's own method |
-| E3. Allocation per 8-layer group across Swift's four builds (Q167's `alloc.py`), composed at 44.3 and 47 GB | quality machine, V100s | est. 6–10 h | route 2's gain over RCO's own allocation |
-| E4. N3P-128 in `bench/mmvq_pascal` on one P106, its CPU reference and quantizer; the requantized-down file of route 3 | code; rig (one card, minutes); quality machine | days of code, hours of scoring | route 3: decode ps per weight and the KLD against IQ3_XXS and IQ3_S |
-| E5. CPU proxy: NanoQuant's ADMM and DBF at 1.0, 1.5, 2.0 and 2.7 bits, rank uncapped, against IQ2_S/IQ3_XXS/N2P/N3P at equal bits, on Ornith's 84 expert matrices and Flash-Next experts from one BF16 shard | quality machine (CPU or one GPU) | hours, one ~5 GB download | whether binary factorization is competitive per bit on fine-grained experts. Gate: within ~10 % of N2P/N3P's importance-weighted error at equal bits (the proxy leaves out NanoQuant's refinement, so it understates the method) |
-| E6. Agent check of the two best files from E2–E4, with the n-gram table on an SSD | rig | a session per file | the choice |
-| E7. GSQ-style rounding into Pascal formats (route 5) | quality machine | est. 2–5 days of three RTX 3090s, after the code | only if E3 and E4 leave a gap to IQ3_S that the agent check shows matters |
+| E1 (Q213). [Fit probe](../../../scripts/fit_probe.sh) of ISTA IQ3_XXS at 64k/128k/262k, q8_0 cache, with and without the MTP draft | rig | minutes | the real weight ceilings in section 1 |
+| E2 (Q216, Q217). KLD against a Q8_0 reference on wikitext-2, agent sessions and code: ISTA IQ3_XXS, Swift IQ3_XXS/IQ2_XS/Q2_0, pfeifferj 3.5-bit, ISTA IQ3_S as the bound (section 9 of [flash_next_variants.md](flash_next_variants.md)) | quality machine | a Q8_0 reference (~134 GB across seven GPUs), then hours per file | where each file sits under the project's own method |
+| E3 (Q219). Allocation per 8-layer group across Swift's four builds (Q167's `alloc.py`), composed at 44.3 and 47 GB | quality machine, V100s | est. 6–10 h | route 2's gain over RCO's own allocation |
+| E4 (Q220, Q221). N3P-128 in `bench/mmvq_pascal` on one P106, its CPU reference and quantizer; the requantized-down file of route 3 | code; rig (one card, minutes); quality machine | days of code, hours of scoring | route 3: decode ps per weight and the KLD against IQ3_XXS and IQ3_S |
+| E5 (Q233). CPU proxy: NanoQuant's ADMM and DBF at 1.0, 1.5, 2.0 and 2.7 bits, rank uncapped, against IQ2_S/IQ3_XXS/N2P/N3P at equal bits, on Ornith's 84 expert matrices and Flash-Next experts from one BF16 shard | quality machine (CPU or one GPU) | hours, one ~5 GB download | whether binary factorization is competitive per bit on fine-grained experts. Gate: within ~10 % of N2P/N3P's importance-weighted error at equal bits (the proxy leaves out NanoQuant's refinement, so it understates the method) |
+| E6 (Q227). Agent check of the two best files from E2–E4, with the n-gram table on an SSD | rig | a session per file | the choice |
+| E7 (Q236). GSQ-style rounding into Pascal formats (route 5) | quality machine | est. 2–5 days of three RTX 3090s, after the code | only if E3 and E4 leave a gap to IQ3_S that the agent check shows matters |
+
+Every route, lever and parked idea in this note and in [flash_next_variants.md](flash_next_variants.md) is a row of the
+[registry](../../../quants/experiments.md#qwen38-flash-next) (Q213–Q244); the routes not pursued above are Q238–Q244.
 
 ## Sources
 

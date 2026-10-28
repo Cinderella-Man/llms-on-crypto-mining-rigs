@@ -344,6 +344,9 @@ shorter thinking matters on a ~15 tok/s rig.
 | `--fit` memory probe ([scripts/fit_probe.sh](../../../scripts/fit_probe.sh)) at 128k and 262k for Q2_0 and IQ3_XXS | rig | the real context limits |
 | The agent check of the two best files | rig | the choice |
 
+Each step and each lever of section 8 is a row of the [registry](../../../quants/experiments.md#qwen38-flash-next)
+(Q213–Q232).
+
 ## Sources
 
 - Census and arithmetic: [docs/data/2026-10-27_flash_next_variants/](../../data/2026-10-27_flash_next_variants/README.md).
