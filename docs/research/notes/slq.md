@@ -455,7 +455,7 @@ question that matters for v3 directly.
 |---|---|---|---|---|
 | This note: SLQ read from source and paper, the published models' formats and bytes | Q179 | done | — | [2026-10-27_slq](../../data/2026-10-27_slq/README.md) |
 | E3: a Flint file within noise of Q8_0 at fewer bytes | Q168 | wikitext done (23:48): p061 within noise of Q8_0 at −7.8 % bytes per token, p065 at −11.0 % (KLD within noise, same top token 0.6 points lower); the costs add near Q8_0 | the Pascal-Q5 anchor (2026-10-28 08:00), which checks additivity at the far end; agent text against Q8_0 for p061 and p065; then the rig's agent check against Q8_0 | [data](../../data/2026-10-27_flint_near_q8/README.md) (`near_q8.py`, `score.sh`) |
-| E1: Ornith-1.5-122B's N2P/N3P mix per 8-layer group | Q167 | planned | file d (the low-bit work's `quantize.sh FILE=d`, ~2.5 h of CPU); then `push`, `deltas`, `score` (18 switches on the two V100s, est. 5–8 h, from 2026-10-28 08:00), `collect` (with file c's three logs), `solve`, one validation file | [run/](../../data/2026-10-27_ornith_alloc/run/run.sh) (`alloc.py`, `score.sh`) |
+| E1: Ornith-1.5-122B's N2P/N3P mix per 8-layer group | Q167 | done (2026-10-28 07:16): at file c's bytes, valid0 beats c by 6.7 / 3.9 / 10 % KLD (wiki / agent / code) and is level with UD-Q2_K_XL at +3.05 GB; +0.91 GB (valid1) beats UD on all three; the late layers carry the cost | a rig file of valid0 or valid1 in N2P/N3P once the low-bit route reaches the rig; finer groups (per layer) in the late half | [data](../../data/2026-10-27_ornith_alloc/README.md) (`alloc.py`, `score.sh`) |
 | E2: The Kaitchup's GGUFs against Unsloth's on this project's test | Q180 | planned, optional | the owner's approval of ~107 GB of downloads (section 5) | — |
 
 How to carry on:
