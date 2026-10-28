@@ -96,6 +96,124 @@ three drafts (E_n = a₁ + a₁a₂ + …, per position; a step also yields the 
   tokens per step with three drafts (stock llama.cpp, the AD file, the model's own sampled text) are in line with the
   AD file's lower first-draft acceptance.
 
+## Cheaper drafts (registry Q396)
+
+`run/mtp_variant.cpp` keeps the model as the target and takes the draft from a second GGUF, as llama-server's
+draft-mtp does with a draft model file. The MTP graph reads only that file's MTP block, token embedding, head norm and
+output head, so a variant is a file with those in other types (`run/draft_file.sh`; the rest of the file, never read,
+is TQ1_0 and stays in host memory). Further variants are a draft-only metadata override (fewer routed experts), the
+routed experts' down projection zeroed (`run/tensor_zero.py`: the shared expert alone), a shortlist of the draft head
+(`run/shortlist.py`, FR-Spec style: draft probability only on the K most frequent token ids, the target unchanged),
+and a screened head (the draft head ranks every token, the model's own head rows give exact logits for its top 256).
+With the draft file holding the model's own types it gives Q341's numbers to the last digit (0.8604 on four code
+chunks). Each variant runs on the first 40 code chunks (20,400 positions) and the first two agent chunks (16,380), under
+the makers' sampling; the ref row is the same slices, so every change is paired.
+
+Draft bytes and P106 time are est. from the shapes and the measured Pascal rates of the
+[cheap MTP draft note](../../research/notes/cheap_mtp_draft.md) (Q8_0 169 GB/s, Q5_0 150, Q4_0 145, Q6_K 139; Q4_K
+~120 and Q2_K ~70 GB/s, est.), plus ~1.35 ms per draft for norms, router, sampling and the host (~1.15 ms with a
+shortlist's small sampling).
+
+**Ornith-1.5-35B** (the makers' Q8_0 as the target; acceptance change in points against ref):
+
+| Variant | Code | Agent | MTP block, MB | Head, MB | est. ms per draft |
+|---|---|---|---|---|---|
+| ref: block, embedding, head Q8_0 | **0.919** | **0.823** | 70 | 540 | 5.0 |
+| head Q5_0 | −0.0 | −0.0 | 70 | 350 | 4.1 |
+| head Q4_0 | −0.1 | −0.1 | 70 | 286 | 3.7 |
+| screened head (Q4_0 ranks, Q8_0 rows rescore the top 256) | +0.0 | +0.0 | 70 | 287 | 3.9 |
+| shortlist head, 64k ids (Q8_0 rows) | −0.6 | −0.1 | 70 | 143 | 2.4 |
+| shortlist head, 32k ids | −4.0 | −0.1 | 70 | 71 | 2.0 |
+| shortlist head, 16k ids | −11.7 | −0.1 | 70 | 36 | 1.8 |
+| shortlist head, 8k ids | −15.6 | −0.7 | 70 | 18 | 1.7 |
+| MTP block Q4_K | −0.2 | −0.3 | 38 | 540 | 4.9 |
+| routed experts Q2_K, rest of the block Q8_0 | −0.3 | −0.5 | 52 | 540 | 4.9 |
+| MTP block Q2_K | −4.0 | −6.8 | 23 | 540 | 4.9 |
+| top-4 of 8 routed experts | −0.5 | −1.0 | 57 | 540 | 4.9 |
+| top-2 | −2.4 | −3.9 | 50 | 540 | 4.9 |
+| the shared expert alone | −8.8 | −9.1 | 43 | 540 | 4.8 |
+
+- **The head is the draft:** 540 of a draft's 610 MB. A Q4_0 or Q5_0 head costs nothing measurable and saves
+  ~1.3 ms; shrinking the block or its experts saves under 0.2 ms, whatever it costs in acceptance.
+- **Shortlists cost what they leave out.** The ids are ranked by their count in 8.3 M tokens of agentic run 1's
+  sessions (outside the 40 held out) and Ornith's own replies in the agent check. The agent text, the same kind of
+  text, loses ≤ 0.7 points even at 8k; the code text loses 0.6 points at 64k and 4–16 at 32k and below, as its
+  coverage falls (64k ids cover 99.0 % of its tokens, 32k 96.0 %, 16k 88.7 %, 8k 82.8 %). Ornith's own replies, the
+  text a draft meets on the rig, sit between the two (lists from run 1's counts alone cover 89.4 % of them at 8k and
+  94.1 % at 16k).
+- **Fewer experts or a 2-bit block cost acceptance for little time:** top-4 −0.5 to −1.0 points, a Q2_K block −4 to −7;
+  Q2_K on the routed experts alone costs 0.3–0.5 points and halves their memory, which matters for card memory
+  (R8's state), not for time.
+
+**Ornith-1.5-122B** (Unsloth's UD-Q2_K_XL as the target; its draft path as shipped: MTP block Q8_0, head Q6_K,
+embedding Q4_K; the head variants requantized from that Q6_K, the block variants from its Q8_0):
+
+| Variant | Code | Agent | MTP block, MB | Head, MB | est. ms per draft |
+|---|---|---|---|---|---|
+| ref: as in UD-Q2_K_XL | **0.874** | **0.824** | 197 | 626 | 7.6 |
+| head Q5_0 | −0.0 | −0.0 | 197 | 524 | 6.6 |
+| head Q4_0 | −0.1 | −0.1 | 197 | 429 | 6.1 |
+| shortlist head, 64k ids (Q6_K rows) | −0.5 | −0.1 | 197 | 165 | 4.1 |
+| shortlist head, 32k ids | −3.5 | −0.1 | 197 | 82 | 3.5 |
+| shortlist head, 16k ids | −10.4 | −0.1 | 197 | 41 | 3.2 |
+| MTP block Q4_K | −2.9 | −5.8 | 106 | 626 | 7.3 |
+| routed experts Q2_K, rest of the block Q8_0 | −0.7 | −1.8 | 142 | 626 | 7.5 |
+| top-4 of 8 routed experts | −2.3 | −3.4 | 157 | 626 | 7.4 |
+| top-2 | −12.9 | −11.3 | 137 | 626 | 7.3 |
+
+- **The heads behave as on the 35B:** a Q5_0 or Q4_0 head costs ≤ 0.1 points, a 64k shortlist 0.5 on code and 0.1 on
+  agent sessions, 32k and below lose on code what they leave out.
+- **The 122B's MTP block is far more sensitive than the 35B's:** Q4_K costs 3–6 points (the 35B's 0.2–0.3), top-4
+  2–3 (0.5–1.0), Q2_K experts 0.7–1.8 (0.3–0.5). Its block's weights are best left as the makers trained them, which
+  matches AtomicChat's Q4_K block accepting 3–5 points less than UD's Q8_0 one (above).
+- The block's time here includes its attention reading 2 KiB of KV per position (~0.6 ms at 6k positions) and ~0.35 ms
+  of norms, router and gates, per the note; the fixed sampling and host share is ~1 ms (~0.8 ms with a shortlist).
+
+## valid1's own MTP layer (registry Q397)
+
+valid1, the N2P/N3P file of the 122B ([2026-10-28_ornith_valid1](../2026-10-28_ornith_valid1/README.md)), keeps its
+MTP block in its own formats: routed experts N2P (gate, up) and N3P (down), the rest Q5_0, 105 MB per pass against
+UD-Q2_K_XL's 197 MB; head Q5_0, token embedding Q8_0. The three tools, built against the low-bit branch
+(`pascal-p106-v3-lowbit` at `d7a75deb3`), on the full texts as above (makers' sampling):
+
+| File (target and its own MTP layer) | Text | Draft 1 | Draft 2 | Draft 3 | E₁ | E₂ | E₃ | Top-1 agree |
+|---|---|---|---|---|---|---|---|---|
+| valid1 | agent sessions | 0.843 | 0.740 | 0.656 | 0.84 | 1.49 | 1.94 | 0.848 |
+| UD-Q2_K_XL | agent sessions | 0.845 | 0.738 | 0.666 | 0.85 | 1.49 | 1.94 | 0.849 |
+| valid1 | Exercism code | 0.864 | 0.760 | 0.676 | 0.86 | 1.54 | 2.04 | 0.873 |
+| UD-Q2_K_XL | Exercism code | 0.865 | 0.770 | 0.702 | 0.87 | 1.55 | 2.07 | 0.871 |
+
+- **valid1's MTP layer is as good as UD-Q2_K_XL's at half the bytes:** the same drafts accepted per step on agent
+  sessions (1.49 with two drafts, 1.94 with three), and within 0.01–0.03 on code. The cost note had predicted 0 to −4
+  points.
+- **On UD-Q2_K_XL's trunk**, valid1's draft path (its block, Q5_0 head and Q8_0 embedding, through
+  `run/mtp_variant.cpp`) is accepted more often than UD's own: 0.889 against 0.874 on the code slice and 0.828 against
+  0.824 on the agent slice. Its block is no closer to the original weights than UD's Q8_0 block, so the difference
+  points at the token embedding the MTP layer reads (Q8_0 in valid1, Q4_K in UD); that test is not finished (below).
+
+## Where this stopped (2026-10-29)
+
+Done: Q341 (first drafts), Q366 (chained drafts), Q396's variant curves for the 35B and the 122B, Q397 (valid1's own
+MTP layer). **The point for Q211's kernels:** keep the MTP block as the makers ship it (Q8_0, or valid1's N2P/N3P
+block, which accepts as well) with all 8 routed experts, and draft through a shortlist head of the 64k most frequent
+ids with Q4_0 rows: est. −0.5 to −0.6 points on code and −0.1 on agent sessions, a draft of ~3.7 ms instead of ~7.6
+on the 122B (UD) and ~2.0 instead of ~5.0 on the 35B (the two head changes are measured apart; their sum is est.).
+Fewer experts, a K-quant block or a 2-bit block save under 0.3 ms per draft and cost the 122B 1–13 points.
+
+Not finished, in order:
+1. **The token embedding's part in valid1's +1.5 points on UD's trunk:** UD's draft path with the makers' Q8_0
+   embedding (`run/compose_gguf.py`-style compose of the reference draft file with `^token_embd\.weight$` from the
+   Q8_0; the code slice ran on 2026-10-29, the agent slice did not).
+2. **The recommended point measured as one variant** on both models: draft file with HEAD=q4_0, run with
+   SHORTLIST=shortlist-65536.txt (and, for the 122B, the Q8_0 embedding).
+3. Then the R8 engine work (registry R8 rows: accepted-path state replay for the pipelined executor, with this MTP
+   layer as the guesser).
+
+Commands for both steps: `run/draft_file.sh` (BLOCK=48, HEAD=q4_0, EMBD=q4_k, ALLOW_REQUANT=1 from UD-Q2_K_XL), then
+`FAST=1 DRAFT=<file> DRAFT_CPU='^blk\.([0-9]|[1-3][0-9]|4[0-7])\.' SHORTLIST=shortlist-65536.txt BIN=<mtp-variant>
+MODEL=<UD-Q2_K_XL> TEXT=<code text> CHUNK=512 CHUNKS=40 GPUS=3,4 OUT=<tsv> bash run/run_accept.sh`, and the same with
+the agent text, CHUNK=8192 CHUNKS=2.
+
 ## What it means for the engine
 
 Speculation with the MTP layer pays when a verification step, the model on the sampled token plus the draft, costs
@@ -132,6 +250,11 @@ tokens at 0.5–0.8× llama.cpp's speed, a 2-token expert product at 3–4× the
 | `35b-q8_0-{agent,code}.tsv`, `122b-ud-{agent,code}.tsv`, `122b-ad-{agent,code}.tsv` | per run: positions, share, acceptance at T 1, T 0.6 and under the makers' chain, top-1 agreement, each top-1's hit rate on the text, mean top probability; all positions and per bin of the model's top probability |
 | `chain-35b-q8_0-{agent,code}.tsv`, `chain-122b-ud-{agent,code}.tsv` | chained drafts per run: positions, share, acceptance of drafts 1–3 given the earlier ones (makers' sampling), their top-1 agreement, expected drafts accepted per step E₁–E₃; all positions and per bin of the model's top probability |
 | `*-chunks.tsv` | the acceptance numbers per chunk of each run |
+| `variants-35b.tsv`, `variants-122b.tsv` | Q396 per variant: positions, makers'-chain acceptance, top-1 agreement and the change against ref, on the code and agent slices (`run/variant_table.py`) |
+| `122b-valid1-{agent,code}.tsv`, `chain-122b-valid1-{agent,code}.tsv` | Q397: valid1 as its own target, first drafts and chained drafts (full texts) |
+| `var-122b-valid1mtp-{agent,code}.tsv` | Q397: valid1's draft path on UD-Q2_K_XL's trunk (slices, FAST) |
+| `shortlist-65536.txt` | the 64k shortlist, token ids most frequent first (`run/shortlist.py`; the 8k–32k lists are its first rows) |
+| `run/mtp_variant.cpp`, `run/draft_file.sh`, `run/variants.sh`, `run/tensor_zero.py`, `run/shortlist.py`, `run/variant_table.py` | Q396's tool, draft files, driver, the shared-expert-only zeroing, the shortlists and the table |
 | `run/mtp_accept.cpp` | the first-draft measurement (C++ against llama.cpp's API: `llama_process`, `common_batch::set_embd_state`, `llama_get_embeddings_nextn_ith`) |
 | `run/mtp_chain.cpp` | the chained-draft measurement (the same API, plus sequence copies in the MTP layer's unified KV cache) |
 | `run/build_tool.sh` | either tool's build against an existing llama.cpp CUDA build, in the CUDA image |
