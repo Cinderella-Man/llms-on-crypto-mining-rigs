@@ -1,0 +1,4 @@
+model	file	text	ppl_q	ppl_q_se	ppl_base	kld_mean	kld_se	kld_median	kld_p99	kld_max	same_top_pct	same_top_se	rms_dp_pct
+Ornith-1.5-122B	Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0	wiki	6.584989	0.120446	6.241162	0.176172	0.002776	0.062778	1.832636	8.978916	84.142	0.256	12.218
+Ornith-1.5-122B	Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0	agent	1.578568	0.009087	1.568219	0.051815	0.001033	0.000861	0.771879	9.410448	95.037	0.098	8.041
+Ornith-1.5-122B	Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0	code	1.308680	0.010888	1.278374	0.061450	0.002583	0.000175	1.489304	11.203243	96.691	0.125	9.285

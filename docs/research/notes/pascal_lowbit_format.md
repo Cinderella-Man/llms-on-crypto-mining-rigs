@@ -55,6 +55,9 @@ Conventions, as in the other notes here:
      is closer to the Q8_0 than AD-IQ3_XXS-IQ2_S, a file of the same size, on prose, agent sessions and code. It is
      behind Unsloth's UD-Q2_K_XL (44.53 GB) on prose and agent sessions and level on code. UD varies its expert bits
      by layer.
+   - **Allocated by 8-layer group (measured, section 6):** gate/up at N3P in layers 24–47, down at N2P in 0–31 and a
+     Q5_0 output layer give a 48.20 GB file that is better than UD-Q2_K_XL on all three texts (1.5–2.6 standard
+     errors).
 5. **Recommendation (section 5):**
    - First, without new code: measure the IQ Pascal kernels on the rig (done since: 6.4–9.2 ps per weight, section 3),
      and move Ornith's dense tensors off Q8_0. Est. −10 to −12 ms of a 118-ms token.
@@ -620,29 +623,43 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
   Q8_0 for down), where c uses one format per tensor kind across all layers. The proxy compared formats at one size per
   tensor; it says nothing about how to spread the bytes over layers, and that spread is what c lacks. On quality alone c
   is not a better file than UD. Its case is decode speed, and allocating its bits by layer (Q167).
+- **Allocating the two formats by 8-layer group closes the gap** (Q167, [allocation data](../../data/2026-10-27_ornith_alloc/README.md);
+  Q212, [the rig candidate](../../data/2026-10-28_ornith_valid1/README.md)). File d is c with the expert formats
+  swapped, and file b is c with every dense tensor at Q8_0. Each of 18 switches moves one 8-layer group's gate/up,
+  down or dense tensors to the other format; each was scored alone, and the best sets were composed and scored:
 
-**Running at the time of writing:** file b's KLD.
+  | File | Size | wiki | agent | code |
+  |---|---|---|---|---|
+  | file b: c's experts, dense Q8_0 as in AD | 49.31 | 0.1951 | 0.0545 | 0.0701 |
+  | valid0: gate/up N3P in layers 24–39, down N2P in 0–31 (c's bytes) | 47.58 | 0.1897 ± 0.0029 | 0.0550 ± 0.0011 | 0.0646 ± 0.0026 |
+  | valid1: valid0 + gate/up N3P in 40–47 | 48.48 | 0.1747 ± 0.0028 | 0.0513 ± 0.0010 | 0.0613 ± 0.0026 |
+  | **valid1 with a Q5_0 output layer (Q212)** | **48.20** | **0.1762 ± 0.0028** | **0.0518 ± 0.0010** | **0.0615 ± 0.0026** |
+
+  - Ornith's late layers carry the cost: gate/up at N3P in layers 24–47 lowers wikitext KLD by 0.016–0.018 per group.
+    Down at N2P costs 0.009 per group there and little in layers 0–23. Dense Q8_0 is worth at most about one standard
+    error per group.
+  - Q212's file is better than UD-Q2_K_XL on all three texts (2.1, 1.5 and 2.6 standard errors) for 3.66 GB more.
+  - File b against AD (same dense tensors) shows what the expert formats alone are worth: 16 % less KLD on wikitext,
+    17 % on agent sessions and 13 % on code, for 1.7 GB more.
 
 **Next, in order:**
-1. **KLD of b** against AD: b has AD's dense tensors at Q8_0, so it shows what the expert formats alone are worth.
-2. **The P106 run** (step 4, Q188): `run/rig_kernels.sh` with the `d7a75deb3` tarball. It checks correctness on the
+1. **The P106 run** (step 4, Q188): `run/rig_kernels.sh` with the `d7a75deb3` tarball. It checks correctness on the
    card, including MMQ, and times the kernels at the IQ kernels' shapes and timing method. Compare the ps per weight with
    the estimates (3.7 / 4.0) and with the tuned IQ kernels (6.67 / 7.07). If the gain is well under ~1.3×, the IQ
-   kernels (Q166) with Q5_0 dense tensors are the cheaper route to the same speed. The perf cases at 2 and 4 tokens
-   show whether MTP verification needs separate work, as it does for the IQ kernels.
-3. **File d and the per-group mix** (Q187, Q167): d is c with the expert formats swapped, the donor for choosing the
-   format per tensor and 8-layer group within c's bytes. This is the route to closing c's gap to UD. With only two
-   formats per tensor kind (2.6875 and 3.25 bits) its range is narrower than UD's (IQ1_S to Q8_0); if the mix can't
-   reach UD at c's size, more steps in N2P/N3P's family (a 1.5–2-bit and a 4-bit register-table type) or K/IQ types
-   for some layers are the next options.
-4. **The agent check** (step 6, Q189) of the best N2P/N3P file on the rig, against UD-Q2_K_XL with the IQ kernels.
-   c's KLD alone doesn't justify it. It is worth running if the P106 run confirms the speed, or once Q167's mix reaches
-   UD's KLD. Use a build of this branch: it carries the v3 engine as of its cut, but not the IQ kernels, which its
-   files do not need.
-5. **To ship:**
+   kernels (Q166) with an allocated IQ mix are the cheaper route. The perf cases at 2 and 4 tokens show whether MTP
+   verification needs separate work, as it does for the IQ kernels.
+2. **The agent check** (step 6, Q189) of Q212's file on the rig, against UD-Q2_K_XL with the IQ kernels, same context
+   and split. Use a build of this branch: it carries the v3 engine as of its cut, but not the IQ kernels, which its
+   files do not need. Q212's file takes 46.43 GB on the cards against UD's ~43 (my calc), so check the context it leaves.
+3. **A smaller mix if the cards need room:** UD's size is out of reach with these two formats, since all six down
+   groups at N2P still leave c at 44.86 GB. The knapsack's −1 GB pick is in the allocation data. Below that, add more
+   steps in N2P/N3P's family (a 1.5–2-bit and a 4-bit register-table type), or K/IQ types for the early layers, where
+   the cost per group is small.
+4. **To ship:**
    - merge the branch into `pascal-p106-v3` after the rig numbers;
    - push it to the fork;
-   - publish the chosen file with a model card that credits ik_llama.cpp's level tables (MIT).
+   - rewrite the file's `quantize.imatrix.file` key, which holds a local path;
+   - publish the file with a model card that credits ik_llama.cpp's level tables (MIT).
 
 **Open technical points:**
 - MMQ requantizes N2P's per-8 sub-scales to one scale per 32 weights (≤ 0.4 % of a group's largest value): prompt
