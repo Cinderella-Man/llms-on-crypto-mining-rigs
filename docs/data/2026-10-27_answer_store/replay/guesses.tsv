@@ -1,0 +1,3 @@
+arm	flags beyond the release line	requests	guesses_launched	right	wrong	from_store	right_share_of_resolved	ms_per_generated_token
+store	--pipe-store agentic-run1.pstore	36	53180	7504	11449	8168	0.396	22.55
+base	none	36	51655	7128	11131	0	0.390	22.87

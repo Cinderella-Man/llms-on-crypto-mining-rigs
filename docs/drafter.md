@@ -30,7 +30,7 @@ copy lookup, which guesses first inside copied text.
 | Data (the owner, 2026-10-25 15:00) | **All drafter data so far is excluded**: every prompt file, answer, dump, pack, vocabulary, head, checkpoint and store, including the "clean" M3 sets, which were cut from mixed-source files. It is the owner's to delete. Every head so far (M0's A, B, C, U, T and the 4-layer A; R0, R1; M2's R2-gen, R2-69, R2-9; R3) and the continuation store were trained or built partly on ShareGPT, UltraChat and Magicoder prompts; their numbers stand as measurements of the method only |
 | v2.1 plan (M4) | start from scratch on approved sources only: [`sources.json`](../bench/staircase_drafter/sources.json) lists them, and the gate [`check_sources.py`](../bench/staircase_drafter/check_sources.py) checks every stage (prompts, answers, dumps, then vocabulary, packs, heads and the store) with a chain of hashed gate records. Both are drafts: written, never run |
 | Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
-| Answer store (2026-10-27) | rebuilt from the 1,177 gated sessions of agentic data run 1 (15.4 M tokens of Flint's own output, 124 MB, publishable): on the agent check, Flint Q8_0 on the release line, **46.9 tok/s** with `--pipe-store` against 45.0 and 46.5 without (the earlier run that day and the same slot: +4.2 % and +0.9 %, within the spread of single live runs); offline on held-out agent sessions +4.3 %. No guess costs card time, so it pays where the head (M4's first heads: 29.7 / 30.7) does not yet ([answer store](benchmarks/2026-10-27-answer-store.md)) |
+| Answer store (2026-10-27) | rebuilt from the 1,177 gated sessions of agentic data run 1 (15.4 M tokens of Flint's own output, 124 MB, publishable): **+1.4 % per generated token (95 % interval 0.4–1.9 %) on the agent check**, Flint Q8_0 on the release line, measured by replaying the check's own requests to both setups on identical tokens (2026-10-28); the live arms (46.9 against 46.5 and 45.0 tok/s) could not separate it, and the model's +4.3 % on held-out sessions was ~3× too high. Ships with v2.1. No guess costs card time, so it pays where the head (M4's first heads: 29.7 / 30.7) does not yet ([answer store](benchmarks/2026-10-27-answer-store.md)) |
 | Cost per guess | 4.7 ms on one P106 at the server's ring with v2.0 (5.3–7.3 ms at 8,192 positions), on the card that also runs Flint's first stage; **2.93 ms** with the cheap-guess options (fork branch `pascal-p106-v3-cheapguess`), under the simulated break-even of ~3 ms; in the served pipeline it costs more: on the agent check's paired replay (2026-10-28) the overnight head, right 24.8 % of the time, makes the release line 3.2 % slower (section 6, "A cheaper guess") |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
 | Best on the release split | M2 run R2-9 (nine-card specialist, 27.6 M tokens): 0.476 coupled acceptance on Q51 fresh text, 0.538 overall; even nine-card split 0.492 / 0.553 |
@@ -576,8 +576,8 @@ row's own window.
 - **Not a kill line** (the owner, 2026-10-24 21:25: "do not give up on this - we need to make it work"). Missing it means
   more data, a bigger head, and a retrain.
 - **In front of the drafter:** the continuation store (Q161, `--pipe-store`) adds ~5 % at no card cost. The store
-  rebuilt from agent sessions (2026-10-27) adds +4.3 % offline on held-out agent sessions and +0.9 to +4.2 % on the
-  agent check (46.9 tok/s against 46.5 and 45.0; [answer store](benchmarks/2026-10-27-answer-store.md)).
+  rebuilt from agent sessions (2026-10-27) adds 1.4 % (0.4–1.9 %) on the agent check, measured on identical tokens
+  (+4.3 % in the model on held-out agent sessions; [answer store](benchmarks/2026-10-27-answer-store.md)).
 
 ### Served on the rig (2026-10-25)
 
@@ -838,8 +838,8 @@ once); the engine now converts in 8 MB pieces (`1d07352bf`).
     test, until the head and the store are rebuilt on the strict data list (the owner, 2026-10-25 13:40); no testing or
     benchmarking of the guesser or the drafter until then. **Partly answered on the agent check (2026-10-27, Flint
     Q8_0, release line):** `cont` 45.0 tok/s (and 46.5 in the same slot as the store), `cont` with the agentic store 46.9,
-    `cont` then M4's first heads 29.7 / 30.7. The store gains a few percent at no cost and can ship; the head behind the
-    store waits for a cheaper guess (item 0). Offline per source on held-out agent sessions: the copy lookup guesses 52.9 % of positions
+    `cont` then M4's first heads 29.7 / 30.7. On identical tokens (paired replay, 2026-10-28) the store makes
+    generation 1.4 % faster (0.4–1.9 %) and ships; the head behind the store waits for a cheaper guess (item 0). Offline per source on held-out agent sessions: the copy lookup guesses 52.9 % of positions
     (81.6 % right), the request's 2-token contexts 23.6 % (42.7 %), the store 13.5 % (34.9 %).
 
 ## 9. Changelog
@@ -956,6 +956,10 @@ once); the engine now converts in 8 MB pieces (`1d07352bf`).
   thresholds tie for best; +0.4 % per doubling of the store. On the rig's agent check: 46.9 tok/s with the store
   against 45.0 (the earlier run) and 46.5 (the same slot) without; single live runs cannot separate a few percent
   ([answer store](benchmarks/2026-10-27-answer-store.md)).
+- 2026-10-28: the answer store's paired replay: six of the agent check's recorded traces replayed to the release line
+  with and without the store (`release_check.sh`'s replay mode; same seeds and reply lengths, identical tokens in both
+  setups): 22.55 against 22.87 ms per generated token, **+1.4 % (95 % interval 0.4–1.9 %)**, prompt reading unchanged;
+  5.3 % more right guesses. The store ships with v2.1; the model's +4.3 % was ~3× too high.
 - 2026-10-27 (evening): a cheaper guess. The guess profiled on a P106 (4.73 ms at the server's ring; the F16 output
   layer 1.46 ms at 82 GB/s), the break-even simulated on the agent check's own requests (`cost_sim.py`: flat to ~3 ms
   per guess), the head moved after the request's 2-token continuations, and the cheap-guess options (fork branch

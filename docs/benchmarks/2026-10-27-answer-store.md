@@ -1,6 +1,6 @@
 # The answer store on agentic work: Flint's own past answers as guesses
 
-*Measured 2026-10-27.*
+*Measured 2026-10-27; the paired replay on 2026-10-28.*
 
 Miner Llama's pipelined decoding feeds a guessed next token into the first card while the later cards still finish the
 current one, and keeps the guess only if the last card samples the same token, so the output is exactly plain
@@ -11,7 +11,9 @@ continuations: a suffix array over the tokens Flint generated in earlier session
 request's own counts. It is in the v2.0 engine already; until now no store existed that could be published.
 
 This page measures a store built from 1,177 agent sessions that Flint wrote on code that may be published, first
-offline on held-out sessions, then on the rig with the agent check, the release metric.
+offline on held-out sessions, then on the rig with the agent check, the release metric, and finally with the agent
+check's own requests replayed to both setups, so that both generate the same tokens. **Result: +1.4 % per generated
+token (95 % interval 0.4–1.9 %) on the agent check, at no cost in card or host memory; it ships with v2.1.**
 
 ## Setup
 
@@ -135,12 +137,34 @@ Generation tok/s is the server's generated tokens over its generation time, summ
 - **Same output rules:** pipelined decoding keeps every sampled token, so the store changes speed only; the agent fixed
   all 12 bugs in every arm, with no failed or malformed tool calls.
 
+### Paired replay: the same tokens with and without the store (2026-10-28)
+
+Six traces of the control arm (picked across its range of task times: space-age and phone-number in JavaScript,
+complex-numbers, affine-cipher, list-ops and scale-generator) were re-sent request by request to the release line with
+the store and then without it ([replay.py](../../bench/agent_check/replay.py) through `release_check.sh`'s replay
+mode): the same messages and tools, a fixed seed per request, and the recorded reply length as the limit. Pipelined
+decoding is exact, so both setups generated the same tokens; all 36 requests agree on every token count, cache hit,
+finish reason and tool call (20,544 generated tokens each). The difference in speed is the store's alone.
+
+| Setup | ms per generated token | tok/s | ms per prompt token | Guesses launched | from the store | right | wrong |
+|---|---|---|---|---|---|---|---|
+| Release line | 22.87 | 43.7 | 5.13 | 51,655 | – | 7,128 | 11,131 |
+| Release line + store | 22.55 | 44.3 | 5.12 | 53,180 | 8,168 | 7,504 | 11,449 |
+| **Ratio, store / release line** (95 % interval over traces) | **0.986 (0.981–0.996)** | | 0.998 (0.994–1.001) | | | | |
+
+- **The store makes generation 1.4 % faster** (0.4–1.9 %) on the agent check's own requests, and leaves prompt reading
+  unchanged. It adds 5.3 % right guesses (376 more over the six traces), and 2.9 % more wrong ones.
+- **The model is too optimistic by about three times:** it gave +4.3 % on the held-out sessions. It also gives `cont`
+  1.87× where the rig measures 1.54×, and it does not count the host's time per store lookup on the 2-core Celeron.
+- **This is why the live arms disagreed:** +1.4 % is below the spread between single live runs (45.0 and 46.5 tok/s
+  for the same setup on the same day).
+
 ## Verdict
 
-The store is worth shipping as an optional download for Miner Llama v2.1: about 4 % on agent work offline, +0.9 to
-+4.2 % in the live agent check, no card memory and no change to the host's memory, the same output, and one flag on the
-v2.0 engine. The engine's compiled thresholds are the right ones, so v2.1 needs no new build for it. It is not a
-general-purpose speed-up: on chat, code and edit requests (Q51) it gains 0.3–1.8 %.
+The store ships with Miner Llama v2.1 as an optional download: **+1.4 % (0.4–1.9 %) on the agent check**, measured on
+identical tokens, with no card memory, no change to the host's memory, the same output, and one flag on the v2.0 engine.
+The engine's compiled thresholds are the right ones, so v2.1 needs no new build for it. It is a small gain, and it is
+not a general-purpose one: offline on chat, code and edit requests (Q51) it gains 0.3–1.8 %.
 
 ## Publishing the store
 
@@ -176,34 +200,28 @@ general-purpose speed-up: on chat, code and edit requests (Q51) it gains 0.3–1
 
 ## Where this stopped and next steps
 
-Stopped on 2026-10-27 with the offline estimate (registry Q200) and the two live arms (Q201) done. The paired replay
-(Q202) waits for the rig. It replays six recorded traces of the control arm to the release line with and without the
-store, through [release_check.sh](../../bench/agent_check/release_check.sh)'s replay mode (its dry run against the mock
-server passed); the store is already on the rig:
-
-```bash
-ENV_FILE=<release.env> STORE_DIR=<the store's folder on the rig> \
-  REPLAY_LOG=<client folder>/out-store-base/proxy.jsonl CLIENT_ROOT=<client folder> OUT=replay \
-  bash docs/data/2026-10-27_answer_store/run/rig_replay.sh
-```
-
-Its `replay.md` gives the store arm's ms per generated token as a ratio to the release line's, with a 95 % interval
-over the six traces. What it decides:
+All three measurements are done: the offline estimate (registry Q200), the two live arms (Q201) and the paired replay
+(Q202), whose decision rule was set before it ran:
 
 | Paired ratio, store / release line | Decision |
 |---|---|
-| interval entirely below 1.00 | ship the store with v2.1 and report the replay's gain as its agentic number |
-| interval includes 1.00 | the store is not shown to help on the agent check: it does not go into the release line; it stays an optional download only if the owner wants it for the offline gain on agent sessions |
-| interval entirely above 1.00 | do not ship it: the store's lookups cost time the model does not count (host time per lookup on the 2-core Celeron); measure that next |
+| **interval entirely below 1.00 (measured: 0.986, 0.981–0.996)** | **ship the store with v2.1 and report the replay's gain as its agentic number** |
+| interval includes 1.00 | the store is not shown to help on the agent check: it does not go into the release line |
+| interval entirely above 1.00 | do not ship it: the store's lookups cost host time the model does not count |
 
-After the replay:
+Next:
 
 1. The owner decides on publishing the store next to Flint-Pascal-Q5 on Hugging Face, with `LICENSE`, `LICENSES/` and
-   `NOTICE` as in [Publishing the store](#publishing-the-store).
-2. A larger store from later data runs: about +0.4 % per doubling of its sessions.
-3. The store on the USB stick instead of the internal disk: not measured.
-4. Flint's MTP head behind the store, once one guess costs less (the cheaper guess, [drafter.md](../drafter.md)
-   section 8, item 0): the head takes the positions the store and the request's own counts leave.
+   `NOTICE` as in [Publishing the store](#publishing-the-store), and on adding `--pipe-store` to v2.1's documented
+   command line.
+2. The host's time per store lookup on the Celeron, which the model leaves out: measure it first. If it is a real
+   part of the gap between the model's +4.3 % and the measured +1.4 %, a cheaper lookup (fewer suffix-array probes per
+   guess) raises the gain without new data.
+3. A larger store from later data runs: about +0.4 % per doubling of its sessions in the model, so less on the rig.
+4. The store on the USB stick instead of the internal disk: not measured.
+5. Flint's MTP head behind the store, once one guess costs less (the cheaper guess, [drafter.md](../drafter.md)
+   section 8, item 0): the head takes the positions the store and the request's own counts leave. The paired replay
+   (`run/rig_replay.sh`, the same six traces) measures any such setup against the release line on identical tokens.
 
 ## Reproduce
 

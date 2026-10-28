@@ -4,7 +4,8 @@ Data and method of [The answer store on agentic work](../../benchmarks/2026-10-2
 own continuations (`--pipe-store`, registry row Q161 in the [registry](../../../quants/experiments.md#registry)) built
 from the 1,177 gated agent sessions of agentic data run 1, its provenance and held-out checks, an offline estimate on
 held-out sessions and on Q51, and the agent check on the rig with and without it (Miner Llama v2.0, Flint Q8_0, nine
-cards, 262,144 tokens).
+cards, 262,144 tokens): two live arms, and a paired replay of the check's own requests on identical tokens that
+measured the store's gain, +1.4 % per generated token (95 % interval 0.4–1.9 %).
 
 | File | What |
 |---|---|
@@ -16,6 +17,9 @@ cards, 262,144 tokens).
 | `offline/q51.md`, `.json` | Q51's 38 transcripts with the full store and the store without the held-out sessions: per class (chat, code, edit, agent) and segment, depths 3 and 4 |
 | `agent/<arm>/compare.md`, `table.md`, `gonogo.md`, `attempts.csv`, `turns.csv` | the agent check's reports per arm (`store`: the release line with `--pipe-store`; `base`: the release line, run right after it in the same slot), as in [2026-10-26_release_setup](../2026-10-26_release_setup/README.md) |
 | `agent/guesses.tsv` | the server's guess counters summed per arm: requests, guesses launched, right, wrong, and guesses that came from the store |
+| `replay/replay.md` | the paired replay (2026-10-28): per label (`store`, `base`, and the recorded live run) the cost per prompt and per generated token, the fixed cost per request, cache and time to first token; the ratios to `base` with 95 % intervals over the six traces |
+| `replay/requests.tsv` | one row per replayed request and label: trace, request index, prompt tokens processed and cached, prompt time, generated tokens and time, finish reason, tool calls, first-token and end times (the two labels agree on every token count, cache hit, finish reason and tool call) |
+| `replay/guesses.tsv` | the server's guess counters summed per replay arm, as `agent/guesses.tsv` |
 | `run/build_stores.sh` | both stores, built and gated as `bench/agentic_data/run.sh`'s checks step does, then `chain.py` and `heldout_check.py` |
 | `run/replay.sh` | the offline estimate (held-out sessions with the threshold grid, the size curve, Q51) |
 | `run/rig_test.sh` | the two agent-check arms on the rig, after copying the store to the rig's internal disk and checking its SHA-256 |
