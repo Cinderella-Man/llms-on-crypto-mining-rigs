@@ -26,7 +26,7 @@ and kernels that `llama-server --spec-type draft-mtp` runs. Per chunk of N token
 
 Teacher-forced means every position conditions on the text's true tokens, not on tokens the model sampled itself: the
 acceptance of one draft after a correct prefix. Chained drafts (the MTP layer run again on its own output, as
-`--spec-draft-n-max 3` does) are not measured here.
+`--spec-draft-n-max 3` does) are measured by the second tool ([below](#chained-drafts-registry-q366)).
 
 ## Results
 
@@ -70,6 +70,32 @@ By the model's own confidence (top probability at T 1), agent sessions, acceptan
   drafts per step, on text the model wrote itself. Offline its first draft is accepted 0.80–0.83 of the time, so the
   second and third drafts carry most of the loss.
 
+## Chained drafts (registry Q366)
+
+`run/mtp_chain.cpp` chains drafts as llama-server's draft-mtp driver does for a single-head model. Draft 1 is the
+draft above. Draft j+1 reads draft j's token at the next position with the MTP layer's own post-norm hidden state from
+draft j, while the layer's KV cache holds the true entries up to the last accepted position and the drafts after it.
+Teacher-forced, the draft tokens are the text's own, so draft j is scored given that the drafts before it were
+accepted. S positions at a time get their own sequence holding a copy of the true entries up to their position, a
+metadata copy in the unified KV cache, so drafts 2 and 3 of 64 positions run as one batch each. Its draft-1 numbers
+equal those of `run/mtp_accept.cpp` (0.8603 and 0.8604 on four code chunks; positions 1 to N-4 against 1 to N-2).
+
+Acceptance of each draft given the earlier ones, and the expected number of drafts accepted per step with one, two or
+three drafts (E_n = a₁ + a₁a₂ + …, per position; a step also yields the model's own token), makers' sampling:
+
+| Model, file | Text | Draft 1 | Draft 2 | Draft 3 | E₁ | E₂ | E₃ |
+|---|---|---|---|---|---|---|---|
+| 35B, the makers' Q8_0 | agent sessions | 0.876 | 0.786 | 0.711 | 0.88 | 1.59 | 2.14 |
+| 35B, the makers' Q8_0 | Exercism code | 0.908 | 0.823 | 0.757 | 0.91 | 1.68 | 2.30 |
+| 122B, UD-Q2_K_XL | agent sessions | 0.845 | 0.738 | 0.666 | 0.85 | 1.49 | 1.94 |
+| 122B, UD-Q2_K_XL | Exercism code | 0.865 | 0.770 | 0.702 | 0.87 | 1.55 | 2.07 |
+
+- **Each further draft loses about 0.07–0.11 of acceptance:** the MTP layer reads its own hidden state instead of the
+  model's, one step further from what it was trained on.
+- **Three drafts give ~1.9–2.3 accepted per step on these texts**, so ~2.9–3.3 tokens per step. The rig's 2.2–2.7
+  tokens per step with three drafts (stock llama.cpp, the AD file, the model's own sampled text) are in line with the
+  AD file's lower first-draft acceptance.
+
 ## What it means for the engine
 
 Speculation with the MTP layer pays when a verification step, the model on the sampled token plus the draft, costs
@@ -79,10 +105,21 @@ rig it does not pay yet: v2.0 with the MTP head ran 7.9 against 8.8 tok/s on the
 tokens at 0.5–0.8× llama.cpp's speed, a 2-token expert product at 3–4× the cost of one token
 ([2026-10-27_iq_kernels](../2026-10-27_iq_kernels/README.md)).
 
-- **First: expert kernels for 2–8 tokens** (registry Q211). With a 2-token verification that reads each weight once,
-  est. 1.3× decode on the 35B (P-Q5: 2.18 against 2.82 GB per token, the draft's MTP layer and output head included)
-  and ~1.2× on the 122B (UD-Q2_K_XL: ~82 against ~99 ms of GPU time per token). This needs no new speculation code:
-  llama.cpp's `draft-mtp` already drafts with the layer and rolls the recurrent state back.
+- **First: expert kernels for 2–8 tokens** (registry Q211). With a verification that reads each weight once, and the
+  agent-session acceptances above, est. decode against no drafts:
+
+  | Drafts per step | 35B P-Q5 (GB per token) | 122B UD-Q2_K_XL (ms of GPU time per token) |
+  |---|---|---|
+  | 0 | 2.82 | 93 |
+  | 1 | 2.18 (1.29×) | 76 (1.23×) |
+  | 2 | **2.06 (1.37×)** | **74 (1.25×)** |
+  | 3 | 2.09 (1.35×) | 78 (1.20×) |
+
+  Two drafts are the most: every further token in the verification reaches ~7–8 more of each layer's 256 experts.
+  The model: the dense tensors once per step; the routed experts by the distinct experts the step's tokens choose
+  (15.8, 23.3 and 30.6 for 2, 3 and 4 tokens against 8); per draft one MTP layer and the output head (~0.6 GB, ~6 ms).
+  The 122B's split is the tuned IQ kernels' profile (36 ms experts, 36 ms dense, 21 ms the rest). This needs no new
+  speculation code: llama.cpp's `draft-mtp` already drafts with the layer and rolls the recurrent state back.
 - **Then: the recurrent state by accepted-path replay** (QUEUES R8, Q162), so that the MTP layer can guess in Miner
   Llama's pipelined executor (Q341), which fills the cards that sit idle. It rests on the same multi-token kernels.
 - **The draft's own cost:** the output head (248,320 tokens: 0.54 GB in the 35B's Q8_0, 0.63 GB in UD-Q2_K_XL) is most
@@ -93,10 +130,12 @@ tokens at 0.5–0.8× llama.cpp's speed, a 2-token expert product at 3–4× the
 | File | What |
 |---|---|
 | `35b-q8_0-{agent,code}.tsv`, `122b-ud-{agent,code}.tsv`, `122b-ad-{agent,code}.tsv` | per run: positions, share, acceptance at T 1, T 0.6 and under the makers' chain, top-1 agreement, each top-1's hit rate on the text, mean top probability; all positions and per bin of the model's top probability |
-| `*-chunks.tsv` | the four acceptance numbers per chunk of each run |
-| `run/mtp_accept.cpp` | the measurement (C++ against llama.cpp's API: `llama_process`, `common_batch::set_embd_state`, `llama_get_embeddings_nextn_ith`) |
-| `run/build_tool.sh` | its build against an existing llama.cpp CUDA build, in the CUDA image |
-| `run/run_accept.sh` | one run on CUDA GPUs in Docker |
+| `chain-35b-q8_0-{agent,code}.tsv`, `chain-122b-ud-{agent,code}.tsv` | chained drafts per run: positions, share, acceptance of drafts 1–3 given the earlier ones (makers' sampling), their top-1 agreement, expected drafts accepted per step E₁–E₃; all positions and per bin of the model's top probability |
+| `*-chunks.tsv` | the acceptance numbers per chunk of each run |
+| `run/mtp_accept.cpp` | the first-draft measurement (C++ against llama.cpp's API: `llama_process`, `common_batch::set_embd_state`, `llama_get_embeddings_nextn_ith`) |
+| `run/mtp_chain.cpp` | the chained-draft measurement (the same API, plus sequence copies in the MTP layer's unified KV cache) |
+| `run/build_tool.sh` | either tool's build against an existing llama.cpp CUDA build, in the CUDA image |
+| `run/run_accept.sh` | one run of either tool on CUDA GPUs in Docker |
 
 ## Made with
 
@@ -115,6 +154,12 @@ BIN=... MODEL=<Ornith-1.5-122B-UD-Q2_K_XL.gguf> TEXT=agent-heldout.txt CHUNK=819
 # per-chunk tables from each run's log (OUT with .log)
 awk 'BEGIN{print "chunk\tacc_t1\tacc_t06\tacc_chain\ttop1_agree"} /^chunk /{split($2,a,"/"); print a[1]"\t"$4"\t"$6"\t"$8"\t"$10}' \
   35b-q8_0-code.log > 35b-q8_0-code-chunks.tsv
+# chained drafts: the same four runs (35B, 122B UD) with the second tool
+TOOL=mtp_chain LLAMA=<llama.cpp checkout> BUILD=build-cuda OUT=<work>/bin/mtp-chain bash $D/build_tool.sh
+BIN=<work>/bin/mtp-chain MODEL=<Ornith-1.5-35B-Q8_0.gguf> TEXT=code-exercism.txt CHUNK=512 CHUNKS=80 GPUS=3,4 \
+  OUT=chain-35b-q8_0-code.tsv bash $D/run_accept.sh
+awk 'BEGIN{print "chunk\ta1\ta2\ta3\tE1\tE2\tE3"} /^chunk /{split($2,a,"/"); print a[1]"\t"$4"\t"$6"\t"$8"\t"$10"\t"$12"\t"$14}' \
+  chain-35b-q8_0-code.log > chain-35b-q8_0-code-chunks.tsv
 ```
 
 - **The engine:** llama.cpp `d77256999` as built on the quality machine (CUDA 12.9, compute 7.0 and 8.6), the build that
