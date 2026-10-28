@@ -585,9 +585,10 @@ are already written on `pascal-p106-v3-iqmmvq`.
 6. **Agent check on the rig**: the 122B in the chosen mix on v3 against AD-IQ3_XXS-IQ2_S on v3 with the IQ Pascal
    kernels, same context and split, paired by task.
 
-## 6. Where the work stands and what comes next
+## 6. Where this stopped (2026-10-28)
 
-The owner chose to skip the two gates (test plan steps 1 and 2) and build the types. The registry rows are Q164 (this
+Nothing runs. Everything below is measured and published; nothing is half-done on the machines. The fork branch and
+these commits are not pushed yet. The owner chose to skip the two gates (test plan steps 1 and 2) and build the types. The registry rows are Q164 (this
 note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122B files), Q188 (the P106 run) and Q189
 (the agent check) in [quants/experiments.md](../../../quants/experiments.md); data, commands and every script are in
 [docs/data/2026-10-27_lowbit](../../data/2026-10-27_lowbit/README.md).
@@ -652,26 +653,48 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
     of the prompt.
   - Better KLD and faster decode for 3.7 GB more: route 2 beats route 1's best file on this rig.
 
-**Next, in order:**
-1. **The fused gate/up** (Q350): stage the two matrices one after the other, as the IQ kernels do. Est. ~3 ms less per
-   token.
-2. **Prompt processing and 2–4 tokens** (Q351, Q302): tune N2P/N3P's MMQ tiles, and hand 2–8-token products to
-   llama.cpp's kernel, which is faster there, until a Pascal kernel for them exists. MTP verification needs the latter.
-3. **A paired replay** (Q352) of Q189 against ud-v3, for per-token speed apart from answer length and for the turns
-   that re-read more of the prompt.
-4. **A smaller mix if the cards need room:** UD's size is out of reach with these two formats, since all six down
+**Next, in order** (each a branch off `pascal-p106-v3-lowbit`, built with
+[run/build.sh](../../data/2026-10-27_lowbit/run/build.sh), checked with
+[run/correctness.sh](../../data/2026-10-27_lowbit/run/correctness.sh) on a V100 and timed with
+[run/rig_kernels.sh](../../data/2026-10-27_lowbit/run/rig_kernels.sh) on the rig):
+1. **The fused gate/up** (Q350): stage the two matrices one after the other, as the IQ kernels do (`baf2e8ded` on
+   `pascal-p106-v3-iqmmvq`, in `mmvq-pascal.cu`). Est. ~3 ms less per token. Done when the fused N2P/N3P times
+   (5.53 / 5.09 ps per weight) reach the two products alone (4.18 / 3.80).
+2. **2–8 tokens** (Q302): in `mmvqp_choose` (`mmvq-pascal-impl.cuh`), send N2P/N3P with more than one token to
+   llama.cpp's kernel, which is 1.3–3× faster at 2 and 4 tokens (`kernels.tsv`). A Pascal kernel for them can come later; MTP
+   verification needs one of the two.
+3. **Prompt processing** (Q351): MMQ tile configurations for N2P/N3P in `mmq-config-pascal-dp4a.cuh` (copied from
+   IQ4_XS), timed with `test-backend-ops perf -o MUL_MAT` at 512 tokens against Q4_0 and IQ3_XXS on one P106.
+4. **A paired replay** (Q352) of Q189 against ud-v3 (`bench/agent_check/release_check.sh` replay mode with Q189's and
+   ud-v3's recorded traces): per-token speed apart from answer length, and why valid1's turns 3–4 re-read ~240 new
+   prompt tokens.
+5. **Then the agent check again** (as Q189, `agent_ornith.sh CANDS=valid1` with `VALID1_LINE="-b 2048 -ub 512 -ts
+   6,6,6,6,5,5,5,5,6 -fit off"`) on the build with 1–3.
+6. **A smaller mix if the cards need room** (Q250, Q301): UD's size is out of reach with these two formats, since all six down
    groups at N2P still leave c at 44.86 GB. The knapsack's −1 GB pick is in the allocation data. Below that, add more
    steps in N2P/N3P's family (a 1.5–2-bit and a 4-bit register-table type), or K/IQ types for the early layers, where
    the cost per group is small.
-5. **To ship** (Q303):
+7. **To ship** (Q303), after the owner's decision on the release file:
    - merge the branch into `pascal-p106-v3`;
    - push it to the fork;
    - rewrite the file's `quantize.imatrix.file` key, which holds a local path;
    - publish the file with a model card that credits ik_llama.cpp's level tables (MIT).
 
+**Open questions:**
+- Why does decode gain 1.28× in the agent check when the kernel times predicted about level? A `GGML_CUDA_PROFILE`
+  decode profile of both files on the rig would show where UD's time goes. My reading is UD's other expert formats on
+  llama.cpp's kernels and its K-quant dense tensors.
+- Why does valid1 re-read more of the prompt in turns 3–4 (Q352)?
+- Does MMQ's rounding of N2P's per-8 sub-scales to one scale per 32 weights (≤ 0.4 % of a group's largest value)
+  cost anything measurable in prompt processing? Decode and the V100 KLD (dequantize + cuBLAS) don't see it (Q307).
+
+**Kill criteria:**
+- Drop route 2 for Ornith if a paired replay (Q352) shows no per-token gain over ud-v3.
+- Drop it too if Q166's IQ kernels with an allocated IQ mix reach valid1's KLD and decode speed at fewer bytes.
+- Stop Q350 if staging the fused gate/up doesn't bring it within 10 % of the two products alone.
+
 **Open technical points:**
-- MMQ requantizes N2P's per-8 sub-scales to one scale per 32 weights (≤ 0.4 % of a group's largest value): prompt
-  processing on Pascal sees that small extra error, while decode and dequantize + cuBLAS (V100 KLD) do not.
-- N3P holds four table registers per lane. The P106 timing shows whether register pressure costs occupancy.
+- N3P holds four table registers per lane, yet it runs faster than N2P (3.80 against 4.18 ps), so register pressure
+  doesn't cost it; N2P's 2-byte staging of its 86-byte blocks may be the slower part.
 - The quantizer is slow (2 h 44 min for the 122B on 8 threads at low priority), from its 28 grid passes per sub-block
-  and table. It doesn't affect use, only how fast new mixes can be tried.
+  and table. It doesn't affect use, only how fast new mixes can be tried (Q308).
