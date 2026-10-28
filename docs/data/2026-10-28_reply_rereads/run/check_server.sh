@@ -10,7 +10,8 @@
 # ON_EXTRA adds variables to the "on" server: LLAMA_SERVER_TAIL_CKPT_MIN=4096 TAG=_tail (Q263);
 # "LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16 LLAMA_GPU_KQ_MASK_CHECK=1" N_PREDICT=1100 TAG=_mask (Q261: the card-built
 # mask in decode steps only, past the 768-cell window ring, every card mask compared with the host mask; on and off must
-# then sample the same first reply from the same seed).
+# then sample the same first reply from the same seed). ON_ARGS adds server arguments to "on", e.g. ON_ARGS="-lv 4" so
+# the library's info lines (each checked card mask: "identical to the host mask") reach its log.
 #   WORK=... MODEL=/path/tiny-flint.gguf [GPUS=3,4 BIN=...] bash check_server.sh
 # Output: $WORK/out/textreuse_check$TAG.tsv and the servers' logs.
 set -euo pipefail
@@ -23,18 +24,18 @@ if [ -n "${GPUS:-}" ]; then
 else
     DEV=(); FA="-fa off -ngl 99"; COLD=
 fi
-start() {  # name port env...
-    local name=$1 port=$2 envs=() e; shift 2
+start() {  # name port extra-args env...
+    local name=$1 port=$2 extra=$3 envs=() e; shift 3
     for e in "$@"; do [ -n "$e" ] && envs+=(-e "$e"); done
     docker rm -f "pq-rereads-$name" >/dev/null 2>&1 || true
     docker run -d --rm --cpu-shares=256 --label pascal-quants=1 --name "pq-rereads-$name" --network host "${DEV[@]}" \
         "${envs[@]}" -v "$BIN:/bin-llama:ro" -v "$MODEL:/model.gguf:ro" nvidia/cuda:12.9.2-devel-ubuntu24.04 \
         /bin-llama/llama-server -m /model.gguf $FA -c 8192 -np 1 -t 2 -b 512 -ub 128 --ctx-checkpoints 4 \
-        --cache-ram 0 --jinja --reasoning-format deepseek --host 127.0.0.1 --port "$port" --no-webui >/dev/null
+        --cache-ram 0 --jinja --reasoning-format deepseek --host 127.0.0.1 --port "$port" --no-webui $extra >/dev/null
 }
-start on 18441 LLAMA_SERVER_TEXT_REUSE=1 ${ON_EXTRA:-}
-start off 18442 LLAMA_SERVER_TEXT_REUSE=0
-start cold 18443 LLAMA_SERVER_TEXT_REUSE=0
+start on 18441 "${ON_ARGS:-}" LLAMA_SERVER_TEXT_REUSE=1 ${ON_EXTRA:-}
+start off 18442 "" LLAMA_SERVER_TEXT_REUSE=0
+start cold 18443 "" LLAMA_SERVER_TEXT_REUSE=0
 for p in 18441 18442 18443; do
     for i in $(seq 600); do curl -sf "http://127.0.0.1:$p/health" >/dev/null && break; sleep 1; done
 done

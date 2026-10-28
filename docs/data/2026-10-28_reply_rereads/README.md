@@ -73,8 +73,14 @@ prompts 3.6× slower on nine cards). The new variable limits it to micro-batches
 prompts on the host mask. After each host-mask prompt the cards' cell copies are stale and the first decode step
 uploads all cells once. Fork branch `pascal-p106-v3-decodemask` (`55143f751`). On the CPU, `test-llama-archs` passes
 141 of 141 with the host mask, the decode-only setting and the all-batches setting (the last compared 1,305 card masks
-with the host's, all identical), but its micro-batches are 32–128 tokens, so the decode-only path needs the GPU check
-below; llama-server on a CPU-only build keeps no card copies.
+with the host's, all identical), but its micro-batches are 32–128 tokens, and llama-server on a CPU-only build keeps no
+card copies. **On two GPUs** (two RTX 3080s, the rig tarball's compute 6.1 code compiled for them at load, the tiny
+Flint layer-split over both cards, `-fa on`, 1,100-token replies past the 768-cell window ring, every card mask
+compared with the host mask): 9,024 card masks identical to the host's, both cards and both caches (8,984 one-token
+decode steps, 24 four-token prompt tails, 16 two-token steps; 24 full uploads after host-mask prompts), no micro-batch
+over 16 tokens on the card mask, and the card-mask server samples the same 1,100-token replies as the host-mask server
+from the same seeds in 6 of 6 trials ([check/textreuse_check_gpu_mask.tsv](check/textreuse_check_gpu_mask.tsv),
+[check/textreuse_check_gpu_mask_v.tsv](check/textreuse_check_gpu_mask_v.tsv)).
 
 **6. On the rig: not run yet.** The three switches are combined on `pascal-p106-v3-promptpath` (`8130a649d`), all off
 by default, one tarball for both scripts:
@@ -94,7 +100,7 @@ every replayed turn re-reads its reply whatever the server does.
 | [summary.md](summary.md) | Tables 1 and 2 as `summary.py` printed them |
 | [turns/d4.tsv](turns/d4.tsv), [turns/q8-d4b.tsv](turns/q8-d4b.tsv), [turns/base.tsv](turns/base.tsv) | Per request that follows a reply: the render check against the server's prompt length, generated and rendered reply tokens, the shared prefix from the log, where it ends in the reply, the reply's parts, the next request's cache, restore and re-read cost |
 | [retok.tsv](retok.tsv) | Data run 1, per turn: generated and re-tokenized lengths, the first differing id (−1: none), its distance from the end and the part of the reply |
-| [check/](check/) | The CPU checks: text reuse (700-token replies), with the tail switch, with 1,100-token replies |
+| [check/](check/) | The CPU checks (text reuse with 700-token replies, with the tail switch, with 1,100-token replies) and the GPU check of the decode-only card mask (`_gpu_mask`: 4 trials; `_gpu_mask_v`: 2 more with the per-mask log lines counted) |
 | [run/rereads.py](run/rereads.py) | Per-turn divergence from a run's `proxy.jsonl`, `proxy.jsonl.bodies.gz` and server log, rendered and tokenized by the server's own code |
 | [run/retok.py](run/retok.py) | The text round trip of an agentic export's generated ids |
 | [run/summary.py](run/summary.py) | Tables 1 and 2 |
@@ -120,8 +126,10 @@ WORK=$WORK SRC=$WORK/src-pp OUT=$WORK/out-cpu-pp bash run/build_cpu.sh
 WORK=$WORK MODEL=$MODELS/tiny-flint.gguf bash run/check_server.sh
 WORK=$WORK MODEL=$MODELS/tiny-flint.gguf ON_EXTRA=LLAMA_SERVER_TAIL_CKPT_MIN=4096 TAG=_tail bash run/check_server.sh
 WORK=$WORK SRC=$WORK/src-pp OUT=$WORK/out-cpu-pp-t TESTS=1 bash run/build_cpu.sh && WORK=$WORK bash run/mask_check_cpu.sh
-# the rig tarball and the rig runs
+# the rig tarball, the GPU check on two cards with it, and the rig runs
 scripts/build_llamacpp_docker.sh fork/pascal-p106-v3-promptpath
+WORK=$WORK MODEL=$MODELS/tiny-flint.gguf GPUS=0,1 BIN=$WORK/<tarball>/bin TRIALS=2 N_PREDICT=1100 ON_ARGS="-lv 4" \
+  ON_EXTRA="LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16 LLAMA_GPU_KQ_MASK_CHECK=1" TAG=_gpu_mask_v bash run/check_server.sh
 ENV_FILE=... BIN=/opt/llama-builds/<tarball>/bin/llama-server CLIENT_ROOT=... bash run/rig_agent.sh
 ENV_FILE=... BIN=... REPLAY_LOG=<the answer store control run's proxy.jsonl> CLIENT_ROOT=... bash run/rig_replay_mask.sh
 ```
