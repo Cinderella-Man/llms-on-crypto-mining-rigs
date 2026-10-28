@@ -46,7 +46,7 @@ From the three release-line runs with per-request rows (2026-10-26 `d4` and `q8-
 | Q193, Q169 | the cheaper MTP guess (2.93 ms) with the overnight heads (held-out acceptance 0.366, was 0.277) | simulated +5 %; +8 % at 0.30 right as served, +14 % at 0.40 | the paired replay (its head arm failed to load on 2026-10-28 for host RAM; Q265's check too) |
 | Q202 | the answer store behind the copy lookup | +0.9–4.2 % live, +4.3 % offline | the paired replay |
 | Q262 | the screened-head side file on the Q8_0 release line | measured +1.5–2.3 % on UD; est. +1.0–1.6 % on agent sessions | the heads are byte-identical; the screen is off whenever a grammar is set, so every agent request needs Q360 (the screen until the tool-call grammar triggers) first |
-| Q263 | the end-of-prompt checkpoint and its 4-token tail micro-batch (v2.0 already takes one ring checkpoint and skips the re-reserve) | ~0.3–0.4 s per request, 1.5–2 % of a task (est.) | built: `LLAMA_SERVER_TAIL_CKPT_MIN`, one live agent-check arm |
+| Q263 | the end-of-prompt checkpoint and its 4-token tail micro-batch, spaced by `LLAMA_SERVER_TAIL_CKPT_MIN=4096` | **measured: a short turn 684 → 379 ms**, prompt 18.6 → 16.2 s per task (on top of Q260) | done; for the v3 release line |
 | Q133 | memory clock offset | +3–5 % decode, exact when stable | the owner at the console |
 | Q265 | the persistent MoE kernel's switch in v3 builds | up to 8 % if a v3 build runs the per-op path | a log and source check |
 
@@ -54,7 +54,7 @@ From the three release-line runs with per-request rows (2026-10-26 `d4` and `q8-
 
 | Registry | Lever | Expected gain | Needs |
 |---|---|---|---|
-| Q260 | stop the reply re-reads: keep the cached ids where the prompt spells the same text (`LLAMA_SERVER_TEXT_REUSE`) | 5.9–8.3 % of task time; the worst first token 60–83 s → 0.5–3.5 s | built and checked on the CPU; one live agent-check arm |
+| Q260 | stop the reply re-reads: keep the cached ids where the prompt spells the same text (`LLAMA_SERVER_TEXT_REUSE`) | **measured: no re-reads, worst first token 60–83 → 12.7 s, prompt 23.6–29.0 → 18.6 s per task** (live agent check) | done; for the v3 release line |
 | Q261 | the decode-only card mask (`LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16`) | **measured on the rig: 0.4 % slower per generated token** at the agent check's ~4.4k tokens (paired replay, identical tokens; Q116's gains were at 32k+) | off; Q430 (a context threshold) for long sessions |
 | Q264 | short agent prompts: micro-batches overlapped as in a fresh prompt (Q363: smaller micro-batches for short prompts) | ~5 % of a task (est.) | Q157's busy profile on agent-sized turns first, after Q260 and Q263 |
 

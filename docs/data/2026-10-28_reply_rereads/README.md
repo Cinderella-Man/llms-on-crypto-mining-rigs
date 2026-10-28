@@ -87,11 +87,42 @@ one tarball for both scripts:
 
 | script | arms | measures | expected (est., from the numbers above) | result | rig time |
 |---|---|---|---|---|---|
-| [rig_agent.sh](run/rig_agent.sh) (live agent check) | `tr` (text reuse), `trtail` (+ tail checkpoints every 4,096 tokens) | restores, prompt s per task, first-token times, time per task | `tr`: 5.9–8.3 % less task time, worst first token 60–83 s → 0.5–3.5 s; `trtail`: ~0.3–0.4 s per request, 1.5–2 % of task time | not run yet | ~70 min |
+| [rig_agent.sh](run/rig_agent.sh) (live agent check) | `tr` (text reuse), `trtail` (+ tail checkpoints every 4,096 tokens) | restores, prompt s per task, first-token times, time per task | `tr`: 5.9–8.3 % less task time, worst first token 60–83 s → 0.5–3.5 s; `trtail`: ~0.3–0.4 s per request, 1.5–2 % of task time | **no re-reads; worst first token 12.2–12.7 s; short turns 0.3 s faster** (below) | 65 min |
 | [rig_replay_mask.sh](run/rig_replay_mask.sh) (paired replay, identical tokens) | `base`, `mask` | ms per generated token, fixed cost per request | +1–2 % per generated token (Q116: +1.6–2.3 % at short context; one cell upload per request, ≤ 0.1 s) | **0.4 % slower** (below) | 45 min |
 
 The live check is needed for Q260 and Q263: a replay sends the recorded replies back, never the server's own, so
 every replayed turn re-reads its reply whatever the server does.
+
+**Text reuse and spaced tail checkpoints on the rig (Q260, Q263, 2026-10-28 18:35–19:40):** the live agent check (12
+bug-fix tasks, Flint Q8_0 on nine cards at 262,144 tokens, the release line) on this build, against the three
+release-line runs of section 1 ([live.md](live.md), [agent/](agent/), per-turn rows in [turns/](turns/)):
+
+| run | passed | min per task (median) | min per task (mean) | prompt s per task | decode s per task | generation tok/s | first token p50 s | p90 s | max s | restores (all) | re-reads of the previous reply: tokens | s | requests that kept cached ids (tokens kept) | end-of-prompt checkpoints per request |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| d4 | 12/12 | 1.07 | 2.22 | 25.3 | 104.7 | 45.9 | 2.61 | 6.18 | 59.8 | 15 | 16,954 | 94.4 | — | 1.15 |
+| q8-d4b | 12/12 | 1.42 | 2.52 | 29.0 | 119.4 | 44.6 | 2.56 | 6.97 | 80.9 | 16 | 29,083 | 150.3 | — | 1.16 |
+| base | 12/12 | 1.19 | 1.89 | 23.6 | 86.0 | 45.0 | 2.30 | 6.48 | 82.5 | 13 | 17,294 | 90.8 | — | 1.16 |
+| **tr** (`LLAMA_SERVER_TEXT_REUSE=1`) | 12/12 | 1.23 | 2.02 | 18.6 | 98.5 | 43.7 | 2.48 | 6.10 | 12.7 | 11 | 0 | 0.0 | 23 (138,676) | 1.15 |
+| **trtail** (+ `LLAMA_SERVER_TAIL_CKPT_MIN=4096`) | 12/12 | 1.05 | 1.62 | 16.2 | 77.6 | 45.7 | 2.38 | 5.98 | 12.2 | 11 | 0 | 0.0 | 15 (55,038) | 0.32 |
+
+| run | requests processing ≤ 64 tokens | their prompt ms (median) | requests processing 65–256 | their prompt ms (median) |
+|---|---|---|---|---|
+| d4 | 18 | 668 | 12 | 1377 |
+| q8-d4b | 24 | 696 | 6 | 1483 |
+| base | 20 | 739 | 11 | 1495 |
+| tr | 25 | 684 | 13 | 1534 |
+| trtail | 22 | 379 | 9 | 1359 |
+
+- **No reply is re-read with text reuse.** Each run's 11 other restores are the task-to-task reuse of the shared system
+  prompt's checkpoint, which every run has. The worst first-token waits fall from 60–83 s to 12–13 s; the median is
+  unchanged. Prompt time per task falls from 23.6–29.0 s to 18.6 s.
+- **The spaced tail checkpoints take 0.3 s off a short turn** (379 against 684 ms with text reuse alone), with 0.32
+  end-of-prompt checkpoints per request instead of 1.15, and prompt time per task falls to 16.2 s.
+- **Time per task follows the replies' length** (decode 78–119 s per task across the five runs at the same 44–46
+  tok/s), so the arms' minutes per task do not isolate the change. The prompt seconds above do: on the release-line
+  runs' own work, the re-reads were 5.9–8.3 % of task time and the tail checkpoint ~0.3 s of every short turn.
+- Generation speed is within the release line's spread (43.7 and 45.7 against 44.6–45.9 tok/s), and no tool call
+  failed or was malformed (78 and 66 calls).
 
 **The decode-only card mask on the rig (Q261, 2026-10-28 17:36–18:21):** six recorded agent-check traces (36
 requests, the answer store's set) replayed to the release line on this build without and with
@@ -116,11 +147,13 @@ Q430) would reopen it for long sessions.
 | [summary.md](summary.md) | Tables 1 and 2 as `summary.py` printed them |
 | [turns/d4.tsv](turns/d4.tsv), [turns/q8-d4b.tsv](turns/q8-d4b.tsv), [turns/base.tsv](turns/base.tsv) | Per request that follows a reply: the render check against the server's prompt length, generated and rendered reply tokens, the shared prefix from the log, where it ends in the reply, the reply's parts, the next request's cache, restore and re-read cost |
 | [retok.tsv](retok.tsv) | Data run 1, per turn: generated and re-tokenized lengths, the first differing id (−1: none), its distance from the end and the part of the reply |
+| [live.md](live.md), [agent/tr/](agent/tr/), [agent/trtail/](agent/trtail/), [turns/tr.tsv](turns/tr.tsv), [turns/trtail.tsv](turns/trtail.tsv) | R17: the live arms against the release-line runs (`live_summary.py`); each arm's agent-check report, per-attempt and per-request rows; the arms' per-turn divergence rows (`rereads.py`; with text reuse the server's prompts are the spliced ids, so `render_ok` is 0 where it kept them) |
 | [replay/replay.md](replay/replay.md) | The rig's paired replay of the decode-only card mask (Q261) as `replay.py summary` printed it, with the recorded live run as `live:rel` |
 | [check/](check/) | The CPU checks (text reuse with 700-token replies, with the tail switch, with 1,100-token replies) and the GPU check of the decode-only card mask (`_gpu_mask`: 4 trials; `_gpu_mask_v`: 2 more with the per-mask log lines counted) |
 | [run/rereads.py](run/rereads.py) | Per-turn divergence from a run's `proxy.jsonl`, `proxy.jsonl.bodies.gz` and server log, rendered and tokenized by the server's own code |
 | [run/retok.py](run/retok.py) | The text round trip of an agentic export's generated ids |
 | [run/summary.py](run/summary.py) | Tables 1 and 2 |
+| [run/live_summary.py](run/live_summary.py) | R17's tables: live arms against the release-line runs |
 | [run/build_cpu.sh](run/build_cpu.sh), [run/serve_tiny.sh](run/serve_tiny.sh) | The CPU llama-server (v2.0 or the fix branch) and the tokenizer-only server on the tiny Flint |
 | [run/check_server.sh](run/check_server.sh), [run/textreuse_check.py](run/textreuse_check.py) | The server checks (CPU; GPU with `GPUS`) |
 | [run/mask_check_cpu.sh](run/mask_check_cpu.sh) | `test-llama-archs` with the three mask settings |
@@ -149,6 +182,10 @@ WORK=$WORK MODEL=$MODELS/tiny-flint.gguf GPUS=0,1 BIN=$WORK/<tarball>/bin TRIALS
   ON_EXTRA="LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16 LLAMA_GPU_KQ_MASK_CHECK=1" TAG=_gpu_mask_v bash run/check_server.sh
 ENV_FILE=... BIN=/opt/llama-builds/<tarball>/bin/llama-server CLIENT_ROOT=... bash run/rig_agent.sh
 ENV_FILE=... BIN=... REPLAY_LOG=<the answer store control run's proxy.jsonl> CLIENT_ROOT=... bash run/rig_replay_mask.sh
+# R17's tables: the arms as collected (proxy.jsonl, bodies, res/attempts.csv, rig/server-rel.log) in $WORK/runs/<arm>
+for a in tr trtail; do python3 -I run/rereads.py --run $WORK/runs/$a --out $WORK/out/$a.tsv; done
+python3 -I run/live_summary.py --runs d4=runs/d4,out/d4.tsv q8-d4b=runs/q8-d4b,out/q8-d4b.tsv base=runs/base,out/base.tsv \
+  tr=runs/tr,out/tr.tsv trtail=runs/trtail,out/trtail.tsv > live.md
 ```
 
 All scripts run in Docker with the label `pascal-quants=1` at `--cpu-shares 256`, Python with the standard library only.
