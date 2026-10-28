@@ -449,15 +449,77 @@ question that matters for v3 directly.
 - **E1's cost and gain**: estimates. Flint's Q77 showed per-byte costs spanning two orders of magnitude between groups,
   but Ornith's spread is unknown until step 2.
 
-## 8. Where this stopped and what is next (2026-10-27, 20:45)
+## 8. Where this stopped (2026-10-28)
+
+Nothing of this work runs anywhere. Every result is in its registry row and data folder.
+
+### Done
+
+- **The research** (sections 1–7, Q179). SLQ is an allocator; its integer grids are not better per byte than
+  K-quants; no SLQ model of this project's models exists.
+- **E3, Q168: a Flint file near Q8_0.**
+  - p065 reads 11.0 % fewer bytes per token than Unsloth's Q8_0, and its KLD is within noise of Q8_0 on wikitext and
+    on agent text. Its same top token is 0.4–0.6 points lower, at the edge of noise.
+  - It decodes **6.3 % faster than Q8_0 on the rig** (paired replay, 0.941 of Q8_0's ms per generated token,
+    0.930–0.980).
+  - The live agent check passed 12 / 12 at 47.1 tok/s.
+  - p061 (−7.8 % bytes) is within noise on every measure.
+- **E1, Q167: Ornith-1.5-122B's N2P/N3P mix per 8-layer group.** At file c's bytes, valid0 beats c and is level with
+  UD-Q2_K_XL; valid1 (+0.91 GB) beats UD on all three texts. Ornith's late layers carry the cost, the reverse of
+  Flint.
+
+### Half-done
+
+- **p065 is not released.** Its recipe is in [the Q168 data](../../data/2026-10-27_flint_near_q8/README.md)
+  (`ITEMS="p065=q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu5,head"`). The file (40,431,236,544 B, md5
+  `8387b2e585a7b9cc10f40cb6b4531694`) exists only on the rig's model drive. Shipping it beside Q8_0 is the owner's
+  decision.
+- **valid1 went on to the rig through the low-bit work.**
+  - With Q171's Q5_0 output layer it became Q212's file: 48.20 GB, better than UD-Q2_K_XL on all three texts.
+  - On the rig (Q189, which covers Q251) it passed 12 / 12 at 14.5 tok/s against UD-Q2_K_XL's 11.3 with the IQ
+    kernels, 1.28× decode.
+  - valid0 exists only as a recipe: rebuilt from Q164's files c and d in ~3 min (`run/run.sh` in
+    [the Q167 data](../../data/2026-10-27_ornith_alloc/README.md), `ITEMS="valid0=gu3,gu4,dn0,dn1,dn2,dn3"`).
+
+### Next, in order
+
+1. **Release decision on p065** (owner). If yes, publish it beside Flint-Pascal-Q5 with a model card that states the
+   KLD, the rig ratio and the recipe. Then rerun the release agent check with p065 as the release file, to give the
+   headline tok/s.
+2. **Q248: a Q6_K rung for Flint.**
+   - Make a Q6_K donor from BF16 (`llama-quantize --pure` with Unsloth's importance matrix, CPU).
+   - Add `q6_*` switches to `near_q8.py` beside the Q5_0 ones: one more option per group, so the dynamic program
+     takes three choices.
+   - Score the early groups (gate/up 9–16, down 2–16, q 0–8) that Q5_0 hurt.
+   - Kill criterion: no group moves to Q6_K for less than half of its Q5_0 cost.
+3. **Q249: Ornith per layer in layers 16–47.** The same scripts with one-layer groups in that range: 2 × 32 switches,
+   one KLD run each, est. ~10 h on two V100s. Kill criterion: if the best per-layer mix beats valid0 by less than one
+   standard error at equal bytes, stop.
+4. **Q250: an Ornith mix at UD's size** needs new downgrade switches (gate/up below N2P in layers 0–15, or dense in a
+   4-bit format). Each new format is first a quantize of a donor file.
+5. **Smaller:**
+   - Q431: p065 with the Q8_0 head, to see whether the head explains its same-top-token drop.
+   - Q432: the routers' share of agent-text KLD.
+   - Q246: EAR beside KLD, from the existing base files.
+   - Q180: needs ~107 GB of downloads approved.
+
+### Open questions
+
+- Why p065's same top token falls 0.4–0.6 points while its KLD does not move: is the Q5_0 head (+0.0023 KLD alone)
+  the cause? Score p065 with the Q8_0 head (`p065h=q4,q5,kv4,kv5,o4,o5,sh4,sh5,gu5`).
+- How the router type moves agent-text KLD by 0.227 at 8k (Q8_0's BF16 against F16, both near-exact): routing flips
+  that compound with context, as Q21 found. A KLD at 8k against the same router type would separate the files from
+  the routers.
+
+### All items
 
 | Item | Registry | State | Next step | Scripts and data |
 |---|---|---|---|---|
 | This note: SLQ read from source and paper, the published models' formats and bytes | Q179 | done | — | [2026-10-27_slq](../../data/2026-10-27_slq/README.md) |
 | E3: a Flint file within noise of Q8_0 at fewer bytes | Q168 | done (rig 2026-10-28): p065 (−11.0 % bytes per token, KLD within noise of Q8_0 on wikitext and agent text) decodes 6.3 % faster than Q8_0 on the rig (paired replay 0.941, 0.930–0.980; sessions 0.963), live agent check 12 / 12 at 47.1 tok/s; p061 is the stricter fallback | a release decision (p065 as a "near-Q8_0" file beside Q8_0); a Q6_K rung (Q248) | [data](../../data/2026-10-27_flint_near_q8/README.md) (`near_q8.py`, `score.sh`) |
-| E1: Ornith-1.5-122B's N2P/N3P mix per 8-layer group | Q167 | done (2026-10-28 07:16): at file c's bytes, valid0 beats c by 6.7 / 3.9 / 10 % KLD (wiki / agent / code) and is level with UD-Q2_K_XL at +3.05 GB; +0.91 GB (valid1) beats UD on all three; the late layers carry the cost | a rig file of valid0 or valid1 in N2P/N3P once the low-bit route reaches the rig; finer groups (per layer) in the late half | [data](../../data/2026-10-27_ornith_alloc/README.md) (`alloc.py`, `score.sh`) |
+| E1: Ornith-1.5-122B's N2P/N3P mix per 8-layer group | Q167 | done (2026-10-28 07:16): at file c's bytes, valid0 beats c by 6.7 / 3.9 / 10 % KLD (wiki / agent / code) and is level with UD-Q2_K_XL at +3.05 GB; +0.91 GB (valid1) beats UD on all three; the late layers carry the cost. valid1 with a Q5_0 head (Q212) ran on the rig as Q189: 12 / 12, 1.28× UD's decode | finer groups (per layer) in the late half (Q249) | [data](../../data/2026-10-27_ornith_alloc/README.md) (`alloc.py`, `score.sh`) |
 | E2: The Kaitchup's GGUFs against Unsloth's on this project's test | Q180 | planned, optional | the owner's approval of ~107 GB of downloads (section 5) | — |
-| The other ideas from this note and from E1/E3 | Q245–Q251 | planned or parked | Shapley costs (parked), EAR beside KLD, Q5_1 (parked), a Q6_K rung for Flint, Ornith per layer, an Ornith mix at UD's size, valid0/valid1 on the rig | the registry rows |
+| The other ideas from this note and from E1/E3 | Q245–Q251, Q431, Q432 | planned or parked (Q251 done as Q189) | Shapley costs (parked), EAR beside KLD, Q5_1 (parked), a Q6_K rung for Flint, Ornith per layer, an Ornith mix at UD's size, p065 with the Q8_0 head, the routers' share of agent-text KLD | the registry rows |
 
 How to carry on:
 - Each experiment's `run.sh` drives the quality machine over SSH and takes every host and path from the environment
