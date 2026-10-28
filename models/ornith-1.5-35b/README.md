@@ -8,7 +8,8 @@ shared expert used per token (about 3 B parameters), and 40 layers, of which 30 
 layers and 10 full attention. Its makers release it under the MIT licence; this project is not affiliated with them.
 
 **Status: coming soon.** It is the nearer of the two Ornith targets, ahead of
-[Ornith-1.5-122B](../ornith-1.5-122b/README.md), and has not run on the reference rig yet.
+[Ornith-1.5-122B](../ornith-1.5-122b/README.md), and has not run on the reference rig yet. Files made from its BF16
+weights are measured against the makers' Q8_0 ([quality](#quality-of-files-made-from-the-bf16-2026-10-28)).
 
 ## What is known
 
@@ -96,17 +97,39 @@ Decode, single stream, five cards, est. from the speed model in
 ### Files we already hold
 
 - **Our model library:** the makers' Q4_K_M (21,713,463,040 bytes, header read), no other Ornith-1.5-35B file.
-- **The quant machine:** no Ornith-1.5-35B file. It holds Ornith-1.5-122B (UD-Q3_K_XL, UD-Q4_K_XL, UD-Q5_K_XL;
-  [Q158](../../quants/experiments.md#registry)) and Qwen3.6-35B-A3B files (Unsloth UD-Q4_K_XL, our mixes, bartowski's
-  imatrix), none of which stands in for this model.
+- **The quant machine:** the makers' BF16 safetensors and Q8_0 (2026-10-27), a BF16 GGUF converted from them, and
+  an importance matrix from agent sessions (2026-10-28); the candidate files below are rebuilt from those in minutes.
 - **To fetch, onto the quant machine's bulk disk:** bartowski's Q4_0 and imatrix (20.6 GB) for the first
   run; the makers' Q8_0 (37.8 GB) only when the KLD base for a quality comparison is needed. Read the Q4_0's header first
   (`scripts/gguf_mix.py`) to confirm its type mix before rig time goes to it.
 
+## Quality of files made from the BF16 (2026-10-28)
+
+Nine files against the makers' Q8_0 by KL divergence on wikitext-2, held-out agent sessions and the agent check's
+Exercism code ([docs/data/2026-10-28_ornith35_kld](../../docs/data/2026-10-28_ornith35_kld/README.md); mean KLD per
+text, lower is closer):
+
+| File | GB | GB read per token | wikitext | Agent sessions | Code |
+|---|---|---|---|---|---|
+| Q8_0, the makers' (reference) | 37.8 | 3.20 | 0 | 0 | 0 |
+| Q6_K | 29.2 | 2.49 | 0.031 | 0.037 | 0.012 |
+| **P-Q5**: routed experts Q5_0, all else Q8_0 | **25.4** | 2.82 | **0.028** | **0.029** | **0.012** |
+| Q5_K_M | 25.3 | 2.23 | 0.050 | 0.046 | 0.020 |
+| **PK-Q4-i**: routed experts Q4_K with an importance matrix, all else Q8_0 | **21.3** | 2.69 | **0.040** | **0.036** | **0.019** |
+| Q4_K_M | 21.7 | 1.98 | 0.089 | 0.072 | 0.042 |
+
+- **Keeping every tensor outside the routed experts in Q8_0 (2.7 GB) matters most:** at equal size those files are
+  1.6–2.2× closer than llama.cpp's mixes (Q5_K_M, Q4_K_M, which round the dense tensors to 4–6 bits). The
+  importance matrix adds 25–29 % for K-quant experts and nothing for Q4_0 experts.
+- **The dense tensors are ~75 % of a decoded token's bytes**, since a token reads 8 of 256 experts per layer, so the
+  closer files read more per token. The rig decides what that costs.
+- **For the rig's agent check:** the makers' Q8_0 (nine cards, est. 44–46 GB with the full context) and P-Q5 first;
+  PK-Q4-i as the five-card file and for two copies on nine cards.
+
 ## What's next
 
-1. **A first rig run with no new code**: bartowski's Q4_0 and the makers' Q4_K_M on five cards, stock llama.cpp against
-   the v2 engine ([Q159](../../quants/experiments.md#registry)).
+1. **The agent check on the v2 engine**: the makers' Q8_0 and P-Q5, then PK-Q4-i
+   ([Q159](../../quants/experiments.md#registry)); bartowski's Q4_0 stays the speed baseline if fetched.
 2. **The Pascal Q6_K and Q4_K kernels** ([Q101, Q149](../../quants/experiments.md#registry)), shared with Qwen3.6.
 3. **Hybrid-model support** for the on-card attention mask and pipelined speculation, also shared with Qwen3.6: built,
    rig timing next ([Q162](../../quants/experiments.md#registry)).
