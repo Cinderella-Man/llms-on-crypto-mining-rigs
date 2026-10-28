@@ -198,10 +198,10 @@ not a general-purpose one: offline on chat, code and edit requests (Q51) it gain
    the guesses that came from the store. The store is used with the default guesser (`--pipe-guess cont`) and needs
    `--pipe-depth` (pipelined decoding) on.
 
-## Where this stopped and next steps
+## Where this stopped (2026-10-28)
 
-All three measurements are done: the offline estimate (registry Q200), the two live arms (Q201) and the paired replay
-(Q202), whose decision rule was set before it ran:
+**Done.** All three measurements: the offline estimate (registry Q200), the two live arms (Q201) and the paired replay
+(Q202). The replay's decision rule was set before it ran, and the result picked the first row:
 
 | Paired ratio, store / release line | Decision |
 |---|---|
@@ -209,19 +209,66 @@ All three measurements are done: the offline estimate (registry Q200), the two l
 | interval includes 1.00 | the store is not shown to help on the agent check: it does not go into the release line |
 | interval entirely above 1.00 | do not ship it: the store's lookups cost host time the model does not count |
 
-Next:
+The tools are in the repository: `datastore_corpus.py --sessions`, `store_agentic.py`, `chain.py`,
+`heldout_check.py`, and `release_check.sh`'s replay mode with `replay.py pick --task-set`. The data and scripts are in
+[docs/data/2026-10-27_answer_store](../data/2026-10-27_answer_store/README.md).
 
-1. The owner decides on publishing the store next to Flint-Pascal-Q5 on Hugging Face, with `LICENSE`, `LICENSES/` and
-   `NOTICE` as in [Publishing the store](#publishing-the-store), and on adding `--pipe-store` to v2.1's documented
-   command line.
-2. The host's time per store lookup on the Celeron, which the model leaves out: measure it first. If it is a real
-   part of the gap between the model's +4.3 % and the measured +1.4 %, a cheaper lookup (fewer suffix-array probes per
-   guess) raises the gain without new data.
-3. A larger store from later data runs: about +0.4 % per doubling of its sessions in the model, so less on the rig.
-4. The store on the USB stick instead of the internal disk: not measured.
-5. Flint's MTP head behind the store, once one guess costs less (the cheaper guess, [drafter.md](../drafter.md)
-   section 8, item 0): the head takes the positions the store and the request's own counts leave. The paired replay
-   (`run/rig_replay.sh`, the same six traces) measures any such setup against the release line on identical tokens.
+**Half-done.** Nothing measured is half-done. Not done yet: the store is not published, and `--pipe-store` is not in
+v2.1's documented command line. Both wait on the owner's decision.
+
+**Next steps, in order:**
+
+1. **Publish the store** (on the owner's yes). Put a folder together holding `agentic-run1.pstore`, a `SHA256SUMS`
+   line, `LICENSE` (Apache-2.0), `LICENSES/Python-2.0.txt`, `LICENSES/Apache-2.0.txt` and a `NOTICE`. The last three
+   are copied from the session dataset's export (`export/hf/` of [bench/agentic_data](../../bench/agentic_data/README.md)),
+   with the NOTICE's first paragraph saying the file holds the token ids of Flint's generated text. Add a section to
+   the model card with [Using it](#using-it-miner-llama-v20-no-new-engine), then upload:
+
+   ```bash
+   sha256sum agentic-run1.pstore > SHA256SUMS
+   hf upload CinderellaMan/Flint-Pascal-Q5-GGUF <that folder> answer-store
+   ```
+
+2. **Add `--pipe-store` to v2.1's documented command line** (README, the Flint model page, the release notes), with
+   +1.4 % on the agent check as its number.
+3. **Measure the host's time per store lookup** on the rig's Celeron, which the model leaves out. This needs a timing
+   mode in [datastore.cpp](../../bench/ngram_replay/datastore.cpp) (it counts probes today): time `ds_longest` on the
+   contexts of the six replay traces, on the rig with nothing else running. If the lookups take a real share of a
+   token's 22.6 ms, a cheaper lookup (fewer suffix-array probes per guess) raises the gain without new data.
+4. **A store from more sessions**, once later data runs export (the model gives ~+0.4 % per doubling, so expect less on
+   the rig). Build it with [build_stores.sh](../data/2026-10-27_answer_store/run/build_stores.sh) (`STORES=full`, `RUN` =
+   the new export), then rerun the paired replay with the new file in place of the store arm's:
+
+   ```bash
+   ENV_FILE=<release.env> STORE_DIR=<the new store's folder on the rig> \
+     REPLAY_LOG=<client folder>/out-store-base/proxy.jsonl CLIENT_ROOT=<client folder> OUT=replay2 \
+     bash docs/data/2026-10-27_answer_store/run/rig_replay.sh
+   ```
+
+   (`rig_replay.sh` checks the store's SHA-256 against this store's; change the hash in the script for a new file.)
+5. **The store on the USB disk** instead of the internal disk: the same replay with `STORE_DIR` on the model disk.
+6. **Flint's MTP head behind the store**, once one guess costs less (the cheaper guess, [drafter.md](../drafter.md)
+   section 8, item 0). The same six traces with `--pipe-guess staircase --pipe-draft <head> --pipe-store <store>` as
+   one more arm against the store arm: add the arm to `rig_replay.sh`'s `case`.
+
+**Open questions:**
+
+- Why the model is ~3× too optimistic (+4.3 % against +1.4 %): host time per lookup (step 3), or the model's general
+  optimism (it gives `cont` 1.87× where the rig measures 1.54×).
+- Whether the gain holds for Flint-Pascal-Q5 and the 4-bit files. They decode faster, so a fixed host cost per lookup
+  weighs more. Not measured.
+- Whether the writer matters: 93 % of the store's sessions were written by the makers' NVFP4 file in vLLM, and the rig
+  runs Q8_0.
+- Card counts other than nine: not measured.
+
+**Kill criteria:**
+
+- A new store, setting or placement replaces this one only if its paired replay against this store's arm has an
+  interval entirely below 1.00 on the same six traces.
+- The store leaves the documented command line if a later release line's paired replay with and without it gives an
+  interval that includes 1.00.
+- Step 3 stops if the lookups take under ~1 % of a token's time: the gap is then the model's, and only data or a
+  different guesser can add more.
 
 ## Reproduce
 
