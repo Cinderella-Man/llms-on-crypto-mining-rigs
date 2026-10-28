@@ -3,7 +3,8 @@
 Miner Llama v3's first kernels for the 2- and 3-bit expert formats of Ornith-1.5-122B's files (registry row Q166):
 the Pascal matrix-vector kernels of `mmvq-pascal` extended to IQ2_S and IQ3_XXS, on the fork's branch
 `pascal-p106-v3-iqmmvq` (off `pascal-p106-v3`, the v2.0 release `37e717ff6`). Round 1 wrote and checked them;
-round 2 timed 11 tuning variants on a P106 and made the fastest the default. The result is in
+round 2 timed 11 tuning variants on a P106 and made the fastest the default, which generates 1.17× faster than
+v2.0 on the agent check. The result is in
 [the Ornith benchmark](../../benchmarks/2026-10-27-ornith-122b.md#what-v3-needs-for-ornith) and the registry row.
 
 ## What the kernels do
@@ -90,6 +91,11 @@ UD-Q2_K_XL (gate/up: 18 IQ2_S and 14 IQ3_XXS layers; down: 7 and 25), one card's
 - **Same output as round 1 on the rig:** the default build `ea55c7865` gives build B's two identity hashes on
   UD-Q2_K_XL (`3e9d790a7c1e`, `1cbdc446d9ad`; [decode_ab.csv](decode_ab.csv)), at 11.2 and 13.5 tok/s against B's
   12.2 and 11.1 (single short runs).
+- **On the agent check** (UD-Q2_K_XL, nine cards, v2.0's line; `ud-v3` in
+  [the Ornith data](../2026-10-27_ornith/README.md), tables in `agent/ud-v3/` there): 12/12 tasks, generation 11.3
+  against v2.0's 9.7 tok/s: 18,227 tokens in 1,615 s of decoding against 15,120 in 1,563 s, 88.6 against 103.4 ms per
+  generated token (1.17×), as the profile predicts. Minutes per task tie (36.0 over the twelve tasks on both) because
+  this run's answers were 21 % longer; one run at temperature 0.6 per build does not resolve the per-task gain.
 
 ## Attention at depth (registry Q210)
 

@@ -1,15 +1,17 @@
 # Ornith-1.5-122B on nine P106 cards: agent check, memory projections, probes and power (2026-10-27)
 
 The first rig run of Ornith-1.5-122B (registry row Q158): llama.cpp's own memory projection for 16 configurations,
-single-request probes of eight server lines, the agent check on six lines (with AtomicChat's AD-IQ3_XXS-IQ2_S file,
+single-request probes of eight server lines, the agent check on seven lines (with AtomicChat's AD-IQ3_XXS-IQ2_S file,
 stock llama.cpp and Miner Llama v2.0, each with and without the model's MTP head; with Unsloth's UD-Q2_K_XL, stock
-and v2.0), GPU power and energy per task (AD lines), the two GGUF files' tensor layouts and v2.0's decode profile. The results are in [the Ornith benchmark](../../benchmarks/2026-10-27-ornith-122b.md) and on
+and v2.0, and v2.0 with the IQ2_S/IQ3_XXS kernels of registry row Q166 on 2026-10-28), GPU power and energy per
+task (AD lines), the two GGUF files' tensor layouts and v2.0's decode profile. The results are in
+[the Ornith benchmark](../../benchmarks/2026-10-27-ornith-122b.md) and on
 [the model page](../../../models/ornith-1.5-122b/README.md).
 
 ## More results
 
 - **The harness rates every agent line "Overall: NO-GO", on host memory.** Its memory check asks for at least 600 MB
-  available and no swap growth; the six lines kept 421–595 MB available at their lowest and swapped ~300 MB more
+  available and no swap growth; the seven lines kept 421–595 MB available at their lowest and swapped ~300 MB more
   during the run. Four lines also fail the proxy-row check, each on a task that ran into the 12-minute cap (the
   request in flight at the cap has no reply).
 
@@ -21,6 +23,7 @@ and v2.0), GPU power and energy per task (AD lines), the two GGUF files' tensor 
 | v2.0 + MTP | 421 MB | 354 → 652 MB | NO-GO (scale-generator) |
 | UD-Q2_K_XL, stock (`ud-stock`) | 564 MB | 356 → 659 MB | NO-GO (scale-generator) |
 | UD-Q2_K_XL, v2.0 (`ud-v2`) | 495 MB | 359 → 660 MB | GO |
+| UD-Q2_K_XL, v2.0 + Q166's kernels (`ud-v3`, `ea55c7865`) | 490 MB | 345 → 649 MB | GO |
 
 - **GPU energy (the nine cards, from `nvidia-smi` every 10 s):** 270–295 W while tasks run, ~90 W while the server
   loads. On the six tasks both passed, stock used 109.0 Wh and v2.0 80.6 Wh (1.35× less); per generated token on the
@@ -91,6 +94,10 @@ CLIENT=<client> CLIENT_WORK=<folder on the client> AD=<rig path> STOCK=<stock ll
 CLIENT=<client> CLIENT_WORK=<folder on the client> AD=<rig path> UD=<rig path of the UD file> STOCK=... V2=... \
   UD_STOCK_LINE="-b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off" UD_V2_LINE="-b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off" \
   OUT=agent CANDS="ud-stock ud-v2" bash docs/data/2026-10-27_ornith/run/agent_ornith.sh
+
+# v2.0 with the IQ2_S/IQ3_XXS kernels (docs/data/2026-10-27_iq_kernels, build ea55c7865), the same line
+CLIENT=... CLIENT_WORK=... AD=... UD=... STOCK=... V2=... V3=<rig path of that build's llama-server> \
+  UD_V2_LINE="-b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off" OUT=agent CANDS=ud-v3 bash docs/data/2026-10-27_ornith/run/agent_ornith.sh
 ```
 
 `fit_projection.csv` and `serve_probe.csv` are those two scripts' logs turned into tables; `agent_power.csv` comes
