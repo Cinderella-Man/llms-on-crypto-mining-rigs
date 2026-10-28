@@ -46,6 +46,34 @@ KLD against BF16, 80 × 512 tokens of wikitext-2, one GPU set (two RTX 3080 and 
   points).
 - Both are as close to Q8_0 as Q8_0 with F16 routers is. p065's same top token is again at the edge of noise.
 
+## On the rig (2026-10-28)
+
+The rig: nine P106-090 cards. The build: Miner Llama v2.0 (`37e717ff6`), release line `-b 512 -ub 128
+-ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4`, 262,144 tokens of context. Tests through
+[bench/agent_check/release_check.sh](../../../bench/agent_check/release_check.sh) (`run/rig_test.sh`).
+
+**Paired replay.** The six recorded agent-check traces of the answer store's control arm were replayed to Q8_0 and then
+to p065. The prompts and seeds were the same, and replies were capped at their recorded lengths. 36 requests per arm;
+45,093 and 45,091 prompt tokens processed; 20,544 and 21,196 tokens generated (the files differ, so the replies do
+too). `replay.md`, ratios to Q8_0 with 95 % intervals over traces:
+
+| | ms per generated token | ms per prompt token | minutes for the same work |
+|---|---|---|---|
+| Q8_0 | 22.92 | 5.14 | 11.8 |
+| p065 | 21.58 | 5.15 | 11.4 |
+| **p065 / Q8_0** | **0.941 (0.930–0.980)** | 1.002 (0.997–1.008) | 0.963 (0.950–0.992) |
+
+- **p065 decodes 6.3 % faster than Q8_0** (1 / 0.941) for 11.0 % fewer bytes per token: weight reading is a little
+  over half of a decoded token's time on these cards.
+- Prompt processing is unchanged.
+- Agent sessions take 3.7 % less time for the same work, since decode is part of each session and prompts the rest.
+
+**Live agent check of p065** (12 bug-fix tasks with real tool runs, `live-table.md`): 12 / 12 passed, 47.1 tok/s
+generation, 25.9 minutes for all tasks, 0 malformed of 91 tool calls, no runaways. Q8_0 on the same build and settings
+has scored 12 / 12 at 46.5 tok/s and 45.0 tok/s in earlier live runs (registry Q201's same-slot control and the v2.0
+release).
+Live runs vary by about ±4 %, which is why the paired replay carries the speed result.
+
 **What the switches cost** (KLD change against q8r; scores in `kld.tsv`, bytes in `deltas.tsv`):
 
 | Group (layers) | 0–8 | 9–16 | 17–24 | 25–32 | 33–40 | 41–48 |
@@ -71,7 +99,11 @@ so single costs under ~0.002 are within that noise.
 | `solve.tsv` | the frontier over bytes read per token: for each saving (MB), the least predicted KLD and its switches |
 | `solve-file.tsv` | the same over file bytes |
 | `solve-picks.tsv` | the picks at KLD ≤ q8r + 0.003 / 0.0065 / 0.010 and at files ≤ 33 / 36 / 39 GB |
-| `run/run.sh` | the runs: push, deltas, score (detached), collect, solve, fetch |
+| `rig/replay.md` | the paired replay's summary: per arm the cost per prompt and generated token, ratios to Q8_0 with 95 % intervals |
+| `rig/replay.jsonl` | every replayed request: trace, index, sampling, prompt and cache tokens, generated tokens, timings (no text) |
+| `rig/live-table.md`, `rig/live-attempts.csv`, `rig/live-turns.csv` | the live agent check of p065: the summary row, one row per task, one row per turn |
+| `run/rig_test.sh` | the rig run: the paired replay (Q8_0, then p065) and the live arm |
+| `run/run.sh` | the runs: push, deltas, agent_base, score (detached), collect, solve, fetch, relay |
 | `run/score.sh` | compose each item from the base and donor, score it with the flags of every Flint mix score, delete it |
 | `run/near_q8.py` | the switches, composing, byte deltas, log parsing and the dynamic program |
 
