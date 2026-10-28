@@ -39,8 +39,8 @@ break-even and guess order, options, the agent-check replay, the next cuts).
   options (commits `5462d458a`, `72552ee12`), built by `run/build.sh` (CUDA 12.9, compute capability 6.1).
 - **Agent check requests:** the three arms of the first heads' run (release line, nine-card head, 3–12-card head), 204
   requests: prompts and replies from the agent check's proxy log, rendered with Flint's own chat template
-  (`agent_tokens.py`); the replies hold 129,890 tokens (the server counted 113,440 generated: the template renders tool
-  calls a little differently from Flint's own output).
+  (`agent_tokens.py`); the replies hold 129,890 tokens: in 203 requests the server's own count minus the stop token
+  (113,440 counted), and one request of 16,662 tokens that the proxy log holds no count for.
 - **Held-out sessions:** the 40 sessions of held-out modules of agentic run 1 and the head's per-position scores from
   `score.py` (inverse-CDF coupling, as served).
 - **Paired replay (2026-10-28):** six recorded traces of the release line's agent check (the answer store's control
