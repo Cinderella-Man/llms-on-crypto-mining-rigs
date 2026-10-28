@@ -87,13 +87,40 @@ UD-Q2_K_XL (gate/up: 18 IQ2_S and 14 IQ3_XXS layers; down: 7 and 25), one card's
   that start with `MUL_MAT_ID` ([run/tune_rig_fused.sh](run/tune_rig_fused.sh)). Weights are random bytes
   (`GGML_TEST_RAW_QUANT=1`, fork commit `82661fcad`): quantizing 400 M random values to IQ2_S per case takes the rig's
   2-core Celeron many minutes, and perf mode does not check values.
+- **Same output as round 1 on the rig:** the default build `ea55c7865` gives build B's two identity hashes on
+  UD-Q2_K_XL (`3e9d790a7c1e`, `1cbdc446d9ad`; [decode_ab.csv](decode_ab.csv)), at 11.2 and 13.5 tok/s against B's
+  12.2 and 11.1 (single short runs).
+
+## Attention at depth (registry Q210)
+
+Build B on UD-Q2_K_XL (`-c 49152 -ub 512 -ts 8,6,5,5,5,4,5,6,6`, f16 KV) under `GGML_CUDA_PROFILE`: a fresh
+39,448-token prompt, then 128 decoded tokens after it ([run/attn_depth.sh](run/attn_depth.sh),
+[decode_profile_ud_39k.txt](decode_profile_ud_39k.txt)), against the same build's short-context profile
+([decode_profile_ud_iq_on.txt](decode_profile_ud_iq_on.txt); both in [attn_depth.csv](attn_depth.csv)):
+
+| GPU time per decoded token, summed over the nine cards | Short context | After 39,448 tokens |
+|---|---|---|
+| Attention (FLASH_ATTN_EXT, 12 layers) | 1.11 ms (1.1 %) | **45.95 ms (32.2 %)** |
+| Expert products (MUL_MAT_ID) | 41.94 ms | 40.69 ms |
+| Dense products (MUL_MAT) | 36.25 ms | 36.61 ms |
+| Gated DeltaNet (36 layers) | 4.65 ms | 4.44 ms |
+| All | 98.81 ms | 142.87 ms |
+
+- **Attention grows by ~1.17 ms per 1,000 tokens of context and is a third of a token at 39k.** Each of the 12
+  attention layers reads 81 MB of f16 KV per token there (2 KV heads of 256 for 32 query heads, 2 KiB per position) in
+  ~3.8 ms: ~21 GB/s, a ninth of the card's memory bandwidth. Everything else stays where it was.
+- **For the agent check it is small:** its turns end at 4.6k tokens (median) to 7.5k (deepest), so attention is ~6 %
+  of a token there. Long agent sessions reach 30–50k, where a decode-attention kernel that reads the cache once per KV
+  head at ~100 GB/s would take ~10 ms instead of 46 (est. a 1.3× faster token at 40k); q8_0 KV halves the bytes again.
+- The run's own speeds, with the profiler's per-group timing on: the prompt read at 45.1 tok/s (877 s), decode at
+  6.62 tok/s. The second request restored a context checkpoint instead of reading the prompt again.
 
 ## Files
 
 | File | What |
 |---|---|
 | `correctness.md` | test-backend-ops pass counts per operation and type, native and compute 6.1 code on a V100; sanitizer runs; round 2's default on a P106 |
-| `decode_ab.csv` | per line (v2.0, builds A and B, A with the new kernels off): fresh prompt tok/s, next-turn first token, decode at 16k, the two identity prompts' output hash (first 12 hex digits of MD5) and tok/s, fullest card's MiB |
+| `decode_ab.csv` | per line (v2.0, builds A and B, A with the new kernels off, round 2's default with the identity prompts only): fresh prompt tok/s, next-turn first token, decode at 16k, the two identity prompts' output hash (first 12 hex digits of MD5) and tok/s, fullest card's MiB |
 | `kernel_profile_ud.csv` | per IQ launch group: layers, weights and bytes per token, ms per token off and on, speedup, GB/s and ps per weight |
 | `decode_profile_ud_iq_on.txt`, `decode_profile_ud_iq_off.txt` | [scripts/prof_summary.py](../../../scripts/prof_summary.py) on the two profiled runs (build B, ~384 one-token steps each): per card, per first op, per weight type, per launch group |
 | `registers.md` | registers, stack bytes and shared memory per kernel for compute 6.1, builds A and B; round 2's variants |
@@ -105,7 +132,9 @@ UD-Q2_K_XL (gate/up: 18 IQ2_S and 14 IQ3_XXS layers; down: 7 and 25), one card's
 | `run/tune_build.sh`, `run/tune_rig.sh` | round 2: tuning variants of test-backend-ops, timed with `test-backend-ops perf` on card 0 (expert down, dense) |
 | `run/tune_rig_fused.sh` | round 2: the fused gate/up per variant, under `GGML_CUDA_PROFILE` |
 | `run/tune_table.py` | round 2: the two rig logs to `tune_round2.csv` and `tune_round2.md` |
-| `run/attn_depth.sh` | attention's share of a decoded token after a ~40k-token prompt, under `GGML_CUDA_PROFILE` (next rig slot) |
+| `attn_depth.csv` | GPU ms per decoded token by first op, short context against 39,448 tokens (build B, UD-Q2_K_XL) |
+| `decode_profile_ud_39k.txt` | [scripts/prof_summary.py](../../../scripts/prof_summary.py) on the 39k run (~129 one-token steps): per card, per first op, per weight type, per launch group |
+| `run/attn_depth.sh` | attention's share of a decoded token after a ~40k-token prompt, under `GGML_CUDA_PROFILE` |
 
 ## How it was made
 

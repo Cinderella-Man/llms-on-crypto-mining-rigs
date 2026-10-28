@@ -1,0 +1,8 @@
+first_op,short_context_ms_per_token,ctx_39448_ms_per_token
+FLASH_ATTN_EXT,1.11,45.95
+MUL_MAT_ID,41.94,40.69
+MUL_MAT,36.25,36.61
+GATED_DELTA_NET,4.65,4.44
+GET_ROWS,3.93,3.82
+RMS_NORM,2.44,2.54
+all launch groups,98.81,142.87

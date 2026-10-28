@@ -1,0 +1,68 @@
+1881 device evals: 1168 decode-sized (< 60.0 ms), 713 larger; ~129 decode steps
+decode: 142.87 ms of GPU time per token summed over cards (≈ 7.00 tok/s if the cards ran back to back with no gaps)
+per card, ms per token: 0:19.97 1:15.04 2:13.83 3:15.77 4:15.04 5:11.23 6:12.33 7:20.66 8:19.00
+
+by first op of the launch group (ms/token, share):
+    45.95  32.2 %  FLASH_ATTN_EXT
+    40.69  28.5 %  MUL_MAT_ID
+    36.61  25.6 %  MUL_MAT
+     4.44   3.1 %  GATED_DELTA_NET
+     3.82   2.7 %  GET_ROWS
+     2.54   1.8 %  RMS_NORM
+     1.17   0.8 %  CPY
+     1.15   0.8 %  ADD
+     1.13   0.8 %  SIGMOID
+     1.12   0.8 %  MUL
+     0.94   0.7 %  CONCAT
+     0.78   0.5 %  SOFT_MAX
+     0.51   0.4 %  SSM_CONV
+     0.47   0.3 %  SOFTPLUS
+     0.37   0.3 %  SILU
+
+by weight type (ms/token, share):
+    65.57  45.9 %  (no weights)
+    15.41  10.8 %  iq3_xxs
+    13.01   9.1 %  q4_K
+    11.42   8.0 %  iq2_s
+     8.65   6.1 %  q8_0
+     6.69   4.7 %  q5_K
+     6.27   4.4 %  iq2_xxs
+     6.04   4.2 %  q6_K
+     2.62   1.8 %  iq1_s
+     2.23   1.6 %  f32
+     1.97   1.4 %  iq2_xs
+     1.26   0.9 %  iq3_s
+     0.93   0.7 %  q2_K
+     0.80   0.6 %  q3_K
+
+top launch groups (ms/token, share, label):
+     9.17   6.4 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_s:3072x1024 ffn_up_exps:iq2_s:3072x1024
+     8.12   5.7 %  MUL_MAT_ID ffn_down_exps:iq3_xxs:1024x3072
+     7.29   5.1 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq3_xxs:3072x1024 ffn_up_exps:iq3_xxs:3072x1024
+     5.26   3.7 %  MUL_MAT output:q6_K:3072x248320
+     5.20   3.6 %  MUL_MAT+ADD ssm_out:q5_K:8192x3072
+     4.42   3.1 %  FLASH_ATTN_EXT node_4525
+     4.39   3.1 %  FLASH_ATTN_EXT node_3763
+     4.38   3.1 %  FLASH_ATTN_EXT node_4144
+     4.37   3.1 %  MUL_MAT attn_qkv:q4_K:3072x12288
+     4.18   2.9 %  FLASH_ATTN_EXT node_2620
+     4.16   2.9 %  FLASH_ATTN_EXT node_1477
+     4.05   2.8 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xxs:3072x1024 ffn_up_exps:iq2_xxs:3072x1024
+     3.65   2.6 %  FLASH_ATTN_EXT node_1096
+     3.55   2.5 %  FLASH_ATTN_EXT node_1858
+     3.54   2.5 %  FLASH_ATTN_EXT node_2239
+     3.54   2.5 %  FLASH_ATTN_EXT node_3001
+     3.39   2.4 %  FLASH_ATTN_EXT node_715
+     3.39   2.4 %  FLASH_ATTN_EXT node_334
+     3.37   2.4 %  FLASH_ATTN_EXT node_3382
+     3.16   2.2 %  MUL_MAT attn_gate:q4_K:3072x8192
+     2.62   1.8 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq1_s:3072x1024 ffn_up_exps:iq1_s:3072x1024
+     2.25   1.6 %  MUL_MAT_ID ffn_down_exps:iq2_s:1024x3072
+     2.22   1.6 %  MUL_MAT_ID ffn_down_exps:iq2_xxs:1024x3072
+     1.97   1.4 %  MUL_MAT_ID ffn_down_exps:iq2_xs:1024x3072
+     1.85   1.3 %  RMS_NORM+MUL norm
+     1.63   1.1 %  MUL_MAT ffn_gate_inp:f32:3072x256
+     1.59   1.1 %  MUL_MAT+MUL_MAT+SWIGLU ffn_gate_shexp:q4_K:3072x1024 ffn_up_shexp:q4_K:3072x1024
+     1.55   1.1 %  MUL_MAT attn_qkv:q8_0:3072x12288
+     1.47   1.0 %  MUL_MAT attn_q:q4_K:3072x16384
+     1.35   0.9 %  MUL_MAT attn_q:q8_0:3072x16384
