@@ -24,6 +24,7 @@ task (AD lines), the two GGUF files' tensor layouts and v2.0's decode profile. T
 | UD-Q2_K_XL, stock (`ud-stock`) | 564 MB | 356 → 659 MB | NO-GO (scale-generator) |
 | UD-Q2_K_XL, v2.0 (`ud-v2`) | 495 MB | 359 → 660 MB | GO |
 | UD-Q2_K_XL, v2.0 + Q166's kernels (`ud-v3`, `ea55c7865`) | 490 MB | 345 → 649 MB | GO |
+| Q212's N2P/N3P file, the low-bit build (`valid1`, `d7a75deb3`; [Q189](../2026-10-28_lowbit_rig/README.md)) | 563 MB | 350 → 651 MB | GO |
 
 - **GPU energy (the nine cards, from `nvidia-smi` every 10 s):** 270–295 W while tasks run, ~90 W while the server
   loads. On the six tasks both passed, stock used 109.0 Wh and v2.0 80.6 Wh (1.35× less); per generated token on the
@@ -49,7 +50,7 @@ task (AD lines), the two GGUF files' tensor layouts and v2.0's decode profile. T
 | `serve_probe.csv` | per server line: status, load seconds, MiB per card after loading, host MemAvailable after loading and after the requests, fresh prompt tok/s, next-turn first token, decode tok/s at 16k with MTP drafts and acceptances, and the two identity prompts' output hash (first 12 hex digits of MD5) and tok/s |
 | `header-Ornith-1.5-122B-AD-IQ3_XXS-IQ2_S.txt`, `header-Ornith-1.5-122B-UD-Q2_K_XL.txt` | [scripts/gguf_summary.py](../../../scripts/gguf_summary.py) on each file: metadata, tensor bytes per role and type, per block |
 | `decode_profile_v2.txt` | [scripts/prof_summary.py](../../../scripts/prof_summary.py) on v2.0's `GGML_CUDA_PROFILE` trace of the `v2-plain-prof` probe: ~591 one-token steps, GPU time per token per card, per first op, per weight type and per launch group |
-| `run/agent_ornith.sh` | the agent-check lines (`stock`, `v2`, `stock-mtp`, `v2-mtp` with the AD file; `ud-stock`, `ud-v2` and `ud-v3`, the IQ2_S/IQ3_XXS kernels' build, with UD-Q2_K_XL), with the harness's machine values as variables |
+| `run/agent_ornith.sh` | the agent-check lines (`stock`, `v2`, `stock-mtp`, `v2-mtp` with the AD file; `ud-stock`, `ud-v2` and `ud-v3`, the IQ2_S/IQ3_XXS kernels' build, with UD-Q2_K_XL; `valid1`, Q212's N2P/N3P file on the low-bit build), with the harness's machine values as variables |
 
 `fit_projection.csv`: per card the main model's memory (weights, context, compute) plus, with the MTP head, the extra
 model's context and compute (it shares the weights). Where llama.cpp printed its own "projected memory use" lines they

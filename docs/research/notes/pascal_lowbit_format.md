@@ -642,21 +642,29 @@ note and the proxy), Q185 (the types and the V100 check), Q186 and Q187 (the 122
   - File b against AD (same dense tensors) shows what the expert formats alone are worth: 16 % less KLD on wikitext,
     17 % on agent sessions and 13 % on code, for 1.7 GB more.
 
+- **On the rig** ([data](../../data/2026-10-28_lowbit_rig/README.md)):
+  - **Kernels (Q188).** N2P and N3P pass on the P106. At one token they read a weight in 3.8–4.7 ps, Q4_0's level and
+    close to the estimates (3.7 / 4.0). The down product is 1.5–1.7× faster than the tuned IQ kernels; the fused gate/up
+    is only 1.2–1.4× faster, because its fusion is slower than the two products alone.
+  - **Agent check (Q189).** Q212's file passes 12/12 and generates at 14.5 tok/s against UD-Q2_K_XL's 11.3 on the
+    tuned IQ kernels (69.0 against 88.6 ms per token), and the 12 tasks take 32.5 against 36.1 minutes. Its first token
+    per turn is slower (9.57 against 6.60 s): prompt processing (MMQ) is ~16 % slower, and later turns re-read more
+    of the prompt.
+  - Better KLD and faster decode for 3.7 GB more: route 2 beats route 1's best file on this rig.
+
 **Next, in order:**
-1. **The P106 run** (step 4, Q188): `run/rig_kernels.sh` with the `d7a75deb3` tarball. It checks correctness on the
-   card, including MMQ, and times the kernels at the IQ kernels' shapes and timing method. Compare the ps per weight with
-   the estimates (3.7 / 4.0) and with the tuned IQ kernels (6.67 / 7.07). If the gain is well under ~1.3×, the IQ
-   kernels (Q166) with an allocated IQ mix are the cheaper route. The perf cases at 2 and 4 tokens show whether MTP
-   verification needs separate work, as it does for the IQ kernels.
-2. **The agent check** (step 6, Q189) of Q212's file on the rig, against UD-Q2_K_XL with the IQ kernels, same context
-   and split. Use a build of this branch: it carries the v3 engine as of its cut, but not the IQ kernels, which its
-   files do not need. Q212's file takes 46.43 GB on the cards against UD's ~43 (my calc), so check the context it leaves.
-3. **A smaller mix if the cards need room:** UD's size is out of reach with these two formats, since all six down
+1. **The fused gate/up** (Q350): stage the two matrices one after the other, as the IQ kernels do. Est. ~3 ms less per
+   token.
+2. **Prompt processing and 2–4 tokens** (Q351, Q302): tune N2P/N3P's MMQ tiles, and hand 2–8-token products to
+   llama.cpp's kernel, which is faster there, until a Pascal kernel for them exists. MTP verification needs the latter.
+3. **A paired replay** (Q352) of Q189 against ud-v3, for per-token speed apart from answer length and for the turns
+   that re-read more of the prompt.
+4. **A smaller mix if the cards need room:** UD's size is out of reach with these two formats, since all six down
    groups at N2P still leave c at 44.86 GB. The knapsack's −1 GB pick is in the allocation data. Below that, add more
    steps in N2P/N3P's family (a 1.5–2-bit and a 4-bit register-table type), or K/IQ types for the early layers, where
    the cost per group is small.
-4. **To ship:**
-   - merge the branch into `pascal-p106-v3` after the rig numbers;
+5. **To ship** (Q303):
+   - merge the branch into `pascal-p106-v3`;
    - push it to the fork;
    - rewrite the file's `quantize.imatrix.file` key, which holds a local path;
    - publish the file with a model card that credits ik_llama.cpp's level tables (MIT).

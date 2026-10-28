@@ -1,0 +1,175 @@
+type	product	tokens	kernel	us_per_call	ps_per_weight
+n2p	expert gate 3072->1024	1	Pascal	105.2	4.18
+n2p	expert down 1024->3072	1	Pascal	117.15	4.66
+n2p	expert gate 3072->1024	2	Pascal	366.92	
+n2p	expert down 1024->3072	2	Pascal	659.98	
+n2p	expert gate 3072->1024	4	Pascal	852.83	
+n2p	expert down 1024->3072	4	Pascal	1743.59	
+n2p	dense 3072->1024	1	Pascal	21.28	6.76
+n2p	dense 1024->3072	1	Pascal	21.85	6.95
+n2p	dense 3072->8192	1	Pascal	104.74	4.16
+n2p	dense 3072->1024	2	Pascal	38.43	
+n2p	dense 1024->3072	2	Pascal	44.54	
+n2p	dense 3072->8192	2	Pascal	195.31	
+n2p	dense 3072->1024	4	Pascal	56.13	
+n2p	dense 1024->3072	4	Pascal	58.72	
+n2p	dense 3072->8192	4	Pascal	344.54	
+n3p	expert gate 3072->1024	1	Pascal	95.53	3.80
+n3p	expert down 1024->3072	1	Pascal	107.54	4.27
+n3p	expert gate 3072->1024	2	Pascal	358.6	
+n3p	expert down 1024->3072	2	Pascal	668.28	
+n3p	expert gate 3072->1024	4	Pascal	778.96	
+n3p	expert down 1024->3072	4	Pascal	1730.36	
+n3p	dense 3072->1024	1	Pascal	19.46	6.19
+n3p	dense 1024->3072	1	Pascal	20.49	6.51
+n3p	dense 3072->8192	1	Pascal	95.97	3.81
+n3p	dense 3072->1024	2	Pascal	34.78	
+n3p	dense 1024->3072	2	Pascal	37.28	
+n3p	dense 3072->8192	2	Pascal	165.77	
+n3p	dense 3072->1024	4	Pascal	51.77	
+n3p	dense 1024->3072	4	Pascal	52.83	
+n3p	dense 3072->8192	4	Pascal	286.42	
+iq2_s	expert gate 3072->1024	1	llama.cpp	279.81	11.12
+iq2_s	expert down 1024->3072	1	llama.cpp	438.04	17.41
+iq2_s	expert gate 3072->1024	2	llama.cpp	423.38	
+iq2_s	expert down 1024->3072	2	llama.cpp	436.53	
+iq2_s	expert gate 3072->1024	4	llama.cpp	842.76	
+iq2_s	expert down 1024->3072	4	llama.cpp	863.28	
+iq2_s	dense 3072->1024	1	llama.cpp	48.05	15.27
+iq2_s	dense 1024->3072	1	llama.cpp	73.6	23.40
+iq2_s	dense 3072->8192	1	llama.cpp	277.67	11.03
+iq2_s	dense 3072->1024	2	llama.cpp	53.89	
+iq2_s	dense 1024->3072	2	llama.cpp	89.24	
+iq2_s	dense 3072->8192	2	llama.cpp	319.11	
+iq2_s	dense 3072->1024	4	llama.cpp	88.61	
+iq2_s	dense 1024->3072	4	llama.cpp	164.36	
+iq2_s	dense 3072->8192	4	llama.cpp	592.17	
+iq3_xxs	expert gate 3072->1024	1	llama.cpp	329.86	13.11
+iq3_xxs	expert down 1024->3072	1	llama.cpp	469.85	18.67
+iq3_xxs	expert gate 3072->1024	2	llama.cpp	493.46	
+iq3_xxs	expert down 1024->3072	2	llama.cpp	520.12	
+iq3_xxs	expert gate 3072->1024	4	llama.cpp	971.27	
+iq3_xxs	expert down 1024->3072	4	llama.cpp	1019.85	
+iq3_xxs	dense 3072->1024	1	llama.cpp	53.49	17.00
+iq3_xxs	dense 1024->3072	1	llama.cpp	77.63	24.68
+iq3_xxs	dense 3072->8192	1	llama.cpp	327.01	12.99
+iq3_xxs	dense 3072->1024	2	llama.cpp	56.72	
+iq3_xxs	dense 1024->3072	2	llama.cpp	89.07	
+iq3_xxs	dense 3072->8192	2	llama.cpp	341.61	
+iq3_xxs	dense 3072->1024	4	llama.cpp	90.06	
+iq3_xxs	dense 1024->3072	4	llama.cpp	164.53	
+iq3_xxs	dense 3072->8192	4	llama.cpp	618.22	
+q2_K	expert gate 3072->1024	1	llama.cpp	157.16	6.24
+q2_K	expert down 1024->3072	1	llama.cpp	296.72	11.79
+q2_K	expert gate 3072->1024	2	llama.cpp	230.52	
+q2_K	expert down 1024->3072	2	llama.cpp	307.26	
+q2_K	expert gate 3072->1024	4	llama.cpp	456.69	
+q2_K	expert down 1024->3072	4	llama.cpp	602.75	
+q2_K	dense 3072->1024	1	llama.cpp	28.4	9.03
+q2_K	dense 1024->3072	1	llama.cpp	48.33	15.36
+q2_K	dense 3072->8192	1	llama.cpp	156.99	6.24
+q2_K	dense 3072->1024	2	llama.cpp	38.81	
+q2_K	dense 1024->3072	2	llama.cpp	78.88	
+q2_K	dense 3072->8192	2	llama.cpp	232.78	
+q2_K	dense 3072->1024	4	llama.cpp	86.07	
+q2_K	dense 1024->3072	4	llama.cpp	233.52	
+q2_K	dense 3072->8192	4	llama.cpp	580.12	
+q3_K	expert gate 3072->1024	1	llama.cpp	227.34	9.03
+q3_K	expert down 1024->3072	1	llama.cpp	359.2	14.27
+q3_K	expert gate 3072->1024	2	llama.cpp	389.77	
+q3_K	expert down 1024->3072	2	llama.cpp	430.01	
+q3_K	expert gate 3072->1024	4	llama.cpp	770.09	
+q3_K	expert down 1024->3072	4	llama.cpp	850.61	
+q3_K	dense 3072->1024	1	llama.cpp	36.95	11.75
+q3_K	dense 1024->3072	1	llama.cpp	53.37	16.97
+q3_K	dense 3072->8192	1	llama.cpp	226.11	8.98
+q3_K	dense 3072->1024	2	llama.cpp	46.85	
+q3_K	dense 1024->3072	2	llama.cpp	84.81	
+q3_K	dense 3072->8192	2	llama.cpp	284.04	
+q3_K	dense 3072->1024	4	llama.cpp	79.18	
+q3_K	dense 1024->3072	4	llama.cpp	164.85	
+q3_K	dense 3072->8192	4	llama.cpp	550.03	
+q4_0	expert gate 3072->1024	1	Pascal	96.96	3.85
+q4_0	expert down 1024->3072	1	Pascal	127.58	5.07
+q4_0	expert gate 3072->1024	2	Pascal	323.43	
+q4_0	expert down 1024->3072	2	Pascal	657.28	
+q4_0	expert gate 3072->1024	4	Pascal	743.9	
+q4_0	expert down 1024->3072	4	Pascal	1648.99	
+q4_0	dense 3072->1024	1	Pascal	22.07	7.02
+q4_0	dense 1024->3072	1	Pascal	26.13	8.31
+q4_0	dense 3072->8192	1	Pascal	97.35	3.87
+q4_0	dense 3072->1024	2	Pascal	36.9	
+q4_0	dense 1024->3072	2	Pascal	42.1	
+q4_0	dense 3072->8192	2	Pascal	153.42	
+q4_0	dense 3072->1024	4	Pascal	47.53	
+q4_0	dense 1024->3072	4	Pascal	53.15	
+q4_0	dense 3072->8192	4	Pascal	247.08	
+q8_0	expert gate 3072->1024	1	Pascal	174.11	6.92
+q8_0	expert down 1024->3072	1	Pascal	187.86	7.46
+q8_0	expert gate 3072->1024	2	Pascal	413.01	
+q8_0	expert down 1024->3072	2	Pascal	696.34	
+q8_0	expert gate 3072->1024	4	Pascal	921.24	
+q8_0	expert down 1024->3072	4	Pascal	1810.66	
+q8_0	dense 3072->1024	1	Pascal	35.22	11.20
+q8_0	dense 1024->3072	1	Pascal	35.72	11.36
+q8_0	dense 3072->8192	1	Pascal	175.24	6.96
+q8_0	dense 3072->1024	2	Pascal	48.32	
+q8_0	dense 1024->3072	2	Pascal	50.17	
+q8_0	dense 3072->8192	2	Pascal	208.68	
+q8_0	dense 3072->1024	4	Pascal	56.42	
+q8_0	dense 1024->3072	4	Pascal	59.75	
+q8_0	dense 3072->8192	4	Pascal	279.81	
+n2p	expert gate 3072->1024	1	llama.cpp	137.58	5.47
+n2p	expert down 1024->3072	1	llama.cpp	263.95	10.49
+n2p	expert gate 3072->1024	2	llama.cpp	246.43	
+n2p	expert down 1024->3072	2	llama.cpp	291.46	
+n2p	expert gate 3072->1024	4	llama.cpp	490.11	
+n2p	expert down 1024->3072	4	llama.cpp	577.28	
+n2p	dense 3072->1024	1	llama.cpp	25.4	8.07
+n2p	dense 1024->3072	1	llama.cpp	41.39	13.16
+n2p	dense 3072->8192	1	llama.cpp	137.55	5.47
+n2p	dense 3072->1024	2	llama.cpp	37.81	
+n2p	dense 1024->3072	2	llama.cpp	75	
+n2p	dense 3072->8192	2	llama.cpp	213.28	
+n2p	dense 3072->1024	4	llama.cpp	51.44	
+n2p	dense 1024->3072	4	llama.cpp	96.48	
+n2p	dense 3072->8192	4	llama.cpp	344.15	
+n3p	expert gate 3072->1024	1	llama.cpp	131.05	5.21
+n3p	expert down 1024->3072	1	llama.cpp	261.17	10.38
+n3p	expert gate 3072->1024	2	llama.cpp	240.67	
+n3p	expert down 1024->3072	2	llama.cpp	287.23	
+n3p	expert gate 3072->1024	4	llama.cpp	477.71	
+n3p	expert down 1024->3072	4	llama.cpp	569.41	
+n3p	dense 3072->1024	1	llama.cpp	22.56	7.17
+n3p	dense 1024->3072	1	llama.cpp	40.88	13.00
+n3p	dense 3072->8192	1	llama.cpp	130.04	5.17
+n3p	dense 3072->1024	2	llama.cpp	34.25	
+n3p	dense 1024->3072	2	llama.cpp	67.9	
+n3p	dense 3072->8192	2	llama.cpp	190.45	
+n3p	dense 3072->1024	4	llama.cpp	50.55	
+n3p	dense 1024->3072	4	llama.cpp	98.29	
+n3p	dense 3072->8192	4	llama.cpp	317.59	
+n2p	fused gate/up 3072->1024	1	Pascal	278.53	5.53
+n2p	fused gate/up 3072->1024	2	Pascal	669.70	
+n2p	fused gate/up 3072->1024	4	Pascal	1465.34	
+n3p	fused gate/up 3072->1024	1	Pascal	256.00	5.09
+n3p	fused gate/up 3072->1024	2	Pascal	555.01	
+n3p	fused gate/up 3072->1024	4	Pascal	1113.09	
+iq2_s	fused gate/up 3072->1024	1	llama.cpp	501.76	9.97
+iq2_s	fused gate/up 3072->1024	2	llama.cpp	799.74	
+iq2_s	fused gate/up 3072->1024	4	llama.cpp	1562.62	
+iq3_xxs	fused gate/up 3072->1024	1	llama.cpp	557.06	11.07
+iq3_xxs	fused gate/up 3072->1024	2	llama.cpp	912.38	
+iq3_xxs	fused gate/up 3072->1024	4	llama.cpp	1782.78	
+q4_0	fused gate/up 3072->1024	1	Pascal	199.68	3.97
+q4_0	fused gate/up 3072->1024	2	Pascal	744.45	
+q4_0	fused gate/up 3072->1024	4	Pascal	1774.59	
+q8_0	fused gate/up 3072->1024	1	Pascal	335.87	6.67
+q8_0	fused gate/up 3072->1024	2	Pascal	840.70	
+q8_0	fused gate/up 3072->1024	4	Pascal	1860.61	
+n2p	fused gate/up 3072->1024	1	llama.cpp	543.74	10.80
+n2p	fused gate/up 3072->1024	2	llama.cpp	497.66	
+n2p	fused gate/up 3072->1024	4	llama.cpp	982.02	
+n3p	fused gate/up 3072->1024	1	llama.cpp	538.62	10.70
+n3p	fused gate/up 3072->1024	2	llama.cpp	427.01	
+n3p	fused gate/up 3072->1024	4	llama.cpp	830.46	
