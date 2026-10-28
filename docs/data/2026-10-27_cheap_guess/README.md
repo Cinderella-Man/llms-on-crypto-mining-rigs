@@ -25,7 +25,10 @@ break-even and guess order, options, the agent-check replay, the next cuts).
 | `replay_served.tsv` | llama-server's guess counts per replay arm (as `served_guesses.tsv`) |
 | `replay_pair_check.txt` | `run/pair_check.py`: per trace and request the reply length, prompt tokens, cache hits, finish reason and tool calls agree across the two arms (0 of 36 differ) |
 | `replay_overhead.txt` | `cost_sim.py` with a longer guess and an extra cost per token: what it takes to reproduce the replay's −3.2 % |
-| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `curate.py` (these tables from the raw outputs) |
+| `profile_replay.md` | Q194, where the served cost goes: the paired replay of five traces with three arms, the release line (`base`), the head loaded and following the sequence without guessing (`taps`), the head (`stair`), all with the host trace on |
+| `profile_gpu.md` | `run/prof_compare.py` over the three arms' `GGML_CUDA_PROFILE_HOST` traces: GPU ms per generated token per card and graph evaluations |
+| `profile_served.tsv`, `profile_pair_check.txt` | the three arms' guess counts (`taps` guesses exactly as `base`), and the same-tokens check (0 of 29 requests differ) |
+| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `prof_compare.py` (GPU time per card from host traces), `q310.sh` (the same replay on three RTX 3090s), `curate.py` (these tables from the raw outputs) |
 
 ## How it was made
 
@@ -54,6 +57,12 @@ break-even and guess order, options, the agent-check replay, the next cuts).
   conversion then held ~424 MB at once); it ran again on `1d07352bf`, which converts in 8 MB pieces and changes nothing
   else, so `base` (on `72552ee12`) and `stair` generate the same tokens (`replay_pair_check.txt`). The cache carries
   over between traces in the same order in both arms.
+- **Where the served cost goes (Q194, 2026-10-28):** `run/replay.sh` with `ARMS_LIST="base taps stair" PROFILE=1`, five of
+  the six traces (scale-generator left out: 29 requests, 7,383 generated tokens), build `366478ef6` (adds
+  `LLAMA_PIPE_DRAFT_TAPS_ONLY=1`: the server loads the head and follows the sequence, the taps of every token and the
+  prompt's final states, but never guesses and keeps the release line's guesses). The host trace costs a lot on the rig's
+  2-core host: the release line takes 49.4 ms per generated token with it against 22.85 without, so the arms' ratios
+  are larger than the served ones; the GPU times per card (`profile_gpu.md`) are the cleaner split.
 - Offline steps on a separate CPU machine (Docker, low CPU priority); every timing on the rig.
 
 Commands (from the repository root of a checkout that reaches the rig and the build machine; the values below are
@@ -83,6 +92,14 @@ build with the same client folder, so the report pairs the two labels:
 
 ```bash
 ARMS_LIST=stair NAME=llama.cpp-20261028-1d07352bf-pascal-p106-v3-cheapguess ... bash docs/data/2026-10-27_cheap_guess/run/replay.sh
+```
+
+Q194 (the three arms with the host trace, five traces), then the per-card GPU times:
+
+```bash
+ARMS_LIST="base taps stair" PROFILE=1 REPLAY_DIR=out-cheap-guess-profile REPLAY_TRACES=<the six without scale-generator> \
+    NAME=llama.cpp-20261028-366478ef6-pascal-p106-v3-cheapguess ... bash docs/data/2026-10-27_cheap_guess/run/replay.sh
+python docs/data/2026-10-27_cheap_guess/run/prof_compare.py --tokens 7383 base=out/prof-base.csv taps=out/prof-taps.csv stair=out/prof-stair.csv
 ```
 
 Licence: the tables and scripts are under this repository's MIT licence ([LICENSE](../../../LICENSE)); the head's

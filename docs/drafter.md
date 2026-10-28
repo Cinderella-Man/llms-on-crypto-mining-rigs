@@ -765,6 +765,29 @@ card 1 with Flint's are the candidates, none measured yet; the prompt side adds 
 copy. The first start of the head's server ran out of host memory while converting the output layer (~424 MB at
 once); the engine now converts in 8 MB pieces (`1d07352bf`).
 
+**Where the served cost goes (Q194).** A third arm loads the head and follows the sequence, the taps of every token
+and the prompt's final states, but never guesses (`LLAMA_PIPE_DRAFT_TAPS_ONLY=1`, `366478ef6`; its guesses are the
+release line's, the same counts). Five of the traces, all three arms with the per-evaluation host trace
+(`GGML_CUDA_PROFILE_HOST`), which on the rig's 2-core host makes every token ~2.2× slower (49.4 ms per generated token
+for the release line), so the ratios below are larger than served:
+
+| Arm against the release line | ms per generated token | ms per prompt token | GPU ms per generated token, all cards |
+|---|---|---|---|
+| following, no guesses | 1.036 (1.005–1.081) | 1.52 | 114.7 against 110.5 (+3.9 %) |
+| the head | 1.079 (1.041–1.124) | 1.51 | 120.6 (+9.2 %) |
+
+- **Following** costs about as much as guessing. Card 1's GPU time rises by 1.9 ms per generated token, from the
+  prompt positions committed in bulk to the head (~930 extra graphs), and the last card's by 0.9 ms (the final state of
+  every prompt position); the prompt side is where most of it lands.
+- **Guessing:** card 1 ran 9,387 head launches of ~1.65 ms of GPU time each for 3,163 guesses that a token used
+  (26.6 % right): two launches in three go to waste, because the server launches the head after every submission whose
+  next position the lookups cannot guess, also when no pipe slot will take the guess. The other cards evaluate ~5 %
+  more tokens (the wrong guesses).
+- **What can go, in order of size:** the wasted launches (launch only when a slot will take the guess), the prompt-side
+  work (only the head's 4,096 newest positions need committing; long prompts commit all), the taps' copies (on a copy
+  stream instead of each card's compute stream). The simulator's ceiling with all of it gone, at the head's served
+  acceptance (0.248): +5.2 % at 2.93 ms per guess, +5.6 % at 2.2 ms; at 0.30 +7.7 %.
+
 ## 7. Lessons and pitfalls
 
 | Lesson | Evidence |
@@ -800,11 +823,11 @@ once); the engine now converts in 8 MB pieces (`1d07352bf`).
    check's own requests puts the break-even at ~3 ms per guess on nine cards, and with the head after the request's
    2-token continuations expects +2–3 % at ~19 % acceptance (+8 % at 30 %). A spare card helps only above 3 ms. **On
    the agent check (paired replay, 2026-10-28) the overnight head is right 24.8 % of the time as predicted, but the
-   release line is 3.2 % slower with it**: a guess costs more in the server than on an idle card. Next: measure that
-   cost in the served pipeline (`GGML_CUDA_PROFILE_HOST` on card 1 with and without the head; an arm with the taps but
-   no head guesses, to separate the copies on every card from the guess), then remove the largest part (the taps'
-   copies off the cards' streams, or fewer of them; the head on a spare card if the contention on card 1 is it). Then
-   the kernels, by size: an 8-column Pascal kernel for the 8-row products (~0.9 ms at ~60 GB/s), the depth
+   release line is 3.2 % slower with it**: a guess costs more in the server than on an idle card. Q194 splits that
+   cost about evenly between following the sequence (the prompt's bulk commits and final states, the taps) and the
+   guesses, two thirds of whose launches go to waste. Next: launch only when a pipe slot will take the guess, commit
+   only the head's 4,096 newest prompt positions, move the taps' copies to a copy stream; the simulator's ceiling with
+   all of that gone is +5.2 % at the served acceptance of 0.248. Then the kernels, by size: an 8-column Pascal kernel for the 8-row products (~0.9 ms at ~60 GB/s), the depth
    projections as one product per projection over rows grouped by depth (0.36 ms), an attention kernel for a few rows
    (0.34 ms at 26 GB/s). More acceptance is worth more than any of these: at ≤ 3 ms, 0.30 instead of 0.20 adds ~5 %.
 1. ~~M2 round and per-card-count scores~~: done 2026-10-25 09:17 (section 6); R2-9 for nine cards, R2-gen for six and
