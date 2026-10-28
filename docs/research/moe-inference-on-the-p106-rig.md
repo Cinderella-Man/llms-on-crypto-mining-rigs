@@ -299,7 +299,7 @@ Every row below is unverified on this rig. "Source" is where the claim or its ke
 | C51 | 25 % REAP pruning keeps coding but costs knowledge and multilingual ability, and costs more perplexity than going from Q4 to Q3 | [REAP paper](https://arxiv.org/html/2510.13999v2); [MoEXBench](https://arxiv.org/html/2608.21693v1) | MC average −13 % at 50 %; +27 % PPL at 20 % pruning | E3.4 |
 | C52 | Halving active experts cuts only ~11 % of bytes for Qwen3.5-122B but 20–40 % for Hunyuan/MiniMax-REAP, and 4–6 experts suffice for chat on Nemotron-H | Large-MoE note §6; [#19528](https://github.com/ggml-org/llama.cpp/issues/19528) | Non-routed tensors dominate the 122B's reads; informal reporter test | E2.8 |
 | C53 | ik's `-ser` buys 5–12 % decode for ~1–2 % PPL | [ik PR #239](https://github.com/ikawrakow/ik_llama.cpp/pull/239) | Measured on DeepSeek-Lite on an RTX 4080 | E2.12, E3.8 |
-| C54 | Qwen3.8-Flash-Next's n-gram table can stay off-GPU and the model runs with 3.7 GiB of RAM | [ISTA-DASLab card](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF); [llama-arch.cpp](https://github.com/ggml-org/llama.cpp/blob/master/src/llama-arch.cpp) | Embedding-class tensors live on the CPU; per-token page-faults unknown | E3.10 |
+| C54 | Qwen3.8-Flash-Next's n-gram table can stay memory-mapped on disk, so the model runs with the rig's 3.7 GiB of RAM | [ISTA-DASLab card](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF); llama.cpp's lazy tensor reads ([#27837](https://github.com/ggml-org/llama.cpp/pull/27837)) | 11–14 disk reads per token with the rig's page cache; an SSD keeps that under 1 ms, a flash stick does not ([flash_next_variants.md](notes/flash_next_variants.md) §5) | E3.10 |
 
 ### Quants and kernels
 

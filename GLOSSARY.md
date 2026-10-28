@@ -26,6 +26,13 @@ _Avoid_: Flint fork, model branch
 The folder `models/<model>/` that holds one model's recommended file, command line, and measured speed and quality.
 _Avoid_: profile
 
+### Models
+
+**N-gram table**:
+A model's lookup table of embeddings for hashed sequences of two and three tokens, read a few rows per token and kept
+apart from the other weights; Qwen3.8-Flash-Next has one.
+_Avoid_: PLE table, per-layer embedding, engram
+
 ### Model files
 
 **Format**:
@@ -55,6 +62,11 @@ _Avoid_: unpacking cost (its inverse), bandwidth utilisation
 A format the rig's cards decode at least as efficiently as Q4_0, established by measurement; today Q4_0, Q4_1, Q5_0 and
 Q8_0.
 _Avoid_: simple format
+
+**Pascal-friendly**:
+Of a model file: decoded and prefilled fast by the rig's cards, through fast formats or through fewer bytes in formats
+those cards still decode well; its formats need not be made for Pascal.
+_Avoid_: Pascal-specific, Pascal-optimised
 
 ### Quality
 
