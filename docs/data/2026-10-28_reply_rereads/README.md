@@ -82,16 +82,32 @@ over 16 tokens on the card mask, and the card-mask server samples the same 1,100
 from the same seeds in 6 of 6 trials ([check/textreuse_check_gpu_mask.tsv](check/textreuse_check_gpu_mask.tsv),
 [check/textreuse_check_gpu_mask_v.tsv](check/textreuse_check_gpu_mask_v.tsv)).
 
-**6. On the rig: not run yet.** The three switches are combined on `pascal-p106-v3-promptpath` (`8130a649d`), all off
-by default, one tarball for both scripts:
+**6. On the rig.** The three switches are combined on `pascal-p106-v3-promptpath` (`8130a649d`), all off by default,
+one tarball for both scripts:
 
-| script | arms | measures | expected (est., from the numbers above) | rig time |
-|---|---|---|---|---|
-| [rig_agent.sh](run/rig_agent.sh) (live agent check) | `tr` (text reuse), `trtail` (+ tail checkpoints every 4,096 tokens) | restores, prompt s per task, first-token times, time per task | `tr`: 5.9–8.3 % less task time, worst first token 60–83 s → 0.5–3.5 s; `trtail`: ~0.3–0.4 s per request, 1.5–2 % of task time | ~70 min |
-| [rig_replay_mask.sh](run/rig_replay_mask.sh) (paired replay, identical tokens) | `base`, `mask` | ms per generated token, fixed cost per request | +1–2 % per generated token (Q116: +1.6–2.3 % at short context; one cell upload per request, ≤ 0.1 s) | ~50 min |
+| script | arms | measures | expected (est., from the numbers above) | result | rig time |
+|---|---|---|---|---|---|
+| [rig_agent.sh](run/rig_agent.sh) (live agent check) | `tr` (text reuse), `trtail` (+ tail checkpoints every 4,096 tokens) | restores, prompt s per task, first-token times, time per task | `tr`: 5.9–8.3 % less task time, worst first token 60–83 s → 0.5–3.5 s; `trtail`: ~0.3–0.4 s per request, 1.5–2 % of task time | not run yet | ~70 min |
+| [rig_replay_mask.sh](run/rig_replay_mask.sh) (paired replay, identical tokens) | `base`, `mask` | ms per generated token, fixed cost per request | +1–2 % per generated token (Q116: +1.6–2.3 % at short context; one cell upload per request, ≤ 0.1 s) | **0.4 % slower** (below) | 45 min |
 
 The live check is needed for Q260 and Q263: a replay sends the recorded replies back, never the server's own, so
 every replayed turn re-reads its reply whatever the server does.
+
+**The decode-only card mask on the rig (Q261, 2026-10-28 17:36–18:21):** six recorded agent-check traces (36
+requests, the answer store's set) replayed to the release line on this build without and with
+`LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16` ([replay/replay.md](replay/replay.md); 95 % bootstrap over traces):
+
+| per base | ms per generated token | ms per prompt token | same-work minutes |
+|---|---|---|---|
+| mask | 1.004 (1.002–1.013) | 1.025 (1.002–1.093) | 1.011 (1.003–1.048) |
+
+Both arms generated the same tokens: all 36 request pairs agree in generated tokens, finish reason, tool calls and
+cache use, and the server's per-request guess counts (guesses, right, wrong) are identical. At the agent check's
+context (4,443 cached tokens on average) the host mask is a few kilobytes per card and step, and the card mask's own
+work costs more than it saves. That work is the per-step cell update and one upload of all kv_size cells after
+each prompt, 2 MiB per card at 262,144, which lands in the prompt's 4-token tail micro-batch. Q116's gains were
+measured at 32k and 64k tokens. The release line keeps the host mask; a context threshold and a smaller upload (Q361,
+Q430) would reopen it for long sessions.
 
 ## Files
 
@@ -100,6 +116,7 @@ every replayed turn re-reads its reply whatever the server does.
 | [summary.md](summary.md) | Tables 1 and 2 as `summary.py` printed them |
 | [turns/d4.tsv](turns/d4.tsv), [turns/q8-d4b.tsv](turns/q8-d4b.tsv), [turns/base.tsv](turns/base.tsv) | Per request that follows a reply: the render check against the server's prompt length, generated and rendered reply tokens, the shared prefix from the log, where it ends in the reply, the reply's parts, the next request's cache, restore and re-read cost |
 | [retok.tsv](retok.tsv) | Data run 1, per turn: generated and re-tokenized lengths, the first differing id (−1: none), its distance from the end and the part of the reply |
+| [replay/replay.md](replay/replay.md) | The rig's paired replay of the decode-only card mask (Q261) as `replay.py summary` printed it, with the recorded live run as `live:rel` |
 | [check/](check/) | The CPU checks (text reuse with 700-token replies, with the tail switch, with 1,100-token replies) and the GPU check of the decode-only card mask (`_gpu_mask`: 4 trials; `_gpu_mask_v`: 2 more with the per-mask log lines counted) |
 | [run/rereads.py](run/rereads.py) | Per-turn divergence from a run's `proxy.jsonl`, `proxy.jsonl.bodies.gz` and server log, rendered and tokenized by the server's own code |
 | [run/retok.py](run/retok.py) | The text round trip of an agentic export's generated ids |

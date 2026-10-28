@@ -55,7 +55,7 @@ From the three release-line runs with per-request rows (2026-10-26 `d4` and `q8-
 | Registry | Lever | Expected gain | Needs |
 |---|---|---|---|
 | Q260 | stop the reply re-reads: keep the cached ids where the prompt spells the same text (`LLAMA_SERVER_TEXT_REUSE`) | 5.9–8.3 % of task time; the worst first token 60–83 s → 0.5–3.5 s | built and checked on the CPU; one live agent-check arm |
-| Q261 | the decode-only card mask (`LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16`) | measured +1.6–2.3 % at short context, more at depth; exact; one cell upload per request | built; a GPU check, then a paired replay |
+| Q261 | the decode-only card mask (`LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_MAX=16`) | **measured on the rig: 0.4 % slower per generated token** at the agent check's ~4.4k tokens (paired replay, identical tokens; Q116's gains were at 32k+) | off; Q430 (a context threshold) for long sessions |
 | Q264 | short agent prompts: micro-batches overlapped as in a fresh prompt (Q363: smaller micro-batches for short prompts) | ~5 % of a task (est.) | Q157's busy profile on agent-sized turns first, after Q260 and Q263 |
 
 ### 3. Diagnostics that decide large engine work
@@ -97,7 +97,7 @@ Parked, with the reason in their rows: expert skipping (lossy on Flint's flat ro
 ## What it could add up to
 
 - **Within a few days, from groups 1 and 2:** generation est. +12–20 % (p065, the head, the store, the screened head,
-  the memory clock, the decode mask; these overlap partly), and time per task a further −8–10 % from the re-reads and
+  the memory clock; these overlap partly), and time per task a further −8–10 % from the re-reads and
   the end-of-prompt checkpoint. About 45 → 52–55 tok/s, with the worst first-token waits gone.
 - **With group 3's engine work, if the diagnostics confirm:** hand-offs and page walks est. +10–20 % more.
 - **Shorter reasoning** multiplies on top of everything: 15–30 % fewer reasoning tokens at the same pass rate would cut
