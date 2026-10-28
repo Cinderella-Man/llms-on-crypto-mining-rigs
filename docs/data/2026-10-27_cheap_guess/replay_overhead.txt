@@ -1,0 +1,14 @@
+cost_sim.py on the agent check's 204 requests, new guess order, head right 0.25 of the time: generation tok/s for a
+head time per guess (2.9 ms = the bench, 4 ms) when every token also costs more on its own (plain decoding's time per
+token, --total-ms: 34.1 = the release split measured, then +0.5, +1.0, +1.5 ms), against the release line (cont) at
+34.1 ms. The paired replay measured the head at 0.968 of the release line's speed (ratio of ms per generated token
+1.032), i.e. 41.3 here.
+
+total ms per token   cont (release line)   head 2.9 ms   head 4 ms
+34.1                 42.7                  44.9          41.9
+34.6                 42.1                  44.3          41.5
+35.1                 41.5                  43.7          41.1
+35.6                 41.0                  43.1          40.7
+
+Reaching 41.3 takes a guess of ~4 ms in the server plus ~0.75 ms more per token (~34.85), or a guess of more than
+~4.3 ms alone; the bench's 2.93 ms with no extra per-token cost gives 44.9.

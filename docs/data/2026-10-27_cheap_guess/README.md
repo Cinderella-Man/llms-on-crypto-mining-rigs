@@ -5,9 +5,10 @@ section 8, item 0): where one guess of the
 staircase head (Flint's MTP head of agentic run 1, the nine-card head) goes on a P106, what a guess may cost on the
 agent check before the head stops paying, and how often the head is right at the positions the server's other
 guessers leave it; then what the options of Miner Llama's branch `pascal-p106-v3-cheapguess` cost (4.77 ms → 2.93 ms
-per guess) and that they compute what the reference computes. `run/replay.sh` measures them on the agent check
-(planned). Registry rows Q190–Q194 in [quants/experiments.md](../../../quants/experiments.md) (profile, break-even and
-guess order, options, the agent-check replay, the next cuts).
+per guess) and that they compute what the reference computes; and the agent check as a paired replay (2026-10-28): with
+the overnight-trained head the release line is **3.2 % slower** per generated token, though the head is right 24.8 % of
+the time as predicted. Registry rows Q190–Q194 in [quants/experiments.md](../../../quants/experiments.md) (profile,
+break-even and guess order, options, the agent-check replay, the next cuts).
 
 | File | What |
 |---|---|
@@ -20,7 +21,11 @@ guess order, options, the agent-check replay, the next cuts).
 | `source_split.md` | [source_split.py](../../../bench/staircase_drafter/source_split.py): the head's offline acceptance on the 40 held-out sessions, split by what the server's lookups would have guessed, and a gate on the head's confidence |
 | `shortlist_coverage.txt` | [shortlist_coverage.py](../../../bench/staircase_drafter/shortlist_coverage.py): the share of the held-out sessions' generated tokens the first K draft ids cover |
 | `check.txt` | the C++ head against `drafter.Drafter.forward` per option (random-weight head of the real shape, the release split's windows), on the CPU and on a P106 |
-| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `curate.py` (these tables from the raw outputs) |
+| `replay.md` | the paired replay (`replay.py summary`): per label the cost per prompt and per generated token, and the ratios to the release line with 95 % intervals over the six traces; `live:rel` is the recorded live run the traces come from |
+| `replay_served.tsv` | llama-server's guess counts per replay arm (as `served_guesses.tsv`) |
+| `replay_pair_check.txt` | `run/pair_check.py`: per trace and request the reply length, prompt tokens, cache hits, finish reason and tool calls agree across the two arms (0 of 36 differ) |
+| `replay_overhead.txt` | `cost_sim.py` with a longer guess and an extra cost per token: what it takes to reproduce the replay's −3.2 % |
+| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `curate.py` (these tables from the raw outputs) |
 
 ## How it was made
 
@@ -38,6 +43,17 @@ guess order, options, the agent-check replay, the next cuts).
   calls a little differently from Flint's own output).
 - **Held-out sessions:** the 40 sessions of held-out modules of agentic run 1 and the head's per-position scores from
   `score.py` (inverse-CDF coupling, as served).
+- **Paired replay (2026-10-28):** six recorded traces of the release line's agent check (the answer store's control
+  arm: space-age, phone-number and complex-numbers in JavaScript, affine-cipher, list-ops and scale-generator in
+  Python; 36 requests, 20,544 generated tokens, scale-generator ~57 % of them) replayed with the recorded prompts, a
+  fixed seed per request and the recorded reply lengths to two llama-servers on the cheap-guess build, Flint Q8_0 on
+  nine cards at 262,144 tokens, the release line `-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4`, both with
+  `GGML_CUDA_MMVQ_MAX_COLS=4`: `base` (the release line's guesser `cont`) and `stair` (+ `--pipe-guess staircase
+  --pipe-draft` the nine-card head after 1,000 minutes of training, held-out 0.366 / fresh 0.323 at α 1;
+  `LLAMA_DRAFT_HEAD=q8_0`). The first `stair` start ran out of host memory while converting the output layer (the
+  conversion then held ~424 MB at once); it ran again on `1d07352bf`, which converts in 8 MB pieces and changes nothing
+  else, so `base` (on `72552ee12`) and `stair` generate the same tokens (`replay_pair_check.txt`). The cache carries
+  over between traces in the same order in both arms.
 - Offline steps on a separate CPU machine (Docker, low CPU priority); every timing on the rig.
 
 Commands (from the repository root of a checkout that reaches the rig and the build machine; the values below are
@@ -51,11 +67,22 @@ BIN=<rig bin folder of v2.0> HEAD=<rig path of flint-mtp-nine.gguf> OUT=out/v20 
 GGUF_PY=... VOCAB=... SESSIONS=... IDS=... BODIES="..." FLINT_HF=... TOKENIZER_IMAGE=... ROWS=... SCORES=... \
     bash docs/data/2026-10-27_cheap_guess/run/sim.sh case coverage tokens cost split
 NAME=<tarball name> HEAD=<rig path of flint-mtp-nine.gguf> OUT=out/new bash docs/data/2026-10-27_cheap_guess/run/variants.sh
-CLIENT=<client> CLIENT_WORK=<folder there> MODEL=<rig path of flint-Q8_0.gguf> NAME=<tarball name> HEAD=... \
-    DRAFT_ENV='...' OUT=out/agent ARMS_LIST="stair base" bash docs/data/2026-10-27_cheap_guess/run/agent.sh
+ENV_FILE=<agent-check machine values> REPLAY_LOG=<recorded proxy.jsonl on the client> CLIENT_ROOT=<client folder> \
+    NAME=<tarball name> HEAD=<rig path of flint-mtp-nine-1000min.gguf> OUT=out/replay \
+    bash docs/data/2026-10-27_cheap_guess/run/replay.sh                                       # ARMS_LIST="stair base"
+python docs/data/2026-10-27_cheap_guess/run/pair_check.py <client folder>/out-cheap-guess-replay/replay.jsonl
 python docs/data/2026-10-27_cheap_guess/run/curate.py docs/data/2026-10-27_cheap_guess \
     --bench v2.0=out/v20/bench.log cheapguess=out/new/bench.log --served release=<server log> nine=... gen=... \
     --sim cost-agent.json cost-agent-spare.json
+python docs/data/2026-10-27_cheap_guess/run/curate.py out/replay-tables \
+    --served release-replay=<replay server log>@llama-server-base head-1000min-replay=<same log>@<build>/bin/llama-server-stair
+```
+
+The replay ran as `ARMS_LIST="stair base"` (the first `stair` start failed to load), then `ARMS_LIST=stair` on the fixed
+build with the same client folder, so the report pairs the two labels:
+
+```bash
+ARMS_LIST=stair NAME=llama.cpp-20261028-1d07352bf-pascal-p106-v3-cheapguess ... bash docs/data/2026-10-27_cheap_guess/run/replay.sh
 ```
 
 Licence: the tables and scripts are under this repository's MIT licence ([LICENSE](../../../LICENSE)); the head's

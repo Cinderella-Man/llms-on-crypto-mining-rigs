@@ -1,0 +1,1 @@
+PAIR_CHECK base vs stair: 36 requests, 0 differ; 20544 generated tokens in base

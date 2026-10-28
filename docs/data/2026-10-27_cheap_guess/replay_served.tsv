@@ -1,0 +1,3 @@
+arm	requests	checked	right	right_share	head_checked	head_right	head_share	lookup_checked	lookup_right	lookup_share
+release-replay	36	18259	7128	0.390	0	0	0.000	18259	7128	0.390
+head-1000min-replay	36	19637	7962	0.405	7104	1761	0.248	12533	6201	0.495

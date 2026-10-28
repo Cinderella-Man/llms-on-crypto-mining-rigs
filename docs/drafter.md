@@ -31,7 +31,7 @@ copy lookup, which guesses first inside copied text.
 | v2.1 plan (M4) | start from scratch on approved sources only: [`sources.json`](../bench/staircase_drafter/sources.json) lists them, and the gate [`check_sources.py`](../bench/staircase_drafter/check_sources.py) checks every stage (prompts, answers, dumps, then vocabulary, packs, heads and the store) with a chain of hashed gate records. Both are drafts: written, never run |
 | Served on the rig | rc4, K2h-r16, llama-server at depth 3, nine cards 6,…,5,2: **50.4 tok/s** (median of 8 requests) with the store and R2-9, against 48.6 with the store alone and 33.4 with no guessing: the head adds 3.7 % (chat and code at T 0 8.6 %). Six cards with R2-gen: 49.5 / 49.0 / 34.3. Every answer identical in every configuration (section 6) |
 | Answer store (2026-10-27) | rebuilt from the 1,177 gated sessions of agentic data run 1 (15.4 M tokens of Flint's own output, 124 MB, publishable): on the agent check, Flint Q8_0 on the release line, **46.9 tok/s** with `--pipe-store` against 45.0 and 46.5 without (the earlier run that day and the same slot: +4.2 % and +0.9 %, within the spread of single live runs); offline on held-out agent sessions +4.3 %. No guess costs card time, so it pays where the head (M4's first heads: 29.7 / 30.7) does not yet ([answer store](benchmarks/2026-10-27-answer-store.md)) |
-| Cost per guess | 4.7 ms on one P106 at the server's ring with v2.0 (5.3–7.3 ms at 8,192 positions), on the card that also runs Flint's first stage; **2.93 ms** with the cheap-guess options (fork branch `pascal-p106-v3-cheapguess`), under the simulated break-even of ~3 ms (section 6, "A cheaper guess") |
+| Cost per guess | 4.7 ms on one P106 at the server's ring with v2.0 (5.3–7.3 ms at 8,192 positions), on the card that also runs Flint's first stage; **2.93 ms** with the cheap-guess options (fork branch `pascal-p106-v3-cheapguess`), under the simulated break-even of ~3 ms; in the served pipeline it costs more: on the agent check's paired replay (2026-10-28) the overnight head, right 24.8 % of the time, makes the release line 3.2 % slower (section 6, "A cheaper guess") |
 | Release split | nine cards with a light last card, `-ts 6,6,6,6,6,6,6,5,2` (g9light): the most tokens in flight |
 | Best on the release split | M2 run R2-9 (nine-card specialist, 27.6 M tokens): 0.476 coupled acceptance on Q51 fresh text, 0.538 overall; even nine-card split 0.492 / 0.553 |
 | Best on six cards | M2 runs R2-69 / R2-gen: 0.525 / 0.584 and 0.523 / 0.583 (R1: 0.502 / 0.562) |
@@ -742,6 +742,29 @@ With the Q8_0 output layer and MMQ the 2.95 ms of the trace are: output layer 0.
 ~0.27, the rest ~0.5. At 2.9–3.1 ms per guess and the head right ~19 % of the time at its new positions, the
 simulator gives 43.6–43.8 tok/s against the release line's 42.7: ~+2–3 %, about the spread of one agent-check run.
 
+**On the agent check (2026-10-28), paired.** Live runs of the agent check differ by a few percent from run to run, so
+the test is a replay: six recorded traces of the release line's agent check (36 requests, 20,544 generated tokens) sent
+with their prompts, a fixed seed per request and their reply lengths to two servers on the cheap-guess build (Flint
+Q8_0, nine cards, 262k, the release line). Pipelined decoding is exact, so both generate the same tokens (checked per
+request) and the ratio of ms per generated token is the head's effect. The head is the nine-card one after 1,000
+minutes of training (held-out sessions 0.366 / fresh 0.323 at α 1, was 0.277 / 0.235), with the Q8_0 output layer and
+MMQ; offline it is right 0.314 of the time at the 1-token continuations' positions (was 0.244), est. ~0.25 served:
+
+| Arm | ms per generated token | tok/s | ms per prompt token | Head guesses checked / right |
+|---|---|---|---|---|
+| release line (`cont`) | 22.85 | 43.8 | 5.13 | – |
+| + the head | 23.59 | 42.4 | 5.46 | 7,104 / 1,761 (24.8 %) |
+| ratio (95 % over traces) | **1.032** (1.028–1.047) | | 1.063 (1.030–1.152) | |
+
+The head is right as often as predicted and adds 834 right guesses net over the 1-token continuations it replaces
+(1,761 against 927), yet every generated token takes 3.2 % longer, and prompts 6 % longer. The simulator reproduces
+−3.2 % only with a ~4 ms guess and ~0.75 ms more per token, or a guess of more than ~4.3 ms alone. **A guess costs
+more in the server than its 2.93 ms on an idle card**: the hidden-state copies on each card's stream (8 KB per tap over
+PCIe 1.0 x1, in the stream's order), the uploads of the other cards' states to card 1, and the head's kernels sharing
+card 1 with Flint's are the candidates, none measured yet; the prompt side adds the all-positions final state and its
+copy. The first start of the head's server ran out of host memory while converting the output layer (~424 MB at
+once); the engine now converts in 8 MB pieces (`1d07352bf`).
+
 ## 7. Lessons and pitfalls
 
 | Lesson | Evidence |
@@ -765,6 +788,9 @@ simulator gives 43.6–43.8 tok/s against the release line's 42.7: ~+2–3 %, ab
 | A head competes with the guess it replaces, not with no guess | as served, the request's continuations were right 31 % of the time and M4's first head 20 %; split, 2-token continuations 38 %, 1-token ones 16 % |
 | Charge the guess's time in the simulator | with it the simulator reproduces the rig (31.9 against 29.7–30.7 tok/s) and shows a cliff at ~3 ms per guess |
 | Profile the guess before guessing at its cost | launches were 0.06 ms (the CUDA graph was in use); the F16 output layer at 82 GB/s was a third of it |
+| A guess on an idle card is not a guess in the pipeline | 2.93 ms on an idle P106, yet the paired replay is 3.2 % slower with the head at the predicted 24.8 % acceptance; the simulator needs ≳ 4 ms to match |
+| Test a few-percent effect paired, not with live runs | release-line live runs spread 44.6–46.5 tok/s; the paired replay's interval over six traces is 1.028–1.047 |
+| Watch the host memory of load-time conversions on a 4 GB host | converting the output layer at once (~424 MB) ran the rig out of memory next to Flint's load; in 8 MB pieces it fits |
 
 ## 8. Open questions and next steps
 
@@ -772,12 +798,15 @@ simulator gives 43.6–43.8 tok/s against the release line's 42.7: ~+2–3 %, ab
    on a P106 at the server's ring ([A cheaper guess](#a-cheaper-guess-2026-10-27)). The CUDA graph was already in
    use (0.06 ms of launching); the F16 output layer at 82 GB/s was a third of the guess. The simulator on the agent
    check's own requests puts the break-even at ~3 ms per guess on nine cards, and with the head after the request's
-   2-token continuations expects +2–3 % at ~19 % acceptance (+8 % at 30 %). A spare card helps only above 3 ms. Next,
-   by size: the agent check with the options; an 8-column Pascal kernel for the 8-row products (~0.9 ms at ~60
-   GB/s); the depth projections as one product per projection over rows grouped by depth (0.36 ms); an attention
-   kernel for a few rows (0.34 ms at 26 GB/s); and, if the Q8_0 output layer costs acceptance, Q8_0 for the ranking
-   with the F16 rows for the top candidates. More acceptance is worth more than any of these: at ≤ 3 ms, 0.30 instead
-   of 0.20 adds ~5 %.
+   2-token continuations expects +2–3 % at ~19 % acceptance (+8 % at 30 %). A spare card helps only above 3 ms. **On
+   the agent check (paired replay, 2026-10-28) the overnight head is right 24.8 % of the time as predicted, but the
+   release line is 3.2 % slower with it**: a guess costs more in the server than on an idle card. Next: measure that
+   cost in the served pipeline (`GGML_CUDA_PROFILE_HOST` on card 1 with and without the head; an arm with the taps but
+   no head guesses, to separate the copies on every card from the guess), then remove the largest part (the taps'
+   copies off the cards' streams, or fewer of them; the head on a spare card if the contention on card 1 is it). Then
+   the kernels, by size: an 8-column Pascal kernel for the 8-row products (~0.9 ms at ~60 GB/s), the depth
+   projections as one product per projection over rows grouped by depth (0.36 ms), an attention kernel for a few rows
+   (0.34 ms at 26 GB/s). More acceptance is worth more than any of these: at ≤ 3 ms, 0.30 instead of 0.20 adds ~5 %.
 1. ~~M2 round and per-card-count scores~~: done 2026-10-25 09:17 (section 6); R2-9 for nine cards, R2-gen for six and
    other counts.
 2. ~~Score R1 on Q51 with both couplings; decide on the Gumbel-max sampler~~: done 2026-10-25; inverse-CDF is
@@ -931,3 +960,8 @@ simulator gives 43.6–43.8 tok/s against the release line's 42.7: ~+2–3 %, ab
   layer 1.46 ms at 82 GB/s), the break-even simulated on the agent check's own requests (`cost_sim.py`: flat to ~3 ms
   per guess), the head moved after the request's 2-token continuations, and the cheap-guess options (fork branch
   `pascal-p106-v3-cheapguess`): 2.93 ms per guess ([docs/data/2026-10-27_cheap_guess](data/2026-10-27_cheap_guess/README.md)).
+- 2026-10-28: the cheaper head on the agent check, as a paired replay (six recorded traces, the same tokens in both
+  arms): with the overnight nine-card head (1,000 minutes) the release line is 3.2 % slower per generated token (95 %
+  1.028–1.047) and 6 % slower on prompts, though the head is right 24.8 % of the time as served, as predicted. The
+  guess costs more in the served pipeline than on an idle card; that cost is the next thing to measure. The head
+  file is now converted at load in 8 MB pieces (`1d07352bf`): at once it ran the rig's host out of memory.
