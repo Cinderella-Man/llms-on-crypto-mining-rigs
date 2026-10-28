@@ -9,7 +9,8 @@ set with the least predicted KLD at each byte level. Groups follow Q36/Q77: laye
 
   specs                                 the switches: name, class, layers, regex
   compose BASE DONOR OUT ITEM...        compose_gguf.py (next to this script): BASE with DONOR's routers and the
-                                        switches ITEM; no ITEM gives q8r
+                                        switches ITEM; no ITEM gives q8r; OUT=/dev/fd/N streams the file to that
+                                        descriptor (compose_gguf.py writes it front to back)
   deltas BASE DONOR OUT.tsv             per switch: tensors, file bytes and bytes read per token it adds (experts
                                         count n_used/n_exp of their bytes, the token embedding none), from the headers;
                                         a last row "q8r" with the base's totals
@@ -71,7 +72,9 @@ def cmd_compose(args):
     sw = {s[0]: s for s in switches()}
     rules = [f"{ROUTER}={donor}"] + [f"{sw[i][3]}={donor}" for i in items]
     compose = os.path.join(os.path.dirname(os.path.abspath(__file__)), "compose_gguf.py")
-    subprocess.run([sys.executable, compose, base, out, *rules], check=True)
+    # OUT may be /dev/fd/N (stream the file to a pipe, e.g. a relay): keep that descriptor open in the child
+    fds = (int(out[len("/dev/fd/"):]),) if out.startswith("/dev/fd/") else ()
+    subprocess.run([sys.executable, compose, base, out, *rules], check=True, pass_fds=fds)
 
 
 def tensor_costs(path):

@@ -9,6 +9,8 @@
 #   collect   WORK/kld.tsv from WORK/logs
 #   solve     WORK/solve.tsv (frontier per token), solve-file.tsv, solve-picks.tsv; SOLVE_ARGS adds options
 #   fetch     the TSVs to OUT (default: this folder's parent)
+#   relay     FILE (a composed file on QM) to RIG_FILE on the rig through this machine, with the md5 of the bytes as
+#             written on the rig in RIG_FILE.md5; then compared with FILE.md5 on QM (RIG: the rig's SSH alias)
 # Env: QM, WORK (scratch on QM, fast disk), BASE (Unsloth's Flint Q8_0 on QM), DONOR (Flint-Pascal-Q5 on QM), REF, BIN,
 #   GGUFPY, GPUS, TS, PREFETCH, EXTRA_MOUNTS, TEXT, AGENT_TXT, AGENT_BASE (see score.sh), ITEMS, TAG, OUT.
 set -euo pipefail
@@ -68,8 +70,15 @@ solve)
 fetch)
     for f in deltas kld solve solve-file solve-picks; do ssh "$QM" "cat $WORK/$f.tsv" > "$OUT/$f.tsv"; done
     ;;
+relay)
+    RIG=${RIG:-rig} FILE=${FILE:?} RIG_FILE=${RIG_FILE:?}
+    ssh "$QM" "cat $FILE" | ssh "$RIG" "mkdir -p $(dirname "$RIG_FILE") && tee $RIG_FILE.part | md5sum > $RIG_FILE.md5 \
+        && mv $RIG_FILE.part $RIG_FILE && sed -i 's#-#$(basename "$RIG_FILE")#' $RIG_FILE.md5 && stat -c '%s %n' $RIG_FILE"
+    want=$(ssh "$QM" "cut -d' ' -f1 $FILE.md5"); have=$(ssh "$RIG" "cut -d' ' -f1 $RIG_FILE.md5")
+    [ "$want" = "$have" ] && echo "md5 ok: $have" || { echo "md5 MISMATCH: $want on QM, $have on the rig"; exit 1; }
+    ;;
 *)
-    echo "usage: $0 push | deltas | agent_base | score | collect | solve | fetch" >&2
+    echo "usage: $0 push | deltas | agent_base | score | collect | solve | fetch | relay" >&2
     exit 1
     ;;
 esac
