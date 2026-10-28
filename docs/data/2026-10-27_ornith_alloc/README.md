@@ -44,7 +44,8 @@ both files are scored on the same tokens, so the paired noise is smaller.
   (1.3–2.3 of one file's standard errors). On agent text it lands 0.002 better than predicted.
 - **Against UD-Q2_K_XL:**
   - valid0 is level: wikitext +0.005, agent +0.001, code −0.007 (0.6–1.8 standard errors either way). It is 3.05 GB
-    larger, in formats est. ~3× faster per expert weight on the P106 (Q164).
+    larger, in formats est. ~1.8× faster per expert weight on the P106 than the IQ2_S/IQ3_XXS kernels of Q166's
+    round 2 (Q164; the rig measures it in Q188).
   - valid1 is better than UD on all three texts: −0.0096, −0.0028 and −0.0100 (2.5, 1.8 and 2.6 standard errors).
     It is 3.95 GB larger.
 - **Ornith's sensitive layers are the late ones, the reverse of Flint (Q168):**
