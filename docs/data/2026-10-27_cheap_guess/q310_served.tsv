@@ -1,0 +1,4 @@
+arm	requests	checked	right	right_share	head_checked	head_right	head_share	lookup_checked	lookup_right	lookup_share
+base	36	14782	5811	0.393	0	0	0.000	14782	5811	0.393
+gen-1000min	36	16058	6936	0.432	6309	1884	0.299	9749	5052	0.518
+nine-1000min	36	16058	5663	0.353	6309	605	0.096	9749	5058	0.519

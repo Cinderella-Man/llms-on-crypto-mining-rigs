@@ -1,0 +1,22 @@
+Q310's quiet check before the start (run/q310.sh preflight; the machine's own preset tool's address lines left out):
+time: 2026-10-29T00:15:10+01:00
+loadavg: 0.63 1.01 1.35 2/868 813534
+containers:
+paused:
+gpus:
+0, NVIDIA GeForce RTX 3080, 0 %, 15 MiB
+1, NVIDIA GeForce RTX 3080, 0 %, 15 MiB
+2, NVIDIA GeForce RTX 3090, 0 %, 15 MiB
+3, Tesla V100-PCIE-32GB, 0 %, 5 MiB
+4, Tesla V100-PCIE-32GB, 0 %, 5 MiB
+5, NVIDIA GeForce RTX 3090, 0 %, 80 MiB
+6, NVIDIA GeForce RTX 3090, 0 %, 15 MiB
+compute processes:
+heavy processes:
+presets:
+
+Saved preset: All managed workloads off (off)
+
+Running now: 0 LLMs, 0 ComfyUI instances
+
+  ComfyUI is stopped.

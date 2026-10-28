@@ -36,18 +36,18 @@ mkdir -p "$OUT"
 preflight() {
     ssh "$H" "for i in \$(seq 20); do l=\$(cut -d' ' -f1 /proc/loadavg); awk -v l=\$l 'BEGIN{exit !(l < 1)}' && break; sleep 30; done
         echo \"time: \$(date -Is)\"; echo \"loadavg: \$(cat /proc/loadavg)\"
-        echo 'containers:'; docker ps --format '{{.Names}} {{.Image}} {{.Status}}'
+        echo 'containers:'; docker ps --filter status=running --format '{{.Names}} {{.Image}} {{.Status}}'; echo 'paused:'; docker ps --filter status=paused --format '{{.Names}} {{.Image}} {{.Status}}'
         echo 'gpus:'; nvidia-smi --query-gpu=index,name,utilization.gpu,memory.used --format=csv,noheader
         echo 'compute processes:'; nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name --format=csv,noheader
-        echo 'heavy processes:'; ps -eo pid,pcpu,comm,args | grep -E 'llama-|quantize|perplexity|cmake|nvcc|make |python.*(train|score|kld)' | grep -v grep
+        echo 'heavy processes:'; ps -eo pid,stat,pcpu,comm,args | awk '\$2 !~ /^T/' | grep -E 'llama-|quantize|perplexity|cmake|nvcc|make |python.*(train|score|kld)' | grep -v grep
         ${RIG_STATUS:+echo 'presets:'; $RIG_STATUS}" > "$OUT/preflight.txt" 2>&1
     awk '/^loadavg:/ {if ($2 >= 1) bad = "load " $2}
-         /^containers:/ {s = "c"; next} /^gpus:/ {s = "g"; next} /^compute processes:/ {s = "p"; next}
+         /^containers:/ {s = "c"; next} /^paused:/ {s = ""; next} /^gpus:/ {s = "g"; next} /^compute processes:/ {s = "p"; next}
          /^heavy processes:/ {s = "h"; next} /^presets:/ {s = ""; next}
          s == "c" && NF && $1 !~ /^q310-/ {bad = bad " container " $1}
          s == "g" && NF {split($0, f, ", "); if (f[3] + 0 > 0) bad = bad " gpu " f[1] " busy"}
-         s == "p" && NF {bad = bad " compute process " $0}
-         s == "h" && NF {bad = bad " process " $3}
+         s == "p" && NF {procs++}
+         s == "h" && NF {bad = bad " process " $4}
          END {if (bad != "") {print "preflight: " bad; exit 1}}' "$OUT/preflight.txt"
 }
 if [ "${PREFLIGHT:-1}" = 1 ]; then

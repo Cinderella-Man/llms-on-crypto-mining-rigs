@@ -788,6 +788,13 @@ for the release line), so the ratios below are larger than served:
   stream instead of each card's compute stream). The simulator's ceiling with all of it gone, at the head's served
   acceptance (0.248): +5.2 % at 2.93 ms per guess, +5.6 % at 2.2 ms; at 0.30 +7.7 %.
 
+**On three RTX 3090s (Q310, 2026-10-29).** The same paired replay on a fast layer split (Flint Q8_0 on three RTX 3090s,
+`-ts 17,16,16 -c 262144 --pipe-depth 3`, the sm_86 build of the cheap-guess branch, a quiet machine): the release line
+8.09 ms per generated token (124 tok/s); with the 3–12-card head 8.33 (**×1.031**, 1.020–1.038), right 29.9 % of the
+time as served (1,884 of 6,309); with the nine-card head 9.04 (×1.118), right 9.6 % (its windows are nine cards'). The
+same tokens in every arm. So the head slows the faster cards too: its following and guessing costs are not
+P106-specific ([q310_replay.md](data/2026-10-27_cheap_guess/q310_replay.md)).
+
 **Where this stopped (2026-10-28).**
 - **Done:** the guess profiled (Q190), the break-even, guess order and confidence gate (Q191), the options (Q192:
   4.77 → 2.93 ms), the paired replay (Q193: the release line 3.2 % slower with the overnight head, 24.8 % right as
