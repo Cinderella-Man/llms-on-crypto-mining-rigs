@@ -35,7 +35,8 @@ data folders, the registry and the papers. Conventions are those of the other no
   retrieves poorly from context: at copy positions it is right 0.310 of the time where the copy lookup is right 0.815.
 - **It is under-trained, and steps still pay:** held-out rose 0.277 → 0.366 from ~1 to ~3.4 epochs, +0.049 per doubling
   of steps (est., two points), more than the +0.03 per doubling of data the old heads showed; training KL was ≈ validation
-  KL at 240 minutes (2.1–2.2 against 2.44 nats). The 1,480-minute round (~5 epochs) is the next point (est. 0.38–0.39).
+  KL at 240 minutes (2.1–2.2 against 2.44 nats). The 1,480-minute round (~5 epochs) scores 0.380, +0.027 per doubling
+  since 1,000 minutes.
 - **The head is already a reasoning drafter.** Fresh text is ~85 % reasoning (est. from the answer store's split), and the
   head serves mostly fresh-text positions; yet ~77 % of its training loss sits on positions it never serves.
 - **After a miss it is weaker than in a full pipeline,** the reverse of every earlier head: held-out g9miss 0.247 against
@@ -306,7 +307,7 @@ held-out scores (nine-card head at nine cards, α 1):
 | restart (+20 min, lr re-warmed) | 1,485 | ~1.04 | 0.337 | – |
 | 316 minutes | ~1,790 | ~1.3 | 0.363 | – |
 | 946 / 1,000 minutes | ~4,700 / ~4,950 | ~3.4 | 0.524 | 0.366 |
-| 1,480 minutes (running) | ~7,150 | ~5 | – | est. 0.38–0.39 |
+| 1,480 minutes (best checkpoint, ~1 h before the end) | ~7,000 | ~5 | 0.557 (final) | 0.380 |
 
 - **Under-trained, yes.** At 240 minutes training KL was 2.1–2.2 nats against 2.44 on validation
   ([train_log_nine.jsonl](../../data/2026-10-27_mtp_head/offline/train_log_nine.jsonl) lines 82–85): no overfitting
@@ -320,7 +321,8 @@ held-out scores (nine-card head at nine cards, α 1):
 - **Fit.** Through the two held-out points: A(S) = 0.277 + 0.049 · log2(S / 1,392), S the steps (est.; fresh text the
   same slope, 0.235 → 0.323). At 7,150 steps it gives 0.392; repeats lose value past ~4 epochs (Muennighoff's effective
   data at 5 epochs ≈ 90 % of unique, at 6.6 ≈ 86 %), so est. 0.38–0.39. The 1,480-minute score tests the fit: below
-  0.375 means the curve is bending and the data is used up. Validation through 1,792 and 4,700 steps rises +0.116 per
+  0.375 means the curve is bending and the data is used up. It scored 0.380 (0.340 on fresh text), 0.011 under the fit:
+  the slope since 1,000 minutes is about +0.027 per doubling. Validation through 1,792 and 4,700 steps rises +0.116 per
   doubling, 2.4× the held-out slope.
 
 | Option | What it buys (est.) | Basis |
@@ -347,7 +349,7 @@ experiments run. Data run 2 adds its own (~1.4 TB at the same size).
 - The epoch count of the 1,000-minute round, the share of head guesses that follow a miss, the head's reasoning share
   and the tool-result position count are this note's estimates (Q385 and Q373 measure them).
 - The EAGLE-grade estimate (0.55–0.65 on Flint's agent text) transfers top-1 agreement from other targets.
-- The fit has two points; the 1,480-minute score is its test.
+- The fit was made on two points; the third, the 1,480-minute score (0.380), sits 0.011 below it.
 - The validation curve of the overnight round (0.363 at 316 minutes, 0.524 at 946 minutes) and the 1,000-minute scores
   are in [the head's data folder](../../data/2026-10-27_mtp_head/README.md) (`offline/train_log_*_overnight.jsonl`,
   `offline/scores_heldout_1000min.md`).

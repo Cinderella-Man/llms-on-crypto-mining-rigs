@@ -30,10 +30,17 @@ control tokens.
 | gen | 0.343 | 0.256 / 0.218 | 0.145 / 0.135 |
 | nine, 1,000 minutes (overnight round, 2026-10-28) | 0.524 at 946 min | **0.366 / 0.323** | 0.218 / 0.195 |
 | gen, 1,000 minutes | 0.537 (`stair`) at 948 min | **0.355 / 0.315** | 0.211 / 0.191 |
+| nine, 1,480 minutes (third round, 2026-10-28) | 0.557 (final evaluation) | **0.380 / 0.340** | 0.226 / 0.203 |
+| gen, 1,480 minutes | 0.570 (`stair`; g9 0.542) | **0.367 / 0.329** | 0.218 / 0.196 |
 
 The overnight round resumed both heads from step 1,704 to 1,000 minutes in all (step ~5,100, epoch 5); validation rose
-the whole time (`offline/train_log_*_overnight.jsonl`). As served on the agent check the nine-card head is right 24.8 %
-of its guesses, and the release line runs 3.2 % slower with it ([cheap guess](../2026-10-27_cheap_guess/README.md)).
+the whole time (`offline/train_log_*_overnight.jsonl`). The third round (2026-10-28 10:21 → 18:23) ran both heads on to
+1,480 minutes (step ~7,280, epoch 7): held-out +0.014 (nine) and +0.012 (gen), about +0.027 per doubling of steps against
++0.049 from 240 to 1,000 minutes. The nine-card head's 0.380 is the low end of the research note's estimate (0.38–0.39)
+and above its 0.375 line for "the data is used up". As served on the agent check the 1,000-minute nine-card head is right
+24.8 % of its guesses, and the release line runs 3.2 % slower with it ([cheap guess](../2026-10-27_cheap_guess/README.md)).
+On three RTX 3090s the release line runs 3.1 % slower with the 3–12-card head and 11.8 % with the nine-card head (Q310,
+same folder).
 
 - **Sharpening:** α 3 (the export's default) raises validation by ~0.09: nine 0.455, gen 0.437 (`offline/final_alpha.tsv`).
 - **Learning:** validation was still rising when the 240 minutes ended (`offline/val_curve.tsv`).
@@ -65,6 +72,8 @@ uses. The cheaper-guess work starts from that ([2026-10-27_cheap_guess](../2026-
 | `offline/train_log_*_resumed.jsonl` | the same heads resumed for an hour (learning rate restarted toward ~3.6 epochs; stopped at step 1,704) |
 | `offline/train_log_*_overnight.jsonl` | the overnight round, 2026-10-27 19:56 → 2026-10-28 08:05, from step 1,704 to the 1,000-minute budget (validation every ~15 minutes, the final evaluation) |
 | `offline/scores_heldout_1000min.md`, `scores_q51_1000min.md` | `score.py` on the held-out sessions and Q51 for the 1,000-minute heads |
+| `offline/scores_heldout_1480min.md`, `scores_q51_1480min.md` | the same for the 1,480-minute heads (`head.pt`, the checkpoint with the best validation: nine at 17:27, ~1 hour before the end, gen at 18:13) |
+| `offline/train_log_*_1480min.jsonl` | the whole run to the 1,480-minute budget (every round; the final evaluation at step 7,284 for nine, 7,277 for gen) |
 | `offline/config_gen.json`, `config_nine.json` | `train.py`'s config: profile, sizes, items, every option (`$WORK` = the run folder) |
 | `offline/heldout_session_ids.txt` | the 40 scored held-out sessions (row ids of the export's `sessions_seq.jsonl`) |
 | `agent/{base,nine,gen}/table.md`, `compare.md`, `gonogo.md` | the agent check's reports per arm |
