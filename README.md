@@ -132,6 +132,8 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
 - [release/flint-v2](release/flint-v2/README.md): the v2 release in one folder, with how to rebuild the engine and the
   model file from scratch.
 - [docs/overview.md](docs/overview.md): why a mining rig suits LLMs at all, and the terms used here.
+- [docs/what_i_tried.md](docs/what_i_tried.md): a guided tour of everything tried in the first week, why, what each
+  result taught, and where each model stands.
 - [docs/benchmarks/](docs/benchmarks/), [bench/](bench/) and [scripts/](scripts/): every benchmark and the tools
   behind it.
 - [quants/](quants/README.md): making and measuring model files for these cards ([registry](quants/experiments.md)).
