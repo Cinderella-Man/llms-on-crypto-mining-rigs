@@ -23,7 +23,9 @@ agent check's text gives 0.243.
 - **The text:** at α 1 the agent check's requests score 0.07 below the held-out sessions at the same kind of position
   (0.243 against 0.314 at cont1). Not because of the language: the three JavaScript traces, a language the training
   sessions do not have, score highest (table below). One Python trace, scale-generator, holds half of the head's
-  positions (long reasoning) and scores lowest.
+  positions and scores lowest. At α 3 the held-out sessions give 0.384 at the head's positions against the check's 0.309;
+  reasoning is 85–87 % of those positions in both, and the check's reasoning is harder (0.286 against 0.357; Q385,
+  [q385_heldout.md](q385_heldout.md)).
 - **The engine:** at α 3, as served, the head is right 0.287–0.309 offline at its positions and 0.248 on the rig: 0.04–0.06
   are lost in serving. Candidates: the engine keeps the head's top 16 ids, the answer store takes some of the positions,
   the served placement (split 6/6/5/5/6/5/5/6/5) differs from the even split of g9, guesses that build on unverified

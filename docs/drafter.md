@@ -800,20 +800,30 @@ and scored offline. At the head's positions (where neither the copy lookup nor a
 head is right **0.309** at g9 and 0.287 at g9miss with the served sharpening (α 3), against **0.248** on the rig: 0.04–0.06
 is lost in serving (Q195 looks for it). At α 1 the check's text scores 0.07 below the held-out sessions at the same kind of
 position (0.243 against 0.314); not by language: the three JavaScript traces score highest (0.37–0.40), the Python trace
-with the longest reasoning (scale-generator, 52 % of the head's positions) lowest (0.275). Reasoning is 87 % of the
+scale-generator (52 % of the head's positions) lowest (0.275). Reasoning is 87 % of the
 head's positions and it is right on 0.286 of them; where Flint is nearly certain (top probability above 0.99, 43 % of
 the positions) it is right 0.39–0.55; acceptance falls with context (0.348 under 4k tokens, 0.270 at 8–16k). The
 1,480-minute head adds +0.005 here ([q384_agentcheck.md](data/2026-10-27_cheap_guess/q384_agentcheck.md)).
+
+**Where the head is right (Q385, 2026-10-29).** The held-out sessions re-scored at α 1 and α 3 with Flint's top
+probability and the overlap Σ min(p, q) per position. For the served head at its positions (g9): held-out 0.322 at α 1,
+**0.384** at α 3; the agent check's text 0.309; served 0.248. Reasoning is 85–87 % of the head's positions in both texts;
+the check's reasoning is harder (0.286 against 0.357), and it has few tool-call tokens (5 % against 32 %), where the head
+does best (0.59). Half the head's positions have Flint above 0.99 sure, and the head is right on 0.52 of them; on copy
+positions with Flint that sure the copy lookup is right 0.880, the head 0.448. The coupled match is 93 % of the overlap,
+so the coupling leaves little: the head's distribution is what is off. Acceptance is flat across a session's requests
+after the first; by context it falls from 0.62 under 4k tokens to 0.36–0.39 from 16k on. After a miss (g9miss) the head is
+0.021 lower. The 1,480-minute head adds +0.009 at α 3 ([q385_heldout.md](data/2026-10-27_cheap_guess/q385_heldout.md)).
 
 **Where this stopped (2026-10-29).**
 - **Done:** the guess profiled (Q190), the break-even, guess order and confidence gate (Q191), the options (Q192:
   4.77 → 2.93 ms), the paired replay (Q193: the release line 3.2 % slower with the overnight head, 24.8 % right as
   served), where the served cost goes (Q194: half following, half guessing, two in three launches wasted), three RTX
-  3090s (Q310: ×1.031), the agent check's own text offline (Q384: 0.04–0.06 lost in serving).
-- **Prepared, not run:** Q385 (`score.py` saves `pmax` and `overlap`, `breakdown.py` splits them; `run/q385.sh`
-  re-scores the held-out sessions), Q371 + Q372 (`train.py --kinds`, `--source-labels` / `--source-weights`,
+  3090s (Q310: ×1.031), the agent check's own text offline (Q384: 0.04–0.06 lost in serving), where the head is right
+  on the held-out sessions (Q385).
+- **Prepared, not run:** Q371 + Q372 (`train.py --kinds`, `--source-labels` / `--source-weights`,
   `--max-steps`; labels from `source_labels.py`). The new training options were checked to compile, not run.
-- **Next, in order:** the Q385 re-score; Q371 + Q372 against a control (the same 1,480-minute nine-card head, the same
+- **Next, in order:** Q371 + Q372 against a control (the same 1,480-minute nine-card head, the same
   `--max-steps`, kill criteria in their registry rows); the serving cuts of Q194 in the fork (launch the head only when a
   pipe slot will take its guess; commit only the head's 4,096 newest prompt positions; the taps' copies on a copy
   stream), then the paired replay again; Q195's engine gap; the kernel cuts of section 8, item 0.
@@ -1032,4 +1042,6 @@ the positions) it is right 0.39–0.55; acceptance falls with context (0.348 und
 - 2026-10-29: Q310: on three RTX 3090s the 3–12-card head costs 3.1 % per generated token, the nine-card head 11.8 %.
   The heads' third round to 1,480 minutes: held-out 0.380 (nine-card), +0.027 per doubling of steps. Q384: on the
   agent check's own text the served head is right 0.29–0.31 offline at its positions as served (α 3), 0.248 on the rig;
-  the check's text is harder than the held-out sessions through its long reasoning, not its language.
+  the check's text is harder than the held-out sessions (0.384 at the head's positions, α 3) because its reasoning is
+  (0.286 against 0.357 at the head's positions), not its language. Q385: the head is right 0.52 where Flint is above 0.99
+  sure (half its positions); its coupled match is 93 % of the overlap Σ min(p, q).
