@@ -4,11 +4,12 @@
 # in JavaScript) and engine. The traces' 36 requests become rows (agent_tokens.py --traces --id-base: prompt and reply
 # tokens with Flint's chat template), are dumped like the training data (llama-staircase-dump with the 26-layer grid)
 # and scored with score.py at the nine-card windows (g9, g9miss); source_split.py splits them by what the server's
-# lookups would guess. On the GPU machine, in containers; run from a machine that reaches it over ssh.
+# lookups would guess, breakdown.py by segment, Flint's top probability and position. On the GPU machine, in containers; run from a machine that reaches it over ssh.
 # Env: HOST, WORK (folder there), BODIES (the replayed arm's proxy.jsonl.bodies.gz there), FLINT_HF (Flint's tokenizer
 # and chat template), MODEL (Flint Q8_0; MODEL_DIRS: folders to mount so it resolves), DUMP_BIN (llama-staircase-dump),
 # HEADS (head folders, train.py's output), VOCAB (vocab.npy), FLINT_DIR (flint_weights.py's output), OUT (local);
-# optional TRACES (the six of replay.sh), GPUS_DUMP (2,6), GPU_SCORE (0), STEPS (rows dump score split), DOCKER_ARGS,
+# optional TRACES (the six of replay.sh), GPUS_DUMP (2,6), GPU_SCORE (0), ALPHA (1; outputs get -a<ALPHA> otherwise),
+# STEPS (rows dump score split), DOCKER_ARGS,
 # TOKENIZER_IMAGE, TORCH_IMAGE (pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime), CUDA_IMAGE
 # (nvidia/cuda:12.9.2-devel-ubuntu24.04), GRID (the 26 layers), DCTX (66048).
 set -euo pipefail
@@ -17,6 +18,7 @@ H=${HOST:?}; W=${WORK:?}/q384; O=${OUT:?}
 : "${BODIES:?}" "${FLINT_HF:?}" "${MODEL:?}" "${DUMP_BIN:?}" "${HEADS:?}" "${VOCAB:?}" "${FLINT_DIR:?}"
 TRACES=${TRACES:-rel/bugfix-javascript-space-age/a1/t1,rel/bugfix-javascript-phone-number/a1/t1,rel/bugfix-javascript-complex-numbers/a1/t1,rel/bugfix-python-affine-cipher/a1/t1,rel/bugfix-python-list-ops/a1/t1,rel/bugfix-python-scale-generator/a1/t1}
 GPUS_DUMP=${GPUS_DUMP:-2,6}; GPU_SCORE=${GPU_SCORE:-0}; STEPS=${STEPS:-rows dump score split}
+A=${ALPHA:-1}; X=$([ "$A" = 1 ] || echo "-a$A")   # score.py --alpha: the served head sharpens by its GGUF's alpha (3)
 TORCH_IMAGE=${TORCH_IMAGE:-pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime}
 CUDA_IMAGE=${CUDA_IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 TOKENIZER_IMAGE=${TOKENIZER_IMAGE:?an image with transformers}
@@ -49,16 +51,18 @@ if has score; then
         n=$(basename "$h")
         ssh "$H" "docker run --rm $DA --gpus '\"device=$GPU_SCORE\"' -e CUDA_DEVICE_ORDER=PCI_BUS_ID --network none $m -w $S \
             $TORCH_IMAGE python -I score.py --heads $h --feats $W/agentcheck.bin --gen $W/rows.jsonl --vocab $VOCAB \
-            --flint $FLINT_DIR --only-windows g9,g9miss --out $W/scores-$n > $W/scores-$n.md 2>&1; \
-            grep -E '^## head|\| g9' $W/scores-$n.md" | sed "s/^/$n: /" | tee -a "$O/scores.txt"
-        ssh "$H" "cat $W/scores-$n.md" > "$O/scores-$n.md"
+            --flint $FLINT_DIR --only-windows g9,g9miss --alpha $A --out $W/scores-$n$X > $W/scores-$n$X.md 2>&1; \
+            grep -E '^## head|\| g9' $W/scores-$n$X.md" | sed "s/^/$n$X: /" | tee -a "$O/scores.txt"
+        ssh "$H" "cat $W/scores-$n$X.md" > "$O/scores-$n$X.md"
     done
 fi
 if has split; then
     for h in $HEADS; do
         n=$(basename "$h")
         ssh "$H" "docker run --rm $DA --cpu-shares 256 --network none $m -w $S --entrypoint bash $TORCH_IMAGE -c \
-            'for w in g9 g9miss; do python -I source_split.py $W/rows.jsonl $W/scores-$n/scores-A.npz --window \$w; done'" \
-            > "$O/split-$n.md"
+            'for w in g9 g9miss; do python -I source_split.py $W/rows.jsonl $W/scores-$n$X/scores-A.npz --window \$w; done'" \
+            > "$O/split-$n$X.md"
+        ssh "$H" "docker run --rm $DA --cpu-shares 256 --network none $m -w $S $TORCH_IMAGE \
+            python -I breakdown.py $W/rows.jsonl $W/scores-$n$X/scores-A.npz --windows g9,g9miss" > "$O/breakdown-$n$X.md"
     done
 fi

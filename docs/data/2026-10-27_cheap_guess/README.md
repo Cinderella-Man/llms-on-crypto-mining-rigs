@@ -29,7 +29,8 @@ break-even and guess order, options, the agent-check replay, the next cuts).
 | `profile_gpu.md` | `run/prof_compare.py` over the three arms' `GGML_CUDA_PROFILE_HOST` traces: GPU ms per generated token per card and graph evaluations |
 | `q310_replay.md`, `q310_served.tsv`, `q310_preflight.txt` | Q310, the same paired replay on three RTX 3090s (compute 8.6, build `366478ef6` for sm_86, `-ts 17,16,16 -c 262144 --pipe-depth 3`): the release line, + the 3–12-card head, + the nine-card head (1,000 minutes each); the pair checks (0 of 36 differ); the guess counts; the logged quiet check before the start |
 | `profile_served.tsv`, `profile_pair_check.txt` | the three arms' guess counts (`taps` guesses exactly as `base`), and the same-tokens check (0 of 29 requests differ) |
-| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `prof_compare.py` (GPU time per card from host traces), `q310.sh` (the same replay on three RTX 3090s, with a quiet check; prepared, not run), `q384.sh` (the agent check's own traces dumped and scored; prepared, not run), `curate.py` (these tables from the raw outputs) |
+| `q384_agentcheck.md`, `q384/` | Q384, the heads offline on the agent check's own six traces (36 requests dumped like the training data): served against offline at the head's positions, per segment, Flint's top probability, context length and trace; per head and α (1, and 3 as served: `-a3`) the `score.py`, `source_split.py` and `breakdown.py` outputs |
+| `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `prof_compare.py` (GPU time per card from host traces), `q310.sh` (the same replay on three RTX 3090s, with a quiet check), `q384.sh` (the agent check's own traces dumped and scored), `q385.sh` (held-out scores at the nine-card windows with Flint's top probability and the overlap, split by `breakdown.py`), `curate.py` (these tables from the raw outputs) |
 
 ## How it was made
 
@@ -64,6 +65,11 @@ break-even and guess order, options, the agent-check replay, the next cuts).
   prompt's final states, but never guesses and keeps the release line's guesses). The host trace costs a lot on the rig's
   2-core host: the release line takes 49.4 ms per generated token with it against 22.85 without, so the arms' ratios
   are larger than the served ones; the GPU times per card (`profile_gpu.md`) are the cleaner split.
+- **The agent check's own text (Q384, 2026-10-29):** `run/q384.sh` on the six traces of the paired replay (the
+  release line's recorded bodies): `agent_tokens.py --traces ... --id-base 900000` (rows `agentcheck_900001` …
+  `agentcheck_900036`), `llama-staircase-dump` on two RTX 3090s with Flint Q8_0 (the 26-layer grid, `DUMP_ALLPOS=4,6,9`,
+  `-c 66048`), `score.py --only-windows g9,g9miss` per head on one GPU, at α 1 and α 3 (`ALPHA=3`), then
+  `source_split.py` and `breakdown.py`.
 - Offline steps on a separate CPU machine (Docker, low CPU priority); every timing on the rig.
 
 Commands (from the repository root of a checkout that reaches the rig and the build machine; the values below are
@@ -101,6 +107,15 @@ Q194 (the three arms with the host trace, five traces), then the per-card GPU ti
 ARMS_LIST="base taps stair" PROFILE=1 REPLAY_DIR=out-cheap-guess-profile REPLAY_TRACES=<the six without scale-generator> \
     NAME=llama.cpp-20261028-366478ef6-pascal-p106-v3-cheapguess ... bash docs/data/2026-10-27_cheap_guess/run/replay.sh
 python docs/data/2026-10-27_cheap_guess/run/prof_compare.py --tokens 7383 base=out/prof-base.csv taps=out/prof-taps.csv stair=out/prof-stair.csv
+```
+
+Q384 (one step at a time; `ALPHA=3` scores and splits again as served):
+
+```bash
+HOST=<GPU machine> WORK=<folder there> BODIES=<the replayed arm's proxy.jsonl.bodies.gz> FLINT_HF=<Flint's tokenizer folder> \
+    MODEL=<Flint Q8_0> DUMP_BIN=<llama-staircase-dump> HEADS="<head folders>" VOCAB=<run>/vocab.npy FLINT_DIR=<run>/flint \
+    TOKENIZER_IMAGE=<image with transformers> OUT=out/q384 STEPS=rows bash docs/data/2026-10-27_cheap_guess/run/q384.sh
+...  STEPS=dump ...; STEPS=score ...; STEPS=split ...; ALPHA=3 STEPS="score split" ...
 ```
 
 Licence: the tables and scripts are under this repository's MIT licence ([LICENSE](../../../LICENSE)); the head's

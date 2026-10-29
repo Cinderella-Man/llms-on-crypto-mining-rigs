@@ -1,0 +1,2 @@
+36 requests, 27284 reply tokens (server: 27321 generated), 0 skipped
+36 sequences, 27284 generated tokens

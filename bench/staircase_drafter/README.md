@@ -279,6 +279,7 @@ paths are placeholders.
 | [agent_tokens.py](agent_tokens.py) | an agent check's requests as token sequences (Flint's chat template) for cost_sim.py |
 | [shortlist_coverage.py](shortlist_coverage.py) | the share of generated tokens the first K draft ids cover (an output head cut to K ids) |
 | [source_split.py](source_split.py) | score.py's per-position acceptance split by what llama-server's lookups would guess there (copy lookup, 2-token or 1-token continuation, none) |
+| [breakdown.py](breakdown.py) | score.py's per-position acceptance by segment, guess source, Flint's top probability, context length and request number, and by source × top probability, with intervals by session and the overlap Σ min(p, q) |
 | [source_labels.py](source_labels.py) | per agent session, the guess source of every generated position (copy lookup, 2-token or 1-token continuation, none, other) as `train.py --source-labels`; with `--source-weights` the loss weight per source |
 | [report.py](report.py) | tables and gate verdicts from score.py and sim.py |
 | [q51_sources.py](q51_sources.py) | the files Q51's prompts are built from, for `clean_prompts.py --q51` and `check_sources.py --q51-sources` |

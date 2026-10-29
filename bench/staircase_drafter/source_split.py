@@ -116,4 +116,5 @@ def main():
         print(f"| {s} | " + " | ".join(cells) + " |")
 
 
-main()
+if __name__ == "__main__":
+    main()

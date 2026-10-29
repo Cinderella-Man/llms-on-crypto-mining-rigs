@@ -795,25 +795,35 @@ time as served (1,884 of 6,309); with the nine-card head 9.04 (×1.118), right 9
 same tokens in every arm. So the head slows the faster cards too: its following and guessing costs are not
 P106-specific ([q310_replay.md](data/2026-10-27_cheap_guess/q310_replay.md)).
 
-**Where this stopped (2026-10-28).**
+**The agent check's own text (Q384, 2026-10-29).** The six traces of the paired replay dumped like the training data
+and scored offline. At the head's positions (where neither the copy lookup nor a 2-token continuation guesses) the served
+head is right **0.309** at g9 and 0.287 at g9miss with the served sharpening (α 3), against **0.248** on the rig: 0.04–0.06
+is lost in serving (Q195 looks for it). At α 1 the check's text scores 0.07 below the held-out sessions at the same kind of
+position (0.243 against 0.314); not by language: the three JavaScript traces score highest (0.37–0.40), the Python trace
+with the longest reasoning (scale-generator, 52 % of the head's positions) lowest (0.275). Reasoning is 87 % of the
+head's positions and it is right on 0.286 of them; where Flint is nearly certain (top probability above 0.99, 43 % of
+the positions) it is right 0.39–0.55; acceptance falls with context (0.348 under 4k tokens, 0.270 at 8–16k). The
+1,480-minute head adds +0.005 here ([q384_agentcheck.md](data/2026-10-27_cheap_guess/q384_agentcheck.md)).
+
+**Where this stopped (2026-10-29).**
 - **Done:** the guess profiled (Q190), the break-even, guess order and confidence gate (Q191), the options (Q192:
   4.77 → 2.93 ms), the paired replay (Q193: the release line 3.2 % slower with the overnight head, 24.8 % right as
-  served), where the served cost goes (Q194: half following, half guessing, two in three launches wasted).
-- **Prepared, not run:** Q310 (the same replay on three RTX 3090s, sm_86 build `366478ef6`, `run/q310.sh` with a quiet
-  check; it never found the quant machine quiet), Q384 (`run/q384.sh`: the agent check's own traces dumped and scored),
-  Q385 (`score.py` saves `pmax` and `overlap`; the held-out sessions need re-scoring), Q371 + Q372 (`train.py --kinds`,
-  `--source-labels` / `--source-weights`, `--max-steps`; labels from `source_labels.py`). The new options were checked
-  to compile, not run.
-- **Next, in order:** Q310 in a quiet window; Q384 and the Q385 re-score; Q371 + Q372 against a control (the same
-  1,480-minute nine-card head, the same `--max-steps`, kill criteria in their registry rows); the serving cuts of Q194
-  in the fork (launch the head only when a pipe slot will take its guess; commit only the head's 4,096 newest prompt
-  positions; the taps' copies on a copy stream), then the paired replay again; the kernel cuts of section 8, item 0.
-- **Open:** whether the head pays on fast GPUs (Q310); how much of the served/offline gap (0.248 against 0.314) is the
-  check's domain (Q384); whether the serving cuts reach the simulator's ceiling (it was 8 points off before them).
+  served), where the served cost goes (Q194: half following, half guessing, two in three launches wasted), three RTX
+  3090s (Q310: ×1.031), the agent check's own text offline (Q384: 0.04–0.06 lost in serving).
+- **Prepared, not run:** Q385 (`score.py` saves `pmax` and `overlap`, `breakdown.py` splits them; `run/q385.sh`
+  re-scores the held-out sessions), Q371 + Q372 (`train.py --kinds`, `--source-labels` / `--source-weights`,
+  `--max-steps`; labels from `source_labels.py`). The new training options were checked to compile, not run.
+- **Next, in order:** the Q385 re-score; Q371 + Q372 against a control (the same 1,480-minute nine-card head, the same
+  `--max-steps`, kill criteria in their registry rows); the serving cuts of Q194 in the fork (launch the head only when a
+  pipe slot will take its guess; commit only the head's 4,096 newest prompt positions; the taps' copies on a copy
+  stream), then the paired replay again; Q195's engine gap; the kernel cuts of section 8, item 0.
+- **Open:** where the 0.04–0.06 lost in serving goes (Q195); whether the serving cuts reach the simulator's ceiling (it
+  was 8 points off before them).
 - **Against the owner's rule** (the head continues only with a credible path to ≥ +5 % on the P106 release line within
   a week of engine work): the serving cuts are est. 3–4 days of fork work, and with all of them the simulator's ceiling
   at today's served acceptance is +5.2 %, at the line with no margin; at 0.30 served (the training changes of
-  [mtp_head_research.md](research/notes/mtp_head_research.md)) it is +7.7 %. Q310 is not measured.
+  [mtp_head_research.md](research/notes/mtp_head_research.md), or Q195's engine gap closed) it is +7.7 %. On three
+  RTX 3090s the head costs 3.1 % (Q310).
 
 ## 7. Lessons and pitfalls
 
@@ -1019,3 +1029,7 @@ P106-specific ([q310_replay.md](data/2026-10-27_cheap_guess/q310_replay.md)).
   1.028–1.047) and 6 % slower on prompts, though the head is right 24.8 % of the time as served, as predicted. The
   guess costs more in the served pipeline than on an idle card; that cost is the next thing to measure. The head
   file is now converted at load in 8 MB pieces (`1d07352bf`): at once it ran the rig's host out of memory.
+- 2026-10-29: Q310: on three RTX 3090s the 3–12-card head costs 3.1 % per generated token, the nine-card head 11.8 %.
+  The heads' third round to 1,480 minutes: held-out 0.380 (nine-card), +0.027 per doubling of steps. Q384: on the
+  agent check's own text the served head is right 0.29–0.31 offline at its positions as served (α 3), 0.248 on the rig;
+  the check's text is harder than the held-out sessions through its long reasoning, not its language.
