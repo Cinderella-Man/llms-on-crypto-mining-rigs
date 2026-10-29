@@ -280,6 +280,7 @@ paths are placeholders.
 | [shortlist_coverage.py](shortlist_coverage.py) | the share of generated tokens the first K draft ids cover (an output head cut to K ids) |
 | [source_split.py](source_split.py) | score.py's per-position acceptance split by what llama-server's lookups would guess there (copy lookup, 2-token or 1-token continuation, none) |
 | [breakdown.py](breakdown.py) | score.py's per-position acceptance by segment, guess source, Flint's top probability, context length and request number, and by source × top probability, with intervals by session and the overlap Σ min(p, q) |
+| [paired_diff.py](paired_diff.py) | two heads scored on the same positions (a training arm and its control): the paired difference per window over all positions and over the head's positions, with intervals by session |
 | [source_labels.py](source_labels.py) | per agent session, the guess source of every generated position (copy lookup, 2-token or 1-token continuation, none, other) as `train.py --source-labels`; with `--source-weights` the loss weight per source |
 | [report.py](report.py) | tables and gate verdicts from score.py and sim.py |
 | [q51_sources.py](q51_sources.py) | the files Q51's prompts are built from, for `clean_prompts.py --q51` and `check_sources.py --q51-sources` |

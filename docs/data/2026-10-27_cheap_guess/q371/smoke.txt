@@ -1,0 +1,3 @@
+{"init_from": "$ARMS/smoke/start.pt", "missing": [], "unexpected": []}
+{"source_weights": [0.6000000238418579, 0.6000000238418579, 3.0, 3.0, 1.0], "labelled_records": 1177}
+{"t_min": 3.7, "step": 10, "seqs": 52, "epochs": 1, "final_val": {"stair": {"coupled": 0.5071394459927115, "top": 0.5601216303275118, "kl": 1.711830587401199, "n": 124328, "coupled_a1.0": 0.5071394459927115, "coupled_a1.5": 0.5472586059668496, "coupled_a2.0": 0.5583314788241037, "coupled_a3.0": 0.56

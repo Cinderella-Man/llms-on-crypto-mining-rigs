@@ -31,6 +31,7 @@ break-even and guess order, options, the agent-check replay, the next cuts).
 | `profile_served.tsv`, `profile_pair_check.txt` | the three arms' guess counts (`taps` guesses exactly as `base`), and the same-tokens check (0 of 29 requests differ) |
 | `q384_agentcheck.md`, `q384/` | Q384, the heads offline on the agent check's own six traces (36 requests dumped like the training data): served against offline at the head's positions, per segment, Flint's top probability, context length and trace; per head and α (1, and 3 as served: `-a3`) the `score.py`, `source_split.py` and `breakdown.py` outputs |
 | `q385_heldout.md`, `q385/` | Q385, the held-out sessions re-scored with Flint's top probability and the overlap: from held-out to served at the head's positions, and where the head is right (segment, source, Flint's top probability, context, request number); per head and α the `score.py` and `breakdown.py` outputs |
+| `q371_arms.md`, `q371/` | Q371 + Q372, two training changes against a control from the same head: the paired differences at the head's positions (held-out and the agent check's text, α 3 and 1), both arms' training logs, commands, scores and breakdowns, the label shares and the smoke test |
 | `run/` | the scripts: `build.sh` (the rig build), `profile.sh`, `variants.sh` (rig), `sim.sh` (the offline steps), `agent.sh` (live agent-check arms), `replay.sh` (the paired replay of recorded agent-check traces, release line against the head on the same build), `pair_check.py`, `prof_compare.py` (GPU time per card from host traces), `q310.sh` (the same replay on three RTX 3090s, with a quiet check), `q384.sh` (the agent check's own traces dumped and scored), `q385.sh` (the held-out sessions at the nine-card windows with Flint's top probability and the overlap, split by `breakdown.py`), `q371.sh` (Q371 + Q372: the training arm against a control from the same head and steps, then their scores), `curate.py` (these tables from the raw outputs) |
 
 ## How it was made
@@ -73,6 +74,9 @@ break-even and guess order, options, the agent-check replay, the next cuts).
   `source_split.py` and `breakdown.py`.
 - **Held-out breakdowns (Q385, 2026-10-29):** `run/q385.sh` on the 40 held-out sessions (`--spans`, the dump of the
   training run), heads nine-card 1,000 and 1,480 minutes, `ALPHA=3` then `ALPHA=1`, one RTX 3090.
+- **Training arms (Q371 + Q372, 2026-10-29):** `run/q371.sh` step by step: `source_labels.py` on the run's sessions
+  (CPU), 10 steps of the experiment arm as a smoke test, both arms detached on two RTX 3090s (1,100 steps, ~145 minutes),
+  then `score.py` and `breakdown.py` per arm, text and α, and `paired_diff.py` on the arms' npz files.
 - Offline steps on a separate CPU machine (Docker, low CPU priority); every timing on the rig.
 
 Commands (from the repository root of a checkout that reaches the rig and the build machine; the values below are
@@ -127,6 +131,17 @@ Q385:
 HOST=<GPU machine> WORK=<folder there> HEADS="<run>/heads/nine-1000min <run>/heads/nine" FEATS=<run>/seqs/test.bin \
     ROWS=<run>/seqs/test-rows.jsonl VOCAB=<run>/vocab.npy FLINT_DIR=<run>/flint OUT=out/q385 ALPHA=3 \
     bash docs/data/2026-10-27_cheap_guess/run/q385.sh                                        # then ALPHA=1
+```
+
+Q371 + Q372:
+
+```bash
+HOST=<GPU machine> WORK=<folder there> ARMS=<folder for the arms> START=<run>/heads/nine \
+    SESSIONS=<run>/export/train/sessions_seq.jsonl DOCKER_ARGS="-v <the disks the start command reads>" OUT=out/q371 \
+    STEPS=labels bash docs/data/2026-10-27_cheap_guess/run/q371.sh       # then smoke, start, wait
+... TEST_FEATS=<run>/seqs/test.bin TEST_ROWS=<run>/seqs/test-rows.jsonl AGENT_FEATS=<Q384 dump> AGENT_ROWS=<Q384 rows> \
+    VOCAB=<run>/vocab.npy FLINT_DIR=<run>/flint STEPS=score ...
+python bench/staircase_drafter/paired_diff.py <rows> <control scores-A.npz> <experiment scores-A.npz>
 ```
 
 Licence: the tables and scripts are under this repository's MIT licence ([LICENSE](../../../LICENSE)); the head's

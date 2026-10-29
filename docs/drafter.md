@@ -815,25 +815,33 @@ so the coupling leaves little: the head's distribution is what is off. Acceptanc
 after the first; by context it falls from 0.62 under 4k tokens to 0.36–0.39 from 16k on. After a miss (g9miss) the head is
 0.021 lower. The 1,480-minute head adds +0.009 at α 3 ([q385_heldout.md](data/2026-10-27_cheap_guess/q385_heldout.md)).
 
+**Two training changes against a control (Q371 + Q372, 2026-10-29).** Both arms from the 1,480-minute nine-card head,
+1,100 steps on the same data in the same order; the experiment draws the after-miss window twice as often and weights
+the loss toward the positions the head serves (cont1 and none, ×3; copy and 2-token continuations ×0.6). Paired over
+the same held-out positions (α 3): after a miss the head's positions gain **+0.012** (95 % +0.011 – +0.013; +0.016 on the
+agent check's text), right after card 1's stage only +0.001, and the positions the server does not give the head lose
+~0.005. Both changes miss their lines (Q371: the after-miss window still 0.003 below the staircase; Q372: under +0.005 at
+the head's positions); together they are worth under +0.01 of served acceptance (est.). The warm start's fresh schedule
+dips validation from 0.557 to 0.488 and spends the 1,100 steps climbing back: the case for Q370's schedule
+([q371_arms.md](data/2026-10-27_cheap_guess/q371_arms.md)).
+
 **Where this stopped (2026-10-29).**
 - **Done:** the guess profiled (Q190), the break-even, guess order and confidence gate (Q191), the options (Q192:
   4.77 → 2.93 ms), the paired replay (Q193: the release line 3.2 % slower with the overnight head, 24.8 % right as
   served), where the served cost goes (Q194: half following, half guessing, two in three launches wasted), three RTX
   3090s (Q310: ×1.031), the agent check's own text offline (Q384: 0.04–0.06 lost in serving), where the head is right
-  on the held-out sessions (Q385).
-- **Prepared, not run:** Q371 + Q372 (`train.py --kinds`, `--source-labels` / `--source-weights`,
-  `--max-steps`; labels from `source_labels.py`). The new training options were checked to compile, not run.
-- **Next, in order:** Q371 + Q372 against a control (the same 1,480-minute nine-card head, the same
-  `--max-steps`, kill criteria in their registry rows); the serving cuts of Q194 in the fork (launch the head only when a
-  pipe slot will take its guess; commit only the head's 4,096 newest prompt positions; the taps' copies on a copy
-  stream), then the paired replay again; Q195's engine gap; the kernel cuts of section 8, item 0.
-- **Open:** where the 0.04–0.06 lost in serving goes (Q195); whether the serving cuts reach the simulator's ceiling (it
-  was 8 points off before them).
+  on the held-out sessions (Q385), two training changes against a control (Q371 + Q372: +0.012 after a miss, +0.001
+  otherwise, both under their lines).
+- **Next, in order:** the serving cuts of Q194 in the fork (launch the head only when a pipe slot will take its guess;
+  commit only the head's 4,096 newest prompt positions; the taps' copies on a copy stream), then the paired replay
+  again; Q195's engine gap; the kernel cuts of section 8, item 0.
+- **Open:** where the 0.04–0.06 lost in serving goes (Q195), the largest lever left on acceptance (the training changes
+  gave ~0.01); whether the serving cuts reach the simulator's ceiling (it was 8 points off before them).
 - **Against the owner's rule** (the head continues only with a credible path to ≥ +5 % on the P106 release line within
   a week of engine work): the serving cuts are est. 3–4 days of fork work, and with all of them the simulator's ceiling
-  at today's served acceptance is +5.2 %, at the line with no margin; at 0.30 served (the training changes of
-  [mtp_head_research.md](research/notes/mtp_head_research.md), or Q195's engine gap closed) it is +7.7 %. On three
-  RTX 3090s the head costs 3.1 % (Q310).
+  at today's served acceptance is +5.2 %, at the line with no margin; at 0.30 served (Q195's engine gap closed; the
+  training changes of [mtp_head_research.md](research/notes/mtp_head_research.md) tried so far, Q371 + Q372, give
+  ~0.01) it is +7.7 %. On three RTX 3090s the head costs 3.1 % (Q310).
 
 ## 7. Lessons and pitfalls
 
@@ -1045,3 +1053,6 @@ after the first; by context it falls from 0.62 under 4k tokens to 0.36–0.39 fr
   the check's text is harder than the held-out sessions (0.384 at the head's positions, α 3) because its reasoning is
   (0.286 against 0.357 at the head's positions), not its language. Q385: the head is right 0.52 where Flint is above 0.99
   sure (half its positions); its coupled match is 93 % of the overlap Σ min(p, q).
+- 2026-10-29: Q371 + Q372 against a control from the 1,480-minute head (1,100 steps each): the after-miss window +0.012
+  at the head's positions, right after card 1's stage +0.001; both under their lines. A warm restart's fresh schedule
+  dips validation 0.557 → 0.488 and takes the 1,100 steps to recover.
