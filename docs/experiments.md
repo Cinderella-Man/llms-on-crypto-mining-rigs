@@ -105,7 +105,7 @@ deep). Results live in [benchmarks/](benchmarks/) and, for all work since 2026-1
 | E4.4 | vLLM-Pascal fork | n/a | Outside the focus: engine work goes into llama.cpp |
 | E4.5 | MLC-LLM | n/a | Outside the focus: engine work goes into llama.cpp |
 | E4.6 | mistral.rs + candle pre-Volta patch | n/a | Outside the focus: engine work goes into llama.cpp |
-| E4.7 | Strata "does it start" | n/a | Outside the focus: engine work goes into llama.cpp |
+| E4.7 | Strata "does it start" | n/a | Engine work goes into llama.cpp ([strata.md](research/notes/strata.md)); reopens on registry Q466's conditions |
 | E4.8 | colibri probe | n/a | Outside the focus: engine work goes into llama.cpp |
 | E4.9 | distributed-llama Vulkan | n/a | Outside the focus: engine work goes into llama.cpp |
 | E4.10 | ninfer-all compile probe at sm_61 | n/a | Outside the focus: engine work goes into llama.cpp |

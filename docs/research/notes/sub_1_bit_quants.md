@@ -357,7 +357,7 @@ On disk a smaller table saves no reads, because one row still costs one page
 SSD has trouble holding 28.8 GB (Q435) and holds 13.4 GB after a small cleanup. At 7.0 GB the table also fits on the
 cards beside a 37.7 GB Q2_0 file, 44.7 GB against the ~47 GB ceiling, with no MTP draft and no disk in the token path.
 
-The test needs no engine work and no download (Q433). Round-trip the table through each format, write the decoded
+The test needs no engine work (Q433). Round-trip the table through each format, write the decoded
 values back in the file's 4.5-bit format, and score KLD against the unmodified file. The re-encoding error is small
 against a 2-bit or lower target. Only the table shard changes. A census of row norms comes first, since hashed slots
 that no common n-gram reaches may hold little.

@@ -38,8 +38,9 @@ scripts are in [docs/data/2026-10-27_flash_next_variants/](../../data/2026-10-27
    before MTP and the dense fixes.
 7. **The table needs an SSD, not a flash stick.** With only 0.3–0.7 GB of page cache, 11–14 of a token's 16 lookups
    go to disk: ~0.3 ms per token on a SATA SSD, 4–8 ms on a USB flash stick, which also adds 50–95 % to prefill (est.).
-8. **Miner Llama is the only engine for this rig.** Every dedicated Flash-Next engine needs 32–80 GB of host RAM, a
-   newer GPU, or both.
+8. **Miner Llama is the engine for this rig.** The dedicated Flash-Next engines need 32–80 GB of host RAM, a newer GPU,
+   or both. Strata could be brought up on Pascal, but it is unproven at 4 GB and a fork is not worth making
+   ([strata.md](strata.md)).
 
 ## 1. What the model is and what the rig must hold
 
@@ -204,7 +205,7 @@ Many bad reports come from the Strata engine (malformed tool calls, greedy defau
 | Engine | Runs on compute 6.1? | Host RAM it needs for Flash-Next | Verdict |
 |---|---|---|---|
 | **Miner Llama** (upstream llama.cpp's `qwen4exp`) | yes | page cache only: the table stays on disk | **the path** |
-| Strata 0.2 | experimental; puts a copy of the dense weights and ~2 GB of buffers on every card, and turns off cards of 8 GB or less | experts in RAM + ~10 GB | blocked |
+| Strata 0.2.9 | experimental; sm_61 with CUDA 12.9 builds and ran on one GTX 1070 Ti; needs a custom build without AVX, `--trim-stage-weights` so that cards do not each hold the dense weights, and every expert in VRAM over x1 | experts in RAM + ~10 GB by default; untested at 4 GB | not blocked by the engine, unproven and very tight ([strata.md](strata.md)) |
 | tqLLM, ninfer, capy-flash, ninfer-offload | no (tensor-core or sm_89+/sm_120 code) | 8–80 GB | blocked ([engine_infer.md](engine_infer.md), [tqllm.md](tqllm.md)) |
 | ninfer-all | no build below sm_70 | ~1.1 GB peak with experts and table on disk | blocked by architecture |
 | agentionai's llama.cpp fork (Gyro) | probably: dp4a trellis kernels without architecture guards (not built) | like llama.cpp, plus a table-on-disk option | runs, but est. 2–3.5× slower per expert weight than Q2_0 |
@@ -328,8 +329,9 @@ shorter thinking matters on a ~15 tok/s rig.
    expert reads grow with the draft length: est. +15–40 %. Only with the table on an SSD.
 4. **A Pascal-tuned Q2_0 expert kernel**, in the style of the fork's Q4_0 kernel. For the IQ files, the v3 IQ2_S and
    IQ3_XXS kernels apply as they are.
-5. **A Pascal sparse-attention kernel** that walks the indexer's existing list of selected cells: est. −5 ms per token
-   at 32k and −20 ms or more at 128k. This is the largest long-context lever.
+5. **A Pascal sparse-attention kernel** that walks the indexer's existing list of selected cells: est. −15 ms per token
+   at 16k, −34 ms at 32k and −145 ms at 128k in F16 ([strata.md](strata.md)). This is the largest long-context lever.
+   Strata's SIMT kernels show it needs no tensor cores.
 6. **Smaller hops between cards:** F16 for the four-stream residual halves its 40 KB per boundary; needs a KLD check.
    Fewer cards also help.
 7. **Hybrid-model work from v3:** Flash-Next is a hybrid model like Ornith, so the recurrent-state replay and

@@ -253,7 +253,7 @@ shipped, are blocked here by host RAM, disk, CPU expert compute, or GPU-count li
 - Upgrading the rig's RAM (one free SO-DIMM slot, up to 32 GB per the [hardware spec](../../mining_rig.md)) would turn several "blocked by RAM" verdicts (Strata, colibri, Maya's 32 GB) into "testable". The no-AVX CPU and 6 GB cards would still be problems.
 
 ### Gaps
-- Whether Strata's n-gram table can be skipped. Whether more than 4 cards and ≤8 GB cards work when forced with `--gpus`.
+- Whether Strata's n-gram table can be skipped. Its limits on cards, memory and copies at v0.2.9, read from source, are in [strata.md](strata.md).
 - colibri's CPU SIMD requirements, and whether it runs below 8 GB RAM when everything is VRAM-resident.
 - Magnitude and TensorFold backends and Pascal status are unknown.
 
