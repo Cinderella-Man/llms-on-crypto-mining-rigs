@@ -241,9 +241,11 @@ How llama.cpp runs this model on Pascal (read in the v3 source):
   | SATA SSD | 88–107 µs | 53–56k IOPS | ~0.2–0.3 ms | ~0.25 ms | ~4 s |
   | USB 3 SSD with UAS | ~180 µs | helps | ~0.3–1 ms | ~0.5–1.3 ms | ~7–18 s |
   | USB 3 flash stick | 367–588 µs | no gain (~2.7k IOPS) | **~4–8 ms** | **~5 ms** | **~65 s** |
+  | USB 3 portable hard disk | ~10 ms | little (~250 IOPS) | **~100 ms** | **~50 ms** | **~10–20 min** |
 
   Put the table on an SSD (internal or USB with UAS). A flash stick costs 5–11 % of decode, 50–95 % of prefill, and
-  most of what MTP gains, because a verify step reads (k+1) × 16 rows.
+  most of what MTP gains, because a verify step reads (k+1) × 16 rows. A portable hard disk more than halves decode
+  speed and makes a cold first turn unusable.
 - **The table's format:** rows are 160 wide, so only 32-weight-block formats fit (Q4_0, IQ4_NL, Q5_0, Q8_0, F16).
   Every format costs one 4 KiB page per row read, so a smaller table saves no I/O, and a Q8_0 table (54.4 GB) costs
   only disk space.
@@ -253,6 +255,8 @@ How llama.cpp runs this model on Pascal (read in the v3 source):
   - A row cache with direct reads, as in agentionai's `llama-ple-disk.cpp`.
   - Hot rows kept on a card.
   - Prefetching the rows of MTP drafts.
+  - A compressed table small enough for a little SSD space or the cards
+    ([sub_1_bit_quants.md](sub_1_bit_quants.md), section 4.1; Q433, Q434).
 
 ## 6. Formats on Pascal and the time per token
 

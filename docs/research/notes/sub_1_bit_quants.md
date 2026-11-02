@@ -72,6 +72,10 @@ Conventions, as in the other notes:
 
    Running GSQ ourselves into Pascal formats has the highest ceiling, and it is a project of days on the quality
    machine plus code ISTA has not released.
+9. **The one part of Flash-Next where a sub-1-bit format has room is the n-gram table, not the experts.** The host
+   decodes only ~2,560 of its weights per token, so format cost does not matter. Nothing below 4 bits has been measured.
+   At 0.3–1.1 bits it would take 1.9–7.0 GB instead of 28.8 GB (my calc, section 4.1). An SSD holds the full table
+   with no quality loss, so this is the fallback, with a cheap test (Q433).
 
 ## 1. What the rig can hold, in bits per expert weight
 
@@ -295,6 +299,7 @@ Chong, Kim, Kim, Choi, ICML 2026 ([arXiv 2602.06694](https://arxiv.org/abs/2602.
 |---|---|---|---|---|
 | ISTA GSQ-RCO-Coder | 1.89 effective (3.5 stored, 256 of 512 experts) | RCO expert pruning | SWE-bench Verified 79.2 against 82.8; one user measured factual recall 63 % → 33 % | fits (29.6 GB) |
 | Unsloth UD-IQ1_S / UD-IQ1_M | ~2.5–2.8 over the experts (my calc), the down projections at 4.5 | imatrix | Unsloth's own set: KLD 0.396 / 0.315, UD-Q2_K_XL 0.225, Q8_0 0.027 | fit (43.7 / 45.7 GB); ranked below GSQ-RCO IQ2_XS in [flash_next_variants.md](flash_next_variants.md) |
+| ukisai Swift-1.5 IQ1_S / IQ1_M | ~2.5 / ~2.7 over the experts (my calc): gate/up 1.56 / 1.75, the down projections at 4.5 | imatrix, bartowski's type map | maker's set: KLD 1.16 / 0.91, same top token 65.15 / 69.57 % (Q8_0 0.030, 94.91 %) | fit (41.3 / 43.2 GB), but larger on the cards than GSQ-RCO Q2_0 and IQ2_XS |
 | SyzygyResearch Mach-2-Additive-Medium | 1.70 | fine-tune with an undisclosed method, trellis codes with a bit rate per expert and a shared low-rank residual for "demoted" experts | maker: 93–98 % retention on Terminal-Bench 2.1, DeepSWE, NL2Repo | its own fork, tested on one A100; BF16 n-gram table in ~105 GB of host RAM |
 | turboderp EXL3 | 1.66 / 2.18 / 2.68 | trellis | GPQA-D 86.4 / 89.4 / 91.4 against 91.7 | tensor-core kernels |
 | agentionai Gyro-S/M/L | ~2.1–3.3 | trellis | maker: KLD 0.401 / 0.291 / 0.146 | their fork; est. 2–3.5× slower per weight than Q2_0 |
@@ -325,6 +330,37 @@ No Flash-Next file below 1.66 bits per expert weight exists, and no sub-1-bit Fl
   - The calibration is thin per expert: ~5,100 tokens per expert per layer at the default 262k tokens, unevenly
     spread.
   - The cost is est. days to weeks on the quality machine, for a quality class that section 3 already rules out.
+
+### 4.1 The n-gram table
+
+The table is the largest tensor in every Flash-Next file (28.8 GB, 41 % of Swift's 70.1 GB IQ1_S), and two things set
+it apart from the experts:
+- **Decode cost does not matter.** A token gathers 16 rows of 160 weights on the host: 2,560 weights. Any format can
+  decode that in time, codebooks and factorizations included, so section 5's limits do not apply and no Pascal kernel
+  is needed.
+- **It is untested below 4 bits.** With only the table quantized, KLD against BF16 is 0.0255 at IQ4_NL and 0.0162 at
+  Q8_0 ([Delgon](https://huggingface.co/Delgon/Qwen3.8-Flash-Next-PLE-GGUF)).
+
+Sizes for the 320,001,536 rows (my calc). Binary factorization uses section 3.2's format, (r + 16) bits per row, and
+the 160-wide side is negligible:
+
+| Row format | Bytes per row | Bits | Table (GB) |
+|---|---|---|---|
+| IQ4_NL (published) | 90 | 4.5 | 28.8 |
+| 2-bit weights + a 16-bit row scale | 42 | 2.1 | 13.4 |
+| Sign bits + a 16-bit row scale | 22 | 1.1 | 7.0 |
+| Binary factorization, rank 64 | 10 | 0.5 | 3.2 |
+| Binary factorization, rank 32 | 6 | 0.3 | 1.9 |
+
+On disk a smaller table saves no reads, because one row still costs one page
+([flash_next_variants.md](flash_next_variants.md), section 5). It changes where the table can live. The rig's 64 GB
+SSD has trouble holding 28.8 GB (Q435) and holds 13.4 GB after a small cleanup. At 7.0 GB the table also fits on the
+cards beside a 37.7 GB Q2_0 file, 44.7 GB against the ~47 GB ceiling, with no MTP draft and no disk in the token path.
+
+The test needs no engine work and no download (Q433). Round-trip the table through each format, write the decoded
+values back in the file's 4.5-bit format, and score KLD against the unmodified file. The re-encoding error is small
+against a 2-bit or lower target. Only the table shard changes. A census of row norms comes first, since hashed slots
+that no common n-gram reaches may hold little.
 
 ## 5. On Pascal
 
@@ -428,7 +464,8 @@ What this means:
 | E7 (Q236). GSQ-style rounding into Pascal formats (route 5) | quality machine | est. 2–5 days of three RTX 3090s, after the code | only if E3 and E4 leave a gap to IQ3_S that the agent check shows matters |
 
 Every route, lever and parked idea in this note and in [flash_next_variants.md](flash_next_variants.md) is a row of the
-[registry](../../../quants/experiments.md#qwen38-flash-next) (Q213–Q244); the routes not pursued above are Q238–Q244.
+[registry](../../../quants/experiments.md#qwen38-flash-next) (Q213–Q244, Q433–Q435); the routes not pursued above are
+Q238–Q244.
 
 ## Sources
 
@@ -490,7 +527,8 @@ Other Flash-Next files
   stated); [SyzygyResearch/Mach-2-Additive-Medium](https://huggingface.co/SyzygyResearch/Mach-2-Additive-Medium) and
   [its fork's docs](https://github.com/SyzygyResearch/llama.cpp-mach1/blob/master/docs/mach1.md);
   [turboderp/Qwen3.8-Flash-Next-exl3](https://huggingface.co/turboderp/Qwen3.8-Flash-Next-exl3);
-  [agentionai Gyro](https://huggingface.co/agentionai/Qwen3.8-Flash-Next-Gyro-GGUF) (P, makers' own numbers)
+  [agentionai Gyro](https://huggingface.co/agentionai/Qwen3.8-Flash-Next-Gyro-GGUF),
+  [ukisai/Swift-1.5-Qwen3.8-Flash-Next-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-Flash-Next-GGUF) (P, makers' own numbers)
 
 This project
 - [flash_next_variants.md](flash_next_variants.md) and its
