@@ -13,7 +13,12 @@ level (78–80 %: makers-fast, S1, S2, the Q4_0 variants) are no longer release 
 against UD-Q4_K_XL on the same build and cards. Engine and kernel work still counts wherever it is measured, because it
 speeds up every file.
 
-**Now (2026-10-27, 20:40):** v2.0 is released; v3 puts Ornith-1.5-122B first (Q158, Q164, Q166, Q167, Q170, Q171)
+**Now (2026-11-02):** Qwen3.8-Flash-Next leads, Swift-1.5 GSQ-RCO Q2_0 first, with IQ3_XXS as the quality reference: where the
+n-gram table lives (Q214, Q435), the fit probe (Q213), then the baseline and agent check (Q215). Strata's techniques are the
+port list (Q436–Q471, [strata.md](../docs/research/notes/strata.md)), with Q215's profile setting their order. Nothing is
+running: the rig is off and the quant machine is being rebuilt.
+
+**Until then (2026-10-27, 20:40):** v2.0 is released; v3 puts Ornith-1.5-122B first (Q158, Q164, Q166, Q167, Q170, Q171)
 with Flint's MTP head alongside (Q169, Q168). The rig is off for the night; from 2026-10-28 08:00 it runs Ornith's
 attention share and the round-2 IQ kernels on UD-Q2_K_XL (Q166), the cheaper MTP guess and the answer store as paired
 replays, then the overnight MTP heads (Q169). The 7-GPU quant machine runs overnight: Flint's MTP heads on two RTX 3090s
