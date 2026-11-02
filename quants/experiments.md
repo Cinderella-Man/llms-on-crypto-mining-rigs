@@ -556,7 +556,7 @@ tasks per rig-hour than Flint and than its own base with a good context file. Al
 | Q478 | AST bug transforms for Elixir: parser-based task generation at no model cost (93 % of mirrored PRs' value in SWE-smith's ablation) | planned | — | code |
 | Q479 | Commit-mined Hex tasks: 25–40 approved packages, licence scan per file, 200 pilot tasks, then ~2,000 | planned | — | code, CPU |
 | Q480 | Back-translated task statements with their own statement type in `gate.py tasks`, in place of issue text | planned | — | code |
-| Q481 | Teacher trial: Flint, Ornith-1.5-35B and Qwen3.6-35B-A3B on 50 tasks, 4 attempts each: verified share and hours per kept session | planned | — | quant machine, ~1 day |
+| Q481 | Teacher trial: Qwen3.8-Flash-Next, Flint, Ornith-1.5-35B and Qwen3.6-35B-A3B on 50 tasks, 4 attempts each: verified share and hours per kept session | planned | — | quant machine, ~1 day |
 | Q482 | Trajectory fine-tuning with loss on `gen_ranges` only: a 9B recipe pilot at 500, 1,000 and 2,000 kept sessions, paired against base plus context | planned | — | quant machine, one card per arm |
 | Q483 | Curated Hex code as a knowledge stage from the `-Base` checkpoint, then restored instructions (Kotlin: +11.8 on 25K curated files, +1 to +3 on raw corpora) | planned | — | an arm of Q482 |
 | Q484 | The recipe ported to Ornith-1.5-35B-A3B: LoRA on the shared expert, attention and Gated DeltaNet, four cards | planned | — | quant machine, ~1.7× the 9B's time |
