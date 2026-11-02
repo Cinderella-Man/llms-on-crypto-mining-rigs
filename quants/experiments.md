@@ -537,3 +537,41 @@ against (marked parked, with the reason and what would reopen them).
 | Q420 | A copy-then-fresh-text trace (Magnitude's `prose-shift` fixture; Moby-Dick is public domain) as a Q342 test in Q87's simulator; diagnostic only | planned | | offline |
 | Q421 | Parked: N2P's integer scale per 8 weights costs 3 XMADs per token on compute 6.1 (no 32-bit integer multiply): 12 per 32 weights and token beside 8 dp4a, in Q211's kernel as in the one-token kernel; a scale per 16 or 32 weights (as N3P has) would cut the per-token integer work by a third to a half | parked: a format change with a quality cost, for a share of time not measured yet | | reopens if Q211's P106 timing shows N2P's 2–4-token products clearly slower per token than N3P's |
 | Q422 | Parked: the expert combine fused into the down product (the second half of uzu lesson 1, part of Q211's plan): llama.cpp already reduces the routed outputs with one kernel per layer (`moe-weighted-reduction.cu`), so fusing saves about one launch per layer and step, est. ~0.1 % of a 3-token verify | parked | | reopens if a rig profile of the verify step shows the reduction above ~1 % |
+
+### Elixir fine-tuning
+
+Every idea from the 2026-11-02 fine-tuning research has a row here, including the ones the evidence argues against
+(marked parked, with the reason and what would reopen them). Score is hidden `mix test` passing with tests unchanged, in
+three arms: base, tuned, opponent. The claim under test: on Elixir repositories it never saw, a tuned model solves more
+tasks per rig-hour than Flint and than its own base with a good context file. All times are estimates.
+
+| ID | Question | Status | Result | How |
+|---|---|---|---|---|
+| Q472 | Where do the candidates start on the Elixir SWE Bench (20 cases, under pi, three seeds, timing off)? Qwen3.5-9B, Ornith-1.5-9B, MiMo-V2.6-Distill-Qwen-9B, OmniCoder-9B as a yardstick, Ornith-1.5-35B, Flint's two missing seeds | planned | — | quant machine, pass rate only |
+| Q473 | An Elixir lane in `bench/agent_check`: 60–80 held-out repository tasks and ~40 Exercism tasks. The bench's 20 projects stay out of all training | planned | — | code, then quant machine |
+| Q474 | elixir-sft-dataset's 335 root tasks as a single-turn evaluation lane, in a container (±2.7 points, against ±12 for its 17-root validation split) | planned | — | quant machine |
+| Q475 | Docs context arm: a docs index and usage rules on the best base, on the same lanes. Every tuned arm must beat this one | planned | — | quant machine |
+| Q476 | Qwen3.5-9B Q4_0 on the rig: is the 19–23 tok/s estimate right, and how do its minutes per solved task compare with Ornith-1.5-35B Q4_0? | planned | — | rig, agent check |
+| Q477 | Fine-tuning smoke test on the RTX 3090s: link widths under load, `nccl-tests`, 200-step LoRA, sequence sweep from 2k to 32k in BF16 and 8-bit, DDP, vLLM, merge to GGUF, a rig check of tool calling | planned | — | quant machine, one day |
+| Q478 | AST bug transforms for Elixir: parser-based task generation at no model cost (93 % of mirrored PRs' value in SWE-smith's ablation) | planned | — | code |
+| Q479 | Commit-mined Hex tasks: 25–40 approved packages, licence scan per file, 200 pilot tasks, then ~2,000 | planned | — | code, CPU |
+| Q480 | Back-translated task statements with their own statement type in `gate.py tasks`, in place of issue text | planned | — | code |
+| Q481 | Teacher trial: Flint, Ornith-1.5-35B and Qwen3.6-35B-A3B on 50 tasks, 4 attempts each: verified share and hours per kept session | planned | — | quant machine, ~1 day |
+| Q482 | Trajectory fine-tuning with loss on `gen_ranges` only: a 9B recipe pilot at 500, 1,000 and 2,000 kept sessions, paired against base plus context | planned | — | quant machine, one card per arm |
+| Q483 | Curated Hex code as a knowledge stage from the `-Base` checkpoint, then restored instructions (Kotlin: +11.8 on 25K curated files, +1 to +3 on raw corpora) | planned | — | an arm of Q482 |
+| Q484 | The recipe ported to Ornith-1.5-35B-A3B: LoRA on the shared expert, attention and Gated DeltaNet, four cards | planned | — | quant machine, ~1.7× the 9B's time |
+| Q485 | Single-turn GRPO with a `mix test` reward on clean tasks, 300 iterations (est. 28 h on five cards) | planned | — | quant machine |
+| Q486 | Multi-turn RL trial, 60 steps, from-base and from-SFT arms, on tasks solved 10–70 % of the time (est. 2–5 days per arm) | planned | — | quant machine, gated on Q482 |
+| Q487 | A length penalty in the reward, as a second arm of Q486 | planned | — | quant machine |
+| Q488 | Specialist pass: ~700 Phoenix or Ecto sessions on top of Q482, for a gain on those repositories without a loss elsewhere | planned | — | quant machine |
+| Q489 | Dialyzer, Credo, compile warnings and format as secondary scores, never as rewards: a static-analysis reward alone made a small model worse | planned | — | agent check |
+| Q490 | Elixir agent sessions as imatrix calibration for a tuned file | planned | — | quant machine |
+| Q491 | The two RTX 3080s as always-on vLLM workers during training | planned | — | quant machine |
+| Q492 | Pass-filtered trajectories as a cheaper first test than RL | planned | — | an arm of Q482 |
+| Q493 | Laguna XS 2.1 on the rig: nearest to Flint's shape, est. 33–38 tok/s pipelined; its CUDA path is unverified | planned | — | rig |
+| Q494 | Parked: a 9B-first router that escalates on failure. It pays only when the first model is cheaper in time, and a dense 9B is est. slower and weaker than Flint and Ornith-1.5-35B on the rig. Reopens if Q476 measures the 9B ahead on minutes per solved task | planned (parked) | — | — |
+| Q495 | Parked: multi-turn RL at DeepSWE's batch of 512 trajectories at home, est. 72–77 days on five cards. Reopens with rented cards, or a smaller recipe proven by Q486 | planned (parked) | — | — |
+| Q496 | Parked: fine-tuning Flint. Its card says the Transformers modeling code is not included yet. Reopens when that code is released | planned (parked) | — | — |
+| Q497 | Parked: single-turn SFT on elixir-sft-dataset as the main stage. No controlled evidence that it helps inside a tool loop, and the repository has no licence. Reopens with a licence and provenance decision | planned (parked) | — | — |
+| Q498 | Parked: a live `--lora` on the rig, which likely loses kernel speed (untested); merge in PyTorch, then quantize. Reopens if many adapters must be served side by side | planned (parked) | — | — |
+| Q499 | Parked: tuning few-active-parameter small models (Mellum2.1 12B-A2.5B, LFM2.5-8B-A1B). Mellum scores below Qwen3.5-9B on SWE Pro, and LFM's makers say it is not the best fit for heavy programming. Reopens if Q476 rules the dense 9B out for small rigs | planned (parked) | — | — |
