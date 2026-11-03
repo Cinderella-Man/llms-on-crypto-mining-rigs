@@ -1,0 +1,71 @@
+k,part,gpu_ms_per_pass_median
+1,routed experts (Q2_0),27.20
+1,shared expert,4.43
+1,BF16 hyper-connections,44.59
+1,router (F32),2.52
+1,attention and recurrent projections,24.54
+1,"recurrent state (delta net, conv)",4.32
+1,flash attention,0.71
+1,output layer,3.49
+1,token embeddings,0.00
+1,other ops without weights,26.28
+1,other weights,1.61
+1,total,139.55
+1,"wall ms per pass (llama-bench, profiler on)",178.66
+1,"wall ms per pass (llama-bench, profiler off)",135.97
+2,routed experts (Q2_0),29.93
+2,shared expert,5.67
+2,BF16 hyper-connections,63.27
+2,router (F32),3.44
+2,attention and recurrent projections,38.06
+2,"recurrent state (delta net, conv)",4.78
+2,flash attention,0.91
+2,output layer,3.49
+2,token embeddings,0.00
+2,other ops without weights,30.52
+2,other weights,2.00
+2,total,182.01
+2,"wall ms per pass (llama-bench, profiler on)",220.17
+2,"wall ms per pass (llama-bench, profiler off)",185.78
+3,routed experts (Q2_0),44.31
+3,shared expert,7.31
+3,BF16 hyper-connections,83.36
+3,router (F32),4.53
+3,attention and recurrent projections,50.94
+3,"recurrent state (delta net, conv)",5.30
+3,flash attention,1.16
+3,output layer,3.58
+3,token embeddings,0.00
+3,other ops without weights,30.93
+3,other weights,2.68
+3,total,234.09
+3,"wall ms per pass (llama-bench, profiler on)",279.82
+3,"wall ms per pass (llama-bench, profiler off)",244.64
+4,routed experts (Q2_0),58.30
+4,shared expert,9.57
+4,BF16 hyper-connections,101.80
+4,router (F32),3.18
+4,attention and recurrent projections,69.20
+4,"recurrent state (delta net, conv)",5.81
+4,flash attention,1.19
+4,output layer,3.58
+4,token embeddings,0.00
+4,other ops without weights,31.08
+4,other weights,3.22
+4,total,286.90
+4,"wall ms per pass (llama-bench, profiler on)",339.18
+4,"wall ms per pass (llama-bench, profiler off)",305.43
+5,routed experts (Q2_0),70.73
+5,shared expert,9.24
+5,BF16 hyper-connections,123.03
+5,router (F32),6.01
+5,attention and recurrent projections,67.89
+5,"recurrent state (delta net, conv)",6.21
+5,flash attention,1.72
+5,output layer,3.58
+5,token embeddings,0.00
+5,other ops without weights,30.83
+5,other weights,3.88
+5,total,323.04
+5,"wall ms per pass (llama-bench, profiler on)",381.90
+5,"wall ms per pass (llama-bench, profiler off)",359.93

@@ -21,6 +21,7 @@ KILL_SWAPOUT_MIB=${KILL_SWAPOUT_MIB:-600}
 WINDOW_S=${WINDOW_S:-10}
 KILL_FULL_PCT=${KILL_FULL_PCT:-60}
 KILL_FULL_S=${KILL_FULL_S:-15}
+PROC=${PROC:-llama-server}  # the process to guard, by its name in /proc/<pid>/comm (Q583 guards llama-bench)
 echo $$ > "$LOG.pid"
 echo -1000 > /proc/$$/oom_score_adj
 echo "# $(date -Is) mem_guard: swap-out > $KILL_SWAPOUT_MIB MiB in $WINDOW_S s, or full avg10 > $KILL_FULL_PCT % for $KILL_FULL_S s" >> "$LOG"
@@ -48,9 +49,9 @@ while true; do
   if [ -z "$pid" ] || [ ! -d "/proc/$pid" ]; then
     pid=""
     for d in /proc/[0-9]*; do
-      { read -r c < "$d/comm"; } 2> /dev/null && [ "$c" = llama-server ] && { pid=${d#/proc/}; break; }
+      { read -r c < "$d/comm"; } 2> /dev/null && [ "$c" = "$PROC" ] && { pid=${d#/proc/}; break; }
     done
-    [ -n "$pid" ] && echo 1000 > "/proc/$pid/oom_score_adj" && echo "# $(printf '%(%s)T') llama-server $pid: oom_score_adj 1000" >> "$LOG"
+    [ -n "$pid" ] && echo 1000 > "/proc/$pid/oom_score_adj" && echo "# $(printf '%(%s)T') $PROC $pid: oom_score_adj 1000" >> "$LOG"
   fi
   if [ "${full%.*}" -gt "$KILL_FULL_PCT" ]; then high=$((high + 1)); else high=0; fi
   echo "$(printf '%(%s)T') $avail $cma $((avail - cma)) $(((st - sf) / 1024)) $win $some $full ${pid:--}" >> "$LOG"
@@ -60,7 +61,7 @@ while true; do
     [ "$high" -ge "$KILL_FULL_S" ] && why="full avg10 $full % for $high s"
     if [ -n "$why" ]; then
       kill -9 "$pid" 2> /dev/null
-      echo "# $(printf '%(%s)T') KILL llama-server $pid: $why" >> "$LOG"
+      echo "# $(printf '%(%s)T') KILL $PROC $pid: $why" >> "$LOG"
       pid=""
     fi
   fi
