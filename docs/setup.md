@@ -4,6 +4,25 @@ This is the software configuration every benchmark in this repository was measur
 the way. It assumes the stock rig: nine P106-090 cards, the Celeron 3865U with 4 GB of RAM and the 64 GB SSD
 ([hardware spec](mining_rig.md)).
 
+## A new rig, step by step
+
+The order that set up a second, identical rig in an afternoon. Each step links its details below or elsewhere in the
+repository. All of them run on the rig as root unless noted.
+
+| # | Step | How | Done when |
+|---|---|---|---|
+| 1 | **Ubuntu 24.04** and the network | A desktop install. Disk encryption is optional, but an encrypted root needs someone at the keyboard after every reboot. Wire the rig to your main network or a switch on it, not behind a second router: one such router dropped traffic toward two rigs ([network data](data/2026-11-03_rig_network/README.md)) | `ip route` shows your main router as the gateway |
+| 2 | **Driver 580** | `apt install nvidia-driver-580`, reboot ([below](#operating-system-and-driver)). The CUDA toolkit is needed only to build on the rig ([below](#cuda-toolkit)) | `nvidia-smi` lists nine P106-090 |
+| 3 | **Inventory against the spec** | `bash scripts/rig_inventory.sh > inventory.txt` ([below](#checking-your-rig)), then compare it with [the hardware spec](mining_rig.md) | VBIOS 86.06.5B.00.0C, 75 W limit, PCIe 1.0 x1 on every card, ASPM off |
+| 4 | **Strip the desktop install** | `bash scripts/rig_debloat.sh` (a dry run that lists everything), then `APPLY=1 bash scripts/rig_debloat.sh` ([what it removes](data/2026-11-03_rig_debloat/README.md)) | 100–130 packages and every snap gone, automatic upgrades off, `dpkg --audit` clean |
+| 5 | **Two more trims, if the CUDA toolkit is installed** | `apt purge cuda-repo-ubuntu2404-12-9-local` if NVIDIA's local installer was used, then `bash scripts/rig_trim.sh` and `APPLY=1 bash scripts/rig_trim.sh` (Nsight, the ext4 reserve) | `nvcc` still works; 7–14 GB more free on the SSD |
+| 6 | **A model drive** | ext4 with a label, mounted by `LABEL=` with `nofail` ([below](#storing-models)). Keep the SSD's free space for files that need fast random reads, such as Flash-Next's 28.8 GB n-gram table ([storage data](data/2026-11-03_table_storage/README.md)) | `findmnt --verify` clean, and the drive mounts after a reboot |
+| 7 | **Two tools for the checks** | `apt install --no-install-recommends fio iperf3` (no daemon is started) | both run |
+| 8 | **The network, both directions** | `iperf3 -s` on the rig, then `iperf3 -c <rig>` and `iperf3 -c <rig> -R` from another machine on the network ([commands](data/2026-11-03_rig_network/README.md#how-it-ran)). A fault in one direction is invisible to `ping` and to downloads | ~940 Mbit/s each way, 0 % ping loss |
+| 9 | **The engine, a model and the release check** | The README's [Run it](../README.md#run-it), steps 2–4, then the check with `SERVE=1` on Flint Q8_0 | 0 FAIL; chat ~35.5 tok/s, a 16k prompt at ~580 tok/s (the same on two rigs) |
+
+Steps 4 and 5 left two rigs with 34 and 39 GB free on the SSD. The only warning step 9 gave was a slow USB stick.
+
 ## What the hardware dictates
 
 | Constraint | Consequence |
@@ -29,7 +48,9 @@ Three things are worth knowing on a 64 GB disk:
 - **The local installer leaves a 4.4 GB copy of all its packages** in `/var/cuda-repo-ubuntu2404-12-9-local`. After the
   toolkit is installed, `sudo apt purge cuda-repo-ubuntu2404-12-9-local` deletes it and keeps the installed CUDA.
   Later CUDA package installs then need NVIDIA's online repository instead.
-- **The full toolkit is ~7 GB plus ~2 GB of profilers** (Nsight Compute and Nsight Systems under `/opt/nvidia`).
+- **The full toolkit is ~7 GB plus ~2 GB of profilers** (Nsight Compute and Nsight Systems under `/opt/nvidia`), and
+  the profilers refuse the P106 anyway. [scripts/rig_trim.sh](../scripts/rig_trim.sh) removes them and keeps the
+  toolkit.
   llama.cpp links only against `libcudart`, `libcublas` and `libcublasLt`; the cuFFT, cuSPARSE, cuSOLVER, NPP, cuRAND and
   nvJPEG libraries (~3.7 GB with their development files) are unused.
 - **`nvcc` is not on `PATH`** after installation. Use `/usr/local/cuda-12.9/bin/nvcc`, or pass it to CMake as below.
