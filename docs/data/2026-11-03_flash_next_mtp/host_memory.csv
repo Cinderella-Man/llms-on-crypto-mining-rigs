@@ -1,0 +1,11 @@
+line,phase,epoch,seconds_from_start,mem_available_mib,swap_used_mib
+nodraft,start,1793717694,0,2549,31
+nodraft,loaded,1793717905,211,767,411
+nodraft,lowest MemAvailable after loading,1793718536,842,195,756
+nodraft,most swap after loading,1793719368,1674,530,1043
+nodraft,last sample,1793720520,2826,2752,306
+mtp,start,1793720544,0,2783,288
+mtp,main model loaded, draft loading,1793720755,211,842,605
+mtp,lowest MemAvailable after loading,1793720757,213,707,669
+mtp,most swap after loading,1793720764,220,949,1011
+mtp,last sample,1793721269,725,2888,169
