@@ -63,11 +63,52 @@ per cell and cache; Q585).
 - Speed. Upstream changed how CUDA graphs launch (chunked capture, #30804; eviction, #30662), so an agent-check A/B on a
   rig decides whether the new base is as fast as v3.
 - Identity on a P106: greedy outputs against the v3 tarball's on the rig.
-- `llama-pipe-recurrent-check`: it lives on the hybrid-model branch (`-hybrid`), not on this base.
-- The feature branches (`-hybrid`, `-bf16mv`, `-dflash` and the older ones) are not rebased yet. A three-way merge onto
-  this base, with `pascal-p106-v3` as the merge base, applies `-bf16mv` and `-dflash` cleanly (`-dflash`'s copy of
-  #30927 is upstream now); `-hybrid` conflicts in `llama-graph.cpp` and `llama-memory-recurrent.{cpp,h}`; `-lowbit` and
-  `-mtpk` conflict in the type tables (the retired `Q4_1_64` beside their new types) and the MMQ tile loaders.
+- `llama-pipe-recurrent-check`: it lives on the hybrid-model branch (`-hybrid`), not on this base; its run on
+  `pascal-p106-v3-b12076-hybrid` is below.
+- The older feature branches (`-cheapguess`, `-promptpath`, `-textreuse`, `-decodemask`, `-lowbit`, `-mtpk`). A
+  three-way merge onto this base, with `pascal-p106-v3` as the merge base, applies the first four cleanly; `-lowbit`
+  and `-mtpk` conflict in the type tables (the retired `Q4_1_64` beside their new types) and the MMQ tile loaders.
+
+## The feature branches on this base (C66b)
+
+Each branch is a new branch, `pascal-p106-v3-b12076-<name>`, made by cherry-picking its commits from `pascal-p106-v3`
+onto `pascal-p106-v3-b12076` (the old branches stay as they are). `-dflash` is not carried over: its fix is upstream's
+#30927, already in the base, and its `HC_STREAM_MEAN` test rides on `-bf16mv` and `-hybrid`. Each was built for the rig
+by [run/branches.sh](run/branches.sh) (sm_61 code + compute_61 PTX, `TESTS=1`, 0 AVX instructions, newest glibc symbol
+GLIBC_2.38), on CPUs only.
+
+| Branch | Commit | Commits on the base | How it moved | Rig tarball, md5 |
+|---|---|---|---|---|
+| `-bf16mv` (Pascal BF16 matrix-vector kernel, Q546) | `abd60e7c0` | 2 | clean | `llama.cpp-20261103-abd60e7c0-pascal-p106-v3-b12076-bf16mv.tar.gz`, `d349f315ea24a5592f741f93d5d08556` |
+| `-q2_0mv` (Pascal Q2_0 expert kernel, Q223) | `d29b0cc56` | 1 | clean | `llama.cpp-20261103-d29b0cc56-pascal-p106-v3-b12076-q2_0mv.tar.gz`, `8055e39db5517253680eaabe8f7fe539` |
+| `-iqmmvq` (IQ2_S / IQ3_XXS in the Pascal kernels, Q166) | `76788bf4a` | 6 | clean | `llama.cpp-20261103-76788bf4a-pascal-p106-v3-b12076-iqmmvq.tar.gz`, `5913a87dbb126a16d57ca139b7ebe928` |
+| `-hybrid` (pipelined decoding of the delta-net models, Q550) | `8c25952e4` | 8 | 2 commits ported by hand (below) | `llama.cpp-20261103-8c25952e4-pascal-p106-v3-b12076-hybrid.tar.gz`, `57fc7db48572b38e50f70dfd92b98348` |
+| `-ladder` (the base + `-bf16mv` + `-q2_0mv`, for the speed ladder Q551) | `98bbd6a2f` | 3 | the two kernels' test cases side by side | `llama.cpp-20261103-98bbd6a2f-pascal-p106-v3-b12076-ladder.tar.gz`, `09bfc0b21d2f7413a28c6cedd3cca392` |
+
+**`-hybrid`'s two ports.** Upstream replaced the attention input's `self_kq_mask` with `self_attn_mask` (a mask plus
+optional kv rows, #29510) and no longer sets the K/V rotations as inputs there, so the hybrid memory's attention part
+now takes the device-built mask exactly as a plain KV cache does on this base: its inputs when the graph
+built it, upstream's `set_input_attn_mask` / `can_reuse_attn_mask` otherwise. In the recurrent memory, upstream keeps
+its buffers in `llama_memory_bufs` (which also simulates allocations with `no_alloc`, #31087) and bounds a rollback by
+the snapshots the last ubatch wrote (`rs_max`, #31368); the state groups for pipe slots allocate through the new holder,
+copy no rows when it only simulates, and keep `rs_max` beside their own fields (pipelining needs `n_rs_seq` 0, where
+`rs_max` stays 0). Every other state read and write already went through `s_copy` (whose new `s_copy_main` and
+`s_copy_tail` are views of it) or through the writes the branch moves into the slot's group.
+
+**`-iqmmvq` is not in `-ladder`:** with `-q2_0mv` it conflicts in seven places in `mmvq-pascal.cu` and one in
+`mmvq-pascal-impl.cuh`, where Q2_0's tile staging and the grid types' lookup tables both change the kernels' shared
+memory and their load paths. Merging them is its own task (Q603).
+
+**Checked (CPU only):** all five compile, with their tests. `-hybrid`'s pipelined decoding on a random-weight
+`qwen4exp` model (Qwen3.8-Flash-Next's architecture: a Gated DeltaNet layer with the n-gram embedding's conv history,
+an attention layer with the sparse-attention indexer, hyper-connections, MoE; written by this build's
+`test-llama-archs -a qwen4exp -s 1`) on the CPU, with C55's
+[checks.sh](../2026-11-03_flash_next_pipelined/run/checks.sh): 29 pipelined runs (depths 1 to 4; oracle guesses with
+0, 10 and 50 % made wrong; `copy`, `cont`, `ngram-simple` and `ngram-map-k` guessers) give the same tokens, logits of
+every token, sequence state and probe as plain decoding, and `llama-pipe-recurrent-check` (24 forced rollbacks through
+the stash, 24 pipe leaves, 8 decodes) is the same in all four too ([c66b_hybrid_cpu.tsv](c66b_hybrid_cpu.tsv)).
+**Not yet:** every kernel on a P106 (`test-backend-ops` on one card for the ops each branch touches), `-hybrid` on the
+GPUs (two virtual devices, the real Flash-Next file, the nine cards), and the speed ladder on the rig.
 
 ## Files
 
@@ -76,6 +117,8 @@ per cell and cache; Q585).
 | [run/build.sh](run/build.sh) | the rig build: [scripts/build_llamacpp_docker.sh](../../../scripts/build_llamacpp_docker.sh) with `TESTS=1`, then `test-llama-archs` from the same tree |
 | [run/check.sh](run/check.sh) | the `test-backend-ops` and `test-llama-archs` runs above, one GPU |
 | [run/e2e.sh](run/e2e.sh) | the Flint runs: the self-check and the two byte-for-byte logit comparisons |
+| [run/branches.sh](run/branches.sh) | C66b: the rig builds of the feature branches, one at a time, with md5s; `test-llama-archs`, `llama-pipespec` and `llama-pipe-recurrent-check` for the branches in `EXTRA` |
+| [c66b_hybrid_cpu.tsv](c66b_hybrid_cpu.tsv) | C66b: `-hybrid`'s pipelined runs and `llama-pipe-recurrent-check` on the random `qwen4exp` model, CPU: per run the depth, tokens generated, guesses, right and wrong guesses, and same/DIFF for tokens, logits, state and probe |
 
 ## Commands
 
@@ -90,6 +133,14 @@ BIN=<dir>/bin/llama.cpp-20261103-b05ecc2d1-pascal-p106-v3-b12076 ARCHS=<dir>/ext
 BIN=... MODEL=<flint-q113-K2h-r16.gguf> TEXT=<wikitext-2-raw/wiki.test.raw> WORK=<dir> GPU=0 NGL=20 STEPS=1 \
     docs/data/2026-11-03_upstream_rebase/run/e2e.sh
 BIN=... MODEL=... TEXT=... WORK=<dir> GPU=0 NGL=30 CHUNKS=1 STEPS="2 3" docs/data/2026-11-03_upstream_rebase/run/e2e.sh
+# C66b: the feature branches (each pushed to the fork first), then -hybrid's CPU checks in a container with no GPU
+# (the binaries link libcuda.so.1, so the CUDA toolkit's stub stands in for it and CUDA finds no device)
+P=pascal-p106-v3-b12076
+WORK=<dir> BRANCHES="$P-ladder $P-hybrid $P-bf16mv $P-q2_0mv $P-iqmmvq" EXTRA="$P-hybrid" JOBS=4 \
+    docs/data/2026-11-03_upstream_rebase/run/branches.sh
+mkdir -p /tmp/stub && ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /tmp/stub/libcuda.so.1
+LD_LIBRARY_PATH=/usr/local/cuda/lib64:/tmp/stub BIN=<dir>/extra/$P-hybrid PS=bench/pipespec OUT=<out> \
+    STEPS="rand-cpu rand-prc-cpu" bash docs/data/2026-11-03_flash_next_pipelined/run/checks.sh
 ```
 
 The `test-backend-ops` runs above used the build of `45fbad874` and the Flint self-check that of `879f3b86f`, made the
