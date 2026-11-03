@@ -1,0 +1,20 @@
+The profiled diagnostic line (run/fn_line.sh of 2026-11-03_flash_next_baseline, MODE=diag, GGML_CUDA_PROFILE on,
+-lv 5), on the unmodified Swift Q2_0 (Q215, 15:06, desktop running) and on the retyped file (20:07, headless), same
+build (v3 base 37e717ff6) and line: -c 65536 -b 2048 -ub 512 -ts 6,5,5,6,5,5,6,5,6 -fit off -lm dio.
+Speeds under the profiler are diagnostics, not results.
+
+== unmodified (Q215's v3diag)
+load 320 s
+cards (MiB): 5275 4565 4745 5315 4591 4751 5333 4601 5199 (sum 44,375)
+host (free -m): used 3356, free 257, shared 735, buff/cache 1225, available 480
+short      prompt 65 (+0 cached) at 10.15 tok/s, first token 6.67 s; decode 64 at 4.42 tok/s; SSD reads: prompt 2147 (21.6 MiB), decode 45.53/token (469.7 KiB), major faults/token 18.02; MemAvailable 302 MiB
+p8k        prompt 7183 (+42 cached) at 61.12 tok/s, first token 118.53 s; decode 16 at 6.25 tok/s; SSD reads: prompt 70250 (294.3 MiB), decode 46.44/token (274.8 KiB), major faults/token 34.12; MemAvailable 375 MiB
+restore8k  prompt 6505 (+42 cached) at 64.02 tok/s, first token 101.65 s; decode 16 at 6.17 tok/s; SSD reads: prompt 20117 (90.2 MiB), decode 15.94/token (88.0 KiB), major faults/token 2.81; MemAvailable 394 MiB
+
+== retyped (hcq8diag)
+load 284 s
+cards (MiB): 5185 4489 4671 5225 4515 4677 5243 4525 5117 (sum 43,647: 728 MiB less, of which ~45 MiB are the desktop's nine contexts, Q83)
+host (free -m): used 3247, free 347, shared 732, buff/cache 1260, available 589
+short      prompt 65 (+0 cached) at 10.19 tok/s, first token 6.54 s; decode 64 at 6.87 tok/s; SSD reads: prompt 2818 (19.8 MiB), decode 19.47/token (96.4 KiB), major faults/token 5.27; MemAvailable 294 MiB
+p8k        prompt 7183 (+42 cached) at 60.36 tok/s, first token 119.26 s; decode 16 at 4.17 tok/s; SSD reads: prompt 64020 (258.3 MiB), decode 56.88/token (381.5 KiB), major faults/token 33.25; MemAvailable 573 MiB
+restore8k  prompt 6505 (+42 cached) at 63.42 tok/s, first token 102.63 s; decode 16 at 6.91 tok/s; SSD reads: prompt 55631 (227.1 MiB), decode 18.5/token (99.0 KiB), major faults/token 2.5; MemAvailable 570 MiB

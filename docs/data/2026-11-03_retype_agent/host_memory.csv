@@ -1,0 +1,2 @@
+arm,samples_s,avail_minus_cma_mean_mib,avail_minus_cma_lowest_mib,mem_available_lowest_mib,swap_highest_mib,swapout_window_highest_mib,psi_some_avg10_mean_pct,psi_full_avg10_highest_pct
+hcq8,2852,236,120,231,305,220,0.04,4.41
