@@ -36,8 +36,11 @@ scripts are in [docs/data/2026-10-27_flash_next_variants/](../../data/2026-10-27
    the quality reference that the v3 IQ kernels speed up. KLD on the quality machine, then the agent check on the rig,
    picks between them and between the ISTA and Swift builds. Est. decode for Q2_0 at short context is 12–15 tok/s
    before MTP and the dense fixes.
-7. **The table needs an SSD, not a flash stick.** With only 0.3–0.7 GB of page cache, 11–14 of a token's 16 lookups
-   go to disk: ~0.3 ms per token on a SATA SSD, 4–8 ms on a USB flash stick, which also adds 50–95 % to prefill (est.).
+7. **The table needs an SSD, and the rig's SATA SSD is enough.** In replayed agent sessions, with the rig's est.
+   ~2 GiB of page cache, 3.6–5.7 of a generated token's 16 lookups and 1.4–3.3 of a prompt token's go to disk
+   ([replay](../../data/2026-11-03_ngram_replay/README.md)): est. 0.15–0.9 ms per generated token on the SATA SSD
+   (~1 % of decode), 1.3–3.4 ms on a USB flash stick, 37–59 ms on a USB hard disk. More RAM barely helps, because the
+   misses are n-grams the session has not used before.
 8. **Miner Llama is the engine for this rig.** The dedicated Flash-Next engines need 32–80 GB of host RAM, a newer GPU,
    or both. Strata could be brought up on Pascal, but it is unproven at 4 GB and a fork is not worth making
    ([strata.md](strata.md)).
@@ -234,33 +237,45 @@ How llama.cpp runs this model on Pascal (read in the v3 source):
 
 ## 5. The n-gram table on the rig
 
-- **Page cache:** during agent runs the rig keeps 495–691 MB of memory available
-  ([Ornith](../../benchmarks/2026-10-27-ornith-122b.md), [answer store](../../benchmarks/2026-10-27-answer-store.md)).
-  A 4 KiB page holds one useful 90-byte row, because the hash scatters rows. With
-  [ninfer-all's measured hot-row curve](https://github.com/iamwavecut/ninfer-all/blob/master/docs/qwen3-8-flash-next.md)
-  (33.8 % hits for a 256 MiB row cache, 49.6 % at 4 GiB and more), that gives an est. 15–30 % hit rate: **11–14 reads
-  of 4 KiB from disk per token.**
-- **Cost per medium** (random 4 KiB reads measured by [ssd-tester](https://ssd-tester.com/); per-token costs est.):
+- **Reads per token, measured on replayed sessions**
+  ([data](../../data/2026-11-03_ngram_replay/README.md), Q228): 3,210 requests of the agent check and of 86 agentic
+  sessions, re-rendered with Flash-Next's template, tokenizer and hash, through simulated caches. With ~2 GiB of page
+  cache (est. for the rig with Flash-Next loaded: ~2.5 GB free before the server starts, 0.05–0.4 GB of server
+  buffers at 64k), a generated token reads 3.6–5.7 pages of 4 KiB from disk and a prompt token 1.4–3.3, against 16.3
+  with no cache; the first request after a server start reads ~33k pages.
+  - A 4 KiB page holds one useful 90-byte row, because the hash scatters rows.
+  - The 8 heads of an n-gram share one hash, so an n-gram seen before hits in all 8 rows and a new one misses all 8.
+    The misses are new n-grams: within a 12-task run the page cache stops gaining at ~2 GiB, and even 16 GiB over 86
+    different sessions leaves ~2 reads per generated token.
+  - A row cache with direct reads reaches the same floor in 32–256 MiB. A 95 MB row cache serves 72–84 % of row reads
+    in agent work, in line with Strata's "up to 82 %"; ninfer-all's
+    [hot-row curve](https://github.com/iamwavecut/ninfer-all/blob/master/docs/qwen3-8-flash-next.md) (33.8 % at
+    256 MiB) is lower than any of these sessions.
+- **Cost per medium** (4 KiB random reads: the rig's SSD and hard disk measured in
+  [R10](../../data/2026-11-03_table_storage/README.md), the others by [ssd-tester](https://ssd-tester.com/); per-token
+  costs est. from the measured reads, a token's reads issued together):
 
-  | Medium | 4 KiB read at queue depth 1 | Queueing | Per decoded token | Per prompt token | Cold 13.7k-token first turn |
+  | Medium | 4 KiB read at queue depth 1 | Queueing | Per generated token | Per prompt token | First request after a start |
   |---|---|---|---|---|---|
-  | SATA SSD | 88–107 µs | 53–56k IOPS | ~0.2–0.3 ms | ~0.25 ms | ~4 s |
-  | USB 3 SSD with UAS | ~180 µs | helps | ~0.3–1 ms | ~0.5–1.3 ms | ~7–18 s |
-  | USB 3 flash stick | 367–588 µs | no gain (~2.7k IOPS) | **~4–8 ms** | **~5 ms** | **~65 s** |
-  | USB 3 portable hard disk | ~10 ms | little (~250 IOPS) | **~100 ms** | **~50 ms** | **~10–20 min** |
+  | The rig's SATA SSD | 152 µs | 23,792 reads/s at depth 32 | 0.15–0.87 ms | 0.06–0.14 ms | ~1.4 s |
+  | USB 3 SSD with UAS | ~180 µs | helps | ≤ 1.0 ms | ≤ 0.6 ms | ≤ 6 s |
+  | USB 3 flash stick | 367–588 µs | no gain (~2.7k IOPS) | 1.3–3.4 ms | 0.5–1.2 ms | ~12 s |
+  | The rig's USB 3 portable hard disk | 10.4 ms | none (101 reads/s at depth 32) | **37–59 ms** | **14–33 ms** | **~5.4 min** |
 
-  Put the table on an SSD (internal or USB with UAS). A flash stick costs 5–11 % of decode, 50–95 % of prefill, and
-  most of what MTP gains, because a verify step reads (k+1) × 16 rows. A portable hard disk more than halves decode
-  speed and makes a cold first turn unusable.
+  Put the table on an SSD (internal or USB with UAS): on the rig's internal SSD it costs about 1 % of decode. A flash
+  stick costs 1.5–5 % of decode and ~1 ms per prompt token. A portable hard disk adds 43–90 % to decode and minutes to
+  a first request. MTP verify steps also read the rows of rejected drafts, which the replay does not cover (Q519).
 - **The table's format:** rows are 160 wide, so only 32-weight-block formats fit (Q4_0, IQ4_NL, Q5_0, Q8_0, F16).
   Every format costs one 4 KiB page per row read, so a smaller table saves no I/O, and a Q8_0 table (54.4 GB) costs
   only disk space.
-- **Ideas for later:**
+- **Ideas for later** (on the SSD none of them is a speed lever; Q229 is parked):
   - A hot-row sidecar: the most-used rows packed together, so the page cache holds ~45 useful rows per page instead of
-    one.
-  - A row cache with direct reads, as in agentionai's `llama-ple-disk.cpp`.
+    one. One learned on other sessions saves 16–23 % of the reads (Q229; more training text, Q522).
+  - A row cache with direct reads, as in agentionai's `llama-ple-disk.cpp`: the same reads in 32–256 MiB instead of
+    ~2 GiB.
   - Hot rows kept on a card.
-  - Prefetching the rows of MTP drafts.
+  - Prefetching the rows of MTP drafts, and of the next prompt micro-batch (Q523).
+  - Warming the table's pages at server start (Q520), or the whole table in RAM on a host with ~29 GB free (Q521).
   - A compressed table small enough for a little SSD space or the cards
     ([sub_1_bit_quants.md](sub_1_bit_quants.md), section 4.1; Q433, Q434).
 
@@ -341,7 +356,8 @@ Compare the ISTA and Swift builds at the Q2_0 rung, since Swift's shorter thinki
    Fewer cards also help.
 7. **Hybrid-model work from v3:** Flash-Next is a hybrid model like Ornith, so the recurrent-state replay and
    pipelined speculation planned for hybrids apply to it as well.
-8. **The table:** a hot-row sidecar (section 5).
+8. **The table:** on the SSD its reads cost about 1 % of decode (section 5), so a hot-row sidecar or a row cache waits
+   until the table moves to a slower disk or host memory runs short.
 
 ## 9. What settles the open questions
 
@@ -349,7 +365,7 @@ Compare the ISTA and Swift builds at the Q2_0 rung, since Swift's shorter thinki
 |---|---|---|
 | Q8_0 reference of the base model and KLD of ISTA Q2_0, IQ2_XS, IQ3_XXS, the Swift builds and the Coder on wikitext, agent sessions and code | quality machine (Q8_0 transformer ~134 GB across seven GPUs) | quality rank under the project's own method |
 | KLD of the dense fixes: router F16, hyper-connections Q8_0, Q8_0 spine | quality machine | whether levers 1–2 are free |
-| Replay of agent-check sessions through the `qwen4exp` hash, with simulated page and row caches | quality machine, CPU only | real table reads per token; value of a hot-row sidecar |
+| Replay of agent-check sessions through the `qwen4exp` hash, with simulated page and row caches | quality machine, CPU only | real table reads per token; value of a hot-row sidecar ([done](../../data/2026-11-03_ngram_replay/README.md)) |
 | `fio` 4 KiB random reads on the internal SSD, a stick and a USB SSD | rig, minutes | the per-medium cost |
 | Q2_0, IQ4_NL and the BF16 hyper-connection shapes in `bench/mmvq_pascal` | rig, one card | ps per weight of the formats that matter |
 | `--fit` memory probe ([scripts/fit_probe.sh](../../../scripts/fit_probe.sh)) at 128k and 262k for Q2_0 and IQ3_XXS | rig | the real context limits ([done](../../data/2026-11-03_flash_next_fit/README.md)) |

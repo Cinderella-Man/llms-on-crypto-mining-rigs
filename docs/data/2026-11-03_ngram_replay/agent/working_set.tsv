@@ -1,0 +1,4 @@
+scope	units	rows_median	rows_max	pages_median	pages_max	GiB_of_pages_median	GiB_of_pages_max	table_share_max
+session	331	53397	228566	54316	229505	0.207	0.875	0.0326
+run	31	445506	570168	439978	557721	1.678	2.128	0.0793
+all	1	3563582	3563582	2722938	2722938	10.387	10.387	0.3873
