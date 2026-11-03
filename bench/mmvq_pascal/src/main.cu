@@ -1030,7 +1030,7 @@ int run_q2_0(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, c
                 grid = dim3((unsigned) ((sh.N + 3) / 4), (unsigned) sh.nused, 1);
             } else {
                 if (v.R < 0) {
-                    q2p_pick(sh.K, sh.N, sh.glu, R, mode);
+                    q2p_pick(sh.K, sh.N, sh.glu, sh.nused, prop.multiProcessorCount, R, mode);
                 }
                 q2p_geom g;
                 if (!q2p_geometry(sh.K, sh.N, R, g)) continue;
@@ -1272,7 +1272,7 @@ int run_q2_0_mtok(const options & opt, cudaStream_t s, const cudaDeviceProp & pr
                     dim3 grid;
                     int smem = 0;
                     if (pertok) {
-                        q2p_pick(sh.K, sh.N, sh.glu, R, mode);
+                        q2p_pick(sh.K, sh.N, sh.glu, NUSED, prop.multiProcessorCount, R, mode);
                         q2p_geometry(sh.K, sh.N, R, g);
                         func = pascal_func(R, mode, sh.glu);
                         smem = mode == Q2P_TILE ? g.tile_smem : 0;

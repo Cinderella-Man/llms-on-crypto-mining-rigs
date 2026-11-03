@@ -232,12 +232,19 @@ inline int mmvfp_blocks(const int nrows, const int G, const int R) {
 
 inline void mmvfp_pick_shape(const int nchunks, const int nrows, const int ncols_dst, const int nsm, int & G, int & R) {
     const int rmax = ncols_dst <= 4 ? 4 : 8;
+    const int target = 4 * nsm;
+    // 3 and 4 tokens: at most 32 lanes from the width, and a short grid gets more lanes before fewer rows
+    const bool mid = ncols_dst == 3 || ncols_dst == 4;
     G = 8;
-    while (G < 128 && nchunks > 16 * G) {
+    while (G < (mid ? 32 : 128) && nchunks > 16 * G) {
         G *= 4;
     }
-    const int target = 4 * nsm;
     R = rmax;
+    if (mid) {
+        while (G < 128 && mmvfp_blocks(nrows, G, R) < target && nchunks >= 8 * G) {
+            G *= 4;
+        }
+    }
     while (R > 1 && mmvfp_blocks(nrows, G, R) < target) {
         R /= 2;
     }

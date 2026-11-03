@@ -1,5 +1,5 @@
 // Host reference for the k-column products (src/kcol_mm.cuh): type names and block sizes, ggml's reference
-// dequantizers for the seven types (ggml/src/ggml-quants.c, MIT, the ggml authors), and the activations a kernel used,
+// dequantizers for the ten types (ggml/src/ggml-quants.c, MIT, the ggml authors), and the activations a kernel used,
 // read back from its records. Used by src/kcol_main.cu and verify/kcol_unit_check.cu.
 #pragma once
 
@@ -24,16 +24,20 @@ inline int u16_le(const uint8_t * p) { return p[0] | (p[1] << 8); }
 inline const char * kname(const int t) {
     switch (t) {
         case KQ8_0: return "q8_0"; case KQ2_0: return "q2_0"; case KQ3_K: return "q3_K"; case KQ4_K: return "q4_K";
-        case KQ5_K: return "q5_K"; case KQ6_K: return "q6_K"; case KIQ4_XS: return "iq4_xs"; default: return "?";
+        case KQ5_K: return "q5_K"; case KQ6_K: return "q6_K"; case KIQ4_XS: return "iq4_xs"; case KQ4_0: return "q4_0";
+        case KQ5_0: return "q5_0"; case KIQ4_NL: return "iq4_nl"; default: return "?";
     }
 }
 inline int kbs(const int t) { // bytes and weights per block
     switch (t) {
         case KQ8_0: return 34; case KQ2_0: return 18; case KQ3_K: return 110; case KQ4_K: return 144;
-        case KQ5_K: return 176; case KQ6_K: return 210; default: return 136;
+        case KQ5_K: return 176; case KQ6_K: return 210; case KQ4_0: return 18; case KQ5_0: return 22;
+        case KIQ4_NL: return 18; default: return 136;
     }
 }
-inline int kqk(const int t) { return t == KQ8_0 ? 32 : t == KQ2_0 ? 64 : 256; }
+inline int kqk(const int t) {
+    return t == KQ8_0 || t == KQ4_0 || t == KQ5_0 || t == KIQ4_NL ? 32 : t == KQ2_0 ? 64 : 256;
+}
 
 // One row of weights as doubles, from ggml's reference dequantizers.
 inline void dequant_row(const int t, const uint8_t * row, const int K, double * out) {
@@ -48,6 +52,28 @@ inline void dequant_row(const int t, const uint8_t * row, const int K, double * 
         } else if (t == KQ2_0) {
             const double d = half_le(x);
             for (int j = 0; j < 64; ++j) y[j] = d * (((x[2 + j / 4] >> (2 * (j % 4))) & 3) - 1);
+        } else if (t == KQ4_0) {
+            const double d = half_le(x);
+            for (int j = 0; j < 16; ++j) {
+                y[j]      = d * ((x[2 + j] & 0xF) - 8);
+                y[j + 16] = d * ((x[2 + j] >> 4) - 8);
+            }
+        } else if (t == KQ5_0) {
+            const double d = half_le(x);
+            uint32_t qh;
+            memcpy(&qh, x + 2, 4);
+            for (int j = 0; j < 16; ++j) {
+                const int xh0 = ((qh >> (j + 0)) << 4) & 0x10;
+                const int xh1 = ((qh >> (j + 12))) & 0x10;
+                y[j]      = d * (((x[6 + j] & 0xF) | xh0) - 16);
+                y[j + 16] = d * (((x[6 + j] >> 4) | xh1) - 16);
+            }
+        } else if (t == KIQ4_NL) {
+            const double d = half_le(x);
+            for (int j = 0; j < 16; ++j) {
+                y[j]      = d * kv[x[2 + j] & 0xF];
+                y[j + 16] = d * kv[x[2 + j] >> 4];
+            }
         } else if (t == KQ3_K) {
             const uint8_t * hm = x;
             const uint8_t * q  = x + 32;
@@ -153,6 +179,9 @@ inline void act_values(const int t, const std::vector<uint32_t> & rec, const int
         case KQ4_K:   act_from_records<KQ4_K>(rec, K, ncols, a);   break;
         case KQ5_K:   act_from_records<KQ5_K>(rec, K, ncols, a);   break;
         case KQ6_K:   act_from_records<KQ6_K>(rec, K, ncols, a);   break;
+        case KQ4_0:   act_from_records<KQ4_0>(rec, K, ncols, a);   break;
+        case KQ5_0:   act_from_records<KQ5_0>(rec, K, ncols, a);   break;
+        case KIQ4_NL: act_from_records<KIQ4_NL>(rec, K, ncols, a); break;
         default:      act_from_records<KIQ4_XS>(rec, K, ncols, a); break;
     }
 }

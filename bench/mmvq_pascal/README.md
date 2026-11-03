@@ -427,13 +427,17 @@ rather than bandwidth. `--bf16` ([src/bf16_mv.cuh](src/bf16_mv.cuh)) times, per 
   (BF16 is the upper half of an FP32) and added with one FMA;
 - `pascal`: the same kernel at the launch shape the fork picks for the card (`G,R` column).
 
-| Shape | K → N | MB per call | Calls per token | Fork's shape on a P106 |
-|---|---|---|---|---|
-| `hc_up` | 320 → 10,240 | 6.55 | 97 (2 per layer, 1 for the output) | G = 8, R = 4 (160 blocks) |
-| `hc_down` | 10,240 → 320 | 6.55 | 97 | G = 128, R = 4 (80 blocks) |
-| `hc_inject` | 10,240 → 4 | 0.08 | 96 | G = 128, R = 1 (4 blocks) |
-| `indexer_q` | 2,560 → 512 | 2.62 | 12 (the attention layers) | G = 32, R = 4 (32 blocks) |
-| `ssm_ab` | 2,560 → 48 | 0.25 | 72 (alpha and beta of the 36 recurrent layers) | G = 128, R = 1 (48 blocks) |
+| Shape | K → N | MB per call | Calls per token | Fork's shape on a P106 (1–2 tokens) | 3–4 tokens (Q611) |
+|---|---|---|---|---|---|
+| `hc_up` | 320 → 10,240 | 6.55 | 97 (2 per layer, 1 for the output) | G = 8, R = 4 (160 blocks) | the same |
+| `hc_down` | 10,240 → 320 | 6.55 | 97 | G = 128, R = 4 (80 blocks) | G = 32, R = 4 (20 blocks) |
+| `hc_inject` | 10,240 → 4 | 0.08 | 96 | G = 128, R = 1 (4 blocks) | the same |
+| `indexer_q` | 2,560 → 512 | 2.62 | 12 (the attention layers) | G = 32, R = 4 (32 blocks) | the same |
+| `ssm_ab` | 2,560 → 48 | 0.25 | 72 (alpha and beta of the 36 recurrent layers) | G = 128, R = 1 (48 blocks) | G = 128, R = 2 (24 blocks) |
+
+At 3 and 4 tokens the lane-group size from the row width stops at 32 and a short grid gets more lanes before fewer
+rows (Q611, from the first sweep on a P106: at 2 rows per group the 10,240-wide rows ran 15–16 % faster at 32 lanes
+than at 128). From 5 tokens R = 8 serves the rows where the grid allows it.
 
 Copies of the weights cycle call by call (≥ 64 MB per shape), and every row (every 37th of `hc_up`) is checked against a
 double-precision product of the same BF16 weights and FP32 activations, tolerance 1e-5 of the sum of the absolute terms.
@@ -473,7 +477,7 @@ the 640-wide down rows. `--q2_0` ([src/q2_0_mv.cuh](src/q2_0_mv.cuh)) times one 
 |---|---|---|---|---|---|
 | `moe_gate_up` | 2,560 → 640, gate and up fused with SwiGLU | 10 of 512 | 9.22 | 48 | 4 lanes per row, R = 2, segment staging |
 | `moe_down` | 640 → 2,560 | 10 of 512 | 4.61 | 48 | 1 lane per row, R = 1, tile staging (5,760 bytes per warp) |
-| `shexp_gate_up` | 2,560 → 640, fused | shared | 0.92 | 48 | as `moe_gate_up` |
+| `shexp_gate_up` | 2,560 → 640, fused | shared | 0.92 | 48 | 4 lanes per row, R = 1 (R = 2 would leave fewer than 4 blocks per SM: Q612), segment staging |
 | `shexp_down` | 640 → 2,560 | shared | 0.46 | 48 | as `moe_down` |
 
 The routed shapes hold all 512 experts and replay 64 random sets of 10 distinct experts call by call; the shared ones
@@ -539,17 +543,18 @@ rebuild (`=0`: the earlier kernels, for an A/B on one binary).
 
 A speculative-decoding verify multiplies every dense matrix by k = 2–8 tokens at once. Miner Llama's k-column kernels
 (`ggml/src/ggml-cuda/mmvq-pascal-kcol*.cu`, fork branch `pascal-p106-v3-b12076-kcol`) read and decode each weight once
-for all k columns: Q8_0, Q2_0, Q3_K, Q4_K, Q5_K, Q6_K and IQ4_XS. The activations are quantized into records laid out
-for the kernels (int8 values in each type's decoding order, FP32 scales, the K-quants' block sums, Q3_K's and Q6_K's
-half-block offsets) that each block stages in shared memory once; per 32 weights, row and column a kernel spends 8 dp4a
-and 3–5 FP32 operations. The design is at the top of the kernel header, which `src/kcol_mm.cuh` copies verbatim.
+for all k columns: Q8_0, Q2_0, Q3_K, Q4_K, Q5_K, Q6_K and IQ4_XS, and Q4_0, Q5_0 and IQ4_NL (Q630, the shared
+expert's other down types). The activations are quantized into records laid out for the kernels (int8 values in each
+type's decoding order, FP32 scales, the K-quants' block sums, Q3_K's and Q6_K's half-block offsets, Q4_0's and Q5_0's
+block offsets) that each block stages in shared memory once; per 32 weights, row and column a kernel spends 8 dp4a and
+2–5 FP32 operations. The design is at the top of the kernel header, which `src/kcol_mm.cuh` copies verbatim.
 
 `build_kcol.sh` builds `build/mmvq_kcol` ([src/kcol_main.cu](src/kcol_main.cu)), which times them per shape and column
 count (`--tokens`, default 1–6 and 8) at the dense shapes of Qwen3.8-Flash-Next's Swift Q2_0 file (its tensor census:
 `attn_qkv` 2,560 → 10,240 in Q3_K ×18, IQ4_XS ×13, Q4_K ×4, Q2_0 ×1; `attn_gate` 2,560 → 6,144; `attn_q`
-2,560 → 12,288; `ssm_out` and `attn_output` 6,144 → 2,560; the shared expert's gate, up and down; the output layer
-2,560 → 248,320 in Q5_K and the draft's Q6_K head; the hyper-connection projections 320 → 10,240 and 10,240 → 320 as
-the Q8_0 retype). Variants:
+2,560 → 12,288; `ssm_out` and `attn_output` 6,144 → 2,560; the shared expert's gate and up, and its down projection
+640 → 2,560 in Q2_0 ×16, Q4_0 ×16, Q5_0 ×7 and IQ4_NL ×7; the output layer 2,560 → 248,320 in Q5_K and the draft's
+Q6_K head; the hyper-connection projections 320 → 10,240 and 10,240 → 320 as the Q8_0 retype). Variants:
 
 - `pascal`: the launch shape the fork picks (lanes per row group from the row width, 2 rows per group unless that
   leaves fewer than 3 blocks per SM, the largest activation tile that fits 48 KB of shared memory);

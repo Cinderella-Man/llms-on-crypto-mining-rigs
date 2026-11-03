@@ -58,7 +58,8 @@ void quantize_host(const float * x, const int K, uint32_t * rec) {
             r[UW / 4 + 2 * NAB + 2 * b + 1] = (uint32_t) (m * s16[1]);
         } else {
             r[UW / 4 + 2 * b]     = f2u(d8);
-            r[UW / 4 + 2 * b + 1] = f2u(traits<T>::ACT == ACT_DS ? d8 * (float) s32 : 0.0f);
+            r[UW / 4 + 2 * b + 1] = traits<T>::ACT == ACT_DI ? (uint32_t) (act_off<T>() * s32) :
+                f2u(traits<T>::ACT == ACT_DS ? d8 * (float) s32 : 0.0f);
         }
     }
 }
@@ -170,6 +171,9 @@ int main(int argc, char ** argv) {
     ok &= check_type<KQ5_K>(trials);
     ok &= check_type<KQ6_K>(trials);
     ok &= check_type<KIQ4_XS>(trials);
+    ok &= check_type<KQ4_0>(trials);
+    ok &= check_type<KQ5_0>(trials);
+    ok &= check_type<KIQ4_NL>(trials);
     printf("decoding: %s\n", ok ? "every type matches ggml's reference" : "FAILURES");
     return ok ? 0 : 1;
 }

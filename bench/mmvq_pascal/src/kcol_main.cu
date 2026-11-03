@@ -40,7 +40,9 @@ const kshape SHAPES[] = {
     { "shexp_gate",  KQ4_K,    2560,    640,  6 }, { "shexp_gate",  KIQ4_XS,  2560,    640,  6 },
     { "shexp_up",    KQ3_K,    2560,    640, 21 }, { "shexp_up",    KQ2_0,    2560,    640, 13 },
     { "shexp_up",    KQ4_K,    2560,    640,  6 }, { "shexp_up",    KIQ4_XS,  2560,    640,  5 },
-    { "shexp_down",  KQ2_0,     640,   2560, 16 }, { "ple_key",     KQ2_0,    2560,  10240,  1 },
+    { "shexp_down",  KQ2_0,     640,   2560, 16 }, { "shexp_down",  KQ4_0,     640,   2560, 16 },
+    { "shexp_down",  KQ5_0,     640,   2560,  7 }, { "shexp_down",  KIQ4_NL,   640,   2560,  7 },
+    { "ple_key",     KQ2_0,    2560,  10240,  1 },
     { "output",      KQ5_K,    2560, 248320,  1 }, { "draft_output", KQ6_K,   2560, 248320,  0 },
 };
 
@@ -115,6 +117,9 @@ void launch_type(const int t, const params & p, cudaStream_t s) {
         case KQ4_K:   launch<KQ4_K>(p, s);   break;
         case KQ5_K:   launch<KQ5_K>(p, s);   break;
         case KQ6_K:   launch<KQ6_K>(p, s);   break;
+        case KQ4_0:   launch<KQ4_0>(p, s);   break;
+        case KQ5_0:   launch<KQ5_0>(p, s);   break;
+        case KIQ4_NL: launch<KIQ4_NL>(p, s); break;
         default:      launch<KIQ4_XS>(p, s); break;
     }
 }
@@ -136,6 +141,9 @@ void launch_prod(const int t, const params & p, cudaStream_t s) {
         case KQ4_K:   launch_prod_t<KQ4_K>(p, s);   break;
         case KQ5_K:   launch_prod_t<KQ5_K>(p, s);   break;
         case KQ6_K:   launch_prod_t<KQ6_K>(p, s);   break;
+        case KQ4_0:   launch_prod_t<KQ4_0>(p, s);   break;
+        case KQ5_0:   launch_prod_t<KQ5_0>(p, s);   break;
+        case KIQ4_NL: launch_prod_t<KIQ4_NL>(p, s); break;
         default:      launch_prod_t<KIQ4_XS>(p, s); break;
     }
 }
@@ -150,7 +158,8 @@ const void * kernel_func(const int t, const int ncols, const int R) {
         return R == 1 ? f1[ncols - 1] : f2[ncols - 1]; } while (0)
     switch (t) {
         case KQ8_0: KF(KQ8_0); case KQ2_0: KF(KQ2_0); case KQ3_K: KF(KQ3_K); case KQ4_K: KF(KQ4_K);
-        case KQ5_K: KF(KQ5_K); case KQ6_K: KF(KQ6_K); default: KF(KIQ4_XS);
+        case KQ5_K: KF(KQ5_K); case KQ6_K: KF(KQ6_K); case KQ4_0: KF(KQ4_0); case KQ5_0: KF(KQ5_0);
+        case KIQ4_NL: KF(KIQ4_NL); default: KF(KIQ4_XS);
     }
 #undef KF
 }
@@ -187,7 +196,7 @@ std::vector<double> time_graph(const std::function<void(cudaStream_t, int)> & la
 
 void usage() {
     printf("usage: mmvq_kcol [options]\n"
-           "  --types LIST     q8_0,q2_0,q3_K,q4_K,q5_K,q6_K,iq4_xs (default all)\n"
+           "  --types LIST     q8_0,q2_0,q3_K,q4_K,q5_K,q6_K,iq4_xs,q4_0,q5_0,iq4_nl (default all)\n"
            "  --shapes LIST    shape names (default all; see --list)\n"
            "  --variants LIST  pascal,r1,r2,itt1,s32k,prod (default all)\n"
            "  --tokens LIST    columns per product, 1 to 8 (default 1,2,3,4,5,6,8)\n"

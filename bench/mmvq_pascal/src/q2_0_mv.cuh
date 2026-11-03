@@ -452,12 +452,19 @@ static bool q2p_geometry(const int K, const int N, const int R, q2p_geom & g) {
     return true;
 }
 
-// mmvqp_choose(GGML_TYPE_Q2_0, gate) and the host's staging choice: gate R = 2 staged by segment where it can, else
+static unsigned q2p_blocks(const int N, const int lpr_log2, const int R);
+
+// mmvqp_choose(GGML_TYPE_Q2_0, gate) and the host's choices in ggml_cuda_mmvq_pascal: gate R = 2, or R = 1 where R = 2
+// leaves fewer than 4 blocks per SM over the grid's nmats matrices (experts), staged by segment where it can, else
 // direct; plain R = 1, tile-staged where segments can't be staged, else by segment, else direct
-static void q2p_pick(const int K, const int N, const bool G, int & R, int & mode) {
+static void q2p_pick(const int K, const int N, const bool G, const int nmats, const int nsm, int & R, int & mode) {
     R = G ? 2 : 1;
     q2p_geom g;
     q2p_geometry(K, N, R, g);
+    if (G && (int) q2p_blocks(N, g.lpr_log2, 2) * nmats < 4 * nsm) {
+        R = 1;
+        q2p_geometry(K, N, R, g);
+    }
     if (!G && !g.seg_ok && g.tile_smem > 0) {
         mode = Q2P_TILE;
     } else {
