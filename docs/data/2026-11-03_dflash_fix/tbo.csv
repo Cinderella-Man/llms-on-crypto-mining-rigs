@@ -1,0 +1,6 @@
+run,filter,env,cases,passed,failed,unsupported,exit
+hc,HC_STREAM_MEAN,,6,6,0,0,0
+hc-nofuse,HC_STREAM_MEAN,GGML_CUDA_DISABLE_FUSION=1,6,6,0,0,0
+add,ADD,,167,167,0,0,0
+addadd,ADD_ADD,,12,12,0,0,0
+scale,SCALE,,7,7,0,0,0
