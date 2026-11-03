@@ -1,0 +1,29 @@
+# bench/mmvq_pascal --q2_0 --check-only on an RTX 3090 running the compute 6.1 code (JIT from PTX); no timings (the us and GB/s columns are 0). err/tol: worst error over its tolerance (1e-5 of the sum of the absolute terms).
+device: NVIDIA GeForce RTX 3090, compute 8.6, 82 SMs, max clock 1800 MHz, memory 384-bit at 9751 MHz
+device code: compiled for compute 6.1 (JIT from PTX)
+shape          variant     R stage  MB/call   us/call   us(min)    GB/s  regs   grid   smem   err/tol check
+moe_gate_up    llama       - -        9.216      0.00      0.00     0.0    90   1600      0     0.001 PASS
+moe_gate_up    pascal      2 seg      9.216      0.00      0.00     0.0   139    100      0     0.001 PASS
+moe_gate_up    r1_seg      1 seg      9.216      0.00      0.00     0.0   101    200      0     0.001 PASS
+moe_gate_up    r1_dir      1 dir      9.216      0.00      0.00     0.0    84    200      0     0.001 PASS
+moe_gate_up    r2_seg      2 seg      9.216      0.00      0.00     0.0   139    100      0     0.001 PASS
+moe_gate_up    r2_dir      2 dir      9.216      0.00      0.00     0.0   174    100      0     0.001 PASS
+moe_down       llama       - -        4.608      0.00      0.00     0.0    64   6400      0     0.003 PASS
+moe_down       pascal      1 tile     4.608      0.00      0.00     0.0    61    200  23040     0.002 PASS
+moe_down       r1_tile     1 tile     4.608      0.00      0.00     0.0    61    200  23040     0.002 PASS
+moe_down       r1_dir      1 dir      4.608      0.00      0.00     0.0    68    200      0     0.002 PASS
+moe_down       r2_tile     2 tile     4.608      0.00      0.00     0.0    76    100  46080     0.002 PASS
+moe_down       r2_dir      2 dir      4.608      0.00      0.00     0.0    88    100      0     0.002 PASS
+shexp_gate_up  llama       - -        0.922      0.00      0.00     0.0    90    160      0     0.001 PASS
+shexp_gate_up  pascal      2 seg      0.922      0.00      0.00     0.0   139     10      0     0.001 PASS
+shexp_gate_up  r1_seg      1 seg      0.922      0.00      0.00     0.0   101     20      0     0.001 PASS
+shexp_gate_up  r1_dir      1 dir      0.922      0.00      0.00     0.0    84     20      0     0.001 PASS
+shexp_gate_up  r2_seg      2 seg      0.922      0.00      0.00     0.0   139     10      0     0.001 PASS
+shexp_gate_up  r2_dir      2 dir      0.922      0.00      0.00     0.0   174     10      0     0.001 PASS
+shexp_down     llama       - -        0.461      0.00      0.00     0.0    64    640      0     0.002 PASS
+shexp_down     pascal      1 tile     0.461      0.00      0.00     0.0    61     20  23040     0.003 PASS
+shexp_down     r1_tile     1 tile     0.461      0.00      0.00     0.0    61     20  23040     0.003 PASS
+shexp_down     r1_dir      1 dir      0.461      0.00      0.00     0.0    68     20      0     0.003 PASS
+shexp_down     r2_tile     2 tile     0.461      0.00      0.00     0.0    76     10  46080     0.003 PASS
+shexp_down     r2_dir      2 dir      0.461      0.00      0.00     0.0    88     10      0     0.003 PASS
+correctness: all variants match the CPU reference

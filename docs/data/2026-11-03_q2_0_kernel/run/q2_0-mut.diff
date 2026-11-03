@@ -1,0 +1,12 @@
+diff --git a/ggml/src/ggml-cuda/mmvq-pascal-impl.cuh b/ggml/src/ggml-cuda/mmvq-pascal-impl.cuh
+index 9aaf51f9a..012f994d3 100644
+--- a/ggml/src/ggml-cuda/mmvq-pascal-impl.cuh
++++ b/ggml/src/ggml-cuda/mmvq-pascal-impl.cuh
+@@ -272,7 +272,6 @@ static __device__ __forceinline__ int mmvqp_q2_0_isum(const uint32_t q, const in
+     isum = ggml_cuda_dp4a((int) __byte_perm(t, t, q),       u[0], isum);
+     isum = ggml_cuda_dp4a((int) __byte_perm(t, t, q >> 2),  u[1], isum);
+     isum = ggml_cuda_dp4a((int) __byte_perm(t, t, q >> 16), u[2], isum);
+-    isum = ggml_cuda_dp4a((int) __byte_perm(t, t, q >> 18), u[3], isum);
+     return isum;
+ }
+ 

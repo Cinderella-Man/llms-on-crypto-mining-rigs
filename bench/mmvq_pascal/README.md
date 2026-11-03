@@ -449,6 +449,52 @@ scp rig:/tmp/bf16.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/bf16.csv'
 
 On another GPU, `--bf16 --check-only --tokens 1,2,3,4` checks the compute 6.1 code through the PTX JIT.
 
+## Flash-Next's Q2_0 experts (Q223)
+
+The Swift Q2_0 file of Qwen3.8-Flash-Next stores its routed and shared experts in Q2_0: 18 bytes per 64 weights, one
+FP16 scale and 2-bit codes for the values −1, 0, 1, 2. On nine P106-090 cards the routed experts took ~28 of the 136 ms
+of GPU time per decoded token ([profile](../../docs/data/2026-11-03_flash_next_baseline/decode_profile_v3.txt)),
+~11 ps per weight. llama.cpp's `mul_mat_vec_q` runs these rows with its small-K shape (4 warps and 4 rows per block, one
+32-weight half block per thread), which leaves 48 of a block's 128 threads idle on the 2560-wide gate/up rows and 108 on
+the 640-wide down rows. `--q2_0` ([src/q2_0_mv.cuh](src/q2_0_mv.cuh)) times one token per shape:
+
+- `llama`: llama.cpp's `mul_mat_vec_q` for Q2_0 as a compute 6.1 card runs it, with the fused gate and SwiGLU and the
+  expert ids;
+- `pascal`: Miner Llama's Pascal Q2_0 kernel (the Q2_0 path of `ggml/src/ggml-cuda/mmvq-pascal.cu`, branch
+  `pascal-p106-v3-q2_0mv`, copied for one token) at the launch shape the fork picks: lane groups sized to the row, two
+  blocks per lane, the codes looked up with `__byte_perm` in a 4-byte table (4 lookups and 3 shifts per 16 weights),
+  the activations split into even and odd bytes once per load and shared by all rows of the lane group;
+- `rR_seg`, `rR_tile`, `rR_dir`: the same kernel at R = 1 or 2 rows per lane group, with each lane group's row
+  segments staged through shared memory (128-bit loads), with each warp's whole rows staged at once (a tile; for rows
+  whose segments aren't 16-byte aligned), or with direct 32-bit loads.
+
+| Shape | K → N | Experts | MB per call | Calls per token | Fork's shape |
+|---|---|---|---|---|---|
+| `moe_gate_up` | 2,560 → 640, gate and up fused with SwiGLU | 10 of 512 | 9.22 | 48 | 4 lanes per row, R = 2, segment staging |
+| `moe_down` | 640 → 2,560 | 10 of 512 | 4.61 | 48 | 1 lane per row, R = 1, tile staging (5,760 bytes per warp) |
+| `shexp_gate_up` | 2,560 → 640, fused | shared | 0.92 | 48 | as `moe_gate_up` |
+| `shexp_down` | 640 → 2,560 | shared | 0.46 | 48 | as `moe_down` |
+
+The routed shapes hold all 512 experts and replay 64 random sets of 10 distinct experts call by call; the shared ones
+cycle copies (≥ 64 MB), so no call finds its weights in L2. Every output of the first set is checked against a
+double-precision product of the same codes and Q8_1 activations (tolerance 1e-5 of the sum of the absolute terms,
+carried through SwiGLU). The last line sums 48 calls of each shape run (`best` takes the fastest correct Pascal
+variant per shape). Gate/up and down together were ~23.7 ms per token in the profile (plus ~2 ms where the shared
+expert's gate/up joins the launch); at 3–6 ps per weight, the estimate for the Pascal kernel, they would take ~7–14 ms.
+On the rig:
+
+```bash
+scp bench/mmvq_pascal/build/mmvq_pascal rig:/tmp/
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --q2_0 --csv /tmp/q2_0.csv' | tee q2_0_rig.txt
+scp rig:/tmp/q2_0.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/q2_0.csv'
+```
+
+If an `rR_*` variant beats `pascal` clearly at a shape, change `mmvqp_choose` (gate R) or the host's tile choice in the
+fork and `q2p_pick` here; `GGML_CUDA_MMVQ_PASCAL_Q2_0=G,P,T` selects the same alternatives in the fork without a
+rebuild. Several tokens per step (a speculative-decoding verify) run through the fork's multi-token kernel, which
+`test-backend-ops perf -o MUL_MAT_ID -p type_a=q2_0` times with `GGML_CUDA_MMVQ_PASCAL=0` and `1`. On another GPU,
+`--q2_0 --check-only` checks the compute 6.1 code through the PTX JIT.
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant

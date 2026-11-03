@@ -8,6 +8,7 @@
 #include "pascal_mmvq.cuh"
 #include "f16_mv.cuh"
 #include "bf16_mv.cuh"
+#include "q2_0_mv.cuh"
 
 #include <algorithm>
 #include <cmath>
@@ -398,6 +399,7 @@ struct options {
     double tlb_max_gb = 5.0;
     bool f16 = false;
     bool bf16 = false;
+    bool q2_0 = false;
     std::vector<std::string> tokens = { "1" };
 };
 
@@ -426,6 +428,8 @@ void usage() {
            "  --bf16           BF16 products at Qwen3.8-Flash-Next's shapes instead of the quantized kernels (shapes\n"
            "                   hc_up, hc_down, hc_inject, indexer_q, ssm_ab; variants mmvf, pascal, gG_rR)\n"
            "  --tokens LIST    --bf16: tokens per product, 1 to 4, comma-separated (default 1)\n"
+           "  --q2_0           one-token Q2_0 products at Qwen3.8-Flash-Next's expert shapes instead (shapes moe_gate_up,\n"
+           "                   moe_down, shexp_gate_up, shexp_down; variants llama, pascal, rR_seg, rR_tile, rR_dir, R = 1, 2)\n"
            "  --list           list shapes and variants\n");
 }
 
@@ -878,6 +882,241 @@ int run_bf16(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, c
     return ok ? 0 : 2;
 }
 
+// --q2_0: Q2_0 matrix-vector products of one token (src/q2_0_mv.cuh) at Qwen3.8-Flash-Next's expert shapes (48 layers,
+// each with 10 of 512 routed experts and a shared expert, all 640 wide; hidden 2560). Routed experts: one weight set
+// holding all 512 experts, with 64 random sets of 10 distinct experts replayed call by call; shared expert: copies of
+// the weights cycled call by call (>= 64 MB per shape). So no call finds its weights in L2. Every output (all slots and
+// rows of the first expert set or copy) is checked against a double-precision CPU product of the same Q2_0 codes and
+// Q8_1 activations (tolerance 1e-5 of the sum of the absolute terms, propagated through SwiGLU).
+int run_q2_0(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, const int code_arch, const bool shapes_given,
+             const bool variants_given) {
+    using namespace q2mv;
+    struct q2_shape { const char * name; int K, N, nexp, nused; bool glu; int calls; };
+    const q2_shape shapes[] = {
+        { "moe_gate_up",   2560,  640, 512, 10, true,  48 }, { "moe_down",   640, 2560, 512, 10, false, 48 },
+        { "shexp_gate_up", 2560,  640,   1,  1, true,  48 }, { "shexp_down", 640, 2560,   1,  1, false, 48 },
+    };
+    struct q2_variant { std::string name; int R, mode; };  // R 0: llama; R < 0: the fork's shape
+    std::vector<q2_variant> variants = { { "llama", 0, 0 }, { "pascal", -1, -1 } };
+    for (const int R : { 1, 2 }) {
+        variants.push_back({ "r" + std::to_string(R) + "_seg",  R, Q2P_SEG });
+        variants.push_back({ "r" + std::to_string(R) + "_tile", R, Q2P_TILE });
+        variants.push_back({ "r" + std::to_string(R) + "_dir",  R, Q2P_DIRECT });
+    }
+    const char * mode_name[] = { "dir", "seg", "tile" };
+    constexpr int NIDSETS = 64;
+    bool ok = true;
+    FILE * f = nullptr;
+    if (!opt.csv.empty()) {
+        f = fopen(opt.csv.c_str(), "w");
+        if (!f) { fprintf(stderr, "cannot write %s\n", opt.csv.c_str()); return 1; }
+        fprintf(f, "device,code_arch,shape,K,N,experts,used,calls_per_token,variant,R,staging,bytes_per_call,us_median,us_min,gbs,"
+                   "regs,grid_blocks,smem_bytes,err_over_tol,check\n");
+    }
+    printf("\n%-14s %-8s %4s %-5s %8s %9s %9s %7s %5s %6s %6s %9s %s\n", "shape", "variant", "R", "stage", "MB/call", "us/call",
+           "us(min)", "GB/s", "regs", "grid", "smem", "err/tol", "check");
+    double tot_llama = 0, tot_pascal = 0, tot_best = 0;
+    for (const auto & sh : shapes) {
+        if (shapes_given && !contains(opt.shapes, sh.name)) continue;
+        const bool   moe       = sh.nexp > 1;
+        const size_t mat_bytes = (size_t) sh.N * (sh.K / Q2MV_QK) * Q2MV_BS; // one expert
+        const size_t set_bytes = mat_bytes * sh.nexp;
+        const int    ncopies   = moe ? 1 : (int) std::max<size_t>(4, ((size_t) 64 << 20) / set_bytes);
+        const int    nm        = sh.glu ? 2 : 1;
+        std::vector<dev_buf> w;
+        for (int m = 0; m < nm; ++m) {
+            w.emplace_back(set_bytes * ncopies);
+            gen_q2_0<<<256, 256, 0, s>>>(w[m].as<uint8_t>(), set_bytes * ncopies / Q2MV_BS, opt.seed + 101 * m);
+        }
+        // routed: NIDSETS sets of nused distinct experts
+        std::vector<int> ids_host((size_t) NIDSETS * sh.nused, 0);
+        if (moe) {
+            for (int k = 0; k < NIDSETS; ++k) {
+                for (int j = 0; j < sh.nused; ++j) {
+                    int e;
+                    uint64_t h = opt.seed * 7919 + (uint64_t) k * 131 + j;
+                    bool dup;
+                    do {
+                        e = (int) (hash_u32(h++) % (uint32_t) sh.nexp);
+                        dup = false;
+                        for (int i = 0; i < j; ++i) dup |= ids_host[(size_t) k * sh.nused + i] == e;
+                    } while (dup);
+                    ids_host[(size_t) k * sh.nused + j] = e;
+                }
+            }
+        }
+        dev_buf ids(ids_host.size() * sizeof(int));
+        CUDA_CHECK(cudaMemcpy(ids.p, ids_host.data(), ids_host.size() * sizeof(int), cudaMemcpyHostToDevice));
+        // activations: one vector for gate/up, one per slot for down; Q8_1 rows padded to 512 values as llama.cpp does
+        const int nvec = sh.glu ? 1 : sh.nused;
+        const int Kp   = (sh.K + 511) / 512 * 512;
+        dev_buf x((size_t) sh.K * nvec * sizeof(float)), yq((size_t) Kp / 32 * nvec * sizeof(block_q8_1));
+        dev_buf d((size_t) sh.N * sh.nused * sizeof(float));
+        gen_floats<<<64, 256, 0, s>>>(x.as<float>(), (size_t) sh.K * nvec, opt.seed + 7);
+        llama::quantize_row_q8_1_cuda(x.as<float>(), yq.p, sh.K, nvec, s);
+        CUDA_CHECK(cudaGetLastError());
+        CUDA_CHECK(cudaStreamSynchronize(s));
+        const int y_slot_blocks = sh.glu ? 0 : Kp / 32;
+        std::vector<block_q8_1> yh((size_t) Kp / 32 * nvec), yc((size_t) sh.K / 32 * nvec);
+        CUDA_CHECK(cudaMemcpy(yh.data(), yq.p, yh.size() * sizeof(block_q8_1), cudaMemcpyDeviceToHost));
+        for (int v = 0; v < nvec; ++v) {
+            std::copy_n(yh.begin() + (size_t) v * (Kp / 32), sh.K / 32, yc.begin() + (size_t) v * (sh.K / 32));
+        }
+        const act_host act = act_from_q8_1(yc, sh.K, nvec);
+        // reference: id set 0 (routed) or copy 0 (shared)
+        std::vector<double> ref((size_t) sh.N * sh.nused), bound((size_t) sh.N * sh.nused);
+        {
+            std::vector<uint8_t> wh[2];
+            for (int m = 0; m < nm; ++m) {
+                wh[m].resize(mat_bytes * sh.nused);
+                for (int k = 0; k < sh.nused; ++k) {
+                    CUDA_CHECK(cudaMemcpy(wh[m].data() + k * mat_bytes, w[m].as<uint8_t>() + (size_t) ids_host[k] * mat_bytes,
+                                          mat_bytes, cudaMemcpyDeviceToHost));
+                }
+            }
+            const size_t rb = (size_t) (sh.K / Q2MV_QK) * Q2MV_BS;
+            auto rdot = [&](const uint8_t * row, const int vec, double & as) {
+                double acc = 0.0;
+                as = 0.0;
+                for (int b = 0; b < sh.K / Q2MV_QK; ++b) {
+                    const uint8_t * blk = row + (size_t) b * Q2MV_BS;
+                    const double d2 = half_bits_to_float(rd_u16(blk));
+                    for (int j = 0; j < Q2MV_QK; ++j) {
+                        const int    c  = (blk[2 + j / 4] >> (2 * (j % 4))) & 3;
+                        const int    kk = b * Q2MV_QK + j;
+                        const double t  = d2 * act.d[(size_t) vec * (sh.K / 32) + kk / 32] * (double) ((c - 1) * act.q[(size_t) vec * sh.K + kk]);
+                        acc += t;
+                        as += fabs(t);
+                    }
+                }
+                return acc;
+            };
+            for (int k = 0; k < sh.nused; ++k) {
+                const int vec = sh.glu ? 0 : k;
+                for (int r = 0; r < sh.N; ++r) {
+                    double au = 0.0, ag = 0.0;
+                    const double up = rdot(wh[0].data() + k * mat_bytes + r * rb, vec, au);
+                    double out = up, bnd = 1e-5 * au;
+                    if (sh.glu) {
+                        const double g  = rdot(wh[1].data() + k * mat_bytes + r * rb, vec, ag);
+                        const double sg = g / (1.0 + exp(-g));
+                        out = up * sg;
+                        bnd = 1e-5 * (au * fabs(sg) + fabs(up) * ag * 1.1);
+                    }
+                    ref[(size_t) k * sh.N + r]   = out;
+                    bound[(size_t) k * sh.N + r] = bnd + 1e-30;
+                }
+            }
+        }
+        const double bytes = (double) mat_bytes * sh.nused * nm;
+        double best_us = 0.0;
+        for (const auto & v : variants) {
+            if (variants_given && !contains(opt.variants, v.name)) continue;
+            int R = v.R, mode = v.mode, smem = 0;
+            const void * func = nullptr;
+            dim3 grid, block(32, 4, 1);
+            if (v.R == 0) {
+                func = llama_func(sh.glu);
+                grid = dim3((unsigned) ((sh.N + 3) / 4), (unsigned) sh.nused, 1);
+            } else {
+                if (v.R < 0) {
+                    q2p_pick(sh.K, sh.N, sh.glu, R, mode);
+                }
+                q2p_geom g;
+                if (!q2p_geometry(sh.K, sh.N, R, g)) continue;
+                if ((mode == Q2P_SEG && !g.seg_ok) || (mode == Q2P_TILE && (sh.glu || g.tile_smem == 0))) continue;
+                func = pascal_func(R, mode, sh.glu);
+                if (!func) continue;
+                smem = mode == Q2P_TILE ? g.tile_smem : 0;
+                grid = dim3(q2p_blocks(sh.N, g.lpr_log2, R), (unsigned) sh.nused, 1);
+            }
+            const bool is_llama = v.R == 0;
+            q2p_geom geo;
+            q2p_geometry(sh.K, sh.N, std::max(R, 1), geo);
+            auto launch = [&, func, grid, block, smem, is_llama, geo](cudaStream_t st, int j) {
+                const int      cp   = j % ncopies;
+                const uint8_t * up  = w[0].as<uint8_t>() + (size_t) cp * set_bytes;
+                const uint8_t * gt  = sh.glu ? w[1].as<uint8_t>() + (size_t) cp * set_bytes : nullptr;
+                const int32_t * idp = moe ? ids.as<int32_t>() + (size_t) (j % NIDSETS) * sh.nused : nullptr;
+                if (is_llama) {
+                    llama_args a = { up, gt, yq.as<block_q8_1>(), idp, d.as<float>(), sh.K, sh.N, y_slot_blocks,
+                                     (int64_t) (mat_bytes / Q2MV_BS) };
+                    void * params[] = { &a };
+                    CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                } else {
+                    pascal_args a = { up, gt, yq.as<block_q8_1>(), idp, d.as<float>(), sh.N, (int) (mat_bytes / sh.N),
+                                      geo.lpr_log2, geo.niter, y_slot_blocks, (int64_t) mat_bytes };
+                    void * params[] = { &a };
+                    CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, (size_t) smem, st));
+                }
+            };
+            CUDA_CHECK(cudaMemsetAsync(d.p, 0xff, (size_t) sh.N * sh.nused * sizeof(float), s));
+            launch(s, 0);
+            CUDA_CHECK(cudaGetLastError());
+            CUDA_CHECK(cudaStreamSynchronize(s));
+            std::vector<float> got((size_t) sh.N * sh.nused);
+            CUDA_CHECK(cudaMemcpy(got.data(), d.p, got.size() * sizeof(float), cudaMemcpyDeviceToHost));
+            double worst = 0.0;
+            for (size_t o = 0; o < got.size(); ++o) {
+                const double e = std::isfinite(got[o]) ? fabs(got[o] - ref[o]) / bound[o] : 1e30;
+                if (e > worst && g_verbose) {
+                    printf("    worst so far: slot %zu row %zu gpu %.9g ref %.9g bound %.3g\n", o / sh.N, o % sh.N, got[o], ref[o],
+                           bound[o]);
+                }
+                worst = std::max(worst, e);
+            }
+            const bool pass = worst <= 1.0;
+            ok &= pass;
+            cudaFuncAttributes attr;
+            CUDA_CHECK(cudaFuncGetAttributes(&attr, func));
+            double us_med = 0.0, us_min = 0.0, gbs = 0.0;
+            if (!opt.check_only) {
+                const auto tm = time_graph(launch, opt.batch, opt.reps, s);
+                us_med = median(tm);
+                us_min = *std::min_element(tm.begin(), tm.end());
+                gbs = bytes / (us_med * 1e3);
+                if (is_llama) {
+                    tot_llama += us_med * sh.calls;
+                } else {
+                    if (v.R < 0) {
+                        tot_pascal += us_med * sh.calls;
+                    }
+                    if (pass && (best_us == 0.0 || us_med < best_us)) {
+                        best_us = us_med;
+                    }
+                }
+            }
+            const char * stage = is_llama ? "-" : mode_name[mode];
+            char rs[8];
+            snprintf(rs, sizeof(rs), is_llama ? "-" : "%d", R);
+            printf("%-14s %-8s %4s %-5s %8.3f %9.2f %9.2f %7.1f %5d %6u %6d %9.3f %s\n", sh.name, v.name.c_str(), rs, stage,
+                   bytes / 1e6, us_med, us_min, gbs, attr.numRegs, grid.x * grid.y, smem, worst, pass ? "PASS" : "FAIL");
+            if (f) {
+                fprintf(f, "\"%s\",%d,%s,%d,%d,%d,%d,%d,%s,%d,%s,%.0f,%.3f,%.3f,%.2f,%d,%u,%d,%.4f,%s\n", prop.name, code_arch,
+                        sh.name, sh.K, sh.N, sh.nexp, sh.nused, sh.calls, v.name.c_str(), is_llama ? 0 : R, stage, bytes,
+                        us_med, us_min, gbs, attr.numRegs, grid.x * grid.y, smem, worst, pass ? "PASS" : "FAIL");
+            }
+        }
+        tot_best += best_us * sh.calls;
+    }
+    if (!opt.check_only) {
+        printf("\nper token (48 layers x us per call, summed over the shapes run), ms: llama %.2f, pascal %.2f, best %.2f\n",
+               tot_llama / 1e3, tot_pascal / 1e3, tot_best / 1e3);
+        printf("(\"best\" takes the fastest passing Pascal variant per shape)\n");
+        if (f) {
+            fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,0,0,48,llama,0,,0,%.3f,,,,,,,\n", prop.name, code_arch, tot_llama);
+            fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,0,0,48,pascal,0,,0,%.3f,,,,,,,\n", prop.name, code_arch, tot_pascal);
+            fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,0,0,48,best,0,,0,%.3f,,,,,,,\n", prop.name, code_arch, tot_best);
+        }
+    }
+    if (f) {
+        fclose(f);
+        printf("\nCSV written to %s\n", opt.csv.c_str());
+    }
+    printf("\ncorrectness: %s\n", ok ? "all variants match the CPU reference" : "FAILURES");
+    return ok ? 0 : 2;
+}
+
 } // namespace
 
 int main(int argc, char ** argv) {
@@ -905,6 +1144,7 @@ int main(int argc, char ** argv) {
         else if (a == "--tlb-max-gb") opt.tlb_max_gb = atof(next().c_str());
         else if (a == "--f16") opt.f16 = true;
         else if (a == "--bf16") opt.bf16 = true;
+        else if (a == "--q2_0") opt.q2_0 = true;
         else if (a == "--tokens") opt.tokens = split(next());
         else if (a == "--list") { list_all(); return 0; }
         else { usage(); return a == "--help" || a == "-h" ? 0 : 1; }
@@ -992,6 +1232,11 @@ int main(int argc, char ** argv) {
         read_plain_gbs = nbytes / (median(time_graph(rdp, 4, 10, s)) * 1e3);
         printf("empty kernel in a CUDA graph: %.2f us per node\n", node_us);
         printf("streaming read of 256 MB with 128-bit loads: %.1f GB/s read-only path (__ldg), %.1f GB/s plain loads\n", read_gbs, read_plain_gbs);
+    }
+    if (opt.q2_0) {
+        const int rc = run_q2_0(opt, s, prop, code_arch, shapes_given, variants_given);
+        CUDA_CHECK(cudaStreamDestroy(s));
+        return rc;
     }
     if (opt.bf16) {
         const int rc = run_bf16(opt, s, prop, code_arch, shapes_given, variants_given);
