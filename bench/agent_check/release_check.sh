@@ -32,6 +32,7 @@
 #   CLIENT_OUT               results folder on the client
 #   STOCK_BIN, REL_BIN, MODEL   on the rig
 #   optional: ARMS ("stock rel"), TASK_SET (bugfix), TASKS (all), CTX (65536), RIG_LOGDIR (/tmp/agent-check-rel),
+#   MIN_AVAIL_MB (400: the rig watchdog stops llama-server below that much MemAvailable),
 #   TIME_CAP_MIN (15), BUDGET_MIN or per arm BUDGET_MIN_stock / BUDGET_MIN_rel (none),
 #   CPU_SHARES (256), IMAGE (agent-check:0.87.1), LABEL (pascal-quants=1),
 #   SAMPLING (the sampling every request carries, JSON, e.g. '{"temperature":0.6,"top_p":0.95,"top_k":20,"min_p":0}';
@@ -114,7 +115,7 @@ relay_stop() {
 server_start() {  # server_start ARM: llama-server on the rig, then /health through the whole relay from the client
   arm_config "$1" || return 1
   say "starting $1 on the rig: ${SERVER_ENV:+$SERVER_ENV }$SERVER_BIN $SERVER_ARGS"
-  ssh "$RIG" "LOGDIR=$RIG_LOGDIR ACTION=start ARM=$1 BIN=$SERVER_BIN MODEL=$MODEL PORT=$RIG_PORT SERVER_ENV='$SERVER_ENV' SERVER_ARGS='$SERVER_ARGS' \
+  ssh "$RIG" "LOGDIR=$RIG_LOGDIR MIN_AVAIL_MB=${MIN_AVAIL_MB:-400} ACTION=start ARM=$1 BIN=$SERVER_BIN MODEL=$MODEL PORT=$RIG_PORT SERVER_ENV='$SERVER_ENV' SERVER_ARGS='$SERVER_ARGS' \
     bash -s" < "$HERE/rig_server.sh" 2>&1 | tee -a "$OUT/run.log"
   [ "${PIPESTATUS[0]}" = 0 ] || return 1
   for _ in $(seq 40); do
