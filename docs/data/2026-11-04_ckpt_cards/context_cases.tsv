@@ -1,0 +1,61 @@
+model	case	verdict	reason
+mamba-dense	baseline	OK	
+mamba-dense	seq_rm	OK	
+mamba-dense	state_load	OK	
+mamba-dense	cp_h	OK	
+mamba-dense	cp_d	OK	
+mamba-dense	cp_h_s	OK	
+mamba-dense	cp_d_s	OK	
+mamba-dense	rt	OK	
+mamba-dense	ps	OK	
+mamba-dense	rf	OK	
+mamba-dense	rot	OK	
+mamba-dense	frag	OK	
+mamba-dense	noalloc	OK	
+mamba-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+mamba-dense	rollback	SKIP	n_rs_seq is disabled
+mamba-dense	rollback_bound	SKIP	n_rs_seq is disabled
+mamba-dense	replay	SKIP	n_rs_seq is too small
+mamba-dense	shared	OK	
+mamba-dense	store	OK	
+mamba-dense	store_p	OK	
+qwen35-dense	baseline	OK	
+qwen35-dense	seq_rm	OK	
+qwen35-dense	state_load	OK	
+qwen35-dense	cp_h	OK	
+qwen35-dense	cp_d	OK	
+qwen35-dense	cp_h_s	OK	
+qwen35-dense	cp_d_s	OK	
+qwen35-dense	rt	OK	
+qwen35-dense	ps	OK	
+qwen35-dense	rf	OK	
+qwen35-dense	rot	OK	
+qwen35-dense	frag	OK	
+qwen35-dense	noalloc	OK	
+qwen35-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+qwen35-dense	rollback	OK	
+qwen35-dense	rollback_bound	OK	
+qwen35-dense	replay	OK	
+qwen35-dense	shared	OK	
+qwen35-dense	store	OK	
+qwen35-dense	store_p	OK	
+qwen4exp-moe	baseline	OK	
+qwen4exp-moe	seq_rm	OK	
+qwen4exp-moe	state_load	OK	
+qwen4exp-moe	cp_h	OK	
+qwen4exp-moe	cp_d	OK	
+qwen4exp-moe	cp_h_s	OK	
+qwen4exp-moe	cp_d_s	OK	
+qwen4exp-moe	rt	OK	
+qwen4exp-moe	ps	OK	
+qwen4exp-moe	rf	OK	
+qwen4exp-moe	rot	OK	
+qwen4exp-moe	frag	OK	
+qwen4exp-moe	noalloc	OK	
+qwen4exp-moe	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+qwen4exp-moe	rollback	OK	
+qwen4exp-moe	rollback_bound	OK	
+qwen4exp-moe	replay	OK	
+qwen4exp-moe	shared	OK	
+qwen4exp-moe	store	OK	
+qwen4exp-moe	store_p	OK	
