@@ -1,0 +1,37 @@
+device: NVIDIA P106-090, compute 6.1, 5 SMs, max clock 1531 MHz, memory 192-bit at 4004 MHz
+device code: compiled for compute 6.1
+empty kernel in a CUDA graph: 1.84 us per node
+streaming read of 256 MB with 128-bit loads: 179.2 GB/s read-only path (__ldg), 179.3 GB/s plain loads
+
+shape          variant     R stage  MB/call   us/call   us(min)    GB/s  regs   grid   smem   err/tol check
+moe_gate_up    llama       - -        9.216    233.25    232.67    39.5    96   1600      0     0.001 PASS
+moe_gate_up    pascal      2 seg      9.216     69.82     64.66   132.0   127    100      0     0.001 PASS
+moe_gate_up    r1_seg      1 seg      9.216     67.63     67.02   136.3    96    200      0     0.001 PASS
+moe_gate_up    r1_dir      1 dir      9.216     84.70     84.19   108.8    85    200      0     0.001 PASS
+moe_gate_up    r2_seg      2 seg      9.216     68.78     67.87   134.0   127    100      0     0.001 PASS
+moe_gate_up    r2_dir      2 dir      9.216     70.96     70.75   129.9   167    100      0     0.001 PASS
+moe_down       llama       - -        4.608    242.54    242.46    19.0    64   6400      0     0.003 PASS
+moe_down       pascal      1 tile     4.608     56.54     56.37    81.5    58    200  23040     0.002 PASS
+moe_down       r1_tile     1 tile     4.608     56.53     56.26    81.5    58    200  23040     0.002 PASS
+moe_down       r1_dir      1 dir      4.608    108.79    108.46    42.4    66    200      0     0.002 PASS
+moe_down       r2_tile     2 tile     4.608     60.14     59.92    76.6    66    100  46080     0.002 PASS
+moe_down       r2_dir      2 dir      4.608    127.52    127.10    36.1    85    100      0     0.002 PASS
+shexp_gate_up  llama       - -        0.922     26.09     26.00    35.3    96    160      0     0.001 PASS
+shexp_gate_up  pascal      2 seg      0.922     10.98     10.86    84.0   127     10      0     0.001 PASS
+shexp_gate_up  r1_seg      1 seg      0.922      7.78      7.66   118.4    96     20      0     0.001 PASS
+shexp_gate_up  r1_dir      1 dir      0.922      9.07      8.88   101.6    85     20      0     0.001 PASS
+shexp_gate_up  r2_seg      2 seg      0.922     11.12     11.06    82.9   127     10      0     0.001 PASS
+shexp_gate_up  r2_dir      2 dir      0.922      9.78      9.74    94.3   167     10      0     0.001 PASS
+shexp_down     llama       - -        0.461     23.74     23.71    19.4    64    640      0     0.002 PASS
+shexp_down     pascal      1 tile     0.461      7.68      7.65    60.0    58     20  23040     0.003 PASS
+shexp_down     r1_tile     1 tile     0.461      7.68      7.65    60.0    58     20  23040     0.003 PASS
+shexp_down     r1_dir      1 dir      0.461      7.87      7.84    58.5    66     20      0     0.003 PASS
+shexp_down     r2_tile     2 tile     0.461      7.12      7.04    64.7    66     10  46080     0.003 PASS
+shexp_down     r2_dir      2 dir      0.461      6.87      6.85    67.1    85     10      0     0.003 PASS
+
+per token (48 layers x us per call, summed over the shapes run), ms: llama 25.23, pascal 6.96, best 6.66
+("best" takes the fastest passing Pascal variant per shape)
+
+CSV written to /tmp/q2_0.csv
+
+correctness: all variants match the CPU reference
