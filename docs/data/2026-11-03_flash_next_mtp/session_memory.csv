@@ -1,0 +1,3 @@
+arm,line,desktop,load_s,load_lowest_avail_minus_cma_mib,load_most_swapout_10s_mib,session_minutes,session_avail_minus_cma_lowest_mib,session_avail_minus_cma_median_mib,session_swap_most_mib,session_swap_mean_mib,session_most_swapout_10s_mib,session_psi_full_avg10_max_pct,session_samples_psi_full_over_20pct,end
+mtp,Q558 step 3,stopped,232,148,549,19.4,117,154,1474,1360,535,59.1,15%,"the kernel's OOM killer: a GFP_KERNEL allocation from CUDA's event thread failed with 1,178 MiB free, 955 MiB of it CMA-marked"
+mtp2,Q558 step 5,stopped,230,171,278,44.1,155,182,979,917,199,5.0,0%,completed: 11 tasks scored (10 passed); the last not started past the 40-minute budget

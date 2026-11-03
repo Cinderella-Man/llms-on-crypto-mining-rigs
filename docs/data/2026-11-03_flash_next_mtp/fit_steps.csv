@@ -1,0 +1,5 @@
+step,line,desktop,result,load_s,main_load_lowest_avail_minus_cma_mib,draft_load_lowest_avail_minus_cma_mib,draft_load_most_swap_mib,draft_load_most_swapout_10s_mib,draft_load_psi_full_avg10_max,loaded_memavail_mib,loaded_cmafree_mib,loaded_swap_mib,after_request_memavail_mib,after_request_cmafree_mib,after_request_swap_mib,draft_acceptance,draft_accepted,draft_generated,mean_accepted_len,prompt_tok_s,generation_tok_s
+0 (Q226),Q213's draft line,running,host out of memory 4 s into the draft load; the kernel's OOM killer ended llama-server after 8 minutes,,,,1011,704,,,,,,,,,,,,,
+1,step 0 + -otd token_embd=CUDA4,running,stopped by mem_guard.sh 5 s into the draft load (654 MiB to swap in 10 s),,481,96,819,654,16.6,,,,,,,,,,,,
+3,step 1 with the desktop stopped,stopped,loaded and answered (the timed arm then ended in an OOM kill after 19 minutes),236,557,140,681,557,22.8,1092,782,675,402,227,622,0.741,269,363,3.22,8.7,9.3
+5,step 3 + --no-host --spec-draft-n-ubatch 128,stopped,loaded and answered,229,835,278,42,0,0.0,519,4,42,438,228,425,0.690,234,339,3.07,9.0,8.6

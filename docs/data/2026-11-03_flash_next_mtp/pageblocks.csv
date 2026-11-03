@@ -1,0 +1,7 @@
+when,zone,unmovable,movable,reclaimable,highatomic,cma,isolate
+idle after step 1 (desktop running),DMA,1,7,0,0,0,0
+idle after step 1 (desktop running),DMA32,776,111,24,0,206,0
+idle after step 1 (desktop running),Normal,512,74,23,0,279,0
+idle after stopping the desktop,DMA,1,7,0,0,0,0
+idle after stopping the desktop,DMA32,776,111,24,0,206,0
+idle after stopping the desktop,Normal,512,74,23,0,279,0

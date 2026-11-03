@@ -23,10 +23,14 @@ up=${PIPESTATUS[0]}
 if [ "$up" = 0 ]; then
   ssh "$RIG" "nvidia-smi --query-gpu=index,memory.used,memory.total --format=csv,noheader" > "$OUT/vram_loaded.csv"
   ssh "$RIG" "awk '/^MemAvailable/ {print int(\$2 / 1024)}' /proc/meminfo" > "$OUT/memavail_loaded_mib.txt"
+  # host memory as a whole and the server's own share (resident, swapped), once loaded and after the request
+  host() { ssh "$RIG" "cat /proc/meminfo; cat /proc/\$(cat $SMOKE_LOGDIR/server.pid)/status" > "$OUT/host_$1.txt"; }
+  host loaded
   say "request"
   ssh "$RIG" "curl -s -m 900 127.0.0.1:$RIG_PORT/v1/chat/completions -H 'Content-Type: application/json' -d @-" \
     < "$REQUEST" > "$OUT/reply.json"
   say "request done ($(wc -c < "$OUT/reply.json") bytes)"
+  host after_request
   ssh "$RIG" "curl -s 127.0.0.1:$RIG_PORT/metrics" > "$OUT/metrics.txt"
 else
   say "the server did not come up"
