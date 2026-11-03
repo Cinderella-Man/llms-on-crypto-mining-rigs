@@ -1,0 +1,12 @@
+PASS  system             Ubuntu 24.04.5 LTS, glibc 2.39
+PASS  driver             580.178.04, proprietary modules
+PASS  cards              9 × P106-090, ~6 GB each, free
+PASS  gpu processes      none
+PASS  host memory        2982 MiB available of 3836
+INFO  cpu                2 threads, Intel(R) Celeron(R) CPU 3865U @ 1.80GHz; AVX no (not needed)
+PASS  engine libraries   all found
+PASS  engine devices     9 CUDA devices
+INFO  model              flint-Q8_0.gguf, 42 GB, on ext4 with 7 GB free
+WARN  model read speed   166 MB/s: a 42 GB load takes about 5 min; a USB 3 port and stick reach ~400 MB/s
+PASS  serve long, 9 cards prompt 16399 tokens at 579 tok/s, 127 generated at 37.3 tok/s; host MemAvailable ≥ 1115 MiB
+0 failed, 1 warnings

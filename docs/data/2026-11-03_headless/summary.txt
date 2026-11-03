@@ -1,0 +1,6 @@
+start 14:39:11
+desktop_ub256: exit 0
+headless_ub128: exit 0
+headless_ub256: exit 0
+default target graphical.target, display manager active
+DONE 15:14:20

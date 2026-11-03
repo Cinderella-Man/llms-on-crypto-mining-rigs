@@ -16,7 +16,8 @@
 # Env [defaults]: CARDS [9] cards expected, CARD_NAME [P106-090], SUMS (a SHA256SUMS file: also verify the model,
 #   1.5-3 min for 25 GB on a 2-core Celeron), SERVE [0], CONFIGS [chat9 tools9 long9 chat6], TS (-ts for the runs on all
 #   cards), DEPTH [4] (--pipe-depth), CTX6 [32768] context on six cards, LONG_TOKENS [16384] prompt length of the
-#   long-context request, ENV [LLAMA_NO_MOE_DOWN_RESCALE=tg], PORT [8091], MIN_AVAIL_MB [300] (a server run whose host
+#   long-context request, UB [128] (-ub of the runs on all cards; the release uses 128), ENV [LLAMA_NO_MOE_DOWN_RESCALE=tg],
+#   PORT [8091], MIN_AVAIL_MB [300] (a server run whose host
 #   MemAvailable falls below this fails)
 # Exit status: 0 no FAIL, 1 at least one FAIL, 2 usage.
 set -uo pipefail
@@ -31,6 +32,7 @@ TS=${TS:-}
 DEPTH=${DEPTH:-4}
 CTX6=${CTX6:-32768}
 LONG_TOKENS=${LONG_TOKENS:-16384}
+UB=${UB:-128}
 ENV=${ENV-LLAMA_NO_MOE_DOWN_RESCALE=tg}
 PORT=${PORT:-8091}
 MIN_AVAIL_MB=${MIN_AVAIL_MB:-300}
@@ -187,7 +189,7 @@ if [ "$SERVE" = 1 ]; then
     if pgrep -x llama-server > /dev/null; then fail "serve" "a llama-server is already running: stop it first"
     else
         all=$(seq -s, 0 $((CARDS - 1))) six=0,1,2,3,4,5
-        line="-c 262144 -b 512 -ub 128${TS:+ -ts $TS} --pipe-depth $DEPTH"   # the release command line
+        line="-c 262144 -b 512 -ub $UB${TS:+ -ts $TS} --pipe-depth $DEPTH"   # the release command line (-ub 128 unless UB is set)
         size_mb=$(( $(stat -Lc %s "$MODEL") / 1048576 ))
         for c in $CONFIGS; do
             case $c in

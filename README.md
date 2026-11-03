@@ -87,6 +87,7 @@ that makes it faster still ([how it works](docs/drafter.md)).
 | [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v2 release: Q8_0 on nine cards, 44.6–45.9 tok/s for a coding agent |
 | [Qwen3.6-35B-A3B](models/qwen3.6-35b-a3b/) | 36B hybrid mixture of experts, 3B active per token | coming: four cards, 29.0 tok/s with v1 (stock 18.5), one request |
 | [Ornith-1.5-35B](models/ornith-1.5-35b/) | 35B hybrid mixture of experts with Qwen3.6's shapes | coming: not run yet |
+| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | first rig run (2026-11-03): Swift-1.5 GSQ-RCO Q2_0 on nine cards, the table on the SSD; with stock llama.cpp 5.7–7.2 tok/s writing and 128 tok/s reading a 32k prompt, one request |
 | [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | first rig run: Unsloth's UD-Q2_K_XL on nine cards, 9.7 tok/s and 12 of 12 tasks for a coding agent with v2 (stock 6.2) |
 
 Each model page gives the file, the command line, speed, quality and what is not measured yet. Model names only

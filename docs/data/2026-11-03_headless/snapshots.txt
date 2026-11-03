@@ -1,0 +1,15 @@
+== desktop 14:39:11
+MemAvailable_MB 2718, used_MB 1118
+vram_used_MiB 5 5 5 5 5 5 5 5 5 
+desktop_rss_MB 290
+running_services 29
+== headless 14:51:24
+MemAvailable_MB 2994, used_MB 842
+vram_used_MiB 0 0 0 0 0 0 0 0 0 
+desktop_rss_MB 0
+running_services 15
+== desktop_again 15:14:19
+MemAvailable_MB 2589, used_MB 1247
+vram_used_MiB 5 5 5 5 5 5 5 5 5 
+desktop_rss_MB 988
+running_services 29
