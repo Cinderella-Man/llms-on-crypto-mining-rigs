@@ -1,0 +1,7 @@
+kernel	instructions_ladder	instructions_merged	opcode count changes	only address arithmetic and scheduling
+_ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device	1116	1116	IADD -1 IADD32I +1 MOV +1 MOV32I -1	yes
+_ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device	1422	1422	IADD -1 IADD32I +1 MOV +1 MOV32I -1	yes
+_ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb1ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device	1512	1512	IADD -1 IADD32I +1 MOV +1 MOV32I -1 NOP +1 XMAD.S16.S16.CSFU -1	yes
+_ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb1ELi0ELb1ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device	1800	1800	DEPBAR.LE -1 XMAD +1	yes
+_ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb1ELi1ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device	1638	1644	DEPBAR.LE +1 IADD -1 IADD32I +1 MOV +1 SHL +1 XMAD +2 XMAD.MRG +1	yes
+_ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb1ELi1ELb1ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device	1920	1920	DEPBAR.LE +1 XMAD -1	yes

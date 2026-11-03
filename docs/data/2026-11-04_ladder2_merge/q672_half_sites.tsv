@@ -1,0 +1,103 @@
+family	kernel	hadd2_cvt	hadd2_cvt_after_ld	half_math	f2f_f16	insns
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	312
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi128ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	216
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi128ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	618
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi128ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	474
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	318
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi160ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	222
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi160ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	624
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi160ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	480
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	318
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi192ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	222
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi192ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	624
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi192ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	480
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	318
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi224ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	222
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi224ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	624
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi224ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	480
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	312
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi256ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	216
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi256ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	618
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi256ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	474
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	258
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi32ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	180
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi32ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	558
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi32ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	426
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	312
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi64ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	216
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi64ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	618
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi64ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	474
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	318
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi96ELb0ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	5	2	222
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi96ELb1ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	624
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li1ELi96ELb1ELb1EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	4	480
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	396
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	402
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	402
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	408
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	396
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	342
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	396
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li2ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	10	4	402
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	504
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	510
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	510
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	510
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	504
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	432
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	504
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li3ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	15	6	510
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	588
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	594
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	594
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	594
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	588
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	486
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	588
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li4ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	20	8	594
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	648
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	648
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	528
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	648
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li5ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	25	10	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	714
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	714
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	582
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	714
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li6ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	30	12	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	660
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	660
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	660
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	486
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	654
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li7ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	21	14	660
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi128ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi160ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	726
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi192ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	726
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi224ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	726
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi256ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi32ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	528
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi64ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	720
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	_Z13mul_mat_vec_fI6__halfS0_Li8ELi96ELb0ELb0EEvPKT_PKfPKi31ggml_cuda_mm_fusion_args_devicePfi5uint3iiiSA_iiiSA_iiii	0	0	24	16	726
+other kernels	_Z25dequantize_block_q8_0_f16ILb0EEvPKvP6__halfl	0	0	32	0	510
+other kernels	_Z25dequantize_block_q8_0_f16ILb1EEvPKvP6__halfl	0	0	32	0	816
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type13ELS1_13ELS1_13ELi2EEEvNS_9moep_argsE	0	0	32	124	9084
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type13ELS1_13ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	114	8010
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type13ELS1_8ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	110	7656
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type23ELS1_13ELS1_13ELi2EEEvNS_9moep_argsE	0	0	32	122	9444
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type23ELS1_13ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	112	8298
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type23ELS1_23ELS1_13ELi2EEEvNS_9moep_argsE	0	0	32	121	9624
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type23ELS1_23ELS1_23ELi2EEEvNS_9moep_argsE	0	0	32	118	10182
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type23ELS1_23ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	111	8478
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type6ELS1_6ELS1_6ELi2EEEvNS_9moep_argsE	0	0	32	108	7704
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type6ELS1_6ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	108	7392
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type6ELS1_8ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	108	7230
+persistent MoE (router included)	_ZN<anon:moe_persistent_cu>11k_moe_layerIL9ggml_type8ELS1_6ELS1_8ELi2EEEvNS_9moep_argsE	0	0	32	104	6966

@@ -1,0 +1,8 @@
+family	kernels	hadd2_cvt	hadd2_cvt_after_ld	half_math	f2f_f16	insns
+BF16/F16 matrix-vector (mmvf, Pascal BF16)	352	0	0	1480	3264	193248
+Pascal quantized (mmvq-pascal, 1-4 tokens)	277	0	0	0	5188	542214
+k-column (mmvq-pascal-kcol)	119	0	0	0	271	240360
+multi-token experts (mmvq-pascal-mtok)	12	0	0	0	204	71682
+persistent MoE (router included)	13	0	0	384	1360	100116
+stock mul_mat_vec_q	317	0	0	0	2936	248580
+other kernels	6173	0	0	64	34336	3023310

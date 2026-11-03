@@ -1,0 +1,57 @@
+iqmmvq (cut from b12076): kernels it changed or added: 229 carried identically, 0 not, 0 changed on both sides
+kcol (cut from ladder): kernels it changed or added: 227 carried identically, 0 not, 0 changed on both sides
+mtok (cut from ladder): kernels it changed or added: 12 carried identically, 0 not, 0 changed on both sides
+gdnfuse (cut from ladder): kernels it changed or added: 27 carried identically, 0 not, 0 changed on both sides
+ckpt (cut from ladder): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+draftmem (cut from ladder): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+merged build: 7263 kernels
+  DIFFERS: 6
+  LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem: 38
+  SAME OPS ladder+kcol+mtok+gdnfuse+ckpt+draftmem: 4
+  as a branch: gdnfuse: 27
+  as a branch: iqmmvq: 229
+  as a branch: kcol: 227
+  as a branch: mtok: 12
+  as base: 6720
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb0ELi0ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb0ELi1ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb0ELi2ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb1ELi0ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb1ELi0ELi16ELb1EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb1ELi1ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb1ELi1ELi16ELb1EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi1ELi2ELb1ELi2ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb0ELi0ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb0ELi1ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb0ELi2ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb1ELi0ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb1ELi0ELi16ELb1EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb1ELi1ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb1ELi1ELi16ELb1EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>20mul_mat_vec_q_pascalIL9ggml_type42ELi2ELi2ELb1ELi2ELi16ELb0EEEvNS_10mmvqp_argsE31ggml_cuda_mm_fusion_args_device
+  flagged (SAME OPS ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb0ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (SAME OPS ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb0ELi0ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb0ELi1ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb0ELi1ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb0ELi2ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb0ELi2ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (DIFFERS): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi0ELb0ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi0ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (SAME OPS ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi0ELb1ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi1ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi1ELb0ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi1ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi1ELb1ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi2ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi1ELi2ELb1ELi2ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (DIFFERS): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi0ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (SAME OPS ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi1ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi1ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi2ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb0ELi2ELb1ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (DIFFERS): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb1ELi0ELb0ELi16ELb0EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  flagged (LOOSE ladder+kcol+mtok+gdnfuse+ckpt+draftmem): _ZN<anon:mmvq_pascal_cu>23mul_mat_vec_q_pascal_mcIL9ggml_type42ELi2ELi2ELb1ELi0ELb0ELi16ELb1EEEvNS_13mmvqp_args_mcE31ggml_cuda_mm_fusion_args_device
+  ... 8 more flagged in kernels.tsv
+verdict: 48 kernels flagged, 0 branch kernels not carried
