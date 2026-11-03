@@ -1,0 +1,33 @@
+model	head_rows	sampling	tokens_same	tokens	probs_same	from_shortlist_rows	from_full_head
+f32	random	greedy	576	576	yes	0	576
+f32	random	default chain	576	576	yes	0	576
+f32	random	top-k 5	576	576	yes	0	576
+f32	random	agent check	576	576	yes	0	576
+f32	random	min-p 0.2	576	576	yes	0	576
+f32	random	top-k 20 + penalties	576	576	yes	0	576
+f32	random	top-k 10 + grammar	576	576	yes	0	576
+f32	random	top-p 0.9	576	576	yes	0	576
+f32	zero from k_low	greedy	576	576	yes	576	0
+f32	zero from k_low	default chain	576	576	yes	576	0
+f32	zero from k_low	top-k 5	576	576	yes	576	0
+f32	zero from k_low	agent check	576	576	yes	576	0
+f32	zero from k_low	min-p 0.2	576	576	yes	0	576
+f32	zero from k_low	top-k 20 + penalties	576	576	yes	576	0
+f32	zero from k_low	top-k 10 + grammar	576	576	yes	1009	0
+f32	zero from k_low	top-p 0.9	576	576	yes	0	576
+q5_K	random	greedy	576	576	yes	0	576
+q5_K	random	default chain	576	576	yes	0	576
+q5_K	random	top-k 5	576	576	yes	0	576
+q5_K	random	agent check	576	576	yes	0	576
+q5_K	random	min-p 0.2	576	576	yes	0	576
+q5_K	random	top-k 20 + penalties	576	576	yes	0	576
+q5_K	random	top-k 10 + grammar	576	576	yes	0	576
+q5_K	random	top-p 0.9	576	576	yes	0	576
+q5_K	zero from k_low	greedy	576	576	yes	576	0
+q5_K	zero from k_low	default chain	576	576	yes	576	0
+q5_K	zero from k_low	top-k 5	576	576	yes	576	0
+q5_K	zero from k_low	agent check	576	576	yes	576	0
+q5_K	zero from k_low	min-p 0.2	576	576	yes	0	576
+q5_K	zero from k_low	top-k 20 + penalties	576	576	yes	576	0
+q5_K	zero from k_low	top-k 10 + grammar	576	576	yes	1018	0
+q5_K	zero from k_low	top-p 0.9	576	576	yes	0	576

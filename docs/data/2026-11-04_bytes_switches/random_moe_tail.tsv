@@ -1,0 +1,13 @@
+model	p	w	renorm	logits	max_abs_diff	same_top_pct	positions	experts_kept_mean	of
+f32	1.00	0.000	0	identical logits	0	100.0	317	8.00	8
+f32	1.00	0.000	1	identical logits	0	100.0	317	8.00	8
+f32	0.90	0.000	0	logits differ	6.47e-05	100.0	317	6.70	8
+f32	0.90	0.000	1	logits differ	6.83e-05	100.0	317	6.70	8
+f32	0.60	0.000	1	logits differ	0.000185	100.0	317	3.38	8
+f32	1.00	0.094	1	logits differ	0.000149	100.0	317	4.20	8
+q5_K	1.00	0.000	0	identical logits	0	100.0	317	8.00	8
+q5_K	1.00	0.000	1	identical logits	0	100.0	317	8.00	8
+q5_K	0.90	0.000	0	logits differ	0.0012	99.4	317	6.70	8
+q5_K	0.90	0.000	1	logits differ	0.000908	99.4	317	6.70	8
+q5_K	0.60	0.000	1	logits differ	0.00144	99.7	317	3.38	8
+q5_K	1.00	0.094	1	logits differ	0.00138	99.7	317	4.20	8
