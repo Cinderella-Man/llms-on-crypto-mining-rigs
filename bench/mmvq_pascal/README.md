@@ -495,6 +495,45 @@ rebuild. Several tokens per step (a speculative-decoding verify) run through the
 `test-backend-ops perf -o MUL_MAT_ID -p type_a=q2_0` times with `GGML_CUDA_MMVQ_PASCAL=0` and `1`. On another GPU,
 `--q2_0 --check-only` checks the compute 6.1 code through the PTX JIT.
 
+## Flash-Next's experts in a k-token pass (R7, Q591)
+
+A speculative verify or a pipelined guess runs k = 2 to 8 tokens through one pass of the model, and each token picks
+10 of the 512 routed experts per layer. On nine cards the routed experts of such a pass cost 27.2 ms of GPU time at
+k = 1 and 70.7 ms at k = 5 on llama.cpp's kernels ([Q583](../../docs/data/2026-11-03_verify_cost/README.md)): every
+(token, slot) entry reads its expert again, whichever other token picked it. `--q2_0-mtok`
+([src/q2_0_mtok.cuh](src/q2_0_mtok.cuh)) times one pass's gate/up (fused with SwiGLU) and down products at k = 1 to 8:
+
+- `pertok`: Miner Llama's one-token Pascal Q2_0 kernel (`--q2_0`'s `pascal`) launched once per token, the cost
+  without sharing at the best one-token speed;
+- `mtok`: the fork's multi-token kernel (`mul_mat_vec_q2_0_pascal_mtok` of `ggml/src/ggml-cuda/mmvq-pascal-mtok.cu`,
+  branch `pascal-p106-v3-b12076-mtok`): one launch per pass; the entries that picked one expert form a group whose
+  block reads the expert's rows once and applies each decoded weight to every member; each block stages its members'
+  activations in shared memory once and loops over 4 row blocks; lane groups, staging and sums as in the one-token
+  kernel, so every output is bit-identical to `pertok`'s;
+- `mtok_c1`: groups of one entry (no sharing: the kernel's own cost per entry), `mtok_c4`: at most 4 entries per group
+  (less shared memory per block at k = 5 to 8), `mtok_rb1`, `mtok_rb2`, `mtok_rb8`: row blocks per block,
+  `mtok_gdir`: the gate/up weights loaded directly instead of staged, `mtok_mb4`: compiled for 4 resident blocks per
+  SM (at most 128 registers; the fork's `MMVQP_MTOK_MIN_BLOCKS`) instead of 3.
+
+How much a pass shares depends on the routing, and no routing trace of Flash-Next exists yet. Route profiles:
+`random` (each token's 10 experts uniform and independent: 19.8, 38.8 and 74.7 distinct experts at k = 2, 4, 8),
+`local` (popularity skewed so that a quarter of the experts take 44 % of the picks, and each expert of the token
+before kept with probability 0.16: Flint's measured routing in Q51, assumed for Flash-Next), `copy` (the same with
+0.6: highly repetitive text, an upper bound on sharing) and `trace` (`--route-trace FILE`: one token per line, its 10
+expert ids, as `bench/expert_overlap` dumps them for one layer). The table prints the mean distinct experts per pass
+(`dist`) next to each time; GB/s counts only the distinct experts' bytes. The last table sums 48 layers of both shapes
+per pass, for `pertok`, `mtok` and `mtok_c1`. Step 0 of every case is checked against a double-precision product and
+every multi-token output against `pertok`'s bit for bit. On the rig:
+
+```bash
+scp bench/mmvq_pascal/build/mmvq_pascal rig:/tmp/
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --q2_0-mtok --csv /tmp/q2_0_mtok.csv' | tee q2_0_mtok_rig.txt
+scp rig:/tmp/q2_0_mtok.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/q2_0_mtok.csv'
+```
+
+The fork's `GGML_CUDA_MMVQ_PASCAL_MTOK=E,CAP,RB,G` selects the same group size, row blocks and gate loads without a
+rebuild (`=0`: the earlier kernels, for an A/B on one binary).
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
@@ -582,4 +621,6 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `kquant_rig.sh` | the Q4_K and Q6_K gates, the fork's Q4_K/Q6_K tests on a P106, and the tg128 A/B of the two kernels on the rig (Q149) |
 | `src/f16_mv.cuh` | `--f16`: llama.cpp's F16 one-token product, the persistent MoE kernel's router rows and the Pascal F16 kernel (Q97); `kquant_rig.sh router` runs it on the rig |
 | `src/bf16_mv.cuh` | `--bf16`: llama.cpp's BF16 `mul_mat_vec_f` and Miner Llama's Pascal BF16 kernel with its launch-shape rule, copied from the fork (Q546) |
+| `src/q2_0_mv.cuh` | `--q2_0`: llama.cpp's Q2_0 `mul_mat_vec_q` and Miner Llama's Pascal Q2_0 kernel at one token (Q223) |
+| `src/q2_0_mtok.cuh` | `--q2_0-mtok`: Miner Llama's multi-token Q2_0 expert kernel, copied from the fork, its launch rule, and the route profiles (R7, Q591) |
 | `tools/` | SASS and register helpers for the fork's Pascal kernels: `regs.py`, `loops.py`, `loops2.py` (registers, spills and main-loop instruction counts from a ptxas log and `cuobjdump -sass`), `classify.py` (sorts a test-backend-ops log's failures into the cases a mutation should hit) (Q78); `benchloops.py` (the bench's staged-kernel loops per weight byte), `forksass.py` (SASS identity of two single-file builds of the fork's `mmvq-pascal.cu`, Q6_K registers), `sasscmp.py` (SASS identity of two bench builds) (Q101) |

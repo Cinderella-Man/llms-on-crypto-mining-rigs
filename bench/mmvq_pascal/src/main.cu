@@ -9,6 +9,7 @@
 #include "f16_mv.cuh"
 #include "bf16_mv.cuh"
 #include "q2_0_mv.cuh"
+#include "q2_0_mtok.cuh"
 
 #include <algorithm>
 #include <cmath>
@@ -400,7 +401,11 @@ struct options {
     bool f16 = false;
     bool bf16 = false;
     bool q2_0 = false;
+    bool q2_0_mtok = false;
     std::vector<std::string> tokens = { "1" };
+    bool tokens_given = false;
+    std::vector<std::string> routes = { "random", "local", "copy" };
+    std::string route_trace;
 };
 
 void usage() {
@@ -430,6 +435,11 @@ void usage() {
            "  --tokens LIST    --bf16: tokens per product, 1 to 4, comma-separated (default 1)\n"
            "  --q2_0           one-token Q2_0 products at Qwen3.8-Flash-Next's expert shapes instead (shapes moe_gate_up,\n"
            "                   moe_down, shexp_gate_up, shexp_down; variants llama, pascal, rR_seg, rR_tile, rR_dir, R = 1, 2)\n"
+           "  --q2_0-mtok      Q2_0 expert products of a k-token pass at Qwen3.8-Flash-Next's routed shapes (shapes\n"
+           "                   moe_gate_up, moe_down; variants pertok, mtok, mtok_c1, mtok_c4, mtok_rb1, mtok_rb2, mtok_rb8,\n"
+           "                   mtok_gdir, mtok_mb4); --tokens 1 to 8 (default all), --routes and --route-trace pick the routing\n"
+           "  --routes LIST    --q2_0-mtok: route profiles random, local, copy (default all three)\n"
+           "  --route-trace F  --q2_0-mtok: also route by a trace: one token per line, its 10 expert ids\n"
            "  --list           list shapes and variants\n");
 }
 
@@ -1117,6 +1127,268 @@ int run_q2_0(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, c
     return ok ? 0 : 2;
 }
 
+// --q2_0-mtok: the Q2_0 expert products of a k-token pass (src/q2_0_mtok.cuh) at Qwen3.8-Flash-Next's routed shapes
+// (48 layers, 10 of 512 experts per token): per route profile and token count, 64 consecutive steps of one routed
+// sequence replayed call by call over one weight set holding all 512 experts (236 MB per matrix, so no step finds its
+// weights in L2). Step 0 of every (profile, k) is checked: each variant's output against pertok's bit for bit, and
+// pertok's against a double-precision CPU product (tolerance 1e-5 of the sum of the absolute terms).
+int run_q2_0_mtok(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, const int code_arch, const bool shapes_given,
+                  const bool variants_given) {
+    using namespace q2mv;
+    using namespace q2mt;
+    struct mt_shape { const char * name; int K, N; bool glu; };
+    const mt_shape shapes[] = { { "moe_gate_up", 2560, 640, true }, { "moe_down", 640, 2560, false } };
+    constexpr int NEXP = 512, NUSED = 10, CALLS = 48, NSTEPS = 64;
+    struct mt_variant { std::string name; int gcap, rb; bool gdir; int minb; }; // gcap < 0: pertok
+    std::vector<mt_variant> variants = { { "pertok", -1, 0, false, 3 }, { "mtok", 0, 0, false, 3 }, { "mtok_c1", 1, 0, false, 3 },
+                                         { "mtok_c4", 4, 0, false, 3 }, { "mtok_rb1", 0, 1, false, 3 },
+                                         { "mtok_rb2", 0, 2, false, 3 }, { "mtok_rb8", 0, 8, false, 3 },
+                                         { "mtok_gdir", 0, 0, true, 3 }, { "mtok_mb4", 0, 0, false, 4 } };
+    std::vector<int> tokens;
+    for (const auto & t : opt.tokens_given ? opt.tokens : std::vector<std::string>{ "1", "2", "3", "4", "5", "6", "7", "8" }) {
+        const int n = atoi(t.c_str());
+        if (n < 1 || n > Q2MT_MAX_COLS) { fprintf(stderr, "--tokens: 1 to %d\n", Q2MT_MAX_COLS); return 1; }
+        tokens.push_back(n);
+    }
+    std::vector<route_profile> routes;
+    for (const auto & r : opt.routes) {
+        if (r == "random") routes.push_back({ "random", 0.0, 0.25, 0.25 });
+        else if (r == "local") routes.push_back({ "local", 0.16, 0.25, 0.44 });
+        else if (r == "copy") routes.push_back({ "copy", 0.6, 0.25, 0.44 });
+        else { fprintf(stderr, "--routes: random, local, copy\n"); return 1; }
+    }
+    std::vector<std::vector<int>> trace;
+    if (!opt.route_trace.empty()) {
+        if (!read_trace(opt.route_trace, NUSED, trace)) { fprintf(stderr, "cannot read a routing trace from %s\n", opt.route_trace.c_str()); return 1; }
+        routes.push_back({ "trace" });
+        printf("routing trace: %zu tokens from %s\n", trace.size(), opt.route_trace.c_str());
+    }
+
+    bool ok = true;
+    FILE * f = nullptr;
+    if (!opt.csv.empty()) {
+        f = fopen(opt.csv.c_str(), "w");
+        if (!f) { fprintf(stderr, "cannot write %s\n", opt.csv.c_str()); return 1; }
+        fprintf(f, "device,code_arch,shape,K,N,route,tokens,distinct_experts,calls_per_token,variant,gcap,rb,staging,us_per_step,"
+                   "us_min,us_per_token,distinct_gbs,regs,grid_blocks,smem_bytes,err_over_tol,bitexact,check\n");
+    }
+    printf("\n%-12s %-7s %2s %6s %-10s %4s %3s %-5s %9s %9s %9s %7s %5s %6s %6s %8s %s\n", "shape", "route", "k", "dist",
+           "variant", "gcap", "rb", "stage", "us/step", "us(min)", "us/token", "GB/s", "regs", "grid", "smem", "err/tol", "check");
+    const char * stage_name[] = { "seg", "tile", "dir" };
+    // ms per k-token pass over 48 layers of both shapes, per (route, k, variant)
+    std::map<std::string, double> pass_us;
+    std::map<std::string, double> dist_of;
+    for (const auto & sh : shapes) {
+        if (shapes_given && !contains(opt.shapes, sh.name)) continue;
+        const size_t mat_bytes = (size_t) sh.N * (sh.K / Q2MV_QK) * Q2MV_BS; // one expert
+        const int    nm        = sh.glu ? 2 : 1;
+        std::vector<dev_buf> w;
+        for (int m = 0; m < nm; ++m) {
+            w.emplace_back(mat_bytes * NEXP);
+            gen_q2_0<<<256, 256, 0, s>>>(w[m].as<uint8_t>(), mat_bytes * NEXP / Q2MV_BS, opt.seed + 101 * m);
+        }
+        const int Kp = (sh.K + 511) / 512 * 512;
+        const int yrow_bytes = Kp / 32 * (int) sizeof(block_q8_1);
+        for (const auto & rp : routes) {
+            for (const int k : tokens) {
+                // NSTEPS consecutive windows of k tokens
+                const std::vector<int> ids_host = route_tokens(rp, trace, NEXP, NUSED, NSTEPS * k, opt.seed + 977 * k);
+                double dsum = 0.0;
+                for (int st = 0; st < NSTEPS; ++st) dsum += distinct(ids_host.data() + (size_t) st * k * NUSED, k * NUSED);
+                const double dist = dsum / NSTEPS;
+                dist_of[rp.name + "/" + std::to_string(k)] = dist;
+                dev_buf ids(ids_host.size() * sizeof(int));
+                CUDA_CHECK(cudaMemcpy(ids.p, ids_host.data(), ids_host.size() * sizeof(int), cudaMemcpyHostToDevice));
+                // activations: one vector per token (gate/up) or per (token, slot) (down), Q8_1 rows padded to 512
+                const int nvec = sh.glu ? k : k * NUSED;
+                dev_buf x((size_t) sh.K * nvec * sizeof(float)), yq((size_t) yrow_bytes * nvec);
+                dev_buf d((size_t) sh.N * NUSED * k * sizeof(float));
+                gen_floats<<<64, 256, 0, s>>>(x.as<float>(), (size_t) sh.K * nvec, opt.seed + 7 + k);
+                llama::quantize_row_q8_1_cuda(x.as<float>(), yq.p, sh.K, nvec, s);
+                CUDA_CHECK(cudaGetLastError());
+                CUDA_CHECK(cudaStreamSynchronize(s));
+                // CPU reference for step 0
+                std::vector<block_q8_1> yh((size_t) Kp / 32 * nvec), yc((size_t) sh.K / 32 * nvec);
+                CUDA_CHECK(cudaMemcpy(yh.data(), yq.p, yh.size() * sizeof(block_q8_1), cudaMemcpyDeviceToHost));
+                for (int v = 0; v < nvec; ++v) {
+                    std::copy_n(yh.begin() + (size_t) v * (Kp / 32), sh.K / 32, yc.begin() + (size_t) v * (sh.K / 32));
+                }
+                const act_host act = act_from_q8_1(yc, sh.K, nvec);
+                const int nout = sh.N * NUSED * k;
+                std::vector<double> ref(nout), bound(nout);
+                {
+                    const size_t rb = (size_t) (sh.K / Q2MV_QK) * Q2MV_BS;
+                    std::vector<uint8_t> wh[2];
+                    for (int m = 0; m < nm; ++m) wh[m].resize(mat_bytes);
+                    auto rdot = [&](const uint8_t * row, const int vec, double & as) {
+                        double acc = 0.0;
+                        as = 0.0;
+                        for (int b = 0; b < sh.K / Q2MV_QK; ++b) {
+                            const uint8_t * blk = row + (size_t) b * Q2MV_BS;
+                            const double d2 = half_bits_to_float(rd_u16(blk));
+                            for (int j = 0; j < Q2MV_QK; ++j) {
+                                const int    c  = (blk[2 + j / 4] >> (2 * (j % 4))) & 3;
+                                const int    kk = b * Q2MV_QK + j;
+                                const double t  = d2 * act.d[(size_t) vec * (sh.K / 32) + kk / 32] * (double) ((c - 1) * act.q[(size_t) vec * sh.K + kk]);
+                                acc += t;
+                                as += fabs(t);
+                            }
+                        }
+                        return acc;
+                    };
+                    for (int i = 0; i < NUSED * k; ++i) {
+                        const int e = ids_host[i];
+                        for (int m = 0; m < nm; ++m) {
+                            CUDA_CHECK(cudaMemcpy(wh[m].data(), w[m].as<uint8_t>() + (size_t) e * mat_bytes, mat_bytes, cudaMemcpyDeviceToHost));
+                        }
+                        const int vec = sh.glu ? i / NUSED : i;
+                        for (int r = 0; r < sh.N; ++r) {
+                            double au = 0.0, ag = 0.0;
+                            const double up = rdot(wh[0].data() + r * rb, vec, au);
+                            double out = up, bnd = 1e-5 * au;
+                            if (sh.glu) {
+                                const double g  = rdot(wh[1].data() + r * rb, vec, ag);
+                                const double sg = g / (1.0 + exp(-g));
+                                out = up * sg;
+                                bnd = 1e-5 * (au * fabs(sg) + fabs(up) * ag * 1.1);
+                            }
+                            ref[(size_t) i * sh.N + r]   = out;
+                            bound[(size_t) i * sh.N + r] = bnd + 1e-30;
+                        }
+                    }
+                }
+                const double distinct_bytes = dist * (double) mat_bytes * nm;
+                std::vector<float> got_pertok;
+                for (const auto & v : variants) {
+                    if (variants_given && !contains(opt.variants, v.name)) continue;
+                    if (v.gdir && !sh.glu) continue;
+                    if (v.gcap > 0 && v.gcap >= k && v.name != "mtok_c1") continue; // same as mtok
+                    const bool pertok = v.gcap < 0;
+                    // pertok: the one-token kernel at the fork's shape, once per token
+                    int R = 1, mode = Q2P_SEG;
+                    q2p_geom g;
+                    mtok_launch L;
+                    const void * func = nullptr;
+                    dim3 grid;
+                    int smem = 0;
+                    if (pertok) {
+                        q2p_pick(sh.K, sh.N, sh.glu, R, mode);
+                        q2p_geometry(sh.K, sh.N, R, g);
+                        func = pascal_func(R, mode, sh.glu);
+                        smem = mode == Q2P_TILE ? g.tile_smem : 0;
+                        grid = dim3(q2p_blocks(sh.N, g.lpr_log2, R), (unsigned) NUSED, 1);
+                    } else {
+                        if (!mtok_setup(sh.K, sh.N, sh.glu, k, NUSED, v.gcap, v.rb, v.gdir, v.minb, L)) continue;
+                        func = L.func;
+                        grid = L.grid;
+                        smem = L.smem;
+                    }
+                    auto launch = [&, func, grid, smem, pertok, R, g, L](cudaStream_t st, int j) {
+                        const int       step = j % NSTEPS;
+                        const int32_t * idp  = ids.as<int32_t>() + (size_t) step * k * NUSED;
+                        const dim3      block(32, Q2P_NW, 1);
+                        if (pertok) {
+                            for (int t = 0; t < k; ++t) {
+                                pascal_args a = { w[0].as<uint8_t>(), sh.glu ? w[1].as<uint8_t>() : nullptr,
+                                                  (const block_q8_1 *) (yq.as<char>() + (size_t) (sh.glu ? t : t * NUSED) * yrow_bytes),
+                                                  idp + t * NUSED, d.as<float>() + (size_t) t * NUSED * sh.N, sh.N,
+                                                  (int) (mat_bytes / sh.N), g.lpr_log2, g.niter, sh.glu ? 0 : Kp / 32,
+                                                  (int64_t) mat_bytes };
+                                void * params[] = { &a };
+                                CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, (size_t) smem, st));
+                            }
+                        } else {
+                            mtok_args a = L.p;
+                            a.x            = w[0].as<uint8_t>();
+                            a.gate         = sh.glu ? w[1].as<uint8_t>() : nullptr;
+                            a.y            = yq.as<char>();
+                            a.ids          = idp;
+                            a.dst          = d.as<float>();
+                            a.y_slot_bytes = sh.glu ? 0 : yrow_bytes;
+                            a.y_col_bytes  = sh.glu ? yrow_bytes : NUSED * yrow_bytes;
+                            void * params[] = { &a };
+                            CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, (size_t) smem, st));
+                        }
+                    };
+                    CUDA_CHECK(cudaMemsetAsync(d.p, 0xff, (size_t) nout * sizeof(float), s));
+                    launch(s, 0);
+                    CUDA_CHECK(cudaGetLastError());
+                    CUDA_CHECK(cudaStreamSynchronize(s));
+                    std::vector<float> got(nout);
+                    CUDA_CHECK(cudaMemcpy(got.data(), d.p, got.size() * sizeof(float), cudaMemcpyDeviceToHost));
+                    double worst = 0.0;
+                    for (int o = 0; o < nout; ++o) {
+                        const double e = std::isfinite(got[o]) ? fabs(got[o] - ref[o]) / bound[o] : 1e30;
+                        if (e > worst && g_verbose) {
+                            printf("    worst so far: entry %d row %d gpu %.9g ref %.9g bound %.3g\n", o / sh.N, o % sh.N, got[o],
+                                   ref[o], bound[o]);
+                        }
+                        worst = std::max(worst, e);
+                    }
+                    bool bitexact = true;
+                    if (pertok) {
+                        got_pertok = got;
+                    } else if (!got_pertok.empty()) {
+                        bitexact = memcmp(got.data(), got_pertok.data(), got.size() * sizeof(float)) == 0;
+                    }
+                    const bool pass = worst <= 1.0 && bitexact;
+                    ok &= pass;
+                    cudaFuncAttributes attr;
+                    CUDA_CHECK(cudaFuncGetAttributes(&attr, func));
+                    double us_med = 0.0, us_min = 0.0, gbs = 0.0;
+                    if (!opt.check_only) {
+                        const auto tm = time_graph(launch, opt.batch, opt.reps, s);
+                        us_med = median(tm);
+                        us_min = *std::min_element(tm.begin(), tm.end());
+                        gbs = distinct_bytes / (us_med * 1e3);
+                        pass_us[rp.name + "/" + std::to_string(k) + "/" + v.name] += us_med * CALLS;
+                    }
+                    char rbs[8], gcs[8];
+                    snprintf(rbs, sizeof(rbs), pertok ? "-" : "%d", L.p.rb);
+                    snprintf(gcs, sizeof(gcs), pertok ? "-" : "%d", L.p.gcap);
+                    const char * stage = pertok ? (mode == Q2P_TILE ? "tile" : mode == Q2P_SEG ? "seg" : "dir") : stage_name[L.st];
+                    printf("%-12s %-7s %2d %6.1f %-10s %4s %3s %-5s %9.2f %9.2f %9.2f %7.1f %5d %6u %6d %8.3f %s%s\n", sh.name,
+                           rp.name.c_str(), k, dist, v.name.c_str(), gcs, rbs, stage, us_med, us_min, us_med / k, gbs,
+                           attr.numRegs, grid.x * grid.y, smem, worst, pass ? "PASS" : "FAIL", bitexact ? "" : " (not bit-exact)");
+                    if (f) {
+                        fprintf(f, "\"%s\",%d,%s,%d,%d,%s,%d,%.2f,%d,%s,%d,%d,%s,%.3f,%.3f,%.3f,%.2f,%d,%u,%d,%.4f,%d,%s\n",
+                                prop.name, code_arch, sh.name, sh.K, sh.N, rp.name.c_str(), k, dist, CALLS, v.name.c_str(),
+                                pertok ? 0 : L.p.gcap, pertok ? 0 : L.p.rb, stage, us_med, us_min, us_med / k, gbs, attr.numRegs,
+                                grid.x * grid.y, smem, worst, bitexact ? 1 : 0, pass ? "PASS" : "FAIL");
+                    }
+                }
+            }
+        }
+    }
+    if (!opt.check_only && !pass_us.empty()) {
+        printf("\nrouted experts of a k-token pass (48 layers x (gate/up + down)), ms, and per token:\n");
+        printf("%-7s %2s %6s %10s %10s %10s %8s %8s\n", "route", "k", "dist", "pertok", "mtok", "mtok_c1", "mtok/tok", "x pertok");
+        for (const auto & rp : routes) {
+            for (const int k : tokens) {
+                const std::string key = rp.name + "/" + std::to_string(k) + "/";
+                const double pt = pass_us[key + "pertok"] / 1e3, mt = pass_us[key + "mtok"] / 1e3, c1 = pass_us[key + "mtok_c1"] / 1e3;
+                printf("%-7s %2d %6.1f %10.2f %10.2f %10.2f %8.2f %8.2f\n", rp.name.c_str(), k, dist_of[rp.name + "/" + std::to_string(k)],
+                       pt, mt, c1, mt / k, mt > 0 ? pt / mt : 0.0);
+                if (f) {
+                    fprintf(f, "\"%s\",%d,PASS_TOTAL,0,0,%s,%d,%.2f,48,pertok,0,0,,%.3f,,,,,,,,,\n", prop.name, code_arch, rp.name.c_str(), k,
+                            dist_of[rp.name + "/" + std::to_string(k)], pt * 1e3);
+                    fprintf(f, "\"%s\",%d,PASS_TOTAL,0,0,%s,%d,%.2f,48,mtok,0,0,,%.3f,,,,,,,,,\n", prop.name, code_arch, rp.name.c_str(), k,
+                            dist_of[rp.name + "/" + std::to_string(k)], mt * 1e3);
+                }
+            }
+        }
+        printf("(one card's kernels for all 48 layers; the model spreads the layers over the cards, so the sum over the\n"
+               " cards of a pass is the same; one-token pertok is the R16 kernel time)\n");
+    }
+    if (f) {
+        fclose(f);
+        printf("\nCSV written to %s\n", opt.csv.c_str());
+    }
+    printf("\ncorrectness: %s\n", ok ? "every variant matches the CPU reference, and the multi-token kernel matches pertok bit for bit"
+                                     : "FAILURES");
+    return ok ? 0 : 2;
+}
+
 } // namespace
 
 int main(int argc, char ** argv) {
@@ -1145,7 +1417,10 @@ int main(int argc, char ** argv) {
         else if (a == "--f16") opt.f16 = true;
         else if (a == "--bf16") opt.bf16 = true;
         else if (a == "--q2_0") opt.q2_0 = true;
-        else if (a == "--tokens") opt.tokens = split(next());
+        else if (a == "--q2_0-mtok") opt.q2_0_mtok = true;
+        else if (a == "--routes") opt.routes = split(next());
+        else if (a == "--route-trace") opt.route_trace = next();
+        else if (a == "--tokens") { opt.tokens = split(next()); opt.tokens_given = true; }
         else if (a == "--list") { list_all(); return 0; }
         else { usage(); return a == "--help" || a == "-h" ? 0 : 1; }
     }
@@ -1232,6 +1507,11 @@ int main(int argc, char ** argv) {
         read_plain_gbs = nbytes / (median(time_graph(rdp, 4, 10, s)) * 1e3);
         printf("empty kernel in a CUDA graph: %.2f us per node\n", node_us);
         printf("streaming read of 256 MB with 128-bit loads: %.1f GB/s read-only path (__ldg), %.1f GB/s plain loads\n", read_gbs, read_plain_gbs);
+    }
+    if (opt.q2_0_mtok) {
+        const int rc = run_q2_0_mtok(opt, s, prop, code_arch, shapes_given, variants_given);
+        CUDA_CHECK(cudaStreamDestroy(s));
+        return rc;
     }
     if (opt.q2_0) {
         const int rc = run_q2_0(opt, s, prop, code_arch, shapes_given, variants_given);

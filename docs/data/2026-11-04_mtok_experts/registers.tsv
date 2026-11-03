@@ -1,0 +1,27 @@
+build	kernel	matrices	staging	max_members	registers	spill_bytes	static_smem_bytes
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	gate/up fused	segments	2	137	0	9216
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	gate/up fused	segments	4	156	0	9216
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	gate/up fused	segments	8	168	0	9216
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	gate/up fused	direct	2	92	0	0
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	gate/up fused	direct	4	134	0	0
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	gate/up fused	direct	8	135	0	0
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	one matrix	segments	2	96	0	4608
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	one matrix	segments	4	114	0	4608
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	one matrix	segments	8	135	0	4608
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	one matrix	warp tiles	2	76	0	0
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	one matrix	warp tiles	4	112	0	0
+fork rig build c70687382 (test-backend-ops)	mul_mat_vec_q2_0_pascal_mtok	one matrix	warp tiles	8	133	0	0
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	gate/up fused	segments	2	133	0	9216
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	gate/up fused	segments	4	158	0	9216
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	gate/up fused	segments	8	168	4	9216
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	gate/up fused	direct	2	88	0	0
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	gate/up fused	direct	4	102	0	0
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	gate/up fused	direct	8	128	0	0
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	one matrix	segments	2	100	0	4608
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	one matrix	segments	4	114	0	4608
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	one matrix	segments	8	134	0	4608
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	one matrix	warp tiles	2	80	0	0
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	one matrix	warp tiles	4	116	0	0
+bench mmvq_pascal (--q2_0-mtok)	mmvq_mtok	one matrix	warp tiles	8	140	0	0
+bench mmvq_pascal (mtok_mb4: 4 blocks per SM)	mmvq_mtok	gate/up fused	segments	8	<=128	44	9216
+bench mmvq_pascal (mtok_mb4: 4 blocks per SM)	mmvq_mtok	every other instantiation	all	2-8	<=128	0	0-9216

@@ -9,13 +9,14 @@
 # Host code is built without AVX (-march=x86-64 -mno-avx), because the rig's Celeron has none, and the CUDA runtime
 # is linked statically, so the binary needs only the NVIDIA driver on the machine that runs it.
 #
-# Usage: bench/mmvq_pascal/build.sh            (env IMAGE overrides the container image)
+# Usage: bench/mmvq_pascal/build.sh            (env IMAGE overrides the container image; DOCKER_ARGS adds `docker run`
+#                                               arguments, e.g. a label or CPU share a shared build machine asks for)
 set -euo pipefail
 cd "$(dirname "$0")"
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 mkdir -p build
 
-docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/w" -w /w "$IMAGE" bash -euo pipefail -c '
+docker run --rm ${DOCKER_ARGS:-} -u "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/w" -w /w "$IMAGE" bash -euo pipefail -c '
     nvcc -O3 -std=c++17 -use_fast_math \
         -gencode arch=compute_61,code=[sm_61,compute_61] -gencode arch=compute_120,code=sm_120 \
         -Wno-deprecated-gpu-targets -cudart static \
