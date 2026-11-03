@@ -1,0 +1,15 @@
+--- a/ggml/src/ggml-cuda/fattn-pascal.cu
++++ b/ggml/src/ggml-cuda/fattn-pascal.cu
+@@ -51,8 +51,10 @@
+         const bool upper = lane & o;
+ #pragma unroll
+         for (int i = 0; i < n/2; ++i) {
+-            const float send = upper ? v[i] : v[i + n/2];
+-            const float keep = upper ? v[i + n/2] : v[i];
++            const float lo = v[i];
++            const float hi = v[i + n/2];
++            const float send = upper ? lo : hi;
++            const float keep = upper ? hi : lo;
+             v[i] = keep + __shfl_xor_sync(0xFFFFFFFF, send, o, WARP_SIZE);
+         }
+     }

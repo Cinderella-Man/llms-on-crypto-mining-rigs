@@ -1,0 +1,5 @@
+trials 20000 x 32 lanes
+1. v2.0 form against the value-select form: 0 of 640000 results differ in any bit
+2. lane l = sum over lanes of value l (FP64 reference, 5-add rounding bound): v2.0 0 fail, value-select 0 fail (worst error 0.178 of the bound)
+3. mutated (last stage keep/send swapped): 640000 of 640000 fail check 2
+PASS
