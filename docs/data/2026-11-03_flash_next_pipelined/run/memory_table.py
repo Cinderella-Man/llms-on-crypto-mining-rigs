@@ -18,12 +18,12 @@ from pathlib import Path
 
 RE_MODEL = re.compile(r"load_tensors:\s+(\S+) model buffer size =\s+([\d.]+) MiB")
 RE_KV = re.compile(r"llama_kv_cache:\s+(\S+) KV buffer size =\s+([\d.]+) MiB")
-RE_RS = re.compile(r"llama_memory_recurrent:\s+(\S+) RS buffer size =\s+([\d.]+) MiB")
+RE_RS = re.compile(r"(?:llama_memory_recurrent|alloc_tensors):\s+(\S+) RS buffer size =\s+([\d.]+) MiB")
 RE_GROUPS = re.compile(r"set_n_groups: (\d+) state groups")
 RE_COMP = re.compile(r"sched_reserve:\s+(\S+) compute buffer size =\s+([\d.]+) MiB")
 RE_PIPE = re.compile(r"pipe_init:\s+(\S+) pipe slots' compute buffers =\s+([\d.]+) MiB")
 RE_SLOTS = re.compile(r"pipe_init: (\d+) slots \+ (\d+) chunk slots")
-RE_PIPE_ON = re.compile(r"pipelined speculation: up to")
+RE_PIPE_ON = re.compile(r"pipelined speculation: up to \d+ guesses .*?(\d+) pipe slots")
 RE_PIPE_FAIL = re.compile(r"failed to set up the pipe slots")
 
 
@@ -34,9 +34,11 @@ def parse(path):
     rs_seen = {}
     comp_seen = set()
     state = "off"
+    seen_groups = False
     for line in path.read_text(errors="replace").splitlines():
-        if RE_PIPE_ON.search(line):
+        if m := RE_PIPE_ON.search(line):
             state = "on"
+            slots = slots or int(m[1])
         elif RE_PIPE_FAIL.search(line):
             state = "failed"
         if m := RE_MODEL.search(line):
@@ -46,6 +48,7 @@ def parse(path):
             d["kv"] = d.get("kv", 0.0) + float(m[2])
         elif m := RE_GROUPS.search(line):
             groups = int(m[1])
+            seen_groups = True
         elif m := RE_RS.search(line):
             d = dev.setdefault(m[1], {})
             # the first RS line per device is the one-group buffer, a later one llama_pipe_init's groups
@@ -63,6 +66,8 @@ def parse(path):
             dev.setdefault(m[1], {})["pipe"] = float(m[2])
         elif m := RE_SLOTS.search(line):
             slots = int(m[1]) + int(m[2])
+    if state == "on" and not seen_groups:
+        groups = slots + 1  # no set_n_groups line (below -lv 5): 2 D + 3 groups for 2 (D + 1) slots
     return dev, groups, slots, state
 
 
@@ -97,6 +102,14 @@ def main():
                          "rs_groups_mib": rs_g, "compute_mib": d.get("compute", 0.0),
                          "pipe_slots_compute_mib": d.get("pipe", 0.0), "pipelining_adds_mib": round(added, 2),
                          "smi_used_mib": used, "smi_total_mib": total})
+        if not any(r["depth"] == depth for r in rows):
+            # a log without libllama's buffer lines (llama-server below -lv 5): nvidia-smi's use per card only
+            for name, (used, total) in sorted(smi.items(), key=lambda kv: int(kv[0][4:])):
+                fullest = max(fullest, (used, name))
+                rows.append({"depth": depth, "pipelining": state, "pipe_slots": slots, "state_groups": groups,
+                             "device": name, "model_mib": "", "kv_mib": "", "rs_1group_mib": "", "rs_groups_mib": "",
+                             "compute_mib": "", "pipe_slots_compute_mib": "", "pipelining_adds_mib": "",
+                             "smi_used_mib": used, "smi_total_mib": total})
         status = src / f"status-d{depth}.txt"
         host = {}
         if status.exists():
@@ -109,7 +122,7 @@ def main():
                          "rs_groups_mib": 0.0, "compute_mib": round(host.get("RssAnon", 0.0), 1),
                          "pipe_slots_compute_mib": dev.get("CPU", {}).get("pipe", 0.0), "pipelining_adds_mib": 0.0,
                          "smi_used_mib": 0.0, "smi_total_mib": 0.0})
-        total = sum(r["pipelining_adds_mib"] for r in rows if r["depth"] == depth)
+        total = sum(r["pipelining_adds_mib"] or 0.0 for r in rows if r["depth"] == depth)
         top = f"; fullest card {fullest[1]} at {fullest[0]:.0f} MiB (nvidia-smi)" if smi else ""
         print(f"depth {depth}: pipelining {state}, {slots} pipe slots, {groups} state groups; adds {total:.1f} MiB over "
               f"the devices, at most {worst[0]:.1f} MiB on {worst[1]}{top}")

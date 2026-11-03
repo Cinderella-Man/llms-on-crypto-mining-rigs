@@ -1,0 +1,4 @@
+arm,samples_s,avail_minus_cma_mean_mib,avail_minus_cma_lowest_mib,mem_available_lowest_mib,swap_highest_mib,swapout_window_highest_mib,psi_some_avg10_mean_pct,psi_full_avg10_highest_pct
+pipe0,2864,205,93,227,845,215,0.15,13.38
+pipe3,395,523,39,146,1210,330,1.37,18.25
+pipe3b,2797,114,35,138,1484,463,0.2,16.3

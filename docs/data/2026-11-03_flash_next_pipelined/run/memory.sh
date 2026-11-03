@@ -25,9 +25,11 @@ mkdir -p "$OUT"
 for D in $DEPTHS; do
     log=$OUT/server-d$D.log
     echo "=== depth $D $(date +%T)"
+    # -lv 5: llama-server's default verbosity (3) hides libllama's buffer lines, which are what this reads (R31 ran
+    # without it and got only nvidia-smi and the host's memory)
     # shellcheck disable=SC2086
-    "$BIN/llama-server" -m "$MODEL" $ARGS -np 1 -bs --pipe-depth "$D" --no-webui --host 127.0.0.1 --port "$PORT" \
-        > "$log" 2>&1 < /dev/null &
+    "$BIN/llama-server" -m "$MODEL" $ARGS -lv 5 -np 1 -bs --pipe-depth "$D" --no-webui --host 127.0.0.1 \
+        --port "$PORT" > "$log" 2>&1 < /dev/null &
     pid=$!
     for _ in $(seq 1 "${WAIT:-1200}"); do
         grep -q "listening on" "$log" && break

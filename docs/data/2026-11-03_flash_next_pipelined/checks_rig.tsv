@@ -1,0 +1,15 @@
+label	check	run	n_gen	guesses	right	wrong	dropped	tokens	logits	state	probe	verdict
+rig-9xP106	rig-greedy	plain	128	0	0	0	0	same	same	same	same	same
+rig-9xP106	rig-greedy	pipe-d0	128	0	0	0	0	same	same	same	same	same
+rig-9xP106	rig-greedy	oracle-d1-m0	128	127	126	0	0	same	same	same	same	same
+rig-9xP106	rig-greedy	oracle-d1-m0.5	128	127	72	54	54	same	same	same	same	same
+rig-9xP106	rig-greedy	copy2-d1	128	45	21	23	23	same	same	same	same	same
+rig-9xP106	rig-greedy	cont4-d1	128	97	34	62	62	same	same	same	same	same
+rig-9xP106	rig-greedy	simple-d1	128	14	8	6	6	same	same	same	same	same
+rig-9xP106	rig-greedy	mapk-d1	128	14	8	6	6	same	same	same	same	same
+rig-9xP106	rig-greedy	oracle-d3-m0	128	127	126	0	0	same	same	same	same	same
+rig-9xP106	rig-greedy	oracle-d3-m0.5	128	235	72	54	162	same	same	same	same	same
+rig-9xP106	rig-greedy	copy2-d3	128	91	21	23	69	same	same	same	same	same
+rig-9xP106	rig-greedy	cont4-d3	128	221	34	62	186	same	same	same	same	same
+rig-9xP106	rig-greedy	simple-d3	128	26	8	6	18	same	same	same	same	same
+rig-9xP106	rig-greedy	mapk-d3	128	26	8	6	18	same	same	same	same	same
