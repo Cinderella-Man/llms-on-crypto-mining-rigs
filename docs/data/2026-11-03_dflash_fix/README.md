@@ -60,8 +60,9 @@ P106 runs.
 
 No case was unsupported on CUDA, so on the rig these ops stay on the card that holds the layer.
 
-**Not covered here:** a request with the real model and drafter. That is the rig's smoke test (Q561), which should
-also check that greedy output is the same with and without the drafter.
+**Not covered here:** a request with the real model and drafter. That is the rig's smoke test (Q561), which also
+compares greedy output with the same build run without the drafter. The two agree, or split late at a near-tie: the
+verify step runs several tokens through multi-token kernels, which sum in a different order than one-token decoding.
 
 ## Running it on the rig
 
