@@ -5,7 +5,7 @@
 # completion body; the reply's timings carry draft_n and draft_n_accepted), then stops; the rig's logs come back to OUT
 # and are removed on the rig. Runs only ssh here. Environment: RIG, BENCH (bench/agent_check), REL_BIN, MODEL,
 # RIG_PORT, ARGS_mtp, SMOKE_LOGDIR (a folder on the rig), REQUEST (a file here), optional CTX (65536), MIN_AVAIL_MB
-# (400).
+# (400), SERVER_ENV (llama-server's environment, e.g. "LLAMA_DRAFT_SHARE=embd LLAMA_DIO_STAGING=2x16").
 set -uo pipefail
 OUT=$(realpath -m "${1:?usage: smoke_mtp.sh OUT}")
 : "${RIG:?}" "${BENCH:?}" "${REL_BIN:?}" "${MODEL:?}" "${RIG_PORT:?}" "${ARGS_mtp:?}" "${SMOKE_LOGDIR:?}" "${REQUEST:?}"
@@ -16,8 +16,8 @@ mkdir -p "$OUT"
 say() { echo "$(date +%H:%M:%S) $*" | tee -a "$OUT/smoke.log"; }
 rs() { ssh "$RIG" "LOGDIR=$SMOKE_LOGDIR MIN_AVAIL_MB=${MIN_AVAIL_MB:-400} PORT=$RIG_PORT $1 bash -s" < "$BENCH/rig_server.sh"; }
 
-say "starting: $REL_BIN $COMMON $ARGS_mtp -m $MODEL"
-rs "ACTION=start ARM=mtp-smoke BIN=$REL_BIN MODEL=$MODEL SERVER_ENV='' SERVER_ARGS='$COMMON $ARGS_mtp'" 2>&1 \
+say "starting: ${SERVER_ENV:-} $REL_BIN $COMMON $ARGS_mtp -m $MODEL"
+rs "ACTION=start ARM=mtp-smoke BIN=$REL_BIN MODEL=$MODEL SERVER_ENV='${SERVER_ENV:-}' SERVER_ARGS='$COMMON $ARGS_mtp'" 2>&1 \
   | tee -a "$OUT/smoke.log"
 up=${PIPESTATUS[0]}
 if [ "$up" = 0 ]; then
