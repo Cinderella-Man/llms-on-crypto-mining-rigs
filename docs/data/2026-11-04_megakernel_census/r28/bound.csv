@@ -1,0 +1,29 @@
+quantity,value,note
+launch groups per token,2519.50,
+est. kernels per token,3187.70,a product with quantized weights adds its activation quantization
+groups without weights,1658.20,
+"  of them near-zero work (elementwise, norms, routing, hyper-connection mixing)",1265.20,
+"  of them moving a state, a cache or attention (GDN, FA, GET_ROWS, CONT, CONCAT, SSM_CONV, CPY, SET_ROWS)",393.00,
+"ms per token, groups without weights (profiled)",30.98,
+  near-zero work (profiled),14.77,
+"  moving a state, a cache or attention (profiled)",16.21,
+us per near-zero group (profiled mean),11.67,
+"us per small kernel in a CUDA graph (Q88 rig, median of the layer's kernels under 5 us)",2.31,rms_norm+mul=2.40 topk_moe=3.85 quantize xn=2.24 quantize routed=2.35 weighted sum=2.33 quantize xn again=2.29 quantize shared=2.22 residual add=2.12
+us per empty CUDA-graph node (Q88 rig),1.84,
+us the profiler adds per group (est.: profiled near-zero mean minus the graph kernel),9.36,
+ms per token the profiler adds over all groups (est.),23.59,
+ms per token of near-zero groups without the profiler (est.),2.92,
+"profiled ms per token: GPU, hops between cards, host before card 0, wall (medians)",113.32,"hops 14.26, host 11.11, wall 139.75"
+"ceiling: every est. kernel's launch cost removed, barriers free (ms per token)",7.36,node-only cost: 5.87
+"net saving with a 0.5 us barrier, 0 % of stages without one (ms per token)",5.77,
+"net saving with a 0.5 us barrier, 30 % of stages without one (ms per token)",6.25,
+"net saving with a 1 us barrier, 0 % of stages without one (ms per token)",4.17,
+"net saving with a 1 us barrier, 30 % of stages without one (ms per token)",5.13,
+"net saving with a 1.5 us barrier, 0 % of stages without one (ms per token)",2.58,
+"net saving with a 1.5 us barrier, 30 % of stages without one (ms per token)",4.01,
+"net saving with a 2 us barrier, 0 % of stages without one (ms per token)",0.99,
+"net saving with a 2 us barrier, 30 % of stages without one (ms per token)",2.90,
+"k-token passes (Q583 llama-bench, k 1-5): gpu_ms = a + b k: a (per pass), b (per token)",92.25,b = 47.16
+"k-token passes (Q583 llama-bench, k 2-5): gpu_ms = a + b k: a (per pass), b (per token)",90.68,b = 47.56
+"k-token passes (Q583 llama-bench, k 1-5): weightless_ms = a + b k: a (per pass), b (per token)",33.82,b = 2.09
+"k-token passes (Q583 llama-bench, k 2-5): weightless_ms = a + b k: a (per pass), b (per token)",37.37,b = 1.20

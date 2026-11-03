@@ -1,0 +1,5 @@
+quantity,per_pass_ms,per_token_ms,k_range
+weightless_ms,33.82,2.09,1-5
+weightless_ms,37.37,1.20,2-5
+gpu_ms,92.25,47.16,1-5
+gpu_ms,90.68,47.56,2-5
