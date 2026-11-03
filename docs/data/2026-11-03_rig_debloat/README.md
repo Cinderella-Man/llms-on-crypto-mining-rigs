@@ -24,6 +24,14 @@ headless mode is measured (Q83). Two identical rigs (9 × P106-090, 2-core Celer
   are masked. An unattended NVIDIA driver upgrade would break `nvidia-smi` until a reboot, and an apt run inside a timed
   run would skew it. Upgrades are now a manual step between runs.
 - **`snapd` cannot come back** with a later install: `/etc/apt/preferences.d/no-snapd.pref` pins it to -10.
+- **Two trims afterwards, by hand on both rigs:** Nsight Compute and Nsight Systems were purged, 2.3 GB. They cannot
+  profile the P106: Nsight Systems and nvprof refuse the card. The purge also removes the toolkit's three metapackages,
+  so the 77 CUDA packages were first marked manual and no later autoremove can take them; `nvcc` still works. The root
+  filesystem's ext4 reserve was also cut from 5 % to 1 % (`tune2fs -m 1`), another 2.3 GB. The first rig's SSD went
+  from 29 to 34 GB free, and the second's from 33.9 to 38.8 GB.
+- **Not run: `apt autoremove`.** It offers about 190 leftovers, mostly LibreOffice and GNOME app libraries, but its list
+  also holds `jq`, an NVIDIA firmware package and Python modules the tools may use. Q515 removes the leftovers by name
+  instead.
 
 ## What the first runs found, and the fixes in the script
 
