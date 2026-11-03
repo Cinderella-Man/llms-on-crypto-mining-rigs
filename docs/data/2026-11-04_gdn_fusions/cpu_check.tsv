@@ -1,0 +1,5 @@
+rollback_snapshots	graph	ops_in_the_conv_window	one_batch_vs_steps_1_to_8_nmse	logits_vs_unfused_nmse	logits_vs_unfused_max_abs_diff	logits_differing
+0	unfused (LLAMA_GDN_FUSE=0)	GET_ROWS CONCAT CPY(one per slot) SSM_CONV SILU RMS_NORM SCALE RMS_NORM SCALE	9.358e-13	reference	reference	reference
+0	fused	GDN_CONV CPY(all slots)	9.358e-13	0	0	0 of 32768
+3	unfused (LLAMA_GDN_FUSE=0)	GET_ROWS CONCAT CPY(one per slot) SSM_CONV SILU RMS_NORM SCALE RMS_NORM SCALE	9.358e-13	reference	reference	reference
+3	fused	GDN_CONV CPY(all slots)	9.358e-13	0	0	0 of 32768
