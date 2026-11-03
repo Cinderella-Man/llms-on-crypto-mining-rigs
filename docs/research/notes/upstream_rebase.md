@@ -31,6 +31,25 @@ The trial is kept as an unpushed local branch, `rebase-probe-2026-11-03`; nothin
    that is already pushed is never rewritten. Then rebase the feature branches onto it, and go back to cherry-picks
    between release candidates. Est. 3–5 days with the checks.
 
+## The new base branch
+
+The rebase is done as `pascal-p106-v3-b12076` (`b05ecc2d1`, 101 commits on `20a51f24a`). It builds for the rig and
+passes `test-backend-ops`, `test-llama-archs` and the persistent MoE kernel's self-check through the compute 6.1 PTX
+on an RTX 3090, with the Pascal kernels on and off; the method and every result are in
+[docs/data/2026-11-03_upstream_rebase/](../../data/2026-11-03_upstream_rebase/README.md).
+
+- **Beyond the trial's ports,** the build and the tests needed six more fixes. One would have broken every model on a
+  GPU: the KV cache filled each layer's members by position, and upstream's new K rotation (#31073) took the slot of the
+  card-built mask's cell copy. It compiled cleanly. The others: the compute-6.1 attention kernels step aside for
+  attention through kv rows, take upstream's new `KV_rows` kernel argument, and devices without a backend registry
+  (upstream's tensor-split meta device) report no features; two pre-existing bugs that only full test runs on a newer
+  GPU show (the MUL_MAT_ID batch limit under older PTX, and `KQ_MASK`'s test leaving the harness's sentinels unset).
+- **The card-built mask stays**, off by default: with `LLAMA_GPU_KQ_MASK_CHECK=1`, 2,429 card-built masks over every
+  architecture equal the host's.
+- **`Q4_1_64` is retired.** Type id 43 is F8_E4M3 again, as upstream has it; no file in use needs the type.
+- **Still to do:** the feature branches onto the new base (`-bf16mv` and `-dflash` apply cleanly, `-hybrid` conflicts
+  in three files), then identity and the agent-check A/B on a rig.
+
 ## The two sides
 
 | | Commits | Files |
@@ -84,9 +103,10 @@ card-built mask may buy little (est.).
   `LLAMA_GPU_KQ_MASK_CHECK=1`.
 - **On a rig:** identity checks against the v3 tarball's greedy outputs, then the agent check A/B.
 
-**Open choices:**
-- **The card-built mask:** keep the port only if `LLAMA_GPU_KQ_MASK_CHECK=1` passes, or drop the chain, since it is off
-  by default.
-- **`Q4_1_64`:** take the new type ID, or retire the type.
+**The two choices, as made:**
+- **The card-built mask:** kept, since `LLAMA_GPU_KQ_MASK_CHECK=1` passes; it stays off by default.
+- **`Q4_1_64`:** retired rather than given a new type ID.
+
+`llama-pipe-recurrent-check` lives on the hybrid-model branch, so it runs when `-hybrid` is rebased.
 
 The registry row is Q573 in [quants/experiments.md](../../../quants/experiments.md).
