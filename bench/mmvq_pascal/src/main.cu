@@ -432,7 +432,7 @@ void usage() {
            "  --f16            F16 one-token products (the MoE router: 2048 -> 256) instead of the quantized kernels\n"
            "  --bf16           BF16 products at Qwen3.8-Flash-Next's shapes instead of the quantized kernels (shapes\n"
            "                   hc_up, hc_down, hc_inject, indexer_q, ssm_ab; variants mmvf, pascal, gG_rR)\n"
-           "  --tokens LIST    --bf16: tokens per product, 1 to 4, comma-separated (default 1)\n"
+           "  --tokens LIST    --bf16: tokens per product, 1 to 8, comma-separated (default 1)\n"
            "  --q2_0           one-token Q2_0 products at Qwen3.8-Flash-Next's expert shapes instead (shapes moe_gate_up,\n"
            "                   moe_down, shexp_gate_up, shexp_down; variants llama, pascal, rR_seg, rR_tile, rR_dir, R = 1, 2)\n"
            "  --q2_0-mtok      Q2_0 expert products of a k-token pass at Qwen3.8-Flash-Next's routed shapes (shapes\n"
@@ -714,7 +714,7 @@ int run_f16(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, co
 }
 
 
-// --bf16: BF16 matrix-vector products of 1 to 4 tokens (src/bf16_mv.cuh) at Qwen3.8-Flash-Next's BF16 shapes (48 layers:
+// --bf16: BF16 matrix-vector products of 1 to 8 tokens (src/bf16_mv.cuh) at Qwen3.8-Flash-Next's BF16 shapes (48 layers:
 // 36 recurrent, 12 with attention; the hyper-connection mixers run twice per layer and once more for the output).
 // Copies of the weights cycle call by call (>= 64 MB per shape), so no call finds its weights in L2. Every row (every
 // 37th of the 10,240-row shape) is checked against a double-precision CPU product of the same BF16 weights and FP32
@@ -729,14 +729,14 @@ int run_bf16(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, c
     struct bf16_variant { std::string name; int G, R; };
     std::vector<bf16_variant> variants = { { "mmvf", 0, 0 }, { "pascal", -1, -1 } };
     for (int G : { 8, 32, 128 }) {
-        for (int R : { 1, 2, 4 }) {
+        for (int R : { 1, 2, 4, 8 }) {
             variants.push_back({ "g" + std::to_string(G) + "_r" + std::to_string(R), G, R });
         }
     }
     std::vector<int> tokens;
     for (const auto & t : opt.tokens) {
         const int n = atoi(t.c_str());
-        if (n < 1 || n > 4) { fprintf(stderr, "--tokens: 1 to 4\n"); return 1; }
+        if (n < 1 || n > 8) { fprintf(stderr, "--tokens: 1 to 8\n"); return 1; }
         tokens.push_back(n);
     }
     bool ok = true;

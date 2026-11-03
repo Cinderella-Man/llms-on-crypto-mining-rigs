@@ -443,11 +443,12 @@ The last table gives the milliseconds per decoding step summed over the shapes (
 
 ```bash
 scp bench/mmvq_pascal/build/mmvq_pascal rig:/tmp/
-ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --bf16 --tokens 1,2,3,4 --csv /tmp/bf16.csv' | tee bf16_rig.txt
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --bf16 --tokens 1,2,3,4,5,6,8 --csv /tmp/bf16.csv' | tee bf16_rig.txt
 scp rig:/tmp/bf16.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/bf16.csv'
 ```
 
-On another GPU, `--bf16 --check-only --tokens 1,2,3,4` checks the compute 6.1 code through the PTX JIT.
+On another GPU, `--bf16 --check-only --tokens 1,2,3,4,5,6,8` checks the compute 6.1 code through the PTX JIT. Since
+Q591 the kernel takes 1 to 8 tokens, with 4 rows per lane group up to 4 tokens and 8 rows from 5 (variants `gG_r8`).
 
 ## Flash-Next's Q2_0 experts (Q223)
 
@@ -533,6 +534,47 @@ scp rig:/tmp/q2_0_mtok.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/q2_0_mtok.c
 
 The fork's `GGML_CUDA_MMVQ_PASCAL_MTOK=E,CAP,RB,G` selects the same group size, row blocks and gate loads without a
 rebuild (`=0`: the earlier kernels, for an A/B on one binary).
+
+## k-column products (Q591)
+
+A speculative-decoding verify multiplies every dense matrix by k = 2–8 tokens at once. Miner Llama's k-column kernels
+(`ggml/src/ggml-cuda/mmvq-pascal-kcol*.cu`, fork branch `pascal-p106-v3-b12076-kcol`) read and decode each weight once
+for all k columns: Q8_0, Q2_0, Q3_K, Q4_K, Q5_K, Q6_K and IQ4_XS. The activations are quantized into records laid out
+for the kernels (int8 values in each type's decoding order, FP32 scales, the K-quants' block sums, Q3_K's and Q6_K's
+half-block offsets) that each block stages in shared memory once; per 32 weights, row and column a kernel spends 8 dp4a
+and 3–5 FP32 operations. The design is at the top of the kernel header, which `src/kcol_mm.cuh` copies verbatim.
+
+`build_kcol.sh` builds `build/mmvq_kcol` ([src/kcol_main.cu](src/kcol_main.cu)), which times them per shape and column
+count (`--tokens`, default 1–6 and 8) at the dense shapes of Qwen3.8-Flash-Next's Swift Q2_0 file (its tensor census:
+`attn_qkv` 2,560 → 10,240 in Q3_K ×18, IQ4_XS ×13, Q4_K ×4, Q2_0 ×1; `attn_gate` 2,560 → 6,144; `attn_q`
+2,560 → 12,288; `ssm_out` and `attn_output` 6,144 → 2,560; the shared expert's gate, up and down; the output layer
+2,560 → 248,320 in Q5_K and the draft's Q6_K head; the hyper-connection projections 320 → 10,240 and 10,240 → 320 as
+the Q8_0 retype). Variants:
+
+- `pascal`: the launch shape the fork picks (lanes per row group from the row width, 2 rows per group unless that
+  leaves fewer than 3 blocks per SM, the largest activation tile that fits 48 KB of shared memory);
+- `r1`, `r2`: 1 or 2 rows per lane group; `itt1`: one iteration per activation tile (the K-tile loop); `s32k`: a
+  32 KB shared-memory budget (3 blocks per SM where registers allow);
+- `prod`: the product alone, the records quantized beforehand, which shows what the quantizer costs.
+
+Each call is the quantizer and the product, as in the model; copies of the weights cycle call by call (≥ 64 MB). Every
+row (every 37th above 4,096 rows) of every column is checked against a double-precision product of ggml's reference
+dequantization ([src/kcol_ref.h](src/kcol_ref.h)) and the activations read back from the records, tolerance 1e-5 of
+the sum of the absolute terms. Per shape the table gives µs per call, GB/s and the cost against the same variant's one
+column (`vs k1`, the flatness the kernels aim at: a 5-column pass at most ~1.3× one); the last table sums calls per
+token × µs per call over the shapes run, per column count. On the rig:
+
+```bash
+scp bench/mmvq_pascal/build/mmvq_kcol rig:/tmp/
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_kcol --csv /tmp/kcol.csv' | tee kcol_rig.txt
+scp rig:/tmp/kcol.csv . && ssh rig 'rm -f /tmp/mmvq_kcol /tmp/kcol.csv'
+```
+
+On another GPU, `CUDA_FORCE_PTX_JIT=1 build/mmvq_kcol --check-only --nsm 5` checks the compute 6.1 code with the
+P106's launch shapes. `verify/kcol_unit_check.sh` checks each type's decoding against ggml's reference on a CPU, without
+a GPU. The whole product path through ggml (llama.cpp's and the earlier Pascal kernels against these) is timed by
+`test-backend-ops perf` with `GGML_CUDA_MMVQ_PASCAL_KCOL=0` and the default:
+[docs/data/2026-11-04_kcol_dense](../../docs/data/2026-11-04_kcol_dense/README.md) has the run for one P106.
 
 ## Memory system: spread weights and a TLB probe (Q99)
 
@@ -624,3 +666,5 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `src/q2_0_mv.cuh` | `--q2_0`: llama.cpp's Q2_0 `mul_mat_vec_q` and Miner Llama's Pascal Q2_0 kernel at one token (Q223) |
 | `src/q2_0_mtok.cuh` | `--q2_0-mtok`: Miner Llama's multi-token Q2_0 expert kernel, copied from the fork, its launch rule, and the route profiles (R7, Q591) |
 | `tools/` | SASS and register helpers for the fork's Pascal kernels: `regs.py`, `loops.py`, `loops2.py` (registers, spills and main-loop instruction counts from a ptxas log and `cuobjdump -sass`), `classify.py` (sorts a test-backend-ops log's failures into the cases a mutation should hit) (Q78); `benchloops.py` (the bench's staged-kernel loops per weight byte), `forksass.py` (SASS identity of two single-file builds of the fork's `mmvq-pascal.cu`, Q6_K registers), `sasscmp.py` (SASS identity of two bench builds) (Q101) |
+| `src/kcol_mm.cuh`, `src/kcol_main.cu`, `src/kcol_ref.h`, `build_kcol.sh` | `build/mmvq_kcol`: Miner Llama's k-column products (Q591, copied verbatim from the fork), timed at 1–8 columns at Qwen3.8-Flash-Next's dense shapes against ggml's reference dequantization |
+| `verify/kcol_unit_check.cu`, `verify/kcol_unit_check.sh` | each type's decoding in the k-column products against ggml's reference dequantization, on a CPU (no GPU) |

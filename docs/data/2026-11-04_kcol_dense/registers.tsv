@@ -1,0 +1,221 @@
+kernel	type	columns	rows_per_group	registers	stack	local
+mul_mat_kcol	iq4_xs	1	1	68	0	0
+mul_mat_kcol	iq4_xs	1	2	72	0	0
+mul_mat_kcol	iq4_xs	2	1	104	0	0
+mul_mat_kcol	iq4_xs	2	2	100	0	0
+mul_mat_kcol	iq4_xs	3	1	102	0	0
+mul_mat_kcol	iq4_xs	3	2	104	0	0
+mul_mat_kcol	iq4_xs	4	1	112	0	0
+mul_mat_kcol	iq4_xs	4	2	113	0	0
+mul_mat_kcol	iq4_xs	5	1	110	0	0
+mul_mat_kcol	iq4_xs	5	2	107	0	0
+mul_mat_kcol	iq4_xs	6	1	111	0	0
+mul_mat_kcol	iq4_xs	6	2	110	0	0
+mul_mat_kcol	iq4_xs	7	1	108	0	0
+mul_mat_kcol	iq4_xs	7	2	111	0	0
+mul_mat_kcol	iq4_xs	8	1	120	0	0
+mul_mat_kcol	iq4_xs	8	2	128	0	0
+mul_mat_kcol	q2_0	1	1	61	0	0
+mul_mat_kcol	q2_0	1	2	58	0	0
+mul_mat_kcol	q2_0	2	1	104	0	0
+mul_mat_kcol	q2_0	2	2	107	0	0
+mul_mat_kcol	q2_0	3	1	102	0	0
+mul_mat_kcol	q2_0	3	2	104	0	0
+mul_mat_kcol	q2_0	4	1	111	0	0
+mul_mat_kcol	q2_0	4	2	117	0	0
+mul_mat_kcol	q2_0	5	1	110	0	0
+mul_mat_kcol	q2_0	5	2	110	0	0
+mul_mat_kcol	q2_0	6	1	106	0	0
+mul_mat_kcol	q2_0	6	2	111	0	0
+mul_mat_kcol	q2_0	7	1	108	0	0
+mul_mat_kcol	q2_0	7	2	111	0	0
+mul_mat_kcol	q2_0	8	1	119	0	0
+mul_mat_kcol	q2_0	8	2	114	0	0
+mul_mat_kcol	q3_K	1	1	93	0	0
+mul_mat_kcol	q3_K	1	2	148	0	0
+mul_mat_kcol	q3_K	2	1	119	0	0
+mul_mat_kcol	q3_K	2	2	161	0	0
+mul_mat_kcol	q3_K	3	1	126	0	0
+mul_mat_kcol	q3_K	3	2	172	0	0
+mul_mat_kcol	q3_K	4	1	136	0	0
+mul_mat_kcol	q3_K	4	2	193	0	0
+mul_mat_kcol	q3_K	5	1	148	0	0
+mul_mat_kcol	q3_K	5	2	207	0	0
+mul_mat_kcol	q3_K	6	1	151	0	0
+mul_mat_kcol	q3_K	6	2	212	0	0
+mul_mat_kcol	q3_K	7	1	152	0	0
+mul_mat_kcol	q3_K	7	2	220	0	0
+mul_mat_kcol	q3_K	8	1	168	0	0
+mul_mat_kcol	q3_K	8	2	235	0	0
+mul_mat_kcol	q4_K	1	1	77	0	0
+mul_mat_kcol	q4_K	1	2	72	0	0
+mul_mat_kcol	q4_K	2	1	100	0	0
+mul_mat_kcol	q4_K	2	2	100	0	0
+mul_mat_kcol	q4_K	3	1	109	0	0
+mul_mat_kcol	q4_K	3	2	118	0	0
+mul_mat_kcol	q4_K	4	1	109	0	0
+mul_mat_kcol	q4_K	4	2	122	0	0
+mul_mat_kcol	q4_K	5	1	115	0	0
+mul_mat_kcol	q4_K	5	2	128	0	0
+mul_mat_kcol	q4_K	6	1	108	0	0
+mul_mat_kcol	q4_K	6	2	130	0	0
+mul_mat_kcol	q4_K	7	1	124	0	0
+mul_mat_kcol	q4_K	7	2	152	0	0
+mul_mat_kcol	q4_K	8	1	122	0	0
+mul_mat_kcol	q4_K	8	2	147	0	0
+mul_mat_kcol	q5_K	1	1	75	0	0
+mul_mat_kcol	q5_K	1	2	111	0	0
+mul_mat_kcol	q5_K	2	1	100	0	0
+mul_mat_kcol	q5_K	2	2	178	0	0
+mul_mat_kcol	q5_K	3	1	109	0	0
+mul_mat_kcol	q5_K	3	2	216	0	0
+mul_mat_kcol	q5_K	4	1	123	0	0
+mul_mat_kcol	q5_K	4	2	220	0	0
+mul_mat_kcol	q5_K	5	1	144	0	0
+mul_mat_kcol	q5_K	5	2	228	0	0
+mul_mat_kcol	q5_K	6	1	146	0	0
+mul_mat_kcol	q5_K	6	2	232	0	0
+mul_mat_kcol	q5_K	7	1	168	0	0
+mul_mat_kcol	q5_K	7	2	244	0	0
+mul_mat_kcol	q5_K	8	1	168	0	0
+mul_mat_kcol	q5_K	8	2	244	0	0
+mul_mat_kcol	q6_K	1	1	88	0	0
+mul_mat_kcol	q6_K	1	2	113	0	0
+mul_mat_kcol	q6_K	2	1	111	0	0
+mul_mat_kcol	q6_K	2	2	144	0	0
+mul_mat_kcol	q6_K	3	1	119	0	0
+mul_mat_kcol	q6_K	3	2	148	0	0
+mul_mat_kcol	q6_K	4	1	135	0	0
+mul_mat_kcol	q6_K	4	2	164	0	0
+mul_mat_kcol	q6_K	5	1	136	0	0
+mul_mat_kcol	q6_K	5	2	163	0	0
+mul_mat_kcol	q6_K	6	1	140	0	0
+mul_mat_kcol	q6_K	6	2	168	0	0
+mul_mat_kcol	q6_K	7	1	144	0	0
+mul_mat_kcol	q6_K	7	2	176	0	0
+mul_mat_kcol	q6_K	8	1	166	0	0
+mul_mat_kcol	q6_K	8	2	208	0	0
+mul_mat_kcol	q8_0	1	1	56	0	0
+mul_mat_kcol	q8_0	1	2	71	0	0
+mul_mat_kcol	q8_0	2	1	110	0	0
+mul_mat_kcol	q8_0	2	2	111	0	0
+mul_mat_kcol	q8_0	3	1	110	0	0
+mul_mat_kcol	q8_0	3	2	102	0	0
+mul_mat_kcol	q8_0	4	1	118	0	0
+mul_mat_kcol	q8_0	4	2	119	0	0
+mul_mat_kcol	q8_0	5	1	114	0	0
+mul_mat_kcol	q8_0	5	2	111	0	0
+mul_mat_kcol	q8_0	6	1	112	0	0
+mul_mat_kcol	q8_0	6	2	110	0	0
+mul_mat_kcol	q8_0	7	1	108	0	0
+mul_mat_kcol	q8_0	7	2	111	0	0
+mul_mat_kcol	q8_0	8	1	120	0	0
+mul_mat_kcol	q8_0	8	2	114	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	1	1	30	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	1	2	36	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	1	4	48	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	1	8	76	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	2	1	32	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	2	2	48	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	2	4	64	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	2	8	94	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	3	1	48	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	3	2	56	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	3	4	80	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	3	8	148	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	4	1	54	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	4	2	64	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	4	4	96	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	4	8	166	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	5	1	56	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	5	2	72	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	5	4	104	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	5	8	188	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	6	1	64	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	6	2	86	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	6	4	140	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	6	8	203	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	7	1	64	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	7	2	80	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	7	4	152	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	7	8	240	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	8	1	78	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	8	2	94	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	8	4	143	0	0
+mul_mat_vec_bf16_pascal G=128	bf16	8	8	244	0	0
+mul_mat_vec_bf16_pascal G=128 bias	bf16	1	1	30	0	0
+mul_mat_vec_bf16_pascal G=128 bias	bf16	1	2	36	0	0
+mul_mat_vec_bf16_pascal G=128 bias	bf16	1	4	48	0	0
+mul_mat_vec_bf16_pascal G=128 bias	bf16	1	8	76	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	1	1	32	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	1	2	36	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	1	4	54	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	1	8	82	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	2	1	36	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	2	2	54	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	2	4	64	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	2	8	90	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	3	1	40	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	3	2	56	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	3	4	80	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	3	8	135	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	4	1	56	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	4	2	64	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	4	4	96	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	4	8	166	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	5	1	56	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	5	2	72	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	5	4	104	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	5	8	192	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	6	1	70	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	6	2	80	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	6	4	138	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	6	8	208	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	7	1	72	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	7	2	80	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	7	4	148	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	7	8	252	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	8	1	72	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	8	2	96	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	8	4	144	0	0
+mul_mat_vec_bf16_pascal G=32	bf16	8	8	254	0	0
+mul_mat_vec_bf16_pascal G=32 bias	bf16	1	1	32	0	0
+mul_mat_vec_bf16_pascal G=32 bias	bf16	1	2	34	0	0
+mul_mat_vec_bf16_pascal G=32 bias	bf16	1	4	46	0	0
+mul_mat_vec_bf16_pascal G=32 bias	bf16	1	8	78	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	1	1	32	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	1	2	36	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	1	4	54	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	1	8	82	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	2	1	36	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	2	2	54	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	2	4	64	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	2	8	90	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	3	1	40	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	3	2	56	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	3	4	80	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	3	8	135	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	4	1	56	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	4	2	64	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	4	4	96	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	4	8	166	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	5	1	56	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	5	2	72	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	5	4	104	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	5	8	192	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	6	1	70	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	6	2	80	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	6	4	138	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	6	8	208	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	7	1	72	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	7	2	80	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	7	4	148	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	7	8	252	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	8	1	72	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	8	2	96	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	8	4	144	0	0
+mul_mat_vec_bf16_pascal G=8	bf16	8	8	254	0	0
+mul_mat_vec_bf16_pascal G=8 bias	bf16	1	1	32	0	0
+mul_mat_vec_bf16_pascal G=8 bias	bf16	1	2	34	0	0
+mul_mat_vec_bf16_pascal G=8 bias	bf16	1	4	46	0	0
+mul_mat_vec_bf16_pascal G=8 bias	bf16	1	8	78	0	0

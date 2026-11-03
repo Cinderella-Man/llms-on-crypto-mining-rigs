@@ -1,4 +1,4 @@
-// BF16 matrix-vector products of 1 to 4 tokens with FP32 activations (--bf16): the BF16 tensors of Qwen3.8-Flash-Next
+// BF16 matrix-vector products of 1 to 8 tokens with FP32 activations (--bf16): the BF16 tensors of Qwen3.8-Flash-Next
 // (hyper-connection projections 320 -> 10240, 10240 -> 320 and 10240 -> 4, the indexer's query projection
 // 2560 -> 512, the recurrent layers' alpha and beta 2560 -> 48).
 //
@@ -7,8 +7,9 @@
 //   width (160 threads for K = 320, 256 for K >= 512), each thread taking every block_size-th pair of weights
 //   (4 bytes), converted to FP32 and accumulated in FP32, reduced per warp and then over the warps through shared memory.
 // "gG_rR": Miner Llama's Pascal BF16 kernel (mul_mat_vec_bf16_pascal, copied below from the fork's
-//   ggml/src/ggml-cuda/mmvf-pascal-impl.cuh, branch pascal-p106-v3-bf16mv at a4acc80a3) at a fixed launch shape:
-//   G lanes per row group (8, 32, or 128 over the block's 4 warps), R rows per group sharing every activation load,
+//   ggml/src/ggml-cuda/mmvf-pascal-impl.cuh, branch pascal-p106-v3-b12076-kcol) at a fixed launch shape:
+//   G lanes per row group (8, 32, or 128 over the block's 4 warps), R rows per group (1, 2, 4, 8) sharing every
+//   activation load,
 //   8 weights per lane per iteration with one 128-bit load, each weight converted exactly (BF16 is the upper half of
 //   an FP32) and added with one FMA.
 // "pascal": the same kernel at the launch shape the fork picks for this card (mmvfp_pick_shape, copied below).
@@ -109,7 +110,9 @@ static __device__ __forceinline__ float mmvfp_dot8(const uint4 w, const float4 a
 // stride_col_y4 float4 apart. dst, and bias if has_bias: T columns, stride_col_dst floats apart.
 // Lane sl of a group takes chunks sl, sl + G, ... of each of its R rows, so every weight load of a warp is a coalesced
 // 128-bit load; the activations of a chunk are loaded once for all R rows. Partial sums are reduced with shuffles in
-// the warp, then (G = 128) over the warps through shared memory, always in the same order.
+// the warp, then (G = 128) over the warps through shared memory, always in the same order; after the shuffles every lane
+// of a group holds all T * R sums, and lane lg writes those whose index t * R + i is lg modulo the group's lanes in the
+// warp, so a lane writes several outputs where T * R exceeds them.
 template <int G, int R, int T, bool has_bias>
 __launch_bounds__(MMVF_PASCAL_NT)
 static __global__ void mul_mat_vec_bf16_pascal(
@@ -120,7 +123,6 @@ static __global__ void mul_mat_vec_bf16_pascal(
     constexpr int GW   = G < warp ? G : warp;     // lanes of a group within one warp
     constexpr int WPG  = G > warp ? G / warp : 1; // warps per group
     static_assert(G == 8 || G == 32 || G == 128, "unsupported group size");
-    static_assert(T * R <= GW, "each lane writes at most one output");
 
     const int tid  = threadIdx.x;
     const int sl   = tid % G;
@@ -163,7 +165,6 @@ static __global__ void mul_mat_vec_bf16_pascal(
         yp += 2 * G;
     }
 
-    float v = 0.0f;
 #pragma unroll
     for (int t = 0; t < T; ++t) {
 #pragma unroll
@@ -172,40 +173,54 @@ static __global__ void mul_mat_vec_bf16_pascal(
             for (int off = GW / 2; off > 0; off >>= 1) {
                 acc[t][i] += __shfl_xor_sync(0xFFFFFFFF, acc[t][i], off, warp);
             }
-            if (lg == t * R + i) {
-                v = acc[t][i];
-            }
         }
     }
 
     if constexpr (WPG > 1) {
         __shared__ float buf[NW][T * R];
         const int wid = tid / warp;
-        if (lg < T * R) {
-            buf[wid][lg] = v;
+#pragma unroll
+        for (int t = 0; t < T; ++t) {
+#pragma unroll
+            for (int i = 0; i < R; ++i) {
+                if ((t * R + i) % GW == lg) {
+                    buf[wid][t * R + i] = acc[t][i];
+                }
+            }
         }
         __syncthreads();
         if (wid % WPG != 0) {
             return;
         }
 #pragma unroll
-        for (int k = 1; k < WPG; ++k) {
-            v += lg < T * R ? buf[wid + k][lg] : 0.0f;
+        for (int t = 0; t < T; ++t) {
+#pragma unroll
+            for (int i = 0; i < R; ++i) {
+                if ((t * R + i) % GW == lg) {
+#pragma unroll
+                    for (int k = 1; k < WPG; ++k) {
+                        acc[t][i] += buf[wid + k][t * R + i];
+                    }
+                }
+            }
         }
     }
 
-    if (lg >= T * R) {
-        return;
+#pragma unroll
+    for (int t = 0; t < T; ++t) {
+#pragma unroll
+        for (int i = 0; i < R; ++i) {
+            const int row = row0 + i;
+            if ((t * R + i) % GW != lg || row >= nrows) {
+                continue;
+            }
+            float v = acc[t][i];
+            if constexpr (has_bias) {
+                v += bias[t * stride_col_dst + row];
+            }
+            dst[t * stride_col_dst + row] = v;
+        }
     }
-    const int t   = lg / R;
-    const int row = row0 + lg % R;
-    if (row >= nrows) {
-        return;
-    }
-    if constexpr (has_bias) {
-        v += bias[t * stride_col_dst + row];
-    }
-    dst[t * stride_col_dst + row] = v;
 }
 
 // ---- copied from the fork's ggml/src/ggml-cuda/mmvf-pascal.cu ---------------------------------------------------------
@@ -216,7 +231,7 @@ inline int mmvfp_blocks(const int nrows, const int G, const int R) {
 }
 
 inline void mmvfp_pick_shape(const int nchunks, const int nrows, const int ncols_dst, const int nsm, int & G, int & R) {
-    const int rmax = ncols_dst <= 2 ? 4 : 2;
+    const int rmax = ncols_dst <= 4 ? 4 : 8;
     G = 8;
     while (G < 128 && nchunks > 16 * G) {
         G *= 4;
@@ -263,8 +278,12 @@ inline const void * pascal_func_t(const int T) {
     switch (T) {
         case 1: return (const void *) mul_mat_vec_bf16_pascal<G, R, 1, false>;
         case 2: return (const void *) mul_mat_vec_bf16_pascal<G, R, 2, false>;
-        case 3: if constexpr (R <= 2) { return (const void *) mul_mat_vec_bf16_pascal<G, R, 3, false>; } return nullptr;
-        case 4: if constexpr (R <= 2) { return (const void *) mul_mat_vec_bf16_pascal<G, R, 4, false>; } return nullptr;
+        case 3: return (const void *) mul_mat_vec_bf16_pascal<G, R, 3, false>;
+        case 4: return (const void *) mul_mat_vec_bf16_pascal<G, R, 4, false>;
+        case 5: return (const void *) mul_mat_vec_bf16_pascal<G, R, 5, false>;
+        case 6: return (const void *) mul_mat_vec_bf16_pascal<G, R, 6, false>;
+        case 7: return (const void *) mul_mat_vec_bf16_pascal<G, R, 7, false>;
+        case 8: return (const void *) mul_mat_vec_bf16_pascal<G, R, 8, false>;
         default: return nullptr;
     }
 }
@@ -275,11 +294,12 @@ inline const void * pascal_func_g(const int R, const int T) {
         case 1: return pascal_func_t<G, 1>(T);
         case 2: return pascal_func_t<G, 2>(T);
         case 4: return pascal_func_t<G, 4>(T);
+        case 8: return pascal_func_t<G, 8>(T);
         default: return nullptr;
     }
 }
 
-// nullptr for shapes the fork never launches (R = 4 with 3 or 4 tokens)
+// nullptr for shapes the kernel has no instance of
 inline const void * pascal_func(const int G, const int R, const int T) {
     switch (G) {
         case   8: return pascal_func_g<  8>(R, T);
