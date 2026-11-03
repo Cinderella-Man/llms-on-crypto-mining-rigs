@@ -1,0 +1,50 @@
+layer	type	q2_0_mib	q2_0_experts_mib	iq3_xxs_mib	iq3_xxs_experts_mib
+0	Gated DeltaNet	740.5	675.0	973.4	912.5
+1	Gated DeltaNet	756.6	675.0	765.5	637.5
+2	Gated DeltaNet	737.2	675.0	974.4	912.5
+3	attention	728.4	675.0	703.0	637.5
+4	Gated DeltaNet	734.9	675.0	980.2	912.5
+5	Gated DeltaNet	733.6	675.0	755.7	687.5
+6	Gated DeltaNet	731.3	675.0	702.5	637.5
+7	attention	727.8	675.0	701.2	637.5
+8	Gated DeltaNet	733.0	675.0	974.8	912.5
+9	Gated DeltaNet	725.3	675.0	757.2	687.5
+10	Gated DeltaNet	730.8	675.0	763.9	687.5
+11	attention	736.8	675.0	704.1	637.5
+12	Gated DeltaNet	730.3	675.0	803.0	737.5
+13	Gated DeltaNet	733.5	675.0	704.5	637.5
+14	Gated DeltaNet	734.5	675.0	753.6	687.5
+15	attention	738.5	675.0	803.2	737.5
+16	Gated DeltaNet	731.5	675.0	708.3	637.5
+17	Gated DeltaNet	731.3	675.0	804.9	737.5
+18	Gated DeltaNet	735.2	675.0	979.9	912.5
+19	attention	732.9	675.0	753.5	687.5
+20	Gated DeltaNet	732.6	675.0	978.9	912.5
+21	Gated DeltaNet	733.7	675.0	797.9	737.5
+22	Gated DeltaNet	733.2	675.0	981.8	912.5
+23	attention	733.7	675.0	978.7	912.5
+24	Gated DeltaNet	736.4	675.0	981.0	912.5
+25	Gated DeltaNet	732.6	675.0	766.0	687.5
+26	Gated DeltaNet	738.7	675.0	801.7	737.5
+27	attention	736.4	675.0	712.2	637.5
+28	Gated DeltaNet	733.9	675.0	1208.5	1137.5
+29	Gated DeltaNet	733.2	675.0	1033.7	962.5
+30	Gated DeltaNet	735.5	675.0	1212.2	1137.5
+31	attention	740.5	675.0	937.2	862.5
+32	Gated DeltaNet	735.8	675.0	1205.6	1137.5
+33	Gated DeltaNet	732.8	675.0	978.0	912.5
+34	Gated DeltaNet	738.1	675.0	1214.1	1137.5
+35	attention	734.3	675.0	1130.1	1062.5
+36	Gated DeltaNet	736.2	675.0	911.4	837.5
+37	Gated DeltaNet	737.1	675.0	1200.8	1137.5
+38	Gated DeltaNet	740.3	675.0	1038.7	962.5
+39	attention	735.8	675.0	987.4	912.5
+40	Gated DeltaNet	735.4	675.0	810.0	737.5
+41	Gated DeltaNet	737.0	675.0	899.0	837.5
+42	Gated DeltaNet	736.3	675.0	1036.5	962.5
+43	attention	740.5	675.0	1211.9	1137.5
+44	Gated DeltaNet	740.1	675.0	1136.6	1062.5
+45	Gated DeltaNet	738.0	675.0	907.1	837.5
+46	Gated DeltaNet	738.7	675.0	1035.6	962.5
+47	attention	739.9	675.0	1121.3	1062.5
+output	output layer (last card)	429.3		429.3	

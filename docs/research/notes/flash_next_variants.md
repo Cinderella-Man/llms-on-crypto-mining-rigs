@@ -30,8 +30,8 @@ scripts are in [docs/data/2026-10-27_flash_next_variants/](../../data/2026-10-27
    cheapest gains are rewriting the BF16 hyper-connection tensors as Q8_0 and, in the Swift files, the F32 router as
    F16.
 5. **Q2_0 is the most Pascal-friendly expert format in these files.** It is a simple 2.25-bit format, est. 3–6 ps per
-   weight on a P106, against 20.5 measured for IQ3_XXS. A Q2_0 file also leaves room for 262k of context and the MTP
-   head.
+   weight on a P106, against 20.5 measured for IQ3_XXS. A Q2_0 file also leaves room for 128k of context with the MTP
+   draft, or 262k without it at a 64-token micro-batch ([fit probe](../../data/2026-11-03_flash_next_fit/README.md)).
 6. **Recommendation:** make the GSQ-RCO **Q2_0** file the first Pascal-friendly target, with the **IQ3_XXS** file as
    the quality reference that the v3 IQ kernels speed up. KLD on the quality machine, then the agent check on the rig,
    picks between them and between the ISTA and Swift builds. Est. decode for Q2_0 at short context is 12–15 tok/s
@@ -60,10 +60,15 @@ What the cards must hold, against 9 × 6,068 MiB (53.3 GiB):
 - **The transformer:** everything but the n-gram table (next table).
 - **KV cache plus indexer cache:** 30 KiB per token in F16, ~16 KiB in q8_0: 3.75 / 2.0 GiB at 128k, 7.5 / 4.0 GiB at
   262k. The 36 DeltaNet layers keep a fixed state instead.
-- **Compute buffers and the desktop:** about 0.5 GiB per card. Ornith-1.5-122B's 47.6 GB file reaches 122,880 tokens
-  of F16 cache only with a 128-token micro-batch
-  ([Ornith benchmark](../../benchmarks/2026-10-27-ornith-122b.md#fitting-it-on-the-cards)).
-- **The MTP draft, if used:** about 2.7 GB on one card.
+- **Compute buffers:** they grow with micro-batch × context, from 180 MiB per card at 64k and `-ub 128` to 1,961 MiB
+  at 262k and `-ub 512` (F16 cache; a q8_0 cache grows them by about what it saves). llama.cpp's own CUDA context and
+  the desktop leave 6,001–6,007 MiB of each card free.
+- **The MTP draft, if used:** 2.2–4.4 GiB on the last card (weights, cache and compute), and four times the recurrent
+  state per Gated DeltaNet layer in the main model.
+
+What fits, from llama.cpp's projection ([fit probe](../../data/2026-11-03_flash_next_fit/README.md), Q213): Swift Q2_0
+reaches 128k up to `-ub 256` and 262k at `-ub 64`, and 128k with the draft; Swift IQ3_XXS 48k on whole layers, more
+only with expert tensors moved across cards.
 
 The local files, from the [census](../../data/2026-10-27_flash_next_variants/census/summary.tsv) (GB):
 
@@ -297,14 +302,14 @@ kernels bring part of that back.
 
 ## 7. Which version to make Pascal-friendly
 
-| Rank | Candidate | Quality for agents | Fits (cache in q8_0) | Route to Pascal-friendly | Odds |
+| Rank | Candidate | Quality for agents | Fits (Swift builds probed, Q213) | Route to Pascal-friendly | Odds |
 |---|---|---|---|---|---|
-| 1 | **GSQ-RCO Q2_0**, ISTA and Swift builds | 3rd of the files that fit; Swift thinks less | 262k and MTP, with ~5 GB to spare | Dense fixes (router F16, hyper-connections Q8_0, optionally a Q8_0 spine, +1.3 GB), a Pascal-tuned Q2_0 expert kernel, MTP | **High**: every format already runs in Miner Llama, and the experts are already in the fastest low-bit format |
-| 2 | **GSQ-RCO IQ3_XXS**, ISTA build | 1st | about 128k, no room for MTP; needs a fit probe | Hyper-connections in Q8_0 (which also frees ~0.6 GB), v3's IQ2/IQ3 kernels | **Medium**: the best quality, but the slowest experts and the tightest fit |
-| 3 | GSQ-RCO IQ2_XS, Swift build | 2nd | 262k, MTP likely | as rank 2 (mostly IQ2_S experts, Q2_0 down) | Medium: IQ2_S kernels exist; thinking loops |
-| 4 | GSQ-RCO-Coder | 4th | 262k and MTP easily | as rank 2; mixed IQ formats | Medium: compact, but general knowledge halved |
+| 1 | **GSQ-RCO Q2_0**, ISTA and Swift builds | 3rd of the files that fit; Swift thinks less | 128k with the MTP draft; 262k without it at `-ub 64` | Dense fixes (router F16, hyper-connections Q8_0, optionally a Q8_0 spine, +1.3 GB), a Pascal-tuned Q2_0 expert kernel, MTP | **High**: every format already runs in Miner Llama, and the experts are already in the fastest low-bit format |
+| 2 | **GSQ-RCO IQ3_XXS**, ISTA build | 1st | 48k on whole layers (32k with the draft); 128k with expert tensors moved across cards, which turns off pipeline parallelism | Hyper-connections in Q8_0 (which also frees ~0.6 GB), v3's IQ2/IQ3 kernels | **Medium**: the best quality, but the slowest experts and the tightest fit |
+| 3 | GSQ-RCO IQ2_XS, Swift build | 2nd | est. 128k, also with the draft (1.6 GB more than Q2_0; not probed) | as rank 2 (mostly IQ2_S experts, Q2_0 down) | Medium: IQ2_S kernels exist; thinking loops |
+| 4 | GSQ-RCO-Coder | 4th | est. 262k with the draft (8 GB less than Q2_0; not probed) | as rank 2; mixed IQ formats | Medium: compact, but general knowledge halved |
 | 5 | Own file from BF16 (base or Swift 1.5) | unknown | chosen to fit | Experts in Q2_0 or the N2P/N3P formats from [route 2](pascal_lowbit_format.md), dense in fast formats, built on the quality machine's CPU from the 354 GB BF16 | Medium-low: llama-quantize's own Q2_0 quantizer is unusable for this, so it needs GSQ-style rounding or the new formats; highest ceiling |
-| 6 | Gyro-M | 5th (maker-only evidence) | 262k | Port the trellis formats into Miner Llama | Low: est. 2–3.5× slower per weight than Q2_0; no BF16 and no published encoder |
+| 6 | Gyro-M | 5th (maker-only evidence) | est. as Q2_0 (37.6 GB on the cards; not probed) | Port the trellis formats into Miner Llama | Low: est. 2–3.5× slower per weight than Q2_0; no BF16 and no published encoder |
 
 How far below these files the experts can go, and why sub-1-bit methods do not help: [sub_1_bit_quants.md](sub_1_bit_quants.md).
 
@@ -313,9 +318,9 @@ to quantization's), Mach-2, Victoria and Niwaki (custom forks, no BF16 source), 
 in the rig's range except Tinfield-1 Mini, unbenchmarked).
 
 **Recommendation:** run the first two ranks side by side. Q2_0 is the file most likely to become fast on the rig and
-leaves room for 262k and MTP; IQ3_XXS is the quality reference, and if KLD and the agent check show Q2_0 losing too
-much, IQ3_XXS with v3's IQ kernels is the fallback. Compare the ISTA and Swift builds at the Q2_0 rung, since Swift's
-shorter thinking matters on a ~15 tok/s rig.
+leaves room for 128k with the MTP draft; IQ3_XXS is the quality reference, and if KLD and the agent check show Q2_0
+losing too much, IQ3_XXS with v3's IQ kernels is the fallback, at 48k unless expert moves keep their speed (Q510).
+Compare the ISTA and Swift builds at the Q2_0 rung, since Swift's shorter thinking matters on a ~15 tok/s rig.
 
 ## 8. Speed levers, in order of gain per effort
 
@@ -347,7 +352,7 @@ shorter thinking matters on a ~15 tok/s rig.
 | Replay of agent-check sessions through the `qwen4exp` hash, with simulated page and row caches | quality machine, CPU only | real table reads per token; value of a hot-row sidecar |
 | `fio` 4 KiB random reads on the internal SSD, a stick and a USB SSD | rig, minutes | the per-medium cost |
 | Q2_0, IQ4_NL and the BF16 hyper-connection shapes in `bench/mmvq_pascal` | rig, one card | ps per weight of the formats that matter |
-| `--fit` memory probe ([scripts/fit_probe.sh](../../../scripts/fit_probe.sh)) at 128k and 262k for Q2_0 and IQ3_XXS | rig | the real context limits |
+| `--fit` memory probe ([scripts/fit_probe.sh](../../../scripts/fit_probe.sh)) at 128k and 262k for Q2_0 and IQ3_XXS | rig | the real context limits ([done](../../data/2026-11-03_flash_next_fit/README.md)) |
 | The agent check of the two best files | rig | the choice |
 
 Each step and each lever of section 8 is a row of the [registry](../../../quants/experiments.md#qwen38-flash-next)

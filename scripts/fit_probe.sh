@@ -7,7 +7,8 @@
 #   CONFIGS='label|build|ctx|args;label|build|ctx|args' bash scripts/fit_probe.sh
 # e.g. CONFIGS='ub128-120k|llama-p106-v2.0|122880|-b 2048 -ub 128 -ts 5,6,5,6,5,5,6,5,7'. NGL (default "-ngl 99")
 # replaces the layer option. The log lines kept per config: per-device projections ("projected memory use", the
-# memory breakdown with model, context and compute MiB), the fit verdict, layer count and splits.
+# memory breakdown with model, context and compute MiB), the fit verdict, layer count and splits; at most KEEP
+# (default 160) of them, which a run with a draft model needs raised (both models print a breakdown).
 set -uo pipefail
 RIG=${RIG:-rig}
 M=${MODEL:?the GGUF on the rig}
@@ -24,7 +25,7 @@ for cfg in "${CFG[@]}"; do
       --ctx-checkpoints 4 --cache-ram 0 --no-webui --host 127.0.0.1 --port 8096 > /tmp/fit_probe.log 2>&1 < /dev/null &
     for i in \$(seq 1 60); do grep -qE 'successfully fit|failed to fit|encountered an error' /tmp/fit_probe.log && break; sleep 2; done
     sleep 2; pkill -9 -x llama-server
-    grep -E 'projected|  - CUDA|  - Host|will leave|cannot meet|context size|failed|error|n_layer|split|ngl_per_device|successfully' /tmp/fit_probe.log | grep -v 'unused tensor' | cut -c1-200 | head -160
+    grep -E 'projected|  - CUDA|  - Host|will leave|cannot meet|context size|failed|error|n_layer|split|ngl_per_device|successfully' /tmp/fit_probe.log | grep -v 'unused tensor' | cut -c1-200 | head -${KEEP:-160}
     rm -f /tmp/fit_probe.log" 2>&1 | sed "s/^/$label | /"
 done
 } | tee -a "$OUT"

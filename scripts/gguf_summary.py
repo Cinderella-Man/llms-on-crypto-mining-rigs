@@ -7,7 +7,8 @@ import collections, re, struct, sys
 TYPES = {0: "F32", 1: "F16", 2: "Q4_0", 3: "Q4_1", 6: "Q5_0", 7: "Q5_1", 8: "Q8_0", 9: "Q8_1", 10: "Q2_K", 11: "Q3_K",
          12: "Q4_K", 13: "Q5_K", 14: "Q6_K", 15: "Q8_K", 16: "IQ2_XXS", 17: "IQ2_XS", 18: "IQ3_XXS", 19: "IQ1_S",
          20: "IQ4_NL", 21: "IQ3_S", 22: "IQ2_S", 23: "IQ4_XS", 24: "I8", 25: "I16", 26: "I32", 27: "I64", 28: "F64",
-         29: "IQ1_M", 30: "BF16", 34: "TQ1_0", 35: "TQ2_0", 39: "MXFP4",
+         29: "IQ1_M", 30: "BF16", 34: "TQ1_0", 35: "TQ2_0", 39: "MXFP4", 40: "NVFP4", 41: "Q1_0", 42: "Q2_0",
+         43: "Q4_1_64",
          500: "N2P", 501: "N3P"}  # Miner Llama's own (docs/research/notes/pascal_lowbit_format.md)
 SCALAR = {0: "<B", 1: "<b", 2: "<H", 3: "<h", 4: "<I", 5: "<i", 6: "<f", 7: "<?", 10: "<Q", 11: "<q", 12: "<d"}
 
@@ -65,7 +66,7 @@ for name, dims, t, off, size in infos:
     m = re.match(r"blk\.(\d+)\.", name)
     if m:
         blocks[int(m.group(1))] += size
-print(f"\ntensor data {end / 1e9:.2f} GB; per role and type (count, GB):")
+print(f"\ntensor data {end / 1e9:.2f} GB from byte {data0:,}; per role and type (count, GB):")
 for (r, t), (n, s) in sorted(by.items(), key=lambda kv: -kv[1][1]):
     print(f"  {r:32s} {t:8s} {n:4d} {s / 1e9:8.3f}")
 print("\nper block (GB):", " ".join(f"{b}:{s / 1e9:.2f}" for b, s in sorted(blocks.items())))

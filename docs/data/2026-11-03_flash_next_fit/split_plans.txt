@@ -1,0 +1,2634 @@
+######## plan_q2.txt
+== q2-f16-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1421 MiB
+  card 0: layers 0-4, 1 attention, 3851 MiB, 2150 free
+  card 1: layers 5-10, 1 attention, 4548 MiB, 1455 free
+  card 2: layers 11-15, 2 attention, 3915 MiB, 2088 free
+  card 3: layers 16-21, 1 attention, 4563 MiB, 1440 free
+  card 4: layers 22-26, 1 attention, 3838 MiB, 2165 free
+  card 5: layers 27-31, 2 attention, 3921 MiB, 2082 free
+  card 6: layers 32-37, 1 attention, 4580 MiB, 1421 free
+  card 7: layers 38-42, 1 attention, 3848 MiB, 2159 free
+  card 8: layers 43-47, 2 attention, 4367 MiB, 1640 free
+== q2-f16-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1360 MiB
+  card 0: layers 0-4, 1 attention, 3912 MiB, 2089 free
+  card 1: layers 5-10, 1 attention, 4609 MiB, 1394 free
+  card 2: layers 11-15, 2 attention, 4016 MiB, 1987 free
+  card 3: layers 16-21, 1 attention, 4624 MiB, 1379 free
+  card 4: layers 22-26, 1 attention, 3899 MiB, 2104 free
+  card 5: layers 27-31, 2 attention, 4022 MiB, 1981 free
+  card 6: layers 32-37, 1 attention, 4641 MiB, 1360 free
+  card 7: layers 38-42, 1 attention, 3909 MiB, 2098 free
+  card 8: layers 43-47, 2 attention, 4468 MiB, 1539 free
+== q2-f16-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1299 MiB
+  card 0: layers 0-4, 1 attention, 3973 MiB, 2028 free
+  card 1: layers 5-10, 1 attention, 4670 MiB, 1333 free
+  card 2: layers 11-15, 2 attention, 4117 MiB, 1886 free
+  card 3: layers 16-21, 1 attention, 4685 MiB, 1318 free
+  card 4: layers 22-26, 1 attention, 3960 MiB, 2043 free
+  card 5: layers 27-31, 2 attention, 4123 MiB, 1880 free
+  card 6: layers 32-37, 1 attention, 4702 MiB, 1299 free
+  card 7: layers 38-42, 1 attention, 3970 MiB, 2037 free
+  card 8: layers 43-47, 2 attention, 4569 MiB, 1438 free
+== q2-f16-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1033 MiB
+  card 0: layers 0-4, 1 attention, 4218 MiB, 1783 free
+  card 1: layers 5-10, 1 attention, 4914 MiB, 1089 free
+  card 2: layers 11-15, 2 attention, 4522 MiB, 1481 free
+  card 3: layers 16-21, 1 attention, 4929 MiB, 1074 free
+  card 4: layers 22-26, 1 attention, 4204 MiB, 1799 free
+  card 5: layers 27-31, 2 attention, 4528 MiB, 1475 free
+  card 6: layers 32-37, 1 attention, 4946 MiB, 1055 free
+  card 7: layers 38-42, 1 attention, 4214 MiB, 1793 free
+  card 8: layers 43-47, 2 attention, 4974 MiB, 1033 free
+== q2-f16-ub64-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 221 MiB
+  card 0: layers 0-4, 1 attention, 4707 MiB, 1294 free
+  card 1: layers 5-10, 1 attention, 5404 MiB, 599 free
+  card 2: layers 11-15, 2 attention, 5334 MiB, 669 free
+  card 3: layers 16-21, 1 attention, 5419 MiB, 584 free
+  card 4: layers 22-26, 1 attention, 4694 MiB, 1309 free
+  card 5: layers 27-31, 2 attention, 5340 MiB, 663 free
+  card 6: layers 32-37, 1 attention, 5436 MiB, 565 free
+  card 7: layers 38-42, 1 attention, 4704 MiB, 1303 free
+  card 8: layers 43-47, 2 attention, 5786 MiB, 221 free
+== q2-f16-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1362 MiB
+  card 0: layers 0-4, 1 attention, 3901 MiB, 2100 free
+  card 1: layers 5-10, 1 attention, 4607 MiB, 1396 free
+  card 2: layers 11-15, 2 attention, 3974 MiB, 2029 free
+  card 3: layers 16-21, 1 attention, 4622 MiB, 1381 free
+  card 4: layers 22-26, 1 attention, 3897 MiB, 2106 free
+  card 5: layers 27-31, 2 attention, 3980 MiB, 2023 free
+  card 6: layers 32-37, 1 attention, 4639 MiB, 1362 free
+  card 7: layers 38-42, 1 attention, 3907 MiB, 2100 free
+  card 8: layers 43-47, 2 attention, 4426 MiB, 1581 free
+== q2-f16-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1301 MiB
+  card 0: layers 0-4, 1 attention, 3962 MiB, 2039 free
+  card 1: layers 5-10, 1 attention, 4668 MiB, 1335 free
+  card 2: layers 11-15, 2 attention, 4075 MiB, 1928 free
+  card 3: layers 16-21, 1 attention, 4683 MiB, 1320 free
+  card 4: layers 22-26, 1 attention, 3958 MiB, 2045 free
+  card 5: layers 27-31, 2 attention, 4081 MiB, 1922 free
+  card 6: layers 32-37, 1 attention, 4700 MiB, 1301 free
+  card 7: layers 38-42, 1 attention, 3968 MiB, 2039 free
+  card 8: layers 43-47, 2 attention, 4527 MiB, 1480 free
+== q2-f16-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1231 MiB
+  card 0: layers 0-4, 1 attention, 4032 MiB, 1969 free
+  card 1: layers 5-10, 1 attention, 4738 MiB, 1265 free
+  card 2: layers 11-15, 2 attention, 4185 MiB, 1818 free
+  card 3: layers 16-21, 1 attention, 4753 MiB, 1250 free
+  card 4: layers 22-26, 1 attention, 4028 MiB, 1975 free
+  card 5: layers 27-31, 2 attention, 4191 MiB, 1812 free
+  card 6: layers 32-37, 1 attention, 4770 MiB, 1231 free
+  card 7: layers 38-42, 1 attention, 4038 MiB, 1969 free
+  card 8: layers 43-47, 2 attention, 4637 MiB, 1370 free
+== q2-f16-ub128-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 924 MiB
+  card 0: layers 0-4, 1 attention, 4317 MiB, 1684 free
+  card 1: layers 5-10, 1 attention, 5023 MiB, 980 free
+  card 2: layers 11-15, 2 attention, 4631 MiB, 1372 free
+  card 3: layers 16-21, 1 attention, 5038 MiB, 965 free
+  card 4: layers 22-26, 1 attention, 4313 MiB, 1690 free
+  card 5: layers 27-31, 2 attention, 4637 MiB, 1366 free
+  card 6: layers 32-37, 1 attention, 5055 MiB, 946 free
+  card 7: layers 38-42, 1 attention, 4323 MiB, 1684 free
+  card 8: layers 43-47, 2 attention, 5083 MiB, 924 free
+== q2-f16-ub128-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 33 MiB
+  card 0: layers 0-4, 1 attention, 4886 MiB, 1115 free
+  card 1: layers 5-10, 1 attention, 5592 MiB, 411 free
+  card 2: layers 11-15, 2 attention, 5522 MiB, 481 free
+  card 3: layers 16-21, 1 attention, 5607 MiB, 396 free
+  card 4: layers 22-26, 1 attention, 4882 MiB, 1121 free
+  card 5: layers 27-31, 2 attention, 5528 MiB, 475 free
+  card 6: layers 32-37, 1 attention, 5624 MiB, 377 free
+  card 7: layers 38-42, 1 attention, 4892 MiB, 1115 free
+  card 8: layers 43-47, 2 attention, 5974 MiB, 33 free
+== q2-f16-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1234 MiB
+  card 0: layers 0-4, 1 attention, 4011 MiB, 1990 free
+  card 1: layers 5-10, 1 attention, 4735 MiB, 1268 free
+  card 2: layers 11-15, 2 attention, 4102 MiB, 1901 free
+  card 3: layers 16-21, 1 attention, 4750 MiB, 1253 free
+  card 4: layers 22-26, 1 attention, 4025 MiB, 1978 free
+  card 5: layers 27-31, 2 attention, 4108 MiB, 1895 free
+  card 6: layers 32-37, 1 attention, 4767 MiB, 1234 free
+  card 7: layers 38-42, 1 attention, 4035 MiB, 1972 free
+  card 8: layers 43-47, 2 attention, 4554 MiB, 1453 free
+== q2-f16-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1153 MiB
+  card 0: layers 0-4, 1 attention, 4091 MiB, 1910 free
+  card 1: layers 5-10, 1 attention, 4816 MiB, 1187 free
+  card 2: layers 11-15, 2 attention, 4223 MiB, 1780 free
+  card 3: layers 16-21, 1 attention, 4831 MiB, 1172 free
+  card 4: layers 22-26, 1 attention, 4106 MiB, 1897 free
+  card 5: layers 27-31, 2 attention, 4229 MiB, 1774 free
+  card 6: layers 32-37, 1 attention, 4848 MiB, 1153 free
+  card 7: layers 38-42, 1 attention, 4116 MiB, 1891 free
+  card 8: layers 43-47, 2 attention, 4675 MiB, 1332 free
+== q2-f16-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1067 MiB
+  card 0: layers 0-4, 1 attention, 4178 MiB, 1823 free
+  card 1: layers 5-10, 1 attention, 4902 MiB, 1101 free
+  card 2: layers 11-15, 2 attention, 4349 MiB, 1654 free
+  card 3: layers 16-21, 1 attention, 4917 MiB, 1086 free
+  card 4: layers 22-26, 1 attention, 4192 MiB, 1811 free
+  card 5: layers 27-31, 2 attention, 4355 MiB, 1648 free
+  card 6: layers 32-37, 1 attention, 4934 MiB, 1067 free
+  card 7: layers 38-42, 1 attention, 4202 MiB, 1805 free
+  card 8: layers 43-47, 2 attention, 4801 MiB, 1206 free
+== q2-f16-ub256-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 664 MiB
+  card 0: layers 0-4, 1 attention, 4559 MiB, 1442 free
+  card 1: layers 5-10, 1 attention, 5283 MiB, 720 free
+  card 2: layers 11-15, 2 attention, 4891 MiB, 1112 free
+  card 3: layers 16-21, 1 attention, 5298 MiB, 705 free
+  card 4: layers 22-26, 1 attention, 4573 MiB, 1430 free
+  card 5: layers 27-31, 2 attention, 4897 MiB, 1106 free
+  card 6: layers 32-37, 1 attention, 5315 MiB, 686 free
+  card 7: layers 38-42, 1 attention, 4583 MiB, 1424 free
+  card 8: layers 43-47, 2 attention, 5343 MiB, 664 free
+== q2-f16-ub256-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free -420 MiB
+  card 0: layers 0-4, 1 attention, 5320 MiB, 681 free
+  card 1: layers 5-10, 1 attention, 6045 MiB, -42 free
+  card 2: layers 11-15, 2 attention, 5975 MiB, 28 free
+  card 3: layers 16-21, 1 attention, 6060 MiB, -57 free
+  card 4: layers 22-26, 1 attention, 5335 MiB, 668 free
+  card 5: layers 27-31, 2 attention, 5981 MiB, 22 free
+  card 6: layers 32-37, 1 attention, 6077 MiB, -76 free
+  card 7: layers 38-42, 1 attention, 5345 MiB, 662 free
+  card 8: layers 43-47, 2 attention, 6427 MiB, -420 free
+== q2-f16-ub512-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free 737 MiB
+  card 0: layers 0-5, 1 attention, 5207 MiB, 794 free
+  card 1: layers 6-10, 1 attention, 4495 MiB, 1508 free
+  card 2: layers 11-15, 2 attention, 4679 MiB, 1324 free
+  card 3: layers 16-21, 1 attention, 5247 MiB, 756 free
+  card 4: layers 22-26, 1 attention, 4522 MiB, 1481 free
+  card 5: layers 27-31, 2 attention, 4685 MiB, 1318 free
+  card 6: layers 32-37, 1 attention, 5264 MiB, 737 free
+  card 7: layers 38-42, 1 attention, 4532 MiB, 1475 free
+  card 8: layers 43-47, 2 attention, 5131 MiB, 876 free
+== q2-f16-ub512-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free 123 MiB
+  card 0: layers 0-5, 1 attention, 5798 MiB, 203 free
+  card 1: layers 6-10, 1 attention, 5087 MiB, 916 free
+  card 2: layers 11-15, 2 attention, 5432 MiB, 571 free
+  card 3: layers 16-21, 1 attention, 5839 MiB, 164 free
+  card 4: layers 22-26, 1 attention, 5114 MiB, 889 free
+  card 5: layers 27-31, 2 attention, 5438 MiB, 565 free
+  card 6: layers 32-37, 1 attention, 5856 MiB, 145 free
+  card 7: layers 38-42, 1 attention, 5124 MiB, 883 free
+  card 8: layers 43-47, 2 attention, 5884 MiB, 123 free
+== q2-f16-ub512-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free -1377 MiB
+  card 0: layers 0-5, 1 attention, 6976 MiB, -975 free
+  card 1: layers 6-10, 1 attention, 6265 MiB, -262 free
+  card 2: layers 11-15, 2 attention, 6932 MiB, -929 free
+  card 3: layers 16-21, 1 attention, 7017 MiB, -1014 free
+  card 4: layers 22-26, 1 attention, 6292 MiB, -289 free
+  card 5: layers 27-31, 2 attention, 6938 MiB, -935 free
+  card 6: layers 32-37, 1 attention, 7034 MiB, -1033 free
+  card 7: layers 38-42, 1 attention, 6302 MiB, -295 free
+  card 8: layers 43-47, 2 attention, 7384 MiB, -1377 free
+== q2-q8_0-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1404 MiB
+  card 0: layers 0-4, 1 attention, 3868 MiB, 2133 free
+  card 1: layers 5-10, 1 attention, 4565 MiB, 1438 free
+  card 2: layers 11-15, 2 attention, 3894 MiB, 2109 free
+  card 3: layers 16-21, 1 attention, 4580 MiB, 1423 free
+  card 4: layers 22-26, 1 attention, 3855 MiB, 2148 free
+  card 5: layers 27-31, 2 attention, 3900 MiB, 2103 free
+  card 6: layers 32-37, 1 attention, 4597 MiB, 1404 free
+  card 7: layers 38-42, 1 attention, 3865 MiB, 2142 free
+  card 8: layers 43-47, 2 attention, 4346 MiB, 1661 free
+== q2-q8_0-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1337 MiB
+  card 0: layers 0-4, 1 attention, 3935 MiB, 2066 free
+  card 1: layers 5-10, 1 attention, 4632 MiB, 1371 free
+  card 2: layers 11-15, 2 attention, 3983 MiB, 2020 free
+  card 3: layers 16-21, 1 attention, 4647 MiB, 1356 free
+  card 4: layers 22-26, 1 attention, 3922 MiB, 2081 free
+  card 5: layers 27-31, 2 attention, 3989 MiB, 2014 free
+  card 6: layers 32-37, 1 attention, 4664 MiB, 1337 free
+  card 7: layers 38-42, 1 attention, 3932 MiB, 2075 free
+  card 8: layers 43-47, 2 attention, 4435 MiB, 1572 free
+== q2-q8_0-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1271 MiB
+  card 0: layers 0-4, 1 attention, 4001 MiB, 2000 free
+  card 1: layers 5-10, 1 attention, 4698 MiB, 1305 free
+  card 2: layers 11-15, 2 attention, 4070 MiB, 1933 free
+  card 3: layers 16-21, 1 attention, 4713 MiB, 1290 free
+  card 4: layers 22-26, 1 attention, 3988 MiB, 2015 free
+  card 5: layers 27-31, 2 attention, 4076 MiB, 1927 free
+  card 6: layers 32-37, 1 attention, 4730 MiB, 1271 free
+  card 7: layers 38-42, 1 attention, 3998 MiB, 2009 free
+  card 8: layers 43-47, 2 attention, 4522 MiB, 1485 free
+== q2-q8_0-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1006 MiB
+  card 0: layers 0-4, 1 attention, 4267 MiB, 1734 free
+  card 1: layers 5-10, 1 attention, 4963 MiB, 1040 free
+  card 2: layers 11-15, 2 attention, 4421 MiB, 1582 free
+  card 3: layers 16-21, 1 attention, 4978 MiB, 1025 free
+  card 4: layers 22-26, 1 attention, 4253 MiB, 1750 free
+  card 5: layers 27-31, 2 attention, 4427 MiB, 1576 free
+  card 6: layers 32-37, 1 attention, 4995 MiB, 1006 free
+  card 7: layers 38-42, 1 attention, 4263 MiB, 1744 free
+  card 8: layers 43-47, 2 attention, 4873 MiB, 1134 free
+== q2-q8_0-ub64-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 430 MiB
+  card 0: layers 0-4, 1 attention, 4798 MiB, 1203 free
+  card 1: layers 5-10, 1 attention, 5495 MiB, 508 free
+  card 2: layers 11-15, 2 attention, 5125 MiB, 878 free
+  card 3: layers 16-21, 1 attention, 5510 MiB, 493 free
+  card 4: layers 22-26, 1 attention, 4785 MiB, 1218 free
+  card 5: layers 27-31, 2 attention, 5131 MiB, 872 free
+  card 6: layers 32-37, 1 attention, 5527 MiB, 474 free
+  card 7: layers 38-42, 1 attention, 4795 MiB, 1212 free
+  card 8: layers 43-47, 2 attention, 5577 MiB, 430 free
+== q2-q8_0-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1342 MiB
+  card 0: layers 0-4, 1 attention, 3921 MiB, 2080 free
+  card 1: layers 5-10, 1 attention, 4627 MiB, 1376 free
+  card 2: layers 11-15, 2 attention, 3956 MiB, 2047 free
+  card 3: layers 16-21, 1 attention, 4642 MiB, 1361 free
+  card 4: layers 22-26, 1 attention, 3917 MiB, 2086 free
+  card 5: layers 27-31, 2 attention, 3962 MiB, 2041 free
+  card 6: layers 32-37, 1 attention, 4659 MiB, 1342 free
+  card 7: layers 38-42, 1 attention, 3927 MiB, 2080 free
+  card 8: layers 43-47, 2 attention, 4408 MiB, 1599 free
+== q2-q8_0-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1255 MiB
+  card 0: layers 0-4, 1 attention, 4008 MiB, 1993 free
+  card 1: layers 5-10, 1 attention, 4714 MiB, 1289 free
+  card 2: layers 11-15, 2 attention, 4065 MiB, 1938 free
+  card 3: layers 16-21, 1 attention, 4729 MiB, 1274 free
+  card 4: layers 22-26, 1 attention, 4004 MiB, 1999 free
+  card 5: layers 27-31, 2 attention, 4071 MiB, 1932 free
+  card 6: layers 32-37, 1 attention, 4746 MiB, 1255 free
+  card 7: layers 38-42, 1 attention, 4014 MiB, 1993 free
+  card 8: layers 43-47, 2 attention, 4517 MiB, 1490 free
+== q2-q8_0-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1173 MiB
+  card 0: layers 0-4, 1 attention, 4090 MiB, 1911 free
+  card 1: layers 5-10, 1 attention, 4796 MiB, 1207 free
+  card 2: layers 11-15, 2 attention, 4168 MiB, 1835 free
+  card 3: layers 16-21, 1 attention, 4811 MiB, 1192 free
+  card 4: layers 22-26, 1 attention, 4086 MiB, 1917 free
+  card 5: layers 27-31, 2 attention, 4174 MiB, 1829 free
+  card 6: layers 32-37, 1 attention, 4828 MiB, 1173 free
+  card 7: layers 38-42, 1 attention, 4096 MiB, 1911 free
+  card 8: layers 43-47, 2 attention, 4620 MiB, 1387 free
+== q2-q8_0-ub128-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 843 MiB
+  card 0: layers 0-4, 1 attention, 4420 MiB, 1581 free
+  card 1: layers 5-10, 1 attention, 5126 MiB, 877 free
+  card 2: layers 11-15, 2 attention, 4584 MiB, 1419 free
+  card 3: layers 16-21, 1 attention, 5141 MiB, 862 free
+  card 4: layers 22-26, 1 attention, 4416 MiB, 1587 free
+  card 5: layers 27-31, 2 attention, 4590 MiB, 1413 free
+  card 6: layers 32-37, 1 attention, 5158 MiB, 843 free
+  card 7: layers 38-42, 1 attention, 4426 MiB, 1581 free
+  card 8: layers 43-47, 2 attention, 5036 MiB, 971 free
+== q2-q8_0-ub128-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 140 MiB
+  card 0: layers 0-4, 1 attention, 5079 MiB, 922 free
+  card 1: layers 5-10, 1 attention, 5785 MiB, 218 free
+  card 2: layers 11-15, 2 attention, 5415 MiB, 588 free
+  card 3: layers 16-21, 1 attention, 5800 MiB, 203 free
+  card 4: layers 22-26, 1 attention, 5075 MiB, 928 free
+  card 5: layers 27-31, 2 attention, 5421 MiB, 582 free
+  card 6: layers 32-37, 1 attention, 5817 MiB, 184 free
+  card 7: layers 38-42, 1 attention, 5085 MiB, 922 free
+  card 8: layers 43-47, 2 attention, 5867 MiB, 140 free
+== q2-q8_0-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1221 MiB
+  card 0: layers 0-4, 1 attention, 4023 MiB, 1978 free
+  card 1: layers 5-10, 1 attention, 4748 MiB, 1255 free
+  card 2: layers 11-15, 2 attention, 4077 MiB, 1926 free
+  card 3: layers 16-21, 1 attention, 4763 MiB, 1240 free
+  card 4: layers 22-26, 1 attention, 4038 MiB, 1965 free
+  card 5: layers 27-31, 2 attention, 4083 MiB, 1920 free
+  card 6: layers 32-37, 1 attention, 4780 MiB, 1221 free
+  card 7: layers 38-42, 1 attention, 4048 MiB, 1959 free
+  card 8: layers 43-47, 2 attention, 4529 MiB, 1478 free
+== q2-q8_0-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1114 MiB
+  card 0: layers 0-4, 1 attention, 4130 MiB, 1871 free
+  card 1: layers 5-10, 1 attention, 4855 MiB, 1148 free
+  card 2: layers 11-15, 2 attention, 4206 MiB, 1797 free
+  card 3: layers 16-21, 1 attention, 4870 MiB, 1133 free
+  card 4: layers 22-26, 1 attention, 4145 MiB, 1858 free
+  card 5: layers 27-31, 2 attention, 4212 MiB, 1791 free
+  card 6: layers 32-37, 1 attention, 4887 MiB, 1114 free
+  card 7: layers 38-42, 1 attention, 4155 MiB, 1852 free
+  card 8: layers 43-47, 2 attention, 4658 MiB, 1349 free
+== q2-q8_0-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 1009 MiB
+  card 0: layers 0-4, 1 attention, 4236 MiB, 1765 free
+  card 1: layers 5-10, 1 attention, 4960 MiB, 1043 free
+  card 2: layers 11-15, 2 attention, 4332 MiB, 1671 free
+  card 3: layers 16-21, 1 attention, 4975 MiB, 1028 free
+  card 4: layers 22-26, 1 attention, 4250 MiB, 1753 free
+  card 5: layers 27-31, 2 attention, 4338 MiB, 1665 free
+  card 6: layers 32-37, 1 attention, 4992 MiB, 1009 free
+  card 7: layers 38-42, 1 attention, 4260 MiB, 1747 free
+  card 8: layers 43-47, 2 attention, 4784 MiB, 1223 free
+== q2-q8_0-ub256-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free 567 MiB
+  card 0: layers 0-4, 1 attention, 4678 MiB, 1323 free
+  card 1: layers 5-10, 1 attention, 5402 MiB, 601 free
+  card 2: layers 11-15, 2 attention, 4860 MiB, 1143 free
+  card 3: layers 16-21, 1 attention, 5417 MiB, 586 free
+  card 4: layers 22-26, 1 attention, 4692 MiB, 1311 free
+  card 5: layers 27-31, 2 attention, 4866 MiB, 1137 free
+  card 6: layers 32-37, 1 attention, 5434 MiB, 567 free
+  card 7: layers 38-42, 1 attention, 4702 MiB, 1305 free
+  card 8: layers 43-47, 2 attention, 5312 MiB, 695 free
+== q2-q8_0-ub256-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 5,6,5,6,5,5,6,5,6  smallest free -345 MiB
+  card 0: layers 0-4, 1 attention, 5545 MiB, 456 free
+  card 1: layers 5-10, 1 attention, 6270 MiB, -267 free
+  card 2: layers 11-15, 2 attention, 5900 MiB, 103 free
+  card 3: layers 16-21, 1 attention, 6285 MiB, -282 free
+  card 4: layers 22-26, 1 attention, 5560 MiB, 443 free
+  card 5: layers 27-31, 2 attention, 5906 MiB, 97 free
+  card 6: layers 32-37, 1 attention, 6302 MiB, -301 free
+  card 7: layers 38-42, 1 attention, 5570 MiB, 437 free
+  card 8: layers 43-47, 2 attention, 6352 MiB, -345 free
+== q2-q8_0-ub512-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free 663 MiB
+  card 0: layers 0-5, 1 attention, 5280 MiB, 721 free
+  card 1: layers 6-10, 1 attention, 4569 MiB, 1434 free
+  card 2: layers 11-15, 2 attention, 4678 MiB, 1325 free
+  card 3: layers 16-21, 1 attention, 5321 MiB, 682 free
+  card 4: layers 22-26, 1 attention, 4596 MiB, 1407 free
+  card 5: layers 27-31, 2 attention, 4684 MiB, 1319 free
+  card 6: layers 32-37, 1 attention, 5338 MiB, 663 free
+  card 7: layers 38-42, 1 attention, 4606 MiB, 1401 free
+  card 8: layers 43-47, 2 attention, 5130 MiB, 877 free
+== q2-q8_0-ub512-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free 30 MiB
+  card 0: layers 0-5, 1 attention, 5913 MiB, 88 free
+  card 1: layers 6-10, 1 attention, 5202 MiB, 801 free
+  card 2: layers 11-15, 2 attention, 5397 MiB, 606 free
+  card 3: layers 16-21, 1 attention, 5954 MiB, 49 free
+  card 4: layers 22-26, 1 attention, 5229 MiB, 774 free
+  card 5: layers 27-31, 2 attention, 5403 MiB, 600 free
+  card 6: layers 32-37, 1 attention, 5971 MiB, 30 free
+  card 7: layers 38-42, 1 attention, 5239 MiB, 768 free
+  card 8: layers 43-47, 2 attention, 5849 MiB, 158 free
+== q2-q8_0-ub512-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free -1314 MiB
+  card 0: layers 0-5, 1 attention, 7213 MiB, -1212 free
+  card 1: layers 6-10, 1 attention, 6502 MiB, -499 free
+  card 2: layers 11-15, 2 attention, 6869 MiB, -866 free
+  card 3: layers 16-21, 1 attention, 7254 MiB, -1251 free
+  card 4: layers 22-26, 1 attention, 6529 MiB, -526 free
+  card 5: layers 27-31, 2 attention, 6875 MiB, -872 free
+  card 6: layers 32-37, 1 attention, 7271 MiB, -1270 free
+  card 7: layers 38-42, 1 attention, 6539 MiB, -532 free
+  card 8: layers 43-47, 2 attention, 7321 MiB, -1314 free
+######## plan_q2_mtp.txt
+== q2-f16-ub64-32768-mtp draft_extra=2053
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1321 MiB
+  card 0: layers 0-5, 1 attention, 4634 MiB, 1367 free
+  card 1: layers 6-11, 2 attention, 4666 MiB, 1337 free
+  card 2: layers 12-17, 1 attention, 4612 MiB, 1391 free
+  card 3: layers 18-23, 2 attention, 4682 MiB, 1321 free
+  card 4: layers 24-28, 1 attention, 3878 MiB, 2125 free
+  card 5: layers 29-34, 1 attention, 4628 MiB, 1375 free
+  card 6: layers 35-39, 2 attention, 3953 MiB, 2048 free
+  card 7: layers 40-45, 1 attention, 4640 MiB, 1367 free
+  card 8: layers 46-47, 1 attention, 4124 MiB, 1883 free
+== q2-f16-ub64-49152-mtp draft_extra=2114
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1220 MiB
+  card 0: layers 0-5, 1 attention, 4695 MiB, 1306 free
+  card 1: layers 6-11, 2 attention, 4767 MiB, 1236 free
+  card 2: layers 12-17, 1 attention, 4673 MiB, 1330 free
+  card 3: layers 18-23, 2 attention, 4783 MiB, 1220 free
+  card 4: layers 24-28, 1 attention, 3939 MiB, 2064 free
+  card 5: layers 29-34, 1 attention, 4689 MiB, 1314 free
+  card 6: layers 35-39, 2 attention, 4054 MiB, 1947 free
+  card 7: layers 40-45, 1 attention, 4701 MiB, 1306 free
+  card 8: layers 46-47, 1 attention, 4246 MiB, 1761 free
+== q2-f16-ub64-65536-mtp draft_extra=2175
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1119 MiB
+  card 0: layers 0-5, 1 attention, 4756 MiB, 1245 free
+  card 1: layers 6-11, 2 attention, 4868 MiB, 1135 free
+  card 2: layers 12-17, 1 attention, 4734 MiB, 1269 free
+  card 3: layers 18-23, 2 attention, 4884 MiB, 1119 free
+  card 4: layers 24-28, 1 attention, 4000 MiB, 2003 free
+  card 5: layers 29-34, 1 attention, 4750 MiB, 1253 free
+  card 6: layers 35-39, 2 attention, 4155 MiB, 1846 free
+  card 7: layers 40-45, 1 attention, 4762 MiB, 1245 free
+  card 8: layers 46-47, 1 attention, 4368 MiB, 1639 free
+== q2-f16-ub64-131072-mtp draft_extra=2419
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 714 MiB
+  card 0: layers 0-5, 1 attention, 5001 MiB, 1000 free
+  card 1: layers 6-11, 2 attention, 5273 MiB, 730 free
+  card 2: layers 12-17, 1 attention, 4978 MiB, 1025 free
+  card 3: layers 18-23, 2 attention, 5289 MiB, 714 free
+  card 4: layers 24-28, 1 attention, 4244 MiB, 1759 free
+  card 5: layers 29-34, 1 attention, 4994 MiB, 1009 free
+  card 6: layers 35-39, 2 attention, 4560 MiB, 1441 free
+  card 7: layers 40-45, 1 attention, 5006 MiB, 1001 free
+  card 8: layers 46-47, 1 attention, 4856 MiB, 1151 free
+== q2-f16-ub64-262144-mtp draft_extra=2909
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free -98 MiB
+  card 0: layers 0-5, 1 attention, 5490 MiB, 511 free
+  card 1: layers 6-11, 2 attention, 6085 MiB, -82 free
+  card 2: layers 12-17, 1 attention, 5468 MiB, 535 free
+  card 3: layers 18-23, 2 attention, 6101 MiB, -98 free
+  card 4: layers 24-28, 1 attention, 4734 MiB, 1269 free
+  card 5: layers 29-34, 1 attention, 5484 MiB, 519 free
+  card 6: layers 35-39, 2 attention, 5372 MiB, 629 free
+  card 7: layers 40-45, 1 attention, 5496 MiB, 511 free
+  card 8: layers 46-47, 1 attention, 5836 MiB, 171 free
+== q2-f16-ub128-32768-mtp draft_extra=2112
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1262 MiB
+  card 0: layers 0-5, 1 attention, 4684 MiB, 1317 free
+  card 1: layers 6-11, 2 attention, 4725 MiB, 1278 free
+  card 2: layers 12-17, 1 attention, 4671 MiB, 1332 free
+  card 3: layers 18-23, 2 attention, 4741 MiB, 1262 free
+  card 4: layers 24-28, 1 attention, 3937 MiB, 2066 free
+  card 5: layers 29-34, 1 attention, 4687 MiB, 1316 free
+  card 6: layers 35-39, 2 attention, 4012 MiB, 1989 free
+  card 7: layers 40-45, 1 attention, 4699 MiB, 1308 free
+  card 8: layers 46-47, 1 attention, 4242 MiB, 1765 free
+== q2-f16-ub128-49152-mtp draft_extra=2173
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1161 MiB
+  card 0: layers 0-5, 1 attention, 4745 MiB, 1256 free
+  card 1: layers 6-11, 2 attention, 4826 MiB, 1177 free
+  card 2: layers 12-17, 1 attention, 4732 MiB, 1271 free
+  card 3: layers 18-23, 2 attention, 4842 MiB, 1161 free
+  card 4: layers 24-28, 1 attention, 3998 MiB, 2005 free
+  card 5: layers 29-34, 1 attention, 4748 MiB, 1255 free
+  card 6: layers 35-39, 2 attention, 4113 MiB, 1888 free
+  card 7: layers 40-45, 1 attention, 4760 MiB, 1247 free
+  card 8: layers 46-47, 1 attention, 4364 MiB, 1643 free
+== q2-f16-ub128-65536-mtp draft_extra=2243
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1051 MiB
+  card 0: layers 0-5, 1 attention, 4815 MiB, 1186 free
+  card 1: layers 6-11, 2 attention, 4936 MiB, 1067 free
+  card 2: layers 12-17, 1 attention, 4802 MiB, 1201 free
+  card 3: layers 18-23, 2 attention, 4952 MiB, 1051 free
+  card 4: layers 24-28, 1 attention, 4068 MiB, 1935 free
+  card 5: layers 29-34, 1 attention, 4818 MiB, 1185 free
+  card 6: layers 35-39, 2 attention, 4223 MiB, 1778 free
+  card 7: layers 40-45, 1 attention, 4830 MiB, 1177 free
+  card 8: layers 46-47, 1 attention, 4504 MiB, 1503 free
+== q2-f16-ub128-131072-mtp draft_extra=2528
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 605 MiB
+  card 0: layers 0-5, 1 attention, 5100 MiB, 901 free
+  card 1: layers 6-11, 2 attention, 5382 MiB, 621 free
+  card 2: layers 12-17, 1 attention, 5087 MiB, 916 free
+  card 3: layers 18-23, 2 attention, 5398 MiB, 605 free
+  card 4: layers 24-28, 1 attention, 4353 MiB, 1650 free
+  card 5: layers 29-34, 1 attention, 5103 MiB, 900 free
+  card 6: layers 35-39, 2 attention, 4669 MiB, 1332 free
+  card 7: layers 40-45, 1 attention, 5115 MiB, 892 free
+  card 8: layers 46-47, 1 attention, 5074 MiB, 933 free
+== q2-f16-ub128-262144-mtp draft_extra=3097
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free -286 MiB
+  card 0: layers 0-5, 1 attention, 5669 MiB, 332 free
+  card 1: layers 6-11, 2 attention, 6273 MiB, -270 free
+  card 2: layers 12-17, 1 attention, 5656 MiB, 347 free
+  card 3: layers 18-23, 2 attention, 6289 MiB, -286 free
+  card 4: layers 24-28, 1 attention, 4922 MiB, 1081 free
+  card 5: layers 29-34, 1 attention, 5672 MiB, 331 free
+  card 6: layers 35-39, 2 attention, 5560 MiB, 441 free
+  card 7: layers 40-45, 1 attention, 5684 MiB, 323 free
+  card 8: layers 46-47, 1 attention, 6212 MiB, -205 free
+== q2-f16-ub256-32768-mtp draft_extra=2225
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1134 MiB
+  card 0: layers 0-5, 1 attention, 4794 MiB, 1207 free
+  card 1: layers 6-11, 2 attention, 4853 MiB, 1150 free
+  card 2: layers 12-17, 1 attention, 4799 MiB, 1204 free
+  card 3: layers 18-23, 2 attention, 4869 MiB, 1134 free
+  card 4: layers 24-28, 1 attention, 4065 MiB, 1938 free
+  card 5: layers 29-34, 1 attention, 4815 MiB, 1188 free
+  card 6: layers 35-39, 2 attention, 4140 MiB, 1861 free
+  card 7: layers 40-45, 1 attention, 4827 MiB, 1180 free
+  card 8: layers 46-47, 1 attention, 4483 MiB, 1524 free
+== q2-f16-ub256-49152-mtp draft_extra=2306
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1013 MiB
+  card 0: layers 0-5, 1 attention, 4874 MiB, 1127 free
+  card 1: layers 6-11, 2 attention, 4974 MiB, 1029 free
+  card 2: layers 12-17, 1 attention, 4880 MiB, 1123 free
+  card 3: layers 18-23, 2 attention, 4990 MiB, 1013 free
+  card 4: layers 24-28, 1 attention, 4146 MiB, 1857 free
+  card 5: layers 29-34, 1 attention, 4896 MiB, 1107 free
+  card 6: layers 35-39, 2 attention, 4261 MiB, 1740 free
+  card 7: layers 40-45, 1 attention, 4908 MiB, 1099 free
+  card 8: layers 46-47, 1 attention, 4645 MiB, 1362 free
+== q2-f16-ub256-65536-mtp draft_extra=2392
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 887 MiB
+  card 0: layers 0-5, 1 attention, 4961 MiB, 1040 free
+  card 1: layers 6-11, 2 attention, 5100 MiB, 903 free
+  card 2: layers 12-17, 1 attention, 4966 MiB, 1037 free
+  card 3: layers 18-23, 2 attention, 5116 MiB, 887 free
+  card 4: layers 24-28, 1 attention, 4232 MiB, 1771 free
+  card 5: layers 29-34, 1 attention, 4982 MiB, 1021 free
+  card 6: layers 35-39, 2 attention, 4387 MiB, 1614 free
+  card 7: layers 40-45, 1 attention, 4994 MiB, 1013 free
+  card 8: layers 46-47, 1 attention, 4817 MiB, 1190 free
+== q2-f16-ub256-131072-mtp draft_extra=2773
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 345 MiB
+  card 0: layers 0-5, 1 attention, 5342 MiB, 659 free
+  card 1: layers 6-11, 2 attention, 5642 MiB, 361 free
+  card 2: layers 12-17, 1 attention, 5347 MiB, 656 free
+  card 3: layers 18-23, 2 attention, 5658 MiB, 345 free
+  card 4: layers 24-28, 1 attention, 4613 MiB, 1390 free
+  card 5: layers 29-34, 1 attention, 5363 MiB, 640 free
+  card 6: layers 35-39, 2 attention, 4929 MiB, 1072 free
+  card 7: layers 40-45, 1 attention, 5375 MiB, 632 free
+  card 8: layers 46-47, 1 attention, 5579 MiB, 428 free
+== q2-f16-ub256-262144-mtp draft_extra=3535
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -755 MiB
+  card 0: layers 0-5, 1 attention, 6103 MiB, -102 free
+  card 1: layers 6-11, 2 attention, 6726 MiB, -723 free
+  card 2: layers 12-17, 1 attention, 6109 MiB, -106 free
+  card 3: layers 18-23, 2 attention, 6742 MiB, -739 free
+  card 4: layers 24-29, 1 attention, 6121 MiB, -118 free
+  card 5: layers 30-35, 2 attention, 6758 MiB, -755 free
+  card 6: layers 36-40, 1 attention, 5382 MiB, 619 free
+  card 7: layers 41-46, 1 attention, 6140 MiB, -133 free
+  card 8: layers 47-47, 1 attention, 6352 MiB, -345 free
+== q2-f16-ub512-65536-mtp draft_extra=2692
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 557 MiB
+  card 0: layers 0-5, 1 attention, 5254 MiB, 747 free
+  card 1: layers 6-11, 2 attention, 5430 MiB, 573 free
+  card 2: layers 12-17, 1 attention, 5296 MiB, 707 free
+  card 3: layers 18-23, 2 attention, 5446 MiB, 557 free
+  card 4: layers 24-28, 1 attention, 4562 MiB, 1441 free
+  card 5: layers 29-34, 1 attention, 5312 MiB, 691 free
+  card 6: layers 35-39, 2 attention, 4717 MiB, 1284 free
+  card 7: layers 40-45, 1 attention, 5324 MiB, 683 free
+  card 8: layers 46-47, 1 attention, 5447 MiB, 560 free
+== q2-f16-ub512-131072-mtp draft_extra=3284
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -212 MiB
+  card 0: layers 0-5, 1 attention, 5845 MiB, 156 free
+  card 1: layers 6-11, 2 attention, 6183 MiB, -180 free
+  card 2: layers 12-17, 1 attention, 5888 MiB, 115 free
+  card 3: layers 18-23, 2 attention, 6199 MiB, -196 free
+  card 4: layers 24-29, 1 attention, 5900 MiB, 103 free
+  card 5: layers 30-35, 2 attention, 6215 MiB, -212 free
+  card 6: layers 36-40, 1 attention, 5161 MiB, 840 free
+  card 7: layers 41-46, 1 attention, 5919 MiB, 88 free
+  card 8: layers 47-47, 1 attention, 5880 MiB, 127 free
+== q2-f16-ub512-262144-mtp draft_extra=4462
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -2229 MiB
+  card 0: layers 0-5, 1 attention, 7023 MiB, -1022 free
+  card 1: layers 6-11, 2 attention, 7683 MiB, -1680 free
+  card 2: layers 12-17, 1 attention, 7066 MiB, -1063 free
+  card 3: layers 18-23, 2 attention, 7699 MiB, -1696 free
+  card 4: layers 24-29, 1 attention, 7078 MiB, -1075 free
+  card 5: layers 30-35, 2 attention, 7715 MiB, -1712 free
+  card 6: layers 36-40, 1 attention, 6339 MiB, -338 free
+  card 7: layers 41-46, 1 attention, 7097 MiB, -1090 free
+  card 8: layers 47-47, 1 attention, 8236 MiB, -2229 free
+== q2-q8_0-ub64-32768-mtp draft_extra=2070
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1342 MiB
+  card 0: layers 0-5, 1 attention, 4651 MiB, 1350 free
+  card 1: layers 6-11, 2 attention, 4645 MiB, 1358 free
+  card 2: layers 12-17, 1 attention, 4629 MiB, 1374 free
+  card 3: layers 18-23, 2 attention, 4661 MiB, 1342 free
+  card 4: layers 24-28, 1 attention, 3895 MiB, 2108 free
+  card 5: layers 29-34, 1 attention, 4645 MiB, 1358 free
+  card 6: layers 35-39, 2 attention, 3932 MiB, 2069 free
+  card 7: layers 40-45, 1 attention, 4657 MiB, 1350 free
+  card 8: layers 46-47, 1 attention, 4158 MiB, 1849 free
+== q2-q8_0-ub64-49152-mtp draft_extra=2137
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1253 MiB
+  card 0: layers 0-5, 1 attention, 4718 MiB, 1283 free
+  card 1: layers 6-11, 2 attention, 4734 MiB, 1269 free
+  card 2: layers 12-17, 1 attention, 4696 MiB, 1307 free
+  card 3: layers 18-23, 2 attention, 4750 MiB, 1253 free
+  card 4: layers 24-28, 1 attention, 3962 MiB, 2041 free
+  card 5: layers 29-34, 1 attention, 4712 MiB, 1291 free
+  card 6: layers 35-39, 2 attention, 4021 MiB, 1980 free
+  card 7: layers 40-45, 1 attention, 4724 MiB, 1283 free
+  card 8: layers 46-47, 1 attention, 4292 MiB, 1715 free
+== q2-q8_0-ub64-65536-mtp draft_extra=2203
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1166 MiB
+  card 0: layers 0-5, 1 attention, 4784 MiB, 1217 free
+  card 1: layers 6-11, 2 attention, 4821 MiB, 1182 free
+  card 2: layers 12-17, 1 attention, 4762 MiB, 1241 free
+  card 3: layers 18-23, 2 attention, 4837 MiB, 1166 free
+  card 4: layers 24-28, 1 attention, 4028 MiB, 1975 free
+  card 5: layers 29-34, 1 attention, 4778 MiB, 1225 free
+  card 6: layers 35-39, 2 attention, 4108 MiB, 1893 free
+  card 7: layers 40-45, 1 attention, 4790 MiB, 1217 free
+  card 8: layers 46-47, 1 attention, 4424 MiB, 1583 free
+== q2-q8_0-ub64-131072-mtp draft_extra=2468
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 815 MiB
+  card 0: layers 0-5, 1 attention, 5050 MiB, 951 free
+  card 1: layers 6-11, 2 attention, 5172 MiB, 831 free
+  card 2: layers 12-17, 1 attention, 5027 MiB, 976 free
+  card 3: layers 18-23, 2 attention, 5188 MiB, 815 free
+  card 4: layers 24-28, 1 attention, 4293 MiB, 1710 free
+  card 5: layers 29-34, 1 attention, 5043 MiB, 960 free
+  card 6: layers 35-39, 2 attention, 4459 MiB, 1542 free
+  card 7: layers 40-45, 1 attention, 5055 MiB, 952 free
+  card 8: layers 46-47, 1 attention, 4954 MiB, 1053 free
+== q2-q8_0-ub64-262144-mtp draft_extra=3000
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free 95 MiB
+  card 0: layers 0-5, 1 attention, 5581 MiB, 420 free
+  card 1: layers 6-11, 2 attention, 5876 MiB, 127 free
+  card 2: layers 12-17, 1 attention, 5559 MiB, 444 free
+  card 3: layers 18-23, 2 attention, 5892 MiB, 111 free
+  card 4: layers 24-29, 1 attention, 5571 MiB, 432 free
+  card 5: layers 30-35, 2 attention, 5908 MiB, 95 free
+  card 6: layers 36-40, 1 attention, 4832 MiB, 1169 free
+  card 7: layers 41-46, 1 attention, 5590 MiB, 417 free
+  card 8: layers 47-47, 1 attention, 5267 MiB, 740 free
+== q2-q8_0-ub128-32768-mtp draft_extra=2132
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1280 MiB
+  card 0: layers 0-5, 1 attention, 4704 MiB, 1297 free
+  card 1: layers 6-11, 2 attention, 4707 MiB, 1296 free
+  card 2: layers 12-17, 1 attention, 4691 MiB, 1312 free
+  card 3: layers 18-23, 2 attention, 4723 MiB, 1280 free
+  card 4: layers 24-28, 1 attention, 3957 MiB, 2046 free
+  card 5: layers 29-34, 1 attention, 4707 MiB, 1296 free
+  card 6: layers 35-39, 2 attention, 3994 MiB, 2007 free
+  card 7: layers 40-45, 1 attention, 4719 MiB, 1288 free
+  card 8: layers 46-47, 1 attention, 4282 MiB, 1725 free
+== q2-q8_0-ub128-49152-mtp draft_extra=2219
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1171 MiB
+  card 0: layers 0-5, 1 attention, 4791 MiB, 1210 free
+  card 1: layers 6-11, 2 attention, 4816 MiB, 1187 free
+  card 2: layers 12-17, 1 attention, 4778 MiB, 1225 free
+  card 3: layers 18-23, 2 attention, 4832 MiB, 1171 free
+  card 4: layers 24-28, 1 attention, 4044 MiB, 1959 free
+  card 5: layers 29-34, 1 attention, 4794 MiB, 1209 free
+  card 6: layers 35-39, 2 attention, 4103 MiB, 1898 free
+  card 7: layers 40-45, 1 attention, 4806 MiB, 1201 free
+  card 8: layers 46-47, 1 attention, 4456 MiB, 1551 free
+== q2-q8_0-ub128-65536-mtp draft_extra=2301
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1068 MiB
+  card 0: layers 0-5, 1 attention, 4873 MiB, 1128 free
+  card 1: layers 6-11, 2 attention, 4919 MiB, 1084 free
+  card 2: layers 12-17, 1 attention, 4860 MiB, 1143 free
+  card 3: layers 18-23, 2 attention, 4935 MiB, 1068 free
+  card 4: layers 24-28, 1 attention, 4126 MiB, 1877 free
+  card 5: layers 29-34, 1 attention, 4876 MiB, 1127 free
+  card 6: layers 35-39, 2 attention, 4206 MiB, 1795 free
+  card 7: layers 40-45, 1 attention, 4888 MiB, 1119 free
+  card 8: layers 46-47, 1 attention, 4620 MiB, 1387 free
+== q2-q8_0-ub128-131072-mtp draft_extra=2631
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 652 MiB
+  card 0: layers 0-5, 1 attention, 5203 MiB, 798 free
+  card 1: layers 6-11, 2 attention, 5335 MiB, 668 free
+  card 2: layers 12-17, 1 attention, 5190 MiB, 813 free
+  card 3: layers 18-23, 2 attention, 5351 MiB, 652 free
+  card 4: layers 24-28, 1 attention, 4456 MiB, 1547 free
+  card 5: layers 29-34, 1 attention, 5206 MiB, 797 free
+  card 6: layers 35-39, 2 attention, 4622 MiB, 1379 free
+  card 7: layers 40-45, 1 attention, 5218 MiB, 789 free
+  card 8: layers 46-47, 1 attention, 5280 MiB, 727 free
+== q2-q8_0-ub128-262144-mtp draft_extra=3290
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -195 MiB
+  card 0: layers 0-5, 1 attention, 5862 MiB, 139 free
+  card 1: layers 6-11, 2 attention, 6166 MiB, -163 free
+  card 2: layers 12-17, 1 attention, 5849 MiB, 154 free
+  card 3: layers 18-23, 2 attention, 6182 MiB, -179 free
+  card 4: layers 24-29, 1 attention, 5861 MiB, 142 free
+  card 5: layers 30-35, 2 attention, 6198 MiB, -195 free
+  card 6: layers 36-40, 1 attention, 5122 MiB, 879 free
+  card 7: layers 41-46, 1 attention, 5880 MiB, 127 free
+  card 8: layers 47-47, 1 attention, 5847 MiB, 160 free
+== q2-q8_0-ub256-32768-mtp draft_extra=2238
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1159 MiB
+  card 0: layers 0-5, 1 attention, 4806 MiB, 1195 free
+  card 1: layers 6-11, 2 attention, 4828 MiB, 1175 free
+  card 2: layers 12-17, 1 attention, 4812 MiB, 1191 free
+  card 3: layers 18-23, 2 attention, 4844 MiB, 1159 free
+  card 4: layers 24-28, 1 attention, 4078 MiB, 1925 free
+  card 5: layers 29-34, 1 attention, 4828 MiB, 1175 free
+  card 6: layers 35-39, 2 attention, 4115 MiB, 1886 free
+  card 7: layers 40-45, 1 attention, 4840 MiB, 1167 free
+  card 8: layers 46-47, 1 attention, 4509 MiB, 1498 free
+== q2-q8_0-ub256-49152-mtp draft_extra=2345
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 1030 MiB
+  card 0: layers 0-5, 1 attention, 4913 MiB, 1088 free
+  card 1: layers 6-11, 2 attention, 4957 MiB, 1046 free
+  card 2: layers 12-17, 1 attention, 4919 MiB, 1084 free
+  card 3: layers 18-23, 2 attention, 4973 MiB, 1030 free
+  card 4: layers 24-28, 1 attention, 4185 MiB, 1818 free
+  card 5: layers 29-34, 1 attention, 4935 MiB, 1068 free
+  card 6: layers 35-39, 2 attention, 4244 MiB, 1757 free
+  card 7: layers 40-45, 1 attention, 4947 MiB, 1060 free
+  card 8: layers 46-47, 1 attention, 4723 MiB, 1284 free
+== q2-q8_0-ub256-65536-mtp draft_extra=2450
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,5,6,5,6,3  smallest free 904 MiB
+  card 0: layers 0-5, 1 attention, 5019 MiB, 982 free
+  card 1: layers 6-11, 2 attention, 5083 MiB, 920 free
+  card 2: layers 12-17, 1 attention, 5024 MiB, 979 free
+  card 3: layers 18-23, 2 attention, 5099 MiB, 904 free
+  card 4: layers 24-28, 1 attention, 4290 MiB, 1713 free
+  card 5: layers 29-34, 1 attention, 5040 MiB, 963 free
+  card 6: layers 35-39, 2 attention, 4370 MiB, 1631 free
+  card 7: layers 40-45, 1 attention, 5052 MiB, 955 free
+  card 8: layers 46-47, 1 attention, 4933 MiB, 1074 free
+== q2-q8_0-ub256-131072-mtp draft_extra=2892
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free 360 MiB
+  card 0: layers 0-5, 1 attention, 5461 MiB, 540 free
+  card 1: layers 6-11, 2 attention, 5611 MiB, 392 free
+  card 2: layers 12-17, 1 attention, 5466 MiB, 537 free
+  card 3: layers 18-23, 2 attention, 5627 MiB, 376 free
+  card 4: layers 24-29, 1 attention, 5478 MiB, 525 free
+  card 5: layers 30-35, 2 attention, 5643 MiB, 360 free
+  card 6: layers 36-40, 1 attention, 4739 MiB, 1262 free
+  card 7: layers 41-46, 1 attention, 5497 MiB, 510 free
+  card 8: layers 47-47, 1 attention, 5066 MiB, 941 free
+== q2-q8_0-ub256-262144-mtp draft_extra=3760
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -795 MiB
+  card 0: layers 0-5, 1 attention, 6328 MiB, -327 free
+  card 1: layers 6-11, 2 attention, 6651 MiB, -648 free
+  card 2: layers 12-17, 1 attention, 6334 MiB, -331 free
+  card 3: layers 18-23, 2 attention, 6667 MiB, -664 free
+  card 4: layers 24-29, 1 attention, 6346 MiB, -343 free
+  card 5: layers 30-35, 2 attention, 6683 MiB, -680 free
+  card 6: layers 36-40, 1 attention, 5607 MiB, 394 free
+  card 7: layers 41-46, 1 attention, 6365 MiB, -358 free
+  card 8: layers 47-47, 1 attention, 6802 MiB, -795 free
+== q2-q8_0-ub512-65536-mtp draft_extra=2766
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free 542 MiB
+  card 0: layers 0-5, 1 attention, 5327 MiB, 674 free
+  card 1: layers 6-11, 2 attention, 5429 MiB, 574 free
+  card 2: layers 12-17, 1 attention, 5370 MiB, 633 free
+  card 3: layers 18-23, 2 attention, 5445 MiB, 558 free
+  card 4: layers 24-29, 1 attention, 5382 MiB, 621 free
+  card 5: layers 30-35, 2 attention, 5461 MiB, 542 free
+  card 6: layers 36-40, 1 attention, 4643 MiB, 1358 free
+  card 7: layers 41-46, 1 attention, 5401 MiB, 606 free
+  card 8: layers 47-47, 1 attention, 4844 MiB, 1163 free
+== q2-q8_0-ub512-131072-mtp draft_extra=3399
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -177 MiB
+  card 0: layers 0-5, 1 attention, 5960 MiB, 41 free
+  card 1: layers 6-11, 2 attention, 6148 MiB, -145 free
+  card 2: layers 12-17, 1 attention, 6003 MiB, -0 free
+  card 3: layers 18-23, 2 attention, 6164 MiB, -161 free
+  card 4: layers 24-29, 1 attention, 6015 MiB, -12 free
+  card 5: layers 30-35, 2 attention, 6180 MiB, -177 free
+  card 6: layers 36-40, 1 attention, 5276 MiB, 725 free
+  card 7: layers 41-46, 1 attention, 6034 MiB, -27 free
+  card 8: layers 47-47, 1 attention, 6110 MiB, -103 free
+== q2-q8_0-ub512-262144-mtp draft_extra=4699
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,6,6,6,6,6,5,6,2  smallest free -2703 MiB
+  card 0: layers 0-5, 1 attention, 7260 MiB, -1259 free
+  card 1: layers 6-11, 2 attention, 7620 MiB, -1617 free
+  card 2: layers 12-17, 1 attention, 7303 MiB, -1300 free
+  card 3: layers 18-23, 2 attention, 7636 MiB, -1633 free
+  card 4: layers 24-29, 1 attention, 7315 MiB, -1312 free
+  card 5: layers 30-35, 2 attention, 7652 MiB, -1649 free
+  card 6: layers 36-40, 1 attention, 6576 MiB, -575 free
+  card 7: layers 41-46, 1 attention, 7334 MiB, -1327 free
+  card 8: layers 47-47, 1 attention, 8710 MiB, -2703 free
+######## plan_iq3.txt
+== iq3-f16-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 343 MiB
+  card 0: layers 0-5, 1 attention, 5308 MiB, 693 free
+  card 1: layers 6-12, 2 attention, 5654 MiB, 349 free
+  card 2: layers 13-18, 1 attention, 4920 MiB, 1083 free
+  card 3: layers 19-23, 2 attention, 4732 MiB, 1271 free
+  card 4: layers 24-28, 1 attention, 4632 MiB, 1371 free
+  card 5: layers 29-33, 1 attention, 5530 MiB, 473 free
+  card 6: layers 34-38, 1 attention, 5658 MiB, 343 free
+  card 7: layers 39-43, 2 attention, 5186 MiB, 821 free
+  card 8: layers 44-47, 1 attention, 4790 MiB, 1217 free
+== iq3-f16-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 248 MiB
+  card 0: layers 0-5, 1 attention, 5369 MiB, 632 free
+  card 1: layers 6-12, 2 attention, 5755 MiB, 248 free
+  card 2: layers 13-18, 1 attention, 4981 MiB, 1022 free
+  card 3: layers 19-23, 2 attention, 4833 MiB, 1170 free
+  card 4: layers 24-28, 1 attention, 4693 MiB, 1310 free
+  card 5: layers 29-33, 1 attention, 5591 MiB, 412 free
+  card 6: layers 34-38, 1 attention, 5719 MiB, 282 free
+  card 7: layers 39-43, 2 attention, 5287 MiB, 720 free
+  card 8: layers 44-47, 1 attention, 4851 MiB, 1156 free
+== iq3-f16-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free 155 MiB
+  card 0: layers 0-5, 1 attention, 5430 MiB, 571 free
+  card 1: layers 6-11, 2 attention, 5050 MiB, 953 free
+  card 2: layers 12-18, 1 attention, 5848 MiB, 155 free
+  card 3: layers 19-23, 2 attention, 4934 MiB, 1069 free
+  card 4: layers 24-28, 1 attention, 4754 MiB, 1249 free
+  card 5: layers 29-33, 1 attention, 5652 MiB, 351 free
+  card 6: layers 34-38, 1 attention, 5780 MiB, 221 free
+  card 7: layers 39-43, 2 attention, 5388 MiB, 619 free
+  card 8: layers 44-47, 1 attention, 4912 MiB, 1095 free
+== iq3-f16-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -89 MiB
+  card 0: layers 0-5, 1 attention, 5675 MiB, 326 free
+  card 1: layers 6-11, 2 attention, 5455 MiB, 548 free
+  card 2: layers 12-18, 1 attention, 6092 MiB, -89 free
+  card 3: layers 19-23, 2 attention, 5339 MiB, 664 free
+  card 4: layers 24-28, 1 attention, 4998 MiB, 1005 free
+  card 5: layers 29-33, 1 attention, 5896 MiB, 107 free
+  card 6: layers 34-38, 1 attention, 6024 MiB, -23 free
+  card 7: layers 39-43, 2 attention, 5793 MiB, 214 free
+  card 8: layers 44-47, 1 attention, 5156 MiB, 851 free
+== iq3-f16-ub64-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -598 MiB
+  card 0: layers 0-5, 1 attention, 6164 MiB, -163 free
+  card 1: layers 6-11, 2 attention, 6267 MiB, -264 free
+  card 2: layers 12-18, 1 attention, 6582 MiB, -579 free
+  card 3: layers 19-23, 2 attention, 6151 MiB, -148 free
+  card 4: layers 24-28, 1 attention, 5488 MiB, 515 free
+  card 5: layers 29-33, 1 attention, 6386 MiB, -383 free
+  card 6: layers 34-38, 1 attention, 6514 MiB, -513 free
+  card 7: layers 39-43, 2 attention, 6605 MiB, -598 free
+  card 8: layers 44-47, 1 attention, 5646 MiB, 361 free
+== iq3-f16-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 284 MiB
+  card 0: layers 0-5, 1 attention, 5358 MiB, 643 free
+  card 1: layers 6-12, 2 attention, 5713 MiB, 290 free
+  card 2: layers 13-18, 1 attention, 4979 MiB, 1024 free
+  card 3: layers 19-23, 2 attention, 4791 MiB, 1212 free
+  card 4: layers 24-28, 1 attention, 4691 MiB, 1312 free
+  card 5: layers 29-33, 1 attention, 5589 MiB, 414 free
+  card 6: layers 34-38, 1 attention, 5717 MiB, 284 free
+  card 7: layers 39-43, 2 attention, 5245 MiB, 762 free
+  card 8: layers 44-47, 1 attention, 4849 MiB, 1158 free
+== iq3-f16-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 189 MiB
+  card 0: layers 0-5, 1 attention, 5419 MiB, 582 free
+  card 1: layers 6-12, 2 attention, 5814 MiB, 189 free
+  card 2: layers 13-18, 1 attention, 5040 MiB, 963 free
+  card 3: layers 19-23, 2 attention, 4892 MiB, 1111 free
+  card 4: layers 24-28, 1 attention, 4752 MiB, 1251 free
+  card 5: layers 29-33, 1 attention, 5650 MiB, 353 free
+  card 6: layers 34-38, 1 attention, 5778 MiB, 223 free
+  card 7: layers 39-43, 2 attention, 5346 MiB, 661 free
+  card 8: layers 44-47, 1 attention, 4910 MiB, 1097 free
+== iq3-f16-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free 87 MiB
+  card 0: layers 0-5, 1 attention, 5489 MiB, 512 free
+  card 1: layers 6-11, 2 attention, 5118 MiB, 885 free
+  card 2: layers 12-18, 1 attention, 5916 MiB, 87 free
+  card 3: layers 19-23, 2 attention, 5002 MiB, 1001 free
+  card 4: layers 24-28, 1 attention, 4822 MiB, 1181 free
+  card 5: layers 29-33, 1 attention, 5720 MiB, 283 free
+  card 6: layers 34-38, 1 attention, 5848 MiB, 153 free
+  card 7: layers 39-43, 2 attention, 5456 MiB, 551 free
+  card 8: layers 44-47, 1 attention, 4980 MiB, 1027 free
+== iq3-f16-ub128-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -198 MiB
+  card 0: layers 0-5, 1 attention, 5774 MiB, 227 free
+  card 1: layers 6-11, 2 attention, 5564 MiB, 439 free
+  card 2: layers 12-18, 1 attention, 6201 MiB, -198 free
+  card 3: layers 19-23, 2 attention, 5448 MiB, 555 free
+  card 4: layers 24-28, 1 attention, 5107 MiB, 896 free
+  card 5: layers 29-33, 1 attention, 6005 MiB, -2 free
+  card 6: layers 34-38, 1 attention, 6133 MiB, -132 free
+  card 7: layers 39-43, 2 attention, 5902 MiB, 105 free
+  card 8: layers 44-47, 1 attention, 5265 MiB, 742 free
+== iq3-f16-ub128-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -786 MiB
+  card 0: layers 0-5, 1 attention, 6343 MiB, -342 free
+  card 1: layers 6-11, 2 attention, 6455 MiB, -452 free
+  card 2: layers 12-18, 1 attention, 6770 MiB, -767 free
+  card 3: layers 19-23, 2 attention, 6339 MiB, -336 free
+  card 4: layers 24-28, 1 attention, 5676 MiB, 327 free
+  card 5: layers 29-33, 1 attention, 6574 MiB, -571 free
+  card 6: layers 34-38, 1 attention, 6702 MiB, -701 free
+  card 7: layers 39-43, 2 attention, 6793 MiB, -786 free
+  card 8: layers 44-47, 1 attention, 5834 MiB, 173 free
+== iq3-f16-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 156 MiB
+  card 0: layers 0-5, 1 attention, 5468 MiB, 533 free
+  card 1: layers 6-12, 2 attention, 5841 MiB, 162 free
+  card 2: layers 13-18, 1 attention, 5107 MiB, 896 free
+  card 3: layers 19-23, 2 attention, 4919 MiB, 1084 free
+  card 4: layers 24-28, 1 attention, 4819 MiB, 1184 free
+  card 5: layers 29-33, 1 attention, 5717 MiB, 286 free
+  card 6: layers 34-38, 1 attention, 5845 MiB, 156 free
+  card 7: layers 39-43, 2 attention, 5373 MiB, 634 free
+  card 8: layers 44-47, 1 attention, 4977 MiB, 1030 free
+== iq3-f16-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 41 MiB
+  card 0: layers 0-5, 1 attention, 5548 MiB, 453 free
+  card 1: layers 6-12, 2 attention, 5962 MiB, 41 free
+  card 2: layers 13-18, 1 attention, 5188 MiB, 815 free
+  card 3: layers 19-23, 2 attention, 5040 MiB, 963 free
+  card 4: layers 24-28, 1 attention, 4900 MiB, 1103 free
+  card 5: layers 29-33, 1 attention, 5798 MiB, 205 free
+  card 6: layers 34-38, 1 attention, 5926 MiB, 75 free
+  card 7: layers 39-43, 2 attention, 5494 MiB, 513 free
+  card 8: layers 44-47, 1 attention, 5058 MiB, 949 free
+== iq3-f16-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -77 MiB
+  card 0: layers 0-5, 1 attention, 5635 MiB, 366 free
+  card 1: layers 6-11, 2 attention, 5282 MiB, 721 free
+  card 2: layers 12-18, 1 attention, 6080 MiB, -77 free
+  card 3: layers 19-23, 2 attention, 5166 MiB, 837 free
+  card 4: layers 24-28, 1 attention, 4986 MiB, 1017 free
+  card 5: layers 29-33, 1 attention, 5884 MiB, 119 free
+  card 6: layers 34-38, 1 attention, 6012 MiB, -11 free
+  card 7: layers 39-43, 2 attention, 5620 MiB, 387 free
+  card 8: layers 44-47, 1 attention, 5144 MiB, 863 free
+== iq3-f16-ub256-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -458 MiB
+  card 0: layers 0-5, 1 attention, 6016 MiB, -15 free
+  card 1: layers 6-11, 2 attention, 5824 MiB, 179 free
+  card 2: layers 12-18, 1 attention, 6461 MiB, -458 free
+  card 3: layers 19-23, 2 attention, 5708 MiB, 295 free
+  card 4: layers 24-28, 1 attention, 5367 MiB, 636 free
+  card 5: layers 29-33, 1 attention, 6265 MiB, -262 free
+  card 6: layers 34-38, 1 attention, 6393 MiB, -392 free
+  card 7: layers 39-43, 2 attention, 6162 MiB, -155 free
+  card 8: layers 44-47, 1 attention, 5525 MiB, 482 free
+== iq3-f16-ub256-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -1239 MiB
+  card 0: layers 0-5, 1 attention, 6777 MiB, -776 free
+  card 1: layers 6-11, 2 attention, 6908 MiB, -905 free
+  card 2: layers 12-18, 1 attention, 7223 MiB, -1220 free
+  card 3: layers 19-23, 2 attention, 6792 MiB, -789 free
+  card 4: layers 24-28, 1 attention, 6129 MiB, -126 free
+  card 5: layers 29-33, 1 attention, 7027 MiB, -1024 free
+  card 6: layers 34-38, 1 attention, 7155 MiB, -1154 free
+  card 7: layers 39-43, 2 attention, 7246 MiB, -1239 free
+  card 8: layers 44-47, 1 attention, 6287 MiB, -280 free
+== iq3-f16-ub512-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -407 MiB
+  card 0: layers 0-5, 1 attention, 5928 MiB, 73 free
+  card 1: layers 6-11, 2 attention, 5612 MiB, 391 free
+  card 2: layers 12-18, 1 attention, 6410 MiB, -407 free
+  card 3: layers 19-23, 2 attention, 5496 MiB, 507 free
+  card 4: layers 24-28, 1 attention, 5316 MiB, 687 free
+  card 5: layers 29-33, 1 attention, 6214 MiB, -211 free
+  card 6: layers 34-38, 1 attention, 6342 MiB, -341 free
+  card 7: layers 39-43, 2 attention, 5950 MiB, 57 free
+  card 8: layers 44-47, 1 attention, 5474 MiB, 533 free
+== iq3-f16-ub512-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -999 MiB
+  card 0: layers 0-5, 1 attention, 6519 MiB, -518 free
+  card 1: layers 6-11, 2 attention, 6365 MiB, -362 free
+  card 2: layers 12-18, 1 attention, 7002 MiB, -999 free
+  card 3: layers 19-23, 2 attention, 6249 MiB, -246 free
+  card 4: layers 24-28, 1 attention, 5908 MiB, 95 free
+  card 5: layers 29-33, 1 attention, 6806 MiB, -803 free
+  card 6: layers 34-38, 1 attention, 6934 MiB, -933 free
+  card 7: layers 39-43, 2 attention, 6703 MiB, -696 free
+  card 8: layers 44-47, 1 attention, 6066 MiB, -59 free
+== iq3-f16-ub512-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -2196 MiB
+  card 0: layers 0-5, 1 attention, 7697 MiB, -1696 free
+  card 1: layers 6-11, 2 attention, 7865 MiB, -1862 free
+  card 2: layers 12-18, 1 attention, 8180 MiB, -2177 free
+  card 3: layers 19-23, 2 attention, 7749 MiB, -1746 free
+  card 4: layers 24-28, 1 attention, 7086 MiB, -1083 free
+  card 5: layers 29-33, 1 attention, 7984 MiB, -1981 free
+  card 6: layers 34-38, 1 attention, 8112 MiB, -2111 free
+  card 7: layers 39-43, 2 attention, 8203 MiB, -2196 free
+  card 8: layers 44-47, 1 attention, 7244 MiB, -1237 free
+== iq3-q8_0-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 326 MiB
+  card 0: layers 0-5, 1 attention, 5325 MiB, 676 free
+  card 1: layers 6-12, 2 attention, 5633 MiB, 370 free
+  card 2: layers 13-18, 1 attention, 4937 MiB, 1066 free
+  card 3: layers 19-23, 2 attention, 4711 MiB, 1292 free
+  card 4: layers 24-28, 1 attention, 4649 MiB, 1354 free
+  card 5: layers 29-33, 1 attention, 5547 MiB, 456 free
+  card 6: layers 34-38, 1 attention, 5675 MiB, 326 free
+  card 7: layers 39-43, 2 attention, 5165 MiB, 842 free
+  card 8: layers 44-47, 1 attention, 4807 MiB, 1200 free
+== iq3-q8_0-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 259 MiB
+  card 0: layers 0-5, 1 attention, 5392 MiB, 609 free
+  card 1: layers 6-12, 2 attention, 5722 MiB, 281 free
+  card 2: layers 13-18, 1 attention, 5004 MiB, 999 free
+  card 3: layers 19-23, 2 attention, 4800 MiB, 1203 free
+  card 4: layers 24-28, 1 attention, 4716 MiB, 1287 free
+  card 5: layers 29-33, 1 attention, 5614 MiB, 389 free
+  card 6: layers 34-38, 1 attention, 5742 MiB, 259 free
+  card 7: layers 39-43, 2 attention, 5254 MiB, 753 free
+  card 8: layers 44-47, 1 attention, 4874 MiB, 1133 free
+== iq3-q8_0-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 193 MiB
+  card 0: layers 0-5, 1 attention, 5458 MiB, 543 free
+  card 1: layers 6-12, 2 attention, 5809 MiB, 194 free
+  card 2: layers 13-18, 1 attention, 5070 MiB, 933 free
+  card 3: layers 19-23, 2 attention, 4887 MiB, 1116 free
+  card 4: layers 24-28, 1 attention, 4782 MiB, 1221 free
+  card 5: layers 29-33, 1 attention, 5680 MiB, 323 free
+  card 6: layers 34-38, 1 attention, 5808 MiB, 193 free
+  card 7: layers 39-43, 2 attention, 5341 MiB, 666 free
+  card 8: layers 44-47, 1 attention, 4940 MiB, 1067 free
+== iq3-q8_0-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -138 MiB
+  card 0: layers 0-5, 1 attention, 5724 MiB, 277 free
+  card 1: layers 6-11, 2 attention, 5354 MiB, 649 free
+  card 2: layers 12-18, 1 attention, 6141 MiB, -138 free
+  card 3: layers 19-23, 2 attention, 5238 MiB, 765 free
+  card 4: layers 24-28, 1 attention, 5047 MiB, 956 free
+  card 5: layers 29-33, 1 attention, 5945 MiB, 58 free
+  card 6: layers 34-38, 1 attention, 6073 MiB, -72 free
+  card 7: layers 39-43, 2 attention, 5692 MiB, 315 free
+  card 8: layers 44-47, 1 attention, 5205 MiB, 802 free
+== iq3-q8_0-ub64-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -670 MiB
+  card 0: layers 0-5, 1 attention, 6255 MiB, -254 free
+  card 1: layers 6-11, 2 attention, 6058 MiB, -55 free
+  card 2: layers 12-18, 1 attention, 6673 MiB, -670 free
+  card 3: layers 19-23, 2 attention, 5942 MiB, 61 free
+  card 4: layers 24-28, 1 attention, 5579 MiB, 424 free
+  card 5: layers 29-33, 1 attention, 6477 MiB, -474 free
+  card 6: layers 34-38, 1 attention, 6605 MiB, -604 free
+  card 7: layers 39-43, 2 attention, 6396 MiB, -389 free
+  card 8: layers 44-47, 1 attention, 5737 MiB, 270 free
+== iq3-q8_0-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 264 MiB
+  card 0: layers 0-5, 1 attention, 5378 MiB, 623 free
+  card 1: layers 6-12, 2 attention, 5695 MiB, 308 free
+  card 2: layers 13-18, 1 attention, 4999 MiB, 1004 free
+  card 3: layers 19-23, 2 attention, 4773 MiB, 1230 free
+  card 4: layers 24-28, 1 attention, 4711 MiB, 1292 free
+  card 5: layers 29-33, 1 attention, 5609 MiB, 394 free
+  card 6: layers 34-38, 1 attention, 5737 MiB, 264 free
+  card 7: layers 39-43, 2 attention, 5227 MiB, 780 free
+  card 8: layers 44-47, 1 attention, 4869 MiB, 1138 free
+== iq3-q8_0-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 177 MiB
+  card 0: layers 0-5, 1 attention, 5465 MiB, 536 free
+  card 1: layers 6-12, 2 attention, 5804 MiB, 199 free
+  card 2: layers 13-18, 1 attention, 5086 MiB, 917 free
+  card 3: layers 19-23, 2 attention, 4882 MiB, 1121 free
+  card 4: layers 24-28, 1 attention, 4798 MiB, 1205 free
+  card 5: layers 29-33, 1 attention, 5696 MiB, 307 free
+  card 6: layers 34-38, 1 attention, 5824 MiB, 177 free
+  card 7: layers 39-43, 2 attention, 5336 MiB, 671 free
+  card 8: layers 44-47, 1 attention, 4956 MiB, 1051 free
+== iq3-q8_0-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 95 MiB
+  card 0: layers 0-5, 1 attention, 5547 MiB, 454 free
+  card 1: layers 6-12, 2 attention, 5907 MiB, 96 free
+  card 2: layers 13-18, 1 attention, 5168 MiB, 835 free
+  card 3: layers 19-23, 2 attention, 4985 MiB, 1018 free
+  card 4: layers 24-28, 1 attention, 4880 MiB, 1123 free
+  card 5: layers 29-33, 1 attention, 5778 MiB, 225 free
+  card 6: layers 34-38, 1 attention, 5906 MiB, 95 free
+  card 7: layers 39-43, 2 attention, 5439 MiB, 568 free
+  card 8: layers 44-47, 1 attention, 5038 MiB, 969 free
+== iq3-q8_0-ub128-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -301 MiB
+  card 0: layers 0-5, 1 attention, 5877 MiB, 124 free
+  card 1: layers 6-11, 2 attention, 5517 MiB, 486 free
+  card 2: layers 12-18, 1 attention, 6304 MiB, -301 free
+  card 3: layers 19-23, 2 attention, 5401 MiB, 602 free
+  card 4: layers 24-28, 1 attention, 5210 MiB, 793 free
+  card 5: layers 29-33, 1 attention, 6108 MiB, -105 free
+  card 6: layers 34-38, 1 attention, 6236 MiB, -235 free
+  card 7: layers 39-43, 2 attention, 5855 MiB, 152 free
+  card 8: layers 44-47, 1 attention, 5368 MiB, 639 free
+== iq3-q8_0-ub128-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -960 MiB
+  card 0: layers 0-5, 1 attention, 6536 MiB, -535 free
+  card 1: layers 6-11, 2 attention, 6348 MiB, -345 free
+  card 2: layers 12-18, 1 attention, 6963 MiB, -960 free
+  card 3: layers 19-23, 2 attention, 6232 MiB, -229 free
+  card 4: layers 24-28, 1 attention, 5869 MiB, 134 free
+  card 5: layers 29-33, 1 attention, 6767 MiB, -764 free
+  card 6: layers 34-38, 1 attention, 6895 MiB, -894 free
+  card 7: layers 39-43, 2 attention, 6686 MiB, -679 free
+  card 8: layers 44-47, 1 attention, 6027 MiB, -20 free
+== iq3-q8_0-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 143 MiB
+  card 0: layers 0-5, 1 attention, 5480 MiB, 521 free
+  card 1: layers 6-12, 2 attention, 5816 MiB, 187 free
+  card 2: layers 13-18, 1 attention, 5120 MiB, 883 free
+  card 3: layers 19-23, 2 attention, 4894 MiB, 1109 free
+  card 4: layers 24-28, 1 attention, 4832 MiB, 1171 free
+  card 5: layers 29-33, 1 attention, 5730 MiB, 273 free
+  card 6: layers 34-38, 1 attention, 5858 MiB, 143 free
+  card 7: layers 39-43, 2 attention, 5348 MiB, 659 free
+  card 8: layers 44-47, 1 attention, 4990 MiB, 1017 free
+== iq3-q8_0-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 36 MiB
+  card 0: layers 0-5, 1 attention, 5587 MiB, 414 free
+  card 1: layers 6-12, 2 attention, 5945 MiB, 58 free
+  card 2: layers 13-18, 1 attention, 5227 MiB, 776 free
+  card 3: layers 19-23, 2 attention, 5023 MiB, 980 free
+  card 4: layers 24-28, 1 attention, 4939 MiB, 1064 free
+  card 5: layers 29-33, 1 attention, 5837 MiB, 166 free
+  card 6: layers 34-38, 1 attention, 5965 MiB, 36 free
+  card 7: layers 39-43, 2 attention, 5477 MiB, 530 free
+  card 8: layers 44-47, 1 attention, 5097 MiB, 910 free
+== iq3-q8_0-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free -69 MiB
+  card 0: layers 0-5, 1 attention, 5693 MiB, 308 free
+  card 1: layers 6-12, 2 attention, 6071 MiB, -68 free
+  card 2: layers 13-18, 1 attention, 5332 MiB, 671 free
+  card 3: layers 19-23, 2 attention, 5149 MiB, 854 free
+  card 4: layers 24-28, 1 attention, 5044 MiB, 959 free
+  card 5: layers 29-33, 1 attention, 5942 MiB, 61 free
+  card 6: layers 34-38, 1 attention, 6070 MiB, -69 free
+  card 7: layers 39-43, 2 attention, 5603 MiB, 404 free
+  card 8: layers 44-47, 1 attention, 5202 MiB, 805 free
+== iq3-q8_0-ub256-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -577 MiB
+  card 0: layers 0-5, 1 attention, 6135 MiB, -134 free
+  card 1: layers 6-11, 2 attention, 5793 MiB, 210 free
+  card 2: layers 12-18, 1 attention, 6580 MiB, -577 free
+  card 3: layers 19-23, 2 attention, 5677 MiB, 326 free
+  card 4: layers 24-28, 1 attention, 5486 MiB, 517 free
+  card 5: layers 29-33, 1 attention, 6384 MiB, -381 free
+  card 6: layers 34-38, 1 attention, 6512 MiB, -511 free
+  card 7: layers 39-43, 2 attention, 6131 MiB, -124 free
+  card 8: layers 44-47, 1 attention, 5644 MiB, 363 free
+== iq3-q8_0-ub256-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -1445 MiB
+  card 0: layers 0-5, 1 attention, 7002 MiB, -1001 free
+  card 1: layers 6-11, 2 attention, 6833 MiB, -830 free
+  card 2: layers 12-18, 1 attention, 7448 MiB, -1445 free
+  card 3: layers 19-23, 2 attention, 6717 MiB, -714 free
+  card 4: layers 24-28, 1 attention, 6354 MiB, -351 free
+  card 5: layers 29-33, 1 attention, 7252 MiB, -1249 free
+  card 6: layers 34-38, 1 attention, 7380 MiB, -1379 free
+  card 7: layers 39-43, 2 attention, 7171 MiB, -1164 free
+  card 8: layers 44-47, 1 attention, 6512 MiB, -505 free
+== iq3-q8_0-ub512-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free -415 MiB
+  card 0: layers 0-5, 1 attention, 6001 MiB, -0 free
+  card 1: layers 6-12, 2 attention, 6417 MiB, -414 free
+  card 2: layers 13-18, 1 attention, 5678 MiB, 325 free
+  card 3: layers 19-23, 2 attention, 5495 MiB, 508 free
+  card 4: layers 24-28, 1 attention, 5390 MiB, 613 free
+  card 5: layers 29-33, 1 attention, 6288 MiB, -285 free
+  card 6: layers 34-38, 1 attention, 6416 MiB, -415 free
+  card 7: layers 39-43, 2 attention, 5949 MiB, 58 free
+  card 8: layers 44-47, 1 attention, 5548 MiB, 459 free
+== iq3-q8_0-ub512-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -1114 MiB
+  card 0: layers 0-5, 1 attention, 6634 MiB, -633 free
+  card 1: layers 6-11, 2 attention, 6330 MiB, -327 free
+  card 2: layers 12-18, 1 attention, 7117 MiB, -1114 free
+  card 3: layers 19-23, 2 attention, 6214 MiB, -211 free
+  card 4: layers 24-28, 1 attention, 6023 MiB, -20 free
+  card 5: layers 29-33, 1 attention, 6921 MiB, -918 free
+  card 6: layers 34-38, 1 attention, 7049 MiB, -1048 free
+  card 7: layers 39-43, 2 attention, 6668 MiB, -661 free
+  card 8: layers 44-47, 1 attention, 6181 MiB, -174 free
+== iq3-q8_0-ub512-262144 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -2414 MiB
+  card 0: layers 0-5, 1 attention, 7934 MiB, -1933 free
+  card 1: layers 6-11, 2 attention, 7802 MiB, -1799 free
+  card 2: layers 12-18, 1 attention, 8417 MiB, -2414 free
+  card 3: layers 19-23, 2 attention, 7686 MiB, -1683 free
+  card 4: layers 24-28, 1 attention, 7323 MiB, -1320 free
+  card 5: layers 29-33, 1 attention, 8221 MiB, -2218 free
+  card 6: layers 34-38, 1 attention, 8349 MiB, -2348 free
+  card 7: layers 39-43, 2 attention, 8140 MiB, -2133 free
+  card 8: layers 44-47, 1 attention, 7481 MiB, -1474 free
+######## plan_iq3_mtp.txt
+== iq3-f16-ub64-32768-mtp draft_extra=2053
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 256 MiB
+  card 0: layers 0-5, 1 attention, 5355 MiB, 646 free
+  card 1: layers 6-12, 2 attention, 5700 MiB, 303 free
+  card 2: layers 13-18, 1 attention, 4967 MiB, 1036 free
+  card 3: layers 19-23, 2 attention, 4760 MiB, 1243 free
+  card 4: layers 24-29, 1 attention, 5716 MiB, 287 free
+  card 5: layers 30-34, 1 attention, 5747 MiB, 256 free
+  card 6: layers 35-39, 2 attention, 5537 MiB, 464 free
+  card 7: layers 40-44, 1 attention, 5294 MiB, 713 free
+  card 8: layers 45-47, 1 attention, 5722 MiB, 285 free
+== iq3-f16-ub64-49152-mtp draft_extra=2114
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 163 MiB
+  card 0: layers 0-5, 1 attention, 5416 MiB, 585 free
+  card 1: layers 6-12, 2 attention, 5801 MiB, 202 free
+  card 2: layers 13-18, 1 attention, 5028 MiB, 975 free
+  card 3: layers 19-23, 2 attention, 4861 MiB, 1142 free
+  card 4: layers 24-29, 1 attention, 5777 MiB, 226 free
+  card 5: layers 30-34, 1 attention, 5808 MiB, 195 free
+  card 6: layers 35-39, 2 attention, 5638 MiB, 363 free
+  card 7: layers 40-44, 1 attention, 5355 MiB, 652 free
+  card 8: layers 45-47, 1 attention, 5844 MiB, 163 free
+== iq3-f16-ub64-65536-mtp draft_extra=2175
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 41 MiB
+  card 0: layers 0-5, 1 attention, 5477 MiB, 524 free
+  card 1: layers 6-12, 2 attention, 5902 MiB, 101 free
+  card 2: layers 13-18, 1 attention, 5089 MiB, 914 free
+  card 3: layers 19-23, 2 attention, 4962 MiB, 1041 free
+  card 4: layers 24-29, 1 attention, 5838 MiB, 165 free
+  card 5: layers 30-34, 1 attention, 5869 MiB, 134 free
+  card 6: layers 35-39, 2 attention, 5739 MiB, 262 free
+  card 7: layers 40-44, 1 attention, 5416 MiB, 591 free
+  card 8: layers 45-47, 1 attention, 5966 MiB, 41 free
+== iq3-f16-ub64-131072-mtp draft_extra=2419
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,5,5,3  smallest free -357 MiB
+  card 0: layers 0-5, 1 attention, 5722 MiB, 279 free
+  card 1: layers 6-11, 2 attention, 5492 MiB, 511 free
+  card 2: layers 12-18, 1 attention, 6148 MiB, -145 free
+  card 3: layers 19-24, 2 attention, 6360 MiB, -357 free
+  card 4: layers 25-30, 1 attention, 6313 MiB, -310 free
+  card 5: layers 31-35, 2 attention, 6341 MiB, -338 free
+  card 6: layers 36-40, 1 attention, 5514 MiB, 487 free
+  card 7: layers 41-45, 1 attention, 5757 MiB, 250 free
+  card 8: layers 46-47, 1 attention, 5534 MiB, 473 free
+== iq3-f16-ub64-262144-mtp draft_extra=2909
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,5,5,6,3  smallest free -1063 MiB
+  card 0: layers 0-5, 1 attention, 6211 MiB, -210 free
+  card 1: layers 6-11, 2 attention, 6304 MiB, -301 free
+  card 2: layers 12-18, 1 attention, 6638 MiB, -635 free
+  card 3: layers 19-23, 2 attention, 6179 MiB, -176 free
+  card 4: layers 24-29, 1 attention, 6572 MiB, -569 free
+  card 5: layers 30-34, 1 attention, 6603 MiB, -600 free
+  card 6: layers 35-39, 2 attention, 6956 MiB, -955 free
+  card 7: layers 40-45, 1 attention, 7070 MiB, -1063 free
+  card 8: layers 46-47, 1 attention, 6514 MiB, -507 free
+== iq3-f16-ub128-32768-mtp draft_extra=2112
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 167 MiB
+  card 0: layers 0-5, 1 attention, 5405 MiB, 596 free
+  card 1: layers 6-12, 2 attention, 5759 MiB, 244 free
+  card 2: layers 13-18, 1 attention, 5026 MiB, 977 free
+  card 3: layers 19-23, 2 attention, 4819 MiB, 1184 free
+  card 4: layers 24-29, 1 attention, 5775 MiB, 228 free
+  card 5: layers 30-34, 1 attention, 5806 MiB, 197 free
+  card 6: layers 35-39, 2 attention, 5596 MiB, 405 free
+  card 7: layers 40-44, 1 attention, 5353 MiB, 654 free
+  card 8: layers 45-47, 1 attention, 5840 MiB, 167 free
+== iq3-f16-ub128-49152-mtp draft_extra=2173
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 45 MiB
+  card 0: layers 0-5, 1 attention, 5466 MiB, 535 free
+  card 1: layers 6-12, 2 attention, 5860 MiB, 143 free
+  card 2: layers 13-18, 1 attention, 5087 MiB, 916 free
+  card 3: layers 19-23, 2 attention, 4920 MiB, 1083 free
+  card 4: layers 24-29, 1 attention, 5836 MiB, 167 free
+  card 5: layers 30-34, 1 attention, 5867 MiB, 136 free
+  card 6: layers 35-39, 2 attention, 5697 MiB, 304 free
+  card 7: layers 40-44, 1 attention, 5414 MiB, 593 free
+  card 8: layers 45-47, 1 attention, 5962 MiB, 45 free
+== iq3-f16-ub128-65536-mtp draft_extra=2243
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -68 MiB
+  card 0: layers 0-5, 1 attention, 5536 MiB, 465 free
+  card 1: layers 6-12, 2 attention, 5970 MiB, 33 free
+  card 2: layers 13-19, 2 attention, 6071 MiB, -68 free
+  card 3: layers 20-25, 1 attention, 5887 MiB, 116 free
+  card 4: layers 26-30, 1 attention, 5359 MiB, 644 free
+  card 5: layers 31-35, 2 attention, 6004 MiB, -1 free
+  card 6: layers 36-40, 1 attention, 5338 MiB, 663 free
+  card 7: layers 41-45, 1 attention, 5581 MiB, 426 free
+  card 8: layers 46-47, 1 attention, 5182 MiB, 825 free
+== iq3-f16-ub128-131072-mtp draft_extra=2528
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,5,5,3  smallest free -466 MiB
+  card 0: layers 0-5, 1 attention, 5821 MiB, 180 free
+  card 1: layers 6-11, 2 attention, 5601 MiB, 402 free
+  card 2: layers 12-18, 1 attention, 6257 MiB, -254 free
+  card 3: layers 19-24, 2 attention, 6469 MiB, -466 free
+  card 4: layers 25-30, 1 attention, 6422 MiB, -419 free
+  card 5: layers 31-35, 2 attention, 6450 MiB, -447 free
+  card 6: layers 36-40, 1 attention, 5623 MiB, 378 free
+  card 7: layers 41-45, 1 attention, 5866 MiB, 141 free
+  card 8: layers 46-47, 1 attention, 5752 MiB, 255 free
+== iq3-f16-ub128-262144-mtp draft_extra=3097
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,5,5,6,3  smallest free -1251 MiB
+  card 0: layers 0-5, 1 attention, 6390 MiB, -389 free
+  card 1: layers 6-11, 2 attention, 6492 MiB, -489 free
+  card 2: layers 12-18, 1 attention, 6826 MiB, -823 free
+  card 3: layers 19-23, 2 attention, 6367 MiB, -364 free
+  card 4: layers 24-29, 1 attention, 6760 MiB, -757 free
+  card 5: layers 30-34, 1 attention, 6791 MiB, -788 free
+  card 6: layers 35-39, 2 attention, 7144 MiB, -1143 free
+  card 7: layers 40-45, 1 attention, 7258 MiB, -1251 free
+  card 8: layers 46-47, 1 attention, 6890 MiB, -883 free
+== iq3-f16-ub256-32768-mtp draft_extra=2225
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 15 MiB
+  card 0: layers 0-5, 1 attention, 5515 MiB, 486 free
+  card 1: layers 6-12, 2 attention, 5887 MiB, 116 free
+  card 2: layers 13-19, 2 attention, 5988 MiB, 15 free
+  card 3: layers 20-25, 1 attention, 5884 MiB, 119 free
+  card 4: layers 26-30, 1 attention, 5356 MiB, 647 free
+  card 5: layers 31-35, 2 attention, 5921 MiB, 82 free
+  card 6: layers 36-40, 1 attention, 5335 MiB, 666 free
+  card 7: layers 41-45, 1 attention, 5578 MiB, 429 free
+  card 8: layers 46-47, 1 attention, 5161 MiB, 846 free
+== iq3-f16-ub256-49152-mtp draft_extra=2306
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -106 MiB
+  card 0: layers 0-5, 1 attention, 5595 MiB, 406 free
+  card 1: layers 6-12, 2 attention, 6008 MiB, -5 free
+  card 2: layers 13-19, 2 attention, 6109 MiB, -106 free
+  card 3: layers 20-25, 1 attention, 5965 MiB, 38 free
+  card 4: layers 26-30, 1 attention, 5437 MiB, 566 free
+  card 5: layers 31-35, 2 attention, 6042 MiB, -39 free
+  card 6: layers 36-40, 1 attention, 5416 MiB, 585 free
+  card 7: layers 41-45, 1 attention, 5659 MiB, 348 free
+  card 8: layers 46-47, 1 attention, 5323 MiB, 684 free
+== iq3-f16-ub256-65536-mtp draft_extra=2392
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -232 MiB
+  card 0: layers 0-5, 1 attention, 5682 MiB, 319 free
+  card 1: layers 6-12, 2 attention, 6134 MiB, -131 free
+  card 2: layers 13-19, 2 attention, 6235 MiB, -232 free
+  card 3: layers 20-25, 1 attention, 6051 MiB, -48 free
+  card 4: layers 26-30, 1 attention, 5523 MiB, 480 free
+  card 5: layers 31-35, 2 attention, 6168 MiB, -165 free
+  card 6: layers 36-40, 1 attention, 5502 MiB, 499 free
+  card 7: layers 41-45, 1 attention, 5745 MiB, 262 free
+  card 8: layers 46-47, 1 attention, 5495 MiB, 512 free
+== iq3-f16-ub256-131072-mtp draft_extra=2773
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,5,5,3  smallest free -726 MiB
+  card 0: layers 0-5, 1 attention, 6063 MiB, -62 free
+  card 1: layers 6-11, 2 attention, 5861 MiB, 142 free
+  card 2: layers 12-18, 1 attention, 6517 MiB, -514 free
+  card 3: layers 19-24, 2 attention, 6729 MiB, -726 free
+  card 4: layers 25-30, 1 attention, 6682 MiB, -679 free
+  card 5: layers 31-35, 2 attention, 6710 MiB, -707 free
+  card 6: layers 36-40, 1 attention, 5883 MiB, 118 free
+  card 7: layers 41-45, 1 attention, 6126 MiB, -119 free
+  card 8: layers 46-47, 1 attention, 6257 MiB, -250 free
+== iq3-f16-ub256-262144-mtp draft_extra=3535
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,5,5,6,3  smallest free -1774 MiB
+  card 0: layers 0-5, 1 attention, 6824 MiB, -823 free
+  card 1: layers 6-11, 2 attention, 6945 MiB, -942 free
+  card 2: layers 12-18, 1 attention, 7279 MiB, -1276 free
+  card 3: layers 19-23, 2 attention, 6820 MiB, -817 free
+  card 4: layers 24-29, 1 attention, 7213 MiB, -1210 free
+  card 5: layers 30-34, 1 attention, 7244 MiB, -1241 free
+  card 6: layers 35-39, 2 attention, 7597 MiB, -1596 free
+  card 7: layers 40-45, 1 attention, 7711 MiB, -1704 free
+  card 8: layers 46-47, 1 attention, 7781 MiB, -1774 free
+== iq3-f16-ub512-65536-mtp draft_extra=2692
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -562 MiB
+  card 0: layers 0-5, 1 attention, 5975 MiB, 26 free
+  card 1: layers 6-12, 2 attention, 6464 MiB, -461 free
+  card 2: layers 13-19, 2 attention, 6565 MiB, -562 free
+  card 3: layers 20-25, 1 attention, 6381 MiB, -378 free
+  card 4: layers 26-30, 1 attention, 5853 MiB, 150 free
+  card 5: layers 31-35, 2 attention, 6498 MiB, -495 free
+  card 6: layers 36-40, 1 attention, 5832 MiB, 169 free
+  card 7: layers 41-45, 1 attention, 6075 MiB, -68 free
+  card 8: layers 46-47, 1 attention, 6125 MiB, -118 free
+== iq3-f16-ub512-131072-mtp draft_extra=3284
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,5,5,3  smallest free -1302 MiB
+  card 0: layers 0-5, 1 attention, 6566 MiB, -565 free
+  card 1: layers 6-11, 2 attention, 6402 MiB, -399 free
+  card 2: layers 12-18, 1 attention, 7058 MiB, -1055 free
+  card 3: layers 19-24, 2 attention, 7270 MiB, -1267 free
+  card 4: layers 25-30, 1 attention, 7223 MiB, -1220 free
+  card 5: layers 31-35, 2 attention, 7251 MiB, -1248 free
+  card 6: layers 36-40, 1 attention, 6424 MiB, -423 free
+  card 7: layers 41-45, 1 attention, 6667 MiB, -660 free
+  card 8: layers 46-47, 1 attention, 7309 MiB, -1302 free
+== iq3-f16-ub512-262144-mtp draft_extra=4462
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,7,6,5,6,5,6,5,2  smallest free -2748 MiB
+  card 0: layers 0-6, 1 attention, 8458 MiB, -2457 free
+  card 1: layers 7-13, 2 attention, 8719 MiB, -2716 free
+  card 2: layers 14-19, 2 attention, 8102 MiB, -2099 free
+  card 3: layers 20-24, 1 attention, 7372 MiB, -1369 free
+  card 4: layers 25-30, 1 attention, 8401 MiB, -2398 free
+  card 5: layers 31-35, 2 attention, 8751 MiB, -2748 free
+  card 6: layers 36-41, 1 attention, 8514 MiB, -2513 free
+  card 7: layers 42-46, 1 attention, 7982 MiB, -1975 free
+  card 8: layers 47-47, 1 attention, 8618 MiB, -2611 free
+== iq3-q8_0-ub64-32768-mtp draft_extra=2070
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,5,5,4  smallest free 239 MiB
+  card 0: layers 0-5, 1 attention, 5372 MiB, 629 free
+  card 1: layers 6-12, 2 attention, 5679 MiB, 324 free
+  card 2: layers 13-18, 1 attention, 4984 MiB, 1019 free
+  card 3: layers 19-24, 2 attention, 5732 MiB, 271 free
+  card 4: layers 25-29, 1 attention, 4739 MiB, 1264 free
+  card 5: layers 30-34, 1 attention, 5764 MiB, 239 free
+  card 6: layers 35-39, 2 attention, 5516 MiB, 485 free
+  card 7: layers 40-44, 1 attention, 5311 MiB, 696 free
+  card 8: layers 45-47, 1 attention, 5756 MiB, 251 free
+== iq3-q8_0-ub64-49152-mtp draft_extra=2137
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 134 MiB
+  card 0: layers 0-5, 1 attention, 5439 MiB, 562 free
+  card 1: layers 6-12, 2 attention, 5768 MiB, 235 free
+  card 2: layers 13-19, 2 attention, 5869 MiB, 134 free
+  card 3: layers 20-25, 1 attention, 5781 MiB, 222 free
+  card 4: layers 26-30, 1 attention, 5253 MiB, 750 free
+  card 5: layers 31-35, 2 attention, 5802 MiB, 201 free
+  card 6: layers 36-40, 1 attention, 5232 MiB, 769 free
+  card 7: layers 41-45, 1 attention, 5475 MiB, 532 free
+  card 8: layers 46-47, 1 attention, 4970 MiB, 1037 free
+== iq3-q8_0-ub64-65536-mtp draft_extra=2203
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 47 MiB
+  card 0: layers 0-5, 1 attention, 5505 MiB, 496 free
+  card 1: layers 6-12, 2 attention, 5855 MiB, 148 free
+  card 2: layers 13-19, 2 attention, 5956 MiB, 47 free
+  card 3: layers 20-25, 1 attention, 5847 MiB, 156 free
+  card 4: layers 26-30, 1 attention, 5319 MiB, 684 free
+  card 5: layers 31-35, 2 attention, 5889 MiB, 114 free
+  card 6: layers 36-40, 1 attention, 5298 MiB, 703 free
+  card 7: layers 41-45, 1 attention, 5541 MiB, 466 free
+  card 8: layers 46-47, 1 attention, 5102 MiB, 905 free
+== iq3-q8_0-ub64-131072-mtp draft_extra=2468
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -304 MiB
+  card 0: layers 0-5, 1 attention, 5771 MiB, 230 free
+  card 1: layers 6-12, 2 attention, 6206 MiB, -203 free
+  card 2: layers 13-19, 2 attention, 6307 MiB, -304 free
+  card 3: layers 20-25, 1 attention, 6112 MiB, -109 free
+  card 4: layers 26-30, 1 attention, 5584 MiB, 419 free
+  card 5: layers 31-35, 2 attention, 6240 MiB, -237 free
+  card 6: layers 36-40, 1 attention, 5563 MiB, 438 free
+  card 7: layers 41-45, 1 attention, 5806 MiB, 201 free
+  card 8: layers 46-47, 1 attention, 5632 MiB, 375 free
+== iq3-q8_0-ub64-262144-mtp draft_extra=3000
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,5,5,3  smallest free -960 MiB
+  card 0: layers 0-5, 1 attention, 6302 MiB, -301 free
+  card 1: layers 6-11, 2 attention, 6095 MiB, -92 free
+  card 2: layers 12-18, 1 attention, 6729 MiB, -726 free
+  card 3: layers 19-24, 2 attention, 6963 MiB, -960 free
+  card 4: layers 25-30, 1 attention, 6894 MiB, -891 free
+  card 5: layers 31-35, 2 attention, 6944 MiB, -941 free
+  card 6: layers 36-40, 1 attention, 6095 MiB, -94 free
+  card 7: layers 41-45, 1 attention, 6338 MiB, -331 free
+  card 8: layers 46-47, 1 attention, 6696 MiB, -689 free
+== iq3-q8_0-ub128-32768-mtp draft_extra=2132
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 161 MiB
+  card 0: layers 0-5, 1 attention, 5425 MiB, 576 free
+  card 1: layers 6-12, 2 attention, 5741 MiB, 262 free
+  card 2: layers 13-19, 2 attention, 5842 MiB, 161 free
+  card 3: layers 20-25, 1 attention, 5776 MiB, 227 free
+  card 4: layers 26-30, 1 attention, 5248 MiB, 755 free
+  card 5: layers 31-35, 2 attention, 5775 MiB, 228 free
+  card 6: layers 36-40, 1 attention, 5227 MiB, 774 free
+  card 7: layers 41-45, 1 attention, 5470 MiB, 537 free
+  card 8: layers 46-47, 1 attention, 4960 MiB, 1047 free
+== iq3-q8_0-ub128-49152-mtp draft_extra=2219
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 52 MiB
+  card 0: layers 0-5, 1 attention, 5512 MiB, 489 free
+  card 1: layers 6-12, 2 attention, 5850 MiB, 153 free
+  card 2: layers 13-19, 2 attention, 5951 MiB, 52 free
+  card 3: layers 20-25, 1 attention, 5863 MiB, 140 free
+  card 4: layers 26-30, 1 attention, 5335 MiB, 668 free
+  card 5: layers 31-35, 2 attention, 5884 MiB, 119 free
+  card 6: layers 36-40, 1 attention, 5314 MiB, 687 free
+  card 7: layers 41-45, 1 attention, 5557 MiB, 450 free
+  card 8: layers 46-47, 1 attention, 5134 MiB, 873 free
+== iq3-q8_0-ub128-65536-mtp draft_extra=2301
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -51 MiB
+  card 0: layers 0-5, 1 attention, 5594 MiB, 407 free
+  card 1: layers 6-12, 2 attention, 5953 MiB, 50 free
+  card 2: layers 13-19, 2 attention, 6054 MiB, -51 free
+  card 3: layers 20-25, 1 attention, 5945 MiB, 58 free
+  card 4: layers 26-30, 1 attention, 5417 MiB, 586 free
+  card 5: layers 31-35, 2 attention, 5987 MiB, 16 free
+  card 6: layers 36-40, 1 attention, 5396 MiB, 605 free
+  card 7: layers 41-45, 1 attention, 5639 MiB, 368 free
+  card 8: layers 46-47, 1 attention, 5298 MiB, 709 free
+== iq3-q8_0-ub128-131072-mtp draft_extra=2631
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -467 MiB
+  card 0: layers 0-5, 1 attention, 5924 MiB, 77 free
+  card 1: layers 6-12, 2 attention, 6369 MiB, -366 free
+  card 2: layers 13-19, 2 attention, 6470 MiB, -467 free
+  card 3: layers 20-25, 1 attention, 6275 MiB, -272 free
+  card 4: layers 26-30, 1 attention, 5747 MiB, 256 free
+  card 5: layers 31-35, 2 attention, 6403 MiB, -400 free
+  card 6: layers 36-40, 1 attention, 5726 MiB, 275 free
+  card 7: layers 41-45, 1 attention, 5969 MiB, 38 free
+  card 8: layers 46-47, 1 attention, 5958 MiB, 49 free
+== iq3-q8_0-ub128-262144-mtp draft_extra=3290
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,5,5,3  smallest free -1269 MiB
+  card 0: layers 0-5, 1 attention, 6583 MiB, -582 free
+  card 1: layers 6-11, 2 attention, 6385 MiB, -382 free
+  card 2: layers 12-18, 1 attention, 7019 MiB, -1016 free
+  card 3: layers 19-24, 2 attention, 7253 MiB, -1250 free
+  card 4: layers 25-30, 1 attention, 7184 MiB, -1181 free
+  card 5: layers 31-35, 2 attention, 7234 MiB, -1231 free
+  card 6: layers 36-40, 1 attention, 6385 MiB, -384 free
+  card 7: layers 41-45, 1 attention, 6628 MiB, -621 free
+  card 8: layers 46-47, 1 attention, 7276 MiB, -1269 free
+== iq3-q8_0-ub256-32768-mtp draft_extra=2238
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 40 MiB
+  card 0: layers 0-5, 1 attention, 5527 MiB, 474 free
+  card 1: layers 6-12, 2 attention, 5862 MiB, 141 free
+  card 2: layers 13-19, 2 attention, 5963 MiB, 40 free
+  card 3: layers 20-25, 1 attention, 5897 MiB, 106 free
+  card 4: layers 26-30, 1 attention, 5369 MiB, 634 free
+  card 5: layers 31-35, 2 attention, 5896 MiB, 107 free
+  card 6: layers 36-40, 1 attention, 5348 MiB, 653 free
+  card 7: layers 41-45, 1 attention, 5591 MiB, 416 free
+  card 8: layers 46-47, 1 attention, 5187 MiB, 820 free
+== iq3-q8_0-ub256-49152-mtp draft_extra=2345
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -89 MiB
+  card 0: layers 0-5, 1 attention, 5634 MiB, 367 free
+  card 1: layers 6-12, 2 attention, 5991 MiB, 12 free
+  card 2: layers 13-19, 2 attention, 6092 MiB, -89 free
+  card 3: layers 20-25, 1 attention, 6004 MiB, -1 free
+  card 4: layers 26-30, 1 attention, 5476 MiB, 527 free
+  card 5: layers 31-35, 2 attention, 6025 MiB, -22 free
+  card 6: layers 36-40, 1 attention, 5455 MiB, 546 free
+  card 7: layers 41-45, 1 attention, 5698 MiB, 309 free
+  card 8: layers 46-47, 1 attention, 5401 MiB, 606 free
+== iq3-q8_0-ub256-65536-mtp draft_extra=2450
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -215 MiB
+  card 0: layers 0-5, 1 attention, 5740 MiB, 261 free
+  card 1: layers 6-12, 2 attention, 6117 MiB, -114 free
+  card 2: layers 13-19, 2 attention, 6218 MiB, -215 free
+  card 3: layers 20-25, 1 attention, 6109 MiB, -106 free
+  card 4: layers 26-30, 1 attention, 5581 MiB, 422 free
+  card 5: layers 31-35, 2 attention, 6151 MiB, -148 free
+  card 6: layers 36-40, 1 attention, 5560 MiB, 441 free
+  card 7: layers 41-45, 1 attention, 5803 MiB, 204 free
+  card 8: layers 46-47, 1 attention, 5611 MiB, 396 free
+== iq3-q8_0-ub256-131072-mtp draft_extra=2892
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -743 MiB
+  card 0: layers 0-5, 1 attention, 6182 MiB, -181 free
+  card 1: layers 6-12, 2 attention, 6645 MiB, -642 free
+  card 2: layers 13-19, 2 attention, 6746 MiB, -743 free
+  card 3: layers 20-25, 1 attention, 6551 MiB, -548 free
+  card 4: layers 26-30, 1 attention, 6023 MiB, -20 free
+  card 5: layers 31-35, 2 attention, 6679 MiB, -676 free
+  card 6: layers 36-40, 1 attention, 6002 MiB, -1 free
+  card 7: layers 41-45, 1 attention, 6245 MiB, -238 free
+  card 8: layers 46-47, 1 attention, 6495 MiB, -488 free
+== iq3-q8_0-ub256-262144-mtp draft_extra=3760
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,6,6,5,6,5,2  smallest free -1781 MiB
+  card 0: layers 0-5, 1 attention, 7049 MiB, -1048 free
+  card 1: layers 6-11, 2 attention, 6870 MiB, -867 free
+  card 2: layers 12-18, 1 attention, 7504 MiB, -1501 free
+  card 3: layers 19-24, 2 attention, 7738 MiB, -1735 free
+  card 4: layers 25-30, 1 attention, 7669 MiB, -1666 free
+  card 5: layers 31-35, 2 attention, 7719 MiB, -1716 free
+  card 6: layers 36-41, 1 attention, 7782 MiB, -1781 free
+  card 7: layers 42-46, 1 attention, 7250 MiB, -1243 free
+  card 8: layers 47-47, 1 attention, 7184 MiB, -1177 free
+== iq3-q8_0-ub512-65536-mtp draft_extra=2766
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free -561 MiB
+  card 0: layers 0-5, 1 attention, 6048 MiB, -47 free
+  card 1: layers 6-12, 2 attention, 6463 MiB, -460 free
+  card 2: layers 13-19, 2 attention, 6564 MiB, -561 free
+  card 3: layers 20-25, 1 attention, 6455 MiB, -452 free
+  card 4: layers 26-30, 1 attention, 5927 MiB, 76 free
+  card 5: layers 31-35, 2 attention, 6497 MiB, -494 free
+  card 6: layers 36-40, 1 attention, 5906 MiB, 95 free
+  card 7: layers 41-45, 1 attention, 6149 MiB, -142 free
+  card 8: layers 46-47, 1 attention, 6273 MiB, -266 free
+== iq3-q8_0-ub512-131072-mtp draft_extra=3399
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,6,5,2  smallest free -1450 MiB
+  card 0: layers 0-5, 1 attention, 6681 MiB, -680 free
+  card 1: layers 6-12, 2 attention, 7182 MiB, -1179 free
+  card 2: layers 13-19, 2 attention, 7283 MiB, -1280 free
+  card 3: layers 20-25, 1 attention, 7088 MiB, -1085 free
+  card 4: layers 26-30, 1 attention, 6560 MiB, -557 free
+  card 5: layers 31-35, 2 attention, 7216 MiB, -1213 free
+  card 6: layers 36-41, 1 attention, 7451 MiB, -1450 free
+  card 7: layers 42-46, 1 attention, 6919 MiB, -912 free
+  card 8: layers 47-47, 1 attention, 6492 MiB, -485 free
+== iq3-q8_0-ub512-262144-mtp draft_extra=4699
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,7,6,5,6,5,6,5,2  smallest free -3085 MiB
+  card 0: layers 0-6, 1 attention, 8695 MiB, -2694 free
+  card 1: layers 7-13, 2 attention, 8656 MiB, -2653 free
+  card 2: layers 14-19, 2 attention, 8039 MiB, -2036 free
+  card 3: layers 20-24, 1 attention, 7609 MiB, -1606 free
+  card 4: layers 25-30, 1 attention, 8638 MiB, -2635 free
+  card 5: layers 31-35, 2 attention, 8688 MiB, -2685 free
+  card 6: layers 36-41, 1 attention, 8751 MiB, -2750 free
+  card 7: layers 42-46, 1 attention, 8219 MiB, -2212 free
+  card 8: layers 47-47, 1 attention, 9092 MiB, -3085 free
+######## plan_iq3_ot150.txt
+== iq3x-f16-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 343 MiB
+  card 0: layers 0-5, 1 attention, 5308 MiB, 693 free
+  card 1: layers 6-12, 2 attention, 5654 MiB, 349 free
+  card 2: layers 13-18, 1 attention, 4920 MiB, 1083 free
+  card 3: layers 19-23, 2 attention, 4732 MiB, 1271 free
+  card 4: layers 24-28, 1 attention, 4632 MiB, 1371 free
+  card 5: layers 29-33, 1 attention, 5530 MiB, 473 free
+  card 6: layers 34-38, 1 attention, 5658 MiB, 343 free
+  card 7: layers 39-43, 2 attention, 5186 MiB, 821 free
+  card 8: layers 44-47, 1 attention, 4790 MiB, 1217 free
+== iq3x-f16-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 248 MiB
+  card 0: layers 0-5, 1 attention, 5369 MiB, 632 free
+  card 1: layers 6-12, 2 attention, 5755 MiB, 248 free
+  card 2: layers 13-18, 1 attention, 4981 MiB, 1022 free
+  card 3: layers 19-23, 2 attention, 4833 MiB, 1170 free
+  card 4: layers 24-28, 1 attention, 4693 MiB, 1310 free
+  card 5: layers 29-33, 1 attention, 5591 MiB, 412 free
+  card 6: layers 34-38, 1 attention, 5719 MiB, 282 free
+  card 7: layers 39-43, 2 attention, 5287 MiB, 720 free
+  card 8: layers 44-47, 1 attention, 4851 MiB, 1156 free
+== iq3x-f16-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free 155 MiB
+  card 0: layers 0-5, 1 attention, 5430 MiB, 571 free
+  card 1: layers 6-11, 2 attention, 5050 MiB, 953 free
+  card 2: layers 12-18, 1 attention, 5848 MiB, 155 free
+  card 3: layers 19-23, 2 attention, 4934 MiB, 1069 free
+  card 4: layers 24-28, 1 attention, 4754 MiB, 1249 free
+  card 5: layers 29-33, 1 attention, 5652 MiB, 351 free
+  card 6: layers 34-38, 1 attention, 5780 MiB, 221 free
+  card 7: layers 39-43, 2 attention, 5388 MiB, 619 free
+  card 8: layers 44-47, 1 attention, 4912 MiB, 1095 free
+== iq3x-f16-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,4,5,5,5 -ot blk\.12\.ffn_up_exps=CUDA2,blk\.12\.ffn_down_exps=CUDA2,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 214 MiB
+  card 0: layers 0-5, 1 attention, 5675 MiB, 326 free
+  card 1: layers 6-12, 2 attention, 5779 MiB, 224 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_up_exps, blk.12.ffn_down_exps, 5768 MiB, 235 free
+  card 3: layers 19-23, 2 attention, 5339 MiB, 664 free
+  card 4: layers 24-29, 1 attention, 5585 MiB, 418 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5309 MiB, 694 free
+  card 6: layers 34-38, 1 attention, 5574 MiB, 427 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5793 MiB, 214 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5606 MiB, 401 free
+== iq3x-f16-ub64-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-f16-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 284 MiB
+  card 0: layers 0-5, 1 attention, 5358 MiB, 643 free
+  card 1: layers 6-12, 2 attention, 5713 MiB, 290 free
+  card 2: layers 13-18, 1 attention, 4979 MiB, 1024 free
+  card 3: layers 19-23, 2 attention, 4791 MiB, 1212 free
+  card 4: layers 24-28, 1 attention, 4691 MiB, 1312 free
+  card 5: layers 29-33, 1 attention, 5589 MiB, 414 free
+  card 6: layers 34-38, 1 attention, 5717 MiB, 284 free
+  card 7: layers 39-43, 2 attention, 5245 MiB, 762 free
+  card 8: layers 44-47, 1 attention, 4849 MiB, 1158 free
+== iq3x-f16-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 189 MiB
+  card 0: layers 0-5, 1 attention, 5419 MiB, 582 free
+  card 1: layers 6-12, 2 attention, 5814 MiB, 189 free
+  card 2: layers 13-18, 1 attention, 5040 MiB, 963 free
+  card 3: layers 19-23, 2 attention, 4892 MiB, 1111 free
+  card 4: layers 24-28, 1 attention, 4752 MiB, 1251 free
+  card 5: layers 29-33, 1 attention, 5650 MiB, 353 free
+  card 6: layers 34-38, 1 attention, 5778 MiB, 223 free
+  card 7: layers 39-43, 2 attention, 5346 MiB, 661 free
+  card 8: layers 44-47, 1 attention, 4910 MiB, 1097 free
+== iq3x-f16-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5 -ot blk\.18\.ffn_down_exps=CUDA3  smallest free 153 MiB
+  card 0: layers 0-5, 1 attention, 5489 MiB, 512 free
+  card 1: layers 6-11, 2 attention, 5118 MiB, 885 free
+  card 2: layers 12-18, 1 attention, 5691 MiB, 312 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_down_exps, 5227 MiB, 776 free
+  card 4: layers 24-28, 1 attention, 4822 MiB, 1181 free
+  card 5: layers 29-33, 1 attention, 5720 MiB, 283 free
+  card 6: layers 34-38, 1 attention, 5848 MiB, 153 free
+  card 7: layers 39-43, 2 attention, 5456 MiB, 551 free
+  card 8: layers 44-47, 1 attention, 4980 MiB, 1027 free
+== iq3x-f16-ub128-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,6,5,6,5,4,5,5 -ot blk\.6\.ffn_gate_exps=CUDA1,blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.12\.ffn_up_exps=CUDA2,blk\.12\.ffn_down_exps=CUDA2,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.34\.ffn_up_exps=CUDA6,blk\.34\.ffn_down_exps=CUDA6,blk\.43\.ffn_down_exps=CUDA8  smallest free 159 MiB
+  card 0: layers 0-6, 1 attention, 5842 MiB, 159 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_gate_exps, blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5820 MiB, 183 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_up_exps, blk.12.ffn_down_exps, 5652 MiB, 351 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_down_exps, 5673 MiB, 330 free
+  card 4: layers 24-29, 1 attention, 5694 MiB, 309 free
+  card 5: layers 30-34, 1 attention, plus blk.29.ffn_down_exps, 5841 MiB, 162 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_up_exps, blk.34.ffn_down_exps, 5710 MiB, 291 free
+  card 7: layers 39-43, 2 attention, 5452 MiB, 555 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5715 MiB, 292 free
+== iq3x-f16-ub128-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-f16-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 156 MiB
+  card 0: layers 0-5, 1 attention, 5468 MiB, 533 free
+  card 1: layers 6-12, 2 attention, 5841 MiB, 162 free
+  card 2: layers 13-18, 1 attention, 5107 MiB, 896 free
+  card 3: layers 19-23, 2 attention, 4919 MiB, 1084 free
+  card 4: layers 24-28, 1 attention, 4819 MiB, 1184 free
+  card 5: layers 29-33, 1 attention, 5717 MiB, 286 free
+  card 6: layers 34-38, 1 attention, 5845 MiB, 156 free
+  card 7: layers 39-43, 2 attention, 5373 MiB, 634 free
+  card 8: layers 44-47, 1 attention, 4977 MiB, 1030 free
+== iq3x-f16-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 205 MiB
+  card 0: layers 0-5, 1 attention, 5548 MiB, 453 free
+  card 1: layers 6-12, 2 attention, 5737 MiB, 266 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5413 MiB, 590 free
+  card 3: layers 19-23, 2 attention, 5040 MiB, 963 free
+  card 4: layers 24-28, 1 attention, 4900 MiB, 1103 free
+  card 5: layers 29-33, 1 attention, 5798 MiB, 205 free
+  card 6: layers 34-38, 1 attention, 5476 MiB, 525 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5494 MiB, 513 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5508 MiB, 499 free
+== iq3x-f16-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 268 MiB
+  card 0: layers 0-5, 1 attention, 5635 MiB, 366 free
+  card 1: layers 6-11, 2 attention, 5282 MiB, 721 free
+  card 2: layers 12-18, 1 attention, 5512 MiB, 491 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5735 MiB, 268 free
+  card 4: layers 24-29, 1 attention, 5573 MiB, 430 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5297 MiB, 706 free
+  card 6: layers 34-38, 1 attention, 5562 MiB, 439 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5620 MiB, 387 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5594 MiB, 413 free
+== iq3x-f16-ub256-131072 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-f16-ub256-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-f16-ub512-65536 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-f16-ub512-131072 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-f16-ub512-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 326 MiB
+  card 0: layers 0-5, 1 attention, 5325 MiB, 676 free
+  card 1: layers 6-12, 2 attention, 5633 MiB, 370 free
+  card 2: layers 13-18, 1 attention, 4937 MiB, 1066 free
+  card 3: layers 19-23, 2 attention, 4711 MiB, 1292 free
+  card 4: layers 24-28, 1 attention, 4649 MiB, 1354 free
+  card 5: layers 29-33, 1 attention, 5547 MiB, 456 free
+  card 6: layers 34-38, 1 attention, 5675 MiB, 326 free
+  card 7: layers 39-43, 2 attention, 5165 MiB, 842 free
+  card 8: layers 44-47, 1 attention, 4807 MiB, 1200 free
+== iq3x-q8_0-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 259 MiB
+  card 0: layers 0-5, 1 attention, 5392 MiB, 609 free
+  card 1: layers 6-12, 2 attention, 5722 MiB, 281 free
+  card 2: layers 13-18, 1 attention, 5004 MiB, 999 free
+  card 3: layers 19-23, 2 attention, 4800 MiB, 1203 free
+  card 4: layers 24-28, 1 attention, 4716 MiB, 1287 free
+  card 5: layers 29-33, 1 attention, 5614 MiB, 389 free
+  card 6: layers 34-38, 1 attention, 5742 MiB, 259 free
+  card 7: layers 39-43, 2 attention, 5254 MiB, 753 free
+  card 8: layers 44-47, 1 attention, 4874 MiB, 1133 free
+== iq3x-q8_0-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 193 MiB
+  card 0: layers 0-5, 1 attention, 5458 MiB, 543 free
+  card 1: layers 6-12, 2 attention, 5809 MiB, 194 free
+  card 2: layers 13-18, 1 attention, 5070 MiB, 933 free
+  card 3: layers 19-23, 2 attention, 4887 MiB, 1116 free
+  card 4: layers 24-28, 1 attention, 4782 MiB, 1221 free
+  card 5: layers 29-33, 1 attention, 5680 MiB, 323 free
+  card 6: layers 34-38, 1 attention, 5808 MiB, 193 free
+  card 7: layers 39-43, 2 attention, 5341 MiB, 666 free
+  card 8: layers 44-47, 1 attention, 4940 MiB, 1067 free
+== iq3x-q8_0-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 196 MiB
+  card 0: layers 0-5, 1 attention, 5724 MiB, 277 free
+  card 1: layers 6-11, 2 attention, 5354 MiB, 649 free
+  card 2: layers 12-18, 1 attention, 5573 MiB, 430 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5807 MiB, 196 free
+  card 4: layers 24-29, 1 attention, 5634 MiB, 369 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5358 MiB, 645 free
+  card 6: layers 34-38, 1 attention, 5623 MiB, 378 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5692 MiB, 315 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5655 MiB, 352 free
+== iq3x-q8_0-ub64-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 264 MiB
+  card 0: layers 0-5, 1 attention, 5378 MiB, 623 free
+  card 1: layers 6-12, 2 attention, 5695 MiB, 308 free
+  card 2: layers 13-18, 1 attention, 4999 MiB, 1004 free
+  card 3: layers 19-23, 2 attention, 4773 MiB, 1230 free
+  card 4: layers 24-28, 1 attention, 4711 MiB, 1292 free
+  card 5: layers 29-33, 1 attention, 5609 MiB, 394 free
+  card 6: layers 34-38, 1 attention, 5737 MiB, 264 free
+  card 7: layers 39-43, 2 attention, 5227 MiB, 780 free
+  card 8: layers 44-47, 1 attention, 4869 MiB, 1138 free
+== iq3x-q8_0-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 177 MiB
+  card 0: layers 0-5, 1 attention, 5465 MiB, 536 free
+  card 1: layers 6-12, 2 attention, 5804 MiB, 199 free
+  card 2: layers 13-18, 1 attention, 5086 MiB, 917 free
+  card 3: layers 19-23, 2 attention, 4882 MiB, 1121 free
+  card 4: layers 24-28, 1 attention, 4798 MiB, 1205 free
+  card 5: layers 29-33, 1 attention, 5696 MiB, 307 free
+  card 6: layers 34-38, 1 attention, 5824 MiB, 177 free
+  card 7: layers 39-43, 2 attention, 5336 MiB, 671 free
+  card 8: layers 44-47, 1 attention, 4956 MiB, 1051 free
+== iq3x-q8_0-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,4,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.34\.ffn_down_exps=CUDA6  smallest free 259 MiB
+  card 0: layers 0-5, 1 attention, 5547 MiB, 454 free
+  card 1: layers 6-12, 2 attention, 5682 MiB, 321 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5393 MiB, 610 free
+  card 3: layers 19-24, 2 attention, 5744 MiB, 259 free
+  card 4: layers 25-29, 1 attention, plus blk.24.ffn_down_exps, 5158 MiB, 845 free
+  card 5: layers 30-34, 1 attention, 5508 MiB, 495 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_down_exps, 5139 MiB, 862 free
+  card 7: layers 39-43, 2 attention, 5439 MiB, 568 free
+  card 8: layers 44-47, 1 attention, 5038 MiB, 969 free
+== iq3x-q8_0-ub128-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.5\.ffn_down_exps=CUDA1,blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.23\.ffn_down_exps=CUDA4,blk\.29\.ffn_up_exps=CUDA5,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 152 MiB
+  card 0: layers 0-5, 1 attention, 5652 MiB, 349 free
+  card 1: layers 6-11, 2 attention, plus blk.5.ffn_down_exps, 5742 MiB, 261 free
+  card 2: layers 12-18, 1 attention, 5736 MiB, 267 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5745 MiB, 258 free
+  card 4: layers 24-29, 1 attention, plus blk.23.ffn_down_exps, 5766 MiB, 237 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_up_exps, blk.29.ffn_down_exps, 5777 MiB, 226 free
+  card 6: layers 34-38, 1 attention, 5786 MiB, 215 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5855 MiB, 152 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5818 MiB, 189 free
+== iq3x-q8_0-ub128-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.38\.ffn_down_exps=CUDA7  smallest free 187 MiB
+  card 0: layers 0-5, 1 attention, 5480 MiB, 521 free
+  card 1: layers 6-12, 2 attention, 5816 MiB, 187 free
+  card 2: layers 13-18, 1 attention, 5120 MiB, 883 free
+  card 3: layers 19-23, 2 attention, 4894 MiB, 1109 free
+  card 4: layers 24-28, 1 attention, 4832 MiB, 1171 free
+  card 5: layers 29-33, 1 attention, 5730 MiB, 273 free
+  card 6: layers 34-38, 1 attention, 5408 MiB, 593 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5798 MiB, 209 free
+  card 8: layers 44-47, 1 attention, 4990 MiB, 1017 free
+== iq3x-q8_0-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,4,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.34\.ffn_down_exps=CUDA6  smallest free 221 MiB
+  card 0: layers 0-5, 1 attention, 5587 MiB, 414 free
+  card 1: layers 6-12, 2 attention, 5720 MiB, 283 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5452 MiB, 551 free
+  card 3: layers 19-24, 2 attention, 5782 MiB, 221 free
+  card 4: layers 25-29, 1 attention, plus blk.24.ffn_down_exps, 5217 MiB, 786 free
+  card 5: layers 30-34, 1 attention, 5567 MiB, 436 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_down_exps, 5198 MiB, 803 free
+  card 7: layers 39-43, 2 attention, 5477 MiB, 530 free
+  card 8: layers 44-47, 1 attention, 5097 MiB, 910 free
+== iq3x-q8_0-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,4,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 157 MiB
+  card 0: layers 0-5, 1 attention, 5693 MiB, 308 free
+  card 1: layers 6-12, 2 attention, 5846 MiB, 157 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5557 MiB, 446 free
+  card 3: layers 19-23, 2 attention, 5149 MiB, 854 free
+  card 4: layers 24-29, 1 attention, 5631 MiB, 372 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5355 MiB, 648 free
+  card 6: layers 34-38, 1 attention, 5620 MiB, 381 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5603 MiB, 404 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5652 MiB, 355 free
+== iq3x-q8_0-ub256-131072 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub256-262144 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub512-65536 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub512-131072 draft_extra=0
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub512-262144 draft_extra=0
+no split leaves 150 MiB on every card
+######## plan_iq3_ot150_mtp.txt
+== iq3x-f16-ub64-32768-mtp draft_extra=2053
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 256 MiB
+  card 0: layers 0-5, 1 attention, 5355 MiB, 646 free
+  card 1: layers 6-12, 2 attention, 5700 MiB, 303 free
+  card 2: layers 13-18, 1 attention, 4967 MiB, 1036 free
+  card 3: layers 19-23, 2 attention, 4760 MiB, 1243 free
+  card 4: layers 24-29, 1 attention, 5716 MiB, 287 free
+  card 5: layers 30-34, 1 attention, 5747 MiB, 256 free
+  card 6: layers 35-39, 2 attention, 5537 MiB, 464 free
+  card 7: layers 40-44, 1 attention, 5294 MiB, 713 free
+  card 8: layers 45-47, 1 attention, 5722 MiB, 285 free
+== iq3x-f16-ub64-49152-mtp draft_extra=2114
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 163 MiB
+  card 0: layers 0-5, 1 attention, 5416 MiB, 585 free
+  card 1: layers 6-12, 2 attention, 5801 MiB, 202 free
+  card 2: layers 13-18, 1 attention, 5028 MiB, 975 free
+  card 3: layers 19-23, 2 attention, 4861 MiB, 1142 free
+  card 4: layers 24-29, 1 attention, 5777 MiB, 226 free
+  card 5: layers 30-34, 1 attention, 5808 MiB, 195 free
+  card 6: layers 35-39, 2 attention, 5638 MiB, 363 free
+  card 7: layers 40-44, 1 attention, 5355 MiB, 652 free
+  card 8: layers 45-47, 1 attention, 5844 MiB, 163 free
+== iq3x-f16-ub64-65536-mtp draft_extra=2175
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 184 MiB
+  card 0: layers 0-6, 1 attention, 5760 MiB, 241 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5619 MiB, 384 free
+  card 2: layers 13-19, 2 attention, 5778 MiB, 225 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5819 MiB, 184 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_down_exps, 5516 MiB, 487 free
+  card 5: layers 31-35, 2 attention, 5486 MiB, 517 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5720 MiB, 281 free
+  card 7: layers 41-45, 1 attention, 5513 MiB, 494 free
+  card 8: layers 46-47, 1 attention, 5046 MiB, 961 free
+== iq3x-f16-ub64-131072-mtp draft_extra=2419
+no split leaves 150 MiB on every card
+== iq3x-f16-ub64-262144-mtp draft_extra=2909
+no split leaves 150 MiB on every card
+== iq3x-f16-ub128-32768-mtp draft_extra=2112
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,5,5,5,4  smallest free 167 MiB
+  card 0: layers 0-5, 1 attention, 5405 MiB, 596 free
+  card 1: layers 6-12, 2 attention, 5759 MiB, 244 free
+  card 2: layers 13-18, 1 attention, 5026 MiB, 977 free
+  card 3: layers 19-23, 2 attention, 4819 MiB, 1184 free
+  card 4: layers 24-29, 1 attention, 5775 MiB, 228 free
+  card 5: layers 30-34, 1 attention, 5806 MiB, 197 free
+  card 6: layers 35-39, 2 attention, 5596 MiB, 405 free
+  card 7: layers 40-44, 1 attention, 5353 MiB, 654 free
+  card 8: layers 45-47, 1 attention, 5840 MiB, 167 free
+== iq3x-f16-ub128-49152-mtp draft_extra=2173
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 186 MiB
+  card 0: layers 0-6, 1 attention, 5749 MiB, 252 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5577 MiB, 426 free
+  card 2: layers 13-19, 2 attention, 5736 MiB, 267 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5817 MiB, 186 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_down_exps, 5514 MiB, 489 free
+  card 5: layers 31-35, 2 attention, 5444 MiB, 559 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5718 MiB, 283 free
+  card 7: layers 41-45, 1 attention, 5511 MiB, 496 free
+  card 8: layers 46-47, 1 attention, 5042 MiB, 965 free
+== iq3x-f16-ub128-65536-mtp draft_extra=2243
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_up_exps=CUDA4,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 157 MiB
+  card 0: layers 0-6, 1 attention, 5819 MiB, 182 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5687 MiB, 316 free
+  card 2: layers 13-19, 2 attention, 5846 MiB, 157 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5655 MiB, 348 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_up_exps, blk.25.ffn_down_exps, 5815 MiB, 188 free
+  card 5: layers 31-35, 2 attention, 5554 MiB, 449 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5788 MiB, 213 free
+  card 7: layers 41-45, 1 attention, 5581 MiB, 426 free
+  card 8: layers 46-47, 1 attention, 5182 MiB, 825 free
+== iq3x-f16-ub128-131072-mtp draft_extra=2528
+no split leaves 150 MiB on every card
+== iq3x-f16-ub128-262144-mtp draft_extra=3097
+no split leaves 150 MiB on every card
+== iq3x-f16-ub256-32768-mtp draft_extra=2225
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_up_exps=CUDA4,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 191 MiB
+  card 0: layers 0-6, 1 attention, 5798 MiB, 203 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5604 MiB, 399 free
+  card 2: layers 13-19, 2 attention, 5763 MiB, 240 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5652 MiB, 351 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_up_exps, blk.25.ffn_down_exps, 5812 MiB, 191 free
+  card 5: layers 31-35, 2 attention, 5471 MiB, 532 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5785 MiB, 216 free
+  card 7: layers 41-45, 1 attention, 5578 MiB, 429 free
+  card 8: layers 46-47, 1 attention, 5161 MiB, 846 free
+== iq3x-f16-ub256-49152-mtp draft_extra=2306
+no split leaves 150 MiB on every card
+== iq3x-f16-ub256-65536-mtp draft_extra=2392
+no split leaves 150 MiB on every card
+== iq3x-f16-ub256-131072-mtp draft_extra=2773
+no split leaves 150 MiB on every card
+== iq3x-f16-ub256-262144-mtp draft_extra=3535
+no split leaves 150 MiB on every card
+== iq3x-f16-ub512-65536-mtp draft_extra=2692
+no split leaves 150 MiB on every card
+== iq3x-f16-ub512-131072-mtp draft_extra=3284
+no split leaves 150 MiB on every card
+== iq3x-f16-ub512-262144-mtp draft_extra=4462
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub64-32768-mtp draft_extra=2070
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,5,5,4  smallest free 239 MiB
+  card 0: layers 0-5, 1 attention, 5372 MiB, 629 free
+  card 1: layers 6-12, 2 attention, 5679 MiB, 324 free
+  card 2: layers 13-18, 1 attention, 4984 MiB, 1019 free
+  card 3: layers 19-24, 2 attention, 5732 MiB, 271 free
+  card 4: layers 25-29, 1 attention, 4739 MiB, 1264 free
+  card 5: layers 30-34, 1 attention, 5764 MiB, 239 free
+  card 6: layers 35-39, 2 attention, 5516 MiB, 485 free
+  card 7: layers 40-44, 1 attention, 5311 MiB, 696 free
+  card 8: layers 45-47, 1 attention, 5756 MiB, 251 free
+== iq3x-q8_0-ub64-49152-mtp draft_extra=2137
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3 -ot blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_down_exps=CUDA4  smallest free 201 MiB
+  card 0: layers 0-5, 1 attention, 5439 MiB, 562 free
+  card 1: layers 6-12, 2 attention, 5768 MiB, 235 free
+  card 2: layers 13-19, 2 attention, 5644 MiB, 359 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5781 MiB, 222 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_down_exps, 5478 MiB, 525 free
+  card 5: layers 31-35, 2 attention, 5802 MiB, 201 free
+  card 6: layers 36-40, 1 attention, 5232 MiB, 769 free
+  card 7: layers 41-45, 1 attention, 5475 MiB, 532 free
+  card 8: layers 46-47, 1 attention, 4970 MiB, 1037 free
+== iq3x-q8_0-ub64-65536-mtp draft_extra=2203
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 156 MiB
+  card 0: layers 0-6, 1 attention, 5788 MiB, 213 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5572 MiB, 431 free
+  card 2: layers 13-19, 2 attention, 5731 MiB, 272 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5847 MiB, 156 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_down_exps, 5544 MiB, 459 free
+  card 5: layers 31-35, 2 attention, 5439 MiB, 564 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5748 MiB, 253 free
+  card 7: layers 41-45, 1 attention, 5541 MiB, 466 free
+  card 8: layers 46-47, 1 attention, 5102 MiB, 905 free
+== iq3x-q8_0-ub64-131072-mtp draft_extra=2468
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub64-262144-mtp draft_extra=3000
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub128-32768-mtp draft_extra=2132
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3  smallest free 161 MiB
+  card 0: layers 0-5, 1 attention, 5425 MiB, 576 free
+  card 1: layers 6-12, 2 attention, 5741 MiB, 262 free
+  card 2: layers 13-19, 2 attention, 5842 MiB, 161 free
+  card 3: layers 20-25, 1 attention, 5776 MiB, 227 free
+  card 4: layers 26-30, 1 attention, 5248 MiB, 755 free
+  card 5: layers 31-35, 2 attention, 5775 MiB, 228 free
+  card 6: layers 36-40, 1 attention, 5227 MiB, 774 free
+  card 7: layers 41-45, 1 attention, 5470 MiB, 537 free
+  card 8: layers 46-47, 1 attention, 4960 MiB, 1047 free
+== iq3x-q8_0-ub128-49152-mtp draft_extra=2219
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,5,6,4,5,6,3 -ot blk\.19\.ffn_down_exps=CUDA3,blk\.30\.ffn_down_exps=CUDA5,blk\.45\.ffn_up_exps=CUDA8,blk\.45\.ffn_down_exps=CUDA8  smallest free 153 MiB
+  card 0: layers 0-5, 1 attention, 5512 MiB, 489 free
+  card 1: layers 6-12, 2 attention, 5850 MiB, 153 free
+  card 2: layers 13-19, 2 attention, 5726 MiB, 277 free
+  card 3: layers 20-24, 1 attention, plus blk.19.ffn_down_exps, 5309 MiB, 694 free
+  card 4: layers 25-30, 1 attention, 5663 MiB, 340 free
+  card 5: layers 31-34, 1 attention, plus blk.30.ffn_down_exps, 5139 MiB, 864 free
+  card 6: layers 35-39, 2 attention, 5687 MiB, 314 free
+  card 7: layers 40-45, 1 attention, 5848 MiB, 159 free
+  card 8: layers 46-47, 1 attention, plus blk.45.ffn_up_exps, blk.45.ffn_down_exps, 5666 MiB, 341 free
+== iq3x-q8_0-ub128-65536-mtp draft_extra=2301
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,5,6,5,5,5,3 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.19\.ffn_up_exps=CUDA3,blk\.19\.ffn_down_exps=CUDA3,blk\.30\.ffn_down_exps=CUDA5,blk\.35\.ffn_up_exps=CUDA6,blk\.35\.ffn_down_exps=CUDA6,blk\.40\.ffn_up_exps=CUDA7,blk\.40\.ffn_down_exps=CUDA7,blk\.45\.ffn_up_exps=CUDA8,blk\.45\.ffn_down_exps=CUDA8  smallest free 177 MiB
+  card 0: layers 0-5, 1 attention, 5594 MiB, 407 free
+  card 1: layers 6-12, 2 attention, 5728 MiB, 275 free
+  card 2: layers 13-19, 2 attention, plus blk.12.ffn_down_exps, 5823 MiB, 180 free
+  card 3: layers 20-24, 1 attention, plus blk.19.ffn_up_exps, blk.19.ffn_down_exps, 5623 MiB, 380 free
+  card 4: layers 25-30, 1 attention, 5745 MiB, 258 free
+  card 5: layers 31-35, 2 attention, plus blk.30.ffn_down_exps, 5681 MiB, 322 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_up_exps, blk.35.ffn_down_exps, 5671 MiB, 330 free
+  card 7: layers 41-45, 1 attention, plus blk.40.ffn_up_exps, blk.40.ffn_down_exps, 5589 MiB, 418 free
+  card 8: layers 46-47, 1 attention, plus blk.45.ffn_up_exps, blk.45.ffn_down_exps, 5830 MiB, 177 free
+== iq3x-q8_0-ub128-131072-mtp draft_extra=2631
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub128-262144-mtp draft_extra=3290
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub256-32768-mtp draft_extra=2238
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_up_exps=CUDA4,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 178 MiB
+  card 0: layers 0-6, 1 attention, 5810 MiB, 191 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5579 MiB, 424 free
+  card 2: layers 13-19, 2 attention, 5738 MiB, 265 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5665 MiB, 338 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_up_exps, blk.25.ffn_down_exps, 5825 MiB, 178 free
+  card 5: layers 31-35, 2 attention, 5446 MiB, 557 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5798 MiB, 203 free
+  card 7: layers 41-45, 1 attention, 5591 MiB, 416 free
+  card 8: layers 46-47, 1 attention, 5187 MiB, 820 free
+== iq3x-q8_0-ub256-49152-mtp draft_extra=2345
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub256-65536-mtp draft_extra=2450
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub256-131072-mtp draft_extra=2892
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub256-262144-mtp draft_extra=3760
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub512-65536-mtp draft_extra=2766
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub512-131072-mtp draft_extra=3399
+no split leaves 150 MiB on every card
+== iq3x-q8_0-ub512-262144-mtp draft_extra=4699
+no split leaves 150 MiB on every card
+######## plan_iq3_ot300.txt
+== iq3x-f16-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 343 MiB
+  card 0: layers 0-5, 1 attention, 5308 MiB, 693 free
+  card 1: layers 6-12, 2 attention, 5654 MiB, 349 free
+  card 2: layers 13-18, 1 attention, 4920 MiB, 1083 free
+  card 3: layers 19-23, 2 attention, 4732 MiB, 1271 free
+  card 4: layers 24-28, 1 attention, 4632 MiB, 1371 free
+  card 5: layers 29-33, 1 attention, 5530 MiB, 473 free
+  card 6: layers 34-38, 1 attention, 5658 MiB, 343 free
+  card 7: layers 39-43, 2 attention, 5186 MiB, 821 free
+  card 8: layers 44-47, 1 attention, 4790 MiB, 1217 free
+== iq3x-f16-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 412 MiB
+  card 0: layers 0-5, 1 attention, 5369 MiB, 632 free
+  card 1: layers 6-12, 2 attention, 5530 MiB, 473 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5206 MiB, 797 free
+  card 3: layers 19-23, 2 attention, 4833 MiB, 1170 free
+  card 4: layers 24-28, 1 attention, 4693 MiB, 1310 free
+  card 5: layers 29-33, 1 attention, 5591 MiB, 412 free
+  card 6: layers 34-38, 1 attention, 5269 MiB, 732 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5287 MiB, 720 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5301 MiB, 706 free
+== iq3x-f16-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5 -ot blk\.18\.ffn_down_exps=CUDA3,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 351 MiB
+  card 0: layers 0-5, 1 attention, 5430 MiB, 571 free
+  card 1: layers 6-11, 2 attention, 5050 MiB, 953 free
+  card 2: layers 12-18, 1 attention, 5623 MiB, 380 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_down_exps, 5159 MiB, 844 free
+  card 4: layers 24-28, 1 attention, 4754 MiB, 1249 free
+  card 5: layers 29-33, 1 attention, 5652 MiB, 351 free
+  card 6: layers 34-38, 1 attention, 5330 MiB, 671 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5388 MiB, 619 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5362 MiB, 645 free
+== iq3x-f16-ub64-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub64-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.38\.ffn_down_exps=CUDA7  smallest free 312 MiB
+  card 0: layers 0-5, 1 attention, 5358 MiB, 643 free
+  card 1: layers 6-12, 2 attention, 5488 MiB, 515 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5204 MiB, 799 free
+  card 3: layers 19-23, 2 attention, 4791 MiB, 1212 free
+  card 4: layers 24-28, 1 attention, 4691 MiB, 1312 free
+  card 5: layers 29-33, 1 attention, 5589 MiB, 414 free
+  card 6: layers 34-38, 1 attention, 5267 MiB, 734 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5695 MiB, 312 free
+  card 8: layers 44-47, 1 attention, 4849 MiB, 1158 free
+== iq3x-f16-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 353 MiB
+  card 0: layers 0-5, 1 attention, 5419 MiB, 582 free
+  card 1: layers 6-12, 2 attention, 5589 MiB, 414 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5265 MiB, 738 free
+  card 3: layers 19-23, 2 attention, 4892 MiB, 1111 free
+  card 4: layers 24-28, 1 attention, 4752 MiB, 1251 free
+  card 5: layers 29-33, 1 attention, 5650 MiB, 353 free
+  card 6: layers 34-38, 1 attention, 5328 MiB, 673 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5346 MiB, 661 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5360 MiB, 647 free
+== iq3x-f16-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5 -ot blk\.18\.ffn_down_exps=CUDA3,blk\.33\.ffn_down_exps=CUDA6,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 312 MiB
+  card 0: layers 0-5, 1 attention, 5489 MiB, 512 free
+  card 1: layers 6-11, 2 attention, 5118 MiB, 885 free
+  card 2: layers 12-18, 1 attention, 5691 MiB, 312 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_down_exps, 5227 MiB, 776 free
+  card 4: layers 24-28, 1 attention, 4822 MiB, 1181 free
+  card 5: layers 29-33, 1 attention, 5495 MiB, 508 free
+  card 6: layers 34-38, 1 attention, plus blk.33.ffn_down_exps, 5623 MiB, 378 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5456 MiB, 551 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5430 MiB, 577 free
+== iq3x-f16-ub128-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub128-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,4,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.34\.ffn_down_exps=CUDA6  smallest free 325 MiB
+  card 0: layers 0-5, 1 attention, 5468 MiB, 533 free
+  card 1: layers 6-12, 2 attention, 5616 MiB, 387 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5332 MiB, 671 free
+  card 3: layers 19-24, 2 attention, 5678 MiB, 325 free
+  card 4: layers 25-29, 1 attention, plus blk.24.ffn_down_exps, 5097 MiB, 906 free
+  card 5: layers 30-34, 1 attention, 5447 MiB, 556 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_down_exps, 5078 MiB, 923 free
+  card 7: layers 39-43, 2 attention, 5373 MiB, 634 free
+  card 8: layers 44-47, 1 attention, 4977 MiB, 1030 free
+== iq3x-f16-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 394 MiB
+  card 0: layers 0-5, 1 attention, 5548 MiB, 453 free
+  card 1: layers 6-11, 2 attention, 5156 MiB, 847 free
+  card 2: layers 12-18, 1 attention, 5426 MiB, 577 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5609 MiB, 394 free
+  card 4: layers 24-29, 1 attention, 5487 MiB, 516 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5211 MiB, 792 free
+  card 6: layers 34-38, 1 attention, 5476 MiB, 525 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5494 MiB, 513 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5508 MiB, 499 free
+== iq3x-f16-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,4,5,5,5 -ot blk\.12\.ffn_up_exps=CUDA2,blk\.12\.ffn_down_exps=CUDA2,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 366 MiB
+  card 0: layers 0-5, 1 attention, 5635 MiB, 366 free
+  card 1: layers 6-12, 2 attention, 5606 MiB, 397 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_up_exps, blk.12.ffn_down_exps, 5531 MiB, 472 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_down_exps, 5391 MiB, 612 free
+  card 4: layers 24-29, 1 attention, 5573 MiB, 430 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5297 MiB, 706 free
+  card 6: layers 34-38, 1 attention, 5562 MiB, 439 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5620 MiB, 387 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5594 MiB, 413 free
+== iq3x-f16-ub256-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub512-65536 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub512-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-f16-ub512-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub64-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5  smallest free 326 MiB
+  card 0: layers 0-5, 1 attention, 5325 MiB, 676 free
+  card 1: layers 6-12, 2 attention, 5633 MiB, 370 free
+  card 2: layers 13-18, 1 attention, 4937 MiB, 1066 free
+  card 3: layers 19-23, 2 attention, 4711 MiB, 1292 free
+  card 4: layers 24-28, 1 attention, 4649 MiB, 1354 free
+  card 5: layers 29-33, 1 attention, 5547 MiB, 456 free
+  card 6: layers 34-38, 1 attention, 5675 MiB, 326 free
+  card 7: layers 39-43, 2 attention, 5165 MiB, 842 free
+  card 8: layers 44-47, 1 attention, 4807 MiB, 1200 free
+== iq3x-q8_0-ub64-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.38\.ffn_down_exps=CUDA7  smallest free 303 MiB
+  card 0: layers 0-5, 1 attention, 5392 MiB, 609 free
+  card 1: layers 6-12, 2 attention, 5497 MiB, 506 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5229 MiB, 774 free
+  card 3: layers 19-23, 2 attention, 4800 MiB, 1203 free
+  card 4: layers 24-28, 1 attention, 4716 MiB, 1287 free
+  card 5: layers 29-33, 1 attention, 5614 MiB, 389 free
+  card 6: layers 34-38, 1 attention, 5292 MiB, 709 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5704 MiB, 303 free
+  card 8: layers 44-47, 1 attention, 4874 MiB, 1133 free
+== iq3x-q8_0-ub64-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,4,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.34\.ffn_down_exps=CUDA6  smallest free 357 MiB
+  card 0: layers 0-5, 1 attention, 5458 MiB, 543 free
+  card 1: layers 6-12, 2 attention, 5584 MiB, 419 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5295 MiB, 708 free
+  card 3: layers 19-24, 2 attention, 5646 MiB, 357 free
+  card 4: layers 25-29, 1 attention, plus blk.24.ffn_down_exps, 5060 MiB, 943 free
+  card 5: layers 30-34, 1 attention, 5410 MiB, 593 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_down_exps, 5041 MiB, 960 free
+  card 7: layers 39-43, 2 attention, 5341 MiB, 666 free
+  card 8: layers 44-47, 1 attention, 4940 MiB, 1067 free
+== iq3x-q8_0-ub64-131072 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.5\.ffn_down_exps=CUDA1,blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.23\.ffn_down_exps=CUDA4,blk\.29\.ffn_up_exps=CUDA5,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 315 MiB
+  card 0: layers 0-5, 1 attention, 5499 MiB, 502 free
+  card 1: layers 6-11, 2 attention, plus blk.5.ffn_down_exps, 5579 MiB, 424 free
+  card 2: layers 12-18, 1 attention, 5573 MiB, 430 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5582 MiB, 421 free
+  card 4: layers 24-29, 1 attention, plus blk.23.ffn_down_exps, 5603 MiB, 400 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_up_exps, blk.29.ffn_down_exps, 5614 MiB, 389 free
+  card 6: layers 34-38, 1 attention, 5623 MiB, 378 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5692 MiB, 315 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5655 MiB, 352 free
+== iq3x-q8_0-ub64-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub128-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,5,5,5,5,5 -ot blk\.38\.ffn_down_exps=CUDA7  smallest free 308 MiB
+  card 0: layers 0-5, 1 attention, 5378 MiB, 623 free
+  card 1: layers 6-12, 2 attention, 5695 MiB, 308 free
+  card 2: layers 13-18, 1 attention, 4999 MiB, 1004 free
+  card 3: layers 19-23, 2 attention, 4773 MiB, 1230 free
+  card 4: layers 24-28, 1 attention, 4711 MiB, 1292 free
+  card 5: layers 29-33, 1 attention, 5609 MiB, 394 free
+  card 6: layers 34-38, 1 attention, 5287 MiB, 714 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5677 MiB, 330 free
+  card 8: layers 44-47, 1 attention, 4869 MiB, 1138 free
+== iq3x-q8_0-ub128-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,4,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.34\.ffn_down_exps=CUDA6  smallest free 362 MiB
+  card 0: layers 0-5, 1 attention, 5465 MiB, 536 free
+  card 1: layers 6-12, 2 attention, 5579 MiB, 424 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5311 MiB, 692 free
+  card 3: layers 19-24, 2 attention, 5641 MiB, 362 free
+  card 4: layers 25-29, 1 attention, plus blk.24.ffn_down_exps, 5076 MiB, 927 free
+  card 5: layers 30-34, 1 attention, 5426 MiB, 577 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_down_exps, 5057 MiB, 944 free
+  card 7: layers 39-43, 2 attention, 5336 MiB, 671 free
+  card 8: layers 44-47, 1 attention, 4956 MiB, 1051 free
+== iq3x-q8_0-ub128-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,4,5,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 321 MiB
+  card 0: layers 0-5, 1 attention, 5547 MiB, 454 free
+  card 1: layers 6-12, 2 attention, 5682 MiB, 321 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5393 MiB, 610 free
+  card 3: layers 19-23, 2 attention, 4985 MiB, 1018 free
+  card 4: layers 24-29, 1 attention, 5467 MiB, 536 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5191 MiB, 812 free
+  card 6: layers 34-38, 1 attention, 5456 MiB, 545 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5439 MiB, 568 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5488 MiB, 519 free
+== iq3x-q8_0-ub128-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub128-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-32768 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,5,5,4,5,5 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.34\.ffn_down_exps=CUDA6  smallest free 350 MiB
+  card 0: layers 0-5, 1 attention, 5480 MiB, 521 free
+  card 1: layers 6-12, 2 attention, 5591 MiB, 412 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5345 MiB, 658 free
+  card 3: layers 19-24, 2 attention, 5653 MiB, 350 free
+  card 4: layers 25-29, 1 attention, plus blk.24.ffn_down_exps, 5110 MiB, 893 free
+  card 5: layers 30-34, 1 attention, 5460 MiB, 543 free
+  card 6: layers 35-38, 1 attention, plus blk.34.ffn_down_exps, 5091 MiB, 910 free
+  card 7: layers 39-43, 2 attention, 5348 MiB, 659 free
+  card 8: layers 44-47, 1 attention, 4990 MiB, 1017 free
+== iq3x-q8_0-ub256-49152 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 411 MiB
+  card 0: layers 0-5, 1 attention, 5587 MiB, 414 free
+  card 1: layers 6-11, 2 attention, 5139 MiB, 864 free
+  card 2: layers 12-18, 1 attention, 5465 MiB, 538 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5592 MiB, 411 free
+  card 4: layers 24-29, 1 attention, 5526 MiB, 477 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5250 MiB, 753 free
+  card 6: layers 34-38, 1 attention, 5515 MiB, 486 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5477 MiB, 530 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5547 MiB, 460 free
+== iq3x-q8_0-ub256-65536 draft_extra=0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,5,6,4,5,5,5 -ot blk\.12\.ffn_up_exps=CUDA2,blk\.12\.ffn_down_exps=CUDA2,blk\.18\.ffn_down_exps=CUDA3,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 308 MiB
+  card 0: layers 0-5, 1 attention, 5693 MiB, 308 free
+  card 1: layers 6-12, 2 attention, 5589 MiB, 414 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_up_exps, blk.12.ffn_down_exps, 5589 MiB, 414 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_down_exps, 5374 MiB, 629 free
+  card 4: layers 24-29, 1 attention, 5631 MiB, 372 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_down_exps, 5355 MiB, 648 free
+  card 6: layers 34-38, 1 attention, 5620 MiB, 381 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5603 MiB, 404 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5652 MiB, 355 free
+== iq3x-q8_0-ub256-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-262144 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub512-65536 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub512-131072 draft_extra=0
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub512-262144 draft_extra=0
+no split leaves 300 MiB on every card
+######## plan_iq3_ot300_mtp.txt
+== iq3x-f16-ub64-32768-mtp draft_extra=2053
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3 -ot blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 303 MiB
+  card 0: layers 0-5, 1 attention, 5355 MiB, 646 free
+  card 1: layers 6-12, 2 attention, 5700 MiB, 303 free
+  card 2: layers 13-19, 2 attention, 5576 MiB, 427 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5697 MiB, 306 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_down_exps, 5394 MiB, 609 free
+  card 5: layers 31-35, 2 attention, 5284 MiB, 719 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5598 MiB, 403 free
+  card 7: layers 41-45, 1 attention, 5391 MiB, 616 free
+  card 8: layers 46-47, 1 attention, 4802 MiB, 1205 free
+== iq3x-f16-ub64-49152-mtp draft_extra=2114
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_up_exps=CUDA4,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 302 MiB
+  card 0: layers 0-6, 1 attention, 5699 MiB, 302 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5518 MiB, 485 free
+  card 2: layers 13-19, 2 attention, 5677 MiB, 326 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5526 MiB, 477 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_up_exps, blk.25.ffn_down_exps, 5686 MiB, 317 free
+  card 5: layers 31-35, 2 attention, 5385 MiB, 618 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5659 MiB, 342 free
+  card 7: layers 41-45, 1 attention, 5452 MiB, 555 free
+  card 8: layers 46-47, 1 attention, 4924 MiB, 1083 free
+== iq3x-f16-ub64-65536-mtp draft_extra=2175
+no split leaves 300 MiB on every card
+== iq3x-f16-ub64-131072-mtp draft_extra=2419
+no split leaves 300 MiB on every card
+== iq3x-f16-ub64-262144-mtp draft_extra=2909
+no split leaves 300 MiB on every card
+== iq3x-f16-ub128-32768-mtp draft_extra=2112
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 7,6,7,6,5,5,5,5,3 -ot blk\.6\.ffn_up_exps=CUDA1,blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_up_exps=CUDA4,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 313 MiB
+  card 0: layers 0-6, 1 attention, 5688 MiB, 313 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_up_exps, blk.6.ffn_down_exps, 5476 MiB, 527 free
+  card 2: layers 13-19, 2 attention, 5635 MiB, 368 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5524 MiB, 479 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_up_exps, blk.25.ffn_down_exps, 5684 MiB, 319 free
+  card 5: layers 31-35, 2 attention, 5343 MiB, 660 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5657 MiB, 344 free
+  card 7: layers 41-45, 1 attention, 5450 MiB, 557 free
+  card 8: layers 46-47, 1 attention, 4920 MiB, 1087 free
+== iq3x-f16-ub128-49152-mtp draft_extra=2173
+no split leaves 300 MiB on every card
+== iq3x-f16-ub128-65536-mtp draft_extra=2243
+no split leaves 300 MiB on every card
+== iq3x-f16-ub128-131072-mtp draft_extra=2528
+no split leaves 300 MiB on every card
+== iq3x-f16-ub128-262144-mtp draft_extra=3097
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-32768-mtp draft_extra=2225
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-49152-mtp draft_extra=2306
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-65536-mtp draft_extra=2392
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-131072-mtp draft_extra=2773
+no split leaves 300 MiB on every card
+== iq3x-f16-ub256-262144-mtp draft_extra=3535
+no split leaves 300 MiB on every card
+== iq3x-f16-ub512-65536-mtp draft_extra=2692
+no split leaves 300 MiB on every card
+== iq3x-f16-ub512-131072-mtp draft_extra=3284
+no split leaves 300 MiB on every card
+== iq3x-f16-ub512-262144-mtp draft_extra=4462
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub64-32768-mtp draft_extra=2070
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,7,6,5,5,5,5,3 -ot blk\.19\.ffn_down_exps=CUDA3,blk\.25\.ffn_up_exps=CUDA4,blk\.25\.ffn_down_exps=CUDA4,blk\.35\.ffn_down_exps=CUDA6  smallest free 324 MiB
+  card 0: layers 0-5, 1 attention, 5372 MiB, 629 free
+  card 1: layers 6-12, 2 attention, 5679 MiB, 324 free
+  card 2: layers 13-19, 2 attention, 5555 MiB, 448 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_down_exps, 5482 MiB, 521 free
+  card 4: layers 26-30, 1 attention, plus blk.25.ffn_up_exps, blk.25.ffn_down_exps, 5642 MiB, 361 free
+  card 5: layers 31-35, 2 attention, 5263 MiB, 740 free
+  card 6: layers 36-40, 1 attention, plus blk.35.ffn_down_exps, 5615 MiB, 386 free
+  card 7: layers 41-45, 1 attention, 5408 MiB, 599 free
+  card 8: layers 46-47, 1 attention, 4836 MiB, 1171 free
+== iq3x-q8_0-ub64-49152-mtp draft_extra=2137
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,6,4,6,5,3 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.30\.ffn_up_exps=CUDA5,blk\.30\.ffn_down_exps=CUDA5,blk\.40\.ffn_gate_exps=CUDA7,blk\.40\.ffn_up_exps=CUDA7,blk\.40\.ffn_down_exps=CUDA7,blk\.45\.ffn_up_exps=CUDA8,blk\.45\.ffn_down_exps=CUDA8  smallest free 311 MiB
+  card 0: layers 0-5, 1 attention, 5439 MiB, 562 free
+  card 1: layers 6-12, 2 attention, 5543 MiB, 460 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5276 MiB, 727 free
+  card 3: layers 19-24, 2 attention, 5596 MiB, 407 free
+  card 4: layers 25-30, 1 attention, plus blk.24.ffn_down_exps, 5462 MiB, 541 free
+  card 5: layers 31-34, 1 attention, plus blk.30.ffn_up_exps, blk.30.ffn_down_exps, 5401 MiB, 602 free
+  card 6: layers 35-40, 2 attention, 5690 MiB, 311 free
+  card 7: layers 41-45, 1 attention, plus blk.40.ffn_gate_exps, blk.40.ffn_up_exps, blk.40.ffn_down_exps, 5682 MiB, 325 free
+  card 8: layers 46-47, 1 attention, plus blk.45.ffn_up_exps, blk.45.ffn_down_exps, 5502 MiB, 505 free
+== iq3x-q8_0-ub64-65536-mtp draft_extra=2203
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub64-131072-mtp draft_extra=2468
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub64-262144-mtp draft_extra=3000
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub128-32768-mtp draft_extra=2132
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,7,6,6,6,4,6,5,3 -ot blk\.12\.ffn_down_exps=CUDA2,blk\.24\.ffn_down_exps=CUDA4,blk\.30\.ffn_up_exps=CUDA5,blk\.30\.ffn_down_exps=CUDA5,blk\.40\.ffn_gate_exps=CUDA7,blk\.40\.ffn_up_exps=CUDA7,blk\.40\.ffn_down_exps=CUDA7,blk\.45\.ffn_up_exps=CUDA8,blk\.45\.ffn_down_exps=CUDA8  smallest free 330 MiB
+  card 0: layers 0-5, 1 attention, 5425 MiB, 576 free
+  card 1: layers 6-12, 2 attention, 5516 MiB, 487 free
+  card 2: layers 13-18, 1 attention, plus blk.12.ffn_down_exps, 5271 MiB, 732 free
+  card 3: layers 19-24, 2 attention, 5569 MiB, 434 free
+  card 4: layers 25-30, 1 attention, plus blk.24.ffn_down_exps, 5457 MiB, 546 free
+  card 5: layers 31-34, 1 attention, plus blk.30.ffn_up_exps, blk.30.ffn_down_exps, 5396 MiB, 607 free
+  card 6: layers 35-40, 2 attention, 5663 MiB, 338 free
+  card 7: layers 41-45, 1 attention, plus blk.40.ffn_gate_exps, blk.40.ffn_up_exps, blk.40.ffn_down_exps, 5677 MiB, 330 free
+  card 8: layers 46-47, 1 attention, plus blk.45.ffn_up_exps, blk.45.ffn_down_exps, 5492 MiB, 515 free
+== iq3x-q8_0-ub128-49152-mtp draft_extra=2219
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub128-65536-mtp draft_extra=2301
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub128-131072-mtp draft_extra=2631
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub128-262144-mtp draft_extra=3290
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-32768-mtp draft_extra=2238
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-49152-mtp draft_extra=2345
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-65536-mtp draft_extra=2450
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-131072-mtp draft_extra=2892
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub256-262144-mtp draft_extra=3760
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub512-65536-mtp draft_extra=2766
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub512-131072-mtp draft_extra=3399
+no split leaves 300 MiB on every card
+== iq3x-q8_0-ub512-262144-mtp draft_extra=4699
+no split leaves 300 MiB on every card
