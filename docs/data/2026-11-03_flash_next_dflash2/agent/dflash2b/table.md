@@ -1,0 +1,8 @@
+32 scored attempts -> res/attempts.csv; 3 infrastructure tries re-run, 0 attempts given up
+
+| arm | attempts | pass@1 | minutes per task (median, p90) | prefill / decode / fixed / other (s, mean) | turns (median) | prompt tokens processed per task | cache hit | TTFT p50 s | malformed calls | runaways |
+|---|---|---|---|---|---|---|---|---|---|---|
+| dflash2b | 11 | 100.0 % | 2.9, 6.8 | 62 / 158 / 1 / 3 | 5 | 2907 | 87.9 % | 8.24 | 0/53 | 0 |
+| mtp | 1 | 100.0 % | 8.1, 8.1 | 115 / 272 / 62 / 37 | 8 | 3388 | 91.9 % | 13.96 | 0/8 | 0 |
+| mtp2 | 11 | 90.9 % | 2.7, 6.2 | 63 / 172 / 1 / 3 | 5 | 3434 | 86.8 % | 8.22 | 0/61 | 1 |
+| nodraft | 9 | 100.0 % | 4.1, 8.7 | 54 / 222 / 8 / 3 | 5 | 3185 | 88.0 % | 8.09 | 0/47 | 0 |

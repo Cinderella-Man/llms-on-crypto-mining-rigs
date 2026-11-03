@@ -1,0 +1,1 @@
+{"messages": [{"role": "user", "content": "Write a Python function is_prime(n) that returns True when n is a prime number, then explain in two sentences how it works."}], "max_tokens": 768, "temperature": 1.0, "top_p": 0.95, "top_k": 20, "min_p": 0, "stream": false}

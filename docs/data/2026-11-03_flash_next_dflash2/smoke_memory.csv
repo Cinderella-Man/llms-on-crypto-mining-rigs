@@ -1,0 +1,5 @@
+n_max,ended,lowest_usable_mib,most_swapout_10s_mib,highest_full_avg10_pct,loaded_usable_mib,loaded_shmem_mib,loaded_swap_mib,after_request_1_usable_mib,after_request_1_shmem_mib,after_request_1_swap_mib,after_request_2_usable_mib,after_request_2_shmem_mib,after_request_2_swap_mib
+3,completed,124,461,13.33,431,497,545,239,608,531,226,608,531
+2,completed,126,391,16.57,453,497,503,198,604,451,274,604,461
+4,"watchdog: MemAvailable 109 MiB, killing llama-server",93,0,0.9,336,497,38,550,597,38,737,87,38
+0,completed,128,0,0.36,441,473,38,167,473,38,146,473,38

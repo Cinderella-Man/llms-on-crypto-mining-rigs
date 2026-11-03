@@ -1,0 +1,5 @@
+arm,phase,samples,usable_median_mib,usable_lowest_mib,swap_mean_mib,swap_highest_mib,most_swapout_10s_mib,highest_full_avg10_pct,kills
+dflash2,load,213,808,82,46,476,352,8.05,none
+dflash2,session,54,275.0,102,427,476,352,6.59,none
+dflash2b,load,215,850,72,52,590,454,28.3,none
+dflash2b,session,2479,126,95,537,590,454,28.24,none
