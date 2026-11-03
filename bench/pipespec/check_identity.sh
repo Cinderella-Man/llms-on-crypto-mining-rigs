@@ -16,8 +16,10 @@
 #
 # Usage (environment variables):
 #   BIN=<dir with llama-pipespec> MODEL=<gguf> [ARGS='-ngl 99 -fa on -c 4096'] [PROMPT=prompts/rewrite.txt] [N=256]
-#   [DEPTHS='1 2 3'] [MISSES='0 0.1 0.5'] [SAMPLING='--temp 0'] [PROBE=8] [OUT=/tmp/pipespec_check] [TIMEOUT=1800]
+#   [DEPTHS='1 2 3'] [MISSES='0 0.1 0.5'] [SAMPLING='--temp 0'] [PROBE=8] [CHAT=1] [OUT=/tmp/pipespec_check] [TIMEOUT=1800]
 #   [SPEED=1] bench/pipespec/check_identity.sh
+# CHAT=0 feeds the prompt file as plain text, for a model without a chat template (e.g. a random-weight test model from
+# llama.cpp's test-llama-archs -a <arch> -o <dir>).
 # SAMPLING='--temp 1 --top-k 20 --top-p 0.95 --min-p 0 --seed 42' checks sampling with a fixed seed: the plain run
 # then also fixes what the oracle replays. SPEED=0 leaves the tokens/s column out.
 # RACE=K (1 = a single sample timed to the stop text) checks a race of K samples (seeds seed..seed+K-1) until one emits RACE_STOP (default "</think>"), after which
@@ -50,10 +52,11 @@ RACE=${RACE:-0}
 RACE_STOP=${RACE_STOP:-</think>}
 FEED=${FEED:-0}
 FLOOR=${FLOOR:-}
+CHAT=${CHAT:-1}
 mkdir -p "$OUT"
 
 jobs=$OUT/jobs.txt
-common="prompt=$PROMPT n=$N probe=$PROBE chat=1"
+common="prompt=$PROMPT n=$N probe=$PROBE chat=$CHAT"
 [ "$RACE" -ge 1 ] && common="$common race=$RACE race_stop=$RACE_STOP"
 {
     echo "name=plain mode=plain $common out=$OUT/plain.tok"
