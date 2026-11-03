@@ -2,7 +2,7 @@
 
 Miner Llama's v3 line (`pascal-p106-v3`) sits on upstream `d77256999` (build 11820, 2026-10-22). Fixes from upstream have
 been taken one at a time, most recently #30927 for DFlash drafters on Flash-Next (`pascal-p106-v3-dflash`). This note
-measures what a move to current upstream costs, from a trial rebase onto `master` at `20a51f24a` (b12076, 2026-11-03).
+measures what a move to current upstream costs, from a trial rebase onto `master` at `20a51f24a` (2026-11-03, 16 commits after upstream's b12076 tag; the `-b12076` branch names keep that label).
 The trial is kept as an unpushed local branch, `rebase-probe-2026-11-03`; nothing was compiled.
 
 ## Summary
