@@ -1,0 +1,96 @@
+q4-q8 head 0 levels -0.9998 -0.7292 -0.5537 -0.4192 -0.3031 -0.1955 -0.0939 -0.0097 0.0097 0.0941 0.1957 0.3029 0.4187 0.5530 0.7289 1.0000 column scales 0.995-1.022
+q4-q8 head 1 levels -0.9993 -0.7287 -0.5532 -0.4189 -0.3030 -0.1955 -0.0940 -0.0097 0.0098 0.0939 0.1954 0.3028 0.4187 0.5534 0.7293 1.0000 column scales 0.994-1.033
+q4-q8 head 2 levels -1.0000 -0.7295 -0.5538 -0.4189 -0.3027 -0.1953 -0.0937 -0.0098 0.0097 0.0940 0.1956 0.3029 0.4185 0.5526 0.7281 0.9989 column scales 0.996-1.015
+q4-q8 head 3 levels -0.9999 -0.7293 -0.5537 -0.4191 -0.3031 -0.1957 -0.0940 -0.0098 0.0097 0.0940 0.1956 0.3031 0.4192 0.5538 0.7293 1.0000 column scales 0.995-1.033
+q4-q8 head 4 levels -0.9999 -0.7290 -0.5534 -0.4189 -0.3029 -0.1955 -0.0939 -0.0098 0.0097 0.0940 0.1956 0.3031 0.4191 0.5536 0.7291 1.0000 column scales 0.995-1.021
+q4-q8 head 5 levels -1.0000 -0.7289 -0.5533 -0.4188 -0.3029 -0.1955 -0.0939 -0.0097 0.0097 0.0940 0.1956 0.3031 0.4192 0.5537 0.7293 0.9997 column scales 0.996-1.030
+q4-q8 head 6 levels -0.9988 -0.7285 -0.5531 -0.4189 -0.3030 -0.1956 -0.0940 -0.0097 0.0097 0.0938 0.1954 0.3028 0.4188 0.5535 0.7293 1.0000 column scales 0.996-1.014
+q4-q8 head 7 levels -0.9995 -0.7293 -0.5538 -0.4192 -0.3032 -0.1957 -0.0941 -0.0097 0.0097 0.0939 0.1955 0.3029 0.4189 0.5535 0.7292 1.0000 column scales 0.996-1.035
+q4-q8 head 8 levels -1.0000 -0.7302 -0.5548 -0.4197 -0.3033 -0.1956 -0.0939 -0.0099 0.0098 0.0942 0.1958 0.3033 0.4195 0.5540 0.7294 0.9996 column scales 0.989-1.142
+q4-q8 head 9 levels -1.0000 -0.7294 -0.5542 -0.4195 -0.3032 -0.1957 -0.0941 -0.0097 0.0099 0.0940 0.1956 0.3031 0.4191 0.5537 0.7290 0.9990 column scales 0.990-1.104
+q4-q8 head 10 levels -1.0000 -0.7301 -0.5541 -0.4185 -0.3020 -0.1947 -0.0934 -0.0099 0.0096 0.0943 0.1957 0.3030 0.4183 0.5514 0.7254 0.9942 column scales 0.990-1.053
+q4-q8 head 11 levels -1.0000 -0.7301 -0.5545 -0.4191 -0.3027 -0.1951 -0.0936 -0.0099 0.0097 0.0943 0.1959 0.3032 0.4189 0.5528 0.7275 0.9972 column scales 0.987-1.086
+q4-q8 head 12 levels -0.9980 -0.7279 -0.5529 -0.4188 -0.3030 -0.1956 -0.0941 -0.0097 0.0098 0.0938 0.1954 0.3029 0.4194 0.5545 0.7300 1.0000 column scales 0.993-1.070
+q4-q8 head 13 levels -0.9950 -0.7260 -0.5515 -0.4181 -0.3028 -0.1955 -0.0941 -0.0096 0.0099 0.0935 0.1950 0.3024 0.4190 0.5542 0.7297 1.0000 column scales 0.990-1.088
+q4-q8 head 14 levels -1.0000 -0.7298 -0.5543 -0.4195 -0.3034 -0.1958 -0.0942 -0.0098 0.0098 0.0939 0.1956 0.3033 0.4195 0.5545 0.7299 0.9998 column scales 0.991-1.076
+q4-q8 head 15 levels -0.9919 -0.7241 -0.5507 -0.4177 -0.3026 -0.1954 -0.0940 -0.0097 0.0099 0.0934 0.1947 0.3020 0.4186 0.5544 0.7302 1.0000 column scales 0.989-1.138
+q3-q8 head 0 levels -1.0000 -0.6135 -0.3425 -0.1093 0.1090 0.3424 0.6134 0.9996 column scales 0.994-1.029
+q3-q8 head 1 levels -0.9977 -0.6118 -0.3412 -0.1086 0.1098 0.3432 0.6140 1.0000 column scales 0.995-1.046
+q3-q8 head 2 levels -1.0000 -0.6152 -0.3447 -0.1106 0.1065 0.3366 0.6051 0.9883 column scales 0.994-1.018
+q3-q8 head 3 levels -1.0000 -0.6138 -0.3429 -0.1094 0.1093 0.3427 0.6137 0.9998 column scales 0.993-1.049
+q3-q8 head 4 levels -1.0000 -0.6145 -0.3438 -0.1101 0.1080 0.3398 0.6096 0.9946 column scales 0.994-1.026
+q3-q8 head 5 levels -1.0000 -0.6138 -0.3430 -0.1096 0.1088 0.3417 0.6123 0.9983 column scales 0.995-1.044
+q3-q8 head 6 levels -0.9892 -0.6056 -0.3370 -0.1069 0.1104 0.3447 0.6153 1.0000 column scales 0.994-1.017
+q3-q8 head 7 levels -0.9933 -0.6088 -0.3392 -0.1078 0.1101 0.3439 0.6146 1.0000 column scales 0.994-1.050
+q3-q8 head 8 levels -1.0000 -0.6156 -0.3451 -0.1108 0.1062 0.3357 0.6040 0.9873 column scales 0.989-1.146
+q3-q8 head 9 levels -0.9982 -0.6120 -0.3412 -0.1084 0.1099 0.3435 0.6142 1.0000 column scales 0.988-1.121
+q3-q8 head 10 levels -1.0000 -0.6295 -0.3729 -0.1534 0.0622 0.2879 0.5542 0.9286 column scales 0.986-1.082
+q3-q8 head 11 levels -1.0000 -0.6162 -0.3461 -0.1117 0.1039 0.3314 0.5980 0.9789 column scales 0.987-1.132
+q3-q8 head 12 levels -0.9876 -0.6040 -0.3357 -0.1062 0.1106 0.3446 0.6152 1.0000 column scales 0.990-1.103
+q3-q8 head 13 levels -0.9798 -0.5988 -0.3322 -0.1043 0.1115 0.3457 0.6159 1.0000 column scales 0.988-1.124
+q3-q8 head 14 levels -0.9930 -0.6083 -0.3387 -0.1073 0.1105 0.3442 0.6146 1.0000 column scales 0.988-1.090
+q3-q8 head 15 levels -0.9739 -0.5948 -0.3292 -0.1029 0.1117 0.3463 0.6167 1.0000 column scales 0.988-1.175
+q2 head 0 levels -1.0000 -0.2948 0.2932 0.9970 column scales 0.989-1.047
+q2 head 1 levels -0.9977 -0.2933 0.2951 1.0000 column scales 0.991-1.064
+q2 head 2 levels -1.0000 -0.2955 0.2912 0.9928 column scales 0.989-1.031
+q2 head 3 levels -0.9994 -0.2944 0.2945 1.0000 column scales 0.989-1.065
+q2 head 4 levels -1.0000 -0.2952 0.2926 0.9960 column scales 0.991-1.044
+q2 head 5 levels -1.0000 -0.2948 0.2939 0.9990 column scales 0.992-1.059
+q2 head 6 levels -0.9959 -0.2928 0.2950 1.0000 column scales 0.991-1.031
+q2 head 7 levels -0.9973 -0.2932 0.2951 1.0000 column scales 0.989-1.069
+q2 head 8 levels -1.0000 -0.2957 0.2918 0.9943 column scales 0.982-1.154
+q2 head 9 levels -0.9975 -0.2930 0.2952 1.0000 column scales 0.983-1.132
+q2 head 10 levels -1.0000 -0.3403 0.2298 0.9127 column scales 0.981-1.103
+q2 head 11 levels -1.0000 -0.3401 0.2311 0.9167 column scales 0.984-1.142
+q2 head 12 levels -0.9924 -0.2909 0.2958 1.0000 column scales 0.983-1.109
+q2 head 13 levels -0.9160 -0.2309 0.3399 1.0000 column scales 0.984-1.142
+q2 head 14 levels -0.9934 -0.2912 0.2958 1.0000 column scales 0.983-1.102
+q2 head 15 levels -0.9141 -0.2304 0.3401 1.0000 column scales 0.983-1.178
+q1 head 0 levels -1.0000 0.9958 column scales 0.986-1.063
+q1 head 1 levels -0.9961 1.0000 column scales 0.987-1.078
+q1 head 2 levels -1.0000 0.9902 column scales 0.986-1.042
+q1 head 3 levels -0.9996 1.0000 column scales 0.986-1.086
+q1 head 4 levels -1.0000 0.9942 column scales 0.987-1.057
+q1 head 5 levels -1.0000 0.9984 column scales 0.988-1.077
+q1 head 6 levels -0.9952 1.0000 column scales 0.987-1.043
+q1 head 7 levels -0.9958 1.0000 column scales 0.984-1.091
+q1 head 8 levels -1.0000 0.9915 column scales 0.976-1.186
+q1 head 9 levels -0.9949 1.0000 column scales 0.977-1.166
+q1 head 10 levels -1.0000 0.8272 column scales 0.974-1.136
+q1 head 11 levels -1.0000 0.8317 column scales 0.976-1.181
+q1 head 12 levels -0.9888 1.0000 column scales 0.976-1.141
+q1 head 13 levels -0.8318 1.0000 column scales 0.976-1.182
+q1 head 14 levels -0.9893 1.0000 column scales 0.976-1.137
+q1 head 15 levels -0.8303 1.0000 column scales 0.976-1.226
+bf64 head 0 basis rank 64, mean squared basis vector norm 3.886e-05
+bf64 head 1 basis rank 64, mean squared basis vector norm 3.869e-05
+bf64 head 2 basis rank 64, mean squared basis vector norm 3.873e-05
+bf64 head 3 basis rank 64, mean squared basis vector norm 3.933e-05
+bf64 head 4 basis rank 64, mean squared basis vector norm 3.884e-05
+bf64 head 5 basis rank 64, mean squared basis vector norm 3.873e-05
+bf64 head 6 basis rank 64, mean squared basis vector norm 3.888e-05
+bf64 head 7 basis rank 64, mean squared basis vector norm 3.909e-05
+bf64 head 8 basis rank 64, mean squared basis vector norm 4.592e-05
+bf64 head 9 basis rank 64, mean squared basis vector norm 4.601e-05
+bf64 head 10 basis rank 64, mean squared basis vector norm 4.615e-05
+bf64 head 11 basis rank 64, mean squared basis vector norm 4.583e-05
+bf64 head 12 basis rank 64, mean squared basis vector norm 4.587e-05
+bf64 head 13 basis rank 64, mean squared basis vector norm 4.604e-05
+bf64 head 14 basis rank 64, mean squared basis vector norm 4.606e-05
+bf64 head 15 basis rank 64, mean squared basis vector norm 4.618e-05
+bf32 head 0 basis rank 32, mean squared basis vector norm 4.183e-05
+bf32 head 1 basis rank 32, mean squared basis vector norm 4.153e-05
+bf32 head 2 basis rank 32, mean squared basis vector norm 4.158e-05
+bf32 head 3 basis rank 32, mean squared basis vector norm 4.275e-05
+bf32 head 4 basis rank 32, mean squared basis vector norm 4.178e-05
+bf32 head 5 basis rank 32, mean squared basis vector norm 4.153e-05
+bf32 head 6 basis rank 32, mean squared basis vector norm 4.184e-05
+bf32 head 7 basis rank 32, mean squared basis vector norm 4.229e-05
+bf32 head 8 basis rank 32, mean squared basis vector norm 5.288e-05
+bf32 head 9 basis rank 32, mean squared basis vector norm 5.302e-05
+bf32 head 10 basis rank 32, mean squared basis vector norm 5.334e-05
+bf32 head 11 basis rank 32, mean squared basis vector norm 5.277e-05
+bf32 head 12 basis rank 32, mean squared basis vector norm 5.272e-05
+bf32 head 13 basis rank 32, mean squared basis vector norm 5.309e-05
+bf32 head 14 basis rank 32, mean squared basis vector norm 5.313e-05
+bf32 head 15 basis rank 32, mean squared basis vector norm 5.339e-05

@@ -338,8 +338,10 @@ it apart from the experts:
 - **Decode cost does not matter.** A token gathers 16 rows of 160 weights on the host: 2,560 weights. Any format can
   decode that in time, codebooks and factorizations included, so section 5's limits do not apply and no Pascal kernel
   is needed.
-- **It is untested below 4 bits.** With only the table quantized, KLD against BF16 is 0.0255 at IQ4_NL and 0.0162 at
-  Q8_0 ([Delgon](https://huggingface.co/Delgon/Qwen3.8-Flash-Next-PLE-GGUF)).
+- **It does not tolerate fewer bits** (Q433, [data](../../data/2026-11-03_table_bits/README.md)). With only the table
+  quantized, KLD against BF16 is 0.0255 at IQ4_NL and 0.0162 at Q8_0
+  ([Delgon](https://huggingface.co/Delgon/Qwen3.8-Flash-Next-PLE-GGUF)); below IQ4_NL every tested format is outside
+  noise, a 4-bit codebook included (below).
 
 Sizes for the 320,001,536 rows (my calc). Binary factorization uses section 3.2's format, (r + 16) bits per row, and
 the 160-wide side is negligible:
@@ -354,13 +356,31 @@ the 160-wide side is negligible:
 
 On disk a smaller table saves no reads, because one row still costs one page
 ([flash_next_variants.md](flash_next_variants.md), section 5). It changes where the table can live. The rig's 64 GB
-SSD has trouble holding 28.8 GB (Q435) and holds 13.4 GB after a small cleanup. At 7.0 GB the table also fits on the
+SSD holds the 28.8 GB table with 7 GB to spare (Q435). At 7.0 GB the table would also fit on the
 cards beside a 37.7 GB Q2_0 file, 44.7 GB against the ~47 GB ceiling, with no MTP draft and no disk in the token path.
 
-The test needs no engine work (Q433). Round-trip the table through each format, write the decoded
-values back in the file's 4.5-bit format, and score KLD against the unmodified file. The re-encoding error is small
-against a 2-bit or lower target. Only the table shard changes. A census of row norms comes first, since hashed slots
-that no common n-gram reaches may hold little.
+**Measured (Q433, [data](../../data/2026-11-03_table_bits/README.md)): the table stays at 4.5 bits.** Each format
+round-tripped the table of Swift-1.5 GSQ-RCO IQ3_XXS, written back so that the engine reads it unchanged, scored
+against the unmodified file (mean KLD on wikitext / agent sessions / code):
+
+| Row format | Bits | Table (GB) | Relative error | KLD |
+|---|---|---|---|---|
+| IQ4_NL re-encoded as is (the floor) | 4.5 | 28.8 | 0.00003 | 0.016 / 0.023 / 0.004 |
+| 4-bit codebook + row scale | 4.1 | 26.2 | 0.0078 | 0.027 / 0.029 / 0.008 |
+| 3-bit codebook + row scale | 3.1 | 19.8 | 0.032 | 0.056 / 0.043 / 0.018 |
+| 2-bit codebook + row scale | 2.1 | 13.4 | 0.118 | 0.140 / 0.063 / 0.054 |
+| Sign bits + row scale | 1.1 | 7.0 | 0.365 | 0.335 / 0.112 / 0.160 |
+| Binary codes on a rank-64 / rank-32 basis | 0.5 / 0.3 | 3.2 / 1.9 | 0.71 / 0.84 | 0.550 / 0.178 / 0.295; 0.601 / 0.183 / 0.324 |
+| No table | 0 | 0 | 1 | 0.649 / 0.234 / 0.311 |
+
+- The table looks like Gaussian noise of one size: no hash slot is empty or small, the weights in a row are Gaussian,
+  the columns equal, and the top 64 of 160 directions hold 43–46 % of the energy. Nothing can be pruned, and a
+  factorization has no low-rank structure to use; a per-weight codebook is near the scalar optimum.
+- Any change to the table, or to the summation order (`-ub 256`), moves the output by the floor (the file against
+  itself scores 0 / 0.0017 / 0): the routing-flip floor Q21 found for Flint. Above it the cost tracks the relative error, so a smaller table is a
+  quality loss in proportion to its error, and none below 4.5 bits is free.
+- So Q434's compressed table gains nothing worth an engine change: the 4-bit layout saves 2.6 GB and is already
+  outside noise on prose and code, and a ≤ ~7 GB table for the cards costs 0.11–0.34.
 
 ## 5. On Pascal
 

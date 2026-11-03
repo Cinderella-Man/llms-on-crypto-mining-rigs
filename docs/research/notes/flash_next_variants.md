@@ -276,8 +276,9 @@ How llama.cpp runs this model on Pascal (read in the v3 source):
   - Hot rows kept on a card.
   - Prefetching the rows of MTP drafts, and of the next prompt micro-batch (Q523).
   - Warming the table's pages at server start (Q520), or the whole table in RAM on a host with ~29 GB free (Q521).
-  - A compressed table small enough for a little SSD space or the cards
-    ([sub_1_bit_quants.md](sub_1_bit_quants.md), section 4.1; Q433, Q434).
+  - A compressed table small enough for a little SSD space or the cards: parked, since no row format below the
+    shipped 4.5 bits stays within noise; 4.1 bits (26.2 GB) already costs KLD +0.012 on prose, 2.1 bits +0.12
+    ([sub_1_bit_quants.md](sub_1_bit_quants.md), section 4.1; [Q433](../../data/2026-11-03_table_bits/README.md), Q434).
 
 ## 6. Formats on Pascal and the time per token
 
