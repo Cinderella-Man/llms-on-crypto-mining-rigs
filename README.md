@@ -132,6 +132,8 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
 
 - [release/flint-v2](release/flint-v2/README.md): the v2 release in one folder, with how to rebuild the engine and the
   model file from scratch.
+- [release/flash-next-v3](release/flash-next-v3/README.md): Qwen3.8-Flash-Next on the rig, in preparation for v3:
+  stock llama.cpp's baseline, the rig's limits, every file with its checksum, and how to run it.
 - [docs/overview.md](docs/overview.md): why a mining rig suits LLMs at all, and the terms used here.
 - [docs/what_i_tried.md](docs/what_i_tried.md): a guided tour of everything tried in the first week, why, what each
   result taught, and where each model stands.
