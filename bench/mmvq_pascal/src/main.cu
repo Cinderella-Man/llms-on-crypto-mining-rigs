@@ -7,6 +7,7 @@
 #include "memsys.cuh"
 #include "pascal_mmvq.cuh"
 #include "f16_mv.cuh"
+#include "bf16_mv.cuh"
 
 #include <algorithm>
 #include <cmath>
@@ -396,6 +397,8 @@ struct options {
     bool tlb_probe = false;
     double tlb_max_gb = 5.0;
     bool f16 = false;
+    bool bf16 = false;
+    std::vector<std::string> tokens = { "1" };
 };
 
 void usage() {
@@ -420,6 +423,9 @@ void usage() {
            "                   (2 MiB and 32 MiB strides over growing footprints, random 2 MiB pages; alone and under load)\n"
            "  --tlb-max-gb X   largest chase buffer (default 5); --check-only walks every chain once, untimed\n"
            "  --f16            F16 one-token products (the MoE router: 2048 -> 256) instead of the quantized kernels\n"
+           "  --bf16           BF16 products at Qwen3.8-Flash-Next's shapes instead of the quantized kernels (shapes\n"
+           "                   hc_up, hc_down, hc_inject, indexer_q, ssm_ab; variants mmvf, pascal, gG_rR)\n"
+           "  --tokens LIST    --bf16: tokens per product, 1 to 4, comma-separated (default 1)\n"
            "  --list           list shapes and variants\n");
 }
 
@@ -693,6 +699,185 @@ int run_f16(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, co
     return ok ? 0 : 2;
 }
 
+
+// --bf16: BF16 matrix-vector products of 1 to 4 tokens (src/bf16_mv.cuh) at Qwen3.8-Flash-Next's BF16 shapes (48 layers:
+// 36 recurrent, 12 with attention; the hyper-connection mixers run twice per layer and once more for the output).
+// Copies of the weights cycle call by call (>= 64 MB per shape), so no call finds its weights in L2. Every row (every
+// 37th of the 10,240-row shape) is checked against a double-precision CPU product of the same BF16 weights and FP32
+// activations (tolerance 1e-5 of the sum of the absolute terms).
+int run_bf16(const options & opt, cudaStream_t s, const cudaDeviceProp & prop, const int code_arch, const bool shapes_given,
+             const bool variants_given) {
+    struct bf16_shape { const char * name; int K, N, calls; };
+    const bf16_shape shapes[] = {
+        { "hc_up",     320, 10240, 97 }, { "hc_down", 10240, 320, 97 }, { "hc_inject", 10240, 4, 96 },
+        { "indexer_q", 2560,  512, 12 }, { "ssm_ab",   2560,  48, 72 },
+    };
+    struct bf16_variant { std::string name; int G, R; };
+    std::vector<bf16_variant> variants = { { "mmvf", 0, 0 }, { "pascal", -1, -1 } };
+    for (int G : { 8, 32, 128 }) {
+        for (int R : { 1, 2, 4 }) {
+            variants.push_back({ "g" + std::to_string(G) + "_r" + std::to_string(R), G, R });
+        }
+    }
+    std::vector<int> tokens;
+    for (const auto & t : opt.tokens) {
+        const int n = atoi(t.c_str());
+        if (n < 1 || n > 4) { fprintf(stderr, "--tokens: 1 to 4\n"); return 1; }
+        tokens.push_back(n);
+    }
+    bool ok = true;
+    FILE * f = nullptr;
+    if (!opt.csv.empty()) {
+        f = fopen(opt.csv.c_str(), "w");
+        if (!f) { fprintf(stderr, "cannot write %s\n", opt.csv.c_str()); return 1; }
+        fprintf(f, "device,code_arch,shape,K,N,tokens,calls_per_token,variant,G,R,bytes_per_call,us_median,us_min,gbs,regs,"
+                   "grid_blocks,err_over_tol,check\n");
+    }
+    printf("\n%-10s %3s %-8s %8s %10s %9s %9s %7s %5s %7s %9s %s\n", "shape", "tok", "variant", "G,R", "MB/call", "us/call",
+           "us(min)", "GB/s", "regs", "grid", "err/tol", "check");
+    struct total { double mmvf = 0, pascal = 0, best = 0; };
+    std::map<int, total> totals;
+    for (const int T : tokens) {
+        for (const auto & sh : shapes) {
+            if (shapes_given && !contains(opt.shapes, sh.name)) continue;
+            const size_t mat = (size_t) sh.K * sh.N;
+            const size_t bytes = mat * sizeof(nv_bfloat16);
+            const int ncopies = (int) std::max<size_t>(4, ((size_t) 64 << 20) / bytes);
+            dev_buf w(bytes * ncopies), y((size_t) sh.K * T * sizeof(float)), d((size_t) sh.N * T * sizeof(float));
+            bf16mv::gen_bf16<<<256, 256, 0, s>>>(w.as<nv_bfloat16>(), mat * ncopies, opt.seed);
+            gen_floats<<<64, 256, 0, s>>>(y.as<float>(), (size_t) sh.K * T, opt.seed + 7);
+            CUDA_CHECK(cudaGetLastError());
+            CUDA_CHECK(cudaStreamSynchronize(s));
+            std::vector<nv_bfloat16> wh(mat);
+            std::vector<float> yh((size_t) sh.K * T);
+            CUDA_CHECK(cudaMemcpy(wh.data(), w.p, bytes, cudaMemcpyDeviceToHost));
+            CUDA_CHECK(cudaMemcpy(yh.data(), y.p, yh.size() * sizeof(float), cudaMemcpyDeviceToHost));
+            const int row_step = sh.N > 1024 ? 37 : 1;
+            std::vector<double> ref((size_t) sh.N * T), absum((size_t) sh.N * T);
+            for (int t = 0; t < T; ++t) {
+                for (int r = 0; r < sh.N; r += row_step) {
+                    double acc = 0.0, as = 0.0;
+                    for (int k = 0; k < sh.K; ++k) {
+                        const double tv = (double) __bfloat162float(wh[(size_t) r * sh.K + k]) * yh[(size_t) t * sh.K + k];
+                        acc += tv;
+                        as += fabs(tv);
+                    }
+                    ref[(size_t) t * sh.N + r] = acc;
+                    absum[(size_t) t * sh.N + r] = as;
+                }
+            }
+            double best_us = 0.0;
+            for (const auto & v : variants) {
+                if (variants_given && !contains(opt.variants, v.name)) continue;
+                int G = v.G, R = v.R;
+                const void * func = nullptr;
+                dim3 grid, block;
+                std::function<void(cudaStream_t, int)> launch;
+                if (v.G == 0) {
+                    const int bs = f16mv::mmvf_block_size(sh.K);
+                    func = bf16mv::stock_func(T, bs);
+                    if (!func) continue;
+                    grid = dim3(sh.N, 1, 1);
+                    block = dim3(bs, 1, 1);
+                    const int ncols2 = sh.K / 2, stride_row = sh.K, scy2 = sh.K / 2, scd = sh.N;
+                    launch = [&w, &y, &d, func, grid, block, bytes, ncols2, stride_row, scy2, scd, ncopies](cudaStream_t st, int j) {
+                        const nv_bfloat16 * x = (const nv_bfloat16 *) ((const uint8_t *) w.p + (size_t) (j % ncopies) * bytes);
+                        const float * yy = y.as<float>();
+                        float * dd = d.as<float>();
+                        int n2 = ncols2, sr = stride_row, sy = scy2, sd = scd;
+                        void * params[] = { &x, &yy, &dd, &n2, &sr, &sy, &sd };
+                        CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                    };
+                } else {
+                    if (v.G < 0) {
+                        bf16mv::mmvfp_pick_shape(sh.K / 8, sh.N, T, prop.multiProcessorCount, G, R);
+                    }
+                    func = bf16mv::pascal_func(G, R, T);
+                    if (!func) continue;
+                    grid = dim3(bf16mv::mmvfp_blocks(sh.N, G, R), 1, 1);
+                    block = dim3(MMVF_PASCAL_NT, 1, 1);
+                    const int nrows = sh.N, nchunks = sh.K / 8, stride_row = sh.K / 8, scy4 = sh.K / 4, scd = sh.N;
+                    launch = [&w, &y, &d, func, grid, block, bytes, nrows, nchunks, stride_row, scy4, scd, ncopies](cudaStream_t st, int j) {
+                        const uint4 * x = (const uint4 *) ((const uint8_t *) w.p + (size_t) (j % ncopies) * bytes);
+                        const float4 * yy = y.as<float4>();
+                        const float * bb = nullptr;
+                        float * dd = d.as<float>();
+                        int nr = nrows, nc = nchunks, sr = stride_row, sy = scy4, sd = scd;
+                        void * params[] = { &x, &yy, &bb, &dd, &nr, &nc, &sr, &sy, &sd };
+                        CUDA_CHECK(cudaLaunchKernel(func, grid, block, params, 0, st));
+                    };
+                }
+                // correctness: copy 0
+                CUDA_CHECK(cudaMemsetAsync(d.p, 0xff, (size_t) sh.N * T * sizeof(float), s));
+                launch(s, 0);
+                CUDA_CHECK(cudaGetLastError());
+                CUDA_CHECK(cudaStreamSynchronize(s));
+                std::vector<float> got((size_t) sh.N * T);
+                CUDA_CHECK(cudaMemcpy(got.data(), d.p, got.size() * sizeof(float), cudaMemcpyDeviceToHost));
+                double worst = 0.0;
+                for (int t = 0; t < T; ++t) {
+                    for (int r = 0; r < sh.N; r += row_step) {
+                        const size_t o = (size_t) t * sh.N + r;
+                        const double bound = 1e-5 * absum[o] + 1e-30;
+                        const double e = std::isfinite(got[o]) ? fabs(got[o] - ref[o]) / bound : 1e30;
+                        if (e > worst && g_verbose) {
+                            printf("    worst so far: token %d row %d gpu %.9g ref %.9g bound %.3g\n", t, r, got[o], ref[o], bound);
+                        }
+                        worst = std::max(worst, e);
+                    }
+                }
+                const bool pass = worst <= 1.0;
+                ok &= pass;
+                cudaFuncAttributes attr;
+                CUDA_CHECK(cudaFuncGetAttributes(&attr, func));
+                double us_med = 0.0, us_min = 0.0, gbs = 0.0;
+                if (!opt.check_only) {
+                    const auto tm = time_graph(launch, opt.batch, opt.reps, s);
+                    us_med = median(tm);
+                    us_min = *std::min_element(tm.begin(), tm.end());
+                    gbs = bytes / (us_med * 1e3);
+                    if (v.G == 0) {
+                        totals[T].mmvf += us_med * sh.calls;
+                    } else if (v.G < 0) {
+                        totals[T].pascal += us_med * sh.calls;
+                    } else if (pass && (best_us == 0.0 || us_med < best_us)) {
+                        best_us = us_med;
+                    }
+                }
+                char gr[16];
+                snprintf(gr, sizeof(gr), v.G == 0 ? "-" : "%d,%d", G, R);
+                printf("%-10s %3d %-8s %8s %10.3f %9.2f %9.2f %7.1f %5d %7u %9.3f %s\n", sh.name, T, v.name.c_str(), gr,
+                       bytes / 1e6, us_med, us_min, gbs, attr.numRegs, grid.x, worst, pass ? "PASS" : "FAIL");
+                if (f) {
+                    fprintf(f, "\"%s\",%d,%s,%d,%d,%d,%d,%s,%d,%d,%zu,%.3f,%.3f,%.2f,%d,%u,%.4f,%s\n", prop.name, code_arch,
+                            sh.name, sh.K, sh.N, T, sh.calls, v.name.c_str(), v.G == 0 ? 0 : G, v.G == 0 ? 0 : R, bytes,
+                            us_med, us_min, gbs, attr.numRegs, grid.x, worst, pass ? "PASS" : "FAIL");
+                }
+            }
+            totals[T].best += best_us * sh.calls;
+        }
+    }
+    if (!opt.check_only) {
+        printf("\nper decoding step (calls per Flash-Next token x us per call), ms:\n");
+        printf("%3s %9s %9s %9s\n", "tok", "mmvf", "pascal", "best");
+        for (const auto & [T, tt] : totals) {
+            printf("%3d %9.2f %9.2f %9.2f\n", T, tt.mmvf / 1e3, tt.pascal / 1e3, tt.best / 1e3);
+            if (f) {
+                fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,%d,0,mmvf,0,0,0,%.3f,,,,,,\n", prop.name, code_arch, T, tt.mmvf);
+                fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,%d,0,pascal,0,0,0,%.3f,,,,,,\n", prop.name, code_arch, T, tt.pascal);
+                fprintf(f, "\"%s\",%d,TOKEN_TOTAL,0,0,%d,0,best,0,0,0,%.3f,,,,,,\n", prop.name, code_arch, T, tt.best);
+            }
+        }
+        printf("(the totals cover the shapes run; \"best\" takes the fastest passing gG_rR variant per shape)\n");
+    }
+    if (f) {
+        fclose(f);
+        printf("\nCSV written to %s\n", opt.csv.c_str());
+    }
+    printf("\ncorrectness: %s\n", ok ? "all variants match the CPU reference" : "FAILURES");
+    return ok ? 0 : 2;
+}
+
 } // namespace
 
 int main(int argc, char ** argv) {
@@ -719,9 +904,13 @@ int main(int argc, char ** argv) {
         else if (a == "--tlb-probe") opt.tlb_probe = true;
         else if (a == "--tlb-max-gb") opt.tlb_max_gb = atof(next().c_str());
         else if (a == "--f16") opt.f16 = true;
+        else if (a == "--bf16") opt.bf16 = true;
+        else if (a == "--tokens") opt.tokens = split(next());
         else if (a == "--list") { list_all(); return 0; }
         else { usage(); return a == "--help" || a == "-h" ? 0 : 1; }
     }
+    const bool variants_given = !opt.variants.empty();
+    const bool shapes_given = !opt.shapes.empty();
     if (opt.variants.empty()) for (const auto & v : VARIANTS) opt.variants.push_back(v.name);
     if (opt.shapes.empty()) for (const auto & s : SHAPES) opt.shapes.push_back(s.name);
     for (const auto & t : opt.types) {
@@ -803,6 +992,11 @@ int main(int argc, char ** argv) {
         read_plain_gbs = nbytes / (median(time_graph(rdp, 4, 10, s)) * 1e3);
         printf("empty kernel in a CUDA graph: %.2f us per node\n", node_us);
         printf("streaming read of 256 MB with 128-bit loads: %.1f GB/s read-only path (__ldg), %.1f GB/s plain loads\n", read_gbs, read_plain_gbs);
+    }
+    if (opt.bf16) {
+        const int rc = run_bf16(opt, s, prop, code_arch, shapes_given, variants_given);
+        CUDA_CHECK(cudaStreamDestroy(s));
+        return rc;
     }
     if (opt.f16) {
         const int rc = run_f16(opt, s, prop, code_arch);

@@ -135,6 +135,7 @@ Useful options (`--help` lists all):
 | `--spread N`, `--spread-gb X` | N weight sets per shape, or as many as fill X GB, cycled call by call, with fresh expert ids for every call (Q99, below) |
 | `--tlb-probe` | pointer-chase probe of the GPU's address translation instead of the kernels (Q99, below) |
 | `--f16` | F16 one-token products (the MoE router) instead of the quantized kernels (Q97, below) |
+| `--bf16`, `--tokens 1,2,3,4` | BF16 products of 1 to 4 tokens at Qwen3.8-Flash-Next's shapes instead of the quantized kernels (Q546, below) |
 
 The program exits with status 2 if any correctness check fails.
 
@@ -410,6 +411,44 @@ is ≥ 110 GB/s at the router's shape):
 ssh rig 'MMVQ=/tmp/q149/mmvq_pascal OUT=/tmp/q97 bash /tmp/q149/kquant_rig.sh router'
 ```
 
+## Flash-Next's BF16 products (Q546)
+
+Qwen3.8-Flash-Next keeps its hyper-connection projections, its indexer's query projection and its recurrent layers'
+alpha and beta in BF16. On nine P106-090 cards they took 43 of the 136 ms of GPU time per decoded token
+([profile](../../docs/data/2026-11-03_flash_next_baseline/decode_profile_v3.txt)), most of it in the 320-wide rows of
+`hc_attn_up` and `hc_ffn_up` (~0.33 ms per 6.5 MB call, ~20 GB/s). llama.cpp runs them with `mul_mat_vec_f`, which
+gives each of the 10,240 rows a 160-thread block whose threads read 4 bytes once, so the card waits on memory latency
+rather than bandwidth. `--bf16` ([src/bf16_mv.cuh](src/bf16_mv.cuh)) times, per shape and token count (`--tokens`):
+
+- `mmvf`: `mul_mat_vec_f<nv_bfloat16>` as a compute 6.1 card runs it (FP32 accumulation, no fusion);
+- `gG_rR`: Miner Llama's Pascal BF16 kernel (`ggml/src/ggml-cuda/mmvf-pascal.cu`, branch `pascal-p106-v3-bf16mv` at `a4acc80a3`,
+  copied verbatim) at a fixed launch shape: G lanes per row group (8, 32, or 128 over the block's 4 warps), R rows per group
+  sharing every activation load, 8 weights per lane per iteration with one 128-bit load, each weight converted exactly
+  (BF16 is the upper half of an FP32) and added with one FMA;
+- `pascal`: the same kernel at the launch shape the fork picks for the card (`G,R` column).
+
+| Shape | K → N | MB per call | Calls per token | Fork's shape on a P106 |
+|---|---|---|---|---|
+| `hc_up` | 320 → 10,240 | 6.55 | 97 (2 per layer, 1 for the output) | G = 8, R = 4 (160 blocks) |
+| `hc_down` | 10,240 → 320 | 6.55 | 97 | G = 128, R = 4 (80 blocks) |
+| `hc_inject` | 10,240 → 4 | 0.08 | 96 | G = 128, R = 1 (4 blocks) |
+| `indexer_q` | 2,560 → 512 | 2.62 | 12 (the attention layers) | G = 32, R = 4 (32 blocks) |
+| `ssm_ab` | 2,560 → 48 | 0.25 | 72 (alpha and beta of the 36 recurrent layers) | G = 128, R = 1 (48 blocks) |
+
+Copies of the weights cycle call by call (≥ 64 MB per shape), and every row (every 37th of `hc_up`) is checked against a
+double-precision product of the same BF16 weights and FP32 activations, tolerance 1e-5 of the sum of the absolute terms.
+The last table gives the milliseconds per decoding step summed over the shapes (`best` takes the fastest correct
+`gG_rR` per shape). At the ~100–130 GB/s the tuned quantized kernels reach on this card, the Pascal kernel should take
+~11–14 ms per token for all five shapes, against 43 ms in the profile. On the rig:
+
+```bash
+scp bench/mmvq_pascal/build/mmvq_pascal rig:/tmp/
+ssh rig 'CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 /tmp/mmvq_pascal --bf16 --tokens 1,2,3,4 --csv /tmp/bf16.csv' | tee bf16_rig.txt
+scp rig:/tmp/bf16.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/bf16.csv'
+```
+
+On another GPU, `--bf16 --check-only --tokens 1,2,3,4` checks the compute 6.1 code through the PTX JIT.
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
@@ -496,4 +535,5 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `multitoken_perf.sh`, `multitoken_perf_table.py` | timing of the fork's kernels at 1–4 tokens per step on the rig, and its tables |
 | `kquant_rig.sh` | the Q4_K and Q6_K gates, the fork's Q4_K/Q6_K tests on a P106, and the tg128 A/B of the two kernels on the rig (Q149) |
 | `src/f16_mv.cuh` | `--f16`: llama.cpp's F16 one-token product, the persistent MoE kernel's router rows and the Pascal F16 kernel (Q97); `kquant_rig.sh router` runs it on the rig |
+| `src/bf16_mv.cuh` | `--bf16`: llama.cpp's BF16 `mul_mat_vec_f` and Miner Llama's Pascal BF16 kernel with its launch-shape rule, copied from the fork (Q546) |
 | `tools/` | SASS and register helpers for the fork's Pascal kernels: `regs.py`, `loops.py`, `loops2.py` (registers, spills and main-loop instruction counts from a ptxas log and `cuobjdump -sass`), `classify.py` (sorts a test-backend-ops log's failures into the cases a mutation should hit) (Q78); `benchloops.py` (the bench's staged-kernel loops per weight byte), `forksass.py` (SASS identity of two single-file builds of the fork's `mmvq-pascal.cu`, Q6_K registers), `sasscmp.py` (SASS identity of two bench builds) (Q101) |
