@@ -1,0 +1,17 @@
+file	tensor	weights	zero	exact	rounded	overflow	largest_abs
+Q2_0	blk.*.hc_attn_down.weight	157286400	0	157262068	24332	0	6.46875
+Q2_0	blk.*.hc_attn_inject.weight	1966080	0	1964926	1154	0	0.878906
+Q2_0	blk.*.hc_attn_up.weight	157286400	0	157262807	23593	0	4.71875
+Q2_0	blk.*.hc_ffn_down.weight	157286400	0	157259111	27289	0	4.125
+Q2_0	blk.*.hc_ffn_inject.weight	1966080	0	1965042	1038	0	1.32031
+Q2_0	blk.*.hc_ffn_up.weight	157286400	0	157267981	18419	0	8.5625
+Q2_0	output_hc_down.weight	3276800	0	3275929	871	0	1.35156
+Q2_0	output_hc_up.weight	3276800	0	3276490	310	0	4.15625
+IQ3_XXS	blk.*.hc_attn_down.weight	157286400	0	157262068	24332	0	6.46875
+IQ3_XXS	blk.*.hc_attn_inject.weight	1966080	0	1964926	1154	0	0.878906
+IQ3_XXS	blk.*.hc_attn_up.weight	157286400	0	157262807	23593	0	4.71875
+IQ3_XXS	blk.*.hc_ffn_down.weight	157286400	0	157259111	27289	0	4.125
+IQ3_XXS	blk.*.hc_ffn_inject.weight	1966080	0	1965042	1038	0	1.32031
+IQ3_XXS	blk.*.hc_ffn_up.weight	157286400	0	157267981	18419	0	8.5625
+IQ3_XXS	output_hc_down.weight	3276800	0	3275929	871	0	1.35156
+IQ3_XXS	output_hc_up.weight	3276800	0	3276490	310	0	4.15625
