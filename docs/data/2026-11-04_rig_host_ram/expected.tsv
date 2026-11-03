@@ -1,0 +1,27 @@
+step	registry	census key	before	expected	basis
+start	Q570, Q558	mem.MemTotal_kB	3,837 MiB of the 4,096 MiB module (firmware holds ~73 MiB, the kernel's early allocations ~186 MiB)	about the same after kho=off; up to +56 MiB with swiotlb=4096	note, "Where the 4,096 MiB goes"
+start	Q560	pageblocks.CMA_MiB	970 MiB (485 pageblocks of 2 MiB: 206 in DMA32, 279 in Normal) with mem.CmaTotal_kB 0	0 after kho=off	note §3.1; Q560 data
+start	Q692	kho.in_kernel, kho.scratch_MiB	the census on the 7-GPU quant machine (kernel 7.0.0-42): yes, and 17,842 MiB, equal to its pageblocks.CMA_MiB	yes on a rig; kho.scratch_MiB equal to pageblocks.CMA_MiB (970); if kho.in_kernel is no, stop: kho=off changes nothing	this folder, README "Parsing check"
+start	Q549, Q558	llama0.RssShmem_kB (loaded)	~735 MiB pinned (compute buffer 379 MiB at -ub 512, token embedding 260 MiB, the rest not itemised)	the reference for Q563 and Q700	note, "Starting point"
+start	Q226, Q558	mem.usable_kB (loaded session)	154-205 MiB median (MemAvailable 140-460 MiB, swap 0.3-1.5 GB in use)	the reference for every row below	note, "Starting point"
+boot	Q692	cmdline.kho	unset	off	note §3.1
+boot	Q692	mem.CmaFree_kB	411 MiB idle; 955-967 MiB at Q226's two OOMs	0	note §3.1
+boot	Q692	pageblocks.CMA	485	0	note §3.1; Q560 data
+boot	Q692	mem.usable_kB	MemAvailable minus CmaFree	+410 to +970 MiB; mem.MemAvailable_kB about the same (it already counted the free CMA pages)	note §3.1, consequence 1
+boot	Q692	loaded_* census, same server line	Q558 step 5: lowest usable memory 835 MiB (main load), 278 MiB (draft load)	higher; no swap-out burst at the draft's load	Q558 data
+boot	Q694	swiotlb.pool_MiB	64, only if the log shows it	8 with swiotlb=4096 (add it only when the pool is 64 MiB)	note §3.5
+boot	Q694	mem.MemTotal_kB	3,837 MiB	up to +56 MiB	note §3.5
+contexts	Q565, Q693	less_usable_kB per card (slope.tsv, MiB_per_card), arm unset	not measured; est. ~40 MiB per card at the default launch queue (360 MiB over nine cards) plus an unknown driver share of 0-30 MiB per card	slope.tsv: the slope is one more context's host cost, the offset the process's	note §1.2, §1.3
+contexts	Q693	less_usable_kB per card, arm CUDA_SCALE_LAUNCH_QUEUES=0.5x	est. ~40 MiB per card	est. ~20 MiB per card (up to 180 MiB over nine cards back)	note §1.2
+contexts	Q693	less_usable_kB per card, arm CUDA_SCALE_LAUNCH_QUEUES=0.25x	est. ~40 MiB per card	est. ~10 MiB per card (up to 270 MiB over nine cards back)	note §1.2
+contexts	Q693	CUDA_SCALE_LAUNCH_QUEUES=4x	never run: ~120 MB per card (llama.cpp PR 19042), ~1.08 GiB over nine cards	the tool refuses it	note §1.1
+contexts	Q565	slope above ~100 MiB per card	decision	hide idle cards on files that fit fewer than nine (Q2_0 needs 7 or more cards at 64k, Q213)	note §1.3, idea 14
+loaded	Q693	measure q05 and q025: mem.usable_kB against loaded_base	loaded_base	+90 to +180 MiB at 0.5x, +180 to +270 MiB at 0.25x (est.); prompt tok/s decides whether it stays	note §1.2, idea 2
+loaded	Q697	thp.enabled, mem.AnonHugePages_kB	madvise on Ubuntu (read it first)	madvise; 0 to 60 MiB of AnonPages back only if it was always	note §3.5, idea 10
+loaded	Q695	cg.system.slice.current_kB, cg.user.slice.current_kB, mem.usable_kB	the daemons' resident set est. 150-250 MiB	each slice at or under 196,608 kB; mem.usable_kB +50 to +150 MiB; swap used up; the server (in llama.slice) not throttled	note §3.3, idea 7
+loaded	Q696	lru_gen.min_ttl_ms	0	1000; frees nothing; the load must still complete, else the setting is too tight	note §3.3, idea 9
+loaded	Q698	vm.watermark_scale_factor, mem.MemFree_kB	10	50; MemFree 15 to 35 MiB lower (headroom); vmstat.allocstall grows less in an agent session	note §3.3, idea 11
+loaded	Q563	llama0.RssShmem_kB, mem.usable_kB, vram_emb.csv	~735 MiB pinned	260 MiB less host memory; +260 MiB on card 4 (~1.3 GB free); identical output	note §4.1, idea 3
+loaded	Q700	mem.Shmem_kB, mem.AnonPages_kB	~735 MiB of Shmem (pinned)	Shmem down by up to 735 MiB, AnonPages up by the same: nothing freed, the pages become swappable; speed decides	note §2.2, idea 13
+idle	Q571	journald.run_kB	read first (0 where /var/log/journal holds the journal)	0 to 40 MiB back with RuntimeMaxUse=16M	note §3.5, idea 8
+idle	Q699	mem.Zswap_kB	0	at most ~190 MiB (5 % pool); only if the rig still swaps after the boot; a checkpoint restore est. 0.8-1.0 s instead of 2.8 s	note §3.2, idea 12

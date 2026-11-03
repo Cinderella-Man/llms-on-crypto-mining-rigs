@@ -315,6 +315,8 @@ output buffer (est. 4 MiB, more with layer taps at `-b 2048`: read the `output b
 - **Q83's headless result and Q558's "pinned memory runs out" are one fact** seen twice: usable memory is MemAvailable minus
   CmaFree until the reboot.
 - **A reboot is worth bundling**: `kho=off`, a smaller `swiotlb=` (if the log shows the pool) and a THP check go in one edit.
+- **The tool:** [scripts/rig_host_ram.sh](../../../scripts/rig_host_ram.sh) reads the census and applies the runtime settings; the
+  run order and the expected numbers are in [the data folder](../../data/2026-11-04_rig_host_ram/README.md).
 - Suggested registry rows (not added here): KHO scratch (`kho=off`); the launch-queue arm of Q565; swiotlb; cgroup protection
   and `memory.high` on the daemons' slices; MGLRU `min_ttl_ms`; zswap as latency.
 
@@ -338,6 +340,8 @@ output buffer (est. 4 MiB, more with layer taps at `-b 2048`: read the `output b
 
 - That the rig's 485 CMA pageblocks are KHO scratch: the match (CMA pageblocks, `CmaTotal` 0, Ubuntu 7.0 kernels with KHO on by
   default) is strong, but `/sys/kernel/debug/kho/out/scratch_len`, the kernel config and the command line were not read on the rig.
+  On a 127 GB machine with the same kernel they were read: the configuration is on and the three scratch regions of debugfs sum to
+  its CMA-marked memory ([data](../../data/2026-11-04_rig_host_ram/README.md)); the census tool reads them on a rig.
 - Whether the rig's kernel names the size parameter `kho_bootmem` or `kho_scratch`.
 - The launch queue's size and its scaling: 40 MB a GPU is a linear extrapolation from one PR's 4x figure, and "system RAM" may
   include pages that are not resident.

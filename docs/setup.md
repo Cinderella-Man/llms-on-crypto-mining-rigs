@@ -106,6 +106,20 @@ Bind the server to `127.0.0.1` unless you mean to expose it, and keep an eye on 
 [scripts/server_bench.sh](../scripts/server_bench.sh) shows a watchdog that stops the server when it drops below
 400 MB.
 
+[scripts/rig_host_ram.sh](../scripts/rig_host_ram.sh) shows where the rest of the 4 GB goes and what gives some
+back. Run as root on the rig, read from stdin (`ssh "$RIG" 'bash -s -- census before' < scripts/rig_host_ram.sh`):
+- `census [NAME]` prints one read-only TSV block: memory (with `CmaFree` and the pageblocks marked CMA), the kernel command
+  line, THP, the swiotlb pool, swap and zswap, MGLRU, journald, the daemons' cgroup memory, and a running llama-server's RSS,
+  PSS, pinned memory and CUDA variables;
+- `delta BEFORE AFTER` lists what changed between two blocks;
+- `apply SETTING` and `revert SETTING` set and undo one runtime-only setting (`thp`, `mglru`, `watermark`, `cgroup`,
+  `journald`, `zswap`) and print the delta;
+- `boot-howto` prints the one-time GRUB steps for `kho=off` (and `swiotlb=4096` when the log shows the 64 MiB pool);
+- `contexts` measures the host memory of an idle llama-server per card count.
+
+The reasoning is in [host_ram_4gb.md](research/notes/host_ram_4gb.md); the order of a run, the commands and the expected
+numbers are in [docs/data/2026-11-04_rig_host_ram](data/2026-11-04_rig_host_ram/README.md).
+
 ## Storing models
 
 Model files don't fit comfortably on the 64 GB SSD next to the OS and CUDA. The benchmarks here load models from a
