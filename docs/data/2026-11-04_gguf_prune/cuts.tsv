@@ -1,0 +1,4 @@
+folder	keep	shards_bytes	bytes_saved	written_bytes	routings_kept_pct	worst_layer_routings_kept_pct	worst_layer	energy_kept_pct	worst_layer_energy_kept_pct
+swift_iq3_s_e464	464	79005238688	4738498560	50205100256	99.78	99.46	0	99.91	99.72
+swift_iq3_s_e448	448	77425739168	6317998080	48625600736	99.61	98.89	0	99.84	99.50
+swift_iq3_s_e416	416	74266740128	9476997120	45466601696	99.07	97.20	0	99.63	98.72
