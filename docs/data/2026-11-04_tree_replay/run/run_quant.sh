@@ -16,6 +16,11 @@
 #   ARMS     the arms of LOG whose traces are replayed, all their traces (default "dflash2b mtp2 nodraft")
 #   TRACES   instead of ARMS: a comma-separated trace list
 #   N_MAX    drafted tokens per step (default 7: the drafter's block of 8 minus the anchor)
+#   FULL_BLOCK  LLAMA_SPEC_DUMP_FULL_BLOCK (branch pascal-p106-v3-b12076-specdump2; default 0): 1 decodes the drafter's
+#            whole trained block (BLOCK tokens) a second time for the dump after the draft of N_MAX is made, n >= 2 a block
+#            of n tokens; the draft, the verify and the output are the line's own either way
+#            (docs/data/2026-11-04_full_block_dump/run/run_full_block.sh sets N_MAX=2 and FULL_BLOCK=1: S18's line)
+#   BLOCK    the drafter's trained block, tokens (default 8: Inco AI's Flash-Next drafter)
 #   CTX      context (default 65536)                   SARGS    more server arguments (default "-fit off")
 #   REPO     this repository (host path)               MOUNTS   docker -v arguments for BIN, MODEL, DRAFT
 #   IMAGE    default nvidia/cuda:12.9.2-devel-ubuntu24.04   LABEL  label on the container (default pascal-quants=1)
@@ -31,6 +36,9 @@ set -uo pipefail
 OUT=$(realpath -m "$OUT")
 REPO=$(realpath "$REPO")
 GPUS=${GPUS:-2,3,4}; PORT=${PORT:-18190}; N_MAX=${N_MAX:-7}; CTX=${CTX:-65536}; SARGS=${SARGS:--fit off}
+FULL_BLOCK=${FULL_BLOCK:-0}; BLOCK=${BLOCK:-8}
+# the second block's width the smoke dump must carry (0: none)
+FB_W=0; [ "$FULL_BLOCK" = 0 ] || { [ "$FULL_BLOCK" = 1 ] && FB_W=$BLOCK || FB_W=$(( FULL_BLOCK < BLOCK ? FULL_BLOCK : BLOCK )); }
 ARMS=${ARMS:-dflash2b mtp2 nodraft}; TRACES=${TRACES:-}; MOUNTS=${MOUNTS:-}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}; LABEL=${LABEL:-pascal-quants=1}
 CACHE=${CACHE:-$OUT/nvcache}
@@ -69,6 +77,7 @@ docker rm -f "$NAME" > /dev/null 2>&1
 docker run -d --name "$NAME" --label "$LABEL" --label specdump=1 --network host --gpus "\"device=$GPUS\"" \
     -e CUDA_DEVICE_ORDER=PCI_BUS_ID -e CUDA_CACHE_PATH=/nvcache -e CUDA_CACHE_MAXSIZE=4294967296 \
     -e LLAMA_SPEC_DUMP="$DUMP" -e LLAMA_SPEC_DUMP_K=8 -e LLAMA_SPEC_DUMP_TGT_K=8 -e LLAMA_SPEC_DUMP_NGRAM=16 \
+    -e LLAMA_SPEC_DUMP_FULL_BLOCK="$FULL_BLOCK" \
     -v "$OUT:$OUT" -v "$CACHE:/nvcache" $MOUNTS "$IMAGE" "$BIN/llama-server" \
     -m "$MODEL" -ngl 99 -fa on -np 1 -c "$CTX" -b 2048 -ub 512 --ctx-checkpoints 4 --cache-ram 0 \
     --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui \
@@ -88,12 +97,19 @@ curl -s --max-time 1800 -H 'Content-Type: application/json' --data @"$SMOKE" \
     "http://127.0.0.1:$PORT/v1/chat/completions" > "$OUT/smoke.json"
 python3 -I "$REPO/bench/tree_replay/tree_replay.py" --check "$DUMP" > "$OUT/smoke_check.txt" 2>&1 \
     || { cat "$OUT/smoke_check.txt"; fail "the smoke dump does not pass --check"; }
-python3 -I - "$DUMP" "$N_MAX" > "$OUT/smoke_lattice.txt" <<'EOF' || fail "the smoke dump has no full lattices"
+python3 -I - "$DUMP" "$N_MAX" "$FB_W" > "$OUT/smoke_lattice.txt" <<'EOF' || fail "the smoke dump has no full lattices"
 import json, sys
 steps = [json.loads(l) for l in open(sys.argv[1]) if l.strip()]
-n = int(sys.argv[2])
-full = [s for s in steps if s.get("type") == "draft-dflash" and s.get("lattice") and len(s.get("cand", [])) == n and all(len(c) == 8 for c in s["cand"])]
-print(f"{len(steps)} steps, {len(full)} with an 8-candidate lattice of {n} positions, "
+n, fbw = int(sys.argv[2]), int(sys.argv[3])
+def second_block_ok(s):
+    # with the second block asked for: its width, one lattice row per position after the anchor, 8 candidates each
+    fb = s.get("fb")
+    return fbw == 0 and fb is None or (fb is not None and fb["w"] == fbw and len(fb["cand"]) == fbw - 1
+                                       and all(len(c) == 8 for c in fb["cand"]))
+full = [s for s in steps if s.get("type") == "draft-dflash" and s.get("lattice") and len(s.get("cand", [])) == n
+        and all(len(c) == 8 for c in s["cand"]) and second_block_ok(s)]
+print(f"{len(steps)} steps, {len(full)} with an 8-candidate lattice of {n} positions"
+      + (f" and a second block of {fbw} tokens" if fbw else "") + ", "
       f"{sum(s['n_acc'] for s in steps)} of {sum(len(s['draft']) for s in steps)} drafted tokens accepted")
 sys.exit(0 if steps and len(full) == len(steps) else 1)
 EOF
@@ -113,9 +129,13 @@ head -n "$n_smoke" "$DUMP" > "$OUT/smoke-$STAMP.jsonl"
 tail -n +$((n_smoke + 1)) "$DUMP" > "$OUT/replay-$STAMP.jsonl"
 log "$n_smoke smoke steps, $(wc -l < "$OUT/replay-$STAMP.jsonl") replay steps"
 rm "$DUMP"
+# the token ids that split the tables by tool call and reasoning (read from the model's vocabulary; none if absent)
+MARKERS=$(python3 -I "$REPO/bench/tree_replay/gguf_markers.py" "$MODEL" 2> "$OUT/markers.err" | tee "$OUT/markers.txt")
+log "markers: ${MARKERS:-none}"
 for mode in markov factorized; do
+    # shellcheck disable=SC2086
     python3 -I "$REPO/bench/tree_replay/tree_replay.py" "$OUT"/replay-*.jsonl --mode "$mode" --out "$OUT/tables-$mode" \
-        > "$OUT/tables-$mode.console" 2>&1
+        $MARKERS > "$OUT/tables-$mode.console" 2>&1
     log "tables-$mode: rc $? ($(head -n 3 "$OUT/tables-$mode/summary.md" | tail -n 1 | cut -c 1-160))"
 done
 date -Is > "$OUT/DONE"

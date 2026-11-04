@@ -1,0 +1,6 @@
+check	verdict	detail
+tokens	OK	2/2 requests return the same tokens in the four arms (24 and 24 tokens)
+drafts	OK	18 / 18 / 18 dump lines (dump / full / full4); every line equal but for the run and the second block: OK
+second_block	OK	18 of 18 lines of full carry a second block of 8 tokens, 18 of 18 of full4 one of 4, 0 of dump's carry any
+check	OK	full: 18 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 18 with a second block; full4: 18 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 18 with a second block
+tables	OK	tree_replay.py on the full dump: rc 0, 8 rows of block.csv

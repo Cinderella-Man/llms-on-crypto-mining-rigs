@@ -3,7 +3,8 @@
 
     python3 tree_replay.py DUMP.jsonl[.gz] [...] --out DIR [--budgets 3,4,6,8,12,16] [--r 0.08,0.10,0.12,0.40]
                            [--draft-cost 0.22] [--mode markov|factorized] [--copy-min 4]
-                           [--ctx-bins 4096,8192,16384,32768]
+                           [--ctx-bins 4096,8192,16384,32768] [--lattice auto|fb|prod]
+                           [--tool-open ID --tool-close ID --think-open ID --think-close ID]
     python3 tree_replay.py --check DUMP.jsonl[.gz] [...]
     python3 tree_replay.py --selftest
 
@@ -11,6 +12,14 @@ Each dump line is one verify step of the server's speculative loop: the position
 tokens, the target's tokens (the accepted drafts, then its own), the drafter's candidates per position (for DFlash2 its
 selector lattice: conditional probabilities from each candidate of the previous position), the target's most probable
 tokens at the sampled positions, and the longest earlier match of the context's suffix with the tokens that followed it.
+With LLAMA_SPEC_DUMP_FULL_BLOCK a line also carries "fb": the lattice of a second block the drafter decoded for the
+record (DFlash2's whole trained block, 7 positions after the anchor for Inco AI's drafter) next to the draft's own, which
+stays what the line drafts; the tables walk the second block by default (--lattice).
+
+Acceptance by position (block*.csv): along the drafter's greedy walk, P_j (the first j tokens all accepted) and the
+conditional acceptance at each position j = 1..7 (or as deep as the block goes), overall and by context length, by
+segment of the anchor token (tool call, reasoning, text: from the marker token ids), by the server's tool-call grammar
+flag and by content (copy), then tau(k) and the speed-up of drafting k tokens against the research note's two tails.
 
 The truth for a step is the target's own continuation after it: the tokens of that request's later steps, rebuilt by
 position (a line may also carry it as "truth"). The server verifies greedy drafts by sample-and-match: it samples each
@@ -34,6 +43,7 @@ import heapq
 import json
 import math
 import random
+import struct
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -70,8 +80,40 @@ def load_steps(paths):
     return steps
 
 
-def attach_truth(steps, depth_cap=64):
-    """Rebuild each request's token sequence by position and give every step its continuation (step["_y"]).
+def segment_states(tok, markers):
+    """The state after each position's token of one request, as {position: segment}: "tool" between the tool-call
+    markers, "think" between the reasoning markers, "text" elsewhere ("other" when no reasoning markers are given).
+    The dump holds the generated tokens, not the prompt, so a request's first tokens are classified by the first
+    marker seen: a closing marker first means the request began inside it (a chat template that opens the reasoning
+    in the prompt), an opening marker or none means outside."""
+    if not markers or not any(v is not None for v in markers.values()):
+        return {}
+    t_open, t_close = markers.get("tool_open"), markers.get("tool_close")
+    k_open, k_close = markers.get("think_open"), markers.get("think_close")
+    order = sorted(tok)
+    first_tool = next((("open" if tok[p] == t_open else "close") for p in order if tok[p] in (t_open, t_close) and tok[p] is not None), None)
+    first_think = next((("open" if tok[p] == k_open else "close") for p in order if tok[p] in (k_open, k_close) and tok[p] is not None), None)
+    in_tool = first_tool == "close"
+    think = first_think == "close"
+    have_think = k_open is not None or k_close is not None
+    out = {}
+    for p in order:
+        t = tok[p]
+        if t_open is not None and t == t_open:
+            in_tool = True
+        elif t_close is not None and t == t_close:
+            in_tool = False
+        if k_open is not None and t == k_open:
+            think = True
+        elif k_close is not None and t == k_close:
+            think = False
+        out[p] = "tool" if in_tool else ("think" if think else ("text" if have_think else "other"))
+    return out
+
+
+def attach_truth(steps, depth_cap=64, markers=None):
+    """Rebuild each request's token sequence by position and give every step its continuation (step["_y"]) and, when
+    markers are given ({"tool_open": id, ...}), the segment its anchor token is in (step["_seg"]).
 
     Returns a list of problems found while rebuilding (two steps that disagree about a position)."""
     problems = []
@@ -88,7 +130,11 @@ def attach_truth(steps, depth_cap=64):
                 if p in tok and tok[p] != t:
                     problems.append(f"task {key[2]}: position {p} is {tok[p]} in one step and {t} in step {s.get('step')}")
                 tok[p] = t
+        seg = segment_states(tok, markers)
         for s in g:
+            s["_key"] = key
+            if seg:
+                s["_seg"] = seg.get(s["pos"])
             if "truth" in s:
                 s["_y"] = list(s["truth"])
                 continue
@@ -150,6 +196,22 @@ class Lattice:
         return out
 
 
+def block_view(s, source="auto"):
+    """The step as seen through one lattice: the second block's ("fb", LLAMA_SPEC_DUMP_FULL_BLOCK) or the draft's own
+    ("prod"). "auto" takes the second block where the step has one. Returns None when `source` asks for a lattice the
+    step does not have. The result is a step (the same fields) whose cand, p, pick and lattice are the chosen block's."""
+    fb = s.get("fb")
+    if source in ("auto", "fb") and fb and fb.get("cand"):
+        v = dict(s)
+        v.update(cand=fb["cand"], p=fb["p"], pick=fb["pick"], lattice=True, kept=fb.get("kept", []), _from="fb")
+        return v
+    if source == "fb" or not s.get("cand"):
+        return None
+    v = dict(s)
+    v["_from"] = "prod"
+    return v
+
+
 def best_first(lat, budget):
     """The budget nodes with the highest path probability, in the order a best-first expansion adds them.
 
@@ -209,7 +271,15 @@ def score_step(s, lat, budgets, tgt):
     nodes = best_first(lat, B)
     accepted = []
     expected = []
-    n_acc_live = s["n_acc"]
+    # the target's rows are conditional on the tokens it sampled: a node's row is known where the path to its parent
+    # is on the walk and the walk's tokens so far are the target's own (the lattice may come from a block that is not
+    # the one the draft was made from, so the walk need not equal the draft)
+    n_acc_live = 0
+    for i, b in enumerate(walk):
+        if i < len(s["sampled"]) and lat.ids[i][b] == s["sampled"][i]:
+            n_acc_live += 1
+        else:
+            break
     tgt_ids = s.get("tgt_ids") or []
     tgt_p = s.get("tgt_p") or []
     for (d, b, parent, pr, on) in nodes:
@@ -284,8 +354,8 @@ def cols_ng(rec, B):
     return min(B, rec["ng_n"])
 
 
-def analyse(steps, budgets, mode, rs, draft_cost, copy_min, ctx_bins, tgt=True):
-    """Every table, as lists of dict rows, plus the consistency report."""
+def analyse(steps, budgets, mode, rs, draft_cost, copy_min, ctx_bins, tgt=True, source="auto"):
+    """Every table, as lists of dict rows, plus the consistency report. `source` picks the lattice (block_view)."""
     report = {"n_lines": len(steps)}
     recs = []
     n_short = 0
@@ -293,16 +363,18 @@ def analyse(steps, budgets, mode, rs, draft_cost, copy_min, ctx_bins, tgt=True):
     types = defaultdict(int)
     for s in steps:
         types[s.get("type") or "none"] += 1
-        if not s.get("cand"):
+        v = block_view(s, source)
+        if v is None:
             n_nocand += 1
             continue
-        lat = Lattice(s, mode)
+        lat = Lattice(v, mode)
         if len(s["_y"]) < lat.D:
             n_short += 1
             continue
-        recs.append(score_step(s, lat, budgets, tgt))
+        recs.append(score_step(v, lat, budgets, tgt))
     report.update(n_scored=len(recs), n_short=n_short, n_nocand=n_nocand, types=dict(types),
-                  n_lattice=sum(1 for s in steps if s.get("lattice")))
+                  n_lattice=sum(1 for s in steps if s.get("lattice") or s.get("fb")),
+                  n_fb=sum(1 for s in steps if s.get("fb")), source=source)
     if not recs:
         return report, {}
     D = max(r["walk_len"] for r in recs)
@@ -460,6 +532,211 @@ def analyse(steps, budgets, mode, rs, draft_cost, copy_min, ctx_bins, tgt=True):
     return report, tables
 
 
+# ---------------------------------------------------------------- acceptance by position along the drafter's walk
+
+# tails to read the measurement against (Q804's research note, section 3.2): P_j, the probability that the first j
+# drafted tokens are all accepted
+REFERENCE_TAILS = {
+    "note's est. (rig-anchored)": [0.86, 0.70, 0.54, 0.39, 0.28, 0.20, 0.145],
+    "INT4 port's collapse": [0.76, 0.45, 0.31, 0.14, 0.10, 0.02, 0.0],
+}
+
+
+def leading_matches(a, b):
+    n = 0
+    for x, y in zip(a, b):
+        if x != y:
+            break
+        n += 1
+    return n
+
+
+def block_records(steps, source="auto", mode="markov"):
+    """One record per step for the per-position tables: the drafter's greedy walk through the chosen lattice (its
+    tokens, its path probabilities), the continuation known after the step, and how far the walk matches it."""
+    recs = []
+    for s in steps:
+        v = block_view(s, source)
+        if v is None:
+            continue
+        lat = Lattice(v, mode)
+        walk = lat.chain()
+        toks = [lat.ids[i][b] for i, b in enumerate(walk)]
+        wp, pr, prev_b = [], 1.0, -1
+        for i, b in enumerate(walk):
+            pr *= lat.cond(i, prev_b, b)
+            wp.append(pr)
+            prev_b = b
+        y = s["_y"]
+        draft = list(s.get("draft", []))
+        recs.append({"pos": s["pos"], "toks": toks, "n": len(toks), "wp": wp, "y_len": len(y),
+                     "acc": leading_matches(toks, y), "key": s.get("_key"), "seg": s.get("_seg"), "gram": s.get("gram"),
+                     "ng_len": s.get("ng_len", 0), "from": v["_from"], "draft": draft,
+                     "draft_acc": leading_matches(draft, y), "equal": leading_matches(draft, toks)})
+    return recs
+
+
+def ratio_se(pairs):
+    """The standard error of sum(a) / sum(n) over clusters of (a, n), clustered (a request's steps are not
+    independent): sqrt(T / (T - 1) * sum_t (a_t - r n_t)^2) / sum(n)."""
+    A = sum(a for a, _ in pairs)
+    N = sum(n for _, n in pairs)
+    T = len(pairs)
+    if N == 0 or T < 2:
+        return float("nan")
+    r = A / N
+    return math.sqrt(T / (T - 1) * sum((a - r * n) ** 2 for a, n in pairs)) / N
+
+
+def position_rows(recs, W):
+    """Acceptance by position j = 1..W along the walk. A step counts at j when its walk reaches j and the target's
+    continuation is known to j (a request's last steps are shorter: `censored`). cumulative = P_j, the probability
+    that the first j tokens are all accepted; conditional = P_j / P_(j-1) on the same steps; strict = P_j on the steps
+    whose continuation is known to W (the same steps at every j); predicted = the selector's own path probability of
+    the walk, averaged over the same steps."""
+    full = [r for r in recs if r["n"] >= W and r["y_len"] >= W]
+    rows = []
+    for j in range(1, W + 1):
+        have = [r for r in recs if r["n"] >= j and r["y_len"] >= j]
+        cens = sum(1 for r in recs if r["n"] >= j and r["y_len"] < j)
+        reach = [1 if r["acc"] >= j else 0 for r in have]
+        prev = sum(1 for r in have if r["acc"] >= j - 1)
+        by_key = defaultdict(lambda: [0, 0])
+        for r, a in zip(have, reach):
+            by_key[r["key"]][0] += a
+            by_key[r["key"]][1] += 1
+        rows.append({"position": j, "steps": len(have), "censored": cens,
+                     "cumulative": mean(reach), "cumulative_se": ratio_se(list(by_key.values())),
+                     "conditional": (sum(reach) / prev) if prev else float("nan"),
+                     "strict_steps": len(full), "strict_cumulative": mean(1 if r["acc"] >= j else 0 for r in full),
+                     "predicted": mean(r["wp"][j - 1] for r in have)})
+    return rows
+
+
+def speed_rows(P, rs, draft_cost):
+    """tau(k) = 1 + P_1 + ... + P_k and S(k) = tau(k) / (1 + draft pass + k r) for k = 1..len(P): k drafted tokens
+    verified in one pass of k + 1 columns, the pass costing 1 + k r one-token steps."""
+    rows, tau = [], 1.0
+    for k, p in enumerate(P, 1):
+        tau += p
+        row = {"k": k, "P_k": p, "tau": tau}
+        for r_ in rs:
+            row[f"S_r{r_:g}"] = tau / (1.0 + draft_cost + k * r_)
+        rows.append(row)
+    return rows
+
+
+def best_k(P, rs, draft_cost):
+    rows = speed_rows(P, rs, draft_cost)
+    return {r_: max(rows, key=lambda row: row[f"S_r{r_:g}"]) for r_ in rs}
+
+
+def group_position_rows(recs, key_fn, name, W, ks=(3, 6)):
+    """Per group of steps, P_j and the conditional acceptance by position, tau of the whole block and of the first k."""
+    groups = defaultdict(list)
+    for r in recs:
+        k = key_fn(r)
+        if k is not None:
+            groups[k].append(r)
+    out = []
+    for key in sorted(groups, key=lambda k: (isinstance(k, str), k)):
+        g = groups[key]
+        pr = position_rows(g, W)
+        row = {name: key, "steps": len(g)}
+        for p in pr:
+            row[f"n{p['position']}"] = p["steps"]
+        for p in pr:
+            row[f"P{p['position']}"] = p["cumulative"]
+        for p in pr:
+            row[f"a{p['position']}"] = p["conditional"]
+        Ps = [p["cumulative"] for p in pr]
+        for k in ks:
+            if k <= W and all(not math.isnan(x) for x in Ps[:k]):
+                row[f"tau_k{k}"] = 1 + sum(Ps[:k])
+        if all(not math.isnan(x) for x in Ps):
+            row["tau_all"] = 1 + sum(Ps)
+        out.append(row)
+    return out
+
+
+def width_rows(recs, W):
+    """Where steps carry both the draft's own block and a second one: for the draft's first j tokens, how often they are
+    the second block's first j walk tokens (`same`), and the draft's and the second block's own P_j on the steps where
+    both exist and the continuation is known to j. A difference is the block width's effect on the drafter (DFlash2's
+    attention across the block is not causal)."""
+    pair = [r for r in recs if r["from"] == "fb" and r["draft"]]
+    rows = []
+    for j in range(1, W + 1):
+        have = [r for r in pair if len(r["draft"]) >= j and r["n"] >= j and r["y_len"] >= j]
+        if not have:
+            break
+        rows.append({"position": j, "steps": len(have), "same": mean(1 if r["equal"] >= j else 0 for r in have),
+                     "draft_P": mean(1 if r["draft_acc"] >= j else 0 for r in have),
+                     "full_block_P": mean(1 if r["acc"] >= j else 0 for r in have),
+                     "draft_minus_full": mean((1 if r["draft_acc"] >= j else 0) - (1 if r["acc"] >= j else 0) for r in have)})
+    return rows
+
+
+def analyse_blocks(steps, rs, draft_cost, copy_min, ctx_bins, source="auto", mode="markov"):
+    """The per-position tables of the drafter's walk (the second block's where the dump has one): overall, by context
+    length, by segment (the markers), by the server's grammar flag, by content (copy), and the block width's effect."""
+    recs = block_records(steps, source, mode)
+    report = {"n_block_steps": len(recs), "n_second_block": sum(1 for r in recs if r["from"] == "fb"),
+              "block_positions": max((r["n"] for r in recs), default=0)}
+    tables = {}
+    W = report["block_positions"]
+    if not recs or W == 0:
+        return report, tables
+    tables["block"] = position_rows(recs, W)
+    P = [row["cumulative"] for row in tables["block"]]
+    if all(not math.isnan(x) for x in P):
+        tables["block_speed"] = speed_rows(P, rs, draft_cost)
+    # the same arithmetic on the reference tails, to read the measured tail against
+    ref = []
+    for name, tail in REFERENCE_TAILS.items():
+        best = best_k(tail, rs, draft_cost)
+        row = {"tail": name}
+        for r_ in rs:
+            row[f"best_k_r{r_:g}"] = best[r_]["k"]
+            row[f"S_r{r_:g}"] = best[r_][f"S_r{r_:g}"]
+        ref.append(row)
+    if all(not math.isnan(x) for x in P):
+        best = best_k(P, rs, draft_cost)
+        row = {"tail": "measured"}
+        for r_ in rs:
+            row[f"best_k_r{r_:g}"] = best[r_]["k"]
+            row[f"S_r{r_:g}"] = best[r_][f"S_r{r_:g}"]
+        ref.insert(0, row)
+    tables["block_vs_reference"] = ref
+
+    def ctx_key(r):
+        lo = 0
+        for e in ctx_bins:
+            if r["pos"] < e:
+                return f"{lo}-{e - 1}"
+            lo = e
+        return f">={lo}"
+
+    by_ctx = group_position_rows(recs, ctx_key, "context", W)
+    order = {}
+    for r in sorted(recs, key=lambda r: r["pos"]):
+        order.setdefault(ctx_key(r), len(order))
+    by_ctx.sort(key=lambda row: order[row["context"]])
+    tables["block_by_ctx"] = by_ctx
+    if any(r["seg"] is not None for r in recs):
+        tables["block_by_segment"] = group_position_rows(recs, lambda r: r["seg"], "segment", W)
+    if any(r["gram"] is not None for r in recs):
+        tables["block_by_gram"] = group_position_rows(
+            recs, lambda r: None if r["gram"] is None else ("tool-call grammar active" if r["gram"] else "no grammar"),
+            "grammar", W)
+    tables["block_by_content"] = group_position_rows(
+        recs, lambda r: "copy" if r["ng_len"] >= copy_min else "fresh", "content", W)
+    wr = width_rows(recs, W)
+    if wr:
+        tables["block_width"] = wr
+    return report, tables
+
+
 def best_s(tables, rs, kind):
     out = {}
     for r_ in rs:
@@ -471,16 +748,17 @@ def best_s(tables, rs, kind):
 # ---------------------------------------------------------------- checks
 
 
-def check(steps):
+def check(steps, markers=None):
     """Consistency of the dump with itself; returns (ok, lines of text)."""
     lines = []
     bad = 0
-    problems = attach_truth(steps)
+    problems = attach_truth(steps, markers=markers)
     for p in problems[:20]:
         lines.append("conflict: " + p)
     bad += len(problems)
     n_gap = sum(1 for s in steps if s.get("_gap"))
     n_eog = 0
+    n_fb = 0
     for s in steps:
         d, smp, n = s["draft"], s["sampled"], s["n_acc"]
         if len(smp) != n + 1 or n > len(d):
@@ -513,11 +791,26 @@ def check(steps):
                 if len(p[0]) != K[0] or any(len(p[i]) != K[i - 1] * K[i] for i in range(1, len(K))):
                     lines.append(f"step {s.get('step')}: lattice rows do not match the candidate counts")
                     bad += 1
+        fb = s.get("fb")
+        if fb is not None:
+            fc, fp, fk, fw = fb.get("cand") or [], fb.get("p") or [], fb.get("pick") or [], fb.get("w", 0)
+            K = [len(c) for c in fc]
+            if not fc or fw != len(fc) + 1 or len(fp) != len(fc) or len(fk) != len(fc):
+                lines.append(f"step {s.get('step')}: the second block has {len(fc)} positions, {len(fp)} rows, "
+                             f"{len(fk)} picks for a width of {fw}")
+                bad += 1
+            elif len(fp[0]) != K[0] or any(len(fp[i]) != K[i - 1] * K[i] for i in range(1, len(K))):
+                lines.append(f"step {s.get('step')}: the second block's lattice rows do not match its candidate counts")
+                bad += 1
+            elif any(k < 0 or k >= K[i] for i, k in enumerate(fk)):
+                lines.append(f"step {s.get('step')}: the second block's walk leaves its candidates")
+                bad += 1
+            n_fb += 1
         if s.get("tgt_ps") is not None and len(s["tgt_ps"]) not in (0, len(smp)):
             lines.append(f"step {s.get('step')}: {len(s['tgt_ps'])} target rows for {len(smp)} sampled tokens")
             bad += 1
     lines.insert(0, f"{len(steps)} steps, {bad} problems, {n_gap} gaps between consecutive steps of a request, "
-                    f"{n_eog} stops at an end-of-generation token")
+                    f"{n_eog} stops at an end-of-generation token, {n_fb} with a second block")
     return bad == 0, lines
 
 
@@ -564,7 +857,9 @@ def summary_md(report, tables, args, rs):
     s.append(f"Lines {report['n_lines']} ({', '.join(f'{k} {v}' for k, v in report['types'].items())}); scored "
              f"{report['n_scored']}; left out: {report['n_short']} without the continuation to the lattice's depth, "
              f"{report['n_nocand']} without candidates. Mode {args.mode} ({report['n_lattice']} steps carry a DFlash2 "
-             f"lattice; the others are factorized); draft pass {args.draft_cost:g} of a one-token step; verified live: "
+             f"lattice; the others are factorized); lattice: {report.get('source', 'auto')} ({report.get('n_fb', 0)} steps "
+             f"carry a second block, which `auto` and `fb` use in place of the draft's own); draft pass "
+             f"{args.draft_cost:g} of a one-token step; verified live: "
              f"{fmt(report.get('live_draft', float('nan')))} drafted, {fmt(report.get('live_tau', float('nan')))} "
              f"tokens per step. Copy share (context match of {args.copy_min}+ tokens): "
              f"{fmt(report.get('copy_share', float('nan')))}.\n")
@@ -598,6 +893,43 @@ def summary_md(report, tables, args, rs):
     s.append(md_table(tables["adaptive"]))
     s.append("\n## Copy-gated: the n-gram chain on copy steps (no draft pass), the tree elsewhere\n")
     s.append(md_table(tables["copy_gated"]))
+    return "\n".join(s) + "\n"
+
+
+def block_summary_md(report, tables, args, rs):
+    s = ["## Acceptance by position along the drafter's walk\n"]
+    s.append(f"{report['n_block_steps']} steps, {report['n_second_block']} of them through the second block of "
+             f"`LLAMA_SPEC_DUMP_FULL_BLOCK` (the rest through the draft's own lattice), the walk covering up to "
+             f"{report['block_positions']} positions after the anchor. A step counts at position j when its walk reaches j "
+             f"and the target's continuation is known to j; `censored` steps ended before j (the end of a request). "
+             f"*cumulative* is P_j, the probability that the first j drafted tokens are all accepted (standard error "
+             f"clustered by request); *conditional* is P_j / P_(j-1) on the same steps; *strict* is P_j on the steps "
+             f"whose continuation is known to the whole block; *predicted* is the selector's own path probability of "
+             f"the walk. tau(k) = 1 + P_1 + ... + P_k; S(k) = tau(k) / (1 + draft pass {args.draft_cost:g} + k r).\n")
+    if not tables:
+        return "\n".join(s) + "\n"
+    s.append(md_table(tables["block"]))
+    if "block_speed" in tables:
+        s.append("\n### tau and speed-up by drafted length k (one pass of k + 1 columns)\n")
+        s.append(md_table(tables["block_speed"]))
+    if "block_vs_reference" in tables:
+        s.append("\n### The best drafted length and its speed-up, measured and on the research note's two tails\n")
+        s.append(md_table(tables["block_vs_reference"]))
+    s.append(f"\n### By context length (position of the step)\n")
+    s.append(md_table(tables["block_by_ctx"]))
+    if "block_by_segment" in tables:
+        s.append("\n### By segment of the anchor token (tool call, reasoning, text: from the token markers)\n")
+        s.append(md_table(tables["block_by_segment"]))
+    if "block_by_gram" in tables:
+        s.append("\n### By the server's tool-call grammar at the draft (the dump's `gram` flag)\n")
+        s.append(md_table(tables["block_by_gram"]))
+    s.append(f"\n### By content (copy: the context's suffix occurs earlier for {args.copy_min}+ tokens)\n")
+    s.append(md_table(tables["block_by_content"]))
+    if "block_width" in tables:
+        s.append("\n### The block width's effect: the draft's own block against the second block, same steps\n")
+        s.append("`same` is the share of steps whose first j drafted tokens equal the second block's walk; "
+                 "`draft_P` and `full_block_P` are the two walks' P_j against the same continuation.\n")
+        s.append(md_table(tables["block_width"]))
     return "\n".join(s) + "\n"
 
 
@@ -648,6 +980,44 @@ def synth_markov_step(rng, step, task, K=4, D=5, n_draft=3, leak=0.1, vocab=1000
     return {"v": 1, "step": step, "task": task, "slot": 0, "pos": 100, "n_prompt": 50, "verify": "match",
             "type": "synthetic", "last": 7, "draft": draft, "sampled": sampled, "n_acc": n, "lattice": True,
             "k": K, "cand": ids, "p": p, "pick": pick, "truth": y, "ng_len": 0, "ng": []}
+
+
+def synth_block_step(rng, step, task, a, pos, cut=None, n_draft=2, K=3, vocab=1000, same=1.0):
+    """A step with a second block of len(a) positions whose walk (candidate 0 at every position) is accepted at position
+    j with conditional probability a[j - 1], so the chain's P_j is the product a[0] ... a[j - 1] exactly. The rows give
+    candidate 0 the probability a[j - 1] after any predecessor, so the selector's path probability of the walk is that
+    product too. `cut` leaves only that many positions of the continuation (the end of a request); the draft's own block
+    has n_draft positions and starts with the walk's tokens with probability `same`."""
+    W = len(a)
+    ids = [rng.sample(range(1, vocab), K) for _ in range(W)]
+
+    def row(x):
+        return [x, (1.0 - x) * 0.6, (1.0 - x) * 0.4]
+
+    p = [row(a[0])] + [[v for _ in range(K) for v in row(a[i])] for i in range(1, W)]
+    toks = [ids[i][0] for i in range(W)]
+    y = []
+    for i in range(W):
+        if rng.random() < a[i]:
+            y.append(toks[i])
+        else:
+            y.append(vocab + 1)
+            y += [vocab + 2 + rng.randrange(5) for _ in range(W - i - 1)]
+            break
+    draft = toks[:n_draft] if rng.random() < same else [vocab + 500 + i for i in range(n_draft)]
+    n = 0
+    while n < n_draft and draft[n] == y[n]:
+        n += 1
+    sampled = draft[:n] + [y[n]]
+    if cut is not None:
+        y = y[:max(cut, n + 1)]
+    # the draft's own block: n_draft positions, its walk the draft
+    d_ids = [[draft[i], vocab + 600 + i, vocab + 700 + i] for i in range(n_draft)]
+    d_p = [[0.5, 0.3, 0.2]] + [[v for _ in range(K) for v in (0.5, 0.3, 0.2)] for _ in range(1, n_draft)]
+    return {"v": 1, "step": step, "task": task, "slot": 0, "pos": pos, "n_prompt": 50, "verify": "match",
+            "type": "synthetic", "last": 7, "draft": draft, "sampled": sampled, "n_acc": n, "lattice": True,
+            "k": K, "cand": d_ids, "p": d_p, "pick": [0] * n_draft, "truth": y, "ng_len": 0, "ng": [],
+            "fb": {"w": W + 1, "cand": ids, "p": p, "pick": [0] * W, "kept": [1.0] * W}}
 
 
 def selftest():
@@ -718,6 +1088,165 @@ def selftest():
            "chain acceptance falls with the position")
     expect(all(r["tau_tree"] >= r["tau_chain"] - 1e-9 for r in tab["budgets"] if r["budget"] <= 5),
            "within the walk's depth the best-first tree accepts at least the chain")
+
+    # 4. by-position acceptance on a hand-made request with a known answer. Request tokens by position: 10 anchor 5;
+    #    step 0 (pos 10) drafts 11, 21 and the target says 11, 99; step 1 (pos 12, anchor 99) drafts 31, 41 and the
+    #    target says 31, 41, 51; step 2 (pos 15, anchor 51) drafts 61 and the target says 61, 71, the request's end.
+    #    The second block's walks: 11 21 31 41 / 31 41 51 61 / 61 71 81 91.
+    def blk(step, pos, last, draft, sampled, walk):
+        W = len(walk)
+        ids = [[t, 7000 + 10 * i, 7001 + 10 * i] for i, t in enumerate(walk)]
+        p = [[0.5, 0.3, 0.2]] + [[v for _ in range(3) for v in (0.5, 0.3, 0.2)] for _ in range(1, W)]
+        n = len(sampled) - 1
+        return {"v": 1, "step": step, "task": 5, "slot": 0, "pos": pos, "n_prompt": 9, "verify": "match",
+                "type": "draft-dflash", "last": last, "draft": draft, "sampled": sampled, "n_acc": n, "lattice": True,
+                "k": 3, "cand": [[t, 7000, 7001] for t in draft],
+                "p": [[0.5, 0.3, 0.2]] + [[v for _ in range(3) for v in (0.5, 0.3, 0.2)] for _ in range(1, len(draft))],
+                "pick": [0] * len(draft), "ng_len": 0, "ng": [], "gram": 1 if step == 1 else 0, "_file": 0,
+                "fb": {"w": W + 1, "cand": ids, "p": p, "pick": [0] * W, "kept": [1.0] * W}}
+
+    hand = [blk(0, 10, 5, [11, 21], [11, 99], [11, 21, 31, 41]),
+            blk(1, 12, 99, [31, 41], [31, 41, 51], [31, 41, 51, 61]),
+            blk(2, 15, 51, [61], [61, 71], [61, 71, 81, 91])]
+    good4, lines4 = check(hand)
+    expect(good4, "hand-made second-block dump is consistent: " + lines4[0])
+    expect(hand[0]["_y"] == [11, 99, 31, 41, 51, 61, 71] and hand[2]["_y"] == [61, 71],
+           "the continuation is rebuilt by position across steps (11 99 31 41 51 61 71)")
+    rep4, tab4 = analyse_blocks(hand, [0.1], 0.2, 4, [4096])
+    pos = tab4["block"]
+    expect([r["steps"] for r in pos] == [3, 3, 2, 2] and [r["censored"] for r in pos] == [0, 0, 1, 1],
+           f"steps counted per position, the request's end censored: {[(r['steps'], r['censored']) for r in pos]}")
+    expect([round(r["cumulative"], 4) for r in pos] == [1.0, 0.6667, 0.5, 0.5],
+           f"P_1..P_4 {[round(r['cumulative'], 4) for r in pos]} (1, 2/3, 1/2, 1/2)")
+    expect([round(r["conditional"], 4) for r in pos] == [1.0, 0.6667, 1.0, 1.0],
+           f"conditional {[round(r['conditional'], 4) for r in pos]} (1, 2/3, 1, 1)")
+    expect([round(r["strict_cumulative"], 4) for r in pos] == [1.0, 0.5, 0.5, 0.5] and pos[0]["strict_steps"] == 2,
+           "P_j on the steps whose continuation is known to the whole block (1, 1/2, 1/2, 1/2)")
+    sp = tab4["block_speed"]
+    expect([round(r["tau"], 4) for r in sp] == [2.0, 2.6667, 3.1667, 3.6667]
+           and abs(sp[3]["S_r0.1"] - 3.6667 / (1 + 0.2 + 4 * 0.1)) < 1e-3, "tau(k) = 1 + the sum of P_j, S(k) = tau / (1 + d + k r)")
+    wd = tab4["block_width"]
+    expect(wd[0]["steps"] == 3 and wd[0]["same"] == 1.0 and wd[1]["steps"] == 2
+           and wd[1]["draft_P"] == 0.5 and wd[1]["full_block_P"] == 0.5,
+           f"the width table: same {wd[0]['same']}, P_2 of the draft {wd[1]['draft_P']} and of the block {wd[1]['full_block_P']}")
+    gram = {r["grammar"]: r for r in tab4["block_by_gram"]}
+    expect(gram["tool-call grammar active"]["steps"] == 1 and gram["no grammar"]["steps"] == 2
+           and gram["tool-call grammar active"]["P4"] == 1.0, "the server's grammar flag splits the steps (1 and 2)")
+    r_fb, t_fb = analyse(hand, [1, 2, 3, 4], "markov", [0.1], 0.2, 4, [4096], tgt=False)
+    r_pr, t_pr = analyse(hand, [1, 2], "markov", [0.1], 0.2, 4, [4096], tgt=False, source="prod")
+    expect(r_fb["n_fb"] == 3 and len(t_fb["chain"]) == 4 and len(t_pr["chain"]) == 2,
+           "the tree tables take the second block's lattice by default (4 positions) and the draft's own on request (2)")
+
+    # 5. segments from the token markers: think closes at 900, a tool call between 901 and 902
+    tk = {10: 7, 11: 8, 12: 900, 13: 5, 14: 901, 15: 6, 16: 6, 17: 902, 18: 9}
+    seg = segment_states(tk, {"tool_open": 901, "tool_close": 902, "think_open": 899, "think_close": 900})
+    expect([seg[p] for p in sorted(seg)] == ["think", "think", "text", "text", "tool", "tool", "tool", "text", "text"],
+           "segments by position: reasoning until its close, a tool call between its markers")
+    seg2 = segment_states(tk, {"tool_open": 901, "tool_close": 902})
+    expect([seg2[p] for p in sorted(seg2)] == ["other", "other", "other", "other", "tool", "tool", "tool", "other", "other"],
+           "tool markers alone")
+    expect(segment_states(tk, None) == {}, "no markers, no segments")
+    st_mk = [dict(blk(0, 10, 7, [8, 900], [8, 900, 5], [8, 900, 5, 901]), _file=0),
+             dict(blk(1, 13, 5, [901, 6], [901, 6, 6], [901, 6, 6, 902]), _file=0)]
+    check(st_mk, markers={"tool_open": 901, "tool_close": 902, "think_open": 899, "think_close": 900})
+    expect([s_["_seg"] for s_ in st_mk] == ["think", "text"], "a step takes the segment of its anchor token")
+
+    # 6. calibrated random second blocks: P_j is the product of the conditionals, in each group, with a request's end
+    #    cutting a quarter of the continuations, and the selector's own path probability is that product
+    rng = random.Random(77)
+    a_tool = [0.95, 0.95, 0.90, 0.90, 0.85, 0.85, 0.80]
+    a_text = [0.70, 0.60, 0.50, 0.50, 0.40, 0.40, 0.30]
+    steps6 = []
+    for i in range(8000):
+        tool = i % 2 == 0
+        cut = rng.randint(3, 6) if rng.random() < 0.25 else None
+        st = synth_block_step(rng, i, 200 + i, a_tool if tool else a_text, 1000 if tool else 20000, cut=cut,
+                              same=0.8 if tool else 1.0)
+        st["_file"] = 0
+        st["gram"] = 1 if tool else 0
+        st["ng_len"] = 6 if tool else 0
+        steps6.append(st)
+    good6, lines6 = check(steps6)
+    expect(good6, "synthetic second-block dump is consistent: " + lines6[0])
+    for st in steps6:
+        st["_seg"] = "tool" if st["gram"] else "text"
+    rep6, tab6 = analyse_blocks(steps6, [0.08, 0.10], 0.22, 4, [4096, 16384])
+
+    def prod(a, j):
+        r_ = 1.0
+        for x in a[:j]:
+            r_ *= x
+        return r_
+
+    def zmax(rows, a):
+        # the largest |z| of P_j, and of the conditional (its standard error from the steps still alive at j - 1)
+        worst, worst_cond = 0.0, 0.0
+        for j, row in enumerate(rows, 1):
+            n = row["steps"]
+            pj = prod(a, j)
+            worst = max(worst, abs(row["cumulative"] - pj) / math.sqrt(max(pj * (1 - pj), 1e-9) / n))
+            alive = max(n * prod(a, j - 1), 1.0)
+            worst_cond = max(worst_cond, abs(row["conditional"] - a[j - 1]) / math.sqrt(a[j - 1] * (1 - a[j - 1]) / alive))
+        return worst, worst_cond
+    groups = {"tool": a_tool, "text": a_text}
+    for seg_row in tab6["block_by_segment"]:
+        a = groups[seg_row["segment"]]
+        rows = [{"steps": seg_row[f"n{j}"], "cumulative": seg_row[f"P{j}"], "conditional": seg_row[f"a{j}"]} for j in range(1, 8)]
+        z, zc = zmax(rows, a)
+        expect(z < 4.5 and zc < 4.5, f"{seg_row['segment']}: P_1..P_7 and the conditionals within sampling error "
+                                     f"(largest |z| {z:.2f} and {zc:.2f})")
+    by_ctx = {r["context"]: r for r in tab6["block_by_ctx"]}
+    expect(set(by_ctx) == {"0-4095", ">=16384"}, f"two context bins {sorted(by_ctx)}")
+    lo = by_ctx["0-4095"]
+    rows_lo = [{"steps": lo[f"n{j}"], "cumulative": lo[f"P{j}"], "conditional": lo[f"a{j}"]} for j in range(1, 8)]
+    z, zc = zmax(rows_lo, a_tool)
+    expect(z < 4.5 and zc < 4.5, f"the short-context bin carries the tool tail (largest |z| {z:.2f} and {zc:.2f})")
+    pr = {r["position"]: r for r in tab6["block"]}
+    expect(all(abs(pr[j]["predicted"] - 0.5 * (prod(a_tool, j) + prod(a_text, j))) < 0.02 for j in range(1, 8)),
+           "the selector's path probability equals the true P_j (mean of the two groups)")
+    expect(all(pr[j]["censored"] > 0 for j in range(4, 8)) and all(pr[j]["censored"] == 0 for j in range(1, 4)),
+           "a request's end censors positions 4 to 7 only")
+    expect(all(abs(pr[j]["strict_cumulative"] - 0.5 * (prod(a_tool, j) + prod(a_text, j))) < 0.03 for j in range(1, 8)),
+           "P_j on the steps with a full continuation agrees with P_j on all steps with the position known")
+    wd6 = tab6["block_width"]
+    expect(abs(wd6[0]["same"] - 0.9) < 0.02, f"the draft equals the second block's walk on 0.9 of the steps ({wd6[0]['same']:.3f})")
+    sp6 = {r["k"]: r for r in tab6["block_speed"]}
+    tau_true = 1 + sum(0.5 * (prod(a_tool, j) + prod(a_text, j)) for j in range(1, 7))
+    expect(abs(sp6[6]["tau"] - tau_true) < 0.06, f"tau at 6 drafted tokens {sp6[6]['tau']:.3f} against {tau_true:.3f}")
+    ref = {r["tail"]: r for r in tab6["block_vs_reference"]}
+    expect({"measured", "note's est. (rig-anchored)", "INT4 port's collapse"} <= set(ref)
+           and ref["note's est. (rig-anchored)"]["best_k_r0.08"] >= 5 and ref["INT4 port's collapse"]["best_k_r0.08"] <= 4,
+           "the reference tails: the note's est. drafts 5 or more at r = 0.08, the collapsing tail 4 or fewer")
+
+    # 7. the marker helper reads a vocabulary from a GGUF header: a tiny file with scalar, numeric-array and string-array
+    #    values around the tokenizer's
+    import os
+    import tempfile
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import gguf_markers
+
+    def gstr(x):
+        b = x.encode()
+        return struct.pack("<Q", len(b)) + b
+
+    def kv(key, t, payload):
+        return gstr(key) + struct.pack("<I", t) + payload
+
+    vocab = ["a", "<think>", "</think>", "<tool_call>", "</tool_call>", "b"]
+    blob = b"GGUF" + struct.pack("<I", 3) + struct.pack("<Q", 0) + struct.pack("<Q", 5)
+    blob += kv("general.architecture", 8, gstr("qwen4exp"))
+    blob += kv("x.layers", 4, struct.pack("<I", 7))
+    blob += kv("x.floats", 9, struct.pack("<I", 6) + struct.pack("<Q", 3) + struct.pack("<3f", 1, 2, 3))
+    blob += kv("tokenizer.ggml.tokens", 9, struct.pack("<I", 8) + struct.pack("<Q", len(vocab)) + b"".join(gstr(t) for t in vocab))
+    blob += kv("tokenizer.ggml.token_type", 9, struct.pack("<I", 5) + struct.pack("<Q", len(vocab)) + struct.pack(f"<{len(vocab)}i", *range(6)))
+    with tempfile.NamedTemporaryFile(suffix=".gguf", delete=False) as tf:
+        tf.write(blob)
+    try:
+        toks = gguf_markers.vocabulary(tf.name)
+    finally:
+        os.unlink(tf.name)
+    expect(toks == vocab and [toks.index(t) for t in ("<tool_call>", "</tool_call>", "<think>", "</think>")] == [3, 4, 1, 2],
+           "gguf_markers reads the vocabulary from a GGUF header past scalar and numeric-array values")
     print("selftest", "passed" if ok else "FAILED")
     return 0 if ok else 1
 
@@ -735,6 +1264,13 @@ def main():
     ap.add_argument("--mode", choices=["markov", "factorized"], default="markov")
     ap.add_argument("--copy-min", type=int, default=4)
     ap.add_argument("--ctx-bins", default="4096,8192,16384,32768")
+    ap.add_argument("--lattice", choices=["auto", "fb", "prod"], default="auto",
+                    help="the lattice the tables walk: the second block of LLAMA_SPEC_DUMP_FULL_BLOCK (fb), the draft's "
+                         "own (prod), or the second block where a step has one (auto, the default)")
+    for name in ("tool-open", "tool-close", "think-open", "think-close"):
+        ap.add_argument(f"--{name}", type=int, default=None, metavar="TOKEN_ID",
+                        help="token id of the marker that opens or closes a tool call / the reasoning; with them the "
+                             "tables split by segment (gguf_markers.py prints them for a model)")
     ap.add_argument("--no-target", action="store_true", help="leave out the expected values from the target's rows")
     ap.add_argument("--check", action="store_true", help="only check the dumps' consistency")
     ap.add_argument("--selftest", action="store_true")
@@ -743,8 +1279,10 @@ def main():
         return selftest()
     if not args.dumps:
         ap.error("no dump files")
+    markers = {"tool_open": args.tool_open, "tool_close": args.tool_close,
+               "think_open": args.think_open, "think_close": args.think_close}
     steps = load_steps(args.dumps)
-    good, lines = check(steps)
+    good, lines = check(steps, markers=markers)
     if args.check:
         print("\n".join(lines))
         return 0 if good else 1
@@ -752,14 +1290,18 @@ def main():
     rs = [float(x) for x in args.r.split(",")]
     ctx_bins = [int(x) for x in args.ctx_bins.split(",")]
     report, tables = analyse(steps, budgets, args.mode, rs, args.draft_cost, args.copy_min, ctx_bins,
-                             tgt=not args.no_target)
+                             tgt=not args.no_target, source=args.lattice)
+    breport, btables = analyse_blocks(steps, rs, args.draft_cost, args.copy_min, ctx_bins, source=args.lattice,
+                                      mode=args.mode)
     text = summary_md(report, tables, args, rs)
+    if btables:
+        text += "\n" + block_summary_md(breport, btables, args, rs)
     if args.out:
         out = Path(args.out)
         out.mkdir(parents=True, exist_ok=True)
         (out / "check.txt").write_text("\n".join(lines) + "\n")
         (out / "summary.md").write_text(text)
-        for name, rows in tables.items():
+        for name, rows in list(tables.items()) + list(btables.items()):
             write_csv(out / f"{name}.csv", rows)
     print(text)
     return 0 if good else 1

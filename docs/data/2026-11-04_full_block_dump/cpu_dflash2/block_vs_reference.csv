@@ -1,0 +1,4 @@
+tail,best_k_r0.08,S_r0.08,best_k_r0.1,S_r0.1,best_k_r0.12,S_r0.12,best_k_r0.4,S_r0.4
+measured,5,2.0508,5,1.9315,5,1.8254,2,1.2651
+note's est. (rig-anchored),6,2.3353,5,2.1919,5,2.0714,3,1.2810
+INT4 port's collapse,4,1.7273,3,1.6579,3,1.5949,2,1.0941
