@@ -1,35 +1,68 @@
 #!/usr/bin/env bash
 # smoke_mtp.sh OUT: Q226's smoke test of the draft line before its timed agent check. llama-server starts on the rig with
-# release_check.sh's COMMON settings and ARGS_mtp (through bench/agent_check/rig_server.sh, so with the same monitors
-# and RAM watchdog), records each card's memory once loaded, answers one short coding request (REQUEST, a chat
-# completion body; the reply's timings carry draft_n and draft_n_accepted), then stops; the rig's logs come back to OUT
-# and are removed on the rig. Runs only ssh here. Environment: RIG, BENCH (bench/agent_check), REL_BIN, MODEL,
-# RIG_PORT, ARGS_mtp, SMOKE_LOGDIR (a folder on the rig), REQUEST (a file here), optional CTX (65536), MIN_AVAIL_MB
-# (400), SERVER_ENV (llama-server's environment, e.g. "LLAMA_DRAFT_SHARE=embd LLAMA_DIO_STAGING=2x16").
+# release_check.sh's COMMON settings and ARGS_mtp (through bench/agent_check/rig_server.sh, so with the same monitors and
+# its RAM watchdog, scripts/ram_watchdog.sh, Q559), records each card's memory once loaded, answers the agent's first-turn
+# request (the first task's whole request, ~2,780 tokens, built at run time from the task files by
+# bench/agent_check/first_turn_request.sh, Q607; LONG_REQUEST=off skips it; it goes first, as in the agent check) and one
+# short coding request (REQUEST, a chat completion body; the reply's timings carry draft_n and draft_n_accepted), then
+# stops; the rig's logs (with ram_watchdog-mtp-smoke.tsv) come back to OUT and are removed on the rig. Exit status: 0 when
+# the server came up and every request got a reply. Runs only ssh here. Environment: RIG, BENCH (bench/agent_check),
+# REL_BIN, MODEL, RIG_PORT, ARGS_mtp, SMOKE_LOGDIR (a folder on the rig), REQUEST (a file here), BUILD_SSH or CLIENT (where
+# first_turn_request.sh builds the request), optional CTX (65536), MIN_AVAIL_MB (400), WD_ENV (limits for the watchdog,
+# e.g. "PSI_FULL_PCT=30 MIN_USABLE_MB=40"), SERVER_ENV (llama-server's environment, e.g. "LLAMA_DRAFT_SHARE=embd
+# LLAMA_DIO_STAGING=2x16"), LONG_REQUEST (on; off), LONG_TOKENS and the other LONG_* of first_turn_request.sh, DRY_RUN=1
+# (build the first-turn request and say what would be sent, without touching the rig).
 set -uo pipefail
 OUT=$(realpath -m "${1:?usage: smoke_mtp.sh OUT}")
 : "${RIG:?}" "${BENCH:?}" "${REL_BIN:?}" "${MODEL:?}" "${RIG_PORT:?}" "${ARGS_mtp:?}" "${SMOKE_LOGDIR:?}" "${REQUEST:?}"
 CTX=${CTX:-65536}
 COMMON="-ngl 99 -fa on -c $CTX -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek \
 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui"
+LONG=${LONG_REQUEST:-on}
 mkdir -p "$OUT"
 say() { echo "$(date +%H:%M:%S) $*" | tee -a "$OUT/smoke.log"; }
-rs() { ssh "$RIG" "LOGDIR=$SMOKE_LOGDIR MIN_AVAIL_MB=${MIN_AVAIL_MB:-400} PORT=$RIG_PORT $1 bash -s" < "$BENCH/rig_server.sh"; }
+rs() { ssh "$RIG" "LOGDIR=$SMOKE_LOGDIR MIN_AVAIL_MB=${MIN_AVAIL_MB:-400} ${WD_ENV:-} PORT=$RIG_PORT $1 bash -s" < "$BENCH/rig_server.sh"; }
+field() { local v; v=$(grep -o "\"$1\":[0-9.]*" "$2" | head -n 1); echo "${v#*:}"; }  # first "name":number in a reply
+send() {  # send REQUEST-FILE REPLY-FILE: the request to the server on the rig, the reply here
+  ssh "$RIG" "curl -s -m 900 127.0.0.1:$RIG_PORT/v1/chat/completions -H 'Content-Type: application/json' -d @-" < "$1" > "$2"
+}
+# host memory as a whole and the server's own share (resident, swapped), once loaded and after each request
+host() { ssh "$RIG" "cat /proc/meminfo; cat /proc/\$(cat $SMOKE_LOGDIR/server.pid)/status" > "$OUT/host_$1.txt"; }
+
+if [ "$LONG" != off ]; then
+  say "building the first-turn request (task files rebuilt on the build machine)"
+  bash "$BENCH/first_turn_request.sh" "$OUT/long_request.json" 2>&1 | tee -a "$OUT/smoke.log"
+  [ "${PIPESTATUS[0]}" = 0 ] || { say "the first-turn request could not be built; stopping before the rig is touched"; exit 1; }
+fi
+if [ "${DRY_RUN:-0}" = 1 ]; then
+  say "dry run: would start ${SERVER_ENV:-} ${REL_BIN##*/} on port $RIG_PORT with $COMMON $ARGS_mtp"
+  [ "$LONG" != off ] && say "dry run: then send the first-turn request, $OUT/long_request.json ($(wc -c < "$OUT/long_request.json") bytes)"
+  say "dry run: then send $REQUEST"
+  exit 0
+fi
 
 say "starting: ${SERVER_ENV:-} $REL_BIN $COMMON $ARGS_mtp -m $MODEL"
 rs "ACTION=start ARM=mtp-smoke BIN=$REL_BIN MODEL=$MODEL SERVER_ENV='${SERVER_ENV:-}' SERVER_ARGS='$COMMON $ARGS_mtp'" 2>&1 \
   | tee -a "$OUT/smoke.log"
 up=${PIPESTATUS[0]}
+bad=0
 if [ "$up" = 0 ]; then
   ssh "$RIG" "nvidia-smi --query-gpu=index,memory.used,memory.total --format=csv,noheader" > "$OUT/vram_loaded.csv"
   ssh "$RIG" "awk '/^MemAvailable/ {print int(\$2 / 1024)}' /proc/meminfo" > "$OUT/memavail_loaded_mib.txt"
-  # host memory as a whole and the server's own share (resident, swapped), once loaded and after the request
-  host() { ssh "$RIG" "cat /proc/meminfo; cat /proc/\$(cat $SMOKE_LOGDIR/server.pid)/status" > "$OUT/host_$1.txt"; }
   host loaded
+  if [ "$LONG" != off ]; then
+    say "request long: the first turn ($(wc -c < "$OUT/long_request.json") bytes)"
+    send "$OUT/long_request.json" "$OUT/reply_long.json"
+    say "request long done ($(wc -c < "$OUT/reply_long.json") bytes): prompt tokens $(field prompt_tokens "$OUT/reply_long.json")" \
+      "(target ${LONG_TOKENS:-2780}), generated $(field completion_tokens "$OUT/reply_long.json")," \
+      "drafted $(field draft_n "$OUT/reply_long.json"), accepted $(field draft_n_accepted "$OUT/reply_long.json")"
+    [ -s "$OUT/reply_long.json" ] || bad=1
+    host after_request_long
+  fi
   say "request"
-  ssh "$RIG" "curl -s -m 900 127.0.0.1:$RIG_PORT/v1/chat/completions -H 'Content-Type: application/json' -d @-" \
-    < "$REQUEST" > "$OUT/reply.json"
+  send "$REQUEST" "$OUT/reply.json"
   say "request done ($(wc -c < "$OUT/reply.json") bytes)"
+  [ -s "$OUT/reply.json" ] || bad=1
   host after_request
   ssh "$RIG" "curl -s 127.0.0.1:$RIG_PORT/metrics" > "$OUT/metrics.txt"
 else
@@ -38,4 +71,10 @@ fi
 rs "ACTION=end" 2>&1 | tee -a "$OUT/smoke.log"
 ssh "$RIG" "tar -C $SMOKE_LOGDIR -cf - ." | tar -C "$OUT" -xf - && ssh "$RIG" "rm -rf $SMOKE_LOGDIR" \
   && say "rig logs in $OUT, removed on the rig"
-[ "$up" = 0 ]
+if [ -f "$OUT/ram_watchdog-mtp-smoke.tsv" ]; then
+  say "RAM watchdog: $(grep -vc '^#' "$OUT/ram_watchdog-mtp-smoke.tsv") samples, $(grep -c '^# [0-9]* KILL ' "$OUT/ram_watchdog-mtp-smoke.tsv") kills"
+else
+  say "RAM watchdog: no ram_watchdog-mtp-smoke.tsv came back"
+  bad=1
+fi
+[ "$up" = 0 ] && [ "$bad" = 0 ]

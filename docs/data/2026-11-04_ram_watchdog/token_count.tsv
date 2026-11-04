@@ -1,0 +1,7 @@
+part	characters	tokens	characters_per_token
+system message	275	59	4.66
+tools (one JSON line each)	1760	456	3.86
+user message	7053	1995	3.54
+sum of the parts	9088	2510	
+rendered prompt	10274	2760	
+added by the template (rendered - sum)		250	

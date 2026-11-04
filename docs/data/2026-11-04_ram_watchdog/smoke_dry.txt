@@ -1,0 +1,13 @@
+building the first-turn request (task files rebuilt on the build machine)
+first_turn_request: task bugfix-python-affine-cipher; prompt.md 4479 characters; files affine_cipher.py (1076 of 1076 characters), affine_cipher_test.py (1363 of 2798 characters); body 9533 bytes, 9093 characters of content, est. 2776 tokens (target 2780: 3.6 characters per token and 250 for the template)
+dry run: would start llama-server on port 8092 with -ngl 99 -fa on -c 65536 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui -b 2048 -ub 512
+dry run: then send the first-turn request, <OUT>/dry_dflash/long_request.json (9534 bytes)
+dry run: then send docs/data/2026-11-03_flash_next_dflash2/run/smoke_request.json docs/data/2026-11-03_flash_next_dflash2/run/smoke_greedy.json
+smoke_dflash.sh dry run exit status 0
+building the first-turn request (task files rebuilt on the build machine)
+first_turn_request: task bugfix-python-affine-cipher; prompt.md 4479 characters; files affine_cipher.py (1076 of 1076 characters), affine_cipher_test.py (1363 of 2798 characters); body 9533 bytes, 9093 characters of content, est. 2776 tokens (target 2780: 3.6 characters per token and 250 for the template)
+dry run: would start  llama-server on port 8092 with -ngl 99 -fa on -c 65536 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui -b 2048 -ub 512
+dry run: then send the first-turn request, <OUT>/dry_mtp/long_request.json (9534 bytes)
+dry run: then send docs/data/2026-11-03_flash_next_mtp/run/smoke_request.json
+smoke_mtp.sh dry run exit status 0
+both scripts build the same request

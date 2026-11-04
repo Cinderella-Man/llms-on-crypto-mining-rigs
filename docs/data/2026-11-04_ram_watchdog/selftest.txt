@@ -1,0 +1,70 @@
+== unit: synthetic inputs
+ok    quiet: nothing killed in 6 s
+ok    quiet: nine tab-separated columns, usable = MemAvailable - CmaFree
+ok    quiet: usable is 800
+ok    quiet: the guarded process has oom_score_adj 1000
+ok    quiet: the watchdog has oom_score_adj -1000
+ok    quiet: events name the limits, oom_score_adj and the scheduling
+ok    quiet: the header names the columns
+ok    quiet: SIGTERM is logged as stopped
+ok    floor: S12's reading (949 - 967 = -18 MiB) kills the process
+ok    floor: the reason names MemAvailable minus CmaFree
+ok    floor: the watchdog ends with the process
+ok    floor: the server's log gets the watchdog line and the numbers
+ok    floor: usable 30 MiB is above the default floor
+ok    floor: off disables it
+ok    floor: under a second below it is not enough (USABLE_FLOOR_S 2)
+ok    legacy: MemAvailable 100 MiB below 150 kills (usable is 100, above the floor)
+ok    legacy: the reason says so
+ok    legacy: MIN_AVAIL_MB defaults to off
+ok    psi: full avg10 45 % for 3 s kills
+ok    psi: the reason names full avg10
+ok    psi: some avg10 45 % for 3 s kills
+ok    psi: the reason names some avg10
+ok    psi: 39 % does not
+ok    psi: a 2 s excursion is not 4 s in a row
+ok    psi: off disables both
+ok    psi: 40.01 % is above 40 (the compare keeps the decimals)
+ok    swap-out: 781 MiB a second kills
+ok    swap-out: the reason names the rate
+ok    swap-out: 39 MiB a second does not
+ok    input: a limit that is not an integer is refused
+ok    input: a process that does not exist is refused
+ok    input: no LOG is refused
+ok    scan: the process named PROC is found and killed
+ok    scan: a process of another name is untouched
+ok    scan: the watchdog keeps running afterwards
+== real: this machine's own /proc for 60 s, every limit off
+ok    real: still running after 60 s, nothing killed
+ok    real: about one row a second (60 rows in 60 s)
+ok    real: nine tab-separated columns, usable = avail - cma
+ok    real: epochs rise by about a second
+ok    real: MemAvailable (now 90898 MiB) is within 25 % + 200 MiB of the last row
+ok    real: CmaFree (now 1526 MiB) is within 200 MiB of the last row
+ok    real: swap used (now 687 MiB) is within 200 MiB of the last row
+ok    real: swap-out and pressure columns are numbers (pressure from /proc/pressure/memory)
+ok    real: the pid column holds the guarded pid
+ok    real: under chrt -f 10 it records SCHED_FIFO rt 10 for itself and SCHED_OTHER for the guarded process
+== sync: the embedded copies
+ok    bench/agent_check/rig_server.sh embeds scripts/ram_watchdog.sh unchanged
+ok    scripts/server_bench.sh embeds scripts/ram_watchdog.sh unchanged
+== rig_server: start, a kill by the embedded watchdog, end (stand-ins for the server and nvidia-smi)
+ok    rig_server: start returns 0 (server t up after 0 s)
+ok    rig_server: the server and the watchdog run
+ok    rig_server: the server has oom_score_adj 1000
+ok    rig_server: the watchdog has oom_score_adj -1000
+ok    rig_server: usable 0 MiB kills the server
+ok    rig_server: the watchdog ends with the server
+ok    rig_server: the server log has the watchdog line
+ok    rig_server: end copies the TSV into LOGDIR with the KILL event
+ok    rig_server: the TSV has rows
+ok    rig_server: the watchdog is gone and /dev/shm is clean
+ok    rig_server: the monitors are gone
+ok    rig_server: a watchdog that cannot start fails the start (rc 1)
+ok    rig_server: and no server is left running
+== server_bench: PROMPTS=none with the stand-in server
+ok    server_bench: returns 0
+ok    server_bench: the TSV is in the output folder, with rows and no KILL
+ok    server_bench: the watchdog and the server are gone, /dev/shm is clean
+ok    server_bench: no stand-in server is left
+ram_watchdog_test: 64 passed, 0 failed

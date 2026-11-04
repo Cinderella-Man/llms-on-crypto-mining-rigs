@@ -160,8 +160,8 @@ llama-server loaded the main model in 211 s, as without the draft, then the draf
 | `draft_load.csv` | Q226's first draft line: vmstat rows every 10 s from the server's start: run queue, swap used, free, swap in and out, disk reads, CPU split, and the latest MemAvailable sample with its age (the logger stalled from 220 s to 723 s) |
 | `vram.csv` | MiB used per card, once loaded and at the most, for each line |
 | `run/release_check_s12.sh` | `bench/agent_check/release_check.sh` with two changes: it runs from outside the bench folder (`BENCH`), and it takes any arm name A with `ARGS_A` set (REL_BIN with those settings), so two checks can share one client: the client names an arm's containers `acrel-<arm>-*` |
-| `run/smoke_mtp.sh`, `run/smoke_request.json` | a draft line's smoke test: the server through `bench/agent_check/rig_server.sh` (same monitors and watchdog), VRAM, `/proc/meminfo` and the server's `/proc/<pid>/status` once loaded and after one short coding request, the logs back |
-| `run/mem_guard.sh` | the host-memory guard (above) |
+| `run/smoke_mtp.sh`, `run/smoke_request.json` | a draft line's smoke test: the server through `bench/agent_check/rig_server.sh` (same monitors and watchdog), VRAM, `/proc/meminfo` and the server's `/proc/<pid>/status` once loaded and after the agent's first-turn request (~2,780 tokens, built from the task files; `LONG_REQUEST=off` skips it) and one short coding request, the logs back with `ram_watchdog-mtp-smoke.tsv`; the runs above used the version before 2026-11-04 (`git log -- docs/data/2026-11-03_flash_next_mtp/run/smoke_mtp.sh`), without the first-turn request ([Q559, Q607](../2026-11-04_ram_watchdog/README.md)) |
+| `run/mem_guard.sh` | the host-memory guard (above); its job (and a floor on MemAvailable minus CmaFree) is now `scripts/ram_watchdog.sh`, started by `rig_server.sh` ([Q559](../2026-11-04_ram_watchdog/README.md)) |
 | `run/s12_tables.sh` | Q226's first-attempt memory tables from the rig's monitor logs (run where the logs are) |
 | `run/s12.env.example` | the machine values both scripts read, paths as placeholders |
 

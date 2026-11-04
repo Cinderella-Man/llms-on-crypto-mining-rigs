@@ -1,0 +1,10 @@
+bash -n ok: docs/data/2026-11-04_ram_watchdog/run/summarize.sh
+bash -n ok: docs/data/2026-11-03_flash_next_mtp/run/smoke_mtp.sh
+bash -n ok: docs/data/2026-11-03_flash_next_dflash2/run/smoke_dflash.sh
+bash -n ok: bench/agent_check/first_turn_request.sh
+bash -n ok: bench/agent_check/rig_server.sh
+bash -n ok: scripts/server_bench.sh
+bash -n ok: scripts/ram_watchdog_test.sh
+bash -n ok: scripts/ram_watchdog.sh
+py_compile ok: docs/data/2026-11-04_ram_watchdog/run/count_tokens.py
+py_compile ok: bench/agent_check/first_turn_request.py

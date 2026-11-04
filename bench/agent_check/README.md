@@ -82,6 +82,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [common.py](common.py) | Tasks, the sandbox, the test check, the stream parser |
 | [pi/](pi/) | The agent folder template: `models.json` (Flint as an OpenAI-compatible provider), `settings.json`, the `check.ts` extension |
 | [pilot.sh](pilot.sh), [full_run.sh](full_run.sh), [rig_lib.sh](rig_lib.sh), [rig_server.sh](rig_server.sh) | The rig pilot and full run, one command each, run on the laptop; the server launcher with monitors and the RAM watchdog, run on the rig over ssh |
+| [first_turn_request.sh](first_turn_request.sh), [first_turn_request.py](first_turn_request.py) | The agent's first request (system message, the four tools, the first bugfix task, ~2,780 tokens) as a chat completion body, built at run time from the task files rebuilt with `build_bugfix.py` on a build machine; the draft smoke tests send it before their short requests ([data](../../docs/data/2026-11-04_ram_watchdog/README.md)) |
 | [quant_run.sh](quant_run.sh), [docker/](docker/) | Calibration and file-quality runs on a GPU machine with Docker; the sandbox image |
 | [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh), [release.env.example](release.env.example) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
 | [build_bugfix.py](build_bugfix.py), [bugfix_bugs.json](bugfix_bugs.json) | Build the bugfix set from the polyglot tasks and the list of injected bugs |
@@ -258,8 +259,9 @@ checkpoints:
   262,144, more than a 4 GB host can spare ([Qwen baselines](../../docs/benchmarks/2026-10-22-qwen-baselines.md#maximum-context-and-how-to-avoid-crashing-a-4-gb-host)).
   pi's context window is set to match, and a bug fix stays far below it.
 - **Three machines** (any two can be the same):
-  - the rig runs llama-server on its loopback only ([rig_server.sh](rig_server.sh), with its monitors and RAM
-    watchdog);
+  - the rig runs llama-server on its loopback only ([rig_server.sh](rig_server.sh), with its monitors and the RAM
+    watchdog [scripts/ram_watchdog.sh](../../scripts/ram_watchdog.sh): MemAvailable minus CmaFree, memory pressure and
+    swap-out, `oom_score_adj` 1000, real-time priority; its TSV lands in the rig logs as `ram_watchdog-<arm>.tsv`);
   - a client, any Linux machine with Docker, runs pi, the logging proxy and the tests, each in a container
     ([client_arm.sh](client_arm.sh)), labelled and at a low CPU share (`--cpu-shares 256`), so it can share a machine
     with other jobs;

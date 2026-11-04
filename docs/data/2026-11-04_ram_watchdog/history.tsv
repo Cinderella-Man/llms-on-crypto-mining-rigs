@@ -1,0 +1,17 @@
+label	samples	lowest_usable_mib	usable_below_20_s	usable_below_48_s	usable_below_100_s	max_swapout_mib	max_psi_some	max_psi_full	full_over_30_s	full_over_40_s	full_over_50_s	some_over_40_s	kills	run	outcome
+r29a_rig1_pipe0	2864	93	0	0	65	215	22.55	13.38	0	0	0	0	0	Q551 on the first rig, pipelining off	completed
+r29a_rig1_pipe3	395	39	0	8	17	330	23.83	18.25	0	0	0	0	0	Q551 on the first rig, pipe depth 3, floor 150 MiB	stopped by the agent check's watchdog (MemAvailable 139 MiB) 18 s into the second request
+r29a_rig1_pipe3b	2797	35	0	42	1074	463	21.22	16.30	0	0	0	0	0	Q551 on the first rig, pipe depth 3, floor 60 MiB	completed, 8 tasks
+s15_mtp2_timed	2858	155	0	0	0	278	7.97	6.70	0	0	0	0	0	Q558 step 5, timed arm, MTP draft with --no-host and its own micro-batch	completed, 11 tasks
+s15_mtp_timed	1380	117	0	0	0	549	65.18	59.10	22	14	8	16	0	Q558 step 3, timed arm, MTP draft line (token embeddings on card 4)	ended in the kernel's OOM killer 23.3 min after the server started (the guard's limits never fired; 1 task passed)
+s15_smoke1_otd	212	96	0	0	1	654	21.20	16.62	0	0	0	0	1	Q558 step 1, smoke test (draft load, desktop running)	stopped by mem_guard.sh 5 s into the draft load (654 MiB swapped out in 10 s)
+s15_smoke3_headless	291	140	0	0	0	557	25.93	22.83	0	0	0	0	0	Q558 step 3, smoke test, desktop stopped	completed
+s15_smoke5_nohost	282	185	0	0	0	302	14.65	11.46	0	0	0	0	0	Q558 step 5, smoke test	completed
+s18_dflash2_timed_b2048	267	82	0	0	2	352	11.16	8.05	0	0	0	0	0	Q561 timed arm dflash2, -b 2048	stopped by the agent check's watchdog (MemAvailable 140 MiB, floor 150) 61 s into the arm, at the end of the first task's 2,776-token prompt
+s18_dflash2b_timed_b512	2694	72	0	0	15	454	32.47	28.30	0	0	0	0	0	Q561 timed arm dflash2b, -b 512	completed, 11 tasks
+s18_smoke_n2	282	126	0	0	0	391	19.12	16.57	0	0	0	0	0	Q561 smoke test, -b 2048, 2 drafted tokens	completed
+s18_smoke_n3	328	124	0	0	0	461	17.66	13.33	0	0	0	0	0	Q561 smoke test, -b 2048, 3 drafted tokens	completed
+s18_smoke_n4	215	93	0	0	1	0	0.90	0.90	0	0	0	0	0	Q561 smoke test, -b 2048, 4 drafted tokens	stopped by the agent check's watchdog (MemAvailable 109 MiB) in the first 79-token prompt
+s18_smoke_nodraft	266	128	0	0	0	0	0.36	0.36	0	0	0	0	0	Q561 smoke test, no drafter, -b 512	completed
+s27_hcq8_diag	529	117	0	0	0	286	31.46	27.63	0	0	0	0	0	Q218 profiled line (GGML_CUDA_PROFILE)	completed
+s27_hcq8_timed	2852	120	0	0	0	220	6.76	4.41	0	0	0	0	0	Q218 timed arm hcq8 (retyped file, no draft)	completed, 12 tasks

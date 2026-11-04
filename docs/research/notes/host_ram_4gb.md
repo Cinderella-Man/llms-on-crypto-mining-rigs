@@ -200,7 +200,7 @@ mechanism behind Q558's finding that pinned memory, not MemAvailable, ran out.
 - **What KHO is for:** preserving state across a live-update `kexec`. The rigs boot cold and Q570 found no crash kernel.
 - **Consequences:** (1) +410–970 MiB usable (the idle and OOM `CmaFree` readings bracket it), and `MemAvailable` stops
   over-reporting; (2) Q83's headless gain becomes ~280 MB usable instead of ~76 MiB; (3) the guards that subtract `CmaFree`
-  (Q559, `mem_guard.sh`) keep working, reading 0; (4) it needs one reboot, so the passphrase at the console, and the owner.
+  (Q559, [scripts/ram_watchdog.sh](../../../scripts/ram_watchdog.sh)) keep working, reading 0; (4) it needs one reboot, so the passphrase at the console, and the owner.
 
 ### 3.2 Swap, zram and zswap
 

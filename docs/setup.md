@@ -102,9 +102,14 @@ the kernel's out-of-memory killer, which may take parts of the desktop with it:
 | `--cache-ram` | 8192 MiB | `--cache-ram 0` | Prompt cache kept in host RAM |
 | `--ctx-checkpoints` | 32 per conversation | 0–4 | Each checkpoint of a hybrid model (Qwen3.6, Qwen3.8) holds the recurrent state of its linear-attention layers in host RAM |
 
-Bind the server to `127.0.0.1` unless you mean to expose it, and keep an eye on `MemAvailable` in `/proc/meminfo`;
-[scripts/server_bench.sh](../scripts/server_bench.sh) shows a watchdog that stops the server when it drops below
-400 MB.
+Bind the server to `127.0.0.1` unless you mean to expose it. `MemAvailable` in `/proc/meminfo` is not enough to watch: on
+the rigs' kernels a quarter of the RAM is CMA-marked and counted in it though pinned buffers cannot use it, so a host that is
+out of memory can still read 900 MiB. [scripts/ram_watchdog.sh](../scripts/ram_watchdog.sh) stops the server on
+`MemAvailable` minus `CmaFree` below 20 MiB, on memory pressure (`/proc/pressure/memory`) above 40 % for 10 s, and on more
+than 600 MiB swapped out in 10 s; it gives the server `oom_score_adj` 1000, runs at real-time priority and logs a TSV row a
+second. [scripts/server_bench.sh](../scripts/server_bench.sh) and the agent check's
+[rig_server.sh](../bench/agent_check/rig_server.sh) start it (every limit is an environment variable; the numbers behind the
+defaults are in [the data folder](data/2026-11-04_ram_watchdog/README.md)).
 
 [scripts/rig_host_ram.sh](../scripts/rig_host_ram.sh) shows where the rest of the 4 GB goes and what gives some
 back. Run as root on the rig, read from stdin (`ssh "$RIG" 'bash -s -- census before' < scripts/rig_host_ram.sh`):
