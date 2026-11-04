@@ -21,7 +21,8 @@
 # Env: OUT (default ./out), BIN (default ./megakernel_p106), HOPS, LINES (1), ARMS (default "f32 q8 f16 staged
 #      q8staged"), and for the lines BUILDS (folder of the builds), BUILD (the hops build's folder name), MODEL (first
 #      shard), CTX (65536), ARGS (default '-b 2048 -ub 512 -ts 6,5,5,6,5,5,6,5,6 -fit off'), PORT, SSD_DEV, USB_DEV;
-#      FORCE=1 starts even with a compute process on the cards.
+#      FORCE=1 starts even with a compute process on the cards; ENV_ALL (default none) goes to every line's server before
+#      the arm's switches (e.g. a kernel setting the comparison arms ran with)
 set -uo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 OUT=${OUT:-$here/out}
@@ -65,7 +66,7 @@ if [ "$LINES" = 1 ]; then
         [ -n "${ENV_OF[$arm]+x}" ] || { log "unknown arm $arm"; continue; }
         log "2. line $arm: ${ENV_OF[$arm]:-no switch}"
         LABEL=$arm BUILD=$BUILD BUILDS=$BUILDS MODEL=$MODEL CTX=$CTX ARGS="$ARGS" MODE=speed OUT=$OUT \
-            ENVS="${ENV_OF[$arm]}" bash "$here/fn_line.sh" > "$OUT/line-$arm.out" 2>&1
+            ENVS="${ENV_ALL:+$ENV_ALL }${ENV_OF[$arm]}" bash "$here/fn_line.sh" > "$OUT/line-$arm.out" 2>&1
         # the switches' own log lines: the boundaries the cast found, each staged boundary's ring and its counts
         grep -E 'card hops in|card hop .* staged through|staged hops,' "$OUT/server-$arm.log" > "$OUT/hops-$arm.txt" 2>/dev/null
         log "line $arm: $(grep -E '^(decode|load|ident)' "$OUT/line-$arm.out" | cut -c1-120 | tr '\n' ' ')"
