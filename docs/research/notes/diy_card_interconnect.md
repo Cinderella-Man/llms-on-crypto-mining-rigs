@@ -68,13 +68,12 @@ Conventions:
 | Rank | Idea | Decode hop (est.) | Prompt hops (est.) | Cost, risk | As sold? | Decides it | Row |
 |---|---|---|---|---|---|---|---|
 | 1 | **Legs overlapped through host memory** (the streamed mailbox in 4–16 chunks; the persistent pipeline) | 127 → 75–85 µs (−0.3 to −0.4 ms a token) | ~147 → ~185 MB/s | software; in progress | yes | the hop bench's streamed-mailbox columns | Q682, Q684 |
-| 2 | **Read-only facts**: `lspci -vv` in full (`LnkCap2`, `LnkCtl2`, ACS, payload sizes); `nvidia-smi topo -p2p r` / `w` reason codes; whether the installed `nvidia.ko` holds the `ForceP2P` key; whether an IOMMU is active | — | — | none, a minute on an idle rig | yes | the outputs themselves | Q990, Q991 |
+| 2 | **Read-only facts**: `nvidia-smi topo -p2p r` / `w` reason codes; whether the installed `nvidia.ko` holds the `ForceP2P` key; whether an IOMMU is active (the `lspci` facts are in: section 2) | — | — | none, a minute on an idle rig | yes | the outputs themselves | Q991 (Q990 done) |
 | 3 | **`ForceP2P=0x11`**: NVIDIA's own override of the peer-to-peer checks, then checksummed peer copies on one pair behind a switch | 127 → ~55 µs (−0.57 ms a token) | one link's rate instead of two legs, off the shared uplink: est. +3–5 % prompts | no money; a module reload, and a hang or wrong copies are possible: **owner's decision** | hardware and files as sold, a driver option | checksums, then the hop bench's peer column | Q992 |
 | 4 | **Two numbers for tensor/expert parallelism**: a 9-card star all-reduce through host memory (cards write partials, the CPU sums, cards read) and the 9-way compute speedup of one Flash-Next layer | — | — | software, a bench, ~1 h on a rig | yes | a ≤ 50 µs all-reduce and S ≥ 1.3× reopen the fork project | Q996 |
 | 5 | **Gen2 on the cards' own links** (volatile BAR0 register writes, then a retrain from the switch port; possibly a 2-byte driver patch) | 127 → 45–65 µs (−0.5 to −0.65 ms); ~30 µs with peer-to-peer | hop time halved where one card per switch transfers: est. +4–6 % prompts | no money; risk: a card off the bus, which here needs a reboot at the console | hardware as sold, firmware state not: **owner's decision** | `LnkSta 5GT/s` on card 4 (its own root port), then the hop bench | Q994 |
-| 6 | **Larger PCIe payloads (MPS 256 B)** if every device on a card's path supports them | card → host leg +7–8 % (−2 µs a hop) | +~4 % on that leg | a boot parameter (`pci=pcie_bus_perf`): a reboot, **owner's decision** | yes | `DevCap`/`DevCtl` in the `lspci -vv` | Q995 |
-| 7 | **USB 3 → 2.5/5 GbE adapters between two rigs** (the two-rig split, Q505) | rig-to-rig crossing: ~same (USB adds ~0.6 ms round trip) | rig-to-rig prompt crossing 2.5–3.7× faster than gigabit | ~€15–40 per adapter: **owner's purchase** | adds parts | iperf3 and ping between the rigs, then Q505's prompt speed | Q998 |
-| 8 | **A peer window through I/O-memory registration** (card A's kernels write into card B's Vulkan-mapped BAR1 window) | as rank 3, without the driver's peer permission | as rank 3 | software; untested by anyone, a freeze is possible: **owner's decision** | yes | a checksummed write from A into B's window | Q993 |
+| 6 | **USB 3 → 2.5/5 GbE adapters between two rigs** (the two-rig split, Q505) | rig-to-rig crossing: ~same (USB adds ~0.6 ms round trip) | rig-to-rig prompt crossing 2.5–3.7× faster than gigabit | ~€15–40 per adapter: **owner's purchase** | adds parts | iperf3 and ping between the rigs, then Q505's prompt speed | Q998 |
+| 7 | **A peer window through I/O-memory registration** (card A's kernels write into card B's Vulkan-mapped BAR1 window) | as rank 3, without the driver's peer permission | as rank 3 | software; untested by anyone, a freeze is possible: **owner's decision** | yes | a checksummed write from A into B's window | Q993 |
 
 ## 1. What a faster path can buy
 
@@ -91,10 +90,11 @@ C140 (rig 1, cards 0 → 1, median of 300 per cell; every pair within 3 %; C200r
 
 - **The fit:** ~26 µs fixed plus ~10 ns per byte, which is 1/213 MB/s (card → host) plus 1/189 MB/s (host → card):
   the two legs in series. Chunking overlaps them partly.
-- **Both legs run at the link's packet limit.** A PCIe 1.0 lane carries 250 MB/s after 8b/10b coding. A 128 B memory
-  write carries 20–24 B of headers (211–216 MB/s ceiling, 213 measured); a host → card copy is the card reading host
-  memory, answered in 64 B completions with 20 B of headers (190 MB/s ceiling, 189 measured). Nothing is left to win
-  on the wire itself except larger payloads on the write leg (section 5.3).
+- **Both legs run near the link's packet limit.** A PCIe 1.0 lane carries 250 MB/s after 8b/10b coding. The path
+  already uses 256 B payloads (section 2): a card → host write carries 20–24 B of headers (~230 MB/s), and the link
+  layer's acknowledgements and flow-control packets take est. 5–10 % more (213 measured). A host → card copy is the
+  card reading host memory, answered in completions of 64–128 B with 20 B of headers each (~190–215 MB/s before the
+  link layer; 189 measured). Nothing is left to win on the wire itself.
 - **A token on the release line** (S35: llama-bench 17.06 tok/s, 58.6 ms a token) spends 8 × 126.7 µs = 1.0 ms in hops,
   1.7 %. C200r's decode gain from the cast (+10–15 %) is the F32 hops' share before it.
 - **Prompts** (C200r, rig 2, `f32` → `q8` lines): +22 % at 1.4k tokens, +31 % at 7k, +22–23 % at 31–33k. If all of
@@ -166,8 +166,16 @@ From the rig (`lspci -vv` in the hardware inventory of 2026-10-22, the same on t
 | PCH root ports (four: two switches, card 4, the NIC) | 5 GT/s x1 | 5 GT/s to the switches; 2.5 GT/s to card 4 and the NIC | `lspci -vv` |
 | Celeron 3865U PCH (Base-U) | 10 lanes, PCIe 2.0 only; groups of four lanes as 4 × x1, 2 × x2, x2 + 2 × x1 or x4 (soft straps in the flash descriptor); at most six root ports | — | [Intel ARK](https://www.intel.com/content/www/us/en/products/sku/96507/intel-celeron-processor-3865u-2m-cache-1-80-ghz/specifications.html); [7th Gen U/Y I/O datasheet vol. 1, 334658-003](https://cdrdv2-public.intel.com/334658/7th-gen-core-family-mobile-u-y-processor-lines-i-o-datasheet-vol-1.pdf), Tables 1-1, 1-2, §3.1–3.2 |
 
-Not yet read on the rig: the cards' supported-speed list (`LnkCap2`), the target speeds (`LnkCtl2`), ACS on the switch
-ports, the payload and read-request sizes (MPS, MRRS) and the BAR sizes (Q990; the command is in the data folder).
+The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
+- **The cards' PCIe capability is version 1**: they have no `LnkCap2`/`LnkCtl2` registers, so `LnkCap`'s 2.5 GT/s is
+  the whole story; the switch ports and root ports already target 5 GT/s.
+- **Payloads are 256 B on every card's path** (cards, switch ports and root ports capable of and set to 256 B; only the
+  network controller's port runs 128 B); the cards' read requests are 512 B, completions on a 64 B boundary.
+- **No ACS stands in the way of peer traffic:** the ASM1184e ports have no ACS capability, and the root ports have it
+  with every control bit off.
+- **Each card's BAR1 is 256 MB** (64-bit, prefetchable; no resizable BAR).
+- **Four root ports are enabled, all in use** (switch, card 4, network controller, switch); the SSD sits on the PCH's
+  SATA controller.
 
 - **Gen1 is set by the card, Gen2 by everything else.** Every port above the cards already offers 5 GT/s; the cards
   offer 2.5. So a card that advertised Gen2 would train at Gen2 with no change to the board.
@@ -234,8 +242,8 @@ ports, the payload and read-request sizes (MPS, MRRS) and the BAR sizes (Q990; t
   writes the P104 sequence needs; user-space writes through `/dev/mem` while the link changes hung the P104 card twice in
   two tries, kernel-side writes did not.
 - **A trial (the owner's decision; Q994):** card 4 first (its own root port, no switch, no neighbour to disturb),
-  with someone at the machine, no model loaded and no timed task on the rig; read the card's `LnkCap2` and `LnkSta`
-  before and after; if it holds at 5 GT/s, the hop bench with card 4 as one end, then a decode and prompt line.
+  with someone at the machine, no model loaded and no timed task on the rig; read the card's `LnkCap` and `LnkSta` (it
+  has no `LnkCap2`) before and after; if it holds at 5 GT/s, the hop bench with card 4 as one end, then a decode and prompt line.
 
 ## 4. Peer-to-peer without NVLink
 
@@ -258,8 +266,8 @@ ports, the payload and read-request sizes (MPS, MRRS) and the BAR sizes (Q990; t
   headers define no ASMedia vendor ID. Expected: CNS for every pair, possibly GNS for the SKU (est.).
 - **The hardware path exists inside each switch.** A PCIe switch forwards a memory write from one downstream port to
   another unless ACS redirect sends it upstream; Linux sets the redirect bits only when an IOMMU asked for them
-  ([p2pdma](https://docs.kernel.org/driver-api/pci/p2pdma.html), `pci_enable_acs` in `drivers/pci/pci.c`). Whether the ASM1184e implements ACS, and whether the rig runs an
-  IOMMU, is not read yet (Q990, Q991).
+  ([p2pdma](https://docs.kernel.org/driver-api/pci/p2pdma.html), `pci_enable_acs` in `drivers/pci/pci.c`). On the rig
+  nothing redirects: the ASM1184e ports have no ACS capability and the root ports' redirect bits are off (section 2).
   Across the two switches a peer write would pass the PCH's root ports, where forwarding between ports is not
   guaranteed on client chipsets.
 
@@ -338,13 +346,9 @@ ports, the payload and read-request sizes (MPS, MRRS) and the BAR sizes (Q990; t
 
 ### 5.3 Larger packets (MPS)
 
-- The card → host leg is posted writes of at most the path's Max Payload Size. At 128 B a write carries 20–24 B of
-  headers (211–216 MB/s ceiling); at 256 B the ceiling is ~228–232 MB/s (+7–8 %). The host → card leg is the card's
-  reads, answered in the root complex's 64 B completions, and does not change.
-- The rig's MPS and each device's maximum are not read yet (Q990).
-- Linux picks MPS at boot (`pci=pcie_bus_perf` raises it to the largest the path allows); changing it live with
-  `setpci` on a busy link is risky. A boot parameter means a reboot: the owner's decision (Q995). Worth ~2 µs a
-  decode hop and ~4 % on prompt hops' card → host leg.
+- The card → host leg is posted writes of at most the path's Max Payload Size, and the rig already runs the
+  largest the devices allow: 256 B on every card's path (section 2). Raising it (Q995) gains nothing. The host → card
+  leg is the card's reads, answered in completions on the root port's 64 B boundary, which no setting changes.
 
 ### 5.4 What the host itself costs
 
@@ -418,8 +422,8 @@ layer, where the interconnect becomes the design's limit.
   side; both are in progress.
 - **Other boards:** the cards are x4 parts, so a board with x4 slots (Gen1 x4, est. ~800 MB/s per card, 4×) is the only
   hardware route to much more per-card bandwidth. It is a different machine, not this rig as sold (Q1000).
-- **The M.2 slot** holds the SATA SSD; whether it also carries PCIe lanes (the PCH has 10 lanes and the board uses four
-  root ports) is unknown. If it does, an M.2-to-PCIe riser would give a tenth device x2 or x4 at Gen2 (a GPU, a NIC),
+- **The M.2 slot** holds the SATA SSD; no PCIe port is enabled for it (the tree shows four root
+  ports, all in use). Only if the slot is wired for PCIe and the firmware can enable a fifth port, an M.2-to-PCIe riser would give a tenth device x2 or x4 at Gen2 (a GPU, a NIC),
   a physical change for the owner (Q1001).
 
 ## 9. Every idea
@@ -430,12 +434,12 @@ Every value est. unless the row says measured.
 | Idea | Decode hop | Bandwidth per hop | Cost | Difficulty, risk | As sold | The one measurement | Row |
 |---|---|---|---|---|---|---|---|
 | Legs overlapped through host memory (streamed mailbox, persistent pipeline) | 75–85 µs | ~185 MB/s (the slower leg) | none | code, in progress; a waiting kernel needs a timeout | yes | the hop bench's streamed-mailbox columns at 10,880 B and 5.57 MB | Q682, Q684 |
-| The rig's PCIe facts in full (`lspci -vv`: `LnkCap2`, `LnkCtl2`, ACS, MPS, BARs) | — | — | none | none (read-only) | yes | the output | Q990 |
+| The rig's PCIe facts in full (`lspci -vv`: `LnkCap2`, `LnkCtl2`, ACS, MPS, BARs) | — | — | none | none (read-only) | yes | done: section 2 | Q990 |
 | The driver's peer verdict per pair (`nvidia-smi topo -p2p r` / `w`), the `ForceP2P` string in `nvidia.ko`, IOMMU on or off | — | — | none | none (read-only) | yes | the outputs | Q991 |
 | `ForceP2P=0x11`: forced peer-to-peer | ~55 µs | ~211 MB/s, one link | none | a module reload; possible hang or wrong copies | a driver option | checksummed `cudaMemcpyPeer` and peer stores on one pair behind a switch | Q992 |
 | A peer window by I/O-memory registration of card B's Vulkan BAR1 buffer | ~55 µs | ~211 MB/s | none | untested; a freeze is possible | yes | one checksummed write from A into B's window | Q993 |
-| Gen2 on the cards' links (volatile BAR0 writes, retrain; maybe a 2-byte driver patch) | 45–65 µs (~30 with peer-to-peer) | ~386 / 427 MB/s per card; ~400 per switch uplink when shared | none | a card off the bus needs a reboot at the console; the P106 sequence is unverified | firmware state changed | `LnkSta` 5 GT/s on card 4, then the hop bench | Q994 |
-| MPS 256 B on every card's path | −2 µs | card → host ~213 → ~230 MB/s | none | a boot parameter, so a reboot | yes | `DevCap` / `DevCtl` MaxPayload in the `lspci -vv` | Q995 |
+| Gen2 on the cards' links (volatile BAR0 writes, retrain; maybe a 2-byte driver patch) | 45–65 µs (~30 with peer-to-peer) | ~386 / 427 MB/s per card; ~400 per switch uplink when shared | none | a card off the bus needs a reboot; the P106 sequence is unverified | firmware state changed | `LnkSta` 5 GT/s on card 4, then the hop bench | Q994 |
+| MPS 256 B on every card's path | 0: already 256 B (measured) | — | none | — | yes | done: the `lspci` (section 2) | Q995 |
 | A 9-card star all-reduce through host memory, and S for one layer split nine ways | (tensor split: 96 × ~70 µs a token) | — | none | a bench | yes | all-reduce median and p99 at 2,720 and 5,120 B; S on one card | Q996 |
 | Tensor or expert parallel decode of Flash-Next on nine cards | token est. ≥ 20–30 ms if S is high, a loss if low | prompts link-capped at est. ~200–400 tok/s | none | weeks of fork work; no compute 6.1 all-reduce today | yes | Q996 first | Q997 |
 | USB 3 → 2.5/5 GbE adapters between two rigs | rig-to-rig: ~same | 117 → ~290–430 MB/s rig-to-rig | ~€15–40 each, two a link | low | adds parts | iperf3 and ping between the rigs, then Q505's prompt speed | Q998 |
@@ -457,8 +461,8 @@ Every value est. unless the row says measured.
 
 - Whether the P106-090's Gen2 register sequence works behind an ASM1184e or on a Base-U root port: no report exists for
   any card in either place.
-- The ASM1184e's forwarding latency, cut-through or store-and-forward, ACS behaviour and multicast: no public datasheet.
+- The ASM1184e's forwarding latency, cut-through or store-and-forward, and multicast: no public datasheet.
 - The poll latency of a GPU reading host memory on a Gen1 x1 link behind a switch (est. 1.2–2.5 µs): the streamed
   mailbox bench measures it.
 - Tensor parallelism's compute speedup on nine 5-SM cards (Q996).
-- Whether the board's M.2 slot carries PCIe lanes.
+- Whether the board's M.2 slot is wired for PCIe at all (no port is enabled for it).

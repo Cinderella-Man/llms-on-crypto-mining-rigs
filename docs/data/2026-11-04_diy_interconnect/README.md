@@ -27,8 +27,28 @@ What it shows:
 - **Nothing on the board goes beyond Gen2 x1:** the switches are x1 on both sides and the root ports are x1 at 5 GT/s.
 - **The cards are x4 parts** in one-lane slots.
 
-Not yet read: the cards' `LnkCap2` and `LnkCtl2`, ACS on the switch ports, MaxPayload and MaxReadReq on each device, BAR
-sizes (Q990; the command below).
+## The rest of the path (rig 1, `run/pcie_facts.sh`, 2026-11-04 21:11, the rig idle)
+
+| Field | P106-090 (nine) | ASM1184e ports (two up, eight down) | PCH root ports (four) |
+|---|---|---|---|
+| PCIe capability | version 1: no `LnkCap2` / `LnkCtl2` registers | `LnkCtl2` target 5 GT/s on every port | `LnkCap2` 2.5–5 GT/s, `LnkCtl2` target 5 GT/s |
+| Max Payload Size, capable / set | 256 / 256 B | 256 / 256 B | 256 / 256 B on the three card ports; 256 / 128 B on the network controller's |
+| Max Read Request | 512 B | 512 B | 128 B (the ports' own) |
+| Read completion boundary | 64 B | — | 64 B |
+| ACS | — | no ACS capability | ACS capable (source validation, translation blocking, request and completion redirect), every control bit off |
+| BARs | BAR0 16 MB, BAR1 256 MB (64-bit, prefetchable), BAR3 32 MB | — | — |
+
+The tree: four root ports are enabled (`00:1c.0` to the first switch and cards 0–3, `00:1c.3` to card 4, `00:1c.4` to
+the network controller, `00:1c.5` to the second switch and cards 5–8); the SSD is on the PCH's SATA controller and
+USB 3 on its xHCI controller. No other PCIe port is enabled.
+
+What it adds:
+- **Packets are already as large as the path allows:** 256 B payloads on every card's path, so raising MPS gains
+  nothing.
+- **Nothing redirects peer traffic:** the switches have no ACS and the root ports' redirect bits are off, so a memory
+  write from one card to another behind the same switch would be forwarded inside the switch.
+- **Each card's BAR1 window is 256 MB** (no resizable BAR).
+- **No spare PCIe port** is enabled for the M.2 slot.
 
 ## Run
 
