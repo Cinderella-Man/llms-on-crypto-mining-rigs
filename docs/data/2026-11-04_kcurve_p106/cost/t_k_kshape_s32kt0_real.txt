@@ -1,0 +1,11 @@
+# T(k) in ms, k = 1..8: passes of k consecutive tokens of real agent text (C271's method, docs/data/2026-11-04_kreal_p106),
+# Swift Q2_0 on -kshape 39c3ab5f1 with GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0, one rig,
+# 1,680 tokens per k, pipelining off. A prompt micro-batch has no output rows (see t_k_q2_0_s32k_real.txt).
+64.9
+93.4
+120.3
+140.4
+170.7
+192.2
+213.5
+246.1

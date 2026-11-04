@@ -1,0 +1,11 @@
+# T(k) in ms, k = 1..8: passes of k consecutive tokens of real agent text (C271's method, docs/data/2026-11-04_kreal_p106),
+# Swift Q2_0 on -kshape 39c3ab5f1 with every switch at its default, one rig, 1,680 tokens per k, pipelining off.
+# A prompt micro-batch has no output rows (see t_k_q2_0_s32k_real.txt).
+66.9
+92.7
+118.9
+140.4
+168.0
+191.4
+213.9
+245.1

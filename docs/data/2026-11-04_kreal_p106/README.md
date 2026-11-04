@@ -36,6 +36,28 @@ not reused between requests.
   verify is a single micro-batch and never overlaps; the timings above therefore run with the pipelining off (any
   tensor override turns it off in `llama_context`; here `-ot token_embd.weight=CPU`, where the embeddings are anyway).
 
+## On `-kshape` (C350, 2026-11-04 evening)
+
+The same runs on Miner Llama's `-kshape` build (`39c3ab5f1`: the routed down projection on the multi-token kernel, Q825;
+[kshape](../2026-11-04_kshape/README.md)), ms per pass of k real tokens ([requests_kshape.tsv](requests_kshape.tsv)):
+
+| k | `-kshape`, defaults | `-kshape`, `KCOL_SMEM=32768 KCOL_TABLE=0` | `-ladder3`, `KCOL_SMEM=32768` (above) |
+|---:|---:|---:|---:|
+| 1 | 66.9 | **64.9** | 64.9 |
+| 2 | **92.7** | 93.4 | 97.9 |
+| 3 | **118.9** | 120.3 | 127.9 |
+| 4 | **140.4** | **140.4** | 151.6 |
+| 5 | **168.0** | 170.7 | 193.9 |
+| 6 | **191.4** | 192.2 | 222.9 |
+| 7 | 213.9 | **213.5** | 249.9 |
+| 8 | **245.1** | 246.1 | 288.5 |
+
+- **`-kshape` saves 23–26 ms at five tokens and 42 at eight on real text too**, at one token nothing.
+- **On real text the two settings are within ~3 ms at every k**, although llama-bench's passes (one output row) show the
+  defaults 6.5 ms slower at one token (80.6 against 74.1, [kshape](../2026-11-04_kshape/README.md)): the defaults'
+  loss is in the output layer, which a prompt micro-batch skips (Q829).
+- Cost files `cost/t_k_kshape_real.txt` and `cost/t_k_kshape_s32kt0_real.txt` in the k-curve folder.
+
 ## Where the time goes on real text (1 and 5 tokens, 32 KB budget)
 
 The `prof` arm ran the first 340 real tokens at k = 1 and 5 under `GGML_CUDA_PROFILE_MODE=group` (C140's 7.6 µs per span
@@ -66,6 +88,7 @@ so the 5-token mean holds one 1-token evaluation among its 68 (est. ~1 % low). F
 |---|---|
 | [requests.tsv](requests.tsv) | per arm and k: the prompt's tokens, its processing time, the micro-batches, ms per micro-batch (pipelining off) |
 | [requests_pipelined.tsv](requests_pipelined.tsv) | the same with the pipelining on (k = 1–4; the run was stopped there) |
+| [requests_kshape.tsv](requests_kshape.tsv) | the same on `-kshape` `39c3ab5f1`: arms `def` and `s32kt0` (`KCOL_SMEM=32768 KCOL_TABLE=0`) |
 | [run/kreal.sh](run/kreal.sh) | the rig run: one llama-server load per arm, one request per k |
 | [run/kreal_req.py](run/kreal_req.py) | the requests: the text tokenized by the server, its first N tokens sent per k |
 | [../2026-11-04_kcurve_p106/cost/t_k_q2_0_s32k_real.txt](../2026-11-04_kcurve_p106/cost/t_k_q2_0_s32k_real.txt), [t_k_q2_0_real.txt](../2026-11-04_kcurve_p106/cost/t_k_q2_0_real.txt) | the `LLAMA_SPEC_ADAPT_COST` files from these passes |
