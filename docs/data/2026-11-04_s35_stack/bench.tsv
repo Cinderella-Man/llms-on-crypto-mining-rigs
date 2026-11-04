@@ -1,0 +1,3 @@
+arm	env	n_gen	reps	avg_tok_s	sd_tok_s
+no hop cast	KCOL_SMEM=32768 KCOL_TABLE=0	128	3	14.98	0.20
+hop cast	+ LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=1	128	3	17.06	0.04
