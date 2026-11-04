@@ -1,0 +1,241 @@
+setting	model	case	verdict	reason
+default	mamba-dense	baseline	OK	
+default	mamba-dense	seq_rm	OK	
+default	mamba-dense	state_load	OK	
+default	mamba-dense	cp_h	OK	
+default	mamba-dense	cp_d	OK	
+default	mamba-dense	cp_h_s	OK	
+default	mamba-dense	cp_d_s	OK	
+default	mamba-dense	rt	OK	
+default	mamba-dense	ps	OK	
+default	mamba-dense	rf	OK	
+default	mamba-dense	rot	OK	
+default	mamba-dense	frag	OK	
+default	mamba-dense	noalloc	OK	
+default	mamba-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+default	mamba-dense	rollback	SKIP	n_rs_seq is disabled
+default	mamba-dense	rollback_bound	SKIP	n_rs_seq is disabled
+default	mamba-dense	replay	SKIP	n_rs_seq is too small
+default	mamba-dense	shared	OK	
+default	mamba-dense	store	OK	
+default	mamba-dense	store_p	OK	
+default	qwen35-dense	baseline	OK	
+default	qwen35-dense	seq_rm	OK	
+default	qwen35-dense	state_load	OK	
+default	qwen35-dense	cp_h	OK	
+default	qwen35-dense	cp_d	OK	
+default	qwen35-dense	cp_h_s	OK	
+default	qwen35-dense	cp_d_s	OK	
+default	qwen35-dense	rt	OK	
+default	qwen35-dense	ps	OK	
+default	qwen35-dense	rf	OK	
+default	qwen35-dense	rot	OK	
+default	qwen35-dense	frag	OK	
+default	qwen35-dense	noalloc	OK	
+default	qwen35-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+default	qwen35-dense	rollback	OK	
+default	qwen35-dense	rollback_bound	OK	
+default	qwen35-dense	replay	OK	
+default	qwen35-dense	shared	OK	
+default	qwen35-dense	store	OK	
+default	qwen35-dense	store_p	OK	
+default	qwen4exp-moe	baseline	OK	
+default	qwen4exp-moe	seq_rm	OK	
+default	qwen4exp-moe	state_load	OK	
+default	qwen4exp-moe	cp_h	OK	
+default	qwen4exp-moe	cp_d	OK	
+default	qwen4exp-moe	cp_h_s	OK	
+default	qwen4exp-moe	cp_d_s	OK	
+default	qwen4exp-moe	rt	OK	
+default	qwen4exp-moe	ps	OK	
+default	qwen4exp-moe	rf	OK	
+default	qwen4exp-moe	rot	OK	
+default	qwen4exp-moe	frag	OK	
+default	qwen4exp-moe	noalloc	OK	
+default	qwen4exp-moe	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+default	qwen4exp-moe	rollback	OK	
+default	qwen4exp-moe	rollback_bound	OK	
+default	qwen4exp-moe	replay	OK	
+default	qwen4exp-moe	shared	OK	
+default	qwen4exp-moe	store	OK	
+default	qwen4exp-moe	store_p	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	baseline	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	seq_rm	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	state_load	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	cp_h	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	cp_d	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	cp_h_s	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	cp_d_s	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	rt	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	ps	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	rf	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	rot	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	frag	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	noalloc	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	rollback	SKIP	n_rs_seq is disabled
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	rollback_bound	SKIP	n_rs_seq is disabled
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	replay	SKIP	n_rs_seq is too small
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	shared	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	store	OK	
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	store_p	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	baseline	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	seq_rm	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	state_load	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	cp_h	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	cp_d	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	cp_h_s	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	cp_d_s	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	rt	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	ps	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	rf	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	rot	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	frag	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	noalloc	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	rollback	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	rollback_bound	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	replay	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	shared	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	store	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	store_p	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	baseline	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	seq_rm	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	state_load	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	cp_h	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	cp_d	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	cp_h_s	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	cp_d_s	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	rt	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	ps	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	rf	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	rot	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	frag	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	noalloc	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	rollback	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	rollback_bound	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	replay	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	shared	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	store	OK	
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	store_p	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	baseline	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	seq_rm	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	state_load	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	cp_h	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	cp_d	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	cp_h_s	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	cp_d_s	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	rt	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	ps	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	rf	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	rot	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	frag	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	noalloc	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	rollback	SKIP	n_rs_seq is disabled
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	rollback_bound	SKIP	n_rs_seq is disabled
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	replay	SKIP	n_rs_seq is too small
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	shared	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	store	OK	
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	store_p	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	baseline	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	seq_rm	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	state_load	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	cp_h	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	cp_d	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	cp_h_s	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	cp_d_s	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	rt	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	ps	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	rf	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	rot	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	frag	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	noalloc	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	rollback	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	rollback_bound	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	replay	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	shared	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	store	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	store_p	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	baseline	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	seq_rm	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	state_load	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	cp_h	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	cp_d	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	cp_h_s	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	cp_d_s	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	rt	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	ps	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	rf	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	rot	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	frag	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	noalloc	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	rollback	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	rollback_bound	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	replay	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	shared	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	store	OK	
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	store_p	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	baseline	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	seq_rm	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	state_load	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	cp_h	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	cp_d	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	cp_h_s	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	cp_d_s	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	rt	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	ps	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	rf	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	rot	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	frag	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	noalloc	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	rollback	SKIP	n_rs_seq is disabled
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	rollback_bound	SKIP	n_rs_seq is disabled
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	replay	SKIP	n_rs_seq is too small
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	shared	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	store	OK	
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	store_p	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	baseline	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	seq_rm	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	state_load	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	cp_h	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	cp_d	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	cp_h_s	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	cp_d_s	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	rt	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	ps	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	rf	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	rot	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	frag	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	noalloc	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	rollback	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	rollback_bound	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	replay	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	shared	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	store	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	store_p	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	baseline	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	seq_rm	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	state_load	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	cp_h	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	cp_d	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	cp_h_s	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	cp_d_s	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	rt	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	ps	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	rf	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	rot	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	frag	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	noalloc	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	comp_padding	SKIP	requires DeepSeek V4 or V4.1
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	rollback	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	rollback_bound	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	replay	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	shared	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	store	OK	
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	store_p	OK	

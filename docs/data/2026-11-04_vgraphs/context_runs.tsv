@@ -1,0 +1,13 @@
+setting	model	passed	failed	skipped
+default	mamba-dense	16	0	4
+default	qwen35-dense	19	0	1
+default	qwen4exp-moe	19	0	1
+LLAMA_GRAPH_PER_SIZE=0	mamba-dense	16	0	4
+LLAMA_GRAPH_PER_SIZE=0	qwen35-dense	19	0	1
+LLAMA_GRAPH_PER_SIZE=0	qwen4exp-moe	19	0	1
+LLAMA_SCHED_PER_SIZE=1	mamba-dense	16	0	4
+LLAMA_SCHED_PER_SIZE=1	qwen35-dense	19	0	1
+LLAMA_SCHED_PER_SIZE=1	qwen4exp-moe	19	0	1
+LLAMA_GRAPH_META_CALLOC=0	mamba-dense	16	0	4
+LLAMA_GRAPH_META_CALLOC=0	qwen35-dense	19	0	1
+LLAMA_GRAPH_META_CALLOC=0	qwen4exp-moe	19	0	1
