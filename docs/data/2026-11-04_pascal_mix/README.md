@@ -139,6 +139,10 @@ export CPUS=10,11,22,23 THREADS=4 MOUNTS="<folders mounted at the same path in t
 setsid -f nohup bash tools/docs/data/2026-11-04_pascal_mix/run/chain.sh >> chain.log 2>&1 < /dev/null
 ```
 
+pmix-iq3-fast and pmix-q2-spine6 were scored in place ([run/score_direct.sh](run/score_direct.sh)): the fast disk was busy with
+writes, which slowed every KLD run reading its base logits there, so these two files were read from the HDDs, only
+the n-gram table from the fast disk. spine6 was built on an HDD for the same reason.
+
 The scores, on the quant machine (FN1's environment file copied with `GPUS_ALL` set to the five cards and `TAG` and
 `WORK` to this run's; the controls are named `<file>-c5` so FN2's seven-card logs, which `score.sh` links in, are not
 taken for them):
@@ -162,6 +166,7 @@ python3 -I <2026-11-03_flash_next_quality's run/>table.py <OUT> q8_0-ub256 swift
 | [run/chain.sh](run/chain.sh), [run/build.sh](run/build.sh) | the build |
 | [run/score_all.sh](run/score_all.sh) | the KLD runs: [gguf_compose's run/score.sh](../2026-11-04_gguf_compose/run/score.sh) one file at a time, resumable (a done marker per file, a STOP file between files), each file after its build marker |
 | [run/stage.sh](run/stage.sh) | a built file staged on the fast disk before its KLD run (shards copied and checked against the build's md5, the table shard linked to the fast copy), so the cards wait on no copy |
+| [run/score_direct.sh](run/score_direct.sh) | score.sh's interface without its staging: a file scored where it lies, through symbolic links (its table shard to the fast disk's copy), for a fast disk that must take no writes |
 | [run/rig_time.sh](run/rig_time.sh) | the rig timing of a mix against its base: a 64k load with one request, then T(1) … T(8) |
 
 ## Provenance and licence
