@@ -1,0 +1,332 @@
+== C228 q1: -ladder3 7bc1552f4 through the compute 6.1 PTX on two RTX 3090s, assembled 2026-11-04T16:44:35+01:00 from run2 a s b a2 b2
+-- run2 (ladder2 part)
+ladder2/ bf16             -bf16mv (GGML_CUDA_MMVF_PASCAL)    1 309/309 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ bf16-g8r8        MMVF_PASCAL_SHAPE=8,8              1 303/303 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ bf16-g128r8      MMVF_PASCAL_SHAPE=128,8            1 303/303 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ bf16-off         BF16 kernel off (stock)            1 309/309 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ q2_0             -q2_0mv alone (KCOL=0, MTOK=0)     1 497/497 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ q2_0-stack       Q2_0 with -kcol and -mtok on       1 497/497 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ q2_0-off         Q2_0 to llama.cpp's kernels        1 497/497 tests passed;                                         0 FAIL  exit 0   all but Q2_0's large-activation cases (they need the Pascal kernel)
+ladder2/ hcsm             HC_STREAM_MEAN                     1 6/6 tests passed;                                             0 FAIL  exit 0   every case passes
+ladder2/ iq               -iqmmvq (IQ2_S, IQ3_XXS)           1 602/602 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ kcol             -kcol default (KCOL=1)             1 855/855 tests passed;                                         0 FAIL  exit 0   every case passes
+-- a (ladder2 part, kcol, kcolcov)
+ladder2/ iq-off           grid types to llama.cpp            1 586/586 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ kcol-all         KCOL=2 (every 1-8 col product)     1 855/855 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ kcol-r1          KCOL=2, KCOL_R=1                   1 855/855 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ kcol-r2          KCOL=2, KCOL_R=2                   1 855/855 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ kcol-itt1        KCOL=2, KCOL_ITT=1 (K tiles)       1 855/855 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ kcol-off         KCOL=0 (the ladder's kernels)      1 855/855 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok             -mtok default                      1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok-cap1        MTOK=1,1 (groups of one)           1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok-cap3        MTOK=1,3                           1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok-rb1         MTOK=1,0,1 (one row block)         1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok-rb8         MTOK=1,0,8                         1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok-gdir        MTOK=1,0,0,1 (direct gate/up)      1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ mtok-off         MTOK=0 (Pascal mc / llama.cpp)     1 333/333 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ gdn              -gdnfuse CUDA fusions              1 499/499 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ gdn-off          GGML_CUDA_GDN_FUSE=0               1 499/499 tests passed;                                         0 FAIL  exit 0   every case passes
+ladder2/ gdn-archs-rs0    qwen4exp fused, n_rs_seq 0         1 Summary: all 1 test(s) passed;                                0 FAIL  exit 0   the qwen4exp rows OK (nmse < 1e-4)
+ladder2/ gdn-archs-rs0-off qwen4exp unfused, n_rs_seq 0       1 Summary: all 1 test(s) passed;                                0 FAIL  exit 0   the qwen4exp rows OK
+ladder2/ gdn-archs-rs3    qwen4exp fused, n_rs_seq 3         1 Summary: all 1 test(s) passed;                                0 FAIL  exit 0   the qwen4exp rows OK (nmse < 1e-4)
+ladder2/ gdn-archs-rs3-off qwen4exp unfused, n_rs_seq 3       1 Summary: all 1 test(s) passed;                                0 FAIL  exit 0   the qwen4exp rows OK
+ladder2/ moe-check        persistent MoE self-check          1 17/17 tests passed;17 ggml_cuda_moe_persistent_end_graph: CUDA0: moe: 1 layers, 1 compared, 0 differed;    0 FAIL  exit 0   0 differed
+ladder2/ moe-fault        self-check's negative control      1 17/17 tests passed;17 ggml_cuda_moe_persistent_end_graph: CUDA0: moe: 1 layers, 1 compared, 1 differed;    0 FAIL  exit 0   differences reported
+ladder2/ archs            test-llama-archs, defaults                                                                         0 FAIL  exit 134 Summary: all passed
+ladder2/ archs-off        test-llama-archs, fork paths off   1 Summary: all 411 test(s) passed;                              0 FAIL  exit 0   Summary: all passed
+ladder2/ archs-mask       LLAMA_GPU_KQ_MASK_CHECK=1          masks identical to the host mask: 380;                          0 FAIL  exit 134 all passed, masks identical to the host mask
+ladder2/ ctx-qwen4exp-moe -ckpt stores, one card             NO CUDA0; 1 failed   : 0;                                       0 FAIL  exit 0   store, store_p OK; failed : 0
+ladder2/ ctx-qwen35-dense -ckpt stores, one card             1 failed   : 0;                                                 0 FAIL  exit 0   store, store_p OK; failed : 0
+ladder2/ ctx-mamba-dense  -ckpt stores, one card             NO CUDA0; 1 failed   : 0;                                       0 FAIL  exit 0   store, store_p OK; failed : 0
+ladder2/ kcol-bench       mmvq_kcol --check-only             1 correctness: all variants match the CPU reference;            0 FAIL  exit 0   all variants match the CPU reference
+ladder2/ mtok-bench       mmvq_pascal --q2_0-mtok --check-only 1 correctness: every variant matches the CPU reference, and the multi-token kernel matches pertok bit for bit;    0 FAIL  exit 0   every variant matches
+ladder2/ == 2026-11-04T12:54:42+00:00 done
+ladder2/ ... script exit 0; passing: every run as -ladder2's handoff says (Q2_0's large-activation cases fail only in q2_0-off/all-off; moe-fault must differ)
+kcol/ == 2026-11-04T12:54:42+00:00 tbo kcol: 0 GPU processes, load 29.16, card 0 604 MiB, 55, 1695 MHz
+kcol/ kcol:   855/855 tests passed, 0 failed
+kcol/ == 2026-11-04T12:55:50+00:00 tbo kcol_all: 2 GPU processes, load 31.81, card 0 1339 MiB, 57, 1965 MHz
+kcol/ kcol_all:   855/855 tests passed, 0 failed
+kcol/ == 2026-11-04T12:57:00+00:00 tbo kcol_r1: 2 GPU processes, load 33.65, card 0 887 MiB, 55, 1695 MHz
+kcol/ kcol_r1:   855/855 tests passed, 0 failed
+kcol/ == 2026-11-04T12:58:10+00:00 tbo kcol_r2: 0 GPU processes, load 36.27, card 0 722 MiB, 55, 1695 MHz
+kcol/ kcol_r2:   855/855 tests passed, 0 failed
+kcol/ == 2026-11-04T12:59:30+00:00 tbo kcol_itt1: 0 GPU processes, load 38.08, card 0 953 MiB, 55, 1695 MHz
+kcol/ kcol_itt1:   855/855 tests passed, 0 failed
+kcol/ == 2026-11-04T13:01:30+00:00 tbo kcol_off: 0 GPU processes, load 37.08, card 0 1061 MiB, 55, 1695 MHz
+kcol/ kcol_off:   855/855 tests passed, 0 failed
+kcol/ == 2026-11-04T13:02:35+00:00 tbo bf16: 0 GPU processes, load 38.79, card 0 845 MiB, 55, 1695 MHz
+kcol/ bf16:   309/309 tests passed, 0 failed
+kcol/ == 2026-11-04T13:03:12+00:00 tbo bf16_g8r8: 0 GPU processes, load 37.38, card 0 841 MiB, 55, 1695 MHz
+kcol/ bf16_g8r8:   303/303 tests passed, 0 failed
+kcol/ == 2026-11-04T13:03:31+00:00 tbo bf16_g128r8: 0 GPU processes, load 38.16, card 0 847 MiB, 54, 1695 MHz
+kcol/ bf16_g128r8:   303/303 tests passed, 0 failed
+kcol/ == 2026-11-04T13:03:49+00:00 mmvq_kcol: 0 GPU processes, load 39.21, card 0 845 MiB, 54, 1695 MHz
+kcol/ mmvq_kcol: correctness: all variants match the CPU reference
+kcol/ == 2026-11-04T13:04:48+00:00 end: 0 GPU processes, load 40.17, card 0 12953 MiB, 55, 1695 MHz
+kcol/ ... script exit 0; passing: every tag N/N tests passed, 0 failed; mmvq_kcol: all variants match the CPU reference
+kcolcov/ == 2026-11-04T13:04:48+00:00 tbo cov: 0 GPU processes, load 40.17, card 0 12955 MiB, 55, 1695 MHz
+kcolcov/ cov:   366/366 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:05:23+00:00 tbo cov_all: 0 GPU processes, load 39.95, card 0 12955 MiB, 54, 1695 MHz
+kcolcov/ cov_all:   366/366 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:05:39+00:00 tbo cov_r1: 0 GPU processes, load 40.41, card 0 12957 MiB, 56, 1965 MHz
+kcolcov/ cov_r1:   366/366 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:06:05+00:00 tbo cov_r2: 0 GPU processes, load 41.00, card 0 13425 MiB, 56, 1965 MHz
+kcolcov/ cov_r2:   366/366 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:06:29+00:00 tbo cov_itt1: 0 GPU processes, load 38.38, card 0 13423 MiB, 57, 1950 MHz
+kcolcov/ cov_itt1:   366/366 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:06:48+00:00 tbo cov_off: 0 GPU processes, load 38.76, card 0 13423 MiB, 57, 1950 MHz
+kcolcov/ cov_off:   364/366 tests passed, 4 failed
+kcolcov/ == 2026-11-04T13:07:04+00:00 tbo q2f: 0 GPU processes, load 38.52, card 0 13419 MiB, 58, 1950 MHz
+kcolcov/ q2f:   157/157 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:09:30+00:00 tbo q2f_r2: 0 GPU processes, load 39.79, card 0 1015 MiB, 56, 1695 MHz
+kcolcov/ q2f_r2:   157/157 tests passed, 0 failed
+kcolcov/ == 2026-11-04T13:11:50+00:00 mmvq_pascal --q2_0: 0 GPU processes, load 37.63, card 0 12999 MiB, 55, 1695 MHz
+kcolcov/ mmvq_pascal --q2_0: correctness: all variants match the CPU reference
+kcolcov/ == 2026-11-04T13:12:08+00:00 end: 0 GPU processes, load 35.42, card 0 13515 MiB, 55, 1695 MHz
+kcolcov/ ... script exit 0; passing: cov cov_all cov_r1 cov_r2 cov_itt1 cov_off q2f q2f_r2 all passed; the --q2_0 line ends in PASS
+-- s (ladder2's whole-suite sweeps)
+ladder2/ all-on           every case, fork paths on          1 22337/22337 tests passed;                                     0 FAIL  exit 0   every case passes
+ladder2/ all-off          every case, fork paths off         1 22087/22087 tests passed;                                     0 FAIL  exit 0   all but Q2_0's large-activation cases
+-- a (iq2xs on) and a2 (iq2xs skip, memcheck)
+iq2xs/ on iq2_xxs MUL_MAT: 83/83 passed, 0 failure lines
+iq2xs/ on iq2_xxs MUL_MAT_ID: 55/55 passed, 0 failure lines
+iq2xs/ on iq2_xxs MUL_MAT_VEC_FUSION: 99/99 passed, 0 failure lines
+iq2xs/ on iq2_xxs MUL_MAT_ID_SHARED: 3/3 passed, 0 failure lines
+iq2xs/ on iq2_xs MUL_MAT: 68/68 passed, 0 failure lines
+iq2xs/ on iq2_xs MUL_MAT_ID: 34/34 passed, 0 failure lines
+iq2xs/ on iq2_xs MUL_MAT_VEC_FUSION: 15/15 passed, 0 failure lines
+iq2xs/ on iq2_xs MUL_MAT_ID_SHARED: 3/3 passed, 0 failure lines
+iq2xs/ on iq3_s MUL_MAT: 68/68 passed, 0 failure lines
+iq2xs/ on iq3_s MUL_MAT_ID: 34/34 passed, 0 failure lines
+iq2xs/ on iq3_s MUL_MAT_VEC_FUSION: 15/15 passed, 0 failure lines
+iq2xs/ on iq3_s MUL_MAT_ID_SHARED: 3/3 passed, 0 failure lines
+iq2xs/ on iq2_s MUL_MAT: 92/92 passed, 0 failure lines
+iq2xs/ on iq2_s MUL_MAT_ID: 50/50 passed, 0 failure lines
+iq2xs/ on iq2_s MUL_MAT_VEC_FUSION: 22/22 passed, 0 failure lines
+iq2xs/ on iq2_s MUL_MAT_ID_SHARED: 6/6 passed, 0 failure lines
+iq2xs/ on iq3_xxs MUL_MAT: 92/92 passed, 0 failure lines
+iq2xs/ on iq3_xxs MUL_MAT_ID: 50/50 passed, 0 failure lines
+iq2xs/ on iq3_xxs MUL_MAT_VEC_FUSION: 20/20 passed, 0 failure lines
+iq2xs/ on iq3_xxs MUL_MAT_ID_SHARED: 6/6 passed, 0 failure lines
+iq2xs/ skip iq2_xxs MUL_MAT: 83/83 passed, 0 failure lines
+iq2xs/ skip iq2_xxs MUL_MAT_ID: 55/55 passed, 0 failure lines
+iq2xs/ skip iq2_xxs MUL_MAT_VEC_FUSION: 99/99 passed, 0 failure lines
+iq2xs/ skip iq2_xxs MUL_MAT_ID_SHARED: 3/3 passed, 0 failure lines
+iq2xs/ skip iq2_xs MUL_MAT: 68/68 passed, 0 failure lines
+iq2xs/ skip iq2_xs MUL_MAT_ID: 34/34 passed, 0 failure lines
+iq2xs/ skip iq2_xs MUL_MAT_VEC_FUSION: 15/15 passed, 0 failure lines
+iq2xs/ skip iq2_xs MUL_MAT_ID_SHARED: 3/3 passed, 0 failure lines
+iq2xs/ skip iq3_s MUL_MAT: 68/68 passed, 0 failure lines
+iq2xs/ skip iq3_s MUL_MAT_ID: 34/34 passed, 0 failure lines
+iq2xs/ skip iq3_s MUL_MAT_VEC_FUSION: 15/15 passed, 0 failure lines
+iq2xs/ skip iq3_s MUL_MAT_ID_SHARED: 3/3 passed, 0 failure lines
+iq2xs/ skip iq2_s MUL_MAT: 92/92 passed, 0 failure lines
+iq2xs/ skip iq2_s MUL_MAT_ID: 50/50 passed, 0 failure lines
+iq2xs/ skip iq2_s MUL_MAT_VEC_FUSION: 22/22 passed, 0 failure lines
+iq2xs/ skip iq2_s MUL_MAT_ID_SHARED: 6/6 passed, 0 failure lines
+iq2xs/ skip iq3_xxs MUL_MAT: 92/92 passed, 0 failure lines
+iq2xs/ skip iq3_xxs MUL_MAT_ID: 50/50 passed, 0 failure lines
+iq2xs/ skip iq3_xxs MUL_MAT_VEC_FUSION: 20/20 passed, 0 failure lines
+iq2xs/ skip iq3_xxs MUL_MAT_ID_SHARED: 6/6 passed, 0 failure lines
+iq2xs/ memcheck: 15 of 15 cases with 0 errors
+-- b (iqkcol on, kcol_r2, cap1) and b2 (iqkcol rb1, off, skip, memcheck, bench)
+iqkcol/ on iq2_xxs MUL_MAT: 168/168 passed, 0 failure lines
+iqkcol/ on iq2_xxs MUL_MAT_ID: 142/142 passed, 0 failure lines
+iqkcol/ on iq2_xxs MUL_MAT_VEC_FUSION: 144/144 passed, 0 failure lines
+iqkcol/ on iq2_xxs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ on iq2_xs MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ on iq2_xs MUL_MAT_ID: 82/82 passed, 0 failure lines
+iqkcol/ on iq2_xs MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ on iq2_xs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ on iq3_s MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ on iq3_s MUL_MAT_ID: 79/79 passed, 0 failure lines
+iqkcol/ on iq3_s MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ on iq3_s MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ on iq2_s MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ on iq2_s MUL_MAT_ID: 89/89 passed, 0 failure lines
+iqkcol/ on iq2_s MUL_MAT_VEC_FUSION: 46/46 passed, 0 failure lines
+iqkcol/ on iq2_s MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ on iq3_xxs MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ on iq3_xxs MUL_MAT_ID: 89/89 passed, 0 failure lines
+iqkcol/ on iq3_xxs MUL_MAT_VEC_FUSION: 44/44 passed, 0 failure lines
+iqkcol/ on iq3_xxs MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ on iq1_m MUL_MAT: 113/113 passed, 0 failure lines
+iqkcol/ on iq1_m MUL_MAT_ID: 69/69 passed, 0 failure lines
+iqkcol/ on iq1_m MUL_MAT_VEC_FUSION: 41/41 passed, 0 failure lines
+iqkcol/ on iq1_m MUL_MAT_ID_SHARED: 8/8 passed, 0 failure lines
+iqkcol/ kcol_r2 iq2_xxs MUL_MAT: 168/168 passed, 0 failure lines
+iqkcol/ kcol_r2 iq2_xs MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ kcol_r2 iq3_s MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ kcol_r2 iq2_s MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ kcol_r2 iq3_xxs MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ kcol_r2 iq1_m MUL_MAT: 113/113 passed, 0 failure lines
+iqkcol/ cap1 iq2_xxs MUL_MAT_ID: 142/142 passed, 0 failure lines
+iqkcol/ cap1 iq2_xxs MUL_MAT_VEC_FUSION: 144/144 passed, 0 failure lines
+iqkcol/ cap1 iq2_xxs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ cap1 iq2_xs MUL_MAT_ID: 82/82 passed, 0 failure lines
+iqkcol/ cap1 iq2_xs MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ cap1 iq2_xs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ cap1 iq3_s MUL_MAT_ID: 79/79 passed, 0 failure lines
+iqkcol/ cap1 iq3_s MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ cap1 iq3_s MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ cap1 iq2_s MUL_MAT_ID: 89/89 passed, 0 failure lines
+iqkcol/ cap1 iq2_s MUL_MAT_VEC_FUSION: 46/46 passed, 0 failure lines
+iqkcol/ cap1 iq2_s MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ cap1 iq3_xxs MUL_MAT_ID: 89/89 passed, 0 failure lines
+iqkcol/ cap1 iq3_xxs MUL_MAT_VEC_FUSION: 44/44 passed, 0 failure lines
+iqkcol/ cap1 iq3_xxs MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ cap1 iq1_m MUL_MAT_ID: 69/69 passed, 0 failure lines
+iqkcol/ cap1 iq1_m MUL_MAT_VEC_FUSION: 41/41 passed, 0 failure lines
+iqkcol/ cap1 iq1_m MUL_MAT_ID_SHARED: 8/8 passed, 0 failure lines
+iqkcol/ rb1 iq2_xxs MUL_MAT_ID: 142/142 passed, 0 failure lines
+iqkcol/ rb1 iq2_xxs MUL_MAT_VEC_FUSION: 144/144 passed, 0 failure lines
+iqkcol/ rb1 iq2_xxs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ rb1 iq2_xs MUL_MAT_ID: 82/82 passed, 0 failure lines
+iqkcol/ rb1 iq2_xs MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ rb1 iq2_xs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ rb1 iq3_s MUL_MAT_ID: 79/79 passed, 0 failure lines
+iqkcol/ rb1 iq3_s MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ rb1 iq3_s MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ rb1 iq2_s MUL_MAT_ID: 89/89 passed, 0 failure lines
+iqkcol/ rb1 iq2_s MUL_MAT_VEC_FUSION: 46/46 passed, 0 failure lines
+iqkcol/ rb1 iq2_s MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ rb1 iq3_xxs MUL_MAT_ID: 89/89 passed, 0 failure lines
+iqkcol/ rb1 iq3_xxs MUL_MAT_VEC_FUSION: 44/44 passed, 0 failure lines
+iqkcol/ rb1 iq3_xxs MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ rb1 iq1_m MUL_MAT_ID: 69/69 passed, 0 failure lines
+iqkcol/ rb1 iq1_m MUL_MAT_VEC_FUSION: 41/41 passed, 0 failure lines
+iqkcol/ rb1 iq1_m MUL_MAT_ID_SHARED: 8/8 passed, 0 failure lines
+iqkcol/ off iq2_xxs MUL_MAT: 168/168 passed, 0 failure lines
+iqkcol/ off iq2_xxs MUL_MAT_ID: 134/134 passed, 0 failure lines
+iqkcol/ off iq2_xxs MUL_MAT_VEC_FUSION: 144/144 passed, 0 failure lines
+iqkcol/ off iq2_xxs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ off iq2_xs MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ off iq2_xs MUL_MAT_ID: 74/74 passed, 0 failure lines
+iqkcol/ off iq2_xs MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ off iq2_xs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ off iq3_s MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ off iq3_s MUL_MAT_ID: 71/71 passed, 0 failure lines
+iqkcol/ off iq3_s MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ off iq3_s MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ off iq2_s MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ off iq2_s MUL_MAT_ID: 81/81 passed, 0 failure lines
+iqkcol/ off iq2_s MUL_MAT_VEC_FUSION: 46/46 passed, 0 failure lines
+iqkcol/ off iq2_s MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ off iq3_xxs MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ off iq3_xxs MUL_MAT_ID: 81/81 passed, 0 failure lines
+iqkcol/ off iq3_xxs MUL_MAT_VEC_FUSION: 44/44 passed, 0 failure lines
+iqkcol/ off iq3_xxs MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ off iq1_m MUL_MAT: 113/113 passed, 0 failure lines
+iqkcol/ off iq1_m MUL_MAT_ID: 61/61 passed, 0 failure lines
+iqkcol/ off iq1_m MUL_MAT_VEC_FUSION: 41/41 passed, 0 failure lines
+iqkcol/ off iq1_m MUL_MAT_ID_SHARED: 8/8 passed, 0 failure lines
+iqkcol/ skip iq2_xxs MUL_MAT: 168/168 passed, 0 failure lines
+iqkcol/ skip iq2_xxs MUL_MAT_ID: 134/134 passed, 0 failure lines
+iqkcol/ skip iq2_xxs MUL_MAT_VEC_FUSION: 144/144 passed, 0 failure lines
+iqkcol/ skip iq2_xxs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ skip iq2_xs MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ skip iq2_xs MUL_MAT_ID: 74/74 passed, 0 failure lines
+iqkcol/ skip iq2_xs MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ skip iq2_xs MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ skip iq3_s MUL_MAT: 133/133 passed, 0 failure lines
+iqkcol/ skip iq3_s MUL_MAT_ID: 71/71 passed, 0 failure lines
+iqkcol/ skip iq3_s MUL_MAT_VEC_FUSION: 39/39 passed, 0 failure lines
+iqkcol/ skip iq3_s MUL_MAT_ID_SHARED: 7/7 passed, 0 failure lines
+iqkcol/ skip iq2_s MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ skip iq2_s MUL_MAT_ID: 81/81 passed, 0 failure lines
+iqkcol/ skip iq2_s MUL_MAT_VEC_FUSION: 46/46 passed, 0 failure lines
+iqkcol/ skip iq2_s MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ skip iq3_xxs MUL_MAT: 157/157 passed, 0 failure lines
+iqkcol/ skip iq3_xxs MUL_MAT_ID: 81/81 passed, 0 failure lines
+iqkcol/ skip iq3_xxs MUL_MAT_VEC_FUSION: 44/44 passed, 0 failure lines
+iqkcol/ skip iq3_xxs MUL_MAT_ID_SHARED: 10/10 passed, 0 failure lines
+iqkcol/ skip iq1_m MUL_MAT: 113/113 passed, 0 failure lines
+iqkcol/ skip iq1_m MUL_MAT_ID: 61/61 passed, 0 failure lines
+iqkcol/ skip iq1_m MUL_MAT_VEC_FUSION: 41/41 passed, 0 failure lines
+iqkcol/ skip iq1_m MUL_MAT_ID_SHARED: 8/8 passed, 0 failure lines
+iqkcol/ memcheck: 30 of 30 cases with 0 errors
+iqkcol/bench             mmvq_kcol --check-only, the IQ types                                                                 0 FAIL  exit 0   correctness: all variants match the CPU reference
+-- a2 (qsa rerun without DEV in the environment; fap)
+qsa/ ok  sparse1: rc=0, '48/48 tests passed', 0 FAIL lines (GGML_CUDA_FATTN_SPARSE_PASCAL=1)
+qsa/ ok  sparse2: rc=0, '48/48 tests passed', 0 FAIL lines (GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128)
+qsa/ ok  sparse0: rc=0, '48/48 tests passed', 0 FAIL lines (GGML_CUDA_FATTN_SPARSE_PASCAL=0)
+qsa/ WRONG  fault1: rc=0, '48/48 tests passed', 0 FAIL lines (GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=1)
+qsa/ ok  fault2: rc=1, '19/48 tests passed', 31 FAIL lines (GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=2)
+qsa/ ok  fault3: rc=1, '19/48 tests passed', 31 FAIL lines (GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=3)
+qsa/ ok  fasp_gpu: rc=0, fasp_check: 20 of 20 cases pass (fault 0, nsm 5, gpu)
+fap/on                   GGML_CUDA_FATTN_PASCAL=2, every FA case 1 4255/4255 tests passed;                                       0 FAIL  exit 0   every case passes
+fap/fault1               FAP fault 1 (output x 1.01)          1 22/22 tests passed;                                           0 FAIL  exit 0   passes (inside the NMSE limit)
+fap/fault2               FAP fault 2 (sinks dropped)          1 16/22 tests passed;                                           8 FAIL  exit 1   FAIL lines present
+fap/fault3               FAP fault 3 (last tile dropped)      1 4/22 tests passed;                                           20 FAIL  exit 1   FAIL lines present
+fap/off                  GGML_CUDA_FATTN_PASCAL=0, FAP's cases 1 22/22 tests passed;                                           0 FAIL  exit 0   every case passes
+-- b2 (hops, vgraphs, ckpt, server)
+hops/ops                 CPY, the 18 hop-shape cases among them 1 276/276 tests passed;                                         0 FAIL  exit 0   every case passes
+hops/unit                test-hop-cast --unit-only (CPU and card)                                                                 0 FAIL  exit 0   exit 0
+hops/model               staged hop and casts across two cards                                                                 0 FAIL  exit 0   exit 0 (staged arms bit for bit, casts within bound)
+hops/model detail: 8 contexts cast before layer 1, 14 staged rings
+hops/archs-2cards        test-llama-archs on two cards, defaults                                                                 0 FAIL  exit 134 Summary: all passed
+hops/archs-staged        test-llama-archs, GGML_CUDA_HOP_STAGED=2                                                                 0 FAIL  exit 134 the same verdicts as ladder2/archs
+vgraphs/ PASS
+vgraphs/ ... script exit 0; passing: verdict PASS: every arm base's tokens and top probabilities, two or more verify widths
+vgraphs/ verdict: gps0 = base (tokens and top probabilities of R1-R5) sps1 = base (tokens and top probabilities of R1-R5) calloc0 = base (tokens and top probabilities of R1-R5) noreuse = base (tokens and top probabilities of R1-R5) base: 505 drafted, 148 accepted, 4 verify widths (1:3 2:116 3:11 4:165 ) sps1: 8 per-size schedulers created ( 2 scheduler for 1-token batches (with outputs); 2 scheduler for 2-token batches (with outputs); 2 scheduler for 3-token batches (with outputs); 2 scheduler for 4-token batches (with outputs);) base: 0.00.211.135 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: off gps0: 0.00.168.679 I llama_context: graphs per batch size up to 8 tokens: off (LLAMA_GRAPH_PER_SIZE=0), schedulers per size: off sps1: 0.00.205.218 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: on (LLAMA_SCHED_PER_SIZE=1) calloc0: 0.00.200.224 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: off noreuse: 0.00.178.871 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: off PASS 
+vgraphs/ctx-qwen4exp-moe-default test-llama-context -ngl 99, default  NO CUDA0; 1 failed   : 0;1 passed   : 19;                       0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen4exp-moe-SIZE=0 test-llama-context -ngl 99, LLAMA_GRAPH_PER_SIZE=0 NO CUDA0; 1 failed   : 0;1 passed   : 19;                       0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen4exp-moe-SIZE=1 test-llama-context -ngl 99, LLAMA_SCHED_PER_SIZE=1 NO CUDA0; 1 failed   : 0;1 passed   : 19;                       0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen4exp-moe-CALLOC=0 test-llama-context -ngl 99, LLAMA_GRAPH_META_CALLOC=0 NO CUDA0; 1 failed   : 0;1 passed   : 19;                       0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen35-dense-default test-llama-context -ngl 99, default  1 failed   : 0;1 passed   : 19;                                 0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen35-dense-SIZE=0 test-llama-context -ngl 99, LLAMA_GRAPH_PER_SIZE=0 1 failed   : 0;1 passed   : 19;                                 0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen35-dense-SIZE=1 test-llama-context -ngl 99, LLAMA_SCHED_PER_SIZE=1 1 failed   : 0;1 passed   : 19;                                 0 FAIL  exit 0   failed : 0
+vgraphs/ctx-qwen35-dense-CALLOC=0 test-llama-context -ngl 99, LLAMA_GRAPH_META_CALLOC=0 1 failed   : 0;1 passed   : 19;                                 0 FAIL  exit 0   failed : 0
+ckpt-plain/ spread = base as well
+ckpt-plain/ vram2: 2 checkpoint(s) moved to the host
+ckpt-plain/ vram2s: 2 checkpoint(s) moved to the host
+ckpt-plain/ spread_v2: 13 checkpoint(s) moved to the host
+ckpt-plain/ PASS
+ckpt-plain/ ... script exit 0; passing: verdict PASS (vram, vram2, vram2s = base; spread_v2 = spread)
+ckpt-plain/ verdict: vram = base (tokens and top probabilities of P1-P5) vram2 = base (tokens and top probabilities of P1-P5) vram2s = base (tokens and top probabilities of P1-P5) spread_v2 = spread (tokens and top probabilities of P1-P5) spread P3 resumed from the checkpoint at 2048 tokens spread = base as well vram2: 2 checkpoint(s) moved to the host vram2s: 2 checkpoint(s) moved to the host spread_v2: 13 checkpoint(s) moved to the host PASS 
+ckpt-share/ spread = base as well
+ckpt-share/ vram2: 2 checkpoint(s) moved to the host
+ckpt-share/ vram2s: 2 checkpoint(s) moved to the host
+ckpt-share/ spread_v2: 13 checkpoint(s) moved to the host
+ckpt-share/ PASS
+ckpt-share/ ... script exit 0; passing: verdict PASS (vram, vram2, vram2s = base; spread_v2 = spread)
+ckpt-share/ verdict: vram = base (tokens and top probabilities of P1-P5) vram2 = base (tokens and top probabilities of P1-P5) vram2s = base (tokens and top probabilities of P1-P5) spread_v2 = spread (tokens and top probabilities of P1-P5) spread P3 resumed from the checkpoint at 2048 tokens spread = base as well vram2: 2 checkpoint(s) moved to the host vram2s: 2 checkpoint(s) moved to the host spread_v2: 13 checkpoint(s) moved to the host PASS 
+server/off                                                    tokens 64/64/64/ drafts 47/47/47/ reference files: none errors 0  passing: 64 tokens a request, drafts > 0
+server/dump              LLAMA_SPEC_DUMP=dump.jsonl           tokens 64/64/64/ drafts 47/47/47/ same files: dump.jsonl:48 errors 0  passing: tokens as off; dump.jsonl lines > 0
+server/adaptlog          LLAMA_SPEC_ADAPT_LOG=adapt.jsonl     tokens 64/64/64/ drafts 47/47/47/ same files: adapt.jsonl:49 errors 0  passing: tokens as off; adapt.jsonl lines > 0
+server/adapt             LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_LOG=adapt.jsonl tokens 64/64/64/ drafts 0/0/0/ same files: adapt.jsonl:187 errors 0  passing: reported only (other verify widths); adapt.jsonl lines > 0
+server/adaptdump         LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_LOG=adapt.jsonl LLAMA_SPEC_DUMP=dump.jsonl tokens 64/64/64/ drafts 0/0/0/ same files: dump.jsonl:0 adapt.jsonl:187 errors 0  passing: reported only (other verify widths); dump.jsonl lines = the steps verified (0 when the rule cuts every draft)
+server/moep1             LLAMA_MOE_TAIL=p=1                   tokens 64/64/64/ drafts 47/47/47/ same files: none errors 0  passing: tokens as off
+server/profgroup         GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=group tokens 64/64/64/ drafts 47/47/47/ same files: prof.csv:45615 errors 0  passing: tokens as off; prof.csv lines > 0
+server/proflayer         GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=layer tokens 64/64/64/ drafts 47/47/47/ same files: prof.csv:967 errors 0  passing: tokens as off; prof.csv lines > 0
+server/profgraph         GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=graph tokens 64/64/64/ drafts 47/47/47/ same files: prof.csv:243 errors 0  passing: tokens as off; prof.csv lines > 0
+server/profsample        GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=sample=8 tokens 64/64/64/ drafts 47/47/47/ same files: prof.csv:4832 errors 0  passing: tokens as off; prof.csv lines > 0
+server/share             --ctx-checkpoints-share              tokens 64/64/64/ drafts 47/47/47/ same files: none errors 0  passing: tokens as off
+server/taper             LLAMA_UBATCH_TAPER=on                tokens 64/64/64/ drafts 47/47/47/ same files: taper-lines:6 errors 0  passing: reported only (64-token micro-batches may round otherwise on the card); taper-lines > 0
+-- probes
+probe-archs/ all-on                       exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ without-MMVQ_PASCAL          exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ without-MMVF_PASCAL          exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ without-PERSISTENT_MOE       exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ without-FATTN_PASCAL         exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ without-FATTN_TILE_PASCAL    exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ without-ATTN_BLOCK           exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ all-off                      exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ only-MMVQ_PASCAL             exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ only-MMVF_PASCAL             exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ only-PERSISTENT_MOE          exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ only-FATTN_PASCAL            exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ only-FATTN_TILE_PASCAL       exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ only-ATTN_BLOCK              exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ fork-off                     exit 0   0 asserts; | qwen4exp| Meta| MoE| OK (1.19e-07)| SKIP| OK (4.34e-08)|;
+probe-archs/ fork-off-but-MMVQ_PASCAL_KCOL exit 0   0 asserts; | qwen4exp| Meta| MoE| OK (1.19e-07)| SKIP| OK (4.34e-08)|;
+probe-archs/ fork-off-but-MMVQ_PASCAL_MTOK exit 0   0 asserts; | qwen4exp| Meta| MoE| OK (1.19e-07)| SKIP| OK (4.34e-08)|;
+probe-archs/ fork-off-but-NORM_Q8         exit 0   0 asserts; | qwen4exp| Meta| MoE| OK (1.19e-07)| SKIP| OK (4.34e-08)|;
+probe-archs/ fork-off-but-GDN_FUSE        exit 134 0 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-cuda/ggml-cuda.cu:118: CUDA error;
+probe-archs/ fork-off-but-LLAMA_GDN_FUSE  exit 134 1 asserts; | qwen4exp| Meta| MoE|/work/src/ggml/src/ggml-backend-meta.cpp:567: GGML_ASSERT(ret.axis !;
+probe-archs/ nogdn                        exit 0   0 asserts; Summary: all 411 test(s) passed;
+probe-archs/ nogdn-mask                   exit 0   0 asserts; Summary: all 411 test(s) passed;
+probe-dup/ stock-case-memcheck: 0/1 tests passed; ERROR SUMMARY: 0 errors; exit 1
+probe-dup/ fork-case: 1/1 tests passed; exit 0
+probe-dup/ fork-case-memcheck: 1/1 tests passed; ERROR SUMMARY: 0 errors; exit 0
+probe-dup/ stock-range-memcheck:  ERROR SUMMARY: 2817 errors; ERROR SUMMARY: 2807 errors were not printed. Use --print-limit option to adjust the number of printed errors; exit 6

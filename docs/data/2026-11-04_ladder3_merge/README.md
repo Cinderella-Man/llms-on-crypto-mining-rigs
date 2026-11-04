@@ -8,7 +8,7 @@ the checks that ran on the merged tree without a GPU, and the script that runs e
 build, each switch on and off, so the morning's GPU and rig work runs one build with switches instead of fourteen. The
 registry rows are Q780 (the merge) and Q781 (its GPU checks) in [quants/experiments.md](../../../quants/experiments.md).
 
-**Status:** merged, built for the rig and checked on the CPU: every merged branch's own CPU checks pass on the merged tree, the logits equal `-ladder2`'s on every architecture with the switches at their defaults and off, and every kernel a branch changed or added comes out with that branch's sm_61 machine code. Not yet run on a GPU; [run/gpu_checks.sh](run/gpu_checks.sh) does that next, one named run per switch.
+**Status:** merged, built for the rig and checked on the CPU: every merged branch's own CPU checks pass on the merged tree, the logits equal `-ladder2`'s on every architecture with the switches at their defaults and off, and every kernel a branch changed or added comes out with that branch's sm_61 machine code. Through the compute 6.1 PTX on a GPU ([gpu_ptx.md](gpu_ptx.md)), with [run/gpu_checks.sh](run/gpu_checks.sh)'s one named run per switch, every switch passes; `-gdnfuse` fails only on llama.cpp's Meta backend, which splits tensors across GPUs and is not on the rig's path (Q877). The P106 runs (natively, one half per rig) follow.
 
 ## What is merged
 
@@ -183,6 +183,10 @@ leaves them in `checks/ctx/models`).
 |---|---|
 | `run/cpu_checks.sh` | the build and every check above, CPU only, in containers without a GPU |
 | `run/gpu_checks.sh` | every switch's GPU check, `MODE=ptx` or `native` |
+| `run/probe_dup_ids.sh` | the repeated-expert-id case on llama.cpp's MMQ and on the fork's kernels, under compute-sanitizer (Q875) |
+| `run/probe_archs_meta.sh` | which switch stops `test-llama-archs`' Meta row, and every architecture with the GDN fusions off (Q877) |
+| `gpu_ptx.md` | the PTX run's verdict per switch, its findings and how it ran |
+| `gpu_ptx_console.txt` | every valid run line of the PTX run, by the container that ran it, and the probes' lines |
 | `union.tsv` | per changed file: the branches that touch it, lines outside the union, single-branch identity |
 | `union_exceptions.txt` | the changed lines outside the union, per file |
 | `cpu_checks.tsv` | one verdict per check of `run/cpu_checks.sh` |
