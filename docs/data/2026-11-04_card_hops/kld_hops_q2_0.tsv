@@ -1,0 +1,10 @@
+arm	text	moe_tail	mean_kld	kld_se	same_top_p_pct	d_kld_vs_off	d_vs_off_se	d_kld_vs_p1	d_vs_p1_se	chunks	experts_kept_mean	routed_reads_pct	kept_by_count
+hops-f16	agent	-	0.285853	0.005552	90.592	-0.00014	0.00123	-	-	12	10	100	-
+hops-f16	code	-	0.111488	0.003935	96.044	-0.00072	0.00036	-	-	80	10	100	-
+hops-f16	wiki	-	0.427946	0.005845	77.760	0.00020	0.00059	-	-	80	10	100	-
+hops-off	agent	-	0.285993	0.005549	90.655	-	-	-	-	-	10	100	-
+hops-off	code	-	0.112212	0.003954	96.049	-	-	-	-	-	10	100	-
+hops-off	wiki	-	0.427745	0.005852	77.819	-	-	-	-	-	10	100	-
+hops-q8_0	agent	-	0.284922	0.005538	90.633	-0.00107	0.00116	-	-	12	10	100	-
+hops-q8_0	code	-	0.111736	0.003953	96.034	-0.00047	0.00040	-	-	80	10	100	-
+hops-q8_0	wiki	-	0.427942	0.005850	77.926	0.00019	0.00058	-	-	80	10	100	-
