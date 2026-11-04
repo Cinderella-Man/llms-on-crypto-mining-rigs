@@ -55,3 +55,51 @@ off_group	5	token embeddings	0.00
 off_group	5	other ops without weights	10.48
 off_group	5	other weights	1.55
 off_group	5	sum of the parts	199.97
+on_sample8_r40	1	routed experts	8.68
+on_sample8_r40	1	shared expert	3.22
+on_sample8_r40	1	hyper-connections (BF16)	9.92
+on_sample8_r40	1	router	2.16
+on_sample8_r40	1	attention and recurrent projections	27.11
+on_sample8_r40	1	Gated DeltaNet state and conv	3.48
+on_sample8_r40	1	attention (FLASH_ATTN_EXT)	0.63
+on_sample8_r40	1	output layer	3.58
+on_sample8_r40	1	token embeddings	0.00
+on_sample8_r40	1	other ops without weights	9.09
+on_sample8_r40	1	other weights	0.58
+on_sample8_r40	1	sum of the parts	68.46
+on_sample8_r40	5	routed experts	55.78
+on_sample8_r40	5	shared expert	6.32
+on_sample8_r40	5	hyper-connections (BF16)	22.09
+on_sample8_r40	5	router	5.86
+on_sample8_r40	5	attention and recurrent projections	61.73
+on_sample8_r40	5	Gated DeltaNet state and conv	5.44
+on_sample8_r40	5	attention (FLASH_ATTN_EXT)	1.69
+on_sample8_r40	5	output layer	3.58
+on_sample8_r40	5	token embeddings	0.00
+on_sample8_r40	5	other ops without weights	10.60
+on_sample8_r40	5	other weights	1.29
+on_sample8_r40	5	sum of the parts	174.39
+off_sample8_r40	1	routed experts	8.67
+off_sample8_r40	1	shared expert	3.02
+off_sample8_r40	1	hyper-connections (BF16)	9.73
+off_sample8_r40	1	router	2.15
+off_sample8_r40	1	attention and recurrent projections	22.22
+off_sample8_r40	1	Gated DeltaNet state and conv	3.47
+off_sample8_r40	1	attention (FLASH_ATTN_EXT)	0.63
+off_sample8_r40	1	output layer	3.58
+off_sample8_r40	1	token embeddings	0.00
+off_sample8_r40	1	other ops without weights	9.10
+off_sample8_r40	1	other weights	0.58
+off_sample8_r40	1	sum of the parts	63.15
+off_sample8_r40	5	routed experts	72.38
+off_sample8_r40	5	shared expert	8.15
+off_sample8_r40	5	hyper-connections (BF16)	22.15
+off_sample8_r40	5	router	5.84
+off_sample8_r40	5	attention and recurrent projections	68.55
+off_sample8_r40	5	Gated DeltaNet state and conv	5.44
+off_sample8_r40	5	attention (FLASH_ATTN_EXT)	1.69
+off_sample8_r40	5	output layer	3.58
+off_sample8_r40	5	token embeddings	0.00
+off_sample8_r40	5	other ops without weights	10.51
+off_sample8_r40	5	other weights	1.59
+off_sample8_r40	5	sum of the parts	199.86

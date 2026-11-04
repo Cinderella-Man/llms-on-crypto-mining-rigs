@@ -60,17 +60,18 @@ instead of 55.5 (about 30.9 / 48 of the share), T(5) est. ~196 ms at the default
 | `graph` (an event pair around each card's evaluation): the cards' GPU time | 70.80 ms | 176.56 ms |
 | `layer` (an event where the layer changes): the sum of the layer spans | 70.56 ms | 176.25 ms |
 | `group` (an event between every two launch groups, 7.6 µs each subtracted): the sum of the parts | 68.72 ms | 174.30 ms |
+| `sample=8` with 40 repetitions (every 8th launch group, 3 samples of each, 7.6 µs subtracted): the sum of the parts | 68.46 ms | 174.39 ms |
 | the pass under the `graph` profiler, wall (host clock) | 83.5 ms | 222.9 ms |
 | the pass unprofiled (Q591) | 82.4 ms | 217.1 ms |
 
-`layer` and `graph` agree within 0.3 ms, `group` with the correction within 1–3 %: C140's calibration holds in the
+`layer` and `graph` agree within 0.3 ms, `group` with the correction within 1–3 %, and `sample=8` matches `group` within 0.3 ms per part (kernels off: 63.15 / 199.86 ms against 63.64 / 199.97): C140's calibration holds in the
 model. All three sum the cards' timelines only, so each sits 11–12 ms (1 token) and 40–43 ms (5 tokens) below the
 unprofiled wall; that difference is the hops between cards, the host's work and its gaps. The `graph` profiler costs
 1–3 % of the wall; the `group` profiler 28 % at one token (105.8 ms) and 10 % at five (239.9 ms).
 
 `sample=8` (an event pair around every 8th launch group, rotating) under llama-bench with 10 repetitions wrote only each
 phase's eager and capture evaluations: a replay's events are read at the same phase's next evaluation, 8 later, and
-nothing flushes them at exit (Q826). It ran again with 40 repetitions (below).
+nothing flushes them at exit (Q826). With 40 repetitions every launch group was timed 3 times (coverage 100 %), and its parts are those of the table to within 0.3 ms (routed experts 8.68 → 55.78 ms, projections 27.11 → 61.73); it costs 9 % of the wall at one token and 3 % at five.
 
 ## Files
 
@@ -90,7 +91,7 @@ mode:
 
 ```bash
 BIN=<-ladder3 build>/bin MODEL=<Swift Q2_0 first shard> OUT=<dir> setsid nohup bash run/kpass_prof.sh > kpass.console 2>&1 < /dev/null &
-MODES=sample=8 REPS=40 OUT=<dir2> ...   # the sample traces need at least 3 evaluations per phase
+MODES=sample=8 REPS=40 BIN=... MODEL=... OUT=<dir2> setsid nohup bash run/kpass_prof.sh ...   # 3 evaluations per phase at least
 ```
 
 Each run is `llama-bench -m MODEL -ngl 99 -fa on -b 2048 -ub 512 -ts 6/6/6/6/5/6/5/6/3 -lm dio --no-host 1 -p 1,5 -n 0 -r 10`

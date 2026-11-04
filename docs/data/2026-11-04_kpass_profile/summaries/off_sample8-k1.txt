@@ -1,0 +1,80 @@
+ress/off_sample8-k1.csv: mode sample, 297 device evals on 9 devices: 297 decode-sized (< 1e+09 ms; 72 capture, 9 eager, 216 replay), 0 larger; ~33 decode steps; used: replays (216)
+decode: 63.15 ms of GPU time per token summed over cards, 7.6 µs per span subtracted (≈ 15.84 tok/s if the cards ran back to back with no gaps)
+per card, ms per token: 0:7.70 1:7.28 2:7.81 3:7.89 4:6.02 5:7.42 6:6.08 7:6.99 8:5.96
+spans shorter than the event cost: 428 of 6912 (6.2 %)
+
+by first op of the launch group (ms/token, share):
+    40.41  64.0 %  MUL_MAT
+     8.67  13.7 %  MUL_MAT_ID
+     4.73   7.5 %  SCALE
+     3.47   5.5 %  GATED_DELTA_NET
+     1.12   1.8 %  MUL
+     0.66   1.0 %  RMS_NORM
+     0.63   1.0 %  FLASH_ATTN_EXT
+     0.61   1.0 %  SOFT_MAX
+     0.46   0.7 %  GDN_CONV
+     0.41   0.6 %  CONT
+     0.38   0.6 %  DSV4_HC_PRE
+     0.29   0.5 %  ADD
+     0.25   0.4 %  SILU
+     0.17   0.3 %  TOP_K
+     0.13   0.2 %  SIGMOID
+
+by weight type (ms/token, share):
+    14.45  22.9 %  q3_K
+    14.07  22.3 %  (no weights)
+     9.84  15.6 %  q2_0
+     9.59  15.2 %  bf16
+     4.50   7.1 %  iq4_xs
+     4.43   7.0 %  q5_K
+     2.35   3.7 %  f32
+     2.22   3.5 %  q4_K
+     0.83   1.3 %  q6_K
+     0.34   0.5 %  q4_0
+     0.22   0.3 %  iq4_nl
+     0.19   0.3 %  q5_0
+     0.12   0.2 %  q8_0
+
+top launch groups (ms/token, share, label):
+     5.78   9.2 %  MUL_MAT attn_qkv:q3_K:2560x10240
+     4.91   7.8 %  MUL_MAT attn_gate:q3_K:2560x6144
+     4.40   7.0 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640
+     3.59   5.7 %  MUL_MAT_ID ffn_down_exps:q2_0:640x2560
+     3.58   5.7 %  MUL_MAT output:q5_K:2560x248320
+     2.34   3.7 %  MUL_MAT hc_attn_down:bf16:10240x320
+     2.30   3.6 %  MUL_MAT attn_q:q3_K:2560x12288
+     2.18   3.5 %  MUL_MAT hc_ffn_down:bf16:10240x320
+     2.15   3.4 %  MUL_MAT ffn_gate_inp:f32:2560x512
+     1.97   3.1 %  MUL_MAT hc_attn_up:bf16:320x10240
+     1.95   3.1 %  MUL_MAT hc_ffn_up:bf16:320x10240
+     1.72   2.7 %  MUL_MAT attn_qkv:iq4_xs:2560x10240
+     1.43   2.3 %  MUL_MAT ssm_out:iq4_xs:6144x2560
+     0.86   1.4 %  MUL_MAT ssm_out:q4_K:6144x2560
+     0.68   1.1 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2
+     0.62   1.0 %  MUL_MAT attn_q:iq4_xs:2560x12288
+     0.61   1.0 %  SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs
+     0.51   0.8 %  MUL_MAT attn_qkv:q4_K:2560x10240
+     0.46   0.7 %  SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject
+     0.46   0.7 %  MUL_MAT ssm_out:q3_K:6144x2560
+     0.46   0.7 %  GDN_CONV+CPY gdn_conv
+     0.44   0.7 %  MUL_MAT attn_output:q6_K:6144x2560
+     0.40   0.6 %  MUL_MAT ffn_up_shexp:q3_K:2560x640
+     0.40   0.6 %  MUL_MAT attn_output:q5_K:6144x2560
+     0.38   0.6 %  DSV4_HC_PRE hc_mixed
+     0.37   0.6 %  MUL_MAT attn_gate:iq4_xs:2560x6144
+     0.34   0.5 %  MUL_MAT ffn_down_shexp:q4_0:640x2560
+     0.33   0.5 %  MUL_MAT+MUL_MAT+SWIGLU ffn_gate_shexp:q3_K:2560x640 ffn_up_shexp:q3_K:2560x640
+     0.32   0.5 %  MUL_MAT attn_output:q4_K:6144x2560
+     0.29   0.5 %  MUL_MAT ssm_out:q5_K:6144x2560
+
+sampling: 2304 launch groups timed, 3-3 samples each (median 3); coverage of each graph's groups: lowest 100 %, main graphs 100 %
+
+per token (one decode step):
+  timed spans, summed over cards       63.15 ms, 7.6 µs per span subtracted
+  whole evaluations (eval_us)          68.55 ms raw, 64.18 ms without the events inside them
+  wall, this run (host clock)          81.33 ms median, 82.39 ms mean (32 intervals of card 0's graph 0)
+  wall, unprofiled (--wall-ms)         82.50 ms
+  timed spans / unprofiled wall         76.5 %  (unprofiled wall minus the spans: 19.35 ms of hops, host work and gaps)
+  this run's wall / unprofiled          98.6 %  (the profiler's own cost on a token)
+check: timed spans 63.15 ms against the unprofiled 82.50 ms per token: -23.5 %, outside 5 % -> fail
+summary: mode=sample steps=33 devices=9 decode_evals=297 used_evals=216 skipped=0 coverage=1.000 sum_ms=63.148 evals_ms=68.553 evals_corr_ms=64.175 wall_run_ms=81.334 event_us=7.600 wall_ref_ms=82.500 sum_vs_ref_pct=-23.457 wall_vs_ref_pct=-1.413 check=fail
