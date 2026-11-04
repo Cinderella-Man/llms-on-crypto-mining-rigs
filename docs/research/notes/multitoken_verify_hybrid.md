@@ -17,7 +17,7 @@ on hybrid models), [Flash-Next acceptance](flash_next_acceptance.md), [speculati
 [pipelined speculation](pipelined_speculation.md), [Flash-Next prefill](flash_next_prefill.md) and
 [the floor note](flash_next_floor_and_engine.md) (the bandwidth floor of a token and of the k-curve's slope), and does not
 repeat them. Sources were read on 2026-11-04; the fork's behaviour is read from `-ladder3`'s source. Nothing was run,
-built or downloaded. The k-pass profile (Q822, [kpass_profile](../../data/2026-11-04_kpass_profile/)) was still running
+built or downloaded. The k-pass profile (Q822, `docs/data/2026-11-04_kpass_profile/`) was still running
 on the rig; section 1 is the bottom-up estimate it replaces.
 
 Conventions:
@@ -247,7 +247,7 @@ per block removes the first row: est. 3.9–4.9 ms a token, T(5)/T(1) ≥ 1.19�
   host. Q750's Q8_0 hop (10.9 KB) is est. −2.4 ms a token and −9.8 ms per 4-token pass, ~−12 ms at k = 5.
 - **The one-token fusions do not apply to k tokens** (section 1.1), and the fork's per-size graphs (`-vgraphs`) key a
   captured graph per shape. Whether llama-bench's k-token passes replay a graph or run eagerly is in the light
-  profiler's per-card `how` counts (C142r); eager launches would add est. 5–10 ms of fixed cost per pass (~2,900
+  profiler's per-card `how` counts (Q681's rig run); eager launches would add est. 5–10 ms of fixed cost per pass (~2,900
   kernels).
 - **The n-gram table is Flash-Next's own per-token host cost.** Every token makes 11–14 random reads of the 28.8 GB table
   on the SSD (Q214). If a pass reads its tokens' rows one at a time, four extra tokens cost est. 6.7–8.5 ms before the
@@ -339,7 +339,7 @@ Ranked by est. ms saved on a 5-token pass. Ideas marked **new** got their regist
 |---|---|---:|---|---|---|---|
 | 1 | Find the unaccounted half of the slope: Q822's profile (k = 1 and 5) plus a k = 2 arm, and a server verify of 4 and 5 tokens on `-ladder3` for the llama-bench gap | up to 57–72 (the unaccounted part; ≤ ~33 at the two path switches, 15–25 if Q589's gap holds) | yes | profile ~35 min + ~10 min for the k = 2 arm; fixes after | the parts at k = 1 / 2 / 5 summing to the wall within 5 %, and the switches' launch counts differing between k = 1 and 2 | Q822, Q589; the k = 2 arm in Q870 (**new**) |
 | 2 | Retune the k-column launch shapes (1 row per lane group or a 32 KB activation budget where the bench shows it faster) | −19 (bench sums; −24 at k = 1) | yes | days | the bench's sums with the new `pick_shape`, then T(k) | Q823 |
-| 3 | Route once per verify block | −14.5 to −17 (−23 in llama-bench) | **no**, verified distribution and cache | the `route-once` switch, a KLD by k | the block-emulating KLD below Q618's gate; acceptance on agent requests not below exact | Q860 |
+| 3 | Route once per verify block | −14.5 to −17 (−23 in llama-bench) | **no**, verified distribution and cache | Q860's switch on `-bytesw`, a KLD by k | the block-emulating KLD below Q618's gate; acceptance on agent requests not below exact | Q860 |
 | 4 | Q8_0 residual hops for verify passes | ~−12 (−2.4 at k = 1) | near (KLD pending) | code done (`LLAMA_HOP_CAST`, CPU-checked), not yet on a GPU | KLD, then T(k) with the cast | Q750, Q231, Q820 |
 | 5 | The one-token-only paths made k-aware: the GLU-fused gate/up products and the shared-expert fusion at 2–8 columns, a Pascal attention kernel for 2–8 query tokens | −5 to −14 at every k ≥ 2 | yes | 1–2 weeks | the k = 2 arm of idea 1: the first step's excess (14.2 ms) and the launches that appear at k = 2 | Q870 (**new**) |
 | 6 | Partial route-once: l own experts per token plus the first token's best (union ≤ 10 + (k − 1)·l) | −10 to −12 (l = 2), −12 to −14.5 (l = 1) | **no** | a parameter of Q860's switch | the same KLD at l = 1, 2, 3 beside l = 0 | Q874 (**new**) |
@@ -350,7 +350,7 @@ Ranked by est. ms saved on a 5-token pass. Ideas marked **new** got their regist
 | 11 | T(k) at agent depth: the k-curve at 8k and 32k cells, sparse attention off and on, before any attention work for drafts | decides; the attention's slope at 32k is unknown (0 to tens of ms) | — | ~30 min on a rig | llama-bench `-p 1..8 -d 8192,32768` against the empty-context curve | Q873 (**new**) |
 
 - **Order of work.** Idea 1 first: it is a measurement on a build that exists and it sizes ideas 2, 5, 7 and 9. Ideas 2
-  and 4 are exact and nearly ready. Ideas 3 and 6 need only the switch the `route-once` work is writing and a KLD; they
+  and 4 are exact and nearly ready. Ideas 3 and 6 need only Q860's switch, being written, and a KLD; they
   decide whether a lossy lever is worth ~2 tok/s once the exact ones are in.
 - **Parked and not reopened by this note:** EcoSpec-style node selection (Q690) and capped expert budgets (Q691). Both
   act on the expert union, which is 11–17 % of the slope after R7's kernel.
