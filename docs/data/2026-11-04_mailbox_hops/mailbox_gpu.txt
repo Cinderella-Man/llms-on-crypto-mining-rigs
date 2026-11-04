@@ -1,0 +1,46 @@
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 348 chunks, 6 on the copy stream (6 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 1512 chunks, 12 on the copy stream (12 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 16 slots of 32 KiB in mapped host memory, 1 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 16 slots of 32 KiB in mapped host memory, 1 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 252 chunks, 6 on the copy stream (6 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 1296 chunks, 12 on the copy stream (12 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 4 slots of 1 KiB in mapped host memory, 64 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 4 slots of 1 KiB in mapped host memory, 64 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 7536 chunks, 24 on the copy stream (24 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 41016 chunks, 48 on the copy stream (48 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 4 slots of 1 KiB in mapped host memory, 64 chunks, 256 threads, polls at most 4 us apart, copy stream mode 0
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 4 slots of 1 KiB in mapped host memory, 64 chunks, 256 threads, polls at most 4 us apart, copy stream mode 0
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 7536 chunks, 0 on the copy stream (0 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 41016 chunks, 0 on the copy stream (0 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 256 threads, polls at most 4 us apart, copy stream mode 2
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 256 threads, polls at most 4 us apart, copy stream mode 2
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 348 chunks, 36 on the copy stream (36 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 1512 chunks, 60 on the copy stream (60 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 64 threads, polls at most 0 us apart, copy stream mode 1
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 64 threads, polls at most 0 us apart, copy stream mode 1
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 348 chunks, 6 on the copy stream (6 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 1512 chunks, 12 on the copy stream (12 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 4 slots of 32 KiB in mapped host memory, 3 chunks, 1024 threads, polls at most 50 us apart, copy stream mode 1
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 4 slots of 32 KiB in mapped host memory, 3 chunks, 1024 threads, polls at most 50 us apart, copy stream mode 1
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 36 hops, 7.20 MiB, 270 chunks, 12 on the copy stream (12 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 60 hops, 39.50 MiB, 1344 chunks, 18 on the copy stream (18 behind the scheduler's guard)
+hop_mb_get: card hop CUDA0 -> CUDA1 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1, hops up to 16 KiB
+ggml_cuda_hop_ring_get: card hop CUDA0 -> CUDA1 staged through 4 pinned slots of 256 KiB, 2 chunks, copy stream mode 1
+hop_mb_get: card hop CUDA1 -> CUDA0 by mailbox: 16 slots of 32 KiB in mapped host memory, 8 chunks, 256 threads, polls at most 4 us apart, copy stream mode 1, hops up to 16 KiB
+ggml_cuda_hop_ring_get: card hop CUDA1 -> CUDA0 staged through 4 pinned slots of 256 KiB, 2 chunks, copy stream mode 1
+ggml_cuda_hop_mailbox_free: card hop CUDA1 -> CUDA0 by mailbox: 18 hops, 0.02 MiB, 60 chunks, 0 on the copy stream (0 behind the scheduler's guard)
+ggml_cuda_hop_ring_free: card hop CUDA1 -> CUDA0: 46 staged hops, 9.60 MiB, 96 chunks, 0 on the copy stream (0 behind the scheduler's guard)
+ggml_cuda_hop_mailbox_free: card hop CUDA0 -> CUDA1 by mailbox: 24 hops, 0.09 MiB, 108 chunks, 0 on the copy stream (0 behind the scheduler's guard)
+ggml_cuda_hop_ring_free: card hop CUDA0 -> CUDA1: 72 staged hops, 52.61 MiB, 308 chunks, 8 on the copy stream (8 behind the scheduler's guard)
+peer-copy              ok  : 96 rounds over 2 cards, 0 hops by mailbox
+mailbox                ok  : 96 rounds over 2 cards, 96 hops by mailbox
+one-chunk              ok  : 96 rounds over 2 cards, 96 hops by mailbox
+tiny-ring              ok  : 96 rounds over 2 cards, 96 hops by mailbox
+tiny-ring-compute      ok  : 96 rounds over 2 cards, 96 hops by mailbox
+copy-stream            ok  : 96 rounds over 2 cards, 96 hops by mailbox
+threads64-poll0        ok  : 96 rounds over 2 cards, 96 hops by mailbox
+threads1024-poll50     ok  : 96 rounds over 2 cards, 96 hops by mailbox
+max16k-staged          ok  : 96 rounds over 2 cards, 42 hops by mailbox
+test-hop-mailbox: 27 checks, 0 failed

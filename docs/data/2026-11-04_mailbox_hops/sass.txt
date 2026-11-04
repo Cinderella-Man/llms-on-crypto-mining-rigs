@@ -1,0 +1,11 @@
+# the mailbox kernels in the rig build: sm_61 machine code and compute_61 PTX, read from test-hop-mailbox (the CUDA backend is linked statically into every binary of the tarball)
+Function : _Z13k_hop_mb_recv11hop_mb_args
+Function : _Z13k_hop_mb_send11hop_mb_args
+.entry _Z13k_hop_mb_send11hop_mb_args(
+.entry _Z13k_hop_mb_recv11hop_mb_args(
+Function _Z13k_hop_mb_recv11hop_mb_args:
+REG:21 STACK:16 SHARED:4 LOCAL:0 CONSTANT[0]:416 TEXTURE:0 SURFACE:0 SAMPLER:0
+Function _Z13k_hop_mb_send11hop_mb_args:
+REG:18 STACK:16 SHARED:4 LOCAL:0 CONSTANT[0]:416 TEXTURE:0 SURFACE:0 SAMPLER:0
+k_hop_mb_send sm_61: 2 MEMBAR.SYS, 3 LDG.E.CV (volatile and cache-bypassing loads), 0 of them 128-bit, 0 VOTE
+k_hop_mb_recv sm_61: 2 MEMBAR.SYS, 4 LDG.E.CV (volatile and cache-bypassing loads), 1 of them 128-bit, 1 VOTE

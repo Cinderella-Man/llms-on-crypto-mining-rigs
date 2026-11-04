@@ -1,0 +1,4 @@
+arm	env	exact_expected	identical	max_abs_logit_diff	kld_mean	kld_max	top1_agree	hops	hop_values	hops_out_of_bound	hop_max_err	hop_worst_of_bound	layer0_identical
+q8_0-staged	LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=2	0	1	0	0	0	1.000000	10	59392	0	0.00208607	0.9335	1
+q8_0-mbox	LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_MAILBOX=2	0	1	0	0	0	1.000000	10	59392	0	0.00208607	0.9335	1
+q8_0-mbox-tiny	LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_MAILBOX=2 GGML_CUDA_HOP_MAILBOX_CHUNKS=64 GGML_CUDA_HOP_MAILBOX_SLOTS=4 GGML_CUDA_HOP_MAILBOX_SLOT_KB=1	0	1	0	0	0	1.000000	10	59392	0	0.00208607	0.9335	1

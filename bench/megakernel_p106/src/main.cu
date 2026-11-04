@@ -12,8 +12,10 @@
 //
 // --hop A,B times one card-to-card hop of a residual vector the ways a layer split can make it without peer access:
 // through a pinned host buffer with two copies, as one driver-staged peer copy, as a mailbox in mapped host memory
-// that a kernel on card B polls, and as the llama.cpp fork's manual staged hop (GGML_CUDA_HOP_STAGED) in 1, 2 or 4
-// chunks: per chunk a D2H on card A's stream into a pinned slot, an event, card B's stream waiting on it, the H2D.
+// that a kernel on card B polls, as the llama.cpp fork's manual staged hop (GGML_CUDA_HOP_STAGED) in 1, 2 or 4
+// chunks: per chunk a D2H on card A's stream into a pinned slot, an event, card B's stream waiting on it, the H2D; and
+// as the fork's streamed mailbox (GGML_CUDA_HOP_MAILBOX) in 1, 4, 8 or 16 chunks: a kernel on each card, card A's
+// writing chunk by chunk into a ring of mapped slots with a flag per chunk, card B's reading each chunk as it arrives.
 // See ../README.md.
 #include <cooperative_groups.h>
 #include <cuda_fp16.h>
@@ -226,6 +228,162 @@ __global__ void k_mail_recv(const float4 * mail, float4 * dst, const int n4, con
     }
 }
 
+// The streamed mailbox, the kernels of the llama.cpp fork's GGML_CUDA_HOP_MAILBOX (ggml/src/ggml-cuda/hop-mailbox.cu):
+// a ring of slots in mapped host memory with a flag line and an acknowledgement line per slot (128 bytes each). Card
+// A's kernel writes the hop chunk by chunk, each into the next slot once its previous chunk was acknowledged, and
+// raises the chunk's flag after a system fence; card B's kernel waits for the next chunk, reads it and every later one
+// already raised (warp 0 looks at their flags in one round trip) straight from the ring, and acknowledges their
+// slots, so the two links stream at once. Waits poll at once, then with pauses doubling up to `poll` cycles. Here a
+// wait that times out raises the timeout word and returns (the fork's kernels trap).
+#define HOP_MB_LINE 32
+
+struct hop_mb_args {
+    char       * ring;
+    unsigned   * flags;
+    unsigned   * acks;
+    unsigned   * err;
+    const char * src;
+    char       * dst;
+    size_t       nbytes;
+    size_t       slot_size;
+    unsigned     chunk;
+    unsigned     n;
+    unsigned     mask;
+    unsigned     seq0;
+
+    long long          poll;
+    unsigned long long timeout_ns;
+};
+
+__device__ __forceinline__ unsigned long long hop_mb_time_ns() {
+    unsigned long long t;
+    asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(t));
+    return t;
+}
+
+__device__ __forceinline__ unsigned hop_mb_peek(const unsigned * p) {
+    return *(const volatile unsigned *) p;
+}
+
+__device__ bool hop_mb_wait(const unsigned * p, const unsigned want, const hop_mb_args & a) {
+    unsigned v = hop_mb_peek(p);
+    if ((int) (v - want) >= 0) {
+        return true;
+    }
+    const unsigned long long t0 = hop_mb_time_ns();
+    long long pause = 32;
+    for (;;) {
+        const long long c0 = clock64();
+        while (clock64() - c0 < pause) {
+        }
+        v = hop_mb_peek(p);
+        if ((int) (v - want) >= 0) {
+            return true;
+        }
+        pause = min(2*pause, a.poll);
+        if (hop_mb_time_ns() - t0 > a.timeout_ns) {
+            *(volatile unsigned *) a.err = 1;
+            __threadfence_system();
+            return false;
+        }
+    }
+}
+
+__global__ void __launch_bounds__(1024) k_hop_mb_send(const hop_mb_args a) {
+    __shared__ int lap0_free;
+    __shared__ int stop;
+    const unsigned n_slots = a.mask + 1;
+    const unsigned lap0    = min(a.n, n_slots);
+    if (threadIdx.x == 0) {
+        lap0_free = 1;
+        stop = 0;
+    }
+    __syncthreads();
+    for (unsigned c = threadIdx.x; c < lap0; c += blockDim.x) {
+        const unsigned q = a.seq0 + c;
+        if ((int) (hop_mb_peek(a.acks + (q & a.mask)*HOP_MB_LINE) - (q - n_slots)) < 0) {
+            lap0_free = 0;
+        }
+    }
+    __syncthreads();
+    const bool wait_lap0 = !lap0_free;
+    for (unsigned c = 0; c < a.n; ++c) {
+        const unsigned q = a.seq0 + c;
+        const unsigned s = q & a.mask;
+        if (c >= n_slots || wait_lap0) {
+            if (threadIdx.x == 0 && !hop_mb_wait(a.acks + s*HOP_MB_LINE, q - n_slots, a)) {
+                stop = 1;
+            }
+            __syncthreads();
+            if (stop) {
+                return;
+            }
+        }
+        const size_t   off  = (size_t) c * a.chunk;
+        const unsigned n16  = (unsigned) (min((size_t) a.chunk, a.nbytes - off) / 16);
+        const uint4  * from = (const uint4 *) (a.src + off);
+        uint4        * to   = (uint4 *) (a.ring + (size_t) s * a.slot_size);
+        for (unsigned i = threadIdx.x; i < n16; i += blockDim.x) {
+            to[i] = from[i];
+        }
+        __threadfence_system();
+        __syncthreads();
+        if (threadIdx.x == 0) {
+            *(volatile unsigned *) (a.flags + s*HOP_MB_LINE) = q;
+        }
+    }
+}
+
+__global__ void __launch_bounds__(1024) k_hop_mb_recv(const hop_mb_args a) {
+    __shared__ unsigned batch;
+    const unsigned n_slots = a.mask + 1;
+    const unsigned chunk16 = a.chunk / 16;
+    for (unsigned c = 0; c < a.n; ) {
+        if (threadIdx.x < 32) {
+            const unsigned lane = threadIdx.x;
+            bool ok = true;
+            if (lane == 0) {
+                ok = hop_mb_wait(a.flags + ((a.seq0 + c) & a.mask)*HOP_MB_LINE, a.seq0 + c, a);
+            }
+            __syncwarp();
+            bool here = lane == 0;
+            const unsigned j = c + lane;
+            if (lane > 0 && j < a.n && lane < n_slots) {
+                const unsigned q = a.seq0 + j;
+                here = (int) (hop_mb_peek(a.flags + (q & a.mask)*HOP_MB_LINE) - q) >= 0;
+            }
+            const unsigned ready = __ballot_sync(0xffffffff, here);
+            __threadfence_system();
+            if (lane == 0) {
+                batch = !ok ? 0 : ~ready == 0 ? 32 : __ffs(~ready) - 1;
+            }
+        }
+        __syncthreads();
+        const unsigned k = batch;
+        if (k == 0) {
+            return;
+        }
+        const unsigned units = k * chunk16;
+        for (unsigned u = threadIdx.x; u < units; u += blockDim.x) {
+            const unsigned jj  = u / chunk16;
+            const unsigned w   = u - jj*chunk16;
+            const size_t   off = (size_t) (c + jj) * a.chunk + (size_t) w*16;
+            if (off >= a.nbytes) {
+                continue;
+            }
+            const unsigned s = (a.seq0 + c + jj) & a.mask;
+            const uint4 * from = (const uint4 *) (a.ring + (size_t) s * a.slot_size) + w;
+            *(uint4 *) (a.dst + off) = __ldcv(from);
+        }
+        __syncthreads();
+        if (threadIdx.x < k) {
+            const unsigned q = a.seq0 + c + threadIdx.x;
+            *(volatile unsigned *) (a.acks + (q & a.mask)*HOP_MB_LINE) = q;
+        }
+        c += k;
+    }
+}
+
 __global__ void k_touch(float * p) {
     if (threadIdx.x == 0) {
         p[0] += 1.0f;
@@ -248,6 +406,11 @@ struct options {
     // 81,920 / 163,840 B: a 4-token verify pass in the same three
     std::string hop_sizes = "10240,10880,20480,40960,43520,81920,163840";
     std::string hop_chunks = "1,2,4"; // chunk counts of the manual staged hop
+    std::string hop_mbox = "1,4,8,16"; // chunk counts of the streamed mailbox (the fork's GGML_CUDA_HOP_MAILBOX)
+    int  hop_mbox_slots = 16;          // its ring: slots (a power of two) of hop_mbox_slot_kb KiB
+    int  hop_mbox_slot_kb = 32;
+    int  hop_mbox_threads = 256;
+    int  hop_mbox_poll_us = 4;
     int  hop_reps = 300;
     bool hop_only = false;
     const char * csv = nullptr;
@@ -281,6 +444,10 @@ void usage() {
            "  --hop A,B         also time a hop from card A to card B (CUDA device numbers)\n"
            "  --hop-sizes LIST  bytes per hop (default 10240,10880,20480,40960,43520,81920,163840)\n"
            "  --hop-chunks LIST chunk counts of the manual staged hop, 1-16 each (default 1,2,4)\n"
+           "  --hop-mbox LIST   chunk counts of the streamed mailbox, 1-256 each (default 1,4,8,16; empty: none)\n"
+           "  --hop-mbox-ring S,KB  its ring: S slots (a power of two) of KB KiB (default 16,32)\n"
+           "  --hop-mbox-threads N  threads of its kernels (default 256)\n"
+           "  --hop-mbox-poll-us N  its longest pause between polls (default 4)\n"
            "  --hop-reps N      hops per size and way (default 300)\n"
            "  --hop-only        only the hop\n"
            "  --csv FILE        results as CSV (section,mix,stages,variant,grid,key,value,unit)\n",
@@ -927,12 +1094,107 @@ void run_hop(int da, int db, const options & opt) {
         CUDA_CHECK(cudaDeviceSynchronize());
     }
 
+    // the streamed mailbox (the fork's GGML_CUDA_HOP_MAILBOX): its ring and control words in mapped host memory, and a
+    // hop's chunk as the fork picks it (the hop over chunks, rounded up to 256 bytes, at most a slot)
+    std::vector<int> mbox_counts;
+    for (int c : parse_ints(opt.hop_mbox, 0)) {
+        if (c >= 1 && c <= 256) {
+            mbox_counts.push_back(c);
+        }
+    }
+    int mb_slots = std::max(2, std::min(256, opt.hop_mbox_slots));
+    while ((mb_slots & (mb_slots - 1)) != 0) {
+        mb_slots &= mb_slots - 1;
+    }
+    const size_t mb_slot    = (size_t) std::max(1, std::min(4096, opt.hop_mbox_slot_kb)) * 1024;
+    const int    mb_threads = std::max(64, std::min(1024, opt.hop_mbox_threads)) / 32 * 32;
+    const size_t mb_nwords  = (size_t) (2*mb_slots + 1) * HOP_MB_LINE;
+    char     * mb_ring;
+    unsigned * mb_words;
+    CUDA_CHECK(cudaHostAlloc((void **) &mb_ring, (size_t) mb_slots * mb_slot, cudaHostAllocPortable | cudaHostAllocMapped));
+    CUDA_CHECK(cudaHostAlloc((void **) &mb_words, mb_nwords * sizeof(unsigned), cudaHostAllocPortable | cudaHostAllocMapped));
+    memset(mb_words, 0, mb_nwords * sizeof(unsigned));
+    void *mb_ring_a, *mb_ring_b, *mb_words_a, *mb_words_b;
+    int khz_a = 0, khz_b = 0;
+    CUDA_CHECK(cudaSetDevice(db));
+    CUDA_CHECK(cudaHostGetDevicePointer(&mb_ring_b, mb_ring, 0));
+    CUDA_CHECK(cudaHostGetDevicePointer(&mb_words_b, mb_words, 0));
+    CUDA_CHECK(cudaDeviceGetAttribute(&khz_b, cudaDevAttrClockRate, db));
+    CUDA_CHECK(cudaSetDevice(da));
+    CUDA_CHECK(cudaHostGetDevicePointer(&mb_ring_a, mb_ring, 0));
+    CUDA_CHECK(cudaHostGetDevicePointer(&mb_words_a, mb_words, 0));
+    CUDA_CHECK(cudaDeviceGetAttribute(&khz_a, cudaDevAttrClockRate, da));
+    unsigned mb_seq = 1;
+    // card B's kernel is launched first and polls, as the next card's does while a decode step runs on the card before
+    auto mbox_hop = [&](int bytes, int chunks) {
+        size_t chunk = ((size_t) (bytes + chunks - 1) / chunks + 255) / 256 * 256;
+        chunk = std::min(chunk, mb_slot);
+        hop_mb_args a{};
+        a.src        = (const char *) src;
+        a.dst        = (char *) dst;
+        a.nbytes     = (size_t) bytes;
+        a.slot_size  = mb_slot;
+        a.chunk      = (unsigned) chunk;
+        a.n          = (unsigned) ((bytes + chunk - 1) / chunk);
+        a.mask       = (unsigned) mb_slots - 1;
+        a.seq0       = mb_seq;
+        a.timeout_ns = 2000000000ull;
+        mb_seq += a.n;
+        CUDA_CHECK(cudaSetDevice(db));
+        a.ring  = (char *) mb_ring_b;
+        a.flags = (unsigned *) mb_words_b;
+        a.acks  = a.flags + (size_t) mb_slots*HOP_MB_LINE;
+        a.err   = a.flags + (size_t) 2*mb_slots*HOP_MB_LINE;
+        a.poll  = (long long) opt.hop_mbox_poll_us * khz_b / 1000;
+        k_hop_mb_recv<<<1, mb_threads, 0, sb>>>(a);
+        CUDA_CHECK(cudaSetDevice(da));
+        a.ring  = (char *) mb_ring_a;
+        a.flags = (unsigned *) mb_words_a;
+        a.acks  = a.flags + (size_t) mb_slots*HOP_MB_LINE;
+        a.err   = a.flags + (size_t) 2*mb_slots*HOP_MB_LINE;
+        a.poll  = (long long) opt.hop_mbox_poll_us * khz_a / 1000;
+        k_hop_mb_send<<<1, mb_threads, 0, sa>>>(a);
+    };
+    if (!mbox_counts.empty()) {
+        std::vector<unsigned char> pat(max_bytes), back(max_bytes);
+        for (int i = 0; i < max_bytes; ++i) {
+            pat[i] = (unsigned char) (i * 151 + 3);
+        }
+        CUDA_CHECK(cudaSetDevice(da));
+        CUDA_CHECK(cudaMemcpy(src, pat.data(), max_bytes, cudaMemcpyHostToDevice));
+        int bad = 0;
+        for (int bytes : sizes) {
+            for (int c : mbox_counts) {
+                CUDA_CHECK(cudaSetDevice(db));
+                CUDA_CHECK(cudaMemset(dst, 0, max_bytes));
+                CUDA_CHECK(cudaDeviceSynchronize());
+                mbox_hop(bytes, c);
+                CUDA_CHECK(cudaSetDevice(db));
+                CUDA_CHECK(cudaStreamSynchronize(sb));
+                CUDA_CHECK(cudaMemcpy(back.data(), dst, bytes, cudaMemcpyDeviceToHost));
+                bad += memcmp(back.data(), pat.data(), bytes) != 0;
+                CUDA_CHECK(cudaSetDevice(da));
+                CUDA_CHECK(cudaStreamSynchronize(sa));
+            }
+        }
+        printf("  streamed mailbox data: %s (%zu sizes x %zu chunk counts; ring %d x %zu KiB, %d threads)\n",
+               bad ? "DIFFERS" : "every byte arrived", sizes.size(), mbox_counts.size(), mb_slots, mb_slot / 1024,
+               mb_threads);
+        csv_row("hop", "data", 0, "mbox", 0, "mismatches", bad, "");
+        CUDA_CHECK(cudaSetDevice(da));
+        CUDA_CHECK(cudaMemset(src, 0, max_bytes));
+        CUDA_CHECK(cudaDeviceSynchronize());
+    }
+
     using clk = std::chrono::steady_clock;
     auto us_since = [](clk::time_point t0) { return std::chrono::duration<double, std::micro>(clk::now() - t0).count(); };
     unsigned seq = 0;
     std::vector<std::string> names = { "host-staged", "peer-copy", "mailbox" };
     for (int c : chunk_counts) {
         names.push_back("manual-c" + std::to_string(c));
+    }
+    for (int c : mbox_counts) {
+        names.push_back("mbox-c" + std::to_string(c));
     }
     printf("  %-10s", "bytes");
     for (const auto & n : names) {
@@ -999,6 +1261,18 @@ void run_hop(int da, int db, const options & opt) {
                 CUDA_CHECK(cudaSetDevice(da));
                 CUDA_CHECK(cudaStreamSynchronize(sa));
             }
+            // 5. the streamed mailbox in c chunks: card B's kernel polls, card A's writes; done when card B's ends
+            for (size_t k = 0; k < mbox_counts.size(); ++k) {
+                t0 = clk::now();
+                mbox_hop(bytes, mbox_counts[k]);
+                CUDA_CHECK(cudaSetDevice(db));
+                CUDA_CHECK(cudaStreamSynchronize(sb));
+                if (r >= 5) {
+                    t[3 + chunk_counts.size() + k].push_back(us_since(t0));
+                }
+                CUDA_CHECK(cudaSetDevice(da));
+                CUDA_CHECK(cudaStreamSynchronize(sa));
+            }
         }
         printf("  %-10d", bytes);
         for (const auto & v : t) {
@@ -1020,6 +1294,13 @@ void run_hop(int da, int db, const options & opt) {
     CUDA_CHECK(cudaSetDevice(db));
     CUDA_CHECK(cudaMemcpy(&to, timeouts, sizeof to, cudaMemcpyDeviceToHost));
     printf("  mailbox timeouts: %u%s\n", to, to ? "  (the mailbox numbers are not valid)" : "");
+    if (!mbox_counts.empty()) {
+        const unsigned mto = *(volatile unsigned *) (mb_words + (size_t) 2*mb_slots*HOP_MB_LINE);
+        printf("  streamed mailbox timeouts: %s\n", mto ? "yes  (the mbox numbers are not valid)" : "none");
+        csv_row("hop", "data", 0, "mbox", 0, "timeouts", mto, "");
+    }
+    CUDA_CHECK(cudaFreeHost(mb_ring));
+    CUDA_CHECK(cudaFreeHost(mb_words));
     CUDA_CHECK(cudaFreeHost(host));
     CUDA_CHECK(cudaFreeHost(mail));
     CUDA_CHECK(cudaFreeHost(flag));
@@ -1063,6 +1344,16 @@ int main(int argc, char ** argv) {
         else if (a == "--hop") opt.hop = next();
         else if (a == "--hop-sizes") opt.hop_sizes = next();
         else if (a == "--hop-chunks") opt.hop_chunks = next();
+        else if (a == "--hop-mbox") opt.hop_mbox = next();
+        else if (a == "--hop-mbox-ring") {
+            const std::vector<int> r = parse_ints(next(), 0);
+            if (r.size() == 2) {
+                opt.hop_mbox_slots = r[0];
+                opt.hop_mbox_slot_kb = r[1];
+            }
+        }
+        else if (a == "--hop-mbox-threads") opt.hop_mbox_threads = atoi(next());
+        else if (a == "--hop-mbox-poll-us") opt.hop_mbox_poll_us = atoi(next());
         else if (a == "--hop-reps") opt.hop_reps = atoi(next());
         else if (a == "--hop-only") opt.hop_only = true;
         else if (a == "--csv") opt.csv = next();

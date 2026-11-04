@@ -60,8 +60,13 @@ kernel on card B polls while card A's kernel writes it; and the llama.cpp fork's
 (`GGML_CUDA_HOP_STAGED`, [2026-11-04_card_hops](../../docs/data/2026-11-04_card_hops/README.md)) in each of
 `--hop-chunks` chunk counts (default 1, 2, 4): per chunk a copy card A → pinned slot on card A's stream, an event,
 card B's stream waiting on it and copying slot → card B, so one chunk's second leg overlaps the next chunk's
-first. Before the timings every chunk count copies a byte pattern at every size and the run reports whether every
-byte arrived.
+first; and the fork's streamed mailbox (`GGML_CUDA_HOP_MAILBOX`,
+[2026-11-04_mailbox_hops](../../docs/data/2026-11-04_mailbox_hops/README.md)) in each of `--hop-mbox` chunk counts
+(default 1, 4, 8, 16), with the fork's kernels: a ring of `--hop-mbox-ring` slots in mapped host memory (default 16 of
+32 KiB), card A's kernel writing the hop chunk by chunk and raising each chunk's flag after a system fence, card B's
+kernel (launched first, polling) reading each chunk as soon as its flag is up and acknowledging the slot, so the two
+links stream at once with no copy or event on the host. Before the timings every chunk count of both copies a byte
+pattern at every size and the run reports whether every byte arrived.
 
 **Checks.** For every mix, the stream launches are compared with a double-precision CPU reference of the whole chain
 (max error < 1e-3 of the largest value), and every other variant and grid with the stream launches (< 1e-4; reported
@@ -108,6 +113,7 @@ hop (`hop.csv`), in that order. Env: `GPU` (default 0), `HOP` (default `0,1`; em
 | `--reps N`, `--trials N` | chains per measurement (default: ~20 ms) and measurements per variant (default 7, median reported) |
 | `--check-only`, `--no-check`, `--smoke` | checks only; no checks; every timing path once |
 | `--hop A,B`, `--hop-sizes LIST`, `--hop-chunks LIST`, `--hop-reps N`, `--hop-only` | the card-to-card hop |
+| `--hop-mbox LIST`, `--hop-mbox-ring S,KB`, `--hop-mbox-threads N`, `--hop-mbox-poll-us N` | the streamed mailbox's chunk counts (empty: none), ring, threads and longest poll pause |
 | `--csv FILE` | `section,mix,stages,variant,grid,key,value,unit` |
 
 ## What decides what
@@ -122,7 +128,8 @@ hop (`hop.csv`), in that order. Env: `GPU` (default 0), `HOP` (default `0,1`; em
   number of a small op needs (Q681).
 - **The hop** says whether the eight hops of a token are bound by the bytes over PCIe 1.0 x1 or by the host's
   synchronize, copy and launch, what a mailbox would save (Q682), and what the manual staged hop saves over the
-  driver's staging (Q751): the fixed part, and the overlap of the two legs.
+  driver's staging (Q751): the fixed part, and the overlap of the two legs. The streamed mailbox's chunk counts
+  against the staged hop's say how close a hop gets to one link's time when both links stream (Q682, C143).
 
 ## Files
 
