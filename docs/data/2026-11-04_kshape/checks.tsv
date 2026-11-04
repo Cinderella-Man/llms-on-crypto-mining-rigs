@@ -1,0 +1,25 @@
+build	card	run	switches (GGML_CUDA_MMVQ_PASCAL_...)	ops and filter	passed	verdict
+4ba3f424d	RTX 3080	kcol	defaults	MUL_MAT, the k-column types at 1-8 columns	1961/1961	pass
+4ba3f424d	RTX 3080	kcol-table0	KCOL_TABLE=0	the same	1961/1961	pass
+4ba3f424d	RTX 3080	kcol-all	KCOL=2	the same	1961/1961	pass
+4ba3f424d	RTX 3080	kcol-old	KCOL=2 KCOL_SMEM=49152	the same	1961/1961	pass
+4ba3f424d	RTX 3080	kcol-r1	KCOL=2 KCOL_R=1	the same	1961/1961	pass
+4ba3f424d	RTX 3090	kcol-s32k	KCOL=2 KCOL_SMEM=32768	the same	1961/1961	pass
+4ba3f424d	RTX 3090	kcol-r2	KCOL=2 KCOL_R=2	the same	1961/1961	pass
+4ba3f424d	RTX 3090	kcol-itt1	KCOL=2 KCOL_ITT=1	the same	1961/1961	pass
+4ba3f424d	RTX 3090	kcol-off	KCOL=0	the same	1959/1961	2 large-activation cases (Q4_0, Q5_0 at 8 columns: inf, NaN) on llama.cpp's mul_mat_vec_q; -ladder3 7bc1552f4 the same (124/126 of the big= cases, 126/126 with KCOL=1); fixed by Q916
+4ba3f424d	RTX 3090	mtok	defaults	MUL_MAT_ID, MUL_MAT_VEC_FUSION, MUL_MAT_ID_SHARED of Q2_0	340/340	pass
+4ba3f424d	RTX 3090	mtok-direct	MTOK=1,0,0,0,0	the same	340/340	pass
+4ba3f424d	RTX 3090	mtok-gdir	MTOK=1,0,0,1	the same	340/340	pass
+4ba3f424d	RTX 3090	mtok-cap1	MTOK=1,1	the same	340/340	pass
+4ba3f424d	RTX 3090	mtok-rb1	MTOK=1,0,1	the same	340/340	pass
+4ba3f424d	RTX 3090	mtok-off	MTOK=0	the same	340/340	pass
+4ba3f424d	RTX 3090	mtok-iq	defaults	the same ops of IQ2_XXS, IQ2_XS, IQ2_S, IQ3_XXS, IQ3_S, IQ1_M	952/952	pass
+4ba3f424d	RTX 3090	bench	(mmvq_kcol --check-only --nsm 5 --smem-sm 98304)	every launch-shape variant of every type at 1-8 columns against a double-precision CPU reference	2592 PASS lines	all variants match the CPU reference
+39c3ab5f1	RTX 3080	kcol	defaults	MUL_MAT, the k-column types at 1-8 columns	1961/1961	pass
+39c3ab5f1	RTX 3080	kcol-all	KCOL=2	the same	1961/1961	pass
+39c3ab5f1	RTX 3080	kcol-off	KCOL=0	the same	1961/1961	pass (the 2 large-activation cases included)
+39c3ab5f1	RTX 3080	stock	defaults	MUL_MAT, every large-activation case (big=)	138/138	pass
+39c3ab5f1	RTX 3080	stock-skip	KCOL=0 SKIP=q4_0,q4_1,q5_0	the same, Q4_0, Q4_1, Q5_0 on llama.cpp's mul_mat_vec_q at every token count	138/138	pass
+39c3ab5f1	RTX 3080	mtok	defaults	MUL_MAT_ID, MUL_MAT_VEC_FUSION, MUL_MAT_ID_SHARED of Q2_0	340/340	pass
+39c3ab5f1	(CPU)	sass	-	per-kernel sm_61 SASS of test-backend-ops against 4ba3f424d (run/sass_all.sh)	7521/7594 identical	the 73 that differ are every mul_mat_vec_q and mul_mat_vec_q_moe kernel of Q4_0, Q4_1, Q5_0, Q5_1, IQ1_S (sass_q916.tsv)

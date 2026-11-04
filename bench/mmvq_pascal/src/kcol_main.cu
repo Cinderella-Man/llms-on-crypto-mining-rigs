@@ -57,12 +57,13 @@ const kshape SHAPES[] = {
 #endif
 };
 
-// Variants: the fork's launch shape, R = 1 or 2 forced, the smallest activation tile, a 32 KB budget (3 blocks per SM),
-// and the product alone (the records quantized once beforehand), which shows what the quantizer costs.
+// Variants: the fork's launch shape (since Q823 a third of the SM's shared memory where the registers allow a third
+// block), the shape before Q823 (old: a 48 KB budget), R = 1 or 2 forced, the smallest activation tile, a 32 KB budget
+// (3 blocks per SM), and the product alone (the records quantized once beforehand), which shows what the quantizer costs.
 struct kvariant { const char * name; int r, itt, smem; bool prod_only; };
 const kvariant VARIANTS[] = {
-    { "pascal", 0, 0, 0, false }, { "r1", 1, 0, 0, false }, { "r2", 2, 0, 0, false }, { "itt1", 0, 1, 0, false },
-    { "s32k", 0, 0, 32 * 1024, false }, { "prod", 0, 0, 0, true },
+    { "pascal", 0, 0, 0, false }, { "old", 0, 0, 48 * 1024, false }, { "r1", 1, 0, 0, false }, { "r2", 2, 0, 0, false },
+    { "itt1", 0, 1, 0, false }, { "s32k", 0, 0, 32 * 1024, false }, { "prod", 0, 0, 0, true },
 };
 
 std::vector<std::string> split(const std::string & s) {
@@ -147,6 +148,30 @@ void launch_type(const int t, const params & p, cudaStream_t s) {
         case KIQ1_M:   launch<KIQ1_M>(p, s);   break;
 #endif
         default:      launch<KIQ4_XS>(p, s); break;
+    }
+}
+
+// kcol::blocks_fn: the resident blocks per SM that the registers of the type's kernel allow, as the fork asks for them
+int blocks_type(const int t, const int ncols, const int R) {
+    switch (t) {
+        case KQ8_0:   return kernel_blocks<KQ8_0>(ncols, R);
+        case KQ2_0:   return kernel_blocks<KQ2_0>(ncols, R);
+        case KQ3_K:   return kernel_blocks<KQ3_K>(ncols, R);
+        case KQ4_K:   return kernel_blocks<KQ4_K>(ncols, R);
+        case KQ5_K:   return kernel_blocks<KQ5_K>(ncols, R);
+        case KQ6_K:   return kernel_blocks<KQ6_K>(ncols, R);
+        case KQ4_0:   return kernel_blocks<KQ4_0>(ncols, R);
+        case KQ5_0:   return kernel_blocks<KQ5_0>(ncols, R);
+        case KIQ4_NL: return kernel_blocks<KIQ4_NL>(ncols, R);
+#ifdef KCOL_BENCH_IQ
+        case KIQ2_XXS: return kernel_blocks<KIQ2_XXS>(ncols, R);
+        case KIQ2_XS:  return kernel_blocks<KIQ2_XS>(ncols, R);
+        case KIQ2_S:   return kernel_blocks<KIQ2_S>(ncols, R);
+        case KIQ3_XXS: return kernel_blocks<KIQ3_XXS>(ncols, R);
+        case KIQ3_S:   return kernel_blocks<KIQ3_S>(ncols, R);
+        case KIQ1_M:   return kernel_blocks<KIQ1_M>(ncols, R);
+#endif
+        default:      return kernel_blocks<KIQ4_XS>(ncols, R);
     }
 }
 
@@ -267,11 +292,12 @@ void usage() {
            "  --types LIST     q8_0,q2_0,q3_K,q4_K,q5_K,q6_K,iq4_xs,q4_0,q5_0,iq4_nl, and with build_kcol.sh IQ_TREE=...\n"
            "                   iq2_xxs,iq2_xs,iq2_s,iq3_xxs,iq3_s,iq1_m (default all)\n"
            "  --shapes LIST    shape names (default all; see --list)\n"
-           "  --variants LIST  pascal,r1,r2,itt1,s32k,prod (default all)\n"
+           "  --variants LIST  pascal,old,r1,r2,itt1,s32k,prod (default all)\n"
            "  --tokens LIST    columns per product, 1 to 8 (default 1,2,3,4,5,6,8)\n"
            "  --reps N         timed graph launches, median reported (default 30)\n"
            "  --batch N        calls per CUDA graph (default 64; 8 for the output layers)\n"
            "  --nsm N          choose the launch shapes as for a card of N SMs (default: this card's)\n"
+           "  --smem-sm N      ... and of N bytes of shared memory per SM (default: this card's; a P106: 98304)\n"
            "  --check-only     correctness only\n"
            "  --csv FILE       also write the results as CSV\n"
            "  --seed N         random seed (default 1234)\n"
@@ -283,7 +309,7 @@ void usage() {
 int main(int argc, char ** argv) {
     std::vector<std::string> types, shapes, variants;
     std::vector<std::string> tokens = { "1", "2", "3", "4", "5", "6", "8" };
-    int reps = 30, batch = 64, nsm_force = 0;
+    int reps = 30, batch = 64, nsm_force = 0, smsm_force = 0;
     bool check_only = false;
     std::string csv;
     uint64_t seed = 1234;
@@ -297,6 +323,7 @@ int main(int argc, char ** argv) {
         else if (a == "--reps") reps = atoi(next().c_str());
         else if (a == "--batch") batch = atoi(next().c_str());
         else if (a == "--nsm") nsm_force = atoi(next().c_str());
+        else if (a == "--smem-sm") smsm_force = atoi(next().c_str());
         else if (a == "--check-only") check_only = true;
         else if (a == "--csv") csv = next();
         else if (a == "--seed") seed = strtoull(next().c_str(), nullptr, 10);
@@ -312,8 +339,9 @@ int main(int argc, char ** argv) {
     int code_arch = 0;
     CUDA_CHECK(cudaMemcpy(&code_arch, arch_buf.p, 4, cudaMemcpyDeviceToHost));
     const int nsm = nsm_force > 0 ? nsm_force : prop.multiProcessorCount;
-    printf("device: %s, compute %d.%d, %d SMs (shapes chosen for %d), code arch %d\n", prop.name, prop.major, prop.minor,
-           prop.multiProcessorCount, nsm, code_arch);
+    const int smsm = smsm_force > 0 ? smsm_force : (int) prop.sharedMemPerMultiprocessor;
+    printf("device: %s, compute %d.%d, %d SMs (shapes chosen for %d SMs of %d bytes of shared memory), code arch %d\n",
+           prop.name, prop.major, prop.minor, prop.multiProcessorCount, nsm, smsm, code_arch);
     cudaStream_t s;
     CUDA_CHECK(cudaStreamCreateWithFlags(&s, cudaStreamNonBlocking));
 
@@ -366,7 +394,8 @@ int main(int argc, char ** argv) {
                 p.vx = w.as<char>(); p.y = y.as<float>(); p.rec = rec.as<uint32_t>(); p.dst = d.as<float>();
                 p.K = sh.K; p.nrows = sh.N; p.row_bytes = (int) rbytes; p.ncols = k; p.stride_col_y = sh.K; p.stride_col_dst = sh.N;
                 p.grid = device_grid(sh.type);
-                if (!pick_shape(sh.type, sh.K, sh.N, k, (int) rbytes, (uintptr_t) w.p, nsm, v.r, v.itt, v.smem, p.s)) {
+                if (!pick_shape(sh.type, sh.K, sh.N, k, (int) rbytes, (uintptr_t) w.p, nsm, v.r, v.itt, v.smem, p.s,
+                                smsm, blocks_type)) {
                     printf("%-12s %-7s %2d %-7s  (no launch shape)\n", sh.name, kname(sh.type), k, v.name);
                     continue;
                 }
