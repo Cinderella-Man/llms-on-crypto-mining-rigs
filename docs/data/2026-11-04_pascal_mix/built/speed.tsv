@@ -1,0 +1,6 @@
+file	token_mb	nonweight_ms	timed_ms	expected_ms	timed_tok_s	expected_tok_s	timed_vs_base_ms	expected_vs_base_ms	timed_routed_gu_ms	timed_routed_down_ms	timed_shared_ms	timed_router_ms	timed_hc_ms	timed_attention_ms	timed_recurrent_ms	timed_ple_ms	timed_output_ms	timed_other_ms	expected_routed_gu_ms	expected_routed_down_ms	expected_shared_ms	expected_router_ms	expected_hc_ms	expected_attention_ms	expected_recurrent_ms	expected_ple_ms	expected_output_ms	expected_other_ms
+pmix-iq3-fast	4721.3	33.48	93.4	88.9	10.71	11.25	+10.9	+15.9	16.53	6.98	2.48	0.89	9.06	15.73	4.70	0.47	3.04	0.00	12.20	6.98	2.34	0.89	9.06	15.73	4.70	0.47	3.04	0.00
+pmix-q2-fast	4160.1	33.48	72.4	72.4	13.81	13.82	-10.0	-0.6	4.65	2.32	2.05	0.89	9.06	12.94	3.83	0.17	3.04	0.00	4.65	2.32	1.97	0.89	9.06	12.94	3.83	0.17	3.04	0.00
+pmix-q2-spine6	4985.7	33.48	82.0	81.9	12.20	12.21	-0.5	+8.9	4.65	2.32	3.02	0.89	9.06	19.75	5.43	0.34	3.04	0.00	4.65	2.32	2.94	0.89	9.06	19.75	5.43	0.34	3.04	0.00
+swift-iq3_xxs-c5	4806.9	33.48	98.9	91.9	10.11	10.88	+16.4	+19.0	16.53	6.98	3.32	3.02	9.06	17.78	5.21	0.47	3.04	0.00	12.20	6.98	2.75	3.02	9.06	16.14	4.80	0.47	3.04	0.00
+swift-q2_0-c5	4155.3	33.48	82.4	73.0	12.13	13.70	+0.0	+0.0	4.65	2.32	2.36	3.02	9.06	20.19	4.15	0.17	3.04	0.00	4.65	2.32	1.83	3.02	9.06	11.64	3.77	0.17	3.04	0.00

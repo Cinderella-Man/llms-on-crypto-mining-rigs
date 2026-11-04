@@ -69,7 +69,7 @@ Per-role tables (MB a token, GB/s, est. ms, base against mix): [design/](design/
 `summary.tsv`, `plan.tsv` (every tensor: class, layer, shape, old and new type, how, bytes), `types.txt` (the
 llama-quantize type file) and `take.txt`.
 
-### Expected quality
+### Expected quality (the design's reasoning; the scores follow below)
 
 - **pmix-q2-fast:** 1,106 M of the dense weights go from Q3_K (3.44 bits) to IQ4_XS (4.25) and the shared expert
   gains bits; nothing loses any. KLD at most Swift Q2_0's (agent 0.285), lower by however much the dense spine
@@ -97,21 +97,48 @@ llama-quantize type file) and `take.txt`.
 KL divergence against the Swift-1.5 Q8_0 reference's logits (FN1's bases, made on all seven quant-machine cards),
 with FN2's `kld.sh` and split (`-fit on`), on five cards (two RTX 3080, three RTX 3090; the other two cards were out
 of service). Each base file is scored again on the same five cards, so a mix is read against its control. The
-controls land within 0.002 of FN2's seven-card scores, so the card set moves these numbers very little. Mean KLD
-(± its standard error over tokens) and the share of tokens whose top choice matches the reference's:
+controls land within 0.002 (Q2_0) and 0.003 (IQ3_XXS's agent text) of FN2's seven-card scores, so the card set
+moves these numbers very little. Mean KLD (± its standard error over tokens), the agent text's 99th percentile, and
+the share of tokens whose top choice matches the reference's; all columns in [kld.tsv](kld.tsv):
 
-| File | Wiki KLD | Agent KLD | Code KLD | Same top: wiki / agent / code |
-|---|---:|---:|---:|---|
-| Swift Q2_0, control | 0.4282 ± 0.0059 | 0.2866 ± 0.0056 | 0.1121 ± 0.0040 | 77.85 / 90.67 / 95.97 % |
-| **pmix-q2-fast** | **0.4264** ± 0.0059 | **0.2792** ± 0.0054 | **0.1080** ± 0.0038 | 77.71 / 90.70 / 96.12 % |
-| Swift IQ3_XXS, control | 0.2480 ± 0.0039 | 0.1786 ± 0.0039 | (running) | 83.35 / 92.24 / — % |
-| pmix-iq3-fast | (built; scored next) | | | |
-| pmix-q2-spine6 | (pending) | | | |
-| Q8_0 at `-ub 256`, the floor (seven cards) | 0.0170 | 0.0291 | 0.0036 | 95.57 / 97.10 / 99.24 % |
+| File | Wiki KLD | Agent KLD | Code KLD | Agent p99 | Same top: wiki / agent / code | Est. ms a token | Cards (MiB) |
+|---|---:|---:|---:|---:|---|---:|---:|
+| Swift Q2_0, control | 0.4282 ± 0.0059 | 0.2866 ± 0.0056 | 0.1121 ± 0.0040 | 6.32 | 77.85 / 90.67 / 95.97 % | 82.4 | 35,730 |
+| **pmix-q2-fast** | 0.4264 ± 0.0059 | 0.2792 ± 0.0054 | 0.1080 ± 0.0038 | 6.17 | 77.71 / 90.70 / 96.12 % | **72.4** | 35,735 |
+| **pmix-q2-spine6** | 0.4211 ± 0.0058 | **0.2559** ± 0.0049 | 0.1042 ± 0.0038 | 5.41 | 78.04 / 90.92 / 96.27 % | 82.0 | 36,522 |
+| Swift IQ3_XXS, control | 0.2480 ± 0.0039 | 0.1786 ± 0.0039 | 0.0542 ± 0.0023 | 3.69 | 83.35 / 92.24 / 97.41 % | 98.9 | 44,710 |
+| **pmix-iq3-fast** | 0.2491 ± 0.0039 | 0.1735 ± 0.0037 | 0.0551 ± 0.0023 | 3.64 | 83.19 / 92.29 / 97.44 % | **93.4** | 44,628 |
+| Q8_0 at `-ub 256`, the floor (seven cards) | 0.0170 | 0.0291 | 0.0036 | 0.55 | 95.57 / 97.10 / 99.24 % | | |
 
-**pmix-q2-fast matches Swift Q2_0 or beats it slightly on all three texts** (KLD −0.4, −2.6, −3.7 %), as designed: no
-tensor lost bits. The 1,106 M dense weights raised from Q3_K to IQ4_XS barely move the KLD, so Q2_0's error is mostly
-its routed experts' (pmix-q2-spine6 bounds the dense share). The file is est. 10 ms a token faster at +5 MiB.
+- **pmix-q2-fast is Swift Q2_0's quality at est. 10 ms a token less** (12.1 → 13.8 tok/s), +5 MiB on the cards: KLD
+  −0.4, −2.6 and −3.7 % on wiki, agent and code, top-token agreement the same (±0.15 points). No tensor lost bits.
+  It is the file to time on a rig first.
+- **The dense spine holds about a tenth of Q2_0's agent KLD.** With every dense matrix at Q6_K, pmix-q2-spine6 cuts
+  the agent KLD by 10.7 % (0.2866 → 0.2559, about five standard errors) and its 99th percentile by 14 %, at the
+  published file's est. speed (82.0 ms) and +792 MiB. The rest, ~0.26 on the agent text, is the routed experts'.
+  Against pmix-q2-fast it buys 0.023 of agent KLD for est. +9.6 ms (0.0024 a ms); pmix-iq3-fast buys 0.106 for
+  +21.0 ms (0.0050 a ms), twice as much a ms, but it fits 64k only at `-ub 64` (or with experts moved) and needs 18
+  expert tensors moved to take the MTP draft.
+- **pmix-iq3-fast is Swift IQ3_XXS's quality at est. 5.5 ms a token less**, 82 MiB lighter: KLD within one standard
+  error on all three texts (−2.9 % agent, +0.4 % wiki, +1.6 % code).
+- The standard errors are over tokens of one text, and every file is scored on the same tokens, so a difference
+  between two files is known more precisely than the two errors suggest; the per-token values are not kept, so the
+  paired error is not given here.
+
+Fit of the built files at 64k, from their headers ([bench/file_choice](../../../bench/file_choice/README.md)'s
+`fit.py`; [built/fit.md](built/fit.md) has every context, cache type and draft): pmix-q2-fast `-ub 512` with 737 MiB
+free on the fullest card (Swift Q2_0: 737), 548 with the MTP draft (557); pmix-q2-spine6 `-ub 512` with 644 (452 with
+the MTP draft); pmix-iq3-fast `-ub 64` on whole layers with 169 (Swift IQ3_XXS: 155), `-ub 256` with 8 expert tensors
+moved 395 (387). [built/](built/) also holds the built files' bytes a token by type and role and the est. ms
+(`token_bytes.tsv`, `speed.tsv`, `layout.tsv`, `ranking.md`).
+
+## On a rig
+
+[run/rig_time.sh](run/rig_time.sh) runs a mix and the file it was made from on one rig, the same boot and build: a
+64k load at the release line with one request (the cards' memory and the host's MemAvailable), then T(1) … T(8) with
+the k-curve's settings. For pmix-q2-fast: `MODELS='fast=<its first shard> q2_0=<Swift Q2_0's first shard>'`; for
+pmix-iq3-fast add `UB=64 TS=6,6,7,5,5,5,5,5,5` (IQ3_XXS's whole-layer 64k line). Shards 1 and 2 of a mix differ from
+the base's; shard 3, the n-gram table, is the same file (link it under the mix's name).
 
 ## Build
 
@@ -166,6 +193,8 @@ python3 -I <2026-11-03_flash_next_quality's run/>table.py <OUT> q8_0-ub256 swift
 | File | What it is |
 |---|---|
 | [design/](design/) | per mix: `summary.tsv`, `plan.tsv`, `types.txt`, `take.txt` (from `pmix.py`) |
+| [kld.tsv](kld.tsv) | every score: mean KLD, its error, 99th and 99.9th percentile, same top token, RMS of the probability change, perplexity, per file and text |
+| [built/](built/) | the built files from their headers: fit at every context (`fit.md`), bytes a token by role and type, est. ms, layout, ranking |
 | [run/chain.sh](run/chain.sh), [run/build.sh](run/build.sh) | the build |
 | [run/score_all.sh](run/score_all.sh) | the KLD runs: [gguf_compose's run/score.sh](../2026-11-04_gguf_compose/run/score.sh) one file at a time, resumable (a done marker per file, a STOP file between files), each file after its build marker |
 | [run/stage.sh](run/stage.sh) | a built file staged on the fast disk before its KLD run (shards copied and checked against the build's md5, the table shard linked to the fast copy), so the cards wait on no copy |

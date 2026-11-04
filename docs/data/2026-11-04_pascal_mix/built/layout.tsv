@@ -1,0 +1,6 @@
+file	experts	file_type	shards	shard_gb	table_shard	table_alone	reshard	table_gb	cards_mib	token_embd_mib	token_mb	routed_mb	shared_mb	dense_mb
+pmix-iq3-fast	10 of 512	23	3	10.97 + 36.11 + 28.80	3	yes	no	28.8	44628	260	4721.3	838.1	137.0	3746.2
+pmix-q2-fast	10 of 512	41	3	11.00 + 26.76 + 28.80	3	yes	no	28.8	35735	260	4160.1	663.6	124.5	3372.0
+pmix-q2-spine6	10 of 512	41	3	11.28 + 27.30 + 28.80	3	yes	no	28.8	36522	260	4985.7	663.6	184.3	4137.8
+swift-iq3_xxs-c5	10 of 512	23	3	10.99 + 36.18 + 28.80	3	yes	no	28.8	44710	260	4806.9	838.1	120.8	3848.0
+swift-q2_0-c5	10 of 512	41	3	11.00 + 26.75 + 28.80	3	yes	no	28.8	35730	260	4155.3	663.6	106.2	3385.5
