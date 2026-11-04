@@ -201,7 +201,9 @@ bit for bit against the launches, as Q88's was.
 - **Q680** Does decode replay CUDA graphs on the rig? `GGML_CUDA_GRAPH_DEBUG=1` on one short line counts reuses against
   warm-up resets per card and token (C141).
 - **Q681** A lighter kernel profiler: events per layer or per sampled group instead of between every group, with the
-  bench's measured event cost subtracted, so small ops stop looking 4× their size (C142).
+  bench's measured event cost subtracted, so small ops stop looking 4× their size (C142); built 2026-11-04 as
+  `GGML_CUDA_PROFILE_MODE=layer`, `sample=<N>` and `graph` ([data](../../data/2026-11-04_light_profiler/README.md)),
+  the rig check next.
 - **Q682** Host-mapped mailbox hops between cards, if the bench's hop shows the staged hop well above its bytes (C143).
 - **Q683** The census as a fusion worklist: the single-op groups that remain (`SCALE`, `SILU`, `ADD`, `RMS_NORM+SCALE`,
   the activation quantizations) merged into neighbours, ~2.3 µs per removed launch (C144).

@@ -1,0 +1,7 @@
+check	where	result
+test-cuda-profile-light	g++ 13.3 -Wall -Wextra -Wshadow, nvidia/cuda:12.9.2-devel-ubuntu24.04	49267 checks, 0 failed, no warning
+prof_summary.py --self-test	python:3.12-slim-bookworm	50 checks, 0 failed
+prof_summary.py on R13 trace vs previous version	python:3.12-slim-bookworm	67 of 67 lines identical
+prof_summary.py on R28 trace vs previous version	python:3.12-slim-bookworm	67 of 67 lines identical
+run/dryrun.sh (arms off graph layer sample=8 group off)	python:3.12-slim-bookworm	pass
+rig tarball build (TESTS=1, sm_61)	build_llamacpp_docker.sh in nvidia/cuda:12.9.2-devel-ubuntu24.04	rc 0, md5 c9342dfd221da9007f900994deb4ff24, 0 AVX, GLIBC_2.38, 160 sm_61 images, no warning on the changed files

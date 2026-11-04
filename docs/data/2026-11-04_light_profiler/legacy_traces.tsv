@@ -1,0 +1,3 @@
+trace	engine	decode_evals	decode_steps	spans_sum_raw_ms	spans_sum_at_7us_ms	profiled_wall_median_ms	profiled_wall_mean_ms	wall_intervals
+R13	v3 37e717ff6, Swift Q2_0	867	96	135.962	118.273	156.443	154.77	93
+R28	v3 37e717ff6, Swift Q2_0 hcq8	869	96	120.698	102.966	139.871	139.32	94
