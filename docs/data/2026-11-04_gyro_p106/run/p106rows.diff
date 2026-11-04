@@ -1,0 +1,19 @@
+diff --git a/ggml/src/ggml-cuda/mmvq.cu b/ggml/src/ggml-cuda/mmvq.cu
+index 2f8c31b2d..db15bd76e 100644
+--- a/ggml/src/ggml-cuda/mmvq.cu
++++ b/ggml/src/ggml-cuda/mmvq.cu
+@@ -1177,6 +1177,14 @@ static void mul_mat_vec_q_switch_ncols_dst(
+         const bool is_nvidia_turing_plus  = GGML_CUDA_CC_IS_NVIDIA(cc) && cc >= GGML_CUDA_CC_TURING;
+         const bool is_nvidia_pascal_older = GGML_CUDA_CC_IS_NVIDIA(cc) && cc < GGML_CUDA_CC_VOLTA;
+ 
++        // Pascal (Q895): GGML_CUDA_TQ_MMVQ_ROWS=1 applies the trellis multi-row layout before Turing as well (unset or
++        // 0: unchanged), so the layout can be timed on cc 6.1, where a 2,560-wide row leaves a 128-thread block idle for
++        // most of its second pass over the row's 20 blocks.
++        if (GGML_CUDA_CC_IS_NVIDIA(cc) && !is_nvidia_turing_plus && ncols_dst == 1 && ggml_cuda_type_is_tq(type) &&
++                nwarps > 1 && nrows_x % nwarps == 0) {
++            static const int tq_rows_env_pre_turing = ggml_cuda_tq_mmvq_env("GGML_CUDA_TQ_MMVQ_ROWS");
++            use = use || tq_rows_env_pre_turing > 0;
++        }
+         if (is_nvidia_turing_plus) {
+             if (ncols_dst == 1 &&
+                     std::find(iq_slow_turing.begin(), iq_slow_turing.end(), type) != iq_slow_turing.end()) {

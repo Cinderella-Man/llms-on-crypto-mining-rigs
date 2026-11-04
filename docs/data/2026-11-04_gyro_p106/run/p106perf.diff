@@ -1,0 +1,31 @@
+diff --git a/tests/test-backend-ops.cpp b/tests/test-backend-ops.cpp
+index 06a702bf8..68f28d268 100644
+--- a/tests/test-backend-ops.cpp
++++ b/tests/test-backend-ops.cpp
+@@ -11404,6 +11404,26 @@ static std::vector<std::unique_ptr<test_case>> make_test_cases_eval() {
+ static std::vector<std::unique_ptr<test_case>> make_test_cases_perf() {
+     std::vector<std::unique_ptr<test_case>> test_cases;
+ 
++    // One P106-090 (6 GB, 4 GB host RAM): Flash-Next's routed experts with 128 matrices (10 used) at 1-8 tokens,
++    // TQ2_T beside Q2_0 at the shapes Miner Llama's Q2_0 expert kernels are timed on (gate/up with src1 broadcast),
++    // and the Q8_0 dense products Gyro files keep (attention, recurrent and shared-expert shapes).
++    for (int n = 1; n <= 8; ++n) {
++        for (ggml_type type_a : {GGML_TYPE_TQ2_T, GGML_TYPE_Q2_0}) {
++            test_cases.emplace_back(new test_mul_mat_id(type_a, GGML_TYPE_F32, 128, 10, true,  640, n, 2560));
++            test_cases.emplace_back(new test_mul_mat_id(type_a, GGML_TYPE_F32, 128, 10, false, 2560, n, 640));
++        }
++    }
++    for (int n : {1, 2, 4, 8}) {
++        for (auto mk : std::vector<std::pair<int64_t, int64_t>>{{6144, 2560}, {10240, 2560}, {12288, 2560}, {2560, 6144}, {10240, 320}, {320, 10240}}) {
++            test_cases.emplace_back(new test_mul_mat(GGML_TYPE_Q8_0, GGML_TYPE_F32, mk.first, n, mk.second, {1, 1}, {1, 1}));
++        }
++    }
++    // The Gyro files' runtime Hadamard rotation of the routed experts' inputs (prism.hadamard, 128-wide blocks):
++    // gate/up 2,560 = 20 blocks a token, down 10 x 640 = 50 blocks a token, at 1, 2, 4 and 8 tokens.
++    for (int64_t n : {20, 40, 80, 160, 50, 100, 200, 400}) {
++        test_cases.emplace_back(new test_mul_mat_hadamard(GGML_TYPE_F32, GGML_TYPE_F32, 128, n, 128));
++    }
++
+     // SWIGLU at a 27B-class FFN width, fused [gate|up] vs split operands
+     // note: same bytes either way, so a backend that indexes them differently shows it here
+     for (ggml_type type : {GGML_TYPE_F16, GGML_TYPE_F32}) {
