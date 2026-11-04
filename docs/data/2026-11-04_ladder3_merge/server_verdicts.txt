@@ -1,0 +1,72 @@
+== ctx/server
+vram = base (tokens and top probabilities of P1-P5)
+vram2 = base (tokens and top probabilities of P1-P5)
+vram2s = base (tokens and top probabilities of P1-P5)
+spread_v2 = spread (tokens and top probabilities of P1-P5)
+spread P3 resumed from the checkpoint at 2048 tokens
+spread = base as well
+vram2: 2 checkpoint(s) moved to the host
+vram2s: 2 checkpoint(s) moved to the host
+spread_v2: 13 checkpoint(s) moved to the host
+PASS
+== b/vgraphs/checks/spec/out
+gps0 = base (tokens and top probabilities of R1-R5)
+sps1 = base (tokens and top probabilities of R1-R5)
+calloc0 = base (tokens and top probabilities of R1-R5)
+noreuse = base (tokens and top probabilities of R1-R5)
+base: 505 drafted, 148 accepted, 4 verify widths (1:3 2:116 3:11 4:165 )
+sps1: 8 per-size schedulers created ( 2 scheduler for 1-token batches (with outputs); 2 scheduler for 2-token batches (with outputs); 2 scheduler for 3-token batches (with outputs); 2 scheduler for 4-token batches (with outputs);)
+base: 0.00.005.209 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: off
+gps0: 0.00.004.958 I llama_context: graphs per batch size up to 8 tokens: off (LLAMA_GRAPH_PER_SIZE=0), schedulers per size: off
+sps1: 0.00.004.919 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: on (LLAMA_SCHED_PER_SIZE=1)
+calloc0: 0.00.004.784 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: off
+noreuse: 0.00.004.771 I llama_context: graphs per batch size up to 8 tokens: on, schedulers per size: off
+PASS
+== b/vgraphs/checks/ckpt/server
+vram = base (tokens and top probabilities of P1-P5)
+vram2 = base (tokens and top probabilities of P1-P5)
+vram2s = base (tokens and top probabilities of P1-P5)
+spread_v2 = spread (tokens and top probabilities of P1-P5)
+spread P3 resumed from the checkpoint at 2048 tokens
+spread = base as well
+vram2: 2 checkpoint(s) moved to the host
+vram2s: 2 checkpoint(s) moved to the host
+spread_v2: 13 checkpoint(s) moved to the host
+PASS
+== b/ckptrc/checks/server
+vram = base (tokens and top probabilities of P1-P5)
+vram2 = base (tokens and top probabilities of P1-P5)
+vram2s = base (tokens and top probabilities of P1-P5)
+spread_v2 = spread (tokens and top probabilities of P1-P5)
+spread P3 resumed from the checkpoint at 2048 tokens
+spread = base as well
+vram2: 2 checkpoint(s) moved to the host
+vram2s: 2 checkpoint(s) moved to the host
+spread_v2: 13 checkpoint(s) moved to the host
+PASS
+== b/ckptrc/checks/server_share
+vram = base (tokens and top probabilities of P1-P5)
+vram2 = base (tokens and top probabilities of P1-P5)
+vram2s = base (tokens and top probabilities of P1-P5)
+spread_v2 = spread (tokens and top probabilities of P1-P5)
+spread P3 resumed from the checkpoint at 2048 tokens
+spread = base as well
+vram2: 2 checkpoint(s) moved to the host
+vram2s: 2 checkpoint(s) moved to the host
+spread_v2: 13 checkpoint(s) moved to the host
+PASS
+== b/hops/checks/server/out
+off = base (tokens and top probabilities of R1-R4)
+staged = base (tokens and top probabilities of R1-R4)
+q8auto = base (tokens and top probabilities of R1-R4)
+q8at1: 5 contexts logged the hop before layer 1, 352 tokens generated; q8at1 differs from base at R1
+f16at1: 5 contexts logged the hop before layer 1, 352 tokens generated; f16at1 differs from base at R1
+base: 392 tokens drafted
+PASS
+== b/taper/checks/server/out
+off = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+on = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+flag = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+req = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+badreq = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+PASS

@@ -1,0 +1,15 @@
+== 2026-11-04T02:40:23+00:00 gpu_checks (ladder3) MODE=ptx DEV=0 DEVS2=0,1 BIN=<work>/llama.cpp-20261104-6da8ee8b0-pascal-p106-v3-b12076-ladder3/bin parts: server
+   
+server/off                                                    tokens 64/64/64/ drafts 47/47/47/ reference files: none errors 1  passing: 64 tokens a request, drafts > 0
+server/dump              LLAMA_SPEC_DUMP=dump.jsonl           tokens 64/64/64/ drafts 47/47/47/ same files: dump.jsonl:48 errors 1  passing: tokens as off; dump.jsonl lines > 0
+server/adaptlog          LLAMA_SPEC_ADAPT_LOG=adapt.jsonl     tokens 64/64/64/ drafts 47/47/47/ same files: adapt.jsonl:49 errors 1  passing: tokens as off; adapt.jsonl lines > 0
+server/adapt             LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_LOG=adapt.jsonl tokens 64/64/64/ drafts 0/0/0/ same files: adapt.jsonl:187 errors 1  passing: reported only (other verify widths); adapt.jsonl lines > 0
+server/adaptdump         LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_LOG=adapt.jsonl LLAMA_SPEC_DUMP=dump.jsonl tokens 64/64/64/ drafts 0/0/0/ same files: dump.jsonl:0 adapt.jsonl:187 errors 1  passing: reported only (other verify widths); dump.jsonl lines > 0
+server/moep1             LLAMA_MOE_TAIL=p=1                   tokens 64/64/64/ drafts 47/47/47/ same files: none errors 1  passing: tokens as off
+server/profgroup         GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=group tokens 64/64/64/ drafts 47/47/47/ same files: none errors 1  passing: tokens as off; prof.csv lines > 0
+server/proflayer         GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=layer tokens 64/64/64/ drafts 47/47/47/ same files: none errors 1  passing: tokens as off; prof.csv lines > 0
+server/profgraph         GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=graph tokens 64/64/64/ drafts 47/47/47/ same files: none errors 1  passing: tokens as off; prof.csv lines > 0
+server/profsample        GGML_CUDA_PROFILE=prof.csv GGML_CUDA_PROFILE_MODE=sample=8 tokens 64/64/64/ drafts 47/47/47/ same files: none errors 1  passing: tokens as off; prof.csv lines > 0
+server/share             --ctx-checkpoints-share              tokens 64/64/64/ drafts 47/47/47/ same files: none errors 1  passing: tokens as off
+server/taper             LLAMA_UBATCH_TAPER=on                tokens 64/64/64/ drafts 47/47/47/ same files: taper-lines:0 errors 1  passing: reported only (64-token micro-batches may round otherwise on the card); taper-lines > 0
+== 2026-11-04T02:40:40+00:00 done

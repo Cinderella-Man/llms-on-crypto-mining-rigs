@@ -1,0 +1,22 @@
+kcol (cut from kcolold): kernels it changed or added: 51 carried identically, 0 not, 0 changed on both sides
+qsa (cut from ladder): kernels it changed or added: 4 carried identically, 0 not, 0 changed on both sides
+fap (cut from ladder): kernels it changed or added: 1 carried identically, 0 not, 0 changed on both sides
+bytesw (cut from draftmem): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+iq2xs (cut from ladder2): kernels it changed or added: 63 carried identically, 0 not, 0 changed on both sides
+iqkcol (cut from ladder2): kernels it changed or added: 324 carried identically, 0 not, 0 changed on both sides
+ccflags (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+vgraphs (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+specdump (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+adraft (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+ckptrc (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+hops (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+lightprof (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+taper (cut from ladder2): kernels it changed or added: 0 carried identically, 0 not, 0 changed on both sides
+merged build: 7591 kernels
+  as a branch: fap: 1
+  as a branch: iq2xs+iqkcol: 63
+  as a branch: iqkcol: 210
+  as a branch: kcol+iqkcol: 51
+  as a branch: qsa: 4
+  as base: 7262
+verdict: every kernel matches a source build

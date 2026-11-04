@@ -1,0 +1,76 @@
+file	branches	added_extra	added_missing	removed_extra	removed_missing	single_branch_identical
+common/arg.cpp	ckptrc taper	0	0	0	0	
+common/common.cpp	bytesw ckptrc	0	0	0	0	
+common/common.h	bytesw ckptrc taper	0	0	0	0	
+common/fit.cpp	ckptrc	0	0	0	0	yes
+common/fit.h	ckptrc	0	0	0	0	yes
+common/sampling.cpp	bytesw	0	0	0	0	yes
+common/sampling.h	bytesw	0	0	0	0	yes
+common/speculative.cpp	specdump adraft ckptrc	0	0	0	0	
+common/speculative.h	specdump adraft ckptrc	0	0	0	0	
+ggml/src/ggml-backend.cpp	vgraphs	0	0	0	0	yes
+ggml/src/ggml-cuda/CMakeLists.txt	ccflags	0	0	0	0	yes
+ggml/src/ggml-cuda/common.cuh	qsa hops lightprof	0	0	0	0	
+ggml/src/ggml-cuda/fattn-pascal.cu	fap ccflags	0	0	0	0	
+ggml/src/ggml-cuda/fattn-sparse-pascal-impl.cuh	qsa	0	0	0	0	yes
+ggml/src/ggml-cuda/fattn-sparse-pascal.cu	qsa	0	0	0	0	yes
+ggml/src/ggml-cuda/fattn-sparse-pascal.cuh	qsa	0	0	0	0	yes
+ggml/src/ggml-cuda/fattn-tile-pascal.cu	ccflags	0	0	0	0	yes
+ggml/src/ggml-cuda/fattn.cu	qsa	0	0	0	0	yes
+ggml/src/ggml-cuda/ggml-cuda.cu	qsa hops lightprof	0	0	0	0	
+ggml/src/ggml-cuda/mmvf-pascal-impl.cuh	ccflags	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvf-pascal.cu	kcol iqkcol	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-impl.cuh	iqkcol iq2xs ccflags	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-iq.cuh	iqkcol iq2xs	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-kcol-impl.cuh	kcol iqkcol ccflags	0	4	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq1_m.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq2_s.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq2_xs.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq2_xxs.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq3_s.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq3_xxs.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-kcol-iq4_nl.cu	kcol iqkcol	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-kcol-q4_0.cu	kcol iqkcol	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-kcol-q5_0.cu	kcol iqkcol	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-kcol.cu	kcol iqkcol	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-kcol.cuh	kcol iqkcol	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq.cuh	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq1_m.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq2_s.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq2_xs.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq2_xxs.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq3_s.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok-iq3_xxs.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal-mtok.cuh	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/mmvq-pascal.cu	kcol iqkcol iq2xs ccflags	0	0	0	0	
+ggml/src/ggml-cuda/mmvq-pascal.cuh	iqkcol iq2xs	0	0	0	0	
+ggml/src/ggml-cuda/mmvq.cu	iqkcol	0	0	0	0	yes
+ggml/src/ggml-cuda/profile-light.h	lightprof	0	0	0	0	yes
+include/llama.h	taper	0	0	0	0	yes
+src/CMakeLists.txt	bytesw	0	0	0	0	yes
+src/llama-batch.cpp	taper	0	0	0	0	yes
+src/llama-batch.h	taper	0	0	0	0	yes
+src/llama-context.cpp	bytesw vgraphs hops taper	2	3	0	0	
+src/llama-context.h	bytesw vgraphs taper	0	0	0	0	
+src/llama-cparams.h	bytesw hops	0	0	0	0	
+src/llama-ext.h	bytesw	0	0	0	0	yes
+src/llama-graph.cpp	bytesw vgraphs hops	0	0	0	0	
+src/llama-graph.h	bytesw vgraphs hops	0	0	0	0	
+src/llama-head-bound.cpp	bytesw	0	0	0	0	yes
+src/llama-head-bound.h	bytesw	0	0	0	0	yes
+src/llama-memory-hybrid-idx.cpp	qsa	0	0	0	0	yes
+src/models/qwen4exp.cpp	qsa bytesw hops	0	1	0	0	
+tests/CMakeLists.txt	bytesw specdump adraft hops lightprof taper	0	0	0	0	
+tests/test-backend-ops.cpp	kcol iqkcol iq2xs qsa fap hops	0	0	0	0	
+tests/test-bytes-switches.cpp	bytesw	0	0	0	0	yes
+tests/test-cuda-profile-light.cpp	lightprof	0	0	0	0	yes
+tests/test-hop-cast.cpp	hops	0	0	0	0	yes
+tests/test-llama-archs.cpp	bytesw	0	0	0	0	no
+tests/test-spec-adapt.cpp	adraft	0	0	0	0	yes
+tests/test-spec-dump.cpp	specdump	0	0	0	0	yes
+tests/test-ubatch-taper.cpp	taper	0	0	0	0	yes
+tools/server/server-context.cpp	bytesw specdump adraft ckptrc taper	0	0	0	0	
+tools/server/server-schema.cpp	taper	0	0	0	0	yes
+tools/server/server-task.cpp	ckptrc	0	0	0	0	yes
+tools/server/server-task.h	ckptrc taper	0	0	0	0	

@@ -1,0 +1,82 @@
+== header diff: the published bench copy against the merged tree (kcol_mm.cuh, mmvq-pascal-iq.cuh)
+45a46,48
+> #ifndef KCOL_MIN_BLOCKS
+> #define KCOL_MIN_BLOCKS 2         // blocks per SM the compiler keeps registers for (__launch_bounds__)
+> #endif
+1040c1043
+< __launch_bounds__(KCOL_NT, 2)
+---
+> __launch_bounds__(KCOL_NT, KCOL_MIN_BLOCKS)
+== kcol
+q8_0     240 cases  worst err/tol 0.0029  PASS
+q2_0     240 cases  worst err/tol 0.0029  PASS
+q3_K     240 cases  worst err/tol 0.0025  PASS
+q4_K     240 cases  worst err/tol 0.0044  PASS
+q5_K     240 cases  worst err/tol 0.0041  PASS
+q6_K     240 cases  worst err/tol 0.0036  PASS
+iq4_xs   240 cases  worst err/tol 0.0028  PASS
+q4_0     240 cases  worst err/tol 0.0030  PASS
+q5_0     240 cases  worst err/tol 0.0030  PASS
+iq4_nl   240 cases  worst err/tol 0.0037  PASS
+decoding: every type matches ggml's reference
+== kcol_mut
+q8_0      48 cases  worst err/tol 0.0029  PASS
+q2_0      48 cases  worst err/tol 0.0013  PASS
+q3_K      48 cases  worst err/tol 0.0025  PASS
+q4_K      48 cases  worst err/tol 0.0033  PASS
+q5_K      48 cases  worst err/tol 0.0026  PASS
+q6_K      48 cases  worst err/tol 0.0036  PASS
+iq4_xs    48 cases  worst err/tol 0.0024  PASS
+q4_0      48 cases  worst err/tol 5454.3075  FAIL
+q5_0      48 cases  worst err/tol 24867.4288  FAIL
+iq4_nl    48 cases  worst err/tol 39606.0179  FAIL
+decoding: FAILURES
+== iq_unit_check
+iq2_xxs    400 cases  worst err/tol 0.0016  PASS
+iq2_xs     400 cases  worst err/tol 0.0014  PASS
+iq3_s      400 cases  worst err/tol 0.0013  PASS
+decoding: every type matches ggml's dequantization
+== iq_unit_check_mut
+the mutations did not apply
+== iq_unit_check_mut_sites
+iq2_xxs     40 cases  worst err/tol 8981.8528  FAIL
+iq2_xs      40 cases  worst err/tol 0.0014  PASS
+iq3_s       40 cases  worst err/tol 5073.8231  FAIL
+decoding: FAILURES
+mutation: fails exactly iq2_xxs and iq3_s, as it must
+== iq_kcol_check
+iq2_xxs  kcol  600 cases worst err/tol 0.0041; mtok  200 cases worst 0.0015, 200/200 bit-identical to the one-token function  PASS
+iq2_xs   kcol  600 cases worst err/tol 0.0038; mtok  200 cases worst 0.0013, 200/200 bit-identical to the one-token function  PASS
+iq2_s    kcol  600 cases worst err/tol 0.0052; mtok  200 cases worst 0.0014  PASS
+iq3_xxs  kcol  600 cases worst err/tol 0.0046; mtok  200 cases worst 0.0011  PASS
+iq3_s    kcol  600 cases worst err/tol 0.0041; mtok  200 cases worst 0.0013, 200/200 bit-identical to the one-token function  PASS
+iq1_m    kcol  600 cases worst err/tol 0.0065; mtok  200 cases worst 0.0016  PASS
+decoding: every type matches ggml's dequantization
+== iq_kcol_check_mut
+iq2_xxs  kcol  120 cases worst err/tol 0.0035; mtok   40 cases worst 0.0008, 40/40 bit-identical to the one-token function  PASS
+iq2_xs   kcol  120 cases worst err/tol 0.0026; mtok   40 cases worst 0.0013, 40/40 bit-identical to the one-token function  PASS
+iq2_s    kcol  120 cases worst err/tol 9223.4536; mtok   40 cases worst 9063.3540  FAIL
+iq3_xxs  kcol  120 cases worst err/tol 0.0028; mtok   40 cases worst 0.0011  PASS
+iq3_s    kcol  120 cases worst err/tol 9373.0274; mtok   40 cases worst 5701.9291, 0/40 bit-identical to the one-token function  FAIL
+iq1_m    kcol  120 cases worst err/tol 2370.3230; mtok   40 cases worst 1439.8531  FAIL
+decoding: FAILURES
+mutation: fails exactly iq2_s, iq3_s and iq1_m, as it must
+== fasp (bench/fattn_sparse/check.sh)
+ptxas info    : Used 161 registers, used 1 barriers, 2561 bytes smem, 536 bytes cmem[0], 16 bytes cmem[2]
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 158 registers, used 1 barriers, 2561 bytes smem, 536 bytes cmem[0], 16 bytes cmem[2]
+avx (ymm) instructions in build/fasp_check: 0
+ok    clean header: 0 failing cases
+ok    fault 1: 20 failing cases
+ok    fault 2: 20 failing cases
+ok    fault 3: 20 failing cases
+ok    mutation 0: Q8_0 rows read without the 2-byte scale: 10 failing cases
+ok    mutation 1: merge adds the splits' sums unscaled: 14 failing cases
+ok    mutation 2: every split but the first skips its first entry: 14 failing cases
+ok    mutation 3: scores mapped to the wrong key of the tile: 20 failing cases
+== reduce_check
+trials 20000 x 32 lanes
+1. v2.0 form against the value-select form: 0 of 640000 results differ in any bit
+2. lane l = sum over lanes of value l (FP64 reference, 5-add rounding bound): v2.0 0 fail, value-select 0 fail (worst error 0.178 of the bound)
+3. mutated (last stage keep/send swapped): 640000 of 640000 fail check 2
+PASS
