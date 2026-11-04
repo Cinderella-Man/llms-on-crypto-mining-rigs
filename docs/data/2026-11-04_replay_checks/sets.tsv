@@ -1,0 +1,100 @@
+build	set	run	switches	expect	cases	fail_lines	exit	memcheck_errors	verdict
+sm86	kshape	kcol	defaults	pass	no cases ran	0	127	-	WRONG
+sm86	kshape	kcol-table0	GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-all	GGML_CUDA_MMVQ_PASCAL_KCOL=2	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-old	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=49152	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-s32k	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-r1	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_R=1	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-r2	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_R=2	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-itt1	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_ITT=1	pass	1961/1961	0	0	-	ok
+sm86	kshape	kcol-off	GGML_CUDA_MMVQ_PASCAL_KCOL=0	pass	1961/1961	0	0	-	ok
+sm86	kshape	stock	defaults	pass	138/138	0	0	-	ok
+sm86	kshape	stock-skip	GGML_CUDA_MMVQ_PASCAL_KCOL=0 GGML_CUDA_MMVQ_PASCAL_SKIP=q4_0,q4_1,q5_0	pass	138/138	0	0	-	ok
+sm86	kshape	mtok	defaults	pass	340/340	0	0	-	ok
+sm86	kshape	mtok-direct	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,0,0,0	pass	340/340	0	0	-	ok
+sm86	kshape	mtok-gdir	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,0,1	pass	340/340	0	0	-	ok
+sm86	kshape	mtok-cap1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,1	pass	340/340	0	0	-	ok
+sm86	kshape	mtok-rb1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1	pass	340/340	0	0	-	ok
+sm86	kshape	mtok-off	GGML_CUDA_MMVQ_PASCAL_MTOK=0	pass	340/340	0	0	-	ok
+sm86	kshape	mtok-iq	defaults	pass	952/952	0	0	-	ok
+ptx	kshape	kcol	defaults	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-table0	GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-all	GGML_CUDA_MMVQ_PASCAL_KCOL=2	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-old	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=49152	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-s32k	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-r1	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_R=1	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-r2	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_R=2	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-itt1	GGML_CUDA_MMVQ_PASCAL_KCOL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_ITT=1	pass	1961/1961	0	0	-	ok
+ptx	kshape	kcol-off	GGML_CUDA_MMVQ_PASCAL_KCOL=0	pass	1961/1961	0	0	-	ok
+ptx	kshape	stock	defaults	pass	138/138	0	0	-	ok
+ptx	kshape	stock-skip	GGML_CUDA_MMVQ_PASCAL_KCOL=0 GGML_CUDA_MMVQ_PASCAL_SKIP=q4_0,q4_1,q5_0	pass	138/138	0	0	-	ok
+ptx	kshape	mtok	defaults	pass	340/340	0	0	-	ok
+ptx	kshape	mtok-direct	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,0,0,0	pass	340/340	0	0	-	ok
+ptx	kshape	mtok-gdir	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,0,1	pass	340/340	0	0	-	ok
+ptx	kshape	mtok-cap1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,1	pass	340/340	0	0	-	ok
+ptx	kshape	mtok-rb1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1	pass	340/340	0	0	-	ok
+ptx	kshape	mtok-off	GGML_CUDA_MMVQ_PASCAL_MTOK=0	pass	340/340	0	0	-	ok
+ptx	kshape	mtok-iq	defaults	pass	952/952	0	0	-	ok
+ptx	ladder3-rest	iqkcol-on	defaults	pass	1813/1813	0	0	-	ok
+ptx	ladder3-rest	iqkcol-kcol_r2	GGML_CUDA_MMVQ_PASCAL_KCOL_R=2	pass	861/861	0	0	-	ok
+ptx	ladder3-rest	iqkcol-cap1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,1	pass	952/952	0	0	-	ok
+ptx	ladder3-rest	iqkcol-rb1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1	pass	952/952	0	0	-	ok
+ptx	ladder3-rest	iqkcol-off	GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=iq2_xxs,iq2_xs,iq3_s,iq2_s,iq3_xxs,iq1_m GGML_CUDA_MMVQ_PASCAL_MTOK_SKIP=iq2_xxs,iq2_xs,iq3_s,iq2_s,iq3_xxs,iq1_m	pass	no cases ran	0	134	-	WRONG
+ptx	ladder3-rest	iqkcol-skip	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s,iq2_s,iq3_xxs,iq1_m	pass	no cases ran	0	134	-	WRONG
+ptx	ladder3-rest	iq2xs-on-fusion	defaults	pass	20/20	0	0	-	ok
+ptx	ladder3-rest	iq2xs-on-shared	defaults	pass	6/6	0	0	-	ok
+ptx	ladder3-rest	iq2xs-skip-mm	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	403/403	0	0	-	ok
+ptx	ladder3-rest	iq2xs-skip-mmid	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	223/223	0	0	-	ok
+ptx	ladder3-rest	iq2xs-skip-fusion	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	171/171	0	0	-	ok
+ptx	ladder3-rest	iq2xs-skip-shared	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	21/21	0	0	-	ok
+ptx	ladder3-rest	qsa-sparse1	GGML_CUDA_FATTN_SPARSE_PASCAL=1	pass	48/48	0	0	-	ok
+ptx	ladder3-rest	qsa-sparse2	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128	pass	48/48	0	0	-	ok
+ptx	ladder3-rest	qsa-sparse0	GGML_CUDA_FATTN_SPARSE_PASCAL=0	pass	48/48	0	0	-	ok
+ptx	ladder3-rest	qsa-fault1	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=1	pass	48/48	0	0	-	ok
+ptx	ladder3-rest	qsa-fault2	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=2	fail	19/48	31	1	-	ok
+ptx	ladder3-rest	qsa-fault3	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=3	fail	19/48	31	1	-	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xxs	defaults	pass	3/3	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xs	defaults	pass	3/3	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq3_s	defaults	pass	3/3	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iq2xs-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xxs	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xxs	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xs	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xs	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_xs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_s	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_s	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_s	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_s	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq2_s	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_xxs	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_xxs	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq3_xxs	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq1_m	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq1_m	defaults	pass	2/2	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq1_m	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq1_m	defaults	pass	1/1	0	0	0	ok
+ptx	ladder3-rest	memcheck-iqkcol-iq1_m	defaults	pass	1/1	0	0	0	ok

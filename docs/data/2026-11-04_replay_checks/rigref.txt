@@ -1,0 +1,2 @@
+kshape PASS: 154 cases re-recorded with llama.cpp-20261104-a89d6b281-pascal-p106-v3-b12076-replay, 154 .ref blobs identical to the set's
+ladder3-rest PASS: 100 cases re-recorded with llama.cpp-20261104-a89d6b281-pascal-p106-v3-b12076-replay, 100 .ref blobs identical to the set's

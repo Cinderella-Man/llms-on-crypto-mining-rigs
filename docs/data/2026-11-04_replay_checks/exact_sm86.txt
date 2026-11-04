@@ -1,0 +1,14 @@
+== 2026-11-04T18:22:38+00:00 gpu_exact DEV=<card> NVIDIA GeForce RTX 3090 parts: same faults corrupt sets
+same/kcol-all PASS: GGML_CUDA_MMVQ_PASCAL_KCOL=2: 1961 cases, 1961 with the same verdict, 1961 with the same errors to 9 digits; FAIL live 0, replayed 0
+same/mtok PASS: defaults: 340 cases, 340 with the same verdict, 340 with the same errors to 9 digits; FAIL live 0, replayed 0
+same/qsa-sparse2 PASS: GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128: 48 cases, 48 with the same verdict, 48 with the same errors to 9 digits; FAIL live 0, replayed 0
+same/qsa-fault2 PASS: GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=2: 48 cases, 48 with the same verdict, 48 with the same errors to 9 digits; FAIL live 29, replayed 29
+faults/qsa-fault2-off PASS: the fault's record replayed with GGML_CUDA_FATTN_SPARSE_PASCAL=2: exit 0, 48/48 tests passed
+same/qsa-fault3 PASS: GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=3: 48 cases, 48 with the same verdict, 48 with the same errors to 9 digits; FAIL live 29, replayed 29
+faults/qsa-fault3-off PASS: the fault's record replayed with GGML_CUDA_FATTN_SPARSE_PASCAL=2: exit 0, 48/48 tests passed
+same/fap-fault2 PASS: GGML_CUDA_FATTN_PASCAL=2 GGML_CUDA_FATTN_PASCAL_FAULT=2: 22 cases, 22 with the same verdict, 22 with the same errors to 9 digits; FAIL live 6, replayed 6
+faults/fap-fault2-off PASS: the fault's record replayed with GGML_CUDA_FATTN_PASCAL=2: exit 0, 22/22 tests passed
+same/fap-fault3 PASS: GGML_CUDA_FATTN_PASCAL=2 GGML_CUDA_FATTN_PASCAL_FAULT=3: 22 cases, 22 with the same verdict, 22 with the same errors to 9 digits; FAIL live 18, replayed 18
+faults/fap-fault3-off PASS: the fault's record replayed with GGML_CUDA_FATTN_PASCAL=2: exit 0, 22/22 tests passed
+sets/kshape FAIL: 17 runs as expected, 2 WRONG (console: sets/kshape/console.txt)
+sets/live-kcol-all PASS: live (fresh inputs): 1961/1961 tests passed; replay of the kshape set: 1961/1961 tests passed

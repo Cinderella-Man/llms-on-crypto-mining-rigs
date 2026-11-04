@@ -1,0 +1,8 @@
+t1 PASS: recorded 49 cases (exit 0); live 49 OK (exit 0); replay 49 OK (exit 0); replay: the cases' tensors and references from $W/a 49/49 tests passed replay: $W/a: 49 cases replayed, 0 selected by the filter have no record 
+t2 PASS: re-recorded from the replayed inputs (exit 0): 0 of 49 .ref blobs differ, 49 of 49 .in blobs identical
+t3 PASS: case 082a501743b22aa1c545's .in flipped: exit 1, 1 md5 mismatch line, 3 FAIL lines, 48 OK; replay: the cases' tensors and references from $W/c 48/49 tests passed replay: $W/c: 48 cases replayed, 0 selected by the filter have no record 
+t4 PASS: case 082a501743b22aa1c545's .ref flipped: exit 1, 1 md5 mismatch line, 48 OK; replay: the cases' tensors and references from $W/c 48/49 tests passed replay: $W/c: 48 cases replayed, 0 selected by the filter have no record 
+t5 PASS: wider filter: exit 1, 4 not-recorded lines, summary FAIL line 1; allowed: exit 0; replay: the cases' tensors and references from $W/a 49/49 tests passed replay: $W/a: 49 cases replayed, 4 selected by the filter have no record 
+t6 PASS: cpu-check on every case: exit 0, 49 of 49 live OK with identical references; replay cpu-check: 49 cases, 49 references identical, 0 verdicts differ
+t7 PASS: reference-only record: 0 metas with a live line (0 expected on -b CPU); replay log 49 lines (exit 0)
+done 2026-11-04T17:36:21+00:00
