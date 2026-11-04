@@ -1,0 +1,2 @@
+phase,samples,usable_median_mib,usable_lowest_mib,swap_mean_mib,swap_highest_mib,most_swapout_10s_mib,highest_full_avg10_pct,kills
+session,3079,476,129,404,500,97,0.8,none
