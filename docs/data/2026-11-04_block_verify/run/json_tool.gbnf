@@ -1,0 +1,5 @@
+# a JSON tool call: fixed keys and punctuation, a tool name from three, a short path and a number
+root ::= "{\"name\": \"" name "\", \"arguments\": {\"path\": \"" path "\", \"line\": " num "}}"
+name ::= "read_file" | "write_file" | "list_dir"
+path ::= [a-z/_.] [a-z/_.]? [a-z/_.]? [a-z/_.]? [a-z/_.]? [a-z/_.]? [a-z/_.]? [a-z/_.]?
+num  ::= [0-9] [0-9]? [0-9]?

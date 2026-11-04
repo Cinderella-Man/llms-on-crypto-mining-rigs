@@ -1,0 +1,5 @@
+# a tool call in Qwen3.8's XML format (its chat template's), with the special token <tool_call>: the tags and the
+# parameter's name are fixed by the grammar, the tool's name once its first letter is written
+root  ::= "<tool_call>\n<function=" name ">\n<parameter=path>\n" value "\n</parameter>\n</function>\n</tool_call>"
+name  ::= "read_file" | "write_file" | "list_dir"
+value ::= [a-zA-Z0-9_./]{1,12}

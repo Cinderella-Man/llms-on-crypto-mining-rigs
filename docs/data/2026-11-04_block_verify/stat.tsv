@@ -1,0 +1,32 @@
+test	kind	n	n_ref	chi2	dof	p	tv	pass
+plain block token 1	exact	4000	4000	9.46	7	0.221	0.0253	yes
+plain block token 2	exact	4000	4000	58.88	59	0.48	0.0573	yes
+plain block token 3	exact	4000	4000	208.36	201	0.346	0.1305	yes
+plain block tokens 1-2	exact	4000	4000	58.88	59	0.48	0.0573	yes
+plain block tokens 1-3	exact	4000	4000	215.12	201	0.235	0.1308	yes
+plain block2 token 1	exact	4000	4000	12.46	7	0.0865	0.0312	yes
+plain block2 token 2	exact	4000	4000	75.49	60	0.0858	0.0565	yes
+plain block2 token 3	exact	4000	4000	195.67	200	0.573	0.128	yes
+plain block2 tokens 1-2	exact	4000	4000	75.49	60	0.0858	0.0565	yes
+plain block2 tokens 1-3	exact	4000	4000	207.3	200	0.347	0.1288	yes
+plain rej token 1	base	4000	4000	13.65	7	0.0579	0.031	yes
+plain rej token 2	base	4000	4000	58.33	59	0.5	0.061	yes
+plain rej token 3	base	4000	4000	205.79	199	0.356	0.1378	yes
+plain rej tokens 1-2	base	4000	4000	58.33	59	0.5	0.061	yes
+plain rej tokens 1-3	base	4000	4000	206.86	200	0.355	0.1378	yes
+plain rej2 token 1	base	4000	4000	4.68	7	0.698	0.0145	yes
+plain rej2 token 2	base	4000	4000	73.9	59	0.0916	0.0668	yes
+plain rej2 token 3	base	4000	4000	256.52	201	0.00492	0.1395	yes
+plain rej2 tokens 1-2	base	4000	4000	73.9	59	0.0916	0.0668	yes
+plain rej2 tokens 1-3	base	4000	4000	242.41	201	0.0244	0.14	yes
+plain rejkeep2 token 1	exact	4000	4000	17.62	7	0.0138	0.0362	yes
+plain rejkeep2 token 2	exact	4000	4000	77.84	58	0.0422	0.0682	yes
+plain rejkeep2 token 3	exact	4000	4000	228.72	196	0.0546	0.1393	yes
+plain rejkeep2 tokens 1-2	exact	4000	4000	77.84	58	0.0422	0.0682	yes
+plain rejkeep2 tokens 1-3	exact	4000	4000	225.83	197	0.0778	0.1395	yes
+plain t08 tokens 1-2	control	4000	4000	223.1	57	1.67e-21	0.1383	yes
+gram block outcome	exact	1500	1500	14.43	20	0.808	0.044	yes
+gram force outcome	exact	1500	1500	29.84	20	0.0725	0.0667	yes
+gram keep0 outcome	exact	1500	1500	17.0	20	0.653	0.0433	yes
+gram rej outcome	base	1500	1500	78.91	20	6e-09	0.0947	no
+gram rejkeep outcome	exact	1500	1500	24.09	20	0.238	0.0573	yes

@@ -1,0 +1,11 @@
+arm	requests	drafted	accepted	accepted_per_drafted
+plain-block	4000	15758	433	0.0275
+plain-block2	4000	14238	3142	0.2207
+plain-rej	4000	15769	423	0.0268
+plain-rej2	4000	14308	2886	0.2017
+plain-rejkeep2	4000	14288	2891	0.2023
+gram-block	1500	48404	0	0.0000
+gram-force	1500	48364	0	0.0000
+gram-keep0	1500	14827	6157	0.4153
+gram-rej	1500	48436	0	0.0000
+gram-rejkeep	1500	48424	0	0.0000

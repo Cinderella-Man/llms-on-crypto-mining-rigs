@@ -1,0 +1,2 @@
+# a short JSON tool call whose outcome is one of 30: the tool (3) and a digit (10)
+root ::= "{\"tool\": \"" ("read" | "write" | "list") "\", \"n\": " [0-9] "}"
