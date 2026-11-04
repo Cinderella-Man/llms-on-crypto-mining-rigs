@@ -1,0 +1,12 @@
+off = base (tokens and top probabilities of R1-R4)
+staged = base (tokens and top probabilities of R1-R4)
+q8auto = base (tokens and top probabilities of R1-R4)
+q4auto = base (tokens and top probabilities of R1-R4)
+q8at1: 5 contexts logged the hop before layer 1, 352 tokens generated; q8at1 differs from base at R1
+f16at1: 5 contexts logged the hop before layer 1, 352 tokens generated; f16at1 differs from base at R1
+q6at1: 5 contexts logged the hop before layer 1, 352 tokens generated; q6at1 differs from base at R1
+q5at1: 5 contexts logged the hop before layer 1, 352 tokens generated; q5at1 differs from base at R1
+q4at1: 5 contexts logged the hop before layer 1, 352 tokens generated; q4at1 differs from base at R1
+nlat1: 5 contexts logged the hop before layer 1, 352 tokens generated; nlat1 differs from base at R1
+base: 392 tokens drafted
+PASS

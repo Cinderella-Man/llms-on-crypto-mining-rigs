@@ -1,0 +1,25 @@
+part 2: /k/qwen4exp-moe.gguf, 58 positions per arm (prompt 48 in micro-batches of 16, a 4-token pass, 6 single steps)
+  arm          identical max |dlogit| mean KLD     max KLD      top-1    hops   hop max err  hop checks
+  off          yes       0            0            0            1.0000   0      0            none, as expected
+  staged       yes       0            0            0            1.0000   0      0            none, as expected
+  q6_k-auto    yes       0            0            0            1.0000   0      0            all within bound
+  q4_0-auto    yes       0            0            0            1.0000   0      0            all within bound
+  f16-at1      no        3.509e-05    3.204e-11    5.565e-11    1.0000   10     0.0002127    all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.0002127, rms 2.654e-05 (0.000207 of the source's rms)
+  bf16-at1     no        0.0002567    2.059e-09    3.727e-09    1.0000   10     0.001881     all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.001881, rms 0.0002126 (0.00166 of the source's rms)
+  q8_0-at1     no        0.0008137    2.205e-08    3.193e-08    1.0000   10     0.002087     all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.002087, rms 0.0006944 (0.00541 of the source's rms)
+  q6_k-at1     no        0.002591     2.338e-07    3.843e-07    1.0000   10     0.008353     all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.008353, rms 0.002303 (0.0179 of the source's rms)
+  q5_1-at1     no        0.005911     1.124e-06    1.507e-06    0.9655   10     0.01462      all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.01462, rms 0.004894 (0.0381 of the source's rms)
+  q5_0-at1     no        0.006483     1.403e-06    1.848e-06    0.9655   10     0.02255      all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.02255, rms 0.005529 (0.0431 of the source's rms)
+  q4_1-at1     no        0.01126      4.848e-06    7.241e-06    0.9310   10     0.02939      all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.02939, rms 0.01011 (0.0787 of the source's rms)
+  q4_0-at1     no        0.01638      5.786e-06    8.363e-06    0.9138   10     0.0498       all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.0498, rms 0.01112 (0.0866 of the source's rms)
+  iq4_nl-at1   no        0.01165      4.779e-06    6.942e-06    0.9138   10     0.03764      all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.03764, rms 0.01016 (0.0791 of the source's rms)
+121 checks, 0 failed
