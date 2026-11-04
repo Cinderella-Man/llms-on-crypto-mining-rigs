@@ -177,6 +177,11 @@ ssh rig "MMVQ=/tmp/c323/mmvq_kcol OUT=/tmp/c323/out setsid nohup bash -s > /tmp/
 scp rig:/tmp/c323/out/kcol_fmt.csv . && ssh rig 'rm -rf /tmp/c323'
 ```
 
+**On one P106 (2026-11-04):** the run on card 0 of the second rig, nothing else running: `mmvq_kcol` exited 0 and all
+3,008 rows (every type, shape, token count and launch shape) match the double-precision reference
+([rig/kcol_fmt.csv](rig/kcol_fmt.csv), the bench's own table [rig/kcol_fmt.txt](rig/kcol_fmt.txt)). The selector's
+`vmix.py times --bench rig/kcol_fmt.csv` and `select` are the next step.
+
 ## Commands
 
 The builds (CPU only: pinned, nice 19, idle I/O priority; ~10–25 min a file, most of it writing ~11–38 GB):
