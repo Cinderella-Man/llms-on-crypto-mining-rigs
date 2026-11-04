@@ -1,0 +1,13 @@
+task,tokens,copied_own_L8,share_own_L8,copied_ctx_L8,share_ctx_L8
+bugfix-javascript-complex-numbers,2647,836,0.3158,703,0.2656
+bugfix-javascript-grade-school,5716,1982,0.3467,1798,0.3146
+bugfix-javascript-phone-number,7087,2709,0.3822,2479,0.3498
+bugfix-javascript-space-age,6758,3170,0.4691,2818,0.4170
+bugfix-javascript-triangle,5595,2056,0.3675,1860,0.3324
+bugfix-javascript-variable-length-quantity,2056,509,0.2476,320,0.1556
+bugfix-python-affine-cipher,20753,5516,0.2658,4648,0.2240
+bugfix-python-list-ops,15978,5365,0.3358,3110,0.1946
+bugfix-python-phone-number,6893,2740,0.3975,2542,0.3688
+bugfix-python-pig-latin,8568,2652,0.3095,2120,0.2474
+bugfix-python-scale-generator,12666,3136,0.2476,2596,0.2050
+bugfix-python-variable-length-quantity,21077,8701,0.4128,4063,0.1928

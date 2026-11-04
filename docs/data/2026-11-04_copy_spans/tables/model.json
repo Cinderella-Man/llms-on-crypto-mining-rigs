@@ -1,0 +1,18 @@
+{
+ "tau_out": [
+  2.35,
+  2.56
+ ],
+ "dflash_tokens": 2.56,
+ "dflash_columns": 3,
+ "costs": {
+  "today": {
+   "r": 0.4,
+   "draft": 0.15
+  },
+  "kernels": {
+   "r": 0.1,
+   "draft": 0.22
+  }
+ }
+}
