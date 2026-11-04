@@ -136,6 +136,40 @@ Every experiment done so far, with its result, is in the same file.
 | [retype_tensors.py](../scripts/retype_tensors.py) | any PC | Converts selected tensors of a GGUF to another format and copies the rest byte for byte (e.g. an F16 router) |
 | [token_cost.py](../scripts/token_cost.py) | any PC | Bytes read per token by format and a predicted decode speed on the rig, from the GGUF header |
 | [bench.sh](../scripts/bench.sh), [server_bench.sh](../scripts/server_bench.sh) | the rig | Speed: raw generation and real chat requests |
+| [cuda_preflight.sh](../scripts/cuda_preflight.sh) | any machine with Docker and NVIDIA GPUs | Before a long GPU job: checks that CUDA works on the cards the job will use, and names the failing card and the cause |
+
+### Before a long GPU job: a CUDA pre-flight
+
+After a card falls off the bus (Xid 79) or the driver's memory manager hits a fatal error, Docker still starts
+containers and `nvidia-smi` still answers, but every CUDA call fails until the machine is rebooted. A job started then
+crashes minutes or hours in, and its own error says little. [cuda_preflight.sh](../scripts/cuda_preflight.sh) finds
+this out in about a second, in the job's own image and with the job's own GPU request:
+
+```bash
+scripts/cuda_preflight.sh -g 0,1,2                       # docker's --gpus "device=0,1,2"; -g all for every card
+scripts/cuda_preflight.sh -- --device nvidia.com/gpu=0   # any request docker takes: CDI, --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=...
+```
+
+It runs a small probe ([cuprobe.c](../scripts/cuda_preflight/cuprobe.c): `cuInit`, then for every visible card a
+context, an allocation and a copy to the card and back) and prints one line per card and a last line, `PREFLIGHT OK: ...`
+or `PREFLIGHT FAIL: ...`, which names the failing card and the likely cause. The exit status is 0 when CUDA works on every
+requested card and 1 when it does not, when the container cannot start with that request, or when the probe hangs (a
+driver stuck after a GPU error does that). On the host it also reads the kernel log of this boot for Xid 79, Xid 154 and
+UVM fatal errors, which name the card and say that a reboot or power cycle is needed. A failure looks like this:
+
+```text
+PREFLIGHT FAIL: cuInit returned CUDA_ERROR_UNKNOWN (999); open(/dev/nvidia-uvm) fails: Input/output error; likely cause:
+nvidia-uvm is in a fatal state (a GPU fell off the bus earlier); only a host reboot clears it. Kernel log of this boot:
+Xid 79 (fell off the bus) on PCI 0000:09:00 [missing from nvidia-smi, the lost card] at 02:04:12; ...
+```
+
+The probe is compiled once, in a container of the job's image without GPUs, and kept in `PREFLIGHT_CACHE`, so nothing is
+installed on the host. Other settings: `IMAGE` (the job's image), `PREFLIGHT_DOCKER_ARGS` (extra `docker run` arguments,
+such as a label), `PREFLIGHT_TIMEOUT` (seconds), `PREFLIGHT_KERNEL_STRICT=1` (fail on kernel-log events even when the
+probe passes), `PREFLIGHT_SKIP=1`; `scripts/cuda_preflight.sh -h` lists them all. The job scripts of the
+[Flash-Next quality chain](../docs/data/2026-11-03_flash_next_quality/README.md) call it from `wait_gpus` before each
+step. [scripts/test/cuda_preflight_test.sh](../scripts/test/cuda_preflight_test.sh) tests the script and the probe on
+any machine with Docker, without a GPU, against a stand-in `libcuda.so.1` that can fail any driver call.
 
 Recipes for the quants made here are in [recipes/](recipes/). Nothing has been published yet; the
 [release checklist](releasing.md) says what a file needs first, including that it must say clearly which hardware it is

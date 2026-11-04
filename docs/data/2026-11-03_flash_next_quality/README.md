@@ -62,7 +62,7 @@ after step:
 | File | What |
 |---|---|
 | `run/chain.sh` | the driver: steps, prerequisites, a log and a done or failed marker per step, restartable |
-| `run/common.sh` | shared helpers: logging, Docker arguments, waiting until other jobs' containers have left the GPUs |
+| `run/common.sh` | shared helpers: logging, Docker arguments, waiting until other jobs' containers have left the GPUs, then a CUDA pre-flight on them ([`scripts/cuda_preflight.sh`](../../../scripts/cuda_preflight.sh), run when `PREFLIGHT` is set) |
 | `run/fn1a_download.sh`, `run/fn1a_check.sh`, `run/fn1a_archive.sh` | the reference: download, identity check, archive copy |
 | `run/same_model.py` | is a GGUF the model of a BF16 safetensors folder: named tensors requantized and compared byte for byte |
 | `run/layout.py` | a split GGUF's tensors and bytes per type, the n-gram table's shard, the bytes on the GPUs |
@@ -79,7 +79,8 @@ On the quality machine, with `W` a work folder on a fast disk (the reference, th
 on hard disks are read hard there), an environment file `ENV` that sets the variables the scripts name (`TAG`, `WORK`,
 `GPUS_ALL`, `MOUNTS`, `Q8_REPO`, `Q8_REV`, `Q8_SUBDIR`, `Q8_HOT`, `Q8_ARCHIVE`, `Q8_LIST`, `REF`, `BF16`, `PPL`,
 `TOOLS`, `SRC`, `BUILD_FROM`, `CCACHE_FROM`, `WIKI`, `AGENT`, `CODE`, `KLD`, `HOT`, `FAST`, `FN2_FILES`, `CALIB`,
-`PUBLISHED_TABLE`), and `Q8_LIST` holding one `<sha256> <bytes> <file>` line per shard:
+`PUBLISHED_TABLE`; optionally `PREFLIGHT`, the path of `scripts/cuda_preflight.sh`, and `PREFLIGHT_CACHE`, where
+it keeps its compiled probe), and `Q8_LIST` holding one `<sha256> <bytes> <file>` line per shard:
 
 ```bash
 mkdir -p $W/logs
