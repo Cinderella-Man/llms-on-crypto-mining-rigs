@@ -44,6 +44,17 @@ const kshape SHAPES[] = {
     { "shexp_down",  KQ5_0,     640,   2560,  7 }, { "shexp_down",  KIQ4_NL,   640,   2560,  7 },
     { "ple_key",     KQ2_0,    2560,  10240,  1 },
     { "output",      KQ5_K,    2560, 248320,  1 }, { "draft_output", KQ6_K,   2560, 248320,  0 },
+#ifdef KCOL_BENCH_IQ
+    // Q713: the IQ3_S dense products of the Swift IQ2_XS file (calls per token of that file), and each other grid type and
+    // IQ1_M at the attn_gate shape (they are routed experts there; calls 0)
+    { "attn_gate",   KIQ3_S,   2560,   6144, 11 }, { "attn_q",      KIQ3_S,   2560,  12288,  1 },
+    { "attn_qkv",    KIQ3_S,   2560,  10240,  1 }, { "attn_output", KIQ3_S,   6144,   2560,  1 },
+    { "ssm_out",     KIQ3_S,   6144,   2560,  6 }, { "shexp_gate",  KIQ3_S,   2560,    640,  9 },
+    { "shexp_up",    KIQ3_S,   2560,    640, 14 },
+    { "attn_gate",   KIQ2_XXS, 2560,   6144,  0 }, { "attn_gate",   KIQ2_XS,  2560,   6144,  0 },
+    { "attn_gate",   KIQ2_S,   2560,   6144,  0 }, { "attn_gate",   KIQ3_XXS, 2560,   6144,  0 },
+    { "attn_gate",   KIQ1_M,   2560,   6144,  0 }, { "ssm_out",     KIQ2_S,   6144,   2560,  0 },
+#endif
 };
 
 // Variants: the fork's launch shape, R = 1 or 2 forced, the smallest activation tile, a 32 KB budget (3 blocks per SM),
@@ -97,6 +108,13 @@ __global__ void gen_weights(uint8_t * __restrict__ w, const size_t nblocks, cons
         const uint32_t h = mb::hash_u32(seed + b * 31 + 7);
         const uint16_t d    = (uint16_t) (0x1C00 | (h & 0x3FF) | ((h >> 10) & 1) << 15);
         const uint16_t dmin = (uint16_t) (0x1C00 | ((h >> 11) & 0x3FF));
+        if (t == KIQ1_M) {
+            // d is in the top nibbles of the four 16-bit scale words (bytes 48-55)
+            for (int k = 0; k < 4; ++k) {
+                blk[49 + 2 * k] = (uint8_t) ((blk[49 + 2 * k] & 0x0F) | (((d >> (4 * k)) & 0xF) << 4));
+            }
+            continue;
+        }
         int off = 0;
         if (t == KQ3_K) off = 108;
         if (t == KQ6_K) off = 208;
@@ -120,6 +138,14 @@ void launch_type(const int t, const params & p, cudaStream_t s) {
         case KQ4_0:   launch<KQ4_0>(p, s);   break;
         case KQ5_0:   launch<KQ5_0>(p, s);   break;
         case KIQ4_NL: launch<KIQ4_NL>(p, s); break;
+#ifdef KCOL_BENCH_IQ
+        case KIQ2_XXS: launch<KIQ2_XXS>(p, s); break;
+        case KIQ2_XS:  launch<KIQ2_XS>(p, s);  break;
+        case KIQ2_S:   launch<KIQ2_S>(p, s);   break;
+        case KIQ3_XXS: launch<KIQ3_XXS>(p, s); break;
+        case KIQ3_S:   launch<KIQ3_S>(p, s);   break;
+        case KIQ1_M:   launch<KIQ1_M>(p, s);   break;
+#endif
         default:      launch<KIQ4_XS>(p, s); break;
     }
 }
@@ -131,6 +157,7 @@ void launch_prod_t(const params & p, cudaStream_t s) {
     a.vx = p.vx; a.rec = p.rec; a.dst = p.dst; a.nrows = p.nrows; a.row_bytes = p.row_bytes;
     a.nunits = p.K / traits<T>::UW; a.lpr_log2 = p.s.lpr_log2; a.niter = a.nunits >> p.s.lpr_log2; a.itt = p.s.itt;
     a.gen = p.s.gen; a.seg_log2 = p.s.seg_log2; a.stride_col_dst = p.stride_col_dst;
+    a.grid = p.grid;
     if (p.s.R == 1) launch_cols<T, 1>(a, p.s, p.ncols, s); else launch_cols<T, 2>(a, p.s, p.ncols, s);
 }
 void launch_prod(const int t, const params & p, cudaStream_t s) {
@@ -144,6 +171,14 @@ void launch_prod(const int t, const params & p, cudaStream_t s) {
         case KQ4_0:   launch_prod_t<KQ4_0>(p, s);   break;
         case KQ5_0:   launch_prod_t<KQ5_0>(p, s);   break;
         case KIQ4_NL: launch_prod_t<KIQ4_NL>(p, s); break;
+#ifdef KCOL_BENCH_IQ
+        case KIQ2_XXS: launch_prod_t<KIQ2_XXS>(p, s); break;
+        case KIQ2_XS:  launch_prod_t<KIQ2_XS>(p, s);  break;
+        case KIQ2_S:   launch_prod_t<KIQ2_S>(p, s);   break;
+        case KIQ3_XXS: launch_prod_t<KIQ3_XXS>(p, s); break;
+        case KIQ3_S:   launch_prod_t<KIQ3_S>(p, s);   break;
+        case KIQ1_M:   launch_prod_t<KIQ1_M>(p, s);   break;
+#endif
         default:      launch_prod_t<KIQ4_XS>(p, s); break;
     }
 }
@@ -159,9 +194,42 @@ const void * kernel_func(const int t, const int ncols, const int R) {
     switch (t) {
         case KQ8_0: KF(KQ8_0); case KQ2_0: KF(KQ2_0); case KQ3_K: KF(KQ3_K); case KQ4_K: KF(KQ4_K);
         case KQ5_K: KF(KQ5_K); case KQ6_K: KF(KQ6_K); case KQ4_0: KF(KQ4_0); case KQ5_0: KF(KQ5_0);
-        case KIQ4_NL: KF(KIQ4_NL); default: KF(KIQ4_XS);
+        case KIQ4_NL: KF(KIQ4_NL);
+#ifdef KCOL_BENCH_IQ
+        case KIQ2_XXS: KF(KIQ2_XXS); case KIQ2_XS: KF(KIQ2_XS); case KIQ2_S: KF(KIQ2_S); case KIQ3_XXS: KF(KIQ3_XXS);
+        case KIQ3_S: KF(KIQ3_S); case KIQ1_M: KF(KIQ1_M);
+#endif
+        default: KF(KIQ4_XS);
     }
 #undef KF
+}
+
+// The grid of a grid type or IQ1_M on the device (copied once), nullptr for the other types.
+const uint32_t * device_grid(const int t) {
+#ifdef KCOL_BENCH_IQ
+    static std::map<int, void *> grids;
+    const void * src = nullptr;
+    size_t bytes = 0;
+    switch (t) {
+        case KIQ2_XXS: src = kcol_grids::iq2xxs_grid;   bytes = sizeof(kcol_grids::iq2xxs_grid);   break;
+        case KIQ2_XS:  src = kcol_grids::iq2xs_grid;    bytes = sizeof(kcol_grids::iq2xs_grid);    break;
+        case KIQ2_S:   src = kcol_grids::iq2s_grid;     bytes = sizeof(kcol_grids::iq2s_grid);     break;
+        case KIQ3_XXS: src = kcol_grids::iq3xxs_grid;   bytes = sizeof(kcol_grids::iq3xxs_grid);   break;
+        case KIQ3_S:   src = kcol_grids::iq3s_grid;     bytes = sizeof(kcol_grids::iq3s_grid);     break;
+        case KIQ1_M:   src = kcol_grids::iq1s_grid_gpu; bytes = sizeof(kcol_grids::iq1s_grid_gpu); break;
+        default:       return nullptr;
+    }
+    if (!grids.count(t)) {
+        void * p = nullptr;
+        CUDA_CHECK(cudaMalloc(&p, bytes));
+        CUDA_CHECK(cudaMemcpy(p, src, bytes, cudaMemcpyHostToDevice));
+        grids[t] = p;
+    }
+    return (const uint32_t *) grids[t];
+#else
+    (void) t;
+    return nullptr;
+#endif
 }
 
 // Run `launch(stream, j)` for j = 0..batch-1 as one CUDA graph; time `reps` launches. Per-call microseconds.
@@ -196,7 +264,8 @@ std::vector<double> time_graph(const std::function<void(cudaStream_t, int)> & la
 
 void usage() {
     printf("usage: mmvq_kcol [options]\n"
-           "  --types LIST     q8_0,q2_0,q3_K,q4_K,q5_K,q6_K,iq4_xs,q4_0,q5_0,iq4_nl (default all)\n"
+           "  --types LIST     q8_0,q2_0,q3_K,q4_K,q5_K,q6_K,iq4_xs,q4_0,q5_0,iq4_nl, and with build_kcol.sh IQ_TREE=...\n"
+           "                   iq2_xxs,iq2_xs,iq2_s,iq3_xxs,iq3_s,iq1_m (default all)\n"
            "  --shapes LIST    shape names (default all; see --list)\n"
            "  --variants LIST  pascal,r1,r2,itt1,s32k,prod (default all)\n"
            "  --tokens LIST    columns per product, 1 to 8 (default 1,2,3,4,5,6,8)\n"
@@ -296,6 +365,7 @@ int main(int argc, char ** argv) {
                 params p;
                 p.vx = w.as<char>(); p.y = y.as<float>(); p.rec = rec.as<uint32_t>(); p.dst = d.as<float>();
                 p.K = sh.K; p.nrows = sh.N; p.row_bytes = (int) rbytes; p.ncols = k; p.stride_col_y = sh.K; p.stride_col_dst = sh.N;
+                p.grid = device_grid(sh.type);
                 if (!pick_shape(sh.type, sh.K, sh.N, k, (int) rbytes, (uintptr_t) w.p, nsm, v.r, v.itt, v.smem, p.s)) {
                     printf("%-12s %-7s %2d %-7s  (no launch shape)\n", sh.name, kname(sh.type), k, v.name);
                     continue;

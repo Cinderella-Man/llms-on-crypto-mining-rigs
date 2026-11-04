@@ -605,6 +605,37 @@ python3 -I bench/mmvq_pascal/iq_perf_table.py iq_perf --layout docs/data/2026-11
 built for the host) against ggml's own dequantization on a CPU, without a GPU; `MUTATE=1` checks that it catches two
 planted faults. Results: [docs/data/2026-11-04_iq2xs_kernel](../../docs/data/2026-11-04_iq2xs_kernel/README.md).
 
+## Flash-Next's grid types in a k-token pass (Q713)
+
+Fork branch `pascal-p106-v3-b12076-iqkcol` takes the grid types (IQ2_XXS, IQ2_XS, IQ2_S, IQ3_XXS, IQ3_S) and IQ1_M at
+2–8 tokens into the k-column dense kernels above (Swift-1.5's IQ3_S attention, shared experts and `ssm_out`) and into a
+multi-token expert kernel in the style of R7's Q2_0 one (`mmvq-pascal-mtok-iq.cuh`: each distinct expert of the step
+read once for all the tokens that picked it; the routed gate/up projections of the IQ files). Both decode each
+32-weight block once into 8 words of signed int8 weights (`mmvqp_iq::decode32` in `mmvq-pascal-iq.cuh`, which
+`src/mmvq-pascal-iq.cuh` copies verbatim) and spend one dp4a per 4 weights and token; the expert kernel's results are
+bit-identical to the one-token Pascal kernel's. Where the expert kernel takes a type, MUL_MAT_ID runs its 5–8-token
+products there instead of llama.cpp's matrix-matrix kernels.
+
+- `build_kcol.sh` with `IQ_TREE=<llama.cpp tree>` adds these types to `build/mmvq_kcol` (their grids come from that
+  tree's `ggml-common.h` into `build/iq_grids.h`): the IQ3_S dense shapes of the Swift IQ2_XS file and each other type at
+  `attn_gate`'s 2,560 → 6,144 (`--types iq3_s,...`; the pass total then covers the types run).
+- `iq_kcol_perf.sh` times them inside ggml at 1–8 tokens against the kernels before Q713 in the same binary
+  (`GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP` and `GGML_CUDA_MMVQ_PASCAL_MTOK_SKIP` listing the types): the routed gate or up
+  projection, the fused routed gate/up + SwiGLU and the dense attention shapes, as `iq_perf.sh`. `iq_kcol_perf_table.py`
+  writes the CSV and `iq_kcol_perf.md` (µs off and on, speed-up, each run's k-token cost against its own one-token call,
+  and with `--layout` the milliseconds of a k-token pass of a file's timed products).
+- `verify/iq_kcol_check.sh <llama.cpp tree>` checks both kernels' decoding against ggml's own dequantization on a CPU,
+  and the expert kernel's arithmetic bit for bit against the one-token functions; `MUTATE=1` plants three faults that
+  must fail exactly IQ2_S, IQ3_S and IQ1_M.
+
+```bash
+ssh rig "BIN=/opt/llama-builds/<build>/bin OUT=/tmp/iq_kcol_perf bash -s" < bench/mmvq_pascal/iq_kcol_perf.sh
+scp -r rig:/tmp/iq_kcol_perf . && ssh rig 'rm -rf /tmp/iq_kcol_perf'
+python3 -I bench/mmvq_pascal/iq_kcol_perf_table.py iq_kcol_perf --layout docs/data/2026-11-04_iq2xs_kernel/layout_swift-iq2_xs.txt > iq_kcol_perf.csv
+```
+
+Results: [docs/data/2026-11-04_iq_kcol](../../docs/data/2026-11-04_iq_kcol/README.md).
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
@@ -699,3 +730,6 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `verify/kcol_unit_check.cu`, `verify/kcol_unit_check.sh` | each type's decoding in the k-column products against ggml's reference dequantization, on a CPU (no GPU) |
 | `iq_perf.sh`, `iq_perf_table.py` | the five grid types' products at Flash-Next's shapes inside ggml, Pascal kernels against llama.cpp's, and the tables (Q222) |
 | `verify/iq_unit_check.cu`, `verify/iq_unit_check.sh` | IQ2_XXS, IQ2_XS and IQ3_S decoding of the fork's Pascal kernels against ggml's own dequantization, on a CPU (no GPU); `MUTATE=1` the check of the check |
+| `src/mmvq-pascal-iq.cuh` | the fork's ggml-free decoding of the grid types and IQ1_M (copied verbatim), which `src/kcol_mm.cuh` includes (Q713) |
+| `iq_kcol_perf.sh`, `iq_kcol_perf_table.py` | the grid types' and IQ1_M's products at 1–8 tokens inside ggml, the Q713 kernels against the kernels before them, and the tables (Q713) |
+| `verify/iq_kcol_check.cu`, `verify/iq_kcol_check.sh` | the grid types' and IQ1_M's decoding in the fork's k-column and multi-token kernels against ggml's own dequantization, on a CPU (no GPU); `MUTATE=1` the check of the check (Q713) |

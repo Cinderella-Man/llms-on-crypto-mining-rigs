@@ -1,0 +1,24 @@
+Per-kernel sm_61 SASS identity of test-backend-ops (docs/data/2026-11-04_ladder2_merge/run/sass_identity.sh, run by
+run/cpu_checks.sh step 4) of fork commit 0fd6ce5c1 (branch pascal-p106-v3-b12076-iqkcol) against:
+  iq2xs     the base: pascal-p106-v3-b12076-iq2xs 6c88b6991
+  kcol      pascal-p106-v3-b12076-kcol af46311af (merged), cut from
+  kcol_old  pascal-p106-v3-b12076-kcol e1fa4c573 (the -kcol the base already holds)
+
+dumped merged: 8006 functions
+dumped iq2xs: 7745 functions
+dumped kcol: 7677 functions
+dumped kcol_old: 7626 functions
+kcol (cut from kcol_old): kernels it changed or added: 51 carried identically, 0 not, 0 changed on both sides
+merged build: 7587 kernels
+  NEW in merge: 210
+  as a branch: kcol: 51
+  as base: 7326
+
+The 210 new kernels, all of Q713:
+   96 kcol::mul_mat_kcol<10..15, NC, R>          (IQ2_XXS, IQ2_XS, IQ2_S, IQ3_XXS, IQ3_S, IQ1_M; 1-8 columns; R 1, 2)
+    6 kcol::quantize_records<10..15>
+  108 mtok_iq::mul_mat_vec_iq_pascal_mtok<type, gate, SU, NTM>   (6 types; gate or not; 16-, 8-, 4-byte staging; 2, 4, 8 members)
+
+verdict: OK. Every kernel of the base build compiles to the same machine code, every kernel -kcol changed or added
+since e1fa4c573 is carried with identical code, and every other kernel is one of the new ones. (The k-column kernels of
+the earlier types are among the 7,326: their parameter struct gained a field at its end, and their code is unchanged.)
