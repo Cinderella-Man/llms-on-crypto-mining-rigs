@@ -1,0 +1,8 @@
+request	prompt_tokens	f32_prompt_tok_s	q8_prompt_tok_s	f32_decode_tok_s	q8_decode_tok_s	f32_first_token_s	q8_first_token_s
+short	65	12.03	12.64	14.53	16.21	5.65	5.39
+p1k	1382	60.96	74.52	16.18	18.25	23.02	18.9
+p8k	7183	140.63	184.05	13.73	15.84	51.64	39.59
+p32k	32674	155.15	189.03	9.16	10.11	211.41	173.59
+restore32k	31161	156.68	192.21	9.79	10.79	199.02	162.25
+ident-chat	30	8.63	9.39	15.83	18.98	3.48	3.2
+ident-rewrite	735	53.4	64.4	16.1	16.53	13.8	11.45

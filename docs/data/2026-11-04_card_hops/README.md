@@ -164,6 +164,8 @@ changes nothing where it is not used), the casts' CUDA kernels at the hop shapes
 | [run/gpu_check.sh](run/gpu_check.sh) | the two-card check |
 | [run/kld_hops.sh](run/kld_hops.sh) | the KLD arms on the quality chain's bases |
 | [run/rig_hops.sh](run/rig_hops.sh) | the rig run: the hop microbenchmark, then a server line per arm |
+| [rig_hop_bench.txt](rig_hop_bench.txt) | C200r: the hop bench on the second rig, four card pairs, every size and transfer |
+| [rig_lines.tsv](rig_lines.tsv) | C200r: the `f32` and `q8` server lines on the second rig, per request: prompt and decode tok/s, first token |
 
 The hop microbenchmark is [bench/megakernel_p106](../../../bench/megakernel_p106/README.md) (`--hop`, `--hop-chunks`).
 
@@ -197,3 +199,32 @@ Swift Q2_0 (the Q8_0 reference needs ~124 GB of VRAM, more than five cards hold)
 | q8_0 | −0.0011 ± 0.0012 | +0.0002 ± 0.0006 | −0.0005 ± 0.0004 |
 
 **Passed:** neither cast moves the KLD beyond its paired noise, so the Q8_0 hop cast goes on the release line (S35).
+
+## C200r: the hop bench and the server lines on a rig (2026-11-04)
+
+The second rig (nine P106-090, `kho=off`), from the bundle's `run/rig_hops.sh` with the lines on Miner Llama's
+`-ladder3` (it holds this branch) and pascal-mix's pmix-q2-fast, `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768` on every line
+(`ENV_ALL`, as the day's agent arms ran), S12's no-draft split `-b 2048 -ub 512 -ts 6,5,5,6,5,5,6,5,6 -fit off`, under
+the RAM watchdog (floor 60 MiB). Only the `f32` and `q8` lines ran: the rig was switched off for the night before `f16`,
+`staged`, `q8staged` and the timed agent arm.
+
+**The hop bench** ([rig_hop_bench.txt](rig_hop_bench.txt), four card pairs: behind one switch, across the switches, to
+the card on its own port and back): every byte arrived in every size and chunk count, no mailbox timeouts. The manual
+staged hop in two chunks takes 118.7 µs at 10,240 B against the driver's peer copy's 144.2, and 357.5 against 455.8 µs
+at 40,960 B (cards 0 → 1); in four chunks it is faster still from ~20 KB up (317.3 µs at 40,960 B, 1,119 against 1,702
+at 163,840 B), as the first rig showed.
+
+**The lines** ([rig_lines.tsv](rig_lines.tsv)), generation and prompt speed per request, `f32` (no switch) against `q8`
+(`LLAMA_HOP_CAST=q8_0`):
+
+| Request | Prompt tokens | Prompt tok/s, f32 → q8 | Decode tok/s, f32 → q8 |
+|---|---:|---|---|
+| short | 65 | 12.0 → 12.6 | 14.5 → 16.2 (+12 %) |
+| ~1k | 1,382 | 61.0 → 74.5 (+22 %) | 16.2 → 18.3 (+13 %) |
+| ~8k | 7,183 | 140.6 → 184.1 (+31 %) | 13.7 → 15.8 (+15 %) |
+| ~32k | 32,674 | 155.2 → 189.0 (+22 %) | 9.2 → 10.1 (+10 %) |
+| ~31k from a checkpoint | 31,161 | 156.7 → 192.2 (+23 %) | 9.8 → 10.8 (+10 %) |
+
+**The Q8_0 hop cast gives +10–15 % decode and +22–31 % prompt speed** on this line, at no measurable KLD (C200k above).
+Each boundary crosses the PCIe 1.0 x1 links in a quarter of F32's bytes, and prompts carry the most bytes per hop. The
+identity hashes of `f32` and `q8` differ, as a cast's must. The agent check of the cast is the next step.
