@@ -6,6 +6,8 @@
 #     (rounding ties, all-zero and all -0.0 blocks, the largest value negative, Q8_0 scales below F16's normal range
 #     and below its smallest step, F16 ties in the normal and subnormal ranges): the BF16 `hc_` tensors go to Q8_0 and
 #     the F32 `ffn_gate_inp` ones to F16;
+#   - a one-shard GGUF whose F32 `ffn_gate_inp` tensors go to BF16 (ties, NaN, inf, subnormals, a router of BF16
+#     values that must convert exactly);
 #   - a two-shard GGUF of BF16, F32, F16 and Q8_0 tensors that go to Q6_K, Q5_0 and Q4_0, with blocks that test those
 #     types' edge cases (the first of two equal magnitudes deciding the scale's sign, the cap at 31 and 15, values one
 #     float32 step below a truncation boundary, nearest_int ties, Q6_K sub-blocks that are zero, sub-blocks whose int8
@@ -14,11 +16,11 @@
 #     in Q8_0, and a shard with nothing to convert that --link-unchanged links;
 #   and checks that (1) the converted bytes equal a line-by-line transcription of ggml's C (quantize_row_q8_0_ref,
 #   _q5_0_ref, _q4_0_ref, _q6_K_ref with make_qx_quants and nearest_int, dequantize_row_q8_0,
-#   ggml_compute_fp32_to_fp16), (2) every other tensor is unchanged byte for byte and a shard with nothing to convert
+#   ggml_compute_fp32_to_fp16, ggml_compute_fp32_to_bf16), (2) every other tensor is unchanged byte for byte and a shard with nothing to convert
 #   has its old SHA-256, (3) the headers keep their key/value pairs and carry the new types, with aligned offsets,
 #   (4) `verify` passes. Negative controls, which must fail: a rule asking for an impossible conversion, a Q6_K rule on
 #   rows of 320, and the same transcriptions with one step changed (Q6_K without make_qx_quants' search, Q5_0's
-#   truncation done in double instead of float32), which must differ from the tool's bytes on these blocks.
+#   truncation done in double instead of float32, BF16 by truncation), which must differ from the tool's bytes on these blocks.
 #   With the options: checks the converted tensors of a real retyped file against llama.cpp itself, every tensor or N
 #   of each type spread over the file (--sample). Q8_0, Q6_K, Q5_0 and Q4_0 tensors go in their source type into one
 #   GGUF per type with the first old shard's key/value pairs (split keys left out), which llama-quantize converts
@@ -429,6 +431,49 @@ def synthetic_low(d):
     return 8
 
 
+def ref_bf16(raw):
+    """ggml_compute_fp32_to_bf16, line by line: a NaN keeps its high half and is made quiet, everything else rounds
+    to nearest even."""
+    out = []
+    for (u,) in struct.iter_unpack("<I", raw):
+        if (u & 0x7FFFFFFF) > 0x7F800000:
+            out.append((u >> 16) | 64)
+        else:
+            out.append((u + (0x7FFF + ((u >> 16) & 1))) >> 16)
+    return struct.pack(f"<{len(out)}H", *out)
+
+
+def synthetic_bf16(d):
+    """F32 -> BF16: ties to even both ways, values just off a tie, the largest finite value rounding to inf, inf,
+    signalling and quiet NaNs, subnormals, -0.0, values already BF16 (unchanged); a router of BF16 values converts
+    exactly. Negative control: plain truncation must differ on these values."""
+    old, new = os.path.join(d, "old-bf16"), os.path.join(d, "new-bf16")
+    os.makedirs(old, exist_ok=True)
+    rnd = random.Random(865)
+    special = [0x3F808000, 0x3F818000, 0xBF808000, 0x3F808001, 0x3F807FFF, 0x7F7FFFFF, 0x7F800000, 0xFF800000,
+               0x7F800001, 0x7FC00000, 0xFFA12345, 0x00000001, 0x00008000, 0x00018000, 0x80000000, 0x00000000,
+               0x3F800000, 0xC2C80000]
+    words = special + [rnd.getrandbits(32) & 0xBFFFFFFF for _ in range(64 * 4 - len(special))]
+    router = [bits(rnd.gauss(0, 0.05)) & 0xFFFF0000 for _ in range(32 * 3)]  # BF16 values held in F32
+    pack = lambda w: struct.pack(f"<{len(w)}I", *w)
+    t1 = [("blk.0.ffn_gate_inp.weight", [64, 4], F32, pack(words)),
+          ("blk.0.attn_norm.weight", [61], F32, struct.pack("<61f", *(rnd.gauss(1, 0.1) for _ in range(61)))),
+          ("blk.1.ffn_gate_inp.weight", [32, 3], F32, pack(router))]
+    olds = [os.path.join(old, "m-00001-of-00001.gguf")]
+    write_gguf(olds[0], [("general.architecture", 8, struct.pack("<Q", 4) + b"test")] + split_kv(0, 1, len(t1)), t1)
+    subprocess.run([sys.executable, "-I", TOOL, "retype", "--rule", "ffn_gate_inp=BF16@F32", "--out-dir", new,
+                    *olds], check=True, stdout=subprocess.DEVNULL)
+    news = [os.path.join(new, os.path.basename(olds[0]))]
+    want = {n: (BF16, ref_bf16(data)) if "ffn_gate_inp" in n else (typ, data) for n, _dims, typ, data in t1}
+    assert want["blk.1.ffn_gate_inp.weight"][1] == b"".join(struct.pack("<I", w)[2:] for w in router), "not exact"
+    check_retyped(olds, news, want)
+    out = subprocess.run([sys.executable, "-I", TOOL, "verify", *olds, "--new", *news], check=True,
+                         capture_output=True, text=True).stdout
+    assert "1 tensors identical" in out and "2 converted" in out, out
+    trunc = struct.pack(f"<{len(words)}H", *(w >> 16 for w in words))
+    assert trunc != want["blk.0.ffn_gate_inp.weight"][1], "the negative control (truncation) matched"
+
+
 def bf16_values(raw):
     return [struct.unpack("<f", b"\0\0" + raw[i:i + 2])[0] for i in range(0, len(raw), 2)]
 
@@ -544,6 +589,7 @@ def main():
     d = os.path.abspath(a.dir)
     synthetic(os.path.join(d, "synthetic"))
     synthetic_low(os.path.join(d, "synthetic"))
+    synthetic_bf16(os.path.join(d, "synthetic"))
     if a.old:
         assert a.quantize and a.ggml and a.new and len(a.old) == len(a.new), "--quantize, --ggml, --old and --new"
         real(os.path.join(d, "real"), a)

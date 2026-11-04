@@ -18,7 +18,9 @@
 #         make_qx_quants finds among 19 trial scales (squared error weighted by x²), the 16 scales are stored as int8
 #         against the largest, d in F16, and q = nearest(x / (d * scale)) clamped to [-32, 31];
 #       - to F16 from F32 or BF16, round to nearest even as ggml_fp32_to_fp16_row; a value beyond F16's range stops
-#         the tool (ggml would write inf).
+#         the tool (ggml would write inf);
+#       - to BF16 from F32, round to nearest even as ggml_compute_fp32_to_bf16 (a NaN stays a quiet NaN); exact for an
+#         F32 tensor that holds BF16 values, as the GSQ-RCO routers do (llama-quantize never converts a router).
 #     A Q8_0 source is read as dequantize_row_q8_0 reads it (q * d, exact in float32), so Q8_0 -> Q5_0 is what
 #     llama-quantize --allow-requantize writes. Rows must hold whole blocks (32 values, Q6_K 256): llama-quantize would
 #     switch such a tensor to another type, so give it a rule of its own first (e.g. 'hc_.*_up=Q8_0@BF16').
@@ -47,7 +49,8 @@ F32, F16, Q4_0, Q5_0, Q8_0, Q6_K, BF16 = 0, 1, 2, 6, 8, 14, 30
 TYPES = {"F32": F32, "F16": F16, "Q4_0": Q4_0, "Q5_0": Q5_0, "Q8_0": Q8_0, "Q6_K": Q6_K, "BF16": BF16}
 NAMES = {v: k for k, v in TYPES.items()}
 FLOATS = (F32, F16, BF16)
-SOURCES = {Q8_0: FLOATS, Q5_0: FLOATS + (Q8_0,), Q4_0: FLOATS + (Q8_0,), Q6_K: FLOATS + (Q8_0,), F16: (F32, BF16)}
+SOURCES = {Q8_0: FLOATS, Q5_0: FLOATS + (Q8_0,), Q4_0: FLOATS + (Q8_0,), Q6_K: FLOATS + (Q8_0,), F16: (F32, BF16),
+           BF16: (F32,)}
 BLOCK = {F32: (1, 4), F16: (1, 2), BF16: (1, 2), Q4_0: (32, 18), Q5_0: (32, 22), Q8_0: (32, 34), Q6_K: (256, 210)}
 PIECE = 1 << 20  # values per conversion job: whole blocks of every type
 EPS = array("f", [1e-15])[0]  # GROUP_MAX_EPS
@@ -241,7 +244,13 @@ def f16(x):
         raise SystemExit("a value is beyond F16's range")
 
 
-QUANT = {Q8_0: q8_0, Q5_0: lambda x: q_legacy(x, 16), Q4_0: lambda x: q_legacy(x, 8), Q6_K: q6_k, F16: f16}
+def bf16(x):
+    """ggml_compute_fp32_to_bf16: the high half of each float32, rounded to nearest even; a NaN is kept quiet."""
+    return array("H", ((v >> 16) | 64 if v & 0x7FFFFFFF > 0x7F800000 else (v + 0x7FFF + (v >> 16 & 1)) >> 16
+                       for v in array("I", x.tobytes()))).tobytes()
+
+
+QUANT = {Q8_0: q8_0, Q5_0: lambda x: q_legacy(x, 16), Q4_0: lambda x: q_legacy(x, 8), Q6_K: q6_k, F16: f16, BF16: bf16}
 
 
 def convert(job):
@@ -382,7 +391,7 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("retype")
     s.add_argument("--rule", action="append", required=True,
-                   help="<regex>=<Q8_0|Q6_K|Q5_0|Q4_0|F16>[@<from type>], repeatable; the first match wins")
+                   help="<regex>=<Q8_0|Q6_K|Q5_0|Q4_0|F16|BF16>[@<from type>], repeatable; the first match wins")
     s.add_argument("--out-dir", required=True)
     s.add_argument("--prefix", help="new file name before -0000k-of-0000N.gguf")
     s.add_argument("--jobs", type=int, default=min(8, os.cpu_count() or 1), help="worker processes (default 8)")
