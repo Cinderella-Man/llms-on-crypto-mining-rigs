@@ -59,13 +59,18 @@ words and multiplied by every token that picked it (8 dp4a a token), with the sa
 operations in the same order and the same lane reduction as the one-token kernel, so every token's result is
 bit-identical to it. Row segments are staged with the widest loads the rows allow; N3P-128's 270-byte rows (no gate)
 as warp tiles. `GGML_CUDA_MMVQ_PASCAL_MTOK=0` runs the earlier kernels.
+Why: on Ornith's shapes Q188 timed the earlier 2- and 4-token Pascal kernel, which reads every (token, slot) entry's
+expert on its own, at 3.5× and 8.1× the one-token time for N2P's expert gate/up (367 and 853 µs against 105) and 5.6×
+and 14.9× for the down projection (660 and 1,744 against 117), behind llama.cpp's kernel ([Q302](../../../quants/experiments.md)).
+The multi-token kernel's cost follows the distinct experts a step touches.
 
 **Prompt batches** (MMQ): the N2P/N3P tile loaders take the block type; a 256-weight MMQ iteration spans two 128-weight
 blocks. Both load into the Q8_0 tile layout as N2P and N3P do.
 
 ## Status
 
-**Built and correct on the CPU; the GPU checks, the files' KLD and the rig timing follow** (below).
+**Built and correct on the CPU; the two files are quantizing.** Still to come, in this order: the PTX and native GPU
+checks, the files' fit and KL divergence, then the P106 timing (C394). This page is updated as each lands.
 
 - **Build:** the rig tarball (sm_61 code and compute_61 PTX, `TESTS=1`, no AVX, GLIBC 2.38) of `1a0832375` compiles
   cleanly. The files were made with the CPU tools of `0b8427657` (`llama-quantize`), whose quantizer is the final
@@ -83,4 +88,53 @@ blocks. Both load into the Q8_0 tile layout as N2P and N3P do.
 | [run/build.sh](run/build.sh) | the builds on the quant machine: the rig tarball (sm_61 + compute_61 PTX), the CPU tools and test-quantize-fns, a compute 8.6 llama-perplexity and test-backend-ops for the KLD and the native MMQ check |
 | [run/gpu_checks.sh](run/gpu_checks.sh) | test-backend-ops runs per switch setting (MODE=ptx on another card, MODE=native on a P106) |
 | [run/quantize.sh](run/quantize.sh) | the two files: llama-quantize of the experts, then gguf_compose onto pmix-q2-fast, `verify`ed |
+| [run/fit.sh](run/fit.sh) | the files' fit on nine 6 GB cards from their headers ([bench/file_choice/fit.py](../../../bench/file_choice/fit.py)), each once built |
 | [run/rig_tk.sh](run/rig_tk.sh) | on a rig: the native check (MMQ included), per-kernel perf at Flash-Next's expert shapes, T(k) of the files |
+
+## The two files
+
+Swift-1.5 Qwen3.8-Flash-Next (`qwen4exp`, 1,224 tensors; routed experts `[2560, 640, 512]` gate and up and
+`[640, 2560, 512]` down per layer), from the Swift-1.5 Q8_0 (the KLD reference, FN1) with FN4's importance matrix (the
+Q8_0 on 200 chunks of 512 tokens of the agent training text, [flash_next_quality](../2026-11-03_flash_next_quality/README.md)):
+
+| File | Gate/up | Down | Every other tensor | Est. on the cards |
+|---|---|---|---|---|
+| N2P-N2P128 | N2P (268.75 MiB a tensor) | N2P-128 (275 MiB) | pmix-q2-fast's, byte for byte | ~42.3 GiB (+6.6 against pmix-q2-fast) |
+| N2P-N3P128 | N2P | N3P-128 (337.5 MiB) | the same | ~45.3 GiB (+9.6) |
+
+For comparison, Q2_0 takes 225 MiB a tensor (Swift Q2_0, pmix-q2-fast: 35,735 MiB on the cards) and Swift's IQ3_XXS
+mix 44,710 MiB. llama-quantize (`--pure`, every other tensor left at Q8_0, unused) writes the experts; gguf_compose
+takes them onto pmix-q2-fast, so the dense spine, the makers' hyper-connections and output layer and the n-gram table
+stay as in that file, and a KLD against it isolates the experts' format. The second file is the first with its down
+projections taken from a second llama-quantize run. Requantizing replaces the makers' GSQ-RCO experts (quantized from
+the BF16 with their own method) with N2P from the Q8_0: Q8_0's own error is about a sixteenth of a 4-bit type's, so the
+double rounding costs little, but the makers' method is not in it.
+
+## Commands
+
+```bash
+# build (a build machine with Docker; WORK/src a llama.cpp clone with the fork's branch as a remote)
+WORK=<dir> REPO=<this repository> REF=fork/pascal-p106-v3-b12076-n2p JOBS=8 DOCKER_ARGS='--cpu-shares=256' \
+  STEPS='rig extra kld' bash docs/data/2026-11-04_n2p_flash/run/build.sh
+# the files (CPU, ~5 h for the first and ~2 h for the second at 8 threads under load; resumable)
+REPO=<this repository> Q8=<Swift-1.5 Q8_0 shard 1> IMATRIX=<imatrix.gguf> BASE=<pmix-q2-fast shard 1> \
+  QUANTIZE=<llama-quantize of the branch> WORK=<scratch> OUT1=<dir> OUT2=<dir> NAME1=<prefix> NAME2=<prefix> \
+  MOUNTS='<dirs>' bash docs/data/2026-11-04_n2p_flash/run/quantize.sh
+# fit on nine 6 GB cards from the headers, each file once built
+REPO=<this repository> OUT=<dir> FILES='pmix-q2-fast=<shard 1> n2p-dn2p128=<shard 1>@<marker> n2p-dn3p128=<shard 1>@<marker>' \
+  bash docs/data/2026-11-04_n2p_flash/run/fit.sh
+# correctness through the PTX on a newer card (the rig tarball), then natively there (the compute 8.6 build: llama.cpp's
+# kernels and MMQ)
+docker run --rm --gpus '"device=<card>"' -v <dirs> -e MODE=ptx -e BIN=<rig tree>/bin -e OUT=<dir> -e DEV=0 \
+  nvidia/cuda:12.9.2-devel-ubuntu24.04 nice -n 19 bash docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh
+docker run --rm --gpus '"device=<card>"' -v <dirs> -e MODE=native -e BIN=<compute 8.6 tree>/bin -e OUT=<dir> -e DEV=0 \
+  -e RUNS='np reg-rows' nvidia/cuda:12.9.2-devel-ubuntu24.04 nice -n 19 bash docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh
+# KL divergence: FN2's kld.sh and split against FN1's bases, each file in place
+#   (../2026-11-04_pascal_mix/run/score_all.sh with score_direct.sh, PPL = the compute 8.6 llama-perplexity)
+# on a rig, idle (C394): the native check with MMQ, per-kernel perf at Flash-Next's expert shapes, T(k) of the files
+BIN=<rig tree>/bin FILES='n2p-dn2p128=<shard 1> pmix-q2-fast=<shard 1>' VC=<folder with verify_cost.sh> OUT=<dir> \
+  TS=<the file's -ts> setsid nohup bash run/rig_tk.sh > rig_tk.out 2>&1 &
+```
+
+Provenance: the Swift-1.5 Q8_0 is ukisai's (`ukisai/Swift-1.5-Qwen3.8-Flash-Next-GGUF`, folder `Q8_0/`); the levels
+are ik_llama.cpp's IQ2_K and IQ3_K tables (MIT). Licence: the repository's.
