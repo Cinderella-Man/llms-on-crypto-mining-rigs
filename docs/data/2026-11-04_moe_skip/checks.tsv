@@ -1,0 +1,14 @@
+commit	where	run	what	result
+f3072cbe8	CPU (native build)	switch	test-bytes-switches, random qwen4exp (64 experts, 10 used), F32 head	0 of 535 checks failed; every op arm (-1, repeat, skip 0) = the graph-level ops' logits and histogram bit for bit at ubatch 64, 4 and 1
+f3072cbe8	CPU (native build)	switch	test-bytes-switches, the same with a Q5_K head	0 failed; the same
+f3072cbe8	CPU (native build)	archs	test-llama-archs -b CPU, LLAMA_MOE_TAIL p=0.8 renorm=1 and w=0.05 renorm=1: the op, skip=0, repeat=1 against the graph-level cut	every run: 136 comparisons bit for bit equal; the 7 others (dense and MoE models sharing an architecture name) the same as in the graph run itself
+f3072cbe8	RTX 3080, compute 6.1 PTX	skip-mmq	test-backend-ops MUL_MAT_ID and MUL_MAT_VEC_FUSION, skipped slots past 8 tokens (MMQ, MMF, the host fallback)	100/100, 0 FAIL
+f3072cbe8	RTX 3080, compute 6.1 PTX	skip	every skipped-slot case, defaults (the Pascal one- and multi-token kernels, -mtok)	568/568, 0 FAIL
+f3072cbe8	RTX 3080, compute 6.1 PTX	skip-mmvq	the same, GGML_CUDA_MMVQ_PASCAL=0 (llama.cpp's mul_mat_vec_q and mul_mat_vec_q_moe)	568/568, 0 FAIL
+f3072cbe8	RTX 3080, compute 6.1 PTX	skip-mtok0	Q2_0's skipped-slot cases, GGML_CUDA_MMVQ_PASCAL_MTOK=0 (the earlier multi-token kernel)	41/41, 0 FAIL
+f3072cbe8	RTX 3080, compute 6.1 PTX	tail	MOE_TAIL, TOPK_MOE_TAIL (the fused router chain), GET_ROWS (row -1), ADD_ID	493/493, 0 FAIL
+f3072cbe8	RTX 3080, compute 6.1 PTX	experts	every expert case with nothing skipped (MUL_MAT_ID, MUL_MAT_VEC_FUSION, MUL_MAT_ID_SHARED, TOPK_MOE)	4237/4237, 0 FAIL
+f3072cbe8	RTX 3080, compute 6.1 PTX	archs-off	test-llama-archs -b CUDA0, the switch off, against -kshape's build (39c3ab5f1)	136 of 136 bit for bit equal; the 7 name collisions as in the base run
+f3072cbe8	RTX 3080, compute 6.1 PTX	archs-tail	test-llama-archs -b CUDA0, p=0.8 renorm=1: the op (the fused router kernel, -1 ids), skip=0, repeat=1 against the graph-level cut	each 136 of 136 bit for bit equal; the 7 name collisions as in the graph run
+3028ef121	CPU (native build)	switch	test-bytes-switches (first run)	crashed: GET_ROWS of an expert's scale with id -1 (fixed: row -1 reads zeros)
+54dbd941e	RTX 3080, compute 6.1 PTX	skip	the skipped-slot cases (first run)	MMQ faulted (Xid 31, illegal address) on a token naming an expert twice: the ids copy put expert 0 in place of -1 (fixed: an expert the token does not name; larger micro-batches keep the router's ids)
