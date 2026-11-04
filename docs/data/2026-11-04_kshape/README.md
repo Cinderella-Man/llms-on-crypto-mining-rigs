@@ -187,6 +187,19 @@ tokens; ms per pass, median; standard deviation 2–4 ms; [tk_rig.tsv](tk_rig.ts
 - The down projection's direct loads (`MTOK=1,0,0,0,0`) match the tiles except at two tokens (113.6 against 102.4);
   `SMEM=24576` matches 32 KB within the noise.
 
+**The bench on the rig** (`mmvq_kcol --tokens 1,...,8`, card 0, every variant passed its CPU reference;
+[kcol_bench_rig.csv](kcol_bench_rig.csv)), ms a token over its Flash-Next shapes (calls per token × µs per call):
+
+| variant | k=1 | k=2 | k=3 | k=4 | k=5 | k=6 | k=7 | k=8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `pascal` (this build's shapes) | 47.63 | 54.24 | 62.83 | 69.69 | 78.22 | 85.21 | 97.28 | 108.17 |
+| `old` (the shapes before Q823) | 68.77 | 76.90 | 82.33 | 88.01 | 97.39 | 104.93 | 116.11 | 126.61 |
+| `s32k` (a 32 KB budget) | 45.97 | 52.33 | 60.83 | 65.39 | 73.39 | 66.79 | 77.14 | 87.11 |
+
+Q823's shapes take 18–31 % less than the old ones at every k; a 32 KB budget is still 2–22 % faster than them. The
+bench step's in-ggml perf arms (test-backend-ops perf) were left out: their time goes into preparing weights on the
+rig's two-core CPU.
+
 ## Files
 
 | File | What it is |
@@ -202,6 +215,7 @@ tokens; ms per pass, median; standard deviation 2–4 ms; [tk_rig.tsv](tk_rig.ts
 | [run/sass_all.sh](run/sass_all.sh) | per-kernel SASS identity of two builds |
 | [run/rig_tk.sh](run/rig_tk.sh) | C350 on the rig: the native checks, T(k) per switch setting, the bench and perf timings |
 | [tk_rig.tsv](tk_rig.tsv) | C350's T(k) on the rig per switch setting: mean and median ms, standard deviation, ms per token, T(k) / T(1), the step from k − 1 |
+| [kcol_bench_rig.csv](kcol_bench_rig.csv) | C350's `mmvq_kcol` on the rig: per shape, type, k and variant, µs, GB/s and the check |
 
 ## Run
 
