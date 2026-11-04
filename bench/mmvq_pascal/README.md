@@ -581,6 +581,30 @@ a GPU. The whole product path through ggml (llama.cpp's and the earlier Pascal k
 `test-backend-ops perf` with `GGML_CUDA_MMVQ_PASCAL_KCOL=0` and the default:
 [docs/data/2026-11-04_kcol_dense](../../docs/data/2026-11-04_kcol_dense/README.md) has the run for one P106.
 
+## Flash-Next's grid types (Q222)
+
+Miner Llama's Pascal kernels (`mmvq-pascal.cu`, fork branch `pascal-p106-v3-b12076-iq2xs`) take five grid types: IQ2_S
+and IQ3_XXS (Q166) and IQ2_XXS, IQ2_XS and IQ3_S (Q222), whose routed gate/up projections and attention fill Swift-1.5
+Qwen3.8-Flash-Next's GSQ-RCO IQ2_XS, IQ3_XXS and IQ3_S files. `iq_perf.sh` times them inside ggml with the fork's
+test-backend-ops at Flash-Next's shapes, 1–4 tokens, against llama.cpp's kernels in the same binary
+(`GGML_CUDA_MMVQ_PASCAL_SKIP`): one routed gate or up projection (2,560 → 640, 10 of 128 experts per token), the fused
+routed gate/up + SwiGLU (under `GGML_CUDA_PROFILE`, since perf mode repeats only a graph's last node), and `attn_qkv`,
+`attn_q`, `attn_gate` (2,560 → 10,240, 12,288, 6,144) and `attn_output` / `ssm_out` (6,144 → 2,560); every call
+reads 4 MB or more. `iq_perf_table.py` turns the logs into a CSV and `iq_perf.md` (µs per call off and on, speed-up,
+GB/s at one token), and with `--layout` (a file's
+[iq_layout.py](../../docs/data/2026-11-04_iq2xs_kernel/run/iq_layout.py) listing) into the milliseconds a token of that
+file spends in these products. On the rig:
+
+```bash
+ssh rig "BIN=/opt/llama-builds/<build>/bin OUT=/tmp/iq_perf bash -s" < bench/mmvq_pascal/iq_perf.sh
+scp -r rig:/tmp/iq_perf . && ssh rig 'rm -rf /tmp/iq_perf'
+python3 -I bench/mmvq_pascal/iq_perf_table.py iq_perf --layout docs/data/2026-11-04_iq2xs_kernel/layout_swift-iq2_xs.txt > iq_perf.csv
+```
+
+`verify/iq_unit_check.sh <llama.cpp tree>` checks the three new types' decoding (the fork's `mmvq-pascal-iq.cuh`,
+built for the host) against ggml's own dequantization on a CPU, without a GPU; `MUTATE=1` checks that it catches two
+planted faults. Results: [docs/data/2026-11-04_iq2xs_kernel](../../docs/data/2026-11-04_iq2xs_kernel/README.md).
+
 ## Memory system: spread weights and a TLB probe (Q99)
 
 In the model, the ported kernels take 13–33 µs longer per call than in this benchmark, and the excess fits a constant
@@ -673,3 +697,5 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `tools/` | SASS and register helpers for the fork's Pascal kernels: `regs.py`, `loops.py`, `loops2.py` (registers, spills and main-loop instruction counts from a ptxas log and `cuobjdump -sass`), `classify.py` (sorts a test-backend-ops log's failures into the cases a mutation should hit) (Q78); `benchloops.py` (the bench's staged-kernel loops per weight byte), `forksass.py` (SASS identity of two single-file builds of the fork's `mmvq-pascal.cu`, Q6_K registers), `sasscmp.py` (SASS identity of two bench builds) (Q101) |
 | `src/kcol_mm.cuh`, `src/kcol_main.cu`, `src/kcol_ref.h`, `build_kcol.sh` | `build/mmvq_kcol`: Miner Llama's k-column products (Q591, copied verbatim from the fork), timed at 1–8 columns at Qwen3.8-Flash-Next's dense shapes against ggml's reference dequantization |
 | `verify/kcol_unit_check.cu`, `verify/kcol_unit_check.sh` | each type's decoding in the k-column products against ggml's reference dequantization, on a CPU (no GPU) |
+| `iq_perf.sh`, `iq_perf_table.py` | the five grid types' products at Flash-Next's shapes inside ggml, Pascal kernels against llama.cpp's, and the tables (Q222) |
+| `verify/iq_unit_check.cu`, `verify/iq_unit_check.sh` | IQ2_XXS, IQ2_XS and IQ3_S decoding of the fork's Pascal kernels against ggml's own dequantization, on a CPU (no GPU); `MUTATE=1` the check of the check |

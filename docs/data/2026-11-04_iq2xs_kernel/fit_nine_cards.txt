@@ -1,0 +1,138 @@
+# scripts/split_plan.py --cards 9 --free 6001 --kv-mib 161 --state-mib 3 --compute 600,674 --top 2 <shards>, then the same with
+# --split-experts --top 1: nine 6 GB P106-090 cards, 64k context, -ub 512, F16 cache (the costs of Q213's fit probes)
+
+### Swift iq2_xs
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 335 MiB on the last card; weights 36862 MiB in the blocks
+#1: -ts 6,6,6,5,5,5,5,5,6  smallest free 569 MiB
+  card 0: layers 0-5, 1 attention, 5432 MiB, 569 free
+  card 1: layers 6-11, 2 attention, 5342 MiB, 659 free
+  card 2: layers 12-17, 1 attention, 5391 MiB, 610 free
+  card 3: layers 18-22, 1 attention, 4642 MiB, 1359 free
+  card 4: layers 23-27, 2 attention, 4908 MiB, 1093 free
+  card 5: layers 28-32, 1 attention, 4645 MiB, 1356 free
+  card 6: layers 33-37, 1 attention, 4683 MiB, 1318 free
+  card 7: layers 38-42, 1 attention, 4842 MiB, 1159 free
+  card 8: layers 43-47, 2 attention, 5342 MiB, 659 free
+#2: -ts 6,6,5,6,5,5,5,5,6  smallest free 557 MiB
+  card 0: layers 0-5, 1 attention, 5432 MiB, 569 free
+  card 1: layers 6-11, 2 attention, 5342 MiB, 659 free
+  card 2: layers 12-16, 1 attention, 4590 MiB, 1411 free
+  card 3: layers 17-22, 1 attention, 5444 MiB, 557 free
+  card 4: layers 23-27, 2 attention, 4908 MiB, 1093 free
+  card 5: layers 28-32, 1 attention, 4645 MiB, 1356 free
+  card 6: layers 33-37, 1 attention, 4683 MiB, 1318 free
+  card 7: layers 38-42, 1 attention, 4842 MiB, 1159 free
+  card 8: layers 43-47, 2 attention, 5342 MiB, 659 free
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 335 MiB on the last card; weights 36862 MiB in the blocks
+#1: -ts 6,5,6,5,6,5,5,6,5 -ot blk\.5\.ffn_up_exps=CUDA1,blk\.5\.ffn_down_exps=CUDA1,blk\.16\.ffn_up_exps=CUDA3,blk\.16\.ffn_down_exps=CUDA3,blk\.27\.ffn_gate_exps=CUDA5,blk\.27\.ffn_up_exps=CUDA5,blk\.27\.ffn_down_exps=CUDA5,blk\.32\.ffn_down_exps=CUDA6,blk\.43\.ffn_gate_exps=CUDA8,blk\.43\.ffn_up_exps=CUDA8,blk\.43\.ffn_down_exps=CUDA8  smallest free 877 MiB
+  card 0: layers 0-5, 1 attention, 4951 MiB, 1050 free
+  card 1: layers 6-10, 1 attention, plus blk.5.ffn_up_exps, blk.5.ffn_down_exps, 4964 MiB, 1037 free
+  card 2: layers 11-16, 2 attention, 4968 MiB, 1033 free
+  card 3: layers 17-21, 1 attention, plus blk.16.ffn_up_exps, blk.16.ffn_down_exps, 5124 MiB, 877 free
+  card 4: layers 22-27, 2 attention, 5072 MiB, 929 free
+  card 5: layers 28-32, 1 attention, plus blk.27.ffn_gate_exps, blk.27.ffn_up_exps, blk.27.ffn_down_exps, 5058 MiB, 943 free
+  card 6: layers 33-37, 1 attention, plus blk.32.ffn_down_exps, 4908 MiB, 1093 free
+  card 7: layers 38-43, 2 attention, 5064 MiB, 937 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_gate_exps, blk.43.ffn_up_exps, blk.43.ffn_down_exps, 5120 MiB, 881 free
+
+### Swift q2_0
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,5,6,5,5,6,5,6  smallest free 737 MiB
+  card 0: layers 0-5, 1 attention, 5207 MiB, 794 free
+  card 1: layers 6-10, 1 attention, 4495 MiB, 1506 free
+  card 2: layers 11-15, 2 attention, 4679 MiB, 1322 free
+  card 3: layers 16-21, 1 attention, 5247 MiB, 754 free
+  card 4: layers 22-26, 1 attention, 4522 MiB, 1479 free
+  card 5: layers 27-31, 2 attention, 4685 MiB, 1316 free
+  card 6: layers 32-37, 1 attention, 5264 MiB, 737 free
+  card 7: layers 38-42, 1 attention, 4532 MiB, 1469 free
+  card 8: layers 43-47, 2 attention, 5131 MiB, 870 free
+#2: -ts 5,6,5,6,5,5,6,5,6  smallest free 737 MiB
+  card 0: layers 0-4, 1 attention, 4471 MiB, 1530 free
+  card 1: layers 5-10, 1 attention, 5232 MiB, 769 free
+  card 2: layers 11-15, 2 attention, 4679 MiB, 1322 free
+  card 3: layers 16-21, 1 attention, 5247 MiB, 754 free
+  card 4: layers 22-26, 1 attention, 4522 MiB, 1479 free
+  card 5: layers 27-31, 2 attention, 4685 MiB, 1316 free
+  card 6: layers 32-37, 1 attention, 5264 MiB, 737 free
+  card 7: layers 38-42, 1 attention, 4532 MiB, 1469 free
+  card 8: layers 43-47, 2 attention, 5131 MiB, 870 free
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 35301 MiB in the blocks
+#1: -ts 6,5,6,5,6,5,5,6,5 -ot blk\.5\.ffn_up_exps=CUDA1,blk\.5\.ffn_down_exps=CUDA1,blk\.16\.ffn_up_exps=CUDA3,blk\.16\.ffn_down_exps=CUDA3,blk\.27\.ffn_up_exps=CUDA5,blk\.27\.ffn_down_exps=CUDA5,blk\.32\.ffn_down_exps=CUDA6,blk\.43\.ffn_gate_exps=CUDA8,blk\.43\.ffn_up_exps=CUDA8,blk\.43\.ffn_down_exps=CUDA8  smallest free 1032 MiB
+  card 0: layers 0-5, 1 attention, 4757 MiB, 1244 free
+  card 1: layers 6-10, 1 attention, plus blk.5.ffn_up_exps, blk.5.ffn_down_exps, 4945 MiB, 1056 free
+  card 2: layers 11-16, 2 attention, 4963 MiB, 1038 free
+  card 3: layers 17-21, 1 attention, plus blk.16.ffn_up_exps, blk.16.ffn_down_exps, 4963 MiB, 1038 free
+  card 4: layers 22-27, 2 attention, 4969 MiB, 1032 free
+  card 5: layers 28-32, 1 attention, plus blk.27.ffn_up_exps, blk.27.ffn_down_exps, 4751 MiB, 1250 free
+  card 6: layers 33-37, 1 attention, plus blk.32.ffn_down_exps, 4751 MiB, 1250 free
+  card 7: layers 38-43, 2 attention, 4758 MiB, 1243 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_gate_exps, blk.43.ffn_up_exps, blk.43.ffn_down_exps, 4905 MiB, 1096 free
+
+### Swift iq3_xxs
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,5,5,5,5,5  smallest free -409 MiB
+  card 0: layers 0-5, 1 attention, 5928 MiB, 73 free
+  card 1: layers 6-11, 2 attention, 5612 MiB, 389 free
+  card 2: layers 12-18, 1 attention, 6410 MiB, -409 free
+  card 3: layers 19-23, 2 attention, 5496 MiB, 505 free
+  card 4: layers 24-28, 1 attention, 5316 MiB, 685 free
+  card 5: layers 29-33, 1 attention, 6214 MiB, -213 free
+  card 6: layers 34-38, 1 attention, 6342 MiB, -341 free
+  card 7: layers 39-43, 2 attention, 5950 MiB, 51 free
+  card 8: layers 44-47, 1 attention, 5474 MiB, 527 free
+#2: -ts 5,7,7,5,5,5,5,5,5  smallest free -409 MiB
+  card 0: layers 0-4, 1 attention, 5170 MiB, 831 free
+  card 1: layers 5-11, 2 attention, 6370 MiB, -369 free
+  card 2: layers 12-18, 1 attention, 6410 MiB, -409 free
+  card 3: layers 19-23, 2 attention, 5496 MiB, 505 free
+  card 4: layers 24-28, 1 attention, 5316 MiB, 685 free
+  card 5: layers 29-33, 1 attention, 6214 MiB, -213 free
+  card 6: layers 34-38, 1 attention, 6342 MiB, -341 free
+  card 7: layers 39-43, 2 attention, 5950 MiB, 51 free
+  card 8: layers 44-47, 1 attention, 5474 MiB, 527 free
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 44281 MiB in the blocks
+#1: -ts 6,6,7,5,6,4,5,5,5 -ot blk\.5\.ffn_down_exps=CUDA1,blk\.18\.ffn_up_exps=CUDA3,blk\.18\.ffn_down_exps=CUDA3,blk\.23\.ffn_down_exps=CUDA4,blk\.29\.ffn_up_exps=CUDA5,blk\.29\.ffn_down_exps=CUDA5,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free 51 MiB
+  card 0: layers 0-5, 1 attention, 5703 MiB, 298 free
+  card 1: layers 6-11, 2 attention, plus blk.5.ffn_down_exps, 5837 MiB, 164 free
+  card 2: layers 12-18, 1 attention, 5842 MiB, 159 free
+  card 3: layers 19-23, 2 attention, plus blk.18.ffn_up_exps, blk.18.ffn_down_exps, 5840 MiB, 161 free
+  card 4: layers 24-29, 1 attention, plus blk.23.ffn_down_exps, 5872 MiB, 129 free
+  card 5: layers 30-33, 1 attention, plus blk.29.ffn_up_exps, blk.29.ffn_down_exps, 5883 MiB, 118 free
+  card 6: layers 34-38, 1 attention, 5892 MiB, 109 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 5950 MiB, 51 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 5924 MiB, 77 free
+
+### Swift iq3_s
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 510 MiB on the last card; weights 51556 MiB in the blocks
+#1: -ts 6,6,6,6,5,5,5,5,5  smallest free -1253 MiB
+  card 0: layers 0-5, 1 attention, 6926 MiB, -925 free
+  card 1: layers 6-11, 2 attention, 6861 MiB, -860 free
+  card 2: layers 12-17, 1 attention, 7082 MiB, -1081 free
+  card 3: layers 18-23, 2 attention, 7254 MiB, -1253 free
+  card 4: layers 24-28, 1 attention, 6567 MiB, -566 free
+  card 5: layers 29-33, 1 attention, 6283 MiB, -282 free
+  card 6: layers 34-38, 1 attention, 6180 MiB, -179 free
+  card 7: layers 39-43, 2 attention, 6662 MiB, -661 free
+  card 8: layers 44-47, 1 attention, 6282 MiB, -281 free
+#2: -ts 6,6,6,5,5,5,6,5,5  smallest free -1316 MiB
+  card 0: layers 0-5, 1 attention, 6926 MiB, -925 free
+  card 1: layers 6-11, 2 attention, 6861 MiB, -860 free
+  card 2: layers 12-17, 1 attention, 7082 MiB, -1081 free
+  card 3: layers 18-22, 1 attention, 6059 MiB, -58 free
+  card 4: layers 23-27, 2 attention, 6542 MiB, -541 free
+  card 5: layers 28-32, 1 attention, 6366 MiB, -365 free
+  card 6: layers 33-38, 1 attention, 7317 MiB, -1316 free
+  card 7: layers 39-43, 2 attention, 6662 MiB, -661 free
+  card 8: layers 44-47, 1 attention, 6282 MiB, -281 free
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 510 MiB on the last card; weights 51556 MiB in the blocks
+#1: -ts 6,6,6,5,5,6,5,5,5 -ot blk\.5\.ffn_down_exps=CUDA1,blk\.11\.ffn_down_exps=CUDA2,blk\.17\.ffn_up_exps=CUDA3,blk\.17\.ffn_down_exps=CUDA3,blk\.33\.ffn_gate_exps=CUDA6,blk\.33\.ffn_up_exps=CUDA6,blk\.33\.ffn_down_exps=CUDA6,blk\.38\.ffn_down_exps=CUDA7,blk\.43\.ffn_down_exps=CUDA8  smallest free -860 MiB
+  card 0: layers 0-5, 1 attention, 6476 MiB, -475 free
+  card 1: layers 6-11, 2 attention, plus blk.5.ffn_down_exps, 6861 MiB, -860 free
+  card 2: layers 12-17, 1 attention, plus blk.11.ffn_down_exps, 6738 MiB, -737 free
+  card 3: layers 18-22, 1 attention, plus blk.17.ffn_up_exps, blk.17.ffn_down_exps, 6853 MiB, -852 free
+  card 4: layers 23-27, 2 attention, 6542 MiB, -541 free
+  card 5: layers 28-33, 1 attention, 6441 MiB, -440 free
+  card 6: layers 34-38, 1 attention, plus blk.33.ffn_gate_exps, blk.33.ffn_up_exps, blk.33.ffn_down_exps, 6793 MiB, -792 free
+  card 7: layers 39-43, 2 attention, plus blk.38.ffn_down_exps, 6662 MiB, -661 free
+  card 8: layers 44-47, 1 attention, plus blk.43.ffn_down_exps, 6732 MiB, -731 free
