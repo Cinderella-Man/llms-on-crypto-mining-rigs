@@ -68,7 +68,7 @@ Round trip: every weight of all 435 matrices of both files decodes back bit for 
 steps ([entropy.md](entropy.md), last column), and so does the bench's sample
 ([bench_cpu_only.txt](bench_cpu_only.txt)).
 
-## The microbench (built, not timed yet)
+## The microbench
 
 `lossless_bench` (bench/mmvq_pascal, `build_lossless.sh`; sm_61 and compute_61 PTX) times each class's product at
 1, 2, 3, 4, 5, 6 and 8 tokens over a sample of the model's own weights (27 tensors, 79 MB, from Swift Q2_0 by
@@ -98,6 +98,30 @@ plain kernel's timing and are left out of the sums. Against the Q8_0
 retype (Q218: 0.53× the bytes, 1.8–2.1× the KL floor), x12 is exact and needs no new file: a kernel can repack the
 BF16 tensors at load time.
 
+## On one P106 (C378, 2026-11-04)
+
+`run/rig_bench.sh` on card 0 of the second rig (nothing else running), the sample above, every variant checked: **all
+checks pass** ([rig/lossless_rig.txt](rig/lossless_rig.txt), [rig/lossless.csv](rig/lossless.csv),
+[rig/lossless_summary.csv](rig/lossless_summary.csv)). Milliseconds per decoding step over the timed classes (calls per
+token × µs per call, each class at its fastest correct shape):
+
+| Tokens | Plain, the fork's shape | Plain, best shape | x12 | x12 against plain's best | x11 |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 9.65 | 9.42 | 11.04 | +1.38 (1.14×) | 45.0 |
+| 2 | 9.97 | 9.68 | 13.55 | +3.58 (1.36×) | 50.5 |
+| 3 | 11.03 | 11.00 | 16.82 | +5.80 (1.53×) | 53.3 |
+| 4 | 11.80 | 11.44 | 19.43 | +7.63 (1.65×) | 57.7 |
+| 5 | 15.88 | 13.57 | 21.35 | +5.48 (1.35×) | 62.3 |
+| 6 | 19.07 | 16.15 | 22.83 | +3.76 (1.20×) | 66.2 |
+| 8 | 23.42 | 18.02 | 36.80 | +13.39 (1.57×) | 76.8 |
+
+**The 12-bit code is slower than plain BF16 at every token count on a P106:** +1.4 ms a step at one token instead of
+the expected −2.2, 85 % of the plain kernel's best rate at one token and 74 % at two where the decision needed 90 %,
+and 1.2–1.65× its time at 3–8 tokens. The decode's extra integer work does not hide behind the reads on five SMs, even at one token. x11 is 4–5×
+slower. So Q621's repack at load time does not go ahead (C373 parked); the BF16 hyper-connections stay plain BF16 or
+the Q8_0 retype. The plain kernel's own best shape is 0.03–5.4 ms a step faster than the fork's default at 1–8 tokens (2.3–5.4 ms
+at 5–8 tokens).
+
 ## Files
 
 | File | What |
@@ -109,6 +133,7 @@ BF16 tensors at load time.
 | [run/census.py](run/census.py) | the census of a split GGUF (standard library) |
 | [run/analyze.sh](run/analyze.sh), [run/table.py](run/table.py) | census, `lossless_entropy` over each file, the bench's sample, the table |
 | [run/rig_bench.sh](run/rig_bench.sh) | the timing on one P106: copies the bench and sample to the rig, checks their md5s, runs, collects, cleans up |
+| [rig/lossless_rig.txt](rig/lossless_rig.txt), [rig/lossless.csv](rig/lossless.csv), [rig/lossless_summary.csv](rig/lossless_summary.csv) | C378: the bench on one P106: every class, code, shape and token count with its check, and the per-step sums |
 
 ## Commands
 
