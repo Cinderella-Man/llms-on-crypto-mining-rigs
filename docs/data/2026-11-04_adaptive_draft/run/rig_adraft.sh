@@ -10,6 +10,8 @@
 #   fix<N>    S18's dflash2b line at --spec-draft-n-max N, the switch off
 #   adapt<N>  the same with LLAMA_SPEC_ADAPT=1 and ADAPT_ENV (default none: Q583's cost table, verify widths 1, 3, 5, 9
 #             and 17 clamped to N + 1, the running speed-up); at N = 5 the widths are 1, 3, 5 and 6
+#   ARM_ENV (default none) goes to every arm's server, fixed and adaptive alike (e.g. a kernel setting whose cost table
+#             ADAPT_ENV names, so that the fixed arms run under the same setting)
 # Steps (STEPS, default "smoke arms report"):
 #   smoke   per arm: one load, the agent's first-turn request and Q561's two smoke requests (S18's smoke_dflash.sh
 #           with the arm's environment, SMOKE_ENV); an arm whose smoke test fails (the watchdog, no reply) is listed in
@@ -24,7 +26,7 @@
 # is set, the guard runs on the rig around each timed arm, as S18's arm runner did (OUT/mem_guard_<arm>.log).
 # Usage, from the repository root with S18's values filled in:
 #   set -a; . s18.env; set +a
-#   REL_BIN=/opt/llama-builds/<the adraft tarball>/bin/llama-server [ARMS="fix2 fix3 fix5 adapt5"] [ADAPT_ENV=...] \
+#   REL_BIN=/opt/llama-builds/<the adraft tarball>/bin/llama-server [ARMS="fix2 fix3 fix5 adapt5"] [ADAPT_ENV=...] [ARM_ENV=...] \
 #     [STEPS=...] [BUDGET_MIN=40] [SMOKE_LOGROOT=<a folder on the rig>] \
 #     bash docs/data/2026-11-04_adaptive_draft/run/rig_adraft.sh OUT
 # Needs: no command on the rig while it runs (a timed task); the client's agent-check image (S18's prep step).
@@ -38,6 +40,7 @@ ARMS=${ARMS:-fix2 fix3 fix5 adapt5}
 REF_ARMS=${REF_ARMS:-nodraft dflash2b}
 STEPS=${STEPS:-smoke arms report}
 ADAPT_ENV=${ADAPT_ENV:-}
+ARM_ENV=${ARM_ENV:-}
 BUDGET=${BUDGET_MIN:-40}
 SMOKE_LOGROOT=${SMOKE_LOGROOT:-$(dirname "$RIG_LOGDIR")}
 S18=$REPO/docs/data/2026-11-03_flash_next_dflash2
@@ -57,6 +60,7 @@ arm() {  # sets A_ARGS and A_ENV for arm $1
     *) say "unknown arm $1 (fix<N> or adapt<N>)"; return 1;;
   esac
   [[ $n =~ ^[0-9]+$ ]] || { say "unknown arm $1"; return 1; }
+  A_ENV="${ARM_ENV:+$ARM_ENV }$A_ENV"
   A_ARGS=${BASE_ARGS/--spec-draft-n-max 2/--spec-draft-n-max $n}
 }
 
