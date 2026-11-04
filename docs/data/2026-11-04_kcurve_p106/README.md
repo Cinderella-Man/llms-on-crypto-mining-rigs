@@ -38,6 +38,11 @@ launch shape a 32 KB shared-memory budget instead of 48 KB (3 blocks per SM wher
   at 0.9.
 - **The multi-token expert kernel pays at every k ≥ 2** (`MTOK=0` is 7–25 ms slower); **the dense k-column kernels
   pay from k = 4** at their default shape and from k = 1 with the 32 KB budget.
+- **llama-bench's prompt tokens are random token ids**, so the routed experts here see near-uniform routing (~48 distinct
+  experts per layer at k = 5). Real agent text reads 16.3 / 21.6 / 26.4 / 30.9 at k = 2–5 (Q860), so on real text T(k) is
+  est. ~4 / 10 / 15 / 21 ms lower at k = 2–5 (the [k-pass profile](../2026-11-04_kpass_profile/README.md) prices an extra
+  distinct expert at ~1.22 ms a pass): with the 32 KB budget est. 74.9 / ~103 / ~129 / ~148 / ~184 ms. The cost files
+  are therefore pessimistic for a verify; Q827 measures T(k) on consecutive positions of real text.
 
 ## The kernels, one P106 (card 0)
 

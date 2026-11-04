@@ -1,0 +1,29 @@
+trace	part	k1_ms	k5_ms	ratio_k5_k1	growth_ms
+on_graph	cards' GPU time	70.80	176.56	2.49	105.76
+on_graph	hops, host work and gaps	11.60	40.54	3.50	28.94
+off_graph	cards' GPU time	65.72	202.35	3.08	136.63
+off_graph	hops, host work and gaps	16.78	48.35	2.88	31.57
+on_group	routed experts	8.69	55.49	6.39	46.81
+on_group	shared expert	3.24	6.36	1.96	3.12
+on_group	hyper-connections (BF16)	10.03	22.25	2.22	12.21
+on_group	router	2.15	5.85	2.72	3.70
+on_group	attention and recurrent projections	27.13	61.77	2.28	34.64
+on_group	Gated DeltaNet state and conv	3.46	5.46	1.58	2.00
+on_group	attention (FLASH_ATTN_EXT)	0.63	1.69	2.68	1.06
+on_group	output layer	3.58	3.58	1.00	-0.00
+on_group	token embeddings	0.00	0.00	nan	0.00
+on_group	other ops without weights	9.22	10.58	1.15	1.36
+on_group	other weights	0.59	1.25	2.11	0.66
+on_group	sum of the parts	68.72	174.30	2.54	105.57
+off_group	routed experts	8.68	72.37	8.34	63.69
+off_group	shared expert	2.99	8.21	2.75	5.22
+off_group	hyper-connections (BF16)	10.07	22.24	2.21	12.17
+off_group	router	2.14	5.84	2.73	3.70
+off_group	attention and recurrent projections	22.27	68.55	3.08	46.28
+off_group	Gated DeltaNet state and conv	3.46	5.45	1.58	1.99
+off_group	attention (FLASH_ATTN_EXT)	0.62	1.69	2.71	1.07
+off_group	output layer	3.58	3.58	1.00	0.00
+off_group	token embeddings	0.00	0.00	nan	0.00
+off_group	other ops without weights	9.24	10.48	1.13	1.24
+off_group	other weights	0.60	1.55	2.58	0.95
+off_group	sum of the parts	63.64	199.97	3.14	136.32

@@ -1,0 +1,66 @@
+res/on_layer-k1.csv: mode layer, 90 device evals on 9 devices: 90 decode-sized (< 1e+09 ms; 9 capture, 9 eager, 72 replay), 0 larger; ~10 decode steps; used: replays (72)
+decode: 70.56 ms of GPU time per token summed over cards, 7.6 µs per span subtracted (≈ 14.17 tok/s if the cards ran back to back with no gaps)
+per card, ms per token: 0:7.99 1:8.39 2:8.88 3:9.16 4:7.34 5:8.24 6:6.89 7:7.64 8:6.03
+spans shorter than the event cost: 0 of 416 (0.0 %)
+
+per card and layer (ms/token, share):
+  card 0 graph 0     0.02   0.0 %  other
+  card 0 graph 0     1.26   1.8 %  layer 0
+  card 0 graph 0     1.76   2.5 %  layer 1
+  card 0 graph 0     1.12   1.6 %  layer 2
+  card 0 graph 0     1.00   1.4 %  layer 3
+  card 0 graph 0     1.25   1.8 %  layer 4
+  card 0 graph 0     1.58   2.2 %  layer 5
+  card 1 graph 0     1.79   2.5 %  layer 6
+  card 1 graph 0     0.98   1.4 %  layer 7
+  card 1 graph 0     1.55   2.2 %  layer 8
+  card 1 graph 0     1.22   1.7 %  layer 9
+  card 1 graph 0     1.42   2.0 %  layer 10
+  card 1 graph 0     1.42   2.0 %  layer 11
+  card 2 graph 0     1.44   2.0 %  layer 12
+  card 2 graph 0     1.59   2.3 %  layer 13
+  card 2 graph 0     1.67   2.4 %  layer 14
+  card 2 graph 0     1.09   1.5 %  layer 15
+  card 2 graph 0     1.39   2.0 %  layer 16
+  card 2 graph 0     1.70   2.4 %  layer 17
+  card 3 graph 0     1.47   2.1 %  layer 18
+  card 3 graph 0     1.46   2.1 %  layer 19
+  card 3 graph 0     1.62   2.3 %  layer 20
+  card 3 graph 0     1.61   2.3 %  layer 21
+  card 3 graph 0     1.59   2.3 %  layer 22
+  card 3 graph 0     1.42   2.0 %  layer 23
+  card 4 graph 0     1.37   1.9 %  layer 24
+  card 4 graph 0     1.59   2.3 %  layer 25
+  card 4 graph 0     1.34   1.9 %  layer 26
+  card 4 graph 0     1.44   2.0 %  layer 27
+  card 4 graph 0     1.60   2.3 %  layer 28
+  card 5 graph 0     1.65   2.3 %  layer 29
+  card 5 graph 0     1.31   1.9 %  layer 30
+  card 5 graph 0     1.09   1.5 %  layer 31
+  card 5 graph 0     1.30   1.8 %  layer 32
+  card 5 graph 0     1.58   2.2 %  layer 33
+  card 5 graph 0     1.29   1.8 %  layer 34
+  card 6 graph 0     1.50   2.1 %  layer 35
+  card 6 graph 0     1.28   1.8 %  layer 36
+  card 6 graph 0     1.31   1.9 %  layer 37
+  card 6 graph 0     1.35   1.9 %  layer 38
+  card 6 graph 0     1.46   2.1 %  layer 39
+  card 7 graph 0     1.48   2.1 %  layer 40
+  card 7 graph 0     1.30   1.8 %  layer 41
+  card 7 graph 0     1.30   1.8 %  layer 42
+  card 7 graph 0     1.12   1.6 %  layer 43
+  card 7 graph 0     1.34   1.9 %  layer 44
+  card 7 graph 0     1.11   1.6 %  layer 45
+  card 8 graph 0     1.17   1.7 %  layer 46
+  card 8 graph 0     1.28   1.8 %  layer 47
+  card 8 graph 0     3.59   5.1 %  output
+
+per token (one decode step):
+  timed spans, summed over cards       70.56 ms, 7.6 µs per span subtracted
+  whole evaluations (eval_us)          71.04 ms raw, 70.65 ms without the events inside them
+  wall, this run (host clock)          83.62 ms median, 83.77 ms mean (9 intervals of card 0's graph 0)
+  wall, unprofiled (--wall-ms)         82.40 ms
+  timed spans / unprofiled wall         85.6 %  (unprofiled wall minus the spans: 11.84 ms of hops, host work and gaps)
+  this run's wall / unprofiled         101.5 %  (the profiler's own cost on a token)
+check: timed spans 70.56 ms against the unprofiled 82.40 ms per token: -14.4 %, outside 5 % -> fail
+summary: mode=layer steps=10 devices=9 decode_evals=90 used_evals=72 skipped=0 sum_ms=70.558 evals_ms=71.041 evals_corr_ms=70.645 wall_run_ms=83.621 event_us=7.600 wall_ref_ms=82.400 sum_vs_ref_pct=-14.372 wall_vs_ref_pct=1.482 check=fail

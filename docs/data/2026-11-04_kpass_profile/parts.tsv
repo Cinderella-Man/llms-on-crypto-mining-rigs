@@ -1,0 +1,57 @@
+trace	k	part	ms_per_pass
+on_graph	1	cards' GPU time	70.80
+on_graph	1	hops, host work and gaps	11.60
+on_graph	5	cards' GPU time	176.56
+on_graph	5	hops, host work and gaps	40.54
+off_graph	1	cards' GPU time	65.72
+off_graph	1	hops, host work and gaps	16.78
+off_graph	5	cards' GPU time	202.35
+off_graph	5	hops, host work and gaps	48.35
+on_group	1	routed experts	8.69
+on_group	1	shared expert	3.24
+on_group	1	hyper-connections (BF16)	10.03
+on_group	1	router	2.15
+on_group	1	attention and recurrent projections	27.13
+on_group	1	Gated DeltaNet state and conv	3.46
+on_group	1	attention (FLASH_ATTN_EXT)	0.63
+on_group	1	output layer	3.58
+on_group	1	token embeddings	0.00
+on_group	1	other ops without weights	9.22
+on_group	1	other weights	0.59
+on_group	1	sum of the parts	68.72
+on_group	5	routed experts	55.49
+on_group	5	shared expert	6.36
+on_group	5	hyper-connections (BF16)	22.25
+on_group	5	router	5.85
+on_group	5	attention and recurrent projections	61.77
+on_group	5	Gated DeltaNet state and conv	5.46
+on_group	5	attention (FLASH_ATTN_EXT)	1.69
+on_group	5	output layer	3.58
+on_group	5	token embeddings	0.00
+on_group	5	other ops without weights	10.58
+on_group	5	other weights	1.25
+on_group	5	sum of the parts	174.30
+off_group	1	routed experts	8.68
+off_group	1	shared expert	2.99
+off_group	1	hyper-connections (BF16)	10.07
+off_group	1	router	2.14
+off_group	1	attention and recurrent projections	22.27
+off_group	1	Gated DeltaNet state and conv	3.46
+off_group	1	attention (FLASH_ATTN_EXT)	0.62
+off_group	1	output layer	3.58
+off_group	1	token embeddings	0.00
+off_group	1	other ops without weights	9.24
+off_group	1	other weights	0.60
+off_group	1	sum of the parts	63.64
+off_group	5	routed experts	72.37
+off_group	5	shared expert	8.21
+off_group	5	hyper-connections (BF16)	22.24
+off_group	5	router	5.84
+off_group	5	attention and recurrent projections	68.55
+off_group	5	Gated DeltaNet state and conv	5.45
+off_group	5	attention (FLASH_ATTN_EXT)	1.69
+off_group	5	output layer	3.58
+off_group	5	token embeddings	0.00
+off_group	5	other ops without weights	10.48
+off_group	5	other weights	1.55
+off_group	5	sum of the parts	199.97

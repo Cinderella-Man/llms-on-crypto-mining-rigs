@@ -1,0 +1,25 @@
+res_off/off_graph-k1.csv: mode graph, 90 device evals on 9 devices: 90 decode-sized (< 1e+09 ms; 9 capture, 9 eager, 72 replay), 0 larger; ~10 decode steps; used: replays (72)
+decode: 65.72 ms of GPU time per token summed over cards, 7.6 µs per span subtracted (≈ 15.22 tok/s if the cards ran back to back with no gaps)
+per card, ms per token: 0:7.77 1:7.60 2:8.02 3:8.25 4:6.70 5:7.69 6:6.37 7:7.32 8:6.00
+spans shorter than the event cost: 0 of 72 (0.0 %)
+
+per card and graph (ms/token, share, evaluations used/decode-sized):
+  card 0 graph 0     7.77  11.8 %  8/10
+  card 1 graph 0     7.60  11.6 %  8/10
+  card 2 graph 0     8.02  12.2 %  8/10
+  card 3 graph 0     8.25  12.6 %  8/10
+  card 4 graph 0     6.70  10.2 %  8/10
+  card 5 graph 0     7.69  11.7 %  8/10
+  card 6 graph 0     6.37   9.7 %  8/10
+  card 7 graph 0     7.32  11.1 %  8/10
+  card 8 graph 0     6.00   9.1 %  8/10
+
+per token (one decode step):
+  timed spans, summed over cards       65.72 ms, 7.6 µs per span subtracted
+  whole evaluations (eval_us)          65.78 ms raw, 65.72 ms without the events inside them
+  wall, this run (host clock)          78.32 ms median, 78.52 ms mean (9 intervals of card 0's graph 0)
+  wall, unprofiled (--wall-ms)         82.50 ms
+  timed spans / unprofiled wall         79.7 %  (unprofiled wall minus the spans: 16.78 ms of hops, host work and gaps)
+  this run's wall / unprofiled          94.9 %  (the profiler's own cost on a token)
+check: timed spans 65.72 ms against the unprofiled 82.50 ms per token: -20.3 %, outside 5 % -> fail
+summary: mode=graph steps=10 devices=9 decode_evals=90 used_evals=72 skipped=0 sum_ms=65.715 evals_ms=65.784 evals_corr_ms=65.715 wall_run_ms=78.321 event_us=7.600 wall_ref_ms=82.500 sum_vs_ref_pct=-20.345 wall_vs_ref_pct=-5.065 check=fail

@@ -42,8 +42,9 @@ def part_of(label):
     return "other weights" if re.search(r":[a-z0-9_]+:\d+x\d+", weights) else "other ops without weights"
 
 
-def split_rows(path):
-    """-> header, {k_index: [rows]}: each card's evaluations cut into two host-time segments."""
+def split_rows(path, per_test=0):
+    """-> header, {k_index: [rows]}: each card's evaluations cut into two host-time segments (the first per_test
+    evaluations, when given, are the first test's: llama-bench evaluates each card once per warm-up and repetition)."""
     with open(path, newline="") as f:
         rd = csv.DictReader(f)
         header, rows = rd.fieldnames, list(rd)
@@ -61,7 +62,26 @@ def split_rows(path):
     out = {0: [], 1: []}
     for d in sorted({k[0] for k in ev}):
         es = sorted((e for k, e in ev.items() if k[0] == d), key=lambda e: e["t"])
-        timed = [e for e in es if e["us"] > 1.0]  # an evaluation the profiler could not read has no time of its own
+        if per_test:
+            for i, e in enumerate(es):
+                if i % per_test:  # each test's first evaluation is llama-bench's warm-up (as in verify_split.py)
+                    out[0 if i < per_test else 1].extend(e["rows"])
+            continue
+        if light:
+            # the light modes name each evaluation's graph, and a pass of another size is another graph: the first
+            # graph a card runs is the first test's
+            gid = lambda e: next((r["graph"] for r in e["rows"] if int(r["group"]) >= 0), None)
+            first = next((g for g in map(gid, es) if g is not None), None)
+            if len({g for g in map(gid, es) if g is not None}) == 2:
+                for e in es:
+                    g = gid(e)
+                    out[0 if g == first else 1].extend(e["rows"])
+                continue
+        # an evaluation the profiler could not read has no time of its own; a warm-up far above the card's median
+        # (allocations, the first launches) would take the split
+        timed = [e for e in es if e["us"] > 1.0]
+        med = statistics.median(e["us"] for e in timed) if timed else 0.0
+        timed = [e for e in timed if e["us"] <= 4 * med]
         logs = [math.log(e["us"]) for e in timed]
         best, t_split = None, float("inf")
         for s in range(1, len(timed)):
@@ -121,6 +141,7 @@ def main():
     ap.add_argument("--ks", default="1,5")
     ap.add_argument("--wall", default="")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--per-test", type=int, default=0, help="evaluations per card in each test (1 + llama-bench's -r)")
     ap.add_argument("traces", nargs="+")
     a = ap.parse_args()
     spec = importlib.util.spec_from_file_location("prof_summary", a.prof_summary)
@@ -132,7 +153,7 @@ def main():
     rows = []
     for t in a.traces:
         tag, path = t.split("=", 1)
-        header, seg = split_rows(path)
+        header, seg = split_rows(path, a.per_test)
         for i, k in enumerate(ks):
             sub = os.path.join(a.out, f"{tag}-k{k}.csv")
             with open(sub, "w", newline="") as f:
