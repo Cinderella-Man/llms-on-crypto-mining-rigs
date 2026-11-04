@@ -7,7 +7,9 @@ put the routed experts (+46.8 ms from one token to five), the attention and recu
 the checks called for (Q916) and the correctness checks. Fork branch `pascal-p106-v3-b12076-kshape`, three commits on
 `pascal-p106-v3-b12076-ladder3` `7bc1552f4`: `5174e7ce0` (Q825), `4ba3f424d` (Q823, Q824) and `39c3ab5f1` (Q916). The rig's timing of the result is its own task (C350).
 
-**Status:** built for the rig and correct through the compute 6.1 PTX on two other cards in every switch setting (below); not yet run on a P106 (C350).
+**Status:** built for the rig and correct through the compute 6.1 PTX on two other cards in every switch setting (below);
+on a P106 (C350, 2026-11-04) correct natively at the defaults and **a 5-token pass 25 ms faster than `-ladder3`'s with the
+same 32 KB budget** (180.2 against 205.3 ms; [On the rig](#on-the-rig-c350)).
 
 ## The changes
 
@@ -150,6 +152,41 @@ SASS ([run/sass_all.sh](run/sass_all.sh), [sass_q916.tsv](sass_q916.tsv)): of th
 the k-column kernels and MMQ are unchanged by Q916. The P106 itself runs the native checks first in C350
 ([run/rig_tk.sh](run/rig_tk.sh), `STEPS=check`).
 
+## On the rig (C350)
+
+One P106-090 of the first rig for the native checks, then nine for T(k); `run/rig_tk.sh` with `STEPS="check tk"`
+(2026-11-04, 16:46–19:10).
+
+**Native checks** (`gpu_checks.sh MODE=native`, the P106 against the rig's CPU): the k-column products at the defaults
+1,961/1,961; the routed Q2_0 experts with the down projection on tiles 340/340 and with direct loads 340/340;
+`mmvq_kcol --check-only`, every launch-shape variant and type, 2,592 PASS lines, 0 FAIL. `kcol-all` and `mtok-iq` were
+left out (the rig's CPU makes each run ~1 h; both passed through the PTX).
+
+**T(k)** of the published Swift Q2_0 (Q591's method: llama-bench `-p 1,...,8 -n 0`, five repetitions, random prompt
+tokens; ms per pass, median; standard deviation 2–4 ms; [tk_rig.tsv](tk_rig.tsv)), all `GGML_CUDA_MMVQ_PASCAL_…`:
+
+| k | defaults | `KCOL_TABLE=0` | **`KCOL_SMEM=32768 KCOL_TABLE=0`** | the same, `MTOK=1,0,0,0,0` | `KCOL_SMEM=24576 KCOL_TABLE=0` | `KCOL_SMEM=49152 KCOL_TABLE=0` | `MTOK=0` | `-ladder3`, `KCOL_SMEM=32768` (Q591) |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 80.6 | 74.0 | **74.1** | 74.9 | 74.8 | 83.1 | 74.8 | 74.9 |
+| 2 | 109.7 | 103.6 | **102.4** | 113.6 | 101.8 | 118.4 | 113.2 | 107.7 |
+| 3 | 139.6 | 131.1 | **129.9** | 131.3 | 126.1 | 140.8 | 149.2 | 138.5 |
+| 4 | 158.3 | 150.5 | **149.0** | 149.9 | 149.9 | 159.2 | 179.8 | 162.8 |
+| 5 | 188.2 | 182.3 | **180.2** | 179.6 | 179.1 | 191.9 | 221.0 | 205.3 |
+| 6 | 213.0 | 207.1 | **202.3** | 201.5 | 205.4 | 216.7 | 257.4 | 234.7 |
+| 7 | 235.0 | 226.0 | **222.1** | 221.1 | 225.1 | 241.9 | 289.4 | 261.7 |
+| 8 | 266.7 | 257.2 | **254.4** | 253.2 | 256.2 | 276.4 | 322.2 | 297.3 |
+| T(5) / T(1) | 2.34 | 2.46 | **2.43** | 2.40 | 2.39 | 2.31 | 2.95 | 2.74 |
+
+- **The routed down projection on the multi-token kernel (Q825) is the gain**: with the same 32 KB budget a 5-token pass
+  takes 180.2 ms against `-ladder3`'s 205.3 (−25 ms), an 8-token pass 254.4 against 297.3 (−43); one token is unchanged.
+  The multi-token experts as a whole save 33 ms at five tokens (`MTOK=0`: 221.0).
+- **The defaults lose at one to three tokens**: Q823's shapes with Q824's table take 80.6 / 109.7 / 139.6 ms where the
+  32 KB budget with the table off takes 74.1 / 102.4 / 129.9 (Q829). Turning the table off at Q823's shapes
+  (`KCOL_TABLE=0`) already gets within 0.1–5 ms of the 32 KB budget, so the table's choices are the loss. The shapes
+  before Q823 (`SMEM=49152`) are slower at every k.
+- The down projection's direct loads (`MTOK=1,0,0,0,0`) match the tiles except at two tokens (113.6 against 102.4);
+  `SMEM=24576` matches 32 KB within the noise.
+
 ## Files
 
 | File | What it is |
@@ -164,6 +201,7 @@ the k-column kernels and MMQ are unchanged by Q916. The P106 itself runs the nat
 | [run/gpu_checks.sh](run/gpu_checks.sh) | the correctness runs (MODE=ptx on another card, MODE=native on a P106) |
 | [run/sass_all.sh](run/sass_all.sh) | per-kernel SASS identity of two builds |
 | [run/rig_tk.sh](run/rig_tk.sh) | C350 on the rig: the native checks, T(k) per switch setting, the bench and perf timings |
+| [tk_rig.tsv](tk_rig.tsv) | C350's T(k) on the rig per switch setting: mean and median ms, standard deviation, ms per token, T(k) / T(1), the step from k − 1 |
 
 ## Run
 

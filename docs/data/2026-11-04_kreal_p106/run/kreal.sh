@@ -6,7 +6,8 @@
 # across them (the next one starts on card 0 while the last runs on card 1), which a verify of one micro-batch never
 # does; any tensor override turns that off (llama_context: !has_tensor_overrides), so the server gets NOPIPE, by
 # default the token embeddings on the CPU, where they are anyway. Runs ON the rig, detached; ends with $OUT/DONE.
-# Arms (ARMS): def (every switch at its default), s32k (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768), prof (s32k under
+# Arms (ARMS): def (every switch at its default), s32k (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768), s32kt0 (the same with
+# GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0, for -kshape's dispatch table), prof (s32k under
 # GGML_CUDA_PROFILE_MODE=group, k = PROF_KS on the first PROF_N tokens, for the parts).
 # Env: BIN, MODEL (first shard), TEXT (a text file), OUT; optional N (1680: every k of 1-8 divides it), KS (1..8),
 # PROF_N (340), PROF_KS ("1 5"), PORT (8097), TS (6,6,6,6,5,6,5,6,3), CTX (8192), ARMS ("def s32k prof"), NOPIPE
@@ -25,6 +26,7 @@ for arm in $ARMS; do
     case $arm in
         def)  ;;
         s32k) envs=(GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768) ;;
+        s32kt0) envs=(GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0) ;;   # -kshape and later: the dispatch table off
         prof) envs=(GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_PROFILE="$OUT/prof-group.csv" GGML_CUDA_PROFILE_MODE=group); ks=$PROF_KS; n=$PROF_N ;;
         *) log "unknown arm $arm"; continue ;;
     esac

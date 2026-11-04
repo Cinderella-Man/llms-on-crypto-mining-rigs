@@ -1,0 +1,9 @@
+# T(k) in ms, k = 1..8: whole-model k-token passes on one rig (-kshape 39c3ab5f1, KCOL_SMEM=32768 KCOL_TABLE=0); median of 5 repetitions
+74.1
+102.4
+129.9
+149.0
+180.2
+202.3
+222.1
+254.4
