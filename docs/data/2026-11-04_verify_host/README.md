@@ -3,8 +3,9 @@
 What this measured: one speculative step of Flash-Next's MTP draft line on a 4 GB rig of nine P106-090, split into
 the main model's verify pass on the cards, the draft's passes, and the time no card's clock holds. The question
 ([Q900](../../../quants/experiments.md)) was how much of a real step `llama-bench`'s k-token passes miss. A verify
-pass copies one row of logits per verified position to the host (248,320 F32, 0.99 MB) over the last card's
-PCIe 1.0 x1 link and samples them there; `llama-bench` asks for one row only.
+pass computes one row of logits per verified position (248,320 F32, 0.99 MB) on the last card. With `-bs`, which this
+line uses, the request's sampler chain samples each row there, and only the chain's 20 candidates a row come back to
+the host ([2026-11-04_device_verify](../2026-11-04_device_verify/README.md)).
 
 The line is S34's MTP arm ([2026-11-04_stacked_gains](../2026-11-04_stacked_gains/README.md)): pascal-mix's pmix-q2-fast
 on Miner Llama's `-ladder3` with `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`, the Gyro MTP draft at
@@ -25,17 +26,19 @@ Per step, over 186 steps after the first three ([steps.md](steps.md), [run/host_
 | the draft's GPU time (eight evaluations on cards 4 and 8: four draft passes) | 24.8 | 24.6 | 32.3 |
 | **neither** (the step minus both) | **~41** | | |
 
-- **About 41 ms of each 179 ms step (23 %) runs on no card's clock.** That is the eight hops between cards, the
-  copy of the four verify rows of logits to the host (3.97 MB over PCIe 1.0 x1, est. ~20 ms at the link's ~190 MB/s),
-  the draft's own full-vocabulary rows, sampling, the acceptance test and the server's bookkeeping.
-- **The host profile cannot time the copy itself:** `graph_compute` returns once the work is queued (each card's host
-  span is ~0.5 ms; all nine take 4.1 ms), so the wait for the GPUs, the copy and the sampling land in the same interval
-  after the last card (138 ms median). The split between hops and the copy is an estimate from the link's speed and the
-  hop bench ([2026-11-04_megakernel_rig](../2026-11-04_megakernel_rig/README.md): a 4-token F32 hop ~1.1–1.3 ms).
-- **Does it change anything?** Yes: sampling verify batches on the last card and copying back only the accepted ids and
-  the rule's probabilities (C338 step 2) would remove most of the ~20 ms copy, about 11 % of a step. The draft's
-  full-vocabulary rows are a second copy of the same kind; the shortlist computes the draft's head over 32,801 of its
-  248,320 rows (7.6× fewer), the likeliest reason it paid 10 % in S34, while its output row keeps the full width.
+- **About 41 ms of each 179 ms step (23 %) runs on no card's clock.** That is the eight hops between cards (est.
+  ~9 ms), the four draft passes' host turnarounds (with `-otd token_embd=CUDA4` each pass crosses card 4 → card 8
+  through the host and waits for its sampled id before the next is queued; the draft's host span is 22.2 ms), the
+  host's sampling of the verify rows' candidates and the acceptance test, and the server's bookkeeping between the
+  draft and the next verify pass. The logits stay on the cards: about 42 KB of sampling data and hidden rows come back a
+  step, ~0.2 ms over the link ([2026-11-04_device_verify](../2026-11-04_device_verify/README.md)).
+- **The host profile cannot split that time:** `graph_compute` returns once the work is queued (each card's host span
+  is ~0.5 ms; all nine take 4.1 ms), so the wait for the GPUs, the copies back and the sampling land in the same
+  interval after the last card (138 ms median). The hops' share is an estimate from the hop bench
+  ([2026-11-04_megakernel_rig](../2026-11-04_megakernel_rig/README.md): a 4-token F32 hop ~1.1–1.3 ms).
+- **Does it change anything?** Yes: the ~41 ms is worth going after, and it is hops and host turnarounds, not logits.
+  Its measured split is Q955 (C396) and the draft passes' turnarounds Q956 (C397). The shortlist computes the draft's
+  head over 32,801 of its 248,320 rows (7.6× fewer), the likeliest reason it paid 10 % in S34.
 
 ## Files
 

@@ -11,8 +11,9 @@ card:
   main_host_ms   host time from the main pass's first card's entry to its last card's exit (the verify chain as the host
                  sees it, with the hops)
   main_gpu_ms    the GPU time summed over the main pass's cards
-  after_ms       from the last main card's exit to the next evaluation's entry: the logits' copy to the host, sampling,
-                 the acceptance test, the server's bookkeeping, the draft's set-up
+  after_ms       from the last main card's exit to the next evaluation's entry: the wait for the cards, the sampling
+                 data's copy to the host (with -bs the candidates, not the logits), sampling, the acceptance test, the
+                 server's bookkeeping, the draft's set-up
   draft_host_ms  from the first to the last draft evaluation's exit in that step, and draft_gpu_ms their GPU time
   before_ms      from the last draft evaluation's exit to the next main pass's entry (the draft's sampling, the batch)
   step_ms        the whole step
