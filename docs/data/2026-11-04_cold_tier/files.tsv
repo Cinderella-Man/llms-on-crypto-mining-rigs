@@ -1,0 +1,19 @@
+2026-11-04T17:52:48+01:00	split h256	OK	48 layers: 256 hot, 256 cold each, by routings
+2026-11-04T17:52:49+01:00	split h320	OK	48 layers: 320 hot, 192 cold each, by routings
+2026-11-04T18:01:11+01:00	extract	OK	experts.gguf: 144 expert tensors of 48 layers, 256 experts each, 64,183,807,424 bytes imatrix.gguf: 432 statistics of 144 tensors cut to 256 experts, 3272 other entries dropped 
+2026-11-04T18:20:49+01:00	tier swift_q2_0_pmix_t256iq3	OK	tensor data 37,743,541,760 -> 42,213,195,264 bytes (+4,469,653,504)
+2026-11-04T18:43:40+01:00	quantize c1	OK	96 gate/up weights to iq1_m, 48 down copied (the base's own in tier), 30209945056 bytes
+2026-11-04T18:55:05+01:00	tier swift_q2_0_pmix_t256iq3c1	OK	tensor data 37,743,541,760 -> 39,696,612,864 bytes (+1,953,071,104)
+2026-11-04T19:11:29+01:00	verify swift_q2_0_pmix_t256iq3c1	FAIL	0 shards; md5 8ddfbf0b 81785b0d 
+2026-11-04T19:11:29+01:00	verify swift_q2_0_pmix_t256iq3	FAIL	2 shards; md5 7b743218 15691588 
+2026-11-04T19:11:39+01:00	headers swift_q2_0_pmix_t256iq3	OK	swift_q2_0_pmix_t256iq3.tar.gz (3176616 bytes)
+2026-11-04T19:11:46+01:00	headers swift_q2_0_pmix_t256iq3c1	OK	swift_q2_0_pmix_t256iq3c1.tar.gz (3176562 bytes)
+2026-11-04T19:28:22+01:00	tier swift_q2_0_pmix_t320iq3	OK	tensor data 37,743,541,760 -> 43,330,584,064 bytes (+5,587,042,304)
+2026-11-04T19:43:55+01:00	tier swift_q2_0_pmix_t256c1	OK	tensor data 37,743,541,760 -> 35,227,057,664 bytes (-2,516,484,096)
+2026-11-04T20:00:07+01:00	verify swift_q2_0_pmix_t256iq3	OK	3 shards; md5 7b743218 15691588 
+2026-11-04T20:43:35+01:00	verify swift_q2_0_pmix_t320iq3	OK	3 shards; md5 0bcb4df7 0828c016 
+2026-11-04T20:43:44+01:00	headers swift_q2_0_pmix_t320iq3	OK	swift_q2_0_pmix_t320iq3.tar.gz (3174415 bytes)
+2026-11-04T20:56:12+01:00	tier swift_q2_0_pmix_t256iq3s	OK	tensor data 37,743,541,760 -> 45,902,872,064 bytes (+8,159,330,304)
+2026-11-04T21:01:03+01:00	verify swift_q2_0_pmix_t256iq3c1	OK	3 shards; md5 8ddfbf0b 81785b0d 
+2026-11-04T21:06:51+01:00	verify swift_q2_0_pmix_t256c1	OK	3 shards; md5 189aa002 ec17a87e 
+2026-11-04T21:07:19+01:00	headers swift_q2_0_pmix_t256c1	OK	swift_q2_0_pmix_t256c1.tar.gz (3174077 bytes)

@@ -1,0 +1,52 @@
+2026-11-04T18:55:09+01:00	selftest	OK	ok
+2026-11-04T18:55:11+01:00	mutation the tier map off by one	OK	caught: AssertionError: shard 1: not the expected bytes
+2026-11-04T18:55:12+01:00	mutation cold slabs in id order	OK	caught: AssertionError: shard 1: not the expected bytes
+2026-11-04T18:55:13+01:00	mutation ties to the higher id	OK	caught: AssertionError: checks/selftest/m3/t/split/hot.tsv
+2026-11-04T18:55:15+01:00	mutation the forced hot ids ignored	OK	caught: AssertionError: checks/selftest/m4/t/spec/hot.tsv
+2026-11-04T18:55:17+01:00	mutation --cold-only ignored	OK	caught: AssertionError: shard 1 with --cold-rest: not the bytes of --cold-only alone
+2026-11-04T18:55:18+01:00	mutation split.tensors.count not raised	OK	caught: AssertionError: shard 1: not the expected bytes
+2026-11-04T18:55:19+01:00	mutation the importance counts not cut	OK	caught: AssertionError: extract: not the expected imatrix.gguf
+2026-11-04T18:55:22+01:00	mutation verify skips the slabs	OK	caught: AssertionError: ('verify', 'checks/selftest/m8/t/m-00001-of-00003.gguf',
+2026-11-04T18:57:50+01:00	identity	OK	0 of 143 architectures' logits differ from the base build; base: Summary: 148 test(s) executed, 7 failed; this build: Summary: 148 test(s) executed, 7 failed
+2026-11-04T18:58:00+01:00	random q4_0 experts	OK	4 of 4 expert weights converted to q4_0
+2026-11-04T18:58:41+01:00	random qwen4exp-moe hot 24	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 4105.475975 ± 10.467086 Mean PPL(base) : 4105.476394 ± 10.467266 Mean PPL(Q)/PPL(base) : 1.000000 ± -nan Mean PPL(Q)-PPL(base) : -0.000419 ± -nan Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T18:59:09+01:00	random qwen4exp-moe hot 31	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 4105.475975 ± 10.467086 Mean PPL(base) : 4105.476394 ± 10.467266 Mean PPL(Q)/PPL(base) : 1.000000 ± -nan Mean PPL(Q)-PPL(base) : -0.000419 ± -nan Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T18:59:47+01:00	random qwen4exp-moe hot 8	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 4105.475975 ± 10.467086 Mean PPL(base) : 4105.476394 ± 10.467266 Mean PPL(Q)/PPL(base) : 1.000000 ± -nan Mean PPL(Q)-PPL(base) : -0.000419 ± -nan Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:00:05+01:00	random qwen4exp-moe mismatch	OK	cold slabs of the wrong experts change the result: Mean PPL(Q) : 4105.477948 ± 10.466784 Mean PPL(base) : 4105.476394 ± 10.467266 Mean PPL(Q)/PPL(base) : 1.000000 ± -nan Mean PPL(Q)-PPL(base) : 0.001554 ± -nan Mean KLD: -0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:00:50+01:00	random qwen4exp-moe-q4e hot 24	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 4105.474141 ± 10.466250 Mean PPL(base) : 4105.474126 ± 10.466161 Mean PPL(Q)/PPL(base) : 1.000000 ± 0.000025 Mean PPL(Q)-PPL(base) : 0.000016 ± 0.100822 Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:01:11+01:00	random qwen4exp-moe-q4e hot 31	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 4105.474141 ± 10.466250 Mean PPL(base) : 4105.474126 ± 10.466161 Mean PPL(Q)/PPL(base) : 1.000000 ± 0.000025 Mean PPL(Q)-PPL(base) : 0.000016 ± 0.100822 Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:01:39+01:00	random qwen4exp-moe-q4e hot 8	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 4105.474141 ± 10.466250 Mean PPL(base) : 4105.474126 ± 10.466161 Mean PPL(Q)/PPL(base) : 1.000000 ± 0.000025 Mean PPL(Q)-PPL(base) : 0.000016 ± 0.100822 Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:01:53+01:00	random qwen4exp-moe-q4e mismatch	OK	cold slabs of the wrong experts change the result: Mean PPL(Q) : 4105.476907 ± 10.466719 Mean PPL(base) : 4105.474126 ± 10.466161 Mean PPL(Q)/PPL(base) : 1.000001 ± -nan Mean PPL(Q)-PPL(base) : 0.002781 ± -nan Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000001 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:02:38+01:00	random qwen4exp-moe-sharp hot 24	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 18831.956344 ± 2216.649684 Mean PPL(base) : 18831.964041 ± 2216.656044 Mean PPL(Q)/PPL(base) : 1.000000 ± 0.000011 Mean PPL(Q)-PPL(base) : -0.007697 ± 0.206850 Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000014 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:03:04+01:00	random qwen4exp-moe-sharp hot 31	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 18831.956344 ± 2216.649684 Mean PPL(base) : 18831.964041 ± 2216.656044 Mean PPL(Q)/PPL(base) : 1.000000 ± 0.000011 Mean PPL(Q)-PPL(base) : -0.007697 ± 0.206850 Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000014 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:03:30+01:00	random qwen4exp-moe-sharp hot 8	OK	verify ok; the KL base files are the same bytes; Mean PPL(Q) : 18831.956344 ± 2216.649684 Mean PPL(base) : 18831.964041 ± 2216.656044 Mean PPL(Q)/PPL(base) : 1.000000 ± 0.000011 Mean PPL(Q)-PPL(base) : -0.007697 ± 0.206850 Mean KLD: 0.000000 ± 0.000000 Maximum KLD: 0.000014 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:03:46+01:00	random qwen4exp-moe-sharp mismatch	OK	cold slabs of the wrong experts change the result: Mean PPL(Q) : 19842.408476 ± 2250.880959 Mean PPL(base) : 18831.964041 ± 2216.656044 Mean PPL(Q)/PPL(base) : 1.053656 ± 0.104565 Mean PPL(Q)-PPL(base) : 1010.444436 ± 1916.898055 Mean KLD: 1.148373 ± 0.061295 Maximum KLD: 4.326753 Same top p: 21.429 ± 2.590 % 
+2026-11-04T19:04:17+01:00	random mixed f32+q4_0	OK	verify ok; runs; against F32: Mean KLD: -0.000000 ± 0.000000 Same top p: 100.000 ± 0.000 % ; against all-Q4_0: Mean KLD: 0.000000 ± 0.000000 Same top p: 100.000 ± 0.000 % 
+2026-11-04T19:04:29+01:00	moeids random/qwen4exp-moe	OK	test-moe-ids: 24 MUL_MAT_ID nodes, 146 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:04:38+01:00	moeids qwen4exp-moe-h24/qwen4exp-moe	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:04:49+01:00	moeids qwen4exp-moe-h31/qwen4exp-moe	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:04:58+01:00	moeids qwen4exp-moe-h8/qwen4exp-moe	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:05:09+01:00	moeids qwen4exp-moe-q4e-h24/qwen4exp-moe-q4e	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:05:22+01:00	moeids qwen4exp-moe-q4e-h31/qwen4exp-moe-q4e	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:05:34+01:00	moeids qwen4exp-moe-q4e-h8/qwen4exp-moe-q4e	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:05:47+01:00	moeids qwen4exp-moe-sharp-h24/qwen4exp-moe-sharp	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:05:58+01:00	moeids qwen4exp-moe-sharp-h31/qwen4exp-moe-sharp	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:06:08+01:00	moeids qwen4exp-moe-sharp-h8/qwen4exp-moe-sharp	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:06:23+01:00	moeids qwen4exp-moe-mixed/qwen4exp-moe	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:07:10+01:00	cuda ub 128 h24	OK	KLD 0.000008 (max 0.000048), same top 99.206 %
+2026-11-04T19:07:14+01:00	cuda ub 128 mismatch	OK	KLD 1.147087 (max 4.328291), same top 20.635 %
+2026-11-04T19:07:17+01:00	cuda ub 128 mixed	OK	KLD -0.000000 (max 0.000001), same top 100.000 %
+2026-11-04T19:07:26+01:00	cuda ub 1 h24	OK	KLD 0.000000 (max 0.000012), same top 100.000 %
+2026-11-04T19:07:28+01:00	cuda ub 1 mismatch	OK	KLD 1.148057 (max 4.329723), same top 21.825 %
+2026-11-04T19:07:31+01:00	cuda ub 1 mixed	OK	KLD -0.000000 (max 0.000002), same top 100.000 %
+2026-11-04T19:07:33+01:00	cuda moeids qwen4exp-moe-sharp-h24	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:07:35+01:00	cuda moeids qwen4exp-moe-mixed	OK	test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+2026-11-04T19:07:35+01:00	cuda xid	OK	kernel log Xid lines: 5 before, 5 after
+2026-11-04T20:00:07+01:00	load t256iq3	OK	Final estimate: PPL = 2.8823 +/- 0.40047; 0 log lines name a cold tensor
+2026-11-04T20:06:45+01:00	load t256iq3c1	OK	Final estimate: PPL = 2.5771 +/- 0.34250; 0 log lines name a cold tensor
+2026-11-04T20:11:29+01:00	load pmix_q2_fast	OK	Final estimate: PPL = 2.0186 +/- 0.21945; 0 log lines name a cold tensor
+2026-11-04T20:18:54+01:00	load same03	OK	Final estimate: PPL = 2.0186 +/- 0.21945; 0 log lines name a cold tensor
+2026-11-04T20:24:43+01:00	real pmix_q2_fast	OK	KLD 0.431688 ± 0.045280, same top 90.588 ± 0.915
+2026-11-04T20:46:13+01:00	real t256iq3	OK	KLD 0.283330 ± 0.033828, same top 92.157 ± 0.842
+2026-11-04T21:02:43+01:00	real t256iq3c1	OK	KLD 0.287005 ± 0.032636, same top 92.451 ± 0.828
+2026-11-04T21:10:35+01:00	real t256c1	OK	KLD 0.427875 ± 0.045235, same top 90.588 ± 0.915

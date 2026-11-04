@@ -14,6 +14,8 @@
 #             tier) must load, run and differ from both
 #   moeids    test-moe-ids (this branch's tests/) on every random model, untiered and tiered: each MUL_MAT_ID's ids
 #             are distinct per token and below its expert count (CUDA's kernels need both; the CPU's do not)
+#   load      each FILES entry (real files, e.g. the donors and their base) on the CPU over LOAD_CHUNKS (1) chunks of
+#             512 tokens of TEXT: it loads and gives a perplexity
 #   real      a tiered real file (FILE, its first shard) on the CPU: llama-perplexity over the first CHUNKS chunks of
 #             512 tokens of TEXT against BASE_KLD (the untiered file's logits on the same chunks), a preview of its
 #             cost; one line per file in $WORK/cpu_kld.tsv
@@ -221,6 +223,21 @@ if step moeids; then
     done
 fi
 
+if step load; then
+    log "load"
+    : "${FILES:?load needs FILES}" "${TEXT:?}"
+    K=$WORK/checks/load
+    mkdir -p "$K"
+    # each real file through the engine on the CPU: loads (its tier maps, cold tensors and types) and gives a perplexity
+    for f in $FILES; do
+        name=${f%%=*} first=${f#*=}
+        box "$IMAGE" nice -n 19 "$BIN/llama-perplexity" -m "$first" -f "$TEXT" -c 512 -b 512 --chunks "${LOAD_CHUNKS:-1}" \
+            -t "$THREADS" > "$K/$name.log" 2>&1
+        ppl=$(grep -oE "Final estimate: PPL = [0-9.]+ \+/- [0-9.]+" "$K/$name.log")
+        verdict "load $name" "$([ -n "$ppl" ] && echo OK || echo FAIL)" "${ppl:-$K/$name.log}; $(grep -cE "ffn_exps_tier|_exps_cold" "$K/$name.log" || true) log lines name a cold tensor"
+    done
+fi
+
 if step real; then
     log "real"
     : "${FILES:?real needs FILES}" "${TEXT:?}" "${BASE_KLD:?}"
@@ -233,7 +250,7 @@ if step real; then
             -t "$THREADS" --kl-divergence-base "$BASE_KLD" --kl-divergence > "$K/$name.log" 2>&1
         kld=$(grep -E "^Mean    KLD" "$K/$name.log" | awk '{print $3 " " $4 " " $5}')
         top=$(grep -E "^Same top p" "$K/$name.log" | awk '{print $4 " " $5 " " $6}')
-        ratio=$(grep -E "^Mean PPL\(Q\)/PPL\(base\)" "$K/$name.log" | awk '{print $3 " " $4 " " $5}')
+        ratio=$(grep -E "^Mean PPL\(Q\)/PPL\(base\)" "$K/$name.log" | awk '{print $4 " " $5 " " $6}')
         if [ -n "$kld" ]; then
             printf '%s\t%s\t%s\t%s\t%s\n' "$name" "$CHUNKS" "$kld" "$top" "$ratio" >> "$WORK/cpu_kld.tsv"
             verdict "real $name" OK "KLD $kld, same top $top"
