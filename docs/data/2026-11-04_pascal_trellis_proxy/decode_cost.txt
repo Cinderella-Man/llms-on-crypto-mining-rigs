@@ -1,0 +1,28 @@
+A = 0.217 ps per ALU slot per 4 weights, B = 3.04 ps per random shared-memory read per 4 weights, F = 2.65 ps
+
+kernel      alu  lds  ldsf  measured     model  count
+Q2_0       3.00    0     0      3.30      3.30  +0 %  PRMT lookup 1, shift 0.75, dp4a 1, scale and sum per 64 weights 0.25
+N2P        4.75    0     0      4.18      3.68  -12 %  PRMT lookup 1, table select 0.5, shift 0.75, dp4a 1, 4-bit sub-scale per 8 (BFE, XMAD, add) 1.5
+IQ2_S      7.00    1     0      6.67      7.21  +8 %  grid index (BFE, LOP, SHF) 1.5, one 8-byte grid read per 8 weights = 1 random 4-byte read, signs 4, dp4a 1, scale 0.5
+IQ3_XXS    6.25    1     0      7.07      7.04  -0 %  grid index 2, one 4-byte grid read, signs (parity, expand, apply) 3, dp4a 1, scale 0.25
+TQ2_T     11.50    2     0     10.00     11.22  +12 %  state (PRMT, AND) 2.5, 32-bit multiply = 3 XMAD, two 11-bit fields 2, two 2-byte reads (+ addresses 2), pack 1, dp4a 1
+
+code           alu  lds  ldsf   est. ps  count
+tq2t         11.60    2     0     11.24  agentionai's kernel as it is (the TQ2_T anchor)
+lut4          3.10    1     0      6.36  11-bit window: funnel shift + mask into a word address 2, one 4-byte read, dp4a 1
+lut4.k25      3.10    1     0      6.36  as lut4 (the window is not byte-aligned; the funnel shift takes any offset)
+hash4         5.10    1     0      6.79  state PRMT 1, 16-bit XMAD hash 1, field to address (SHF, LOP) 2, one 4-byte read, dp4a 1
+hash4.k25     6.10    1     0      7.01  as hash4, the 16-bit state from a 10-bit-step stream: funnel shift + mask 2
+hash4.n128    6.10    0   1.5      5.27  as hash4 + lane offset 1; 16 copies (8 KB): two lanes per copy, ~1.5-way conflicts
+hash4.n64     6.10    0     1      4.84  as hash4 + lane offset 1; 32 lane copies of 64 entries (8 KB): conflict-free
+lut2          6.10    2     0     10.05  two 12-bit windows to addresses 4, two 2-byte reads, pack PRMT 1, dp4a 1
+lut2.k25      6.10    2     0     10.05  as lut2
+hp4           6.10    0     0      3.97  state PRMT 1, 16-bit XMAD 1, fold (SHF 1, LOP3 xor-and-mask 1), PRMT lookup of 8 int8 levels in two registers 1, dp4a 1
+hp4.k25       7.10    0     0      4.19  as hp4, the state from a 10-bit-step stream: funnel shift + mask 2
+hp4.n16      10.10    0     0      4.84  as hp4 with 4-bit fields: two PRMT lookups (16 levels in four registers), mask PRMT 1, select LOP3 1, the fold mask 1
+hp4m          8.10    0     0      4.41  as hp4 with Gyro's 32-bit multiply (3 XMAD) and no fold
+hp4s          9.10    0     0      4.62  as hp4 + a table pair chosen by a hash bit: sign-extend to a mask 1, two LOP3 blends of the table registers 2
+tcq8u         7.10    0     0      4.19  codes to bytes (SHF, LOP) 2, parity of 2 state bits (2 funnel SHF, LOP3) 3, OR 1, dp4a 1; uniform levels, the offset from the activation sums per block
+tcq8          8.10    0     0      4.41  as tcq8u in nibble layout + PRMT lookup of 8 int8 levels held in two registers 1
+tcq8.3       10.10    0     0      4.84  as tcq8 with a 3-term parity (one more SHF and LOP)
+tcq16        14.10    0     0      5.71  two parities 6, codes 2, OR 1, two PRMT lookups (16 levels in four registers) 2, mask PRMT 1, select LOP3 1, dp4a 1
