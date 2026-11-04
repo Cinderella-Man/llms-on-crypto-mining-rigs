@@ -1,0 +1,69 @@
+on	ubatch taper: 96 tokens, head 1, tail 1, 2 ubatches: 64 32
+on	ubatch taper: 37 tokens, head 1, tail 1, 1 ubatches: 37
+on	ubatch taper: 116 tokens, head 1, tail 1, 2 ubatches: 64 52
+on	ubatch taper: 84 tokens, head 1, tail 1, 2 ubatches: 64 20
+on	ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+on	ubatch taper: 37 tokens, head 1, tail 1, 1 ubatches: 37
+on	ubatch taper: 20 tokens, head 1, tail 1, 1 ubatches: 20
+on	ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+on	ubatch taper: 2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256
+on	ubatch taper: 436 tokens, head 0, tail 1, 4 ubatches: 128x3 52
+on	ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+on	ubatch taper: 37 tokens, head 1, tail 1, 1 ubatches: 37
+on	ubatch taper: 20 tokens, head 1, tail 1, 1 ubatches: 20
+on	ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+on	ubatch taper: 2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256
+on	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+on	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+on	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+on	ubatch taper: 292 tokens, head 0, tail 1, 3 ubatches: 128x2 36
+on	ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+on	ubatch taper: 37 tokens, head 1, tail 1, 1 ubatches: 37
+on	ubatch taper: 20 tokens, head 1, tail 1, 1 ubatches: 20
+on	ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+flag	ubatch taper: 96 tokens, head 1, tail 1, 6 ubatches: 16x6
+flag	ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 16 21
+flag	ubatch taper: 116 tokens, head 1, tail 1, 7 ubatches: 16x6 20
+flag	ubatch taper: 84 tokens, head 1, tail 1, 5 ubatches: 16x4 20
+flag	ubatch taper: 512 tokens, head 1, tail 1, 32 ubatches: 16x32
+flag	ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 16 21
+flag	ubatch taper: 20 tokens, head 1, tail 1, 1 ubatches: 20
+flag	ubatch taper: 512 tokens, head 1, tail 1, 32 ubatches: 16x32
+flag	ubatch taper: 2048 tokens, head 1, tail 0, 35 ubatches: 16x32 512x3
+flag	ubatch taper: 436 tokens, head 0, tail 1, 27 ubatches: 16x26 20
+flag	ubatch taper: 512 tokens, head 1, tail 1, 32 ubatches: 16x32
+flag	ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 16 21
+flag	ubatch taper: 20 tokens, head 1, tail 1, 1 ubatches: 20
+flag	ubatch taper: 512 tokens, head 1, tail 1, 32 ubatches: 16x32
+flag	ubatch taper: 2048 tokens, head 1, tail 0, 35 ubatches: 16x32 512x3
+flag	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+flag	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+flag	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+flag	ubatch taper: 292 tokens, head 0, tail 1, 18 ubatches: 16x17 20
+flag	ubatch taper: 512 tokens, head 1, tail 1, 32 ubatches: 16x32
+flag	ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 16 21
+flag	ubatch taper: 20 tokens, head 1, tail 1, 1 ubatches: 20
+flag	ubatch taper: 512 tokens, head 1, tail 1, 32 ubatches: 16x32
+req	ubatch taper: 96 tokens, head 1, tail 1, 10 ubatches: 9x9 15
+req	ubatch taper: 37 tokens, head 1, tail 1, 4 ubatches: 9x3 10
+req	ubatch taper: 116 tokens, head 1, tail 1, 12 ubatches: 9x11 17
+req	ubatch taper: 84 tokens, head 1, tail 1, 9 ubatches: 9x8 12
+req	ubatch taper: 512 tokens, head 1, tail 1, 16 ubatches: 10 9x10 362 13x3 11
+req	ubatch taper: 37 tokens, head 1, tail 1, 4 ubatches: 9x3 10
+req	ubatch taper: 20 tokens, head 1, tail 1, 2 ubatches: 9 11
+req	ubatch taper: 512 tokens, head 1, tail 1, 16 ubatches: 10 9x10 362 13x3 11
+req	ubatch taper: 2048 tokens, head 1, tail 0, 15 ubatches: 10 9x10 512x3 412
+req	ubatch taper: 436 tokens, head 0, tail 1, 5 ubatches: 386 13x3 11
+req	ubatch taper: 512 tokens, head 1, tail 1, 16 ubatches: 10 9x10 362 13x3 11
+req	ubatch taper: 37 tokens, head 1, tail 1, 4 ubatches: 9x3 10
+req	ubatch taper: 20 tokens, head 1, tail 1, 2 ubatches: 9 11
+req	ubatch taper: 512 tokens, head 1, tail 1, 16 ubatches: 10 9x10 362 13x3 11
+req	ubatch taper: 2048 tokens, head 1, tail 0, 15 ubatches: 10 9x10 512x3 412
+req	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+req	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+req	ubatch taper: 2048 tokens, head 0, tail 0, 4 ubatches: 512x4
+req	ubatch taper: 292 tokens, head 0, tail 1, 5 ubatches: 242 13x3 11
+req	ubatch taper: 512 tokens, head 1, tail 1, 16 ubatches: 10 9x10 362 13x3 11
+req	ubatch taper: 37 tokens, head 1, tail 1, 4 ubatches: 9x3 10
+req	ubatch taper: 20 tokens, head 1, tail 1, 2 ubatches: 9 11
+req	ubatch taper: 512 tokens, head 1, tail 1, 16 ubatches: 10 9x10 362 13x3 11

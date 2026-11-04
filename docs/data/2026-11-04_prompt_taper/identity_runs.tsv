@@ -1,0 +1,4 @@
+run	archs	second_model_lines	archs_with_values_different	archs_over_nmse_1e-8	archs_above_base_steps_nmse	largest_nmse	largest_arch	above_base_steps
+off	136	7	0	0	0	0.000e+00		
+taper1	136	7	136	71	1	9.809e-07	gemma4	 minimax-m3:5.926e-08/4.949e-08
+taper	136	7	133	71	0	8.025e-07	gemma4	

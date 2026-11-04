@@ -1,0 +1,6 @@
+off = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+on = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+flag = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+req = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+badreq = base (tokens, top-3 probabilities, prompt_n, cache_n of 12 requests; 26 checkpoint lines)
+PASS

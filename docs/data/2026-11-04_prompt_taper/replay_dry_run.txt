@@ -1,0 +1,10 @@
+off: 1 passes, 10 turns, 6690 prompt tokens in 0.8 s (8573.6 tok/s); per pass 0.8 s
+on: 1 passes, 10 turns, 6690 prompt tokens in 1.4 s (4874.7 tok/s); per pass 1.4 s
+on against off, paired by task and turn: 10 turns, speed-up median 0.67x, -0.6 s saved per pass
+  1-64 new tokens: 2 turns, off median 0.01 s, on median 0.01 s, sum 0.0 -> 0.0 s
+  65-255 new tokens: 1 turns, off median 0.02 s, on median 0.02 s, sum 0.0 -> 0.0 s
+  256-511 new tokens: 4 turns, off median 0.05 s, on median 0.10 s, sum 0.2 -> 0.4 s
+  1024-1999 new tokens: 3 turns, off median 0.16 s, on median 0.33 s, sum 0.5 -> 0.9 s
+greedy output identical to off's on 10 of 10 turns of the other arms
+fresh 601-token prompts, off: median 0.05 s (0.05)
+fresh 601-token prompts, on: median 0.06 s (0.06)

@@ -1,0 +1,61 @@
+unit: parser, 13 fixed plans, 4000 random schedules (2014 with a plan): OK
+base: 96 tokens in one call against 95 + 1, taper off: recurrent states differ (largest float difference 8.941e-08)
+base: 512 tokens in one call against 511 + 1, taper off: recurrent states differ (largest float difference 9.313e-08)
+on       rs 0   100 tokens, outputs all :  2 calls,    2 ubatches, 12800 logits, 3963 differ (max 1.602e-07, nmse 3.286e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0   100 tokens, outputs all :  2 calls,    6 ubatches, 12800 logits, 11739 differ (max 1.602e-07, nmse 8.490e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0   100 tokens, outputs all :  2 calls,   10 ubatches, 12800 logits, 11739 differ (max 1.602e-07, nmse 8.490e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0   100 tokens, outputs all :  2 calls,    3 ubatches, 12800 logits, 11739 differ (max 1.602e-07, nmse 8.490e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0   100 tokens, outputs all :  2 calls,   96 ubatches, 12800 logits, 12282 differ (max 1.490e-07, nmse 8.567e-13), ckpts within 1.8e-07, state within 1.8e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0   100 tokens, outputs last:  2 calls,    2 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0   100 tokens, outputs last:  2 calls,    6 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0   100 tokens, outputs last:  2 calls,   10 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0   100 tokens, outputs last:  2 calls,    3 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0   100 tokens, outputs last:  2 calls,   96 ubatches, 128 logits, 108 differ (max 1.397e-08, nmse 2.552e-14), ckpts within 1.8e-07, state within 1.8e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0   600 tokens, outputs all :  3 calls,   10 ubatches, 76800 logits, 2463 differ (max 1.565e-07, nmse 2.979e-14), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0   600 tokens, outputs all :  3 calls,   37 ubatches, 76800 logits, 74067 differ (max 2.757e-07, nmse 1.654e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0   600 tokens, outputs all :  3 calls,   25 ubatches, 76800 logits, 28845 differ (max 2.310e-07, nmse 4.918e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0   600 tokens, outputs all :  3 calls,   19 ubatches, 76800 logits, 74067 differ (max 2.757e-07, nmse 1.654e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0   600 tokens, outputs all :  3 calls,  596 ubatches, 76800 logits, 72438 differ (max 2.244e-07, nmse 5.863e-13), ckpts within 1.8e-07, state within 1.8e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0   600 tokens, outputs last:  3 calls,   10 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0   600 tokens, outputs last:  3 calls,   37 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0   600 tokens, outputs last:  3 calls,   25 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0   600 tokens, outputs last:  3 call  checkpoint 0: 177212 bytes, 40110 differ from offset 40, 38385 words, largest float difference 1.192e-07
+tiny1    rs 0   600 tokens, outputs last:  3 calls,  596 ubatches, 128 logits, 127 differ (max 2.272e-07, nmse 3.226e-12), ckpts within 1.8e-07, state within 1.8e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0  3000 tokens, outputs all :  4 calls,   26 ubatches, 384000 logits, 6602 differ (max 4.973e-07, nmse 2.148e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0  3000 tokens, outputs all :  4 calls,  125 ubatches, 384000 logits, 248629 differ (max 5.923e-07, nmse 5.336e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0  3000 tokens, outputs all :  4 calls,   51 ubatches, 384000 logits, 56587 differ (max 5.923e-07, nmse 1.306e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0  3000 tokens, outputs all :  4 calls,   94 ubatches, 384000 logits, 377593 differ (max 5.923e-07, nmse 6.958e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0  3000 tokens, outputs all :  4 calls, 2996 ubatches, 384000 logits, 358807 differ (max 3.837e-07, nmse 3.113e-13), ckpts within 1.3e-07, state within 1.2e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0  3000 tokens, outputs last:  4 calls,   20 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0  3000 tokens, outputs last:  4 calls,   94 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0  3000 tokens, outputs last:  4 calls,   36 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0  3000 tokens, outputs last:  4 calls,   94 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0  3000 tokens, outputs last:  4 calls, 2996 ubatches, 128 logits, 127 differ (max 3.781e-07, nmse 9.784e-12), ckpts within 1.3e-07, state within 1.2e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0  9000 tokens, outputs all :  7 calls,   57 ubatches, 1152000 logits, 4573 differ (max 6.612e-07, nmse 1.251e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0  9000 tokens, outputs all :  7 calls,  314 ubatches, 1152000 logits, 620222 differ (max 8.363e-07, nmse 9.546e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0  9000 tokens, outputs all :  7 calls,  124 ubatches, 1152000 logits, 131801 differ (max 8.363e-07, nmse 2.450e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+uniform  rs 0  9000 tokens, outputs all :  7 calls,  281 ubatches, 1152000 logits, 1138973 differ (max 9.388e-07, nmse 1.621e-11), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0  9000 tokens, outputs all :  7 calls, 8996 ubatches, 1152000 logits, 1089707 differ (max 6.855e-07, nmse 3.982e-13), ckpts within 1.8e-07, state within 1.5e-07, tokens same, splits as planned, head/tail as server: OK
+on       rs 0  9000 tokens, outputs last:  7 calls,   31 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+small    rs 0  9000 tokens, outputs last:  7 calls,   97 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd      rs 0  9000 tokens, outputs last:  7 calls,   48 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, sp  checkpoint 0: 177212 bytes, 40350 differ from offset 44, 38596 words, largest float difference 1.416e-07
+uniform  rs 0  9000 tokens, outputs last:  7 calls,  281 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+tiny1    rs 0  9000 tokens, outputs last:  7 calls, 8996 ubatches, 128 logits, 127 differ (max 6.258e-07, nmse 3.116e-11), ckpts within 1.8e-07, state within 1.5e-07, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3   100 tokens, outputs all :  2 calls,    2 ubatches, 12800 logits, 3963 differ (max 1.602e-07, nmse 3.286e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3   100 tokens, outputs all :  2 calls,   10 ubatches, 12800 logits, 11739 differ (max 1.602e-07, nmse 8.490e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3   100 tokens, outputs last:  2 calls,    2 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3   100 tokens, outputs last:  2 calls,   10 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3   600 tokens, outputs all :  3 calls,   10 ubatches, 76800 logits, 2463 differ (max 1.565e-07, nmse 2.979e-14), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3   600 tokens, outputs all :  3 calls,   25 ubatches, 76800 logits, 28845 differ (max 2.310e-07, nmse 4.918e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3   600 tokens, outputs last:  3 calls,   10 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3   600 tokens, outputs last:  3 calls,   25 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3  3000 tokens, outputs all :  4 calls,   26 ubatches, 384000 logits, 6602 differ (max 4.973e-07, nmse 2.148e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3  3000 tokens, outputs all :  4 calls,   51 ubatches, 384000 logits, 56587 differ (max 5.923e-07, nmse 1.306e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3  3000 tokens, outputs last:  4 calls,   20 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3  3000 tokens, outputs last:  4 calls,   36 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3  9000 tokens, outputs all :  7 calls,   57 ubatches, 1152000 logits, 4573 differ (max 6.612e-07, nmse 1.251e-13), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3  9000 tokens, outputs all :  7 calls,  124 ubatches, 1152000 logits, 131801 differ (max 8.363e-07, nmse 2.450e-12), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+on-rs3   rs 3  9000 tokens, outputs last:  7 calls,   31 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+odd-rs3  rs 3  9000 tokens, outputs last:  7 calls,   48 ubatches, 128 logits, 0 differ (max 0.000e+00, nmse 0.000e+00), ckpts same, state same, tokens same, splits as planned, head/tail as server: OK
+model: 56 comparisons against off, 0 failed
+PASS
