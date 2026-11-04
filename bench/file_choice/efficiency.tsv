@@ -1,0 +1,29 @@
+type	role	timed_gbps	expected_gbps	source
+Q2_0	any	95.2	95.2	R16 (Q223): the Pascal Q2_0 kernel, est. 55 % of 173 GB/s in the model (bench on one P106: routed gate/up 132, down 82 GB/s)
+BF16	any	141.9	141.9	R16 (Q546): the Pascal BF16 kernel, est. 82 % of 173 GB/s in the model (bench: hc_up, hc_down 157-159 GB/s)
+F32	any	83.5	83.5	R13 profile: F32 routers, 3.14 ms for 262 MB a token (llama.cpp's kernel)
+F16	any	41.8	41.8	R28 profile: F16 router, 3.02 ms for 126 MB a token (llama.cpp's kernel)
+Q8_0	hc	27.7	89.0	R28 profile: Q8_0 hyper-connections, 24.5 ms for 680 MB (the 320-wide rows on llama.cpp's kernel); expected: C81's short-row Q8_0 path (-kcol, not yet timed) at the v2 k-quant average
+Q8_0	any	29.2	89.0	R13 profile: 0.12 ms for 3.5 MB (shared-expert down); expected: the k-column kernels at the v2 k-quant average
+Q3_K	any	33.3	89.0	R13 profile: 14.97 ms for 499 MB (llama.cpp's kernel); expected: C4's Q3_K kernel (-kcol, not yet timed) at the v2 k-quant average
+Q4_K	any	91.4	91.4	R13 profile: 2.54 ms for 232 MB (v2 Pascal kernel)
+Q5_K	any	87.1	87.1	R13 profile: Q5_K without the output layer, 0.96 ms for 84 MB (v2 Pascal kernel)
+Q6_K	any	88.8	88.8	R13 profile: 0.95 ms for 84 MB (v2 Pascal kernel)
+IQ4_XS	any	87.7	87.7	R13 profile: 4.99 ms for 438 MB (v2 Pascal kernel)
+Q5_K	output	143.8	143.8	R13 profile: output.weight (2560 x 248320), 3.04 ms for 437 MB
+Q6_K	output	143.8	143.8	est.: the same 248,320-row product as Q5_K's output on the v2 Pascal kernels
+IQ4_XS	output	143.8	143.8	est.: as Q6_K's output
+Q4_0	any	30.6	30.6	R13 profile: 0.48 ms for 14.7 MB (shared-expert down, 640-wide rows)
+Q5_0	any	35.9	35.9	R13 profile: 0.22 ms for 7.9 MB (shared-expert down)
+IQ4_NL	any	23.2	23.2	R13 profile: 0.28 ms for 6.5 MB (shared-expert down, llama.cpp's kernel)
+IQ4_NL	routed_down	30.0	30.0	est., not timed on a P106: llama.cpp's kernel at 640-wide rows, between the GB/s of llama.cpp's Q2_0 down in the model (R13: 20.4) and its picoseconds per weight (41 GB/s at IQ4_NL's 4.5 bits); Q712 / C162 would give it a Pascal kernel
+IQ2_S	routed_gu	42.6	42.6	round 2 (Q166, docs/data/2026-10-27_iq_kernels): the Pascal fused gate/up at one token on a P106, 48.0 GB/s in the bench, times round 1's in-model share of its bench speed (32.4 of 36.5 GB/s)
+IQ3_XXS	routed_gu	45.1	45.1	round 2: 52.6 GB/s in the bench, times round 1's in-model share (36.2 of 42.2 GB/s)
+IQ2_XXS	routed_gu	27.5	42.6	timed: llama.cpp's IQ2_S gate/up in the model (round 1 profile, the nearest timed kernel); expected: C2's kernel (-iq2xs, not yet timed) at IQ2_S's Pascal speed
+IQ2_XS	routed_gu	27.5	42.6	as IQ2_XXS
+IQ3_S	routed_gu	29.6	45.1	timed: llama.cpp's IQ3_XXS gate/up in the model (round 1 profile); expected: C2's IQ3_S kernel (not yet timed) at IQ3_XXS's Pascal speed
+IQ1_M	routed_gu	27.5	27.5	est.: no Pascal kernel (Q711 parked); llama.cpp's IQ2_S gate/up in the model as the nearest timed kernel
+IQ4_XS	routed_gu	87.7	87.7	est.: the v2 Pascal kernel as in the dense products (R13)
+IQ3_S	any	25.5	52.2	timed: llama.cpp's IQ3_XXS dense product, 8192 x 3072 (round 2 bench, 29.6 GB/s, times 0.86, its gate/up in-model share); expected: C2's IQ3_S kernel at IQ3_XXS's Pascal dense speed
+IQ3_XXS	any	52.2	52.2	round 2: the Pascal dense product, 8192 x 3072, 60.0 GB/s in the bench, times 0.87 (round 1's in-model share)
+IQ2_S	any	39.0	39.0	round 2: the Pascal dense product, 8192 x 3072, 44.8 GB/s in the bench, times 0.87

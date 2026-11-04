@@ -1,0 +1,9 @@
+file	experts	file_type	shards	shard_gb	table_shard	table_alone	reshard	table_gb	cards_mib	token_embd_mib	token_mb	routed_mb	shared_mb	dense_mb
+ista-coder-iq1_m	10 of 256	31	2	29.61 + 28.80	2	yes	no	28.8	27904	322	5095.8	982.3	145.5	3968.0
+ista-iq3_s	10 of 512	26	2	54.82 + 28.80	2	yes	no	28.8	51945	322	5158.7	982.3	145.5	4030.9
+swift-iq2_xs	10 of 512	20	2	39.79 + 28.36	1	no (341 others)	yes (C160)	28.8	37196	322	4240.8	692.5	135.0	3413.3
+swift-iq3_s	10 of 512	26	2	44.90 + 38.84	1	no (372 others)	yes (C160)	28.8	52066	322	5284.8	982.3	145.5	4157.0
+swift-iq3_xxs-hcq8	10 of 512	23	3	10.80 + 35.64 + 28.80	3	yes	no	28.8	44018	260	4081.2	838.1	120.8	3122.3
+swift-iq3_xxs	10 of 512	23	3	10.99 + 36.18 + 28.80	3	yes	no	28.8	44710	260	4806.9	838.1	120.8	3848.0
+swift-q2_0-hcq8	10 of 512	41	3	10.80 + 26.23 + 28.80	3	yes	no	28.8	35038	260	3429.6	663.6	106.2	2659.8
+swift-q2_0	10 of 512	41	3	11.00 + 26.75 + 28.80	3	yes	no	28.8	35730	260	4155.3	663.6	106.2	3385.5
