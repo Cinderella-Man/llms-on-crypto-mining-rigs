@@ -1,0 +1,5 @@
+type	absolute_quantization_error	reference_implementation_error	dot_product_error	result
+n2p	0.004383	0.000000	0.038522	ok
+n3p	0.002475	0.000000	0.011789	ok
+n2p_128	0.004376	0.000000	0.038146	ok
+n3p_128	0.002464	0.000000	0.011834	ok
