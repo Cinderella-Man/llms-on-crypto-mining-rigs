@@ -105,7 +105,7 @@ controls land within 0.002 of FN2's seven-card scores, so the card set moves the
 | Swift Q2_0, control | 0.4282 ± 0.0059 | 0.2866 ± 0.0056 | 0.1121 ± 0.0040 | 77.85 / 90.67 / 95.97 % |
 | **pmix-q2-fast** | **0.4264** ± 0.0059 | **0.2792** ± 0.0054 | **0.1080** ± 0.0038 | 77.71 / 90.70 / 96.12 % |
 | Swift IQ3_XXS, control | 0.2480 ± 0.0039 | 0.1786 ± 0.0039 | (running) | 83.35 / 92.24 / — % |
-| pmix-iq3-fast | (pending) | | | |
+| pmix-iq3-fast | (built; scored next) | | | |
 | pmix-q2-spine6 | (pending) | | | |
 | Q8_0 at `-ub 256`, the floor (seven cards) | 0.0170 | 0.0291 | 0.0036 | 95.57 / 97.10 / 99.24 % |
 
@@ -161,6 +161,7 @@ python3 -I <2026-11-03_flash_next_quality's run/>table.py <OUT> q8_0-ub256 swift
 | [design/](design/) | per mix: `summary.tsv`, `plan.tsv`, `types.txt`, `take.txt` (from `pmix.py`) |
 | [run/chain.sh](run/chain.sh), [run/build.sh](run/build.sh) | the build |
 | [run/score_all.sh](run/score_all.sh) | the KLD runs: [gguf_compose's run/score.sh](../2026-11-04_gguf_compose/run/score.sh) one file at a time, resumable (a done marker per file, a STOP file between files), each file after its build marker |
+| [run/stage.sh](run/stage.sh) | a built file staged on the fast disk before its KLD run (shards copied and checked against the build's md5, the table shard linked to the fast copy), so the cards wait on no copy |
 | [run/rig_time.sh](run/rig_time.sh) | the rig timing of a mix against its base: a 64k load with one request, then T(1) … T(8) |
 
 ## Provenance and licence
