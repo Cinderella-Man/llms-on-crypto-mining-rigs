@@ -1,0 +1,14 @@
+case	projected_host_MiB	extra_model
+r_main	65	none
+r_draft0	130	measured
+r_draft	130	measured
+r_share	129	measured
+r_share0	130	measured
+s_main	65709	none
+s_dflash0	66047	failed: failed to create llama_context from model
+s_dflash	66768	measured
+s_dflash_old	66047	failed: failed to create llama_context from model
+s_mtp0	68973	measured
+s_mtp	68973	measured
+s_mtp_share	67832	measured
+s_mtp_old	68973	measured

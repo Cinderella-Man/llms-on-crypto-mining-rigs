@@ -1,0 +1,23 @@
+# C22 server_check.sh on pascal-p106-v3-b12076-ckptrc, as published
+vram = base (tokens and top probabilities of P1-P5)
+vram2 = base (tokens and top probabilities of P1-P5)
+vram2s = base (tokens and top probabilities of P1-P5)
+spread_v2 = spread (tokens and top probabilities of P1-P5)
+spread P3 resumed from the checkpoint at 2048 tokens
+spread = base as well
+vram2: 2 checkpoint(s) moved to the host
+vram2s: 2 checkpoint(s) moved to the host
+spread_v2: 13 checkpoint(s) moved to the host
+PASS
+
+# the same, --ctx-checkpoints-share on every arm
+vram = base (tokens and top probabilities of P1-P5)
+vram2 = base (tokens and top probabilities of P1-P5)
+vram2s = base (tokens and top probabilities of P1-P5)
+spread_v2 = spread (tokens and top probabilities of P1-P5)
+spread P3 resumed from the checkpoint at 2048 tokens
+spread = base as well
+vram2: 2 checkpoint(s) moved to the host
+vram2s: 2 checkpoint(s) moved to the host
+spread_v2: 13 checkpoint(s) moved to the host
+PASS

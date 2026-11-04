@@ -1,0 +1,25 @@
+# server_mem.sh, random qwen4exp (test-llama-archs -s 1), rig build of pascal-p106-v3-b12076-ckptrc; *_old = -ladder2
+c0_share = c0_copy (tokens and top probabilities of P1-P8)
+  peak: c0_copy 246828 kB, c0_share 246888 kB, c0_copy - c0_share = -60 kB
+cr_share = cr_copy (tokens and top probabilities of P1-P8)
+  peak: cr_copy 257028 kB, cr_share 257496 kB, cr_copy - cr_share = -468 kB
+cr2_share = cr2_copy (tokens and top probabilities of P1-P8)
+  peak: cr2_copy 256628 kB, cr2_share 256936 kB, cr2_copy - cr2_share = -308 kB
+crv_share = crv_copy (tokens and top probabilities of P1-P8)
+  peak: crv_copy 257384 kB, crv_share 257072 kB, crv_copy - crv_share = 312 kB
+crs_share = crs_copy (tokens and top probabilities of P1-P8)
+  peak: crs_copy 257412 kB, crs_share 256868 kB, crs_copy - crs_share = 544 kB
+c0_old = c0_copy (tokens and top probabilities of P1-P8)
+  peak: c0_copy 246828 kB, c0_old 246668 kB, c0_copy - c0_old = 160 kB
+cr_old = cr_copy (tokens and top probabilities of P1-P8)
+  peak: cr_copy 257028 kB, cr_old 257264 kB, cr_copy - cr_old = -236 kB
+PASS
+
+# server_mem.sh, Qwen3.6-35B-A3B Q4_K_M, native CPU build of the same tree, -lm none
+c0_share = c0_copy (tokens and top probabilities of P1-P8)
+  peak: c0_copy 20673192 kB, c0_share 20672876 kB, c0_copy - c0_share = 316 kB
+cr_share = cr_copy (tokens and top probabilities of P1-P8)
+  peak: cr_copy 21266036 kB, cr_share 21073780 kB, cr_copy - cr_share = 192256 kB
+cr2_share = cr2_copy (tokens and top probabilities of P1-P8)
+  peak: cr2_copy 21138324 kB, cr2_share 21008708 kB, cr2_copy - cr2_share = 129616 kB
+PASS

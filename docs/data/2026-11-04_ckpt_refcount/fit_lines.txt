@@ -1,0 +1,115 @@
+== r_main
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I common_params_fit_impl: projected to use 65 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 124311 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== r_draft0
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I operator(): getting device memory data for the extra model at a context size of 4096:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I common_params_fit_impl: projected to use 130 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 124246 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== r_draft
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I operator(): getting device memory data for the extra model at a context size of 4096:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I common_params_fit_impl: projected to use 130 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 124246 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== r_share
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I operator(): getting device memory data for the extra model at a context size of 4096:
+I load_tensors: reading from the source model: token embeddings output head
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   64 =    18 +       6 +      40                |
+I common_params_fit_impl: projected to use 129 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 124246 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+I load_tensors: reading from the source model: token embeddings output head
+== r_share0
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I operator(): getting device memory data for the extra model at a context size of 4096:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                   65 =    18 +       6 +      40                |
+I common_params_fit_impl: projected to use 130 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 124246 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+I load_tensors: reading from the source model: token embeddings output head
+== s_main
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 65709 = 63456 +    2033 +     219                |
+I common_params_fit_impl: projected to use 65709 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 58666 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_dflash0
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+E llama_init_from_model: failed to initialize the context: dflash requires ctx_other to be set (this warning is normal during memory fitting)
+W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model
+I common_params_fit_impl: projected to use 66047 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 58329 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_dflash
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                  721 =   611 +      45 +      64                |
+I common_params_fit_impl: projected to use 66768 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 57607 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_dflash_old
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+E llama_init_from_model: failed to initialize the context: dflash requires ctx_other to be set (this warning is normal during memory fitting)
+W operator(): failed to measure the memory of the extra model, fitting without it: failed to create llama_context from model
+I common_params_fit_impl: projected to use 66047 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 58329 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_mtp0
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 2926 =  2562 +     161 +     203                |
+I common_params_fit_impl: projected to use 68973 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 55402 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_mtp
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 2926 =  2562 +     161 +     203                |
+I common_params_fit_impl: projected to use 68973 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 55402 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_mtp_share
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+I load_tensors: reading from the source model: token embeddings output head
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 1784 =  1420 +     161 +     203                |
+I common_params_fit_impl: projected to use 67832 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 56544 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
+== s_mtp_old
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 66047 = 63456 +    2371 +     219                |
+I operator(): getting device memory data for the extra model at a context size of 65536:
+I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |
+I common_memory_breakdown_print: |   - Host               |                 2926 =  2562 +     161 +     203                |
+I common_params_fit_impl: projected to use 68973 MiB of host memory vs. 124376 MiB of total host memory
+I common_params_fit_impl: will leave 55402 >= 1024 MiB of system memory, no changes needed
+I common_fit_params: successfully fit params to free device memory
