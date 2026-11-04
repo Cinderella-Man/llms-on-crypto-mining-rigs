@@ -110,9 +110,21 @@ per weight inside ggml, where the call includes the activations' quantization an
 
 ## Results
 
-The P106 numbers land here from the rig run, as `perf.tsv` and a table. They decide Q241 (trellis formats on Pascal)
-and gate Q908: a TQ2_T file of Swift-1.5, the fine-tune the rig runs, from a calibrated encoder of our own, since the
-Gyro files are quantized from the base Qwen3.8-Flash-Next.
+On one P106-090 of the first rig (card 0, idle; 2026-11-04, C335r), [perf.tsv](perf.tsv): ps per weight read at
+Flash-Next's routed expert shapes (10 of 128 experts per token, random routing; inside ggml, the activations'
+quantization and the launch included), against Miner Llama's Q2_0 kernels on the same card:
+
+| Product | TQ2_T, 1 token | TQ2_T, 1 token, its best layout | TQ2_T, 2–8 tokens | Q2_0 (Miner Llama), 1 token | Q2_0 (Miner Llama), 2–8 tokens |
+|---|---:|---:|---:|---:|---:|
+| routed gate/up (2,560 → 640) | 23.8 ps (11.2 GB/s) | 10.0 (`rows1`) | 8.4–10.5 (25–32 GB/s) | 3.3 (84 GB/s) | 2.8–3.6 |
+| routed down (640 → 2,560) | 37.8 ps (7.0 GB/s) | 22.3 (`wide0`) | 15.2–19.2 (14–18 GB/s) | 3.9 (72 GB/s) | 5.4–9.6 |
+
+**TQ2_T misses the ~5 ps line at every token count**: 3–10× Miner Llama's Q2_0 per weight read at one token, 2–3× at
+2–8. The run-time Hadamard rotation adds 6.7 µs a call. Correctness on the card: `MUL_MAT` 81/81, `MUL_MAT_ID` 53/53, the
+P106 one-token layout 38/38. Priced in a token at one token, the routed experts would take est. ~4× Q2_0's ~6 ms, about
++20 ms (~25 %), for Gyro-M's agent KLD of 0.148 against Swift Q2_0's 0.285. That trade decides Q908 (a TQ2_T file of
+Swift-1.5, the fine-tune the rig runs, from a calibrated encoder of our own, since the Gyro files are quantized from the
+base Qwen3.8-Flash-Next); Q241 stays parked as a kernel matter until a P106 decode reaches the line.
 
 ## Files here
 

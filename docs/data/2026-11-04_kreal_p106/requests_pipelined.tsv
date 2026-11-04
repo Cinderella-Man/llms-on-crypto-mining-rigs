@@ -1,0 +1,6 @@
+arm	k	prompt_n	prompt_ms	micro_batches	ms_per_micro_batch
+def	1	1680	66132.6	1680	39.36
+def	2	1680	36037.4	840	42.90
+def	3	1680	25529.5	560	45.59
+def	4	1680	20500.2	420	48.81
+def	5	1680	17448.4	336	51.93

@@ -30,9 +30,9 @@ GGML_CUDA_MMVQ_PASCAL_MTOK=0`, "off"). The profiler's own cost per timed span, 7
 The parts are the group-mode trace's launch groups by their labels (S21's categories); the hops row is the unprofiled
 pass minus the cards' whole evaluations from the graph-mode trace (`hops, host work and gaps` in [parts.tsv](parts.tsv)).
 
-- **The routed experts grow 6.4×.** Each token picks its own 10 of 512 experts, so a 5-token pass reads ~48 distinct
-  experts per layer (Q591's bench, with llama-bench's random tokens; real text overlaps more): their bytes grow ~4.8×
-  whatever the kernel. Beyond that, the routed down projection never takes the multi-token kernel (Q825: its 180-byte
+- **The routed experts grow 6.4×.** Each token picks its own 10 of 512 experts, so a 5-token pass reads up to ~48 distinct
+  experts per layer (Q591's bench under uniform routing; real text reads ~31, Q860, at the same cost: C271): their bytes
+  grow several times whatever the kernel. Beyond that, the routed down projection never takes the multi-token kernel (Q825: its 180-byte
   rows fail both staging checks) and runs per token. The multi-token gate/up still saves 16.9 ms at 5 tokens (off:
   72.4).
 - **The attention and recurrent projections grow 2.3×** although every weight is read once: the k-column kernels' default
@@ -45,13 +45,12 @@ pass minus the cards' whole evaluations from the graph-mode trace (`hops, host w
 - **The hyper-connections grow 2.2×**, their BF16 products 2.15× where the kernel bench reaches 1.63× at five tokens
   (Q591's bf16.csv): ~5 ms of room in the 5-token shape.
 
-**These passes use llama-bench's prompt tokens, which are random token ids**, and so is Q591's T(k): their routing is
-close to uniform (the ~48 distinct experts per layer at five tokens is Q591's bench under uniform routing, not a count
-from these passes). Consecutive tokens of real agent text read fewer: 16.3 / 21.6 / 26.4 / 30.9 distinct experts per layer
-at k = 2–5 (Q860's dry runs on real text, against ~19.9 / 29.4 / 38.9 / 48.3 uniform). At the measured ~1.22 ms per pass
-per extra distinct expert ((55.49 − 8.69) / (48.3 − 10)), real text's routed experts cost est. ~34 ms at five tokens
-instead of 55.5 (about 30.9 / 48 of the share), T(5) est. ~196 ms at the defaults instead of 217.1 and ~184 instead of
-205.3 with Q591's 32 KB launch budget: T(5) / T(1) est. 2.4–2.5 rather than 2.6–2.7. Q827 measures it on real text.
+**These passes use llama-bench's prompt tokens, which are random token ids**, and so does Q591's T(k). On real agent text
+the same passes cost the same: [C271](../2026-11-04_kreal_p106/README.md) timed passes of k consecutive real tokens at
+73.2 / 112.8 / 139.3 / 162.0 / 208.1 ms (k = 1–5, defaults), a steady 7–11 ms below llama-bench's at every k, which is the
+output layer and the logits row a prompt micro-batch skips. So the routed experts cost the same on real text, although
+Q860 counts fewer distinct experts there (30.9 per layer at five tokens) than uniform routing would give: llama-bench's
+random tokens do not route uniformly either.
 
 ## The profiler against the unprofiled pass
 
