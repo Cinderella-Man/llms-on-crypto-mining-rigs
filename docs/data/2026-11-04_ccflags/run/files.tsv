@@ -1,0 +1,16 @@
+family	file	threads	launch bounds in the source
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq-pascal.cu	128	(128, 1); grid types (128, 3)
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mmvq-pascal-mtok.cu	128	(128, 3)
+BF16 (mmvf-pascal)	mmvf-pascal.cu	128	(128)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-q8_0.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-q2_0.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-q3_K.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-q4_K.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-q5_K.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-q6_K.cu	128	(128, 2)
+k-column (mmvq-pascal-kcol)	mmvq-pascal-kcol-iq4_xs.cu	128	(128, 2)
+decode attention (fattn-pascal)	fattn-pascal.cu	128	(128, 3)
+prompt attention tile (fattn-tile-pascal)	fattn-tile-pascal.cu	128	(128, 3)
+GDN fusions (gdn-fused)	gdn-fused.cu	128	none
+persistent MoE (moe-persistent)	moe-persistent.cu	256	(256, 2)

@@ -1,0 +1,708 @@
+family	arm	form	count
+BF16 (mmvf-pascal)	base	LDG.E.CI	45
+BF16 (mmvf-pascal)	base	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	base	LDS.U.32	1665
+BF16 (mmvf-pascal)	base2	LDG.E.CI	45
+BF16 (mmvf-pascal)	base2	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	base2	LDS.U.32	1665
+BF16 (mmvf-pascal)	bf16_mb2	LDG.E.CI	45
+BF16 (mmvf-pascal)	bf16_mb2	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	bf16_mb2	LDS.U.32	1665
+BF16 (mmvf-pascal)	bf16_mb3	LDG.E.CI	45
+BF16 (mmvf-pascal)	bf16_mb3	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	bf16_mb3	LDL	52
+BF16 (mmvf-pascal)	bf16_mb3	LDL.LU	468
+BF16 (mmvf-pascal)	bf16_mb3	LDL.LU.64	2
+BF16 (mmvf-pascal)	bf16_mb3	LDS.U.32	1665
+BF16 (mmvf-pascal)	bf16_mb4	LDG.E.CI	45
+BF16 (mmvf-pascal)	bf16_mb4	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	bf16_mb4	LDL	87
+BF16 (mmvf-pascal)	bf16_mb4	LDL.LU	2429
+BF16 (mmvf-pascal)	bf16_mb4	LDS.U.32	1665
+BF16 (mmvf-pascal)	dlcm_ca	LDG.E.CI	45
+BF16 (mmvf-pascal)	dlcm_ca	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	dlcm_ca	LDS.U.32	1665
+BF16 (mmvf-pascal)	dlcm_cg	LDG.E.CI	45
+BF16 (mmvf-pascal)	dlcm_cg	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	dlcm_cg	LDS.U.32	1665
+BF16 (mmvf-pascal)	mrr128	LDG.E.CI	45
+BF16 (mmvf-pascal)	mrr128	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	mrr128	LDS.U.32	1665
+BF16 (mmvf-pascal)	mrr64	LDG.E.CI	45
+BF16 (mmvf-pascal)	mrr64	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	mrr64	LDS.U.32	1665
+BF16 (mmvf-pascal)	mrr96	LDG.E.CI	45
+BF16 (mmvf-pascal)	mrr96	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	mrr96	LDS.U.32	1665
+BF16 (mmvf-pascal)	restrict	LDG.E.CI	45
+BF16 (mmvf-pascal)	restrict	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	restrict	LDS.U.32	1665
+BF16 (mmvf-pascal)	xvec	LDG.E.CI	45
+BF16 (mmvf-pascal)	xvec	LDG.E.CI.128	3879
+BF16 (mmvf-pascal)	xvec	LDS.U.32	1665
+GDN fusions (gdn-fused)	base	LDG.E.CI	127
+GDN fusions (gdn-fused)	base	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	base	LDS.U.128	217
+GDN fusions (gdn-fused)	base	LDS.U.32	7
+GDN fusions (gdn-fused)	base2	LDG.E.CI	127
+GDN fusions (gdn-fused)	base2	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	base2	LDS.U.128	217
+GDN fusions (gdn-fused)	base2	LDS.U.32	7
+GDN fusions (gdn-fused)	dlcm_ca	LDG.E.CI	127
+GDN fusions (gdn-fused)	dlcm_ca	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	dlcm_ca	LDS.U.128	217
+GDN fusions (gdn-fused)	dlcm_ca	LDS.U.32	7
+GDN fusions (gdn-fused)	dlcm_cg	LDG.E.CI	127
+GDN fusions (gdn-fused)	dlcm_cg	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	dlcm_cg	LDS.U.128	217
+GDN fusions (gdn-fused)	dlcm_cg	LDS.U.32	7
+GDN fusions (gdn-fused)	mrr128	LDG.E.CI	127
+GDN fusions (gdn-fused)	mrr128	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	mrr128	LDS.U.128	217
+GDN fusions (gdn-fused)	mrr128	LDS.U.32	7
+GDN fusions (gdn-fused)	mrr64	LDG.E.CI	127
+GDN fusions (gdn-fused)	mrr64	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	mrr64	LDS.U.128	217
+GDN fusions (gdn-fused)	mrr64	LDS.U.32	7
+GDN fusions (gdn-fused)	mrr96	LDG.E.CI	127
+GDN fusions (gdn-fused)	mrr96	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	mrr96	LDS.U.128	217
+GDN fusions (gdn-fused)	mrr96	LDS.U.32	7
+GDN fusions (gdn-fused)	restrict	LDG.E.CI	127
+GDN fusions (gdn-fused)	restrict	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	restrict	LDS.U.128	217
+GDN fusions (gdn-fused)	restrict	LDS.U.32	7
+GDN fusions (gdn-fused)	xvec	LDG.E.CI	127
+GDN fusions (gdn-fused)	xvec	LDG.E.CI.128	2
+GDN fusions (gdn-fused)	xvec	LDS.U.128	217
+GDN fusions (gdn-fused)	xvec	LDS.U.32	7
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDL	841
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDL.LU	2092
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDL	841
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDL.LU	2092
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	base2	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDL	2819
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDL.LU	3575
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_ca	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDG.E.CG	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDL	841
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDL.LU	2092
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	dlcm_cg	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDL	40
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDL.LU	5
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb2	LDS.U.64	2384
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDL	2819
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDL.LU	3575
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmb4	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDL	40
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDL.LU	5
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	iqmc2	LDS.U.64	2384
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDL	849
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDL.LU	2092
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb2	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDL	3154
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDL.LU	4697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDL.LU.64	12
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb3	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDL	6529
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDL.LU	10091
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDL.LU.64	6
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mmvq_mb4	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDC	334
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDL	1084
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDL.LU	2072
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDS.U.32	5958
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr128	LDS.U.64	2320
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDC	322
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDL	941
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDL.LU	2099
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr64	LDS.U.64	2384
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDC	330
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDL	967
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDL.LU	2106
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDS.U.32	5958
+Pascal quantized (mmvq-pascal, 1-4 tokens)	mrr96	LDS.U.64	2320
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDL	841
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDL.LU	2092
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	restrict	LDS.U.64	2448
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDC	325
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDG.E	9395
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDG.E.CI	2502
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDG.E.CI.128	9587
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDG.E.CI.64	2460
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDL	841
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDL.LU	2092
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDS.U.128	1697
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDS.U.32	6086
+Pascal quantized (mmvq-pascal, 1-4 tokens)	xvec	LDS.U.64	2448
+decode attention (fattn-pascal)	base	LDG.E	1
+decode attention (fattn-pascal)	base	LDG.E.128	8
+decode attention (fattn-pascal)	base	LDG.E.CG	45
+decode attention (fattn-pascal)	base	LDG.E.CG.128	7
+decode attention (fattn-pascal)	base	LDG.E.CI.64	40
+decode attention (fattn-pascal)	base	LDG.E.U16	1
+decode attention (fattn-pascal)	base	LDL	336
+decode attention (fattn-pascal)	base	LDS.U.128	16
+decode attention (fattn-pascal)	base	LDS.U.U8	1
+decode attention (fattn-pascal)	base2	LDG.E	1
+decode attention (fattn-pascal)	base2	LDG.E.128	8
+decode attention (fattn-pascal)	base2	LDG.E.CG	45
+decode attention (fattn-pascal)	base2	LDG.E.CG.128	7
+decode attention (fattn-pascal)	base2	LDG.E.CI.64	40
+decode attention (fattn-pascal)	base2	LDG.E.U16	1
+decode attention (fattn-pascal)	base2	LDL	336
+decode attention (fattn-pascal)	base2	LDS.U.128	16
+decode attention (fattn-pascal)	base2	LDS.U.U8	1
+decode attention (fattn-pascal)	dlcm_ca	LDG.E	1
+decode attention (fattn-pascal)	dlcm_ca	LDG.E.128	8
+decode attention (fattn-pascal)	dlcm_ca	LDG.E.CG	45
+decode attention (fattn-pascal)	dlcm_ca	LDG.E.CG.128	7
+decode attention (fattn-pascal)	dlcm_ca	LDG.E.CI.64	40
+decode attention (fattn-pascal)	dlcm_ca	LDG.E.U16	1
+decode attention (fattn-pascal)	dlcm_ca	LDL	336
+decode attention (fattn-pascal)	dlcm_ca	LDS.U.128	16
+decode attention (fattn-pascal)	dlcm_ca	LDS.U.U8	1
+decode attention (fattn-pascal)	dlcm_cg	LDG.E.CG	46
+decode attention (fattn-pascal)	dlcm_cg	LDG.E.CG.128	15
+decode attention (fattn-pascal)	dlcm_cg	LDG.E.CG.U16	1
+decode attention (fattn-pascal)	dlcm_cg	LDG.E.CI.64	40
+decode attention (fattn-pascal)	dlcm_cg	LDL	336
+decode attention (fattn-pascal)	dlcm_cg	LDS.U.128	16
+decode attention (fattn-pascal)	dlcm_cg	LDS.U.U8	1
+decode attention (fattn-pascal)	fap_mb2	LDG.E	1
+decode attention (fattn-pascal)	fap_mb2	LDG.E.128	8
+decode attention (fattn-pascal)	fap_mb2	LDG.E.CG	45
+decode attention (fattn-pascal)	fap_mb2	LDG.E.CG.128	7
+decode attention (fattn-pascal)	fap_mb2	LDG.E.CI.64	40
+decode attention (fattn-pascal)	fap_mb2	LDG.E.U16	1
+decode attention (fattn-pascal)	fap_mb2	LDL	336
+decode attention (fattn-pascal)	fap_mb2	LDS.U.128	16
+decode attention (fattn-pascal)	fap_mb2	LDS.U.U8	1
+decode attention (fattn-pascal)	fap_mb4	LDG.E	1
+decode attention (fattn-pascal)	fap_mb4	LDG.E.128	8
+decode attention (fattn-pascal)	fap_mb4	LDG.E.CG	45
+decode attention (fattn-pascal)	fap_mb4	LDG.E.CG.128	7
+decode attention (fattn-pascal)	fap_mb4	LDG.E.CI.64	40
+decode attention (fattn-pascal)	fap_mb4	LDG.E.U16	1
+decode attention (fattn-pascal)	fap_mb4	LDL	336
+decode attention (fattn-pascal)	fap_mb4	LDS.U.128	16
+decode attention (fattn-pascal)	fap_mb4	LDS.U.U8	1
+decode attention (fattn-pascal)	mrr128	LDG.E	1
+decode attention (fattn-pascal)	mrr128	LDG.E.128	8
+decode attention (fattn-pascal)	mrr128	LDG.E.CG	45
+decode attention (fattn-pascal)	mrr128	LDG.E.CG.128	7
+decode attention (fattn-pascal)	mrr128	LDG.E.CI.64	40
+decode attention (fattn-pascal)	mrr128	LDG.E.U16	1
+decode attention (fattn-pascal)	mrr128	LDL	336
+decode attention (fattn-pascal)	mrr128	LDS.U.128	16
+decode attention (fattn-pascal)	mrr128	LDS.U.U8	1
+decode attention (fattn-pascal)	mrr64	LDG.E	1
+decode attention (fattn-pascal)	mrr64	LDG.E.128	8
+decode attention (fattn-pascal)	mrr64	LDG.E.CG	45
+decode attention (fattn-pascal)	mrr64	LDG.E.CG.128	7
+decode attention (fattn-pascal)	mrr64	LDG.E.CI.64	40
+decode attention (fattn-pascal)	mrr64	LDG.E.U16	1
+decode attention (fattn-pascal)	mrr64	LDL	336
+decode attention (fattn-pascal)	mrr64	LDS.U.128	16
+decode attention (fattn-pascal)	mrr64	LDS.U.U8	1
+decode attention (fattn-pascal)	mrr96	LDG.E	1
+decode attention (fattn-pascal)	mrr96	LDG.E.128	8
+decode attention (fattn-pascal)	mrr96	LDG.E.CG	45
+decode attention (fattn-pascal)	mrr96	LDG.E.CG.128	7
+decode attention (fattn-pascal)	mrr96	LDG.E.CI.64	40
+decode attention (fattn-pascal)	mrr96	LDG.E.U16	1
+decode attention (fattn-pascal)	mrr96	LDL	336
+decode attention (fattn-pascal)	mrr96	LDS.U.128	16
+decode attention (fattn-pascal)	mrr96	LDS.U.U8	1
+decode attention (fattn-pascal)	restrict	LDG.E	1
+decode attention (fattn-pascal)	restrict	LDG.E.128	8
+decode attention (fattn-pascal)	restrict	LDG.E.CG	45
+decode attention (fattn-pascal)	restrict	LDG.E.CG.128	7
+decode attention (fattn-pascal)	restrict	LDG.E.CI.64	40
+decode attention (fattn-pascal)	restrict	LDG.E.U16	1
+decode attention (fattn-pascal)	restrict	LDL	336
+decode attention (fattn-pascal)	restrict	LDS.U.128	16
+decode attention (fattn-pascal)	restrict	LDS.U.U8	1
+decode attention (fattn-pascal)	xvec	LDG.E	1
+decode attention (fattn-pascal)	xvec	LDG.E.128	8
+decode attention (fattn-pascal)	xvec	LDG.E.CG	45
+decode attention (fattn-pascal)	xvec	LDG.E.CG.128	7
+decode attention (fattn-pascal)	xvec	LDG.E.CI.64	40
+decode attention (fattn-pascal)	xvec	LDG.E.U16	1
+decode attention (fattn-pascal)	xvec	LDL	336
+decode attention (fattn-pascal)	xvec	LDS.U.128	16
+decode attention (fattn-pascal)	xvec	LDS.U.U8	1
+k-column (mmvq-pascal-kcol)	base	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	base	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	base	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	base	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	base	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	base	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	base2	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	base2	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	base2	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	base2	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	base2	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	base2	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	dlcm_ca	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	dlcm_ca	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	dlcm_ca	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	dlcm_ca	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	dlcm_ca	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	dlcm_ca	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	dlcm_cg	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	dlcm_cg	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	dlcm_cg	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	dlcm_cg	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	dlcm_cg	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	dlcm_cg	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	kcol_mb1	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	kcol_mb1	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	kcol_mb1	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	kcol_mb1	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	kcol_mb1	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	kcol_mb1	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDL	40
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDL.LU	8
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	kcol_mb3	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDL	175
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDL.LU	176
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	kcol_mb4	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	mrr128	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	mrr128	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	mrr128	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	mrr128	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	mrr128	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	mrr128	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	mrr64	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	mrr64	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	mrr64	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	mrr64	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	mrr64	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	mrr64	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	mrr96	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	mrr96	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	mrr96	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	mrr96	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	mrr96	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	mrr96	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	restrict	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	restrict	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	restrict	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	restrict	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	restrict	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	restrict	LDS.U.U16	48
+k-column (mmvq-pascal-kcol)	xvec	LDG.E.CI	7
+k-column (mmvq-pascal-kcol)	xvec	LDG.E.CI.128	15568
+k-column (mmvq-pascal-kcol)	xvec	LDS.U.128	8256
+k-column (mmvq-pascal-kcol)	xvec	LDS.U.32	4839
+k-column (mmvq-pascal-kcol)	xvec	LDS.U.64	408
+k-column (mmvq-pascal-kcol)	xvec	LDS.U.U16	48
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	base2	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDL	81
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_ca	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDG.E.CG	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	dlcm_cg	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr128	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr64	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mrr96	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb2	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDL	81
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	mtokmb4	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	restrict	LDS.U.64	392
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDC	72
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDG.E	1550
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDG.E.CI	576
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDG.E.CI.128	294
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDS.U.128	1568
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDS.U.32	504
+multi-token Q2_0 experts (mmvq-pascal-mtok)	xvec	LDS.U.64	392
+persistent MoE (moe-persistent)	base	LDG.E	2
+persistent MoE (moe-persistent)	base	LDG.E.CG	912
+persistent MoE (moe-persistent)	base	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	base	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	base	LDG.E.CI	1344
+persistent MoE (moe-persistent)	base	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	base	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	base	LDG.E.CV	180
+persistent MoE (moe-persistent)	base	LDL	72
+persistent MoE (moe-persistent)	base	LDL.LU	25
+persistent MoE (moe-persistent)	base	LDS.U.128	425
+persistent MoE (moe-persistent)	base	LDS.U.32	833
+persistent MoE (moe-persistent)	base	LDS.U.64	380
+persistent MoE (moe-persistent)	base	LDS.U.U16	16
+persistent MoE (moe-persistent)	base2	LDG.E	2
+persistent MoE (moe-persistent)	base2	LDG.E.CG	912
+persistent MoE (moe-persistent)	base2	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	base2	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	base2	LDG.E.CI	1344
+persistent MoE (moe-persistent)	base2	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	base2	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	base2	LDG.E.CV	180
+persistent MoE (moe-persistent)	base2	LDL	72
+persistent MoE (moe-persistent)	base2	LDL.LU	25
+persistent MoE (moe-persistent)	base2	LDS.U.128	425
+persistent MoE (moe-persistent)	base2	LDS.U.32	833
+persistent MoE (moe-persistent)	base2	LDS.U.64	380
+persistent MoE (moe-persistent)	base2	LDS.U.U16	16
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E	2
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CG	912
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CI	1344
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	dlcm_ca	LDG.E.CV	180
+persistent MoE (moe-persistent)	dlcm_ca	LDL	72
+persistent MoE (moe-persistent)	dlcm_ca	LDL.LU	25
+persistent MoE (moe-persistent)	dlcm_ca	LDS.U.128	425
+persistent MoE (moe-persistent)	dlcm_ca	LDS.U.32	833
+persistent MoE (moe-persistent)	dlcm_ca	LDS.U.64	380
+persistent MoE (moe-persistent)	dlcm_ca	LDS.U.U16	16
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CG	914
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CI	1344
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	dlcm_cg	LDG.E.CV	180
+persistent MoE (moe-persistent)	dlcm_cg	LDL	72
+persistent MoE (moe-persistent)	dlcm_cg	LDL.LU	25
+persistent MoE (moe-persistent)	dlcm_cg	LDS.U.128	425
+persistent MoE (moe-persistent)	dlcm_cg	LDS.U.32	833
+persistent MoE (moe-persistent)	dlcm_cg	LDS.U.64	380
+persistent MoE (moe-persistent)	dlcm_cg	LDS.U.U16	16
+persistent MoE (moe-persistent)	mrr128	LDG.E	2
+persistent MoE (moe-persistent)	mrr128	LDG.E.CG	912
+persistent MoE (moe-persistent)	mrr128	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	mrr128	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	mrr128	LDG.E.CI	1344
+persistent MoE (moe-persistent)	mrr128	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	mrr128	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	mrr128	LDG.E.CV	180
+persistent MoE (moe-persistent)	mrr128	LDL	68
+persistent MoE (moe-persistent)	mrr128	LDL.LU	22
+persistent MoE (moe-persistent)	mrr128	LDS.U.128	425
+persistent MoE (moe-persistent)	mrr128	LDS.U.32	833
+persistent MoE (moe-persistent)	mrr128	LDS.U.64	380
+persistent MoE (moe-persistent)	mrr128	LDS.U.U16	16
+persistent MoE (moe-persistent)	mrr64	LDG.E	2
+persistent MoE (moe-persistent)	mrr64	LDG.E.CG	912
+persistent MoE (moe-persistent)	mrr64	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	mrr64	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	mrr64	LDG.E.CI	1344
+persistent MoE (moe-persistent)	mrr64	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	mrr64	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	mrr64	LDG.E.CV	180
+persistent MoE (moe-persistent)	mrr64	LDL	70
+persistent MoE (moe-persistent)	mrr64	LDL.LU	13
+persistent MoE (moe-persistent)	mrr64	LDS.U.128	425
+persistent MoE (moe-persistent)	mrr64	LDS.U.32	833
+persistent MoE (moe-persistent)	mrr64	LDS.U.64	380
+persistent MoE (moe-persistent)	mrr64	LDS.U.U16	16
+persistent MoE (moe-persistent)	mrr96	LDG.E	2
+persistent MoE (moe-persistent)	mrr96	LDG.E.CG	912
+persistent MoE (moe-persistent)	mrr96	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	mrr96	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	mrr96	LDG.E.CI	1344
+persistent MoE (moe-persistent)	mrr96	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	mrr96	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	mrr96	LDG.E.CV	180
+persistent MoE (moe-persistent)	mrr96	LDL	70
+persistent MoE (moe-persistent)	mrr96	LDL.LU	21
+persistent MoE (moe-persistent)	mrr96	LDS.U.128	425
+persistent MoE (moe-persistent)	mrr96	LDS.U.32	833
+persistent MoE (moe-persistent)	mrr96	LDS.U.64	380
+persistent MoE (moe-persistent)	mrr96	LDS.U.U16	16
+persistent MoE (moe-persistent)	restrict	LDG.E.CG	912
+persistent MoE (moe-persistent)	restrict	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	restrict	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	restrict	LDG.E.CI	1346
+persistent MoE (moe-persistent)	restrict	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	restrict	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	restrict	LDG.E.CV	180
+persistent MoE (moe-persistent)	restrict	LDL	72
+persistent MoE (moe-persistent)	restrict	LDL.LU	25
+persistent MoE (moe-persistent)	restrict	LDS.U.128	425
+persistent MoE (moe-persistent)	restrict	LDS.U.32	833
+persistent MoE (moe-persistent)	restrict	LDS.U.64	380
+persistent MoE (moe-persistent)	restrict	LDS.U.U16	16
+persistent MoE (moe-persistent)	xvec	LDG.E	2
+persistent MoE (moe-persistent)	xvec	LDG.E.CG	912
+persistent MoE (moe-persistent)	xvec	LDG.E.CG.128	198
+persistent MoE (moe-persistent)	xvec	LDG.E.CG.64	117
+persistent MoE (moe-persistent)	xvec	LDG.E.CI	1344
+persistent MoE (moe-persistent)	xvec	LDG.E.CI.128	613
+persistent MoE (moe-persistent)	xvec	LDG.E.CI.64	3456
+persistent MoE (moe-persistent)	xvec	LDG.E.CV	180
+persistent MoE (moe-persistent)	xvec	LDL	72
+persistent MoE (moe-persistent)	xvec	LDL.LU	25
+persistent MoE (moe-persistent)	xvec	LDS.U.128	425
+persistent MoE (moe-persistent)	xvec	LDS.U.32	833
+persistent MoE (moe-persistent)	xvec	LDS.U.64	380
+persistent MoE (moe-persistent)	xvec	LDS.U.U16	16
+prompt attention tile (fattn-tile-pascal)	base	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	base	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	base	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	base	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	base	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	base	LDL	10
+prompt attention tile (fattn-tile-pascal)	base	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	base	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	base	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	base2	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	base2	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	base2	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	base2	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	base2	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	base2	LDL	10
+prompt attention tile (fattn-tile-pascal)	base2	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	base2	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	base2	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDL	77
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDL.64	1
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDL.LU	52
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDG.E.CG	28
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDG.E.CG.U16	72
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDL	10
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDL	77
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDL.64	1
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDL.LU	52
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	mrr128	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	mrr128	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	mrr128	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	mrr128	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	mrr128	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	mrr128	LDL	10
+prompt attention tile (fattn-tile-pascal)	mrr128	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	mrr128	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	mrr128	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	mrr64	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	mrr64	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	mrr64	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	mrr64	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	mrr64	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	mrr64	LDL	10
+prompt attention tile (fattn-tile-pascal)	mrr64	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	mrr64	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	mrr64	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	mrr96	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	mrr96	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	mrr96	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	mrr96	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	mrr96	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	mrr96	LDL	10
+prompt attention tile (fattn-tile-pascal)	mrr96	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	mrr96	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	mrr96	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	restrict	LDG.E	4
+prompt attention tile (fattn-tile-pascal)	restrict	LDG.E.CI	236
+prompt attention tile (fattn-tile-pascal)	restrict	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	restrict	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	restrict	LDG.E.CI.U16	72
+prompt attention tile (fattn-tile-pascal)	restrict	LDL	10
+prompt attention tile (fattn-tile-pascal)	restrict	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	restrict	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	restrict	LDS.U.64	2
+prompt attention tile (fattn-tile-pascal)	xvec	LDG.E	28
+prompt attention tile (fattn-tile-pascal)	xvec	LDG.E.CI	212
+prompt attention tile (fattn-tile-pascal)	xvec	LDG.E.CI.128	66
+prompt attention tile (fattn-tile-pascal)	xvec	LDG.E.CI.64	16
+prompt attention tile (fattn-tile-pascal)	xvec	LDG.E.U16	72
+prompt attention tile (fattn-tile-pascal)	xvec	LDL	10
+prompt attention tile (fattn-tile-pascal)	xvec	LDS.U.128	292
+prompt attention tile (fattn-tile-pascal)	xvec	LDS.U.32	62
+prompt attention tile (fattn-tile-pascal)	xvec	LDS.U.64	2

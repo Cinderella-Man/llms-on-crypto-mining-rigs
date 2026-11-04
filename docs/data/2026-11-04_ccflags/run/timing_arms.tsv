@@ -1,0 +1,7 @@
+arm	cmake_flags	bench_flags	what it tests
+base	-	-	the -ladder2 code with the macro refactor (identical machine code to -ladder2's)
+iqmc2	-DMMVQP_IQ_MC_MIN_BLOCKS=2	n/a	IQ2_S and IQ3_XXS kernels of 2-4 tokens at 2 blocks per SM, up to 255 registers (no spills), one-token kernels unchanged
+mtokmb4	-DMMVQP_MTOK_MIN_BLOCKS=4	n/a	Q2_0 multi-token expert kernels at 4 blocks per SM, at most 128 registers
+mrr128	-maxrregcount=128	-maxrregcount=128	every Pascal kernel file compiled with a register cap of 128 (acts on the kernels whose launch bounds do not bind)
+dlcm_ca	--ptxas-options=-dlcm=ca	-Xptxas -dlcm=ca	ptxas with an explicit default load cache modifier ca
+dlcm_cg	--ptxas-options=-dlcm=cg	-Xptxas -dlcm=cg	control: plain global loads bypass L1 (LDG.E.CG); tells whether L1 caching of the plain loads matters on a P106

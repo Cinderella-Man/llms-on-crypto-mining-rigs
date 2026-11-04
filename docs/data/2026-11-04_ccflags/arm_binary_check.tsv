@@ -1,0 +1,7 @@
+arm	grid_mc_regs_max	grid_mc_regs_mean	mtok_regs_max	mtok_regs_mean	kcol_regs_max	ldg_cg_in_binary
+base	168	168.0	168	124.0	244	1279
+iqmc2	255	253.9	168	124.0	244	1279
+mtokmb4	168	168.0	128	114.7	244	1279
+mrr128	168	168.0	168	130.9	244	1279
+dlcm_cg	168	168.0	168	124.0	244	12336
+dlcm_ca	128	128.0	128	114.7	244	1279

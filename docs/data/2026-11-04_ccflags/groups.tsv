@@ -1,0 +1,320 @@
+group	arm	kernels	regs_mean	regs_max	local_insns	blocks_sm_mean	insns	kernels_differing_from_base
+BF16	base	108	93.3	254	0	6.99	101028	0
+BF16	dlcm_ca	108	94.9	254	0	6.83	100992	42
+BF16	dlcm_cg	108	93.3	254	0	6.99	101028	0
+BF16	mrr64	108	92.2	255	0	6.95	100476	73
+BF16	mrr96	108	93.6	255	0	6.95	100554	65
+BF16	mrr128	108	93.6	254	0	6.95	100638	62
+BF16	restrict	108	93.3	254	0	6.99	101028	0
+BF16	xvec	108	93.3	254	0	6.99	101028	0
+BF16	base2	108	93.3	254	0	6.99	101028	0
+BF16	bf16_mb2	108	139.8	254	0	4.41	100734	102
+BF16	bf16_mb3	108	125.2	168	725	4.77	102078	108
+BF16	bf16_mb4	108	106.7	128	2988	5.3	106332	108
+GDN fusions	base	8	49.0	63	0	10.12	6042	0
+GDN fusions	dlcm_ca	8	49.0	63	0	10.12	6042	0
+GDN fusions	dlcm_cg	8	49.0	63	0	10.12	6042	0
+GDN fusions	mrr64	8	57.0	64	0	9.12	6042	8
+GDN fusions	mrr96	8	62.2	76	0	8.25	6030	8
+GDN fusions	mrr128	8	62.2	76	0	8.25	6030	8
+GDN fusions	restrict	8	49.0	63	0	10.12	6042	0
+GDN fusions	xvec	8	49.0	63	0	10.12	6042	0
+GDN fusions	base2	8	49.0	63	0	10.12	6042	0
+IQ2_S (grid type), 2-4 tokens	base	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	dlcm_ca	9	128.0	128	3246	4.0	42738	9
+IQ2_S (grid type), 2-4 tokens	dlcm_cg	9	168.0	168	1467	3.0	39918	9
+IQ2_S (grid type), 2-4 tokens	mrr64	9	168.0	168	1549	3.0	38544	8
+IQ2_S (grid type), 2-4 tokens	mrr96	9	168.0	168	1571	3.0	36942	8
+IQ2_S (grid type), 2-4 tokens	mrr128	9	168.0	168	1628	3.0	37002	9
+IQ2_S (grid type), 2-4 tokens	restrict	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	xvec	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	iqmb2	9	254.9	255	12	2.0	35208	9
+IQ2_S (grid type), 2-4 tokens	iqmb4	9	128.0	128	3246	4.0	42738	9
+IQ2_S (grid type), 2-4 tokens	base2	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	mmvq_mb2	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	mmvq_mb3	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	mmvq_mb4	9	168.0	168	1467	3.0	39918	0
+IQ2_S (grid type), 2-4 tokens	iqmc2	9	254.9	255	12	2.0	35208	9
+IQ2_S (grid type), one token	base	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	dlcm_ca	9	125.3	128	18	4.0	16734	9
+IQ2_S (grid type), one token	dlcm_cg	9	161.0	168	0	3.0	16668	9
+IQ2_S (grid type), one token	mrr64	9	161.6	168	0	3.0	16638	6
+IQ2_S (grid type), one token	mrr96	9	161.4	168	0	3.0	16626	6
+IQ2_S (grid type), one token	mrr128	9	161.7	168	0	3.0	16602	9
+IQ2_S (grid type), one token	restrict	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	xvec	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	iqmb2	9	179.7	213	0	2.67	16638	9
+IQ2_S (grid type), one token	iqmb4	9	125.2	128	18	4.0	16752	9
+IQ2_S (grid type), one token	base2	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	mmvq_mb2	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	mmvq_mb3	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	mmvq_mb4	9	161.0	168	0	3.0	16668	0
+IQ2_S (grid type), one token	iqmc2	9	161.0	168	0	3.0	16668	0
+IQ3_XXS (grid type), 2-4 tokens	base	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	dlcm_ca	9	128.0	128	3169	4.0	41430	9
+IQ3_XXS (grid type), 2-4 tokens	dlcm_cg	9	168.0	168	1213	3.0	38316	9
+IQ3_XXS (grid type), 2-4 tokens	mrr64	9	168.0	168	1307	3.0	38538	8
+IQ3_XXS (grid type), 2-4 tokens	mrr96	9	168.0	168	1316	3.0	36660	8
+IQ3_XXS (grid type), 2-4 tokens	mrr128	9	168.0	168	1383	3.0	36624	9
+IQ3_XXS (grid type), 2-4 tokens	restrict	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	xvec	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	iqmb2	9	252.9	255	0	2.0	35400	9
+IQ3_XXS (grid type), 2-4 tokens	iqmb4	9	128.0	128	3169	4.0	41430	9
+IQ3_XXS (grid type), 2-4 tokens	base2	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	mmvq_mb2	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	mmvq_mb3	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	mmvq_mb4	9	168.0	168	1213	3.0	38316	0
+IQ3_XXS (grid type), 2-4 tokens	iqmc2	9	252.9	255	0	2.0	35400	9
+IQ3_XXS (grid type), one token	base	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	dlcm_ca	9	105.8	128	31	4.56	17904	3
+IQ3_XXS (grid type), one token	dlcm_cg	9	119.1	168	0	4.22	17808	9
+IQ3_XXS (grid type), one token	mrr64	9	125.7	168	0	4.0	17778	6
+IQ3_XXS (grid type), one token	mrr96	9	126.1	168	0	3.89	17766	6
+IQ3_XXS (grid type), one token	mrr128	9	125.4	168	0	3.89	17760	9
+IQ3_XXS (grid type), one token	restrict	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	xvec	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	iqmb2	9	123.0	190	0	4.11	17832	8
+IQ3_XXS (grid type), one token	iqmb4	9	105.8	128	31	4.56	17898	4
+IQ3_XXS (grid type), one token	base2	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	mmvq_mb2	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	mmvq_mb3	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	mmvq_mb4	9	119.1	168	0	4.22	17808	0
+IQ3_XXS (grid type), one token	iqmc2	9	119.1	168	0	4.22	17808	0
+Q2_0 experts, 2 tokens	base	2	86.0	96	0	5.5	2856	0
+Q2_0 experts, 2 tokens	dlcm_ca	2	86.0	96	0	5.5	2856	0
+Q2_0 experts, 2 tokens	dlcm_cg	2	86.0	96	0	5.5	2856	2
+Q2_0 experts, 2 tokens	mrr64	2	90.0	100	0	5.0	2946	2
+Q2_0 experts, 2 tokens	mrr96	2	91.5	101	0	4.5	2850	2
+Q2_0 experts, 2 tokens	mrr128	2	96.5	101	0	4.5	2844	2
+Q2_0 experts, 2 tokens	restrict	2	86.0	96	0	5.5	2856	0
+Q2_0 experts, 2 tokens	xvec	2	86.0	96	0	5.5	2856	0
+Q2_0 experts, 2 tokens	mtokmb2	2	86.0	96	0	5.5	2856	1
+Q2_0 experts, 2 tokens	mtokmb4	2	86.0	96	0	5.5	2856	0
+Q2_0 experts, 2 tokens	base2	2	86.0	96	0	5.5	2856	0
+Q2_0 experts, 2 tokens, fused gate/up	base	2	114.5	137	0	4.0	4704	0
+Q2_0 experts, 2 tokens, fused gate/up	dlcm_ca	2	107.5	123	0	4.5	4704	1
+Q2_0 experts, 2 tokens, fused gate/up	dlcm_cg	2	114.5	137	0	4.0	4704	2
+Q2_0 experts, 2 tokens, fused gate/up	mrr64	2	117.5	143	0	4.0	4692	2
+Q2_0 experts, 2 tokens, fused gate/up	mrr96	2	135.5	147	0	3.5	4842	2
+Q2_0 experts, 2 tokens, fused gate/up	mrr128	2	141.5	148	0	3.0	4836	2
+Q2_0 experts, 2 tokens, fused gate/up	restrict	2	114.5	137	0	4.0	4704	0
+Q2_0 experts, 2 tokens, fused gate/up	xvec	2	114.5	137	0	4.0	4704	0
+Q2_0 experts, 2 tokens, fused gate/up	mtokmb2	2	117.0	142	0	4.0	4806	1
+Q2_0 experts, 2 tokens, fused gate/up	mtokmb4	2	107.5	123	0	4.5	4692	1
+Q2_0 experts, 2 tokens, fused gate/up	base2	2	114.5	137	0	4.0	4704	0
+Q2_0 experts, 4 tokens	base	2	113.0	114	0	4.0	5046	0
+Q2_0 experts, 4 tokens	dlcm_ca	2	113.0	114	0	4.0	5046	0
+Q2_0 experts, 4 tokens	dlcm_cg	2	113.0	114	0	4.0	5046	2
+Q2_0 experts, 4 tokens	mrr64	2	113.0	114	0	4.0	5046	1
+Q2_0 experts, 4 tokens	mrr96	2	113.5	115	0	4.0	5040	1
+Q2_0 experts, 4 tokens	mrr128	2	113.5	115	0	4.0	5040	1
+Q2_0 experts, 4 tokens	restrict	2	113.0	114	0	4.0	5046	0
+Q2_0 experts, 4 tokens	xvec	2	113.0	114	0	4.0	5046	0
+Q2_0 experts, 4 tokens	mtokmb2	2	113.0	114	0	4.0	5040	1
+Q2_0 experts, 4 tokens	mtokmb4	2	113.0	114	0	4.0	5046	0
+Q2_0 experts, 4 tokens	base2	2	113.0	114	0	4.0	5046	0
+Q2_0 experts, 4 tokens, fused gate/up	base	2	145.0	156	0	3.0	11760	0
+Q2_0 experts, 4 tokens, fused gate/up	dlcm_ca	2	125.5	128	0	4.0	11754	2
+Q2_0 experts, 4 tokens, fused gate/up	dlcm_cg	2	145.0	156	0	3.0	11760	2
+Q2_0 experts, 4 tokens, fused gate/up	mrr64	2	145.0	156	0	3.0	11772	2
+Q2_0 experts, 4 tokens, fused gate/up	mrr96	2	145.0	156	0	3.0	11772	2
+Q2_0 experts, 4 tokens, fused gate/up	mrr128	2	148.5	163	0	3.0	11736	2
+Q2_0 experts, 4 tokens, fused gate/up	restrict	2	145.0	156	0	3.0	11760	0
+Q2_0 experts, 4 tokens, fused gate/up	xvec	2	145.0	156	0	3.0	11760	0
+Q2_0 experts, 4 tokens, fused gate/up	mtokmb2	2	145.0	156	0	3.0	11808	1
+Q2_0 experts, 4 tokens, fused gate/up	mtokmb4	2	125.5	128	0	4.0	11754	2
+Q2_0 experts, 4 tokens, fused gate/up	base2	2	145.0	156	0	3.0	11760	0
+Q2_0 experts, 8 tokens	base	2	134.0	135	0	3.0	11568	0
+Q2_0 experts, 8 tokens	dlcm_ca	2	128.0	128	0	4.0	11598	2
+Q2_0 experts, 8 tokens	dlcm_cg	2	134.0	135	0	3.0	11568	2
+Q2_0 experts, 8 tokens	mrr64	2	134.0	135	0	3.0	11568	1
+Q2_0 experts, 8 tokens	mrr96	2	134.0	135	0	3.0	11568	1
+Q2_0 experts, 8 tokens	mrr128	2	134.0	135	0	3.0	11568	1
+Q2_0 experts, 8 tokens	restrict	2	134.0	135	0	3.0	11568	0
+Q2_0 experts, 8 tokens	xvec	2	134.0	135	0	3.0	11568	0
+Q2_0 experts, 8 tokens	mtokmb2	2	134.0	135	0	3.0	11562	1
+Q2_0 experts, 8 tokens	mtokmb4	2	128.0	128	0	4.0	11598	2
+Q2_0 experts, 8 tokens	base2	2	134.0	135	0	3.0	11568	0
+Q2_0 experts, 8 tokens, fused gate/up	base	2	151.5	168	0	3.0	35748	0
+Q2_0 experts, 8 tokens, fused gate/up	dlcm_ca	2	128.0	128	92	4.0	35904	2
+Q2_0 experts, 8 tokens, fused gate/up	dlcm_cg	2	151.5	168	0	3.0	35748	2
+Q2_0 experts, 8 tokens, fused gate/up	mrr64	2	151.5	168	0	3.0	35766	2
+Q2_0 experts, 8 tokens, fused gate/up	mrr96	2	151.5	168	0	3.0	35766	2
+Q2_0 experts, 8 tokens, fused gate/up	mrr128	2	151.5	168	0	3.0	35766	2
+Q2_0 experts, 8 tokens, fused gate/up	restrict	2	151.5	168	0	3.0	35748	0
+Q2_0 experts, 8 tokens, fused gate/up	xvec	2	151.5	168	0	3.0	35748	0
+Q2_0 experts, 8 tokens, fused gate/up	mtokmb2	2	161.5	188	0	2.5	35790	1
+Q2_0 experts, 8 tokens, fused gate/up	mtokmb4	2	128.0	128	92	4.0	35904	2
+Q2_0 experts, 8 tokens, fused gate/up	base2	2	151.5	168	0	3.0	35748	0
+decode attention (fattn-pascal)	base	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	dlcm_ca	1	128.0	128	433	4.0	4590	1
+decode attention (fattn-pascal)	dlcm_cg	1	134.0	134	433	3.0	4584	1
+decode attention (fattn-pascal)	mrr64	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	mrr96	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	mrr128	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	restrict	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	xvec	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	base2	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	fap_mb2	1	134.0	134	433	3.0	4584	0
+decode attention (fattn-pascal)	fap_mb4	1	128.0	128	433	4.0	4590	1
+k-column iq4_xs	base	16	105.0	128	0	4.38	41580	0
+k-column iq4_xs	dlcm_ca	16	105.0	128	0	4.38	41580	0
+k-column iq4_xs	dlcm_cg	16	105.0	128	0	4.38	41580	0
+k-column iq4_xs	mrr64	16	101.8	116	0	4.38	41922	16
+k-column iq4_xs	mrr96	16	107.1	117	0	4.25	41196	16
+k-column iq4_xs	mrr128	16	114.9	128	0	4.25	40050	16
+k-column iq4_xs	restrict	16	105.0	128	0	4.38	41580	0
+k-column iq4_xs	xvec	16	105.0	128	0	4.38	41580	0
+k-column iq4_xs	base2	16	105.0	128	0	4.38	41580	0
+k-column iq4_xs	kcol_mb1	16	105.9	133	0	4.31	41622	5
+k-column iq4_xs	kcol_mb3	16	104.4	128	0	4.44	41526	8
+k-column iq4_xs	kcol_mb4	16	104.8	128	0	4.38	41574	11
+k-column q2_0	base	16	103.3	119	0	4.5	26502	0
+k-column q2_0	dlcm_ca	16	103.3	119	0	4.5	26502	0
+k-column q2_0	dlcm_cg	16	103.3	119	0	4.5	26502	0
+k-column q2_0	mrr64	16	100.9	116	0	4.56	26400	16
+k-column q2_0	mrr96	16	106.4	117	0	4.31	25746	16
+k-column q2_0	mrr128	16	114.1	128	0	4.31	25152	16
+k-column q2_0	restrict	16	103.3	119	0	4.5	26502	0
+k-column q2_0	xvec	16	103.3	119	0	4.5	26502	0
+k-column q2_0	base2	16	103.3	119	0	4.5	26502	0
+k-column q2_0	kcol_mb1	16	103.4	119	0	4.5	26904	5
+k-column q2_0	kcol_mb3	16	103.2	119	0	4.5	26574	8
+k-column q2_0	kcol_mb4	16	103.8	119	0	4.44	26592	10
+k-column q3_K	base	16	165.1	235	0	2.88	39618	0
+k-column q3_K	dlcm_ca	16	165.1	235	0	2.88	39618	0
+k-column q3_K	dlcm_cg	16	165.1	235	0	2.88	39618	0
+k-column q3_K	mrr64	16	158.9	219	0	2.94	39708	16
+k-column q3_K	mrr96	16	163.6	219	0	2.75	39120	16
+k-column q3_K	mrr128	16	173.3	219	0	2.5	38580	16
+k-column q3_K	restrict	16	165.1	235	0	2.88	39618	0
+k-column q3_K	xvec	16	165.1	235	0	2.88	39618	0
+k-column q3_K	base2	16	165.1	235	0	2.88	39618	0
+k-column q3_K	kcol_mb1	16	165.3	235	0	2.81	40224	5
+k-column q3_K	kcol_mb3	16	148.2	168	34	3.25	39852	13
+k-column q3_K	kcol_mb4	16	123.8	128	214	4.06	40974	15
+k-column q4_K	base	16	114.6	152	0	4.12	32946	0
+k-column q4_K	dlcm_ca	16	114.6	152	0	4.12	32946	0
+k-column q4_K	dlcm_cg	16	114.6	152	0	4.12	32946	0
+k-column q4_K	mrr64	16	111.4	147	0	4.12	33288	16
+k-column q4_K	mrr96	16	117.0	147	0	3.94	32490	16
+k-column q4_K	mrr128	16	124.1	147	0	3.75	32112	16
+k-column q4_K	restrict	16	114.6	152	0	4.12	32946	0
+k-column q4_K	xvec	16	114.6	152	0	4.12	32946	0
+k-column q4_K	base2	16	114.6	152	0	4.12	32946	0
+k-column q4_K	kcol_mb1	16	114.6	152	0	4.12	32856	5
+k-column q4_K	kcol_mb3	16	114.4	152	0	4.19	33150	8
+k-column q4_K	kcol_mb4	16	111.4	128	2	4.38	33264	14
+k-column q5_K	base	16	169.1	244	0	3.0	36576	0
+k-column q5_K	dlcm_ca	16	169.1	244	0	3.0	36576	0
+k-column q5_K	dlcm_cg	16	169.1	244	0	3.0	36576	0
+k-column q5_K	mrr64	16	167.4	244	0	3.0	36888	16
+k-column q5_K	mrr96	16	171.0	244	0	3.0	36096	16
+k-column q5_K	mrr128	16	178.6	244	0	2.75	35688	16
+k-column q5_K	restrict	16	169.1	244	0	3.0	36576	0
+k-column q5_K	xvec	16	169.1	244	0	3.0	36576	0
+k-column q5_K	base2	16	169.1	244	0	3.0	36576	0
+k-column q5_K	kcol_mb1	16	169.1	244	0	3.0	36486	5
+k-column q5_K	kcol_mb3	16	142.9	168	0	3.44	36780	13
+k-column q5_K	kcol_mb4	16	121.5	128	16	4.12	36924	15
+k-column q6_K	base	16	145.2	208	0	3.19	40542	0
+k-column q6_K	dlcm_ca	16	145.2	208	0	3.19	40542	0
+k-column q6_K	dlcm_cg	16	145.2	208	0	3.19	40542	0
+k-column q6_K	mrr64	16	139.2	188	0	3.38	40674	16
+k-column q6_K	mrr96	16	144.9	188	0	3.19	40086	16
+k-column q6_K	mrr128	16	152.6	188	0	3.12	39546	16
+k-column q6_K	restrict	16	145.2	208	0	3.19	40542	0
+k-column q6_K	xvec	16	145.2	208	0	3.19	40542	0
+k-column q6_K	base2	16	145.2	208	0	3.19	40542	0
+k-column q6_K	kcol_mb1	16	145.3	208	0	3.19	41148	5
+k-column q6_K	kcol_mb3	16	139.8	168	43	3.31	40788	13
+k-column q6_K	kcol_mb4	16	122.0	128	234	4.06	41790	15
+k-column q8_0	base	16	106.1	120	0	4.5	21804	0
+k-column q8_0	dlcm_ca	16	106.1	120	0	4.5	21804	0
+k-column q8_0	dlcm_cg	16	106.1	120	0	4.5	21804	0
+k-column q8_0	mrr64	16	100.6	116	0	4.56	21966	16
+k-column q8_0	mrr96	16	106.4	117	0	4.31	21300	16
+k-column q8_0	mrr128	16	114.6	128	0	4.31	20712	16
+k-column q8_0	restrict	16	106.1	120	0	4.5	21804	0
+k-column q8_0	xvec	16	106.1	120	0	4.5	21804	0
+k-column q8_0	base2	16	106.1	120	0	4.5	21804	0
+k-column q8_0	kcol_mb1	16	106.7	127	0	4.5	22422	5
+k-column q8_0	kcol_mb3	16	104.6	120	0	4.5	21840	8
+k-column q8_0	kcol_mb4	16	104.3	120	0	4.5	21888	10
+k-column, activation records	base	7	16.7	19	0	16.0	792	0
+k-column, activation records	dlcm_ca	7	16.7	19	0	16.0	792	0
+k-column, activation records	dlcm_cg	7	16.7	19	0	16.0	792	0
+k-column, activation records	mrr64	7	20.1	21	0	16.0	852	5
+k-column, activation records	mrr96	7	20.1	21	0	16.0	852	5
+k-column, activation records	mrr128	7	20.1	21	0	16.0	852	5
+k-column, activation records	restrict	7	16.7	19	0	16.0	792	0
+k-column, activation records	xvec	7	16.7	19	0	16.0	792	0
+k-column, activation records	base2	7	16.7	19	0	16.0	792	0
+k-column, activation records	kcol_mb1	7	16.7	19	0	16.0	792	0
+k-column, activation records	kcol_mb3	7	16.7	19	0	16.0	792	0
+k-column, activation records	kcol_mb4	7	16.7	19	0	16.0	792	0
+other types, 2-4 tokens	base	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	dlcm_ca	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	dlcm_cg	151	163.7	255	64	3.07	349404	151
+other types, 2-4 tokens	mrr64	151	162.1	255	96	3.13	353136	91
+other types, 2-4 tokens	mrr96	151	162.4	255	96	3.1	352206	61
+other types, 2-4 tokens	mrr128	151	164.0	255	94	3.03	349656	63
+other types, 2-4 tokens	restrict	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	xvec	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	iqmb2	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	iqmb4	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	base2	151	163.7	255	64	3.07	349404	0
+other types, 2-4 tokens	mmvq_mb2	151	163.4	255	80	3.05	348486	94
+other types, 2-4 tokens	mmvq_mb3	151	143.8	168	4860	3.35	358320	145
+other types, 2-4 tokens	mmvq_mb4	151	121.0	128	13065	3.78	374682	151
+other types, 2-4 tokens	iqmc2	151	163.7	255	64	3.07	349404	0
+other types, Q, K, V in one launch	base	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	dlcm_ca	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	dlcm_cg	5	107.6	142	0	3.6	8826	5
+other types, Q, K, V in one launch	mrr64	5	107.6	142	0	3.6	8814	5
+other types, Q, K, V in one launch	mrr96	5	107.2	142	0	3.6	8736	5
+other types, Q, K, V in one launch	mrr128	5	107.2	142	0	3.6	8736	5
+other types, Q, K, V in one launch	restrict	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	xvec	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	iqmb2	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	iqmb4	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	base2	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	mmvq_mb2	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	mmvq_mb3	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	mmvq_mb4	5	107.6	142	0	3.6	8826	0
+other types, Q, K, V in one launch	iqmc2	5	107.6	142	0	3.6	8826	0
+other types, one token	base	85	116.6	255	1	4.56	71274	0
+other types, one token	dlcm_ca	85	116.6	255	1	4.56	71274	0
+other types, one token	dlcm_cg	85	116.6	255	1	4.56	71274	85
+other types, one token	mrr64	85	117.2	255	1	4.51	71190	76
+other types, one token	mrr96	85	119.3	255	1	4.46	70560	75
+other types, one token	mrr128	85	119.6	255	1	4.45	70554	80
+other types, one token	restrict	85	116.6	255	1	4.56	71274	0
+other types, one token	xvec	85	116.6	255	1	4.56	71274	0
+other types, one token	iqmb2	85	116.6	255	1	4.56	71274	0
+other types, one token	iqmb4	85	116.6	255	1	4.56	71274	0
+other types, one token	base2	85	116.6	255	1	4.56	71274	0
+other types, one token	mmvq_mb2	85	115.3	255	1	4.59	71172	7
+other types, one token	mmvq_mb3	85	108.4	168	59	4.72	71142	29
+other types, one token	mmvq_mb4	85	100.0	128	495	4.89	71544	46
+other types, one token	iqmc2	85	116.6	255	1	4.56	71274	0
+persistent MoE	base	13	118.8	128	157	2.46	100116	0
+persistent MoE	dlcm_ca	13	118.8	128	157	2.46	100116	0
+persistent MoE	dlcm_cg	13	118.8	128	157	2.46	100116	1
+persistent MoE	mrr64	13	118.8	128	142	2.46	100068	12
+persistent MoE	mrr96	13	118.8	128	152	2.46	100086	12
+persistent MoE	mrr128	13	118.8	128	149	2.46	100080	12
+persistent MoE	restrict	13	118.8	128	157	2.46	100116	1
+persistent MoE	xvec	13	118.8	128	157	2.46	100116	0
+persistent MoE	base2	13	118.8	128	157	2.46	100116	0
+prompt attention tile (fattn-tile-pascal)	base	14	88.9	168	20	9.43	17142	0
+prompt attention tile (fattn-tile-pascal)	dlcm_ca	14	74.6	128	205	9.43	17406	6
+prompt attention tile (fattn-tile-pascal)	dlcm_cg	14	88.9	168	20	9.43	17142	10
+prompt attention tile (fattn-tile-pascal)	mrr64	14	90.6	168	20	8.29	17142	4
+prompt attention tile (fattn-tile-pascal)	mrr96	14	90.6	168	20	8.29	17142	4
+prompt attention tile (fattn-tile-pascal)	mrr128	14	90.6	168	20	8.29	17142	4
+prompt attention tile (fattn-tile-pascal)	restrict	14	88.9	168	20	9.43	17142	6
+prompt attention tile (fattn-tile-pascal)	xvec	14	88.9	168	20	9.43	17142	0
+prompt attention tile (fattn-tile-pascal)	base2	14	88.9	168	20	9.43	17142	0
+prompt attention tile (fattn-tile-pascal)	ftp_mb2	14	92.6	196	0	9.29	17112	2
+prompt attention tile (fattn-tile-pascal)	ftp_mb4	14	74.6	128	205	9.43	17406	6

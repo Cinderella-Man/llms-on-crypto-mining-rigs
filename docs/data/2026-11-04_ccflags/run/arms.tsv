@@ -1,0 +1,28 @@
+arm	flags	files	what it tests
+base	-	.	the build's own flags
+dlcm_ca	-Xptxas -dlcm=ca	.	global loads cached in L1 (ptxas --def-load-cache=ca)
+dlcm_cg	-Xptxas -dlcm=cg	.	global loads cached in L2 only (to tell what the default does on sm_61)
+mrr64	-maxrregcount=64	.	register cap 64 (8 blocks of 128 threads per SM)
+mrr96	-maxrregcount=96	.	register cap 96
+mrr128	-maxrregcount=128	.	register cap 128 (4 blocks of 128 threads per SM)
+restrict	--restrict	.	every kernel pointer parameter assumed restrict (aliasing assertion; needs a correctness review before any use)
+xvec	--extra-device-vectorization	.	more aggressive device code vectorization in the NVVM optimizer
+iqmb2	-DMMVQP_IQ_MIN_BLOCKS=2	^mmvq-pascal\.cu$	the grid types' (IQ2_S, IQ3_XXS) __launch_bounds__ minimum blocks 2 instead of 3
+iqmb4	-DMMVQP_IQ_MIN_BLOCKS=4	^mmvq-pascal\.cu$	the grid types' minimum blocks 4 (at most 128 registers)
+mtokmb2	-DMMVQP_MTOK_MIN_BLOCKS=2	^mmvq-pascal-mtok\.cu$	the multi-token Q2_0 expert kernels' minimum blocks 2 instead of 3
+mtokmb4	-DMMVQP_MTOK_MIN_BLOCKS=4	^mmvq-pascal-mtok\.cu$	the multi-token Q2_0 expert kernels' minimum blocks 4
+base2	-	.	the base arm's flags on the tree with the launch-bound macros (branch -ccflags): the code must equal the base arm's
+mmvq_mb2	-DMMVQP_MIN_BLOCKS=2	^mmvq-pascal\.cu$	launch bounds of the other types' Pascal matrix-vector kernels (one token and 2-4 tokens): minimum blocks 2 instead of 1
+mmvq_mb3	-DMMVQP_MIN_BLOCKS=3	^mmvq-pascal\.cu$	minimum blocks 3 (at most 168 registers)
+mmvq_mb4	-DMMVQP_MIN_BLOCKS=4	^mmvq-pascal\.cu$	minimum blocks 4 (at most 128 registers)
+iqmc2	-DMMVQP_IQ_MC_MIN_BLOCKS=2	^mmvq-pascal\.cu$	the grid types' kernels of 2-4 tokens only: minimum blocks 2 (their one-token kernels stay at 3)
+kcol_mb1	-DKCOL_MIN_BLOCKS=1	^mmvq-pascal-kcol-	k-column kernels: minimum blocks 1 instead of 2
+kcol_mb3	-DKCOL_MIN_BLOCKS=3	^mmvq-pascal-kcol-	minimum blocks 3
+kcol_mb4	-DKCOL_MIN_BLOCKS=4	^mmvq-pascal-kcol-	minimum blocks 4
+bf16_mb2	-DMMVF_PASCAL_MIN_BLOCKS=2	^mmvf-pascal\.cu$	BF16 kernels: minimum blocks 2 instead of no limit
+bf16_mb3	-DMMVF_PASCAL_MIN_BLOCKS=3	^mmvf-pascal\.cu$	minimum blocks 3
+bf16_mb4	-DMMVF_PASCAL_MIN_BLOCKS=4	^mmvf-pascal\.cu$	minimum blocks 4
+fap_mb2	-DFAP_MIN_BLOCKS=2	^fattn-pascal\.cu$	decode attention: minimum blocks 2 instead of 3
+fap_mb4	-DFAP_MIN_BLOCKS=4	^fattn-pascal\.cu$	minimum blocks 4
+ftp_mb2	-DFTP_MIN_BLOCKS=2	^fattn-tile-pascal\.cu$	prompt attention tile kernels: minimum blocks 2 instead of 3
+ftp_mb4	-DFTP_MIN_BLOCKS=4	^fattn-tile-pascal\.cu$	minimum blocks 4

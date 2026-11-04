@@ -1,0 +1,16 @@
+file	kernels_base_cubin	kernels_build	identical	different	only_in_one
+mmvq-pascal.cu	277	277	277	0	0
+mmvq-pascal-mtok.cu	12	12	12	0	0
+mmvf-pascal.cu	108	108	108	0	0
+mmvq-pascal-kcol.cu	0	0	0	0	0
+mmvq-pascal-kcol-q8_0.cu	17	17	17	0	0
+mmvq-pascal-kcol-q2_0.cu	17	17	17	0	0
+mmvq-pascal-kcol-q3_K.cu	17	17	17	0	0
+mmvq-pascal-kcol-q4_K.cu	17	17	17	0	0
+mmvq-pascal-kcol-q5_K.cu	17	17	17	0	0
+mmvq-pascal-kcol-q6_K.cu	17	17	17	0	0
+mmvq-pascal-kcol-iq4_xs.cu	17	17	17	0	0
+fattn-pascal.cu	1	1	1	0	0
+fattn-tile-pascal.cu	14	14	14	0	0
+gdn-fused.cu	8	8	8	0	0
+moe-persistent.cu	13	13	13	0	0
