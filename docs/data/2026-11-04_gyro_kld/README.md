@@ -84,12 +84,54 @@ Coder (256 of 512 experts per layer, like Gyro-Coder), which share their checkpo
 - **A control first** (`run/score.sh`): ISTA's Coder, which the reference chain scored with Miner Llama's own build,
   on this fork's CUDA build and these two cards. Each text had to land within the larger of that floor and two
   standard errors of the old score, or the run would stop before the Gyro files.
-- Every file is read from a copy on an NVMe drive, since the n-gram table is read at random.
+- The n-gram table is read at random, so each file is read from a copy on an NVMe drive or, when that drive is busy,
+  in place with its table held in the page cache (see "How the run went").
 
 ## Results
 
-The run is set up and waits for its two cards; the scores land here, as `kld.tsv` and a table beside the reference
-chain's files.
+KL divergence against Swift-1.5's Q8_0 (mean ± standard error) and the share of tokens whose top token matches it,
+on the held-out agent sessions and the Exercism code. The rows from ISTA's Coder down are the reference chain's own scores of
+the files this repository runs, on seven cards with Miner Llama's build
+([2026-11-03_flash_next_quality](../2026-11-03_flash_next_quality/README.md)). GiB on the GPUs is everything but the
+n-gram table and the token embeddings (`run/header.py`).
+
+| File | Experts per layer | GiB on the GPUs | agent KLD | agent same top | code KLD | code same top |
+|---|---:|---:|---:|---:|---:|---:|
+| **Gyro-M** (TQ2_T experts, the rest Q8_0) | 512 | 34.35 | **0.148 ± 0.003** | 92.5 % | **0.046 ± 0.002** | 97.5 % |
+| **Gyro-Coder** (TQ2_T experts, the rest Q8_0) | 256 | 19.29 | **0.281 ± 0.005** | 90.1 % | **0.133 ± 0.005** | 95.6 % |
+| control: ISTA GSQ-RCO Coder ("IQ1_M"), this fork and cards | 256 | 27.25 | 0.278 ± 0.005 | 90.8 % | 0.130 ± 0.005 | 95.6 % |
+| ISTA GSQ-RCO Coder ("IQ1_M") | 256 | 27.25 | 0.274 ± 0.005 | 90.7 % | 0.131 ± 0.005 | 95.5 % |
+| ISTA GSQ-RCO IQ3_S | 512 | 50.73 | 0.117 ± 0.002 | 93.4 % | 0.032 ± 0.001 | 98.0 % |
+| Swift-1.5 GSQ-RCO IQ3_S | 512 | 50.85 | 0.121 ± 0.003 | 93.7 % | 0.032 ± 0.001 | 98.1 % |
+| Swift-1.5 GSQ-RCO IQ3_XXS | 512 | 43.67 | 0.176 ± 0.004 | 92.3 % | 0.054 ± 0.002 | 97.5 % |
+| Swift-1.5 GSQ-RCO Q2_0 | 512 | 34.89 | 0.285 ± 0.006 | 90.7 % | 0.112 ± 0.004 | 96.0 % |
+| floor: the reference at `-ub 256` | 512 | — | 0.029 ± 0.001 | 97.1 % | 0.004 ± 0.000 | 99.2 % |
+
+- **The control holds:** ISTA's Coder on this fork and these two cards lands 0.004 above its old agent score and 0.001
+  below its old code score, inside the noise (the larger of the floor and two standard errors: 0.029 and 0.009). The
+  fork's `llama-perplexity` and the change of cards and split leave the scale as it was.
+- **Gyro-M at the size of Swift's Q2_0:** with the same GPU footprint (34.35 against 34.89 GiB), Gyro-M's KLD is
+  about half of Q2_0's on agent text and 0.41 of it on code, and below Swift IQ3_XXS's on both, which needs 9.3 GiB
+  more. The checkpoint difference counts against Gyro-M here (about 0.01 or less, from the ISTA-vs-Swift IQ3_S pair),
+  so its quantization alone is at least this good. Part of the gap is the file's other tensors: Gyro-M keeps every
+  non-expert matrix and the n-gram table in Q8_0, where the Swift files use K- and IQ-quants and an IQ4_NL table.
+- **On the rig** Gyro-M would take the room Swift Q2_0 takes on nine 6 GB cards. No Pascal kernel for TQ2_T exists
+  yet; registry row Q895 measures what one would cost per weight on a P106.
+- **Gyro-Coder at 19.29 GiB** scores like ISTA's Coder, which keeps the same number of experts (256 of 512) in 27.25 GiB,
+  and like Swift's Q2_0 on agent text at 55 % of its size; on code it is 0.021 behind Q2_0.
+- **Not scored yet** (registry row Q909): the wiki text of both files and Gyro-Coder's code text on the Vulkan build;
+  the run's card time ended. `run/score.sh` with `STEPS="coder:wiki m:wiki coder-vulkan:code"` scores them and skips
+  what is done.
+
+The scores as a table: `kld.tsv` (`table.py` of the reference chain over this run's logs).
+
+## How the run went
+
+- Every file ran from a copy on the NVMe drive at first. While other jobs wrote to that drive, its writes slowed to
+  ~100 MB/s and its reads queued behind them: 80–90 s per agent chunk against ~15 s on a quiet drive. Gyro-M was then
+  read in place from a hard disk instead. There its n-gram table, read at random, came in at ~110
+  reads a second, one agent chunk in 565 s. `run/pin_range.py` holds the table's 54.4 GB in the page cache
+  (`mlock`, filled by one sequential read in 338 s), after which the chunks took ~25 s.
 
 ## Files here
 
@@ -102,6 +144,8 @@ chain's files.
 | `run/hot_copy.sh` | a file copied to a fast disk and checked against its SHA-256 |
 | `run/kld.sh` | a file's KL divergence against the reference logits on the three texts with the fork's `llama-perplexity` |
 | `run/score.sh` | the whole run: the copies, a wait for the GPUs, the control and its check, Gyro-Coder, Gyro-M, Gyro-Coder on Vulkan |
+| `run/pin_range.py`, `run/pin_guard.sh` | a byte range of a file (the n-gram table) held in the page cache with `mlock`, and its release when free memory runs low or the run ends |
+| `kld.tsv` | the scores: mean KLD and its error, the 99th and 99.9th percentile, same top token, RMS change of the top probability, perplexity of the file and of the reference |
 
 ## Commands
 
@@ -119,6 +163,14 @@ BIN=$W BASES=$BASES OUT=$W/kld HOT=$HOT GPUS=<two GPU ids> MOUNTS=<folders the f
   CODER=$M/Qwen3.8-Flash-Next-Gyro-Coder-TQ2_0.gguf GYRO_M=$M/Qwen3.8-Flash-Next-Gyro-M-TQ2_0.gguf \
   CONTROL_FILES="<ISTA Coder shard 1> <its sha256> <shard 2> <its sha256>" \
   CONTROL_REF="wiki:0.845520:0.009881 agent:0.273501:0.005248 code:0.130815:0.004663" \
-  FLOOR="wiki:0.017012 agent:0.029142 code:0.003578" bash run/score.sh
-python3 -I ../2026-11-03_flash_next_quality/run/table.py $W/kld > kld.tsv
+  FLOOR="wiki:0.017012 agent:0.029142 code:0.003578" \
+  STEPS="control:agent,code coder:agent,code m:agent,code" IN_PLACE=m WARM=1 bash run/score.sh
+# Gyro-M read in place: its n-gram table held in RAM for at most 40 minutes, released early when the run ends
+read start len <<< "$(python3 -I run/header.py --range per_layer_token_embd.weight $M/Qwen3.8-Flash-Next-Gyro-M-TQ2_0.gguf)"
+timeout 2400 python3 -I run/pin_range.py $M/Qwen3.8-Flash-Next-Gyro-M-TQ2_0.gguf $start $len 2400 &
+OUT=$W/kld MIN_AVAIL_GB=15 bash run/pin_guard.sh &
+python3 -I ../2026-11-03_flash_next_quality/run/table.py $W/kld gyro-m gyro-coder control-ista-coder > kld.tsv
 ```
+
+In this run the pin started while Gyro-M's agent text was running, and that text was paused (`SIGSTOP`) for the 338 s
+the pin took to read the table, so the hard disk read it in one pass.
