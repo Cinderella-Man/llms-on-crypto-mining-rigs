@@ -55,6 +55,26 @@ const kshape SHAPES[] = {
     { "attn_gate",   KIQ2_S,   2560,   6144,  0 }, { "attn_gate",   KIQ3_XXS, 2560,   6144,  0 },
     { "attn_gate",   KIQ1_M,   2560,   6144,  0 }, { "ssm_out",     KIQ2_S,   6144,   2560,  0 },
 #endif
+#ifdef KCOL_BENCH_FMT
+    // C323 (Q901): the types a verify-shaped mix may give the dense tensors, at each dense shape where the Swift Q2_0
+    // census has none of them (calls 0): Q8_0, Q6_K, Q5_K, Q5_0 and Q4_0 (attn_output and ple_key share ssm_out's and
+    // attn_qkv's shapes, shexp_up shexp_gate's; 640-wide rows take only the 32-weight blocks)
+    { "attn_qkv",    KQ8_0,    2560,  10240,  0 }, { "attn_qkv",    KQ6_K,    2560,  10240,  0 },
+    { "attn_qkv",    KQ5_K,    2560,  10240,  0 }, { "attn_qkv",    KQ5_0,    2560,  10240,  0 },
+    { "attn_qkv",    KQ4_0,    2560,  10240,  0 },
+    { "attn_gate",   KQ8_0,    2560,   6144,  0 }, { "attn_gate",   KQ6_K,    2560,   6144,  0 },
+    { "attn_gate",   KQ5_K,    2560,   6144,  0 }, { "attn_gate",   KQ5_0,    2560,   6144,  0 },
+    { "attn_gate",   KQ4_0,    2560,   6144,  0 },
+    { "attn_q",      KQ8_0,    2560,  12288,  0 }, { "attn_q",      KQ6_K,    2560,  12288,  0 },
+    { "attn_q",      KQ5_K,    2560,  12288,  0 }, { "attn_q",      KQ5_0,    2560,  12288,  0 },
+    { "attn_q",      KQ4_0,    2560,  12288,  0 },
+    { "ssm_out",     KQ8_0,    6144,   2560,  0 }, { "ssm_out",     KQ5_0,    6144,   2560,  0 },
+    { "ssm_out",     KQ4_0,    6144,   2560,  0 },
+    { "shexp_gate",  KQ8_0,    2560,    640,  0 }, { "shexp_gate",  KQ6_K,    2560,    640,  0 },
+    { "shexp_gate",  KQ5_K,    2560,    640,  0 }, { "shexp_gate",  KQ5_0,    2560,    640,  0 },
+    { "shexp_gate",  KQ4_0,    2560,    640,  0 },
+    { "shexp_down",  KQ8_0,     640,   2560,  0 },
+#endif
 };
 
 // Variants: the fork's launch shape (since Q823 a third of the SM's shared memory where the registers allow a third

@@ -1,0 +1,11 @@
+file	ms_k1	ms_k4	ms_expected	delta_mib	pred_dkld
+start	24.091	36.443	36.307	0.0	0.00000
+vmix-q2-time	24.212	34.273	34.163	-0.1	-0.00094
+# P(k) 1=0.0110,4=0.9890; dense units 231, kept 33 tensors; objective time, multipliers 3.16e-06 a byte, 0 a unit of the other budget
+# IQ4_XS -> Q4_K: 109 units
+# Q4_K -> IQ4_XS: 7 units
+# Q5_0 -> Q4_0: 14 units
+# Q5_K -> IQ4_XS: 5 units
+# Q5_K -> Q4_K: 2 units
+# Q6_K -> IQ4_XS: 5 units
+# Q6_K -> Q4_K: 1 units

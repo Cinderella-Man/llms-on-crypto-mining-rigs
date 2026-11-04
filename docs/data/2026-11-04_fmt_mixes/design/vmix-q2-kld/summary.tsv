@@ -1,0 +1,14 @@
+file	ms_k1	ms_k4	ms_expected	delta_mib	pred_dkld
+start	24.091	36.443	36.307	0.0	0.00000
+vmix-q2-kld	23.913	35.717	35.587	-0.1	-0.01259
+# P(k) 1=0.0110,4=0.9890; dense units 231, kept 33 tensors; objective kld, multipliers 5.62e-11 a byte, 3.16e-06 a unit of the other budget
+# IQ4_XS -> Q4_K: 44 units
+# Q2_0 -> IQ4_XS: 7 units
+# Q2_0 -> Q4_0: 9 units
+# Q2_0 -> Q5_0: 2 units
+# Q4_K -> IQ4_XS: 21 units
+# Q4_K -> Q5_K: 1 units
+# Q5_0 -> Q4_0: 13 units
+# Q5_K -> IQ4_XS: 6 units
+# Q5_K -> Q6_K: 1 units
+# Q6_K -> IQ4_XS: 6 units

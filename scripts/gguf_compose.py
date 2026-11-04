@@ -22,7 +22,8 @@
 #   gguf_compose.py verify --base SHARD... --donor SHARD... --take PATTERN... --new SHARD...
 #     checks the new shards against both inputs: every tensor of the base once, a taken tensor with the donor's
 #     type and bytes and every other with the base's, the base's first key/value pairs, and split keys that number
-#     the shards. It reads every tensor.
+#     the shards. It reads every tensor, except where a new shard is its source file itself at the same offset (a
+#     shard --link-unchanged linked): those bytes are the source's by construction.
 # Standard library only.
 import argparse, fnmatch, os, re, struct, sys
 
@@ -218,21 +219,24 @@ def cmd_verify(a):
         got = tuple(h.value(k) for k in SPLIT)
         assert got == want, f"{h.path}: split keys {got}, want {want}"
         assert h.align == base.shards[0].align, f"{h.path}: alignment {h.align}"
-    files, n_take = {}, 0
+    files, n_take, n_linked = {}, 0, 0
     for name, (hn, dims, typ, off) in new.where.items():
         hs, sdims, styp, soff = source(base, donor, take, name)
         assert dims == sdims and typ == styp, f"{name}: shape {dims} type {typ}, want {sdims} type {styp}"
         left = hs.slot[name]
         assert hn.slot[name] >= left, f"{name}: {hn.slot[name]} bytes in the new file, {left} in its source"
+        n_take += name in take
+        if os.path.realpath(hs.path) == os.path.realpath(hn.path) and hs.data0 + soff == hn.data0 + off:
+            n_linked += 1  # the same bytes of the same file (a linked shard): nothing to read
+            continue
         fs, fn = (files.setdefault(p, open(p, "rb")) for p in (hs.path, hn.path))
         ps, pn = hs.data0 + soff, hn.data0 + off
         while left:
             k = min(left, CHUNK)
             assert os.pread(fs.fileno(), k, ps) == os.pread(fn.fileno(), k, pn), f"{name}: bytes differ"
             left, ps, pn = left - k, ps + k, pn + k
-        n_take += name in take
     print(f"{len(new.where)} tensors in {count} shards: {n_take} identical to the donor's, "
-          f"{len(new.where) - n_take} to the base's")
+          f"{len(new.where) - n_take} to the base's ({n_linked} in a shard that is the source file itself)")
 
 
 def main():

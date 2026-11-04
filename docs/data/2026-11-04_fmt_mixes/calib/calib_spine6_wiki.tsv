@@ -1,0 +1,3 @@
+arm	class	dkld	dnoise	gain
+pmix-q2-spine6	fa_out+fa_qkv+gdn_gate+gdn_out+gdn_qkv+ple+shexp	-0.00528	-3263.52	1.61758e-06
+all	all	-0.00528	-3263.52	1.61758e-06

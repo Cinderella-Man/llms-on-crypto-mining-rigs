@@ -1,0 +1,10 @@
+name	text	kld	kld_se	same_top_pct	same_top_se
+pmix-q2-fast	wiki	0.426376	0.005852	77.706	0.291
+pmix-q2-fast	agent	0.279228	0.005378	90.698	0.131
+pmix-q2-fast	code	0.107982	0.003843	96.118	0.135
+pmix-q2-spine6	wiki	0.421097	0.005829	78.039	0.290
+pmix-q2-spine6	agent	0.255943	0.004893	90.920	0.130
+pmix-q2-spine6	code	0.104199	0.003776	96.270	0.133
+pmix-iq3-fast	wiki	0.249056	0.003925	83.186	0.262
+pmix-iq3-fast	agent	0.173506	0.003741	92.287	0.120
+pmix-iq3-fast	code	0.055091	0.002345	97.436	0.111

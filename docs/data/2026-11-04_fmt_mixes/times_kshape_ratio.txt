@@ -1,0 +1,7 @@
+# ggml / bench at 1 tokens: median 0.660 over 15 products (0.42-1.96)
+# ggml / bench at 2 tokens: median 1.104 over 15 products (0.55-1.86)
+# ggml / bench at 3 tokens: median 1.011 over 15 products (0.59-1.73)
+# ggml / bench at 4 tokens: median 1.050 over 15 products (0.56-1.57)
+# ggml / bench at 5 tokens: median 1.166 over 15 products (0.66-1.35)
+# ggml / bench at 6 tokens: median 1.030 over 15 products (0.70-1.55)
+# ggml / bench at 8 tokens: median 1.198 over 15 products (0.62-1.70)

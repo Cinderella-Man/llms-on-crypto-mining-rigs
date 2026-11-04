@@ -1,0 +1,2 @@
+# 4509 draft passes of 3.000 drafted tokens, acceptance 0.7231, 51 tokens outside them; 14342 predicted
+4=0.9888,1=0.0112

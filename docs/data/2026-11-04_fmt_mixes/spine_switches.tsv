@@ -1,0 +1,10 @@
+name	class	group	layers	donor	donor_file	tensors	type_changes	delta_bytes	delta_ms_timed	delta_ms_expected	types	regex
+s6fa_qkv	fa_qkv	a	0-47	s6	pmix-q2-spine6	36	32	131235840	1.467	1.467	IQ4_XS>Q6_K:21 Q2_0>Q6_K:2 Q4_K>Q6_K:4 Q5_K>Q6_K:5	\.attn_(?:q|k|v)\.weight$
+s6fa_out	fa_out	b	0-47	s6	pmix-q2-spine6	12	8	24576000	0.279	0.279	Q4_K>Q6_K:4 Q5_K>Q6_K:4	\.attn_output\.weight$
+s6gdn_qkv	gdn_qkv	c	0-47	s6	pmix-q2-spine6	36	36	276070400	3.072	3.072	IQ4_XS>Q6_K:31 Q2_0>Q6_K:1 Q4_K>Q6_K:4	\.attn_qkv\.weight$
+s6gdn_gate	gdn_gate	d	0-47	s6	pmix-q2-spine6	36	36	177930240	1.991	1.991	IQ4_XS>Q6_K:29 Q2_0>Q6_K:4 Q4_K>Q6_K:3	\.attn_gate\.weight$
+s6gdn_out	gdn_out	e	0-47	s6	pmix-q2-spine6	36	34	141803520	1.597	1.597	IQ4_XS>Q6_K:20 Q4_K>Q6_K:11 Q5_K>Q6_K:3	\.ssm_out\.weight$
+s6shexp	shexp	f	0-47	s6	pmix-q2-spine6	144	124	59852800	0.964	0.964	IQ4_XS>Q6_K:54 Q2_0>Q5_0:16 Q2_0>Q6_K:12 Q4_0>Q5_0:16 Q4_K>Q6_K:20 Q5_K>Q6_K:6	\.ffn_(?:gate|up|down)_shexp\.weight$
+s6ple	ple	g	1	s6	pmix-q2-spine6	1	1	14131200	0.165	0.165	Q2_0>Q6_K:1	\.ple_key\.weight$
+q8output	output	h	-	q8	swift15-q8_0	1	1	238387200	20.092	4.550	Q5_K>Q8_0:1	^output\.weight$
+base	base				pmix-q2-fast	1224	0	37470389760	72.437	72.357	-	

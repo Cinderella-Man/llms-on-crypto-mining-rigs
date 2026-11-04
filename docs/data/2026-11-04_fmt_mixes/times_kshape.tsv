@@ -1,0 +1,236 @@
+type	K	M	n	us	source
+BF16	320	10240	1	62.04	perf perf_dense.tsv x 1.516 (bench basis)
+BF16	320	10240	2	37.35	perf perf_dense.tsv x 0.906 (bench basis)
+BF16	320	10240	3	45.77	perf perf_dense.tsv x 0.989 (bench basis)
+BF16	320	10240	4	47.77	perf perf_dense.tsv x 0.952 (bench basis)
+BF16	320	10240	5	53.85	perf perf_dense.tsv x 0.858 (bench basis)
+BF16	320	10240	6	72.82	perf perf_dense.tsv x 0.971 (bench basis)
+BF16	320	10240	8	67.26	perf perf_dense.tsv x 0.835 (bench basis)
+BF16	2560	48	1	6.44	perf perf_dense.tsv x 1.516 (bench basis)
+BF16	2560	48	2	4.70	perf perf_dense.tsv x 0.906 (bench basis)
+BF16	2560	48	3	4.70	perf perf_dense.tsv x 0.989 (bench basis)
+BF16	2560	48	4	5.13	perf perf_dense.tsv x 0.952 (bench basis)
+BF16	2560	48	5	8.23	perf perf_dense.tsv x 0.858 (bench basis)
+BF16	2560	48	6	10.62	perf perf_dense.tsv x 0.971 (bench basis)
+BF16	2560	48	8	10.68	perf perf_dense.tsv x 0.835 (bench basis)
+BF16	2560	512	1	27.56	perf perf_dense.tsv x 1.516 (bench basis)
+BF16	2560	512	2	17.41	perf perf_dense.tsv x 0.906 (bench basis)
+BF16	2560	512	3	24.91	perf perf_dense.tsv x 0.989 (bench basis)
+BF16	2560	512	4	25.18	perf perf_dense.tsv x 0.952 (bench basis)
+BF16	2560	512	5	24.24	perf perf_dense.tsv x 0.858 (bench basis)
+BF16	2560	512	6	28.55	perf perf_dense.tsv x 0.971 (bench basis)
+BF16	2560	512	8	31.87	perf perf_dense.tsv x 0.835 (bench basis)
+BF16	10240	4	1	6.20	perf perf_dense.tsv x 1.516 (bench basis)
+BF16	10240	4	2	4.37	perf perf_dense.tsv x 0.906 (bench basis)
+BF16	10240	4	3	5.95	perf perf_dense.tsv x 0.989 (bench basis)
+BF16	10240	4	4	6.01	perf perf_dense.tsv x 0.952 (bench basis)
+BF16	10240	4	5	6.10	perf perf_dense.tsv x 0.858 (bench basis)
+BF16	10240	4	6	8.52	perf perf_dense.tsv x 0.971 (bench basis)
+BF16	10240	4	8	8.71	perf perf_dense.tsv x 0.835 (bench basis)
+BF16	10240	320	1	64.72	perf perf_dense.tsv x 1.516 (bench basis)
+BF16	10240	320	2	38.57	perf perf_dense.tsv x 0.906 (bench basis)
+BF16	10240	320	3	44.18	perf perf_dense.tsv x 0.989 (bench basis)
+BF16	10240	320	4	44.43	perf perf_dense.tsv x 0.952 (bench basis)
+BF16	10240	320	5	57.23	perf perf_dense.tsv x 0.858 (bench basis)
+BF16	10240	320	6	82.78	perf perf_dense.tsv x 0.971 (bench basis)
+BF16	10240	320	8	95.55	perf perf_dense.tsv x 0.835 (bench basis)
+BF16	14336	4096	1	1052.32	perf perf_dense.tsv x 1.516 (bench basis)
+BF16	14336	4096	2	663.16	perf perf_dense.tsv x 0.906 (bench basis)
+BF16	14336	4096	3	723.36	perf perf_dense.tsv x 0.989 (bench basis)
+BF16	14336	4096	4	745.38	perf perf_dense.tsv x 0.952 (bench basis)
+BF16	14336	4096	5	989.08	perf perf_dense.tsv x 0.858 (bench basis)
+BF16	14336	4096	8	1463.99	perf perf_dense.tsv x 0.835 (bench basis)
+IQ4_NL	640	2560	1	18.56	bench kcol_dense.csv r1
+IQ4_NL	640	2560	2	27.15	bench kcol_dense.csv r1
+IQ4_NL	640	2560	3	28.18	bench kcol_dense.csv r1
+IQ4_NL	640	2560	4	28.97	bench kcol_dense.csv r1
+IQ4_NL	640	2560	5	30.88	bench kcol_dense.csv r1
+IQ4_NL	640	2560	6	33.38	bench kcol_dense.csv r1
+IQ4_NL	640	2560	8	35.09	bench kcol_dense.csv r1
+IQ4_XS	2560	640	1	22.80	bench kcol_dense.csv s32k
+IQ4_XS	2560	640	2	24.05	bench kcol_dense.csv pascal
+IQ4_XS	2560	640	3	26.45	bench kcol_dense.csv pascal
+IQ4_XS	2560	640	4	28.11	bench kcol_dense.csv pascal
+IQ4_XS	2560	640	5	30.24	bench kcol_dense.csv pascal
+IQ4_XS	2560	640	6	31.68	bench kcol_dense.csv r1
+IQ4_XS	2560	640	8	36.78	bench kcol_dense.csv r1
+IQ4_XS	2560	6144	1	124.61	bench kcol_dense.csv s32k
+IQ4_XS	2560	6144	2	129.46	bench kcol_dense.csv r1
+IQ4_XS	2560	6144	3	168.37	bench kcol_dense.csv s32k
+IQ4_XS	2560	6144	4	181.28	bench kcol_dense.csv s32k
+IQ4_XS	2560	6144	5	203.44	bench kcol_dense.csv s32k
+IQ4_XS	2560	6144	6	212.35	bench kcol_dense.csv s32k
+IQ4_XS	2560	6144	8	273.53	bench kcol_dense.csv s32k
+IQ4_XS	2560	10240	1	202.50	bench kcol_dense.csv r1
+IQ4_XS	2560	10240	2	211.45	bench kcol_dense.csv s32k
+IQ4_XS	2560	10240	3	268.74	bench kcol_dense.csv s32k
+IQ4_XS	2560	10240	4	288.30	bench kcol_dense.csv s32k
+IQ4_XS	2560	10240	5	321.29	bench kcol_dense.csv s32k
+IQ4_XS	2560	10240	6	336.42	bench kcol_dense.csv s32k
+IQ4_XS	2560	10240	8	433.83	bench kcol_dense.csv s32k
+IQ4_XS	2560	12288	1	242.31	bench kcol_dense.csv s32k
+IQ4_XS	2560	12288	2	251.15	bench kcol_dense.csv r1
+IQ4_XS	2560	12288	3	318.87	bench kcol_dense.csv r1
+IQ4_XS	2560	12288	4	340.75	bench kcol_dense.csv r1
+IQ4_XS	2560	12288	5	378.48	bench kcol_dense.csv s32k
+IQ4_XS	2560	12288	6	395.16	bench kcol_dense.csv s32k
+IQ4_XS	2560	12288	8	508.79	bench kcol_dense.csv s32k
+IQ4_XS	6144	2560	1	125.84	bench kcol_dense.csv s32k
+IQ4_XS	6144	2560	2	158.31	bench kcol_dense.csv s32k
+IQ4_XS	6144	2560	3	196.19	bench kcol_dense.csv s32k
+IQ4_XS	6144	2560	4	224.11	bench kcol_dense.csv s32k
+IQ4_XS	6144	2560	5	254.28	bench kcol_dense.csv s32k
+IQ4_XS	6144	2560	6	359.07	bench kcol_dense.csv itt1
+IQ4_XS	6144	2560	8	429.05	bench kcol_dense.csv itt1
+Q2_0	640	2560	1	14.46	bench kcol_dense.csv pascal
+Q2_0	640	2560	2	16.26	bench kcol_dense.csv r1
+Q2_0	640	2560	3	17.73	bench kcol_dense.csv pascal
+Q2_0	640	2560	4	18.70	bench kcol_dense.csv s32k
+Q2_0	640	2560	5	20.29	bench kcol_dense.csv pascal
+Q2_0	640	2560	6	21.09	bench kcol_dense.csv pascal
+Q2_0	640	2560	8	24.88	bench kcol_dense.csv r1
+Q2_0	2560	640	1	11.10	bench kcol_dense.csv pascal
+Q2_0	2560	640	2	12.74	bench kcol_dense.csv r1
+Q2_0	2560	640	3	15.38	bench kcol_dense.csv pascal
+Q2_0	2560	640	4	16.92	bench kcol_dense.csv r1
+Q2_0	2560	640	5	20.56	bench kcol_dense.csv pascal
+Q2_0	2560	640	6	24.06	bench kcol_dense.csv r2
+Q2_0	2560	640	8	27.79	bench kcol_dense.csv r2
+Q2_0	2560	6144	1	49.53	bench kcol_dense.csv r1
+Q2_0	2560	6144	2	79.17	bench kcol_dense.csv r2
+Q2_0	2560	6144	3	88.04	bench kcol_dense.csv s32k
+Q2_0	2560	6144	4	99.04	bench kcol_dense.csv r2
+Q2_0	2560	6144	5	136.19	bench kcol_dense.csv r2
+Q2_0	2560	6144	6	149.77	bench kcol_dense.csv pascal
+Q2_0	2560	6144	8	183.37	bench kcol_dense.csv itt1
+Q2_0	2560	10240	1	79.34	bench kcol_dense.csv r1
+Q2_0	2560	10240	2	125.50	bench kcol_dense.csv r2
+Q2_0	2560	10240	3	139.84	bench kcol_dense.csv r2
+Q2_0	2560	10240	4	157.24	bench kcol_dense.csv pascal
+Q2_0	2560	10240	5	211.05	bench kcol_dense.csv s32k
+Q2_0	2560	10240	6	232.33	bench kcol_dense.csv s32k
+Q2_0	2560	10240	8	288.78	bench kcol_dense.csv itt1
+Q2_0	2560	12288	1	94.04	bench kcol_dense.csv r1
+Q2_0	2560	12288	2	151.23	bench kcol_dense.csv s32k
+Q2_0	2560	12288	3	166.70	bench kcol_dense.csv pascal
+Q2_0	2560	12288	4	188.49	bench kcol_dense.csv pascal
+Q2_0	2560	12288	5	251.70	bench kcol_dense.csv s32k
+Q2_0	2560	12288	6	277.54	bench kcol_dense.csv r2
+Q2_0	2560	12288	8	349.59	bench kcol_dense.csv s32k
+Q3_K	2560	640	1	21.92	bench kcol_dense.csv pascal
+Q3_K	2560	640	2	23.63	bench kcol_dense.csv pascal
+Q3_K	2560	640	3	25.79	bench kcol_dense.csv pascal
+Q3_K	2560	640	4	28.26	bench kcol_dense.csv r1
+Q3_K	2560	640	5	30.82	bench kcol_dense.csv pascal
+Q3_K	2560	640	6	32.79	bench kcol_dense.csv pascal
+Q3_K	2560	640	8	37.60	bench kcol_dense.csv r1
+Q3_K	2560	6144	1	109.70	bench kcol_dense.csv r1
+Q3_K	2560	6144	2	123.26	bench kcol_dense.csv r1
+Q3_K	2560	6144	3	171.95	bench kcol_dense.csv r1
+Q3_K	2560	6144	4	190.88	bench kcol_dense.csv r1
+Q3_K	2560	6144	5	216.73	bench kcol_dense.csv s32k
+Q3_K	2560	6144	6	235.42	bench kcol_dense.csv s32k
+Q3_K	2560	6144	8	282.94	bench kcol_dense.csv s32k
+Q3_K	2560	10240	1	173.30	bench kcol_dense.csv s32k
+Q3_K	2560	10240	2	195.05	bench kcol_dense.csv s32k
+Q3_K	2560	10240	3	266.19	bench kcol_dense.csv r1
+Q3_K	2560	10240	4	298.43	bench kcol_dense.csv r1
+Q3_K	2560	10240	5	340.05	bench kcol_dense.csv s32k
+Q3_K	2560	10240	6	368.96	bench kcol_dense.csv s32k
+Q3_K	2560	10240	8	443.11	bench kcol_dense.csv s32k
+Q3_K	2560	12288	1	212.10	bench kcol_dense.csv s32k
+Q3_K	2560	12288	2	239.07	bench kcol_dense.csv s32k
+Q3_K	2560	12288	3	317.21	bench kcol_dense.csv s32k
+Q3_K	2560	12288	4	353.87	bench kcol_dense.csv r1
+Q3_K	2560	12288	5	402.62	bench kcol_dense.csv s32k
+Q3_K	2560	12288	6	435.90	bench kcol_dense.csv s32k
+Q3_K	2560	12288	8	521.82	bench kcol_dense.csv s32k
+Q3_K	6144	2560	1	166.32	bench kcol_dense.csv s32k
+Q3_K	6144	2560	2	208.74	bench kcol_dense.csv s32k
+Q3_K	6144	2560	3	247.06	bench kcol_dense.csv r2
+Q3_K	6144	2560	4	268.51	bench kcol_dense.csv pascal
+Q3_K	6144	2560	5	297.06	bench kcol_dense.csv r2
+Q3_K	6144	2560	6	420.12	bench kcol_dense.csv r1
+Q3_K	6144	2560	8	495.81	bench kcol_dense.csv r1
+Q4_0	640	2560	1	18.14	bench kcol_dense.csv r1
+Q4_0	640	2560	2	26.43	bench kcol_dense.csv r1
+Q4_0	640	2560	3	27.45	bench kcol_dense.csv r1
+Q4_0	640	2560	4	27.89	bench kcol_dense.csv r1
+Q4_0	640	2560	5	29.85	bench kcol_dense.csv r1
+Q4_0	640	2560	6	32.86	bench kcol_dense.csv r1
+Q4_0	640	2560	8	47.62	bench kcol_dense.csv r1
+Q4_K	2560	640	1	22.25	bench kcol_dense.csv s32k
+Q4_K	2560	640	2	23.74	bench kcol_dense.csv pascal
+Q4_K	2560	640	3	25.26	bench kcol_dense.csv pascal
+Q4_K	2560	640	4	26.82	bench kcol_dense.csv s32k
+Q4_K	2560	640	5	29.09	bench kcol_dense.csv pascal
+Q4_K	2560	640	6	30.91	bench kcol_dense.csv pascal
+Q4_K	2560	640	8	34.35	bench kcol_dense.csv pascal
+Q4_K	2560	6144	1	141.14	bench kcol_dense.csv s32k
+Q4_K	2560	6144	2	161.45	bench kcol_dense.csv r1
+Q4_K	2560	6144	3	168.38	bench kcol_dense.csv r1
+Q4_K	2560	6144	4	177.98	bench kcol_dense.csv s32k
+Q4_K	2560	6144	5	204.61	bench kcol_dense.csv s32k
+Q4_K	2560	6144	6	218.30	bench kcol_dense.csv s32k
+Q4_K	2560	6144	8	253.36	bench kcol_dense.csv s32k
+Q4_K	2560	10240	1	227.98	bench kcol_dense.csv s32k
+Q4_K	2560	10240	2	256.70	bench kcol_dense.csv r1
+Q4_K	2560	10240	3	268.69	bench kcol_dense.csv r1
+Q4_K	2560	10240	4	283.11	bench kcol_dense.csv s32k
+Q4_K	2560	10240	5	322.95	bench kcol_dense.csv s32k
+Q4_K	2560	10240	6	343.16	bench kcol_dense.csv s32k
+Q4_K	2560	10240	8	402.14	bench kcol_dense.csv s32k
+Q4_K	6144	2560	1	123.68	bench kcol_dense.csv r1
+Q4_K	6144	2560	2	156.16	bench kcol_dense.csv s32k
+Q4_K	6144	2560	3	198.68	bench kcol_dense.csv s32k
+Q4_K	6144	2560	4	222.93	bench kcol_dense.csv pascal
+Q4_K	6144	2560	5	265.46	bench kcol_dense.csv itt1
+Q4_K	6144	2560	6	366.45	bench kcol_dense.csv pascal
+Q4_K	6144	2560	8	434.66	bench kcol_dense.csv pascal
+Q5_0	640	2560	1	19.15	bench kcol_dense.csv r1
+Q5_0	640	2560	2	28.21	bench kcol_dense.csv r1
+Q5_0	640	2560	3	29.76	bench kcol_dense.csv r1
+Q5_0	640	2560	4	31.92	bench kcol_dense.csv r1
+Q5_0	640	2560	5	35.41	bench kcol_dense.csv r1
+Q5_0	640	2560	6	36.85	bench kcol_dense.csv r1
+Q5_0	640	2560	8	51.22	bench kcol_dense.csv r1
+Q5_K	2560	248320	1	7330.50	bench kcol_dense.csv r1
+Q5_K	2560	248320	2	7524.86	bench kcol_dense.csv s32k
+Q5_K	2560	248320	3	7699.71	bench kcol_dense.csv s32k
+Q5_K	2560	248320	4	8138.88	bench kcol_dense.csv s32k
+Q5_K	2560	248320	5	9004.03	bench kcol_dense.csv s32k
+Q5_K	2560	248320	6	10597.44	bench kcol_dense.csv s32k
+Q5_K	2560	248320	8	13008.90	bench kcol_dense.csv r1
+Q5_K	6144	2560	1	141.06	bench kcol_dense.csv r1
+Q5_K	6144	2560	2	188.98	bench kcol_dense.csv itt1
+Q5_K	6144	2560	3	218.70	bench kcol_dense.csv s32k
+Q5_K	6144	2560	4	296.95	bench kcol_dense.csv pascal
+Q5_K	6144	2560	5	362.23	bench kcol_dense.csv pascal
+Q5_K	6144	2560	6	395.48	bench kcol_dense.csv itt1
+Q5_K	6144	2560	8	465.82	bench kcol_dense.csv r1
+Q6_K	2560	248320	1	12770.30	bench kcol_dense.csv pascal
+Q6_K	2560	248320	2	13635.58	bench kcol_dense.csv pascal
+Q6_K	2560	248320	3	14361.09	bench kcol_dense.csv r1
+Q6_K	2560	248320	4	15156.54	bench kcol_dense.csv r1
+Q6_K	2560	248320	5	16399.10	bench kcol_dense.csv pascal
+Q6_K	2560	248320	6	16907.14	bench kcol_dense.csv r1
+Q6_K	2560	248320	8	19465.47	bench kcol_dense.csv pascal
+Q6_K	6144	2560	1	299.92	bench kcol_dense.csv r1
+Q6_K	6144	2560	2	352.06	bench kcol_dense.csv r1
+Q6_K	6144	2560	3	395.70	bench kcol_dense.csv pascal
+Q6_K	6144	2560	4	433.77	bench kcol_dense.csv itt1
+Q6_K	6144	2560	5	473.62	bench kcol_dense.csv r1
+Q8_0	320	10240	1	72.51	bench kcol_dense.csv s32k
+Q8_0	320	10240	2	77.90	bench kcol_dense.csv r1
+Q8_0	320	10240	3	83.63	bench kcol_dense.csv r1
+Q8_0	320	10240	4	87.31	bench kcol_dense.csv r1
+Q8_0	320	10240	5	96.75	bench kcol_dense.csv r1
+Q8_0	320	10240	6	102.35	bench kcol_dense.csv s32k
+Q8_0	320	10240	8	108.11	bench kcol_dense.csv s32k
+Q8_0	10240	320	1	43.26	bench kcol_dense.csv r1
+Q8_0	10240	320	2	53.86	bench kcol_dense.csv itt1
+Q8_0	10240	320	3	72.59	bench kcol_dense.csv s32k
+Q8_0	10240	320	4	88.45	bench kcol_dense.csv itt1
+Q8_0	10240	320	5	97.54	bench kcol_dense.csv s32k
+Q8_0	10240	320	6	106.92	bench kcol_dense.csv s32k
+Q8_0	10240	320	8	153.31	bench kcol_dense.csv r2
