@@ -1,0 +1,21 @@
+2026-11-04T17:53:03+01:00	dump	OK	#span-dump tokens 60009 parse_special 0 add_bos 0; window of 8 ending in 664: 158 in the first 4 chunks, 158 tokens after them
+2026-11-04T17:54:30+01:00	all: usual = no mask	OK	39 tensors, 0 differ
+2026-11-04T17:54:30+01:00	all: class 1 = usual	OK	39 tensors, 0 differ
+2026-11-04T17:54:30+01:00	all: class 0 zero	OK	39 tensors, 0 not zero
+2026-11-04T17:54:30+01:00	none: class 0 = usual	OK	39 tensors, 0 differ
+2026-11-04T17:54:30+01:00	none: class 1 zero	OK	39 tensors, 0 not zero
+2026-11-04T17:54:30+01:00	random: classes add up	OK	39 tensors (0 left out), 4 parts: counts add up exactly, in_sum2 within 1.08e-05, in_sum within 2.19e-06; every part counts its own tokens
+2026-11-04T17:54:31+01:00	ngram: classes add up	OK	39 tensors (0 left out), 3 parts: counts add up exactly, in_sum2 within 9.02e-06, in_sum within 1.71e-06; every part counts its own tokens
+2026-11-04T17:54:31+01:00	chunk: class 1 = 4 - 3 chunks	OK	39 tensors: the part's counts are the difference in 39
+2026-11-04T17:54:31+01:00	chunk: class 0 = 3 chunks	OK	39 tensors, 0 differ
+2026-11-04T17:54:31+01:00	ngram: one window, no variance	OK	smallest relative variance at most 0.0001: blk.0.ple_key.weight 1.05e-06 (158 rows), blk.0.ple_value.weight 1.05e-06 (158 rows), blk.0.hc_ffn_up.weight 0.00108 (158 rows), blk.0.ffn_gate_inp.weight 0.00164 (158 rows)
+2026-11-04T17:54:31+01:00	ngram: the next token varies	OK	smallest relative variance above 0.01: blk.0.ssm_out.weight 0.473 (158 rows), blk.0.ffn_down_shexp.weight 0.979 (158 rows), blk.0.hc_ffn_up.weight 0.988 (158 rows), blk.0.hc_attn_up.weight 0.988 (158 rows)
+2026-11-04T17:54:31+01:00	ngram -b 256: one window, no variance	OK	smallest relative variance at most 0.0001: blk.0.ple_key.weight 1.05e-06 (158 rows), blk.0.ple_value.weight 1.05e-06 (158 rows), blk.0.hc_ffn_up.weight 0.00108 (158 rows), blk.0.ffn_gate_inp.weight 0.00164 (158 rows)
+2026-11-04T17:54:31+01:00	ngram -b 256: classes add up	OK	39 tensors (0 left out), 3 parts: counts add up exactly, in_sum2 within 9.02e-06, in_sum within 1.71e-06; every part counts its own tokens
+2026-11-04T17:54:31+01:00	control: same tells 3 from 4 chunks	OK	FAIL 39 tensors, 117 differ: blk.0.attn_gate.weight.in_sum, blk.0.attn_gate.weight.counts, blk.0.attn_gate.weight.in_sum2, blk.0.attn_qkv.weight.in_sum, blk.0.attn_qkv.weight.counts
+2026-11-04T17:54:31+01:00	control: variance sees mixed tokens	OK	FAIL smallest relative variance at most 0.0001: blk.0.ssm_out.weight 0.473 (158 rows), blk.0.ffn_down_shexp.weight 0.979 (158 rows), blk.0.hc_ffn_up.weight 0.988 (158 rows), blk.0.hc_attn_up.weight 0.988 (158 rows)
+2026-11-04T17:54:32+01:00	refuse: a changed token id	OK	exit 1: token 0 is 3934, the input's is 3933: the mask was made from another tokenization (same model and --parse-special?)
+2026-11-04T17:54:33+01:00	refuse: two ubatches	OK	exit 1: '--span-mask' needs one sequence per batch and the batch in one ubatch: set '--batch-size'
+2026-11-04T17:54:33+01:00	analysis: span_counts	OK	exit 0: 24 call 8192 14.429 0 14.966 2
+2026-11-04T17:54:33+01:00	analysis: force_keep	OK	exit 0: even 1.0 % forces 8 experts in a layer: each layer keeps its 2 largest
+2026-11-04T17:54:34+01:00	analysis: gguf_prune --force-ids	OK	exit 0; forced, all kept, 24 a layer: 4 True True; $WORK/checks/analysis/pruned/qwen4exp-moe.gguf: 88 tensors identical to $WORK/random/qwen4exp-moe.gguf, 10 sliced to 24 experts, every kept slab equal

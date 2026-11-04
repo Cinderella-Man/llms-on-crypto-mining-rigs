@@ -1,0 +1,12 @@
+# plain spans of 419232 tokens (parse_special 0); processed: the first 200 chunks of 512 tokens
+measure	whole_text	processed
+tokens	419232	102400
+tokens_other	10334	2276
+tokens_call	2784	673
+tokens_argument	4026	884
+tokens_response	377730	91787
+tokens_assistant	24358	6780
+calls	417	98
+calls_unterminated	0	0
+parameters	420	101
+responses	376	83

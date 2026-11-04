@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # gguf_prune.py: keeps N of the routed experts in every layer of a (split) GGUF and drops the rest, so that a file too
 # big for the cards fits by losing the experts its routers pick least (Qwen3.8-Flash-Next: 512 a layer, 10 picked).
-#   gguf_prune.py prune --keep N (--experts experts.tsv[.gz] [--by routings|energy] | --ids IDS.tsv) --out-dir <dir> \
-#       [--prefix <name>] [--headers-only] [--link-unchanged] SHARD...
+#   gguf_prune.py prune --keep N (--experts experts.tsv[.gz] [--by routings|energy] [--force-ids FORCED.tsv] | --ids IDS.tsv) \
+#       --out-dir <dir> [--prefix <name>] [--headers-only] [--link-unchanged] SHARD...
 #     Which experts: --experts takes a table with the columns layer, expert and the --by column (a count per expert,
 #     docs/data/2026-11-04_expert_usage/experts.tsv.gz) and keeps each layer's N largest, ties to the lower id, in
 #     ascending id order; --ids takes one line per layer, `<layer><TAB><id>,<id>,...`, kept in the order given (a
 #     header line is skipped), N ids a layer (--keep may be left out). Every layer with routed experts must be listed.
+#     --force-ids (with --experts) takes the --ids format with any number of ids a layer, layers may be left out: each
+#     layer keeps its forced ids whatever their rank and fills its other N - (forced) places with its largest others
+#     (the experts tool-call text needs, docs/data/2026-11-04_toolcall_experts/run/force_keep.py).
 #     What changes: every tensor of a layer whose expert axis is its last dimension (`ffn_gate_exps`, `ffn_up_exps`,
 #     `ffn_down_exps`, `ffn_gate_up_exps` with their `.scale` and `.input_scale`, the router `ffn_gate_inp`, and
 #     `exp_probs_b`) keeps the slabs of the kept experts, in the kept order. That axis is the outermost one, so an
@@ -83,8 +86,9 @@ def read_ids(path):
     return ids
 
 
-def rank_ids(path, by, keep):
-    """Each layer's `keep` largest experts by column `by`, ties to the lower id, in ascending id order."""
+def rank_ids(path, by, keep, force=None):
+    """Each layer's `keep` largest experts by column `by`, ties to the lower id, in ascending id order. With `force`
+    (layer -> ids) a layer keeps its forced ids and fills its other places with its largest others."""
     per = {}
     with (gzip.open(path, "rt") if path.endswith(".gz") else open(path)) as f:
         head = f.readline().rstrip("\n").split("\t")
@@ -92,7 +96,17 @@ def rank_ids(path, by, keep):
         for line in f:
             cols = line.rstrip("\n").split("\t")
             per.setdefault(int(cols[li]), []).append((-float(cols[vi]), int(cols[ei])))
-    return {layer: sorted(e for _v, e in sorted(rows)[:keep]) for layer, rows in per.items()}
+    force = force or {}
+    assert set(force) <= set(per), f"forced ids for layers {sorted(set(force) - set(per))}, which the table lacks"
+    out = {}
+    for layer, rows in per.items():
+        forced = set(force.get(layer, []))
+        assert len(forced) == len(force.get(layer, [])), f"layer {layer}: a forced id repeats"
+        assert forced <= {e for _v, e in rows}, f"layer {layer}: forced ids {sorted(forced - {e for _v, e in rows})} are not in the table"
+        assert len(forced) <= keep, f"layer {layer}: {len(forced)} forced ids, more than the {keep} kept"
+        rest = [e for _v, e in sorted(rows) if e not in forced]
+        out[layer] = sorted(forced | set(rest[:keep - len(forced)]))
+    return out
 
 
 def check_ids(ids, layers, n_expert, n_used):
@@ -142,11 +156,12 @@ def cmd_prune(a):
     layers = sorted({layer for layer, _slab in cut.values()})
     assert layers, "no tensor on the expert axis"
     if a.ids:
+        assert not a.force_ids, "--force-ids goes with --experts, not --ids"
         ids = read_ids(a.ids)
         assert a.keep is None or all(len(ids[l]) == a.keep for l in layers if l in ids), f"{a.ids}: not {a.keep} a layer"
     else:
         assert a.keep, "--keep N with --experts"
-        ids = rank_ids(a.experts, a.by, a.keep)
+        ids = rank_ids(a.experts, a.by, a.keep, read_ids(a.force_ids) if a.force_ids else None)
     keep = check_ids(ids, layers, n_expert, n_used)
     os.makedirs(a.out_dir, exist_ok=True)
     with open(os.path.join(a.out_dir, "kept.tsv"), "w") as f:
@@ -254,6 +269,7 @@ def main():
     g.add_argument("--experts", help="per layer and expert counts (columns layer, expert and --by), .gz or plain")
     g.add_argument("--ids", help="<layer>\\t<id>,<id>,... per layer, kept in that order")
     s.add_argument("--by", default="routings", help="the --experts column to rank by (default routings)")
+    s.add_argument("--force-ids", help="<layer>\\t<id>,<id>,... per layer: kept whatever their rank (with --experts)")
     s.add_argument("--out-dir", required=True)
     s.add_argument("--prefix", help="new file name before -0000k-of-0000N.gguf")
     s.add_argument("--headers-only", action="store_true", help="write the headers and size the files, copy no data")

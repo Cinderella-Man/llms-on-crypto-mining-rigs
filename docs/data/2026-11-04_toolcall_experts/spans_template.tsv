@@ -1,0 +1,12 @@
+# template spans of 421843 tokens (parse_special 1); processed: the first 200 chunks of 512 tokens
+measure	whole_text	processed
+tokens	421843	102400
+tokens_other	12191	2920
+tokens_call	24809	7554
+tokens_argument	15477	4127
+tokens_response	165645	48158
+tokens_assistant	203721	39641
+calls	938	275
+calls_unterminated	5	2
+parameters	1212	385
+responses	929	270

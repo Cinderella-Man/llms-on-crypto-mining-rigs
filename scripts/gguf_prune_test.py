@@ -11,10 +11,13 @@
 #       --link-unchanged making the third shard a link to its source; `verify` passes;
 #   (3) an id list in its own order (not ascending) gives the slabs in that order, and `verify` passes;
 #   (4) --headers-only writes the same headers and file sizes with no data, `verify --headers-only` passes and a full
-#       `verify` of it fails.
+#       `verify` of it fails;
+#   (5) --force-ids with the ranking keeps each layer's forced ids (one ranked last, one tied, a layer left out) and
+#       fills the other places by rank: the bytes this test's writer makes for those ids, and `verify` passes.
 # Negative controls, which must fail: `verify` with one byte changed in a kept slab, in a tensor that is not sliced,
 # or with two kept ids swapped in kept.tsv; `prune` keeping fewer experts than are used, an id list with a repeated
-# id, and one that leaves a layer out. Prints "ok" or fails an assertion. Uses DIR for its files and removes them.
+# id, and one that leaves a layer out; more forced ids than kept, a forced id out of range or repeated, a forced layer
+# the model lacks, and --force-ids with --ids. Prints "ok" or fails an assertion. Uses DIR for its files and removes them.
 # Standard library only.
 import hashlib, os, random, shutil, struct, subprocess, sys
 
@@ -207,7 +210,29 @@ def main():
     ok("verify", *names, "--new", *hnews, "--ids", f"{hdr}/kept.tsv", "--headers-only")
     fails("verify", *names, "--new", *hnews, "--ids", f"{hdr}/kept.tsv")
 
+    # (5) forced ids with the ranking: layer 0 forces its last-ranked expert 7, layer 2 two of its lowest (1, 0, given
+    # out of order), layer 1 is left out; the other places go by rank (layer 0: 0, 4, 3, then 2 of the tie at 40)
+    force = os.path.join(d, "force.tsv")
+    with open(force, "w") as f:
+        f.write("layer\tforced_ids\n0\t7\n2\t1,0\n")
+    want_f = {0: [0, 2, 3, 4, 7], 1: [0, 1, 2, 3, 4], 2: [0, 1, 5, 6, 7]}
+    ok("prune", "--keep", str(KEEP), "--experts", table, "--force-ids", force, "--out-dir", f"{d}/force", *names)
+    forced = [os.path.join(d, "force", os.path.basename(p)) for p in names]
+    for i in range(3):
+        ref = os.path.join(d, f"ref-force-{i}.gguf")
+        write_gguf(ref, kvs(KEEP, i), sliced(shards[i], want_f))
+        assert sha(forced[i]) == sha(ref), f"shard {i + 1} with forced ids: not the expected bytes"
+    with open(f"{d}/force/kept.tsv") as f:
+        assert f.read() == "layer\tkept_ids\n" + "".join(f"{l}\t{','.join(map(str, want_f[l]))}\n" for l in range(3))
+    ok("verify", *names, "--new", *forced, "--ids", f"{d}/force/kept.tsv")
+
     # negative controls
+    for rows in ("0\t0,1,2,3,4,5\n", "0\t9\n", "0\t7,7\n", "5\t1\n"):
+        with open(force, "w") as f:
+            f.write(rows)
+        fails("prune", "--keep", str(KEEP), "--experts", table, "--force-ids", force, "--out-dir", f"{d}/x", *names)
+    fails("prune", "--ids", ids, "--force-ids", force, "--out-dir", f"{d}/x", *names)
+
     def corrupt(src, tensor, delta):
         """A copy of `src` with one byte of `tensor` changed, `delta` bytes into its data."""
         h = g.Header(src)
