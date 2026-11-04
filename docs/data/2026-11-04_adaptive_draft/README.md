@@ -160,6 +160,31 @@ the timed agent check per arm (40 minutes each, as S18), the report against Q226
   `fix5`'s draft pass; if both n-max-5 arms fail their smoke test, `ARMS="fix2 fix3 fix4 adapt4"` is the fallback.
   This branch is `-ladder2`, whose kernels are not yet checked on a GPU (C86); its smoke test is the first run.
 
+## On the rig (C134r, 2026-11-04)
+
+The second rig (`kho=off`, the RAM watchdog's `MemAvailable` floor at 60 MiB), S18's DFlash2 line on Swift-1.5 Q2_0,
+run on Miner Llama's `-ladder3` (`7bc1552f4`, which holds this branch) with `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768` on
+both arms (`ARM_ENV`). The cost table is the one measured on the first rig under the same setting on real agent text
+(`docs/data/2026-11-04_kcurve_p106/cost/t_k_q2_0_s32k_real.txt`: 64.9 / 97.9 / 127.9 / 151.6 / 193.9 / 222.9 / 249.9 /
+288.5 ms at k = 1–8). Two of the four arms ran (`fix2`, `adapt5`): the rig was switched off for the night before
+`fix3` and `fix5`. Both smoke tests passed, `adapt5`'s at `--spec-draft-n-max 5` too.
+
+| Arm | Passed | Minutes, all tasks | Minutes per task (median) | Prompt tok/s | Generation tok/s | Nine shared tasks: tok/s, at equal tokens | Acceptance | Tokens a step | Usable host memory lowest |
+|---|---|---|---|---|---|---|---|---|---|
+| no draft (S12, v3's base) | 9 / 9 | 43.0 | 4.1 | 59 | 7.8 | 7.8, 1.0× | — | 1 | — |
+| DFlash2 `dflash2b` (S18, v3's base) | 11 / 11 | 41.0 | 2.9 | 47 | 9.5 | 9.5, 1.15–1.16× | 0.778 | 2.56 | 95 MiB |
+| `fix2` (two drafted, switch off) | 10 / 10 (2 past the budget) | 41.8 | 3.5 | 51 | 12.0 | 12.2, 1.30–1.39× | 0.742 | 2.49 | 229 MiB |
+| **`adapt5`** (`LLAMA_SPEC_ADAPT=1`, up to five) | 11 / 12 | 46.4 | 2.8 | 50 | **12.5** | **14.0, 1.52–1.53×** | 0.761 | 3.19 | 173 MiB |
+
+- **Choosing the verified length per step beats a fixed two by ~10–17 % at equal tokens** on the nine shared tasks
+  (1.52–1.53× against 1.30–1.39×). The rule verified 1 token on 1,748 steps, 3 on 2,186, 5 on 631 and all 6 on 2,917
+  of 7,482 ([rig/adapt.tsv](rig/adapt.tsv)): 3.19 tokens a step at a modelled 175.8 ms against `fix2`'s 2.49 at 264.6.
+- `fix2`'s log replays the rule offline on the same drafts: it would have verified 1 token on 1,087 of 8,004 steps and
+  modelled 1.31× against the arm's 1.28× (the `rule_*` columns).
+- `adapt_log.py`'s check: 15,486 steps in two runs, 0 problems ([rig/adapt_check.txt](rig/adapt_check.txt)).
+- Host memory: `adapt5` held usable memory at a median 903 MiB and lowest 173, swap up to 908 MiB, at most 59 MiB
+  swapped out in 10 s; `fix2` lowest 229, swap 33 MiB; no stop.
+
 ## Files
 
 | File | What |
@@ -169,6 +194,10 @@ the timed agent check per arm (40 minutes each, as S18), the report against Q226
 | `run/cpu_check.sh` | the CPU check: build (with the base build), unit test, smoke arms on a random-weight qwen4exp |
 | `run/adapt_log.py` | checks and summarizes `LLAMA_SPEC_ADAPT_LOG` files (standard library only) |
 | `run/rig_adraft.sh` | the rig run: smoke tests, the timed arms, the report and the logs' tables |
+| `rig/report.md` | C134r: the agent check's report, per task and per arm, against S12's no-draft and S18's DFlash2 arms |
+| `rig/common_tasks.csv` | C134r: the nine tasks every arm scored, per arm sums and the time at the no-draft arm's tokens |
+| `rig/adapt.tsv`, `rig/adapt_check.txt` | C134r: per arm the steps by verify width, tokens a step, the modelled speed-up and the rule replayed on the drafts; the log check |
+| `rig/session_memory_*.csv`, `rig/draft_acceptance_*.csv` | C134r: each arm's host memory over the session and acceptance per request |
 
 ## Commands
 

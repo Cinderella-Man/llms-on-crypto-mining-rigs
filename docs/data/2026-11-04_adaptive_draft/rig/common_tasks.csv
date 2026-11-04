@@ -1,0 +1,5 @@
+arm,tasks,turns,output_tokens,decode_s,generation_tok_s,new_prompt_tokens,prefill_s,prompt_tok_s,fixed_s,other_s,wall_s,wall_at_ref_tokens_low_s,wall_at_ref_tokens_high_s,speedup_at_ref_tokens_low,speedup_at_ref_tokens_high
+nodraft,9,51,15521,1997,7.77,28664,482,59.4,75,27,2582,2582,2582,1.0,1.0
+dflash2b,9,48,14009,1483,9.45,27099,575,47.1,6,25,2089,2249,2227,1.159,1.148
+fix2,9,48,17988,1481,12.15,33221,656,50.6,3,57,2197,1994,1863,1.386,1.295
+adapt5,9,48,12196,869,14.03,27218,559,48.7,4,31,1462,1699,1691,1.527,1.519
