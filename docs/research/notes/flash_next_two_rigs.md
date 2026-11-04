@@ -30,8 +30,9 @@ Its own data, the RPC build's CPU checks, the 18-card fit and the run for the ri
   token sends 10 KB of gathered rows and the 10 KB input embedding to rig 2. Rig 2 needs no copy of the file.
 - **est. decode: 5.5–6.3 tok/s plain** (158–181 ms a token, on Q2_0's measured 128–136 ms a token on one rig), against
   6.5–6.9 for Swift IQ3_XXS on one rig: 8–17 % longer per token for 1.45× lower agent KLD. Of the extra over IQ3_XXS,
-  est. 4–9 ms is IQ3_S's heavier spine and experts and est. 9.5–17 ms the second rig over stock RPC: eight blocking copies between rig 2's
-  cards (each a hop plus a round trip from rig 1), one 40 KB crossing back to rig 1, and the inputs sent one by one.
+  est. 4–9 ms is IQ3_S's heavier spine and experts and est. 9.5–17 ms the second rig over stock RPC: eight blocking
+  copies between rig 2's cards (each a hop plus a round trip from rig 1), one 40 KB crossing back to rig 1, and the
+  inputs sent one by one.
 - **Ranking:** (1) **stock RPC now**: built, CPU-checked, the only way to IQ3_S quality tomorrow; (2) **the fork's own
   rig-to-rig pipeline link** (Q325): est. 4–9 ms a token less and carries pipelined speculation, weeks of engine work,
   worth it if the measured RPC overhead matches this estimate; (3) **two independent servers** on files that fit one
@@ -48,7 +49,7 @@ op) before `GGML_OP_UNARY` and `GGML_OP_KQ_MASK` (the attention mask built on th
 | Change | Why |
 |---|---|
 | `static_assert(GGML_OP_COUNT == 104)`, `RPC_PROTO_PATCH_VERSION` 1 → 2 | the build; the patch number is upstream's convention for a changed op table |
-| `RPC_PROTO_MAJOR_VERSION` 8 → 108 | a client accepts only a server with its own major version, so a fork client and a stock `rpc-server` (or the other way round) refuse each other at the handshake; with the same major version, a stock server would run a fork graph's `UNARY` as the fork's `GDN_CONV` |
+| `RPC_PROTO_MAJOR_VERSION` 8 → 108 | a client accepts only a server with its own major version, so a fork client and a stock `rpc-server` (or the other way round) refuse each other at the handshake; with the same major version, a fork server would run a stock client's `UNARY` as `GDN_CONV`, and a stock server would read every fork op from `UNARY` on as the op after it |
 | the server rejects a tensor whose op is beyond its own op table | as it already rejects an unknown type |
 
 **What crosses the wire.** A graph node is serialized as its op number, `op_params` (all of them), flags, sources,
@@ -163,8 +164,8 @@ tonight's kernels at their expected speed, a lower bound):
 | **Swift IQ3_S, two rigs, stock RPC** | +20.0 / +27.8 | +9.5–17 | **158–181 ms** | **5.5–6.3** | 110–118 ms | 8.5–9.1 |
 | Swift IQ3_S, two rigs, pipeline link | +20.0 / +27.8 | +5–8 | 153–172 ms | 5.8–6.5 | 106–109 ms | 9.2–9.5 |
 
-So the second rig costs more than the heavier file does: est. 9.5–17 ms against 4–9 ms. The measured 18-card overhead comes from
-tomorrow's `ident` step (the same IQ3_XXS file on 9 and on 18 cards, so only the second rig differs).
+So the second rig costs more than the heavier file does: est. 9.5–17 ms against 4–9 ms. The measured 18-card overhead
+comes from tomorrow's `ident` step (the same IQ3_XXS file on 9 and on 18 cards, so only the second rig differs).
 
 ### Speculation across rigs
 
@@ -208,14 +209,14 @@ over today's; the RAM watchdog guards both (tomorrow's script runs `scripts/ram_
 | File | Swift IQ3_S (KLD 0.121) | Swift IQ3_S | Swift IQ3_XXS or Q2_0 per rig (0.176 / 0.285) |
 | est. plain decode | 5.5–6.3 tok/s | 5.8–6.5 tok/s | 6.5–6.9 (IQ3_XXS) / 7.4–7.8 (Q2_0) per session |
 | Pipelined speculation | no (remote half at plain speed) | yes | yes, per rig |
-| Load | rig 1 reads all 84 GB and sends rig 2's ~28 GB over the LAN (~4–5 min the first time), later loads send hashes (`-c`) | each rig reads its own layers from its own disk | each rig its own file |
+| Load | rig 1 reads all 84 GB and sends rig 2's ~28 GB over the LAN (~4–5 min the first time), with `-c`, later loads send hashes | each rig reads its own layers from its own disk | each rig its own file |
 | Code | none beyond Q743 | weeks: one process per rig, one-way messages, cache edits in order, partial loading | none |
 | For | the best quality now | the best quality at the best speed, after Q816 measures RPC | two agents at once; the three coming rigs |
 
-**Recommendation: stock RPC with Swift IQ3_S now.** It is the only route to the best file tomorrow and makes a token est. 8–17 %
-longer than IQ3_XXS on one rig. If Q816 measures the second rig's cost near this estimate, two cheap RPC changes come first (Q817:
-same-server copies without a reply, inputs packed into one message per split, est. −3 to −5 ms), and the pipeline link
-after them if pipelined speculation is wanted across rigs.
+**Recommendation: stock RPC with Swift IQ3_S now.** It is the only route to the best file tomorrow and makes a
+token est. 8–17 % longer than IQ3_XXS on one rig. If Q816 measures the second rig's cost near this estimate, two cheap
+RPC changes come first (Q817: same-server copies without a reply, inputs packed into one message per split, est. −3 to
+−5 ms), and the pipeline link after them if pipelined speculation is wanted across rigs.
 
 ## 8. Ideas registered
 
