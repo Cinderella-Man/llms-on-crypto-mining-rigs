@@ -1,0 +1,2 @@
+line	setting	n_gen	tok_s_mean	tok_s_stddev	samples
+-b 2048 -ub 512 -ts 6/5/5/6/5/5/6/5/6 -fa 1 -lm dio, nine P106-090	GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768	128	14.65	0.08	14.56 14.66 14.73

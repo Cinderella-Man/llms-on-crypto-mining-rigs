@@ -1,0 +1,20 @@
+== nodraft: llama.cpp-20261104-7bc1552f4-pascal-p106-v3-b12076-ladder3 -c 65536 -b 2048 -ub 512 -ts 6,5,5,6,5,5,6,5,6
+nodraft | - CUDA0 (NVIDIA P106-090):   6068 total,   4944 used,   1079 free vs. target of   1024
+nodraft | - CUDA1 (NVIDIA P106-090):   6068 total,   4243 used,   1780 free vs. target of   1024
+nodraft | - CUDA2 (NVIDIA P106-090):   6068 total,   4426 used,   1597 free vs. target of   1024
+nodraft | - CUDA3 (NVIDIA P106-090):   6068 total,   5002 used,   1021 free vs. target of   1024
+nodraft | - CUDA4 (NVIDIA P106-090):   6068 total,   4271 used,   1752 free vs. target of   1024
+nodraft | - CUDA5 (NVIDIA P106-090):   6068 total,   4431 used,   1592 free vs. target of   1024
+nodraft | - CUDA6 (NVIDIA P106-090):   6068 total,   5010 used,   1013 free vs. target of   1024
+nodraft | - CUDA7 (NVIDIA P106-090):   6068 total,   4276 used,   1746 free vs. target of   1024
+nodraft | - CUDA8 (NVIDIA P106-090):   6068 total,   4867 used,   1156 free vs. target of   1024
+== mtp: llama.cpp-20261104-7bc1552f4-pascal-p106-v3-b12076-ladder3 -c 65536 -b 2048 -ub 512 -ts 6,6,6,6,5,6,5,6,3 -md /m
+mtp | - CUDA0 (NVIDIA P106-090):   6068 total,   4992 used,   1031 free vs. target of   1024
+mtp | - CUDA1 (NVIDIA P106-090):   6068 total,   5178 used,    844 free vs. target of   1024
+mtp | - CUDA2 (NVIDIA P106-090):   6068 total,   5047 used,    976 free vs. target of   1024
+mtp | - CUDA3 (NVIDIA P106-090):   6068 total,   5200 used,    823 free vs. target of   1024
+mtp | - CUDA4 (NVIDIA P106-090):   6068 total,   4957 used,   1066 free vs. target of   1024
+mtp | - CUDA5 (NVIDIA P106-090):   6068 total,   5058 used,    965 free vs. target of   1024
+mtp | - CUDA6 (NVIDIA P106-090):   6068 total,   4461 used,   1562 free vs. target of   1024
+mtp | - CUDA7 (NVIDIA P106-090):   6068 total,   5064 used,    959 free vs. target of   1024
+mtp | - CUDA8 (NVIDIA P106-090):   6068 total,   4632 used,   1391 free vs. target of   1024

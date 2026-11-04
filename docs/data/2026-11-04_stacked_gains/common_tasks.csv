@@ -1,0 +1,6 @@
+arm,tasks,turns,output_tokens,decode_s,generation_tok_s,new_prompt_tokens,prefill_s,prompt_tok_s,fixed_s,other_s,wall_s,wall_at_ref_tokens_low_s,wall_at_ref_tokens_high_s,speedup_at_ref_tokens_low,speedup_at_ref_tokens_high
+nodraft,9,51,15521,1997,7.77,28664,482,59.4,75,27,2582,2582,2582,1.0,1.0
+mtp2d,9,48,11611,949,12.23,27761,491,56.5,24,286,1750,2070,1854,1.393,1.247
+s34nd,9,47,16791,1148,14.63,27591,442,62.4,3,19,1612,1526,1646,1.569,1.692
+s34mtp,9,46,13030,879,14.82,27658,474,58.3,4,48,1405,1573,1632,1.582,1.641
+s34mtps,9,52,11560,719,16.08,28903,516,56.1,5,79,1318,1565,1550,1.666,1.65
