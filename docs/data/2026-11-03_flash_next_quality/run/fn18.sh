@@ -15,7 +15,7 @@ IM=$WORK/fn4/imatrix-swift15-q8_0-agent-train.gguf
 mkdir -p "$D"
 if [ ! -f "$D/quantize.done" ]; then
     log "llama-quantize: experts Q4_0 with $(basename "$IM"), the rest as in the reference"
-    docker run --rm $DOCKER_BASE --name "pq-$TAG-quantize" $MOUNT_ARGS "$IMAGE" nice -n 19 "$TOOLS/llama-quantize" \
+    docker run --rm $DOCKER_BASE --name "pq-$TAG-quantize" $MOUNT_ARGS "$IMAGE" bash -c 'mkdir -p /tmp/stub && ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /tmp/stub/libcuda.so.1 && LD_LIBRARY_PATH=/tmp/stub${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} exec nice -n 19 "$@"' quantize "$TOOLS/llama-quantize" \
         --allow-requantize --keep-split --imatrix "$IM" --tensor-type ffn_gate_exps=q4_0 \
         --tensor-type ffn_up_exps=q4_0 --tensor-type ffn_down_exps=q4_0 "$REF" "$D/$NAME" Q8_0 "${THREADS:-8}" \
         > "$D/quantize.log" 2>&1
