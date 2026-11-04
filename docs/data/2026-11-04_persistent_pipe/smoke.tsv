@@ -1,0 +1,10 @@
+run	code	options	stages	variants	exit	check
+f32-2	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--cards 2 --smoke	2	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+q8-2	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--cards 2 --smoke --wire q8	2	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+f32-4	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--devices 0,1,0,1 --grid 8 --smoke	4	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+q8k4-4	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--devices 0,1,0,1 --grid 8 --smoke --wire q8 --k 4	4	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+k8-3	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--devices 0,1,0 --grid 8 --smoke --k 8 --layers 3 --mail-chunks 16	3	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+small-4	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--devices 0,1,0,1 --grid 8 --smoke --n 2560 --layers 1 --mail-chunks 3 --wire q8 --k 2 --staged-chunks 3	4	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+long-2	compute_61 PTX (CUDA_FORCE_PTX_JIT=1)	--cards 2 --passes 200 --warmup 5 --wire q8	2	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+f32-2	sm_86	--cards 2 --smoke	2	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual
+f32-4	sm_86	--devices 0,1,0,1 --grid 8 --smoke	4	sync,peer,staged,persist,persist-direct	0	every variant gives the same token ids and final residual

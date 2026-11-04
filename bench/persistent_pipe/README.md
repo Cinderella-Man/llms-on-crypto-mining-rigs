@@ -36,7 +36,7 @@ another and a pass's time is the cards' work plus every hop.
 | `sync` | the host launches each card's products, then the hop: a copy into pinned host memory, a host synchronize, a copy onto the next card; at the end it reads the ids back and synchronizes |
 | `peer` | every hop is one `cudaMemcpyPeerAsync` (the driver stages it through the host without peer access), with an event that the next card's stream waits on (ggml's copy between two CUDA backends); one host synchronize a pass, on the ids |
 | `staged` | every hop is the fork's manual staged hop (`GGML_CUDA_HOP_STAGED=1`, [card hops](../../docs/data/2026-11-04_card_hops/README.md)): `--staged-chunks` chunks (default 2, the fork's default) through pinned slots, each chunk's two copies on the two cards' streams behind an event, so one chunk's second leg overlaps the next chunk's first; one synchronize a pass |
-| `persist` | one cooperative kernel per card for every pass. Card i's block 0 polls card i's mailbox in mapped pinned host memory (slowly until the sender's hint that its last product has started, then every `--poll-us`), one sequence flag per chunk (`--mail-chunks`, default 4); each chunk's reader block copies it into the card's memory as soon as its flag is up; the products run behind a grid barrier; after the last product one block writes the residual into the next card's mailbox chunk by chunk, raising each chunk's flag. The last card's argmax goes to card 0's mailbox and to the results in host memory |
+| `persist` | one cooperative kernel per card for every pass. Card i's block 0 polls card i's mailbox in mapped pinned host memory (slowly until the sender's hint that its last product has started, then every `--poll-us`), one sequence flag per chunk (`--mail-chunks`, default 4); each chunk's reader block copies it into the card's memory in 16-byte loads as soon as its flag is up; the products run behind a grid barrier; after the last product one block writes the residual into the next card's mailbox chunk by chunk in 16-byte stores (Q8_0 cast in shared memory first), raising each chunk's flag. In a mailbox a Q8_0 chunk is its column's `block_q8_0` run padded to 16 bytes (64 bytes more than the 10,880 a token at 4 chunks). The last card's argmax goes to card 0's mailbox and to the results in host memory |
 | `persist-direct` | the same, but the last product writes its rows straight into the next card's mailbox while it runs, and the block that completes a chunk raises its flag, so the bytes cross the sender's link while it still computes |
 
 Every variant runs the same device functions on the same blocks of work (one warp per 4 rows, a fixed reduction
@@ -56,9 +56,10 @@ ids back to card 0).
   product done, on the card's own `%globaltimer`.
 - **Pass time**, host-driven: the host clock between two passes' ends. Persistent: the last card's timer between two
   passes' ids posted.
-- **Per boundary** (persistent only): from card i's last product done to card i + 1's input in, on the two cards'
-  timers. The driver sets each card's timer from the host clock, so an offset between two cards shows up here; the
-  boundaries' sum around the ring has no offset (it is the overhead).
+- **Per boundary** (persistent only): from card i's last product done to card i + 1's input in. The cards' timers
+  differ (two RTX 3090s in one machine: ~174 ms), so before and after each persistent run every pair of neighbours
+  measures its offset with a ping-pong through mapped host memory (as NTP does: 200 rounds, the median), and each pass
+  is aligned with the offsets interpolated between the two; the run prints the offsets and how far they moved.
 - **The saving**: each persistent variant against each host-driven one, ms a pass, %, and µs a hop.
 
 Not modelled: the host's own per-token work in llama.cpp (graph build or update, sampling, the server), which a

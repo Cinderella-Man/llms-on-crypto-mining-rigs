@@ -193,20 +193,9 @@ template <int K> __device__ __forceinline__ void load_vb(const float * y, float 
     }
 }
 
-// The 32 x K values of virtual block vb, from sh, onto the wire (device or mapped host memory): F32 as they are
-// (column-major, as y), or Q8_0 (column c's row of n / 32 blocks, ggml's block_q8_0 and its rounding), each block's
-// 34 bytes written by one store of 17 lanes.
-template <int K>
-__device__ __forceinline__ void emit_vb(const float * sh, unsigned char * wire, const int type, const int n, const int vb) {
-    const int warp = threadIdx.x / 32, lane = threadIdx.x % 32;
-    if (warp >= K) {
-        return;
-    }
-    const float v = sh[warp * VB_ROWS + lane];
-    if (type == WIRE_F32) {
-        ((float *) wire)[(size_t) warp * n + vb * VB_ROWS + lane] = v;
-        return;
-    }
+// Warp-wide: the Q8_0 block of the warp's 32 values (value `lane` in v) at blk: ggml's block_q8_0 and its rounding,
+// the 34 bytes written by one store of 17 lanes.
+__device__ __forceinline__ void emit_q8(const float v, unsigned char * blk, const int lane) {
     float amax = fabsf(v);
 #pragma unroll
     for (int off = 16; off > 0; off >>= 1) {
@@ -219,25 +208,41 @@ __device__ __forceinline__ void emit_vb(const float * sh, unsigned char * wire, 
     const int   hi = __shfl_sync(0xffffffffu, q, (2 * lane - 1) & 31);
     if (lane < Q8_BYTES / 2) {
         const unsigned short u = lane == 0 ? __half_as_ushort(__float2half(d)) : (unsigned short) (lo | (hi << 8));
-        ((unsigned short *) (wire + ((size_t) warp * (n / VB_ROWS) + vb) * Q8_BYTES))[lane] = u;
+        ((unsigned short *) blk)[lane] = u;
     }
 }
 
-// Warp-wide: the 32 values of column c, virtual block vb, from the wire into x. CV: read with ld.global.cv (mapped
-// host memory that another card writes while this kernel runs).
-template <bool CV>
+// value `lane` of the Q8_0 block at blk
+__device__ __forceinline__ float take_q8(const unsigned char * blk, const int lane) {
+    return __half2float(__ushort_as_half(*(const unsigned short *) blk)) * (float) ((const signed char *) blk)[2 + lane];
+}
+
+// Warp-wide: value `lane` of column c, virtual block vb, onto the wire in device memory: F32 as it is (column-major,
+// as y), or Q8_0 (column c's row of n / 32 blocks).
+__device__ __forceinline__ void emit_warp(const float v, unsigned char * wire, const int type, const int n, const int c,
+                                          const int vb, const int lane) {
+    if (type == WIRE_F32) {
+        ((float *) wire)[(size_t) c * n + vb * VB_ROWS + lane] = v;
+    } else {
+        emit_q8(v, wire + ((size_t) c * (n / VB_ROWS) + vb) * Q8_BYTES, lane);
+    }
+}
+
+// The 32 x K values of virtual block vb, from sh, onto the wire in device memory: warp c emits column c.
+template <int K>
+__device__ __forceinline__ void emit_vb(const float * sh, unsigned char * wire, const int type, const int n, const int vb) {
+    const int warp = threadIdx.x / 32, lane = threadIdx.x % 32;
+    if (warp < K) {
+        emit_warp(sh[warp * VB_ROWS + lane], wire, type, n, warp, vb, lane);
+    }
+}
+
+// Warp-wide: the 32 values of column c, virtual block vb, from the wire in device memory into x.
 __device__ __forceinline__ void take_vb(const unsigned char * wire, const int type, float * x, const int n, const int c,
                                         const int vb, const int lane) {
     const size_t j = (size_t) c * n + vb * VB_ROWS + lane;
-    if (type == WIRE_F32) {
-        const float * p = (const float *) wire + j;
-        x[j] = CV ? __ldcv(p) : *p;
-        return;
-    }
-    const unsigned char * blk = wire + ((size_t) c * (n / VB_ROWS) + vb) * Q8_BYTES;
-    const unsigned short dbits = CV ? __ldcv((const unsigned short *) blk) : *(const unsigned short *) blk;
-    const signed char    q     = CV ? __ldcv((const signed char *) blk + 2 + lane) : ((const signed char *) blk)[2 + lane];
-    x[j] = __half2float(__ushort_as_half(dbits)) * (float) q;
+    x[j] = type == WIRE_F32 ? ((const float *) wire)[j]
+                            : take_q8(wire + ((size_t) c * (n / VB_ROWS) + vb) * Q8_BYTES, lane);
 }
 
 // the larger value wins, the lower index on a tie: exact, so any reduction order gives the same answer
@@ -305,7 +310,7 @@ __global__ void k_uncast(const unsigned char * wire, const int type, float * x, 
     const int V = n / VB_ROWS, lane = threadIdx.x % 32;
     const int nw = gridDim.x * blockDim.x / 32;
     for (int q = (blockIdx.x * blockDim.x + threadIdx.x) / 32; q < K * V; q += nw) {
-        take_vb<false>(wire, type, x, n, q / V, q % V, lane);
+        take_vb(wire, type, x, n, q / V, q % V, lane);
     }
 }
 
@@ -326,6 +331,38 @@ __global__ void k_arch(int * out) {
 #ifdef __CUDA_ARCH__
     *out = __CUDA_ARCH__;
 #endif
+}
+
+// The offset between two cards' %globaltimer, measured as NTP does: card A (role 0) raises a round number in mapped
+// host memory, card B (role 1) answers it, both spinning; per round, B's clock minus A's is
+// ((B's receive - A's send) - (A's receive - B's send)) / 2, exact when both directions take as long. A round that
+// times out leaves its readings 0.
+__global__ void k_ping(unsigned long long * box, const int role, const int rounds, unsigned long long * out,
+                       const unsigned long long timeout_ns) {
+    volatile unsigned long long * b = box;
+    const unsigned long long t0 = gtime();
+    for (int r = 1; r <= rounds; ++r) {
+        if (role == 0) {
+            const unsigned long long t_send = gtime();
+            b[0] = r;
+            while (b[1] < (unsigned long long) r) {
+                if (gtime() - t0 > timeout_ns) {
+                    return;
+                }
+            }
+            out[2 * r - 2] = t_send;
+            out[2 * r - 1] = gtime();
+        } else {
+            while (b[0] < (unsigned long long) r) {
+                if (gtime() - t0 > timeout_ns) {
+                    return;
+                }
+            }
+            out[2 * r - 2] = gtime();
+            out[2 * r - 1] = gtime();
+            b[1] = r;
+        }
+    }
 }
 
 // ---- the token-persistent kernel ------------------------------------------------------------------------------------
@@ -407,6 +444,25 @@ __device__ bool grid_barrier(const pipe_args & a) {
 
 __device__ __forceinline__ int chunk_begin(const int c, const int V, const int C) { return c * V / C; }
 
+// Where column col of chunk c lies in a mailbox's data, and its bytes. F32: as in y. Q8_0: per column the chunks'
+// blocks one after the other, each chunk padded to 16 bytes, so that a chunk moves in 16-byte loads and stores.
+__device__ __forceinline__ size_t mail_at(const int type, const int n, const int C, const int col, const int c,
+                                          int & bytes) {
+    const int V = n / VB_ROWS, vb0 = chunk_begin(c, V, C), nvb = chunk_begin(c + 1, V, C) - vb0;
+    if (type == WIRE_F32) {
+        bytes = nvb * VB_ROWS * (int) sizeof(float);
+        return ((size_t) col * n + (size_t) vb0 * VB_ROWS) * sizeof(float);
+    }
+    size_t row = 0, off = 0;
+    for (int k = 0; k < C; ++k) {
+        const int sz = ((chunk_begin(k + 1, V, C) - chunk_begin(k, V, C)) * Q8_BYTES + 15) / 16 * 16;
+        off += k < c ? sz : 0;
+        row += sz;
+    }
+    bytes = (nvb * Q8_BYTES + 15) / 16 * 16;
+    return (size_t) col * row + off;
+}
+
 // The block has written `count` virtual blocks of chunk c into the mailbox; the block that completes the chunk for this
 // pass raises its flag.
 __device__ void post_chunk(const pipe_args & a, volatile mail_hdr * out, const int c, const int count, const unsigned seq,
@@ -426,6 +482,7 @@ __device__ void post_chunk(const pipe_args & a, volatile mail_hdr * out, const i
 template <int K> __global__ void __launch_bounds__(THREADS) k_pipe(const pipe_args a) {
     __shared__ float sh[K * VB_ROWS];
     __shared__ int   ok_s;
+    __shared__ __align__(16) unsigned char stage[NMAX / VB_ROWS * Q8_BYTES];  // one chunk of one column in Q8_0
     const int  n = a.n, V = n / VB_ROWS, C = a.chunks, G = gridDim.x, b = blockIdx.x, t = threadIdx.x;
     const int  warp = t / 32, lane = t % 32;
     const bool first = a.card == 0, last = a.card == a.ncards - 1;
@@ -486,9 +543,27 @@ template <int K> __global__ void __launch_bounds__(THREADS) k_pipe(const pipe_ar
                 if (!ok_s) {
                     return;
                 }
+                // 16-byte loads that bypass the caches (ld.global.cv): F32 straight into the input, Q8_0 through
+                // shared memory
                 const int vb0 = chunk_begin(c, V, C), nvb = chunk_begin(c + 1, V, C) - vb0;
-                for (int q = warp; q < K * nvb; q += WARPS) {
-                    take_vb<true>(in_data, a.wire, a.buf0, n, q / nvb, vb0 + q % nvb, lane);
+                for (int col = 0; col < K; ++col) {
+                    int bytes;
+                    const uint4 * src = (const uint4 *) (in_data + mail_at(a.wire, n, C, col, c, bytes));
+                    if (a.wire == WIRE_F32) {
+                        uint4 * dst = (uint4 *) (a.buf0 + (size_t) col * n + (size_t) vb0 * VB_ROWS);
+                        for (int i = t; i < bytes / 16; i += THREADS) {
+                            dst[i] = __ldcv(src + i);
+                        }
+                    } else {
+                        for (int i = t; i < bytes / 16; i += THREADS) {
+                            ((uint4 *) stage)[i] = __ldcv(src + i);
+                        }
+                        __syncthreads();
+                        for (int q = warp; q < nvb; q += WARPS) {
+                            a.buf0[(size_t) col * n + (size_t) (vb0 + q) * VB_ROWS + lane] = take_q8(stage + q * Q8_BYTES, lane);
+                        }
+                        __syncthreads();
+                    }
                 }
             }
         }
@@ -526,7 +601,17 @@ template <int K> __global__ void __launch_bounds__(THREADS) k_pipe(const pipe_ar
                         cur     = c;
                         pending = 0;
                     }
-                    emit_vb<K>(sh, out_data, a.wire, n, vb);
+                    if (warp < K) {
+                        // this block's piece of the chunk, straight into the next card's mailbox
+                        const float v = sh[warp * VB_ROWS + lane];
+                        int bytes;
+                        const size_t at = mail_at(a.wire, n, C, warp, c, bytes);
+                        if (a.wire == WIRE_F32) {
+                            ((float *) out_data)[(size_t) warp * n + (size_t) vb * VB_ROWS + lane] = v;
+                        } else {
+                            emit_q8(v, out_data + at + (size_t) (vb - chunk_begin(c, V, C)) * Q8_BYTES, lane);
+                        }
+                    }
                     ++pending;
                 } else {
                     store_vb<K>(sh, y, n, vb);
@@ -551,11 +636,27 @@ template <int K> __global__ void __launch_bounds__(THREADS) k_pipe(const pipe_ar
             // card's link
             if (!a.direct && b == 1 % G) {
                 for (int c = 0; c < C; ++c) {
-                    for (int vb = chunk_begin(c, V, C); vb < chunk_begin(c + 1, V, C); ++vb) {
-                        load_vb<K>(res, sh, n, vb);
-                        __syncthreads();
-                        emit_vb<K>(sh, out_data, a.wire, n, vb);
-                        __syncthreads();
+                    // 16-byte stores: F32 straight from the output, Q8_0 cast into shared memory first
+                    const int vb0 = chunk_begin(c, V, C), nvb = chunk_begin(c + 1, V, C) - vb0;
+                    for (int col = 0; col < K; ++col) {
+                        int bytes;
+                        uint4 * dst = (uint4 *) (out_data + mail_at(a.wire, n, C, col, c, bytes));
+                        if (a.wire == WIRE_F32) {
+                            const uint4 * src = (const uint4 *) (res + (size_t) col * n + (size_t) vb0 * VB_ROWS);
+                            for (int i = t; i < bytes / 16; i += THREADS) {
+                                dst[i] = __ldcg(src + i);
+                            }
+                        } else {
+                            for (int q = warp; q < nvb; q += WARPS) {
+                                emit_q8(__ldcg(res + (size_t) col * n + (size_t) (vb0 + q) * VB_ROWS + lane),
+                                        stage + q * Q8_BYTES, lane);
+                            }
+                            __syncthreads();
+                            for (int i = t; i < bytes / 16; i += THREADS) {
+                                dst[i] = ((const uint4 *) stage)[i];
+                            }
+                            __syncthreads();
+                        }
                     }
                     __threadfence_system();
                     __syncthreads();
@@ -674,6 +775,7 @@ struct run_result {
     std::vector<double> compute_us;      // per timed pass: the sum over the cards of their products' time
     std::vector<std::vector<double>> card_us;      // persistent: per card, per timed pass
     std::vector<std::vector<double>> boundary_us;  // persistent: per boundary (the last one: back to card 0)
+    std::vector<double> offset0, offset1;          // persistent: each card's timer minus card 0's, before and after (us)
     double wall_s = 0;
 };
 
@@ -908,11 +1010,67 @@ run_result run_host(const std::string & v) {
     return r;
 }
 
+// b - a in us, exact for timer readings of ~1.8e18 ns
+double d_us(unsigned long long a, unsigned long long b) { return (double) (long long) (b - a) / 1000.0; }
+
+// each card's %globaltimer minus card 0's in us, by a ping-pong between neighbours (the median of 200 rounds); NAN
+// from the first pair whose ping timed out
+std::vector<double> clock_offsets() {
+    constexpr int ROUNDS = 200;
+    std::vector<double> off(N_, 0.0);
+    unsigned long long * box;
+    CUDA_CHECK(cudaHostAlloc((void **) &box, 64, cudaHostAllocPortable | cudaHostAllocMapped));
+    std::vector<unsigned long long> ra(2 * ROUNDS), rb(2 * ROUNDS);
+    for (int i = 0; i + 1 < N_; ++i) {
+        card_t & a = cards[i];
+        card_t & b = cards[i + 1];
+        memset(box, 0, 64);
+        std::atomic_thread_fence(std::memory_order_seq_cst);
+        unsigned long long *box_a, *box_b, *out_a, *out_b;
+        CUDA_CHECK(cudaSetDevice(a.dev));
+        CUDA_CHECK(cudaHostGetDevicePointer((void **) &box_a, box, 0));
+        CUDA_CHECK(cudaMalloc(&out_a, ra.size() * sizeof(unsigned long long)));
+        CUDA_CHECK(cudaMemset(out_a, 0, ra.size() * sizeof(unsigned long long)));
+        CUDA_CHECK(cudaSetDevice(b.dev));
+        CUDA_CHECK(cudaHostGetDevicePointer((void **) &box_b, box, 0));
+        CUDA_CHECK(cudaMalloc(&out_b, rb.size() * sizeof(unsigned long long)));
+        CUDA_CHECK(cudaMemset(out_b, 0, rb.size() * sizeof(unsigned long long)));
+        CUDA_CHECK(cudaDeviceSynchronize());
+        k_ping<<<1, 1, 0, b.s>>>(box_b, 1, ROUNDS, out_b, 2000000000ull);
+        CUDA_CHECK(cudaSetDevice(a.dev));
+        k_ping<<<1, 1, 0, a.s>>>(box_a, 0, ROUNDS, out_a, 2000000000ull);
+        CUDA_CHECK(cudaStreamSynchronize(a.s));
+        CUDA_CHECK(cudaMemcpy(ra.data(), out_a, ra.size() * sizeof(unsigned long long), cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaFree(out_a));
+        CUDA_CHECK(cudaSetDevice(b.dev));
+        CUDA_CHECK(cudaStreamSynchronize(b.s));
+        CUDA_CHECK(cudaMemcpy(rb.data(), out_b, rb.size() * sizeof(unsigned long long), cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaFree(out_b));
+        std::vector<double> theta;
+        for (int r = 0; r < ROUNDS; ++r) {
+            const unsigned long long a_send = ra[2 * r], a_recv = ra[2 * r + 1], b_recv = rb[2 * r], b_send = rb[2 * r + 1];
+            if (a_send && a_recv && b_recv && b_send) {
+                theta.push_back((d_us(a_send, b_recv) - d_us(b_send, a_recv)) / 2.0);
+            }
+        }
+        if (theta.size() < ROUNDS) {
+            for (int j = i + 1; j < N_; ++j) {
+                off[j] = NAN;
+            }
+            break;
+        }
+        off[i + 1] = off[i] + median(theta);
+    }
+    CUDA_CHECK(cudaFreeHost(box));
+    return off;
+}
+
 run_result run_persistent(const std::string & v, bool direct) {
     const int P = opt.warmup + opt.passes;
     run_result r;
     r.name = v;
     r.toks.resize((size_t) P * K);
+    r.offset0 = clock_offsets();
     for (card_t & c : cards) {
         memset(c.mail, 0, MAIL_HDR);
         CUDA_CHECK(cudaSetDevice(c.dev));
@@ -1007,22 +1165,27 @@ run_result run_persistent(const std::string & v, bool direct) {
         CUDA_CHECK(cudaMemcpy(st[i].data(), cards[i].stamps, st[i].size() * sizeof(unsigned long long),
                               cudaMemcpyDeviceToHost));
     }
+    r.offset1 = clock_offsets();
     r.card_us.assign(N_, {});
     r.boundary_us.assign(N_, {});
-    auto d_us = [](unsigned long long a, unsigned long long b) { return ((double) b - (double) a) / 1000.0; };
     for (int p = std::max(1, opt.warmup); p < P && r.ok; ++p) {
         r.pass_us.push_back(d_us(st[N_ - 1][3 * (p - 1) + 2], st[N_ - 1][3 * p + 2]));
         double compute = 0;
+        // each card's timer minus card 0's at this pass: the offsets before and after the run, interpolated
+        const double f = (double) p / P;
+        auto off = [&](int i) { return r.offset0[i] + f * (r.offset1[i] - r.offset0[i]); };
         for (int i = 0; i < N_; ++i) {
             const double cu = d_us(st[i][3 * p], st[i][3 * p + 1]);
             r.card_us[i].push_back(cu);
             compute += cu;
-            // from card i's last product done to card i + 1's input in (the last: card 0's next pass), on two cards'
-            // timers
-            const double bu = i + 1 < N_ ? d_us(st[i][3 * p + 1], st[i + 1][3 * p])
-                                         : (p + 1 < P ? d_us(st[i][3 * p + 1], st[0][3 * (p + 1)]) : NAN);
-            if (!std::isnan(bu)) {
-                r.boundary_us[i].push_back(bu);
+            // from card i's last product done to card i + 1's input in (the last: card 0's next pass), the two
+            // cards' timers aligned
+            const int j = (i + 1) % N_;
+            if (i + 1 < N_ || p + 1 < P) {
+                const double bu = d_us(st[i][3 * p + 1], st[j][3 * (i + 1 < N_ ? p : p + 1)]) - (off(j) - off(i));
+                if (!std::isnan(bu)) {
+                    r.boundary_us[i].push_back(bu);
+                }
             }
         }
         r.compute_us.push_back(compute);
@@ -1260,7 +1423,7 @@ int main(int argc, char ** argv) {
         printf(" %.3f", cards[i].cal_ms);
         csv_row("calibration", "card" + std::to_string(i) + "_ms", cards[i].cal_ms, "ms");
     }
-    printf("; sum %.3f ms, %.1f GB/s on card 0\n", compute_ms, w_mb * L_ / cards[0].cal_ms / 1000.0);
+    printf("; sum %.3f ms, %.1f GB/s on card 0\n", compute_ms, w_mb * L_ / cards[0].cal_ms);
     csv_row("calibration", "sum_ms", compute_ms, "ms");
     csv_row("calibration", "hop_bytes", (double) wire_bytes, "B");
     printf("persistent mailboxes: %d chunks; polls every %.2f us after the hint, %.1f us before; host wait: %s\n\n",
@@ -1350,14 +1513,24 @@ int main(int argc, char ** argv) {
             printf(" %.0f", median(r.card_us[i]));
             csv_row(r.name, "card" + std::to_string(i) + "_products_us", median(r.card_us[i]), "us");
         }
-        printf("\n%s per boundary (card i's last product done -> card i+1's input in; the last: back to card 0; on two "
-               "cards' timers), median us:",
+        double drift = 0;
+        for (int i = 0; i < N_; ++i) {
+            drift = std::max(drift, fabs(r.offset1[i] - r.offset0[i]));
+        }
+        printf("\n%s per boundary (card i's last product done -> card i+1's input in; the last: back to card 0), "
+               "median us:",
                r.name.c_str());
         for (int i = 0; i < N_; ++i) {
-            printf(" %.1f", median(r.boundary_us[i]));
-            csv_row(r.name, "boundary" + std::to_string(i) + "_us", median(r.boundary_us[i]), "us");
+            const double m = r.boundary_us[i].empty() ? NAN : median(r.boundary_us[i]);
+            printf(" %.1f", m);
+            csv_row(r.name, "boundary" + std::to_string(i) + "_us", m, "us");
         }
-        printf("\n");
+        printf("\n%s the cards' timers against card 0's (us, before the run):", r.name.c_str());
+        for (int i = 0; i < N_; ++i) {
+            printf(" %.1f", r.offset0[i]);
+        }
+        printf("; they moved by up to %.1f us during it\n", drift);
+        csv_row(r.name, "timer_drift_us", drift, "us");
     }
 
     // what the persistent pipeline saves against each host-driven variant
