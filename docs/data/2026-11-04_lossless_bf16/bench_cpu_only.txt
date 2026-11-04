@@ -1,0 +1,11 @@
+class           K      N calls   n  x12 bits  x11 bits   x12 esc  x11 esc          round trip
+router       2560    512    48   2    12.025    11.837   0.0400%   2.578%          PASS
+hc_down     10240    320    97   4    12.011    11.932   0.0231%   2.904%          PASS
+hc_inject   10240      4    96   8    12.013    12.035   0.0290%   3.221%          PASS
+hc_up         320  10240    97   4    12.105    11.973   0.0161%   2.728%          PASS
+ssm_ab       2560     48    72   4    12.023    11.920   0.0307%   2.834%          PASS
+ple_value    2560   2560     1   1    12.021    13.113   0.0269%   6.565%          PASS
+indexer_k    2560    128    12   2    12.018    11.647   0.0172%   1.984%          PASS
+indexer_q    2560    512    12   2    12.019    11.598   0.0196%   1.831%          PASS
+
+round trip of every weight: PASS

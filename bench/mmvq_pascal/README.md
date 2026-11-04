@@ -454,6 +454,41 @@ scp rig:/tmp/bf16.csv . && ssh rig 'rm -f /tmp/mmvq_pascal /tmp/bf16.csv'
 On another GPU, `--bf16 --check-only --tokens 1,2,3,4,5,6,8` checks the compute 6.1 code through the PTX JIT. Since
 Q591 the kernel takes 1 to 8 tokens, with 4 rows per lane group up to 4 tokens and 8 rows from 5 (variants `gG_r8`).
 
+## Lossless BF16 (Q621)
+
+`build/lossless_bench` ([src/lossless_main.cu](src/lossless_main.cu), built by `build_lossless.sh` with
+`build/lossless_entropy`) times the BF16 products of the previous section over the model's own weights, in plain BF16
+and in two lossless codes ([src/lossless_bf16.h](src/lossless_bf16.h)). Both keep each weight's low byte (exponent
+bit 0 and the mantissa) and code its high byte (sign and exponent >> 1), which holds almost all of the redundancy:
+
+- **x12**, 12 bits a weight: a 4-bit index into a 16-entry table per row (a window of 8 exponent pairs times the two
+  signs). Two byte permutes and an add give 4 high bytes; 4 more interleave them with the low bytes into the 16 bytes
+  the plain kernel would have loaded. Weights outside the window (~1 in 5,000) are kept as (column, BF16) per row and
+  put in place before the products. Each lane decodes the plain kernel's own 8-weight chunks and runs the same FMA
+  sequence, so **its output equals the plain kernel's bit for bit at the same launch shape**;
+- **x11**, 11 bits a weight plus escapes: a 3-bit index (4 pairs times 2 signs), 32 weights packed into three words;
+  one permute gives 4 high bytes, but 2–3 % of the weights fall outside its 8 exponents.
+
+[src/lossless_mv.cuh](src/lossless_mv.cuh) is the Pascal BF16 kernel of `src/bf16_mv.cuh` with the weight load
+replaced by the decoder (G = 8, 32, 128 lanes per row group for x12, also G = 2 for x11's 10 chunks of a 320-wide row;
+R = 1, 2, 4, 8 rows). The weights are a sample the entropy tool writes (`lossless_entropy --sample`, see
+[docs/data/2026-11-04_lossless_bf16](../../docs/data/2026-11-04_lossless_bf16/README.md)): 27 tensors of 8 shape
+classes, coded once on the CPU and checked weight for weight, then copied on the card to ≥ 32 MB of plain BF16 per
+class so that consecutive calls never hit the L2. Variants per class and token count (1–8): `plain/pascal` (the fork's
+launch shape), `plain/gG_rR`, `x12/gG_rR`, `x11/gG_rR`, and `read/<code>`, a stream over the code's bytes per call with
+nothing computed: the card's read speed for that size, the floor under the codes. Every variant is checked against a
+double-precision product of the BF16 weights (every row up to 4,096 rows, else every 37th; tolerance 1e-5 of the sum
+of the absolute terms), and each x12 output against the plain kernel's at the same (G, R), bit for bit (`same`). The
+summary adds calls per token × the fastest correct variant of each code per class, against `plain/pascal`.
+
+```bash
+# CPU only, any machine: every weight of the sample through the kernels' permute steps
+build/lossless_bench --sample sample.lbb --cpu-only
+# on a newer GPU: the compute 6.1 code through the PTX JIT, no timing
+CUDA_FORCE_PTX_JIT=1 build/lossless_bench --sample sample.lbb --check-only
+# on the rig: docs/data/2026-11-04_lossless_bf16/run/rig_bench.sh copies, checks, runs and cleans up
+```
+
 ## Flash-Next's Q2_0 experts (Q223)
 
 The Swift Q2_0 file of Qwen3.8-Flash-Next stores its routed and shared experts in Q2_0: 18 bytes per 64 weights, one
@@ -723,6 +758,7 @@ scp -r rig:/tmp/mmvq_multitoken . && bench/mmvq_pascal/multitoken_perf_table.py 
 | `kquant_rig.sh` | the Q4_K and Q6_K gates, the fork's Q4_K/Q6_K tests on a P106, and the tg128 A/B of the two kernels on the rig (Q149) |
 | `src/f16_mv.cuh` | `--f16`: llama.cpp's F16 one-token product, the persistent MoE kernel's router rows and the Pascal F16 kernel (Q97); `kquant_rig.sh router` runs it on the rig |
 | `src/bf16_mv.cuh` | `--bf16`: llama.cpp's BF16 `mul_mat_vec_f` and Miner Llama's Pascal BF16 kernel with its launch-shape rule, copied from the fork (Q546) |
+| `src/lossless_bf16.h`, `src/lossless_entropy.cpp`, `src/lossless_mv.cuh`, `src/lossless_main.cu`, `build_lossless.sh` | the lossless BF16 codes x12 and x11 (Q621): encoders and the CPU decoder that runs the kernels' byte permutes; `build/lossless_entropy`, the byte entropy and code sizes of a model's BF16 matrices and the bench's weight sample (CPU); the decoding Pascal BF16 kernels; `build/lossless_bench`, their timing against the plain kernel at 1–8 tokens |
 | `src/q2_0_mv.cuh` | `--q2_0`: llama.cpp's Q2_0 `mul_mat_vec_q` and Miner Llama's Pascal Q2_0 kernel at one token (Q223) |
 | `src/q2_0_mtok.cuh` | `--q2_0-mtok`: Miner Llama's multi-token Q2_0 expert kernel, copied from the fork, its launch rule, and the route profiles (R7, Q591) |
 | `tools/` | SASS and register helpers for the fork's Pascal kernels: `regs.py`, `loops.py`, `loops2.py` (registers, spills and main-loop instruction counts from a ptxas log and `cuobjdump -sass`), `classify.py` (sorts a test-backend-ops log's failures into the cases a mutation should hit) (Q78); `benchloops.py` (the bench's staged-kernel loops per weight byte), `forksass.py` (SASS identity of two single-file builds of the fork's `mmvq-pascal.cu`, Q6_K registers), `sasscmp.py` (SASS identity of two bench builds) (Q101) |
