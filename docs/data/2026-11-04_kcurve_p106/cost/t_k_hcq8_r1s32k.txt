@@ -1,0 +1,9 @@
+# T(k) in ms, k = 1..8: whole-model k-token passes on one rig (hcq8_r1s32k); median of 5 repetitions
+78.7
+117.7
+148.6
+177.5
+214.6
+244.8
+279.0
+316.4

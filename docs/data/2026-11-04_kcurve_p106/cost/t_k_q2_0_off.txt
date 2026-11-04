@@ -1,0 +1,9 @@
+# T(k) in ms, k = 1..8: whole-model k-token passes on one rig (q2_0_off); median of 5 repetitions
+82.5
+125.6
+167.1
+210.8
+250.7
+303.4
+341.4
+383.3
