@@ -35,6 +35,21 @@ same graph with nothing dropped; the error is the paired standard error over the
   of the pairs, and the slots above it less than 99 % of the weight in 99.99 %: the mild cuts drop nothing that
   matters, in quality or in bytes.
 
+## Slot 2 results (2026-11-04 16:19–17:15, main session; set a on GPUs 0–2, set b on 5–6, each paired against its own `off`)
+
+Full tables: [`kld_by_arm.tsv`](kld_by_arm.tsv) (every arm and text) and [`kept_by_layer.tsv`](kept_by_layer.tsv) (experts kept per layer).
+
+| Arm | Experts kept (of 10) | Routed reads | agent Δ KLD | wiki Δ KLD | code Δ KLD |
+|---|---|---|---|---|---|
+| w005r (own share < 5 % dropped) | 9.33 | 93 % | −0.002 ± 0.005 | +0.007 ± 0.002 | +0.004 ± 0.001 |
+| p095r | 9.74 | 97 % | −0.006 ± 0.006 | −0.001 ± 0.001 | +0.001 ± 0.001 |
+| **p090r** | **8.77** | **88 %** | −0.003 ± 0.008 | +0.001 ± 0.002 | +0.0035 ± 0.0012 |
+| p080r | 7.27 | 73 % | −0.001 ± 0.007 | +0.025 ± 0.003 | +0.011 ± 0.002 |
+| p070r | 5.95 | 60 % | +0.020 ± 0.015 | +0.084 ± 0.004 | +0.028 ± 0.004 |
+| p090 (not renormalized, set b) | 8.76 | 88 % | +0.006 ± 0.005 | +0.001 ± 0.001 | +0.000 ± 0.001 |
+
+**Verdict:** p = 0.9 renormalized keeps 8.77 of 10 experts (−12 % of routed reads) at no measurable cost (agent −0.003 ± 0.008, wiki +0.001 ± 0.002, code +0.0035 ± 0.0012); p = 0.8 keeps 7.27 (−27 %) for wiki +0.025 ± 0.003 and code +0.011 ± 0.002 (agent within noise); p = 0.7 keeps 5.95 (−40 %) for wiki +0.084 and code +0.028, too lossy; renormalizing matters (p = 0.9 plain: agent +0.006). The agent text has 12 chunks (its paired noise is ±0.005–0.008); wiki and code have 80 each and are the sharper tests. The saving becomes speed only when the kernels skip the dropped experts' reads (Q660): est. ~1 ms of a one-token pass at p = 0.9 (routed experts are ~8.6 ms) and more on multi-token verify passes, where fewer experts per token shrink the union a pass reads.
+
 ## Method
 
 - **Model:** Swift-1.5 GSQ-RCO Q2_0 of Qwen3.8-Flash-Next (the rig's file), every layer on the GPUs (`-fit on`).
