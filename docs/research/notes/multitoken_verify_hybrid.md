@@ -49,7 +49,8 @@ Conventions:
    per-size graphs; what it lacks is the arithmetic, and its hops through the host scale with k.
 4. **An exact 5-token pass at ≤ 1.3× a token is at the floor of what the rig can do.** The floor of the slope is est.
    6.2–7.6 ms a token with Q8_0 hops (distinct experts 2.3–2.7, hop bytes 0.9, `dp4a` arithmetic ~2, operations without
-   weights 1–2), so T(5)/T(1) ≥ 1.30–1.37 at today's T1 (1.42–1.49 with F32 hops). Kernels at twice their floor, as the
+   weights 1–2), so T(5)/T(1) ≥ 1.30–1.37 at today's T1 (≥ 1.20 if the extra arithmetic hides entirely under the weight
+   reads; 1.42–1.49 with F32 hops). Kernels at twice their floor, as the
    one-token pass runs today, give est. 1.6–1.8×. The ratio also rises whenever T1 falls; the slope in ms, and tok/s,
    are the targets that hold. Section 8.
 5. **The Gated DeltaNet layers are not where the slope is.** Every engine verifies k ≤ 8 tokens of a linear-attention
@@ -75,7 +76,7 @@ Conventions:
    cuts of a similar share cost 9–15 points on GSM8K in Lynx (batch 32), and Swift's router already changes greedy text
    when only its lowest-weight 14 % of reads is dropped (Q618). Section 7.
 9. **What the slope is worth:** at DFlash2's measured acceptance on agent requests (τ 3.11 at three drafted tokens), a
-   step gives 16.1 tok/s today, est. 19.2 at a slope of 20 ms, 22.5 at 12 and 24.6 at the exact floor of 8. Section 8.
+   step gives 16.1 tok/s today, est. 19.2 at a slope of 20 ms, 22.5 at 12 and 24.6 at 8, near the exact floor. Section 8.
 10. **Ideas, ranked by est. ms saved at k = 5** (section 9): find the unaccounted half with Q822's profile plus a k = 2
     arm (Q870); retune the k-column launch shapes (Q823, est. −19 ms); route once (Q860, −14.5–17, lossy); Q8_0 hops
     (Q750, −12); the one-token-only paths made k-aware (Q870, −5–14); partial route-once with two own experts per token
@@ -125,19 +126,20 @@ T(5) − T(1) = 217.1 − 82.4 = **134.7 ms** (plain Swift Q2_0, `-ladder3` defa
 
 ### 1.2 The floor of the slope
 
-From [the floor note](flash_next_floor_and_engine.md) (its 8–12 ms a token assumes independent routing and F32 hops),
+From [the floor note](flash_next_floor_and_engine.md) (its 8–11 ms a token assumes independent routing and F32 hops),
 per extra token (est.):
 
 | Term | F32 hops, independent routing | Q8_0 hops, measured-class locality |
 |---|---:|---:|
 | Distinct routed experts (1.38 MB each per layer, 48 layers, 173 GB/s) | 3.6 (9.5 new a layer) | 2.3–2.7 (6–7 new a layer, u(5) = 34–38) |
 | Hop bytes, eight boundaries | 3.3 | 0.9 |
-| `dp4a` and FP32 arithmetic of one more column | ~2 | ~2 |
+| `dp4a` and FP32 arithmetic of one more column (0 if it hides entirely under the weight reads) | ~2 | ~2 |
 | Operations without weights | 1–2 | 1–2 |
 | **Slope floor** | **9.9–10.9** | **6.2–7.6** |
 | T(5)/T(1) at T1 = 82.4 ms | 1.48–1.53 | 1.30–1.37 |
 
-Routing once per block removes the first row: est. 3.9–4.9 ms a token, T(5)/T(1) ≥ 1.19–1.24.
+With the arithmetic hidden under the reads the Q8_0 column falls to 4.2–5.6 ms (T(5)/T(1) ≥ 1.20–1.27). Routing once
+per block removes the first row: est. 3.9–4.9 ms a token, T(5)/T(1) ≥ 1.19–1.24.
 
 ## 2. What a verify pass costs elsewhere
 
@@ -318,7 +320,7 @@ as the server's verify):
 | 20 | 142.4 | 1.97 | 1.48 | 1.58 | 19.2 |
 | 15 (kernels at ~2× the exact floor) | 127.4 | 1.73 | 1.59 | 1.74 | 21.1 |
 | 12 | 118.4 | 1.58 | 1.67 | 1.85 | 22.5 |
-| 8 (exact floor, Q8_0 hops) | 106.4 | 1.39 | 1.78 | 2.03 | 24.6 |
+| 8 (near the exact floor, Q8_0 hops) | 106.4 | 1.39 | 1.78 | 2.03 | 24.6 |
 | 5 (route-once floor; acceptance unknown) | 97.4 | 1.24 | 1.88 | 2.18 | 26.5 |
 
 - **The first 13–18 ms of slope are worth the most:** from 33 to 15–20 ms a token raises a 3-token draft from 1.33× to
