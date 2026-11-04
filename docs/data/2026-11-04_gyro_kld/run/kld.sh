@@ -7,7 +7,8 @@
 #                             and the others still run (exit status 1 at the end)
 # BACKEND picks the build ($BIN/<backend>/bin/llama-perplexity): cuda runs in the CUDA image, vulkan in a small Ubuntu
 # image with the Vulkan loader, the driver's Vulkan ICD mounted by the NVIDIA Container Toolkit (graphics capability).
-# EXTRA adds llama-perplexity arguments (a tensor split, --ngram-on-disk).
+# EXTRA adds llama-perplexity arguments (a tensor split, --ngram-on-disk). MOUNTS lists the folders the model sits in
+# ("<folder>:ro" for read only).
 #   (env: BIN BASES OUT GPUS MOUNTS [BACKEND] [TEXTS] [EXTRA] [TAG]) bash kld.sh <model> <name>
 set -uo pipefail
 : "${BIN:?}" "${BASES:?}" "${OUT:?}" "${GPUS:?}"
@@ -17,7 +18,7 @@ log() { printf '%s %s\n' "$(date '+%F %T')" "$*"; }
 ppl=$BIN/$BACKEND/bin/llama-perplexity
 [ -x "$ppl" ] || { log "no $ppl"; exit 1; }
 mounts="-v $BIN:$BIN -v $BASES:$BASES -v $OUT:$OUT"
-for d in ${MOUNTS:-}; do mounts="$mounts -v $d:$d"; done
+for d in ${MOUNTS:-}; do mounts="$mounts -v ${d%%:*}:$d"; done  # "<folder>:ro" mounts it read only
 case $BACKEND in
     cuda) image=nvidia/cuda:12.9.2-devel-ubuntu24.04 caps="" ;;
     vulkan) image=pq-gyro-vulkan:24.04 caps="-e NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics"

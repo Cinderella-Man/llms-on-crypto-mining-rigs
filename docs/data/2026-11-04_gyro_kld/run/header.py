@@ -4,6 +4,7 @@ with its bytes, the tensors per kind and type, the n-gram table (`per_layer_toke
 (everything but the table and the token embeddings, which llama.cpp keeps on the host). Type ids are those of
 agentionai's llama.cpp fork (ggml.h), which adds the trellis types 143-149.
   python3 -I header.py FILE...
+  python3 -I header.py --range TENSOR FILE      the byte offset and length of one tensor's data
 Standard library only; gguf_reshard.py from the repository's scripts/ (next to this file or in ../../../../scripts).
 """
 import collections, os, re, sys
@@ -27,6 +28,11 @@ def text(v):
 
 
 def main():
+    if sys.argv[1] == "--range":  # header.py --range TENSOR FILE: "<byte offset> <bytes>" of that tensor's data
+        h = Header(sys.argv[3])
+        off = {t[0]: t[3] for t in h.tensors}[sys.argv[2]]
+        print(h.data0 + off, h.slot[sys.argv[2]])
+        return
     for p in sys.argv[1:]:
         h = Header(p)
         arch = text(h.value("general.architecture"))
