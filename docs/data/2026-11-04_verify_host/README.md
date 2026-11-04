@@ -37,7 +37,7 @@ Per step, over 186 steps after the first three ([steps.md](steps.md), [run/host_
   interval after the last card (138 ms median). The hops' share is an estimate from the hop bench
   ([2026-11-04_megakernel_rig](../2026-11-04_megakernel_rig/README.md): a 4-token F32 hop ~1.1–1.3 ms).
 - **Does it change anything?** Yes: the ~41 ms is worth going after, and it is hops and host turnarounds, not logits.
-  Its measured split is Q955 (C396) and the draft passes' turnarounds Q956 (C397). The shortlist computes the draft's
+  Its measured split is Q960 (C405) and the draft passes' turnarounds Q961 (C406). The shortlist computes the draft's
   head over 32,801 of its 248,320 rows (7.6× fewer), the likeliest reason it paid 10 % in S34.
 
 ## Files

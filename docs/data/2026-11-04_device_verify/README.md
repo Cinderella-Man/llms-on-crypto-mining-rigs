@@ -47,8 +47,8 @@ At the link's ~190 MB/s the line's ~42 KB a step is ~0.2 ms, not ~20 ms.
   hops between cards (est. ~9 ms) and the host's turnarounds. Those include the four draft passes: the draft's host span
   is 22.2 ms over 8 evaluations, and with `-otd token_embd=CUDA4` each pass crosses card 4 → card 8 through the host and
   waits for its sampled id before the next is queued. They also include the server's bookkeeping between the draft and
-  the next verify pass (`before_ms` 14.5). These are estimates. The split is now its own measurement (Q955, C396), and
-  the draft's turnarounds are a candidate change (Q956, C397).
+  the next verify pass (`before_ms` 14.5). These are estimates. The split is now its own measurement (Q960, C405), and
+  the draft's turnarounds are a candidate change (Q961, C406).
 - **`-bs` is worth ~4 MB a step on this line:** a server line without it pays the four rows' copy and the host's
   sampling of 248,320 values a row. Every release and agent-check line keeps `-bs`.
 
