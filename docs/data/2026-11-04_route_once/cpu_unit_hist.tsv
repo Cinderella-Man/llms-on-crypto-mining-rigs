@@ -1,0 +1,21 @@
+model	router_scale	arm	full_block_layers	distinct_read	distinct_independent	later_reading_outside
+qwen4exp-moe	1	k=1 hist	2979	8.00	8.00	0
+qwen4exp-moe	1	k=5 dry hist	494	24.26	24.26	2282
+qwen4exp-moe	1	k=2 hist	1345	8.00	13.95	0
+qwen4exp-moe	1	k=5 hist	494	8.00	24.26	0
+qwen4exp-moe	1	k=n hist	3	8.00	32.00	0
+qwen4exp-moe	30	k=1 hist	2979	8.00	8.00	0
+qwen4exp-moe	30	k=5 dry hist	494	24.26	24.26	2282
+qwen4exp-moe	30	k=2 hist	1345	8.00	13.95	0
+qwen4exp-moe	30	k=5 hist	494	8.00	24.26	0
+qwen4exp-moe	30	k=n hist	3	8.00	32.00	0
+qwen4exp-moe-q5k	1	k=1 hist	2979	8.00	8.00	0
+qwen4exp-moe-q5k	1	k=5 dry hist	494	24.26	24.26	2282
+qwen4exp-moe-q5k	1	k=2 hist	1345	8.00	13.95	0
+qwen4exp-moe-q5k	1	k=5 hist	494	8.00	24.26	0
+qwen4exp-moe-q5k	1	k=n hist	3	8.00	32.00	0
+qwen4exp-moe-q5k	30	k=1 hist	2979	8.00	8.00	0
+qwen4exp-moe-q5k	30	k=5 dry hist	494	24.26	24.26	2282
+qwen4exp-moe-q5k	30	k=2 hist	1345	8.00	13.95	0
+qwen4exp-moe-q5k	30	k=5 hist	494	8.00	24.26	0
+qwen4exp-moe-q5k	30	k=n hist	3	8.00	32.00	0

@@ -1,0 +1,12 @@
+experts	arm	LLAMA_MOE_ROUTE_ONCE	exit	compared	differ	archs_that_differ
+test	unset	unset	1	143	0	-
+test	zero	0	1	143	0	-
+test	k1	1	1	143	0	-
+test	k1hist	1,hist=1	1	143	0	-
+test	dry5	5,dry=1,hist=1	1	143	0	-
+test	max1	5,max=1	1	143	0	-
+test	k5	5	1	143	1	clover_moe 
+8,2	unset	unset	1	143	0	-
+8,2	k1	1	1	143	0	-
+8,2	dry5	5,dry=1,hist=1	1	143	0	-
+8,2	k5	5	1	143	27	llama4 grok qwen2moe qwen3moe qwen3next qwen3vlmoe qwen35moe clover_moe qwen4exp phimoe minicpm maple cohere2moe dbrx olmoe arctic deepseek granite granitemoe bailingmoe hunyuan-moe gpt-oss smallthinker mistral-large4 maion-coder mellum minimax-01 
