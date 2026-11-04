@@ -1,0 +1,207 @@
+device 0: NVIDIA P106-090, compute 6.1, 5 SMs, running code for compute 6.1; cooperative launch: yes
+k_persistent<0>: 61 registers, 32 B static shared memory, 4 resident blocks of 256 threads per SM
+k_persistent<1>: 61 registers, 32 B static shared memory, 4 resident blocks of 256 threads per SM
+k_persistent<2>: 61 registers, 32 B static shared memory, 4 resident blocks of 256 threads per SM
+persistent grids: 5 10 20 (largest resident grid 20)
+cooperative launch inside a CUDA graph: yes
+streaming read 178.0 GB/s; empty kernel: 1.72 us per graph node, 6.43 us per eager launch
+
+empty: 256 stages (empty x256), 0.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -      1742.65        6.807
+  stream+events        -      3137.02       12.254
+  graph                -       435.67        1.702
+  graph+events         -      2540.39        9.923
+  coop                 5       268.29        1.048
+  coop-graph           5       267.97        1.047
+  barrier              5       281.44        1.099
+  barrier-graph        5       281.21        1.098
+  barrier-local        5       279.24        1.091
+  coop                10       274.00        1.070
+  coop-graph          10       273.80        1.070
+  barrier             10       306.69        1.198
+  barrier-graph       10       306.53        1.197
+  barrier-local       10       276.16        1.079
+  coop                20       316.22        1.235
+  coop-graph          20       316.06        1.235
+  barrier             20       338.63        1.323
+  barrier-graph       20       338.24        1.321
+  barrier-local       20       326.77        1.276
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 12.29 [7.17, 12.29]  empty 12.29 [7.17, 12.29]
+    graph+events    all 9.22 [7.17, 10.24]  empty 9.22 [7.17, 10.24]
+
+ew2560: 256 stages (ew2560 x256), 0.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -      1742.61        6.807
+  stream+events        -      3136.95       12.254
+  graph                -       438.08        1.711
+  graph+events         -      2540.39        9.923
+  coop                 5       362.30        1.415
+  coop-graph           5       361.98        1.414
+  barrier              5       375.65        1.467
+  barrier-graph        5       375.41        1.466
+  barrier-local        5       159.67        0.624
+  coop                10       313.93        1.226
+  coop-graph          10       313.62        1.225
+  barrier             10       328.74        1.284
+  barrier-graph       10       328.55        1.283
+  barrier-local       10       106.77        0.417
+  coop                20       372.03        1.453
+  coop-graph          20       371.91        1.453
+  barrier             20       377.74        1.476
+  barrier-graph       20       377.46        1.474
+  barrier-local       20       121.27        0.474
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 12.29 [7.17, 12.29]  ew2560 12.29 [7.17, 12.29]
+    graph+events    all 9.22 [7.17, 10.24]  ew2560 9.22 [7.17, 10.24]
+
+ew10240: 256 stages (ew10240 x256), 0.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -      1742.53        6.807
+  stream+events        -      3137.22       12.255
+  graph                -       439.73        1.718
+  graph+events         -      2540.74        9.925
+  coop                 5       706.17        2.758
+  coop-graph           5       705.73        2.757
+  barrier              5       722.39        2.822
+  barrier-graph        5       722.12        2.821
+  barrier-local        5       505.03        1.973
+  coop                10       489.79        1.913
+  coop-graph          10       489.47        1.912
+  barrier             10       505.78        1.976
+  barrier-graph       10       505.42        1.974
+  barrier-local       10       281.13        1.098
+  coop                20       439.77        1.718
+  coop-graph          20       439.37        1.716
+  barrier             20       438.15        1.712
+  barrier-graph       20       437.76        1.710
+  barrier-local       20       182.94        0.715
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 12.29 [7.17, 12.29]  ew10240 12.29 [7.17, 12.29]
+    graph+events    all 9.22 [7.17, 10.24]  ew10240 9.22 [7.17, 10.24]
+
+norm2560: 256 stages (norm2560 x256), 0.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -      1748.80        6.831
+  stream+events        -      3145.18       12.286
+  graph                -       814.16        3.180
+  graph+events         -      2619.00       10.230
+  coop                 5       848.78        3.316
+  coop-graph           5       848.42        3.314
+  barrier              5       864.73        3.378
+  barrier-graph        5       864.45        3.377
+  barrier-local        5       864.02        3.375
+  coop                10       849.60        3.319
+  coop-graph          10       849.25        3.317
+  barrier             10       860.95        3.363
+  barrier-graph       10       860.67        3.362
+  barrier-local       10       861.66        3.366
+  coop                20       893.16        3.489
+  coop-graph          20       892.93        3.488
+  barrier             20       911.36        3.560
+  barrier-graph       20       911.32        3.560
+  barrier-local       20       897.10        3.504
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 12.29 [7.17, 12.29]  norm2560 12.29 [7.17, 12.29]
+    graph+events    all 9.22 [7.17, 10.24]  norm2560 9.22 [7.17, 10.24]
+
+mv10240x4: 64 stages (mv10240x4 x64), 5120.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -       438.19        6.847
+  stream+events        -       795.82       12.435
+  graph                -       237.73        3.714
+  graph+events         -       673.47       10.523
+  coop                 5       274.66        4.292
+  coop-graph           5       274.02        4.282
+  barrier              5       230.47        3.601
+  barrier-graph        5       229.57        3.587
+  barrier-local        5       268.99        4.203
+  coop                10       277.36        4.334
+  coop-graph          10       276.86        4.326
+  barrier             10       233.72        3.652
+  barrier-graph       10       232.87        3.639
+  barrier-local       10       273.25        4.270
+  coop                20       286.83        4.482
+  coop-graph          20       286.44        4.476
+  barrier             20       244.89        3.826
+  barrier-graph       20       244.16        3.815
+  barrier-local       20       283.92        4.436
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 8.19 [8.19, 12.29]  mv10240x4 8.19 [8.19, 12.29]
+    graph+events    all 8.19 [7.17, 9.22]  mv10240x4 8.19 [7.17, 9.22]
+
+mv2560x48: 64 stages (mv2560x48 x64), 15360.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -       440.64        6.885
+  stream+events        -       799.52       12.492
+  graph                -       304.19        4.753
+  graph+events         -       723.62       11.307
+  coop                 5       953.78       14.903
+  coop-graph           5       953.00       14.891
+  barrier              5       867.45       13.554
+  barrier-graph        5       867.15       13.549
+  barrier-local        5       936.05       14.626
+  coop                10       538.23        8.410
+  coop-graph          10       537.63        8.400
+  barrier             10       509.42        7.960
+  barrier-graph       10       508.96        7.952
+  barrier-local       10       530.43        8.288
+  coop                20       391.13        6.111
+  coop-graph          20       390.58        6.103
+  barrier             20       386.91        6.046
+  barrier-graph       20       386.55        6.040
+  barrier-local       20       385.91        6.030
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 9.22 [8.19, 12.29]  mv2560x48 9.22 [8.19, 12.29]
+    graph+events    all 9.22 [8.19, 10.24]  mv2560x48 9.22 [8.19, 10.24]
+
+census1: 38 stages (ew10240 x4 ew2560 x24 mv10240x4 x2 mv2560x48 x2 norm10240 x2 norm2560 x4), 640.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -       259.20        6.821
+  stream+events        -       473.61       12.464
+  graph                -        67.00        1.763
+  graph+events         -       389.19       10.242
+  coop                 5       106.00        2.790
+  coop-graph           5       105.75        2.783
+  barrier              5       105.04        2.764
+  barrier-graph        5       104.90        2.761
+  barrier-local        5        88.95        2.341
+  coop                10        87.75        2.309
+  coop-graph          10        87.43        2.301
+  barrier             10        87.22        2.295
+  barrier-graph       10        87.03        2.290
+  barrier-local       10        70.11        1.845
+  coop                20        90.98        2.394
+  coop-graph          20        90.77        2.389
+  barrier             20        89.64        2.359
+  barrier-graph       20        89.53        2.356
+  barrier-local       20        69.47        1.828
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 7.17 [7.17, 15.36]  ew10240 7.17 [7.17, 87.04]  ew2560 7.17 [7.17, 7.17]  mv10240x4 7.17 [7.17, 8.19]  mv2560x48 8.19 [8.19, 9.22]  norm10240 15.36 [12.29, 36.86]  norm2560 8.19 [7.17, 27.65]
+    graph+events    all 7.17 [7.17, 12.29]  ew10240 7.17 [7.17, 7.17]  ew2560 7.17 [7.17, 8.19]  mv10240x4 7.17 [7.17, 7.17]  mv2560x48 8.19 [8.19, 33.79]  norm10240 12.29 [11.26, 13.31]  norm2560 8.19 [7.17, 19.46]
+
+census6: 228 stages (ew10240 x24 ew2560 x144 mv10240x4 x12 mv2560x48 x12 norm10240 x12 norm2560 x24), 3840.0 KB of weights
+  variant           grid     us/chain     us/stage
+  stream               -      1556.09        6.825
+  stream+events        -      2823.06       12.382
+  graph                -       625.66        2.744
+  graph+events         -      2368.48       10.388
+  coop                 5       683.15        2.996
+  coop-graph           5       682.44        2.993
+  barrier              5       666.73        2.924
+  barrier-graph        5       666.27        2.922
+  barrier-local        5       588.91        2.583
+  coop                10       563.59        2.472
+  coop-graph          10       563.02        2.469
+  barrier             10       557.13        2.444
+  barrier-graph       10       556.70        2.442
+  barrier-local       10       464.15        2.036
+  coop                20       569.91        2.500
+  coop-graph          20       569.10        2.496
+  barrier             20       565.50        2.480
+  barrier-graph       20       565.39        2.480
+  barrier-local       20       450.35        1.975
+  per stage between events (what GGML_CUDA_PROFILE records), us: median [p10, p90]
+    stream+events   all 12.29 [7.17, 12.29]  ew10240 11.26 [7.17, 12.29]  ew2560 12.29 [7.17, 12.29]  mv10240x4 11.26 [8.19, 12.29]  mv2560x48 12.29 [9.22, 12.29]  norm10240 13.31 [11.26, 15.36]  norm2560 12.29 [7.17, 12.29]
+    graph+events    all 9.22 [7.17, 11.26]  ew10240 8.19 [7.17, 10.24]  ew2560 7.17 [7.17, 10.24]  mv10240x4 9.22 [8.19, 11.26]  mv2560x48 9.22 [9.22, 13.31]  norm10240 13.31 [12.29, 15.36]  norm2560 8.19 [7.17, 11.26]

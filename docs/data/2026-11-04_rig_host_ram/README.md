@@ -5,14 +5,30 @@ time and with an undo, the runtime settings that the research note ranks as givi
 tool was checked against, the order of a run on a rig with the exact commands, and the numbers the note expects at each
 step. The reasoning behind every setting, with sources, is in
 [host_ram_4gb.md](../../research/notes/host_ram_4gb.md); the registry rows are Q692-Q700, Q563, Q565, Q571 and Q725-Q729 in
-[quants/experiments.md](../../../quants/experiments.md). No rig ran for this folder: the tool was checked on the 7-GPU quant
-machine (below).
+[quants/experiments.md](../../../quants/experiments.md). The tool was checked on the 7-GPU quant machine (below); on the
+rigs, its census has run on the first rig at idle after the `kho=off` boot.
 
 | File | What it is |
 |---|---|
 | [census_quant_machine.tsv](census_quant_machine.tsv) | the census of the 7-GPU quant machine (127 GB, kernel 7.0.0-42): what one block looks like |
 | [expected.tsv](expected.tsv) | every number the note expects at each step of the run: census key, before, expected, basis |
 | [run/s32_helpers.sh](run/s32_helpers.sh) | shell functions that make each step below one command (`rhr`, `measure`, `pull_all`, ...) |
+| [census_rig1_after_boot.tsv](census_rig1_after_boot.tsv) | the first rig's census at idle after the permanent `kho=off` (2026-11-04, ~6 minutes after boot, headless, no model loaded) |
+
+## The first rig after `kho=off` (2026-11-04)
+
+`rhr census after_boot` on the first rig, idle and headless, ~6 minutes after a boot with `kho=off` on the kernel command
+line (kernel 7.0.0-38). It is the idle baseline every later step on this rig compares against
+([the full block](census_rig1_after_boot.tsv)):
+
+| Row | Value |
+|---|---|
+| `mem.MemTotal_kB` / `mem.MemAvailable_kB` | 3,929,068 kB (3,837 MiB) / 3,286,296 kB (**3,209 MiB**) |
+| `mem.CmaTotal_kB`, `mem.CmaFree_kB`, `pageblocks.CMA` | 0, 0, 0: no free memory is held as CMA any more, so `mem.usable_kB` = MemAvailable |
+| `cmdline.kho`, `kho.scratch_len` | `off`, NA (the debugfs scratch file is absent once KHO is off) |
+| `swiotlb.pool_MiB`, `thp.enabled`, `lru_gen.enabled` | 64, `madvise`, `0x0007` (MGLRU on) |
+| `mem.swap_used_kB`, `vmstat.pswpout`, `vmstat.allocstall` | 0, 0, 0 |
+| `cg.system.slice.current_kB` / `cg.user.slice.current_kB` | 391,564 kB (343,044 of it page cache) / 20,108 kB |
 
 ## The tool
 

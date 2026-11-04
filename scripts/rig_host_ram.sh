@@ -159,7 +159,7 @@ census_boot() {
         *) kv kho.in_kernel no ;;
     esac
     # debugfs lists one scratch region per line (low, global, one per node), in hex bytes; their sum is the CMA-marked memory
-    sl=$(tr -c '[:print:]' ' ' < /sys/kernel/debug/kho/out/scratch_len 2> /dev/null | head -c 400 | sed 's/ *$//')
+    sl=$(tr -c '[:print:]' ' ' 2> /dev/null < /sys/kernel/debug/kho/out/scratch_len | head -c 400 | sed 's/ *$//')
     kv kho.scratch_len "${sl:-NA}"
     tot=NA
     if [ -n "$sl" ]; then
