@@ -1,0 +1,17 @@
+step	arm	server	VmHWM_kB	VmRSS_kB
+tokens	local	rpc-50152	5480	5480
+tokens	local	rpc-50153	5452	5452
+tokens	rpc1	rpc-50152	46772	17804
+tokens	rpc1	rpc-50153	5544	5544
+tokens	rpc2	rpc-50152	18620	9160
+tokens	rpc2	rpc-50153	39456	16440
+tokens	mixed	rpc-50152	19080	9480
+tokens	mixed	rpc-50153	24180	13200
+tokens	hop	rpc-50152	18140	9060
+tokens	hop	rpc-50153	37596	15368
+tokens	draft-l	rpc-50152	5252	5252
+tokens	draft-l	rpc-50153	5416	5416
+tokens	draft-r	rpc-50152	56532	37328
+tokens	draft-r	rpc-50153	107260	58932
+bytes	bytes	rpc-50152	21316	10068
+bytes	bytes	rpc-50153	44652	17784

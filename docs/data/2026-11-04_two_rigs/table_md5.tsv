@@ -1,0 +1,5 @@
+file	shard	type	shape	bytes	data_offset	data_md5	header_bytes	before_md5	alone
+swift-q2_0	Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf	20	160x320001536	28800138240	192	421370d4a22de91a136ea148802b5fae	192	fac09befd6adaf80e2eaef0baf6af608	yes
+swift-iq3_xxs	Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00003-of-00003.gguf	20	160x320001536	28800138240	192	421370d4a22de91a136ea148802b5fae	192	fac09befd6adaf80e2eaef0baf6af608	yes
+swift-iq3_s	Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf	20	160x320001536	28800138240	545589984	421370d4a22de91a136ea148802b5fae	10969824	-	no (372 others)
+ista-iq3_s	Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf	20	160x320001536	28800138240	192	421370d4a22de91a136ea148802b5fae	192	702bfe947acd259e023a3269b89371f0	yes

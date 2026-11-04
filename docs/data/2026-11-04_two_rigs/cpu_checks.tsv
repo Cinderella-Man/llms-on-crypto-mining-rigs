@@ -1,0 +1,14 @@
+run	check	verdict	detail
+1 (-ts 1,1)	build	OK	ba068ae6e rpc : build on the fork's op table (Q743): GGML_OP_COUNT 104, a fork major version, reject unknown ops
+1 (-ts 1,1)	models	OK	qwen4exp-moe.gguf 
+1 (-ts 1,1)	tokens/qwen4exp-moe/compare-local	OK	12 same, 0 differ or missing
+1 (-ts 1,1)	tokens/qwen4exp-moe/compare-draft	OK	4 same, 0 differ or missing
+1 (-ts 1,1)	tokens/qwen4exp-moe/report	REPORT	hop R1 SAME n=64 max_prob_diff=0.00e+00;hop R3 SAME n=48 max_prob_diff=0.00e+00;draft-l R1 SAME n=64 max_prob_diff=4.07e-09;draft-l R3 SAME n=48 max_prob_diff=4.06e-09;draft-r R1 SAME n=64 max_prob_diff=4.07e-09;draft-r R3 SAME n=48 max_prob_diff=4.06e-09;
+1 (-ts 1,1)	ops/qwen4exp-moe	FAIL	
+1 (-ts 1,1)	bytes	OK	50152 64 14058 4104 126.9 34.8 563868 181280;50153 64 4866 520 19.0 7.2 19301 520;50152 2048 0 0 0.0 0.0 0 0;50153 2048 0 0 0.0 0.0 0 0;
+2 (-ts 1,2)	tokens/qwen4exp-moe/compare-local	OK	12 same, 0 differ or missing
+2 (-ts 1,2)	tokens/qwen4exp-moe/compare-draft	OK	4 same, 0 differ or missing
+2 (-ts 1,2)	tokens/qwen4exp-moe/report	REPORT	hop R1 SAME n=64 max_prob_diff=2.49e-07;hop R3 DIFFER first_at=27 same=28/48 max_prob_diff=4.97e-04;draft-l R1 SAME n=64 max_prob_diff=4.07e-09;draft-l R3 SAME n=48 max_prob_diff=4.06e-09;draft-r R1 SAME n=64 max_prob_diff=4.07e-09;draft-r R3 SAME n=48 max_prob_diff=4.06e-09;
+2 (-ts 1,2)	ops/qwen4exp-moe/rpc2	OK	ABS ADD ARGSORT CLAMP CONCAT CONT CPY DIV DSV4_HC_PO DSV4_HC_PR DUP FILL FLASH_ATTN GATED_DELT GDN_CONV GET_ROWS LIGHTNING_ MUL MUL_MAT MUL_MAT_ID REPEAT RMS_NORM ROPE SCALE SET_ROWS SGN SIGMOID SILU SOFTPLUS SOFT_MAX SQRT SUM_ROWS SWIGLU TOP_K TOP_K_MASK  
+2 (-ts 1,2)	ops/qwen4exp-moe/hop	OK	ABS ADD ARGSORT CLAMP CONCAT CONT CPY DIV DSV4_HC_PO DSV4_HC_PR DUP FILL FLASH_ATTN GATED_DELT GDN_CONV GET_ROWS LIGHTNING_ MUL MUL_MAT MUL_MAT_ID REPEAT RMS_NORM ROPE SCALE SET_ROWS SGN SIGMOID SILU SOFTPLUS SOFT_MAX SQRT SUM_ROWS SWIGLU TOP_K TOP_K_MASK  hop: llama_context: card hops in f16 before layers 1 (the layer split) hop: llama_context: card hops in f16 before layers 1 (the layer split) 
+2 (-ts 1,2)	bytes	OK	50152 32 8187 8208 62.1 21.0 293141 439352;50153 32 16480 520 96.2 26.3 541629 520;50152 160 8182 8208 62.0 19.9 818453 1487928;50153 160 16475 520 96.5 26.1 1614837 520;

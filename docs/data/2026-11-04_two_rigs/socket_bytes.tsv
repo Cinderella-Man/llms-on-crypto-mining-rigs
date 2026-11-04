@@ -1,0 +1,5 @@
+server_port	prompt_tokens	sent_per_token	received_per_token	segs_out_per_token	segs_in_per_token	prompt_sent	prompt_received
+50152	32	8187	8208	62.1	21.0	293141	439352
+50153	32	16480	520	96.2	26.3	541629	520
+50152	160	8182	8208	62.0	19.9	818453	1487928
+50153	160	16475	520	96.5	26.1	1614837	520

@@ -1,0 +1,29 @@
+reference	arm	request	verdict	detail
+local	rpc1	R1	SAME	n=64 max_prob_diff=0.00e+00
+local	rpc1	R2a	SAME	n=16 max_prob_diff=0.00e+00
+local	rpc1	R2b	SAME	n=32 max_prob_diff=0.00e+00
+local	rpc1	R3	SAME	n=48 max_prob_diff=0.00e+00
+local	rpc2	R1	SAME	n=64 max_prob_diff=0.00e+00
+local	rpc2	R2a	SAME	n=16 max_prob_diff=0.00e+00
+local	rpc2	R2b	SAME	n=32 max_prob_diff=0.00e+00
+local	rpc2	R3	SAME	n=48 max_prob_diff=0.00e+00
+local	mixed	R1	SAME	n=64 max_prob_diff=0.00e+00
+local	mixed	R2a	SAME	n=16 max_prob_diff=0.00e+00
+local	mixed	R2b	SAME	n=32 max_prob_diff=0.00e+00
+local	mixed	R3	SAME	n=48 max_prob_diff=0.00e+00
+draft-l	draft-r	R1	SAME	n=64 max_prob_diff=0.00e+00
+draft-l	draft-r	R2a	SAME	n=16 max_prob_diff=0.00e+00
+draft-l	draft-r	R2b	SAME	n=32 max_prob_diff=0.00e+00
+draft-l	draft-r	R3	SAME	n=48 max_prob_diff=0.00e+00
+local	hop	R1	SAME	n=64 max_prob_diff=2.49e-07
+local	hop	R2a	SAME	n=16 max_prob_diff=1.63e-07
+local	hop	R2b	SAME	n=32 max_prob_diff=1.98e-07
+local	hop	R3	DIFFER	first_at=27 same=28/48 max_prob_diff=4.97e-04
+local	draft-l	R1	SAME	n=64 max_prob_diff=4.07e-09
+local	draft-l	R2a	SAME	n=16 max_prob_diff=4.07e-09
+local	draft-l	R2b	SAME	n=32 max_prob_diff=4.04e-09
+local	draft-l	R3	SAME	n=48 max_prob_diff=4.06e-09
+local	draft-r	R1	SAME	n=64 max_prob_diff=4.07e-09
+local	draft-r	R2a	SAME	n=16 max_prob_diff=4.07e-09
+local	draft-r	R2b	SAME	n=32 max_prob_diff=4.04e-09
+local	draft-r	R3	SAME	n=48 max_prob_diff=4.06e-09
