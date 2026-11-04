@@ -14,10 +14,11 @@ mkdir -p "$D"
 [ -f "$IM" ] && { log "$IM exists"; exit 0; }
 wait_gpus "$GPUS_ALL"
 split=$(cat "$KLD/gpu_args" 2> /dev/null || true)
+ngl="-ngl 99"; case "$split" in *"-fit on"*) ngl="";; esac
 log "llama-imatrix on $(basename "$CALIB"), split ${split:-default}"
 docker run --rm $DOCKER_BASE --name "pq-$TAG-imatrix" --gpus "\"device=$GPUS_ALL\"" -e CUDA_DEVICE_ORDER=PCI_BUS_ID \
     $MOUNT_ARGS "$IMAGE" "$TOOLS/llama-imatrix" -m "$REF" -f "$CALIB" -o "$D/partial-imatrix.gguf" -c 512 -b 512 \
-    --chunks 200 -ngl 99 -fa on $split > "$D/imatrix.log" 2>&1
+    --chunks 200 $ngl -fa on $split > "$D/imatrix.log" 2>&1
 mv "$D/partial-imatrix.gguf" "$IM"
 tail -n 3 "$D/imatrix.log"
 ls -l "$IM"
