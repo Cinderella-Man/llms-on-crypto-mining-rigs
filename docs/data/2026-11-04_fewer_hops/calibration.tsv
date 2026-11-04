@@ -1,0 +1,10 @@
+card	s34_ts	s34_projection_mib	s34_planner_mib	s35_ts	s35_projection_mib	s35_planner_mib	s35_note
+0	6	4944	4943	6	4992	4990
+1	5	4243	4243	6	5178	5179
+2	5	4426	4427	6	5047	5047
+3	6	5002	5001	6	5200	5200
+4	5	4271	4271	5	4957	4957	planner 4312 + the draft's token embeddings 645 (-otd token_embd=CUDA4)
+5	5	4431	4432	6	5058	5057
+6	6	5010	5009	5	4461	4461
+7	5	4276	4276	6	5064	5064
+8	6	4867	4868	3	4632	4632	main 2496 + the draft's layer, head, cache and compute 2136

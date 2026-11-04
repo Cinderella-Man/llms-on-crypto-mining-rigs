@@ -1,0 +1,72 @@
+### pmix-q2-spine6 (compute 344,419 MiB, KV 161 MiB an attention layer, free 6023 MiB a card, margin 300)
+## nodraft
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 36093 MiB in the blocks
+fewest cards keeping 300 MiB free on every card
+cards	free_cards	own_free	whole_free	whole_ts	ot_free	ot_moved
+9	-	-	919	6,5,5,5,6,5,5,6,6	1215	12
+8	CUDA8	-	335	6,6,6,6,6,6,6,7	694	14
+7	CUDA7,CUDA8	-	9	7,7,7,7,7,7,7	9	4
+6	CUDA6,CUDA7,CUDA8	-	-1176	8,8,8,8,8,9	-971	14
+5	CUDA5,CUDA6,CUDA7,CUDA8	-	-2410	10,9,10,10,10	-2186	6
+4	CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-4350	12,12,12,13	-4146	8
+3	CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-7525	16,16,17	-7320	5
+2	CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-13875	24,25	-13709	2
+1	CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-32883	49	-32883	0
+fewest: 8 cards (CUDA0,CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7), 1 free (CUDA8)
+#1: -dev CUDA0,CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7 -ts 6,6,6,6,6,6,6,7  smallest free 335 MiB
+  card 0: layers 0-5, 1 attention, 5062 MiB, 961 free
+  card 1: layers 6-11, 2 attention, 5258 MiB, 765 free
+  card 2: layers 12-17, 1 attention, 5105 MiB, 918 free
+  card 3: layers 18-23, 2 attention, 5258 MiB, 765 free
+  card 4: layers 24-29, 1 attention, 5104 MiB, 919 free
+  card 5: layers 30-35, 2 attention, 5258 MiB, 765 free
+  card 6: layers 36-41, 1 attention, 5104 MiB, 919 free
+  card 7: layers 42-47, 2 attention, 5688 MiB, 335 free
+## draft-own: the MTP draft's whole pass (2781 MiB) on the first free card
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 36093 MiB in the blocks
+fewest cards keeping 300 MiB free on every card, a 2781 MiB piece on the first free card
+cards	free_cards	own_free	whole_free	whole_ts	ot_free	ot_moved
+9	-	none	872	6,5,5,5,6,5,6,5,6	1177	10
+8	CUDA8	3242	297	6,6,6,6,6,6,6,7	647	14
+7	CUDA7,CUDA8	3242	-38	7,7,7,7,7,7,7	-37	4
+6	CUDA6,CUDA7,CUDA8	3242	-1231	8,8,8,8,8,9	-1026	14
+5	CUDA5,CUDA6,CUDA7,CUDA8	3242	-2475	10,9,10,10,10	-2251	6
+4	CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	3242	-4434	12,12,12,13	-4229	8
+3	CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	3242	-7637	16,16,17	-7432	5
+2	CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	3242	-14042	24,25	-13886	2
+1	CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	3242	-33218	49	-33218	0
+fewest: 8 cards (CUDA0,CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7), 1 free (CUDA8); the 2781 MiB piece on CUDA8, 3242 free
+whole layers do not keep the margin; the fewest -ot moves that do (no pipelined prompt with -ot):
+#1: -dev CUDA0,CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7 -ts 7,6,6,6,6,6,6,6 -ot blk\.6\.ffn_down_exps=CUDA1  smallest free 375 MiB
+  card 0: layers 0-6, 1 attention, 5648 MiB, 375 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_down_exps, 5521 MiB, 502 free
+  card 2: layers 13-18, 1 attention, 5151 MiB, 872 free
+  card 3: layers 19-24, 2 attention, 5296 MiB, 727 free
+  card 4: layers 25-30, 1 attention, 5151 MiB, 872 free
+  card 5: layers 31-36, 2 attention, 5296 MiB, 727 free
+  card 6: layers 37-42, 1 attention, 5151 MiB, 872 free
+  card 7: layers 43-47, 2 attention, 4961 MiB, 1062 free
+## draft-last: the draft's body (2136 MiB) on the last card, its token embeddings (645 MiB) on the best card
+qwen4exp: 48 layers, attention at [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47], output 429 MiB on the last card; weights 36093 MiB in the blocks
+fewest cards keeping 300 MiB free on every card, a 645 MiB piece on the best card
+cards	free_cards	own_free	whole_free	whole_ts	ot_free	ot_moved
+9	-	-	727	5,6,5,6,6,6,6,6,3	914	12
+8	CUDA8	-	-37	6,6,7,6,7,7,6,4	333	10
+7	CUDA7,CUDA8	-	-801	7,7,7,8,8,7,5	-390	7
+6	CUDA6,CUDA7,CUDA8	-	-1566	9,8,9,9,8,6	-1357	7
+5	CUDA5,CUDA6,CUDA7,CUDA8	-	-3053	11,10,10,10,8	-2790	7
+4	CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-4922	13,13,13,10	-4874	8
+3	CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-8575	17,17,15	-8302	2
+2	CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-15295	26,23	-15205	3
+1	CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7,CUDA8	-	-35999	49	-35999	0
+fewest: 8 cards (CUDA0,CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7), 1 free (CUDA8)
+whole layers do not keep the margin; the fewest -ot moves that do (no pipelined prompt with -ot):
+#1: -dev CUDA0,CUDA1,CUDA2,CUDA3,CUDA4,CUDA5,CUDA6,CUDA7 -ts 7,6,7,6,7,6,6,4 -ot blk\.6\.ffn_down_exps=CUDA1,blk\.19\.ffn_up_exps=CUDA3,blk\.19\.ffn_down_exps=CUDA3,blk\.32\.ffn_up_exps=CUDA5,blk\.32\.ffn_down_exps=CUDA5,blk\.44\.ffn_down_exps=CUDA7  smallest free 307 MiB; the 645 MiB piece on CUDA6
+  card 0: layers 0-6, 1 attention, 5648 MiB, 375 free
+  card 1: layers 7-12, 2 attention, plus blk.6.ffn_down_exps, 5521 MiB, 502 free
+  card 2: layers 13-19, 2 attention, 5611 MiB, 412 free
+  card 3: layers 20-25, 1 attention, plus blk.19.ffn_up_exps, blk.19.ffn_down_exps, 5601 MiB, 422 free
+  card 4: layers 26-32, 2 attention, 5610 MiB, 413 free
+  card 5: layers 33-38, 1 attention, plus blk.32.ffn_up_exps, blk.32.ffn_down_exps, 5601 MiB, 422 free
+  card 6: layers 39-44, 2 attention, plus the 645 MiB piece, 5716 MiB, 307 free
+  card 7: layers 45-47, 1 attention, plus blk.44.ffn_down_exps, 5648 MiB, 375 free
