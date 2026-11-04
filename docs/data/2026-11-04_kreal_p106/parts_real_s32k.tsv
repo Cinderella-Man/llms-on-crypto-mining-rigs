@@ -1,0 +1,25 @@
+trace	k	part	ms_per_pass
+real_s32k_group	1	routed experts	8.62
+real_s32k_group	1	shared expert	3.14
+real_s32k_group	1	hyper-connections (BF16)	10.13
+real_s32k_group	1	router	2.16
+real_s32k_group	1	attention and recurrent projections	19.12
+real_s32k_group	1	Gated DeltaNet state and conv	3.46
+real_s32k_group	1	attention (FLASH_ATTN_EXT)	0.73
+real_s32k_group	1	output layer	0.01
+real_s32k_group	1	token embeddings	0.00
+real_s32k_group	1	other ops without weights	5.44
+real_s32k_group	1	other weights	0.53
+real_s32k_group	1	sum of the parts	53.34
+real_s32k_group	5	routed experts	54.46
+real_s32k_group	5	shared expert	6.70
+real_s32k_group	5	hyper-connections (BF16)	22.76
+real_s32k_group	5	router	5.74
+real_s32k_group	5	attention and recurrent projections	50.04
+real_s32k_group	5	Gated DeltaNet state and conv	5.39
+real_s32k_group	5	attention (FLASH_ATTN_EXT)	1.94
+real_s32k_group	5	output layer	0.05
+real_s32k_group	5	token embeddings	0.00
+real_s32k_group	5	other ops without weights	8.77
+real_s32k_group	5	other weights	1.25
+real_s32k_group	5	sum of the parts	157.12

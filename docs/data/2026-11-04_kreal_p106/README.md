@@ -36,6 +36,30 @@ not reused between requests.
   verify is a single micro-batch and never overlaps; the timings above therefore run with the pipelining off (any
   tensor override turns it off in `llama_context`; here `-ot token_embd.weight=CPU`, where the embeddings are anyway).
 
+## Where the time goes on real text (1 and 5 tokens, 32 KB budget)
+
+The `prof` arm ran the first 340 real tokens at k = 1 and 5 under `GGML_CUDA_PROFILE_MODE=group` (C140's 7.6 µs per span
+subtracted; [C266](../2026-11-04_kpass_profile/README.md)'s method and categories), ms per pass:
+
+| Part | 1 token | 5 tokens | 5 / 1 | C266, random tokens, defaults: 1 → 5 |
+|---|---:|---:|---:|---|
+| routed experts | 8.62 | 54.46 | 6.32 | 8.69 → 55.49 |
+| attention and recurrent projections | 19.12 | 50.04 | 2.62 | 27.13 → 61.77 |
+| hyper-connections (BF16) | 10.13 | 22.76 | 2.25 | 10.03 → 22.25 |
+| shared expert | 3.14 | 6.70 | 2.13 | 3.24 → 6.36 |
+| router | 2.16 | 5.74 | 2.66 | 2.15 → 5.85 |
+| Gated DeltaNet state and conv | 3.46 | 5.39 | 1.56 | 3.46 → 5.46 |
+| attention (FLASH_ATTN_EXT) | 0.73 | 1.94 | 2.65 | 0.63 → 1.69 |
+| other operations without weights | 5.44 | 8.77 | 1.61 | 9.22 → 10.58 |
+| output layer | 0.01 | 0.05 | | 3.58 → 3.58 (llama-bench asks for one row) |
+| the cards' GPU time | 53.3 | 157.1 | 2.95 | 68.7 → 174.3 |
+| the pass, unprofiled | 64.9 | 193.9 | 2.99 | 82.4 → 217.1 |
+
+The routed experts cost the same on real text as on random tokens (6.3–6.4× from one token to five), so their growth
+is not a matter of routing; the 32 KB budget's gain is in the projections. Each request also decodes one answer token,
+so the 5-token mean holds one 1-token evaluation among its 68 (est. ~1 % low). Files: [parts_real_s32k.tsv](parts_real_s32k.tsv),
+[summaries/](summaries/).
+
 ## Files
 
 | File | What it is |
