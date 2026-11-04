@@ -1,0 +1,12 @@
+# T(k) in ms, k = 1..8: passes of k consecutive tokens of real agent text (C271, docs/data/2026-11-04_kreal_p106),
+# Swift Q2_0 on -ladder3 with GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768, one rig, 1,680 tokens per k, pipelining off.
+# A prompt micro-batch has no output rows: a verify of k tokens adds the output layer for its k rows and copies their
+# logits (~1 MB a row) to the host; llama-bench's passes (t_k_q2_0_s32k.txt) add one row and sit ~10 ms above these.
+64.9
+97.9
+127.9
+151.6
+193.9
+222.9
+249.9
+288.5
