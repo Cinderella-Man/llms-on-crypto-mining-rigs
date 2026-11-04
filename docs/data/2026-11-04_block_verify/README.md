@@ -252,3 +252,73 @@ The fork's branch `pascal-p106-v3-b12076-blockver` at `b8f42a3ff`, two commits o
 uses random-weight models with Qwen3.8-Flash-Next's tokenizer and chat template, read from the header of a Flash-Next
 GGUF, and with GPT-2's tokenizer (`models/ggml-vocab-gpt-2.gguf` of llama.cpp); no model output or weights are
 published. The tables here are this project's measurements (MIT, as the repository).
+
+## Upstream status (2026-11-04)
+
+**The reuse of draws after a checkpoint replay (Q808) is in upstream llama.cpp, and no issue or pull request reports
+it.** The fork's base build differs from upstream's [`20a51f24a`](https://github.com/ggml-org/llama.cpp/tree/20a51f24a)
+in these functions only by additions that leave the restore, the replay and the rejection loop as they are, and
+`master` has the same code: its history for `common/sampling.cpp` has no commit after 2026-10-12, and for
+`tools/server/server-context.cpp` none touching this path after 2026-11-02. Block verification (Sun et al.) has no
+upstream issue or pull request either.
+
+### The path in upstream
+
+| Step | Where (at `20a51f24a`) |
+|---|---|
+| The server clones the slot's sampler before it verifies a draft | `post_decode()` in [`tools/server/server-context.cpp`](https://github.com/ggml-org/llama.cpp/blob/20a51f24a/tools/server/server-context.cpp#L4934): `smpl_save(common_sampler_clone(...))` |
+| Sampled drafts are verified by rejection: the acceptance test and the residual draw come from the sampler's own `rng`, its only two uses | `common_sampler_sample_and_accept_n_rejection` in [`common/sampling.cpp`](https://github.com/ggml-org/llama.cpp/blob/20a51f24a/common/sampling.cpp#L795) (`uni(gsmpl->rng)`, lines 795 and 814) |
+| A partly accepted draft whose rollback needs the checkpoint (a context that cannot remove part of a sequence, or a recurrent target and a draft longer than `llama_n_rs_seq`) restores the target and then the sampler, `rng` and the chain's draws included | [`common_sampler_copy(smpl_save, slot.smpl)`](https://github.com/ggml-org/llama.cpp/blob/20a51f24a/tools/server/server-context.cpp#L4990); [`common_sampler_copy`](https://github.com/ggml-org/llama.cpp/blob/20a51f24a/common/sampling.cpp#L548) copies `rng` |
+| The next step re-accepts the kept tokens without verifying them | [`server_accept_replay`](https://github.com/ggml-org/llama.cpp/blob/20a51f24a/tools/server/server-context.cpp#L71): `common_sampler_sample` and `common_sampler_accept` per token, no draw from `rng` |
+
+After the replay `rng` stands where it stood before the step that was replayed, so the following verification draws
+that step's uniforms again, conditioned on the outcome they produced. Affected: requests at temperature above 0 whose
+drafter fills distributions (draft-simple, draft-mtp and DFlash2 with `--spec-draft-sampling probabilistic`,
+[#27694](https://github.com/ggml-org/llama.cpp/pull/27694), [#30663](https://github.com/ggml-org/llama.cpp/pull/30663))
+on a target that restores the checkpoint. Not affected by the `rng` path: n-gram drafts, which carry no distributions
+and verify by sample-and-match, and any step that keeps the target's rollback snapshots. Since
+[#31350](https://github.com/ggml-org/llama.cpp/pull/31350) (merged 2026-10-29) a recurrent target also restores the
+checkpoint when a draft longer than `n_rs_seq` is partly accepted.
+
+### Related upstream items
+
+Keyword searches of the repository's issues and pull requests (speculative with grammar, replay, checkpoint, sampler,
+rejection sampling, seed, distribution, block verification) and the threads of the items below; none concerns draws
+across a restore, exact sampling under a grammar, or sampled output after a replay.
+
+| Item | State | What it covers |
+|---|---|---|
+| [#27694](https://github.com/ggml-org/llama.cpp/pull/27694) | merged 2026-10-02 | rejection sampling for draft-simple and MTP; introduced `server_accept_replay`; its review had `common_sampler_copy` copy `rng`, and did not take up drawing across a restore |
+| [#30663](https://github.com/ggml-org/llama.cpp/pull/30663) | merged 2026-10-23 | the same verifier for DFlash2 drafts |
+| [#30213](https://github.com/ggml-org/llama.cpp/pull/30213) | merged 2026-10-24 | `test-speculative-rejection-sampling`: one position after the prompt, random draft distributions, no grammar, no replay |
+| [#29975](https://github.com/ggml-org/llama.cpp/issues/29975), fixed by [#30095](https://github.com/ggml-org/llama.cpp/pull/30095) | closed 2026-10-12 | `examples/speculative` changed the distribution at temperature above 0 (draft token and residual pairing); not the server |
+| [#29924](https://github.com/ggml-org/llama.cpp/pull/29924) | merged 2026-10-04 | n-gram drafts with empty distributions rejected whole at temperature above 0 |
+| [#28060](https://github.com/ggml-org/llama.cpp/issues/28060) | closed 2026-09-01 | a livelock on Vulkan when the replay re-verified tokens, fixed by re-accepting them (the origin of the replay path); no sampler state |
+| [#31350](https://github.com/ggml-org/llama.cpp/pull/31350) | merged 2026-10-29 | restores the checkpoint for drafts longer than `n_rs_seq` (recurrent state, not sampler state) |
+| [#30419](https://github.com/ggml-org/llama.cpp/issues/30419) | open | grammar stack error with a JSON-schema response under draft-mtp; a link to rollbacks is not established |
+| [#25618](https://github.com/ggml-org/llama.cpp/issues/25618) | open | greedy output differs from plain decoding on quantized targets (batch-shape numerics); greedy only |
+| [#31294](https://github.com/ggml-org/llama.cpp/pull/31294) | open | a warning for `--spec-draft-p-min` with probabilistic drafting |
+
+### What an upstream report needs
+
+- **Claim:** at temperature above 0 with a drafter that fills distributions, the sampler restored after a checkpoint
+  replay rolls `rng` back, and `server_accept_replay` never advances it, so sampled output differs from plain
+  decoding's. It is shown under a grammar; the plain-text arms did not separate at 4,000 requests (smallest p 0.0049).
+- **Reproduction without a download:** the CPU check's pair of random-weight `qwen4exp` models (target and a drafter
+  with its weights at another scale, from `test-llama-archs` with a vocabulary that spells the grammar; `LLAMA_ARCHS_VOCAB`
+  copies GPT-2's), draft-simple with `--spec-draft-sampling probabilistic --spec-draft-p-min 0` and
+  `--spec-draft-n-max 4`, 1,500 requests with distinct seeds at temperature 1, top-k 8, under
+  [run/stat_tool.gbnf](run/stat_tool.gbnf) (30 outcomes), against the same server without a drafter: two-sample
+  chi-square p = 6e-9, total variation 0.095 ([run/stat.sh](run/stat.sh), [run/stat_check.py](run/stat_check.py),
+  [stat.tsv](stat.tsv)). The control (temperature 0.8 against 1.0) is told apart at p = 1.7e-21.
+- **The test:** a statistical test beside #30213's. `server_accept_replay` is `static` in the server, so the unit form
+  needs it (and the restore sequence) moved to `common/`: run two consecutive verification steps with a forced
+  restore and replay between them, and compare the first tokens' joint distribution with plain sampling by chi-square
+  at 5,000 trials. It fails on `master` and passes with the fix. A server-level form fits
+  `tools/server/tests/unit/test_speculative.py` only as a small run.
+- **The fix's shape:** keep the draws used across the restore. The fork's `common_sampler_copy_keep_rng(src, dst)`
+  (`common/sampling.cpp`) copies everything from the clone except `dst`'s `rng` and the chain's `dist` and `xtc` draws,
+  and `post_decode()` calls it where it calls `common_sampler_copy` (behind `LLAMA_SPEC_KEEP_DRAWS` here; upstream
+  would make it unconditional, which changes seeded outputs on replaying setups). With it the grammar
+  arm gives p = 0.24. The effect of keeping `rng` alone, without the chain's draws, has not been measured.
+- **Posting:** whether to post it upstream is the owner's call (the pattern of registry row Q707).
