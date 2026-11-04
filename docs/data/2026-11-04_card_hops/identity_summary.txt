@@ -1,0 +1,4 @@
+base: Summary: 148 test(s) executed, 7 failed
+off: Summary: 148 test(s) executed, 7 failed
+staged: Summary: 148 test(s) executed, 7 failed
+q8at1: Summary: 148 test(s) executed, 8 failed

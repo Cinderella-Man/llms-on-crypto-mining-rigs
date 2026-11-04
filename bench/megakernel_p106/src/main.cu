@@ -11,8 +11,10 @@
 // stages differ, and every variant's output is checked against the eager launches and a CPU reference.
 //
 // --hop A,B times one card-to-card hop of a residual vector the ways a layer split can make it without peer access:
-// through a pinned host buffer with two copies, as one driver-staged peer copy, and as a mailbox in mapped host memory
-// that a kernel on card B polls. See ../README.md.
+// through a pinned host buffer with two copies, as one driver-staged peer copy, as a mailbox in mapped host memory
+// that a kernel on card B polls, and as the llama.cpp fork's manual staged hop (GGML_CUDA_HOP_STAGED) in 1, 2 or 4
+// chunks: per chunk a D2H on card A's stream into a pinned slot, an event, card B's stream waiting on it, the H2D.
+// See ../README.md.
 #include <cooperative_groups.h>
 #include <cuda_fp16.h>
 #include <cuda_runtime.h>
@@ -242,7 +244,10 @@ struct options {
     bool no_check = false;
     bool smoke = false;
     std::string hop;                 // "A,B"
-    std::string hop_sizes = "10240,40960,163840";
+    // 10,880 / 20,480 / 40,960 B: one Flash-Next token's residual in Q8_0, F16 and F32 (LLAMA_HOP_CAST); 43,520 /
+    // 81,920 / 163,840 B: a 4-token verify pass in the same three
+    std::string hop_sizes = "10240,10880,20480,40960,43520,81920,163840";
+    std::string hop_chunks = "1,2,4"; // chunk counts of the manual staged hop
     int  hop_reps = 300;
     bool hop_only = false;
     const char * csv = nullptr;
@@ -274,7 +279,8 @@ void usage() {
            "  --no-check        skip the checks\n"
            "  --smoke           every path once with 2 chains and 1 trial (a functional check of the timing code)\n"
            "  --hop A,B         also time a hop from card A to card B (CUDA device numbers)\n"
-           "  --hop-sizes LIST  bytes per hop (default 10240,40960,163840)\n"
+           "  --hop-sizes LIST  bytes per hop (default 10240,10880,20480,40960,43520,81920,163840)\n"
+           "  --hop-chunks LIST chunk counts of the manual staged hop, 1-16 each (default 1,2,4)\n"
            "  --hop-reps N      hops per size and way (default 300)\n"
            "  --hop-only        only the hop\n"
            "  --csv FILE        results as CSV (section,mix,stages,variant,grid,key,value,unit)\n",
@@ -858,13 +864,86 @@ void run_hop(int da, int db, const options & opt) {
     CUDA_CHECK(cudaHostGetDevicePointer(&mail_a, mail, 0));
     CUDA_CHECK(cudaHostGetDevicePointer(&flag_a, flag, 0));
 
+    // the manual staged hop (the fork's GGML_CUDA_HOP_STAGED): a pinned ring with a slot per chunk, an event per slot
+    // on each card
+    std::vector<int> chunk_counts;
+    for (int c : parse_ints(opt.hop_chunks, 0)) {
+        if (c >= 1 && c <= 16) {
+            chunk_counts.push_back(c);
+        }
+    }
+    void * ring;
+    cudaEvent_t filled[16], drained[16];
+    CUDA_CHECK(cudaHostAlloc(&ring, max_bytes, cudaHostAllocPortable));
+    for (auto & e : filled) {
+        CUDA_CHECK(cudaEventCreateWithFlags(&e, cudaEventDisableTiming));
+    }
+    CUDA_CHECK(cudaSetDevice(db));
+    for (auto & e : drained) {
+        CUDA_CHECK(cudaEventCreateWithFlags(&e, cudaEventDisableTiming));
+    }
+    // chunk i through slot i (the same offset in the ring as in the data): its D2H on card A's stream, an event, its H2D
+    // on card B's stream behind that event; a slot's next D2H waits for its last H2D. Chunks are multiples of 256 B.
+    auto manual_hop = [&](int bytes, int chunks) {
+        const int chunk = ((bytes + chunks - 1) / chunks + 255) / 256 * 256;
+        for (int i = 0, off = 0; off < bytes; ++i, off += chunk) {
+            const int len = std::min(chunk, bytes - off);
+            CUDA_CHECK(cudaSetDevice(da));
+            CUDA_CHECK(cudaStreamWaitEvent(sa, drained[i], 0));
+            CUDA_CHECK(cudaMemcpyAsync((char *) ring + off, (const char *) src + off, len, cudaMemcpyDeviceToHost, sa));
+            CUDA_CHECK(cudaEventRecord(filled[i], sa));
+            CUDA_CHECK(cudaSetDevice(db));
+            CUDA_CHECK(cudaStreamWaitEvent(sb, filled[i], 0));
+            CUDA_CHECK(cudaMemcpyAsync((char *) dst + off, (const char *) ring + off, len, cudaMemcpyHostToDevice, sb));
+            CUDA_CHECK(cudaEventRecord(drained[i], sb));
+        }
+    };
+    // each chunk count delivers the bytes exactly
+    {
+        std::vector<unsigned char> pat(max_bytes), back(max_bytes);
+        for (int i = 0; i < max_bytes; ++i) {
+            pat[i] = (unsigned char) (i * 131 + 7);
+        }
+        CUDA_CHECK(cudaSetDevice(da));
+        CUDA_CHECK(cudaMemcpy(src, pat.data(), max_bytes, cudaMemcpyHostToDevice));
+        int bad = 0;
+        for (int bytes : sizes) {
+            for (int c : chunk_counts) {
+                CUDA_CHECK(cudaSetDevice(db));
+                CUDA_CHECK(cudaMemset(dst, 0, max_bytes));
+                CUDA_CHECK(cudaDeviceSynchronize());
+                manual_hop(bytes, c);
+                CUDA_CHECK(cudaSetDevice(db));
+                CUDA_CHECK(cudaStreamSynchronize(sb));
+                CUDA_CHECK(cudaMemcpy(back.data(), dst, bytes, cudaMemcpyDeviceToHost));
+                bad += memcmp(back.data(), pat.data(), bytes) != 0;
+            }
+        }
+        printf("  manual hop data: %s (%zu sizes x %zu chunk counts)\n", bad ? "DIFFERS" : "every byte arrived",
+               sizes.size(), chunk_counts.size());
+        csv_row("hop", "data", 0, "manual", 0, "mismatches", bad, "");
+        CUDA_CHECK(cudaSetDevice(da));
+        CUDA_CHECK(cudaMemset(src, 0, max_bytes));
+        CUDA_CHECK(cudaDeviceSynchronize());
+    }
+
     using clk = std::chrono::steady_clock;
     auto us_since = [](clk::time_point t0) { return std::chrono::duration<double, std::micro>(clk::now() - t0).count(); };
     unsigned seq = 0;
-    printf("  %-10s %14s %14s %14s   (us per hop, median [p10, p90] of %d)\n", "bytes", "host-staged", "peer-copy",
-           "mailbox", reps);
+    std::vector<std::string> names = { "host-staged", "peer-copy", "mailbox" };
+    for (int c : chunk_counts) {
+        names.push_back("manual-c" + std::to_string(c));
+    }
+    printf("  %-10s", "bytes");
+    for (const auto & n : names) {
+        printf(" %17s", n.c_str());
+    }
+    printf("   (us per hop, median [p10, p90] of %d)\n", reps);
     for (int bytes : sizes) {
-        std::vector<double> t_staged, t_peer, t_mail;
+        std::vector<std::vector<double>> t(names.size());
+        std::vector<double> & t_staged = t[0];
+        std::vector<double> & t_peer   = t[1];
+        std::vector<double> & t_mail   = t[2];
         for (int r = 0; r < reps + 5; ++r) {
             // 1. two copies through a pinned host buffer, the host waiting on each (what ggml does when it has no
             //    asynchronous copy between the two backends)
@@ -907,17 +986,35 @@ void run_hop(int da, int db, const options & opt) {
             }
             CUDA_CHECK(cudaSetDevice(da));
             CUDA_CHECK(cudaStreamSynchronize(sa));
+            // 4. the manual staged hop in c chunks, card B's stream running one small kernel after it
+            for (size_t k = 0; k < chunk_counts.size(); ++k) {
+                t0 = clk::now();
+                manual_hop(bytes, chunk_counts[k]);
+                CUDA_CHECK(cudaSetDevice(db));
+                k_touch<<<1, 32, 0, sb>>>((float *) dst);
+                CUDA_CHECK(cudaStreamSynchronize(sb));
+                if (r >= 5) {
+                    t[3 + k].push_back(us_since(t0));
+                }
+                CUDA_CHECK(cudaSetDevice(da));
+                CUDA_CHECK(cudaStreamSynchronize(sa));
+            }
         }
-        printf("  %-10d %6.1f [%.0f,%.0f] %6.1f [%.0f,%.0f] %6.1f [%.0f,%.0f]\n", bytes, median(t_staged),
-               pctl(t_staged, 0.1), pctl(t_staged, 0.9), median(t_peer), pctl(t_peer, 0.1), pctl(t_peer, 0.9),
-               median(t_mail), pctl(t_mail, 0.1), pctl(t_mail, 0.9));
+        printf("  %-10d", bytes);
+        for (const auto & v : t) {
+            printf(" %6.1f [%3.0f,%4.0f]", median(v), pctl(v, 0.1), pctl(v, 0.9));
+        }
+        printf("\n");
         const std::string pair = std::to_string(da) + "-" + std::to_string(db);
-        csv_row("hop", pair, bytes, "host-staged", 0, "us_median", median(t_staged), "us");
-        csv_row("hop", pair, bytes, "peer-copy", 0, "us_median", median(t_peer), "us");
-        csv_row("hop", pair, bytes, "mailbox", 0, "us_median", median(t_mail), "us");
-        csv_row("hop", pair, bytes, "host-staged", 0, "us_p10", pctl(t_staged, 0.1), "us");
-        csv_row("hop", pair, bytes, "peer-copy", 0, "us_p10", pctl(t_peer, 0.1), "us");
-        csv_row("hop", pair, bytes, "mailbox", 0, "us_p10", pctl(t_mail, 0.1), "us");
+        for (size_t k = 0; k < names.size(); ++k) {
+            csv_row("hop", pair, bytes, names[k], 0, "us_median", median(t[k]), "us");
+        }
+        for (size_t k = 0; k < names.size(); ++k) {
+            csv_row("hop", pair, bytes, names[k], 0, "us_p10", pctl(t[k], 0.1), "us");
+        }
+        for (size_t k = 0; k < names.size(); ++k) {
+            csv_row("hop", pair, bytes, names[k], 0, "us_p90", pctl(t[k], 0.9), "us");
+        }
     }
     unsigned to = 0;
     CUDA_CHECK(cudaSetDevice(db));
@@ -926,10 +1023,17 @@ void run_hop(int da, int db, const options & opt) {
     CUDA_CHECK(cudaFreeHost(host));
     CUDA_CHECK(cudaFreeHost(mail));
     CUDA_CHECK(cudaFreeHost(flag));
+    CUDA_CHECK(cudaFreeHost(ring));
+    for (auto & e : drained) {
+        CUDA_CHECK(cudaEventDestroy(e));
+    }
     CUDA_CHECK(cudaFree(dst));
     CUDA_CHECK(cudaFree(timeouts));
     CUDA_CHECK(cudaStreamDestroy(sb));
     CUDA_CHECK(cudaSetDevice(da));
+    for (auto & e : filled) {
+        CUDA_CHECK(cudaEventDestroy(e));
+    }
     CUDA_CHECK(cudaFree(src));
     CUDA_CHECK(cudaEventDestroy(ev_a));
     CUDA_CHECK(cudaStreamDestroy(sa));
@@ -958,6 +1062,7 @@ int main(int argc, char ** argv) {
         else if (a == "--smoke") opt.smoke = true;
         else if (a == "--hop") opt.hop = next();
         else if (a == "--hop-sizes") opt.hop_sizes = next();
+        else if (a == "--hop-chunks") opt.hop_chunks = next();
         else if (a == "--hop-reps") opt.hop_reps = atoi(next());
         else if (a == "--hop-only") opt.hop_only = true;
         else if (a == "--csv") opt.csv = next();

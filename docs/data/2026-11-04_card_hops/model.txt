@@ -1,0 +1,24 @@
+part 1: round trips F32 -> type -> F32 at [2560, 4, T]
+  backend        type     T  representable data     residual-like data                
+  CPU            f16      1  exact                  max err 0.0415, rms 0.00123, worst/bound 0.992
+  CPU            f16      4  exact                  max err 0.0425, rms 0.00118, worst/bound 0.995
+  CPU            f16    512  exact                  max err 0.0821, rms 0.00132, worst/bound 1.000
+  CPU            bf16     1  exact                  max err 0.456, rms 0.0117, worst/bound 0.988
+  CPU            bf16     4  exact                  max err 0.498, rms 0.011, worst/bound 0.996
+  CPU            bf16   512  exact                  max err 0.5, rms 0.0106, worst/bound 0.996
+  CPU            q8_0     1  exact                  max err 0.784, rms 0.069, worst/bound 0.933
+  CPU            q8_0     4  exact                  max err 0.935, rms 0.0803, worst/bound 0.935
+  CPU            q8_0   512  exact                  max err 0.969, rms 0.0794, worst/bound 0.970
+part 2: /k/qwen4exp-moe.gguf, 58 positions per arm (prompt 48 in micro-batches of 16, a 4-token pass, 6 single steps)
+  arm          identical max |dlogit| mean KLD     max KLD      top-1    hops   hop max err  hop checks
+  off          yes       0            0            0            1.0000   0      0            none, as expected
+  staged       yes       0            0            0            1.0000   0      0            none, as expected
+  f16-auto     yes       0            0            0            1.0000   0      0            all within bound
+  q8_0-auto    yes       0            0            0            1.0000   0      0            all within bound
+  f16-at1      no        3.509e-05    3.204e-11    5.565e-11    1.0000   10     0.0002127    all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.0002127, rms 2.654e-05 (0.000207 of the source's rms)
+  bf16-at1     no        0.0002567    2.059e-09    3.727e-09    1.0000   10     0.001881     all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.001881, rms 0.0002126 (0.00166 of the source's rms)
+  q8_0-at1     no        0.0008137    2.205e-08    3.193e-08    1.0000   10     0.002087     all within bound
+    hop_wide-1         10 hops, source max |x| 0.535, rms 0.1284; error max 0.002087, rms 0.0006944 (0.00541 of the source's rms)
+55 checks, 0 failed

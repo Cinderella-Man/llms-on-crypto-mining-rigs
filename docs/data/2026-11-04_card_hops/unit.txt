@@ -1,0 +1,13 @@
+part 1: round trips F32 -> type -> F32 at [2560, 4, T]
+  backend        type     T  representable data     residual-like data                
+  CPU            f16      1  exact                  max err 0.0415, rms 0.00123, worst/bound 0.992
+  CPU            f16      4  exact                  max err 0.0425, rms 0.00118, worst/bound 0.995
+  CPU            f16    512  exact                  max err 0.0821, rms 0.00132, worst/bound 1.000
+  CPU            bf16     1  exact                  max err 0.456, rms 0.0117, worst/bound 0.988
+  CPU            bf16     4  exact                  max err 0.498, rms 0.011, worst/bound 0.996
+  CPU            bf16   512  exact                  max err 0.5, rms 0.0106, worst/bound 0.996
+  CPU            q8_0     1  exact                  max err 0.784, rms 0.069, worst/bound 0.933
+  CPU            q8_0     4  exact                  max err 0.935, rms 0.0803, worst/bound 0.935
+  CPU            q8_0   512  exact                  max err 0.969, rms 0.0794, worst/bound 0.970
+
+18 checks, 0 failed

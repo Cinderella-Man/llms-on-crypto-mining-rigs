@@ -1,0 +1,12 @@
+check	verdict	detail
+build	OK	commit: 5b69b0574c779868443ec816dd0d5512406c14b9 (2026-11-04 02:16:05 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;
+cpubuild	OK	rc 0; 5b69b0574c779868443ec816dd0d5512406c14b9
+bench	OK	rc 0; avx (ymm) instructions in the binary: 0;highest glibc symbol: GLIBC_2.38;md5: f47c545dd6b0f9f9d6fe194e16877ae7;
+ops	OK	rc 0; 18 hop-shape cases;  555/555 tests passed;1/1 backends passed;
+models	OK	qwen4exp-moe.gguf 
+unit	OK	rc 0; 18 checks, 0 failed
+model	OK	rc 0; 55 checks, 0 failed
+identity	OK	base wrote 136 archs, 7 of its own lines; off: 136 compared against the base, 0 differ, 7 repeat the base's own lines; q8at1: 136 compared against the base, 1 differ (qwen4exp), 7 repeat the base's own lines; staged: 136 compared against the base, 0 differ, 7 repeat the base's own lines; base rc=1 off rc=1 staged rc=1 q8at1 rc=1 
+ctx	OK	rc 0;default: exit 0, passed : 19 skipped : 1 failed : 0  q8at1: exit 0, passed : 19 skipped : 1 failed : 0  
+server	OK	rc 0; off = base (tokens and top probabilities of R1-R4) staged = base (tokens and top probabilities of R1-R4) q8auto = base (tokens and top probabilities of R1-R4) q8at1: 4 contexts logged the hop before layer 1, 352 tokens generated; q8at1 differs from base at R1 f16at1: 4 contexts logged the hop before layer 1, 352 tokens generated; f16at1 differs from base at R1 base: 392 tokens drafted PASS 
+sm86	OK	rc 0; 5b69b0574c779868443ec816dd0d5512406c14b9

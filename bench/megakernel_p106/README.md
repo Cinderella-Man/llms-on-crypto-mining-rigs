@@ -51,11 +51,17 @@ The persistent variants run at grids of 5, 10 and 20 blocks and the largest resi
 profiler: R13's trace shows ~9–10 µs per elementwise group, against 2.1–2.4 µs for such kernels in a graph in Q88's
 bench.
 
-`--hop A,B` times one card-to-card hop of a residual vector (10 KB, 40 KB (Flash-Next's 4 × 2,560 FP32 residual),
-160 KB) three ways, with the host clock: two copies through a pinned host buffer with the host waiting on each; one
-`cudaMemcpyPeerAsync` (staged through the host by the driver when there is no peer access) with card B's stream
-waiting on an event, as ggml's asynchronous copy between CUDA backends does; and a mailbox in mapped pinned memory
-that a kernel on card B polls while card A's kernel writes it.
+`--hop A,B` times one card-to-card hop of a residual vector with the host clock, at sizes that default to the hops of
+Flash-Next (4 × 2,560 values) a token in Q8_0, F16 and F32 (10,880, 20,480, 40,960 bytes), a 4-token pass in the same
+three (43,520, 81,920, 163,840) and 10,240 bytes: two copies through a pinned host buffer with the host waiting on each;
+one `cudaMemcpyPeerAsync` (staged through the host by the driver when there is no peer access) with card B's stream
+waiting on an event, as ggml's asynchronous copy between CUDA backends does; a mailbox in mapped pinned memory that a
+kernel on card B polls while card A's kernel writes it; and the llama.cpp fork's manual staged hop
+(`GGML_CUDA_HOP_STAGED`, [2026-11-04_card_hops](../../docs/data/2026-11-04_card_hops/README.md)) in each of
+`--hop-chunks` chunk counts (default 1, 2, 4): per chunk a copy card A → pinned slot on card A's stream, an event,
+card B's stream waiting on it and copying slot → card B, so one chunk's second leg overlaps the next chunk's
+first. Before the timings every chunk count copies a byte pattern at every size and the run reports whether every
+byte arrived.
 
 **Checks.** For every mix, the stream launches are compared with a double-precision CPU reference of the whole chain
 (max error < 1e-3 of the largest value), and every other variant and grid with the stream launches (< 1e-4; reported
@@ -101,7 +107,7 @@ hop (`hop.csv`), in that order. Env: `GPU` (default 0), `HOP` (default `0,1`; em
 | `--grids LIST` | grids of the persistent kernels (`max`: resident blocks per SM × SMs) |
 | `--reps N`, `--trials N` | chains per measurement (default: ~20 ms) and measurements per variant (default 7, median reported) |
 | `--check-only`, `--no-check`, `--smoke` | checks only; no checks; every timing path once |
-| `--hop A,B`, `--hop-sizes LIST`, `--hop-reps N`, `--hop-only` | the card-to-card hop |
+| `--hop A,B`, `--hop-sizes LIST`, `--hop-chunks LIST`, `--hop-reps N`, `--hop-only` | the card-to-card hop |
 | `--csv FILE` | `section,mix,stages,variant,grid,key,value,unit` |
 
 ## What decides what
@@ -115,7 +121,8 @@ hop (`hop.csv`), in that order. Env: `GPU` (default 0), `HOP` (default `0,1`; em
 - **`graph+events` against `graph`** gives the profiler's cost per group, the correction every `GGML_CUDA_PROFILE`
   number of a small op needs (Q681).
 - **The hop** says whether the eight hops of a token are bound by the bytes over PCIe 1.0 x1 or by the host's
-  synchronize, copy and launch, and what a mailbox would save (Q682).
+  synchronize, copy and launch, what a mailbox would save (Q682), and what the manual staged hop saves over the
+  driver's staging (Q751): the fixed part, and the overlap of the two legs.
 
 ## Files
 

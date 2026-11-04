@@ -1,0 +1,20 @@
+CPY(type_src=f32,type_dst=f16,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f16,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=f16,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f16,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=f16,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f16,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=bf16,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=bf16,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=bf16,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=bf16,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=bf16,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=bf16,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=q8_0,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=q8_0,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+CPY(type_src=q8_0,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+555/555 tests passed
+1/1 backends passed
