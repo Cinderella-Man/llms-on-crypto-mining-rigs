@@ -141,7 +141,10 @@ setsid -f nohup bash tools/docs/data/2026-11-04_pascal_mix/run/chain.sh >> chain
 
 pmix-iq3-fast and pmix-q2-spine6 were scored in place ([run/score_direct.sh](run/score_direct.sh)): the fast disk was busy with
 writes, which slowed every KLD run reading its base logits there, so these two files were read from the HDDs, only
-the n-gram table from the fast disk. spine6 was built on an HDD for the same reason.
+the n-gram table from the fast disk. spine6 was built on an HDD for the same reason. Their KLD ran beside small test
+jobs on the same cards (under ~2 GB each; a copy of FN2's scripts with [run/wait_shared.sh](run/wait_shared.sh) as its
+`wait_gpus`: a free-memory floor a card instead of an empty card), and the first files beside other sessions'
+smaller checks on two of the cards; that changes a run's speed, not its KLD.
 
 The scores, on the quant machine (FN1's environment file copied with `GPUS_ALL` set to the five cards and `TAG` and
 `WORK` to this run's; the controls are named `<file>-c5` so FN2's seven-card logs, which `score.sh` links in, are not
@@ -167,6 +170,7 @@ python3 -I <2026-11-03_flash_next_quality's run/>table.py <OUT> q8_0-ub256 swift
 | [run/score_all.sh](run/score_all.sh) | the KLD runs: [gguf_compose's run/score.sh](../2026-11-04_gguf_compose/run/score.sh) one file at a time, resumable (a done marker per file, a STOP file between files), each file after its build marker |
 | [run/stage.sh](run/stage.sh) | a built file staged on the fast disk before its KLD run (shards copied and checked against the build's md5, the table shard linked to the fast copy), so the cards wait on no copy |
 | [run/score_direct.sh](run/score_direct.sh) | score.sh's interface without its staging: a file scored where it lies, through symbolic links (its table shard to the fast disk's copy), for a fast disk that must take no writes |
+| [run/wait_shared.sh](run/wait_shared.sh) | FN2's `wait_gpus` for cards shared with small jobs: a free-memory floor a card (MIN_FREE_MIB) |
 | [run/rig_time.sh](run/rig_time.sh) | the rig timing of a mix against its base: a 64k load with one request, then T(1) … T(8) |
 
 ## Provenance and licence
