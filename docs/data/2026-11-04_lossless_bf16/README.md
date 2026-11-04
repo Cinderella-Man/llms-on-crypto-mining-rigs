@@ -1,6 +1,6 @@
 # Lossless BF16 for Qwen3.8-Flash-Next: the entropy of its BF16 weights, two codes, a P106 bench
 
-Registry row: [Q621](../../../quants/experiments.md) (exact BF16 from fewer bytes), with Q931 and Q932 (the codes
+Registry row: [Q621](../../../quants/experiments.md) (exact BF16 from fewer bytes), with Q932 and Q935 (the codes
 parked here).
 
 Flash-Next keeps its hyper-connection projections, router, indexer and recurrent-layer gates in BF16. Swift Q2_0 and
@@ -39,7 +39,7 @@ in bits a weight:
   (class means; 0.38 at most, in `blk.0.hc_attn_up`), so a table per row buys little over one per tensor; the codes
   below choose their window per row anyway, since it costs one byte of the row word they need for the escapes.
 - **A static Huffman code of the high byte** (one per tensor) would take 10.76–11.18 bits a weight, ~1.1 bits below
-  x12: at most −92 MB a token below x12 on the hyper-connections (−0.6 ms at 159 GB/s), if its decoder were free (Q931).
+  x12: at most −92 MB a token below x12 on the hyper-connections (−0.6 ms at 159 GB/s), if its decoder were free (Q935).
 - Both files hold the same values: all 435 matrices compare equal (Swift Q2_0's F32 router converts to BF16 exactly,
   `not_bf16` = 0 in every row).
 
