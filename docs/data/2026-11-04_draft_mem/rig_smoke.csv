@@ -1,0 +1,10 @@
+arm,ended,floor_mib,kill,load_s,usable_loaded_mib,shmem_loaded_mib,swap_used_loaded_mib,usable_lowest_after_load_mib,swapout_10s_max_mib,psi_full_max,card4_loaded_mib,card8_loaded_mib,long_prompt,long_gen,long_tps,long_drafted,long_accepted,long_acceptance,smoke_prompt,smoke_gen,smoke_tps,smoke_drafted,smoke_accepted,smoke_acceptance
+sharenw150,stopped by the watchdog,150,"MemAvailable 84 MiB, below 150",219,787,635,24,84,1,0.18,4365,4507,,,,,,,,,,,,
+sharenw,stopped by the watchdog,60,"MemAvailable 54 MiB, below 60",219,794,635,25,54,1,0.36,4365,4507,,,,,,,,,,,,
+stagenw,answered both,60,,222,813,635,26,122,210,2.59,4365,4507,2760,256,9.57,295,156,0.529,79,509,11.36,576,316,0.549
+base,answered both,60,,225,988,231,27,153,0,0.0,5013,4701,2760,255,11.42,270,164,0.607,79,316,13.59,309,212,0.686
+embd,answered both,60,,221,945,262,26,116,6,0.18,4365,4745,2760,256,12.54,246,172,0.699,79,219,13.66,213,147,0.69
+share,answered both,60,,219,972,262,30,129,0,0.0,4365,4249,2760,256,11.52,278,162,0.583,79,183,14.9,168,126,0.75
+stage,answered both,60,,218,952,262,28,115,1,0.37,4365,4249,2760,256,11.39,283,160,0.565,79,220,15.43,198,153,0.773
+short,answered both,60,,218,965,262,30,113,0,0.03,4365,4251,2760,256,12.02,275,163,0.593,79,230,14.49,225,154,0.684
+short-own,answered both,60,,224,1005,231,30,160,0,0.0,5013,4703,2760,256,11.29,286,159,0.556,79,445,13.67,444,296,0.667

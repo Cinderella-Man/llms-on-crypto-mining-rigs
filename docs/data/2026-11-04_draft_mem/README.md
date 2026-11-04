@@ -4,8 +4,8 @@ Three engine switches for the Gyro MTP draft of Qwen3.8-Flash-Next on the 4 GB h
 branch `pascal-p106-v3-b12076-draftmem` (`1e0caf230`, one commit on the speed ladder's `pascal-p106-v3-b12076-ladder`).
 Result rows: [Q564, Q635, Q592 and Q580 in the registry](../../../quants/experiments.md). What the draft cost before
 them: [the MTP draft within the 4 GB host](../2026-11-03_flash_next_mtp/README.md) (S15) and
-[what verifying k tokens costs](../2026-11-03_verify_cost/README.md) (S21). Their memory and speed on the rig are the
-next measurement; this folder holds the checks that run without a GPU.
+[what verifying k tokens costs](../2026-11-03_verify_cost/README.md) (S21). This folder holds the checks that run
+without a GPU and the smoke tests on the rig (S31, [below](#on-the-rig-s31)).
 
 | Switch | What it does | Saves |
 |---|---|---|
@@ -87,6 +87,38 @@ on the CPU; two greedy requests per load, 96 and 53 tokens; [cpu_check.tsv](cpu_
 - `-lm dio` was not run here: the CPU path reads the whole main model into memory, and the pinned staging exists only
   with a GPU, so the rig measures it.
 
+## On the rig (S31)
+
+The second rig (nine P106-090, 4 GB of host RAM, headless, booted with `kho=off` so no memory is CMA-marked), Swift
+Q2_0 with the Gyro draft at `--spec-draft-n-max 3`, the `-draftmem` build. One load per arm, then the agent's
+first-turn request (~2,760 tokens, a bugfix task's whole first request) and the smoke request of
+[S12](../2026-11-03_flash_next_mtp/README.md), under the agent check's RAM watchdog with its `MemAvailable` floor at
+60 MiB (usable under 20 MiB, memory pressure over 40 % for 10 s and 600 MiB of swap-out in 10 s stop it too). Two arms
+use the plain draft line (`-otd`, the 128-token draft micro-batch and `--no-host` all off); the others use S15's line,
+whose `-otd token_embd=CUDA4` the sharing arms replace. [rig_smoke.csv](rig_smoke.csv) has every number.
+
+| Arm | Line | Switches | Ended | Lowest usable after the load (MiB) | Card 4 / card 8 once loaded (MiB) | First turn: tok/s, accepted | Smoke request: tok/s, accepted |
+|---|---|---|---|---|---|---|---|
+| sharenw | plain | `embd,head` | stopped at 54 MiB, early in generation (at a 150 floor: 84 MiB at the end of the prompt) | — | 4,365 / 4,507 | — | — |
+| stagenw | plain | `embd,head`, `LLAMA_DIO_STAGING=2x16` | answered both | 122 (210 MiB swapped out in 10 s at the load) | 4,365 / 4,507 | 9.6, 0.53 | 11.4, 0.55 |
+| base | S15's | none (`-otd token_embd=CUDA4`) | answered both | 153 | 5,013 / 4,701 | 11.4, 0.61 | 13.6, 0.69 |
+| embd | S15's | `embd` | answered both | 116 | 4,365 / 4,745 | 12.5, 0.70 | 13.7, 0.69 |
+| share | S15's | `embd,head` | answered both | 129 | 4,365 / 4,249 | 11.5, 0.58 | 14.9, 0.75 |
+| stage | S15's | `embd,head`, `2x16` | answered both | 115 | 4,365 / 4,249 | 11.4, 0.57 | 15.4, 0.77 |
+| short | S15's | `embd,head`, `2x16`, `LLAMA_DRAFT_SHORTLIST=32768,8192,2` | answered both | 113 | 4,365 / 4,251 | 12.0, 0.59 | 14.5, 0.68 |
+| short-own | S15's | the shortlist on the draft's own head (`-otd token_embd=CUDA4`) | answered both | 160 | 5,013 / 4,703 | 11.3, 0.56 | 13.7, 0.67 |
+
+- **The draft loads and answers with none of S15's workarounds once it shares both tensors and stages through
+  2 × 16 MiB** (stagenw). Sharing alone (sharenw) loads but runs out early in generation. The plain line keeps the
+  main model's token embeddings and the draft's compute buffer pinned (Shmem 635 MiB once loaded, against 231–262 MiB
+  on S15's line), so it has the least room of any arm that answered.
+- **On S15's line the switches free cards, not host memory:** sharing the embeddings takes 648 MiB off card 4, sharing
+  the head 452 MiB more off card 8, at the same speed. Host memory once loaded and at its lowest is 15–40 MiB below the
+  control's.
+- **Speed and acceptance:** each arm samples two requests at temperature 1.0, so differences of a few tenths of a
+  token per second or a few points of acceptance are noise. Nothing here shows the shortlist paying (`short`: 218 drafts
+  with it and 26 with the full head on the two requests). The agent check settles both.
+
 ## Files
 
 | File | What |
@@ -97,6 +129,9 @@ on the CPU; two greedy requests per load, 96 and 53 tokens; [cpu_check.tsv](cpu_
 | `run/embd_equal.py` | the comparison (gguf-py, numpy) |
 | `run/cpu_draft_check.sh` | the switches on the real files, on a CPU |
 | `run/token_freq.sh` | a frequency list for `LLAMA_DRAFT_SHORTLIST_FILE` from an agent check's logged requests |
+| [rig_smoke.csv](rig_smoke.csv) | S31 on the rig, one row per arm: how it ended, the watchdog's floor and reason, load seconds, usable host memory, Shmem and swap once loaded, the lowest usable after the load, the most swap-out in 10 s, the highest pressure, cards 4 and 8, and per request prompt and generated tokens, tok/s, drafted, accepted and the acceptance |
+| `run/rig_smoke_s31.sh` | S31's smoke arms on a rig |
+| `run/s31_tables.py` | `rig_smoke.csv` from the arms' folders |
 
 ## Commands
 
@@ -114,6 +149,12 @@ cmake --build build --target test-draft-mem && build/bin/test-draft-mem
 ln -s /usr/local/cuda/lib64/stubs/libcuda.so /tmp/stub/libcuda.so.1 && export LD_LIBRARY_PATH=/tmp/stub
 BIN=<build>/bin MODEL=<main model shard 1> DRAFT=<draft> OUT=out THREADS=16 BODIES=<proxy.jsonl.bodies.gz> \
   ARMS="nodraft base embd share short shareshort shortfile" bash run/cpu_draft_check.sh
+
+# S31 on a rig, from the repository root: the machine file is S12's (docs/data/2026-11-03_flash_next_mtp/run/s12.env.example)
+ENVFILE=s12.env OUT=s31 MIN_AVAIL_MB=60 bash docs/data/2026-11-04_draft_mem/run/rig_smoke_s31.sh
+python3 -I docs/data/2026-11-04_draft_mem/run/s31_tables.py --out rig_smoke.csv \
+  sharenw=s31/smoke-sharenw stagenw=s31/smoke-stagenw base=s31/smoke-base embd=s31/smoke-embd share=s31/smoke-share \
+  stage=s31/smoke-stage short=s31/smoke-short short-own=s31/smoke-short-own
 ```
 
 ## Provenance and licence
