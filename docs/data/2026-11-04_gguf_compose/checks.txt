@@ -1,0 +1,134 @@
+== q2_0-hcq6k
+BF16 -> Q6_K: 193 tensors, 643,563,520 -> 263,961,600 bytes (-379,601,920)
+BF16 -> Q8_0: 97 tensors, 635,699,200 -> 337,715,200 bytes (-297,984,000)
+F32 -> F16: 96 tensors, 252,149,760 -> 126,074,880 bytes (-126,074,880)
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k-00001-of-00003.gguf: 237 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf, 106 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k-00002-of-00003.gguf: 600 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00002-of-00003.gguf, 280 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k-00003-of-00003.gguf: 1 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq8-00003-of-00003.gguf, 0 converted
+F16: 96 tensors identical to ggml_quantize_chunk's; blk.1.ffn_gate_inp.weight's differ from blk.0.ffn_gate_inp.weight's
+Q8_0: 97 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_up.weight's differ from output_hc_up.weight's
+Q8_0: 97 tensors identical to llama-quantize's
+Q6_K: 193 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_down.weight's differ from output_hc_down.weight's
+Q6_K: 193 tensors identical to llama-quantize's
+llama.cpp loader (llama-quantize --dry-run):
+loaded meta data with 75 key-value pairs and 1224 tensors from Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k-00001-of-00003.gguf (version GGUF V3 (latest))
+- type  f32:  292 tensors
+- type  f16:   97 tensors
+- type q4_0:   16 tensors
+- type q5_0:    7 tensors
+- type q8_0:   99 tensors
+- type q3_K:   91 tensors
+- type q4_K:   38 tensors
+- type q5_K:   16 tensors
+- type q6_K:  205 tensors
+- type iq4_nl:    8 tensors
+- type iq4_xs:   56 tensors
+- type bf16:   97 tensors
+- type q2_0:  202 tensors
+F16: 96 tensors identical to ggml_quantize_chunk's; blk.1.ffn_gate_inp.weight's differ from blk.0.ffn_gate_inp.weight's
+Q8_0: 97 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_up.weight's differ from output_hc_up.weight's
+Q8_0: 97 tensors identical to llama-quantize's
+Q6_K: 193 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_down.weight's differ from output_hc_down.weight's
+Q6_K: 193 tensors identical to llama-quantize's
+ok
+== q2_0-hcq5
+BF16 -> Q5_0: 290 tensors, 1,279,262,720 -> 439,746,560 bytes (-839,516,160)
+F32 -> F16: 96 tensors, 252,149,760 -> 126,074,880 bytes (-126,074,880)
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq5-00001-of-00003.gguf: 237 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf, 106 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq5-00002-of-00003.gguf: 600 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00002-of-00003.gguf, 280 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq5-00003-of-00003.gguf: 1 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq8-00003-of-00003.gguf, 0 converted
+F16: 96 tensors identical to ggml_quantize_chunk's; blk.1.ffn_gate_inp.weight's differ from blk.0.ffn_gate_inp.weight's
+Q5_0: 290 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_down.weight's differ from output_hc_down.weight's
+Q5_0: 290 tensors identical to llama-quantize's
+llama.cpp loader (llama-quantize --dry-run):
+loaded meta data with 75 key-value pairs and 1224 tensors from Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq5-00001-of-00003.gguf (version GGUF V3 (latest))
+- type  f32:  292 tensors
+- type  f16:   97 tensors
+- type q4_0:   16 tensors
+- type q5_0:  297 tensors
+- type q8_0:    2 tensors
+- type q3_K:   91 tensors
+- type q4_K:   38 tensors
+- type q5_K:   16 tensors
+- type q6_K:   12 tensors
+- type iq4_nl:    8 tensors
+- type iq4_xs:   56 tensors
+- type bf16:   97 tensors
+- type q2_0:  202 tensors
+F16: 96 tensors identical to ggml_quantize_chunk's; blk.1.ffn_gate_inp.weight's differ from blk.0.ffn_gate_inp.weight's
+Q5_0: 290 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_down.weight's differ from output_hc_down.weight's
+Q5_0: 290 tensors identical to llama-quantize's
+ok
+== q2_0-hcq6k5
+BF16 -> Q5_0: 97 tensors, 635,699,200 -> 218,521,600 bytes (-417,177,600)
+BF16 -> Q6_K: 193 tensors, 643,563,520 -> 263,961,600 bytes (-379,601,920)
+F32 -> F16: 96 tensors, 252,149,760 -> 126,074,880 bytes (-126,074,880)
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k5-00001-of-00003.gguf: 237 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf, 106 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k5-00002-of-00003.gguf: 600 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00002-of-00003.gguf, 280 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k5-00003-of-00003.gguf: 1 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq8-00003-of-00003.gguf, 0 converted
+F16: 96 tensors identical to ggml_quantize_chunk's; blk.1.ffn_gate_inp.weight's differ from blk.0.ffn_gate_inp.weight's
+Q5_0: 97 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_up.weight's differ from output_hc_up.weight's
+Q5_0: 97 tensors identical to llama-quantize's
+Q6_K: 193 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_down.weight's differ from output_hc_down.weight's
+Q6_K: 193 tensors identical to llama-quantize's
+llama.cpp loader (llama-quantize --dry-run):
+loaded meta data with 75 key-value pairs and 1224 tensors from Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-hcq6k5-00001-of-00003.gguf (version GGUF V3 (latest))
+- type  f32:  292 tensors
+- type  f16:   97 tensors
+- type q4_0:   16 tensors
+- type q5_0:  104 tensors
+- type q8_0:    2 tensors
+- type q3_K:   91 tensors
+- type q4_K:   38 tensors
+- type q5_K:   16 tensors
+- type q6_K:  205 tensors
+- type iq4_nl:    8 tensors
+- type iq4_xs:   56 tensors
+- type bf16:   97 tensors
+- type q2_0:  202 tensors
+F16: 96 tensors identical to ggml_quantize_chunk's; blk.1.ffn_gate_inp.weight's differ from blk.0.ffn_gate_inp.weight's
+Q5_0: 97 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_up.weight's differ from output_hc_up.weight's
+Q5_0: 97 tensors identical to llama-quantize's
+Q6_K: 193 tensors identical to ggml_quantize_chunk's; blk.0.hc_attn_down.weight's differ from output_hc_down.weight's
+Q6_K: 193 tensors identical to llama-quantize's
+ok
+== iq3_xxs-spine8
+301 tensors from the donor: 2,304,675,840 -> 3,767,091,200 bytes (+1,462,415,360)
+1224 tensors in 3 shards: 301 identical to the donor's, 923 to the base's
+llama.cpp loader (llama-quantize --dry-run):
+loaded meta data with 75 key-value pairs and 1224 tensors from Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine8-00001-of-00003.gguf (version GGUF V3 (latest))
+- type  f32:  292 tensors
+- type  f16:   97 tensors
+- type q8_0:  591 tensors
+- type iq2_xxs:   18 tensors
+- type iq2_xs:   20 tensors
+- type iq3_xxs:   12 tensors
+- type iq4_nl:   19 tensors
+- type iq3_s:   27 tensors
+- type iq2_s:   20 tensors
+- type bf16:   98 tensors
+- type q2_0:   30 tensors
+== iq3_xxs-spine5
+Q8_0 -> Q5_0: 300 tensors, 3,091,660,800 -> 2,000,486,400 bytes (-1,091,174,400)
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine5-00001-of-00003.gguf: 239 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine8-00001-of-00003.gguf, 77 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine5-00002-of-00003.gguf: 684 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine8-00002-of-00003.gguf, 223 converted
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine5-00003-of-00003.gguf: 1 tensors identical to Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine8-00003-of-00003.gguf, 0 converted
+Q5_0: 300 tensors identical to ggml_quantize_chunk's; blk.1.attn_gate.weight's differ from blk.0.attn_gate.weight's
+Q5_0: 300 tensors identical to llama-quantize's
+llama.cpp loader (llama-quantize --dry-run):
+loaded meta data with 75 key-value pairs and 1224 tensors from Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-hcq8-spine5-00001-of-00003.gguf (version GGUF V3 (latest))
+- type  f32:  292 tensors
+- type  f16:   97 tensors
+- type q5_0:  300 tensors
+- type q8_0:  291 tensors
+- type iq2_xxs:   18 tensors
+- type iq2_xs:   20 tensors
+- type iq3_xxs:   12 tensors
+- type iq4_nl:   19 tensors
+- type iq3_s:   27 tensors
+- type iq2_s:   20 tensors
+- type bf16:   98 tensors
+- type q2_0:   30 tensors
+Q5_0: 300 tensors identical to ggml_quantize_chunk's; blk.1.attn_gate.weight's differ from blk.0.attn_gate.weight's
+Q5_0: 300 tensors identical to llama-quantize's
+ok
