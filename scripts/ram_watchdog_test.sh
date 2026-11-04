@@ -340,6 +340,7 @@ if has server_bench; then
     bash -c "! ps -eo args | grep -F 'ram_watchdog-$tag' | grep -v grep | grep -q . && ! ls /dev/shm/ram_watchdog-$tag.* 2> /dev/null | grep -q ."
   check "server_bench: no stand-in server is left" bash -c "! ps -eo args | grep -F -- '--port $port' | grep -v grep | grep -q ."
   rm -rf "$O"
+  rmdir /tmp/server_bench 2> /dev/null  # the folder server_bench.sh makes, if nothing else is in it
 fi
 
 echo "ram_watchdog_test: $pass passed, $fail failed"
