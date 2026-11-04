@@ -1,14 +1,53 @@
 # Usage-pruned Flash-Next files: Swift IQ3_S with 464, 448 and 416 experts per layer (2026-11-04)
 
-Registry row Q890 ([quants/experiments.md](../../../quants/experiments.md)); the KL-divergence run they are for is Q891.
+Registry rows Q890 (the tool and the files) and Q891 (their KL divergence) ([quants/experiments.md](../../../quants/experiments.md)).
 [2026-11-04_expert_usage](../2026-11-04_expert_usage/README.md) counted how often each of Qwen3.8-Flash-Next's 512
 routed experts per layer is picked on agent text and found that keeping each layer's busiest 464 loses 0.22 % of the
 routings, and that Swift-1.5 GSQ-RCO IQ3_S, the best file that does not fit one rig's nine 6 GB cards, fits them at 64k
 context with 464 experts per layer (448 with the DFlash2 draft, 416 on whole layers). This folder holds the tool that
-makes such a file, [scripts/gguf_prune.py](../../../scripts/gguf_prune.py), its checks, and the three cut files' sizes,
-checksums and a first CPU look at what the cut costs. Everything here ran on a CPU; no GPU and no rig.
+makes such a file, [scripts/gguf_prune.py](../../../scripts/gguf_prune.py), its checks, the three cut files' sizes and
+checksums, and what the cuts cost: a first look on a CPU, then the KL divergence of every file on five GPUs. The cuts and
+their checks ran on a CPU; no rig was used.
 
 ## Result
+
+**A usage cut keeps agent and code quality and loses general knowledge.** Q891 scored the uncut Swift IQ3_S and its three
+cuts against the Swift-1.5 Q8_0 reference's logits on the quality chain's three texts
+([2026-11-03_flash_next_quality](../2026-11-03_flash_next_quality/README.md): held-out agent sessions 12 × 8,192 tokens,
+Exercism code 80 × 512, wikitext-2 80 × 512), all four on the same five GPUs with the same flags; Swift IQ3_XXS, today's
+one-rig file, is that chain's published score. Mean KL divergence (± its error) and the share of tokens whose top choice
+stays the same, [kld.tsv](kld.tsv):
+
+| File | Agent KLD | Same top | Wiki KLD | Same top | Code KLD | Same top |
+|---|---|---|---|---|---|---|
+| IQ3_S, uncut | 0.118 ± 0.003 | 93.6 % | 0.153 ± 0.003 | 87.0 % | 0.032 ± 0.002 | 98.0 % |
+| IQ3_S, 464 experts | 0.123 ± 0.003 | 93.8 % | 0.446 ± 0.006 | 78.0 % | 0.034 ± 0.002 | 98.0 % |
+| IQ3_S, 448 experts | 0.122 ± 0.003 | 93.6 % | 0.551 ± 0.007 | 75.9 % | 0.034 ± 0.001 | 98.0 % |
+| IQ3_S, 416 experts | 0.131 ± 0.003 | 93.5 % | 0.724 ± 0.009 | 71.7 % | 0.043 ± 0.002 | 97.7 % |
+| IQ3_XXS (published score) | 0.176 ± 0.004 | 92.3 % | 0.248 ± 0.004 | 83.3 % | 0.054 ± 0.002 | 97.5 % |
+
+- **On agent and code text the cuts cost almost nothing.** Against the uncut file they add 0.005, 0.004 and 0.012 on
+  agent text and 0.002, 0.002 and 0.011 on code, and stay 0.045–0.053 and 0.011–0.020 below IQ3_XXS. The median token
+  does not move (agent 0.0008 in all four files, code 0.00004) and the share of unchanged top tokens stays at the uncut
+  file's; the added mean sits in the tail, where the 99th percentile rises from 2.40 to 2.57–2.69 on agent text and
+  from 0.79 to 0.87–1.03 on code ([kld_stats.tsv](kld_stats.tsv)).
+- **On wiki text they cost a lot, and everywhere in the text.** The mean rises from 0.153 to 0.446, 0.551 and 0.724,
+  above IQ3_XXS's 0.248 at every cut; the median token's KLD rises from 0.034 to 0.112, 0.147 and 0.222, the unchanged
+  top tokens fall from 87.0 % to 78.0, 75.9 and 71.7 %, and the perplexity ratio against the reference rises from 1.04 to
+  1.29, 1.42 and 1.66. The experts that agent text rarely picks, which a ranking counted on agent sessions drops, carry
+  the general knowledge that the wiki text asks for.
+- **What a cut file is for:** a coding-only line. At 464 experts it is 4.74 GB smaller than the uncut file, keeps its
+  agent and code scores, and fits the rig's nine cards at 64k by Q232's plan where the uncut file does not
+  ([cuts.tsv](cuts.tsv); the rig's own fit is Q902); it is no replacement for IQ3_XXS where the model is asked anything
+  else. 448 and 416 save 1.6 and 4.7 GB more and cost more on every text, so 464 is the cut to take further. A ranking
+  that includes wiki routings (Q892) and a low-bit tier for rarely used experts instead of dropping them (Q238) are the
+  ways to keep the knowledge.
+- **The control is the same file on the same cards.** The uncut file scored again here reads 0.118 / 0.153 / 0.032
+  against 0.121 / 0.153 / 0.032 when the quality chain scored it on other cards, so the published IQ3_XXS scores are
+  comparable to within about 0.003. The cuts rank experts by routing counts alone; whether they keep the experts a tool
+  call needs is a separate check (Q897, Q937).
+
+## The cut files
 
 **Three cut copies of Swift IQ3_S, exact and loadable,** in the layout the rig uses (shards 1–2 cut, shard 3 the
 unchanged n-gram table). Each keeps every layer's most-routed experts on Q232's agent text ([cuts.tsv](cuts.tsv)):
@@ -20,17 +59,11 @@ unchanged n-gram table). Each keeps every layer's most-routed experts on Q232's 
 | 448 | 48.61 GB | −6.32 GB (11.5 %) | 99.61 % (98.89 %) | experts moved, `-ub 256`: 165 MiB; with DFlash2, `-ub 128`: 211 MiB | 0.044 ± 0.012 | 97.4 % |
 | 416 | 45.46 GB | −9.48 GB (17.3 %) | 99.07 % (97.20 %) | whole layers, `-ub 256`: 172 MiB; with DFlash2, `-ub 128`: 299 MiB | 0.056 ± 0.014 | 96.9 % |
 
-- **The cut is not free, and the CPU sample cannot say yet whether it pays.** On 4 chunks of 512 tokens of the held-out
-  agent text (1,024 scored tokens), the 464 cut alone moves the output by a KL divergence of 0.060 ± 0.015 from the
-  uncut file, almost all of it in one chunk (0.229; the other three 0.0006–0.007, and the largest single token 9.3),
-  while IQ3_S leads IQ3_XXS by 0.055 against the Q8_0 reference on FN2's agent text (0.121 against 0.176). KL
-  divergences do not add, so this does not settle it: Q891 scores the three files against the Q8_0 reference on FN2's
-  three full texts (agent 12 × 8,192 tokens, wiki and code 80 × 512), with the uncut file and Swift IQ3_XXS on the same
-  cards as the controls.
-- **This sample cannot tell the three cuts apart** ([cpu_kld.tsv](cpu_kld.tsv)): 0.060, 0.044 and 0.056, each within
-  the others' error, and in each almost all of it in the first chunk (0.17–0.23; the later three average
-  0.004–0.005). The median token does not change (KLD 4–6 × 10⁻⁶); the mean comes from the 1 % of tokens above a KLD of
-  about 1. Only the share of tokens whose top choice stays the same falls with the cut: 97.5, 97.4 and 96.9 %.
+- **The CPU column is a small sample** ([cpu_kld.tsv](cpu_kld.tsv)): the KL divergence of each cut from the uncut file
+  on 4 chunks of 512 tokens of the held-out agent text (1,024 scored tokens), almost all of it in the first chunk
+  (0.17–0.23; the later three average 0.004–0.005). The median token does not change (KLD 4–6 × 10⁻⁶); the mean comes
+  from the 1 % of tokens above a KLD of about 1. The scores of the full texts above are the measure: on 12 × 8,192 agent
+  tokens the cuts add 0.004–0.012 to the uncut file's KLD against the Q8_0 reference, not 0.044–0.060.
 - The routings a cut drops (0.22 % at 464) understate what it changes: a token that picked a cut expert in any of 48
   layers gets the next one on its router's list, and on Q232's text that is about one routing a token (10 picks ×
   48 layers × 0.22 %).
@@ -84,9 +117,11 @@ that ~150 GB of reads and writes per file did not push other jobs' files out of 
 | [cuts.tsv](cuts.tsv) | per cut: experts kept, the bytes of the three shards and those saved against the uncut file, and the share of Q232's agent routings and activation energy the kept experts carry (all layers, the worst layer) |
 | [checks.tsv](checks.tsv) | one verdict line per check of `run/prune.sh` (self-test, random models, cut, verify, header copies, CPU load) |
 | [cpu_kld.tsv](cpu_kld.tsv) | the CPU load: each cut's KL divergence, same-top-token share and perplexity ratio against the uncut file's logits on 4 × 512 tokens of the held-out agent text |
+| [kld.tsv](kld.tsv) | Q891: each file's KL divergence against the Swift-1.5 Q8_0 reference on the agent, code and wiki texts (`kld`, `err`, `same_top_pct`, `ppl_ratio`), and the difference from the uncut IQ3_S scored in the same run (`d_uncut`) and from Swift IQ3_XXS's published score (`d_iq3_xxs`: agent 0.175513, wiki 0.247651, code 0.054359) |
+| [kld_stats.tsv](kld_stats.tsv) | the same runs' distribution: mean, median, 99th and 99.9th percentile and largest KLD, and the unchanged-top-token share |
 | [checksums.md5](checksums.md5) | md5 of every written shard (shard 3, the n-gram table, is the unchanged source shard, md5 `98ce140e641bc5d68af9f31df0f1c048`) |
 | [kept/](kept/) | `kept_e464.tsv`, `kept_e448.tsv`, `kept_e416.tsv`: each layer's kept expert ids (the `--ids` format) |
-| [run/](run/) | `prune.sh` (every step above), `cuts.py` (the cuts table), `kld.sh` (Q891's KL-divergence run on the GPUs) |
+| [run/](run/) | `prune.sh` (every step above), `cuts.py` (the cuts table), `kld.sh` (Q891's KL-divergence run on the GPUs), `kld_stats.sh` (its distribution table) |
 
 The tool and its self-test are [scripts/gguf_prune.py](../../../scripts/gguf_prune.py) and
 [scripts/gguf_prune_test.py](../../../scripts/gguf_prune_test.py).
@@ -114,15 +149,35 @@ EXPERTS=docs/data/2026-11-04_expert_usage/experts.tsv.gz CPUS=8-11,20-23 THREADS
 PY_IMAGE=python:3.12-slim-bookworm PY_MEMORY=8g bash docs/data/2026-11-04_gguf_prune/run/prune.sh
 ```
 
-`TEXT` is the held-out agent text of [2026-10-27_ornith_kld](../2026-10-27_ornith_kld/README.md). Q891 on the GPUs,
-after the quality chain's bases exist ([2026-11-03_flash_next_quality](../2026-11-03_flash_next_quality/README.md)),
-with `kld.files` listing `swift-iq3_s=<uncut first shard>` and then `swift-iq3_s-e<N>=<cut first shard>` per cut:
+`TEXT` is the held-out agent text of [2026-10-27_ornith_kld](../2026-10-27_ornith_kld/README.md).
+
+Q891 on the GPUs (five cards, each file split across them by `-fit on` with the bases' `gpu_args`; the four files took
+75 minutes), after
+the quality chain's bases exist ([2026-11-03_flash_next_quality](../2026-11-03_flash_next_quality/README.md)).
+`kld.files` lists the files in the order they are scored, as `<name>=<first shard>` lines; the uncut file goes in
+beside the cuts so that it is scored again on the same cards as their control:
+
+```
+swift-iq3_s-e464=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-e464-00001-of-00003.gguf
+swift-iq3_s=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00003.gguf
+swift-iq3_s-e448=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-e448-00001-of-00003.gguf
+swift-iq3_s-e416=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-e416-00001-of-00003.gguf
+```
+
+Every path starts with `FAST`, so each file is read where it is (`fn2.sh` copies a file that is outside `FAST` to `HOT`
+first), with the cut files' shard 3 linked to the n-gram table so that all four share it in the page cache.
 
 ```bash
-PPL=<llama-perplexity of the bases' build> GPUS=<cards> MOUNTS="<folders>" WIKI=<wiki.test.raw> AGENT=<agent-heldout.txt> \
-CODE=<code-exercism.txt> TAG=prune HOT=<fast disk folder> FAST=<fast disk prefix> BASES=<bases folder> OUT=<out> \
-FILES=kld.files bash docs/data/2026-11-04_gguf_prune/run/kld.sh
+# the quality chain's environment (PPL, IMAGE, MOUNTS, WIKI, AGENT, CODE) as in 2026-11-03_flash_next_quality, then:
+export TAG=prune GPUS=<five cards> BASES=<the chain's bases folder, with base.{agent,code,wiki}.kld and gpu_args> \
+       OUT=<out> HOT=<scratch folder> FAST=<path prefix of the model folder> FILES=<kld.files> TEXTS="agent code wiki" \
+       PREFLIGHT=scripts/cuda_preflight.sh PREFLIGHT_CACHE=<folder>
+bash docs/data/2026-11-04_gguf_prune/run/kld.sh            # writes $OUT/<name>.<text>.log and $OUT/kld.tsv
+OUT=$OUT FILES=$FILES bash docs/data/2026-11-04_gguf_prune/run/kld_stats.sh > kld_stats.tsv
 ```
+
+`kld.tsv` here adds the two difference columns to the run's `$OUT/kld.tsv` (the uncut row's `kld` and Swift IQ3_XXS's
+published score subtracted from each row's).
 
 ## Provenance
 
