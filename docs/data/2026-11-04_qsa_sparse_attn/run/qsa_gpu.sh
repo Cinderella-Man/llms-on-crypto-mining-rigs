@@ -4,7 +4,8 @@
 #   check  test-backend-ops FLASH_ATTN_EXT against the CPU backend under GGML_CUDA_FATTN_SPARSE_PASCAL=1 (the path below
 #          Turing, from 1.5 x n_kv_max cells), =2 with _NQ=128 (any size, and the 64- and 67-token cases too) and =0
 #          (the stock kernels on the same cases)
-#   fault  =2 with each of the three _FAULT codes (testing the tests): every run must fail cases
+#   fault  =2 with each of the three _FAULT codes (testing the tests): 2 and 3 must fail cases; 1 (output x 1.01, an NMSE
+#          of ~1e-4) stays inside test-backend-ops' limit for FLASH_ATTN_EXT (5e-4) and must pass, as FAP's fault 1 does
 #   fasp   bench/fattn_sparse's fasp_check --gpu: the kernel itself against FP64 and ggml's CPU kernel on 20 cases, with
 #          the host model beside it (lists built on the host, as the compaction would)
 #   perf   test-backend-ops perf on Flash-Next's QSA call (head 256, 2 x 12 heads, 2,051 cells, cache layout) at 1 and
@@ -40,6 +41,8 @@ tbo() {
     local verdict=WRONG
     { [ "$want" = ok ] && [ "$rc" = 0 ] && [ "$fails" = 0 ]; } && verdict=ok
     { [ "$want" = fail ] && [ "$fails" -gt 0 ]; } && verdict=ok
+    # a run in which no case ran (a filter or backend name that matches nothing) proves nothing either way
+    [ -n "$passed" ] || verdict="WRONG (no cases ran)"
     log "$verdict  $name: rc=$rc, '$passed', $fails FAIL lines ($*)"
 }
 
@@ -50,7 +53,8 @@ if has check; then
 fi
 
 if has fault; then
-    for f in 1 2 3; do
+    tbo fault1 ok GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=1
+    for f in 2 3; do
         tbo fault$f fail GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=$f
     done
 fi

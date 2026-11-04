@@ -3,9 +3,11 @@
 # switch on and off, so that a failing switch is found by its run's name. One NVIDIA GPU, run natively (no container):
 #   MODE=native  on a P106-090: the kernels as the rig runs them, every switch at its default (compute 6.1 turns the
 #                fork's kernels on);
-#   MODE=ptx     on a newer NVIDIA GPU through the build's compute_61 PTX (CUDA_FORCE_PTX_JIT=1), every fork path forced
-#                on with =2 and the P106's launch shapes (NSM=5): the kernels a P106 runs, on another card. Wrap the script
-#                in the CUDA 12.9 container with one GPU.
+#   MODE=ptx     on a newer NVIDIA GPU through the build's compute_61 PTX, every fork path forced on with =2 and the
+#                P106's launch shapes (NSM=5): the kernels a P106 runs, on another card. The rig build holds only sm_61
+#                code and compute_61 PTX, so the driver JIT-compiles that PTX by itself; PTX_JIT=1 adds
+#                CUDA_FORCE_PTX_JIT=1 for a build that also holds the card's own code (cuBLAS, which ships no PTX for
+#                these cards, then aborts every case it takes). Wrap the script in the CUDA 12.9 container with one GPU.
 # Correctness only, no timings. test-backend-ops compares the GPU with the CPU backend.
 #
 # Usage: BIN=<bin/ of the unpacked rig tarball, with test-llama-archs and test-llama-context from the extra tarball> \
@@ -33,10 +35,10 @@ OFF="GGML_CUDA_MMVQ_PASCAL=0 GGML_CUDA_MMVF_PASCAL=0 GGML_CUDA_MMVQ_PASCAL_KCOL=
      GGML_CUDA_PERSISTENT_MOE=0 GGML_CUDA_FATTN_PASCAL=0 GGML_CUDA_FATTN_TILE_PASCAL=0 GGML_CUDA_ATTN_BLOCK=0
      GGML_CUDA_NORM_Q8=0 GGML_CUDA_GDN_FUSE=0 LLAMA_GDN_FUSE=0"
 if [ "$MODE" = ptx ]; then
-    ON="CUDA_FORCE_PTX_JIT=1 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_PERSISTENT_MOE=2
+    ON="CUDA_FORCE_PTX_JIT=${PTX_JIT:-0} GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_PERSISTENT_MOE=2
         GGML_CUDA_FATTN_PASCAL=2 GGML_CUDA_FATTN_TILE_PASCAL=2 GGML_CUDA_ATTN_BLOCK=2
         GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5"
-    OFF="CUDA_FORCE_PTX_JIT=1 $OFF"
+    OFF="CUDA_FORCE_PTX_JIT=${PTX_JIT:-0} $OFF"
     export CUDA_CACHE_PATH=${CUDA_CACHE_PATH:-$OUT/nvcache} CUDA_CACHE_MAXSIZE=4294967296
     DEVS2=${DEVS2:-}
     DEFAULT_SKIP=""
@@ -46,6 +48,12 @@ else
     DEFAULT_SKIP="all-on all-off"
 fi
 SKIP=${SKIP-$DEFAULT_SKIP}
+# The grid types' MUL_MAT_ID cases with repeated expert ids (dup=1) at 5-8 tokens test the fork's multi-token kernels;
+# with those kernels off, llama.cpp's MMQ takes them, which does not support repeated ids (upstream keeps such cases
+# disabled for CUDA, TAG_MUL_MAT_ID_DUPLICATE_ID) and reads out of bounds. The stock arms leave them out in MODE=ptx;
+# natively they run (Q875).
+NODUP=""
+[ "$MODE" = ptx ] && NODUP='^(?!type_a=iq[0-9a-z_]+,.*,n=[5-8],.*dup=1)'
 
 wanted() {
     case " ${SKIP} " in *" $1 "*) return 1 ;; esac
@@ -101,7 +109,7 @@ run hcsm        "HC_STREAM_MEAN"                   "$PASS" "$DEV" "$ON" $T -o HC
 # -iqmmvq (C79): the grid types' Pascal kernels beside Q2_0's tile staging
 IQ='type_a=iq2_s|type=iq2_s|type_a=iq3_xxs|type=iq3_xxs'
 run iq          "-iqmmvq (IQ2_S, IQ3_XXS)"         "$PASS" "$DEV" "$ON" $T -o $MM -p "$IQ"
-run iq-off      "grid types to llama.cpp"          "$PASS" "$DEV" "$ON GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_s,iq3_xxs" $T -o $MM -p "$IQ"
+run iq-off      "grid types to llama.cpp"          "$PASS" "$DEV" "$ON GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_s,iq3_xxs" $T -o $MM -p "$NODUP.*($IQ)"
 
 # -kcol (C70): the k-column dense products, 1-8 tokens
 KT='type_a=(q8_0|q2_0|q3_K|q4_K|q5_K|q6_K|iq4_xs),(type_b=f32,)?m=[0-9]+,n=[1-8],'
@@ -160,7 +168,7 @@ fi
 
 # the whole suite, every fork path on and off (MODE=ptx by default)
 run all-on      "every case, fork paths on"        "$PASS" "$DEV" "$ON" $T
-run all-off     "every case, fork paths off"       "all but Q2_0's large-activation cases" "$DEV" "$OFF" $T
+run all-off     "every case, fork paths off"       "all but Q2_0's large-activation cases" "$DEV" "$OFF" $T ${NODUP:+-p "$NODUP"}
 
 # the standalone benches' own correctness checks (C70's mmvq_kcol, R7's --q2_0-mtok), when given
 NSM=$([ "$MODE" = ptx ] && echo "--nsm 5")

@@ -4,8 +4,9 @@
 # MUL_MAT_ID_SHARED cases of 1 to 4 tokens (larger batches run llama.cpp's own batched kernels, which this branch does
 # not touch). Prints pass counts and failures only; no timings (bench/mmvq_pascal/iq_perf.sh times them).
 #   MODE=ptx     a newer NVIDIA GPU (run inside nvidia/cuda:12.9.2-devel-ubuntu24.04 with one GPU): the compute 6.1 PTX
-#                the P106 runs, through the driver's JIT (CUDA_FORCE_PTX_JIT=1), with the Pascal kernels forced on any
-#                GPU (GGML_CUDA_MMVQ_PASCAL=2); every case
+#                the P106 runs, through the driver's JIT (a rig build holds no other device code; PTX_JIT=1 adds
+#                CUDA_FORCE_PTX_JIT=1 for a build that does, which also aborts every case cuBLAS takes), with the Pascal
+#                kernels forced on any GPU (GGML_CUDA_MMVQ_PASCAL=2); every case
 #   MODE=native  a P106 (compute 6.1, its own sm_61 code); the dense cases of 6144 rows or more are left out, because a
 #                2-core host quantizes their IQ weights for many minutes (the PTX run covers them)
 # Runs (RUNS, default "on skip memcheck"):
@@ -25,7 +26,7 @@ mkdir -p "$OUT"
 rm -f "$OUT/done" "$OUT/console.txt"
 T="$BIN/test-backend-ops -b CUDA0"
 if [ "$MODE" = ptx ]; then
-    export GGML_CUDA_MMVQ_PASCAL=2 CUDA_FORCE_PTX_JIT=1
+    export GGML_CUDA_MMVQ_PASCAL=2 CUDA_FORCE_PTX_JIT=${PTX_JIT:-0}
     EXCL=""
 else
     export CUDA_VISIBLE_DEVICES=${GPU:-0}

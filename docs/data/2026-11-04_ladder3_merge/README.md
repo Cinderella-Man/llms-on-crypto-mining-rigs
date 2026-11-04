@@ -149,7 +149,13 @@ off).
 
 - **Through the compute 6.1 PTX on another NVIDIA GPU** (an RTX 3090 here): `MODE=ptx`, inside
   `nvidia/cuda:12.9.2-devel-ubuntu24.04` with two cards (`--gpus '"device=<a>,<b>"'`; inside they are 0 and 1), curl and
-  jq installed, est. 2–3 h (the whole-suite sweeps of the `ladder2` part are most of it).
+  jq installed, est. 2–3 h (the whole-suite sweeps of the `ladder2` part are most of it; `PARTS`, and `-ladder2`'s
+  `RUNS`/`SKIP`, split it across containers that run side by side). The rig build holds only sm_61 code and compute_61
+  PTX, so the card JIT-compiles that PTX by itself; `CUDA_FORCE_PTX_JIT=1` is left off (`PTX_JIT=0`), because it would
+  also force cuBLAS onto PTX that cuBLAS does not ship, and every case cuBLAS takes would abort its run (Q876). The
+  stock arms (`ladder2`'s `iq-off` and `all-off`, `iqkcol`'s `off` and `skip`) leave out the grid types' cases with
+  repeated expert ids at 5–8 tokens: llama.cpp's MMQ takes them there and does not support repeated ids (Q875;
+  [run/probe_dup_ids.sh](run/probe_dup_ids.sh) isolates the case). Natively both run as before.
 - **On P106-090s natively:** `MODE=native` on a rig alone, cards 0 and 0,1; `PARTS` splits the run between two rigs
   (est. `ladder2 fap hops vgraphs ckpt server` ~3.5 h, `kcol iq2xs iqkcol qsa` ~2.5 h on the rig's Celeron).
 - **Card choice:** `DEV`/`DEVS2` in PCI bus order; by default the first entry (and first two) of

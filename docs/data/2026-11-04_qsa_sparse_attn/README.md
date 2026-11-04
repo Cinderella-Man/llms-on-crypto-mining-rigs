@@ -137,8 +137,8 @@ docker run --rm --gpus device=<n> -v <work>:/w -e CUDA_FORCE_PTX_JIT=1 -e BIN=/w
   nvidia/cuda:12.9.2-devel-ubuntu24.04 bash /w/qsa_gpu.sh
 ```
 
-`console.txt` must show `ok` for `sparse1`, `sparse2`, `sparse0` (every case passing), `fault1`–`fault3` (cases
-failing) and `fasp_gpu` (20 / 20).
+`console.txt` must show `ok` for `sparse1`, `sparse2`, `sparse0` (every case passing), `fault1` (output × 1.01, inside
+the NMSE limit: every case passing), `fault2` and `fault3` (cases failing) and `fasp_gpu` (20 / 20).
 
 **2. One P106** (~1.5 h, rig otherwise idle; the CPU references run on the rig's Celeron): the tarball unpacked on the
 rig, then

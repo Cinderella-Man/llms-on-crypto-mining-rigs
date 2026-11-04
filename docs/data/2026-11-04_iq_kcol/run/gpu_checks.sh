@@ -5,8 +5,10 @@
 # cases at 1 to 4 tokens included: their 2 to 4 dense tokens now run the k-column kernels). Prints pass counts and
 # failures only; no timings (bench/mmvq_pascal/iq_kcol_perf.sh times them).
 #   MODE=ptx     a newer NVIDIA GPU (run inside nvidia/cuda:12.9.2-devel-ubuntu24.04 with one GPU): the compute 6.1 PTX
-#                the P106 runs, through the driver's JIT (CUDA_FORCE_PTX_JIT=1), with the Pascal kernels forced on any
-#                GPU (GGML_CUDA_MMVQ_PASCAL=2, GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 for the P106's launch shapes); every case
+#                the P106 runs, through the driver's JIT (a rig build holds no other device code; PTX_JIT=1 adds
+#                CUDA_FORCE_PTX_JIT=1 for a build that does, which also aborts every case cuBLAS takes), with the Pascal
+#                kernels forced on any GPU (GGML_CUDA_MMVQ_PASCAL=2, GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 for the P106's
+#                launch shapes); every case
 #   MODE=native  a P106 (compute 6.1, its own sm_61 code); the dense cases of 6144 rows or more and K = 6144, the
 #                consecutive-routing cases (keep=) and the 32-of-64-expert cases are left out, because a 2-core host
 #                quantizes their IQ weights for hours (the PTX run covers them); RUNS=on is enough there
@@ -34,11 +36,15 @@ mkdir -p "$OUT"
 rm -f "$OUT/done" "$OUT/console.txt"
 T="$BIN/test-backend-ops -b CUDA0"
 if [ "$MODE" = ptx ]; then
-    export GGML_CUDA_MMVQ_PASCAL=2 CUDA_FORCE_PTX_JIT=1 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5
+    export GGML_CUDA_MMVQ_PASCAL=2 CUDA_FORCE_PTX_JIT=${PTX_JIT:-0} GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5
     EXCL=""
+    # off and skip give the 5-8-token cases with repeated expert ids (dup=1) to llama.cpp's MMQ, which does not support
+    # repeated ids (upstream keeps such cases disabled for CUDA) and reads out of bounds; natively they run (Q875)
+    NODUP='(?!.*,n=[5-8],.*dup=1)'
 else
     export CUDA_VISIBLE_DEVICES=${GPU:-0}
     EXCL='(?!.*(m=6144|m=10240|m=12288|k=6144|keep=|n_used=32))'
+    NODUP=""
 fi
 summ() { grep -E "FAIL|tests passed|Abort|CUDA error|terminate called|Segmentation|not supported" | sed -E 's/^ +//'; }
 line() { # <run> <type> <op> <log>
@@ -67,8 +73,9 @@ for run in $RUNS; do
         kcol_r2) GGML_CUDA_MMVQ_PASCAL_KCOL_R=2 run_ops kcol_r2 MUL_MAT ;;
         cap1)    GGML_CUDA_MMVQ_PASCAL_MTOK=1,1 run_ops cap1 $EXPERT_OPS ;;
         rb1)     GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1 run_ops rb1 $EXPERT_OPS ;;
-        off)     GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=$LIST GGML_CUDA_MMVQ_PASCAL_MTOK_SKIP=$LIST run_ops off MUL_MAT $EXPERT_OPS ;;
-        skip)    GGML_CUDA_MMVQ_PASCAL_SKIP=$LIST run_ops skip MUL_MAT $EXPERT_OPS ;;
+        off)     EXCL="$EXCL$NODUP" GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=$LIST GGML_CUDA_MMVQ_PASCAL_MTOK_SKIP=$LIST \
+                     run_ops off MUL_MAT $EXPERT_OPS ;;
+        skip)    EXCL="$EXCL$NODUP" GGML_CUDA_MMVQ_PASCAL_SKIP=$LIST run_ops skip MUL_MAT $EXPERT_OPS ;;
         memcheck)
             [ "$MODE" = ptx ] || continue
             CS=${CS:-/usr/local/cuda/bin/compute-sanitizer}

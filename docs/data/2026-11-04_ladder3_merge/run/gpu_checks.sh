@@ -4,8 +4,11 @@
 # container of its own), on one GPU, and on two for the parts that cross cards:
 #   MODE=native  on P106-090s: the kernels as the rig runs them, every switch at its default (compute 6.1 turns the
 #                fork's kernels on)
-#   MODE=ptx     on a newer NVIDIA GPU through the build's compute_61 PTX (CUDA_FORCE_PTX_JIT=1), the fork's kernel paths
-#                forced on (=2) with the P106's launch shapes (NSM=5): the kernels a P106 runs, on another card. Wrap the
+#   MODE=ptx     on a newer NVIDIA GPU through the build's compute_61 PTX, the fork's kernel paths forced on (=2) with the
+#                P106's launch shapes (NSM=5): the kernels a P106 runs, on another card. The rig build holds only sm_61
+#                code and compute_61 PTX, so the driver JIT-compiles that PTX for the card by itself. PTX_JIT=1 adds
+#                CUDA_FORCE_PTX_JIT=1, for a build that also holds the card's own code; it forces cuBLAS onto PTX as well,
+#                which cuBLAS does not ship for these cards, so every case cuBLAS takes then aborts its run. Wrap the
 #                script in the CUDA 12.9 container with the cards it may use.
 # Correctness only, no timings: test-backend-ops compares the GPU with the CPU backend, the model-level parts compare
 # arms of the same binary.
@@ -61,7 +64,8 @@ else
     DEVS2=${DEVS2-0,1}
 fi
 if [ "$MODE" = ptx ]; then
-    PTX="CUDA_FORCE_PTX_JIT=1"
+    export PTX_JIT=${PTX_JIT:-0}
+    PTX="CUDA_FORCE_PTX_JIT=$PTX_JIT"
     export CUDA_CACHE_PATH=${CUDA_CACHE_PATH:-$OUT/nvcache} CUDA_CACHE_MAXSIZE=4294967296
 else
     PTX=""
@@ -101,7 +105,7 @@ model() { ls "${MODELS:-/nonexistent}"/$1*.gguf 2>/dev/null | head -1; }
 T="$BIN/test-backend-ops -b CUDA0"
 NSM5=""; [ "$MODE" = ptx ] && NSM5="GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_MMVQ_PASCAL_NSM=5"
 FORCE=""; [ "$MODE" = ptx ] && FORCE="GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2"
-say "== $(date -Is) gpu_checks (ladder3) MODE=$MODE DEV=$DEV DEVS2=${DEVS2:-none} BIN=$BIN parts: $PARTS"
+say "== $(date -Is) gpu_checks (ladder3) MODE=$MODE${PTX:+ $PTX} DEV=$DEV DEVS2=${DEVS2:-none} BIN=$BIN parts: $PARTS"
 say "   $(nvidia-smi --query-gpu=index,name,memory.used --format=csv,noheader 2>/dev/null | tr '\n' ';')"
 
 if part ladder2; then
@@ -118,7 +122,7 @@ if part kcol; then
             "$RUN/2026-11-04_kcol_dense/run/rig_kcol.sh" \
             $PTX $FORCE $NSM5 BIN="$BIN" MMVQ="$KCOL_BENCH2" MMVQ_PASCAL="$MMVQ_PASCAL" OUT="$OUT/kcol" CARD="$DEV" PARTS="check bench" BENCH_ARGS="$BA"
         # shellcheck disable=SC2086
-        sub kcolcov "cov cov_all cov_r1 cov_r2 cov_itt1 cov_off q2f q2f_r2 all passed; the --q2_0 line ends in PASS" \
+        sub kcolcov "cov cov_all cov_r1 cov_r2 cov_itt1 q2f q2f_r2 all passed; cov_off all but Q4_0's and Q5_0's 8-column large-activation cases (llama.cpp's FP16 sums); the --q2_0 line ends in PASS" \
             "$RUN/2026-11-04_kcol_coverage/run/rig_kcol_cov.sh" \
             $PTX $FORCE $NSM5 BIN="$BIN" MMVQ_PASCAL="$MMVQ_PASCAL" OUT="$OUT/kcolcov" CARD="$DEV" PARTS="check q2_0" Q2_BENCH_ARGS=--check-only
     else
@@ -145,9 +149,9 @@ fi
 if part qsa; then
     if [ -n "${FASP:-}" ]; then
         # shellcheck disable=SC2046,SC2086
-        sub qsa "sparse1 sparse2 sparse0 all pass; fault1-3 have FAIL lines; fasp_gpu 20 of 20" \
+        sub qsa "sparse1 sparse2 sparse0 fault1 all pass; fault2-3 have FAIL lines; fasp_gpu 20 of 20" \
             "$RUN/2026-11-04_qsa_sparse_attn/run/qsa_gpu.sh" \
-            $PTX BIN="$BIN" FASP="$FASP" OUT="$OUT/qsa" PARTS="check fault fasp" CUDA_VISIBLE_DEVICES="$DEV" $([ "$MODE" = ptx ] && echo NSM=5)
+            $PTX BIN="$BIN" FASP="$FASP" OUT="$OUT/qsa" PARTS="check fault fasp" CUDA_VISIBLE_DEVICES="$DEV" DEV=CUDA0 $([ "$MODE" = ptx ] && echo NSM=5)
     else
         skip qsa "FASP not given"
     fi
