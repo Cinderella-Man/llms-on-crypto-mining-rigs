@@ -17,7 +17,7 @@ Scripts: [scripts/record_checks.sh](../../../scripts/record_checks.sh) (build ma
 **Status:** built (the rig tarball and an sm_86 `test-backend-ops`) and exact on the build machine: live and replayed
 verdicts and every node's error agree on the same inputs, the fault codes fail the same cases, and the rig build's
 references equal the record's bit for bit. Four suites are recorded (3–22 GB each). The first runs on the rigs
-themselves are their own tasks (C420 on rig 1, C421 on rig 2).
+themselves are their own tasks (C440 on rig 1, C441 on rig 2).
 
 ## How it works
 
