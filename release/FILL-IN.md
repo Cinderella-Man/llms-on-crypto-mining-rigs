@@ -30,3 +30,5 @@ move as slots are filled. Delete this file when every box is ticked.
       from `release/notes-v3.0.md`; after a later fill, `NOTES_ONLY=1` rewrites only the notes.
 - [ ] `grep -rn 'TODO(' README.md release docs/switches.md docs/book` prints only this file.
 - [ ] `v3` is merged into `main` (the notes link to `main`), then this file is deleted.
+
+- **TODO(flintq5): Flint in two lanes.** `release/flint-v3/README.md`, `release/notes-v3.0.md` and the README each get two Flint tables in the three-row form. **Flint Q8:** stock + Unsloth Q8_0, v3 + Unsloth Q8_0 (45.9), v3 + `p065`. **Flint Q5:** stock + Unsloth UD-Q5_K_XL, v3 + UD-Q5_K_XL, v3 + Flint-Pascal-Q5 (already on Hugging Face since v2). Each row is filled from its own 2026-11-06 rig 1 run.
