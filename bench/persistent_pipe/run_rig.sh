@@ -59,9 +59,10 @@ trap 'kill $smi 2>/dev/null' EXIT
 cards=()
 [ -n "$CARDS" ] && cards=(--cards "$CARDS")
 fails=0
-run() {  # name, options...
-    local name=$1
+run() {  # name, options...; a step named twice in STEPS writes <name>-2, <name>-3, ...
+    local step=$1 name=$1 n=2
     shift
+    while [ -e "$OUT/$name.txt" ]; do name=$step-$n; n=$((n + 1)); done
     log "$name: $*"
     # shellcheck disable=SC2086
     "$BIN" "$@" $EXTRA --csv "$OUT/$name.csv" > "$OUT/$name.txt" 2>&1

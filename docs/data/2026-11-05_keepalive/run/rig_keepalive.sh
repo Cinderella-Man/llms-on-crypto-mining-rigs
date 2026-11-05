@@ -14,7 +14,9 @@
 #   report the agent check's report of the arms, the client's folder collected to OUT
 # Env: ENVFILE (S12's machine file, docs/data/2026-11-03_flash_next_mtp/run/s12.env.example, filled in, with DRAFT),
 #      RIG_PORT RELAY_PORT CLIENT_PORT PROXY_PORT CLIENT_DIR CLIENT_OUT (as s35_arms.sh), MODEL (the first shard on the
-#      rig), BUILD (the -keepalive build's folder under /opt/llama-builds), OUT (a local folder), STEPS, LOADS, ARMS_KA
+#      rig), BUILD (the -keepalive build's folder under /opt/llama-builds), OUT (a local folder), STEPS, LOADS, ARMS_KA,
+#      SMI_MS (an nvidia-smi log per card every SMI_MS ms beside each llama-bench load, smi_<load>.csv, for the clocks
+#      with the switch off too; unset: none. A 100 ms log costs ~3 ms a token, so keep it sparse, 2,000 or more)
 set -uo pipefail
 : "${ENVFILE:?}" "${MODEL:?}" "${BUILD:?}" "${OUT:?}"
 M=$MODEL; T=$BUILD
@@ -38,10 +40,12 @@ mkdir -p "$OUT"
 bench_load() {
     ssh "$RIG" "mkdir -p /tmp/c533 && cat > /dev/shm/ram_watchdog.sh" < scripts/ram_watchdog.sh
     ssh "$RIG" "LOG=/dev/shm/rw_$1.tsv PROC=llama-bench MIN_AVAIL_MB=60 setsid nohup chrt -f 10 bash /dev/shm/ram_watchdog.sh > /dev/null 2>&1 < /dev/null & echo \$! > /dev/shm/rw.pid
+        ${SMI_MS:+nvidia-smi --query-gpu=timestamp,index,pstate,clocks.sm,power.draw,clocks_event_reasons.active --format=csv,noheader -lms $SMI_MS > /tmp/c533/smi_$1.csv 2>&1 & echo \$! > /dev/shm/smi.pid}
         cd /tmp/c533 && env $KENV $HOP ${2:+GGML_CUDA_KEEPALIVE=$2} timeout 2400 /opt/llama-builds/$T/bin/llama-bench -m $M $BENCH $3 \
             -o jsonl > $1.jsonl 2> $1.err; echo \"$1 rc=\$?\"
+        [ -e /dev/shm/smi.pid ] && kill \$(cat /dev/shm/smi.pid); rm -f /dev/shm/smi.pid
         kill \$(cat /dev/shm/rw.pid); mv /dev/shm/rw_$1.tsv /tmp/c533/; rm -f /dev/shm/rw.pid /dev/shm/ram_watchdog.sh"
-    for f in "$1.jsonl" "$1.err" "rw_$1.tsv"; do ssh "$RIG" "cat /tmp/c533/$f" > "$OUT/$f"; done
+    for f in "$1.jsonl" "$1.err" "rw_$1.tsv" ${SMI_MS:+"smi_$1.csv"}; do ssh "$RIG" "cat /tmp/c533/$f" > "$OUT/$f"; done
 }
 if has smoke; then
     bench_load smoke decode "-p 0 -n 16 -r 1 -v"
