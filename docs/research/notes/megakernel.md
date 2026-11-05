@@ -166,7 +166,10 @@ mapped memory).
   saves the host's synchronize-copy-launch latency, not the bytes.
 - The bytes stay: the residual is FP32 and the output has to stay exact, so it cannot shrink.
 - The end state is a token-persistent pipeline: each card's kernel stays resident across tokens, polling its mailbox,
-  with sampling on the last card and the token id mailed back to card 0 (Q684, parked behind stage 1 and Q682).
+  with sampling on the last card and the token id mailed back to card 0 (Q684, parked behind stage 1 and Q682). Its
+  bound on nine P106s ([persistent_pipe](../../data/2026-11-04_persistent_pipe/README.md#the-rig-run-c417-2026-11-05)):
+  the hop saves 0.77 ms a token on Q8_0 hops, and the persistent kernel's products run 6–8 % slower than standalone
+  ones. Its larger measured saving comes from holding the cards at the boost clock (Q1021).
 
 ## 5. With k-token verify passes and the recurrent states
 
@@ -207,4 +210,6 @@ bit for bit against the launches, as Q88's was.
 - **Q682** Host-mapped mailbox hops between cards, if the bench's hop shows the staged hop well above its bytes (C143).
 - **Q683** The census as a fusion worklist: the single-op groups that remain (`SCALE`, `SILU`, `ADD`, `RMS_NORM+SCALE`,
   the activation quantizations) merged into neighbours, ~2.3 µs per removed launch (C144).
-- **Q684** Parked: the token-persistent pipeline (section 4), behind stage 3 and Q682.
+- **Q684** Parked: the token-persistent pipeline (section 4), behind stage 3 and Q682. Its bound was measured on 2026-11-05:
+  the hop saves 0.77 ms a token on Q8_0 hops, about 1.3 % of a token.
+- **Q1021** A keep-alive kernel per card to hold the boost clock in the host-driven split (from Q684's run).

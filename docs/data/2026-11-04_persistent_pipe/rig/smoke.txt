@@ -1,0 +1,36 @@
+card 0: device 0, NVIDIA P106-090, PCI 03:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 1: device 1, NVIDIA P106-090, PCI 04:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+
+2 cards, n = 10240, 1 token a pass, 4 products a card (209.7 MB of weights each, read 4 times a pass), the residual in F32: 40960 bytes a hop; 2 + 20 passes
+the products alone, launched back to back (ms a pass): 5.868 5.854; sum 11.722 ms, 143.0 GB/s on card 0
+persistent mailboxes: 4 chunks; polls every 2.00 us after the hint, 50.0 us before; host wait: auto
+
+running sync ...
+running peer ...
+running staged ...
+running persist ...
+running persist-direct ...
+
+variant         ms a pass: median [p10,p90]      mean     tok/s  compute ms  overhead ms    us a hop  check
+sync              10.928 [ 10.806, 10.953]    10.889     91.84      11.722       -0.833      -416.3  reference, checksum 148bddf4bd73f6e6
+peer              10.451 [ 10.437, 10.791]    10.498     95.26      11.722       -1.224      -612.0  identical, checksum 148bddf4bd73f6e6
+staged            10.209 [ 10.171, 10.224]    10.244     97.62      11.722       -1.477      -738.7  identical, checksum 148bddf4bd73f6e6
+persist           10.799 [ 10.784, 10.814]    10.799     92.60      10.459        0.340       170.1  identical, checksum 148bddf4bd73f6e6
+persist-direct    10.626 [ 10.616, 10.641]    10.627     94.10      10.539        0.088        43.9  identical, checksum 148bddf4bd73f6e6
+
+persist per card, median us a pass: products 5239 5221
+persist per boundary (card i's last product done -> card i+1's input in; the last: back to card 0), median us: 318.0 22.0
+persist the cards' timers against card 0's (us, before the run): 0.0 -405.0; they moved by up to 0.0 us during it
+
+persist-direct per card, median us a pass: products 5321 5218
+persist-direct per boundary (card i's last product done -> card i+1's input in; the last: back to card 0), median us: 64.5 22.0
+persist-direct the cards' timers against card 0's (us, before the run): 0.0 -405.0; they moved by up to 0.0 us during it
+
+persist against sync: 0.090 ms a pass less (0.8 %), 45.1 us a hop
+persist-direct against sync: 0.262 ms a pass less (2.4 %), 131.1 us a hop
+persist against peer: -0.301 ms a pass less (-2.9 %), -150.5 us a hop
+persist-direct against peer: -0.129 ms a pass less (-1.2 %), -64.5 us a hop
+persist against staged: -0.555 ms a pass less (-5.4 %), -277.3 us a hop
+persist-direct against staged: -0.382 ms a pass less (-3.7 %), -191.2 us a hop
+
+checks: every variant gives the same token ids and final residual

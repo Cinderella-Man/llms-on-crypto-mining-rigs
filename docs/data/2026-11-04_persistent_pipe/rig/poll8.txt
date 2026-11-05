@@ -1,0 +1,31 @@
+card 0: device 0, NVIDIA P106-090, PCI 03:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 1: device 1, NVIDIA P106-090, PCI 04:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 2: device 2, NVIDIA P106-090, PCI 05:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 3: device 3, NVIDIA P106-090, PCI 06:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 4: device 4, NVIDIA P106-090, PCI 07:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 5: device 5, NVIDIA P106-090, PCI 0b:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 6: device 6, NVIDIA P106-090, PCI 0c:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 7: device 7, NVIDIA P106-090, PCI 0d:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+card 8: device 8, NVIDIA P106-090, PCI 0e:00.0, compute 6.1, 5 SMs, 1531 MHz, code for compute 6.1; persistent grid 20 (4 a SM resident)
+
+9 cards, n = 10240, 1 token a pass, 4 products a card (209.7 MB of weights each, read 4 times a pass), the residual in F32: 40960 bytes a hop; 20 + 300 passes
+the products alone, launched back to back (ms a pass): 4.917 4.908 4.907 4.909 4.901 4.906 4.908 4.902 4.902; sum 44.159 ms, 170.6 GB/s on card 0
+persistent mailboxes: 4 chunks; polls every 8.00 us after the hint, 50.0 us before; host wait: auto
+
+running persist ...
+running persist-direct ...
+
+variant         ms a pass: median [p10,p90]      mean     tok/s  compute ms  overhead ms    us a hop  check
+persist           49.576 [ 49.542, 49.607]    49.575     20.17      47.046        2.529       281.0  reference, checksum 987650d1481a43a1
+persist-direct    48.266 [ 48.227, 48.313]    48.268     20.72      47.705        0.563        62.5  identical, checksum 987650d1481a43a1
+
+persist per card, median us a pass: products 5254 5228 5234 5236 5213 5226 5228 5216 5213
+persist per boundary (card i's last product done -> card i+1's input in; the last: back to card 0), median us: 317.2 317.6 318.3 294.2 299.4 318.1 316.5 318.0 27.7
+persist the cards' timers against card 0's (us, before the run): 0.0 -563.7 -8037.4 -18931.2 -6300.2 -7055.4 -6407.7 -3672.6 5092.4; they moved by up to 169.0 us during it
+
+persist-direct per card, median us a pass: products 5338 5308 5316 5317 5292 5309 5311 5298 5213
+persist-direct per boundary (card i's last product done -> card i+1's input in; the last: back to card 0), median us: 66.7 66.8 67.9 64.0 66.9 67.6 67.5 67.0 28.3
+persist-direct the cards' timers against card 0's (us, before the run): 0.0 -564.7 -8099.8 -19100.2 -6346.8 -7111.2 -6453.8 -3696.6 5144.1; they moved by up to 166.4 us during it
+
+
+checks: every variant gives the same token ids and final residual
