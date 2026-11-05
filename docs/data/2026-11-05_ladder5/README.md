@@ -72,6 +72,8 @@ folder per branch, Docker, `--cpu-shares=256`, no GPU). Base: `-ladder4` `e3b303
 | C524: SASS of every kernel against the base; `test-quantize-fns` (Q4_1_64); the screened head with a grammar (Flint, 16 BFCL requests) | REVIEW: 16 differ (12 `k_moe_layer`; 4 allreduce kernels, the one compared differing only in a source line number, from `-keepalive`'s one-line include), 369 renamed with the same code (`-flags`' template flag); OK; 16/16 identical | the same |
 | C565's whole CPU set, static and shared: ctest, `test-arg-parser` with network, archs plain/write/compare, identity, the hand tests | ctest 66/66 + 1/1; archs 148/148 ×3; identity with `-ladder4fix` 143/143 | the same; identity with `-b12127-ladder4`+fix 143/143; against `-ladder5`: gpt2, qwen2, gemma4 differ (upstream #30993, #31657, rounding) |
 | C566: upstream's download tests (stories15M, torch) | 71/72: `test-conversion-fp8` needs `transformers` too | the same |
+| T0: ctest with `transformers==4.57.6` too, static, all but the five download tests and the net test ([summary-t0-fp8.tsv](summary-t0-fp8.tsv)) | 67/67, `test-conversion-fp8` passes (with C566: 72/72) | the same |
+| T0: one RTX 3090 through the compute_61 PTX, the fork's kernels forced on with a P106's launch shapes (`2026-11-04_ladder4_merge/run/gpu_checks.sh`, `MODE=ptx`, every part; [ptx-l5.txt](ptx-l5.txt)) | **FAIL**: `MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640)` NMSE 9.13e-4 > 5e-4 (`-ladder4`: OK); every other run OK (the other 4758 expert cases, skipped slots, tail op, archs 136 compared with no difference, combo, moe-ids, dense 3423/3423; `archs-off-base` exits 1 on `-ladder4`'s own binary, C565's shared-logits test bug, as in `-ladder4`'s run) | not run |
 
 **The flake (C589):** on the quant machine at a load average of ~50, `llama-perplexity` sometimes exited 0 with its last
 chunk's row and the summary missing from its log, also when the log was written straight to a file inside the
@@ -88,6 +90,7 @@ so failed every branch carrying C565's test fix.
 | [run/checks.sh](run/checks.sh) | the checks of one merged branch: the merged branches' own scripts with this tree, in one work folder |
 | [run/rig_ladder5.sh](run/rig_ladder5.sh) | the rig steps: identity with `-ladder4` on Flash-Next's files (`llama-perplexity` distributions, byte for byte) and T(k) on S35's line |
 | `summary-*.tsv` | every verdict line of the runs |
+| `ptx-l5.txt` | T0: the PTX check's console (one line per run) and the failing case |
 
 ## Commands
 
