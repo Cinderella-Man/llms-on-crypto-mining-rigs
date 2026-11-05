@@ -4,7 +4,7 @@
 # meanwhile; the wait below is one ssh session sleeping on the rig until the run's DONE marker.
 # Env: RIG: ssh alias of the rig (root); BIN: the binary (bench/persistent_pipe/build.sh), on this machine or, with
 #      FROM set, on the ssh host FROM (ssh arguments: options and the host); MD5_BIN: its md5, checked on the rig;
-#      SCRIPT: run_rig.sh (default: this repository's); OUT: where the output goes; STEPS, CARDS, EXTRA: passed to
+#      SCRIPT: run_rig.sh (default: this repository's); OUT: where the output goes; STEPS, CARDS, EXTRA, PAUSE: passed to
 #      run_rig.sh; STEP: "all" (default), "start", "wait" or "collect" (to resume after a dropped connection).
 set -euo pipefail
 : "${RIG:?}" "${BIN:?}" "${MD5_BIN:?}" "${OUT:?}"
@@ -22,7 +22,7 @@ if [ "$STEP" = all ] || [ "$STEP" = start ]; then
     fetch "$BIN" | ssh "$RIG" "cat > $D/persistent_pipe && chmod +x $D/persistent_pipe"
     ssh "$RIG" "cat > $D/run_rig.sh && chmod +x $D/run_rig.sh" < "$SCRIPT"
     ssh "$RIG" "cd $D && echo '$MD5_BIN  persistent_pipe' > md5 && md5sum -c md5"
-    timeout 30 ssh "$RIG" "cd $D && STEPS='${STEPS:-}' CARDS='${CARDS:-}' EXTRA='${EXTRA:-}' \
+    timeout 30 ssh "$RIG" "cd $D && STEPS='${STEPS:-}' CARDS='${CARDS:-}' EXTRA='${EXTRA:-}' PAUSE='${PAUSE:-0}' \
         setsid nohup ./run_rig.sh > console.log 2>&1 < /dev/null &" || true
     echo "started on $RIG: $D"
 fi

@@ -16,13 +16,19 @@
 #   kapulse    --keepalive pulse: one thread a card busy 100 ms every 1,000 ms
 #   kak4off    4 tokens a pass, no keep-alive
 #   kak4       4 tokens a pass, --keepalive resident
+#   kak4pulse  4 tokens a pass, --keepalive pulse
+# The runs load every kernel when they start (CUDA_MODULE_LOADING=EAGER): with CUDA 12's lazy loading, the first launch
+# of a kernel not loaded yet waits until every kernel on the card has ended, so a resident keep-alive held it until its
+# own timeout and the timed passes ran without it (C533's first rig run).
 #
 # Env: OUT     output folder (default ./out)
 #      BIN     the binary (default ./persistent_pipe)
 #      CARDS   cards for the full runs (default: every visible card)
 #      STEPS   the steps to run (default "smoke f32 q8 two k4 polls")
 #      EXTRA   more options for every run (e.g. "--layers 5")
+#      PAUSE   seconds of idle before each step (default 0), so that a step does not start at the clock the last one left
 #      FORCE   1: start even with a compute process on the cards
+#      CUDA_MODULE_LOADING  default EAGER (above)
 set -uo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 OUT=${OUT:-$here/out}
@@ -31,8 +37,9 @@ CARDS=${CARDS:-}
 STEPS=${STEPS:-smoke f32 q8 two k4 polls}
 EXTRA=${EXTRA:-}
 FORCE=${FORCE:-0}
+PAUSE=${PAUSE:-0}
 mkdir -p "$OUT"
-export CUDA_DEVICE_ORDER=PCI_BUS_ID
+export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_MODULE_LOADING=${CUDA_MODULE_LOADING:-EAGER}
 log() { echo "$(date -Is) $*" | tee -a "$OUT/run.log"; }
 
 apps=$(nvidia-smi --query-compute-apps=pid,process_name --format=csv,noheader 2>/dev/null)
@@ -63,6 +70,7 @@ run() {  # name, options...
     [ "$rc" = 0 ] || fails=$((fails + 1))
 }
 for step in $STEPS; do
+    [ "$PAUSE" != 0 ] && { log "pause $PAUSE s"; sleep "$PAUSE"; }
     case $step in
         smoke) run smoke --cards 2 --smoke ;;
         f32)   run f32 "${cards[@]}" --wire f32 ;;
@@ -77,6 +85,7 @@ for step in $STEPS; do
         kapulse)    run kapulse "${cards[@]}" --wire q8 --variants staged --keepalive pulse ;;
         kak4off)    run kak4off "${cards[@]}" --wire q8 --variants staged --k 4 --passes 250 --warmup 10 ;;
         kak4)       run kak4 "${cards[@]}" --wire q8 --variants staged --k 4 --passes 250 --warmup 10 --keepalive resident ;;
+        kak4pulse)  run kak4pulse "${cards[@]}" --wire q8 --variants staged --k 4 --passes 250 --warmup 10 --keepalive pulse ;;
         *)     log "unknown step $step" ;;
     esac
 done
