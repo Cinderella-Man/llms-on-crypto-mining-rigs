@@ -23,7 +23,7 @@ and real test runs ([the agent check](bench/agent_check/README.md)):
 |---|---|---|---|
 | Stock llama.cpp, 65,536-token context | 14.4 tok/s | 8 of 12 | 3.7 s |
 | Miner Llama v1, 65,536-token context | 25.7 tok/s | 11 of 12 | 4.0 s |
-| **Miner Llama v2**, 262,144-token context | **44.6–45.9 tok/s** | **12 of 12** | **2.6 s** |
+| **Miner Llama v2**, 262,144-token context | **45.9 tok/s** (44.6 in a second run) | **12 of 12** | **2.6 s** |
 
 More speed or fewer cards: [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, fits
 six cards) generates 53.8 tok/s in the same test, a little further from the original model than Q8_0. Every number
@@ -90,7 +90,7 @@ that makes it faster still ([how it works](docs/drafter.md)).
 
 | Model | What it is | On the reference rig |
 |---|---|---|
-| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v3 release: Q8_0 on nine cards, 45.9 tok/s for a coding agent (v2: 44.6–45.9) |
+| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v3 release: Q8_0 on nine cards, 45.9 tok/s for a coding agent (v2.0: 45.9 and 44.6 in two runs) |
 | [Qwen3.6-35B-A3B](models/qwen3.6-35b-a3b/) | 36B hybrid mixture of experts, 3B active per token | coming: four cards, 29.0 tok/s with v1 (stock 18.5), one request |
 | [Ornith-1.5-35B](models/ornith-1.5-35b/) | 35B hybrid mixture of experts with Qwen3.6's shapes | coming: not run yet |
 | [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v3 release: Swift-1.5 `pmix-q2-fast` on nine cards, the table on the SSD, the MTP draft; 20.75 tok/s and 12 of 12 tasks for a coding agent (stock 6.4 on 2026-11-03) |

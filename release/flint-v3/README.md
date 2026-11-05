@@ -14,13 +14,13 @@ Unsloth's Q8_0 on nine P106-090 cards:
 |---|---|---|---|---|---|---|
 | Stock llama.cpp (v2's run, an older commit) | 65,536 | 8 of 12 | 14.4 | — | 3.7 | [results.md](../flint-v2/results.md) |
 | Stock llama.cpp b12076 (`20a51f24a`) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
-| Miner Llama v2.0 | 262,144 | 12 of 12 | 44.6–45.9 | — | 2.6 | [results.md](../flint-v2/results.md) |
+| Miner Llama v2.0 | 262,144 | 12 of 12 | 45.9 and 44.6 (two runs) | — | 2.6 | [results.md](../flint-v2/results.md) |
 | **v3 (`1f7215948`), the preset: v2's line** | 262,144 | **12 of 12** | **45.9** | 168 | 2.67, 6.48 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | v3, + the re-read fix, the tail checkpoint rule and the keep-alive | 262,144 | 12 of 12 | 44.7 | 168 | 2.45, 6.89 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 
 - Nothing is lost against v2.0: 45.9 tok/s is the top of v2.0's range.
 - The second v3 row sets `LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 GGML_CUDA_KEEPALIVE=decode`. One run
-  each, 1.2 tok/s apart, about the spread of v2.0's own runs (44.6–45.9), so the preset stays v2's line. Each of v3's
+  each, 1.2 tok/s apart, about the spread between v2.0's own two runs (45.9 and 44.6), so the preset stays v2's line. Each of v3's
   additions on its own against the preset (the keep-alive, the re-read fix, the staged hop, the answer store, the
   negligible group): TODO(flintside).
 - The Q8_0 hop cast and the expert skip are not in Flint's preset: each needs Flint's own quality check first.

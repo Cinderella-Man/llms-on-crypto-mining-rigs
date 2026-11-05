@@ -20,7 +20,7 @@ RAM). Generation in tokens per second over every request:
 | Model, file | Stock llama.cpp b12076 | Miner Llama v2.0 | **{{VERSION}}**, the model's preset |
 |---|---|---|---|
 | **Qwen3.8-Flash-Next**, Swift-1.5 `pmix-q2-fast`, 65,536-token context | TODO(stock) | 7.8 (Swift Q2_0, 9 of 9 tasks) | **20.75, 12 of 12** |
-| **Flint**, Unsloth Q8_0, 262,144-token context | TODO(stock) | 44.6–45.9, 12 of 12 | **45.9, 12 of 12** |
+| **Flint**, Unsloth Q8_0, 262,144-token context | TODO(stock) | 45.9 and 44.6 (two runs), 12 of 12 | **45.9, 12 of 12** |
 | **Ornith-1.5-122B**, my valid1 file (48.2 GB), 49,152-token context | TODO(stock) (UD-Q2_K_XL: stock cannot load valid1's types) | 9.7 (UD-Q2_K_XL) | **14.9, 12 of 12** |
 
 - **Flash-Next:** 20.75 against 19.19 tok/s for the same line without the keep-alive, 12 of 12 each; −8.4 % time a task
@@ -28,7 +28,7 @@ RAM). Generation in tokens per second over every request:
   this build: TODO(preset). [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_keepalive/README.md).
   v2.0's 7.8 and stock's 6.4 (an older stock commit, 7 of 8 tasks tried):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-03_flash_next_baseline/README.md).
-- **Flint:** 45.9 tok/s on this build (`1f7215948`) with v2's command line, against v2.0's 44.6–45.9; first token per
+- **Flint:** 45.9 tok/s on this build (`1f7215948`) with v2's command line, against v2.0's 45.9 and 44.6 in two runs; first token per
   turn 2.67 s (v2.0: 2.6). [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
   v2.0's numbers: [results.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/results.md).
   v2's stock run (an older stock commit, 65,536 tokens of context): 14.4 tok/s, 8 of 12.
