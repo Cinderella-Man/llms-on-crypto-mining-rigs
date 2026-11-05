@@ -197,15 +197,19 @@ if step identity; then
             run merged '"$mb"'
             rm -f /k/*.f32
             chown -R '"$(id -u):$(id -g)"' /k' > "$K/$n/rc.txt" 2>&1
-        # architectures whose models share a logits file compare against each other already in the base run
+        # a build from before C565's fix (fork commit fd8276bbc) gives an architecture's Dense and MoE models one logits
+        # file, so its MoE model compares against the Dense one's logits and fails (7 architectures): those lines are
+        # the base's own; a build with the fix writes the MoE models' files apart, passes them, and with a base from
+        # before the fix writes them itself (not compared)
         grep 'logits against' "$K/$n/base.log" | grep -v ', 0 of ' > "$K/$n/base_self.txt"
-        local nb nc bad sb sm
+        local nb nc nw bad sb sm
         nb=$(cat "$K/$n/n_base.txt" 2>/dev/null || echo 0)
         nc=$(grep -c 'logits against' "$K/$n/merged.log")
+        nw=$(grep -c 'logits_dump_or_compare: wrote' "$K/$n/merged.log")
         bad=$(grep 'logits against' "$K/$n/merged.log" | grep -v ', 0 of ' | grep -vxFf "$K/$n/base_self.txt" | cut -d: -f1 | tr '\n' ' ')
         sb=$(grep -m 1 '^Summary' "$K/$n/base.log") sm=$(grep -m 1 '^Summary' "$K/$n/merged.log")
-        verdict "identity-$n" "$([ "$nb" -gt 0 ] && [ "$nc" -gt 0 ] && [ -z "$bad" ] && [ "$sb" = "$sm" ] && echo OK || echo FAIL)" \
-            "base wrote $nb logits files; $nc compared, differ: ${bad:-none}; base: $sb; merged: $sm; $(tr '\n' ' ' < "$K/$n/rc.txt")"
+        verdict "identity-$n" "$([ "$nb" -gt 0 ] && [ "$nc" -gt 0 ] && [ -z "$bad" ] && { [ "$sb" = "$sm" ] || [[ "$sm" == 'Summary: all '* ]]; } && echo OK || echo FAIL)" \
+            "base wrote $nb logits files; $nc compared, differ: ${bad:-none}; written by the merge only: $nw; base: $sb; merged: $sm; $(tr '\n' ' ' < "$K/$n/rc.txt")"
     }
     if [ -n "${BASE_BUILD:-}" ] && [ -n "$T" ]; then ident rig "$BASE_BUILD/bin" "$T/bin"; else verdict identity-rig FAIL "no BASE_BUILD or no tarball tree"; fi
     if [ -n "${BASE_CPU:-}" ]; then ident cpu "$BASE_CPU" "$WORK/cpu/bin"; else verdict identity-cpu FAIL "no BASE_CPU"; fi

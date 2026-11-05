@@ -1,0 +1,73 @@
+test	l4	u4	l4fix	u4fix	l4fixs
+test-alloc	Passed	Passed	Passed	Passed	Passed
+test-arg-parser	Failed	Failed	Passed	Passed	Passed
+test-autorelease	Passed	Passed	Passed	Passed	Passed
+test-backend-sampler	Passed	Passed	Passed	Passed	Passed
+test-backend-tensor	Passed	Passed	Passed	Passed	Passed
+test-barrier	Passed	Passed	Passed	Passed	Passed
+test-batch-alloc	Passed	Passed	Passed	Passed	Passed
+test-chat-auto-parser	Passed	Passed	Passed	Passed	Passed
+test-chat	Passed	Passed	Passed	Passed	Passed
+test-chat-peg-parser	Passed	Passed	Passed	Passed	Passed
+test-chat-template	Passed	Passed	Passed	Passed	Passed
+test-col2im-1d	Passed	Passed	Passed	Passed	Passed
+test-conv-1d	Passed	Passed	Passed	Passed	Passed
+test-conversion-fp8	not run	not run	not run	not run	not run
+test-cuda-profile-light	Passed	Passed	Passed	Passed	Passed
+test-download-model	not run	not run	not run	not run	not run
+test-draft-mem	Passed	Passed	Passed	Passed	Passed
+test-eval-callback-download-model	Failed	Failed	not run	not run	not run
+test-eval-callback	Not Run	Not Run	not run	not run	not run
+test-fp8-requantize	Passed	Passed	Passed	Passed	Passed
+test-gelu-quick	Passed	Passed	Passed	Passed	Passed
+test-generate-fp8-models	Passed	Passed	Passed	Passed	Passed
+test-generate-models	Passed	Passed	Passed	Passed	Passed
+test-generate-speculative-target	Passed	Passed	Passed	Passed	Passed
+test-gguf	Passed	Passed	Passed	Passed	Passed
+test-grammar-integration	Passed	Passed	Passed	Passed	Passed
+test-grammar-parser	Passed	Passed	Passed	Passed	Passed
+test-jinja	Passed	Passed	Passed	Passed	Passed
+test-jinja-py	Passed	Passed	Passed	Passed	Passed
+test-json-schema	Passed	Passed	Passed	Passed	Passed
+test-json-schema-to-grammar	Passed	Passed	Passed	Passed	Passed
+test-llama-context-model	not run	not run	not run	not run	not run
+test-llama-context	Passed	Passed	Passed	Passed	Passed
+test-llama-grammar	Passed	Passed	Passed	Passed	Passed
+test-log	Passed	Passed	Passed	Passed	Passed
+test-model-load-cancel	Passed	Passed	Passed	Passed	Passed
+test-model-resolution	Passed	Passed	Passed	Passed	Passed
+test-mtmd-c-api	Passed	Passed	Passed	Passed	Passed
+test-mtmd-impl	Passed	Passed	Passed	Passed	Passed
+test-opt	Passed	Passed	Passed	Passed	Passed
+test-peg-parser	Passed	Passed	Passed	Passed	Passed
+test-quantize-fns	Passed	Passed	Passed	Passed	Passed
+test-quantize-perf	Passed	Passed	Passed	Passed	Passed
+test-reasoning-budget	Passed	Passed	Passed	Passed	Passed
+test-rope	Passed	Passed	Passed	Passed	Passed
+test-sampling	Passed	Passed	Passed	Passed	Passed
+test-server-component	Passed	Passed	Passed	Passed	Passed
+test-spec-adapt	Passed	Passed	Passed	Passed	Passed
+test-spec-block	Passed	Passed	Passed	Passed	Passed
+test-spec-dump	Passed	Passed	Passed	Passed	Passed
+test-speculative-rejection-sampling	Passed	Passed	Passed	Passed	Passed
+test-thread-safety	not run	not run	not run	not run	not run
+test-tiled-mulmat	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-bert-bge	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-command-r	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-deepseek-coder	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-deepseek-llm	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-falcon	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-gemma-4	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-gpt-2	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-llama-bpe	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-llama-spm	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-mpt	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-phi-3	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-qwen2	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-qwen35	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-refact	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-0-starcoder	Passed	Passed	Passed	Passed	Passed
+test-tokenizer-1-llama-spm	Passed	Passed	Passed	Passed	Passed
+test-tokenizers-ggml-vocabs	Passed	Passed	Passed	Passed	Passed
+test-ubatch-taper	Passed	Passed	Passed	Passed	Passed
+test-unicode	Passed	Passed	Passed	Passed	Passed
