@@ -1,0 +1,5 @@
+build	arm	k	prompt_n	prompt_ms	micro_batches	ms_per_micro_batch
+kshape	prof-off	4	340	14870.3	85	174.94
+kshape	prof-off	5	340	14582.4	68	214.45
+moeskip	prof-off	4	340	14866.3	85	174.90
+moeskip	prof-off	5	340	14580.8	68	214.42

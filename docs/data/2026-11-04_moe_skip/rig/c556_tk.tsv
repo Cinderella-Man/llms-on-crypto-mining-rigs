@@ -1,0 +1,4 @@
+k	kshape_n	kshape_mean	kshape_sd	kshape_min	kshape_max	moeskip_n	moeskip_mean	moeskip_sd	moeskip_min	moeskip_max	diff_of_means	pairs	paired_mean	paired_sd	ci95_low	ci95_high
+4	4	142.25	2.07	141.17	145.36	4	141.43	0.06	141.38	141.51	-0.82	-3.98,0.25,0.20,0.23	-0.83	2.10	-4.17	2.52
+5	4	170.15	1.60	168.22	172.02	4	169.12	1.55	167.24	171.03	-1.03	-2.93,1.32,-3.42,0.90	-1.03	2.49	-4.99	2.93
+6	4	191.97	1.82	190.73	194.60	4	191.44	2.05	188.88	193.68	-0.53	-0.92,-0.85,-1.85,1.52	-0.52	1.44	-2.81	1.76

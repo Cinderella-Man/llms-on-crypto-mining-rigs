@@ -1,0 +1,49 @@
+trace	k	part	ms_per_pass
+kshape	4	routed experts	24.30
+kshape	4	shared expert	6.08
+kshape	4	hyper-connections (BF16)	16.20
+kshape	4	router	5.91
+kshape	4	attention and recurrent projections	43.44
+kshape	4	Gated DeltaNet state and conv	4.66
+kshape	4	attention (FLASH_ATTN_EXT)	1.72
+kshape	4	output layer	0.09
+kshape	4	token embeddings	0.00
+kshape	4	other ops without weights	11.80
+kshape	4	other weights	1.96
+kshape	4	sum of the parts	116.15
+kshape	5	routed experts	32.79
+kshape	5	shared expert	7.30
+kshape	5	hyper-connections (BF16)	24.27
+kshape	5	router	6.06
+kshape	5	attention and recurrent projections	53.56
+kshape	5	Gated DeltaNet state and conv	6.00
+kshape	5	attention (FLASH_ATTN_EXT)	1.91
+kshape	5	output layer	0.05
+kshape	5	token embeddings	0.00
+kshape	5	other ops without weights	10.02
+kshape	5	other weights	1.32
+kshape	5	sum of the parts	143.28
+moeskip	4	routed experts	24.42
+moeskip	4	shared expert	6.07
+moeskip	4	hyper-connections (BF16)	16.16
+moeskip	4	router	5.93
+moeskip	4	attention and recurrent projections	43.25
+moeskip	4	Gated DeltaNet state and conv	4.66
+moeskip	4	attention (FLASH_ATTN_EXT)	1.72
+moeskip	4	output layer	0.09
+moeskip	4	token embeddings	0.00
+moeskip	4	other ops without weights	11.92
+moeskip	4	other weights	1.98
+moeskip	4	sum of the parts	116.20
+moeskip	5	routed experts	32.95
+moeskip	5	shared expert	7.31
+moeskip	5	hyper-connections (BF16)	24.28
+moeskip	5	router	6.05
+moeskip	5	attention and recurrent projections	53.52
+moeskip	5	Gated DeltaNet state and conv	6.00
+moeskip	5	attention (FLASH_ATTN_EXT)	1.90
+moeskip	5	output layer	0.05
+moeskip	5	token embeddings	0.00
+moeskip	5	other ops without weights	10.09
+moeskip	5	other weights	1.31
+moeskip	5	sum of the parts	143.47
