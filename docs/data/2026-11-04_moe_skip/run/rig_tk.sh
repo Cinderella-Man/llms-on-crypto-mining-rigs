@@ -11,6 +11,7 @@
 #            p080r   p=0.8,renorm=1: 7.27 of 10 kept
 #            p090rr  p=0.9,renorm=1,repeat=1: the same cut, the dropped slots reading their token's last kept expert
 #                    again at weight 0 instead of being skipped (Q661: whether the P106's 1.5 MiB L2 serves the repeats)
+#            off2    as off, a second load at the end (the spread between loads)
 #          every arm with hist=0 (the histogram reads the graph back after each micro-batch)
 #   prof   the first 340 tokens at k = 1 and 5 under GGML_CUDA_PROFILE_MODE=group, arms PROF_ARMS (off p090r): the
 #          routed experts' part of the pass (C271's parts)
@@ -36,7 +37,7 @@ step() { [[ " $STEPS " == *" $1 "* ]]; }
 quiet() { log "quiet: load $(cut -d' ' -f1-3 /proc/loadavg); llama processes $(pgrep -c '^llama-'); $(grep -E '^MemAvailable:' /proc/meminfo | tr -s ' ')"; }
 tail_of() { # the LLAMA_MOE_TAIL of an arm
     case $1 in
-        off)    echo "" ;;
+        off|off2) echo "" ;;  # off2: the switch off again, a second load (the spread between loads)
         p090r)  echo "p=0.9,renorm=1,hist=0" ;;
         p080r)  echo "p=0.8,renorm=1,hist=0" ;;
         p090rr) echo "p=0.9,renorm=1,hist=0,repeat=1" ;;
