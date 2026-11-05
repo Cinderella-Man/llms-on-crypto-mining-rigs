@@ -23,7 +23,7 @@ move as slots are filled. Delete this file when every box is ticked.
 ## Before publishing
 
 - [ ] T23 pushes `docs/data/2026-11-05_release_regression/` with its `docs/data/README.md` row: five pages link it.
-- [ ] T0c's PTX check of `1551f5fe1` (quant machine, one card) passes, with the 30 runs of the formerly failing case.
+- [x] T0c's PTX check of `1551f5fe1` (quant machine, one card): every part OK, experts 4,759 of 4,759, the formerly failing case 30 of 30 ([2026-11-05_ladder5](../docs/data/2026-11-05_ladder5/README.md)).
 - [ ] If a preset changes after its agent check, its numbers come from the run of the new preset, not the old one.
 - [ ] `scripts/package_release.sh fork/pascal-p106-v3-b12076-ladder5 v3.0` (the quant machine) writes `RELEASE_NOTES.md`
       from `release/notes-v3.0.md`; after a later fill, `NOTES_ONLY=1` rewrites only the notes.
