@@ -14,10 +14,11 @@
 #   context   test-llama-context on random models (CTX_ARCHS, written by the branch's test-llama-archs -o): the base and
 #             the branch at their defaults must give the same verdicts; then the branch with each cache switch flipped,
 #             reported per case (a flip may fail the cases that check its rule)
-#   server    llama-server on a random sliding-window model (SWA_ARCH), five greedy requests with checkpoint restores
-#             (as the C22 server check), one server per arm: the default, each server-side switch flipped, and the
-#             base build; the default must give the base's tokens, LLAMA_STATE_NOINIT=0 the default's tokens and restore
-#             points; the checkpoint arms report their restore points, checkpoint sizes and tokens
+#   server    llama-server on a random sliding-window model (SWA_ARCH), five greedy requests built to hit each
+#             checkpoint rule (server_arms.sh), one server per arm: the default, each server-side switch flipped, and the
+#             base build; the default must give the base's tokens, LLAMA_STATE_NOINIT=0 the default's tokens, restore
+#             points and cached tokens; the checkpoint arms report their restore points, checkpoint sizes, cached tokens
+#             and tokens (ACTS where any of the first three differ from the default's)
 # Usage: WORK=<dir> REPO=<this repository> BASE_BUILD=<-ladder4's unpacked rig tarball, extras in bin/> \
 #   [BRANCH=pascal-p106-v3-b12076-flags] [BASE=e3b30303d] [REMOTE=fork] [JOBS=8] [THREADS=8] [LOCK=<flock file>] \
 #   [DOCKER_ARGS=...] [MOUNTS='<dirs>'] [STEPS='basecpu build cpubuild identity flips context server'] bash checks.sh
@@ -165,8 +166,9 @@ if step context; then
             # shellcheck disable=SC2086
             box $e "$IMAGE" nice -n 19 "$b/test-llama-context" -m "$m" -t "$THREADS" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' \
                 > "$K/$n.$(basename "$(dirname "$m")").log"
-            awk -v a="$(basename "$(dirname "$m")")" 'NF >= 2 && ($2 == "OK" || $2 == "FAIL" || $2 == "SKIP") { print a, $1, $2 }' \
-                "$K/$n.$(basename "$(dirname "$m")").log" >> "$K/$n.log"
+            # a case's verdict line, also where a log line of the run was printed into it
+            grep -aoE '(^| )[a-z][a-z_0-9]* +(OK|FAIL|SKIP)( |$)' "$K/$n.$(basename "$(dirname "$m")").log" \
+                | awk -v a="$(basename "$(dirname "$m")")" '{ print a, $1, $2 }' >> "$K/$n.log"
         done
         printf '%s' "$(grep -cw OK "$K/$n.log") OK, $(grep -cw SKIP "$K/$n.log") SKIP, $(grep -cw FAIL "$K/$n.log") FAIL"
     }
