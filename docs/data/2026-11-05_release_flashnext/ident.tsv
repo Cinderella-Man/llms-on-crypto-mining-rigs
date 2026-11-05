@@ -1,0 +1,9 @@
+build	prompt	md5	tokens	tok_s	start
+l5-1f7215948	code	08d7258fe07b	128	14.54	'\n\n<think>\nThe user wants a Python function that checks if a '
+l5-1f7215948	prose	dba941b4967b	128	14.78	'\n\n<think>\nThe user wants a concise one-paragraph explanation'
+l4-e3b30303d	code	08d7258fe07b	128	14.52	'\n\n<think>\nThe user wants a Python function that checks if a '
+l4-e3b30303d	prose	dba941b4967b	128	15.08	'\n\n<think>\nThe user wants a concise one-paragraph explanation'
+l5-1551f5fe1	code	08d7258fe07b	128	14.58	'\n\n<think>\nThe user wants a Python function that checks if a '
+l5-1551f5fe1	prose	dba941b4967b	128	15.04	'\n\n<think>\nThe user wants a concise one-paragraph explanation'
+l5-1f7215948	code	08d7258fe07b	128	14.85	'\n\n<think>\nThe user wants a Python function that checks if a '
+l5-1f7215948	prose	dba941b4967b	128	15.42	'\n\n<think>\nThe user wants a concise one-paragraph explanation'

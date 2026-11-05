@@ -1,0 +1,6 @@
+arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref
+t1base	12/12	65	69.0	20.75	7.60	15.79	13.43	0.714	3.14	29.4	1.89	2.45	+0.0 %
+t1skip	11/12	58	71.9	21.29	6.37	16.47	13.36	0.720	3.16	37.5	1.65	2.38	-2.9 %
+t1neg	12/12	63	70.2	19.05	7.14	15.73	13.32	0.817	3.45	34.5	1.91	2.58	+5.3 %
+stockq2	9/9	47	53.7	8.20	10.22	24.85	19.40	0.717	3.15	47.2	2.77	5.13	+109.4 %
+s35ka	12/12	63	77.4	20.75	6.41	16.86	13.36	0.708	3.12	29.6	1.82	2.36	-3.7 %
