@@ -9,6 +9,13 @@
 #   two    the first two cards, F32: one boundary and the token's way back
 #   k4     every card, Q8_0, 4 tokens a pass (a verify pass's width), 250 timed passes
 #   polls  every card, F32, the two persistent variants with polls every 0.5 and every 8 us (default 2), 300 passes
+# The keep-alive steps (C533, not in the default STEPS): every card, Q8_0, the staged hop (the release line's), 1,000
+# timed passes (250 at k = 4), each with its control run first:
+#   kaoff      no keep-alive
+#   karesident --keepalive resident: one thread a card polling a word in mapped host memory every 50 us
+#   kapulse    --keepalive pulse: one thread a card busy 100 ms every 1,000 ms
+#   kak4off    4 tokens a pass, no keep-alive
+#   kak4       4 tokens a pass, --keepalive resident
 #
 # Env: OUT     output folder (default ./out)
 #      BIN     the binary (default ./persistent_pipe)
@@ -65,6 +72,11 @@ for step in $STEPS; do
         polls) for us in 0.5 8; do
                    run "poll$us" "${cards[@]}" --wire f32 --variants persist,persist-direct --poll-us "$us" --passes 300
                done ;;
+        kaoff)      run kaoff "${cards[@]}" --wire q8 --variants staged ;;
+        karesident) run karesident "${cards[@]}" --wire q8 --variants staged --keepalive resident ;;
+        kapulse)    run kapulse "${cards[@]}" --wire q8 --variants staged --keepalive pulse ;;
+        kak4off)    run kak4off "${cards[@]}" --wire q8 --variants staged --k 4 --passes 250 --warmup 10 ;;
+        kak4)       run kak4 "${cards[@]}" --wire q8 --variants staged --k 4 --passes 250 --warmup 10 --keepalive resident ;;
         *)     log "unknown step $step" ;;
     esac
 done

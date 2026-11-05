@@ -1,3 +1,4 @@
+| `GGML_CUDA_KEEPALIVE` (`_MS`, `_POLL_US`) | off | `decode` (or `1`): one block per card, on a stream of the card's lowest priority, polls a word in mapped host memory so that the driver holds the card at its boost clock while a layer split decodes; it ends itself `_MS` after the card's last graph (default 1,000) and is ended before captures, frees and device-wide synchronizes. `request`: also every card's block when llama-server takes a request; `idle`: a 120 s timeout, through an agent's tool calls | -keepalive | Q1021, Q1045 |
 # Miner Llama's switches
 
 Every behaviour that Miner Llama adds to upstream llama.cpp (b12076) can be turned on or off on its own, at run time, in
@@ -174,8 +175,8 @@ Q1040.
 
 ## Branches that join with `-ladder5`
 
-These ports of older v3 branches onto `-ladder4` (C80) have their own switches, all off by default; they enter one tree
-with `-ladder5` (C537, Q1026), and their rows move into the tables above then:
+These branches on `-ladder4` (C80's ports of older v3 branches, and the features made since) have their own switches,
+all off by default; they enter one tree with `-ladder5` (C537, Q1026), and their rows move into the tables above then:
 
 | Switch | Default | What it does | Branch | Row |
 |---|---|---|---|---|

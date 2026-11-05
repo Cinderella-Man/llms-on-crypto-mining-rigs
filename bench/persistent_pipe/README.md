@@ -115,6 +115,27 @@ passes) and `polls` (the persistent variants with polls every 0.5 and 8 µs). En
 | `--timeout-s S` | a mailbox wait longer than this stops every card (default 10) |
 | `--sched auto\|spin\|yield\|blocking` | how the host thread waits on the devices (`cudaInitDevice` flags; default auto, as llama.cpp leaves it) |
 | `--seed S`, `--csv FILE` | the first ids; `variant,cards,k,wire,layers,key,value,unit` |
+| `--keepalive off\|resident\|pulse` | a keep-alive thread on every card around the calibration and every host-driven variant (below; default off) |
+| `--keepalive-poll-us X`, `--keepalive-pulse ON,PER` | resident: time between two reads of its word (default 50); pulse: busy ON ms every PER ms (default 100,1000) |
+
+## The keep-alive (C533)
+
+On the rig the driver runs a card that computes only ~1/9 of each token at its 1,354 MHz base clock, while a card that
+stays busy runs at up to 1,911 MHz ([card clocks](../../docs/data/2026-11-05_card_clocks/README.md): the release line
+decodes at base on every card). `--keepalive` keeps each card busy with one thread on a stream of the card's lowest
+priority, so its products run beside it:
+
+- `resident`: the thread reads a word in mapped host memory every `--keepalive-poll-us` (spinning on `clock64()`
+  between reads) until the host clears the word, which it does before anything that waits for the whole device. The
+  engine's `GGML_CUDA_KEEPALIVE` works the same way.
+- `pulse`: a host thread launches a short spin on every card every period, since a card keeps its boost clock for a few
+  seconds after a busy spell.
+
+Each thread measures its card's SM clock every 50 ms (its `clock64()` against `%globaltimer`). Per card and phase (the
+calibration, each host-driven variant) the run prints the clock's p10, median and p90, the share of samples below
+1,400 MHz and at 1,800 MHz or more, and how long the stop took. The calibration runs twice: with the keep-alive, and
+right after it stopped while the cards still run at its clock. The difference is what the thread costs the products.
+`run_rig.sh`'s steps `kaoff karesident kapulse kak4off kak4` are C533's rig run.
 
 ## What decides what
 

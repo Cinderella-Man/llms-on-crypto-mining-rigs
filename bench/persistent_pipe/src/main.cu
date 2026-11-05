@@ -15,7 +15,10 @@
 //     mails the token ids back to card 0. The host only launches the kernels and reads the results.
 // Every variant runs the same device functions on the same blocks of work, so every variant's token ids and final
 // residual must equal the first variant's bit for bit; the run fails (exit code 2) when they do not, or when a mailbox
-// times out. See ../README.md.
+// times out. With --keepalive, one thread a card on a stream of the card's lowest priority keeps the card busy around
+// the calibration and every host-driven variant (resident: it polls a word in mapped host memory with a clock64()
+// back-off; pulse: it spins for a while every period), measures the SM clock and reports it per card, so the run shows
+// whether the cards hold their boost clock and what that costs the products. See ../README.md.
 #include <cuda_fp16.h>
 #include <cuda_runtime.h>
 
@@ -363,6 +366,74 @@ __global__ void k_ping(unsigned long long * box, const int role, const int round
             b[1] = r;
         }
     }
+}
+
+// ---- the keep-alive (--keepalive) -----------------------------------------------------------------------------------
+
+constexpr int                KA_BINS      = 48;          // the SM clock in bins of 50 MHz
+constexpr unsigned long long KA_SAMPLE_NS = 50000000ull; // a clock sample every 50 ms
+
+// What a card's keep-alive saw, in mapped host memory: summed over its runs (the pulses add to it).
+struct ka_report {
+    unsigned long long polls;
+    unsigned long long ns;
+    unsigned           hist[KA_BINS];
+};
+
+// The SM clock between two (clock64, %globaltimer) readings into a bin; the readings move on.
+__device__ __forceinline__ void ka_sample(long long & c_s, unsigned long long & t_s, const unsigned long long now,
+                                          unsigned * hist) {
+    const long long          c   = clock64();
+    const unsigned long long mhz = (unsigned long long) (c - c_s) * 1000ull / (now - t_s);
+    hist[mhz / 50 < KA_BINS ? mhz / 50 : KA_BINS - 1]++;
+    c_s = c;
+    t_s = now;
+}
+
+__device__ void ka_add(ka_report * rep, const unsigned long long polls, const unsigned long long ns, const unsigned * hist) {
+    rep->polls += polls;
+    rep->ns    += ns;
+    for (int i = 0; i < KA_BINS; ++i) {
+        rep->hist[i] += hist[i];
+    }
+    __threadfence_system();
+}
+
+// --keepalive resident: one thread, launched on a stream of the card's lowest priority, that reads its word in mapped
+// host memory every poll_cycles (spinning on clock64() in between) while the word is 1, or until max_ns, and samples
+// the SM clock.
+__global__ void k_keepalive(const volatile unsigned * word, ka_report * rep, const long long poll_cycles,
+                            const unsigned long long max_ns) {
+    unsigned hist[KA_BINS] = {};
+    const unsigned long long t0 = gtime();
+    unsigned long long       t_s = t0, polls = 0, now = t0;
+    long long                c_s = clock64();
+    while (*word == 1 && now - t0 < max_ns) {
+        polls++;
+        spin(poll_cycles);
+        now = gtime();
+        if (now - t_s >= KA_SAMPLE_NS) {
+            ka_sample(c_s, t_s, now, hist);
+        }
+    }
+    ka_add(rep, polls, gtime() - t0, hist);
+}
+
+// --keepalive pulse: the same thread busy for on_ns, then it ends; the host launches it every period.
+__global__ void k_pulse(ka_report * rep, const unsigned long long on_ns) {
+    unsigned hist[KA_BINS] = {};
+    const unsigned long long t0 = gtime();
+    unsigned long long       t_s = t0, now = t0, polls = 0;
+    long long                c_s = clock64();
+    while (now - t0 < on_ns) {
+        polls++;
+        spin(1000);
+        now = gtime();
+        if (now - t_s >= KA_SAMPLE_NS) {
+            ka_sample(c_s, t_s, now, hist);
+        }
+    }
+    ka_add(rep, polls, now - t0, hist);
 }
 
 // ---- the token-persistent kernel ------------------------------------------------------------------------------------
@@ -731,6 +802,10 @@ struct options {
     unsigned    seed          = 1;
     std::string csv;
     bool        smoke = false;
+    std::string keepalive     = "off";  // off, resident, pulse: around the calibration and every host-driven variant
+    double      ka_poll_us    = 50.0;   // resident: time between two reads of the word
+    double      ka_on_ms      = 100.0;  // pulse: busy time
+    double      ka_period_ms  = 1000.0; // pulse: one pulse every
 };
 
 struct card_t {
@@ -764,6 +839,12 @@ struct card_t {
     cudaEvent_t filled[MAX_CHUNKS] = {}; // staged: slot filled (this card), slot drained (the next card)
     cudaEvent_t drained[MAX_CHUNKS] = {};
     double cal_ms = 0;                   // the card's products alone, launched back to back
+    // the keep-alive
+    cudaStream_t ka_s = nullptr;         // the card's lowest priority
+    volatile unsigned * ka_word = nullptr;   // mapped host memory: 1 runs the resident thread
+    unsigned * ka_word_dev = nullptr;
+    ka_report * ka_rep = nullptr;        // mapped host memory
+    ka_report * ka_rep_dev = nullptr;
 };
 
 struct run_result {
@@ -906,6 +987,106 @@ double calibrate(card_t & c, int layers, int reps) {
     return median(t);
 }
 
+// ---- the keep-alive: started before the calibration and each host-driven variant, stopped before anything that waits
+// for a whole device (read_final's synchronize, the persistent variants' set-up)
+
+std::thread       ka_pulser;
+std::atomic<bool> ka_pulsing{false};
+double            ka_max_s = 0; // a resident thread ends by itself after this long
+
+bool ka_on() { return opt.keepalive != "off"; }
+
+void ka_start() {
+    if (!ka_on()) {
+        return;
+    }
+    for (card_t & c : cards) {
+        memset((void *) c.ka_rep, 0, sizeof(ka_report));
+        *c.ka_word = 1;
+    }
+    std::atomic_thread_fence(std::memory_order_seq_cst);
+    if (opt.keepalive == "resident") {
+        for (card_t & c : cards) {
+            CUDA_CHECK(cudaSetDevice(c.dev));
+            k_keepalive<<<1, 1, 0, c.ka_s>>>(c.ka_word_dev, c.ka_rep_dev, (long long) (opt.ka_poll_us * c.clock_khz / 1000.0),
+                                             (unsigned long long) (ka_max_s * 1e9));
+            CUDA_CHECK(cudaGetLastError());
+        }
+    } else {
+        ka_pulsing = true;
+        ka_pulser  = std::thread([] {
+            const auto period = std::chrono::microseconds((long long) (opt.ka_period_ms * 1000.0));
+            auto next = clk::now();
+            while (ka_pulsing) {
+                for (card_t & c : cards) {
+                    CUDA_CHECK(cudaSetDevice(c.dev));
+                    k_pulse<<<1, 1, 0, c.ka_s>>>(c.ka_rep_dev, (unsigned long long) (opt.ka_on_ms * 1e6));
+                    CUDA_CHECK(cudaGetLastError());
+                }
+                next += period;
+                while (ka_pulsing && clk::now() < next) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                }
+            }
+        });
+    }
+}
+
+// Ends every card's keep-alive and reports what each saw during `phase`: the SM clock (p10, median, p90; the share
+// below 1,400 MHz, the base, and at 1,800 MHz or more, the boost), and how long the stop took.
+void ka_stop(const std::string & phase) {
+    if (!ka_on()) {
+        return;
+    }
+    const clk::time_point t0 = clk::now();
+    if (opt.keepalive == "resident") {
+        for (card_t & c : cards) {
+            *c.ka_word = 0;
+        }
+        std::atomic_thread_fence(std::memory_order_seq_cst);
+    } else {
+        ka_pulsing = false;
+        ka_pulser.join();
+    }
+    std::vector<double> stop_us;
+    for (card_t & c : cards) {
+        CUDA_CHECK(cudaStreamSynchronize(c.ka_s));
+        stop_us.push_back(us_between(t0, clk::now()));
+    }
+    printf("keep-alive (%s) during %s, per card: SM clock MHz p10/median/p90 (%% below 1400, %% at 1800 or more)\n ",
+           opt.keepalive.c_str(), phase.c_str());
+    for (size_t i = 0; i < cards.size(); ++i) {
+        const ka_report & r = *(const ka_report *) cards[i].ka_rep;
+        unsigned long long n = 0, base = 0, boost = 0;
+        for (int b = 0; b < KA_BINS; ++b) {
+            n     += r.hist[b];
+            base  += b * 50 < 1400 ? r.hist[b] : 0;
+            boost += b * 50 >= 1800 ? r.hist[b] : 0;
+        }
+        auto q = [&](double p) {
+            unsigned long long acc = 0;
+            for (int b = 0; b < KA_BINS; ++b) {
+                acc += r.hist[b];
+                if (n > 0 && acc >= p * n) {
+                    return b * 50 + 25;
+                }
+            }
+            return 0;
+        };
+        printf(" %d: %d/%d/%d (%.0f, %.0f)", (int) i, q(0.1), q(0.5), q(0.9), n ? 100.0 * base / n : 0.0,
+               n ? 100.0 * boost / n : 0.0);
+        const std::string k = "card" + std::to_string(i);
+        csv_row("ka_" + phase, k + "_mhz_median", q(0.5), "MHz");
+        csv_row("ka_" + phase, k + "_base_pct", n ? 100.0 * base / n : 0.0, "%");
+        csv_row("ka_" + phase, k + "_boost_pct", n ? 100.0 * boost / n : 0.0, "%");
+        csv_row("ka_" + phase, k + "_samples", (double) n, "");
+        csv_row("ka_" + phase, k + "_busy_s", r.ns / 1e9, "s");
+    }
+    const double stop_max = *std::max_element(stop_us.begin(), stop_us.end());
+    printf("\n  the stop took %.0f us (every card's thread ended)\n", stop_max);
+    csv_row("ka_" + phase, "stop_us", stop_max, "us");
+}
+
 // the residual (or its Q8_0 cast) from card i to card i + 1, the way variant v hands it on
 void hop(const std::string & v, int i, const void * src, void * dst, size_t bytes) {
     card_t & a = cards[i];
@@ -961,6 +1142,7 @@ run_result run_host(const std::string & v) {
         htoks[c] = start_tok(c);
     }
     const int embed_blocks = std::min(256, (K * opt.n + THREADS - 1) / THREADS);
+    ka_start();
     const clk::time_point t0 = clk::now();
     clk::time_point prev = t0;
     for (int p = 0; p < P; ++p) {
@@ -1006,6 +1188,7 @@ run_result run_host(const std::string & v) {
     CUDA_CHECK(cudaGetLastError());
     r.wall_s = us_between(t0, clk::now()) / 1e6;
     r.ok     = true;
+    ka_stop(v); // before read_final's device synchronize
     read_final(r);
     return r;
 }
@@ -1215,6 +1398,11 @@ void usage() {
            "  --sched auto|spin|yield|blocking   the host thread's wait on the devices (default auto)\n"
            "  --seed S             the first token ids (default 1)\n"
            "  --csv FILE           variant,cards,k,wire,layers,key,value,unit\n"
+           "  --keepalive MODE     off, resident (one thread a card polling a word in mapped host memory) or pulse (one\n"
+           "                       thread a card busy for a while every period), around the calibration and every\n"
+           "                       host-driven variant, on a stream of the card's lowest priority (default off)\n"
+           "  --keepalive-poll-us X     resident: time between two reads of the word (default 50)\n"
+           "  --keepalive-pulse ON,PER  pulse: busy ON ms every PER ms (default 100,1000)\n"
            "  --smoke              20 passes after 2: every path once\n",
            NMAX);
 }
@@ -1251,6 +1439,13 @@ int main(int argc, char ** argv) {
         else if (a == "--seed") opt.seed = (unsigned) atoi(next());
         else if (a == "--csv") opt.csv = next();
         else if (a == "--smoke") opt.smoke = true;
+        else if (a == "--keepalive") opt.keepalive = next();
+        else if (a == "--keepalive-poll-us") opt.ka_poll_us = atof(next());
+        else if (a == "--keepalive-pulse") {
+            const std::string s = next();
+            opt.ka_on_ms     = atof(s.c_str());
+            opt.ka_period_ms = s.find(',') == std::string::npos ? 0 : atof(s.c_str() + s.find(',') + 1);
+        }
         else { usage(); return a == "-h" || a == "--help" ? 0 : 1; }
     }
     if (opt.smoke) {
@@ -1267,6 +1462,11 @@ int main(int argc, char ** argv) {
     if (opt.wire == "f32") WIRE = WIRE_F32;
     else if (opt.wire == "q8") WIRE = WIRE_Q8;
     else { usage(); return 1; }
+    if ((opt.keepalive != "off" && opt.keepalive != "resident" && opt.keepalive != "pulse") || opt.ka_poll_us <= 0 ||
+        opt.ka_on_ms <= 0 || opt.ka_period_ms < opt.ka_on_ms) {
+        usage();
+        return 1;
+    }
     const std::vector<std::string> variants = parse_list(opt.variants);
     for (const std::string & v : variants) {
         if (v != "sync" && v != "peer" && v != "staged" && v != "persist" && v != "persist-direct") {
@@ -1384,6 +1584,20 @@ int main(int argc, char ** argv) {
     CUDA_CHECK(cudaHostAlloc((void **) &results_host, (size_t) P * K * sizeof(int), cudaHostAllocPortable | cudaHostAllocMapped));
     CUDA_CHECK(cudaHostAlloc((void **) &abort_host, 64, cudaHostAllocPortable | cudaHostAllocMapped));
     CUDA_CHECK(cudaHostAlloc((void **) &htoks, 64 * sizeof(int), cudaHostAllocPortable));
+    if (ka_on()) {
+        // the keep-alive: a word and a report per card in mapped host memory, a stream of the card's lowest priority
+        for (card_t & c : cards) {
+            CUDA_CHECK(cudaSetDevice(c.dev));
+            int least = 0, greatest = 0;
+            CUDA_CHECK(cudaDeviceGetStreamPriorityRange(&least, &greatest));
+            CUDA_CHECK(cudaStreamCreateWithPriority(&c.ka_s, cudaStreamNonBlocking, least));
+            CUDA_CHECK(cudaHostAlloc((void **) &c.ka_word, 64, cudaHostAllocPortable | cudaHostAllocMapped));
+            CUDA_CHECK(cudaHostAlloc((void **) &c.ka_rep, sizeof(ka_report), cudaHostAllocPortable | cudaHostAllocMapped));
+            *c.ka_word = 0;
+            CUDA_CHECK(cudaHostGetDevicePointer((void **) &c.ka_word_dev, (void *) c.ka_word, 0));
+            CUDA_CHECK(cudaHostGetDevicePointer((void **) &c.ka_rep_dev, c.ka_rep, 0));
+        }
+    }
     for (int i = 0; i < N_; ++i) {
         card_t & c = cards[i];
         CUDA_CHECK(cudaSetDevice(c.dev));
@@ -1401,7 +1615,9 @@ int main(int argc, char ** argv) {
         }
     }
 
-    // the products per card, and each card's time for them alone
+    // the products per card, and each card's time for them alone (with the keep-alive running, if one is asked for)
+    ka_max_s = 600;
+    ka_start();
     L_ = opt.layers;
     if (opt.card_ms > 0) {
         const double one = calibrate(cards[0], 1, 5);
@@ -1413,6 +1629,17 @@ int main(int argc, char ** argv) {
         cards[i].cal_ms = calibrate(cards[i], L_, 10);
         compute_ms += cards[i].cal_ms;
     }
+    ka_stop("calibration");
+    // the same right after the keep-alive stopped, while the cards still run at its clock (it decays over seconds):
+    // the difference is what the keep-alive's thread costs the products
+    std::vector<double> cal_after(N_, 0.0);
+    if (ka_on()) {
+        for (int i = 0; i < N_; ++i) {
+            cal_after[i] = calibrate(cards[i], L_, 10);
+        }
+    }
+    // a resident keep-alive thread ends by itself after three times a run's estimate
+    ka_max_s = opt.timeout_s + 3.0 * (compute_ms / 1000.0 + 0.002 * N_) * (opt.warmup + opt.passes);
     const double w_mb = (double) opt.n * opt.n * sizeof(__half) / 1e6;
     printf("\n%d cards, n = %d, %d token%s a pass, %d products a card (%.1f MB of weights each, read %d times a pass), "
            "the residual in %s: %zu bytes a hop; %d + %d passes\n",
@@ -1424,10 +1651,29 @@ int main(int argc, char ** argv) {
         csv_row("calibration", "card" + std::to_string(i) + "_ms", cards[i].cal_ms, "ms");
     }
     printf("; sum %.3f ms, %.1f GB/s on card 0\n", compute_ms, w_mb * L_ / cards[0].cal_ms);
+    if (ka_on()) {
+        printf("the products alone right after the keep-alive stopped (ms a pass):");
+        double sum_after = 0;
+        for (int i = 0; i < N_; ++i) {
+            printf(" %.3f", cal_after[i]);
+            sum_after += cal_after[i];
+            csv_row("calibration_after_ka", "card" + std::to_string(i) + "_ms", cal_after[i], "ms");
+        }
+        printf("; sum %.3f ms: the keep-alive costs the products %+.3f ms a pass (%+.1f %%)\n", sum_after,
+               compute_ms - sum_after, 100.0 * (compute_ms - sum_after) / sum_after);
+        csv_row("calibration_after_ka", "sum_ms", sum_after, "ms");
+    }
     csv_row("calibration", "sum_ms", compute_ms, "ms");
     csv_row("calibration", "hop_bytes", (double) wire_bytes, "B");
     printf("persistent mailboxes: %d chunks; polls every %.2f us after the hint, %.1f us before; host wait: %s\n\n",
            opt.mail_chunks, opt.poll_us, opt.slow_poll_us, opt.sched.c_str());
+    if (opt.keepalive == "resident") {
+        printf("keep-alive: resident, one thread a card reading its word every %.1f us, around the calibration and every "
+               "host-driven variant\n\n", opt.ka_poll_us);
+    } else if (opt.keepalive == "pulse") {
+        printf("keep-alive: pulse, one thread a card busy %.0f ms every %.0f ms, around the calibration and every "
+               "host-driven variant\n\n", opt.ka_on_ms, opt.ka_period_ms);
+    }
 
     // the variants
     std::vector<run_result> runs;
