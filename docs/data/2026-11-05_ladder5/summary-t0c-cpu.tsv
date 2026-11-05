@@ -1,0 +1,15 @@
+tree	check	verdict	detail
+l5	tree	OK	commit 1f7215948af80391b8f23f3b3a51f2e123c41700 
+l5	build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+l5	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+l5	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+l5	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+l5	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+t0c	tree	OK	commit 1551f5fe12424d7006748c1628b0df9550f20171 
+t0c	build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+t0c	ctest	OK	100% tests passed, 0 tests failed out of 66; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+t0c	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+t0c	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+t0c	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+t0c	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+t0c	ident vs l5	SAME	l5 wrote 143 files; 143 compared, differ: none; written by t0c only: 0; Summary: all 148 test(s) passed
