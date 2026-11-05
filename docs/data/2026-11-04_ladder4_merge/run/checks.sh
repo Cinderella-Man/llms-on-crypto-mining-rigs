@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# The -ladder4 merge on a build machine, CPU only: fork branch pascal-p106-v3-b12076-ladder4 (-kshape with -moeskip
-# and -coldtier merged in, -adraft already in it) built for the rig, and the merged branches' own CPU checks re-run on
-# the merged tree, every binary in a container of the build image:
+# The -ladder4 merge on a build machine, CPU only: fork branch pascal-p106-v3-b12076-ladder4 (-kshape with every
+# off-by-default feature branch of the fork merged in: BRANCHES; -adraft already in -kshape) built for the rig, and the
+# merged branches' own CPU checks re-run on the merged tree, every binary in a container of the build image:
 #   union     git only: every line the merge changes against -kshape is a line one of the merged branches changed, or a
-#             line of the merge's own commits (MERGE_OWN: the tiered layer's graph-level cut)
+#             line of the merge's own commits (MERGE_OWN: the tiered layer's graph-level cut, route once's histogram
+#             before the tail's cut, and the -rpc merge with GGML_OP_COUNT 105)
 #   build     the rig tarball (scripts/build_llamacpp_docker.sh, TESTS=1: sm_61 code and compute_61 PTX, no AVX, with
 #             test-backend-ops) and, from its build tree, the extra tests (EXTRA) as a second tarball
 #   cpubuild  the merged tree without CUDA (static, native): CPU_TARGETS into $WORK/cpu/bin
@@ -20,6 +21,10 @@
 #             graph-level ops (a tiered layer takes them: its tier lookup reads a row per id), equals the untiered
 #             model's, and differs from no cut; test-moe-ids on the tiered model with the cut; at -ub 128, 4 and 1
 #   adraft    test-spec-adapt (Q687's unit test) from the merged CPU build
+#   units     the other merged branches' unit tests from the merged CPU build: test-spec-block (-blockver),
+#             test-spec-dump (-specdump2), test-draft-mem (-draft1card), test-quantize-fns (-n2p's four types),
+#             test-hop-cast --unit-only (-hopcast4), and test-route-once on coldtier's sharp random model (-routeonce;
+#             run the coldtier step first)
 # Usage: WORK=<dir> REPO=<this repository> BASE_BUILD=<-kshape's unpacked rig tarball, extras in bin/> \
 #   BASE_CPU=<bin/ of a static native CPU build with -kshape's CPU code> TEXT=<a text file for llama-perplexity> \
 #   [BRANCH=pascal-p106-v3-b12076-ladder4] [REMOTE=fork] [BASE=d27845b67] [BRANCHES='<name>=<tip> ...'] \
@@ -36,15 +41,19 @@ REPO=$(realpath "${REPO:?REPO=<this repository>}")
 BRANCH=${BRANCH:-pascal-p106-v3-b12076-ladder4}
 REMOTE=${REMOTE:-fork}
 BASE=${BASE:-d27845b67}
-BRANCHES=${BRANCHES:-moeskip=f3072cbe8 coldtier=f5e600bd2}
-MERGE_OWN=${MERGE_OWN:-}
+BRANCHES=${BRANCHES:-moeskip=f3072cbe8 coldtier=f5e600bd2 blockver=b8f42a3ff specdump2=3e22fd7c1 spancount=f6c157897 \
+routeonce=b3825c215 rpc=ba068ae6e replay=a89d6b281 mailbox=5aebbddd9 hopcast4=3dbf1105a draft1card=648c720c9 \
+n2p=1a0832375 hybrid=8c25952e4}
+MERGE_OWN=${MERGE_OWN:-6e57e208b 6fd71e172 6a9021389}
 CUT=${CUT:-p=0.8,renorm=1}
 JOBS=${JOBS:-8}
 THREADS=${THREADS:-8}
-STEPS=${STEPS:-union build cpubuild identity moeskip coldtier combo adraft}
+STEPS=${STEPS:-union build cpubuild identity moeskip coldtier combo adraft units}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
-EXTRA=${EXTRA:-test-llama-archs test-llama-context test-draft-mem test-hop-cast test-bytes-switches test-moe-ids test-spec-adapt}
-CPU_TARGETS=${CPU_TARGETS:-llama-server llama-perplexity llama-quantize test-backend-ops test-llama-archs test-bytes-switches test-moe-ids test-spec-adapt}
+EXTRA=${EXTRA:-test-llama-archs test-llama-context test-draft-mem test-hop-cast test-bytes-switches test-moe-ids test-spec-adapt \
+test-hop-mailbox test-route-once}
+CPU_TARGETS=${CPU_TARGETS:-llama-server llama-perplexity llama-quantize test-backend-ops test-llama-archs test-bytes-switches \
+test-moe-ids test-spec-adapt test-spec-block test-spec-dump test-draft-mem test-quantize-fns test-hop-cast test-route-once}
 D="--cpu-shares=256 ${CPUS:+--cpuset-cpus $CPUS} ${DOCKER_ARGS:-}"
 DATA=$REPO/docs/data
 S=$WORK/src
@@ -268,6 +277,30 @@ if step adraft; then
     box "$IMAGE" nice -n 19 "$WORK/cpu/bin/test-spec-adapt" > "$K/unit.log" 2>&1
     rc=$?
     verdict adraft "$([ $rc = 0 ] && echo OK || echo FAIL)" "test-spec-adapt rc=$rc: $(tail -n 1 "$K/unit.log")"
+fi
+
+if step units; then
+    echo "=== units $(date -Is)"
+    K=$WORK/checks/units
+    rm -rf "$K" && mkdir -p "$K"
+    # <check> <binary> [args]: exit status 0 passes; the log's last line goes into the detail
+    unit() {
+        local n=$1 b=$2; shift 2
+        box "$IMAGE" nice -n 19 "$WORK/cpu/bin/$b" "$@" > "$K/$n.log" 2>&1
+        local rc=$?
+        verdict "unit $n" "$([ $rc = 0 ] && echo OK || echo FAIL)" "$b $* rc=$rc: $(grep -av '^ *$' "$K/$n.log" | tail -n 1 | cut -c1-160)"
+    }
+    unit blockver   test-spec-block
+    unit specdump2  test-spec-dump
+    unit draft1card test-draft-mem
+    unit n2p        test-quantize-fns
+    unit hopcast4   test-hop-cast --unit-only
+    UM=$WORK/checks/coldtier/random/qwen4exp-moe-sharp.gguf
+    if [ -f "$UM" ]; then
+        unit routeonce test-route-once -m "$UM" -t "$THREADS"
+    else
+        verdict "unit routeonce" FAIL "no random model (run the coldtier step first): $UM"
+    fi
 fi
 
 date -Is > "$WORK/DONE"
