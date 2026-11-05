@@ -69,8 +69,8 @@ blocks. Both load into the Q8_0 tile layout as N2P and N3P do.
 
 ## Status
 
-**Built and correct on the CPU; file 1 (N2P-N2P128) is built and fits nine 6 GB cards at 64k; file 2 (N2P-N3P128) is
-quantizing.** Still to come, in this order: the PTX and native GPU checks, file 2's fit, both files' KL divergence, then
+**Built and correct on the CPU; both files are built and fit nine 6 GB cards at 64k on whole layers (file 1 to
+`-ub 256`, file 2 to `-ub 128`).** Still to come, in this order: the PTX and native GPU checks, both files' KL divergence, then
 the P106 timing (C394). This page is updated as each lands.
 
 - **File 1** (2026-11-05): `gguf_compose verify` passes (1,224 tensors in 3 shards, the 144 routed-expert tensors
@@ -83,6 +83,14 @@ the P106 timing (C394). This page is updated as each lands.
   At 64k with an f16 cache on whole layers, `-ts 5,6,5,6,5,5,6,5,6` (pmix-q2-fast's split) fits up to `-ub 256`, with
   242 MiB free on the fullest card (474 at `-ub 64`; pmix-q2-fast: 1,067 and 1,299). With the DFlash2 drafter it fits up
   to `-ub 128` (238 MiB), with the MTP draft also up to `-ub 128` (217 MiB). `-ub 512` misses on every line.
+- **File 2** (2026-11-05 16:32): composed onto file 1, so `verify` counts the 48 down projections identical to
+  llama-quantize's N3P-128 and the other 1,176 tensors to file 1's. Shard 1 is 13,843,633,760 bytes (md5
+  `5fded2e6f456f2aa4bd2ddce9eb943f2`), shard 2 33,977,261,696 bytes (md5 `df4809b9fe535bf7858dbf96aa116cbc`), shard 3
+  the same n-gram table: 3,145,728,000 bytes (2.93 GiB) more than file 1.
+- **Fit of file 2** ([fit/fit-n2p-dn3p128.tsv](fit/fit-n2p-dn3p128.tsv)). At 64k with an f16 cache on whole layers, the
+  same `-ts 5,6,5,6,5,5,6,5,6` fits up to `-ub 128`, with 31 MiB free on the fullest card (99 at `-ub 64`). With the
+  DFlash2 drafter or the MTP draft no whole-layer split fits at 64k (−69 and −90 MiB at `-ub 64`); with expert tensors
+  placed one by one (the `ot` lines) the drafter fits, 395 MiB free at `-ub 64`.
 
 - **Build:** the rig tarball (sm_61 code and compute_61 PTX, `TESTS=1`, no AVX, GLIBC 2.38) of `1a0832375` compiles
   cleanly. The files were made with the CPU tools of `0b8427657` (`llama-quantize`), whose quantizer is the final
