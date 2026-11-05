@@ -14,15 +14,16 @@
 #          agent's tool calls, C558)
 #   report the agent check's report of the arms, the client's folder collected to OUT
 # Env: ENVFILE (S12's machine file, docs/data/2026-11-03_flash_next_mtp/run/s12.env.example, filled in, with DRAFT),
-#      RIG_PORT RELAY_PORT CLIENT_PORT PROXY_PORT CLIENT_DIR CLIENT_OUT (as s35_arms.sh), MODEL (the first shard on the
+#      RIG_PORT RELAY_PORT CLIENT_PORT PROXY_PORT CLIENT_DIR CLIENT_OUT BENCH (as s35_arms.sh), MODEL (the first shard on the
 #      rig), BUILD (the -keepalive build's folder under /opt/llama-builds), OUT (a local folder), STEPS, LOADS, ARMS_KA,
 #      SMI_MS (an nvidia-smi log per card every SMI_MS ms beside each llama-bench load, smi_<load>.csv, for the clocks
 #      with the switch off too; unset: none. A 100 ms log costs ~3 ms a token, so keep it sparse, 2,000 or more)
 set -uo pipefail
 : "${ENVFILE:?}" "${MODEL:?}" "${BUILD:?}" "${OUT:?}"
 M=$MODEL; T=$BUILD
-# the caller's rig, ports and folders win over the machine file's
-keep=$(for v in RIG RIG_PORT RELAY_PORT CLIENT_PORT PROXY_PORT CLIENT_DIR CLIENT_OUT RIG_LOGDIR; do
+# the caller's rig, ports and folders win over the machine file's (BENCH, the agent_check folder, too: the machine file
+# is sourced with set -a, so every name it sets reaches release_check_s12.sh)
+keep=$(for v in RIG RIG_PORT RELAY_PORT CLIENT_PORT PROXY_PORT CLIENT_DIR CLIENT_OUT RIG_LOGDIR BENCH; do
            [ -n "${!v:-}" ] && printf '%s=%q ' "$v" "${!v}"; done)
 set -a; . "$ENVFILE"; eval "$keep"; set +a
 export MIN_AVAIL_MB=60 MODEL=$M REL_BIN=/opt/llama-builds/$T/bin/llama-server RIG_LOGDIR=${RIG_LOGDIR:-/tmp/c533-agent-logs}
@@ -34,7 +35,7 @@ KENV="GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0"
 HOP="LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=1"
 SL="LLAMA_DRAFT_SHORTLIST=32768,8192,2"
 MT="-b 2048 -ub 512 -ts 6,6,6,6,5,6,5,6,3 -fit off -lm dio -md $DRAFT --spec-type draft-mtp --spec-draft-n-max 3 -otd token_embd=CUDA4 --spec-draft-n-ubatch 128 --no-host"
-BENCH="-ngl 99 -fa 1 -b 2048 -ub 512 -ts 6/5/5/6/5/5/6/5/6 -lm dio"
+LBOPT="-ngl 99 -fa 1 -b 2048 -ub 512 -ts 6/5/5/6/5/5/6/5/6 -lm dio"
 RC=docs/data/2026-11-03_flash_next_mtp/run/release_check_s12.sh
 mkdir -p "$OUT"
 # <name> <keep-alive setting or ""> <llama-bench options>: one llama-bench load on the rig under the RAM watchdog
@@ -42,7 +43,7 @@ bench_load() {
     ssh "$RIG" "mkdir -p /tmp/c533 && cat > /dev/shm/ram_watchdog.sh" < scripts/ram_watchdog.sh
     ssh "$RIG" "LOG=/dev/shm/rw_$1.tsv PROC=llama-bench MIN_AVAIL_MB=60 setsid nohup chrt -f 10 bash /dev/shm/ram_watchdog.sh > /dev/null 2>&1 < /dev/null & echo \$! > /dev/shm/rw.pid
         ${SMI_MS:+nvidia-smi --query-gpu=timestamp,index,pstate,clocks.sm,power.draw,clocks_event_reasons.active --format=csv,noheader -lms $SMI_MS > /tmp/c533/smi_$1.csv 2>&1 & echo \$! > /dev/shm/smi.pid}
-        cd /tmp/c533 && env $KENV $HOP ${2:+GGML_CUDA_KEEPALIVE=$2} timeout 2400 /opt/llama-builds/$T/bin/llama-bench -m $M $BENCH $3 \
+        cd /tmp/c533 && env $KENV $HOP ${2:+GGML_CUDA_KEEPALIVE=$2} timeout 2400 /opt/llama-builds/$T/bin/llama-bench -m $M $LBOPT $3 \
             -o jsonl > $1.jsonl 2> $1.err; echo \"$1 rc=\$?\"
         [ -e /dev/shm/smi.pid ] && kill \$(cat /dev/shm/smi.pid); rm -f /dev/shm/smi.pid
         kill \$(cat /dev/shm/rw.pid); mv /dev/shm/rw_$1.tsv /tmp/c533/; rm -f /dev/shm/rw.pid /dev/shm/ram_watchdog.sh"
