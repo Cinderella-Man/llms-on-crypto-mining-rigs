@@ -23,6 +23,29 @@ every kernel the two share is the same but the persistent MoE kernel's F16 route
 what each switch does when flipped on a CPU, are in [docs/data/2026-11-05_ladder5/](data/2026-11-05_ladder5/README.md)
 and [docs/data/2026-11-05_switches/](data/2026-11-05_switches/README.md).
 
+## Which preset sets each switch
+
+Each v3 model has a preset, `release/<model>-v3/settings.env`: the switches (`PRESET_ENV`) and the command line
+(`PRESET_ARGS`) its agent check ran with. A switch no preset names stays at its default. These are the switches the
+presets set:
+
+| Switch | [Flash-Next](../release/flash-next-v3/README.md) | [Flint](../release/flint-v3/settings.env) | [Ornith-1.5-122B](../release/ornith-v3/settings.env) |
+|---|---|---|---|
+| `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM` | `32768` | — | — |
+| `GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE` | `0` | — | — |
+| `LLAMA_HOP_CAST` | `q8_0` | — (needs Flint's quality check) | — (needs Ornith's quality check) |
+| `GGML_CUDA_HOP_STAGED` | `1` | — (TODO(flintside)) | — |
+| `LLAMA_DRAFT_SHORTLIST` | `32768,8192,2` | — | — |
+| `GGML_CUDA_KEEPALIVE` | `decode` | — (TODO(flintside)) | — (TODO(ornithka)) |
+| `LLAMA_SERVER_TEXT_REUSE`, `LLAMA_SERVER_TAIL_CKPT_MIN` | — | — (TODO(flintside)) | — |
+| `LLAMA_MOE_TAIL` | TODO(t1skip) | — (needs Flint's quality check) | — (needs Ornith's quality check) |
+| The negligible group (switches whose gain is within the spread of repeated loads, tested together) | TODO(t1neg) | — (TODO(flintside)) | — |
+| `--pipe-depth` | — | `4` | — |
+| `--pipe-store` | — | — (TODO(flintside)) | — |
+| `-md`, `--spec-type draft-mtp` (upstream's) | the Gyro MTP draft | — | — (TODO(ornithmtp)) |
+
+Flash-Next's column is the line measured at 20.75 tok/s; its `settings.env` on the release build: TODO(preset).
+
 ## Matrix-vector kernels (token generation, speculative verify)
 
 | Switch | Default | What it does | Branch | Row |

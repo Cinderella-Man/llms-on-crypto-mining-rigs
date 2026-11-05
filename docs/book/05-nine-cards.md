@@ -278,6 +278,8 @@ That rule is why this chapter exists. It forced every item above:
 
 ## Where the details are
 
+- The 8-bit hop in the v3 release, and why it saved three times what its bytes predicted:
+  [chapter 10](10-v3.md#104-story-a-smaller-message-between-cards).
 - The rig's hardware and its measured link speeds: [mining_rig.md](../mining_rig.md); the per-card time ledger and
   idle cards: [idle_cards.md](../research/notes/idle_cards.md); the early nine-card calibration:
   [2026-10-22-single-card-calibration](../benchmarks/2026-10-22-single-card-calibration.md).

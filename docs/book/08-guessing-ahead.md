@@ -325,6 +325,8 @@ send back only the accepted tokens. **Open.**
 
 ## Where the details are
 
+- The MTP draft in the v3 release, and the shortlist head that made it pay again on the faster kernels:
+  [chapter 10](10-v3.md#105-story-a-draft-that-stopped-paying-and-a-cheaper-head).
 - The cost of checking k tokens: [verify cost](../data/2026-11-03_verify_cost/README.md) (Q583),
   [k-curve](../data/2026-11-04_kcurve_p106/README.md) (Q591), [k-pass profile](../data/2026-11-04_kpass_profile/README.md)
   (Q822), [route once](../data/2026-11-04_route_once/README.md) (Q860), the research note

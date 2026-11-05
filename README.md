@@ -9,6 +9,12 @@ software runs models slowly on it. Miner Llama makes such rigs useful: a llama.c
 
 ## What it does
 
+**Miner Llama v3 runs three models on one build, each with its own preset** ([release notes](release/notes-v3.0.md)):
+[Qwen3.8-Flash-Next](release/flash-next-v3/README.md), a 180B-parameter model, at **20.75 tok/s** for a coding agent
+on nine 6 GB cards and a 4 GB host (6.4 on stock llama.cpp and 7.8 on v2.0's code when it first ran, 2026-11-03);
+[Flint](release/flint-v3/README.md) at 45.9 tok/s, as v2; and [Ornith-1.5-122B](release/ornith-v3/README.md) at
+14.9 tok/s. Against stock llama.cpp b12076, the upstream release v3 is built on: TODO(stock).
+
 [Flint](models/flint/README.md), a 39.8B mixture-of-experts model, runs on the nine cards in near-lossless 8-bit
 (Unsloth's Q8_0, 42.3 GB) with its full 262,144-token context. A coding agent fixing twelve small bugs, with tool calls
 and real test runs ([the agent check](bench/agent_check/README.md)):
@@ -84,11 +90,11 @@ that makes it faster still ([how it works](docs/drafter.md)).
 
 | Model | What it is | On the reference rig |
 |---|---|---|
-| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v2 release: Q8_0 on nine cards, 44.6–45.9 tok/s for a coding agent |
+| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v3 release: Q8_0 on nine cards, 45.9 tok/s for a coding agent (v2: 44.6–45.9) |
 | [Qwen3.6-35B-A3B](models/qwen3.6-35b-a3b/) | 36B hybrid mixture of experts, 3B active per token | coming: four cards, 29.0 tok/s with v1 (stock 18.5), one request |
 | [Ornith-1.5-35B](models/ornith-1.5-35b/) | 35B hybrid mixture of experts with Qwen3.6's shapes | coming: not run yet |
-| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | first rig run (2026-11-03): Swift-1.5 GSQ-RCO Q2_0 on nine cards, the table on the SSD; with stock llama.cpp 5.7–7.2 tok/s writing and 128 tok/s reading a 32k prompt, one request |
-| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | first rig run: Unsloth's UD-Q2_K_XL on nine cards, 9.7 tok/s and 12 of 12 tasks for a coding agent with v2 (stock 6.2) |
+| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v3 release: Swift-1.5 `pmix-q2-fast` on nine cards, the table on the SSD, the MTP draft; 20.75 tok/s and 12 of 12 tasks for a coding agent (stock 6.4 on 2026-11-03) |
+| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | v3 release: my valid1 file (48.2 GB) on nine cards, 14.9 tok/s and 12 of 12 tasks for a coding agent (stock 6.2 on Unsloth's UD-Q2_K_XL) |
 
 Each model page gives the file, the command line, speed, quality and what is not measured yet. Model names only
 identify the models; this project is not affiliated with their makers.
@@ -102,6 +108,10 @@ P104 mining cards, the GTX 10 series and the Tesla P4/P40.
 - **v2:** 32-bit sums in those kernels, one persistent kernel per mixture-of-experts layer, the shared expert fused
   with its activation, tool requests sampled on the GPU, faster prefill, and pipelined speculation: the idle cards of a
   layer split run guessed tokens, and only those the real pass agrees with are kept (`--pipe-depth 4`).
+- **v3:** Pascal kernels for BF16, 2-bit and my own N2P/N3P weights and for 1–8-token steps, the model's state cast to
+  8 bits between cards, an MTP draft with a cheaper output head, a keep-alive that holds every card at its boost clock,
+  and every feature behind its own switch, with one preset per model ([release notes](release/notes-v3.0.md),
+  [what v3 changed and why](docs/book/10-v3.md)).
 - **The answers don't change:** the kernels change only the order of additions, and speculation gives exactly the
   tokens of plain decoding.
 
@@ -132,8 +142,9 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
 
 - [release/flint-v2](release/flint-v2/README.md): the v2 release in one folder, with how to rebuild the engine and the
   model file from scratch.
-- [release/flash-next-v3](release/flash-next-v3/README.md): Qwen3.8-Flash-Next on the rig, in preparation for v3:
-  stock llama.cpp's baseline, the rig's limits, every file with its checksum, and how to run it.
+- [release/notes-v3.0.md](release/notes-v3.0.md): the v3 release, and its three models:
+  [Qwen3.8-Flash-Next](release/flash-next-v3/README.md), [Flint](release/flint-v3/README.md) and
+  [Ornith-1.5-122B](release/ornith-v3/README.md), each with the files to download, its preset and one command.
 - [docs/overview.md](docs/overview.md): why a mining rig suits LLMs at all, and the terms used here.
 - [docs/what_i_tried.md](docs/what_i_tried.md): a guided tour of everything tried in the first week, why, what each
   result taught, and where each model stands.

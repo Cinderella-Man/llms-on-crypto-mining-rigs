@@ -310,6 +310,7 @@ the standalone engine only if a measurement finds ≥ 5 ms of host time a pass t
 
 ## Where the details are
 
+- What these kernels added up to in the v3 release, step by step: [chapter 10](10-v3.md#102-the-steps).
 - Feature list of v2 with every check and rig result: [engine_features.md](../engine_features.md).
 - v1 kernels and launch shape: registry rows Q34, Q38, Q46; [design notes](../research/notes/pascal_mmvq_integration.md).
 - FP32 activation sums: Q76 (v2, switch `LLAMA_NO_MOE_DOWN_RESCALE`); the rescale and its NaN in

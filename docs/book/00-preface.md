@@ -108,8 +108,9 @@ The third part steps back.
 | [7. Experts](07-experts.md) | How do mixture-of-experts models pick their experts, and what can I skip? |
 | [8. Guessing ahead](08-guessing-ahead.md) | Can I guess the next tokens cheaply and check them in bulk? |
 | [9. The models](09-the-models.md) | Where does each model stand, and how did it get there? |
-| [10. Lessons](10-lessons.md) | What carries over to other systems? |
-| [11. Glossary](11-glossary.md) | Every term, in one place. |
+| [10. v3](10-v3.md) | What did the v3 release change, and why did each change help? |
+| [11. Lessons](11-lessons.md) | What carries over to other systems? |
+| [12. Glossary](12-glossary.md) | Every term, in one place. |
 
 Chapters 1 to 3 build on each other, so read them in order. After that, each chapter stands mostly on its own. Read
 whatever interests you. When a chapter needs an idea from another one, it says so and links to it.
@@ -122,7 +123,7 @@ flowchart LR
     C --> F[6. GPU code]
     C --> G[7. Experts]
     C --> H[8. Guessing ahead]
-    D & E & F & G & H --> I[9. The models] --> J[10. Lessons]
+    D & E & F & G & H --> I[9. The models] --> K[10. v3] --> J[11. Lessons]
 ```
 
 ## How to read it
