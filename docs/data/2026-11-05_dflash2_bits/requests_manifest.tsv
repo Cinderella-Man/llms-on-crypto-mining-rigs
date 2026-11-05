@@ -1,0 +1,6 @@
+name	endpoint	body_bytes	text_bytes	md5
+1_first_turn	chat	9503		9f86126323ba537dd3d55154ff055659
+2_smoke_greedy	chat	236		9b9dc8829e89ae7ded6b8f00fbb4859b
+3_cont_a	completion	6312	0-5992	d5370e22ffa960e34e03f24583556328
+4_cont_b	completion	6148	6045-12040	b1223d0be46953b5c0f5b2c17529d051
+5_cont_c	completion	6192	12003-17995	11d725ee0962faf2527a52873818ab32

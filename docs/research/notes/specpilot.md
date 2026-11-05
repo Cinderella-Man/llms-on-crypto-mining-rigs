@@ -164,6 +164,10 @@ the bytes it saves. All four single-request finals ran DFlash2's body in INT4. T
 the publisher's Q4_K_M is 362 MB and its Q5_K_M 432 MB, both made from the BF16 original. Est. saving: the 290 MB not
 read in each draft pass, at most 1.7–2.4 ms a draft step at the cards' 122–173 GB/s (less where the draft pass is bound
 by launches and hops), 290 MB free on the card that holds the drafter, and 290 MB less to load through the 4 GB host.
+Measured on the rig ([C528](../../data/2026-11-05_dflash2_bits/README.md)): Q5_K_M keeps Q8_0's tokens per step
+(2.597 against 2.600), saves 2.2 ms a draft pass at base clock and 210 MiB on the drafter's card, and takes 0.8 % less
+time a token. Q4_K_M saves 3.4 ms and 276 MiB but accepts 1.3 % fewer tokens a step, which spends the saving. The
+host's lowest free memory does not move with either.
 
 ### 4.5 The reference for Q686
 
