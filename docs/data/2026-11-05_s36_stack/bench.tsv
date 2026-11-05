@@ -1,0 +1,14 @@
+time_utc	build	commit	line	tok_s	sd
+2026-11-04T18:21	-kshape	39c3ab5f1	no hop cast (S35)	14.983	0.203
+2026-11-04T18:26	-kshape	39c3ab5f1	hop (S35)	17.061	0.045
+2026-11-05T13:19	-ladder4	e3b30303d	hop	15.978	0.010
+2026-11-05T13:24	-ladder4	e3b30303d	hop + skip	16.984	0.027
+2026-11-05T13:30	-kshape	39c3ab5f1	hop	17.075	0.025
+2026-11-05T13:35	-kshape	39c3ab5f1	hop	17.052	0.038
+2026-11-05T13:41	-moeskip	f3072cbe8	hop	16.805	0.041
+2026-11-05T13:46	-ladder4	e3b30303d	no hop cast	15.322	0.038
+2026-11-05T14:42	-n2p	1a0832375	hop	16.176	0.026
+2026-11-05T14:48	-mailbox	5aebbddd9	hop	17.031	0.018
+2026-11-05T14:54	-coldtier	f5e600bd2	hop	16.187	0.014
+2026-11-05T14:59	-ladder4	e3b30303d	hop	16.801	0.041
+2026-11-05T15:04	-kshape	39c3ab5f1	no hop cast	15.494	0.014

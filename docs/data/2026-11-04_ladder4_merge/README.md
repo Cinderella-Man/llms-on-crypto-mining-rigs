@@ -10,7 +10,8 @@ holds the merge record and the scripts that check it: [run/checks.sh](run/checks
 [quants/experiments.md](../../../quants/experiments.md).
 
 **Status:** merged, pushed (`e3b30303d`) and built for the rig (see "The build" below), and the same with upstream
-b12127 merged in (`a042afb15`, below). The CPU checks and the one-card PTX check have not run yet; neither has a P106.
+b12127 merged in (`a042afb15`, below). The one-card PTX check ran in part (below: every run that finished passed);
+the CPU checks have not run.
 
 ## What is merged
 
@@ -150,6 +151,20 @@ MODE=ptx BIN=<the tarball tree>/bin BASE_BIN=<-kshape's tree>/bin OUT=<out dir> 
 
 The mailbox hops need two cards and the other branches' GPU checks are their own folders' (`run/` in each), now with
 this build.
+
+## The PTX check on one card (2026-11-05, in part)
+
+`PARTS='moeskip dense'` on an RTX 3090 through the compute 6.1 PTX (the other two parts need the CPU checks' random
+models), with `-kshape`'s tree as `BASE_BIN`. It was stopped during `archs-tail-op`, because the next cumulative build
+gets a check of its own; `archs-tail-op`, `-op0`, `-rep` and `dense` did not run. No Xid during the run.
+
+| Run | Result |
+|---|---|
+| `skip-mmq`, `skip`, `skip-mmvq`, `skip-mtok0` (the skipped slots) | 100/100, 568/568, 568/568, 41/41 passed, 0 FAIL lines |
+| `tail` (the tail op, the fused router chain) | 525/525 passed |
+| `experts` (every expert case, nothing skipped; with the N types) | 4,612/4,612 passed |
+| `archs-off` (the switch off against `-kshape`) | 143 compared, 7 with a difference: the 7 MoE models whose logits file has its Dense sibling's name, which differ within one build's own run too (a test bug, [2026-11-05_c565_ladder4fix](../2026-11-05_c565_ladder4fix/README.md)); the other 136 equal |
+| `archs-tail-graph` | logits written |
 
 ## Files
 
