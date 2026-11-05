@@ -1,0 +1,5 @@
+arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref
+s35kaoff	12/12	65	68.8	19.19	7.27	15.81	13.58	0.712	3.14	29.9	2.25	2.49	+0.0 %
+s35ka	12/12	63	77.4	20.75	6.41	16.86	13.36	0.708	3.12	29.6	1.82	2.28	-8.4 %
+s35kareq	12/12	67	71.6	20.79	6.23	16.21	13.50	0.693	3.08	26.2	1.84	2.34	-6.0 %
+s35kaidle	10/12	57	35.9	18.13	7.60	15.93	13.37	0.705	3.11	40.9	1.57	3.30	+32.5 %

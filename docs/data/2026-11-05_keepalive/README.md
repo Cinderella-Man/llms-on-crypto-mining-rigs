@@ -3,7 +3,7 @@
 What this is: a keep-alive for the P106 cards, in Miner Llama (`GGML_CUDA_KEEPALIVE`) and in
 [bench/persistent_pipe](../../../bench/persistent_pipe/README.md) (`--keepalive`): its code, its CPU checks, its first
 run on a rig (the bench, then the engine's T(k) and plain decoding), and the answer to why two cards of the release line
-already hold their clock (C559). The agent check is still to come; its command is below. Registry rows Q1021 (the
+already hold their clock (C559), then the agent check of the three settings (C533, C558). Registry rows Q1021 (the
 keep-alive), Q1045 (holding the cards between agent turns), Q1046 (cards 4 and 8), Q1065 (the pulse in the engine),
 Q1066 (the back-off) and Q1075–Q1077 in [quants/experiments.md](../../../quants/experiments.md).
 
@@ -55,10 +55,51 @@ against 29.3–30.8.
 | Setting | Class | Why |
 |---|---|---|
 | `GGML_CUDA_KEEPALIVE=decode` | **gain** | −8.5 to −11.7 ms a token on plain decoding, −19 to −23 % on 4- and 5-token passes, far beyond the spread (3.1 ms between the off loads, 0.02 between the on loads); +8 W a decoding card |
-| `request`, `idle` | not measured yet | they differ from `decode` only while llama-server takes a request or idles between requests; llama-bench does neither (each test frees its context, which ends the blocks). Their arms in the agent check decide (below) |
+| `request`, `idle` | the agent check (below) | they differ from `decode` only while llama-server takes a request or idles between requests; llama-bench does neither (each test frees its context, which ends the blocks) |
 | bench `--keepalive resident` against off | **gain** | −12 to −15 % a pass at 1 token, −18 to −23 % at 4 |
 | bench `--keepalive pulse` against off | **gain** | −14 to −16 % at 1 token, −19 to −23 % at 4 |
 | bench `pulse` against `resident` | **gain** | −0.75 ms a pass at 1 token (−1.6 %; three runs of each, which agree within 0.005 ms), −0.43 ms at 4 (−0.5 %; one run each, their p10–p90 apart) |
+
+### The agent check: the three settings with the MTP draft (C533, C558)
+
+**`decode` goes into the release preset: the session generates 8 % faster, prompts run 12 % faster and a task takes
+8 % less time at equal work, with all 12 tasks passed.** The release line with the MTP draft (S35's `s35stack`:
+pmix-q2-fast, the k-column settings, the Q8_0 hop cast, the draft head's shortlist) on the `-keepalive` build, one arm
+a setting, the bugfix task set on the same 4 GB rig, one attempt each ([agent_report.md](agent_report.md),
+[agent.tsv](agent.tsv)):
+
+| Arm | `GGML_CUDA_KEEPALIVE` | Passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | First turn, s | Acceptance, tokens a step | Minutes a task at equal work |
+|---|---|---|---|---|---|---|---|---|
+| `s35kaoff` | off (the control) | 12 / 12 | 19.19 | 68.8 | 7.27, 15.81 | 13.58 | 0.712, 3.14 | 2.49 |
+| **`s35ka`** | **`decode`** | **12 / 12** | **20.75 (+8.1 %)** | **77.4 (+12.5 %)** | **6.41, 16.86** | 13.36 | 0.708, 3.12 | **2.28 (−8.4 %)** |
+| `s35kareq` | `request` | 12 / 12 | 20.79 (+8.3 %) | 71.6 (+4.1 %) | 6.23, 16.21 | 13.50 | 0.693, 3.08 | 2.34 (−6.0 %) |
+| `s35kaidle` | `idle` | 10 / 12 | 18.13 (−5.5 %) | 35.9 (−48 %) | 7.60, 15.93 | 13.37 | 0.705, 3.11 | 3.30 (+32.5 %) |
+| S35's `s35stack` (the other rig, `-kshape` build) | — | 12 / 12 | 18.8 | 68 | 7.42, 17.34 | 13.73 | 0.708, 3.12 | — |
+
+- **Minutes a task at equal work:** the control's prompt tokens at the arm's prompt speed, its generated tokens at the
+  arm's generation speed, plus the control's own time outside the server (tools, tests, the relay), over 12 tasks.
+  Minutes for all tasks depend on what each attempt generated (29.9, 29.6, 26.2 and 40.9 min).
+- **What of the engine step's gain reaches the agent:** plain decoding without the draft gained 8.5–11.7 ms a token
+  (−14 to −19 %); with the draft the session's generation goes from 52.1 to 48.2 ms a token (−3.9 ms, −7.5 %), about
+  half of C533's estimate of 7.7–10.2 ms for the served decode. Acceptance does not change (0.708 against 0.712), so
+  the draft's tokens a step are the same and the gain is the clock alone.
+- **`idle` is a loss through one stall:** its first request took 506 s for its 2,780-token prompt and 124 s for 73
+  tokens, against 34–36 s for the same prompt on the other three arms, and that task ran out of its 12 minutes. Under
+  CUDA's lazy module loading a kernel's first launch waits until the block running on its card ends, and `idle`'s
+  block runs for 120 s after the last graph (C590, below). One other task ended in a runaway generation (16,235
+  tokens in context when the time cap cut it). On the 10 tasks every arm passed ([agent_10.tsv](agent_10.tsv)) the
+  three settings are all faster than off: −9.2 % (`decode`), −6.3 % (`request`) and −5.5 % (`idle`) a task at equal
+  work, generation 21.2–21.6 against 19.6 tok/s.
+- **The first turn** (a fresh server's first prompt) is as fast with `decode` and `request` as off: 13.36 and 13.50
+  s against 13.58, so the 1 s block shows no lazy-loading wait in llama-server.
+- **The blocks' own reports** are not in the server logs: they are written when a backend is freed, and llama-server
+  ends without that line.
+
+| Setting (agent check, against `s35kaoff`) | Class | Why |
+|---|---|---|
+| `decode` | **gain** | generation +8.1 %, prompts +12.5 %, −8.4 % a task at equal work (−9.2 % on the 10 shared tasks), 12 / 12; beyond the 2–5 % between loads of the line with the switch off (19.19 here against S35's 18.8; 59.6 against 62.8 ms a token in T(k)) |
+| `request` | **gain** | −6.0 % a task at equal work, generation +8.3 %, 12 / 12. Against `decode` negligible: generation 20.79 against 20.75, the median first token 6.23 against 6.41 s, equal work 2.34 against 2.28 min, all within the spread |
+| `idle` | **loss** | +32.5 % a task at equal work, 10 / 12: the 120 s block makes the first request wait behind it (C590). Without that task and the runaway it is −5.5 %, still behind `decode` |
 
 ### The bench: resident against pulse
 
@@ -201,7 +242,7 @@ start, a second kick only beats), `idle` (the block outlives a 200 ms gap), and 
 threads at once with every run accounted for. The CUDA side (the kernel, the stream, the mapped words) is checked by the
 rig run above.
 
-## The rig run: what ran, and the agent check to come
+## The rig run: what ran
 
 On a rig with nothing else running, driven over ssh from a machine that runs nothing else, the bench binary built above
 copied from the build machine (~30 min in all with the repeats):
@@ -227,15 +268,18 @@ bash docs/data/2026-11-05_keepalive/run/tk_tables.sh clocks <OUT> > tk_clocks.ts
 bash docs/data/2026-11-05_keepalive/run/tk_tables.sh blocks <OUT>    # the blocks' own clock lines
 ```
 
-**The agent check (to come, ~80 min):** the arms `s35kaoff` (the same build and line, switch off: the control on the
-same rig) and `s35ka` (`GGML_CUDA_KEEPALIVE=decode`), against each other and against S35's `s35stack` (18.8 tok/s,
-time to first token median 7.42 s, on the other rig); `s35kareq` and `s35kaidle` add C558's two settings (+80 min):
+**The agent check** (2 h 27 min: four arms of ~35 min, each with its load), the client on the build machine, its ports
+apart from another check running beside it, then the tables on the client:
 
 ```bash
-ENVFILE=<machine file> RIG_PORT=8192 RELAY_PORT=8199 CLIENT_PORT=18493 PROXY_PORT=18494 \
+ENVFILE=<machine file> BENCH=$PWD/bench/agent_check RIG_PORT=8192 RELAY_PORT=8196 CLIENT_PORT=18693 PROXY_PORT=18694 \
   CLIENT_DIR=<client folder> CLIENT_OUT=<client results folder> \
   MODEL=<pmix-q2-fast first shard on the rig> BUILD=<the -keepalive build's folder> OUT=<local folder> \
-  STEPS='prep arms report' ARMS_KA='s35kaoff s35ka' bash docs/data/2026-11-05_keepalive/run/rig_keepalive.sh
+  STEPS='prep arms report' ARMS_KA='s35kaoff s35ka s35kareq s35kaidle' \
+  bash docs/data/2026-11-05_keepalive/run/rig_keepalive.sh
+python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> s35kaoff s35ka s35kareq s35kaidle
+SKIP_TASKS=bugfix-python-affine-cipher,bugfix-python-scale-generator OUT_TAG=_10 \
+  python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> s35kaoff s35ka s35kareq s35kaidle
 ```
 
 ## Files
@@ -249,7 +293,11 @@ ENVFILE=<machine file> RIG_PORT=8192 RELAY_PORT=8199 CLIENT_PORT=18493 PROXY_POR
 | [transitions.tsv](transitions.tsv) | C559: every change of a card's P-state, SM clock, power and clock-event reasons in C532's log, from the server's start to the log's end, with the run's marks |
 | [run/transitions.sh](run/transitions.sh) | builds it from C532's `nvidia-smi` log and marks |
 | [run/checks.sh](run/checks.sh) | the build and the CPU checks on the build machine (calls the -ladder4 merge's [checks.sh](../2026-11-04_ladder4_merge/run/checks.sh) for the build, the CPU build and the identity) |
+| [agent_report.md](agent_report.md) | the agent check's report of the four arms: per task (result, minutes, turns, tool calls), per arm, the first token per turn |
+| [agent.tsv](agent.tsv) | the agent check per arm: passed, turns, prompt and generation tok/s, first token per turn (median, p90, first turn), acceptance and tokens a step, minutes a task (median and at equal work against `s35kaoff`) |
+| [agent_10.tsv](agent_10.tsv) | the same on the 10 tasks every arm passed |
 | [run/rig_keepalive.sh](run/rig_keepalive.sh) | the engine's rig run: smoke, T(k) (with `SMI_MS`, a sparse clock log beside each load), the agent check |
+| [run/agent_tables.py](run/agent_tables.py) | `agent.tsv` and `agent_10.tsv` from the agent check's collected folder |
 | [run/tk_tables.sh](run/tk_tables.sh) | `tk.tsv`, `tk_clocks.tsv` and the blocks' lines from the engine run's files |
 | [run/bench_cards.sh](run/bench_cards.sh) | `bench_cards.tsv` from the bench's `nvidia-smi` log and step log |
 
@@ -267,5 +315,5 @@ bash docs/data/2026-11-05_keepalive/run/transitions.sh <C532's smi.csv.gz> <C532
 
 Provenance: the code is Miner Llama's (MIT, as llama.cpp) and this repository's; `transitions.tsv` is derived from the
 `nvidia-smi` log of [2026-11-05_card_clocks](../2026-11-05_card_clocks/README.md); the other tables come from this
-run's llama-bench, `persistent_pipe` and `nvidia-smi` output on the rig. The model is Swift's Qwen3.8-Flash-Next
+run's llama-bench, `persistent_pipe` and `nvidia-smi` output on the rig and the agent check's logs (its bugfix task set, [bench/agent_check](../../../bench/agent_check/README.md)). The model is Swift's Qwen3.8-Flash-Next
 GSQ-RCO Q2_0 as retyped by [the Pascal mixes](../2026-11-04_pascal_mix/README.md) (pmix-q2-fast).
