@@ -69,8 +69,20 @@ blocks. Both load into the Q8_0 tile layout as N2P and N3P do.
 
 ## Status
 
-**Built and correct on the CPU; the two files are quantizing.** Still to come, in this order: the PTX and native GPU
-checks, the files' fit and KL divergence, then the P106 timing (C394). This page is updated as each lands.
+**Built and correct on the CPU; file 1 (N2P-N2P128) is built and fits nine 6 GB cards at 64k; file 2 (N2P-N3P128) is
+quantizing.** Still to come, in this order: the PTX and native GPU checks, file 2's fit, both files' KL divergence, then
+the P106 timing (C394). This page is updated as each lands.
+
+- **File 1** (2026-11-05): `gguf_compose verify` passes (1,224 tensors in 3 shards, the 144 routed-expert tensors
+  identical to llama-quantize's, the other 1,080 to pmix-q2-fast's). The routed experts take 40,894,464,000 bytes against
+  pmix-q2-fast's 33,973,862,400 (+6,920,601,600, +6.45 GiB). Shard 1 is 12,926,129,760 bytes (md5
+  `b2ddb62733c82a30d211d65d9ab663fe`), shard 2 31,749,037,696 bytes (md5 `c8712cd348e6d08a5ed336e945d853f8`), and shard
+  3 is the unchanged n-gram table (Swift Q2_0's, 28,800,138,432 bytes, md5 `98ce140e…`). In the headers, every layer's
+  `ffn_gate_exps` and `ffn_up_exps` are N2P (type 500) and `ffn_down_exps` is N2P-128 (502).
+- **Fit of file 1** ([fit/fit-n2p-dn2p128.tsv](fit/fit-n2p-dn2p128.tsv), beside [pmix-q2-fast's](fit/fit-pmix-q2-fast.tsv)).
+  At 64k with an f16 cache on whole layers, `-ts 5,6,5,6,5,5,6,5,6` (pmix-q2-fast's split) fits up to `-ub 256`, with
+  242 MiB free on the fullest card (474 at `-ub 64`; pmix-q2-fast: 1,067 and 1,299). With the DFlash2 drafter it fits up
+  to `-ub 128` (238 MiB), with the MTP draft also up to `-ub 128` (217 MiB). `-ub 512` misses on every line.
 
 - **Build:** the rig tarball (sm_61 code and compute_61 PTX, `TESTS=1`, no AVX, GLIBC 2.38) of `1a0832375` compiles
   cleanly. The files were made with the CPU tools of `0b8427657` (`llama-quantize`), whose quantizer is the final
@@ -89,6 +101,7 @@ checks, the files' fit and KL divergence, then the P106 timing (C394). This page
 | [run/gpu_checks.sh](run/gpu_checks.sh) | test-backend-ops runs per switch setting (MODE=ptx on another card, MODE=native on a P106) |
 | [run/quantize.sh](run/quantize.sh) | the two files: llama-quantize of the experts, then gguf_compose onto pmix-q2-fast, `verify`ed |
 | [run/fit.sh](run/fit.sh) | the files' fit on nine 6 GB cards from their headers ([bench/file_choice/fit.py](../../../bench/file_choice/fit.py)), each once built |
+| [fit/](fit/) | fit.py's rows per file (every context, cache type, micro-batch and draft; whole layers and with experts moved) |
 | [run/rig_tk.sh](run/rig_tk.sh) | on a rig: the native check (MMQ included), per-kernel perf at Flash-Next's expert shapes, T(k) of the files |
 
 ## The two files
