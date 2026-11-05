@@ -9,8 +9,9 @@
 #          under the RAM watchdog; the -v log of each "on" load keeps the per-card clock lines
 #   prep   the agent check's bench files and sandbox image on the client
 #   arms   the agent check, one arm a setting: s35ka (S35's s35stack with GGML_CUDA_KEEPALIVE=decode); ARMS_KA may add
-#          s35kareq (=request: also every card's block when a request arrives, C558) and s35kaidle (=idle: the blocks
-#          kept through the agent's tool calls, C558)
+#          s35kaoff (the same build and line with the switch off: the control on the same rig), s35kareq (=request:
+#          also every card's block when a request arrives, C558) and s35kaidle (=idle: the blocks kept through the
+#          agent's tool calls, C558)
 #   report the agent check's report of the arms, the client's folder collected to OUT
 # Env: ENVFILE (S12's machine file, docs/data/2026-11-03_flash_next_mtp/run/s12.env.example, filled in, with DRAFT),
 #      RIG_PORT RELAY_PORT CLIENT_PORT PROXY_PORT CLIENT_DIR CLIENT_OUT (as s35_arms.sh), MODEL (the first shard on the
@@ -67,6 +68,7 @@ run_arm() {  # <arm> <REL_ENV> <args>
 if has arms; then
     for a in $ARMS_KA; do
         case $a in
+            s35kaoff)  run_arm s35kaoff  "$KENV $HOP $SL"                             "$MT" ;;
             s35ka)     run_arm s35ka     "$KENV $HOP $SL GGML_CUDA_KEEPALIVE=decode"  "$MT" ;;
             s35kareq)  run_arm s35kareq  "$KENV $HOP $SL GGML_CUDA_KEEPALIVE=request" "$MT" ;;
             s35kaidle) run_arm s35kaidle "$KENV $HOP $SL GGML_CUDA_KEEPALIVE=idle"    "$MT" ;;

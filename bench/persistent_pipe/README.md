@@ -135,7 +135,11 @@ Each thread measures its card's SM clock every 50 ms (its `clock64()` against `%
 calibration, each host-driven variant) the run prints the clock's p10, median and p90, the share of samples below
 1,400 MHz and at 1,800 MHz or more, and how long the stop took. The calibration runs twice: with the keep-alive, and
 right after it stopped while the cards still run at its clock. The difference is what the thread costs the products.
-`run_rig.sh`'s steps `kaoff karesident kapulse kak4off kak4` are C533's rig run.
+`run_rig.sh`'s steps `kaoff karesident kapulse kak4off kak4 kak4pulse` are C533's rig run. On the rig both hold every
+card at boost and a pass of the staged hop takes 12–16 % less time than without; the pulse is 0.75 ms a pass faster
+than the resident thread ([the result](../../docs/data/2026-11-05_keepalive/README.md#the-bench-resident-against-pulse)).
+Run a resident keep-alive with every kernel loaded at the start (`CUDA_MODULE_LOADING=EAGER`, as `run_rig.sh` does):
+under CUDA 12's lazy loading the first launch of a kernel waits for every running kernel on its card to end.
 
 ## What decides what
 

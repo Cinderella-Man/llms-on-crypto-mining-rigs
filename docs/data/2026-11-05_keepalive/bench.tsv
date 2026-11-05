@@ -1,0 +1,15 @@
+run	step	k	keepalive	module_loading	pause_s	ms_a_pass_median	p10	p90	mean	products_with_ka_ms	products_after_ka_ms	ka_stop_us	valid
+1	kaoff	1	off	lazy	0	53.751	53.657	53.838	53.706	52.628	-	-	yes
+1	karesident	1	resident	lazy	0	53.639	53.574	53.690	53.244	44.150	44.301	41	no: the first launch of the cast waited for the thread's own 200 s timeout, so the timed passes ran without it, at base
+1	kapulse	1	pulse	lazy	0	45.133	45.103	45.187	45.150	50.103	48.270	2853	yes
+1	kak4off	4	off	lazy	0	121.207	120.171	121.259	120.515	104.982	-	-	yes (started at the clock kapulse left)
+1	kak4	4	resident	lazy	0	128.962	128.830	129.053	126.254	90.601	90.771	53	no: as karesident
+2	kak4off	4	off	eager	10	115.101	115.059	115.143	115.101	123.635	-	-	yes
+2	kak4	4	resident	eager	10	93.914	93.871	93.968	93.916	99.493	90.459	158	yes
+2	kak4pulse	4	pulse	eager	10	93.482	93.381	93.576	93.479	90.509	90.608	469	yes
+2	kaoff-2	1	off	eager	10	52.278	52.143	53.733	52.601	52.626	-	-	yes
+2	karesident-2	1	resident	eager	10	45.879	45.855	45.903	45.880	48.279	44.329	164	yes
+2	kapulse-2	1	pulse	eager	10	45.129	45.097	45.199	45.158	50.456	48.203	3809	yes
+3	karesident	1	resident	eager	10	45.878	45.856	45.902	45.878	47.992	44.235	167	yes
+3	kapulse	1	pulse	eager	10	45.128	45.093	45.186	45.150	49.693	48.763	14855	yes
+3	karesident-2	1	resident	eager	10	45.881	45.857	45.905	45.881	48.722	44.314	162	yes
