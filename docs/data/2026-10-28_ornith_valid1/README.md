@@ -94,5 +94,5 @@ BIN=<llama.cpp>/bin/llama-perplexity OUT=<folder with the bases> GPUS=3,4 WIKI=w
   - on all three, `-ngl 99 -fa on --kl-divergence-base <Q8_0 base> --kl-divergence`.
 
   It took 19 minutes for the three texts, from a copy of the file on an NVMe disk.
-- **Licences:** Ornith-1.5 is MIT; Unsloth's importance matrix (used for files c and d) is Apache-2.0; ik_llama.cpp's
+- **Licences:** Ornith-1.5 is MIT; Unsloth's importance matrix (used for files c and d) is MIT, like the rest of Unsloth's Ornith repository; ik_llama.cpp's
   level tables in N2P/N3P are MIT; the scores and scripts are this project's.

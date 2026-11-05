@@ -33,7 +33,7 @@ on nine P106-090 cards, 49,152 tokens of context:
 
 valid1 holds the routed experts in N2P and N3P, my Pascal 2- and 3-bit types, with more bits in the late layers, where
 Ornith is most sensitive, and a Q5_0 output layer. It is closer to the makers' Q8_0 than Unsloth's UD-Q2_K_XL and
-faster on the rig; how it was made and scored: [2026-10-28_ornith_valid1](../../docs/data/2026-10-28_ornith_valid1/README.md).
+faster on the rig; how it was made and scored: [2026-10-28_ornith_valid1](../../docs/data/2026-10-28_ornith_valid1/README.md). Which weights get more bits was decided with [Unsloth](https://huggingface.co/unsloth)'s published importance matrix for Ornith-1.5-122B (MIT), so their calibration work is part of this file, with thanks.
 Ornith-1.5 is under the MIT licence.
 
 ## Run it
