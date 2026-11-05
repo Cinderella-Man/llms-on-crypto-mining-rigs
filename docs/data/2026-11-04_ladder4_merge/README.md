@@ -9,8 +9,8 @@ holds the merge record and the scripts that check it: [run/checks.sh](run/checks
 [run/gpu_checks.sh](run/gpu_checks.sh) (one card, through the compute 6.1 PTX). The registry row is Q962 in
 [quants/experiments.md](../../../quants/experiments.md).
 
-**Status:** merged and pushed (`e3b30303d`); the rig build is running (see "The build" below). The CPU checks and the
-one-card PTX check have not run yet; neither has a P106.
+**Status:** merged, pushed (`e3b30303d`) and built for the rig (see "The build" below), and the same with upstream
+b12127 merged in (`a042afb15`, below). The CPU checks and the one-card PTX check have not run yet; neither has a P106.
 
 ## What is merged
 
@@ -64,6 +64,48 @@ Every other `pascal-p106-v3-b12076-*` branch on the fork is in `-ladder4`.
 - **`-hybrid` × the rest**: with pipelining off (one state group) the recurrent states sit where they did, the
   attention mask is built on the host unless `LLAMA_GPU_KQ_MASK` is set, and `qwen4exp`'s conv rows go to group 0.
 
+## On upstream b12127: `pascal-p106-v3-b12127-ladder4`
+
+A second branch, `pascal-p106-v3-b12127-ladder4` at `a042afb15`, is `-ladder4` with upstream llama.cpp's release tag
+`b12127` (`44f91a02b`, 2026-11-05) merged in as one commit: the 35 upstream commits since the v3 base's `20a51f24a`
+(b12076 and 16). `-ladder4` itself stays on b12076, so the rig's comparisons against `-kshape` keep one variable. The
+registry row is Q1022.
+
+Three files conflicted:
+
+| File | Hunks | What met | Resolution |
+|---|---:|---|---|
+| `ggml/src/ggml-cuda/mmq.cuh` | 10 | upstream's fused NVFP4 gate/up ([#31296](https://github.com/ggml-org/llama.cpp/pull/31296)) adds two scale pointers to the MMQ write-back and tile functions, whose signatures the fork carries in PR [#31047](https://github.com/ggml-org/llama.cpp/pull/31047)'s form | the fork's signatures and names plus the two pointers; in the fused write-back, upstream's NVFP4 scaling and the fork's NVFP4 activation-scale branch (the same condition). Every line upstream owns equals b12127's file |
+| `src/llama-context.cpp` | 1 | an include next to one upstream dropped | the fork's `<cctype>` kept |
+| `tests/test-backend-ops.cpp` | 1 | both sides add performance cases at the same place | both kept |
+
+Upstream changes in the files the fork also patches, read for what they change on the rig:
+- [#31356](https://github.com/ggml-org/llama.cpp/pull/31356): the MTP draft keeps only the rows it needs when it shares
+  the target's memory (Gemma4's assistant). Flash-Next's MTP draft does not share it (the context keeps the target as
+  its `ctx_other` only for Gemma4's assistant, EAGLE3 and DFlash), so its drafts are unchanged.
+- [#30541](https://github.com/ggml-org/llama.cpp/pull/30541): the on-device state copies of a quantized KV cache count
+  every weight of a block; before, they counted a block as one element, so a Q8_0 cache's copy held a 32nd of its
+  bytes. This fixes device state copies with a quantized KV cache, and so changes what they hold.
+- [#31584](https://github.com/ggml-org/llama.cpp/pull/31584): a view must stay inside its source over the bytes its
+  strides reach, and a view with explicit strides needs a source contiguous along dim 0. Every tensor constructor call
+  in the fork's ggml code takes the new strides argument.
+- [#31296](https://github.com/ggml-org/llama.cpp/pull/31296): the new scaled gate/up fusion matches NVFP4 weights only,
+  and the Pascal matrix-vector kernel declines a fusion that carries scales.
+- [#31444](https://github.com/ggml-org/llama.cpp/pull/31444): `common_get_path_from_env()` is gone from `common/`;
+  nothing in the fork used it.
+- No op or type was added upstream, so `GGML_OP_COUNT` stays 105 and the RPC protocol's patch version 3.
+
+Its build, the same way in its own work folder:
+
+| File | Bytes | md5 |
+|---|---:|---|
+| `llama.cpp-20261105-a042afb15-pascal-p106-v3-b12127-ladder4.tar.gz` (sm_61 code and compute_61 PTX, no AVX, highest glibc symbol 2.38) | 605,617,906 | `355292fb5ebd1b9b219e339c593cf6c5` |
+| `extra-a042afb15.tar.gz` (the same nine extra tests) | 466,178,389 | `ef61d3151b02cb7f5962a21308571f3e` |
+
+Its checks are `-ladder4`'s with `BRANCH=pascal-p106-v3-b12127-ladder4` and `a042afb15` added to `MERGE_OWN` (so the
+upstream merge's lines count as the merge's own in `union`); `identity` against `-kshape` may differ only on the
+architectures upstream changed (Gemma4).
+
 ## The build
 
 `scripts/build_llamacpp_docker.sh fork/pascal-p106-v3-b12076-ladder4` with `TESTS=1` (sm_61 code and compute_61 PTX,
@@ -74,6 +116,13 @@ the same tree as a second tarball (`test-llama-archs`, `test-llama-context`, `te
 ```bash
 WORK=<work dir> REPO=<this repository> STEPS=build JOBS=8 bash docs/data/2026-11-04_ladder4_merge/run/checks.sh
 ```
+
+| File | Bytes | md5 |
+|---|---:|---|
+| `llama.cpp-20261105-e3b30303d-pascal-p106-v3-b12076-ladder4.tar.gz` (sm_61 code and compute_61 PTX, no AVX, highest glibc symbol 2.38) | 605,120,820 | `5607273282362c674d8c9e9187e9ac7c` |
+| `extra-e3b30303d.tar.gz` (the nine extra tests above) | 465,933,069 | `7f94f62b85b95d102725a0798df3c937` |
+
+For the upstream branch the same command with `BRANCH=pascal-p106-v3-b12127-ladder4` in its own `WORK`.
 
 ## The checks still to run
 
