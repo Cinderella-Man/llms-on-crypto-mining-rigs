@@ -1,4 +1,3 @@
-| `GGML_CUDA_KEEPALIVE` (`_MS`, `_POLL_US`) | off | `decode` (or `1`): one block per card, on a stream of the card's lowest priority, polls a word in mapped host memory so that the driver holds the card at its boost clock while a layer split decodes; it ends itself `_MS` after the card's last graph (default 1,000) and is ended before captures, frees and device-wide synchronizes. `request`: also every card's block when llama-server takes a request; `idle`: a 120 s timeout, through an agent's tool calls | -keepalive | Q1021, Q1045 |
 # Miner Llama's switches
 
 Every behaviour that Miner Llama adds to upstream llama.cpp (b12076) can be turned on or off on its own, at run time, in
@@ -18,21 +17,26 @@ replayed onto upstream b12076, and the others are its `pascal-p106-v3-b12076-*` 
 switches marked *new*). The **Row** column is the registry row in [quants/experiments.md](../quants/experiments.md)
 where the change was proposed and measured.
 
-With every switch at its default, the `-flags` build gives `-ladder4`'s logits bit for bit on every architecture
-`test-llama-archs` builds. The checks behind that, and what each switch does when flipped on a CPU, are in
-[docs/data/2026-11-05_switches/](data/2026-11-05_switches/README.md).
+Every switch below is in one build, `pascal-p106-v3-b12076-ladder5` (the v3 release build). With every switch at its
+default it gives `-ladder4`'s logits bit for bit on every architecture `test-llama-archs` builds, and the sm_61 code of
+every kernel the two share is the same but the persistent MoE kernel's F16 router branch. The checks behind that, and
+what each switch does when flipped on a CPU, are in [docs/data/2026-11-05_ladder5/](data/2026-11-05_ladder5/README.md)
+and [docs/data/2026-11-05_switches/](data/2026-11-05_switches/README.md).
 
 ## Matrix-vector kernels (token generation, speculative verify)
 
 | Switch | Default | What it does | Branch | Row |
 |---|---|---|---|---|
 | `GGML_CUDA_MMVQ_PASCAL` | `1` | The fork's matrix-vector kernels on compute 6.1 for 1–4 tokens (Q4_0, Q4_1, Q5_0, Q8_0, Q4_K, Q5_K, Q6_K, IQ4_XS, Q2_0, the grid types IQ2_XXS, IQ2_XS, IQ2_S, IQ3_XXS, IQ3_S, and N2P/N3P), with FP32 activation sums. `0`: llama.cpp's `mul_mat_vec_q`; `2`: any NVIDIA GPU | base | Q76, Q78, Q101, Q149 |
-| `GGML_CUDA_MMVQ_PASCAL_SKIP` | empty | Comma-separated ggml type names (`q2_0`, `iq2_s`, `n2p`, ...) that go back to llama.cpp's kernels, at every token count | base | Q149 |
+| `GGML_CUDA_MMVQ_PASCAL_SKIP` | empty | Comma-separated ggml type names (`q2_0`, `iq2_s`, `n2p`, ...) that go back to llama.cpp's kernels, at every token count; `f16` also turns `GGML_CUDA_MMVQ_PASCAL_F16` off | base, -f16router | Q149, Q97 |
 | `GGML_CUDA_MMVQ_PASCAL_MC` | `1` | `0`: products of 2 or more tokens go to llama.cpp's kernels; one token keeps the fork's | base | Q78 |
 | `GGML_CUDA_MMVQ_PASCAL_STAGE_ACT` | `0` | `1`: the 2–4-token kernels stage the activations in shared memory | base | Q78 |
 | `GGML_CUDA_MMVQ_PASCAL_Q2_0` | `0,0,1` | Q2_0 launch shape `G,P,T`; `2` forces R = 2 at one token, the rule before Q612 | -ladder, -kcol | Q223, Q612 |
 | `GGML_CUDA_MMVQ_PASCAL_NSM` | the device's | SM count the launch shapes are chosen for (to run the P106's shapes on another GPU) | -kcol | Q612 |
 | `GGML_CUDA_MMVQ_PASCAL_MTOK` | `1,0,0,0,1` | `E,CAP,RB,G,T` of the multi-token expert kernel (2–8 tokens, each distinct expert read once). `E=0`: off, 2–4 tokens go to the 2–4-token kernels and 5–8 to llama.cpp's. `T=0`: direct loads for the routed Q2_0 down projection; `T=2`: that product declined, as before Q825 | -mtok, -kshape, -flags | Q647, Q825 |
+| `GGML_CUDA_MMVQ_PASCAL_MT` (`_MT_RB`, `_MT_ACT_KB`) | `0` | `1`: 2–4-token kernels that read and decode each weight once for every token (IQ2_S, IQ3_XXS, N2P, N3P, Q8_0, Q5_0), for the products the multi-token expert and k-column kernels decline; a skipped expert slot (id -1) gets zeros | -mtpk | Q211 |
+| `GGML_CUDA_MMVQ_PASCAL_F16` | `0` | `1`: an F16 matrix (a MoE router kept in F16) at one token through the Pascal F16 kernel, and the persistent MoE kernel's router rows summed in the same order | -f16router | Q97 |
+| `GGML_CUDA_MMVQ_MAX_COLS` | unset | `N`: products of more than N tokens leave llama.cpp's `mul_mat_vec_q` for MMQ (to compare the two at 5–8 tokens) | -cheapguess | Q194 |
 | `GGML_CUDA_MMVQ_PASCAL_MTOK_SKIP` | empty | Types (grid types, IQ1_M, N2P/N3P) left out of the multi-token expert kernel | -iqkcol | Q713 |
 | `GGML_CUDA_MMVQ_PASCAL_KCOL` | `1` | k-column dense kernels for 1–8 tokens (each weight read and decoded once). `0`: off; `2`: on any GPU | -kcol | Q591, Q630, Q713 |
 | `GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP` | empty | Types left out of the k-column kernels | -iqkcol | Q713 |
@@ -51,7 +55,7 @@ With every switch at its default, the `-flags` build gives `-ladder4`'s logits b
 
 | Switch | Default | What it does | Branch | Row |
 |---|---|---|---|---|
-| `GGML_CUDA_MMQ_MOE_LEGACY` | `0` | `1`: MUL_MAT_ID in MMQ and MMF as before upstream PR #31047's tile list (tile width from all tokens, a tile column per expert) | base, -flags | Q108 |
+| `GGML_CUDA_MMQ_MOE_LEGACY` | `0` | `1`: MUL_MAT_ID in MMQ and MMF as before upstream PR #31047's tile list (tile width from all tokens, a tile column per expert); `2`: that layout only up to 8 tokens (speculative verify, multi-token steps) and the tile list for prompt batches (v2's prefill split) | base, -flags, -prefill-split | Q108 |
 | `GGML_CUDA_FATTN_TILE_PASCAL` | `1` | Prompt attention kernel on compute 6.1 (head size 128 or 256, reads a Q8_0 cache directly). `0`: llama.cpp's TILE kernel; `2`: any GPU; `_MIN`: the fewest query tokens it takes | base | Q163 |
 | `GGML_CUDA_FATTN_TILE_PASCAL_QK` | `2` | `1`: the head-128 scores without the split over the head's halves | base | Q163 |
 
@@ -64,6 +68,7 @@ With every switch at its default, the `-flags` build gives `-ladder4`'s logits b
 | `GGML_CUDA_FATTN_SPARSE_PASCAL` | `0` | `1`: sparse decode attention below Turing over the cells a QSA layer keeps; `2`: any GPU. `_NQ`, `_SPLITS`, `_NSM`, `_MIN_RATIO` tune it | -qsa | Q230, Q441 |
 | `LLAMA_ATTN_K_LAST` | `1` | *new.* `0`: a sliding-window cache's layer expands q, k, v (upstream's order) instead of k last, which lets K's norm, RoPE and cache write fuse | base, -flags | Q1025 |
 | `LLAMA_GPU_KQ_MASK` | `0` | `n`: micro-batches of at least n tokens build their attention mask on each card; `LLAMA_GPU_KQ_MASK_CHECK=1` compares it with the host's | base, -hybrid | Q110, Q116 |
+| `LLAMA_GPU_KQ_MASK_MAX` | unset | `m`: with `LLAMA_GPU_KQ_MASK`, card-built masks only for micro-batches of at most m tokens (decode steps); longer ones use the host's | -decodemask, -promptpath | Q261 |
 | `LLAMA_GPU_KQ_CELLS` | `1` | *new.* `0`: no per-card copy of the cells' positions in the KV buffers (upstream's buffers; the card-built mask then stays off) | base, -flags | Q110, Q1025 |
 | `LLAMA_QSA_PAD_LINEAR` | `1` | *new.* `0`: the QSA k-pool's pad cells found by sorting and binary search, as upstream (the same cells, more host time) | -qsa, -flags | Q441, Q1025 |
 | `LLAMA_QSA_INPUT_STATS` | `0` | `N`: log the k-pool inputs every N micro-batches | -qsa | Q441 |
@@ -98,6 +103,7 @@ With every switch at its default, the `-flags` build gives `-ladder4`'s logits b
 | `LLAMA_KV_RESTORE_CANONICAL` | `1` | *new.* `0`: a state restored into an empty stream is placed by the slot search (upstream) instead of position p in cell p | base, -flags | Q111, Q1025 |
 | `LLAMA_STATE_NOINIT` | `1` | *new.* `0`: state buffers (checkpoints, prompt cache) are zero-filled when allocated, as upstream | -ckptrc, -flags | Q704, Q1025 |
 | `LLAMA_DIO_STAGING` | `4x64` | Pinned staging of the direct-I/O loader, `<n>x<MiB>` | -draftmem | Q580 |
+| `GGML_CUDA_KEEPALIVE` (`_MS`, `_POLL_US`) | off | `decode` (or `1`): one block per card, on a stream of the card's lowest priority, polls a word in mapped host memory so that the driver holds the card at its boost clock while a layer split decodes; it ends itself `_MS` after the card's last graph (default 1,000) and is ended before captures, frees and device-wide synchronizes. `request`: also every card's block when llama-server takes a request; `idle`: a 120 s timeout, through an agent's tool calls | -keepalive | Q1021, Q1045 |
 | `LLAMA_UBATCH_TAPER`, `--ubatch-taper` | off | A taper of prompt micro-batches (`on` or `head=N:S,tail=N:S,short=N:S,min=N`); a request may send `"ubatch_taper"` | -taper | Q771 |
 
 ## MoE routing and card hops
@@ -120,9 +126,14 @@ With every switch at its default, the `-flags` build gives `-ladder4`'s logits b
 | `LLAMA_GRAMMAR_HOST_SAMPLING` | `0` | `1`: a request with a grammar turns device sampling off, as upstream (default: the device's token is checked on the host) | base | Q67 |
 | `LLAMA_GRAMMAR_TEST_REJECT` | `0` | `N`: count every Nth grammar-checked token as rejected (tests) | base | Q67 |
 | `LLAMA_SCREEN_HEAD` (`_M`, `_FILE`) | `0` | The screened output head (files with a screen) | base | Q92, Q125 |
+| `LLAMA_SCREEN_HEAD_GRAMMAR` | `0` | `1`: a request with a grammar keeps the screened head until the grammar can reject a token (a lazy grammar before its trigger, the reasoning); `0`: any grammar turns the screen off | -toolsample-screen | Q360 |
 | `LLAMA_REASONING_BUDGET_UNMASK` | `1` | *new.* `0`: the reasoning budget's forced token keeps a -inf logit, as upstream (the screened head gives -inf to tokens outside its screen) | base, -flags | Q92, Q1025 |
 | `--pipe-depth`, `--pipe-guess`, `--pipe-copy-min`, `--pipe-floor`, `--pipe-store`, `--pipe-draft` | off | Pipelined speculation for a slot that generates alone, its guessers, filler floor, continuation store and staircase drafter | base | Q87, Q154, Q160, Q161, Q20 |
 | `LLAMA_PIPE_UPLOAD`, `LLAMA_PIPE_CHUNK_STREAM` | packed, off | The pipe slots' packed uploads; their prompt chunks on lower-priority streams | base | Q120, Q155 |
+| `LLAMA_DRAFT_HEAD`, `LLAMA_DRAFT_VOCAB`, `LLAMA_DRAFT_ANC`, `LLAMA_DRAFT_SPLIT`, `LLAMA_DRAFT_PRUNE` | unset | The staircase drafter's cheaper guess: its output head converted at load (`q8_0`, `f16`), its vocabulary cut to the first k draft ids, the ancestor selection as one dense product (`dense`), each step's matrix products in groups of k rows, the last block on the output row only (`PRUNE=1`, exact) | -cheapguess | Q194 |
+| `LLAMA_DRAFT_LOAD_CHUNK` | `8` | MiB per read when the staircase drafter's file loads and its head converts (the same bytes, a small peak on a 4 GB host); `0`: each tensor at once | -cheapguess | Q194 |
+| `LLAMA_PIPE_STAIR_CONT` | `0` | `1`: `--pipe-guess staircase` without a store guesses the request's continuations of 2-token contexts before the drafter | -cheapguess | Q194 |
+| `LLAMA_PIPE_DRAFT_TAPS_ONLY` | `0` | `1`: the staircase drafter follows the sequence but never guesses (what following costs) | -cheapguess | Q194 |
 | `LLAMA_DRAFT_SHARE` | off | `embd[,head]`: the MTP draft reads the target's token embeddings and head | -draftmem | Q564 |
 | `LLAMA_DRAFT_SHORTLIST` (`_FILE`) | off | `k[,m[,r]]`: the MTP draft's head over a token shortlist | -draftmem | Q592, Q635 |
 | `LLAMA_DRAFT_EMBD_CACHE` | off | `<rows>[,<max tokens>]`: the draft's token rows cached on its layer's card | -draft1card | Q961 |
@@ -142,6 +153,8 @@ With every switch at its default, the `-flags` build gives `-ladder4`'s logits b
 | `--ctx-checkpoints-share` | off | Prompt-cache entries and child slots share the slot's host checkpoints (upstream #30137) | -ckptrc | Q704 |
 | `--prefix-cache DIR` (`_MAX`, `_MIN`), `--checkpoint-gen` (`_AT`, `_MIN`) | off | Saved shared prefixes and generation checkpoints for agent sessions | base | Q111, Q132 |
 | `--checkpoint-tail2` | off | Two tail checkpoints per prompt and the mid-prompt rule, as stock, instead of one ring checkpoint for a sliding-window model | base | Q111 |
+| `LLAMA_SERVER_TEXT_REUSE` | `0` | `1`: llama-server keeps the cached tokens where a prompt spells the same text with other tokens (a reply sent back and tokenized its own way) | -textreuse, -promptpath | Q260 |
+| `LLAMA_SERVER_TAIL_CKPT_MIN` | `0` | `n`: a prompt's end-of-prompt checkpoint only when it ends at least n tokens past the slot's newest checkpoint | -promptpath | Q263 |
 | `LLAMA_SERVER_CKPT_RING` | `1` | *new.* `0`: a sliding-window model's checkpoints hold only the last window, as stock, not the whole ring | base, -flags | Q111, Q1025 |
 | `LLAMA_SERVER_CKPT_RING_PAST` | `1` | *new.* `0`: no ring checkpoint taken after the divergence is restored, as stock | base, -flags | Q111, Q1025 |
 | `LLAMA_SERVER_CKPT_RESUME_NEXT` | `1` | *new.* `0`: a sliding-window checkpoint restore resumes at its last position, as stock, not after it | base, -flags | Q111, Q1025 |
@@ -173,22 +186,11 @@ those kernels' compile-time tuning (Q671). The defaults are the engine's:
 The IQ2_S/IQ3_XXS tuning (sign masks in registers, 3 blocks per SM) has only this build-time switch; a run-time one is
 Q1040.
 
-## Branches that join with `-ladder5`
-
-These branches on `-ladder4` (C80's ports of older v3 branches, and the features made since) have their own switches,
-all off by default; they enter one tree with `-ladder5` (C537, Q1026), and their rows move into the tables above then:
-
-| Switch | Default | What it does | Branch | Row |
-|---|---|---|---|---|
-| `LLAMA_SERVER_TEXT_REUSE` | off | `1`: llama-server keeps the cached tokens where a prompt spells the same text with other tokens | -textreuse, -promptpath | Q260 |
-| `LLAMA_GPU_KQ_MASK_MAX` | off | `m`: with `LLAMA_GPU_KQ_MASK=1`, card-built masks only for micro-batches of at most m tokens (decode) | -decodemask, -promptpath | Q261 |
-| `LLAMA_SERVER_TAIL_CKPT_MIN` | off | `n`: the spacing of a prompt's tail checkpoints | -promptpath | Q263 |
-| `LLAMA_DRAFT_HEAD`, `LLAMA_DRAFT_VOCAB`, `LLAMA_DRAFT_ANC`, `LLAMA_DRAFT_SPLIT`, `LLAMA_DRAFT_PRUNE`, `LLAMA_DRAFT_LOAD_CHUNK`, `LLAMA_PIPE_STAIR_CONT`, `LLAMA_PIPE_DRAFT_TAPS_ONLY`, `GGML_CUDA_MMVQ_MAX_COLS` | off (`_LOAD_CHUNK` 8 MiB) | The staircase drafter's cheaper guess: its head in Q8_0, vocabulary and splits, pruning, continuations | -cheapguess | Q194 |
-| `GGML_CUDA_MMVQ_PASCAL_MT` (`_MT_RB`, `_MT_ACT_KB`) | off | `1`: 2–4-token Pascal kernels that read and decode each weight once (IQ2_S, IQ3_XXS, N2P, N3P, Q8_0, Q5_0) | -mtpk | Q211 |
-
 ## What has no switch
 
-- **New quant types** (N2P, N3P, N2P-128, N3P-128) and **cold-tier tensors** (Q238) act only in files that hold them.
+- **New quant types** (N2P, N3P, N2P-128, N3P-128, Q4_1_64) and **cold-tier tensors** (Q238) act only in files that hold
+  them. Q4_1_64 (Q16, v2's group-64 Q4_1) has type id 504 on v3; files written by v2.0 carry its old id and do not
+  load as Q4_1_64 (Q1037).
   Their Pascal kernels have the kernel switches above: `GGML_CUDA_MMVQ_PASCAL_SKIP=n2p,n3p,n2p_128,n3p_128` sends them
   to llama.cpp's `mul_mat_vec_q` with the fork's dot products.
 - **Fixes whose other value would bring a crash or a wrong result back:** ggml-alloc plans again for a leaf that no node

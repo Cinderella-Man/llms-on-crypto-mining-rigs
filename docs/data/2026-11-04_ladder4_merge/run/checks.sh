@@ -231,7 +231,9 @@ if step coldtier; then
     mkdir -p "$K"
     : > "$K/checks.tsv"
     : "${TEXT:?coldtier needs TEXT}"
-    WORK=$K REPO=$REPO BIN=$WORK/cpu/bin TEXT=$TEXT THREADS=$THREADS ${CPUS:+CPUS=$CPUS} \
+    # env: as prefix assignments, ${CPUS:+...} would end the assignments (the next one runs as the command) and BIN and
+    # MOUNTS would expand $WORK as $K
+    env WORK="$K" REPO="$REPO" BIN="$WORK/cpu/bin" TEXT="$TEXT" THREADS="$THREADS" ${CPUS:+CPUS=$CPUS} \
         MOUNTS="$WORK $(dirname "$TEXT") ${MOUNTS:-}" STEPS="random moeids" \
         nice -n 19 bash "$DATA/2026-11-04_cold_tier/run/cpu_checks.sh" > "$K/console.txt" 2>&1
     while IFS=$'\t' read -r _t s v d; do verdict "coldtier-$s" "$v" "$d"; done < "$K/checks.tsv"

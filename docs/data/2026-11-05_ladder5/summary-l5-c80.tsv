@@ -1,0 +1,7 @@
+branch	check	verdict	detail
+merge	cpubuild	OK	rc=0; commit 1f7215948
+promptpath	server	OK	LLAMA_SERVER_TEXT_REUSE=1  rc=0: # PASS: 0 failed trials 
+promptpath	server_tail	OK	LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 rc=0: # PASS: 0 failed trials 
+promptpath	mask	OK	host: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size:  decode: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size:  all: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 1557, by micro-batch size:  275 32 1280 64 2 128  
+cheapguess	drafter	OK	CPU build, 9 option sets (checks/cheapguess/drafter/options.tsv); chunk 0 = default: yes, with q8_0: yes
+cheapguess	drafter-identity	OK	rig builds, no option set: -ladder4 DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00259 table=host fuse=0 window=6,12,22,3; port DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00259 table=host fuse=0 window=6,12,22,3

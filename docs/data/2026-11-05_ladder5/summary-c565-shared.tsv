@@ -1,0 +1,56 @@
+tree	check	verdict	detail
+l4fix	tree	OK	commit fdd2e565d21d9f807c9addcab68be17e74a8c81a 
+l4fix	build	OK	rc=0; BUILD_SHARED_LIBS=ON; test-llama-archs; 0 error lines
+l4fix	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+l4fix	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+l4fix	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+l4fix	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+u4fix	tree	OK	commit a042afb158f1c017945868ea15551eeda11a1f2a patch fd8276bbcdf7b157ffec101b7c4d572429c491c0 test-llama-archs: the MoE model of an architecture with a Dense one gets its own LLAMA_ARCHS_LOGITS file (C565) patch fdd2e565d21d9f807c9addcab68be17e74a8c81a ggml: export ggml_graph_view, which test-backend-ops' replay calls (C565: shared-library builds failed to link) 
+u4fix	build	OK	rc=0; BUILD_SHARED_LIBS=ON; test-llama-archs; 0 error lines
+u4fix	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+u4fix	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+u4fix	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+u4fix	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+l5	tree	OK	commit 1f7215948af80391b8f23f3b3a51f2e123c41700 
+l5	build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+l5	ctest	OK	100% tests passed, 0 tests failed out of 66; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+l5	net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+l5	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+l5	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+l5	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+l5	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+l5	ident vs l4fix	SAME	l4fix wrote 143 files; 143 compared, differ: none; written by l5 only: 0; Summary: all 148 test(s) passed
+l5	hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+l5	hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+l5	hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+l5	hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+l5	hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+l5	hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+l5	hand thread-safety	OK	test-thread-safety rc=0: 0.00.288.934 I All threads finished without errors.
+l5	hand context-model	OK	test-llama-context rc=0: failed   : 0
+l5	hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.189178
+u5	tree	OK	commit 832fb5aa4fc499fd474a1ae88e639dfa3b54699e 
+u5	build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+u5	ctest	OK	100% tests passed, 0 tests failed out of 66; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+u5	net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+u5	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+u5	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+u5	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+u5	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+u5	ident vs u4fix	SAME	u4fix wrote 143 files; 143 compared, differ: none; written by u5 only: 0; Summary: all 148 test(s) passed
+u5	hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+u5	hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+u5	hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+u5	hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+u5	hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+u5	hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+u5	hand thread-safety	OK	test-thread-safety rc=0: 0.00.123.003 I All threads finished without errors.
+u5	hand context-model	OK	test-llama-context rc=0: failed   : 0
+u5	hand eval-callback	OK	llama-eval-callback rc=0:     sum = -3.649517
+l5u	tree	OK	commit 832fb5aa4fc499fd474a1ae88e639dfa3b54699e 
+l5u	build	OK	rc=0; BUILD_SHARED_LIBS=ON; test-llama-archs; 0 error lines
+l5u	archs plain	OK	Summary: all 148 test(s) passed; plain rc=0
+l5u	archs write	OK	Summary: all 148 test(s) passed; write rc=0
+l5u	archs compare	OK	Summary: all 148 test(s) passed; compare rc=0
+l5u	archs files	OK	143 files written; 143 compared, differ: none; compared while writing (a shared file): none
+l5u	ident vs l5	DIFFERS	l5 wrote 143 files; 143 compared, differ: gpt2 qwen2 gemma4 ; written by l5u only: 0; Summary: 148 test(s) executed, 3 failed

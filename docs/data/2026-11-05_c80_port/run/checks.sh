@@ -25,9 +25,13 @@
 # Usage: WORK=<dir> REPO=<this repository> BASE_BUILD=<-ladder4's unpacked rig tarball, test-llama-archs in bin/> \
 #   TINY=<tiny Flint gguf> CASE=<folder with drafter.gguf and case.bin> [BRANCHES='textreuse promptpath ...'] \
 #   [PREFIX=pascal-p106-v3-b12076-] [REMOTE=fork] [SPLIT=6,6,5,5,6,5,5,6,5] [JOBS=8] [LOCK=<flock file>] \
-#   [DOCKER_ARGS=...] [PY_IMAGE=python:3.12-slim] [STEPS='build identity cpubuild own'] bash checks.sh
+#   [DOCKER_ARGS=...] [PY_IMAGE=python:3.12-slim] [STEPS='build identity cpubuild own'] [BUILD_OF=<name>] \
+#   [RIG_TREE=<dir>] bash checks.sh
 #   WORK      the work folder of scripts/build_llamacpp_docker.sh: its llama.cpp clone in $WORK/src has the fork as
 #             remote REMOTE with an https fetch URL
+#   BUILD_OF  one build that holds every branch of BRANCHES (a merge, checked out in $WORK/src): the cpubuild step builds
+#             it once into $WORK/cpu-<BUILD_OF>/bin, and every branch's own checks run on it (STEPS='cpubuild own')
+#   RIG_TREE  the rig tree the drafter's default check compares with BASE_BUILD's (default: the branch's tarball tree)
 # Output: $WORK/llama.cpp-<date>-<sha>-<branch>{,.tar.gz}, $WORK/md5.txt, $WORK/cpu-<name>/bin/, $WORK/checks/<name>/,
 #   $WORK/logs/, $WORK/summary.tsv (branch, check, verdict, detail); done when $WORK/DONE exists
 set -uo pipefail
@@ -49,11 +53,12 @@ rm -f "$WORK/DONE"
 verdict() { printf '%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" | tee -a "$WORK/summary.tsv"; }
 locked()  { if [ -n "${LOCK:-}" ]; then flock -w 21600 "$LOCK" "$@"; else "$@"; fi; }
 step()    { [[ " $STEPS " == *" $1 "* ]]; }
-mounts="-v $WORK:$WORK -v $BASE_BUILD:$BASE_BUILD -v $CASE:$CASE"
+mounts="-v $WORK:$WORK -v $BASE_BUILD:$BASE_BUILD -v $CASE:$CASE${RIG_TREE:+ -v $RIG_TREE:$RIG_TREE}"
 # shellcheck disable=SC2086
 box() { docker run --rm $D $mounts "$@"; }
 # a container without a GPU whose CUDA backend loads against the stub driver (the rig build's binaries)
 STUB='mkdir -p /tmp/stub && ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /tmp/stub/libcuda.so.1 && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/tmp/stub'
+cpuname() { echo "${BUILD_OF:-$1}"; }
 tarball_tree() { local t; t=$(ls -t "$WORK"/llama.cpp-*-"$1".tar.gz 2>/dev/null | head -n 1); [ -n "$t" ] && echo "$WORK/$(basename "$t" .tar.gz)"; }
 echo "=== checks started $(date -Is), branches: $BRANCHES, steps: $STEPS"
 
@@ -146,8 +151,8 @@ cpubuild() {
 
 # <name> <tag> <extra variables of the "on" server>: check_server.sh, the warm answers against a cold server's
 own_server() {
-    [ -x "$WORK/cpu-$1/bin/llama-server" ] || { verdict "$1" "server$2" FAIL "no CPU build in cpu-$1/bin"; return 1; }
-    local n=$1 tag=$2 K=$WORK/checks/$1/server$2 bin=$WORK/cpu-$1/bin rc
+    [ -x "$WORK/cpu-$(cpuname "$1")/bin/llama-server" ] || { verdict "$1" "server$2" FAIL "no CPU build in cpu-$(cpuname "$1")/bin"; return 1; }
+    local n=$1 tag=$2 K=$WORK/checks/$1/server$2 bin=$WORK/cpu-$(cpuname "$1")/bin rc
     mkdir -p "$K/run" && cp "$RR/textreuse_check.py" "$K/run/"
     # (BIN before WORK: a later prefix assignment would expand $WORK as K)
     BIN=$bin WORK=$K MODEL=$TINY ON_EXTRA="$3" TAG=$tag PY_IMAGE=${PY_IMAGE:-python:3.12-slim} \
@@ -158,7 +163,7 @@ own_server() {
 }
 
 own_mask() {
-    local n=$1 K=$WORK/checks/$1/mask bin=$WORK/cpu-$1/bin ok=OK
+    local n=$1 K=$WORK/checks/$1/mask bin=$WORK/cpu-$(cpuname "$1")/bin ok=OK
     mkdir -p "$K"
     BIN=$bin WORK=$K nice -n 19 bash "$RR/mask_check_cpu.sh" > "$K/console.txt" 2>&1
     # every arm exits 0 with the host arm's summary; the all-batches arm compares card masks (an abort on any difference);
@@ -177,7 +182,7 @@ own_mask() {
 
 own_drafter() {
     local n=$1 K=$WORK/checks/$1/drafter T ok=OK i
-    T=$(tarball_tree "$PREFIX$n")
+    T=${RIG_TREE:-$(tarball_tree "$PREFIX$n")}
     mkdir -p "$K"
     # <tag> <bin dir> <variables...>: one run of the reference case on the CPU
     dcheck() {
@@ -190,7 +195,7 @@ own_drafter() {
                 "LLAMA_DRAFT_ANC=dense LLAMA_DRAFT_HEAD=q8_0" "LLAMA_DRAFT_LOAD_CHUNK=0"
                 "LLAMA_DRAFT_HEAD=q8_0" "LLAMA_DRAFT_HEAD=q8_0 LLAMA_DRAFT_LOAD_CHUNK=0")
     for i in "${!opts[@]}"; do
-        dcheck "opt$i" "$WORK/cpu-$n/bin" "${opts[$i]}"
+        dcheck "opt$i" "$WORK/cpu-$(cpuname "$n")/bin" "${opts[$i]}"
         local line; line=$(grep -a '^DRAFTER_CHECK' "$K/opt$i.steps")
         [[ "$line" == *" bad=0 "* ]] || ok=FAIL
         printf '%s\t%s\n' "${opts[$i]:-(defaults)}" "${line:-no DRAFTER_CHECK line}" >> "$K/options.tsv"
@@ -211,7 +216,7 @@ for n in $BRANCHES; do
     echo "=== $n $(date -Is)"
     if step build; then build "$n" || continue; fi
     step identity && identity "$n"
-    if step cpubuild && [ "$n" != mtpk ]; then cpubuild "$n"; fi
+    if step cpubuild && [ "$n" != mtpk ] && [ ! -x "$WORK/cpu-${BUILD_OF:-.}/bin/llama-server" ]; then cpubuild "$(cpuname "$n")"; fi
     if step own; then
         case $n in
             textreuse)  own_server "$n" "" "" ;;

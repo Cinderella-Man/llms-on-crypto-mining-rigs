@@ -1,4 +1,0 @@
-log	requests	accepted	drafted	acceptance	steps	tokens_per_step
-server-s35stack.log	67	16303	23040	0.708	7676	3.124
-server-s36ref.log	66	14761	21123	0.699	7043	3.096
-server-s36adapt.log	67	16649	21091	0.789	7366	3.260

@@ -23,7 +23,11 @@
 # Usage: ROOT=<dir> REPO=<this repository> BASE_TREE=<-ladder4's unpacked rig tarball, extras in bin/> \
 #   BASE_SRC=<a llama.cpp clone holding -ladder4> [BASE_CCACHE=<-ladder4's ccache>] [MODEL=<gguf with output_screen>] \
 #   [TASKS=<BFCL tasks.jsonl of bench/bfcl_flint/prepare.py>] [BRANCHES='<name> ...'] [FORK=<fork https URL>] \
-#   [JOBS=8] [THREADS=8] [PORT=18524] [LOCK=<flock file>] [DOCKER_ARGS=...] [STEPS='prep build ...'] bash checks.sh
+#   [JOBS=8] [THREADS=8] [PORT=18524] [LOCK=<flock file>] [DOCKER_ARGS=...] [STEPS='prep build ...'] \
+#   [ONE=<work dir> ONE_BRANCH=<fork branch>] bash checks.sh
+#   ONE       one work folder whose build of ONE_BRANCH holds every branch of BRANCHES (a merge, built by another script:
+#             its rig tarball tree with the extras in bin/, its static native CPU build in cpu/bin): every name's steps
+#             run on it (STEPS='identity sass units screen'), into $ONE/checks/c524/<step>/
 # Output: $ROOT/<name>/llama.cpp-<date>-<sha>-<branch>{,.tar.gz}, $ROOT/<name>/checks/<step>/, $ROOT/<name>/logs/,
 #   $ROOT/md5.txt, $ROOT/summary.tsv (branch, check, verdict, detail); done when $ROOT/DONE exists
 set -uo pipefail
@@ -48,10 +52,11 @@ STUB='mkdir -p /tmp/stub && ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /tmp/s
 echo "=== checks started $(date -Is): $BRANCHES; steps: $STEPS"
 
 for n in $BRANCHES; do
-    BR=pascal-p106-v3-b12076-$n
-    W=$ROOT/$n
+    BR=${ONE_BRANCH:-pascal-p106-v3-b12076-$n}
+    W=${ONE:-$ROOT/$n}
     S=$W/src
-    mkdir -p "$W/logs" "$W/checks"
+    CK=$W/checks${ONE:+/c524}
+    mkdir -p "$W/logs" "$CK"
     verdict() { printf '%s\t%s\t%s\t%s\n' "$n" "$1" "$2" "$3" | tee -a "$ROOT/summary.tsv"; }
     tree() { local t; t=$(ls -t "$W"/llama.cpp-*-"$BR".tar.gz 2>/dev/null | head -n 1); [ -n "$t" ] && echo "$W/$(basename "$t" .tar.gz)"; }
     # shellcheck disable=SC2086
@@ -103,7 +108,7 @@ for n in $BRANCHES; do
     T=$(tree)
 
     if step identity; then
-        K=$W/checks/identity
+        K=$CK/identity
         rm -rf "$K" && mkdir -p "$K"
         if [ -z "$T" ] || [ ! -x "$T/bin/test-llama-archs" ]; then
             verdict identity FAIL "no tree with test-llama-archs"
@@ -128,7 +133,7 @@ for n in $BRANCHES; do
     fi
 
     if step sass; then
-        K=$W/checks/sass
+        K=$CK/sass
         rm -rf "$K" && mkdir -p "$K"
         if [ -z "$T" ]; then
             verdict sass FAIL "no tree"
@@ -166,7 +171,7 @@ for n in $BRANCHES; do
     fi
 
     if step units && [ "$n" = q41g64 ]; then
-        K=$W/checks/units
+        K=$CK/units
         rm -rf "$K" && mkdir -p "$K"
         box "$IMAGE" bash -c "$STUB; nice -n 19 $T/bin/test-quantize-fns -v" > "$K/test-quantize-fns.log" 2>&1
         rc=$?
@@ -196,7 +201,7 @@ for n in $BRANCHES; do
     fi
 
     if step screen && [ "$n" = toolsample-screen ]; then
-        K=$W/checks/screen
+        K=$CK/screen
         rm -rf "$K" && mkdir -p "$K"
         : "${MODEL:?screen needs MODEL}" "${TASKS:?screen needs TASKS}"
         name=pq-c524-screen

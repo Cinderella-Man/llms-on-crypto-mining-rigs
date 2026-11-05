@@ -1,2 +1,0 @@
-log	run	switch	n_max	s_mode	scale	steps	no_prob_steps	verify_widths	drafted_per_step	verified_per_step	accepted_per_step	acceptance	tokens_per_step	expected_tokens_per_step	model_ms_per_step	model_speedup	rule_verify_widths	rule_tokens_per_step	rule_model_ms_per_step	rule_model_speedup
-adapt-s36adapt.jsonl	1793882232194474	on	3	run	1.0	9281	0	1:1899 3:1013 4:6369	3.0	2.277	1.797	0.789	2.797	3.008	151.3	1.2	1:1899 3:1013 4:6369	2.797	151.3	1.2

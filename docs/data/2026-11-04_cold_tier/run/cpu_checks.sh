@@ -130,8 +130,16 @@ if step random; then
     # --no-repack: x86's repacked Q4_0 kernels compute an expert's tokens four at a time or one by one depending on how
     # many it gets, and a tier's slot 0 also gets the other tier's picks, so with them the tiered file rounds a little
     # differently (perplexity 4104.52 against 4104.34 at hot 24); without them every arm must match byte for byte
-    ppl() { box "$IMAGE" nice -n 19 "$BIN/llama-perplexity" -m "$1" -f "$TEXT" -c 128 -b 128 --chunks "$CHUNKS" \
-                -t "$THREADS" --no-repack --kl-divergence-base "$2" "${@:3}"; }
+    # <log> <model> <KL base file> [arguments]. A run whose log lacks its last line runs again, up to three times: on a
+    # loaded machine llama-perplexity sometimes exits 0 with the last chunk's row and the summary missing from its log
+    # (C537: 4 of 20 KL runs of -coldtier's own build, 1-2 of 20 of -ladder5's; the KL files are complete; Q1074)
+    ppl() { local log=$1 i; shift
+            for i in 1 2 3; do
+                box "$IMAGE" nice -n 19 "$BIN/llama-perplexity" -m "$1" -f "$TEXT" -c 128 -b 128 --chunks "$CHUNKS" \
+                    -t "$THREADS" --no-repack --kl-divergence-base "$2" "${@:3}" > "$log" 2>&1
+                grep -qaE 'Final estimate|^Same top p' "$log" && return 0
+                log "ppl: $log ends early (run $i of 3)"
+            done; }
     # split <model> <hot> <dir>: a seeded random ranking of each layer's experts, hot.tsv and cold.tsv in <dir>
     split() {
         pyin - "$1" "$3/experts.tsv" "$REPO/scripts" "$2" << 'PY'
@@ -150,8 +158,8 @@ PY
     }
     for m in qwen4exp-moe qwen4exp-moe-q4e qwen4exp-moe-sharp; do
         src=$M/$m.gguf
-        ppl "$src" "$K/$m.base.kld" > "$K/$m.base.log" 2>&1
-        ppl "$src" "$K/$m.base.kld" --kl-divergence > "$K/$m.self.log" 2>&1
+        ppl "$K/$m.base.log" "$src" "$K/$m.base.kld"
+        ppl "$K/$m.self.log" "$src" "$K/$m.base.kld" --kl-divergence
         for hot in 24 31 8; do
             d=$K/$m-h$hot
             mkdir -p "$d"
@@ -159,8 +167,8 @@ PY
             py "$TOOL" tier --hot-ids "$d/hot.tsv" --cold-ids "$d/cold.tsv" --cold "$src" --out-dir "$d" "$src" > "$d/tier.log" 2>&1 &&
                 py "$TOOL" verify "$src" --new "$d/$m.gguf" --hot-ids "$d/hot.tsv" --cold-ids "$d/cold.tsv" --cold "$src" >> "$d/tier.log" 2>&1
             rc=$?
-            ppl "$d/$m.gguf" "$d/tiered.kld" > "$d/tiered.log" 2>&1
-            ppl "$d/$m.gguf" "$K/$m.base.kld" --kl-divergence > "$d/vs_base.log" 2>&1
+            ppl "$d/tiered.log" "$d/$m.gguf" "$d/tiered.kld"
+            ppl "$d/vs_base.log" "$d/$m.gguf" "$K/$m.base.kld" --kl-divergence
             if [ $rc -eq 0 ] && cmp -s "$K/$m.base.kld" "$d/tiered.kld" && [ -n "$(result "$K/$m.self.log")" ] &&
                 [ "$(result "$K/$m.self.log")" = "$(result "$d/vs_base.log")" ]; then
                 verdict "random $m hot $hot" OK "verify ok; the KL base files are the same bytes; $(result "$d/vs_base.log" | tr -s ' ' | tr '\n' ' ')"
@@ -180,7 +188,7 @@ with open(sys.argv[2], "w") as f:
 PY
         py "$TOOL" tier --hot-ids "$d/hot.tsv" --cold-ids "$d/cold.tsv" --cold "$src" --cold-in "$c/cold_in.tsv" \
             --out-dir "$c" "$src" > "$c/tier.log" 2>&1
-        ppl "$c/$m.gguf" "$K/$m.base.kld" --kl-divergence > "$c/vs_base.log" 2>&1
+        ppl "$c/vs_base.log" "$c/$m.gguf" "$K/$m.base.kld" --kl-divergence
         if grep -q "^Mean    KLD" "$c/vs_base.log" && [ "$(result "$K/$m.self.log")" != "$(result "$c/vs_base.log")" ]; then
             verdict "random $m mismatch" OK "cold slabs of the wrong experts change the result: $(result "$c/vs_base.log" | tr -s ' ' | tr '\n' ' ')"
         else
@@ -198,8 +206,8 @@ PY
         py "$TOOL" verify "$src" --new "$x/$m.gguf" --hot-ids "$d/hot.tsv" --cold-ids "$d/cold.tsv" \
             --cold "$x/experts-q4_0.gguf" --cold-in "$x/ids.tsv" >> "$x/tier.log" 2>&1
     rc=$?
-    ppl "$x/$m.gguf" "$K/$m.base.kld" --kl-divergence > "$x/vs_f32.log" 2>&1
-    ppl "$x/$m.gguf" "$K/qwen4exp-moe-q4e.base.kld" --kl-divergence > "$x/vs_q4e.log" 2>&1
+    ppl "$x/vs_f32.log" "$x/$m.gguf" "$K/$m.base.kld" --kl-divergence
+    ppl "$x/vs_q4e.log" "$x/$m.gguf" "$K/qwen4exp-moe-q4e.base.kld" --kl-divergence
     if [ $rc -eq 0 ] && grep -q "^Mean    KLD" "$x/vs_f32.log" && grep -q "^Mean    KLD" "$x/vs_q4e.log" &&
         [ "$(result "$K/$m.self.log")" != "$(result "$x/vs_f32.log")" ] &&
         [ "$(result "$K/qwen4exp-moe-q4e.self.log")" != "$(result "$x/vs_q4e.log")" ]; then

@@ -74,7 +74,8 @@ if step switchon; then
         nc=$(grep -c 'logits against' "$K/on.log")
         bad=$(grep 'logits against' "$K/on.log" | grep -v ', 0 of ' | grep -vxFf "$K/base_self.txt" | cut -d: -f1 | tr '\n' ' ')
         sb=$(grep -m 1 '^Summary' "$K/base.log") so=$(grep -m 1 '^Summary' "$K/on.log")
-        verdict switchon "$([ "$nb" -gt 0 ] && [ "$nc" -gt 0 ] && [ -z "$bad" ] && [ "$sb" = "$so" ] && echo OK || echo FAIL)" \
+        # a branch with C565's fix (fork commit fd8276bbc) passes the 7 dense/MoE cases a base without it fails
+        verdict switchon "$([ "$nb" -gt 0 ] && [ "$nc" -gt 0 ] && [ -z "$bad" ] && { [ "$sb" = "$so" ] || [[ "$so" == 'Summary: all '* ]]; } && echo OK || echo FAIL)" \
             "GGML_CUDA_KEEPALIVE=decode, rig build, no device: base wrote $nb logits files; $nc compared, differ: ${bad:-none}; base: $sb; on: $so; $(tr '\n' ' ' < "$K/rc.txt")"
     fi
 fi

@@ -128,7 +128,8 @@ if step flips; then
         nc=$(grep -c 'logits against' "$K/$n.log")
         bad=$(grep 'logits against' "$K/$n.log" | grep -v ', 0 of ' | grep -vxFf "$K/base/base_self.txt" | cut -d: -f1 | tr '\n' ' ')
         sb=$(grep -m 1 '^Summary' "$K/base/base.log") sm=$(grep -m 1 '^Summary' "$K/$n.log")
-        verdict "flip $n" "$([ "$nc" -gt 0 ] && [ -z "$bad" ] && [ "$sb" = "$sm" ] && echo SAME || echo DIFFERS)" \
+        # a branch with C565's fix (fork commit fd8276bbc) passes the 7 dense/MoE cases a base without it fails
+        verdict "flip $n" "$([ "$nc" -gt 0 ] && [ -z "$bad" ] && { [ "$sb" = "$sm" ] || [[ "$sm" == 'Summary: all '* ]]; } && echo SAME || echo DIFFERS)" \
             "$*: $nc compared, differ: ${bad:-none}; base: $sb; flipped: $sm"
     }
     for f in $FLIPS; do

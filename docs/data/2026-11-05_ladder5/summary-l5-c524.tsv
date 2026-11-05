@@ -1,0 +1,4 @@
+branch	check	verdict	detail
+q41g64	sass	REVIEW	base 8541 kernels; 8156 identical, 16 differ, 561 new, 369 gone (checks/sass/*.demangled.txt)
+q41g64	unit test-quantize-fns	OK	rc=0; q4_1_64: q4_1_64 absolute quantization error: ok (0.001147);q4_1_64 reference implementation error: ok (0.000000);q4_1_64 dot product error: ok (0.008952);
+toolsample-screen	screen	OK	screen = full and default = full: screen against full T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls) T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)  | default against full T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls) T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls) ; 48 requests; screen on 14 times with the switch, 0 without
