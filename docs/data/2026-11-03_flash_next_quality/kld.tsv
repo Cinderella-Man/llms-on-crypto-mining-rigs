@@ -1,0 +1,34 @@
+file	text	kld	kld_pm	same_top_pct	same_top_pm	ppl_ratio	ppl_ratio_pm	note
+q8_0-ub256	agent	0.029142	0.001088	97.104	0.076	1.003689	0.001630	the floor: the reference at -ub 256 against its own bases
+q8_0-ub256	wiki	0.017012	0.000340	95.569	0.144	1.000994	0.001667	the floor
+q8_0-ub256	code	0.003578	0.000186	99.240	0.061	1.000323	0.000761	the floor
+q8_0-iq4nl-table	agent	0.034690	0.001338	96.866	0.079	1.008953	0.001775	FN22: the published IQ4_NL n-gram table in the reference
+q8_0-iq4nl-table	wiki	0.026906	0.000591	94.637	0.158	1.002099	0.002109	FN22
+q8_0-iq4nl-table	code	0.007010	0.000360	99.020	0.069	1.002545	0.001141	FN22
+swift-q2_0	agent	0.285104	0.005573	90.714	0.131	0.947543	0.004373
+swift-q2_0	wiki	0.428258	0.005868	77.941	0.290	1.225524	0.010257
+swift-q2_0	code	0.112447	0.003987	95.980	0.138	1.056530	0.004682
+swift-q2_0-hcq8	agent	0.282676	0.005476	90.700	0.131	0.943640	0.004395	FN17's retype
+swift-q2_0-hcq8	wiki	0.428353	0.005803	77.706	0.291	1.226057	0.010207	FN17's retype
+swift-q2_0-hcq8	code	0.112005	0.003944	95.961	0.138	1.055262	0.004665	FN17's retype
+swift-iq2_xs	agent	0.224779	0.004614	91.532	0.126	0.959366	0.003875
+swift-iq2_xs	wiki	0.351209	0.005045	79.569	0.282	1.160503	0.008507
+swift-iq2_xs	code	0.075033	0.002805	96.828	0.123	1.030745	0.003623
+swift-iq3_xxs	agent	0.175513	0.003762	92.320	0.120	0.990920	0.003694
+swift-iq3_xxs	wiki	0.247651	0.003930	83.328	0.261	1.091043	0.006751
+swift-iq3_xxs	code	0.054359	0.002311	97.480	0.110	1.016299	0.003262
+swift-iq3_xxs-hcq8	agent	0.184789	0.003959	92.230	0.121	0.995453	0.003796	FN17's retype
+swift-iq3_xxs-hcq8	wiki	0.244509	0.003894	83.206	0.262	1.089984	0.006697	FN17's retype
+swift-iq3_xxs-hcq8	code	0.053107	0.002264	97.461	0.110	1.017771	0.003162	FN17's retype
+swift-iq3_s	agent	0.120963	0.002828	93.740	0.109	0.981308	0.003047
+swift-iq3_s	wiki	0.153484	0.002669	87.010	0.235	1.039327	0.005084
+swift-iq3_s	code	0.031648	0.001465	98.088	0.096	1.009834	0.002377
+ista-iq3_s	agent	0.116514	0.002494	93.370	0.112	0.985958	0.003017	quantized from the original model: fine-tune plus quantization
+ista-iq3_s	wiki	0.161387	0.002636	86.475	0.239	1.017204	0.005046	from the original model
+ista-iq3_s	code	0.032019	0.001481	98.010	0.098	1.004156	0.002403	from the original model
+ista-coder-iq1_m	agent	0.273501	0.005248	90.690	0.131	0.937011	0.004440	from the original model, 256 experts
+ista-coder-iq1_m	wiki	0.845520	0.009881	68.681	0.325	1.694572	0.020768	from the original model, 256 experts
+ista-coder-iq1_m	code	0.130815	0.004663	95.525	0.145	1.080720	0.005683	from the original model, 256 experts
+fn18-pq4exp	agent	NA	NA	NA	NA	NA	NA	FN18: the run stopped on a GPU fault (CUDA unspecified launch failure)
+fn18-pq4exp	wiki	0.060845	0.001104	92.147	0.188	1.014167	0.003167	FN18: routed experts Q4_0 with FN4's matrix, the rest Q8_0
+fn18-pq4exp	code	NA	NA	NA	NA	NA	NA	FN18: not started (the GPU's container failed to start after the fault)

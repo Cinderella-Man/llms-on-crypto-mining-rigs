@@ -57,10 +57,42 @@ after step:
   28.8 GB) with `run/swap_tensor.py`; swapping that table into its own shard reproduces the shard byte for byte (MD5
   `98ce140e641bc5d68af9f31df0f1c048`).
 
+## Result
+
+KL divergence against the Swift-1.5 Q8_0 reference, mean ± its error, on the three texts
+([kld.tsv](kld.tsv) adds the same-top-token rate and the perplexity ratio). The floor is the reference at `-ub 256`
+against its own bases. Which file to run on the rig, from these scores, the fit and the speed model:
+[2026-11-04_file_choice](../2026-11-04_file_choice/README.md).
+
+| File | Agent | Wiki | Code |
+|---|---:|---:|---:|
+| floor (`q8_0-ub256`) | 0.0291 ± 0.0011 | 0.0170 ± 0.0003 | 0.0036 ± 0.0002 |
+| the reference with the published IQ4_NL n-gram table (FN22) | 0.0347 ± 0.0013 | 0.0269 ± 0.0006 | 0.0070 ± 0.0004 |
+| ISTA IQ3_S | 0.1165 ± 0.0025 | 0.1614 ± 0.0026 | 0.0320 ± 0.0015 |
+| Swift IQ3_S | 0.1210 ± 0.0028 | 0.1535 ± 0.0027 | 0.0316 ± 0.0015 |
+| Swift IQ3_XXS | 0.1755 ± 0.0038 | 0.2477 ± 0.0039 | 0.0544 ± 0.0023 |
+| Swift IQ3_XXS-hcq8 (FN17) | 0.1848 ± 0.0040 | 0.2445 ± 0.0039 | 0.0531 ± 0.0023 |
+| Swift IQ2_XS | 0.2248 ± 0.0046 | 0.3512 ± 0.0050 | 0.0750 ± 0.0028 |
+| ISTA Coder "IQ1_M" (256 experts) | 0.2735 ± 0.0052 | 0.8455 ± 0.0099 | 0.1308 ± 0.0047 |
+| Swift Q2_0-hcq8 (FN17) | 0.2827 ± 0.0055 | 0.4284 ± 0.0058 | 0.1120 ± 0.0039 |
+| Swift Q2_0 | 0.2851 ± 0.0056 | 0.4283 ± 0.0059 | 0.1124 ± 0.0040 |
+| the two-rig file, Q4_0 experts (FN18) | stopped (GPU fault) | 0.0608 ± 0.0011 | not run |
+
+- **The published IQ4_NL n-gram table costs little:** +0.006 agent, +0.010 wiki and +0.003 code over the floor (FN22,
+  Q579).
+- **Swift IQ3_XXS is the best file that fits nine cards** (0.176 on agent text, 1.6× below Q2_0); both IQ3_S files are
+  better still but do not fit. ISTA's files are quantized from the original Qwen3.8-Flash-Next, so their scores hold
+  the fine-tune's difference as well.
+- **FN17's retypes cost nothing measurable:** Q2_0-hcq8 equals Q2_0 within its error on all three texts, IQ3_XXS-hcq8
+  equals IQ3_XXS on wiki and code and is 0.009 higher on agent text (about twice the error).
+- **The two-rig file (FN18)** scored 0.061 on wiki, 4× below Swift IQ3_XXS's 0.248; its agent run stopped on a GPU fault on
+  2026-11-04 and its code run did not start, so its agent and code scores are still open (Q552).
+
 ## Files
 
 | File | What |
 |---|---|
+| [kld.tsv](kld.tsv) | per file and text, from each `llama-perplexity` log's summary (`Mean KLD`, `Same top p`, `Mean PPL(Q)/PPL(base)`): the value and its error for each, and a note |
 | `run/chain.sh` | the driver: steps, prerequisites, a log and a done or failed marker per step, restartable |
 | `run/common.sh` | shared helpers: logging, Docker arguments, waiting until other jobs' containers have left the GPUs, then a CUDA pre-flight on them ([`scripts/cuda_preflight.sh`](../../../scripts/cuda_preflight.sh), run when `PREFLIGHT` is set) |
 | `run/fn1a_download.sh`, `run/fn1a_check.sh`, `run/fn1a_archive.sh` | the reference: download, identity check, archive copy |

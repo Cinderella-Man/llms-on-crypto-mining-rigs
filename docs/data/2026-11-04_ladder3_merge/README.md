@@ -8,7 +8,7 @@ the checks that ran on the merged tree without a GPU, and the script that runs e
 build, each switch on and off, so the morning's GPU and rig work runs one build with switches instead of fourteen. The
 registry rows are Q780 (the merge) and Q781 (its GPU checks) in [quants/experiments.md](../../../quants/experiments.md).
 
-**Status:** merged, built for the rig and checked on the CPU: every merged branch's own CPU checks pass on the merged tree, the logits equal `-ladder2`'s on every architecture with the switches at their defaults and off, and every kernel a branch changed or added comes out with that branch's sm_61 machine code. Through the compute 6.1 PTX on a GPU ([gpu_ptx.md](gpu_ptx.md)), with [run/gpu_checks.sh](run/gpu_checks.sh)'s one named run per switch, every switch passes; `-gdnfuse` fails only on llama.cpp's Meta backend, which splits tensors across GPUs and is not on the rig's path (Q877). The P106 runs (natively, one half per rig) follow.
+**Status:** merged, built for the rig and checked on the CPU: every merged branch's own CPU checks pass on the merged tree, the logits equal `-ladder2`'s on every architecture with the switches at their defaults and off, and every kernel a branch changed or added comes out with that branch's sm_61 machine code. Through the compute 6.1 PTX on a GPU ([gpu_ptx.md](gpu_ptx.md)), with [run/gpu_checks.sh](run/gpu_checks.sh)'s one named run per switch, every switch passes; `-gdnfuse` fails only on llama.cpp's Meta backend, which splits tensors across GPUs and is not on the rig's path (Q877). On P106-090s natively, every run that ran passed: 8 of `ladder2`'s runs on the first rig, `kcol` with its coverage runs and 18 of `iq2xs`'s 20 type/op lines on the second ([native_rigs.tsv](native_rigs.tsv)); the rest moved to record and replay (C372), since its CPU reference is too slow on the rigs' Celeron.
 
 ## What is merged
 
@@ -172,6 +172,29 @@ MODE=native BIN=<tree>/bin OUT=<dir> MODELS=<dir> RUN=<docs/data copy> PARTS="la
   KCOL_BENCH=... MTOK_BENCH=... KCOL_BENCH2=... MMVQ_PASCAL=... FASP=... bash gpu_checks.sh
 ```
 
+**The native runs (C228r1, C228r2, 2026-11-04),** card 0 of each rig, `-ladder3`'s rig tarball, the first rig with
+`SKIP="all-on all-off iq-off"` (the first two are `-ladder2`'s native defaults; `iq-off` puts the grid types on
+llama.cpp's MMQ, which does not support repeated expert ids, Q875). Verdicts per part and run in
+[native_rigs.tsv](native_rigs.tsv):
+
+| Rig | Parts | Passed | Not run |
+|---|---|---|---|
+| first | `ladder2 fap hops vgraphs ckpt server` | BF16 (4 runs), Q2_0, `-stack` and `-off` 497/497 each, `hcsm` 6/6 | the rest, stopped at 15:35 |
+| second | `kcol iq2xs iqkcol qsa` | `kcol` every case, `cov_off` too (natively the two Q4_0/Q5_0 large-activation cases the PTX run failed do not overflow); `iq2xs`'s `on` arm 18 of 20 type/op lines, 0 FAIL lines (iq3_xxs MUL_MAT 76/76, MUL_MAT_ID 50/50) | iq3_xxs MUL_MAT_VEC_FUSION and MUL_MAT_ID_SHARED, `skip`, memcheck, `iqkcol`, `qsa`, stopped at 16:26 |
+
+Both stopped for timed runs. The rest is not rerun this way: test-backend-ops' CPU reference on the rigs' 2-core Celeron
+takes most of each run's time, so the remaining cases run by record and replay
+([2026-11-04_replay_checks](../2026-11-04_replay_checks/README.md): the reference recorded on another machine, only the
+GPU side on the rig; C440 and C441).
+
+```bash
+# the first rig, then the second, each from the folder holding the copied data folder, models and benches
+SKIP="all-on all-off iq-off" MODE=native BIN=<-ladder3>/bin OUT=<dir>/out-ladder2 MODELS=<dir>/models RUN=<dir>/data \
+  PARTS="ladder2 fap hops vgraphs ckpt server" bash <dir>/data/2026-11-04_ladder3_merge/run/gpu_checks.sh
+MODE=native BIN=<-ladder3>/bin OUT=<dir>/out-kcol MODELS=<dir>/models RUN=<dir>/data \
+  PARTS="kcol iq2xs iqkcol qsa" bash <dir>/data/2026-11-04_ladder3_merge/run/gpu_checks.sh
+```
+
 The bench binaries: C70's `mmvq_kcol` and R7's `mmvq_pascal` (the `ladder2` part, as -ladder2's handoff), C163's
 `mmvq_kcol` built with the IQ types (`KCOL_BENCH2`), C93's `mmvq_pascal` (`MMVQ_PASCAL`), C6's `fasp_check` (`FASP`);
 each from `bench/` as its folder says. `MODELS` holds the random models `test-llama-archs -o` writes (the `ctx` check
@@ -187,6 +210,7 @@ leaves them in `checks/ctx/models`).
 | `run/probe_archs_meta.sh` | which switch stops `test-llama-archs`' Meta row, and every architecture with the GDN fusions off (Q877) |
 | `gpu_ptx.md` | the PTX run's verdict per switch, its findings and how it ran |
 | `gpu_ptx_console.txt` | every valid run line of the PTX run, by the container that ran it, and the probes' lines |
+| `native_rigs.tsv` | the native runs on P106-090s (C228r1, C228r2): per rig, part and run, the verdict, the cases and why a run did not run |
 | `union.tsv` | per changed file: the branches that touch it, lines outside the union, single-branch identity |
 | `union_exceptions.txt` | the changed lines outside the union, per file |
 | `cpu_checks.tsv` | one verdict per check of `run/cpu_checks.sh` |

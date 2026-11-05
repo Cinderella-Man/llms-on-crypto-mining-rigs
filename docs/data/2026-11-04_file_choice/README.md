@@ -133,6 +133,26 @@ At 64k, F16 cache (from [fit.md](fit.md); whole layers / experts moved):
   layers; IQ2_XS 262k with experts moved (or whole layers with q8_0 cache); IQ3_XXS and IQ3_XXS-hcq8 128k with experts
   moved; IQ3_S none.
 
+### Checked on the rig: llama.cpp's own projection (C257, Q813, 2026-11-04)
+
+[run/c257_fit.sh](run/c257_fit.sh) ran `scripts/fit_probe.sh` on the second rig for Swift IQ3_XXS's three 64k lines,
+on header-only copies of its three shards (llama.cpp's projection reads the metadata only, so no weights load), on v3's
+base (v2.0, `37e717ff6`, the engine the planner's costs came from) and on `-ladder3` (`7bc1552f4`). Free MiB on the
+fullest card ([fit_probe_rig.tsv](fit_probe_rig.tsv), every card):
+
+| Line (64k, F16 cache) | Planned | v3's base | `-ladder3` |
+|---|---:|---:|---:|
+| whole layers, `-ub 64`, `-ts 6,6,7,5,5,5,5,5,5` | 155 | 152 (card 2) | 206 (card 2) |
+| 8 experts moved, `-ub 128`, `-ts 6,6,7,5,6,4,5,5,5` | 551 | 659 (card 7) | 687 (card 7) |
+| 8 experts moved, `-ub 256`, same split | 387 | 594 (card 7) | 638 (card 7) |
+| DFlash2 on card 8, 9 experts moved, `-b 512 -ub 256`, `-ts 6,7,6,5,6,5,4,6,4` | 202 | (no DFlash) | 457 (card 8) |
+
+- **Every line keeps the 150 MiB margin.** On whole layers the planner matched llama.cpp within 3 MiB, and `-ladder3`
+  leaves 54 MiB more on the fullest card. With experts moved, llama.cpp projects 108–255 MiB more free than the
+  planner, so the moved lines have room for a larger micro-batch or more context than `fit.md` lists.
+- v3's base has no DFlash draft, so its DFlash2 line projects the main model alone (card 8 keeps 1,124 MiB).
+- The second half of step 1 below, the diagnostic profile, needs the whole file on the rig and runs with S13.
+
 ## The speed model
 
 est. ms per token = Σ over weight type and role (MB the token reads ÷ the GB/s of that type's kernel on a P106)
@@ -191,6 +211,8 @@ for every other file the model is a forecast until the rig measures it.
 | [ranking.md](ranking.md) | the result table above, as `model.py` writes it |
 | [fit.md](fit.md) | per file, context and cache type, for no draft, DFlash2, MTP and MTP with a shared head: the largest micro-batch that leaves 150 MiB on every card, on whole layers and with experts moved |
 | [fit.tsv](fit.tsv) | every plan (2,304): file, context, cache type, micro-batch, draft, whole or moved, the fullest card's free MiB, `-ts`, how many tensors moved and the `-ot` list |
+| [fit_probe_rig.tsv](fit_probe_rig.tsv) | C257: IQ3_XXS's three 64k lines on the rig, per build: the planned and the projected free MiB on the fullest card, the projected total and every card's free MiB |
+| [run/c257_fit.sh](run/c257_fit.sh) | C257's run: `scripts/fit_probe.sh` with the four lines on both builds |
 | [layout.tsv](layout.tsv) | per file: experts used, file type, shard sizes, the table's shard, MiB on the cards, the token embeddings' MiB, MB a token reads (routed, shared, dense) |
 | [token_bytes.tsv](token_bytes.tsv) | per file, role and weight type: MB a token reads, the GB/s assumed (timed, expected) and the est. ms |
 | [speed.tsv](speed.tsv) | per file: est. ms and tok/s (timed, expected), the difference to Q2_0, and the ms per role |
@@ -212,6 +234,15 @@ FILES=files.list KLD=<KLD log folder> OUT=<output folder> bash bench/file_choice
 `files.list` named, in this order: `swift-q2_0`, `swift-iq3_xxs` (the rig's 3-shard sets, Q435), `swift-iq2_xs`,
 `swift-iq3_s`, `ista-iq3_s`, `ista-coder-iq1_m` (as published), `swift-q2_0-hcq8`, `swift-iq3_xxs-hcq8` (FN17's
 retypes). The run used Python 3.14 at `nice -n 19` on the quant machine's CPU.
+
+C257 on the rig (idle, nothing loaded; seconds a line):
+
+```bash
+# header-only copies of the three shards, on the machine that holds them, then unpacked on the rig with tar -xSzf
+FILES="swift_iq3_xxs=<shard 1>,<shard 2>,<shard 3>" OUT=<folder> bash docs/data/2026-11-04_fewer_hops/run/header_copies.sh
+RIG=<rig> MODEL=<rig path of the copy's shard 1> DRAFT=<rig path of DFlash2's Q8_0 GGUF> BUILDS=<rig builds folder> \
+  OUT=fit_probe.md bash docs/data/2026-11-04_file_choice/run/c257_fit.sh
+```
 
 ## Provenance
 

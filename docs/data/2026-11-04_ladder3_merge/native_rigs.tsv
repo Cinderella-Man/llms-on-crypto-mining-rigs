@@ -1,0 +1,14 @@
+rig	half	part	run	verdict	cases	note
+first	C228r1	ladder2	bf16 (4 runs)	PASS	all	-ladder2's BF16 runs on card 0
+first	C228r1	ladder2	q2_0	PASS	497/497
+first	C228r1	ladder2	q2_0-stack	PASS	497/497
+first	C228r1	ladder2	q2_0-off	PASS	497/497
+first	C228r1	ladder2	hcsm	PASS	6/6
+first	C228r1	ladder2, fap, hops, vgraphs, ckpt, server	the rest	not run		stopped at 15:35 for C271; the rest waits for record and replay (C372, Q931)
+second	C228r2	kcol	every run	PASS	all
+second	C228r2	kcol	cov_off	PASS	all	the two Q4_0/Q5_0 large-activation cases that the PTX run failed (364/366) pass natively
+second	C228r2	iq2xs	on: iq2_xxs, iq2_xs, iq3_s, iq2_s (all four ops)	PASS	all, 0 FAIL lines
+second	C228r2	iq2xs	on: iq3_xxs MUL_MAT	PASS	76/76
+second	C228r2	iq2xs	on: iq3_xxs MUL_MAT_ID	PASS	50/50
+second	C228r2	iq2xs	on: iq3_xxs MUL_MAT_VEC_FUSION, MUL_MAT_ID_SHARED; skip; memcheck	not run		stopped at 16:26 for S34; by replay in C441
+second	C228r2	iqkcol, qsa	every run	not run		by replay in C441

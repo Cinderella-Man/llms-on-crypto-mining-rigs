@@ -5,8 +5,8 @@ time and with an undo, the runtime settings that the research note ranks as givi
 tool was checked against, the order of a run on a rig with the exact commands, and the numbers the note expects at each
 step. The reasoning behind every setting, with sources, is in
 [host_ram_4gb.md](../../research/notes/host_ram_4gb.md); the registry rows are Q692-Q700, Q563, Q565, Q571 and Q725-Q729 in
-[quants/experiments.md](../../../quants/experiments.md). The tool was checked on the 7-GPU quant machine (below); on the
-rigs, its census has run on the first rig at idle after the `kho=off` boot.
+[quants/experiments.md](../../../quants/experiments.md). The tool was checked on the 7-GPU quant machine (below), and its census has run on
+both rigs at idle after the `kho=off` boot.
 
 | File | What it is |
 |---|---|
@@ -14,6 +14,7 @@ rigs, its census has run on the first rig at idle after the `kho=off` boot.
 | [expected.tsv](expected.tsv) | every number the note expects at each step of the run: census key, before, expected, basis |
 | [run/s32_helpers.sh](run/s32_helpers.sh) | shell functions that make each step below one command (`rhr`, `measure`, `pull_all`, ...) |
 | [census_rig1_after_boot.tsv](census_rig1_after_boot.tsv) | the first rig's census at idle after the permanent `kho=off` (2026-11-04, ~6 minutes after boot, headless, no model loaded) |
+| [census_rig2_after_boot.tsv](census_rig2_after_boot.tsv) | the second rig's census, the same way (2026-11-04, ~6 minutes after boot) |
 
 ## The first rig after `kho=off` (2026-11-04)
 
@@ -29,6 +30,22 @@ line (kernel 7.0.0-38). It is the idle baseline every later step on this rig com
 | `swiotlb.pool_MiB`, `thp.enabled`, `lru_gen.enabled` | 64, `madvise`, `0x0007` (MGLRU on) |
 | `mem.swap_used_kB`, `vmstat.pswpout`, `vmstat.allocstall` | 0, 0, 0 |
 | `cg.system.slice.current_kB` / `cg.user.slice.current_kB` | 391,564 kB (343,044 of it page cache) / 20,108 kB |
+
+## The second rig after `kho=off` (2026-11-04)
+
+The same `rhr census after_boot` on the second rig, idle and headless, ~6 minutes after its `kho=off` boot (kernel
+7.0.0-42), the baseline for that rig ([the full block](census_rig2_after_boot.tsv)). The two rigs agree within 4 MiB of
+usable memory; the second holds less page cache because it had read less since boot.
+
+| Row | Value |
+|---|---|
+| `mem.MemTotal_kB` / `mem.MemAvailable_kB` | 3,929,064 kB (3,837 MiB) / 3,290,212 kB (**3,213 MiB**) |
+| `mem.MemFree_kB`, `mem.Cached_kB`, `mem.AnonPages_kB`, `mem.Slab_kB` | 3,101,112 / 358,484 / 44,612 / 106,508 kB |
+| `mem.CmaTotal_kB`, `mem.CmaFree_kB`, `pageblocks.CMA` | 0, 0, 0: `mem.usable_kB` = MemAvailable |
+| `cmdline.kho`, `kho.scratch_len` | `off`, NA |
+| `swiotlb.pool_MiB`, `thp.enabled`, `lru_gen.enabled` | 64, `madvise`, `0x0007` (MGLRU on) |
+| `mem.swap_used_kB`, `vmstat.pswpout`, `vmstat.allocstall` | 0, 0, 0 |
+| `cg.system.slice.current_kB` / `cg.user.slice.current_kB` | 386,152 kB (334,932 of it page cache) / 18,036 kB |
 
 ## The tool
 

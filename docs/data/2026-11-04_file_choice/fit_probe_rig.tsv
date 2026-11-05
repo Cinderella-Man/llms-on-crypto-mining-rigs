@@ -1,0 +1,9 @@
+line	args	build	planned_free_mib	projected_free_mib	fullest_card	projected_total_mib	free_cuda0	free_cuda1	free_cuda2	free_cuda3	free_cuda4	free_cuda5	free_cuda6	free_cuda7	free_cuda8
+whole-ub64	whole layers, -ub 64, -ts 6,6,7,5,5,5,5,5,5	v3 base 37e717ff6 (v2.0)	155	152	CUDA2	47750	574	958	152	1078	1252	355	227	624	1099
+whole-ub64	whole layers, -ub 64, -ts 6,6,7,5,5,5,5,5,5	-ladder3 7bc1552f4	155	206	CUDA2	47463	624	1006	206	1122	1300	403	275	668	1143
+ot8-ub128	8 experts moved, -ub 128, -ts 6,6,7,5,6,4,5,5,5	v3 base 37e717ff6 (v2.0)	551	659	CUDA7	47448	824	768	756	769	730	724	711	659	684
+ot8-ub128	8 experts moved, -ub 128, -ts 6,6,7,5,6,4,5,5,5	-ladder3 7bc1552f4	551	687	CUDA7	47305	858	799	794	797	763	752	743	687	712
+ot8-ub256	8 experts moved, -ub 256, -ts 6,6,7,5,6,4,5,5,5	v3 base 37e717ff6 (v2.0)	387	594	CUDA7	48030	759	703	691	704	665	660	647	594	619
+ot8-ub256	8 experts moved, -ub 256, -ts 6,6,7,5,6,4,5,5,5	-ladder3 7bc1552f4	387	638	CUDA7	47743	809	751	745	748	715	704	695	638	663
+dflash2-ot9-ub256	DFlash2, 9 experts moved, -b 512 -ub 256, -ts 6,7,6,5,6,5,4,6,4	v3 base 37e717ff6 (v2.0)	202	440	CUDA5	48255	470	538	613	784	571	440	586	464	1124
+dflash2-ot9-ub256	DFlash2, 9 experts moved, -b 512 -ub 256, -ts 6,7,6,5,6,5,4,6,4	-ladder3 7bc1552f4	202	457	CUDA8	48690	552	620	695	848	652	512	650	536	457
