@@ -1,0 +1,36 @@
+From e52e8234622b4615eaa2a63a27a1d691983b6f76 Mon Sep 17 00:00:00 2001
+From: Kamil Skowron <1019893+Cinderella-Man@users.noreply.github.com>
+Date: Thu, 5 Nov 2026 18:13:10 +0100
+Subject: [PATCH 1/2] tests : add MUL_MAT_ID cases with one token and rows not
+ a multiple of 4
+
+With one token the outputs of the used experts lie next to each other in
+dst, so a CUDA MMVQ block whose rows run past m writes into the next
+expert's rows. No existing MUL_MAT_ID case on a quantized type has m
+that is not a multiple of 4, so this was not covered.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ tests/test-backend-ops.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tests/test-backend-ops.cpp b/tests/test-backend-ops.cpp
+index e35806f31..b162f5646 100644
+--- a/tests/test-backend-ops.cpp
++++ b/tests/test-backend-ops.cpp
+@@ -11868,6 +11868,12 @@ static std::vector<std::unique_ptr<test_case>> make_test_cases_eval() {
+     test_cases.emplace_back(new test_mul_mat_id(GGML_TYPE_TQ1_0, GGML_TYPE_F32, 28, 10, false, 1024, 1, 4096));
+     test_cases.emplace_back(new test_mul_mat_id(GGML_TYPE_TQ1_0, GGML_TYPE_F32, 128, 8, false, 1024, 1, 2048));
+ 
++    // one token, rows not a multiple of the rows per block: the used experts' outputs lie next to each other,
++    // so a block's rows past m are the next expert's first rows
++    // (CUDA MMVQ: 4 rows per block with a small k, 2 for Q2_K)
++    test_cases.emplace_back(new test_mul_mat_id(GGML_TYPE_Q4_0, GGML_TYPE_F32, 32, 10, false, 129, 1, 640));
++    test_cases.emplace_back(new test_mul_mat_id(GGML_TYPE_Q2_K, GGML_TYPE_F32, 32, 10, false, 129, 1, 4096));
++
+     // TODO: disabled until CUDA backend support is added [TAG_MUL_MAT_ID_DUPLICATE_ID]
+ #if 0
+     // repeated expert ids within a row
+-- 
+2.53.0
+

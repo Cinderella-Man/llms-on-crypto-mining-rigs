@@ -1,0 +1,5 @@
+kind	tag	commit	tree	rc
+cpu	master	e5e5c42	177f3db30d8769ad825ae41a0a084b2ce90ab27e	0
+cpu	fix	0f9dbd2	0347acbdf5e849973fa1357d8d012b3d825c03ba	0
+cuda	test	8e8a15c	d19a3da7c663d176dc3c9f64410c4f946b372949	0
+cuda	fix	8c0cd39	823a7eae75263d78a2607a24ad8d5b3916a962e3	0

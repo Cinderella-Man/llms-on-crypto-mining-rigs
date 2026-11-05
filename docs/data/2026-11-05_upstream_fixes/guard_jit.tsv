@@ -1,0 +1,41 @@
+label	build	run	case	verdict	nmse
+jit	master	1	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.010248022
+jit	master	1	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.999992317
+jit	fix	1	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	1	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	2	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.001131265
+jit	master	2	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.004881071
+jit	fix	2	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	2	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	3	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.016011216
+jit	master	3	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.002606348
+jit	fix	3	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	3	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	4	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.011970133
+jit	master	4	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001441446
+jit	fix	4	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	4	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	5	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.032447204
+jit	master	5	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.010933209
+jit	fix	5	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	5	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	6	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.014749542
+jit	master	6	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.005613611
+jit	fix	6	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	6	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	7	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.013954731
+jit	master	7	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.000832264
+jit	fix	7	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	7	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	8	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.020249948
+jit	master	8	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.005026537
+jit	fix	8	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	8	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	9	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.008124088
+jit	master	9	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.008321801
+jit	fix	9	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	9	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+jit	master	10	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.003287232
+jit	master	10	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.000711635
+jit	fix	10	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+jit	fix	10	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	

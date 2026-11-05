@@ -1,0 +1,11 @@
+label	build	run	case	verdict	nmse
+jit-shared-master	master	1	MUL_MAT_ID_SHARED(type=q4_K,n=1)	OK	
+jit-shared-master	master	1	MUL_MAT_ID_SHARED(type=q4_K,n=2)	OK	
+jit-shared-master	master	1	MUL_MAT_ID_SHARED(type=q4_K,n=3)	OK	
+jit-shared-master	master	1	MUL_MAT_ID_SHARED(type=q4_K,n=4)	OK	
+jit-shared-master	master	1	(run)	exit 134	
+jit-shared-fix	fix	1	MUL_MAT_ID_SHARED(type=q4_K,n=1)	OK	
+jit-shared-fix	fix	1	MUL_MAT_ID_SHARED(type=q4_K,n=2)	OK	
+jit-shared-fix	fix	1	MUL_MAT_ID_SHARED(type=q4_K,n=3)	OK	
+jit-shared-fix	fix	1	MUL_MAT_ID_SHARED(type=q4_K,n=4)	OK	
+jit-shared-fix	fix	1	(run)	exit 134	

@@ -1,0 +1,121 @@
+label	build	run	case	verdict	nmse
+sass	master	1	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.007566956
+sass	master	1	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.000930226
+sass	fix	1	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	1	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	2	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	1.000027106
+sass	master	2	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.005770011
+sass	fix	2	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	2	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	3	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.007679747
+sass	master	3	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.008743276
+sass	fix	3	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	3	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	4	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.009933658
+sass	master	4	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001319191
+sass	fix	4	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	4	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	5	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.021560322
+sass	master	5	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.000653718
+sass	fix	5	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	5	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	6	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.022877516
+sass	master	6	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001742444
+sass	fix	6	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	6	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	7	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.017599408
+sass	master	7	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.002630720
+sass	fix	7	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	7	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	8	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.008167203
+sass	master	8	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.002963370
+sass	fix	8	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	8	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	9	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.037393981
+sass	master	9	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.002577630
+sass	fix	9	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	9	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	10	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.021505186
+sass	master	10	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	10	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	10	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	11	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.013453359
+sass	master	11	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.005124743
+sass	fix	11	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	11	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	12	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.012489639
+sass	master	12	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.002203021
+sass	fix	12	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	12	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	13	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	1.000008946
+sass	master	13	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001212333
+sass	fix	13	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	13	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	14	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.014575351
+sass	master	14	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.004348609
+sass	fix	14	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	14	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	15	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.013783137
+sass	master	15	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001731373
+sass	fix	15	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	15	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	16	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.009221205
+sass	master	16	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.009275617
+sass	fix	16	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	16	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	17	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.002929793
+sass	master	17	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.006329185
+sass	fix	17	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	17	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	18	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	1.000017646
+sass	master	18	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.005938559
+sass	fix	18	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	18	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	19	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.020931628
+sass	master	19	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.000696351
+sass	fix	19	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	19	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	20	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.017645964
+sass	master	20	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.004044457
+sass	fix	20	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	20	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	21	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.017721569
+sass	master	21	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001080420
+sass	fix	21	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	21	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	22	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.040709766
+sass	master	22	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.003431712
+sass	fix	22	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	22	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	23	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.024335421
+sass	master	23	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.007180362
+sass	fix	23	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	23	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	24	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.020111519
+sass	master	24	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001321866
+sass	fix	24	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	24	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	25	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.032708552
+sass	master	25	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.002214298
+sass	fix	25	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	25	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	26	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.026950121
+sass	master	26	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.016351999
+sass	fix	26	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	26	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	27	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.004962438
+sass	master	27	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.007835076
+sass	fix	27	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	27	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	28	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.011890755
+sass	master	28	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.001304477
+sass	fix	28	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	28	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	29	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.007849153
+sass	master	29	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.006695479
+sass	fix	29	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	29	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	
+sass	master	30	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.021019717
+sass	master	30	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	FAIL	0.000631318
+sass	fix	30	MUL_MAT_ID(type_a=q4_0,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	
+sass	fix	30	MUL_MAT_ID(type_a=q2_K,type_b=f32,n_mats=32,n_used=10,b=0,m=129,n=1,k=4096,m_v=0,ids_offset=0,skip=0)	OK	

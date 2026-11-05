@@ -1,0 +1,6 @@
+gram-nospec: 1500 requests in 472 s
+gram-nospec: verified drafts 0, restores 0
+gram-rej: 1500 requests in 950 s
+gram-rej: verified drafts 24218, restores 12109
+gram-rejkeep: 1500 requests in 951 s
+gram-rejkeep: verified drafts 24218, restores 12109

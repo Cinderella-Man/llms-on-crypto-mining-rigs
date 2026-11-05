@@ -1,0 +1,107 @@
+From b50c521d7feb74dcfeaa8fbc428a484c0eb58805 Mon Sep 17 00:00:00 2001
+From: Kamil Skowron <1019893+Cinderella-Man@users.noreply.github.com>
+Date: Thu, 5 Nov 2026 18:14:54 +0100
+Subject: [PATCH] server : keep the random draws used across a speculative
+ checkpoint restore
+
+When a draft is partly accepted and the target cannot remove part of a
+sequence (or a recurrent target's draft is longer than n_rs_seq, #31350),
+post_decode() restores the checkpoint and copies back the sampler cloned
+before verification with common_sampler_copy, which also copies rng and the
+state of the chain's dist sampler. The next step re-accepts the kept tokens
+with server_accept_replay, which does not draw from rng, so the step after
+it verifies with the same uniforms the rejected step used, and those
+uniforms are conditioned on the outcome the output already holds.
+
+With rejection sampling (temperature > 0, a drafter that fills
+distributions) this changes the output distribution. Measured with
+draft-simple on a random-weight hybrid target (no rollback snapshots, so
+every partly accepted draft restores) under a grammar with 30 outcomes,
+1,500 requests per arm against plain decoding, chi-square test of the
+outcomes: p = 6.05e-9 (total variation 0.095) before, p = 0.23 with this
+change.
+
+Add common_sampler_copy_keep_rng, which copies everything but dst's rng
+and the state of the chain's dist and xtc samplers, and use it for the
+restore. Seeded outputs change on setups that restore checkpoints.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ common/sampling.cpp             | 29 +++++++++++++++++++++++++++++
+ common/sampling.h               |  4 ++++
+ tools/server/server-context.cpp |  4 +++-
+ 3 files changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/common/sampling.cpp b/common/sampling.cpp
+index 564fa9c4d..2785c0745 100644
+--- a/common/sampling.cpp
++++ b/common/sampling.cpp
+@@ -549,6 +549,35 @@ void common_sampler_copy(const common_sampler * src, common_sampler * dst) {
+     dst->t_total_us = src->t_total_us;
+ }
+ 
++void common_sampler_copy_keep_rng(const common_sampler * src, common_sampler * dst) {
++    if (!src || !dst || src == dst) {
++        return;
++    }
++
++    // dst's random samplers, kept aside while the copy overwrites them
++    // (their state is their random stream only)
++    const int32_t n = llama_sampler_chain_n(dst->chain);
++    std::vector<llama_sampler *> draws(n, nullptr);
++    for (int32_t i = 0; i < n; ++i) {
++        const llama_sampler * s = llama_sampler_chain_get(dst->chain, i);
++        const char * name = llama_sampler_name(s);
++        if (name && (strcmp(name, "dist") == 0 || strcmp(name, "xtc") == 0)) {
++            draws[i] = llama_sampler_clone(s);
++        }
++    }
++    const std::mt19937 rng = dst->rng;
++
++    common_sampler_copy(src, dst);
++
++    dst->rng = rng;
++    for (int32_t i = 0; i < n; ++i) {
++        if (draws[i]) {
++            llama_sampler_copy(draws[i], llama_sampler_chain_get(dst->chain, i));
++            llama_sampler_free(draws[i]);
++        }
++    }
++}
++
+ void common_perf_print(const struct llama_context * ctx, const struct common_sampler * gsmpl) {
+     // TODO: measure grammar performance
+ 
+diff --git a/common/sampling.h b/common/sampling.h
+index f19bd27c4..8c3dae11f 100644
+--- a/common/sampling.h
++++ b/common/sampling.h
+@@ -49,6 +49,10 @@ void                    common_sampler_reset (struct common_sampler * gsmpl);
+ struct common_sampler * common_sampler_clone (struct common_sampler * gsmpl);
+ void                    common_sampler_copy  (const struct common_sampler * src, struct common_sampler * dst);
+ 
++// as common_sampler_copy, but dst keeps its random state: rng and the draws of the chain's dist and xtc samplers
++// a speculative step rolled back this way does not hand its random draws to the next step
++void common_sampler_copy_keep_rng(const struct common_sampler * src, struct common_sampler * dst);
++
+ // arguments can be nullptr to skip printing
+ void common_perf_print(const struct llama_context * ctx, const struct common_sampler * gsmpl);
+ 
+diff --git a/tools/server/server-context.cpp b/tools/server/server-context.cpp
+index 4596e788b..727d26f42 100644
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -5003,7 +5003,9 @@ private:
+                         slot.mem.seq_rm(slot.id, ckpt.pos_max + 1, -1);
+ 
+                         slot.prompt.tokens.keep_first(ckpt.n_tokens);
+-                        common_sampler_copy(smpl_save.get(), slot.smpl.get());
++                        // the random draws this step used stay used: the replay below does not verify, so with them
++                        // handed back the next verification would draw again the uniforms whose outcome it follows
++                        common_sampler_copy_keep_rng(smpl_save.get(), slot.smpl.get());
+ 
+                         return;
+                     }
+-- 
+2.53.0
+
