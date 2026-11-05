@@ -1,0 +1,13 @@
+part	off_k1	p090r_k1	off_k5	p090r_k5
+routed experts	8.94	7.95	30.55	27.11
+shared expert	3.33	3.33	6.41	6.41
+hyper-connections (BF16)	10.65	10.66	22.82	22.81
+router	2.88	2.87	6.06	6.06
+attention and recurrent projections	20.08	20.13	49.85	49.89
+Gated DeltaNet state and conv	3.52	3.53	5.45	5.45
+attention (FLASH_ATTN_EXT)	0.83	0.83	1.97	1.97
+output layer	0.01	0.01	0.11	0.11
+token embeddings	0.00	0.00	0.00	0.00
+other ops without weights	6.75	6.84	8.89	9.06
+other weights	0.77	0.77	1.29	1.29
+sum of the parts	57.75	56.91	133.41	130.17

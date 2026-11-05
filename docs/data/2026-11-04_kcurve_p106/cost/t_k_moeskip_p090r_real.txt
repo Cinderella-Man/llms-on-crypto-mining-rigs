@@ -1,0 +1,12 @@
+# T(k) in ms, k = 1..8: passes of k consecutive tokens of real agent text (C271's method, docs/data/2026-11-04_kreal_p106),
+# Swift Q2_0 on -moeskip f3072cbe8 with LLAMA_MOE_TAIL=p=0.9,renorm=1,hist=0 (the dropped experts skipped by the kernels), every other
+# switch at its default, one rig, 1,680 tokens per k, pipelining off (C120r, docs/data/2026-11-04_moe_skip).
+# A prompt micro-batch has no output rows (see t_k_q2_0_s32k_real.txt).
+64.5
+92.3
+117.9
+137.3
+170.5
+194.2
+211.8
+244.7

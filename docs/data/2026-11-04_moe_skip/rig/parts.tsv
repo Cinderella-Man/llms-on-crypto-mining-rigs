@@ -1,0 +1,49 @@
+trace	k	part	ms_per_pass
+off	1	routed experts	8.94
+off	1	shared expert	3.33
+off	1	hyper-connections (BF16)	10.65
+off	1	router	2.88
+off	1	attention and recurrent projections	20.08
+off	1	Gated DeltaNet state and conv	3.52
+off	1	attention (FLASH_ATTN_EXT)	0.83
+off	1	output layer	0.01
+off	1	token embeddings	0.00
+off	1	other ops without weights	6.75
+off	1	other weights	0.77
+off	1	sum of the parts	57.75
+off	5	routed experts	30.55
+off	5	shared expert	6.41
+off	5	hyper-connections (BF16)	22.82
+off	5	router	6.06
+off	5	attention and recurrent projections	49.85
+off	5	Gated DeltaNet state and conv	5.45
+off	5	attention (FLASH_ATTN_EXT)	1.97
+off	5	output layer	0.11
+off	5	token embeddings	0.00
+off	5	other ops without weights	8.89
+off	5	other weights	1.29
+off	5	sum of the parts	133.41
+p090r	1	routed experts	7.95
+p090r	1	shared expert	3.33
+p090r	1	hyper-connections (BF16)	10.66
+p090r	1	router	2.87
+p090r	1	attention and recurrent projections	20.13
+p090r	1	Gated DeltaNet state and conv	3.53
+p090r	1	attention (FLASH_ATTN_EXT)	0.83
+p090r	1	output layer	0.01
+p090r	1	token embeddings	0.00
+p090r	1	other ops without weights	6.84
+p090r	1	other weights	0.77
+p090r	1	sum of the parts	56.91
+p090r	5	routed experts	27.11
+p090r	5	shared expert	6.41
+p090r	5	hyper-connections (BF16)	22.81
+p090r	5	router	6.06
+p090r	5	attention and recurrent projections	49.89
+p090r	5	Gated DeltaNet state and conv	5.45
+p090r	5	attention (FLASH_ATTN_EXT)	1.97
+p090r	5	output layer	0.11
+p090r	5	token embeddings	0.00
+p090r	5	other ops without weights	9.06
+p090r	5	other weights	1.29
+p090r	5	sum of the parts	130.17
