@@ -110,21 +110,61 @@ PRESET_ENV="GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TAB
 PRESET_ARGS="-ngl 99 -fa on -c 65536 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,6,5,6,3 -fit off -lm dio --spec-type draft-mtp --spec-draft-n-max 3 -otd token_embd=CUDA4 --spec-draft-n-ubatch 128 --no-host"
 ```
 
-What each part does:
+What each setting does, why the rig needs it and what it bought: [the recipe](#the-recipe-every-setting-and-what-it-bought).
 
-| Setting | What it does |
-|---|---|
-| `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`, `GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0` | the k-column kernels with a 32 KB shared-memory budget and without their dispatch table: the fastest setting on the rig ([2026-11-04_kshape](../../docs/data/2026-11-04_kshape/README.md)) |
-| `LLAMA_HOP_CAST=q8_0`, `GGML_CUDA_HOP_STAGED=1` | the model's state crosses the eight card boundaries in Q8_0, through a pinned host ring |
-| `LLAMA_DRAFT_SHORTLIST=32768,8192,2` | the draft's output head over a shortlist of tokens, with an exact fallback |
-| `GGML_CUDA_KEEPALIVE=decode` | every card held at its boost clock while the split decodes |
-| `-ts 6,6,6,6,5,6,5,6,3`, `-otd token_embd=CUDA4` | the layer split with the draft on the cards; the draft's token embeddings on the fifth card |
-| `-md`, `--spec-type draft-mtp --spec-draft-n-max 3`, `--spec-draft-n-ubatch 128` | the MTP draft, three tokens ahead |
-| `-lm dio` | direct I/O for the load: a 4 GB host cannot memory-map the 37.7 GB of shards 1 and 2 |
-| `--no-host`, `--cache-ram 0`, `--ctx-checkpoints 4` | what keeps the 4 GB host from running out of memory |
-| `-fit off` | skips llama.cpp's fit pass; this split was checked to fit |
+## The recipe: every setting and what it bought
 
-Every switch: [docs/switches.md](../../docs/switches.md).
+The rig has nine 6 GB cards, each on one PCIe 1.0 lane, a 2-core Celeron and 4 GB of host memory. Almost every
+setting below works around one of those. Each speed is generation tok/s from one run of the coding-agent check, unless
+a row says otherwise.
+
+### The ladder: from stock llama.cpp to 20.75 tok/s
+
+One change at a time:
+
+| Step | What I added | Tasks passed | Generation tok/s | Data |
+|---|---|---|---|---|
+| 0 | stock llama.cpp `d77256999`, Swift Q2_0 | 7 of 8 tried | 6.4 | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | TODO(stock) | TODO(stock) | TODO(stock) |
+| 1 | Miner Llama's Pascal kernels (v2.0's code, v3's base `37e717ff6`) | 9 of 9 | 7.8 | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
+| 2 | the slowest BF16 weights retyped to Q8_0, which the cards read fast | 12 of 12 | 9.0 | [2026-11-03_retype_agent](../../docs/data/2026-11-03_retype_agent/README.md) |
+| 3 | v3's kernels for the model's shapes on upstream b12076, and the `pmix-q2-fast` file; no draft | 11 of 12 | 14.3 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
+| 4 | + the MTP draft, three tokens ahead | 11 of 12 | 14.6 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
+| 5 | + the draft's shortlist head | 12 of 12 | 16.0 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
+| 6 | + newer kernel shapes and the 8-bit hop between cards | 12 of 12 | 18.8 | [2026-11-04_s35_stack](../../docs/data/2026-11-04_s35_stack/README.md) |
+| 7 | the same line on the second rig, the control for step 8 | 12 of 12 | 19.19 | [2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
+| 8 | + the keep-alive: **the preset** | 12 of 12 | **20.75** | [2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
+
+Steps 3, 4 and 5 are three arms of one session, and steps 7 and 8 two arms of another, so those compare cleanly. The
+other steps ran on two identical rigs and on different builds; each one's own side-by-side is in its data folder.
+
+### Every setting
+
+| Setting | What it does | Why this rig needs it | What it measured | Data |
+|---|---|---|---|---|
+| `pmix-q2-fast` (the file) | Swift-1.5's Q2_0 with the dense and shared-expert weights in types the cards read fast; the routed experts unchanged | Pascal has no fast path for BF16, and BF16 projections took 30 % of a token's GPU time | retyping the slowest BF16 weights alone: 9.0 against 7.8 tok/s; `pmix-q2-fast` over that: est. 10 ms a token less, at Swift Q2_0's quality | [retype_agent](../../docs/data/2026-11-03_retype_agent/README.md), [pascal_mix](../../docs/data/2026-11-04_pascal_mix/README.md) |
+| `-md mtp-…gguf`, `--spec-type draft-mtp`, `--spec-draft-n-max 3` | a small draft model guesses three tokens; the main model checks them in one pass and keeps those it agrees with, so the text is the main model's own | checking four tokens costs about twice one token (149.0 against 74.1 ms on nine cards), not four times | 14.6 against 14.3 tok/s on its own; 16.0 with the shortlist below; in the preset, 0.708 of the guesses are accepted, 3.12 tokens a step | [stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md), [keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
+| `LLAMA_DRAFT_SHORTLIST=32768,8192,2` | the draft scores a shortlist of likely tokens instead of all 248,320, and falls back to the full list when the shortlist might miss the best one; the guesses are the same | once the main model got fast, scoring every token for every guess ate most of what the draft saved | 16.0 against 14.6 tok/s in the same session; acceptance 0.705 against 0.697 | [stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
+| `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`, `GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0` | the kernels that read each weight once for all the tokens a draft step checks, with 32 KB of shared memory and without their dispatch table | a card has 5 SMs and a slow memory; reading a weight once instead of four times is most of a draft step's saving | a pass over five tokens 180.2 ms against 188.2 at the defaults; one token 74.1 against 80.6 ms | [kshape](../../docs/data/2026-11-04_kshape/README.md) |
+| `LLAMA_HOP_CAST=q8_0` | the model's state crosses each of the eight card boundaries in 8-bit Q8_0 instead of 32-bit floats: a quarter of the bytes | each card has one PCIe 1.0 lane (~190 MB/s) and no direct path to the next card, so every boundary goes through the host | decode +12 %, +13 % and +15 % on a short, a ~1k and a ~8k-token request; prompts +22 % and +31 % on the ~1k and ~8k ones; no measurable change in KL divergence | [card_hops](../../docs/data/2026-11-04_card_hops/README.md) |
+| `GGML_CUDA_HOP_STAGED=1` | the hop goes through a ring of pinned host memory that the next card reads, instead of the driver's copy | the same links | on Q8_0 hops negligible: decode −1.6, +0.1 and +0.1 % on those three requests, prompts faster on all five by no more than two loads differ; kept as a small gain. With the cast: plain decoding 17.06 against 14.98 tok/s | [card_hops](../../docs/data/2026-11-04_card_hops/README.md), [s35_stack](../../docs/data/2026-11-04_s35_stack/README.md) |
+| `GGML_CUDA_KEEPALIVE=decode` | a one-thread loop on each card's lowest-priority stream while the model decodes, so no card looks idle | on a layer split each card works about a ninth of the time, so the driver held every card at 1,354 MHz instead of its boost clock | 20.75 against 19.19 tok/s (+8.1 %) and prompts 77.4 against 68.8 (+12.5 %) in the same session; the nine cards draw 72 W more while decoding | [keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
+| `-otd token_embd=CUDA4`, `--spec-draft-n-ubatch 128`, `--no-host` | the draft's 644 MiB token table on the fifth card instead of host memory; a smaller batch for the draft; no pinned host copies of the weights | 4 GB of host memory leaves a few hundred MiB free while the model runs | without them the draft did not load: usable host memory fell to 133 MiB and the watchdog stopped it. With them the agent check ran to the end, at 129 MiB at the lowest | [mtp_redo](../../docs/data/2026-11-04_mtp_redo/README.md), [draft_mem](../../docs/data/2026-11-04_draft_mem/README.md) |
+| `-lm dio` | loads the files with direct reads instead of mapping them into memory | the memory map first fills 37.7 GB of mappings, which 4 GB cannot hold | the load takes 326 s from the USB disk; with the memory map it was stopped after 30 GB had been read and nothing had reached the cards | [flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
+| `--cache-ram 0`, `--ctx-checkpoints 4` | no prompt cache in host memory; at most four saved context states | the same 4 GB | not measured on its own: every run on this page used them | — |
+| `-ts 6,6,6,6,5,6,5,6,3`, `-fit off` | how many layers each card holds; skips llama.cpp's own fit pass | the model and the draft must fit nine separate 6 GB pools; the last card also holds the output layer | a fit setting, not a speed one; check another card count with [fit_probe.sh](../../scripts/fit_probe.sh) | — |
+| `-bs` | samples the next token on the card | otherwise the scores for 248,320 tokens (est. 1 MB) cross the slow link every token | not measured on its own here | — |
+| `-ngl 99 -fa on -c 65536 -np 1 -b 2048 -ub 512 --jinja --reasoning-format deepseek`, the sampling | every layer on the cards, flash attention, the context, one request at a time, prompt batches of 512, the model's chat template with its reasoning kept apart; the makers' sampling settings | ordinary llama.cpp settings | — | — |
+
+### On by default
+
+These need no setting. Each has a switch that turns it off ([docs/switches.md](../../docs/switches.md) lists all of
+them), and what that costs where it was measured:
+
+| Feature | Turning it off | Data |
+|---|---|---|
+| The fork's Pascal matrix-vector kernels (`GGML_CUDA_MMVQ_PASCAL=1`) | not measured alone on Flash-Next; on Flint they are worth +15.5 % (llama-bench, 36.8 against 31.9 tok/s) | [Flint v2 results](../flint-v2/results.md) |
+| The multi-token expert kernel, which reads each routed expert once for every token of a draft step (`GGML_CUDA_MMVQ_PASCAL_MTOK`) | `MTOK=0`: a pass over five tokens takes 221.0 ms instead of 188.2 at the defaults | [kshape](../../docs/data/2026-11-04_kshape/README.md) |
 
 ## The machine: how little there is
 

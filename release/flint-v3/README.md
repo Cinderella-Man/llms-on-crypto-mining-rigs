@@ -60,3 +60,55 @@ This is v2's command line, unchanged; every flag is explained on the [Flint page
 No switch is set: every fork feature Flint uses (the Pascal kernels, the persistent MoE kernel, GPU sampling for tool
 requests, pipelined speculation with `--pipe-depth 4`) is on by default. TODO(flintside): the switches that win in the
 side-by-side go into `PRESET_ENV`.
+
+## The recipe: every setting and what it bought
+
+The rig has nine 6 GB cards, each on one PCIe 1.0 lane, a 2-core Celeron and 4 GB of host memory. Almost every
+setting below works around one of those. Each speed is generation tok/s from one run of the coding-agent check, Unsloth's
+Q8_0, unless a row says otherwise.
+
+### The ladder: from stock llama.cpp to 45.9 tok/s
+
+One change at a time:
+
+| Step | What I added | Context | Tasks passed | Generation tok/s | Data |
+|---|---|---|---|---|---|
+| 0 | stock llama.cpp (v2's run, an older commit) | 65,536 | 8 of 12 | 14.4 | [results.md](../flint-v2/results.md) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
+| 1 | Miner Llama v2.0's engine: the Pascal kernels, the persistent expert kernel, GPU sampling for tool requests; and the full context | 262,144 | 9 of 12 | 29.3 | [results.md](../flint-v2/results.md) |
+| 2 | + pipelined speculation, two tokens ahead (`--pipe-depth 2`) | 262,144 | 10 of 12 | 40.1 | [results.md](../flint-v2/results.md) |
+| 3 | three tokens ahead (`--pipe-depth 3`), two runs | 262,144 | 11 and 9 of 12 | 44.6 and 44.6 | [results.md](../flint-v2/results.md) |
+| 4 | four tokens ahead (`--pipe-depth 4`): v2.0's line, two runs | 262,144 | 12 and 12 of 12 | 45.9 and 44.6 | [results.md](../flint-v2/results.md) |
+| 5 | the v3 build (`1f7215948`), the same line: **the preset** | 262,144 | 12 of 12 | **45.9** | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| 6 | + the re-read fix, the tail checkpoint rule and the keep-alive | 262,144 | 12 of 12 | 44.7 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+
+- Stock runs at 65,536 tokens: at 262,144 its host-side attention mask does not fit in 4 GB. Step 1 is v2.0's whole
+  engine at once; what each part of it is worth is under "On by default" below.
+- Steps 1 to 4 ran on the v2.0 release engine on 2026-10-26, so they compare cleanly. Step 6 is 1.2 tok/s below step
+  5, one run each, about the spread of v2.0's own two runs at depth 4. That is negligible, so step 6 is not in the
+  preset; each of its parts on its own against step 5: TODO(flintside).
+
+### Every setting
+
+| Setting | What it does | Why this rig needs it | What it measured | Data |
+|---|---|---|---|---|
+| `--pipe-depth 4` | while the later cards finish the current token, the idle earlier cards start on up to four guessed tokens, taken from the request itself; the text is the same as without it | on a layer split only one card works at a time | 45.9 and 44.6 tok/s (two runs) against 29.3 without it | [results.md](../flint-v2/results.md) |
+| `-ts 6,6,5,5,6,5,5,6,6` | how many layers each card holds, chosen by memory instead of by count | 42.3 GB plus the 262,144-token cache must fit nine separate 6 GB pools; llama.cpp's even split puts two full-attention layers, ~6.3 GB, on one card | needed to load at this context | [models/flint](../../models/flint/README.md#command-lines) |
+| `-b 512 -ub 128` | prompt batches of 128 tokens | the default batch pins ~1 GiB of host memory at 262,144 tokens | with `-b 2048 -ub 256` a card lost the room for pipeline parallelism and a 16k-token prompt read at 133 tok/s against 214; `-b 2048 -ub 512` ran the host out of memory while loading Flint-Pascal-Q5 | [results.md](../flint-v2/results.md) |
+| `-bs` | samples the next token on the card, also for tool requests, with each token checked against the tool grammar on the host | otherwise 600 KB of scores per token cross the slow link | tool requests at 37.9 against 33.6 tok/s sampled on the host (Flint-Pascal-Q5, temperature 0, 2,011 tokens) | [results.md](../flint-v2/results.md) |
+| `--cache-ram 0`, `--ctx-checkpoints 4` | no prompt cache in host memory; at most four saved context states | the 4 GB host | not measured on its own: every run on this page used them | — |
+| `-ngl 99 -fa on -c 262144 -np 1 --alias flint`, the sampling | every layer on the cards, flash attention, the full context, one request at a time, the name clients see; the makers' sampling settings | ordinary llama.cpp settings | — | — |
+| `PRESET_ENV=""` | no switch: v3's additions stay at their defaults | — | the keep-alive, the re-read fix, the staged hop, the answer store and the negligible group, each on its own: TODO(flintside) | — |
+
+### On by default
+
+These need no setting. Each has a switch that turns it off ([docs/switches.md](../../docs/switches.md)), and what that
+costs where it was measured (llama-bench, Flint-Pascal-Q5 on nine cards, unless a row says otherwise):
+
+| Feature | Turning it off | Data |
+|---|---|---|
+| The fork's Pascal matrix-vector kernels (`GGML_CUDA_MMVQ_PASCAL=1`) | 31.9 against 36.8 tok/s with everything on (they are worth +15.5 %) | [results.md](../flint-v2/results.md) |
+| The persistent expert kernel, one kernel per expert layer | 34.0 against 36.8 tok/s (+8 %) | [results.md](../flint-v2/results.md) |
+| Dropping llama.cpp's safety rescale of the expert layers, which the fork's 32-bit sums make unneeded; it is what lets each expert layer run as one kernel | `LLAMA_NO_MOE_DOWN_RESCALE=0` keeps the rescale; not measured on its own | [models/flint](../../models/flint/README.md#command-lines) |
+| GPU sampling for tool requests | `LLAMA_GRAMMAR_HOST_SAMPLING=1`: 33.6 against 37.9 tok/s (llama-server, temperature 0) | [results.md](../flint-v2/results.md) |
+| The prefill-attention kernel | with it, prompts of 8,192 and 32,768 tokens read 10 % and 3 % faster than without | [results.md](../flint-v2/results.md) |

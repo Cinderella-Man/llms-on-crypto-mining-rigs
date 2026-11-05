@@ -65,3 +65,48 @@ PRESET_ARGS="-ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0
 
 No switch is set: the N2P/N3P kernels and the other Pascal kernels are on by default. TODO(ornithka), TODO(ornithmtp):
 the settings that win go into `PRESET_ENV` and `PRESET_ARGS`.
+
+## The recipe: every setting and what it bought
+
+The rig has nine 6 GB cards, each on one PCIe 1.0 lane, a 2-core Celeron and 4 GB of host memory. Almost every
+setting below works around one of those. Each speed is generation tok/s from one run of the coding-agent check at
+49,152 tokens of context, unless a row says otherwise.
+
+### The ladder: from stock llama.cpp to 14.9 tok/s
+
+One change at a time:
+
+| Step | What I added | Tasks passed | Generation tok/s | Data |
+|---|---|---|---|---|
+| 0 | stock llama.cpp (an older commit), Unsloth's UD-Q2_K_XL | 8 of 9 tried | 6.2 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on, UD-Q2_K_XL | TODO(stock) | TODO(stock) | TODO(stock) |
+| 1 | Miner Llama v2.0's Pascal kernels, the same file | 12 of 12 | 9.7 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| 2 | + kernels for the IQ2_S and IQ3_XXS weights the file is made of (`ea55c7865`) | 12 of 12 | 11.3 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| 2 | the v3 build on the same file | TODO(ornithud) | TODO(ornithud) | TODO(ornithud) |
+| 3 | my valid1 file, its experts in my Pascal 2- and 3-bit types, on the low-bit build of 2026-10-28 (`d7a75deb3`) | 12 of 12 | 14.5 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/agent/valid1/compare.md) |
+| 4 | the v3 build (`1f7215948`), the same file: **the preset** | 12 of 12 | **14.9** | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| 5 | + the keep-alive | TODO(ornithka) | TODO(ornithka) | TODO(ornithka) |
+| 6 | + Ornith's own MTP layer as the draft | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) |
+
+Steps 0 to 2 ran the same file on three engines. Step 3 changes the file and the build at once; the v3
+build on Unsloth's file splits the two.
+
+### Every setting
+
+| Setting | What it does | Why this rig needs it | What it measured | Data |
+|---|---|---|---|---|
+| valid1 (the file) | the routed experts in N2P and N3P, my Pascal 2- and 3-bit types, with more bits in the late layers and a Q5_0 output layer | 122B parameters fit 54 GB of cards only at 2 to 3 bits, and these types decode about as fast as Q4_0 on Pascal | 14.5 against 11.3 tok/s for UD-Q2_K_XL (different builds, above), and closer to the makers' Q8_0 | [ornith_valid1](../../docs/data/2026-10-28_ornith_valid1/README.md) |
+| `-ts 6,6,6,6,5,5,5,5,6`, `-fit off` | how many layers each card holds; skips llama.cpp's own fit pass | 48.2 GB plus the cache must fit nine separate 6 GB pools | a fit setting, not a speed one; check another card count with [fit_probe.sh](../../scripts/fit_probe.sh) | — |
+| `--cache-ram 0`, `--ctx-checkpoints 4` | no prompt cache in host memory; at most four saved context states | the 4 GB host: the agent check left 563 MB free at the lowest | not measured on its own: every run on this page used them | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| `-bs` | samples the next token on the card, also for tool requests | otherwise every token's scores cross the slow link | not measured on its own for Ornith; on Flint, tool requests ran at 37.9 against 33.6 tok/s sampled on the host | [Flint v2 results](../flint-v2/results.md) |
+| `-ngl 99 -fa on -c 49152 -np 1 -b 2048 -ub 512 --jinja --reasoning-format deepseek`, the sampling | every layer on the cards, flash attention, the context, one request at a time, prompt batches of 512, the model's chat template with its reasoning kept apart; the makers' sampling settings | ordinary llama.cpp settings | — | — |
+| `PRESET_ENV=""` | no switch | — | the keep-alive: TODO(ornithka); Ornith's own MTP draft: TODO(ornithmtp) | — |
+
+### On by default
+
+These need no setting. Each has a switch that turns it off ([docs/switches.md](../../docs/switches.md)):
+
+| Feature | Turning it off | Data |
+|---|---|---|
+| The fork's kernels for N2P and N3P (part of `GGML_CUDA_MMVQ_PASCAL=1`) | there is no other path: stock llama.cpp cannot load valid1 at all | [ornith_valid1](../../docs/data/2026-10-28_ornith_valid1/README.md) |
+| The fork's kernels for IQ2_S and IQ3_XXS, for Unsloth's file | `GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_s,iq3_xxs` gives llama.cpp's kernels: 9.7 against 11.3 tok/s on the agent check (v2.0 without them), 103.4 against 88.6 ms per generated token | [2026-10-27_iq_kernels](../../docs/data/2026-10-27_iq_kernels/README.md) |
