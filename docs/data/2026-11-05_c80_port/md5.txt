@@ -1,0 +1,10 @@
+bcb9fd09ccfffaa9849798482b3e6194  llama.cpp-20261105-5b8a616df-pascal-p106-v3-b12076-textreuse.tar.gz
+llama.cpp-20261105-5b8a616df-pascal-p106-v3-b12076-textreuse.tar.gz 605129209 bytes
+d53728da962968fed05fc0279bc283d4  llama.cpp-20261105-1cb98250c-pascal-p106-v3-b12076-promptpath.tar.gz
+llama.cpp-20261105-1cb98250c-pascal-p106-v3-b12076-promptpath.tar.gz 605128069 bytes
+10b6e1d64813a2d507d8632215d2bca4  llama.cpp-20261105-33f88566a-pascal-p106-v3-b12076-decodemask.tar.gz
+llama.cpp-20261105-33f88566a-pascal-p106-v3-b12076-decodemask.tar.gz 605122034 bytes
+8b696a22525088b45e27026f7a6aed8d  llama.cpp-20261105-046beb835-pascal-p106-v3-b12076-cheapguess.tar.gz
+llama.cpp-20261105-046beb835-pascal-p106-v3-b12076-cheapguess.tar.gz 605140138 bytes
+7627735715bbac5c8704e4b28e3f3770  llama.cpp-20261105-7655db25b-pascal-p106-v3-b12076-mtpk.tar.gz
+llama.cpp-20261105-7655db25b-pascal-p106-v3-b12076-mtpk.tar.gz 641190092 bytes

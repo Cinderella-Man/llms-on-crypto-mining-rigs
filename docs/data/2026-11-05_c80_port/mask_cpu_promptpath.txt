@@ -1,0 +1,3 @@
+host: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size: 
+decode: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size: 
+all: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 1557, by micro-batch size:  275 32 1280 64 2 128 

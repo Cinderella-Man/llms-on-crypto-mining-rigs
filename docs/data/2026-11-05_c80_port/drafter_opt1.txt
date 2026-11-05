@@ -1,0 +1,9 @@
+step 0: 0 commits, 6 in flight: max |diff| 0.00254 (0.0025 sd), rms 0.00064, top id 1997 / 1997, p_top 0.0643 ok
+step 1: 1 commits, 6 in flight: max |diff| 0.00226 (0.0022 sd), rms 0.00063, top id 2353 / 2353, p_top 0.1025 ok
+step 2: 1 commits, 6 in flight: max |diff| 0.00248 (0.0024 sd), rms 0.00064, top id 879 / 879, p_top 0.5212 ok
+step 3: 1 commits, 7 in flight: max |diff| 0.00238 (0.0024 sd), rms 0.00063, top id 1759 / 1759, p_top 0.0926 ok
+step 4: 1 commits, 1 in flight: max |diff| 0.00244 (0.0024 sd), rms 0.00061, top id 3182 / 3182, p_top 0.3462 ok
+step 5: 1 commits, 2 in flight: max |diff| 0.00234 (0.0023 sd), rms 0.00061, top id 2782 / 2782, p_top 0.0978 ok
+step 6: 1 commits, 6 in flight: max |diff| 0.00242 (0.0024 sd), rms 0.00059, top id 2800 / 2800, p_top 0.3127 ok
+step 7: 1 commits, 6 in flight: max |diff| 0.00220 (0.0022 sd), rms 0.00063, top id 3748 / 3748, p_top 0.1533 ok
+DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00249 table=host fuse=0 window=6,12,22,33,37,44 older=49

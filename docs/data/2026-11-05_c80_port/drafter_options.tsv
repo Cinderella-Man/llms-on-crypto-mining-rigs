@@ -1,0 +1,9 @@
+(defaults)	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00253 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_PRUNE=1	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00249 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_ANC=dense	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00253 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_SPLIT=4	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00253 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_SPLIT=4 LLAMA_DRAFT_PRUNE=1	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00249 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_ANC=dense LLAMA_DRAFT_HEAD=q8_0	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.03880 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_LOAD_CHUNK=0	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00253 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_HEAD=q8_0	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.03880 table=host fuse=0 window=6,12,22,33,37,44 older=49
+LLAMA_DRAFT_HEAD=q8_0 LLAMA_DRAFT_LOAD_CHUNK=0	DRAFTER_CHECK steps=8 bad=0 worst_rel=0.03880 table=host fuse=0 window=6,12,22,33,37,44 older=49

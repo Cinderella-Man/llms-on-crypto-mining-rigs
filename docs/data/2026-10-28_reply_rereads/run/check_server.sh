@@ -12,7 +12,8 @@
 # mask in decode steps only, past the 768-cell window ring, every card mask compared with the host mask; on and off must
 # then sample the same first reply from the same seed). ON_ARGS adds server arguments to "on", e.g. ON_ARGS="-lv 4" so
 # the library's info lines (each checked card mask: "identical to the host mask") reach its log.
-#   WORK=... MODEL=/path/tiny-flint.gguf [GPUS=3,4 BIN=...] bash check_server.sh
+# PY_IMAGE: the image textreuse_check.py runs in (default python:3.12-slim; it needs only the standard library).
+#   WORK=... MODEL=/path/tiny-flint.gguf [GPUS=3,4 BIN=...] [PY_IMAGE=...] bash check_server.sh
 # Output: $WORK/out/textreuse_check$TAG.tsv and the servers' logs.
 set -euo pipefail
 : "${WORK:?set WORK}" "${MODEL:?set MODEL}"
@@ -40,7 +41,7 @@ for p in 18441 18442 18443; do
     for i in $(seq 600); do curl -sf "http://127.0.0.1:$p/health" >/dev/null && break; sleep 1; done
 done
 rc=0
-docker run --rm --cpu-shares=256 --label pascal-quants=1 --network host -v "$WORK:/w" -w /w python:3.12-slim \
+docker run --rm --cpu-shares=256 --label pascal-quants=1 --network host -v "$WORK:/w" -w /w "${PY_IMAGE:-python:3.12-slim}" \
     python3 -I run/textreuse_check.py --on http://127.0.0.1:18441 --off http://127.0.0.1:18442 \
     --cold http://127.0.0.1:18443 --trials "${TRIALS:-6}" --n-predict "${N_PREDICT:-700}" $COLD \
     > "$WORK/out/textreuse_check${TAG:-}.tsv" || rc=$?

@@ -1,0 +1,28 @@
+branch	check	verdict	detail
+textreuse	build-rig	OK	llama.cpp-20261105-5b8a616df-pascal-p106-v3-b12076-textreuse; commit: 5b8a616df635caa42c0ab50fba071d60f7a01058 (2026-11-05 11:10:43 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+textreuse	build-extra	OK	test-llama-archs in llama.cpp-20261105-5b8a616df-pascal-p106-v3-b12076-textreuse/bin
+textreuse	identity	OK	-ladder4 wrote 136 logits files; 143 compared, differ: none; -ladder4: Summary: 148 test(s) executed, 7 failed; port: Summary: 148 test(s) executed, 7 failed; base rc=1 port rc=1
+textreuse	cpubuild	OK	rc=0; commit 5b8a616df
+textreuse	server	OK	LLAMA_SERVER_TEXT_REUSE=1  rc=0: # PASS: 0 failed trials 
+promptpath	build-rig	OK	llama.cpp-20261105-1cb98250c-pascal-p106-v3-b12076-promptpath; commit: 1cb98250ce529b80ce029adaefd602683c53fc38 (2026-11-05 11:12:44 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+promptpath	build-extra	OK	test-llama-archs in llama.cpp-20261105-1cb98250c-pascal-p106-v3-b12076-promptpath/bin
+promptpath	identity	OK	-ladder4 wrote 136 logits files; 143 compared, differ: none; -ladder4: Summary: 148 test(s) executed, 7 failed; port: Summary: 148 test(s) executed, 7 failed; base rc=1 port rc=1
+promptpath	cpubuild	OK	rc=0; commit 1cb98250c
+promptpath	server	OK	LLAMA_SERVER_TEXT_REUSE=1  rc=0: # PASS: 0 failed trials 
+promptpath	server_tail	OK	LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 rc=0: # PASS: 0 failed trials 
+promptpath	mask	OK	host: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size:  decode: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size:  all: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 1557, by micro-batch size:  275 32 1280 64 2 128  
+decodemask	build-rig	OK	llama.cpp-20261105-33f88566a-pascal-p106-v3-b12076-decodemask; commit: 33f88566a906f5eb664cae28390af76a86ec78f9 (2026-11-05 11:11:40 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+decodemask	build-extra	OK	test-llama-archs in llama.cpp-20261105-33f88566a-pascal-p106-v3-b12076-decodemask/bin
+decodemask	identity	OK	-ladder4 wrote 136 logits files; 143 compared, differ: none; -ladder4: Summary: 148 test(s) executed, 7 failed; port: Summary: 148 test(s) executed, 7 failed; base rc=1 port rc=1
+decodemask	cpubuild	OK	rc=0; commit 33f88566a
+decodemask	mask	OK	host: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size:  decode: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 0, by micro-batch size:  all: exit 0; Summary: all 148 test(s) passed; masks identical to the host mask: 1557, by micro-batch size:  275 32 1280 64 2 128  
+cheapguess	build-rig	OK	llama.cpp-20261105-046beb835-pascal-p106-v3-b12076-cheapguess; commit: 046beb8358ece79180100e209f8bf13de08c58ef (2026-11-05 11:16:13 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+cheapguess	build-extra	OK	test-llama-archs in llama.cpp-20261105-046beb835-pascal-p106-v3-b12076-cheapguess/bin
+cheapguess	identity	OK	-ladder4 wrote 136 logits files; 143 compared, differ: none; -ladder4: Summary: 148 test(s) executed, 7 failed; port: Summary: 148 test(s) executed, 7 failed; base rc=1 port rc=1
+cheapguess	cpubuild	OK	rc=0; commit 046beb835
+cheapguess	drafter	OK	CPU build, 9 option sets (checks/cheapguess/drafter/options.tsv); chunk 0 = default: yes, with q8_0: yes
+cheapguess	drafter-identity	OK	rig builds, no option set: -ladder4 DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00259 table=host fuse=0 window=6,12,22,3; port DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00259 table=host fuse=0 window=6,12,22,3
+mtpk	build-rig	OK	llama.cpp-20261105-7655db25b-pascal-p106-v3-b12076-mtpk; commit: 7655db25b924aed623e097c1f7e5e5e1b5b8cde0 (2026-11-05 11:20:14 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+mtpk	build-extra	OK	test-llama-archs in llama.cpp-20261105-7655db25b-pascal-p106-v3-b12076-mtpk/bin
+mtpk	identity	OK	-ladder4 wrote 136 logits files; 143 compared, differ: none; -ladder4: Summary: 148 test(s) executed, 7 failed; port: Summary: 148 test(s) executed, 7 failed; base rc=1 port rc=1
+mtpk	own	SKIP	its kernels need a GPU (test-backend-ops with GGML_CUDA_MMVQ_PASCAL_MT=1)
