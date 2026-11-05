@@ -28,7 +28,7 @@ export RIG_PORT=${RIG_PORT:-8091} RELAY_PORT=${RELAY_PORT:-8098} CLIENT_PORT=${C
 CW=${CLIENT_WORK:?folder on the client}
 export CLIENT_DIR=$CW/bench RIG_LOGDIR=/tmp/agent-check-rel TIME_CAP_MIN=12
 SAMPLING='{"temperature":0.6,"top_p":0.95,"top_k":20,"min_p":0}'
-BUDGET_MIN_stock=35; BUDGET_MIN_rel=35
+BUDGET_MIN_stock=${BUDGET_MIN_stock:-35}; BUDGET_MIN_rel=${BUDGET_MIN_rel:-35}
 export SAMPLING BUDGET_MIN_stock BUDGET_MIN_rel
 # the lines the diagnostics chose (docs/data/2026-10-27_ornith/fit_projection.csv, serve_probe.csv)
 STOCK_CTX=${STOCK_CTX:-49152}; V2_CTX=${V2_CTX:-49152}
