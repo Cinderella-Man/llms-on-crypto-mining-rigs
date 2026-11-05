@@ -1,0 +1,24 @@
+build	pass	record	case	verdict	nmse
+l5	1	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000980737501,0,0,0,0,0
+l5	2	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	7.36032853e-06,0,0,0,0,0
+l5	3	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000776739389,0,0,0,0,0
+l5	4	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00100497096,0,0,0,0,0
+l5	5	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	0.000323016914,0,0,0,0,0
+l5	6	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00114365126,0,0,0,0,0
+l5	7	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	0.000433023995,0,0,0,0,0
+l5	8	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000648707127,0,0,0,0,0
+l5	9	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000671452702,0,0,0,0,0
+l5	10	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00122359104,0,0,0,0,0
+l4	1	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00133577893,0,0,0,0,0
+l4	2	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	0.00043944139,0,0,0,0,0
+l4	3	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.0006001698,0,0,0,0,0
+l4	4	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	0.000323016914,0,0,0,0,0
+l4	5	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00123668268,0,0,0,0,0
+l4	6	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	8.46623817e-05,0,0,0,0,0
+l4	7	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	0.000292385376,0,0,0,0,0
+l4	8	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	OK	0.000433023995,0,0,0,0,0
+l4	9	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000660328036,0,0,0,0,0
+l4	10	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000940978492,0,0,0,0,0
+l5	compute-sanitizer memcheck	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.000760599638,0,0,0,0,0
+l5	compute-sanitizer initcheck	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00174140384,0,0,0,0,0
+l5	compute-sanitizer racecheck	l5-1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	FAIL	0.00107336568,0,0,0,0,0

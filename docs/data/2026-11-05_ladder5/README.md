@@ -74,6 +74,7 @@ folder per branch, Docker, `--cpu-shares=256`, no GPU). Base: `-ladder4` `e3b303
 | C566: upstream's download tests (stories15M, torch) | 71/72: `test-conversion-fp8` needs `transformers` too | the same |
 | T0: ctest with `transformers==4.57.6` too, static, all but the five download tests and the net test ([summary-t0-fp8.tsv](summary-t0-fp8.tsv)) | 67/67, `test-conversion-fp8` passes (with C566: 72/72) | the same |
 | T0: one RTX 3090 through the compute_61 PTX, the fork's kernels forced on with a P106's launch shapes (`2026-11-04_ladder4_merge/run/gpu_checks.sh`, `MODE=ptx`, every part; [ptx-l5.txt](ptx-l5.txt)) | **FAIL**: `MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640)` NMSE 9.13e-4 > 5e-4 (`-ladder4`: OK); every other run OK (the other 4758 expert cases, skipped slots, tail op, archs 136 compared with no difference, combo, moe-ids, dense 3423/3423; `archs-off-base` exits 1 on `-ladder4`'s own binary, C565's shared-logits test bug, as in `-ladder4`'s run) | not run |
+| T0b: the failing case 30 times per build, each `-ladder5` draw replayed on `-ladder4`; one draw 10 times per build and under compute-sanitizer; its N2P-128 and N3P-128 neighbours ([run/case_reps.sh](run/case_reps.sh), [run/case_diag.sh](run/case_diag.sh); [t0b-case.tsv](t0b-case.tsv), [t0b-replays.tsv](t0b-replays.tsv), [t0b-neighbours.tsv](t0b-neighbours.tsv)) | not a `-ladder5` regression: over 5e-4 in 23/30 runs, `-ladder4` 19/30 (20/30 on `-ladder5`'s draws); the same inputs give 7.4e-6 to 1.2e-3 from run to run on either build; a row guard in llama.cpp's `mul_mat_vec_q` (below) | not run |
 
 **The flake (C589):** on the quant machine at a load average of ~50, `llama-perplexity` sometimes exited 0 with its last
 chunk's row and the summary missing from its log, also when the log was written straight to a file inside the
@@ -83,6 +84,22 @@ three times). Three more check scripts are fixed: `-ladder4`'s `coldtier` call (
 `${CPUS:+...}`), and the switch flips and the keep-alive check, which compared the base's test summary for equality and
 so failed every branch carrying C565's test fix.
 
+**T0b, the failing case.** Over the 5e-4 limit: `-ladder5` 23 of 30 runs, `-ladder4` 19 of 30, `-ladder4` replaying
+`-ladder5`'s draws 20 of 30; the NMSE reached 1.0 in 1, 4 and 2 of them (test-backend-ops divides by the GPU output's
+own energy, so one huge wrong value gives 1). One recorded draw replayed 10 times: 7.4e-6 to 1.2e-3 on `-ladder5` (7
+over the limit) and 8.5e-5 to 1.3e-3 on `-ladder4` (5), and the same values recur on both builds; under
+compute-sanitizer's memcheck, initcheck and racecheck 0 errors, and the case still fails. Every neighbour (N2P-128 and
+N3P-128, m 2560 and 2561, 1 and 2 tokens, b 0 and 1; 6 checks each, from 2 runs: the run was stopped there) gives about 6e-15. The cause: with 2561 rows of
+270 bytes the Pascal kernel declines the product (its tile staging needs rows × row bytes to be a multiple of 16), so it
+goes to llama.cpp's `mul_mat_vec_q`, whose small-K shape at K = 640 puts 4 rows in a block. That kernel bounds the rows
+with `row0 + i < stride_col_dst`, and for MUL_MAT_ID with one token the column stride is m × n_used (25610), not m. The
+last block of each expert slot therefore writes rows 2561 to 2563, computed from the weights after its expert's
+matrix, over the first three rows of the next slot, racing with that slot's own block; the fork's skipped-slot zeros in
+the same kernel use the same bound. It takes a one-token MUL_MAT_ID whose row count is not a multiple of the block's
+rows and that the Pascal kernel declines; no model in the release has such a matrix. The guard is upstream's
+(llama.cpp #25445, still in its master). The fix, bounding the rows by the matrix's row count, is not in the frozen
+release build.
+
 ## Files
 
 | File | What |
@@ -91,6 +108,9 @@ so failed every branch carrying C565's test fix.
 | [run/rig_ladder5.sh](run/rig_ladder5.sh) | the rig steps: identity with `-ladder4` on Flash-Next's files (`llama-perplexity` distributions, byte for byte) and T(k) on S35's line |
 | `summary-*.tsv` | every verdict line of the runs |
 | `ptx-l5.txt` | T0: the PTX check's console (one line per run) and the failing case |
+| [run/case_reps.sh](run/case_reps.sh) | T0b: cases run many times per build on one card, each draw of the first build replayed on the others |
+| [run/case_diag.sh](run/case_diag.sh) | T0b: one recorded draw replayed many times per build, then under compute-sanitizer |
+| `t0b-*.tsv` | T0b: build, run, draw, case, verdict and NMSE per run (`case`: the failing case; `replays`: one draw; `neighbours`) |
 
 ## Commands
 
@@ -108,4 +128,9 @@ TREES='l4fix=fdd2e565d:test-llama-archs u4fix=a042afb15+fd8276bbc+fdd2e565d:test
 # on a rig (from a machine that only runs ssh): identity on Flash-Next's files, then T(k)
 RIG=<alias> MODEL=<first shard> BUILDS='<-ladder4 folder> <-ladder5 folder>' TEXT=<text on the rig> DIR=<folder> OUT=<dir> \
   STEPS='identity tk' bash docs/data/2026-11-05_ladder5/run/rig_ladder5.sh
+# T0b, in a container of the build image that sees one card (the PTX settings are in the scripts)
+BINS='l5=<-ladder5 tree>/bin l4=<-ladder4 tree>/bin' OUT=<dir> REPS=30 bash docs/data/2026-11-05_ladder5/run/case_reps.sh
+BINS='l5=... l4=...' OUT=<dir> REPS=30 KEEP_REC=none \
+  CASES='type_a=n[23]p_128,type_b=f32,n_mats=32,n_used=10,b=[01],m=256[01],n=[12],k=640,m_v=0,ids_offset=0,skip=0' bash docs/data/2026-11-05_ladder5/run/case_reps.sh
+BINS='l5=... l4=...' REC=<OUT>/rec/l5-1 OUT=<dir> REPS=10 bash docs/data/2026-11-05_ladder5/run/case_diag.sh
 ```
