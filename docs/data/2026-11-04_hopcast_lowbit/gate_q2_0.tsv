@@ -1,0 +1,22 @@
+arm	text	d_kld_vs_off	se	verdict
+hops-q5_0	agent	0.00058	0.00232	within noise
+hops-q5_0	code	0.00154	0.00081	within noise
+hops-q5_0	wiki	0.00531	0.00119	ABOVE NOISE
+hops-q5_1	agent	-0.00040	0.00210	within noise
+hops-q5_1	code	0.00041	0.00059	within noise
+hops-q5_1	wiki	0.00378	0.00106	ABOVE NOISE
+hops-q6_K	agent	0.00032	0.00181	within noise
+hops-q6_K	code	-0.00007	0.00054	within noise
+hops-q6_K	wiki	0.00233	0.00079	ABOVE NOISE
+hops-iq4_nl	agent	0.00773	0.00367	ABOVE NOISE
+hops-iq4_nl	code	0.00652	0.00107	ABOVE NOISE
+hops-iq4_nl	wiki	0.01808	0.00180	ABOVE NOISE
+hops-q4_0	agent	0.01340	0.00545	ABOVE NOISE
+hops-q4_0	code	0.00604	0.00112	ABOVE NOISE
+hops-q4_0	wiki	0.02034	0.00212	ABOVE NOISE
+hops-q4_1	agent	0.00920	0.00398	ABOVE NOISE
+hops-q4_1	code	0.00476	0.00122	ABOVE NOISE
+hops-q4_1	wiki	0.01137	0.00186	ABOVE NOISE
+hops-q8_0	agent	-0.00090	0.00110	within noise
+hops-q8_0	code	-0.00047	0.00040	within noise
+hops-q8_0	wiki	0.00019	0.00058	within noise

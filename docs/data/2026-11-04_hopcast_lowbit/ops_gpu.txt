@@ -1,0 +1,59 @@
+  CPY(type_src=f32,type_dst=f16,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f16,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=f16,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f16,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=f16,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f16,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=bf16,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=bf16,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=bf16,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=bf16,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=bf16,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=bf16,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q8_0,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q8_0,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+[CPY] ERR = 0.000000001 > 0.000000000   CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+  CPY(type_src=q8_0,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q6_K,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q6_K,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q6_K,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q6_K,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q6_K,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q6_K,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q5_1,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q5_1,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q5_1,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q5_1,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+[CPY] ERR = 0.000000008 > 0.000000003   CPY(type_src=f32,type_dst=q5_1,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+  CPY(type_src=q5_1,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q5_0,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q5_0,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q5_0,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q5_0,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q5_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q5_0,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q4_1,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q4_1,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q4_1,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q4_1,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+[CPY] ERR = 0.000000019 > 0.000000012   CPY(type_src=f32,type_dst=q4_1,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+  CPY(type_src=q4_1,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q4_0,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q4_0,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q4_0,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q4_0,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=q4_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=q4_0,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=iq4_nl,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=iq4_nl,type_dst=f32,ne_src=[2560,4,1,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=iq4_nl,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=iq4_nl,type_dst=f32,ne_src=[2560,4,4,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=f32,type_dst=iq4_nl,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  CPY(type_src=iq4_nl,type_dst=f32,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): OK
+  315/318 tests passed
+  CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0)
+  CPY(type_src=f32,type_dst=q5_1,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0)
+  CPY(type_src=f32,type_dst=q4_1,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0)
+2/3 backends passed

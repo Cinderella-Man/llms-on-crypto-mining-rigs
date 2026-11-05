@@ -1,0 +1,82 @@
+  CPU            f16       1  exact                  max err 0.0415, rms 0.00123 (1.96e-04 of the data's), worst/bound 0.992  (the reference)
+  CPU            f16       4  exact                  max err 0.0425, rms 0.00118 (1.88e-04 of the data's), worst/bound 0.995  (the reference)
+  CPU            f16     512  exact                  max err 0.0821, rms 0.00132 (2.07e-04 of the data's), worst/bound 1.000  (the reference)
+  CPU            bf16      1  exact                  max err 0.456, rms 0.0117 (1.79e-03 of the data's), worst/bound 0.988  (the reference)
+  CPU            bf16      4  exact                  max err 0.498, rms 0.011 (1.72e-03 of the data's), worst/bound 0.996  (the reference)
+  CPU            bf16    512  exact                  max err 0.5, rms 0.0106 (1.67e-03 of the data's), worst/bound 0.996  (the reference)
+  CPU            q8_0      1  exact                  max err 0.784, rms 0.069 (1.23e-02 of the data's), worst/bound 0.933  (the reference)
+  CPU            q8_0      4  exact                  max err 0.935, rms 0.0803 (1.25e-02 of the data's), worst/bound 0.935  (the reference)
+  CPU            q8_0    512  exact                  max err 0.969, rms 0.0794 (1.24e-02 of the data's), worst/bound 0.970  (the reference)
+  CPU            q6_K      1  exact                  max err 2, rms 0.198 (3.21e-02 of the data's), worst/bound 0.606  (the reference)
+  CPU            q6_K      4  exact                  max err 3.05, rms 0.199 (3.19e-02 of the data's), worst/bound 0.665  (the reference)
+  CPU            q6_K    512  exact                  max err 4.17, rms 0.205 (3.20e-02 of the data's), worst/bound 0.686  (the reference)
+  CPU            q5_1      1  exact                  max err 2.39, rms 0.331 (5.60e-02 of the data's), worst/bound 0.963  (the reference)
+  CPU            q5_1      4  exact                  max err 3.09, rms 0.348 (5.46e-02 of the data's), worst/bound 0.966  (the reference)
+  CPU            q5_1    512  exact                  max err 3.85, rms 0.354 (5.52e-02 of the data's), worst/bound 0.981  (the reference)
+  CPU            q5_0      1  exact                  max err 3.23, rms 0.406 (7.47e-02 of the data's), worst/bound 0.868  (the reference)
+  CPU            q5_0      4  exact                  max err 4.8, rms 0.43 (6.65e-02 of the data's), worst/bound 0.981  (the reference)
+  CPU            q5_0    512  exact                  max err 6.68, rms 0.433 (6.78e-02 of the data's), worst/bound 0.996  (the reference)
+  CPU            q4_1      1  exact                  max err 5.07, rms 0.684 (1.09e-01 of the data's), worst/bound 0.983  (the reference)
+  CPU            q4_1      4  exact                  max err 4.82, rms 0.751 (1.15e-01 of the data's), worst/bound 0.979  (the reference)
+  CPU            q4_1    512  exact                  max err 7.45, rms 0.736 (1.15e-01 of the data's), worst/bound 0.986  (the reference)
+  CPU            q4_0      1  exact                  max err 5.54, rms 0.568 (9.73e-02 of the data's), worst/bound 0.962  (the reference)
+  CPU            q4_0      4  exact                  max err 9.82, rms 0.587 (9.19e-02 of the data's), worst/bound 0.990  (the reference)
+  CPU            q4_0    512  exact                  max err 13.9, rms 0.582 (9.10e-02 of the data's), worst/bound 0.998  (the reference)
+  CPU            iq4_nl    1  exact                  max err 6.77, rms 0.571 (8.72e-02 of the data's), worst/bound 0.432  (the reference)
+  CPU            iq4_nl    4  exact                  max err 7.02, rms 0.564 (9.07e-02 of the data's), worst/bound 0.412  (the reference)
+  CPU            iq4_nl  512  exact                  max err 10.1, rms 0.569 (8.85e-02 of the data's), worst/bound 0.515  (the reference)
+  CUDA0          f16       1  exact                  max err 0.0415, rms 0.00123 (1.96e-04 of the data's), worst/bound 0.992  100.0000 % bit for bit, max |diff| 0
+  CUDA0          f16       4  exact                  max err 0.0425, rms 0.00118 (1.88e-04 of the data's), worst/bound 0.995  100.0000 % bit for bit, max |diff| 0
+  CUDA0          f16     512  exact                  max err 0.0821, rms 0.00132 (2.07e-04 of the data's), worst/bound 1.000  100.0000 % bit for bit, max |diff| 0
+  CUDA0          bf16      1  exact                  max err 0.456, rms 0.0117 (1.79e-03 of the data's), worst/bound 0.988  100.0000 % bit for bit, max |diff| 0
+  CUDA0          bf16      4  exact                  max err 0.498, rms 0.011 (1.72e-03 of the data's), worst/bound 0.996  100.0000 % bit for bit, max |diff| 0
+  CUDA0          bf16    512  exact                  max err 0.5, rms 0.0106 (1.67e-03 of the data's), worst/bound 0.996  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q8_0      1  exact                  max err 0.784, rms 0.069 (1.23e-02 of the data's), worst/bound 0.933  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q8_0      4  exact                  max err 0.935, rms 0.0803 (1.25e-02 of the data's), worst/bound 0.935  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q8_0    512  exact                  max err 0.969, rms 0.0794 (1.24e-02 of the data's), worst/bound 0.970  99.9998 % bit for bit, max |diff| 0.0579
+  CUDA0          q6_K      1  exact                  max err 2, rms 0.198 (3.21e-02 of the data's), worst/bound 0.606  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q6_K      4  exact                  max err 3.05, rms 0.199 (3.19e-02 of the data's), worst/bound 0.665  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q6_K    512  exact                  max err 4.17, rms 0.205 (3.20e-02 of the data's), worst/bound 0.686  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q5_1      1  exact                  max err 2.39, rms 0.331 (5.60e-02 of the data's), worst/bound 0.963  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q5_1      4  exact                  max err 3.09, rms 0.348 (5.46e-02 of the data's), worst/bound 0.966  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q5_1    512  exact                  max err 3.85, rms 0.354 (5.52e-02 of the data's), worst/bound 0.981  100.0000 % bit for bit, max |diff| 2.89
+  CUDA0          q5_0      1  exact                  max err 3.23, rms 0.406 (7.47e-02 of the data's), worst/bound 0.868  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q5_0      4  exact                  max err 4.8, rms 0.43 (6.65e-02 of the data's), worst/bound 0.981  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q5_0    512  exact                  max err 6.68, rms 0.433 (6.78e-02 of the data's), worst/bound 0.996  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q4_1      1  exact                  max err 5.07, rms 0.684 (1.09e-01 of the data's), worst/bound 0.983  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q4_1      4  exact                  max err 4.82, rms 0.751 (1.15e-01 of the data's), worst/bound 0.979  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q4_1    512  exact                  max err 7.45, rms 0.736 (1.15e-01 of the data's), worst/bound 0.986  99.9936 % bit for bit, max |diff| 5.08
+  CUDA0          q4_0      1  exact                  max err 5.54, rms 0.568 (9.73e-02 of the data's), worst/bound 0.962  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q4_0      4  exact                  max err 9.82, rms 0.587 (9.19e-02 of the data's), worst/bound 0.990  100.0000 % bit for bit, max |diff| 0
+  CUDA0          q4_0    512  exact                  max err 13.9, rms 0.582 (9.10e-02 of the data's), worst/bound 0.998  100.0000 % bit for bit, max |diff| 0
+  CUDA0          iq4_nl    1  exact                  max err 6.77, rms 0.571 (8.72e-02 of the data's), worst/bound 0.432  100.0000 % bit for bit, max |diff| 0
+  CUDA0          iq4_nl    4  exact                  max err 7.02, rms 0.564 (9.07e-02 of the data's), worst/bound 0.412  100.0000 % bit for bit, max |diff| 0
+  CUDA0          iq4_nl  512  exact                  max err 10.1, rms 0.569 (8.85e-02 of the data's), worst/bound 0.515  99.9823 % bit for bit, max |diff| 0.062
+  CUDA1          f16       1  exact                  max err 0.0415, rms 0.00123 (1.96e-04 of the data's), worst/bound 0.992  100.0000 % bit for bit, max |diff| 0
+  CUDA1          f16       4  exact                  max err 0.0425, rms 0.00118 (1.88e-04 of the data's), worst/bound 0.995  100.0000 % bit for bit, max |diff| 0
+  CUDA1          f16     512  exact                  max err 0.0821, rms 0.00132 (2.07e-04 of the data's), worst/bound 1.000  100.0000 % bit for bit, max |diff| 0
+  CUDA1          bf16      1  exact                  max err 0.456, rms 0.0117 (1.79e-03 of the data's), worst/bound 0.988  100.0000 % bit for bit, max |diff| 0
+  CUDA1          bf16      4  exact                  max err 0.498, rms 0.011 (1.72e-03 of the data's), worst/bound 0.996  100.0000 % bit for bit, max |diff| 0
+  CUDA1          bf16    512  exact                  max err 0.5, rms 0.0106 (1.67e-03 of the data's), worst/bound 0.996  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q8_0      1  exact                  max err 0.784, rms 0.069 (1.23e-02 of the data's), worst/bound 0.933  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q8_0      4  exact                  max err 0.935, rms 0.0803 (1.25e-02 of the data's), worst/bound 0.935  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q8_0    512  exact                  max err 0.969, rms 0.0794 (1.24e-02 of the data's), worst/bound 0.970  99.9998 % bit for bit, max |diff| 0.0579
+  CUDA1          q6_K      1  exact                  max err 2, rms 0.198 (3.21e-02 of the data's), worst/bound 0.606  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q6_K      4  exact                  max err 3.05, rms 0.199 (3.19e-02 of the data's), worst/bound 0.665  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q6_K    512  exact                  max err 4.17, rms 0.205 (3.20e-02 of the data's), worst/bound 0.686  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q5_1      1  exact                  max err 2.39, rms 0.331 (5.60e-02 of the data's), worst/bound 0.963  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q5_1      4  exact                  max err 3.09, rms 0.348 (5.46e-02 of the data's), worst/bound 0.966  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q5_1    512  exact                  max err 3.85, rms 0.354 (5.52e-02 of the data's), worst/bound 0.981  100.0000 % bit for bit, max |diff| 2.89
+  CUDA1          q5_0      1  exact                  max err 3.23, rms 0.406 (7.47e-02 of the data's), worst/bound 0.868  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q5_0      4  exact                  max err 4.8, rms 0.43 (6.65e-02 of the data's), worst/bound 0.981  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q5_0    512  exact                  max err 6.68, rms 0.433 (6.78e-02 of the data's), worst/bound 0.996  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q4_1      1  exact                  max err 5.07, rms 0.684 (1.09e-01 of the data's), worst/bound 0.983  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q4_1      4  exact                  max err 4.82, rms 0.751 (1.15e-01 of the data's), worst/bound 0.979  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q4_1    512  exact                  max err 7.45, rms 0.736 (1.15e-01 of the data's), worst/bound 0.986  99.9936 % bit for bit, max |diff| 5.08
+  CUDA1          q4_0      1  exact                  max err 5.54, rms 0.568 (9.73e-02 of the data's), worst/bound 0.962  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q4_0      4  exact                  max err 9.82, rms 0.587 (9.19e-02 of the data's), worst/bound 0.990  100.0000 % bit for bit, max |diff| 0
+  CUDA1          q4_0    512  exact                  max err 13.9, rms 0.582 (9.10e-02 of the data's), worst/bound 0.998  100.0000 % bit for bit, max |diff| 0
+  CUDA1          iq4_nl    1  exact                  max err 6.77, rms 0.571 (8.72e-02 of the data's), worst/bound 0.432  100.0000 % bit for bit, max |diff| 0
+  CUDA1          iq4_nl    4  exact                  max err 7.02, rms 0.564 (9.07e-02 of the data's), worst/bound 0.412  100.0000 % bit for bit, max |diff| 0
+  CUDA1          iq4_nl  512  exact                  max err 10.1, rms 0.569 (8.85e-02 of the data's), worst/bound 0.515  99.9823 % bit for bit, max |diff| 0.062
+162 checks, 0 failed
