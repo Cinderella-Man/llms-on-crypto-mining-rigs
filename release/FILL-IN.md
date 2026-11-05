@@ -32,3 +32,5 @@ move as slots are filled. Delete this file when every box is ticked.
 - [ ] `v3` is merged into `main` (the notes link to `main`), then this file is deleted.
 
 - **TODO(flintq5): Flint in two lanes.** `release/flint-v3/README.md`, `release/notes-v3.0.md` and the README each get two Flint tables in the three-row form. **Flint Q8:** stock + Unsloth Q8_0, v3 + Unsloth Q8_0 (45.9), v3 + `p065`. **Flint Q5:** stock + Unsloth UD-Q5_K_XL, v3 + UD-Q5_K_XL, v3 + Flint-Pascal-Q5 (already on Hugging Face since v2). Each row is filled from its own 2026-11-06 rig 1 run.
+
+- **TODO(names): the public names** (the owner, 2026-11-05; the map is in the private BUILDS.md, "Public names"). In every release page, card, the notes, the README and book chapter 10, call my files Flint Pascal Q5 GGUF, Flint Pascal Q8 GGUF (p065), Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (pmix-q2-fast) and Ornith-1.5-122B Pascal N2P GGUF (valid1), with the internal code only in parentheses on first mention. The Hugging Face repos follow the same pattern (`CinderellaMan/Swift-Qwen3.8-Flash-Next-Pascal-Q2-GGUF` and so on); the Swift card adds a line saying it is not affiliated with or endorsed by UkisAI.
