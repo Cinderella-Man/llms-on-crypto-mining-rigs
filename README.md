@@ -143,6 +143,8 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
 - [docs/research/notes/](docs/research/notes/README.md): the research behind each change; [GLOSSARY.md](GLOSSARY.md).
 - [docs/data/](docs/data/README.md): the data and method behind every experiment (tables, exact commands, run scripts),
   and [docs/engine_features.md](docs/engine_features.md): each v2.0 engine feature, how it was checked and measured.
+- [docs/switches.md](docs/switches.md): every switch of the engine, its default, what it does, the branch that brought
+  it and its registry row, so each change can be turned off on its own.
 
 ## License
 

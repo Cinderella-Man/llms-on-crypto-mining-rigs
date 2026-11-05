@@ -1,0 +1,15 @@
+context default	OK	base: 93 OK, 27 SKIP, 0 FAIL; branch: 93 OK, 27 SKIP, 0 FAIL; per-case verdicts equal: yes
+context LLAMA_KV_HEAD_EMPTY=0	SAME	93 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+context LLAMA_KV_HEAD_TAIL=0	SAME	93 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+context LLAMA_KV_HEAD_FREE=0	SAME	93 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+context LLAMA_KV_RESTORE_CANONICAL=0	DIFFERS	92 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+context LLAMA_ATTN_K_LAST=0	SAME	93 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+context LLAMA_QSA_PAD_LINEAR=0	SAME	93 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+context GGML_SCHED_CTX_PER_GRAPH=0	SAME	93 OK, 27 SKIP, 0 FAIL; cases that differ from the default: 
+server base	OK	tokens as default: yes; restores (0): ; checkpoints: 5 x 0.759 MiB; ; error lines 0
+server ring0	ACTS	tokens as default: yes; restores (0): ; checkpoints: 5 x 0.506 MiB; ; error lines 0
+server past0	NO EFFECT	tokens as default: yes; restores (0): ; checkpoints: 5 x 0.759 MiB; ; error lines 0
+server resume0	NO EFFECT	tokens as default: yes; restores (0): ; checkpoints: 5 x 0.759 MiB; ; error lines 0
+server noinit0	OK	tokens as default: yes; restores (0): ; checkpoints: 5 x 0.759 MiB; ; error lines 0
+server kv0	NO EFFECT	tokens as default: yes; restores (0): ; checkpoints: 5 x 0.759 MiB; ; error lines 0
+server default	OK	restores (0): ; checkpoints: 5 x 0.759 MiB; ; error lines 0
