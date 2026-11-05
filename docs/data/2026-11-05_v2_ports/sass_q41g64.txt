@@ -1,0 +1,23 @@
+# q41g64: kernels of test-backend-ops whose sm_61 SASS differs from -ladder4's: none; new (demangled):
+void k_get_rows<(int)32, (int)2, &dequantize_q4_1_64, __nv_bfloat16>(const void *, const int *, T4 *, long, long, uint3, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsi
+void k_get_rows<(int)32, (int)2, &dequantize_q4_1_64, __half>(const void *, const int *, T4 *, long, long, uint3, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned lo
+void k_get_rows<(int)32, (int)2, &dequantize_q4_1_64, float>(const void *, const int *, T4 *, long, long, uint3, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned lon
+void k_get_rows<(int)32, (int)2, &dequantize_q4_1_64, int>(const void *, const int *, T4 *, long, long, uint3, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long,
+void mul_mat_vec_q<(ggml_type)504, (int)1, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)1, (bool)0, (bool)1, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)1, (bool)1, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)1, (bool)1, (bool)1, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)2, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)3, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)4, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)5, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)6, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)7, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void mul_mat_vec_q<(ggml_type)504, (int)8, (bool)0, (bool)0, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int
+void dequantize_block<(int)32, (int)2, &dequantize_q4_1_64, __nv_bfloat16>(const void *, T4 *, long, long, long, uint3, long, long, long)
+void dequantize_block<(int)32, (int)2, &dequantize_q4_1_64, __half>(const void *, T4 *, long, long, long, uint3, long, long, long)
+void dequantize_block<(int)32, (int)2, &dequantize_q4_1_64, float>(const void *, T4 *, long, long, long, uint3, long, long, long)
+void mul_mat_vec_q_moe<(ggml_type)504, (int)2, (bool)0>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int, unsigned int
+void mul_mat_vec_q_moe<(ggml_type)504, (int)2, (bool)1>(const void *, const void *, const int *, ggml_cuda_mm_fusion_args_device, float *, unsigned int, uint3, unsigned int, unsigned int, unsigned int
+# gone
+(none)

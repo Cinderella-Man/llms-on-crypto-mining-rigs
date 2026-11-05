@@ -1,0 +1,211 @@
+branch	commit	in_v2.0	in_ladder4	subject
+pascal-p106-v2-agentcache	1d8c2fc1c	patch	patch	llama: no scheduler reserve when an attached backend sampler is already covered (Q111)
+pascal-p106-v2-agentcache	8540c5ee3	patch	patch	kv-cache: the cell layout of a fresh context after an emptied stream and a state restore; whole-ring states (Q111)
+pascal-p106-v2-agentcache	f84962229	subj	subj	server: agent sessions stop re-reading their prompts (Q111, Q132)
+pascal-p106-v2-agentcache	2379f790e	patch	patch	server: a sliding-window checkpoint restore resumes right after the checkpoint (Q111)
+pascal-p106-v2-agentcache	cace93ac7	patch	patch	server, llama: prefix files and checkpoints hold the whole sliding-window ring (Q111)
+pascal-p106-v2-combined-split	94cc40f33	patch	subj	CUDA: linearize MoE data layout for MMQ/MMF
+pascal-p106-v2-combined-split	a30093bcd	patch	subj	Apply MMQ tile size optimization more generally
+pascal-p106-v2-combined-split	464746011	patch	patch	llama: graph reuse only when no ubatch is in flight under pipeline parallelism
+pascal-p106-v2-combined-split	82bbb3aa4	patch	patch	tests: MUL_MAT_ID at prompt-sized batches with Flint's routing (256 experts, 6 used)
+pascal-p106-v2-combined-split	511943869	no	no	CUDA: MoE tile list (PR #31047) for prompt batches only; steps of up to 8 tokens keep the per-expert tiles
+pascal-p106-v2-combined-split	fcd8c78ea	patch	subj	ggml, llama: attention mask built on each device from cell and token positions (GGML_OP_KQ_MASK)
+pascal-p106-v2-combined-split	c2526078a	patch	subj	CUDA: the RMS norm of one row writes its Q8_1 copy and absorbs the residual add (GGML_CUDA_NORM_Q8)
+pascal-p106-v2-combined-split	ccac61063	patch	subj	llama: screened output head (LLAMA_SCREEN_HEAD)
+pascal-p106-v2-combined-split	4ae3a5162	patch	patch	screened output head: log when it switches; its op tests in the default test-backend-ops list
+pascal-p106-v2-combined-split	7f159014c	patch	subj	server: log the screened-head decision when it changes
+pascal-p106-v2-combined-split	7633082ee	patch	subj	CUDA: 2-4 tokens in the Pascal matrix-vector kernels, one read per distinct expert
+pascal-p106-v2-combined-split	26901f4c0	patch	patch	CUDA: GGML_CUDA_MMVQ_PASCAL_STAGE_ACT=1 stages the multi-token activations
+pascal-p106-v2-combined-split	0130f070f	patch	subj	tests: perf cases for 1-4 tokens with 48 experts, Q8_0 output head only
+pascal-p106-v2-combined-split	333a219d1	patch	patch	ggml: ggml_backend_sched_set_caller_sync skips the host waits before split input copies
+pascal-p106-v2-combined-split	ea9a3c075	patch	patch	kv-cache: after removing a sequence's tail, put head on the cell of the first removed position
+pascal-p106-v2-combined-split	239d69d74	patch	subj	llama: pipelined single-token decoding (llama_pipe_*)
+pascal-p106-v2-combined-split	b65d219a3	patch	patch	examples: llama-pipespec, pipelined speculation for one sequence
+pascal-p106-v2-combined-split	9fb6c8f2a	patch	patch	llama-pipespec: backend greedy sampling (llama_pipe_get_sampled)
+pascal-p106-v2-combined-split	0437ae34e	patch	patch	llama-pipespec: race of K samples of one request (--pipe-race, --pipe-race-stop)
+pascal-p106-v2-combined-split	442e3a5c7	patch	patch	llama-pipespec: time the race (t_race) and trace raced tokens
+pascal-p106-v2-combined-split	231bc1095	patch	patch	llama-pipespec: Q96 guesser (copy >= 4, else continuation counts), --pipe-table, --pipe-jsonl
+pascal-p106-v2-combined-split	a68708c77	patch	patch	llama-pipespec: race=1 times a single sample to the stop text
+pascal-p106-v2-combined-split	da01164b0	patch	patch	sampling: position-keyed device draws (llama_sampler_set_pos); per-graph sampler input tensors
+pascal-p106-v2-combined-split	f3f023cd7	patch	patch	llama: pipe slots for several sequences: chunk slots, per-sequence samplers, the slot's scheduler in the graph callback
+pascal-p106-v2-combined-split	5532675a4	patch	patch	llama-pipespec: streams mode, several conversations staggered through the cards (Q104)
+pascal-p106-v2-combined-split	e11b88846	subj	subj	off switches for the pieces that had none: GGML_CUDA_MMQ_MOE_LEGACY, LLAMA_GRAPH_REUSE_WAIT, GGML_CUDA_MMVQ_PASCAL_MC
+pascal-p106-v2-drafter	abc8876cc	patch	subj	Staircase drafter as a guesser of the pipelined executor (Q20/D3)
+pascal-p106-v2-drafter	daf310b66	subj	subj	Staircase drafter: windows from the run's layer split, depth-indexed rows (depth-general heads)
+pascal-p106-v2-drafter	c3a324ba0	patch	patch	Staircase drafter: tokens in flight older than the split's window are complete and read the final state (as committed rows)
+pascal-p106-v2-drafter	e93bac721	patch	patch	Staircase drafter: flush at most the pending commits (out-of-bounds read when more than N - window commits were pending)
+pascal-p106-v2-f16router	74a087754	patch	patch	CUDA: Q6_K in the Pascal matrix-vector kernels (1-4 tokens)
+pascal-p106-v2-f16router	13b4683a4	patch	patch	CUDA: Q4_K in the Pascal matrix-vector kernels (1-4 tokens)
+pascal-p106-v2-f16router	8ff4431ce	patch	patch	CUDA: GGML_CUDA_MMVQ_PASCAL_SKIP leaves listed weight types to mul_mat_vec_q
+pascal-p106-v2-f16router	2dc8fee87	no	no	CUDA: Pascal F16 matrix-vector kernel for one token (MoE routers kept in F16)
+pascal-p106-v2-f16router-persistent	74a087754	patch	patch	CUDA: Q6_K in the Pascal matrix-vector kernels (1-4 tokens)
+pascal-p106-v2-f16router-persistent	13b4683a4	patch	patch	CUDA: Q4_K in the Pascal matrix-vector kernels (1-4 tokens)
+pascal-p106-v2-f16router-persistent	8ff4431ce	patch	patch	CUDA: GGML_CUDA_MMVQ_PASCAL_SKIP leaves listed weight types to mul_mat_vec_q
+pascal-p106-v2-f16router-persistent	2dc8fee87	no	no	CUDA: Pascal F16 matrix-vector kernel for one token (MoE routers kept in F16)
+pascal-p106-v2-f16router-persistent	0972b2768	no	no	CUDA: persistent MoE kernel sums an F16 router as the Pascal F16 product does
+pascal-p106-v2-hybrid	2f8cc063b	subj	subj	llama: the device-built attention mask reads cell copies each device keeps, so decode steps upload only their cells
+pascal-p106-v2-hybrid	82481c314	no	subj	llama: the hybrid memory's attention part builds its mask on the devices (Qwen3.5/3.6, Ornith, Qwen3.8)
+pascal-p106-v2-hybrid	016cd2f8a	no	subj	llama: pipelined decoding for the delta-net hybrid models (Qwen3.5/3.6, Ornith, Qwen3.8): a state group per pipe slot
+pascal-p106-v2-hybrid	7be7e40fd	no	patch	examples: llama-pipe-recurrent-check, the pipelined rollbacks the executors' slot rotation rarely makes
+pascal-p106-v2-hybrid	60c7e4975	no	patch	llama: the device-built attention mask for token batches of M-RoPE models (Qwen3.5/3.6, Ornith, Qwen3.8)
+pascal-p106-v2-hybrid	b7af2c4e2	no	patch	llama: LLAMA_GPU_KQ_MASK_CHECK=1 synchronizes before a pipe slot's inputs too
+pascal-p106-v2-kquant-next	74a087754	patch	patch	CUDA: Q6_K in the Pascal matrix-vector kernels (1-4 tokens)
+pascal-p106-v2-kquant-next	13b4683a4	patch	patch	CUDA: Q4_K in the Pascal matrix-vector kernels (1-4 tokens)
+pascal-p106-v2-kquant-next	8ff4431ce	patch	patch	CUDA: GGML_CUDA_MMVQ_PASCAL_SKIP leaves listed weight types to mul_mat_vec_q
+pascal-p106-v2-next-c7	466e48600	patch	patch	ggml-cuda: init parameter priority=high (streams at the device's greatest priority); ggml_backend_event_query in the proc table
+pascal-p106-v2-next-c7	bc9337014	subj	subj	llama: pipe chunk slots on streams of their own below the tokens' priority (LLAMA_PIPE_CHUNK_STREAM); llama_pipe_ready
+pascal-p106-v2-next-c7	800962e1f	patch	patch	llama-pipespec: streams with several prompt chunks in flight (--pipe-chunks, --pipe-chunks-gen); handle complete items first
+pascal-p106-v2-next-c7	e72523190	patch	patch	llama-pipespec: wait for the prompt before the generation clock starts
+pascal-p106-v2-next-c7	b44cac587	subj	subj	common, server: a continuation store for pipelined speculation (--pipe-store, Q161)
+pascal-p106-v2-next-c7	cda382799	subj	subj	llama-pipespec: --pipe-store for the cont guesser (job key store=0 leaves it out), store_guesses per job
+pascal-p106-v2-next-c7	99d61a35e	patch	patch	llama: refuse fed tokens for models whose KV cells record their token (M-RoPE, PLE)
+pascal-p106-v2-pipeserve	7a3cc71fe	patch	patch	ggml: ggml_backend_sched_set_caller_sync skips the host waits before split input copies
+pascal-p106-v2-pipeserve	9ab87e750	patch	patch	kv-cache: after removing a sequence's tail, put head on the cell of the first removed position
+pascal-p106-v2-pipeserve	e2fccd035	patch	subj	llama: pipelined single-token decoding (llama_pipe_*)
+pascal-p106-v2-pipeserve	2f5f0b6c1	subj	subj	examples: llama-pipespec, pipelined speculation for one sequence
+pascal-p106-v2-pipeserve	733093c58	patch	patch	llama-pipespec: backend greedy sampling (llama_pipe_get_sampled)
+pascal-p106-v2-pipeserve	3c4687a28	patch	patch	llama-pipespec: race of K samples of one request (--pipe-race, --pipe-race-stop)
+pascal-p106-v2-pipeserve	a7204884d	patch	patch	llama-pipespec: time the race (t_race) and trace raced tokens
+pascal-p106-v2-pipeserve	bcdc36fcd	patch	patch	llama-pipespec: Q96 guesser (copy >= 4, else continuation counts), --pipe-table, --pipe-jsonl
+pascal-p106-v2-pipeserve	d83a7e5f2	patch	patch	llama-pipespec: race=1 times a single sample to the stop text
+pascal-p106-v2-pipeserve	73fb89e48	patch	patch	sampling: position-keyed device draws (llama_sampler_set_pos); per-graph sampler input tensors
+pascal-p106-v2-pipeserve	24356e444	patch	patch	llama: pipe slots for several sequences: chunk slots, per-sequence samplers, the slot's scheduler in the graph callback
+pascal-p106-v2-pipeserve	a217f42c8	patch	patch	llama-pipespec: streams mode, several conversations staggered through the cards (Q104)
+pascal-p106-v2-pipeserve	f249104ab	patch	patch	pipespec: packed asynchronous input uploads (Q120), device-fed next token (Q121), host timers
+pascal-p106-v2-pipeserve	fbb1b24f3	patch	patch	kv-cache: keep head on a free cell instead of restarting the slot search from cell 0
+pascal-p106-v2-pipeserve	74f7c7182	patch	patch	llama-pipespec: print the model's window size, n_ubatch and n_ctx (check_swa_wrap.sh checks that the window cache wraps)
+pascal-p106-v2-pipeserve	cd49e507c	patch	subj	server: pipelined speculation for a slot that generates alone (--pipe-depth, --pipe-guess, --pipe-copy-min)
+pascal-p106-v2-pipeserve	87eb59599	patch	patch	llama: a fed token waits for its source evaluation only (Q156)
+pascal-p106-v2-pipeserve	3ee0f3d94	patch	subj	KV-step stall of the pipe slots (Q153): packed-upload buffers grow geometrically; LLAMA_KV_PAD
+pascal-p106-v2-pipeserve	3718ccd57	patch	patch	llama-pipespec: --pipe-floor F keeps F guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-pipeserve	2650855b2	patch	patch	server: --pipe-floor N keeps N guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-pipeserve-tools	7a3cc71fe	patch	patch	ggml: ggml_backend_sched_set_caller_sync skips the host waits before split input copies
+pascal-p106-v2-pipeserve-tools	9ab87e750	patch	patch	kv-cache: after removing a sequence's tail, put head on the cell of the first removed position
+pascal-p106-v2-pipeserve-tools	e2fccd035	patch	subj	llama: pipelined single-token decoding (llama_pipe_*)
+pascal-p106-v2-pipeserve-tools	2f5f0b6c1	subj	subj	examples: llama-pipespec, pipelined speculation for one sequence
+pascal-p106-v2-pipeserve-tools	733093c58	patch	patch	llama-pipespec: backend greedy sampling (llama_pipe_get_sampled)
+pascal-p106-v2-pipeserve-tools	3c4687a28	patch	patch	llama-pipespec: race of K samples of one request (--pipe-race, --pipe-race-stop)
+pascal-p106-v2-pipeserve-tools	a7204884d	patch	patch	llama-pipespec: time the race (t_race) and trace raced tokens
+pascal-p106-v2-pipeserve-tools	bcdc36fcd	patch	patch	llama-pipespec: Q96 guesser (copy >= 4, else continuation counts), --pipe-table, --pipe-jsonl
+pascal-p106-v2-pipeserve-tools	d83a7e5f2	patch	patch	llama-pipespec: race=1 times a single sample to the stop text
+pascal-p106-v2-pipeserve-tools	73fb89e48	patch	patch	sampling: position-keyed device draws (llama_sampler_set_pos); per-graph sampler input tensors
+pascal-p106-v2-pipeserve-tools	24356e444	patch	patch	llama: pipe slots for several sequences: chunk slots, per-sequence samplers, the slot's scheduler in the graph callback
+pascal-p106-v2-pipeserve-tools	a217f42c8	patch	patch	llama-pipespec: streams mode, several conversations staggered through the cards (Q104)
+pascal-p106-v2-pipeserve-tools	f249104ab	patch	patch	pipespec: packed asynchronous input uploads (Q120), device-fed next token (Q121), host timers
+pascal-p106-v2-pipeserve-tools	fbb1b24f3	patch	patch	kv-cache: keep head on a free cell instead of restarting the slot search from cell 0
+pascal-p106-v2-pipeserve-tools	74f7c7182	patch	patch	llama-pipespec: print the model's window size, n_ubatch and n_ctx (check_swa_wrap.sh checks that the window cache wraps)
+pascal-p106-v2-pipeserve-tools	cd49e507c	patch	subj	server: pipelined speculation for a slot that generates alone (--pipe-depth, --pipe-guess, --pipe-copy-min)
+pascal-p106-v2-pipeserve-tools	fbc81f98a	subj	subj	sampling: keep backend sampling with a grammar: check the device's token on the host, resample the full row only on a rejection (Q67)
+pascal-p106-v2-pipeserve-tools	301799049	patch	patch	llama: unsigned loop over the outputs that stay on the device
+pascal-p106-v2-pipeserve-tools	24293202d	patch	patch	sampling: LLAMA_GRAMMAR_TEST_REJECT=N counts every Nth grammar-checked token as rejected, for tests of the resample path
+pascal-p106-v2-pipeserve-tools	ba83d3a1f	patch	patch	server: pipelined speculation for tool requests until the tool call starts
+pascal-p106-v2-pipeserve-tools	a4a377584	patch	patch	llama: a fed token waits for its source evaluation only (Q156)
+pascal-p106-v2-pipeserve-tools	dc42e91f2	patch	subj	KV-step stall of the pipe slots (Q153): packed-upload buffers grow geometrically; LLAMA_KV_PAD
+pascal-p106-v2-pipeserve-tools	af4b1d7e2	patch	patch	llama-pipespec: --pipe-floor F keeps F guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-pipeserve-tools	96fdd9cb1	patch	patch	server: --pipe-floor N keeps N guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-pipespec2	7a3cc71fe	patch	patch	ggml: ggml_backend_sched_set_caller_sync skips the host waits before split input copies
+pascal-p106-v2-pipespec2	9ab87e750	patch	patch	kv-cache: after removing a sequence's tail, put head on the cell of the first removed position
+pascal-p106-v2-pipespec2	e2fccd035	patch	subj	llama: pipelined single-token decoding (llama_pipe_*)
+pascal-p106-v2-pipespec2	2f5f0b6c1	subj	subj	examples: llama-pipespec, pipelined speculation for one sequence
+pascal-p106-v2-pipespec2	733093c58	patch	patch	llama-pipespec: backend greedy sampling (llama_pipe_get_sampled)
+pascal-p106-v2-pipespec2	3c4687a28	patch	patch	llama-pipespec: race of K samples of one request (--pipe-race, --pipe-race-stop)
+pascal-p106-v2-pipespec2	a7204884d	patch	patch	llama-pipespec: time the race (t_race) and trace raced tokens
+pascal-p106-v2-pipespec2	bcdc36fcd	patch	patch	llama-pipespec: Q96 guesser (copy >= 4, else continuation counts), --pipe-table, --pipe-jsonl
+pascal-p106-v2-pipespec2	d83a7e5f2	patch	patch	llama-pipespec: race=1 times a single sample to the stop text
+pascal-p106-v2-pipespec2	73fb89e48	patch	patch	sampling: position-keyed device draws (llama_sampler_set_pos); per-graph sampler input tensors
+pascal-p106-v2-pipespec2	24356e444	patch	patch	llama: pipe slots for several sequences: chunk slots, per-sequence samplers, the slot's scheduler in the graph callback
+pascal-p106-v2-pipespec2	a217f42c8	patch	patch	llama-pipespec: streams mode, several conversations staggered through the cards (Q104)
+pascal-p106-v2-pipespec2	f249104ab	patch	patch	pipespec: packed asynchronous input uploads (Q120), device-fed next token (Q121), host timers
+pascal-p106-v2-pipespec2	fbb1b24f3	patch	patch	kv-cache: keep head on a free cell instead of restarting the slot search from cell 0
+pascal-p106-v2-pipespec2	74f7c7182	patch	patch	llama-pipespec: print the model's window size, n_ubatch and n_ctx (check_swa_wrap.sh checks that the window cache wraps)
+pascal-p106-v2-pipespec2	ae0d40c1f	patch	patch	llama: a fed token waits for its source evaluation only (Q156)
+pascal-p106-v2-pipespec2	e3f497d6f	patch	subj	KV-step stall of the pipe slots (Q153): packed-upload buffers grow geometrically; LLAMA_KV_PAD
+pascal-p106-v2-pipespec2	2dfbe403e	patch	patch	llama-pipespec: --pipe-floor F keeps F guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-prefill-attn	e0ce9ada1	subj	subj	CUDA: prompt-size attention kernel for compute 6.1 (GGML_CUDA_FATTN_TILE_PASCAL)
+pascal-p106-v2-prefill-attn	d02dd10f1	patch	patch	CUDA: compute-6.1 prompt attention: split scores over the head halves at head 128 (GGML_CUDA_FATTN_TILE_PASCAL_QK)
+pascal-p106-v2-prefill-attn	70718d6ec	patch	patch	CUDA: compute-6.1 prompt attention: per-tile staging row pointers
+pascal-p106-v2-prefill-attn	5d5112a43	patch	patch	CUDA: compute-6.1 prompt attention: log line on first use
+pascal-p106-v2-prefill-attn	79613a54e	patch	patch	tests: compute-6.1 prompt attention at 1024 tokens (per-block key bound from the mask scan)
+pascal-p106-v2-prefill-split	94cc40f33	patch	subj	CUDA: linearize MoE data layout for MMQ/MMF
+pascal-p106-v2-prefill-split	a30093bcd	patch	subj	Apply MMQ tile size optimization more generally
+pascal-p106-v2-prefill-split	464746011	patch	patch	llama: graph reuse only when no ubatch is in flight under pipeline parallelism
+pascal-p106-v2-prefill-split	82bbb3aa4	patch	patch	tests: MUL_MAT_ID at prompt-sized batches with Flint's routing (256 experts, 6 used)
+pascal-p106-v2-prefill-split	511943869	no	no	CUDA: MoE tile list (PR #31047) for prompt batches only; steps of up to 8 tokens keep the per-expert tiles
+pascal-p106-v2-q151	8d30766c2	patch	patch	CUDA: Pascal decode attention kernel for one token (GGML_CUDA_FATTN_PASCAL)
+pascal-p106-v2-q155	7a3cc71fe	patch	patch	ggml: ggml_backend_sched_set_caller_sync skips the host waits before split input copies
+pascal-p106-v2-q155	9ab87e750	patch	patch	kv-cache: after removing a sequence's tail, put head on the cell of the first removed position
+pascal-p106-v2-q155	e2fccd035	patch	subj	llama: pipelined single-token decoding (llama_pipe_*)
+pascal-p106-v2-q155	2f5f0b6c1	subj	subj	examples: llama-pipespec, pipelined speculation for one sequence
+pascal-p106-v2-q155	733093c58	patch	patch	llama-pipespec: backend greedy sampling (llama_pipe_get_sampled)
+pascal-p106-v2-q155	3c4687a28	patch	patch	llama-pipespec: race of K samples of one request (--pipe-race, --pipe-race-stop)
+pascal-p106-v2-q155	a7204884d	patch	patch	llama-pipespec: time the race (t_race) and trace raced tokens
+pascal-p106-v2-q155	bcdc36fcd	patch	patch	llama-pipespec: Q96 guesser (copy >= 4, else continuation counts), --pipe-table, --pipe-jsonl
+pascal-p106-v2-q155	d83a7e5f2	patch	patch	llama-pipespec: race=1 times a single sample to the stop text
+pascal-p106-v2-q155	73fb89e48	patch	patch	sampling: position-keyed device draws (llama_sampler_set_pos); per-graph sampler input tensors
+pascal-p106-v2-q155	24356e444	patch	patch	llama: pipe slots for several sequences: chunk slots, per-sequence samplers, the slot's scheduler in the graph callback
+pascal-p106-v2-q155	a217f42c8	patch	patch	llama-pipespec: streams mode, several conversations staggered through the cards (Q104)
+pascal-p106-v2-q155	f249104ab	patch	patch	pipespec: packed asynchronous input uploads (Q120), device-fed next token (Q121), host timers
+pascal-p106-v2-q155	fbb1b24f3	patch	patch	kv-cache: keep head on a free cell instead of restarting the slot search from cell 0
+pascal-p106-v2-q155	74f7c7182	patch	patch	llama-pipespec: print the model's window size, n_ubatch and n_ctx (check_swa_wrap.sh checks that the window cache wraps)
+pascal-p106-v2-q155	cd49e507c	patch	subj	server: pipelined speculation for a slot that generates alone (--pipe-depth, --pipe-guess, --pipe-copy-min)
+pascal-p106-v2-q155	fbc81f98a	subj	subj	sampling: keep backend sampling with a grammar: check the device's token on the host, resample the full row only on a rejection (Q67)
+pascal-p106-v2-q155	301799049	patch	patch	llama: unsigned loop over the outputs that stay on the device
+pascal-p106-v2-q155	24293202d	patch	patch	sampling: LLAMA_GRAMMAR_TEST_REJECT=N counts every Nth grammar-checked token as rejected, for tests of the resample path
+pascal-p106-v2-q155	ba83d3a1f	patch	patch	server: pipelined speculation for tool requests until the tool call starts
+pascal-p106-v2-q155	a4a377584	patch	patch	llama: a fed token waits for its source evaluation only (Q156)
+pascal-p106-v2-q155	dc42e91f2	patch	subj	KV-step stall of the pipe slots (Q153): packed-upload buffers grow geometrically; LLAMA_KV_PAD
+pascal-p106-v2-q155	af4b1d7e2	patch	patch	llama-pipespec: --pipe-floor F keeps F guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-q155	96fdd9cb1	patch	patch	server: --pipe-floor N keeps N guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-q155	eea6c5cd4	patch	patch	ggml-cuda: init parameter priority=high (streams at the device's greatest priority); ggml_backend_event_query in the proc table
+pascal-p106-v2-q155	e8a9c06f2	subj	subj	llama: pipe chunk slots on streams of their own below the tokens' priority (LLAMA_PIPE_CHUNK_STREAM); llama_pipe_ready
+pascal-p106-v2-q155	98e79d8c9	patch	patch	llama-pipespec: streams with several prompt chunks in flight (--pipe-chunks, --pipe-chunks-gen); handle complete items first
+pascal-p106-v2-q155	99c3a7c00	patch	patch	llama-pipespec: wait for the prompt before the generation clock starts
+pascal-p106-v2-q161	7a3cc71fe	patch	patch	ggml: ggml_backend_sched_set_caller_sync skips the host waits before split input copies
+pascal-p106-v2-q161	9ab87e750	patch	patch	kv-cache: after removing a sequence's tail, put head on the cell of the first removed position
+pascal-p106-v2-q161	e2fccd035	patch	subj	llama: pipelined single-token decoding (llama_pipe_*)
+pascal-p106-v2-q161	2f5f0b6c1	subj	subj	examples: llama-pipespec, pipelined speculation for one sequence
+pascal-p106-v2-q161	733093c58	patch	patch	llama-pipespec: backend greedy sampling (llama_pipe_get_sampled)
+pascal-p106-v2-q161	3c4687a28	patch	patch	llama-pipespec: race of K samples of one request (--pipe-race, --pipe-race-stop)
+pascal-p106-v2-q161	a7204884d	patch	patch	llama-pipespec: time the race (t_race) and trace raced tokens
+pascal-p106-v2-q161	bcdc36fcd	patch	patch	llama-pipespec: Q96 guesser (copy >= 4, else continuation counts), --pipe-table, --pipe-jsonl
+pascal-p106-v2-q161	d83a7e5f2	patch	patch	llama-pipespec: race=1 times a single sample to the stop text
+pascal-p106-v2-q161	73fb89e48	patch	patch	sampling: position-keyed device draws (llama_sampler_set_pos); per-graph sampler input tensors
+pascal-p106-v2-q161	24356e444	patch	patch	llama: pipe slots for several sequences: chunk slots, per-sequence samplers, the slot's scheduler in the graph callback
+pascal-p106-v2-q161	a217f42c8	patch	patch	llama-pipespec: streams mode, several conversations staggered through the cards (Q104)
+pascal-p106-v2-q161	f249104ab	patch	patch	pipespec: packed asynchronous input uploads (Q120), device-fed next token (Q121), host timers
+pascal-p106-v2-q161	fbb1b24f3	patch	patch	kv-cache: keep head on a free cell instead of restarting the slot search from cell 0
+pascal-p106-v2-q161	74f7c7182	patch	patch	llama-pipespec: print the model's window size, n_ubatch and n_ctx (check_swa_wrap.sh checks that the window cache wraps)
+pascal-p106-v2-q161	cd49e507c	patch	subj	server: pipelined speculation for a slot that generates alone (--pipe-depth, --pipe-guess, --pipe-copy-min)
+pascal-p106-v2-q161	fbc81f98a	subj	subj	sampling: keep backend sampling with a grammar: check the device's token on the host, resample the full row only on a rejection (Q67)
+pascal-p106-v2-q161	301799049	patch	patch	llama: unsigned loop over the outputs that stay on the device
+pascal-p106-v2-q161	24293202d	patch	patch	sampling: LLAMA_GRAMMAR_TEST_REJECT=N counts every Nth grammar-checked token as rejected, for tests of the resample path
+pascal-p106-v2-q161	ba83d3a1f	patch	patch	server: pipelined speculation for tool requests until the tool call starts
+pascal-p106-v2-q161	a4a377584	patch	patch	llama: a fed token waits for its source evaluation only (Q156)
+pascal-p106-v2-q161	dc42e91f2	patch	subj	KV-step stall of the pipe slots (Q153): packed-upload buffers grow geometrically; LLAMA_KV_PAD
+pascal-p106-v2-q161	af4b1d7e2	patch	patch	llama-pipespec: --pipe-floor F keeps F guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-q161	96fdd9cb1	patch	patch	server: --pipe-floor N keeps N guesses in flight with a filler token when the guesser has none (Q154)
+pascal-p106-v2-q161	eea6c5cd4	patch	patch	ggml-cuda: init parameter priority=high (streams at the device's greatest priority); ggml_backend_event_query in the proc table
+pascal-p106-v2-q161	e8a9c06f2	subj	subj	llama: pipe chunk slots on streams of their own below the tokens' priority (LLAMA_PIPE_CHUNK_STREAM); llama_pipe_ready
+pascal-p106-v2-q161	98e79d8c9	patch	patch	llama-pipespec: streams with several prompt chunks in flight (--pipe-chunks, --pipe-chunks-gen); handle complete items first
+pascal-p106-v2-q161	99c3a7c00	patch	patch	llama-pipespec: wait for the prompt before the generation clock starts
+pascal-p106-v2-q161	dacf35d1b	subj	subj	common, server: a continuation store for pipelined speculation (--pipe-store, Q161)
+pascal-p106-v2-q161	9d50872e0	subj	subj	llama-pipespec: --pipe-store for the cont guesser (job key store=0 leaves it out), store_guesses per job
+pascal-p106-v2-q161	327656fb5	patch	patch	llama: refuse fed tokens for models whose KV cells record their token (M-RoPE, PLE)
+pascal-p106-v2-rc-agentcache	a888d2524	patch	patch	llama: no scheduler reserve when an attached backend sampler is already covered (Q111)
+pascal-p106-v2-rc-agentcache	204ab1d58	patch	patch	kv-cache: the cell layout of a fresh context after an emptied stream and a state restore; whole-ring states (Q111)
+pascal-p106-v2-rc-agentcache	e13ca6609	patch	patch	server: agent sessions stop re-reading their prompts (Q111, Q132)
+pascal-p106-v2-rc-agentcache	a1f3acfb9	patch	patch	server: a sliding-window checkpoint restore resumes right after the checkpoint (Q111)
+pascal-p106-v2-rc-agentcache	c0b4a995d	patch	patch	server, llama: prefix files and checkpoints hold the whole sliding-window ring (Q111)
+pascal-p106-v2-rc3	9cf56b155	patch	patch	ggml-alloc: plan again when a leaf that no node reads needs memory its plan entry does not give it
+pascal-p106-v2-rescale	bdac267bb	patch	subj	llama: MoE down rescale at one token off by default on compute 6.1; LLAMA_NO_MOE_DOWN_RESCALE=0 keeps it
+pascal-p106-v2-toolsample	e2d587398	subj	subj	sampling: keep backend sampling with a grammar: check the device's token on the host, resample the full row only on a rejection (Q67)
+pascal-p106-v2-toolsample	972ccde20	patch	patch	llama: unsigned loop over the outputs that stay on the device
+pascal-p106-v2-toolsample	f11ac1589	patch	patch	sampling: LLAMA_GRAMMAR_TEST_REJECT=N counts every Nth grammar-checked token as rejected, for tests of the resample path
+pascal-p106-v2-toolsample-screen	e2d587398	subj	subj	sampling: keep backend sampling with a grammar: check the device's token on the host, resample the full row only on a rejection (Q67)
+pascal-p106-v2-toolsample-screen	4d89acb56	patch	subj	llama: screened output head (LLAMA_SCREEN_HEAD)
+pascal-p106-v2-toolsample-screen	18f6f37c1	patch	patch	screened output head: log when it switches; its op tests in the default test-backend-ops list
+pascal-p106-v2-toolsample-screen	06efbf4da	patch	subj	server: log the screened-head decision when it changes
+pascal-p106-v2-toolsample-screen	45d243e80	no	no	screened output head with a grammar: kept until the grammar can reject a token (Q67)
+pascal-p106-v2-toolsample-screen	06a17d382	patch	patch	llama: unsigned loop over the outputs that stay on the device
+pascal-p106-v2-toolsample-screen	b6ffd7e6b	patch	patch	sampling: LLAMA_GRAMMAR_TEST_REJECT=N counts every Nth grammar-checked token as rejected, for tests of the resample path
+wip/q41g64-2026-10-23	43de1acd2	patch	no	WIP (uncommitted since 2026-10-23): a Q4_1 group-64 weight type across ggml, CUDA mmvq/convert/getrows, quantize and test-backend-ops; saved on a local branch so it isn't lost, not pushed

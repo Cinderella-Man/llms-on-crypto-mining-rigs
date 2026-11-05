@@ -1,0 +1,10 @@
+# Flint G3-screen, 8 BFCL tasks (one per category) at T 0 and T 1, backend sampling: three llama-server runs
+# screen: LLAMA_SCREEN_HEAD=1 LLAMA_SCREEN_HEAD_GRAMMAR=1; full: LLAMA_SCREEN_HEAD=0; default: LLAMA_SCREEN_HEAD=1
+screen against full
+  T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+  T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+default against full
+  T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+  T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)
+requests: 48, failed: 0
+server log, 'screened output head on': screen 14, default 0

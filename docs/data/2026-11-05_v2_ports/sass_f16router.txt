@@ -1,0 +1,17 @@
+# f16router: kernels of test-backend-ops whose sm_61 SASS differs from -ladder4's (demangled)
+void <unnamed>::k_moe_layer<(ggml_type)13, (ggml_type)13, (ggml_type)13, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)13, (ggml_type)13, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)13, (ggml_type)8, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)23, (ggml_type)13, (ggml_type)13, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)23, (ggml_type)13, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)23, (ggml_type)23, (ggml_type)13, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)23, (ggml_type)23, (ggml_type)23, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)23, (ggml_type)23, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)6, (ggml_type)6, (ggml_type)6, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)6, (ggml_type)6, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)6, (ggml_type)8, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+void <unnamed>::k_moe_layer<(ggml_type)8, (ggml_type)6, (ggml_type)8, (int)2>(<unnamed>::moep_args)
+# new
+void mul_mat_vec_f16_pascal<(int)2>(const char *, const float *, float *, int, int, int, int)
+# gone
+(none)

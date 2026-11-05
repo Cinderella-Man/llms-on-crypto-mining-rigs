@@ -1,0 +1,20 @@
+branch	check	verdict	detail
+toolsample-screen	build-rig	OK	llama.cpp-20261105-21c36929c-pascal-p106-v3-b12076-toolsample-screen (rig tarball): 0 AVX instructions in llama-bench, highest glibc symbol GLIBC_2.38
+toolsample-screen	build-extra	OK	rc=0; test-llama-archs
+toolsample-screen	identity	OK	143 logits comparisons against -ladder4, none differ; the same 7 of 148 tests fail in both runs
+toolsample-screen	sass	OK	base 8541 kernels; 8541 identical, 0 differ, 0 new, 0 gone
+toolsample-screen	cpubuild	OK	llama-server, static native CPU build
+prefill-split	build-rig	OK	llama.cpp-20261105-3be460d5a-pascal-p106-v3-b12076-prefill-split (rig tarball): 0 AVX instructions in llama-bench, highest glibc symbol GLIBC_2.38
+prefill-split	build-extra	OK	rc=0; test-llama-archs
+prefill-split	identity	OK	143 logits comparisons against -ladder4, none differ; the same 7 of 148 tests fail in both runs
+prefill-split	sass	OK	base 8541 kernels; 8541 identical, 0 differ, 0 new, 0 gone
+f16router	build-rig	OK	llama.cpp-20261105-9a0e4c8cc-pascal-p106-v3-b12076-f16router (rig tarball): 0 AVX instructions in llama-bench, highest glibc symbol GLIBC_2.38
+f16router	build-extra	OK	rc=0; test-llama-archs
+f16router	identity	OK	143 logits comparisons against -ladder4, none differ; the same 7 of 148 tests fail in both runs
+toolsample-screen	screen	OK	screen = full and default = full: screen against full T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls) T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls)  | default against full T 0.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls) T 1.0: 8 of 8 (task, seed) pairs identical (reasoning, content, calls) ; 48 requests; screen on 14 times with the switch, 0 without
+f16router	sass	REVIEW	base 8541 kernels; 8529 identical, 12 differ, 1 new, 0 gone: the 12 are k_moe_layer instantiations (its new router branch), the new one mul_mat_vec_f16_pascal<2>
+q41g64	build-rig	OK	llama.cpp-20261105-59ac8ce59-pascal-p106-v3-b12076-q41g64 (rig tarball): 0 AVX instructions in llama-bench, highest glibc symbol GLIBC_2.38
+q41g64	build-extra	OK	rc=0; test-llama-archs test-quantize-fns
+q41g64	identity	OK	143 logits comparisons against -ladder4, none differ; the same 7 of 148 tests fail in both runs
+q41g64	sass	OK	base 8541 kernels; 8541 identical, 0 differ, 20 new, 0 gone: all 20 are Q4_1_64 kernels (matrix-vector, MoE matrix-vector, dequantize, get_rows)
+q41g64	unit test-quantize-fns	OK	rc=0; q4_1_64: q4_1_64 absolute quantization error: ok (0.001147);q4_1_64 reference implementation error: ok (0.000000);q4_1_64 dot product error: ok (0.008952);
