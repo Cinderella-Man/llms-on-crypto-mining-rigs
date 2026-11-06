@@ -137,8 +137,8 @@ The floor assumes the GPU reads memory at full speed all the time. Real code on 
 reasons:
 
 - **The chip is too small to keep the memory busy.** With 5 SMs, a P106-090 cannot issue requests and unpack
-  compressed weights fast enough. Real kernels reached 54 % (Q8_0), 42 % (Q4_0) and 35 % (Q4_K_M) of the
-  bandwidth in the first calibration ([chapter 1](01-the-rig.md)). Formats that are cheap to unpack do better.
+  compressed weights fast enough. Real kernels reached 53.7 % (Q8_0), 42.2 % (Q4_0) and 34.7 % (Q4_K_M) of
+  the bandwidth in the first calibration ([chapter 1](01-the-rig.md)). Formats that are cheap to unpack do better.
 - **Every GPU program has a fixed start cost.** The GPU runs a pass as a series of small programs called *kernels*.
   Launching an empty kernel takes 6.43 µs here, and in three small models each kernel cost 11.0, 11.2 and 9.7 µs of
   a token's time, whatever it did. A small model's token ran 934 to 3,418 of them (five models), so the start costs

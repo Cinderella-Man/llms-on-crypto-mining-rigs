@@ -37,7 +37,7 @@ models at a speed that is useful?
 ### The machine
 
 Each card is a 6 GB Pascal GPU from NVIDIA's 2016 generation. It has fast memory but only a small chip. Each card
-talks to the rest of the computer over one PCIe 1.0 lane, about 190 MB/s. The host is a 2-core Celeron with 4 GB of
+talks to the rest of the computer over one PCIe 1.0 lane, 189 MB/s. The host is a 2-core Celeron with 4 GB of
 RAM. [Chapter 1](01-the-rig.md) explains each limit and why it matters.
 
 ### The bet
@@ -134,8 +134,10 @@ flowchart LR
 - **Experiments are small stories.** Each one has the same parts: the idea, how it should work, what I did, what
   happened, and why. The "why" is the lesson, and it matters more than the number.
 - **Failures get the same care as wins.** Many ideas were dead ends. I say so plainly and explain the reason.
-- **Numbers are rounded** and come with their unit and what they mean for you. Every number comes from a measurement
-  or a source in this repository. My own arithmetic is marked as an estimate.
+- **Numbers are exact** and come with their unit and what they mean for you. A speed is one measured run, with its
+  file, engine and settings; repeated runs are listed by value ("45.9 and 44.6 tok/s in two runs"), never as a span.
+  Every number comes from a measurement or a source in this repository. My own estimates and predictions are marked
+  est., and only those may be ranges.
 - **Open questions stay open.** Some experiments were still running on 2026-11-04. Those are marked "open", with what
   would settle them.
 - **Identifiers live at the end.** Each chapter ends with "Where the details are": data folders, benchmark pages and
