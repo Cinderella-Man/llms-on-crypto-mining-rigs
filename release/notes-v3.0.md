@@ -176,7 +176,7 @@ Requirements: Linux with glibc 2.38 or newer (tested on Ubuntu 24.04) and NVIDIA
 (`nvidia-driver-580`, not `-open`). No CUDA toolkit: the second asset carries the CUDA runtime libraries.
 
 ```bash
-sha256sum -c SHA256SUMS
+sha256sum -c --ignore-missing SHA256SUMS
 tar xzf {{BIN_ASSET}} && tar xzf {{CUDART_ASSET}}
 {{PREFIX}}-{{VERSION}}/llama-server --list-devices
 ```
