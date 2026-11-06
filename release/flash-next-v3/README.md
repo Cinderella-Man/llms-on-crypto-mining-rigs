@@ -17,8 +17,8 @@ A coding agent fixing twelve small bugs, with real tool calls and test runs, 65,
 | Engine and line | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median) | Data |
 |---|---|---|---|---|---|
 | Stock llama.cpp `d77256999`, Swift Q2_0, no draft | 7 of 8 tried | 6.4 | — | — | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
-| Stock llama.cpp b12076 (`20a51f24a`), Swift Q2_0 | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
-| Stock llama.cpp b12076 (`20a51f24a`), `pmix-q2-fast` | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
+| Stock llama.cpp b12076 (`20a51f24a`), Swift Q2_0 | 9 of 9 (3 not reached) | 8.20 | 53.7 | 10.22 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| Stock llama.cpp b12076 (`20a51f24a`), `pmix-q2-fast` | 10 of 11 (1 not reached) | 8.47 | 48.3 | 10.99 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 | Miner Llama v2.0's code, Swift Q2_0, no draft | 9 of 9 | 7.8 | 59 | 8.70 | [2026-11-04_mtp_redo](../../docs/data/2026-11-04_mtp_redo/README.md) |
 | v3, the preset without the keep-alive | 12 of 12 | 19.19 | 68.8 | 7.27 | [2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
 | **v3, the preset** | **12 of 12** | **20.75** | **77.4** | **6.41** | [2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
@@ -125,7 +125,7 @@ One change at a time:
 | Step | What I added | Tasks passed | Generation tok/s | Data |
 |---|---|---|---|---|
 | 0 | stock llama.cpp `d77256999`, Swift Q2_0 | 7 of 8 tried | 6.4 | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
-| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | TODO(stock) | TODO(stock) | TODO(stock) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | 9 of 9 (3 not reached) | 8.20 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 | 1 | Miner Llama's Pascal kernels (v2.0's code, v3's base `37e717ff6`) | 9 of 9 | 7.8 | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
 | 2 | the slowest BF16 weights retyped to Q8_0, which the cards read fast | 12 of 12 | 9.0 | [2026-11-03_retype_agent](../../docs/data/2026-11-03_retype_agent/README.md) |
 | 3 | v3's kernels for the model's shapes on upstream b12076, and the `pmix-q2-fast` file; no draft | 11 of 12 | 14.3 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |

@@ -18,7 +18,7 @@ Every speed below is one measured run, with its file, build and settings named.
 | Miner Llama `-ladder5` with the MMVQ row-guard fix | `1551f5fe1` | identity, arms `t1skip`, `t1neg` and `t1swift` |
 | Miner Llama `-ladder4` | `e3b30303d` | the identity reference |
 | Miner Llama `-keepalive` | `f6c1c6a4a` | the reference runs of [2026-11-05_keepalive](../2026-11-05_keepalive/README.md) |
-| stock llama.cpp | `20a51f24a` | arm `stockq2`, the tuning pass. This is `-ladder5`'s upstream merge base (tag `b12076` plus 16 commits), built with `scripts/build_llamacpp_docker.sh 20a51f24a`, no patch |
+| stock llama.cpp | `20a51f24a` | arms `stockq2`, `stockq2t` and `stockpmix`, the tuning pass. This is `-ladder5`'s upstream merge base (tag `b12076` plus 16 commits), built with `scripts/build_llamacpp_docker.sh 20a51f24a`, no patch |
 
 ## Identity: the same greedy output on every build
 
@@ -50,9 +50,12 @@ The arms:
 | `t1neg` | `1551f5fe1` | `t1base` + every "negligible gain" that applies to this line, together. That is the expert skip, the draft length per step (`LLAMA_SPEC_ADAPT=1` with the real-text T(k) of the `-kshape` kernels at these k-column settings, [t_k_kshape_s32kt0_real.txt](../2026-11-04_kcurve_p106/cost/t_k_kshape_s32kt0_real.txt)), one server thread (`-t 1 -tb 1`), and the keep-alive at each request (`GGML_CUDA_KEEPALIVE=request` instead of `decode`) |
 | `t1swift` | `1551f5fe1` | `t1base`'s line and setting exactly, on Swift's own Q2_0 file |
 | `stockq2` | stock `20a51f24a` | the same server line on Swift's own Q2_0 file, with the MTP draft and no switch |
+| `stockq2t` | stock `20a51f24a` | `stockq2` at `-ub 256`, the line stock's tuning pass chose |
+| `stockpmix` | stock `20a51f24a` | `stockq2t`'s line on pmix-q2-fast |
 
 Each arm has a 40-minute budget and a 12-minute cap a task. All arms ran on one rig, with the client on another
-machine: `t1base`, `t1skip`, `t1neg` and `stockq2` back to back on 2026-11-05, `t1swift` on 2026-11-06. The equal-work column times one fixed amount of work for every arm: `t1base`'s prompt tokens at the
+machine: `t1base`, `t1skip`, `t1neg` and `stockq2` back to back on 2026-11-05, `t1swift`, `stockq2t` and `stockpmix` on
+2026-11-06. The equal-work column times one fixed amount of work for every arm: `t1base`'s prompt tokens at the
 arm's prompt speed, plus `t1base`'s generated tokens at the arm's generation speed, plus `t1base`'s time outside the
 server, divided over `t1base`'s tasks ([agent_tables.py](../2026-11-05_keepalive/run/agent_tables.py)).
 
@@ -66,7 +69,9 @@ All 12 tasks ([agent_t1.tsv](agent_t1.tsv)):
 | `t1swift` (Swift's own Q2_0 file) | 12/12 | 20.40 | 69.4 | 6.89, 15.89 | 0.718 | 2.47 (+0.8 %) |
 | `s35ka` (`-keepalive` `f6c1c6a4a`, the same line and setting as `t1base`) | 12/12 | 20.75 | 77.4 | 6.41, 16.86 | 0.708 | 2.36 (−3.7 %) |
 
-`stockq2` reached 9 tasks before its budget ran out. On those 9 tasks ([agent_t1_9.tsv](agent_t1_9.tsv)):
+Stock is slower, so its arms ran out of budget first: `stockq2` reached 9 tasks, `stockq2t` 10 and `stockpmix` 11 (each
+arm on its own tasks is in [agent_t1.tsv](agent_t1.tsv)). On the 9 tasks every arm reached
+([agent_t1_9.tsv](agent_t1_9.tsv)):
 
 | Arm | Passed | Gen tok/s | Prompt tok/s | TTFT median, p90 s | Acceptance | Equal work, min a task |
 |---|---|---|---|---|---|---|
@@ -75,10 +80,12 @@ All 12 tasks ([agent_t1.tsv](agent_t1.tsv)):
 | `t1neg` | 9/9 | 18.82 | 69.8 | 6.89, 15.73 | 0.817 | 1.97 (+5.3 %) |
 | `t1swift` | 9/9 | 20.25 | 68.2 | 6.63, 15.89 | 0.718 | 1.90 (+1.6 %) |
 | `stockq2` | 9/9 | 8.20 | 53.7 | 10.22, 24.85 | 0.717 | 3.74 (+100.0 %) |
+| `stockq2t` | 9/9 | 8.26 | 50.3 | 12.11, 21.71 | 0.677 | 3.78 (+102.1 %) |
+| `stockpmix` | 9/9 | 8.73 | 50.7 | 11.39, 21.49 | 0.694 | 3.63 (+94.1 %) |
 
 The report's own summary of the arms (minutes, turns, cache hits, runaways) is [report_table.md](report_table.md).
-Some tasks ran into the 12-minute cap ("runaway"): `t1skip` one, which it failed (`bugfix-python-scale-generator`), and
-`t1neg` one, which it passed. In `t1neg` the draft length varies per step, so 1 + 3 × acceptance does not give its
+Some tasks ran into the 12-minute cap ("runaway"): `t1skip` one, which it failed (`bugfix-python-scale-generator`),
+`t1neg` one, which it passed, and `stockpmix` one, its eleventh task, which it failed (`bugfix-python-pig-latin`). In `t1neg` the draft length varies per step, so 1 + 3 × acceptance does not give its
 tokens a step.
 
 **Classes, against `t1base`:**
@@ -94,23 +101,38 @@ tokens a step.
   generation is 20.40 against 20.75 tok/s, its prompt reading 69.4 against 69.0. Miner Llama v3 gets its speed from
   the engine on either file.
 
-## Stock llama.cpp against Miner Llama v3
+## Stock llama.cpp against Miner Llama v3: both engines on both files
 
-| Engine and file | Arm | Gen tok/s | TTFT median s | Equal work, min a task (the 9 tasks) | Passed |
-|---|---|---|---|---|---|
-| stock llama.cpp `20a51f24a` + Swift's Q2_0 | `stockq2` | 8.20 | 10.22 | 3.74 | 9/9 (3 not reached) |
-| Miner Llama v3 + Swift's Q2_0 | `t1swift` | 20.40 | 6.89 | 1.90 | 12/12 |
-| Miner Llama v3 + pmix-q2-fast | `t1base` | 20.75 | 7.60 | 1.87 | 12/12 |
+Each engine runs on each file: Swift's own Q2_0 and pmix-q2-fast. Passed, generation, prompt reading and first token
+are over each arm's own tasks; the equal-work column is over the 9 tasks every arm reached.
 
-On the 9 tasks stock reached, the engine alone halves a task's time: Miner Llama v3 on Swift's own file does a task's
-work in 1.90 minutes against stock's 3.74 on the same file, and generates at 20.40 against 8.20 tok/s. The file adds
-little on top: pmix-q2-fast takes 1.87 minutes on the same build and preset.
+| Engine and file | Arm | Line | Passed | Gen tok/s | Prompt tok/s | TTFT median s | Equal work, min a task (the 9 tasks) |
+|---|---|---|---|---|---|---|---|
+| stock `20a51f24a` + Swift's Q2_0 | `stockq2` | S35's line with the MTP draft, `-ub 512` | 9/9 (3 not reached) | 8.20 | 53.7 | 10.22 | 3.74 |
+| stock `20a51f24a` + Swift's Q2_0 | `stockq2t` | the same at `-ub 256` | 10/10 (2 not reached) | 8.02 | 51.1 | 12.13 | 3.78 |
+| stock `20a51f24a` + pmix-q2-fast | `stockpmix` | the same at `-ub 256` | 10/11 (1 not reached) | 8.47 | 48.3 | 10.99 | 3.63 |
+| Miner Llama v3 + Swift's Q2_0 | `t1swift` | the preset | 12/12 | 20.40 | 69.4 | 6.89 | 1.90 |
+| Miner Llama v3 + pmix-q2-fast | `t1base` | the preset | 12/12 | 20.75 | 69.0 | 7.60 | 1.87 |
+
+- **The engine halves a task's time.** On Swift's own file, Miner Llama v3 does a task's work in 1.90 minutes against
+  stock's 3.74 (`stockq2`, stock's faster arm on that file) and generates at 20.40 against 8.20 tok/s. On pmix-q2-fast
+  it is 1.87 against 3.63 minutes, 20.75 against 8.47 tok/s.
+- **The file on Miner Llama v3: negligible.** pmix-q2-fast takes 1.87 against 1.90 minutes on the 9 tasks (−1.6 %) and
+  2.45 against 2.47 on all 12 (−0.8 %). Two runs of the preset's line differ by 1.6 % on these 9 tasks and 3.7 % on all
+  12 (`s35ka` against `t1base`).
+- **The file on stock: a small gain.** On the same line (`-ub 256`), pmix-q2-fast takes 3.63 against 3.78 minutes
+  (−4.0 %) and generates at 8.73 against 8.26 tok/s on the 9 tasks; against `stockq2` at `-ub 512` it is −2.9 %. Stock
+  has one run per arm, so its own spread is not measured; −4.0 % is beyond the preset's 1.6 % on these tasks and
+  within its 3.7 % on all 12.
+- **The release table** takes stock's faster arm at equal work on each file: `stockq2` on Swift's file and `stockpmix`
+  on pmix-q2-fast.
 
 **Stock's line:** stock `20a51f24a` ran the same server line as Miner Llama, without the fork's environment switches.
 That line is the one tuned for Miner Llama, and stock has every option in it: `-lm dio`, the n-gram table read on
 demand (`-lzm auto`), `-otd`, `--spec-type draft-mtp`, `--spec-draft-n-max`, `--spec-draft-n-ubatch`, `--no-host` and
 `-fit`. Swift's Q2_0 file has no MTP layer of its own (no `nextn` tensors in its shards), so the separate MTP draft
-file is stock's only way to draft, and stock runs it: acceptance 0.717, the same as Miner Llama's.
+file is stock's only way to draft, and stock runs it: acceptance 0.717 in `stockq2`, the same as Miner Llama's (0.677 in
+`stockq2t`, 0.694 in `stockpmix`).
 
 ### Stock's tuning pass
 
@@ -125,10 +147,15 @@ One llama-bench load of stock `20a51f24a` on Swift's own Q2_0 file, flash attent
 | 512 | 12.54 (12.51, 12.55, 12.55) | 138.93 (139.51, 140.03, 137.26) | 7.16 (7.40, 7.40, 6.67) |
 
 - **`-ub 256` reads a 2,048-token prompt 10.4 % faster than `stockq2`'s `-ub 512`**: 153.44 against 138.93 tok/s,
-  with every repetition apart. Stock's tuned line is `stockq2`'s with `-ub 256`.
+  with every repetition apart. On llama-bench, stock's fastest line is `stockq2`'s with `-ub 256`; `stockq2t` and
+  `stockpmix` ran it.
 - **The 4-token pass** (one token and three drafted, the draft's verification) is the same at every `-ub`.
 - **tg128** decodes one token a pass, so `-ub` does not enter it. At `-ub 512`, the load's last test, two of its three
   repetitions ran at 7.40 tok/s. The agent arms measure generation over whole sessions.
+- **On the agent check the tuned line is not faster.** `stockq2t` (`-ub 256`) takes 3.78 against `stockq2`'s 3.74 minutes
+  a task on the 9 tasks (+1.1 %), with prompts read at 50.3 against 53.7 tok/s and generation at 8.26 against 8.20. An
+  agent's prompts are mostly cache hits: the median turn processes 789 to 1,608 new tokens in the first two turns and
+  under 500 after them (the report's turn table), not 2,048. Stock's row on Swift's file stays `stockq2`.
 
 ## llama-bench on S35's no-draft line: a diagnostic
 
@@ -151,7 +178,7 @@ alternated runs of both builds decide whether its 4- and 5-token passes are slow
 | File | What |
 |---|---|
 | [agent_t1.tsv](agent_t1.tsv) | the agent check per arm, all 12 tasks, against `t1base` |
-| [agent_t1_9.tsv](agent_t1_9.tsv) | the same over the 9 tasks `stockq2` reached |
+| [agent_t1_9.tsv](agent_t1_9.tsv) | the same over the 9 tasks every arm reached (stock's arms ran out of budget first) |
 | [report_table.md](report_table.md) | the agent check's own report table (minutes, turns, cache hits, runaways) |
 | [ident.tsv](ident.tsv) | the identity replies' md5 and speed per build (the second `1f7215948` load is the reference of the `1551f5fe1` check) |
 | [tune.tsv](tune.tsv) | stock's tuning pass: tok/s per `-ub` and test, mean, standard deviation and each repetition |
@@ -170,6 +197,12 @@ ENVFILE=<machine file> MODEL=<pmix-q2-fast shard 1> BUILD=<-ladder5> IDENT_REF=<
 # stock on Swift's own Q2_0 file
 ENVFILE=<machine file> MODEL=<Swift Q2_0 shard 1> BUILD=<stock 20a51f24a> OUT=<out> STEPS=stock STOCK_ARMS=stockq2 \
   bash docs/data/2026-11-05_release_flashnext/run/rig_t1.sh
+# stock at -ub 256 (the tuning pass's line) on Swift's own Q2_0 file and on pmix-q2-fast
+L256="-b 2048 -ub 256 -ts 6,6,6,6,5,6,5,6,3 -fit off -lm dio -md <draft> --spec-type draft-mtp --spec-draft-n-max 3 -otd token_embd=CUDA4 --spec-draft-n-ubatch 128 --no-host"
+ENVFILE=<machine file> MODEL=<Swift Q2_0 shard 1> BUILD=<stock 20a51f24a> OUT=<out> STEPS=stock STOCK_ARMS=stockq2t STOCK_ARGS="$L256" \
+  bash docs/data/2026-11-05_release_flashnext/run/rig_t1.sh
+ENVFILE=<machine file> MODEL=<pmix-q2-fast shard 1> BUILD=<stock 20a51f24a> OUT=<out> STEPS=stock STOCK_ARMS=stockpmix STOCK_ARGS="$L256" \
+  bash docs/data/2026-11-05_release_flashnext/run/rig_t1.sh
 # the release preset on Swift's own Q2_0 file; stock's tuning pass
 ENVFILE=<machine file> MODEL=<Swift Q2_0 shard 1> BUILD=<-ladder5> OUT=<out> STEPS=swift bash docs/data/2026-11-05_release_flashnext/run/rig_t1.sh
 ENVFILE=<machine file> MODEL=<Swift Q2_0 shard 1> BUILD=<stock 20a51f24a> OUT=<out> STEPS=tune bash docs/data/2026-11-05_release_flashnext/run/rig_t1.sh
@@ -180,9 +213,9 @@ for l in open(sys.argv[1]):
     r = json.loads(l); t = "pp%d" % r["n_prompt"] if r["n_prompt"] else "tg%d" % r["n_gen"]
     print(r["build_commit"], r["n_ubatch"], t, "%.2f" % r["avg_ts"], "%.2f" % r["stddev_ts"], ",".join("%.2f" % x for x in r["samples_ts"]), sep="\t")' <out>/tune.jsonl > tune.tsv
 # the tables, from the agent check's collected folder (any machine with Python 3)
-OUT_TAG=_t1 python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> t1base t1skip t1neg stockq2 s35ka t1swift
+OUT_TAG=_t1 python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> t1base t1skip t1neg stockq2 s35ka t1swift stockq2t stockpmix
 SKIP_TASKS=bugfix-javascript-complex-numbers,bugfix-python-pig-latin,bugfix-javascript-variable-length-quantity OUT_TAG=_t1_9 \
-  python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> t1base t1skip t1neg stockq2 s35ka t1swift
+  python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> t1base t1skip t1neg stockq2 s35ka t1swift stockq2t stockpmix
 ```
 
 Provenance: measured on one Manli 9 × P106-090 rig (4 GB host), with the agent check's client on another machine. The
