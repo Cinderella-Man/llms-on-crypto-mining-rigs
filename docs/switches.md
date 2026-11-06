@@ -34,14 +34,14 @@ presets set:
 | `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM` | `32768` | — | — |
 | `GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE` | `0` | — | — |
 | `LLAMA_HOP_CAST` | `q8_0` | — (no effect: Flint's graph does not call it, Q1125) | — (no effect: Ornith's graph does not call it, Q1125) |
-| `GGML_CUDA_HOP_STAGED` | `1` | — (TODO(flintside)) | — |
+| `GGML_CUDA_HOP_STAGED` | `1` | — (not run in v3.0) | — |
 | `LLAMA_DRAFT_SHORTLIST` | `32768,8192,2` | — | — |
-| `GGML_CUDA_KEEPALIVE` | `decode` | — (TODO(flintside)) | `decode` (16.3 against 14.9 tok/s, [`valid1-ka`](data/2026-11-05_release_regression/README.md#the-agent-check)) |
+| `GGML_CUDA_KEEPALIVE` | `decode` | — (not run in v3.0) | `decode` (16.3 against 14.9 tok/s, [`valid1-ka`](data/2026-11-05_release_regression/README.md#the-agent-check)) |
 | `LLAMA_SERVER_TEXT_REUSE`, `LLAMA_SERVER_TAIL_CKPT_MIN` | — | — (negligible: 2.59 against 2.60 minutes a task at equal work, the first token 2.25 against 2.64 s, median; [`reread`](data/2026-11-06_flint_side_rig2/README.md)) | — |
 | `LLAMA_MOE_TAIL` | — (negligible at p = 0.9: −2.9 % a task, inside the spread of two runs, one task failed; [`t1skip`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) |
-| The negligible group (switches whose gain is within the spread of repeated loads, tested together) | — (a loss together: 19.05 against 20.75 tok/s on my Pascal mix of the file, +5.3 % a task; [`t1neg`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (TODO(flintside)) | — |
+| The negligible group (switches whose gain is within the spread of repeated loads, tested together) | — (a loss together: 19.05 against 20.75 tok/s on my Pascal mix of the file, +5.3 % a task; [`t1neg`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (not run in v3.0) | — |
 | `--pipe-depth` | — | `4` | — |
-| `--pipe-store` | — | — (TODO(flintside)) | — |
+| `--pipe-store` | — | — (not run in v3.0) | — |
 | `-md`, `--spec-type draft-mtp` (upstream's) | the Gyro MTP draft | — | — (TODO(ornithmtp)) |
 
 Flash-Next's column is its preset, measured on the release build at 20.40 tok/s, 12 of 12

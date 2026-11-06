@@ -26,8 +26,9 @@ RAM). Generation in tokens per second over every request:
 
 - **Flash-Next:** the preset on this build generates 20.40 tok/s, 12 of 12, with prompts at 69.4 tok/s and the first
   token of a turn at 6.89 s (median). Stock ran the same server line with the MTP draft and without the fork's switches.
-  My Pascal type mix of the file (`pmix-q2-fast`, not published) ran the preset at 20.75 tok/s, 2.45 against 2.47
-  minutes a task at equal work: within the spread of two runs, so the preset uses UkisAI's file as published.
+  My Pascal type mix of the file, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (`pmix-q2-fast`, not published), ran the
+  preset at 20.75 tok/s, 2.45 against 2.47 minutes a task at equal work: within the spread of two runs, so the preset
+  uses UkisAI's file as published.
   [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md).
   The keep-alive alone: 20.75 against 19.19 tok/s for the same line without it, −8.4 % time a task at equal work
   ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_keepalive/README.md)).
@@ -108,7 +109,7 @@ On Flint's agent check, with the tail checkpoint rule and the keep-alive, 44.7 t
 each. On its own, with the tail checkpoint rule, it is negligible: 2.59 against 2.60 minutes a task at equal work, the
 first token at 2.25 against 2.64 s (median), one run each on one rig
 ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-06_flint_side_rig2/README.md));
-the keep-alive, the staged hop, the answer store and the negligible group on their own: TODO(flintside).
+the keep-alive, the staged hop, the answer store and the negligible group on their own were not run in v3.0.
 
 **Also in the build, off by default:** the expert skip (`LLAMA_MOE_TAIL`: the router's low-weight experts dropped),
 the adaptive draft length (`LLAMA_SPEC_ADAPT`), the staircase drafter's cheaper guess, checkpoints spread through long

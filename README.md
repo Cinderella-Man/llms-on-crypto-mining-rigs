@@ -26,7 +26,7 @@ and real test runs ([the agent check](bench/agent_check/README.md)):
 | Miner Llama v1, 65,536-token context | 25.7 tok/s | 11 of 12 | 4.0 s |
 | **Miner Llama v2**, 262,144-token context | **45.9 tok/s** (44.6 in a second run) | **12 of 12** | **2.6 s** |
 
-More speed or fewer cards: [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, fits
+More speed or fewer cards: [Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB, fits
 six cards) generates 53.8 tok/s in the same test, a little further from the original model than Q8_0. Every number
 with its command: [results.md](release/flint-v2/results.md).
 
