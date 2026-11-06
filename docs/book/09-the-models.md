@@ -237,7 +237,7 @@ checking several tokens at once.
 | **v1** | 2026-10-23 | CUDA graphs on Pascal, a launch shape for 5-SM cards, Pascal matrix-vector kernels for six formats, a profiler that works on mining cards | Flint chat 28.0 against 14.2 tok/s on stock; agent check 25.7 against 14.4 |
 | **v2.0** | 2026-10-26 | 32-bit sums, a persistent kernel per expert layer, the fused shared expert, faster prompt reading, GPU sampling for tool requests, pipelined speculation; my Flint-Pascal-Q5 file | Flint Q8_0 at 262,144 tokens: 44.6–45.9 tok/s, 12 of 12 |
 | **v2.1** | not released | was to add the answer store and a trained drafter | the drafter was stopped; the store measured +1.4 % |
-| **v3** | TODO(tag) | Flash-Next first; also Flint's near-Q8_0 file and re-read fix, Ornith's own file and kernels; every feature behind a switch, a preset per model ([chapter 10](10-v3.md)) | Flash-Next 20.40 tok/s for a coding agent; Flint 45.9 and Ornith 14.9 on the same build |
+| **v3** | TODO(tag) | Flash-Next first; also Flint's near-Q8_0 file and re-read fix, Ornith's own file and kernels; every feature behind a switch, a preset per model ([chapter 10](10-v3.md)) | Flash-Next 20.40 tok/s for a coding agent; Flint 45.9 and Ornith 16.3 on the same build |
 
 Every release keeps the answers the same: the kernels change only the order of additions, and the speculation keeps
 exactly the tokens plain decoding would produce. Each one ships with the command line and the measurements behind its

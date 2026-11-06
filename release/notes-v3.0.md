@@ -47,9 +47,9 @@ RAM). Generation in tokens per second over every request:
   the earlier run and v2.0's 9.7 (stock 6.2, both UD-Q2_K_XL):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md).
 
-Flint's Q8_0 and Ornith's runs used `1f7215948`; this release is `1551f5fe1`, the same code plus one row-guard fix (below)
-that cannot change these models' tokens. On the rigs both commits give the same greedy tokens for Flint (8 of 8
-requests) and Flash-Next (both prompts); Ornith's: TODO(identity).
+Flint's Q8_0 runs and Ornith's runs on its N2P file used `1f7215948`; this release is `1551f5fe1`, the same code plus
+one row-guard fix (below) that cannot change these models' tokens. On the rigs both commits give the same greedy tokens
+for Flint (8 of 8 requests) and Flash-Next (both prompts); Ornith's: TODO(identity).
 
 Speed-up against stock llama.cpp b12076, the upstream release this engine is built on (`20a51f24a`, no fork commit),
 each engine on the same file:
