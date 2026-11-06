@@ -42,7 +42,7 @@ presets set:
 | The negligible group (switches whose gain is within the spread of repeated loads, tested together) | — (a loss together: 19.05 against 20.75 tok/s on my Pascal mix of the file, +5.3 % a task; [`t1neg`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (not run in v3.0) | — |
 | `--pipe-depth` | — | `4` | — |
 | `--pipe-store` | — | — (not run in v3.0) | — |
-| `-md`, `--spec-type draft-mtp` (upstream's) | the Gyro MTP draft | — | — (TODO(ornithmtp)) |
+| `-md`, `--spec-type draft-mtp` (upstream's) | the Gyro MTP draft | — | — (its own MTP layer as the draft is a loss: 3.42 against 2.52 minutes a task, [2026-11-06_ornith_mtp_rig2](data/2026-11-06_ornith_mtp_rig2/README.md)) |
 
 Flash-Next's column is its preset, measured on the release build at 20.40 tok/s, 12 of 12
 ([2026-11-05_release_flashnext](data/2026-11-05_release_flashnext/README.md)).

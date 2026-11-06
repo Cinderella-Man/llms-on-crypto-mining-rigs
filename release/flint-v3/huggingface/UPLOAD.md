@@ -31,8 +31,7 @@ copy:
    ```
 
 4. **Check the file:** `sha256sum -c CHECKSUMS` in its folder.
-5. **The release page** ([../README.md](../README.md)): add the file to Flint's Q8 lane (`TODO(flintq5)` in
-   [FILL-IN.md](../../FILL-IN.md)).
+5. **The release page** ([../README.md](../README.md)): the file is in Flint's Q8 lane.
 
 ## Commands (once the above is done)
 

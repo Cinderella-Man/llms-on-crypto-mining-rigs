@@ -44,7 +44,7 @@ a median task of 1.0 against 1.2 minutes; its sessions wrote more text, so all t
 minutes. Its KL divergence against the 16-bit model is within two standard errors of Q8_0's, 0.0656 ± 0.0029 against
 0.0627 ± 0.0032, in 40.4 GB against 42.3 ([2026-10-27_flint_near_q8](../../docs/data/2026-10-27_flint_near_q8/README.md)).
 
-Stock llama.cpp on Flint Pascal Q8 GGUF: TODO(flintq5).
+Stock llama.cpp on Flint Pascal Q8 GGUF and on Flint Pascal Q5 GGUF: measured after the release.
 
 Flint's 5-bit lane, layers by count on nine cards: Unsloth's UD-Q5_K_XL and my Flint Pascal Q5 GGUF (29.4 GB), each
 on stock and on v3, in the same test:
@@ -52,7 +52,7 @@ on stock and on v3, in the same test:
 | Engine and line | File | Context | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|---|---|
 | Stock llama.cpp b12076 (`20a51f24a`), tuned: `-b 2048 -ub 512 -fa on` | UD-Q5_K_XL | 65,536 | 11 of 12 | 13.7 | 141 | 4.25, 8.36 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
-| Stock llama.cpp b12076, tuned | Flint Pascal Q5 GGUF | 65,536 | TODO(flintq5) | | | | |
+| Stock llama.cpp b12076, tuned | Flint Pascal Q5 GGUF | 65,536 | measured after the release | | | | |
 | Miner Llama v2.0, `-b 512 -ub 128 --pipe-depth 4` | UD-Q5_K_XL | 262,144 | 12 of 12 | 44.2 | 185 | 2.6 | [results.md](../flint-v2/results.md) |
 | Miner Llama v2.0, the same line | Flint Pascal Q5 GGUF | 262,144 | 12 of 12 | 53.8 | 178 | 2.6 | [results.md](../flint-v2/results.md) |
 | v3 (`1551f5fe1`), v2's line: `-b 512 -ub 128 --pipe-depth 4` | UD-Q5_K_XL | 262,144 | 12 of 12 | 46.4 | 182 | 2.68, 8.32 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |

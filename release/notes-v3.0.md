@@ -21,9 +21,9 @@ RAM). Generation in tokens per second over every request:
 |---|---|---|---|
 | **Qwen3.8-Flash-Next**, UkisAI's Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | 8.20, 9 of 9 (3 not reached) | 7.8, 9 of 9 (no draft) | **20.40, 12 of 12** |
 | **Flint**, Unsloth Q8_0, 262,144-token context | 14.4, 10 of 12 (65,536-token context) | 45.9 and 44.6 (two runs), 12 of 12 | **45.9, 12 of 12** |
-| **Flint**, Flint Pascal Q8 GGUF (`p065`, 40.4 GB), 262,144-token context | TODO(flintq5) | 47.1, 12 of 12 | **47.4, 12 of 12** |
+| **Flint**, Flint Pascal Q8 GGUF (`p065`, 40.4 GB), 262,144-token context | measured after the release | 47.1, 12 of 12 | **47.4, 12 of 12** |
 | **Flint**, Unsloth UD-Q5_K_XL, 262,144-token context | 13.7, 11 of 12 (65,536-token context) | 44.2, 12 of 12 | **46.4, 12 of 12** |
-| **Flint**, Flint Pascal Q5 GGUF (29.4 GB), 262,144-token context | TODO(flintq5) | 53.8, 12 of 12 | **49.4, 12 of 12** |
+| **Flint**, Flint Pascal Q5 GGUF (29.4 GB), 262,144-token context | measured after the release | 53.8, 12 of 12 | **49.4, 12 of 12** |
 | **Ornith-1.5-122B**, Ornith-1.5-122B Pascal N2P GGUF (`valid1`, 48.2 GB), 49,152-token context | 6.0, 11 of 12 (UD-Q2_K_XL: stock cannot load the N2P/N3P types) | 9.7 (UD-Q2_K_XL) | **16.3, 12 of 12** |
 
 - **Flash-Next:** the preset on this build generates 20.40 tok/s, 12 of 12, with prompts at 69.4 tok/s and the first
@@ -56,7 +56,7 @@ RAM). Generation in tokens per second over every request:
 
 Flint's Q8_0 runs and Ornith's runs on its N2P file used `1f7215948`; this release is `1551f5fe1`, the same code plus
 one row-guard fix (below) that cannot change these models' tokens. On the rigs both commits give the same greedy tokens
-for Flint (8 of 8 requests) and Flash-Next (both prompts); Ornith's: TODO(identity).
+for Flint (8 of 8 requests) and Flash-Next (both prompts); Ornith's is measured after the release; on the P106 the release build's KL divergence against Ornith's Q8_0 is within noise of the low-bit build's (d = −0.00068 ± 0.00069), and its preset runs 16.42 tok/s, 12 of 12, on the release build (a second rig).
 
 Speed-up against stock llama.cpp b12076, the upstream release this engine is built on (`20a51f24a`, no fork commit),
 each engine on the same file:

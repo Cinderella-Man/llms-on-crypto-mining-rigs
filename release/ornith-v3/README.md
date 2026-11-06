@@ -19,7 +19,9 @@ on nine P106-090 cards, 49,152 tokens of context:
 | Miner Llama's N2P/N3P build of 2026-10-28, Ornith-1.5-122B Pascal N2P GGUF (`valid1`) | 12 of 12 | 14.5 | — | 9.6 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | v3 (`1f7215948`), the same file, no switch | 12 of 12 | 14.9 | 59 | 9.41, 19.85 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | **v3, + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): the preset** | **12 of 12** | **16.3** | 58 | 8.39, 19.38 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
-| v3, + Ornith's own MTP layer as the draft (`mtp`, `mtpadapt`, `mtpka`) | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) |
+| v3 (`1551f5fe1`), the preset, on a second rig (2026-11-06) | 12 of 12 | 16.42 | 60.1 | 9.34, 19.86 | [2026-11-06_ornith_mtp_rig2](../../docs/data/2026-11-06_ornith_mtp_rig2/README.md) |
+| v3 (`1551f5fe1`), + Ornith's own MTP layer as the draft, two tokens a step, `-ub 256`, the keep-alive (`mtpka`), the second rig | 8 of 9 (3 not started: budget) | 13.01 | 39.4 | 12.61, 38.44 | [2026-11-06_ornith_mtp_rig2](../../docs/data/2026-11-06_ornith_mtp_rig2/README.md) |
+| the same with the draft length chosen per step (`mtpadapt`), the second rig | 11 of 11 (1 not started: budget) | 12.78 | 40.0 | 11.43, 31.43 | [2026-11-06_ornith_mtp_rig2](../../docs/data/2026-11-06_ornith_mtp_rig2/README.md) |
 
 - The keep-alive is a gain, so the preset sets it: 16.3 against 14.9 tok/s generation (+9.4 %), the median first token
   8.39 against 9.41 s.
@@ -86,8 +88,9 @@ PRESET_ARGS="-ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0
 | `-bs` | sampling on the GPU, also for tool requests |
 
 One switch is set, the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): 16.3 against 14.9 tok/s. The N2P/N3P kernels and
-the other Pascal kernels are on by default. TODO(ornithmtp): Ornith's own MTP layer as the draft, if one of its arms
-beats the preset.
+the other Pascal kernels are on by default. Ornith's own MTP layer as the draft is slower, so the preset leaves it off: at equal work 3.42 (`mtpka`) and 3.44
+(`mtpadapt`) minutes a task against the preset's 2.52 on the same rig; checking two tokens costs 1.76 times one
+(183.9 against 104.6 ms).
 
 ## The recipe: every setting and what it bought
 
@@ -109,7 +112,7 @@ One change at a time:
 | 3 | my file, Ornith-1.5-122B Pascal N2P GGUF, its experts in my Pascal 2- and 3-bit types, on the low-bit build of 2026-10-28 (`d7a75deb3`) | 12 of 12 | 14.5 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/agent/valid1/compare.md) |
 | 4 | the v3 build (`1f7215948`), the same file | 12 of 12 | 14.9 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | 5 | + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): **the preset** | 12 of 12 | **16.3** | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
-| 6 | + Ornith's own MTP layer as the draft | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) |
+| 6 | + Ornith's own MTP layer as the draft (`mtpka`, a second rig): a loss, 3.42 against 2.52 minutes a task at equal work | 8 of 9 | 13.01 | [2026-11-06_ornith_mtp_rig2](../../docs/data/2026-11-06_ornith_mtp_rig2/README.md) |
 
 Steps 0 to 2 ran the same file on three engines. Step 3 changes the file and the build at once; the v3
 build on Unsloth's file splits the two.
@@ -123,7 +126,7 @@ build on Unsloth's file splits the two.
 | `--cache-ram 0`, `--ctx-checkpoints 4` | no prompt cache in host memory; at most four saved context states | the 4 GB host: the agent check left 563 MB free at the lowest | not measured on its own: every run on this page used them | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | `-bs` | samples the next token on the card, also for tool requests | otherwise every token's scores cross the slow link | not measured on its own for Ornith; on Flint, tool requests ran at 37.9 against 33.6 tok/s sampled on the host | [Flint v2 results](../flint-v2/results.md) |
 | `-ngl 99 -fa on -c 49152 -np 1 -b 2048 -ub 512 --jinja --reasoning-format deepseek`, the sampling | every layer on the cards, flash attention, the context, one request at a time, prompt batches of 512, the model's chat template with its reasoning kept apart; the makers' sampling settings | ordinary llama.cpp settings | — | — |
-| `PRESET_ENV="GGML_CUDA_KEEPALIVE=decode"` | a small kernel on every card keeps it at its boost clock while it decodes | between the short kernels of one token the cards fall back to their base clock | 16.3 against 14.9 tok/s; Ornith's own MTP draft: TODO(ornithmtp) | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| `PRESET_ENV="GGML_CUDA_KEEPALIVE=decode"` | a small kernel on every card keeps it at its boost clock while it decodes | between the short kernels of one token the cards fall back to their base clock | 16.3 against 14.9 tok/s; with Ornith's own MTP draft added, a loss (3.42 against 2.52 minutes a task) | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 
 ### On by default
 
