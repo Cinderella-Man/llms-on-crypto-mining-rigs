@@ -4,17 +4,18 @@
 # one load. The pick minimizes the time of a typical agent turn at depth DEPTH, PROMPT new prompt tokens plus GEN
 # generated (600 each: the agent check's Flint arms average ~3,000 of each per task over ~5 turns). Run from the
 # repository root with nothing else on the rig.
-# Env: RIG, MODEL, BIN (stock llama-bench on the rig), TS (the split, shares separated by "/"), DIR (rig folder), OUT
-#   (local folder); optional UBS, DEPTH, PROMPT, GEN, EXTRA (more llama-bench flags, e.g. "-fit off")
+# Env: RIG, MODEL, BIN (stock llama-bench on the rig), DIR (rig folder), OUT (local folder); optional TS (the split,
+#   shares separated by "/"; unset: layers by count), UBS, DEPTH, PROMPT, GEN, EXTRA (more llama-bench flags, e.g.
+#   "-fit off")
 # Output: OUT/tune.jsonl, OUT/tune.err, OUT/tune.md (the grid: pp and tg tokens/s, the modelled turn seconds) and
 #   OUT/pick.env (UB=..., FA=on|off)
 set -uo pipefail
-: "${RIG:?}" "${MODEL:?}" "${BIN:?}" "${TS:?}" "${DIR:?}" "${OUT:?}"
+: "${RIG:?}" "${MODEL:?}" "${BIN:?}" "${DIR:?}" "${OUT:?}"
 UBS=${UBS:-128,256,512}; DEPTH=${DEPTH:-4096}; PROMPT=${PROMPT:-600}; GEN=${GEN:-600}
 mkdir -p "$OUT"
 ssh "$RIG" "mkdir -p $DIR && cat > /dev/shm/ram_watchdog.sh" < scripts/ram_watchdog.sh
 ssh "$RIG" "LOG=/dev/shm/rw_tune.tsv PROC=llama-bench MIN_AVAIL_MB=200 setsid nohup chrt -f 10 bash /dev/shm/ram_watchdog.sh > /dev/null 2>&1 < /dev/null & echo \$! > /dev/shm/rw.pid
-    cd $DIR && timeout 1500 $BIN -m $MODEL -ngl 99 -ts $TS -b 2048 -ub $UBS -fa 0,1 -p 512 -n 64 -d 0,$DEPTH -r 1 ${EXTRA:-} \
+    cd $DIR && timeout 1500 $BIN -m $MODEL -ngl 99 ${TS:+-ts $TS} -b 2048 -ub $UBS -fa 0,1 -p 512 -n 64 -d 0,$DEPTH -r 1 ${EXTRA:-} \
         -o jsonl > tune.jsonl 2> tune.err; echo \"llama-bench rc=\$?\"
     kill \$(cat /dev/shm/rw.pid); mv /dev/shm/rw_tune.tsv $DIR/; rm -f /dev/shm/rw.pid /dev/shm/ram_watchdog.sh
     python3 -I -c 'import json, sys

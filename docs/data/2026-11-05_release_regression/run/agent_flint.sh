@@ -21,11 +21,13 @@
 # Env: the harness's machine values (RIG, CLIENT, RIG_PORT, RELAY_PORT, CLIENT_PORT, PROXY_PORT, CLIENT_DIR, MODEL,
 #   RIG_LOGDIR, as in bench/agent_check/release.env.example), BIN (and V2_BIN for v2ref) on the rig, CLIENT_ROOT (the
 #   results folder on the client), OUT (local), STORE (the store file on the rig, for store); optional ARMS_LIST
-#   ("v3base v3add"), BUDGET_MIN_rel (40), STEPS_FIRST (the first arm's steps, default "prep run report collect")
+#   ("v3base v3add"), BUDGET_MIN_rel (40), STEPS_FIRST (the first arm's steps, default "prep run report collect"),
+#   REL_LINE (replaces the release line for every arm but stock, e.g. "-b 512 -ub 128 --pipe-depth 4" for the Q5 files,
+#   which v2 ran with layers by count)
 set -uo pipefail
 : "${BIN:?}" "${CLIENT_ROOT:?}" "${OUT:?}"
 LIST=${ARMS_LIST:-v3base v3add}
-REL="-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4"
+REL=${REL_LINE:-"-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4"}
 export TIME_CAP_MIN=${TIME_CAP_MIN:-12} BUDGET_MIN_rel=${BUDGET_MIN_rel:-40}
 mkdir -p "$OUT"
 steps="prep run report collect"
