@@ -26,8 +26,10 @@ on nine P106-090 cards; Flint's 8-bit lane: Unsloth's Q8_0, and my Flint Pascal 
   12-minute cap.
 - The second v3 row sets `LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 GGML_CUDA_KEEPALIVE=decode`. One run
   each, 1.2 tok/s apart, about the spread between v2.0's own two runs (45.9 and 44.6), so the preset stays v2's line. Each of v3's
-  additions on its own against the preset (the keep-alive, the re-read fix, the staged hop, the answer store, the
-  negligible group): TODO(flintside).
+  additions on its own against the preset, on one rig: the re-read fix (with the tail checkpoint rule) is negligible,
+  2.59 against 2.60 minutes a task at equal work, with the first token at 2.25 against 2.64 s (median), one run each
+  ([2026-11-06_flint_side_rig2](../../docs/data/2026-11-06_flint_side_rig2/README.md)); the keep-alive, the staged
+  hop, the answer store and the negligible group: TODO(flintside).
 - The expert skip is not in Flint's preset: at p = 0.9 its KL divergence on Unsloth's Q8_0 is above noise on both texts (agent +0.08832 ± 0.02050, wiki +0.12198 ± 0.00569; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Flint's graph does not call it, so the switch changes nothing there.
 
 Quality: on wikitext-2 the release build's KL divergence against v2.0 is −0.000000 ± 0.000000 (0.000056 at most), with
@@ -108,7 +110,8 @@ One change at a time:
   engine at once; what each part of it is worth is under "On by default" below.
 - Steps 1 to 4 ran on the v2.0 release engine on 2026-10-26, so they compare cleanly. Step 6 is 1.2 tok/s below step
   5, one run each, about the spread of v2.0's own two runs at depth 4. That is negligible, so step 6 is not in the
-  preset; each of its parts on its own against step 5: TODO(flintside).
+  preset; each of its parts on its own against step 5's line: the re-read fix is negligible (2.59 against 2.60 minutes
+  a task at equal work, rig 2), the others TODO(flintside).
 
 ### Every setting
 
@@ -120,7 +123,7 @@ One change at a time:
 | `-bs` | samples the next token on the card, also for tool requests, with each token checked against the tool grammar on the host | otherwise 600 KB of scores per token cross the slow link | tool requests at 37.9 against 33.6 tok/s sampled on the host (Flint-Pascal-Q5, temperature 0, 2,011 tokens) | [results.md](../flint-v2/results.md) |
 | `--cache-ram 0`, `--ctx-checkpoints 4` | no prompt cache in host memory; at most four saved context states | the 4 GB host | not measured on its own: every run on this page used them | — |
 | `-ngl 99 -fa on -c 262144 -np 1 --alias flint`, the sampling | every layer on the cards, flash attention, the full context, one request at a time, the name clients see; the makers' sampling settings | ordinary llama.cpp settings | — | — |
-| `PRESET_ENV=""` | no switch: v3's additions stay at their defaults | — | the keep-alive, the re-read fix, the staged hop, the answer store and the negligible group, each on its own: TODO(flintside) | — |
+| `PRESET_ENV=""` | no switch: v3's additions stay at their defaults | — | the re-read fix on its own: negligible, 2.59 against 2.60 minutes a task at equal work ([data](../../docs/data/2026-11-06_flint_side_rig2/README.md)); the keep-alive, the staged hop, the answer store and the negligible group, each on its own: TODO(flintside) | — |
 
 ### On by default
 

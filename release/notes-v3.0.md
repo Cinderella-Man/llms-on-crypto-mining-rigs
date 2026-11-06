@@ -105,7 +105,10 @@ prompts +12.5 %, at 5–11 % more energy a token
 sends a reply back as text that tokenizes differently, instead of reading the conversation again from there
 ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-28_reply_rereads/README.md)).
 On Flint's agent check, with the tail checkpoint rule and the keep-alive, 44.7 tok/s against 45.9 without them, one run
-each; their side-by-side, one switch at a time: TODO(flintside).
+each. On its own, with the tail checkpoint rule, it is negligible: 2.59 against 2.60 minutes a task at equal work, the
+first token at 2.25 against 2.64 s (median), one run each on one rig
+([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-06_flint_side_rig2/README.md));
+the keep-alive, the staged hop, the answer store and the negligible group on their own: TODO(flintside).
 
 **Also in the build, off by default:** the expert skip (`LLAMA_MOE_TAIL`: the router's low-weight experts dropped),
 the adaptive draft length (`LLAMA_SPEC_ADAPT`), the staircase drafter's cheaper guess, checkpoints spread through long
