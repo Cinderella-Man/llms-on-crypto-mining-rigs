@@ -38,7 +38,11 @@ closer to the model: TODO(t3e).
 
 | File | Size | Where from | Checksum |
 |---|---:|---|---|
-| `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` | 48.2 GB | TODO(upload): this project's Hugging Face repository | TODO(upload) |
+| `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` | 48.2 GB | [CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF](https://huggingface.co/CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF) | `0bfa0cf2…` in its [CHECKSUMS](huggingface/Ornith-1.5-122B-Pascal-N2P-GGUF/CHECKSUMS) |
+
+```bash
+wget -c -P /mnt/models https://huggingface.co/CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF/resolve/main/Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf
+```
 
 Ornith-1.5-122B Pascal N2P GGUF (`valid1`) holds the routed experts in N2P and N3P, my Pascal 2- and 3-bit types, with more bits in the late layers, where
 Ornith is most sensitive, and a Q5_0 output layer. It is closer to the makers' Q8_0 than Unsloth's UD-Q2_K_XL and

@@ -50,10 +50,12 @@ GGUF, each on stock and on v3): TODO(flintq5).
 | File | Size | Where from | Checksum |
 |---|---:|---|---|
 | `flint-Q8_0.gguf` | 42.3 GB | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) | the SHA-256 Hugging Face lists for the file |
-| `flint-pascal-Q8.gguf` (Flint Pascal Q8 GGUF) | 40.4 GB | TODO(upload): [CinderellaMan/Flint-Pascal-Q8-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) | `15c50169…` in its [CHECKSUMS](huggingface/Flint-Pascal-Q8-GGUF/CHECKSUMS) |
+| `flint-pascal-Q8.gguf` (Flint Pascal Q8 GGUF) | 40.4 GB | [CinderellaMan/Flint-Pascal-Q8-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) | `15c50169…` in its [CHECKSUMS](huggingface/Flint-Pascal-Q8-GGUF/CHECKSUMS) |
 
 ```bash
 wget -c -P /mnt/models https://huggingface.co/unsloth/flint-GGUF/resolve/main/flint-Q8_0.gguf
+# or my file, Flint Pascal Q8 GGUF:
+wget -c -P /mnt/models https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF/resolve/main/flint-pascal-Q8.gguf
 ```
 
 Flint Pascal Q8 GGUF runs on the same line: after sourcing the preset below, set `PRESET_MODEL=flint-pascal-Q8.gguf`.
