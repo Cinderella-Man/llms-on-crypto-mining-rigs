@@ -2,11 +2,12 @@
 
 What this is: release test T1 of Miner Llama v3. Flash-Next (Swift-1.5 GSQ-RCO Q2_0) runs on nine P106-090 cards on
 the frozen release build `pascal-p106-v3-b12076-ladder5`, which has every v3 feature behind its switch. The test has
-three parts: a greedy identity check against the previous cumulative build, a llama-bench diagnostic, and the agent
-check ([bench/agent_check](../../../bench/agent_check/README.md), 12 bugfix tasks an arm) of three switch groups. The
-preset also runs on Swift's own Q2_0 file (`t1swift`), so the engine's gain and the file's gain show apart. Stock
-llama.cpp at the release build's upstream base runs a tuning pass and the agent check, on Swift's own Q2_0 file. The
-preset this chose is [release/flash-next-v3/settings.env](../../../release/flash-next-v3/settings.env).
+three parts: a greedy identity check against the previous cumulative build, a llama-bench diagnostic with four
+alternated loads, and the agent check ([bench/agent_check](../../../bench/agent_check/README.md), 12 bugfix tasks an
+arm) of three switch groups. The preset also runs on Swift's own Q2_0 file (`t1swift`), so the engine's gain and the
+file's gain show apart. Stock llama.cpp at the release build's upstream base runs a tuning pass on Swift's own Q2_0
+file and the agent check on both files. The preset this chose is
+[release/flash-next-v3/settings.env](../../../release/flash-next-v3/settings.env).
 
 Every speed below is one measured run, with its file, build and settings named.
 
@@ -169,9 +170,26 @@ the mean ms a token:
 | `-keepalive` `f6c1c6a4a`, run 1 | 63.9 | 80.7 | 94.7 | 100.1 | 117.0 | 51.1 |
 | `-keepalive` `f6c1c6a4a`, run 2 | 61.8 | 77.7 | 89.4 | 100.0 | 117.1 | 51.1 |
 
-The `-keepalive` runs are from [2026-11-05_keepalive](../2026-11-05_keepalive/README.md). `-ladder5` had one run, so
-alternated runs of both builds decide whether its 4- and 5-token passes are slower. On the agent check, `t1base` on
-`-ladder5` and `s35ka` on `-keepalive` both generate at 20.75 tok/s.
+The `-keepalive` runs are from [2026-11-05_keepalive](../2026-11-05_keepalive/README.md).
+
+### Alternated loads (2026-11-06)
+
+The same llama-bench line, four loads on one rig, the two builds taking turns ([tk_alt.tsv](tk_alt.tsv)):
+
+| Load | Build | k = 1 | 2 | 3 | 4 | 5 | tg128 |
+|---|---|---|---|---|---|---|---|
+| 1 | `-keepalive` `f6c1c6a4a` | 65.5 | 81.9 | 95.2 | 105.5 | 123.9 | 52.3 |
+| 2 | `-ladder5` `1551f5fe1` | 61.7 | 77.9 | 89.3 | 106.3 | 122.9 | 52.3 |
+| 3 | `-keepalive` `f6c1c6a4a` | 64.5 | 83.2 | 94.2 | 100.2 | 117.3 | 51.2 |
+| 4 | `-ladder5` `1551f5fe1` | 60.9 | 78.4 | 89.3 | 101.6 | 117.2 | 51.1 |
+
+- **tg128 and the 4- and 5-token passes are the same on both builds.** They move from one pair of loads to the next,
+  not between builds: tg128 52.3 and 52.3 in the first pair, 51.2 and 51.1 in the second; T(4) 105.5 and 106.3, then
+  100.2 and 101.6. `-ladder5`'s single run of 2026-11-05 (52.2, 105.2, 123.5) matches the first pair.
+- **The 1-, 2- and 3-token passes are faster on `-ladder5`** in both pairs: T(1) 61.7 and 60.9 against 65.5 and 64.5 ms,
+  T(3) 89.3 and 89.3 against 95.2 and 94.2.
+- The draft's verification pass is T(4) (one token and three drafted), the same on both builds. On the agent check,
+  `t1base` on `-ladder5` and `s35ka` on `-keepalive` both generate at 20.75 tok/s.
 
 ## Files
 
@@ -182,7 +200,9 @@ alternated runs of both builds decide whether its 4- and 5-token passes are slow
 | [report_table.md](report_table.md) | the agent check's own report table (minutes, turns, cache hits, runaways) |
 | [ident.tsv](ident.tsv) | the identity replies' md5 and speed per build (the second `1f7215948` load is the reference of the `1551f5fe1` check) |
 | [tune.tsv](tune.tsv) | stock's tuning pass: tok/s per `-ub` and test, mean, standard deviation and each repetition |
+| [tk_alt.tsv](tk_alt.tsv) | the four alternated llama-bench loads: the median ms a pass of k = 1 to 5 tokens and tg128's mean ms a token, per load |
 | [run/rig_t1.sh](run/rig_t1.sh) | the run: identity, llama-bench, the agent arms, stock's arms, `t1swift`, stock's tuning pass |
+| [run/tk_table.py](run/tk_table.py) | builds `tk_alt.tsv` (and the single-load rows) from llama-bench's jsonl output |
 
 ## Commands
 
@@ -212,6 +232,12 @@ print("build\tn_ubatch\ttest\tavg_tok_s\tstddev_tok_s\tsamples_tok_s")
 for l in open(sys.argv[1]):
     r = json.loads(l); t = "pp%d" % r["n_prompt"] if r["n_prompt"] else "tg%d" % r["n_gen"]
     print(r["build_commit"], r["n_ubatch"], t, "%.2f" % r["avg_ts"], "%.2f" % r["stddev_ts"], ",".join("%.2f" % x for x in r["samples_ts"]), sep="\t")' <out>/tune.jsonl > tune.tsv
+# the four alternated llama-bench loads (STEPS=tk, one load each, the builds taking turns), then their table
+for b in <-keepalive> <-ladder5> <-keepalive> <-ladder5>; do
+  ENVFILE=<machine file> MODEL=<pmix-q2-fast shard 1> BUILD=$b OUT=<out>/<load> STEPS=tk LOADS=1 bash docs/data/2026-11-05_release_flashnext/run/rig_t1.sh
+done
+python3 -I docs/data/2026-11-05_release_flashnext/run/tk_table.py ka-1=<out>/<load 1>/tk-on-1.jsonl l5b-1=<out>/<load 2>/tk-on-1.jsonl \
+  ka-2=<out>/<load 3>/tk-on-1.jsonl l5b-2=<out>/<load 4>/tk-on-1.jsonl > tk_alt.tsv
 # the tables, from the agent check's collected folder (any machine with Python 3)
 OUT_TAG=_t1 python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py <client results folder> t1base t1skip t1neg stockq2 s35ka t1swift stockq2t stockpmix
 SKIP_TASKS=bugfix-javascript-complex-numbers,bugfix-python-pig-latin,bugfix-javascript-variable-length-quantity OUT_TAG=_t1_9 \
