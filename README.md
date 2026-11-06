@@ -14,7 +14,7 @@ software runs models slowly on it. Miner Llama makes such rigs useful: a llama.c
 on nine 6 GB cards and a 4 GB host (6.4 on stock llama.cpp and 7.8 on v2.0's code when it first ran, 2026-11-03);
 [Flint](release/flint-v3/README.md) at 45.9 tok/s, as v2; and [Ornith-1.5-122B](release/ornith-v3/README.md) at
 16.3 tok/s. Against stock llama.cpp b12076, the upstream release v3 is built on, on the same file: Flash-Next 20.40 against
-8.20 tok/s (a task's work in 1.90 against 3.74 minutes), Flint 45.9 against 14.4; Ornith: TODO(stock).
+8.20 tok/s (a task's work in 1.90 against 3.74 minutes), Flint 45.9 against 14.4; Ornith 12.6 against 6.0 on Unsloth's UD-Q2_K_XL (stock cannot load my Ornith file).
 
 [Flint](models/flint/README.md), a 39.8B mixture-of-experts model, runs on the nine cards in near-lossless 8-bit
 (Unsloth's Q8_0, 42.3 GB) with its full 262,144-token context. A coding agent fixing twelve small bugs, with tool calls

@@ -22,7 +22,7 @@ RAM). Generation in tokens per second over every request:
 | **Qwen3.8-Flash-Next**, UkisAI's Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | 8.20, 9 of 9 (3 not reached) | 7.8, 9 of 9 (no draft) | **20.40, 12 of 12** |
 | **Flint**, Unsloth Q8_0, 262,144-token context | 14.4, 10 of 12 (65,536-token context) | 45.9 and 44.6 (two runs), 12 of 12 | **45.9, 12 of 12** |
 | **Flint**, Flint Pascal Q8 GGUF (`p065`, 40.4 GB), 262,144-token context | TODO(flintq5) | 47.1, 12 of 12 | **47.4, 12 of 12** |
-| **Ornith-1.5-122B**, Ornith-1.5-122B Pascal N2P GGUF (`valid1`, 48.2 GB), 49,152-token context | TODO(stock) (UD-Q2_K_XL: stock cannot load the N2P/N3P types) | 9.7 (UD-Q2_K_XL) | **16.3, 12 of 12** |
+| **Ornith-1.5-122B**, Ornith-1.5-122B Pascal N2P GGUF (`valid1`, 48.2 GB), 49,152-token context | 6.0, 11 of 12 (UD-Q2_K_XL: stock cannot load the N2P/N3P types) | 9.7 (UD-Q2_K_XL) | **16.3, 12 of 12** |
 
 - **Flash-Next:** the preset on this build generates 20.40 tok/s, 12 of 12, with prompts at 69.4 tok/s and the first
   token of a turn at 6.89 s (median). Stock ran the same server line with the MTP draft and without the fork's switches.
@@ -55,7 +55,8 @@ each engine on the same file:
 - **Flash-Next:** 20.40 against 8.20 tok/s (2.49×), 12 of 12 against 9 of 9 reached; on the nine tasks stock reached,
   a task's work takes 1.90 against 3.74 minutes.
 - **Flint:** 45.9 against 14.4 tok/s (3.2×), 12 of 12 against 10 of 12, 1.2 against 2.9 minutes a task (median).
-- **Ornith-1.5-122B:** TODO(stock).
+- **Ornith-1.5-122B:** on Unsloth's UD-Q2_K_XL, 12.6 against 6.0 tok/s (2.1×), 12 of 12 against 11 of 12, 1.8 against
+  3.1 minutes a task (median). Stock cannot load Ornith-1.5-122B Pascal N2P GGUF, on which the preset runs at 16.3.
 
 ## What is new since v2
 

@@ -12,8 +12,9 @@ on nine P106-090 cards, 49,152 tokens of context:
 | Engine and file | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|
 | Stock llama.cpp (an older commit), Unsloth UD-Q2_K_XL | — | 6.2 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
-| Stock llama.cpp b12076 (`20a51f24a`), Unsloth UD-Q2_K_XL | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
+| Stock llama.cpp b12076 (`20a51f24a`), tuned (`-b 2048 -ub 256 -fa on`), Unsloth UD-Q2_K_XL | 11 of 12 | 6.0 | 55 | 12.57, 20.55 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v2.0, UD-Q2_K_XL | 12 of 12 | 9.7 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| v3 (`1551f5fe1`), Unsloth UD-Q2_K_XL (`-b 2048 -ub 512`), no switch | 12 of 12 | 12.6 | 69 | 7.90, 17.24 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama's N2P/N3P build of 2026-10-28, Ornith-1.5-122B Pascal N2P GGUF (`valid1`) | 12 of 12 | 14.5 | — | 9.6 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | v3 (`1f7215948`), the same file, no switch | 12 of 12 | 14.9 | 59 | 9.41, 19.85 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | **v3, + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): the preset** | **12 of 12** | **16.3** | 58 | 8.39, 19.38 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
@@ -24,7 +25,12 @@ on nine P106-090 cards, 49,152 tokens of context:
   All twelve tasks took the same time (32.0 against 32.2 minutes), since answers at the makers' sampling differ in
   length.
 - Stock llama.cpp cannot load Ornith-1.5-122B Pascal N2P GGUF (its N2P and N3P types are this fork's), so stock runs
-  Unsloth's UD-Q2_K_XL, the common file of about the same size.
+  Unsloth's UD-Q2_K_XL, the common file of about the same size. Stock was tuned first: llama-bench over `-ub` 128, 256
+  and 512 with flash attention off and on picked `-ub 256` with flash attention on
+  ([stock_tune/ornith-ud.md](../../docs/data/2026-11-05_release_regression/stock_tune/ornith-ud.md)).
+- On UD-Q2_K_XL, v3 against stock: 12.6 against 6.0 tok/s (2.1×), 12 of 12 against 11 of 12, 1.8 against 3.1 minutes
+  a task (median). On v3, my file against UD-Q2_K_XL: 14.9 against 12.6 tok/s (+18.3 %) without a switch, but prompts
+  at 59 against 69 tok/s and the first token at 9.41 against 7.90 s.
 - The expert skip is not in Ornith's preset: at p = 0.9 its KL divergence on the Ornith-1.5-122B Pascal N2P GGUF is above noise on all three texts (agent +0.00756 ± 0.00090, code +0.01021 ± 0.00178, wiki +0.02383 ± 0.00280; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Ornith's graph does not call it, so the switch changes nothing there.
 - The first token is slow (8.39 s median): the prompt-processing tiles are not tuned for N2P and N3P yet (Q351 in
   [quants/experiments.md](../../quants/experiments.md)).
@@ -94,10 +100,10 @@ One change at a time:
 | Step | What I added | Tasks passed | Generation tok/s | Data |
 |---|---|---|---|---|
 | 0 | stock llama.cpp (an older commit), Unsloth's UD-Q2_K_XL | 8 of 9 tried | 6.2 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
-| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on, UD-Q2_K_XL | TODO(stock) | TODO(stock) | TODO(stock) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on, UD-Q2_K_XL, tuned (`-ub 256`, flash attention on) | 11 of 12 | 6.0 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | 1 | Miner Llama v2.0's Pascal kernels, the same file | 12 of 12 | 9.7 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | 2 | + kernels for the IQ2_S and IQ3_XXS weights the file is made of (`ea55c7865`) | 12 of 12 | 11.3 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
-| 2 | the v3 build on the same file | TODO(ornithud) | TODO(ornithud) | TODO(ornithud) |
+| 2 | the v3 build (`1551f5fe1`) on the same file | 12 of 12 | 12.6 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | 3 | my file, Ornith-1.5-122B Pascal N2P GGUF, its experts in my Pascal 2- and 3-bit types, on the low-bit build of 2026-10-28 (`d7a75deb3`) | 12 of 12 | 14.5 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/agent/valid1/compare.md) |
 | 4 | the v3 build (`1f7215948`), the same file | 12 of 12 | 14.9 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | 5 | + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): **the preset** | 12 of 12 | **16.3** | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |

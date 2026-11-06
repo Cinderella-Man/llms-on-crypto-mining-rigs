@@ -20,8 +20,8 @@ upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan); th
 ## Before uploading
 
 1. **The gain on the same build.** Compare the card's preset row (14.9 tokens/s) with `ornithv3ud` (Miner Llama v3 on
-   UD-Q2_K_XL), together with the KL divergence advantage, and fill the card's `TODO(ornithud)` and `TODO(stock)`
-   rows. No meaningful gain in speed or quality means no upload: UD-Q2_K_XL carries the release.
+   UD-Q2_K_XL), together with the KL divergence advantage. The card's rows: v3 on UD-Q2_K_XL 12.6 tokens/s, 12 of 12;
+   stock on it 6.0, 11 of 12 (2026-11-06). No meaningful gain in speed or quality means no upload: UD-Q2_K_XL carries the release.
 2. **The owner's explicit go** for this file.
 3. **The base's licence,** unchanged from Qwen's repository:
 
