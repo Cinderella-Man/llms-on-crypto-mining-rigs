@@ -16,7 +16,7 @@ from these measurements.
 
 | | |
 |---|---|
-| Engine | [Miner Llama v2.0](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0) (tag `miner-llama-v2.0`) |
+| Engine | [Miner Llama v2.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v2.0) (tag `miner-llama-v2.0`) |
 | Model file | Unsloth's [Ornith-1.5-122B-UD-Q2_K_XL](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF) (44.5 GB): faster on the rig and closer to the makers' Q8_0 than the other rig-sized file |
 | File check | 44,533,952,768 bytes, SHA-256 `93fb32cfb1c31b34df426b4a41d961bdaffcddbbd217d850262136cf3689ba66` (repository revision `745bd742473a`); [scripts/hf_get.sh](../../scripts/hf_get.sh) downloads it pinned and checked |
 | Cards | all nine, split by bytes with `-ts 8,6,5,5,5,4,5,6,6` (llama.cpp's default split overfills card 5) |

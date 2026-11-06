@@ -126,11 +126,11 @@ Testing this release turned up two bugs that are in upstream llama.cpp's own cod
 - **`mul_mat_vec_q` bounds a one-token MUL_MAT_ID's rows by the column stride**, so when the rows are not a multiple of a
   block's, each expert's last block writes into the next expert's output. New `test-backend-ops` cases fail 30 of 30 and
   29 of 30 runs on master, 0 of 80 with the fix:
-  [Cinderella-Man/llama.cpp#1](https://github.com/Cinderella-Man/llama.cpp/pull/1). This release carries the fix
+  [Cinderella-Man/miner-llama#1](https://github.com/Cinderella-Man/miner-llama/pull/1). This release carries the fix
   (`1551f5fe1`); no release model has such a row count.
 - **A checkpoint restore in speculative decoding hands the sampler back draws it already used**, which skews rejection
   sampling on recurrent and hybrid models: p = 6.05e-9 on master, 0.23 with the fix:
-  [Cinderella-Man/llama.cpp#2](https://github.com/Cinderella-Man/llama.cpp/pull/2). In this build the fix is the switch
+  [Cinderella-Man/miner-llama#2](https://github.com/Cinderella-Man/miner-llama/pull/2). In this build the fix is the switch
   `LLAMA_SPEC_KEEP_DRAWS=1`.
 
 The write-up, with every test and number:

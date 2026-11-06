@@ -8,7 +8,7 @@ The CUDA-graphs patch for Pascal ([PR #27721](https://github.com/ggml-org/llama.
 build script itself (`--cuda-graphs-pascal`); when it no longer applies, the script makes the same one-line change.
 
 The same changes are kept as one commit each on the `pascal-p106` branch of
-[a llama.cpp fork](https://github.com/Cinderella-Man/llama.cpp/tree/pascal-p106), on top of upstream `d77256999`: CUDA
+[a llama.cpp fork](https://github.com/Cinderella-Man/miner-llama/tree/pascal-p106), on top of upstream `d77256999`: CUDA
 graphs on compute 6.1, the rescale switch, Flint's `prism.hadamard` support, `Q4_1_64` and the wide-rows launch shape.
 New Pascal work lands there first and only there:
 - **Pascal single-token matrix-vector kernels** for Q4_0, Q4_1, Q5_0 and Q8_0 (`ggml/src/ggml-cuda/mmvq-pascal.cu`,
@@ -18,7 +18,7 @@ New Pascal work lands there first and only there:
   refuse (the CMP mining cards). Summarize with [scripts/cuda_profile_summary.py](../scripts/cuda_profile_summary.py).
 - `test-backend-ops` cases at the shapes of a large MoE model.
 
-Build it with `git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/llama.cpp` and
+Build it with `git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/miner-llama` and
 `TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106` (no `PATCHES`, no `--cuda-graphs-pascal`).
 
 | Patch | What it does | Tested against |

@@ -23,7 +23,7 @@ tasks in 17 minutes).
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `37e717ff6`: the [Miner Llama v2.0](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0) release archives (tag `miner-llama-v2.0`), or a build from source ([how](../../README.md#run-it)) |
+| Engine | the v2 Pascal engine, commit `37e717ff6`: the [Miner Llama v2.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v2.0) release archives (tag `miner-llama-v2.0`), or a build from source ([how](../../README.md#run-it)) |
 | Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
 | Model file, six cards, or the most speed on nine | [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
 | Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint-Pascal-Q5 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |

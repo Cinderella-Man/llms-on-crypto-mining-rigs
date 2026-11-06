@@ -69,7 +69,7 @@ A *token* is a piece of a word, the unit a model reads and writes; [chapter 2](0
 
 Stock llama.cpp ran with a 65,536-token context here, because a larger one does not fit its memory needs on the
 4 GB host. Miner Llama v2 ran with the full 262,144 tokens. The released v2.0 engine is on
-[GitHub](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0).
+[GitHub](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v2.0).
 
 ### The main model today
 

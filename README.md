@@ -43,7 +43,7 @@ and a PC to connect from.
 
    Reboot; `nvidia-smi` should list your cards ([setup guide](docs/setup.md)).
 
-2. **Miner Llama v2:** from its [GitHub release](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0), download the two archives and `SHA256SUMS` into one
+2. **Miner Llama v2:** from its [GitHub release](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v2.0), download the two archives and `SHA256SUMS` into one
    folder, then:
 
    ```bash
@@ -102,7 +102,7 @@ identify the models; this project is not affiliated with their makers.
 
 ## What Miner Llama changes
 
-A [fork of llama.cpp](https://github.com/Cinderella-Man/llama.cpp) for GPUs of compute capability 6.1: the P106 and
+A [fork of llama.cpp](https://github.com/Cinderella-Man/miner-llama) for GPUs of compute capability 6.1: the P106 and
 P104 mining cards, the GTX 10 series and the Tesla P4/P40.
 - **v1:** CUDA graphs on Pascal (upstream switches them off before Volta), a launch shape and matrix-vector kernels
   made for 5-SM cards: 1.8 times stock llama.cpp's speed in the agent test.

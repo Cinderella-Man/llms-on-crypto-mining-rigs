@@ -8,10 +8,10 @@ each one well enough to check line by line, with a patch on upstream `master` an
   (2026-11-05). Every line number and quote below is from that commit.
 - **The patches:** one branch per fix in my fork, each cut from that base and holding only its own commits, in
   upstream's style and touching nothing else, each with a pull request inside my fork against a copy of that base
-  ([`upstream-master-45b6604b2`](https://github.com/Cinderella-Man/llama.cpp/tree/upstream-master-45b6604b2)):
-  [Cinderella-Man/llama.cpp#1](https://github.com/Cinderella-Man/llama.cpp/pull/1) (bug 1) and
-  [Cinderella-Man/llama.cpp#2](https://github.com/Cinderella-Man/llama.cpp/pull/2) (bug 2). Branch
-  [`upstream-fixes`](https://github.com/Cinderella-Man/llama.cpp/tree/upstream-fixes) holds both; the measurements ran on
+  ([`upstream-master-45b6604b2`](https://github.com/Cinderella-Man/miner-llama/tree/upstream-master-45b6604b2)):
+  [Cinderella-Man/miner-llama#1](https://github.com/Cinderella-Man/miner-llama/pull/1) (bug 1) and
+  [Cinderella-Man/miner-llama#2](https://github.com/Cinderella-Man/miner-llama/pull/2) (bug 2). Branch
+  [`upstream-fixes`](https://github.com/Cinderella-Man/miner-llama/tree/upstream-fixes) holds both; the measurements ran on
   its commits (the data folder has the details).
 - **Measured or read:** every claim says which. "Measured" means a run on upstream code (the base or the branch),
   with its numbers and scripts in [data/2026-11-05_upstream_fixes](data/2026-11-05_upstream_fixes/README.md); "by
@@ -19,8 +19,8 @@ each one well enough to check line by line, with a patch on upstream `master` an
 
 | # | What | Where | Status on `master` | Patch | Reproduction |
 |---|---|---|---|---|---|
-| 1 | A one-token `MUL_MAT_ID` writes rows past each used expert into the next expert's output | CUDA, `mmvq.cu` | present | [`e52e823`](https://github.com/Cinderella-Man/llama.cpp/commit/e52e8234622b4615eaa2a63a27a1d691983b6f76) (test), [`44956c7`](https://github.com/Cinderella-Man/llama.cpp/commit/44956c778bf973de8beba846d31ce2f2f8e869c8) (fix), [PR #1](https://github.com/Cinderella-Man/llama.cpp/pull/1) | measured: the new cases fail 30/30 and 29/30 on `master`, 0/30 with the fix (RTX 3090) |
-| 2 | After a speculative checkpoint restore the sampler gets its used random draws back, so rejection sampling is biased | `llama-server`, `common/sampling.cpp` | present | [`b50c521`](https://github.com/Cinderella-Man/llama.cpp/commit/b50c521d7feb74dcfeaa8fbc428a484c0eb58805), [PR #2](https://github.com/Cinderella-Man/llama.cpp/pull/2) | measured: p = 6.05e-9 on `master`, 0.23 with the fix (chi-square, 1,500 requests an arm) |
+| 1 | A one-token `MUL_MAT_ID` writes rows past each used expert into the next expert's output | CUDA, `mmvq.cu` | present | [`e52e823`](https://github.com/Cinderella-Man/miner-llama/commit/e52e8234622b4615eaa2a63a27a1d691983b6f76) (test), [`44956c7`](https://github.com/Cinderella-Man/miner-llama/commit/44956c778bf973de8beba846d31ce2f2f8e869c8) (fix), [PR #1](https://github.com/Cinderella-Man/miner-llama/pull/1) | measured: the new cases fail 30/30 and 29/30 on `master`, 0/30 with the fix (RTX 3090) |
+| 2 | After a speculative checkpoint restore the sampler gets its used random draws back, so rejection sampling is biased | `llama-server`, `common/sampling.cpp` | present | [`b50c521`](https://github.com/Cinderella-Man/miner-llama/commit/b50c521d7feb74dcfeaa8fbc428a484c0eb58805), [PR #2](https://github.com/Cinderella-Man/miner-llama/pull/2) | measured: p = 6.05e-9 on `master`, 0.23 with the fix (chi-square, 1,500 requests an arm) |
 | 3 | `MUL_MAT_ID`'s batch limit on a newer GPU running older code | CUDA, `mmvq.cu` | fixed for real builds by [#31679](https://github.com/ggml-org/llama.cpp/pull/31679); a case under `CUDA_FORCE_PTX_JIT=1` remains | none | measured: `MUL_MAT_ID_SHARED` aborts under `CUDA_FORCE_PTX_JIT=1` on `master` |
 
 ## 1. CUDA: a one-token `MUL_MAT_ID` writes past each expert's rows
@@ -171,12 +171,12 @@ done 2>&1 | grep -c 'MUL_MAT_ID(.*FAIL'    # failed cases: up to 60 on master, 0
 
 ### The patch
 
-Pull request [Cinderella-Man/llama.cpp#1](https://github.com/Cinderella-Man/llama.cpp/pull/1) (in my fork).
-Branch [`upstream-fix/mmvq-row-guard`](https://github.com/Cinderella-Man/llama.cpp/tree/upstream-fix/mmvq-row-guard),
+Pull request [Cinderella-Man/miner-llama#1](https://github.com/Cinderella-Man/miner-llama/pull/1) (in my fork).
+Branch [`upstream-fix/mmvq-row-guard`](https://github.com/Cinderella-Man/miner-llama/tree/upstream-fix/mmvq-row-guard),
 on `master` `45b6604b2`, two commits:
-- [`e52e823`](https://github.com/Cinderella-Man/llama.cpp/commit/e52e8234622b4615eaa2a63a27a1d691983b6f76)
+- [`e52e823`](https://github.com/Cinderella-Man/miner-llama/commit/e52e8234622b4615eaa2a63a27a1d691983b6f76)
   `tests : add MUL_MAT_ID cases with one token and rows not a multiple of 4` (`tests/test-backend-ops.cpp`, +6);
-- [`44956c7`](https://github.com/Cinderella-Man/llama.cpp/commit/44956c778bf973de8beba846d31ce2f2f8e869c8)
+- [`44956c7`](https://github.com/Cinderella-Man/miner-llama/commit/44956c778bf973de8beba846d31ce2f2f8e869c8)
   `CUDA: bound the rows of mul_mat_vec_q by nrows_x, not stride_col_dst` (`ggml/src/ggml-cuda/mmvq.cu`, +15 −14: the
   new kernel argument, its 10 call sites, the two guards).
 
@@ -326,10 +326,10 @@ are in [2026-11-04_block_verify/run/cpu_check.sh](data/2026-11-04_block_verify/r
 
 ### The patch
 
-Pull request [Cinderella-Man/llama.cpp#2](https://github.com/Cinderella-Man/llama.cpp/pull/2) (in my fork).
-Branch [`upstream-fix/spec-replay-draws`](https://github.com/Cinderella-Man/llama.cpp/tree/upstream-fix/spec-replay-draws),
+Pull request [Cinderella-Man/miner-llama#2](https://github.com/Cinderella-Man/miner-llama/pull/2) (in my fork).
+Branch [`upstream-fix/spec-replay-draws`](https://github.com/Cinderella-Man/miner-llama/tree/upstream-fix/spec-replay-draws),
 on `master` `45b6604b2`, one commit:
-[`b50c521`](https://github.com/Cinderella-Man/llama.cpp/commit/b50c521d7feb74dcfeaa8fbc428a484c0eb58805)
+[`b50c521`](https://github.com/Cinderella-Man/miner-llama/commit/b50c521d7feb74dcfeaa8fbc428a484c0eb58805)
 `server : keep the random draws used across a speculative checkpoint restore` (`common/sampling.{h,cpp}` +33,
 `tools/server/server-context.cpp` +3 −1). The new function:
 

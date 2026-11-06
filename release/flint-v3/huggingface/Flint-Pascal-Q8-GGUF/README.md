@@ -43,7 +43,7 @@ the same build.
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
 2. **Download** the Pascal engine, Miner Llama v3.0, from the fork's
-   [releases](https://github.com/Cinderella-Man/llama.cpp/releases), unpack it, and download `flint-pascal-Q8.gguf`
+   [releases](https://github.com/Cinderella-Man/miner-llama/releases), unpack it, and download `flint-pascal-Q8.gguf`
    from this page.
 3. **Start it**, on nine cards with the full context (v2's release line, Flint's v3 preset):
 

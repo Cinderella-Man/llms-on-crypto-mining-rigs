@@ -49,7 +49,7 @@ How v3 got there from 7.8 tok/s, one change at a time: [docs/book/10-v3.md](../.
 | `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, `…-00002-of-00003.gguf` (the transformer, on the cards) | 37.7 GB | cut from UkisAI's Swift-1.5 GSQ-RCO Q2_0 download with `gguf_reshard.py` (below) | `690252d2…`, `a893db93…` in [CHECKSUMS](CHECKSUMS) |
 | `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf` (the n-gram table, on the SSD) | 28.8 GB | the same cut | `05716382…` in [CHECKSUMS](CHECKSUMS) |
 | `mtp-Qwen3.8-Flash-Next-draft.gguf` (the MTP draft) | 2.7 GB | [agentionai/Qwen3.8-Flash-Next-Gyro-GGUF](https://huggingface.co/agentionai/Qwen3.8-Flash-Next-Gyro-GGUF), revision `273edc1d2ffae5241fe3cab69568d682dad4c718` | `00818378…` in [CHECKSUMS](CHECKSUMS) |
-| Miner Llama v3.0 engine archives (binaries, CUDA runtime, tests) | 556 / 554 / 58 MB | the fork's [GitHub release](https://github.com/Cinderella-Man/llama.cpp/releases) | the release's `SHA256SUMS` |
+| Miner Llama v3.0 engine archives (binaries, CUDA runtime, tests) | 556 / 554 / 58 MB | the fork's [GitHub release](https://github.com/Cinderella-Man/miner-llama/releases) | the release's `SHA256SUMS` |
 
 The three model shards are UkisAI's two Q2_0 shards byte for byte, with the n-gram table moved into a third shard of
 its own: the table can then live on the SSD while shards 1 and 2 load to the cards.

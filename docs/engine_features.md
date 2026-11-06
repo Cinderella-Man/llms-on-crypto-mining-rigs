@@ -1,7 +1,7 @@
 # Miner Llama v2.0: every engine feature, how it was checked, what it measured
 
 Miner Llama v2.0 is the fork's tag `miner-llama-v2.0` (commit `37e717ff6` on branch `pascal-p106-v2` of
-[Cinderella-Man/llama.cpp](https://github.com/Cinderella-Man/llama.cpp)). This page lists each engine feature that v2.0
+[Cinderella-Man/miner-llama](https://github.com/Cinderella-Man/miner-llama)). This page lists each engine feature that v2.0
 adds to v1, the registry row that measured it ([quants/experiments.md](../quants/experiments.md)), how its correctness
 was checked, what it measured on the nine-card P106-090 rig, and whether v2.0 runs it by default. The switches
 themselves are in [reproduce/engine.md](../release/flint-v2/reproduce/engine.md#switches); the user-facing summary is in

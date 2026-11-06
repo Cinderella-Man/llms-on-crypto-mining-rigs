@@ -45,7 +45,7 @@ model drive, and a PC with Python 3 and room for UkisAI's 66.5 GB download.
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
 2. **Engine:** download Miner Llama v3.0 from the fork's
-   [releases](https://github.com/Cinderella-Man/llama.cpp/releases) and unpack it.
+   [releases](https://github.com/Cinderella-Man/miner-llama/releases) and unpack it.
 3. **Files:** this repository's two shards, the MTP draft, and UkisAI's two Q2_0 shards at the revision measured here:
 
    ```bash
