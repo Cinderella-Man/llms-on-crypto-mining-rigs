@@ -23,7 +23,10 @@ Every speed below is one measured run with its file, build and settings.
 
 Files: Unsloth's `flint-Q8_0.gguf` (42,301,076,928 bytes), `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf`
 (48,196,722,592 bytes, [its data](../2026-10-28_ornith_valid1/README.md)) and, on 2026-11-06, Flint Pascal Q8 GGUF
-(p065, `flint-near-q8-p065.gguf`, 40,431,236,544 bytes, md5 `8387b2e585a7b9cc10f40cb6b4531694`).
+(p065, `flint-near-q8-p065.gguf`, 40,431,236,544 bytes, md5 `8387b2e585a7b9cc10f40cb6b4531694`). Flint's 5-bit lane, on
+2026-11-06: Unsloth's `flint-UD-Q5_K_XL.gguf` (revision `20468edf`, 29,919,491,520 bytes, md5
+`efadf404c377ad2bdf79266c4c5d577b`) and Flint Pascal Q5 GGUF (`flint-pascal-Q5.gguf`, K2h-r16 with the release header,
+29,390,812,736 bytes, md5 `54e0f28553d0c18ba940d1e8d894dfcf`, sha256 `0163ec54…df6003`).
 
 ## Results
 
@@ -39,6 +42,7 @@ harness's flags (`-np 1 -bs --ctx-checkpoints 4 --cache-ram 0 ...`).
 | Flint Q8_0 | `-ladder5` `1f7215948` | `v3add`: + `LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 21.6 | 1.2 | 2.45, 6.89 | 168 | 44.7 | 73 / 2 / 0 | 0 |
 | Flint Q8_0 | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, same split (stock's tuned line, below); 8 tasks on 2026-11-05, the last 4 on 2026-11-06 | 10 / 12 | 52.6 | 2.9 | 4.13, 8.04 | 148 | 14.4 | 59 / 2 / 0 | 2 |
 | Flint Pascal Q8 GGUF (p065) | `-ladder5` `1551f5fe1` | `v3base`, 2026-11-06 | 12 / 12 | 22.3 | 1.0 | 2.66, 6.75 | 175 | **47.4** | 74 / 2 / 0 | 0 |
+| Flint UD-Q5_K_XL | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, layers by count (stock's tuned line, below), 2026-11-06 | 11 / 12 | 62.7 | 3.0 | 4.25, 8.36 | 141 | 13.7 | 62 / 0 / 0 | 1 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1`: Q189's line, every switch at its default | 12 / 12 | 32.2 | 2.1 | 9.41, 19.85 | 59 | **14.9** | 62 / 0 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1-ka`: + `GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 32.0 | 2.1 | 8.39, 19.38 | 58 | **16.3** | 63 / 1 / 0 | 0 |
 | Ornith UD-Q2_K_XL | `-ladder5` `1551f5fe1` | `ud-v3`: R3's line `-c 49152 -b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off`, every switch at its default, 2026-11-06 | 12 / 12 | 28.3 | 1.8 | 7.90, 17.24 | 69 | 12.6 | 54 / 0 / 0 | 0 |
@@ -65,6 +69,9 @@ The earlier numbers on the same files and lines:
 - **valid1 against UD-Q2_K_XL on v3, no switch:** generation 14.9 against 12.6 tok/s (+18.3 %), but prompts at 59
   against 69 tok/s, the first token at 9.41 against 7.90 s, and 2.1 against 1.8 minutes per task (median; 5 against 4
   turns). At equal work the file is ~5 % faster a task (est., from each arm's mean prefill and decode seconds a task).
+- **Stock on Flint's 5-bit lane, Unsloth's UD-Q5_K_XL:** 11 / 12 tasks, 13.7 tok/s generation, 3.0 minutes per task
+  (median), the first token at 4.25 s (median). The miss (scale-generator) ran into the 12-minute cap. Stock on Q8_0 in
+  the same harness: 14.4 tok/s, 10 / 12.
 - **Flint Pascal Q8 GGUF against Unsloth's Q8_0, both on `-ladder5`:** 47.4 against 45.9 tok/s generation (+3.3 %),
   the first token at 2.66 against 2.67 s, 1.0 against 1.2 minutes per task (median); both 12 / 12. Its sessions
   generated more (85 against 74 s of decoding a task, mean), so all twelve took 22.3 against 19.2 minutes. Q8_0's two
@@ -81,6 +88,10 @@ The earlier numbers on the same files and lines:
   65,536 tokens, as v2's stock arm did. A bug-fix task stays far below that.
 - **No speculation on stock:** stock has no pipelined speculation, and Flint has no MTP layer of its own. Stock's
   draft-free n-gram drafts were not tried.
+
+Flint's UD-Q5_K_XL ([stock_tune/flint-ud-q5.md](stock_tune/flint-ud-q5.md), the same grid with layers by count, no
+split) picked the same: `-ub 512` with flash attention on, 39.5 s a modelled turn at depth 4,096 (148.0 prompt and 16.93
+generation tok/s). Its arm ran at 65,536 tokens for the same reason.
 
 ### Greedy identity
 
@@ -170,6 +181,7 @@ runs, which on the P106 is within noise.
 | `kld/ornith_lowbit_vs_1551f5fe1.tsv`, `_stats.txt` | Ornith valid1's KLD of `1551f5fe1` against `-lowbit` on the P106 |
 | `kld/ornith_vs_q8_ref.tsv`, `_paired.tsv`, `_<build>.txt` | both builds against Ornith's Q8_0 reference on the P106: the table, the paired difference, each build's statistics |
 | `stock_tune/flint.md`, `.jsonl` | stock's llama-bench grid and pick |
+| `stock_tune/flint-ud-q5.md`, `.jsonl` | the same for Flint's UD-Q5_K_XL (layers by count): `-ub 512`, flash attention on |
 | `stock_tune/ornith-ud.md`, `.jsonl` | the same for Ornith's UD-Q2_K_XL (split `8,6,5,5,5,4,5,6,6`, `-fit off`): `-ub 256`, flash attention on |
 | `run/greedy_identity.sh`, `greedy_requests.py`, `compare_greedy.py`, `prompts.jsonl` | the identity check |
 | `run/decode_drift.py` | the one-token drift table |
@@ -217,6 +229,13 @@ MODEL=<flint-Q8_0.gguf on the rig> BIN=/opt/llama-builds/$L5/bin/llama-server CL
 RIG=rig MODEL=<flint-Q8_0.gguf> BIN=<stock folder>/bin/llama-bench TS=6/6/5/5/6/5/5/6/6 DIR=<rig folder> OUT=tune bash $R/stock_tune.sh
 MODEL=<flint-Q8_0.gguf> BIN=<as above> STOCK_BIN=<stock folder>/bin/llama-server STOCK_LINE="-b 2048 -ub 512 -ts 6,6,5,5,6,5,5,6,6 -fa on" \
   BUDGET_MIN_rel=36 CLIENT_ROOT=<client folder> OUT=agent_flint ARMS_LIST=stock64k bash $R/agent_flint.sh
+# Flint's 5-bit lane, layers by count: stock's grid with no split, then its arm; v3 on v2's line for the Q5 files
+RIG=rig MODEL=<flint-UD-Q5_K_XL.gguf> BIN=<stock folder>/bin/llama-bench TS= DIR=<rig folder> OUT=tune bash $R/stock_tune.sh
+MODEL=<flint-UD-Q5_K_XL.gguf> BIN=<as above> STOCK_BIN=<stock folder>/bin/llama-server STOCK_LINE="-b 2048 -ub 512 -fa on" \
+  BUDGET_MIN_rel=60 CLIENT_ROOT=<client folder> OUT=agent_q5stock ARMS_LIST=stock64k bash $R/agent_flint.sh
+MODEL=<flint-pascal-Q5.gguf, then flint-UD-Q5_K_XL.gguf> BIN=/opt/llama-builds/$L5/bin/llama-server \
+  REL_LINE="-b 512 -ub 128 --pipe-depth 4" BUDGET_MIN_rel=40 CLIENT_ROOT=<client folder> OUT=agent_q5 ARMS_LIST=v3base \
+  bash $R/agent_flint.sh
 # the agent check, Ornith (add REL_ENV=GGML_CUDA_KEEPALIVE=decode for valid1-ka, with its own CLIENT_WORK)
 CLIENT_WORK=<client folder> AD=unused STOCK=unused V2=unused LOWBIT=/opt/llama-builds/$L5/bin/llama-server \
   VALID1=<valid1 on the rig> VALID1_LINE="-b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off" OUT=agent_ornith CANDS=valid1 \
