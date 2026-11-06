@@ -83,6 +83,11 @@ The earlier numbers on the same files and lines:
   context grew (v2.0: 2,508 tokens at 50.5). On the other eleven tasks, from each run's `turns.csv`, generation is 53.64
   against 54.04 tok/s (−0.7 %) and prompts 182.3 against 175.2 tok/s. Its sessions wrote more on those eleven too
   (53,455 against 38,782 tokens), so all tasks took 31.7 against 16.7 minutes and the median task 1.7 against 1.2.
+  At fixed context depth, with the same chat turn on both builds, v3 generates the same tokens as v2.0 within 1.1 %,
+  and the gap does not grow with depth (−0.1 % at 32,768 tokens). Both builds slow by a third between depth 0 and
+  32,768: v2.0 from 51.59 to 34.59 tok/s and v3 from 50.79 to 34.60, on each build's first load. So complex-numbers'
+  long session explains the gap, not the build
+  ([2026-11-06_flint_q5_depth](../2026-11-06_flint_q5_depth/README.md)).
 - **UD-Q5_K_XL on `-ladder5` against v2.0:** 46.4 against 44.2 tok/s (+5.0 %), both 12 / 12, one run each; more than
   the 2.8 % between v2.0's two Q8_0 runs. Both did about the same work (51,130 against 49,161 generated tokens, 24.5
   against 24.8 minutes for all tasks, 1.0 minutes per task each), and v3 generated faster on 9 of the 12 tasks. The
