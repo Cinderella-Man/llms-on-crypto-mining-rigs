@@ -1,0 +1,10 @@
+arm	text	moe_tail	mean_kld	kld_se	same_top_p_pct	d_kld_vs_off	d_vs_off_se	d_kld_vs_p1	d_vs_p1_se	chunks	experts_kept_mean	routed_reads_pct	kept_by_count
+lowbit	agent	-	0.052554	0.001077	94.982	0.00011	0.00037	-	-	12	10	100	-
+lowbit	code	-	0.061739	0.002605	96.637	0.00062	0.00067	-	-	80	10	100	-
+lowbit	wiki	-	0.175210	0.002738	84.142	-0.00167	0.00078	-	-	80	10	100	-
+off	agent	-	0.052441	0.001061	94.939	-	-	-	-	-	10	100	-
+off	code	-	0.061123	0.002564	96.588	-	-	-	-	-	10	100	-
+off	wiki	-	0.176878	0.002787	83.985	-	-	-	-	-	10	100	-
+tail	agent	-	0.060000	0.001159	94.615	0.00756	0.00090	-	-	12	10	100	-
+tail	code	-	0.071327	0.002829	96.387	0.01021	0.00178	-	-	80	10	100	-
+tail	wiki	-	0.200708	0.003103	82.505	0.02383	0.00280	-	-	80	10	100	-

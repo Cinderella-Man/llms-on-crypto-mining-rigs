@@ -1,0 +1,12 @@
+step	status	start	end	xid_before	xid_after	result
+C-disk	ok	2026-11-05T20:55:54+01:00	2026-11-05T20:55:54+01:00	0	0	WORK 75 GB free, REL 1007 GB free 
+B-flint	ok	2026-11-05T20:58:49+01:00	2026-11-05T21:26:36+01:00	0	0	flint: arms off tail done, failed=0 
+gate-flint	ok	2026-11-05T21:26:36+01:00	2026-11-05T21:26:37+01:00	0	0	tail agent +0.08832±0.02050 ABOVE NOISE; tail wiki +0.12198±0.00569 ABOVE NOISE; 
+build	ok	2026-11-05T20:55:54+01:00	2026-11-05T20:58:22+01:00	0	0	llama.cpp-20261105-d7a75deb3 md5 83aac1e8844d6ab5d6c961d2754de57b;  
+C-pmix	ok	2026-11-05T20:55:54+01:00	2026-11-05T21:12:09+01:00	0	0	Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00001-of-00003.gguf: 2 keys changed (~ quantize.imatrix.file -> 'imatrix-swiftfn-v1mix.gguf' (STRING);~ quantize.imatrix.dataset -> 'imatrix_calib.txt' (STRING);), flags: source 2, copy 0; sha256 7d4b6cedfdbbefe3… Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00002-of-00003.gguf: 0 keys changed (), flags: source 0, copy 0; sha256 f20e58f28af29423… 
+C-valid1	ok	2026-11-05T21:12:09+01:00	2026-11-05T21:32:41+01:00	0	0	Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf: 1 keys changed (~ quantize.imatrix.file -> 'imatrix_unsloth.gguf_file' (STRING);), flags: source 1, copy 0; sha256 ef28114d83df37a5… 
+C-p065	ok	2026-11-05T21:33:47+01:00	2026-11-05T22:10:44+01:00	0	0	p065: composed again, md5 8387b2e585a7b9cc10f40cb6b4531694 = the rig file's flint-near-q8-p065.gguf: 1 keys changed (~ quantize.imatrix.file -> 'imatrix_unsloth.gguf_file' (STRING);), flags: source 0, copy 0; sha256 da1c33ae6eac089c… 
+B-ornith-sw	ok	2026-11-05T20:55:59+01:00	2026-11-05T21:43:29+01:00	0	0	ornith: arms off tail done, failed=0 
+A	ok	2026-11-05T21:43:29+01:00	2026-11-05T21:48:45+01:00	0	0	verdict: DIFFERS (8 requests, 1 builds against lowbit) 
+B-ornith-lowbit	ok	2026-11-05T21:48:45+01:00	2026-11-05T22:12:10+01:00	0	0	ornith: arms lowbit done, failed=0 
+gate-ornith	ok	2026-11-05T22:12:10+01:00	2026-11-05T22:12:11+01:00	0	0	lowbit agent +0.00011±0.00037 within noise; lowbit code +0.00062±0.00067 within noise; lowbit wiki -0.00167±0.00078 within noise; tail agent +0.00756±0.00090 ABOVE NOISE; tail code +0.01021±0.00178 ABOVE NOISE; tail wiki +0.02383±0.00280 ABOVE NOISE; T3a agent -0.00011±0.00037 not worse; T3a code -0.00062±0.00067 not worse; T3a wiki +0.00167±0.00078 WORSE; 

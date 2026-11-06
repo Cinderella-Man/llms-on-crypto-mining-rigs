@@ -21,7 +21,7 @@ on nine P106-090 cards, 49,152 tokens of context:
 
 - Stock llama.cpp cannot load valid1 (its N2P and N3P types are this fork's), so stock runs Unsloth's UD-Q2_K_XL, the
   common file of about the same size.
-- The hop casts and the expert skip are not in Ornith's preset: each needs Ornith's own quality check first.
+- The expert skip is not in Ornith's preset: at p = 0.9 its KL divergence on the Ornith-1.5-122B Pascal N2P GGUF is above noise on all three texts (agent +0.00756 ± 0.00090, code +0.01021 ± 0.00178, wiki +0.02383 ± 0.00280; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Ornith's graph does not call it, so the switch changes nothing there.
 - The first token is slow (9.4 s median): the prompt-processing tiles are not tuned for N2P and N3P yet (Q351 in
   [quants/experiments.md](../../quants/experiments.md)).
 

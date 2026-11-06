@@ -1,0 +1,4 @@
+arm	text	d_kld_vs_lowbit	se	verdict
+1551f5fe1	agent	-0.00011	0.00037	not worse
+1551f5fe1	code	-0.00062	0.00067	not worse
+1551f5fe1	wiki	0.00167	0.00078	WORSE

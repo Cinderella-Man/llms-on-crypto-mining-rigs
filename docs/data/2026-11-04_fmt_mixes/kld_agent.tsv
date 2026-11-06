@@ -19,6 +19,7 @@ dniq35	dn	40-47	pmix-iq3-fast	+1125.0	+1.29	0.2840	0.0056	+0.0048	90.74	0.13	neg
 dniq34	dn	32-39	pmix-iq3-fast	+1350.0	+1.55	0.2739	0.0054	-0.0053	90.92	0.13	negligible
 dniq33	dn	24-31	pmix-iq3-fast	+900.0	+1.03	0.2689	0.0052	-0.0103	90.82	0.13	gain
 dniq30	dn	0-7	pmix-iq3-fast	+675.0	+0.78	0.2745	0.0053	-0.0047	90.67	0.13	negligible
+dniq23	dn	24-31	swift-iq2_xs	+0.0	+0.00	0.2754	0.0053	-0.0038	90.75	0.13	negligible
 denseiq35	dense	40-47	pmix-iq3-fast	+50.7	+0.63	0.2798	0.0054	+0.0006	90.71	0.13	negligible
 denseiq34	dense	32-39	pmix-iq3-fast	+60.0	+0.73	0.2802	0.0054	+0.0010	90.68	0.13	negligible
 denseiq33	dense	24-31	pmix-iq3-fast	+70.4	+0.93	0.2804	0.0054	+0.0012	90.74	0.13	negligible

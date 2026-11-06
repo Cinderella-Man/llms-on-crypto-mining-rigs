@@ -23,7 +23,7 @@ Unsloth's Q8_0 on nine P106-090 cards:
   each, 1.2 tok/s apart, about the spread between v2.0's own two runs (45.9 and 44.6), so the preset stays v2's line. Each of v3's
   additions on its own against the preset (the keep-alive, the re-read fix, the staged hop, the answer store, the
   negligible group): TODO(flintside).
-- The Q8_0 hop cast and the expert skip are not in Flint's preset: each needs Flint's own quality check first.
+- The expert skip is not in Flint's preset: at p = 0.9 its KL divergence on Unsloth's Q8_0 is above noise on both texts (agent +0.08832 ± 0.02050, wiki +0.12198 ± 0.00569; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Flint's graph does not call it, so the switch changes nothing there.
 
 Quality: v3's greedy tokens leave v2.0's after 60–133 tokens on four test prompts, each time at a token whose
 two best scores were close; the KL divergence against v2.0: TODO(kld).

@@ -16,14 +16,14 @@ each with pascal-mix's tools, and builds the files that price them:
    file.
 
 **Status:** the tools are written and tested; all 30 single-switch files (8 for C326, 22 for Q219) are built and
-scored on agent text ([results](#results-so-far-agent-text-kld-2026-11-05)); wiki and code text and the control `dniq23` (building) come next; the rig timing (C323) is a run file
+scored on agent text ([results](#results-so-far-agent-text-kld-2026-11-05)); wiki and code text come next, and the control `dniq23` is scored too; the rig timing (C323) is a run file
 for a rig. Registry rows Q219, Q888, Q889, Q901 in
 [quants/experiments.md](../../../quants/experiments.md).
 
 ## Results so far: agent-text KLD (2026-11-05)
 
-**Agent text only so far:** wiki and code text are not scored yet, and the control `dniq23` is still building. Each of
-the 30 single-switch files was scored against the Swift-1.5 Q8_0's logits on the agent text, on the same five cards as
+**Agent text only so far:** wiki and code text are not scored yet. Each of
+the 30 single-switch files and the control `dniq23` was scored against the Swift-1.5 Q8_0's logits on the agent text, on the same five cards as
 `pmix-q2-fast` and spine6 ([kld_agent.tsv](kld_agent.tsv): KLD and its ±, the change from the start, the same-top-token
 share and each file's class). A **gain** is below `pmix-q2-fast`'s 0.2792 by more than its ± (0.0054,
 `llama-perplexity`'s standard error of the mean KLD), a **loss** above it by more, the rest **negligible**. All the files
@@ -42,9 +42,18 @@ share the text and the reference logits, so their differences are tighter than t
   start, 91.04 % at most).
 - **Read with care:** IQ2_XS's gate/up, at IQ3_XXS's bytes or fewer (`guiq21` is 0.24 GB smaller than the start), gains
   as much as IQ3_XXS's in the same groups, and `pmix-iq3-fast`'s dense tensors gain in groups 0–2 and nothing in groups
-  3–5. Part of each gain may come from mixing two builds' rounding rather than from the types: `dniq23` (IQ2_XS's own
-  Q2_0 down projections, the start's type) prices that.
-- **Next:** wiki and code text for every file and `dniq23`, then `galloc.py solve` for the best set at each budget. The
+  3–5. Part of each gain may come from mixing two builds' rounding rather than from the types: the control below
+  prices that.
+- **The control `dniq23`** (IQ2_XS's own Q2_0 down projections of layers 24–31, the start's type, no bytes added):
+  agent KLD **0.275440 ± 0.005310** against the start's 0.2792, **−0.0038**, same top token 90.751 ± 0.131 % (90.70 % at
+  the start): negligible. Mixing builds alone costs no quality; it moves the score by −0.0038, in the direction of a
+  gain and within the ±. Read the 14 gains of Q219's switches against it: nine are more than 0.0054 below the control
+  (`guiq33`, `guiq32`, `dniq33`, `denseiq32`, `denseiq31`, `denseiq30`, `guiq23`, `guiq22`, `guiq20`; `dniq33`, IQ3_XXS's
+  down projections of the control's layers, is 0.0065 below it, so its IQ4_NL type pays beyond the mixing), and five are
+  not: `guiq35` (−0.0088), `guiq34` (−0.0055), `guiq30` (−0.0073), `guiq25` (−0.0068) and `guiq21` (−0.0083) are less
+  than 0.0054 below it. One control covers one class in one group (down projections of layers 24–31), so it is no
+  proof for the gate/up and dense switches.
+- **Next:** wiki and code text for every file, then `galloc.py solve` for the best set at each budget. The
   best switches stacked into one file are a candidate after the v3 release, not part of it.
 
 ## 1. Q219: the routed experts per 8-layer group
@@ -260,7 +269,7 @@ python3 -I tools/bench/pascal_mix/vmix.py select --start pmix-q2-fast.json --pub
 |---|---|
 | [switches.tsv](switches.tsv) | Q219's 30 switches and the start (`galloc.py switches`): tensors, type changes, bytes and est. ms added |
 | [spine_switches.tsv](spine_switches.tsv) | C326's 8 arms, the same columns |
-| [kld_agent.tsv](kld_agent.tsv) | agent-text KLD of the 30 single-switch files, `pmix-q2-fast` and spine6: ±, change, same top token, class |
+| [kld_agent.tsv](kld_agent.tsv) | agent-text KLD of the 30 single-switch files, the control `dniq23`, `pmix-q2-fast` and spine6: ±, change, same top token, class |
 | [times_kshape.tsv](times_kshape.tsv) | the P106 product times `vmix.py` uses (type, row width, rows, tokens, µs, source) |
 | [pk_s33_mtp2d.txt](pk_s33_mtp2d.txt) | P(k) from S33's `mtp2d` arm (`vmix.py pk`) |
 | [times_kshape_ratio.txt](times_kshape_ratio.txt) | the ggml / bench ratio per token count that puts the tables on one basis |

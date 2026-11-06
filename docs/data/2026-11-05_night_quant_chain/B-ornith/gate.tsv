@@ -1,0 +1,7 @@
+arm	text	mean_kld	d_kld_vs_off	se	verdict
+lowbit	agent	0.052554	0.00011	0.00037	within noise
+lowbit	code	0.061739	0.00062	0.00067	within noise
+lowbit	wiki	0.175210	-0.00167	0.00078	within noise
+tail	agent	0.060000	0.00756	0.00090	ABOVE NOISE
+tail	code	0.071327	0.01021	0.00178	ABOVE NOISE
+tail	wiki	0.200708	0.02383	0.00280	ABOVE NOISE

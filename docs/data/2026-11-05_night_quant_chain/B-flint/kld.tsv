@@ -1,0 +1,5 @@
+arm	text	moe_tail	mean_kld	kld_se	same_top_p_pct	d_kld_vs_off	d_vs_off_se	d_kld_vs_p1	d_vs_p1_se	chunks	experts_kept_mean	routed_reads_pct	kept_by_count
+off	agent	-	0.256538	0.006110	93.535	-	-	-	-	-	10	100	-
+off	wiki	-	0.051887	0.002414	93.471	-	-	-	-	-	10	100	-
+tail	agent	-	0.344857	0.007417	91.807	0.08832	0.02050	-	-	12	10	100	-
+tail	wiki	-	0.173874	0.005339	86.275	0.12198	0.00569	-	-	80	10	100	-

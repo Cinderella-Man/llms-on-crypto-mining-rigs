@@ -1,0 +1,4 @@
+7d4b6cedfdbbefe3d016a0017f0874239f359589d44c2e4d0f211f5299004ce9  Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00001-of-00003.gguf
+f20e58f28af29423a731897bc0b58abb7918b19d0628de614eae609e89604965  Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00002-of-00003.gguf
+da1c33ae6eac089c3d64146ce9e567422e80b78ee334abc9874e4203bab4c695  flint-near-q8-p065.gguf
+ef28114d83df37a534d3b1667ba766de2c808a29d630c11318e75e0e69bbe76a  Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf

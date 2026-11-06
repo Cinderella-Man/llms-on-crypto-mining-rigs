@@ -33,12 +33,12 @@ presets set:
 |---|---|---|---|
 | `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM` | `32768` | — | — |
 | `GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE` | `0` | — | — |
-| `LLAMA_HOP_CAST` | `q8_0` | — (needs Flint's quality check) | — (needs Ornith's quality check) |
+| `LLAMA_HOP_CAST` | `q8_0` | — (no effect: Flint's graph does not call it, Q1125) | — (no effect: Ornith's graph does not call it, Q1125) |
 | `GGML_CUDA_HOP_STAGED` | `1` | — (TODO(flintside)) | — |
 | `LLAMA_DRAFT_SHORTLIST` | `32768,8192,2` | — | — |
 | `GGML_CUDA_KEEPALIVE` | `decode` | — (TODO(flintside)) | — (TODO(ornithka)) |
 | `LLAMA_SERVER_TEXT_REUSE`, `LLAMA_SERVER_TAIL_CKPT_MIN` | — | — (TODO(flintside)) | — |
-| `LLAMA_MOE_TAIL` | TODO(t1skip) | — (needs Flint's quality check) | — (needs Ornith's quality check) |
+| `LLAMA_MOE_TAIL` | TODO(t1skip) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) |
 | The negligible group (switches whose gain is within the spread of repeated loads, tested together) | TODO(t1neg) | — (TODO(flintside)) | — |
 | `--pipe-depth` | — | `4` | — |
 | `--pipe-store` | — | — (TODO(flintside)) | — |
