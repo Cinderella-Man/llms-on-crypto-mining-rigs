@@ -5,7 +5,7 @@
 >   full 262,144-token context, 44.6–45.9 tok/s for a coding agent, three times stock llama.cpp.
 > - Qwen3.6-35B-A3B showed early that a mixture-of-experts model runs fast here. Ornith-1.5-122B showed that a 122B model
 >   fits at 2–3 bits, and reached 14.5 tok/s.
-> - Since 2026-11-02 there is one goal: Qwen3.8 Flash-Next, a 180B-parameter model, well above 5–8 tok/s on one rig. On
+> - Since 2026-11-02 there is one goal: Qwen3.8 Flash-Next, a 125B-parameter model, well above 5–8 tok/s on one rig. On
 >   2026-11-04 it stands at 12.2 tok/s with a draft network.
 > - Across all four, the engine carried most of the speed, the file decided the quality, and the 4 GB host decided what
 >   could load at all. Facts as of 2026-11-04.
@@ -22,7 +22,7 @@ kernels [Chapter 6](06-gpu-code.md), for experts [Chapter 7](07-experts.md) and 
 | Flint | 39.8 B / 2.5 B | mixture of experts | Q8_0, 42.3 GB | 44.6–45.9 tok/s (Q8_0), 53.8 (own Q5 file) | released in v2.0 |
 | Qwen3.6-35B-A3B | 36 B / 3 B | hybrid mixture of experts | Q4_0, 20.8 GB | no agent check; 29.0 tok/s on one request | waiting |
 | Ornith-1.5-122B | 122 B / 10 B | hybrid mixture of experts | own 2–3-bit file, 48.2 GB | 14.5 tok/s | paused since 2026-10-28 |
-| Qwen3.8 Flash-Next | 180 B (125 B + 51 B table) / 6 B | hybrid mixture of experts with an n-gram table | Swift Q2_0, 37.7 GB on the cards | 12.2 tok/s | the v3 goal |
+| Qwen3.8 Flash-Next | 125 B / 6 B (plus a 51 B n-gram table and a 4 B MTP block: 180 B in the weights) | hybrid mixture of experts with an n-gram table | Swift Q2_0, 37.7 GB on the cards | 12.2 tok/s | the v3 goal |
 
 "Per token" is what matters for speed: the cards read only that part of the weights for each token
 ([Chapter 2](02-how-an-llm-makes-text.md)). A *hybrid* model mixes attention layers, which cache every past token,
@@ -159,7 +159,7 @@ wiki text, and its draft layer is right 0.88–0.91 of the time. It has not run 
 ## 9.5 Qwen3.8 Flash-Next: the single goal
 
 **What it is.** Qwen released Flash-Next on 2026-08-24. It is a 125B mixture-of-experts model that uses about 6B
-parameters per token, plus a 51B-parameter n-gram table: 180B parameters in all. The table is a lookup of embeddings
+parameters per token, plus a 51B-parameter n-gram table and a 4B multi-token-prediction block: 180B parameters in all. The table is a lookup of embeddings
 for hashed sequences of two and three tokens. Each token reads only a few of its rows, like a huge read-only hash table
 that lives on disk. The model has 48 layers (36 recurrent, 12 attention with a sparse-attention index that picks the
 top 2,048 past tokens), 512 experts per layer with 10 used plus one shared, and 262,144 tokens of context.

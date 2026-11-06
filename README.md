@@ -10,7 +10,7 @@ software runs models slowly on it. Miner Llama makes such rigs useful: a llama.c
 ## What it does
 
 **Miner Llama v3 runs three models on one build, each with its own preset** ([release notes](release/notes-v3.0.md)):
-[Qwen3.8-Flash-Next](release/flash-next-v3/README.md), a 180B-parameter model, at **20.40 tok/s** for a coding agent
+[Qwen3.8-Flash-Next](release/flash-next-v3/README.md), a 125B-parameter model, at **20.40 tok/s** for a coding agent
 on nine 6 GB cards and a 4 GB host (6.4 on stock llama.cpp and 7.8 on v2.0's code when it first ran, 2026-11-03);
 [Flint](release/flint-v3/README.md) at 45.9 tok/s, as v2; and [Ornith-1.5-122B](release/ornith-v3/README.md) at
 16.3 tok/s. Against stock llama.cpp b12076, the upstream release v3 is built on, on the same file: Flash-Next 20.40 against

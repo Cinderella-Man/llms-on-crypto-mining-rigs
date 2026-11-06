@@ -14,7 +14,7 @@ tags:
   - miner-llama
 ---
 
-# Swift Qwen3.8-Flash-Next Pascal Q2 GGUF: a 180B-parameter model on old NVIDIA cards and mining rigs
+# Swift Qwen3.8-Flash-Next Pascal Q2 GGUF: a 125B-parameter model on old NVIDIA cards and mining rigs
 
 **What this is.** Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token,
 plus a 51B-parameter n-gram table. This file is UkisAI's 2-bit Swift-1.5 fine-tune of it (Swift-1.5 GSQ-RCO Q2_0)

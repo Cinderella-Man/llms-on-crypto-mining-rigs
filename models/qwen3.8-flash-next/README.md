@@ -1,13 +1,13 @@
 # Qwen3.8-Flash-Next on a mining rig: the first run
 
-Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token, plus a 51B-parameter
-n-gram table: 180B parameters in its original weights. On 2026-11-03 it ran for the first time on a retired mining rig
+Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token. Its original weights
+add a 51B-parameter n-gram table and a 4B multi-token-prediction block, 180B in all. On 2026-11-03 it ran for the first time on a retired mining rig
 built around 6 GB cards on single PCIe 1.0 lanes, a 2-core Celeron and 4 GB of RAM. This page is the state of that work
 as it stands, with stock llama.cpp as the baseline. Where it goes next is at the end. Miner Llama v3 runs it at 20.40
 tokens per second for a coding agent; every file's checksum and the steps to run it:
 [release/flash-next-v3](../../release/flash-next-v3/README.md).
 
-## The headline: a 180B-parameter model on nine 6 GB mining cards and 4 GB of RAM, with stock llama.cpp
+## The headline: a 125B-parameter model on nine 6 GB mining cards and 4 GB of RAM, with stock llama.cpp
 
 | Stock llama.cpp `d77256999`, Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | |
 |---|---|

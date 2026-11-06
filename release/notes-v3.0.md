@@ -9,7 +9,7 @@ Measurements, settings and the scripts behind every number:
 
 ## Speed
 
-**Qwen3.8-Flash-Next, a 180B-parameter model, at 20.40 tok/s for a coding agent on nine 6 GB mining cards and a 4 GB
+**Qwen3.8-Flash-Next, a 125B-parameter model, at 20.40 tok/s for a coding agent on nine 6 GB mining cards and a 4 GB
 host.** On 2026-11-03 it ran at 6.4 tok/s on stock llama.cpp and 7.8 on v2.0's code. Flint and Ornith-1.5-122B run on
 the same build at their v2-era speed or better.
 

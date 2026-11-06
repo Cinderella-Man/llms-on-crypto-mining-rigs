@@ -1,4 +1,4 @@
-# Qwen3.8-Flash-Next on Miner Llama v3: a 180B-parameter model on a mining rig
+# Qwen3.8-Flash-Next on Miner Llama v3: a 125B-parameter model on a mining rig
 
 Flash-Next is Miner Llama v3's headline model. This folder says which files to download, the one command that starts
 it, and the preset it was measured with; the engine's release notes are [notes-v3.0.md](../notes-v3.0.md). The model's
@@ -6,8 +6,8 @@ own page is [models/qwen3.8-flash-next](../../models/qwen3.8-flash-next/README.m
 
 ## The headline: 20.40 tok/s for a coding agent on nine 6 GB mining cards, a 2-core Celeron and 4 GB of RAM
 
-Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token, plus a 51B-parameter
-n-gram table: 180B parameters in its original weights. In UkisAI's Swift-1.5 fine-tune at 2 bits it runs on a rig
+Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token. Its original weights
+add a 51B-parameter n-gram table and a 4B multi-token-prediction block, 180B in all. In UkisAI's Swift-1.5 fine-tune at 2 bits it runs on a rig
 built for mining: the transformer split over nine 6 GB cards on single PCIe 1.0 lanes, the 28.8 GB n-gram table read
 from the rig's SSD.
 

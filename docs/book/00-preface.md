@@ -4,7 +4,7 @@
 > - Retired crypto-mining rigs have lots of GPU memory and sit idle. I try to make one run large language models well.
 > - The rig is nine 2016-era graphics cards on very slow links, with a weak 2-core CPU and 4 GB of RAM.
 > - My own version of llama.cpp, Miner Llama, made one model three times faster on it for a coding agent.
-> - The main model today is Qwen3.8-Flash-Next, a 180-billion-parameter model. It runs, but slowly, and the work goes on.
+> - The main model today is Qwen3.8-Flash-Next, a 125-billion-parameter model. It runs, but slowly, and the work goes on.
 > - This book explains what I tried, how each idea was meant to work, what happened and why.
 
 Facts in this book are from 2026-11-04 unless a chapter says otherwise.
