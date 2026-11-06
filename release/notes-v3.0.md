@@ -144,8 +144,9 @@ The write-up, with every test and number:
   too ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md#how-large-the-difference-is)).
 - **Ornith's prompt passes differ from the 2026-10-28 build's on Pascal.** On nine P106-090 cards, wikitext-2, this build
   against `d7a75deb3`: mean KL divergence 0.021653 ± 0.000881, the same top token 93.873 % of the time; this build's
-  perplexity is the lower, 5.9938 ± 0.2410 against 6.0735 ± 0.2449. Which of the two is closer to the model:
-  TODO(t3e).
+  perplexity is the lower, 5.9938 ± 0.2410 against 6.0735 ± 0.2449. Neither is closer to the model: against
+  Ornith's Q8_0 on the same cards (80 chunks of 512), this build's KL divergence is 0.175182 ± 0.002745 and the older
+  build's 0.175864 ± 0.002767, a paired difference of −0.00068 ± 0.00069, within noise.
 - **Don't use `GGML_CUDA_KEEPALIVE=idle`.** Its 120 s block holds the first launch of each kernel under CUDA's lazy
   module loading: the first request of an agent session waited 506 s for its prompt. `decode` and `request` are not
   affected.

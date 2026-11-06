@@ -38,8 +38,9 @@ on nine P106-090 cards, 49,152 tokens of context:
 Quality: on the P106 cards the release build computes Ornith's prompt passes a little differently from the low-bit
 build of 2026-10-28 (`d7a75deb3`). On wikitext-2 their KL divergence is 0.021653 ± 0.000881, with the same top token
 93.873 % of the time, and the release build's perplexity is the lower, 5.9938 ± 0.2410 against 6.0735 ± 0.2449
-([data](../../docs/data/2026-11-05_release_regression/README.md#how-large-the-difference-is)). Which of the two is
-closer to the model: TODO(t3e).
+([data](../../docs/data/2026-11-05_release_regression/README.md#how-large-the-difference-is)). Neither is closer to
+the model: against Ornith's Q8_0 on the same cards (wikitext-2, 80 chunks of 512), the release build's KL divergence is
+0.175182 ± 0.002745 and the older build's 0.175864 ± 0.002767, a paired difference of −0.00068 ± 0.00069, within noise.
 
 ## The file
 
