@@ -4,7 +4,8 @@
 > - Retired crypto-mining rigs have lots of GPU memory and sit idle. I try to make one run large language models well.
 > - The rig is nine 2016-era graphics cards on very slow links, with a weak 2-core CPU and 4 GB of RAM.
 > - My own version of llama.cpp, Miner Llama, made one model three times faster on it for a coding agent.
-> - The main model today is Qwen3.8-Flash-Next, a 125-billion-parameter model. It runs, but slowly, and the work goes on.
+> - The main model today is Qwen3.8-Flash-Next, a 125-billion-parameter model. Miner Llama v3 runs it at 20.40 tokens
+>   per second for a coding agent, from 7.8 on v2.0's code ([chapter 10](10-v3.md)).
 > - This book explains what I tried, how each idea was meant to work, what happened and why.
 
 Facts in this book are from 2026-11-04 unless a chapter says otherwise.
@@ -61,15 +62,16 @@ why I measure that and not a simple speed number.
 
 | Engine, Flint at 8 bits on nine cards | Tokens written per second | Bugs fixed | Wait for the first token, per turn |
 |---|---|---|---|
-| Stock llama.cpp | 14 | 8 of 12 | 3.7 s |
-| Miner Llama v1 | 26 | 11 of 12 | 4.0 s |
-| Miner Llama v2 | 45 | 12 of 12 | 2.6 s |
+| Stock llama.cpp | 14.4 | 8 of 12 | 3.7 s |
+| Miner Llama v1 | 25.7 | 11 of 12 | 4.0 s |
+| Miner Llama v2 | 45.9 and 44.6 (two runs) | 12 of 12 | 2.6 s |
+| Miner Llama v3 | 45.9 | 12 of 12 | 2.67 s |
 
 A *token* is a piece of a word, the unit a model reads and writes; [chapter 2](02-how-an-llm-makes-text.md) explains it.
 
-Stock llama.cpp ran with a 65,536-token context here, because a larger one does not fit its memory needs on the
-4 GB host. Miner Llama v2 ran with the full 262,144 tokens. The released v2.0 engine is on
-[GitHub](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v2.0).
+Stock llama.cpp and v1 ran with a 65,536-token context here, because a larger one does not fit their memory needs on
+the 4 GB host. Miner Llama v2 and v3 ran with the full 262,144 tokens. The released engines are on
+[GitHub](https://github.com/Cinderella-Man/miner-llama/releases): v2.0 and v3.0.
 
 ### The main model today
 
@@ -87,10 +89,11 @@ the rig's small SSD. The same coding-agent test gives this picture:
 | Stock llama.cpp | 6.4 | 7 of 8 tried |
 | Miner Llama, v2.0 code | 7.8 | 9 of 9 tried |
 | Miner Llama, with its slowest weights converted to a format the cards read faster | 9.0 | 12 of 12 |
+| Miner Llama v3, the release preset (2026-11-06) | 20.40 | 12 of 12 |
 
-So it works, and it gets the tasks right. But 7 to 9 tokens per second is slow for an agent. The open work on
-2026-11-04 is new GPU code for this model's shapes, a better-quality file that still fits, and ways to guess several
-tokens at once. Each of those has its own chapter.
+So it works, and it gets the tasks right. But 7.8 and 9.0 tokens per second are slow for an agent. The open work on
+2026-11-04 was new GPU code for this model's shapes, a better-quality file that still fits, and ways to guess several
+tokens at once. Each of those has its own chapter, and [chapter 10](10-v3.md) tells how they added up to 20.40 in v3.
 
 ## How the chapters connect
 
@@ -109,8 +112,8 @@ The third part steps back.
 | [8. Guessing ahead](08-guessing-ahead.md) | Can I guess the next tokens cheaply and check them in bulk? |
 | [9. The models](09-the-models.md) | Where does each model stand, and how did it get there? |
 | [10. v3](10-v3.md) | What did the v3 release change, and why did each change help? |
-| [11. Lessons](11-lessons.md) | What carries over to other systems? |
-| [12. Glossary](12-glossary.md) | Every term, in one place. |
+| 11. Lessons (not written yet) | What carries over to other systems? |
+| [Glossary](../../GLOSSARY.md) | Every term, in one place. |
 
 Chapters 1 to 3 build on each other, so read them in order. After that, each chapter stands mostly on its own. Read
 whatever interests you. When a chapter needs an idea from another one, it says so and links to it.
@@ -123,7 +126,7 @@ flowchart LR
     C --> F[6. GPU code]
     C --> G[7. Experts]
     C --> H[8. Guessing ahead]
-    D & E & F & G & H --> I[9. The models] --> K[10. v3] --> J[11. Lessons]
+    D & E & F & G & H --> I[9. The models] --> K[10. v3] --> J[11. Lessons, not written yet]
 ```
 
 ## How to read it
@@ -146,9 +149,9 @@ flowchart LR
   looks.
 - Almost everything else about the rig is weak: tiny links, a weak CPU, 4 GB of RAM. Software has to work around each
   limit. The rig stays as sold: no new parts.
-- Miner Llama, my llama.cpp fork, took a coding agent on Flint from 14 to 45 tokens per second.
-- The main model now is Qwen3.8-Flash-Next. It runs at about 8 to 9 tokens per second for an agent, and the goal is far
-  more.
+- Miner Llama, my llama.cpp fork, took a coding agent on Flint from 14.4 to 45.9 tokens per second.
+- The main model now is Qwen3.8-Flash-Next. Miner Llama v3 runs it at 20.40 tokens per second for an agent, from 7.8 on
+  v2.0's code.
 - Read chapters 1 to 3 first. The rest can be read in any order.
 
 ## Where the details are
@@ -156,7 +159,7 @@ flowchart LR
 - The project's front page: [README.md](../../README.md). The older, denser tour of the first week:
   [what_i_tried.md](../what_i_tried.md).
 - Flint's v2 release numbers and commands: [release/flint-v2/results.md](../../release/flint-v2/results.md).
-- Flash-Next: [models/qwen3.8-flash-next](../../models/qwen3.8-flash-next/README.md) and the release in preparation,
+- Flash-Next: [models/qwen3.8-flash-next](../../models/qwen3.8-flash-next/README.md) and its v3 release,
   [release/flash-next-v3](../../release/flash-next-v3/README.md).
 - Flash-Next on the coding agent: stock against Miner Llama is registry row Q215
   ([data](../data/2026-11-03_flash_next_baseline/README.md)); the faster-format file is step 2 of Q551

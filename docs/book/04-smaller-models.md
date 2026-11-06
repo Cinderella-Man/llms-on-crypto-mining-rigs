@@ -121,7 +121,7 @@ layers at a time, and measured what each change cost in KLD and saved in bytes.
 - **The v1 file** used those costs. It scored KLD 0.123 and 88.7 % same top token at 32.5 GB, level with Unsloth's
   file. On real chat with 262k tokens of context it wrote 24.7 tok/s, against 20.4 for Unsloth's file.
 - **The v2 file.** My own kernels later made Q5_0 nearly as cheap as Q4_1, about 1.1 times the time per weight instead
-  of 1.4. So I re-priced every mix. The result, Flint-Pascal-Q5, scores KLD 0.105 and 88.8 % at 29.4 GB, reading
+  of 1.4. So I re-priced every mix. The result, Flint Pascal Q5 GGUF, scores KLD 0.105 and 88.8 % at 29.4 GB, reading
   2.09 GB per token. On the agent check it ran at 53.8 tok/s, against 50.7 for Unsloth's file.
 - **Two small tricks.** GPTQ, a rounding that corrects each weight's error in the weights still to come, let the output
   layer drop to Q5_0 for 0.002 of KLD instead of 0.023, saving about 0.12 GB per token. The routers, the small tensors
@@ -189,7 +189,7 @@ and give every other tensor the type a P106 reads fastest. The rule: no tensor g
 
 **What happened.** The first surprise was in the speed table. The makers' Q3_K turned out to be the slowest type per
 weight on a P106, slower than Q6_K with nearly twice its bits. Swapping Q3_K for IQ4_XS gives both more bits and more
-speed. The first file, pmix-q2-fast, changes 168 tensors and adds only 5 MiB on the cards. Its estimated GPU time per
+speed. The first file, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (`pmix-q2-fast`), changes 168 tensors and adds only 5 MiB on the cards. Its estimated GPU time per
 token falls from 82.4 to 72.4 ms, which is 12.1 to 13.8 tok/s before any guessing ahead. Its agent-text KLD moved from
 0.287 to 0.279, on provisional scores.
 
@@ -310,8 +310,8 @@ elsewhere, or for the MTP draft model, on the same nine cards.
 - Flint: Q24 (Q4_0 fix), Q36 (v1 file S4-L0), Q73 and Q77 (re-pricing), Q56 and
   [2026-10-24_q56_gptq_head](../data/2026-10-24_q56_gptq_head/README.md) (GPTQ head), Q113 (F16 routers), Q41 (task
   check), Q44 (makers' tensors), Q74 and [2026-10-23_qat_check](../data/2026-10-23_qat_check/README.md) (the makers'
-  Q4_1 is a plain rounding of their own 4-bit release, not a trained one). The v2 file is K2h-r16.
-- Near-Q8_0 file p065: Q168, [2026-10-27_flint_near_q8](../data/2026-10-27_flint_near_q8/README.md),
+  Q4_1 is a plain rounding of their own 4-bit release, not a trained one). The v2 file, Flint Pascal Q5 GGUF, is K2h-r16.
+- Flint Pascal Q8 GGUF (`p065`): Q168, [2026-10-27_flint_near_q8](../data/2026-10-27_flint_near_q8/README.md),
   [slq.md](../research/notes/slq.md).
 - Ornith-1.5-122B: Q164, Q167, Q212, Q189; [2026-10-27_lowbit](../data/2026-10-27_lowbit/README.md),
   [2026-10-27_ornith_alloc](../data/2026-10-27_ornith_alloc/README.md),

@@ -331,7 +331,8 @@ the standalone engine only if a measurement finds ≥ 5 ms of host time a pass t
   [ladder3_merge](../data/2026-11-04_ladder3_merge/README.md).
 - Launch shapes: Q823 (the 32 KB budget, measured through `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`), Q824 (dispatch
   table), Q825; [kcurve_p106](../data/2026-11-04_kcurve_p106/README.md), [kshape](../data/2026-11-04_kshape/README.md).
-  The new default build is fork branch `pascal-p106-v3-b12076-kshape`, timing task C340.
+  Branch `pascal-p106-v3-b12076-kshape` brought them; they are in the v3 release build, `pascal-p106-v3-b12076-ladder5`,
+  where Flash-Next's preset sets `KCOL_SMEM=32768` and `KCOL_TABLE=0` ([chapter 10](10-v3.md)).
 - Profiling: Q681 (light profiler, `GGML_CUDA_PROFILE_MODE`), Q822 (1- vs 5-token profile), Q827 (real-text passes,
   planned); [light_profiler](../data/2026-11-04_light_profiler/README.md),
   [kpass_profile](../data/2026-11-04_kpass_profile/README.md).

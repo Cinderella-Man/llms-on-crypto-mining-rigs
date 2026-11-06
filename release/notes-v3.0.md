@@ -83,8 +83,8 @@ one command starts it (below).
 - A Pascal kernel for BF16 matrices at 1–8 tokens, and for 2-bit Q2_0 experts.
 - k-column kernels for dense products at 1–8 tokens, and a multi-token expert kernel that reads each distinct expert
   once for 2–8 tokens.
-- Together with upstream b12076, a Flash-Next token on nine cards went from ≈136 ms to ≈75 ms, and a four-token verify
-  from 305 to 163 ms ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-04_kcurve_p106/README.md)).
+- Together with upstream b12076, a Flash-Next token on nine cards went from 136.0 ms to 74.9 ms, and a four-token
+  verify from 305.4 to 162.8 ms ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-04_kcurve_p106/README.md)).
 - Pascal kernels for my own 2- and 3-bit types N2P and N3P (Ornith-1.5-122B Pascal N2P GGUF).
 
 **The hop cast** (`LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=1`, off by default; Flash-Next's preset sets it): the

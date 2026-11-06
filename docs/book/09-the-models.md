@@ -2,13 +2,14 @@
 
 > **In short**
 > - Four large models ran on the rig. Flint was the flagship of v1 and v2: near-lossless Q8_0 on nine cards with its
->   full 262,144-token context, 44.6–45.9 tok/s for a coding agent, three times stock llama.cpp.
+>   full 262,144-token context, 45.9 and 44.6 tok/s in two runs for a coding agent on v2.0, three times stock
+>   llama.cpp, and 45.9 on v3.
 > - Qwen3.6-35B-A3B showed early that a mixture-of-experts model runs fast here. Ornith-1.5-122B showed that a 122B model
->   fits at 2–3 bits, and reached 14.5 tok/s.
+>   fits at 2–3 bits, and reached 14.5 tok/s, and 16.3 on v3.
 > - Since 2026-11-02 there is one goal: Qwen3.8 Flash-Next, a 125B-parameter model, well above 5–8 tok/s on one rig. On
->   2026-11-04 it stands at 12.2 tok/s with a draft network.
+>   2026-11-04 it stood at 12.2 tok/s with a draft network; the v3 release runs it at 20.40 ([Chapter 10](10-v3.md)).
 > - Across all four, the engine carried most of the speed, the file decided the quality, and the 4 GB host decided what
->   could load at all. Facts as of 2026-11-04.
+>   could load at all. Facts as of 2026-11-04; the release results of 2026-11-06 are in [Chapter 10](10-v3.md).
 
 The earlier chapters explain the tools; this one follows each model through them. For quantization and file mixes see
 [Chapter 4](04-smaller-models.md), for the card split and the host memory [Chapter 5](05-nine-cards.md), for the
@@ -19,10 +20,10 @@ kernels [Chapter 6](06-gpu-code.md), for experts [Chapter 7](07-experts.md) and 
 
 | Model | Parameters, total / per token | Kind | File on the rig | Best coding-agent speed | Where it stands |
 |---|---|---|---|---|---|
-| Flint | 39.8 B / 2.5 B | mixture of experts | Q8_0, 42.3 GB | 44.6–45.9 tok/s (Q8_0), 53.8 (own Q5 file) | released in v2.0 |
+| Flint | 39.8 B / 2.5 B | mixture of experts | Q8_0, 42.3 GB | 45.9 tok/s (Q8_0, v3; v2.0: 45.9 and 44.6), 49.4 (Flint Pascal Q5 GGUF, v3; v2.0: 53.8) | released in v2.0 and v3 |
 | Qwen3.6-35B-A3B | 36 B / 3 B | hybrid mixture of experts | Q4_0, 20.8 GB | no agent check; 29.0 tok/s on one request | waiting |
-| Ornith-1.5-122B | 122 B / 10 B | hybrid mixture of experts | own 2–3-bit file, 48.2 GB | 14.5 tok/s | paused since 2026-10-28 |
-| Qwen3.8 Flash-Next | 125 B / 6 B (plus a 51 B n-gram table and a 4 B MTP block: 180 B in the weights) | hybrid mixture of experts with an n-gram table | Swift Q2_0, 37.7 GB on the cards | 12.2 tok/s | the v3 goal |
+| Ornith-1.5-122B | 122 B / 10 B | hybrid mixture of experts | Ornith-1.5-122B Pascal N2P GGUF, my 2–3-bit file, 48.2 GB | 16.3 tok/s (v3; 14.5 on 2026-10-28) | released in v3 |
+| Qwen3.8 Flash-Next | 125 B / 6 B (plus a 51 B n-gram table and a 4 B MTP block: 180 B in the weights) | hybrid mixture of experts with an n-gram table | Swift Q2_0, 37.7 GB on the cards | 20.40 tok/s (v3; 12.2 on 2026-11-04) | released in v3, the headline |
 
 "Per token" is what matters for speed: the cards read only that part of the weights for each token
 ([Chapter 2](02-how-an-llm-makes-text.md)). A *hybrid* model mixes attention layers, which cache every past token,
@@ -44,8 +45,8 @@ which one to run:
 | The makers' Q4_1 | 26.0 GB | 0.322 | 78.4 % | not run |
 | Plain Q4_0 | 22.6 GB | 0.565 | 71.7 % | broken, not run |
 | Unsloth UD-Q4_K_XL, the quality bar | 25.1 GB | 0.120 | 87.7 % | 50.7 tok/s, 10 passed |
-| Flint-Pascal-Q5, my own file | 29.4 GB | 0.105 | 88.8 % | **53.8 tok/s, 12 of 12** |
-| Unsloth Q8_0 | 42.3 GB | 0.052 | 93.3 % | **44.6–45.9 tok/s, 12 of 12** |
+| Flint Pascal Q5 GGUF, my own file | 29.4 GB | 0.105 | 88.8 % | **53.8 tok/s, 12 of 12** |
+| Unsloth Q8_0 | 42.3 GB | 0.052 | 93.3 % | **45.9 and 44.6 tok/s in two runs, 12 of 12 each** |
 
 KLD is a diff score between the file's predictions and the full-precision model's ([Chapter 3](03-measuring.md)).
 Plain Q4_0 broke Flint: seven tensors carry a few dominant channels that 4 bits can't hold, and perplexity rose by
@@ -59,7 +60,8 @@ match it or beat it ([Chapter 4](04-smaller-models.md)).
 |---|---|---:|---|---:|
 | Stock llama.cpp | 65,536 | 14.4 tok/s | 8 of 12 | 3.7 s |
 | Miner Llama v1 (2026-10-23) | 65,536 | 25.7 tok/s | 11 of 12 | 4.0 s |
-| **Miner Llama v2 (2026-10-26)** | **262,144** | **44.6–45.9 tok/s** | **12 of 12** | **2.6 s** |
+| **Miner Llama v2 (2026-10-26)** | **262,144** | **45.9 and 44.6 tok/s (two runs)** | **12 of 12** | **2.6 s** |
+| Miner Llama v3 (2026-11-06) | 262,144 | 45.9 tok/s | 12 of 12 | 2.67 s |
 
 v1 made a P106 decode Flint well at all. It turned on CUDA graphs, which llama.cpp switches off for cards this old,
 gave one-token products a launch shape for 5-SM cards, and added Pascal matrix-vector kernels. On a single-request
@@ -76,19 +78,22 @@ is the near-lossless file, not the smallest one.
 
 **After v2.** Three pieces for Flint were measured one at a time, each against the release line:
 
-- a near-Q8_0 file that reads 11 % fewer bytes per token at almost Q8_0's quality (KLD 0.066 against 0.063 on the
-  same machine): 6.3 % faster per token, 47.1 tok/s and 12 of 12 on the agent check;
+- a near-Q8_0 file, Flint Pascal Q8 GGUF (`p065`), that reads 11 % fewer bytes per token at almost Q8_0's quality
+  (KLD 0.066 against 0.063 on the same machine): 6.3 % faster per token, 47.1 tok/s and 12 of 12 on the agent check;
 - the answer store, +1.4 % ([Chapter 8](08-guessing-ahead.md));
-- a fix for replies the server read twice: prompt time fell from 24–29 s to 16 s per task, and the worst wait for a
-  first token from 60–83 s to about 13 s.
+- a fix for replies the server read twice: with the tail checkpoint rule, prompt time fell from 25.3, 29.0 and 23.6 s
+  per task in three runs without it to 16.2 s, and the worst wait for a first token from 59.8, 80.9 and 82.5 s to
+  12.2 s.
 
 My own drafter for Flint did not pay and was stopped on 2026-10-29 ([Chapter 8](08-guessing-ahead.md)). The v2.1
 release that was to carry it is not released.
 
-**What is open.** The three pieces have not been measured together. Shorter reasoning is the largest lever per task:
-about 65 % of what Flint writes in an agent session is reasoning, and a steering vector that nudges it towards brevity
-is estimated at 1.1–1.3× per task. Cheaper hand-offs between cards are estimated at +8–15 %. Both are planned; no Flint
-work has run since the lead moved to Flash-Next on 2026-11-02.
+**What is open.** The three pieces have not been measured together. On the v3 release build Flint Pascal Q8 GGUF ran
+47.4 tok/s, the re-read fix on its own was negligible, and the answer store was not run ([chapter 10](10-v3.md)).
+Shorter reasoning is the largest lever per task: about 65 % of what Flint writes in an agent session is reasoning, and
+a steering vector that nudges it towards brevity is estimated at 1.1–1.3× per task. Cheaper hand-offs between cards
+are estimated at +8–15 %. Both are planned; apart from the v3 release tests, no Flint work has run since the lead
+moved to Flash-Next on 2026-11-02.
 
 ## 9.3 Qwen3.6-35B-A3B: the first proof
 
@@ -235,9 +240,9 @@ checking several tokens at once.
 | Release | Date | What it held | Headline |
 |---|---|---|---|
 | **v1** | 2026-10-23 | CUDA graphs on Pascal, a launch shape for 5-SM cards, Pascal matrix-vector kernels for six formats, a profiler that works on mining cards | Flint chat 28.0 against 14.2 tok/s on stock; agent check 25.7 against 14.4 |
-| **v2.0** | 2026-10-26 | 32-bit sums, a persistent kernel per expert layer, the fused shared expert, faster prompt reading, GPU sampling for tool requests, pipelined speculation; my Flint-Pascal-Q5 file | Flint Q8_0 at 262,144 tokens: 44.6–45.9 tok/s, 12 of 12 |
+| **v2.0** | 2026-10-26 | 32-bit sums, a persistent kernel per expert layer, the fused shared expert, faster prompt reading, GPU sampling for tool requests, pipelined speculation; my Flint Pascal Q5 GGUF file | Flint Q8_0 at 262,144 tokens: 45.9 and 44.6 tok/s in two runs, 12 of 12 each |
 | **v2.1** | not released | was to add the answer store and a trained drafter | the drafter was stopped; the store measured +1.4 % |
-| **v3** | 2026-11-06 | Flash-Next first; also Flint's near-Q8_0 file and re-read fix, Ornith's own file and kernels; every feature behind a switch, a preset per model ([chapter 10](10-v3.md)) | Flash-Next 20.40 tok/s for a coding agent; Flint 45.9 and Ornith 16.3 on the same build |
+| **v3** | 2026-11-06 | Flash-Next first; also Flint Pascal Q8 GGUF and the re-read fix, Ornith-1.5-122B Pascal N2P GGUF and its kernels; every feature behind a switch, a preset per model ([chapter 10](10-v3.md)) | Flash-Next 20.40 tok/s for a coding agent; Flint 45.9 and Ornith 16.3 on the same build |
 
 Every release keeps the answers the same: the kernels change only the order of additions, and the speculation keeps
 exactly the tokens plain decoding would produce. Each one ships with the command line and the measurements behind its
@@ -245,14 +250,14 @@ headline.
 
 ## What to remember
 
-- Pick models by what they read per token. Flint reads 2.5B parameters per token and runs at 45 tok/s; Ornith reads
-  10B and runs at 14.5.
+- Pick models by what they read per token. Flint reads 2.5B parameters per token and runs at 45.9 tok/s; Ornith reads
+  10B and runs at 16.3 (both on v3).
 - The engine carries the speed, the file sets the quality, and the 4 GB host decides what loads at all.
 - On these cards a near-lossless 8-bit file can be the headline: it was within about 15 % of the 4-bit files.
 - A big model fits only at 2–3 bits. There, where the bits go matters more than the format, and my own file beat the
   common one on both speed and quality.
-- Flash-Next went from 7.8 to 12.2 tok/s in two days, but its floor is about 35 tok/s; most of the distance is still
-  ahead.
+- Flash-Next went from 7.8 to 12.2 tok/s in two days and to 20.40 in v3 ([chapter 10](10-v3.md)); its floor is about
+  35 tok/s.
 
 ## Where the details are
 
@@ -260,8 +265,9 @@ headline.
   [results](../../release/flint-v2/results.md), [benchmark](../benchmarks/2026-10-22-flint.md),
   [chat benchmark](../benchmarks/2026-10-23-flint-chat.md), [v2 synthesis](../research/notes/v2_synthesis.md) (the
   engine's share of the speed-up, decision log of 2026-10-24), [Flint v3 plan](../research/notes/flint_v3_plan.md);
-  registry rows Q2, Q36, Q74, Q117, Q168 (near-Q8_0 file), Q260 (re-read fix), Q267, Q268, Q81, Q270. Sources give
-  44.6–46.5 tok/s for v2 when a later run on 2026-10-27 is counted; the release results table gives 44.6–45.9.
+  registry rows Q2, Q36, Q74, Q117, Q168 (near-Q8_0 file), Q260 (re-read fix), Q267, Q268, Q81, Q270. The release
+  results table gives 45.9 and 44.6 tok/s for v2.0 in two runs; a later run on 2026-10-27, registry Q201's same-slot
+  control, gave 46.5 ([2026-10-27_flint_near_q8](../data/2026-10-27_flint_near_q8/README.md)).
 - Qwen3.6-35B-A3B: [model page](../../models/qwen3.6-35b-a3b/README.md),
   [baselines](../benchmarks/2026-10-22-qwen-baselines.md), [speed-ups](../benchmarks/2026-10-22-speedups.md),
   [overview](../overview.md); Q38, Q43, Q82, Q148.
