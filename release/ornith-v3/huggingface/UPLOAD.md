@@ -10,7 +10,7 @@ upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan); th
 
 | File | Bytes | SHA-256 | From |
 |---|---:|---|---|
-| `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` | 48,196,722,528 | `ef28114d83df37a534d3b1667ba766de2c808a29d630c11318e75e0e69bbe76a` | the release copy (importance-matrix paths cut to file names, every tensor checked byte for byte) |
+| `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` | 48,196,722,624 | `0bfa0cf25b93de4370e6634d33b04942ad6e244acf41e9ac1764dd27162f44e1` | the release copy with the release header (step 4; importance-matrix paths cut to file names, every tensor checked byte for byte) |
 | `README.md`, `CHECKSUMS`, `LICENSE` (MIT, with the ornith-ai credit) | | | this folder |
 | `LICENSE-QWEN3.5` (Apache-2.0, Ornith's base) | | | Qwen's `LICENSE`, unchanged, fetched in step 3 |
 
@@ -29,15 +29,15 @@ upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan); th
    hf download Qwen/Qwen3.5-122B-A10B LICENSE --revision dc4d348443bc740c68e2d77492492c11606384d5 --local-dir qwen35 && mv qwen35/LICENSE release/ornith-v3/huggingface/Ornith-1.5-122B-Pascal-N2P-GGUF/LICENSE-QWEN3.5
    ```
 
-4. **The header, advisable.** The copy's `general.name` is inherited from ornith-ai's Q8_0
-   (`Qwen3.5-122B-A10B-ck2100-v1014-MTP1740`) and it has no `general.license`:
+4. **The header.** The file carries its own `general.name` (in place of ornith-ai's Q8_0 name
+   `Qwen3.5-122B-A10B-ck2100-v1014-MTP1740`), `general.quantized_by` and `general.license`; the `SHA-256` above is the file
+   with this header, written by:
 
    ```bash
    scripts/gguf_release_header.py Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf ornith-pascal-n2p.gguf --name "Ornith-1.5-122B-Pascal-N2P" --quantized-by "Kamil Skowron (@kamilskowron)" --set general.license=mit
    ```
 
-   Then rename the result back to `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` (the preset's name), hash it again
-   and replace the line in `CHECKSUMS`.
+   and renamed back to `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` (the preset's name).
 5. **Check the file:** `sha256sum -c CHECKSUMS` in its folder.
 6. **The release page** ([../README.md](../README.md)): fill its `TODO(upload)` slots (the file row, the checksum).
 
