@@ -3,9 +3,9 @@
 > **In short**
 > - A model writes one token per pass, and each pass reads most of its weights. If I can guess the next few tokens
 >   cheaply, the model can check them all in one pass and keep the ones it would have written anyway.
-> - On Flint, guesses fed into the rig's idle cards took a coding agent from 29 to 45 tok/s. On Flash-Next, a small
->   draft network and a newer engine build together took it from 7.8 to 12.2 tok/s.
-> - The catch on these cards: checking five tokens at once costs about 2.6× one token, not 1×. A wrong guess can cost
+> - On Flint, guesses fed into the rig's idle cards took a coding agent from 29.3 to 45.9 and 44.6 tok/s (two runs).
+>   On Flash-Next, a small draft network and a newer engine build together took it from 7.8 to 12.2 tok/s.
+> - The catch on these cards: checking five tokens at once costs 2.63× one token at the default launch shape, not 1×. A wrong guess can cost
 >   more than a right one saves.
 > - Facts as of 2026-11-04.
 
@@ -41,61 +41,64 @@ how many tokens each pass yields. With random sampling instead of always taking 
 acceptance rule keeps the output's statistics the same ([section 8.9](#89-exact-or-only-nearly-block-verification-and-a-hidden-bias)).
 
 What decides the gain is the **acceptance rate** p, the chance that a guess is right. If every guess is right with
-probability p and the guesser keeps going, a pass yields on average about 1 / (1 − p) tokens: 1.33 at p = 0.25 and 3.3
-at p = 0.7. Low acceptance buys almost nothing.
+probability p and the guesser keeps going, a pass yields on average about 1 / (1 − p) tokens: 1.33 at p = 0.25 and
+3.33 at p = 0.7. Low acceptance buys almost nothing.
 
 ## 8.2 The catch: checking k tokens is not free
 
 **The idea.** The whole bet rests on one assumption: a pass over k tokens costs about as much as a pass over one,
 because the weights are read once either way.
 
-**What I did.** I timed whole-model passes of 1 to 8 tokens on the nine cards, first for Flint (2026-10-23), then for
-Flash-Next on each new engine build (2026-11-03 and 11-04).
+**What I did.** I timed whole-model passes of 1 to 8 tokens, first for Flint on six cards (2026-10-23), then for
+Flash-Next on the nine cards on each new engine build (2026-11-03 and 11-04).
 
-**What happened.** On Flint, checking 2.9 tokens took 2.2× the time of one token, and 4 tokens took 3.6×. Flash-Next
-is no better:
+**What happened.** On Flint, checking 2.90 tokens took 2.22× the time of one token, and 4.05 tokens took 3.55×.
+Flash-Next is no better:
 
 | Tokens in one pass | 1 | 2 | 3 | 4 | 5 |
 |---|---:|---:|---:|---:|---:|
-| Flash-Next, v3's base engine (2026-11-03), ms | 136 | 186 | 245 | 305 | 360 |
-| Flash-Next, with the new multi-token kernels (2026-11-04), ms | 75 | 108 | 139 | 163 | 205 |
-| Cost against one token, new kernels | 1.0× | 1.4× | 1.8× | 2.2× | 2.7× |
+| Flash-Next, v3's base engine (2026-11-03), ms | 136.0 | 185.8 | 244.6 | 305.4 | 359.9 |
+| Flash-Next, with the new multi-token kernels and the 32 KB launch setting (2026-11-04), ms | 74.9 | 107.7 | 138.5 | 162.8 | 205.3 |
+| Cost against one token, new kernels | 1.00× | 1.44× | 1.85× | 2.17× | 2.74× |
 
 The new kernels made every pass faster, but the shape of the curve barely changed: a five-token pass still costs
-about 2.5–3× one token in every setting I tried. The goal had been 1.3×.
+2.74× one token with that setting and 2.63× at the default launch shape, and at least 2.47× in every other setting
+and file I tried. The goal had been 1.3×.
 
-**Why.** A profile of the 1-token and 5-token passes (2026-11-04) shows where the extra time goes:
+**Why.** A profile of the 1-token and 5-token passes (2026-11-04, the default launch shape) shows where the extra time
+goes:
 
 | Part of the pass | 1 token, ms | 5 tokens, ms | Growth |
 |---|---:|---:|---:|
-| Routed experts | 9 | 56 | 6.4× |
-| Attention and recurrent projections | 27 | 62 | 2.3× |
-| Hand-offs between cards, with host work | 12 | 41 | 3.5× |
-| Hyper-connections | 10 | 22 | 2.2× |
+| Routed experts | 8.69 | 55.49 | 6.39× |
+| Attention and recurrent projections | 27.13 | 61.77 | 2.28× |
+| Hand-offs between cards, with host work | 11.60 | 40.54 | 3.50× |
+| Hyper-connections | 10.03 | 22.25 | 2.22× |
 
 Three things break the assumption:
 
 - **Experts.** Each token picks its own experts, so five tokens read the union of five sets, often several times the
-  bytes of one token ([Chapter 7](07-experts.md) explains why five tokens need about 31 experts). That profile used
-  random tokens; on real text the experts' part is estimated nearer 34 ms than 56.
+  bytes of one token ([Chapter 7](07-experts.md) explains why five tokens need 30.86 experts). That profile used
+  random tokens; passes of real text cost the same (208.1 against 217.1 ms at five tokens, the difference being the
+  output layer).
 - **Code paths.** The engine's fastest kernels and fusions were written for one token at a time
   ([Chapter 6](06-gpu-code.md)). At two tokens or more, other, slower paths take over. Pricing the parts one by one
-  explains only about half of the 5-token pass's extra time, and these path switches are the main suspect for the rest.
+  explains only est. 63–78 ms of the 5-token pass's extra 134.7 ms, and these path switches are the main suspect for the rest.
 - **Hops.** Every card hands its tokens' activations to the next over a slow PCIe x1 link and the host, so five tokens
   mean five times the traffic ([Chapter 5](05-nine-cards.md)).
 
 This one curve sets the price of every guesser in this chapter. A worked example: the MTP draft of
-[section 8.6](#86-flash-nexts-mtp-draft-78-to-122-toks) got 3.1 tokens per step, but its step cost about 347 ms
-against 127 ms for one plain token. So it gained 3.1 × 127 / 347 ≈ 1.13×, not 3×.
+[section 8.6](#86-flash-nexts-mtp-draft-78-to-122-toks) got 3.10 tokens per step, but its step cost 347 ms
+against 127 ms for one plain token. So it gained 3.10 × 127 / 347 = 1.13×, not 3×.
 
 **What is being done about it.** Several attacks, most still open:
 
 | Fix | What it does | Effect |
 |---|---|---|
-| Multi-token kernels for Pascal | read each weight once for 2–8 tokens | the expert kernel saves 7–25 ms a pass, a smaller shared-memory setting another 7.5–22 ms; the curve stays steep |
-| Route once per block | every token in the block uses the first token's experts | estimated −15 ms at 5 tokens, but too lossy: quality score (KLD) 0.29 at 2 tokens, 0.90 at 5 |
+| Multi-token kernels for Pascal | read each weight once for 2–8 tokens | at 5 tokens the expert kernel saves 16.2 ms a pass (217.1 against 233.3 ms), the 32 KB shared-memory setting another 11.8 ms; the curve stays steep |
+| Route once per block | every token in the block uses the first token's experts | est. −14.5 to −17 ms at 5 tokens, but too lossy: quality score (KLD) 0.288 at 2 tokens, 0.898 at 5 |
 | New kernel shapes for 2–5 tokens | tune the launch for small batches | built, not yet timed on a P106 |
-| Smaller fixes | 8-bit hand-offs, k-aware one-token paths, batched table reads | each estimated at 0–14 ms, open |
+| Smaller fixes | 8-bit hand-offs, k-aware one-token paths, batched table reads | est. −12, −5 to −14 and 0 to −6 ms, open |
 
 ## 8.3 Free guesses: copying from the context
 
@@ -108,17 +111,17 @@ whatever followed it there. This is an n-gram lookup, like autocomplete from you
 **What I did.** I measured how much of Flint's output is copied, then replayed lookup guessers offline over recorded
 sessions (2026-10-23).
 
-**What happened.** 28 % of Flint's output sat in copies of eight tokens or more: 4 % in chat, 21 % in code, 53 % in
-whole-file edits and 99 % in rewrites. Inside a copy, a 6-token match continued correctly 95–99 % of the time; in fresh
-text, only 14–22 %. But with the measured cost of a multi-token check, only 2-token guesses paid at all, for about
-1.03× overall.
+**What happened.** 27.7 % of Flint's output sat in copies of eight tokens or more: 3.9 % in chat, 21.5 % in code,
+52.5 % in whole-file edits and 99.2 % in rewrites. Inside a copy, a 6-token match continued correctly 97.9 % of the
+time; in fresh text, only 17.1 %. But with the measured cost of a multi-token check, only 2-token guesses paid at all,
+for 1.03× overall.
 
 **Why.** The guesses were good where copies exist, but the check was too expensive to exploit them. That pushed me to
 a different way of checking, on the cards that sit idle anyway (next section).
 
 **The answer store** was the follow-up (2026-10-27). It is a host-side index of Flint's own past answers, 1,177
-publishable agent sessions and 15.4 million tokens in a 124 MB file, consulted after the context lookup. Offline it
-raised right guesses from 57 % to 60 %, and a simulator predicted +4.3 %. Measured by replaying the agent check's
+publishable agent sessions and 15,445,634 tokens in a 123.6 MB file, consulted after the context lookup. Offline it
+raised right guesses from 56.9 % to 59.6 %, and a simulator predicted +4.3 %. Measured by replaying the agent check's
 requests to both setups on identical tokens, it gave **+1.4 %** (95 % interval 0.4–1.9 %), a third of the prediction.
 It is built and passed its pre-set rule, but it is not published yet.
 
@@ -148,22 +151,22 @@ moment 9                                                         A  → sample t
 request's own continuation counts as the guesser.
 
 **What happened on Flint.** Exact: 89 runs, 21,688 tokens, bit-identical to plain decoding. On the agent check, Flint
-Q8_0 went from **29.3 tok/s without pipelining to 40.1 at depth 2, 44.6 at depth 3 and 44.6–45.9 at depth 4:
-+52 %**. It shipped in v2.0. Part of the gain is the clock, not the guesses: with every guess wrong, nine cards still
+Q8_0 went from **29.3 tok/s without pipelining to 40.1 at depth 2, 44.6 and 44.6 at depth 3 (two runs) and 45.9
+and 44.6 at depth 4 (two runs): +52 % at depth 3**. It shipped in v2.0. Part of the gain is the clock, not the guesses: with every guess wrong, nine cards still
 ran 1.24× faster, because the extra work keeps idle cards at their boost clock instead of dropping to base. I estimate
 the gain at about half clock, half right guesses.
 
 **What happened on Flash-Next** (2026-11-03). I rebuilt it for Flash-Next, a hybrid model whose recurrent layers keep a
 running state instead of a cache ([Chapter 2](02-how-an-llm-makes-text.md)). A dropped guess can't just discard cache
-entries; it needs a saved copy of that state per guess in flight, 113 MiB each. It was exact on the P106s, 13 of 13
-runs, and fitted at depth 3 with 349 MiB to spare on the fullest card. Then the agent check: **4.9 tok/s against 7.9
-without pipelining, 1.6× slower.** A fit over 40 requests put the cost of each wrong guess at **about 370 ms, nearly
-three plain tokens** (127 ms each). The guesser was right on 30 % of tokens and wrong on 40 %. And 23 % of the tokens,
-the tool-call bodies, never ran pipelined at all: the server leaves the pipeline while a grammar constrains the output.
+entries; it needs a saved copy of that state per guess in flight, 112.6 MiB each. It was exact on the P106s, 13 of 13
+runs, and fitted at depth 3 with 349 MiB to spare on the fullest card. Then the agent check: **4.91 tok/s against 7.88
+without pipelining, 1.6× slower.** A fit over 40 requests put the cost of each wrong guess at **372 ms, 2.9 plain
+tokens** (127 ms each). The guesser was right on 29.7 % of tokens and wrong on 39.9 %. And 23.3 % of the tokens
+(2,359 of 10,142), the tool-call bodies, never ran pipelined at all: the server leaves the pipeline while a grammar constrains the output.
 Those include the edits, where copy guesses are right most often.
 
 **Why.** Pipelining pays only when a wrong guess is nearly free. On Flint it was: the wasted work ran on cards that
-would otherwise idle. On Flash-Next the 370 ms is about what the queued work behind a wrong guess (the guess itself and
+would otherwise idle. On Flash-Next the 372 ms is about what the queued work behind a wrong guess (the guess itself and
 the two behind it) would take if it still ran on every card before the corrected token. My simulator assumed dropped
 guesses used idle cards and predicted 1.31×; the rig said otherwise. Where exactly the time goes (the cards' queues,
 restoring the recurrent state, or the host loop on two Celeron cores) is **open**: a per-card timeline of one replayed
@@ -172,8 +175,8 @@ confidence floor. Until then pipelining stays off Flash-Next's line.
 
 ## 8.5 A drafter of my own for Flint
 
-**The idea.** Lookups only guess copied text, and more than half of the output is fresh: 52 % of positions in
-held-out agent sessions, 72 % in my test set of hand-written prompts. A small trained network could guess fresh text too.
+**The idea.** Lookups only guess copied text, and more than half of the output is fresh: 52.2 % of positions
+in held-out agent sessions, 72.3 % in my test set of hand-written prompts. A small trained network could guess fresh text too.
 
 **How it should work.** Flint already computes hidden states (its internal representation of each token) for the
 tokens in flight. My drafter is a two-layer network that reads, for each of them, the deepest state reached so far and
@@ -182,64 +185,67 @@ estimate was acceptance 0.60–0.72, 1.6–2.6 ms per guess and 2.5–2.9× on n
 
 **What I did, round 1** (2026-10-24/25). I trained heads on Flint's answers to prompts from public chat datasets.
 
-**What happened.** Offline acceptance reached 0.54, and served acceptance matched the offline score: 53.8 %. Served at
-depth 3, it gave 50.4 tok/s against 48.6 without the head, +3.7 %. Two problems. One guess cost 5.3–7.3 ms instead of
-1.6–2.6. And then I excluded all of it: the prompts came from ShareGPT, UltraChat and Magicoder, whose licences and
+**What happened.** Offline acceptance reached 0.538, and served acceptance matched the offline score: 53.8 %. Served
+at depth 3, it gave 50.4 tok/s against 48.6 without the head, +3.7 %. Two problems. One guess cost 6.20 ms (7.29 at
+8,192 positions of context) instead of the estimated 1.6–2.6. And then I excluded all of it: the prompts came from ShareGPT, UltraChat and Magicoder, whose licences and
 provenance I could not publish. Those numbers now only describe the method.
 
 **What I did, round 2** (2026-10-26 to 10-29). I built a publishable data set from scratch: an agent loop in
 network-less sandboxes over licence-checked code (Python 3.12's standard library and Elixir's), with Flint writing the
-sessions. One overnight run produced 1,177 sessions, 18,885 turns and 15.4 million tokens. I trained new heads on it,
+sessions. One overnight run produced 1,177 sessions, 18,885 turns and 15,426,749 tokens. I trained new heads on it,
 as an MTP head (a small extra layer predicting the next token from the model's final hidden state).
 
 **What happened.**
 
 | Head | Held-out acceptance | Agent check |
 |---|---:|---|
-| 240 minutes of training | 0.28 | 29.7–30.7 tok/s, against 45.0 without |
-| 1,000 minutes | 0.37 | right 24.8 % of the time, 3.2 % slower |
-| 1,480 minutes | 0.38 | gains slowed to +0.027 per doubling of training |
+| 240 minutes of training | 0.277 | 29.7 tok/s (the nine-card head) and 30.7 (the 3–12-card head), against 45.0 without |
+| 1,000 minutes | 0.366 | right 24.8 % of the time, 3.2 % slower |
+| 1,480 minutes | 0.380 | gains slowed to +0.027 per doubling of training |
 
-I cut the guess from 4.7 to 2.9 ms, under the simulated break-even of about 3 ms. It still lost, because inside the
-server a guess costs more than on an idle card: following the conversation costs as much as guessing, and two of
-every three head launches were wasted. On three RTX 3090s the head was slower too, so this isn't Pascal's fault.
+I cut the guess from 4.77 to 2.93 ms, under the simulated break-even of est. 3 ms. It still lost, because inside the
+server a guess costs more than on an idle card: following the conversation costs as much as guessing, and 6,224 of
+9,387 head launches were wasted. On three RTX 3090s the head was slower too, so this isn't Pascal's fault.
 With every removable cost gone, the estimated ceiling was +5.2 %, against my rule of a credible +5 %. I stopped work
 on it on 2026-10-29.
 
 **Why.** Acceptance is set by what the drafter learned, and an add-on head trained on one overnight run of narrow code
-mostly memorizes that code. Ornith's MTP layer, trained together with the model on its whole training corpus, is right 0.85–0.91 of
-the time on the same kind of text; my head 0.25–0.38. On these cards that difference is the difference between a
-slowdown and a 2–3× speed-up. The one open lever is the 0.04–0.06 of acceptance lost between offline scoring and
+mostly memorizes that code. Ornith's MTP layer, trained together with the model on its whole training corpus, is right 0.845 of
+the time on agent sessions and 0.865 on code; my head 0.380 at best offline and 0.248 as served. On these cards that
+difference is the difference between a slowdown and an est. 2–3× speed-up. The one open lever is the acceptance lost
+between offline scoring (0.309 on the agent check's own text) and
 serving, which is engine work.
 
 ## 8.6 Flash-Next's MTP draft: 7.8 to 12.2 tok/s
 
 **The idea.** Flash-Next has a published MTP draft, the Gyro draft by agentionai, made for this model. If it is right
-70 % of the time, each step should yield about three tokens.
+70 % of the time, each step should yield est. three tokens.
 
 **What I did, round 1** (2026-11-03). I loaded it beside the model on the second rig. The host ran out of memory:
 swap jumped from 287 to 991 MiB in 10 seconds, and the kernel's out-of-memory killer ended the server. The cause was
-odd. About 970 MiB of the 4 GB was marked as a special reserved kind of memory (CMA) that the GPU driver's pinned
+odd. 970 MiB of the 4 GB was marked as a special reserved kind of memory (CMA) that the GPU driver's pinned
 buffers can't use, although free tools reported it as available.
 
 Three workarounds made room: the draft's token table on card 4 instead of the host, a smaller draft batch, and the
 model's own token table out of pinned memory. With those, the agent check ran.
 
-**What happened.** 10 of 11 tasks passed, generation **8.8 against 7.8 tok/s**, acceptance 0.70 and 3.1 tokens per
-step. The draft arm also wrote 30 % fewer tokens, which flatters per-task times; at equal tokens the draft was worth
-1.11–1.15×. The reason is the curve of [section 8.2](#82-the-catch-checking-k-tokens-is-not-free): a step of three
-draft passes and a 4-token check cost about 350 ms, the time of 2.8 plain tokens.
+**What happened.** 10 of 11 tasks passed, generation **8.8 against 7.8 tok/s**, acceptance 0.701 and 3.10 tokens per
+step. The draft arm also wrote 29.6 % fewer tokens (10,930 against 15,521), which flatters per-task times; at equal
+tokens the draft was worth est. 1.11–1.15×. The reason is the curve of
+[section 8.2](#82-the-catch-checking-k-tokens-is-not-free): a step of three draft passes and a 4-token check cost
+347 and 359 ms in two loads, the time of 2.7 and 2.8 plain tokens.
 
 **What I did, round 2** (2026-11-04). Booting the kernel with `kho=off` ended the CMA marking, so the host had its
 memory back ([Chapter 5](05-nine-cards.md) tells that story). I reran the same draft line on a newer engine build with
 faster Pascal kernels.
 
-**What happened.** 11 of 12 tasks passed, generation **12.2 tok/s against 7.8**, acceptance 0.72. At equal tokens the
-session ran 1.25–1.39× faster. The one failed task ran out of time while one reply reasoned for 7,448 tokens.
+**What happened.** 11 of 12 tasks passed, generation **12.2 tok/s against 7.8**, acceptance 0.723. At equal tokens the
+session ran est. 1.25–1.39× faster. The one failed task ran out of time while one reply reasoned for 7,448 tokens.
 
 In parallel I made the draft borrow the main model's token table and output head instead of keeping its own copies.
-The two matched row by row (cosine 0.988 and 0.999). Sharing them frees about 650 MiB on card 4 and 450 MiB on card 8,
-and the plain draft line then loads without the three workarounds. Short smoke tests ran at the same speed; its agent
+The two matched row by row (mean cosine 0.9884 and 0.9991). Sharing them frees 648 MiB on card 4 and 452 MiB on
+card 8. Sharing alone still ran out of host memory early in generation; with the load also staged through 32 MiB
+instead of 256, the plain draft line runs without the three workarounds. Short smoke tests ran at the same speed; its agent
 check is next.
 
 **Why, and what is open.** The draft works because it was trained for this model. But 12.2 compares two different
@@ -255,10 +261,10 @@ several positions in one pass from the main model's internal states.
 8, sharing the main model's token table and output head. It needed an upstream fix first.
 
 **What happened.** On the same base engine as the first MTP run: 11 of 11 tasks, **9.5 tok/s** (MTP 8.8, none 7.8),
-acceptance 0.78, 2.56 tokens per step at about 270 ms a step. At equal tokens, 1.15–1.16×. It paid only with two
-drafted tokens. Each drafted position added about 87 ms to a step, so a third pays only above 2.9 tokens per step,
-which would need about 0.85 acceptance at that position. And the host only held it with a small prompt batch, which
-slowed prompt reading from 59 to 47 tok/s.
+acceptance 0.778, 2.56 tokens per step at 271 ms a step. At equal tokens, est. 1.15–1.16×. It paid only with two
+drafted tokens. Each drafted position added 87 ms to a step (348 against 261 ms), so a third pays only above 2.9 tokens
+per step, which would need est. 0.85 acceptance at that position. And the host only held it with a small prompt batch,
+which slowed prompt reading from 59.4 to 47.1 tok/s.
 
 **Why.** Cheaper drafting moved the bottleneck entirely onto the check. A block drafter is only as good as the
 multi-token pass behind it.
@@ -288,7 +294,7 @@ decoding can't catch a bias in sampling, so the test generates many outputs with
 a chi-square test, whether the two distributions differ. A control at a different temperature proves the test can see
 a shift.
 
-**What happened.** Block verification accepted 9 % more drafted tokens per draft (0.221 against 0.202) and passed. But
+**What happened.** Block verification accepted 9.4 % more drafted tokens per draft (0.2207 against 0.2017) and passed. But
 the test also caught a bug in the existing one-by-one path, under a grammar, the mode used for tool calls. A hybrid
 model can't remove part of its recurrent state. When a draft is longer than the state snapshots it keeps, the server
 restores an earlier checkpoint after a partial rejection and replays the accepted tokens. That restore also put back
@@ -304,8 +310,8 @@ drafters on hybrid models, and models that can't remove part of a sequence. The 
 
 ## 8.10 The open cost: copying the answers back
 
-Each checked position returns a row of scores, one per vocabulary entry: 248,320 32-bit numbers, about 1 MB. A 5-token
-check therefore ships about 5 MB from the last card over its PCIe 1.0 x1 link, an estimated 20 ms, and then the
+Each checked position returns a row of scores, one per vocabulary entry: 248,320 32-bit numbers, 993,280 bytes. A 5-token
+check therefore ships 4.97 MB from the last card over its PCIe 1.0 x1 link, an estimated 20 ms, and then the
 two-core host samples each row. My pass timings never include it, because the benchmark tool returns only one row.
 Every real agent-check step pays it. The plan is to measure it first, then, if it is large, sample on the last card and
 send back only the accepted tokens. **Open.**
@@ -314,12 +320,12 @@ send back only the accepted tokens. **Open.**
 
 - Speculative decoding is optimistic execution with rollback: guess, check in bulk, keep the matching prefix. The
   output doesn't change.
-- It pays only if checking k tokens costs close to one. On these cards five tokens still cost about 2.6×, and that
-  curve, not the drafter, is today's limit.
-- Acceptance is everything. Drafts trained with the model are right 0.7–0.9 of the time; my add-on head reached 0.38
-  and lost speed.
-- Guesses on idle cards gave Flint +52 %, but made Flash-Next 1.6× slower, because each wrong guess cost almost three
-  tokens' time.
+- It pays only if checking k tokens costs close to one. On these cards five tokens still cost 2.63× at the default
+  launch shape, and that curve, not the drafter, is today's limit.
+- Acceptance is everything. Drafts trained with the model were right 0.701 (the Gyro MTP draft), 0.778 (DFlash2) and
+  0.845 (Ornith's MTP layer, offline) of the time; my add-on head reached 0.380 offline and lost speed.
+- Guesses on idle cards gave Flint +52 %, but made Flash-Next 1.6× slower, because each wrong guess cost 2.9 tokens'
+  time.
 - On a 4 GB host, memory decides whether a drafter runs at all; sharing tensors with the main model is free room.
 - Test exactness statistically. A chi-square test found a sampling bias that no greedy comparison could see.
 
