@@ -60,11 +60,11 @@ for Flint (8 of 8 requests) and Flash-Next (both prompts); Ornith's is measured 
 
 Speed-up against stock llama.cpp b12076, the upstream release this engine is built on (`20a51f24a`, no fork commit),
 each engine on the same file:
-- **Flash-Next:** 20.40 against 8.20 tok/s (2.49×), 12 of 12 against 9 of 9 reached; on the nine tasks stock reached,
+- **Flash-Next:** 20.40 against 8.20 tok/s (2.48×), 12 of 12 against 9 of 9 reached; on the nine tasks stock reached,
   a task's work takes 1.90 against 3.74 minutes.
-- **Flint:** 45.9 against 14.4 tok/s (3.2×), 12 of 12 against 10 of 12, 1.2 against 2.9 minutes a task (median). On
-  Unsloth's UD-Q5_K_XL: 46.4 against 13.7 tok/s (3.4×), 12 of 12 against 11 of 12, 1.0 against 3.0 minutes a task.
-- **Ornith-1.5-122B:** on Unsloth's UD-Q2_K_XL, 12.6 against 6.0 tok/s (2.1×), 12 of 12 against 11 of 12, 1.8 against
+- **Flint:** 45.9 against 14.4 tok/s (3.18×), 12 of 12 against 10 of 12, 1.2 against 2.9 minutes a task (median). On
+  Unsloth's UD-Q5_K_XL: 46.4 against 13.7 tok/s (3.38×), 12 of 12 against 11 of 12, 1.0 against 3.0 minutes a task.
+- **Ornith-1.5-122B:** on Unsloth's UD-Q2_K_XL, 12.6 against 6.0 tok/s (2.10×), 12 of 12 against 11 of 12, 1.8 against
   3.1 minutes a task (median). Stock cannot load Ornith-1.5-122B Pascal N2P GGUF, on which the preset runs at 16.3.
 
 ## What is new since v2

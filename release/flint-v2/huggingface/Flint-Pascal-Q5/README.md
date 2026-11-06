@@ -25,33 +25,38 @@ popular files use elaborate formats that get more quality out of each bit. Old P
 units and spend real time unpacking those formats. This file uses only the two simplest formats (Q5_0 and Q8_0), which
 the [Pascal engine](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs) decodes fastest. The price is some
 quality: Unsloth's UD-Q5_K_XL, the same size in elaborate formats, stays closer to the original model, but on these
-cards it ran only at the speed of the much larger Q8_0. In the test below this file is 22 % faster.
+cards it ran only at the speed of the much larger Q8_0. In the agent test below this file is the fastest Flint file:
+49.4 tokens per second on Miner Llama v3 against 46.4 for UD-Q5_K_XL (on v2.0: 53.8 against 44.2).
 
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
-card on a single PCIe 1.0 lane, a 2-core Celeron host): it generated **53.8 tokens per second** over its sessions and
-finished all twelve tasks in 17 minutes, a median of 1.2 minutes per task. Unsloth's UD-Q5_K_XL in the same test: 44.2
-tokens per second, 25 minutes for the twelve tasks. This file on stock llama.cpp: 15.6 tokens per second (at 65,536
-tokens of context).
+card on a single PCIe 1.0 lane, a 2-core Celeron host). With Miner Llama v3 (2026-11-06) this file generated
+**49.4 tokens per second** over its sessions and passed all twelve tasks, a median of 1.7 minutes per task. One session
+went long (complex-numbers, 14,024 tokens, its context past 24,000 tokens); on the other eleven tasks it generated 53.64
+tokens per second, as on v2.0 (54.04), and at fixed context depths v3 writes the same tokens as v2.0 at the same speed.
+Unsloth's UD-Q5_K_XL on v3: 46.4 tokens per second. Stock llama.cpp b12076 on UD-Q5_K_XL: 13.7 (at 65,536 tokens of
+context); this file on an older stock commit: 15.6.
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
   near-lossless (it picks the original model's next word 93.3 % of the time) and fits the full 262,144-token context on
-  nine cards; with the Pascal engine it generates 45.9 and 44.6 tokens per second in two runs of the same agent test.
+  nine cards; with Miner Llama v3 it generates 45.9 tokens per second in the same agent test (v2.0: 45.9 and 44.6 in two
+  runs).
 - **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards with a
-  shorter context, and is 17 % and 21 % faster than Q8_0's two runs and 22 % faster than UD-Q5_K_XL on nine, at a lower quality than
+  shorter context, and is the fastest on nine: on Miner Llama v3, 49.4 against Q8_0's 45.9 and UD-Q5_K_XL's 46.4 tokens
+  per second (on v2.0 it was 17 % and 21 % faster than Q8_0's two runs and 22 % faster than UD-Q5_K_XL), at a lower quality than
   both (it picks the original's next word 88.8 % of the time, UD-Q5_K_XL 90.7 %).
 
 ## Run it in three steps
 
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
-2. **Download** the Pascal engine, Miner Llama v2 (the two archives of its
-   [release](https://github.com/Cinderella-Man/llama.cpp/releases)), unpack both into one folder,
+2. **Download** the Pascal engine, Miner Llama v3 (the two archives of its
+   [release](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v3.0)), unpack both into one folder,
    and download `flint-pascal-Q5.gguf` from this page.
 3. **Start it**, here on nine cards with the full context:
 
    ```bash
-   llama-p106-v2.0/llama-server -m flint-pascal-Q5.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
+   llama-p106-v3.0/llama-server -m flint-pascal-Q5.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
    ```
 
    Then open `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`),
@@ -59,8 +64,6 @@ tokens of context).
 
 What each flag does, how to run on six cards, and how to use it for coding agents:
 [the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md).
-A trained guesser for more speed is planned for a later release
-([how it works](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/drafter.md)).
 
 ## What you need
 
@@ -76,8 +79,19 @@ A trained guesser for more speed is planned for a later release
 The measure is a coding agent at work, because that is what a rig like this is for: the
 [agent check](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/bench/agent_check) gives the
 [pi](https://github.com/earendil-works/pi) coding agent twelve small bug-fix tasks (Python and JavaScript, real test
-runs, five to ten tool calls each, the context growing every turn) within 25 minutes, and records every turn. Nine
-P106-090, 262,144-token context, the command line above unless noted, 2026-10-26:
+runs, five to ten tool calls each, the context growing every turn) within a time budget, and records every turn. Nine
+P106-090, 262,144-token context, the command line above unless noted. With Miner Llama v3 (`1551f5fe1`), 2026-11-06:
+
+| File and engine | Tasks passed | Minutes per task (median) | Generation, tokens/s | Prompt reading, tokens/s | First token (median) |
+|---|---|---|---|---|---|
+| **This file, Miner Llama v3** | **12 of 12** | 1.7 | **49.4** | 168 | 3.02 s |
+| Unsloth UD-Q5_K_XL, Miner Llama v3 | 12 of 12 | 1.0 | 46.4 | 182 | 2.68 s |
+| Unsloth UD-Q5_K_XL, stock llama.cpp b12076, 65,536-token context | 11 of 12 | 3.0 | 13.7 | 141 | 4.25 s |
+
+The runs: [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md); the check at fixed depth, v3
+against v2.0 on this file: [2026-11-06_flint_q5_depth](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-06_flint_q5_depth/README.md).
+
+With Miner Llama v2.0, 2026-10-26, within 25 minutes:
 
 | File and engine | Tasks done in the 25 minutes (passed) | Minutes per task (median) | Generation, tokens/s | Prompt reading, tokens/s | First token (median) |
 |---|---|---|---|---|---|

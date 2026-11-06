@@ -31,7 +31,7 @@ on nine P106-090 cards, 49,152 tokens of context:
   Unsloth's UD-Q2_K_XL, the common file of about the same size. Stock was tuned first: llama-bench over `-ub` 128, 256
   and 512 with flash attention off and on picked `-ub 256` with flash attention on
   ([stock_tune/ornith-ud.md](../../docs/data/2026-11-05_release_regression/stock_tune/ornith-ud.md)).
-- On UD-Q2_K_XL, v3 against stock: 12.6 against 6.0 tok/s (2.1×), 12 of 12 against 11 of 12, 1.8 against 3.1 minutes
+- On UD-Q2_K_XL, v3 against stock: 12.6 against 6.0 tok/s (2.10×), 12 of 12 against 11 of 12, 1.8 against 3.1 minutes
   a task (median). On v3, my file against UD-Q2_K_XL: 14.9 against 12.6 tok/s (+18.3 %) without a switch, but prompts
   at 59 against 69 tok/s and the first token at 9.41 against 7.90 s.
 - The expert skip is not in Ornith's preset: at p = 0.9 its KL divergence on the Ornith-1.5-122B Pascal N2P GGUF is above noise on all three texts (agent +0.00756 ± 0.00090, code +0.01021 ± 0.00178, wiki +0.02383 ± 0.00280; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Ornith's graph does not call it, so the switch changes nothing there.

@@ -12,10 +12,10 @@ A llama.cpp fork for Pascal cards: nine P106-090s, one PCIe 1.0 lane each, a 2-c
 
 | A coding agent, tok/s | Stock llama.cpp b12076 | **Miner Llama v3** | **Miner Llama v3, my quant** |
 |---|---:|---:|---:|
-| Qwen3.8-Flash-Next 125B, 2-bit | 8.20 | **20.40** (2.49×) | — |
-| Flint 39.8B, 8-bit | 14.4 | **45.9** (3.19×) | **47.4**<br>[Flint Pascal Q8 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) |
-| Flint 39.8B, 5-bit | 13.7 | **46.4** (3.39×) | **49.4**<br>[Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) |
-| Ornith-1.5-122B, 2-bit | 6.0 | **12.6** (2.1×) | **16.3**<br>[Ornith-1.5-122B Pascal N2P GGUF](https://huggingface.co/CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF) |
+| Qwen3.8-Flash-Next 125B, 2-bit | 8.20 | **20.40** (2.48×) | — |
+| Flint 39.8B, 8-bit | 14.4 | **45.9** (3.18×) | **47.4**<br>[Flint Pascal Q8 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) |
+| Flint 39.8B, 5-bit | 13.7 | **46.4** (3.38×) | **49.4**<br>[Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) |
+| Ornith-1.5-122B, 2-bit | 6.0 | **12.6** (2.10×) | **16.3**<br>[Ornith-1.5-122B Pascal N2P GGUF](https://huggingface.co/CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF) |
 
 The public files are UkisAI's Swift-1.5 GSQ-RCO Q2_0 and Unsloth's Q8_0, UD-Q5_K_XL and UD-Q2_K_XL. Stock llama.cpp
 runs Flint at 65,536 tokens of context, because at 262,144 its attention mask does not fit in the 4 GB host; Miner Llama
