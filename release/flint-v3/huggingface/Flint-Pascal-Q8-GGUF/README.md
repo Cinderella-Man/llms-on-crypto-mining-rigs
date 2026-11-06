@@ -32,7 +32,7 @@ tokens per second**, all twelve tasks passed, on the Miner Llama v3 release buil
 the same build.
 
 **Which Flint file should you pick?**
-- **Nine 6 GB cards, best quality: this file or Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)**
+- **Nine 6 GB cards, best quality: this file or Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF/tree/20468edfc38ab43d6914cc88b08cbecb05d0fc62)**
   (42.3 GB). Both fit the full context on nine cards; this one is Q8_0's quality at fewer bytes per token.
 - **Six to eight cards, or the most speed on nine:
   [Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF)** (29.4 GB), at a lower quality.

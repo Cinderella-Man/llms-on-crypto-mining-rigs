@@ -72,6 +72,7 @@ records every turn. Nine P106-090, 49,152-token context, one run per row:
 | Engine and file | Tasks passed | Generation, tokens/s | Prompt reading, tokens/s | First token per turn (median) | Data |
 |---|---|---|---|---|---|
 | Stock llama.cpp b12076 (`20a51f24a`), tuned (`-b 2048 -ub 256 -fa on`), Unsloth UD-Q2_K_XL, 2026-11-06 | 11 of 12 | 6.0 | 55 | 12.57 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
+| Stock llama.cpp b12076, this file | cannot load it: N2P and N3P are this fork's types | — | — | — | — |
 | Miner Llama v3 (`1551f5fe1`), Unsloth UD-Q2_K_XL, no switch, 2026-11-06 | 12 of 12 | 12.6 | 69 | 7.90 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v3 (`1f7215948`), this file, no switch, 2026-11-05 | 12 of 12 | 14.9 | 59 | 9.41 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | **Miner Llama v3 (`1f7215948`), this file, the preset (`GGML_CUDA_KEEPALIVE=decode`), 2026-11-05** | **12 of 12** | **16.3** | 58 | 8.39 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |

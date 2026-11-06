@@ -13,6 +13,7 @@ on nine P106-090 cards, 49,152 tokens of context:
 |---|---|---|---|---|---|
 | Stock llama.cpp (an older commit), Unsloth UD-Q2_K_XL | — | 6.2 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | Stock llama.cpp b12076 (`20a51f24a`), tuned (`-b 2048 -ub 256 -fa on`), Unsloth UD-Q2_K_XL | 11 of 12 | 6.0 | 55 | 12.57, 20.55 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| Stock llama.cpp b12076, Ornith-1.5-122B Pascal N2P GGUF | cannot load it: N2P and N3P are this fork's types | — | — | — | — |
 | Miner Llama v2.0, UD-Q2_K_XL | 12 of 12 | 9.7 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | v3 (`1551f5fe1`), Unsloth UD-Q2_K_XL (`-b 2048 -ub 512`), no switch | 12 of 12 | 12.6 | 69 | 7.90, 17.24 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama's N2P/N3P build of 2026-10-28, Ornith-1.5-122B Pascal N2P GGUF (`valid1`) | 12 of 12 | 14.5 | — | 9.6 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |

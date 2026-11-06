@@ -12,14 +12,16 @@ built for mining: the transformer split over nine 6 GB cards on single PCIe 1.0 
 from the rig's SSD.
 
 A coding agent fixing twelve small bugs, with real tool calls and test runs, 65,536 tokens of context
-([bench/agent_check](../../bench/agent_check/README.md)), UkisAI's Swift-1.5 GSQ-RCO Q2_0:
+([bench/agent_check](../../bench/agent_check/README.md)), UkisAI's Swift-1.5 GSQ-RCO Q2_0 unless a row names my Pascal mix of it:
 
 | Engine and line | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|
 | Stock llama.cpp `d77256999`, no draft (2026-11-03) | 7 of 8 tried | 6.4 | — | — | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
 | Miner Llama v2.0's code, no draft | 9 of 9 | 7.8 | 59 | 8.70 | [2026-11-04_mtp_redo](../../docs/data/2026-11-04_mtp_redo/README.md) |
 | Stock llama.cpp b12076 (`20a51f24a`), with the MTP draft, `-ub 512` | 9 of 9 (3 not reached) | 8.20 | 53.7 | 10.22, 24.85 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| Stock llama.cpp b12076, my Pascal mix of the file (Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, not published), `-ub 256` | 10 of 11 (1 not reached) | 8.47 | 48.3 | 10.99, 20.91 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 | **Miner Llama v3 (`1551f5fe1`), the preset** | **12 of 12** | **20.40** | **69.4** | **6.89, 15.89** | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| Miner Llama v3 (`1f7215948`), the preset, my Pascal mix of the file | 12 of 12 | 20.75 | 69.0 | 7.60, 15.79 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 
 - **The engine halves a task's time.** On the nine tasks stock reached, Miner Llama v3 does a task's work in 1.90
   minutes against stock's 3.74, and generates 2.49 times as fast.
@@ -47,7 +49,7 @@ How v3 got there from 7.8 tok/s, one change at a time: [docs/book/10-v3.md](../.
 | `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, `…-00002-of-00003.gguf` (the transformer, on the cards) | 37.7 GB | cut from UkisAI's Swift-1.5 GSQ-RCO Q2_0 download with `gguf_reshard.py` (below) | `690252d2…`, `a893db93…` in [CHECKSUMS](CHECKSUMS) |
 | `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf` (the n-gram table, on the SSD) | 28.8 GB | the same cut | `05716382…` in [CHECKSUMS](CHECKSUMS) |
 | `mtp-Qwen3.8-Flash-Next-draft.gguf` (the MTP draft) | 2.7 GB | [agentionai/Qwen3.8-Flash-Next-Gyro-GGUF](https://huggingface.co/agentionai/Qwen3.8-Flash-Next-Gyro-GGUF), revision `273edc1d2ffae5241fe3cab69568d682dad4c718` | `00818378…` in [CHECKSUMS](CHECKSUMS) |
-| Miner Llama v3.0 engine archives | TODO(tag) | the fork's [GitHub release](https://github.com/Cinderella-Man/llama.cpp/releases) | the release's `SHA256SUMS` |
+| Miner Llama v3.0 engine archives (binaries, CUDA runtime, tests) | 556 / 554 / 58 MB | the fork's [GitHub release](https://github.com/Cinderella-Man/llama.cpp/releases) | the release's `SHA256SUMS` |
 
 The three model shards are UkisAI's two Q2_0 shards byte for byte, with the n-gram table moved into a third shard of
 its own: the table can then live on the SSD while shards 1 and 2 load to the cards.

@@ -51,11 +51,11 @@ GGUF, each on stock and on v3): TODO(flintq5).
 
 | File | Size | Where from | Checksum |
 |---|---:|---|---|
-| `flint-Q8_0.gguf` | 42.3 GB | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) | the SHA-256 Hugging Face lists for the file |
+| `flint-Q8_0.gguf` | 42.3 GB | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF/tree/20468edfc38ab43d6914cc88b08cbecb05d0fc62), revision `20468edf` | `5df42b56859c7b5142228005d7d63c327ec9e34c99c72548016d805309a0d284` |
 | `flint-pascal-Q8.gguf` (Flint Pascal Q8 GGUF) | 40.4 GB | [CinderellaMan/Flint-Pascal-Q8-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) | `15c50169…` in its [CHECKSUMS](huggingface/Flint-Pascal-Q8-GGUF/CHECKSUMS) |
 
 ```bash
-wget -c -P /mnt/models https://huggingface.co/unsloth/flint-GGUF/resolve/main/flint-Q8_0.gguf
+wget -c -P /mnt/models https://huggingface.co/unsloth/flint-GGUF/resolve/20468edfc38ab43d6914cc88b08cbecb05d0fc62/flint-Q8_0.gguf
 # or my file, Flint Pascal Q8 GGUF:
 wget -c -P /mnt/models https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF/resolve/main/flint-pascal-Q8.gguf
 ```
