@@ -46,7 +46,7 @@ second** with Miner Llama v3's preset, all twelve tasks passed; 16.3 with the ke
 3. **Start it**, on nine cards with Ornith's v3 preset:
 
    ```bash
-   llama-p106-v3.0/llama-server -m Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf -ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off --host 127.0.0.1 --port 8080
+   llama-p106-v3.0/llama-server -m Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf -ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off --host 127.0.0.1 --port 8080
    ```
 
    For the keep-alive row below, put `GGML_CUDA_KEEPALIVE=decode` before the command. Then open

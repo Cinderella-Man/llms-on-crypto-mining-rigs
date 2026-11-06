@@ -65,7 +65,7 @@ works: on 2026-10-28 its agent check left 563 MB of host memory at the lowest.
 ```bash
 PRESET_MODEL=Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf
 PRESET_ENV=""
-PRESET_ARGS="-ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off"
+PRESET_ARGS="-ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off"
 ```
 
 | Setting | What it does |
