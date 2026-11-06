@@ -76,7 +76,7 @@ records every turn. Nine P106-090, 49,152-token context, one run per row:
 | Miner Llama v3 (`1551f5fe1`), Unsloth UD-Q2_K_XL, no switch, 2026-11-06 | 12 of 12 | 12.6 | 69 | 7.90 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v3 (`1f7215948`), this file, no switch, 2026-11-05 | 12 of 12 | 14.9 | 59 | 9.41 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | **Miner Llama v3 (`1f7215948`), this file, the preset (`GGML_CUDA_KEEPALIVE=decode`), 2026-11-05** | **12 of 12** | **16.3** | 58 | 8.39 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
-| Miner Llama v2.0, Unsloth UD-Q2_K_XL, 2026-10-27 | 12 of 12 | 9.7 | — | — | [2026-10-27_ornith](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md) |
+| Miner Llama v2.0, Unsloth UD-Q2_K_XL, 2026-10-27 | 12 of 12 | 9.7 | 67 | 7.58 s | [2026-10-27_ornith](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md) |
 
 - **On the release build `1551f5fe1`** the preset runs 16.42 tok/s, 12 of 12 (2026-11-06, a second rig,
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-06_ornith_mtp_rig2/README.md));
@@ -84,7 +84,7 @@ records every turn. Nine P106-090, 49,152-token context, one run per row:
   noise (d = −0.00068 ± 0.00069).
 - **The keep-alive** runs a one-thread loop on each card while the model decodes, so the driver keeps every card at
   its boost clock.
-- **The first token is slow** (9.41 s median): Miner Llama's prompt kernels are not tuned for N2P and N3P yet.
+- **The first token is slow** (8.39 s median with the preset): Miner Llama's prompt kernels are not tuned for N2P and N3P yet.
 
 ## Quality
 

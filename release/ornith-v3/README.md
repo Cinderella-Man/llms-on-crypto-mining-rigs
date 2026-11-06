@@ -11,12 +11,12 @@ on nine P106-090 cards, 49,152 tokens of context:
 
 | Engine and file | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|
-| Stock llama.cpp (an older commit), Unsloth UD-Q2_K_XL | — | 6.2 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| Stock llama.cpp (an older commit), Unsloth UD-Q2_K_XL | 8 of 9 tried | 6.2 | 53 | 9.80, 20.36 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | Stock llama.cpp b12076 (`20a51f24a`), tuned (`-b 2048 -ub 256 -fa on`), Unsloth UD-Q2_K_XL | 11 of 12 | 6.0 | 55 | 12.57, 20.55 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | Stock llama.cpp b12076, Ornith-1.5-122B Pascal N2P GGUF | cannot load it: N2P and N3P are this fork's types | — | — | — | — |
-| Miner Llama v2.0, UD-Q2_K_XL | 12 of 12 | 9.7 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| Miner Llama v2.0, UD-Q2_K_XL | 12 of 12 | 9.7 | 67 | 7.58, 17.51 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | v3 (`1551f5fe1`), Unsloth UD-Q2_K_XL (`-b 2048 -ub 512`), no switch | 12 of 12 | 12.6 | 69 | 7.90, 17.24 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
-| Miner Llama's N2P/N3P build of 2026-10-28, Ornith-1.5-122B Pascal N2P GGUF (`valid1`) | 12 of 12 | 14.5 | — | 9.6 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
+| Miner Llama's N2P/N3P build of 2026-10-28, Ornith-1.5-122B Pascal N2P GGUF (`valid1`) | 12 of 12 | 14.5 | 61 | 9.57, 20.29 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | v3 (`1f7215948`), the same file, no switch | 12 of 12 | 14.9 | 59 | 9.41, 19.85 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | **v3, + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): the preset** | **12 of 12** | **16.3** | 58 | 8.39, 19.38 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | v3 (`1551f5fe1`), the preset, on a second rig (2026-11-06) | 12 of 12 | 16.42 | 60.1 | 9.34, 19.86 | [2026-11-06_ornith_mtp_rig2](../../docs/data/2026-11-06_ornith_mtp_rig2/README.md) |

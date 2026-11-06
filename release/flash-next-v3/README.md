@@ -195,7 +195,7 @@ single requests ([data](../../docs/data/2026-11-03_flash_next_baseline/README.md
 |---|---|---|
 | Reading a 1.4k / 7.2k / 32.7k-token prompt | 59 / 116 / 128 tok/s | 72 / 139 / 149 tok/s |
 | Time to the first token for those prompts | 23 / 62 / 257 s | 20 / 52 / 221 s |
-| Writing the answer | 5.7–7.2 tok/s | 5.4–8.9 tok/s |
+| Writing the answer to those prompts | 6.78 / 7.15 / 5.66 tok/s | 5.43 / 8.30 / 6.24 tok/s |
 | Loading from a USB 3 hard disk | 322 s | 326 s |
 | Host memory available while it works | 230–410 MiB of 4 GB | 330–460 MiB |
 

@@ -50,7 +50,7 @@ RAM). Generation in tokens per second over every request:
   Stock on UD-Q5_K_XL, the same tuned line: 13.7 tok/s, 11 of 12.
 - **Ornith-1.5-122B:** 16.3 tok/s, 12 of 12, first token per turn 8.39 s, with the keep-alive
   (`GGML_CUDA_KEEPALIVE=decode`), which its preset sets. Without it 14.9 tok/s on this build (`1f7215948`), against 14.5
-  for the same file on 2026-10-28, first token 9.41 s against 9.6. [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
+  for the same file on 2026-10-28, first token 9.41 s against 9.57. [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
   the earlier run and v2.0's 9.7 (stock 6.2, both UD-Q2_K_XL):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md).
 
@@ -102,11 +102,12 @@ the shortlist adds 10 % on the newer kernels, 14.6 → 16.0 tok/s
 With the hop cast and the newest kernels on top: 18.8 tok/s
 ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-04_s35_stack/README.md)).
 
-**The keep-alive** (`GGML_CUDA_KEEPALIVE=decode`, off by default; Flash-Next's preset sets it): on a layer split only
-one card works at a time, and the driver drops the waiting cards from their boost clock. One block of one thread per
-card, on the card's lowest-priority stream, polls a word in host memory while the split decodes, so every card stays at
-1,873–1,911 MHz instead of 1,354. Plain decoding −14 to −19 % a token; on the agent check 19.19 → 20.75 tok/s and
-prompts +12.5 %, at 5–11 % more energy a token
+**The keep-alive** (`GGML_CUDA_KEEPALIVE=decode`, off by default; Flash-Next's and Ornith's presets set it): on a layer
+split only one card works at a time, and the driver drops the waiting cards from their boost clock. One block of one
+thread per card, on the card's lowest-priority stream, polls a word in host memory while the split decodes, so every
+card stays at 1,873–1,911 MHz instead of 1,354. Plain decoding takes 51.06 and 51.08 ms a token against 62.75 and 59.62
+without it (two loads each); on the agent check 19.19 → 20.75 tok/s and prompts +12.5 %, at 16.5 and 16.7 J a token
+against 15.1 and 15.8
 ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_keepalive/README.md)).
 `request` also wakes every card when a request arrives (no better than `decode`); don't use `idle` (known issues).
 
