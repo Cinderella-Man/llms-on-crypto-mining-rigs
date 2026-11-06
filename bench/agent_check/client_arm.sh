@@ -8,14 +8,15 @@
 #   PROXY_PORT     the proxy on this machine's loopback (pi's base URL)
 #   TASK_SET (bugfix), TASKS (all), TIME_CAP_MIN (15), TURN_CAP (40), BUDGET_MIN (none: no attempt starts after it),
 #   CTX (65536, pi's context window = the server's -c), CPU_SHARES (256), IMAGE (agent-check:0.87.1),
-#   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings)
+#   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings),
+#   PREFIX (acrel: the containers are PREFIX-ARM-*, and both ends remove every PREFIX-ARM-* container)
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 : "${OUT:?}" "${ARM:?}" "${UPSTREAM_PORT:?}" "${PROXY_PORT:?}"
 TASK_SET=${TASK_SET:-bugfix}; TASKS=${TASKS:-all}; TIME_CAP_MIN=${TIME_CAP_MIN:-15}; TURN_CAP=${TURN_CAP:-40}
 CTX=${CTX:-65536}; CPU_SHARES=${CPU_SHARES:-256}; IMAGE=${IMAGE:-agent-check:0.87.1}
 LABEL=${LABEL:-pascal-quants=1}
-PFX=acrel-$ARM
+PFX=${PREFIX:-acrel}-$ARM
 mkdir -p "$OUT"
 rm -f "$OUT/$ARM.rc"
 echo $$ > "$OUT/$ARM.pid"

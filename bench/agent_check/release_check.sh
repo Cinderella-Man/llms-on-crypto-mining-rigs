@@ -36,7 +36,8 @@
 #   MemAvailable minus CmaFree below 20 MiB, on memory pressure and on swap-out, scripts/ram_watchdog.sh), WD_ENV (the
 #   watchdog's other limits as "VAR=value ...", e.g. "PSI_FULL_PCT=30 MIN_USABLE_MB=40"; "off" disables one),
 #   TIME_CAP_MIN (15), BUDGET_MIN or per arm BUDGET_MIN_stock / BUDGET_MIN_rel (none),
-#   CPU_SHARES (256), IMAGE (agent-check:0.87.1), LABEL (pascal-quants=1),
+#   CPU_SHARES (256), IMAGE (agent-check:0.87.1), LABEL (pascal-quants=1), PREFIX (acrel: the client's container
+#   names, PREFIX-ARM-*; give each rig its own when two rigs' arms of the same name share one client),
 #   SAMPLING (the sampling every request carries, JSON, e.g. '{"temperature":0.6,"top_p":0.95,"top_k":20,"min_p":0}';
 #   default Flint's makers' settings, temperature 1.0, top-p 0.95, top-k 20, min-p 0)
 #   STEPS ("prep run report collect"):
@@ -150,7 +151,8 @@ client_arm() {  # client_arm ARM: start client_arm.sh detached on the client, fo
   cl "mkdir -p $CLIENT_OUT && cd $CAC || exit 1; OUT=$CLIENT_OUT ARM=$arm UPSTREAM_PORT=$CLIENT_PORT \
     PROXY_PORT=$PROXY_PORT TASK_SET=$TASK_SET TASKS=$TASKS TIME_CAP_MIN=$TIME_CAP_MIN \
     BUDGET_MIN=${!budget_var:-${BUDGET_MIN:-}} CTX=$CTX CPU_SHARES=$CPU_SHARES IMAGE=$IMAGE LABEL=$LABEL \
-    SAMPLING='${SAMPLING:-}' setsid nohup bash client_arm.sh > $CLIENT_OUT/$arm.log 2>&1 < /dev/null & sleep 1" \
+    PREFIX=${PREFIX:-acrel} SAMPLING='${SAMPLING:-}' \
+    setsid nohup bash client_arm.sh > $CLIENT_OUT/$arm.log 2>&1 < /dev/null & sleep 1" \
     || { say "could not start the client for $arm"; return 1; }
   CLIENT_ARM=$arm
   while true; do
@@ -198,7 +200,7 @@ client_stop() {  # stop a client arm or replay still running (this script interr
   fi
   [ -n "${CLIENT_ARM:-}" ] || return 0
   cl "p=\$(cat $CLIENT_OUT/$CLIENT_ARM.pid 2> /dev/null) && kill -- -\$p 2> /dev/null; sleep 3; \
-    docker ps -aq --filter name=^acrel-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
+    docker ps -aq --filter name=^${PREFIX:-acrel}-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
   say "client arm $CLIENT_ARM stopped"
 }
 
