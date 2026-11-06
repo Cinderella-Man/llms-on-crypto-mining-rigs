@@ -1,4 +1,4 @@
-# Release regression: Flint and Ornith-122B on Miner Llama v3 (2026-11-05)
+# Release regression: Flint and Ornith-122B on Miner Llama v3 (2026-11-05 and 2026-11-06)
 
 Miner Llama v3's release build is `pascal-p106-v3-b12076-ladder5`. These tests check that it does not break or slow
 down the two models of the earlier releases: Flint (Unsloth's Q8_0, the v2 release model) and Ornith-1.5-122B
@@ -21,8 +21,9 @@ Every speed below is one measured run with its file, build and settings.
 | `-ladder5` `1551f5fe1` | the same branch at `1551f5fe1` (the MMVQ row-guard fix), md5 `288b57025e6ff64e76b90674a0509228` | the frozen tip from 2026-11-05 ~18:20 |
 | stock | upstream llama.cpp `20a51f24a`, `-ladder5`'s merge base (tag b12076 + 16 commits), no fork commits | the stock baseline |
 
-Files: Unsloth's `flint-Q8_0.gguf` (42,301,076,928 bytes) and `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf`
-(48,196,722,592 bytes, [its data](../2026-10-28_ornith_valid1/README.md)).
+Files: Unsloth's `flint-Q8_0.gguf` (42,301,076,928 bytes), `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf`
+(48,196,722,592 bytes, [its data](../2026-10-28_ornith_valid1/README.md)) and, on 2026-11-06, Flint Pascal Q8 GGUF
+(p065, `flint-near-q8-p065.gguf`, 40,431,236,544 bytes, md5 `8387b2e585a7b9cc10f40cb6b4531694`).
 
 ## Results
 
@@ -36,7 +37,8 @@ harness's flags (`-np 1 -bs --ctx-checkpoints 4 --cache-ram 0 ...`).
 |---|---|---|---|---:|---:|---|---:|---:|---|---:|
 | Flint Q8_0 | `-ladder5` `1f7215948` | `v3base`: the v2 line, every switch at its default | 12 / 12 | 19.2 | 1.2 | 2.67, 6.48 | 168 | **45.9** | 71 / 3 / 0 | 0 |
 | Flint Q8_0 | `-ladder5` `1f7215948` | `v3add`: + `LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 21.6 | 1.2 | 2.45, 6.89 | 168 | 44.7 | 73 / 2 / 0 | 0 |
-| Flint Q8_0 | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, same split (stock's tuned line, below); **partial**, stopped at 22:00 during task 9 | 7 / 8 | 27.9 (8 tasks) | 2.1 | 3.69, 7.80 | 140 | 14.6 | 39 / 1 / 0 | 1 |
+| Flint Q8_0 | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, same split (stock's tuned line, below); 8 tasks on 2026-11-05, the last 4 on 2026-11-06 | 10 / 12 | 52.6 | 2.9 | 4.13, 8.04 | 148 | 14.4 | 59 / 2 / 0 | 2 |
+| Flint Pascal Q8 GGUF (p065) | `-ladder5` `1551f5fe1` | `v3base`, 2026-11-06 | 12 / 12 | 22.3 | 1.0 | 2.66, 6.75 | 175 | **47.4** | 74 / 2 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1`: Q189's line, every switch at its default | 12 / 12 | 32.2 | 2.1 | 9.41, 19.85 | 59 | **14.9** | 62 / 0 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1-ka`: + `GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 32.0 | 2.1 | 8.39, 19.38 | 58 | **16.3** | 63 / 1 / 0 | 0 |
 
@@ -53,8 +55,12 @@ The earlier numbers on the same files and lines:
 - **The keep-alive on Ornith is a gain on generation:** 16.3 against 14.9 tok/s (+9.4 %), and the median first token
   8.39 against 9.41 s. The minutes for all tasks are equal (32.0 against 32.2), since answers at T 0.6 differ in
   length.
-- **Stock against Miner Llama, Flint Q8_0:** generation 14.6 against 45.9 tok/s (3.1×), and 2.1 against 1.2 minutes
-  per task (median), over the 8 tasks stock reached.
+- **Stock against Miner Llama, Flint Q8_0:** 10 / 12 against 12 / 12 tasks, generation 14.4 against 45.9 tok/s
+  (3.2×), and 2.9 against 1.2 minutes per task (median). Stock's two misses ran into the 12-minute cap.
+- **Flint Pascal Q8 GGUF against Unsloth's Q8_0, both on `-ladder5`:** 47.4 against 45.9 tok/s generation (+3.3 %),
+  the first token at 2.66 against 2.67 s, 1.0 against 1.2 minutes per task (median); both 12 / 12. Its sessions
+  generated more (85 against 74 s of decoding a task, mean), so all twelve took 22.3 against 19.2 minutes. Q8_0's two
+  v2.0 runs were 45.9 and 44.6.
 
 ### Stock's line (Flint Q8_0)
 
@@ -116,9 +122,21 @@ log-probability over the tokens both builds generated alike.
   identity run of `-ladder5` with `GGML_CUDA_MMVQ_2WARPS=0` against v2.0.
 - **No loss of function:** both models pass 12 / 12 at full speed on `-ladder5`.
 
-**Ornith's KLD against `-lowbit`** runs on the rig. `-lowbit`'s build does not start on an RTX 3090: its first kernel
-launch fails with "invalid argument". And on a compute 8.6 card neither build takes its Pascal kernels, which are what
-this drift is about.
+**Ornith's prompt passes do differ ([kld/ornith_lowbit_vs_1551f5fe1.tsv](kld/ornith_lowbit_vs_1551f5fe1.tsv),
+[the statistics](kld/ornith_lowbit_vs_1551f5fe1_stats.txt)).** The same run on the rig, 2026-11-06: valid1 on nine
+P106-090, wikitext-2 test, 16 chunks of 512 tokens, Q189's line (`-b 2048 -ub 512`), `1551f5fe1` scored against
+`-lowbit`. It runs on the rig because `-lowbit`'s build does not start on an RTX 3090 (its first kernel launch fails
+with "invalid argument"), and on a compute 8.6 card neither build takes its Pascal kernels.
+- mean KLD 0.021653 ± 0.000881, median 0.006179, 99th percentile 0.224798, maximum 1.654823;
+- the same top token 93.873 ± 0.376 %;
+- perplexity 5.9938 ± 0.2410 on `1551f5fe1` against 6.0735 ± 0.2449 on `-lowbit`; paired by token, ln(PPL ratio)
+  −0.0126 ± 0.0043.
+
+So on Pascal the two builds compute Ornith's prompt passes differently, far beyond Flint's rounding (0.000056 at most),
+and the release build's perplexity is the lower. On the 3090s, where neither build takes its Pascal kernels, the same
+two builds differ by +0.00167 ± 0.00078 in KLD against the Q8_0 reference on this text
+([2026-11-05_night_quant_chain](../2026-11-05_night_quant_chain/README.md)). Which build is closer to the model on
+Pascal is the next run: both against that Q8_0 reference on the P106.
 
 ## Files
 
@@ -128,7 +146,9 @@ this drift is about.
 | `identity/*.md` | the greedy identity tables (compare_greedy.py) |
 | `identity/*-greedy-*.jsonl` | each build's greedy requests: token ids, text, timings and the top-2 log-probabilities |
 | `kld/flint.tsv`, `kld/flint_stats.txt` | Flint's KLD of `1551f5fe1` against v2.0 |
+| `kld/ornith_lowbit_vs_1551f5fe1.tsv`, `_stats.txt` | Ornith valid1's KLD of `1551f5fe1` against `-lowbit` on the P106 |
 | `stock_tune/flint.md`, `.jsonl` | stock's llama-bench grid and pick |
+| `stock_tune/ornith-ud.md`, `.jsonl` | the same for Ornith's UD-Q2_K_XL (split `8,6,5,5,5,4,5,6,6`, `-fit off`) |
 | `run/greedy_identity.sh`, `greedy_requests.py`, `compare_greedy.py`, `prompts.jsonl` | the identity check |
 | `run/decode_drift.py` | the one-token drift table |
 | `run/kld_builds.sh` | the KLD between builds on the rig |

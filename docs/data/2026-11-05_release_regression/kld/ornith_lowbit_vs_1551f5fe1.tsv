@@ -1,0 +1,3 @@
+build	against	mean KLD	same top p	PPL (its own)
+v3-lowbit (d7a75deb3)	-	-	-	6.0735 ± 0.24486
+v3-b12076-ladder5 (1551f5fe1)	v3-lowbit	0.021653 ± 0.000881	93.873 ± 0.376 %	5.993812 ± 0.240994

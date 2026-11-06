@@ -1,0 +1,39 @@
+Mean PPL(Q)                   :   5.993812 ±   0.240994
+Mean PPL(base)                :   6.070060 ±   0.244404
+Cor(ln(PPL(Q)), ln(PPL(base))):  99.42%
+Mean ln(PPL(Q)/PPL(base))     :  -0.012641 ±   0.004322
+Mean PPL(Q)/PPL(base)         :   0.987439 ±   0.004268
+Mean PPL(Q)-PPL(base)         :  -0.076248 ±   0.026288
+
+====== KL divergence statistics ======
+Mean    KLD:   0.021653 ±   0.000881
+Maximum KLD:   1.654823
+99.9%   KLD:   0.720255
+99.0%   KLD:   0.224798
+95.0%   KLD:   0.090462
+90.0%   KLD:   0.053617
+Median  KLD:   0.006179
+10.0%   KLD:   0.000055
+ 5.0%   KLD:   0.000010
+ 1.0%   KLD:  -0.000056
+ 0.1%   KLD:  -0.000237
+Minimum KLD:  -0.000692
+
+====== Token probability statistics ======
+Mean    Δp:  0.148 ± 0.071 %
+Maximum Δp: 67.532%
+99.9%   Δp: 33.072%
+99.0%   Δp: 15.261%
+95.0%   Δp:  5.957%
+90.0%   Δp:  3.346%
+75.0%   Δp:  0.629%
+Median  Δp:  0.002%
+25.0%   Δp: -0.478%
+10.0%   Δp: -2.728%
+ 5.0%   Δp: -5.202%
+ 1.0%   Δp: -14.119%
+ 0.1%   Δp: -34.285%
+Minimum Δp: -39.536%
+RMS Δp    :  4.557 ± 0.218 %
+Same top p: 93.873 ± 0.376 %
+-lowbit Final estimate: PPL = 6.0735 +/- 0.24486

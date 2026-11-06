@@ -1,4 +1,4 @@
-8 scored attempts, arms rel; 0 infrastructure tries re-run, 0 attempts given up; per-request rows in res/turns.csv
+12 scored attempts, arms rel; 0 infrastructure tries re-run, 0 attempts given up; per-request rows in res/turns.csv
 
 ### Per task
 
@@ -14,12 +14,16 @@ Minutes from pi's start to its exit; tool calls: all / failed (the tool returned
 | bugfix-javascript-phone-number | pass, 2.1, 7, 6 / 1 / 0 |
 | bugfix-python-list-ops | pass, 2.0, 5, 4 / 0 / 0 |
 | bugfix-javascript-grade-school | pass, 1.9, 5, 5 / 0 / 0 |
+| bugfix-python-scale-generator | runaway (time), 12.0, 3, 4 / 0 / 0 |
+| bugfix-javascript-complex-numbers | pass, 2.7, 5, 4 / 0 / 0 |
+| bugfix-python-pig-latin | pass, 6.7, 5, 5 / 0 / 0 |
+| bugfix-javascript-variable-length-quantity | pass, 3.2, 8, 7 / 1 / 0 |
 
 ### Per arm
 
 | arm | tasks passed | minutes, all tasks | minutes per task (median) | TTFT per turn s (median, p90) | prompt tok/s | generation tok/s | tool calls / failed / malformed | runaways |
 |---|---|---|---|---|---|---|---|---|
-| rel | 7 / 8 | 27.9 | 2.1 | 3.69, 7.80 | 140 | 14.6 | 39 / 1 / 0 | 1 |
+| rel | 10 / 12 | 52.6 | 2.9 | 4.13, 8.04 | 148 | 14.4 | 59 / 2 / 0 | 2 |
 
 ### Time to first token per turn
 
@@ -27,12 +31,12 @@ Median over tasks of the seconds from the request to its first token as the clie
 
 | turn | rel: tasks, TTFT s, new prompt tokens |
 |---|---|
-| 1 | 8, 5.53, 612 |
-| 2 | 8, 7.67, 1291 |
-| 3 | 8, 3.93, 400 |
-| 4 | 8, 1.24, 20 |
-| 5 | 6, 2.20, 128 |
-| 6 | 2, 2.07, 112 |
-| 7 | 2, 2.42, 161 |
-| 8 | 1, 1.16, 19 |
+| 1 | 13, 7.31, 704 |
+| 2 | 13, 7.63, 1357 |
+| 3 | 12, 4.39, 417 |
+| 4 | 11, 1.35, 24 |
+| 5 | 9, 1.30, 32 |
+| 6 | 3, 2.25, 94 |
+| 7 | 3, 1.18, 21 |
+| 8 | 2, 1.12, 22 |
 | 9 | 1, 2.57, 132 |
