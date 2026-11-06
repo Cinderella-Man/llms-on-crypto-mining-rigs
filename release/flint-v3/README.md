@@ -55,14 +55,17 @@ on stock and on v3, in the same test:
 | Stock llama.cpp b12076, tuned | Flint Pascal Q5 GGUF | 65,536 | TODO(flintq5) | | | | |
 | Miner Llama v2.0, `-b 512 -ub 128 --pipe-depth 4` | UD-Q5_K_XL | 262,144 | 12 of 12 | 44.2 | 185 | 2.6 | [results.md](../flint-v2/results.md) |
 | Miner Llama v2.0, the same line | Flint Pascal Q5 GGUF | 262,144 | 12 of 12 | 53.8 | 178 | 2.6 | [results.md](../flint-v2/results.md) |
-| v3 (`1551f5fe1`), v2's line: `-b 512 -ub 128 --pipe-depth 4` | UD-Q5_K_XL | 262,144 | TODO(flintq5) | | | | |
+| v3 (`1551f5fe1`), v2's line: `-b 512 -ub 128 --pipe-depth 4` | UD-Q5_K_XL | 262,144 | 12 of 12 | 46.4 | 182 | 2.68, 8.32 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | **v3 (`1551f5fe1`), the same line** | **Flint Pascal Q5 GGUF** | 262,144 | **12 of 12** | **49.4** | 168 | 3.02, 7.94 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 
 - Flint Pascal Q5 GGUF on v3 generates 49.4 against v2.0's 53.8 tok/s, one run each. The gap is one task:
   complex-numbers ran 31 turns and generated 14,024 tokens at 38.0 tok/s as its context grew (v2.0: 2,508 tokens). On
   the other eleven tasks v3 generates at 53.64 against 54.04 tok/s, and reads prompts at 182.3 against 175.2.
-- Stock runs at 65,536 tokens on the line its llama-bench pass chose, the same as for Q8_0; its miss ran into the
-  12-minute cap.
+- UD-Q5_K_XL on v3 generates 46.4 against v2.0's 44.2 tok/s, one run each, with about the same work (1.0 minutes a
+  task in both).
+- Against stock llama.cpp b12076 on UD-Q5_K_XL, v3 generates 3.4 times as fast (46.4 against 13.7 tok/s) and passes 12
+  of 12 tasks against 11 of 12, with a median task of 1.0 against 3.0 minutes. Stock runs at 65,536 tokens on the line
+  its llama-bench pass chose, the same as for Q8_0; its miss ran into the 12-minute cap.
 
 ## The files
 

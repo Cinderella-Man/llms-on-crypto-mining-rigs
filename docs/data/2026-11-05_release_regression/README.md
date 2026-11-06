@@ -45,6 +45,7 @@ harness's flags (`-np 1 -bs --ctx-checkpoints 4 --cache-ram 0 ...`).
 | Flint Pascal Q8 GGUF (p065) | `-ladder5` `1551f5fe1` | `v3base`, 2026-11-06 | 12 / 12 | 22.3 | 1.0 | 2.66, 6.75 | 175 | **47.4** | 74 / 2 / 0 | 0 |
 | Flint UD-Q5_K_XL | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, layers by count (stock's tuned line, below), 2026-11-06 | 11 / 12 | 62.7 | 3.0 | 4.25, 8.36 | 141 | 13.7 | 62 / 0 / 0 | 1 |
 | Flint Pascal Q5 GGUF | `-ladder5` `1551f5fe1` | `v3base`: v2's line for the 5-bit files, 2026-11-06 | 12 / 12 | 31.7 | 1.7 | 3.02, 7.94 | 168 | **49.4** | 90 / 1 / 0 | 0 |
+| Flint UD-Q5_K_XL | `-ladder5` `1551f5fe1` | `v3base`: the same line, 2026-11-06 | 12 / 12 | 24.5 | 1.0 | 2.68, 8.32 | 182 | **46.4** | 64 / 0 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1`: Q189's line, every switch at its default | 12 / 12 | 32.2 | 2.1 | 9.41, 19.85 | 59 | **14.9** | 62 / 0 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1-ka`: + `GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 32.0 | 2.1 | 8.39, 19.38 | 58 | **16.3** | 63 / 1 / 0 | 0 |
 | Ornith UD-Q2_K_XL | `-ladder5` `1551f5fe1` | `ud-v3`: R3's line `-c 49152 -b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off`, every switch at its default, 2026-11-06 | 12 / 12 | 28.3 | 1.8 | 7.90, 17.24 | 69 | 12.6 | 54 / 0 / 0 | 0 |
@@ -82,6 +83,12 @@ The earlier numbers on the same files and lines:
   context grew (v2.0: 2,508 tokens at 50.5). On the other eleven tasks, from each run's `turns.csv`, generation is 53.64
   against 54.04 tok/s (−0.7 %) and prompts 182.3 against 175.2 tok/s. Its sessions wrote more on those eleven too
   (53,455 against 38,782 tokens), so all tasks took 31.7 against 16.7 minutes and the median task 1.7 against 1.2.
+- **UD-Q5_K_XL on `-ladder5` against v2.0:** 46.4 against 44.2 tok/s (+5.0 %), both 12 / 12, one run each; more than
+  the 2.8 % between v2.0's two Q8_0 runs. Both did about the same work (51,130 against 49,161 generated tokens, 24.5
+  against 24.8 minutes for all tasks, 1.0 minutes per task each), and v3 generated faster on 9 of the 12 tasks. The
+  first token at 2.68 against 2.63 s (median), prompts at 182 against 185 tok/s.
+- **Stock against Miner Llama, UD-Q5_K_XL:** 11 / 12 against 12 / 12 tasks, generation 13.7 against 46.4 tok/s (3.4×),
+  3.0 against 1.0 minutes per task (median), the first token at 4.25 against 2.68 s.
 - **Flint Pascal Q8 GGUF against Unsloth's Q8_0, both on `-ladder5`:** 47.4 against 45.9 tok/s generation (+3.3 %),
   the first token at 2.66 against 2.67 s, 1.0 against 1.2 minutes per task (median); both 12 / 12. Its sessions
   generated more (85 against 74 s of decoding a task, mean), so all twelve took 22.3 against 19.2 minutes. Q8_0's two
