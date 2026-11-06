@@ -41,6 +41,8 @@ harness's flags (`-np 1 -bs --ctx-checkpoints 4 --cache-ram 0 ...`).
 | Flint Pascal Q8 GGUF (p065) | `-ladder5` `1551f5fe1` | `v3base`, 2026-11-06 | 12 / 12 | 22.3 | 1.0 | 2.66, 6.75 | 175 | **47.4** | 74 / 2 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1`: Q189's line, every switch at its default | 12 / 12 | 32.2 | 2.1 | 9.41, 19.85 | 59 | **14.9** | 62 / 0 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1-ka`: + `GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 32.0 | 2.1 | 8.39, 19.38 | 58 | **16.3** | 63 / 1 / 0 | 0 |
+| Ornith UD-Q2_K_XL | `-ladder5` `1551f5fe1` | `ud-v3`: R3's line `-c 49152 -b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off`, every switch at its default, 2026-11-06 | 12 / 12 | 28.3 | 1.8 | 7.90, 17.24 | 69 | 12.6 | 54 / 0 / 0 | 0 |
+| Ornith UD-Q2_K_XL | stock `20a51f24a` | `ud-stock`: `-c 49152 -b 2048 -ub 256 -ts 8,6,5,5,5,4,5,6,6 -fit off -fa on` (stock's tuned line), 2026-11-06 | 11 / 12 | 56.5 | 3.1 | 12.57, 20.55 | 55 | 6.0 | 56 / 2 / 0 | 2 |
 
 The earlier numbers on the same files and lines:
 - **Flint Q8_0 on v2.0:** 45.9 and 44.6 tok/s in two runs (12 / 12 each;
@@ -57,6 +59,12 @@ The earlier numbers on the same files and lines:
   length.
 - **Stock against Miner Llama, Flint Q8_0:** 10 / 12 against 12 / 12 tasks, generation 14.4 against 45.9 tok/s
   (3.2×), and 2.9 against 1.2 minutes per task (median). Stock's two misses ran into the 12-minute cap.
+- **Stock against Miner Llama, Ornith on Unsloth's UD-Q2_K_XL** (stock cannot load valid1's N2P/N3P types): 11 / 12
+  against 12 / 12 tasks, generation 6.0 against 12.6 tok/s (2.1×), 3.1 against 1.8 minutes per task (median), the
+  first token at 12.57 against 7.90 s.
+- **valid1 against UD-Q2_K_XL on v3, no switch:** generation 14.9 against 12.6 tok/s (+18.3 %), but prompts at 59
+  against 69 tok/s, the first token at 9.41 against 7.90 s, and 2.1 against 1.8 minutes per task (median; 5 against 4
+  turns). At equal work the file is ~5 % faster a task (est., from each arm's mean prefill and decode seconds a task).
 - **Flint Pascal Q8 GGUF against Unsloth's Q8_0, both on `-ladder5`:** 47.4 against 45.9 tok/s generation (+3.3 %),
   the first token at 2.66 against 2.67 s, 1.0 against 1.2 minutes per task (median); both 12 / 12. Its sessions
   generated more (85 against 74 s of decoding a task, mean), so all twelve took 22.3 against 19.2 minutes. Q8_0's two
@@ -148,7 +156,7 @@ Pascal is the next run: both against that Q8_0 reference on the P106.
 | `kld/flint.tsv`, `kld/flint_stats.txt` | Flint's KLD of `1551f5fe1` against v2.0 |
 | `kld/ornith_lowbit_vs_1551f5fe1.tsv`, `_stats.txt` | Ornith valid1's KLD of `1551f5fe1` against `-lowbit` on the P106 |
 | `stock_tune/flint.md`, `.jsonl` | stock's llama-bench grid and pick |
-| `stock_tune/ornith-ud.md`, `.jsonl` | the same for Ornith's UD-Q2_K_XL (split `8,6,5,5,5,4,5,6,6`, `-fit off`) |
+| `stock_tune/ornith-ud.md`, `.jsonl` | the same for Ornith's UD-Q2_K_XL (split `8,6,5,5,5,4,5,6,6`, `-fit off`): `-ub 256`, flash attention on |
 | `run/greedy_identity.sh`, `greedy_requests.py`, `compare_greedy.py`, `prompts.jsonl` | the identity check |
 | `run/decode_drift.py` | the one-token drift table |
 | `run/kld_builds.sh` | the KLD between builds on the rig |
@@ -158,7 +166,9 @@ Pascal is the next run: both against that Q8_0 reference on the P106.
 | `run/tk_cost.sh` | T(k) for the adaptive draft's cost table |
 
 Ornith's arms ran through [../2026-10-27_ornith/run/agent_ornith.sh](../2026-10-27_ornith/run/agent_ornith.sh)
-(candidate `valid1`, `LOWBIT` = the `-ladder5` server, and `REL_ENV` for the keep-alive).
+(candidate `valid1`, `LOWBIT` = the `-ladder5` server, and `REL_ENV` for the keep-alive; candidates `ud-v3` with
+`V3` = the `-ladder5` server and `ud-stock` with `STOCK` = stock's, `UD` = the UD-Q2_K_XL file and `UD_STOCK_LINE` =
+stock's tuned line).
 
 ## How it was made
 
