@@ -81,7 +81,7 @@ code used far less than the memory could give:
 | 4-bit, simple (Q4_0), the mean of the nine cards | 19.45 tok/s | 73.0 GB/s | 42.2 % |
 | 4-bit, two-level blocks (Q4_K_M) | 14.99 tok/s | 60.1 GB/s | 34.7 % |
 
-A P106-100, the same chip with 10 SMs instead of 5, reaches est. 115 GB/s on the same 4-bit file (from its 30.6 tok/s
+A P106-100, the same chip with 10 SMs instead of 5, reaches 114.9 GB/s on the same 4-bit file (from its 30.64 tok/s
 on llama.cpp's public scoreboard).
 
 **Why.** With only 5 SMs, the card cannot issue memory requests and unpack compressed weights fast enough to keep its

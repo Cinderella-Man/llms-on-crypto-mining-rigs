@@ -18,17 +18,18 @@ reports it. I started there too, and three results taught me to stop trusting it
 
 **It hid a cost that agents pay.** Chat requests let the rig pick each token on the GPU. Agent requests carry a list of
 tools, and that list quietly moved the token picking to the CPU. Every agent token then paid for a 600 KB copy over
-the slow link: 12–16 % slower per token on Flint. A chat benchmark could never show it
+the slow link: 11.9 % slower per token on Flint (34.04 against 30.43 ms). A chat benchmark could never show it
 ([chapter 2](02-how-an-llm-makes-text.md) tells the story).
 
-**It was too noisy to compare two engines.** On Flash-Next, single requests wrote 5.4 to 8.9 tok/s on stock llama.cpp
-and on my engine alike. They could not tell the two apart. The coding-agent test, over a 40-minute session per engine,
-could: 6.4 tok/s against 7.8, and 7 of 8 tasks done against 9 of 9.
+**It was too noisy to compare two engines.** On Flash-Next, the same four prompts wrote 6.56, 6.78, 7.15 and
+5.66 tok/s on stock llama.cpp and 6.25, 5.43, 8.30 and 6.24 on my engine. They could not tell the two apart. The
+coding-agent test, over a session of 39.6 and 44.2 minutes, could: 6.4 tok/s against 7.8, and 7 of 8 tasks done
+against 9 of 9.
 
 **Faster per task is not the same as faster per token.** An agent's choices are random draws, so two runs of the same
 task do different amounts of work. In one test, a small helper model that guesses tokens ahead made tasks finish
-1.48 times faster. But in that run the agent also happened to write 30 % fewer tokens. Priced at equal work, the helper
-was worth 1.11 to 1.15 times. Another change looked like 1.35 times per task and was 1.10 times at equal work.
+1.48 times faster. But in that run the agent also happened to write 29.6 % fewer tokens (10,930 against 15,521). Priced
+at equal work, the helper was worth est. 1.11 to 1.15 times. Another change looked like 1.35 times per task and was 1.10 times at equal work.
 
 So I measure two things, and I keep them apart: how long a real job takes, and what each token costs.
 
@@ -45,7 +46,7 @@ exercise with one human-style mistake put in: a lost pair of parentheses, an off
 year instead of 365.25. Each bug breaks 1 to 8 of the task's tests. The agent sees the broken file and the test file,
 and is told to find and fix the bug without changing the tests.
 
-A typical fix takes about six turns and 5 to 10 tool calls: run the tests, read the code, edit, run the tests again.
+In one v2 release run on Flint, the median fix took six turns and six tool calls: run the tests, read the code, edit, run the tests again.
 Every turn re-sends the whole conversation, so the context grows each turn. That is exactly the pattern that single
 requests miss: multi-turn, tool calls and their results, a growing context and a prompt cache doing most of the work.
 
@@ -94,13 +95,13 @@ two engines are compared, the comparison uses the tasks both of them finished.
 
 The v2 release settings were chosen on it, not on single requests. Some examples:
 
-- Speculation depth 4 instead of 3 made a smaller Flint file 11 % faster on agent work.
+- Speculation depth 4 instead of 3 made a smaller Flint file 10.7 % faster on agent work (53.8 against 48.6 tok/s).
 - A larger prompt batch ran the 4 GB host out of memory at full context, so the release keeps the small one.
-- An extra prompt cache for agents, which saves the shared tool prompt between sessions, added about 11 seconds of
-  fixed cost per task and gained nothing, so it stays off.
+- An extra prompt cache for agents, which saves the shared tool prompt between sessions, gained nothing: 42.2 tok/s
+  against 44.6 in both runs without it, with 11 seconds of fixed cost per task against 1 and 22. It stays off.
 
-And the headline numbers come from it. Flint on nine cards: stock llama.cpp 14 tok/s and 8 of 12 tasks, Miner Llama
-v2 45 tok/s and 12 of 12 ([preface](00-preface.md)).
+And the headline numbers come from it. Flint on nine cards: stock llama.cpp 14.4 tok/s and 8 of 12 tasks, Miner
+Llama v2 45.9 and 44.6 tok/s in two runs and 12 of 12 ([preface](00-preface.md)).
 
 ## Quality: KLD and "same top token"
 
@@ -110,9 +111,9 @@ Most speed-ups in this book change the model's file: fewer bits per weight, diff
 [Chapter 4](04-smaller-models.md) covers how. Each change makes the model slightly different from the original. A
 faster file is worthless if it answers worse. So how much worse is it?
 
-Task benchmarks are the obvious answer, and they are far too noisy. Two runs of the same file disagree on 5–15 % of
-tool-call tasks, about as much as a compressed file against the original. To see a 2-point difference in pass rate
-reliably, I would need about 2,160 paired tasks. That costs days of rig time for every candidate file.
+Task benchmarks are the obvious answer, and they are far too noisy. Two runs disagree on 10.8 % of tool-call tasks on
+average, and a compressed file against the original on 11.2 %: no more than two runs of one file. To see a 2-point
+difference in pass rate reliably, I would need est. 2,160 paired tasks. That costs days of rig time for every candidate file.
 
 ### How it works
 
@@ -140,10 +141,10 @@ Flint's files against its 8-bit file, on Wikipedia text:
 
 | Flint file | Same top token | KLD |
 |---|---|---|
-| Unsloth's 4-bit mix, UD-Q4_K_XL | 87.6 % | 0.12 |
-| A 5-bit file I made | 85.0 % | 0.18 |
-| The makers' own 4-bit file | 78.6 % | 0.32 |
-| A plain 4-bit file I made | 71.4 % | 0.57 |
+| Unsloth's 4-bit mix, UD-Q4_K_XL | 87.6 % | 0.124 |
+| A 5-bit file I made | 85.0 % | 0.177 |
+| The makers' own 4-bit file | 78.6 % | 0.316 |
+| A plain 4-bit file I made | 71.4 % | 0.566 |
 
 Early on I set a bar: a Flint file counts only if it is as good as Unsloth's UD-Q4_K_XL, within noise. That is the file
 people already download. Nobody gives up nine points of token agreement for speed, so files at the makers' 4-bit level
@@ -153,10 +154,10 @@ Flash-Next's files, against Swift-1.5's 8-bit file, on held-out agent sessions:
 
 | Flash-Next file | Same top token | KLD | Fits nine cards? |
 |---|---|---|---|
-| 2-bit, the file the rig runs now | 90.7 % | 0.29 | Yes, with room |
-| A 2-bit codebook format | 91.5 % | 0.23 | Yes |
-| A 3-bit codebook format | 92.3 % | 0.18 | Only at small batches, with 155 MiB to spare |
-| A larger 3-bit codebook format | 93.7 % | 0.12 | No |
+| 2-bit, the file the rig runs now | 90.7 % | 0.285 | Yes, with room |
+| A 2-bit codebook format | 91.5 % | 0.225 | Yes |
+| A 3-bit codebook format | 92.3 % | 0.176 | Only at small batches, with 155 MiB to spare |
+| A larger 3-bit codebook format | 93.7 % | 0.121 | No |
 
 The trade is plain in that table. Better files read more bytes per token and leave less room on the cards. Which one
 the rig should run is **open** on 2026-11-04: it waits on the agent check of the 3-bit file and on new GPU code for
@@ -172,8 +173,8 @@ Wikipedia does worse there.
 large tool-call benchmarks with the pass margin fixed in advance.
 
 **What happened.** On 3,477 single-turn tool-call tasks, my best file was no worse than Unsloth's: +0.14 points, inside
-the margin. On agent text, every candidate scored 1.03 to 1.04 times Unsloth's KLD. The split was telling: on tokens the
-model *writes*, my files were better, 0.89 times. On tokens it *reads*, such as tool schemas, they were worse.
+the margin. On agent text, the four candidates scored 1.033, 1.035, 1.032 and 1.042 times Unsloth's KLD. The split was
+telling: on tokens the model *writes*, my best file was better, 0.887 times (the other three 0.957, 1.013 and 1.038). On tokens it *reads*, such as tool schemas, they were worse.
 
 **Why.** Text type matters. A score on one kind of text does not transfer exactly to another. Since then, a release
 file is judged on agent text, with the tokens the model writes counted apart, plus task checks.
@@ -194,7 +195,8 @@ hundredths between files mean nothing unless both were scored on the same build 
 the 8-bit reference against itself at another batch size gives 0.029 on agent text.
 
 **The speed floor.** The same Flint server on the same rig measured 45.0 and 46.5 tok/s on the agent check on the same
-day. Agent sessions are random, and some sessions are easier to guess than others. A 3 % effect disappears inside that.
+day. Agent sessions are random, and some sessions are easier to guess than others. The two runs are 3.3 % apart, so a
+3 % effect disappears inside that.
 
 ## Paired comparisons
 
@@ -210,7 +212,7 @@ identical tokens, and the ratio of time per token is the effect of the change al
 sessions gives a 95 % interval.
 
 **What I did.** First the live runs: the store against a control on the same server, then six recorded sessions,
-about 27,000 written tokens, replayed with and without the store. Before the replay I wrote down the rule: the store
+20,544 written tokens, replayed with and without the store. Before the replay I wrote down the rule: the store
 ships only if the whole interval is on the faster side.
 
 **What happened.**
@@ -236,11 +238,11 @@ Several effects I measured turned out to be artefacts. Each one became a standin
 | Trap | What happened | Rule since |
 |---|---|---|
 | Warm-up | A speculation trick looked like 1.24× faster. The plain run was still warming up. Real gain: 1.04× | Warm up before timing |
-| Run order | A build seemed 4–10 % slower. The prompt runs scheduled before each test caused it | The same order in every arm |
-| The benchmark tool's own memory | Speed fell from 23 to 4 tok/s between 32k and 64k of context. The benchmark tool itself held 1.8 GiB of host RAM, and the 4 GB host most likely swapped | Watch host memory in every run |
+| Run order | A build seemed 3.6 % slower on six cards and 9.8 % on nine. The prompt runs scheduled before each test caused it | The same order in every arm |
+| The benchmark tool's own memory | Speed fell from 23.3 to 3.6 tok/s between 32k and 64k of context. The benchmark tool itself held est. 1.78 GiB of host RAM, and the 4 GB host most likely swapped | Watch host memory in every run |
 | Cold clocks | Cards that had just been idle ran at base clock: 34.0 against 38.5 tok/s | Log clocks; compare like with like |
-| A tool's own prompt speed | One benchmark tool reported about 2.3 times less prompt speed than the server did | Take prompt speeds from the server |
-| Task noise | Two runs of one file disagree on 5–15 % of tool-call tasks | KLD and paired tests, not small task sets |
+| A tool's own prompt speed | One benchmark tool reported 213.67 tok/s on a 16,384-token prompt where the server read a 13,404-token one at 485.0 | Take prompt speeds from the server |
+| Task noise | Two runs disagree on 10.8 % of tool-call tasks on average, as much as a compressed file against the original | KLD and paired tests, not small task sets |
 
 The biggest rule is the simplest: **a timed run gets a quiet machine.** Nothing else runs on the rig while it is
 timed, not even a read-only status check over SSH. Background package updates are off, and the NVIDIA packages are
@@ -251,14 +253,16 @@ the quiet is checked and logged.
 
 Estimates are useful. They tell me what to try first. But over and over, the rig disagreed with them.
 
-- **A guess that cost twice the estimate.** Proposing one token with a small trained helper model was estimated at 1.6
-  to 2.6 ms. On a P106 inside the real server it took 4.7 ms. The idea pays only below about 3 ms, so the measurement
-  turned an expected win into a loss. Making the guess cheaper became its own project, which got it to 2.9 ms.
+- **A guess that cost 1.8 times the estimate.** Proposing one token with a small trained helper model was estimated at
+  1.6 to 2.6 ms. On a P106, at the real server's context size, it took 4.73 ms. The idea pays only below est. 3 ms, so
+  the measurement turned an expected win into a loss. Making the guess cheaper became its own project, which got it to
+  2.93 ms.
 - **A trick that helped one model and hurt another.** Running guessed tokens on the idle cards made Flint much faster.
-  On Flash-Next the same trick cut generation from 7.9 to 4.9 tok/s, and tasks took slightly longer. Its guesses were
-  wrong too often, and each wrong guess cost about three tokens' time ([chapter 8](08-guessing-ahead.md)).
-- **The same chip on a different card.** A P106-100 has the same chip with twice the SMs. It reaches about 115 GB/s on
-  a file where the P106-090 reaches 73. Numbers from a "similar" card don't transfer.
+  On Flash-Next the same trick cut generation from 7.88 to 4.91 tok/s, and tasks took slightly longer. Its guesses were
+  wrong too often, and each wrong guess cost 2.9 tokens' time (372 ms against 127 ms a token, from a fit over 40
+  requests; [chapter 8](08-guessing-ahead.md)).
+- **The same chip on a different card.** A P106-100 has the same chip with twice the SMs. It reaches 114.9 GB/s on a
+  file where the P106-090 reaches 73.0. Numbers from a "similar" card don't transfer.
 - **Other people's numbers.** On a GTX 1060, the same chip again, someone measured another GPU interface, Vulkan,
   11 % faster on one model and 47 % on another. On this rig, every Vulkan command would be recorded by the 2-core
   Celeron, which could become the bottleneck. It has not been run on the rig yet, so it stays **open**. An engine
@@ -273,7 +277,8 @@ work. Speed is measured only on the rig, with the agent check for decisions and 
 - Single-request tok/s is a diagnostic. It hides agent-only costs and is too noisy to compare engines.
 - Agentic speed is the result: tasks passed, minutes per task, first token per turn and tok/s over a whole session.
 - Quality is KLD against a reference plus "same top token", measured on the kind of text the model will see.
-- Know the noise floor first. On Flint, rounding alone moves KLD by about 0.06; live agent runs move by about 3 %.
+- Know the noise floor first. On Flint, rounding alone moves KLD by 0.065; two live agent runs of one setup differed by
+  3.3 %.
 - Few-percent decisions need paired replays of identical work and a rule written down before the run.
 - Time only quiet machines, and only the rig itself. Estimates choose what to try; the rig decides.
 
