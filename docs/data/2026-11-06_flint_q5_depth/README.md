@@ -40,6 +40,11 @@ line, on one rig of nine P106-090 cards with 4 GB of host RAM.
 The full tables, with each pass by value, the guesses and the checks, are in [table.md](table.md). Every request is
 listed in [requests.tsv](requests.tsv).
 
+Two questions from this run are in the [registry](../../../quants/experiments.md), both planned for after the release:
+- **Q1133:** why is the first of two identical requests slower on both builds and at every depth? On v3's first load
+  it ran 47.15 against 54.56 tok/s at depth 0.
+- **Q1134:** which of v3's changes slows the fresh prompt read?
+
 ## What was measured
 
 - **The engine path of the agent check:** llama-server, started and stopped by
