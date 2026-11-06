@@ -28,8 +28,8 @@ older Miner Llama releases cannot load this file.
 same size, on all three texts measured (prose, coding-agent sessions, code), for 3.66 GB more.
 
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
-card on a single PCIe 1.0 lane, a 2-core Celeron host with 4 GB of RAM), 49,152 tokens of context: **14.9 tokens per
-second** with Miner Llama v3's preset, all twelve tasks passed; 16.3 with the keep-alive switch.
+card on a single PCIe 1.0 lane, a 2-core Celeron host with 4 GB of RAM), 49,152 tokens of context: **16.3 tokens per
+second** with Miner Llama v3's preset, all twelve tasks passed; 14.9 without its keep-alive switch.
 
 **Which Ornith file should you pick?**
 - **Nine 6 GB Pascal cards and Miner Llama v3: this file.**
@@ -46,10 +46,10 @@ second** with Miner Llama v3's preset, all twelve tasks passed; 16.3 with the ke
 3. **Start it**, on nine cards with Ornith's v3 preset:
 
    ```bash
-   llama-p106-v3.0/llama-server -m Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf -ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off --host 127.0.0.1 --port 8080
+   GGML_CUDA_KEEPALIVE=decode llama-p106-v3.0/llama-server -m Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf -ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off --host 127.0.0.1 --port 8080
    ```
 
-   For the keep-alive row below, put `GGML_CUDA_KEEPALIVE=decode` before the command. Then open
+   `GGML_CUDA_KEEPALIVE=decode` is the keep-alive, which holds the cards at their boost clock. Then open
    `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`), or point
    any OpenAI-compatible client at it.
 
@@ -73,8 +73,8 @@ records every turn. Nine P106-090, 49,152-token context, one run per row:
 |---|---|---|---|---|---|
 | Stock llama.cpp b12076 (`20a51f24a`), Unsloth UD-Q2_K_XL | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
 | Miner Llama v3, Unsloth UD-Q2_K_XL, Ornith's v3 settings | TODO(ornithud) | TODO(ornithud) | TODO(ornithud) | TODO(ornithud) | TODO(ornithud) |
-| **Miner Llama v3 (`1f7215948`), this file, the preset, 2026-11-05** | **12 of 12** | **14.9** | 59 | 9.41 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
-| Miner Llama v3 (`1f7215948`), this file, + `GGML_CUDA_KEEPALIVE=decode`, 2026-11-05 | 12 of 12 | 16.3 | 58 | 8.39 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
+| Miner Llama v3 (`1f7215948`), this file, no switch, 2026-11-05 | 12 of 12 | 14.9 | 59 | 9.41 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
+| **Miner Llama v3 (`1f7215948`), this file, the preset (`GGML_CUDA_KEEPALIVE=decode`), 2026-11-05** | **12 of 12** | **16.3** | 58 | 8.39 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v2.0, Unsloth UD-Q2_K_XL, 2026-10-27 | 12 of 12 | 9.7 | — | — | [2026-10-27_ornith](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md) |
 
 - **`1f7215948`** gives the same greedy output as the release build `1551f5fe1`.

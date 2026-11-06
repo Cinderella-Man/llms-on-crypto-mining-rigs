@@ -15,17 +15,18 @@ on nine P106-090 cards, 49,152 tokens of context:
 | Stock llama.cpp b12076 (`20a51f24a`), Unsloth UD-Q2_K_XL | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
 | Miner Llama v2.0, UD-Q2_K_XL | 12 of 12 | 9.7 | — | — | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | Miner Llama's N2P/N3P build of 2026-10-28, Ornith-1.5-122B Pascal N2P GGUF (`valid1`) | 12 of 12 | 14.5 | — | 9.6 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
-| **v3 (`1f7215948`), the preset, the same file** | **12 of 12** | **14.9** | 59 | 9.41, 19.85 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
-| v3, + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`) | 12 of 12 | 16.3 | 58 | 8.39, 19.38 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| v3 (`1f7215948`), the same file, no switch | 12 of 12 | 14.9 | 59 | 9.41, 19.85 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| **v3, + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): the preset** | **12 of 12** | **16.3** | 58 | 8.39, 19.38 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | v3, + Ornith's own MTP layer as the draft (`mtp`, `mtpadapt`, `mtpka`) | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) |
 
-- The keep-alive is a gain on generation: 16.3 against 14.9 tok/s (+9.4 %), the median first token 8.39 against 9.41 s.
+- The keep-alive is a gain, so the preset sets it: 16.3 against 14.9 tok/s generation (+9.4 %), the median first token
+  8.39 against 9.41 s.
   All twelve tasks took the same time (32.0 against 32.2 minutes), since answers at the makers' sampling differ in
   length.
 - Stock llama.cpp cannot load Ornith-1.5-122B Pascal N2P GGUF (its N2P and N3P types are this fork's), so stock runs
   Unsloth's UD-Q2_K_XL, the common file of about the same size.
 - The expert skip is not in Ornith's preset: at p = 0.9 its KL divergence on the Ornith-1.5-122B Pascal N2P GGUF is above noise on all three texts (agent +0.00756 ± 0.00090, code +0.01021 ± 0.00178, wiki +0.02383 ± 0.00280; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Ornith's graph does not call it, so the switch changes nothing there.
-- The first token is slow (9.4 s median): the prompt-processing tiles are not tuned for N2P and N3P yet (Q351 in
+- The first token is slow (8.39 s median): the prompt-processing tiles are not tuned for N2P and N3P yet (Q351 in
   [quants/experiments.md](../../quants/experiments.md)).
 
 Quality: on the P106 cards the release build computes Ornith's prompt passes a little differently from the low-bit
@@ -64,7 +65,7 @@ works: on 2026-10-28 its agent check left 563 MB of host memory at the lowest.
 
 ```bash
 PRESET_MODEL=Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf
-PRESET_ENV=""
+PRESET_ENV="GGML_CUDA_KEEPALIVE=decode"
 PRESET_ARGS="-ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off"
 ```
 
@@ -76,9 +77,9 @@ PRESET_ARGS="-ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0
 | `--cache-ram 0`, `--ctx-checkpoints 4` | what keeps the 4 GB host from running out of memory |
 | `-bs` | sampling on the GPU, also for tool requests |
 
-No switch is set: the N2P/N3P kernels and the other Pascal kernels are on by default. The keep-alive is a gain (16.3
-against 14.9 tok/s). TODO(ornithmtp): the best of Ornith's MTP arms, with the keep-alive, goes into `PRESET_ENV` and
-`PRESET_ARGS`.
+One switch is set, the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): 16.3 against 14.9 tok/s. The N2P/N3P kernels and
+the other Pascal kernels are on by default. TODO(ornithmtp): Ornith's own MTP layer as the draft, if one of its arms
+beats the preset.
 
 ## The recipe: every setting and what it bought
 
@@ -86,7 +87,7 @@ The rig has nine 6 GB cards, each on one PCIe 1.0 lane, a 2-core Celeron and 4 G
 setting below works around one of those. Each speed is generation tok/s from one run of the coding-agent check at
 49,152 tokens of context, unless a row says otherwise.
 
-### The ladder: from stock llama.cpp to 14.9 tok/s
+### The ladder: from stock llama.cpp to 16.3 tok/s
 
 One change at a time:
 
@@ -98,8 +99,8 @@ One change at a time:
 | 2 | + kernels for the IQ2_S and IQ3_XXS weights the file is made of (`ea55c7865`) | 12 of 12 | 11.3 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | 2 | the v3 build on the same file | TODO(ornithud) | TODO(ornithud) | TODO(ornithud) |
 | 3 | my file, Ornith-1.5-122B Pascal N2P GGUF, its experts in my Pascal 2- and 3-bit types, on the low-bit build of 2026-10-28 (`d7a75deb3`) | 12 of 12 | 14.5 | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/agent/valid1/compare.md) |
-| 4 | the v3 build (`1f7215948`), the same file: **the preset** | 12 of 12 | **14.9** | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
-| 5 | + the keep-alive | 12 of 12 | 16.3 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| 4 | the v3 build (`1f7215948`), the same file | 12 of 12 | 14.9 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| 5 | + the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): **the preset** | 12 of 12 | **16.3** | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | 6 | + Ornith's own MTP layer as the draft | TODO(ornithmtp) | TODO(ornithmtp) | TODO(ornithmtp) |
 
 Steps 0 to 2 ran the same file on three engines. Step 3 changes the file and the build at once; the v3
@@ -114,7 +115,7 @@ build on Unsloth's file splits the two.
 | `--cache-ram 0`, `--ctx-checkpoints 4` | no prompt cache in host memory; at most four saved context states | the 4 GB host: the agent check left 563 MB free at the lowest | not measured on its own: every run on this page used them | [2026-10-27_ornith](../../docs/data/2026-10-27_ornith/README.md) |
 | `-bs` | samples the next token on the card, also for tool requests | otherwise every token's scores cross the slow link | not measured on its own for Ornith; on Flint, tool requests ran at 37.9 against 33.6 tok/s sampled on the host | [Flint v2 results](../flint-v2/results.md) |
 | `-ngl 99 -fa on -c 49152 -np 1 -b 2048 -ub 512 --jinja --reasoning-format deepseek`, the sampling | every layer on the cards, flash attention, the context, one request at a time, prompt batches of 512, the model's chat template with its reasoning kept apart; the makers' sampling settings | ordinary llama.cpp settings | — | — |
-| `PRESET_ENV=""` | no switch | — | the keep-alive: 16.3 against 14.9 tok/s, a gain; Ornith's own MTP draft: TODO(ornithmtp) | — |
+| `PRESET_ENV="GGML_CUDA_KEEPALIVE=decode"` | a small kernel on every card keeps it at its boost clock while it decodes | between the short kernels of one token the cards fall back to their base clock | 16.3 against 14.9 tok/s; Ornith's own MTP draft: TODO(ornithmtp) | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 
 ### On by default
 

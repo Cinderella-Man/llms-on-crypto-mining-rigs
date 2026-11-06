@@ -36,7 +36,7 @@ presets set:
 | `LLAMA_HOP_CAST` | `q8_0` | — (no effect: Flint's graph does not call it, Q1125) | — (no effect: Ornith's graph does not call it, Q1125) |
 | `GGML_CUDA_HOP_STAGED` | `1` | — (TODO(flintside)) | — |
 | `LLAMA_DRAFT_SHORTLIST` | `32768,8192,2` | — | — |
-| `GGML_CUDA_KEEPALIVE` | `decode` | — (TODO(flintside)) | — (a gain: 16.3 against 14.9 tok/s, [`valid1-ka`](data/2026-11-05_release_regression/README.md#the-agent-check); the preset follows Ornith's MTP arms, TODO(ornithmtp)) |
+| `GGML_CUDA_KEEPALIVE` | `decode` | — (TODO(flintside)) | `decode` (16.3 against 14.9 tok/s, [`valid1-ka`](data/2026-11-05_release_regression/README.md#the-agent-check)) |
 | `LLAMA_SERVER_TEXT_REUSE`, `LLAMA_SERVER_TAIL_CKPT_MIN` | — | — (TODO(flintside)) | — |
 | `LLAMA_MOE_TAIL` | — (negligible at p = 0.9: −2.9 % a task, inside the spread of two runs, one task failed; [`t1skip`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) |
 | The negligible group (switches whose gain is within the spread of repeated loads, tested together) | — (a loss together: 19.05 against 20.75 tok/s on my Pascal mix of the file, +5.3 % a task; [`t1neg`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (TODO(flintside)) | — |
