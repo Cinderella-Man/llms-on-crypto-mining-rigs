@@ -6,7 +6,9 @@
 # runs ssh, with nothing else on the rig.
 # Env: RIG, MODEL (on the rig), BUILDS ('<folder under /opt/llama-builds> ...': the first is the reference), ARGS (the
 #   layer split and batch flags, e.g. '-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6'), TEXT (on the rig), DIR (a rig folder
-#   with room for the distributions, ~n_vocab x 2 bytes a scored token), OUT (local); optional CTX (512), CHUNKS (16)
+#   with room for the distributions, ~n_vocab x 2 bytes a scored token), OUT (local); optional CTX (512), CHUNKS (16),
+#   BASE (a base file already on the rig, written with the same CTX on another machine, e.g. a Q8_0 reference: every
+#   build is then scored against it and none writes one; a BASE inside DIR is removed with DIR at the end)
 # Output: OUT/kld-<build tag>.out/.err (the tool's output), OUT/kld.tsv (build, mean KLD, same top token, PPL lines)
 set -uo pipefail
 : "${RIG:?}" "${MODEL:?}" "${BUILDS:?}" "${ARGS:?}" "${TEXT:?}" "${DIR:?}" "${OUT:?}"
@@ -15,7 +17,8 @@ mkdir -p "$OUT"
 ref=""
 for b in $BUILDS; do
     t=${b##*-pascal-p106-}
-    if [ -z "$ref" ]; then ref=$t; k="--kl-divergence-base $DIR/base.kld"; else k="--kl-divergence-base $DIR/base.kld --kl-divergence"; fi
+    if [ -n "${BASE:-}" ]; then [ -n "$ref" ] || ref=$(basename "$BASE"); k="--kl-divergence-base $BASE --kl-divergence"
+    elif [ -z "$ref" ]; then ref=$t; k="--kl-divergence-base $DIR/base.kld"; else k="--kl-divergence-base $DIR/base.kld --kl-divergence"; fi
     echo "=== kld $t $(date -Is)"
     ssh "$RIG" "mkdir -p $DIR && cat > /dev/shm/ram_watchdog.sh" < scripts/ram_watchdog.sh
     ssh "$RIG" "LOG=/dev/shm/rw_kld.tsv PROC=llama-perplexity MIN_AVAIL_MB=200 setsid nohup chrt -f 10 bash /dev/shm/ram_watchdog.sh > /dev/null 2>&1 < /dev/null & echo \$! > /dev/shm/rw.pid
