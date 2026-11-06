@@ -12,7 +12,7 @@ upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan); th
 |---|---:|---|---|
 | `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` | 48,196,722,624 | `0bfa0cf25b93de4370e6634d33b04942ad6e244acf41e9ac1764dd27162f44e1` | the release copy with the release header (step 4; importance-matrix paths cut to file names, every tensor checked byte for byte) |
 | `README.md`, `CHECKSUMS`, `LICENSE` (MIT, with the ornith-ai credit) | | | this folder |
-| `LICENSE-QWEN3.5` (Apache-2.0, Ornith's base) | | | Qwen's `LICENSE`, unchanged, fetched in step 3 |
+| `LICENSE-QWEN3.5` (Apache-2.0, Ornith's base) | | | Qwen's `LICENSE`, unchanged (step 3), in this folder |
 
 - **Unsloth's UD-Q2_K_XL and importance matrix are linked, never re-uploaded:**
   [unsloth/Ornith-1.5-122B-GGUF](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF).
