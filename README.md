@@ -10,11 +10,11 @@ software runs models slowly on it. Miner Llama makes such rigs useful: a llama.c
 ## What it does
 
 **Miner Llama v3 runs three models on one build, each with its own preset** ([release notes](release/notes-v3.0.md)):
-[Qwen3.8-Flash-Next](release/flash-next-v3/README.md), a 180B-parameter model, at **20.75 tok/s** for a coding agent
+[Qwen3.8-Flash-Next](release/flash-next-v3/README.md), a 180B-parameter model, at **20.40 tok/s** for a coding agent
 on nine 6 GB cards and a 4 GB host (6.4 on stock llama.cpp and 7.8 on v2.0's code when it first ran, 2026-11-03);
 [Flint](release/flint-v3/README.md) at 45.9 tok/s, as v2; and [Ornith-1.5-122B](release/ornith-v3/README.md) at
-14.9 tok/s. Against stock llama.cpp b12076, the upstream release v3 is built on, on the same file: Flash-Next 20.75 against
-8.47 tok/s (a task's work in 1.87 against 3.63 minutes), Flint 45.9 against 14.4; Ornith: TODO(stock).
+14.9 tok/s. Against stock llama.cpp b12076, the upstream release v3 is built on, on the same file: Flash-Next 20.40 against
+8.20 tok/s (a task's work in 1.90 against 3.74 minutes), Flint 45.9 against 14.4; Ornith: TODO(stock).
 
 [Flint](models/flint/README.md), a 39.8B mixture-of-experts model, runs on the nine cards in near-lossless 8-bit
 (Unsloth's Q8_0, 42.3 GB) with its full 262,144-token context. A coding agent fixing twelve small bugs, with tool calls
@@ -94,8 +94,8 @@ that makes it faster still ([how it works](docs/drafter.md)).
 | [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v3 release: Q8_0 on nine cards, 45.9 tok/s for a coding agent (v2.0: 45.9 and 44.6 in two runs) |
 | [Qwen3.6-35B-A3B](models/qwen3.6-35b-a3b/) | 36B hybrid mixture of experts, 3B active per token | coming: four cards, 29.0 tok/s with v1 (stock 18.5), one request |
 | [Ornith-1.5-35B](models/ornith-1.5-35b/) | 35B hybrid mixture of experts with Qwen3.6's shapes | coming: not run yet |
-| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v3 release: Swift-1.5 `pmix-q2-fast` on nine cards, the table on the SSD, the MTP draft; 20.75 tok/s and 12 of 12 tasks for a coding agent (stock 6.4 on 2026-11-03) |
-| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | v3 release: my valid1 file (48.2 GB) on nine cards, 14.9 tok/s and 12 of 12 tasks for a coding agent (stock 6.2 on Unsloth's UD-Q2_K_XL) |
+| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v3 release: UkisAI's Swift-1.5 Q2_0 on nine cards, the table on the SSD, the MTP draft; 20.40 tok/s and 12 of 12 tasks for a coding agent (stock llama.cpp b12076 8.20 on the same file) |
+| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | v3 release: Ornith-1.5-122B Pascal N2P GGUF (48.2 GB) on nine cards, 14.9 tok/s and 12 of 12 tasks for a coding agent (stock 6.2 on Unsloth's UD-Q2_K_XL) |
 
 Each model page gives the file, the command line, speed, quality and what is not measured yet. Model names only
 identify the models; this project is not affiliated with their makers.

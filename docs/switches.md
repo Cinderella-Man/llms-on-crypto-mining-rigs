@@ -39,12 +39,12 @@ presets set:
 | `GGML_CUDA_KEEPALIVE` | `decode` | — (TODO(flintside)) | — (a gain: 16.3 against 14.9 tok/s, [`valid1-ka`](data/2026-11-05_release_regression/README.md#the-agent-check); the preset follows Ornith's MTP arms, TODO(ornithmtp)) |
 | `LLAMA_SERVER_TEXT_REUSE`, `LLAMA_SERVER_TAIL_CKPT_MIN` | — | — (TODO(flintside)) | — |
 | `LLAMA_MOE_TAIL` | — (negligible at p = 0.9: −2.9 % a task, inside the spread of two runs, one task failed; [`t1skip`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) | — (KL divergence above noise at p = 0.9, [T5b](data/2026-11-05_night_quant_chain/README.md#results)) |
-| The negligible group (switches whose gain is within the spread of repeated loads, tested together) | — (a loss together: 19.05 against 20.75 tok/s, +5.3 % a task; [`t1neg`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (TODO(flintside)) | — |
+| The negligible group (switches whose gain is within the spread of repeated loads, tested together) | — (a loss together: 19.05 against 20.75 tok/s on my Pascal mix of the file, +5.3 % a task; [`t1neg`](data/2026-11-05_release_flashnext/README.md#the-agent-check)) | — (TODO(flintside)) | — |
 | `--pipe-depth` | — | `4` | — |
 | `--pipe-store` | — | — (TODO(flintside)) | — |
 | `-md`, `--spec-type draft-mtp` (upstream's) | the Gyro MTP draft | — | — (TODO(ornithmtp)) |
 
-Flash-Next's column is its preset, measured on the release build at 20.75 tok/s, 12 of 12
+Flash-Next's column is its preset, measured on the release build at 20.40 tok/s, 12 of 12
 ([2026-11-05_release_flashnext](data/2026-11-05_release_flashnext/README.md)).
 
 ## Matrix-vector kernels (token generation, speculative verify)

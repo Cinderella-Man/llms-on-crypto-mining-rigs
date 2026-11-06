@@ -8,7 +8,7 @@ with every flag explained is [release/flint-v2](../flint-v2/README.md), and the 
 ## Speed
 
 A coding agent fixing twelve small bugs, with real tool calls and test runs ([bench/agent_check](../../bench/agent_check/README.md)),
-Unsloth's Q8_0 on nine P106-090 cards:
+on nine P106-090 cards; Flint's 8-bit lane: Unsloth's Q8_0, and my Flint Pascal Q8 GGUF (`p065`) on the last row:
 
 | Engine and line | Context | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|---|
@@ -17,6 +17,7 @@ Unsloth's Q8_0 on nine P106-090 cards:
 | Miner Llama v2.0 | 262,144 | 12 of 12 | 45.9 and 44.6 (two runs) | — | 2.6 | [results.md](../flint-v2/results.md) |
 | **v3 (`1f7215948`), the preset: v2's line** | 262,144 | **12 of 12** | **45.9** | 168 | 2.67, 6.48 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | v3, + the re-read fix, the tail checkpoint rule and the keep-alive | 262,144 | 12 of 12 | 44.7 | 168 | 2.45, 6.89 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
+| v3 (`1551f5fe1`), v2's line, Flint Pascal Q8 GGUF | 262,144 | 12 of 12 | 47.4 | 175 | 2.66, 6.75 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 
 - Nothing is lost against v2.0: 45.9 tok/s equals v2.0's faster run (45.9 and 44.6 in two runs).
 - Against stock llama.cpp b12076 the preset generates 3.2 times as fast (45.9 against 14.4 tok/s) and passes 12 of 12
@@ -36,18 +37,26 @@ a near tie (v2.0's two best tokens 0.011, 0.024, 0.056 and 0.343 nats apart), si
 differently and a generation compounds it
 ([data](../../docs/data/2026-11-05_release_regression/README.md#how-large-the-difference-is)).
 
-Flint's second lane, 5-bit (Unsloth's UD-Q5_K_XL and Flint Pascal Q5 GGUF, each on stock and on v3), and Flint Pascal
-Q8 GGUF in this lane: TODO(flintq5).
+Flint Pascal Q8 GGUF generates 3.3 % faster than Unsloth's Q8_0 on the release build (47.4 against 45.9 tok/s), with
+a median task of 1.0 against 1.2 minutes; its sessions wrote more text, so all twelve tasks took 22.3 against 19.2
+minutes. Its KL divergence against the 16-bit model is within two standard errors of Q8_0's, 0.0656 ± 0.0029 against
+0.0627 ± 0.0032, in 40.4 GB against 42.3 ([2026-10-27_flint_near_q8](../../docs/data/2026-10-27_flint_near_q8/README.md)).
 
-## The file
+Stock llama.cpp on Flint Pascal Q8 GGUF, and Flint's second lane, 5-bit (Unsloth's UD-Q5_K_XL and Flint Pascal Q5
+GGUF, each on stock and on v3): TODO(flintq5).
+
+## The files
 
 | File | Size | Where from | Checksum |
 |---|---:|---|---|
 | `flint-Q8_0.gguf` | 42.3 GB | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) | the SHA-256 Hugging Face lists for the file |
+| `flint-pascal-Q8.gguf` (Flint Pascal Q8 GGUF) | 40.4 GB | TODO(upload): [CinderellaMan/Flint-Pascal-Q8-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) | `15c50169…` in its [CHECKSUMS](huggingface/Flint-Pascal-Q8-GGUF/CHECKSUMS) |
 
 ```bash
 wget -c -P /mnt/models https://huggingface.co/unsloth/flint-GGUF/resolve/main/flint-Q8_0.gguf
 ```
+
+Flint Pascal Q8 GGUF runs on the same line: after sourcing the preset below, set `PRESET_MODEL=flint-pascal-Q8.gguf`.
 
 ## Run it
 

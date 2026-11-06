@@ -9,7 +9,7 @@ Measurements, settings and the scripts behind every number:
 
 ## Speed
 
-**Qwen3.8-Flash-Next, a 180B-parameter model, at 20.75 tok/s for a coding agent on nine 6 GB mining cards and a 4 GB
+**Qwen3.8-Flash-Next, a 180B-parameter model, at 20.40 tok/s for a coding agent on nine 6 GB mining cards and a 4 GB
 host.** On 2026-11-03 it ran at 6.4 tok/s on stock llama.cpp and 7.8 on v2.0's code. Flint and Ornith-1.5-122B run on
 the same build at their v2-era speed or better.
 
@@ -19,22 +19,24 @@ RAM). Generation in tokens per second over every request:
 
 | Model, file | Stock llama.cpp b12076 | Miner Llama v2.0 | **{{VERSION}}**, the model's preset |
 |---|---|---|---|
-| **Qwen3.8-Flash-Next**, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (`pmix-q2-fast`), 65,536-token context | 8.47, 10 of 11 (1 not reached) | — | **20.75, 12 of 12** |
-| **Qwen3.8-Flash-Next**, UkisAI's Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | 8.20, 9 of 9 (3 not reached) | 7.8, 9 of 9 | **20.40, 12 of 12** |
+| **Qwen3.8-Flash-Next**, UkisAI's Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | 8.20, 9 of 9 (3 not reached) | 7.8, 9 of 9 (no draft) | **20.40, 12 of 12** |
 | **Flint**, Unsloth Q8_0, 262,144-token context | 14.4, 10 of 12 (65,536-token context) | 45.9 and 44.6 (two runs), 12 of 12 | **45.9, 12 of 12** |
-| **Ornith-1.5-122B**, Ornith-1.5-122B Pascal N2P GGUF (`valid1`, 48.2 GB), 49,152-token context | TODO(stock) (UD-Q2_K_XL: stock cannot load valid1's types) | 9.7 (UD-Q2_K_XL) | **14.9, 12 of 12** |
+| **Flint**, Flint Pascal Q8 GGUF (`p065`, 40.4 GB), 262,144-token context | TODO(flintq5) | 47.1, 12 of 12 | **47.4, 12 of 12** |
+| **Ornith-1.5-122B**, Ornith-1.5-122B Pascal N2P GGUF (`valid1`, 48.2 GB), 49,152-token context | TODO(stock) (UD-Q2_K_XL: stock cannot load the N2P/N3P types) | 9.7 (UD-Q2_K_XL) | **14.9, 12 of 12** |
 
-- **Flash-Next:** the preset on this build (`1f7215948`, the same greedy output as `1551f5fe1`) generates 20.75 tok/s on
-  my file, 12 of 12, with prompts at 69.0 tok/s and the first token of a turn at 7.60 s (median); on UkisAI's own Q2_0,
-  20.40 tok/s, 12 of 12. The file's difference on this build is negligible: 2.45 against 2.47 minutes a task at equal
-  work. Stock ran the same server line with the MTP draft and without the fork's switches.
+- **Flash-Next:** the preset on this build generates 20.40 tok/s, 12 of 12, with prompts at 69.4 tok/s and the first
+  token of a turn at 6.89 s (median). Stock ran the same server line with the MTP draft and without the fork's switches.
+  My Pascal type mix of the file (`pmix-q2-fast`, not published) ran the preset at 20.75 tok/s, 2.45 against 2.47
+  minutes a task at equal work: within the spread of two runs, so the preset uses UkisAI's file as published.
   [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md).
   The keep-alive alone: 20.75 against 19.19 tok/s for the same line without it, −8.4 % time a task at equal work
   ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_keepalive/README.md)).
   v2.0's 7.8 and an older stock commit's 6.4 (7 of 8 tasks tried):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-03_flash_next_baseline/README.md).
-- **Flint:** 45.9 tok/s on this build (`1f7215948`) with v2's command line, against v2.0's 45.9 and 44.6 in two runs; first token per
-  turn 2.67 s (v2.0: 2.6). [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
+- **Flint:** 45.9 tok/s on this build (`1f7215948`) with v2's command line, against v2.0's 45.9 and 44.6 in two runs;
+  first token per turn 2.67 s (v2.0: 2.6). Flint Pascal Q8 GGUF, my 40.4 GB file of Q8_0's quality, on `1551f5fe1`:
+  47.4 tok/s, first token 2.66 s.
+  [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
   v2.0's numbers: [results.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/results.md).
   Stock b12076 runs at 65,536 tokens of context (at 262,144 its host-side attention mask does not fit in 4 GB), tuned
   to `-b 2048 -ub 512` with flash attention: 14.4 tok/s, 10 of 12, first token 4.13 s (median).
@@ -44,14 +46,14 @@ RAM). Generation in tokens per second over every request:
   the earlier run and v2.0's 9.7 (stock 6.2, both UD-Q2_K_XL):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md).
 
-The Flint and Ornith runs used `1f7215948`; this release is `1551f5fe1`, the same code plus one row-guard fix (below)
+Flint's Q8_0 and Ornith's runs used `1f7215948`; this release is `1551f5fe1`, the same code plus one row-guard fix (below)
 that cannot change these models' tokens. On the rigs both commits give the same greedy tokens for Flint (8 of 8
 requests) and Flash-Next (both prompts); Ornith's: TODO(identity).
 
 Speed-up against stock llama.cpp b12076, the upstream release this engine is built on (`20a51f24a`, no fork commit),
 each engine on the same file:
-- **Flash-Next:** 20.75 against 8.47 tok/s on my file (2.45×), 20.40 against 8.20 on UkisAI's Q2_0 (2.49×). On the
-  nine tasks stock reached, a task's work takes 1.87 against 3.63 minutes on my file and 1.90 against 3.74 on UkisAI's.
+- **Flash-Next:** 20.40 against 8.20 tok/s (2.49×), 12 of 12 against 9 of 9 reached; on the nine tasks stock reached,
+  a task's work takes 1.90 against 3.74 minutes.
 - **Flint:** 45.9 against 14.4 tok/s (3.2×), 12 of 12 against 10 of 12, 1.2 against 2.9 minutes a task (median).
 - **Ornith-1.5-122B:** TODO(stock).
 
@@ -73,7 +75,7 @@ one command starts it (below).
   once for 2–8 tokens.
 - Together with upstream b12076, a Flash-Next token on nine cards went from ≈136 ms to ≈75 ms, and a four-token verify
   from 305 to 163 ms ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-04_kcurve_p106/README.md)).
-- Pascal kernels for my own 2- and 3-bit types N2P and N3P (Ornith's valid1 file).
+- Pascal kernels for my own 2- and 3-bit types N2P and N3P (Ornith-1.5-122B Pascal N2P GGUF).
 
 **The hop cast** (`LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=1`, off by default; Flash-Next's preset sets it): the
 model's state crosses each of the eight card boundaries in Q8_0 through a pinned host ring instead of F32. Without a

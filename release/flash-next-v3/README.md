@@ -4,7 +4,7 @@ Flash-Next is Miner Llama v3's headline model. This folder says which files to d
 it, and the preset it was measured with; the engine's release notes are [notes-v3.0.md](../notes-v3.0.md). The model's
 own page is [models/qwen3.8-flash-next](../../models/qwen3.8-flash-next/README.md).
 
-## The headline: 20.75 tok/s for a coding agent on nine 6 GB mining cards, a 2-core Celeron and 4 GB of RAM
+## The headline: 20.40 tok/s for a coding agent on nine 6 GB mining cards, a 2-core Celeron and 4 GB of RAM
 
 Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token, plus a 51B-parameter
 n-gram table: 180B parameters in its original weights. In UkisAI's Swift-1.5 fine-tune at 2 bits it runs on a rig
@@ -12,63 +12,55 @@ built for mining: the transformer split over nine 6 GB cards on single PCIe 1.0 
 from the rig's SSD.
 
 A coding agent fixing twelve small bugs, with real tool calls and test runs, 65,536 tokens of context
-([bench/agent_check](../../bench/agent_check/README.md)):
+([bench/agent_check](../../bench/agent_check/README.md)), UkisAI's Swift-1.5 GSQ-RCO Q2_0:
 
-| Engine and file | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
+| Engine and line | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|
-| Stock llama.cpp `d77256999`, Swift Q2_0, no draft (2026-11-03) | 7 of 8 tried | 6.4 | — | — | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
-| Miner Llama v2.0's code, Swift Q2_0, no draft | 9 of 9 | 7.8 | 59 | 8.70 | [2026-11-04_mtp_redo](../../docs/data/2026-11-04_mtp_redo/README.md) |
-| Stock llama.cpp b12076 (`20a51f24a`), UkisAI's Swift Q2_0, with the MTP draft, `-ub 512` | 9 of 9 (3 not reached) | 8.20 | 53.7 | 10.22, 24.85 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
-| Stock llama.cpp b12076 (`20a51f24a`), Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, with the MTP draft, `-ub 256` | 10 of 11 (1 not reached) | 8.47 | 48.3 | 10.99, 20.91 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
-| Miner Llama v3 (`1551f5fe1`), UkisAI's Swift Q2_0, the preset | 12 of 12 | 20.40 | 69.4 | 6.89, 15.89 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
-| **Miner Llama v3 (`1f7215948`), Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, the preset** | **12 of 12** | **20.75** | **69.0** | **7.60, 15.79** | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| Stock llama.cpp `d77256999`, no draft (2026-11-03) | 7 of 8 tried | 6.4 | — | — | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
+| Miner Llama v2.0's code, no draft | 9 of 9 | 7.8 | 59 | 8.70 | [2026-11-04_mtp_redo](../../docs/data/2026-11-04_mtp_redo/README.md) |
+| Stock llama.cpp b12076 (`20a51f24a`), with the MTP draft, `-ub 512` | 9 of 9 (3 not reached) | 8.20 | 53.7 | 10.22, 24.85 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| **Miner Llama v3 (`1551f5fe1`), the preset** | **12 of 12** | **20.40** | **69.4** | **6.89, 15.89** | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 
-- **Swift Qwen3.8-Flash-Next Pascal Q2 GGUF** (internal name `pmix-q2-fast`) is my Pascal type mix of UkisAI's Swift
-  Q2_0 ([the files](#the-files)).
-- **The release build** is `1551f5fe1`. `1f7215948` is the same code without one row-guard fix and gives the same greedy
-  output on both prompts of the identity check.
-- **The engine halves a task's time on either file.** On the nine tasks every arm reached, Miner Llama v3 does a task's
-  work in 1.90 minutes on UkisAI's Q2_0 against stock's 3.74, and in 1.87 against 3.63 on my file.
-- **The file on Miner Llama v3: negligible.** My file takes 2.45 against 2.47 minutes a task on all twelve tasks at
-  equal work (−0.8 %); two runs of the preset's line differ by 3.7 %. On stock it is a small gain: 3.63 against 3.78
-  minutes on the nine tasks at the same `-ub 256` (−4.0 %).
+- **The engine halves a task's time.** On the nine tasks stock reached, Miner Llama v3 does a task's work in 1.90
+  minutes against stock's 3.74, and generates 2.49 times as fast.
 - **Stock's line** is the preset's server line with the MTP draft and without the fork's switches. Stock's llama-bench
   pass read a 2,048-token prompt fastest at `-ub 256` (153.44 against 138.93 tok/s at `-ub 512`); on the agent check
-  `-ub 256` was not faster on UkisAI's file (3.78 against 3.74 minutes a task), so that row is `-ub 512`.
-- **The draft's guesses** are accepted 0.714 of the time in the preset, 3.14 tokens a step. With the keep-alive a task
+  `-ub 256` was not faster (3.78 against 3.74 minutes a task), so stock's row is `-ub 512`.
+- **The draft's guesses** are accepted 0.718 of the time in the preset, 3.15 tokens a step. With the keep-alive a task
   takes 8.4 % less time than without it, at equal work ([2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md)).
-- **Left out of the preset:** the expert skip at p = 0.9 is negligible on top of it (`t1skip`: 11 of 12, one task ran
-  into the 12-minute cap, 21.29 tok/s, −2.9 % a task at equal work, inside the 3.7 % between two runs of the preset);
-  every switch of the "negligible" group together is a loss (`t1neg`: 12 of 12, 19.05 tok/s, +5.3 % a task).
+- **My Pascal type mix of the same file** (Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, `pmix-q2-fast`: the dense and
+  shared-expert weights in types the cards read faster) runs the preset at 20.75 tok/s, 12 of 12 (`t1base`, on
+  `1f7215948`, which gives the same greedy output as `1551f5fe1`). That is 2.45 against 2.47 minutes a task at equal
+  work, inside the 3.7 % between two runs of one line, so the release uses UkisAI's file as published. On stock the mix
+  runs at 8.47 tok/s. Its recipe: [2026-11-04_pascal_mix](../../docs/data/2026-11-04_pascal_mix/README.md).
+- **Left out of the preset**, each tried on the mix against its 20.75: the expert skip at p = 0.9 is negligible
+  (`t1skip`: 11 of 12, one task ran into the 12-minute cap, 21.29 tok/s, −2.9 % a task at equal work, inside the 3.7 %
+  between two runs); every switch of the "negligible" group together is a loss (`t1neg`: 12 of 12, 19.05 tok/s, +5.3 %
+  a task).
 
-How v3 got from 7.8 to 20.75 tok/s, one change at a time: [docs/book/10-v3.md](../../docs/book/10-v3.md).
+How v3 got there from 7.8 tok/s, one change at a time: [docs/book/10-v3.md](../../docs/book/10-v3.md).
 
 ## The files
 
 | File | Size | Where from | Checksum |
 |---|---:|---|---|
-| Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, shards 1 and 2 (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00001-of-00003.gguf`, `…-00002-of-00003.gguf`; on the cards) | TODO(upload) | TODO(upload): this project's Hugging Face repository | TODO(upload) |
-| `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf` (the n-gram table, on the SSD) | 28.8 GB | made from UkisAI's Swift-1.5 Q2_0 download with `gguf_reshard.py` (below) | `05716382…` in [CHECKSUMS](CHECKSUMS) |
+| `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, `…-00002-of-00003.gguf` (the transformer, on the cards) | 37.7 GB | cut from UkisAI's Swift-1.5 GSQ-RCO Q2_0 download with `gguf_reshard.py` (below) | `690252d2…`, `a893db93…` in [CHECKSUMS](CHECKSUMS) |
+| `Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf` (the n-gram table, on the SSD) | 28.8 GB | the same cut | `05716382…` in [CHECKSUMS](CHECKSUMS) |
 | `mtp-Qwen3.8-Flash-Next-draft.gguf` (the MTP draft) | 2.7 GB | [agentionai/Qwen3.8-Flash-Next-Gyro-GGUF](https://huggingface.co/agentionai/Qwen3.8-Flash-Next-Gyro-GGUF), revision `273edc1d2ffae5241fe3cab69568d682dad4c718` | `00818378…` in [CHECKSUMS](CHECKSUMS) |
 | Miner Llama v3.0 engine archives | TODO(tag) | the fork's [GitHub release](https://github.com/Cinderella-Man/llama.cpp/releases) | the release's `SHA256SUMS` |
 
-Swift Qwen3.8-Flash-Next Pascal Q2 GGUF is Swift-1.5's Q2_0 with a Pascal type mix: the dense and shared-expert
-weights in types the cards read faster, the routed experts unchanged. Against Swift's 8-bit file its KL divergence on
-coding-agent text is 0.2792 ± 0.0054, against 0.2866 ± 0.0056 for UkisAI's Q2_0; on the agent check with Miner Llama
-v3 the two run at the same speed. It fits the same splits; how it was made, with the recipe to rebuild it:
-[2026-11-04_pascal_mix](../../docs/data/2026-11-04_pascal_mix/README.md) and [bench/pascal_mix](../../bench/pascal_mix/).
-Its third shard is Swift's n-gram table, byte for byte, so you make it from Swift's own download.
+The three model shards are UkisAI's two Q2_0 shards byte for byte, with the n-gram table moved into a third shard of
+its own: the table can then live on the SSD while shards 1 and 2 load to the cards.
 
 The model is under the Swift Open License 1.0 (free below US$1M of yearly revenue) and the Qwen Community License 1.0.
 
 ## Run it
 
 You need the rig, about 30 GB free on its internal SSD, a model drive with 41 GB free, and a PC with Python 3 and
-room for Swift's 66.5 GB download. Another card count needs its own `-ts`, checked with
-[scripts/fit_probe.sh](../../scripts/fit_probe.sh) before the first load.
+room for Swift's 66.5 GB download and the cut copy of it (another 66.5 GB). Another card count needs its own `-ts`,
+checked with [scripts/fit_probe.sh](../../scripts/fit_probe.sh) before the first load.
 
-1. **Download** shards 1 and 2 of Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (TODO(upload): the command), the MTP draft, and Swift's two Q2_0 shards
-   at the revision measured here:
+1. **Download** the MTP draft and Swift's two Q2_0 shards at the revision measured here:
 
    ```bash
    hf download agentionai/Qwen3.8-Flash-Next-Gyro-GGUF mtp-Qwen3.8-Flash-Next-draft.gguf --revision 273edc1d2ffae5241fe3cab69568d682dad4c718 --local-dir swift
@@ -89,13 +81,13 @@ room for Swift's 66.5 GB download. Another card count needs its own `-ts`, check
    python3 -I scripts/gguf_reshard.py verify swift/*Q2_0-0000*-of-00002.gguf --new swift_q2_0/*-of-00003.gguf
    ```
 
-   Only the third new file is needed: `swift_q2_0/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf`.
+   The split is deterministic: `sha256sum -c --ignore-missing CHECKSUMS` in `swift_q2_0/` checks the three new files.
 
-3. **Copy shards 1 and 2 and the draft to the model drive, and the table to the SSD.** Then link the
-   table beside shards 1 and 2 under their name, where llama.cpp looks for it:
+3. **Copy the new shards 1 and 2 and the draft to the model drive, and shard 3 (the table) to the SSD.** Then link the
+   table beside shards 1 and 2, where llama.cpp looks for it:
 
    ```bash
-   ln -s <SSD>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf <model drive>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00003-of-00003.gguf
+   ln -s <SSD>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf <model drive>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00003-of-00003.gguf
    ```
 
 4. **Start the server** with the preset, from a clone of this repository:
@@ -111,17 +103,14 @@ room for Swift's 66.5 GB download. Another card count needs its own `-ts`, check
 
 ## The preset: [settings.env](settings.env)
 
-The line of the release build's agent check (`t1base`: 12 of 12, 20.75 tok/s):
+The line of the release build's agent check (`t1swift`: 12 of 12, 20.40 tok/s):
 
 ```bash
-PRESET_MODEL=Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00001-of-00003.gguf
+PRESET_MODEL=Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf
 PRESET_DRAFT=mtp-Qwen3.8-Flash-Next-draft.gguf
 PRESET_ENV="GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=1 LLAMA_DRAFT_SHORTLIST=32768,8192,2 GGML_CUDA_KEEPALIVE=decode"
 PRESET_ARGS="-ngl 99 -fa on -c 65536 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,6,5,6,3 -fit off -lm dio --spec-type draft-mtp --spec-draft-n-max 3 -otd token_embd=CUDA4 --spec-draft-n-ubatch 128 --no-host"
 ```
-
-The same line runs UkisAI's Q2_0 at 20.40 tok/s (`t1swift`): set `PRESET_MODEL` to the first of the three shards
-`gguf_reshard.py` writes (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`), with the table beside it.
 
 What each setting does, why the rig needs it and what it bought: [the recipe](#the-recipe-every-setting-and-what-it-bought).
 
@@ -131,33 +120,35 @@ The rig has nine 6 GB cards, each on one PCIe 1.0 lane, a 2-core Celeron and 4 G
 setting below works around one of those. Each speed is generation tok/s from one run of the coding-agent check, unless
 a row says otherwise.
 
-### The ladder: from stock llama.cpp to 20.75 tok/s
+### The ladder: from stock llama.cpp to the preset
 
 One change at a time:
 
 | Step | What I added | Tasks passed | Generation tok/s | Data |
 |---|---|---|---|---|
 | 0 | stock llama.cpp `d77256999`, Swift Q2_0 | 7 of 8 tried | 6.4 | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
-| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | 9 of 9 (3 not reached) | 8.20 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on, with the MTP draft | 9 of 9 (3 not reached) | 8.20 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 | 1 | Miner Llama's Pascal kernels (v2.0's code, v3's base `37e717ff6`) | 9 of 9 | 7.8 | [2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md) |
 | 2 | the slowest BF16 weights retyped to Q8_0, which the cards read fast | 12 of 12 | 9.0 | [2026-11-03_retype_agent](../../docs/data/2026-11-03_retype_agent/README.md) |
-| 3 | v3's kernels for the model's shapes on upstream b12076, and the Swift Qwen3.8-Flash-Next Pascal Q2 GGUF file; no draft | 11 of 12 | 14.3 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
+| 3 | v3's kernels for the model's shapes on upstream b12076, and my Pascal type mix of the file; no draft | 11 of 12 | 14.3 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
 | 4 | + the MTP draft, three tokens ahead | 11 of 12 | 14.6 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
 | 5 | + the draft's shortlist head | 12 of 12 | 16.0 | [2026-11-04_stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
 | 6 | + newer kernel shapes and the 8-bit hop between cards | 12 of 12 | 18.8 | [2026-11-04_s35_stack](../../docs/data/2026-11-04_s35_stack/README.md) |
 | 7 | the same line on the second rig, the control for step 8 | 12 of 12 | 19.19 | [2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
 | 8 | + the keep-alive | 12 of 12 | 20.75 | [2026-11-05_keepalive](../../docs/data/2026-11-05_keepalive/README.md) |
-| 9 | the release build (`1f7215948`, the same greedy output as `1551f5fe1`), the same line: **the preset** | 12 of 12 | **20.75** | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| 9 | the release build (`1f7215948`, the same greedy output as `1551f5fe1`), the same line | 12 of 12 | 20.75 | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| 10 | UkisAI's Q2_0 as published instead of my mix, on `1551f5fe1`: **the preset** | 12 of 12 | **20.40** | [2026-11-05_release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 
-Steps 3, 4 and 5 are three arms of one session, and steps 7 and 8 two arms of another, so those compare cleanly. The
+Steps 3, 4 and 5 are three arms of one session, and steps 7 and 8 two arms of another, so those compare cleanly. Steps
+9 and 10 differ only in the file: 2.45 against 2.47 minutes a task at equal work, inside the spread of two runs. The
 other steps ran on two identical rigs and on different builds; each one's own side-by-side is in its data folder.
 
 ### Every setting
 
 | Setting | What it does | Why this rig needs it | What it measured | Data |
 |---|---|---|---|---|
-| Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (the file) | Swift-1.5's Q2_0 with the dense and shared-expert weights in types the cards read fast; the routed experts unchanged | Pascal has no fast path for BF16, and BF16 projections took 30 % of a token's GPU time | retyping the slowest BF16 weights alone: 9.0 against 7.8 tok/s; the whole mix against UkisAI's Q2_0 on the release build: 20.75 against 20.40 tok/s, a negligible 2.45 against 2.47 minutes a task, at a slightly lower KL divergence on agent text | [retype_agent](../../docs/data/2026-11-03_retype_agent/README.md), [pascal_mix](../../docs/data/2026-11-04_pascal_mix/README.md) |
-| `-md mtp-…gguf`, `--spec-type draft-mtp`, `--spec-draft-n-max 3` | a small draft model guesses three tokens; the main model checks them in one pass and keeps those it agrees with, so the text is the main model's own | checking four tokens costs about twice one token (149.0 against 74.1 ms on nine cards), not four times | 14.6 against 14.3 tok/s on its own; 16.0 with the shortlist below; in the preset on the release build, 0.714 of the guesses are accepted, 3.14 tokens a step | [stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md), [release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
+| UkisAI's Swift Q2_0, its n-gram table cut into a third shard (`gguf_reshard.py`) | the same weights, byte for byte; the table in a shard of its own | the 28.8 GB table fits neither the cards nor 4 GB of host memory; the SSD reads it at 6,039 random 4 KiB reads a second, the USB disk at 95 | the table's reads cost about 1 % of a token's time | [table_storage](../../docs/data/2026-11-03_table_storage/README.md), [ngram_replay](../../docs/data/2026-11-03_ngram_replay/README.md) |
+| `-md mtp-…gguf`, `--spec-type draft-mtp`, `--spec-draft-n-max 3` | a small draft model guesses three tokens; the main model checks them in one pass and keeps those it agrees with, so the text is the main model's own | checking four tokens costs about twice one token (149.0 against 74.1 ms on nine cards), not four times | 14.6 against 14.3 tok/s on its own; 16.0 with the shortlist below; in the preset on the release build, 0.718 of the guesses are accepted, 3.15 tokens a step | [stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md), [release_flashnext](../../docs/data/2026-11-05_release_flashnext/README.md) |
 | `LLAMA_DRAFT_SHORTLIST=32768,8192,2` | the draft scores a shortlist of likely tokens instead of all 248,320, and falls back to the full list when the shortlist might miss the best one; the guesses are the same | once the main model got fast, scoring every token for every guess ate most of what the draft saved | 16.0 against 14.6 tok/s in the same session; acceptance 0.705 against 0.697 | [stacked_gains](../../docs/data/2026-11-04_stacked_gains/README.md) |
 | `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`, `GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0` | the kernels that read each weight once for all the tokens a draft step checks, with 32 KB of shared memory and without their dispatch table | a card has 5 SMs and a slow memory; reading a weight once instead of four times is most of a draft step's saving | a pass over five tokens 180.2 ms against 188.2 at the defaults; one token 74.1 against 80.6 ms | [kshape](../../docs/data/2026-11-04_kshape/README.md) |
 | `LLAMA_HOP_CAST=q8_0` | the model's state crosses each of the eight card boundaries in 8-bit Q8_0 instead of 32-bit floats: a quarter of the bytes | each card has one PCIe 1.0 lane (~190 MB/s) and no direct path to the next card, so every boundary goes through the host | decode +12 %, +13 % and +15 % on a short, a ~1k and a ~8k-token request; prompts +22 % and +31 % on the ~1k and ~8k ones; no measurable change in KL divergence | [card_hops](../../docs/data/2026-11-04_card_hops/README.md) |
@@ -221,7 +212,7 @@ They were v3's first target.
 
 [CHECKSUMS](CHECKSUMS) is in `sha256sum -c` format; in the folder that holds your files,
 `sha256sum -c --ignore-missing CHECKSUMS` checks the ones you have. The split is deterministic: the same downloaded
-shards give the same three files. Shards 1 and 2 of Swift Qwen3.8-Flash-Next Pascal Q2 GGUF: TODO(upload).
+shards give the same three files.
 
 ## What is not measured yet
 

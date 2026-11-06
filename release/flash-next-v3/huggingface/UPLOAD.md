@@ -1,7 +1,9 @@
 # Uploading Swift Qwen3.8-Flash-Next Pascal Q2 GGUF to Hugging Face
 
-Nothing here has been uploaded. This page is the plan: which repository, which files, and the checks before the
-upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan).
+**Not uploaded for v3.0** (decided 2026-11-06): on the release build this file runs at the speed of UkisAI's own Q2_0
+(20.75 against 20.40 tokens/s, 2.45 against 2.47 minutes a task at equal work), so Flash-Next's release uses UkisAI's
+file as published. The card and this plan stay for a later file that earns an upload: which repository, which files,
+and the checks before the upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan).
 
 ## Repository and files
 
