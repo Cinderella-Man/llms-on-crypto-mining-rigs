@@ -18,7 +18,7 @@ A model does not see letters or words. It sees *tokens*: common words, pieces of
 In English a token is about three quarters of a word on average. A tokenizer turns text into a list of token numbers
 before the model sees it, and turns the model's output numbers back into text.
 
-The set of all tokens a model knows is its *vocabulary*. Flint's has about 150,000 entries. Flash-Next's has 248,320.
+The set of all tokens a model knows is its *vocabulary*. Flint's has 150,144 entries. Flash-Next's has 248,320.
 That number matters later, because the model's last step scores every one of them, for every token it writes.
 
 All speeds in this book are in tokens per second, written tok/s. For a sense of scale: comfortable reading speed is
@@ -59,7 +59,7 @@ flowchart LR
     P -->|appended to the conversation| T
 ```
 
-Only the hidden state travels between cards: about 8 KB for Flint, about 40 KB for Flash-Next. Each card holds its
+Only the hidden state travels between cards: 8,192 bytes for Flint, 40,960 bytes for Flash-Next. Each card holds its
 own layers' weights and never sends them anywhere. [Chapter 5](05-nine-cards.md) is about this split.
 
 ### What a layer computes
@@ -90,8 +90,8 @@ Here is the key calculation of this whole book, done for Flint in a 4-bit file.
 
 | | Per token | Time on one P106-090 |
 |---|---|---|
-| Weights read | about 2.2 GB | 2.2 GB at 173 GB/s ≈ **13 ms** |
-| Arithmetic | about 5 billion operations (2.5 billion weights used, one multiply and one add each) | 5 GFLOP at ~2 TFLOPS ≈ **2.5 ms** |
+| Weights read | 2.21 GB | 2.21 GB at 173 GB/s ≈ **12.8 ms** |
+| Arithmetic | about 5 billion operations (2.5 billion weights used, one multiply and one add each) | 5 GFLOP at 1.96 TFLOPS ≈ **2.55 ms** |
 
 My arithmetic, from the card's measured bandwidth, its rated 32-bit speed and the bytes Flint's file reads per token.
 
@@ -116,19 +116,20 @@ The same arithmetic for Flash-Next, in the 2-bit file the rig runs, part by part
 
 | Part of the model | Read per token | Share |
 |---|---|---|
-| Attention and recurrent layers' matrices | 1.39 GB | 34 % |
-| Mixing matrices between the model's parallel streams, kept in 16-bit | 1.28 GB | 31 % |
-| The 10 chosen experts per layer | 0.66 GB | 16 % |
-| Output layer | 0.44 GB | 11 % |
-| Router and the rest | 0.38 GB | 9 % |
-| **All weights** | **4.2 GB** | |
+| Attention and recurrent layers' matrices | 1,392 MB | 33.5 % |
+| Mixing matrices between the model's parallel streams, kept in 16-bit | 1,283 MB | 30.9 % |
+| The 10 chosen experts per layer | 664 MB | 16.0 % |
+| Output layer | 437 MB | 10.5 % |
+| Router and the rest | 379 MB | 9.2 % |
+| **All weights** | **4,155 MB** | |
 
-At 173 GB/s, 4.2 GB takes 24 ms. That puts a ceiling of about 42 tok/s on writing. The measured GPU time per token
-was 136 ms, so the real speed was about 7 to 8 tok/s. The gap is more than five times.
+At 173 GB/s, 4,155 MB takes 24.0 ms. That puts a ceiling of 41.6 tok/s on writing. The measured GPU time per token
+was 135.96 ms under the profiler, which allows 7.36 tok/s; without the profiler, the coding agent wrote 7.8 tok/s on
+the same engine. The gap is 5.66 times.
 
-Where does it go? The profile answered that. The 16-bit mixing matrices alone took 41 ms, against a floor of about 7 ms
-for their bytes, most likely because Pascal has no fast path for the 16-bit format they use. The 2-bit experts took 26 ms, against a floor
-of about 4 ms. Many small steps added the rest.
+Where does it go? The profile answered that. The 16-bit mixing matrices alone took 40.45 ms, against a floor of
+7.42 ms for their bytes, most likely because Pascal has no fast path for the 16-bit format they use. The 2-bit experts
+took 25.74 ms, against a floor of 3.84 ms. Many small steps added the rest.
 
 ### Why real code falls short of the floor
 
@@ -136,16 +137,18 @@ The floor assumes the GPU reads memory at full speed all the time. Real code on 
 reasons:
 
 - **The chip is too small to keep the memory busy.** With 5 SMs, a P106-090 cannot issue requests and unpack
-  compressed weights fast enough. Real kernels reached 35–54 % of the bandwidth in the first calibration
-  ([chapter 1](01-the-rig.md)). Formats that are cheap to unpack do better.
+  compressed weights fast enough. Real kernels reached 54 % (Q8_0), 42 % (Q4_0) and 35 % (Q4_K_M) of the
+  bandwidth in the first calibration ([chapter 1](01-the-rig.md)). Formats that are cheap to unpack do better.
 - **Every GPU program has a fixed start cost.** The GPU runs a pass as a series of small programs called *kernels*.
-  Each kernel launch costs about 10 µs here, whatever it does. A small model's token ran one to three thousand of
-  them, so the start costs alone can outweigh the reading. Fewer, larger kernels are a big lever
+  Launching an empty kernel takes 6.43 µs here, and in three small models each kernel cost 11.0, 11.2 and 9.7 µs of
+  a token's time, whatever it did. A small model's token ran 934 to 3,418 of them (five models), so the start costs
+  alone can outweigh the reading. Fewer, larger kernels are a big lever
   ([chapter 6](06-gpu-code.md)).
 - **Hand-offs between cards and the host's small jobs** add time on every token ([chapter 5](05-nine-cards.md)).
 
-Even Flint, after a lot of tuning, shows the gap. On six cards one token took about 27 ms. Streaming its weights
-accounted for about 15 ms of that. The other 12 ms were kernel boundaries, small kernels, hand-offs and the host.
+Even Flint, after a lot of tuning, shows the gap. On six cards one token took 26.8 ms. Streaming its weights
+accounted for est. 14.9 ms of that. The other est. 11.9 ms were kernel boundaries, small kernels, hand-offs and the
+host.
 
 Most of this book is about closing the gap between the floor and the measured time.
 
@@ -165,15 +168,15 @@ The cache costs memory, and it lives on the cards beside the weights:
 
 | Model | KV cache per token | At the full 262,144-token context |
 |---|---|---|
-| Flint | ~28 KiB | ~7 GiB |
-| Flash-Next | ~30 KiB, including a small index for its sparse attention | ~7.5 GiB |
+| Flint | 28 KiB | 7.0 GiB |
+| Flash-Next | 30 KiB, including a small index for its sparse attention | 7.5 GiB |
 
 Both stay this small because only some layers keep the whole history. Flint's 14 full-attention layers do. Its other
 35 look back only over the last 513 tokens. Flash-Next keeps a KV cache in only 12 of its 48 layers.
 
 The cache also costs time: attention reads it on every token, so writing slows as the conversation grows. In
-Flash-Next's 12 attention layers, at the measured speed of the current attention code, that is under 1 ms per token
-with an empty context, about 6 ms at 5,000 tokens of context and about 38 ms at 32,000. A coding agent's context grows every turn, so this cost matters
+Flash-Next's 12 attention layers, at the measured speed of the current attention code, that is est. 0.7 ms per token
+with an empty context, est. 6.0 ms at 5,000 tokens of context and est. 38 ms at 32,000. A coding agent's context grows every turn, so this cost matters
 ([chapter 3](03-measuring.md)).
 
 ### Recurrent state: a running total instead of a log
@@ -182,19 +185,20 @@ Flash-Next's other 36 layers work differently. They are *recurrent* layers, a ki
 the two kinds are called *hybrid* models. A recurrent layer does not keep an entry per token. It keeps one fixed-size
 *state* and updates it with each token, like a running aggregate instead of an append-only log.
 
-The state is about 3.3 MB per layer, about 113 MiB for all 36. It does not grow with the conversation, which makes long
-contexts cheap. But each token reads and writes it, about 236 MB of traffic per token.
+The state is 3.27 MB per layer, 112.6 MiB for all 36. It does not grow with the conversation, which makes long
+contexts cheap. But each token reads and writes it, 236 MB of traffic per token.
 
 **The catch is that a running total cannot be rewound.** With a KV cache, the engine can drop the last few entries and
 continue from an earlier point. With a recurrent state, it cannot. Agents need that rewind all the time. Each new turn
 re-sends the conversation as text, and the text does not always turn back into the same tokens. Flint, for example,
 sometimes writes a word as two tokens that the tokenizer would write as one. Then the cached tokens and the new prompt
 stop matching in the middle of the last reply, and the engine must step back to where they still match. That happened
-in 6 % of Flint's agent turns, and in 45 % of replies longer than 4,000 tokens, until a fix compared the bytes instead
-of the tokens.
+in 6.1 % of Flint's agent turns, and in 44.9 % of replies of 4,096 tokens or more, until a fix compared the bytes
+instead of the tokens.
 
 So the server saves *checkpoints*: copies of the recurrent state at chosen positions. On the rig, each checkpoint is
-113 MiB, and it lives in host RAM. Saving one took about 0.67 s and restoring one about 0.63 s, over the slow links.
+112.6 MiB, and it lives in host RAM. Saving one took 674.2 ms and restoring one 636.8 ms, the first of each in the
+first test's logs, over the slow links.
 With 4 GB of host RAM, the server keeps at most a few of them ([chapter 1](01-the-rig.md)).
 
 ## Reading the prompt: a different speed
@@ -208,15 +212,15 @@ faster than writing:
 
 | Model, engine | Reading a prompt | Writing |
 |---|---|---|
-| Flint, Miner Llama v2 | ~580 tok/s on a 16,000-token prompt | ~35 tok/s on a chat reply |
-| Flash-Next, Miner Llama v2.0 code | 72 to 149 tok/s, on 1,400- to 32,700-token prompts | ~8 tok/s |
+| Flint, Miner Llama v2 | 580 tok/s on a 16,399-token prompt | 35.4 tok/s on a 256-token chat reply |
+| Flash-Next, Miner Llama v2.0 code | 71.8 tok/s on a 1,382-token prompt, 139.3 on 7,183 tokens, 148.6 on 32,674 | 5.43, 8.30 and 6.24 tok/s after those three prompts |
 
-The time to read the prompt is what you wait before the first word appears. For Flash-Next a 32,700-token prompt took
-about 3.7 minutes to read. That wait is called the *time to first token*.
+The time to read the prompt is what you wait before the first word appears. For Flash-Next the 32,674-token prompt took
+220.8 s to read. That wait is called the *time to first token*.
 
 The same effect works across users. When two conversations share one server, one read of each weight serves a token
-for both. Flint served one conversation at about 22 tok/s on real chat requests, and two at once at 21 to 24 tok/s each: 35
-to 42 tok/s in total.
+for both. Flint served one conversation at 22.47 tok/s on real chat requests. Two at once wrote 21.19 and 21.72 tok/s
+on a code prompt, 35.4 in total, and 23.64 and 23.63 tok/s on an explanation, 42.4 in total.
 
 ### The prompt cache, and why agents depend on it
 
@@ -225,19 +229,19 @@ and their results. By turn ten that can be tens of thousands of tokens. Reading 
 minutes per turn.
 
 So the server compares the new prompt with what is already in the KV cache and keeps the matching beginning. Only the
-new part, such as the latest test output, has to be read. In Flash-Next's first agent test, 97 % of each prompt came
-from the cache from the second turn on. This *prompt caching* is what makes agents usable on slow hardware. It is also
+new part, such as the latest test output, has to be read. In Flash-Next's first agent test, the median request from the second
+turn on took 96.6 % of its prompt from the cache. This *prompt caching* is what makes agents usable on slow hardware. It is also
 why rewinding the recurrent state matters so much.
 
 ## The output layer and the vocabulary
 
 The last step multiplies the final hidden state by the *output layer*, a matrix with one row per vocabulary token. For
-Flash-Next that is 248,320 rows of 2,560 weights. It is read in full for every token, about 0.44 GB, 11 % of
+Flash-Next that is 248,320 rows of 2,560 weights. It is read in full for every token, 437 MB, 10.5 % of
 everything the token reads.
 
 The result is one score per vocabulary token, called the *logits*. For Flash-Next that is a list of 248,320 numbers,
-about 1 MB. On a desktop machine, copying 1 MB from GPU to CPU is nothing. Over this rig's link at ~213 MB/s it takes
-about 4.7 ms per token. So it matters where the next step happens.
+993 KB. On a desktop machine, copying 1 MB from GPU to CPU is nothing. Over this rig's link at 213 MB/s it takes
+est. 4.7 ms per token. So it matters where the next step happens.
 
 ## Sampling: picking the next token
 
@@ -266,8 +270,9 @@ token and sends back one number.
 *tools*: the functions an agent may call, such as "read file" or "run command".
 
 **What happened.** Every agent request carries its tool list, and a tool list switched backend sampling off. The
-engine then copied all the logits to the host for every token. On Flint, tool requests wrote 12–16 % slower per token:
-about 3 ms for the 600 KB copy plus the host's own work.
+engine then copied all the logits to the host for every token. On Flint, tool requests wrote 11.9 % slower per token
+on nine cards (34.04 against 30.43 ms, the same 3,000 tokens) and 12.8 % slower on six: 3.61 and 3.83 ms more, for the
+600 KB copy (est. 2.82 ms) plus the host's own work.
 
 **Why.** The engine restricts a tool call to valid syntax with a grammar, and that grammar ran only on the CPU. On a
 desktop the copy is invisible, so nobody had noticed the cost. On a PCIe 1.0 x1 link, a 600 KB copy per token is
@@ -278,8 +283,8 @@ that every agent request paid ([chapter 3](03-measuring.md)).
 
 Because one pass is mostly reading weights, a pass could check several guessed tokens for about the cost of one, if
 the arithmetic stayed cheap. That is *speculative decoding*: guess a few tokens cheaply, check them all in one pass,
-keep the ones the model agrees with. It is optimistic execution with rollback. On these small cards, checking about
-three tokens at once cost 2.2 times one token, so the obvious way pays poorly. [Chapter 8](08-guessing-ahead.md) tells
+keep the ones the model agrees with. It is optimistic execution with rollback. On these small cards, checking 2.90
+tokens at once cost 2.22 times one token (57.7 against 25.9 ms), so the obvious way pays poorly. [Chapter 8](08-guessing-ahead.md) tells
 what worked instead.
 
 ## What to remember
@@ -287,7 +292,7 @@ what worked instead.
 - A model writes one token at a time, and each token is a full pass through all the layers.
 - Every pass reads the weights it uses from GPU memory. With almost no arithmetic per weight, memory reading sets the
   speed: tokens per second ≤ bandwidth ÷ bytes read per token.
-- Flash-Next reads about 4.2 GB per token. The floor is 24 ms; the measured GPU time was 136 ms. Closing that gap is
+- Flash-Next reads 4,155 MB per token. The floor is 24.0 ms; the measured GPU time was 135.96 ms. Closing that gap is
   most of the work.
 - Reading a prompt is ten or more times faster than writing, because many tokens share one read of the weights.
 - The KV cache is a per-conversation cache that grows with the context. Hybrid models also keep a fixed recurrent
