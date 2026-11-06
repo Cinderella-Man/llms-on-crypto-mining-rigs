@@ -34,7 +34,7 @@ done
         printf '%s\t%s\t%s\t%s\t%s\n' "$t" "$ref" "$(grep -a -m1 '^Mean    KLD:' "$f" "$OUT/kld-$t.out" | cut -d: -f3- | xargs)" \
             "$(grep -a -m1 '^Same top p:' "$f" "$OUT/kld-$t.out" | cut -d: -f3- | xargs)" \
             "$( { grep -a -h -o 'Final estimate: PPL = [0-9.]* +/- [0-9.]*' "$f" "$OUT/kld-$t.out" | sed 's/.*PPL = //'
-                  grep -a -h '^Mean PPL(Q)' "$f" "$OUT/kld-$t.out" | cut -d: -f2- | xargs; } | tail -n 1)"
+                  grep -a -h -E '^Mean PPL\(Q\) +:' "$f" "$OUT/kld-$t.out" | cut -d: -f2- | xargs; } | tail -n 1)"
     done
 } > "$OUT/kld.tsv"
 ssh "$RIG" "rm -rf $DIR"

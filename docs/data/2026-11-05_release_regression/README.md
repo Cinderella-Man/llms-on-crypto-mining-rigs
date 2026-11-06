@@ -141,10 +141,23 @@ with "invalid argument"), and on a compute 8.6 card neither build takes its Pasc
   −0.0126 ± 0.0043.
 
 So on Pascal the two builds compute Ornith's prompt passes differently, far beyond Flint's rounding (0.000056 at most),
-and the release build's perplexity is the lower. On the 3090s, where neither build takes its Pascal kernels, the same
-two builds differ by +0.00167 ± 0.00078 in KLD against the Q8_0 reference on this text
-([2026-11-05_night_quant_chain](../2026-11-05_night_quant_chain/README.md)). Which build is closer to the model on
-Pascal is the next run: both against that Q8_0 reference on the P106.
+and the release build's perplexity is the lower.
+
+**Neither build is closer to the model ([kld/ornith_vs_q8_ref.tsv](kld/ornith_vs_q8_ref.tsv),
+[paired by chunk](kld/ornith_vs_q8_ref_paired.tsv)).** Both builds scored on the P106 against the Ornith-1.5-122B Q8_0
+reference for wikitext-2 test (80 chunks of 512 tokens, written on a build machine), the same line:
+
+| Build | Mean KLD against Q8_0 | Same top token | PPL (its own) |
+|---|---:|---:|---:|
+| `-lowbit` `d7a75deb3` | 0.175864 ± 0.002767 | 84.083 ± 0.256 % | 6.594073 ± 0.120548 |
+| `-ladder5` `1551f5fe1` | 0.175182 ± 0.002745 | 84.270 ± 0.255 % | 6.578500 ± 0.120298 |
+
+Paired by chunk ([table.sh](../2026-11-04_moe_tail_kld/run/table.sh)), the release build's KLD minus `-lowbit`'s is
+−0.00068 ± 0.00069: within noise (worse would be d − 2 se > 0). The two builds differ from each other by a KLD of 0.0217
+and each from the reference by 0.176, so on Pascal the release build keeps the older build's quality for Ornith. On
+the 3090s, where neither build takes its Pascal kernels, the same two builds differ by +0.00167 ± 0.00078 against this
+reference ([2026-11-05_night_quant_chain](../2026-11-05_night_quant_chain/README.md)): a change in the code every card
+runs, which on the P106 is within noise.
 
 ## Files
 
@@ -155,6 +168,7 @@ Pascal is the next run: both against that Q8_0 reference on the P106.
 | `identity/*-greedy-*.jsonl` | each build's greedy requests: token ids, text, timings and the top-2 log-probabilities |
 | `kld/flint.tsv`, `kld/flint_stats.txt` | Flint's KLD of `1551f5fe1` against v2.0 |
 | `kld/ornith_lowbit_vs_1551f5fe1.tsv`, `_stats.txt` | Ornith valid1's KLD of `1551f5fe1` against `-lowbit` on the P106 |
+| `kld/ornith_vs_q8_ref.tsv`, `_paired.tsv`, `_<build>.txt` | both builds against Ornith's Q8_0 reference on the P106: the table, the paired difference, each build's statistics |
 | `stock_tune/flint.md`, `.jsonl` | stock's llama-bench grid and pick |
 | `stock_tune/ornith-ud.md`, `.jsonl` | the same for Ornith's UD-Q2_K_XL (split `8,6,5,5,5,4,5,6,6`, `-fit off`): `-ub 256`, flash attention on |
 | `run/greedy_identity.sh`, `greedy_requests.py`, `compare_greedy.py`, `prompts.jsonl` | the identity check |
@@ -187,6 +201,12 @@ RIG=rig MODEL=<flint-Q8_0.gguf> BUILDS="$L5" LINE="<the same>" CTX=262144 DIR=<r
 python3 $R/compare_greedy.py id_flint/greedy-v2-rc4.jsonl id_flint/greedy-v3-b12076-ladder5.jsonl id_flint/greedy-v3-b12076-ladder5-v3add.jsonl
 python3 $R/decode_drift.py id_flint/greedy-v2-rc4.jsonl id_flint/greedy-v3-b12076-ladder5.jsonl
 # Ornith: BUILDS="llama.cpp-20261027-d7a75deb3-pascal-p106-v3-lowbit $L5" LINE="-b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off" CTX=49152
+# KLD on wikitext-2 test (Ornith, both builds against a Q8_0 reference written elsewhere with -c 512: BASE)
+RIG=rig MODEL=<valid1 on the rig> BUILDS="llama.cpp-20261027-d7a75deb3-pascal-p106-v3-lowbit <1551f5fe1 folder>" \
+  ARGS="-b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off" TEXT=<wiki.test.raw on the rig> DIR=<rig folder> \
+  BASE=<rig folder>/ornith-122b-q8_0.wiki.kld CHUNKS=80 OUT=kld_ornith_ref bash $R/kld_builds.sh
+# then, paired by chunk: copy kld-<build>.out to <dir>/<lowbit|ladder5>.wiki.log and
+OUT=<dir> OFF=lowbit CTRL=lowbit bash docs/data/2026-11-04_moe_tail_kld/run/table.sh
 # KLD on wikitext-2 test (Flint)
 RIG=rig MODEL=<flint-Q8_0.gguf> BUILDS="llama.cpp-20261025-37e717ff6-pascal-p106-v2-rc4 <1551f5fe1 folder>" \
   ARGS="-b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6" TEXT=<wiki.test.raw on the rig> DIR=<rig folder> OUT=kld_flint bash $R/kld_builds.sh

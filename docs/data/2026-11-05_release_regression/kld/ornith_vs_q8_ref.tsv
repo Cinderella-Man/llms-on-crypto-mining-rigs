@@ -1,0 +1,3 @@
+build	against	mean KLD	same top p	PPL (its own)
+v3-lowbit (d7a75deb3)	Ornith-1.5-122B Q8_0, wikitext-2, 80 x 512	0.175864 ± 0.002767	84.083 ± 0.256 %	6.594073 ± 0.120548
+v3-b12076-ladder5 (1551f5fe1)	the same	0.175182 ± 0.002745	84.270 ± 0.255 %	6.578500 ± 0.120298
