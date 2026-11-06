@@ -1,6 +1,6 @@
 # Flint on Pascal mining rigs
 
-[![Flint](https://img.shields.io/badge/Flint-v2%20release-2b6cb0)](#speed)
+[![Flint](https://img.shields.io/badge/Flint-v3%20release-2b6cb0)](#speed)
 
 [Flint](https://huggingface.co/RecursiveSI/flint) is a 39.8 B-parameter mixture-of-experts model that uses 2.5 B
 parameters per token, keeps most of its attention local, and reads up to 262,144 tokens of context. It reasons before
@@ -14,43 +14,45 @@ Speeds on this page were measured on the [reference rig](../../docs/mining_rig.m
 **The headline: Flint in near-lossless 8-bit, on all nine cards, at the full 262,144-token context, about three times
 as fast as stock llama.cpp for a coding agent.** Unsloth's Q8_0 (42.3 GB) picks the original model's next token
 93.3 % of the time, against 87.7 % for the usual 4-bit download. A coding agent fixing twelve small bugs generated
-44.6–45.9 tok/s with it (stock llama.cpp: 14.4) and took a median 1.1–1.4 minutes per task (stock: 2.9). The Pascal
-kernels decode Q8_0's plain 8-bit blocks with few instructions per byte, at ~150 GB/s of a card's ~179, so Q8_0 runs
-within about 15 % of the 4-bit files; the fastest file is the project's own Flint-Pascal-Q5 (53.8 tok/s, all twelve
-tasks in 17 minutes).
+45.9 tok/s with it on Miner Llama v3 (v2.0: 45.9 and 44.6 in two runs; stock llama.cpp b12076: 14.4) and took a median
+1.2 minutes per task (stock: 2.9). The Pascal kernels decode Q8_0's plain 8-bit blocks with few instructions per byte,
+at ~150 GB/s of a card's ~179, so Q8_0 runs within about 15 % of the 4-bit files; the fastest file is my own Flint
+Pascal Q5 GGUF (49.4 tok/s on v3, all twelve tasks; 53.8 on v2.0).
 
 ## Recommended setup
 
 | | |
 |---|---|
-| Engine | the v2 Pascal engine, commit `37e717ff6`: the [Miner Llama v2.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v2.0) release archives (tag `miner-llama-v2.0`), or a build from source ([how](../../README.md#run-it)) |
+| Engine | Miner Llama v3, commit `1551f5fe1`: the [v3.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v3.0) release archives (tag `miner-llama-v3.0`) with Flint's preset, [release/flint-v3](../../release/flint-v3/README.md), or a build from source ([how](../../README.md#run-it)). v2.0 (`37e717ff6`, tag `miner-llama-v2.0`) runs the same command line |
 | Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
-| Model file, six cards, or the most speed on nine | [Flint-Pascal-Q5](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
-| Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint-Pascal-Q5 or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
+| Model file, six cards, or the most speed on nine | [Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
+| Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint Pascal Q5 GGUF or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
 
 Unsloth's [UD-Q4_K_XL](https://huggingface.co/unsloth/flint-GGUF) (25.1 GB), the file most people already have, runs
-too; Flint-Pascal-Q5 is ~6 % faster than it for a coding agent, at better measured fidelity.
+too; Flint Pascal Q5 GGUF was 6.1 % faster than it for a coding agent on v2.0 (53.8 against 50.7 tok/s), at better
+measured fidelity.
 
 ## Command lines
 
 Chat with the full context on nine cards, served on the rig's loopback address, with the release archives unpacked
-in `llama-p106-v2.0/` (a build from source has the same binary in `llama.cpp/build/bin/`):
+in `llama-p106-v3.0/` (a build from source has the same binary in `llama.cpp/build/bin/`). It is v2's release line
+and v3's preset:
 
 ```bash
-llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
+llama-p106-v3.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
 ```
 
 - **`-ts 6,6,5,5,6,5,5,6,6`** splits Flint's layers by memory instead of by count, so that the 42.3 GB of weights and
   the full-context cache fit (llama.cpp's even split puts two full-attention layers on one card, ~6.3 GB). For
-  Flint-Pascal-Q5 or UD-Q4_K_XL drop it and give the file's name instead.
+  Flint Pascal Q5 GGUF or UD-Q4_K_XL drop it and give the file's name instead.
 - **`--pipe-depth 4`** sends up to four guessed tokens through the idle cards while the later cards finish the current
   one ([pipelined speculation](#pipelined-speculation)). The output is the same as without it. It applies to requests
   sampled on the GPU (`-bs`) without repetition penalties; tool requests run pipelined until the tool call starts.
 - **`-bs`** samples on the GPU instead of copying 600 KB of scores per token over the slow link.
 - **`-b 512 -ub 128`, `--cache-ram 0` and four checkpoints** keep the 4 GB host from running out of memory at this
   context. llama.cpp's default micro-batch of 512 pins ~1 GiB of host memory at 262,144 tokens: with `-b 2048 -ub 512`
-  the host ran out of memory while loading Flint-Pascal-Q5, and Q8_0 lost pipeline parallelism. At shorter contexts
+  the host ran out of memory while loading Flint Pascal Q5 GGUF, and Q8_0 lost pipeline parallelism. At shorter contexts
   (`-c 65536`) the larger batches fit and read long prompts faster.
 - **The engine drops llama.cpp's safety rescale of Flint's expert layers by itself** on Pascal cards: its kernels sum in
   32-bit floats, so one-token steps don't need it, and without it each expert layer runs as one persistent kernel.
@@ -59,7 +61,7 @@ llama-p106-v2.0/llama-server -m flint-Q8_0.gguf --alias flint -ngl 99 -fa on -c 
   tool grammar on the host: 13–15 % faster than sampling them on the host. Set the client's context window equal to
   `-c`.
 - **Agents, prompt cache:** add `--prefix-cache <dir>` so every conversation restores the shared system and tool prompt from a file instead of reading it again (the files outlive the server), and `--checkpoint-gen` so a client's re-rendered reply re-reads only from the last `</think>` or `<tool_call>`. In the agent test it gained nothing (it added 11 s of fixed time per task), so the line above leaves it out.
-- **Six cards:** Flint-Pascal-Q5 or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
+- **Six cards:** Flint Pascal Q5 GGUF or UD-Q4_K_XL with `CUDA_VISIBLE_DEVICES=0,1,2,3,4,5`, without `-ts`, and a lower `-c`
   (UD-Q4_K_XL fits est. ~128k tokens there). Q8_0 needs eight or nine cards.
 
 Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127.0.0.1:8080 <rig>`, then
@@ -67,7 +69,25 @@ Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127
 
 ## Speed
 
-### A coding agent at work
+### On Miner Llama v3 (2026-11-05 and 2026-11-06)
+
+The same agent check on the v3 release branch, one run per row, nine cards; Q8_0 with the `-ts` split above, the 5-bit
+files with layers by count ([2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md),
+every row's command and the v3 preset: [release/flint-v3](../../release/flint-v3/README.md)):
+
+| File | Stock llama.cpp b12076, 64k, tuned | Miner Llama v3, 262k, `--pipe-depth 4` | Miner Llama v2.0, the same line |
+|---|---|---|---|
+| Unsloth Q8_0 | 14.4, 10 of 12 | **45.9**, 12 of 12 (`1f7215948`) | 45.9 and 44.6 in two runs, 12 of 12 each |
+| Flint Pascal Q8 GGUF (`p065`, 40.4 GB) | not measured yet | **47.4**, 12 of 12 (`1551f5fe1`) | 47.1, 12 of 12 |
+| Unsloth UD-Q5_K_XL | 13.7, 11 of 12 | **46.4**, 12 of 12 (`1551f5fe1`) | 44.2, 12 of 12 |
+| Flint Pascal Q5 GGUF | not measured yet | **49.4**, 12 of 12 (`1551f5fe1`) | 53.8, 12 of 12 |
+
+Flint Pascal Q5 GGUF's 49.4 against v2.0's 53.8 is one long session: complex-numbers wrote 14,024 tokens on v3 against
+2,508 on v2.0, and on the other eleven tasks v3 generated 53.64 against 54.04 tok/s. At fixed context depths both
+builds generate the same tokens at the same speed
+([2026-11-06_flint_q5_depth](../../docs/data/2026-11-06_flint_q5_depth/README.md)).
+
+### A coding agent at work (v2.0)
 
 The speed this project optimizes and reports: the [agent check](../../bench/agent_check/README.md) gives the pi coding
 agent twelve small bug-fix tasks (six Python, six JavaScript, real test runs, five to ten tool calls each, the context
@@ -76,16 +96,16 @@ growing every turn) and 25 minutes (stock llama.cpp 35), one attempt per task, n
 
 | File, engine | Tasks done (passed) | Minutes per task, median | Generation | Prompt reading | First token, median |
 |---|---|---|---|---|---|
-| **Flint-Pascal-Q5**, v2, 262k, `--pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 | **53.8** | 178 | 2.6 s |
+| **Flint Pascal Q5 GGUF**, v2, 262k, `--pipe-depth 4` | **12 (12)** in 16.7 min | 1.2 | **53.8** | 178 | 2.6 s |
 | UD-Q4_K_XL, v2, 262k, `--pipe-depth 4` | 11 (10) | 1.1 | 50.7 | 191 | 2.5 s |
 | UD-Q5_K_XL, v2, 262k, `--pipe-depth 4` | 12 (12) | 1.0 | 44.2 | 185 | 2.6 s |
 | **Q8_0**, v2, 262k, `--pipe-depth 4` (two runs) | 12 (12), 12 (12) | 1.1, 1.4 | **45.9, 44.6** | 176, 185 | 2.6 s |
 | Q8_0, v2, 262k, without pipelined speculation | 10 (9) | 1.7 | 29.3 | 184 | 2.3 s |
 | Q8_0, stock llama.cpp, 64k | 9 (8) | 2.9 | 14.4 | 144 | 3.7 s |
-| Flint-Pascal-Q5, stock llama.cpp, 64k | 11 (10) | 2.1 | 15.6 | 143 | 3.9 s |
+| Flint Pascal Q5 GGUF, stock llama.cpp, 64k | 11 (10) | 2.1 | 15.6 | 143 | 3.9 s |
 | UD-Q4_K_XL, stock llama.cpp, 64k | 9 (8) | 3.1 | 14.0 | 145 | 3.8 s |
 
-- **Depth 4** won on Flint-Pascal-Q5 (+11 % over depth 3: 48.6 tok/s) and tied on Q8_0 (44.6 at depth 3 in two runs);
+- **Depth 4** won on Flint Pascal Q5 GGUF (+11 % over depth 3: 48.6 tok/s) and tied on Q8_0 (44.6 at depth 3 in two runs);
   depth 2 gave 40.1 on Q8_0.
 - **Stock llama.cpp** runs at 65,536 tokens: at 262,144 its attention mask, built on the host, does not fit 4 GB.
 - **Prompt reading** here is the agent's turns, a few hundred to a few thousand new tokens each, 84–89 % of each prompt
@@ -112,7 +132,7 @@ because idle cards sit at a lower clock. These locate causes; the release is cho
 
 ### The 4-bit files
 
-| Engine | UD-Q4_K_XL | Flint-Pascal-Q5 (ours) |
+| Engine | UD-Q4_K_XL | Flint Pascal Q5 GGUF (mine) |
 |---|---|---|
 | Stock llama.cpp (`d77256999`) | 16.5 | |
 | v1 engine (released 2026-10-23) | 32.6 | |
@@ -120,18 +140,18 @@ because idle cards sit at a lower clock. These locate causes; the release is cho
 | v2: + prefill changes | 37.5 | 39.3 |
 | v2: + persistent MoE kernel | 39.8 | 41.5 |
 | v2: + pipelined speculation in llama-server (branch `pascal-p106-v2-next`) | 39.9 | 41.8 |
-| **v2 release** (`37e717ff6`) | — | **38.9–40.5** |
+| **v2 release** (`37e717ff6`) | — | **38.9, 40.5 and 40.3** (three loads) |
 
 - The first three rows come from one session, the next two from another, the `v2-next` row from a third
   ([Q117, Q88, Q125, Q160](../../quants/experiments.md#registry)).
-- On six cards the persistent kernel takes UD-Q4_K_XL from 35.8 to 38.2 tok/s and Flint-Pascal-Q5 from 37.4 to 40.7.
+- On six cards the persistent kernel takes UD-Q4_K_XL from 35.8 to 38.2 tok/s and Flint Pascal Q5 GGUF from 37.4 to 40.7.
 
 ### Served
 
 llama-server, one conversation, GPU sampling (`-bs`), median per request, tok/s
 ([Q160](../../quants/experiments.md#registry)):
 
-| Build | UD-Q4_K_XL | Flint-Pascal-Q5 (ours) |
+| Build | UD-Q4_K_XL | Flint Pascal Q5 GGUF (mine) |
 |---|---|---|
 | v2-next, plain decoding | 36.6 | 39.2 |
 | **v2-next, pipelined speculation (`--pipe-depth 3`)** | **47.3** | **48.5** |
@@ -153,7 +173,7 @@ followed the longest earlier match of the current text, or else the most frequen
 Nine cards, 256 generated tokens per prompt at temperature 0, the fork's `llama-pipespec` tool on the `v2-next` build,
 tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/experiments.md#registry)):
 
-| Prompt | UD-Q4_K_XL plain | depth 3 | depth 4 | Flint-Pascal-Q5 plain | depth 3 | depth 4 |
+| Prompt | UD-Q4_K_XL plain | depth 3 | depth 4 | Flint Pascal Q5 GGUF plain | depth 3 | depth 4 |
 |---|---|---|---|---|---|---|
 | Chat | 32.2 | 40.4 | 42.5 | 34.3 | 41.8 | 44.4 |
 | Code | 35.2 | 41.3 | 43.4 | 34.7 | 44.2 | 47.0 |
@@ -167,7 +187,7 @@ tok/s, plain decoding → three / four guesses in flight ([Q160](../../quants/ex
 - **A trained guesser would pay much more.** With 70 % of guesses right the pipeline runs 82–84 tok/s
   ([Q87](../../quants/experiments.md#registry)).
 
-**Coming later (v2.1):** a trained guesser, the staircase drafter, that predicts Flint's next token from the hidden states of the tokens in flight, and a store of Flint's earlier answers ([how the drafter works](../../docs/drafter.md)).
+**Not shipped:** v2.1 was to add a trained guesser, the staircase drafter, that predicts Flint's next token from the hidden states of the tokens in flight, and a store of Flint's earlier answers ([how the drafter works](../../docs/drafter.md)). It was not released: the drafter did not pay and was stopped on 2026-10-29 ([book, chapter 8](../../docs/book/08-guessing-ahead.md)). The store is in the v3 build behind `--pipe-store`, off by default and not run in v3.0.
 
 ### Prefill
 
@@ -176,9 +196,9 @@ tokens: stock llama.cpp 185 / 493 / 593, v1 187 / 494 / 593, v2 228 / 613 / 723;
 against stock's 593. The gain comes from upstream llama.cpp's PR #31047, which sizes the MoE tiles by tokens per expert
 ([Q117](../../quants/experiments.md#registry)).
 
-Prefill of long prompts with the release's prefill-attention kernel, Flint-Pascal-Q5 on nine cards: 766 tok/s at 8,192 tokens and 461 at 32,768, against 699 and 447 with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`).
+Prefill of long prompts with the release's prefill-attention kernel, Flint Pascal Q5 GGUF on nine cards: 766 tok/s at 8,192 tokens and 461 at 32,768, against 699 and 447 with it switched off (`GGML_CUDA_FATTN_TILE_PASCAL=0`).
 
-Generation deep into a long context: after 32,768 tokens of context Flint-Pascal-Q5 on nine cards generates 25.1 tok/s
+Generation deep into a long context: after 32,768 tokens of context Flint Pascal Q5 GGUF on nine cards generates 25.1 tok/s
 on v2 (`llama-bench -p 0 -n 64 -d 32768`), against 15.0 on the release candidate with the Pascal decode-attention kernel
 on (off by default since; `GGML_CUDA_FATTN_PASCAL=1` turns it on) and 23.3 on v1 with Miner S4-L0
 ([Q54](../../quants/experiments.md#registry); [data](../../docs/data/2026-10-25_release_rig/README.md)).
@@ -196,9 +216,9 @@ Against Flint's original 16-bit weights, 80 × 512 tokens of wikitext-2:
 |---|---|---|---|---|
 | Unsloth Q8_0 | 42.3 GB | 93.3 % | 0.052 | +3.3 % |
 | Unsloth UD-Q4_K_XL | 25.1 GB | 87.7 % | 0.120 | +3.9 % |
-| Flint-Pascal-Q5 (ours) | 29.4 GB | 88.8 % | 0.105 | +2.7 % |
+| Flint Pascal Q5 GGUF (mine) | 29.4 GB | 88.8 % | 0.105 | +2.7 % |
 
-- **Flint-Pascal-Q5** is a mix of Q5_0 and Q8_0 tensors, formats the Pascal kernels decode fast, made from the original weights
+- **Flint Pascal Q5 GGUF** is a mix of Q5_0 and Q8_0 tensors, formats the Pascal kernels decode fast, made from the original weights
   with Unsloth's importance matrix, with a GPTQ-rounded Q5_0 output head and a 16-bit router. The same tensors with a
   32-bit router score level with UD-Q4_K_XL on 3,477 single-turn tool-calling tasks (BFCL v4): +0.14 points, 90 %
   interval −0.87 to +1.16 ([Q41](../../quants/experiments.md#registry)). How the files were found:
@@ -254,8 +274,9 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 
 ## More
 
-- [release/flint-v2](../../release/flint-v2/README.md): everything about this release in one folder, with the recipes
-  that rebuild the engine and Flint-Pascal-Q5 from scratch and every number behind the release.
+- [release/flint-v3](../../release/flint-v3/README.md): Flint on the v3 release, its files, preset and one command.
+- [release/flint-v2](../../release/flint-v2/README.md): everything about the v2 release in one folder, with the recipes
+  that rebuild the engine and Flint Pascal Q5 GGUF from scratch and every number behind the release.
 - [Benchmarks](../../docs/benchmarks/): [Flint, first measurements](../../docs/benchmarks/2026-10-22-flint.md) (files,
   quality against speed), [the five-turn chat](../../docs/benchmarks/2026-10-23-flint-chat.md).
 - [quants/](../../quants/README.md): making Flint files for these cards; [recipes](../../quants/recipes/); every

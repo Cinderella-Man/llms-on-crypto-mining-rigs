@@ -2,8 +2,8 @@
 
 Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active parameters per token. Its original weights
 add a 51B-parameter n-gram table and a 4B multi-token-prediction block, 180B in all. On 2026-11-03 it ran for the first time on a retired mining rig
-built around 6 GB cards on single PCIe 1.0 lanes, a 2-core Celeron and 4 GB of RAM. This page is the state of that work
-as it stands, with stock llama.cpp as the baseline. Where it goes next is at the end. Miner Llama v3 runs it at 20.40
+built around 6 GB cards on single PCIe 1.0 lanes, a 2-core Celeron and 4 GB of RAM. This page is that first run,
+with stock llama.cpp as the baseline; what came of each next step is at the end. Miner Llama v3 runs it at 20.40
 tokens per second for a coding agent; every file's checksum and the steps to run it:
 [release/flash-next-v3](../../release/flash-next-v3/README.md).
 
@@ -12,15 +12,16 @@ tokens per second for a coding agent; every file's checksum and the steps to run
 | Stock llama.cpp `d77256999`, Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | |
 |---|---|
 | Reading a prompt of 1.4k / 7.2k / 32.7k tokens | 59 / 116 / 128 tok/s (first token after 23 s / 62 s / 257 s) |
-| Writing the answer | 5.7–7.2 tok/s |
+| Writing the answer to those prompts | 6.78 / 7.15 / 5.66 tok/s |
 | A short question, to its first token | 7.1 s |
 | Loading the model from a USB hard disk | 5.4 min |
 | Memory left | 0.8–1.6 GB on each card; 230–460 MiB of the host's 4 GB |
 
-Miner Llama v3's base, the project's Pascal engine (v2.0's code), reads prompts 15–21 % faster: 72 / 139 / 149 tok/s.
-It writes at the same 5.4–8.9 tok/s, because these single requests are too noisy to separate the two. These are
-single-request numbers. The project's measure is a coding agent at work ([bench/agent_check](../../bench/agent_check/README.md)),
-whose run on both engines is under way. All the numbers, the commands and the scripts are in
+Miner Llama v3's base, the project's Pascal engine (v2.0's code), reads those prompts faster: 72 / 139 / 149 tok/s.
+It writes them at 5.43 / 8.30 / 6.24 tok/s, no different from stock, because these single requests are too noisy to
+separate the two. These are single-request numbers. The project's measure is a coding agent at work
+([bench/agent_check](../../bench/agent_check/README.md)): stock got 6.4 tok/s (7 of 8 tasks tried) and v2.0's code
+7.8 (9 of 9) on 2026-11-03, and the v3 release preset 20.40 (12 of 12). All the numbers, the commands and the scripts are in
 [docs/data/2026-11-03_flash_next_baseline](../../docs/data/2026-11-03_flash_next_baseline/README.md).
 
 ## The machine: how little there is
@@ -83,15 +84,15 @@ The BF16 projections are the biggest single cost. They run about 8× slower than
 because Pascal has no fast BF16 path. Converting them to Q8_0 (FN3) or giving them a Pascal kernel is the first
 speed-up.
 
-## Next
+## What came next
 
-| Step | What it brings |
-|---|---|
-| The coding agent on both engines (running) | the project's own measure: tasks passed, minutes per task, tokens per second over a session |
-| The BF16 projections to Q8_0, and Pascal kernels for Flash-Next's shapes | the 30 % above, then the experts |
-| An MTP draft (2.7 GB) | several tokens per step, as pipelined speculation does for Flint |
-| The better file: Swift IQ3_XXS (47.2 GB on the cards), and the quality of each file against the original BF16 | which file to ship |
-| Two rigs together | 18 cards and 108 GB, for a better file than one rig holds |
+| Step | What it brings | Where it stands |
+|---|---|---|
+| The coding agent on both engines | the project's own measure: tasks passed, minutes per task, tokens per second over a session | done: stock 6.4 tok/s (7 of 8 tried), v2.0's code 7.8 (9 of 9) ([data](../../docs/data/2026-11-03_flash_next_baseline/README.md)) |
+| The BF16 projections to Q8_0, and Pascal kernels for Flash-Next's shapes | the 30 % above, then the experts | done in v3: 9.0 tok/s with the projections retyped, then the v3 kernels ([book, chapter 10](../../docs/book/10-v3.md)) |
+| An MTP draft (2.7 GB) | several tokens per step, as pipelined speculation does for Flint | done in v3: the Gyro draft with a shortlist head, in the release preset (20.40 tok/s, 12 of 12) |
+| The better file: Swift IQ3_XXS (47.2 GB on the cards), and the quality of each file against the original BF16 | which file to ship | v3 ships UkisAI's Swift Q2_0; the files compared: [2026-11-04_file_choice](../../docs/data/2026-11-04_file_choice/README.md) (Q811); the BF16 reference is Q216, Q217 |
+| Two rigs together | 18 cards and 108 GB, for a better file than one rig holds | not run (Q505) |
 
 Every step has its row in the registry, [quants/experiments.md](../../quants/experiments.md), and its research in
 [flash_next_variants.md](../../docs/research/notes/flash_next_variants.md) and [strata.md](../../docs/research/notes/strata.md).

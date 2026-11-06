@@ -16,11 +16,11 @@ weights are measured against the makers' Q8_0 ([quality](#quality-of-files-made-
 - **Same shapes as Qwen3.6-35B-A3B** (read from its GGUF header), so everything on the
   [Qwen3.6 page](../qwen3.6-35b-a3b/README.md) about what fits and what the engine does applies here too: the full
   262,144-token context fits on four or five cards, and two copies fit on nine.
-- **Its Q4_K_M file** (21.7 GB) reads 2.02 GB per generated token: 57 % in Q4_K, 39 % in Q6_K and 4.5 % in F32. None of
-  those types has a Pascal kernel in the v2 engine yet, so today the file runs on llama.cpp's own kernels, with the
-  engine's CUDA graphs and launch shape.
-- **Expected speed:** est. 19–23 tok/s on today's engine, 30–36 with the Pascal Q6_K kernel (built, waiting for its rig
-  gate) and a Pascal Q4_K kernel (planned), which together cover 96 % of its bytes.
+- **Its Q4_K_M file** (21.7 GB) reads 2.02 GB per generated token: 57 % in Q4_K, 39 % in Q6_K and 4.5 % in F32. When this
+  page was written none of those types had a Pascal kernel; v2.0 and v3 have Pascal one-token kernels for Q4_K and
+  Q6_K, on by default ([engine features](../../docs/engine_features.md)). The file has not run on the rig.
+- **Expected speed** (2026-10-24): est. 19–23 tok/s on llama.cpp's own kernels, 30–36 with Pascal Q6_K and Q4_K kernels,
+  which together cover 96 % of its bytes; v2.0 and v3 have both, and the speed is not measured.
 
 Details: [model branches](../../docs/research/notes/model_branches.md), sections 1.2, 2.1 and 3.
 
@@ -130,6 +130,7 @@ text, lower is closer):
 
 1. **The agent check on the v2 engine**: the makers' Q8_0 and P-Q5, then PK-Q4-i
    ([Q159](../../quants/experiments.md#registry)); bartowski's Q4_0 stays the speed baseline if fetched.
-2. **The Pascal Q6_K and Q4_K kernels** ([Q101, Q149](../../quants/experiments.md#registry)), shared with Qwen3.6.
+2. **The Pascal Q6_K and Q4_K kernels** ([Q101, Q149](../../quants/experiments.md#registry)), shared with Qwen3.6: in
+   v2.0 and v3, on by default; not timed on this model.
 3. **Hybrid-model support** for the on-card attention mask and pipelined speculation, also shared with Qwen3.6: built,
    rig timing next ([Q162](../../quants/experiments.md#registry)).

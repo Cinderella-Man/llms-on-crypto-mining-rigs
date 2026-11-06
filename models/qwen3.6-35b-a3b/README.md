@@ -37,24 +37,24 @@ Against the Q8_0 file, 80 × 512 tokens of wikitext-2 ([Q82](../../quants/experi
 |---|---|---|---|---|
 | Unsloth UD-Q4_K_XL | 22.4 GB | 95.4 % | 0.013 | +0.4 % |
 | bartowski Q4_0 | 20.8 GB | 92.0 % | 0.036 | |
-| Our mix A ([recipe](../../quants/recipes/qwen36-mix-a.txt)) | | 94.1 % | 0.020 | |
-| Our mix B ([recipe](../../quants/recipes/qwen36-mix-b.txt)) | | 92.8 % | 0.029 | |
+| My mix A ([recipe](../../quants/recipes/qwen36-mix-a.txt)) | | 94.1 % | 0.020 | |
+| My mix B ([recipe](../../quants/recipes/qwen36-mix-b.txt)) | | 92.8 % | 0.029 | |
 
-Unsloth's UD-Q4_K_XL is the quality bar for this model. Its speed on the rig is not measured yet: its Q4_K and Q6_K
-tensors run on llama.cpp's own kernels until the Pascal kernels below land.
+Unsloth's UD-Q4_K_XL is the quality bar for this model. Its speed on the rig is not measured yet; v2.0 and v3 have
+Pascal one-token kernels for its Q4_K and Q6_K tensors, on by default.
 
 ## What's next
 
 1. **A rig model matrix** of Qwen3.6, Qwen3-30B-A3B and a dense control on the v2 engine against stock llama.cpp, with no
    new code ([Q148](../../quants/experiments.md#registry)).
-2. **A Pascal Q6_K kernel** (built, waiting for its rig gate): every Q4 file keeps its 248,320-token output head in Q6_K;
+2. **A Pascal Q6_K kernel** (in v2.0 and v3, on by default; not timed on this model): every Q4 file keeps its 248,320-token output head in Q6_K;
    est. +12–18 % on the Q4_0 file ([Q101](../../quants/experiments.md#registry)).
-3. **A Pascal Q4_K kernel** for Q4_K_M and UD files, est. 1.5–1.7× on Q4_K_M together with Q6_K
+3. **A Pascal Q4_K kernel** (in v2.0 and v3, on by default; not timed on this model) for Q4_K_M and UD files, est. 1.5–1.7× on Q4_K_M together with Q6_K
    ([Q149](../../quants/experiments.md#registry)).
 4. **Hybrid-model support** for the on-card attention mask and for pipelined speculation, which keeps a group of
    recurrent states per pipe slot so that wrong guesses can be dropped: built, output identical to plain decoding in the
    CPU and GPU checks, rig timing next ([Q162](../../quants/experiments.md#registry)).
-5. **GPU sampling for tool requests**, worth more here than on Flint: Qwen3.6's 993 KB score row per token would no
+5. **GPU sampling for tool requests** (in v2.0 and v3, `-bs`; not timed on this model), worth more here than on Flint: Qwen3.6's 993 KB score row per token would no
    longer cross the PCIe 1.0 link.
 
 Per-trick details and estimates: [model branches](../../docs/research/notes/model_branches.md), section 2.1.
