@@ -1,9 +1,11 @@
-# Flint v2.1 (in preparation): the staircase drafter and its store
+# Flint v2.1 (not released): the staircase drafter and its store
 
-Not released. The v2 release ships the engine, K2h-r16 and Flint Q8_0 on nine cards
-([release/flint-v2](../flint-v2/README.md)); the trained drafter and the store of Flint's earlier answers follow in
-v2.1, rebuilt from sources whose answers may be published. How the drafter works and every training run so far:
-[docs/drafter.md](../../docs/drafter.md).
+Not released. The v2 release ships the engine, Flint Pascal Q5 GGUF (K2h-r16) and Flint Q8_0 on nine cards
+([release/flint-v2](../flint-v2/README.md)); the trained drafter and the store of Flint's earlier answers were to
+follow in v2.1, rebuilt from sources whose answers may be published. The drafter did not pay on the agent check and its
+training was stopped on 2026-10-29 ([book, chapter 8](../../docs/book/08-guessing-ahead.md)); the store is in the v3
+build behind `--pipe-store`, off by default and not run in v3.0 ([release/flint-v3](../flint-v3/README.md)). How the
+drafter works and every training run so far: [docs/drafter.md](../../docs/drafter.md).
 
 This folder holds the drafts for that release:
 

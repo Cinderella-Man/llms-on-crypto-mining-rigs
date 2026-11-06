@@ -9,7 +9,7 @@ Flint in 8-bit (Unsloth's Q8_0, 42.3 GB) runs on all nine P106-090 cards of a re
 262,144-token context. It is near-lossless: it picks the original model's next token 93.3 % of the time (KL divergence
 0.052 against the BF16 weights), against 87.7 % and 0.120 for Unsloth's UD-Q4_K_XL. For a coding agent it runs about
 three times as fast as stock llama.cpp and within about 15 % of the 4-bit files. The fastest file on these cards is the
-project's own Flint-Pascal-Q5 (recipe K2h-r16, 29.4 GB), closer to the original than UD-Q4_K_XL (88.8 %, KL divergence
+project's own Flint Pascal Q5 GGUF (recipe K2h-r16, 29.4 GB), closer to the original than UD-Q4_K_XL (88.8 %, KL divergence
 0.105) and small enough for six cards.
 
 A coding agent ([bench/agent_check](../../bench/agent_check/README.md): the pi agent fixing twelve small bugs, Python
@@ -18,8 +18,8 @@ tokens per second over every request, and the median minutes per task:
 
 | Nine P106-090 cards, a coding agent at work | Stock llama.cpp (65,536-token context) | **v2** (262,144-token context) |
 |---|---|---|
-| **Unsloth Q8_0** (42.3 GB, 93.3 % same top token) | 8 of 12, 14.4 tok/s, 2.9 min | **12 of 12, 44.6–45.9 tok/s, 1.1–1.4 min** (two runs) |
-| **Flint-Pascal-Q5** (29.4 GB, 88.8 %) | 10 of 12, 15.6 tok/s, 2.1 min | **12 of 12, 53.8 tok/s, 1.2 min** |
+| **Unsloth Q8_0** (42.3 GB, 93.3 % same top token) | 8 of 12, 14.4 tok/s, 2.9 min | **12 of 12, 45.9 and 44.6 tok/s, 1.1 and 1.4 min** (two runs) |
+| **Flint Pascal Q5 GGUF** (29.4 GB, 88.8 %) | 10 of 12, 15.6 tok/s, 2.1 min | **12 of 12, 53.8 tok/s, 1.2 min** |
 | Unsloth UD-Q4_K_XL (25.1 GB, 87.7 %) | 8 of 12, 14.0 tok/s, 3.1 min | 10 of 12, 50.7 tok/s, 1.1 min |
 
 Stock llama.cpp runs at 65,536 tokens because at 262,144 its attention mask, built on the host, does not fit the rig's
@@ -35,7 +35,7 @@ about 15 % of the one that reads 2.21 GB (UD-Q4_K_XL).
 |---|---|---|
 | **Engine** | llama.cpp fork for compute 6.1, commit `37e717ff6` (tag `miner-llama-v2.0`, rc4 with the release defaults): the Pascal kernels, the persistent MoE kernel, pipelined speculation with guesses from the request itself, GPU sampling for tool requests and the prefill-attention kernel; prebuilt for Ubuntu 24.04+ without AVX, with NVIDIA's CUDA runtime libraries as a second archive | [Miner Llama v2.0](https://github.com/Cinderella-Man/llama.cpp/releases/tag/miner-llama-v2.0), the fork's GitHub release; notes: [release/notes-v2.0.md](../notes-v2.0.md) |
 | **Unsloth's Flint Q8_0** | the headline file: near-lossless, 42.3 GB, nine cards at the full context | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (linked, not redistributed) |
-| **Flint-Pascal-Q5** | our Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-Pascal-Q5-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF); card: [huggingface/Flint-Pascal-Q5](huggingface/Flint-Pascal-Q5/README.md) |
+| **Flint Pascal Q5 GGUF** | my Flint file: Q5_0 and Q8_0 tensors, KLD 0.105 against BF16, 29.4 GB, fits six cards | Hugging Face [CinderellaMan/Flint-Pascal-Q5-GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF); card: [huggingface/Flint-Pascal-Q5](huggingface/Flint-Pascal-Q5/README.md) |
 | **Unsloth's UD-Q4_K_XL** | the file most people already have, KLD 0.120 | [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (linked, not redistributed) |
 
 **Coming later (v2.1):** a trained guesser for pipelined speculation (the staircase drafter) and a store of Flint's
@@ -76,13 +76,13 @@ from. Nine P106-090 cards unless a row says otherwise:
 
 | | Stock llama.cpp | v1 | **v2** |
 |---|---|---|---|
-| Coding agent, Q8_0: generation without pipelined speculation / `--pipe-depth` 2 / 3 / 4 (tok/s) | 14.4 (64k) | — | 29.3 / 40.1 / 44.6 / **44.6–45.9** |
-| Coding agent, Flint-Pascal-Q5: `--pipe-depth` 3 / 4 | — | — | 48.6 / **53.8** |
+| Coding agent, Q8_0: generation without pipelined speculation / `--pipe-depth` 2 / 3 / 4 (tok/s) | 14.4 (64k) | — | 29.3 / 40.1 / 44.6 / **45.9 and 44.6** |
+| Coding agent, Flint Pascal Q5 GGUF: `--pipe-depth` 3 / 4 | — | — | 48.6 / **53.8** |
 | Coding agent, Q8_0 at depth 3 with the agent prompt cache (`--prefix-cache --checkpoint-gen`) | — | — | 42.2 against 44.6 without (11 s more per task): off by default |
 | Prompt reading in llama-server, Q8_0: a fresh 13,400-token prompt; the next turn's first token | — | — | 485 tok/s; 5.8 s |
-| Prefill, Flint-Pascal-Q5, the prefill-attention kernel on against off, at 8,192 / 32,768 tokens | — | — | +10 % / +3 % |
+| Prefill, Flint Pascal Q5 GGUF, the prefill-attention kernel on against off, at 8,192 / 32,768 tokens | — | — | +10 % / +3 % |
 | Generation (`llama-bench`), UD-Q4_K_XL, nine / six cards | 16.5 / 15.2 | 32.6 / 31.2 | 39.9 / 38.2 (v2-next and the persistent build) |
-| Generation (`llama-bench`), Flint-Pascal-Q5, nine / six cards | — | — | 41.8 / 40.7 (v2-next and the persistent build) |
+| Generation (`llama-bench`), Flint Pascal Q5 GGUF, nine / six cards | — | — | 41.8 / 40.7 (v2-next and the persistent build) |
 
 The write-ups behind the work: [docs/research/notes](../../docs/research/notes/README.md) (the v2 synthesis, release
 settings, pipelined speculation) and the registry [quants/experiments.md](../../quants/experiments.md) (every
@@ -93,7 +93,7 @@ experiment, Q1–Q163, and the decision log).
 | What | How | Needs |
 |---|---|---|
 | The engine | [reproduce/engine.md](reproduce/engine.md): `scripts/build_llamacpp_docker.sh`, `scripts/package_release.sh` | Docker on any x86-64 Linux PC |
-| Flint-Pascal-Q5 | [reproduce/model.md](reproduce/model.md), `reproduce/build_k2h_r16.sh`: Flint BF16 → llama-quantize with the tensor-type map → GPTQ head → F16 routers → header; checked tensor by tensor against [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | CPU and ~150 GB of disk; GPUs only to compute the head yourself |
+| Flint Pascal Q5 GGUF | [reproduce/model.md](reproduce/model.md), `reproduce/build_k2h_r16.sh`: Flint BF16 → llama-quantize with the tensor-type map → GPTQ head → F16 routers → header; checked tensor by tensor against [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | CPU and ~150 GB of disk; GPUs only to compute the head yourself |
 
 Big data is not in git. The model files download from Hugging Face; Flint's original weights and Unsloth's importance
 matrix are pinned by revision and SHA-256 ([reproduce/inputs.sha256](reproduce/inputs.sha256)). The one small dataset
@@ -124,7 +124,7 @@ What a stranger cannot yet redo exactly from this repository, and what closes ea
    machine names; `results.md` gives each number's public command instead.
 3. **Reference data that is large:** the BF16 logits for the KL-divergence checks (`flint-BF16.c512x80.kld`) are
    regenerated with the commands in [reproduce/model.md](reproduce/model.md).
-4. **How the mix was found:** the per-group measurements that chose Flint-Pascal-Q5's tensor types (Q73, Q77) ran as private job
+4. **How the mix was found:** the per-group measurements that chose Flint Pascal Q5 GGUF's tensor types (Q73, Q77) ran as private job
    files; their results are in the registry, and the type map, not the search, defines the file.
 
 ## Acceptance check: everything needed to rebuild every shipped file
@@ -139,7 +139,7 @@ way:
 | `llama-p106-v2.0-tests-ubuntu-cuda12.9-sm61.tar.gz` | [reproduce/engine.md](reproduce/engine.md) | as the engine | `26e0f0633e4ed9967cfbbbf8a2b45bec2c79ae80f526a8ab4afde920f72665fe` | as the engine |
 | `flint-pascal-Q5.gguf` | [reproduce/model.md](reproduce/model.md) | `reproduce/build_k2h_r16.sh` | `0163ec541e88a863…` (release header, [CHECKSUMS](CHECKSUMS)); every tensor in [k2h-r16.tensors.tsv](reproduce/k2h-r16.tensors.tsv) | verified: the script rebuilt it from BF16 with all 779 tensors equal byte for byte (2026-10-25, head copied); **gap 1:** the output head is byte-exact only when copied |
 | Release notes | [notes-v2.0.md](../notes-v2.0.md) | `scripts/package_release.sh NOTES_VARIANT=rc4` | — | complete once the numbers are in |
-| The Hugging Face card of Flint-Pascal-Q5 | [huggingface/](huggingface/UPLOAD.md) | — | — | complete once the numbers are in |
+| The Hugging Face card of Flint Pascal Q5 GGUF | [huggingface/](huggingface/UPLOAD.md) | — | — | complete once the numbers are in |
 | The Q51 test set (inputs to the checks) | [reproduce/data/q51](reproduce/data/q51/README.md) | `bench/expert_overlap` | in git | complete |
 
 ## Not in this release

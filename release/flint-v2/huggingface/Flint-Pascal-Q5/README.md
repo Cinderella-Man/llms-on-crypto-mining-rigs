@@ -11,7 +11,7 @@ tags:
   - mining-rig
 ---
 
-# Flint-Pascal-Q5: Flint for old NVIDIA cards and crypto-mining rigs
+# Flint Pascal Q5 GGUF: Flint for old NVIDIA cards and crypto-mining rigs
 
 **What this is.** [Flint](https://huggingface.co/RecursiveSI/flint) is a 39.8-billion-parameter AI model that thinks
 before it answers, writes code and calls tools, and reads up to 262,144 tokens of context. This file is Flint in
@@ -36,9 +36,9 @@ tokens of context).
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
   near-lossless (it picks the original model's next word 93.3 % of the time) and fits the full 262,144-token context on
-  nine cards; with the Pascal engine it generates 44.6–45.9 tokens per second in the same agent test.
+  nine cards; with the Pascal engine it generates 45.9 and 44.6 tokens per second in two runs of the same agent test.
 - **Six to eight cards, or the most speed on nine: this file.** It is a third smaller than Q8_0, runs on six cards with a
-  shorter context, and is 17–21 % faster than Q8_0 and 22 % faster than UD-Q5_K_XL on nine, at a lower quality than
+  shorter context, and is 17 % and 21 % faster than Q8_0's two runs and 22 % faster than UD-Q5_K_XL on nine, at a lower quality than
   both (it picks the original's next word 88.8 % of the time, UD-Q5_K_XL 90.7 %).
 
 ## Run it in three steps
@@ -117,7 +117,7 @@ Against Flint's original 16-bit weights, 80 × 512 tokens of wikitext-2:
 
 ## How we got there
 
-**The file.** Flint-Pascal-Q5 (its recipe is called K2h-r16 in the project's notes, measurements and rebuild script)
+**The file.** Flint Pascal Q5 GGUF (its recipe is called K2h-r16 in the project's notes, measurements and rebuild script)
 came out of a search over mixes of Q5_0 and Q8_0, chosen tensor group by tensor group (attention,
 the shared expert, the routed experts, per layer), each candidate scored by its KL divergence against the 16-bit model,
 the leading ones checked on the tool-calling tasks against UD-Q4_K_XL and timed on the rig. On top of the mix:
