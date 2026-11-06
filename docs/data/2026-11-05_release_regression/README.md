@@ -32,7 +32,8 @@ Files: Unsloth's `flint-Q8_0.gguf` (42,301,076,928 bytes), `Ornith-1.5-122B-N2P-
 
 ### The agent check
 
-Flint's line is the v2 release line: `-c 262144 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4`. Ornith's is
+Flint's line is the v2 release line: `-c 262144 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4`; its 5-bit files
+run v2's line for them, layers by count: `-c 262144 -b 512 -ub 128 --pipe-depth 4`. Ornith's is
 Q189's: `-c 49152 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off`, at the makers' sampling (T 0.6). Both add the
 harness's flags (`-np 1 -bs --ctx-checkpoints 4 --cache-ram 0 ...`).
 
@@ -43,6 +44,7 @@ harness's flags (`-np 1 -bs --ctx-checkpoints 4 --cache-ram 0 ...`).
 | Flint Q8_0 | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, same split (stock's tuned line, below); 8 tasks on 2026-11-05, the last 4 on 2026-11-06 | 10 / 12 | 52.6 | 2.9 | 4.13, 8.04 | 148 | 14.4 | 59 / 2 / 0 | 2 |
 | Flint Pascal Q8 GGUF (p065) | `-ladder5` `1551f5fe1` | `v3base`, 2026-11-06 | 12 / 12 | 22.3 | 1.0 | 2.66, 6.75 | 175 | **47.4** | 74 / 2 / 0 | 0 |
 | Flint UD-Q5_K_XL | stock `20a51f24a` | `stock64k`: `-c 65536 -b 2048 -ub 512 -fa on`, layers by count (stock's tuned line, below), 2026-11-06 | 11 / 12 | 62.7 | 3.0 | 4.25, 8.36 | 141 | 13.7 | 62 / 0 / 0 | 1 |
+| Flint Pascal Q5 GGUF | `-ladder5` `1551f5fe1` | `v3base`: v2's line for the 5-bit files, 2026-11-06 | 12 / 12 | 31.7 | 1.7 | 3.02, 7.94 | 168 | **49.4** | 90 / 1 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1`: Q189's line, every switch at its default | 12 / 12 | 32.2 | 2.1 | 9.41, 19.85 | 59 | **14.9** | 62 / 0 / 0 | 0 |
 | Ornith valid1 | `-ladder5` `1f7215948` | `valid1-ka`: + `GGML_CUDA_KEEPALIVE=decode` | 12 / 12 | 32.0 | 2.1 | 8.39, 19.38 | 58 | **16.3** | 63 / 1 / 0 | 0 |
 | Ornith UD-Q2_K_XL | `-ladder5` `1551f5fe1` | `ud-v3`: R3's line `-c 49152 -b 2048 -ub 512 -ts 8,6,5,5,5,4,5,6,6 -fit off`, every switch at its default, 2026-11-06 | 12 / 12 | 28.3 | 1.8 | 7.90, 17.24 | 69 | 12.6 | 54 / 0 / 0 | 0 |
@@ -52,6 +54,9 @@ The earlier numbers on the same files and lines:
 - **Flint Q8_0 on v2.0:** 45.9 and 44.6 tok/s in two runs (12 / 12 each;
   [release/flint-v2/results.md](../../../release/flint-v2/results.md)).
 - **Ornith valid1 on `-lowbit`:** 14.5 tok/s, 32.5 minutes, 12 / 12 (Q189).
+- **Flint's 5-bit files on v2.0, v2's line for them:** Flint Pascal Q5 GGUF 53.8 tok/s, 12 / 12 in 16.7 minutes;
+  UD-Q5_K_XL 44.2 tok/s, 12 / 12 in 24.8 minutes ([2026-10-26_release_setup](../2026-10-26_release_setup/README.md),
+  arms `k2h-d4` and `ud5-d4`).
 
 **Verdicts:**
 - **No regression on either model.** Flint's `v3base` (45.9) equals v2.0's faster run. Ornith's base arm (14.9) is
@@ -72,6 +77,11 @@ The earlier numbers on the same files and lines:
 - **Stock on Flint's 5-bit lane, Unsloth's UD-Q5_K_XL:** 11 / 12 tasks, 13.7 tok/s generation, 3.0 minutes per task
   (median), the first token at 4.25 s (median). The miss (scale-generator) ran into the 12-minute cap. Stock on Q8_0 in
   the same harness: 14.4 tok/s, 10 / 12.
+- **Flint Pascal Q5 GGUF on `-ladder5` against v2.0:** 49.4 against 53.8 tok/s over all requests, both 12 / 12, one run
+  each. The difference is one task: complex-numbers ran 31 turns and generated 14,024 tokens at 38.0 tok/s, as its
+  context grew (v2.0: 2,508 tokens at 50.5). On the other eleven tasks, from each run's `turns.csv`, generation is 53.64
+  against 54.04 tok/s (−0.7 %) and prompts 182.3 against 175.2 tok/s. Its sessions wrote more on those eleven too
+  (53,455 against 38,782 tokens), so all tasks took 31.7 against 16.7 minutes and the median task 1.7 against 1.2.
 - **Flint Pascal Q8 GGUF against Unsloth's Q8_0, both on `-ladder5`:** 47.4 against 45.9 tok/s generation (+3.3 %),
   the first token at 2.66 against 2.67 s, 1.0 against 1.2 minutes per task (median); both 12 / 12. Its sessions
   generated more (85 against 74 s of decoding a task, mean), so all twelve took 22.3 against 19.2 minutes. Q8_0's two
