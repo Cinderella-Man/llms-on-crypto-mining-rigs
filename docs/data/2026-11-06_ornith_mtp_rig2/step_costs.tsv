@@ -1,0 +1,4 @@
+arm	requests	decode_tokens	steps	tokens_per_step	ms_per_token	ms_per_step	steps_by_verify_width
+ka	63	17969	17969	1.000	61.1	61.1	-
+mtpka	43	16537	7716	2.143	77.0	165.1	-
+mtpadapt	57	17720	8905	1.990	78.5	156.2	1:3008 3:5925
