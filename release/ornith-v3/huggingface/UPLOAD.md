@@ -1,7 +1,9 @@
 # Uploading Ornith-1.5-122B Pascal N2P GGUF to Hugging Face
 
-Nothing here has been uploaded. This page is the plan: which repository, which files, and the checks before the
-upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan); the file is under MIT.
+The model file is on Hugging Face since 2026-11-06, its SHA-256 there equal to its line in `CHECKSUMS`; the card
+files of this folder go up at the release, once their links resolve on `main`. This page is the plan: which repository,
+which files, and the checks before each upload. The account is
+[CinderellaMan](https://huggingface.co/CinderellaMan); the file is under MIT.
 
 ## Repository and files
 
