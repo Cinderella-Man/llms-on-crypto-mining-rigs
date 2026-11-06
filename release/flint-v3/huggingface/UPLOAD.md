@@ -17,9 +17,9 @@ copy:
 
 ## Before uploading
 
-1. **The gain on the same build.** Compare the card's `TODO(p065)` row (this file on Miner Llama v3) with Unsloth's
-   Q8_0 on the same build (45.9 tokens/s), and fill the card's `TODO(p065)` and `TODO(stock)` rows. No meaningful
-   gain means no upload: Unsloth's Q8_0 carries Flint's Q8 lane.
+1. **The gain on the same build.** The card's rows are filled: this file at 47.4 tokens/s on Miner Llama v3, 12 of 12,
+   against Unsloth's Q8_0 at 45.9 on the same build (+3.3 %). No meaningful gain means no upload: Unsloth's Q8_0
+   carries Flint's Q8 lane.
 2. **The owner's explicit go** for this file.
 3. **The header.** The file carries its own licence, name and quantizer in place of Unsloth's, as v2's Flint Pascal Q5
    GGUF does, and no `general.repo_url`; the `SHA-256` above is the file with this header, written by:

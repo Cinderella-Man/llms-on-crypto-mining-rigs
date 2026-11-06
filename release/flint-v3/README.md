@@ -13,20 +13,31 @@ Unsloth's Q8_0 on nine P106-090 cards:
 | Engine and line | Context | Tasks passed | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Data |
 |---|---|---|---|---|---|---|
 | Stock llama.cpp (v2's run, an older commit) | 65,536 | 8 of 12 | 14.4 | — | 3.7 | [results.md](../flint-v2/results.md) |
-| Stock llama.cpp b12076 (`20a51f24a`) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
+| Stock llama.cpp b12076 (`20a51f24a`), tuned: `-b 2048 -ub 512 -fa on` | 65,536 | 10 of 12 | 14.4 | 148 | 4.13, 8.04 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v2.0 | 262,144 | 12 of 12 | 45.9 and 44.6 (two runs) | — | 2.6 | [results.md](../flint-v2/results.md) |
 | **v3 (`1f7215948`), the preset: v2's line** | 262,144 | **12 of 12** | **45.9** | 168 | 2.67, 6.48 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | v3, + the re-read fix, the tail checkpoint rule and the keep-alive | 262,144 | 12 of 12 | 44.7 | 168 | 2.45, 6.89 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 
-- Nothing is lost against v2.0: 45.9 tok/s is the top of v2.0's range.
+- Nothing is lost against v2.0: 45.9 tok/s equals v2.0's faster run (45.9 and 44.6 in two runs).
+- Against stock llama.cpp b12076 the preset generates 3.2 times as fast (45.9 against 14.4 tok/s) and passes 12 of 12
+  tasks against 10 of 12, with a median task of 1.2 against 2.9 minutes. Stock runs at 65,536 tokens, because at 262,144
+  its host-side attention mask does not fit in 4 GB, on the line its llama-bench pass chose; its two misses ran into the
+  12-minute cap.
 - The second v3 row sets `LLAMA_SERVER_TEXT_REUSE=1 LLAMA_SERVER_TAIL_CKPT_MIN=4096 GGML_CUDA_KEEPALIVE=decode`. One run
   each, 1.2 tok/s apart, about the spread between v2.0's own two runs (45.9 and 44.6), so the preset stays v2's line. Each of v3's
   additions on its own against the preset (the keep-alive, the re-read fix, the staged hop, the answer store, the
   negligible group): TODO(flintside).
 - The expert skip is not in Flint's preset: at p = 0.9 its KL divergence on Unsloth's Q8_0 is above noise on both texts (agent +0.08832 ± 0.02050, wiki +0.12198 ± 0.00569; [2026-11-05_night_quant_chain](../../docs/data/2026-11-05_night_quant_chain/README.md#results)). The Q8_0 hop cast is not either: Flint's graph does not call it, so the switch changes nothing there.
 
-Quality: v3's greedy tokens leave v2.0's after 60–133 tokens on four test prompts, each time at a token whose
-two best scores were close; the KL divergence against v2.0: TODO(kld).
+Quality: on wikitext-2 the release build's KL divergence against v2.0 is −0.000000 ± 0.000000 (0.000056 at most), with
+the same top token 100.000 % of the time and the same perplexity, 24.4293: prompt processing matches v2.0 to rounding.
+At temperature 0 the generated tokens leave v2.0's after 123, 60, 99 and 133 tokens on four test prompts, each time at
+a near tie (v2.0's two best tokens 0.011, 0.024, 0.056 and 0.343 nats apart), since one-token decoding rounds a little
+differently and a generation compounds it
+([data](../../docs/data/2026-11-05_release_regression/README.md#how-large-the-difference-is)).
+
+Flint's second lane, 5-bit (Unsloth's UD-Q5_K_XL and Flint Pascal Q5 GGUF, each on stock and on v3), and Flint Pascal
+Q8 GGUF in this lane: TODO(flintq5).
 
 ## The file
 
@@ -74,7 +85,7 @@ One change at a time:
 | Step | What I added | Context | Tasks passed | Generation tok/s | Data |
 |---|---|---|---|---|---|
 | 0 | stock llama.cpp (v2's run, an older commit) | 65,536 | 8 of 12 | 14.4 | [results.md](../flint-v2/results.md) |
-| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
+| 0 | stock llama.cpp b12076 (`20a51f24a`), the upstream release v3 is built on | 65,536 | 10 of 12 | 14.4 | [2026-11-05_release_regression](../../docs/data/2026-11-05_release_regression/README.md) |
 | 1 | Miner Llama v2.0's engine: the Pascal kernels, the persistent expert kernel, GPU sampling for tool requests; and the full context | 262,144 | 9 of 12 | 29.3 | [results.md](../flint-v2/results.md) |
 | 2 | + pipelined speculation, two tokens ahead (`--pipe-depth 2`) | 262,144 | 10 of 12 | 40.1 | [results.md](../flint-v2/results.md) |
 | 3 | three tokens ahead (`--pipe-depth 3`), two runs | 262,144 | 11 and 9 of 12 | 44.6 and 44.6 | [results.md](../flint-v2/results.md) |

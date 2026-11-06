@@ -27,8 +27,9 @@ generated each token in 0.941 of Q8_0's time, at the same prompt speed. Its KL d
 16-bit model is within two standard errors of Q8_0's.
 
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
-card on a single PCIe 1.0 lane, a 2-core Celeron host with 4 GB of RAM), the full 262,144-token context: **47.1
-tokens per second**, all twelve tasks passed, on Miner Llama v2.0 (2026-10-28). On the v3 release build: TODO(p065).
+card on a single PCIe 1.0 lane, a 2-core Celeron host with 4 GB of RAM), the full 262,144-token context: **47.4
+tokens per second**, all twelve tasks passed, on the Miner Llama v3 release build, against 45.9 for Unsloth's Q8_0 on
+the same build.
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: this file or Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)**
@@ -72,12 +73,18 @@ above, one run per row:
 
 | Engine and file | Tasks passed | Generation, tokens/s | Prompt reading, tokens/s | First token per turn (median) | Data |
 |---|---|---|---|---|---|
-| Stock llama.cpp b12076 (`20a51f24a`), Unsloth Q8_0 | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) | TODO(stock) |
+| Stock llama.cpp b12076 (`20a51f24a`), Unsloth Q8_0, 65,536-token context, 2026-11-05 and 2026-11-06 | 10 of 12 | 14.4 | 148 | 4.13 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v3 (`1f7215948`), Unsloth Q8_0, 2026-11-05 | 12 of 12 | 45.9 | 168 | 2.67 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
-| **Miner Llama v3, this file** | TODO(p065) | TODO(p065) | TODO(p065) | TODO(p065) | TODO(p065) |
+| **Miner Llama v3 (`1551f5fe1`), this file, 2026-11-06** | **12 of 12** | **47.4** | 175 | 2.66 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v2.0 (`37e717ff6`), this file, 2026-10-28 | 12 of 12 | 47.1 | — | — | [2026-10-27_flint_near_q8](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_flint_near_q8/README.md) |
 
 - **`1f7215948`** gives the same greedy output as the release build `1551f5fe1`.
+- **On the release build** this file generates 3.3 % faster than Unsloth's Q8_0 (47.4 against 45.9 tokens/s), with a
+  median task of 1.0 against 1.2 minutes. Its sessions wrote more text, so all twelve tasks took 22.3 against 19.2
+  minutes.
+- **Stock** runs at 65,536 tokens of context, because at 262,144 its host-side attention mask does not fit in 4 GB, on
+  the line a llama-bench pass chose for it (`-b 2048 -ub 512 -fa on`, the same split). Its two misses ran into the
+  12-minute cap.
 - **The paired replay** (v2.0, the same six recorded agent sessions sent to Q8_0 and then to this file, replies
   capped at their recorded lengths): 0.941 of Q8_0's time per generated token (95 % interval 0.930–0.980 over the
   sessions), 1.002 per prompt token, 0.963 of the time for the same work.
