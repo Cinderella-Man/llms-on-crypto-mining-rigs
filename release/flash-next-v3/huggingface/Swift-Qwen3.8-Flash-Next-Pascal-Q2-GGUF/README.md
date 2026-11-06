@@ -101,7 +101,7 @@ records every turn. Nine P106-090, 65,536-token context, one run per row:
 | Engine and file | Tasks passed | Generation, tokens/s | Prompt reading, tokens/s | First token per turn (median) | Data |
 |---|---|---|---|---|---|
 | Stock llama.cpp b12076 (`20a51f24a`), UkisAI's Swift Q2_0, 2026-11-05 | 9 of 9 (3 not reached) | 8.20 | 53.7 | 10.22 s | [2026-11-05_release_flashnext](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md) |
-| Stock llama.cpp b12076 (`20a51f24a`), this file, 2026-11-06 | 10 of 11 (1 not reached) | 8.47 | 48.3 | 10.99 s |  |
+| Stock llama.cpp b12076 (`20a51f24a`), this file, 2026-11-06 | 10 of 11 (1 not reached) | 8.47 | 48.3 | 10.99 s | [2026-11-05_release_flashnext](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md) |
 | Miner Llama v3 (`1551f5fe1`), UkisAI's Swift Q2_0, the preset, 2026-11-06 | 12 of 12 | 20.40 | 69.4 | 6.89 s | [2026-11-05_release_flashnext](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md) |
 | **Miner Llama v3 (`1f7215948`), this file, the preset, 2026-11-05** | **12 of 12** | **20.75** | 69.0 | 7.60 s | [2026-11-05_release_flashnext](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md) |
 

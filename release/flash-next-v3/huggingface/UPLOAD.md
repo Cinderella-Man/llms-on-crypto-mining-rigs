@@ -21,9 +21,10 @@ upload. The account is [CinderellaMan](https://huggingface.co/CinderellaMan).
 
 ## Before uploading
 
-1. **The gain on the same build.** Compare the card's `t1base` row (20.75 tokens/s) with `t1swift` (Miner Llama v3 on
-   UkisAI's Q2_0), and fill the card's `TODO(t1swift)` and `TODO(stock)` rows. No meaningful gain in speed or quality
-   means no upload: the release page's UkisAI row carries the release.
+1. **The gain on the same build.** The card's rows are filled: this file at 20.75 tokens/s (`t1base`) against UkisAI's
+   Q2_0 at 20.40 (`t1swift`), 2.45 against 2.47 minutes a task at equal work (negligible), with agent-text KL
+   divergence 0.2792 ± 0.0054 against 0.2866 ± 0.0056. No meaningful gain in speed or quality means no upload: the
+   release page's UkisAI row carries the release.
 2. **The owner's explicit go** for this file.
 3. **The licence files,** unchanged from UkisAI's repository at the measured revision:
 

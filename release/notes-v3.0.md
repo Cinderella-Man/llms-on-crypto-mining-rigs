@@ -19,29 +19,41 @@ RAM). Generation in tokens per second over every request:
 
 | Model, file | Stock llama.cpp b12076 | Miner Llama v2.0 | **{{VERSION}}**, the model's preset |
 |---|---|---|---|
-| **Qwen3.8-Flash-Next**, Swift-1.5 `pmix-q2-fast`, 65,536-token context | TODO(stock) | 7.8 (Swift Q2_0, 9 of 9 tasks) | **20.75, 12 of 12** |
-| **Flint**, Unsloth Q8_0, 262,144-token context | TODO(stock) | 45.9 and 44.6 (two runs), 12 of 12 | **45.9, 12 of 12** |
-| **Ornith-1.5-122B**, my valid1 file (48.2 GB), 49,152-token context | TODO(stock) (UD-Q2_K_XL: stock cannot load valid1's types) | 9.7 (UD-Q2_K_XL) | **14.9, 12 of 12** |
+| **Qwen3.8-Flash-Next**, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (`pmix-q2-fast`), 65,536-token context | 8.47, 10 of 11 (1 not reached) | — | **20.75, 12 of 12** |
+| **Qwen3.8-Flash-Next**, UkisAI's Swift-1.5 GSQ-RCO Q2_0, 65,536-token context | 8.20, 9 of 9 (3 not reached) | 7.8, 9 of 9 | **20.40, 12 of 12** |
+| **Flint**, Unsloth Q8_0, 262,144-token context | 14.4, 10 of 12 (65,536-token context) | 45.9 and 44.6 (two runs), 12 of 12 | **45.9, 12 of 12** |
+| **Ornith-1.5-122B**, Ornith-1.5-122B Pascal N2P GGUF (`valid1`, 48.2 GB), 49,152-token context | TODO(stock) (UD-Q2_K_XL: stock cannot load valid1's types) | 9.7 (UD-Q2_K_XL) | **14.9, 12 of 12** |
 
-- **Flash-Next:** 20.75 against 19.19 tok/s for the same line without the keep-alive, 12 of 12 each; −8.4 % time a task
-  at equal work. Measured on the `-keepalive` build (`f6c1c6a4a`), whose code this release holds; the preset's run on
-  this build: TODO(preset). [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_keepalive/README.md).
-  v2.0's 7.8 and stock's 6.4 (an older stock commit, 7 of 8 tasks tried):
+- **Flash-Next:** the preset on this build (`1f7215948`, the same greedy output as `1551f5fe1`) generates 20.75 tok/s on
+  my file, 12 of 12, with prompts at 69.0 tok/s and the first token of a turn at 7.60 s (median); on UkisAI's own Q2_0,
+  20.40 tok/s, 12 of 12. The file's difference on this build is negligible: 2.45 against 2.47 minutes a task at equal
+  work. Stock ran the same server line with the MTP draft and without the fork's switches.
+  [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_flashnext/README.md).
+  The keep-alive alone: 20.75 against 19.19 tok/s for the same line without it, −8.4 % time a task at equal work
+  ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_keepalive/README.md)).
+  v2.0's 7.8 and an older stock commit's 6.4 (7 of 8 tasks tried):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-03_flash_next_baseline/README.md).
 - **Flint:** 45.9 tok/s on this build (`1f7215948`) with v2's command line, against v2.0's 45.9 and 44.6 in two runs; first token per
   turn 2.67 s (v2.0: 2.6). [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
   v2.0's numbers: [results.md](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v2/results.md).
-  v2's stock run (an older stock commit, 65,536 tokens of context): 14.4 tok/s, 8 of 12.
+  Stock b12076 runs at 65,536 tokens of context (at 262,144 its host-side attention mask does not fit in 4 GB), tuned
+  to `-b 2048 -ub 512` with flash attention: 14.4 tok/s, 10 of 12, first token 4.13 s (median).
 - **Ornith-1.5-122B:** 14.9 tok/s on this build (`1f7215948`) against 14.5 for the same file on 2026-10-28, first token
-  per turn 9.41 s against 9.6. [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
+  per turn 9.41 s against 9.6. With the keep-alive (`GGML_CUDA_KEEPALIVE=decode`): 16.3 tok/s, 12 of 12, first token
+  8.39 s. [Data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md);
   the earlier run and v2.0's 9.7 (stock 6.2, both UD-Q2_K_XL):
   [data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_ornith/README.md).
 
 The Flint and Ornith runs used `1f7215948`; this release is `1551f5fe1`, the same code plus one row-guard fix (below)
-that cannot change these models' tokens. The greedy check that shows the same tokens on the rigs: TODO(identity).
+that cannot change these models' tokens. On the rigs both commits give the same greedy tokens for Flint (8 of 8
+requests) and Flash-Next (both prompts); Ornith's: TODO(identity).
 
-Speed-up against stock llama.cpp b12076, the upstream release this engine is built on (`20a51f24a`, no fork commit):
-TODO(stock).
+Speed-up against stock llama.cpp b12076, the upstream release this engine is built on (`20a51f24a`, no fork commit),
+each engine on the same file:
+- **Flash-Next:** 20.75 against 8.47 tok/s on my file (2.45×), 20.40 against 8.20 on UkisAI's Q2_0 (2.49×). On the
+  nine tasks stock reached, a task's work takes 1.87 against 3.63 minutes on my file and 1.90 against 3.74 on UkisAI's.
+- **Flint:** 45.9 against 14.4 tok/s (3.2×), 12 of 12 against 10 of 12, 1.2 against 2.9 minutes a task (median).
+- **Ornith-1.5-122B:** TODO(stock).
 
 ## What is new since v2
 
@@ -119,10 +131,18 @@ The write-up, with every test and number:
 
 ## Known issues
 
-- **Greedy tokens differ from v2.0's.** On Flint Q8_0 at temperature 0, this build's tokens leave v2.0's after 60 to
-  133 tokens on four test prompts, each time at a token whose two best scores were close (a margin of 0.011 to 0.34 in
-  log-probability); upstream b12076's own changes are under it. Whether the distributions moved is the KL divergence
-  against v2.0: TODO(kld).
+- **Greedy tokens differ from v2.0's.** On Flint Q8_0 at temperature 0, this build's tokens leave v2.0's after 123, 60,
+  99 and 133 tokens on four test prompts, each time at a near tie: v2.0's two best tokens there were 0.011, 0.024, 0.056
+  and 0.343 nats apart. Prompt processing is unchanged: on wikitext-2 this build's KL divergence against v2.0 is
+  −0.000000 ± 0.000000 (0.000056 at most), with the same top token 100.000 % of the time and the same perplexity,
+  24.4293. In one-token decoding the chosen token's log-probability moves by 0.0001 nats (median over 415 tokens),
+  0.438 at most, and such steps compound over a generation. The likeliest cause is the one-token kernel's summation
+  order (two warps a block on compute 6.1, `GGML_CUDA_MMVQ_2WARPS=1`); upstream b12076's own changes are under the build
+  too ([data](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md#how-large-the-difference-is)).
+- **Ornith's prompt passes differ from the 2026-10-28 build's on Pascal.** On nine P106-090 cards, wikitext-2, this build
+  against `d7a75deb3`: mean KL divergence 0.021653 ± 0.000881, the same top token 93.873 % of the time; this build's
+  perplexity is the lower, 5.9938 ± 0.2410 against 6.0735 ± 0.2449. Which of the two is closer to the model:
+  TODO(t3e).
 - **Don't use `GGML_CUDA_KEEPALIVE=idle`.** Its 120 s block holds the first launch of each kernel under CUDA's lazy
   module loading: the first request of an agent session waited 506 s for its prompt. `decode` and `request` are not
   affected.
