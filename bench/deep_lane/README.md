@@ -111,16 +111,22 @@ the host. The times of such a run are not measurements (`QUIET=0`); the reply ha
 
 ```bash
 BIN=<build>/bin/llama-server MODELS=<model folder> TEXT=<recorded>/proxy.jsonl.bodies.gz OUT=<results folder> \
-  QUIET=0 TS=1,1,1 ARGS_DROP="-otd" ENV_DROP=GGML_CUDA_KEEPALIVE \
-  RUNNER='docker run --rm --init --name deep-lane --network host --gpus "device=0,1,2" -e CUDA_FORCE_PTX_JIT=1
-          -v <build>:<build> -v <model folder>:<model folder> nvidia/cuda:12.9.2-devel-ubuntu24.04' \
+  QUIET=0 TS=1,1,1 ARGS_DROP="-otd" ENV_DROP=GGML_CUDA_KEEPALIVE ENV_ADD=CUDA_CACHE_PATH=<results folder>/jit \
+  RUNNER='docker run --rm --init --name deep-lane --network host --gpus "device=0,1,2"
+          -v <build>:<build> -v <model folder>:<model folder> -v <results folder>:<results folder>
+          nvidia/cuda:12.9.2-devel-ubuntu24.04' \
   STOP_CMD="docker rm -f deep-lane" ARMS="draft nodraft" ARM_DRAFT_nodraft=off SAMPLER_PASS=1 \
   setsid -f nohup bash bench/deep_lane/deep_lane.sh > console.txt 2>&1 < /dev/null
 ```
 
-The server's variables go on the command line the runner receives (`env NAME=value … llama-server …`), so they reach
-the server inside the container. `-otd token_embd=CUDA4` in the preset names the fifth card: drop it, or point it at
-a card that exists, when fewer cards are used. Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
+- A build that holds only sm_61 code and compute 6.1 PTX needs no switch for this: a newer card cannot run the sm_61
+  code, so its driver compiles the PTX. `CUDA_CACHE_PATH` keeps the compiled code between loads.
+- The server's variables go on the command line the runner receives (`env NAME=value … llama-server …`), so they
+  reach the server inside the container. With `--network host` the server's loopback port is the host's.
+- `-otd token_embd=CUDA4` in the preset names the fifth card: drop it, or point it at a card that exists, when fewer
+  cards are used. `ARGS_DROP="-ts -otd"` leaves the split to llama-server.
+
+Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
 
 ## What it writes
 
@@ -175,17 +181,19 @@ Python 3.12):
 | the same command again | every load skipped, the same `requests.csv` |
 | the same folder, another setting | refused, the folder untouched |
 | a llama process running | refused before any load |
-| quiet checks off, a runner, three equal cards | every request `valid=0`, no speed in the tables, `-ts 1,1,1`, `-otd` dropped, `CUDA_FORCE_PTX_JIT=1` added and the keep-alive variable dropped |
+| quiet checks off, a runner, three equal cards | every request `valid=0`, no speed in the tables, `-ts 1,1,1`, `-otd` dropped, a `CUDA_CACHE_PATH` added and the keep-alive variable dropped |
 | `CACHE=0` on plain text | no prime, every request read its whole prompt |
 | a depth the text cannot fill | stopped in the warm-up load, before any timed load |
 | a depth the context cannot hold | refused before any load |
 | `deep_table.py` on hand-made speeds | inside the spread negligible, above it a gain, below it a loss |
 
-Three more checks on the same day:
+Four more checks on the same day:
 
 - The driver ran on requests a real agent recorded: the 15 sessions of the agent check's own self-test (pi against the
   mock, through the logging proxy), at depths 0, 2,048, 8,192 and 16,384.
 - `remote.sh` started a run over ssh with the RAM watchdog, waited for it, collected it and removed its folder.
+- With a `docker run` line as the `RUNNER` (the mock in a container on the host's network), the variables reached the
+  server, each load stopped cleanly and no container was left.
 - The agent check's self-test still passes with the extended mock (11 checks).
 
 The mock has no model, so these checks cover the driver, not llama-server: the first run on a real server shows

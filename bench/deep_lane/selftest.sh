@@ -10,7 +10,7 @@
 #   other   the same folder with another setting: refused
 #   busy    a llama process is running: refused before any load
 #   ptx     quiet checks off, a RUNNER and a STOP_CMD, three equal cards, -otd dropped, the keep-alive variable dropped
-#           and CUDA_FORCE_PTX_JIT=1 added
+#           and a CUDA_CACHE_PATH added
 #   fresh   CACHE=0 on plain text with a TAIL_TEXT
 #   short   a depth the recorded text cannot fill: stops in the warm-up load
 #   ctx     a depth the context cannot hold: refused before any load
@@ -92,7 +92,7 @@ run resume OUT="$WORK/rig" "${RIG_ARMS[@]}"
 run other OUT="$WORK/rig" "${RIG_ARMS[@]}" N_PREDICT=32
 run busy FAKE_BUSY=1
 run ptx FAKE_BUSY=1 QUIET=0 RUNNER="nice -n 19" STOP_CMD="touch $WORK/ptx-stopped" TS=1,1,1 ARGS_DROP="-otd" \
-  ENV_DROP=GGML_CUDA_KEEPALIVE ENV_ADD=CUDA_FORCE_PTX_JIT=1 ARMS="dense sparse" REPS=1 \
+  ENV_DROP=GGML_CUDA_KEEPALIVE ENV_ADD=CUDA_CACHE_PATH=$WORK/jit ARMS="dense sparse" REPS=1 \
   ARM_ENV_dense=GGML_CUDA_FATTN_SPARSE_PASCAL=0 ARM_ENV_sparse=GGML_CUDA_FATTN_SPARSE_PASCAL=1
 run fresh TEXT="$WORK/text/agent.txt" TAG= TAIL_TEXT=$'\n### assistant\n' CACHE=0 REPS=1 WARM=0
 run short DEPTHS="0 60000"
@@ -196,8 +196,8 @@ check('not measurements' in t and 'tok/s' not in t and 'ms a step' not in t and 
 l = line('ptx', 'sparse1')
 check('-ts 1,1,1' in l and '-otd' not in l and 'nice -n 19 env' in l and (w / 'ptx-stopped').exists(), 'ptx: three equal cards, -otd dropped, the RUNNER and the STOP_CMD used')
 env = [x for x in l.splitlines() if x.startswith('environment:')]
-check(bool(env) and 'CUDA_FORCE_PTX_JIT=1' in env[0] and 'KEEPALIVE' not in env[0] and 'GGML_CUDA_FATTN_SPARSE_PASCAL=1' in env[0],
-      'ptx: CUDA_FORCE_PTX_JIT=1 added, the keep-alive variable dropped')
+check(bool(env) and 'CUDA_CACHE_PATH=' in env[0] and 'KEEPALIVE' not in env[0] and 'GGML_CUDA_FATTN_SPARSE_PASCAL=1' in env[0],
+      'ptx: a CUDA_CACHE_PATH added, the keep-alive variable dropped')
 # fresh
 rows = [r for r in table('fresh/requests.csv') if r['kind'] != 'warmup']
 check(text('fresh.rc').strip() == '0' and len(rows) == 8 and all(r['kind'] == 'decode' and r['cache_n'] == '0'
