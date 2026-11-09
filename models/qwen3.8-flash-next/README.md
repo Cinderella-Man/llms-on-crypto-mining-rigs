@@ -91,7 +91,7 @@ speed-up.
 | The coding agent on both engines | the project's own measure: tasks passed, minutes per task, tokens per second over a session | done: stock 6.4 tok/s (7 of 8 tried), v2.0's code 7.8 (9 of 9) ([data](../../docs/data/2026-11-03_flash_next_baseline/README.md)) |
 | The BF16 projections to Q8_0, and Pascal kernels for Flash-Next's shapes | the 30 % above, then the experts | done in v3: 9.0 tok/s with the projections retyped, then the v3 kernels ([book, chapter 10](../../docs/book/10-v3.md)) |
 | An MTP draft (2.7 GB) | several tokens per step, as pipelined speculation does for Flint | done in v3: the Gyro draft with a shortlist head, in the release preset (20.40 tok/s, 12 of 12) |
-| The better file: Swift IQ3_XXS (47.2 GB on the cards), and the quality of each file against the original BF16 | which file to ship | v3 ships UkisAI's Swift Q2_0; the files compared: [2026-11-04_file_choice](../../docs/data/2026-11-04_file_choice/README.md) (Q811); the BF16 reference is Q216, Q217 |
+| The better file: Swift IQ3_XXS (47.2 GB on the cards), and the quality of each file against Swift's Q8_0 | which file to ship | v3 ships UkisAI's Swift Q2_0; the files compared: [2026-11-04_file_choice](../../docs/data/2026-11-04_file_choice/README.md) (Q811); the reference is Swift's Q8_0 (Q216, its tensors checked byte for byte against the BF16's; about 0.022 KLD from the BF16 by its maker's card), the scores Q217 |
 | Two rigs together | 18 cards and 108 GB, for a better file than one rig holds | not run (Q505) |
 
 Every step has its row in the registry, [quants/experiments.md](../../quants/experiments.md), and its research in

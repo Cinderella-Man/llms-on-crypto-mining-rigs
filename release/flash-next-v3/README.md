@@ -219,6 +219,8 @@ shards give the same three files.
 ## What is not measured yet
 
 - **One context size.** 65,536 tokens ran; 128k and 262k are memory projections only.
-- **Quality on the agent's own tasks** is measured as KL divergence against Swift's 8-bit file; the full-precision
-  reference is Q216, Q217 in [quants/experiments.md](../../quants/experiments.md).
+- **Quality on the agent's own tasks** is measured as KL divergence against Swift's 8-bit file (Q216, Q217 in
+  [quants/experiments.md](../../quants/experiments.md)), which its maker puts at about 0.022 KLD from the BF16. No task
+  pass rate beyond the 12-task check exists for any Flash-Next file yet (Q1146).
+- **Speed at depth.** The agent check's tasks end below 10k tokens of context; the fixed-depth lane is Q1143.
 - **Two rigs together** (18 cards, a better file than one rig holds): Q505.
