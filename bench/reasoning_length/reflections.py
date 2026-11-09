@@ -13,6 +13,9 @@ header, decodes the reasoning block (<think> ... </think>, or to the end when th
 Text mode (--text) reads outputs without token ids (llama-server's `content`, e.g. the BFCL runs of Q41) and counts the
 same words per 1,000 words of reasoning.
 
+count_block() does the counting for one reasoning block given as token ids, for callers that hold the reasoning apart
+from the answer (llama-server's `reasoning_content`): the reasoning census of the agent check's replies (Q1152) uses it.
+
 usage: python reflections.py GEN.jsonl MODEL.gguf [--out RESULTS.json]
        python reflections.py --text OUTPUTS.jsonl [...] [--out RESULTS.json]
 """
@@ -88,6 +91,83 @@ def token_texts(vocab):
 WORD = re.compile(r"[A-Za-z][A-Za-z'-]*")
 
 
+def count_block(toks, texts):
+    """One reasoning block, given as its token ids: (counts, words, sentence-initial words, reflection words per tenth
+    of the block, sentence openers). The counts: reasoning_tokens, transcripts, reflection_tokens, reflection_initial,
+    contrast_tokens, contrast_initial and, for the sentences and paragraphs that a reflection word or phrase opens,
+    sentence_tokens, sentence_count, paragraph_tokens, paragraph_count; the same four with `_word` after the unit
+    count only those that a reflection word opens."""
+    c, words, words_initial, tenths, openers = Counter(), Counter(), Counter(), [0] * 10, Counter()
+    n = len(toks)
+    # decoded text with each token's start offset
+    starts, parts, pos = [], [], 0
+    for t in toks:
+        s = texts[t]
+        starts.append(pos)
+        parts.append(s)
+        pos += len(s)
+    text = "".join(parts)
+
+    def tok_at(off):    # index of the token containing character offset off
+        lo, hi = 0, n - 1
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            if starts[mid] <= off:
+                lo = mid
+            else:
+                hi = mid - 1
+        return lo
+
+    c["reasoning_tokens"] += n
+    c["transcripts"] += 1
+    # word-initial reflection tokens: the token's text, without leading space, is the word (any case)
+    for i, t in enumerate(toks):
+        s = parts[i]
+        w = s.strip().lower()
+        if not s or not s[:1].isspace() and i and not parts[i - 1][-1:].isspace() and parts[i - 1][-1:].isalpha():
+            continue    # inside a word
+        w = w.rstrip(",.!?:;")
+        if w in REFLECTION or w in CONTRAST:
+            before = text[:starts[i]].rstrip(" ")
+            initial = not before or before[-1] in ".!?:\n*" or before.endswith("--")
+            kind = "reflection" if w in REFLECTION else "contrast"
+            words[w] += 1
+            c[kind + "_tokens"] += 1
+            if initial:
+                words_initial[w] += 1
+                c[kind + "_initial"] += 1
+            if kind == "reflection":
+                tenths[min(9, i * 10 // n)] += 1
+    # phrases
+    low = text.lower()
+    for ph in PHRASES:
+        for m in re.finditer(re.escape(ph), low):
+            if m.start() and low[m.start() - 1].isalpha():
+                continue
+            words["phrase: " + ph] += 1
+    # sentences and paragraphs opened by a reflection word ("but" only as "but wait")
+    for unit, pattern in (("sentence", r"(?<=[.!?:])\s+|\n+"), ("paragraph", r"\n\s*\n")):
+        off = 0
+        for piece in re.split(pattern, text):
+            start = text.find(piece, off) if piece else off
+            end = start + len(piece)
+            off = end
+            if not piece.strip():
+                continue
+            if unit == "sentence":
+                m = WORD.match(piece.lstrip(" -*#>\t0123456789.)"))
+                if m:
+                    openers[m.group(0)] += 1
+            if opens_reflection(piece):
+                k = tok_at(end - 1) - tok_at(start) + 1
+                c[unit + "_tokens"] += k
+                c[unit + "_count"] += 1
+                if opens_reflection(piece, phrases=False):
+                    c[unit + "_word_tokens"] += k
+                    c[unit + "_word_count"] += 1
+    return c, words, words_initial, tenths, openers
+
+
 def analyze(rows, texts):
     res = {}
     by = defaultdict(Counter)                 # class -> counters
@@ -102,76 +182,15 @@ def analyze(rows, texts):
         a = gen.index(THINK_OPEN) + 1
         b = gen.index(THINK_CLOSE) if THINK_CLOSE in gen else len(gen)
         toks = gen[a:b]
-        n = len(toks)
-        if not n:
+        if not toks:
             continue
-        # decoded text with each token's start offset
-        starts, parts, pos = [], [], 0
-        for t in toks:
-            s = texts[t]
-            starts.append(pos)
-            parts.append(s)
-            pos += len(s)
-        text = "".join(parts)
-
-        def tok_at(off):    # index of the token containing character offset off
-            lo, hi = 0, n - 1
-            while lo < hi:
-                mid = (lo + hi + 1) // 2
-                if starts[mid] <= off:
-                    lo = mid
-                else:
-                    hi = mid - 1
-            return lo
-
+        c, block_words, block_initial, block_tenths, block_openers = count_block(toks, texts)
         for key in (cls, "all"):
-            by[key]["reasoning_tokens"] += n
-            by[key]["transcripts"] += 1
-        # word-initial reflection tokens: the token's text, without leading space, is the word (any case)
-        for i, t in enumerate(toks):
-            s = parts[i]
-            w = s.strip().lower()
-            if not s or not s[:1].isspace() and i and not parts[i - 1][-1:].isspace() and parts[i - 1][-1:].isalpha():
-                continue    # inside a word
-            w = w.rstrip(",.!?:;")
-            if w in REFLECTION or w in CONTRAST:
-                before = text[:starts[i]].rstrip(" ")
-                initial = not before or before[-1] in ".!?:\n*" or before.endswith("--")
-                kind = "reflection" if w in REFLECTION else "contrast"
-                for key in (cls, "all"):
-                    words[key][w] += 1
-                    by[key][kind + "_tokens"] += 1
-                    if initial:
-                        words_initial[key][w] += 1
-                        by[key][kind + "_initial"] += 1
-                    if kind == "reflection":
-                        tenths[key][min(9, i * 10 // n)] += 1
-        # phrases
-        low = text.lower()
-        for ph in PHRASES:
-            for m in re.finditer(re.escape(ph), low):
-                if m.start() and low[m.start() - 1].isalpha():
-                    continue
-                for key in (cls, "all"):
-                    words[key]["phrase: " + ph] += 1
-        # sentences and paragraphs opened by a reflection word ("but" only as "but wait")
-        for unit, pattern in (("sentence", r"(?<=[.!?:])\s+|\n+"), ("paragraph", r"\n\s*\n")):
-            off = 0
-            for piece in re.split(pattern, text):
-                start = text.find(piece, off) if piece else off
-                end = start + len(piece)
-                off = end
-                if not piece.strip():
-                    continue
-                if unit == "sentence":
-                    m = WORD.match(piece.lstrip(" -*#>\t0123456789.)"))
-                    if m:
-                        openers[m.group(0)] += 1
-                if opens_reflection(piece):
-                    k = tok_at(end - 1) - tok_at(start) + 1
-                    for key in (cls, "all"):
-                        by[key][unit + "_tokens"] += k
-                        by[key][unit + "_count"] += 1
+            by[key].update(c)
+            words[key].update(block_words)
+            words_initial[key].update(block_initial)
+            tenths[key] = [x + y for x, y in zip(tenths[key], block_tenths)]
+        openers.update(block_openers)
     for key, c in by.items():
         n = c["reasoning_tokens"]
         res[key] = {
@@ -189,15 +208,17 @@ def analyze(rows, texts):
     return res
 
 
-def opens_reflection(s):
+def opens_reflection(s, phrases=True):
+    """Does the sentence or paragraph open with a reflection word or, with `phrases`, one of the opening phrases?
+    "let me re" is meant for re-check, re-read and reconsider; it also takes "let me read" and "let me review"."""
     s = s.lstrip(" -*#>\t0123456789.)").lower()
     m = WORD.match(s)
     if not m:
         return False
     if m.group(0).rstrip("'") in REFLECTION:
         return True
-    return s.startswith(("but wait", "let me double", "let me re", "let me verify", "let me check", "on second thought",
-                         "hold on"))
+    return phrases and s.startswith(("but wait", "let me double", "let me re", "let me verify", "let me check",
+                                     "on second thought", "hold on"))
 
 
 def analyze_text(items):

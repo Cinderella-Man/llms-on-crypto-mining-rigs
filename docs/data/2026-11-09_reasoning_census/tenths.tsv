@@ -1,0 +1,7 @@
+group	model	reflection_words	tenth_1	tenth_2	tenth_3	tenth_4	tenth_5	tenth_6	tenth_7	tenth_8	tenth_9	tenth_10
+earlier	flint	9888	1103	1200	1074	1022	954	872	890	930	923	920
+earlier	ornith	685	72	73	64	74	82	57	63	67	68	65
+flash-next-series	flash_next	818	111	102	108	86	88	68	55	54	59	87
+v3-release	flash_next	344	50	31	34	53	40	29	25	32	28	22
+v3-release	flint	4213	468	529	475	425	427	413	321	381	393	381
+v3-release	ornith	770	90	92	72	94	76	75	72	68	58	73

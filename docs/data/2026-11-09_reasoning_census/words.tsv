@@ -1,0 +1,205 @@
+group	model	kind	word	count	sentence_initial	per_1000
+earlier	flint	reflection	wait	3582	2204	3.85
+earlier	flint	reflection	hmm	3941	3774	4.23
+earlier	flint	reflection	hmmm	0	0	0.00
+earlier	flint	reflection	actually	1880	1314	2.02
+earlier	flint	reflection	alternatively	68	65	0.07
+earlier	flint	reflection	oh	144	126	0.15
+earlier	flint	reflection	ah	29	29	0.03
+earlier	flint	reflection	double-check	0	0	0.00
+earlier	flint	reflection	recheck	0	0	0.00
+earlier	flint	reflection	re-check	0	0	0.00
+earlier	flint	reflection	verify	118	7	0.13
+earlier	flint	reflection	reconsider	126	0	0.14
+earlier	flint	reflection	rethink	0	0	0.00
+earlier	flint	contrast	but	4415	2149	4.74
+earlier	flint	contrast	however	11	10	0.01
+earlier	flint	contrast	maybe	1642	580	1.76
+earlier	flint	contrast	perhaps	27	22	0.03
+earlier	flint	phrase	but wait	393		0.42
+earlier	flint	phrase	wait,	1437		1.54
+earlier	flint	phrase	hold on	186		0.20
+earlier	flint	phrase	let me double-check	6		0.01
+earlier	flint	phrase	let me double check	10		0.01
+earlier	flint	phrase	let me check	147		0.16
+earlier	flint	phrase	let me verify	45		0.05
+earlier	flint	phrase	let me re-check	18		0.02
+earlier	flint	phrase	let me recheck	39		0.04
+earlier	flint	phrase	let me re-read	49		0.05
+earlier	flint	phrase	let me reread	0		0.00
+earlier	flint	phrase	let me reconsider	83		0.09
+earlier	flint	phrase	let me think again	2		0.00
+earlier	flint	phrase	let me re-examine	1		0.00
+earlier	flint	phrase	double-check	13		0.01
+earlier	flint	phrase	on second thought	0		0.00
+earlier	flint	phrase	actually,	133		0.14
+earlier	ornith	reflection	wait	241	183	2.99
+earlier	ornith	reflection	hmm	101	98	1.25
+earlier	ornith	reflection	hmmm	0	0	0.00
+earlier	ornith	reflection	actually	216	163	2.68
+earlier	ornith	reflection	alternatively	0	0	0.00
+earlier	ornith	reflection	oh	5	4	0.06
+earlier	ornith	reflection	ah	0	0	0.00
+earlier	ornith	reflection	double-check	0	0	0.00
+earlier	ornith	reflection	recheck	0	0	0.00
+earlier	ornith	reflection	re-check	0	0	0.00
+earlier	ornith	reflection	verify	76	0	0.94
+earlier	ornith	reflection	reconsider	46	0	0.57
+earlier	ornith	reflection	rethink	0	0	0.00
+earlier	ornith	contrast	but	541	301	6.72
+earlier	ornith	contrast	however	12	12	0.15
+earlier	ornith	contrast	maybe	19	10	0.24
+earlier	ornith	contrast	perhaps	1	1	0.01
+earlier	ornith	phrase	but wait	31		0.39
+earlier	ornith	phrase	wait,	110		1.37
+earlier	ornith	phrase	hold on	3		0.04
+earlier	ornith	phrase	let me double-check	0		0.00
+earlier	ornith	phrase	let me double check	5		0.06
+earlier	ornith	phrase	let me check	88		1.09
+earlier	ornith	phrase	let me verify	70		0.87
+earlier	ornith	phrase	let me re-check	5		0.06
+earlier	ornith	phrase	let me recheck	4		0.05
+earlier	ornith	phrase	let me re-read	3		0.04
+earlier	ornith	phrase	let me reread	0		0.00
+earlier	ornith	phrase	let me reconsider	44		0.55
+earlier	ornith	phrase	let me think again	1		0.01
+earlier	ornith	phrase	let me re-examine	3		0.04
+earlier	ornith	phrase	double-check	0		0.00
+earlier	ornith	phrase	on second thought	0		0.00
+earlier	ornith	phrase	actually,	8		0.10
+flash-next-series	flash_next	reflection	wait	159	146	0.52
+flash-next-series	flash_next	reflection	hmm	338	331	1.11
+flash-next-series	flash_next	reflection	hmmm	0	0	0.00
+flash-next-series	flash_next	reflection	actually	65	53	0.21
+flash-next-series	flash_next	reflection	alternatively	5	5	0.02
+flash-next-series	flash_next	reflection	oh	7	7	0.02
+flash-next-series	flash_next	reflection	ah	20	20	0.07
+flash-next-series	flash_next	reflection	double-check	0	0	0.00
+flash-next-series	flash_next	reflection	recheck	0	0	0.00
+flash-next-series	flash_next	reflection	re-check	0	0	0.00
+flash-next-series	flash_next	reflection	verify	224	45	0.73
+flash-next-series	flash_next	reflection	reconsider	0	0	0.00
+flash-next-series	flash_next	reflection	rethink	0	0	0.00
+flash-next-series	flash_next	contrast	but	251	93	0.82
+flash-next-series	flash_next	contrast	however	0	0	0.00
+flash-next-series	flash_next	contrast	maybe	21	9	0.07
+flash-next-series	flash_next	contrast	perhaps	3	2	0.01
+flash-next-series	flash_next	phrase	but wait	0		0.00
+flash-next-series	flash_next	phrase	wait,	60		0.20
+flash-next-series	flash_next	phrase	hold on	0		0.00
+flash-next-series	flash_next	phrase	let me double-check	3		0.01
+flash-next-series	flash_next	phrase	let me double check	5		0.02
+flash-next-series	flash_next	phrase	let me check	85		0.28
+flash-next-series	flash_next	phrase	let me verify	62		0.20
+flash-next-series	flash_next	phrase	let me re-check	2		0.01
+flash-next-series	flash_next	phrase	let me recheck	6		0.02
+flash-next-series	flash_next	phrase	let me re-read	3		0.01
+flash-next-series	flash_next	phrase	let me reread	0		0.00
+flash-next-series	flash_next	phrase	let me reconsider	0		0.00
+flash-next-series	flash_next	phrase	let me think again	0		0.00
+flash-next-series	flash_next	phrase	let me re-examine	0		0.00
+flash-next-series	flash_next	phrase	double-check	7		0.02
+flash-next-series	flash_next	phrase	on second thought	0		0.00
+flash-next-series	flash_next	phrase	actually,	7		0.02
+v3-release	flash_next	reflection	wait	66	60	0.53
+v3-release	flash_next	reflection	hmm	147	142	1.17
+v3-release	flash_next	reflection	hmmm	0	0	0.00
+v3-release	flash_next	reflection	actually	28	25	0.22
+v3-release	flash_next	reflection	alternatively	1	1	0.01
+v3-release	flash_next	reflection	oh	5	5	0.04
+v3-release	flash_next	reflection	ah	6	6	0.05
+v3-release	flash_next	reflection	double-check	0	0	0.00
+v3-release	flash_next	reflection	recheck	0	0	0.00
+v3-release	flash_next	reflection	re-check	0	0	0.00
+v3-release	flash_next	reflection	verify	91	20	0.73
+v3-release	flash_next	reflection	reconsider	0	0	0.00
+v3-release	flash_next	reflection	rethink	0	0	0.00
+v3-release	flash_next	contrast	but	109	51	0.87
+v3-release	flash_next	contrast	however	0	0	0.00
+v3-release	flash_next	contrast	maybe	7	3	0.06
+v3-release	flash_next	contrast	perhaps	4	4	0.03
+v3-release	flash_next	phrase	but wait	0		0.00
+v3-release	flash_next	phrase	wait,	19		0.15
+v3-release	flash_next	phrase	hold on	0		0.00
+v3-release	flash_next	phrase	let me double-check	2		0.02
+v3-release	flash_next	phrase	let me double check	0		0.00
+v3-release	flash_next	phrase	let me check	28		0.22
+v3-release	flash_next	phrase	let me verify	16		0.13
+v3-release	flash_next	phrase	let me re-check	1		0.01
+v3-release	flash_next	phrase	let me recheck	1		0.01
+v3-release	flash_next	phrase	let me re-read	0		0.00
+v3-release	flash_next	phrase	let me reread	0		0.00
+v3-release	flash_next	phrase	let me reconsider	0		0.00
+v3-release	flash_next	phrase	let me think again	0		0.00
+v3-release	flash_next	phrase	let me re-examine	0		0.00
+v3-release	flash_next	phrase	double-check	2		0.02
+v3-release	flash_next	phrase	on second thought	0		0.00
+v3-release	flash_next	phrase	actually,	4		0.03
+v3-release	flint	reflection	wait	1506	956	3.72
+v3-release	flint	reflection	hmm	1674	1598	4.13
+v3-release	flint	reflection	hmmm	0	0	0.00
+v3-release	flint	reflection	actually	831	612	2.05
+v3-release	flint	reflection	alternatively	26	26	0.06
+v3-release	flint	reflection	oh	57	49	0.14
+v3-release	flint	reflection	ah	19	19	0.05
+v3-release	flint	reflection	double-check	0	0	0.00
+v3-release	flint	reflection	recheck	0	0	0.00
+v3-release	flint	reflection	re-check	0	0	0.00
+v3-release	flint	reflection	verify	61	1	0.15
+v3-release	flint	reflection	reconsider	39	0	0.10
+v3-release	flint	reflection	rethink	0	0	0.00
+v3-release	flint	contrast	but	1967	918	4.86
+v3-release	flint	contrast	however	4	4	0.01
+v3-release	flint	contrast	maybe	626	193	1.55
+v3-release	flint	contrast	perhaps	9	5	0.02
+v3-release	flint	phrase	but wait	154		0.38
+v3-release	flint	phrase	wait,	595		1.47
+v3-release	flint	phrase	hold on	63		0.16
+v3-release	flint	phrase	let me double-check	5		0.01
+v3-release	flint	phrase	let me double check	3		0.01
+v3-release	flint	phrase	let me check	79		0.20
+v3-release	flint	phrase	let me verify	22		0.05
+v3-release	flint	phrase	let me re-check	8		0.02
+v3-release	flint	phrase	let me recheck	15		0.04
+v3-release	flint	phrase	let me re-read	10		0.02
+v3-release	flint	phrase	let me reread	0		0.00
+v3-release	flint	phrase	let me reconsider	27		0.07
+v3-release	flint	phrase	let me think again	0		0.00
+v3-release	flint	phrase	let me re-examine	1		0.00
+v3-release	flint	phrase	double-check	11		0.03
+v3-release	flint	phrase	on second thought	0		0.00
+v3-release	flint	phrase	actually,	59		0.15
+v3-release	ornith	reflection	wait	281	199	3.26
+v3-release	ornith	reflection	hmm	102	102	1.18
+v3-release	ornith	reflection	hmmm	0	0	0.00
+v3-release	ornith	reflection	actually	266	215	3.09
+v3-release	ornith	reflection	alternatively	0	0	0.00
+v3-release	ornith	reflection	oh	4	4	0.05
+v3-release	ornith	reflection	ah	0	0	0.00
+v3-release	ornith	reflection	double-check	0	0	0.00
+v3-release	ornith	reflection	recheck	0	0	0.00
+v3-release	ornith	reflection	re-check	0	0	0.00
+v3-release	ornith	reflection	verify	69	0	0.80
+v3-release	ornith	reflection	reconsider	48	0	0.56
+v3-release	ornith	reflection	rethink	0	0	0.00
+v3-release	ornith	contrast	but	670	393	7.78
+v3-release	ornith	contrast	however	15	15	0.17
+v3-release	ornith	contrast	maybe	26	5	0.30
+v3-release	ornith	contrast	perhaps	1	0	0.01
+v3-release	ornith	phrase	but wait	48		0.56
+v3-release	ornith	phrase	wait,	126		1.46
+v3-release	ornith	phrase	hold on	1		0.01
+v3-release	ornith	phrase	let me double-check	6		0.07
+v3-release	ornith	phrase	let me double check	7		0.08
+v3-release	ornith	phrase	let me check	110		1.28
+v3-release	ornith	phrase	let me verify	59		0.69
+v3-release	ornith	phrase	let me re-check	8		0.09
+v3-release	ornith	phrase	let me recheck	1		0.01
+v3-release	ornith	phrase	let me re-read	12		0.14
+v3-release	ornith	phrase	let me reread	0		0.00
+v3-release	ornith	phrase	let me reconsider	47		0.55
+v3-release	ornith	phrase	let me think again	0		0.00
+v3-release	ornith	phrase	let me re-examine	1		0.01
+v3-release	ornith	phrase	double-check	6		0.07
+v3-release	ornith	phrase	on second thought	0		0.00
+v3-release	ornith	phrase	actually,	12		0.14

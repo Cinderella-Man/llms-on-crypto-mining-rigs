@@ -66,6 +66,28 @@ contrast words per 1,000 words):
   "Wait — the user says…"), from the four turns that follow a `read_file` result. The BFCL answers, single-turn tool calls,
   don't show it (0.5–3.4 per 1,000 words).
 
+## In the agent check (Q1152)
+
+[The reasoning census](../../docs/data/2026-11-09_reasoning_census/README.md) ran the same counter over every reply
+the agent check recorded on the rig, 4,713 replies of three models. The server returns the reasoning apart from the
+answer there (`reasoning_content`), so the census calls `count_block()` with the reasoning's token ids. Its v3 release
+arms, per 1,000 reasoning tokens:
+
+| Model | Reasoning tokens | Reflection words (sentence-initial) | Contrast words | Reasoning in sentences a reflection word opens | in paragraphs it opens |
+|---|---|---|---|---|---|
+| Qwen3.8-Flash-Next | 125,356 | 2.74 (2.07) | 0.96 | 2.87 % | 11.74 % |
+| Flint | 404,874 | 10.41 (8.05) | 6.44 | 9.09 % | 22.66 % |
+| Ornith-1.5-122B | 86,124 | 8.94 (6.04) | 8.27 | 6.71 % | 17.46 % |
+
+- **Flash-Next reflects as seldom in agent sessions as Flint does in single requests,** so a bias has little to cut
+  there.
+- **Flint's agent sessions are the exception at scale:** 10.41 per 1,000 on 404,874 reasoning tokens, above the
+  threshold, as the four agent turns above suggested. A bias for Flint and Ornith in agent sessions is registry row
+  Q1174.
+- The two span columns count sentences and paragraphs that a listed word opens. The tables above also count those
+  that open with a phrase such as "let me check" or "let me re…"; that prefix also matches "let me read", so the
+  census reports both.
+
 ## Estimate
 
 - A reflection bias aims at 2.5–3.8 % of Flint's reasoning (both datasets): 1.5–2.5 % of the output tokens, ≤ 1.03×
