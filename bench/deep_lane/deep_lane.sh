@@ -257,7 +257,7 @@ for arm in $ARMS; do
   arm_config "$arm"
   [ "$A_DRAFT" = on ] && drafts=1
   say "arm $arm: draft $A_DRAFT, context $A_CTX, -ub $A_UB${A_ENV:+, $A_ENV}${A_ARGS:+, $A_ARGS}"
-  say "  env ${ENVS[*]} $BIN -m $MODEL ${LINE[*]}"
+  say "  ${RUNNER:+$RUNNER }env ${ENVS[*]} $BIN -m $MODEL ${LINE[*]}"
   settings="$settings|$arm: ${ENVS[*]} ${LINE[*]}"
   [ -n "$A_CTX" ] && [ $((max_depth + N_PREDICT)) -gt "$A_CTX" ] \
     && refuse "arm $arm: depth $max_depth + $N_PREDICT tokens does not fit its context of $A_CTX"
