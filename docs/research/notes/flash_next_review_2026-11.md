@@ -7,6 +7,12 @@ literature since v3.0. This note says where a task's time goes today, what the p
 not, which beliefs rest on no data, and the order of work that gives Flash-Next the best chance of a large gain in
 speed or quality.
 
+**The order of work in section 5 is replaced by [the second review](flash_next_review2_2026-11.md), section 8.**
+That note checks this one claim by claim (its section 1) and changes three things: reasoning effort is not the
+first lever (section 3.6 and lever 1 here), the upstream depth fixes named in section 3.8 were closed unmerged, and
+the first files to score on tasks are Swift Q2_0 and Swift IQ3_S, not Q2_0 and IQ2_XS. Sections 1 to 3 here stand
+as the evidence.
+
 Conventions:
 - "est." marks my own arithmetic or inference; the basis is next to it. Every other number is measured and quoted
   from the linked folder, one run unless the folder lists repeats.
