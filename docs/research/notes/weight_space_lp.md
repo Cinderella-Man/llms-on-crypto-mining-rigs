@@ -19,8 +19,9 @@ What I read:
 - **The cheap form of the fix is a steering vector,** and llama.cpp already applies one: `--control-vector-scaled` and
   `--control-vector-layer-range`. The graphs of all three of my models call it: `flint`, `qwen4exp` (Flash-Next) and
   `qwen35moe` (Ornith). The cost is one vector add per steered layer and token.
-- **Whether my models loop enough to matter is not known.** The agent check has runaways (section 3), but nobody has
-  counted how many of them are repeated text. That count comes first (Q1138).
+- **My models do not loop on the agent check** (Q1138, counted on 2026-11-09). By the post's labels 1 reply of 4,706
+  loops, and none of the 31 replies cut at the 12-minute cap. The runaways are long reasoning (section 3), so the fix
+  has nothing to remove there.
 - **Reading fewer bytes by removing weights is pruning.** Pruning and the lottery ticket hypothesis are covered in
   the Elixir models repo, which holds all the work on making models smaller (section 4).
 
@@ -113,9 +114,21 @@ appear on Flash-Next and Flint:
   9–15k reasoning tokens, and hit the cap in 9 of 15 runs;
 - Ornith's release arms had none (12/12).
 
-No one has checked whether these replies repeat themselves or reason at length. The proxy keeps every reply
-(`proxy.jsonl.bodies.gz`), so the post's labels and the paper's 20-gram rule can be run over all of them offline.
-That count is Q1138, and it decides the rest.
+**The count (Q1138, [data](../../data/2026-11-09_loop_census/README.md)).** The proxy keeps every reply
+(`proxy.jsonl.bodies.gz`); the post's labels and the paper's 20-gram rule were run over all 4,713 of them, each
+model in its own tokens.
+- By the post's labels 1 reply of 4,706 loops: 67 tokens of a Flint tool call that ended on its own. In the v3
+  release arms and the Flash-Next arms it is 0 of 2,745.
+- The paper's rule trips on 82 replies. 73 of them ended on their own, 67 in attempts that passed, so as a rescue
+  it would mostly cut replies that went on to end on their own.
+- Of the 31 replies cut at the cap, none loops by the post's labels and 9 trip the paper's rule. At most 10.6 % of
+  a cut reply's tokens repeat a 16-token window: they are reasoning of up to 16,660 tokens, not repeated text.
+- No reply ends in one repeated token, which is how a NaN in the recurrent state would show (Q1158).
+- Attempts stopped at the cap take 13.11 % of the v3 release arms' task time on Flash-Next, 12.42 % on Flint and
+  14.03 % on Ornith.
+
+So on these 12 tasks the runaways' time goes to long reasoning. A loop fix has nothing to remove, and the guard left to try
+is a reasoning budget per turn (Q266). Both rules see only word-for-word repetition.
 
 **What the post adds to what is queued.**
 - Q266 (a runaway guard: a repetition detector or a reasoning budget) cuts a loop once it has started.
@@ -141,8 +154,8 @@ That count is Q1138, and it decides the rest.
 - It changes the text, so the task-level gate (the pass rate) decides, as for Q266 and Q267.
 
 **Rows:**
-- Q1138: the loop census;
-- Q1139: the loop vector;
+- Q1138: the loop census (done);
+- Q1139: the loop vector (parked by Q1138's count);
 - Q1140: the fix baked into a published file, or shipped as a vector file beside it.
 
 ## 4. Pruning and the lottery ticket hypothesis

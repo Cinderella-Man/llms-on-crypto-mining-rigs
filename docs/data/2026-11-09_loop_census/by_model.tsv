@@ -1,0 +1,7 @@
+group	model	replies	tokens	tokens_per_server_count	rule1_replies	rule2_replies	both_replies	class3_replies	rule1_finished	rule2_finished	repeat_tokens	looping_tokens	repeat_token_pct	rule1_tokens	rule2_tokens	rule2_fire_tokens	rule2_fire_pct	rule2_in_passed	rule1_token_pct	rule2_token_pct	attempts	passed	runaway_attempts	runaway_s	runaway_time_pct	task_s	rule1_s	rule2_s	rule1_time_pct	rule2_time_pct	cut_replies	cut_rule1	cut_rule2	cut_class3	cut_tokens	cut_repeat_tokens	length_stops	server_errors	longest_tail_same	longest_tail_char_run
+earlier	flint	1590	1078648	1.0045	1	45	0	0	1	40	28096	17	2.60	67	152312	43683	4.05	36	0.01	14.12	252	243	10	7203.9	19.31	37308.9	2.5	3913.0	0.01	10.49	10	0	5	0	70489	3162	0	0	1	3
+earlier	ornith	371	110595	0.9400	0	1	0	0	0	0	1534	0	1.39	0	1405	488	0.44	0	0.00	1.27	79	74	5	3602.5	19.97	18041.2	0.0	280.9	0.00	1.56	5	0	1	0	19478	483	0	0	1	3
+flash-next-series	flash_next	1248	405575	0.9493	0	12	0	0	0	10	6980	0	1.72	0	29387	7723	1.90	8	0.00	7.25	231	222	11	8152.1	16.37	49802.0	0.0	2310.1	0.00	4.64	8	0	2	0	35081	1684	0	7	1	3
+v3-release	flash_next	412	157837	0.9559	0	8	0	0	0	8	3439	0	2.18	0	23953	8296	5.26	8	0.00	15.18	78	76	3	2160.9	13.11	16486.9	0.0	1324.5	0.00	8.03	2	0	0	0	12350	384	0	0	1	3
+v3-release	flint	686	467228	1.0042	0	16	0	0	0	15	10532	0	2.25	0	48464	11852	2.54	15	0.00	10.37	108	105	3	2160.9	12.42	17400.3	0.0	1461.2	0.00	8.40	3	0	1	0	19594	596	0	0	1	1
+v3-release	ornith	399	118141	0.9445	0	0	0	0	0	0	1585	0	1.34	0	0	0	0.00	0	0.00	0.00	80	78	3	2161.3	14.03	15404.6	0.0	0.0	0.00	0.00	3	0	0	0	3511	124	0	1	1	3
