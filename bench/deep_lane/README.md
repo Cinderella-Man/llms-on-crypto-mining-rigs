@@ -196,5 +196,26 @@ Four more checks on the same day:
   server, each load stopped cleanly and no container was left.
 - The agent check's self-test still passes with the extended mock (11 checks).
 
-The mock has no model, so these checks cover the driver, not llama-server: the first run on a real server shows
-whether its checkpoints serve the primes as the mock's do.
+The mock has no model, so these checks cover the driver, not llama-server.
+
+## Run against llama-server
+
+The first run against llama-server counted the MTP draft's acceptance by depth on 2026-11-10
+([docs/data/2026-11-10_draft_acceptance_by_depth](../../docs/data/2026-11-10_draft_acceptance_by_depth/README.md)):
+the release preset through the build's PTX on three newer cards, quiet checks off, five loads, depths 0 to 49,152 on
+the release check's recorded requests.
+
+- The server's template rendered the recorded requests with their tools, and every prompt had exactly its depth in
+  tokens.
+- The primes continued from a context checkpoint. At 16,384, 32,768 and 49,152 they read 8,708, 16,388 and 16,900
+  tokens on 7,612, 16,316 and 32,188 cached: the checkpoint the server restores lies 4 or 516 tokens before the end
+  of the previous prime, so a prime can read 512 tokens more than its chunk.
+- A request that asks for no output generates one token.
+- Each arm wrote the same greedy reply on pass 1 and pass 2. The arm without the draft wrote another reply than the
+  arm with it at every depth (registry row Q1175), so the check "the same greedy reply in every arm" fails between
+  those two arms.
+- **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
+  behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
+  cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.
+  A draft arm's speed does, through its acceptance, so its numbers at depth are for such replies (registry row
+  Q1176 plans prompts that end in a whole recorded request).

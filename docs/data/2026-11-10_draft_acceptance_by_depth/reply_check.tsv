@@ -1,0 +1,6 @@
+tail	depth	arms	same_greedy_reply	reply_ids_md5_per_arm
+tail1	0	draft nodraft	no	draft: dcd8ac534b374049419da90ccbda80cb; nodraft: 84d85f5ee7ba02dcb185199b70cb90a5
+tail1	8192	draft nodraft	no	draft: 2ceddbaabf74614a5a07f13d20b85a49; nodraft: 9eb513034b1b23578d4175f6fae64c49
+tail1	16384	draft nodraft	no	draft: aa1e65680f330be121d4454bc86c7a3d; nodraft: 41cfc791fad24994909ec21c0f9e2f46
+tail1	32768	draft nodraft	no	draft: f0401caedab24d4c7656eecb20fc09f5; nodraft: a423bdef89dd014810b24f8913dd9c8e
+tail1	49152	draft nodraft	no	draft: 6c850da27219d32ffc3d8af24fdaf53f; nodraft: 9c6a0daae6432247737c112c810db24e
