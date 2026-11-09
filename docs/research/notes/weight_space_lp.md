@@ -1,4 +1,4 @@
-# Weight-space LP and the lottery ticket hypothesis: what they are, and what I can take (2026-11-09)
+# Weight-space LP: what it is, and what I can take (2026-11-09)
 
 What I read:
 - the post, [Linear programming for weight-space programming](https://nathan.rs/posts/weight-space-lp/);
@@ -6,7 +6,6 @@ What I read:
   `docs/WRITEUP.md`. I read it as text only and ran nothing. Its page shows no licence;
 - the paper it builds on: Takehi, Teoh, Zhang and Khattab,
   [Sparks of Weight-Space Programming](https://rikiyat.github.io/blog/weight-space-programming/) (MIT CSAIL, 2026);
-- Frankle and Carbin, [The Lottery Ticket Hypothesis](https://arxiv.org/abs/1803.03635) (ICLR 2019);
 - the related work in the sources at the end.
 
 ## The short answer
@@ -22,11 +21,8 @@ What I read:
   `qwen35moe` (Ornith). The cost is one vector add per steered layer and token.
 - **Whether my models loop enough to matter is not known.** The agent check has runaways (section 3), but nobody has
   counted how many of them are repeated text. That count comes first (Q1138).
-- **Reading fewer bytes by removing weights is pruning.** The registry already covers each form that a P106 can turn
-  into fewer bytes: expert cuts (Q239, Q891, Q896, Q898), the per-token expert skip (Q618, Q660), activation
-  sparsity (Q622) and shared bases (Q242). Section 4 adds the new evidence.
-- **The lottery ticket hypothesis** is about training sparse networks from scratch. I don't train these models, and its
-  unstructured sparsity reads no fewer bytes on a P106 at my bit widths. Parked (Q1141).
+- **Reading fewer bytes by removing weights is pruning.** Pruning and the lottery ticket hypothesis are covered in
+  the Elixir models repo, which holds all the work on making models smaller (section 4).
 
 ## 1. What the post does
 
@@ -149,71 +145,10 @@ That count is Q1138, and it decides the rest.
 - Q1139: the loop vector;
 - Q1140: the fix baked into a published file, or shipped as a vector file beside it.
 
-## 4. Reading fewer bytes: pruning, the right name for the idea
+## 4. Pruning and the lottery ticket hypothesis
 
-**The idea has an older form.** The LP's pattern, "the fewest nonzeros such that the outputs stay within ε on real
-inputs", is a pruning method from 2017: [Net-Trim](https://arxiv.org/abs/1611.05162) (Aghasi et al., NeurIPS 2017)
-minimizes each layer's L1 norm subject to its outputs staying close on training data. It was shown on MNIST-sized
-networks.
-
-**On a P106, only patterns the kernel can skip save bytes:**
-- whole experts;
-- whole channels (an expert's intermediate neurons: rows of gate and up, columns of down);
-- whole quantization blocks.
-
-**Unstructured sparsity pays for its index.** A bitmap costs 1 bit per weight, so at b bits a weight and sparsity s
-the cost is 1 + (1 − s) · b bits. That saves bytes only when s > 1/b:
-- above 50 % sparsity at 2 bits;
-- above 18 % at 5.5 bits (Q5_K).
-
-Pascal also has no sparse tensor cores.
-
-**At equal bytes, quantizing beats pruning down to about 3 bits:**
-- [Zhou et al., EMNLP Findings 2025](https://aclanthology.org/2025.findings-emnlp.645/): quantization keeps more than
-  pruning on small models.
-- [arXiv 2607.16721](https://arxiv.org/abs/2607.16721) (July 2026) on Qwen3.6-35B-A3B and Gemma-4-26B-A4B: half the
-  experts can go with no detectable loss on the code benchmark, and the damage lands outside coding. Pruning wins only
-  where quantizing would drop below 3 bits a weight. Flash-Next at 2 bits is in that regime.
-- My own registry agrees. In Q891, IQ3_S cut to 416 experts beat IQ3_XXS on agent text (0.131 against 0.176) and code
-  (0.043 against 0.054) but lost on wiki (0.724 against 0.248).
-- The LP's way of choosing would apply to expert cuts too: minimize the experts kept, subject to each agent-text
-  token's routed output staying within ε. It is a cheaper cousin of Q898's searched expert set and is parked with it
-  (Q1142).
-
-**Activation sparsity skips weights per token instead of removing them.**
-[TEAL](https://arxiv.org/abs/2408.14690) (ICLR 2025) reaches 40–50 % sparsity across the whole model without training,
-with decode speed-ups of up to 1.53× at 40 % and 1.8× at 50 % on GPUs. It is Q622, planned. My files store quant blocks
-along the input dimension, so skipping input columns needs a column-major layout, and a k-token verify pass reads the
-union of the active columns.
-
-## 5. The lottery ticket hypothesis (Frankle and Carbin, ICLR 2019)
-
-**What it says.** A dense, randomly initialized network contains a subnetwork that, trained alone from the same
-initial values, matches the full network's accuracy in at most the same number of steps. That subnetwork is the
-"winning ticket". Finding one:
-- train;
-- prune the smallest weights (20 % per round for the fully connected layers);
-- reset the survivors to their initial values;
-- repeat.
-
-On MNIST and CIFAR-10 (Lenet, Conv-2/4/6, VGG-19, ResNet-18), the tickets are at most 10–20 % of the original size.
-Given fresh random initial values instead, they do far worse. For VGG-19 and ResNet-18, tickets appeared only at the
-lower learning rate or with warmup.
-
-**Why it doesn't help the rig:**
-1. It is a training method: each ticket costs several full training runs of the dense network. I don't train Flint,
-   Flash-Next or Ornith, and a pretraining run at their size is out of reach. For larger networks, the authors' later
-   work rewinds to an early training checkpoint instead of the initial values, which still needs that training run.
-2. Its tickets are unstructured, so the bitmap arithmetic in section 4 applies. At 2 bits there is no byte saving
-   below 50 % sparsity, and Pascal has no sparse kernels.
-3. Its practical heir for language models is one-shot pruning of trained models (SparseGPT, Wanda), and the
-   registry covers that pruning in its structured forms (section 4).
-
-**Where it could apply** is a network I train myself: the drafter heads (Q20) and the fine-tuning work. But a head
-reads est. 0.19 GB a guess, and what limits it on the P106 is its launches (Q20; the book, chapter 8), not its bytes. A
-narrower dense head is a plain training choice, not a ticket. Parked as Q1141. It reopens with a kernel that skips
-whole quant blocks, where a block-level ticket would read fewer bytes, or with a trained network whose cost is its
-bytes.
+Reading fewer bytes by removing weights (pruning), and the lottery ticket hypothesis, are in
+[pruning_and_lottery_tickets.md](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs/blob/main/docs/research/notes/pruning_and_lottery_tickets.md), with the other work on making models smaller.
 
 ## Sources
 
@@ -224,10 +159,3 @@ bytes.
 - Rudas et al., Extreme Low-Bit Inference in Reasoning Models: Failure Modes and Targeted Recovery (2026):
   https://arxiv.org/abs/2606.02011
 - Liu et al., Quantization Hurts Reasoning? (2025): https://arxiv.org/abs/2504.04823
-- Aghasi, Abdi, Nguyen, Romberg, Net-Trim (NeurIPS 2017): https://arxiv.org/abs/1611.05162
-- Zhou et al., Revisiting Pruning vs Quantization for Small Language Models (EMNLP Findings 2025):
-  https://aclanthology.org/2025.findings-emnlp.645/
-- Jha, Half the Experts, All the Code (2026): https://arxiv.org/abs/2607.16721
-- Liu et al., TEAL: Training-Free Activation Sparsity in Large Language Models (ICLR 2025):
-  https://arxiv.org/abs/2408.14690
-- Frankle, Carbin, The Lottery Ticket Hypothesis (ICLR 2019): https://arxiv.org/abs/1803.03635

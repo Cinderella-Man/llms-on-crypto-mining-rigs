@@ -736,62 +736,9 @@ None. The n-gram drafters (`flint_speedups.md` experiment 2) are the training-fr
 
 ---
 
-### 3.11 Attention head pruning, fewer query heads, low-rank q/o
+### 3.11â3.12 Attention-head pruning and expert pruning
 
-#### Takeaway
-- q and o projections are a third of Flint's active parameters.
-- Halving the query heads (32 → 16, keeping 4 KV heads) or factoring q/o to rank ~512–683 saves ~411–514 M parameters per token: +9–12 % at Q4_1 (my calc). Low-rank gains less because it adds 2 launches per layer.
-- Recovering quality needs distillation budgets of tens of billions of tokens. Not feasible on our hardware; not recommended.
-
-#### Cited findings
-- Minitron's width pruning (heads, MLP and embedding channels) needed ~94 B tokens with a corrected teacher ([arXiv 2408.11796](https://arxiv.org/abs/2408.11796), P).
-- No post-hoc query-head-reduction result for a sliding-window/sink model was found.
-
-#### Inferences
-**My calc:**
-- 32 → 16 heads: q and o shrink to 2048 × 2048 → −4.19 M × 2 × 49 = −411 M parameters → −257 MB at Q4_1 → −3.8 ms → **+11–12 %**.
-- With Q8_0 attention (UD-mirror): −436 MB → +15–17 %.
-- Rank 683: same parameter saving, but +98 launches (+0.6 ms) → **+9–10 %**.
-- Rank 512: −514 M parameters → −321 MB → +12 %.
-- KV cache is unchanged (still 4 KV heads), so there is no long-context gain.
-
-#### Gaps
-- No published post-hoc result for this kind of model.
-
-#### Experiment ideas
-None recommended. If wanted: rank-sweep the SVD energy of `q_proj`/`o_proj` per layer (minutes on the PC). If 683 singular values hold < 95 % of the energy, drop the idea.
-
-**Carries over to Qwen3.6?** Less to gain: only 10 attention layers; the GDN projections dominate.
-
----
-
-### 3.12 Expert pruning (REAP and similar)
-
-#### Takeaway
-- Pruning 25–50 % of experts shrinks the file. It does not change bytes per token: still 6 experts per token, and card count does not change speed on this rig.
-- So: no decode speed-up.
-- Use it only to fit Flint on fewer cards or to free VRAM for KV and slots. It has a measurable quality cost.
-
-#### Cited findings
-- REAP ([arXiv 2510.13999](https://arxiv.org/abs/2510.13999), ICLR 2026, P; [repo](https://github.com/CerebrasResearch/reap); [Cerebras blog](https://www.cerebras.ai/blog/reap), S).
-  - Router-weighted expert-activation pruning, one-shot, no healing.
-  - 50 % pruning of Qwen3-Coder-480B kept 97.6 % of non-agentic coding and 96.7 % of SWE-Bench.
-  - [cerebras/Qwen3-Coder-REAP-25B-A3B](https://huggingface.co/cerebras/Qwen3-Coder-REAP-25B-A3B) (20 % pruned) shows mixed ±2-point changes.
-- Expert merging and pruning are covered in `models_large_moe_and_compression.md`.
-
-#### Inferences
-- **Speed: 0 %** (my calc).
-- **Memory:** 25 % pruning turns a 26 GB file into ~20 GB, fitting 4 cards with more KV room. 5 vs 9 cards measured the same speed.
-
-#### Gaps
-- REAP has no Flint adapter. A calibration pass needs transformers' Flint (feasible).
-
-#### Experiment ideas
-None for speed.
-
-**Carries over to Qwen3.6?** Same: no speed gain.
-
----
+These two sections live in [pruning_from_flint_surveys.md](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs/blob/main/docs/research/notes/pruning_from_flint_surveys.md), with the other work on making models smaller.
 
 ### 3.13 Output head: vocabulary trimming or a factorized head
 

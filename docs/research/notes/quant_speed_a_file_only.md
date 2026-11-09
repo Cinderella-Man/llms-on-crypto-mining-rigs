@@ -543,43 +543,7 @@ Candidate moves from UD-mirror v1 (≈ 45 ms, with the rescale):
 
 ### 3.7 Layer pruning, skipping and MoE-specific skipping
 
-**Takeaway.**
-- **Nothing here reaches +15 % speed at the quality bar.**
-- **Layer pruning:** ≈ +2 % per layer, with a sharp collapse risk.
-- **Expert pruning:** gives no single-stream speed at all on this rig, because bytes per token don't change.
-- **Static expert reduction (6 → 4):** already measured, +9 % served at KLD 0.316 → 0.555.
-- **New in Sept–Oct 2026:** k₂-normalized top-k reduction (training-free, Qwen3.6) and several expert-pruning papers.
-
-**Cited findings**
-- **Dense layer pruning without healing:**
-  - SLEB ([arXiv 2402.09025](https://arxiv.org/abs/2402.09025); P): removing 10 % of blocks takes LLaMA-2-7B wikitext PPL from 5.47 to 6.95, at 1.10–1.13× speed.
-  - Gromov et al. ([arXiv 2403.17887](https://arxiv.org/abs/2403.17887); P): the Qwen family collapses at about 20 % of layers removed.
-  - ShortGPT ([arXiv 2403.03853](https://arxiv.org/abs/2403.03853); P): Llama2-7B −27 % of layers kept MMLU but XSum fell from 19.4 to 0.7.
-- **`llama-quantize --prune-layers`** ([PR #13037](https://github.com/ggml-org/llama.cpp/pull/13037), merged 2025-06-22, checked):
-  - It rewrites `block_count` but not the per-layer arrays, so the output fails to load ([issue #27976](https://github.com/ggml-org/llama.cpp/issues/27976), closed as stale 2026-10-13, checked).
-  - The fix PR #28597 was closed unmerged on 2026-10-20 (helper agent).
-  - Flint has per-layer arrays (`sliding_window_pattern`, `rope_pattern`, possibly `expert_feed_forward_length`), so they would need fixing with gguf-py.
-- **New, k₂ normalization** ([Chen & Yao, arXiv 2609.04575](https://arxiv.org/abs/2609.04575), 2026-09-04; P): run k₁ experts, normalise by the top-k₂ mass. Qwen3.6-35B-A3B 8 → 4 experts costs −0.35 MMLU instead of −4.65. Softmax routers only.
-- **ACE** ([arXiv 2609.05228](https://arxiv.org/abs/2609.05228); P) is calibration-free slot skipping but needs runtime logic.
-- **New expert pruning:**
-  - RAZOR ([2609.30465](https://arxiv.org/abs/2609.30465), 2026-09-24): beats REAP by 2.1–5.6 points on Qwen3.6-35B-A3B at 25–50 %.
-  - HOPE ([2609.18916](https://arxiv.org/abs/2609.18916)): second-order.
-  - OMP-MoE ([2609.31631](https://arxiv.org/abs/2609.31631)): Qwen3-30B-A3B at 50 % keeps 93.3 %.
-  - OptEP ([2610.27123](https://arxiv.org/abs/2610.27123), 2026-10-19).
-  - All P, via the helper agent.
-- **Measured on the rig** (`docs/benchmarks/2026-10-22-flint.md`): 6 → 5 experts +4 % served (KLD 0.379), 6 → 4 +9 % (KLD 0.555).
-- **Not found:** any shared-expert-skipping measurement, any whole-layer pruning of a Qwen3-MoE or Qwen3.6 model, or any Flint data.
-
-**Inferences (my calc)**
-- **One MoE layer** costs ≈ 44.6 M params per token (0.55 ms at UD-mirror's mix) plus ~40 launches (0.2–0.28 ms), so ≈ 0.8 ms (≈ 2 %). The +15 % bar needs ~7 layers (14 %), where the literature shows large losses.
-- **Skipping the shared expert in all layers** saves ≈ 5.3 ms (12 %), almost certainly catastrophically. Per-layer skipping needs a patch and a sensitivity scan; expected gain per layer is 0.11 ms.
-- **For Flint's sigmoid router with weight normalization,** the k₂ trick is: keep the top k₁ experts, with weights s_i / Σ_{top-k₂} s_j. A ~10-line change in `build_moe_ffn`: take the top-6, sum their weights, then view the first k₁. Worth a 1-hour CPU KLD test, because it could make 6 → 5 nearly free. The speed gain stays ≤ 9 %, so it only stacks.
-- **Expert caching** (`--moe-cache-mib`) serves experts kept in host RAM. With every expert resident in VRAM, as here, it has nothing to do.
-
-**Experiment idea (low priority) — A12.**
-- Patch `build_moe_ffn` with an env switch `MOE_K1=5` (select top-6, normalise over all 6, keep the first 5 slots).
-- CPU KLD with the Q8_0 file: k₁ ∈ {5, 4} against the standard override (`expert_used_count=5/4`), ≈ 15 min per run.
-- If 6 → 5 costs < 0.01 KLD, add it to the stack: +4 % served.
+This section lives in [pruning_from_flint_surveys.md](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs/blob/main/docs/research/notes/pruning_from_flint_surveys.md), with the other work on making models smaller.
 
 ### 3.8 Router precision and embedding format
 
