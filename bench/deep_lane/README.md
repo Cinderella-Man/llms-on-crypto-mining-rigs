@@ -1,0 +1,192 @@
+# The deep lane: speed at fixed context depths, arm against arm
+
+A coding agent's context grows with every turn, and generation slows as it grows: each new token reads the whole
+cache. The bug-fix tasks of the agent check ([agent_check](../agent_check/README.md)) end below 10,000 tokens of
+context, so they do not show what a setting does at 30,000 or 100,000. This tool holds the depth fixed instead. It
+loads llama-server on the line of a release preset, sends prompts of exactly 0, 8,192, 16,384, 32,768 and 49,152
+tokens cut from recorded agent text, and generates 256 tokens after each, for two or more settings (arms) whose loads
+alternate. Per depth it reports every load's speed by value, the spread between loads, and each arm's class against
+the control: gain, negligible or loss.
+
+Its numbers are single-request diagnostics at a known depth. They explain the agent check's results and do not
+replace them. The registry rows it serves are Q1143 (the lane), Q1153 (the MTP draft by depth), Q1154 (a
+131,072-token line) and Q1172 (draft acceptance by depth) in [quants/experiments.md](../../quants/experiments.md). The
+method follows the depth sweep of
+[docs/data/2026-11-06_flint_q5_depth](../../docs/data/2026-11-06_flint_q5_depth/README.md).
+
+## Files
+
+| File | What it does |
+|---|---|
+| [deep_lane.sh](deep_lane.sh) | The driver. Runs on the machine that holds the cards, detached: per load one llama-server, the quiet check, the RAM watchdog, the client; at the end the tables |
+| [deep_client.py](deep_client.py) | One load's requests on the loopback: builds the prompts, sends them, writes one CSV line per request |
+| [deep_table.py](deep_table.py) | The tables and classes from `requests.csv` |
+| [remote.sh](remote.sh) | Starts the driver on a rig over ssh, waits for it, collects the results and cleans up |
+| [selftest.sh](selftest.sh) | The whole tool against [mock_server.py](../agent_check/mock_server.py), no model and no GPU |
+
+Bash, curl and Python 3.9 or newer (standard library only) on the machine that runs the driver.
+
+## How a run goes
+
+**The server line** comes from a preset file, by default
+[release/flash-next-v3/settings.env](../../release/flash-next-v3/settings.env): its `PRESET_ENV`, `PRESET_ARGS`, model
+and draft. Nothing about the machine is in the scripts. `BIN`, `MODELS`, `TEXT` and `OUT` name the files, and the line
+is changed through the environment:
+
+| Variable | Effect on the line |
+|---|---|
+| `TS` | the card split, replacing the preset's `-ts` (for example `1,1,1` on three equal cards) |
+| `CTX`, `UB` | context size and micro-batch, replacing `-c` and `-ub` |
+| `DRAFT=off` | the line without `-md`, the `--spec-*` flags and the draft's other flags |
+| `ARGS_DROP`, `ARGS_SET` | flags removed with their values; `flag value` pairs replaced or added |
+| `ENV_DROP`, `ENV_ADD` | variables removed from `PRESET_ENV`; variables added |
+| `RUNNER`, `STOP_CMD` | a command the server line is handed to (a container), and one that runs after each stop |
+
+**An arm is a named setting.** `ARMS="dense sparse"` with `ARM_ENV_dense=GGML_CUDA_FATTN_SPARSE_PASCAL=0` and
+`ARM_ENV_sparse=GGML_CUDA_FATTN_SPARSE_PASCAL=1` compares the sparse Pascal attention off and on. Besides
+`ARM_ENV_<arm>` an arm can set `ARM_DRAFT_<arm>` (on or off), `ARM_CTX_<arm>` and `ARM_UB_<arm>` (131,072 tokens need
+`-ub 256` on nine 6 GB cards) and `ARM_ARGS_<arm>` (flags, as `ARGS_SET`). The first arm is the control.
+
+**Loads alternate.** One untimed warm-up load of the first arm comes first, because the first load on an idle rig
+runs slower than later ones (registry row Q1055). Then every arm loads once per repetition (`REPS`, default 2):
+`dense1 sparse1 dense2 sparse2`. Each load is a fresh server start. A finished load leaves a marker, so a run that was
+cut short resumes with the same command; a results folder holding loads of other settings is refused.
+
+**The quiet check** runs before every load: no llama process, at most 100 MiB on any card, with the cards'
+temperature and clock and the host's free memory written to `quiet_<load>.txt`. A machine that is not idle stops the
+run. `QUIET=0` skips the check for a machine where speed is not measured, and marks every request `valid=0`; the
+tables of such a run print no speed. On a host under 8 GB the server runs under
+[scripts/ram_watchdog.sh](../../scripts/ram_watchdog.sh), which stops it before the host runs out of memory.
+
+**The prompts** are cut from recorded agent text passed by path (`TEXT`), never from text in this repository:
+
+- Recorded chat requests (the agent check's `proxy.jsonl.bodies.gz`, optionally filtered by tag with `TAG`) count once
+  per session, as the session's last request, rendered by the server's own chat template with its tools. Plain text is
+  read as it is.
+- The server tokenizes the sessions into one stream of ids. A prompt of depth D is the stream's first ids followed by a
+  fixed tail of 64 ids, D ids together.
+- The tail is the end of one recorded request: the end of its last message and the template's start of the assistant's
+  turn. The model therefore writes the same turn at every depth, and only the context in front of it grows. The
+  request chosen is the one whose recorded reply was the longest, and its session is left out of the stream.
+- Depth 0 is the tail alone. The ids are kept in `prompts.json`, so every load sends the same prompts.
+
+**The requests** of a load, depths ascending, each to `/completion` with token ids as the prompt:
+
+1. `prime`: the prompt without its tail, no output asked. The server reads what its cache lacks, which is a chunk on
+   top of the previous depth. Its prompt timings are the prompt reading at that depth.
+2. `decode`, pass 1 and pass 2: the whole prompt, 256 tokens at temperature 0 with end of text ignored. Pass 1 is the
+   first request at a new depth, as every turn of an agent is; pass 2 repeats it.
+3. `sample` (with `SAMPLER_PASS=1`): once more with the server line's own sampler and a fixed seed.
+
+`CACHE=0` drops the prime and makes every request read its whole prompt fresh. That is the method of the Flint depth
+sweep, and it costs the full prompt time for every request: at the 69.4 prompt tok/s the release preset ran on the
+agent check, a 49,152-token prompt is est. 12 minutes.
+
+A model whose state cannot be rolled back token by token reuses the cache through llama-server's context checkpoints,
+which are taken four tokens before the end of each prompt. The prime puts one right in front of the tail, so the next
+depth continues from there. The `cache_n` column and the table's last check show what each prime read. A prime that
+read its whole prompt means the server found no checkpoint: the run is still correct, only longer.
+
+## Running it
+
+On a rig, from a machine that only runs ssh (`RIG` is the rig's ssh alias; `BIN` and `MODELS` are paths on the rig;
+`TEXT_LOCAL` is copied over):
+
+```bash
+RIG=rig BIN=/opt/llama-builds/<build>/bin/llama-server MODELS=<model folder on the rig> \
+  TEXT_LOCAL=<recorded>/proxy.jsonl.bodies.gz TAG='^<arm>/' WD_ENV=MIN_AVAIL_MB=60 \
+  ARMS="dense sparse" ARM_ENV_dense=GGML_CUDA_FATTN_SPARSE_PASCAL=0 ARM_ENV_sparse=GGML_CUDA_FATTN_SPARSE_PASCAL=1 \
+  bash bench/deep_lane/remote.sh start
+RIG=rig bash bench/deep_lane/remote.sh wait
+RIG=rig OUT=<results folder> bash bench/deep_lane/remote.sh collect
+```
+
+`start` copies this folder, the preset and the watchdog to `/tmp/deep-lane` on the rig and starts the driver there in
+its own session, so a dropped connection does not stop it. `wait` is one ssh call that returns when the run has ended.
+`collect` brings the results back and removes the folder on the rig. `DRY=1` with `start` prints each arm's server
+line and starts nothing.
+
+On a machine with newer cards, through the build's compute 6.1 PTX, the server runs in a container and the driver on
+the host. The times of such a run are not measurements (`QUIET=0`); the reply hashes and the draft counters are valid:
+
+```bash
+BIN=<build>/bin/llama-server MODELS=<model folder> TEXT=<recorded>/proxy.jsonl.bodies.gz OUT=<results folder> \
+  QUIET=0 TS=1,1,1 ARGS_DROP="-otd" ENV_DROP=GGML_CUDA_KEEPALIVE \
+  RUNNER='docker run --rm --init --name deep-lane --network host --gpus "device=0,1,2" -e CUDA_FORCE_PTX_JIT=1
+          -v <build>:<build> -v <model folder>:<model folder> nvidia/cuda:12.9.2-devel-ubuntu24.04' \
+  STOP_CMD="docker rm -f deep-lane" ARMS="draft nodraft" ARM_DRAFT_nodraft=off SAMPLER_PASS=1 \
+  setsid -f nohup bash bench/deep_lane/deep_lane.sh > console.txt 2>&1 < /dev/null
+```
+
+The server's variables go on the command line the runner receives (`env NAME=value … llama-server …`), so they reach
+the server inside the container. `-otd token_embd=CUDA4` in the preset names the fifth card: drop it, or point it at
+a card that exists, when fewer cards are used. Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
+
+## What it writes
+
+| File in `OUT` | Content |
+|---|---|
+| `requests.csv` | one line per request, every load |
+| `loads.tsv` | one line per load: arm, timed or warm-up, valid, draft, context, start, load seconds, the line as it ran |
+| `table.md`, `classes.tsv` | the tables below; the classes as a table |
+| `quiet_<load>.txt`, `fit_<load>.txt` | the quiet check before the load; memory per card and on the host after it |
+| `server-<load>.log`, `ram_watchdog-<load>.tsv`, `gpu.csv` | the server's log, the watchdog's samples, the cards every 10 s |
+| `<load>.jsonl`, `prompts.json` | each request's whole `timings` and the first 160 characters of its reply; the prompts' token ids |
+| `done` or `failed` | how the run ended |
+
+The columns of `requests.csv`: `arm`, `load`, `kind` (warmup, prime, decode, sample), `pass`, `depth`,
+`prompt_tokens` (ids sent), `cache_n` (reused), `prompt_n` and `prompt_ms` (read), `gen_n` and `gen_ms` (generated),
+`text_md5` (the reply's text), `ids_md5` (its token ids), `draft_n` and `draft_accepted` (the server's draft counters),
+`tokens_per_step`, `prompt_md5`, `cache_src`, `valid`, `wall_s`, `time`.
+
+`requests.csv`, `loads.tsv`, `table.md` and `classes.tsv` hold no recorded text. `prompts.json`, the `.jsonl` files
+and the server logs hold token ids, reply text and paths: publish them only if the recorded text may be published.
+
+## The tables
+
+- **Generation, tok/s:** per depth and arm, each load as `pass 1, pass 2 → load`, where a load's speed is its two
+  passes' tokens over their time. Then the spread, the arm against the control in tok/s and percent, and the class.
+- **Class:** the spread is the larger of the two arms' differences between their fastest and slowest load. An arm is a
+  gain when its mean is above the control's by more than the spread, a loss when below by more than it, and negligible
+  otherwise. With one load per arm there is no spread and no class. `--class-on pass1` classes on pass 1 alone.
+- **Prompt reading, tok/s:** the tokens each prime read over their time, with the tokens read and reused.
+- **The draft and the step:** draft tokens accepted of drafted, tokens a step and ms a step. A step is one pass of the
+  main model. It yields one token of its own and the draft tokens it accepts, so a request's steps are its generated
+  tokens minus the accepted ones.
+- **Checks:** the same prompt ids on every load, the tokens out, and per depth whether the greedy reply is the same on
+  every pass and load of every arm. Arms that change only speed must write the same reply.
+
+Every value is one load of one arm at one depth. A number quoted from a table names its arm, load and depth.
+
+## Checked against the mock server
+
+`bash selftest.sh <work folder>` runs the driver on the real release preset with
+[mock_server.py](../agent_check/mock_server.py) in place of llama-server, on recorded text it writes itself, with
+stand-ins for `nvidia-smi` and `ps`. For this the mock speaks `/tokenize`, `/apply-template` and `/completion`, and its
+`timings` carry `cache_n`, `cache_src`, the per-second fields and, when the line has `-md`, `draft_n` and
+`draft_n_accepted`. It rolls its cache back to checkpoints as a recurrent model's server does.
+
+On 2026-11-09 all 33 checks passed, on a Linux machine's CPU under Python 3.14 (the tables come out the same under
+Python 3.12):
+
+| Run | What it showed |
+|---|---|
+| five arms × 2 loads, quiet checks on | 164 requests; every prompt exactly its depth; the preset's nine-card line unchanged; the draft-off arm without `-md`, `--spec-*` and `-otd`; the context arm with `-c 131072 -ub 256`; an arm as fast as the control negligible, a faster one a gain, the one without the draft a loss, at every depth; the same greedy reply in every arm; each prime read only the chunk past the previous depth's checkpoint |
+| the same command again | every load skipped, the same `requests.csv` |
+| the same folder, another setting | refused, the folder untouched |
+| a llama process running | refused before any load |
+| quiet checks off, a runner, three equal cards | every request `valid=0`, no speed in the tables, `-ts 1,1,1`, `-otd` dropped, `CUDA_FORCE_PTX_JIT=1` added and the keep-alive variable dropped |
+| `CACHE=0` on plain text | no prime, every request read its whole prompt |
+| a depth the text cannot fill | stopped in the warm-up load, before any timed load |
+| a depth the context cannot hold | refused before any load |
+| `deep_table.py` on hand-made speeds | inside the spread negligible, above it a gain, below it a loss |
+
+Three more checks on the same day:
+
+- The driver ran on requests a real agent recorded: the 15 sessions of the agent check's own self-test (pi against the
+  mock, through the logging proxy), at depths 0, 2,048, 8,192 and 16,384.
+- `remote.sh` started a run over ssh with the RAM watchdog, waited for it, collected it and removed its folder.
+- The agent check's self-test still passes with the extended mock (11 checks).
+
+The mock has no model, so these checks cover the driver, not llama-server: the first run on a real server shows
+whether its checkpoints serve the primes as the mock's do.

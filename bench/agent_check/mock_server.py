@@ -17,9 +17,24 @@ Requests without the header (replays) get the same script.
 - --malformed-every K: on tasks whose CRC32 is 2 mod K its first reply carries tool-call markup as text.
 The timings are synthetic: prompt_n and cache_n from a 4-characters-per-token estimate and the previous request's
 prefix, at --prefill-ms and --decode-ms per token.
+
+It also speaks the native endpoints bench/deep_lane uses: /tokenize (four UTF-8 bytes a token, the id their value),
+/apply-template (a ChatML-like rendering of the messages and tools) and /completion (a prompt as text or token ids,
+n_predict, cache_prompt, return_tokens). /completion's reply is a function of the prompt alone at temperature 0 and of
+the prompt and the seed otherwise, and its `timings` carry what llama-server's do: cache_n, cache_src, prompt_n,
+prompt_ms, prompt_per_second, predicted_n, predicted_ms, predicted_per_second and, when the server line has -md, the
+draft counters draft_n and draft_n_accepted. Its model of the server:
+- the cache is rolled back as a recurrent model's is: to the newest of the last four checkpoints at or below the shared
+  prefix, one checkpoint four tokens before the end of each prompt (cache_src checkpoint), or not at all (none); a
+  prompt that continues the whole cache reuses it (live); a request generates at least one token;
+- a step costs --decode-ms plus --depth-ms per 1,000 tokens of prompt; with -md every step drafts --spec-draft-n-max
+  tokens (default 3), each accepted with probability --draft-accept while the ones before it were, and costs
+  --draft-step-cost times a plain step.
+At its start it prints the GGML_, LLAMA_ and CUDA_ variables of its environment.
 """
 import argparse
 import json
+import os
 import random
 import threading
 import time
@@ -28,6 +43,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 TASK_ROOT = Path(__file__).resolve().parent / "tasks"
+NATIVE = ("/tokenize", "/apply-template", "/completion")
+LETTERS = b"abcdefghijklmnopqrstuvwxyz "
 
 
 def task_dir(task_id):
@@ -42,10 +59,89 @@ class State:
     lock = threading.Lock()
     last_prompt = ""
     tries = {}  # task -> set of try ids seen
+    kv = []  # /completion: the token ids in the cache (the last prompt and its reply)
+    ckpts = []  # /completion: the checkpoints' positions, oldest first
 
 
 def crc(s):
     return zlib.crc32(s.encode())
+
+
+def tok_ids(text):
+    """The mock's tokenizer: four UTF-8 bytes a token, the id their little-endian value."""
+    b = text.encode()
+    return [int.from_bytes(b[i:i + 4], "little") for i in range(0, len(b), 4)]
+
+
+def tok_text(ids):
+    return b"".join(i.to_bytes(4, "little").rstrip(b"\0") for i in ids).decode("utf-8", "replace")
+
+
+def render(body):
+    """A ChatML-like prompt of a chat request's tools and messages, ending where the assistant's turn starts."""
+    out = []
+    if body.get("tools"):
+        out.append("<|im_start|>system\n# Tools\n" + json.dumps(body["tools"]) + "<|im_end|>\n")
+    for m in body.get("messages", []):
+        c = m.get("content") or ""
+        if not isinstance(c, str):
+            c = "".join(p.get("text", "") for p in c if isinstance(p, dict))
+        think = f"<think>\n{m['reasoning_content']}\n</think>\n" if m.get("reasoning_content") else ""
+        calls = "".join("\n<tool_call>" + json.dumps(t.get("function", t)) + "</tool_call>"
+                        for t in m.get("tool_calls") or [])
+        out.append(f"<|im_start|>{m.get('role', 'user')}\n{think}{c}{calls}<|im_end|>\n")
+    return "".join(out) + "<|im_start|>assistant\n"
+
+
+def complete(body, a):
+    """/completion: (reply, seconds to sleep) for a request body."""
+    prompt = body.get("prompt", "")
+    ids = tok_ids(prompt) if isinstance(prompt, str) else [int(t) for t in prompt]
+    n = max(1, int(body.get("n_predict", 16)))
+    with State.lock:
+        common = 0
+        for x, y in zip(State.kv, ids):
+            if x != y:
+                break
+            common += 1
+        if not body.get("cache_prompt", True):
+            cache_n, src = 0, "none"
+        elif common and common == len(State.kv):
+            cache_n, src = min(common, len(ids) - 1), "live"
+        else:
+            cache_n = max((c for c in State.ckpts if c <= common), default=0)
+            src = "checkpoint" if cache_n else "none"
+        State.ckpts = [c for c in State.ckpts if c <= cache_n and c != len(ids) - 4]
+        if len(ids) > 4:
+            State.ckpts = (State.ckpts + [len(ids) - 4])[-4:]
+        greedy = body.get("temperature", 1.0) == 0 or body.get("top_k") == 1
+        seed = zlib.crc32(json.dumps(ids).encode()) ^ (0 if greedy else int(body.get("seed", 0)) + 1)
+        rng = random.Random(seed)
+        out = [int.from_bytes(bytes(rng.choice(LETTERS) for _ in range(4)), "little") for _ in range(n)]
+        State.kv = ids + out
+    steps, drafted, accepted = n, 0, 0
+    if a.draft:
+        rng, steps, made = random.Random(seed ^ 0x5BD1E995), 0, 0
+        while made < n:
+            k = 0
+            while k < a.draft_n_max and rng.random() < a.draft_accept:
+                k += 1
+            steps, drafted, accepted, made = steps + 1, drafted + a.draft_n_max, accepted + k, made + 1 + k
+    prompt_n = max(1, len(ids) - cache_n)
+    prompt_ms = max(prompt_n * a.prefill_ms, 1e-6)
+    predicted_ms = steps * (a.decode_ms + a.depth_ms * len(ids) / 1000) * (a.draft_step_cost if a.draft else 1)
+    predicted_ms = max(predicted_ms, 1e-6)
+    timings = {"cache_n": cache_n, "cache_src": src, "prompt_n": prompt_n, "prompt_ms": prompt_ms,
+               "prompt_per_token_ms": prompt_ms / prompt_n, "prompt_per_second": prompt_n * 1000 / prompt_ms,
+               "predicted_n": n, "predicted_ms": predicted_ms, "predicted_per_token_ms": predicted_ms / n,
+               "predicted_per_second": n * 1000 / predicted_ms}
+    if a.draft:
+        timings.update(draft_n=drafted, draft_n_accepted=accepted)
+    reply = {"content": tok_text(out), "stop": True, "stop_type": "limit", "tokens_predicted": n,
+             "tokens_evaluated": len(ids), "timings": timings}
+    if body.get("return_tokens"):
+        reply["tokens"] = out
+    return reply, (prompt_ms + predicted_ms) / 1000
 
 
 def reply_for(task_id, n_assistant, args, try_id):
@@ -112,6 +208,15 @@ class Handler(BaseHTTPRequestHandler):
         raw = self.rfile.read(n)
         if self.path.startswith("/slots"):
             return self.send_json(200, {"id_slot": 0, "n_erased": 0})
+        if self.path.startswith(NATIVE):
+            body = json.loads(raw)
+            if self.path.startswith("/tokenize"):
+                return self.send_json(200, {"tokens": tok_ids(body.get("content", ""))})
+            if self.path.startswith("/apply-template"):
+                return self.send_json(200, {"prompt": render(body)})
+            reply, wait = complete(body, self.server.args)
+            time.sleep(wait)
+            return self.send_json(200, reply)
         if not self.path.startswith("/v1/chat/completions"):
             return self.send_json(404, {"error": "not found"})
         body = json.loads(raw)
@@ -209,12 +314,22 @@ def main():
     ap.add_argument("--malformed-every", type=int, default=0)
     ap.add_argument("--prefill-ms", type=float, default=0.05)
     ap.add_argument("--decode-ms", type=float, default=1.0)
+    ap.add_argument("--depth-ms", type=float, default=0.0)
+    ap.add_argument("--draft-accept", type=float, default=0.7)
+    ap.add_argument("--draft-step-cost", type=float, default=1.3)
     a, ignored = ap.parse_known_args()
+    # llama-server's own draft flags, read from the ignored ones: registered with argparse, -md would also match -m
+    a.draft = "-md" in ignored or "--model-draft" in ignored
+    a.draft_n_max = 3
+    if "--spec-draft-n-max" in ignored[:-1]:
+        a.draft_n_max = int(ignored[ignored.index("--spec-draft-n-max") + 1])
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     srv.args = a
     srv.daemon_threads = True
     print(f"mock llama-server on {a.host}:{a.port}" + (f" (ignored: {' '.join(ignored)})" if ignored else ""),
           flush=True)
+    print("environment: " + " ".join(f"{k}={v}" for k, v in sorted(os.environ.items())
+                                     if k.startswith(("GGML_", "LLAMA_", "CUDA_"))), flush=True)
     srv.serve_forever()
 
 

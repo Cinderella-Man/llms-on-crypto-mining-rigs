@@ -369,3 +369,6 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
 - **`selftest_pilot.sh`** runs `pilot.sh` (or `full_run.sh`) against a fake rig on the laptop. An `ssh` stand-in runs
   the rig-side script locally and forwards the port, and the "llama-server" is the mock. That checks the server
   starts and stops, the monitors, the log collection and cleanup, and the reports.
+- **The mock's native endpoints** (`/tokenize`, `/apply-template`, `/completion` with token-id prompts, a prompt
+  cache rolled back to checkpoints, and the draft counters in `timings` when the line has `-md`) serve
+  [bench/deep_lane](../deep_lane/README.md), whose own `selftest.sh` uses them.
