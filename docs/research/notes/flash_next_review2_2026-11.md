@@ -280,7 +280,7 @@ One instrument should answer each question once. The bench is the owner's measur
 - **Q1146 becomes the second opinion on the same two files** (Swift Q2_0 and IQ3_S on the polyglot tasks), run only
   if the bench's bracket lands inside its resolution, since 82 tasks a seed resolve less than they seem to: by the
   project's power table a 5-point difference needs ~340 paired tasks.
-- **Near neighbours (IQ2_XS, IQ3_XXS, the v3.1 mix) are scored only after the bracket separates.** If Q2_0 and IQ3_S
+- **Near neighbours (IQ2_XS, IQ3_XXS, the v3.1 mix, the N2P files) are scored only after the bracket separates.** If Q2_0 and IQ3_S
   cannot be told apart on tasks, no file between them can, and the file is chosen on speed, tokens per solved case
   and loop rate.
 - **Q1147 points at E16.** Note for that row: the card lists `xhigh`, `medium` and `low`; there is no `high`.
@@ -353,7 +353,7 @@ runs wherever the owner places it.
 | | 2 | sister: E1 and E13 (the bracket) | whether file quality moves real tasks | est. 12 h of series |
 | | 3 | Q1109's offline gate; Q806; copy spans in recorded real attempts (Q787) | what a longer, chained or lookup draft can pay | 1 to 3 h |
 | | 4 | Q1162: KLD by depth bucket | quality where tasks live | 3 h |
-| | 5 | Q710's reshard, C326's code text, Q552's KLD | files ready for whatever the bracket says | 1 + 2.5 + 0.75 h |
+| | 5 | Q710's reshard, C326's code text, Q552's KLD, the two N2P files' checks and KLD (Q928) | files ready for whatever the bracket says; whether a Pascal-format file beats IQ2_XS's KLD without its loops | 1 + 2.5 + 0.75 + 1.5 h |
 
 **Decision rules**, so that each result moves the queue without a new review:
 - R41 or S37 puts a part of the step above 5 ms → that part's row is next in code (Q1148, Q960, Q1104, Q969).
