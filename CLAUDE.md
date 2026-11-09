@@ -32,6 +32,15 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
   message. An idea is not a proposal awaiting discussion. Ideas the evidence argues against are kept as planned rows
   marked parked, with the reason and what would reopen them. Tracking every idea is what keeps work from being done
   twice.
+- Two kinds of ideas belong to the sister repo
+  [elixir-agents-on-mining-rigs](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs), not here:
+  - Elixir models and training: fine-tuning, LoRA, distillation, RL, teacher models;
+  - shrinking a model by cutting or merging parts: expert pruning or merging, layer or head drops, vocabulary trims,
+    lottery tickets.
+
+  Search its `experiments.md` before adding such an idea, and add new ones there. Rows moved from here kept their ids,
+  so an id this registry lacks (for example Q239 or Q472) is a row there. Run-time skipping that keeps the file whole,
+  and file formats, stay here.
 
 ## The data behind every result
 

@@ -126,6 +126,15 @@ Elixir models, training and model shrinking have their own repo,
 
 The finished expert-cut runs (Q232, Q890, Q891) stay here with their data.
 
+New ideas of these kinds get their rows there, not here, and that registry is searched first, so no idea is found
+twice:
+- **Elixir and training:** fine-tuning, LoRA, distillation, RL, teacher models, task mining, Elixir models.
+- **Model shrinking:** cutting or merging parts, such as expert pruning (REAP, RCO, usage cuts), expert merging (REAM,
+  HC-SMoE), shared bases, layer or head drops, vocabulary trims, lottery tickets.
+
+Run-time skipping that keeps the file whole stays here: the per-token expert skip (Q618), activation sparsity (Q622)
+and the cold tier (Q238).
+
 ### Flint
 
 | ID | Question | Status | Result | How |

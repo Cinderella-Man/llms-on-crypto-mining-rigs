@@ -83,7 +83,9 @@ Levers checked and not worth it on this rig:
 - **Trimming the vocabulary:** the output head is 12 % of the bytes, but a 65,000-token head misses 1.9 % of English and
   5.5 % of code tokens. Expected +4–6.5 %.
 - **Pruning layers, attention heads or experts:** below the quality bar without retraining. Expert pruning reads the
-  same bytes per token.
+  same bytes per token. Pruning and other ways of shrinking a model are now tracked in
+  [elixir-agents-on-mining-rigs](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs) (its registry and
+  `docs/research/`).
 - **ik_llama.cpp's types, Marlin-style and lookup-table kernels, other engines:** CPU-only, tensor-core-only, or no
   faster on sm_61. ik_llama.cpp also needs AVX2 on the host.
 

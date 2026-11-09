@@ -1,5 +1,15 @@
 # Research notes: MoE inference on the P106 rig
 
+Notes on Elixir models, training (fine-tuning, distillation, RL, a teacher model) and shrinking a model by cutting or
+merging parts (expert pruning and merging, layer drops, lottery tickets) live in the sister repo's
+[docs/research](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs/tree/main/docs/research):
+- the fine-tuning reports;
+- `expert_pruning_survey.md`;
+- `pruning_from_flint_surveys.md`;
+- `pruning_and_lottery_tickets.md`.
+
+Where a note here mentions pruning in passing, the open ideas are rows in that repo's registry.
+
 These are the underlying research notes that the report [Fitting 2026's MoE models onto nine P106s](../moe-inference-on-the-p106-rig.md) synthesises, one note per topic, compiled as of 2026-10-22. They hold the full source lists, per-quant file sizes, tables and arithmetic that the report summarises, along with each topic's own claims to test and experiment ideas. Nothing in them was measured on the rig unless stated; measured results are in [docs/benchmarks/](../../benchmarks/), and the hardware is described in the [hardware spec](../../mining_rig.md).
 
 - [models_small_moe.md](models_small_moe.md): catalogue of small and mid-size MoE models (up to ~40B total), with GGUF sizes, disk and VRAM fit, KV-cache cost and decode-speed ceilings.
