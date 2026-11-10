@@ -1,0 +1,5 @@
+run	arm	tasks	passed	failed_tasks	turns	requests	generated	tool_calls	tool_errors	malformed_calls	length_stops	runaways	infra_tries	drafted	accepted	share_accepted	tokens_per_step	generated_per_turn	median_reply	largest_reply	replies_1000_plus	first_reply	second_reply	later_replies	drawn_on_device	grammar_rejected
+pv0-1	pv0	12	12	-	92	92	34945	87	0	0	0	-	0	35229	23129	0.6565	2.957	379.8	190.5	4694	7	792	11826	22327	34964	4
+pv1-1	pv1	12	12	-	64	64	35406	59	1	0	0	-	0	31644	24874	0.7861	3.362	553.2	149.5	17785	5	801	25457	9148	35486	22
+pv0-2	pv0	12	12	-	67	67	21936	60	2	0	0	-	0	21399	14752	0.6894	3.053	327.4	165	4071	2	797	10783	10356	21952	2
+pv1-2	pv1	12	12	-	60	60	36683	56	0	0	0	-	0	33114	25665	0.775	3.329	611.4	174.0	9445	6	861	27222	8600	36763	26
