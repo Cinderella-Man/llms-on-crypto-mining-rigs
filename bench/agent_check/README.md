@@ -180,7 +180,16 @@ check also has no network. On the quant machine each attempt runs in its own con
     cache carries over as it would for a user;
   - `--stream off`: the request non-streamed;
   - `--drop-reasoning`: the earlier replies' reasoning removed from the history;
-  - `--ignore-eos`: exactly the recorded length generated.
+  - `--ignore-eos`: exactly the recorded length generated;
+  - `--requests 1` (or `1,3`): only the requests at these positions of each trace, counted from 0, without the ones
+    before them: one turn of every task on its recorded history;
+  - `--repeat N`: each request sent N times in a row, repeat k (from 0) with the seed plus 104729 × k and `rep` in its
+    row: N replies to one prompt, the same seeds on every server;
+  - `--reply-limit request` keeps the `max_tokens` the agent sent, `--reply-limit N` sets N tokens; the default
+    `recorded` is the recorded reply's length. With the agent's own limit a replay shows how long the replies get
+    ([reply lengths with probabilistic verification](../../docs/data/2026-11-10_prob_verify_reply_length/README.md));
+  - `--count-parts`: each row keeps the tokens of the reply's reasoning, text and tool-call arguments (`reasoning_n`,
+    `content_n`, `tool_args_n`: each part tokenized again by the server's `/tokenize`) and their characters.
 - **`replay.py summary`** prints, per label: ms per prompt token, ms per generated token, the fixed cost per request,
   cache and time to first token. It gives each label's ratio to a reference with a 95 % bootstrap interval over
   traces, and "same work" minutes (the reference's token counts priced at each label's costs). The live rows of the
@@ -372,7 +381,9 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
   - a second run resumes without redoing anything;
   - the turn cap stops an attempt;
   - every turn has a proxy row with timings;
-  - replay re-sends traces with the recorded `max_tokens`.
+  - replay re-sends traces with the recorded `max_tokens`;
+  - replay's `--requests`, `--repeat` (a seed per repeat, the first one unchanged), `--reply-limit` and
+    `--count-parts` do what they say.
 - **`selftest_pilot.sh`** runs `pilot.sh` (or `full_run.sh`) against a fake rig on the laptop. An `ssh` stand-in runs
   the rig-side script locally and forwards the port, and the "llama-server" is the mock. That checks the server
   starts and stops, the monitors, the log collection and cleanup, and the reports.

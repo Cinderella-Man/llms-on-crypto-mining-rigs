@@ -1,0 +1,5 @@
+load	arm	set	replies	generated	median	mean	longest	long_replies	long_share	at_limit	reasoning_tokens	answer_tokens	reasoning_share	reasoning_median	reasoning_mean	answer_median	answer_mean	replies_without_reasoning	ended_tool_calls	ended_stop	drafted	accepted	share_accepted	tokens_a_step	sampled_on_device	grammar_checked	grammar_rejected	replies_with_grammar_rejection
+pv0-a	pv0	a	60	66802	444.0	1113.4	8619	3	0.0500	0	63812	2990	0.9552	395.0	1063.5	45.5	49.8	0	60	0	63081	45721	0.7248	3.169	66808	2750	0	0
+pv0-b	pv0	b	60	91163	348.0	1519.4	11619	7	0.1167	0	87630	3533	0.9612	296.5	1460.5	45.5	58.9	0	60	0	86367	62326	0.7216	3.161	91175	3278	0	0
+pv1-a	pv1	a	60	95670	378.5	1594.5	19994	6	0.1000	0	92761	2909	0.9696	333.0	1546.0	47.5	48.5	0	60	0	89130	65973	0.7402	3.222	95743	2720	33	33
+pv1-b	pv1	b	60	72564	338.0	1209.4	13639	3	0.0500	0	69337	3227	0.9555	295.0	1155.6	45.0	53.8	0	60	0	66090	50543	0.7648	3.295	72633	3051	29	29

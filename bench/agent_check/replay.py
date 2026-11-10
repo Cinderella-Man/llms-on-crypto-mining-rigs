@@ -5,14 +5,19 @@
                        [--task-set polyglot|bugfix]
     python3 replay.py run --log RESULTS/proxy.jsonl --traces ARM/TASK/a1/t1[,…] --server http://127.0.0.1:PORT
                       --label v1-ud --out REPLAY.jsonl [--stream recorded|on|off] [--ignore-eos] [--erase-slot]
+                      [--requests 1[,2…]] [--repeat N] [--reply-limit recorded|request|N] [--count-parts]
     python3 replay.py summary REPLAY.jsonl [REPLAY2.jsonl …] [--reference v2-ud]
 
 A trace is one attempt's try as the proxy logged it (tag prefix "<arm>/<task>/a<k>/t<n>"). `run` sends each of its
 requests to SERVER's /v1/chat/completions exactly as recorded (messages, tools, sampling), except:
 - `max_tokens` is the recorded reply's generated length (llama-server's predicted_n), so every server generates the
-  same amount, at most; with --ignore-eos exactly that amount;
+  same amount, at most; with --ignore-eos exactly that amount. --reply-limit request keeps the request's own
+  `max_tokens` (the limit the agent sent), --reply-limit N sets N tokens: for comparing how long the replies get;
 - `seed` is fixed per trace and request (CRC32 of the trace plus 7919 × index), the same for every server, so two
-  servers sample from the same random numbers;
+  servers sample from the same random numbers. With --repeat N each request is sent N times in a row, repeat k
+  (from 0) with the seed plus 104729 × k, and its row carries `rep`: N replies to one prompt, one seed each;
+- with --requests I[,J…] only the requests at these positions of each trace (from 0) are sent, without the ones
+  before them: one turn of every task on the history as recorded;
 - `stream` as recorded (pi always streams) unless --stream on/off;
 - with --drop-reasoning, the earlier replies' reasoning_content is removed from the history (what keeping the
   reasoning costs in prefill; a speed variant only).
@@ -25,7 +30,9 @@ recorded one, so from the second request on each turn reuses the cache only up t
 Each row also keeps the counters llama-server reports in `timings` (draft_n and draft_n_accepted with a draft model,
 sampled_on_device, grammar_n, grammar_rejected_n; the recorded request's under `rec`) and `reply_md5`, the MD5 of the
 assembled reply (reasoning, text, tool calls), so two replays can be compared on what was written without keeping the
-text.
+text. With --count-parts a row also keeps the reply's parts: `reasoning_n`, `content_n` and `tool_args_n`, the tokens
+of the reasoning, the text and the tool calls' arguments as the server's /tokenize counts them (the parts tokenized
+again one by one, so their sum is close to predicted_n, not equal to it), and the characters of each.
 
 `pick` chooses N traces of one arm's scored attempts (optionally within task positions A-B of the run order) that
 span its range of live minutes: the attempts at the quantiles (2i + 1) / 2N of live time, so a replay set has short,
@@ -101,10 +108,31 @@ def send(server, body, timeout):
     row = st.summary()
     row.update(status=status, t_end=round(time.monotonic() - t0, 4))
     row.update({k: row["timings"][k] for k in COUNTERS if k in (row["timings"] or {})})
-    row["reply_md5"] = hashlib.md5(json.dumps(st.reply(), sort_keys=True).encode()).hexdigest()
+    reply = st.reply()
+    row["reply_md5"] = hashlib.md5(json.dumps(reply, sort_keys=True).encode()).hexdigest()
     if err:
         row["error"] = err
-    return row
+    return row, reply
+
+
+def count_parts(server, reply, timeout=120):
+    """Tokens (the server's /tokenize; None if it has none) and characters of a reply's reasoning, text and tool-call
+    arguments."""
+    def n_tok(text):
+        if not text:
+            return 0
+        req = urllib.request.Request(server.rstrip("/") + "/tokenize", data=json.dumps({"content": text}).encode(),
+                                     headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return len(json.loads(resp.read())["tokens"])
+        except Exception:  # noqa: BLE001 - the counts stay empty, the replay goes on
+            return None
+    parts = dict(reasoning=reply["reasoning_content"], content=reply["content"],
+                 tool_args="".join(t["arguments"] for t in reply["tool_calls"]))
+    out = {f"{k}_n": n_tok(v) for k, v in parts.items()}
+    out.update({f"{k}_chars": len(v) for k, v in parts.items()})
+    return out
 
 
 def cmd_list(a):
@@ -122,18 +150,24 @@ def cmd_run(a):
     names = [t for t in a.traces.split(",") if t] if a.traces else []
     if a.traces_file:
         names += [l.strip() for l in a.traces_file.read_text().splitlines() if l.strip()]
+    only = {int(x) for x in a.requests.split(",") if x.strip()} if a.requests else None
+    if a.repeat < 1:
+        sys.exit("--repeat takes 1 or more")
+    if a.reply_limit not in ("recorded", "request") and not (a.reply_limit.isdigit() and int(a.reply_limit) > 0):
+        sys.exit("--reply-limit takes recorded, request or a number of tokens")
     done = defaultdict(set)
     if a.out.exists():
         for l in a.out.open():
             if l.strip():
                 r = json.loads(l)
                 if r["label"] == a.label and not r.get("error"):
-                    done[r["trace"]].add(r["idx"])
+                    done[r["trace"]].add((r["idx"], r.get("rep", 0)))
     out = a.out.open("a")
     for name in names:
         if name not in traces:
             sys.exit(f"trace {name} not in the logs (see `replay.py list`)")
-        if len(done[name]) >= len(traces[name]):
+        want = {(i, k) for i in range(len(traces[name])) if only is None or i in only for k in range(a.repeat)}
+        if want <= done[name]:
             print(f"{a.label} {name}: already replayed, skipped", flush=True)
             continue
         if a.erase_slot:
@@ -144,35 +178,43 @@ def cmd_run(a):
                 print(f"slot erase failed: {e}", file=sys.stderr)
         base_seed = zlib.crc32(name.encode())
         for i, rec in enumerate(traces[name]):
+            if only is not None and i not in only:
+                continue
             b = bodies.get(rec["id"])
             if not b or not isinstance(b["body"], dict):
                 print(f"{name} #{i}: no body recorded, skipped", file=sys.stderr)
                 continue
-            body = dict(b["body"])
-            n_gen = rec.get("predicted_n") or (rec.get("usage") or {}).get("completion_tokens")
-            if n_gen:
-                body["max_tokens"] = int(n_gen)
-            if a.ignore_eos:
-                body["ignore_eos"] = True
-            body["seed"] = (base_seed + 7919 * i) % (2 ** 31)
-            if a.stream != "recorded":
-                body["stream"] = a.stream == "on"
-            if not body.get("stream"):
-                body.pop("stream_options", None)
-            if a.drop_reasoning:
-                body["messages"] = [{k: v for k, v in m.items() if k != "reasoning_content"}
-                                    if m.get("role") == "assistant" else m for m in body["messages"]]
-            r = send(a.server, body, a.timeout)
-            row = dict(label=a.label, trace=name, idx=i, rec_id=rec["id"], t_wall=time.time(), **request_facts(body),
-                       **r, rec=dict({k: rec.get(k) for k in ("prompt_n", "prompt_ms", "cache_n", "predicted_n",
-                                                              "predicted_ms", "t_first_token", "t_end")},
-                                **{k: rec["timings"][k] for k in COUNTERS if k in (rec.get("timings") or {})}))
-            row.pop("timings", None)
-            out.write(json.dumps(row) + "\n")
-            out.flush()
-            print(f"{a.label} {name} #{i}: prompt {r.get('prompt_n')} (cache {r.get('cache_n')}) "
-                  f"gen {r.get('predicted_n')} in {r['t_end']:.1f} s{' ERROR ' + r['error'] if r.get('error') else ''}",
-                  flush=True)
+            for rep in range(a.repeat):
+                body = dict(b["body"])
+                n_gen = rec.get("predicted_n") or (rec.get("usage") or {}).get("completion_tokens")
+                if a.reply_limit == "recorded":
+                    if n_gen:
+                        body["max_tokens"] = int(n_gen)
+                elif a.reply_limit != "request":
+                    body["max_tokens"] = int(a.reply_limit)
+                if a.ignore_eos:
+                    body["ignore_eos"] = True
+                body["seed"] = (base_seed + 7919 * i + 104729 * rep) % (2 ** 31)
+                if a.stream != "recorded":
+                    body["stream"] = a.stream == "on"
+                if not body.get("stream"):
+                    body.pop("stream_options", None)
+                if a.drop_reasoning:
+                    body["messages"] = [{k: v for k, v in m.items() if k != "reasoning_content"}
+                                        if m.get("role") == "assistant" else m for m in body["messages"]]
+                r, reply = send(a.server, body, a.timeout)
+                parts = count_parts(a.server, reply) if a.count_parts else {}
+                row = dict(label=a.label, trace=name, idx=i, rep=rep, rec_id=rec["id"], t_wall=time.time(),
+                           **request_facts(body), **r, **parts,
+                           rec=dict({k: rec.get(k) for k in ("prompt_n", "prompt_ms", "cache_n", "predicted_n",
+                                                             "predicted_ms", "t_first_token", "t_end")},
+                                    **{k: rec["timings"][k] for k in COUNTERS if k in (rec.get("timings") or {})}))
+                row.pop("timings", None)
+                out.write(json.dumps(row) + "\n")
+                out.flush()
+                print(f"{a.label} {name} #{i}{f' rep {rep}' if a.repeat > 1 else ''}: prompt {r.get('prompt_n')} "
+                      f"(cache {r.get('cache_n')}) gen {r.get('predicted_n')} ({r.get('finish_reason')}) in "
+                      f"{r['t_end']:.1f} s{' ERROR ' + r['error'] if r.get('error') else ''}", flush=True)
 
 
 def cmd_pick(a):
@@ -226,14 +268,14 @@ def same_work_min(ref_rows, c):
 
 
 def load_replay(files):
-    """Replay rows without errors, the last one per label, trace and request."""
+    """Replay rows without errors, the last one per label, trace, request and repeat."""
     last = {}
     for p in files:
         for l in Path(p).open():
             if l.strip():
                 r = json.loads(l)
                 if not r.get("error"):
-                    last[(r["label"], r["trace"], r["idx"])] = r
+                    last[(r["label"], r["trace"], r["idx"], r.get("rep", 0))] = r
     return list(last.values())
 
 
@@ -304,6 +346,14 @@ def main():
     p.add_argument("--erase-slot", action="store_true")
     p.add_argument("--timeout", type=float, default=3600)
     p.add_argument("--drop-reasoning", action="store_true")
+    p.add_argument("--requests", default="", help="I[,J…]: only the requests at these positions of each trace (from 0)")
+    p.add_argument("--repeat", type=int, default=1,
+                   help="send each request N times in a row, repeat k with the seed plus 104729 × k")
+    p.add_argument("--reply-limit", default="recorded",
+                   help="max_tokens: recorded (the recorded reply's length), request (as the agent sent it) or N tokens")
+    p.add_argument("--count-parts", action="store_true",
+                   help="keep the tokens (the server's /tokenize) and characters of each reply's reasoning, text and "
+                        "tool-call arguments")
     p = sub.add_parser("pick")
     p.add_argument("--log", nargs="+", required=True)
     p.add_argument("--results", required=True)
