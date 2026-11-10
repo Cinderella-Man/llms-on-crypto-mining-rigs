@@ -16,7 +16,14 @@ Requests without the header (replays) get the same script.
   second turn's stream, an infrastructure failure the runner must re-run;
 - --malformed-every K: on tasks whose CRC32 is 2 mod K its first reply carries tool-call markup as text.
 The timings are synthetic: prompt_n and cache_n from a 4-characters-per-token estimate and the previous request's
-prefix, at --prefill-ms and --decode-ms per token.
+prefix, at --prefill-ms and --decode-ms per token. A client that closes the connection while a chat reply is being
+"decoded" cancels it, streamed or not, as llama-server does. For race_proxy.py's self-test:
+- --name NAME: each chat reply's reasoning starts with "[NAME seed S] " (S the request's seed);
+- --seed-length K: the reasoning is written 1 + (seed mod K) times, so the reply's length follows the seed;
+- a streamed request with `timings_per_token` gets the timings so far in every chunk with a delta;
+- --error-status CODE: every chat request gets that HTTP status and an error body;
+- --log FILE: one JSON line per chat request: the tag, seed, whether it streamed, the pieces sent, start and end
+  (wall clock) and the outcome (done, cancelled, dropped, error).
 
 It also speaks the native endpoints bench/deep_lane uses: /tokenize (four UTF-8 bytes a token, the id their value),
 /apply-template (a ChatML-like rendering of the messages and tools) and /completion (a prompt as text or token ids,
@@ -36,6 +43,8 @@ import argparse
 import json
 import os
 import random
+import select
+import socket
 import threading
 import time
 import zlib
@@ -189,6 +198,26 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b)
 
+    def pause(self, seconds):
+        """Sleep, or return False as soon as the client has closed the connection."""
+        end = time.monotonic() + seconds
+        while True:
+            left = end - time.monotonic()
+            if select.select([self.connection], [], [], max(0.0, min(left, 0.05)))[0]:
+                try:
+                    if self.connection.recv(1, socket.MSG_PEEK) == b"":
+                        return False
+                except OSError:
+                    return False
+                time.sleep(max(0.0, min(left, 0.05)))
+            if left <= 0:
+                return True
+
+    def log_chat(self, row):
+        if self.server.args.log:
+            with State.lock, open(self.server.args.log, "a") as f:
+                f.write(json.dumps(dict(row, t_end=time.time())) + "\n")
+
     def do_GET(self):
         if self.path.startswith("/health"):
             return self.send_json(200, {"status": "ok"})
@@ -221,12 +250,23 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(404, {"error": "not found"})
         body = json.loads(raw)
         a = self.server.args
+        seed = body.get("seed")
+        log = dict(tag=self.headers.get("X-Agent-Check"), seed=seed, stream=bool(body.get("stream")), pieces=0,
+                   t_start=time.time(), outcome="done")
+        if a.error_status:
+            self.log_chat(dict(log, outcome="error"))
+            return self.send_json(a.error_status, {"error": {"code": a.error_status, "type": "server_error",
+                                                             "message": "mock: --error-status"}})
         tag = (self.headers.get("X-Agent-Check") or "").split("/")
         task_id = tag[1] if len(tag) >= 2 else None
         try_id = tag[3] if len(tag) >= 4 else ""
         msgs = body.get("messages", [])
         n_assistant = sum(1 for m in msgs if m.get("role") == "assistant")
         reasoning, content, calls, drop = reply_for(task_id, n_assistant, a, try_id)
+        if a.seed_length and isinstance(seed, int):
+            reasoning = " ".join([reasoning] * (1 + seed % a.seed_length))
+        if a.name:
+            reasoning = f"[{a.name} seed {seed}] {reasoning}"
         prompt = json.dumps(msgs) + json.dumps(body.get("tools", []))
         with State.lock:
             common = 0
@@ -242,7 +282,8 @@ class Handler(BaseHTTPRequestHandler):
         if body.get("max_tokens"):
             predicted_n = min(predicted_n, int(body["max_tokens"]))
         prompt_ms = prompt_n * a.prefill_ms
-        time.sleep(prompt_ms / 1000)
+        if not self.pause(prompt_ms / 1000):
+            return self.log_chat(dict(log, outcome="cancelled"))
         cid = f"chatcmpl-mock{random.randrange(1 << 30)}"
         tool_calls = [{"index": i, "id": f"call_{random.randrange(1 << 30):x}", "type": "function",
                        "function": {"name": name, "arguments": json.dumps(args)}} for i, (name, args) in
@@ -254,13 +295,15 @@ class Handler(BaseHTTPRequestHandler):
                  "total_tokens": cache_n + prompt_n + predicted_n,
                  "prompt_tokens_details": {"cached_tokens": cache_n}}
         if not body.get("stream"):
-            time.sleep(predicted_n * a.decode_ms / 1000)
+            if not self.pause(predicted_n * a.decode_ms / 1000):
+                return self.log_chat(dict(log, outcome="cancelled"))
             msg = {"role": "assistant", "content": content or None, "reasoning_content": reasoning}
             if tool_calls:
                 msg["tool_calls"] = [{k: v for k, v in tc.items() if k != "index"} for tc in tool_calls]
-            return self.send_json(200, {"id": cid, "object": "chat.completion", "model": "flint",
-                                        "choices": [{"index": 0, "message": msg, "finish_reason": finish}],
-                                        "usage": usage, "timings": timings})
+            self.send_json(200, {"id": cid, "object": "chat.completion", "model": "flint",
+                                 "choices": [{"index": 0, "message": msg, "finish_reason": finish}],
+                                 "usage": usage, "timings": timings})
+            return self.log_chat(dict(log, pieces=1))
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
         self.send_header("Transfer-Encoding", "chunked")
@@ -270,38 +313,54 @@ class Handler(BaseHTTPRequestHandler):
             data = b"data: " + (obj if isinstance(obj, bytes) else json.dumps(obj).encode()) + b"\n\n"
             self.wfile.write(b"%x\r\n%s\r\n" % (len(data), data))
             self.wfile.flush()
+            log["pieces"] += 1
 
         def chunk(delta, finish_reason=None, **extra):
             return dict(id=cid, object="chat.completion.chunk", model="flint",
                         choices=[{"index": 0, "delta": delta, "finish_reason": finish_reason}], **extra)
 
+        class Gone(Exception):
+            pass
+
+        def piece(delta):  # one "token"; with timings_per_token its chunk carries the timings so far, as llama-server's
+            n_out[0] += 1
+            k = min(n_out[0], predicted_n)
+            so_far = {"timings": dict(timings, predicted_n=k, predicted_ms=k * a.decode_ms)} if tpt else {}
+            send(chunk(delta, **so_far))
+            if not self.pause(per_piece):
+                raise Gone
+
         per_piece = a.decode_ms / 1000
-        send(chunk({"role": "assistant", "content": None}))
-        for i in range(0, len(reasoning), 12):
-            send(chunk({"reasoning_content": reasoning[i:i + 12]}))
-            time.sleep(per_piece)
-            if drop and i > 24:
-                self.close_connection = True
-                self.wfile.flush()
-                self.connection.shutdown(2)
-                return
-        for i in range(0, len(content), 24):
-            send(chunk({"content": content[i:i + 24]}))
-            time.sleep(per_piece)
-        for tc in tool_calls:
-            args = tc["function"]["arguments"]
-            send(chunk({"tool_calls": [{"index": tc["index"], "id": tc["id"], "type": "function",
-                                        "function": {"name": tc["function"]["name"], "arguments": ""}}]}))
-            for i in range(0, len(args), 200):
-                send(chunk({"tool_calls": [{"index": tc["index"], "function": {"arguments": args[i:i + 200]}}]}))
-        send(chunk({}, finish))
-        if (body.get("stream_options") or {}).get("include_usage"):
-            send(dict(id=cid, object="chat.completion.chunk", model="flint", choices=[], usage=usage,
-                      timings=timings))
-        else:
-            send(chunk({}, None, timings=timings))
-        send(b"[DONE]")
-        self.wfile.write(b"0\r\n\r\n")
+        tpt, n_out = bool(body.get("timings_per_token")), [0]
+        try:
+            send(chunk({"role": "assistant", "content": None}))
+            for i in range(0, len(reasoning), 12):
+                piece({"reasoning_content": reasoning[i:i + 12]})
+                if drop and i > 24:
+                    self.close_connection = True
+                    self.wfile.flush()
+                    self.connection.shutdown(2)
+                    return self.log_chat(dict(log, outcome="dropped"))
+            for i in range(0, len(content), 24):
+                piece({"content": content[i:i + 24]})
+            for tc in tool_calls:
+                args = tc["function"]["arguments"]
+                send(chunk({"tool_calls": [{"index": tc["index"], "id": tc["id"], "type": "function",
+                                            "function": {"name": tc["function"]["name"], "arguments": ""}}]}))
+                for i in range(0, len(args), 200):
+                    send(chunk({"tool_calls": [{"index": tc["index"], "function": {"arguments": args[i:i + 200]}}]}))
+            send(chunk({}, finish))
+            if (body.get("stream_options") or {}).get("include_usage"):
+                send(dict(id=cid, object="chat.completion.chunk", model="flint", choices=[], usage=usage,
+                          timings=timings))
+            else:
+                send(chunk({}, None, timings=timings))
+            send(b"[DONE]")
+            self.wfile.write(b"0\r\n\r\n")
+        except (Gone, BrokenPipeError, ConnectionResetError):
+            self.close_connection = True
+            return self.log_chat(dict(log, outcome="cancelled"))
+        self.log_chat(log)
 
 
 def main():
@@ -317,6 +376,10 @@ def main():
     ap.add_argument("--depth-ms", type=float, default=0.0)
     ap.add_argument("--draft-accept", type=float, default=0.7)
     ap.add_argument("--draft-step-cost", type=float, default=1.3)
+    ap.add_argument("--name", default="")
+    ap.add_argument("--seed-length", type=int, default=0)
+    ap.add_argument("--error-status", type=int, default=0)
+    ap.add_argument("--log", default="")
     a, ignored = ap.parse_known_args()
     # llama-server's own draft flags, read from the ignored ones: registered with argparse, -md would also match -m
     a.draft = "-md" in ignored or "--model-draft" in ignored

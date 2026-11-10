@@ -6,13 +6,23 @@
 #   OUT            results folder (res/, proxy.jsonl, work/ during the run)
 #   ARM            the arm's name                   UPSTREAM_PORT  the server as seen on this machine's loopback
 #   PROXY_PORT     the proxy on this machine's loopback (pi's base URL)
+#   UPSTREAM_PORTS (instead of UPSTREAM_PORT) several servers, space-separated: the proxy is race_proxy.py over them
+#                  in that order (the first-finish race, Q1195), with RACE_ARGS as its options (e.g. --win-at
+#                  reasoning); its per-sample rows go to OUT/proxy.samples.jsonl
 #   TASK_SET (bugfix), TASKS (all), TIME_CAP_MIN (15), TURN_CAP (40), BUDGET_MIN (none: no attempt starts after it),
 #   CTX (65536, pi's context window = the server's -c), CPU_SHARES (256), IMAGE (agent-check:0.87.1),
 #   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings),
 #   PREFIX (acrel: the containers are PREFIX-ARM-*, and both ends remove every PREFIX-ARM-* container)
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
-: "${OUT:?}" "${ARM:?}" "${UPSTREAM_PORT:?}" "${PROXY_PORT:?}"
+: "${OUT:?}" "${ARM:?}" "${PROXY_PORT:?}"
+read -r -a UPS <<< "${UPSTREAM_PORTS:-${UPSTREAM_PORT:?UPSTREAM_PORT or UPSTREAM_PORTS}}"
+if [ -n "${UPSTREAM_PORTS:-}" ]; then
+  # shellcheck disable=SC2206
+  PROXY=(race_proxy.py serve $(printf -- '--upstream 127.0.0.1:%s ' "${UPS[@]}") ${RACE_ARGS:-})
+else
+  PROXY=(proxy.py --upstream "127.0.0.1:$UPSTREAM_PORT")
+fi
 TASK_SET=${TASK_SET:-bugfix}; TASKS=${TASKS:-all}; TIME_CAP_MIN=${TIME_CAP_MIN:-15}; TURN_CAP=${TURN_CAP:-40}
 CTX=${CTX:-65536}; CPU_SHARES=${CPU_SHARES:-256}; IMAGE=${IMAGE:-agent-check:0.87.1}
 LABEL=${LABEL:-pascal-quants=1}
@@ -32,13 +42,13 @@ trap 'echo "stopped"; exit 143' TERM INT HUP
 
 docker rm -f "$PFX-proxy" > /dev/null 2>&1
 docker run -d --name "$PFX-proxy" --label "$LABEL" --cpu-shares "$CPU_SHARES" --network host \
-  -v "$HERE:$HERE:ro" -v "$OUT:$OUT" "$IMAGE" python3 -I "$HERE/proxy.py" --listen "127.0.0.1:$PROXY_PORT" \
-  --upstream "127.0.0.1:$UPSTREAM_PORT" --log "$OUT/proxy.jsonl" > /dev/null \
+  -v "$HERE:$HERE:ro" -v "$OUT:$OUT" "$IMAGE" python3 -I "$HERE/${PROXY[0]}" "${PROXY[@]:1}" \
+  --listen "127.0.0.1:$PROXY_PORT" --log "$OUT/proxy.jsonl" > /dev/null \
   || { echo "proxy container did not start"; exit 1; }
 sleep 2
 [ "$(docker inspect -f '{{.State.Running}}' "$PFX-proxy" 2> /dev/null)" = true ] \
   || { echo "proxy exited:"; docker logs "$PFX-proxy" 2>&1 | tail -5; exit 1; }
-echo "$(date +%H:%M:%S) $ARM: proxy 127.0.0.1:$PROXY_PORT -> 127.0.0.1:$UPSTREAM_PORT; tasks $TASK_SET/$TASKS"
+echo "$(date +%H:%M:%S) $ARM: ${PROXY[0]} 127.0.0.1:$PROXY_PORT -> $(printf '127.0.0.1:%s ' "${UPS[@]}")${RACE_ARGS:+($RACE_ARGS) }; tasks $TASK_SET/$TASKS"
 DEADLINE=()
 [ -n "${BUDGET_MIN:-}" ] && DEADLINE=(--start-deadline-min "$BUDGET_MIN")
 SAMP=()

@@ -279,6 +279,7 @@ class StreamStats:
         self.tool_calls = {}
         self.error = None
         self.n_chunks = 0
+        self.done = False  # the stream's closing [DONE] arrived
 
     def feed(self, data):
         self.buf += data
@@ -289,6 +290,7 @@ class StreamStats:
                 continue
             payload = line[5:].strip()
             if payload == b"[DONE]":
+                self.done = True
                 continue
             try:
                 self.chunk(json.loads(payload))
