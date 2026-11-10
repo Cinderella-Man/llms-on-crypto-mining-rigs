@@ -1,0 +1,64 @@
+run	switches	expect	wrap	recorded_selected	replayed	passed	failed	selected_not_replayed	not_recorded	exit	verdict	seconds	log
+iqkcol-on	-	pass	-	1855	1855	1855	0	0	212	0	ok	175	
+iqkcol-kcol_r2	GGML_CUDA_MMVQ_PASCAL_KCOL_R=2	pass	-	861	861	861	0	0	0	0	ok	22	
+iqkcol-cap1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,1	pass	-	994	994	994	0	0	212	0	ok	150	
+iqkcol-rb1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1	pass	-	994	994	994	0	0	212	0	ok	150	
+iqkcol-off	GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=iq2_xxs,iq2_xs,iq3_s,iq2_s,iq3_xxs,iq1_m GGML_CUDA_MMVQ_PASCAL_MTOK_SKIP=iq2_xxs,iq2_xs,iq3_s,iq2_s,iq3_xxs,iq1_m	pass	-	1855	890	890	0	965		134	WRONG	79	CUDA error: an illegal memory access was encountered
+iqkcol-skip	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s,iq2_s,iq3_xxs,iq1_m	pass	-	1855	890	890	0	965		134	WRONG	78	CUDA error: an illegal memory access was encountered
+iq2xs-on-fusion	-	pass	-	20	20	20	0	0	13	0	ok	10	
+iq2xs-on-shared	-	pass	-	6	6	6	0	0	0	0	ok	2	
+iq2xs-skip-mm	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	-	403	403	403	0	0	0	0	ok	15	
+iq2xs-skip-mmid	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	-	223	223	223	0	0	64	0	ok	47	
+iq2xs-skip-fusion	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	-	171	171	171	0	0	38	0	ok	28	
+iq2xs-skip-shared	GGML_CUDA_MMVQ_PASCAL_SKIP=iq2_xxs,iq2_xs,iq3_s	pass	-	21	21	21	0	0	0	0	ok	2	
+qsa-sparse1	GGML_CUDA_FATTN_SPARSE_PASCAL=1	pass	-	61	48	48	0	13	0	0	ok	21	
+qsa-sparse2	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128	pass	-	61	48	48	0	13	0	0	ok	13	
+qsa-sparse0	GGML_CUDA_FATTN_SPARSE_PASCAL=0	pass	-	61	48	48	0	13	0	0	ok	14	
+qsa-fault1	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=1	pass	-	61	48	48	0	13	0	0	ok	14	
+qsa-fault2	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=2	fail	-	61	48	19	29	13	0	1	ok	14	
+qsa-fault3	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=3	fail	-	61	48	19	29	13	0	1	ok	13	
+memcheck-iq2xs-iq2_xxs-1	-	pass	memcheck	3	3	3	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xxs-2	-	pass	memcheck	1	1	1	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xxs-3	-	pass	memcheck	1	1	1	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xxs-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xxs-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xs-1	-	pass	memcheck	3	3	3	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xs-2	-	pass	memcheck	1	1	1	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xs-3	-	pass	memcheck	1	1	1	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xs-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq2_xs-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq3_s-1	-	pass	memcheck	3	3	3	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq3_s-2	-	pass	memcheck	1	1	1	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq3_s-3	-	pass	memcheck	1	1	1	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq3_s-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iq2xs-iq3_s-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xxs-1	-	pass	memcheck	2	2	2	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xxs-2	-	pass	memcheck	2	2	2	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xxs-3	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xxs-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xxs-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xs-1	-	pass	memcheck	2	2	2	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xs-2	-	pass	memcheck	2	2	2	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xs-3	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xs-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_xs-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_s-1	-	pass	memcheck	2	2	2	0	0	1	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_s-2	-	pass	memcheck	2	2	2	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_s-3	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_s-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_s-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_s-1	-	pass	memcheck	2	2	2	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_s-2	-	pass	memcheck	2	2	2	0	0	0	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_s-3	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_s-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq2_s-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_xxs-1	-	pass	memcheck	2	2	2	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_xxs-2	-	pass	memcheck	2	2	2	0	0	0	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_xxs-3	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_xxs-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq3_xxs-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq1_m-1	-	pass	memcheck	2	2	2	0	0	1	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq1_m-2	-	pass	memcheck	2	2	2	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq1_m-3	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	3	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq1_m-4	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	1	compute-sanitizer: Error: GPU debugging features are disabled.
+memcheck-iqkcol-iq1_m-5	-	pass	memcheck	1	1	1	0	0	0	0	WRONG	2	compute-sanitizer: Error: GPU debugging features are disabled.
