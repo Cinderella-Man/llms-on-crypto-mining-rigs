@@ -38,6 +38,9 @@
 #   indexer-rows  LIGHTNING_INDEXER (LID below): the k-pool indexer reading the pooled keys in place beside its scores
 #                 over the gathered copy (bit for bit), and the fault that scores the wrong rows
 #                 (docs/data/2026-11-11_c704_indexer_gather)
+#   range-mask    RANGE_MASK, every case: the QSA pool mask built on the card from each token's range of visible pools
+#                 (exact), and the fault that makes one more column visible after each range
+#                 (docs/data/2026-11-11_c719_pool_mask_on_cards)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -46,7 +49,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -95,6 +98,8 @@ suite_filters() {
             printf '%s\t%s\n' MUL_MAT "$Q5MT" ;;
         indexer-rows)
             printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
+        range-mask)
+            printf '%s\t%s\n' RANGE_MASK '.' ;;
         *) return 1 ;;
     esac
 }
@@ -191,6 +196,12 @@ suite_runs() {
             printf '%s\t%s\t%s\t%s\t%s\t\n' \
                 lid "" LIGHTNING_INDEXER "$LID" pass \
                 lid-rows-fault GGML_CUDA_LID_ROWS_FAULT=1 LIGHTNING_INDEXER 'n_cells=' fail ;;
+        range-mask)
+            # C719: every RANGE_MASK case, then GGML_CUDA_RANGE_MASK_FAULT=1, which makes one more column visible after
+            # each range and so must fail cases
+            printf '%s\t%s\t%s\t%s\t%s\t\n' \
+                range-mask "" RANGE_MASK . pass \
+                range-mask-fault GGML_CUDA_RANGE_MASK_FAULT=1 RANGE_MASK . fail ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
