@@ -1,0 +1,46 @@
+plain 8192: on and off part at generated token 122 of 128: on writes 44631, off writes 62
+  probe on.r2: the same 121 tokens before it: True; writes 44631 ('_Str'); log-probability of 44631 ('_Str'): -1.3271393775939941, of 62 ('_'): -1.7028412818908691, lead of 44631 over 62: +0.3757
+    top 5: 44631 '_Str' -1.3271, 14659 '_Con' -1.3718, 62 '_' -1.7028, 18442 '_Name' -2.2366, 2160 '_O' -2.9960
+  probe off.r2: the same 121 tokens before it: True; writes 62 ('_'); log-probability of 44631 ('_Str'): -1.472783088684082, of 62 ('_'): -1.4082061052322388, lead of 44631 over 62: -0.0646
+    top 5: 62 '_' -1.4082, 44631 '_Str' -1.4728, 14659 '_Con' -1.5222, 18442 '_Name' -2.1900, 2160 '_O' -2.7799
+plain 8192: on.s1 and off part at generated token 3 of 128: on.s1 writes 5344, off writes 653
+  probe on.s1: the same 2 tokens before it: True; writes 5344 (' mat'); log-probability of 5344 (' mat'): -0.6242926716804504, of 653 (' #'): -0.9196951389312744, lead of 5344 over 653: +0.2954
+    top 5: 5344 ' mat' -0.6243, 653 ' #' -0.9197, 2423 ' ...' -4.3297, 638 ' self' -4.7631, 847 ' )' -4.8910
+  probe off.r2: the same 2 tokens before it: True; writes 653 (' #'); log-probability of 5344 (' mat'): -0.7994893193244934, of 653 (' #'): -0.7605431079864502, lead of 5344 over 653: -0.0389
+    top 5: 653 ' #' -0.7605, 5344 ' mat' -0.7995, 638 ' self' -3.9697, 2423 ' ...' -4.1731, 847 ' )' -4.5371
+plain 8192: on.s1 and on part at generated token 3 of 128: on.s1 writes 5344, on writes 653
+  probe on.s1: the same 2 tokens before it: True; writes 5344 (' mat'); log-probability of 5344 (' mat'): -0.6242926716804504, of 653 (' #'): -0.9196951389312744, lead of 5344 over 653: +0.2954
+    top 5: 5344 ' mat' -0.6243, 653 ' #' -0.9197, 2423 ' ...' -4.3297, 638 ' self' -4.7631, 847 ' )' -4.8910
+  probe on.r2: the same 2 tokens before it: True; writes 653 (' #'); log-probability of 5344 (' mat'): -0.8482180833816528, of 653 (' #'): -0.7130595445632935, lead of 5344 over 653: -0.1352
+    top 5: 653 ' #' -0.7131, 5344 ' mat' -0.8482, 638 ' self' -3.9937, 2423 ' ...' -4.1592, 847 ' )' -4.6000
+plain 8192: on.s32 and on part at generated token 122 of 128: on.s32 writes 62, on writes 44631
+  probe on.s32: the same 121 tokens before it: True; writes 62 ('_'); log-probability of 62 ('_'): -1.4800522327423096, of 44631 ('_Str'): -1.5112049579620361, lead of 62 over 44631: +0.0312
+    top 5: 62 '_' -1.4801, 44631 '_Str' -1.5112, 14659 '_Con' -1.5157, 18442 '_Name' -2.1847, 2160 '_O' -2.6119
+  probe on.r2: the same 121 tokens before it: True; writes 44631 ('_Str'); log-probability of 62 ('_'): -1.7028412818908691, of 44631 ('_Str'): -1.3271393775939941, lead of 62 over 44631: -0.3757
+    top 5: 44631 '_Str' -1.3271, 14659 '_Con' -1.3718, 62 '_' -1.7028, 18442 '_Name' -2.2366, 2160 '_O' -2.9960
+plain 8192: on.s32 and off write the same 128 tokens
+plain 8192: fault and on part at generated token 3 of 128: fault writes 5344, on writes 653
+  probe fault: the same 2 tokens before it: True; writes 5344 (' mat'); log-probability of 5344 (' mat'): -0.7500913739204407, of 653 (' #'): -0.7999151945114136, lead of 5344 over 653: +0.0498
+    top 5: 5344 ' mat' -0.7501, 653 ' #' -0.7999, 2423 ' ...' -4.1959, 638 ' self' -4.2360, 248046 '' -4.7266
+  probe on.r2: the same 2 tokens before it: True; writes 653 (' #'); log-probability of 5344 (' mat'): -0.8482180833816528, of 653 (' #'): -0.7130595445632935, lead of 5344 over 653: -0.1352
+    top 5: 653 ' #' -0.7131, 5344 ' mat' -0.8482, 638 ' self' -3.9937, 2423 ' ...' -4.1592, 847 ' )' -4.6000
+plain 8192: on.f3 and on part at generated token 2 of 128: on.f3 writes 248069, on writes 388
+  probe on.f3: the same 1 tokens before it: True; writes 248069 ('</think>'); log-probability of 248069 ('</think>'): -2.561851739883423, of 388 ('               '): -2.665717363357544, lead of 248069 over 388: +0.1039
+    top 5: 248046 '' -1.1314, 248069 '</think>' -2.5619, 96220 '请' -2.6310, 388 '               ' -2.6657, 309 '           ' -3.3376
+  probe on.r2: the same 1 tokens before it: True; writes 388 ('               '); log-probability of 248069 ('</think>'): -3.330172061920166, of 388 ('               '): -2.009239673614502, lead of 248069 over 388: -1.3209
+    top 5: 248046 '' -1.2437, 388 '               ' -2.0092, 309 '           ' -2.5586, 96220 '请' -2.7813, 248069 '</think>' -3.3302
+plain 32768: on.f3 and on part at generated token 41 of 128: on.f3 writes 973, on writes 363
+  probe on.f3: only 16 tokens
+  probe on: only 16 tokens
+plain 60000: on.f3 and on part at generated token 38 of 128: on.f3 writes 82602, on writes 471
+  probe on.f3: only 16 tokens
+  probe on: only 16 tokens
+draft 32768: on.f3 and on part at generated token 41 of 128: on.f3 writes 973, on writes 363
+  probe on.f3: only 16 tokens
+  probe on: only 16 tokens
+draft 60000: on.f3 and on part at generated token 33 of 128: on.f3 writes 2257, on writes 482
+  probe on.f3: only 16 tokens
+  probe on: only 16 tokens
+draft 60000: offfault and off part at generated token 118 of 128: offfault writes 8, off writes 7368
+  probe offfault: only 16 tokens
+  probe off: only 16 tokens
