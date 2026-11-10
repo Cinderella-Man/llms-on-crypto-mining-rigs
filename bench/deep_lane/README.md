@@ -224,6 +224,12 @@ the release check's recorded requests.
   registry row Q1175): a pass over two or more tokens is another arithmetic than a one-token pass, and from 8,192
   tokens on two loads of one arm write different replies too. Read that check as exact only at depth 0 and between
   arms whose passes have the same shape.
+- **The first run on the rig** timed the sparse Pascal attention off and on at the same depths on nine P106-090
+  cards on 2026-11-10 ([docs/data/2026-11-10_deep_lane](../../docs/data/2026-11-10_deep_lane/README.md)): 70
+  minutes for a warm-up load and four timed loads, every load checked quiet, the RAM watchdog silent on the 4 GB
+  host. From 8,192 tokens on each load wrote its own greedy reply and accepted another share of the draft, so two
+  loads of one arm ran 16.82 and 19.97 tok/s at 8,192 while their steps took 153.00 and 152.97 ms. The step tables
+  come from that run: class a kernel on the step's time, and read tok/s beside the draft's counters.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.
