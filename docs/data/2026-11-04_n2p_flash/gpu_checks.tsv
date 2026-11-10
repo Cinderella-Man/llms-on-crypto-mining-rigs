@@ -1,0 +1,11 @@
+check	run	switch	passed	cases	not_supported	failed	exit
+native86	np	defaults	704	706	64	2	1
+native86	reg-rows	GET_ROWS, every type	248	248	32	0	0
+ptx	np	defaults	717	718	0	1	1
+ptx	np-mtok-off	MTOK=0 (the earlier kernels)	717	718	0	1	1
+ptx	np-cap1	MTOK=1,1 (groups of one)	717	718	0	1	1
+ptx	np-rb1	MTOK=1,0,1 (one row block)	717	718	0	1	1
+ptx	np-notile	MTOK=1,0,0,0,0 (no multi-token tiles)	717	718	0	1	1
+ptx	np-skip	PASCAL_SKIP=the four (llama.cpp's)	716	718	0	2	1
+ptx	reg-half	Q2_0, Q6_K, grid types, defaults	2029	2029	94	0	0
+ptx	reg-rows	GET_ROWS, every type	248	248	32	0	0

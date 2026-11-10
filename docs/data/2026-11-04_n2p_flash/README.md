@@ -69,9 +69,12 @@ blocks. Both load into the Q8_0 tile layout as N2P and N3P do.
 
 ## Status
 
-**Built and correct on the CPU; both files are built and fit nine 6 GB cards at 64k on whole layers (file 1 to
-`-ub 256`, file 2 to `-ub 128`).** Still to come, in this order: the PTX and native GPU checks, both files' KL divergence, then
-the P106 timing (C394). This page is updated as each lands.
+**Both files score below Swift IQ2_XS on all three texts, and the build passes its GPU checks at every shape the files
+hold; one test case at another row count fails (Q1181).** On held-out agent text the KL divergence against the Q8_0
+reference is 0.1931 ± 0.0044 for file 1 (down N2P-128) and 0.1727 ± 0.0040 for file 2 (down N3P-128), against
+0.2792 ± 0.0054 for pmix-q2-fast, 0.2851 ± 0.0056 for Swift Q2_0 and 0.2248 ± 0.0046 for Swift IQ2_XS
+([KL divergence](#kl-divergence), [GPU checks](#gpu-checks)). Both files fit nine 6 GB cards at 64k on whole layers
+(file 1 to `-ub 256`, file 2 to `-ub 128`). Still to come: the native check and the timing on a P106 (C394).
 
 - **File 1** (2026-11-05): `gguf_compose verify` passes (1,224 tensors in 3 shards, the 144 routed-expert tensors
   identical to llama-quantize's, the other 1,080 to pmix-q2-fast's). The routed experts take 40,894,464,000 bytes against
@@ -101,12 +104,103 @@ the P106 timing (C394). This page is updated as each lands.
   reference and fast quantizers agree exactly. test-backend-ops compares a GPU with the CPU backend, so its runs are
   the GPU checks below.
 
+## KL divergence
+
+Against the Swift-1.5 Q8_0 reference's logits on the three texts of
+[2026-11-03_flash_next_quality](../2026-11-03_flash_next_quality/README.md): 12 chunks of 8,192 tokens of held-out
+agent sessions, 80 chunks of 512 tokens of wikitext-2 and 80 of the agent check's Exercism code. Scored with that
+folder's `kld.sh` (`-ub 512`, flash attention, the layers placed by `-fit on`) and this branch's compute 8.6
+llama-perplexity on two RTX 3080s and two RTX 3090s, each file read in place ([run/kld.sh](run/kld.sh)). The table
+gives the mean ± its error and the share of tokens whose top choice is the reference's; every column is in
+[kld.tsv](kld.tsv). The other files' rows are from [flash_next_quality](../2026-11-03_flash_next_quality/kld.tsv) and
+[pascal_mix](../2026-11-04_pascal_mix/kld.tsv), scored the same way with the v3 base's llama-perplexity on seven and on
+five cards.
+
+| File | Agent | Wiki | Code |
+|---|---|---|---|
+| Swift Q2_0 (the maker's) | 0.2851 ± 0.0056, 90.71 % | 0.4283 ± 0.0059, 77.94 % | 0.1124 ± 0.0040, 95.98 % |
+| pmix-q2-fast | 0.2792 ± 0.0054, 90.70 % | 0.4264 ± 0.0059, 77.71 % | 0.1080 ± 0.0038, 96.12 % |
+| pmix-q2-fast, this run's build and cards (control) | 0.2773 ± 0.0054, 90.69 % | 0.4264 ± 0.0059, 77.66 % | 0.1075 ± 0.0038, 96.08 % |
+| Swift IQ2_XS (the maker's) | 0.2248 ± 0.0046, 91.53 % | 0.3512 ± 0.0050, 79.57 % | 0.0750 ± 0.0028, 96.83 % |
+| **N2P-N2P128** (file 1) | **0.1931 ± 0.0044**, 92.40 % | **0.2555 ± 0.0040**, 83.00 % | **0.0521 ± 0.0021**, 97.45 % |
+| Swift IQ3_XXS (the maker's) | 0.1755 ± 0.0038, 92.32 % | 0.2477 ± 0.0039, 83.33 % | 0.0544 ± 0.0023, 97.48 % |
+| **N2P-N3P128** (file 2) | **0.1727 ± 0.0040**, 92.79 % | **0.2252 ± 0.0037**, 84.16 % | **0.0460 ± 0.0019**, 97.53 % |
+
+- **Both files are a gain against pmix-q2-fast on every text** (below it by more than its error, the classes of
+  [2026-11-04_fmt_mixes](../2026-11-04_fmt_mixes/README.md)). File 1 is 0.0862 lower on agent text, 0.1708 on wiki and
+  0.0559 on code; file 2 is 0.1066, 0.2012 and 0.0620 lower. Each file differs from pmix-q2-fast only in its routed
+  experts: N2P from the Q8_0 with FN4's importance matrix in place of the makers' Q2_0.
+- **Both are below Swift IQ2_XS.** File 1 by 0.0317 on agent text (0.1931 against 0.2248), 0.0957 on wiki and 0.0230 on
+  code; file 2 by 0.0521, 0.1260 and 0.0290.
+- **File 2 is level with Swift IQ3_XXS on agent text** (0.1727 against 0.1755, a difference of 0.0029, inside either
+  error) and below it on wiki (0.2252 against 0.2477) and on code (0.0460 against 0.0544). File 1 is above IQ3_XXS by
+  0.0176 on agent text and 0.0079 on wiki, and level with it on code (0.0521 against 0.0544).
+- **The third bit in the down projections is worth 0.0204 on agent text** (file 2's 0.1727 against file 1's 0.1931,
+  10.6 % lower), 0.0304 on wiki and 0.0061 on code, for 2.93 GiB.
+- **The control holds, so the rows compare.** pmix-q2-fast scored with this run's build and cards gives 0.426375 ±
+  0.005853 on wiki (0.426376 ± 0.005852 in its own run), 0.277337 ± 0.005369 on agent text (0.279228 ± 0.005378) and
+  0.107518 ± 0.003823 on code (0.107982 ± 0.003843): the build and the card set move a score by 0.0019 at most, a
+  third of its error.
+- **Each file ran whole on the cards** ([mem_peak.tsv](mem_peak.tsv)). llama-perplexity's log does not print where
+  `-fit on` put the layers, so the cards' memory was sampled every 5 s. The peaks add up to 45,692 MiB for file 1
+  (its two weight shards: 42,606 MiB), 48,690 MiB for file 2 (45,605 MiB) and 39,088 MiB for the control (36,005 MiB):
+  the same 3.08 GiB of context and work buffers above the weights in all three.
+- These scores say nothing about speed: the timing on a P106 is C394.
+
+## GPU checks
+
+test-backend-ops runs each case on the card and on the CPU backend and compares the two results (the limit is a
+normalized squared error of 0.0005). Two checks ran, each on one RTX 3080 ([run/gpu_checks.sh](run/gpu_checks.sh)):
+the rig build through its compute 6.1 PTX, with the fork's Pascal kernels forced on at a P106's launch shapes (1–8
+tokens, one run per switch setting), and a compute 8.6 build natively (llama.cpp's own kernels, and MMQ for the prompt
+batches of 9, 33 and 128 tokens). Every run is in [gpu_checks.tsv](gpu_checks.tsv):
+
+| Check | Run | Passed | Cases | Failing |
+|---|---|---:|---:|---|
+| PTX | `np` (the four types, defaults) | 717 | 718 | N3P-128 at 2,561 rows, one token |
+| PTX | `np-mtok-off` (the earlier multi-token kernels) | 717 | 718 | the same case |
+| PTX | `np-cap1` (groups of one) | 717 | 718 | the same case |
+| PTX | `np-rb1` (one row block) | 717 | 718 | the same case |
+| PTX | `np-notile` (no multi-token tiles) | 717 | 718 | the same case |
+| PTX | `np-skip` (llama.cpp's matrix-vector kernel) | 716 | 718 | the same case, N2P-128 and N3P-128 |
+| PTX | `reg-half` (Q2_0, Q6_K, the grid types) | 2,029 | 2,029 | |
+| PTX | `reg-rows` (GET_ROWS of every type) | 248 | 248 | |
+| native | `np` (prompt batches included) | 704 | 706 | the same case, N2P-128 and N3P-128 |
+| native | `reg-rows` | 248 | 248 | |
+
+- **Every failure is one test case, in its two 128-weight types:**
+  `MUL_MAT_ID(type_a=n2p_128|n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640)`, one token's product with 10
+  of 32 experts whose matrices have 2,561 rows of 640 weights. [gpu_check_failures.tsv](gpu_check_failures.tsv) lists
+  it per run with its error.
+- **It fails with the fork's kernels and with llama.cpp's, through the PTX and natively, and its error moves from run
+  to run.** With the fork's kernels on, N3P-128's error is 0.000762 (`np`), 0.000563 (`np-mtok-off`), 0.000805
+  (`np-cap1`), 0.000697 (`np-rb1`) and 1.000003 (`np-notile`); those switches set the multi-token kernel, and the case
+  has one token. N2P-128 passes it in those five runs. On llama.cpp's kernel the error is 0.000518 for N2P-128 and
+  1.000000 for N3P-128 through the PTX (`np-skip`), and 0.989390 and 0.001466 natively. The cause is open (Q1181 in
+  the [registry](../../../quants/experiments.md)).
+- **Everything around it passes:** the same matrices without expert ids (`MUL_MAT` at 2,561 rows), with expert ids at
+  2 to 8 tokens, and every case at 2,560 rows at every token count, in every run.
+- **No tensor in either file has 2,561 rows.** The routed down projections have 2,560 rows of 640 weights and the gate
+  and up projections 640 rows of 2,560. In the types the files use (N2P for gate and up, N2P-128 and N3P-128 for
+  down), the cases at those shapes pass at 1 to 8 tokens through the PTX and at 1 to 8, 9, 33 and 128 tokens natively.
+- **The KL divergence above does not run the failing case's path.** llama-perplexity scores in micro-batches of 512
+  tokens, and on these cards a routed-expert product of more than 8 tokens goes to MMQ, not to the matrix-vector
+  kernels of the failing case. MMQ's 40 prompt-batch cases of the four types (9, 33 and 128 tokens, the files' shapes
+  among them) all pass natively, and pmix-q2-fast scored with the same build reproduces its earlier score.
+- The check on a P106 itself, with MMQ's dp4a path, is part of C394.
+
 ## Files
 
 | File | What |
 |---|---|
 | [run/build.sh](run/build.sh) | the builds on the quant machine: the rig tarball (sm_61 + compute_61 PTX), the CPU tools and test-quantize-fns, a compute 8.6 llama-perplexity and test-backend-ops for the KLD and the native MMQ check |
 | [run/gpu_checks.sh](run/gpu_checks.sh) | test-backend-ops runs per switch setting (MODE=ptx on another card, MODE=native on a P106) |
+| [run/checks_table.sh](run/checks_table.sh) | the checks' output folders to the two tables below |
+| [gpu_checks.tsv](gpu_checks.tsv) | per check and run: the switch, cases passed, cases run, cases the backend does not support, failures, exit status |
+| [gpu_check_failures.tsv](gpu_check_failures.tsv) | every failing case by name, per check and run, with its error and the limit |
+| [run/kld.sh](run/kld.sh) | the KL divergence of the files one at a time, the cards' memory sampled beside each |
+| [kld.tsv](kld.tsv) | per file and text: mean KLD and its error, 99th and 99.9th percentile, same top token and its error, RMS change of the top token's probability, perplexity of the file and of the reference (`n2p_dn2p128` is file 1, `n2p_dn3p128` file 2, `pmix-q2-fast-n2pbuild` the control) |
+| [mem_peak.tsv](mem_peak.tsv) | per file and card: the peak memory in use during its three texts, MiB |
 | [run/quantize.sh](run/quantize.sh) | the two files: llama-quantize of the experts, then gguf_compose onto pmix-q2-fast, `verify`ed |
 | [run/fit.sh](run/fit.sh) | the files' fit on nine 6 GB cards from their headers ([bench/file_choice/fit.py](../../../bench/file_choice/fit.py)), each once built |
 | [fit/](fit/) | fit.py's rows per file (every context, cache type, micro-batch and draft; whole layers and with experts moved) |
@@ -150,8 +244,21 @@ docker run --rm --gpus '"device=<card>"' -v <dirs> -e MODE=ptx -e BIN=<rig tree>
   nvidia/cuda:12.9.2-devel-ubuntu24.04 nice -n 19 bash docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh
 docker run --rm --gpus '"device=<card>"' -v <dirs> -e MODE=native -e BIN=<compute 8.6 tree>/bin -e OUT=<dir> -e DEV=0 \
   -e RUNS='np reg-rows' nvidia/cuda:12.9.2-devel-ubuntu24.04 nice -n 19 bash docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh
-# KL divergence: FN2's kld.sh and split against FN1's bases, each file in place
-#   (../2026-11-04_pascal_mix/run/score_all.sh with score_direct.sh, PPL = the compute 8.6 llama-perplexity)
+# the checks' tables from the two output folders
+bash docs/data/2026-11-04_n2p_flash/run/checks_table.sh <folder> native86=<OUT of the native check> ptx=<OUT of the PTX check>
+# KL divergence: FN2's kld.sh and split against FN1's bases, each file in place, the control last. ENV is the quality
+# chain's environment file (../2026-11-03_flash_next_quality) with PPL=<this branch's compute 8.6 llama-perplexity>
+# and GPUS_ALL=<the cards>; a build marker is the file quantize.sh writes when a file is verified
+ENV=<environment file> QUALITY=docs/data/2026-11-03_flash_next_quality/run BASES=<its kld folder> OUT=<score folder> \
+  HOT=<scratch> LINKS=<folder for the links> TABLE_FAST=<the n-gram table shard on a fast disk> SCORE_TAG=n2p DONE=<dir> \
+  SCORE=docs/data/2026-11-04_pascal_mix/run/score_direct.sh SCORE_ALL=docs/data/2026-11-04_pascal_mix/run/score_all.sh \
+  GPUS=<the cards> LIST='n2p_dn2p128 <file 1, shard 1> <its build marker>
+n2p_dn3p128 <file 2, shard 1> <its build marker>
+pmix-q2-fast-n2pbuild <pmix-q2-fast, shard 1>' \
+  setsid nohup bash docs/data/2026-11-04_n2p_flash/run/kld.sh >> score.log 2>&1 < /dev/null &
+#   each text is one call: llama-perplexity -m <file> -f <text> -c <c> -b <c> -ub 512 --chunks <n> -fa on -fit on \
+#     --kl-divergence-base <the reference's logits> --kl-divergence   (agent: c 8192, n 12; wiki and code: c 512, n 80)
+python3 -I docs/data/2026-11-03_flash_next_quality/run/table.py <score folder> n2p_dn2p128 n2p_dn3p128 pmix-q2-fast-n2pbuild > kld.tsv
 # on a rig, idle (C394): the native check with MMQ, per-kernel perf at Flash-Next's expert shapes, T(k) of the files
 BIN=<rig tree>/bin FILES='n2p-dn2p128=<shard 1> pmix-q2-fast=<shard 1>' VC=<folder with verify_cost.sh> OUT=<dir> \
   TS=<the file's -ts> setsid nohup bash run/rig_tk.sh > rig_tk.out 2>&1 &

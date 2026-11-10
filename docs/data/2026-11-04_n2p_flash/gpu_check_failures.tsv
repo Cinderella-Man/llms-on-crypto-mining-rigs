@@ -1,0 +1,10 @@
+check	run	case	err	limit
+native86	np	MUL_MAT_ID(type_a=n2p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.989389857	0.000500000
+native86	np	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.001465523	0.000500000
+ptx	np	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.000761546	0.000500000
+ptx	np-mtok-off	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.000562711	0.000500000
+ptx	np-cap1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.000804832	0.000500000
+ptx	np-rb1	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.000696898	0.000500000
+ptx	np-notile	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	1.000003382	0.000500000
+ptx	np-skip	MUL_MAT_ID(type_a=n2p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.000517839	0.000500000
+ptx	np-skip	MUL_MAT_ID(type_a=n3p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,m_v=0,ids_offset=0,skip=0)	0.999999727	0.000500000

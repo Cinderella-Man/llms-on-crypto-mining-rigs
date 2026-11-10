@@ -16,6 +16,7 @@ mode=$1 model=$2 name=${3:-base}
 mkdir -p "$OUT"
 bindir=$(dirname "$(dirname "$PPL")")
 split=$(cat "$OUT/gpu_args" 2> /dev/null || true)
+ngl="-ngl 99"; case "$split" in *"-fit on"*) ngl="";; esac
 failed=0
 for t in ${TEXTS:-wiki agent code}; do
     case $t in
@@ -36,7 +37,7 @@ for t in ${TEXTS:-wiki agent code}; do
     log "$name $t: start"
     docker run --rm $DOCKER_BASE --name "pq-$TAG-kld" --gpus "\"device=$GPUS\"" -e CUDA_DEVICE_ORDER=PCI_BUS_ID \
         -v "$bindir:$bindir" $MOUNT_ARGS "$IMAGE" \
-        "$PPL" -m "$model" -f "$txt" -c $c -b $c -ub 512 --chunks $n -ngl 99 -fa on $split $args > "$log" 2>&1
+        "$PPL" -m "$model" -f "$txt" -c $c -b $c -ub 512 --chunks $n $ngl -fa on $split $args > "$log" 2>&1
     rc=$?
     if [ "$mode" = base ]; then
         if [ $rc -eq 0 ] && grep -q "Final estimate" "$log"; then
