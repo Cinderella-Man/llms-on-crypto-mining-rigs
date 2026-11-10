@@ -10,7 +10,7 @@ the control: gain, negligible or loss.
 
 Its numbers are single-request diagnostics at a known depth. They explain the agent check's results and do not
 replace them. The registry rows it serves are Q1143 (the lane), Q1153 (the MTP draft by depth), Q1154 (a
-131,072-token line) and Q1172 (draft acceptance by depth) in [quants/experiments.md](../../quants/experiments.md). The
+131,072-token line), Q1219 (196,608 and 262,144 tokens) and Q1172 (draft acceptance by depth) in [quants/experiments.md](../../quants/experiments.md). The
 method follows the depth sweep of
 [docs/data/2026-11-06_flint_q5_depth](../../docs/data/2026-11-06_flint_q5_depth/README.md).
 
@@ -286,6 +286,14 @@ the release check's recorded requests.
   the tables take each load's last line. Depths 4,096 tokens apart restore an older checkpoint at the third prime
   (8,708 tokens read on 3,516 cached at 12,288). [run/threshold_table.py](../../docs/data/2026-11-10_deep_lane/run/threshold_table.py)
   reads such a run on the step, with tok/s and the share accepted beside it.
+- **The ninth run on the rig** held a 196,608-token line (`CTX=196608 UB=256`) at 120,000 and 196,000 tokens, with
+  and without the draft, one load an arm, 131 minutes
+  ([docs/data/2026-11-10_deep_lane](../../docs/data/2026-11-10_deep_lane/README.md)). Three arms' recorded sessions
+  (`TAG='^(t1swift|t1base|t1neg)/'`, 36 sessions) fill 196,000 tokens. A depth must leave the request's
+  `N_PREDICT` tokens free in the context, so the deepest depth of a 196,608-token line is 196,352; 196,000 leaves
+  room. With depths 120,000 and 196,000 the first prime reads 119,876 tokens on an empty cache in one request (30.5
+  minutes with the draft); the warm-up load at depth 0 reads every card's memory before the deep loads, in place of a
+  separate load check.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

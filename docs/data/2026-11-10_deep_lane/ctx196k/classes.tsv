@@ -1,0 +1,10 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	120000	nodraft	draft	10.31	12.61	—	-2.30	-18.3	no class (one load)
+generation	196000	nodraft	draft	8.80	10.56	—	-1.75	-16.6	no class (one load)
+generation_all	all	nodraft	draft	9.50	11.49	—	-2.00	-17.4	no class (one load)
+step_pass1	120000	nodraft	draft	103.65	268.23	—	-164.58	-61.4	no class (the draft differs)
+step_pass1	196000	nodraft	draft	114.24	325.15	—	-210.91	-64.9	no class (the draft differs)
+step_pass2	120000	nodraft	draft	90.42	248.95	—	-158.53	-63.7	no class (the draft differs)
+step_pass2	196000	nodraft	draft	112.92	321.43	—	-208.52	-64.9	no class (the draft differs)
+prompt	120000	nodraft	draft	97.9	65.4	—	32.5	49.6	no class (one load)
+prompt	196000	nodraft	draft	50.3	32.9	—	17.4	53.0	no class (one load)
