@@ -335,6 +335,14 @@ Utilization of a card in a full pipeline is stage / period: 0.84 / 2.0 = 42 % at
 The discriminating measurements are in the ideas (I3): a per-card busy timeline in a 4,096-token prompt, the 8-copy build
 on Flash-Next, an F16-hop A/B, `-t 1`.
 
+**The per-card timeline** ([2026-11-10_prompt_timeline](../../data/2026-11-10_prompt_timeline/README.md), R42): on
+the v3.0 release line a fresh 4,097-token prompt keeps 1.42 of the nine cards busy on average (card 1 the busiest at
+18.78 % of the prompt's 29,983.0 ms, card 8 at 6.43 %). The host waits for the cards after each of the prompt's four
+calls (45.9 % of the time: after each call the MTP draft's catch-up needs the call's rows, and the 512-token call
+between the two checkpoints runs on one card at a time), blocks inside each call's third queued micro-batch on cards
+1 to 7 (29.5 %, est. a full CUDA launch queue: no prompt micro-batch runs as a CUDA graph), and spends 9.8 % on the
+draft's catch-up. The main model logs no compute-buffer reallocation.
+
 ## 4. Methods for CUDA-core-only GPUs (question 2)
 
 | Method | Fit to compute 6.1 and this model | Est. effect on Flash-Next prompts | Verdict |

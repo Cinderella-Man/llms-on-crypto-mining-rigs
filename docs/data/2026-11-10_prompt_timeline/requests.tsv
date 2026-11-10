@@ -1,0 +1,51 @@
+load	request	kind	task	arm	prompt_n	prompt_ms	calls_logged	checkpoint_saves_ms	graphs_reused	graph_reallocs_main	draft_reallocs	draft_reallocs_changed	taper	micro_batches	window_ms	window_vs_prompt_ms	draft_evals_in_window	main_how
+warm4096	1	reset	bugfix-javascript-triangle	off	1549	22326.42	1033 1545	630.1 636.2	0	0/0	0	0						
+warm4096	2	turn	bugfix-javascript-triangle	off	430	7250.83		651.1 630.5	2	0/0	4	4						
+warm4096	3	turn	bugfix-javascript-triangle	off	1359	19667.72	843 1355	639.2 660.2	3	0/0	10	3						
+warm4096	4	turn	bugfix-javascript-triangle	off	258	5500.56		633.7 640.7	3	0/0	4	2						
+warm4096	5	turn	bugfix-javascript-triangle	off	31	2881.31		644.5 647.8	4	0/0	4	3						
+warm4096	6	turn	bugfix-javascript-triangle	off	71	3249.95		641.4 641.3	4	0/0	5	4						
+warm4096	7	fresh	fresh0	off	4097	30213.68	2048 3581 4093	670.8 648.6	4	0/0	34	4						
+warm4096	8	fresh	fresh0	on	4097	28911.51	2048 3581 4093	651.5 637.2	4	0/0	34	4	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 1, tail 1, 10 ubatches: 64x4 512 253 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8					
+warm4096	9	fresh	fresh1	on	4097	29827.05	2048 3581 4093	639.4 641.0	4	0/0	34	4	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 1, tail 1, 10 ubatches: 64x4 512 253 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8					
+warm4096	10	fresh	fresh1	off	4097	28981.42	2048 3581 4093	640.1 630.0	4	0/0	34	4						
+graph4096	1	reset	bugfix-javascript-triangle	off	1549	22272.32	1033 1545	630.4 632.7	0	0/0	0	0		5	20497.9	-1774.4	27	eager:36 not ready:9
+graph4096	2	turn	bugfix-javascript-triangle	off	430	7645.08		736.8 654.0	2	0/0	4	4		2	6144.2	-1500.8	9	eager:18
+graph4096	3	turn	bugfix-javascript-triangle	off	1359	21270.41	843 1355	646.4 664.9	3	0/0	10	3		4	18997.3	-2273.1	23	eager:36
+graph4096	4	turn	bugfix-javascript-triangle	off	258	5512.98		635.6 648.3	3	0/0	4	2		2	4614.7	-898.2	5	eager:18
+graph4096	5	turn	bugfix-javascript-triangle	off	31	2739.45		640.7 643.9	4	0/0	3	2		2	2023.9	-715.6	3	eager:18
+graph4096	6	turn	bugfix-javascript-triangle	off	71	3318.59		640.9 637.9	4	0/0	5	4		2	2554.4	-764.2	3	eager:18
+graph4096	7	fresh	fresh0	off	4097	30420.33	2048 3581 4093	636.0 716.9	4	0/0	34	4		9	29983.0	-437.4	65	eager:41 not ready:40
+graph4096	8	fresh	fresh0	on	4097	29939.12	2048 3581 4093	654.3 680.7	4	0/0	34	4	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 1, tail 1, 10 ubatches: 64x4 512 253 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	27	29807.6	-131.5	65	eager:76 not ready:167
+graph4096	9	fresh	fresh1	on	4097	29906.29	2048 3581 4093	648.2 676.0	4	0/0	34	4	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 1, tail 1, 10 ubatches: 64x4 512 253 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	27	29699.8	-206.5	65	eager:75 not ready:168
+graph4096	10	fresh	fresh1	off	4097	28806.65	2048 3581 4093	658.1 635.2	4	0/0	34	4		8	28618.6	-188.0	63	eager:32 not ready:40
+graph450	1	reset	bugfix-javascript-triangle	off	1549	24575.81	1033 1545	2443.4 681.4	0	0/0	0	0		5	22831.6	-1744.2	27	eager:36 not ready:9
+graph450	2	turn	bugfix-javascript-triangle	off	430	10352.93	426	3342.5 643.9	2	0/0	4	4		2	6494.0	-3859.0	9	eager:18
+graph450	3	turn	bugfix-javascript-triangle	off	1359	20989.46	843 1355	643.6 649.5	3	0/0	10	3		4	19983.2	-1006.3	23	eager:36
+graph450	4	turn	bugfix-javascript-triangle	off	258	5614.06		630.4 649.0	3	0/0	4	2		2	4645.7	-968.4	5	eager:18
+graph450	5	turn	bugfix-javascript-triangle	off	31	2736.3		651.5 646.2	4	0/0	3	2		2	2024.5	-711.8	3	eager:18
+graph450	6	turn	bugfix-javascript-triangle	off	71	3303.77		630.4 640.0	4	0/0	5	4		2	2577.0	-726.7	3	eager:18
+graph450	7	fresh	fresh0	off	451	6207.82		632.3	4	0/0	7	4		2	5823.2	-384.6	9	eager:18
+graph450	8	fresh	fresh0	on	451	4904.43		632.8	4	0/0	7	4	447 tokens, head 1, tail 1, 7 ubatches: 64x6 63	8	4849.0	-55.5	9	eager:28 not ready:44
+graph450	9	fresh	fresh1	on	451	4933.81		641.9	4	0/0	7	4	447 tokens, head 1, tail 1, 7 ubatches: 64x6 63	8	4862.8	-71.1	9	eager:30 not ready:42
+graph450	10	fresh	fresh1	off	451	5968.14		640.0	4	0/0	7	4		1	112.5	-5855.6	1	eager:9
+host4096	1	reset	bugfix-javascript-triangle	off	1549	21612.94	1033 1545	634.0 630.1	0	0/0	0	0		5	20930.0	-682.9	27	:45
+host4096	2	turn	bugfix-javascript-triangle	off	430	7140.47		628.9 656.5	2	0/0	4	4		2	6068.9	-1071.6	9	:18
+host4096	3	turn	bugfix-javascript-triangle	off	1359	20184.12	843 1355	665.5 639.9	3	0/0	10	3		4	19123.8	-1060.4	23	:36
+host4096	4	turn	bugfix-javascript-triangle	off	258	5558.01		636.9 645.6	3	0/0	4	2		2	4613.4	-944.6	5	:18
+host4096	5	turn	bugfix-javascript-triangle	off	31	2840.64		639.3 633.8	4	0/0	3	2		2	2152.4	-688.2	3	:18
+host4096	6	turn	bugfix-javascript-triangle	off	71	3318.97		644.6 646.0	4	0/0	5	4		2	2584.0	-734.9	3	:18
+host4096	7	fresh	fresh0	off	4097	35821.69	2048 3581 4093	638.3 631.5	4	0/0	34	4		9	35387.4	-434.3	65	:81
+host4096	8	fresh	fresh0	on	4097	39471.63	2048 3581 4093	637.7 630.9	4	0/0	34	4	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 1, tail 1, 10 ubatches: 64x4 512 253 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	27	39326.6	-145.0	65	:243
+host4096	9	fresh	fresh1	on	4097	39378.47	2048 3581 4093	634.1 629.6	4	0/0	34	4	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 1, tail 1, 10 ubatches: 64x4 512 253 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	27	39271.8	-106.7	65	:243
+host4096	10	fresh	fresh1	off	4097	35463.35	2048 3581 4093	645.7 635.7	4	0/0	34	4		9	35024.8	-438.5	65	:81
+host450	1	reset	bugfix-javascript-triangle	off	1549	22608.57	1033 1545	784.5 650.1	0	0/0	0	0		5	21602.4	-1006.2	27	:45
+host450	2	turn	bugfix-javascript-triangle	off	430	8106.96		675.2 647.2	2	0/0	4	4		2	6903.7	-1203.2	9	:18
+host450	3	turn	bugfix-javascript-triangle	off	1359	20808.8	843 1355	652.4 653.6	3	0/0	10	3		4	20032.3	-776.5	23	:36
+host450	4	turn	bugfix-javascript-triangle	off	258	5653.26		640.3 646.1	3	0/0	4	2		2	4634.7	-1018.6	5	:18
+host450	5	turn	bugfix-javascript-triangle	off	31	2730.29		649.2 638.5	4	0/0	4	3		2	2033.6	-696.7	3	:18
+host450	6	turn	bugfix-javascript-triangle	off	71	3398.83		640.4 645.9	4	0/0	5	4		2	2636.4	-762.4	3	:18
+host450	7	fresh	fresh0	off	451	6378.4		639.5	4	0/0	7	4		2	5895.9	-482.5	9	:18
+host450	8	fresh	fresh0	on	451	6457.05	447	644.9	4	0/0	7	4	447 tokens, head 1, tail 1, 7 ubatches: 64x6 63	8	6406.5	-50.6	9	:72
+host450	9	fresh	fresh1	on	451	6536.32	447	645.5	4	0/0	7	4	447 tokens, head 1, tail 1, 7 ubatches: 64x6 63	8	6463.4	-73.0	9	:72
+host450	10	fresh	fresh1	off	451	5961.19		645.9	4	0/0	7	4		2	5816.1	-145.1	9	:18

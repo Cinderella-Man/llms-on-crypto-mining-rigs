@@ -1,0 +1,7 @@
+warm4096: none profile, 0 evaluations, 0 without a GPU time; clock offset - (0 of 163 draft allocation lines matched); 10 requests in the log, 10 in requests.tsv; pipeline parallelism enabled
+graph4096: graph profile, 1463 evaluations, 424 without a GPU time; clock offset 286994.3 ms (149 of 162 draft allocation lines matched); 10 requests in the log, 10 in requests.tsv; pipeline parallelism enabled
+graph450: graph profile, 771 evaluations, 95 without a GPU time; clock offset 287207.2 ms (49 of 54 draft allocation lines matched); 10 requests in the log, 10 in requests.tsv; pipeline parallelism enabled
+host4096: host profile, 1522 evaluations, 0 without a GPU time; clock offset 287748.5 ms (155 of 162 draft allocation lines matched); 10 requests in the log, 10 in requests.tsv; pipeline parallelism enabled
+host450: host profile, 847 evaluations, 0 without a GPU time; clock offset 289961.3 ms (51 of 55 draft allocation lines matched); 10 requests in the log, 10 in requests.tsv; pipeline parallelism enabled
+pair graph4096=host4096 request 10: 8 micro-batches in graph4096, 9 in host4096; GPU time from host4096, window from graph4096, no ratio per micro-batch
+pair graph450=host450 request 10: 1 micro-batches in graph450, 2 in host450; GPU time from host450, window from graph450, no ratio per micro-batch
