@@ -16,13 +16,15 @@ each with pascal-mix's tools, and builds the files that price them:
    file.
 
 **Status:** the tools are written and tested; all 30 single-switch files (8 for C326, 22 for Q219) and the control
-`dniq23` are built and scored on agent text ([results](#results-so-far-agent-text-kld-2026-11-05)) and on wiki text
-([results](#wiki-text-kld-2026-11-06)); code text comes next; the rig timing (C323) is a run file for a rig. Registry rows Q219, Q888, Q889, Q901 in
-[quants/experiments.md](../../../quants/experiments.md).
+`dniq23` are built and scored on all three texts: agent ([results](#results-so-far-agent-text-kld-2026-11-05)), wiki
+([results](#wiki-text-kld-2026-11-06)) and code ([results](#code-text-kld-2026-11-10), with the three texts side by
+side); the allocation over the three texts (`galloc.py solve`) comes next; the rig timing (C323) is a run file for a
+rig. Registry rows Q219, Q888, Q889, Q901 in [quants/experiments.md](../../../quants/experiments.md).
 
 ## Results so far: agent-text KLD (2026-11-05)
 
-Wiki text follows in [its own section](#wiki-text-kld-2026-11-06); code text is not scored yet. Each of
+Wiki text and code text follow in their own sections ([wiki](#wiki-text-kld-2026-11-06),
+[code](#code-text-kld-2026-11-10)). Each of
 the 30 single-switch files and the control `dniq23` was scored against the Swift-1.5 Q8_0's logits on the agent text, on the same five cards as
 `pmix-q2-fast` and spine6 ([kld_agent.tsv](kld_agent.tsv): KLD and its ±, the change from the start, the same-top-token
 share and each file's class). A **gain** is below `pmix-q2-fast`'s 0.2792 by more than its ± (0.0054,
@@ -53,8 +55,8 @@ share the text and the reference logits, so their differences are tighter than t
   not: `guiq35` (−0.0088), `guiq34` (−0.0055), `guiq30` (−0.0073), `guiq25` (−0.0068) and `guiq21` (−0.0083) are less
   than 0.0054 below it. One control covers one class in one group (down projections of layers 24–31), so it is no
   proof for the gate/up and dense switches.
-- **Next:** code text for every file, then `galloc.py solve` for the best set at each budget. The best switches
-  stacked into one file are a candidate after the v3 release, not part of it.
+- **Next:** `galloc.py solve` for the best set at each budget, now that every file has its three texts. The best
+  switches stacked into one file are a candidate after the v3 release, not part of it.
 
 ## Wiki-text KLD (2026-11-06)
 
@@ -87,8 +89,63 @@ above it by more, the rest **negligible**; against the control, the same with th
   text only (the four arms that gained there, the dense switches of groups 0–2, `guiq21`), three on wiki only
   (`dniq34`, `dniq35`, `guiq24`), and none loses on either. Agent text, the one the agent check reads, rewards the
   dense tensors and the early groups; wiki text rewards the late groups' routed experts.
-- **Next:** code text for every file (80 × 512, est. ~5.5 min a file on the same cards), then `galloc.py solve`
-  (its `--texts` defaults to all three; a switch without all of them is left out).
+
+## Code-text KLD (2026-11-10)
+
+The same 31 files on the agent check's Exercism code (80 × 512 tokens) against the Swift-1.5 Q8_0's code logits
+([kld_code.tsv](kld_code.tsv): the wiki table's columns, written by [run/kld_table.py](run/kld_table.py)). The start
+`pmix-q2-fast` scores **0.107982 ± 0.003843** (same top token 96.118 ± 0.135 %), spine6 0.104199 (−0.0038, within the
+±). The classes are the other texts': a **gain** is below the start by more than its ± (0.0038), a **loss** above it by
+more, the rest **negligible**; against the control, the same with the control's ± (0.0039).
+
+- **8 gains, 22 negligible, no loss** among the 30 single switches.
+- **C326's arms gain nothing on code text.** All eight are within the ±: `ssm_out` −0.0018, recurrent `attn_qkv`
+  −0.0009, `attn_gate` −0.0007, the shared expert −0.0003, the Q8_0 output layer −0.0000, the attention output +0.0000,
+  attention `q`/`k`/`v` +0.0001 and `blk.1.ple_key` +0.0001.
+- **Every gain is a routed-expert switch of Q219, seven of the eight a gate/up switch.** Group 0 (layers 0–7): `guiq30`
+  0.099531 (−0.0085, with 100 MiB fewer than the start) and `guiq20` 0.100677 (−0.0073). Group 5 (layers 40–47):
+  `guiq35` 0.100162 (−0.0078) and `guiq25` 0.101137 (−0.0068, +500 MiB against IQ3_XXS's +1,075). Then `guiq34`
+  0.103414 (−0.0046), IQ3_XXS's down projections of group 4, `dniq34` 0.103701 (−0.0043), `guiq32` 0.103754 (−0.0042)
+  and `guiq22` 0.103848 (−0.0041). Within the ±: `guiq31` −0.0036, `dniq33` −0.0030, `guiq21` −0.0029, `guiq24`
+  −0.0027, `dniq30` −0.0026, `dniq35` −0.0026, `guiq23` −0.0017, `guiq33` −0.0016. The six dense switches move
+  nothing: `denseiq31` −0.0009, `denseiq32` −0.0005, `denseiq35` −0.0002, `denseiq30` +0.0000, `denseiq34` +0.0002,
+  `denseiq33` +0.0010. The same-top-token share runs from 96.02 % (`s6gdn_gate`) to 96.27 % (`guiq35`), 96.12 % at the
+  start.
+- **The control `dniq23`:** **0.109187 ± 0.003860**, +0.0012 against the start, same top token 96.098 ± 0.136 %:
+  negligible, as on the other two texts (agent −0.0038, wiki +0.0033). Each of the eight gains is more than 0.0039
+  below the control too. Against the control 12 switches gain: those eight and `guiq31`, `dniq33`, `guiq21` and
+  `guiq24`, which clear it only because the control sits above the start.
+- **The cards differ from the start's.** These 31 files ran on four cards (two RTX 3080s, two RTX 3090s); the start's
+  score, like every agent and wiki score here, is from five cards, with the same `llama-perplexity` and the same
+  `-fit on` split. Each file ran whole on the four cards: the cards' memory peaks sum to at least 2,815 MiB more than
+  the file's two weight shards ([mem_peak_code.tsv](mem_peak_code.tsv)). The start itself on these four cards, with
+  another build of `llama-perplexity`, scored 0.107518 on code text
+  ([N2P files](../2026-11-04_n2p_flash/README.md), `kld.tsv`), 0.0005 below its score here. Three gains clear the ± by
+  less than that: `guiq32` by 0.0004, `dniq34` by 0.0004 and `guiq22` by 0.0003; `guiq31` misses it by 0.0003. The
+  start's code score with this build on the four cards (Q1185) settles those four classes.
+
+### The three texts together
+
+[kld_texts.tsv](kld_texts.tsv) ([run/kld_texts.sh](run/kld_texts.sh)) puts each file's three changes and classes side
+by side.
+
+- **Seven switches gain on all three texts**, all of them routed gate/up: Swift IQ3_XXS's in groups 5, 4, 2 and 0
+  (`guiq35`, `guiq34`, `guiq32`, `guiq30`) and Swift IQ2_XS's in groups 5, 2 and 0 (`guiq25`, `guiq22`, `guiq20`).
+  `guiq30` does it with 100 MiB fewer than the start (agent −0.0073, wiki −0.0066, code −0.0085).
+- **Four gain on two texts:** group 3's three routed switches on agent and wiki (`guiq33`, `guiq23`, `dniq33`), and
+  `dniq34` on wiki and code.
+- **Ten gain on one text:** on agent text only, the four arms that gained there (`s6fa_out`, `s6shexp`, `s6gdn_qkv`,
+  `s6fa_qkv`), the dense switches of groups 0–2 (`denseiq30`, `denseiq31`, `denseiq32`) and `guiq21`; on wiki text
+  only, `dniq35` and `guiq24`. No switch gains on code text alone.
+- **Nine gain on none:** `s6gdn_gate`, `s6gdn_out`, `s6ple`, `q8output`, `guiq31`, `dniq30`, `denseiq33`, `denseiq34`,
+  `denseiq35`.
+- **No switch loses on any text.** The largest rise is `dniq35`'s +0.0048 on agent text, within that text's ±
+  (0.0054).
+- **What the texts agree on:** better routed gate/up pays on every text in groups 0, 2 and 5 from either build and in
+  group 4 from IQ3_XXS. Group 3's pays on agent and wiki text, group 1's on agent text from IQ2_XS only. The dense
+  classes, the agent text's best per byte (`denseiq31`, the attention output), pay on agent text only.
+- **Next:** `galloc.py solve` (its `--texts` defaults to all three). It takes each switch's change from the start, so
+  the start's code score on the four cards (Q1185) comes first.
 
 ## 1. Q219: the routed experts per 8-layer group
 
@@ -279,6 +336,18 @@ setsid -f nohup bash tools/docs/data/2026-11-04_pascal_mix/run/score_all.sh >> s
 # Beside other jobs on the cards: QUALITY=<a copy of that run/ with pascal-mix's run/wait_shared.sh appended to
 # common.sh> MIN_FREE_MIB=6000,7000,12000,12000,12000 (a floor per card; the split stays -fit on)
 python3 -I tools/docs/data/2026-11-04_fmt_mixes/run/kld_table.py --meta kld_agent.tsv --logs <OUT> --text wiki > kld_wiki.tsv
+# Code text (2026-11-10), on four cards: ENV=<a copy of the environment file with GPUS_ALL the four cards>, the
+# shared-card QUALITY above with a floor per card, and the N2P folder's kld.sh as the driver (score_all.sh one file at a
+# time, the cards' memory sampled beside it, DONE/finished at the end). With the files on a hard disk, readahead.sh
+# beside it reads the next file into the page cache while the current one is scored.
+export TEXTS=code GPUS=<the four cards> MIN_FREE_MIB=8000,10000,20000,20000 DONE=<marker folder for code>
+export SCORE_ALL=tools/docs/data/2026-11-04_pascal_mix/run/score_all.sh
+setsid -f nohup bash tools/docs/data/2026-11-04_n2p_flash/run/kld.sh >> score_code.log 2>&1 < /dev/null
+LOG=score_code.log END=$DONE/finished SLOW=<path prefix of the hard disks> CARD=<one of the cards> TEXT=code \
+  setsid -f nohup bash tools/docs/data/2026-11-04_fmt_mixes/run/readahead.sh >> readahead.log 2>&1 < /dev/null
+python3 -I tools/docs/data/2026-11-04_fmt_mixes/run/kld_table.py --meta kld_agent.tsv --logs <OUT> --text code > kld_code.tsv
+cp <OUT>/mem_peak.tsv mem_peak_code.tsv
+bash tools/docs/data/2026-11-04_fmt_mixes/run/kld_texts.sh . > kld_texts.tsv    # kld_agent, kld_wiki, kld_code in .
 python3 -I tools/bench/pascal_mix/galloc.py collect kld.tsv pmix-q2-fast=<OUT>/pmix-q2-fast guiq35=<OUT>/guiq35 ...
 python3 -I tools/bench/pascal_mix/galloc.py solve --switches switches.tsv --kld kld.tsv --out solve.tsv
 python3 -I tools/bench/pascal_mix/galloc.py solve --switches switches.tsv --kld kld.tsv --out solve_ms.tsv --ms-budget 80
@@ -309,7 +378,12 @@ python3 -I tools/bench/pascal_mix/vmix.py select --start pmix-q2-fast.json --pub
 | [spine_switches.tsv](spine_switches.tsv) | C326's 8 arms, the same columns |
 | [kld_agent.tsv](kld_agent.tsv) | agent-text KLD of the 30 single-switch files, the control `dniq23`, `pmix-q2-fast` and spine6: ±, change, same top token, class |
 | [kld_wiki.tsv](kld_wiki.tsv) | wiki-text KLD of the same files: the same columns, then the change from the control `dniq23` and the class against it |
+| [kld_code.tsv](kld_code.tsv) | code-text KLD of the same files, the wiki table's columns |
+| [kld_texts.tsv](kld_texts.tsv) | the three texts side by side: each file's change from the start and its class on agent, wiki and code text, and on how many texts it gains and loses |
+| [mem_peak_code.tsv](mem_peak_code.tsv) | the code-text run's peak memory per file and card (the cards' index on the machine), MiB |
 | [run/kld_table.py](run/kld_table.py) | one text's table from llama-perplexity's logs (standard library) |
+| [run/kld_texts.sh](run/kld_texts.sh) | `kld_texts.tsv` from the three tables |
+| [run/readahead.sh](run/readahead.sh) | beside a one-text scoring run: the next file read from a slow disk into the page cache while the current one is scored |
 | [times_kshape.tsv](times_kshape.tsv) | the P106 product times `vmix.py` uses (type, row width, rows, tokens, µs, source) |
 | [pk_s33_mtp2d.txt](pk_s33_mtp2d.txt) | P(k) from S33's `mtp2d` arm (`vmix.py pk`) |
 | [times_kshape_ratio.txt](times_kshape_ratio.txt) | the ggml / bench ratio per token count that puts the tables on one basis |
