@@ -105,6 +105,8 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_QSA_PAD_LINEAR` | `1` | *new.* `0`: the QSA k-pool's pad cells found by sorting and binary search, as upstream (the same cells, more host time) | -qsa, -flags | Q441, Q1025 |
 | `LLAMA_QSA_INPUT_STATS` | `0` | `N`: log the k-pool inputs every N micro-batches | -qsa | Q441 |
 | `LLAMA_QSA_KPOOL_DEV` (`_CHECK`) | `0` | `1`: the QSA k-pool tables (`pool_cells`, `pool_idxs`) kept on each card, each micro-batch sending only the rows that changed instead of both tables whole; `2`: the MTP draft's context only. `LLAMA_QSA_KPOOL_DEV_CHECK=1` compares every micro-batch's copies and update with the host's tables and aborts on a difference ([design](data/2026-11-11_c100_kpool_on_cards/README.md)) | v4: `pascal-p106-v4-b12246-c100` | Q640 |
+| `LLAMA_QSA_INDEXER_ROWS` | `0` | `1`: the QSA indexer (qwen4exp, and glm5-next with its fused indexer) reads each pool’s key in its cell of the cache by `pool_cells` instead of from a gathered F32 copy of every pooled key; the same scores bit for bit ([design](data/2026-11-11_c704_indexer_gather/README.md)) | v4: `pascal-p106-v4-b12246-c704` | Q1244 |
+| `GGML_CUDA_LID_ROWS_FAULT` | `0` | `1` (checks only): an indexer with a list of rows scores rows 0 to n−1 instead, so the recorded check must fail | v4: `pascal-p106-v4-b12246-c704` | Q1244 |
 
 ## Fusions and numerics
 

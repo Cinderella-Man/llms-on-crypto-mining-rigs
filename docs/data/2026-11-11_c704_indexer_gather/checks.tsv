@@ -1,0 +1,12 @@
+check	command	build	setting	result
+rig build	TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106-v4-b12246-c704	763fc55ca	-	builds; tarball llama.cpp-20261110-763fc55ca-pascal-p106-v4-b12246-c704.tar.gz 648,108,603 B, md5 0f7095f4c040f2ddef2811dc97ec6efb; 0 AVX instructions in llama-bench; highest glibc symbol GLIBC_2.38
+CPU build	cmake -DGGML_NATIVE=ON -DGGML_CUDA=OFF, targets test-llama-archs test-backend-ops	763fc55ca	-	builds
+operator cases on the CPU	test-backend-ops -b CPU -o LIGHTNING_INDEXER (the rig build's CPU code, the CPU against itself)	763fc55ca	-	323 of 323 OK: 210 cases of ggml_lightning_indexer and 113 of ggml_lightning_indexer_rows, 110 of them with the gather's scores beside the in-place ones, bit for bit on both sides (cpu_cases.tsv)
+recorded set	OUT=<dir> SUITE=indexer-rows BIN=<tarball>/bin bash scripts/record_checks.sh	763fc55ca	-	269 cases (156 of ggml_lightning_indexer, 113 in place), 1,623,428,321 B of files; tar 1,624,135,680 B, md5 ef22b0d2b3215d3ef8fc899fc7a40101 (set_manifest.tsv, set_runs.tsv)
+the set replayed on the CPU	test-backend-ops -b CPU -o LIGHTNING_INDEXER -p '<the suite's filter>' --replay <set>	763fc55ca	-	269 of 269 OK, no selected case without a record (cpu_replay_cases.tsv)
+whole models, switch off	test-llama-archs -b CPU -s 1 with LLAMA_ARCHS_LOGITS against pascal-p106-v4's CPU build (84f7bd3d2)	763fc55ca	LLAMA_QSA_INDEXER_ROWS unset	146 models compared, 0 differ in any logit; all 151 tests pass
+whole models, switch on	the same	763fc55ca	LLAMA_QSA_INDEXER_ROWS=1	146 models compared, 0 differ in any logit; all 151 tests pass
+selection by the scores	test-llama-archs -a 'qwen4exp|glm5-next', LLAMA_ARCHS_INDEXER_TOP_K=8, on against off	763fc55ca	LLAMA_QSA_INDEXER_ROWS=1 against unset	2 models compared, 0 of 32,768 logits differ in each
+the control	top-k 8 against the every-cell logits (top-k 131,072)	763fc55ca	unset	2 models compared, 2 differ: at top-k 8 the selection changes the logits
+the graph	qwen4exp's graphs as the scheduler prints them (GGML_SCHED_DEBUG=2), every graph test-llama-archs computes	763fc55ca	unset	8,806 node lines; 555 GET_ROWS; 37 LIGHTNING_INDEXER, all 37 reading the gathered copy
+the graph	the same	763fc55ca	LLAMA_QSA_INDEXER_ROWS=1	8,769 node lines; 518 GET_ROWS (37 fewer: one gather per indexer); 37 LIGHTNING_INDEXER, none reading a copy

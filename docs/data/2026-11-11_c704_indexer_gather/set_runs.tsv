@@ -1,0 +1,2 @@
+lid	-	LIGHTNING_INDEXER	n_cells=|nh=4,|nb=(1|32),	pass	-
+lid-rows-fault	GGML_CUDA_LID_ROWS_FAULT=1	LIGHTNING_INDEXER	n_cells=	fail	-

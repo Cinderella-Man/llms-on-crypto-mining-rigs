@@ -35,6 +35,9 @@
 #   q5kmt         Q5_K's products of 1-4 tokens (the output layer of Qwen3.8-Flash-Next among them) with the 2-4-token
 #                 kernel that decodes each weight once (GGML_CUDA_MMVQ_PASCAL_Q5K_MT, C690) at each setting, under the
 #                 Flash-Next preset's k-column switches, and without it (docs/data/2026-11-11_c690_head_four_rows)
+#   indexer-rows  LIGHTNING_INDEXER (LID below): the k-pool indexer reading the pooled keys in place beside its scores
+#                 over the gathered copy (bit for bit), and the fault that scores the wrong rows
+#                 (docs/data/2026-11-11_c704_indexer_gather)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -43,7 +46,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -68,6 +71,9 @@ QSA='n_kv_max=[1-9]'
 FAP_OWN='hsk=128,hsv=128,nh=(4|8),nr23=\[8,1\],kv=[0-9]+,nb=1,'
 FN_MOE='n_mats=512,n_used=10,|^type=[^,]+,n=[0-9]+$'
 N4='(n2p|n3p|n2p_128|n3p_128)'
+# the indexer: every in-place case, every four-head case (Flash-Next's), and the one- and 32-token cases of 32 and 64
+# heads (the 512-token ones of those hold 7.6 GB, and their kernel is the one-token cases')
+LID='n_cells=|nh=4,|nb=(1|32),'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 suite_filters() {
@@ -87,6 +93,8 @@ suite_filters() {
             printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
         q5kmt)
             printf '%s\t%s\n' MUL_MAT "$Q5MT" ;;
+        indexer-rows)
+            printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
         *) return 1 ;;
     esac
 }
@@ -177,6 +185,12 @@ suite_runs() {
                      "q5kmt-skip:$KP $M=1 ${P}_SKIP=q5_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q5MT"
             done ;;
+        indexer-rows)
+            # C704: the LID cases, then the in-place reads with GGML_CUDA_LID_ROWS_FAULT=1, which scores rows 0 to n-1
+            # instead of the listed ones and so must fail cases
+            printf '%s\t%s\t%s\t%s\t%s\t\n' \
+                lid "" LIGHTNING_INDEXER "$LID" pass \
+                lid-rows-fault GGML_CUDA_LID_ROWS_FAULT=1 LIGHTNING_INDEXER 'n_cells=' fail ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
