@@ -1,0 +1,181 @@
+load_a	load_b	session	task	requests	same_reply	first_request_that_differs	same_again_after_it
+pv0-1	pv0-2	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-1	pv0-2	2	bugfix-javascript-space-age	5	0	1	0
+pv0-1	pv0-2	3	bugfix-python-phone-number	5	5		0
+pv0-1	pv0-2	4	bugfix-javascript-triangle	5	5		0
+pv0-1	pv0-2	5	bugfix-python-variable-length-quantity	6	6		0
+pv0-1	pv0-2	6	bugfix-javascript-phone-number	5	5		0
+pv0-1	pv0-2	7	bugfix-python-list-ops	5	5		0
+pv0-1	pv0-2	8	bugfix-javascript-grade-school	5	5		0
+pv0-1	pv0-2	9	bugfix-python-scale-generator	5	0	1	0
+pv0-1	pv0-2	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-1	pv0-2	11	bugfix-python-pig-latin	6	1	2	0
+pv0-1	pv0-2	12	bugfix-javascript-variable-length-quantity	5	5		0
+pv0-1	kd1-1	1	bugfix-python-affine-cipher	9	9		0
+pv0-1	kd1-1	2	bugfix-javascript-space-age	5	0	1	0
+pv0-1	kd1-1	3	bugfix-python-phone-number	5	5		0
+pv0-1	kd1-1	4	bugfix-javascript-triangle	5	5		0
+pv0-1	kd1-1	5	bugfix-python-variable-length-quantity	6	6		0
+pv0-1	kd1-1	6	bugfix-javascript-phone-number	5	5		0
+pv0-1	kd1-1	7	bugfix-python-list-ops	5	5		0
+pv0-1	kd1-1	8	bugfix-javascript-grade-school	5	5		0
+pv0-1	kd1-1	9	bugfix-python-scale-generator	5	0	1	0
+pv0-1	kd1-1	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-1	kd1-1	11	bugfix-python-pig-latin	6	1	2	0
+pv0-1	kd1-1	12	bugfix-javascript-variable-length-quantity	5	5		0
+pv0-1	kd1-2	1	bugfix-python-affine-cipher	9	1	2	0
+pv0-1	kd1-2	2	bugfix-javascript-space-age	5	0	1	0
+pv0-1	kd1-2	3	bugfix-python-phone-number	5	5		0
+pv0-1	kd1-2	4	bugfix-javascript-triangle	5	5		0
+pv0-1	kd1-2	5	bugfix-python-variable-length-quantity	6	6		0
+pv0-1	kd1-2	6	bugfix-javascript-phone-number	5	5		0
+pv0-1	kd1-2	7	bugfix-python-list-ops	5	5		0
+pv0-1	kd1-2	8	bugfix-javascript-grade-school	5	5		0
+pv0-1	kd1-2	9	bugfix-python-scale-generator	5	0	1	0
+pv0-1	kd1-2	10	bugfix-javascript-complex-numbers	5	1	1	1
+pv0-1	kd1-2	11	bugfix-python-pig-latin	6	1	2	0
+pv0-1	kd1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+pv0-1	pv1-1	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-1	pv1-1	2	bugfix-javascript-space-age	5	0	1	0
+pv0-1	pv1-1	3	bugfix-python-phone-number	5	0	1	0
+pv0-1	pv1-1	4	bugfix-javascript-triangle	5	0	1	0
+pv0-1	pv1-1	5	bugfix-python-variable-length-quantity	6	0	1	0
+pv0-1	pv1-1	6	bugfix-javascript-phone-number	5	0	1	0
+pv0-1	pv1-1	7	bugfix-python-list-ops	5	1	2	0
+pv0-1	pv1-1	8	bugfix-javascript-grade-school	5	0	1	0
+pv0-1	pv1-1	9	bugfix-python-scale-generator	5	0	1	0
+pv0-1	pv1-1	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-1	pv1-1	11	bugfix-python-pig-latin	6	0	1	0
+pv0-1	pv1-1	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+pv0-1	pv1-2	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-1	pv1-2	2	bugfix-javascript-space-age	5	0	1	0
+pv0-1	pv1-2	3	bugfix-python-phone-number	5	0	1	0
+pv0-1	pv1-2	4	bugfix-javascript-triangle	5	0	1	0
+pv0-1	pv1-2	5	bugfix-python-variable-length-quantity	6	0	1	0
+pv0-1	pv1-2	6	bugfix-javascript-phone-number	5	0	1	0
+pv0-1	pv1-2	7	bugfix-python-list-ops	5	1	2	0
+pv0-1	pv1-2	8	bugfix-javascript-grade-school	5	0	1	0
+pv0-1	pv1-2	9	bugfix-python-scale-generator	5	0	1	0
+pv0-1	pv1-2	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-1	pv1-2	11	bugfix-python-pig-latin	6	0	1	0
+pv0-1	pv1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+pv0-2	kd1-1	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-2	kd1-1	2	bugfix-javascript-space-age	5	1	2	0
+pv0-2	kd1-1	3	bugfix-python-phone-number	5	5		0
+pv0-2	kd1-1	4	bugfix-javascript-triangle	5	5		0
+pv0-2	kd1-1	5	bugfix-python-variable-length-quantity	6	6		0
+pv0-2	kd1-1	6	bugfix-javascript-phone-number	5	5		0
+pv0-2	kd1-1	7	bugfix-python-list-ops	5	5		0
+pv0-2	kd1-1	8	bugfix-javascript-grade-school	5	5		0
+pv0-2	kd1-1	9	bugfix-python-scale-generator	5	0	1	0
+pv0-2	kd1-1	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-2	kd1-1	11	bugfix-python-pig-latin	6	1	2	0
+pv0-2	kd1-1	12	bugfix-javascript-variable-length-quantity	5	5		0
+pv0-2	kd1-2	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-2	kd1-2	2	bugfix-javascript-space-age	5	1	2	0
+pv0-2	kd1-2	3	bugfix-python-phone-number	5	5		0
+pv0-2	kd1-2	4	bugfix-javascript-triangle	5	5		0
+pv0-2	kd1-2	5	bugfix-python-variable-length-quantity	6	6		0
+pv0-2	kd1-2	6	bugfix-javascript-phone-number	5	5		0
+pv0-2	kd1-2	7	bugfix-python-list-ops	5	5		0
+pv0-2	kd1-2	8	bugfix-javascript-grade-school	5	5		0
+pv0-2	kd1-2	9	bugfix-python-scale-generator	5	1	2	0
+pv0-2	kd1-2	10	bugfix-javascript-complex-numbers	5	1	2	0
+pv0-2	kd1-2	11	bugfix-python-pig-latin	6	1	2	0
+pv0-2	kd1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+pv0-2	pv1-1	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-2	pv1-1	2	bugfix-javascript-space-age	5	0	1	0
+pv0-2	pv1-1	3	bugfix-python-phone-number	5	0	1	0
+pv0-2	pv1-1	4	bugfix-javascript-triangle	5	0	1	0
+pv0-2	pv1-1	5	bugfix-python-variable-length-quantity	6	0	1	0
+pv0-2	pv1-1	6	bugfix-javascript-phone-number	5	0	1	0
+pv0-2	pv1-1	7	bugfix-python-list-ops	5	1	2	0
+pv0-2	pv1-1	8	bugfix-javascript-grade-school	5	0	1	0
+pv0-2	pv1-1	9	bugfix-python-scale-generator	5	0	1	0
+pv0-2	pv1-1	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-2	pv1-1	11	bugfix-python-pig-latin	6	0	1	0
+pv0-2	pv1-1	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+pv0-2	pv1-2	1	bugfix-python-affine-cipher	9	0	1	0
+pv0-2	pv1-2	2	bugfix-javascript-space-age	5	0	1	0
+pv0-2	pv1-2	3	bugfix-python-phone-number	5	0	1	0
+pv0-2	pv1-2	4	bugfix-javascript-triangle	5	0	1	0
+pv0-2	pv1-2	5	bugfix-python-variable-length-quantity	6	0	1	0
+pv0-2	pv1-2	6	bugfix-javascript-phone-number	5	0	1	0
+pv0-2	pv1-2	7	bugfix-python-list-ops	5	1	2	0
+pv0-2	pv1-2	8	bugfix-javascript-grade-school	5	0	1	0
+pv0-2	pv1-2	9	bugfix-python-scale-generator	5	0	1	0
+pv0-2	pv1-2	10	bugfix-javascript-complex-numbers	5	0	1	0
+pv0-2	pv1-2	11	bugfix-python-pig-latin	6	0	1	0
+pv0-2	pv1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+kd1-1	kd1-2	1	bugfix-python-affine-cipher	9	1	2	0
+kd1-1	kd1-2	2	bugfix-javascript-space-age	5	1	2	0
+kd1-1	kd1-2	3	bugfix-python-phone-number	5	5		0
+kd1-1	kd1-2	4	bugfix-javascript-triangle	5	5		0
+kd1-1	kd1-2	5	bugfix-python-variable-length-quantity	6	6		0
+kd1-1	kd1-2	6	bugfix-javascript-phone-number	5	5		0
+kd1-1	kd1-2	7	bugfix-python-list-ops	5	5		0
+kd1-1	kd1-2	8	bugfix-javascript-grade-school	5	5		0
+kd1-1	kd1-2	9	bugfix-python-scale-generator	5	0	1	0
+kd1-1	kd1-2	10	bugfix-javascript-complex-numbers	5	0	1	0
+kd1-1	kd1-2	11	bugfix-python-pig-latin	6	1	2	0
+kd1-1	kd1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+kd1-1	pv1-1	1	bugfix-python-affine-cipher	9	0	1	0
+kd1-1	pv1-1	2	bugfix-javascript-space-age	5	0	1	0
+kd1-1	pv1-1	3	bugfix-python-phone-number	5	0	1	0
+kd1-1	pv1-1	4	bugfix-javascript-triangle	5	0	1	0
+kd1-1	pv1-1	5	bugfix-python-variable-length-quantity	6	0	1	0
+kd1-1	pv1-1	6	bugfix-javascript-phone-number	5	0	1	0
+kd1-1	pv1-1	7	bugfix-python-list-ops	5	1	2	0
+kd1-1	pv1-1	8	bugfix-javascript-grade-school	5	0	1	0
+kd1-1	pv1-1	9	bugfix-python-scale-generator	5	0	1	0
+kd1-1	pv1-1	10	bugfix-javascript-complex-numbers	5	0	1	0
+kd1-1	pv1-1	11	bugfix-python-pig-latin	6	0	1	0
+kd1-1	pv1-1	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+kd1-1	pv1-2	1	bugfix-python-affine-cipher	9	0	1	0
+kd1-1	pv1-2	2	bugfix-javascript-space-age	5	0	1	0
+kd1-1	pv1-2	3	bugfix-python-phone-number	5	0	1	0
+kd1-1	pv1-2	4	bugfix-javascript-triangle	5	0	1	0
+kd1-1	pv1-2	5	bugfix-python-variable-length-quantity	6	0	1	0
+kd1-1	pv1-2	6	bugfix-javascript-phone-number	5	0	1	0
+kd1-1	pv1-2	7	bugfix-python-list-ops	5	1	2	0
+kd1-1	pv1-2	8	bugfix-javascript-grade-school	5	0	1	0
+kd1-1	pv1-2	9	bugfix-python-scale-generator	5	0	1	0
+kd1-1	pv1-2	10	bugfix-javascript-complex-numbers	5	0	1	0
+kd1-1	pv1-2	11	bugfix-python-pig-latin	6	0	1	0
+kd1-1	pv1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+kd1-2	pv1-1	1	bugfix-python-affine-cipher	9	0	1	0
+kd1-2	pv1-1	2	bugfix-javascript-space-age	5	0	1	0
+kd1-2	pv1-1	3	bugfix-python-phone-number	5	0	1	0
+kd1-2	pv1-1	4	bugfix-javascript-triangle	5	0	1	0
+kd1-2	pv1-1	5	bugfix-python-variable-length-quantity	6	0	1	0
+kd1-2	pv1-1	6	bugfix-javascript-phone-number	5	0	1	0
+kd1-2	pv1-1	7	bugfix-python-list-ops	5	1	2	0
+kd1-2	pv1-1	8	bugfix-javascript-grade-school	5	0	1	0
+kd1-2	pv1-1	9	bugfix-python-scale-generator	5	0	1	0
+kd1-2	pv1-1	10	bugfix-javascript-complex-numbers	5	0	1	0
+kd1-2	pv1-1	11	bugfix-python-pig-latin	6	0	1	0
+kd1-2	pv1-1	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+kd1-2	pv1-2	1	bugfix-python-affine-cipher	9	0	1	0
+kd1-2	pv1-2	2	bugfix-javascript-space-age	5	0	1	0
+kd1-2	pv1-2	3	bugfix-python-phone-number	5	0	1	0
+kd1-2	pv1-2	4	bugfix-javascript-triangle	5	0	1	0
+kd1-2	pv1-2	5	bugfix-python-variable-length-quantity	6	0	1	0
+kd1-2	pv1-2	6	bugfix-javascript-phone-number	5	0	1	0
+kd1-2	pv1-2	7	bugfix-python-list-ops	5	1	2	0
+kd1-2	pv1-2	8	bugfix-javascript-grade-school	5	0	1	0
+kd1-2	pv1-2	9	bugfix-python-scale-generator	5	0	1	0
+kd1-2	pv1-2	10	bugfix-javascript-complex-numbers	5	0	1	0
+kd1-2	pv1-2	11	bugfix-python-pig-latin	6	0	1	0
+kd1-2	pv1-2	12	bugfix-javascript-variable-length-quantity	5	1	2	0
+pv1-1	pv1-2	1	bugfix-python-affine-cipher	9	0	1	0
+pv1-1	pv1-2	2	bugfix-javascript-space-age	5	1	2	0
+pv1-1	pv1-2	3	bugfix-python-phone-number	5	5		0
+pv1-1	pv1-2	4	bugfix-javascript-triangle	5	5		0
+pv1-1	pv1-2	5	bugfix-python-variable-length-quantity	6	2	3	0
+pv1-1	pv1-2	6	bugfix-javascript-phone-number	5	5		0
+pv1-1	pv1-2	7	bugfix-python-list-ops	5	5		0
+pv1-1	pv1-2	8	bugfix-javascript-grade-school	5	5		0
+pv1-1	pv1-2	9	bugfix-python-scale-generator	5	1	2	0
+pv1-1	pv1-2	10	bugfix-javascript-complex-numbers	5	1	1	1
+pv1-1	pv1-2	11	bugfix-python-pig-latin	6	0	1	0
+pv1-1	pv1-2	12	bugfix-javascript-variable-length-quantity	5	5		0

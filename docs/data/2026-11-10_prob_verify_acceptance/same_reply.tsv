@@ -1,0 +1,16 @@
+kind	load_a	load_b	requests	same_reply	same_counters	requests_below_8192	same_reply_below	requests_from_8192	same_reply_from
+one arm, two loads	pv0-1	pv0-2	66	37	36	60	31	6	6
+arm against the control	pv0-1	kd1-1	66	46	45	60	40	6	6
+arm against the control	pv0-1	kd1-2	66	35	34	60	31	6	4
+arm against the control	pv0-1	pv1-1	66	2	1	60	2	6	0
+arm against the control	pv0-1	pv1-2	66	2	1	60	2	6	0
+arm against the control	pv0-2	kd1-1	66	38	39	60	32	6	6
+arm against the control	pv0-2	kd1-2	66	36	33	60	32	6	4
+arm against the control	pv0-2	pv1-1	66	2	1	60	2	6	0
+arm against the control	pv0-2	pv1-2	66	2	2	60	2	6	0
+one arm, two loads	kd1-1	kd1-2	66	35	34	60	31	6	4
+two arms	kd1-1	pv1-1	66	2	1	60	2	6	0
+two arms	kd1-1	pv1-2	66	2	1	60	2	6	0
+two arms	kd1-2	pv1-1	66	2	1	60	2	6	0
+two arms	kd1-2	pv1-2	66	2	1	60	2	6	0
+one arm, two loads	pv1-1	pv1-2	66	35	36	60	33	6	2

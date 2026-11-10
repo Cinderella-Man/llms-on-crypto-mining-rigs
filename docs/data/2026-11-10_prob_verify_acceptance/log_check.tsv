@@ -1,0 +1,7 @@
+load	flags	generated	sampling_lines	sampled	device	grammar	rejected	rejected_device	forced	timings_with_grammar	timings_device	timings_short	step_lines	step_drafted	step_accepted	step_restores	accept_lines	log_drafted	log_accepted	drafted	accepted	ckpt_restores	keep_draws	error_lines	cuda_errors
+pv0-1	LLAMA_TRACE=1	17410	66	17420	17420	2658	1	1	0	66	17420	0	5661	16958	11688	0	66	16958	11688	16958	11688	65		0	0
+pv0-2	LLAMA_TRACE=1	17359	66	17368	17368	2540	1	1	0	66	17368	0	5590	16743	11708	0	66	16743	11708	16743	11708	65		0	0
+kd1-1	LLAMA_SPEC_KEEP_DRAWS=1 LLAMA_TRACE=1	16762	66	16772	16772	2496	1	1	0	66	16772	0	5431	16266	11270	0	66	16266	11270	16266	11270	65	on	0	0
+kd1-2	LLAMA_SPEC_KEEP_DRAWS=1 LLAMA_TRACE=1	17140	66	17151	17151	2690	1	1	0	66	17151	0	5536	16576	11542	0	66	16576	11542	16576	11542	65	on	0	0
+pv1-1	--spec-draft-sampling probabilistic --spec-draft-p-min 0 LLAMA_TRACE=1	18788	66	18833	18833	2568	14	14	0	66	18833	0	5691	17050	13066	0	66	17050	13066	17050	13066	64		0	0
+pv1-2	--spec-draft-sampling probabilistic --spec-draft-p-min 0 LLAMA_TRACE=1	18784	66	18828	18828	2685	14	14	0	66	18828	0	5655	16944	13099	0	66	16944	13099	16944	13099	64		0	0

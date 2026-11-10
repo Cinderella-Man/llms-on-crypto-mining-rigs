@@ -22,6 +22,10 @@ previous one's cache; by default the cache carries over as it would for a user. 
 under the same label in --out is skipped, so an interrupted replay resumes (a partly replayed trace runs again from
 its start; `summary` keeps the last row per label, trace and request). A replayed reply never matches the
 recorded one, so from the second request on each turn reuses the cache only up to the end of the previous prompt.
+Each row also keeps the counters llama-server reports in `timings` (draft_n and draft_n_accepted with a draft model,
+sampled_on_device, grammar_n, grammar_rejected_n; the recorded request's under `rec`) and `reply_md5`, the MD5 of the
+assembled reply (reasoning, text, tool calls), so two replays can be compared on what was written without keeping the
+text.
 
 `pick` chooses N traces of one arm's scored attempts (optionally within task positions A-B of the run order) that
 span its range of live minutes: the attempts at the quantiles (2i + 1) / 2N of live time, so a replay set has short,
@@ -35,6 +39,7 @@ costs. The live rows of the same traces (from the proxy log) appear as label "li
 """
 import argparse
 import gzip
+import hashlib
 import json
 import random
 import re
@@ -50,6 +55,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import StreamStats, request_facts  # noqa: E402
 
 TRACE_RE = re.compile(r"^(.+/a\d+/t\d+)/(\d+)$")
+# llama-server's counters in `timings` that a replay row keeps (the times are kept as prompt_ms and predicted_ms)
+COUNTERS = ("draft_n", "draft_n_accepted", "sampled_on_device", "grammar_n", "grammar_rejected_n")
 
 
 def load_log(paths):
@@ -93,6 +100,8 @@ def send(server, body, timeout):
         err = f"{type(e).__name__}: {e}"
     row = st.summary()
     row.update(status=status, t_end=round(time.monotonic() - t0, 4))
+    row.update({k: row["timings"][k] for k in COUNTERS if k in (row["timings"] or {})})
+    row["reply_md5"] = hashlib.md5(json.dumps(st.reply(), sort_keys=True).encode()).hexdigest()
     if err:
         row["error"] = err
     return row
@@ -155,8 +164,9 @@ def cmd_run(a):
                                     if m.get("role") == "assistant" else m for m in body["messages"]]
             r = send(a.server, body, a.timeout)
             row = dict(label=a.label, trace=name, idx=i, rec_id=rec["id"], t_wall=time.time(), **request_facts(body),
-                       **r, rec={k: rec.get(k) for k in ("prompt_n", "prompt_ms", "cache_n", "predicted_n",
-                                                         "predicted_ms", "t_first_token", "t_end")})
+                       **r, rec=dict({k: rec.get(k) for k in ("prompt_n", "prompt_ms", "cache_n", "predicted_n",
+                                                              "predicted_ms", "t_first_token", "t_end")},
+                                **{k: rec["timings"][k] for k in COUNTERS if k in (rec.get("timings") or {})}))
             row.pop("timings", None)
             out.write(json.dumps(row) + "\n")
             out.flush()

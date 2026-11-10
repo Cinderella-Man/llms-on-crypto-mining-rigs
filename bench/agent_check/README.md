@@ -172,8 +172,12 @@ check also has no network. On the quant machine each attempt runs in its own con
   - "reply re-read": it stops at the previous prompt's end;
   - "older checkpoint": it falls short of the previous prompt, which is Q132's eviction case.
 - **`replay.py run`** re-sends one or more traces (an attempt's requests) in order, straight to a server. It keeps
-  their messages, tools and sampling, sets `max_tokens` to the recorded reply's length and a seed fixed per trace and
-  request (the same for every server), and erases the slot before each trace. Options:
+  their messages, tools and sampling, and sets `max_tokens` to the recorded reply's length and a seed fixed per trace
+  and request (the same for every server). Each row of its output keeps the server's counters (`draft_n` and
+  `draft_n_accepted` with a draft model, `sampled_on_device`, the grammar counters) and an MD5 of the assembled reply,
+  so replays can be compared on drafts and on what was written. Options:
+  - `--erase-slot`: the slot erased before each trace (the server needs `--slot-save-path` for that); by default the
+    cache carries over as it would for a user;
   - `--stream off`: the request non-streamed;
   - `--drop-reasoning`: the earlier replies' reasoning removed from the history;
   - `--ignore-eos`: exactly the recorded length generated.
@@ -187,7 +191,10 @@ check also has no network. On the quant machine each attempt runs in its own con
   labelled `REPLAY_LABEL`, into `CLIENT_OUT/replay.jsonl`; the report step writes `replay.md` with the ratios to
   `REPLAY_REF`. Run it once per server setup with the same `CLIENT_OUT`. Pipelined decoding is exact, so two setups of
   the release engine generate the same tokens for the same seeds, and the ratio of ms per generated token measures the
-  setup alone, without the run-to-run spread of live sessions.
+  setup alone, without the run-to-run spread of live sessions. This does not hold on the v3 Flash-Next line: two
+  loads of one setup wrote the same reply in 37 of 66 replayed requests
+  ([data](../../docs/data/2026-11-10_prob_verify_acceptance/README.md)), so a replay comparison there takes two or
+  more loads per setup and reads the difference against their spread.
 
 ## Calibration on the quant machine
 
