@@ -1,0 +1,64 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	dub256	draft	9.79 9.78	9.89 9.78	0.11	-0.05	-0.5	negligible
+generation	0	nodraft	draft	19.96 19.97	9.89 9.78	0.11	10.13	103.0	gain
+generation	0	dub512	draft	9.78 9.77	9.89 9.78	0.11	-0.07	-0.7	negligible
+generation	8192	dub256	draft	5.81 5.11	6.39 8.01	1.62	-1.73	-24.1	loss
+generation	8192	nodraft	draft	11.81 11.82	6.39 8.01	1.62	4.62	64.2	gain
+generation	8192	dub512	draft	6.79 6.54	6.39 8.01	1.62	-0.53	-7.4	negligible
+generation	16384	dub256	draft	7.83 15.90	9.22 7.49	8.07	3.51	42.0	negligible
+generation	16384	nodraft	draft	17.17 17.15	9.22 7.49	1.73	8.80	105.3	gain
+generation	16384	dub512	draft	16.02 14.42	9.22 7.49	1.73	6.86	82.1	gain
+generation	32768	dub256	draft	8.67 8.46	15.39 12.74	2.65	-5.50	-39.1	loss
+generation	32768	nodraft	draft	15.84 15.88	15.39 12.74	2.65	1.80	12.8	negligible
+generation	32768	dub512	draft	9.04 14.43	15.39 12.74	5.39	-2.32	-16.5	negligible
+generation	49152	dub256	draft	16.70 16.49	14.47 12.44	2.03	3.14	23.3	gain
+generation	49152	nodraft	draft	14.77 14.79	14.47 12.44	2.03	1.32	9.8	negligible
+generation	49152	dub512	draft	16.83 16.93	14.47 12.44	2.03	3.43	25.5	gain
+generation_all	all	dub256	draft	8.66 9.26	10.00 9.63	0.60	-0.85	-8.6	loss
+generation_all	all	nodraft	draft	15.44 15.45	10.00 9.63	0.37	5.64	57.5	gain
+generation_all	all	dub512	draft	10.37 11.04	10.00 9.63	0.66	0.89	9.1	gain
+step_pass1	0	dub256	draft	250.10 250.52	245.67 250.46	4.79	2.24	0.9	negligible
+step_pass1	0	nodraft	draft	50.94 50.87	245.67 250.46	4.79	-197.16	-79.5	no class (the draft differs)
+step_pass1	0	dub512	draft	250.61 250.56	245.67 250.46	4.79	2.52	1.0	negligible
+step_pass1	8192	dub256	draft	418.12 578.34	427.44 538.44	160.22	15.29	3.2	negligible
+step_pass1	8192	nodraft	draft	115.26 115.19	427.44 538.44	111.01	-367.71	-76.1	no class (the draft differs)
+step_pass1	8192	dub512	draft	313.08 462.71	427.44 538.44	149.63	-95.04	-19.7	negligible
+step_pass1	16384	dub256	draft	550.41 200.73	369.77 437.72	349.68	-28.18	-7.0	negligible
+step_pass1	16384	nodraft	draft	59.81 59.89	369.77 437.72	67.95	-343.90	-85.2	no class (the draft differs)
+step_pass1	16384	dub512	draft	192.02 220.39	369.77 437.72	67.95	-197.54	-48.9	gain
+step_pass1	32768	dub256	draft	395.48 394.48	151.29 192.62	41.34	223.02	129.7	loss
+step_pass1	32768	nodraft	draft	64.79 64.47	151.29 192.62	41.34	-107.32	-62.4	no class (the draft differs)
+step_pass1	32768	dub512	draft	305.18 141.11	151.29 192.62	164.07	51.19	29.8	negligible
+step_pass1	49152	dub256	draft	162.53 166.52	160.89 170.01	9.12	-0.92	-0.6	negligible
+step_pass1	49152	nodraft	draft	69.28 69.14	160.89 170.01	9.12	-96.23	-58.2	no class (the draft differs)
+step_pass1	49152	dub512	draft	161.87 160.25	160.89 170.01	9.12	-4.38	-2.6	negligible
+step_pass2	0	dub256	draft	112.97 113.00	113.71 112.97	0.74	-0.36	-0.3	negligible
+step_pass2	0	nodraft	draft	49.26 49.26	113.71 112.97	0.74	-64.08	-56.5	no class (the draft differs)
+step_pass2	0	dub512	draft	113.11 113.32	113.71 112.97	0.74	-0.12	-0.1	negligible
+step_pass2	8192	dub256	draft	146.99 132.04	145.60 127.65	17.95	2.88	2.1	negligible
+step_pass2	8192	nodraft	draft	54.03 54.03	145.60 127.65	17.95	-82.60	-60.5	no class (the draft differs)
+step_pass2	8192	dub512	draft	175.90 149.35	145.60 127.65	26.56	26.00	19.0	negligible
+step_pass2	16384	dub256	draft	130.82 134.70	125.92 172.36	46.44	-16.38	-11.0	negligible
+step_pass2	16384	nodraft	draft	56.66 56.73	125.92 172.36	46.44	-92.45	-62.0	no class (the draft differs)
+step_pass2	16384	dub512	draft	140.86 149.55	125.92 172.36	46.44	-3.94	-2.6	negligible
+step_pass2	32768	dub256	draft	132.07 146.19	145.79 166.28	20.48	-16.90	-10.8	negligible
+step_pass2	32768	nodraft	draft	61.44 61.45	145.79 166.28	20.48	-94.59	-60.6	no class (the draft differs)
+step_pass2	32768	dub512	draft	137.06 136.00	145.79 166.28	20.48	-19.50	-12.5	negligible
+step_pass2	49152	dub256	draft	156.81 156.93	155.08 151.54	3.54	3.56	2.3	loss
+step_pass2	49152	nodraft	draft	66.12 66.12	155.08 151.54	3.54	-87.19	-56.9	no class (the draft differs)
+step_pass2	49152	dub512	draft	155.02 154.76	155.08 151.54	3.54	1.58	1.0	negligible
+prompt	0	dub256	draft	32.8 31.8	32.8 32.8	1.0	-0.5	-1.6	negligible
+prompt	0	nodraft	draft	33.5 33.8	32.8 32.8	0.3	0.9	2.7	gain
+prompt	0	dub512	draft	32.9 32.6	32.8 32.8	0.3	-0.0	-0.1	negligible
+prompt	8192	dub256	draft	130.2 129.0	122.5 129.2	6.8	3.7	3.0	negligible
+prompt	8192	nodraft	draft	177.1 177.5	122.5 129.2	6.8	51.4	40.9	gain
+prompt	8192	dub512	draft	132.8 131.9	122.5 129.2	6.8	6.5	5.2	negligible
+prompt	16384	dub256	draft	110.7 110.8	107.8 108.9	1.2	2.4	2.2	gain
+prompt	16384	nodraft	draft	167.0 166.2	107.8 108.9	1.2	58.3	53.8	gain
+prompt	16384	dub512	draft	113.2 112.7	107.8 108.9	1.2	4.6	4.2	gain
+prompt	32768	dub256	draft	92.4 92.1	90.6 90.4	0.3	1.7	1.9	gain
+prompt	32768	nodraft	draft	148.5 148.7	90.6 90.4	0.2	58.1	64.2	gain
+prompt	32768	dub512	draft	93.8 93.6	90.6 90.4	0.2	3.2	3.6	gain
+prompt	49152	dub256	draft	71.1 70.9	70.0 70.1	0.2	0.9	1.4	gain
+prompt	49152	nodraft	draft	119.5 119.6	70.0 70.1	0.1	49.5	70.7	gain
+prompt	49152	dub512	draft	72.4 72.2	70.0 70.1	0.2	2.3	3.2	gain

@@ -244,6 +244,12 @@ the release check's recorded requests.
   draft first, so that its numbers would be in if the draft line ran out of host memory. Run the projection of
   [scripts/fit_probe.sh](../../scripts/fit_probe.sh) and a load check (`WARM=0 REPS=1 DEPTHS=0`) before such a run:
   together they take a few minutes and read every card's memory before an hour of loads.
+- **The fourth run on the rig** read prompts only: four arms (`--spec-draft-n-ubatch` 128, 256 and 512 through
+  `ARM_ARGS_<arm>`, and the line without the draft), two loads each, 108 minutes, same data page. With
+  `N_PREDICT=16` a load with the draft took 14 minutes instead of the second pair's 16, and the primes' numbers
+  repeated that pair's. `LOADS` put the arm most likely to be stopped by the RAM watchdog last in each round, since a
+  stop ends the run; it was not stopped. [run/draft_ubatch.py](../../docs/data/2026-11-10_deep_lane/run/draft_ubatch.py)
+  reads such a run: prompt reading of every arm against the control and the floor, and the host's memory per load.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

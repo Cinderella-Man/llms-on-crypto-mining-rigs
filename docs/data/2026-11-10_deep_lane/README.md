@@ -1,4 +1,4 @@
-# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, and a 131,072-token line to 120,000 tokens (Q1143, Q230, Q1153, Q1154; 2026-11-10)
+# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, a 131,072-token line to 120,000 tokens, and the draft's micro-batch in prompt reading (Q1143, Q230, Q1153, Q1154, Q1215; 2026-11-10)
 
 What this is: the first timing of the sparse Pascal attention (`GGML_CUDA_FATTN_SPARSE_PASCAL=1`, off by default) on
 a real model. The line is the Miner Llama v3 release preset
@@ -16,6 +16,10 @@ and with the sparse attention on in both arms (`draft` and `nodraft`; registry r
 A third run put the same line, with and without the draft, at a 131,072-token context (`-c 131072 -ub 256`) and
 held it at 49,152, 65,536 and 120,000 tokens, after a projection and a real load of each line's memory (registry row
 Q1154). Its result is [the 131,072-token line](#the-third-run-a-131072-token-line-q1154) below.
+
+A fourth run timed the draft model's micro-batch in prompt reading: `--spec-draft-n-ubatch` 128 (the preset), 256
+and 512 against the line without the draft, on the second pair's line and prompts (registry row Q1215). Its result
+is [the draft's micro-batch](#the-fourth-run-the-drafts-micro-batch-in-prompt-reading-q1215) below.
 
 Why: on a P106 llama.cpp's attention reads the whole cache for every token, so generation slows as an agent's
 context grows, and real coding attempts write 40,000 tokens and more. The model's attention layers keep about 2,051
@@ -663,6 +667,138 @@ pass 1's.
 - The host's memory is one sample a second; the run does not show what was swapped.
 - No quality is measured here.
 
+## The fourth run: the draft's micro-batch in prompt reading (Q1215)
+
+The second pair found that with the draft the line reads prompts 28.4 % slower on an empty cache and 41.3 % slower
+on 32,188 cached tokens. The draft model reads every prompt token too, in micro-batches of 128 tokens
+(`--spec-draft-n-ubatch 128`), a quarter of the main model's 512. That value was set so that the draft would fit the
+4 GB host: by llama-server's projection the draft's compute buffer in host memory is 25 MiB at 128 against 101 MiB at
+512 (registry row Q558). This run timed the draft's micro-batch at 128 (the preset, `draft`), 256 (`dub256`) and 512
+(`dub512`, which is llama.cpp's default: without the flag the draft takes the main model's `-ub`) against the line
+without the draft (`nodraft`). It used the second pair's line, depths and prompts, two loads an arm, and only 16
+tokens a decode request, since the question is prompt reading.
+
+**A draft micro-batch of 512 reads prompts faster than the preset's 128: a gain at 16,384, 32,768 and 49,152 tokens
+(+4.2 %, +3.6 % and +3.2 %) and over a load's four prompt chunks (91.8 and 91.5 against 88.0 and 88.7 tok/s, +3.7 %;
+546.2 and 548.0 s against 569.6 and 565.2 s), negligible at 8,192. The 4 GB host held: its lowest available memory
+was 263 and 238 MiB against 71 and 81 MiB with the preset, and the RAM watchdog never acted. But 512 takes away only
+9.3 % of what the draft costs in prompt reading. 90.7 % is left, and the part of it that grows with depth does not
+change with the micro-batch.**
+
+### Prompt reading: tok/s (ms a prompt token)
+
+Per load, the tokens its prime read over their time. Each arm is classed against `draft` by the rule of the first
+pair. The draft adds: the arm's mean ms a prompt token minus `nodraft`'s. Taken away: the share of what the draft adds
+in `draft` that the arm no longer adds ([draft_prompt_cost/draft_ubatch.md](draft_prompt_cost/draft_ubatch.md),
+[draft_prompt_cost/draft_ubatch_prompt.tsv](draft_prompt_cost/draft_ubatch_prompt.tsv)).
+
+| Depth (tokens) | Read, on cached | Arm | Load 1 | Load 2 | Spread, tok/s | Against `draft` | Class | The draft adds, ms a prompt token | Taken away |
+|---:|---|---|---|---|---:|---:|---|---:|---:|
+| 8,192 | 8,128 on 0 | draft (128) | 122.5 (8.17) | 129.2 (7.74) | 6.8 | | | +2.31 | |
+| | | dub256 | 130.2 (7.68) | 129.0 (7.75) | 1.2 | +3.0 % | negligible | +2.08 | 10.2 % |
+| | | dub512 | 132.8 (7.53) | 131.9 (7.58) | 0.9 | +5.2 % | negligible | +1.92 | 17.1 % |
+| | | nodraft | 177.1 (5.65) | 177.5 (5.63) | 0.4 | +40.9 % | gain | | |
+| 16,384 | 8,708 on 7,612 | draft (128) | 107.8 (9.28) | 108.9 (9.18) | 1.2 | | | +3.23 | |
+| | | dub256 | 110.7 (9.03) | 110.8 (9.02) | 0.1 | +2.2 % | gain | +3.03 | 6.2 % |
+| | | dub512 | 113.2 (8.84) | 112.7 (8.87) | 0.5 | +4.2 % | gain | +2.85 | 11.6 % |
+| | | nodraft | 167.0 (5.99) | 166.2 (6.02) | 0.8 | +53.8 % | gain | | |
+| 32,768 | 16,388 on 16,316 | draft (128) | 90.6 (11.04) | 90.4 (11.07) | 0.2 | | | +4.32 | |
+| | | dub256 | 92.4 (10.83) | 92.1 (10.86) | 0.3 | +1.9 % | gain | +4.11 | 4.8 % |
+| | | dub512 | 93.8 (10.66) | 93.6 (10.69) | 0.2 | +3.6 % | gain | +3.94 | 8.8 % |
+| | | nodraft | 148.5 (6.73) | 148.7 (6.73) | 0.1 | +64.2 % | gain | | |
+| 49,152 | 16,900 on 32,188 | draft (128) | 70.0 (14.29) | 70.1 (14.26) | 0.1 | | | +5.91 | |
+| | | dub256 | 71.1 (14.07) | 70.9 (14.10) | 0.2 | +1.4 % | gain | +5.72 | 3.2 % |
+| | | dub512 | 72.4 (13.81) | 72.2 (13.85) | 0.2 | +3.2 % | gain | +5.46 | 7.6 % |
+| | | nodraft | 119.5 (8.37) | 119.6 (8.36) | 0.1 | +70.7 % | gain | | |
+| all four | 50,124 tokens | draft (128) | 88.0 (11.36) | 88.7 (11.28) | 0.7 | | | +4.34 | |
+| | | dub256 | 90.1 (11.10) | 89.8 (11.13) | 0.3 | +1.8 % | gain | +4.14 | 4.7 % |
+| | | dub512 | 91.8 (10.90) | 91.5 (10.93) | 0.3 | +3.7 % | gain | +3.94 | 9.3 % |
+| | | nodraft | 143.3 (6.98) | 143.3 (6.98) | 0.0 | +62.2 % | gain | | |
+
+- **The four prompt chunks of a load took** 569.6 and 565.2 s with the preset, 556.2 and 557.9 with `dub256`, 546.2
+  and 548.0 with `dub512` and 349.8 and 349.7 without the draft. The draft adds 217.7 s to a load with the preset and
+  197.4 s with `dub512`, the means of each arm's two loads.
+- **The micro-batch takes the same amount off every prompt token at every depth.** At 512 that is 0.40, 0.37, 0.38
+  and 0.45 ms a prompt token at the four depths; at 256 it is 0.24, 0.20, 0.21 and 0.19 ms, about half.
+- **The part that grows with depth does not change.** From an empty cache to 32,188 cached tokens the draft's cost
+  rises by 3.60 ms a prompt token at 128, 3.65 at 256 and 3.55 at 512. A larger micro-batch means fewer passes over
+  the draft layer's cache, so that rise is not in reading the cache once per micro-batch. It is the same for every
+  prompt token whatever the batching, as the draft layer's attention is: every prompt token against every cached
+  cell. That is a reading of these numbers, not a measurement; the second half of Q1215 profiles one prime.
+- **At 8,192 the class is negligible because of one load:** `draft1` read its first chunk at 122.5 tok/s and `draft2`
+  at 129.2, below both loads of `dub512` (132.8 and 131.9). The second pair's preset loads read the same chunk at
+  127.7 and 127.2.
+- **The preset repeats the second pair:** its four chunks took 569.6 and 565.2 s against 567.6 and 563.9 there; the
+  line without the draft 349.8 and 349.7 against 350.0 and 350.4; at 49,152 the preset read 70.0 and 70.1 tok/s
+  against 69.9 and 70.3.
+- At depth 0 the 64-token tail reads at 32.8 and 32.8 tok/s with the preset, 32.8 and 31.8 with `dub256`, 32.9 and
+  32.6 with `dub512`, and 33.5 and 33.8 without the draft.
+
+### The host's memory
+
+From the RAM watchdog's samples, one a second, over each whole load
+([draft_prompt_cost/draft_ubatch_memory.tsv](draft_prompt_cost/draft_ubatch_memory.tsv), per request in
+[draft_prompt_cost/host_memory.tsv](draft_prompt_cost/host_memory.tsv)). The watchdog's usable memory is MemAvailable
+minus CmaFree; with the rig's kernel option `kho=off` the lowest of the two was the same in every load here.
+
+| Load | MemAvailable after loading, MiB | Lowest MemAvailable | Most swap in use | Swap moved during the primes | Most written to swap in 10 s | Highest pressure, some / full |
+|---|---:|---:|---:|---:|---:|---|
+| `draft1` | 884 | 71 | 512 | +281 | 275 | 19.50 / 17.67 % |
+| `draft2` | 930 | 81 | 1,012 | +754 | 208 | 6.17 / 4.48 % |
+| `dub256_1` | 905 | 80 | 1,131 | +882 | 228 | 15.18 / 13.40 % |
+| `dub256_2` | 904 | 79 | 1,147 | +969 | 206 | 11.15 / 9.77 % |
+| `dub512_1` | 871 | 263 | 1,064 | +905 | 353 | 5.80 / 3.71 % |
+| `dub512_2` | 873 | 238 | 1,097 | +880 | 284 | 10.29 / 8.28 % |
+| `nodraft1` | 984 | 268 | 44 | 0 | 0 | 5.54 / 5.33 % |
+| `nodraft2` | 1,025 | 257 | 46 | 0 | 0 | 0.36 / 0.29 % |
+
+- **With 512 the host is not lower at its lowest point, and the watchdog stayed far from its limits.** Its stop
+  points are MemAvailable under 60 MiB, usable memory under 20 MiB, or more than 600 MiB written to swap within
+  10 s. With `dub512` the lowest MemAvailable was 263 and 238 MiB, as without the draft (268 and 257), against 71 and
+  81 with the preset and 80 and 79 with `dub256`.
+- **With 512 the host swaps earlier.** During the first prime at 8,192 it wrote 558 and 606 MiB to swap (the preset
+  255 and 62, `dub256` 125 and 135), at most 353 and 284 MiB within 10 s (the preset 275 and 208). It was at its
+  lowest during that prime, and from the prime at 16,384 on its MemAvailable stayed above 500 MiB. Over the four
+  primes of a load the swap moved is alike: 905 and 880 MiB at 512, 281 and 754 at 128, 882 and 969 at 256.
+- **The preset's lowest points:** in `draft1` 147 MiB during the prime and the first decode request at 8,192, 84
+  during those at 16,384 and 71 during the prime at 49,152; in `draft2` 84 and 81 MiB during the prime and the first
+  decode request at 8,192.
+- **After loading** the host had 871 and 873 MiB available with 512 against 884 and 930 with the preset.
+- **On the cards** the larger micro-batch takes 48 MiB more on card 8 and 2 more on card 4 at 256, and 146 and 4 more
+  at 512: card 8 holds 4,711 MiB of its 6,144 after loading with `dub512` against 4,565 with the preset. Every other
+  card holds the same.
+- This run's decode requests write 16 tokens, so the first request's swapping that the second pair saw over 256
+  tokens is only partly in it. A whole agent session on the 4 GB host is the agent check's (registry row Q1233).
+
+### Generation, a check
+
+- Every request generated its 16 tokens. At depth 0 all eight loads wrote the same reply, and every load of the three
+  draft arms accepted 14 of its 46 drafted tokens over the two passes. The step on the repeated request at depth 0
+  took 113.71 and 112.97 ms with the preset, 112.97 and 113.00 with `dub256` and 113.11 and 113.32 with `dub512`.
+- From 8,192 tokens on, two loads of one arm wrote different replies, as in the earlier runs, and a 16-token request
+  takes 6 to 9 steps. The step tables of [draft_prompt_cost/table.md](draft_prompt_cost/table.md) are not read for a
+  class at that count. Each load's speed, acceptance and reply hash are in
+  [draft_prompt_cost/draft_ubatch_generation.tsv](draft_prompt_cost/draft_ubatch_generation.tsv).
+
+### What it decides
+
+- **`--spec-draft-n-ubatch 512` is a gain in prompt reading, at no cost in the host's lowest memory and 146 MiB more
+  on card 8.** It goes into the stacked line. It goes into the preset after the agent check on the rig, because
+  release settings are chosen on agentic speed and only a whole agent session shows the fit on the 4 GB host
+  (registry row Q1233). As 512 is llama.cpp's default, the change to the preset is to drop
+  `--spec-draft-n-ubatch 128`.
+- `dub256` is a gain too (+1.8 % over the primes) and takes away half as much as 512.
+- **What is left for code:** of the 217.7 s the preset's draft adds to a load's 50,124 prompt tokens, 512 takes away
+  20.3 s, and 197.4 s (90.7 %) are left. That is the ceiling for the KV-only catch-up (Q1105) and for the parts the
+  profile in Q1215 names.
+
+**Limits.**
+- Two loads an arm, one day, one rig, the second pair's prompts.
+- Decode requests of 16 tokens: generation here is a check, not a speed.
+- The host's memory is one sample a second; the run does not show what was swapped.
+- No quality is measured here. The draft's micro-batch changes at most which tokens the draft proposes; the main model
+  checks every one.
+
 ## Method
 
 - **The line:** the preset as it is on nine P106-090 cards (`-ts 6,6,6,6,5,6,5,6,3`, `-c 65536`, `-ub 512`, the MTP
@@ -718,6 +854,19 @@ pass 1's.
   [run/card_fit.py](run/card_fit.py), the last of which puts the projection, the memory after loading and the most
   each card held during a load into one table. They ran on another machine and gave the rig's own tables again,
   byte for byte.
+- **The fourth run's line:** the second pair's `draft` line (the preset with `GGML_CUDA_FATTN_SPARSE_PASCAL=1`) with
+  `--spec-draft-n-ubatch 256` or `512` in place of the preset's `128` (`ARM_ARGS_<arm>`), and its `nodraft` line;
+  nothing else changed ([draft_prompt_cost/loads.tsv](draft_prompt_cost/loads.tsv)). The second pair's depths and
+  prompts, token for token; `N_PREDICT=16`, so each decode request writes 16 tokens.
+- **The fourth run's loads:** one untimed warm-up load of `draft`, then `draft1`, `dub256_1`, `nodraft1`, `dub512_1`,
+  `draft2`, `dub256_2`, `nodraft2`, `dub512_2` (`LOADS`), each after the quiet check. `dub512` came last in each
+  round so that, had the watchdog stopped it, the round's other loads would have been in. Loading took 224 and 224 s
+  for `draft`, 226 and 224 for `dub256`, 224 and 225 for `dub512`, 210 and 208 for `nodraft`; a whole load 14.2 and
+  14.1 minutes, 14.1 and 14.0, 13.8 and 13.8, and 10.0 and 10.0; the run 108 minutes. The watchdog did not act.
+- **The fourth run's tables:** the driver's own ([draft_prompt_cost/table.md](draft_prompt_cost/table.md), control
+  `draft`), rebuilt on another machine byte for byte; [run/draft_ubatch.py](run/draft_ubatch.py) for the prompt,
+  memory and generation tables of this page, and [run/host_memory.py](run/host_memory.py) per request. On the
+  second pair's folder `draft_ubatch.py` gives that pair's prompt and host-memory numbers again.
 
 ## Files
 
@@ -739,6 +888,10 @@ pass 1's.
 | [ctx131k/card_fit.tsv](ctx131k/card_fit.tsv) | MiB per card: the projection of four lines, and after loading and at the highest for every load of the third run, its load check and the second pair |
 | [ctx131k/load_check/](ctx131k/load_check/table.md) (`table.md`, `classes.tsv`, `requests.csv`, `loads.tsv`, `host_memory.tsv`) | the load check: one load of each 131,072-token line at depth 0 |
 | [run/card_fit.py](run/card_fit.py) | the card table's script (Python 3.9 or newer, standard library only) |
+| [draft_prompt_cost/table.md](draft_prompt_cost/table.md), [classes.tsv](draft_prompt_cost/classes.tsv), [requests.csv](draft_prompt_cost/requests.csv), [loads.tsv](draft_prompt_cost/loads.tsv) | the fourth run's driver tables and classes (control `draft`), requests and loads (`warm`, then two loads each of `draft`, `dub256`, `nodraft` and `dub512`) |
+| [draft_prompt_cost/draft_ubatch.md](draft_prompt_cost/draft_ubatch.md), [_prompt.tsv](draft_prompt_cost/draft_ubatch_prompt.tsv), [_memory.tsv](draft_prompt_cost/draft_ubatch_memory.tsv), [_generation.tsv](draft_prompt_cost/draft_ubatch_generation.tsv) | the fourth run read on prompt reading (every load by value, the class against `draft`, what the draft adds per prompt token, the share taken away), on the host's memory per load and each card's after loading, and on generation as a check |
+| [draft_prompt_cost/host_memory.tsv](draft_prompt_cost/host_memory.tsv) | the fourth run's host memory per load and request |
+| [run/draft_ubatch.py](run/draft_ubatch.py) | the fourth run's table script (Python 3.9 or newer, standard library only) |
 
 Not published: the prompts' token ids, the replies' first characters and the server logs (recorded text and paths),
 the raw telemetry (the cards every 10 s, the watchdog's samples, the quiet and fit checks, which the text above
@@ -843,6 +996,29 @@ python3 -I docs/data/2026-11-10_deep_lane/run/draft_pair.py <deep lane folder> \
 python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <deep lane folder> > host_memory.tsv
 python3 -I docs/data/2026-11-10_deep_lane/run/card_fit.py --probe fit_probe.md <load check folder> <deep lane folder> \
   <second pair's folder> > card_fit.tsv
+```
+
+The fourth run, with the `wait` and `collect` commands above (`DRY=1` first; its four server lines differ only in
+`--spec-draft-n-ubatch` and, for `nodraft`, in the draft's flags):
+
+```bash
+RIG=rig BIN=<build>/bin/llama-server \
+MODEL=<models>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+MODEL_DRAFT=<models>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+TEXT_LOCAL=<recorded>/proxy.jsonl.bodies.gz TAG='^t1swift/' WD_ENV=MIN_AVAIL_MB=60 \
+ENV_ADD=GGML_CUDA_FATTN_SPARSE_PASCAL=1 N_PREDICT=16 \
+ARMS="draft dub256 dub512 nodraft" ARM_ARGS_dub256="--spec-draft-n-ubatch 256" \
+ARM_ARGS_dub512="--spec-draft-n-ubatch 512" ARM_DRAFT_nodraft=off \
+LOADS="warm:draft draft1:draft dub256_1:dub256 nodraft1:nodraft dub512_1:dub512 draft2:draft dub256_2:dub256 nodraft2:nodraft dub512_2:dub512" \
+bash bench/deep_lane/remote.sh start
+```
+
+Its tables:
+
+```bash
+python3 -I bench/deep_lane/deep_table.py <results folder> --out table.md --tsv classes.tsv
+python3 -I docs/data/2026-11-10_deep_lane/run/draft_ubatch.py <results folder> --out draft_ubatch.md --tsv draft_ubatch
+python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <results folder> > host_memory.tsv
 ```
 
 ## Provenance and licence

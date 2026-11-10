@@ -1,0 +1,9 @@
+load	arm	avail_after_load_mib	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_change_load_mib	swap_moved_primes_mib	max_swapout_10s_mib	max_psi_some	max_psi_full	watchdog_kill
+draft1	draft	884	71	71	512	+16	281	275	19.50	17.67	none
+draft2	draft	930	81	81	1012	+688	754	208	6.17	4.48	none
+dub256_1	dub256	905	80	80	1131	+767	882	228	15.18	13.40	none
+dub256_2	dub256	904	79	79	1147	+0	969	206	11.15	9.77	none
+dub512_1	dub512	871	263	263	1064	+730	905	353	5.80	3.71	none
+dub512_2	dub512	873	238	238	1097	+734	880	284	10.29	8.28	none
+nodraft1	nodraft	984	268	268	44	+0	0	0	5.54	5.33	none
+nodraft2	nodraft	1025	257	257	46	+0	0	0	0.36	0.29	none
