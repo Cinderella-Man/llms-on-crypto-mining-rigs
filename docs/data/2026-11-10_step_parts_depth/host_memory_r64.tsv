@@ -1,0 +1,15 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+host (whole load)	1024	61	61	900	+591	3.89	2.93
+warm (whole load)	955	196	196	957	+15	10.15	9.06
+warm prime pass 0 depth 16384	135	196	196	532	+511	10.15	9.06
+warm decode pass 1 depth 16384	20	423	423	683	+151	5.03	4.14
+warm decode pass 2 depth 16384	14	469	469	683	+0	1.01	0.83
+warm prime pass 0 depth 49152	414	559	559	957	+274	2.41	2.21
+warm decode pass 1 depth 49152	20	676	676	957	-1	0.00	0.00
+warm decode pass 2 depth 49152	16	686	686	956	-9	0.00	0.00
+host prime pass 0 depth 16384	153	87	87	151	+115	2.80	2.10
+host decode pass 1 depth 16384	21	61	61	298	+147	2.35	1.69
+host decode pass 2 depth 16384	15	132	132	298	+0	0.47	0.34
+host prime pass 0 depth 49152	464	192	192	868	+570	3.89	2.93
+host decode pass 1 depth 49152	20	610	610	900	+32	1.08	0.74
+host decode pass 2 depth 49152	17	624	624	900	-4	0.11	0.08

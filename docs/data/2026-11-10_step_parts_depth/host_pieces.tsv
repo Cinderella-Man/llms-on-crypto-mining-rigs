@@ -1,0 +1,8 @@
+piece	request	evaluations	main_passes	draft_passes	qsa_lines	matched	generation_steps	typical_steps
+1	warmup 0	211	13	47	0	0	0	0
+2	prime 16384	534	32	123	0	0	0	0
+3	decode 16384 p1	1214	72	283	0	0	69	66
+4	decode 16384 p2	1184	70	277	0	0	69	66
+5	prime 49152	1097	65	256	0	0	0	0
+6	decode 49152 p1	1282	76	299	0	0	75	72
+7	decode 49152 p2	1243	73	293	0	0	72	69

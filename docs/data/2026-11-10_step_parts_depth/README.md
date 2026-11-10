@@ -8,7 +8,9 @@ repeated step took 149.73 ms at 16,384 tokens, 165.86 at 32,768 and 180.77 at 49
 ([2026-11-10_deep_lane](../2026-11-10_deep_lane/README.md), R39a, `sparse1`): 31.04 ms from 16,384 to 49,152. This
 run profiles that step, the verify pass and the draft's passes together, at 16,384, 32,768 and 49,152 tokens with the
 fork's profiler in group mode, beside the shallow step of
-[2026-11-10_served_verify_parts](../2026-11-10_served_verify_parts/README.md) (R49, depth 79 to 335).
+[2026-11-10_served_verify_parts](../2026-11-10_served_verify_parts/README.md) (R49, depth 79 to 335). A second run on
+the same rig the same evening (R64, [Q1243](../../../quants/experiments.md)) measured the part outside the kernels
+with the fork's host profile: [Outside the kernels, measured](#outside-the-kernels-measured-r64).
 
 ## Result
 
@@ -86,9 +88,8 @@ unprofiled step is the server's own figure (generation time over steps) for the 
     cards' work.
   - Q441 estimated that these copies overlap with the cards before them and put ~1 to 1.5 ms at 32k on the token's
     path. This run's 16.46 ms says that something of their size is on the path, but it does not show that it is them.
-- **Q1243** (R64) measures it: `LLAMA_QSA_INPUT_STATS` (the inputs' host time and bytes per card) and the host profile
-  `GGML_CUDA_PROFILE_HOST` (each evaluation's host entry and exit per card) on one load at 16,384 and 49,152. That
-  test is the one that reopens Q640 (the k-pool tables kept on the cards).
+- **Measured in R64** ([below](#outside-the-kernels-measured-r64)): the uploads of these inputs are on the token's
+  path, and est. 9.76 of the 15.69 ms that grow outside the kernels follow their size. Q640 reopens.
 
 ### The step at each depth
 
@@ -122,8 +123,123 @@ or 12.87 ms).
 |---|---|---:|
 | new [Q1244](../../../quants/experiments.md) (C704): the indexer reads the pooled keys where they are, with no gather into a new tensor (a `LIGHTNING_INDEXER` that takes `pool_cells`, or the pooled keys kept in pool order so that the gather is a view); exact | the gather (and, fused, part of the scores' read) | up to 4.97 / 14.69 (3.3 % / 8.1 % of the unprofiled 151.42 / 181.86) |
 | [Q1153](../../../quants/experiments.md)'s index reuse: the draft's passes reuse the selection of the step's last accepted row | the draft's gather and scores | up to 1.53 / 4.40 |
-| [Q640](../../../quants/experiments.md), the k-pool tables kept on the cards (parked until Q1243) | the inputs' host build and uploads, if they are what grows outside the kernels | up to est. 16.46 of the growth |
+| [Q640](../../../quants/experiments.md), the k-pool tables kept on the cards (reopened by R64) | the inputs' uploads and host build | est. 2.70 / 12.43 (R64: card 0's and the draft's four uploads at 188 MB/s, 2.70 and 8.02, and at 49,152 the verify pass's rest that grows with the other cards' uploads, +4.41) |
 | [Q643](../../../quants/experiments.md), the union gather for verify passes | part of the attention, which is flat in depth | not estimated here |
+
+## Outside the kernels, measured (R64)
+
+The same line on the same rig at 19:26 to 19:59 ([Q1243](../../../quants/experiments.md)): an unprofiled load, then
+one load with the fork's host profile (`GGML_CUDA_PROFILE_HOST`) at 16,384 and 49,152 tokens, the same requests as
+above. The host profile writes, per card and graph evaluation, the host's entry to and exit from `graph_compute` and
+the GPU time between two CUDA events around the evaluation's work; it adds two events an evaluation and synchronizes
+nothing. The scheduler copies a card's host inputs (the QSA k-pool inputs among them) right before it enters that
+card's `graph_compute`, so each upload lies in the host's gap before that entry.
+
+### Result
+
+**Q640 reopens: the k-pool inputs' uploads are on the token's path, and est. 9.76 of the 15.69 ms that grow outside
+the kernels follow their size.** From 16,384 to 49,152 tokens the step grows 30.33 ms on pass 2 (153.26 → 183.58 ms),
+the GPU time of its evaluations 14.64 (135.00 → 149.64; the group profile above: 13.98) and the time outside the
+kernels 15.69 (18.26 → 33.94; the estimate above: 16.46). ms a step, the mean over 66 and 69 typical steps of one
+request each ([host_depth.md](host_depth.md); the parts add up to the step):
+
+| Outside the kernels, pass 2 | 16,384 | 49,152 | growth | share of the growth |
+|---|---:|---:|---:|---:|
+| the verify pass's rest (its span less the nine cards' GPU time: the eight crossings, the rows back, the acceptance, the server before the draft) | 6.65 | 11.05 | +4.41 | 28.1 % |
+| the draft's four crossings (card 4's exit to card 8's entry: the token's row through the host and card 8's uploads) | 5.13 | 9.26 | +4.12 | 26.3 % |
+| the draft's turns before its last pass (card 8's end to the next pass's entry) | 1.53 | 3.40 | +1.86 | 11.9 % |
+| the server between the last draft pass and the next verify pass (with the verify pass's input build and card 0's uploads) | 4.93 | 10.23 | +5.30 | 33.8 % |
+| **outside the kernels** | **18.26** | **33.94** | **+15.69** | 100 % |
+| the host's launch of the verify pass, inside its span (card 0's entry to card 8's exit) | 8.74 | 18.72 | +9.98 | |
+
+- **Every upload interval grows by the inputs' extra bytes at the link's speed.** The k-pool inputs take 28 bytes per
+  pool of four cells for a four-token pass and 22 for one token; with 4,160 and 12,352 pools (est., from the tensors'
+  shapes) that is 229,376 bytes more a card for a verify pass and 180,224 for a drafting pass.
+  - In the verify pass the host's gap before cards 1 to 8 grows by 1.23, 1.23, 1.22, 1.21, 1.23, 1.28, 1.23 and
+    1.21 ms (from 0.92, 0.89, 0.89, 0.82, 0.88, 0.88, 0.89 and 0.94 at 16,384): 186.5 MB/s on average.
+  - Each drafting pass's crossing grows by 0.96 ms (187.7 MB/s), the catch-up pass's by 1.24 (185.0 MB/s at the
+    four-token size; it reads the step's accepted tokens).
+  - The rig's links move ~189 MB/s from the host to one card at a time, and the cards behind one PCIe switch share
+    its upstream link when several take data at once ([mining_rig.md](../../mining_rig.md), its PCIe table).
+- **What lies on the token's path:**
+  - *the draft's uploads:* its passes run one after another, and each waits for card 8's inputs, so the four
+    crossings' +4.12 ms add to the step;
+  - *card 0's upload:* it lies in the server's interval before the verify pass, est. +1.23 of that interval's +5.30,
+    as on every other card;
+  - *the uploads to cards 1 to 8:* they run while the cards before them compute (the host's launch takes 18.72 ms
+    against the cards' 131.04 ms of GPU time). Yet the verify pass's rest grows by 4.41 ms, though its crossings move
+    the same bytes at every depth: est. the uploads hold the switches' shared links while the crossings need them.
+- **Together est. 9.76 ms:** 4.12 + 1.23 (est.) + 4.41 (est.). The other est. 5.93 ms is host work in the turns (the
+  server's interval beyond card 0's upload +4.07, the draft's turns +1.86). The host's build of the inputs (their
+  `set_input`) is part of it; how much was not measured (below).
+- **What keeping the tables on the cards could save** (Q640: a few hundred bytes a token instead of the whole layout):
+  est. 2.70 ms a step at 16,384 (card 0's and the draft's uploads at 188 MB/s) and 12.43 at 49,152 (8.02 of uploads and
+  the +4.41 of the verify pass's rest), 1.8 % and 6.8 % of the step, plus the host's build. The draft's four uploads a
+  step carry nearly the same tables (one token more each): kept on card 8 alone, they are est. 2.08 and 6.18 ms of it.
+- **Not measured: the inputs' host time and their bytes per ubatch.** `LLAMA_QSA_INPUT_STATS=1` was set, but it logs at
+  the library's info level, which llama-server prints only from `-lv 4` on (its default is 3): the server log holds no
+  such line. The bytes above are from the tensors' shapes. Q1255 repeats the load with `-lv 4`.
+
+**Pass 1** (the first request at a depth):
+
+| | 16,384 p1 | 49,152 p1 |
+|---|---:|---:|
+| the step, mean | 196.35 | 188.27 |
+| the step, median | 154.84 | 187.03 |
+| outside the kernels, median | 18.37 | 37.52 |
+| the server's interval before the verify pass, mean | 47.65 | 13.91 |
+| the server's interval, median | 4.87 | 13.93 |
+
+- At 16,384, 23 of the 66 typical steps spent over 100 ms each in the server's interval before the verify pass
+  (2,903.4 ms together; the other 43 steps 5.62 ms on average), while the host moved 147 MiB to swap and its
+  MemAvailable fell to 61 MiB ([host_memory_r64.tsv](host_memory_r64.tsv)). The cards' GPU time is the same as on pass 2
+  (135.32 and 135.00 ms). That is Q1133's first-request cost: host waits, not kernels.
+- At 49,152 pass 1's step is 4.69 ms longer than pass 2's, 3.68 of it in the same interval (13.91 against 10.23), with
+  no step over 100 ms.
+
+**The host profile changes the decode step little:** the server's own step on pass 2 is 151.44 and 181.48 ms in the
+profiled load against 150.33 and 180.87 in the unprofiled one (R51's unprofiled load: 151.42 and 181.86). Prompts
+read slower under it: 107.5 and 71.7 tok/s against 122.8 and 80.4 for the same two chunks (16,260 tokens on 60 cached,
+33,284 on 15,804).
+
+### What ran (R64)
+
+One deep-lane run on the rig, nothing else on the rig during the loads, 19:26:24 to 19:59:42 (33.3 minutes):
+
+| Load | What | Loaded in | Requests |
+|---|---|---:|---|
+| `warm` | the preset with `GGML_CUDA_FATTN_SPARSE_PASCAL=1`: the warm-up load, and the unprofiled step of the same requests | 308 s | the client's warm-up; at 16,384 and 49,152 tokens a prime and two decodes of 256 greedy tokens |
+| `host` | the same with `GGML_CUDA_PROFILE_HOST=$OUT/host.csv` and `LLAMA_QSA_INPUT_STATS=1` | 311 s | the same |
+
+- **The prompts:** the primes read 16,260 tokens on 60 cached, then 33,284 on 15,804 (the 49,152 prime continues
+  from the 16,384 one's checkpoint).
+- **The replies:** each load wrote its own greedy reply at each depth and repeated it on pass 2; the profiled load's
+  draft accepted 186 of 206 at 16,384 and 182 of 218 at 49,152, the unprofiled load's 184 of 210 at both.
+- **The host's memory:** the lowest MemAvailable was 196 MiB over the unprofiled load (its first prime) and 61 MiB over
+  the profiled one (its first decode at 16,384); the RAM watchdog (floor 60 MiB) never acted.
+- **The profile** holds 6,774 evaluations: the load's own, then one piece per request at the pauses (`PAUSE=4`), with
+  each depth's first decode cut once more after its tail's pass, where the server saves a context checkpoint
+  ([host_pieces.tsv](host_pieces.tsv)).
+- **The tables ran on a build machine's CPU** (`nice -n 19`, under a second), never on the rig.
+
+### How the host profile is cut
+
+`run/host_depth.py` (its header has the definitions; `--self-test`, 29 checks, all pass) uses the step and its parts
+of [2026-11-10_served_step_split](../2026-11-10_served_step_split/README.md)'s `run/step_split.py` (S37):
+- **The pieces:** gaps of more than 3 s cut the profile (a prompt micro-batch at depth leaves the host idle up to
+  ~2.5 s; the client pauses 4 s before every request). A piece of fewer than ten main passes after the load's own is
+  joined to the next one: a first decode's tail pass, cut off by the checkpoint the server saves after it. The pieces
+  then match the load's requests in `requests.csv` one to one, or the script stops.
+- **A main pass** is one evaluation on each of the nine cards in order; **a draft pass** the evaluations after it up to
+  one on card 8 (each on card 4, the draft's token rows, then on card 8). A step is a main pass and its draft passes.
+- **Typical steps** as in S37: after the request's prompt passes, four draft passes, no stray evaluation, the verify
+  pass within 12 % of the median GPU time, not among the request's first three steps (66, 66, 72 and 69 steps).
+- **Added to S37's parts:** per card the host's gap before its entry (from the previous card's exit) and its host
+  span; per draft pass its crossing (card 4's exit to card 8's entry); outside the kernels = the step less the GPU time
+  of every evaluation in it.
+- **The k-pool lines** (when the server log holds them): the lines between a request's `launch_slot_` and `release`
+  lines are that request's, and the j-th of them is the request's j-th pass (main or draft) in the profile; a request
+  whose counts differ is left unmatched.
 
 ## What ran
 
@@ -192,6 +308,13 @@ One deep-lane run on the rig, nothing else on the rig during the loads, 16:35:53
 | [requests.csv](requests.csv), [loads.tsv](loads.tsv) | the deep lane's lines per request and per load, both loads |
 | [table.md](table.md), [classes.tsv](classes.tsv) | the deep lane's own tables of the profiled load (it skips the warm-up load) |
 | [run/depth_parts.py](run/depth_parts.py) | the cut into requests and steps, the parts and buckets, the self-test |
+| [host.csv.gz](host.csv.gz) | R64: the host profile of load `host`, whole: per card and evaluation the host's entry and exit (ms) and the GPU time (µs); 6,774 lines |
+| [host_depth.md](host_depth.md) | R64: the host profile's cut, the step by part per decode (means and medians) and the growth from 16,384 to 49,152 |
+| [host_steps.tsv](host_steps.tsv) | R64: every generation step of the four decodes: its parts, the GPU time, host gap and host span per card, each draft pass's lead, crossing, GPU time and turn |
+| [host_summary.tsv](host_summary.tsv), [host_pieces.tsv](host_pieces.tsv) | R64: each part's mean and median per decode; the cut into pieces and requests |
+| [host_memory_r64.tsv](host_memory_r64.tsv) | R64: the host's memory per load and request from the RAM watchdog |
+| [r64_requests.csv](r64_requests.csv), [r64_loads.tsv](r64_loads.tsv), [r64_table.md](r64_table.md), [r64_classes.tsv](r64_classes.tsv) | R64: the deep lane's lines per request and per load, both loads; its own tables of the profiled load |
+| [run/host_depth.py](run/host_depth.py) | R64: the host profile cut into requests and steps (with S37's `step_split.py`), the parts, the k-pool lines matched to passes, the self-test |
 
 ## Commands
 
@@ -218,6 +341,30 @@ $V --event-us 7.6 --shallow $SHALLOW --shallow-label R49 --shallow-depth "79 to 
 nice -n 19 python3 -I $R/2026-11-10_deep_lane/run/host_memory.py $OUT > $RES/host_memory.tsv
 ```
 
+R64, the host profile (add `ARM_ARGS_host="-lv 4"` to get the k-pool lines into the server log as well):
+
+```bash
+# from a machine that reaches the rig over ssh, as above
+RIG=$RIG WORK=$WORK BIN=$BIN MODEL=$MODEL MODEL_DRAFT=$MODEL_DRAFT TEXT_LOCAL=$TEXT_LOCAL TAG='^t1swift/' \
+  WD_ENV=MIN_AVAIL_MB=60 ENV_ADD=GGML_CUDA_FATTN_SPARSE_PASCAL=1 \
+  ARMS="sparse host" ARM_ENV_host="LLAMA_QSA_INPUT_STATS=1 GGML_CUDA_PROFILE_HOST=$WORK/out/host.csv" \
+  LOADS="warm:sparse host:host" DEPTHS="16384 49152" WARM_DEPTHS="16384 49152" PAUSE=4 \
+  bash bench/deep_lane/remote.sh start
+RIG=$RIG WORK=$WORK bash bench/deep_lane/remote.sh wait
+RIG=$RIG WORK=$WORK OUT=$OUT CLEAN=0 bash bench/deep_lane/remote.sh collect
+
+# on a build machine, CPU only, from this repository's root. OUT: the collected folder (host.csv 246,402 B, md5
+# 887a4c1275da4fa8488e80e9adc1145d, this folder's host.csv.gz gunzipped; requests.csv as r64_requests.csv); RES: the
+# tables
+R=docs/data
+H="nice -n 19 python3 -I $R/2026-11-10_step_parts_depth/run/host_depth.py \
+  --step-split $R/2026-11-10_served_step_split/run/step_split.py"
+$H --self-test
+$H --host $OUT/host.csv --requests $OUT/requests.csv --load host --ref-load warm --grow 16384:49152 \
+  --out $RES > $RES/host_depth.md   # with the k-pool lines in the log: --log $OUT/server-host.log
+nice -n 19 python3 -I $R/2026-11-10_deep_lane/run/host_memory.py $OUT > $RES/host_memory.tsv
+```
+
 ## Limits
 
 - **One profiled load.** Each depth's two requests are two samples of every part of that load. They agree within
@@ -231,10 +378,17 @@ nice -n 19 python3 -I $R/2026-11-10_deep_lane/run/host_memory.py $OUT > $RES/hos
   pass-2 steps match R39a's second sample on the other rig to within 1.69 ms.
 - **The profiler's 7.6 µs a launch group is an estimate:** C140's figure, the one R41 and R49 used, 20.48 ms a step
   here. It is the same at every depth, so the growth does not depend on it.
+- **R64: one profiled load,** every value one request. Which upload an interval holds is read from where the
+  scheduler copies a card's inputs; that the growth is the k-pool inputs rests on the rate (the extra bytes, from the
+  tensors' shapes, over each interval's growth gives 186.5, 187.7 and 185.0 MB/s for the verify pass's cards, the
+  drafting passes and the catch-up pass, the link's speed), not on a count of bytes. The share of
+  the verify pass's rest that is the uploads holding the links is an estimate, and the host's own build of the inputs
+  is unmeasured (the k-pool lines need `-lv 4`).
 
 ## Provenance and licence
 
 Measured on 2026-11-10 on one rig of nine P106-090 cards, with the release build of the Miner Llama fork (llama.cpp,
 MIT). The tables are this project's own measurements. The models are UkisAI's Swift-1.5 GSQ-RCO Q2_0 of
 Qwen3.8-Flash-Next and the MTP draft; neither is republished. The prompts are cut from this project's recorded agent
-requests; they and the replies are not part of this folder (`requests.csv` holds only checksums).
+requests; they and the replies are not part of this folder (`requests.csv` and `r64_requests.csv` hold only
+checksums). R64's host profile is here whole (`host.csv.gz`); R51's group-mode trace (85.8 MB) is not.

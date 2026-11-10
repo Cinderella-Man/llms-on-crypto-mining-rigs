@@ -263,6 +263,12 @@ the release check's recorded requests.
   (`WARM_DEPTHS`), 44 minutes
   ([docs/data/2026-11-10_step_parts_depth](../../docs/data/2026-11-10_step_parts_depth/README.md)). The trace held
   the whole load, prompts included, in 85.8 MB, and cut into the load and its 10 requests at the pauses.
+- **A later run on the rig took the host profile at depth:** `GGML_CUDA_PROFILE_HOST` in `ARM_ENV_host` with
+  `PAUSE=4`, depths 16,384 and 49,152, 33 minutes (same data page,
+  [run/host_depth.py](../../docs/data/2026-11-10_step_parts_depth/run/host_depth.py)). The profile cuts at the pauses
+  too, but the first decode at a depth leaves a second gap after its tail's pass, where the server saves a context
+  checkpoint. Library log lines that a switch writes at the info level, such as `LLAMA_QSA_INPUT_STATS`, reach the
+  server log only with `-lv 4` in the arm (`ARM_ARGS_<arm>="-lv 4"`).
 - **The sixth run on the rig** read prompts in micro-batches of 128 through the sparse kernel: `-ub` per arm through
   `ARM_UB_<arm>`, the switch per arm through `ARM_ENV_<arm>` (no `ENV_ADD`, so that each server line holds the
   switch once), depths 0, 16,384, 32,768 and 49,152, `N_PREDICT=16`, two loads an arm, 80 minutes
