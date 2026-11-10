@@ -1,0 +1,11 @@
+check	verdict	detail
+build-rig	OK	llama.cpp-20261110-ca3055285-pascal-p106-v4-b12246-c620; commit: ca305528573fcb04070167ce270db4d98d8fdf29 (2026-11-10 22:35:57 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261110-ca3055285-pascal-p106-v4-b12246-c620/bin
+cpubuild	OK	rc=0; commit ca3055285
+kvonly-rig-s1	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-rig-s2	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-rig-s3	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-cpu-s1	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-cpu-s2	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-cpu-s3	OK	rc=0; Summary: all 5 test(s) passed
+off	OK	base wrote 146 logits files; 146 compared, 0 differ: none; base: Summary: all 151 test(s) passed; branch: Summary: all 151 test(s) passed; base rc=0 branch rc=0 

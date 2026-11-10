@@ -177,6 +177,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_SPEC_FORCE` (`_CHARS`, `_MAX`), `LLAMA_SPEC_DRAFT_KEEP` | off | The text a grammar forces appended to the draft | -blockver | Q802 |
 | `LLAMA_SPEC_KEEP_DRAWS` | off | `1`: token-by-token rejection keeps its draws across a checkpoint replay | -blockver | Q808 |
 | `LLAMA_SPEC_REJECT_STOP` | off | `1`: token-by-token rejection (`--spec-draft-sampling probabilistic` above temperature 0) stops after an accepted end-of-generation token that is not the last drafted one, and where the screened head meets a grammar that has become active, as sample-and-match does; `0`: upstream's path, which verifies the drafted tokens behind the end of a turn ([design](data/2026-11-11_c675_end_of_turn_stop/README.md)) | v4: `pascal-p106-v4-b12246-c675` | Q1187 |
+| `LLAMA_MTP_KV_ONLY` | off | `1`: an MTP draft pass with no output row (the catch-up over a prompt chunk or a verify step's tokens) writes only the draft layer's caches (K and V, and on a QSA layer its indexer and pooled keys) and skips its queries, attention, MoE and head; a pass with a `dist` backend sampler keeps the whole layer. `qwen4exp` (Flash-Next) only; the same caches and drafts as off on the CPU ([design](data/2026-11-11_c620_draft_kv_catchup/README.md)) | v4: `pascal-p106-v4-b12246-c620` | Q1105 |
 
 ## Server checkpoints and prompt cache
 
