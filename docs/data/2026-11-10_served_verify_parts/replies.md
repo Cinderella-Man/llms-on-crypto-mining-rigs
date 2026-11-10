@@ -1,0 +1,6 @@
+| load | request | text_md5 | same_text_as_first | prompt_n | predicted_n | draft_n | draft_n_accepted | steps_server | tokens_a_step | predicted_ms | ms_a_step_server | tok_s | prompt_ms |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| warm | greedy-1 | e460d038a1f6 | yes | 79 | 256 | 255 | 170 | 86 | 2.98 | 12418.25 | 144.40 | 20.53 | 6497.62 |
+| warm | greedy-2 | e460d038a1f6 | yes | 4 | 256 | 247 | 172 | 84 | 3.05 | 10410.46 | 123.93 | 24.49 | 1410.91 |
+| prof | greedy-1 | e460d038a1f6 | yes | 79 | 256 | 255 | 170 | 86 | 2.98 | 14860.08 | 172.79 | 17.16 | 7931.35 |
+| prof | greedy-2 | e460d038a1f6 | yes | 4 | 256 | 247 | 172 | 84 | 3.05 | 13248.75 | 157.72 | 19.25 | 1413.62 |

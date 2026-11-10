@@ -1,0 +1,101 @@
+81 device evals: 81 decode-sized (< 1000000000.0 ms), 0 larger; ~81 decode steps
+decode: 12.86 ms of GPU time per token summed over cards, 7.6 µs per span subtracted (≈ 77.77 tok/s if the cards ran back to back with no gaps)
+per card, ms per token: 8:12.86
+spans shorter than the event cost: 3587 of 16443 (21.8 %)
+
+by first op of the launch group (ms/token, share):
+    10.49  81.6 %  MUL_MAT
+     0.85   6.6 %  MUL_MAT_ID
+     0.34   2.7 %  TOP_K
+     0.25   2.0 %  GATED_DELTA_NET
+     0.22   1.7 %  PAD
+     0.09   0.7 %  SCALE
+     0.09   0.7 %  FLASH_ATTN_EXT
+     0.07   0.5 %  MUL
+     0.07   0.5 %  GET_ROWS
+     0.05   0.4 %  RMS_NORM
+     0.04   0.3 %  SIGMOID
+     0.04   0.3 %  ADD
+     0.03   0.2 %  CPY
+     0.03   0.2 %  SOFT_MAX
+     0.02   0.2 %  SOFTPLUS
+
+by weight type (ms/token, share):
+     8.42  65.5 %  q5_K
+     1.51  11.8 %  (no weights)
+     0.85   6.6 %  q2_0
+     0.68   5.3 %  bf16
+     0.64   5.0 %  iq4_xs
+     0.42   3.2 %  q4_K
+     0.13   1.0 %  f32
+     0.08   0.6 %  q3_K
+     0.05   0.4 %  q8_0
+     0.05   0.4 %  q6_K
+     0.04   0.3 %  q4_0
+
+top launch groups (ms/token, share, label):
+     8.05  62.6 %  MUL_MAT output:q5_K:2560x248320
+     0.55   4.2 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640
+     0.35   2.7 %  MUL_MAT attn_q:iq4_xs:2560x12288
+     0.33   2.6 %  TOP_K top_k
+     0.31   2.4 %  MUL_MAT_ID ffn_down_exps:q2_0:640x2560
+     0.29   2.3 %  MUL_MAT attn_qkv:iq4_xs:2560x10240
+     0.25   2.0 %  GATED_DELTA_NET+CPY node_5982
+     0.24   1.9 %  MUL_MAT attn_output:q5_K:6144x2560
+     0.23   1.8 %  MUL_MAT ssm_out:q4_K:6144x2560
+     0.22   1.7 %  PAD node_6224
+     0.19   1.5 %  MUL_MAT attn_gate:q4_K:2560x6144
+     0.12   1.0 %  MUL_MAT hc_attn_down:bf16:10240x320
+     0.11   0.8 %  MUL_MAT hc_ffn_up:bf16:320x10240
+     0.11   0.8 %  MUL_MAT hc_attn_up:bf16:320x10240
+     0.11   0.8 %  MUL_MAT hc_ffn_down:bf16:10240x320
+     0.10   0.8 %  MUL_MAT ffn_gate_inp:f32:2560x512
+     0.09   0.7 %  FLASH_ATTN_EXT node_6129
+     0.06   0.4 %  SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject
+     0.05   0.4 %  MUL_MAT output_hc_up:bf16:320x10240
+     0.05   0.4 %  MUL_MAT output_hc_down:bf16:10240x320
+     0.05   0.4 %  MUL_MAT ffn_down_shexp:q8_0:640x2560
+     0.05   0.4 %  MUL gate
+     0.05   0.4 %  MUL_MAT attn_k:q6_K:2560x512
+     0.04   0.3 %  MUL_MAT ffn_gate_shexp:q5_K:2560x640
+     0.04   0.3 %  MUL_MAT ssm_beta:bf16:2560x48
+     0.04   0.3 %  MUL_MAT ffn_up_shexp:q5_K:2560x640
+     0.04   0.3 %  MUL_MAT attn_v:q5_K:2560x512
+     0.04   0.3 %  MUL_MAT ffn_gate_shexp:q3_K:2560x640
+     0.04   0.3 %  MUL_MAT ffn_up_shexp:q3_K:2560x640
+     0.04   0.3 %  MUL_MAT ffn_down_shexp:q4_0:640x2560
+     0.03   0.2 %  MUL_MAT indexer.q_proj:bf16:2560x512
+     0.03   0.2 %  MUL_MAT ffn_gate_inp_shexp:f32:2560x1
+     0.02   0.2 %  SIGMOID beta_sigmoid
+     0.02   0.2 %  SOFTPLUS a_softplus
+     0.02   0.2 %  SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs
+     0.02   0.2 %  CPY hop_wide
+     0.02   0.2 %  DSV4_HC_PRE hc_mixed
+     0.02   0.1 %  GDN_CONV+CPY gdn_conv
+     0.02   0.1 %  MUL_MAT hc_ffn_inject:bf16:10240x4
+     0.02   0.1 %  MUL_MAT hc_attn_inject:bf16:10240x4
+     0.01   0.1 %  MUL_MAT indexer.k_proj:bf16:2560x128
+     0.01   0.1 %  CONT gate_reshaped
+     0.01   0.1 %  RMS_NORM+MUL norm
+     0.01   0.1 %  GET_ROWS node_6202
+     0.01   0.1 %  MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted
+     0.01   0.1 %  TOP_K indexer_top_k
+     0.01   0.1 %  LIGHTNING_INDEXER indexer_score
+     0.01   0.1 %  SCALE top_p_ones
+     0.01   0.1 %  ARGMAX greedy_argmax
+     0.01   0.1 %  SUM top_p_index_f32
+     0.01   0.1 %  SET_ROWS top_p_mask_(reshaped)_(view)
+     0.01   0.1 %  TOP_K_MASK indexer_sel
+     0.01   0.1 %  GET_ROWS node_6122
+     0.01   0.1 %  MUL_MAT ssm_alpha:bf16:2560x48
+     0.01   0.1 %  CPY _(copy)
+     0.01   0.1 %  RMS_NORM+MUL+SIGMOID+MUL norm
+     0.01   0.1 %  GET_ROWS greedy_sampled_token
+     0.01   0.1 %  GET_ROWS top_p_candidates
+     0.01   0.1 %  ADD ffn_out
+     0.01   0.1 %  SOFT_MAX top_p_softmax
+
+per token (one decode step):
+  timed spans, summed over cards       12.86 ms, 7.6 µs per span subtracted
+  wall, this run (host clock)         156.46 ms median, 159.15 ms mean (80 intervals of card 8's graph 0)
+summary: mode=group steps=81 devices=1 decode_evals=81 used_evals=81 skipped=0 sum_ms=12.858 evals_ms=14.401 evals_corr_ms=12.858 wall_run_ms=156.463 event_us=7.600
