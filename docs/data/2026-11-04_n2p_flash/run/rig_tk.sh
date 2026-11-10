@@ -1,28 +1,43 @@
 #!/usr/bin/env bash
 # Q928 on the rig: N2P, N3P, N2P-128 and N3P-128 on a P106, and what the N2P Flash-Next files cost a whole-model k-token
 # pass against pmix-q2-fast. Runs ON the rig, detached, the rig idle; ends with $OUT/DONE.
-#   check  test-backend-ops on one P106 (gpu_checks.sh MODE=native, the runs in CHECK_RUNS: the four types at the
-#          defaults, MMQ, which the PTX runs could not check, and the regression of the half-word types and Q2_0)
+#   replay test-backend-ops on one P106 from a recorded set (scripts/replay_checks.sh on SET, the n2p suite of
+#          scripts/record_checks.sh; the runs in CHECK_RUNS: the four types at the defaults, MMQ, which the PTX runs
+#          could not check, and the regression of the half-word types and Q2_0). The card computes and the stored CPU
+#          references judge it, so the rig's two Celeron cores do none of the work
+#   check  the same runs live (gpu_checks.sh MODE=native): each case is drawn, quantized and computed on this host's
+#          CPU before the card runs it. For a machine with a real CPU: on the rig's it is about an hour
 #   perf   test-backend-ops perf on one P106 (CARD) at Flash-Next's expert shapes, 1-8 tokens, 10 of 128 experts: the
 #          four types' routed gate/up, fused gate/up and down projections beside Q2_0's, with the Pascal kernels at their
 #          defaults, with MTOK=0 (2-8 tokens on the earlier kernels) and on llama.cpp's kernels (PASCAL_SKIP)
 #   tk     T(k) of each file in FILES at k = 1-8, Q591's method (S21's verify_cost.sh: llama-bench -p 1,...,8 -n 0,
 #          five repetitions after a warm-up, under the host-memory guard after a logged quiet check); llama-bench's
 #          prompt tokens are random ids, so every arm routes alike. The N2P files also with MTOK=0.
-# Usage: BIN=<bin/ of the unpacked n2p tarball, the extras in it> FILES='<name>=<first shard> ...' \
-#   VC=<folder with verify_cost.sh, mem_guard.sh, smoke_request.json> OUT=<dir> [STEPS='check perf tk'] \
+# Usage: BIN=<bin/ of a build that holds the N types, test-backend-ops in it> FILES='<name>=<first shard> ...' \
+#   VC=<folder with verify_cost.sh, mem_guard.sh, smoke_request.json> OUT=<dir> [STEPS='replay perf tk'] \
+#   [SET=<the recorded n2p suite's folder> CHECKS=<replay_checks.sh, default beside this script> CPU_CHECK=<N: about
+#   one small case in N of the first run also against this host's CPU, default 0>] \
 #   [CHECK_RUNS='np np-mmq reg-half'] [CARD=0] [TS=<-ts of the files>] bash rig_tk.sh
 set -uo pipefail
 : "${BIN:?}" "${OUT:?}"
 HERE=$(cd "$(dirname "$0")" && pwd)
-STEPS=${STEPS:-check perf tk}
+STEPS=${STEPS:-replay perf tk}
 CHECK_RUNS=${CHECK_RUNS:-np np-mmq reg-half}
+CHECKS=${CHECKS:-$HERE/replay_checks.sh}
 CARD=${CARD:-0}
+[[ " $STEPS " != *" replay "* ]] || : "${SET:?SET=<the recorded n2p suite: the replay step needs it>}"
 P=GGML_CUDA_MMVQ_PASCAL
 mkdir -p "$OUT"
 rm -f "$OUT/DONE"
 st() { echo "$(date -Is) $*" | tee -a "$OUT/status.txt"; }
 step() { [[ " $STEPS " == *" $1 "* ]]; }
+
+if step replay; then
+    st "replay start"
+    SET="$SET" BIN="$BIN" OUT="$OUT/replay" DEV="$CARD" RUNS="$CHECK_RUNS" CPU_CHECK="${CPU_CHECK:-0}" \
+        bash "$CHECKS" > "$OUT/replay.out" 2>&1
+    st "replay exit $? ($(tail -n 1 "$OUT/replay/console.txt" 2>/dev/null | sed -E 's/^== [^ ]+ //'))"
+fi
 
 if step check; then
     st "check start"
