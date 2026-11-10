@@ -1,0 +1,5 @@
+run	arm	depths	avail_after_load_mib	min_avail_mib	max_swap_used_mib	max_swapout_10s_mib	max_psi_full_avg10	watchdog
+run1	off	0,8192,32768	807	30	759	658	8.82	killed (swap-out above 600 MiB in 10 s)
+run1	sparse2	0,8192,32768	782	87	717	637	28.68	killed (swap-out above 600 MiB in 10 s)
+run2	off	32768	878	121	547	362	8.30	silent
+run2	sparse2	32768	881	57	464	231	4.97	silent
