@@ -117,7 +117,7 @@ on card 0 and 12 MiB on card 8 to what the host-checkpoint load used at its end.
 `--ctx-checkpoints-vram 4` (a gain alone, the same greedy replies) and the taper (`--ubatch-taper on`, a gain on the
 replay alone and on top of the device stores) go into the Flash-Next preset, together −29.75 % of prompt time on the
 replay, once the agent check confirms it on agentic speed (R59, Q1234). `LLAMA_SERVER_TAIL_CKPT_MIN=4096` (Q263) was
-not run: it is R58 (Q1233), now on top of the device stores.
+not run: it is R61 (Q1236), now on top of the device stores.
 
 ## Files
 
@@ -152,7 +152,7 @@ ssh $RIG "cd $WORK && BUILDS=$BUILDS BUILD=$BUILD MODEL=$MODEL DRAFT=$DRAFT OUT=
 # run 2: load A with the newest four checkpoints on the cards, 15:01 to 15:41
 ssh $RIG "cd $WORK && BUILDS=$BUILDS BUILD=$BUILD MODEL=$MODEL DRAFT=$DRAFT OUT=$WORK/run2 LOADS=A \
   ARGS_ADD='--ctx-checkpoints-vram 4' setsid nohup bash $WORK/r43_run.sh > $WORK/run2.out 2>&1 < /dev/null &"
-# run 3 (not run; R58): load A with the end-of-prompt checkpoint only 4,096 tokens past the newest one
+# run 3 (not run; R61): load A with the end-of-prompt checkpoint only 4,096 tokens past the newest one
 ssh $RIG "cd $WORK && LLAMA_SERVER_TAIL_CKPT_MIN=4096 BUILDS=$BUILDS BUILD=$BUILD MODEL=$MODEL DRAFT=$DRAFT \
   OUT=$WORK/run3 LOADS=A setsid nohup bash $WORK/r43_run.sh > $WORK/run3.out 2>&1 < /dev/null &"
 ```
