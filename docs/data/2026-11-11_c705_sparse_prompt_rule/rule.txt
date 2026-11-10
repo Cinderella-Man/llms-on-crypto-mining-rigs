@@ -1,0 +1,23 @@
+rule: 35964000 settings x calls; _PROMPT off: 0 differ from the rule before; _PROMPT on: decode and verify calls 0 differ from it, prompt calls 0 differ from the prompt rule (5240274 taken)
+switch points, n_kv_max 2051: the smallest cache (cells) from which a call of n_q query tokens goes to the kernel (never: it stays on the dense kernels)
+setting \ n_q                              1       2       4       8       9      16      64     128     129     256     512
+=1 (v4)                                 3077    6153   12306   24612   never   never   never   never   never   never   never
+=1 _PROMPT=1                            3077    6153   12306   24612    2051    2051    2051    2051   never   never   never
+=1 _MIN_RATIO=1.0 _PROMPT=1             2051    4102    8204   16408    2051    2051    2051    2051   never   never   never
+=1 _PROMPT=1 _PROMPT_MIN_RATIO=2.5      3077    6153   12306   24612    5128    5128    5128    5128   never   never   never
+=1 _PROMPT=1 _PROMPT_NQ=512             3077    6153   12306   24612    2051    2051    2051    2051    2051    2051    2051
+the prompt cases' kernel per replay run (head 256 x 12 per KV head; 8 KV heads: head 128, sinks)
+nb, kv, n_kv_max, ne3, KV heads qp-sparse1 qp-prompt  qp-r100    qp-pratio  qp-pnq512  qp-m2      qp-m2-off 
+9, 8192, 2051, 1, 2            d          S          S          S          S          S          d         
+16, 8192, 2051, 1, 2           d          S          S          S          S          S          d         
+64, 8192, 2051, 1, 2           d          S          S          S          S          S          d         
+128, 8192, 2051, 1, 2          d          S          S          S          S          S          d         
+9, 3072, 2051, 1, 2            d          S          S          d          S          S          d         
+128, 3072, 2051, 1, 2          d          S          S          d          S          S          d         
+128, 32768, 2051, 1, 2         d          S          S          S          S          S          d         
+64, 4096, 2051, 2, 2           d          S          S          d          S          S          d         
+32, 4096, 1027, 1, 8           d          S          S          S          S          S          d         
+129, 4096, 2051, 1, 2          d          d          d          d          S          S          d         
+256, 4096, 2051, 1, 2          d          d          d          d          S          S          d         
+512, 4096, 2051, 1, 2          d          d          d          d          S          S          d         
+fasp_check --rule: pass

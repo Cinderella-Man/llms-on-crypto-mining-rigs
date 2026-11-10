@@ -10,8 +10,11 @@
 // same way. --bench: times the kernel at Flash-Next's QSA shape over the context (lists of 2,051 cells).
 // --fault n: the kernel's GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT codes (1 output x 1.01, 2 mask values ignored, 3 every
 // split's last entry dropped), in the host model and the kernel: every check must then fail.
+// --rule: only the switch's rule (fasp_rule_takes), on the host: with _PROMPT off it takes exactly the calls the switch
+// took before the prompt rule, with it on the same decode and verify calls and the prompt calls of its definition; then
+// the switch points at Flash-Next's 2,051 cells and the kernel each test-backend-ops prompt case takes per replay run.
 //
-// Usage: fasp_check [--gpu] [--bench] [--fault n] [--nsm n] [--threads n]
+// Usage: fasp_check [--gpu] [--bench] [--fault n] [--nsm n] [--threads n] | fasp_check --rule
 // Exit status 0 if every case passes, 1 otherwise.
 
 #include "fattn-sparse-pascal-impl.cuh"
@@ -590,6 +593,144 @@ static void run_gpu(const problem & p, const int S, std::vector<float> & out) {
     gpu_free(b);
 }
 
+// The switch's rule before the prompt rule (Miner Llama pascal-p106-v4 84f7bd3d2, fattn-sparse-pascal.cu): at most nq
+// query tokens, and in mode 1 at least min_ratio x n_kv_max cells per query token.
+static bool rule_before(const fasp_rule & r, const int64_t n_q, const int64_t n_kv, const int32_t n_kv_max) {
+    if (n_q > r.nq) {
+        return false;
+    }
+    if (r.mode == 1 && (double) n_kv < r.min_ratio*n_kv_max*n_q) {
+        return false;
+    }
+    return true;
+}
+
+// The prompt rule as GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT defines it: more than nq and at most prompt_nq query tokens,
+// in mode 1 at least prompt_min_ratio x n_kv_max cells whatever the number of query tokens, in mode 2 any cache size.
+static bool rule_prompt(const fasp_rule & r, const int64_t n_q, const int64_t n_kv, const int32_t n_kv_max) {
+    if (n_q <= r.nq || r.prompt == 0 || n_q > r.prompt_nq) {
+        return false;
+    }
+    return r.mode == 2 || (double) n_kv >= (double) r.prompt_min_ratio*n_kv_max;
+}
+
+// smallest cache (cells) from which the rule takes a call of n_q query tokens, -1 if none up to 2^22
+static int64_t rule_from(const fasp_rule & r, const int64_t n_q, const int32_t n_kv_max) {
+    for (int64_t n_kv = 0; n_kv <= (int64_t) 1 << 22; ++n_kv) {
+        if (fasp_rule_takes(r, n_q, n_kv, n_kv_max)) {
+            return n_kv;
+        }
+    }
+    return -1;
+}
+
+static int rule_check() {
+    // 1. every setting of a grid against the two definitions
+    const int64_t kvs[] = { 0, 1, 31, 32, 255, 256, 333, 512, 1027, 1538, 1539, 2050, 2051, 2052, 3072, 3076, 3077,
+                            3078, 4096, 4102, 4352, 5127, 5128, 8192, 8204, 8448, 12288, 12306, 12544, 16384, 32768,
+                            65536, 131072, 262144, 393791, 393792, 393793 };
+    long n = 0, bad_off = 0, bad_dec = 0, bad_prompt = 0, n_prompt_taken = 0;
+    for (int mode : { 1, 2 }) {
+        for (int nq : { 1, 4, 8, 16, 128 }) {
+            for (float min_ratio : { 0.25f, 1.0f, 1.5f }) {
+                for (int prompt : { 0, 1 }) {
+                    for (int prompt_nq : { 16, 128, 512 }) {
+                        for (float prompt_min_ratio : { 0.5f, 1.0f, 2.5f }) {
+                            for (int32_t n_kv_max : { 31, 333, 2051 }) {
+                                const fasp_rule r = { mode, nq, min_ratio, prompt, prompt_nq, prompt_min_ratio };
+                                for (int64_t n_q = 1; n_q <= 600; ++n_q) {
+                                    for (int64_t n_kv : kvs) {
+                                        const bool t = fasp_rule_takes(r, n_q, n_kv, n_kv_max);
+                                        ++n;
+                                        if (prompt == 0) {
+                                            bad_off += t != rule_before(r, n_q, n_kv, n_kv_max);
+                                        } else if (n_q <= nq) {
+                                            bad_dec += t != rule_before(r, n_q, n_kv, n_kv_max);
+                                        } else {
+                                            bad_prompt += t != rule_prompt(r, n_q, n_kv, n_kv_max);
+                                            n_prompt_taken += t;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    printf("rule: %ld settings x calls; _PROMPT off: %ld differ from the rule before; _PROMPT on: decode and verify "
+           "calls %ld differ from it, prompt calls %ld differ from the prompt rule (%ld taken)\n",
+           n, bad_off, bad_dec, bad_prompt, n_prompt_taken);
+    const bool ok = bad_off == 0 && bad_dec == 0 && bad_prompt == 0 && n_prompt_taken > 0;
+
+    // 2. the switch points at Flash-Next's 2,051 cells (mode 1)
+    struct named { const char * name; fasp_rule r; };
+    const named sets[] = {
+        { "=1 (v4)",                      { 1, 8, 1.5f, 0, 128, 1.0f } },
+        { "=1 _PROMPT=1",                 { 1, 8, 1.5f, 1, 128, 1.0f } },
+        { "=1 _MIN_RATIO=1.0 _PROMPT=1",  { 1, 8, 1.0f, 1, 128, 1.0f } },
+        { "=1 _PROMPT=1 _PROMPT_MIN_RATIO=2.5", { 1, 8, 1.5f, 1, 128, 2.5f } },
+        { "=1 _PROMPT=1 _PROMPT_NQ=512",  { 1, 8, 1.5f, 1, 512, 1.0f } },
+    };
+    printf("\nswitch points, n_kv_max 2051: the smallest cache (cells) from which a call of n_q query tokens goes to the "
+           "kernel (never: it stays on the dense kernels)\n%-36s", "setting \\ n_q");
+    const int64_t nqs[] = { 1, 2, 4, 8, 9, 16, 64, 128, 129, 256, 512 };
+    for (int64_t q : nqs) {
+        printf(" %7lld", (long long) q);
+    }
+    printf("\n");
+    for (const named & x : sets) {
+        printf("%-36s", x.name);
+        for (int64_t q : nqs) {
+            const int64_t f = rule_from(x.r, q, 2051);
+            if (f < 0) {
+                printf(" %7s", "never");
+            } else {
+                printf(" %7lld", (long long) f);
+            }
+        }
+        printf("\n");
+    }
+
+    // 3. which kernel each prompt case of test-backend-ops (FLASH_ATTN_EXT, n_kv_max > 0, more than 8 tokens) takes in
+    // the replay runs of scripts/record_checks.sh's suite qsa-prompt on a P106 (S: the sparse kernel, d: the dense ones;
+    // over 1,024 query tokens x KV heads always d)
+    struct tcase { int n_head_kv, nb, ne3, kv, n_kv_max; };
+    const tcase tcs[] = {
+        { 2,   9, 1,  8192, 2051 }, { 2,  16, 1,  8192, 2051 }, { 2,  64, 1,  8192, 2051 }, { 2, 128, 1,  8192, 2051 },
+        { 2,   9, 1,  3072, 2051 }, { 2, 128, 1,  3072, 2051 }, { 2, 128, 1, 32768, 2051 }, { 2,  64, 2,  4096, 2051 },
+        { 8,  32, 1,  4096, 1027 }, { 2, 129, 1,  4096, 2051 }, { 2, 256, 1,  4096, 2051 }, { 2, 512, 1,  4096, 2051 },
+    };
+    const named runs[] = {
+        { "qp-sparse1", { 1, 8, 1.5f, 0, 128, 1.0f } },
+        { "qp-prompt",  { 1, 8, 1.5f, 1, 128, 1.0f } },
+        { "qp-r100",    { 1, 8, 1.0f, 1, 128, 1.0f } },
+        { "qp-pratio",  { 1, 8, 1.5f, 1, 128, 2.5f } },
+        { "qp-pnq512",  { 1, 8, 1.5f, 1, 512, 1.0f } },
+        { "qp-m2",      { 2, 8, 1.5f, 1, 512, 1.0f } },
+        { "qp-m2-off",  { 2, 8, 1.5f, 0, 128, 1.0f } },
+    };
+    printf("\nthe prompt cases' kernel per replay run (head 256 x 12 per KV head; 8 KV heads: head 128, sinks)\n"
+           "%-30s", "nb, kv, n_kv_max, ne3, KV heads");
+    for (const named & x : runs) {
+        printf(" %-10s", x.name);
+    }
+    printf("\n");
+    for (const tcase & c : tcs) {
+        char b[64];
+        snprintf(b, sizeof(b), "%d, %d, %d, %d, %d", c.nb, c.kv, c.n_kv_max, c.ne3, c.n_head_kv);
+        printf("%-30s", b);
+        for (const named & x : runs) {
+            const bool fits = (int64_t) c.n_head_kv*c.nb*c.ne3 <= FASP_MAX_COLS;
+            printf(" %-10s", fits && fasp_rule_takes(x.r, c.nb, c.kv, c.n_kv_max) ? "S" : "d");
+        }
+        printf("\n");
+    }
+    printf("fasp_check --rule: %s\n", ok ? "pass" : "FAIL");
+    return ok ? 0 : 1;
+}
+
 int main(int argc, char ** argv) {
     bool gpu = false, bench = false;
     int nsm = 5, n_threads = 4;
@@ -605,8 +746,10 @@ int main(int argc, char ** argv) {
             nsm = atoi(argv[++i]);
         } else if (s == "--threads" && i + 1 < argc) {
             n_threads = atoi(argv[++i]);
+        } else if (s == "--rule") {
+            return rule_check();
         } else {
-            fprintf(stderr, "usage: %s [--gpu] [--bench] [--fault n] [--nsm n] [--threads n]\n", argv[0]);
+            fprintf(stderr, "usage: %s [--gpu] [--bench] [--fault n] [--nsm n] [--threads n] | %s --rule\n", argv[0], argv[0]);
             return 2;
         }
     }
@@ -623,6 +766,9 @@ int main(int argc, char ** argv) {
         { "head 128, 4 per KV",        128,  4, 2, 7, 1,  4096,  333, false, 0 },
         { "16 per KV, short list",     256, 16, 1, 1, 1,  4096,   31, false, 0 },
         { "one tile",                  256, 12, 2, 2, 1,  4096,   32, false, 0 },
+        { "flash-next prompt 16",      256, 12, 2, 16, 1, 8192, 2051, false, 0 },
+        { "flash-next prompt 128",     256, 12, 2, 128, 1, 4096, 2051, false, 0 },
+        { "1,024 columns (512 tokens)", 128, 4, 2, 512, 1, 2560,  333, false, 0 },
     };
 
     // pass: the host model (and the kernel) within 2e-5 of the FP64 reference (max error over the largest output),

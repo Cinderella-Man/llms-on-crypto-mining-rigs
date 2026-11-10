@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # The CPU check of the sparse decode attention (no GPU needed): the tree's fattn-sparse-pascal-impl.cuh must pass every
 # case of build/fasp_check; the kernel's three fault codes and four source mutations of the header must each fail at
-# least one case. Writes build/check.txt (every run's table) and prints the verdicts.
+# least one case. The switch's rule (fasp_check --rule) must pass, and three mutations of it must fail. Writes
+# build/check.txt (every run's table) and prints the verdicts.
 # Usage: SRC=<llama.cpp tree> bench/fattn_sparse/check.sh   (env IMAGE, DOCKER_ARGS, JOBS as for build.sh; THREADS: CPU
 # threads of ggml's reference, default 4)
 set -euo pipefail
@@ -18,6 +19,12 @@ muts=(
     "every split but the first skips its first entry|s/begin = s\*share < count ? s\*share : count;/begin = s*share + (s > 0) < count ? s*share + (s > 0) : count;/"
     "scores mapped to the wrong key of the tile|s/return i \/ FASP_HPW;/return i % FASP_KPR;/"
 )
+# mutations of the switch's rule (fasp_rule_takes), checked with --rule
+rmuts=(
+    "prompt calls by cells per query token|s/!((double) n_kv < r.prompt_min_ratio\*n_kv_max)/!((double) n_kv < r.prompt_min_ratio*n_kv_max*n_q)/"
+    "prompt calls taken with the prompt rule off|s/if (r.prompt == 0 || n_q > r.prompt_nq) {/if (n_q > r.prompt_nq) {/"
+    "a call of exactly _NQ tokens by the prompt rule|s/if (n_q <= r.nq) {/if (n_q < r.nq) {/"
+)
 
 ./build.sh fasp_check
 for i in "${!muts[@]}"; do
@@ -28,6 +35,15 @@ for i in "${!muts[@]}"; do
         exit 1
     fi
     ./build.sh fasp_check_mut$i /w/build/mut$i > /dev/null
+done
+for i in "${!rmuts[@]}"; do
+    mkdir -p build/rmut$i
+    sed "${rmuts[$i]#*|}" "$H" > build/rmut$i/fattn-sparse-pascal-impl.cuh
+    if cmp -s "$H" build/rmut$i/fattn-sparse-pascal-impl.cuh; then
+        echo "rule mutation $i (${rmuts[$i]%%|*}) did not apply"
+        exit 1
+    fi
+    ./build.sh fasp_check_rmut$i /w/build/rmut$i > /dev/null
 done
 
 run() {
@@ -48,10 +64,14 @@ check() {
     rc=$(tail -1 build/check.txt | sed 's/rc=//')
     local fails
     fails=$(grep -c "FAIL$" <(sed -n "/^== $label\$/,/^rc=/p" build/check.txt) || true)
+    local what="$fails failing cases"
+    if [[ " $* " == *" --rule "* ]]; then
+        what=$(sed -n "/^== $label\$/,/^rc=/p" build/check.txt | grep -o "fasp_check --rule: [A-Za-z]*" | tail -n 1)
+    fi
     if { [ "$want" = 0 ] && [ "$rc" = 0 ]; } || { [ "$want" = 1 ] && [ "$rc" = 1 ]; }; then
-        verdicts+=("ok    $label: $fails failing cases")
+        verdicts+=("ok    $label: $what")
     else
-        verdicts+=("WRONG $label: rc=$rc, $fails failing cases")
+        verdicts+=("WRONG $label: rc=$rc, $what")
     fi
 }
 
@@ -61,6 +81,10 @@ for f in 1 2 3; do
 done
 for i in "${!muts[@]}"; do
     check "mutation $i: ${muts[$i]%%|*}" 1 build/fasp_check_mut$i
+done
+check "the switch's rule" 0 build/fasp_check --rule
+for i in "${!rmuts[@]}"; do
+    check "rule mutation $i: ${rmuts[$i]%%|*}" 1 build/fasp_check_rmut$i --rule
 done
 printf '%s\n' "${verdicts[@]}" | tee -a build/check.txt
 ! printf '%s\n' "${verdicts[@]}" | grep -q "^WRONG"

@@ -26,6 +26,10 @@
 #   n2p           N2P, N3P, N2P-128 and N3P-128 at every op and token count, the regression of Q2_0, Q6_K and the grid
 #                 types, GET_ROWS of every type (docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh, its nine native runs).
 #                 Its runs-ptx.tsv is the run list for a newer card through the compute_61 PTX: 1-8 tokens, no MMQ
+#   qsa-prompt    the sparse attention's cases (FLASH_ATTN_EXT with n_kv_max) under its prompt rule
+#                 (GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT, docs/data/2026-11-11_c705_sparse_prompt_rule): mode 1 with the
+#                 rule off and on, its two thresholds and its query-token cap, mode 2, the faults. Its runs-ptx.tsv
+#                 holds the mode-2 runs, as mode 1 leaves a newer card on its own kernels
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -34,7 +38,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -73,6 +77,8 @@ suite_filters() {
         n2p)
             printf '%s\t%s\n' "MUL_MAT,$EXPERT_OPS,GET_ROWS" "type(_a)?=$N4,.*n=[0-9]+,|type=$N4," \
                 "MUL_MAT,$EXPERT_OPS" "type(_a)?=$HW,.*n=[0-9]+,|type=$HW," GET_ROWS '.' ;;
+        qsa-prompt)
+            printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
         *) return 1 ;;
     esac
 }
@@ -152,7 +158,28 @@ suite_runs() {
             printf '%s\t%s\t%s\t%s\tpass\t\n' fnmoe "" $EXPERT_OPS "$FN_MOE" fnmoe-mtok0 "${P}_MTOK=0" $EXPERT_OPS "$FN_MOE" ;;
         n2p)
             suite_runs_n2p 'n=[0-9]+,' "type(_a)?=" ;;
+        qsa-prompt)
+            suite_runs_qsa_prompt 1 ;;
     esac
+}
+# the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
+# kernel each prompt case takes in each run is fasp_check --rule's last table (bench/fattn_sparse)
+suite_runs_qsa_prompt() {
+    local Q=GGML_CUDA_FATTN_SPARSE_PASCAL
+    local M2="$Q=2 ${Q}_PROMPT=1 ${Q}_PROMPT_NQ=512"
+    printf '%s\t%s\t%s\t%s\tpass\t\n' qp-stock "$Q=0" FLASH_ATTN_EXT "$QSA"
+    [ "$1" = 1 ] && printf '%s\t%s\t%s\t%s\tpass\t\n' \
+        qp-sparse1 "$Q=1" FLASH_ATTN_EXT "$QSA" \
+        qp-prompt "$Q=1 ${Q}_PROMPT=1" FLASH_ATTN_EXT "$QSA" \
+        qp-r100 "$Q=1 ${Q}_MIN_RATIO=1.0 ${Q}_PROMPT=1" FLASH_ATTN_EXT "$QSA" \
+        qp-pratio "$Q=1 ${Q}_PROMPT=1 ${Q}_PROMPT_MIN_RATIO=2.5" FLASH_ATTN_EXT "$QSA" \
+        qp-pnq512 "$Q=1 ${Q}_PROMPT=1 ${Q}_PROMPT_NQ=512" FLASH_ATTN_EXT "$QSA"
+    printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        qp-m2 "$M2" FLASH_ATTN_EXT "$QSA" pass \
+        qp-m2-off "$Q=2" FLASH_ATTN_EXT "$QSA" pass \
+        qp-fault1 "$M2 ${Q}_FAULT=1" FLASH_ATTN_EXT "$QSA" pass \
+        qp-fault2 "$M2 ${Q}_FAULT=2" FLASH_ATTN_EXT "$QSA" fail \
+        qp-fault3 "$M2 ${Q}_FAULT=3" FLASH_ATTN_EXT "$QSA" fail
 }
 # docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh's runs: <the token counts> <the products' type field>; natively
 # every token count and the prompt batches, through the PTX 1-8 tokens of the products (MMQ takes the host's tile
@@ -171,6 +198,7 @@ suite_runs_n2p() {
 suite_runs_ptx() {
     case $1 in
         n2p) suite_runs_n2p 'n=[1-8],' "type_a=" ;;
+        qsa-prompt) suite_runs_qsa_prompt 2 ;;
     esac
 }
 suite_filters "$SUITE" > /dev/null || { echo "unknown SUITE $SUITE" >&2; exit 1; }
