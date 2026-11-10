@@ -8,8 +8,11 @@ is a taper: micro-batches of 64–128 tokens where a call fills or drains the pi
 folder holds that switch, off by default, the checks that ran without a GPU, and the rig script that measures it on the
 agent check's prompts.
 
-**Status:** written, built for the rig and checked on the CPU (the tables below). Not yet run on the rig:
-[run/rig_taper.sh](run/rig_taper.sh) is next (C218r), together with Q770's no-code test.
+**Status:** written, built for the rig and checked on the CPU (the tables below). [run/rig_taper.sh](run/rig_taper.sh)
+ran on the rig on the v3.0 release build, which carries the switch, with Q770's no-code test:
+[2026-11-10_prompt_lane](../2026-11-10_prompt_lane/README.md) (R43). The taper per request takes the agent check's
+prompt time from 509.16 and 499.93 s a pass to 434.46 and 430.50 (−14.28 %), and to 358.94 and 349.97 with the
+checkpoints on the cards.
 
 ## The build
 

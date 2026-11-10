@@ -1,0 +1,11 @@
+load	arm	pass	turns	prompt_tokens	prompt_s	tok_s	turns_reprocessed	checkpoints_created	created_s	checkpoints_restored	restored_s
+A	off	0	62	36793	509.16	72.26	1	124	79.95	1	0.62
+A	off	3	62	36793	499.93	73.60	1	124	79.61	1	0.62
+A	on	1	62	36793	434.46	84.69	1	124	79.74	1	0.62
+A	on	2	62	36793	430.50	85.47	1	124	79.66	1	0.62
+B	off	0	62	37826	349.57	108.21	1	0	0.00	0	0.00
+B	on	1	62	37826	318.08	118.92	1	0	0.00	0	0.00
+vram4	off	0	62	36793	437.54	84.09	1	124	5.70	1	0.00
+vram4	off	3	62	36793	416.17	88.41	1	124	2.74	1	0.00
+vram4	on	1	62	36793	358.94	102.50	1	124	2.73	1	0.00
+vram4	on	2	62	36793	349.97	105.13	1	124	2.74	1	0.00
