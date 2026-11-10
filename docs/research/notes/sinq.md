@@ -243,8 +243,8 @@ A check needs:
 
 ### 3.1 Who and what
 
-- **Owner:** GitHub user Anbeeld, account since 2021-12-10, 14 public repositories, 54 followers. The profile names
-  a named full-stack engineer, links anbeeld.com, and links the X account @Anbeeld.
+- **Owner:** GitHub user Anbeeld, account since 2021-12-10, 14 public repositories, 54 followers. The profile describes
+  a full-stack engineer, links anbeeld.com, and links the X account @Anbeeld.
 - **Hugging Face:** Anbeeld since 2026-04-27, 49 model repositories, almost all DFlash, DFlash2 and DSpark drafter
   GGUFs for other makers' models (up to 6,195 downloads each).
 - **Repository:** [Anbeeld/beellama.cpp](https://github.com/Anbeeld/beellama.cpp), created 2026-05-05 as a GitHub
