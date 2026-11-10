@@ -1,0 +1,75 @@
+== group off
+tbo-off                                                                      2 FAIL  exit 134
+      1     [CPY] ERR = 0.000000004 > 0.000000003   CPY(type_src=f32,type_dst=q5_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+      1     [CPY] ERR = 0.000000005 > 0.000000003   CPY(type_src=f32,type_dst=q5_1,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+      1     CUDA error: an illegal memory access was encountered
+      1     /work/src/ggml/src/ggml-cuda/ggml-cuda.cu:121: CUDA error
+== group on
+tbo-on                                                                       3 FAIL  exit 143
+moe-check    17 ran 1 layers, 1 compared with the per-op path, 0 differed      0 FAIL  exit 0
+moe-fault    17 ran 1 layers, 1 compared with the per-op path, 1 differed      0 FAIL  exit 0
+norm-q8     32/32 tests passed                                               0 FAIL  exit 0
+      1     [CPY] ERR = 0.000000000 > 0.000000000   CPY(type_src=f32,type_dst=q8_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+      1     [CPY] ERR = 0.000000004 > 0.000000003   CPY(type_src=f32,type_dst=q5_1,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+      1     [CPY] ERR = 0.000000006 > 0.000000003   CPY(type_src=f32,type_dst=q5_0,ne_src=[2560,4,512,1],permute_src=[0,0,0,0],permute_dst=[0,0,0,0],_src_transpose=0): FAIL
+== group archs
+archs       85 OK lines; masks identical to the host mask: 0                 0 FAIL  exit 134
+archs-on    85 OK lines; masks identical to the host mask: 0                 0 FAIL  exit 134
+archs-mask  85 OK lines; masks identical to the host mask: 512               0 FAIL  exit 134
+== group archs-nogdn
+archs       418 OK lines; masks identical to the host mask: 0                0 FAIL  exit 0
+archs-on    418 OK lines; masks identical to the host mask: 0                0 FAIL  exit 0
+archs-mask  418 OK lines; masks identical to the host mask: 2861             0 FAIL  exit 0
+== group archs-cuda0
+archs       153 OK lines; masks identical to the host mask: 0                0 FAIL  exit 0
+archs-on    153 OK lines; masks identical to the host mask: 0                0 FAIL  exit 0
+archs-mask  153 OK lines; masks identical to the host mask: 1579             0 FAIL  exit 0
+== shards
+off conv: exit 0; 3937/3937 tests passed; case lines 6099; OK 3938; FAIL lines 0; not supported 2162; 
+off fattn: exit 0; 4519/4519 tests passed; case lines 5918; OK 4520; FAIL lines 0; not supported 1399; 
+off mulmat: exit 0; 4126/4126 tests passed; case lines 4889; OK 4127; FAIL lines 0; not supported 763; 
+off mulmatx: exit 0; 4571/4571 tests passed; case lines 4992; OK 4572; FAIL lines 0; not supported 421; 
+off rest: exit 1; 6999/7001 tests passed; case lines 10019; OK 6999; FAIL lines 4; not supported 3018; 
+on conv: exit 0; 3937/3937 tests passed; case lines 6099; OK 3938; FAIL lines 0; not supported 2162; 
+on fattn: exit 0; 4519/4519 tests passed; case lines 5918; OK 4520; FAIL lines 0; not supported 1399; 
+on mulmat: exit 0; 4288/4288 tests passed; case lines 4889; OK 4289; FAIL lines 0; not supported 601; 
+on mulmatx: exit 0; 4925/4925 tests passed; case lines 5230; OK 4926; FAIL lines 0; not supported 305; 
+on rest: exit 1; 6999/7001 tests passed; case lines 10019; OK 6999; FAIL lines 4; not supported 3018; 
+== shards-support
+on all: exit 0; ; case lines 27343; OK 1; FAIL lines 0; not supported 0; 
+on conv: exit 0; ; case lines 6099; OK 1; FAIL lines 0; not supported 0; 
+on fattn: exit 0; ; case lines 5918; OK 1; FAIL lines 0; not supported 0; 
+on mulmat: exit 0; ; case lines 4888; OK 1; FAIL lines 0; not supported 0; 
+on mulmatx: exit 0; ; case lines 2609; OK 1; FAIL lines 0; not supported 0; 
+on rest: exit 0; ; case lines 7829; OK 1; FAIL lines 0; not supported 0; 
+== off-nodup
+l6 off: exit 124; ; OK lines 12166; FAIL lines 2; last case:   MUL_MAT_ID(type_a=n2p,type_b=f32,n_mats=32,n_used=8,b=0,m=3072,n=2,k=1024,m_v=0,ids_offset=0,skip=0): OK; 
+== case-dup
+l6 off: exit 134; ; OK lines 2; FAIL lines 0; last case:   MUL_MAT_ID(type_a=iq2_xxs,type_b=f32,n_mats=28,n_used=10,b=1,m=256,n=5,k=2560,m_v=0,ids_offset=0,skip=0,dup=1): OK; CUDA error: an illegal memory access was encountered
+l6 on: exit 0; 8/8 tests passed; OK lines 9; FAIL lines 0; last case:   Backend CUDA0: OK; 
+rel off: exit 134; ; OK lines 2; FAIL lines 0; last case:   MUL_MAT_ID(type_a=iq2_xxs,type_b=f32,n_mats=28,n_used=10,b=1,m=256,n=5,k=2560,m_v=0,ids_offset=0,skip=0,dup=1): OK; CUDA error: an illegal memory access was encountered
+rel on: exit 0; 8/8 tests passed; OK lines 9; FAIL lines 0; last case:   Backend CUDA0: OK; 
+== case-iq
+l6 off: exit 134; ; OK lines 345; FAIL lines 0; last case:   MUL_MAT_ID_SHARED(type=iq2_xxs,n=6): OK; CUDA error: an illegal memory access was encountered
+rel off: exit 134; ; OK lines 345; FAIL lines 0; last case:   MUL_MAT_ID_SHARED(type=iq2_xxs,n=6): OK; CUDA error: an illegal memory access was encountered
+== cpy-reps
+rel off 1: 330/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000004;f32>q5_0 [2560,4,512,1] 0.000000006;f32>q4_1 [2560,4,512,1] 0.000000020;  Backend CUDA0: FAIL;FAIL;
+rel off 2: 330/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000006;f32>q5_0 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000025;  Backend CUDA0: FAIL;FAIL;
+rel off 3: 331/333 tests passed; FAIL: f32>q5_0 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000026;  Backend CUDA0: FAIL;FAIL;
+rel off 4: 332/333 tests passed; FAIL: f32>q4_1 [2560,4,512,1] 0.000000026;  Backend CUDA0: FAIL;FAIL;
+rel off 5: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000006;f32>q5_0 [2560,4,512,1] 0.000000007;  Backend CUDA0: FAIL;FAIL;
+rel on 1: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000006;f32>q5_0 [2560,4,512,1] 0.000000004;  Backend CUDA0: FAIL;FAIL;
+rel on 2: 331/333 tests passed; FAIL: f32>q5_0 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000019;  Backend CUDA0: FAIL;FAIL;
+rel on 3: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000004;f32>q5_0 [2560,4,512,1] 0.000000004;  Backend CUDA0: FAIL;FAIL;
+rel on 4: 332/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000008;  Backend CUDA0: FAIL;FAIL;
+rel on 5: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000014;f32>q4_1 [2560,4,512,1] 0.000000018;  Backend CUDA0: FAIL;FAIL;
+l6 off 1: 329/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000009;f32>q5_0 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000027;f32>q4_0 [2560,4,512,1] 0.000000017;  Backend CUDA0: FAIL;FAIL;
+l6 off 2: 330/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000008;f32>q5_0 [2560,4,512,1] 0.000000006;f32>q4_1 [2560,4,512,1] 0.000000018;  Backend CUDA0: FAIL;FAIL;
+l6 off 3: 329/333 tests passed; FAIL: f32>q8_0 [2560,4,512,1] 0.000000000;f32>q5_1 [2560,4,512,1] 0.000000010;f32>q5_0 [2560,4,512,1] 0.000000004;f32>q4_0 [2560,4,512,1] 0.000000034;  Backend CUDA0: FAIL;FAIL;
+l6 off 4: 331/333 tests passed; FAIL: f32>q5_0 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000028;  Backend CUDA0: FAIL;FAIL;
+l6 off 5: 330/333 tests passed; FAIL: f32>q8_0 [2560,4,512,1] 0.000000000;f32>q5_1 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000028;  Backend CUDA0: FAIL;FAIL;
+l6 on 1: 330/333 tests passed; FAIL: f32>q8_0 [2560,4,512,1] 0.000000000;f32>q5_1 [2560,4,512,1] 0.000000006;f32>q4_1 [2560,4,512,1] 0.000000028;  Backend CUDA0: FAIL;FAIL;
+l6 on 2: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000004;f32>q4_1 [2560,4,512,1] 0.000000019;  Backend CUDA0: FAIL;FAIL;
+l6 on 3: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000011;f32>q4_1 [2560,4,512,1] 0.000000026;  Backend CUDA0: FAIL;FAIL;
+l6 on 4: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000006;f32>q5_0 [2560,4,512,1] 0.000000004;  Backend CUDA0: FAIL;FAIL;
+l6 on 5: 331/333 tests passed; FAIL: f32>q5_1 [2560,4,512,1] 0.000000004;f32>q5_0 [2560,4,512,1] 0.000000004;  Backend CUDA0: FAIL;FAIL;

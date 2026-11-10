@@ -1,0 +1,26 @@
+== repeat-full: 8 whole runs (4 at the defaults, 4 with LLAMA_KV_HEAD_TAIL=0), 0 with a difference
+== repeat-full-l6: 30 whole runs (15 at the defaults, 15 with X=1), 0 with a difference
+== repeat-full-rel: 30 whole runs (15 at the defaults, 15 with X=1), 0 with a difference
+== repeat-full-stock: 30 whole runs (15 at the defaults, 15 with X=1), 0 with a difference
+== repeat-flip30: 60 whole runs (30 at the defaults, 30 with LLAMA_KV_HEAD_TAIL=0), 0 with a difference
+== deepseek4 alone, 12 runs per line, against stock's logits
+    stock default (X=1):  12 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    stock flip (LLAMA_KV_HEAD_TAIL=0):  12 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    l6 default (X=1):  12 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    l6 flip (LLAMA_KV_HEAD_TAIL=0):  12 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    rel default (X=1):  12 nmse 2.827e-08, max abs diff 2.874e-04, 16384 of 32768 differ 
+    rel flip (LLAMA_KV_HEAD_TAIL=0):  12 nmse 2.827e-08, max abs diff 2.874e-04, 16384 of 32768 differ 
+== deepseek4 alone, eight runs at a time, l6: default  200 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ ; LLAMA_KV_HEAD_TAIL=0  200 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+== deepseek4 alone, eight runs at a time, stock: default  200 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ ; LLAMA_KV_HEAD_TAIL=0  200 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+== fused against unfused GDN, gdn-l6
+    l6 default (X=1):  1 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    l6 flip (LLAMA_GDN_FUSE=0):  1 nmse 1.503e-17, max abs diff 7.451e-09, 95 of 32768 differ 
+== fused against unfused GDN, gdn-norev
+    norev default (X=1):  1 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    norev flip (LLAMA_GDN_FUSE=0):  1 nmse 2.533e-17, max abs diff 7.451e-09, 143 of 32768 differ 
+== fused against unfused GDN, gdn-rel
+    rel default (X=1):  1 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    rel flip (LLAMA_GDN_FUSE=0):  1 nmse 2.533e-17, max abs diff 7.451e-09, 143 of 32768 differ 
+== fused against unfused GDN, gdn-u5
+    u5 default (X=1):  1 nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ 
+    u5 flip (LLAMA_GDN_FUSE=0):  1 nmse 2.533e-17, max abs diff 7.451e-09, 143 of 32768 differ 

@@ -1,0 +1,15 @@
+class	kernel	instances
+differ	cub::CUB_200802_SM_610::EmptyKernel	1
+differ	topk_moe_cuda	13
+differ	top_k_radix_init	1
+differ	top_k_radix_select	1
+new	lightning_indexer_kernel_mma	12
+new	mul_mat_q	1008
+new	ssm_scan_f32_group	1
+new	top_k_radix_gather	1
+new	top_k_radix_histogram	1
+gone	lightning_indexer_kernel_wmma	12
+gone	mul_mat_q	976
+gone	top_k_radix_gather	1
+gone	top_k_radix_histogram	1
+gone	top_k_radix_reset_counters	1

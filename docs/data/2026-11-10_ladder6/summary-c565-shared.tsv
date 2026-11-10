@@ -1,0 +1,18 @@
+tree	check	verdict	detail
+l6	tree	OK	commit 84f7bd3d2e89aeedb065554eaca47ce4401cfd79 
+l6	build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+l6	ctest	OK	100% tests passed, 0 tests failed out of 67; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+l6	net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+l6	archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+l6	archs write	OK	Summary: all 151 test(s) passed; write rc=0
+l6	archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+l6	archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+l6	hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+l6	hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+l6	hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+l6	hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+l6	hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+l6	hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+l6	hand thread-safety	OK	test-thread-safety rc=0: 0.00.189.746 I All threads finished without errors.
+l6	hand context-model	OK	test-llama-context rc=0: failed   : 0
+l6	hand eval-callback	OK	llama-eval-callback rc=0:             [      0.2103,       0.1582, 

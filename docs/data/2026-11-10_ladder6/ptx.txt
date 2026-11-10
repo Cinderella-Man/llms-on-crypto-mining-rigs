@@ -1,0 +1,20 @@
+== 2026-11-10T10:47:17+00:00 gpu_checks (ladder4) MODE=ptx DEV=0 BIN=$WORK/llama.cpp-20261110-84f7bd3d2-pascal-p106-v4-b12246-ladder6/bin
+   NVIDIA GeForce RTX 3080, 1071 MiB
+-- moeskip's gpu_checks.sh (exit 0): $WORK/ptx/moeskip/console.txt
+skip-mmq     skipped slots past 8 tokens (MMQ)            1 100/100 tests passed;                                                     0 FAIL  exit 0   N/N tests passed, 0 FAIL lines, exit 0
+skip         defaults, skipped slots                      1 604/604 tests passed;                                                     0 FAIL  exit 0   N/N tests passed, 0 FAIL lines, exit 0
+skip-mmvq    MMVQ_PASCAL=0, skipped slots                 1 604/604 tests passed;                                                     0 FAIL  exit 0   N/N tests passed, 0 FAIL lines, exit 0
+skip-mtok0   MTOK=0, skipped slots of Q2_0                1 41/41 tests passed;                                                       0 FAIL  exit 0   N/N tests passed, 0 FAIL lines, exit 0
+tail         the tail op, the fused router chain          1 533/533 tests passed;                                                     0 FAIL  exit 0   N/N tests passed, 0 FAIL lines, exit 0
+experts      the expert cases, nothing skipped            1 4782/4782 tests passed;                                                   0 FAIL  exit 0   N/N tests passed, 0 FAIL lines, exit 0
+archs-off-base the switch off, BASE_BIN writes              1 Summary: all 150 test(s) passed;                                          0 FAIL  exit 0   logits written
+archs-off    the switch off, this build compares          143 compared, 141 with a difference, max nmse 8.137e-01                     0 FAIL  exit 1   0 with a difference, exit 0
+archs-tail-graph p=0.8 renorm, graph-level ops write          1 Summary: all 153 test(s) passed;                                          0 FAIL  exit 0   logits written
+archs-tail-op the same as the op compares                  146 compared, 0 with a difference, max nmse 1.481e-06                       0 FAIL  exit 0   max nmse <= 1e-8, exit 0
+archs-tail-op0 the op, skip=0, compares                     146 compared, 0 with a difference, max nmse 1.481e-06                       0 FAIL  exit 0   max nmse <= 1e-8, exit 0
+archs-tail-rep the op, repeat=1, compares                   146 compared, 0 with a difference, max nmse 1.481e-06                       0 FAIL  exit 0   max nmse <= 1e-8, exit 0
+combo ub 128               OK   tiered op = tiered graph bit for bit: yes; KLD tiered/untiered 0.000000, op/graph 0.000000, tiered/untiered with the cut 0.000000, the cut 0.397838 (p=0.8,renorm=1)
+combo ub 1                 OK   tiered op = tiered graph bit for bit: yes; KLD tiered/untiered 0.000000, op/graph -0.000000, tiered/untiered with the cut -0.000000, the cut 0.397970 (p=0.8,renorm=1)
+moeids tiered + cut        OK   exit 0: test-moe-ids: 48 MUL_MAT_ID nodes, 2336 token columns, 0 with a repeated id, 0 ids out of range 13 checks, 0 failed 
+dense (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0) OK   exit 0, 0 FAIL lines:   3423/3423 tests passed 
+== 2026-11-10T13:31:29+00:00 done

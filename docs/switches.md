@@ -23,6 +23,12 @@ every kernel the two share is the same but the persistent MoE kernel's F16 route
 what each switch does when flipped on a CPU, are in [docs/data/2026-11-05_ladder5/](data/2026-11-05_ladder5/README.md)
 and [docs/data/2026-11-05_switches/](data/2026-11-05_switches/README.md).
 
+The v4 line carries every switch at the same default on a newer upstream: `pascal-p106-v4-b12246-ladder6` is the
+release tree with upstream b12246 merged in ([docs/data/2026-11-10_ladder6/](data/2026-11-10_ladder6/README.md)). Where
+upstream has since merged a change that a switch describes, the row says "v4:" and what the switch's other value now
+gives; [what upstream changed by default](#what-upstream-changed-by-default-on-the-v4-line) lists the behaviour that
+came with the merge and has no switch.
+
 ## Which preset sets each switch
 
 Each v3 model has a preset, `release/<model>-v3/settings.env`: the switches (`PRESET_ENV`) and the command line
@@ -79,7 +85,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 
 | Switch | Default | What it does | Branch | Row |
 |---|---|---|---|---|
-| `GGML_CUDA_MMQ_MOE_LEGACY` | `0` | `1`: MUL_MAT_ID in MMQ and MMF as before upstream PR #31047's tile list (tile width from all tokens, a tile column per expert); `2`: that layout only up to 8 tokens (speculative verify, multi-token steps) and the tile list for prompt batches (v2's prefill split) | base, -flags, -prefill-split | Q108 |
+| `GGML_CUDA_MMQ_MOE_LEGACY` | `0` | `1`: MUL_MAT_ID in MMQ and MMF as before upstream PR #31047's tile list (tile width from all tokens, a tile column per expert); `2`: that layout only up to 8 tokens (speculative verify, multi-token steps) and the tile list for prompt batches (v2's prefill split). v4: upstream merged #31047, so `0` is upstream's own path and `1` the layout upstream had before b12246 | base, -flags, -prefill-split | Q108 |
 | `GGML_CUDA_FATTN_TILE_PASCAL` | `1` | Prompt attention kernel on compute 6.1 (head size 128 or 256, reads a Q8_0 cache directly). `0`: llama.cpp's TILE kernel; `2`: any GPU; `_MIN`: the fewest query tokens it takes | base | Q163 |
 | `GGML_CUDA_FATTN_TILE_PASCAL_QK` | `2` | `1`: the head-128 scores without the split over the head's halves | base | Q163 |
 
@@ -91,7 +97,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `GGML_CUDA_FATTN_PASCAL` | `0` | `1`: the Pascal decode-attention kernel (slower than llama.cpp's on the rig); `2`: any GPU | base, -fap | Q60, Q151 |
 | `GGML_CUDA_FATTN_SPARSE_PASCAL` | `0` | `1`: sparse decode attention below Turing over the cells a QSA layer keeps; `2`: any GPU. `_NQ`, `_SPLITS`, `_NSM`, `_MIN_RATIO` tune it | -qsa | Q230, Q441 |
 | `LLAMA_ATTN_K_LAST` | `1` | *new.* `0`: a sliding-window cache's layer expands q, k, v (upstream's order) instead of k last, which lets K's norm, RoPE and cache write fuse | base, -flags | Q1025 |
-| `LLAMA_GPU_KQ_MASK` | `0` | `n`: micro-batches of at least n tokens build their attention mask on each card; `LLAMA_GPU_KQ_MASK_CHECK=1` compares it with the host's | base, -hybrid | Q110, Q116 |
+| `LLAMA_GPU_KQ_MASK` | `0` | `n`: micro-batches of at least n tokens build their attention mask on each card; `LLAMA_GPU_KQ_MASK_CHECK=1` compares it with the host's. v4: with it on, gemma4 keeps every row through its KV-shared layers (upstream's row pruning there reads the host masks) | base, -hybrid | Q110, Q116, Q1073 |
 | `LLAMA_GPU_KQ_MASK_MAX` | unset | `m`: with `LLAMA_GPU_KQ_MASK`, card-built masks only for micro-batches of at most m tokens (decode steps); longer ones use the host's | -decodemask, -promptpath | Q261 |
 | `LLAMA_GPU_KQ_CELLS` | `1` | *new.* `0`: no per-card copy of the cells' positions in the KV buffers (upstream's buffers; the card-built mask then stays off) | base, -flags | Q110, Q1025 |
 | `LLAMA_QSA_PAD_LINEAR` | `1` | *new.* `0`: the QSA k-pool's pad cells found by sorting and binary search, as upstream (the same cells, more host time) | -qsa, -flags | Q441, Q1025 |
@@ -104,7 +110,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `GGML_CUDA_NORM_Q8` | `1` | The RMS norm of one row writes the Q8_1 activations and absorbs the residual add. `0`: off (v2.0's release candidate hit a CUDA-pool assertion with it off) | base | Q100 |
 | `GGML_CUDA_GLU_ALIAS_FUSE` | `1` | *new.* `0`: a gate/up/GLU whose output reuses the activations' memory (a shared expert, a dense FFN) runs unfused, as upstream | base, -flags | Q50, Q1025 |
 | `GGML_CUDA_GDN_FUSE` | `1` | The delta-net layer's fusions: the GDN state read in place, the conv window, the gated norm. `0`: off | -gdnfuse | Q437 |
-| `LLAMA_GDN_FUSE` | `1` | `0`: qwen4exp's graph without the GDN_CONV op (the unfused conv window and norms) | -gdnfuse | Q438 |
+| `LLAMA_GDN_FUSE` | `1` | `0`: qwen4exp's graph without the GDN_CONV op (the unfused conv window and norms). v4: the unfused window stores its history as upstream does since #31660, one write for all rollback slots | -gdnfuse | Q438 |
 | `LLAMA_NO_MOE_DOWN_RESCALE` | unset | Unset: the MoE down-projection rescale is dropped at one token on compute 6.1 (FP32 sums make it unnecessary). `0`: kept everywhere (upstream); `tg`: dropped at one token; any other value: dropped everywhere | base | Q76 |
 | `GGML_CUDA_DISABLE_GRAPHS` | unset | Upstream's switch; `1` turns CUDA graphs off, which upstream does for compute 6.1 | base | v1 |
 
@@ -125,7 +131,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_KV_HEAD_TAIL` | `1` | *new.* `0`: removing a sequence's tail keeps upstream's head rule instead of putting head on the first removed cell (pipelined speculation needs this rule for exact results) | base, -flags | Q87, Q1025 |
 | `LLAMA_KV_HEAD_FREE` | `1` | *new.* `0`: the slot search restarts from cell 0 as upstream, even when head is on a free cell | base, -flags | Q87, Q1025 |
 | `LLAMA_KV_RESTORE_CANONICAL` | `1` | *new.* `0`: a state restored into an empty stream is placed by the slot search (upstream) instead of position p in cell p | base, -flags | Q111, Q1025 |
-| `LLAMA_STATE_NOINIT` | `1` | *new.* `0`: state buffers (checkpoints, prompt cache) are zero-filled when allocated, as upstream | -ckptrc, -flags | Q704, Q1025 |
+| `LLAMA_STATE_NOINIT` | `1` | *new.* `0`: state buffers (checkpoints, prompt cache) are zero-filled when allocated, as upstream. v4: upstream merged #30137 and leaves them uninitialized too, so `0` is upstream before b12246 | -ckptrc, -flags | Q704, Q1025 |
 | `LLAMA_DIO_STAGING` | `4x64` | Pinned staging of the direct-I/O loader, `<n>x<MiB>` | -draftmem | Q580 |
 | `GGML_CUDA_KEEPALIVE` (`_MS`, `_POLL_US`) | off | `decode` (or `1`): one block per card, on a stream of the card's lowest priority, polls a word in mapped host memory so that the driver holds the card at its boost clock while a layer split decodes; it ends itself `_MS` after the card's last graph (default 1,000) and is ended before captures, frees and device-wide synchronizes. `request`: also every card's block when llama-server takes a request; `idle`: a 120 s timeout, through an agent's tool calls | -keepalive | Q1021, Q1045 |
 | `LLAMA_UBATCH_TAPER`, `--ubatch-taper` | off | A taper of prompt micro-batches (`on` or `head=N:S,tail=N:S,short=N:S,min=N`); a request may send `"ubatch_taper"`; with an MTP draft loaded no planned micro-batch holds fewer than `--spec-draft-n-max` + 2 tokens (Q1192) | -taper | Q771 |
@@ -161,8 +167,8 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_DRAFT_SHARE` | off | `embd[,head]`: the MTP draft reads the target's token embeddings and head | -draftmem | Q564 |
 | `LLAMA_DRAFT_SHORTLIST` (`_FILE`) | off | `k[,m[,r]]`: the MTP draft's head over a token shortlist | -draftmem | Q592, Q635 |
 | `LLAMA_DRAFT_EMBD_CACHE` | off | `<rows>[,<max tokens>]`: the draft's token rows cached on its layer's card | -draft1card | Q961 |
-| `LLAMA_DRAFT_H_CARRY` | off | `1`: the draft's hidden rows stay on its card between passes | -draft1card | Q961 |
-| `LLAMA_FIT_DRAFT_CTX`, `LLAMA_FIT_NEXTN_SKIP` | `1` | `0`: `--fit` measures a draft alone and leaves skipped NextN layers out, as b12076 (upstream #31610, #31569) | -ckptrc | Q706 |
+| `LLAMA_DRAFT_H_CARRY` | off | `1`: the draft's hidden rows stay on its card between passes. v4: the rows the draft reads from the target stay on the target's output card by default, upstream's #31927; this switch still covers the draft's own passes | -draft1card | Q961 |
+| `LLAMA_FIT_DRAFT_CTX`, `LLAMA_FIT_NEXTN_SKIP` | `1` | `0`: `--fit` measures a draft alone and leaves skipped NextN layers out, as b12076 (upstream #31610, #31569). v4: upstream merged #31569, so `LLAMA_FIT_NEXTN_SKIP=1` is upstream's own count | -ckptrc | Q706 |
 | `LLAMA_SPEC_ADAPT` (`_COST`, `_S`, `_WIDTHS`, `_LOG`, ...) | off | `1`: the draft length chosen per step from the drafter's probabilities and a verify-cost table | -adraft | Q687 |
 | `LLAMA_SPEC_BLOCK_VERIFY` | off | `1`: sampled drafts verified as a block | -blockver | Q797 |
 | `LLAMA_SPEC_FORCE` (`_CHARS`, `_MAX`), `LLAMA_SPEC_DRAFT_KEEP` | off | The text a grammar forces appended to the draft | -blockver | Q802 |
@@ -174,7 +180,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 |---|---|---|---|---|
 | `--ctx-checkpoints-vram N`, `--ctx-checkpoints-vram-sync` | `0`, off | A slot's newest N checkpoints in device stores | -ckpt | Q440, Q548 |
 | `--ctx-checkpoints-spread N` | `0` | Checkpoints inside long prompts, at most N tokens apart | -ckpt | Q448 |
-| `--ctx-checkpoints-share` | off | Prompt-cache entries and child slots share the slot's host checkpoints (upstream #30137) | -ckptrc | Q704 |
+| `--ctx-checkpoints-share` | off | Prompt-cache entries and child slots share the slot's host checkpoints (upstream #30137). v4: upstream merged #30137 and always shares; Miner Llama keeps the flag and copies without it, as the release does (following upstream's default is Q1227) | -ckptrc | Q704 |
 | `--prefix-cache DIR` (`_MAX`, `_MIN`), `--checkpoint-gen` (`_AT`, `_MIN`) | off | Saved shared prefixes and generation checkpoints for agent sessions | base | Q111, Q132 |
 | `--checkpoint-tail2` | off | Two tail checkpoints per prompt and the mid-prompt rule, as stock, instead of one ring checkpoint for a sliding-window model | base | Q111 |
 | `LLAMA_SERVER_TEXT_REUSE` | `0` | `1`: llama-server keeps the cached tokens where a prompt spells the same text with other tokens (a reply sent back and tokenized its own way) | -textreuse, -promptpath | Q260 |
@@ -218,12 +224,31 @@ Q1040.
   Their Pascal kernels have the kernel switches above: `GGML_CUDA_MMVQ_PASCAL_SKIP=n2p,n3p,n2p_128,n3p_128` sends them
   to llama.cpp's `mul_mat_vec_q` with the fork's dot products.
 - **Fixes whose other value would bring a crash or a wrong result back:** ggml-alloc plans again for a leaf that no node
-  reads; MUL_MAT_ID's matrix-vector batch limit comes from the architecture the device's code was built for; the prompt
-  cache drops an entry whose state was copied short; the KV layer's members are set by name; devices without a backend
-  registry report no features.
+  reads; MUL_MAT_ID's matrix-vector batch limit comes from the architecture the device's code was built for (v4:
+  upstream's #31679 takes the highest architecture the build holds; the fork also bounds it by the architecture of the
+  code the device loaded); the prompt cache drops an entry whose state was copied short; the KV layer's members are
+  set by name; devices without a backend registry report no features. On v4 also the two recurrent-state fixes of
+  Q1158: a new sequence's state is cleared with a fill, so a NaN cannot stay in a cell (upstream's open #31913), and a
+  sequence that the slot finder moves to another cell takes its rollback depth along (upstream's #31656).
 - **Output only:** the `COMPUTE_6_1` backend feature entry, the server's extra timing fields (`sampled_on_device`,
   `grammar_n`, `cache_src`, `ckpt_*`, ...) and the info level of its checkpoint log lines.
 - **The -1 expert-id checks** compiled into llama.cpp's expert kernels: a comparison never taken for valid ids
   (`GGML_CUDA_SKIP_IDS_ANY` switches the host-side handling; what the comparisons cost at five and six tokens is Q1028).
 - **Op numbering:** the fork's ops (`GGML_OP_GDN_CONV`, `GGML_OP_KQ_MASK`, `GGML_OP_MOE_TAIL`) change the op enum, so an
-  RPC build carries the fork's own protocol version.
+  RPC build carries the fork's own protocol version (upstream's major version plus 100: 108 on v3, 109 on v4).
+
+## What upstream changed by default on the v4 line
+
+The merge of upstream b12246 brings 154 upstream commits. These change what the engine does with no switch set, on
+the models Miner Llama serves; none has a switch of its own
+([the full list and the checks](data/2026-11-10_ladder6/README.md#what-upstream-changed-by-default)):
+
+| Upstream change | What changes with no switch set |
+|---|---|
+| [#31927](https://github.com/ggml-org/llama.cpp/pull/31927) | An MTP draft with one head and its own memory (Flash-Next's) reads the target's hidden rows from a buffer on the target's output card instead of the host. The buffer holds one row per batch position: 80.0 MiB for Flash-Next at `-b 2048` (est. from the code: 2,049 rows of 10,240 F32 values). If it cannot be allocated the rows go through the host as before |
+| [#31660](https://github.com/ggml-org/llama.cpp/pull/31660) | Recurrent models with rollback snapshots store the conv history of all snapshots in one write (the fused GDN path, the default for qwen4exp, already did) |
+| [#31419](https://github.com/ggml-org/llama.cpp/pull/31419), [#30966](https://github.com/ggml-org/llama.cpp/pull/30966) | The scheduler does not upload the inputs of nodes that are not computed, and fetches a CPU split's inputs from the previous card before that card's split runs |
+| [#31084](https://github.com/ggml-org/llama.cpp/pull/31084), [#31803](https://github.com/ggml-org/llama.cpp/pull/31803), [#31005](https://github.com/ggml-org/llama.cpp/pull/31005) | CUDA kernels on the decode path: the top-k of device sampling picks tied candidates in a fixed order, the lightning indexer (Flash-Next's sparse attention) lays out its shared memory differently, the fused MoE router replaces a NaN score |
+| [#31851](https://github.com/ggml-org/llama.cpp/pull/31851), [#31854](https://github.com/ggml-org/llama.cpp/pull/31854) | Attention without flash attention asks for BF16 accumulators instead of F32; the CPU backend multiplies F16 and BF16 matrices with F32 activations |
+| [#31683](https://github.com/ggml-org/llama.cpp/pull/31683) | Context shift moves the KV cells correctly, and each model builds its own RoPE |
+| [#31956](https://github.com/ggml-org/llama.cpp/pull/31956), [#28697](https://github.com/ggml-org/llama.cpp/pull/28697) | llama-server: a request with tools and a `response_format` gets a full grammar, not a lazy one; a `json_schema` not nested in its wrapper is accepted |

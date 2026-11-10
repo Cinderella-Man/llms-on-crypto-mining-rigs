@@ -1,0 +1,16 @@
+stock b12246 with the fork's test file against the branch's CPU build:
+base wrote 146 logits files; 146 compared, 1 differ: qwen4exp ; written by the compared build only: 0; base: Summary: all 151 test(s) passed; compared: Summary: all 151 test(s) passed;
+    qwen4exp: logits against /k/logits-qwen4exp.f32: nmse 1.503e-17, max abs diff 7.451e-09, 95 of 32768 differ
+single settings against stock's logits:
+    qwen4exp-default (X=1): nmse 1.503e-17, max abs diff 7.451e-09, 95 of 32768 differ;
+    qwen4exp-gdnfuse0 (LLAMA_GDN_FUSE=0): nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ;
+    deepseek4-default (X=1): nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ;
+    deepseek4-headtail0 (LLAMA_KV_HEAD_TAIL=0): nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ;
+    deepseek4-kv0 (LLAMA_KV_HEAD_EMPTY=0 LLAMA_KV_HEAD_TAIL=0 LLAMA_KV_HEAD_FREE=0 LLAMA_KV_RESTORE_CANONICAL=0): nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ;
+the release's CPU build against the branch with upstream 12ab59798 (#31854) reverted:
+base wrote 143 logits files; 143 compared, 30 differ: llama llama-moe llama4 deci gpt2 mpt qwen2 phi3 phimoe minicpm minicpm-moe minicpm3 gemma4 exaone exaone4 exaone-moe granite granite-moe granitemoe granitemoe-moe granitehybrid granite_swa arcee lfm3 apertus mistral3 mistral3-moe mistral-large4 step35 nanbeige ; written by the compared build only: 3; base: Summary: all 148 test(s) passed; compared: Summary: 151 test(s) executed, 26 failed;
+the staircase drafter's check (llama-pipe-drafter-check, native CPU builds):
+    base:   DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00248 table=host fuse=0 window=6,12,22,33,37,44 older=49
+    branch: DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00219 table=host fuse=0 window=6,12,22,33,37,44 older=49
+    revert: DRAFTER_CHECK steps=8 bad=0 worst_rel=0.00248 table=host fuse=0 window=6,12,22,33,37,44 older=49
+    branch = base: no; branch with 12ab59798 reverted = base: yes
