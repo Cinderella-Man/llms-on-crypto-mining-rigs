@@ -1,0 +1,13 @@
+load	value	step_ms	ref_a_ms	ref_b_ms	minus_ref_mean_ms	class
+d1cache	mean of the medians	168.843	133.979	132.507	35.600	loss
+d1cache	long, median	248.039	140.459	139.261	108.179	loss
+d1cache	greedy, median	130.740	131.570	130.514	-0.302	negligible
+d1cache	smoke, median	127.750	129.907	127.746	-1.077	negligible
+d1carry	mean of the medians	133.425	133.979	132.507	0.183	negligible
+d1carry	long, median	140.604	140.459	139.261	0.744	negligible
+d1carry	greedy, median	130.611	131.570	130.514	-0.431	negligible
+d1carry	smoke, median	129.061	129.907	127.746	0.234	negligible
+d1on	mean of the medians	168.215	133.979	132.507	34.973	loss
+d1on	long, median	246.038	140.459	139.261	106.179	loss
+d1on	greedy, median	130.180	131.570	130.514	-0.862	negligible
+d1on	smoke, median	128.428	129.907	127.746	-0.399	negligible

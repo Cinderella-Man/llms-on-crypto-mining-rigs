@@ -96,6 +96,18 @@ with `base`, not with plain decoding.
 
 ## The rig run (S37)
 
+**The run is [2026-11-10_served_step_split](../2026-11-10_served_step_split/README.md), on the release build with
+the v3 preset** (both switches are in that build, off by default). Neither switch is a gain there:
+- On two short requests each arm's step is within the spread of two loads of the preset. The row cache removes the
+  3.27 ms counted as crossings, but 2.64 ms of host time stay; over 82 paired steps it is −0.91 ± 0.17 ms a step,
+  and a second load of the preset is −0.68 ± 0.13.
+- In each load's first, long request the two loads with the row cache waited on the host in 46 of 90 and 16 of 29
+  steps (median 115.9 and 120.5 ms) while the host swapped (Q1209), so the cache is a loss as measured.
+- The carry alone drafted another token somewhere in the greedy reply (Q1210); the cache and both switches drafted
+  what the preset drafts.
+
+The script below was written for S35's line and was not run in this form.
+
 `run/rig_d1.sh` runs on S35's line ([2026-11-04_s35_stack](../2026-11-04_s35_stack/README.md): pmix-q2-fast, the
 k-column setting, the Q8_0 hop cast, the MTP draft with the shortlist head, `-otd token_embd=CUDA4`). It uses this
 build with the switches off (`d1off`), each switch alone (`d1cache`, `d1carry`), both (`d1on`) and S31's shared

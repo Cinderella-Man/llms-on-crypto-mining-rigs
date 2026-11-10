@@ -1,0 +1,4 @@
+load	steps_paired	step_mean_diff_ms	standard_error_ms	step_median_diff_ms	verify_span_mean_diff_ms	verify_gpu_mean_diff_ms	verify_rest_mean_diff_ms	draft_span_mean_diff_ms	draft_gpu_mean_diff_ms	lead_sum_mean_diff_ms	turn_mid_mean_diff_ms	turn_last_mean_diff_ms
+d1cache	82	-0.911	0.169	-0.813	1.095	0.041	1.053	-2.005	0.372	-3.271	1.594	-0.700
+d1on	82	-1.066	0.127	-1.053	1.060	0.015	1.046	-2.126	0.455	-3.271	1.306	-0.616
+d1off-2	82	-0.679	0.130	-0.693	-0.040	-0.075	0.034	-0.638	-0.064	-0.061	0.034	-0.548

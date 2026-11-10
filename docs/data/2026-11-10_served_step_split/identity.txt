@@ -1,0 +1,6 @@
+res/d1off/reply_greedy.json: draft_n 255, accepted 170, predicted 256 (the reference)
+res/d1off-2/reply_greedy.json: draft_n 255, accepted 170, predicted 256: the same text and counts
+res/d1cache/reply_greedy.json: draft_n 255, accepted 170, predicted 256: the same text and counts
+res/d1carry/reply_greedy.json: draft_n 258, accepted 169, predicted 256: DIFFERS
+res/d1on/reply_greedy.json: draft_n 255, accepted 170, predicted 256: the same text and counts
+res/warm/reply_greedy.json: draft_n 255, accepted 170, predicted 256: the same text and counts

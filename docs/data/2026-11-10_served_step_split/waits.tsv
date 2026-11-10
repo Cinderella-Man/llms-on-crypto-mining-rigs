@@ -1,0 +1,16 @@
+load	request	generation_steps	steps_with_a_long_turn	after_pass0	after_pass1	after_pass2	after_the_last_pass	sum_long_turns_ms	median_long_turn_ms	first_step	last_step
+d1off	long	92	0	0	0	0	0	0.0	0.0		
+d1off	greedy	85	0	0	0	0	0	0.0	0.0		
+d1off	smoke	120	0	0	0	0	0	0.0	0.0		
+d1cache	long	90	46	28	0	0	18	5620.8	115.9	0	55
+d1cache	greedy	85	0	0	0	0	0	0.0	0.0		
+d1cache	smoke	114	0	0	0	0	0	0.0	0.0		
+d1carry	long	16	1	1	0	0	0	73.3	73.3	0	0
+d1carry	greedy	86	0	0	0	0	0	0.0	0.0		
+d1carry	smoke	106	0	0	0	0	0	0.0	0.0		
+d1on	long	29	16	0	0	0	16	2012.2	120.5	1	17
+d1on	greedy	85	0	0	0	0	0	0.0	0.0		
+d1on	smoke	172	0	0	0	0	0	0.0	0.0		
+d1off-2	long	18	0	0	0	0	0	0.0	0.0		
+d1off-2	greedy	85	0	0	0	0	0	0.0	0.0		
+d1off-2	smoke	48	0	0	0	0	0	0.0	0.0		
