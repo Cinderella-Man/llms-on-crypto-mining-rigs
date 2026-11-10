@@ -1,0 +1,73 @@
+585 device evals: 585 decode-sized (< 1000000000.0 ms), 0 larger; ~65 decode steps
+decode: 111.39 ms of GPU time per token summed over cards, 7.6 µs per span subtracted (≈ 8.98 tok/s if the cards ran back to back with no gaps)
+per card, ms per token: 0:15.07 1:13.62 2:13.76 3:13.85 4:11.27 5:13.84 6:11.59 7:13.77 8:4.61
+spans shorter than the event cost: 11436 of 147940 (7.7 %)
+
+by first op of the launch group (ms/token, share):
+    66.69  59.9 %  MUL_MAT
+    24.91  22.4 %  MUL_MAT_ID
+     9.27   8.3 %  GATED_DELTA_NET
+     1.85   1.7 %  SCALE
+     1.49   1.3 %  FLASH_ATTN_EXT
+     1.12   1.0 %  RMS_NORM
+     0.78   0.7 %  GDN_CONV
+     0.77   0.7 %  MUL
+     0.60   0.5 %  CONT
+     0.57   0.5 %  DSV4_HC_PRE
+     0.55   0.5 %  CPY
+     0.54   0.5 %  SOFT_MAX
+     0.53   0.5 %  ADD
+     0.32   0.3 %  SIGMOID
+     0.17   0.2 %  SILU
+
+by weight type (ms/token, share):
+    27.36  24.6 %  q2_0
+    19.79  17.8 %  (no weights)
+    18.15  16.3 %  bf16
+    16.93  15.2 %  q3_K
+    11.90  10.7 %  iq4_xs
+     6.60   5.9 %  q4_K
+     5.33   4.8 %  f32
+     2.16   1.9 %  q5_K
+     1.91   1.7 %  q6_K
+     0.60   0.5 %  q4_0
+     0.29   0.3 %  q5_0
+     0.28   0.2 %  iq4_nl
+     0.10   0.1 %  q8_0
+
+top launch groups (ms/token, share, label):
+    14.01  12.6 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640
+     8.69   7.8 %  MUL_MAT_ID ffn_down_exps:q2_0:640x2560
+     6.25   5.6 %  MUL_MAT attn_qkv:q3_K:2560x10240
+     5.70   5.1 %  MUL_MAT attn_gate:q3_K:2560x6144
+     4.70   4.2 %  MUL_MAT ffn_gate_inp:f32:2560x512
+     4.44   4.0 %  MUL_MAT ssm_out:iq4_xs:6144x2560
+     4.30   3.9 %  MUL_MAT attn_qkv:iq4_xs:2560x10240
+     4.11   3.7 %  MUL_MAT hc_attn_down:bf16:10240x320
+     3.93   3.5 %  MUL_MAT hc_ffn_down:bf16:10240x320
+     3.57   3.2 %  MUL_MAT hc_attn_up:bf16:320x10240
+     3.56   3.2 %  MUL_MAT hc_ffn_up:bf16:320x10240
+     2.94   2.6 %  MUL_MAT ssm_out:q4_K:6144x2560
+     2.46   2.2 %  MUL_MAT attn_q:q3_K:2560x12288
+     2.21   2.0 %  MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2
+     1.61   1.4 %  SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject
+     1.55   1.4 %  MUL_MAT attn_q:iq4_xs:2560x12288
+     1.33   1.2 %  MUL_MAT attn_qkv:q4_K:2560x10240
+     1.12   1.0 %  MUL_MAT attn_output:q6_K:6144x2560
+     1.08   1.0 %  MUL_MAT attn_output:q4_K:6144x2560
+     1.04   0.9 %  MUL_MAT attn_output:q5_K:6144x2560
+     0.96   0.9 %  MUL_MAT ssm_out:q3_K:6144x2560
+     0.87   0.8 %  MUL_MAT attn_gate:iq4_xs:2560x6144
+     0.84   0.8 %  MUL_MAT ffn_up_shexp:q3_K:2560x640
+     0.78   0.7 %  GDN_CONV+CPY gdn_conv
+     0.78   0.7 %  MUL_MAT ssm_out:q5_K:6144x2560
+     0.69   0.6 %  MUL_MAT ssm_beta:bf16:2560x48
+     0.65   0.6 %  MUL_MAT attn_gate:q4_K:2560x6144
+     0.62   0.6 %  MUL_MAT ffn_gate_inp_shexp:f32:2560x1
+     0.60   0.5 %  MUL_MAT ffn_down_shexp:q4_0:640x2560
+     0.58   0.5 %  MUL_MAT attn_gate:q2_0:2560x6144
+
+per token (one decode step):
+  timed spans, summed over cards      111.39 ms, 7.6 µs per span subtracted
+  wall, this run (host clock)         142.73 ms median, 144.89 ms mean (64 intervals of card 0's graph 0)
+summary: mode=group steps=65 devices=9 decode_evals=585 used_evals=585 skipped=0 sum_ms=111.387 evals_ms=128.684 evals_corr_ms=111.387 wall_run_ms=142.731 event_us=7.600

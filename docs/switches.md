@@ -128,7 +128,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_STATE_NOINIT` | `1` | *new.* `0`: state buffers (checkpoints, prompt cache) are zero-filled when allocated, as upstream | -ckptrc, -flags | Q704, Q1025 |
 | `LLAMA_DIO_STAGING` | `4x64` | Pinned staging of the direct-I/O loader, `<n>x<MiB>` | -draftmem | Q580 |
 | `GGML_CUDA_KEEPALIVE` (`_MS`, `_POLL_US`) | off | `decode` (or `1`): one block per card, on a stream of the card's lowest priority, polls a word in mapped host memory so that the driver holds the card at its boost clock while a layer split decodes; it ends itself `_MS` after the card's last graph (default 1,000) and is ended before captures, frees and device-wide synchronizes. `request`: also every card's block when llama-server takes a request; `idle`: a 120 s timeout, through an agent's tool calls | -keepalive | Q1021, Q1045 |
-| `LLAMA_UBATCH_TAPER`, `--ubatch-taper` | off | A taper of prompt micro-batches (`on` or `head=N:S,tail=N:S,short=N:S,min=N`); a request may send `"ubatch_taper"` | -taper | Q771 |
+| `LLAMA_UBATCH_TAPER`, `--ubatch-taper` | off | A taper of prompt micro-batches (`on` or `head=N:S,tail=N:S,short=N:S,min=N`); a request may send `"ubatch_taper"`; with an MTP draft loaded no planned micro-batch holds fewer than `--spec-draft-n-max` + 2 tokens (Q1192) | -taper | Q771 |
 
 ## MoE routing and card hops
 

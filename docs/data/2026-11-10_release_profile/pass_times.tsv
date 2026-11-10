@@ -1,0 +1,13 @@
+load	arm	k	prompt_n	prompt_ms_per_pass	call1_ms_per_pass	call2_ms_per_pass_with_checkpoint
+prof	prof	1	340	79.02	74.47	nan
+prof	prof	4	340	133.61	125.73	nan
+prof	prof	5	340	164.00	153.92	nan
+wall	wall340	1	340	50.24	48.31	nan
+wall	wall340	4	340	98.92	91.20	nan
+wall	wall340	5	340	121.22	111.00	nan
+wall	wall	1	1680	50.75	49.11	51.41
+wall	wall	4	1680	97.01	93.96	98.80
+wall	wall	5	1680	118.35	114.59	120.47
+warm	warm	1	1680	51.10	49.60	51.45
+warm	warm	4	1680	97.01	93.99	98.72
+warm	warm	5	1680	118.38	114.63	120.46
