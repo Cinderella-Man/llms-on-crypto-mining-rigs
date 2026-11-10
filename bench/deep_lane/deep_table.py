@@ -6,17 +6,22 @@
 Reads OUT/requests.csv (deep_client.py's line per request) and OUT/loads.tsv (deep_lane.sh's line per load; without
 it every load but `warm` counts as timed) and prints Markdown, also written to --out:
 - generation: per depth and arm, tok/s of every load by value (pass 1, pass 2, and the load: its passes' tokens over
-  their time), the spread between the arm's loads, the arm against the control and its class;
+  their time, with its ms a token), the spread between the arm's loads, the arm against the control and its class;
+- the step, when a draft ran: ms a step of every load on pass 1 and on pass 2, with the same columns. Two loads of
+  one arm can write different replies at depth, and the draft's acceptance differs with the reply, so tok/s mixes
+  the time of a step with the tokens a step yields; the step's time alone is what a kernel changes;
 - prompt reading: the same for the prompt tokens read at each depth (the `prime` requests: a chunk on top of the
   previous depth's cache; with CACHE=0 the decode requests, each a whole prompt read fresh);
 - the draft and the step: accepted of drafted tokens, tokens a step and ms a step per load;
 - the sampler pass, when the run has one;
 - the checks: the same prompt ids on every load, the tokens out, the greedy reply the same on every pass, load and
-  arm (its token ids' md5 where the server returned them, else its text's), what each prime read.
+  arm (its token ids' md5 where the server returned them, else its text's) or how many replies each arm's loads
+  wrote, what each prime read.
 The class of an arm against the control (--control, default the first arm): the spread is the larger of the two
 arms' differences between their fastest and slowest load; gain when the arm's mean is above the control's by more
-than the spread, loss when below by more than it, else negligible; with one load per arm there is no spread and no
-class. --class-on picks the speed that is classed: load (default, both passes), pass1 or pass2.
+than the spread (for a time: below it), loss when below by more than it (for a time: above), else negligible; with
+one load per arm there is no spread and no class. --class-on picks the speed that is classed: load (default, both
+passes), pass1 or pass2.
 Requests marked valid=0 (deep_lane.sh's QUIET=0) carry times that are not measurements: no speed is printed for a run
 that has any, only the draft counters and the checks. --tsv writes the classes as a table (metric, depth, arm, control,
 each load's value, spread, delta, percent, class).
@@ -94,8 +99,8 @@ def spread(v):
     return max(v) - min(v) if len(v) > 1 else None
 
 
-def verdict(ctl, arm):
-    """(spread, delta, percent, class) of an arm's load speeds against the control's."""
+def verdict(ctl, arm, lower=False):
+    """(spread, delta, percent, class) of an arm's load values against the control's; lower: a time, less is a gain."""
     ctl, arm = [v for v in ctl if v is not None], [v for v in arm if v is not None]
     if not ctl or not arm:
         return None, None, None, '—'
@@ -104,7 +109,8 @@ def verdict(ctl, arm):
     if len(ctl) < 2 or len(arm) < 2:
         return None, delta, pct, 'no class (one load)'
     s = max(spread(ctl), spread(arm))
-    return s, delta, pct, 'gain' if delta > s else 'loss' if delta < -s else 'negligible'
+    better = -delta if lower else delta
+    return s, delta, pct, 'gain' if better > s else 'loss' if better < -s else 'negligible'
 
 
 def fmt(v, nd=2):
@@ -114,8 +120,9 @@ def fmt(v, nd=2):
 classes = []
 
 
-def speed_table(title, note, metric, value, cell, nd, groups):
-    """A table of one speed per load: `groups` are (label, key) rows, value(load, key) the classed number."""
+def speed_table(title, note, metric, value, cell, nd, groups, unit='tok/s', lower=False, no_class=lambda a: ''):
+    """A table of one number per load: `groups` are (label, key) rows, value(load, key) the classed number; `lower`
+    for a time; no_class(arm) gives the reason an arm gets no class, or ''."""
     md = ['', f'### {title}', '', note, '',
           f'| Depth (tokens) | Arm | Per load | Spread | Against `{control}` | | Class |', '|---:|---|---|---:|---:|---:|---|']
     for label, key in groups:
@@ -125,8 +132,9 @@ def speed_table(title, note, metric, value, cell, nd, groups):
             if a == control:
                 tail = 'control | | |'
             else:
-                s, delta, pct, cls = verdict([value(ld, key) for ld in by_arm[control]], vals)
-                tail = f'{fmt(delta, nd) if delta is None else f"{delta:+.{nd}f}"} tok/s | ' \
+                s, delta, pct, cls = verdict([value(ld, key) for ld in by_arm[control]], vals, lower)
+                cls = no_class(a) or cls
+                tail = f'{fmt(delta, nd) if delta is None else f"{delta:+.{nd}f}"} {unit} | ' \
                        f'{"—" if pct is None else f"{pct:+.1f} %"} | {cls} |'
                 classes.append([metric, label.replace(',', ''), a, control, ' '.join(fmt(v, nd) for v in vals),
                                 ' '.join(fmt(value(ld, key), nd) for ld in by_arm[control]), fmt(s, nd), fmt(delta, nd),
@@ -136,7 +144,9 @@ def speed_table(title, note, metric, value, cell, nd, groups):
 
 
 def gen_cell(ld, d):
-    return (', '.join(fmt(gen(ld, d, (p,))) for p in ('1', '2')) + f' → **{fmt(gen(ld, d))}**')
+    v = gen(ld, d)
+    return (', '.join(fmt(gen(ld, d, (p,))) for p in ('1', '2')) + f' → **{fmt(v)}**'
+            + (f' ({1000 / v:.2f} ms a token)' if v else ''))
 
 
 def gen_all(ld, _):
@@ -154,6 +164,22 @@ def read_cell(ld, d):
 
 def steps(r):
     return num(r['gen_n']) - num(r['draft_accepted'])
+
+
+def step_ms(ld, d, p):
+    r = R.get((ld, 'decode', p, d))
+    return num(r['gen_ms']) / steps(r) if r and steps(r) > 0 and num(r['gen_ms']) > 0 else None
+
+
+def step_cell(ld, d, p):
+    r = R.get((ld, 'decode', p, d))
+    return '—' if step_ms(ld, d, p) is None else f'{fmt(step_ms(ld, d, p))} ({steps(r):.0f} steps)'
+
+
+def other_draft(a):
+    """Why an arm's step is not classed against the control's: with the draft in another state it yields other tokens."""
+    return ('no class (the draft differs)'
+            if loads[by_arm[a][0]].get('draft', '') != loads[by_arm[control][0]].get('draft', '') else '')
 
 
 def draft_cell(r):
@@ -194,10 +220,22 @@ if valid:
     rule = (f'A load\'s speed is {what}. Spread: the difference between the arm\'s fastest and slowest load. Class '
             f'against `{control}`: gain when the mean is above the control\'s by more than the larger of the two '
             'spreads, loss when below by more than it, else negligible.')
-    md += speed_table('Generation, tok/s', 'Per load: pass 1, pass 2 → the load. ' + rule, 'generation', gen, gen_cell,
-                      2, [(f'{d:,}', d) for d in depths])
+    md += speed_table('Generation, tok/s', 'Per load: pass 1, pass 2 → the load, with the load\'s time per token. '
+                      + rule, 'generation', gen, gen_cell, 2, [(f'{d:,}', d) for d in depths])
     md += speed_table('Generation over all depths, tok/s', 'Every depth\'s tokens over their time, per load.',
                       'generation_all', gen_all, lambda ld, k: f'**{fmt(gen_all(ld, k))}**', 2, [('all', None)])
+    if any(num(r['draft_n']) for r in rows if r['load'] in timed and r['kind'] == 'decode'):
+        note = ('A step is one pass of the main model: it yields one token of its own and the draft tokens it accepts, '
+                'so a request\'s steps are its generated tokens minus the accepted ones, and the time of a step is the '
+                'request\'s generation time over its steps. Loads that write different replies accept different shares '
+                'of the draft, so their tok/s differ by more than their steps do. Per load: the request of this pass, '
+                f'with its steps. Class against `{control}`: gain when the mean is below the control\'s by more than '
+                'the larger of the two spreads, loss when above by more than it, else negligible; none for an arm '
+                'whose draft is not in the control\'s state, since its steps yield other tokens.')
+        for p, what in (('1', 'the first request at a new depth'), ('2', 'the same request again')):
+            md += speed_table(f'The step on pass {p} ({what}), ms', note, f'step_pass{p}',
+                              lambda ld, d, p=p: step_ms(ld, d, p), lambda ld, d, p=p: step_cell(ld, d, p), 2,
+                              [(f'{d:,}', d) for d in depths], unit='ms', lower=True, no_class=other_draft)
     md += speed_table('Prompt reading, tok/s',
                       'Per load: the tokens read at that depth over their time (a prime request reads a chunk on top of '
                       'the cache; without primes each decode request reads its prompt), with the tokens read and the '
@@ -248,13 +286,19 @@ md.append('- Prompts: ' + ', '.join(f'{"/".join(sizes[d])} ids at depth {d:,}' f
 md.append(f'- Tokens out: {n_predict[0]} on every timed request.' if len(n_predict) == 1
           else f'- Tokens out differ between timed requests: {", ".join(n_predict)}.')
 for d in depths:
-    ref = {reply_md5(R[(ld, 'decode', p, d)]) for ld in by_arm[control] for p in ('1', '2') if (ld, 'decode', p, d) in R}
+    rep = {ld: {reply_md5(R[(ld, 'decode', p, d)]) for p in ('1', '2') if (ld, 'decode', p, d) in R} for ld in timed}
+    per_arm = {a: set().union(*(rep[ld] for ld in by_arm[a])) for a in arms}
+    ref = per_arm[control]
     line = f'- Greedy reply at depth {d:,}: '
     if len(ref) != 1:
-        md.append(line + f'**`{control}` itself wrote {len(ref)} different replies over its passes and loads.**')
+        # the control's own loads differ, so a difference between arms cannot be told from one between loads
+        twice = [ld for ld in timed if len(rep[ld]) > 1]
+        md.append(line + f'{len(set().union(*per_arm.values()))} different replies over the {len(timed)} loads ('
+                  + '; '.join(f'`{a}`: {len(per_arm[a])} over its {len(by_arm[a])}' for a in arms) + '); '
+                  + (f'**{", ".join(twice)} wrote another reply on pass 2 than on pass 1.**' if twice
+                     else 'every load wrote its own reply again on pass 2.'))
         continue
-    off = [a for a in arms if a != control and {reply_md5(R[(ld, 'decode', p, d)]) for ld in by_arm[a] for p in ('1', '2')
-                                                if (ld, 'decode', p, d) in R} != ref]
+    off = [a for a in arms if a != control and per_arm[a] != ref]
     md.append(line + (f'**differs from `{control}` in {", ".join(off)}.**' if off
                       else 'the same on every pass and load' + (' of every arm.' if len(arms) > 1 else '.')))
 primes = [(ld, d, R[(ld, 'prime', '0', d)]) for ld in timed for d in depths if (ld, 'prime', '0', d) in R]

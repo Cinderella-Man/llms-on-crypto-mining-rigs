@@ -115,7 +115,8 @@ for load in ('c1', 'x1', 'c2', 'x2'):
             w.writerow(dict.fromkeys(cols, '') | {
                 'arm': load[0], 'load': load, 'kind': 'decode', 'pass': p, 'depth': depth, 'prompt_tokens': max(depth, 64),
                 'cache_n': 0, 'prompt_n': max(depth, 64), 'prompt_ms': max(depth, 64) * 10, 'gen_n': 256,
-                'gen_ms': 256000 / s, 'text_md5': f't{depth}', 'draft_n': 0, 'draft_accepted': 0, 'tokens_per_step': '1.000',
+                'gen_ms': 256000 / s, 'text_md5': f't{depth}' + (load if depth == 16384 else ''),  # at 16,384 a reply per load
+                'draft_n': 0, 'draft_accepted': 0, 'tokens_per_step': '1.000',
                 'prompt_md5': f'p{depth}', 'valid': 1})
 EOF
 python3 -I "$HERE/deep_table.py" "$WORK/table" --out "$WORK/table/table.md" --tsv "$WORK/table/classes.tsv" > /dev/null
@@ -167,6 +168,10 @@ depths = ('0', '512', '1024', '2048')
 check(all(c.get(('same', d)) == 'negligible' and c.get(('big', d)) == 'negligible' for d in depths), 'rig: an arm as fast as the control is negligible at every depth')
 check(all(c.get(('fast', d)) == 'gain' for d in depths), 'rig: the faster arm is a gain at every depth')
 check(all(c.get(('nodraft', d)) == 'loss' for d in depths), 'rig: the arm without the draft is a loss at every depth')
+s2 = classes('rig/classes.tsv', 'step_pass2')
+check(text('rig/table.md').count('### The step on pass') == 2
+      and all((s2.get(('same', d)), s2.get(('fast', d)), s2.get(('nodraft', d))) == ('negligible', 'gain', 'no class (the draft differs)') for d in depths),
+      'rig: the step\'s time per pass: the same line negligible, the faster one a gain, no class for the arm without the draft')
 check(all(int(r['draft_n']) > 0 and float(r['tokens_per_step']) > 1 for r in dec if r['arm'] == 'base')
       and all(r['draft_n'] == '0' and r['tokens_per_step'] == '1.000' for r in dec if r['arm'] == 'nodraft'), 'rig: draft counters and tokens a step with the draft, none without')
 check(text('rig/table.md').count('the same on every pass and load of every arm.') == 4, 'rig: the greedy reply is the same in every arm at every depth')
@@ -214,6 +219,11 @@ check(text('table.rc').strip() == '0' and (c.get(('x', '0')), c.get(('x', '8192'
       f'table: inside the spread negligible, above it gain, below it loss ({c})')
 r = [x for x in table('table/classes.tsv', True) if x['metric'] == 'generation' and x['depth'] == '8192'][0]
 check((r['spread'], r['delta'], r['percent']) == ('0.20', '1.05', '7.0'), f'table: spread 0.20, +1.05 tok/s, +7.0 % at 8,192 ({r["spread"]}, {r["delta"]}, {r["percent"]})')
+t = text('table/table.md')
+check('c1: 20.00, 20.00 → **20.00** (50.00 ms a token)' in t and '### The step' not in t, 'table: each load\'s ms a token beside its tok/s, no step table without a draft')
+check('Greedy reply at depth 8,192: the same on every pass and load of every arm.' in t
+      and 'Greedy reply at depth 16,384: 4 different replies over the 4 loads (`c`: 2 over its 2; `x`: 2 over its 2); every load wrote its own reply again on pass 2.' in t,
+      'table: replies that differ between the control\'s own loads are counted per arm, not called a difference between arms')
 print(f'{len(fails)} of the checks failed' if fails else 'selftest passed')
 sys.exit(1 if fails else 0)
 EOF

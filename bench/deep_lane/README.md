@@ -151,16 +151,24 @@ and the server logs hold token ids, reply text and paths: publish them only if t
 ## The tables
 
 - **Generation, tok/s:** per depth and arm, each load as `pass 1, pass 2 → load`, where a load's speed is its two
-  passes' tokens over their time. Then the spread, the arm against the control in tok/s and percent, and the class.
+  passes' tokens over their time, with the load's ms a token. Then the spread, the arm against the control in tok/s
+  and percent, and the class.
 - **Class:** the spread is the larger of the two arms' differences between their fastest and slowest load. An arm is a
   gain when its mean is above the control's by more than the spread, a loss when below by more than it, and negligible
   otherwise. With one load per arm there is no spread and no class. `--class-on pass1` classes on pass 1 alone.
+- **The step on pass 1 and on pass 2, ms** (when a draft ran): the time of one step per load, with the same columns;
+  for a time, less is the gain. At depth two loads of one arm can write different replies, and the draft's acceptance
+  differs with the reply, so tok/s mixes the time of a step with the tokens a step yields. The step's time is the part
+  a kernel changes. An arm whose draft is not in the control's state gets no class here: its steps yield other
+  tokens.
 - **Prompt reading, tok/s:** the tokens each prime read over their time, with the tokens read and reused.
 - **The draft and the step:** draft tokens accepted of drafted, tokens a step and ms a step. A step is one pass of the
   main model. It yields one token of its own and the draft tokens it accepts, so a request's steps are its generated
   tokens minus the accepted ones.
 - **Checks:** the same prompt ids on every load, the tokens out, and per depth whether the greedy reply is the same on
-  every pass and load of every arm. Arms that change only speed must write the same reply.
+  every pass and load of every arm. Arms that change only speed must write the same reply. Where the control's own
+  loads wrote different replies, the line counts the replies per arm instead and says whether every load wrote its
+  own reply again on pass 2: a difference between arms cannot be told from one between loads there.
 
 Every value is one load of one arm at one depth. A number quoted from a table names its arm, load and depth.
 
@@ -172,12 +180,11 @@ stand-ins for `nvidia-smi` and `ps`. For this the mock speaks `/tokenize`, `/app
 `timings` carry `cache_n`, `cache_src`, the per-second fields and, when the line has `-md`, `draft_n` and
 `draft_n_accepted`. It rolls its cache back to checkpoints as a recurrent model's server does.
 
-On 2026-11-09 all 33 checks passed, on a Linux machine's CPU under Python 3.14 (the tables come out the same under
-Python 3.12):
+On 2026-11-10 all 36 checks passed, on a Linux machine's CPU under Python 3.14:
 
 | Run | What it showed |
 |---|---|
-| five arms × 2 loads, quiet checks on | 164 requests; every prompt exactly its depth; the preset's nine-card line unchanged; the draft-off arm without `-md`, `--spec-*` and `-otd`; the context arm with `-c 131072 -ub 256`; an arm as fast as the control negligible, a faster one a gain, the one without the draft a loss, at every depth; the same greedy reply in every arm; each prime read only the chunk past the previous depth's checkpoint |
+| five arms × 2 loads, quiet checks on | 164 requests; every prompt exactly its depth; the preset's nine-card line unchanged; the draft-off arm without `-md`, `--spec-*` and `-otd`; the context arm with `-c 131072 -ub 256`; an arm as fast as the control negligible, a faster one a gain, the one without the draft a loss, at every depth; the step's time classed the same way, with no class for the arm without the draft; the same greedy reply in every arm; each prime read only the chunk past the previous depth's checkpoint |
 | the same command again | every load skipped, the same `requests.csv` |
 | the same folder, another setting | refused, the folder untouched |
 | a llama process running | refused before any load |
@@ -185,7 +192,7 @@ Python 3.12):
 | `CACHE=0` on plain text | no prime, every request read its whole prompt |
 | a depth the text cannot fill | stopped in the warm-up load, before any timed load |
 | a depth the context cannot hold | refused before any load |
-| `deep_table.py` on hand-made speeds | inside the spread negligible, above it a gain, below it a loss |
+| `deep_table.py` on hand-made speeds | inside the spread negligible, above it a gain, below it a loss; each load's ms a token; replies that differ between the control's own loads counted per arm |
 
 Four more checks on the same day:
 
