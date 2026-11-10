@@ -1,0 +1,9 @@
+group	reply_limit_from	reply_limit_to	requests	load	generated	steps	tokens_per_step	generation_s	ms_per_step	generation_tok_per_s
+the shorter half	43	172	33	pv0-1	3009	960	3.134	140.3	151.37	21.44
+the shorter half	43	172	33	pv0-2	3009	946	3.181	141.4	154.90	21.28
+the shorter half	43	172	33	pv1-1	3049	914	3.336	138.4	157.15	22.02
+the shorter half	43	172	33	pv1-2	2975	896	3.320	137.5	159.32	21.64
+the longer half	183	8747	33	pv0-1	16580	5335	3.108	810.4	152.85	20.46
+the longer half	183	8747	33	pv0-2	16527	5292	3.123	802.2	152.55	20.60
+the longer half	183	8747	33	pv1-1	14715	4573	3.218	695.0	153.08	21.17
+the longer half	183	8747	33	pv1-2	18002	5542	3.248	851.0	154.48	21.15

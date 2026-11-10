@@ -1,0 +1,16 @@
+kind	a	b	metric	better	a_loads	b_loads	a_value	b_value	delta	percent	spread_a	spread_b	class_control_spread	class_larger_spread	boot_requests_lo	boot_requests_hi	boot_traces_lo	boot_traces_hi	requests	per_request_mean_delta	per_request_lo	per_request_hi	requests_higher	requests_lower	requests_equal
+arm against the control	pv1	pv0	generation tok/s	higher	21.31 21.22	20.60 20.70	21.27	20.65	+0.61	+2.97	0.09	0.10	gain	gain	+0.24	+1.03	+0.37	+0.81	66	+0.28	-0.21	+0.80	37	29	0
+arm against the control	pv1	pv0	ms a step	lower	153.74 155.13	152.63 152.89	154.44	152.76	+1.68	+1.10	1.39	0.26	loss	loss	+0.79	+2.72	+1.05	+2.62	66	+3.89	+1.78	+6.36	42	24	0
+arm against the control	pv1	pv0	tokens a step	higher	3.237 3.258	3.112 3.132	3.248	3.122	+0.126	+4.04	0.021	0.020	gain	gain	+0.069	+0.186	+0.088	+0.161	66	+0.125	+0.060	+0.191	47	17	2
+arm against the control	pv1	pv0	share accepted	higher	0.7507 0.7581	0.7135 0.7185	0.7544	0.7160	+0.0384	+5.36	0.0074	0.0050	gain	gain	+0.0190	+0.0581	+0.0261	+0.0490	66	+0.0305	+0.0089	+0.0531	45	19	2
+arm against the control	pv1	pv0	prompt tok/s	higher	75.75 75.89	75.57 75.90	75.82	75.74	+0.08	+0.11	0.13	0.33	negligible	negligible	-0.12	+0.27	-0.16	+0.28	66	+0.03	-0.13	+0.19	34	32	0
+second load against the first	pv0-2	pv0-1	generation tok/s	higher	20.70	20.60	20.70	20.60	+0.10	+0.48					-0.19	+0.43	-0.14	+0.46	66	+0.04	-0.24	+0.35	36	30	0
+second load against the first	pv0-2	pv0-1	ms a step	lower	152.89	152.63	152.89	152.63	+0.26	+0.17					-0.90	+1.69	-0.56	+1.02	66	+0.85	-1.25	+3.76	23	43	0
+second load against the first	pv0-2	pv0-1	tokens a step	higher	3.132	3.112	3.132	3.112	+0.020	+0.64					-0.015	+0.064	-0.015	+0.071	66	+0.018	-0.023	+0.062	18	20	28
+second load against the first	pv0-2	pv0-1	share accepted	higher	0.7185	0.7135	0.7185	0.7135	+0.0050	+0.69					-0.0070	+0.0190	-0.0065	+0.0214	66	+0.0028	-0.0115	+0.0177	16	24	26
+second load against the first	pv0-2	pv0-1	prompt tok/s	higher	75.90	75.57	75.90	75.57	+0.33	+0.43					+0.04	+0.60	+0.08	+0.62	66	+0.28	+0.05	+0.51	54	12	0
+second load against the first	pv1-2	pv1-1	generation tok/s	higher	21.22	21.31	21.22	21.31	-0.09	-0.44					-0.49	+0.12	-0.41	+0.10	66	-0.22	-0.70	+0.23	27	39	0
+second load against the first	pv1-2	pv1-1	ms a step	lower	155.13	153.74	155.13	153.74	+1.39	+0.90					-0.74	+3.31	-0.64	+2.53	66	+1.96	-1.43	+6.23	33	33	0
+second load against the first	pv1-2	pv1-1	tokens a step	higher	3.258	3.237	3.258	3.237	+0.021	+0.64					-0.055	+0.060	-0.047	+0.062	66	-0.017	-0.073	+0.037	15	30	21
+second load against the first	pv1-2	pv1-1	share accepted	higher	0.7581	0.7507	0.7581	0.7507	+0.0074	+0.99					-0.0166	+0.0200	-0.0146	+0.0215	66	-0.0038	-0.0218	+0.0138	18	28	20
+second load against the first	pv1-2	pv1-1	prompt tok/s	higher	75.89	75.75	75.89	75.75	+0.13	+0.17					-0.10	+0.40	-0.03	+0.33	66	+0.11	-0.09	+0.34	35	31	0

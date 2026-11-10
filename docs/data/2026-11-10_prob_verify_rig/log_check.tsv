@@ -1,0 +1,5 @@
+load	flags	generated	sampling_lines	sampled	device	grammar	rejected	rejected_device	forced	timings_device	timings_grammar	timings_rejected	accept_lines	log_drafted	log_accepted	drafted	accepted	warmup_generated	warmup_drafted	warmup_accepted	ckpt_restores	error_lines	cuda_errors	watchdog_lines
+pv0-1		19589	66	19594	19594	2396	0	0	0	19594	2396	0	67	19024	13541	18631	13294	379	393	247	64	0	0	0
+pv0-2		19536	66	19550	19550	2410	0	0	0	19550	2410	0	67	18895	13557	18508	13298	389	387	259	64	0	0	0
+pv1-1	--spec-draft-sampling probabilistic --spec-draft-p-min 0	17764	66	17809	17809	3215	15	15	0	17809	3215	15	67	16549	12422	16354	12277	210	195	145	65	0	0	0
+pv1-2	--spec-draft-sampling probabilistic --spec-draft-p-min 0	20977	66	21017	21017	2910	11	11	0	21017	2910	11	67	19589	14873	19178	14539	469	411	334	65	0	0	0

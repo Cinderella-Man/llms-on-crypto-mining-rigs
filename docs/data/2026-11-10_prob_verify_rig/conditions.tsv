@@ -1,0 +1,5 @@
+load	replay_start	replay_end	replay_minutes	cards	samples_per_card	mean_temperature_c	hottest_card_mean_c	mean_sm_clock_mhz	lowest_sm_clock_mhz	mean_power_w	mean_utilization_pct	memory_used_mib_per_card	lowest_mem_available_mib	swap_used_at_start_mib	swap_used_at_end_mib	highest_swap_used_mib	swapped_out_during_mib	swapped_in_during_mib	watchdog_kills
+pv0-1	11:13:04	11:43:04	30.0	9	179	40.1	43.3	1862	1354	37.0	69.1	5101 5137 5005 5153 4913 5021 4423 5033 4625	76	20	342	342	342.7	98.9	0
+pv0-2	12:22:48	12:52:37	29.8	9	179	36.8	40.4	1869	1354	36.7	67.9	5101 5137 5005 5153 4913 5021 4423 5033 4625	135	24	439	518	457.0	134.9	0
+pv1-1	11:48:47	12:16:48	28.0	9	167	37.5	41.0	1859	1354	36.8	64.4	5101 5137 5005 5153 4913 5021 4423 5033 4625	68	24	335	335	337.7	103.2	0
+pv1-2	12:58:34	13:29:10	30.6	9	183	37.2	40.6	1864	1354	36.2	69.2	5101 5137 5005 5153 4913 5021 4423 5033 4625	72	25	335	406	350.4	132.7	0

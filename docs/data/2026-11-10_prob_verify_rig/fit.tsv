@@ -1,0 +1,14 @@
+model	arm	rows	term	value	boot_lo	boot_hi	minus_control	minus_control_lo	minus_control_hi
+steps and depth	pv0	132	ms a reply	223.38	49.15	340.96			
+steps and depth	pv0	132	ms a step at depth 0	130.21	126.58	134.56			
+steps and depth	pv0	132	ms a step per 1,000 tokens of context	3.41	2.71	4.02			
+steps and depth	pv0	132	ms a step at the mean depth	150.54	149.90	152.98			
+steps and depth	pv1	132	ms a reply	301.47	161.60	427.26	+78.09	+19.13	+171.03
+steps and depth	pv1	132	ms a step at depth 0	132.42	127.96	134.66	+2.21	-2.05	+3.58
+steps and depth	pv1	132	ms a step per 1,000 tokens of context	3.11	2.80	3.87	-0.30	-0.52	+0.37
+steps and depth	pv1	132	ms a step at the mean depth	150.97	149.83	153.00	+0.44	-0.85	+0.74
+steps, depth and grammar rejections	pv1	132	ms a reply	218.38	73.11	313.19	-5.00	-124.26	+109.92
+steps, depth and grammar rejections	pv1	132	ms a step at depth 0	132.38	127.57	134.70	+2.17	-2.33	+3.51
+steps, depth and grammar rejections	pv1	132	ms a step per 1,000 tokens of context	3.13	2.81	3.98	-0.28	-0.50	+0.45
+steps, depth and grammar rejections	pv1	132	ms a step at the mean depth	151.04	149.87	153.23	+0.51	-0.39	+0.96
+steps, depth and grammar rejections	pv1	132	ms a grammar rejection	389.65	174.61	771.03			

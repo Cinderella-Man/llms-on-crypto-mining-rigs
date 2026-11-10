@@ -1,0 +1,6 @@
+arm	load	requests	generated	drafted	accepted	share_accepted	steps	tokens_per_step	generation_s	ms_per_step	generation_tok_per_s	prompt_tokens_processed	prompt_s	prompt_tok_per_s	replies_at_the_limit	grammar_tokens	grammar_rejected
+pv0	pv0-1	66	19589	18631	13294	0.7135	6295	3.112	950.7	152.63	20.60	63823	844.5	75.57	33	2396	0
+pv0	pv0-2	66	19536	18508	13298	0.7185	6238	3.132	943.7	152.89	20.70	63823	840.9	75.90	29	2410	0
+pv1	pv1-1	66	17764	16354	12277	0.7507	5487	3.237	833.4	153.74	21.31	63887	843.3	75.75	29	3215	15
+pv1	pv1-2	66	20977	19178	14539	0.7581	6438	3.258	988.5	155.13	21.22	63887	841.9	75.89	33	2910	11
+recorded	the recorded session	66	27067	25704	18447	0.7177	8620	3.140	1326.8	155.10	20.40	39863	574.2	69.42			
