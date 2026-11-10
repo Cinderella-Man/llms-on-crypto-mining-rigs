@@ -39,7 +39,7 @@ arithmetic.
      merge into the usual per-group scales. No calibration data is needed.
    - KVarN ([arXiv 2606.03458](https://arxiv.org/abs/2606.03458), 2026-06-02), the KV-cache quantizer BeeLlama
      already ships, comes from the same Huawei group: Müller, Bich, Zhuang and Cavigelli are on both papers.
-   - BeeLlama's author, Ivan Neustroev (GitHub and Hugging Face "Anbeeld"), is on neither paper. He ports their
+   - BeeLlama's author (GitHub and Hugging Face "Anbeeld") is on neither paper. The fork ports their
      methods; "from the authors of KVarN" describes SINQ, not the fork.
 2. **BeeLlama.cpp shows no sign of malware in what was read.**
    - It is a fork of `ggml-org/llama.cpp` under MIT, one developer's project since 2026-05-05. Its `v0.5.0` branch
@@ -244,7 +244,7 @@ A check needs:
 ### 3.1 Who and what
 
 - **Owner:** GitHub user Anbeeld, account since 2021-12-10, 14 public repositories, 54 followers. The profile names
-  Ivan Neustroev, Belgrade, a full-stack engineer, links anbeeld.com, and links the X account @Anbeeld.
+  a named full-stack engineer, links anbeeld.com, and links the X account @Anbeeld.
 - **Hugging Face:** Anbeeld since 2026-04-27, 49 model repositories, almost all DFlash, DFlash2 and DSpark drafter
   GGUFs for other makers' models (up to 6,195 downloads each).
 - **Repository:** [Anbeeld/beellama.cpp](https://github.com/Anbeeld/beellama.cpp), created 2026-05-05 as a GitHub
