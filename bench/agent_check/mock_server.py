@@ -14,7 +14,10 @@ Requests without the header (replays) get the same script.
 - --fail-every K: on tasks whose CRC32 is 0 mod K it writes the stub back unchanged, so the hidden tests fail;
 - --drop-every K: on the first try of tasks whose CRC32 is 1 mod K it drops the connection in the middle of the
   second turn's stream, an infrastructure failure the runner must re-run;
-- --malformed-every K: on tasks whose CRC32 is 2 mod K its first reply carries tool-call markup as text.
+- --malformed-every K: on tasks whose CRC32 is 2 mod K its first reply carries tool-call markup as text;
+- --loop-tasks ID[:N],…: on the listed tasks, in tries t1 to tN of an attempt (every try without :N), the agent
+  never writes the solution: from its second reply on it reasons --loop-chars characters (four a token) and reads the
+  test file again, until the runner stops it (run.py's token mark, or its turn or time cap).
 The timings are synthetic: prompt_n and cache_n from a 4-characters-per-token estimate and the previous request's
 prefix, at --prefill-ms and --decode-ms per token. A client that closes the connection while a chat reply is being
 "decoded" cancels it, streamed or not, as llama-server does. For race_proxy.py's self-test:
@@ -161,6 +164,11 @@ def reply_for(task_id, n_assistant, args, try_id):
     test_file = task["test_file"] if task else "solution_test.py"
     test_cmd = task["test_cmd"] if task else "pytest"
     k = crc(task_id or "")
+    loop_tries = args.loop.get(task_id or "", 0)
+    if n_assistant >= 1 and try_id[1:].isdigit() and int(try_id[1:]) <= loop_tries:
+        text = f"Reply {n_assistant}: the tests in {test_file} may hide another case; let me read them once more. "
+        return ((text * (args.loop_chars // len(text) + 1))[:args.loop_chars], "",
+                [("read", {"path": test_file})], False)
     if n_assistant == 0:
         content = ""
         if args.malformed_every and k % args.malformed_every == 2:
@@ -371,6 +379,8 @@ def main():
     ap.add_argument("--fail-every", type=int, default=0)
     ap.add_argument("--drop-every", type=int, default=0)
     ap.add_argument("--malformed-every", type=int, default=0)
+    ap.add_argument("--loop-tasks", default="")
+    ap.add_argument("--loop-chars", type=int, default=2000)
     ap.add_argument("--prefill-ms", type=float, default=0.05)
     ap.add_argument("--decode-ms", type=float, default=1.0)
     ap.add_argument("--depth-ms", type=float, default=0.0)
@@ -381,6 +391,7 @@ def main():
     ap.add_argument("--error-status", type=int, default=0)
     ap.add_argument("--log", default="")
     a, ignored = ap.parse_known_args()
+    a.loop = {t: int(n or 1 << 30) for t, _, n in (s.partition(":") for s in a.loop_tasks.split(",") if s)}
     # llama-server's own draft flags, read from the ignored ones: registered with argparse, -md would also match -m
     a.draft = "-md" in ignored or "--model-draft" in ignored
     a.draft_n_max = 3

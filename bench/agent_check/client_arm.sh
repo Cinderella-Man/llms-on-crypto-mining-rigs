@@ -12,7 +12,8 @@
 #   TASK_SET (bugfix), TASKS (all), TIME_CAP_MIN (15), TURN_CAP (40), BUDGET_MIN (none: no attempt starts after it),
 #   CTX (65536, pi's context window = the server's -c), CPU_SHARES (256), IMAGE (agent-check:0.87.1),
 #   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings),
-#   PREFIX (acrel: the containers are PREFIX-ARM-*, and both ends remove every PREFIX-ARM-* container)
+#   PREFIX (acrel: the containers are PREFIX-ARM-*, and both ends remove every PREFIX-ARM-* container),
+#   RUN_ARGS (more run.py options, e.g. the token mark: "--gen-budget 65536 --mark-tries 2")
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 : "${OUT:?}" "${ARM:?}" "${PROXY_PORT:?}"
@@ -53,10 +54,11 @@ DEADLINE=()
 [ -n "${BUDGET_MIN:-}" ] && DEADLINE=(--start-deadline-min "$BUDGET_MIN")
 SAMP=()
 [ -n "${SAMPLING:-}" ] && SAMP=(--sampling "$SAMPLING")
+read -r -a MORE <<< "${RUN_ARGS:-}"
 nice -n 19 python3 "$HERE/run.py" --arm "$ARM" --base-url "http://127.0.0.1:$PROXY_PORT/v1" --out "$OUT/res" \
   --task-set "$TASK_SET" --tasks "$TASKS" --time-cap-min "$TIME_CAP_MIN" --turn-cap "$TURN_CAP" --context "$CTX" \
   --health-wait-min 5 --work-root "$OUT/work" "${DEADLINE[@]}" "${SAMP[@]}" --sandbox docker --image "$IMAGE" \
-  --docker-label "$LABEL" --docker-prefix "$PFX" --docker-cpu-shares "$CPU_SHARES"
+  --docker-label "$LABEL" --docker-prefix "$PFX" --docker-cpu-shares "$CPU_SHARES" "${MORE[@]}"
 rc=$?
 rm -rf "$OUT/work/$ARM"
 finish $rc

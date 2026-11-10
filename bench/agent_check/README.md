@@ -80,6 +80,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [race_quant.sh](race_quant.sh), [race_rigs.sh](race_rigs.sh) | The race's runs: one server per card set on a GPU machine with Docker (counts only), one server per rig across rigs |
 | [replay.py](replay.py) | Re-sends recorded traces to any server (same prompts, seeds and `max_tokens`); picks traces; summarizes and compares per-token costs |
 | [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn |
+| [token_mark.py](token_mark.py) | The generated-token mark: what a mark would have stopped, lost and saved on recorded runs (`price`), and arms run with it side by side by the try that passed (`arms`) ([below](#the-token-mark-and-a-fresh-attempt)) |
 | [validate.py](validate.py) | Oracle, empty-change and visible-subset checks of every task, no model |
 | [common.py](common.py) | Tasks, the sandbox, the test check, the stream parser |
 | [pi/](pi/) | The agent folder template: `models.json` (Flint as an OpenAI-compatible provider), `settings.json`, the `check.ts` extension |
@@ -139,8 +140,9 @@ check also has no network. On the quant machine each attempt runs in its own con
      with an `X-Agent-Check: <arm>/<task>/a<k>/t<try>/<turn>` header for the proxy.
    - pi sends each reply's `reasoning_content` back in the history, as the makers ask, and its four default tools
      (read, bash, edit, write) with every request.
-3. Every event line pi prints is written to `events.jsonl` with its arrival time. The runner stops pi after 40 turns
-   or `--time-cap-min` minutes and flags the attempt a runaway.
+3. Every event line pi prints is written to `events.jsonl` with its arrival time. The runner stops pi after 40 turns,
+   `--time-cap-min` minutes or, with a token mark, a set number of generated tokens
+   ([below](#the-token-mark-and-a-fresh-attempt)), and flags the attempt a runaway.
 4. The final workspace is copied, the full hidden test file put in place, and the tests run without network
    (timeout 180 s). **Success = the hidden tests pass and the visible test file is unchanged.** `hidden_pass` and
    `tests_untouched` are reported apart. A runaway's workspace is scored as it stands.
@@ -157,6 +159,52 @@ check also has no network. On the quant machine each attempt runs in its own con
    5xx, or pi exiting before any reply. The try's folder is renamed `a<k>-t<n>-infra`, the runner waits for `/health`,
    and the attempt runs again (up to 3 tries). A finished attempt has a `result.json` and is skipped, so a stopped run
    resumes with the same command.
+
+## The token mark and a fresh attempt
+
+An attempt that runs long is more often a failure than a pass, and a fresh attempt after a stop can keep the solve
+rate ([tokens per solved task](../../docs/research/notes/tokens_per_solved_task.md), section 4). The runner's token
+mark tests that on this check (registry Q1200):
+
+- **The stop.** `--gen-mark N` stops a try once it has generated N tokens. The count is llama-server's own for every
+  finished reply (`usage.completion_tokens`, as pi reports it) plus one per streamed piece of the reply in flight. A
+  piece holds about one token, so the count does not run ahead of the server's, and the exact count replaces it when
+  the reply ends. The runner checks it every 0.25 s, as it does the turn and time caps.
+- **The fresh attempt.** With `--mark-tries N` a try stopped at the mark is scored as it stood, for the record, and
+  its folder becomes `a<k>-t<n>-mark` (`status` `mark_stopped`). The attempt then starts again from a fresh copy of
+  the workspace, behind every attempt already queued: a stopped task waits until every other task has had its try
+  (the order [Reset-and-Discard](https://arxiv.org/abs/2601.21522) favours). The N-th try is not started again: it is
+  scored as it stands, like a turn or time cap (`runaway` `tokens`). A resumed run puts attempts with a stopped try
+  behind the others again.
+- **Equal budgets.** `--gen-budget B` sets the mark to B divided by `--mark-tries`, so arms of one budget differ in one
+  flag and spend at most B tokens an attempt: `--gen-budget 65536` is one try of up to 65,536 tokens,
+  `--gen-budget 65536 --mark-tries 2` two of 32,768 and `--mark-tries 4` four of 16,384. The turn and time caps still
+  apply to every try, so set `--time-cap-min` above what the budget takes on the machine and the mark decides.
+  `client_arm.sh` and `release_check.sh` pass `RUN_ARGS` on to run.py.
+- **What the row says.** The attempt's `result.json` adds `gen_mark`, `mark_tries`, `mark_try` (the try this row
+  scores: a pass with `mark_try` 2 passed on the fresh try), `generated` (this try's tokens, the mark's count: a reply cut off
+  counts one token per streamed piece), `generated_all` and `wall_all_s` (all tries) and `earlier_tries` (each
+  stopped try's tokens, seconds, turns and whether its workspace passed as it stood). The log prints
+  `PASS on try 2 of 2`, and the arm's last line counts the passes by try. `report.py` reads the scored rows only, so
+  its numbers per attempt are the last try's; `token_mark.py arms RESULTS` adds up all tries per arm: passes, passes
+  by try, tries stopped, tokens and minutes, and passes per million tokens and per hour.
+- **Pricing a mark before running it.** `token_mark.py price` reads recorded runs (each attempt's `result.json` and
+  `events.jsonl`), rebuilds the count the mark watches, and gives per mark and model the attempts the mark stops, the
+  passes it loses (a passed attempt over the mark, counted a fail), the failures it cuts short, and the tokens and
+  rig minutes it saves. It also estimates a fresh try at equal budget from the spread of each task's recorded
+  attempts. A run list (`--runs`, a TSV of run, model, family, machine and folder) names the models; folders on the
+  command line are runs of their own.
+
+```bash
+# what marks of 16,384 to 65,536 tokens would have stopped, lost and saved (no server; writes attempts.tsv, price.tsv, price.md)
+python3 bench/agent_check/token_mark.py price --runs runs.tsv --out price/
+# one try of 65,536 tokens against two of 32,768, then the arms side by side
+python3 bench/agent_check/run.py --arm one --gen-budget 65536 --time-cap-min 240 …
+python3 bench/agent_check/run.py --arm two --gen-budget 65536 --mark-tries 2 --time-cap-min 240 …
+python3 bench/agent_check/token_mark.py arms RESULTS --arms one,two
+```
+
+The recorded runs' prices are in [2026-11-11_fn58_stop_and_retry](../../docs/data/2026-11-11_fn58_stop_and_retry/README.md).
 
 ## The proxy and the replay
 
@@ -474,7 +522,13 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
   - every turn has a proxy row with timings;
   - replay re-sends traces with the recorded `max_tokens`;
   - replay's `--requests`, `--repeat` (a seed per repeat, the first one unchanged), `--reply-limit` and
-    `--count-parts` do what they say.
+    `--count-parts` do what they say;
+  - the token mark: against a second mock whose agent never writes the fix on the second task's first try and on
+    every try of the third (`--loop-tasks`), `--gen-budget 9000 --mark-tries 3` stops each such try at 3,000 tokens,
+    starts it again behind the other tasks, passes the second task on try 2 and scores the third's last try as it
+    stands; a second run resumes; `--gen-mark` alone stops without a fresh try; `token_mark.py price` on a run
+    without a mark stops the looping attempt at the token run.py stops at, loses no pass at 3,000 and the passing
+    task's pass at 50; `token_mark.py arms` counts the passes by try.
 - **`selftest_race.sh`** (`AC_TEST_PORT=… bench/agent_check/selftest_race.sh <scratch folder>`, no sandbox) puts
   race proxies in front of mocks of different speeds, one that answers HTTP 500, one that drops its stream half-way
   and a port nobody listens on. It checks that:

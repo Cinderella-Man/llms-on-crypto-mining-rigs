@@ -12,6 +12,12 @@ Per attempt (task × attempt number), in RESULTS/<arm>/<task>/a<k>/:
   caps max_tokens and tags requests for the proxy), copied into the attempt's folder because pi writes there; every
   event line is written to events.jsonl with its arrival time;
 - caps: --turn-cap turns and --time-cap-min minutes, after which pi is stopped and the attempt is flagged a runaway;
+- the token mark (--gen-mark, or --gen-budget divided by --mark-tries): pi is stopped once the try has generated that
+  many tokens (the server's count for each finished reply, one per streamed piece of the reply in flight); with
+  --mark-tries N the stopped try's folder becomes a<k>-t<n>-mark (scored as it stood, status mark_stopped) and the
+  attempt starts again from a fresh workspace behind every attempt already queued, up to N tries; the last try is
+  scored as it stands, like the other caps, and the row says which try it was (mark_try) and what all tries cost
+  (generated_all, wall_all_s);
 - the hidden tests run on the final workspace in the sandbox without network; success = the full test file passes and
   the visible test file is unchanged (pass and tests_untouched are also reported apart);
 - result.json (the per-attempt row), diff.patch, check.txt, stderr.txt, session/, metrics before and after.
@@ -37,7 +43,7 @@ import threading
 import time
 import urllib.request
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 
 from common import HERE, Sandbox, diff_workspace, load_tasks, make_workspace, put_hidden_tests, run_check, \
@@ -136,13 +142,22 @@ class Attempt:
         self.n_events = 0
         self.t_first_event = None
         self.assistant_messages = 0
+        self.live = 0  # streamed pieces of the reply in flight
+
+    def generated(self):
+        """Tokens generated so far, as the token mark counts them: the server's count of every finished reply, plus
+        one per streamed piece of the reply in flight (a piece holds about one token; the exact count replaces it when
+        the reply ends)."""
+        return self.usage["output"] + self.live
 
     def event(self, e, t):
         self.n_events += 1
         if self.t_first_event is None:
             self.t_first_event = t
         typ = e.get("type")
-        if typ == "turn_start":
+        if typ == "message_update":
+            self.live += str((e.get("assistantMessageEvent") or {}).get("type", "")).endswith("_delta")
+        elif typ == "turn_start":
             self.turns += 1
         elif typ == "tool_execution_start":
             self.tool_calls[e.get("toolName", "?")] += 1
@@ -154,6 +169,7 @@ class Attempt:
         elif typ == "message_end" and (e.get("message") or {}).get("role") == "assistant":
             m = e["message"]
             self.assistant_messages += 1
+            self.live = 0
             self.stop_reasons[m.get("stopReason", "?")] += 1
             if m.get("errorMessage"):
                 self.error_messages.append(m["errorMessage"])
@@ -221,6 +237,8 @@ def run_pi(a, sb, task, adir, tag, work, agent_dir, name):
                 runaway = "turns"
             elif time.monotonic() - t0 > 60 * a.time_cap_min:
                 runaway = "time"
+            elif a.gen_mark and st.generated() >= a.gen_mark:
+                runaway = "tokens"
             if runaway:
                 sb.kill(proc, name)
                 break
@@ -246,12 +264,26 @@ def classify(st, code, runaway):
     return "", ""
 
 
+def earlier_tries(tdir, k):
+    """The tries of attempt k moved aside, oldest first: (try number, 'infra' | 'mark', folder)."""
+    out = []
+    for p in tdir.glob(f"a{k}-t*-*"):
+        m = re.fullmatch(rf"a{k}-t(\d+)-(infra|mark)", p.name)
+        if m:
+            out.append((int(m[1]), m[2], p))
+    return sorted(out)
+
+
 def attempt(a, sb, task, k, slots, agent_dir):
     tdir = a.out / a.arm / task["id"]
     adir = tdir / f"a{k}"
     if (adir / "result.json").exists():
         return json.loads((adir / "result.json").read_text())
-    tries = len(list(tdir.glob(f"a{k}-t*-infra")))
+    earlier = earlier_tries(tdir, k)
+    tries = earlier[-1][0] if earlier else 0
+    marks = [json.loads((p / "result.json").read_text()) for _, kind, p in earlier if kind == "mark"]
+    last_mark = max((n for n, kind, _ in earlier if kind == "mark"), default=0)
+    infra = sum(1 for n, kind, _ in earlier if kind == "infra" and n > last_mark)
     slot = slots.get()
     if a.deadline is not None and time.monotonic() > a.deadline:
         slots.put(slot)
@@ -280,11 +312,12 @@ def attempt(a, sb, task, k, slots, agent_dir):
                 (adir / "metrics_after.txt").write_text(metrics)
             kind, msg = classify(st, code, runaway)
             if kind == "infra":
-                tries = n
+                tries, infra = n, infra + 1
                 adir.rename(tdir / f"a{k}-t{n}-infra")
                 (tdir / f"a{k}-t{n}-infra" / "infra.txt").write_text(msg + "\n")
-                log(f"{tag} infrastructure failure ({msg[:160]}); {'retrying' if n < a.max_infra else 'giving up'}")
-                if n < a.max_infra:
+                log(f"{tag} infrastructure failure ({msg[:160]}); "
+                    f"{'retrying' if infra < a.max_infra else 'giving up'}")
+                if infra < a.max_infra:
                     continue
                 row = dict(arm=a.arm, task_id=task["id"], attempt=k, try_n=n, status="infra_exhausted",
                            error_message=msg)
@@ -317,10 +350,24 @@ def attempt(a, sb, task, k, slots, agent_dir):
                 error_type=kind, error_message=msg,
                 wall_s=wall, t_first_event=st.t_first_event, pi_exit=code,
                 usage_input=st.usage["input"], usage_output=st.usage["output"],
-                usage_cache_read=st.usage["cacheRead"], started=started,
+                usage_cache_read=st.usage["cacheRead"], generated=st.generated(), started=started,
                 finished=time.strftime("%Y-%m-%dT%H:%M:%S"))
+            if a.gen_mark:
+                row.update(gen_mark=a.gen_mark, mark_tries=a.mark_tries, mark_try=len(marks) + 1,
+                           generated_all=sum(m["generated"] for m in marks) + row["generated"],
+                           wall_all_s=round(sum(m["wall_s"] for m in marks) + wall, 2),
+                           earlier_tries=[{f: m[f] for f in ("try_n", "generated", "wall_s", "turns", "success")}
+                                          for m in marks])
+            if runaway == "tokens" and len(marks) + 1 < a.mark_tries:
+                row["status"] = "mark_stopped"
+                (adir / "result.json").write_text(json.dumps(row, indent=1) + "\n")
+                adir.rename(tdir / f"a{k}-t{n}-mark")
+                log(f"{tag} stopped at {row['generated']} generated tokens (mark {a.gen_mark}), try "
+                    f"{len(marks) + 1} of {a.mark_tries}; a fresh try goes to the back of the queue")
+                return row
             (adir / "result.json").write_text(json.dumps(row, indent=1) + "\n")
-            log(f"{tag} {'PASS' if row['success'] else 'fail'} turns {st.turns} calls {row['tool_calls']} "
+            on_try = f" on try {len(marks) + 1} of {a.mark_tries}" if a.mark_tries > 1 else ""
+            log(f"{tag} {'PASS' if row['success'] else 'fail'}{on_try} turns {st.turns} calls {row['tool_calls']} "
                 f"malformed {malformed} {wall:.0f} s{' runaway ' + runaway if runaway else ''}")
             return row
     finally:
@@ -340,6 +387,14 @@ def main():
     ap.add_argument("--parallel", type=int, default=1, help="attempts in flight (the server's slots)")
     ap.add_argument("--turn-cap", type=int, default=40)
     ap.add_argument("--time-cap-min", type=float, default=30)
+    ap.add_argument("--gen-mark", type=int, default=0,
+                    help="stop a try once it has generated this many tokens (0: no mark)")
+    ap.add_argument("--gen-budget", type=int, default=0,
+                    help="in place of --gen-mark: the mark is this budget divided by --mark-tries, so arms with the "
+                         "same budget spend at most the same tokens per attempt")
+    ap.add_argument("--mark-tries", type=int, default=1,
+                    help="tries per attempt: a try stopped at the mark starts again from a fresh workspace, behind "
+                         "every attempt already queued; the last try is scored as it stands")
     ap.add_argument("--check-timeout", type=float, default=180)
     ap.add_argument("--context", type=int, default=262144, help="pi's contextWindow; the server's -c")
     ap.add_argument("--max-tokens", type=int, default=32768)
@@ -350,6 +405,12 @@ def main():
     ap.add_argument("--work-root", type=Path, default=Path(tempfile.gettempdir()) / "agent-check-work")
     Sandbox.add_args(ap)
     a = ap.parse_args()
+    if a.gen_budget and a.gen_mark:
+        ap.error("--gen-mark and --gen-budget exclude each other")
+    if a.mark_tries < 1 or (a.mark_tries > 1 and not (a.gen_mark or a.gen_budget)):
+        ap.error("--mark-tries is at least 1, and above 1 it needs --gen-mark or --gen-budget")
+    if a.gen_budget:
+        a.gen_mark = a.gen_budget // a.mark_tries
     sb = Sandbox.from_args(a)
     a.work_root = a.work_root / a.arm
     a.out.mkdir(parents=True, exist_ok=True)
@@ -358,21 +419,44 @@ def main():
     tasks = select_tasks(a.tasks, a.task_set)
     attempts = parse_range(a.attempts)
     jobs = [(t, k) for k in attempts for t in tasks]
+    # attempts with a try already stopped at the mark wait behind the ones without, as they did before a resume
+    jobs.sort(key=lambda j: sum(kind == "mark" for _, kind, _ in earlier_tries(a.out / a.arm / j[0]["id"], j[1])))
     (a.out / a.arm).mkdir(parents=True, exist_ok=True)
     with (a.out / a.arm / "runs.jsonl").open("a") as f:
         f.write(json.dumps(dict(started=time.strftime("%Y-%m-%dT%H:%M:%S"), argv=sys.argv[1:],
-                                tasks=[t["id"] for t in tasks], attempts=attempts)) + "\n")
+                                tasks=[t["id"] for t in tasks], attempts=attempts, gen_mark=a.gen_mark,
+                                mark_tries=a.mark_tries)) + "\n")
     slots = queue.Queue()
     for i in range(a.parallel):
         slots.put(i)
-    log(f"arm {a.arm}: {len(tasks)} tasks × {len(attempts)} attempts, {a.parallel} in flight, sandbox {a.sandbox}")
+    mark = f", token mark {a.gen_mark} × {a.mark_tries} tries" if a.gen_mark else ""
+    log(f"arm {a.arm}: {len(tasks)} tasks × {len(attempts)} attempts, {a.parallel} in flight, sandbox {a.sandbox}"
+        + mark)
+    rows = {}
     with ThreadPoolExecutor(a.parallel) as ex:
-        rows = list(ex.map(lambda j: attempt(a, sb, j[0], j[1], slots, agent_dir), jobs))
+        # the executor's queue is first in, first out: a try stopped at the mark is queued again behind every attempt
+        # not yet started
+        running = {ex.submit(attempt, a, sb, t, k, slots, agent_dir): (t, k) for t, k in jobs}
+        while running:
+            done, _ = wait(running, return_when=FIRST_COMPLETED)
+            for fut in done:
+                t, k = running.pop(fut)
+                r = fut.result()
+                if r.get("status") == "mark_stopped":
+                    running[ex.submit(attempt, a, sb, t, k, slots, agent_dir)] = (t, k)
+                else:
+                    rows[t["id"], k] = r
+    rows = [rows[t["id"], k] for t, k in jobs]
     scored = [r for r in rows if r.get("status") == "scored"]
     ok = sum(r["success"] for r in scored)
     log(f"arm {a.arm}: {len(scored)} scored, {ok} passed, "
         f"{sum(1 for r in rows if r.get('status') == 'infra_exhausted')} gave up after infrastructure failures, "
         f"{sum(1 for r in rows if r.get('status') == 'skipped')} skipped past the deadline")
+    if a.mark_tries > 1:
+        by_try = Counter(r.get("mark_try", 1) for r in scored if r["success"])
+        log(f"arm {a.arm}: passed on try " + ", ".join(f"{j}: {by_try[j]}" for j in range(1, a.mark_tries + 1))
+            + f"; {sum(r.get('mark_try', 1) - 1 for r in scored)} tries stopped at the mark and started again, "
+            f"{sum(r.get('generated_all', 0) for r in scored)} tokens generated in all tries")
 
 
 if __name__ == "__main__":
