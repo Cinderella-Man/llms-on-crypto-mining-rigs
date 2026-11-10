@@ -128,6 +128,33 @@ The five lengths of every prompt and load are in [tasks.tsv](tasks.tsv).
   exactly one, and each of those replies sampled two tokens more than it generated; no other reply of any load
   sampled more than one.
 
+### What a first-finish race would save on these replies (Q1195)
+
+Each prompt has ten samples per arm (five seeds in two loads), so the data prices a race: several samples of one
+request run side by side and the first to finish is kept (Q93). [race_price.md](race_price.md) takes every subset of
+N of a prompt's samples and the shortest reply in each.
+
+| Arm | One sample | First of 2 | First of 3 | First of 4 | First of 5 |
+|---|---:|---:|---:|---:|---:|
+| `pv0` (the preset) | 15,796 tokens | 9,814 (0.621) | 7,860 (0.498) | 6,891 (0.436) | 6,296 (0.399) |
+| `pv1` | 16,823 | 9,979 (0.593) | 7,944 (0.472) | 7,023 (0.417) | 6,454 (0.384) |
+
+Expected tokens for the 12 prompts, with the share of one sample in brackets.
+
+- **The tail is where the saving is.** On the six longest prompts a prompt's longest sample is 3.8 to 17.1 times
+  its shortest (20 samples each, both arms together), and the mean is up to 1.86 times the median.
+- **Across machines the saving is the share above:** each machine runs one sample at its own speed, so two machines
+  finish a reply in est. 0.62 of the tokens and five in est. 0.40, before the cost of the losers reading the
+  winner's reply as a prompt.
+- **In slots of one machine it does not pay on this engine (est.):** two sequences in one pass take 77.9 and 78.4 ms
+  on the release build against 51.1 and 52.3 ms for one token alone, so a race of 2 costs est. 0.621 × 1.52 = 0.95
+  of one sample's time, and a race of 4 (101.6 and 106.3 ms a pass) est. 0.436 × 1.99 = 0.87, without a draft.
+- **A cap instead of a race:** counting every reply at most at 4,000 tokens keeps 0.744 of all tokens and touches 19
+  of the 240 replies; at 2,000 it keeps 0.563 and touches 40. What the model writes after a forced end of its
+  reasoning is not in these numbers.
+- **Limits:** 12 prompts, all second replies of bug-fix tasks, whole-reply lengths. Nothing here says whether the
+  first finisher's answer is as good; Q93's offline gate found no loss on another model and benchmark.
+
 ## Step 1: what the source draws
 
 Read in the fork's release build (`1551f5fe1`, branch `pascal-p106-v3-b12076-ladder5`).
@@ -218,6 +245,8 @@ wrong draw:
 | [summary.md](summary.md) | the tables as Markdown, as the script printed them |
 | [run/run_pv_replies.sh](run/run_pv_replies.sh) | one chain of loads on one card set |
 | [run/pv_replies_table.py](run/pv_replies_table.py) | the tables from the chains' work folders |
+| [race_price.md](race_price.md) | from `replies.tsv`: the first and second finisher of N samples of one request, per prompt the shortest, median, mean and longest sample, and a cap on the reply's length |
+| [run/race_price.py](run/race_price.py) | that table from `replies.tsv` (standard library) |
 
 The replies' text is not kept: the rows hold counts and an MD5. The prompts are requests of
 [2026-11-10_prob_verify_agent_check](../2026-11-10_prob_verify_agent_check/README.md)'s run `pv0-1`; its task ids are
@@ -244,6 +273,9 @@ ssh $CLIENT "mkdir -p $WORK/b && cd $WORK && $COMMON WORK=$WORK/b GPUS=$GPUS_B M
 
 # the tables
 ssh $CLIENT "cd $WORK && python3 -I $REPO/docs/data/2026-11-10_prob_verify_reply_length/run/pv_replies_table.py a b --out $WORK/tables"
+
+# the race's price, from the published rows
+ssh $CLIENT "cd $REPO/docs/data/2026-11-10_prob_verify_reply_length && python3 -I run/race_price.py replies.tsv" > race_price.md
 ```
 
 `START_BY` and `STOP_AT` are the clock limits of this run (a load starts only before the first; the second cuts a
