@@ -1,0 +1,9 @@
+tree	check	verdict	detail
+tip	tree	OK	commit ca3c0b4fd704938067fb3c566728b098cf996eb8 test-spec-reject-stop: a digest of the block path's results with the switch off, to compare with a build without the cut (Q1263);
+tip	build	OK	rc=0; targets test-llama-archs test-spec-reject-stop test-spec-block test-speculative-rejection-sampling test-sampling; 3 warning lines, 0 error lines
+tip	ctest	OK	100% tests passed, 0 tests failed out of 6
+base	tree	OK	commit b2763cce74f5f1ceebd00e6b611f0c4c1ed1b34e sampling: LLAMA_SPEC_REJECT_STOP=1 stops token-by-token rejection after an accepted EOG, as sample-and-match does (Q1187);laid over: tests/test-spec-reject-stop.cpp from ca3c0b4fd;
+base	build	OK	rc=0; targets test-spec-reject-stop test-spec-block; 3 warning lines, 0 error lines
+ident	block-off	SAME	digest base 1404fbd5c5a6a29a over 4000 trials, tip 1404fbd5c5a6a29a over 4000 trials; reject-stop-base rc=1 spec-block-base rc=0 reject-stop-tip rc=0 spec-block-tip rc=0 
+ident	spec-block	SAME	11 configuration lines of base, 0 not printed alike by tip; tip prints 13 lines
+tip	tarball	OK	llama.cpp-20261110-ca3c0b4fd-pascal-p106-v4-b12246-c711.tar.gz, 647592506 bytes, md5 59b233fc0319e6c70790c29cf9e9191c; sm_61, TESTS=1, 0 AVX instructions in llama-bench, GLIBC_2.38 at most

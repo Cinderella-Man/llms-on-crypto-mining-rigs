@@ -1,0 +1,9 @@
+check	path	trials	counts
+random	rejection	4000	1148 cut after an accepted EOG; 2852 unchanged; 1675 ended in a residual draw; 536 EOGs behind the cut (C675's drafts and counts, unchanged)
+random	block	4000	1356 drafts cut (an EOG before the last drafted token): 1251 accepted whole, 105 ended in a residual draw before the EOG; 2644 with nothing to cut; 3728 tokens behind an EOG in the switch-off results; tokens up to the first EOG 12617 off, 12603 on
+identity	block off	4000	digest 1404fbd5c5a6a29a on this branch and on C675's tree with the same test
+grammar	rejection	50	rows sampled under the grammar: 100 off, 50 on; first draws the grammar rejected: 89 off, 44 on
+grammar	block	50	rows sampled under the grammar: 100 off, 50 on; first draws the grammar rejected: 81 off, 41 on
+enumeration	cut at an EOG, g <= 4	200	max |P_out - P_target| 1.02e-07; E[accepted] block 0.8487, token 0.7942 (+6.87 %); min gap 6.37e-05
+enumeration	cut at an EOG + all of them, g <= 4	200	max |P_out - P_target| 1.17e-07; E[accepted] block 0.5407, token 0.5278 (+2.43 %); min gap -8.56e-09
+enumeration	C675's 11 configurations	100 to 300 each	max |P_out - P_target| at most 1.24e-07; the same lines as on C675's tree

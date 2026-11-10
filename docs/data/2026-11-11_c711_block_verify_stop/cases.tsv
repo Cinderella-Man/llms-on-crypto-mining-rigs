@@ -1,0 +1,7 @@
+case	draft	switch off	switch on	what it shows
+EOG first	7 22 119	7 22 119 22	7	the block cut after the EOG at the first drafted token: one row walked, no next token
+EOG second	22 7 119	22 7 119 22	22 7	the cut after the second drafted token, the first kept
+EOG last	22 119 7	22 119 7 22	22 119 7 22	a trailing EOG is no cut: the block verified whole, the next row sampled, as in the other two paths
+EOG alone	7	7 22	7 22	a one-token draft: the trailing case
+no EOG	22 119 96	22 119 96 22	22 119 96 22	nothing changes without an EOG
+EOG twice	22 7 7 119	22 7 7 119 7	22 7	the first EOG cuts; off verifies the second and outputs an EOG behind it
