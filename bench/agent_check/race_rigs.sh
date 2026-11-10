@@ -228,8 +228,9 @@ if has run; then
       client_run "$label" $((CLIENT_PORT + k - 1)) 0 || { say "run $label failed; stopping"; exit 1; }
     else
       ports=$(for k in $(seq "$(race_n "$r")"); do printf '%s ' $((CLIENT_PORT + k - 1)); done)
-      say "run $label: race of rigs 1 to $(race_n "$r") ($(race_args "$r"))"
-      client_run "$label" "${ports% }" 1 "$(race_args "$r")" || { say "run $label failed; stopping"; exit 1; }
+      ra=$(race_args "$r")
+      say "run $label: race of rigs 1 to $(race_n "$r")${ra:+ ($ra)}"
+      client_run "$label" "${ports% }" 1 "$ra" || { say "run $label failed; stopping"; exit 1; }
     fi
   done
   servers_stop

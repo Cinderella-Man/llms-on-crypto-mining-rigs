@@ -142,7 +142,8 @@ for r in $RUNS; do
     say "run $label: one server, set $k"
   else
     ups=$(for k in $(seq "$(race_n "$r")"); do printf '%s ' $((PORT + k - 1)); done)
-    say "run $label: race of $(race_n "$r") servers, ports $ups$(race_args "$r")"
+    ra=$(race_args "$r")
+    say "run $label: race of $(race_n "$r") servers, ports ${ups% }${ra:+ ($ra)}"
   fi
   OUT=$OUT ARM=$label UPSTREAM_PORT=$up UPSTREAM_PORTS=$ups PROXY_PORT=$((PORT + N)) TASK_SET=$TASK_SET \
     TASKS=$TASKS TIME_CAP_MIN=$TIME_CAP_MIN TURN_CAP=$TURN_CAP CTX=$CTX CPU_SHARES=$CPU_SHARES IMAGE=$IMAGE \
