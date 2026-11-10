@@ -1,0 +1,16 @@
+depth	draft_adds_ms_prompt_token	yield	tokens_step	saved_ms_generated_token	prompt_tokens_per_generated_token
+0	0.408	this run's loads	3.282	14.184	34.76
+0	0.408	the sampler off the rig (est.)	2.226	-4.005	none: nothing saved
+0	0.408	greedy off the rig (est.)	2.965	10.085	24.71
+8192	2.230	this run's loads	3.216	-10.329	none: nothing saved
+8192	2.230	the sampler off the rig (est.)	2.866	-17.496	none: nothing saved
+8192	2.230	greedy off the rig (est.)	2.954	-15.127	none: nothing saved
+16384	3.187	this run's loads	3.606	8.614	2.70
+16384	3.187	the sampler off the rig (est.)	3.241	2.833	0.89
+16384	3.187	greedy off the rig (est.)	3.539	7.647	2.40
+32768	4.280	this run's loads	2.804	-2.744	none: nothing saved
+32768	4.280	the sampler off the rig (est.)	2.844	-0.712	none: nothing saved
+32768	4.280	greedy off the rig (est.)	3.200	6.731	1.57
+49152	5.890	this run's loads	3.243	14.262	2.42
+49152	5.890	the sampler off the rig (est.)	2.876	6.957	1.18
+49152	5.890	greedy off the rig (est.)	3.413	17.185	2.92

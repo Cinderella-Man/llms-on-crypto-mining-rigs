@@ -230,6 +230,13 @@ the release check's recorded requests.
   host. From 8,192 tokens on each load wrote its own greedy reply and accepted another share of the draft, so two
   loads of one arm ran 16.82 and 19.97 tok/s at 8,192 while their steps took 153.00 and 152.97 ms. The step tables
   come from that run: class a kernel on the step's time, and read tok/s beside the draft's counters.
+- **The second run on the rig** put the line with its MTP draft against the same line without it
+  (`ARMS="draft nodraft" ARM_DRAFT_nodraft=off`), 62 minutes, same data page. The arm without the draft repeats to
+  within 0.26 tok/s between two loads at every depth, since it yields one token a step whatever it writes, while
+  the draft arm's two loads were up to 5.35 tok/s apart. Read such a pair on the break-even: the draft's step over
+  the plain line's token is the tokens a step the draft must yield, and it does not depend on the reply
+  ([run/draft_pair.py](../../docs/data/2026-11-10_deep_lane/run/draft_pair.py) prints it). The prime requests of the
+  two arms also time what the draft adds to prompt reading.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

@@ -1,0 +1,64 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+draft1 (whole load)	960	76	76	524	+26	11.68	9.50
+draft2 (whole load)	958	96	96	1136	+810	9.94	8.05
+nodraft1 (whole load)	745	258	258	37	+1	10.96	10.63
+nodraft2 (whole load)	747	275	275	447	+340	4.00	3.11
+warm (whole load)	255	411	411	10	+0	0.20	0.20
+warm decode pass 1 depth 0	13	411	411	10	+0	0.20	0.20
+warm decode pass 2 depth 0	13	411	411	10	+0	0.05	0.05
+draft1 decode pass 1 depth 0	13	417	417	10	+0	0.00	0.00
+draft1 decode pass 2 depth 0	13	417	417	10	+0	0.00	0.00
+draft1 prime pass 0 depth 8192	66	178	178	210	+200	9.17	7.39
+draft1 decode pass 1 depth 8192	29	181	181	396	+209	11.68	9.50
+draft1 decode pass 2 depth 8192	17	274	274	396	+0	1.29	1.05
+draft1 prime pass 0 depth 16384	83	91	91	396	+0	0.31	0.25
+draft1 decode pass 1 depth 16384	20	91	91	524	+128	1.78	1.06
+draft1 decode pass 2 depth 16384	15	127	127	524	-1	0.53	0.31
+draft1 prime pass 0 depth 32768	183	84	84	524	+1	0.16	0.09
+draft1 decode pass 1 depth 32768	21	84	84	524	-52	0.00	0.00
+draft1 decode pass 2 depth 32768	18	84	84	472	+0	0.00	0.00
+draft1 prime pass 0 depth 49152	242	79	79	484	+12	0.00	0.00
+draft1 decode pass 1 depth 49152	21	76	76	492	+20	0.36	0.18
+draft1 decode pass 2 depth 49152	18	78	78	492	-217	0.07	0.03
+nodraft1 decode pass 1 depth 0	18	589	589	36	+0	1.17	1.05
+nodraft1 decode pass 2 depth 0	17	628	628	36	+0	0.28	0.25
+nodraft1 prime pass 0 depth 8192	47	482	482	36	+0	0.05	0.05
+nodraft1 decode pass 1 depth 8192	21	374	374	36	+0	0.00	0.00
+nodraft1 decode pass 2 depth 8192	18	387	387	36	+0	0.00	0.00
+nodraft1 prime pass 0 depth 16384	55	375	375	36	+0	0.00	0.00
+nodraft1 decode pass 1 depth 16384	21	284	284	36	+0	0.00	0.00
+nodraft1 decode pass 2 depth 16384	19	284	284	36	+0	0.00	0.00
+nodraft1 prime pass 0 depth 32768	112	281	281	36	+0	0.00	0.00
+nodraft1 decode pass 1 depth 32768	23	261	261	36	+0	0.00	0.00
+nodraft1 decode pass 2 depth 32768	20	263	263	36	+0	0.00	0.00
+nodraft1 prime pass 0 depth 49152	143	352	352	37	+1	0.00	0.00
+nodraft1 decode pass 1 depth 49152	25	258	258	37	+0	0.00	0.00
+nodraft1 decode pass 2 depth 49152	22	258	258	37	+0	0.00	0.00
+draft2 decode pass 1 depth 0	14	456	456	37	+0	0.00	0.00
+draft2 decode pass 2 depth 0	13	456	456	37	+0	0.00	0.00
+draft2 prime pass 0 depth 8192	66	96	96	218	+181	1.17	0.99
+draft2 decode pass 1 depth 8192	21	96	96	218	+178	5.13	3.71
+draft2 decode pass 2 depth 8192	14	111	111	218	+0	1.45	1.10
+draft2 prime pass 0 depth 16384	82	193	193	560	+342	3.21	2.01
+draft2 decode pass 1 depth 16384	19	306	306	681	+238	9.94	8.05
+draft2 decode pass 2 depth 16384	15	357	357	681	+0	3.65	2.96
+draft2 prime pass 0 depth 32768	182	454	454	836	+155	1.84	0.89
+draft2 decode pass 1 depth 32768	25	503	503	836	+0	1.84	0.88
+draft2 decode pass 2 depth 32768	21	506	506	836	+0	0.20	0.09
+draft2 prime pass 0 depth 49152	242	606	606	1126	+290	2.49	1.90
+draft2 decode pass 1 depth 49152	23	731	731	1136	+18	6.02	5.18
+draft2 decode pass 2 depth 49152	19	763	763	1136	-11	0.99	0.85
+nodraft2 decode pass 1 depth 0	18	671	671	41	+0	0.00	0.00
+nodraft2 decode pass 2 depth 0	17	671	671	41	+0	0.00	0.00
+nodraft2 prime pass 0 depth 8192	49	431	431	42	+1	0.18	0.00
+nodraft2 decode pass 1 depth 8192	21	400	400	42	+0	0.01	0.00
+nodraft2 decode pass 2 depth 8192	18	404	404	42	+0	0.00	0.00
+nodraft2 prime pass 0 depth 16384	54	444	444	42	+0	0.00	0.00
+nodraft2 decode pass 1 depth 16384	21	295	295	42	+0	0.18	0.18
+nodraft2 decode pass 2 depth 16384	19	295	295	42	+0	0.05	0.05
+nodraft2 prime pass 0 depth 32768	112	276	276	42	+0	0.18	0.18
+nodraft2 decode pass 1 depth 32768	23	275	275	42	+0	0.26	0.26
+nodraft2 decode pass 2 depth 32768	21	285	285	42	+0	0.09	0.09
+nodraft2 prime pass 0 depth 49152	143	362	362	447	+405	3.11	2.25
+nodraft2 decode pass 1 depth 49152	25	629	629	447	+30	4.00	3.11
+nodraft2 decode pass 2 depth 49152	22	634	634	445	-57	0.66	0.51

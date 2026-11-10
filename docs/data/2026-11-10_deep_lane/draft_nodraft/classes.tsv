@@ -1,0 +1,22 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	nodraft	draft	19.26 19.26	27.03 26.71	0.32	-7.61	-28.3	loss
+generation	8192	nodraft	draft	16.87 16.98	14.70 20.05	5.35	-0.45	-2.6	negligible
+generation	16384	nodraft	draft	16.80 16.81	20.87 22.14	1.27	-4.70	-21.9	loss
+generation	32768	nodraft	draft	15.45 15.19	17.77 13.98	3.79	-0.55	-3.5	negligible
+generation	49152	nodraft	draft	14.28 14.14	17.92 17.13	0.79	-3.32	-18.9	loss
+generation_all	all	nodraft	draft	16.37 16.30	18.87 19.06	0.19	-2.63	-13.9	loss
+step_pass1	0	nodraft	draft	52.52 52.53	124.42 127.24	2.82	-73.31	-58.3	no class (the draft differs)
+step_pass1	8192	nodraft	draft	62.39 61.66	248.63 207.18	41.45	-165.88	-72.8	no class (the draft differs)
+step_pass1	16384	nodraft	draft	60.01 59.99	195.63 174.94	20.70	-125.28	-67.6	no class (the draft differs)
+step_pass1	32768	nodraft	draft	65.54 66.84	185.78 194.76	8.97	-124.08	-65.2	no class (the draft differs)
+step_pass1	49152	nodraft	draft	71.27 72.66	186.13 187.79	1.66	-115.00	-61.5	no class (the draft differs)
+step_pass2	0	nodraft	draft	51.32 51.32	123.20 123.26	0.06	-71.91	-58.4	no class (the draft differs)
+step_pass2	8192	nodraft	draft	56.13 56.13	151.17 149.56	1.60	-94.24	-62.7	no class (the draft differs)
+step_pass2	16384	nodraft	draft	59.05 58.95	149.89 150.72	0.83	-91.31	-60.7	no class (the draft differs)
+step_pass2	32768	nodraft	draft	63.88 64.80	165.57 165.72	0.92	-101.30	-61.2	no class (the draft differs)
+step_pass2	49152	nodraft	draft	68.81 68.80	184.90 181.11	3.79	-114.20	-62.4	no class (the draft differs)
+prompt	0	nodraft	draft	33.4 33.1	32.9 32.7	0.4	0.4	1.4	gain
+prompt	8192	nodraft	draft	179.4 176.6	127.7 127.2	2.8	50.6	39.7	gain
+prompt	16384	nodraft	draft	164.9 166.6	107.6 109.3	1.8	57.3	52.8	gain
+prompt	32768	nodraft	draft	148.3 148.1	90.3 91.0	0.7	57.5	63.4	gain
+prompt	49152	nodraft	draft	119.5 119.4	69.9 70.3	0.4	49.3	70.4	gain

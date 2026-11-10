@@ -1,0 +1,64 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+dense1 (whole load)	999	187	187	1049	+764	9.96	8.15
+dense2 (whole load)	986	304	304	1065	+747	6.57	4.37
+sparse1 (whole load)	952	75	75	1000	+706	6.19	5.02
+sparse2 (whole load)	952	71	71	845	+8	7.18	5.85
+warm (whole load)	256	431	431	0	+0	0.18	0.18
+warm decode pass 1 depth 0	15	432	432	0	+0	0.18	0.18
+warm decode pass 2 depth 0	12	431	431	0	+0	0.08	0.08
+dense1 decode pass 1 depth 0	14	432	432	0	+0	0.00	0.00
+dense1 decode pass 2 depth 0	13	431	431	0	+0	0.00	0.00
+dense1 prime pass 0 depth 8192	65	187	187	339	+339	5.15	3.47
+dense1 decode pass 1 depth 8192	22	187	187	339	+49	5.15	3.47
+dense1 decode pass 2 depth 8192	17	240	240	339	+0	0.85	0.57
+dense1 prime pass 0 depth 16384	82	344	344	641	+302	3.24	2.28
+dense1 decode pass 1 depth 16384	23	442	442	755	+212	9.96	8.15
+dense1 decode pass 2 depth 16384	16	461	461	755	+0	2.45	2.01
+dense1 prime pass 0 depth 32768	180	553	553	935	+180	1.77	1.26
+dense1 decode pass 1 depth 32768	34	618	618	978	+108	1.26	0.92
+dense1 decode pass 2 depth 32768	29	639	639	978	+0	0.09	0.05
+dense1 prime pass 0 depth 49152	240	712	712	1049	+71	1.26	0.90
+dense1 decode pass 1 depth 49152	31	712	712	1049	+0	0.17	0.11
+dense1 decode pass 2 depth 49152	28	728	728	1049	-9	0.00	0.00
+sparse1 decode pass 1 depth 0	14	449	449	15	+0	0.14	0.14
+sparse1 decode pass 2 depth 0	13	448	448	15	+0	0.05	0.05
+sparse1 prime pass 0 depth 8192	65	95	95	137	+122	3.81	3.26
+sparse1 decode pass 1 depth 8192	21	95	95	246	+224	6.19	5.02
+sparse1 decode pass 2 depth 8192	14	125	125	246	+0	1.79	1.50
+sparse1 prime pass 0 depth 16384	82	75	75	283	+37	1.81	1.63
+sparse1 decode pass 1 depth 16384	20	75	75	400	+152	3.15	2.41
+sparse1 decode pass 2 depth 16384	14	112	112	400	+0	1.16	0.88
+sparse1 prime pass 0 depth 32768	183	216	216	808	+408	4.29	3.08
+sparse1 decode pass 1 depth 32768	23	408	408	808	+163	4.29	3.08
+sparse1 decode pass 2 depth 32768	17	445	445	808	+0	0.58	0.41
+sparse1 prime pass 0 depth 49152	241	537	537	964	+156	1.81	1.08
+sparse1 decode pass 1 depth 49152	20	652	652	1000	+36	0.44	0.26
+sparse1 decode pass 2 depth 49152	18	683	683	1000	-14	0.07	0.04
+dense2 decode pass 1 depth 0	14	457	457	24	+1	0.13	0.13
+dense2 decode pass 2 depth 0	13	456	456	24	-1	0.04	0.04
+dense2 prime pass 0 depth 8192	65	304	304	673	+650	4.48	2.90
+dense2 decode pass 1 depth 8192	21	375	375	673	+186	6.57	4.37
+dense2 decode pass 2 depth 8192	14	389	389	673	+0	1.32	0.88
+dense2 prime pass 0 depth 16384	81	509	509	835	+162	0.72	0.54
+dense2 decode pass 1 depth 16384	20	621	621	935	+168	4.23	3.09
+dense2 decode pass 2 depth 16384	17	621	621	935	+0	1.09	0.76
+dense2 prime pass 0 depth 32768	181	734	734	1065	+130	0.51	0.18
+dense2 decode pass 1 depth 32768	31	711	711	1065	+0	1.42	0.95
+dense2 decode pass 2 depth 32768	27	727	727	1065	+0	0.10	0.07
+dense2 prime pass 0 depth 49152	241	702	702	1065	+0	0.00	0.00
+dense2 decode pass 1 depth 49152	29	698	698	1065	+0	0.00	0.00
+dense2 decode pass 2 depth 49152	26	698	698	1065	-20	0.00	0.00
+sparse2 decode pass 1 depth 0	14	476	476	24	+0	0.00	0.00
+sparse2 decode pass 2 depth 0	13	462	462	24	+0	0.00	0.00
+sparse2 prime pass 0 depth 8192	65	94	94	177	+153	0.36	0.36
+sparse2 decode pass 1 depth 8192	19	94	94	177	+146	3.41	2.63
+sparse2 decode pass 2 depth 8192	13	96	96	177	+0	1.02	0.79
+sparse2 prime pass 0 depth 16384	82	93	93	233	+56	0.72	0.36
+sparse2 decode pass 1 depth 16384	20	71	71	396	+163	7.18	5.85
+sparse2 decode pass 2 depth 16384	15	131	131	396	+0	2.16	1.76
+sparse2 prime pass 0 depth 32768	183	112	112	396	+0	0.65	0.53
+sparse2 decode pass 1 depth 32768	20	111	111	396	+0	0.06	0.06
+sparse2 decode pass 2 depth 32768	17	111	111	396	+0	0.00	0.00
+sparse2 prime pass 0 depth 49152	242	200	200	845	+449	2.69	1.45
+sparse2 decode pass 1 depth 49152	25	424	424	845	+151	2.69	1.45
+sparse2 decode pass 2 depth 49152	19	492	492	845	+0	0.29	0.16
