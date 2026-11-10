@@ -70,7 +70,8 @@ blocks. Both load into the Q8_0 tile layout as N2P and N3P do.
 ## Status
 
 **Both files score below Swift IQ2_XS on all three texts, and the build passes its GPU checks at every shape the files
-hold; one test case at another row count fails (Q1181).** On held-out agent text the KL divergence against the Q8_0
+hold; one test case at another row count fails on the `-n2p` build and passes on the release build, whose last commit
+fixes its cause (Q1181).** On held-out agent text the KL divergence against the Q8_0
 reference is 0.1931 ± 0.0044 for file 1 (down N2P-128) and 0.1727 ± 0.0040 for file 2 (down N3P-128), against
 0.2792 ± 0.0054 for pmix-q2-fast, 0.2851 ± 0.0056 for Swift Q2_0 and 0.2248 ± 0.0046 for Swift IQ2_XS
 ([KL divergence](#kl-divergence), [GPU checks](#gpu-checks)). Both files fit nine 6 GB cards at 64k on whole layers
@@ -176,8 +177,9 @@ batches of 9, 33 and 128 tokens). Every run is in [gpu_checks.tsv](gpu_checks.ts
   to run.** With the fork's kernels on, N3P-128's error is 0.000762 (`np`), 0.000563 (`np-mtok-off`), 0.000805
   (`np-cap1`), 0.000697 (`np-rb1`) and 1.000003 (`np-notile`); those switches set the multi-token kernel, and the case
   has one token. N2P-128 passes it in those five runs. On llama.cpp's kernel the error is 0.000518 for N2P-128 and
-  1.000000 for N3P-128 through the PTX (`np-skip`), and 0.989390 and 0.001466 natively. The cause is open (Q1181 in
-  the [registry](../../../quants/experiments.md)).
+  1.000000 for N3P-128 through the PTX (`np-skip`), and 0.989390 and 0.001466 natively. The cause is a fault in
+  llama.cpp's `mul_mat_vec_q` that the release build's last commit fixes: on that build the case passes
+  ([below](#the-check-set-for-a-p106); Q1181 in the [registry](../../../quants/experiments.md)).
 - **Everything around it passes:** the same matrices without expert ids (`MUL_MAT` at 2,561 rows), with expert ids at
   2 to 8 tokens, and every case at 2,560 rows at every token count, in every run.
 - **No tensor in either file has 2,561 rows.** The routed down projections have 2,560 rows of 640 weights and the gate
@@ -187,7 +189,68 @@ batches of 9, 33 and 128 tokens). Every run is in [gpu_checks.tsv](gpu_checks.ts
   tokens, and on these cards a routed-expert product of more than 8 tokens goes to MMQ, not to the matrix-vector
   kernels of the failing case. MMQ's 40 prompt-batch cases of the four types (9, 33 and 128 tokens, the files' shapes
   among them) all pass natively, and pmix-q2-fast scored with the same build reproduces its earlier score.
-- The check on a P106 itself, with MMQ's dp4a path, is part of C394.
+- The check on a P106 itself, with MMQ's dp4a path, is part of C394. It replays a recorded set
+  ([below](#the-check-set-for-a-p106)).
+
+## The check set for a P106
+
+test-backend-ops draws each case's tensors, quantizes them and computes the reference on the host's CPU before the
+card runs anything. On the rig's two Celeron cores that is est. an hour for the three runs C394 needs, so they are
+recorded once on a build machine and the rig replays them: the card computes, the stored references judge it
+([replay checks](../2026-11-04_replay_checks/README.md)). The suite is `n2p` in
+[scripts/record_checks.sh](../../../scripts/record_checks.sh), and [run/rig_tk.sh](run/rig_tk.sh) has a `replay` step
+for it beside `check`, which stays for a machine with a real CPU.
+
+- **The build is the v3.0 release build** (`1551f5fe1`). `1a0832375`, the `-n2p` branch's head, is an ancestor of it,
+  so a rig with the release folder already holds the N types, and the timing runs on the build that ships. The set
+  was recorded with that build's own test-backend-ops (md5 `2c7f4054190d271eae3696792d487dd2`; it is part of the rig
+  tarball, and in the GitHub release it is the `tests` archive), so the references are what the rig's CPU would compute.
+- **The set:** 3,655 cases, 37,416,765,440 bytes as one tar (md5 `0ce5cd1e19a628fec02051a8ac9e035d`), recorded in 35
+  minutes on a 12-core CPU with 8 workers at low priority: 16 minutes for the N types' 812 cases (9.3 GB), 19 for the
+  2,567 regression cases of Q2_0, Q6_K and the grid types (25.7 GB), 12 seconds for 276 more GET_ROWS cases. The
+  largest product case is 473 MB (Q2_0, 512 experts), the largest of all 933 MB (GET_ROWS of F32). It holds the cases
+  of all nine native runs of [run/gpu_checks.sh](run/gpu_checks.sh); [replay_runs.tsv](replay_runs.tsv) is its run list (C394 replays `np`,
+  `np-mmq` and `reg-half`) and [replay_manifest.tsv.gz](replay_manifest.tsv.gz) names every case with the md5 of its
+  tensors and of its reference.
+- **Every run is expected to pass, the one-token case at 2,561 rows included.** That case failed on the `-n2p`
+  build ([GPU checks](#gpu-checks), Q1181) and does not fail on the release build. Run live through the PTX (fresh
+  draws and a fresh CPU reference each time), it passes 35 times of 35 on `1551f5fe1`: 20 of 20 with the fork's
+  Pascal kernels on and 15 of 15 with them skipped, on an RTX 3090 and an RTX 3080. On `1a0832375`, on the same RTX
+  3080 the same day, it fails 13 times of 20: N3P-128 5 of 5 with the Pascal kernels on (errors 0.999998177,
+  0.964768327, 0.001410587, 0.000787041 and 0.001027811, N2P-128 passing 5 of 5) and 8 of 10 results with them
+  skipped, one of them a NaN at output index 2563 ([case_m2561_live.tsv](case_m2561_live.tsv)).
+- **The cause was already fixed in the release build's last commit** (`1551f5fe1`): llama.cpp's `mul_mat_vec_q`
+  bounded its rows by the output's stride, which for an expert product of one token is the row count times the
+  experts used. With a row count that is not a multiple of the block's rows, each expert's last block wrote rows past
+  its own, computed from the weights behind its matrix, over the next expert's first rows, in a race with that
+  expert's own block. The kernel now bounds its rows by the matrix's row count, and the commit's message names this
+  case. So a failure of it on a P106 would be new, and the replay reports it as wrong.
+- **A run list can still name cases that are known to fail** (a seventh field, a regex on the case string):
+  [scripts/replay_checks.sh](../../../scripts/replay_checks.sh) then counts their failures apart, and the run is as
+  expected when nothing else fails. No suite uses it today.
+- **Checked through the compute 6.1 PTX before it goes to a rig** (one RTX 3080, the release rig build, the fork's
+  Pascal kernels forced on at a P106's launch shapes; the set's `runs-ptx.tsv`, 1–8 tokens). Every run is in
+  [replay_ptx.tsv](replay_ptx.tsv):
+
+| Run | Switches | Passed | Cases |
+|---|---|---:|---:|
+| `np` | defaults | 760 | 760 |
+| `np-mtok-off` | the earlier multi-token kernels | 760 | 760 |
+| `np-cap1` | groups of one | 760 | 760 |
+| `np-rb1` | one row block | 760 | 760 |
+| `np-notile` | no multi-token tiles | 760 | 760 |
+| `np-skip` | llama.cpp's matrix-vector kernel | 760 | 760 |
+| `reg-half` | Q2_0, Q6_K, the grid types | 2,285 | 2,285 |
+| `reg-rows` | GET_ROWS of every type | 276 | 276 |
+
+  All eight runs are as expected: 3,289 of the set's 3,655 cases were replayed and each passes in every run that
+  holds it (7,121 results), with no Xid on the card. The release build's test file holds more cases than the `-n2p`
+  branch's, so the counts are above those of the [GPU checks](#gpu-checks) (760 against 718 in `np`).
+
+- **What the PTX check cannot see:** the 334 products of 9 or more tokens (`np-mmq`'s 40 cases among them). MMQ
+  takes the host card's tile configuration through the PTX, not Pascal's, so those records are replayed for the first
+  time on the P106. Each replayed case checks the md5 of its tensors and of its reference first. The other 32 cases
+  are GET_ROWS of four types the CUDA backend does not support (F8_E4M3, NVFP4, TQ1_0, TQ2_0): a card skips them.
 
 ## Files
 
@@ -204,7 +267,11 @@ batches of 9, 33 and 128 tokens). Every run is in [gpu_checks.tsv](gpu_checks.ts
 | [run/quantize.sh](run/quantize.sh) | the two files: llama-quantize of the experts, then gguf_compose onto pmix-q2-fast, `verify`ed |
 | [run/fit.sh](run/fit.sh) | the files' fit on nine 6 GB cards from their headers ([bench/file_choice/fit.py](../../../bench/file_choice/fit.py)), each once built |
 | [fit/](fit/) | fit.py's rows per file (every context, cache type, micro-batch and draft; whole layers and with experts moved) |
-| [run/rig_tk.sh](run/rig_tk.sh) | on a rig: the native check (MMQ included), per-kernel perf at Flash-Next's expert shapes, T(k) of the files |
+| [run/rig_tk.sh](run/rig_tk.sh) | on a rig: the native check (MMQ included) by replay of the recorded set or live, per-kernel perf at Flash-Next's expert shapes, T(k) of the files |
+| [replay_runs.tsv](replay_runs.tsv) | the recorded set's run list: run, switches, test-backend-ops' `-o` and `-p`, what passing means, a wrapper (none here) |
+| [replay_manifest.tsv.gz](replay_manifest.tsv.gz) | the recorded set's cases: id, case, bytes and md5 of the tensors, bytes and md5 of the CPU reference |
+| [replay_ptx.tsv](replay_ptx.tsv) | the set replayed through the compute 6.1 PTX: per run the switches, cases passed, FAIL lines, exit status, verdict |
+| [case_m2561_live.tsv](case_m2561_live.tsv) | the one-token expert case at 2,561 rows, run live through the PTX on the release build and on the `-n2p` build: card, build, the fork's Pascal kernels (on, or skipped for the four types), repetition, case, verdict, error |
 
 ## The two files
 
@@ -259,9 +326,19 @@ pmix-q2-fast-n2pbuild <pmix-q2-fast, shard 1>' \
 #   each text is one call: llama-perplexity -m <file> -f <text> -c <c> -b <c> -ub 512 --chunks <n> -fa on -fit on \
 #     --kl-divergence-base <the reference's logits> --kl-divergence   (agent: c 8192, n 12; wiki and code: c 512, n 80)
 python3 -I docs/data/2026-11-03_flash_next_quality/run/table.py <score folder> n2p_dn2p128 n2p_dn3p128 pmix-q2-fast-n2pbuild > kld.tsv
-# on a rig, idle (C394): the native check with MMQ, per-kernel perf at Flash-Next's expert shapes, T(k) of the files
-BIN=<rig tree>/bin FILES='n2p-dn2p128=<shard 1> pmix-q2-fast=<shard 1>' VC=<folder with verify_cost.sh> OUT=<dir> \
-  TS=<the file's -ts> setsid nohup bash run/rig_tk.sh > rig_tk.out 2>&1 &
+# the check set for a P106: recorded on a build machine's CPU with the release rig build's own test-backend-ops
+# (containers without a card, --cpu-shares=256, nice 19), tarred with its md5
+OUT=<sets folder> SUITE=n2p BIN=<release rig tree>/bin JOBS=8 nice -n 19 bash scripts/record_checks.sh
+# the set once through the compute 6.1 PTX on a newer card: its PTX run list, the fork's Pascal paths forced on
+docker run --rm --gpus '"device=<card>"' -v <dirs> -e SET=<sets folder>/n2p -e RUNS_FILE=<sets folder>/n2p/runs-ptx.tsv \
+  -e BIN=<release rig tree>/bin -e OUT=<dir> -e DEV=0 -e CUDA_CACHE_PATH=<dir>/nvcache -e CUDA_CACHE_MAXSIZE=4294967296 \
+  -e ENV_ALL='GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5' \
+  nvidia/cuda:12.9.2-devel-ubuntu24.04 nice -n 19 bash scripts/replay_checks.sh
+# on a rig, idle (C394), the set unpacked there and scripts/replay_checks.sh beside rig_tk.sh: the native check with
+# MMQ by replay, per-kernel perf at Flash-Next's expert shapes, T(k) of the files
+BIN=<release rig tree>/bin SET=<the n2p set's folder> CPU_CHECK=200 FILES='n2p-dn2p128=<shard 1> pmix-q2-fast=<shard 1>' \
+  VC=<folder with verify_cost.sh> OUT=<dir> TS=<the file's -ts> setsid nohup bash run/rig_tk.sh > rig_tk.out 2>&1 &
+#   STEPS='check perf tk' instead computes the references live on the host's CPU (no SET): for a machine with a real CPU
 ```
 
 Provenance: the Swift-1.5 Q8_0 is ukisai's (`ukisai/Swift-1.5-Qwen3.8-Flash-Next-GGUF`, folder `Q8_0/`); the levels

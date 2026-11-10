@@ -1,0 +1,9 @@
+run	switches	expect	cases	fail_lines	exit	verdict
+np	defaults	pass	760/760	0	0	ok
+np-mtok-off	GGML_CUDA_MMVQ_PASCAL_MTOK=0	pass	760/760	0	0	ok
+np-cap1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,1	pass	760/760	0	0	ok
+np-rb1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1	pass	760/760	0	0	ok
+np-notile	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,0,0,0	pass	760/760	0	0	ok
+np-skip	GGML_CUDA_MMVQ_PASCAL_SKIP=n2p,n3p,n2p_128,n3p_128	pass	760/760	0	0	ok
+reg-half	defaults	pass	2285/2285	0	0	ok
+reg-rows	defaults	pass	276/276	0	0	ok

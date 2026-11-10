@@ -1,0 +1,10 @@
+run	switches	ops	params	expect	wrap
+np	-	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED,GET_ROWS	type(_a)?=(n2p|n3p|n2p_128|n3p_128),.*n=[0-9]+,|type=(n2p|n3p|n2p_128|n3p_128),	pass	-
+np-mtok-off	GGML_CUDA_MMVQ_PASCAL_MTOK=0	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED,GET_ROWS	type(_a)?=(n2p|n3p|n2p_128|n3p_128),.*n=[0-9]+,|type=(n2p|n3p|n2p_128|n3p_128),	pass	-
+np-cap1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,1	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED,GET_ROWS	type(_a)?=(n2p|n3p|n2p_128|n3p_128),.*n=[0-9]+,|type=(n2p|n3p|n2p_128|n3p_128),	pass	-
+np-rb1	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,1	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED,GET_ROWS	type(_a)?=(n2p|n3p|n2p_128|n3p_128),.*n=[0-9]+,|type=(n2p|n3p|n2p_128|n3p_128),	pass	-
+np-notile	GGML_CUDA_MMVQ_PASCAL_MTOK=1,0,0,0,0	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED,GET_ROWS	type(_a)?=(n2p|n3p|n2p_128|n3p_128),.*n=[0-9]+,|type=(n2p|n3p|n2p_128|n3p_128),	pass	-
+np-skip	GGML_CUDA_MMVQ_PASCAL_SKIP=n2p,n3p,n2p_128,n3p_128	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED,GET_ROWS	type(_a)?=(n2p|n3p|n2p_128|n3p_128),.*n=[0-9]+,|type=(n2p|n3p|n2p_128|n3p_128),	pass	-
+np-mmq	-	MUL_MAT,MUL_MAT_ID	type_a=(n2p|n3p|n2p_128|n3p_128),.*n=(9|33|128),	pass	-
+reg-half	-	MUL_MAT,MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED	type(_a)?=(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s),.*n=[0-9]+,|type=(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s),	pass	-
+reg-rows	-	GET_ROWS	.	pass	-

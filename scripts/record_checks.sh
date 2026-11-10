@@ -48,8 +48,8 @@ log() { echo "$(date -Is) $*" | tee -a "$OUT/$SUITE.log"; }
 # filters: "<-o ops><TAB><-p params>" per line; runs: "<run><TAB><switches><TAB><-o><TAB><-p><TAB><expect><TAB><wrap>"
 # and, for a run with cases that are known to fail, "<TAB><known>" (expect: pass = every case passes, fail = some case
 # fails, the run being a fault; wrap: memcheck = under compute-sanitizer; known: a regex on the case string of cases
-# that may fail until a named fix: replay_checks.sh counts their FAIL lines apart). The switches and filters are those
-# of the native runs of each branch's gpu_checks.sh.
+# that may fail until a named fix: replay_checks.sh counts their FAIL lines apart; no suite names one today). The
+# switches and filters are those of the native runs of each branch's gpu_checks.sh.
 EXPERT_OPS=MUL_MAT_ID,MUL_MAT_VEC_FUSION,MUL_MAT_ID_SHARED
 P=GGML_CUDA_MMVQ_PASCAL
 KT='type_a=(q8_0|q2_0|q3_K|q4_K|q5_K|q6_K|iq4_xs|q4_0|q5_0|iq4_nl|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s|iq1_m),(type_b=f32,)?m=[0-9]+,n=[1-8],'
@@ -60,9 +60,6 @@ FAP_OWN='hsk=128,hsv=128,nh=(4|8),nr23=\[8,1\],kv=[0-9]+,nb=1,'
 FN_MOE='n_mats=512,n_used=10,|^type=[^,]+,n=[0-9]+$'
 N4='(n2p|n3p|n2p_128|n3p_128)'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
-# Q1181: the one-token expert product of N2P-128 and N3P-128 at 2,561 rows fails on some runs, on the fork's kernels
-# and on llama.cpp's (no model has that row count)
-N2P_KNOWN='MUL_MAT_ID\(type_a=n[23]p_128,type_b=f32,n_mats=32,n_used=10,b=0,m=2561,n=1,k=640,'
 suite_filters() {
     case $1 in
         kshape)
@@ -165,10 +162,10 @@ suite_runs_n2p() {
     local NP="${TA}$N4,.*$NT|type=$N4," RH="${TA}$HW,.*$NT|type=$HW,"
     for r in "np:" "np-mtok-off:${P}_MTOK=0" "np-cap1:${P}_MTOK=1,1" "np-rb1:${P}_MTOK=1,0,1" \
              "np-notile:${P}_MTOK=1,0,0,0,0" "np-skip:${P}_SKIP=n2p,n3p,n2p_128,n3p_128"; do
-        printf '%s\t%s\t%s\t%s\tpass\t\t%s\n' "${r%%:*}" "${r#*:}" "MUL_MAT,$EXPERT_OPS,GET_ROWS" "$NP" "$N2P_KNOWN"
+        printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" "MUL_MAT,$EXPERT_OPS,GET_ROWS" "$NP"
     done
-    [ "$NT" = 'n=[1-8],' ] || printf '%s\t%s\t%s\t%s\tpass\t\t\n' np-mmq "" MUL_MAT,MUL_MAT_ID "type_a=$N4,.*n=(9|33|128),"
-    printf '%s\t%s\t%s\t%s\tpass\t\t\n' reg-half "" "MUL_MAT,$EXPERT_OPS" "$RH" reg-rows "" GET_ROWS '.'
+    [ "$NT" = 'n=[1-8],' ] || printf '%s\t%s\t%s\t%s\tpass\t\n' np-mmq "" MUL_MAT,MUL_MAT_ID "type_a=$N4,.*n=(9|33|128),"
+    printf '%s\t%s\t%s\t%s\tpass\t\n' reg-half "" "MUL_MAT,$EXPERT_OPS" "$RH" reg-rows "" GET_ROWS '.'
 }
 # the suite's runs for a newer card through the compute_61 PTX, when they differ from the native ones
 suite_runs_ptx() {

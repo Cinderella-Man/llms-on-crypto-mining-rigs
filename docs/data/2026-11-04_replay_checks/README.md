@@ -75,6 +75,11 @@ Recording took 57 minutes for `kshape` on the build machine's 12-core CPU, share
 experts (their quantization is most of the CPU work, as on the rig). `ladder3-rest` took 8 minutes (1,734 of its 1,916 cases hardlinked from `kshape`), `flashnext-moe` 30
 seconds, `fap` 15 minutes.
 
+A fifth suite, `n2p`, holds the native checks of the N2P types on the v3.0 release build: 3,655 cases, 37.4 GB,
+recorded in 35 minutes with 8 workers. It also writes `runs-ptx.tsv`, the run list for a newer card through the
+compute 6.1 PTX (`RUNS_FILE` of `replay_checks.sh`), and a run list may carry a seventh field naming cases that are
+known to fail, which `replay_checks.sh` counts apart ([n2p_flash](../2026-11-04_n2p_flash/README.md#the-check-set-for-a-p106)).
+
 The inputs are almost all of it (the quantized weights; the references are 0.5–11 %), and they are random data that do
 not compress, so a set is stored as a plain tar. Every set fits a rig: rig 1 keeps its models on a 4.5 TB USB disk, rig
 2 on a 57 GB and a 115 GB stick. No cap or shape filter was needed, though both exist (`MAX_CASE_MB`, `BUDGET_GB`,
