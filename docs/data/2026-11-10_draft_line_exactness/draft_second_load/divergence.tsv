@@ -1,0 +1,6 @@
+depth	tokens	first_differing_token	plain_token_id	plain_piece	draft_token_id	draft_piece	plain_generating_lp_plain	plain_generating_lp_draft	plain_generating_lead_of_plain	draft_generating_lp_draft	draft_generating_lp_plain	draft_generating_lead_of_draft	read_back_tokens	read_back_first_choice	read_back_lp_plain	read_back_lp_draft	read_back_lead_of_plain	plain_reply_same_as_earlier_run	draft_reply_same_as_earlier_run	plain_second_request_parts_at	plain_second_request_lead	draft_second_request_parts_at	draft_second_request_lead
+0	256	7	9845	" verify"	1542	" run"	-1.0734	-1.2834	0.2100	-1.1357	-1.3389	0.2032	11	draft	-1.6415	-1.0201	-0.6213	yes	yes	nowhere		nowhere	
+8192	256	2	1965	" response"	14408	" listing"	-1.0346	-2.8144	1.7798	-1.3152	-2.0688	0.7537	6	plain	-0.9327	-2.6012	1.6685	no	no	nowhere		nowhere	
+16384	256	17	1228	" test"	4220	" whole"	-1.1623	-1.3140	0.1516	-1.1604	-1.4569	0.2965	21	plain	-1.0098	-1.4796	0.4698	no	no	nowhere		nowhere	
+32768	256	26	353	" I"	561	" The"	-1.0135	-1.0828	0.0692	-1.0933	-1.2640	0.1707	30	plain	-1.0277	-1.1321	0.1044	no	no	nowhere		nowhere	
+49152	256	45	63	"`"	27653	"`."	-0.7396	-1.0522	0.3126	-0.9726	-1.0904	0.1178	47	another (682)				no	no	nowhere		nowhere	

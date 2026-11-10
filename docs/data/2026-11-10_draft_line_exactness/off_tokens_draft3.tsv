@@ -1,0 +1,14 @@
+depth	arm	token	written_as	step_drafted	step_accepted	follows_a_partly_accepted_draft
+0	draft3	27	an accepted draft token	3	1	yes
+0	draft3	37	an accepted draft token	3	1	no
+0	draft3	39	the step's own token	3	0	yes
+0	draft3	64	an accepted draft token	3	2	yes
+0	draft3	125	the step's own token	3	0	yes
+8192	draft3	2	the step's own token	3	0	yes
+8192	draft3	3	the step's own token	3	0	yes
+8192	draft3	57	the step's own token	3	1	yes
+8192	draft3	92	the step's own token	3	0	yes
+8192	draft3	247	the step's own token	3	2	yes
+16384	draft3	17	the step's own token	3	1	no
+16384	draft3	24	an accepted draft token	3	3	yes
+16384	draft3	201	an accepted draft token	3	3	no

@@ -1,0 +1,6 @@
+depth	arm	same_tokens_as_the_scored_load	steps	drafted	accepted	steps_all_accepted	steps_partly_accepted	steps_none_accepted	tokens_from_steps	first_differing_token	written_as	step_drafted	step_accepted	step_before_drafted	step_before_accepted	follows_a_partly_accepted_draft
+0	draft3	yes	84	252	171	46	26	12	255	7	an accepted draft token	3	3	3	2	yes
+8192	draft3	yes	89	267	166	38	33	18	255	2	the step's own token	3	0	3	0	yes
+16384	draft3	yes	73	219	182	54	13	6	255	17	the step's own token	3	1	3	3	no
+32768	draft3	no	90	270	164	37	37	16	254	26	the step's own token	3	2	3	2	yes
+49152	draft3	no	72	216	182	53	13	6	254	45	an accepted draft token	3	3	3	3	no

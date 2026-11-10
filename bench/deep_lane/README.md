@@ -212,8 +212,11 @@ the release check's recorded requests.
   of the previous prime, so a prime can read 512 tokens more than its chunk.
 - A request that asks for no output generates one token.
 - Each arm wrote the same greedy reply on pass 1 and pass 2. The arm without the draft wrote another reply than the
-  arm with it at every depth (registry row Q1175), so the check "the same greedy reply in every arm" fails between
-  those two arms.
+  arm with it at every depth, so the check "the same greedy reply in every arm" fails between those two arms. The
+  cause is not a fault of the draft ([docs/data/2026-11-10_draft_line_exactness](../../docs/data/2026-11-10_draft_line_exactness/README.md),
+  registry row Q1175): a pass over two or more tokens is another arithmetic than a one-token pass, and from 8,192
+  tokens on two loads of one arm write different replies too. Read that check as exact only at depth 0 and between
+  arms whose passes have the same shape.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

@@ -66,8 +66,11 @@ The run of tail 1 also loaded the line without the draft. **Its greedy reply dif
 five depths; each line repeats its own reply exactly on the second request** ([reply_check.tsv](reply_check.tsv)).
 The driver keeps the first 160 characters of a reply; within them the two lines part at character 28 (depth 0),
 0 (8,192), 35 (16,384) and 145 (32,768), and not at all at 49,152. The draft's counters are counted on the draft
-line's own text either way. Whether this is rounding at a near-tie (a four-token verify takes other kernels than
-one-token decoding) or a fault in the speculative path is registry row Q1175.
+line's own text either way. The cause is settled in
+[2026-11-10_draft_line_exactness](../2026-11-10_draft_line_exactness/README.md) (registry row Q1175): not a fault of
+the draft and not a near-tie. A pass over two or more tokens is another arithmetic than a one-token pass, the model
+turns that into tenths of a log-probability within a few tokens, and from 8,192 tokens on two loads of one line
+write different replies as well.
 
 **What it decides.**
 - Q1153's depth gate: acceptance gives no depth at which to switch the draft off. The draft's value at depth is then

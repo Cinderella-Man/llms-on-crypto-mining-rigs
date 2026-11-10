@@ -1,0 +1,16 @@
+depth	pair	tokens	exactly_equal	median_abs_shift	p90_abs_shift	max_abs_shift	at_token	mean_kld_over_listed
+0	draft generating against nodraft generating, the common tokens	7	1	0.0073	0.0138	0.3214	6	0.0038
+0	nodraft generating against nodraft teacher-forced, its own reply	256	256	0.0000	0.0000	0.0000	255	0.0000
+0	draft generating against nodraft teacher-forced, the reply of draft	249	6	0.0005	0.0925	0.5714	251	0.0055
+8192	draft generating against nodraft generating, the common tokens	2	0	0.2773	0.1750	0.3797	1	0.1559
+8192	nodraft generating against nodraft teacher-forced, its own reply	256	22	0.0000	0.0431	0.3806	206	0.0049
+8192	draft generating against nodraft teacher-forced, the reply of draft	253	18	0.0000	0.0613	0.3788	92	0.0044
+16384	draft generating against nodraft generating, the common tokens	17	0	0.0781	0.1738	0.3079	9	0.0263
+16384	nodraft generating against nodraft teacher-forced, its own reply	256	44	0.0000	0.0641	1.5620	245	0.0057
+16384	draft generating against nodraft teacher-forced, the reply of draft	239	46	0.0000	0.0154	1.2704	223	0.0011
+32768	draft generating against nodraft generating, the common tokens	26	0	0.0493	0.1232	0.1796	15	0.0156
+32768	nodraft generating against nodraft teacher-forced, its own reply	256	23	0.0007	0.1225	0.5297	128	0.0057
+32768	draft generating against nodraft teacher-forced, the reply of draft	230	2	0.0108	0.1271	0.6286	217	0.0101
+49152	draft generating against nodraft generating, the common tokens	43	1	0.0010	0.0323	0.6362	5	0.0108
+49152	nodraft generating against nodraft teacher-forced, its own reply	255	19	0.0000	0.0630	0.5054	141	0.0049
+49152	draft generating against nodraft teacher-forced, the reply of draft	212	25	0.0000	0.0402	0.6422	118	0.0056

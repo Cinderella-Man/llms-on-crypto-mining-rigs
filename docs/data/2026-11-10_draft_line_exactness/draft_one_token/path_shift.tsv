@@ -1,0 +1,10 @@
+depth	pair	tokens	exactly_equal	median_abs_shift	p90_abs_shift	max_abs_shift	at_token	mean_kld_over_listed
+0	draft1 generating against nodraft generating, the common tokens	7	1	0.0073	0.0138	0.3214	6	0.0038
+0	nodraft generating against nodraft teacher-forced, its own reply	256	256	0.0000	0.0000	0.0000	255	0.0000
+8192	nodraft generating against nodraft teacher-forced, its own reply	256	22	0.0000	0.0431	0.3806	206	0.0049
+16384	draft1 generating against nodraft generating, the common tokens	11	0	0.0792	0.1762	0.1848	9	0.0174
+16384	nodraft generating against nodraft teacher-forced, its own reply	256	44	0.0000	0.0641	1.5620	245	0.0057
+32768	draft1 generating against nodraft generating, the common tokens	15	0	0.0464	0.1008	0.2039	7	0.0187
+32768	nodraft generating against nodraft teacher-forced, its own reply	256	23	0.0007	0.1225	0.5297	128	0.0057
+49152	draft1 generating against nodraft generating, the common tokens	45	1	0.0017	0.0694	0.6082	5	0.0087
+49152	nodraft generating against nodraft teacher-forced, its own reply	255	19	0.0000	0.0630	0.5054	141	0.0049

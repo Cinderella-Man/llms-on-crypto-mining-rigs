@@ -1,0 +1,9 @@
+load	0	8192	16384	32768	49152
+the acceptance run, draft	dcd8ac53	2ceddbaa	aa1e6568	f0401cae	6c850da2
+the acceptance run, nodraft	84d85f5e	9eb51303	41cfc791	a423bdef	9c6a0daa
+nodraft, first load	84d85f5e	fb838580	31d479c4	479cf06a	6a5ce791
+nodraft, second load (scored)	84d85f5e	339e9d80	2ea4b33d	9c38c0d1	6c8165de
+draft, first load (scored)	dcd8ac53	df205624	bebe917b	833c3ec1	8fd44563
+draft, second load (step dump)	dcd8ac53	df205624	bebe917b	88326a47	09680ed9
+draft at one token (step dump)	dcd8ac53	2f10ac7a	41cfc791	09915dee	ca910dfe
+distinct replies	2	6	5	7	7

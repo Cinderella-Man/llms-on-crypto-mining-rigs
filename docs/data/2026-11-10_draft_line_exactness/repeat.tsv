@@ -1,0 +1,16 @@
+loads	depth	same_tokens	first_differing_token	tokens_compared	exactly_equal	median_abs_shift	max_abs_shift	first_token_shift	lead_of_own_token_load_a	lead_of_own_token_load_b
+nodraft: two loads	0	yes	none	256	256	0.0000	0.0000	0.0000		
+nodraft: two loads	8192	no	24	24	0	0.0162	0.1130	0.0236	0.0341	0.0359
+nodraft: two loads	16384	no	17	17	0	0.0156	0.1139	0.0088	0.0177	0.1516
+nodraft: two loads	32768	no	26	26	0	0.0154	0.1440	0.0806	0.1319	0.0692
+nodraft: two loads	49152	no	141	140	11	0.0000	0.3599	0.0003	0.0261	0.4205
+draft: two loads (the second with the step dump)	0	yes	none	256	256	0.0000	0.0000	0.0000		
+draft: two loads (the second with the step dump)	8192	yes	none	255	255	0.0000	0.0000	0.0000		
+draft: two loads (the second with the step dump)	16384	yes	none	256	256	0.0000	0.0000	0.0000		
+draft: two loads (the second with the step dump)	32768	no	33	33	0	0.0249	0.3286	0.0249	0.1072	0.0391
+draft: two loads (the second with the step dump)	49152	no	43	43	0	0.0019	0.7530	0.0050	0.1581	0.4121
+draft at three tokens against draft at one token	0	yes	none	256	256	0.0000	0.0000	0.0000		
+draft at three tokens against draft at one token	8192	no	0	0	0				0.2546	0.5200
+draft at three tokens against draft at one token	16384	no	11	11	0	0.0627	0.2809	0.0462	0.2240	0.0242
+draft at three tokens against draft at one token	32768	no	15	15	0	0.0395	0.1888	0.0042	0.4320	0.2618
+draft at three tokens against draft at one token	49152	no	43	43	2	0.0011	0.0838	0.0008	0.1581	0.3032

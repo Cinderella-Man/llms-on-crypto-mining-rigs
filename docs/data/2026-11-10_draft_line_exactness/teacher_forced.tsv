@@ -1,0 +1,13 @@
+depth	reply	first_token_scored	tokens_scored	end_of_text_most_probable	no_probabilities	not_first_choice	above_line	largest_lead_lost	at_token	lead_unknown	lead_lost_at_first_differing_token
+0	nodraft	0	256	0	0	0	0			0	0.0000
+0	draft	7	249	0	0	5	3	0.3781	37	0	0.0000
+8192	nodraft	0	256	2	0	4	3	0.5409	206	0	0.0000
+8192	draft	2	254	0	1	5	5	0.3936	3	0	0.2052
+16384	nodraft	0	256	5	0	3	3	0.5914	17	0	0.5914
+16384	draft	17	239	4	0	3	2	0.0825	24	0	0.0208
+32768	nodraft	0	256	4	0	5	5	0.4607	68	0	0.2733
+32768	draft	26	230	1	0	10	10	0.3640	44	0	0.0000
+49152	nodraft	0	256	0	1	5	4	0.5577	141	0	0.2750
+49152	draft	43	213	0	1	3	3	0.9267	118	0	0.0000
+all	nodraft		1280	11	1	17	15	0.5914	17 at depth 16384	0	
+all	draft		1185	5	2	26	23	0.9267	118 at depth 49152	0	
