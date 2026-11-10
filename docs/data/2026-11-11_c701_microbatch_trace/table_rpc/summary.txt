@@ -1,0 +1,12 @@
+log $WORK/cpu/runs/rpc-on.err: 18 decode calls, 24 micro-batches, 48 splits, 0 re-plans, 0 evaluations outside a micro-batch; min tokens 1
+
+ctx	n_tokens	ubatches	reused	rebuilt by reason	card0 median us	card0 sum us	replans
+dec	1	15	14	not_allocated 1	731	11037	0
+dec	29	1	0	params 1	13556	13556	0
+dec	64	8	3	llm_graph_input_mem_hybrid 1, not_allocated 4	1181.5	55221	0
+
+backend	splits	w sum us	c sum us	l sum us	l max us
+CPU	24	0	1	175	25
+RPC0[127.0.0.1:18301]	24	19213	10850	969	202
+
+re-plans (first 20)

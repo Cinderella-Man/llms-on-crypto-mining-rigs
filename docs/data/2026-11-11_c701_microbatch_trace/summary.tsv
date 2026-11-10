@@ -1,0 +1,16 @@
+stage	check	verdict	detail
+tip	tree	OK	commit 769d4c274ab8da5078d6f1050197ce2ca195f64e trace: the allocator's trace helpers before their first use (C701)
+tip	build	OK	rc=0; 3 warning lines, 0 error lines
+base	tree	OK	commit 84f7bd3d2e89aeedb065554eaca47ce4401cfd79 gemma4: no row pruning before the KV-shared layers with the masks built 
+base	build	OK	rc=0; 3 warning lines, 0 error lines
+model	write	OK	$WORK/cpu/models/qwen4exp-moe.gguf; $WORK/cpu/models/qwen4exp-moe.gguf: 492130240 bytes $WORK/cpu/models/vocab.gguf: 5928682 bytes 
+cpu	text	OK	base, off, on: 075f2419 075f2419 075f2419, 95 bytes; rc 0 0 0
+cpu	off-silent	OK	trace lines: off 0, base 0
+cpu	on-lines	OK	decode-trace 18, ubatch-trace 25, sched-trace 24, sched-replan 0, galloc-trigger 0, galloc-grow 1
+rpc	text	OK	base, off, on: 075f2419 075f2419 075f2419, 95 bytes; rc 0 0 0
+rpc	off-silent	OK	trace lines: off 0, base 0
+rpc	on-lines	OK	decode-trace 18, ubatch-trace 25, sched-trace 24, sched-replan 0, galloc-trigger 0, galloc-grow 2
+rpc	splits	OK	24 of 24 evaluations with 2+ splits; 24 of 24 micro-batches with a card0
+server	text	OK	off, on: 0cf04996 0cf04996
+server	lines	OK	off: trace 0, phase 0; on: ubatch 28, sched 26, phase 1
+table	rpc	OK	(rerun with trace_table.py's RPC name fix) log $WORK/cpu/runs/rpc-on.err: 18 decode calls, 24 micro-batches, 48 splits, 0 re-plans, 0 evaluations outside a micro-batch; min tokens 1

@@ -204,6 +204,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 |---|---|---|---|---|
 | `GGML_CUDA_PROFILE=<file>` | off | Times every launch group with CUDA events; `GGML_CUDA_PROFILE_MODE` = `group` (default), `layer`, `sample=<N>`, `graph` | base, -lightprof | Q54, Q681 |
 | `GGML_CUDA_PROFILE_HOST=<file>` | off | Host and GPU time per graph evaluation | base | Q49 |
+| `LLAMA_UBATCH_TRACE` | off | `1`: a log line per decode call, per micro-batch (graph reused or rebuilt and why, the host's parts and its time before the first split reaches a card), per scheduler evaluation (each split's wait, copy and launch time on the host) and per re-plan of the compute buffers with its trigger; llama-server's phase averages every 5 s. `2`: llama-server also waits for the cards after each decode (changes the schedule) ([the lines](data/2026-11-11_c701_microbatch_trace/README.md)) | v4: `pascal-p106-v4-b12246-c701` | Q1238 |
 | `LLAMA_SPEC_DUMP=<file>` (`_K`, `_TGT_K`, `_NGRAM`, `_FULL_BLOCK`) | off | One JSON line per speculative verify step | -specdump, -specdump2 | Q688, Q804 |
 | `GGML_CUDA_NORM_Q8_DEBUG`, `GGML_CUDA_FATTN_*_FAULT`, `GGML_CUDA_PERSISTENT_MOE_FAULT` | off | Test hooks | base | — |
 
