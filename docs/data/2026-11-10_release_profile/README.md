@@ -57,7 +57,7 @@ pass is the 336-token call of the `wall` load's 340-token request divided by its
 
 Passes kept: 334 at k = 1, 82 at k = 4, 65 at k = 5.
 
-- **The cards' kernels are 93 to 94 % of a pass.** Hops, host work and gaps are 3.26 ms of a one-token pass and
+- **The cards' kernels are 93.3 %, 93.6 % and 93.7 % of a pass** at one, four and five tokens. Hops, host work and gaps are 3.26 ms of a one-token pass and
   5.84 ms of a four-token pass. That figure still holds the request's start (the time from the request's launch to its
   first pass, 112.7 ms in the profiled load's second request): at most 0.34 ms a pass at k = 1 and 1.34 ms at k = 4.
 - **At four tokens the projections are 40 % of the GPU time** (34.13 ms), the routed experts 23 % (19.68 ms) and the
