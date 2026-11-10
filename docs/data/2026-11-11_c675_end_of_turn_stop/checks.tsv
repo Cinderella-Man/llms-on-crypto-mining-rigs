@@ -1,0 +1,7 @@
+tree	check	verdict	detail
+tip	tree	OK	commit b2763cce74f5f1ceebd00e6b611f0c4c1ed1b34e sampling: LLAMA_SPEC_REJECT_STOP=1 stops token-by-token rejection after an accepted EOG, as sample-and-match does (Q1187)
+tip	build	OK	rc=0; targets test-llama-archs test-spec-reject-stop test-speculative-rejection-sampling test-sampling; 3 warning lines, 0 error lines
+tip	ctest	OK	100% tests passed, 0 tests failed out of 5
+base	tree	OK	commit 84f7bd3d2e89aeedb065554eaca47ce4401cfd79 gemma4: no row pruning before the KV-shared layers with the masks built on the device (Q1073)
+base	build	OK	rc=0; targets test-speculative-rejection-sampling; 3 warning lines, 0 error lines
+ident	distribution	SAME	128 token lines, 20000 trials; base rc=0 tip rc=0 tip-on rc=0 
