@@ -1,0 +1,177 @@
+trace	request	depth	pass	group	where	ms_a_step
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	0.086
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	0.098
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.215
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.487
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	0.948
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	the output heads (` output:`)	0.000
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	everything else	86.294
+shallow	R49 r1	79 to 335	1	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.008
+shallow	R49 r1	79 to 335	1	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.010
+shallow	R49 r1	79 to 335	1	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.021
+shallow	R49 r1	79 to 335	1	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.049
+shallow	R49 r1	79 to 335	1	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	0.088
+shallow	R49 r1	79 to 335	1	main, card 8	the output heads (` output:`)	8.054
+shallow	R49 r1	79 to 335	1	main, card 8	everything else	4.628
+shallow	R49 r1	79 to 335	1	draft	the gather of every pooled key (GET_ROWS before the indexer)	0.030
+shallow	R49 r1	79 to 335	1	draft	the indexer's scores (LIGHTNING_INDEXER)	0.039
+shallow	R49 r1	79 to 335	1	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.077
+shallow	R49 r1	79 to 335	1	draft	the indexer's other launch groups (projections, norms, RoPE)	0.149
+shallow	R49 r1	79 to 335	1	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	0.238
+shallow	R49 r1	79 to 335	1	draft	the output heads (` output:`)	3.893
+shallow	R49 r1	79 to 335	1	draft	everything else	8.624
+shallow	R49 r1	79 to 335	1		outside the kernels, unprofiled (est.)	
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	0.085
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	0.104
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.212
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.488
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	0.940
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	the output heads (` output:`)	0.000
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	everything else	86.303
+shallow	R49 r2	79 to 335	2	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.008
+shallow	R49 r2	79 to 335	2	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.010
+shallow	R49 r2	79 to 335	2	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.021
+shallow	R49 r2	79 to 335	2	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.048
+shallow	R49 r2	79 to 335	2	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	0.087
+shallow	R49 r2	79 to 335	2	main, card 8	the output heads (` output:`)	8.065
+shallow	R49 r2	79 to 335	2	main, card 8	everything else	4.630
+shallow	R49 r2	79 to 335	2	draft	the gather of every pooled key (GET_ROWS before the indexer)	0.030
+shallow	R49 r2	79 to 335	2	draft	the indexer's scores (LIGHTNING_INDEXER)	0.038
+shallow	R49 r2	79 to 335	2	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.079
+shallow	R49 r2	79 to 335	2	draft	the indexer's other launch groups (projections, norms, RoPE)	0.153
+shallow	R49 r2	79 to 335	2	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	0.237
+shallow	R49 r2	79 to 335	2	draft	the output heads (` output:`)	1.930
+shallow	R49 r2	79 to 335	2	draft	everything else	8.578
+shallow	R49 r2	79 to 335	2		outside the kernels, unprofiled (est.)	
+deep	16384 p1	16384	1	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	3.414
+deep	16384 p1	16384	1	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	1.553
+deep	16384 p1	16384	1	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.617
+deep	16384 p1	16384	1	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.492
+deep	16384 p1	16384	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	11.941
+deep	16384 p1	16384	1	main, cards 0 to 7	the output heads (` output:`)	0.000
+deep	16384 p1	16384	1	main, cards 0 to 7	everything else	86.688
+deep	16384 p1	16384	1	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.312
+deep	16384 p1	16384	1	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.143
+deep	16384 p1	16384	1	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.058
+deep	16384 p1	16384	1	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.048
+deep	16384 p1	16384	1	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.062
+deep	16384 p1	16384	1	main, card 8	the output heads (` output:`)	8.082
+deep	16384 p1	16384	1	main, card 8	everything else	4.793
+deep	16384 p1	16384	1	draft	the gather of every pooled key (GET_ROWS before the indexer)	1.246
+deep	16384 p1	16384	1	draft	the indexer's scores (LIGHTNING_INDEXER)	0.284
+deep	16384 p1	16384	1	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.214
+deep	16384 p1	16384	1	draft	the indexer's other launch groups (projections, norms, RoPE)	0.158
+deep	16384 p1	16384	1	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.807
+deep	16384 p1	16384	1	draft	the output heads (` output:`)	2.705
+deep	16384 p1	16384	1	draft	everything else	8.628
+deep	16384 p1	16384	1		outside the kernels, unprofiled (est.)	35.83
+deep	16384 p2	16384	2	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	3.414
+deep	16384 p2	16384	2	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	1.552
+deep	16384 p2	16384	2	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.628
+deep	16384 p2	16384	2	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.493
+deep	16384 p2	16384	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	11.942
+deep	16384 p2	16384	2	main, cards 0 to 7	the output heads (` output:`)	0.000
+deep	16384 p2	16384	2	main, cards 0 to 7	everything else	86.721
+deep	16384 p2	16384	2	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.313
+deep	16384 p2	16384	2	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.144
+deep	16384 p2	16384	2	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.058
+deep	16384 p2	16384	2	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.048
+deep	16384 p2	16384	2	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.062
+deep	16384 p2	16384	2	main, card 8	the output heads (` output:`)	8.086
+deep	16384 p2	16384	2	main, card 8	everything else	4.783
+deep	16384 p2	16384	2	draft	the gather of every pooled key (GET_ROWS before the indexer)	1.247
+deep	16384 p2	16384	2	draft	the indexer's scores (LIGHTNING_INDEXER)	0.284
+deep	16384 p2	16384	2	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.212
+deep	16384 p2	16384	2	draft	the indexer's other launch groups (projections, norms, RoPE)	0.162
+deep	16384 p2	16384	2	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.807
+deep	16384 p2	16384	2	draft	the output heads (` output:`)	2.543
+deep	16384 p2	16384	2	draft	everything else	8.620
+deep	16384 p2	16384	2		outside the kernels, unprofiled (est.)	17.30
+deep	32768 p1	32768	1	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	6.758
+deep	32768 p1	32768	1	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	2.918
+deep	32768 p1	32768	1	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.690
+deep	32768 p1	32768	1	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.488
+deep	32768 p1	32768	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	11.859
+deep	32768 p1	32768	1	main, cards 0 to 7	the output heads (` output:`)	0.000
+deep	32768 p1	32768	1	main, cards 0 to 7	everything else	86.318
+deep	32768 p1	32768	1	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.616
+deep	32768 p1	32768	1	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.267
+deep	32768 p1	32768	1	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.060
+deep	32768 p1	32768	1	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.048
+deep	32768 p1	32768	1	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.069
+deep	32768 p1	32768	1	main, card 8	the output heads (` output:`)	8.081
+deep	32768 p1	32768	1	main, card 8	everything else	4.823
+deep	32768 p1	32768	1	draft	the gather of every pooled key (GET_ROWS before the indexer)	2.462
+deep	32768 p1	32768	1	draft	the indexer's scores (LIGHTNING_INDEXER)	0.505
+deep	32768 p1	32768	1	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.227
+deep	32768 p1	32768	1	draft	the indexer's other launch groups (projections, norms, RoPE)	0.148
+deep	32768 p1	32768	1	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.843
+deep	32768 p1	32768	1	draft	the output heads (` output:`)	2.995
+deep	32768 p1	32768	1	draft	everything else	8.652
+deep	32768 p1	32768	1		outside the kernels, unprofiled (est.)	43.24
+deep	32768 p2	32768	2	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	6.759
+deep	32768 p2	32768	2	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	2.917
+deep	32768 p2	32768	2	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.694
+deep	32768 p2	32768	2	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.492
+deep	32768 p2	32768	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	11.866
+deep	32768 p2	32768	2	main, cards 0 to 7	the output heads (` output:`)	0.000
+deep	32768 p2	32768	2	main, cards 0 to 7	everything else	86.339
+deep	32768 p2	32768	2	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.616
+deep	32768 p2	32768	2	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.267
+deep	32768 p2	32768	2	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.061
+deep	32768 p2	32768	2	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.049
+deep	32768 p2	32768	2	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.068
+deep	32768 p2	32768	2	main, card 8	the output heads (` output:`)	8.086
+deep	32768 p2	32768	2	main, card 8	everything else	4.827
+deep	32768 p2	32768	2	draft	the gather of every pooled key (GET_ROWS before the indexer)	2.462
+deep	32768 p2	32768	2	draft	the indexer's scores (LIGHTNING_INDEXER)	0.507
+deep	32768 p2	32768	2	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.226
+deep	32768 p2	32768	2	draft	the indexer's other launch groups (projections, norms, RoPE)	0.160
+deep	32768 p2	32768	2	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.841
+deep	32768 p2	32768	2	draft	the output heads (` output:`)	2.717
+deep	32768 p2	32768	2	draft	everything else	8.631
+deep	32768 p2	32768	2		outside the kernels, unprofiled (est.)	25.08
+deep	49152 p1	49152	1	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	10.091
+deep	49152 p1	49152	1	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	4.282
+deep	49152 p1	49152	1	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.783
+deep	49152 p1	49152	1	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.491
+deep	49152 p1	49152	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	12.108
+deep	49152 p1	49152	1	main, cards 0 to 7	the output heads (` output:`)	0.000
+deep	49152 p1	49152	1	main, cards 0 to 7	everything else	86.548
+deep	49152 p1	49152	1	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.920
+deep	49152 p1	49152	1	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.390
+deep	49152 p1	49152	1	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.068
+deep	49152 p1	49152	1	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.048
+deep	49152 p1	49152	1	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.089
+deep	49152 p1	49152	1	main, card 8	the output heads (` output:`)	8.087
+deep	49152 p1	49152	1	main, card 8	everything else	4.866
+deep	49152 p1	49152	1	draft	the gather of every pooled key (GET_ROWS before the indexer)	3.675
+deep	49152 p1	49152	1	draft	the indexer's scores (LIGHTNING_INDEXER)	0.720
+deep	49152 p1	49152	1	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.229
+deep	49152 p1	49152	1	draft	the indexer's other launch groups (projections, norms, RoPE)	0.150
+deep	49152 p1	49152	1	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.873
+deep	49152 p1	49152	1	draft	the output heads (` output:`)	3.260
+deep	49152 p1	49152	1	draft	everything else	8.680
+deep	49152 p1	49152	1		outside the kernels, unprofiled (est.)	54.40
+deep	49152 p2	49152	2	main, cards 0 to 7	the gather of every pooled key (GET_ROWS before the indexer)	10.090
+deep	49152 p2	49152	2	main, cards 0 to 7	the indexer's scores (LIGHTNING_INDEXER)	4.279
+deep	49152 p2	49152	2	main, cards 0 to 7	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.779
+deep	49152 p2	49152	2	main, cards 0 to 7	the indexer's other launch groups (projections, norms, RoPE)	0.494
+deep	49152 p2	49152	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	12.104
+deep	49152 p2	49152	2	main, cards 0 to 7	the output heads (` output:`)	0.000
+deep	49152 p2	49152	2	main, cards 0 to 7	everything else	86.598
+deep	49152 p2	49152	2	main, card 8	the gather of every pooled key (GET_ROWS before the indexer)	0.920
+deep	49152 p2	49152	2	main, card 8	the indexer's scores (LIGHTNING_INDEXER)	0.391
+deep	49152 p2	49152	2	main, card 8	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.068
+deep	49152 p2	49152	2	main, card 8	the indexer's other launch groups (projections, norms, RoPE)	0.048
+deep	49152 p2	49152	2	main, card 8	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.087
+deep	49152 p2	49152	2	main, card 8	the output heads (` output:`)	8.083
+deep	49152 p2	49152	2	main, card 8	everything else	4.868
+deep	49152 p2	49152	2	draft	the gather of every pooled key (GET_ROWS before the indexer)	3.675
+deep	49152 p2	49152	2	draft	the indexer's scores (LIGHTNING_INDEXER)	0.722
+deep	49152 p2	49152	2	draft	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.231
+deep	49152 p2	49152	2	draft	the indexer's other launch groups (projections, norms, RoPE)	0.154
+deep	49152 p2	49152	2	draft	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	1.869
+deep	49152 p2	49152	2	draft	the output heads (` output:`)	2.975
+deep	49152 p2	49152	2	draft	everything else	8.664
+deep	49152 p2	49152	2		outside the kernels, unprofiled (est.)	33.77

@@ -78,6 +78,9 @@ tables of such a run print no speed. On a host under 8 GB the server runs under
    first request at a new depth, as every turn of an agent is; pass 2 repeats it.
 3. `sample` (with `SAMPLER_PASS=1`): once more with the server line's own sampler and a fixed seed.
 
+`PAUSE=<seconds>` makes the client wait before every request. Nothing the server times changes, and a profiler's trace
+(`GGML_CUDA_PROFILE` in an arm's `ARM_ENV_<arm>`) then falls into one piece per request at the idle gaps.
+
 `CACHE=0` drops the prime and makes every request read its whole prompt fresh. That is the method of the Flint depth
 sweep, and it costs the full prompt time for every request: at the 69.4 prompt tok/s the release preset ran on the
 agent check, a 49,152-token prompt is est. 12 minutes.
@@ -250,6 +253,11 @@ the release check's recorded requests.
   repeated that pair's. `LOADS` put the arm most likely to be stopped by the RAM watchdog last in each round, since a
   stop ends the run; it was not stopped. [run/draft_ubatch.py](../../docs/data/2026-11-10_deep_lane/run/draft_ubatch.py)
   reads such a run: prompt reading of every arm against the control and the floor, and the host's memory per load.
+- **The fifth run on the rig** profiled a step at depth: `LOADS="warm:sparse prof:prof"` with the profiler in
+  `ARM_ENV_prof` and `PAUSE=4`, depths 16,384, 32,768 and 49,152, the unprofiled load first at the same depths
+  (`WARM_DEPTHS`), 44 minutes
+  ([docs/data/2026-11-10_step_parts_depth](../../docs/data/2026-11-10_step_parts_depth/README.md)). The trace held
+  the whole load, prompts included, in 85.8 MB, and cut into the load and its 10 requests at the pauses.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

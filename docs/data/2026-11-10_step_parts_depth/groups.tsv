@@ -1,0 +1,2363 @@
+trace	request	depth	pass	group	label	groups_a_step	ms_a_step
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.7126
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.6552
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	7.0018
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4222
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9443
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8730
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5243
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5733
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.4947
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4630
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3872
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3044
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.2941
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1324
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.8227
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2386
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1537
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0558
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0296
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	0.9480
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9285
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8321
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7695
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7244
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7222
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7132
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.6991
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5976
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.5928
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5595
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5251
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5036
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5029
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4555
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4347
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL gate	35.00	0.4216
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3914
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3745
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3673
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3624
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3275
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3113
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3067
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.3022
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2833
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2748
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2694
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2614
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2445
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ADD node	73.00	0.2324
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2292
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2213
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.2047
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1941
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1927
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SILU node	93.00	0.1887
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SCALE node	104.00	0.1866
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	GET_ROWS node	23.00	0.1846
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1674
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1663
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CPY hop_wide	7.00	0.1550
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ADD ffn_out	46.00	0.1536
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1510
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1478
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1418
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1391
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CONCAT node	12.00	0.1366
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1311
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.1305
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1246
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1211
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CPY hop_narrow	8.00	0.1207
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1140
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1102
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1084
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1074
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	0.0981
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.0950
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0866
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0857
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.0848
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0798
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0786
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0736
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0681
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0664
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0642
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0617
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0609
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	FILL node	33.00	0.0553
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0514
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0493
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ROPE Qcur	11.00	0.0394
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0392
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0391
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL node	6.00	0.0329
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ROPE node	11.00	0.0300
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0287
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ROPE indexer_q	11.00	0.0250
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0213
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0200
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	REPEAT node	1.00	0.0179
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	REPEAT hc_init	1.00	0.0111
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0111
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0076
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	ABS node	1.00	0.0050
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SGN node	1.00	0.0048
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0047
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0042
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SQRT node	1.00	0.0041
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CLAMP node	1.00	0.0039
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0037
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0033
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0030
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0030
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0029
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0029
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0028
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0026
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	CONT _(cont)	1.00	0.0026
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0026
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0026
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0025
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0025
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0025
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0024
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0023
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SUM_ROWS node	1.00	0.0021
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0014
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0012
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0008
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0006
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0005
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0004
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0002
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0003
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0008
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0011
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0544
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5461
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3471
+shallow	R49 r1	79 to 335	1	main, card 8	TOP_K top_k	4.00	0.3285
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3088
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2932
+shallow	R49 r1	79 to 335	1	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2523
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2389
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2270
+shallow	R49 r1	79 to 335	1	main, card 8	PAD node	1.00	0.2160
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1882
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1239
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1086
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1068
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1053
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1022
+shallow	R49 r1	79 to 335	1	main, card 8	FLASH_ATTN_EXT node	1.00	0.0876
+shallow	R49 r1	79 to 335	1	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0571
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0546
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0538
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0491
+shallow	R49 r1	79 to 335	1	main, card 8	MUL gate	1.00	0.0478
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0456
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0420
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0419
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0419
+shallow	R49 r1	79 to 335	1	main, card 8	GET_ROWS node	11.00	0.0406
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0401
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0385
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0383
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0375
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0303
+shallow	R49 r1	79 to 335	1	main, card 8	RMS_NORM+MUL node	5.00	0.0292
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0273
+shallow	R49 r1	79 to 335	1	main, card 8	ADD node	7.00	0.0236
+shallow	R49 r1	79 to 335	1	main, card 8	SIGMOID beta_sigmoid	1.00	0.0233
+shallow	R49 r1	79 to 335	1	main, card 8	SOFTPLUS a_softplus	1.00	0.0229
+shallow	R49 r1	79 to 335	1	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0226
+shallow	R49 r1	79 to 335	1	main, card 8	CPY hop_wide	1.00	0.0224
+shallow	R49 r1	79 to 335	1	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0218
+shallow	R49 r1	79 to 335	1	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0174
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0164
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0160
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0149
+shallow	R49 r1	79 to 335	1	main, card 8	SCALE node	6.00	0.0145
+shallow	R49 r1	79 to 335	1	main, card 8	CONT gate_reshaped	1.00	0.0143
+shallow	R49 r1	79 to 335	1	main, card 8	RMS_NORM+MUL norm	4.00	0.0142
+shallow	R49 r1	79 to 335	1	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0130
+shallow	R49 r1	79 to 335	1	main, card 8	TOP_K indexer_top_k	1.00	0.0125
+shallow	R49 r1	79 to 335	1	main, card 8	SILU node	5.00	0.0120
+shallow	R49 r1	79 to 335	1	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.0104
+shallow	R49 r1	79 to 335	1	main, card 8	SCALE top_p_ones	4.00	0.0102
+shallow	R49 r1	79 to 335	1	main, card 8	ARGMAX greedy_argmax	4.00	0.0091
+shallow	R49 r1	79 to 335	1	main, card 8	SUM top_p_index_f32	4.00	0.0086
+shallow	R49 r1	79 to 335	1	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0085
+shallow	R49 r1	79 to 335	1	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0084
+shallow	R49 r1	79 to 335	1	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0082
+shallow	R49 r1	79 to 335	1	main, card 8	FILL node	3.00	0.0081
+shallow	R49 r1	79 to 335	1	main, card 8	CPY _(copy)	4.00	0.0078
+shallow	R49 r1	79 to 335	1	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0078
+shallow	R49 r1	79 to 335	1	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0076
+shallow	R49 r1	79 to 335	1	main, card 8	GET_ROWS top_p_candidates	4.00	0.0075
+shallow	R49 r1	79 to 335	1	main, card 8	ADD ffn_out	2.00	0.0075
+shallow	R49 r1	79 to 335	1	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0068
+shallow	R49 r1	79 to 335	1	main, card 8	LOG top_p_bias	4.00	0.0066
+shallow	R49 r1	79 to 335	1	main, card 8	MUL ffn_shexp_gated	2.00	0.0063
+shallow	R49 r1	79 to 335	1	main, card 8	SIGMOID+MUL node	1.00	0.0062
+shallow	R49 r1	79 to 335	1	main, card 8	GET_ROWS top_k_rows	4.00	0.0059
+shallow	R49 r1	79 to 335	1	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0057
+shallow	R49 r1	79 to 335	1	main, card 8	ARGMAX temp_max_idx	4.00	0.0056
+shallow	R49 r1	79 to 335	1	main, card 8	SWIGLU ffn_swiglu	2.00	0.0054
+shallow	R49 r1	79 to 335	1	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0050
+shallow	R49 r1	79 to 335	1	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0048
+shallow	R49 r1	79 to 335	1	main, card 8	CLAMP node	4.00	0.0047
+shallow	R49 r1	79 to 335	1	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0045
+shallow	R49 r1	79 to 335	1	main, card 8	STEP top_p_mask	4.00	0.0044
+shallow	R49 r1	79 to 335	1	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0044
+shallow	R49 r1	79 to 335	1	main, card 8	ROPE Qcur	1.00	0.0043
+shallow	R49 r1	79 to 335	1	main, card 8	ADD top_p_logits	4.00	0.0042
+shallow	R49 r1	79 to 335	1	main, card 8	CUMSUM top_p_cdf	4.00	0.0040
+shallow	R49 r1	79 to 335	1	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0039
+shallow	R49 r1	79 to 335	1	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0036
+shallow	R49 r1	79 to 335	1	main, card 8	ROPE indexer_q	1.00	0.0034
+shallow	R49 r1	79 to 335	1	main, card 8	CONCAT node	1.00	0.0030
+shallow	R49 r1	79 to 335	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0029
+shallow	R49 r1	79 to 335	1	main, card 8	ROPE node	1.00	0.0029
+shallow	R49 r1	79 to 335	1	main, card 8	SCALE result_norm	1.00	0.0028
+shallow	R49 r1	79 to 335	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0027
+shallow	R49 r1	79 to 335	1	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0026
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT output:q6_K:2560x248320	0.52	2.3120
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT output:q6_K:2560x32768	2.48	1.4725
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3306
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3255
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2245
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7056
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4315
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3493
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3028
+shallow	R49 r1	79 to 335	1	draft	TOP_K top_k	3.00	0.2791
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2481
+shallow	R49 r1	79 to 335	1	draft	PAD node	3.00	0.2417
+shallow	R49 r1	79 to 335	1	draft	FLASH_ATTN_EXT node	4.00	0.2384
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2159
+shallow	R49 r1	79 to 335	1	draft	CONCAT node	10.48	0.2060
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1673
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1639
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1587
+shallow	R49 r1	79 to 335	1	draft	RMS_NORM+MUL norm	24.00	0.1536
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1258
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT_ID output:q6_K:2560x1	2.48	0.1084
+shallow	R49 r1	79 to 335	1	draft	SILU node	11.00	0.1024
+shallow	R49 r1	79 to 335	1	draft	SCALE node	15.00	0.1002
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0917
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0832
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0724
+shallow	R49 r1	79 to 335	1	draft	DSV4_HC_PRE hc_mixed	8.00	0.0627
+shallow	R49 r1	79 to 335	1	draft	GET_ROWS node	8.00	0.0615
+shallow	R49 r1	79 to 335	1	draft	RMS_NORM+MUL node	11.00	0.0569
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0475
+shallow	R49 r1	79 to 335	1	draft	TOP_K indexer_top_k	4.00	0.0471
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0461
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0446
+shallow	R49 r1	79 to 335	1	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0422
+shallow	R49 r1	79 to 335	1	draft	FILL node	12.00	0.0393
+shallow	R49 r1	79 to 335	1	draft	LIGHTNING_INDEXER indexer_score	4.00	0.0386
+shallow	R49 r1	79 to 335	1	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0373
+shallow	R49 r1	79 to 335	1	draft	CONT result_output	2.48	0.0332
+shallow	R49 r1	79 to 335	1	draft	ADD node	12.00	0.0302
+shallow	R49 r1	79 to 335	1	draft	TOP_K_MASK indexer_sel	4.00	0.0300
+shallow	R49 r1	79 to 335	1	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0268
+shallow	R49 r1	79 to 335	1	draft	CONT gate_reshaped	4.00	0.0256
+shallow	R49 r1	79 to 335	1	draft	ROPE Qcur	4.00	0.0221
+shallow	R49 r1	79 to 335	1	draft	GET_ROWS mtp_tok_embd	4.00	0.0190
+shallow	R49 r1	79 to 335	1	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0187
+shallow	R49 r1	79 to 335	1	draft	REPEAT mtp_enorm	4.00	0.0157
+shallow	R49 r1	79 to 335	1	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0104
+shallow	R49 r1	79 to 335	1	draft	ROPE indexer_q	4.00	0.0100
+shallow	R49 r1	79 to 335	1	draft	ROPE node	4.00	0.0098
+shallow	R49 r1	79 to 335	1	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0096
+shallow	R49 r1	79 to 335	1	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0093
+shallow	R49 r1	79 to 335	1	draft	GET_ROWS h_nextn	3.00	0.0088
+shallow	R49 r1	79 to 335	1	draft	ROPE+SET_ROWS Kcur	4.00	0.0083
+shallow	R49 r1	79 to 335	1	draft	GET_ROWS top_k_rows	3.00	0.0081
+shallow	R49 r1	79 to 335	1	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0065
+shallow	R49 r1	79 to 335	1	draft	DSV4_HC_PRE result_norm	3.00	0.0059
+shallow	R49 r1	79 to 335	1	draft	ADD ffn_out	4.00	0.0029
+shallow	R49 r1	79 to 335	1	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0019
+shallow	R49 r1	79 to 335	1	draft	MUL ffn_shexp_gated	4.00	0.0017
+shallow	R49 r1	79 to 335	1	draft	SET_ROWS _(reshaped)_(view)	2.48	0.0007
+shallow	R49 r1	79 to 335	1	draft	SIGMOID shared_expert_gate_sigmoid	4.00	0.0002
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.7033
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.6541
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	6.9977
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4276
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9454
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8741
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5228
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5697
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.5011
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4559
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3892
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3049
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3029
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1351
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.8191
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2476
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1547
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0561
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0314
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	0.9397
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9290
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8331
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7697
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7437
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7225
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7130
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7000
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.6152
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5850
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5456
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5254
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5019
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.4981
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4556
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4325
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL gate	35.00	0.4254
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3916
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3744
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3668
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3617
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3276
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3106
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3080
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.2894
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2841
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2725
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2609
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2554
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2402
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2289
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ADD node	73.00	0.2237
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2215
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.2209
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2027
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SCALE node	104.00	0.2010
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1965
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	GET_ROWS node	23.00	0.1952
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1882
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SILU node	93.00	0.1813
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1706
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1665
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CPY hop_wide	7.00	0.1557
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1509
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ADD ffn_out	46.00	0.1457
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1448
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1447
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1406
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CONCAT node	12.00	0.1364
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1308
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.1294
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1248
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1248
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CPY hop_narrow	8.00	0.1195
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1144
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1124
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1095
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1085
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	0.1039
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1009
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0874
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0858
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.0822
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0784
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0767
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0690
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0683
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0665
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0659
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0619
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0608
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	FILL node	33.00	0.0524
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0495
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0492
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0392
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0391
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ROPE Qcur	11.00	0.0373
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL node	6.00	0.0346
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0302
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ROPE node	11.00	0.0301
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ROPE indexer_q	11.00	0.0266
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0231
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	REPEAT node	1.00	0.0208
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0182
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0119
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	REPEAT hc_init	1.00	0.0108
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0056
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0043
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0036
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0034
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0030
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0029
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0029
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0029
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0029
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SGN node	1.00	0.0029
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0028
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0028
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0027
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0027
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0026
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0026
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0026
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0026
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0025
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0025
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0025
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0025
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CONT _(cont)	1.00	0.0025
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0024
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0024
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SUM_ROWS node	1.00	0.0024
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SQRT node	1.00	0.0024
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0024
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	CLAMP node	1.00	0.0021
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	ABS node	1.00	0.0021
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	0.0017
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0016
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0015
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0007
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0007
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0005
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0005
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0005
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0011
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0018
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0648
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5473
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3470
+shallow	R49 r2	79 to 335	2	main, card 8	TOP_K top_k	4.00	0.3287
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3091
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2930
+shallow	R49 r2	79 to 335	2	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2511
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2385
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2272
+shallow	R49 r2	79 to 335	2	main, card 8	PAD node	1.00	0.2158
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1881
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1221
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1084
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1069
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1049
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1021
+shallow	R49 r2	79 to 335	2	main, card 8	FLASH_ATTN_EXT node	1.00	0.0867
+shallow	R49 r2	79 to 335	2	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0581
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0545
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0539
+shallow	R49 r2	79 to 335	2	main, card 8	MUL gate	1.00	0.0511
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0493
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0459
+shallow	R49 r2	79 to 335	2	main, card 8	GET_ROWS node	11.00	0.0459
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0422
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0419
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0400
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0385
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0382
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0375
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0344
+shallow	R49 r2	79 to 335	2	main, card 8	SIGMOID beta_sigmoid	1.00	0.0306
+shallow	R49 r2	79 to 335	2	main, card 8	RMS_NORM+MUL node	5.00	0.0305
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0300
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0277
+shallow	R49 r2	79 to 335	2	main, card 8	SOFTPLUS a_softplus	1.00	0.0236
+shallow	R49 r2	79 to 335	2	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0231
+shallow	R49 r2	79 to 335	2	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0228
+shallow	R49 r2	79 to 335	2	main, card 8	CPY hop_wide	1.00	0.0224
+shallow	R49 r2	79 to 335	2	main, card 8	ADD node	7.00	0.0192
+shallow	R49 r2	79 to 335	2	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0186
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0177
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0167
+shallow	R49 r2	79 to 335	2	main, card 8	CONT gate_reshaped	1.00	0.0145
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0142
+shallow	R49 r2	79 to 335	2	main, card 8	SCALE node	6.00	0.0141
+shallow	R49 r2	79 to 335	2	main, card 8	RMS_NORM+MUL norm	4.00	0.0135
+shallow	R49 r2	79 to 335	2	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0132
+shallow	R49 r2	79 to 335	2	main, card 8	TOP_K indexer_top_k	1.00	0.0126
+shallow	R49 r2	79 to 335	2	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0122
+shallow	R49 r2	79 to 335	2	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.0103
+shallow	R49 r2	79 to 335	2	main, card 8	SILU node	5.00	0.0102
+shallow	R49 r2	79 to 335	2	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0085
+shallow	R49 r2	79 to 335	2	main, card 8	GET_ROWS top_k_rows	4.00	0.0081
+shallow	R49 r2	79 to 335	2	main, card 8	ADD top_p_logits	4.00	0.0078
+shallow	R49 r2	79 to 335	2	main, card 8	FILL node	3.00	0.0077
+shallow	R49 r2	79 to 335	2	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0076
+shallow	R49 r2	79 to 335	2	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0073
+shallow	R49 r2	79 to 335	2	main, card 8	ADD ffn_out	2.00	0.0073
+shallow	R49 r2	79 to 335	2	main, card 8	CPY _(copy)	4.00	0.0072
+shallow	R49 r2	79 to 335	2	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0069
+shallow	R49 r2	79 to 335	2	main, card 8	GET_ROWS top_p_candidates	4.00	0.0069
+shallow	R49 r2	79 to 335	2	main, card 8	ARGMAX temp_max_idx	4.00	0.0063
+shallow	R49 r2	79 to 335	2	main, card 8	MUL ffn_shexp_gated	2.00	0.0062
+shallow	R49 r2	79 to 335	2	main, card 8	SCALE top_p_ones	4.00	0.0062
+shallow	R49 r2	79 to 335	2	main, card 8	SIGMOID+MUL node	1.00	0.0062
+shallow	R49 r2	79 to 335	2	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0060
+shallow	R49 r2	79 to 335	2	main, card 8	LOG top_p_bias	4.00	0.0059
+shallow	R49 r2	79 to 335	2	main, card 8	ARGMAX greedy_argmax	4.00	0.0058
+shallow	R49 r2	79 to 335	2	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0058
+shallow	R49 r2	79 to 335	2	main, card 8	STEP top_p_mask	4.00	0.0055
+shallow	R49 r2	79 to 335	2	main, card 8	SWIGLU ffn_swiglu	2.00	0.0053
+shallow	R49 r2	79 to 335	2	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0051
+shallow	R49 r2	79 to 335	2	main, card 8	CLAMP node	4.00	0.0049
+shallow	R49 r2	79 to 335	2	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0047
+shallow	R49 r2	79 to 335	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0045
+shallow	R49 r2	79 to 335	2	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0044
+shallow	R49 r2	79 to 335	2	main, card 8	ROPE Qcur	1.00	0.0044
+shallow	R49 r2	79 to 335	2	main, card 8	CUMSUM top_p_cdf	4.00	0.0044
+shallow	R49 r2	79 to 335	2	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0041
+shallow	R49 r2	79 to 335	2	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0037
+shallow	R49 r2	79 to 335	2	main, card 8	ROPE indexer_q	1.00	0.0034
+shallow	R49 r2	79 to 335	2	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0034
+shallow	R49 r2	79 to 335	2	main, card 8	CONCAT node	1.00	0.0031
+shallow	R49 r2	79 to 335	2	main, card 8	ROPE node	1.00	0.0030
+shallow	R49 r2	79 to 335	2	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0028
+shallow	R49 r2	79 to 335	2	main, card 8	SUM top_p_index_f32	4.00	0.0027
+shallow	R49 r2	79 to 335	2	main, card 8	SCALE result_norm	1.00	0.0026
+shallow	R49 r2	79 to 335	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0025
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT output:q6_K:2560x32768	3.00	1.7824
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3289
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3216
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2259
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7045
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4302
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3701
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3020
+shallow	R49 r2	79 to 335	2	draft	TOP_K top_k	3.00	0.2854
+shallow	R49 r2	79 to 335	2	draft	PAD node	3.00	0.2426
+shallow	R49 r2	79 to 335	2	draft	CONCAT node	11.00	0.2379
+shallow	R49 r2	79 to 335	2	draft	FLASH_ATTN_EXT node	4.00	0.2368
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2329
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2144
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1671
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1628
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1585
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT_ID output:q6_K:2560x1	3.00	0.1479
+shallow	R49 r2	79 to 335	2	draft	RMS_NORM+MUL norm	24.00	0.1388
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1227
+shallow	R49 r2	79 to 335	2	draft	SCALE node	15.00	0.1146
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0914
+shallow	R49 r2	79 to 335	2	draft	SILU node	11.00	0.0899
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0759
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0716
+shallow	R49 r2	79 to 335	2	draft	RMS_NORM+MUL node	11.00	0.0599
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0525
+shallow	R49 r2	79 to 335	2	draft	GET_ROWS node	8.00	0.0489
+shallow	R49 r2	79 to 335	2	draft	TOP_K indexer_top_k	4.00	0.0480
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0470
+shallow	R49 r2	79 to 335	2	draft	DSV4_HC_PRE hc_mixed	8.00	0.0470
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0432
+shallow	R49 r2	79 to 335	2	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0412
+shallow	R49 r2	79 to 335	2	draft	CONT result_output	3.00	0.0410
+shallow	R49 r2	79 to 335	2	draft	LIGHTNING_INDEXER indexer_score	4.00	0.0384
+shallow	R49 r2	79 to 335	2	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0357
+shallow	R49 r2	79 to 335	2	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0336
+shallow	R49 r2	79 to 335	2	draft	FILL node	12.00	0.0320
+shallow	R49 r2	79 to 335	2	draft	TOP_K_MASK indexer_sel	4.00	0.0312
+shallow	R49 r2	79 to 335	2	draft	ADD node	12.00	0.0270
+shallow	R49 r2	79 to 335	2	draft	CONT gate_reshaped	4.00	0.0253
+shallow	R49 r2	79 to 335	2	draft	GET_ROWS mtp_tok_embd	4.00	0.0197
+shallow	R49 r2	79 to 335	2	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0170
+shallow	R49 r2	79 to 335	2	draft	ROPE Qcur	4.00	0.0103
+shallow	R49 r2	79 to 335	2	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0099
+shallow	R49 r2	79 to 335	2	draft	ROPE node	4.00	0.0099
+shallow	R49 r2	79 to 335	2	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0097
+shallow	R49 r2	79 to 335	2	draft	ROPE indexer_q	4.00	0.0091
+shallow	R49 r2	79 to 335	2	draft	GET_ROWS h_nextn	3.00	0.0088
+shallow	R49 r2	79 to 335	2	draft	GET_ROWS top_k_rows	3.00	0.0082
+shallow	R49 r2	79 to 335	2	draft	ROPE+SET_ROWS Kcur	4.00	0.0080
+shallow	R49 r2	79 to 335	2	draft	REPEAT mtp_enorm	4.00	0.0077
+shallow	R49 r2	79 to 335	2	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0075
+shallow	R49 r2	79 to 335	2	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0066
+shallow	R49 r2	79 to 335	2	draft	DSV4_HC_PRE result_norm	3.00	0.0033
+shallow	R49 r2	79 to 335	2	draft	ADD ffn_out	4.00	0.0012
+shallow	R49 r2	79 to 335	2	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0006
+shallow	R49 r2	79 to 335	2	draft	SET_ROWS _(reshaped)_(view)	3.00	0.0005
+shallow	R49 r2	79 to 335	2	draft	MUL ffn_shexp_gated	4.00	0.0002
+shallow	R49 r2	79 to 335	2	draft	SIGMOID shared_expert_gate_sigmoid	4.00	-0.0009
+deep	16384 p1	16384	1	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	11.9407
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.7679
+deep	16384 p1	16384	1	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.7273
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	7.0126
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4698
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9719
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8957
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5455
+deep	16384 p1	16384	1	main, cards 0 to 7	GET_ROWS node	23.00	3.5269
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5652
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.5135
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4699
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3875
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3146
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3090
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1649
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.7857
+deep	16384 p1	16384	1	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	1.5531
+deep	16384 p1	16384	1	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2812
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1556
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0552
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0324
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9357
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8415
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7742
+deep	16384 p1	16384	1	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7334
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7150
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7135
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7035
+deep	16384 p1	16384	1	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.6061
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5852
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5451
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5274
+deep	16384 p1	16384	1	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.5203
+deep	16384 p1	16384	1	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5110
+deep	16384 p1	16384	1	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5040
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4616
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4388
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL gate	35.00	0.4262
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3961
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3914
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3804
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3767
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.3394
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3244
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3083
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3048
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2781
+deep	16384 p1	16384	1	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2676
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2633
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2633
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.2613
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2343
+deep	16384 p1	16384	1	main, cards 0 to 7	ADD node	73.00	0.2287
+deep	16384 p1	16384	1	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2236
+deep	16384 p1	16384	1	main, cards 0 to 7	SCALE node	104.00	0.2072
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2024
+deep	16384 p1	16384	1	main, cards 0 to 7	SILU node	93.00	0.1949
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1924
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1901
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1809
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1677
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1636
+deep	16384 p1	16384	1	main, cards 0 to 7	CPY hop_wide	7.00	0.1500
+deep	16384 p1	16384	1	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1450
+deep	16384 p1	16384	1	main, cards 0 to 7	CONCAT node	12.00	0.1441
+deep	16384 p1	16384	1	main, cards 0 to 7	ADD ffn_out	46.00	0.1431
+deep	16384 p1	16384	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1406
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1391
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1352
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1265
+deep	16384 p1	16384	1	main, cards 0 to 7	CPY hop_narrow	8.00	0.1204
+deep	16384 p1	16384	1	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1172
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1145
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1134
+deep	16384 p1	16384	1	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1124
+deep	16384 p1	16384	1	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.1055
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1051
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.0977
+deep	16384 p1	16384	1	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.0967
+deep	16384 p1	16384	1	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0890
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0791
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0697
+deep	16384 p1	16384	1	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0686
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0673
+deep	16384 p1	16384	1	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0673
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0669
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0626
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0616
+deep	16384 p1	16384	1	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0579
+deep	16384 p1	16384	1	main, cards 0 to 7	FILL node	33.00	0.0536
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0493
+deep	16384 p1	16384	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0472
+deep	16384 p1	16384	1	main, cards 0 to 7	ROPE Qcur	11.00	0.0452
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0393
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0392
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL node	6.00	0.0342
+deep	16384 p1	16384	1	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0322
+deep	16384 p1	16384	1	main, cards 0 to 7	ROPE node	11.00	0.0322
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0262
+deep	16384 p1	16384	1	main, cards 0 to 7	REPEAT node	1.00	0.0221
+deep	16384 p1	16384	1	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0208
+deep	16384 p1	16384	1	main, cards 0 to 7	ROPE indexer_q	11.00	0.0200
+deep	16384 p1	16384	1	main, cards 0 to 7	REPEAT hc_init	1.00	0.0109
+deep	16384 p1	16384	1	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0107
+deep	16384 p1	16384	1	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0060
+deep	16384 p1	16384	1	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0048
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0041
+deep	16384 p1	16384	1	main, cards 0 to 7	CLAMP node	1.00	0.0037
+deep	16384 p1	16384	1	main, cards 0 to 7	SGN node	1.00	0.0034
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0032
+deep	16384 p1	16384	1	main, cards 0 to 7	SQRT node	1.00	0.0031
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0031
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0031
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0030
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0030
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0029
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0029
+deep	16384 p1	16384	1	main, cards 0 to 7	CONT _(cont)	1.00	0.0029
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0028
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0028
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0027
+deep	16384 p1	16384	1	main, cards 0 to 7	ABS node	1.00	0.0027
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0027
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0026
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0026
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0026
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0025
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0025
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0024
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0024
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0024
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0024
+deep	16384 p1	16384	1	main, cards 0 to 7	SUM_ROWS node	1.00	0.0023
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0022
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0022
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0021
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0010
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0009
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0007
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0006
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0006
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0001
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0005
+deep	16384 p1	16384	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0011
+deep	16384 p1	16384	1	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0818
+deep	16384 p1	16384	1	main, card 8	FLASH_ATTN_EXT node	1.00	1.0616
+deep	16384 p1	16384	1	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5378
+deep	16384 p1	16384	1	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3472
+deep	16384 p1	16384	1	main, card 8	GET_ROWS node	11.00	0.3421
+deep	16384 p1	16384	1	main, card 8	TOP_K top_k	4.00	0.3327
+deep	16384 p1	16384	1	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3020
+deep	16384 p1	16384	1	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2943
+deep	16384 p1	16384	1	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2638
+deep	16384 p1	16384	1	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2399
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2287
+deep	16384 p1	16384	1	main, card 8	PAD node	1.00	0.2172
+deep	16384 p1	16384	1	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1889
+deep	16384 p1	16384	1	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.1431
+deep	16384 p1	16384	1	main, card 8	ADD node	11.00	0.1340
+deep	16384 p1	16384	1	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1205
+deep	16384 p1	16384	1	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1095
+deep	16384 p1	16384	1	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1072
+deep	16384 p1	16384	1	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1055
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1027
+deep	16384 p1	16384	1	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0577
+deep	16384 p1	16384	1	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0546
+deep	16384 p1	16384	1	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0533
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0495
+deep	16384 p1	16384	1	main, card 8	TOP_K indexer_top_k	1.00	0.0478
+deep	16384 p1	16384	1	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0459
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0427
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0423
+deep	16384 p1	16384	1	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0405
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0388
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0388
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0374
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0374
+deep	16384 p1	16384	1	main, card 8	MUL gate	1.00	0.0366
+deep	16384 p1	16384	1	main, card 8	SIGMOID beta_sigmoid	1.00	0.0366
+deep	16384 p1	16384	1	main, card 8	FILL node	7.00	0.0359
+deep	16384 p1	16384	1	main, card 8	RMS_NORM+MUL node	5.00	0.0299
+deep	16384 p1	16384	1	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0293
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0283
+deep	16384 p1	16384	1	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0227
+deep	16384 p1	16384	1	main, card 8	CPY hop_wide	1.00	0.0219
+deep	16384 p1	16384	1	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0208
+deep	16384 p1	16384	1	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0192
+deep	16384 p1	16384	1	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0165
+deep	16384 p1	16384	1	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0161
+deep	16384 p1	16384	1	main, card 8	GET_ROWS top_p_candidates	4.00	0.0155
+deep	16384 p1	16384	1	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0153
+deep	16384 p1	16384	1	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0148
+deep	16384 p1	16384	1	main, card 8	SCALE node	6.00	0.0147
+deep	16384 p1	16384	1	main, card 8	CONT gate_reshaped	1.00	0.0141
+deep	16384 p1	16384	1	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0132
+deep	16384 p1	16384	1	main, card 8	RMS_NORM+MUL norm	4.00	0.0132
+deep	16384 p1	16384	1	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0124
+deep	16384 p1	16384	1	main, card 8	SUM top_p_index_f32	4.00	0.0123
+deep	16384 p1	16384	1	main, card 8	GET_ROWS top_k_rows	4.00	0.0122
+deep	16384 p1	16384	1	main, card 8	CPY _(copy)	4.00	0.0112
+deep	16384 p1	16384	1	main, card 8	SILU node	5.00	0.0110
+deep	16384 p1	16384	1	main, card 8	CUMSUM top_p_cdf	4.00	0.0105
+deep	16384 p1	16384	1	main, card 8	SCALE top_p_ones	4.00	0.0105
+deep	16384 p1	16384	1	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0099
+deep	16384 p1	16384	1	main, card 8	STEP top_p_mask	4.00	0.0095
+deep	16384 p1	16384	1	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0088
+deep	16384 p1	16384	1	main, card 8	CLAMP node	4.00	0.0087
+deep	16384 p1	16384	1	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0075
+deep	16384 p1	16384	1	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0073
+deep	16384 p1	16384	1	main, card 8	ADD ffn_out	2.00	0.0072
+deep	16384 p1	16384	1	main, card 8	SIGMOID+MUL node	1.00	0.0065
+deep	16384 p1	16384	1	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0064
+deep	16384 p1	16384	1	main, card 8	SWIGLU ffn_swiglu	2.00	0.0061
+deep	16384 p1	16384	1	main, card 8	LOG top_p_bias	4.00	0.0059
+deep	16384 p1	16384	1	main, card 8	MUL ffn_shexp_gated	2.00	0.0057
+deep	16384 p1	16384	1	main, card 8	SET_ROWS _(reshaped)_(view)	4.00	0.0051
+deep	16384 p1	16384	1	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0048
+deep	16384 p1	16384	1	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0048
+deep	16384 p1	16384	1	main, card 8	ROPE Qcur	1.00	0.0045
+deep	16384 p1	16384	1	main, card 8	ADD top_p_logits	4.00	0.0045
+deep	16384 p1	16384	1	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0039
+deep	16384 p1	16384	1	main, card 8	ARGMAX temp_max_idx	4.00	0.0036
+deep	16384 p1	16384	1	main, card 8	ROPE indexer_q	1.00	0.0034
+deep	16384 p1	16384	1	main, card 8	SOFTPLUS a_softplus	1.00	0.0032
+deep	16384 p1	16384	1	main, card 8	ROPE node	1.00	0.0031
+deep	16384 p1	16384	1	main, card 8	CONCAT node	1.00	0.0030
+deep	16384 p1	16384	1	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0030
+deep	16384 p1	16384	1	main, card 8	SCALE result_norm	1.00	0.0029
+deep	16384 p1	16384	1	main, card 8	ARGMAX greedy_argmax	4.00	0.0029
+deep	16384 p1	16384	1	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0028
+deep	16384 p1	16384	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0028
+deep	16384 p1	16384	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0027
+deep	16384 p1	16384	1	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0027
+deep	16384 p1	16384	1	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0024
+deep	16384 p1	16384	1	draft	FLASH_ATTN_EXT node	4.00	1.8065
+deep	16384 p1	16384	1	draft	MUL_MAT output:q6_K:2560x32768	2.96	1.7604
+deep	16384 p1	16384	1	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3299
+deep	16384 p1	16384	1	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3036
+deep	16384 p1	16384	1	draft	GET_ROWS node	8.00	1.2675
+deep	16384 p1	16384	1	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2309
+deep	16384 p1	16384	1	draft	MUL_MAT_ID output:q6_K:2560x1	2.96	0.7447
+deep	16384 p1	16384	1	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7082
+deep	16384 p1	16384	1	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4327
+deep	16384 p1	16384	1	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3289
+deep	16384 p1	16384	1	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3036
+deep	16384 p1	16384	1	draft	TOP_K top_k	3.00	0.2858
+deep	16384 p1	16384	1	draft	LIGHTNING_INDEXER indexer_score	4.00	0.2840
+deep	16384 p1	16384	1	draft	PAD node	3.00	0.2445
+deep	16384 p1	16384	1	draft	CONCAT node	10.96	0.2374
+deep	16384 p1	16384	1	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2317
+deep	16384 p1	16384	1	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2154
+deep	16384 p1	16384	1	draft	MUL_MAT output:q6_K:2560x248320	0.04	0.2004
+deep	16384 p1	16384	1	draft	TOP_K indexer_top_k	4.00	0.1759
+deep	16384 p1	16384	1	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1682
+deep	16384 p1	16384	1	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1624
+deep	16384 p1	16384	1	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1582
+deep	16384 p1	16384	1	draft	SCALE node	15.00	0.1578
+deep	16384 p1	16384	1	draft	RMS_NORM+MUL norm	24.00	0.1303
+deep	16384 p1	16384	1	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1213
+deep	16384 p1	16384	1	draft	SILU node	11.00	0.0976
+deep	16384 p1	16384	1	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0912
+deep	16384 p1	16384	1	draft	RMS_NORM+MUL node	11.00	0.0801
+deep	16384 p1	16384	1	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0777
+deep	16384 p1	16384	1	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0740
+deep	16384 p1	16384	1	draft	FILL node	12.00	0.0658
+deep	16384 p1	16384	1	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0579
+deep	16384 p1	16384	1	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0448
+deep	16384 p1	16384	1	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0445
+deep	16384 p1	16384	1	draft	CONT result_output	2.96	0.0428
+deep	16384 p1	16384	1	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0403
+deep	16384 p1	16384	1	draft	TOP_K_MASK indexer_sel	4.00	0.0376
+deep	16384 p1	16384	1	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0357
+deep	16384 p1	16384	1	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0329
+deep	16384 p1	16384	1	draft	ADD node	12.00	0.0290
+deep	16384 p1	16384	1	draft	CONT gate_reshaped	4.00	0.0248
+deep	16384 p1	16384	1	draft	DSV4_HC_PRE hc_mixed	8.00	0.0220
+deep	16384 p1	16384	1	draft	GET_ROWS mtp_tok_embd	4.00	0.0207
+deep	16384 p1	16384	1	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0172
+deep	16384 p1	16384	1	draft	ROPE Qcur	4.00	0.0116
+deep	16384 p1	16384	1	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0115
+deep	16384 p1	16384	1	draft	ROPE node	4.00	0.0113
+deep	16384 p1	16384	1	draft	GET_ROWS top_k_rows	3.00	0.0090
+deep	16384 p1	16384	1	draft	REPEAT mtp_enorm	4.00	0.0089
+deep	16384 p1	16384	1	draft	ROPE indexer_q	4.00	0.0089
+deep	16384 p1	16384	1	draft	ROPE+SET_ROWS Kcur	4.00	0.0088
+deep	16384 p1	16384	1	draft	GET_ROWS h_nextn	3.00	0.0087
+deep	16384 p1	16384	1	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0084
+deep	16384 p1	16384	1	draft	DSV4_HC_PRE result_norm	3.00	0.0079
+deep	16384 p1	16384	1	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0078
+deep	16384 p1	16384	1	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0074
+deep	16384 p1	16384	1	draft	ADD ffn_out	4.00	0.0026
+deep	16384 p1	16384	1	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0013
+deep	16384 p1	16384	1	draft	MUL ffn_shexp_gated	4.00	0.0008
+deep	16384 p1	16384	1	draft	SET_ROWS _(reshaped)_(view)	2.96	0.0005
+deep	16384 p1	16384	1	draft	SIGMOID shared_expert_gate_sigmoid	4.00	-0.0007
+deep	16384 p2	16384	2	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	11.9424
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.7732
+deep	16384 p2	16384	2	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.7275
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	7.0120
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4663
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9723
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8932
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5433
+deep	16384 p2	16384	2	main, cards 0 to 7	GET_ROWS node	23.00	3.5184
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5851
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.4992
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4674
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.4068
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3309
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3058
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1648
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.7880
+deep	16384 p2	16384	2	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	1.5519
+deep	16384 p2	16384	2	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2985
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1564
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0551
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0335
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9362
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8417
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7735
+deep	16384 p2	16384	2	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7700
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7152
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7129
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7036
+deep	16384 p2	16384	2	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.5981
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5840
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5468
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5269
+deep	16384 p2	16384	2	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.5233
+deep	16384 p2	16384	2	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5066
+deep	16384 p2	16384	2	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5029
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4572
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4380
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL gate	35.00	0.4146
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3945
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3746
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.3729
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3698
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3647
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3247
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3116
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3005
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2765
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.2664
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2608
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2572
+deep	16384 p2	16384	2	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2541
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2351
+deep	16384 p2	16384	2	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2238
+deep	16384 p2	16384	2	main, cards 0 to 7	ADD node	73.00	0.2208
+deep	16384 p2	16384	2	main, cards 0 to 7	SCALE node	104.00	0.2067
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2020
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1901
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1887
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1762
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1682
+deep	16384 p2	16384	2	main, cards 0 to 7	SILU node	93.00	0.1654
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1628
+deep	16384 p2	16384	2	main, cards 0 to 7	ADD ffn_out	46.00	0.1513
+deep	16384 p2	16384	2	main, cards 0 to 7	CONCAT node	12.00	0.1512
+deep	16384 p2	16384	2	main, cards 0 to 7	CPY hop_wide	7.00	0.1494
+deep	16384 p2	16384	2	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1487
+deep	16384 p2	16384	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1445
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1399
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1355
+deep	16384 p2	16384	2	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1342
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1265
+deep	16384 p2	16384	2	main, cards 0 to 7	CPY hop_narrow	8.00	0.1209
+deep	16384 p2	16384	2	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.1178
+deep	16384 p2	16384	2	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1176
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1142
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1133
+deep	16384 p2	16384	2	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.1046
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1020
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1009
+deep	16384 p2	16384	2	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0886
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0789
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0697
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0674
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0671
+deep	16384 p2	16384	2	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0656
+deep	16384 p2	16384	2	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0634
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0626
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0620
+deep	16384 p2	16384	2	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0590
+deep	16384 p2	16384	2	main, cards 0 to 7	FILL node	33.00	0.0571
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0490
+deep	16384 p2	16384	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0472
+deep	16384 p2	16384	2	main, cards 0 to 7	ROPE Qcur	11.00	0.0434
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0397
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0390
+deep	16384 p2	16384	2	main, cards 0 to 7	ROPE node	11.00	0.0348
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL node	6.00	0.0326
+deep	16384 p2	16384	2	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0308
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0284
+deep	16384 p2	16384	2	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0206
+deep	16384 p2	16384	2	main, cards 0 to 7	ROPE indexer_q	11.00	0.0188
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0121
+deep	16384 p2	16384	2	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0120
+deep	16384 p2	16384	2	main, cards 0 to 7	REPEAT hc_init	1.00	0.0109
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0099
+deep	16384 p2	16384	2	main, cards 0 to 7	REPEAT node	1.00	0.0099
+deep	16384 p2	16384	2	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0075
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0033
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0033
+deep	16384 p2	16384	2	main, cards 0 to 7	SGN node	1.00	0.0032
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0031
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0030
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0030
+deep	16384 p2	16384	2	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0029
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0029
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0028
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0028
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0028
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0028
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0027
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0026
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	CONT _(cont)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SUM_ROWS node	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0024
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0023
+deep	16384 p2	16384	2	main, cards 0 to 7	ABS node	1.00	0.0023
+deep	16384 p2	16384	2	main, cards 0 to 7	SQRT node	1.00	0.0023
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0022
+deep	16384 p2	16384	2	main, cards 0 to 7	CLAMP node	1.00	0.0015
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0011
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0011
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0009
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0008
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0006
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0005
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0007
+deep	16384 p2	16384	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0015
+deep	16384 p2	16384	2	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0862
+deep	16384 p2	16384	2	main, card 8	FLASH_ATTN_EXT node	1.00	1.0619
+deep	16384 p2	16384	2	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5379
+deep	16384 p2	16384	2	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3473
+deep	16384 p2	16384	2	main, card 8	GET_ROWS node	11.00	0.3446
+deep	16384 p2	16384	2	main, card 8	TOP_K top_k	4.00	0.3344
+deep	16384 p2	16384	2	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3029
+deep	16384 p2	16384	2	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2943
+deep	16384 p2	16384	2	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2713
+deep	16384 p2	16384	2	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2399
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2287
+deep	16384 p2	16384	2	main, card 8	PAD node	1.00	0.2175
+deep	16384 p2	16384	2	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1910
+deep	16384 p2	16384	2	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.1435
+deep	16384 p2	16384	2	main, card 8	ADD node	11.00	0.1309
+deep	16384 p2	16384	2	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1177
+deep	16384 p2	16384	2	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1094
+deep	16384 p2	16384	2	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1072
+deep	16384 p2	16384	2	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1053
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1027
+deep	16384 p2	16384	2	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0568
+deep	16384 p2	16384	2	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0548
+deep	16384 p2	16384	2	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0535
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0496
+deep	16384 p2	16384	2	main, card 8	TOP_K indexer_top_k	1.00	0.0480
+deep	16384 p2	16384	2	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0460
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0427
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0423
+deep	16384 p2	16384	2	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0405
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0392
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0389
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0388
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0375
+deep	16384 p2	16384	2	main, card 8	FILL node	7.00	0.0347
+deep	16384 p2	16384	2	main, card 8	SIGMOID beta_sigmoid	1.00	0.0334
+deep	16384 p2	16384	2	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0294
+deep	16384 p2	16384	2	main, card 8	RMS_NORM+MUL node	5.00	0.0294
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0285
+deep	16384 p2	16384	2	main, card 8	MUL gate	1.00	0.0265
+deep	16384 p2	16384	2	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0230
+deep	16384 p2	16384	2	main, card 8	CPY hop_wide	1.00	0.0219
+deep	16384 p2	16384	2	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0212
+deep	16384 p2	16384	2	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0190
+deep	16384 p2	16384	2	main, card 8	GET_ROWS top_p_candidates	4.00	0.0188
+deep	16384 p2	16384	2	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0166
+deep	16384 p2	16384	2	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0166
+deep	16384 p2	16384	2	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0156
+deep	16384 p2	16384	2	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0150
+deep	16384 p2	16384	2	main, card 8	SCALE node	6.00	0.0142
+deep	16384 p2	16384	2	main, card 8	CONT gate_reshaped	1.00	0.0141
+deep	16384 p2	16384	2	main, card 8	RMS_NORM+MUL norm	4.00	0.0135
+deep	16384 p2	16384	2	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0134
+deep	16384 p2	16384	2	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0133
+deep	16384 p2	16384	2	main, card 8	STEP top_p_mask	4.00	0.0118
+deep	16384 p2	16384	2	main, card 8	GET_ROWS top_k_rows	4.00	0.0105
+deep	16384 p2	16384	2	main, card 8	SILU node	5.00	0.0104
+deep	16384 p2	16384	2	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0098
+deep	16384 p2	16384	2	main, card 8	SCALE top_p_ones	4.00	0.0092
+deep	16384 p2	16384	2	main, card 8	ARGMAX greedy_argmax	4.00	0.0086
+deep	16384 p2	16384	2	main, card 8	CUMSUM top_p_cdf	4.00	0.0086
+deep	16384 p2	16384	2	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0076
+deep	16384 p2	16384	2	main, card 8	ADD top_p_logits	4.00	0.0076
+deep	16384 p2	16384	2	main, card 8	SUM top_p_index_f32	4.00	0.0075
+deep	16384 p2	16384	2	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0075
+deep	16384 p2	16384	2	main, card 8	ADD ffn_out	2.00	0.0073
+deep	16384 p2	16384	2	main, card 8	CLAMP node	4.00	0.0070
+deep	16384 p2	16384	2	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0069
+deep	16384 p2	16384	2	main, card 8	SIGMOID+MUL node	1.00	0.0067
+deep	16384 p2	16384	2	main, card 8	CPY _(copy)	4.00	0.0063
+deep	16384 p2	16384	2	main, card 8	SWIGLU ffn_swiglu	2.00	0.0059
+deep	16384 p2	16384	2	main, card 8	MUL ffn_shexp_gated	2.00	0.0055
+deep	16384 p2	16384	2	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0054
+deep	16384 p2	16384	2	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0052
+deep	16384 p2	16384	2	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0052
+deep	16384 p2	16384	2	main, card 8	LOG top_p_bias	4.00	0.0049
+deep	16384 p2	16384	2	main, card 8	ROPE Qcur	1.00	0.0044
+deep	16384 p2	16384	2	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0043
+deep	16384 p2	16384	2	main, card 8	SET_ROWS _(reshaped)_(view)	4.00	0.0042
+deep	16384 p2	16384	2	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0041
+deep	16384 p2	16384	2	main, card 8	ARGMAX temp_max_idx	4.00	0.0037
+deep	16384 p2	16384	2	main, card 8	ROPE indexer_q	1.00	0.0034
+deep	16384 p2	16384	2	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0032
+deep	16384 p2	16384	2	main, card 8	ROPE node	1.00	0.0030
+deep	16384 p2	16384	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0030
+deep	16384 p2	16384	2	main, card 8	CONCAT node	1.00	0.0028
+deep	16384 p2	16384	2	main, card 8	SCALE result_norm	1.00	0.0027
+deep	16384 p2	16384	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0026
+deep	16384 p2	16384	2	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0025
+deep	16384 p2	16384	2	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0021
+deep	16384 p2	16384	2	main, card 8	SOFTPLUS a_softplus	1.00	0.0005
+deep	16384 p2	16384	2	draft	FLASH_ATTN_EXT node	4.00	1.8073
+deep	16384 p2	16384	2	draft	MUL_MAT output:q6_K:2560x32768	3.00	1.7870
+deep	16384 p2	16384	2	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3296
+deep	16384 p2	16384	2	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3037
+deep	16384 p2	16384	2	draft	GET_ROWS node	8.00	1.2709
+deep	16384 p2	16384	2	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2311
+deep	16384 p2	16384	2	draft	MUL_MAT_ID output:q6_K:2560x1	3.00	0.7555
+deep	16384 p2	16384	2	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7090
+deep	16384 p2	16384	2	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4327
+deep	16384 p2	16384	2	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3315
+deep	16384 p2	16384	2	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3035
+deep	16384 p2	16384	2	draft	TOP_K top_k	3.00	0.2866
+deep	16384 p2	16384	2	draft	LIGHTNING_INDEXER indexer_score	4.00	0.2840
+deep	16384 p2	16384	2	draft	CONCAT node	11.00	0.2551
+deep	16384 p2	16384	2	draft	PAD node	3.00	0.2445
+deep	16384 p2	16384	2	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2430
+deep	16384 p2	16384	2	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2155
+deep	16384 p2	16384	2	draft	TOP_K indexer_top_k	4.00	0.1742
+deep	16384 p2	16384	2	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1681
+deep	16384 p2	16384	2	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1625
+deep	16384 p2	16384	2	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1586
+deep	16384 p2	16384	2	draft	RMS_NORM+MUL norm	24.00	0.1274
+deep	16384 p2	16384	2	draft	SCALE node	15.00	0.1249
+deep	16384 p2	16384	2	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1209
+deep	16384 p2	16384	2	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0914
+deep	16384 p2	16384	2	draft	SILU node	11.00	0.0884
+deep	16384 p2	16384	2	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0760
+deep	16384 p2	16384	2	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0737
+deep	16384 p2	16384	2	draft	FILL node	12.00	0.0718
+deep	16384 p2	16384	2	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0623
+deep	16384 p2	16384	2	draft	RMS_NORM+MUL node	11.00	0.0614
+deep	16384 p2	16384	2	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0451
+deep	16384 p2	16384	2	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0446
+deep	16384 p2	16384	2	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0440
+deep	16384 p2	16384	2	draft	CONT result_output	3.00	0.0429
+deep	16384 p2	16384	2	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0405
+deep	16384 p2	16384	2	draft	TOP_K_MASK indexer_sel	4.00	0.0374
+deep	16384 p2	16384	2	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0359
+deep	16384 p2	16384	2	draft	ADD node	12.00	0.0288
+deep	16384 p2	16384	2	draft	DSV4_HC_PRE hc_mixed	8.00	0.0269
+deep	16384 p2	16384	2	draft	CONT gate_reshaped	4.00	0.0247
+deep	16384 p2	16384	2	draft	GET_ROWS mtp_tok_embd	4.00	0.0192
+deep	16384 p2	16384	2	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0176
+deep	16384 p2	16384	2	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0120
+deep	16384 p2	16384	2	draft	ROPE Qcur	4.00	0.0118
+deep	16384 p2	16384	2	draft	ROPE node	4.00	0.0112
+deep	16384 p2	16384	2	draft	ROPE+SET_ROWS Kcur	4.00	0.0089
+deep	16384 p2	16384	2	draft	GET_ROWS top_k_rows	3.00	0.0086
+deep	16384 p2	16384	2	draft	GET_ROWS h_nextn	3.00	0.0085
+deep	16384 p2	16384	2	draft	ROPE indexer_q	4.00	0.0085
+deep	16384 p2	16384	2	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0082
+deep	16384 p2	16384	2	draft	DSV4_HC_PRE result_norm	3.00	0.0081
+deep	16384 p2	16384	2	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0079
+deep	16384 p2	16384	2	draft	REPEAT mtp_enorm	4.00	0.0078
+deep	16384 p2	16384	2	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0077
+deep	16384 p2	16384	2	draft	ADD ffn_out	4.00	0.0029
+deep	16384 p2	16384	2	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0014
+deep	16384 p2	16384	2	draft	MUL ffn_shexp_gated	4.00	0.0013
+deep	16384 p2	16384	2	draft	SET_ROWS _(reshaped)_(view)	3.00	0.0005
+deep	16384 p2	16384	2	draft	SIGMOID shared_expert_gate_sigmoid	4.00	-0.0002
+deep	32768 p1	32768	1	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	11.8593
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.5327
+deep	32768 p1	32768	1	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.7162
+deep	32768 p1	32768	1	main, cards 0 to 7	GET_ROWS node	23.00	6.8553
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	6.8414
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4611
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9779
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8956
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5326
+deep	32768 p1	32768	1	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	2.9180
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5812
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.5118
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4721
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3937
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3192
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3142
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1702
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.7569
+deep	32768 p1	32768	1	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2372
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1573
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0570
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0333
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9362
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8412
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7751
+deep	32768 p1	32768	1	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7402
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7194
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7146
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7050
+deep	32768 p1	32768	1	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.6231
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.6118
+deep	32768 p1	32768	1	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.5766
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5538
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5293
+deep	32768 p1	32768	1	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5241
+deep	32768 p1	32768	1	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5208
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4587
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4363
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL gate	35.00	0.4126
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3950
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3743
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3730
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3531
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3249
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3191
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3093
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.3000
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2851
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2759
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2748
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2637
+deep	32768 p1	32768	1	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2514
+deep	32768 p1	32768	1	main, cards 0 to 7	ADD node	73.00	0.2361
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2329
+deep	32768 p1	32768	1	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2236
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2020
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1948
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1946
+deep	32768 p1	32768	1	main, cards 0 to 7	SCALE node	104.00	0.1945
+deep	32768 p1	32768	1	main, cards 0 to 7	SILU node	93.00	0.1878
+deep	32768 p1	32768	1	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.1821
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1772
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1673
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1607
+deep	32768 p1	32768	1	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1480
+deep	32768 p1	32768	1	main, cards 0 to 7	CPY hop_wide	7.00	0.1473
+deep	32768 p1	32768	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1406
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1396
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1348
+deep	32768 p1	32768	1	main, cards 0 to 7	CONCAT node	12.00	0.1312
+deep	32768 p1	32768	1	main, cards 0 to 7	ADD ffn_out	46.00	0.1267
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1255
+deep	32768 p1	32768	1	main, cards 0 to 7	CPY hop_narrow	8.00	0.1213
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1180
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1146
+deep	32768 p1	32768	1	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1139
+deep	32768 p1	32768	1	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.1134
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1131
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1021
+deep	32768 p1	32768	1	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.0994
+deep	32768 p1	32768	1	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0973
+deep	32768 p1	32768	1	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0893
+deep	32768 p1	32768	1	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0829
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0786
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0692
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0676
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0671
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0627
+deep	32768 p1	32768	1	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0623
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0619
+deep	32768 p1	32768	1	main, cards 0 to 7	FILL node	33.00	0.0567
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0493
+deep	32768 p1	32768	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0473
+deep	32768 p1	32768	1	main, cards 0 to 7	ROPE Qcur	11.00	0.0431
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0398
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0392
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL node	6.00	0.0370
+deep	32768 p1	32768	1	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0346
+deep	32768 p1	32768	1	main, cards 0 to 7	ROPE node	11.00	0.0329
+deep	32768 p1	32768	1	main, cards 0 to 7	REPEAT node	1.00	0.0219
+deep	32768 p1	32768	1	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0207
+deep	32768 p1	32768	1	main, cards 0 to 7	ROPE indexer_q	11.00	0.0185
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0152
+deep	32768 p1	32768	1	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0112
+deep	32768 p1	32768	1	main, cards 0 to 7	REPEAT hc_init	1.00	0.0110
+deep	32768 p1	32768	1	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0110
+deep	32768 p1	32768	1	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0091
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0044
+deep	32768 p1	32768	1	main, cards 0 to 7	CLAMP node	1.00	0.0036
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0032
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0031
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0031
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0030
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0030
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0028
+deep	32768 p1	32768	1	main, cards 0 to 7	ABS node	1.00	0.0027
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0027
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0027
+deep	32768 p1	32768	1	main, cards 0 to 7	SUM_ROWS node	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0026
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0025
+deep	32768 p1	32768	1	main, cards 0 to 7	CONT _(cont)	1.00	0.0025
+deep	32768 p1	32768	1	main, cards 0 to 7	SGN node	1.00	0.0025
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0025
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0024
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0024
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0024
+deep	32768 p1	32768	1	main, cards 0 to 7	SQRT node	1.00	0.0024
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0022
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0020
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0017
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0015
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0009
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0005
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0005
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0003
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0003
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0008
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0009
+deep	32768 p1	32768	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0018
+deep	32768 p1	32768	1	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0813
+deep	32768 p1	32768	1	main, card 8	FLASH_ATTN_EXT node	1.00	1.0685
+deep	32768 p1	32768	1	main, card 8	GET_ROWS node	11.00	0.6410
+deep	32768 p1	32768	1	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5365
+deep	32768 p1	32768	1	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3472
+deep	32768 p1	32768	1	main, card 8	TOP_K top_k	4.00	0.3335
+deep	32768 p1	32768	1	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3044
+deep	32768 p1	32768	1	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2951
+deep	32768 p1	32768	1	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.2670
+deep	32768 p1	32768	1	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2506
+deep	32768 p1	32768	1	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2397
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2284
+deep	32768 p1	32768	1	main, card 8	PAD node	1.00	0.2173
+deep	32768 p1	32768	1	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1882
+deep	32768 p1	32768	1	main, card 8	ADD node	11.00	0.1400
+deep	32768 p1	32768	1	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1279
+deep	32768 p1	32768	1	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1090
+deep	32768 p1	32768	1	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1071
+deep	32768 p1	32768	1	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1053
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1026
+deep	32768 p1	32768	1	main, card 8	MUL gate	1.00	0.0811
+deep	32768 p1	32768	1	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0569
+deep	32768 p1	32768	1	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0549
+deep	32768 p1	32768	1	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0535
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0495
+deep	32768 p1	32768	1	main, card 8	TOP_K indexer_top_k	1.00	0.0495
+deep	32768 p1	32768	1	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0458
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0439
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0425
+deep	32768 p1	32768	1	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0406
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0389
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0384
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0373
+deep	32768 p1	32768	1	main, card 8	FILL node	7.00	0.0358
+deep	32768 p1	32768	1	main, card 8	RMS_NORM+MUL node	5.00	0.0315
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0312
+deep	32768 p1	32768	1	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0297
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0281
+deep	32768 p1	32768	1	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0236
+deep	32768 p1	32768	1	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0225
+deep	32768 p1	32768	1	main, card 8	CPY hop_wide	1.00	0.0212
+deep	32768 p1	32768	1	main, card 8	SOFTPLUS a_softplus	1.00	0.0189
+deep	32768 p1	32768	1	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0178
+deep	32768 p1	32768	1	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0177
+deep	32768 p1	32768	1	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0176
+deep	32768 p1	32768	1	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0165
+deep	32768 p1	32768	1	main, card 8	CUMSUM top_p_cdf	4.00	0.0164
+deep	32768 p1	32768	1	main, card 8	SCALE node	6.00	0.0155
+deep	32768 p1	32768	1	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0148
+deep	32768 p1	32768	1	main, card 8	RMS_NORM+MUL norm	4.00	0.0144
+deep	32768 p1	32768	1	main, card 8	CONT gate_reshaped	1.00	0.0142
+deep	32768 p1	32768	1	main, card 8	GET_ROWS top_p_candidates	4.00	0.0141
+deep	32768 p1	32768	1	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0136
+deep	32768 p1	32768	1	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0133
+deep	32768 p1	32768	1	main, card 8	STEP top_p_mask	4.00	0.0117
+deep	32768 p1	32768	1	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0111
+deep	32768 p1	32768	1	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0109
+deep	32768 p1	32768	1	main, card 8	GET_ROWS top_k_rows	4.00	0.0107
+deep	32768 p1	32768	1	main, card 8	SILU node	5.00	0.0103
+deep	32768 p1	32768	1	main, card 8	ADD top_p_logits	4.00	0.0098
+deep	32768 p1	32768	1	main, card 8	LOG top_p_bias	4.00	0.0094
+deep	32768 p1	32768	1	main, card 8	SUM top_p_index_f32	4.00	0.0092
+deep	32768 p1	32768	1	main, card 8	SCALE top_p_ones	4.00	0.0091
+deep	32768 p1	32768	1	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0082
+deep	32768 p1	32768	1	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0082
+deep	32768 p1	32768	1	main, card 8	SIGMOID+MUL node	1.00	0.0066
+deep	32768 p1	32768	1	main, card 8	CLAMP node	4.00	0.0065
+deep	32768 p1	32768	1	main, card 8	ADD ffn_out	2.00	0.0061
+deep	32768 p1	32768	1	main, card 8	ROPE Qcur	1.00	0.0061
+deep	32768 p1	32768	1	main, card 8	SWIGLU ffn_swiglu	2.00	0.0058
+deep	32768 p1	32768	1	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0056
+deep	32768 p1	32768	1	main, card 8	MUL ffn_shexp_gated	2.00	0.0055
+deep	32768 p1	32768	1	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0052
+deep	32768 p1	32768	1	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0050
+deep	32768 p1	32768	1	main, card 8	SET_ROWS _(reshaped)_(view)	4.00	0.0047
+deep	32768 p1	32768	1	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0044
+deep	32768 p1	32768	1	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0041
+deep	32768 p1	32768	1	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0035
+deep	32768 p1	32768	1	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0035
+deep	32768 p1	32768	1	main, card 8	ARGMAX temp_max_idx	4.00	0.0033
+deep	32768 p1	32768	1	main, card 8	ROPE indexer_q	1.00	0.0032
+deep	32768 p1	32768	1	main, card 8	SIGMOID beta_sigmoid	1.00	0.0032
+deep	32768 p1	32768	1	main, card 8	ROPE node	1.00	0.0032
+deep	32768 p1	32768	1	main, card 8	CONCAT node	1.00	0.0031
+deep	32768 p1	32768	1	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0029
+deep	32768 p1	32768	1	main, card 8	SCALE result_norm	1.00	0.0029
+deep	32768 p1	32768	1	main, card 8	CPY _(copy)	4.00	0.0027
+deep	32768 p1	32768	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0027
+deep	32768 p1	32768	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0025
+deep	32768 p1	32768	1	main, card 8	ARGMAX greedy_argmax	4.00	0.0015
+deep	32768 p1	32768	1	draft	GET_ROWS node	8.00	2.4876
+deep	32768 p1	32768	1	draft	FLASH_ATTN_EXT node	4.00	1.8427
+deep	32768 p1	32768	1	draft	MUL_MAT output:q6_K:2560x32768	2.92	1.7402
+deep	32768 p1	32768	1	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3271
+deep	32768 p1	32768	1	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3170
+deep	32768 p1	32768	1	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2306
+deep	32768 p1	32768	1	draft	MUL_MAT_ID output:q6_K:2560x1	2.92	0.9070
+deep	32768 p1	32768	1	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7085
+deep	32768 p1	32768	1	draft	LIGHTNING_INDEXER indexer_score	4.00	0.5050
+deep	32768 p1	32768	1	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4329
+deep	32768 p1	32768	1	draft	MUL_MAT output:q6_K:2560x248320	0.08	0.3481
+deep	32768 p1	32768	1	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3360
+deep	32768 p1	32768	1	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3035
+deep	32768 p1	32768	1	draft	TOP_K top_k	3.00	0.2839
+deep	32768 p1	32768	1	draft	CONCAT node	10.92	0.2513
+deep	32768 p1	32768	1	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2475
+deep	32768 p1	32768	1	draft	PAD node	3.00	0.2440
+deep	32768 p1	32768	1	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2150
+deep	32768 p1	32768	1	draft	TOP_K indexer_top_k	4.00	0.1865
+deep	32768 p1	32768	1	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1677
+deep	32768 p1	32768	1	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1640
+deep	32768 p1	32768	1	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1589
+deep	32768 p1	32768	1	draft	RMS_NORM+MUL norm	24.00	0.1379
+deep	32768 p1	32768	1	draft	SCALE node	15.00	0.1311
+deep	32768 p1	32768	1	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1226
+deep	32768 p1	32768	1	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0911
+deep	32768 p1	32768	1	draft	FILL node	12.00	0.0868
+deep	32768 p1	32768	1	draft	SILU node	11.00	0.0800
+deep	32768 p1	32768	1	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0770
+deep	32768 p1	32768	1	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0750
+deep	32768 p1	32768	1	draft	RMS_NORM+MUL node	11.00	0.0564
+deep	32768 p1	32768	1	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0478
+deep	32768 p1	32768	1	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0459
+deep	32768 p1	32768	1	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0454
+deep	32768 p1	32768	1	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0424
+deep	32768 p1	32768	1	draft	TOP_K_MASK indexer_sel	4.00	0.0404
+deep	32768 p1	32768	1	draft	CONT result_output	2.92	0.0399
+deep	32768 p1	32768	1	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0368
+deep	32768 p1	32768	1	draft	DSV4_HC_PRE hc_mixed	8.00	0.0333
+deep	32768 p1	32768	1	draft	ADD node	12.00	0.0290
+deep	32768 p1	32768	1	draft	CONT gate_reshaped	4.00	0.0265
+deep	32768 p1	32768	1	draft	GET_ROWS mtp_tok_embd	4.00	0.0193
+deep	32768 p1	32768	1	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0192
+deep	32768 p1	32768	1	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0165
+deep	32768 p1	32768	1	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0139
+deep	32768 p1	32768	1	draft	ROPE Qcur	4.00	0.0134
+deep	32768 p1	32768	1	draft	ROPE node	4.00	0.0112
+deep	32768 p1	32768	1	draft	ROPE+SET_ROWS Kcur	4.00	0.0092
+deep	32768 p1	32768	1	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0091
+deep	32768 p1	32768	1	draft	GET_ROWS h_nextn	3.00	0.0088
+deep	32768 p1	32768	1	draft	ROPE indexer_q	4.00	0.0088
+deep	32768 p1	32768	1	draft	REPEAT mtp_enorm	4.00	0.0085
+deep	32768 p1	32768	1	draft	GET_ROWS top_k_rows	3.00	0.0084
+deep	32768 p1	32768	1	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0084
+deep	32768 p1	32768	1	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0080
+deep	32768 p1	32768	1	draft	DSV4_HC_PRE result_norm	3.00	0.0076
+deep	32768 p1	32768	1	draft	SET_ROWS _(reshaped)_(view)	2.92	0.0047
+deep	32768 p1	32768	1	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0030
+deep	32768 p1	32768	1	draft	ADD ffn_out	4.00	0.0021
+deep	32768 p1	32768	1	draft	MUL ffn_shexp_gated	4.00	0.0012
+deep	32768 p1	32768	1	draft	SIGMOID shared_expert_gate_sigmoid	4.00	0.0004
+deep	32768 p2	32768	2	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	11.8660
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.5487
+deep	32768 p2	32768	2	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.7199
+deep	32768 p2	32768	2	main, cards 0 to 7	GET_ROWS node	23.00	6.8532
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	6.8467
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4667
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9762
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8923
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5337
+deep	32768 p2	32768	2	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	2.9173
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5711
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.4968
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4747
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3898
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3197
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3166
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1701
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.7584
+deep	32768 p2	32768	2	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2445
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1565
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0560
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0329
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9360
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8412
+deep	32768 p2	32768	2	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7847
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7737
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7177
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7153
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7060
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.6223
+deep	32768 p2	32768	2	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.6058
+deep	32768 p2	32768	2	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.5793
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5628
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5298
+deep	32768 p2	32768	2	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5083
+deep	32768 p2	32768	2	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5082
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4620
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL gate	35.00	0.4486
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4348
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3937
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3747
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3661
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3631
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3245
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3133
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3082
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.3034
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2883
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2748
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2652
+deep	32768 p2	32768	2	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2471
+deep	32768 p2	32768	2	main, cards 0 to 7	ADD node	73.00	0.2376
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2318
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2250
+deep	32768 p2	32768	2	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2229
+deep	32768 p2	32768	2	main, cards 0 to 7	SCALE node	104.00	0.2040
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2015
+deep	32768 p2	32768	2	main, cards 0 to 7	SILU node	93.00	0.1975
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1968
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1966
+deep	32768 p2	32768	2	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.1950
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1730
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1669
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1654
+deep	32768 p2	32768	2	main, cards 0 to 7	CPY hop_wide	7.00	0.1474
+deep	32768 p2	32768	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1428
+deep	32768 p2	32768	2	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1426
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1375
+deep	32768 p2	32768	2	main, cards 0 to 7	CONCAT node	12.00	0.1361
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1350
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1254
+deep	32768 p2	32768	2	main, cards 0 to 7	ADD ffn_out	46.00	0.1245
+deep	32768 p2	32768	2	main, cards 0 to 7	CPY hop_narrow	8.00	0.1210
+deep	32768 p2	32768	2	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1164
+deep	32768 p2	32768	2	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.1148
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1143
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1128
+deep	32768 p2	32768	2	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1072
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1072
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1008
+deep	32768 p2	32768	2	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0938
+deep	32768 p2	32768	2	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0921
+deep	32768 p2	32768	2	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0879
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0782
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0696
+deep	32768 p2	32768	2	main, cards 0 to 7	FILL node	33.00	0.0674
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0672
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0669
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0626
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0616
+deep	32768 p2	32768	2	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0532
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0490
+deep	32768 p2	32768	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0470
+deep	32768 p2	32768	2	main, cards 0 to 7	ROPE Qcur	11.00	0.0422
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0398
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0391
+deep	32768 p2	32768	2	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0367
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL node	6.00	0.0335
+deep	32768 p2	32768	2	main, cards 0 to 7	ROPE node	11.00	0.0308
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0261
+deep	32768 p2	32768	2	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0212
+deep	32768 p2	32768	2	main, cards 0 to 7	ROPE indexer_q	11.00	0.0185
+deep	32768 p2	32768	2	main, cards 0 to 7	REPEAT node	1.00	0.0117
+deep	32768 p2	32768	2	main, cards 0 to 7	REPEAT hc_init	1.00	0.0112
+deep	32768 p2	32768	2	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0104
+deep	32768 p2	32768	2	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0070
+deep	32768 p2	32768	2	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0031
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0031
+deep	32768 p2	32768	2	main, cards 0 to 7	SUM_ROWS node	1.00	0.0030
+deep	32768 p2	32768	2	main, cards 0 to 7	SQRT node	1.00	0.0030
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0029
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0029
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0028
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0028
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0028
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0027
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0027
+deep	32768 p2	32768	2	main, cards 0 to 7	SGN node	1.00	0.0027
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0026
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0026
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0025
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0025
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0025
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0025
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0025
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0024
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0024
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0023
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0023
+deep	32768 p2	32768	2	main, cards 0 to 7	CONT _(cont)	1.00	0.0022
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0022
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0022
+deep	32768 p2	32768	2	main, cards 0 to 7	ABS node	1.00	0.0021
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0021
+deep	32768 p2	32768	2	main, cards 0 to 7	CLAMP node	1.00	0.0016
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0014
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0013
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0007
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0007
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0004
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0003
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0003
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0009
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0009
+deep	32768 p2	32768	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0018
+deep	32768 p2	32768	2	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0863
+deep	32768 p2	32768	2	main, card 8	FLASH_ATTN_EXT node	1.00	1.0684
+deep	32768 p2	32768	2	main, card 8	GET_ROWS node	11.00	0.6427
+deep	32768 p2	32768	2	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5374
+deep	32768 p2	32768	2	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3470
+deep	32768 p2	32768	2	main, card 8	TOP_K top_k	4.00	0.3325
+deep	32768 p2	32768	2	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3041
+deep	32768 p2	32768	2	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2941
+deep	32768 p2	32768	2	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.2667
+deep	32768 p2	32768	2	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2509
+deep	32768 p2	32768	2	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2402
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2284
+deep	32768 p2	32768	2	main, card 8	PAD node	1.00	0.2173
+deep	32768 p2	32768	2	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1883
+deep	32768 p2	32768	2	main, card 8	ADD node	11.00	0.1336
+deep	32768 p2	32768	2	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1293
+deep	32768 p2	32768	2	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1092
+deep	32768 p2	32768	2	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1072
+deep	32768 p2	32768	2	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1053
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1027
+deep	32768 p2	32768	2	main, card 8	MUL gate	1.00	0.0922
+deep	32768 p2	32768	2	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0575
+deep	32768 p2	32768	2	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0545
+deep	32768 p2	32768	2	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0535
+deep	32768 p2	32768	2	main, card 8	TOP_K indexer_top_k	1.00	0.0498
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0495
+deep	32768 p2	32768	2	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0460
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0427
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0424
+deep	32768 p2	32768	2	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0404
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0387
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0385
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0374
+deep	32768 p2	32768	2	main, card 8	FILL node	7.00	0.0353
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0333
+deep	32768 p2	32768	2	main, card 8	RMS_NORM+MUL node	5.00	0.0310
+deep	32768 p2	32768	2	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0298
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0284
+deep	32768 p2	32768	2	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0232
+deep	32768 p2	32768	2	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0228
+deep	32768 p2	32768	2	main, card 8	CPY hop_wide	1.00	0.0210
+deep	32768 p2	32768	2	main, card 8	CUMSUM top_p_cdf	4.00	0.0199
+deep	32768 p2	32768	2	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0178
+deep	32768 p2	32768	2	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0176
+deep	32768 p2	32768	2	main, card 8	SOFTPLUS a_softplus	1.00	0.0166
+deep	32768 p2	32768	2	main, card 8	STEP top_p_mask	4.00	0.0165
+deep	32768 p2	32768	2	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0163
+deep	32768 p2	32768	2	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0159
+deep	32768 p2	32768	2	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0153
+deep	32768 p2	32768	2	main, card 8	GET_ROWS top_p_candidates	4.00	0.0150
+deep	32768 p2	32768	2	main, card 8	CONT gate_reshaped	1.00	0.0144
+deep	32768 p2	32768	2	main, card 8	SCALE node	6.00	0.0143
+deep	32768 p2	32768	2	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0137
+deep	32768 p2	32768	2	main, card 8	RMS_NORM+MUL norm	4.00	0.0134
+deep	32768 p2	32768	2	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0132
+deep	32768 p2	32768	2	main, card 8	SUM top_p_index_f32	4.00	0.0125
+deep	32768 p2	32768	2	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0122
+deep	32768 p2	32768	2	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0107
+deep	32768 p2	32768	2	main, card 8	GET_ROWS top_k_rows	4.00	0.0107
+deep	32768 p2	32768	2	main, card 8	SILU node	5.00	0.0105
+deep	32768 p2	32768	2	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0102
+deep	32768 p2	32768	2	main, card 8	SCALE top_p_ones	4.00	0.0090
+deep	32768 p2	32768	2	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0083
+deep	32768 p2	32768	2	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0080
+deep	32768 p2	32768	2	main, card 8	LOG top_p_bias	4.00	0.0066
+deep	32768 p2	32768	2	main, card 8	SIGMOID+MUL node	1.00	0.0064
+deep	32768 p2	32768	2	main, card 8	SWIGLU ffn_swiglu	2.00	0.0059
+deep	32768 p2	32768	2	main, card 8	ADD ffn_out	2.00	0.0057
+deep	32768 p2	32768	2	main, card 8	MUL ffn_shexp_gated	2.00	0.0057
+deep	32768 p2	32768	2	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0053
+deep	32768 p2	32768	2	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0050
+deep	32768 p2	32768	2	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0047
+deep	32768 p2	32768	2	main, card 8	SIGMOID beta_sigmoid	1.00	0.0044
+deep	32768 p2	32768	2	main, card 8	ADD top_p_logits	4.00	0.0044
+deep	32768 p2	32768	2	main, card 8	ROPE Qcur	1.00	0.0044
+deep	32768 p2	32768	2	main, card 8	CPY _(copy)	4.00	0.0039
+deep	32768 p2	32768	2	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0039
+deep	32768 p2	32768	2	main, card 8	ROPE indexer_q	1.00	0.0036
+deep	32768 p2	32768	2	main, card 8	ARGMAX temp_max_idx	4.00	0.0032
+deep	32768 p2	32768	2	main, card 8	SCALE result_norm	1.00	0.0031
+deep	32768 p2	32768	2	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0031
+deep	32768 p2	32768	2	main, card 8	CLAMP node	4.00	0.0030
+deep	32768 p2	32768	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0029
+deep	32768 p2	32768	2	main, card 8	ROPE node	1.00	0.0029
+deep	32768 p2	32768	2	main, card 8	CONCAT node	1.00	0.0029
+deep	32768 p2	32768	2	main, card 8	SET_ROWS _(reshaped)_(view)	4.00	0.0027
+deep	32768 p2	32768	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0027
+deep	32768 p2	32768	2	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0026
+deep	32768 p2	32768	2	main, card 8	ARGMAX greedy_argmax	4.00	0.0018
+deep	32768 p2	32768	2	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0012
+deep	32768 p2	32768	2	draft	GET_ROWS node	8.00	2.5032
+deep	32768 p2	32768	2	draft	FLASH_ATTN_EXT node	4.00	1.8407
+deep	32768 p2	32768	2	draft	MUL_MAT output:q6_K:2560x32768	3.00	1.7860
+deep	32768 p2	32768	2	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3281
+deep	32768 p2	32768	2	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3156
+deep	32768 p2	32768	2	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2306
+deep	32768 p2	32768	2	draft	MUL_MAT_ID output:q6_K:2560x1	3.00	0.9312
+deep	32768 p2	32768	2	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7089
+deep	32768 p2	32768	2	draft	LIGHTNING_INDEXER indexer_score	4.00	0.5071
+deep	32768 p2	32768	2	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4332
+deep	32768 p2	32768	2	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3427
+deep	32768 p2	32768	2	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3036
+deep	32768 p2	32768	2	draft	TOP_K top_k	3.00	0.2855
+deep	32768 p2	32768	2	draft	CONCAT node	11.00	0.2554
+deep	32768 p2	32768	2	draft	PAD node	3.00	0.2442
+deep	32768 p2	32768	2	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2356
+deep	32768 p2	32768	2	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2154
+deep	32768 p2	32768	2	draft	TOP_K indexer_top_k	4.00	0.1841
+deep	32768 p2	32768	2	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1679
+deep	32768 p2	32768	2	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1636
+deep	32768 p2	32768	2	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1593
+deep	32768 p2	32768	2	draft	RMS_NORM+MUL norm	24.00	0.1375
+deep	32768 p2	32768	2	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1213
+deep	32768 p2	32768	2	draft	SCALE node	15.00	0.1100
+deep	32768 p2	32768	2	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0921
+deep	32768 p2	32768	2	draft	SILU node	11.00	0.0830
+deep	32768 p2	32768	2	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0757
+deep	32768 p2	32768	2	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0743
+deep	32768 p2	32768	2	draft	FILL node	12.00	0.0678
+deep	32768 p2	32768	2	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0599
+deep	32768 p2	32768	2	draft	DSV4_HC_PRE hc_mixed	8.00	0.0504
+deep	32768 p2	32768	2	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0463
+deep	32768 p2	32768	2	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0452
+deep	32768 p2	32768	2	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0420
+deep	32768 p2	32768	2	draft	TOP_K_MASK indexer_sel	4.00	0.0417
+deep	32768 p2	32768	2	draft	CONT result_output	3.00	0.0408
+deep	32768 p2	32768	2	draft	RMS_NORM+MUL node	11.00	0.0403
+deep	32768 p2	32768	2	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0364
+deep	32768 p2	32768	2	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0282
+deep	32768 p2	32768	2	draft	ADD node	12.00	0.0282
+deep	32768 p2	32768	2	draft	CONT gate_reshaped	4.00	0.0265
+deep	32768 p2	32768	2	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0191
+deep	32768 p2	32768	2	draft	GET_ROWS mtp_tok_embd	4.00	0.0185
+deep	32768 p2	32768	2	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0119
+deep	32768 p2	32768	2	draft	ROPE Qcur	4.00	0.0119
+deep	32768 p2	32768	2	draft	ROPE node	4.00	0.0112
+deep	32768 p2	32768	2	draft	GET_ROWS h_nextn	3.00	0.0094
+deep	32768 p2	32768	2	draft	ROPE+SET_ROWS Kcur	4.00	0.0093
+deep	32768 p2	32768	2	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0087
+deep	32768 p2	32768	2	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0087
+deep	32768 p2	32768	2	draft	GET_ROWS top_k_rows	3.00	0.0085
+deep	32768 p2	32768	2	draft	ROPE indexer_q	4.00	0.0082
+deep	32768 p2	32768	2	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0080
+deep	32768 p2	32768	2	draft	REPEAT mtp_enorm	4.00	0.0069
+deep	32768 p2	32768	2	draft	DSV4_HC_PRE result_norm	3.00	0.0068
+deep	32768 p2	32768	2	draft	SET_ROWS _(reshaped)_(view)	3.00	0.0047
+deep	32768 p2	32768	2	draft	ADD ffn_out	4.00	0.0019
+deep	32768 p2	32768	2	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0012
+deep	32768 p2	32768	2	draft	MUL ffn_shexp_gated	4.00	0.0010
+deep	32768 p2	32768	2	draft	SIGMOID shared_expert_gate_sigmoid	4.00	-0.0003
+deep	49152 p1	49152	1	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	12.1083
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.6936
+deep	49152 p1	49152	1	main, cards 0 to 7	GET_ROWS node	23.00	10.1852
+deep	49152 p1	49152	1	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.7086
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	6.9747
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4550
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9708
+deep	49152 p1	49152	1	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	4.2824
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8918
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5403
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5683
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.5203
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4684
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3968
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3169
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3139
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1684
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.8017
+deep	49152 p1	49152	1	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2492
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1551
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0551
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0319
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9358
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8388
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7749
+deep	49152 p1	49152	1	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7209
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7180
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7147
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7061
+deep	49152 p1	49152	1	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.6734
+deep	49152 p1	49152	1	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.6664
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5942
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5427
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5293
+deep	49152 p1	49152	1	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5053
+deep	49152 p1	49152	1	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5048
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4569
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4378
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL gate	35.00	0.4075
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3940
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3739
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3648
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3639
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3228
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3120
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3093
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.3088
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2836
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2725
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2677
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2593
+deep	49152 p1	49152	1	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2424
+deep	49152 p1	49152	1	main, cards 0 to 7	ADD node	73.00	0.2366
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2336
+deep	49152 p1	49152	1	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2231
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2026
+deep	49152 p1	49152	1	main, cards 0 to 7	SCALE node	104.00	0.2010
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1981
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1945
+deep	49152 p1	49152	1	main, cards 0 to 7	SILU node	93.00	0.1798
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1726
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1662
+deep	49152 p1	49152	1	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.1658
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1596
+deep	49152 p1	49152	1	main, cards 0 to 7	CPY hop_wide	7.00	0.1475
+deep	49152 p1	49152	1	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1417
+deep	49152 p1	49152	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1415
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1401
+deep	49152 p1	49152	1	main, cards 0 to 7	ADD ffn_out	46.00	0.1391
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1357
+deep	49152 p1	49152	1	main, cards 0 to 7	CONCAT node	12.00	0.1356
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1260
+deep	49152 p1	49152	1	main, cards 0 to 7	CPY hop_narrow	8.00	0.1214
+deep	49152 p1	49152	1	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.1168
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1146
+deep	49152 p1	49152	1	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1143
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1130
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1104
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1032
+deep	49152 p1	49152	1	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.0983
+deep	49152 p1	49152	1	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0878
+deep	49152 p1	49152	1	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0869
+deep	49152 p1	49152	1	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0852
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0780
+deep	49152 p1	49152	1	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0745
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0686
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0671
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0667
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0627
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0620
+deep	49152 p1	49152	1	main, cards 0 to 7	FILL node	33.00	0.0613
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0493
+deep	49152 p1	49152	1	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0475
+deep	49152 p1	49152	1	main, cards 0 to 7	ROPE Qcur	11.00	0.0437
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0392
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0391
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL node	6.00	0.0351
+deep	49152 p1	49152	1	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0339
+deep	49152 p1	49152	1	main, cards 0 to 7	ROPE node	11.00	0.0322
+deep	49152 p1	49152	1	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0216
+deep	49152 p1	49152	1	main, cards 0 to 7	ROPE indexer_q	11.00	0.0192
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0172
+deep	49152 p1	49152	1	main, cards 0 to 7	REPEAT node	1.00	0.0148
+deep	49152 p1	49152	1	main, cards 0 to 7	REPEAT hc_init	1.00	0.0119
+deep	49152 p1	49152	1	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0102
+deep	49152 p1	49152	1	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0101
+deep	49152 p1	49152	1	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0078
+deep	49152 p1	49152	1	main, cards 0 to 7	ABS node	1.00	0.0045
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0032
+deep	49152 p1	49152	1	main, cards 0 to 7	SQRT node	1.00	0.0030
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0030
+deep	49152 p1	49152	1	main, cards 0 to 7	CLAMP node	1.00	0.0029
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0029
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0028
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0028
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0027
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0027
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0026
+deep	49152 p1	49152	1	main, cards 0 to 7	CONT _(cont)	1.00	0.0026
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0026
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0026
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0026
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0026
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0025
+deep	49152 p1	49152	1	main, cards 0 to 7	SUM_ROWS node	1.00	0.0025
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0025
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0024
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0024
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0024
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0023
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0023
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0022
+deep	49152 p1	49152	1	main, cards 0 to 7	SGN node	1.00	0.0021
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0021
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0021
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0021
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0014
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0014
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0008
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0006
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0003
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0002
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0002
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0007
+deep	49152 p1	49152	1	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0014
+deep	49152 p1	49152	1	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0867
+deep	49152 p1	49152	1	main, card 8	FLASH_ATTN_EXT node	1.00	1.0887
+deep	49152 p1	49152	1	main, card 8	GET_ROWS node	11.00	0.9461
+deep	49152 p1	49152	1	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5629
+deep	49152 p1	49152	1	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.3902
+deep	49152 p1	49152	1	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3477
+deep	49152 p1	49152	1	main, card 8	TOP_K top_k	4.00	0.3305
+deep	49152 p1	49152	1	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3192
+deep	49152 p1	49152	1	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2944
+deep	49152 p1	49152	1	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2511
+deep	49152 p1	49152	1	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2400
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2286
+deep	49152 p1	49152	1	main, card 8	PAD node	1.00	0.2172
+deep	49152 p1	49152	1	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1889
+deep	49152 p1	49152	1	main, card 8	ADD node	11.00	0.1408
+deep	49152 p1	49152	1	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1300
+deep	49152 p1	49152	1	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1093
+deep	49152 p1	49152	1	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1073
+deep	49152 p1	49152	1	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1054
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1025
+deep	49152 p1	49152	1	main, card 8	MUL gate	1.00	0.0779
+deep	49152 p1	49152	1	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0573
+deep	49152 p1	49152	1	main, card 8	TOP_K indexer_top_k	1.00	0.0560
+deep	49152 p1	49152	1	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0547
+deep	49152 p1	49152	1	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0535
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0494
+deep	49152 p1	49152	1	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0459
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0426
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0424
+deep	49152 p1	49152	1	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0406
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0389
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0385
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0384
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0374
+deep	49152 p1	49152	1	main, card 8	FILL node	7.00	0.0327
+deep	49152 p1	49152	1	main, card 8	RMS_NORM+MUL node	5.00	0.0308
+deep	49152 p1	49152	1	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0300
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0279
+deep	49152 p1	49152	1	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0234
+deep	49152 p1	49152	1	main, card 8	SOFTPLUS a_softplus	1.00	0.0226
+deep	49152 p1	49152	1	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0224
+deep	49152 p1	49152	1	main, card 8	CPY hop_wide	1.00	0.0220
+deep	49152 p1	49152	1	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0176
+deep	49152 p1	49152	1	main, card 8	GET_ROWS top_p_candidates	4.00	0.0170
+deep	49152 p1	49152	1	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0170
+deep	49152 p1	49152	1	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0168
+deep	49152 p1	49152	1	main, card 8	CUMSUM top_p_cdf	4.00	0.0166
+deep	49152 p1	49152	1	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0150
+deep	49152 p1	49152	1	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0141
+deep	49152 p1	49152	1	main, card 8	SUM top_p_index_f32	4.00	0.0139
+deep	49152 p1	49152	1	main, card 8	CONT gate_reshaped	1.00	0.0139
+deep	49152 p1	49152	1	main, card 8	SCALE node	6.00	0.0136
+deep	49152 p1	49152	1	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0131
+deep	49152 p1	49152	1	main, card 8	RMS_NORM+MUL norm	4.00	0.0131
+deep	49152 p1	49152	1	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0127
+deep	49152 p1	49152	1	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0116
+deep	49152 p1	49152	1	main, card 8	GET_ROWS top_k_rows	4.00	0.0115
+deep	49152 p1	49152	1	main, card 8	ADD top_p_logits	4.00	0.0113
+deep	49152 p1	49152	1	main, card 8	SILU node	5.00	0.0103
+deep	49152 p1	49152	1	main, card 8	STEP top_p_mask	4.00	0.0101
+deep	49152 p1	49152	1	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0083
+deep	49152 p1	49152	1	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0082
+deep	49152 p1	49152	1	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0082
+deep	49152 p1	49152	1	main, card 8	SIGMOID beta_sigmoid	1.00	0.0074
+deep	49152 p1	49152	1	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0073
+deep	49152 p1	49152	1	main, card 8	CLAMP node	4.00	0.0068
+deep	49152 p1	49152	1	main, card 8	SIGMOID+MUL node	1.00	0.0063
+deep	49152 p1	49152	1	main, card 8	ARGMAX temp_max_idx	4.00	0.0062
+deep	49152 p1	49152	1	main, card 8	SWIGLU ffn_swiglu	2.00	0.0062
+deep	49152 p1	49152	1	main, card 8	ADD ffn_out	2.00	0.0061
+deep	49152 p1	49152	1	main, card 8	MUL ffn_shexp_gated	2.00	0.0058
+deep	49152 p1	49152	1	main, card 8	SCALE top_p_ones	4.00	0.0054
+deep	49152 p1	49152	1	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0052
+deep	49152 p1	49152	1	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0051
+deep	49152 p1	49152	1	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0051
+deep	49152 p1	49152	1	main, card 8	CPY _(copy)	4.00	0.0048
+deep	49152 p1	49152	1	main, card 8	ROPE Qcur	1.00	0.0046
+deep	49152 p1	49152	1	main, card 8	LOG top_p_bias	4.00	0.0043
+deep	49152 p1	49152	1	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0042
+deep	49152 p1	49152	1	main, card 8	ROPE indexer_q	1.00	0.0034
+deep	49152 p1	49152	1	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0032
+deep	49152 p1	49152	1	main, card 8	CONCAT node	1.00	0.0031
+deep	49152 p1	49152	1	main, card 8	ROPE node	1.00	0.0031
+deep	49152 p1	49152	1	main, card 8	SCALE result_norm	1.00	0.0030
+deep	49152 p1	49152	1	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0029
+deep	49152 p1	49152	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0027
+deep	49152 p1	49152	1	main, card 8	SET_ROWS _(reshaped)_(view)	4.00	0.0026
+deep	49152 p1	49152	1	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0024
+deep	49152 p1	49152	1	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0023
+deep	49152 p1	49152	1	main, card 8	ARGMAX greedy_argmax	4.00	0.0016
+deep	49152 p1	49152	1	draft	GET_ROWS node	8.00	3.6952
+deep	49152 p1	49152	1	draft	FLASH_ATTN_EXT node	4.00	1.8730
+deep	49152 p1	49152	1	draft	MUL_MAT output:q6_K:2560x32768	2.92	1.7363
+deep	49152 p1	49152	1	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3298
+deep	49152 p1	49152	1	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3109
+deep	49152 p1	49152	1	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2302
+deep	49152 p1	49152	1	draft	MUL_MAT_ID output:q6_K:2560x1	2.92	1.1561
+deep	49152 p1	49152	1	draft	LIGHTNING_INDEXER indexer_score	4.00	0.7202
+deep	49152 p1	49152	1	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7085
+deep	49152 p1	49152	1	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4333
+deep	49152 p1	49152	1	draft	MUL_MAT output:q6_K:2560x248320	0.08	0.3677
+deep	49152 p1	49152	1	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3225
+deep	49152 p1	49152	1	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3033
+deep	49152 p1	49152	1	draft	TOP_K top_k	3.00	0.2866
+deep	49152 p1	49152	1	draft	CONCAT node	10.92	0.2451
+deep	49152 p1	49152	1	draft	PAD node	3.00	0.2440
+deep	49152 p1	49152	1	draft	SCALE node	15.00	0.2177
+deep	49152 p1	49152	1	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2157
+deep	49152 p1	49152	1	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.2061
+deep	49152 p1	49152	1	draft	TOP_K indexer_top_k	4.00	0.1892
+deep	49152 p1	49152	1	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1683
+deep	49152 p1	49152	1	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1652
+deep	49152 p1	49152	1	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1589
+deep	49152 p1	49152	1	draft	RMS_NORM+MUL norm	24.00	0.1329
+deep	49152 p1	49152	1	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1213
+deep	49152 p1	49152	1	draft	FILL node	12.00	0.0946
+deep	49152 p1	49152	1	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0923
+deep	49152 p1	49152	1	draft	SILU node	11.00	0.0799
+deep	49152 p1	49152	1	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0762
+deep	49152 p1	49152	1	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0740
+deep	49152 p1	49152	1	draft	RMS_NORM+MUL node	11.00	0.0727
+deep	49152 p1	49152	1	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0483
+deep	49152 p1	49152	1	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0477
+deep	49152 p1	49152	1	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0436
+deep	49152 p1	49152	1	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0422
+deep	49152 p1	49152	1	draft	CONT result_output	2.92	0.0411
+deep	49152 p1	49152	1	draft	TOP_K_MASK indexer_sel	4.00	0.0399
+deep	49152 p1	49152	1	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0376
+deep	49152 p1	49152	1	draft	ADD node	12.00	0.0314
+deep	49152 p1	49152	1	draft	CONT gate_reshaped	4.00	0.0301
+deep	49152 p1	49152	1	draft	DSV4_HC_PRE hc_mixed	8.00	0.0230
+deep	49152 p1	49152	1	draft	GET_ROWS mtp_tok_embd	4.00	0.0197
+deep	49152 p1	49152	1	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0176
+deep	49152 p1	49152	1	draft	ROPE Qcur	4.00	0.0165
+deep	49152 p1	49152	1	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0130
+deep	49152 p1	49152	1	draft	REPEAT mtp_enorm	4.00	0.0116
+deep	49152 p1	49152	1	draft	ROPE node	4.00	0.0113
+deep	49152 p1	49152	1	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0104
+deep	49152 p1	49152	1	draft	ROPE indexer_q	4.00	0.0101
+deep	49152 p1	49152	1	draft	GET_ROWS h_nextn	3.00	0.0099
+deep	49152 p1	49152	1	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0097
+deep	49152 p1	49152	1	draft	GET_ROWS top_k_rows	3.00	0.0096
+deep	49152 p1	49152	1	draft	ROPE+SET_ROWS Kcur	4.00	0.0090
+deep	49152 p1	49152	1	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0085
+deep	49152 p1	49152	1	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0084
+deep	49152 p1	49152	1	draft	DSV4_HC_PRE result_norm	3.00	0.0028
+deep	49152 p1	49152	1	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0021
+deep	49152 p1	49152	1	draft	MUL ffn_shexp_gated	4.00	0.0020
+deep	49152 p1	49152	1	draft	ADD ffn_out	4.00	0.0013
+deep	49152 p1	49152	1	draft	SET_ROWS _(reshaped)_(view)	2.92	0.0010
+deep	49152 p1	49152	1	draft	SIGMOID shared_expert_gate_sigmoid	4.00	0.0006
+deep	49152 p2	49152	2	main, cards 0 to 7	FLASH_ATTN_EXT node	11.00	12.1041
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.6921
+deep	49152 p2	49152	2	main, cards 0 to 7	GET_ROWS node	23.00	10.1899
+deep	49152 p2	49152	2	main, cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.7071
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	6.9763
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4663
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9735
+deep	49152 p2	49152	2	main, cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	4.2794
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8901
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5443
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5699
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.4950
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4737
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3972
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.3162
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.3065
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1683
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.7994
+deep	49152 p2	49152	2	main, cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2516
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1563
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0560
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0315
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9354
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8389
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7738
+deep	49152 p2	49152	2	main, cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7663
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7175
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7156
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7081
+deep	49152 p2	49152	2	main, cards 0 to 7	TOP_K indexer_top_k	11.00	0.6658
+deep	49152 p2	49152	2	main, cards 0 to 7	RMS_NORM+MUL node	95.00	0.6134
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5926
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5450
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5287
+deep	49152 p2	49152	2	main, cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.5138
+deep	49152 p2	49152	2	main, cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5004
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4579
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4347
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL gate	35.00	0.4300
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3956
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3873
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3755
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3677
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3235
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3111
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.3089
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3035
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2831
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2724
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2660
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2643
+deep	49152 p2	49152	2	main, cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2466
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2316
+deep	49152 p2	49152	2	main, cards 0 to 7	ADD node	73.00	0.2232
+deep	49152 p2	49152	2	main, cards 0 to 7	CONT ple_conv1d	4.00	0.2231
+deep	49152 p2	49152	2	main, cards 0 to 7	SCALE node	104.00	0.2101
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2019
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1935
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1907
+deep	49152 p2	49152	2	main, cards 0 to 7	SILU node	93.00	0.1906
+deep	49152 p2	49152	2	main, cards 0 to 7	SOFTPLUS a_softplus	35.00	0.1778
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1698
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1677
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1626
+deep	49152 p2	49152	2	main, cards 0 to 7	CPY hop_wide	7.00	0.1474
+deep	49152 p2	49152	2	main, cards 0 to 7	CONT gate_reshaped	11.00	0.1446
+deep	49152 p2	49152	2	main, cards 0 to 7	ADD ffn_out	46.00	0.1403
+deep	49152 p2	49152	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of_node_168_(view))	3.00	0.1402
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1387
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1351
+deep	49152 p2	49152	2	main, cards 0 to 7	CONCAT node	12.00	0.1313
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1263
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1224
+deep	49152 p2	49152	2	main, cards 0 to 7	CPY hop_narrow	8.00	0.1218
+deep	49152 p2	49152	2	main, cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1161
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1143
+deep	49152 p2	49152	2	main, cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.1133
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1132
+deep	49152 p2	49152	2	main, cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1024
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.0992
+deep	49152 p2	49152	2	main, cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0899
+deep	49152 p2	49152	2	main, cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0890
+deep	49152 p2	49152	2	main, cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0885
+deep	49152 p2	49152	2	main, cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0841
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0777
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0685
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0671
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0669
+deep	49152 p2	49152	2	main, cards 0 to 7	FILL node	33.00	0.0633
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0627
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0616
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0495
+deep	49152 p2	49152	2	main, cards 0 to 7	CPY cache_ple_r_l1_(view)_(copy_of__(view))	1.00	0.0473
+deep	49152 p2	49152	2	main, cards 0 to 7	ROPE Qcur	11.00	0.0420
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0392
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0390
+deep	49152 p2	49152	2	main, cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0357
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL node	6.00	0.0335
+deep	49152 p2	49152	2	main, cards 0 to 7	ROPE node	11.00	0.0315
+deep	49152 p2	49152	2	main, cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0229
+deep	49152 p2	49152	2	main, cards 0 to 7	ROPE indexer_q	11.00	0.0202
+deep	49152 p2	49152	2	main, cards 0 to 7	REPEAT hc_init	1.00	0.0116
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0115
+deep	49152 p2	49152	2	main, cards 0 to 7	CPY ple_conv1d	4.00	0.0107
+deep	49152 p2	49152	2	main, cards 0 to 7	MUL ple_gated_value	1.00	0.0093
+deep	49152 p2	49152	2	main, cards 0 to 7	REPEAT node	1.00	0.0063
+deep	49152 p2	49152	2	main, cards 0 to 7	SIGMOID ple_gate	1.00	0.0041
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0036
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0034
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0029
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0029
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0028
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0028
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0027
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0027
+deep	49152 p2	49152	2	main, cards 0 to 7	SUM_ROWS node	1.00	0.0027
+deep	49152 p2	49152	2	main, cards 0 to 7	SGN node	1.00	0.0026
+deep	49152 p2	49152	2	main, cards 0 to 7	SQRT node	1.00	0.0026
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0025
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0025
+deep	49152 p2	49152	2	main, cards 0 to 7	ABS node	1.00	0.0025
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0025
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0025
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0025
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0024
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0024
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0023
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0022
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0022
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0022
+deep	49152 p2	49152	2	main, cards 0 to 7	CONT _(cont)	1.00	0.0022
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0022
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0021
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0021
+deep	49152 p2	49152	2	main, cards 0 to 7	CLAMP node	1.00	0.0019
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0016
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0015
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0008
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0006
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0004
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0004
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0004
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0003
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0006
+deep	49152 p2	49152	2	main, cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0014
+deep	49152 p2	49152	2	main, card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0833
+deep	49152 p2	49152	2	main, card 8	FLASH_ATTN_EXT node	1.00	1.0869
+deep	49152 p2	49152	2	main, card 8	GET_ROWS node	11.00	0.9440
+deep	49152 p2	49152	2	main, card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5637
+deep	49152 p2	49152	2	main, card 8	LIGHTNING_INDEXER indexer_score	1.00	0.3907
+deep	49152 p2	49152	2	main, card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3474
+deep	49152 p2	49152	2	main, card 8	TOP_K top_k	4.00	0.3309
+deep	49152 p2	49152	2	main, card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3199
+deep	49152 p2	49152	2	main, card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2948
+deep	49152 p2	49152	2	main, card 8	GATED_DELTA_NET+CPY node	1.00	0.2506
+deep	49152 p2	49152	2	main, card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2397
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2283
+deep	49152 p2	49152	2	main, card 8	PAD node	1.00	0.2172
+deep	49152 p2	49152	2	main, card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1885
+deep	49152 p2	49152	2	main, card 8	ADD node	11.00	0.1402
+deep	49152 p2	49152	2	main, card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1292
+deep	49152 p2	49152	2	main, card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1093
+deep	49152 p2	49152	2	main, card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1072
+deep	49152 p2	49152	2	main, card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1054
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1027
+deep	49152 p2	49152	2	main, card 8	MUL gate	1.00	0.0943
+deep	49152 p2	49152	2	main, card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0575
+deep	49152 p2	49152	2	main, card 8	TOP_K indexer_top_k	1.00	0.0561
+deep	49152 p2	49152	2	main, card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0547
+deep	49152 p2	49152	2	main, card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0536
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0497
+deep	49152 p2	49152	2	main, card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0457
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0425
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0423
+deep	49152 p2	49152	2	main, card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0405
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0388
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0387
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0375
+deep	49152 p2	49152	2	main, card 8	FILL node	7.00	0.0343
+deep	49152 p2	49152	2	main, card 8	RMS_NORM+MUL node	5.00	0.0308
+deep	49152 p2	49152	2	main, card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0298
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0278
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0278
+deep	49152 p2	49152	2	main, card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0232
+deep	49152 p2	49152	2	main, card 8	DSV4_HC_PRE hc_mixed	4.00	0.0228
+deep	49152 p2	49152	2	main, card 8	CPY hop_wide	1.00	0.0213
+deep	49152 p2	49152	2	main, card 8	SOFT_MAX top_p_softmax	4.00	0.0201
+deep	49152 p2	49152	2	main, card 8	GDN_CONV+CPY gdn_conv	1.00	0.0182
+deep	49152 p2	49152	2	main, card 8	SCALE top_p_cdf_scaled	4.00	0.0175
+deep	49152 p2	49152	2	main, card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0175
+deep	49152 p2	49152	2	main, card 8	GET_ROWS top_p_candidates	4.00	0.0175
+deep	49152 p2	49152	2	main, card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0165
+deep	49152 p2	49152	2	main, card 8	CUMSUM top_p_cdf	4.00	0.0159
+deep	49152 p2	49152	2	main, card 8	SOFTPLUS a_softplus	1.00	0.0155
+deep	49152 p2	49152	2	main, card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0151
+deep	49152 p2	49152	2	main, card 8	CONT gate_reshaped	1.00	0.0143
+deep	49152 p2	49152	2	main, card 8	SCALE node	6.00	0.0140
+deep	49152 p2	49152	2	main, card 8	STEP top_p_mask	4.00	0.0139
+deep	49152 p2	49152	2	main, card 8	SUM top_p_index_f32	4.00	0.0134
+deep	49152 p2	49152	2	main, card 8	RMS_NORM+MUL norm	4.00	0.0133
+deep	49152 p2	49152	2	main, card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0130
+deep	49152 p2	49152	2	main, card 8	TOP_K_MASK indexer_sel	1.00	0.0116
+deep	49152 p2	49152	2	main, card 8	SILU node	5.00	0.0104
+deep	49152 p2	49152	2	main, card 8	GET_ROWS top_k_rows	4.00	0.0092
+deep	49152 p2	49152	2	main, card 8	GET_ROWS top_p_sorted_logits	4.00	0.0088
+deep	49152 p2	49152	2	main, card 8	CPY _(copy)	4.00	0.0086
+deep	49152 p2	49152	2	main, card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0083
+deep	49152 p2	49152	2	main, card 8	ADD top_p_logits	4.00	0.0079
+deep	49152 p2	49152	2	main, card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0078
+deep	49152 p2	49152	2	main, card 8	SIGMOID beta_sigmoid	1.00	0.0073
+deep	49152 p2	49152	2	main, card 8	ADD ffn_out	2.00	0.0064
+deep	49152 p2	49152	2	main, card 8	SIGMOID+MUL node	1.00	0.0060
+deep	49152 p2	49152	2	main, card 8	SWIGLU ffn_swiglu	2.00	0.0057
+deep	49152 p2	49152	2	main, card 8	ARGSORT top_p_sorted_idx	4.00	0.0056
+deep	49152 p2	49152	2	main, card 8	MUL ffn_shexp_gated	2.00	0.0056
+deep	49152 p2	49152	2	main, card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0055
+deep	49152 p2	49152	2	main, card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0051
+deep	49152 p2	49152	2	main, card 8	SCALE top_p_ones	4.00	0.0049
+deep	49152 p2	49152	2	main, card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0047
+deep	49152 p2	49152	2	main, card 8	ROPE Qcur	1.00	0.0045
+deep	49152 p2	49152	2	main, card 8	CLAMP node	4.00	0.0045
+deep	49152 p2	49152	2	main, card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0039
+deep	49152 p2	49152	2	main, card 8	ROPE indexer_q	1.00	0.0034
+deep	49152 p2	49152	2	main, card 8	ARGMAX greedy_argmax	4.00	0.0033
+deep	49152 p2	49152	2	main, card 8	GET_ROWS greedy_sampled_token	4.00	0.0031
+deep	49152 p2	49152	2	main, card 8	ROPE+SET_ROWS Kcur	1.00	0.0031
+deep	49152 p2	49152	2	main, card 8	ROPE node	1.00	0.0031
+deep	49152 p2	49152	2	main, card 8	CONCAT node	1.00	0.0030
+deep	49152 p2	49152	2	main, card 8	SCALE result_norm	1.00	0.0029
+deep	49152 p2	49152	2	main, card 8	LOG top_p_bias	4.00	0.0029
+deep	49152 p2	49152	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0028
+deep	49152 p2	49152	2	main, card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0028
+deep	49152 p2	49152	2	main, card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0025
+deep	49152 p2	49152	2	main, card 8	SET_ROWS _(reshaped)_(view)	4.00	0.0024
+deep	49152 p2	49152	2	main, card 8	ARGMAX temp_max_idx	4.00	0.0020
+deep	49152 p2	49152	2	draft	GET_ROWS node	8.00	3.7069
+deep	49152 p2	49152	2	draft	FLASH_ATTN_EXT node	4.00	1.8694
+deep	49152 p2	49152	2	draft	MUL_MAT output:q6_K:2560x32768	3.00	1.7861
+deep	49152 p2	49152	2	draft	MUL_MAT nextn.eh_proj:q8_0:5120x2560	4.00	1.3267
+deep	49152 p2	49152	2	draft	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q4_K:2560x640 ffn_up_exps:q4_K:2560x640 ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	4.00	1.3132
+deep	49152 p2	49152	2	draft	MUL_MAT_ID ffn_down_exps:iq4_nl:640x2560	4.00	1.2304
+deep	49152 p2	49152	2	draft	MUL_MAT_ID output:q6_K:2560x1	3.00	1.1886
+deep	49152 p2	49152	2	draft	LIGHTNING_INDEXER indexer_score	4.00	0.7220
+deep	49152 p2	49152	2	draft	MUL_MAT attn_q:q4_K:2560x12288	4.00	0.7092
+deep	49152 p2	49152	2	draft	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.4330
+deep	49152 p2	49152	2	draft	MUL_MAT hc_attn_up:q8_0:320x10240	4.00	0.3308
+deep	49152 p2	49152	2	draft	MUL_MAT hc_ffn_up:q8_0:320x10240	4.00	0.3033
+deep	49152 p2	49152	2	draft	TOP_K top_k	3.00	0.2866
+deep	49152 p2	49152	2	draft	CONCAT node	11.00	0.2570
+deep	49152 p2	49152	2	draft	PAD node	3.00	0.2439
+deep	49152 p2	49152	2	draft	MUL_MAT nextn.hc_head_up:q8_0:320x10240	3.00	0.2155
+deep	49152 p2	49152	2	draft	SCALE node	15.00	0.2042
+deep	49152 p2	49152	2	draft	MUL_MAT hc_attn_down:q8_0:10240x320	4.00	0.1959
+deep	49152 p2	49152	2	draft	TOP_K indexer_top_k	4.00	0.1901
+deep	49152 p2	49152	2	draft	MUL_MAT ffn_down_shexp:q8_0:640x2560	4.00	0.1688
+deep	49152 p2	49152	2	draft	MUL_MAT hc_ffn_down:q8_0:10240x320	4.00	0.1650
+deep	49152 p2	49152	2	draft	MUL_MAT ffn_gate_inp:f32:2560x512	4.00	0.1591
+deep	49152 p2	49152	2	draft	RMS_NORM+MUL norm	24.00	0.1318
+deep	49152 p2	49152	2	draft	MUL_MAT attn_v:q6_K:2560x512	4.00	0.1225
+deep	49152 p2	49152	2	draft	FILL node	12.00	0.1037
+deep	49152 p2	49152	2	draft	MUL_MAT indexer.q_proj:q8_0:2560x512	4.00	0.0925
+deep	49152 p2	49152	2	draft	MUL_MAT nextn.hc_head_down:q8_0:10240x320	3.00	0.0761
+deep	49152 p2	49152	2	draft	MUL_MAT attn_k:q4_K:2560x512	4.00	0.0729
+deep	49152 p2	49152	2	draft	SILU node	11.00	0.0725
+deep	49152 p2	49152	2	draft	MUL_MAT indexer.k_proj:q8_0:2560x128	4.00	0.0514
+deep	49152 p2	49152	2	draft	RMS_NORM+MUL node	11.00	0.0489
+deep	49152 p2	49152	2	draft	MUL_MAT hc_attn_inject:q8_0:10240x4	4.00	0.0485
+deep	49152 p2	49152	2	draft	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	8.00	0.0446
+deep	49152 p2	49152	2	draft	CONT result_output	3.00	0.0424
+deep	49152 p2	49152	2	draft	MUL_MAT hc_ffn_inject:q8_0:10240x4	4.00	0.0423
+deep	49152 p2	49152	2	draft	TOP_K_MASK indexer_sel	4.00	0.0407
+deep	49152 p2	49152	2	draft	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	4.00	0.0378
+deep	49152 p2	49152	2	draft	ADD node	12.00	0.0317
+deep	49152 p2	49152	2	draft	CONT gate_reshaped	4.00	0.0300
+deep	49152 p2	49152	2	draft	DSV4_HC_PRE hc_mixed	8.00	0.0230
+deep	49152 p2	49152	2	draft	GET_ROWS mtp_tok_embd	4.00	0.0188
+deep	49152 p2	49152	2	draft	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	4.00	0.0168
+deep	49152 p2	49152	2	draft	SET_ROWS cache_idx_k_l48_(view)	4.00	0.0160
+deep	49152 p2	49152	2	draft	ROPE Qcur	4.00	0.0129
+deep	49152 p2	49152	2	draft	ROPE node	4.00	0.0112
+deep	49152 p2	49152	2	draft	GET_ROWS h_nextn	3.00	0.0106
+deep	49152 p2	49152	2	draft	CONT _(reshaped)_(view)_(cont)	4.00	0.0101
+deep	49152 p2	49152	2	draft	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	4.00	0.0098
+deep	49152 p2	49152	2	draft	ROPE indexer_q	4.00	0.0097
+deep	49152 p2	49152	2	draft	SET_ROWS cache_idx_k_l48_(view)_(view)	4.00	0.0096
+deep	49152 p2	49152	2	draft	GET_ROWS top_k_rows	3.00	0.0095
+deep	49152 p2	49152	2	draft	REPEAT mtp_enorm	4.00	0.0092
+deep	49152 p2	49152	2	draft	ROPE+SET_ROWS Kcur	4.00	0.0090
+deep	49152 p2	49152	2	draft	SET_ROWS cache_v_l48_(view)	4.00	0.0079
+deep	49152 p2	49152	2	draft	MUL ffn_shexp_gated	4.00	0.0029
+deep	49152 p2	49152	2	draft	DSV4_HC_PRE result_norm	3.00	0.0029
+deep	49152 p2	49152	2	draft	SIGMOID+MUL gate_sigmoid	4.00	0.0021
+deep	49152 p2	49152	2	draft	ADD ffn_out	4.00	0.0012
+deep	49152 p2	49152	2	draft	SET_ROWS _(reshaped)_(view)	3.00	0.0010
+deep	49152 p2	49152	2	draft	SIGMOID shared_expert_gate_sigmoid	4.00	-0.0002

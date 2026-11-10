@@ -4,7 +4,7 @@
     python3 -I deep_client.py --port 8097 --arm dense --load dense1 --depths 0,8192,16384 --text RECORDED [RECORDED …]
         --csv OUT/requests-dense1.csv [--jsonl OUT/dense1.jsonl] [--prompts OUT/prompts.json] [--cache 0|1]
         [--sampler-pass 1] [--valid 0|1] [--n-predict 256] [--need-depth N] [--tag REGEX] [--tail-ids 64]
-        [--tail-rank 1] [--tail-text TEXT] [--ignore-eos 0|1] [--seed 1]
+        [--tail-rank 1] [--tail-text TEXT] [--ignore-eos 0|1] [--seed 1] [--pause S]
 
 deep_lane.sh runs it once per load, beside the server, so no prompt crosses a network. Standard library only.
 
@@ -33,7 +33,8 @@ The requests, depths ascending, all to /completion with token ids as the prompt:
   reading at that depth); then the whole prompt twice (`decode`, pass 1 and 2), --n-predict tokens at temperature 0
   with end of text ignored; then with --sampler-pass 1 once more with the server line's own sampler and a fixed seed
   (`sample`, pass s). With --cache 0 no prime, and every request reads its whole prompt fresh (cache_prompt false).
-Pass 1 is the first request at a new depth, as every turn of an agent is.
+Pass 1 is the first request at a new depth, as every turn of an agent is. --pause S waits S seconds before every
+request, so that a profiler's trace (GGML_CUDA_PROFILE) falls into one piece per request at its idle gaps.
 
 One CSV line per request (--csv): arm, load, kind, pass, depth, prompt_tokens (the ids sent), cache_n (reused from
 the cache), prompt_n and prompt_ms (read), gen_n and gen_ms (generated), text_md5 (the reply's text), ids_md5 (its
@@ -80,6 +81,7 @@ ap.add_argument('--valid', type=int, default=1)
 ap.add_argument('--prompts', default='')
 ap.add_argument('--csv', required=True)
 ap.add_argument('--jsonl', default='')
+ap.add_argument('--pause', type=float, default=0)
 A = ap.parse_args()
 DEPTHS = sorted({int(d) for d in A.depths.split(',')})
 
@@ -261,6 +263,8 @@ def main():
                               'time': time.strftime('%Y-%m-%dT%H:%M:%S%z')}) + '\n')
 
     def ask(kind, pas, depth, prompt, n, sampling):
+        if A.pause > 0:
+            time.sleep(A.pause)  # an idle gap before every request, so that a profiler's trace cuts into requests
         t0 = time.time()
         r = post('/completion', {'prompt': prompt, 'n_predict': n, 'cache_prompt': bool(A.cache) and kind != 'warmup',
                                  'ignore_eos': bool(A.ignore_eos), 'return_tokens': True, 'stream': False, **sampling})

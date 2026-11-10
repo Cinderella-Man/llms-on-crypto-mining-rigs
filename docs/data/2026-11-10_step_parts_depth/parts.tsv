@@ -1,0 +1,265 @@
+trace	request	depth	pass	group	part	ms_a_step
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	routed experts	19.537
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	shared expert	4.659
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	hyper-connections (BF16)	12.400
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	router	2.294
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	attention and recurrent projections	32.663
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	Gated DeltaNet state and conv	8.655
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	0.948
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	output layer	0.000
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	token embeddings	0.000
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	other ops without weights	6.234
+shallow	R49 r1	79 to 335	1	main, cards 0 to 7	other weights	0.737
+shallow	R49 r1	79 to 335	1	main, card 8	routed experts	0.855
+shallow	R49 r1	79 to 335	1	main, card 8	shared expert	0.274
+shallow	R49 r1	79 to 335	1	main, card 8	hyper-connections (BF16)	0.556
+shallow	R49 r1	79 to 335	1	main, card 8	router	0.102
+shallow	R49 r1	79 to 335	1	main, card 8	attention and recurrent projections	1.430
+shallow	R49 r1	79 to 335	1	main, card 8	Gated DeltaNet state and conv	0.252
+shallow	R49 r1	79 to 335	1	main, card 8	attention (FLASH_ATTN_EXT)	0.088
+shallow	R49 r1	79 to 335	1	main, card 8	output layer	8.054
+shallow	R49 r1	79 to 335	1	main, card 8	token embeddings	0.000
+shallow	R49 r1	79 to 335	1	main, card 8	other ops without weights	1.093
+shallow	R49 r1	79 to 335	1	main, card 8	other weights	0.154
+shallow	R49 r1	79 to 335	1	draft	routed experts	2.664
+shallow	R49 r1	79 to 335	1	draft	shared expert	0.186
+shallow	R49 r1	79 to 335	1	draft	hyper-connections (BF16)	1.565
+shallow	R49 r1	79 to 335	1	draft	router	0.159
+shallow	R49 r1	79 to 335	1	draft	attention and recurrent projections	1.335
+shallow	R49 r1	79 to 335	1	draft	Gated DeltaNet state and conv	0.000
+shallow	R49 r1	79 to 335	1	draft	attention (FLASH_ATTN_EXT)	0.238
+shallow	R49 r1	79 to 335	1	draft	output layer	3.785
+shallow	R49 r1	79 to 335	1	draft	token embeddings	0.000
+shallow	R49 r1	79 to 335	1	draft	other ops without weights	1.654
+shallow	R49 r1	79 to 335	1	draft	other weights	1.465
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	routed experts	19.520
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	shared expert	4.635
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	hyper-connections (BF16)	12.405
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	router	2.303
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	attention and recurrent projections	32.651
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	Gated DeltaNet state and conv	8.654
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	0.940
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	output layer	0.000
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	token embeddings	0.000
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	other ops without weights	6.279
+shallow	R49 r2	79 to 335	2	main, cards 0 to 7	other weights	0.744
+shallow	R49 r2	79 to 335	2	main, card 8	routed experts	0.856
+shallow	R49 r2	79 to 335	2	main, card 8	shared expert	0.275
+shallow	R49 r2	79 to 335	2	main, card 8	hyper-connections (BF16)	0.558
+shallow	R49 r2	79 to 335	2	main, card 8	router	0.102
+shallow	R49 r2	79 to 335	2	main, card 8	attention and recurrent projections	1.422
+shallow	R49 r2	79 to 335	2	main, card 8	Gated DeltaNet state and conv	0.251
+shallow	R49 r2	79 to 335	2	main, card 8	attention (FLASH_ATTN_EXT)	0.087
+shallow	R49 r2	79 to 335	2	main, card 8	output layer	8.065
+shallow	R49 r2	79 to 335	2	main, card 8	token embeddings	0.000
+shallow	R49 r2	79 to 335	2	main, card 8	other ops without weights	1.101
+shallow	R49 r2	79 to 335	2	main, card 8	other weights	0.153
+shallow	R49 r2	79 to 335	2	draft	routed experts	2.703
+shallow	R49 r2	79 to 335	2	draft	shared expert	0.184
+shallow	R49 r2	79 to 335	2	draft	hyper-connections (BF16)	1.540
+shallow	R49 r2	79 to 335	2	draft	router	0.158
+shallow	R49 r2	79 to 335	2	draft	attention and recurrent projections	1.329
+shallow	R49 r2	79 to 335	2	draft	Gated DeltaNet state and conv	0.000
+shallow	R49 r2	79 to 335	2	draft	attention (FLASH_ATTN_EXT)	0.237
+shallow	R49 r2	79 to 335	2	draft	output layer	1.782
+shallow	R49 r2	79 to 335	2	draft	token embeddings	0.000
+shallow	R49 r2	79 to 335	2	draft	other ops without weights	1.647
+shallow	R49 r2	79 to 335	2	draft	other weights	1.465
+deep	16384 p1	16384	1	main, cards 0 to 7	routed experts	19.566
+deep	16384 p1	16384	1	main, cards 0 to 7	shared expert	4.637
+deep	16384 p1	16384	1	main, cards 0 to 7	hyper-connections (BF16)	12.511
+deep	16384 p1	16384	1	main, cards 0 to 7	router	2.309
+deep	16384 p1	16384	1	main, cards 0 to 7	attention and recurrent projections	32.905
+deep	16384 p1	16384	1	main, cards 0 to 7	Gated DeltaNet state and conv	8.727
+deep	16384 p1	16384	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	11.941
+deep	16384 p1	16384	1	main, cards 0 to 7	output layer	0.000
+deep	16384 p1	16384	1	main, cards 0 to 7	token embeddings	0.000
+deep	16384 p1	16384	1	main, cards 0 to 7	other ops without weights	11.351
+deep	16384 p1	16384	1	main, cards 0 to 7	other weights	0.758
+deep	16384 p1	16384	1	main, card 8	routed experts	0.840
+deep	16384 p1	16384	1	main, card 8	shared expert	0.278
+deep	16384 p1	16384	1	main, card 8	hyper-connections (BF16)	0.554
+deep	16384 p1	16384	1	main, card 8	router	0.103
+deep	16384 p1	16384	1	main, card 8	attention and recurrent projections	1.429
+deep	16384 p1	16384	1	main, card 8	Gated DeltaNet state and conv	0.264
+deep	16384 p1	16384	1	main, card 8	attention (FLASH_ATTN_EXT)	1.062
+deep	16384 p1	16384	1	main, card 8	output layer	8.082
+deep	16384 p1	16384	1	main, card 8	token embeddings	0.000
+deep	16384 p1	16384	1	main, card 8	other ops without weights	1.735
+deep	16384 p1	16384	1	main, card 8	other weights	0.153
+deep	16384 p1	16384	1	draft	routed experts	3.279
+deep	16384 p1	16384	1	draft	shared expert	0.185
+deep	16384 p1	16384	1	draft	hyper-connections (BF16)	1.479
+deep	16384 p1	16384	1	draft	router	0.158
+deep	16384 p1	16384	1	draft	attention and recurrent projections	1.336
+deep	16384 p1	16384	1	draft	Gated DeltaNet state and conv	0.000
+deep	16384 p1	16384	1	draft	attention (FLASH_ATTN_EXT)	1.807
+deep	16384 p1	16384	1	draft	output layer	1.961
+deep	16384 p1	16384	1	draft	token embeddings	0.000
+deep	16384 p1	16384	1	draft	other ops without weights	3.357
+deep	16384 p1	16384	1	draft	other weights	1.479
+deep	16384 p2	16384	2	main, cards 0 to 7	routed experts	19.573
+deep	16384 p2	16384	2	main, cards 0 to 7	shared expert	4.623
+deep	16384 p2	16384	2	main, cards 0 to 7	hyper-connections (BF16)	12.509
+deep	16384 p2	16384	2	main, cards 0 to 7	router	2.306
+deep	16384 p2	16384	2	main, cards 0 to 7	attention and recurrent projections	32.948
+deep	16384 p2	16384	2	main, cards 0 to 7	Gated DeltaNet state and conv	8.727
+deep	16384 p2	16384	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	11.942
+deep	16384 p2	16384	2	main, cards 0 to 7	output layer	0.000
+deep	16384 p2	16384	2	main, cards 0 to 7	token embeddings	0.000
+deep	16384 p2	16384	2	main, cards 0 to 7	other ops without weights	11.370
+deep	16384 p2	16384	2	main, cards 0 to 7	other weights	0.752
+deep	16384 p2	16384	2	main, card 8	routed experts	0.841
+deep	16384 p2	16384	2	main, card 8	shared expert	0.278
+deep	16384 p2	16384	2	main, card 8	hyper-connections (BF16)	0.551
+deep	16384 p2	16384	2	main, card 8	router	0.103
+deep	16384 p2	16384	2	main, card 8	attention and recurrent projections	1.431
+deep	16384 p2	16384	2	main, card 8	Gated DeltaNet state and conv	0.271
+deep	16384 p2	16384	2	main, card 8	attention (FLASH_ATTN_EXT)	1.062
+deep	16384 p2	16384	2	main, card 8	output layer	8.086
+deep	16384 p2	16384	2	main, card 8	token embeddings	0.000
+deep	16384 p2	16384	2	main, card 8	other ops without weights	1.717
+deep	16384 p2	16384	2	main, card 8	other weights	0.153
+deep	16384 p2	16384	2	draft	routed experts	3.290
+deep	16384 p2	16384	2	draft	shared expert	0.186
+deep	16384 p2	16384	2	draft	hyper-connections (BF16)	1.496
+deep	16384 p2	16384	2	draft	router	0.159
+deep	16384 p2	16384	2	draft	attention and recurrent projections	1.336
+deep	16384 p2	16384	2	draft	Gated DeltaNet state and conv	0.000
+deep	16384 p2	16384	2	draft	attention (FLASH_ATTN_EXT)	1.807
+deep	16384 p2	16384	2	draft	output layer	1.787
+deep	16384 p2	16384	2	draft	token embeddings	0.000
+deep	16384 p2	16384	2	draft	other ops without weights	3.330
+deep	16384 p2	16384	2	draft	other weights	1.483
+deep	32768 p1	32768	1	main, cards 0 to 7	routed experts	19.131
+deep	32768 p1	32768	1	main, cards 0 to 7	shared expert	4.711
+deep	32768 p1	32768	1	main, cards 0 to 7	hyper-connections (BF16)	12.457
+deep	32768 p1	32768	1	main, cards 0 to 7	router	2.319
+deep	32768 p1	32768	1	main, cards 0 to 7	attention and recurrent projections	32.861
+deep	32768 p1	32768	1	main, cards 0 to 7	Gated DeltaNet state and conv	8.716
+deep	32768 p1	32768	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	11.859
+deep	32768 p1	32768	1	main, cards 0 to 7	output layer	0.000
+deep	32768 p1	32768	1	main, cards 0 to 7	token embeddings	0.000
+deep	32768 p1	32768	1	main, cards 0 to 7	other ops without weights	16.227
+deep	32768 p1	32768	1	main, cards 0 to 7	other weights	0.749
+deep	32768 p1	32768	1	main, card 8	routed experts	0.841
+deep	32768 p1	32768	1	main, card 8	shared expert	0.279
+deep	32768 p1	32768	1	main, card 8	hyper-connections (BF16)	0.563
+deep	32768 p1	32768	1	main, card 8	router	0.103
+deep	32768 p1	32768	1	main, card 8	attention and recurrent projections	1.424
+deep	32768 p1	32768	1	main, card 8	Gated DeltaNet state and conv	0.251
+deep	32768 p1	32768	1	main, card 8	attention (FLASH_ATTN_EXT)	1.069
+deep	32768 p1	32768	1	main, card 8	output layer	8.081
+deep	32768 p1	32768	1	main, card 8	token embeddings	0.000
+deep	32768 p1	32768	1	main, card 8	other ops without weights	2.202
+deep	32768 p1	32768	1	main, card 8	other weights	0.153
+deep	32768 p1	32768	1	draft	routed experts	3.455
+deep	32768 p1	32768	1	draft	shared expert	0.187
+deep	32768 p1	32768	1	draft	hyper-connections (BF16)	1.517
+deep	32768 p1	32768	1	draft	router	0.159
+deep	32768 p1	32768	1	draft	attention and recurrent projections	1.339
+deep	32768 p1	32768	1	draft	Gated DeltaNet state and conv	0.000
+deep	32768 p1	32768	1	draft	attention (FLASH_ATTN_EXT)	1.843
+deep	32768 p1	32768	1	draft	output layer	2.088
+deep	32768 p1	32768	1	draft	token embeddings	0.000
+deep	32768 p1	32768	1	draft	other ops without weights	4.778
+deep	32768 p1	32768	1	draft	other weights	1.466
+deep	32768 p2	32768	2	main, cards 0 to 7	routed experts	19.154
+deep	32768 p2	32768	2	main, cards 0 to 7	shared expert	4.722
+deep	32768 p2	32768	2	main, cards 0 to 7	hyper-connections (BF16)	12.426
+deep	32768 p2	32768	2	main, cards 0 to 7	router	2.320
+deep	32768 p2	32768	2	main, cards 0 to 7	attention and recurrent projections	32.822
+deep	32768 p2	32768	2	main, cards 0 to 7	Gated DeltaNet state and conv	8.720
+deep	32768 p2	32768	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	11.866
+deep	32768 p2	32768	2	main, cards 0 to 7	output layer	0.000
+deep	32768 p2	32768	2	main, cards 0 to 7	token embeddings	0.000
+deep	32768 p2	32768	2	main, cards 0 to 7	other ops without weights	16.291
+deep	32768 p2	32768	2	main, cards 0 to 7	other weights	0.747
+deep	32768 p2	32768	2	main, card 8	routed experts	0.842
+deep	32768 p2	32768	2	main, card 8	shared expert	0.278
+deep	32768 p2	32768	2	main, card 8	hyper-connections (BF16)	0.565
+deep	32768 p2	32768	2	main, card 8	router	0.103
+deep	32768 p2	32768	2	main, card 8	attention and recurrent projections	1.426
+deep	32768 p2	32768	2	main, card 8	Gated DeltaNet state and conv	0.251
+deep	32768 p2	32768	2	main, card 8	attention (FLASH_ATTN_EXT)	1.068
+deep	32768 p2	32768	2	main, card 8	output layer	8.086
+deep	32768 p2	32768	2	main, card 8	token embeddings	0.000
+deep	32768 p2	32768	2	main, card 8	other ops without weights	2.203
+deep	32768 p2	32768	2	main, card 8	other weights	0.153
+deep	32768 p2	32768	2	draft	routed experts	3.477
+deep	32768 p2	32768	2	draft	shared expert	0.187
+deep	32768 p2	32768	2	draft	hyper-connections (BF16)	1.527
+deep	32768 p2	32768	2	draft	router	0.159
+deep	32768 p2	32768	2	draft	attention and recurrent projections	1.338
+deep	32768 p2	32768	2	draft	Gated DeltaNet state and conv	0.000
+deep	32768 p2	32768	2	draft	attention (FLASH_ATTN_EXT)	1.841
+deep	32768 p2	32768	2	draft	output layer	1.786
+deep	32768 p2	32768	2	draft	token embeddings	0.000
+deep	32768 p2	32768	2	draft	other ops without weights	4.749
+deep	32768 p2	32768	2	draft	other weights	1.480
+deep	49152 p1	49152	1	main, cards 0 to 7	routed experts	19.470
+deep	49152 p1	49152	1	main, cards 0 to 7	shared expert	4.665
+deep	49152 p1	49152	1	main, cards 0 to 7	hyper-connections (BF16)	12.449
+deep	49152 p1	49152	1	main, cards 0 to 7	router	2.317
+deep	49152 p1	49152	1	main, cards 0 to 7	attention and recurrent projections	32.842
+deep	49152 p1	49152	1	main, cards 0 to 7	Gated DeltaNet state and conv	8.709
+deep	49152 p1	49152	1	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	12.108
+deep	49152 p1	49152	1	main, cards 0 to 7	output layer	0.000
+deep	49152 p1	49152	1	main, cards 0 to 7	token embeddings	0.000
+deep	49152 p1	49152	1	main, cards 0 to 7	other ops without weights	20.996
+deep	49152 p1	49152	1	main, cards 0 to 7	other weights	0.747
+deep	49152 p1	49152	1	main, card 8	routed experts	0.882
+deep	49152 p1	49152	1	main, card 8	shared expert	0.277
+deep	49152 p1	49152	1	main, card 8	hyper-connections (BF16)	0.566
+deep	49152 p1	49152	1	main, card 8	router	0.102
+deep	49152 p1	49152	1	main, card 8	attention and recurrent projections	1.430
+deep	49152 p1	49152	1	main, card 8	Gated DeltaNet state and conv	0.251
+deep	49152 p1	49152	1	main, card 8	attention (FLASH_ATTN_EXT)	1.089
+deep	49152 p1	49152	1	main, card 8	output layer	8.087
+deep	49152 p1	49152	1	main, card 8	token embeddings	0.000
+deep	49152 p1	49152	1	main, card 8	other ops without weights	2.630
+deep	49152 p1	49152	1	main, card 8	other weights	0.153
+deep	49152 p1	49152	1	draft	routed experts	3.697
+deep	49152 p1	49152	1	draft	shared expert	0.186
+deep	49152 p1	49152	1	draft	hyper-connections (BF16)	1.449
+deep	49152 p1	49152	1	draft	router	0.159
+deep	49152 p1	49152	1	draft	attention and recurrent projections	1.337
+deep	49152 p1	49152	1	draft	Gated DeltaNet state and conv	0.000
+deep	49152 p1	49152	1	draft	attention (FLASH_ATTN_EXT)	1.873
+deep	49152 p1	49152	1	draft	output layer	2.104
+deep	49152 p1	49152	1	draft	token embeddings	0.000
+deep	49152 p1	49152	1	draft	other ops without weights	6.313
+deep	49152 p1	49152	1	draft	other weights	1.470
+deep	49152 p2	49152	2	main, cards 0 to 7	routed experts	19.468
+deep	49152 p2	49152	2	main, cards 0 to 7	shared expert	4.655
+deep	49152 p2	49152	2	main, cards 0 to 7	hyper-connections (BF16)	12.468
+deep	49152 p2	49152	2	main, cards 0 to 7	router	2.306
+deep	49152 p2	49152	2	main, cards 0 to 7	attention and recurrent projections	32.869
+deep	49152 p2	49152	2	main, cards 0 to 7	Gated DeltaNet state and conv	8.707
+deep	49152 p2	49152	2	main, cards 0 to 7	attention (FLASH_ATTN_EXT)	12.104
+deep	49152 p2	49152	2	main, cards 0 to 7	output layer	0.000
+deep	49152 p2	49152	2	main, cards 0 to 7	token embeddings	0.000
+deep	49152 p2	49152	2	main, cards 0 to 7	other ops without weights	21.025
+deep	49152 p2	49152	2	main, cards 0 to 7	other weights	0.743
+deep	49152 p2	49152	2	main, card 8	routed experts	0.884
+deep	49152 p2	49152	2	main, card 8	shared expert	0.277
+deep	49152 p2	49152	2	main, card 8	hyper-connections (BF16)	0.565
+deep	49152 p2	49152	2	main, card 8	router	0.103
+deep	49152 p2	49152	2	main, card 8	attention and recurrent projections	1.417
+deep	49152 p2	49152	2	main, card 8	Gated DeltaNet state and conv	0.251
+deep	49152 p2	49152	2	main, card 8	attention (FLASH_ATTN_EXT)	1.087
+deep	49152 p2	49152	2	main, card 8	output layer	8.083
+deep	49152 p2	49152	2	main, card 8	token embeddings	0.000
+deep	49152 p2	49152	2	main, card 8	other ops without weights	2.644
+deep	49152 p2	49152	2	main, card 8	other weights	0.153
+deep	49152 p2	49152	2	draft	routed experts	3.732
+deep	49152 p2	49152	2	draft	shared expert	0.186
+deep	49152 p2	49152	2	draft	hyper-connections (BF16)	1.448
+deep	49152 p2	49152	2	draft	router	0.159
+deep	49152 p2	49152	2	draft	attention and recurrent projections	1.338
+deep	49152 p2	49152	2	draft	Gated DeltaNet state and conv	0.000
+deep	49152 p2	49152	2	draft	attention (FLASH_ATTN_EXT)	1.869
+deep	49152 p2	49152	2	draft	output layer	1.786
+deep	49152 p2	49152	2	draft	token embeddings	0.000
+deep	49152 p2	49152	2	draft	other ops without weights	6.301
+deep	49152 p2	49152	2	draft	other weights	1.471
