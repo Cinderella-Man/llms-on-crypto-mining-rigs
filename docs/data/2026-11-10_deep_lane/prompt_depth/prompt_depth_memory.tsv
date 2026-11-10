@@ -1,0 +1,7 @@
+load	arm	avail_after_load_mib	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_moved_primes_mib	max_swapout_10s_mib	max_psi_some	max_psi_full	watchdog_kill
+ub512_1	ub512	896	220	220	1061	929	242	10.05	8.96	none
+ub512_2	ub512	911	622	622	1036	833	319	12.70	11.09	none
+ub128_1	ub128	996	67	67	282	232	129	3.42	2.62	none
+ub128_2	ub128	1016	246	246	1075	835	262	6.49	4.97	none
+sp128_1	sp128	1013	69	69	635	590	240	9.53	9.31	none
+sp128_2	sp128	970	92	92	331	116	156	6.69	5.86	none

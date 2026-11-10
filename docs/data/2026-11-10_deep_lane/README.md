@@ -1,4 +1,4 @@
-# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, a 131,072-token line to 120,000 tokens, and the draft's micro-batch in prompt reading (Q1143, Q230, Q1153, Q1154, Q1215; 2026-11-10)
+# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, a 131,072-token line to 120,000 tokens, the draft's micro-batch in prompt reading, and prompt micro-batches through the sparse kernel (Q1143, Q230, Q1153, Q1154, Q1215, Q1214; 2026-11-10)
 
 What this is: the first timing of the sparse Pascal attention (`GGML_CUDA_FATTN_SPARSE_PASCAL=1`, off by default) on
 a real model. The line is the Miner Llama v3 release preset
@@ -20,6 +20,13 @@ Q1154). Its result is [the 131,072-token line](#the-third-run-a-131072-token-lin
 A fourth run timed the draft model's micro-batch in prompt reading: `--spec-draft-n-ubatch` 128 (the preset), 256
 and 512 against the line without the draft, on the second pair's line and prompts (registry row Q1215). Its result
 is [the draft's micro-batch](#the-fourth-run-the-drafts-micro-batch-in-prompt-reading-q1215) below.
+
+A sixth run read the prompts in micro-batches of 128 tokens through the sparse kernel: the preset's `-ub 512`
+(control), `-ub 128`, and `-ub 128` with the switch at 2 and `GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128`, at 0, 16,384,
+32,768 and 49,152 tokens (registry row Q1214). Its result is
+[prompt micro-batches through the sparse kernel](#the-sixth-run-prompt-micro-batches-through-the-sparse-kernel-q1214)
+below. The fifth deep-lane run on the rig profiled a step at depth and has its own page
+([2026-11-10_step_parts_depth](../2026-11-10_step_parts_depth/README.md)).
 
 Why: on a P106 llama.cpp's attention reads the whole cache for every token, so generation slows as an agent's
 context grows, and real coding attempts write 40,000 tokens and more. The model's attention layers keep about 2,051
@@ -799,6 +806,153 @@ minus CmaFree; with the rig's kernel option `kho=off` the lowest of the two was 
 - No quality is measured here. The draft's micro-batch changes at most which tokens the draft proposes; the main model
   checks every one.
 
+## The sixth run: prompt micro-batches through the sparse kernel (Q1214)
+
+In the first pair the sparse switch did not change prompt reading, and prompt reading slowed with depth in both arms.
+The sparse kernel takes a call of at most 8 query tokens (`GGML_CUDA_FATTN_SPARSE_PASCAL_NQ`, default 8), and in mode
+1 only when the cache holds at least 1.5 × 2,051 cells per query token (`_MIN_RATIO`): 393,792 cells for a
+128-token micro-batch, beyond this line's context. So every prompt micro-batch of 512 tokens went to the dense
+kernel, which computes each query token against every cell. This run read the prompts in micro-batches of 128
+tokens through the sparse kernel: mode 2 (`GGML_CUDA_FATTN_SPARSE_PASCAL=2`) drops the ratio rule and sends every
+call within the kernel's limits to it, `_NQ=128` lets 128 query tokens in, and `-ub 128` makes the micro-batches that
+size (`sp128`). A second arm, `-ub 128` with the switch at 1 as in the control (`ub128`), takes the micro-batch alone.
+The control `ub512` is the preset with the switch at 1, the line of the fourth run's `draft` arm. Depths 0, 16,384,
+32,768 and 49,152, 16 tokens a decode request, two loads an arm after a warm-up load.
+
+**With its prompt micro-batches through the sparse kernel the line reads prompts 46.7 % faster over a load's three
+prompt chunks (131.1 and 131.3 tok/s against the preset's 89.5 and 89.4; 376.5 and 375.8 s against 559.9 and
+560.6 s), and its prompt speed no longer falls with depth: 128.2 and 128.3 tok/s on an empty cache, 133.8 and 133.9
+on 16,188 cached tokens and 131.3 and 131.9 on 32,572, against 123.8 and 123.7, 90.2 and 90.3, and 70.2 and 70.0 with
+the preset. At 49,152 tokens it reads prompts faster with the draft than the line without the draft did in the fourth
+run (119.5 and 119.6 tok/s on the same cache). `-ub 128` with the dense kernel is a gain at depth (+9.1 % and
++15.1 %) and a loss on an empty cache (−4.3 %). Mode 2 sends the decode steps to the kernel too, and at depth 0 the
+repeated request's step takes 282.35 and 282.53 ms against 113.12 and 113.14: it is not a setting to serve, and the
+prompt path needs a rule of its own in the switch.**
+
+### Prompt reading: tok/s (ms a prompt token)
+
+Per load, the tokens its prompt request read over their time. Each arm is classed against `ub512` by the rule of the
+first pair. Beside: the fourth run's loads that read the same chunk on the same cached tokens, not classed. Gap
+closed: the share of the gap between `ub512` and the fourth run's line without the draft, in ms a prompt token, that
+an arm closes ([prompt_depth/prompt_depth.md](prompt_depth/prompt_depth.md),
+[prompt_depth/prompt_depth_prompt.tsv](prompt_depth/prompt_depth_prompt.tsv)).
+
+| Depth (tokens) | Read, on cached | Arm | Load 1 | Load 2 | Spread, tok/s | Against `ub512` | Class | Gap closed |
+|---:|---|---|---|---|---:|---:|---|---:|
+| 0 | 64 on 0 | ub512 | 32.7 (30.57) | 28.0 (35.70) | 4.7 | | | |
+| | | ub128 | 32.4 (30.84) | 32.7 (30.62) | 0.2 | +7.2 % | negligible | |
+| | | sp128 | 32.6 (30.69) | 32.1 (31.14) | 0.5 | +6.6 % | negligible | |
+| | | the fourth run's `draft` (beside) | 32.8 (30.52) | 32.8 (30.45) | 0.1 | +8.0 % | | |
+| | | the fourth run's `nodraft` (beside) | 33.5 (29.82) | 33.8 (29.57) | 0.3 | +10.9 % | | |
+| 16,384 | 16,320 on 0 | ub512 | 123.8 (8.07) | 123.7 (8.08) | 0.1 | | | |
+| | | ub128 | 118.2 (8.46) | 118.6 (8.43) | 0.3 | −4.3 % | loss | |
+| | | sp128 | 128.2 (7.80) | 128.3 (7.79) | 0.1 | +3.6 % | gain | |
+| 32,768 | 16,900 on 15,804 | ub512 | 90.2 (11.09) | 90.3 (11.08) | 0.1 | | | |
+| | 16,516 on 16,188 | ub128 | 98.5 (10.15) | 98.5 (10.15) | 0.0 | +9.1 % | gain | |
+| | 16,516 on 16,188 | sp128 | 133.8 (7.47) | 133.9 (7.47) | 0.0 | +48.3 % | gain | |
+| 49,152 | 16,900 on 32,188 | ub512 | 70.2 (14.25) | 70.0 (14.29) | 0.2 | | | |
+| | 16,516 on 32,572 | ub128 | 80.5 (12.42) | 80.7 (12.38) | 0.2 | +15.1 % | gain | 31.6 % |
+| | 16,516 on 32,572 | sp128 | 131.3 (7.62) | 131.9 (7.58) | 0.6 | +87.8 % | gain | 112.9 % |
+| | | the fourth run's `draft` (beside) | 70.0 (14.29) | 70.1 (14.26) | 0.1 | −0.0 % | | |
+| | | the fourth run's `nodraft` (beside) | 119.5 (8.37) | 119.6 (8.36) | 0.1 | +70.6 % | | |
+| all three primes | 50,120 tokens (`ub512`), 49,352 (`ub128`, `sp128`) | ub512 | 89.5 (559.9 s) | 89.4 (560.6 s) | 0.1 | | | |
+| | | ub128 | 96.6 (510.8 s) | 96.8 (509.9 s) | 0.2 | +8.1 % | gain | |
+| | | sp128 | 131.1 (376.5 s) | 131.3 (375.8 s) | 0.2 | +46.7 % | gain | |
+
+- **The micro-batch moves the chunk a little.** The server restores the checkpoint it took 4 or `-ub` + 4 tokens
+  before the end of the previous prime, so with `-ub 128` the primes at 32,768 and 49,152 read 16,516 tokens on
+  16,188 and 32,572 cached, and with `-ub 512` 16,900 on 15,804 and 32,188: 384 tokens fewer, starting 384 tokens
+  deeper. The tok/s compare the same kind of chunk per token. At 16,384 every arm read the same 16,320 tokens on an
+  empty cache, since the depth-0 tail is not a prefix of the deeper prompts.
+- **The sparse path makes prompt reading flat with depth.** `sp128_1` reads at 7.80, 7.47 and 7.62 ms a prompt token
+  at the three depths, `ub512_1` at 8.07, 11.09 and 14.25. From the means of each arm's two loads, `sp128` takes
+  0.28 ms off a prompt token on the chunk from an empty cache, 3.61 on 15,804 to 16,188 cached tokens and 6.67 on
+  32,188 to 32,572.
+- **Both models' attention.** The kernel also takes the MTP draft's attention
+  ([2026-11-10_step_parts_depth](../2026-11-10_step_parts_depth/README.md)), so the micro-batches of 128 that the
+  draft reads (`--spec-draft-n-ubatch 128` in every arm) go through it too. The fourth run found that the draft's
+  prompt cost rises by 3.60 ms a prompt token from an empty cache to 32,188 cached tokens, and the line without the
+  draft read 5.65 and 5.63 ms a prompt token on an empty cache and 8.37 and 8.36 there. With `sp128` the line with
+  the draft reads 7.62 and 7.58 ms a prompt token on 32,572 cached tokens, 0.76 ms under the line without the draft on
+  the dense path (the means): the rise of both is gone. Which part each model's attention had is not split here (registry row Q1249 runs `sp128` without the
+  draft).
+- **On an empty cache the gain is small:** +3.6 % at 16,384, where the cache grows from 0 to 16,320 cells within the
+  chunk and the dense kernel has few cells to read in its first micro-batches. `-ub 128` alone is a loss there
+  (−4.3 %); a micro-batch of 128 reads the weights four times as often per prompt token as one of 512, which would
+  explain it (a reading, not measured).
+- **The control repeats the fourth run** at 49,152 (70.2 and 70.0 tok/s against 70.0 and 70.1 on the same chunk and
+  cache). The fourth run's chunks at 16,384 and 32,768 were others (8,708 on 7,612 and 16,388 on 16,316), so they
+  are not beside.
+- **Which kernel took a call is read on the times.** The server log does not say, and the kernel hands a call beyond
+  its limits to the dense kernel without a message. `sp128`'s times differ from `ub128`'s at every depth past 0
+  (+8.3 %, +35.9 % and +63.2 % in tok/s), so its calls went to the sparse kernel.
+
+### The host's memory and the cards
+
+From the RAM watchdog's samples, one a second, over each whole load
+([prompt_depth/prompt_depth_memory.tsv](prompt_depth/prompt_depth_memory.tsv), per request in
+[prompt_depth/host_memory.tsv](prompt_depth/host_memory.tsv)):
+
+| Load | MemAvailable after loading, MiB | Lowest MemAvailable | Most swap in use | Swap moved during the primes | Most written to swap in 10 s | Highest pressure, some / full |
+|---|---:|---:|---:|---:|---:|---|
+| `ub512_1` | 896 | 220 | 1,061 | +929 | 242 | 10.05 / 8.96 % |
+| `ub512_2` | 911 | 622 | 1,036 | +833 | 319 | 12.70 / 11.09 % |
+| `ub128_1` | 996 | 67 | 282 | +232 | 129 | 3.42 / 2.62 % |
+| `ub128_2` | 1,016 | 246 | 1,075 | +835 | 262 | 6.49 / 4.97 % |
+| `sp128_1` | 1,013 | 69 | 635 | +590 | 240 | 9.53 / 9.31 % |
+| `sp128_2` | 970 | 92 | 331 | +116 | 156 | 6.69 / 5.86 % |
+
+- **The watchdog never acted** (its stop points: MemAvailable under 60 MiB, usable memory under 20 MiB, more than
+  600 MiB written to swap within 10 s). The lowest points were 67 MiB in `ub128_1` (the prime and the first decode
+  request at 49,152) and 69 MiB in `sp128_1` (the prime and the first decode request at 32,768).
+- **The lowest point moves with when the host swaps, not with the arm alone.** The preset's two loads here swapped
+  833 and 929 MiB during the primes, most of it in the first, and stayed at 220 MiB and above; the same line's loads
+  in the fourth run fell to 71 and 81 MiB. With `-ub 128` the host has about 100 MiB more available after loading
+  (996, 1,016, 1,013 and 970 MiB against 896 and 911), and three of the four loads swapped less during the primes.
+- **On the cards** `-ub 128` holds 200 MiB less on each card after loading and 248 less on card 0 (4,811 against
+  5,059 MiB; 42,171 against 44,019 MiB over the nine cards); `sp128` holds 2 MiB more than `ub128` on seven of the
+  cards ([prompt_depth/prompt_depth.md](prompt_depth/prompt_depth.md)).
+
+### Generation, a check
+
+- Every request generated its 16 tokens. Over all depths generation is negligible in both arms: 11.73 and 10.01 tok/s
+  (`ub128`) and 11.43 and 10.35 (`sp128`) against 11.18 and 10.81
+  ([prompt_depth/table.md](prompt_depth/table.md)).
+- **Mode 2 is a loss in decode at depth 0:** the repeated request's step takes 282.35 and 282.53 ms with `sp128`,
+  113.11 and 113.19 with `ub128`, and 113.12 and 113.14 with the preset. Mode 2 sends a verify pass over a cache of
+  64 cells to the sparse kernel, where mode 1's threshold keeps it on the dense kernel (registry row Q1212 times that
+  threshold).
+- **At depth 0 `sp128` wrote another greedy reply** (`95afbd…`, in both loads) than the preset and `ub128` (`9da71b…`,
+  in all four loads, as in the fourth run). `-ub 128` alone did not change it there, so the other reply comes from
+  the kernel's arithmetic on the tail or on the decode steps. From 16,384 tokens on, loads of one arm wrote different
+  replies, as in the earlier runs. No quality is measured here (registry row Q1248).
+- The step tables of [prompt_depth/table.md](prompt_depth/table.md) are not read for a class: a 16-token request
+  takes 6 to 9 steps, and the first request after each prime moved with the host's swapping.
+
+### What it decides
+
+- **The rule in the row: a gain from the sparse prompt path → Q643's union gather for prompt micro-batches.** The
+  gain is there: +46.7 % over the primes, +87.8 % on 32,572 cached tokens. Each query token of a micro-batch now reads
+  its own list of about 2,051 cells. If the neighbouring query tokens of one micro-batch share much of their lists
+  (Q643's premise for verify passes, not measured for prompts), one gather over the union of the lists reads each cell
+  once and lets 512-token micro-batches through without a smaller batch.
+- **Without code first:** micro-batches of 256 and 512 tokens through the kernel (`_NQ=256` and `_NQ=512`). The
+  kernel takes up to 1,024 columns of query token × KV head a call, and the model's attention layers have 2 KV heads
+  for 24 query heads, so 512 query tokens fit. The kernel's cases at those sizes come first, off the rig (registry
+  row Q1245).
+- **Mode 2 is not for serving:** a prompt rule in the switch (calls of more than 8 query tokens to the kernel from a
+  depth on, mode 1's rule for verify passes; Q1246), then the agent check on the rig (Q1247), whether the kernel's
+  prompt path changes the model's output (Q1248), the split between the two models (Q1249), and a 131,072-token
+  line at `-ub 128` (Q1250).
+
+**Limits.**
+- Two loads an arm, one day, one rig, the second pair's prompts.
+- Decode requests of 16 tokens: generation here is a check, not a speed.
+- The chunks of the `-ub 128` arms are 384 tokens shorter and start 384 tokens deeper than the control's at 32,768
+  and 49,152.
+- Which kernel took a call is read on the times.
+- No quality is measured.
+
 ## Method
 
 - **The line:** the preset as it is on nine P106-090 cards (`-ts 6,6,6,6,5,6,5,6,3`, `-c 65536`, `-ub 512`, the MTP
@@ -867,6 +1021,22 @@ minus CmaFree; with the rig's kernel option `kho=off` the lowest of the two was 
   `draft`), rebuilt on another machine byte for byte; [run/draft_ubatch.py](run/draft_ubatch.py) for the prompt,
   memory and generation tables of this page, and [run/host_memory.py](run/host_memory.py) per request. On the
   second pair's folder `draft_ubatch.py` gives that pair's prompt and host-memory numbers again.
+- **The sixth run's line:** the preset with one variable set per arm (`ARM_ENV_<arm>`, no `ENV_ADD`, so that each
+  line holds the switch once): `GGML_CUDA_FATTN_SPARSE_PASCAL=1` for `ub512` and `ub128`,
+  `GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128` for `sp128`; `-ub 128` for `ub128` and
+  `sp128` (`ARM_UB_<arm>`); nothing else changed ([prompt_depth/loads.tsv](prompt_depth/loads.tsv)). `ub512` is the
+  fourth run's `draft` line. The prompts are the earlier runs' at depths 0, 16,384, 32,768 and 49,152;
+  `N_PREDICT=16`.
+- **The sixth run's loads:** one untimed warm-up load of `ub512`, then `ub512_1`, `ub128_1`, `sp128_1`, `ub512_2`,
+  `ub128_2`, `sp128_2` (`LOADS`), each after the quiet check (no llama process, 0 MiB on every card). `sp128` came
+  last in each round, since it runs the kernel on calls it had not served before. Loading took 224 to 226 s; a whole
+  load 13.9 and 13.9 minutes (`ub512`), 13.0 and 13.1 (`ub128`), 10.8 and 10.8 (`sp128`); the run 80 minutes. The
+  watchdog did not act.
+- **The sixth run's tables:** the driver's own ([prompt_depth/table.md](prompt_depth/table.md), control `ub512`),
+  rebuilt on another machine byte for byte; [run/prompt_depth.py](run/prompt_depth.py) for the prompt, memory and
+  generation tables of this page, with the fourth run's `draft` and `nodraft` loads beside, and
+  [run/host_memory.py](run/host_memory.py) per request. On the fourth run's folder `prompt_depth.py` gives that run's
+  prompt classes, its share taken away (as the gap closed) and its host memory again.
 
 ## Files
 
@@ -892,6 +1062,10 @@ minus CmaFree; with the rig's kernel option `kho=off` the lowest of the two was 
 | [draft_prompt_cost/draft_ubatch.md](draft_prompt_cost/draft_ubatch.md), [_prompt.tsv](draft_prompt_cost/draft_ubatch_prompt.tsv), [_memory.tsv](draft_prompt_cost/draft_ubatch_memory.tsv), [_generation.tsv](draft_prompt_cost/draft_ubatch_generation.tsv) | the fourth run read on prompt reading (every load by value, the class against `draft`, what the draft adds per prompt token, the share taken away), on the host's memory per load and each card's after loading, and on generation as a check |
 | [draft_prompt_cost/host_memory.tsv](draft_prompt_cost/host_memory.tsv) | the fourth run's host memory per load and request |
 | [run/draft_ubatch.py](run/draft_ubatch.py) | the fourth run's table script (Python 3.9 or newer, standard library only) |
+| [prompt_depth/table.md](prompt_depth/table.md), [classes.tsv](prompt_depth/classes.tsv), [requests.csv](prompt_depth/requests.csv), [loads.tsv](prompt_depth/loads.tsv) | the sixth run's driver tables and classes (control `ub512`), requests and loads (`warm`, then two loads each of `ub512`, `ub128` and `sp128`) |
+| [prompt_depth/prompt_depth.md](prompt_depth/prompt_depth.md), [_prompt.tsv](prompt_depth/prompt_depth_prompt.tsv), [_memory.tsv](prompt_depth/prompt_depth_memory.tsv), [_generation.tsv](prompt_depth/prompt_depth_generation.tsv) | the sixth run read on prompt reading (every load by value, the class against `ub512`, the fourth run's loads beside, the gap closed), on the host's memory per load and each card's after loading, and on generation as a check (tok/s and ms a step on both passes) |
+| [prompt_depth/host_memory.tsv](prompt_depth/host_memory.tsv) | the sixth run's host memory per load and request |
+| [run/prompt_depth.py](run/prompt_depth.py) | the sixth run's table script (Python 3.9 or newer, standard library only) |
 
 Not published: the prompts' token ids, the replies' first characters and the server logs (recorded text and paths),
 the raw telemetry (the cards every 10 s, the watchdog's samples, the quiet and fit checks, which the text above
@@ -1018,6 +1192,32 @@ Its tables:
 ```bash
 python3 -I bench/deep_lane/deep_table.py <results folder> --out table.md --tsv classes.tsv
 python3 -I docs/data/2026-11-10_deep_lane/run/draft_ubatch.py <results folder> --out draft_ubatch.md --tsv draft_ubatch
+python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <results folder> > host_memory.tsv
+```
+
+The sixth run, with the `wait` and `collect` commands above (`DRY=1` first; its three server lines differ only in
+`-ub` and the switch's variables):
+
+```bash
+RIG=rig BIN=<build>/bin/llama-server \
+MODEL=<models>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+MODEL_DRAFT=<models>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+TEXT_LOCAL=<recorded>/proxy.jsonl.bodies.gz TAG='^t1swift/' WD_ENV=MIN_AVAIL_MB=60 \
+DEPTHS="0 16384 32768 49152" N_PREDICT=16 ARMS="ub512 ub128 sp128" \
+ARM_ENV_ub512=GGML_CUDA_FATTN_SPARSE_PASCAL=1 \
+ARM_ENV_ub128=GGML_CUDA_FATTN_SPARSE_PASCAL=1 ARM_UB_ub128=128 \
+ARM_ENV_sp128="GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128" ARM_UB_sp128=128 \
+LOADS="warm:ub512 ub512_1:ub512 ub128_1:ub128 sp128_1:sp128 ub512_2:ub512 ub128_2:ub128 sp128_2:sp128" \
+bash bench/deep_lane/remote.sh start
+```
+
+Its tables (`<fourth run>` is the fourth run's results folder, for its loads beside):
+
+```bash
+python3 -I bench/deep_lane/deep_table.py <results folder> --out table.md --tsv classes.tsv
+python3 -I docs/data/2026-11-10_deep_lane/run/prompt_depth.py <results folder> --control ub512 \
+  --beside "<fourth run>:draft:draft (the fourth run)" --beside "<fourth run>:nodraft:nodraft (the fourth run)" \
+  --floor "nodraft (the fourth run)" --out prompt_depth.md --tsv prompt_depth
 python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <results folder> > host_memory.tsv
 ```
 

@@ -258,6 +258,14 @@ the release check's recorded requests.
   (`WARM_DEPTHS`), 44 minutes
   ([docs/data/2026-11-10_step_parts_depth](../../docs/data/2026-11-10_step_parts_depth/README.md)). The trace held
   the whole load, prompts included, in 85.8 MB, and cut into the load and its 10 requests at the pauses.
+- **The sixth run on the rig** read prompts in micro-batches of 128 through the sparse kernel: `-ub` per arm through
+  `ARM_UB_<arm>`, the switch per arm through `ARM_ENV_<arm>` (no `ENV_ADD`, so that each server line holds the
+  switch once), depths 0, 16,384, 32,768 and 49,152, `N_PREDICT=16`, two loads an arm, 80 minutes
+  ([docs/data/2026-11-10_deep_lane](../../docs/data/2026-11-10_deep_lane/README.md)). A smaller `-ub` moves the
+  checkpoint the next prime continues from (4 or `-ub` + 4 tokens before the end of the previous prime), so the
+  primes past the first read slightly other chunks than the control's.
+  [run/prompt_depth.py](../../docs/data/2026-11-10_deep_lane/run/prompt_depth.py) reads such a run: prompt reading
+  per arm with each arm's own chunk, another run's loads beside where they read the same chunk, and the host's memory.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

@@ -1,0 +1,76 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+sp128_1 (whole load)	641	69	69	635	+342	9.53	9.31
+sp128_2 (whole load)	640	92	92	331	+1	6.69	5.86
+ub128_1 (whole load)	774	67	67	282	+7	3.42	2.62
+ub128_2 (whole load)	777	246	246	1075	+1	6.49	4.97
+ub512_1 (whole load)	826	220	220	1061	+753	10.05	8.96
+ub512_2 (whole load)	829	622	622	1036	+701	12.70	11.09
+warm (whole load)	240	427	427	22	-1	8.59	8.59
+warm decode pass 1 depth 0	7	427	427	22	-1	0.00	0.00
+warm decode pass 2 depth 0	5	427	427	21	+0	0.00	0.00
+ub512_1 decode pass 1 depth 0	7	442	442	21	+0	0.00	0.00
+ub512_1 decode pass 2 depth 0	5	439	439	21	+0	0.00	0.00
+ub512_1 prime pass 0 depth 16384	133	220	220	662	+641	2.22	1.20
+ub512_1 decode pass 1 depth 16384	8	552	552	692	+151	3.55	2.20
+ub512_1 decode pass 2 depth 16384	5	552	552	692	+0	3.55	2.20
+ub512_1 prime pass 0 depth 32768	189	654	654	976	+284	3.65	2.83
+ub512_1 decode pass 1 depth 32768	8	690	690	1057	+197	10.05	8.96
+ub512_1 decode pass 2 depth 32768	5	713	713	1057	+0	10.05	8.96
+ub512_1 prime pass 0 depth 49152	241	690	690	1061	+4	6.74	6.00
+ub512_1 decode pass 1 depth 49152	7	665	665	1061	+0	0.00	0.00
+ub512_1 decode pass 2 depth 49152	5	665	665	1061	-10	0.00	0.00
+ub128_1 decode pass 1 depth 0	7	541	541	37	+0	0.00	0.00
+ub128_1 decode pass 2 depth 0	4	541	541	37	+0	0.00	0.00
+ub128_1 prime pass 0 depth 16384	140	94	94	40	+3	0.18	0.18
+ub128_1 decode pass 1 depth 16384	7	81	81	49	+9	0.14	0.14
+ub128_1 decode pass 2 depth 16384	5	106	106	49	+0	0.09	0.09
+ub128_1 prime pass 0 depth 32768	168	98	98	192	+143	3.07	2.53
+ub128_1 decode pass 1 depth 32768	9	71	71	192	+142	3.42	2.62
+ub128_1 decode pass 2 depth 32768	5	71	71	192	+0	2.42	1.98
+ub128_1 prime pass 0 depth 49152	207	67	67	278	+86	2.42	1.98
+ub128_1 decode pass 1 depth 49152	8	67	67	282	+15	1.87	1.51
+ub128_1 decode pass 2 depth 49152	5	110	110	282	-14	1.53	1.24
+sp128_1 decode pass 1 depth 0	7	585	585	44	+0	0.36	0.24
+sp128_1 decode pass 2 depth 0	6	569	569	44	+0	0.24	0.16
+sp128_1 prime pass 0 depth 16384	129	177	177	44	+0	0.16	0.10
+sp128_1 decode pass 1 depth 16384	5	101	101	45	+1	0.54	0.54
+sp128_1 decode pass 2 depth 16384	5	101	101	45	+0	0.54	0.54
+sp128_1 prime pass 0 depth 32768	126	69	69	186	+141	1.63	0.90
+sp128_1 decode pass 1 depth 32768	8	69	69	186	+140	2.06	1.10
+sp128_1 decode pass 2 depth 32768	5	79	79	186	+0	1.68	0.90
+sp128_1 prime pass 0 depth 49152	127	146	146	635	+449	4.99	3.31
+sp128_1 decode pass 1 depth 49152	7	340	340	635	+90	4.99	3.31
+sp128_1 decode pass 2 depth 49152	5	445	445	635	-242	3.35	2.22
+ub512_2 decode pass 1 depth 0	8	622	622	202	+12	3.50	3.18
+ub512_2 decode pass 2 depth 0	5	633	633	202	+0	2.52	2.33
+ub512_2 prime pass 0 depth 16384	134	629	629	1035	+833	12.70	9.70
+ub512_2 decode pass 1 depth 16384	9	884	884	1036	+212	4.78	2.92
+ub512_2 decode pass 2 depth 16384	5	923	923	1036	+0	3.20	1.96
+ub512_2 prime pass 0 depth 32768	188	834	834	1036	+0	2.62	1.60
+ub512_2 decode pass 1 depth 32768	7	695	695	1036	+0	0.00	0.00
+ub512_2 decode pass 2 depth 32768	5	695	695	1036	+0	0.00	0.00
+ub512_2 prime pass 0 depth 49152	243	674	674	1036	+0	0.18	0.18
+ub512_2 decode pass 1 depth 49152	7	673	673	1036	+0	0.18	0.18
+ub512_2 decode pass 2 depth 49152	5	673	673	1036	-9	0.14	0.14
+ub128_2 decode pass 1 depth 0	7	572	572	46	+0	0.00	0.00
+ub128_2 decode pass 2 depth 0	5	563	563	46	+0	0.00	0.00
+ub128_2 prime pass 0 depth 16384	139	246	246	180	+134	0.18	0.18
+ub128_2 decode pass 1 depth 16384	8	246	246	316	+251	5.61	4.02
+ub128_2 decode pass 2 depth 16384	5	281	281	316	+0	5.29	4.02
+ub128_2 prime pass 0 depth 32768	169	391	391	684	+368	4.33	3.29
+ub128_2 decode pass 1 depth 32768	9	529	529	742	+125	6.49	4.97
+ub128_2 decode pass 2 depth 32768	5	532	532	742	+14	6.49	4.97
+ub128_2 prime pass 0 depth 49152	206	637	637	1075	+333	5.31	4.07
+ub128_2 decode pass 1 depth 49152	8	762	762	1075	+40	3.25	2.46
+ub128_2 decode pass 2 depth 49152	5	811	811	1073	-16	2.66	2.01
+sp128_2 decode pass 1 depth 0	7	599	599	46	+0	0.00	0.00
+sp128_2 decode pass 2 depth 0	6	592	592	46	+0	0.00	0.00
+sp128_2 prime pass 0 depth 16384	129	120	120	67	+21	0.18	0.18
+sp128_2 decode pass 1 depth 16384	7	109	109	100	+54	0.47	0.18
+sp128_2 decode pass 2 depth 16384	5	112	112	100	+0	0.47	0.14
+sp128_2 prime pass 0 depth 32768	125	92	92	161	+61	0.90	0.54
+sp128_2 decode pass 1 depth 32768	8	92	92	279	+170	6.69	5.86
+sp128_2 decode pass 2 depth 32768	6	161	161	279	+1	6.69	5.86
+sp128_2 prime pass 0 depth 49152	127	105	105	313	+34	5.48	4.80
+sp128_2 decode pass 1 depth 49152	7	105	105	331	+45	2.02	1.73
+sp128_2 decode pass 2 depth 49152	5	171	171	329	-14	2.02	1.73

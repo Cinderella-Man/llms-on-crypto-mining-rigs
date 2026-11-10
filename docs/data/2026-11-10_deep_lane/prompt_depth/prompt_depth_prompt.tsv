@@ -1,0 +1,20 @@
+depth	read_on_cached	arm	kind	tok_s	ms_prompt_token	spread	percent_against_control	class	gap_closed_pct
+0	64 on 0	ub512	arm	32.71 28.01	30.575 35.705	4.70		control	
+0	64 on 0	ub128	arm	32.42 32.66	30.844 30.619	0.24	7.19	negligible	
+0	64 on 0	sp128	arm	32.59 32.11	30.688 31.143	0.48	6.56	negligible	
+0	64 on 0	draft (the fourth run)	beside	32.76 32.84	30.524 30.453	0.08	8.04	beside	
+0	64 on 0	nodraft (the fourth run)	beside	33.54 33.82	29.817 29.567	0.28	10.94	beside	
+16384	16320 on 0	ub512	arm	123.84 123.69	8.075 8.085	0.15		control	
+16384	16320 on 0	ub128	arm	118.23 118.56	8.458 8.435	0.33	-4.34	loss	
+16384	16320 on 0	sp128	arm	128.16 128.30	7.803 7.794	0.14	3.60	gain	
+32768	16900 on 15804	ub512	arm	90.20 90.27	11.086 11.078	0.06		control	
+32768	16516 on 16188	ub128	arm	98.49 98.47	10.153 10.155	0.02	9.14	gain	
+32768	16516 on 16188	sp128	arm	133.85 133.87	7.471 7.470	0.02	48.35	gain	
+49152	16900 on 32188	ub512	arm	70.18 69.98	14.248 14.289	0.20		control	
+49152	16516 on 32572	ub128	arm	80.52 80.75	12.419 12.384	0.23	15.06	gain	31.6
+49152	16516 on 32572	sp128	arm	131.31 131.89	7.616 7.582	0.58	87.77	gain	112.9
+49152	16900 on 32188	draft (the fourth run)	beside	69.98 70.13	14.289 14.260	0.14	-0.04	beside	
+49152	16900 on 32188	nodraft (the fourth run)	beside	119.54 119.63	8.365 8.359	0.08	70.63	beside	
+all	50120	ub512	arm	89.51 89.40	559.9 560.6	0.11		control	
+all	49352	ub128	arm	96.61 96.79	510.8 509.9	0.18	8.10	gain	
+all	49352	sp128	arm	131.08 131.32	376.5 375.8	0.25	46.67	gain	
