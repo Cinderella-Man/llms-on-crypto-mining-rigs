@@ -1,0 +1,37 @@
+kind	load_a	load_b	requests	same_reply	same_counters	requests_below_8192	same_reply_below	requests_from_8192	same_reply_from
+one arm, two loads	pv0-1	pv0-2	66	37	36	60	31	6	6
+arm against the control	pv0-1	gyro-pv0-1	66	43	41	60	41	6	2
+arm against the control	pv0-1	own-pv0-1	66	29	17	60	29	6	0
+arm against the control	pv0-1	own-pv0-2	66	31	17	60	31	6	0
+arm against the control	pv0-1	own-pv1-1	66	1	2	60	1	6	0
+arm against the control	pv0-1	own-pv1-2	66	3	1	60	3	6	0
+arm against the control	pv0-1	pv1-1	66	2	1	60	2	6	0
+arm against the control	pv0-1	pv1-2	66	2	1	60	2	6	0
+arm against the control	pv0-2	gyro-pv0-1	66	34	32	60	32	6	2
+arm against the control	pv0-2	own-pv0-1	66	30	16	60	30	6	0
+arm against the control	pv0-2	own-pv0-2	66	31	16	60	31	6	0
+arm against the control	pv0-2	own-pv1-1	66	1	2	60	1	6	0
+arm against the control	pv0-2	own-pv1-2	66	2	1	60	2	6	0
+arm against the control	pv0-2	pv1-1	66	2	1	60	2	6	0
+arm against the control	pv0-2	pv1-2	66	2	2	60	2	6	0
+two arms	gyro-pv0-1	own-pv0-1	66	31	16	60	31	6	0
+two arms	gyro-pv0-1	own-pv0-2	66	31	16	60	31	6	0
+two arms	gyro-pv0-1	own-pv1-1	66	2	3	60	2	6	0
+two arms	gyro-pv0-1	own-pv1-2	66	3	1	60	3	6	0
+two arms	gyro-pv0-1	pv1-1	66	2	1	60	2	6	0
+two arms	gyro-pv0-1	pv1-2	66	2	1	60	2	6	0
+one arm, two loads	own-pv0-1	own-pv0-2	66	32	32	60	30	6	2
+two arms	own-pv0-1	own-pv1-1	66	2	1	60	2	6	0
+two arms	own-pv0-1	own-pv1-2	66	1	1	60	1	6	0
+two arms	own-pv0-1	pv1-1	66	2	1	60	2	6	0
+two arms	own-pv0-1	pv1-2	66	2	2	60	2	6	0
+two arms	own-pv0-2	own-pv1-1	66	1	1	60	1	6	0
+two arms	own-pv0-2	own-pv1-2	66	2	2	60	2	6	0
+two arms	own-pv0-2	pv1-1	66	2	1	60	2	6	0
+two arms	own-pv0-2	pv1-2	66	2	1	60	2	6	0
+one arm, two loads	own-pv1-1	own-pv1-2	66	31	34	60	29	6	2
+two arms	own-pv1-1	pv1-1	66	3	3	60	3	6	0
+two arms	own-pv1-1	pv1-2	66	3	3	60	3	6	0
+two arms	own-pv1-2	pv1-1	66	4	4	60	4	6	0
+two arms	own-pv1-2	pv1-2	66	4	4	60	4	6	0
+one arm, two loads	pv1-1	pv1-2	66	35	36	60	33	6	2

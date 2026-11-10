@@ -1,0 +1,33 @@
+lm_head.weight	BF16	[248320, 2560]	model-00131-of-00131.safetensors	128	1271398400
+model.language_model.embed_tokens.weight	BF16	[248320, 2560]	model-00130-of-00131.safetensors	1576	1271398400
+mtp.fc_embedding.weight	BF16	[2560, 2560]	model-00120-of-00131.safetensors	1935412640	13107200
+mtp.fc_hidden.weight	BF16	[2560, 2560]	model-00124-of-00131.safetensors	1716599928	13107200
+mtp.hyper_connection_mixer.hc_norm.weight	BF16	[10240]	model-00037-of-00131.safetensors	1742326680	20480
+mtp.hyper_connection_mixer.input_mix_weight_down.weight	BF16	[320, 10240]	model-00041-of-00131.safetensors	1935412688	6553600
+mtp.hyper_connection_mixer.input_mix_weight_up.weight	BF16	[10240, 320]	model-00043-of-00131.safetensors	1832518416	6553600
+mtp.layers.0.attn_hyper_connection.block_inject_weight.weight	BF16	[4, 10240]	model-00047-of-00131.safetensors	1716599984	81920
+mtp.layers.0.attn_hyper_connection.hc_norm.weight	BF16	[10240]	model-00049-of-00131.safetensors	1935412672	20480
+mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight	BF16	[320, 10240]	model-00053-of-00131.safetensors	1832518424	6553600
+mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight	BF16	[10240, 320]	model-00057-of-00131.safetensors	1935412680	6553600
+mtp.layers.0.mlp.experts.down_proj	BF16	[512, 2560, 640]	model-00062-of-00131.safetensors	1832518400	1677721600
+mtp.layers.0.mlp.experts.gate_up_proj	BF16	[512, 1280, 2560]	model-00060-of-00131.safetensors	115918328	3355443200
+mtp.layers.0.mlp.gate.weight	BF16	[512, 2560]	model-00066-of-00131.safetensors	1716599952	2621440
+mtp.layers.0.mlp.shared_expert.down_proj.weight	BF16	[2560, 640]	model-00076-of-00131.safetensors	1935412680	3276800
+mtp.layers.0.mlp.shared_expert.gate_proj.weight	BF16	[640, 2560]	model-00072-of-00131.safetensors	1832518528	3276800
+mtp.layers.0.mlp.shared_expert.up_proj.weight	BF16	[640, 2560]	model-00072-of-00131.safetensors	1835795328	3276800
+mtp.layers.0.mlp.shared_expert_gate.weight	BF16	[1, 2560]	model-00070-of-00131.safetensors	1832518400	5120
+mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight	BF16	[4, 10240]	model-00078-of-00131.safetensors	1832518424	81920
+mtp.layers.0.mlp_hyper_connection.hc_norm.weight	BF16	[10240]	model-00082-of-00131.safetensors	1935412656	20480
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight	BF16	[320, 10240]	model-00086-of-00131.safetensors	1935412696	6553600
+mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight	BF16	[10240, 320]	model-00088-of-00131.safetensors	1832518424	6553600
+mtp.layers.0.self_attn.indexer.index_qk_proj.weight	BF16	[640, 2560]	model-00090-of-00131.safetensors	1832518416	3276800
+mtp.layers.0.self_attn.indexer.k_layernorm.weight	BF16	[128]	model-00094-of-00131.safetensors	1935412672	256
+mtp.layers.0.self_attn.indexer.q_layernorm.weight	BF16	[128]	model-00100-of-00131.safetensors	1716599968	256
+mtp.layers.0.self_attn.k_norm.weight	BF16	[256]	model-00102-of-00131.safetensors	1935412648	512
+mtp.layers.0.self_attn.k_proj.weight	BF16	[512, 2560]	model-00108-of-00131.safetensors	1832518624	2621440
+mtp.layers.0.self_attn.o_proj.weight	BF16	[2560, 6144]	model-00106-of-00131.safetensors	1832518400	31457280
+mtp.layers.0.self_attn.q_norm.weight	BF16	[256]	model-00112-of-00131.safetensors	1935412664	512
+mtp.layers.0.self_attn.q_proj.weight	BF16	[12288, 2560]	model-00108-of-00131.safetensors	1835140064	62914560
+mtp.layers.0.self_attn.v_proj.weight	BF16	[512, 2560]	model-00108-of-00131.safetensors	1898054624	2621440
+mtp.pre_fc_norm_embedding.weight	BF16	[2560]	model-00114-of-00131.safetensors	1832518392	5120
+mtp.pre_fc_norm_hidden.weight	BF16	[10240]	model-00118-of-00131.safetensors	1716599944	20480

@@ -1,0 +1,10 @@
+load	flags	generated	sampling_lines	sampled	device	grammar	rejected	rejected_device	forced	timings_with_grammar	timings_device	timings_short	step_lines	step_drafted	step_accepted	step_restores	accept_lines	log_drafted	log_accepted	drafted	accepted	ckpt_restores	keep_draws	error_lines	cuda_errors
+pv0-1	LLAMA_TRACE=1	17410	66	17420	17420	2658	1	1	0	66	17420	0	5661	16958	11688	0	66	16958	11688	16958	11688	65		0	0
+pv0-2	LLAMA_TRACE=1	17359	66	17368	17368	2540	1	1	0	66	17368	0	5590	16743	11708	0	66	16743	11708	16743	11708	65		0	0
+gyro-pv0-1	LLAMA_TRACE=1	17346	66	17355	17355	2655	1	1	0	66	17355	0	5552	16629	11733	0	66	16629	11733	16629	11733	65		0	0
+own-pv0-1	LLAMA_TRACE=1	17174	66	17186	17186	2568	1	1	0	66	17186	0	5506	16488	11608	0	66	16488	11608	16488	11608	65		0	0
+own-pv0-2	LLAMA_TRACE=1	17439	66	17451	17451	2536	1	1	0	66	17451	0	5614	16812	11764	0	66	16812	11764	16812	11764	65		0	0
+own-pv1-1	--spec-draft-sampling probabilistic --spec-draft-p-min 0 LLAMA_TRACE=1	15085	66	15134	15134	2639	16	16	0	66	15134	0	4632	13869	10426	0	66	13869	10426	13869	10426	64		0	0
+own-pv1-2	--spec-draft-sampling probabilistic --spec-draft-p-min 0 LLAMA_TRACE=1	16254	66	16295	16295	2334	12	12	0	66	16295	0	4924	14744	11297	0	66	14744	11297	14744	11297	63		0	0
+pv1-1	--spec-draft-sampling probabilistic --spec-draft-p-min 0 LLAMA_TRACE=1	18788	66	18833	18833	2568	14	14	0	66	18833	0	5691	17050	13066	0	66	17050	13066	17050	13066	64		0	0
+pv1-2	--spec-draft-sampling probabilistic --spec-draft-p-min 0 LLAMA_TRACE=1	18784	66	18828	18828	2685	14	14	0	66	18828	0	5655	16944	13099	0	66	16944	13099	16944	13099	64		0	0

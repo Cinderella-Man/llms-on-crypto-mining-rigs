@@ -1,0 +1,35 @@
+tensor	type	shape	operation	plus_one	from
+output.weight	BF16	[2560, 248320]	copy	0	lm_head.weight
+blk.48.nextn.hc_head_down.weight	BF16	[10240, 320]	copy	0	mtp.hyper_connection_mixer.input_mix_weight_down.weight
+blk.48.nextn.hc_head_norm.weight	F32	[10240]	copy	1	mtp.hyper_connection_mixer.hc_norm.weight
+blk.48.nextn.hc_head_up.weight	BF16	[320, 10240]	copy	0	mtp.hyper_connection_mixer.input_mix_weight_up.weight
+token_embd.weight	BF16	[2560, 248320]	copy	0	model.language_model.embed_tokens.weight
+blk.48.attn_k.weight	BF16	[2560, 512]	copy	0	mtp.layers.0.self_attn.k_proj.weight
+blk.48.attn_k_norm.weight	F32	[256]	copy	1	mtp.layers.0.self_attn.k_norm.weight
+blk.48.attn_output.weight	BF16	[6144, 2560]	copy	0	mtp.layers.0.self_attn.o_proj.weight
+blk.48.attn_q.weight	BF16	[2560, 12288]	copy	0	mtp.layers.0.self_attn.q_proj.weight
+blk.48.attn_q_norm.weight	F32	[256]	copy	1	mtp.layers.0.self_attn.q_norm.weight
+blk.48.attn_v.weight	BF16	[2560, 512]	copy	0	mtp.layers.0.self_attn.v_proj.weight
+blk.48.ffn_down_exps.weight	BF16	[640, 2560, 512]	copy	0	mtp.layers.0.mlp.experts.down_proj
+blk.48.ffn_down_shexp.weight	BF16	[640, 2560]	copy	0	mtp.layers.0.mlp.shared_expert.down_proj.weight
+blk.48.ffn_gate_exps.weight	BF16	[2560, 640, 512]	mid 0 640	0	mtp.layers.0.mlp.experts.gate_up_proj
+blk.48.ffn_gate_inp.weight	F32	[2560, 512]	copy	0	mtp.layers.0.mlp.gate.weight
+blk.48.ffn_gate_inp_shexp.weight	F32	[2560]	copy	0	mtp.layers.0.mlp.shared_expert_gate.weight
+blk.48.ffn_gate_shexp.weight	BF16	[2560, 640]	copy	0	mtp.layers.0.mlp.shared_expert.gate_proj.weight
+blk.48.ffn_up_exps.weight	BF16	[2560, 640, 512]	mid 640 1280	0	mtp.layers.0.mlp.experts.gate_up_proj
+blk.48.ffn_up_shexp.weight	BF16	[2560, 640]	copy	0	mtp.layers.0.mlp.shared_expert.up_proj.weight
+blk.48.hc_attn_down.weight	BF16	[10240, 320]	copy	0	mtp.layers.0.attn_hyper_connection.input_mix_weight_down.weight
+blk.48.hc_attn_inject.weight	BF16	[10240, 4]	copy	0	mtp.layers.0.attn_hyper_connection.block_inject_weight.weight
+blk.48.hc_attn_norm.weight	F32	[10240]	copy	1	mtp.layers.0.attn_hyper_connection.hc_norm.weight
+blk.48.hc_attn_up.weight	BF16	[320, 10240]	copy	0	mtp.layers.0.attn_hyper_connection.input_mix_weight_up.weight
+blk.48.hc_ffn_down.weight	BF16	[10240, 320]	copy	0	mtp.layers.0.mlp_hyper_connection.input_mix_weight_down.weight
+blk.48.hc_ffn_inject.weight	BF16	[10240, 4]	copy	0	mtp.layers.0.mlp_hyper_connection.block_inject_weight.weight
+blk.48.hc_ffn_norm.weight	F32	[10240]	copy	1	mtp.layers.0.mlp_hyper_connection.hc_norm.weight
+blk.48.hc_ffn_up.weight	BF16	[320, 10240]	copy	0	mtp.layers.0.mlp_hyper_connection.input_mix_weight_up.weight
+blk.48.indexer.k_norm.weight	F32	[128]	copy	1	mtp.layers.0.self_attn.indexer.k_layernorm.weight
+blk.48.indexer.k_proj.weight	BF16	[2560, 128]	rows 512 -1	0	mtp.layers.0.self_attn.indexer.index_qk_proj.weight
+blk.48.indexer.q_norm.weight	F32	[128]	copy	1	mtp.layers.0.self_attn.indexer.q_layernorm.weight
+blk.48.indexer.q_proj.weight	BF16	[2560, 512]	rows 0 512	0	mtp.layers.0.self_attn.indexer.index_qk_proj.weight
+blk.48.nextn.eh_proj.weight	BF16	[5120, 2560]	cat	0	mtp.fc_embedding.weight + mtp.fc_hidden.weight
+blk.48.nextn.enorm.weight	F32	[2560]	copy	1	mtp.pre_fc_norm_embedding.weight
+blk.48.nextn.hnorm.weight	F32	[10240]	copy	1	mtp.pre_fc_norm_hidden.weight

@@ -1,0 +1,3 @@
+tensor	shape	base_type	blocks	same_blocks	values	same_values	rel
+token_embd.weight	2560x248320	Q8_0	19865600	19865600	635699200	635699200	0.000000
+output.weight	2560x248320	Q8_0	19865600	19865600	635699200	635699200	0.000000

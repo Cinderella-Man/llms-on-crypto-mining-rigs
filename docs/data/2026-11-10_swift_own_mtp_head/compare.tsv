@@ -1,0 +1,19 @@
+comparison	kind	a	b	metric	a_loads	b_loads	a_value	b_value	delta	percent	spread_a	spread_b	class_control_spread	class_larger_spread	boot_requests_lo	boot_requests_hi	boot_traces_lo	boot_traces_hi	requests	per_request_mean_delta	per_request_lo	per_request_hi	requests_higher	requests_lower	requests_equal
+all	arm against the control	gyro-pv0	pv0	tokens a step	3.090	3.043 3.072	3.090	3.057	+0.033	+1.08		0.029	gain	no class (one load)	-0.007	+0.073	+0.004	+0.073	66	+0.012	-0.029	+0.053	19	16	31
+all	arm against the control	gyro-pv0	pv0	share accepted	0.7056	0.6892 0.6993	0.7056	0.6943	+0.0113	+1.63		0.0100	gain	no class (one load)	-0.0023	+0.0246	+0.0015	+0.0248	66	+0.0039	-0.0104	+0.0181	21	15	30
+all	arm against the control	own-pv0	pv0	tokens a step	3.086 3.073	3.043 3.072	3.079	3.057	+0.022	+0.72	0.013	0.029	negligible	negligible	-0.008	+0.053	-0.011	+0.066	66	+0.001	-0.037	+0.038	26	21	19
+all	arm against the control	own-pv0	pv0	share accepted	0.7040 0.6997	0.6892 0.6993	0.7019	0.6943	+0.0076	+1.10	0.0043	0.0100	negligible	negligible	-0.0026	+0.0184	-0.0038	+0.0228	66	-0.0013	-0.0139	+0.0111	29	22	15
+pre3	arm against the control	own-pv0	pv0	tokens a step	3.086 3.073	3.043 3.072 3.090	3.079	3.068	+0.011	+0.36	0.013	0.048	negligible	negligible	-0.016	+0.040	-0.020	+0.046	66	-0.003	-0.039	+0.030	30	25	11
+pre3	arm against the control	own-pv0	pv0	share accepted	0.7040 0.6997	0.6892 0.6993 0.7056	0.7019	0.6980	+0.0039	+0.55	0.0043	0.0163	negligible	negligible	-0.0054	+0.0137	-0.0068	+0.0160	66	-0.0026	-0.0141	+0.0083	29	24	13
+night	arm against the control	own-pv0	gyro-pv0	tokens a step	3.086 3.073	3.090	3.079	3.090	-0.011	-0.36	0.013		no class (one load)	no class (one load)	-0.049	+0.030	-0.045	+0.018	66	-0.011	-0.057	+0.031	20	26	20
+night	arm against the control	own-pv0	gyro-pv0	share accepted	0.7040 0.6997	0.7056	0.7019	0.7056	-0.0037	-0.52	0.0043		no class (one load)	no class (one load)	-0.0164	+0.0099	-0.0152	+0.0061	66	-0.0052	-0.0203	+0.0086	23	27	16
+pv1	arm against the control	own-pv1	pv1	tokens a step	3.238 3.279	3.283 3.304	3.258	3.294	-0.035	-1.07	0.041	0.021	loss	negligible	-0.101	+0.048	-0.090	+0.051	66	-0.068	-0.125	-0.014	23	40	3
+pv1	arm against the control	own-pv1	pv1	share accepted	0.7517 0.7662	0.7663 0.7731	0.7590	0.7697	-0.0107	-1.39	0.0145	0.0067	loss	negligible	-0.0321	+0.0167	-0.0292	+0.0175	66	-0.0187	-0.0361	-0.0018	26	37	3
+own	arm against the control	own-pv1	own-pv0	tokens a step	3.238 3.279	3.086 3.073	3.258	3.079	+0.179	+5.82	0.041	0.013	gain	gain	+0.120	+0.229	+0.129	+0.231	66	+0.152	+0.092	+0.210	48	17	1
+own	arm against the control	own-pv1	own-pv0	share accepted	0.7517 0.7662	0.7040 0.6997	0.7590	0.7019	+0.0571	+8.13	0.0145	0.0043	gain	gain	+0.0348	+0.0745	+0.0374	+0.0750	66	+0.0420	+0.0229	+0.0601	46	19	1
+all	second load against the first	own-pv0-2	own-pv0-1	tokens a step	3.073	3.086	3.073	3.086	-0.013	-0.41					-0.061	+0.035	-0.040	+0.015	66	-0.008	-0.062	+0.044	14	19	33
+all	second load against the first	own-pv0-2	own-pv0-1	share accepted	0.6997	0.7040	0.6997	0.7040	-0.0043	-0.61					-0.0207	+0.0119	-0.0143	+0.0059	66	-0.0032	-0.0214	+0.0143	15	19	32
+all	second load against the first	own-pv1-2	own-pv1-1	tokens a step	3.279	3.238	3.279	3.238	+0.041	+1.27					-0.032	+0.105	+0.001	+0.091	66	-0.009	-0.058	+0.039	17	15	34
+all	second load against the first	own-pv1-2	own-pv1-1	share accepted	0.7662	0.7517	0.7662	0.7517	+0.0145	+1.92					-0.0097	+0.0358	+0.0010	+0.0320	66	+0.0019	-0.0135	+0.0176	16	16	34
+pre3	second load against the first	pv0-2	pv0-1	tokens a step	3.072	3.043	3.072	3.043	+0.029	+0.96					-0.043	+0.103	-0.046	+0.112	66	+0.016	-0.027	+0.062	13	15	38
+pre3	second load against the first	pv0-2	pv0-1	share accepted	0.6993	0.6892	0.6993	0.6892	+0.0100	+1.46					-0.0143	+0.0349	-0.0150	+0.0378	66	+0.0064	-0.0080	+0.0220	14	15	37
