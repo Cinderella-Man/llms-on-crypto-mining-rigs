@@ -1,0 +1,7 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+draft1 (whole load)	255	437	437	20	+0	0.00	0.00
+nodraft1 (whole load)	244	610	610	20	+0	0.00	0.00
+draft1 decode pass 1 depth 0	14	445	445	20	+0	0.00	0.00
+draft1 decode pass 2 depth 0	12	437	437	20	+0	0.00	0.00
+nodraft1 decode pass 1 depth 0	18	610	610	20	+0	0.00	0.00
+nodraft1 decode pass 2 depth 0	16	635	635	20	+0	0.00	0.00

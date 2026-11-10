@@ -237,6 +237,13 @@ the release check's recorded requests.
   the plain line's token is the tokens a step the draft must yield, and it does not depend on the reply
   ([run/draft_pair.py](../../docs/data/2026-11-10_deep_lane/run/draft_pair.py) prints it). The prime requests of the
   two arms also time what the draft adds to prompt reading.
+- **The third run on the rig** held the same two lines at a 131,072-token context (`CTX=131072 UB=256`) at 49,152,
+  65,536 and 120,000 tokens, one load an arm, 68 minutes, same data page. One arm's 12 recorded sessions hold too
+  few tokens for 120,000, so the prompts came from two arms' (`TAG='^(t1swift|t1base)/'`, 24 sessions); every prime
+  continued from a checkpoint, and the longest read 54,724 tokens on 65,212 cached. `LOADS` put the line without the
+  draft first, so that its numbers would be in if the draft line ran out of host memory. Run the projection of
+  [scripts/fit_probe.sh](../../scripts/fit_probe.sh) and a load check (`WARM=0 REPS=1 DEPTHS=0`) before such a run:
+  together they take a few minutes and read every card's memory before an hour of loads.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

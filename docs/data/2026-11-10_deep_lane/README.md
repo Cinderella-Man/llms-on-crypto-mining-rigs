@@ -1,4 +1,4 @@
-# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context (Q1143, Q230, Q1153; 2026-11-10)
+# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, and a 131,072-token line to 120,000 tokens (Q1143, Q230, Q1153, Q1154; 2026-11-10)
 
 What this is: the first timing of the sparse Pascal attention (`GGML_CUDA_FATTN_SPARSE_PASCAL=1`, off by default) on
 a real model. The line is the Miner Llama v3 release preset
@@ -12,6 +12,10 @@ an arm. Registry rows Q1143 (the lane) and Q230 (the kernel) in
 A second run on the same day put the line with its MTP draft against the same line without it, at the same depths
 and with the sparse attention on in both arms (`draft` and `nodraft`; registry row Q1153). Its result is
 [the second pair](#the-second-pair-the-mtp-draft-on-against-off-q1153) below.
+
+A third run put the same line, with and without the draft, at a 131,072-token context (`-c 131072 -ub 256`) and
+held it at 49,152, 65,536 and 120,000 tokens, after a projection and a real load of each line's memory (registry row
+Q1154). Its result is [the 131,072-token line](#the-third-run-a-131072-token-line-q1154) below.
 
 Why: on a P106 llama.cpp's attention reads the whole cache for every token, so generation slows as an agent's
 context grows, and real coding attempts write 40,000 tokens and more. The model's attention layers keep about 2,051
@@ -467,6 +471,198 @@ the step on pass 1 and pass 2; the first six characters of the reply's hash on p
 - The host's memory is read from one sample a second; the run does not show what was swapped.
 - No quality is measured here.
 
+## The third run: a 131,072-token line (Q1154)
+
+Real coding attempts write 40,000 tokens and more, and a benchmark that keeps an attempt's whole history cannot fit
+a typical attempt into the preset's 65,536 tokens. The question: does the same line fit at `-c 131072` on the nine
+6 GB cards and the 4 GB host, and how fast is it at 65,536 and 120,000 tokens? The line is the preset with
+`GGML_CUDA_FATTN_SPARSE_PASCAL=1`, `-c 131072` and `-ub 256` in place of `-ub 512` (the micro-batch the projection
+of registry row Q213 allows with the draft at this context), with the draft (`draft`) and without it (`nodraft`).
+First a projection per card of each line, then one real load of each at depth 0 (`load_check`), then the deep lane
+at 49,152, 65,536 and 120,000 tokens, one load an arm after a warm-up load.
+
+**The line fits and holds to 120,000 tokens with the draft and without it. With the draft the fullest card held
+5,419 of its 6,068 usable MiB during the run, the host's available memory fell to 175 MiB at the lowest while
+1,118 MiB went to swap during the first long prompt, and the RAM watchdog did not act. At 120,000 tokens the line
+generates 15.24 tok/s with the draft and 10.96 without (one load each). At 49,152 tokens it is as fast as the
+65,536-token preset: a draft step takes 181.81 ms on the repeated request, against 184.90, 181.11, 180.77 and
+180.96 ms in R39b's and R39a's four loads. With the draft it reads prompts a third slower: 49.0 against 73.6 tok/s
+on 65,212 cached tokens.**
+
+### Memory on the cards
+
+MiB in use per card: the projection of [scripts/fit_probe.sh](../../../scripts/fit_probe.sh) (llama.cpp's `--fit`
+step with no weights loaded, seconds a line), the real use right after loading, and the most each card held during
+the load (the cards every 10 s). The last column is what is left on the fullest card, card 3, of the 6,068 MiB a
+P106-090 offers a process (6,144 MiB minus the driver's reserve of 76;
+[ctx131k/card_fit.tsv](ctx131k/card_fit.tsv), made by [run/card_fit.py](run/card_fit.py)).
+
+| Line | | Card 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | Left on card 3 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 131,072, `-ub 256`, draft | projected | 5,088 | 5,386 | 5,092 | 5,402 | 5,004 | 5,109 | 4,672 | 5,120 | 4,892 | 666 |
+| | after loading (three loads) | 5,145 | 5,373 | 5,081 | 5,389 | 4,993 | 5,097 | 4,659 | 5,109 | 4,887 | 679 |
+| | highest, `draft1` | 5,187 | 5,403 | 5,111 | 5,419 | 5,019 | 5,127 | 4,689 | 5,139 | 4,935 | 649 |
+| 131,072, `-ub 256`, no draft | projected | 5,040 | 5,348 | 5,046 | 5,365 | 4,321 | 5,062 | 4,644 | 5,073 | 2,541 | 703 |
+| | after loading (two loads) | 5,099 | 5,339 | 5,035 | 5,355 | 4,309 | 5,051 | 4,633 | 5,063 | 2,529 | 713 |
+| | highest, `nodraft1` | 5,141 | 5,369 | 5,065 | 5,385 | 4,339 | 5,081 | 4,663 | 5,093 | 2,559 | 683 |
+| 65,536, `-ub 512`, draft (R39b) | after loading | 5,059 | 5,095 | 4,963 | 5,111 | 4,875 | 4,979 | 4,381 | 4,991 | 4,565 | 957 |
+| | highest, `draft1` | 5,101 | 5,137 | 5,005 | 5,153 | 4,913 | 5,021 | 4,423 | 5,033 | 4,625 | 915 |
+| 65,536, `-ub 512`, no draft (R39b) | after loading | 5,013 | 5,061 | 4,917 | 5,077 | 4,191 | 4,933 | 4,355 | 4,945 | 2,411 | 991 |
+
+- **The projection matches the real load** within 13 MiB on cards 1 to 8, and on card 0 it is 57 MiB under it with
+  the draft and 59 MiB without. llama.cpp
+  counts the probe's own 45 MiB context as taken and prints 621 MiB free on card 3 with the draft and 658 without.
+  Its `--fit` target of 1,024 MiB free per card is met by none of the four lines probed, the 65,536-token preset's
+  included; the preset runs with `-fit off`.
+- **What the doubled context costs** after loading, against the preset with its `-ub 512`: 86 MiB on card 0, 278 on
+  cards 1, 3 and 6 (the three cards with two attention layers), 118 on cards 2, 4, 5 and 7, and on card 8 118 without
+  the draft and 322 with it. That is 1,510 MiB over the nine cards without the draft and 1,714 with it.
+- During the requests the fullest card grew by 30 MiB in both lines (5,389 to 5,419 MiB with the draft, 5,355 to
+  5,385 without).
+- Registry row Q213 had projected 309 MiB free on the fullest card for a 128k line with the draft, on v2.0's build
+  and another split; on this build and the preset's split the projection is 621 MiB (llama.cpp's figure).
+
+### The host's memory
+
+From the RAM watchdog's samples, one a second ([ctx131k/host_memory.tsv](ctx131k/host_memory.tsv),
+[ctx131k/load_check/host_memory.tsv](ctx131k/load_check/host_memory.tsv)):
+
+| Load | MemAvailable after loading | Lowest MemAvailable | During | Most swap in use | Moved to swap | Highest pressure |
+|---|---:|---:|---|---:|---|---:|
+| `load_check`: `draft1` (depth 0) | 908 MiB | 437 MiB | the decode at depth 0 | 20 MiB | none | 0.00 % |
+| `load_check`: `nodraft1` (depth 0) | 970 | 610 | the decode at depth 0 | 20 | none | 0.00 % |
+| `warm` (draft, depth 0) | 887 | 441 | the decode at depth 0 | 20 | none | 0.00 % |
+| `nodraft1` | 947 | 190 | the decode at 120,000 | 20 | none | 0.18 % |
+| `draft1` | 878 | 175 | the prime to 49,152 | 1,223 | +1,118 MiB in the prime to 49,152, +134 in the first request at 49,152 | 9.70 % |
+
+- **With the draft the host gave 1,118 MiB to swap while the line read its first 49,028 prompt tokens**, under a
+  memory pressure of up to 9.70 % (the kernel's "some" figure, a 10-second average). The most written to swap in any
+  10 seconds was 162 MiB, against the watchdog's limit of 600. From then on at least 725 MiB stayed available to the
+  end of the load.
+- **Without the draft no swap moved.** The lowest available memory fell with depth: 253 MiB during the decode at
+  49,152, 223 at 65,536 and 190 at 120,000.
+- On the 65,536-token line R39b's loads fell to 76 and 96 MiB with the draft and 258 and 275 without, so this line
+  is not tighter on the host than the preset. The watchdog did not act in any load.
+
+### Generation: tokens a second and ms a token
+
+Per load: pass 1, pass 2 → the load, with the load's ms a token ([ctx131k/table.md](ctx131k/table.md),
+[ctx131k/draft_pair.md](ctx131k/draft_pair.md)).
+
+| Depth (tokens) | `draft1`, tok/s (ms a token) | Accepted on pass 1 (tokens a step) | `nodraft1`, tok/s (ms a token) | `draft` against `nodraft` |
+|---:|---|---:|---|---:|
+| 49,152 | 15.01, 18.05 → **16.39** (61.01) | 0.771 (3.28) | 14.12, 14.55 → **14.33** (69.78) | +14.4 % |
+| 65,536 | 17.09, 18.82 → **17.92** (55.82) | 0.930 (3.71) | 13.39, 13.55 → **13.47** (74.25) | +33.0 % |
+| 120,000 | 15.20, 15.29 → **15.24** (65.60) | 0.964 (3.82) | 10.85, 11.07 → **10.96** (91.25) | +39.1 % |
+| all three | **16.44** (60.81) | | **12.75** (78.42) | +29.0 % |
+
+- **One load an arm, so no class.** Two loads an arm were est. 2 h 18 min from R39b's prompt speeds; the run took 68
+  minutes. Registry row Q1218 is the second load of each arm.
+- Every pass 2 repeated its pass 1's reply, and the draft line's replies here accepted much of the draft: 0.930
+  and 0.964 of the drafted tokens at 65,536 and 120,000, more than any of R39b's loads at any depth.
+- Without the draft the line slows from 14.33 tok/s at 49,152 to 10.96 at 120,000: 69.78, 74.25 and 91.25 ms a
+  token.
+
+### The step and what it must yield
+
+The draft's step against a token of the line without it, and their ratio, the tokens a step the draft must yield to
+pay ([ctx131k/draft_pair_breakeven.tsv](ctx131k/draft_pair_breakeven.tsv)). The last two columns are an estimate:
+the tokens a step counted off the rig with the preset's sampler at 49,152 tokens, 2.88
+([2026-11-10_draft_acceptance_by_depth](../2026-11-10_draft_acceptance_by_depth/README.md); nothing deeper was
+counted), at this run's step times.
+
+| Depth (tokens) | Step of `draft1`, ms: pass 1, pass 2 | Token of `nodraft1`, ms: pass 1, pass 2 | Break-even, tokens a step: pass 1, pass 2 | At 2.88 tokens a step (est.): pass 1, pass 2 |
+|---:|---|---|---|---|
+| 49,152 | 218.69, 181.81 | 70.84, 68.72 | 3.09, 2.65 | −6.8 %, +8.7 % |
+| 65,536 | 217.07, 197.12 | 74.68, 73.81 | 2.91, 2.67 | −1.1 %, +7.7 % |
+| 120,000 | 251.36, 249.94 | 92.15, 90.34 | 2.73, 2.77 | +5.4 %, +4.0 % |
+
+- **The break-even barely rises to 120,000 tokens:** 2.65, 2.67 and 2.77 tokens a step on the repeated request,
+  against R39b's 2.40, 2.68, 2.55, 2.57 and 2.66 at 0 to 49,152.
+- **With the sparse attention the step grows by under 1 ms per 1,000 tokens of context:** from 65,536 to 120,000
+  the draft's step on the repeat grows by 52.82 ms (0.97 ms per 1,000 tokens) and a plain token by 16.53 ms (0.30).
+  R39a's dense step grew by 3.68 ms per 1,000 tokens from 32,768 to 49,152; continued to 120,000 that would be
+  est. 562 ms a step.
+- **The first request:** at 49,152 the draft's step is 36.88 ms longer on pass 1 than on the repeat (a plain token
+  2.12 ms), right after the prime that moved 1,118 MiB to swap; at 65,536 19.95 ms (0.87) and at 120,000 1.42 ms
+  (1.81). Registry row Q1133.
+
+### Prompt reading
+
+The tokens each prime read over their time, with the ms a prompt token
+([ctx131k/draft_pair_prompt.tsv](ctx131k/draft_pair_prompt.tsv)):
+
+| Depth (tokens) | Read, on cached | `draft1` | `nodraft1` | `draft` against `nodraft` | The draft adds, ms a prompt token |
+|---:|---|---:|---:|---:|---:|
+| 49,152 | 49,028 on 60 | 100.5 tok/s (9.95 ms) | 146.2 (6.84) | −31.3 % | +3.11 |
+| 65,536 | 16,644 on 48,828 | 66.2 (15.10) | 93.7 (10.68) | −29.3 % | +4.42 |
+| 120,000 | 54,724 on 65,212 | 49.0 (20.41) | 73.6 (13.58) | −33.5 % | +6.83 |
+
+- The three primes, 120,396 tokens, took 1,856.3 s with the draft and 1,256.3 s without.
+- On 65,212 cached tokens the draft adds 6.83 ms to a prompt token; in R39b it added 5.89 on 32,188 (another
+  micro-batch and other chunks, so not a pair).
+- At these speeds a 2,000-token tool output at 120,000 tokens of context reads in est. 40.8 s with the draft and
+  27.2 s without.
+- In a whole turn the draft paid in this run's loads up to 1.35, 3.66 and 3.86 new prompt tokens per generated token
+  at 49,152, 65,536 and 120,000; at the sampler's 2.88 tokens a step est. nowhere at 49,152 and 65,536 and up to
+  0.70 at 120,000 ([ctx131k/draft_pair_turn.tsv](ctx131k/draft_pair_turn.tsv)). Registry row Q1216 counts which side
+  real turns fall on.
+
+### At 49,152 tokens beside the 65,536-token line, and at depth 0
+
+All loads with the sparse attention on. Tok/s is both passes of a load; the share accepted and the tokens a step are
+pass 1's.
+
+| Line | Load | tok/s (ms a token) | Share accepted | Tokens a step | Step on pass 1, ms | Step on pass 2, ms |
+|---|---|---|---:|---:|---:|---:|
+| 131,072, `-ub 256` | `draft1` | **16.39** (61.01) | 0.771 | 3.28 | 218.69 | 181.81 |
+| 65,536, `-ub 512` (R39b) | `draft1` | **17.92** (55.80) | 0.792 | 3.32 | 186.13 | 184.90 |
+| | `draft2` | **17.13** (58.36) | 0.729 | 3.16 | 187.79 | 181.11 |
+| 65,536, `-ub 512` (R39a) | `sparse1` | **17.81** (56.13) | 0.807 | 3.37 | 197.40 | 180.77 |
+| | `sparse2` | **14.68** (68.11) | 0.616 | 2.81 | 202.27 | 180.96 |
+| 131,072, no draft | `nodraft1` | **14.33** (69.78) | | 1 | 70.84 | 68.72 |
+| 65,536, no draft (R39b) | `nodraft1` | **14.28** (70.04) | | 1 | 71.27 | 68.81 |
+| | `nodraft2` | **14.14** (70.73) | | 1 | 72.66 | 68.80 |
+
+- **At the same depth the larger context costs nothing in generation:** on the repeated request the draft's step is
+  181.81 ms against 184.90, 181.11, 180.77 and 180.96, and a plain token 68.72 ms against 68.81 and 68.80.
+- The 49,152-token prompt here is other text than R39's: the stream is cut from both arms' recorded sessions
+  (`t1swift` and `t1base`, 24 sessions) and the tail is another session's turn with an equally long recorded reply.
+  So the replies and their acceptance are not paired with R39's; the step times are.
+- Pass 1's 218.69 ms is the first request after a prime of 49,028 tokens on an empty cache; R39b's first requests at
+  49,152 followed a prime of 16,900 tokens.
+- **At depth 0** (`load_check`, [ctx131k/load_check/table.md](ctx131k/load_check/table.md)) the line with the draft
+  ran 25.75, 27.65 → **26.67** tok/s (37.50 ms a token), its step on the repeat 123.46 ms; without the draft 18.96,
+  19.48 → **19.22** (52.03), a token on the repeat 51.33 ms. The 65,536-token line in R39b: 27.03 (37.00) and 26.71
+  (37.44) tok/s, steps of 123.20 and 123.26 ms; 19.26 (51.92) twice, tokens of 51.32 and 51.32 ms. The load check's
+  draft load was the first load of the weights on the rig in 25 minutes, with no warm-up load before it (registry row
+  Q1055).
+
+### What it decides
+
+- **A 131,072-token line is usable on the rig as sold, with the draft.** It fits the cards with 649 MiB left on the
+  fullest one at its highest, it holds the 4 GB host to 120,000 tokens, it is as fast as the 65,536-token preset at
+  the same depth, and at 120,000 tokens it still generates 15.24 tok/s with the draft (10.96 without). The draft
+  line was the faster one in generation at all three depths in this run's loads.
+- **What the draft costs at this depth is prompt reading:** 31.3 %, 29.3 % and 33.5 % of prompt speed at 49,152,
+  65,536 and 120,000 tokens, 6.83 ms a prompt token on 65,212 cached tokens. At the yield counted with the preset's sampler its gain in generation at 120,000 is
+  est. +4.0 % on the repeat and +5.4 % on a first request. So over a whole long session the line without the draft
+  may be the faster one; registry row Q1216 decides that from recorded turns.
+- **`-ub 256` costs nothing in generation** at depth 0 or 49,152. Its cost in prompt reading against `-ub 512` is not
+  measured here; on stock llama.cpp's agent check it read prompts at 50.3 against 53.7 tok/s (registry row Q1128).
+  Whether one 131,072-token preset can replace the 65,536-token one is the agent check of both lines (registry row
+  Q1220).
+- Next: the second load of each arm for classes (Q1218), the same probe and lane at 196,608 and 262,144 tokens
+  (Q1219), and a second preset file for this line (Q1221). The preset is not changed by this run.
+
+**Limits.**
+- One load an arm, one day, one rig: no class.
+- Greedy replies of 256 tokens at the end of recorded sessions cut at a token count; at depth the model often says
+  the context looks cut. The draft's yield here, 3.28, 3.71 and 3.82 tokens a step, is that of three such replies.
+- The estimates use tokens a step counted on other cards at 49,152 tokens for all three depths.
+- The host's memory is one sample a second; the run does not show what was swapped.
+- No quality is measured here.
+
 ## Method
 
 - **The line:** the preset as it is on nine P106-090 cards (`-ts 6,6,6,6,5,6,5,6,3`, `-c 65536`, `-ub 512`, the MTP
@@ -505,6 +701,23 @@ the step on pass 1 and pass 2; the first six characters of the reply's hash on p
   turns the same `requests.csv` into the tables of this page: the class of `draft` against `nodraft` per pass, the
   break-even, the two factors between loads, prompt reading, the turn, and the first pair's `sparse` loads beside
   `draft`. [run/host_memory.py](run/host_memory.py) reads the watchdog's samples. Both ran on another machine.
+- **The third run's line:** the second pair's two lines with `-c 131072 -ub 256` (`CTX=131072 UB=256`); nothing
+  else changed ([ctx131k/loads.tsv](ctx131k/loads.tsv)). The prompts are cut from both arms of the release check's
+  recorded requests (`TAG='^(t1swift|t1base)/'`, 24 sessions), since one arm's 12 sessions hold too few tokens for
+  120,000.
+- **The third run's steps:** the projection of four lines (131,072 and 65,536 tokens, with and without the draft,
+  seconds a line), then `load_check`: one load of each line at depth 0 (`WARM=0 REPS=1 DEPTHS=0`), with the cards'
+  memory read after loading and the watchdog on. Then the deep lane at 49,152, 65,536 and 120,000 tokens: a warm-up
+  load of `draft`, then `nodraft1` and `draft1` (`LOADS="warm:draft nodraft1:nodraft draft1:draft"`), the line
+  without the draft first, so that its numbers were in even if the draft line ran out of host memory. Depth 49,152
+  is there to pair with the first two runs; its two decode requests cost about 40 s a load, since the prime to 65,536
+  reads its tokens anyway. Each load was checked quiet before it (no llama process, 0 MiB on every card). Loading
+  took 225 s with the draft and 208 s without; `nodraft1` took 26.9 minutes, `draft1` 36.9, the run 68 minutes.
+- **The third run's tables:** the driver's own ([ctx131k/table.md](ctx131k/table.md); its control is `nodraft`, the
+  first timed arm); [run/draft_pair.py](run/draft_pair.py), [run/host_memory.py](run/host_memory.py) and
+  [run/card_fit.py](run/card_fit.py), the last of which puts the projection, the memory after loading and the most
+  each card held during a load into one table. They ran on another machine and gave the rig's own tables again,
+  byte for byte.
 
 ## Files
 
@@ -520,10 +733,16 @@ the step on pass 1 and pass 2; the first six characters of the reply's hash on p
 | [draft_nodraft/draft_pair_classes.tsv](draft_nodraft/draft_pair_classes.tsv), [_breakeven.tsv](draft_nodraft/draft_pair_breakeven.tsv), [_prompt.tsv](draft_nodraft/draft_pair_prompt.tsv), [_turn.tsv](draft_nodraft/draft_pair_turn.tsv), [_loads.tsv](draft_nodraft/draft_pair_loads.tsv) | the same as tables: the classes (generation on both passes, pass 1, pass 2, all depths, and the prompt), the break-even per depth and pass, the prompt's ms a token per arm, the turn's break-even, and one line per load, depth and pass of both runs |
 | [draft_nodraft/requests.csv](draft_nodraft/requests.csv), [loads.tsv](draft_nodraft/loads.tsv), [host_memory.tsv](draft_nodraft/host_memory.tsv) | the second pair's requests, loads and host memory, as for the first pair |
 | [run/draft_pair.py](run/draft_pair.py), [run/host_memory.py](run/host_memory.py) | the two table scripts of the second pair (Python 3.9 or newer, standard library only) |
+| [ctx131k/table.md](ctx131k/table.md), [classes.tsv](ctx131k/classes.tsv), [requests.csv](ctx131k/requests.csv), [loads.tsv](ctx131k/loads.tsv) | the third run's driver tables, requests and loads (`warm`, `nodraft1`, `draft1` at 49,152, 65,536 and 120,000 tokens) |
+| [ctx131k/draft_pair.md](ctx131k/draft_pair.md), [_classes.tsv](ctx131k/draft_pair_classes.tsv), [_breakeven.tsv](ctx131k/draft_pair_breakeven.tsv), [_prompt.tsv](ctx131k/draft_pair_prompt.tsv), [_turn.tsv](ctx131k/draft_pair_turn.tsv), [_loads.tsv](ctx131k/draft_pair_loads.tsv) | the third run read part by part, as for the second pair, with an estimate at the sampler's yield at 49,152 |
+| [ctx131k/host_memory.tsv](ctx131k/host_memory.tsv) | the third run's host memory per load and request |
+| [ctx131k/card_fit.tsv](ctx131k/card_fit.tsv) | MiB per card: the projection of four lines, and after loading and at the highest for every load of the third run, its load check and the second pair |
+| [ctx131k/load_check/](ctx131k/load_check/table.md) (`table.md`, `classes.tsv`, `requests.csv`, `loads.tsv`, `host_memory.tsv`) | the load check: one load of each 131,072-token line at depth 0 |
+| [run/card_fit.py](run/card_fit.py) | the card table's script (Python 3.9 or newer, standard library only) |
 
 Not published: the prompts' token ids, the replies' first characters and the server logs (recorded text and paths),
-and the raw telemetry (the cards every 10 s, the watchdog's samples, the quiet and fit checks, which the text above
-summarizes).
+the raw telemetry (the cards every 10 s, the watchdog's samples, the quiet and fit checks, which the text above
+summarizes) and the fit probe's raw log (paths; its numbers are in `ctx131k/card_fit.tsv`).
 
 ## Commands
 
@@ -577,6 +796,53 @@ python3 -I docs/data/2026-11-10_deep_lane/run/draft_pair.py <results folder of t
   --yield "greedy off the rig:0=2.965,8192=2.954,16384=3.539,32768=3.200,49152=3.413" \
   --out draft_pair.md --tsv draft_pair
 python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <results folder> > host_memory.tsv
+```
+
+The third run. First the projection per card (`BUILDS` is the rig's folder of builds, `BUILD` the release build's
+folder in it; `fit_probe.sh` adds `-ngl 99 -fa on -np 1 -fit on --ctx-checkpoints 4 --cache-ram 0`):
+
+```bash
+BUILD=<the release build's folder name>
+E="GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 LLAMA_HOP_CAST=q8_0 GGML_CUDA_HOP_STAGED=1 LLAMA_DRAFT_SHORTLIST=32768,8192,2 GGML_CUDA_KEEPALIVE=decode GGML_CUDA_FATTN_SPARSE_PASCAL=1"
+P="-bs -b 2048 -ts 6,6,6,6,5,6,5,6,3 -lm dio --no-host"
+DR="--spec-type draft-mtp --spec-draft-n-max 3 -otd token_embd=CUDA4 --spec-draft-n-ubatch 128 -md <models>/mtp-Qwen3.8-Flash-Next-draft.gguf"
+RIG=rig MODEL=<models>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf BUILDS=<builds> OUT=fit_probe.md KEEP=400 \
+CONFIGS="draft131k|$BUILD|131072|$P -ub 256 $DR|$E;nodraft131k|$BUILD|131072|$P -ub 256|$E;draft65k|$BUILD|65536|$P -ub 512 $DR|$E;nodraft65k|$BUILD|65536|$P -ub 512|$E" \
+bash scripts/fit_probe.sh
+```
+
+Then the load check and the deep lane, each with the `wait` and `collect` commands above (`DRY=1` first):
+
+```bash
+RIG=rig BIN=<build>/bin/llama-server \
+MODEL=<models>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+MODEL_DRAFT=<models>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+TEXT_LOCAL=<recorded>/proxy.jsonl.bodies.gz TAG='^(t1swift|t1base)/' WD_ENV=MIN_AVAIL_MB=60 \
+CTX=131072 UB=256 ENV_ADD=GGML_CUDA_FATTN_SPARSE_PASCAL=1 ARMS="draft nodraft" ARM_DRAFT_nodraft=off \
+WARM=0 REPS=1 DEPTHS=0 \
+bash bench/deep_lane/remote.sh start
+```
+
+```bash
+RIG=rig BIN=<build>/bin/llama-server \
+MODEL=<models>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+MODEL_DRAFT=<models>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+TEXT_LOCAL=<recorded>/proxy.jsonl.bodies.gz TAG='^(t1swift|t1base)/' WD_ENV=MIN_AVAIL_MB=60 \
+CTX=131072 UB=256 ENV_ADD=GGML_CUDA_FATTN_SPARSE_PASCAL=1 ARMS="draft nodraft" ARM_DRAFT_nodraft=off \
+DEPTHS="49152 65536 120000" LOADS="warm:draft nodraft1:nodraft draft1:draft" \
+bash bench/deep_lane/remote.sh start
+```
+
+Its tables (the yield is the sampler pass's tokens a step at 49,152 in
+[2026-11-10_draft_acceptance_by_depth/pooled.tsv](../2026-11-10_draft_acceptance_by_depth/pooled.tsv)):
+
+```bash
+python3 -I bench/deep_lane/deep_table.py <deep lane folder> --out table.md --tsv classes.tsv
+python3 -I docs/data/2026-11-10_deep_lane/run/draft_pair.py <deep lane folder> \
+  --yield "the sampler off the rig, at 49,152:49152=2.876,65536=2.876,120000=2.876" --out draft_pair.md --tsv draft_pair
+python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <deep lane folder> > host_memory.tsv
+python3 -I docs/data/2026-11-10_deep_lane/run/card_fit.py --probe fit_probe.md <load check folder> <deep lane folder> \
+  <second pair's folder> > card_fit.tsv
 ```
 
 ## Provenance and licence
