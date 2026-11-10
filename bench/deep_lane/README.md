@@ -247,6 +247,11 @@ the release check's recorded requests.
   draft first, so that its numbers would be in if the draft line ran out of host memory. Run the projection of
   [scripts/fit_probe.sh](../../scripts/fit_probe.sh) and a load check (`WARM=0 REPS=1 DEPTHS=0`) before such a run:
   together they take a few minutes and read every card's memory before an hour of loads.
+- **A run can be extended later.** The seventh run on the rig gave the third one its second load of each arm, five
+  and a half hours later, 68 minutes: the collected folder went back to the rig's `out` folder and the same command
+  ran with a longer `LOADS` (`... nodraft2:nodraft draft2:draft`). The settings check (`settings.md5`, which leaves
+  `LOADS` out) let the folder resume, the driver skipped the two finished loads, ran a warm-up load and the two new
+  ones, and wrote the tables of all four. The new warm-up replaces the old one's per-load files.
 - **The fourth run on the rig** read prompts only: four arms (`--spec-draft-n-ubatch` 128, 256 and 512 through
   `ARM_ARGS_<arm>`, and the line without the draft), two loads each, 108 minutes, same data page. With
   `N_PREDICT=16` a load with the draft took 14 minutes instead of the second pair's 16, and the primes' numbers

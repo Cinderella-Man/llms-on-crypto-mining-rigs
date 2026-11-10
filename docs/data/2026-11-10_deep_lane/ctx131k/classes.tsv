@@ -1,14 +1,14 @@
 metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
-generation	49152	draft	nodraft	16.39	14.33	—	2.06	14.4	no class (one load)
-generation	65536	draft	nodraft	17.92	13.47	—	4.45	33.0	no class (one load)
-generation	120000	draft	nodraft	15.24	10.96	—	4.28	39.1	no class (one load)
-generation_all	all	draft	nodraft	16.44	12.75	—	3.69	29.0	no class (one load)
-step_pass1	49152	draft	nodraft	218.69	70.84	—	147.84	208.7	no class (the draft differs)
-step_pass1	65536	draft	nodraft	217.07	74.68	—	142.39	190.7	no class (the draft differs)
-step_pass1	120000	draft	nodraft	251.36	92.15	—	159.20	172.8	no class (the draft differs)
-step_pass2	49152	draft	nodraft	181.81	68.72	—	113.09	164.6	no class (the draft differs)
-step_pass2	65536	draft	nodraft	197.12	73.81	—	123.30	167.0	no class (the draft differs)
-step_pass2	120000	draft	nodraft	249.94	90.34	—	159.60	176.7	no class (the draft differs)
-prompt	49152	draft	nodraft	100.5	146.2	—	-45.7	-31.3	no class (one load)
-prompt	65536	draft	nodraft	66.2	93.7	—	-27.4	-29.3	no class (one load)
-prompt	120000	draft	nodraft	49.0	73.6	—	-24.6	-33.5	no class (one load)
+generation	49152	draft	nodraft	16.39 19.23	14.33 14.34	2.85	3.48	24.2	gain
+generation	65536	draft	nodraft	17.92 17.67	13.47 13.40	0.25	4.36	32.4	gain
+generation	120000	draft	nodraft	15.24 12.71	10.96 10.90	2.54	3.05	27.9	gain
+generation_all	all	draft	nodraft	16.44 16.02	12.75 12.71	0.43	3.50	27.5	gain
+step_pass1	49152	draft	nodraft	218.69 186.82	70.84 70.54	31.87	132.06	186.8	no class (the draft differs)
+step_pass1	65536	draft	nodraft	217.07 216.29	74.68 75.25	0.78	141.72	189.0	no class (the draft differs)
+step_pass1	120000	draft	nodraft	251.36 253.63	92.15 92.79	2.27	160.02	173.0	no class (the draft differs)
+step_pass2	49152	draft	nodraft	181.81 182.88	68.72 68.91	1.06	113.53	165.0	no class (the draft differs)
+step_pass2	65536	draft	nodraft	197.12 197.73	73.81 74.05	0.61	123.49	167.0	no class (the draft differs)
+step_pass2	120000	draft	nodraft	249.94 249.96	90.34 90.70	0.36	159.43	176.1	no class (the draft differs)
+prompt	49152	draft	nodraft	100.5 100.0	146.2 145.6	0.6	-45.7	-31.3	loss
+prompt	65536	draft	nodraft	66.2 65.4	93.7 93.2	0.9	-27.6	-29.6	loss
+prompt	120000	draft	nodraft	49.0 48.9	73.6 73.2	0.4	-24.5	-33.3	loss

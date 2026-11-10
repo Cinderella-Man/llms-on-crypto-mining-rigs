@@ -1,9 +1,11 @@
 window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
 draft1 (whole load)	2197	175	175	1223	+22	9.70	8.61
+draft2 (whole load)	2205	243	243	1096	+761	4.14	2.76
 nodraft1 (whole load)	1603	190	190	20	-1	0.18	0.18
-warm (whole load)	256	441	441	20	+0	0.00	0.00
-warm decode pass 1 depth 0	14	442	442	20	+0	0.00	0.00
-warm decode pass 2 depth 0	13	441	441	20	+0	0.00	0.00
+nodraft2 (whole load)	1610	214	214	22	+0	0.18	0.18
+warm (whole load)	255	447	447	22	+0	0.00	0.00
+warm decode pass 1 depth 0	14	455	455	22	+0	0.00	0.00
+warm decode pass 2 depth 0	13	447	447	22	+0	0.00	0.00
 nodraft1 prime pass 0 depth 49152	336	375	375	20	-1	0.18	0.18
 nodraft1 decode pass 1 depth 49152	25	253	253	19	+0	0.00	0.00
 nodraft1 decode pass 2 depth 49152	21	253	253	19	+0	0.00	0.00
@@ -22,3 +24,21 @@ draft1 decode pass 2 depth 65536	18	825	825	1131	+0	0.00	0.00
 draft1 prime pass 0 depth 120000	1113	735	735	1131	+0	0.00	0.00
 draft1 decode pass 1 depth 120000	25	725	725	1131	+0	0.00	0.00
 draft1 decode pass 2 depth 120000	21	725	725	1131	-26	0.00	0.00
+nodraft2 prime pass 0 depth 49152	337	384	384	22	+0	0.18	0.18
+nodraft2 decode pass 1 depth 49152	24	255	255	22	+0	0.00	0.00
+nodraft2 decode pass 2 depth 49152	22	255	255	22	+0	0.00	0.00
+nodraft2 prime pass 0 depth 65536	180	255	255	22	+0	0.00	0.00
+nodraft2 decode pass 1 depth 65536	25	242	242	22	+0	0.00	0.00
+nodraft2 decode pass 2 depth 65536	23	242	242	22	+0	0.00	0.00
+nodraft2 prime pass 0 depth 120000	745	319	319	22	+0	0.00	0.00
+nodraft2 decode pass 1 depth 120000	32	214	214	22	+0	0.18	0.18
+nodraft2 decode pass 2 depth 120000	27	214	214	22	+0	0.00	0.00
+draft2 prime pass 0 depth 49152	489	243	243	1096	+1073	4.14	2.76
+draft2 decode pass 1 depth 49152	20	786	786	1095	+0	0.67	0.56
+draft2 decode pass 2 depth 49152	17	786	786	1095	+0	0.13	0.11
+draft2 prime pass 0 depth 65536	255	714	714	1095	+0	0.02	0.02
+draft2 decode pass 1 depth 65536	22	608	608	1095	-60	0.00	0.00
+draft2 decode pass 2 depth 65536	18	608	608	1035	+0	0.00	0.00
+draft2 prime pass 0 depth 120000	1115	519	519	1035	+0	0.18	0.00
+draft2 decode pass 1 depth 120000	29	505	505	1035	+0	0.00	0.00
+draft2 decode pass 2 depth 120000	24	514	514	1035	-96	0.00	0.00

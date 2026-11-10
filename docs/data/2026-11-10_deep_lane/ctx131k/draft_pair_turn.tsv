@@ -1,7 +1,7 @@
 depth	draft_adds_ms_prompt_token	yield	tokens_step	saved_ms_generated_token	prompt_tokens_per_generated_token
-49152	3.111	this run's loads	3.282	4.213	1.35
-49152	3.111	the sampler off the rig, at 49,152 (est.)	2.876	-5.195	none: nothing saved
-65536	4.422	this run's loads	3.710	16.169	3.66
-65536	4.422	the sampler off the rig, at 49,152 (est.)	2.876	-0.800	none: nothing saved
-120000	6.832	this run's loads	3.821	26.370	3.86
-120000	6.832	the sampler off the rig, at 49,152 (est.)	2.876	4.756	0.70
+49152	3.125	this run's loads	3.419	11.104	3.55
+49152	3.125	the sampler off the rig, at 49,152 (est.)	2.876	0.192	0.06
+65536	4.494	this run's loads	3.684	16.140	3.59
+65536	4.494	the sampler off the rig, at 49,152 (est.)	2.876	-0.376	none: nothing saved
+120000	6.813	this run's loads	3.510	19.950	2.93
+120000	6.813	the sampler off the rig, at 49,152 (est.)	2.876	4.679	0.69
