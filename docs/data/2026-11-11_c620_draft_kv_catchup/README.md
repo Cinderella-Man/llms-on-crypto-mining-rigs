@@ -27,7 +27,7 @@ in 30 of 30 runs: five configurations (F16 and Q8_0 caches, flash attention on a
 chain) at three seeds, each with the rig build's CPU code and with a native CPU build. On the test's model the cut
 catch-up computes 531 graph nodes where the full one computes 1,458. With the switch off the branch gives the base's
 logits bit for bit on all 146 architectures `test-llama-archs` builds. The rig tarball builds (0 AVX instructions).
-The gain on the cards, and the drafts' identity there, are R73 (Q1264).
+The gain on the cards, and the drafts' identity there, are R75 (Q1278).
 
 ## The change
 
@@ -74,7 +74,7 @@ has its own copy of their cache writes.
 mask (the hybrid memory's and the attention input's `set_input` skip a mask without a buffer), the output ids (not
 built), the hidden-row carry's output index (not built). The k-pool inputs the QSA layers share are filled for every
 micro-batch as before, also the selection inputs only the skipped part reads (`pool_mask`, `pool_cells`, `pool_idxs`,
-`tail_idxs`); not filling them is Q1265.
+`tail_idxs`); not filling them is Q1279.
 
 **Graph reuse:** a cut pass has no output row, so its graph is reused only by another pass without outputs (the
 reuse test compares the output count), and a draft pass builds its own graph as before.
@@ -168,12 +168,12 @@ Verdicts land in `$WORK/summary.tsv`, the check's table in `$WORK/checks/kvonly/
 
 ## On the rig
 
-Not run yet. R73 (Q1264) relays this tarball to a rig and runs two things. First, untimed loads of the deep lane at 0
+Not run yet. R75 (Q1278) relays this tarball to a rig and runs two things. First, untimed loads of the deep lane at 0
 and 32,768 tokens with `LLAMA_SPEC_DUMP` in the control and in the cut arm: every verify step's drafted tokens and
 probabilities must be the same wherever the control repeats itself. Second, R53's deep-lane primes with the control,
 the cut arm (`ARM_ENV_kvonly=LLAMA_MTP_KV_ONLY=1`) and no draft, two loads each, read with
 [`draft_ubatch.py`](../2026-11-10_deep_lane/run/draft_ubatch.py) for the share of the draft's prompt cost the cut
-takes away at each depth. FN67 (Q1266) checks the identity through the compute 6.1 PTX on a build machine's card
+takes away at each depth. FN68 (Q1280) checks the identity through the compute 6.1 PTX on a build machine's card
 first, if a card is free. The commands, with the `wait` and `collect` steps of
 [bench/deep_lane](../../../bench/deep_lane/README.md) after each:
 
