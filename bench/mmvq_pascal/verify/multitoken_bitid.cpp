@@ -12,6 +12,10 @@
 // routings: neighbours sharing 2 of 8 experts, every token on the same 8 experts in other slots, and 4 shared plus 4 of
 // their own. The weights are rows drawn from a pool of 256 quantized rows per shape, so the slow IQ quantizers run on
 // few rows while every expert's rows differ.
+// `multitoken_bitid q5k` checks Q5_K's dense products alone (C690: the kernel of mmvq-pascal-q5k.cu with
+// GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 or 2), at Qwen3.8-Flash-Next's output layer (2560 -> 248,320) and at row widths that
+// give 1 to 32 lanes per row, weights drawn from a row pool as for ornith; with the switch at 0 the k-column kernel takes
+// these products and its sums differ from the one-token kernel's.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -124,10 +128,16 @@ int main(int argc, char ** argv) {
     ggml_backend_t be = ggml_backend_cuda_init(0);
     GGML_ASSERT(be);
     const bool ornith = argc > 1 && strcmp(argv[1], "ornith") == 0;
+    const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;
     const mode_cfg cfg = ornith
         ? mode_cfg{ { GGML_TYPE_IQ2_S, GGML_TYPE_IQ3_XXS, GGML_TYPE_N2P, GGML_TYPE_N3P, GGML_TYPE_Q8_0, GGML_TYPE_Q5_0 },
                     { { 8192, 3072 }, { 3072, 8192 }, { 3072, 1024 }, { 1024, 3072 }, { 4097, 3072 } },
                     16, 8, 3072, 1024, true, 3 }
+        : q5k
+        ? mode_cfg{ { GGML_TYPE_Q5_K },
+                    { { 248320, 2560 }, { 4097, 2560 }, { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 },
+                      { 64, 8192 } },
+                    1, 1, 256, 256, true, 0 }
         : mode_cfg{ { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS,
                       GGML_TYPE_Q6_K },
                     { { 4096, 2048 }, { 2048, 4096 }, { 512, 2048 }, { 2048, 1024 }, { 4097, 2048 } },

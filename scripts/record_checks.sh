@@ -14,6 +14,8 @@
 #   build   the rig tarball of BRANCH with test-backend-ops into WORK (scripts/build_llamacpp_docker.sh, TESTS=1)
 #   record  every filter of SUITE into OUT/SUITE/ (test-backend-ops -b CPU --record), the suite's runs into
 #           OUT/SUITE/runs.tsv (what replay_checks.sh runs), the cases into OUT/SUITE/manifest.tsv
+#   runs    only the run lists (runs.tsv, runs-ptx.tsv) of an OUT/SUITE/ recorded earlier, from this script's suite: for
+#           a suite whose runs changed after the record (the cases must be the same); then "tar" packs it again
 #   tar     OUT/SUITE.tar (not compressed: the blobs are random data) and OUT/SUITE.tar.md5
 # Suites (SUITE; each filter is the union of the cases its runs select, every run's switches replay one record):
 #   kshape        the k-column products, the large-activation cases, the Q2_0 experts and the grid types' experts
@@ -30,6 +32,9 @@
 #                 (GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT, docs/data/2026-11-11_c705_sparse_prompt_rule): mode 1 with the
 #                 rule off and on, its two thresholds and its query-token cap, mode 2, the faults. Its runs-ptx.tsv
 #                 holds the mode-2 runs, as mode 1 leaves a newer card on its own kernels
+#   q5kmt         Q5_K's products of 1-4 tokens (the output layer of Qwen3.8-Flash-Next among them) with the 2-4-token
+#                 kernel that decodes each weight once (GGML_CUDA_MMVQ_PASCAL_Q5K_MT, C690) at each setting, under the
+#                 Flash-Next preset's k-column switches, and without it (docs/data/2026-11-11_c690_head_four_rows)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -38,7 +43,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -64,6 +69,7 @@ FAP_OWN='hsk=128,hsv=128,nh=(4|8),nr23=\[8,1\],kv=[0-9]+,nb=1,'
 FN_MOE='n_mats=512,n_used=10,|^type=[^,]+,n=[0-9]+$'
 N4='(n2p|n3p|n2p_128|n3p_128)'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
+Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 suite_filters() {
     case $1 in
         kshape)
@@ -79,6 +85,8 @@ suite_filters() {
                 "MUL_MAT,$EXPERT_OPS" "type(_a)?=$HW,.*n=[0-9]+,|type=$HW," GET_ROWS '.' ;;
         qsa-prompt)
             printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
+        q5kmt)
+            printf '%s\t%s\n' MUL_MAT "$Q5MT" ;;
         *) return 1 ;;
     esac
 }
@@ -160,6 +168,15 @@ suite_runs() {
             suite_runs_n2p 'n=[0-9]+,' "type(_a)?=" ;;
         qsa-prompt)
             suite_runs_qsa_prompt 1 ;;
+        q5kmt)
+            # the Flash-Next preset's k-column switches (release/flash-next-v3/settings.env), then the kernel's settings
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_Q5K_MT"
+            for r in "q5kmt-on:$KP $M=1" "q5kmt-nopf:$KP $M=2" "q5kmt-nw2:$KP $M=1 ${M}_NW=2" "q5kmt-nw1:$KP $M=1 ${M}_NW=1" \
+                     "q5kmt-r1:$KP $M=1 ${M}_R=1" "q5kmt-r1-nopf:$KP $M=2 ${M}_R=1" \
+                     "q5kmt-r1-nw1:$KP $M=1 ${M}_R=1 ${M}_NW=1" "q5kmt-defaults:$M=1" "q5kmt-off:$KP" \
+                     "q5kmt-skip:$KP $M=1 ${P}_SKIP=q5_K"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q5MT"
+            done ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
@@ -213,15 +230,25 @@ if step build; then
     log "build done: $(basename "$T").tar.gz md5 $(md5sum < "$T.tar.gz" | cut -d' ' -f1)"
 fi
 
-if step record; then
-    BIN=$(realpath "${BIN:?BIN=<bin/ of the rig tarball>}")
-    [ -x "$BIN/test-backend-ops" ] || { echo "no test-backend-ops in $BIN" >&2; exit 1; }
-    mkdir -p "$S"
+write_runs() {
     # empty fields as "-": read with a tab IFS would merge two tabs
     dash() { awk -F'\t' -v OFS='\t' '{ for (i = 1; i <= NF; i++) if ($i == "") $i = "-"; print }'; }
     suite_runs "$SUITE" | dash > "$S/runs.tsv"
     suite_runs_ptx "$SUITE" | dash > "$S/runs-ptx.tsv"
     [ -s "$S/runs-ptx.tsv" ] || rm -f "$S/runs-ptx.tsv"
+}
+
+if step runs && ! step record; then
+    [ -f "$S/manifest.tsv" ] || { echo "no recorded set in $S" >&2; exit 1; }
+    write_runs
+    log "runs: $(wc -l < "$S/runs.tsv") runs written into $S/runs.tsv"
+fi
+
+if step record; then
+    BIN=$(realpath "${BIN:?BIN=<bin/ of the rig tarball>}")
+    [ -x "$BIN/test-backend-ops" ] || { echo "no test-backend-ops in $BIN" >&2; exit 1; }
+    mkdir -p "$S"
+    write_runs
     {
         echo "suite: $SUITE"
         echo "recorded: $(date -Is)"
