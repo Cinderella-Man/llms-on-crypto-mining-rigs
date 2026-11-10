@@ -271,6 +271,15 @@ the release check's recorded requests.
   primes past the first read slightly other chunks than the control's.
   [run/prompt_depth.py](../../docs/data/2026-11-10_deep_lane/run/prompt_depth.py) reads such a run: prompt reading
   per arm with each arm's own chunk, another run's loads beside where they read the same chunk, and the host's memory.
+- **The eighth run on the rig** timed five settings of the sparse switch's threshold (`ARM_ENV_<arm>`, with
+  `ENV_ADD` for the variable all five share) at 0, 4,096, 8,192 and 12,288 tokens, two loads an arm
+  ([docs/data/2026-11-10_deep_lane](../../docs/data/2026-11-10_deep_lane/README.md)). The RAM watchdog stopped the
+  fifth load, which ends a run. `collect` with `CLEAN=0` kept the rig's folder, and the same command with a `LOADS`
+  that put the stopped arm last resumed it two minutes later: the four finished loads were skipped, a warm-up load ran
+  again, and the stopped load ran whole. The resumed run appends to `loads.tsv`, so it lists the stopped start too;
+  the tables take each load's last line. Depths 4,096 tokens apart restore an older checkpoint at the third prime
+  (8,708 tokens read on 3,516 cached at 12,288). [run/threshold_table.py](../../docs/data/2026-11-10_deep_lane/run/threshold_table.py)
+  reads such a run on the step, with tok/s and the share accepted beside it.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

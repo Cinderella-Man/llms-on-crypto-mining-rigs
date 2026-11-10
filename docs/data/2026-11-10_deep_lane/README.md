@@ -1,4 +1,4 @@
-# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, a 131,072-token line to 120,000 tokens, the draft's micro-batch in prompt reading, and prompt micro-batches through the sparse kernel (Q1143, Q230, Q1153, Q1154, Q1218, Q1215, Q1214; 2026-11-10)
+# The deep lane on the rig: the sparse Pascal attention off and on, and the MTP draft on and off, at 0 to 49,152 tokens of context, a 131,072-token line to 120,000 tokens, the draft's micro-batch in prompt reading, prompt micro-batches through the sparse kernel, and the sparse kernel's threshold for verify passes (Q1143, Q230, Q1153, Q1154, Q1218, Q1215, Q1214, Q1212; 2026-11-10)
 
 What this is: the first timing of the sparse Pascal attention (`GGML_CUDA_FATTN_SPARSE_PASCAL=1`, off by default) on
 a real model. The line is the Miner Llama v3 release preset
@@ -29,6 +29,12 @@ A sixth run read the prompts in micro-batches of 128 tokens through the sparse k
 below. The fifth deep-lane run on the rig profiled a step at depth and has its own page
 ([2026-11-10_step_parts_depth](../2026-11-10_step_parts_depth/README.md)); the seventh is the third run's second
 loads.
+
+An eighth run timed the threshold below which the sparse switch leaves a verify pass to the dense kernel:
+`GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO` at 1.5 (the default), 1.0, 0.5 and 0.25, and the switch at 2 (no
+threshold), at 0, 4,096, 8,192 and 12,288 tokens, where an agent's everyday turns are (registry row Q1212). Its
+result is [the threshold for verify passes](#the-eighth-run-the-sparse-kernels-threshold-for-verify-passes-q1212)
+below.
 
 Why: on a P106 llama.cpp's attention reads the whole cache for every token, so generation slows as an agent's
 context grows, and real coding attempts write 40,000 tokens and more. The model's attention layers keep about 2,051
@@ -863,9 +869,9 @@ prompt chunks (131.1 and 131.3 tok/s against the preset's 89.5 and 89.4; 376.5 a
 on 16,188 cached tokens and 131.3 and 131.9 on 32,572, against 123.8 and 123.7, 90.2 and 90.3, and 70.2 and 70.0 with
 the preset. At 49,152 tokens it reads prompts faster with the draft than the line without the draft did in the fourth
 run (119.5 and 119.6 tok/s on the same cache). `-ub 128` with the dense kernel is a gain at depth (+9.1 % and
-+15.1 %) and a loss on an empty cache (−4.3 %). Mode 2 sends the decode steps to the kernel too, and at depth 0 the
-repeated request's step takes 282.35 and 282.53 ms against 113.12 and 113.14: it is not a setting to serve, and the
-prompt path needs a rule of its own in the switch.**
++15.1 %) and a loss on an empty cache (−4.3 %). With `_NQ=128` mode 2 slows the decode steps: at depth 0 the
+repeated request's step takes 282.35 and 282.53 ms against 113.12 and 113.14, so it is not a setting to serve, and
+the prompt path needs a rule of its own in the switch.**
 
 ### Prompt reading: tok/s (ms a prompt token)
 
@@ -957,9 +963,11 @@ From the RAM watchdog's samples, one a second, over each whole load
   (`ub128`) and 11.43 and 10.35 (`sp128`) against 11.18 and 10.81
   ([prompt_depth/table.md](prompt_depth/table.md)).
 - **Mode 2 is a loss in decode at depth 0:** the repeated request's step takes 282.35 and 282.53 ms with `sp128`,
-  113.11 and 113.19 with `ub128`, and 113.12 and 113.14 with the preset. Mode 2 sends a verify pass over a cache of
-  64 cells to the sparse kernel, where mode 1's threshold keeps it on the dense kernel (registry row Q1212 times that
-  threshold).
+  113.11 and 113.19 with `ub128`, and 113.12 and 113.14 with the preset. Mode 2 with the kernel's default of 8 query
+  tokens a call costs nothing there (the eighth run: 123.71 and 124.24 ms against mode 1's 123.56 and 123.62, the
+  verify pass over the tail's cache on the sparse kernel), so the cost comes with `_NQ=128` (or with mode 2 and
+  `-ub 128` together, which no run had without `_NQ=128`), not with mode 2's sending the verify pass to the sparse
+  kernel.
 - **At depth 0 `sp128` wrote another greedy reply** (`95afbd…`, in both loads) than the preset and `ub128` (`9da71b…`,
   in all four loads, as in the fourth run). `-ub 128` alone did not change it there, so the other reply comes from
   the kernel's arithmetic on the tail or on the decode steps. From 16,384 tokens on, loads of one arm wrote different
@@ -990,6 +998,172 @@ From the RAM watchdog's samples, one a second, over each whole load
   and 49,152.
 - Which kernel took a call is read on the times.
 - No quality is measured.
+
+## The eighth run: the sparse kernel's threshold for verify passes (Q1212)
+
+With the switch at 1 the sparse kernel takes an attention call only when the cache holds at least
+`GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO` (default 1.5) × 2,051 kept cells × the call's query tokens, since each
+query token reads its own list of cells while the dense kernel reads the cache once for all of them. A verify pass of
+four tokens (the draft's three and one) reaches the kernel at 12,306 cells, so in the first pair the step at 8,192
+tokens gained only 2.62 ms. T(k) at depth ([2026-11-10_tk_depth](../2026-11-10_tk_depth/README.md)) then found the
+kernel faster at 8,192 cells for every pass of 1 to 8 tokens. This run timed lower thresholds on served steps: the
+switch at 1 with the ratio at 1.5 (`r150`, the control), 1.0 (`r100`), 0.5 (`r050`) and 0.25 (`r025`), and the
+switch at 2 (`m2`: every call of up to 8 query tokens to the kernel). Every arm also sets
+`GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5`, the P106-090's own number of SMs, as in the whole-model check. Depths 0, 4,096,
+8,192 and 12,288, 256 tokens a decode request, two loads an arm after a warm-up load, on the other of the two
+identical rigs than the runs above.
+
+**A ratio of 1.0 is the fastest threshold. At 8,192 tokens a served step takes 143.43 and 144.13 ms with it against
+151.37 and 150.30 with the default 1.5 (−7.05 ms, −4.7 %), and at 4,096 and 12,288 it takes what the default takes
+(136.96 and 137.41 against 137.70 and 137.06; 148.21 and 147.89 against 147.75 and 147.66). The lower ratios and the
+switch at 2 save as much at 8,192 (−6.30 to −7.09 ms) but lose 2.50 to 2.71 ms (+1.8 to +2.0 %) at 4,096, where they
+send the four-token verify pass to the sparse kernel at about 4,352 cells and the dense kernel is faster. At depth 0
+every arm is within 0.39 ms of the default.**
+
+### Which kernel takes a verify pass (est.)
+
+The server's log does not say which kernel took a call. By the rule in `fattn-sparse-pascal.cu` and the cache's
+padding to 256 cells in `llama-kv-cache.cpp` (the release line's source, branch `pascal-p106-v3-b12076-ladder5`), a
+four-token verify pass at these depths reads:
+
+| Depth (tokens) | Cells (est.) | `r150` (from 12,306) | `r100` (8,204) | `r050` (4,102) | `r025` (2,051) | `m2` |
+|---:|---|---|---|---|---|---|
+| 0 | 256 to 512 | dense | dense | dense | dense | sparse |
+| 4,096 | 4,352 to 4,608 | dense | dense | sparse | sparse | sparse |
+| 8,192 | 8,448 to 8,704 | dense | sparse | sparse | sparse | sparse |
+| 12,288 | 12,544 to 12,800 | sparse | sparse | sparse | sparse | sparse |
+
+Every time below fits this table. Where it gives two arms the same kernel, their steps on the repeated request differ
+by at most 1.34 ms (the means). Where it gives them different kernels at 4,096 and 8,192 tokens they differ by 2.50
+to 7.09 ms; at depth 0, where only `m2` runs the sparse kernel, over 256 to 512 cells, by 0.39 ms at most.
+
+### The time of a step
+
+Pass 2, the repeated request: the request's generation time over its steps, every load by value, classed against
+`r150` by the rule of the first pair (less is the gain). Beside it pass 1, the first request at the depth, and each
+load's tok/s over both passes with the share of drafted tokens it accepted
+([sparse_threshold/threshold.md](sparse_threshold/threshold.md),
+[sparse_threshold/threshold.tsv](sparse_threshold/threshold.tsv)).
+
+| Depth (tokens) | Arm | Step, pass 2, ms | Spread | Against `r150` | | Class | Step, pass 1, ms | tok/s (share accepted) |
+|---:|---|---|---:|---:|---:|---|---|---|
+| 0 | r150 | 123.56, 123.62 | 0.05 | | | | 124.95, 124.89 | 26.93 (0.800), 26.93 (0.800) |
+| | r100 | 123.92, 123.91 | 0.01 | +0.33 ms | +0.3 % | loss | 127.43, 127.62 | 26.62 (0.800), 26.60 (0.800) |
+| | r050 | 123.74, 123.78 | 0.04 | +0.17 ms | +0.1 % | loss | 127.92, 126.93 | 26.59 (0.800), 26.69 (0.800) |
+| | r025 | 123.84, 123.91 | 0.07 | +0.29 ms | +0.2 % | loss | 139.62, 127.99 | 25.37 (0.800), 26.56 (0.800) |
+| | m2 | 123.71, 124.24 | 0.53 | +0.39 ms | +0.3 % | negligible | 128.06, 139.63 | 25.90 (0.773), 24.71 (0.773) |
+| 4,096 | r150 | 137.70, 137.06 | 0.64 | | | | 190.47, 200.63 | 19.75 (0.766), 18.95 (0.752) |
+| | r100 | 136.96, 137.41 | 0.45 | −0.19 ms | −0.1 % | negligible | 225.48, 226.54 | 19.09 (0.843), 19.01 (0.839) |
+| | r050 | 140.60, 139.14 | 1.46 | +2.50 ms | +1.8 % | loss | 190.97, 231.25 | 17.05 (0.621), 18.68 (0.843) |
+| | r025 | 140.12, 140.06 | 0.07 | +2.71 ms | +2.0 % | loss | 192.94, 198.37 | 20.77 (0.831), 20.44 (0.831) |
+| | m2 | 140.33, 139.83 | 0.51 | +2.70 ms | +2.0 % | loss | 176.62, 215.21 | 18.13 (0.635), 19.27 (0.823) |
+| 8,192 | r150 | 151.37, 150.30 | 1.07 | | | | 170.44, 171.88 | 18.36 (0.666), 19.60 (0.738) |
+| | r100 | 143.43, 144.13 | 0.71 | −7.05 ms | −4.7 % | gain | 156.80, 162.13 | 25.45 (0.964), 21.56 (0.781) |
+| | r050 | 143.85, 144.01 | 0.16 | −6.90 ms | −4.6 % | gain | 163.98, 175.84 | 22.62 (0.843), 22.20 (0.868) |
+| | r025 | 143.97, 145.09 | 1.12 | −6.30 ms | −4.2 % | gain | 162.70, 164.61 | 23.17 (0.868), 22.94 (0.868) |
+| | m2 | 143.55, 143.93 | 0.37 | −7.09 ms | −4.7 % | gain | 147.76, 145.39 | 24.24 (0.864), 24.08 (0.843) |
+| 12,288 | r150 | 147.75, 147.66 | 0.09 | | | | 194.95, 194.89 | 16.76 (0.640), 17.58 (0.684) |
+| | r100 | 148.21, 147.89 | 0.32 | +0.35 ms | +0.2 % | loss | 208.68, 181.53 | 15.81 (0.623), 18.60 (0.700) |
+| | r050 | 148.25, 147.55 | 0.70 | +0.19 ms | +0.1 % | negligible | 200.13, 218.36 | 18.37 (0.746), 16.66 (0.699) |
+| | r025 | 147.85, 150.20 | 2.35 | +1.32 ms | +0.9 % | negligible | 175.39, 185.72 | 18.52 (0.678), 16.92 (0.629) |
+| | m2 | 147.72, 147.66 | 0.07 | −0.01 ms | −0.0 % | negligible | 191.28, 164.91 | 15.73 (0.565), 20.48 (0.746) |
+
+What the table shows:
+
+- **At 8,192 tokens every threshold below the default is a gain of 6.30 to 7.09 ms a step**, and `r100` (143.43 and
+  144.13 ms) is as fast as the switch at 2 (143.55 and 143.93). There the verify pass reads about 8,448 cells: the
+  kernel's four lists of 2,051 cells are 8,204 cells read against the dense kernel's 8,448.
+- **At 4,096 tokens the sparse kernel is slower.** `r050`, `r025` and `m2` send the verify pass over about 4,352
+  cells to it, four lists of 2,051 against 4,352 cells read once, and each step takes 2.50 to 2.71 ms longer. `r100`
+  keeps it on the dense kernel there (−0.19 ms, negligible). So for a four-token pass the two kernels cross between
+  about 4,352 and 8,448 cells, and a ratio of 1.0 switches at 8,204, at the top of that band. Where in the band they
+  cross is not measured (registry row Q1252 times 0.75 and 0.625 there).
+- **At 12,288 tokens all five arms run the sparse kernel** (the default's switch point, 12,306 cells, is passed once
+  the pass's cells are padded to 12,544), and the five arms' steps lie within 1.34 ms of each other (the means).
+- **The classes "loss" at depth 0 and `r100`'s at 12,288 are the order of the loads, not the threshold.** At depth 0
+  the four arms with the switch at 1 run the same dense kernel, and at 12,288 `r100` runs the control's kernels. The
+  control's two loads both came right after a warm-up load (one per round), and the first pair saw the same: there
+  `dense1`, the load after the warm-up, ran the first request at depth 0 in 124.41 ms a step against 127.14 to 127.38
+  in the three others; here `r150` 124.95 and 124.89 against 126.93 to 128.06 (and two loads at 139.62 and 139.63).
+  Two loads an arm measure the spread within an arm, not the place in the round, so differences under about 0.4 ms
+  between arms are not read as the threshold's (registry row Q1253 adds a second name for the control to the lane).
+- **Tokens a second mix in the reply**, as in the first pair. At 8,192 every lower threshold is a gain in tok/s (+18.1
+  to +27.3 %), but the control's two loads wrote replies that accepted 0.666 and 0.738 of the draft and the others
+  0.781 to 0.964. At 4,096 `r025` is a gain in tok/s (+6.5 %) while its step is a loss, since its loads accepted
+  0.831 against the control's 0.766 and 0.752. Over the four depths: `r100` 20.78 and 21.02 tok/s against 19.81 and
+  20.22 (+4.4 %, gain), `r050` 20.52 and 20.40 (+2.2 %, gain), `r025` 21.65 and 21.13 (+6.9 %, gain), `m2` 20.14 and
+  21.89 (+5.0 %, negligible) ([sparse_threshold/classes.tsv](sparse_threshold/classes.tsv)).
+- **Pass 1 is not classed:** two loads of one arm differ by up to 40.29 ms there (`r050` at 4,096: 190.97 and
+  231.25). At 8,192 `r100`, `r025` and `m2` ran pass 1 below both of the control's loads (170.44 and 171.88), `m2`
+  lowest (147.76 and 145.39), and `r050` at 163.98 and 175.84.
+- **The control repeats the first pair on the other rig:** at 8,192 the default's step takes 151.37 and 150.30 ms
+  against that pair's `sparse` loads' 150.40 and 150.34, at depth 0 123.56 and 123.62 against 123.36 and 123.38.
+- **The switch at 2 costs nothing at depth 0 with the kernel's default of 8 query tokens a call:** 123.71 and 124.24
+  ms against 123.56 and 123.62, while it runs the sparse kernel on the tail's cache of 256 to 512 cells there (its
+  reply differs, below). The sixth run's `sp128` took 282.35 and 282.53 ms there; that line also had
+  `GGML_CUDA_FATTN_SPARSE_PASCAL_NQ=128` and `-ub 128` (and `-ub 128` alone with the switch at 1 took 113.11 and
+  113.19), so the cost comes with `_NQ=128`, or with mode 2 and `-ub 128` together, not with mode 2's sending the
+  verify pass to the kernel (registry row Q1246).
+
+### Prompt reading, the primes and the replies
+
+- **Prompt reading is unchanged:** negligible in every arm at 4,096, 8,192 and 12,288 (110.0 to 124.2 tok/s), as the
+  prompts' 512-token micro-batches are beyond the kernel's 8 query tokens. At depth 0 the 64-token tail reads at 32.9
+  and 32.9 tok/s in the control's loads and at 31.2 to 32.8 in the others' (`r025` and `m2` a loss by 1.2 and 1.1
+  tok/s): the order of the loads again.
+- **The prime at 12,288 continued from an older checkpoint.** At 8,192 the prime read 4,612 tokens on 3,516 cached,
+  from the checkpoint 516 tokens before the end of the prime at 4,096. At 12,288 it read 8,708 on the same 3,516,
+  not on a checkpoint of the prime at 8,192, which would have left 4,100 or 4,612 tokens to read. In the first pair,
+  with depths 8,192 tokens or more apart, every prime continued from the prime before it. This fits llama-server's
+  minimum spacing between context checkpoints (registry rows Q132 and Q448; a reading, not taken from the log): est.
+  34 to 38 s of each load's prompt reading, the same in every arm.
+- **The replies:** at depth 0 the eight loads of the four arms with the switch at 1 wrote one greedy reply, and `m2`'s
+  two loads another (0.773 of the draft accepted against 0.800): with the switch at 2 the tail's cache goes through
+  the sparse kernel, another arithmetic. From 4,096 on, two loads of one arm write different replies, as in the
+  earlier runs: 9, 7 and 8 replies over the 10 loads at 4,096, 8,192 and 12,288, every load its own again on pass 2.
+  No quality is measured here.
+
+### The host's memory and a stopped load
+
+The first round's `m2` load was stopped by the RAM watchdog at the start of its first decode request at 4,096
+tokens: MemAvailable fell from 154 to 41 MiB within 2 s, with 85 MiB of the 3.8 GB swap in use, under the limit of
+60 MiB. The run was then resumed with the same command and a `LOADS` that put both `m2` loads at the end, after a
+second warm-up load and the second round of the four ratios; the finished loads were kept. Both `m2` loads then ran
+whole. The lowest MemAvailable of each load, from the watchdog's samples
+([sparse_threshold/host_memory.tsv](sparse_threshold/host_memory.tsv), per request):
+
+| Arm | Load 1, MiB | Load 2, MiB | Most swap in use, MiB |
+|---|---:|---:|---|
+| r150 | 271 | 86 | 837, 666 |
+| r100 | 246 | 597 | 940, 993 |
+| r050 | 63 | 323 | 642, 1,004 |
+| r025 | 548 | 86 | 883, 403 |
+| m2 | 70 (the second try) | 567 | 619, 878 |
+
+- **The stop is the 4 GB host's margin, not the switch at 2's (est.):** `r050`'s first load fell to 63 MiB during
+  the prime and first request at 8,192, and `r150`'s and `r025`'s second loads to 86 MiB at 4,096, all with the switch
+  at 1; at 4,096 `r025` runs the same kernels as `m2` by the table above. As in the earlier runs, the lowest point
+  moves with when the host swaps: the stopped load had moved 43 MiB to swap when it fell under the limit.
+- After loading the cards held 5,059, 5,095, 4,963, 5,111, 4,875, 4,979, 4,381, 4,991 and 4,565 MiB in every load of
+  `r150`, `r100` and `r050`, and 2 MiB more on seven of the cards (all but the fifth and the ninth) in every load of
+  `r025` and `m2`.
+
+### What it decides
+
+- **For the preset: when the sparse attention goes into it, `GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=1.0` goes with
+  `GGML_CUDA_FATTN_SPARSE_PASCAL=1`.** It takes 7.05 ms (4.7 %) off a served step at 8,192 tokens and is as fast as
+  the default at 0, 4,096 and 12,288, where 0.5, 0.25 and the switch at 2 lose 2.50 to 2.71 ms at 4,096. Release
+  settings are chosen on agentic speed, so it goes in with the switch's agent check; this run changes no preset.
+- `GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5` is the cards' own count and changes nothing on a P106-090.
+- The crossover between about 4,352 and 8,448 cells (Q1252), and the place of a load in the round (Q1253), are new
+  rows.
+
+**Limits.**
+- Two loads an arm, one day, one rig; depths 4,096 tokens apart.
+- Which kernel took a call is read from the source and fits the times; the server does not log it.
+- The second round followed a second warm-up load, and the switch at 2 ran last in it.
+- No quality is measured. The threshold only chooses between the two kernels, whose decode text on the whole model
+  is the whole-model check's.
 
 ## Method
 
@@ -1084,6 +1258,22 @@ From the RAM watchdog's samples, one a second, over each whole load
   generation tables of this page, with the fourth run's `draft` and `nodraft` loads beside, and
   [run/host_memory.py](run/host_memory.py) per request. On the fourth run's folder `prompt_depth.py` gives that run's
   prompt classes, its share taken away (as the gap closed) and its host memory again.
+- **The eighth run's line:** the preset with `GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5` added for every arm (`ENV_ADD`) and
+  one arm's variables (`ARM_ENV_<arm>`): `GGML_CUDA_FATTN_SPARSE_PASCAL=1` with `GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO`
+  at 1.5, 1.0, 0.5 or 0.25, or `GGML_CUDA_FATTN_SPARSE_PASCAL=2`; the five server lines differ only in those
+  ([sparse_threshold/loads.tsv](sparse_threshold/loads.tsv)). Depths 0, 4,096, 8,192 and 12,288 (`DEPTHS`), cut from the
+  same recorded requests as the earlier runs, 256 tokens a decode request.
+- **The eighth run's loads:** one untimed warm-up load of `r150`, then `r150`, `r100`, `r050`, `r025` and `m2` once
+  each, each after the quiet check (no llama process, 0 MiB on every card); 306 to 311 s to load, 9.7 to 9.8 minutes
+  a load. The RAM watchdog stopped the first `m2` load as its first decode request at 4,096 began (MemAvailable 41
+  MiB, the limit 60), which ended the run after 51 minutes. The same command with `LOADS` set resumed it in the same
+  results folder two minutes later: a second warm-up load, the second round of the four ratios, then `m2`'s two
+  loads, 64 minutes; the finished loads were kept. `loads.tsv` lists both warm-ups and both starts of the first `m2`
+  load; `requests.csv` holds the second warm-up and the whole `m2` load.
+- **The eighth run's tables:** the driver's own ([sparse_threshold/table.md](sparse_threshold/table.md), control
+  `r150`), rebuilt on another machine byte for byte; [run/threshold_table.py](run/threshold_table.py) for the step
+  table of this page, and [run/host_memory.py](run/host_memory.py) per request. On the first pair's folder
+  `threshold_table.py` gives that pair's step classes again.
 
 ## Files
 
@@ -1113,6 +1303,10 @@ From the RAM watchdog's samples, one a second, over each whole load
 | [prompt_depth/prompt_depth.md](prompt_depth/prompt_depth.md), [_prompt.tsv](prompt_depth/prompt_depth_prompt.tsv), [_memory.tsv](prompt_depth/prompt_depth_memory.tsv), [_generation.tsv](prompt_depth/prompt_depth_generation.tsv) | the sixth run read on prompt reading (every load by value, the class against `ub512`, the fourth run's loads beside, the gap closed), on the host's memory per load and each card's after loading, and on generation as a check (tok/s and ms a step on both passes) |
 | [prompt_depth/host_memory.tsv](prompt_depth/host_memory.tsv) | the sixth run's host memory per load and request |
 | [run/prompt_depth.py](run/prompt_depth.py) | the sixth run's table script (Python 3.9 or newer, standard library only) |
+| [sparse_threshold/table.md](sparse_threshold/table.md), [classes.tsv](sparse_threshold/classes.tsv), [requests.csv](sparse_threshold/requests.csv), [loads.tsv](sparse_threshold/loads.tsv) | the eighth run's driver tables and classes (control `r150`), requests and loads (two warm-ups, then two loads each of `r150`, `r100`, `r050`, `r025` and `m2`; `loads.tsv` also lists the stopped first start of `m21`) |
+| [sparse_threshold/threshold.md](sparse_threshold/threshold.md), [threshold.tsv](sparse_threshold/threshold.tsv) | the eighth run read on the step: pass 2 classed against `r150` with every load by value, pass 1, tok/s with the share accepted; the TSV one line per depth, arm and measure |
+| [sparse_threshold/host_memory.tsv](sparse_threshold/host_memory.tsv) | the eighth run's host memory per load and request (the second start of `m21`) |
+| [run/threshold_table.py](run/threshold_table.py) | the eighth run's table script (Python 3.9 or newer, standard library only) |
 
 Not published: the prompts' token ids, the replies' first characters and the server logs (recorded text and paths),
 the raw telemetry (the cards every 10 s, the watchdog's samples, the quiet and fit checks, which the text above
@@ -1282,6 +1476,33 @@ python3 -I bench/deep_lane/deep_table.py <results folder> --out table.md --tsv c
 python3 -I docs/data/2026-11-10_deep_lane/run/prompt_depth.py <results folder> --control ub512 \
   --beside "<fourth run>:draft:draft (the fourth run)" --beside "<fourth run>:nodraft:nodraft (the fourth run)" \
   --floor "nodraft (the fourth run)" --out prompt_depth.md --tsv prompt_depth
+python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <results folder> > host_memory.tsv
+```
+
+The eighth run, with the `wait` and `collect` commands above (`DRY=1` first; its five server lines differ only in
+the switch's variables):
+
+```bash
+RIG=rig BIN=<build>/bin/llama-server \
+MODEL=<models>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+MODEL_DRAFT=<models>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+TEXT_LOCAL=<recorded>/proxy.jsonl.bodies.gz TAG='^t1swift/' WD_ENV=MIN_AVAIL_MB=60 \
+DEPTHS="0 4096 8192 12288" ENV_ADD=GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5 ARMS="r150 r100 r050 r025 m2" \
+ARM_ENV_r150="GGML_CUDA_FATTN_SPARSE_PASCAL=1 GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=1.5" \
+ARM_ENV_r100="GGML_CUDA_FATTN_SPARSE_PASCAL=1 GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=1.0" \
+ARM_ENV_r050="GGML_CUDA_FATTN_SPARSE_PASCAL=1 GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=0.5" \
+ARM_ENV_r025="GGML_CUDA_FATTN_SPARSE_PASCAL=1 GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=0.25" \
+ARM_ENV_m2="GGML_CUDA_FATTN_SPARSE_PASCAL=2" \
+bash bench/deep_lane/remote.sh start
+```
+
+After the watchdog stopped `m21`: `collect` with `CLEAN=0`, which keeps the rig's folder, then the same command with
+`LOADS="warm:r150 r1501:r150 r1001:r100 r0501:r050 r0251:r025 r1502:r150 r1002:r100 r0502:r050 r0252:r025 m21:m2 m22:m2"`
+in front of `bash bench/deep_lane/remote.sh start`, and `wait` and `collect`. Its tables:
+
+```bash
+python3 -I bench/deep_lane/deep_table.py <results folder> --out table.md --tsv classes.tsv
+python3 -I docs/data/2026-11-10_deep_lane/run/threshold_table.py <results folder> --out threshold.md --tsv threshold.tsv
 python3 -I docs/data/2026-11-10_deep_lane/run/host_memory.py <results folder> > host_memory.tsv
 ```
 
