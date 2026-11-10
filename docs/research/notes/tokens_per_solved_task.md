@@ -199,14 +199,19 @@ against both (section 8).
   attempts (section 9).
 - **The agent check** stops an attempt at 12 minutes, and attempts stopped there take 13.11 % of Flash-Next's task
   time in the release arms. A token mark with a fresh attempt from a clean workspace is the same rule in the unit
-  that does not depend on the machine (Q1200).
+  that does not depend on the machine (Q1200). On the check's recorded attempts it has almost nothing to stop:
+  Flash-Next's longest of 357 attempts generated 19,770 tokens, and at 8,192 tokens the mark stops 8 passes and 4
+  failures; a fresh try keeps the passes at est. 2.76 % more tokens
+  ([data](../../data/2026-11-11_fn58_stop_and_retry/README.md)). The check's 12 bug-fix tasks are too short to
+  test the rule; the bench's attempts, which reach its budget, are where it is priced.
 
 ### How it runs
 
 The bench's `max_tokens` per attempt is the mark. In the agent check, `run.py` runs `--attempts` per task from fresh
 copies of the workspace, every task's first attempt before any second one (the order Reset-and-Discard favours), and
-stops an attempt at `--turn-cap` turns or `--time-cap-min` minutes. A generated-token cap is one more stop of that
-kind. No server change.
+stops an attempt at `--turn-cap` turns, `--time-cap-min` minutes or `--gen-mark` generated tokens; `--mark-tries`
+starts a stopped attempt again from a fresh workspace behind the other tasks, and `--gen-budget` sets equal budgets
+([the token mark](../../../bench/agent_check/README.md#the-token-mark-and-a-fresh-attempt)). No server change.
 
 ## 5. First finish among several samples
 

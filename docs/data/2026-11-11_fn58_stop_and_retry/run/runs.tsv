@@ -1,0 +1,94 @@
+run	model	family	machine	dir
+2026-10-26_release_setup/cache-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/cache/res/rel
+2026-10-26_release_setup/d2-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/d2/res/rel
+2026-10-26_release_setup/d4-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/d4/res/rel
+2026-10-26_release_setup/k2h-d4-rel	Flint Pascal Q5 GGUF	Flint	rig	results/2026-10-26_release_setup/agent/k2h-d4/res/rel
+2026-10-26_release_setup/k2h-rel	Flint Pascal Q5 GGUF	Flint	rig	results/2026-10-26_release_setup/agent/k2h/res/rel
+2026-10-26_release_setup/noguess-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/noguess/res/rel
+2026-10-26_release_setup/page-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/page/res/rel
+2026-10-26_release_setup/q8-d3b-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/q8-d3b/res/rel
+2026-10-26_release_setup/q8-d4b-rel	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/q8-d4b/res/rel
+2026-10-26_release_setup/stock-k2h-stock	Flint Pascal Q5 GGUF	Flint	rig	results/2026-10-26_release_setup/agent/stock-k2h/res/stock
+2026-10-26_release_setup/stock-stock	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/stock/res/stock
+2026-10-26_release_setup/stock-ud-stock	Unsloth UD-Q4_K_XL	Flint	rig	results/2026-10-26_release_setup/agent/stock-ud/res/stock
+2026-10-26_release_setup/ud5-d4-rel	Unsloth UD-Q5_K_XL	Flint	rig	results/2026-10-26_release_setup/agent/ud5-d4/res/rel
+2026-10-26_release_setup/ud-d4-rel	Unsloth UD-Q4_K_XL	Flint	rig	results/2026-10-26_release_setup/agent/ud-d4/res/rel
+2026-10-26_release_setup/v1-q8-stock	Unsloth Q8_0	Flint	rig	results/2026-10-26_release_setup/agent/v1-q8/res/stock
+2026-10-27_answer_store/base-rel	Unsloth Q8_0	Flint	rig	results/2026-10-27_answer_store/agent/base/res/rel
+2026-10-27_answer_store/store-rel	Unsloth Q8_0	Flint	rig	results/2026-10-27_answer_store/agent/store/res/rel
+2026-10-27_flint_near_q8/live-rel	Flint Pascal Q8 GGUF	Flint	rig	results/2026-10-27_flint_near_q8/rig/live/res/rel
+2026-10-27_mtp_head/base-rel	Unsloth Q8_0	Flint	rig	results/2026-10-27_mtp_head/agent/base/res/rel
+2026-10-27_mtp_head/gen-rel	Unsloth Q8_0	Flint	rig	results/2026-10-27_mtp_head/agent/gen/res/rel
+2026-10-27_mtp_head/nine-rel	Unsloth Q8_0	Flint	rig	results/2026-10-27_mtp_head/agent/nine/res/rel
+2026-10-27_ornith/stock-mtp-stock	Ornith AD-IQ3_XXS-IQ2_S	Ornith	rig	results/2026-10-27_ornith/rig/agent/stock-mtp/res/stock
+2026-10-27_ornith/stock-stock	Ornith AD-IQ3_XXS-IQ2_S	Ornith	rig	results/2026-10-27_ornith/rig/agent/stock/res/stock
+2026-10-27_ornith/ud-stock-stock	Ornith UD-Q2_K_XL	Ornith	rig	results/2026-10-27_ornith/rig/agent/ud-stock/res/stock
+2026-10-27_ornith/ud-v2-rel	Ornith UD-Q2_K_XL	Ornith	rig	results/2026-10-27_ornith/rig/agent/ud-v2/res/rel
+2026-10-27_ornith/ud-v3-rel	Ornith UD-Q2_K_XL	Ornith	rig	results/2026-10-27_ornith/rig/agent/ud-v3/res/rel
+2026-10-27_ornith/v2-mtp-rel	Ornith AD-IQ3_XXS-IQ2_S	Ornith	rig	results/2026-10-27_ornith/rig/agent/v2-mtp/res/rel
+2026-10-27_ornith/v2-rel	Ornith AD-IQ3_XXS-IQ2_S	Ornith	rig	results/2026-10-27_ornith/rig/agent/v2/res/rel
+2026-10-28_lowbit_rig/valid1-rel	Ornith-1.5-122B Pascal N2P GGUF	Ornith	rig	results/2026-10-28_lowbit_rig/agent/valid1/res/rel
+2026-10-28_reply_rereads/tr-rel	Unsloth Q8_0	Flint	rig	results/2026-10-28_reply_rereads/agent/tr/res/rel
+2026-10-28_reply_rereads/trtail-rel	Unsloth Q8_0	Flint	rig	results/2026-10-28_reply_rereads/agent/trtail/res/rel
+2026-11-03_flash_next_baseline/rel	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_baseline/agent/res/rel
+2026-11-03_flash_next_baseline/stock	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_baseline/agent/res/stock
+2026-11-03_flash_next_dflash2/dflash2b-report-dflash2b	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_dflash2/agent-dflash2b-report/res/dflash2b
+2026-11-03_flash_next_mtp/nodraft	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_mtp/agent/res/nodraft
+2026-11-03_flash_next_mtp/s15-mtp2-report-mtp	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_mtp/s15/agent-mtp2-report/res/mtp
+2026-11-03_flash_next_mtp/s15-mtp2-report-mtp2	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_mtp/s15/agent-mtp2-report/res/mtp2
+2026-11-03_flash_next_mtp/s15-mtp2-report-nodraft	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_mtp/s15/agent-mtp2-report/res/nodraft
+2026-11-03_flash_next_mtp/s15-mtp-oom-mtp	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_mtp/s15/agent-mtp-oom/res/mtp
+2026-11-03_flash_next_mtp/s15-mtp-oom-nodraft	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_mtp/s15/agent-mtp-oom/res/nodraft
+2026-11-03_flash_next_pipelined/r29a_rig1-pipe0	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_pipelined/r29a_rig1/agent/res/pipe0
+2026-11-03_flash_next_pipelined/r29a_rig1-pipe3b	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-03_flash_next_pipelined/r29a_rig1/agent/res/pipe3b
+2026-11-03_retype_agent/hcq8	Swift GSQ-RCO Q2_0, hcq8 retype	Flash-Next	rig	results/2026-11-03_retype_agent/agent/res/hcq8
+2026-11-04_rig1_runner/s35-s35stack	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-04_rig1_runner/s35/agent-report/res/s35stack
+2026-11-04_rig2_runner/c134r-adapt5	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/c134r/rig/agent-report/res/adapt5
+2026-11-04_rig2_runner/c134r-fix2	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/c134r/rig/agent-report/res/fix2
+2026-11-04_rig2_runner/s33-mtp2d	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/s33/agent-report-d/res/mtp2d
+2026-11-04_rig2_runner/s34-dflash2b	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/dflash2b
+2026-11-04_rig2_runner/s34-mtp	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/mtp
+2026-11-04_rig2_runner/s34-mtp2	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/mtp2
+2026-11-04_rig2_runner/s34-mtp2d	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/mtp2d
+2026-11-04_rig2_runner/s34-nodraft	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/nodraft
+2026-11-04_rig2_runner/s34-s34mtp	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/s34mtp
+2026-11-04_rig2_runner/s34-s34mtps	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/s34mtps
+2026-11-04_rig2_runner/s34-s34nd	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-04_rig2_runner/s34/agent-report/res/s34nd
+2026-11-05_keepalive/rig_engine-s35ka	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_keepalive/rig_engine/agent-report/res/s35ka
+2026-11-05_keepalive/rig_engine-s35kaidle	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_keepalive/rig_engine/agent-report/res/s35kaidle
+2026-11-05_keepalive/rig_engine-s35kaoff	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_keepalive/rig_engine/agent-report/res/s35kaoff
+2026-11-05_keepalive/rig_engine-s35kareq	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_keepalive/rig_engine/agent-report/res/s35kareq
+2026-11-05_release_flashnext/s35ka	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/s35ka
+2026-11-05_release_flashnext/s35kaidle	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/s35kaidle
+2026-11-05_release_flashnext/s35kaoff	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/s35kaoff
+2026-11-05_release_flashnext/s35kareq	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/s35kareq
+2026-11-05_release_flashnext/stockpmix	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/stockpmix
+2026-11-05_release_flashnext/stockq2	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/stockq2
+2026-11-05_release_flashnext/stockq2t	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/stockq2t
+2026-11-05_release_flashnext/t1base	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/t1base
+2026-11-05_release_flashnext/t1neg	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/t1neg
+2026-11-05_release_flashnext/t1skip	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/t1skip
+2026-11-05_release_flashnext/t1swift	Swift GSQ-RCO Q2_0	Flash-Next	rig	results/2026-11-05_release_flashnext/rig/agent-report/res/t1swift
+2026-11-05_release_regression/flint_p065-v3base-rel	Flint Pascal Q8 GGUF	Flint	rig	results/2026-11-05_release_regression/agent_flint_p065/v3base/res/rel
+2026-11-05_release_regression/flint-stock64k-rel	Unsloth Q8_0	Flint	rig	results/2026-11-05_release_regression/agent_flint/stock64k/res/rel
+2026-11-05_release_regression/flint-v3add-rel	Unsloth Q8_0	Flint	rig	results/2026-11-05_release_regression/agent_flint/v3add/res/rel
+2026-11-05_release_regression/flint-v3base-rel	Unsloth Q8_0	Flint	rig	results/2026-11-05_release_regression/agent_flint/v3base/res/rel
+2026-11-05_release_regression/ornith_ka-valid1-rel	Ornith-1.5-122B Pascal N2P GGUF	Ornith	rig	results/2026-11-05_release_regression/agent_ornith_ka/valid1/res/rel
+2026-11-05_release_regression/ornith_ud-stock-ud-stock-stock	Ornith UD-Q2_K_XL	Ornith	rig	results/2026-11-05_release_regression/agent_ornith_ud-stock/ud-stock/res/stock
+2026-11-05_release_regression/ornith_ud-v3-ud-v3-rel	Ornith UD-Q2_K_XL	Ornith	rig	results/2026-11-05_release_regression/agent_ornith_ud-v3/ud-v3/res/rel
+2026-11-05_release_regression/ornith-valid1-rel	Ornith-1.5-122B Pascal N2P GGUF	Ornith	rig	results/2026-11-05_release_regression/agent_ornith/valid1/res/rel
+2026-11-05_release_regression/r1a-flint-q5-pq5-v3base-rel	Flint Pascal Q5 GGUF	Flint	rig	results/2026-11-05_release_regression/r1a-flint-q5/agent_pq5/v3base/res/rel
+2026-11-05_release_regression/r1a-flint-q5-q5stock-stock64k-rel	Unsloth UD-Q5_K_XL	Flint	rig	results/2026-11-05_release_regression/r1a-flint-q5/agent_q5stock/stock64k/res/rel
+2026-11-05_release_regression/r1a-flint-q5-q5v3-v3base-rel	Unsloth UD-Q5_K_XL	Flint	rig	results/2026-11-05_release_regression/r1a-flint-q5/agent_q5v3/v3base/res/rel
+2026-11-05_s36_stack/s36-s35stack	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_s36_stack/s36/agent-report/res/s35stack
+2026-11-05_s36_stack/s36-s36adapt	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_s36_stack/s36/agent-report/res/s36adapt
+2026-11-05_s36_stack/s36-s36ref	Swift Qwen3.8-Flash-Next Pascal Q2 GGUF	Flash-Next	rig	results/2026-11-05_s36_stack/s36/agent-report/res/s36ref
+2026-11-06_flint_side_rig2/flint-reread-rel	Unsloth Q8_0	Flint	rig	results/2026-11-06_flint_side_rig2/agent_flint/reread/res/rel
+2026-11-06_flint_side_rig2/flint-v3base-rel	Unsloth Q8_0	Flint	rig	results/2026-11-06_flint_side_rig2/agent_flint/v3base/res/rel
+2026-11-06_ornith_mtp_rig2/r2a-ka-valid1-rel	Ornith-1.5-122B Pascal N2P GGUF	Ornith	rig	results/2026-11-06_ornith_mtp_rig2/r2a/agent_ka/valid1/res/rel
+2026-11-06_ornith_mtp_rig2/r2a-mtpka-valid1-mtp-rel	Ornith-1.5-122B Pascal N2P GGUF	Ornith	rig	results/2026-11-06_ornith_mtp_rig2/r2a/agent_mtpka/valid1-mtp/res/rel
+2026-11-06_ornith_mtp_rig2/t3d-mtpadapt-mtpadapt-valid1-mtp-rel	Ornith-1.5-122B Pascal N2P GGUF	Ornith	rig	results/2026-11-06_ornith_mtp_rig2/t3d-mtpadapt/agent_mtpadapt/valid1-mtp/res/rel
+2026-11-10_fn50_pv_agent_check/pv0-1	Swift GSQ-RCO Q2_0	Flash-Next	quant	results/2026-11-10_fn50_pv_agent_check/fn50/pv0-1
+2026-11-10_fn50_pv_agent_check/pv1-1	Swift GSQ-RCO Q2_0	Flash-Next	quant	results/2026-11-10_fn50_pv_agent_check/fn50/pv1-1
+2026-11-10_fn50_pv_agent_check/pv0-2	Swift GSQ-RCO Q2_0	Flash-Next	quant	results/2026-11-10_fn50_pv_agent_check/fn50/pv0-2
+2026-11-10_fn50_pv_agent_check/pv1-2	Swift GSQ-RCO Q2_0	Flash-Next	quant	results/2026-11-10_fn50_pv_agent_check/fn50/pv1-2
