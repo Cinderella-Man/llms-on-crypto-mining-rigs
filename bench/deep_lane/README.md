@@ -294,6 +294,13 @@ the release check's recorded requests.
   room. With depths 120,000 and 196,000 the first prime reads 119,876 tokens on an empty cache in one request (30.5
   minutes with the draft); the warm-up load at depth 0 reads every card's memory before the deep loads, in place of a
   separate load check.
+- **The tenth run on the rig** put a preset candidate against the release preset: five switches at once, two
+  through `ARM_ENV_<arm>` and five flags through `ARM_ARGS_<arm>`, one of which replaces a value the preset holds
+  (`--spec-draft-n-ubatch 128` became 512, checked with `DRY=1` first), and `SAMPLER_PASS=1`, since one switch
+  (probabilistic verification) acts only on a request with a temperature above 0; 80 minutes for a warm-up and four
+  timed loads ([docs/data/2026-11-10_v4_candidate](../../docs/data/2026-11-10_v4_candidate/README.md)).
+  [run/v4c_table.py](../../docs/data/2026-11-10_v4_candidate/run/v4c_table.py) reads such a run per depth and load,
+  decode, the sampler pass and prompts side by side, with a class for each.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

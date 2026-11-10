@@ -1,0 +1,281 @@
+depth	arm	load	metric	value
+0	rel	rel1	decode	26.91
+0	rel	rel2	decode	25.29
+0	v4c	v4c1	decode	26.63
+0	v4c	v4c2	decode	26.64
+0	rel	rel1	decode_ms_token	37.16
+0	rel	rel2	decode_ms_token	39.54
+0	v4c	v4c1	decode_ms_token	37.55
+0	v4c	v4c2	decode_ms_token	37.54
+0	rel	rel1	step_pass1	125.38
+0	rel	rel2	step_pass1	140.58
+0	v4c	v4c1	step_pass1	127.54
+0	v4c	v4c2	step_pass1	127.49
+0	rel	rel1	step_pass2	123.31
+0	rel	rel2	step_pass2	123.74
+0	v4c	v4c1	step_pass2	123.68
+0	v4c	v4c2	step_pass2	123.70
+0	rel	rel1	share	0.7996
+0	rel	rel2	share	0.7996
+0	v4c	v4c1	share	0.7996
+0	v4c	v4c2	share	0.7996
+0	rel	rel1	tokens_step	3.346
+0	rel	rel2	tokens_step	3.346
+0	v4c	v4c1	tokens_step	3.346
+0	v4c	v4c2	tokens_step	3.346
+0	rel	rel1	sample	17.04
+0	rel	rel2	sample	15.22
+0	v4c	v4c1	sample	15.22
+0	v4c	v4c2	sample	15.27
+0	rel	rel1	sample_share	0.4506
+0	rel	rel2	sample_share	0.4506
+0	v4c	v4c1	sample_share	0.3943
+0	v4c	v4c2	sample_share	0.3943
+0	rel	rel1	sample_tokens_step	2.327
+0	rel	rel2	sample_tokens_step	2.327
+0	v4c	v4c1	sample_tokens_step	2.169
+0	v4c	v4c2	sample_tokens_step	2.169
+0	rel	rel1	sample_step	136.59
+0	rel	rel2	sample_step	152.91
+0	v4c	v4c1	sample_step	142.54
+0	v4c	v4c2	sample_step	142.10
+0	rel	rel1	prompt	32.9
+0	rel	rel2	prompt	31.2
+0	v4c	v4c1	prompt	48.1
+0	v4c	v4c2	prompt	48.3
+8192	rel	rel1	decode	15.37
+8192	rel	rel2	decode	23.66
+8192	v4c	v4c1	decode	22.16
+8192	v4c	v4c2	decode	20.62
+8192	rel	rel1	decode_ms_token	65.05
+8192	rel	rel2	decode_ms_token	42.26
+8192	v4c	v4c1	decode_ms_token	45.13
+8192	v4c	v4c2	decode_ms_token	48.50
+8192	rel	rel1	step_pass1	233.36
+8192	rel	rel2	step_pass1	170.19
+8192	v4c	v4c1	step_pass1	174.62
+8192	v4c	v4c2	step_pass1	177.58
+8192	rel	rel1	step_pass2	153.86
+8192	rel	rel2	step_pass2	152.76
+8192	v4c	v4c1	step_pass2	143.85
+8192	v4c	v4c2	step_pass2	144.48
+8192	rel	rel1	share	0.6779
+8192	rel	rel2	share	0.9643
+8192	v4c	v4c1	share	0.8555
+8192	v4c	v4c2	share	0.7851
+8192	rel	rel1	tokens_step	2.994
+8192	rel	rel2	tokens_step	3.821
+8192	v4c	v4c1	tokens_step	3.531
+8192	v4c	v4c2	tokens_step	3.325
+8192	rel	rel1	sample	17.34
+8192	rel	rel2	sample	17.83
+8192	v4c	v4c1	sample	19.89
+8192	v4c	v4c2	sample	18.87
+8192	rel	rel1	sample_share	0.6693
+8192	rel	rel2	sample_share	0.6326
+8192	v4c	v4c1	sample_share	0.6840
+8192	v4c	v4c2	sample_share	0.7149
+8192	rel	rel1	sample_tokens_step	2.977
+8192	rel	rel2	sample_tokens_step	2.876
+8192	v4c	v4c1	sample_tokens_step	3.012
+8192	v4c	v4c2	sample_tokens_step	3.084
+8192	rel	rel1	sample_step	171.71
+8192	rel	rel2	sample_step	161.36
+8192	v4c	v4c1	sample_step	151.42
+8192	v4c	v4c2	sample_step	163.48
+8192	rel	rel1	prompt	128.5
+8192	rel	rel2	prompt	130.1
+8192	v4c	v4c1	prompt	127.9
+8192	v4c	v4c2	prompt	130.0
+16384	rel	rel1	decode	17.75
+16384	rel	rel2	decode	19.27
+16384	v4c	v4c1	decode	21.32
+16384	v4c	v4c2	decode	23.99
+16384	rel	rel1	decode_ms_token	56.33
+16384	rel	rel2	decode_ms_token	51.88
+16384	v4c	v4c1	decode_ms_token	46.90
+16384	v4c	v4c2	decode_ms_token	41.68
+16384	rel	rel1	step_pass1	214.52
+16384	rel	rel2	step_pass1	185.60
+16384	v4c	v4c1	step_pass1	169.51
+16384	v4c	v4c2	step_pass1	153.21
+16384	rel	rel1	step_pass2	183.08
+16384	rel	rel2	step_pass2	183.34
+16384	v4c	v4c1	step_pass2	150.66
+16384	v4c	v4c2	step_pass2	151.67
+16384	rel	rel1	share	0.8635
+16384	rel	rel2	share	0.8638
+16384	v4c	v4c1	share	0.8265
+16384	v4c	v4c2	share	0.9029
+16384	rel	rel1	tokens_step	3.531
+16384	rel	rel2	tokens_step	3.556
+16384	v4c	v4c1	tokens_step	3.413
+16384	v4c	v4c2	tokens_step	3.657
+16384	rel	rel1	sample	16.49
+16384	rel	rel2	sample	18.98
+16384	v4c	v4c1	sample	24.11
+16384	v4c	v4c2	sample	21.93
+16384	rel	rel1	sample_share	0.7033
+16384	rel	rel2	sample_share	0.8472
+16384	v4c	v4c1	sample_share	0.9118
+16384	v4c	v4c2	sample_share	0.8036
+16384	rel	rel1	sample_tokens_step	3.084
+16384	rel	rel2	sample_tokens_step	3.507
+16384	v4c	v4c1	sample_tokens_step	3.657
+16384	v4c	v4c2	sample_tokens_step	3.368
+16384	rel	rel1	sample_step	187.04
+16384	rel	rel2	sample_step	184.74
+16384	v4c	v4c1	sample_step	151.66
+16384	v4c	v4c2	sample_step	153.56
+16384	rel	rel1	prompt	109.6
+16384	rel	rel2	prompt	110.0
+16384	v4c	v4c1	prompt	123.9
+16384	v4c	v4c2	prompt	128.6
+32768	rel	rel1	decode	11.96
+32768	rel	rel2	decode	11.32
+32768	v4c	v4c1	decode	16.66
+32768	v4c	v4c2	decode	15.03
+32768	rel	rel1	decode_ms_token	83.60
+32768	rel	rel2	decode_ms_token	88.32
+32768	v4c	v4c1	decode_ms_token	60.01
+32768	v4c	v4c2	decode_ms_token	66.51
+32768	rel	rel1	step_pass1	249.66
+32768	rel	rel2	step_pass1	250.08
+32768	v4c	v4c1	step_pass1	170.26
+32768	v4c	v4c2	step_pass1	172.80
+32768	rel	rel1	step_pass2	245.10
+32768	rel	rel2	step_pass2	244.01
+32768	v4c	v4c1	step_pass2	165.51
+32768	v4c	v4c2	step_pass2	166.02
+32768	rel	rel1	share	0.6686
+32768	rel	rel2	share	0.6104
+32768	v4c	v4c1	share	0.6173
+32768	v4c	v4c2	share	0.5245
+32768	rel	rel1	tokens_step	2.960
+32768	rel	rel2	tokens_step	2.798
+32768	v4c	v4c1	tokens_step	2.798
+32768	v4c	v4c2	tokens_step	2.547
+32768	rel	rel1	sample	11.27
+32768	rel	rel2	sample	10.11
+32768	v4c	v4c1	sample	15.12
+32768	v4c	v4c2	sample	16.22
+32768	rel	rel1	sample_share	0.6074
+32768	rel	rel2	sample_share	0.5168
+32768	v4c	v4c1	sample_share	0.5448
+32768	v4c	v4c2	sample_share	0.6029
+32768	rel	rel1	sample_tokens_step	2.783
+32768	rel	rel2	sample_tokens_step	2.510
+32768	v4c	v4c1	sample_tokens_step	2.612
+32768	v4c	v4c2	sample_tokens_step	2.783
+32768	rel	rel1	sample_step	247.00
+32768	rel	rel2	sample_step	248.20
+32768	v4c	v4c1	sample_step	172.75
+32768	v4c	v4c2	sample_step	171.51
+32768	rel	rel1	prompt	90.8
+32768	rel	rel2	prompt	90.5
+32768	v4c	v4c1	prompt	103.6
+32768	v4c	v4c2	prompt	103.7
+49152	rel	rel1	decode	10.40
+49152	rel	rel2	decode	10.70
+49152	v4c	v4c1	decode	19.08
+49152	v4c	v4c2	decode	18.34
+49152	rel	rel1	decode_ms_token	96.11
+49152	rel	rel2	decode_ms_token	93.48
+49152	v4c	v4c1	decode_ms_token	52.40
+49152	v4c	v4c2	decode_ms_token	54.53
+49152	rel	rel1	step_pass1	307.76
+49152	rel	rel2	step_pass1	307.18
+49152	v4c	v4c1	step_pass1	185.29
+49152	v4c	v4c2	step_pass1	185.72
+49152	rel	rel1	step_pass2	303.51
+49152	rel	rel2	step_pass2	302.47
+49152	v4c	v4c1	step_pass2	182.21
+49152	v4c	v4c2	step_pass2	181.66
+49152	rel	rel1	share	0.7358
+49152	rel	rel2	share	0.7701
+49152	v4c	v4c1	share	0.8472
+49152	v4c	v4c2	share	0.8036
+49152	rel	rel1	tokens_step	3.180
+49152	rel	rel2	tokens_step	3.261
+49152	v4c	v4c1	tokens_step	3.507
+49152	v4c	v4c2	tokens_step	3.368
+49152	rel	rel1	sample	9.65
+49152	rel	rel2	sample	9.78
+49152	v4c	v4c1	sample	17.84
+49152	v4c	v4c2	sample	18.56
+49152	rel	rel1	sample_share	0.6627
+49152	rel	rel2	sample_share	0.6786
+49152	v4c	v4c1	sample_share	0.7807
+49152	v4c	v4c2	sample_share	0.8227
+49152	rel	rel1	sample_tokens_step	2.943
+49152	rel	rel2	sample_tokens_step	3.012
+49152	v4c	v4c1	sample_tokens_step	3.282
+49152	v4c	v4c2	sample_tokens_step	3.413
+49152	rel	rel1	sample_step	304.92
+49152	rel	rel2	sample_step	308.03
+49152	v4c	v4c1	sample_step	183.96
+49152	v4c	v4c2	sample_step	183.90
+49152	rel	rel1	prompt	69.9
+49152	rel	rel2	prompt	69.8
+49152	v4c	v4c1	prompt	83.5
+49152	v4c	v4c2	prompt	83.1
+all depths	rel	rel1	decode	14.78
+all depths	rel	rel2	decode	15.85
+all depths	v4c	v4c1	decode	20.66
+all depths	v4c	v4c2	decode	20.10
+all depths	rel	rel1	decode_ms_token	67.65
+all depths	rel	rel2	decode_ms_token	63.10
+all depths	v4c	v4c1	decode_ms_token	48.40
+all depths	v4c	v4c2	decode_ms_token	49.75
+all depths	rel	rel1	step_pass1	227.63
+all depths	rel	rel2	step_pass1	214.03
+all depths	v4c	v4c1	step_pass1	165.21
+all depths	v4c	v4c2	step_pass1	163.99
+all depths	rel	rel1	step_pass2	203.33
+all depths	rel	rel2	step_pass2	204.89
+all depths	v4c	v4c1	step_pass2	153.62
+all depths	v4c	v4c2	step_pass2	154.36
+all depths	rel	rel1	share	0.7442
+all depths	rel	rel2	share	0.7891
+all depths	v4c	v4c1	share	0.7817
+all depths	v4c	v4c2	share	0.7464
+all depths	rel	rel1	tokens_step	3.188
+all depths	rel	rel2	tokens_step	3.320
+all depths	v4c	v4c1	tokens_step	3.295
+all depths	v4c	v4c2	tokens_step	3.200
+all depths	rel	rel1	sample	13.54
+all depths	rel	rel2	sample	13.31
+all depths	v4c	v4c1	sample	17.88
+all depths	v4c	v4c2	sample	17.88
+all depths	rel	rel1	sample_share	0.6093
+all depths	rel	rel2	sample_share	0.6064
+all depths	v4c	v4c1	sample_share	0.6286
+all depths	v4c	v4c2	sample_share	0.6391
+all depths	rel	rel1	sample_tokens_step	2.795
+all depths	rel	rel2	sample_tokens_step	2.789
+all depths	v4c	v4c1	sample_tokens_step	2.851
+all depths	v4c	v4c2	sample_tokens_step	2.883
+all depths	rel	rel1	sample_step	206.48
+all depths	rel	rel2	sample_step	209.51
+all depths	v4c	v4c1	sample_step	159.43
+all depths	v4c	v4c2	sample_step	161.21
+all depths	rel	rel1	prompt	88.7
+all depths	rel	rel2	prompt	88.7
+all depths	v4c	v4c1	prompt	101.4
+all depths	v4c	v4c2	prompt	101.9
+load	rel	rel1	min_avail_mib	172.00
+load	rel	rel1	max_swap_used_mib	997.00
+load	rel	rel1	swap_change_mib	15.00
+load	rel	rel1	max_psi_full	4.50
+load	rel	rel2	min_avail_mib	395.00
+load	rel	rel2	max_swap_used_mib	802.00
+load	rel	rel2	swap_change_mib	0.00
+load	rel	rel2	max_psi_full	21.93
+load	v4c	v4c1	min_avail_mib	106.00
+load	v4c	v4c1	max_swap_used_mib	800.00
+load	v4c	v4c1	swap_change_mib	3.00
+load	v4c	v4c1	max_psi_full	2.65
+load	v4c	v4c2	min_avail_mib	211.00
+load	v4c	v4c2	max_swap_used_mib	1034.00
+load	v4c	v4c2	swap_change_mib	757.00
+load	v4c	v4c2	max_psi_full	5.77

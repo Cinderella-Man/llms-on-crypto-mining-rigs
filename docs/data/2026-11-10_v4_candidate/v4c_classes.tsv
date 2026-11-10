@@ -1,0 +1,67 @@
+metric	depth	arm	control	control_loads	arm_loads	spread	delta	percent	class
+decode	0	v4c	rel	26.91 25.29	26.63 26.64	1.62	0.54	2.06	negligible
+decode_ms_token	0	v4c	rel	37.16 39.54	37.55 37.54	2.38	-0.81	-2.11	negligible
+step_pass1	0	v4c	rel	125.38 140.58	127.54 127.49	15.21	-5.47	-4.11	negligible
+step_pass2	0	v4c	rel	123.31 123.74	123.68 123.70	0.43	0.17	0.13	negligible
+share	0	v4c	rel	0.7996 0.7996	0.7996 0.7996	0.0000	0.0000	0.00	negligible
+tokens_step	0	v4c	rel	3.346 3.346	3.346 3.346	0.000	0.000	0.00	negligible
+sample	0	v4c	rel	17.04 15.22	15.22 15.27	1.82	-0.88	-5.49	negligible
+sample_share	0	v4c	rel	0.4506 0.4506	0.3943 0.3943	0.0000	-0.0563	-12.50	loss
+sample_tokens_step	0	v4c	rel	2.327 2.327	2.169 2.169	0.000	-0.158	-6.78	loss
+sample_step	0	v4c	rel	136.59 152.91	142.54 142.10	16.32	-2.44	-1.68	negligible
+prompt	0	v4c	rel	32.9 31.2	48.1 48.3	1.6	16.2	50.37	gain
+decode	8192	v4c	rel	15.37 23.66	22.16 20.62	8.29	1.87	9.59	negligible
+decode_ms_token	8192	v4c	rel	65.05 42.26	45.13 48.50	22.79	-6.84	-12.75	negligible
+step_pass1	8192	v4c	rel	233.36 170.19	174.62 177.58	63.17	-25.68	-12.72	negligible
+step_pass2	8192	v4c	rel	153.86 152.76	143.85 144.48	1.10	-9.14	-5.96	gain
+share	8192	v4c	rel	0.6779 0.9643	0.8555 0.7851	0.2864	-0.0008	-0.10	negligible
+tokens_step	8192	v4c	rel	2.994 3.821	3.531 3.325	0.827	0.020	0.60	negligible
+sample	8192	v4c	rel	17.34 17.83	19.89 18.87	1.02	1.80	10.23	gain
+sample_share	8192	v4c	rel	0.6693 0.6326	0.6840 0.7149	0.0367	0.0485	7.45	gain
+sample_tokens_step	8192	v4c	rel	2.977 2.876	3.012 3.084	0.100	0.121	4.15	gain
+sample_step	8192	v4c	rel	171.71 161.36	151.42 163.48	12.07	-9.09	-5.46	negligible
+prompt	8192	v4c	rel	128.5 130.1	127.9 130.0	2.1	-0.4	-0.29	negligible
+decode	16384	v4c	rel	17.75 19.27	21.32 23.99	2.67	4.14	22.38	gain
+decode_ms_token	16384	v4c	rel	56.33 51.88	46.90 41.68	5.22	-9.82	-18.14	gain
+step_pass1	16384	v4c	rel	214.52 185.60	169.51 153.21	28.92	-38.70	-19.35	gain
+step_pass2	16384	v4c	rel	183.08 183.34	150.66 151.67	1.01	-32.05	-17.49	gain
+share	16384	v4c	rel	0.8635 0.8638	0.8265 0.9029	0.0764	0.0010	0.12	negligible
+tokens_step	16384	v4c	rel	3.531 3.556	3.413 3.657	0.244	-0.008	-0.23	negligible
+sample	16384	v4c	rel	16.49 18.98	24.11 21.93	2.49	5.29	29.81	gain
+sample_share	16384	v4c	rel	0.7033 0.8472	0.9118 0.8036	0.1440	0.0824	10.63	negligible
+sample_tokens_step	16384	v4c	rel	3.084 3.507	3.657 3.368	0.423	0.217	6.59	negligible
+sample_step	16384	v4c	rel	187.04 184.74	151.66 153.56	2.30	-33.28	-17.90	gain
+prompt	16384	v4c	rel	109.6 110.0	123.9 128.6	4.7	16.5	15.01	gain
+decode	32768	v4c	rel	11.96 11.32	16.66 15.03	1.63	4.21	36.13	gain
+decode_ms_token	32768	v4c	rel	83.60 88.32	60.01 66.51	6.50	-22.70	-26.40	gain
+step_pass1	32768	v4c	rel	249.66 250.08	170.26 172.80	2.54	-78.34	-31.35	gain
+step_pass2	32768	v4c	rel	245.10 244.01	165.51 166.02	1.09	-78.79	-32.22	gain
+share	32768	v4c	rel	0.6686 0.6104	0.6173 0.5245	0.0928	-0.0687	-10.74	negligible
+tokens_step	32768	v4c	rel	2.960 2.798	2.798 2.547	0.251	-0.206	-7.16	negligible
+sample	32768	v4c	rel	11.27 10.11	15.12 16.22	1.15	4.98	46.63	gain
+sample_share	32768	v4c	rel	0.6074 0.5168	0.5448 0.6029	0.0906	0.0118	2.10	negligible
+sample_tokens_step	32768	v4c	rel	2.783 2.510	2.612 2.783	0.273	0.051	1.94	negligible
+sample_step	32768	v4c	rel	247.00 248.20	172.75 171.51	1.24	-75.47	-30.48	gain
+prompt	32768	v4c	rel	90.8 90.5	103.6 103.7	0.2	13.0	14.36	gain
+decode	49152	v4c	rel	10.40 10.70	19.08 18.34	0.75	8.16	77.34	gain
+decode_ms_token	49152	v4c	rel	96.11 93.48	52.40 54.53	2.64	-41.33	-43.60	gain
+step_pass1	49152	v4c	rel	307.76 307.18	185.29 185.72	0.58	-121.96	-39.67	gain
+step_pass2	49152	v4c	rel	303.51 302.47	182.21 181.66	1.03	-121.05	-39.95	gain
+share	49152	v4c	rel	0.7358 0.7701	0.8472 0.8036	0.0437	0.0724	9.62	gain
+tokens_step	49152	v4c	rel	3.180 3.261	3.507 3.368	0.138	0.217	6.74	gain
+sample	49152	v4c	rel	9.65 9.78	17.84 18.56	0.72	8.49	87.37	gain
+sample_share	49152	v4c	rel	0.6627 0.6786	0.7807 0.8227	0.0420	0.1311	19.54	gain
+sample_tokens_step	49152	v4c	rel	2.943 3.012	3.282 3.413	0.131	0.371	12.45	gain
+sample_step	49152	v4c	rel	304.92 308.03	183.96 183.90	3.10	-122.55	-39.99	gain
+prompt	49152	v4c	rel	69.9 69.8	83.5 83.1	0.4	13.4	19.17	gain
+decode	all depths	v4c	rel	14.78 15.85	20.66 20.10	1.07	5.07	33.08	gain
+decode_ms_token	all depths	v4c	rel	67.65 63.10	48.40 49.75	4.56	-16.30	-24.93	gain
+step_pass1	all depths	v4c	rel	227.63 214.03	165.21 163.99	13.61	-56.23	-25.46	gain
+step_pass2	all depths	v4c	rel	203.33 204.89	153.62 154.36	1.56	-50.12	-24.56	gain
+share	all depths	v4c	rel	0.7442 0.7891	0.7817 0.7464	0.0450	-0.0026	-0.34	negligible
+tokens_step	all depths	v4c	rel	3.188 3.320	3.295 3.200	0.132	-0.007	-0.21	negligible
+sample	all depths	v4c	rel	13.54 13.31	17.88 17.88	0.23	4.46	33.22	gain
+sample_share	all depths	v4c	rel	0.6093 0.6064	0.6286 0.6391	0.0106	0.0260	4.28	gain
+sample_tokens_step	all depths	v4c	rel	2.795 2.789	2.851 2.883	0.032	0.075	2.69	gain
+sample_step	all depths	v4c	rel	206.48 209.51	159.43 161.21	3.03	-47.68	-22.92	gain
+prompt	all depths	v4c	rel	88.7 88.7	101.4 101.9	0.6	12.9	14.55	gain

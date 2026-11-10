@@ -1,0 +1,22 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	v4c	rel	26.63 26.64	26.91 25.29	1.62	0.54	2.1	negligible
+generation	8192	v4c	rel	22.16 20.62	15.37 23.66	8.29	1.87	9.6	negligible
+generation	16384	v4c	rel	21.32 23.99	17.75 19.27	2.67	4.14	22.4	gain
+generation	32768	v4c	rel	16.66 15.03	11.96 11.32	1.63	4.21	36.1	gain
+generation	49152	v4c	rel	19.08 18.34	10.40 10.70	0.75	8.16	77.3	gain
+generation_all	all	v4c	rel	20.66 20.10	14.78 15.85	1.07	5.07	33.1	gain
+step_pass1	0	v4c	rel	127.54 127.49	125.38 140.58	15.21	-5.47	-4.1	negligible
+step_pass1	8192	v4c	rel	174.62 177.58	233.36 170.19	63.17	-25.68	-12.7	negligible
+step_pass1	16384	v4c	rel	169.51 153.21	214.52 185.60	28.92	-38.70	-19.3	gain
+step_pass1	32768	v4c	rel	170.26 172.80	249.66 250.08	2.54	-78.34	-31.4	gain
+step_pass1	49152	v4c	rel	185.29 185.72	307.76 307.18	0.58	-121.96	-39.7	gain
+step_pass2	0	v4c	rel	123.68 123.70	123.31 123.74	0.43	0.17	0.1	negligible
+step_pass2	8192	v4c	rel	143.85 144.48	153.86 152.76	1.10	-9.14	-6.0	gain
+step_pass2	16384	v4c	rel	150.66 151.67	183.08 183.34	1.01	-32.05	-17.5	gain
+step_pass2	32768	v4c	rel	165.51 166.02	245.10 244.01	1.09	-78.79	-32.2	gain
+step_pass2	49152	v4c	rel	182.21 181.66	303.51 302.47	1.03	-121.05	-40.0	gain
+prompt	0	v4c	rel	48.1 48.3	32.9 31.2	1.6	16.2	50.4	gain
+prompt	8192	v4c	rel	127.9 130.0	128.5 130.1	2.1	-0.4	-0.3	negligible
+prompt	16384	v4c	rel	123.9 128.6	109.6 110.0	4.7	16.5	15.0	gain
+prompt	32768	v4c	rel	103.6 103.7	90.8 90.5	0.2	13.0	14.4	gain
+prompt	49152	v4c	rel	83.5 83.1	69.9 69.8	0.4	13.4	19.2	gain
