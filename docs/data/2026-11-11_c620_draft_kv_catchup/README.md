@@ -27,7 +27,7 @@ in 30 of 30 runs: five configurations (F16 and Q8_0 caches, flash attention on a
 chain) at three seeds, each with the rig build's CPU code and with a native CPU build. On the test's model the cut
 catch-up computes 531 graph nodes where the full one computes 1,458. With the switch off the branch gives the base's
 logits bit for bit on all 146 architectures `test-llama-archs` builds. The rig tarball builds (0 AVX instructions).
-The gain on the cards, and the drafts' identity there, are R75 (Q1278).
+The gain on the cards, and the drafts' identity there, are R76 (Q1278).
 
 ## The change
 
@@ -168,7 +168,7 @@ Verdicts land in `$WORK/summary.tsv`, the check's table in `$WORK/checks/kvonly/
 
 ## On the rig
 
-Not run yet. R75 (Q1278) relays this tarball to a rig and runs two things. First, untimed loads of the deep lane at 0
+Not run yet. R76 (Q1278) relays this tarball to a rig and runs two things. First, untimed loads of the deep lane at 0
 and 32,768 tokens with `LLAMA_SPEC_DUMP` in the control and in the cut arm: every verify step's drafted tokens and
 probabilities must be the same wherever the control repeats itself. Second, R53's deep-lane primes with the control,
 the cut arm (`ARM_ENV_kvonly=LLAMA_MTP_KV_ONLY=1`) and no draft, two loads each, read with
