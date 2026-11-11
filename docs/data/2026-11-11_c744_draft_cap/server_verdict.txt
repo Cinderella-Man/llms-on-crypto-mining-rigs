@@ -1,0 +1,26 @@
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same in steps.jsonl)
+boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same in steps.jsonl)
+cap = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same in cut.jsonl)
+capnt = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same in cut.jsonl)
+bcap = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same in cut.jsonl)
+pcap = pbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 396 verify steps the same in cut.jsonl)
+ncap = nbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same in cut.jsonl)
+base: 12 cut rows in 8 verify steps, 12 spare passes in 8 steps; no pass left out
+bbase: 12 cut rows in 8 verify steps, 12 spare passes in 8 steps; no pass left out
+pbase: 11 cut rows in 7 verify steps, 11 spare passes in 7 steps; no pass left out
+nbase: 12 cut rows in 8 verify steps, 12 spare passes in 8 steps; no pass left out
+off: 12 cut rows in 8 verify steps, 12 spare passes in 8 steps; no pass left out
+boff: 12 cut rows in 8 verify steps, 12 spare passes in 8 steps; no pass left out
+cap: the cap left out 12 passes; cut rows 12 -> 0, spare passes 12 -> 0
+cap: log: draft length cap: 12 drafting passes left out in 8 drafts
+capnt: the cap left out 12 passes; cut rows 12 -> 0, spare passes 12 -> 0
+bcap: the cap left out 12 passes; cut rows 12 -> 0, spare passes 12 -> 0
+bcap: log: draft length cap: 12 drafting passes left out in 8 drafts
+pcap: the cap left out 6 passes; cut rows 11 -> 5, spare passes 11 -> 5 (the refused drafts keep theirs)
+pcap: log: draft length cap: 6 drafting passes left out in 4 drafts
+ncap: the cap left out 4 passes; cut rows 12 -> 8, spare passes 12 -> 8 (the refused drafts keep theirs)
+ncap: log: draft length cap: 4 drafting passes left out in 4 drafts
+p2base: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); 398 reads answered; cut rows 6, passes 378, left out 0
+p2off: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); 333 reads answered; cut rows 6, passes 378, left out 0
+p2cap: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); 380 reads answered; cut rows 0, passes 375, left out 6
+PASS
