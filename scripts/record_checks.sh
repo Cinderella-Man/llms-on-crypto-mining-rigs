@@ -48,6 +48,10 @@
 #   top-k-rows    TOP_K at Flash-Next's 248,320 columns over one to eight rows against the CPU, and TOP_K_ROWS: the
 #                 top-k of several rows in one op against each row's own, on the card (the backend samplers' one top-k
 #                 over the output rows, LLAMA_SAMPLING_TOP_K_ROWS, C691; docs/data/2026-11-11_c691_sampling_launches)
+#   qsa-union     the sparse attention's cases (FLASH_ATTN_EXT with n_kv_max) with union lists
+#                 (GGML_CUDA_FATTN_SPARSE_PASCAL_UNION, docs/data/2026-11-11_c103_union_gather): mode 1 with and without
+#                 them and their threshold, mode 2 through the union kernel at three split counts, the four faults. Its
+#                 runs-ptx.tsv holds the mode-2 runs, as mode 1 leaves a newer card on its own kernels
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -56,7 +60,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -114,6 +118,8 @@ suite_filters() {
             printf '%s\t%s\n' MUL_MAT "$DMT" ;;
         top-k-rows)
             printf '%s\t%s\n' TOP_K "$TKV" TOP_K_ROWS '.' ;;
+        qsa-union)
+            printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
         *) return 1 ;;
     esac
 }
@@ -230,6 +236,8 @@ suite_runs() {
         top-k-rows)
             # C691: no CUDA switch (the change is in the graph); the op at the vocabulary's width, and its rows
             printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;
+        qsa-union)
+            suite_runs_qsa_union 1 ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
@@ -251,6 +259,30 @@ suite_runs_qsa_prompt() {
         qp-fault2 "$M2 ${Q}_FAULT=2" FLASH_ATTN_EXT "$QSA" fail \
         qp-fault3 "$M2 ${Q}_FAULT=3" FLASH_ATTN_EXT "$QSA" fail
 }
+# the union lists' runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
+# kernel each case takes in each run is fasp_check --rule's last table (bench/fattn_sparse). The m2 runs send every
+# case of 2 to 512 query tokens through the union kernel (prompt cases with _PROMPT_NQ=512), at the splits the switch
+# picks, at one split and at 32; fault 4 scores each token with the next token's mask row
+suite_runs_qsa_union() {
+    local Q=GGML_CUDA_FATTN_SPARSE_PASCAL
+    local M2="$Q=2 ${Q}_PROMPT=1 ${Q}_PROMPT_NQ=512"
+    local U2="$M2 ${Q}_UNION=1"
+    printf '%s\t%s\t%s\t%s\tpass\t\n' qu-stock "$Q=0" FLASH_ATTN_EXT "$QSA"
+    [ "$1" = 1 ] && printf '%s\t%s\t%s\t%s\tpass\t\n' \
+        qu-sparse1 "$Q=1" FLASH_ATTN_EXT "$QSA" \
+        qu-union "$Q=1 ${Q}_UNION=1" FLASH_ATTN_EXT "$QSA" \
+        qu-uprompt "$Q=1 ${Q}_UNION=1 ${Q}_PROMPT=1" FLASH_ATTN_EXT "$QSA" \
+        qu-ur05 "$Q=1 ${Q}_UNION=1 ${Q}_UNION_MIN_RATIO=0.5 ${Q}_PROMPT=1 ${Q}_PROMPT_NQ=512" FLASH_ATTN_EXT "$QSA"
+    printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        qu-m2 "$M2" FLASH_ATTN_EXT "$QSA" pass \
+        qu-m2-union "$U2" FLASH_ATTN_EXT "$QSA" pass \
+        qu-m2-union-s1 "$U2 ${Q}_SPLITS=1" FLASH_ATTN_EXT "$QSA" pass \
+        qu-m2-union-s32 "$U2 ${Q}_SPLITS=32" FLASH_ATTN_EXT "$QSA" pass \
+        qu-fault1 "$U2 ${Q}_FAULT=1" FLASH_ATTN_EXT "$QSA" pass \
+        qu-fault2 "$U2 ${Q}_FAULT=2" FLASH_ATTN_EXT "$QSA" fail \
+        qu-fault3 "$U2 ${Q}_FAULT=3" FLASH_ATTN_EXT "$QSA" fail \
+        qu-fault4 "$U2 ${Q}_FAULT=4" FLASH_ATTN_EXT "$QSA" fail
+}
 # docs/data/2026-11-04_n2p_flash/run/gpu_checks.sh's runs: <the token counts> <the products' type field>; natively
 # every token count and the prompt batches, through the PTX 1-8 tokens of the products (MMQ takes the host's tile
 # configuration there, not Pascal's)
@@ -269,6 +301,7 @@ suite_runs_ptx() {
     case $1 in
         n2p) suite_runs_n2p 'n=[1-8],' "type_a=" ;;
         qsa-prompt) suite_runs_qsa_prompt 2 ;;
+        qsa-union) suite_runs_qsa_union 2 ;;
     esac
 }
 suite_filters "$SUITE" > /dev/null || { echo "unknown SUITE $SUITE" >&2; exit 1; }

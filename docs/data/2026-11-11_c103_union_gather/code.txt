@@ -1,0 +1,80 @@
+== llama-server sass
+sass: base 8346 functions (8765 copies), branch 8356; same 8346, differ 0, missing 0, new 10
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi1EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi1EEv9fasp_args
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi1ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi2ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi3ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi4ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi5ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi6ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi7ELb1EEvPK6__halfPiS3_iiill
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi1EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi1EEv9fasp_args
+verdict: SAME
+== llama-server ptx
+ptx: base 8346 functions (8765 copies), branch 8356; same 8346, differ 0, missing 0, new 10
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi1EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi1EEv9fasp_args
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi1ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi2ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi3ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi4ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi5ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi6ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi7ELb1EEvPK6__halfPiS3_iiill
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi1EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi1EEv9fasp_args
+verdict: SAME
+== test-backend-ops sass
+sass: base 8346 functions (8765 copies), branch 8356; same 8346, differ 0, missing 0, new 10
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi1EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi1EEv9fasp_args
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi1ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi2ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi3ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi4ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi5ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi6ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi7ELb1EEvPK6__halfPiS3_iiill
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi1EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi1EEv9fasp_args
+verdict: SAME
+== test-backend-ops ptx
+ptx: base 8346 functions (8765 copies), branch 8356; same 8346, differ 0, missing 0, new 10
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi128ELi1EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi0EEv9fasp_args
+  same (sparse path): _Z28flash_attn_ext_sparse_pascalILi256ELi1EEv9fasp_args
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi1ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb0EEvPK6__halfPiS3_iiill
+  same (sparse path): _Z33flash_attn_mask_to_sparse_indicesILi8ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi2ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi3ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi4ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi5ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi6ELb1EEvPK6__halfPiS3_iiill
+  new: _Z33flash_attn_mask_to_sparse_indicesILi7ELb1EEvPK6__halfPiS3_iiill
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi128ELi1EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi0EEv9fasp_args
+  new: _Z34flash_attn_ext_sparse_pascal_unionILi256ELi1EEv9fasp_args
+verdict: SAME

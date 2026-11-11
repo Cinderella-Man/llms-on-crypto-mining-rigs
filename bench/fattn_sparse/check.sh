@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # The CPU check of the sparse decode attention (no GPU needed): the tree's fattn-sparse-pascal-impl.cuh must pass every
-# case of build/fasp_check; the kernel's three fault codes and four source mutations of the header must each fail at
-# least one case. The switch's rule (fasp_check --rule) must pass, and three mutations of it must fail. Writes
-# build/check.txt (every run's table) and prints the verdicts.
+# case of build/fasp_check (per-token and union kernel); the kernel's four fault codes and six source mutations of the
+# header (two of them in the union kernel's warp map) must each fail at least one case. The switch's rule (fasp_check
+# --rule) must pass, and six mutations of it (three of the union rule) must fail. Writes build/check.txt (every run's
+# table) and prints the verdicts.
 # Usage: SRC=<llama.cpp tree> bench/fattn_sparse/check.sh   (env IMAGE, DOCKER_ARGS, JOBS as for build.sh; THREADS: CPU
 # threads of ggml's reference, default 4)
 set -euo pipefail
@@ -18,12 +19,17 @@ muts=(
     "merge adds the splits' sums unscaled|s/l = fmaf(f, FASP_LDCG(ps + D + 1), l);/l = l + FASP_LDCG(ps + D + 1);/"
     "every split but the first skips its first entry|s/begin = s\*share < count ? s\*share : count;/begin = s*share + (s > 0) < count ? s*share + (s > 0) : count;/"
     "scores mapped to the wrong key of the tile|s/return i \/ FASP_HPW;/return i % FASP_KPR;/"
+    "union warps on the wrong token of their list|s/r.iq    = j\*tpb + wy \/ nw;/r.iq    = j*tpb + wy % nw;/"
+    "union lists of the first sequence for every sequence|s/r.list  = (r.i3 % m_ne3)\*n_lists + j;/r.list  = j;/"
 )
 # mutations of the switch's rule (fasp_rule_takes), checked with --rule
 rmuts=(
     "prompt calls by cells per query token|s/!((double) n_kv < r.prompt_min_ratio\*n_kv_max)/!((double) n_kv < r.prompt_min_ratio*n_kv_max*n_q)/"
     "prompt calls taken with the prompt rule off|s/if (r.prompt == 0 || n_q > r.prompt_nq) {/if (n_q > r.prompt_nq) {/"
     "a call of exactly _NQ tokens by the prompt rule|s/if (n_q <= r.nq) {/if (n_q < r.nq) {/"
+    "union lists counted per query token|s/r.union_min_ratio\*n_kv_max\*((n_q + tpb - 1)\/tpb)/r.union_min_ratio*n_kv_max*n_q/"
+    "the union rule with _UNION off|s/if (r.uni != 0 \&\& tpb > 1) {/if (tpb > 1) {/"
+    "one-token calls by the union rule|s/if (r.uni != 0 \&\& tpb > 1) {/if (r.uni != 0 \&\& tpb > 0) {/"
 )
 
 ./build.sh fasp_check
@@ -76,7 +82,7 @@ check() {
 }
 
 check "clean header" 0 build/fasp_check
-for f in 1 2 3; do
+for f in 1 2 3 4; do
     check "fault $f" 1 build/fasp_check --fault $f
 done
 for i in "${!muts[@]}"; do

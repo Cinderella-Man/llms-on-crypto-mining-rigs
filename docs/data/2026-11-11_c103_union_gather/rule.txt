@@ -1,0 +1,50 @@
+rule: 454896000 settings x calls; _PROMPT off: 0 prompt calls differ from the rule before; prompt calls 0 differ from the prompt rule (66668904 taken); _UNION off: 0 decode and verify calls differ from the rule before; _UNION on: one token a list 0 differ from it, 0 calls differ from the union rule (12405528 taken)
+switch points, n_kv_max 2051, 12 query heads per KV head (4 tokens a union list): the smallest cache (cells) from which a call of n_q query tokens goes to the kernel (never: it stays on the dense kernels)
+setting \ n_q                                1       2       3       4       5       8       9      16     128     129     512
+=1 (v4)                                   3077    6153    9230   12306   15383   24612   never   never   never   never   never
+=1 _PROMPT=1                              3077    6153    9230   12306   15383   24612    2051    2051    2051   never   never
+=1 _MIN_RATIO=1.0 _PROMPT=1               2051    4102    6153    8204   10255   16408    2051    2051    2051   never   never
+=1 _UNION=1                               3077    3077    3077    3077    6153    6153   never   never   never   never   never
+=1 _UNION=1 _PROMPT=1                     3077    3077    3077    3077    6153    6153    2051    2051    2051   never   never
+=1 _UNION=1 _UNION_MIN_RATIO=1.0          3077    2051    2051    2051    4102    4102   never   never   never   never   never
+=1 _UNION=1 _UNION_MIN_RATIO=0.5          3077    1026    1026    1026    2051    2051   never   never   never   never   never
+the prompt and union cases' kernel per replay run (G: query heads per KV head; head 256, but head 128 at G 4 and 8, with sinks at 8)
+G, KV heads, nb, ne3, kv, n_kv_max qp-sparse1  qp-prompt   qp-m2       qu-union    qu-uprompt  qu-ur05     qu-m2       qu-m2-union
+12, 2, 9, 1, 8192, 2051            d           S           S           d           U           U           S           U          
+12, 2, 16, 1, 8192, 2051           d           S           S           d           U           U           S           U          
+12, 2, 64, 1, 8192, 2051           d           S           S           d           U           U           S           U          
+12, 2, 128, 1, 8192, 2051          d           S           S           d           U           U           S           U          
+12, 2, 9, 1, 3072, 2051            d           S           S           d           U           U           S           U          
+12, 2, 128, 1, 3072, 2051          d           S           S           d           U           U           S           U          
+12, 2, 128, 1, 32768, 2051         d           S           S           d           U           U           S           U          
+12, 2, 64, 2, 4096, 2051           d           S           S           d           U           U           S           U          
+8, 4, 32, 1, 4096, 1027            d           S           S           d           U           U           S           U          
+12, 2, 129, 1, 4096, 2051          d           d           S           d           d           U           S           U          
+12, 2, 256, 1, 4096, 2051          d           d           S           d           d           U           S           U          
+12, 2, 512, 1, 4096, 2051          d           d           S           d           d           U           S           U          
+12, 2, 2, 1, 4096, 2051            d           d           S           U           U           U           S           U          
+12, 2, 3, 1, 4096, 2051            d           d           S           U           U           U           S           U          
+12, 2, 4, 1, 4096, 2051            d           d           S           U           U           U           S           U          
+12, 2, 5, 1, 4096, 2051            d           d           S           d           d           U           S           U          
+12, 2, 8, 1, 4096, 2051            d           d           S           d           d           U           S           U          
+12, 2, 128, 1, 4096, 2051          d           S           S           d           U           U           S           U          
+12, 2, 2, 1, 12288, 2051           S           S           S           U           U           U           S           U          
+12, 2, 4, 1, 12288, 2051           d           d           S           U           U           U           S           U          
+12, 2, 5, 1, 12288, 2051           d           d           S           U           U           U           S           U          
+12, 2, 8, 1, 12288, 2051           d           d           S           U           U           U           S           U          
+12, 2, 128, 1, 12288, 2051         d           S           S           d           U           U           S           U          
+12, 2, 2, 1, 49152, 2051           S           S           S           U           U           U           S           U          
+12, 2, 4, 1, 49152, 2051           S           S           S           U           U           U           S           U          
+12, 2, 8, 1, 49152, 2051           S           S           S           U           U           U           S           U          
+12, 2, 128, 1, 49152, 2051         d           S           S           d           U           U           S           U          
+12, 2, 6, 2, 8192, 2051            d           d           S           U           U           U           S           U          
+4, 2, 8, 1, 4096, 333              S           S           S           U           U           U           S           U          
+4, 2, 13, 1, 4096, 333             d           S           S           d           U           U           S           U          
+8, 4, 7, 1, 4096, 1027             d           d           S           U           U           U           S           U          
+16, 1, 5, 1, 4096, 31              S           S           S           U           U           U           S           U          
+12, 2, 2, 1, 8192, 2051            S           S           S           U           U           U           S           U          
+12, 2, 3, 1, 8192, 2051            d           d           S           U           U           U           S           U          
+12, 2, 5, 1, 8192, 2051            d           d           S           U           U           U           S           U          
+12, 2, 8, 1, 8192, 2051            d           d           S           U           U           U           S           U          
+12, 2, 4, 2, 4096, 2051            d           d           S           U           U           U           S           U          
+fasp_check --rule: pass

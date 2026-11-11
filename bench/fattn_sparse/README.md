@@ -16,15 +16,26 @@ helpers, free of ggml) and links ggml's CPU backend from the same tree as the re
 - **`--gpu`**: also launches the kernel on device 0 with the lists built on the host (as the compaction would), twice
   (its merge counters must return to zero), and compares it the same way.
 - **`--bench`**: times the kernel alone at Flash-Next's QSA call (head 256, 2 KV heads of 12 query heads, 2,051 cells)
-  at 4k–128k cells and 1 or 4 query tokens: µs per call and GB/s of K/V rows read.
+  at 4k–128k cells and 1 or 4 query tokens: µs per call and GB/s of K/V rows read; then the union kernel against the
+  per-token one on the same call at 8k, 32k and 48k cells, 2, 4, 8 and 128 query tokens whose selections share 90 % of
+  their pools, and 4 tokens whose selections share nothing beyond chance.
 - **`--fault n`**: the kernel's `GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT` codes (1 output × 1.01, 2 mask values ignored,
-  3 every split's last entry dropped), in the host model and the kernel.
+  3 every split's last entry dropped, 4 the union kernel scoring each token with the next token's mask row), in the
+  host model and the kernel.
+- **The union kernel** (`GGML_CUDA_FATTN_SPARSE_PASCAL_UNION`): a block takes `tpb` consecutive query tokens
+  (`fasp_union_tokens`: as many as 12 warps hold) and reads one list, the union of their kept cells; each warp scores
+  with its own token's mask row. Its host model runs the header's warp map (`fasp_union_map`) over union lists built on
+  the host, as upstream's compaction in groups of `tpb` makes them. Its 16 cases (each F16 and Q8_0) are checked
+  against the same two references and compared with the per-token model on the same problem; in the two where every
+  query row of a sequence keeps the same cells and the splits are the same, the two models must agree bit for bit.
 - **`--rule`**: only the switch's rule (`fasp_rule_takes` in the header: which calls go to the kernel), on the host.
   With `GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT` off it must take exactly the calls the switch took before the prompt rule
   (at most `_NQ` query tokens, in mode 1 from `_MIN_RATIO` × `n_kv_max` cells per query token), with it on the same
-  decode and verify calls and the prompt calls its definition names, over a grid of 35,964,000 settings × calls. Then
-  it prints the switch points at Flash-Next's 2,051 cells and, for each prompt case of test-backend-ops, the kernel it
-  takes in each run of `scripts/record_checks.sh`'s suite `qsa-prompt`.
+  decode and verify calls and the prompt calls its definition names; with `_UNION` off every decode and verify call
+  as before at any tokens per list, with it on the calls of two or more tokens a list by the union rule (from
+  `_UNION_MIN_RATIO` × `n_kv_max` cells per union list), over a grid of settings × calls. Then it prints the switch
+  points at Flash-Next's 2,051 cells and, for each prompt and union case of test-backend-ops, the kernel it takes in
+  each run of `scripts/record_checks.sh`'s suites `qsa-prompt` and `qsa-union`.
 - `--nsm n` picks the split count of an `n`-SM card (default 5, the P106-090); `--threads n` the CPU reference's threads.
 
 The 26 cases (each with an F16 and a Q8_0 cache): Flash-Next decode at 8k and 32k cells, a 5-token verify, 1 and 32
@@ -32,14 +43,19 @@ splits, two sequences (one with an empty list), head 128 with 8 query heads per 
 heads per KV head with a list shorter than a tile, a list of exactly one tile, prompt micro-batches of 16 and 128 query
 tokens at Flash-Next's shape, and 512 query tokens over 2 KV heads (the kernel's 1,024 columns). Selections look like QSA's: pools of 4
 consecutive cells, the incomplete pool at the end, single cells, mask values 0 or small negatives, a row with one entry.
+The union kernel's 32 cases: Flash-Next verifies of 2, 4, 5 (lists of 4 and 1) and 8 tokens from 8k to 32k cells,
+prompts of 128 tokens, rows that share 90 % of their pools, two sequences of 6 tokens, 1 and 32 splits, head 128 with
+4 query heads per KV head at 13 tokens (lists of 8 and 5) and with 8 and sinks at 7 (6 and 1), 16 heads per KV head at
+5 (3 and 2) with lists shorter than a tile, a list of one tile, and every row the same cells at 4 and 128 tokens.
 A case passes within 2·10⁻⁵ of the FP64 reference (largest error over the largest output) and within test-backend-ops'
-FLASH_ATTN_EXT tolerance (NMSE 5·10⁻⁴) of ggml's CPU kernel.
+FLASH_ATTN_EXT tolerance (NMSE 5·10⁻⁴) of ggml's CPU kernel; a union case where every row keeps the same cells must
+also equal the per-token model bit for bit.
 
 | File | What |
 |---|---|
 | `src/fasp_check.cu` | the check, the GPU run and the bench |
 | `build.sh` | builds `build/fasp_check` in `nvidia/cuda:12.9.2-devel-ubuntu24.04`: ggml's CPU backend from `SRC` (static, no AVX, so it runs on the rig's Celeron too), the kernel as sm_61 code plus compute_61 PTX |
-| `check.sh` | the CPU check: the tree's header must pass every case; the three fault codes and four source mutations of the header (Q8_0 rows read without their scale, the splits' sums merged unscaled, every split but the first skipping an entry, scores mapped to the wrong key) must each fail cases; `--rule` must pass, and three mutations of the rule (prompt calls by cells per query token, prompt calls taken with the prompt rule off, a call of exactly `_NQ` tokens by the prompt rule) must each fail it |
+| `check.sh` | the CPU check: the tree's header must pass every case; the four fault codes and six source mutations of the header (Q8_0 rows read without their scale, the splits' sums merged unscaled, every split but the first skipping an entry, scores mapped to the wrong key, union warps on the wrong token of their list, every sequence reading the first sequence's union lists) must each fail cases; `--rule` must pass, and six mutations of the rule (prompt calls by cells per query token, prompt calls taken with the prompt rule off, a call of exactly `_NQ` tokens by the prompt rule, union lists counted per query token, the union rule with `_UNION` off, one-token calls by the union rule) must each fail it |
 
 ```bash
 SRC=<llama.cpp tree with the path> DOCKER_ARGS="--cpu-shares 256" bench/fattn_sparse/check.sh   # CPU, ~5 min
@@ -48,4 +64,5 @@ build/fasp_check --bench --nsm 5    # timings, on the card they are for
 ```
 
 Results: [docs/data/2026-11-04_qsa_sparse_attn](../../docs/data/2026-11-04_qsa_sparse_attn/README.md); the prompt rule
-and `--rule`: [docs/data/2026-11-11_c705_sparse_prompt_rule](../../docs/data/2026-11-11_c705_sparse_prompt_rule/README.md).
+and `--rule`: [docs/data/2026-11-11_c705_sparse_prompt_rule](../../docs/data/2026-11-11_c705_sparse_prompt_rule/README.md);
+the union kernel: [docs/data/2026-11-11_c103_union_gather](../../docs/data/2026-11-11_c103_union_gather/README.md).
