@@ -25,7 +25,8 @@
 #   RUNNER    a command the server line is handed to (e.g. "docker run --rm --init --network host --gpus ... IMAGE");
 #             STOP_CMD runs after every server stop (e.g. "docker rm -f NAME")
 # Env, the arms: ARMS (names of letters, digits and _; default "base", the preset as it is). Per arm:
-#   ARM_ENV_<arm> "NAME=value ..."; ARM_DRAFT_<arm> on|off; ARM_CTX_<arm>, ARM_UB_<arm>; ARM_ARGS_<arm> (as ARGS_SET)
+#   ARM_ENV_<arm> "NAME=value ..."; ARM_DRAFT_<arm> on|off; ARM_CTX_<arm>, ARM_UB_<arm>; ARM_ARGS_<arm> (as ARGS_SET);
+#   ARM_BIN_<arm> the arm's own llama-server in place of BIN (binary or folder: two builds in one run)
 # Env, the run:
 #   REPS (2) loads per arm, alternated: warm, then every arm once per repetition. LOADS ("name:arm ...") sets
 #   another order. WARM (1): one untimed load of the first arm first, at WARM_DEPTHS (0). A load whose
@@ -120,13 +121,15 @@ drop_flags() {  # drop_flags REGEX: removes the flags that match from LINE, each
   LINE=("${out[@]}")
 }
 
-arm_config() {  # arm_config ARM: the arm's environment (ENVS), server line (LINE), A_ENV, A_ARGS, A_DRAFT, A_CTX, A_UB
+arm_config() {  # arm_config ARM: the arm's environment (ENVS), server line (LINE), A_BIN, A_ENV, A_ARGS, A_DRAFT, A_CTX, A_UB
   local v w ub
   v=ARM_ENV_$1; A_ENV=${!v:-}
   v=ARM_DRAFT_$1; A_DRAFT=${!v:-$DRAFT}
   v=ARM_CTX_$1; A_CTX=${!v:-${CTX:-}}
   v=ARM_UB_$1; ub=${!v:-${UB:-}}
   v=ARM_ARGS_$1; A_ARGS=${!v:-}
+  v=ARM_BIN_$1; A_BIN=${!v:-$BIN}
+  [ -d "$A_BIN" ] && A_BIN=$A_BIN/llama-server
   ENVS=()
   for w in $PRESET_ENV; do [[ " ${ENV_DROP:-} " == *" ${w%%=*} "* ]] || ENVS+=("$w"); done
   # shellcheck disable=SC2206
@@ -201,9 +204,9 @@ stop_server() {  # the server, then its watchdog; the watchdog's table goes to O
 start_server() {  # start_server LOAD: the server on ENVS and LINE; 0 when /health answers
   local log=$OUT/server-$1.log t0
   if curl -sf -m 5 "http://127.0.0.1:$PORT/health" > /dev/null; then say "a server already answers on port $PORT"; return 1; fi
-  echo "=== $(date -Is) $1: ${RUNNER:+$RUNNER }env ${ENVS[*]} $BIN -m $MODEL ${LINE[*]} --host 127.0.0.1 --port $PORT" >> "$log"
+  echo "=== $(date -Is) $1: ${RUNNER:+$RUNNER }env ${ENVS[*]} $A_BIN -m $MODEL ${LINE[*]} --host 127.0.0.1 --port $PORT" >> "$log"
   # shellcheck disable=SC2086
-  $RUNNER env "${ENVS[@]}" "$BIN" -m "$MODEL" "${LINE[@]}" --host 127.0.0.1 --port "$PORT" >> "$log" 2>&1 < /dev/null &
+  $RUNNER env "${ENVS[@]}" "$A_BIN" -m "$MODEL" "${LINE[@]}" --host 127.0.0.1 --port "$PORT" >> "$log" 2>&1 < /dev/null &
   SRV=$!
   wd_start "$1" || return 1
   t0=$(date +%s)
@@ -258,8 +261,10 @@ for arm in $ARMS; do
   arm_config "$arm"
   [ "$A_DRAFT" = on ] && drafts=1
   say "arm $arm: draft $A_DRAFT, context $A_CTX, -ub $A_UB${A_ENV:+, $A_ENV}${A_ARGS:+, $A_ARGS}"
-  say "  ${RUNNER:+$RUNNER }env ${ENVS[*]} $BIN -m $MODEL ${LINE[*]}"
+  say "  ${RUNNER:+$RUNNER }env ${ENVS[*]} $A_BIN -m $MODEL ${LINE[*]}"
   settings="$settings|$arm: ${ENVS[*]} ${LINE[*]}"
+  [ "$A_BIN" = "$BIN" ] || settings="$settings bin $A_BIN"
+  OWN_BINS="${OWN_BINS:-} $arm=$A_BIN"
   [ -n "$A_CTX" ] && [ $((max_depth + N_PREDICT)) -gt "$A_CTX" ] \
     && refuse "arm $arm: depth $max_depth + $N_PREDICT tokens does not fit its context of $A_CTX"
 done
@@ -277,6 +282,11 @@ if [ -z "$RUNNER" ]; then  # with a RUNNER the paths are the runner's own
   [ -r "$MODEL" ] || fail "no model file at $MODEL"
   [ "$drafts" = 0 ] || [ -r "$MODEL_DRAFT" ] || fail "no draft file at $MODEL_DRAFT"
   "$BIN" --version > "$OUT/build.txt" 2>&1 < /dev/null || true
+  for ab in ${OWN_BINS:-}; do  # an arm with its own build: build-<arm>.txt
+    [ "${ab#*=}" = "$BIN" ] && continue
+    [ -x "${ab#*=}" ] || fail "no llama-server at ${ab#*=} (arm ${ab%%=*})"
+    "${ab#*=}" --version > "$OUT/build-${ab%%=*}.txt" 2>&1 < /dev/null || true
+  done
 fi
 if [ "$WATCHDOG" = none ]; then  # none found: fine with a RUNNER or on a host with memory to spare
   mem_kb=$(awk '/^MemTotal/ { print $2 }' /proc/meminfo)
@@ -290,7 +300,7 @@ for spec in $LOADS; do [ "${spec%%:*}" = warm ] || [ -f "$OUT/load-${spec%%:*}.d
 RUN=$LOADS
 [ "$pending" -gt 0 ] || RUN=${LOADS#warm:* }  # every timed load is done: no warm-up either, only the tables
 echo $$ > "$OUT/driver.pid"
-[ -s "$OUT/loads.tsv" ] || printf 'load\tarm\ttimed\tvalid\tdraft\tctx\tub\tcache\tn_predict\tstarted\tload_s\tmodel\tarm_env\tarm_args\tline\n' > "$OUT/loads.tsv"
+[ -s "$OUT/loads.tsv" ] || printf 'load\tarm\ttimed\tvalid\tdraft\tctx\tub\tcache\tn_predict\tstarted\tload_s\tmodel\tarm_env\tarm_args\tline\tbin\n' > "$OUT/loads.tsv"
 if [ "${MONITOR:-1}" = 1 ] && command -v nvidia-smi > /dev/null; then
   nvidia-smi --query-gpu=timestamp,index,temperature.gpu,power.draw,clocks.sm,memory.used,utilization.gpu \
     --format=csv,noheader -l 10 >> "$OUT/gpu.csv" 2>&1 < /dev/null &
@@ -317,9 +327,9 @@ for spec in $RUN; do
     fail "load $name: the server did not start (server-$name.log)"
   fi
   line="${ENVS[*]} ${LINE[*]}"  # as it ran, the draft named by its file alone
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$arm" "$timed" "$VALID" "$A_DRAFT" "$A_CTX" \
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$arm" "$timed" "$VALID" "$A_DRAFT" "$A_CTX" \
     "$A_UB" "$CACHE" "$N_PREDICT" "$started" "$LOAD_S" "$(basename "$MODEL")" "$A_ENV" "$A_ARGS" \
-    "${line//$MODEL_DRAFT/$(basename "$MODEL_DRAFT")}" >> "$OUT/loads.tsv"
+    "${line//$MODEL_DRAFT/$(basename "$MODEL_DRAFT")}" "$A_BIN" >> "$OUT/loads.tsv"
   # shellcheck disable=SC2086
   python3 -I "$HERE/deep_client.py" --port "$PORT" --arm "$arm" --load "$name" --depths "${depths// /,}" \
     --need-depth "$max_depth" --n-predict "$N_PREDICT" --text $TEXT "--tag=${TAG:-}" --tail-ids "${TAIL_IDS:-64}" \

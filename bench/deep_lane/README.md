@@ -45,7 +45,8 @@ is changed through the environment:
 **An arm is a named setting.** `ARMS="dense sparse"` with `ARM_ENV_dense=GGML_CUDA_FATTN_SPARSE_PASCAL=0` and
 `ARM_ENV_sparse=GGML_CUDA_FATTN_SPARSE_PASCAL=1` compares the sparse Pascal attention off and on. Besides
 `ARM_ENV_<arm>` an arm can set `ARM_DRAFT_<arm>` (on or off), `ARM_CTX_<arm>` and `ARM_UB_<arm>` (131,072 tokens need
-`-ub 256` on nine 6 GB cards) and `ARM_ARGS_<arm>` (flags, as `ARGS_SET`). The first arm is the control.
+`-ub 256` on nine 6 GB cards), `ARM_ARGS_<arm>` (flags, as `ARGS_SET`) and `ARM_BIN_<arm>` (its own llama-server, so that two
+builds alternate in one run; its `--version` goes to `build-<arm>.txt`). The first arm is the control.
 
 **Loads alternate.** One untimed warm-up load of the first arm comes first, because the first load on an idle rig
 runs slower than later ones (registry row Q1055). Then every arm loads once per repetition (`REPS`, default 2):
@@ -136,7 +137,7 @@ Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
 | File in `OUT` | Content |
 |---|---|
 | `requests.csv` | one line per request, every load |
-| `loads.tsv` | one line per load: arm, timed or warm-up, valid, draft, context, start, load seconds, the line as it ran |
+| `loads.tsv` | one line per load: arm, timed or warm-up, valid, draft, context, start, load seconds, the line as it ran, the binary |
 | `table.md`, `classes.tsv` | the tables below; the classes as a table |
 | `quiet_<load>.txt`, `fit_<load>.txt` | the quiet check before the load; memory per card and on the host after it |
 | `server-<load>.log`, `ram_watchdog-<load>.tsv`, `gpu.csv` | the server's log, the watchdog's samples, the cards every 10 s |
