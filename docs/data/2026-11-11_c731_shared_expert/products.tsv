@@ -1,0 +1,18 @@
+product	layers	type	width_to_rows	kernel_1_token	kernel_2_to_4_tokens	weights_read_2_to_4	same_sums_as_1_token_at_2_to_4	with_v4_switches	ms_k1	ms_k4	ms_k5
+gate+up fused with the routed experts	6	q2_0	2560 -> 640	one-token Pascal kernel, routed + shared launch	mtok kernel, routed + shared launch (one block row, all tokens)	once per call	yes	yes	in the routed group	in the routed group	in the routed group
+gate alone	15	q2_0	2560 -> 640	one-token Pascal kernel (L = 4)	k-column (L = 4)	once per call	yes	yes	0.166	0.316	0.368
+up alone	7	q2_0	2560 -> 640	one-token Pascal kernel (L = 4)	k-column (L = 4)	once per call	yes	yes	0.080	0.136	0.166
+down	16	q2_0	640 -> 2560	one-token Pascal kernel, warp tiles (L = 1)	k-column (L = 1)	once per call	yes	yes	0.179	0.323	0.370
+gate+up, fused at one token	6	q3_K	2560 -> 640	llama.cpp mul_mat_vec_q, fused gate/up + SWIGLU	k-column, gate and up apart, then SWIGLU	once per call	no	no (C756)	0.262	in the next two rows	in the next two rows
+gate alone	6	q3_K	2560 -> 640	k-column (L = 2)	k-column (L = 2)	once per call	yes	yes	0.154	0.453 (12 calls)	0.504 (12 calls)
+up alone	15	q3_K	2560 -> 640	k-column (L = 2)	k-column (L = 2)	once per call	yes	yes	0.394	0.742 (21 calls)	0.841 (21 calls)
+gate	6	iq4_xs	2560 -> 640	one-token Pascal kernel	k-column	once per call	no	yes with GGML_CUDA_MMVQ_PASCAL_DMT=1 (C722)	0.117	0.228	0.255
+up	5	iq4_xs	2560 -> 640	one-token Pascal kernel	k-column	once per call	no	yes with GGML_CUDA_MMVQ_PASCAL_DMT=1 (C722)	0.097	0.189	0.212
+gate+up (2 layers fused at one token)	6	q4_K	2560 -> 640	one-token Pascal kernel (fused gate on 2 layers: the same lanes and order)	k-column	once per call	no	yes with GGML_CUDA_MMVQ_PASCAL_DMT=1 (C722)	0.181	0.405	0.448
+gate+up	1	q5_K	2560 -> 640	one-token Pascal kernel	k-column	once per call	no	yes with GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 (C690)	0.034	0.082	0.089
+gate+up	1	q6_K	2560 -> 640	one-token Pascal kernel	k-column	once per call	no	no (C727)	0.049	0.122	0.082
+down	16	q4_0	640 -> 2560	one-token Pascal kernel (L = 2)	k-column (L = 2)	once per call	no (only blocks with |I| >= 2^13 can differ)	no (KCOL_SKIP=q4_0 puts it on the multi-column kernel: C755)	0.292	0.595	0.588
+down	7	q5_0	640 -> 2560	one-token Pascal kernel (L = 2)	k-column (L = 2)	once per call	no (only blocks with |I| >= 2^13 can differ)	no (KCOL_SKIP=q5_0 puts it on the multi-column kernel: C755)	0.134	0.285	0.287
+down	7	iq4_nl	640 -> 2560	k-column (L = 2)	k-column (L = 2)	once per call	yes	yes	0.224	0.266	0.271
+down	1	q8_0	640 -> 2560	k-column (L = 2, short rows)	k-column (L = 2)	once per call	yes	yes	0.040	0.049	0.053
+gate_inp_shexp	47	f32	2560 -> 1	llama.cpp mul_mat_vec_f	mul_mat_vec_f at 2-3 tokens, cuBLAS at 4-8	once per call	yes at 2-3, no at 4	yes at 2-3, no at 4 (C754)	0.153	0.601	0.602

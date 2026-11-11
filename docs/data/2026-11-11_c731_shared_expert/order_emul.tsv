@@ -1,0 +1,9 @@
+type	K	rows	tokens	activations	lanes_per_row	outputs	differ	median_ulp_of_those	max_diff_over_sum_abs	blocks	blocks_with_a_rounded_product
+q2_0	2560	640	4	normal	4	2560	0	0	0	0	0
+q2_0	640	2560	4	normal	1	10240	0	0	0	0	0
+q4_0	640	2560	4	normal	2	10240	0	0	0	204800	0
+q5_0	640	2560	4	normal	2	10240	4	2	1.86e-08	204800	11
+q2_0	2560	640	4	uniform	4	2560	0	0	0	0	0
+q2_0	640	2560	4	uniform	1	10240	0	0	0	0	0
+q4_0	640	2560	4	uniform	2	10240	0	0	0	204800	0
+q5_0	640	2560	4	uniform	2	10240	79	2	6.19e-08	204800	225

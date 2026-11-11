@@ -1,0 +1,14 @@
+23b928f449cbd8c2a696374a25609c68  mmvq-pascal-mtok.cu.o
+15bc445da9f640b296fe84b119a81fdb  mmvq-pascal.cu.o
+d252ddedd8c37eb77156251dd5efa3ce  mmvq.cu.o
+d711513dfe2c18966f3823eb35cc2915  mmvf.cu.o
+03c92024f826e5b1137caab93d76e5d4  mmvq-pascal-kcol-q2_0.cu.o
+1b2f4bfc82c0c0d85bd391d438028d5e  mmvq-pascal-kcol-q3_K.cu.o
+8e8bc14738e1e2b675fa9c9d45f8c11f  mmvq-pascal-kcol-q4_K.cu.o
+13b349c1059e7739fe849316784b7231  mmvq-pascal-kcol-q5_K.cu.o
+08402c5009cd771e59f24a61fa7f86d2  mmvq-pascal-kcol-q6_K.cu.o
+a9c5fa01900897d2503e1a1e502980a4  mmvq-pascal-kcol-iq4_xs.cu.o
+0fdccd70713c014f3048a92aac066ca9  mmvq-pascal-kcol-q4_0.cu.o
+e4948b3cd7aca16f374ffdd755365d31  mmvq-pascal-kcol-q5_0.cu.o
+56532e39b81bc8a273f985074d8af1d4  mmvq-pascal-kcol-iq4_nl.cu.o
+86dae8a1f982c0199add7fab6ab0a829  mmvq-pascal-kcol-q8_0.cu.o

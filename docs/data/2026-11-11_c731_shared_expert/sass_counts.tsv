@@ -1,0 +1,254 @@
+object	kernel	REG	STACK	LOCAL	loop	loop_instr	LDG	LDS	STS	IDP	I2F	FMUL	FFMA	FADD
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 8, 2>	114	0	0	main	1166	3	116	3	512	64	32	64	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 7, 2>	111	0	0	main	1068	3	104	3	448	56	28	56	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 6, 2>	111	0	0	main	964	3	92	3	384	48	24	48	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 5, 2>	110	0	0	main	861	3	80	3	320	40	20	40	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 4, 2>	117	0	0	main	727	3	68	3	256	32	16	32	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 3, 2>	104	0	0	main	667	3	56	3	192	24	12	24	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 2, 2>	107	0	0	main	535	3	44	3	128	16	8	16	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 1, 2>	58	0	0	main	468	3	32	3	64	8	4	8	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 8, 1>	119	0	0	main	666	2	107	2	256	32	16	32	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 7, 1>	108	0	0	main	646	2	95	2	224	28	14	28	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 6, 1>	106	0	0	main	581	2	82	2	192	24	12	24	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 5, 1>	110	0	0	main	495	2	70	2	160	20	10	20	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 4, 1>	111	0	0	main	432	2	58	2	128	16	8	16	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 3, 1>	102	0	0	main	405	2	46	2	96	12	6	12	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 2, 1>	104	0	0	main	330	2	34	2	64	8	4	8	0
+mmvq-pascal-kcol-q2_0	kcol::mul_mat_kcol<1, 1, 1>	61	0	0	main	256	2	22	2	32	4	2	4	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 8, 2>	235	0	0	main	2685	3	287	3	1024	288	160	256	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 7, 2>	220	0	0	main	2499	3	258	3	896	256	144	224	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 6, 2>	212	0	0	main	2257	3	230	3	768	224	128	192	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 5, 2>	207	0	0	main	2019	3	202	3	640	192	112	160	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 4, 2>	193	0	0	main	1779	3	171	3	512	160	96	128	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 3, 2>	172	0	0	main	1538	3	142	3	384	128	80	96	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 2, 2>	161	0	0	main	1298	3	114	3	256	96	64	64	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 1, 2>	148	0	0	main	1059	3	86	3	128	64	48	32	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 8, 1>	168	0	0	main	1506	2	255	2	512	144	80	128	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 7, 1>	152	0	0	main	1398	2	229	2	448	128	72	112	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 6, 1>	151	0	0	main	1261	2	201	2	384	112	64	96	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 5, 1>	148	0	0	main	1103	2	172	2	320	96	56	80	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 4, 1>	136	0	0	main	964	2	144	2	256	80	48	64	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 3, 1>	126	0	0	main	824	2	113	2	192	64	40	48	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 2, 1>	119	0	0	main	691	2	85	2	128	48	32	32	0
+mmvq-pascal-kcol-q3_K	kcol::mul_mat_kcol<2, 1, 1>	93	0	0	main	548	2	57	2	64	32	24	16	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 8, 2>	147	0	0	main	2141	3	178	3	1024	160	168	256	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 7, 2>	152	0	0	main	1892	3	158	3	896	144	152	224	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 6, 2>	130	0	0	main	1721	3	138	3	768	128	136	192	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 5, 2>	128	0	0	main	1505	3	118	3	640	112	120	160	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 4, 2>	122	0	0	main	1290	3	98	3	512	96	104	128	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 3, 2>	118	0	0	main	1065	3	78	3	384	80	88	96	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 2, 2>	100	0	0	main	863	3	58	3	256	64	72	64	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 1, 2>	72	0	0	main	645	3	38	3	128	48	56	32	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 8, 1>	122	0	0	main	1189	2	169	2	512	80	84	128	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 7, 1>	124	0	0	main	1074	2	149	2	448	72	76	112	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 6, 1>	108	0	0	main	987	2	129	2	384	64	68	96	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 5, 1>	115	0	0	main	857	2	109	2	320	56	60	80	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 4, 1>	109	0	0	main	713	2	89	2	256	48	52	64	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 3, 1>	109	0	0	main	592	2	69	2	192	40	44	48	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 2, 1>	100	0	0	main	510	2	49	2	128	32	36	32	0
+mmvq-pascal-kcol-q4_K	kcol::mul_mat_kcol<3, 1, 1>	77	0	0	main	347	2	29	2	64	24	28	16	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 8, 2>	244	0	0	main	2445	3	182	3	1024	160	160	256	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 7, 2>	244	0	0	main	2192	3	162	3	896	144	144	224	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 6, 2>	232	0	0	main	2021	3	142	3	768	128	128	192	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 5, 2>	228	0	0	main	1807	3	122	3	640	112	112	160	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 4, 2>	220	0	0	main	1590	3	102	3	512	96	96	128	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 3, 2>	216	0	0	main	1364	3	82	3	384	80	80	96	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 2, 2>	178	0	0	main	1159	3	62	3	256	64	64	64	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 1, 2>	111	0	0	main	945	3	42	3	128	48	48	32	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 8, 1>	168	0	0	main	1339	2	171	2	512	80	80	128	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 7, 1>	168	0	0	main	1224	2	151	2	448	72	72	112	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 6, 1>	146	0	0	main	1137	2	131	2	384	64	64	96	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 5, 1>	144	0	0	main	1007	2	111	2	320	56	56	80	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 4, 1>	123	0	0	main	863	2	91	2	256	48	48	64	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 3, 1>	109	0	0	main	742	2	71	2	192	40	40	48	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 2, 1>	100	0	0	main	660	2	51	2	128	32	32	32	0
+mmvq-pascal-kcol-q5_K	kcol::mul_mat_kcol<4, 1, 1>	75	0	0	main	497	2	31	2	64	24	24	16	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 8, 2>	208	0	0	main	2760	3	332	3	1024	288	160	256	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 7, 2>	176	0	0	main	2579	3	305	3	896	256	144	224	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 6, 2>	168	0	0	main	2336	3	277	3	768	224	128	192	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 5, 2>	163	0	0	main	2096	3	249	3	640	192	112	160	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 4, 2>	164	0	0	main	1809	3	222	3	512	160	96	128	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 3, 2>	148	0	0	main	1620	3	192	3	384	128	80	96	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 2, 2>	144	0	0	main	1380	3	164	3	256	96	64	64	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 1, 2>	113	0	0	main	1146	3	136	3	128	64	48	32	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 8, 1>	166	0	0	main	1547	2	280	2	512	144	80	128	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 7, 1>	144	0	0	main	1436	2	251	2	448	128	72	112	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 6, 1>	140	0	0	main	1298	2	222	2	384	112	64	96	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 5, 1>	136	0	0	main	1142	2	195	2	320	96	56	80	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 4, 1>	135	0	0	main	1004	2	167	2	256	80	48	64	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 3, 1>	119	0	0	main	865	2	138	2	192	64	40	48	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 2, 1>	111	0	0	main	733	2	111	2	128	48	32	32	0
+mmvq-pascal-kcol-q6_K	kcol::mul_mat_kcol<5, 1, 1>	88	0	0	main	589	2	82	2	64	32	24	16	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 8, 2>	128	0	0	main	2718	3	228	3	1024	144	144	128	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 7, 2>	111	0	0	main	2551	3	204	3	896	128	128	112	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 6, 2>	110	0	0	main	2346	3	179	3	768	112	112	96	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 5, 2>	107	0	0	main	2147	3	156	3	640	96	96	80	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 4, 2>	113	0	0	main	1907	3	130	3	512	80	80	64	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 3, 2>	104	0	0	main	1739	3	106	3	384	64	64	48	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 2, 2>	100	0	0	main	1547	3	83	3	256	48	48	32	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 1, 2>	72	0	0	main	1328	3	58	3	128	32	32	16	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 8, 1>	120	0	0	main	1510	2	210	2	512	72	72	64	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 7, 1>	108	0	0	main	1421	2	187	2	448	64	64	56	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 6, 1>	111	0	0	main	1282	2	163	2	384	56	56	48	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 5, 1>	110	0	0	main	1165	2	138	2	320	48	48	40	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 4, 1>	112	0	0	main	1047	2	114	2	256	40	40	32	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 3, 1>	102	0	0	main	958	2	89	2	192	32	32	24	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 2, 1>	104	0	0	main	826	2	66	2	128	24	24	16	0
+mmvq-pascal-kcol-iq4_xs	kcol::mul_mat_kcol<6, 1, 1>	68	0	0	main	693	2	41	2	64	16	16	8	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 8, 2>	132	0	0	main	661	3	60	3	256	32	32	32	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 7, 2>	115	0	0	main	610	3	55	3	224	28	28	28	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 6, 2>	110	0	0	main	553	3	50	3	192	24	24	24	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 5, 2>	110	0	0	main	495	3	45	3	160	20	20	20	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 4, 2>	117	0	0	main	412	3	40	3	128	16	16	16	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 3, 2>	103	0	0	main	397	3	35	3	96	12	12	12	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 2, 2>	102	0	0	main	351	3	30	3	64	8	8	8	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 1, 2>	62	0	0	main	292	3	25	3	32	4	4	4	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 8, 1>	138	0	0	main	384	2	50	2	128	16	16	16	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 7, 1>	122	0	0	main	392	2	45	2	112	14	14	14	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 6, 1>	118	0	0	main	354	2	40	2	96	12	12	12	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 5, 1>	110	0	0	main	295	2	35	2	80	10	10	10	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 4, 1>	112	0	0	main	262	2	30	2	64	8	8	8	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 3, 1>	102	0	0	main	260	2	25	2	48	6	6	6	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 2, 1>	105	0	0	main	199	2	20	2	32	4	4	4	0
+mmvq-pascal-kcol-q4_0	kcol::mul_mat_kcol<7, 1, 1>	56	0	0	main	164	2	15	2	16	2	2	2	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 8, 2>	132	0	0	main	807	3	64	3	256	32	32	32	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 7, 2>	123	0	0	main	756	3	59	3	224	28	28	28	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 6, 2>	124	0	0	main	699	3	54	3	192	24	24	24	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 5, 2>	108	0	0	main	647	3	49	3	160	20	20	20	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 4, 2>	117	0	0	main	554	3	44	3	128	16	16	16	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 3, 2>	103	0	0	main	543	3	39	3	96	12	12	12	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 2, 2>	100	0	0	main	505	3	34	3	64	8	8	8	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 1, 2>	68	0	0	main	406	3	29	3	32	4	4	4	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 8, 1>	138	0	0	main	457	2	52	2	128	16	16	16	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 7, 1>	122	0	0	main	464	2	47	2	112	14	14	14	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 6, 1>	120	0	0	main	427	2	42	2	96	12	12	12	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 5, 1>	114	0	0	main	372	2	37	2	80	10	10	10	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 4, 1>	111	0	0	main	332	2	32	2	64	8	8	8	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 3, 1>	96	0	0	main	339	2	27	2	48	6	6	6	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 2, 1>	102	0	0	main	285	2	22	2	32	4	4	4	0
+mmvq-pascal-kcol-q5_0	kcol::mul_mat_kcol<8, 1, 1>	63	0	0	main	237	2	17	2	16	2	2	2	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 8, 2>	114	0	0	main	831	3	68	3	256	32	32	32	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 7, 2>	111	0	0	main	779	3	62	3	224	28	28	28	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 6, 2>	110	0	0	main	721	3	56	3	192	24	24	24	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 5, 2>	110	0	0	main	664	3	50	3	160	20	20	20	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 4, 2>	117	0	0	main	578	3	44	3	128	16	16	16	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 3, 2>	104	0	0	main	562	3	38	3	96	12	12	12	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 2, 2>	102	0	0	main	505	3	32	3	64	8	8	8	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 1, 2>	63	0	0	main	412	3	26	3	32	4	4	4	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 8, 1>	119	0	0	main	475	2	58	2	128	16	16	16	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 7, 1>	108	0	0	main	469	2	52	2	112	14	14	14	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 6, 1>	112	0	0	main	414	2	46	2	96	12	12	12	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 5, 1>	110	0	0	main	382	2	40	2	80	10	10	10	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 4, 1>	111	0	0	main	345	2	34	2	64	8	8	8	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 3, 1>	102	0	0	main	344	2	28	2	48	6	6	6	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 2, 1>	102	0	0	main	298	2	22	2	32	4	4	4	0
+mmvq-pascal-kcol-iq4_nl	kcol::mul_mat_kcol<9, 1, 1>	56	0	0	main	247	2	16	2	16	2	2	2	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 8, 2>	114	0	0	main	645	3	84	3	256	32	32	32	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 7, 2>	111	0	0	main	593	3	78	3	224	28	28	28	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 6, 2>	110	0	0	main	535	3	72	3	192	24	24	24	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 5, 2>	111	0	0	main	476	3	66	3	160	20	20	20	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 4, 2>	119	0	0	main	391	3	60	3	128	16	16	16	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 3, 2>	102	0	0	main	376	3	54	3	96	12	12	12	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 2, 2>	111	0	0	main	284	3	48	3	64	8	8	8	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 1, 2>	71	0	0	main	264	3	42	3	32	4	4	4	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 8, 1>	120	0	0	main	381	2	66	2	128	16	16	16	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 7, 1>	108	0	0	main	375	2	60	2	112	14	14	14	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 6, 1>	112	0	0	main	320	2	54	2	96	12	12	12	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 5, 1>	114	0	0	main	288	2	48	2	80	10	10	10	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 4, 1>	118	0	0	main	253	2	42	2	64	8	8	8	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 3, 1>	110	0	0	main	219	2	36	2	48	6	6	6	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 2, 1>	110	0	0	main	191	2	30	2	32	4	4	4	0
+mmvq-pascal-kcol-q8_0	kcol::mul_mat_kcol<0, 1, 1>	56	0	0	main	153	2	24	2	16	2	2	2	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	1	171	9	10	0	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	2	228	9	20	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	3	285	9	30	0	96	12	6	12	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	4	339	9	40	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	5	391	9	50	0	160	20	10	20	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	6	451	9	60	0	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	7	509	9	70	0	224	28	14	28	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 8>	115	0	0	8	562	9	80	0	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 4>	83	0	0	1	171	9	10	0	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 4>	83	0	0	2	229	9	20	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 4>	83	0	0	3	285	9	30	0	96	12	6	12	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 4>	83	0	0	4	337	9	40	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 2>	68	0	0	1	171	9	10	0	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 2, 2>	68	0	0	2	229	9	20	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	1	165	0	19	0	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	2	222	0	29	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	3	277	0	39	0	96	12	6	12	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	4	332	0	49	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	5	387	0	59	0	160	20	10	20	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	6	442	0	69	0	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	7	507	0	79	0	224	28	14	28	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 8>	133	0	0	8	564	0	89	0	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 4>	111	0	0	1	165	0	19	0	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 4>	111	0	0	2	222	0	29	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 4>	111	0	0	3	277	0	39	0	96	12	6	12	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 4>	111	0	0	4	332	0	49	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 2>	76	0	0	1	165	0	19	0	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 1, 2>	76	0	0	2	224	0	29	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	1	184	3	19	3	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	2	238	3	29	3	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	3	293	3	39	3	96	12	6	12	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	4	348	3	49	3	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	5	403	3	59	3	160	20	10	20	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	6	458	3	69	3	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	7	519	3	79	3	224	28	14	28	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 8>	135	0	0	8	572	3	89	3	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 4>	114	0	0	1	184	3	19	3	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 4>	114	0	0	2	238	3	29	3	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 4>	114	0	0	3	293	3	39	3	96	12	6	12	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 4>	114	0	0	4	348	3	49	3	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 2>	96	0	0	1	179	3	19	3	32	4	2	4	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<false, 0, 2>	96	0	0	2	238	3	29	3	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	1	355	18	10	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	2	422	18	20	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	3	521	18	30	0	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	4	618	18	40	0	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	5	715	18	50	0	320	40	20	40	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	6	814	18	60	0	384	48	24	48	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	7	912	18	70	0	448	56	28	56	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 8>	135	0	0	8	1008	18	80	0	512	64	32	64	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 4>	134	0	0	1	355	18	10	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 4>	134	0	0	2	421	18	20	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 4>	134	0	0	3	521	18	30	0	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 4>	134	0	0	4	617	18	40	0	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 2>	92	0	0	1	328	18	10	0	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 2, 2>	92	0	0	2	421	18	20	0	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	1	343	6	28	6	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	2	442	6	38	6	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	3	539	6	48	6	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	4	635	6	58	6	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	5	732	6	68	6	320	40	20	40	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	6	834	6	78	6	384	48	24	48	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	7	932	6	88	6	448	56	28	56	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 8>	168	0	0	8	1027	6	98	6	512	64	32	64	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 4>	156	0	0	1	343	6	28	6	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 4>	156	0	0	2	442	6	38	6	128	16	8	16	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 4>	156	0	0	3	539	6	48	6	192	24	12	24	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 4>	156	0	0	4	637	6	58	6	256	32	16	32	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 2>	137	0	0	1	344	6	28	6	64	8	4	8	0
+mmvq-pascal-mtok	mul_mat_vec_q2_0_pascal_mtok<true, 0, 2>	137	0	0	2	452	6	38	6	128	16	8	16	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 2, 2, true, 2, 16, false>	139	0	0	main	712	21	36	12	128	16	8	16	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 2, 2, true, 1, 16, false>	112	0	0	main	374	15	18	6	64	8	4	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 2, 2, true, 0, 16, false>	108	0	0	main	374	15	18	6	64	8	4	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 1, 2, true, 2, 16, false>	107	0	0	main	374	15	18	6	64	8	4	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 1, 2, true, 1, 16, false>	72	0	0	main	223	12	9	3	32	4	2	4	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 1, 2, true, 0, 16, false>	72	0	0	main	222	12	9	3	32	4	2	4	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 2, 2, true, 1, 16, true>	87	0	0	main	346	9	18	0	64	8	4	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 2, 2, true, 0, 16, true>	74	0	0	main	346	9	18	0	64	8	4	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 1, 2, true, 1, 16, true>	58	0	0	main	199	9	9	0	32	4	2	4	0
+mmvq-pascal	mul_mat_vec_q_pascal<42, 1, 2, true, 0, 16, true>	58	0	0	main	199	9	9	0	32	4	2	4	0
+mmvq-pascal	mul_mat_vec_q_pascal<6, 2, 2, true, 2, 16, false>	125	0	0	main	603	21	44	12	144	10	6	16	0
+mmvq-pascal	mul_mat_vec_q_pascal<6, 2, 2, true, 1, 16, false>	93	0	0	main	321	15	22	6	80	6	6	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<6, 2, 2, true, 0, 16, false>	95	0	0	main	315	15	22	6	80	6	6	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<6, 1, 2, true, 2, 16, false>	87	0	0	main	318	15	22	6	80	6	6	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<6, 1, 2, true, 1, 16, false>	56	0	0	main	203	12	11	3	48	4	6	4	0
+mmvq-pascal	mul_mat_vec_q_pascal<6, 1, 2, true, 0, 16, false>	56	0	0	main	198	12	11	3	48	4	6	4	0
+mmvq-pascal	mul_mat_vec_q_pascal<2, 2, 2, true, 2, 16, false>	116	0	0	main	370	21	36	12	80	10	6	16	0
+mmvq-pascal	mul_mat_vec_q_pascal<2, 2, 2, true, 1, 16, false>	96	0	0	main	181	15	18	6	48	6	6	8	0
+mmvq-pascal	mul_mat_vec_q_pascal<2, 2, 2, true, 0, 16, false>	90	0	0	main	181	15	18	6	48	6	6	8	0
+mmvf	mul_mat_vec_f<float, float, 4, 256, false, false>	48	0	0	main	75	20	0	0	0	0	0	32	0
+mmvf	mul_mat_vec_f<float, float, 3, 256, false, false>	40	0	0	main	55	16	0	0	0	0	0	24	0
+mmvf	mul_mat_vec_f<float, float, 2, 256, false, false>	39	0	0	main	137	48	0	0	0	0	0	64	0
+mmvf	mul_mat_vec_f<float, float, 1, 256, false, false>	30	0	0	main	88	32	0	0	0	0	0	32	0

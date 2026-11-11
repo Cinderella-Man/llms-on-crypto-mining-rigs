@@ -1,0 +1,63 @@
+k	ops	tensors	calls_per_pass	ms_per_pass	us_per_call	R41_part
+1	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU	ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	0.557	92.90	routed experts
+1	MUL_MAT	ffn_up_shexp:q3_K:2560x640	15.00	0.394	26.27	shared expert
+1	MUL_MAT	ffn_down_shexp:q4_0:640x2560	16.00	0.292	18.24	shared expert
+1	MUL_MAT+MUL_MAT+SWIGLU	ffn_gate_shexp:q3_K:2560x640 ffn_up_shexp:q3_K:2560x640	6.00	0.262	43.64	shared expert
+1	MUL_MAT	ffn_down_shexp:iq4_nl:640x2560	7.00	0.224	32.05	shared expert
+1	MUL_MAT	ffn_down_shexp:q2_0:640x2560	16.00	0.179	11.22	shared expert
+1	MUL_MAT	ffn_gate_shexp:q2_0:2560x640	15.00	0.166	11.10	shared expert
+1	MUL_MAT	ffn_gate_shexp:q3_K:2560x640	6.00	0.154	25.75	shared expert
+1	MUL_MAT	ffn_gate_inp_shexp:f32:2560x1	47.00	0.153	3.26	shared expert
+1	MUL_MAT	ffn_down_shexp:q5_0:640x2560	7.00	0.134	19.20	shared expert
+1	MUL	ffn_shexp_gated	47.00	0.118	2.52	other operations
+1	MUL_MAT	ffn_gate_shexp:iq4_xs:2560x640	6.00	0.117	19.52	shared expert
+1	MUL_MAT	ffn_up_shexp:iq4_xs:2560x640	5.00	0.097	19.39	shared expert
+1	MUL_MAT	ffn_up_shexp:q2_0:2560x640	7.00	0.080	11.47	shared expert
+1	MUL_MAT	ffn_up_shexp:q4_K:2560x640	4.00	0.068	17.09	shared expert
+1	MUL_MAT	ffn_gate_shexp:q4_K:2560x640	4.00	0.063	15.85	shared expert
+1	MUL_MAT+MUL_MAT+SWIGLU	ffn_gate_shexp:q4_K:2560x640 ffn_up_shexp:q4_K:2560x640	2.00	0.050	25.11	shared expert
+1	MUL_MAT	ffn_down_shexp:q8_0:640x2560	1.00	0.040	40.12	shared expert
+1	MUL_MAT	ffn_up_shexp:q6_K:2560x640	1.00	0.025	25.49	shared expert
+1	MUL_MAT	ffn_gate_shexp:q6_K:2560x640	1.00	0.024	23.60	shared expert
+1	MUL_MAT	ffn_gate_shexp:q5_K:2560x640	1.00	0.019	19.02	shared expert
+1	MUL_MAT	ffn_up_shexp:q5_K:2560x640	1.00	0.015	15.34	shared expert
+4	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU	ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.765	294.19	routed experts
+4	MUL_MAT	ffn_up_shexp:q3_K:2560x640	21.00	0.742	35.32	shared expert
+4	MUL_MAT	ffn_gate_inp_shexp:f32:2560x1	47.00	0.601	12.78	shared expert
+4	MUL_MAT	ffn_down_shexp:q4_0:640x2560	16.00	0.595	37.19	shared expert
+4	MUL_MAT	ffn_gate_shexp:q3_K:2560x640	12.00	0.453	37.76	shared expert
+4	MUL_MAT	ffn_down_shexp:q2_0:640x2560	16.00	0.323	20.18	shared expert
+4	MUL_MAT	ffn_gate_shexp:q2_0:2560x640	15.00	0.316	21.06	shared expert
+4	MUL_MAT	ffn_down_shexp:q5_0:640x2560	7.00	0.285	40.77	shared expert
+4	MUL_MAT	ffn_down_shexp:iq4_nl:640x2560	7.00	0.266	37.98	shared expert
+4	MUL_MAT	ffn_gate_shexp:iq4_xs:2560x640	6.00	0.228	38.03	shared expert
+4	MUL_MAT	ffn_gate_shexp:q4_K:2560x640	6.00	0.203	33.77	shared expert
+4	MUL_MAT	ffn_up_shexp:q4_K:2560x640	6.00	0.202	33.70	shared expert
+4	MUL_MAT	ffn_up_shexp:iq4_xs:2560x640	5.00	0.189	37.79	shared expert
+4	MUL_MAT	ffn_up_shexp:q2_0:2560x640	7.00	0.136	19.44	shared expert
+4	MUL	ffn_shexp_gated	47.00	0.123	2.63	other operations
+4	MUL_MAT	ffn_up_shexp:q6_K:2560x640	1.00	0.062	61.68	shared expert
+4	MUL_MAT	ffn_gate_shexp:q6_K:2560x640	1.00	0.060	60.01	shared expert
+4	MUL_MAT	ffn_down_shexp:q8_0:640x2560	1.00	0.049	49.21	shared expert
+4	MUL_MAT	ffn_gate_shexp:q5_K:2560x640	1.00	0.042	41.51	shared expert
+4	MUL_MAT	ffn_up_shexp:q5_K:2560x640	1.00	0.040	39.84	shared expert
+5	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU	ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	2.197	366.11	routed experts
+5	MUL_MAT	ffn_up_shexp:q3_K:2560x640	21.00	0.841	40.03	shared expert
+5	MUL_MAT	ffn_gate_inp_shexp:f32:2560x1	47.00	0.602	12.80	shared expert
+5	MUL_MAT	ffn_down_shexp:q4_0:640x2560	16.00	0.588	36.73	shared expert
+5	MUL_MAT	ffn_gate_shexp:q3_K:2560x640	12.00	0.504	42.00	shared expert
+5	MUL_MAT	ffn_down_shexp:q2_0:640x2560	16.00	0.370	23.14	shared expert
+5	MUL_MAT	ffn_gate_shexp:q2_0:2560x640	15.00	0.368	24.53	shared expert
+5	MUL_MAT	ffn_down_shexp:q5_0:640x2560	7.00	0.287	41.05	shared expert
+5	MUL_MAT	ffn_down_shexp:iq4_nl:640x2560	7.00	0.271	38.67	shared expert
+5	MUL_MAT	ffn_gate_shexp:iq4_xs:2560x640	6.00	0.255	42.51	shared expert
+5	MUL_MAT	ffn_gate_shexp:q4_K:2560x640	6.00	0.232	38.64	shared expert
+5	MUL_MAT	ffn_up_shexp:q4_K:2560x640	6.00	0.216	35.92	shared expert
+5	MUL_MAT	ffn_up_shexp:iq4_xs:2560x640	5.00	0.212	42.47	shared expert
+5	MUL_MAT	ffn_up_shexp:q2_0:2560x640	7.00	0.166	23.65	shared expert
+5	MUL	ffn_shexp_gated	47.00	0.116	2.47	other operations
+5	MUL_MAT	ffn_down_shexp:q8_0:640x2560	1.00	0.053	52.97	shared expert
+5	MUL_MAT	ffn_gate_shexp:q5_K:2560x640	1.00	0.046	46.07	shared expert
+5	MUL_MAT	ffn_up_shexp:q5_K:2560x640	1.00	0.043	42.86	shared expert
+5	MUL_MAT	ffn_up_shexp:q6_K:2560x640	1.00	0.042	42.14	shared expert
+5	MUL_MAT	ffn_gate_shexp:q6_K:2560x640	1.00	0.040	39.63	shared expert
