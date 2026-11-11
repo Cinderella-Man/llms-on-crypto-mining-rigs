@@ -1,0 +1,9 @@
+load	h_nextn	host_rows	prefetch_first	prefetch_total	trace_lines	compute_buffers	buffer_warnings
+base1	-	-	0	-	0	-	-
+host1	-	-	0	-	0	-	-
+nopf1	-	-	0	-	0	-	-
+base2	-	-	0	-	0	-	-
+warm	-	-	0	-	0	-	-
+nopf2	-	-	0	-	0	-	-
+trace	CUDA8 80.04	-	0	-	2822	CUDA0 344.13; CUDA1 280.75; CUDA2 280.37; CUDA3 280.75; CUDA4 280.37; CUDA5 280.37; CUDA6 280.75; CUDA7 280.37; CUDA8 280.37; CUDA_Host 123.26; CUDA4 1.25; CUDA8 57.46; CUDA_Host 9.96; CUDA4 1.25; CUDA8 57.46; CUDA_Host 9.96; CUDA0 344.13; CUDA1 280.75; CUDA2 280.37; CUDA3 280.75; CUDA4 280.37; CUDA5 280.37; CUDA6 280.75; CUDA7 280.37; CUDA8 280.38; CUDA_Host 123.28	-
+host2	-	-	0	-	0	-	-

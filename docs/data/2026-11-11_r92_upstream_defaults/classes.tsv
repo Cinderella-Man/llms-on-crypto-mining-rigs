@@ -1,0 +1,40 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	host	base	26.76 26.79	27.14 27.16	0.03	-0.38	-1.4	loss
+generation	0	nopf	base	27.01 27.13	27.14 27.16	0.12	-0.08	-0.3	negligible
+generation	0	trace	base	27.08	27.14 27.16	—	-0.07	-0.3	no class (one load)
+generation	16384	host	base	16.64 16.35	18.08 18.05	0.29	-1.56	-8.7	loss
+generation	16384	nopf	base	18.08 18.05	18.08 18.05	0.03	-0.00	-0.0	negligible
+generation	16384	trace	base	18.02	18.08 18.05	—	-0.05	-0.3	no class (one load)
+generation	49152	host	base	10.55 10.64	11.06 10.65	0.41	-0.26	-2.4	negligible
+generation	49152	nopf	base	11.08 11.06	11.06 10.65	0.41	0.21	2.0	negligible
+generation	49152	trace	base	10.47	11.06 10.65	—	-0.39	-3.6	no class (one load)
+generation_all	all	host	base	15.61 15.59	16.43 16.12	0.31	-0.68	-4.2	loss
+generation_all	all	nopf	base	16.43 16.42	16.43 16.12	0.31	0.15	0.9	negligible
+generation_all	all	trace	base	15.96	16.43 16.12	—	-0.31	-1.9	no class (one load)
+step_pass1	0	host	base	126.88 126.86	125.25 124.61	0.64	1.94	1.6	loss
+step_pass1	0	nopf	base	126.01 125.37	125.25 124.61	0.64	0.75	0.6	loss
+step_pass1	0	trace	base	125.62	125.25 124.61	—	0.69	0.5	no class (one load)
+step_pass1	16384	host	base	214.65 221.46	185.03 185.11	6.81	32.99	17.8	loss
+step_pass1	16384	nopf	base	184.69 185.24	185.03 185.11	0.55	-0.10	-0.1	negligible
+step_pass1	16384	trace	base	185.57	185.03 185.11	—	0.50	0.3	no class (one load)
+step_pass1	49152	host	base	346.83 341.62	318.49 343.01	24.52	13.47	4.1	negligible
+step_pass1	49152	nopf	base	317.59 319.13	318.49 343.01	24.52	-12.39	-3.7	negligible
+step_pass1	49152	trace	base	353.82	318.49 343.01	—	23.06	7.0	no class (one load)
+step_pass2	0	host	base	123.15 122.89	121.28 121.71	0.43	1.52	1.3	loss
+step_pass2	0	nopf	base	121.71 121.25	121.28 121.71	0.46	-0.02	-0.0	negligible
+step_pass2	0	trace	base	121.42	121.28 121.71	—	-0.08	-0.1	no class (one load)
+step_pass2	16384	host	base	182.06 182.23	180.40 180.85	0.44	1.52	0.8	loss
+step_pass2	16384	nopf	base	180.76 180.71	180.40 180.85	0.44	0.11	0.1	negligible
+step_pass2	16384	trace	base	181.08	180.40 180.85	—	0.45	0.3	no class (one load)
+step_pass2	49152	host	base	300.14 300.19	298.57 298.06	0.51	1.84	0.6	loss
+step_pass2	49152	nopf	base	298.41 298.30	298.57 298.06	0.51	0.04	0.0	negligible
+step_pass2	49152	trace	base	298.28	298.57 298.06	—	-0.04	-0.0	no class (one load)
+prompt	0	host	base	32.9 32.1	31.9 32.8	0.9	0.2	0.6	negligible
+prompt	0	nopf	base	31.4 32.6	31.9 32.8	1.2	-0.3	-1.0	negligible
+prompt	0	trace	base	32.2	31.9 32.8	—	-0.2	-0.5	no class (one load)
+prompt	16384	host	base	126.3 124.5	131.8 132.1	1.8	-6.6	-5.0	loss
+prompt	16384	nopf	base	132.1 131.5	131.8 132.1	0.6	-0.2	-0.1	negligible
+prompt	16384	trace	base	132.0	131.8 132.1	—	-0.0	-0.0	no class (one load)
+prompt	49152	host	base	80.4 80.4	82.8 82.8	0.0	-2.4	-2.9	loss
+prompt	49152	nopf	base	83.3 82.6	82.8 82.8	0.7	0.2	0.2	negligible
+prompt	49152	trace	base	82.6	82.8 82.8	—	-0.2	-0.2	no class (one load)

@@ -1,0 +1,193 @@
+depth	arm	load	metric	value
+0	base	base1	decode	27.14
+0	base	base2	decode	27.16
+0	nopf	nopf1	decode	27.01
+0	nopf	nopf2	decode	27.13
+0	base	base1	decode_ms_token	36.85
+0	base	base2	decode_ms_token	36.81
+0	nopf	nopf1	decode_ms_token	37.02
+0	nopf	nopf2	decode_ms_token	36.86
+0	base	base1	step_pass1	125.25
+0	base	base2	step_pass1	124.61
+0	nopf	nopf1	step_pass1	126.01
+0	nopf	nopf2	step_pass1	125.37
+0	base	base1	step_pass2	121.28
+0	base	base2	step_pass2	121.71
+0	nopf	nopf1	step_pass2	121.71
+0	nopf	nopf2	step_pass2	121.25
+0	base	base1	share	0.7996
+0	base	base2	share	0.7996
+0	nopf	nopf1	share	0.7996
+0	nopf	nopf2	share	0.7996
+0	base	base1	tokens_step	3.346
+0	base	base2	tokens_step	3.346
+0	nopf	nopf1	tokens_step	3.346
+0	nopf	nopf2	tokens_step	3.346
+0	base	base1	sample	—
+0	base	base2	sample	—
+0	nopf	nopf1	sample	—
+0	nopf	nopf2	sample	—
+0	base	base1	sample_share	—
+0	base	base2	sample_share	—
+0	nopf	nopf1	sample_share	—
+0	nopf	nopf2	sample_share	—
+0	base	base1	sample_tokens_step	—
+0	base	base2	sample_tokens_step	—
+0	nopf	nopf1	sample_tokens_step	—
+0	nopf	nopf2	sample_tokens_step	—
+0	base	base1	sample_step	—
+0	base	base2	sample_step	—
+0	nopf	nopf1	sample_step	—
+0	nopf	nopf2	sample_step	—
+0	base	base1	prompt	31.9
+0	base	base2	prompt	32.8
+0	nopf	nopf1	prompt	31.4
+0	nopf	nopf2	prompt	32.6
+16384	base	base1	decode	18.08
+16384	base	base2	decode	18.05
+16384	nopf	nopf1	decode	18.08
+16384	nopf	nopf2	decode	18.05
+16384	base	base1	decode_ms_token	55.32
+16384	base	base2	decode_ms_token	55.40
+16384	nopf	nopf1	decode_ms_token	55.32
+16384	nopf	nopf2	decode_ms_token	55.40
+16384	base	base1	step_pass1	185.03
+16384	base	base2	step_pass1	185.11
+16384	nopf	nopf1	step_pass1	184.69
+16384	nopf	nopf2	step_pass1	185.24
+16384	base	base1	step_pass2	180.40
+16384	base	base2	step_pass2	180.85
+16384	nopf	nopf1	step_pass2	180.76
+16384	nopf	nopf2	step_pass2	180.71
+16384	base	base1	share	0.7778
+16384	base	base2	share	0.7778
+16384	nopf	nopf1	share	0.7778
+16384	nopf	nopf2	share	0.7778
+16384	base	base1	tokens_step	3.303
+16384	base	base2	tokens_step	3.303
+16384	nopf	nopf1	tokens_step	3.303
+16384	nopf	nopf2	tokens_step	3.303
+16384	base	base1	sample	—
+16384	base	base2	sample	—
+16384	nopf	nopf1	sample	—
+16384	nopf	nopf2	sample	—
+16384	base	base1	sample_share	—
+16384	base	base2	sample_share	—
+16384	nopf	nopf1	sample_share	—
+16384	nopf	nopf2	sample_share	—
+16384	base	base1	sample_tokens_step	—
+16384	base	base2	sample_tokens_step	—
+16384	nopf	nopf1	sample_tokens_step	—
+16384	nopf	nopf2	sample_tokens_step	—
+16384	base	base1	sample_step	—
+16384	base	base2	sample_step	—
+16384	nopf	nopf1	sample_step	—
+16384	nopf	nopf2	sample_step	—
+16384	base	base1	prompt	131.8
+16384	base	base2	prompt	132.1
+16384	nopf	nopf1	prompt	132.1
+16384	nopf	nopf2	prompt	131.5
+49152	base	base1	decode	11.06
+49152	base	base2	decode	10.65
+49152	nopf	nopf1	decode	11.08
+49152	nopf	nopf2	decode	11.06
+49152	base	base1	decode_ms_token	90.39
+49152	base	base2	decode_ms_token	93.91
+49152	nopf	nopf1	decode_ms_token	90.23
+49152	nopf	nopf2	decode_ms_token	90.44
+49152	base	base1	step_pass1	318.49
+49152	base	base2	step_pass1	343.01
+49152	nopf	nopf1	step_pass1	317.59
+49152	nopf	nopf2	step_pass1	319.13
+49152	base	base1	step_pass2	298.57
+49152	base	base2	step_pass2	298.06
+49152	nopf	nopf1	step_pass2	298.41
+49152	nopf	nopf2	step_pass2	298.30
+49152	base	base1	share	0.8265
+49152	base	base2	share	0.8265
+49152	nopf	nopf1	share	0.8265
+49152	nopf	nopf2	share	0.8265
+49152	base	base1	tokens_step	3.413
+49152	base	base2	tokens_step	3.413
+49152	nopf	nopf1	tokens_step	3.413
+49152	nopf	nopf2	tokens_step	3.413
+49152	base	base1	sample	—
+49152	base	base2	sample	—
+49152	nopf	nopf1	sample	—
+49152	nopf	nopf2	sample	—
+49152	base	base1	sample_share	—
+49152	base	base2	sample_share	—
+49152	nopf	nopf1	sample_share	—
+49152	nopf	nopf2	sample_share	—
+49152	base	base1	sample_tokens_step	—
+49152	base	base2	sample_tokens_step	—
+49152	nopf	nopf1	sample_tokens_step	—
+49152	nopf	nopf2	sample_tokens_step	—
+49152	base	base1	sample_step	—
+49152	base	base2	sample_step	—
+49152	nopf	nopf1	sample_step	—
+49152	nopf	nopf2	sample_step	—
+49152	base	base1	prompt	82.8
+49152	base	base2	prompt	82.8
+49152	nopf	nopf1	prompt	83.3
+49152	nopf	nopf2	prompt	82.6
+all depths	base	base1	decode	16.43
+all depths	base	base2	decode	16.12
+all depths	nopf	nopf1	decode	16.43
+all depths	nopf	nopf2	decode	16.42
+all depths	base	base1	decode_ms_token	60.85
+all depths	base	base2	decode_ms_token	62.04
+all depths	nopf	nopf1	decode_ms_token	60.86
+all depths	nopf	nopf2	decode_ms_token	60.90
+all depths	base	base1	step_pass1	208.18
+all depths	base	base2	step_pass1	215.95
+all depths	nopf	nopf1	step_pass1	208.03
+all depths	nopf	nopf2	step_pass1	208.49
+all depths	base	base1	step_pass2	199.91
+all depths	base	base2	step_pass2	200.04
+all depths	nopf	nopf1	step_pass2	200.12
+all depths	nopf	nopf2	step_pass2	199.91
+all depths	base	base1	share	0.8009
+all depths	base	base2	share	0.8009
+all depths	nopf	nopf1	share	0.8009
+all depths	nopf	nopf2	share	0.8009
+all depths	base	base1	tokens_step	3.354
+all depths	base	base2	tokens_step	3.354
+all depths	nopf	nopf1	tokens_step	3.354
+all depths	nopf	nopf2	tokens_step	3.354
+all depths	base	base1	sample	—
+all depths	base	base2	sample	—
+all depths	nopf	nopf1	sample	—
+all depths	nopf	nopf2	sample	—
+all depths	base	base1	sample_share	—
+all depths	base	base2	sample_share	—
+all depths	nopf	nopf1	sample_share	—
+all depths	nopf	nopf2	sample_share	—
+all depths	base	base1	sample_tokens_step	—
+all depths	base	base2	sample_tokens_step	—
+all depths	nopf	nopf1	sample_tokens_step	—
+all depths	nopf	nopf2	sample_tokens_step	—
+all depths	base	base1	sample_step	—
+all depths	base	base2	sample_step	—
+all depths	nopf	nopf1	sample_step	—
+all depths	nopf	nopf2	sample_step	—
+all depths	base	base1	prompt	94.3
+all depths	base	base2	prompt	94.4
+all depths	nopf	nopf1	prompt	94.8
+all depths	nopf	nopf2	prompt	94.1
+load	base	base1	min_avail_mib	97.00
+load	base	base1	max_swap_used_mib	45.00
+load	base	base1	swap_change_mib	4.00
+load	base	base1	max_psi_full	0.35
+load	base	base2	min_avail_mib	222.00
+load	base	base2	max_swap_used_mib	788.00
+load	base	base2	swap_change_mib	0.00
+load	base	base2	max_psi_full	1.72
+load	nopf	nopf1	min_avail_mib	752.00
+load	nopf	nopf1	max_swap_used_mib	848.00
+load	nopf	nopf1	swap_change_mib	0.00
+load	nopf	nopf1	max_psi_full	4.34
+load	nopf	nopf2	min_avail_mib	117.00
+load	nopf	nopf2	max_swap_used_mib	44.00
+load	nopf	nopf2	swap_change_mib	7.00
+load	nopf	nopf2	max_psi_full	0.30

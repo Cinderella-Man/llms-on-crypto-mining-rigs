@@ -1,0 +1,29 @@
+metric	depth	arm	control	control_loads	arm_loads	spread	delta	percent	class
+decode	0	host	base	27.14 27.16	26.76 26.79	0.03	-0.38	-1.39	loss
+decode_ms_token	0	host	base	36.85 36.81	37.37 37.33	0.04	0.52	1.41	loss
+step_pass1	0	host	base	125.25 124.61	126.88 126.86	0.64	1.94	1.55	loss
+step_pass2	0	host	base	121.28 121.71	123.15 122.89	0.43	1.52	1.25	loss
+share	0	host	base	0.7996 0.7996	0.7996 0.7996	0.0000	0.0000	0.00	negligible
+tokens_step	0	host	base	3.346 3.346	3.346 3.346	0.000	0.000	0.00	negligible
+prompt	0	host	base	31.9 32.8	32.9 32.1	0.9	0.2	0.60	negligible
+decode	16384	host	base	18.08 18.05	16.64 16.35	0.29	-1.56	-8.66	loss
+decode_ms_token	16384	host	base	55.32 55.40	60.08 61.14	1.06	5.25	9.49	loss
+step_pass1	16384	host	base	185.03 185.11	214.65 221.46	6.81	32.99	17.82	loss
+step_pass2	16384	host	base	180.40 180.85	182.06 182.23	0.44	1.52	0.84	loss
+share	16384	host	base	0.7778 0.7778	0.7778 0.7778	0.0000	0.0000	0.00	negligible
+tokens_step	16384	host	base	3.303 3.303	3.303 3.303	0.000	0.000	0.00	negligible
+prompt	16384	host	base	131.8 132.1	126.3 124.5	1.8	-6.6	-5.01	loss
+decode	49152	host	base	11.06 10.65	10.55 10.64	0.41	-0.26	-2.41	negligible
+decode_ms_token	49152	host	base	90.39 93.91	94.77 94.01	3.52	2.24	2.43	negligible
+step_pass1	49152	host	base	318.49 343.01	346.83 341.62	24.52	13.47	4.07	negligible
+step_pass2	49152	host	base	298.57 298.06	300.14 300.19	0.51	1.84	0.62	loss
+share	49152	host	base	0.8265 0.8265	0.8265 0.8265	0.0000	0.0000	0.00	negligible
+tokens_step	49152	host	base	3.413 3.413	3.413 3.413	0.000	0.000	0.00	negligible
+prompt	49152	host	base	82.8 82.8	80.4 80.4	0.0	-2.4	-2.88	loss
+decode	all depths	host	base	16.43 16.12	15.61 15.59	0.31	-0.68	-4.18	loss
+decode_ms_token	all depths	host	base	60.85 62.04	64.07 64.16	1.19	2.67	4.35	loss
+step_pass1	all depths	host	base	208.18 215.95	227.93 228.53	7.77	16.17	7.62	loss
+step_pass2	all depths	host	base	199.91 200.04	201.61 201.60	0.12	1.63	0.81	loss
+share	all depths	host	base	0.8009 0.8009	0.8009 0.8009	0.0000	0.0000	0.00	negligible
+tokens_step	all depths	host	base	3.354 3.354	3.354 3.354	0.000	0.000	0.00	negligible
+prompt	all depths	host	base	94.3 94.4	91.3 91.0	0.3	-3.2	-3.39	loss

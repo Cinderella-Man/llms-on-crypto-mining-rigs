@@ -1,0 +1,29 @@
+metric	depth	arm	control	control_loads	arm_loads	spread	delta	percent	class
+decode	0	nopf	base	27.14 27.16	27.01 27.13	0.12	-0.08	-0.30	negligible
+decode_ms_token	0	nopf	base	36.85 36.81	37.02 36.86	0.17	0.11	0.30	negligible
+step_pass1	0	nopf	base	125.25 124.61	126.01 125.37	0.64	0.75	0.60	loss
+step_pass2	0	nopf	base	121.28 121.71	121.71 121.25	0.46	-0.02	-0.02	negligible
+share	0	nopf	base	0.7996 0.7996	0.7996 0.7996	0.0000	0.0000	0.00	negligible
+tokens_step	0	nopf	base	3.346 3.346	3.346 3.346	0.000	0.000	0.00	negligible
+prompt	0	nopf	base	31.9 32.8	31.4 32.6	1.2	-0.3	-1.02	negligible
+decode	16384	nopf	base	18.08 18.05	18.08 18.05	0.03	-0.00	-0.00	negligible
+decode_ms_token	16384	nopf	base	55.32 55.40	55.32 55.40	0.08	0.00	0.00	negligible
+step_pass1	16384	nopf	base	185.03 185.11	184.69 185.24	0.55	-0.10	-0.06	negligible
+step_pass2	16384	nopf	base	180.40 180.85	180.76 180.71	0.44	0.11	0.06	negligible
+share	16384	nopf	base	0.7778 0.7778	0.7778 0.7778	0.0000	0.0000	0.00	negligible
+tokens_step	16384	nopf	base	3.303 3.303	3.303 3.303	0.000	0.000	0.00	negligible
+prompt	16384	nopf	base	131.8 132.1	132.1 131.5	0.6	-0.2	-0.12	negligible
+decode	49152	nopf	base	11.06 10.65	11.08 11.06	0.41	0.21	1.97	negligible
+decode_ms_token	49152	nopf	base	90.39 93.91	90.23 90.44	3.52	-1.81	-1.96	negligible
+step_pass1	49152	nopf	base	318.49 343.01	317.59 319.13	24.52	-12.39	-3.75	negligible
+step_pass2	49152	nopf	base	298.57 298.06	298.41 298.30	0.51	0.04	0.01	negligible
+share	49152	nopf	base	0.8265 0.8265	0.8265 0.8265	0.0000	0.0000	0.00	negligible
+tokens_step	49152	nopf	base	3.413 3.413	3.413 3.413	0.000	0.000	0.00	negligible
+prompt	49152	nopf	base	82.8 82.8	83.3 82.6	0.7	0.2	0.18	negligible
+decode	all depths	nopf	base	16.43 16.12	16.43 16.42	0.31	0.15	0.92	negligible
+decode_ms_token	all depths	nopf	base	60.85 62.04	60.86 60.90	1.19	-0.57	-0.92	negligible
+step_pass1	all depths	nopf	base	208.18 215.95	208.03 208.49	7.77	-3.80	-1.79	negligible
+step_pass2	all depths	nopf	base	199.91 200.04	200.12 199.91	0.21	0.04	0.02	negligible
+share	all depths	nopf	base	0.8009 0.8009	0.8009 0.8009	0.0000	0.0000	0.00	negligible
+tokens_step	all depths	nopf	base	3.354 3.354	3.354 3.354	0.000	0.000	0.00	negligible
+prompt	all depths	nopf	base	94.3 94.4	94.8 94.1	0.7	0.1	0.11	negligible

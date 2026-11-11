@@ -1,0 +1,193 @@
+depth	arm	load	metric	value
+0	base	base1	decode	27.14
+0	base	base2	decode	27.16
+0	host	host1	decode	26.76
+0	host	host2	decode	26.79
+0	base	base1	decode_ms_token	36.85
+0	base	base2	decode_ms_token	36.81
+0	host	host1	decode_ms_token	37.37
+0	host	host2	decode_ms_token	37.33
+0	base	base1	step_pass1	125.25
+0	base	base2	step_pass1	124.61
+0	host	host1	step_pass1	126.88
+0	host	host2	step_pass1	126.86
+0	base	base1	step_pass2	121.28
+0	base	base2	step_pass2	121.71
+0	host	host1	step_pass2	123.15
+0	host	host2	step_pass2	122.89
+0	base	base1	share	0.7996
+0	base	base2	share	0.7996
+0	host	host1	share	0.7996
+0	host	host2	share	0.7996
+0	base	base1	tokens_step	3.346
+0	base	base2	tokens_step	3.346
+0	host	host1	tokens_step	3.346
+0	host	host2	tokens_step	3.346
+0	base	base1	sample	—
+0	base	base2	sample	—
+0	host	host1	sample	—
+0	host	host2	sample	—
+0	base	base1	sample_share	—
+0	base	base2	sample_share	—
+0	host	host1	sample_share	—
+0	host	host2	sample_share	—
+0	base	base1	sample_tokens_step	—
+0	base	base2	sample_tokens_step	—
+0	host	host1	sample_tokens_step	—
+0	host	host2	sample_tokens_step	—
+0	base	base1	sample_step	—
+0	base	base2	sample_step	—
+0	host	host1	sample_step	—
+0	host	host2	sample_step	—
+0	base	base1	prompt	31.9
+0	base	base2	prompt	32.8
+0	host	host1	prompt	32.9
+0	host	host2	prompt	32.1
+16384	base	base1	decode	18.08
+16384	base	base2	decode	18.05
+16384	host	host1	decode	16.64
+16384	host	host2	decode	16.35
+16384	base	base1	decode_ms_token	55.32
+16384	base	base2	decode_ms_token	55.40
+16384	host	host1	decode_ms_token	60.08
+16384	host	host2	decode_ms_token	61.14
+16384	base	base1	step_pass1	185.03
+16384	base	base2	step_pass1	185.11
+16384	host	host1	step_pass1	214.65
+16384	host	host2	step_pass1	221.46
+16384	base	base1	step_pass2	180.40
+16384	base	base2	step_pass2	180.85
+16384	host	host1	step_pass2	182.06
+16384	host	host2	step_pass2	182.23
+16384	base	base1	share	0.7778
+16384	base	base2	share	0.7778
+16384	host	host1	share	0.7778
+16384	host	host2	share	0.7778
+16384	base	base1	tokens_step	3.303
+16384	base	base2	tokens_step	3.303
+16384	host	host1	tokens_step	3.303
+16384	host	host2	tokens_step	3.303
+16384	base	base1	sample	—
+16384	base	base2	sample	—
+16384	host	host1	sample	—
+16384	host	host2	sample	—
+16384	base	base1	sample_share	—
+16384	base	base2	sample_share	—
+16384	host	host1	sample_share	—
+16384	host	host2	sample_share	—
+16384	base	base1	sample_tokens_step	—
+16384	base	base2	sample_tokens_step	—
+16384	host	host1	sample_tokens_step	—
+16384	host	host2	sample_tokens_step	—
+16384	base	base1	sample_step	—
+16384	base	base2	sample_step	—
+16384	host	host1	sample_step	—
+16384	host	host2	sample_step	—
+16384	base	base1	prompt	131.8
+16384	base	base2	prompt	132.1
+16384	host	host1	prompt	126.3
+16384	host	host2	prompt	124.5
+49152	base	base1	decode	11.06
+49152	base	base2	decode	10.65
+49152	host	host1	decode	10.55
+49152	host	host2	decode	10.64
+49152	base	base1	decode_ms_token	90.39
+49152	base	base2	decode_ms_token	93.91
+49152	host	host1	decode_ms_token	94.77
+49152	host	host2	decode_ms_token	94.01
+49152	base	base1	step_pass1	318.49
+49152	base	base2	step_pass1	343.01
+49152	host	host1	step_pass1	346.83
+49152	host	host2	step_pass1	341.62
+49152	base	base1	step_pass2	298.57
+49152	base	base2	step_pass2	298.06
+49152	host	host1	step_pass2	300.14
+49152	host	host2	step_pass2	300.19
+49152	base	base1	share	0.8265
+49152	base	base2	share	0.8265
+49152	host	host1	share	0.8265
+49152	host	host2	share	0.8265
+49152	base	base1	tokens_step	3.413
+49152	base	base2	tokens_step	3.413
+49152	host	host1	tokens_step	3.413
+49152	host	host2	tokens_step	3.413
+49152	base	base1	sample	—
+49152	base	base2	sample	—
+49152	host	host1	sample	—
+49152	host	host2	sample	—
+49152	base	base1	sample_share	—
+49152	base	base2	sample_share	—
+49152	host	host1	sample_share	—
+49152	host	host2	sample_share	—
+49152	base	base1	sample_tokens_step	—
+49152	base	base2	sample_tokens_step	—
+49152	host	host1	sample_tokens_step	—
+49152	host	host2	sample_tokens_step	—
+49152	base	base1	sample_step	—
+49152	base	base2	sample_step	—
+49152	host	host1	sample_step	—
+49152	host	host2	sample_step	—
+49152	base	base1	prompt	82.8
+49152	base	base2	prompt	82.8
+49152	host	host1	prompt	80.4
+49152	host	host2	prompt	80.4
+all depths	base	base1	decode	16.43
+all depths	base	base2	decode	16.12
+all depths	host	host1	decode	15.61
+all depths	host	host2	decode	15.59
+all depths	base	base1	decode_ms_token	60.85
+all depths	base	base2	decode_ms_token	62.04
+all depths	host	host1	decode_ms_token	64.07
+all depths	host	host2	decode_ms_token	64.16
+all depths	base	base1	step_pass1	208.18
+all depths	base	base2	step_pass1	215.95
+all depths	host	host1	step_pass1	227.93
+all depths	host	host2	step_pass1	228.53
+all depths	base	base1	step_pass2	199.91
+all depths	base	base2	step_pass2	200.04
+all depths	host	host1	step_pass2	201.61
+all depths	host	host2	step_pass2	201.60
+all depths	base	base1	share	0.8009
+all depths	base	base2	share	0.8009
+all depths	host	host1	share	0.8009
+all depths	host	host2	share	0.8009
+all depths	base	base1	tokens_step	3.354
+all depths	base	base2	tokens_step	3.354
+all depths	host	host1	tokens_step	3.354
+all depths	host	host2	tokens_step	3.354
+all depths	base	base1	sample	—
+all depths	base	base2	sample	—
+all depths	host	host1	sample	—
+all depths	host	host2	sample	—
+all depths	base	base1	sample_share	—
+all depths	base	base2	sample_share	—
+all depths	host	host1	sample_share	—
+all depths	host	host2	sample_share	—
+all depths	base	base1	sample_tokens_step	—
+all depths	base	base2	sample_tokens_step	—
+all depths	host	host1	sample_tokens_step	—
+all depths	host	host2	sample_tokens_step	—
+all depths	base	base1	sample_step	—
+all depths	base	base2	sample_step	—
+all depths	host	host1	sample_step	—
+all depths	host	host2	sample_step	—
+all depths	base	base1	prompt	94.3
+all depths	base	base2	prompt	94.4
+all depths	host	host1	prompt	91.3
+all depths	host	host2	prompt	91.0
+load	base	base1	min_avail_mib	97.00
+load	base	base1	max_swap_used_mib	45.00
+load	base	base1	swap_change_mib	4.00
+load	base	base1	max_psi_full	0.35
+load	base	base2	min_avail_mib	222.00
+load	base	base2	max_swap_used_mib	788.00
+load	base	base2	swap_change_mib	0.00
+load	base	base2	max_psi_full	1.72
+load	host	host1	min_avail_mib	80.00
+load	host	host1	max_swap_used_mib	841.00
+load	host	host1	swap_change_mib	536.00
+load	host	host1	max_psi_full	5.43
+load	host	host2	min_avail_mib	113.00
+load	host	host2	max_swap_used_mib	970.00
+load	host	host2	swap_change_mib	0.00
+load	host	host2	max_psi_full	5.56
