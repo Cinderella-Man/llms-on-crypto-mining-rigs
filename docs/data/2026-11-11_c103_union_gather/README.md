@@ -130,7 +130,7 @@ Which kernel each multi-token case takes in each run, from the rule (`S` the per
 
 Two parts on one rig, nothing else running on it (registry row Q1310).
 
-**1. The native check** (est. 25 min): the set on card 0 with the branch's own `test-backend-ops`. It passes when every
+**1. The native check** (est. 35 min): the set on card 0 with the branch's own `test-backend-ops`. It passes when every
 console line ends `ok` (`qu-fault2`, `qu-fault3` and `qu-fault4` must fail cases, every other run passes every case),
 and when each case's error in a run equals its error in `qu-stock` where the table above says `d` and differs where it
 says `S` or `U` (the per-case errors are in `OUT/<run>.tsv`). Then `fasp_check --gpu --nsm 5` (every case of the CPU
@@ -138,7 +138,7 @@ check, the per-token and the union kernel on the card, each launched twice) and 
 call of the union kernel against the per-token one on the same call, for selections that share 90 % of their pools
 and for selections that share nothing beyond chance.
 
-**2. The timing on the deep lane** (est. 3 h 30 min): [bench/deep_lane](../../../bench/deep_lane/README.md) on the
+**2. The timing on the deep lane** (est. 3 h 20 min): [bench/deep_lane](../../../bench/deep_lane/README.md) on the
 branch's build, the release preset's line with the sparse switch's `_NSM=5`, two loads an arm after a warm-up load,
 256 tokens a decode request at 0, 4,096, 8,192, 16,384, 32,768 and 49,152 tokens. The arms take the verify side of the
 eighth run ([Q1212](../2026-11-10_deep_lane/README.md#the-eighth-run-the-sparse-kernels-threshold-for-verify-passes-q1212))
