@@ -40,7 +40,10 @@ accepted end of generation, as sample-and-match does". With block verification o
 same run: block verification for the requests it takes, token-by-token rejection for the requests with backend
 sampling. One switch turns the stop on for both, and a preset needs one line, not two. The cost is that the block
 cut cannot be measured apart from the rejection stop in a run where both paths are used; with block verification on
-and no backend sampling (the Flash-Next preset's case) only the block path runs, so the switch measures the cut alone.
+and no backend sampling only the block path runs, so the switch measures the cut alone. The Flash-Next preset runs
+with backend sampling (`-bs`), so there block verification is never used and the switch acts through the
+token-by-token stop alone: on real loads `LLAMA_SPEC_BLOCK_VERIFY=1` gives the same counts as without it
+([2026-11-11_fn69_fn66_stops](../2026-11-11_fn69_fn66_stops/README.md), Q1291).
 
 **With the switch off nothing changes:** the function calls the old body with the whole draft and `next` true, which
 is the old function line for line.
