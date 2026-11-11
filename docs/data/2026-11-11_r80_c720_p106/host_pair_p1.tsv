@@ -1,0 +1,42 @@
+part	hostdev 0	hoststage 0	diff 0	hostdev 16384	hoststage 16384	diff 16384	hostdev 49152	hoststage 49152	diff 49152	hostdev growth	hoststage growth	growth diff
+the step	127.86	128.24	+0.39	154.32	151.30	-3.03	191.37	181.14	-10.23	+37.04	+29.84	-7.20
+GPU time, every evaluation	114.43	114.66	+0.23	135.33	135.20	-0.14	149.88	150.00	+0.12	+14.54	+14.80	+0.26
+outside the kernels (the step less that)	13.43	13.59	+0.16	18.99	16.10	-2.89	41.49	31.14	-10.35	+22.50	+15.04	-7.46
+verify pass: GPU time of the nine cards	101.71	101.79	+0.08	119.93	119.82	-0.11	130.93	131.10	+0.17	+11.00	+11.28	+0.28
+verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	4.35	4.32	-0.03	6.14	6.15	+0.01	10.58	10.62	+0.04	+4.44	+4.47	+0.03
+verify pass: the host's launch, card 0's entry to card 8's exit	4.67	4.17	-0.50	5.32	4.69	-0.63	9.26	8.29	-0.97	+3.94	+3.59	-0.34
+draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	0.53	0.46	-0.08	0.70	0.63	-0.07	1.04	0.97	-0.07	+0.35	+0.35	-0.00
+draft pass 0: lead (card 4's entry to card 8's entry)	0.64	0.56	-0.08	0.79	0.72	-0.07	1.14	1.07	-0.07	+0.35	+0.35	+0.00
+draft pass 0: GPU time, card 4 and card 8	3.65	3.70	+0.05	5.14	5.09	-0.05	6.06	6.02	-0.04	+0.92	+0.93	+0.01
+draft pass 0: turn	0.37	0.36	-0.01	0.38	0.37	-0.02	2.72	2.72	+0.00	+2.34	+2.36	+0.02
+draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.52	0.45	-0.07	0.56	0.49	-0.07	0.65	0.58	-0.07	+0.09	+0.09	-0.00
+draft pass 1: lead (card 4's entry to card 8's entry)	0.60	0.53	-0.07	0.64	0.57	-0.07	0.74	0.66	-0.07	+0.09	+0.09	-0.00
+draft pass 1: GPU time, card 4 and card 8	3.04	3.07	+0.04	3.46	3.45	-0.01	4.33	4.31	-0.01	+0.86	+0.86	+0.00
+draft pass 1: turn	0.55	0.55	-0.00	0.66	0.69	+0.03	0.88	0.89	+0.02	+0.22	+0.21	-0.02
+draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.52	0.44	-0.07	0.56	0.49	-0.07	0.65	0.57	-0.07	+0.09	+0.09	-0.00
+draft pass 2: lead (card 4's entry to card 8's entry)	0.59	0.51	-0.08	0.62	0.59	-0.04	0.72	0.64	-0.07	+0.09	+0.06	-0.03
+draft pass 2: GPU time, card 4 and card 8	3.09	3.12	+0.03	3.40	3.42	+0.02	4.29	4.30	+0.00	+0.89	+0.87	-0.02
+draft pass 2: turn	0.54	0.55	+0.02	0.65	0.66	+0.00	0.86	0.87	+0.01	+0.21	+0.22	+0.01
+draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.52	0.44	-0.07	0.56	0.49	-0.07	0.65	0.57	-0.07	+0.09	+0.09	-0.00
+draft pass 3: lead (card 4's entry to card 8's entry)	0.58	0.51	-0.07	0.63	0.55	-0.07	0.72	0.64	-0.07	+0.09	+0.09	-0.00
+draft pass 3: GPU time, card 4 and card 8	2.95	2.98	+0.03	3.39	3.41	+0.01	4.27	4.26	-0.00	+0.87	+0.85	-0.02
+draft pass 3: turn (the server before the next verify pass)	5.42	5.91	+0.49	8.67	6.01	-2.66	23.34	13.22	-10.12	+14.67	+7.21	-7.47
+the draft's crossings, all passes	2.09	1.79	-0.30	2.37	2.08	-0.29	2.99	2.70	-0.29	+0.62	+0.61	-0.00
+the draft's turns before its last pass	1.46	1.46	-0.00	1.70	1.71	+0.01	4.46	4.49	+0.03	+2.77	+2.78	+0.01
+k-pool inputs: host us a step, all passes (set_input)	42.11	45.32	+3.22									
+k-pool inputs: host us, the verify pass	9.23	10.57	+1.34									
+k-pool inputs: host us, the draft's passes	32.88	34.76	+1.88									
+k-pool inputs: KiB a card, the verify pass	3.81	3.71	-0.10									
+k-pool inputs: KiB, one draft pass (card 8)	3.22	3.22	+0.00									
+k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	47.82	46.82	-1.00									
+k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	17.30	17.10	-0.20									
+k-pool inputs: n_pool of the verify pass	78.70	78.70	+0.00									
+verify pass: card 0's host span	0.33	0.35	+0.02	0.23	0.22	-0.00	0.33	0.31	-0.02	+0.10	+0.09	-0.01
+verify pass: card 1's host gap before entry	0.30	0.22	-0.08	0.49	0.41	-0.08	0.84	0.75	-0.09	+0.36	+0.35	-0.01
+verify pass: card 2's host gap before entry	0.28	0.20	-0.08	0.45	0.37	-0.08	0.81	0.72	-0.09	+0.36	+0.35	-0.01
+verify pass: card 3's host gap before entry	0.28	0.20	-0.07	0.45	0.37	-0.08	0.82	0.72	-0.09	+0.36	+0.35	-0.01
+verify pass: card 4's host gap before entry	0.23	0.18	-0.06	0.41	0.34	-0.07	0.74	0.68	-0.06	+0.33	+0.33	+0.00
+verify pass: card 5's host gap before entry	0.27	0.19	-0.08	0.45	0.37	-0.08	0.80	0.72	-0.08	+0.35	+0.36	+0.00
+verify pass: card 6's host gap before entry	0.27	0.19	-0.07	0.45	0.37	-0.08	0.81	0.72	-0.08	+0.36	+0.36	-0.00
+verify pass: card 7's host gap before entry	0.26	0.19	-0.07	0.44	0.37	-0.08	0.80	0.72	-0.08	+0.36	+0.36	-0.01
+verify pass: card 8's host gap before entry	0.32	0.25	-0.07	0.50	0.43	-0.07	0.86	0.78	-0.08	+0.36	+0.35	-0.01

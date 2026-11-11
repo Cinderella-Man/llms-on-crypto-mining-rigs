@@ -1,0 +1,247 @@
+request	part	mean_ms	median_ms	typical_steps
+decode 0 p1	the step	127.8574	126.0865	74
+decode 0 p1	GPU time, every evaluation	114.4268	113.0659	74
+decode 0 p1	outside the kernels (the step less that)	13.4305	13.3978	74
+decode 0 p1	verify pass: GPU time of the nine cards	101.7054	101.6208	74
+decode 0 p1	verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	4.3495	4.2833	74
+decode 0 p1	verify pass: the host's launch, card 0's entry to card 8's exit	4.6725	3.8380	74
+decode 0 p1	draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	0.5343	0.5305	74
+decode 0 p1	draft pass 0: lead (card 4's entry to card 8's entry)	0.6394	0.6375	74
+decode 0 p1	draft pass 0: GPU time, card 4 and card 8	3.6469	3.6239	74
+decode 0 p1	draft pass 0: turn	0.3722	0.3418	74
+decode 0 p1	draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.5191	0.5150	74
+decode 0 p1	draft pass 1: lead (card 4's entry to card 8's entry)	0.6034	0.5995	74
+decode 0 p1	draft pass 1: GPU time, card 4 and card 8	3.0378	2.5967	74
+decode 0 p1	draft pass 1: turn	0.5533	0.5454	74
+decode 0 p1	draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.5170	0.5140	74
+decode 0 p1	draft pass 2: lead (card 4's entry to card 8's entry)	0.5875	0.5810	74
+decode 0 p1	draft pass 2: GPU time, card 4 and card 8	3.0881	2.5525	74
+decode 0 p1	draft pass 2: turn	0.5351	0.5240	74
+decode 0 p1	draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.5156	0.5140	74
+decode 0 p1	draft pass 3: lead (card 4's entry to card 8's entry)	0.5827	0.5800	74
+decode 0 p1	draft pass 3: GPU time, card 4 and card 8	2.9488	2.5522	74
+decode 0 p1	draft pass 3: turn (the server before the next verify pass)	5.4176	5.4590	74
+decode 0 p1	the draft's crossings, all passes	2.0860	2.0795	74
+decode 0 p1	the draft's turns before its last pass	1.4606	1.4117	74
+decode 0 p1	k-pool inputs: host us a step, all passes (set_input)	42.1081	41.0000	74
+decode 0 p1	k-pool inputs: host us, the verify pass	9.2297	9.0000	74
+decode 0 p1	k-pool inputs: host us, the draft's passes	32.8784	32.0000	74
+decode 0 p1	k-pool inputs: KiB a card, the verify pass	3.8149	3.7000	74
+decode 0 p1	k-pool inputs: KiB, one draft pass (card 8)	3.2230	3.2000	74
+decode 0 p1	k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	47.8176	46.6000	74
+decode 0 p1	k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	17.2986	17.0000	74
+decode 0 p1	k-pool inputs: n_pool of the verify pass	78.7027	64.0000	74
+decode 0 p1	verify pass: card 0's host span	0.3321	0.2380	74
+decode 0 p1	verify pass: card 1's host gap before entry	0.3035	0.3020	74
+decode 0 p1	verify pass: card 2's host gap before entry	0.2789	0.2700	74
+decode 0 p1	verify pass: card 3's host gap before entry	0.2764	0.2710	74
+decode 0 p1	verify pass: card 4's host gap before entry	0.2331	0.2290	74
+decode 0 p1	verify pass: card 5's host gap before entry	0.2685	0.2620	74
+decode 0 p1	verify pass: card 6's host gap before entry	0.2650	0.2610	74
+decode 0 p1	verify pass: card 7's host gap before entry	0.2634	0.2590	74
+decode 0 p1	verify pass: card 8's host gap before entry	0.3209	0.3170	74
+decode 0 p2	the step	123.6374	122.8680	71
+decode 0 p2	GPU time, every evaluation	113.0747	112.8506	71
+decode 0 p2	outside the kernels (the step less that)	10.5627	9.9027	71
+decode 0 p2	verify pass: GPU time of the nine cards	101.7157	101.5378	71
+decode 0 p2	verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	4.2582	4.2474	71
+decode 0 p2	verify pass: the host's launch, card 0's entry to card 8's exit	4.6975	3.8290	71
+decode 0 p2	draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	0.5311	0.5280	71
+decode 0 p2	draft pass 0: lead (card 4's entry to card 8's entry)	0.6313	0.6270	71
+decode 0 p2	draft pass 0: GPU time, card 4 and card 8	3.6627	3.6402	71
+decode 0 p2	draft pass 0: turn	0.3450	0.3344	71
+decode 0 p2	draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.5169	0.5140	71
+decode 0 p2	draft pass 1: lead (card 4's entry to card 8's entry)	0.6002	0.5980	71
+decode 0 p2	draft pass 1: GPU time, card 4 and card 8	2.5634	2.5470	71
+decode 0 p2	draft pass 1: turn	0.5479	0.5445	71
+decode 0 p2	draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.5145	0.5130	71
+decode 0 p2	draft pass 2: lead (card 4's entry to card 8's entry)	0.5830	0.5790	71
+decode 0 p2	draft pass 2: GPU time, card 4 and card 8	2.5633	2.5654	71
+decode 0 p2	draft pass 2: turn	0.5241	0.5196	71
+decode 0 p2	draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.5147	0.5130	71
+decode 0 p2	draft pass 3: lead (card 4's entry to card 8's entry)	0.5790	0.5760	71
+decode 0 p2	draft pass 3: GPU time, card 4 and card 8	2.5696	2.5739	71
+decode 0 p2	draft pass 3: turn (the server before the next verify pass)	2.6980	2.0319	71
+decode 0 p2	the draft's crossings, all passes	2.0772	2.0740	71
+decode 0 p2	the draft's turns before its last pass	1.4169	1.4026	71
+decode 0 p2	k-pool inputs: host us a step, all passes (set_input)	41.2817	40.0000	71
+decode 0 p2	k-pool inputs: host us, the verify pass	8.9437	9.0000	71
+decode 0 p2	k-pool inputs: host us, the draft's passes	32.3380	31.0000	71
+decode 0 p2	k-pool inputs: KiB a card, the verify pass	3.8197	3.7000	71
+decode 0 p2	k-pool inputs: KiB, one draft pass (card 8)	3.2239	3.2000	71
+decode 0 p2	k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	47.8690	46.6000	71
+decode 0 p2	k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	17.3113	17.0000	71
+decode 0 p2	k-pool inputs: n_pool of the verify pass	79.3239	64.0000	71
+decode 0 p2	verify pass: card 0's host span	0.3325	0.2400	71
+decode 0 p2	verify pass: card 1's host gap before entry	0.2971	0.2950	71
+decode 0 p2	verify pass: card 2's host gap before entry	0.2714	0.2660	71
+decode 0 p2	verify pass: card 3's host gap before entry	0.2756	0.2680	71
+decode 0 p2	verify pass: card 4's host gap before entry	0.2369	0.2300	71
+decode 0 p2	verify pass: card 5's host gap before entry	0.2653	0.2600	71
+decode 0 p2	verify pass: card 6's host gap before entry	0.2626	0.2590	71
+decode 0 p2	verify pass: card 7's host gap before entry	0.2633	0.2590	71
+decode 0 p2	verify pass: card 8's host gap before entry	0.3235	0.3170	71
+decode 16384 p1	the step	154.3247	150.9800	67
+decode 16384 p1	GPU time, every evaluation	135.3335	135.3160	67
+decode 16384 p1	outside the kernels (the step less that)	18.9912	14.5007	67
+decode 16384 p1	verify pass: GPU time of the nine cards	119.9343	120.0800	67
+decode 16384 p1	verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	6.1439	6.1175	67
+decode 16384 p1	verify pass: the host's launch, card 0's entry to card 8's exit	5.3223	5.2150	67
+decode 16384 p1	draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	0.6987	0.6970	67
+decode 16384 p1	draft pass 0: lead (card 4's entry to card 8's entry)	0.7917	0.7890	67
+decode 16384 p1	draft pass 0: GPU time, card 4 and card 8	5.1405	5.1399	67
+decode 16384 p1	draft pass 0: turn	0.3837	0.3834	67
+decode 16384 p1	draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.5573	0.5550	67
+decode 16384 p1	draft pass 1: lead (card 4's entry to card 8's entry)	0.6411	0.6390	67
+decode 16384 p1	draft pass 1: GPU time, card 4 and card 8	3.4630	3.4051	67
+decode 16384 p1	draft pass 1: turn	0.6571	0.6548	67
+decode 16384 p1	draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.5570	0.5550	67
+decode 16384 p1	draft pass 2: lead (card 4's entry to card 8's entry)	0.6249	0.6230	67
+decode 16384 p1	draft pass 2: GPU time, card 4 and card 8	3.4008	3.3263	67
+decode 16384 p1	draft pass 2: turn	0.6548	0.6525	67
+decode 16384 p1	draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.5578	0.5560	67
+decode 16384 p1	draft pass 3: lead (card 4's entry to card 8's entry)	0.6260	0.6250	67
+decode 16384 p1	draft pass 3: GPU time, card 4 and card 8	3.3949	3.3464	67
+decode 16384 p1	draft pass 3: turn (the server before the next verify pass)	8.6696	4.1382	67
+decode 16384 p1	the draft's crossings, all passes	2.3708	2.3670	67
+decode 16384 p1	the draft's turns before its last pass	1.6957	1.6915	67
+decode 16384 p1	k-pool inputs: host us a step, all passes (set_input)	nan	nan	67
+decode 16384 p1	k-pool inputs: host us, the verify pass	nan	nan	67
+decode 16384 p1	k-pool inputs: host us, the draft's passes	nan	nan	67
+decode 16384 p1	k-pool inputs: KiB a card, the verify pass	nan	nan	67
+decode 16384 p1	k-pool inputs: KiB, one draft pass (card 8)	nan	nan	67
+decode 16384 p1	k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	nan	nan	67
+decode 16384 p1	k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	nan	nan	67
+decode 16384 p1	k-pool inputs: n_pool of the verify pass	nan	nan	67
+decode 16384 p1	verify pass: card 0's host span	0.2265	0.2170	67
+decode 16384 p1	verify pass: card 1's host gap before entry	0.4863	0.4800	67
+decode 16384 p1	verify pass: card 2's host gap before entry	0.4507	0.4420	67
+decode 16384 p1	verify pass: card 3's host gap before entry	0.4526	0.4410	67
+decode 16384 p1	verify pass: card 4's host gap before entry	0.4106	0.4000	67
+decode 16384 p1	verify pass: card 5's host gap before entry	0.4475	0.4400	67
+decode 16384 p1	verify pass: card 6's host gap before entry	0.4479	0.4400	67
+decode 16384 p1	verify pass: card 7's host gap before entry	0.4435	0.4370	67
+decode 16384 p1	verify pass: card 8's host gap before entry	0.5023	0.4950	67
+decode 16384 p2	the step	149.5922	149.5210	67
+decode 16384 p2	GPU time, every evaluation	135.1136	135.2332	67
+decode 16384 p2	outside the kernels (the step less that)	14.4786	14.3115	67
+decode 16384 p2	verify pass: GPU time of the nine cards	119.8891	120.0837	67
+decode 16384 p2	verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	6.1749	6.0860	67
+decode 16384 p2	verify pass: the host's launch, card 0's entry to card 8's exit	5.2063	5.1950	67
+decode 16384 p2	draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	0.6992	0.6970	67
+decode 16384 p2	draft pass 0: lead (card 4's entry to card 8's entry)	0.7917	0.7880	67
+decode 16384 p2	draft pass 0: GPU time, card 4 and card 8	5.1361	5.1393	67
+decode 16384 p2	draft pass 0: turn	0.4504	0.3786	67
+decode 16384 p2	draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.5580	0.5550	67
+decode 16384 p2	draft pass 1: lead (card 4's entry to card 8's entry)	0.6428	0.6410	67
+decode 16384 p2	draft pass 1: GPU time, card 4 and card 8	3.4057	3.4070	67
+decode 16384 p2	draft pass 1: turn	0.6537	0.6519	67
+decode 16384 p2	draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.5563	0.5550	67
+decode 16384 p2	draft pass 2: lead (card 4's entry to card 8's entry)	0.6248	0.6230	67
+decode 16384 p2	draft pass 2: GPU time, card 4 and card 8	3.3369	3.3352	67
+decode 16384 p2	draft pass 2: turn	0.6500	0.6489	67
+decode 16384 p2	draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.5571	0.5570	67
+decode 16384 p2	draft pass 3: lead (card 4's entry to card 8's entry)	0.6263	0.6250	67
+decode 16384 p2	draft pass 3: GPU time, card 4 and card 8	3.3459	3.3489	67
+decode 16384 p2	draft pass 3: turn (the server before the next verify pass)	4.0687	4.0480	67
+decode 16384 p2	the draft's crossings, all passes	2.3705	2.3710	67
+decode 16384 p2	the draft's turns before its last pass	1.7542	1.6871	67
+decode 16384 p2	k-pool inputs: host us a step, all passes (set_input)	219.5373	218.0000	67
+decode 16384 p2	k-pool inputs: host us, the verify pass	47.7761	47.0000	67
+decode 16384 p2	k-pool inputs: host us, the draft's passes	171.7612	170.0000	67
+decode 16384 p2	k-pool inputs: KiB a card, the verify pass	35.7000	35.7000	67
+decode 16384 p2	k-pool inputs: KiB, one draft pass (card 8)	11.2000	11.2000	67
+decode 16384 p2	k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	390.6000	390.6000	67
+decode 16384 p2	k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	105.0000	105.0000	67
+decode 16384 p2	k-pool inputs: n_pool of the verify pass	4160.0000	4160.0000	67
+decode 16384 p2	verify pass: card 0's host span	0.2160	0.2160	67
+decode 16384 p2	verify pass: card 1's host gap before entry	0.4773	0.4770	67
+decode 16384 p2	verify pass: card 2's host gap before entry	0.4415	0.4400	67
+decode 16384 p2	verify pass: card 3's host gap before entry	0.4421	0.4400	67
+decode 16384 p2	verify pass: card 4's host gap before entry	0.4048	0.4000	67
+decode 16384 p2	verify pass: card 5's host gap before entry	0.4397	0.4390	67
+decode 16384 p2	verify pass: card 6's host gap before entry	0.4431	0.4390	67
+decode 16384 p2	verify pass: card 7's host gap before entry	0.4401	0.4360	67
+decode 16384 p2	verify pass: card 8's host gap before entry	0.4967	0.4950	67
+decode 49152 p1	the step	191.3680	179.5380	72
+decode 49152 p1	GPU time, every evaluation	149.8759	149.6245	72
+decode 49152 p1	outside the kernels (the step less that)	41.4921	30.1425	72
+decode 49152 p1	verify pass: GPU time of the nine cards	130.9336	130.9256	72
+decode 49152 p1	verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	10.5812	10.5629	72
+decode 49152 p1	verify pass: the host's launch, card 0's entry to card 8's exit	9.2574	8.1145	72
+decode 49152 p1	draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	1.0450	1.0430	72
+decode 49152 p1	draft pass 0: lead (card 4's entry to card 8's entry)	1.1397	1.1350	72
+decode 49152 p1	draft pass 0: GPU time, card 4 and card 8	6.0598	6.0357	72
+decode 49152 p1	draft pass 0: turn	2.7210	3.0408	72
+decode 49152 p1	draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.6494	0.6470	72
+decode 49152 p1	draft pass 1: lead (card 4's entry to card 8's entry)	0.7357	0.7340	72
+decode 49152 p1	draft pass 1: GPU time, card 4 and card 8	4.3250	4.2236	72
+decode 49152 p1	draft pass 1: turn	0.8775	0.8737	72
+decode 49152 p1	draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.6457	0.6450	72
+decode 49152 p1	draft pass 2: lead (card 4's entry to card 8's entry)	0.7157	0.7150	72
+decode 49152 p1	draft pass 2: GPU time, card 4 and card 8	4.2919	4.1666	72
+decode 49152 p1	draft pass 2: turn	0.8646	0.8614	72
+decode 49152 p1	draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.6468	0.6450	72
+decode 49152 p1	draft pass 3: lead (card 4's entry to card 8's entry)	0.7186	0.7170	72
+decode 49152 p1	draft pass 3: GPU time, card 4 and card 8	4.2655	4.1753	72
+decode 49152 p1	draft pass 3: turn (the server before the next verify pass)	23.3427	12.3517	72
+decode 49152 p1	the draft's crossings, all passes	2.9869	2.9840	72
+decode 49152 p1	the draft's turns before its last pass	4.4631	4.7907	72
+decode 49152 p1	k-pool inputs: host us a step, all passes (set_input)	nan	nan	72
+decode 49152 p1	k-pool inputs: host us, the verify pass	nan	nan	72
+decode 49152 p1	k-pool inputs: host us, the draft's passes	nan	nan	72
+decode 49152 p1	k-pool inputs: KiB a card, the verify pass	nan	nan	72
+decode 49152 p1	k-pool inputs: KiB, one draft pass (card 8)	nan	nan	72
+decode 49152 p1	k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	nan	nan	72
+decode 49152 p1	k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	nan	nan	72
+decode 49152 p1	k-pool inputs: n_pool of the verify pass	nan	nan	72
+decode 49152 p1	verify pass: card 0's host span	0.3292	0.2210	72
+decode 49152 p1	verify pass: card 1's host gap before entry	0.8413	0.8290	72
+decode 49152 p1	verify pass: card 2's host gap before entry	0.8112	0.7950	72
+decode 49152 p1	verify pass: card 3's host gap before entry	0.8174	0.8010	72
+decode 49152 p1	verify pass: card 4's host gap before entry	0.7433	0.7340	72
+decode 49152 p1	verify pass: card 5's host gap before entry	0.8022	0.7930	72
+decode 49152 p1	verify pass: card 6's host gap before entry	0.8058	0.7930	72
+decode 49152 p1	verify pass: card 7's host gap before entry	0.8039	0.7935	72
+decode 49152 p1	verify pass: card 8's host gap before entry	0.8620	0.8505	72
+decode 49152 p2	the step	176.1610	176.0190	69
+decode 49152 p2	GPU time, every evaluation	149.3317	149.3691	69
+decode 49152 p2	outside the kernels (the step less that)	26.8293	27.2171	69
+decode 49152 p2	verify pass: GPU time of the nine cards	130.7399	130.7743	69
+decode 49152 p2	verify pass: the rest of its span (crossings, rows back, acceptance, the server before the draft)	10.5514	10.5295	69
+decode 49152 p2	verify pass: the host's launch, card 0's entry to card 8's exit	7.9943	7.9940	69
+decode 49152 p2	draft pass 0 (catch-up): crossing (card 4's exit to card 8's entry)	1.0454	1.0430	69
+decode 49152 p2	draft pass 0: lead (card 4's entry to card 8's entry)	1.1390	1.1340	69
+decode 49152 p2	draft pass 0: GPU time, card 4 and card 8	6.0367	6.0288	69
+decode 49152 p2	draft pass 0: turn	2.5693	2.9964	69
+decode 49152 p2	draft pass 1 (draft 1): crossing (card 4's exit to card 8's entry)	0.6469	0.6450	69
+decode 49152 p2	draft pass 1: lead (card 4's entry to card 8's entry)	0.7334	0.7300	69
+decode 49152 p2	draft pass 1: GPU time, card 4 and card 8	4.2184	4.2222	69
+decode 49152 p2	draft pass 1: turn	0.8748	0.8738	69
+decode 49152 p2	draft pass 2 (draft 2): crossing (card 4's exit to card 8's entry)	0.6482	0.6450	69
+decode 49152 p2	draft pass 2: lead (card 4's entry to card 8's entry)	0.7190	0.7150	69
+decode 49152 p2	draft pass 2: GPU time, card 4 and card 8	4.1663	4.1692	69
+decode 49152 p2	draft pass 2: turn	0.8647	0.8588	69
+decode 49152 p2	draft pass 3 (draft 3): crossing (card 4's exit to card 8's entry)	0.6486	0.6460	69
+decode 49152 p2	draft pass 3: lead (card 4's entry to card 8's entry)	0.7190	0.7180	69
+decode 49152 p2	draft pass 3: GPU time, card 4 and card 8	4.1704	4.1696	69
+decode 49152 p2	draft pass 3: turn (the server before the next verify pass)	8.8634	8.8501	69
+decode 49152 p2	the draft's crossings, all passes	2.9891	2.9840	69
+decode 49152 p2	the draft's turns before its last pass	4.3088	4.7399	69
+decode 49152 p2	k-pool inputs: host us a step, all passes (set_input)	584.7391	584.0000	69
+decode 49152 p2	k-pool inputs: host us, the verify pass	124.7101	123.0000	69
+decode 49152 p2	k-pool inputs: host us, the draft's passes	460.0290	459.0000	69
+decode 49152 p2	k-pool inputs: KiB a card, the verify pass	99.7000	99.7000	69
+decode 49152 p2	k-pool inputs: KiB, one draft pass (card 8)	27.2000	27.2000	69
+decode 49152 p2	k-pool inputs: KiB a step to every card (9 in the verify pass, 1 a draft pass)	1078.6000	1078.6000	69
+decode 49152 p2	k-pool inputs: KiB a step on the token's path (card 0's and every draft pass's)	281.0000	281.0000	69
+decode 49152 p2	k-pool inputs: n_pool of the verify pass	12352.0000	12352.0000	69
+decode 49152 p2	verify pass: card 0's host span	0.2147	0.2140	69
+decode 49152 p2	verify pass: card 1's host gap before entry	0.8283	0.8270	69
+decode 49152 p2	verify pass: card 2's host gap before entry	0.7938	0.7920	69
+decode 49152 p2	verify pass: card 3's host gap before entry	0.7987	0.7970	69
+decode 49152 p2	verify pass: card 4's host gap before entry	0.7346	0.7330	69
+decode 49152 p2	verify pass: card 5's host gap before entry	0.7896	0.7880	69
+decode 49152 p2	verify pass: card 6's host gap before entry	0.7879	0.7860	69
+decode 49152 p2	verify pass: card 7's host gap before entry	0.7859	0.7860	69
+decode 49152 p2	verify pass: card 8's host gap before entry	0.8449	0.8440	69
