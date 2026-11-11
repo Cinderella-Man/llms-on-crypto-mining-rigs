@@ -1,0 +1,4 @@
+run	binary	switch	expect	cases	ok	fail	exit	summary
+rig-fault	rig build	GGML_CUDA_LID_ROWS_FAULT=1	pass	113	113	0	0	113/113 tests passed
+emu-off	CPU stand-in build	-	pass	113	113	0	0	113/113 tests passed
+emu-fault	CPU stand-in build	GGML_CUDA_LID_ROWS_FAULT=1	fail	113	0	113	1	0/113 tests passed

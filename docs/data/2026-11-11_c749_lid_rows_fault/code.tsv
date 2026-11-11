@@ -1,0 +1,5 @@
+binary	listing	base_functions	base_copies	branch_functions	same	differ	missing	new	new_functions	verdict
+llama-server	sass	8428	8847	8429	8428	0	0	1	_Z33lightning_indexer_rows_fault_listPiii	SAME
+llama-server	ptx	8428	8847	8429	8428	0	0	1	_Z33lightning_indexer_rows_fault_listPiii	SAME
+test-backend-ops	sass	8428	8847	8429	8428	0	0	1	_Z33lightning_indexer_rows_fault_listPiii	SAME
+test-backend-ops	ptx	8428	8847	8429	8428	0	0	1	_Z33lightning_indexer_rows_fault_listPiii	SAME

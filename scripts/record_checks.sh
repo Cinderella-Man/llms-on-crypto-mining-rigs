@@ -218,8 +218,8 @@ suite_runs() {
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q5MT"
             done ;;
         indexer-rows)
-            # C704: the LID cases, then the in-place reads with GGML_CUDA_LID_ROWS_FAULT=1, which scores rows 0 to n-1
-            # instead of the listed ones and so must fail cases
+            # C704: the LID cases, then the in-place reads with GGML_CUDA_LID_ROWS_FAULT=1, which scores rows i mod n_cells
+            # instead of the listed ones and so must fail every case (C749; before it, rows 0 to n-1 and lists up to n_cells)
             printf '%s\t%s\t%s\t%s\t%s\t\n' \
                 lid "" LIGHTNING_INDEXER "$LID" pass \
                 lid-rows-fault GGML_CUDA_LID_ROWS_FAULT=1 LIGHTNING_INDEXER 'n_cells=' fail ;;

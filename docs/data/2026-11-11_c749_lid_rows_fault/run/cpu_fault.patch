@@ -1,0 +1,30 @@
+diff --git a/ggml/src/ggml-cpu/ops.cpp b/ggml/src/ggml-cpu/ops.cpp
+index a51a25125..afac12f5e 100644
+--- a/ggml/src/ggml-cpu/ops.cpp
++++ b/ggml/src/ggml-cpu/ops.cpp
+@@ -12805,6 +12805,16 @@ void ggml_compute_forward_fwht(const ggml_compute_params * params, ggml_tensor *
+ 
+ // ggml_compute_forward_lightning_indexer
+ 
++// C749's CPU check only (a patch, never on a branch): GGML_CUDA_LID_ROWS_FAULT=1 scores rows i mod n_cells of a list,
++// as the CUDA fault does, so that the fault run replayed on the CPU shows what it must show on a card
++static bool ggml_cpu_lid_rows_fault() {
++    static const bool fault = [] {
++        const char * env = getenv("GGML_CUDA_LID_ROWS_FAULT");
++        return env != nullptr && atoi(env) != 0;
++    }();
++    return fault;
++}
++
+ void ggml_compute_forward_lightning_indexer(
+         const ggml_compute_params * params,
+         ggml_tensor * dst) {
+@@ -12869,7 +12879,7 @@ void ggml_compute_forward_lightning_indexer(
+             const ggml_fp16_t *   m_row = (ggml_fp16_t *) ((char *)   m->data + t*nbm1 + (s%nem3)*nbm3);
+             float             * dst_row =       (float *) ((char *) dst->data + t*nb1  +        s*nb3 );
+             for (int ik = ir0; ik < ir1; ++ik) {
+-                const int64_t i_row = k_rows ? k_rows[ik] : ik;
++                const int64_t i_row = k_rows ? (ggml_cpu_lid_rows_fault() ? ik % nek2 : k_rows[ik]) : ik;
+                 GGML_ASSERT(!k_rows || (i_row >= 0 && i_row < nek2));
+                 char * k_row = (char *) k->data + i_row*nbk2 + s*nbk3;
+                 if (k_to_float) {
