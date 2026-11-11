@@ -1,0 +1,16 @@
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on1 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on2 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+bon1 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+bon2 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ron1 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ron2 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead
+on2: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead
+bon1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead
+bon2: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead
+ron1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead
+ron2: 398 verify passes prepared, 0 calls not prepared, 5174 inputs uploaded ahead
+ron2: 5174 inputs uploaded ahead; 398 evaluations skipped copying some of them again
+PASS

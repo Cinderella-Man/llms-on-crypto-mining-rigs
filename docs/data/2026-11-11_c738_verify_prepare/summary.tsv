@@ -1,0 +1,24 @@
+check	verdict	detail
+cpu-tip	OK	rc=0; commit b45b4afd1c7b7c8f751f0ecc1aaf61f40e503c44 llama: llama_decode_prepare refuses a memory type or batch it cannot hold before decode() runs (C738); all targets, GGML_RPC=OFF; 3 warning lines, 0 error lines
+cpu-rpc	OK	rc=0; commit b45b4afd1c7b7c8f751f0ecc1aaf61f40e503c44 llama: llama_decode_prepare refuses a memory type or batch it cannot hold before decode() runs (C738); llama-server ggml-rpc-server, GGML_RPC=ON; 3 warning lines, 0 error lines
+vprep-tip-vp-s1	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-tip-vp-s2	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-tip-vp-s3	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-tip-vp2-s1	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-tip-vp2-s2	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-tip-vp2-s3	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-tip-fault-s1	AS-EXPECTED	rc=1; LLAMA_VERIFY_PREPARE_FAULT=1; 196 rows prepared, 26 of them failed; qwen4exp: 2 rows prepared, 0 passed; Summary: 272 test(s) executed, 26 failed
+server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on1 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on2 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bon1 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bon2 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ron1 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ron2 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;on2: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;bon1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;bon2: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;ron1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;ron2: 398 verify passes prepared, 0 calls not prepared, 5174 inputs uploaded ahead;ron2: 5174 inputs uploaded ahead; 398 evaluations skipped copying some of them again;
+off-base	OK	rc=0; $BASE_CPU (5b329df16's static CPU build): 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-vp1	SAME	rc=0; LLAMA_VERIFY_PREPARE=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-vp2	SAME	rc=0; LLAMA_VERIFY_PREPARE=2; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+build-rig	OK	llama.cpp-20261111-b45b4afd1-pascal-p106-v4-b12246-c738; commit: b45b4afd1c7b7c8f751f0ecc1aaf61f40e503c44 (2026-11-11 11:43:10 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-b45b4afd1-pascal-p106-v4-b12246-c738/bin
+vprep-rig-vp-s1	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-rig-vp-s2	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-rig-vp-s3	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-rig-vp2-s1	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-rig-vp2-s2	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+vprep-rig-vp2-s3	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
