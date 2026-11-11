@@ -1,0 +1,40 @@
+log tables/req03.log: 23 decode calls, 33 micro-batches, 130 splits, 13 re-plans, 0 evaluations outside a micro-batch; min tokens 1
+
+ctx	n_tokens	ubatches	reused	rebuilt by reason	card0 median us	card0 sum us	replans
+dec	1	1	0	not_allocated 1	18351	18351	0
+dec	2	1	0	not_allocated 1	16086	16086	0
+dec	4	3	1	not_allocated 1, params 1	17602	42751	0
+dec	331	1	0	in_flight 1	332723	332723	0
+dec	512	2	0	not_allocated 1, params 1	435642.5	871285	0
+mtp	1	10	6	not_allocated 4	155.0	10732	3
+mtp	2	1	0	not_allocated 1	1062	1062	1
+mtp	4	3	0	not_allocated 3	1112	3168	2
+mtp	75	1	0	params 1	63306	63306	1
+mtp	128	10	4	llm_graph_input_mem_hybrid 4, not_allocated 1, params 1	1428.5	263469	6
+
+backend	splits	w sum us	c sum us	l sum us	l max us
+CPU	8	0	0	148605	63106
+CUDA0	8	276	163736	518496	456192
+CUDA1	8	134	15564	1097638	598392
+CUDA2	8	131	15942	1677460	951523
+CUDA3	8	138	15972	2078482	1028977
+CUDA4	33	363	15306	1528844	921913
+CUDA5	8	133	15272	1043341	556966
+CUDA6	8	133	15523	1030268	549877
+CUDA7	8	129	15683	1421947	908240
+CUDA8	33	342198	37905	31535	2416
+
+re-plans (first 20)
+#0 before micro-batch 2: #22 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 103 plan = 192 us <- galloc-trigger: src 0 'leaf_8' of 'leaf_8 (view)' (NONE) ne = [128, 1, 1, 1] needs 512 bytes in CUDA_Host, planned 8
+#1 before micro-batch 4: #23 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 60795 plan = 184 us <- galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [640, 1, 1, 1] needs 2560 bytes in CUDA_Host, planned 2304
+#2 before micro-batch 6: #24 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 62854 plan = 183 us <- galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [704, 1, 1, 1] needs 2816 bytes in CUDA_Host, planned 2560
+#3 before micro-batch 8: #25 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 62454 plan = 189 us <- galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [768, 1, 1, 1] needs 3072 bytes in CUDA_Host, planned 2816
+#4 before micro-batch 10: #26 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 108 plan = 198 us <- galloc-trigger: src 0 'leaf_8' of 'leaf_8 (view)' (NONE) ne = [128, 1, 1, 1] needs 512 bytes in CUDA_Host, planned 300
+#5 before micro-batch 11: #27 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 65214 plan = 181 us <- galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [832, 1, 1, 1] needs 3328 bytes in CUDA_Host, planned 3072
+#6 before micro-batch 13: #28 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 66908 plan = 181 us <- galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [896, 1, 1, 1] needs 3584 bytes in CUDA_Host, planned 3328
+#7 before micro-batch 16: #29 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 2820 plan = 187 us
+#8 before micro-batch 20: #30 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 77 plan = 179 us
+#9 before micro-batch 21: #31 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1543 plan = 185 us
+#10 before micro-batch 25: #32 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 81 plan = 179 us
+#11 before micro-batch 26: #33 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1725 plan = 189 us
+#12 before micro-batch 30: #34 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 77 plan = 176 us

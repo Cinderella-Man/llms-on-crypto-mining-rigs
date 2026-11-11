@@ -1,0 +1,3 @@
+call	ctx	n_tokens	n_outputs	prep	init	wait	ubatches	rebuilt	reused	replans	card0	submit	w	l
+0	dec	2	1	24	37	4	1	1	0	0	20669	875053	162	827382
+1	mtp	2	1	27983	53	13215	1	1	0	0	965	2924	199	1751

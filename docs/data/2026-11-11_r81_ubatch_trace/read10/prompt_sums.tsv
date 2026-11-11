@@ -1,0 +1,60 @@
+part	n	sum_us	median_us	min_us	max_us
+main pre	8	4596	502.5	431	935
+main build	8	38894	4897.5	4495	5098
+main alloc	8	51920	6479.0	6391	6605
+main inputs	8	91441	11365.5	8573	13827
+main cpu_l	8	180052	8297.0	7597	122557
+main eval_card0	8	662640	68907.5	67839	179622
+main card0	8	849534	92645.5	89609	202767
+main submit	8	10894066	182410.5	121092	4879750
+main total	8	11080917	206860.0	143486	4902318
+main CUDA0 w	8	247	32.0	26	34
+main CUDA0 c	8	482259	59995.5	57028	62672
+main splits on cards 1-8 with l > 20 ms	15	9351838	648392	254558	872466
+  of them w	15	287			
+  of them c	15	87398			
+draft call of 2048 rows: decode-trace wait	1	4968222			
+draft call of 2048 rows: pre	16	2385	136.5		
+draft call of 2048 rows: build	16	4051	236.5		
+draft call of 2048 rows: alloc	16	819928	53039.5		
+draft call of 2048 rows: inputs	16	895	54.5		
+draft call of 2048 rows: submit	16	159649	9936.5		
+draft call of 2048 rows: total	16	986908	63416.0		
+draft call of 2048 rows: CUDA4 w	16	211	12.5	5	25
+draft call of 2048 rows: CUDA4 c	16	714	44.0	41	50
+draft call of 2048 rows: CUDA4 l	16	367	21.0	19	50
+draft call of 2048 rows: CUDA8 w	16	128200	8203.0	5042	8300
+draft call of 2048 rows: CUDA8 c	16	15971	786.5	453	4401
+draft call of 2048 rows: CUDA8 l	16	13665	846.0	816	1013
+draft call of 2048 rows: re-plans' drain	16	813869			
+draft call of 2048 rows: re-plans' plan	16	2884			
+draft call of 1533 rows: decode-trace wait	1	2070238			
+draft call of 1533 rows: pre	12	1970	143.0		
+draft call of 1533 rows: build	12	3066	240.5		
+draft call of 1533 rows: alloc	12	615513	60857.5		
+draft call of 1533 rows: inputs	12	1025	81.5		
+draft call of 1533 rows: submit	12	187431	10689.5		
+draft call of 1533 rows: total	12	809005	72082.5		
+draft call of 1533 rows: CUDA4 w	12	180	14.0	7	24
+draft call of 1533 rows: CUDA4 c	12	515	43.0	38	47
+draft call of 1533 rows: CUDA4 l	12	299	21.5	20	54
+draft call of 1533 rows: CUDA8 w	12	158242	8203.0	8156	68042
+draft call of 1533 rows: CUDA8 c	12	17424	1493.0	1188	1666
+draft call of 1533 rows: CUDA8 l	12	10437	856.0	832	1017
+draft call of 1533 rows: re-plans' drain	11	611214			
+draft call of 1533 rows: re-plans' plan	11	2020			
+draft call of 512 rows: decode-trace wait	1	5660840			
+draft call of 512 rows: pre	4	1214	261.5		
+draft call of 512 rows: build	4	473	117.5		
+draft call of 512 rows: alloc	4	65605	439.5		
+draft call of 512 rows: inputs	4	355	84.0		
+draft call of 512 rows: submit	4	183720	44689.0		
+draft call of 512 rows: total	4	251367	77418.5		
+draft call of 512 rows: CUDA4 w	4	42	12.0	5	13
+draft call of 512 rows: CUDA4 c	4	163	41.0	35	46
+draft call of 512 rows: CUDA4 l	4	204	33.0	15	123
+draft call of 512 rows: CUDA8 w	4	165762	40240.0	8179	77103
+draft call of 512 rows: CUDA8 c	4	7134	1785.0	1724	1840
+draft call of 512 rows: CUDA8 l	4	10292	2532.0	859	4369
+draft call of 512 rows: re-plans' drain	2	64452			
+draft call of 512 rows: re-plans' plan	2	398			

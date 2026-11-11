@@ -1,0 +1,19 @@
+log tables/req00.log: 2 decode calls, 2 micro-batches, 12 splits, 0 re-plans, 0 evaluations outside a micro-batch; min tokens 1
+
+ctx	n_tokens	ubatches	reused	rebuilt by reason	card0 median us	card0 sum us	replans
+dec	2	1	0	not_allocated 1	20669	20669	0
+mtp	2	1	0	not_allocated 1	965	965	0
+
+backend	splits	w sum us	c sum us	l sum us	l max us
+CPU	1	0	0	6321	6321
+CUDA0	1	22	479	323133	323133
+CUDA1	1	18	5687	59827	59827
+CUDA2	1	20	5952	57379	57379
+CUDA3	1	14	6005	61307	61307
+CUDA4	2	34	5753	59497	59397
+CUDA5	1	20	6067	67173	67173
+CUDA6	1	15	5727	61316	61316
+CUDA7	1	19	6020	66631	66631
+CUDA8	2	199	6695	66549	64898
+
+re-plans (first 20)

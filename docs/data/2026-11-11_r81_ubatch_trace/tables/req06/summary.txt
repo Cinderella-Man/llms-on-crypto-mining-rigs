@@ -1,0 +1,29 @@
+log tables/req06.log: 14 decode calls, 14 micro-batches, 60 splits, 5 re-plans, 0 evaluations outside a micro-batch; min tokens 1
+
+ctx	n_tokens	ubatches	reused	rebuilt by reason	card0 median us	card0 sum us	replans
+dec	3	1	0	not_allocated 1	16078	16078	0
+dec	4	2	0	not_allocated 1, params 1	53072.5	106145	0
+dec	67	1	0	not_allocated 1	59384	59384	0
+mtp	1	6	4	not_allocated 2	241.5	4644	2
+mtp	3	1	0	not_allocated 1	1107	1107	1
+mtp	4	2	0	not_allocated 2	1170.5	2341	1
+mtp	67	1	0	not_allocated 1	1306	1306	1
+
+backend	splits	w sum us	c sum us	l sum us	l max us
+CPU	4	0	1	48782	37417
+CUDA0	4	120	11327	84570	57086
+CUDA1	4	113	3671	23824	7900
+CUDA2	4	71	3236	19301	6070
+CUDA3	4	106	4387	19842	6769
+CUDA4	14	185	3283	17959	6197
+CUDA5	4	117	3041	23438	7319
+CUDA6	4	71	3394	17792	4848
+CUDA7	4	76	3529	17934	5076
+CUDA8	14	7442	10033	17748	4062
+
+re-plans (first 20)
+#0 before micro-batch 1: #46 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 99 plan = 196 us <- galloc-trigger: src 0 'leaf_8' of 'leaf_8 (view)' (NONE) ne = [67, 1, 1, 1] needs 268 bytes in CUDA_Host, planned 16
+#1 before micro-batch 4: #47 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 547 plan = 209 us
+#2 before micro-batch 8: #48 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 65 plan = 179 us
+#3 before micro-batch 9: #49 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1478 plan = 184 us
+#4 before micro-batch 13: #50 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 76 plan = 202 us

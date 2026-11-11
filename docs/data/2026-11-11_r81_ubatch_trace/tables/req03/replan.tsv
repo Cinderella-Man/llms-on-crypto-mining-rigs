@@ -1,0 +1,14 @@
+replan	ubatch	text	triggers
+0	2	#22 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 103 plan = 192 us	galloc-trigger: src 0 'leaf_8' of 'leaf_8 (view)' (NONE) ne = [128, 1, 1, 1] needs 512 bytes in CUDA_Host, planned 8
+1	4	#23 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 60795 plan = 184 us	galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [640, 1, 1, 1] needs 2560 bytes in CUDA_Host, planned 2304
+2	6	#24 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 62854 plan = 183 us	galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [704, 1, 1, 1] needs 2816 bytes in CUDA_Host, planned 2560
+3	8	#25 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 62454 plan = 189 us	galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [768, 1, 1, 1] needs 3072 bytes in CUDA_Host, planned 2816
+4	10	#26 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 108 plan = 198 us	galloc-trigger: src 0 'leaf_8' of 'leaf_8 (view)' (NONE) ne = [128, 1, 1, 1] needs 512 bytes in CUDA_Host, planned 300
+5	11	#27 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 65214 plan = 181 us	galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [832, 1, 1, 1] needs 3328 bytes in CUDA_Host, planned 3072
+6	13	#28 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 66908 plan = 181 us	galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [896, 1, 1, 1] needs 3584 bytes in CUDA_Host, planned 3328
+7	16	#29 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 2820 plan = 187 us	
+8	20	#30 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 77 plan = 179 us	
+9	21	#31 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1543 plan = 185 us	
+10	25	#32 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 81 plan = 179 us	
+11	26	#33 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1725 plan = 189 us	
+12	30	#34 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 77 plan = 176 us	

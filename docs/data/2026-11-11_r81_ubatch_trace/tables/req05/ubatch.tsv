@@ -1,0 +1,17 @@
+ubatch	call	ctx	n_tokens	n_seqs	n_outputs	graph	why	replans	pre	build	alloc	inputs	submit	card0	total	copy	n_splits	s_wait	s_card0
+0	0	dec	27	1	0	rebuilt	not_allocated	0	507	4576	6356	8334	145663	26898	165436	0	10	174	7121
+1	1	mtp	27	1	0	rebuilt	not_allocated	1	624	230	471	43	3741	1420	5109	0	2	2136	49
+2	2	dec	4	1	1	rebuilt	not_allocated	0	346	4582	6361	715	28264	17724	40268	1	10	155	5717
+3	3	mtp	4	1	0	rebuilt	not_allocated	0	390	230	225	30	1577	958	2452	0	2	346	80
+4	4	mtp	1	1	1	rebuilt	not_allocated	1	54	225	3139	37	1548	3513	5003	0	2	89	55
+5	5	mtp	1	1	1	reused		0	56	5	0	32	1493	136	1586	0	2	98	40
+6	6	mtp	1	1	1	reused		0	68	4	0	38	813	155	923	0	2	103	42
+7	7	dec	4	1	4	rebuilt	params	0	65	4759	6365	677	28298	17062	40164	2	10	154	5192
+8	8	mtp	4	1	0	rebuilt	not_allocated	1	383	233	462	30	1447	1157	2555	0	2	329	47
+9	9	mtp	1	1	1	rebuilt	not_allocated	1	308	232	1968	36	854	2593	3398	0	2	100	46
+10	10	mtp	1	1	1	reused		0	71	6	0	33	800	149	910	0	2	107	37
+11	11	mtp	1	1	1	reused		0	61	4	0	32	789	135	886	0	2	101	36
+12	12	dec	4	1	4	reused		0	344	61	0	760	36239	7074	37404	2	10	158	5906
+13	13	mtp	4	1	0	rebuilt	not_allocated	1	397	253	438	31	1827	1167	2946	0	2	330	46
+14	14	dec	1	1	1	rebuilt	not_allocated	0	326	4699	6338	258	24221	14667	35842	3	10	158	3042
+15	15	mtp	1	1	0	rebuilt	not_allocated	0	401	227	198	28	1330	908	2184	0	2	112	51

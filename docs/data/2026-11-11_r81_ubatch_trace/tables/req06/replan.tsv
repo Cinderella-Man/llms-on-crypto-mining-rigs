@@ -1,0 +1,6 @@
+replan	ubatch	text	triggers
+0	1	#46 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 99 plan = 196 us	galloc-trigger: src 0 'leaf_8' of 'leaf_8 (view)' (NONE) ne = [67, 1, 1, 1] needs 268 bytes in CUDA_Host, planned 16
+1	4	#47 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 547 plan = 209 us	
+2	8	#48 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 65 plan = 179 us	
+3	9	#49 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1478 plan = 184 us	
+4	13	#50 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 76 plan = 202 us	

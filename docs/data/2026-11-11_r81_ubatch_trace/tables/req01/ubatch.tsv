@@ -1,0 +1,20 @@
+ubatch	call	ctx	n_tokens	n_seqs	n_outputs	graph	why	replans	pre	build	alloc	inputs	submit	card0	total	copy	n_splits	s_wait	s_card0
+0	0	dec	512	1	0	rebuilt	not_allocated	0	626	6175	6400	357030	6069773	476396	6440004	0	10	176	106159
+1	0	dec	512	1	0	rebuilt	in_flight	0	499	7311	6584	237093	128812	336485	380299	1	10	170	84994
+2	0	dec	9	1	0	rebuilt	in_flight	0	58	4642	6517	889	5366425	18237	5378531	2	10	159	6128
+3	1	mtp	128	1	0	rebuilt	not_allocated	1	306	360	4524	43	1037725	5295	1042958	0	2	8175	60
+4	1	mtp	128	1	0	rebuilt	llm_graph_input_mem_hybrid	1	120	257	12310	47	9845	12802	22579	0	2	8192	64
+5	1	mtp	128	1	0	rebuilt	llm_graph_input_mem_hybrid	1	124	238	54399	46	9688	54871	64495	0	2	8208	61
+6	1	mtp	128	1	0	rebuilt	N20llama_model_qwen4exp21llm_graph_input_kpoolE	1	120	238	55314	47	9791	55779	65510	0	2	8217	56
+7	1	mtp	128	1	0	rebuilt	llm_graph_input_mem_hybrid	1	125	245	55192	51	9765	55672	65378	0	2	8204	56
+8	1	mtp	128	1	0	rebuilt	N20llama_model_qwen4exp21llm_graph_input_kpoolE	1	124	242	56097	50	9877	56576	66390	0	2	8202	59
+9	1	mtp	128	1	0	rebuilt	llm_graph_input_mem_hybrid	1	128	228	52042	52	9870	52516	62320	0	2	8210	62
+10	1	mtp	128	1	0	rebuilt	N20llama_model_qwen4exp21llm_graph_input_kpoolE	1	126	227	55566	53	9966	56029	65938	0	2	8218	53
+11	1	mtp	9	1	0	rebuilt	params	1	50	230	55006	25	1927	55366	57238	0	2	735	52
+12	2	dec	512	1	0	rebuilt	params	0	498	4511	6352	127483	126077	215955	264921	3	10	168	77076
+13	3	mtp	128	1	0	rebuilt	params	1	253	236	442	53	9932	1038	10916	0	2	8181	52
+14	3	mtp	128	1	0	rebuilt	llm_graph_input_mem_hybrid	1	130	258	53916	60	10083	54436	64447	0	2	8192	68
+15	3	mtp	128	1	0	reused		0	133	5	0	47	62787	231	62972	0	2	60496	43
+16	3	mtp	128	1	0	rebuilt	llm_graph_input_mem_hybrid	1	138	239	52424	61	10150	52923	63012	0	2	8217	58
+17	4	dec	4	1	1	rebuilt	not_allocated	0	373	8002	6425	748	275940	22367	291488	0	10	165	6816
+18	5	mtp	4	1	0	rebuilt	not_allocated	0	336	396	200	22	1698	1012	2652	0	2	348	55

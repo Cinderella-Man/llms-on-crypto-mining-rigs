@@ -1,0 +1,11 @@
+label	pass	arm	kind	task	turn	n_new	prompt_n	cache_n	prompt_ms	predicted_n	predicted_ms	wall_s	gen_md5
+A	0	off	reset	bugfix-javascript-triangle	0	0	1549	0	22521.2	1	0.0	22.52	e0cd717285
+A	0	off	turn	bugfix-javascript-triangle	1	430	430	1549	7871.9	8	1822.0	9.7	92d083e1e5
+A	0	off	turn	bugfix-javascript-triangle	2	1358	1359	1986	19944.8	8	2750.1	22.7	f80d0634f1
+A	0	off	turn	bugfix-javascript-triangle	3	257	258	3352	5323.3	8	1498.2	6.83	9421333575
+A	0	off	turn	bugfix-javascript-triangle	4	30	31	3617	2711.7	8	389.0	3.11	63866fa981
+A	0	off	turn	bugfix-javascript-triangle	5	70	71	3655	3292.2	8	354.6	3.65	283571001f
+A	1	off	fresh	fresh0	0	4097	4097	0	28029.2	8	317.5	28.35	9e255f5fe4
+A	1	on	fresh	fresh0	1	4097	4097	0	26313.0	8	309.4	26.63	9e255f5fe4
+A	1	on	fresh	fresh1	0	4097	4097	0	26902.4	8	312.1	27.24	3d625f8ad2
+A	1	off	fresh	fresh1	1	4097	4097	0	27307.0	8	312.3	27.63	3d625f8ad2

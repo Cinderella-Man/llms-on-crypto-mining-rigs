@@ -1,0 +1,34 @@
+log tables/req02.log: 24 decode calls, 27 micro-batches, 102 splits, 9 re-plans, 0 evaluations outside a micro-batch; min tokens 1
+
+ctx	n_tokens	ubatches	reused	rebuilt by reason	card0 median us	card0 sum us	replans
+dec	2	1	0	not_allocated 1	22933	22933	0
+dec	4	4	2	not_allocated 1, params 1	12833.5	52891	0
+dec	426	1	0	not_allocated 1	398871	398871	0
+mtp	1	12	8	not_allocated 4	148.5	13977	4
+mtp	2	1	0	not_allocated 1	1248	1248	1
+mtp	4	4	0	not_allocated 4	953.0	3750	3
+mtp	42	1	0	params 1	630	630	0
+mtp	128	3	1	llm_graph_input_mem_hybrid 1, not_allocated 1	993	68918	1
+
+backend	splits	w sum us	c sum us	l sum us	l max us
+CPU	6	0	1	95667	70138
+CUDA0	6	177	52766	16878	4299
+CUDA1	6	103	4930	15810	4288
+CUDA2	6	94	4875	15587	4826
+CUDA3	6	97	4749	16661	5342
+CUDA4	27	261	5273	14129	3939
+CUDA5	6	100	4714	15621	4845
+CUDA6	6	97	4785	14469	4600
+CUDA7	6	110	4775	15507	4988
+CUDA8	27	157669	16359	26467	8467
+
+re-plans (first 20)
+#0 before micro-batch 2: #13 backends_changed = 0 size_changed = 0 graph_size 207 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 66740 plan = 184 us <- galloc-trigger: src 0 'leaf_1' of 'leaf_1 (view)' (NONE) ne = [512, 1, 1, 1] needs 2048 bytes in CUDA_Host, planned 1792
+#1 before micro-batch 7: #14 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 62 plan = 190 us
+#2 before micro-batch 11: #15 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 74 plan = 180 us
+#3 before micro-batch 12: #16 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1335 plan = 187 us
+#4 before micro-batch 16: #17 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 73 plan = 181 us
+#5 before micro-batch 17: #18 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1396 plan = 190 us
+#6 before micro-batch 21: #19 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 72 plan = 180 us
+#7 before micro-batch 22: #20 backends_changed = 1 (node 35 'mtp_h_input (reshaped)' CUDA8 -> CPU) size_changed = 1 graph_size 207 -> 216 nodes = 216 leafs = 57 splits = 2 drain = 1637 plan = 183 us
+#8 before micro-batch 26: #21 backends_changed = 1 (node 35 'node_5' CPU -> CUDA8) size_changed = 1 graph_size 216 -> 207 nodes = 207 leafs = 56 splits = 2 drain = 78 plan = 174 us

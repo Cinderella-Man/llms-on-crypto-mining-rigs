@@ -1,0 +1,11 @@
+req	ctx	backends_changed	drain_us	grow:CUDA0	grow:CUDA1	grow:CUDA2	grow:CUDA3	grow:CUDA4	grow:CUDA5	grow:CUDA6	grow:CUDA7	grow:CUDA8	grow:CUDA_Host	plan_us	replans	size_changed	trigger:node	trigger:src
+1	mtp	1	498771	1	1	1	1	1	1	1	1	1	1	2198	12	1	4	7
+2	mtp	8	71467											1649	9	8		1
+3	mtp	6	324759											2403	13	6		7
+4	mtp	4	71853											1139	6	4		2
+5	mtp	4	4663											915	5	4		1
+6	mtp	4	2265											970	5	4		1
+7	mtp	4	1491836											6244	34	4	13	17
+8	mtp	4	1489770											6251	34	4	13	17
+9	mtp	4	1489118											6278	34	4	13	17
+10	mtp	4	1493764											6255	34	4	13	17
