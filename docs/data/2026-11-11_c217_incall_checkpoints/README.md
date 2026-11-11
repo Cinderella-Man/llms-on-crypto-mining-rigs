@@ -15,7 +15,7 @@ the agent check's 62 prompts, 18.10 % of that line's prompt time
 
 This folder holds the change that takes a checkpoint without cutting the call, behind a new switch on Miner Llama's v4
 line, and its CPU checks. The registry row is Q770 in [quants/experiments.md](../../../quants/experiments.md); the
-switch is listed in [docs/switches.md](../../switches.md). The rig run is Q1304.
+switch is listed in [docs/switches.md](../../switches.md). The rig run is Q1306.
 
 **Result:** with `--ctx-checkpoints-incall` a checkpoint inside a prompt is taken inside the decode call, and on a
 build machine's CPU everything the server computes stays as it was. A state stored inside one call at a cut is the
@@ -27,7 +27,7 @@ checkpoints on every request, with checkpoints at the base's token counts in the
 arms: 9, 8, 9 and 21 checkpoints taken inside calls (at the preset's 4 and 4 too, and with every other checkpoint
 moved to the host). With the switch off, 146 of 146 architectures give the base's logits bit for bit. The rig tarball
 builds. Not run on a card yet: whether the copies keep their order on the cards and what the prompts gain is the rig
-row Q1304.
+row Q1306.
 
 ## The change
 
@@ -149,7 +149,7 @@ made; since `9fb51d28f` a full list counts the store that making room frees.
 - **Any speed.** Est. (not measured): most of R43's 77.28 s a pass, the drains at the checkpoints; the micro-batches
   stay the cut calls' (the 4-token one at a prompt's end too), so the line stays above `--ctx-checkpoints 0`'s.
 
-## The rig row (Q1304)
+## The rig row (Q1306)
 
 R43's replay ([2026-11-10_prompt_lane](../2026-11-10_prompt_lane/README.md), its `run/r43_run.sh` with C218r's
 `rig_taper.sh` and `taper_replay.py`): the agent check's 62 prompts, fresh text of their sizes, 8 greedy tokens a turn,
