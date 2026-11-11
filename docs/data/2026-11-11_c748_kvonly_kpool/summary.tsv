@@ -1,0 +1,83 @@
+check	verdict	detail
+cpu-tip	OK	rc=0; commit 5b329df16d8dd2ccb001300adf64ef2834dbab26 qwen4exp: the KV-only MTP pass keeps the k-pool tables on the devices current (C748); all targets; 3 warning lines, 0 error lines
+cpu-before	OK	rc=0; commit 7b9dabf66758aa9d8b23cbc11b17150fa64ff0fd test-llama-archs --mtp-kv-only: the k-pool tables on the devices after KV-only passes (C748); test-llama-archs; 3 warning lines, 0 error lines
+kvonly-tip-plain-s1	OK	rc=0; ; Summary: all 5 test(s) passed
+kvonly-tip-plain-s2	OK	rc=0; ; Summary: all 5 test(s) passed
+kvonly-tip-plain-s3	OK	rc=0; ; Summary: all 5 test(s) passed
+kvonly-tip-dev1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+kvonly-tip-dev1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+kvonly-tip-dev1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+kvonly-tip-dev1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-dev1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-dev1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+kvonly-tip-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+kvonly-tip-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+kvonly-before-plain-s1	AS-EXPECTED	rc=0; ; Summary: all 5 test(s) passed
+kvonly-before-plain-s2	AS-EXPECTED	rc=0; ; Summary: all 5 test(s) passed
+kvonly-before-plain-s3	AS-EXPECTED	rc=0; ; Summary: all 5 test(s) passed
+kvonly-before-dev1-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-dev1-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-dev1-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-dev1check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-dev1check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-dev1check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage1-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage1-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage1-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage1check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage1check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage1check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage2check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage2check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-stage2check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-qsa4check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-qsa4check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 5 test(s) executed, 4 failed
+kvonly-before-qsa4check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 5 test(s) executed, 4 failed
+overlap-plain-s1	OK	rc=0; ; Summary: all 5 test(s) passed
+overlap-plain-s2	OK	rc=0; ; Summary: all 5 test(s) passed
+overlap-plain-s3	OK	rc=0; ; Summary: all 5 test(s) passed
+overlap-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+off-base	OK	rc=0; BASE_CPU: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-stage	SAME	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; 1 compared, 0 differ: none; written by this build only: 0; Summary: all 1 test(s) passed
+off-check	SAME	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; 1 compared, 0 differ: none; written by this build only: 0; Summary: all 1 test(s) passed
+off-draft	SAME	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1; 1 compared, 0 differ: none; written by this build only: 0; Summary: all 1 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+build-rig	OK	llama.cpp-20261111-5b329df16-pascal-p106-v4-b12246-c748; commit: 5b329df16d8dd2ccb001300adf64ef2834dbab26 (2026-11-11 08:33:37 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-5b329df16-pascal-p106-v4-b12246-c748/bin
+kvonly-rig-plain-s1	OK	rc=0; ; Summary: all 5 test(s) passed
+kvonly-rig-plain-s2	OK	rc=0; ; Summary: all 5 test(s) passed
+kvonly-rig-plain-s3	OK	rc=0; ; Summary: all 5 test(s) passed
+kvonly-rig-dev1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+kvonly-rig-dev1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+kvonly-rig-dev1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+kvonly-rig-dev1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-dev1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-dev1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-stage1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+kvonly-rig-stage1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+kvonly-rig-stage1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+kvonly-rig-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-rig-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+kvonly-rig-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+kvonly-rig-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
