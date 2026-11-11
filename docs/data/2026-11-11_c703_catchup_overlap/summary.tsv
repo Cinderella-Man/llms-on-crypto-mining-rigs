@@ -1,0 +1,18 @@
+check	verdict	detail
+cpubuild	OK	rc=0; commit db253c8a7
+off	OK	base wrote 146 logits files; 146 compared, 0 differ: none; base: Summary: all 151 test(s) passed; branch: Summary: all 151 test(s) passed; base rc=0 branch rc=0 
+build-rig	OK	llama.cpp-20261111-db253c8a7-pascal-p106-v4-b12246-c703; commit: db253c8a732f8bb8031675e8a0feb2ff8b920d9e (2026-11-10 23:53:35 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-db253c8a7-pascal-p106-v4-b12246-c703/bin
+overlap-rig-s1	OK	rc=0; Summary: all 5 test(s) passed
+overlap-rig-s2	OK	rc=0; Summary: all 5 test(s) passed
+overlap-rig-s3	OK	rc=0; Summary: all 5 test(s) passed
+overlap-cpu-s1	OK	rc=0; Summary: all 5 test(s) passed
+overlap-cpu-s2	OK	rc=0; Summary: all 5 test(s) passed
+overlap-cpu-s3	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-rig-s1	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-rig-s2	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-rig-s3	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-cpu-s1	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-cpu-s2	OK	rc=0; Summary: all 5 test(s) passed
+kvonly-cpu-s3	OK	rc=0; Summary: all 5 test(s) passed
+tarball	OK	llama.cpp-20261111-db253c8a7-pascal-p106-v4-b12246-c703.tar.gz, 647631545 bytes, md5 c8c1ee08e9b66e9ff8988ce661a4edac

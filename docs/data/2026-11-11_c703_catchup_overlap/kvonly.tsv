@@ -1,0 +1,31 @@
+build	seed	config	kv, prompt	drafts	kv, end	nodes off/on	status
+cpu	1	f16 fa	identical	identical	identical	1458/531	OK
+cpu	1	f16	identical	identical	identical	1503/549	OK
+cpu	1	q8_0 fa	identical	identical	identical	1566/585	OK
+cpu	1	f16 fa top-k	identical	identical	identical	1647/531	OK
+cpu	1	f16 fa dist	identical	identical	identical	2043/2043	OK
+cpu	2	f16 fa	identical	identical	identical	1458/531	OK
+cpu	2	f16	identical	identical	identical	1503/549	OK
+cpu	2	q8_0 fa	identical	identical	identical	1566/585	OK
+cpu	2	f16 fa top-k	identical	identical	identical	1647/531	OK
+cpu	2	f16 fa dist	identical	identical	identical	2043/2043	OK
+cpu	3	f16 fa	identical	identical	identical	1458/531	OK
+cpu	3	f16	identical	identical	identical	1503/549	OK
+cpu	3	q8_0 fa	identical	identical	identical	1566/585	OK
+cpu	3	f16 fa top-k	identical	identical	identical	1647/531	OK
+cpu	3	f16 fa dist	identical	identical	identical	2043/2043	OK
+rig	1	f16 fa	identical	identical	identical	1458/531	OK
+rig	1	f16	identical	identical	identical	1503/549	OK
+rig	1	q8_0 fa	identical	identical	identical	1566/585	OK
+rig	1	f16 fa top-k	identical	identical	identical	1647/531	OK
+rig	1	f16 fa dist	identical	identical	identical	2043/2043	OK
+rig	2	f16 fa	identical	identical	identical	1458/531	OK
+rig	2	f16	identical	identical	identical	1503/549	OK
+rig	2	q8_0 fa	identical	identical	identical	1566/585	OK
+rig	2	f16 fa top-k	identical	identical	identical	1647/531	OK
+rig	2	f16 fa dist	identical	identical	identical	2043/2043	OK
+rig	3	f16 fa	identical	identical	identical	1458/531	OK
+rig	3	f16	identical	identical	identical	1503/549	OK
+rig	3	q8_0 fa	identical	identical	identical	1566/585	OK
+rig	3	f16 fa top-k	identical	identical	identical	1647/531	OK
+rig	3	f16 fa dist	identical	identical	identical	2043/2043	OK
