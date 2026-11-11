@@ -1,0 +1,9 @@
+bf16x-off	-	MUL_MAT	type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+bf16x-on	GGML_CUDA_MMVF_PASCAL_EXACT=1	MUL_MAT	type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+bf16x-on-rule1	GGML_CUDA_MMVF_PASCAL_RULE=1 GGML_CUDA_MMVF_PASCAL_EXACT=1	MUL_MAT	type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+bf16x-on-rule0	GGML_CUDA_MMVF_PASCAL_RULE=0 GGML_CUDA_MMVF_PASCAL_EXACT=1	MUL_MAT	type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+bf16x-on-nsm10	GGML_CUDA_MMVF_PASCAL_NSM=10 GGML_CUDA_MMVF_PASCAL_EXACT=1	MUL_MAT	type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+bf16x-on2	GGML_CUDA_MMVF_PASCAL_EXACT=2	MUL_MAT	type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+bf16x-fault	GGML_CUDA_MMVF_PASCAL_EXACT=1 GGML_CUDA_MMVF_PASCAL_EXACT_FAULT=1	MUL_MAT	type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,	fail	-
+bf16x-fault2	GGML_CUDA_MMVF_PASCAL_EXACT=2 GGML_CUDA_MMVF_PASCAL_EXACT_FAULT=1	MUL_MAT	type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,	fail	-
+bf16x-fault-off	GGML_CUDA_MMVF_PASCAL_EXACT_FAULT=1	MUL_MAT	type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,	pass	-

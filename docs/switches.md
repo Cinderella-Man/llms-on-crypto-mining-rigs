@@ -88,6 +88,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `GGML_CUDA_MMVF_PASCAL_RULE` | `2` | *new.* The BF16 kernel's launch-shape rule: `1` the rule before Q611 (no 3–4-token rule), `0` the first kernel's (at most 2 rows per lane group at 3–4 tokens) | -flags | Q611, Q1025 |
 | `GGML_CUDA_MMVF_PASCAL_MAX_COLS` | `8` | *new.* The most tokens the BF16 kernel takes; `4` leaves 5–8 tokens to llama.cpp's path, as before C70 | -flags | Q591, Q1025 |
 | `GGML_CUDA_MMVF_PASCAL_NSM`, `_SHAPE` | unset | SM count for the shapes; `G,R` forces one launch shape (tests) | -ladder | Q546 |
+| `GGML_CUDA_MMVF_PASCAL_EXACT` (`_EXACT_FAULT`) | `0` | *v4, not yet in a release build.* `1`: BF16 products of 2–4 tokens add each row in the one-token order. On a P106-090 the 10,240-wide hyper-connection products (`hc_attn_down`, `hc_ffn_down`, `hc_head_down`) at 3–4 tokens keep the rule's 32 lanes, each lane running the one-token kernel's four 128-lane chains one after another; `2`: the same with the four chains interleaved in one pass (four times the accumulators); where the 3–4-token rule changes the lanes otherwise (cards of 10 SMs), the product takes its one-token shape. `_EXACT_FAULT=1` (checks only) leaves a quarter of each row out of the 32-lane kernel ([design](data/2026-11-11_c750_bf16_exact/README.md)) | `pascal-p106-v4-b12246-c750` | Q1325 |
 | `GGML_CUDA_PERSISTENT_MOE` | `1` | One persistent kernel per MoE layer at one token, for the layer types it covers (Flint's). `0`: off; `2`: any GPU. `_CHECK=1` checks it against the per-op path; `_GRID`, `_FAULT` are test settings | base | Q88 |
 
 ## Prompt-processing kernels
@@ -236,6 +237,7 @@ those kernels' compile-time tuning (Q671). The defaults are the engine's:
 | Macro | Default | What it sets |
 |---|---|---|
 | `MMVQP_MIN_BLOCKS`, `MMVQP_MC_MIN_BLOCKS`, `KCOL_MIN_BLOCKS`, `MMVF_PASCAL_MIN_BLOCKS`, `FAP_MIN_BLOCKS`, `FTP_MIN_BLOCKS` | as built | The blocks per SM each Pascal kernel keeps registers for |
+| `MMVF_PASCAL_X4_MIN_BLOCKS` | `4` | The same for `GGML_CUDA_MMVF_PASCAL_EXACT`'s 32-lane kernels (at most 128 registers, so a 10,240 × 320 product's 20 blocks fit one wave on 5 SMs) |
 | `MMVQP_IQ_MIN_BLOCKS`, `MMVQP_IQ_MC_MIN_BLOCKS` | `3` | The same for the grid types; `1` is the setting before the P106 tuning round |
 | `MMVQP_IQ_SIGN_LUT` | `0` | `1`: IQ2_S and IQ3_XXS read their sign masks from a shared-memory table instead of computing them |
 | `MMVQP_IQ_R`, `MMVQP_IQ_PERSIST` | `1`, `0` | Rows per lane group and persistent row blocks of the one-token grid-type kernel |

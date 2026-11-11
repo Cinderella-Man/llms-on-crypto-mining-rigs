@@ -1,0 +1,22 @@
+check	verdict	detail
+emul	OK	hc_down g128-x4p: 0 of 2560 differ; hc_down g128-x4i: 0 of 2560 differ; hc_down g128-g32: 2323 of 2560 differ; hc_down g128-x4pfault: 2560 of 2560 differ; tail1 g128-x4p: 0 of 1280 differ; tail1 g128-x4i: 0 of 1280 differ; tail21 g128-x4p: 0 of 1280 differ; tail21 g128-x4i: 0 of 1280 differ; tail32 g128-x4p: 0 of 1332 differ; tail32 g128-x4i: 0 of 1332 differ; sweep g128-x4p: 0 of 16384 differ; sweep g128-x4i: 0 of 16384 differ; 
+build	OK	llama.cpp-20261111-69dfccc81-pascal-p106-v4-b12246-c750.tar.gz 658057828 B md5 df7fc616b618b8a9f970cd9062030a51
+res	OK	x4i<4,3,0> 128 regs, stack 40 (26 STL/LDL, 8 in loops), LDG 40/40, FFMA 384/384, SHFL 240; x4i<4,3,1> 128 regs, stack 16 (8 STL/LDL, 0 in loops), LDG 30/40, FFMA 288/384, SHFL 180; x4i<4,4,0> 128 regs, stack 96 (85 STL/LDL, 36 in loops), LDG 48/48, FFMA 512/512, SHFL 320; x4i<4,4,1> 128 regs, stack 24 (10 STL/LDL, 0 in loops), LDG 36/48, FFMA 384/512, SHFL 240; x4p<4,3,0> 128 regs, stack 8 (2 STL/LDL, 0 in loops), LDG 20/20, FFMA 192/192, SHFL 240; x4p<4,3,1> 128 regs, stack 0 (0 STL/LDL, 0 in loops), LDG 20/20, FFMA 192/192, SHFL 180; x4p<4,4,0> 128 regs, stack 16 (12 STL/LDL, 0 in loops), LDG 24/24, FFMA 256/256, SHFL 320; x4p<4,4,1> 128 regs, stack 24 (12 STL/LDL, 0 in loops), LDG 24/24, FFMA 256/256, SHFL 240; 
+code	SAME	new: _Z26mul_mat_vec_bf16_pascal_x4ILi4ELi3ELb0EEvPK5uint4PK6float4Pfiiiii _Z26mul_mat_vec_bf16_pascal_x4ILi4ELi3ELb1EEvPK5uint4PK6float4Pfiiiii _Z26mul_mat_vec_bf16_pascal_x4ILi4ELi4ELb0EEvPK5uint4PK6float4Pfiiiii _Z26mul_mat_vec_bf16_pascal_x4ILi4ELi4ELb1EEvPK5uint4PK6float4Pfiiiii _Z27mul_mat_vec_bf16_pascal_x4pILi4ELi3ELb0EEvPK5uint4PK6float4Pfiiiii _Z27mul_mat_vec_bf16_pascal_x4pILi4ELi3ELb1EEvPK5uint4PK6float4Pfiiiii _Z27mul_mat_vec_bf16_pascal_x4pILi4ELi4ELb0EEvPK5uint4PK6float4Pfiiiii _Z27mul_mat_vec_bf16_pascal_x4pILi4ELi4ELb1EEvPK5uint4PK6float4Pfiiiii 
+cpu-base-tree	OK	commit 5b329df16d8dd2ccb001300adf64ef2834dbab26 
+cpu-base-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+cpu-base-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-base-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-base-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-base-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c750-tree	OK	commit 69dfccc81fad706d2deb2e57845e24ec2272ac71 
+cpu-c750-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+cpu-c750-ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+cpu-c750-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-c750-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-c750-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-c750-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c750-ident vs base	SAME	base wrote 146 files; 146 compared, differ: none; written by c750 only: 0; Summary: all 151 test(s) passed
+bitid	OK	md5 8a425cb9637e4506a07f3a0cd08ed433
+record	OK	152 cases, 9 runs; tar 1200547840 B md5 f00104d99ff44a68aff262bb0ec144fe
+replay-cpu	OK	152 cases, 152 OK, 0 FAIL; exit 0

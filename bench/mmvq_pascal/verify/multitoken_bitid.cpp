@@ -19,6 +19,12 @@
 // `multitoken_bitid dmt` checks IQ4_XS's and Q4_K's dense products the same way (C722: the kernel of
 // mmvq-pascal-dmt.cu with GGML_CUDA_MMVQ_PASCAL_DMT=1 or 2), at Qwen3.8-Flash-Next's attention and recurrent projections
 // (2560 -> 10240, 6144 and 12288; 6144 -> 2560) and at row widths that give 1 to 32 lanes per row.
+// `multitoken_bitid bf16` checks BF16's dense products the same way (C750: the Pascal BF16 kernel of mmvf-pascal.cu with
+// GGML_CUDA_MMVF_PASCAL_EXACT=1 or 2), at Qwen3.8-Flash-Next's BF16 shapes (the hyper-connections 10240 -> 320 and
+// 320 -> 10240, 10240 -> 4, the indexer's 2560 -> 512, the recurrent layers' 2560 -> 48) and at row widths whose
+// 3-4-token launch shape on 5 SMs has other lanes than one token's (K = 1000: 32 against 8; K = 4104, 4392 and 4736, the
+// 32-lane kernel's tails: 32 against 128); with the switch at 0 those differ at 3 and 4 tokens. Run as is on a P106, or
+// with GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVF_PASCAL_NSM=5 on a newer GPU (the P106-090's launch shapes).
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -133,6 +139,7 @@ int main(int argc, char ** argv) {
     const bool ornith = argc > 1 && strcmp(argv[1], "ornith") == 0;
     const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;
     const bool dmt    = argc > 1 && strcmp(argv[1], "dmt") == 0;
+    const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
     const mode_cfg cfg = ornith
         ? mode_cfg{ { GGML_TYPE_IQ2_S, GGML_TYPE_IQ3_XXS, GGML_TYPE_N2P, GGML_TYPE_N3P, GGML_TYPE_Q8_0, GGML_TYPE_Q5_0 },
                     { { 8192, 3072 }, { 3072, 8192 }, { 3072, 1024 }, { 1024, 3072 }, { 4097, 3072 } },
@@ -147,6 +154,11 @@ int main(int argc, char ** argv) {
                     { { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 }, { 2560, 6144 }, { 4097, 2560 }, { 200, 512 },
                       { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 } },
                     1, 1, 256, 256, true, 0 }
+        : bf16
+        ? mode_cfg{ { GGML_TYPE_BF16 },
+                    { { 320, 10240 }, { 10240, 320 }, { 4, 10240 }, { 512, 2560 }, { 48, 2560 }, { 333, 1000 }, { 320, 4104 },
+                      { 320, 4392 }, { 333, 4736 } },
+                    1, 1, 256, 256, false, 0 }
         : mode_cfg{ { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS,
                       GGML_TYPE_Q6_K },
                     { { 4096, 2048 }, { 2048, 4096 }, { 512, 2048 }, { 2048, 1024 }, { 4097, 2048 } },

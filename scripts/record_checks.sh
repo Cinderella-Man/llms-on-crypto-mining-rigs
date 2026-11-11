@@ -55,6 +55,11 @@
 #   v4night       the seven suites of the v4 night's branches in one set, as merged in pascal-p106-v4-b12246-night
 #                 (docs/data/2026-11-11_v4_night_merge): NIGHT below; each filter recorded once, every suite's runs
 #                 (runs-ptx.tsv: a suite's PTX runs where it has them, else its native runs)
+#   bf16x         BF16's 2-D products of 1-8 tokens (Qwen3.8-Flash-Next's hyper-connections, indexer and recurrent gates
+#                 among them) under the launch rule and with GGML_CUDA_MMVF_PASCAL_EXACT=1 (C750: the 3-4-token products
+#                 in the one-token order) at three rules and as for 10 SMs, with =2, and the fault that leaves a quarter
+#                 of each row out of the 32-lane kernels of that order (docs/data/2026-11-11_c750_bf16_exact). Its
+#                 runs-ptx.tsv runs them on a newer card with the P106-090's launch shapes
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -63,7 +68,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -96,6 +101,10 @@ Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 # the top-k cases at Flash-Next's vocabulary
 TKV='ne=\[248320,'
+# BF16's 2-D products of 1-8 tokens, and those GGML_CUDA_MMVF_PASCAL_EXACT's 32-lane kernel takes on 5 SMs (3-4 tokens,
+# 128 lanes at one token)
+BFX='type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
+BFX4='type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,'
 NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
 suite_filters() {
     case $1 in
@@ -124,6 +133,8 @@ suite_filters() {
             printf '%s\t%s\n' TOP_K "$TKV" TOP_K_ROWS '.' ;;
         qsa-union)
             printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
+        bf16x)
+            printf '%s\t%s\n' MUL_MAT "$BFX" ;;
         v4night)
             local s
             for s in $NIGHT; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
@@ -245,12 +256,33 @@ suite_runs() {
             printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;
         qsa-union)
             suite_runs_qsa_union 1 ;;
+        bf16x)
+            suite_runs_bf16x "" ;;
         v4night)
             local s
             for s in $NIGHT; do suite_runs "$s"; done ;;
     esac
 }
-# the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
+# C750's runs: <the switches every run starts with ("" natively; on a newer card the kernel on and the P106-090's 5 SMs)>.
+# The launch rule alone; the switch at rules 2 (the default), 1 and 0, as for 10 SMs (the one-token shapes where 3-4
+# tokens take 128 lanes) and at 2 (its other 32-lane kernel); the fault in the products the 32-lane kernels take must
+# fail them, and without the switch it reaches nothing
+suite_runs_bf16x() {
+    local F=GGML_CUDA_MMVF_PASCAL B=$1
+    local E="${F}_EXACT=1" E2="${F}_EXACT=2"
+    # shellcheck disable=SC2086 # echo joins the switches with single spaces
+    printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        bf16x-off "$(echo $B)" MUL_MAT "$BFX" pass \
+        bf16x-on "$(echo $B $E)" MUL_MAT "$BFX" pass \
+        bf16x-on-rule1 "$(echo $B ${F}_RULE=1 $E)" MUL_MAT "$BFX" pass \
+        bf16x-on-rule0 "$(echo $B ${F}_RULE=0 $E)" MUL_MAT "$BFX" pass \
+        bf16x-on-nsm10 "$(echo ${B/${F}_NSM=5/} ${F}_NSM=10 $E)" MUL_MAT "$BFX" pass \
+        bf16x-on2 "$(echo $B $E2)" MUL_MAT "$BFX" pass \
+        bf16x-fault "$(echo $B $E ${F}_EXACT_FAULT=1)" MUL_MAT "$BFX4" fail \
+        bf16x-fault2 "$(echo $B $E2 ${F}_EXACT_FAULT=1)" MUL_MAT "$BFX4" fail \
+        bf16x-fault-off "$(echo $B ${F}_EXACT_FAULT=1)" MUL_MAT "$BFX4" pass
+}
+# the prompt rule's runs:<1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
 # kernel each prompt case takes in each run is fasp_check --rule's last table (bench/fattn_sparse)
 suite_runs_qsa_prompt() {
     local Q=GGML_CUDA_FATTN_SPARSE_PASCAL
@@ -312,6 +344,7 @@ suite_runs_ptx() {
         n2p) suite_runs_n2p 'n=[1-8],' "type_a=" ;;
         qsa-prompt) suite_runs_qsa_prompt 2 ;;
         qsa-union) suite_runs_qsa_union 2 ;;
+        bf16x) suite_runs_bf16x "GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVF_PASCAL_NSM=5" ;;
         v4night)
             local s
             for s in $NIGHT; do
