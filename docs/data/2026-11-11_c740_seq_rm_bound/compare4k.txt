@@ -1,0 +1,50 @@
+plain	base-plain	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+plain	base-plain	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+plain	base-plain	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+plain	base-plain	dump	identical	202 steps (ref 202)
+plain	off-plain	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+plain	off-plain	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+plain	off-plain	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+plain	off-plain	dump	identical	202 steps (ref 202)
+plain	on-plain	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+plain	on-plain	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+plain	on-plain	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+plain	on-plain	dump	identical	202 steps (ref 202)
+short	base-short	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+short	base-short	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+short	base-short	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+short	base-short	dump	identical	202 steps (ref 202)
+short	off-short	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+short	off-short	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+short	off-short	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+short	off-short	dump	identical	202 steps (ref 202)
+short	on-short	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+short	on-short	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+short	on-short	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+short	on-short	dump	identical	202 steps (ref 202)
+pmin	base-pmin	reply-R1	identical	n=96 draft 260 accepted 0 (ref 260 0)
+pmin	base-pmin	reply-R2	identical	n=48 draft 86 accepted 0 (ref 86 0)
+pmin	base-pmin	reply-R3	identical	n=64 draft 178 accepted 0 (ref 178 0)
+pmin	base-pmin	dump	identical	186 steps (ref 186)
+pmin	off-pmin	reply-R1	identical	n=96 draft 260 accepted 0 (ref 260 0)
+pmin	off-pmin	reply-R2	identical	n=48 draft 86 accepted 0 (ref 86 0)
+pmin	off-pmin	reply-R3	identical	n=64 draft 178 accepted 0 (ref 178 0)
+pmin	off-pmin	dump	identical	186 steps (ref 186)
+pmin	on-pmin	reply-R1	identical	n=96 draft 260 accepted 0 (ref 260 0)
+pmin	on-pmin	reply-R2	identical	n=48 draft 86 accepted 0 (ref 86 0)
+pmin	on-pmin	reply-R3	identical	n=64 draft 178 accepted 0 (ref 178 0)
+pmin	on-pmin	dump	identical	186 steps (ref 186)
+
+| group | arm | verify steps | draft micro-batches | rebuilt | of up to 8 tokens: rebuilt / reused | rebuilt, no output / one output | rebuilt per step (up to 8 tokens) | why rebuilt |
+|---|---|---:|---:|---:|---|---|---:|---|
+| plain | base-plain | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| plain | off-plain | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| plain | on-plain | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| short | base-short | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| short | off-short | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| short | on-short | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| pmin | base-pmin | 186 | 776 | 415 | 411 / 361 | 208 / 203 | 2.210 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| pmin | off-pmin | 186 | 776 | 415 | 411 / 361 | 208 / 203 | 2.210 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| pmin | on-pmin | 186 | 776 | 415 | 411 / 361 | 208 / 203 | 2.210 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+
+compare: 0 differences

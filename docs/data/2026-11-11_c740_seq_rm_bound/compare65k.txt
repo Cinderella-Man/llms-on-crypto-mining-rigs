@@ -1,0 +1,25 @@
+t65k	toff	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+t65k	toff	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+t65k	toff	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+t65k	toff	dump	identical	202 steps (ref 202)
+t65k	ton	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+t65k	ton	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+t65k	ton	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+t65k	ton	dump	identical	202 steps (ref 202)
+t65k	toff2	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+t65k	toff2	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+t65k	toff2	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+t65k	toff2	dump	identical	202 steps (ref 202)
+t65k	ton2	reply-R1	identical	n=96 draft 279 accepted 0 (ref 279 0)
+t65k	ton2	reply-R2	identical	n=48 draft 135 accepted 0 (ref 135 0)
+t65k	ton2	reply-R3	identical	n=64 draft 183 accepted 0 (ref 183 0)
+t65k	ton2	dump	identical	202 steps (ref 202)
+
+| group | arm | verify steps | draft micro-batches | rebuilt | of up to 8 tokens: rebuilt / reused | rebuilt, no output / one output | rebuilt per step (up to 8 tokens) | why rebuilt |
+|---|---|---:|---:|---:|---|---|---:|---|
+| t65k | toff | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| t65k | ton | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| t65k | toff2 | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+| t65k | ton2 | 202 | 819 | 415 | 411 / 404 | 208 / 203 | 2.035 | large:not_allocated 3, large:params 1, small:not_allocated 411 |
+
+compare: 0 differences
