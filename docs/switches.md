@@ -45,6 +45,14 @@ default it gives `pascal-p106-v4`'s logits bit for bit on every architecture `te
 branch's own check passes on it with its switch on
 ([docs/data/2026-11-11_v4_night_merge/](data/2026-11-11_v4_night_merge/README.md)).
 
+The switches of 2026-11-11 are merged the same way on top: the day's 17 branches in `pascal-p106-v4-b12246-day`
+([docs/data/2026-11-11_v4_day_merge/](data/2026-11-11_v4_day_merge/README.md)), and the four that finished after it
+(`LLAMA_MTP_EMBD_FIRST`, `LLAMA_MTP_DRAFT_CAP`, `LLAMA_MTP_SKIP_LAST_ROW` and the switch line in llama-server's log)
+merged on it into `pascal-p106-v4` itself ([docs/data/2026-11-11_v4_late_merge/](data/2026-11-11_v4_late_merge/README.md)).
+So `pascal-p106-v4` holds the switches of the night's, the day's and these four branches, each off by default: with
+nothing set it computes what `pascal-p106-v4-b12246-c748` computes, and each branch's check passes on it with its switch
+on.
+
 ## Which preset sets each switch
 
 Each v3 model has a preset, `release/<model>-v3/settings.env`: the switches (`PRESET_ENV`) and the command line
