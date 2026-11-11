@@ -1,0 +1,9 @@
+base arm	base switches	tip spelling	tip switches	products	differing lines
+on	DMT=1	rule	DMT=1 DMT_R=0	384	0
+nopf	DMT=2	rule-nopf	DMT=2 DMT_R=0	384	0
+r1	DMT=1 DMT_R=1	pf	DMT=1 DMT_PF=1	384	0
+r2	DMT=1 DMT_R=2	r2	DMT=1 DMT_R=2	384	0
+r1nopf	DMT=2 DMT_R=1	nopf	DMT=2	384	0
+r1nopf	DMT=2 DMT_R=1	r1nopf	DMT=2 DMT_R=1	384	0
+r2nopf	DMT=2 DMT_R=2	r2nopf	DMT=2 DMT_R=2	384	0
+nw2	DMT=1 DMT_NW=2	rule-nw2	DMT=1 DMT_R=0 DMT_NW=2	384	0

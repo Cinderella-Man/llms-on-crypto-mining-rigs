@@ -1,0 +1,13 @@
+type	NT	K	kernel (tip DMT=1)	R79 arm	warps	smem	SASS	base md5	tip md5	REG
+iq4_xs	2	2560	mul_mat_vec_q_pascal_dmt<iq4_xs, 2, 1, false>	r1nopf (DMT=2 DMT_R=1)	6	32080	same	53d6fb5474f63cc3ed610de5f686c153	53d6fb5474f63cc3ed610de5f686c153	72
+iq4_xs	2	6144	mul_mat_vec_q_pascal_dmt<iq4_xs, 2, 1, true>	r1 (DMT=1 DMT_R=1)	6	40416	same	0996d18ffd51fac11325271a39650254	0996d18ffd51fac11325271a39650254	104
+iq4_xs	3	2560	mul_mat_vec_q_pascal_dmt<iq4_xs, 3, 1, true>	r1 (DMT=1 DMT_R=1)	6	34960	same	34c36b877f5629b7ee9a6fa411bfbc6a	34c36b877f5629b7ee9a6fa411bfbc6a	119
+iq4_xs	3	6144	mul_mat_vec_q_pascal_dmt<iq4_xs, 3, 1, true>	r1 (DMT=1 DMT_R=1)	6	47328	same	34c36b877f5629b7ee9a6fa411bfbc6a	34c36b877f5629b7ee9a6fa411bfbc6a	119
+iq4_xs	4	2560	mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 1, true>	r1 (DMT=1 DMT_R=1)	6	37840	same	8922e259c36eaab4b3305627e59c587f	8922e259c36eaab4b3305627e59c587f	127
+iq4_xs	4	6144	mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 1, true>	r1 (DMT=1 DMT_R=1)	4	45536	same	8922e259c36eaab4b3305627e59c587f	8922e259c36eaab4b3305627e59c587f	127
+q4_K	2	2560	mul_mat_vec_q_pascal_dmt<q4_K, 2, 1, true>	r1 (DMT=1 DMT_R=1)	6	34288	same	18be0cd2ef53aa2fa5c709b1ab4f9fbb	18be0cd2ef53aa2fa5c709b1ab4f9fbb	113
+q4_K	2	6144	mul_mat_vec_q_pascal_dmt<q4_K, 2, 1, true>	r1 (DMT=1 DMT_R=1)	6	43584	same	18be0cd2ef53aa2fa5c709b1ab4f9fbb	18be0cd2ef53aa2fa5c709b1ab4f9fbb	113
+q4_K	3	2560	mul_mat_vec_q_pascal_dmt<q4_K, 3, 1, true>	r1 (DMT=1 DMT_R=1)	6	37488	same	7adaa5a7a1adf7e0ecd219c3ba3d9730	7adaa5a7a1adf7e0ecd219c3ba3d9730	127
+q4_K	3	6144	mul_mat_vec_q_pascal_dmt<q4_K, 3, 1, true>	r1 (DMT=1 DMT_R=1)	5	46656	same	7adaa5a7a1adf7e0ecd219c3ba3d9730	7adaa5a7a1adf7e0ecd219c3ba3d9730	127
+q4_K	4	2560	mul_mat_vec_q_pascal_dmt<q4_K, 4, 1, true>	r1 (DMT=1 DMT_R=1)	6	40688	same	2b1541913413013aa5ff81d20813208c	2b1541913413013aa5ff81d20813208c	136
+q4_K	4	6144	mul_mat_vec_q_pascal_dmt<q4_K, 4, 1, true>	r1 (DMT=1 DMT_R=1)	3	45120	same	2b1541913413013aa5ff81d20813208c	2b1541913413013aa5ff81d20813208c	136

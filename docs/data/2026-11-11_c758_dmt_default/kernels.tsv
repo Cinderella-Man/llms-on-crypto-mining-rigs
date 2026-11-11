@@ -1,0 +1,25 @@
+kernel	verdict	base md5	tip md5	REG	STACK	LOCAL
+mul_mat_vec_q_pascal_dmt<iq4_xs, 2, 1, false>	same	53d6fb5474f63cc3ed610de5f686c153	53d6fb5474f63cc3ed610de5f686c153	72	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 2, 1, true>	same	0996d18ffd51fac11325271a39650254	0996d18ffd51fac11325271a39650254	104	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 2, 2, false>	same	6f04554e7e89034389a89f05458c3f58	6f04554e7e89034389a89f05458c3f58	111	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 2, 2, true>	same	41f5669dae28ffeb43cdcf08e28780a3	41f5669dae28ffeb43cdcf08e28780a3	164	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 3, 1, false>	same	bfc31493eddfec3ad96d7c662c92a0bf	bfc31493eddfec3ad96d7c662c92a0bf	84	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 3, 1, true>	same	34c36b877f5629b7ee9a6fa411bfbc6a	34c36b877f5629b7ee9a6fa411bfbc6a	119	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 3, 2, false>	same	96ba3bd15be2064b7e62519ab32a1555	96ba3bd15be2064b7e62519ab32a1555	110	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 3, 2, true>	same	07f9cdec94695ec16af7c9ba36cc26bb	07f9cdec94695ec16af7c9ba36cc26bb	173	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 1, false>	same	f9700cffe78f25cdf4ccc78ff94f25f7	f9700cffe78f25cdf4ccc78ff94f25f7	92	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 1, true>	same	8922e259c36eaab4b3305627e59c587f	8922e259c36eaab4b3305627e59c587f	127	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 2, false>	same	f2efaa4d513e0c634de903ddd942e8cf	f2efaa4d513e0c634de903ddd942e8cf	114	0	0
+mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 2, true>	same	2adf02e5448730a825b8c8e2a07b4a5c	2adf02e5448730a825b8c8e2a07b4a5c	184	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 2, 1, false>	same	3f665b77d79b5dd9b79b63f4130bf2e8	3f665b77d79b5dd9b79b63f4130bf2e8	80	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 2, 1, true>	same	18be0cd2ef53aa2fa5c709b1ab4f9fbb	18be0cd2ef53aa2fa5c709b1ab4f9fbb	113	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 2, 2, false>	same	c089ee2ad8d8acb5d7b330c48e909e34	c089ee2ad8d8acb5d7b330c48e909e34	110	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 2, 2, true>	same	3ef83847c2b2379e766bb17cfd1b35f9	3ef83847c2b2379e766bb17cfd1b35f9	168	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 3, 1, false>	same	52707e1ba6ae98d9399473dc8f173ee3	52707e1ba6ae98d9399473dc8f173ee3	95	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 3, 1, true>	same	7adaa5a7a1adf7e0ecd219c3ba3d9730	7adaa5a7a1adf7e0ecd219c3ba3d9730	127	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 3, 2, false>	same	69708d78845e4f81585d20337953d74b	69708d78845e4f81585d20337953d74b	117	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 3, 2, true>	same	bccdb7c9e60d0394529027032027118b	bccdb7c9e60d0394529027032027118b	191	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 4, 1, false>	same	2f819c60486892c9422bb84e0fd2b4d7	2f819c60486892c9422bb84e0fd2b4d7	96	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 4, 1, true>	same	2b1541913413013aa5ff81d20813208c	2b1541913413013aa5ff81d20813208c	136	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 4, 2, false>	same	3554e99ba06c493913b0dc10d4bb3fa9	3554e99ba06c493913b0dc10d4bb3fa9	134	0	0
+mul_mat_vec_q_pascal_dmt<q4_K, 4, 2, true>	same	5b1a9c579f017b918d1561c967cb7fe0	5b1a9c579f017b918d1561c967cb7fe0	204	0	0

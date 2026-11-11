@@ -23,8 +23,10 @@ and 8.313 ms of GPU time with the switch against 16.212, 16.221, 16.202 and 16.2
 93.104, 93.105 and 93.123 ms against 101.030, 101.033, 101.006 and 101.033; and the server's step on the second
 request 114.01 and 113.62 ms against 122.10 and 122.03.
 
-The default rule picks R = 2 for most shapes, and R = 2 is slower than R = 1 at every shape where it was tried. So the
-switch has to be set with `GGML_CUDA_MMVQ_PASCAL_DMT_R=1` until the default changes (C758, Q1335).
+The default rule picks R = 2 for most shapes, and R = 2 is slower than R = 1 at every shape where it was tried. So on
+this build the switch has to be set with `GGML_CUDA_MMVQ_PASCAL_DMT_R=1`. Since `pascal-p106-v4-b12246-c758`, R = 1
+is the default, without the prefetch at IQ4_XS's 2 tokens at K = 2,560
+([2026-11-11_c758_dmt_default](../2026-11-11_c758_dmt_default/README.md), Q1335).
 
 ### Bit identity
 
