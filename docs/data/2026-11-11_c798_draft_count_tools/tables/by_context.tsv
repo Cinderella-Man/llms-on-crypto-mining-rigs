@@ -1,0 +1,5 @@
+arm	context	requests	tokens_a_step	verify_steps	P1	c1	P2	c2	P3	c3	P4	c4	P5	c5	P6	c6	P7	c7
+d3	0-4095	12	1.0000	1512	0.0000	0.0000	0.0000	nan	0.0000	nan								
+d5	0-4095	6	1.0000	756	0.0000	0.0000	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan				
+d7	0-4095	6	1.0000	756	0.0000	0.0000	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan
+d7x	0-4095	6	1.0000	756	0.0000	0.0000	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan

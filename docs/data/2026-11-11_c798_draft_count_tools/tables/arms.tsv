@@ -1,0 +1,5 @@
+arm	n_max	loads	tokens_a_step_each	tokens_a_step_pooled	spread	share_accepted_each	accepted_per_verify_step_each	P1	c1	P2	c2	P3	c3	P4	c4	P5	c5	P6	c6	P7	c7
+d3	3	2	1.000 1.000	1.0000	0.0000	0.0000 0.0000	0.000 0.000	0.0000	0.0000	0.0000	nan	0.0000	nan								
+d5	5	1	1.000	1.0000	nan	0.0000	0.000	0.0000	0.0000	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan				
+d7	7	1	1.000	1.0000	nan	0.0000	0.000	0.0000	0.0000	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan
+d7x	7	1	1.000	1.0000	nan	0.0000	0.000	0.0000	0.0000	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan	0.0000	nan

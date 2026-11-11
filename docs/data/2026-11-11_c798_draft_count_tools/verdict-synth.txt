@@ -1,0 +1,14 @@
+VERDICT PASS
+checks: 12 of 12 OK
+d7s-1 P1 0.8987 on 1175 steps, set 0.9 (|z| 0.15)
+d7s-1 P2 0.8075 on 1174 steps, set 0.8 (|z| 0.64)
+d7s-1 P3 0.7118 on 1173 steps, set 0.7 (|z| 0.88)
+d7s-1 P4 0.6063 on 1171 steps, set 0.6 (|z| 0.44)
+d7s-1 P5 0.5060 on 1170 steps, set 0.5 (|z| 0.41)
+d7s-1 P6 0.4046 on 1169 steps, set 0.4 (|z| 0.32)
+d7s-1 P7 0.2979 on 1168 steps, set 0.3 (|z| 0.16)
+d4s-1 P1 0.9054 on 1522 steps, set 0.9 (|z| 0.70)
+d4s-1 P2 0.8101 on 1522 steps, set 0.8 (|z| 0.99)
+d4s-1 P3 0.7163 on 1519 steps, set 0.7 (|z| 1.39)
+d4s-1 P4 0.6028 on 1518 steps, set 0.6 (|z| 0.22)
+d7s cut to 4: 4.0204 tokens a verify step; d4s's own: 4.0315; 1 + the set rates: 4.0000

@@ -1,0 +1,6 @@
+label	arm	n_max	requests	errors	generated	drafted	accepted	steps	tokens_a_step	share_accepted	verify_steps	accepted_per_verify_step	restores	sampled_on_device	grammar_rejected	dump_steps	P1	P2	P3	dump_type	dump_verify	dump_cand_rows	P4	P5	P6	P7
+d3-1	d3	3	6	0	768	2250	0	768	1.0000	0.0000	756	0.0000	0	0	0	756	0.0000	0.0000	0.0000	draft-mtp	reject	2268				
+d5-1	d5	5	6	0	768	3720	0	768	1.0000	0.0000	756	0.0000	0	0	0	756	0.0000	0.0000	0.0000	draft-mtp	reject	3780	0.0000	0.0000		
+d7-1	d7	7	6	0	768	5166	0	768	1.0000	0.0000	756	0.0000	0	0	0	756	0.0000	0.0000	0.0000	draft-mtp	reject	5292	0.0000	0.0000	0.0000	0.0000
+d7x-1	d7x	7	6	0	768	5166	0	768	1.0000	0.0000	756	0.0000	0	0	0		0.0000	0.0000	0.0000				0.0000	0.0000	0.0000	0.0000
+d3-2	d3	3	6	0	768	2250	0	768	1.0000	0.0000	756	0.0000	0	0	0	756	0.0000	0.0000	0.0000	draft-mtp	reject	2268				

@@ -1,0 +1,35 @@
+label	check	verdict	detail
+d3-1	rows	OK	6 rows, 0 with an error
+d3-1	trace sums = timings	OK	trace accepted 0 drafted 2250; timings 0 2250
+d3-1	no restore inside a step	OK	0 steps restored a checkpoint
+d3-1	metrics per position = trace	OK	metrics [0, 0, 0]; trace [0, 0, 0]
+d3-1	metrics steps and sums = trace	OK	metrics steps 756.0 accepted 0.0 drafted 2250.0
+d3-1	dump = trace	OK	dump 756 steps, trace 756; the first difference at 756
+d3-1	requests = tasks	OK	6 of 6 tasks matched to requests in order
+d5-1	rows	OK	6 rows, 0 with an error
+d5-1	trace sums = timings	OK	trace accepted 0 drafted 3720; timings 0 3720
+d5-1	no restore inside a step	OK	0 steps restored a checkpoint
+d5-1	metrics per position = trace	OK	metrics [0, 0, 0, 0, 0]; trace [0, 0, 0, 0, 0]
+d5-1	metrics steps and sums = trace	OK	metrics steps 756.0 accepted 0.0 drafted 3720.0
+d5-1	dump = trace	OK	dump 756 steps, trace 756; the first difference at 756
+d5-1	requests = tasks	OK	6 of 6 tasks matched to requests in order
+d7-1	rows	OK	6 rows, 0 with an error
+d7-1	trace sums = timings	OK	trace accepted 0 drafted 5166; timings 0 5166
+d7-1	no restore inside a step	OK	0 steps restored a checkpoint
+d7-1	metrics per position = trace	OK	metrics [0, 0, 0, 0, 0, 0, 0]; trace [0, 0, 0, 0, 0, 0, 0]
+d7-1	metrics steps and sums = trace	OK	metrics steps 756.0 accepted 0.0 drafted 5166.0
+d7-1	dump = trace	OK	dump 756 steps, trace 756; the first difference at 756
+d7-1	requests = tasks	OK	6 of 6 tasks matched to requests in order
+d7x-1	rows	OK	6 rows, 0 with an error
+d7x-1	trace sums = timings	OK	trace accepted 0 drafted 5166; timings 0 5166
+d7x-1	no restore inside a step	OK	0 steps restored a checkpoint
+d7x-1	metrics per position = trace	OK	metrics [0, 0, 0, 0, 0, 0, 0]; trace [0, 0, 0, 0, 0, 0, 0]
+d7x-1	metrics steps and sums = trace	OK	metrics steps 756.0 accepted 0.0 drafted 5166.0
+d7x-1	requests = tasks	OK	6 of 6 tasks matched to requests in order
+d3-2	rows	OK	6 rows, 0 with an error
+d3-2	trace sums = timings	OK	trace accepted 0 drafted 2250; timings 0 2250
+d3-2	no restore inside a step	OK	0 steps restored a checkpoint
+d3-2	metrics per position = trace	OK	metrics [0, 0, 0]; trace [0, 0, 0]
+d3-2	metrics steps and sums = trace	OK	metrics steps 756.0 accepted 0.0 drafted 2250.0
+d3-2	dump = trace	OK	dump 756 steps, trace 756; the first difference at 756
+d3-2	requests = tasks	OK	6 of 6 tasks matched to requests in order

@@ -1,0 +1,13 @@
+label	check	verdict	detail
+d7s-1	rows	OK	6 rows, 0 with an error
+d7s-1	trace sums = timings	OK	trace accepted 4962 drafted 8200; timings 4962 8200
+d7s-1	no restore inside a step	OK	0 steps restored a checkpoint
+d7s-1	metrics per position = trace	OK	metrics [1056, 948, 835, 710, 592, 473, 348]; trace [1056, 948, 835, 710, 592, 473, 348]
+d7s-1	metrics steps and sums = trace	OK	metrics steps 1175.0 accepted 4962.0 drafted 8200.0
+d7s-1	requests = tasks	OK	6 of 6 tasks matched to requests in order
+d4s-1	rows	OK	6 rows, 0 with an error
+d4s-1	trace sums = timings	OK	trace accepted 4614 drafted 6081; timings 4614 6081
+d4s-1	no restore inside a step	OK	0 steps restored a checkpoint
+d4s-1	metrics per position = trace	OK	metrics [1378, 1233, 1088, 915]; trace [1378, 1233, 1088, 915]
+d4s-1	metrics steps and sums = trace	OK	metrics steps 1522.0 accepted 4614.0 drafted 6081.0
+d4s-1	requests = tasks	OK	6 of 6 tasks matched to requests in order

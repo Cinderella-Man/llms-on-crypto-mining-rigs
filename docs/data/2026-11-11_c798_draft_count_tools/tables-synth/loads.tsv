@@ -1,0 +1,3 @@
+label	arm	n_max	requests	errors	generated	drafted	accepted	steps	tokens_a_step	share_accepted	verify_steps	accepted_per_verify_step	restores	sampled_on_device	grammar_rejected	dump_steps	P1	P2	P3	P4	P5	P6	P7
+d7s-1	d7s	7	6	0	6144	8200	4962	1182	5.1980	0.6051	1175	4.2230	0	0	0		0.8987	0.8075	0.7118	0.6063	0.5060	0.4046	0.2979
+d4s-1	d4s	4	6	0	6144	6081	4614	1530	4.0157	0.7588	1522	3.0315	0	0	0		0.9054	0.8101	0.7163	0.6028			

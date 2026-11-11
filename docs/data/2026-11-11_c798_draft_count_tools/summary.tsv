@@ -1,0 +1,11 @@
+step	verdict	detail
+model	OK	c3e53c7ef295967108102bb0e37d3397  qwen4exp-moe-mtp.gguf 92d0ee3ef71f874d349bc551464323a6  qwen4exp-moe-mtp-draft.gguf 
+chain	OK	rc=0; CHAIN_DONE 2026-11-11T19:34:30+01:00
+synth-chain	OK	rc=0; CHAIN_DONE 2026-11-11T19:39:22+01:00
+verdict-synth	PASS	VERDICT PASS; d7s cut to 4: 4.0204 tokens a verify step; d4s's own: 4.0315; 1 + the set rates: 4.0000
+selftest-draft_table	OK	rc=0; selftest: OK (0 failures)
+selftest-tree_replay	OK	rc=0; selftest passed
+tables	OK	rc=0; 5 loads; 34 of 34 checks OK; tables in WORK/tables
+verdict	PASS	checks: 34 of 34 OK;d7 with and without the dump: 6 of 6 replies the same, counts the same;the two d3 loads: 6 of 6 replies the same, counts the same;d7's dump: 756 steps, type draft-mtp, verify reject, 5292 candidate rows;
+tree-check	OK	756 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 0 with a second block
+tree	OK	rc=0; 69 lines in shapes.csv

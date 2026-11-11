@@ -1,0 +1,59 @@
+ok   hand-made dump is consistent: 2 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 0 with a second block
+ok   the continuation is rebuilt from the next step (12, 21)
+ok   best-first order by path probability [(0, 0), (1, 0), (0, 1), (1, 0), (1, 1), (1, 1)]
+ok   path probabilities [0.6, 0.42, 0.4, 0.36, 0.18, 0.04]
+ok   tree tau at budgets 1, 2, 3, 4, 6: [1, 1, 2, 3, 3]
+ok   the walk (11, 21) accepts nothing
+ok   the n-gram chain (12, 21, 99) accepts 2
+ok   factorized path probabilities [0.6, 0.468, 0.4, 0.312, 0.132, 0.088]
+ok   an n_acc that the drafts and the target's tokens contradict is caught
+ok   synthetic dump is consistent: 6000 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 0 with a second block
+ok   node values match path probabilities over 16 ranks (largest |z| 2.58)
+ok   tau at budget 3: 2.001 against 2.009
+ok   tau at budget 8: 2.603 against 2.616
+ok   tau at budget 16: 3.041 against 3.072
+ok   chain acceptance falls with the position
+ok   within the walk's depth the best-first tree accepts at least the chain
+ok   hand-made second-block dump is consistent: 3 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 3 with a second block
+ok   the continuation is rebuilt by position across steps (11 99 31 41 51 61 71)
+ok   steps counted per position, the request's end censored: [(3, 0), (3, 0), (2, 1), (2, 1)]
+ok   P_1..P_4 [1.0, 0.6667, 0.5, 0.5] (1, 2/3, 1/2, 1/2)
+ok   conditional [1.0, 0.6667, 1.0, 1.0] (1, 2/3, 1, 1)
+ok   P_j on the steps whose continuation is known to the whole block (1, 1/2, 1/2, 1/2)
+ok   tau(k) = 1 + the sum of P_j, S(k) = tau / (1 + d + k r)
+ok   the width table: same 1.0, P_2 of the draft 0.5 and of the block 0.5
+ok   the server's grammar flag splits the steps (1 and 2)
+ok   the tree tables take the second block's lattice by default (4 positions) and the draft's own on request (2)
+ok   segments by position: reasoning until its close, a tool call between its markers
+ok   tool markers alone
+ok   no markers, no segments
+ok   a step takes the segment of its anchor token
+ok   synthetic second-block dump is consistent: 8000 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 8000 with a second block
+ok   text: P_1..P_7 and the conditionals within sampling error (largest |z| 1.12 and 1.81)
+ok   tool: P_1..P_7 and the conditionals within sampling error (largest |z| 2.08 and 1.96)
+ok   two context bins ['0-4095', '>=16384']
+ok   the short-context bin carries the tool tail (largest |z| 2.08 and 1.96)
+ok   the selector's path probability equals the true P_j (mean of the two groups)
+ok   a request's end censors positions 4 to 7 only
+ok   P_j on the steps with a full continuation agrees with P_j on all steps with the position known
+ok   the draft equals the second block's walk on 0.9 of the steps (0.902)
+ok   tau at 6 drafted tokens 4.035 against 4.020
+ok   the reference tails: the note's est. drafts 5 or more at r = 0.08, the collapsing tail 4 or fewer
+ok   gguf_markers reads the vocabulary from a GGUF header past scalar and numeric-array values
+ok   hand-made MTP steps are consistent: 2 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 0 with a second block
+ok   a sibling at position 2 takes the target's token: tau 3
+ok   with a sibling at position 1 only, the step keeps tau 2
+ok   a walk token drafted outside the top 2 has the best candidate as its sibling
+ok   the full 2x2 tree accepts the off-walk path (11, 22)
+ok   the full 2x2 tree keeps the walk's token at position 1 and stops at 2
+ok   the walk accepts 1; best-first of 2 nodes too
+ok   random MTP steps are consistent: 4000 steps, 0 problems, 0 gaps between consecutive steps of a request, 0 stops at an end-of-generation token, 0 with a second block
+ok   position 1: the target's token among the 1 best other candidates on 0.474 of 1609 rejections (want 0.5, |z| 2.07)
+ok   position 1: the target's token among the 2 best other candidates on 0.687 of 1609 rejections (want 0.7, |z| 1.16)
+ok   position 2: the target's token among the 1 best other candidates on 0.492 of 924 rejections (want 0.5, |z| 0.46)
+ok   position 2: the target's token among the 2 best other candidates on 0.653 of 924 rejections (want 0.7, |z| 3.14)
+ok   position 3: the target's token among the 1 best other candidates on 0.474 of 567 rejections (want 0.5, |z| 1.22)
+ok   position 3: the target's token among the 2 best other candidates on 0.668 of 567 rejections (want 0.7, |z| 1.64)
+ok   siblings 2x3 on a walk of 3: tau 2.561 against 2.568, 6 nodes
+ok   a tree never accepts less than its own walk
+selftest passed

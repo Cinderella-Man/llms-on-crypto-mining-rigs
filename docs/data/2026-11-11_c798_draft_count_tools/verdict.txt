@@ -1,0 +1,5 @@
+VERDICT PASS
+checks: 34 of 34 OK
+d7 with and without the dump: 6 of 6 replies the same, counts the same
+the two d3 loads: 6 of 6 replies the same, counts the same
+d7's dump: 756 steps, type draft-mtp, verify reject, 5292 candidate rows
