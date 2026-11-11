@@ -9,9 +9,10 @@
 #           llama-server and ggml-rpc-server (cpu), C762's server check with its RPC arms (server), "off": test-llama-archs
 #           on every architecture with every switch off (and C762's two arms) against the logits of BASE (the base
 #           branch's static native CPU build): the merged tree computes what the base computes, ctest, and the rig
-#           tarball (TESTS=1, sm_61, no AVX) with test-llama-archs in its bin/ (build)
+#           tarball (TESTS=1, sm_61, no AVX) with test-llama-archs in its bin/ (build); MAIN_STEPS chooses among them
 #   prep    a folder for each check below with the main build's CPU binaries (every one in build/bin), the RPC build's
-#           (c738) and the rig tree hardlinked in, as each script's own cpu and build steps leave them
+#           (c738) and the rig tree hardlinked in, as each script's own cpu and build steps leave them, and this
+#           repository (each script runs from $WORK/repo: its containers mount $WORK, not REPO)
 #   c748 c735 c693 c619 c738 c740 c761 c741 c615   each branch's checks.sh without its cpu, ctest and build steps
 #           (main's), and without the steps that build a control tree of their own (C735's nohalf) or a test merge
 #           (C615's merge); a branch's off step runs where it sets its switch (C693, C738, C761, C741, C615)
@@ -37,7 +38,7 @@
 #   C748_BEFORE (bin/ of C748's control build, for its kvonly step), SASS_BUILDS ('<label>=<rig tarball tree>[@<parent
 #   label>] ...': a branch build on another listed branch names it),
 #   LINK_FROM (record_checks.sh's), NIGHT_SET (the v4night set folder), BRANCH (default pascal-p106-v4-b12246-day),
-#   JOBS (8), THREADS (8), DOCKER_ARGS, IMAGE, STEPS
+#   JOBS (8), THREADS (8), DOCKER_ARGS, IMAGE, STEPS, MAIN_STEPS (C762's steps for main, default all five)
 # Output: $M/summary.tsv (row, check, verdict, detail: each script's own verdict lines), $M/logs/<step>.out,
 #   $M/logs/day.log; done when $M/DONE exists
 set -uo pipefail
@@ -77,14 +78,16 @@ if step main; then
     mkdir -p "$M/main/rig" "$M/main/cpu"
     if [ ! -d "$SRC/.git" ]; then
         git clone -q --local --no-checkout "${SEED_SRC:?SEED_SRC=<a llama.cpp clone with the fork as remote fork>}" "$SRC" &&
-            git -C "$SRC" remote add fork "$(git -C "$SEED_SRC" remote get-url fork)"
+            git -C "$SRC" remote add fork "$(git -C "$SEED_SRC" remote get-url fork)" &&
+            git -C "$SRC" remote set-url origin "$(git -C "$SEED_SRC" remote get-url origin)"
     fi
     [ -d "$M/main/rig/ccache" ] || [ -z "${SEED_CCACHE:-}" ] || nice -n 19 cp -a "$SEED_CCACHE" "$M/main/rig/ccache"
     [ -d "$M/main/cpu/ccache" ] || [ -z "${SEED_CPU_CCACHE:-}" ] || nice -n 19 cp -a "$SEED_CPU_CCACHE" "$M/main/cpu/ccache"
+    rm -rf "$M/main/repo" && cp -al "$REPO" "$M/main/repo"
     n=$(($(lines "$M/main/summary.tsv") + 1))
-    env WORK="$M/main" REPO="$REPO" SRC="$SRC" BRANCH="$BRANCH" BASE_CPU="$BASE" BASE_SRV="$BASE" JOBS="$JOBS" \
-        THREADS="$THREADS" LOCK="$LOCK" DOCKER_ARGS="$DA" STEPS='cpu server off ctest build' nice -n 19 \
-        bash "$D/2026-11-11_c762_draft_rows/run/checks.sh" > "$M/logs/main.out" 2>&1
+    env WORK="$M/main" REPO="$M/main/repo" SRC="$SRC" BRANCH="$BRANCH" BASE_CPU="$BASE" BASE_SRV="$BASE" JOBS="$JOBS" \
+        THREADS="$THREADS" LOCK="$LOCK" DOCKER_ARGS="$DA" STEPS="${MAIN_STEPS:-cpu server off ctest build}" nice -n 19 \
+        bash "$M/main/repo/docs/data/2026-11-11_c762_draft_rows/run/checks.sh" >> "$M/logs/main.out" 2>&1
     log "main rc=$?"
     take main "$M/main/summary.tsv" "$n"
 fi
@@ -97,21 +100,23 @@ if step prep; then
     B=$M/main/cpu/tip/tree/build/bin
     for r in $ROWS; do
         rm -rf "$M/$r/cpu/tip/bin" && mkdir -p "$M/$r/cpu/tip" "$M/$r/rig"
+        rm -rf "$M/$r/repo" && cp -al "$REPO" "$M/$r/repo"
         cp -al "$B" "$M/$r/cpu/tip/bin"
         [ -n "$T" ] && [ ! -e "$M/$r/rig/$(basename "$T")" ] && cp -al "$T" "$M/$r/rig/"
     done
     rm -rf "$M/c738/cpu/rpc/bin" && mkdir -p "$M/c738/cpu/rpc" && cp -al "$M/main/cpu/rpc/tree/build/bin" "$M/c738/cpu/rpc/bin"
     rm -rf "$M/c748/cpu/before" && mkdir -p "$M/c748/cpu/before" && cp -a "${C748_BEFORE:?C748_BEFORE=<bin/ of C748's control>}" "$M/c748/cpu/before/bin"
+    rm -rf "$M/main/repo" && cp -al "$REPO" "$M/main/repo"
     log "prep done: $(du -sh "$M" | cut -f1) in $M"
 fi
 
-# <row> <data folder> <steps> [env...]: the branch's checks.sh on the merged tree in $M/<row>
+# <row> <data folder> <steps> [env...]: the branch's checks.sh on the merged tree in $M/<row>, from $M/<row>/repo
 row() {
     local r=$1 f=$2 s=$3 n
     shift 3
     n=$(($(lines "$M/$r/summary.tsv") + 1))
-    env WORK="$M/$r" REPO="$REPO" SRC="$SRC" BRANCH="$BRANCH" JOBS="$JOBS" THREADS="$THREADS" LOCK="$LOCK" \
-        DOCKER_ARGS="$DA" STEPS="$s" "$@" nice -n 19 bash "$D/$f/run/checks.sh" > "$M/logs/$r.out" 2>&1
+    env WORK="$M/$r" REPO="$M/$r/repo" SRC="$SRC" BRANCH="$BRANCH" JOBS="$JOBS" THREADS="$THREADS" LOCK="$LOCK" \
+        DOCKER_ARGS="$DA" STEPS="$s" "$@" nice -n 19 bash "$M/$r/repo/docs/data/$f/run/checks.sh" > "$M/logs/$r.out" 2>&1
     log "$r rc=$?"
     take "$r" "$M/$r/summary.tsv" "$n"
 }
