@@ -1,0 +1,17 @@
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ron = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rbon = rboff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rhon = rhoff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+base: no LLAMA_DRAFT_EMBD_DEV line (the table where it was)
+off: no LLAMA_DRAFT_EMBD_DEV line (the table where it was)
+roff: no LLAMA_DRAFT_EMBD_DEV line (the table where it was)
+rboff: no LLAMA_DRAFT_EMBD_DEV line (the table where it was)
+rhoff: no LLAMA_DRAFT_EMBD_DEV line (the table where it was)
+on: the table with the layer on the CPU (CPU )
+ron: the table in RPC0[127.0.0.1:50763] with the layer; the override to RPC0[127.0.0.1:50762] not applied
+rbon: the table in RPC0[127.0.0.1:50763] with the layer; the override to RPC0[127.0.0.1:50762] not applied
+rhon: the table in RPC0[127.0.0.1:50763] with the layer; the override to RPC0[127.0.0.1:50762] not applied
+rhon = rhoff: 7863 hashed draft nodes, the same names, types, shapes and bytes, 1661 of them mtp_tok_embd
+mtp_tok_embd gathered in RPC0[127.0.0.1:50762] (rhoff) and RPC0[127.0.0.1:50763] (rhon)
+PASS

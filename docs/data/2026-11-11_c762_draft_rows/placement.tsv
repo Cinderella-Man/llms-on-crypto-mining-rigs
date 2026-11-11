@@ -1,0 +1,10 @@
+arm	switch_lines	table_in	override_not_applied	hashed_draft_nodes	tok_embd_buffers
+base	0	-	-	0	-
+off	0	-	-	0	-
+on	2	CPU 	-	0	-
+roff	0	-	-	0	-
+ron	3	RPC0[127.0.0.1:50763] 	RPC0[127.0.0.1:50762] 	0	-
+rboff	0	-	-	0	-
+rbon	3	RPC0[127.0.0.1:50763] 	RPC0[127.0.0.1:50762] 	0	-
+rhoff	0	-	-	7863	RPC0[127.0.0.1:50762] x1661
+rhon	3	RPC0[127.0.0.1:50763] 	RPC0[127.0.0.1:50762] 	7863	RPC0[127.0.0.1:50763] x1661
