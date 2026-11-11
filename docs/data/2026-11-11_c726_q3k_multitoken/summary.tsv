@@ -1,0 +1,12 @@
+check	verdict	detail
+build	OK	rc=0; llama.cpp-20261111-77343063d-pascal-p106-v4-b12246-c726.tar.gz md5 e2cbfd77f53014112d929b94fff90f88, 662639042 B; commit: 77343063d2536884e086046311f0b20c1c4d9467 (2026-11-11 12:06:42 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 d1af76cc8cf5628f79d77f7404671fb3
+sass-others	SAME	rc=0; 194 objects: 193 the same as the base, new: mmvq-pascal-q3kmt.cu.o ; differ: none
+sass-q3kmt	OK	28 instantiations, 0 with stack or local memory; registers 136-253
+record	OK	rc=0; 2026-11-11T12:27:17+01:00 tar: $WORK/sets/q3kmt.tar 408965120 bytes, md5 bb5c27c123efe68eae489a0e1a3a5a8c; manifest lines 170, runs 12; q3kmt.tar 408965120 B, md5 bb5c27c123efe68eae489a0e1a3a5a8c
+bitid-build	OK	rc=0; md5 91d6e938b73aa3abbc39781ed6f292a6
+cpu	OK	rc=0; commit 77343063d2536884e086046311f0b20c1c4d9467 CUDA: Q3_K's 2-8-token kernel leaves products of one warp a block to the k-column kernel (C726); 3 warning lines, 0 error lines
+off-base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-q3kmt	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+bitid-build-merged	OK	the harness rebuilt from multitoken_bitid.cpp as merged with C750's bf16 and C754's f32 modes (q3k unchanged: 2-8 tokens, the same shapes): md5 0a03968ce43f4e1357b401a6c95e9484

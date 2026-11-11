@@ -64,6 +64,10 @@
 #                 cuBLAS at 4-8 tokens (off) and with GGML_CUDA_MMVF_F32_MT=1 and =2 (C754: mul_mat_vec_f, each token's
 #                 one-token sums), and the fault that adds only the first half of each row of the products that switch
 #                 takes (docs/data/2026-11-11_c754_f32_mmvf). Its runs-ptx.tsv runs them on a newer card at =2
+#   q3kmt         Q3_K's products of 1-8 tokens (Qwen3.8-Flash-Next's Q3_K attention and recurrent projections and the
+#                 shared expert's Q3_K products among them) with the 2-8-token kernel in the k-column kernel's order
+#                 (GGML_CUDA_MMVQ_PASCAL_Q3K_MT, C726) at each setting, under the Flash-Next preset's k-column switches,
+#                 without it, and its fault (docs/data/2026-11-11_c726_q3k_multitoken)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -72,7 +76,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -103,6 +107,7 @@ LID='n_cells=|nh=4,|nb=(1|32),'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
+Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
 # the top-k cases at Flash-Next's vocabulary
 TKV='ne=\[248320,'
 # BF16's 2-D products of 1-8 tokens, and those GGML_CUDA_MMVF_PASCAL_EXACT's 32-lane kernel takes on 5 SMs (3-4 tokens,
@@ -137,6 +142,8 @@ suite_filters() {
             printf '%s\t%s\n' RANGE_MASK '.' ;;
         dmt)
             printf '%s\t%s\n' MUL_MAT "$DMT" ;;
+        q3kmt)
+            printf '%s\t%s\n' MUL_MAT "$Q3MT" ;;
         top-k-rows)
             printf '%s\t%s\n' TOP_K "$TKV" TOP_K_ROWS '.' ;;
         qsa-union)
@@ -261,6 +268,19 @@ suite_runs() {
                      "dmt-skip-iq4xs:$KP $M=1 ${M}_SKIP=iq4_xs" "dmt-skip:$KP $M=1 ${P}_SKIP=iq4_xs,q4_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$DMT"
             done ;;
+        q3kmt)
+            # C726, as dmt: the preset's k-column switches, then the kernel's settings (R = 1 by default, forced to 2;
+            # without the prefetch; fewer warps; no slot padding), without the preset, off, the k-column kernel off or
+            # without Q3_K (the new kernel follows it), and the fault (each token takes the next token's activations),
+            # which must fail cases
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_Q3K_MT"
+            for r in "q3kmt-on:$KP $M=1" "q3kmt-nopf:$KP $M=2" "q3kmt-r2:$KP $M=1 ${M}_R=2" \
+                     "q3kmt-r2-nopf:$KP $M=2 ${M}_R=2" "q3kmt-nw1:$KP $M=1 ${M}_NW=1" "q3kmt-nw2:$KP $M=1 ${M}_NW=2" \
+                     "q3kmt-pad0:$KP $M=1 ${M}_PAD=0" "q3kmt-defaults:$M=1" "q3kmt-off:$KP" \
+                     "q3kmt-kcol-skip:$KP $M=1 ${P}_KCOL_SKIP=q3_K" "q3kmt-kcol-off:$M=1 ${P}_KCOL=0"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q3MT"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' q3kmt-fault "$KP $M=1 ${M}_FAULT=1" MUL_MAT "$Q3MT" ;;
         top-k-rows)
             # C691: no CUDA switch (the change is in the graph); the op at the vocabulary's width, and its rows
             printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;

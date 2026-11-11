@@ -30,6 +30,13 @@
 // the router 2560 -> 512) and at row widths that take mul_mat_vec_f's other block sizes (64, 100, 300) and a wide row
 // (6144); with the switch at 0, cuBLAS takes 4-8 tokens and those differ. Run as is on a P106, or with
 // GGML_CUDA_MMVF_F32_MT=2 on a newer GPU.
+// `multitoken_bitid q3k` checks Q3_K's dense products at 2 to 8 tokens (C726: the kernel of mmvq-pascal-q3kmt.cu with
+// GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 or 2, whose one-token kernel is the k-column kernel), at Qwen3.8-Flash-Next's Q3_K
+// projections (2560 -> 10240, 6144 and 12288; 6144 -> 2560; the shared expert's 2560 -> 640), at row widths that give 1
+// to 32 lanes per row, and at widths whose activations pass the kernel's shared memory from 3 or 4 tokens on. With the
+// switch at 0 the k-column kernel takes every product of 1 to 8 tokens, whose sums are already the one-token ones, so
+// that run also gives 0 differences; GGML_CUDA_MMVQ_PASCAL_Q3K_MT_FAULT=1 (each token takes the next token's
+// activations) must give differences.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -146,8 +153,15 @@ int main(int argc, char ** argv) {
     const bool dmt    = argc > 1 && strcmp(argv[1], "dmt") == 0;
     const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
     const bool f32    = argc > 1 && strcmp(argv[1], "f32") == 0;
-    const int  n_max  = f32 ? 8 : 4;
-    const mode_cfg cfg = ornith
+    const bool q3k    = argc > 1 && strcmp(argv[1], "q3k") == 0;
+    const int  n_max  = f32 || q3k ? 8 : 4;
+    const mode_cfg cfg = q3k
+        ? mode_cfg{ { GGML_TYPE_Q3_K },
+                    { { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 }, { 2560, 6144 }, { 640, 2560 }, { 4097, 2560 },
+                      { 200, 512 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 }, { 96, 12288 },
+                      { 333, 768 } },
+                    1, 1, 256, 256, true, 0 }
+        : ornith
         ? mode_cfg{ { GGML_TYPE_IQ2_S, GGML_TYPE_IQ3_XXS, GGML_TYPE_N2P, GGML_TYPE_N3P, GGML_TYPE_Q8_0, GGML_TYPE_Q5_0 },
                     { { 8192, 3072 }, { 3072, 8192 }, { 3072, 1024 }, { 1024, 3072 }, { 4097, 3072 } },
                     16, 8, 3072, 1024, true, 3 }

@@ -25,6 +25,8 @@ import argparse, collections, hashlib, json, os, re
 ap = argparse.ArgumentParser()
 ap.add_argument("served"); ap.add_argument("--parts", required=True); ap.add_argument("--out", required=True)
 ap.add_argument("--loads", default="warm,prof"); ap.add_argument("--requests", type=int, default=2)
+# the switch's types (ggml type names): C722's by default; C726's rig run passes q3_K
+ap.add_argument("--types", default="iq4_xs,q4_K")
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 runs = sorted((d for d in os.listdir(a.served) if re.fullmatch(r"\d+-\w+", d) and os.path.isdir(os.path.join(a.served, d))),
@@ -85,7 +87,7 @@ for r in runs:
             parts[(r, f[0], "passes")] = int(f[2])
 types = sorted({t for (_, _, _, t) in prod})
 ATT = ("attn_qkv", "attn_gate", "attn_q", "ssm_out", "attn_output")
-SW = ("iq4_xs", "q4_K")
+SW = tuple(a.types.split(","))
 first_run = next(iter(traces))[0] if traces else ""
 names = sorted({n for (r, _, n, t) in prod if t in SW}, key=lambda n: -sum(prod[(first_run, tr, n, t)] for (rr, tr) in traces
                                                                             if rr == first_run for t in SW))
@@ -126,7 +128,7 @@ print("|---|---|---|---|---" + "|---:" * (len(cols) - 5) + "|")
 for x in reps:
     print("| " + " | ".join(fmt(x[c]) for c in cols) + " |")
 print("\n## The one-op weight products per verify pass, all cards, ms\n")
-print("| run | trace | passes | " + " | ".join(types) + " | IQ4_XS + Q4_K | attention and recurrent projections | sum of the parts |")
+print("| run | trace | passes | " + " | ".join(types) + f" | {' + '.join(t.upper() for t in SW)} | attention and recurrent projections | sum of the parts |")
 print("|---|---|---:" + "|---:" * (len(types) + 3) + "|")
 for (r, tr) in traces:
     by_t, sw, att = row(r, tr)

@@ -255,7 +255,7 @@ BIN=$R/<tarball>/bin OUT=$R/out SET=$R/dmt REPLAY=$R/replay_checks.sh BITID=$R/m
 
 - **Q3_K at 2–8 tokens** (Q1285; 5.42, 4.95, 2.14 and 0.83 ms at four tokens): already exact; a kernel in the
   k-column kernel's order with two rows per lane group and the activations staged once (est. 302 load-store clocks a
-  warp iteration against 494).
+  warp iteration against 494). Written: [2026-11-11_c726_q3k_multitoken](../2026-11-11_c726_q3k_multitoken/README.md).
 - **Q6_K** (Q1286; attn_output and ssm_out, 6,144 wide): this kernel with 2-byte-aligned super-block reads.
 - **The shape at K = 6,144** (Q1287): whole-K activation staging leaves 2 to 3 warps a block (and C690's Q5_K kernel,
   at its default R = 2, one); K tiles or another split, after the rig's `perf` step.
