@@ -248,11 +248,15 @@ suite_runs() {
         qsa-prompt)
             suite_runs_qsa_prompt 1 ;;
         q5kmt)
-            # the Flash-Next preset's k-column switches (release/flash-next-v3/settings.env), then the kernel's settings
+            # the Flash-Next preset's k-column switches (release/flash-next-v3/settings.env), then the kernel's settings,
+            # each run naming its rows per lane group and its prefetch, so that it runs the same kernel on builds before
+            # and after C766 changed the defaults (R = 2 with the prefetch before, R = 1 without it since; `defaults`
+            # is the build's own)
             local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_Q5K_MT"
-            for r in "q5kmt-on:$KP $M=1" "q5kmt-nopf:$KP $M=2" "q5kmt-nw2:$KP $M=1 ${M}_NW=2" "q5kmt-nw1:$KP $M=1 ${M}_NW=1" \
-                     "q5kmt-r1:$KP $M=1 ${M}_R=1" "q5kmt-r1-nopf:$KP $M=2 ${M}_R=1" \
-                     "q5kmt-r1-nw1:$KP $M=1 ${M}_R=1 ${M}_NW=1" "q5kmt-defaults:$M=1" "q5kmt-off:$KP" \
+            for r in "q5kmt-on:$KP $M=1 ${M}_R=2 ${M}_PF=1" "q5kmt-nopf:$KP $M=2 ${M}_R=2" \
+                     "q5kmt-nw2:$KP $M=1 ${M}_R=2 ${M}_PF=1 ${M}_NW=2" "q5kmt-nw1:$KP $M=1 ${M}_R=2 ${M}_PF=1 ${M}_NW=1" \
+                     "q5kmt-r1:$KP $M=1 ${M}_R=1 ${M}_PF=1" "q5kmt-r1-nopf:$KP $M=2 ${M}_R=1" \
+                     "q5kmt-r1-nw1:$KP $M=1 ${M}_R=1 ${M}_PF=1 ${M}_NW=1" "q5kmt-defaults:$M=1" "q5kmt-off:$KP" \
                      "q5kmt-skip:$KP $M=1 ${P}_SKIP=q5_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q5MT"
             done ;;

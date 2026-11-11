@@ -1,0 +1,8 @@
+check	verdict	detail
+build-rig	OK	llama.cpp-20261111-9cb1b4a14-pascal-p106-v4-b12246-c766; commit: 9cb1b4a14def9bbe8e2c7c0cd5a90a025d286e3a (2026-11-11 13:19:32 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-9cb1b4a14-pascal-p106-v4-b12246-c766/bin
+sass	SAME	rc=0/0; objects 193, functions base 8952 tip 8952, same 8952, differ 0, base only 0, tip only 0; llama-server functions 8847 / 8847, same 8847; q5k instantiations 12; problems 0; sass_check.sh counts same; Build cuda_12.9.r12.9/compiler.36001619_0; 0/0 error lines
+cpu-tip	OK	rc=0; commit 9cb1b4a14def9bbe8e2c7c0cd5a90a025d286e3a mmvq-pascal-q5k: GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 runs one row per lane group without the register prefetch (C766); all targets; 3 warning lines, 0 error lines
+off-base	OK	rc=0; the base (5b329df16) test-llama-archs: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
