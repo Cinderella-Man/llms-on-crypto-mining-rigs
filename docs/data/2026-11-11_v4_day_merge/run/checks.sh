@@ -105,7 +105,7 @@ if step prep; then
         [ -n "$T" ] && [ ! -e "$M/$r/rig/$(basename "$T")" ] && cp -al "$T" "$M/$r/rig/"
     done
     rm -rf "$M/c738/cpu/rpc/bin" && mkdir -p "$M/c738/cpu/rpc" && cp -al "$M/main/cpu/rpc/tree/build/bin" "$M/c738/cpu/rpc/bin"
-    rm -rf "$M/c748/cpu/before" && mkdir -p "$M/c748/cpu/before" && cp -a "${C748_BEFORE:?C748_BEFORE=<bin/ of C748's control>}" "$M/c748/cpu/before/bin"
+    rm -rf "$M/c748/cpu/before" && mkdir -p "$M/c748/cpu/before" && cp -a "${C748_BEFORE:?C748_BEFORE=<bin/ of the C748 control build>}" "$M/c748/cpu/before/bin"
     rm -rf "$M/main/repo" && cp -al "$REPO" "$M/main/repo"
     log "prep done: $(du -sh "$M" | cut -f1) in $M"
 fi
