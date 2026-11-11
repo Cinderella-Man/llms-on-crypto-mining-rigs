@@ -1,0 +1,33 @@
+# sass_attrib.py attrib: llama-server, SASS
+merged 8483 functions: base 8428, c726 28, c749 1, c750 8, c757 14, c767 4; listed 0
+  c750: changed 8 functions, 8 of them in the merged build with its code
+  c754: changed 0 functions, 0 of them in the merged build with its code
+  c726: changed 28 functions, 28 of them in the merged build with its code
+  c757: changed 14 functions, 14 of them in the merged build with its code
+  c758: changed 0 functions, 0 of them in the merged build with its code
+  c766: changed 0 functions, 0 of them in the merged build with its code
+  c767: changed 4 functions, 4 of them in the merged build with its code
+  c749: changed 1 functions, 1 of them in the merged build with its code
+verdict: OK
+
+# sass_attrib.py attrib: llama-server, PTX
+merged 8483 functions: base 8418, c726 28, c749 1, c750 8, c757 14, c767 4; listed 10
+  c750: changed 8 functions, 8 of them in the merged build with its code
+  c754: changed 0 functions, 0 of them in the merged build with its code
+  c726: changed 38 functions, 28 of them in the merged build with its code
+  c757: changed 24 functions, 14 of them in the merged build with its code
+  c758: changed 0 functions, 0 of them in the merged build with its code
+  c766: changed 0 functions, 0 of them in the merged build with its code
+  c767: changed 4 functions, 4 of them in the merged build with its code
+  c749: changed 1 functions, 1 of them in the merged build with its code
+  LOST: _Z15flash_attn_tileILi128ELi128ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi128ELi128ELi1ELi2ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi128ELi128ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi128ELi128ELi2ELi1ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi256ELi256ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi256ELi256ELi1ELi2ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi256ELi256ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi256ELi256ELi2ELi1ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi64ELi64ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+  LOST: _Z15flash_attn_tileILi64ELi64ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: changed by c726 c757; the merged build has the base's code
+verdict: CHECK

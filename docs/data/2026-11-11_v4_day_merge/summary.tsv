@@ -1,0 +1,297 @@
+row	check	verdict	detail
+main	cpu-tip	OK	rc=0; commit 18d0fa309986f206f501d490e4065f5610eec234 Merge -c767 (C767: GGML_CUDA_MMVQ_PASCAL_Q5K_1R, the one-token Q5_K products on C690's kernel) into -day (C773); all targets, GGML_RPC=OFF; 3 warning lines, 0 error lines
+main	cpu-rpc	OK	rc=0; commit 18d0fa309986f206f501d490e4065f5610eec234 Merge -c767 (C767: GGML_CUDA_MMVQ_PASCAL_Q5K_1R, the one-token Q5_K products on C690's kernel) into -day (C773); llama-server ggml-rpc-server, GGML_RPC=ON; 3 warning lines, 0 error lines
+main	models	OK	qwen4exp-moe-mtp-draft.gguf: 58 tensors (no block below 2), token embeddings in Q8_0; qwen4exp-moe-mtp.gguf 32807008 qwen4exp-moe-mtp-draft.gguf 13952032 
+main-try1	server	FAIL	rc=127; 
+main	off-base	OK	rc=0; $BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+main	off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+main	off-on	SAME	rc=0; LLAMA_DRAFT_EMBD_DEV=layer; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+main	off-hash	SAME	rc=0; LLAMA_TENSOR_HASH=attn_norm,ffn_inp,result_norm; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+main	ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+main-try1	build-rig	FAIL	rc=128; 0 error lines in logs/rig.log
+main-try1	build-extra	FAIL	rc=1; logs/extra.log
+main	models	OK	qwen4exp-moe-mtp-draft.gguf: 58 tensors (no block below 2), token embeddings in Q8_0; qwen4exp-moe-mtp.gguf 32807008 qwen4exp-moe-mtp-draft.gguf 13952032 
+main	server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ron = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);rbon = rboff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);rhon = rhoff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);base: no LLAMA_DRAFT_EMBD_DEV line (the table where it was);off: no LLAMA_DRAFT_EMBD_DEV line (the table where it was);roff: no LLAMA_DRAFT_EMBD_DEV line (the table where it was);rboff: no LLAMA_DRAFT_EMBD_DEV line (the table where it was);rhoff: no LLAMA_DRAFT_EMBD_DEV line (the table where it was);on: the table with the layer on the CPU (CPU );ron: the table in RPC0[127.0.0.1:50763] with the layer; the override to RPC0[127.0.0.1:50762] not applied;rbon: the table in RPC0[127.0.0.1:50763] with the layer; the override to RPC0[127.0.0.1:50762] not applied;rhon: the table in RPC0[127.0.0.1:50763] with the layer; the override to RPC0[127.0.0.1:50762] not applied;rhon = rhoff: 7863 hashed draft nodes, the same names, types, shapes and bytes, 1661 of them mtp_tok_embd;mtp_tok_embd gathered in RPC0[127.0.0.1:50762] (rhoff) and RPC0[127.0.0.1:50763] (rhon);
+main-try1	build-rig	FAIL	rc=128; 0 error lines in logs/rig.log
+main-try1	build-extra	FAIL	rc=1; logs/extra.log
+main	build-rig	OK	llama.cpp-20261111-18d0fa309-pascal-p106-v4-b12246-day; commit: 18d0fa309986f206f501d490e4065f5610eec234 (2026-11-11 14:27:22 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+main	build-extra	OK	test-llama-archs in llama.cpp-20261111-18d0fa309-pascal-p106-v4-b12246-day/bin
+c748	kvonly-tip-plain-s1	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-tip-plain-s2	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-tip-plain-s3	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-tip-dev1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-dev1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-dev1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-dev1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-dev1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-dev1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+c748	kvonly-tip-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+c748	kvonly-before-plain-s1	AS-EXPECTED	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-before-plain-s2	AS-EXPECTED	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-before-plain-s3	AS-EXPECTED	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-before-dev1-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-dev1-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-dev1-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-dev1check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-dev1check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-dev1check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage1-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage1-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage1-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage1check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage1check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage1check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage2check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage2check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-stage2check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-qsa4check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-qsa4check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 5 test(s) executed, 4 failed
+c748	kvonly-before-qsa4check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 5 test(s) executed, 4 failed
+c748	overlap-plain-s1	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	overlap-plain-s2	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	overlap-plain-s3	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	overlap-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	overlap-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	overlap-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	overlap-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	overlap-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	overlap-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-plain-s1	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-rig-plain-s2	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-rig-plain-s3	OK	rc=0; ; Summary: all 5 test(s) passed
+c748	kvonly-rig-dev1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-dev1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-dev1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-dev1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-dev1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-dev1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage1-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage1-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage1-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+c748	kvonly-rig-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 5 test(s) passed
+c735	incall-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	incall-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	incall-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	incall-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-tip-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-tip-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-tip-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	overlap-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	overlap-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	overlap-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	overlap-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	overlap-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	overlap-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	overlap-tip-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	overlap-tip-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	overlap-tip-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	kvonly-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	kvonly-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	kvonly-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	kvonly-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	kvonly-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	kvonly-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	context	OK	3 models; 72 case runs, 0 FAIL; store_at/store_at_p OK in 6 runs; MTP model: qwen4exp-moe-mtp.gguf
+c735	server	OK	off = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);ovl = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);incall = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);incall2 = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);both = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);both2 = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);incall4 = base4 (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);both4 = base4 (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);sincall = sbase (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 30 checkpoints at the same token counts; 70 verify steps the same);sboth = sbase (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 30 checkpoints at the same token counts; 70 verify steps the same);incall: 9 checkpoints taken inside a call;incall2: 8 checkpoints taken inside a call;both: 9 checkpoints taken inside a call;both2: 8 checkpoints taken inside a call;incall4: 9 checkpoints taken inside a call;both4: 9 checkpoints taken inside a call;sincall: 16 checkpoints taken inside a call;sboth: 16 checkpoints taken inside a call;ovl: the overlap is on; 15 catch-ups ran after the next call was queued;both: the overlap is on; 6 catch-ups ran after the next call was queued;both2: the overlap is on; 7 catch-ups ran after the next call was queued;both4: the overlap is on; 6 catch-ups ran after the next call was queued;sboth: the overlap is on; 9 catch-ups ran after the next call was queued;incall2: 4 checkpoint(s) moved to the host;both2: 4 checkpoint(s) moved to the host;bboth (the control, the base with both switches): bboth differs from base at Q2; 0 checkpoints inside a call, 2 erased (expected);
+c735	incall-rig-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	incall-rig-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	incall-rig-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c735	incall-rig-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-rig-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-rig-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-rig-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-rig-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c735	incall-rig-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c693	hdev-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c693	hdev-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c693	hdev-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c693	hdev-tip-nopf-s1	OK	rc=0; GGML_SCHED_PREFETCH=0; Summary: all 5 test(s) passed
+c693	hdev-tip-nopf-s2	OK	rc=0; GGML_SCHED_PREFETCH=0; Summary: all 5 test(s) passed
+c693	hdev-tip-nopf-s3	OK	rc=0; GGML_SCHED_PREFETCH=0; Summary: all 5 test(s) passed
+c693	hdev-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c693	hdev-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c693	hdev-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+c693	overlap-s1	OK	rc=0; Summary: all 5 test(s) passed
+c693	overlap-s2	OK	rc=0; Summary: all 5 test(s) passed
+c693	overlap-s3	OK	rc=0; Summary: all 5 test(s) passed
+c693	off-base	OK	rc=0; $BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+c693	off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c693	off-hdev0	SAME	rc=0; LLAMA_MTP_H_DEV=0; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c693	off-hdev2	SAME	rc=0; LLAMA_MTP_H_DEV=2; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c693	off-nopf	SAME	rc=0; GGML_SCHED_PREFETCH=0; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c693	off-both	SAME	rc=0; LLAMA_MTP_H_DEV=0 GGML_SCHED_PREFETCH=0; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c693	server	OK	rc=0; 9 of 9 arms give base's tokens and draft counts on R1-R3 with the h rows where their switches put them; server/arms.tsv
+c693	hdev-rig-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c693	hdev-rig-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c693	hdev-rig-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+c619	keep-tip-plain-s1	OK	rc=0; no switch; Summary: all 8 test(s) passed
+c619	keep-tip-plain-s2	OK	rc=0; no switch; Summary: all 8 test(s) passed
+c619	keep-tip-plain-s3	OK	rc=0; no switch; Summary: all 8 test(s) passed
+c619	keep-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+c619	keep-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+c619	keep-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+c619	keep-tip-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+c619	keep-tip-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+c619	keep-tip-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+c619	regress-mtp-kv-only-s1	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+c619	regress-mtp-kv-only-s2	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+c619	regress-mtp-kv-only-s3	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+c619	regress-mtp-catchup-overlap-s1	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+c619	regress-mtp-catchup-overlap-s2	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+c619	regress-mtp-catchup-overlap-s3	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+c619	server-identity	OK	36 of 36 identical (3 variants x base, off, on x 3 replies and the dump), 0 differ; rc=0
+c619	server-builds-plain	FEWER	draft graphs of up to 8 tokens rebuilt: off 411, on 6 (compare.txt)
+c619	server-builds-short	FEWER	draft graphs of up to 8 tokens rebuilt: off 411, on 7 (compare.txt)
+c619	server-builds-pmin	FEWER	draft graphs of up to 8 tokens rebuilt: off 411, on 6 (compare.txt)
+c619	keep-rig-plain-s1	OK	rc=0; no switch; Summary: all 8 test(s) passed
+c619	keep-rig-plain-s2	OK	rc=0; no switch; Summary: all 8 test(s) passed
+c619	keep-rig-plain-s3	OK	rc=0; no switch; Summary: all 8 test(s) passed
+c619	keep-rig-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+c619	keep-rig-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+c619	keep-rig-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+c619	keep-rig-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+c619	keep-rig-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+c619	keep-rig-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+c738	vprep-tip-vp-s1	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-tip-vp-s2	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-tip-vp-s3	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-tip-vp2-s1	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-tip-vp2-s2	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-tip-vp2-s3	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-tip-fault-s1	AS-EXPECTED	rc=1; LLAMA_VERIFY_PREPARE_FAULT=1; 196 rows prepared, 26 of them failed; qwen4exp: 2 rows prepared, 0 passed; Summary: 272 test(s) executed, 26 failed
+c738	server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on1 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on2 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bon1 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bon2 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ron1 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ron2 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;on2: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;bon1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;bon2: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;ron1: 398 verify passes prepared, 0 calls not prepared, 0 inputs uploaded ahead;ron2: 398 verify passes prepared, 0 calls not prepared, 5174 inputs uploaded ahead;ron2: 5174 inputs uploaded ahead; 398 evaluations skipped copying some of them again;
+c738	off-base	OK	rc=0; $BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+c738	off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c738	off-vp1	SAME	rc=0; LLAMA_VERIFY_PREPARE=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c738	off-vp2	SAME	rc=0; LLAMA_VERIFY_PREPARE=2; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c738	vprep-rig-vp-s1	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-rig-vp-s2	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-rig-vp-s3	OK	rc=0; no variable; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-rig-vp2-s1	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-rig-vp2-s2	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+c738	vprep-rig-vp2-s3	OK	rc=0; LLAMA_VERIFY_PREPARE=2; 196 rows prepared; Summary: all 272 test(s) passed
+c740	bound-tip-plain-s1-abort1	BASE-ABORT	plamo2 Dense 4 seq: rc=134 (src/ggml.c:1929: GGML_ASSERT(view_src == NULL || view_size == 0 || view_size + view_offs <= ggml_nbytes(view_src)) failed); the switch off in both contexts: rc=134, last test: plamo2 Dense 4 seq
+c740	bound-tip-plain-s1-abort2	BASE-ABORT	plamo2 Dense 4 split: rc=134 (src/ggml.c:1929: GGML_ASSERT(view_src == NULL || view_size == 0 || view_size + view_offs <= ggml_nbytes(view_src)) failed); the switch off in both contexts: rc=134, last test: plamo2 Dense 4 split
+c740	bound-tip-plain-s1	OK	rc=0; -a .; no switch ; Summary: all 436 test(s) passed; 90971 calls for one sequence (6795 sorted, 104 scanned the used range), 21361 for every sequence, 615915 cells visited
+c740	bound-tip-plain-set-s2	OK	rc=0; -a ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; no switch ; Summary: all 27 test(s) passed; 4052 calls for one sequence (367 sorted, 10 scanned the used range), 746 for every sequence, 30993 cells visited
+c740	bound-tip-plain-set-s3	OK	rc=0; -a ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; no switch ; Summary: all 27 test(s) passed; 4255 calls for one sequence (360 sorted, 27 scanned the used range), 672 for every sequence, 30961 cells visited
+c740	bound-tip-kqmask-s1-abort1	BASE-ABORT	plamo2 Dense 4 seq: rc=134 (src/ggml.c:1929: GGML_ASSERT(view_src == NULL || view_size == 0 || view_size + view_offs <= ggml_nbytes(view_src)) failed); the switch off in both contexts: rc=134, last test: plamo2 Dense 4 seq
+c740	bound-tip-kqmask-s1-abort2	BASE-ABORT	plamo2 Dense 4 split: rc=134 (src/ggml.c:1929: GGML_ASSERT(view_src == NULL || view_size == 0 || view_size + view_offs <= ggml_nbytes(view_src)) failed); the switch off in both contexts: rc=134, last test: plamo2 Dense 4 split
+c740	bound-tip-kqmask-s1-abort3	BASE-ABORT	minimax-01 MoE 4 split: rc=134 (src/ggml.c:4317: GGML_ASSERT(cells->ne[0] == 2 && toks->ne[0] == 2 && cells->ne[2] == toks->ne[2] && cells->ne[3] == 1 && toks->ne[3] == 1) failed); the switch off in both contexts: rc=134, last test: minimax-01 MoE 4 split
+c740	bound-tip-kqmask-s1	OK	rc=0; -a .; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1 ; Summary: all 435 test(s) passed; 90848 calls for one sequence (6771 sorted, 102 scanned the used range), 21361 for every sequence, 614598 cells visited
+c740	bound-tip-qsa-s1	OK	rc=0; -a ^qwen4exp$; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1 LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1 ; Summary: all 3 test(s) passed; 840 calls for one sequence (80 sorted, 4 scanned the used range), 0 for every sequence, 5286 cells visited
+c740	bound-tip-qsa-s2	OK	rc=0; -a ^qwen4exp$; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1 LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1 ; Summary: all 3 test(s) passed; 790 calls for one sequence (86 sorted, 2 scanned the used range), 0 for every sequence, 5336 cells visited
+c740	bound-tip-qsa-s3	OK	rc=0; -a ^qwen4exp$; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1 LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1 ; Summary: all 3 test(s) passed; 870 calls for one sequence (76 sorted, 18 scanned the used range), 0 for every sequence, 7392 cells visited
+c740	bound-control-plain-s1	AS-EXPECTED	rc=1; -a ^(llama|qwen4exp|gemma3)$; no switch LLAMA_ARCHS_SEQ_RM_BOUND_ON=2; Summary: 12 test(s) executed, 10 failed; 1482 calls for one sequence (0 sorted, 0 scanned the used range), 215 for every sequence, 10103 cells visited
+c740	time	OK	rc=0; 20 rows in time.tsv; Summary: all timings ran, the memories the same
+c740	server-identity	OK	36 of 36 identical (3 variants x base, off, on x 3 replies and the dump), 0 differ; switch log lines in the on arms: 3; rc=0
+c740	server-trace65k	OK	16 of 16 identical (off, on, off, on x 3 replies and the dump), 0 differ; rm_stages.md 4 loads; rc=0
+c740	bound-rig-plain-set-s1	OK	rc=0; -a ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; no switch ; Summary: all 27 test(s) passed; 4167 calls for one sequence (362 sorted, 10 scanned the used range), 657 for every sequence, 28774 cells visited
+c740	bound-rig-plain-set-s2	OK	rc=0; -a ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; no switch ; Summary: all 27 test(s) passed; 4052 calls for one sequence (367 sorted, 10 scanned the used range), 746 for every sequence, 30993 cells visited
+c740	bound-rig-plain-set-s3	OK	rc=0; -a ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; no switch ; Summary: all 27 test(s) passed; 4255 calls for one sequence (360 sorted, 27 scanned the used range), 672 for every sequence, 30961 cells visited
+c740	bound-rig-qsa-s1	OK	rc=0; -a ^qwen4exp$; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1 ; Summary: all 3 test(s) passed; 840 calls for one sequence (80 sorted, 4 scanned the used range), 0 for every sequence, 5286 cells visited
+c761	npf-tip-s1	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+c761	npf-tip-s2	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+c761	npf-tip-s3	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+c761	server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);small = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);offtr = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ontr = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on: 4 calls planned, 4128 n-gram rows issued by the helper, 8740 by set_input, 0 differed; at most 7757824 bytes ahead (cap 50331648);small: 4 calls planned, 248 n-gram rows issued by the helper, 12620 by set_input, 0 differed; at most 65536 bytes ahead (cap 65536);ontr: 4 calls planned, 4128 n-gram rows issued by the helper, 8740 by set_input, 0 differed; at most 7757824 bytes ahead (cap 50331648);ngram calls: 425 calls, each with the same tokens, micro-batches, rows, pages and digest off and on;rows: off 12868 (helper 0), on 12868 = helper 4128 + inline 8740; 0 rows differed; 4 calls planned; pages off 6083, on 6083; window max 7757824 of cap 50331648 bytes, 0 calls over the cap;ngram calls: PASS;
+c761	off-base	OK	rc=0; $BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+c761	off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c761	off-pf1	SAME	rc=0; LLAMA_NGRAM_PREFETCH=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c761	off-stats	SAME	rc=0; LLAMA_NGRAM_PREFETCH_STATS=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c761	npf-rig-s1	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+c761	npf-rig-s2	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+c761	npf-rig-s3	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+c741	unit-1	OK	rc=0; assertions : 22; failures : 0; 2 of 2 subtests passed
+c741	unit-2	OK	rc=0; assertions : 22; failures : 0; 2 of 2 subtests passed
+c741	unit-3	OK	rc=0; assertions : 22; failures : 0; 2 of 2 subtests passed
+c741	unit-4	OK	rc=0; assertions : 22; failures : 0; 2 of 2 subtests passed
+c741	unit-5	OK	rc=0; assertions : 22; failures : 0; 2 of 2 subtests passed
+c741	server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);y1 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);y2 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);y2nt = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);by1 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);by2 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);off: each of 406 generation steps 3 yields and 3 wakes of the worker;y1: each of 406 generation steps 1 yields and 1 wakes of the worker;y2: each of 406 generation steps 1 yields and 0 wakes of the worker;boff: each of 406 generation steps 3 yields and 3 wakes of the worker;by1: each of 406 generation steps 1 yields and 1 wakes of the worker;by2: each of 406 generation steps 1 yields and 0 wakes of the worker;p2base: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 230 reads answered;p2off: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 236 reads answered;p2y1: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 186 reads answered;p2y2: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 182 reads answered;p2off: B's prompt 1 step(s) after the step it came in (p2off: 1); of 231 reads posted in a step 225 answered in a yield of that step, 6 at its end;p2y1: B's prompt 1 step(s) after the step it came in (p2off: 1); of 180 reads posted in a step 170 answered in a yield of that step, 10 at its end;p2y2: B's prompt 1 step(s) after the step it came in (p2off: 1); of 178 reads posted 
+c741	off-base	OK	rc=0; $BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+c741	off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c741	off-y2	SAME	rc=0; LLAMA_SERVER_YIELD=2; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c615	server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ons = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);cap0 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);offs = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bons = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged;bons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged;cap0: 1624 calls, every one of 1624 tokens over the cap, nothing issued, nothing found ahead;offs: 429 evaluations counted, no prefetch call;
+c615	off-base	OK	rc=0; $BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+c615	off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c615	off-dp1	SAME	rc=0; LLAMA_DRAFT_PREFETCH=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c615	off-dps	SAME	rc=0; LLAMA_DRAFT_PREFETCH=1 LLAMA_DRAFT_PREFETCH_STATS=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c615	rsrv	OK	rc=0; the rig build's llama-server on the CPU, base (unset) and ons; ons = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged;
+c615	trace	OK	rc=0; troff = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);trc = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);trc: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged;
+c615	trace-read	OK	troff: 429 evaluations; C615: draft prefetch off, cap 1024 KiB: 0 calls issued the rows of 0 tokens (0 rows, 0 already issued, 0 tokens over the cap, most 0 B of pages in a window, 0.000 ms in the calls); 429 evaluations set 12868 rows, 0 issued ahead; 415 of up to 64 tokens set 6532 rows, 0 issued ahead; pages 6221, 5759 of 5759 checked in the page cache;trc: 429 evaluations; C615: draft prefetch on, cap 1024 KiB: 1624 calls issued the rows of 1624 tokens (6420 rows, 76 already issued, 0 tokens over the cap, most 81920 B of pages in a window, 7.433 ms in the calls); 429 evaluations set 12868  trc: 410 verify evaluations, rows 6512, ahead 6448, pages 5739, resident 5739; troff: 410 verify evaluations, rows 6512, ahead 0, pages 5739, resident 5739; 
+combo	off all switches	SAME	146 compared, 0 differ against the base's logits: ; Summary: all 151 test(s) passed; all rc=0; LLAMA_MTP_KV_ONLY=1 LLAMA_MTP_CATCHUP_OVERLAP=1 LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_INDEXER_ROWS=1 LLAMA_SAMPLING_TOP_K_ROWS=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_VERIFY_PREPARE=2 LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_NGRAM_PREFETCH=1 LLAMA_DRAFT_PREFETCH=1 LLAMA_DRAFT_EMBD_DEV=layer LLAMA_MTP_H_DEV=2 GGML_SCHED_PREFETCH=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_GLU_MT=1 GGML_CUDA_MMVF_PASCAL_EXACT=1 GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_UNION=1 GGML_CUDA_GRAPHS_FORCE=1
+combo	ngram-prefetch with LLAMA_DRAFT_PREFETCH=1 s1	PASS	npf s1 rc=0; Summary: all 3 test(s) passed
+combo	ngram-prefetch with LLAMA_DRAFT_PREFETCH=1 s2	PASS	npf s2 rc=0; Summary: all 3 test(s) passed
+combo	ngram-prefetch with LLAMA_DRAFT_PREFETCH=1 s3	PASS	npf s3 rc=0; Summary: all 3 test(s) passed
+combo	server_combo	OK	server rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);r90 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);all = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);alln = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);
+sass	llama-server sass by build	OK	merged 8483 functions: base 8428, c726 28, c749 1, c750 8, c757 14, c767 4; listed 0; c750: changed 8 functions, 8 of them in the merged build with its code;c754: changed 0 functions, 0 of them in the merged build with its code;c726: changed 28 functions, 28 of them in the merged build with its code;c757: changed 14 functions, 14 of them in the merged build with its code;c758: changed 0 functions, 0 of them in the merged build with its code;c766: changed 0 functions, 0 of them in the merged build with its code;c767: changed 4 functions, 4 of them in the merged build with its code;c749: changed 1 functions, 1 of them in the merged build with its code;verdict: OK;
+sass	llama-server ptx by build	CHECK	merged 8483 functions: base 8418, c726 28, c749 1, c750 8, c757 14, c767 4; listed 10; c750: changed 8 functions, 8 of them in the merged build with its code;c754: changed 0 functions, 0 of them in the merged build with its code;c726: changed 38 functions, 28 of them in the merged build with its code;c757: changed 24 functions, 14 of them in the merged build with its code;c758: changed 0 functions, 0 of them in the merged build with its code;c766: changed 0 functions, 0 of them in the merged build with its code;c767: changed 4 functions, 4 of them in the merged build with its code;c749: changed 1 functions, 1 of them in the merged build with its code;
+bitid	build	OK	rc=0; 14583e21264d4766a88f1bc77efb3793 $M/repo/bench/mmvq_pascal/build/multitoken_bitid; linked against $M/main/rig/src/build (18d0fa309)
+c749	replay rig-fault	LOG	rig build GGML_CUDA_LID_ROWS_FAULT=1 pass 113	113	0	0	113/113 tests passed
+c749	replay emu-off	LOG	CPU stand-in build - pass 113	113	0	0	113/113 tests passed
+c749	replay emu-fault	LOG	CPU stand-in build GGML_CUDA_LID_ROWS_FAULT=1 fail 113	0	113	1	0/113 tests passed
+c565 static	day tree	OK	commit 18d0fa309986f206f501d490e4065f5610eec234 
+c565 static	day build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	day ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	day net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	day archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	day archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	day archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	day archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	day hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	day hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	day hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	day hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	day hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	day hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	day hand thread-safety	OK	test-thread-safety rc=0: 0.00.042.203 I All threads finished without errors.
+c565 static	day hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	day hand eval-callback	OK	llama-eval-callback rc=0:     sum = 1.352701
+c565 shared	day tree	OK	commit 18d0fa309986f206f501d490e4065f5610eec234 
+c565 shared	day build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	day ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	day net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	day archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	day archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	day archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	day archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	day hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	day hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	day hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	day hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	day hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	day hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	day hand thread-safety	OK	test-thread-safety rc=0: 0.00.038.631 I All threads finished without errors.
+c565 shared	day hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	day hand eval-callback	OK	llama-eval-callback rc=0:     sum = 2.688309
+set	record	OK	rc=0; linked 1503 of 1541 selected cases in all; manifest: 1512 cases, 5470018344 bytes in cases/; tar: $M/sets/v4day.tar 5473720320 bytes, md5 f23c05d9365e55b70df90401eb064ca4
+set	replay -o MUL_MAT -p type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],	OK	rc=0; 0 FAIL lines; 295/295 tests passed;   replay: $M/sets/v4day: 295 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],	OK	rc=0; 0 FAIL lines; 114/114 tests passed;   replay: $M/sets/v4day: 114 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],	OK	rc=0; 0 FAIL lines; 167/167 tests passed;   replay: $M/sets/v4day: 167 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	OK	rc=0; 0 FAIL lines; 152/152 tests passed;   replay: $M/sets/v4day: 152 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,	OK	rc=0; 0 FAIL lines; 8/8 tests passed;   replay: $M/sets/v4day: 8 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	OK	rc=0; 0 FAIL lines; 115/115 tests passed;   replay: $M/sets/v4day: 115 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),	OK	rc=0; 0 FAIL lines; 37/37 tests passed;   replay: $M/sets/v4day: 37 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT_GLU -p type_gate=[^,]+,type_up=[^,]+,m=[0-9]+,n=[1-8],	OK	rc=0; 0 FAIL lines; 636/636 tests passed;   replay: $M/sets/v4day: 636 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT_GLU -p type_gate=(q2_0|q3_K),type_up=(q2_0|q3_K),m=640,n=[2-8],	OK	rc=0; 0 FAIL lines; 28/28 tests passed;   replay: $M/sets/v4day: 28 cases replayed, 0 selected by the filter have no record
+set	replay -o MUL_MAT -p type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=1,	OK	rc=0; 0 FAIL lines; 26/26 tests passed;   replay: $M/sets/v4day: 26 cases replayed, 0 selected by the filter have no record
