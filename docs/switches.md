@@ -191,6 +191,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 |---|---|---|---|---|
 | `--ctx-checkpoints-vram N`, `--ctx-checkpoints-vram-sync` | `0`, off | A slot's newest N checkpoints in device stores | -ckpt | Q440, Q548 |
 | `--ctx-checkpoints-spread N` | `0` | Checkpoints inside long prompts, at most N tokens apart | -ckpt | Q448 |
+| `--ctx-checkpoints-incall` | off | With `--ctx-checkpoints-vram`: a checkpoint is taken inside the prompt's decode call instead of cutting the call there, its state copied into the device store behind the micro-batch that ends at it, with no wait for the cards; calls are joined only where the joined call keeps the cut calls' micro-batches, so the checkpoints and every number stay the same ([design](data/2026-11-11_c217_incall_checkpoints/README.md)) | v4: `pascal-p106-v4-b12246-c217` | Q770 |
 | `--ctx-checkpoints-share` | off | Prompt-cache entries and child slots share the slot's host checkpoints (upstream #30137). v4: upstream merged #30137 and always shares; Miner Llama keeps the flag and copies without it, as the release does (following upstream's default is Q1227) | -ckptrc | Q704 |
 | `--prefix-cache DIR` (`_MAX`, `_MIN`), `--checkpoint-gen` (`_AT`, `_MIN`) | off | Saved shared prefixes and generation checkpoints for agent sessions | base | Q111, Q132 |
 | `--checkpoint-tail2` | off | Two tail checkpoints per prompt and the mid-prompt rule, as stock, instead of one ring checkpoint for a sliding-window model | base | Q111 |

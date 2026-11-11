@@ -1,0 +1,11 @@
+off = base (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts)
+incall = base (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts)
+incall2 = base (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts)
+incall4 = base4 (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts)
+sincall = sbase (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 30 checkpoints at the same token counts)
+incall: 9 checkpoints taken inside a call
+incall2: 8 checkpoints taken inside a call
+incall4: 9 checkpoints taken inside a call
+sincall: 16 checkpoints taken inside a call
+incall2: 4 checkpoint(s) moved to the host
+PASS

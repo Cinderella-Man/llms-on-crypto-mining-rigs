@@ -1,0 +1,6 @@
+store_at: n_rs_seq 0: an uncut call ends elsewhere; n_rs_seq 3: an uncut call ends the same; cuts without the rule end elsewhere;
+store_at: n_rs_seq 0: an uncut call ends elsewhere; n_rs_seq 3: an uncut call ends the same; cuts without the rule end elsewhere;
+store_at: n_rs_seq 0: an uncut call ends elsewhere; n_rs_seq 3 off;
+store_at: n_rs_seq 0: an uncut call ends elsewhere; n_rs_seq 3 off;
+store_at: n_rs_seq 0: an uncut call ends elsewhere; n_rs_seq 3: an uncut call ends the same; cuts without the rule end elsewhere;
+store_at: n_rs_seq 0: an uncut call ends elsewhere; n_rs_seq 3: an uncut call ends the same; cuts without the rule end elsewhere;
