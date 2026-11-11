@@ -1,0 +1,6 @@
+f32x-off	-	MUL_MAT	type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+f32x-on	GGML_CUDA_MMVF_F32_MT=1	MUL_MAT	type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+f32x-fault	GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_FAULT=1	MUL_MAT	type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),	fail	-
+f32x-on2	GGML_CUDA_MMVF_F32_MT=2	MUL_MAT	type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],	pass	-
+f32x-fault2	GGML_CUDA_MMVF_F32_MT=2 GGML_CUDA_MMVF_F32_MT_FAULT=1	MUL_MAT	type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),	fail	-
+f32x-fault-off	GGML_CUDA_MMVF_F32_MT_FAULT=1	MUL_MAT	type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),	pass	-

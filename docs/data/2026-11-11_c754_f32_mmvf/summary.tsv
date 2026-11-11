@@ -1,0 +1,22 @@
+check	verdict	detail
+emul	OK	gate T=2 one-mt: 0 of 512 differ; router T=2 one-mt: 0 of 1024 differ; gate T=3 one-mt: 0 of 768 differ; router T=3 one-mt: 0 of 1536 differ; gate T=4 one-mt: 0 of 1024 differ; router T=4 one-mt: 0 of 2048 differ; gate T=5 one-mt: 0 of 1280 differ; router T=5 one-mt: 0 of 2560 differ; gate T=6 one-mt: 0 of 1536 differ; router T=6 one-mt: 0 of 3072 differ; gate T=7 one-mt: 0 of 1792 differ; router T=7 one-mt: 0 of 3584 differ; gate T=8 one-mt: 0 of 2048 differ; router T=8 one-mt: 0 of 4096 differ; gate T=4 one-seq: 993 of 1024 differ; router T=4 one-seq: 1976 of 2048 differ; gate T=4 one-bs128: 811 of 1024 differ; router T=4 one-bs128: 1572 of 2048 differ; gate T=4 one-fault: 1024 of 1024 differ; router T=4 one-fault: 2048 of 2048 differ; sweep T=2 one-mt: 0 of 8192 differ; sweep T=3 one-mt: 0 of 12288 differ; sweep T=4 one-mt: 0 of 16384 differ; sweep T=5 one-mt: 0 of 20480 differ; sweep T=6 one-mt: 0 of 24576 differ; sweep T=7 one-mt: 0 of 28672 differ; sweep T=8 one-mt: 0 of 32768 differ; 
+build	OK	llama.cpp-20261111-bca4cc4c6-pascal-p106-v4-b12246-c754.tar.gz 656296922 B md5 b1c59870910cf1bf86661c9fb12ab11c
+res	OK	72 of 72 unfused instantiations: no stack, no FMUL, the butterflies FADDs only, every loop the sums only; 16 of 16 fused: no stack, every loop the sums only
+code	SAME	new: 
+cpu-base-tree	OK	commit 5b329df16d8dd2ccb001300adf64ef2834dbab26 
+cpu-base-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+cpu-base-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-base-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-base-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-base-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c754-tree	OK	commit bca4cc4c636358c6fbebafe5c337245d4563cb4c 
+cpu-c754-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+cpu-c754-ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+cpu-c754-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-c754-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-c754-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-c754-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c754-ident vs base	SAME	base wrote 146 files; 146 compared, differ: none; written by c754 only: 0; Summary: all 151 test(s) passed
+bitid	OK	md5 42408e4a3573c4f862b8b6023e9b52ec
+record	OK	115 cases, 6 runs; tar 369397760 B md5 7ed93810cd3109c7d2cebb48c80b9ee7
+replay-cpu	OK	115 cases, 115 OK, 0 FAIL; exit 0

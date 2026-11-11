@@ -60,6 +60,10 @@
 #                 in the one-token order) at three rules and as for 10 SMs, with =2, and the fault that leaves a quarter
 #                 of each row out of the 32-lane kernels of that order (docs/data/2026-11-11_c750_bf16_exact). Its
 #                 runs-ptx.tsv runs them on a newer card with the P106-090's launch shapes
+#   f32x          F32's 2-D products of 1-8 tokens (Qwen3.8-Flash-Next's shared-expert gate and router among them) with
+#                 cuBLAS at 4-8 tokens (off) and with GGML_CUDA_MMVF_F32_MT=1 and =2 (C754: mul_mat_vec_f, each token's
+#                 one-token sums), and the fault that adds only the first half of each row of the products that switch
+#                 takes (docs/data/2026-11-11_c754_f32_mmvf). Its runs-ptx.tsv runs them on a newer card at =2
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -68,7 +72,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -105,6 +109,10 @@ TKV='ne=\[248320,'
 # 128 lanes at one token)
 BFX='type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
 BFX4='type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,'
+# F32's 2-D products of 1-8 tokens, and those of C754's shapes that GGML_CUDA_MMVF_F32_MT takes (4-8 tokens, rows of an
+# even width at an even stride)
+F32X='type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
+F32X4='type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
 NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
 suite_filters() {
     case $1 in
@@ -135,6 +143,8 @@ suite_filters() {
             printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
         bf16x)
             printf '%s\t%s\n' MUL_MAT "$BFX" ;;
+        f32x)
+            printf '%s\t%s\n' MUL_MAT "$F32X" ;;
         v4night)
             local s
             for s in $NIGHT; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
@@ -258,10 +268,26 @@ suite_runs() {
             suite_runs_qsa_union 1 ;;
         bf16x)
             suite_runs_bf16x "" ;;
+        f32x)
+            suite_runs_f32x 1 ;;
         v4night)
             local s
             for s in $NIGHT; do suite_runs "$s"; done ;;
     esac
+}
+# C754's runs: <1 natively (the switch on compute 6.1) | 2 through the PTX on a newer card (the switch on any NVIDIA
+# GPU)>. cuBLAS at 4-8 tokens; the switch, which sends those to mul_mat_vec_f; the fault in the products it takes must
+# fail them, and without the switch it reaches nothing
+suite_runs_f32x() {
+    local F=GGML_CUDA_MMVF_F32_MT M=$1
+    printf '%s\t%s\t%s\t%s\t%s\t\n' f32x-off "" MUL_MAT "$F32X" pass
+    [ "$M" = 1 ] && printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        f32x-on "$F=1" MUL_MAT "$F32X" pass \
+        f32x-fault "$F=1 ${F}_FAULT=1" MUL_MAT "$F32X4" fail
+    printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        f32x-on2 "$F=2" MUL_MAT "$F32X" pass \
+        f32x-fault2 "$F=2 ${F}_FAULT=1" MUL_MAT "$F32X4" fail \
+        f32x-fault-off "${F}_FAULT=1" MUL_MAT "$F32X4" pass
 }
 # C750's runs: <the switches every run starts with ("" natively; on a newer card the kernel on and the P106-090's 5 SMs)>.
 # The launch rule alone; the switch at rules 2 (the default), 1 and 0, as for 10 SMs (the one-token shapes where 3-4
@@ -345,6 +371,7 @@ suite_runs_ptx() {
         qsa-prompt) suite_runs_qsa_prompt 2 ;;
         qsa-union) suite_runs_qsa_union 2 ;;
         bf16x) suite_runs_bf16x "GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVF_PASCAL_NSM=5" ;;
+        f32x) suite_runs_f32x 2 ;;
         v4night)
             local s
             for s in $NIGHT; do

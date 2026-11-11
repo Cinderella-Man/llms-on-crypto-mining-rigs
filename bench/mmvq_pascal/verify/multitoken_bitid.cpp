@@ -25,6 +25,11 @@
 // 3-4-token launch shape on 5 SMs has other lanes than one token's (K = 1000: 32 against 8; K = 4104, 4392 and 4736, the
 // 32-lane kernel's tails: 32 against 128); with the switch at 0 those differ at 3 and 4 tokens. Run as is on a P106, or
 // with GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVF_PASCAL_NSM=5 on a newer GPU (the P106-090's launch shapes).
+// `multitoken_bitid f32` checks F32's dense products the same way, at 2 to 8 tokens (C754: llama.cpp's mul_mat_vec_f
+// with GGML_CUDA_MMVF_F32_MT=1 at 4-8 tokens), at Qwen3.8-Flash-Next's F32 shapes (the shared expert's gate 2560 -> 1,
+// the router 2560 -> 512) and at row widths that take mul_mat_vec_f's other block sizes (64, 100, 300) and a wide row
+// (6144); with the switch at 0, cuBLAS takes 4-8 tokens and those differ. Run as is on a P106, or with
+// GGML_CUDA_MMVF_F32_MT=2 on a newer GPU.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -140,6 +145,8 @@ int main(int argc, char ** argv) {
     const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;
     const bool dmt    = argc > 1 && strcmp(argv[1], "dmt") == 0;
     const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
+    const bool f32    = argc > 1 && strcmp(argv[1], "f32") == 0;
+    const int  n_max  = f32 ? 8 : 4;
     const mode_cfg cfg = ornith
         ? mode_cfg{ { GGML_TYPE_IQ2_S, GGML_TYPE_IQ3_XXS, GGML_TYPE_N2P, GGML_TYPE_N3P, GGML_TYPE_Q8_0, GGML_TYPE_Q5_0 },
                     { { 8192, 3072 }, { 3072, 8192 }, { 3072, 1024 }, { 1024, 3072 }, { 4097, 3072 } },
@@ -158,6 +165,10 @@ int main(int argc, char ** argv) {
         ? mode_cfg{ { GGML_TYPE_BF16 },
                     { { 320, 10240 }, { 10240, 320 }, { 4, 10240 }, { 512, 2560 }, { 48, 2560 }, { 333, 1000 }, { 320, 4104 },
                       { 320, 4392 }, { 333, 4736 } },
+                    1, 1, 256, 256, false, 0 }
+        : f32
+        ? mode_cfg{ { GGML_TYPE_F32 },
+                    { { 1, 2560 }, { 512, 2560 }, { 48, 64 }, { 33, 100 }, { 129, 300 }, { 7, 6144 } },
                     1, 1, 256, 256, false, 0 }
         : mode_cfg{ { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS,
                       GGML_TYPE_Q6_K },
@@ -181,7 +192,7 @@ int main(int argc, char ** argv) {
             if (cfg.pool) fill_weights_pool(t); else fill_weights(t);
         }
 
-        for (int n = 2; n <= 4; ++n) {
+        for (int n = 2; n <= n_max; ++n) {
             ggml_init_params ip = { 256 * ggml_tensor_overhead() + 64 * ggml_graph_overhead_custom(64, false), nullptr, true };
             // inputs
             ggml_context * ictx = ggml_init(ip);
