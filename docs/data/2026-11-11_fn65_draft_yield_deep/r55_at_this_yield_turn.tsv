@@ -1,0 +1,9 @@
+depth	draft_adds_ms_prompt_token	yield	tokens_step	saved_ms_generated_token	prompt_tokens_per_generated_token
+49152	3.125	this run's loads	3.419	11.104	3.55
+49152	3.125	the sampler off the rig, at 49,152 (Q1172) (est.)	2.876	0.192	0.06
+65536	4.494	this run's loads	3.684	16.140	3.59
+65536	4.494	the sampler off the rig (Q1251) (est.)	2.931	1.037	0.23
+65536	4.494	greedy off the rig (Q1251) (est.)	3.459	12.322	2.74
+120000	6.813	this run's loads	3.510	19.950	2.93
+120000	6.813	the sampler off the rig (Q1251) (est.)	2.695	-1.218	none: nothing saved
+120000	6.813	greedy off the rig (Q1251) (est.)	3.354	17.191	2.52
