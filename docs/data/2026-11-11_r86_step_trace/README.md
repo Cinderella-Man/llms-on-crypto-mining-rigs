@@ -139,7 +139,9 @@ In both loads the long request's first steps wait about 117 ms after the last dr
 before card 0's launch, after the inputs are set (above). The server's own timings give 157.38 ms a step (`trace`)
 and 204.55 ms (`prof`) on the long request, against 133.98 and 131.65 on the greedy one. S37's v3.0 loads had no such
 step (`d1off` long: 0 of 92, 4 MiB swapped out), but they ran the long request first after the load; here it ran
-second, after the greedy request. Which of the two causes it, the build or the order, is Q1328.
+second, after the greedy request. The waits come with swapping, on
+either build (Q1328): v3.0 waits the same way whenever its long request swaps
+([2026-11-11_c752_long_request_stalls](../2026-11-11_c752_long_request_stalls/README.md)).
 
 ## Aligning the profile with the trace
 

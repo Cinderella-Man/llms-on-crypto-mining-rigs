@@ -145,7 +145,8 @@ step i of one load pairs with step i of another. Mean difference from `d1off` ov
   in the four loads without the row cache.
 - **The cause is not established.** One load an arm cannot tell whether the row cache pushes the host into swap or
   whether these two loads crossed the limit by chance, and the host profile does not show what the host does during
-  a wait. Q1209 holds the question.
+  a wait. Q1209 holds the question. The preset without the cache waits the same way when its long request swaps
+  (R86, R57: [2026-11-11_c752_long_request_stalls](../2026-11-11_c752_long_request_stalls/README.md)).
 
 ### The drafts compared
 
