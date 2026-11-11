@@ -149,6 +149,11 @@ All on a build machine's CPU, in containers without a GPU; nothing here ran a ke
 
 ## The rig run (R75)
 
+**Run on 2026-11-11 through the v4 night merge ([2026-11-11_r75_c690_p106](../2026-11-11_r75_c690_p106/README.md)):**
+exact at every setting; R = 1 without the prefetch is the fastest at 2–4 rows (four rows 3,340.78 and 3,346.73 µs
+against the k-column kernel's 8,103.16 and 8,100.11), and R = 2 is slower than R = 1 (Q1347); in a served verify pass
+the head takes 3.149, 3.155, 3.149 and 3.151 ms against 8.105, 8.125, 8.115 and 8.120.
+
 `run/rig_c690.sh` on one P106 of an idle rig, detached. Its steps:
 
 - **replay:** the recorded set through `scripts/replay_checks.sh`. Passing: every run's line ends `ok`.
