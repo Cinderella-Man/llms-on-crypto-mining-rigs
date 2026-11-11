@@ -258,7 +258,9 @@ Every release keeps the answers the same: the kernels change only the order of a
 exactly the tokens plain decoding would produce. Each one ships with the command line and the measurements behind its
 headline. "Only the order of additions" has a consequence that showed after v3: on Flash-Next a check over several
 tokens adds in another order than a pass over one, and this model turns the last bits into another text at
-temperature 0. The distributions are the same; the text is not always ([chapter 13](13-the-check-pass.md)).
+temperature 0. Every kept token is still the model's own choice. The difference is rounding noise of the
+kind [chapter 3](03-measuring.md) measures between two types of GPU, and it is enough to change the text
+([chapter 13](13-the-check-pass.md)).
 
 ## What to remember
 

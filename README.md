@@ -140,8 +140,11 @@ P104 mining cards, the GTX 10 series and the Tesla P4/P40.
   the pipeline. On 2026-11-11 this line wrote 45.97 % faster than v3 over a conversation of up to 49,152 tokens and
   took 9.4 % less time for a coding agent's task, on the same rig the same day
   ([the work since v3](docs/book/11-after-v3.md)).
-- **The answers don't change:** the kernels change only the order of additions, and speculation gives exactly the
-  tokens of plain decoding.
+- **The answers stay the model's own:** the kernels change only the order of additions, and a guessed token is kept
+  only when it is the one the model picks itself. Flint's pipelined speculation gives plain decoding's tokens bit for
+  bit. Flash-Next's draft is checked several tokens at a time, and such a pass adds the same numbers in another order
+  than a one-token pass. That model amplifies the last bits, so at temperature 0 its text can differ from plain
+  decoding's ([why](docs/book/13-the-check-pass.md#134-story-a-check-was-a-different-arithmetic)).
 
 Each change with its measured gain: [the Flint page](models/flint/README.md#how-it-got-here) and
 [the fork's scope](docs/research/notes/fork_scope.md). Other Pascal cards run the same code but were not measured. NVIDIA's

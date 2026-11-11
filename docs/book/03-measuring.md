@@ -218,7 +218,7 @@ propose likely next tokens, which the model then checks ([chapter 8](08-guessing
 
 **How it should work.** Live agent runs can't resolve a few percent. So: record an agent session's requests, then
 replay exactly those requests to two server setups, with the same prompts, the same random seeds and the same reply
-lengths. My engine's speculation is exact: it produces the same tokens as plain decoding. So both setups write
+lengths. On Flint my engine's speculation is exact: it produces the same tokens as plain decoding. So both setups write
 identical tokens, and the ratio of time per token is the effect of the change alone. A bootstrap over the recorded
 sessions gives a 95 % interval.
 
