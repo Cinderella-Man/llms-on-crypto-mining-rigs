@@ -1,0 +1,45 @@
+check	verdict	detail
+cpu-tip	OK	rc=0; commit 916d1cf71d780556afe410b51e2a727a24a9bc7b test-llama-archs --mtp-graph-keep: room for two sizes in the compute column (C619); all targets; 3 warning lines, 0 error lines
+cpu-before	OK	rc=0; commit 2f8715a6ed8b998fc13063f362ddc406cd1403d4 test-llama-archs --mtp-graph-keep: the MTP draft's graph builds with LLAMA_MTP_GRAPH_KEEP off and on (C619); test-llama-archs; 4 warning lines, 0 error lines
+keep-tip-plain-s1	OK	rc=0; no switch; Summary: all 8 test(s) passed
+keep-tip-plain-s2	OK	rc=0; no switch; Summary: all 8 test(s) passed
+keep-tip-plain-s3	OK	rc=0; no switch; Summary: all 8 test(s) passed
+keep-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+keep-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+keep-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+keep-tip-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+keep-tip-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+keep-tip-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+keep-before-plain-s1	AS-EXPECTED	rc=1; no switch; Summary: 8 test(s) executed, 8 failed
+keep-before-plain-s2	AS-EXPECTED	rc=1; no switch; Summary: 8 test(s) executed, 8 failed
+keep-before-plain-s3	AS-EXPECTED	rc=1; no switch; Summary: 8 test(s) executed, 8 failed
+keep-before-stage1check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 8 test(s) executed, 8 failed
+keep-before-stage1check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 8 test(s) executed, 8 failed
+keep-before-stage1check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: 8 test(s) executed, 8 failed
+keep-before-qsa4check-s1	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 8 test(s) executed, 8 failed
+keep-before-qsa4check-s2	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 8 test(s) executed, 8 failed
+keep-before-qsa4check-s3	AS-EXPECTED	rc=1; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: 8 test(s) executed, 8 failed
+regress-mtp-kv-only-s1	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+regress-mtp-kv-only-s2	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+regress-mtp-kv-only-s3	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+regress-mtp-catchup-overlap-s1	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+regress-mtp-catchup-overlap-s2	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+regress-mtp-catchup-overlap-s3	OK	rc=0; LLAMA_MTP_GRAPH_KEEP=1; Summary: all 5 test(s) passed
+off-base	OK	rc=0; $BASE_BIN: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+build-rig	OK	llama.cpp-20261111-916d1cf71-pascal-p106-v4-b12246-c619; commit: 916d1cf71d780556afe410b51e2a727a24a9bc7b (2026-11-11 11:02:15 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-916d1cf71-pascal-p106-v4-b12246-c619/bin
+keep-rig-plain-s1	OK	rc=0; no switch; Summary: all 8 test(s) passed
+keep-rig-plain-s2	OK	rc=0; no switch; Summary: all 8 test(s) passed
+keep-rig-plain-s3	OK	rc=0; no switch; Summary: all 8 test(s) passed
+keep-rig-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+keep-rig-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+keep-rig-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 8 test(s) passed
+keep-rig-qsa4check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+keep-rig-qsa4check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+keep-rig-qsa4check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_POOL_MASK_DEV_CHECK=1 LLAMA_QSA_INDEXER_ROWS=1; Summary: all 8 test(s) passed
+server-identity	OK	36 of 36 identical (3 variants x base, off, on x 3 replies and the dump), 0 differ; rc=0
+server-builds-plain	FEWER	draft graphs of up to 8 tokens rebuilt: off 411, on 6 (compare.txt)
+server-builds-short	FEWER	draft graphs of up to 8 tokens rebuilt: off 411, on 7 (compare.txt)
+server-builds-pmin	FEWER	draft graphs of up to 8 tokens rebuilt: off 411, on 6 (compare.txt)

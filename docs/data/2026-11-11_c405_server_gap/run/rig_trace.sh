@@ -7,10 +7,14 @@
 #   trace  + LLAMA_STEP_TRACE=<load>/step_trace.jsonl: the step's stages on the host
 #   prof   the profile alone: the step the trace is checked against (step_split.py on both, paired on the greedy
 #          request, which draws nothing at random)
+# A load whose name starts with "trace" has the trace; any other name is a profile alone. LOAD_ENV adds switches to
+# named loads (C619: 'tracekeep:LLAMA_MTP_GRAPH_KEEP=1 keep:LLAMA_MTP_GRAPH_KEEP=1'; a comma separates switches, so
+# values hold none), so that loads with and without a switch alternate in one run.
 # Each load answers REQ_GREEDY then REQ_LONG, PAUSE seconds apart (the gap cuts the profile into requests).
 # Usage: BIN=<bin/ of the build> MODEL=<Swift Q2_0 first shard> DRAFT=<the MTP draft> PRESET=<settings.env>
 #   RIG_SERVER=<bench/agent_check/rig_server.sh> REQ_GREEDY=<json> REQ_LONG=<json> OUT=<dir>
-#   [LOADS='trace prof'] [PORT=8193] [PAUSE=4] [MIN_AVAIL_MB=60] bash rig_trace.sh
+#   [LOADS='trace prof'] [LOAD_ENV='<load>:VAR=value[,VAR=value] ...'] [PORT=8193] [PAUSE=4] [MIN_AVAIL_MB=60]
+#   bash rig_trace.sh
 # Output: per load OUT/<load>/ with host_profile.csv, step_trace.jsonl (trace), reply_{greedy,long}.json,
 #   server-<load>.log and rig_server.sh's monitor files; OUT/status.txt (the epoch time around every request)
 set -uo pipefail
@@ -36,10 +40,11 @@ for load in $LOADS; do
     mkdir -p "$d"
     sw="GGML_CUDA_PROFILE_HOST=$d/host_profile.csv"
     case $load in
-        trace) sw="$sw LLAMA_STEP_TRACE=$d/step_trace.jsonl" ;;
-        prof) ;;
-        *) log "unknown load $load"; continue ;;
+        trace*) sw="$sw LLAMA_STEP_TRACE=$d/step_trace.jsonl" ;;
     esac
+    for e in ${LOAD_ENV:-}; do
+        [ "${e%%:*}" = "$load" ] && sw="$sw ${e#*:}" && sw=${sw//,/ }
+    done
     pkill -x llama-server; sleep 2; quiet
     log "$load: server start $(date +%s.%3N)"
     if ! rs "$load" ACTION=start ARM="$load" BIN="$BIN/llama-server" MODEL="$MODEL" \

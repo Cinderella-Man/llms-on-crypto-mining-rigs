@@ -1,0 +1,217 @@
+build	arm	seed	config	prompt	drafts	end	shortlist	built_prompt_off_on	built_steps_off_on_of	compute_kib_off_on	status
+before	plain	1	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	1	f16	identical	identical	identical	off	7/7	32/32 of 64	1447/1447	FAIL (the steps built no fewer graphs)
+before	plain	1	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	1	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	1	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	1	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16	identical	identical	identical	off	7/7	32/32 of 64	1447/1447	FAIL (the steps built no fewer graphs)
+before	plain	2	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16	identical	identical	identical	off	7/7	32/32 of 64	1447/1447	FAIL (the steps built no fewer graphs)
+before	plain	3	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	plain	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1411/1411	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16	identical	identical	identical	off	7/7	32/32 of 64	1457/1457	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16	identical	identical	identical	off	7/7	32/32 of 64	1457/1457	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16	identical	identical	identical	off	7/7	32/32 of 64	1457/1457	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	qsa4check	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1420/1420	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16	identical	identical	identical	off	7/7	32/32 of 64	1461/1461	FAIL (the steps built no fewer graphs)
+before	stage1check	1	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16	identical	identical	identical	off	7/7	32/32 of 64	1461/1461	FAIL (the steps built no fewer graphs)
+before	stage1check	2	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16 fa	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16	identical	identical	identical	off	7/7	32/32 of 64	1461/1461	FAIL (the steps built no fewer graphs)
+before	stage1check	3	q8_0 fa	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16 fa host	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16 fa short	identical	identical	identical	on	7/7	32/32 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16 fa carry	identical	identical	identical	off	7/7	48/48 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+before	stage1check	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/48 of 64	1425/1425	FAIL (the steps built no fewer graphs)
+rig	plain	1	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	1	f16	identical	identical	identical	off	7/7	32/4 of 64	1447/2339	OK
+rig	plain	1	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	1	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1411/1713	OK
+rig	plain	1	f16 fa short	identical	identical	identical	on	7/7	32/4 of 64	1411/2278	OK
+rig	plain	1	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1411/2358	OK
+rig	plain	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/5 of 64	1411/1793	OK
+rig	plain	2	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	2	f16	identical	identical	identical	off	7/7	32/4 of 64	1447/2339	OK
+rig	plain	2	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	2	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1411/1713	OK
+rig	plain	2	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1411/2358	OK
+rig	plain	2	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1411/2358	OK
+rig	plain	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1411/1953	OK
+rig	plain	3	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	3	f16	identical	identical	identical	off	7/7	32/4 of 64	1447/2339	OK
+rig	plain	3	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	3	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+rig	plain	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1411/1713	OK
+rig	plain	3	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1411/2358	OK
+rig	plain	3	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1411/2358	OK
+rig	plain	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1411/1953	OK
+rig	qsa4check	1	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	1	f16	identical	identical	identical	off	7/7	32/4 of 64	1457/2347	OK
+rig	qsa4check	1	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2300	OK
+rig	qsa4check	1	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1420/1736	OK
+rig	qsa4check	1	f16 fa short	identical	identical	identical	on	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	1	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1420/2374	OK
+rig	qsa4check	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/5 of 64	1420/1817	OK
+rig	qsa4check	2	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	2	f16	identical	identical	identical	off	7/7	32/4 of 64	1457/2347	OK
+rig	qsa4check	2	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2300	OK
+rig	qsa4check	2	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1420/1736	OK
+rig	qsa4check	2	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1420/2374	OK
+rig	qsa4check	2	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1420/2374	OK
+rig	qsa4check	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1420/1979	OK
+rig	qsa4check	3	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	3	f16	identical	identical	identical	off	7/7	32/4 of 64	1457/2347	OK
+rig	qsa4check	3	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2300	OK
+rig	qsa4check	3	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+rig	qsa4check	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1420/1736	OK
+rig	qsa4check	3	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1420/2374	OK
+rig	qsa4check	3	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1420/2374	OK
+rig	qsa4check	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1420/1979	OK
+rig	stage1check	1	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	1	f16	identical	identical	identical	off	7/7	32/4 of 64	1461/2352	OK
+rig	stage1check	1	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2306	OK
+rig	stage1check	1	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1425/1742	OK
+rig	stage1check	1	f16 fa short	identical	identical	identical	on	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	1	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1425/2379	OK
+rig	stage1check	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/5 of 64	1425/1823	OK
+rig	stage1check	2	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	2	f16	identical	identical	identical	off	7/7	32/4 of 64	1461/2352	OK
+rig	stage1check	2	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2306	OK
+rig	stage1check	2	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1425/1742	OK
+rig	stage1check	2	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1425/2379	OK
+rig	stage1check	2	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1425/2379	OK
+rig	stage1check	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1425/1985	OK
+rig	stage1check	3	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	3	f16	identical	identical	identical	off	7/7	32/4 of 64	1461/2352	OK
+rig	stage1check	3	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2306	OK
+rig	stage1check	3	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+rig	stage1check	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1425/1742	OK
+rig	stage1check	3	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1425/2379	OK
+rig	stage1check	3	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1425/2379	OK
+rig	stage1check	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1425/1985	OK
+tip	plain	1	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	1	f16	identical	identical	identical	off	7/7	32/4 of 64	1447/2339	OK
+tip	plain	1	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	1	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1411/1713	OK
+tip	plain	1	f16 fa short	identical	identical	identical	on	7/7	32/4 of 64	1411/2278	OK
+tip	plain	1	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1411/2358	OK
+tip	plain	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/5 of 64	1411/1793	OK
+tip	plain	2	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	2	f16	identical	identical	identical	off	7/7	32/4 of 64	1447/2339	OK
+tip	plain	2	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	2	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1411/1713	OK
+tip	plain	2	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1411/2358	OK
+tip	plain	2	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1411/2358	OK
+tip	plain	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1411/1953	OK
+tip	plain	3	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	3	f16	identical	identical	identical	off	7/7	32/4 of 64	1447/2339	OK
+tip	plain	3	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	3	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1411/2278	OK
+tip	plain	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1411/1713	OK
+tip	plain	3	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1411/2358	OK
+tip	plain	3	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1411/2358	OK
+tip	plain	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1411/1953	OK
+tip	qsa4check	1	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	1	f16	identical	identical	identical	off	7/7	32/4 of 64	1457/2347	OK
+tip	qsa4check	1	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2300	OK
+tip	qsa4check	1	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1420/1736	OK
+tip	qsa4check	1	f16 fa short	identical	identical	identical	on	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	1	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1420/2374	OK
+tip	qsa4check	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/5 of 64	1420/1817	OK
+tip	qsa4check	2	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	2	f16	identical	identical	identical	off	7/7	32/4 of 64	1457/2347	OK
+tip	qsa4check	2	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2300	OK
+tip	qsa4check	2	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1420/1736	OK
+tip	qsa4check	2	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1420/2374	OK
+tip	qsa4check	2	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1420/2374	OK
+tip	qsa4check	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1420/1979	OK
+tip	qsa4check	3	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	3	f16	identical	identical	identical	off	7/7	32/4 of 64	1457/2347	OK
+tip	qsa4check	3	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1420/2300	OK
+tip	qsa4check	3	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1420/2293	OK
+tip	qsa4check	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1420/1736	OK
+tip	qsa4check	3	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1420/2374	OK
+tip	qsa4check	3	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1420/2374	OK
+tip	qsa4check	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1420/1979	OK
+tip	stage1check	1	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	1	f16	identical	identical	identical	off	7/7	32/4 of 64	1461/2352	OK
+tip	stage1check	1	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2306	OK
+tip	stage1check	1	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	1	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1425/1742	OK
+tip	stage1check	1	f16 fa short	identical	identical	identical	on	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	1	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1425/2379	OK
+tip	stage1check	1	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/5 of 64	1425/1823	OK
+tip	stage1check	2	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	2	f16	identical	identical	identical	off	7/7	32/4 of 64	1461/2352	OK
+tip	stage1check	2	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2306	OK
+tip	stage1check	2	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	2	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1425/1742	OK
+tip	stage1check	2	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1425/2379	OK
+tip	stage1check	2	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1425/2379	OK
+tip	stage1check	2	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1425/1985	OK
+tip	stage1check	3	f16 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	3	f16	identical	identical	identical	off	7/7	32/4 of 64	1461/2352	OK
+tip	stage1check	3	q8_0 fa	identical	identical	identical	off	7/7	32/4 of 64	1425/2306	OK
+tip	stage1check	3	f16 fa host	identical	identical	identical	off	7/7	32/4 of 64	1425/2299	OK
+tip	stage1check	3	f16 fa kv-only	identical	identical	identical	off	7/7	32/4 of 64	1425/1742	OK
+tip	stage1check	3	f16 fa short	identical	identical	identical	on	7/7	32/5 of 64	1425/2379	OK
+tip	stage1check	3	f16 fa carry	identical	identical	identical	off	7/7	48/5 of 64	1425/2379	OK
+tip	stage1check	3	f16 fa kv+sl+carry	identical	identical	identical	on	7/7	48/7 of 64	1425/1985	OK
