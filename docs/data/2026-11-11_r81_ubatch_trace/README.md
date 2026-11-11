@@ -171,7 +171,8 @@ nine rebuilt passes, against 59, 88, 63 and 61 µs and no allocation in the four
   what is left is to prefetch each drafted token's rows as it is drafted, est. up to the 4.379 ms CPU split of a
   verify pass whose rows are not cached.
 - **New:** Q1339 (the prompt's n-gram prefetch off the host's path before card 0: est. 0.46 to 1.4 s of a fresh
-  4,097-token prompt) and Q1340 (the draft's catch-up token rows from card 4, est. 8.2 ms a 128-row pass).
+  4,097-token prompt), Q1340 (the draft's catch-up token rows from card 4, est. 8.2 ms a 128-row pass) and Q1341
+  (this trace with the prompt graphs on, beside R82).
 
 ## How it was measured
 
