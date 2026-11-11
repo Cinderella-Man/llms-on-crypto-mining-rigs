@@ -1,0 +1,1450 @@
+load	request	kind	arm	prompt_n	micro_batch	card	t_ms	host_before_ms	after	gpu_ms	how
+graph4096	1	reset	off	1549	0	0	0.0			768.68	eager
+graph4096	1	reset	off	1549	0	1	703.5	703.51	main card 0	729.61	eager
+graph4096	1	reset	off	1549	0	2	1412.7	709.18	main card 1	711.84	eager
+graph4096	1	reset	off	1549	0	3	2260.5	847.83	main card 2	714.89	eager
+graph4096	1	reset	off	1549	0	4	2878.0	617.47	main card 3	588.11	eager
+graph4096	1	reset	off	1549	0	5	3557.0	678.96	main card 4	705.08	eager
+graph4096	1	reset	off	1549	0	6	4243.6	686.66	main card 5	588.82	eager
+graph4096	1	reset	off	1549	0	7	4989.7	746.04	main card 6	705.0	eager
+graph4096	1	reset	off	1549	0	8	5236.9	247.24	main card 7	215.78	eager
+graph4096	1	reset	off	1549	1	0	5548.5	311.58	main card 8		not ready
+graph4096	1	reset	off	1549	1	1	5553.9	5.41	main card 0		not ready
+graph4096	1	reset	off	1549	1	2	5559.2	5.34	main card 1		not ready
+graph4096	1	reset	off	1549	1	3	5564.7	5.44	main card 2		not ready
+graph4096	1	reset	off	1549	1	4	5569.5	4.8	main card 3		not ready
+graph4096	1	reset	off	1549	1	5	5574.9	5.4	main card 4		not ready
+graph4096	1	reset	off	1549	1	6	5580.1	5.18	main card 5		not ready
+graph4096	1	reset	off	1549	1	7	5585.4	5.32	main card 6		not ready
+graph4096	1	reset	off	1549	1	8	5589.1	3.77	main card 7		not ready
+graph4096	1	reset	off	1549	2	0	6554.2	965.1	main card 8	363.57	eager
+graph4096	1	reset	off	1549	2	1	7015.0	460.75	main card 0	116.59	eager
+graph4096	1	reset	off	1549	2	2	7683.4	668.41	main card 1	107.9	eager
+graph4096	1	reset	off	1549	2	3	8371.2	687.85	main card 2	96.75	eager
+graph4096	1	reset	off	1549	2	4	8938.6	567.34	main card 3	80.71	eager
+graph4096	1	reset	off	1549	2	5	9589.0	650.38	main card 4	103.8	eager
+graph4096	1	reset	off	1549	2	6	10164.9	575.96	main card 5	85.77	eager
+graph4096	1	reset	off	1549	2	7	10802.6	637.67	main card 6	104.46	eager
+graph4096	1	reset	off	1549	2	8	11025.3	222.73	main card 7	35.55	eager
+graph4096	1	reset	off	1549	3	0	13448.4	874.32	draft card 8	652.26	eager
+graph4096	1	reset	off	1549	3	1	13454.6	6.18	main card 0	666.97	eager
+graph4096	1	reset	off	1549	3	2	13460.6	6.0	main card 1	618.72	eager
+graph4096	1	reset	off	1549	3	3	13466.8	6.18	main card 2	644.03	eager
+graph4096	1	reset	off	1549	3	4	13472.2	5.4	main card 3	527.43	eager
+graph4096	1	reset	off	1549	3	5	13478.1	5.96	main card 4	614.56	eager
+graph4096	1	reset	off	1549	3	6	13483.9	5.73	main card 5	521.13	eager
+graph4096	1	reset	off	1549	3	7	13489.9	6.03	main card 6	595.38	eager
+graph4096	1	reset	off	1549	3	8	13494.4	4.51	main card 7	221.26	eager
+graph4096	1	reset	off	1549	4	0	19658.6	704.86	draft card 8	33.74	eager
+graph4096	1	reset	off	1549	4	1	19675.7	17.11	main card 0	33.2	eager
+graph4096	1	reset	off	1549	4	2	19725.4	49.73	main card 1	36.98	eager
+graph4096	1	reset	off	1549	4	3	19747.4	21.95	main card 2	29.19	eager
+graph4096	1	reset	off	1549	4	4	19786.7	39.31	main card 3	26.8	eager
+graph4096	1	reset	off	1549	4	5	19809.2	22.56	main card 4	32.55	eager
+graph4096	1	reset	off	1549	4	6	19835.8	26.61	main card 5	33.02	eager
+graph4096	1	reset	off	1549	4	7	19880.4	44.58	main card 6	32.23	eager
+graph4096	1	reset	off	1549	4	8	19903.4	22.98	main card 7	15.96	eager
+graph4096	2	turn	off	430	0	0	0.0	2808.98	draft card 8	609.09	eager
+graph4096	2	turn	off	430	0	1	6.3	6.31	main card 0	608.04	eager
+graph4096	2	turn	off	430	0	2	12.4	6.09	main card 1	547.09	eager
+graph4096	2	turn	off	430	0	3	18.6	6.23	main card 2	584.3	eager
+graph4096	2	turn	off	430	0	4	24.2	5.54	main card 3	462.6	eager
+graph4096	2	turn	off	430	0	5	30.3	6.14	main card 4	533.13	eager
+graph4096	2	turn	off	430	0	6	36.2	5.87	main card 5	479.62	eager
+graph4096	2	turn	off	430	0	7	42.2	6.06	main card 6	537.78	eager
+graph4096	2	turn	off	430	0	8	46.8	4.54	main card 7	239.69	eager
+graph4096	2	turn	off	430	1	0	6708.0	1675.67	draft card 8	13.8	eager
+graph4096	2	turn	off	430	1	1	6710.9	2.97	main card 0	12.59	eager
+graph4096	2	turn	off	430	1	2	6714.0	3.01	main card 1	12.42	eager
+graph4096	2	turn	off	430	1	3	6716.9	2.94	main card 2	13.2	eager
+graph4096	2	turn	off	430	1	4	6719.3	2.37	main card 3	10.55	eager
+graph4096	2	turn	off	430	1	5	6722.1	2.87	main card 4	12.84	eager
+graph4096	2	turn	off	430	1	6	6724.8	2.66	main card 5	11.18	eager
+graph4096	2	turn	off	430	1	7	6727.6	2.81	main card 6	12.61	eager
+graph4096	2	turn	off	430	1	8	6729.8	2.15	main card 7	7.93	eager
+graph4096	3	turn	off	1359	0	0	0.0	913.92	draft card 8	817.32	eager
+graph4096	3	turn	off	1359	0	1	481.5	481.54	main card 0	719.25	eager
+graph4096	3	turn	off	1359	0	2	1441.7	960.16	main card 1	652.9	eager
+graph4096	3	turn	off	1359	0	3	1917.8	476.15	main card 2	688.24	eager
+graph4096	3	turn	off	1359	0	4	2845.6	927.72	main card 3	549.36	eager
+graph4096	3	turn	off	1359	0	5	3322.5	476.93	main card 4	634.46	eager
+graph4096	3	turn	off	1359	0	6	3787.2	464.72	main card 5	579.17	eager
+graph4096	3	turn	off	1359	0	7	4696.8	909.56	main card 6	630.47	eager
+graph4096	3	turn	off	1359	0	8	4702.4	5.61	main card 7	240.14	eager
+graph4096	3	turn	off	1359	1	0	4910.7	208.29	main card 8	584.58	eager
+graph4096	3	turn	off	1359	1	1	5513.6	602.97	main card 0	593.54	eager
+graph4096	3	turn	off	1359	1	2	6128.0	614.34	main card 1	547.86	eager
+graph4096	3	turn	off	1359	1	3	6697.0	569.01	main card 2	574.04	eager
+graph4096	3	turn	off	1359	1	4	7290.8	593.84	main card 3	562.63	eager
+graph4096	3	turn	off	1359	1	5	7874.2	583.37	main card 4	533.62	eager
+graph4096	3	turn	off	1359	1	6	8428.6	554.44	main card 5	480.14	eager
+graph4096	3	turn	off	1359	1	7	8929.9	501.22	main card 6	547.52	eager
+graph4096	3	turn	off	1359	1	8	8934.9	5.09	main card 7	200.22	eager
+graph4096	3	turn	off	1359	2	0	12359.6	2111.2	draft card 8	762.62	eager
+graph4096	3	turn	off	1359	2	1	12368.4	8.8	main card 0	722.29	eager
+graph4096	3	turn	off	1359	2	2	12376.8	8.42	main card 1	633.34	eager
+graph4096	3	turn	off	1359	2	3	12385.4	8.63	main card 2	699.43	eager
+graph4096	3	turn	off	1359	2	4	12393.2	7.78	main card 3	541.88	eager
+graph4096	3	turn	off	1359	2	5	12401.7	8.47	main card 4	626.73	eager
+graph4096	3	turn	off	1359	2	6	12409.9	8.26	main card 5	579.34	eager
+graph4096	3	turn	off	1359	2	7	12418.4	8.45	main card 6	696.82	eager
+graph4096	3	turn	off	1359	2	8	12425.3	6.93	main card 7	245.47	eager
+graph4096	3	turn	off	1359	3	0	19056.4	702.17	draft card 8	14.46	eager
+graph4096	3	turn	off	1359	3	1	19059.3	2.88	main card 0	16.94	eager
+graph4096	3	turn	off	1359	3	2	19062.0	2.74	main card 1	12.75	eager
+graph4096	3	turn	off	1359	3	3	19064.9	2.92	main card 2	13.74	eager
+graph4096	3	turn	off	1359	3	4	19067.3	2.36	main card 3	11.02	eager
+graph4096	3	turn	off	1359	3	5	19070.0	2.72	main card 4	12.86	eager
+graph4096	3	turn	off	1359	3	6	19072.6	2.61	main card 5	11.82	eager
+graph4096	3	turn	off	1359	3	7	19075.4	2.78	main card 6	12.61	eager
+graph4096	3	turn	off	1359	3	8	19077.4	1.95	main card 7	8.32	eager
+graph4096	4	turn	off	258	0	0	0.0	980.97	draft card 8	449.69	eager
+graph4096	4	turn	off	258	0	1	6.3	6.31	main card 0	464.24	eager
+graph4096	4	turn	off	258	0	2	12.3	6.01	main card 1	415.27	eager
+graph4096	4	turn	off	258	0	3	18.5	6.23	main card 2	449.87	eager
+graph4096	4	turn	off	258	0	4	24.0	5.44	main card 3	354.93	eager
+graph4096	4	turn	off	258	0	5	30.1	6.08	main card 4	407.14	eager
+graph4096	4	turn	off	258	0	6	35.9	5.81	main card 5	370.57	eager
+graph4096	4	turn	off	258	0	7	42.0	6.09	main card 6	403.8	eager
+graph4096	4	turn	off	258	0	8	46.6	4.62	main card 7	157.39	eager
+graph4096	4	turn	off	258	1	0	4356.9	668.88	draft card 8	14.26	eager
+graph4096	4	turn	off	258	1	1	4359.8	2.87	main card 0	13.52	eager
+graph4096	4	turn	off	258	1	2	4362.5	2.75	main card 1	12.95	eager
+graph4096	4	turn	off	258	1	3	4365.4	2.84	main card 2	13.81	eager
+graph4096	4	turn	off	258	1	4	4367.7	2.3	main card 3	11.09	eager
+graph4096	4	turn	off	258	1	5	4370.3	2.62	main card 4	12.88	eager
+graph4096	4	turn	off	258	1	6	4372.8	2.54	main card 5	11.69	eager
+graph4096	4	turn	off	258	1	7	4375.6	2.72	main card 6	12.82	eager
+graph4096	4	turn	off	258	1	8	4377.4	1.88	main card 7	8.35	eager
+graph4096	5	turn	off	31	0	0	0.0	912.05	draft card 8	330.53	eager
+graph4096	5	turn	off	31	0	1	7.5	7.55	main card 0	158.35	eager
+graph4096	5	turn	off	31	0	2	12.7	5.18	main card 1	147.96	eager
+graph4096	5	turn	off	31	0	3	18.3	5.57	main card 2	149.84	eager
+graph4096	5	turn	off	31	0	4	22.5	4.23	main card 3	120.7	eager
+graph4096	5	turn	off	31	0	5	27.1	4.55	main card 4	146.19	eager
+graph4096	5	turn	off	31	0	6	32.0	4.88	main card 5	129.79	eager
+graph4096	5	turn	off	31	0	7	37.0	5.07	main card 6	136.7	eager
+graph4096	5	turn	off	31	0	8	40.6	3.58	main card 7	51.28	eager
+graph4096	5	turn	off	31	1	0	1876.1	688.15	draft card 8	14.71	eager
+graph4096	5	turn	off	31	1	1	1879.0	2.86	main card 0	13.7	eager
+graph4096	5	turn	off	31	1	2	1881.7	2.68	main card 1	12.92	eager
+graph4096	5	turn	off	31	1	3	1884.6	2.9	main card 2	13.85	eager
+graph4096	5	turn	off	31	1	4	1886.9	2.32	main card 3	10.96	eager
+graph4096	5	turn	off	31	1	5	1889.5	2.66	main card 4	12.89	eager
+graph4096	5	turn	off	31	1	6	1892.1	2.57	main card 5	11.74	eager
+graph4096	5	turn	off	31	1	7	1894.8	2.73	main card 6	12.85	eager
+graph4096	5	turn	off	31	1	8	1896.7	1.9	main card 7	8.32	eager
+graph4096	6	turn	off	71	0	0	0.0	896.57	draft card 8	280.03	eager
+graph4096	6	turn	off	71	0	1	7.4	7.36	main card 0	229.27	eager
+graph4096	6	turn	off	71	0	2	14.3	6.89	main card 1	205.12	eager
+graph4096	6	turn	off	71	0	3	21.5	7.21	main card 2	209.38	eager
+graph4096	6	turn	off	71	0	4	26.7	5.26	main card 3	168.92	eager
+graph4096	6	turn	off	71	0	5	32.1	5.38	main card 4	205.29	eager
+graph4096	6	turn	off	71	0	6	37.7	5.64	main card 5	182.5	eager
+graph4096	6	turn	off	71	0	7	43.8	6.07	main card 6	195.1	eager
+graph4096	6	turn	off	71	0	8	47.8	4.03	main card 7	68.99	eager
+graph4096	6	turn	off	71	1	0	2374.1	665.57	draft card 8	14.09	eager
+graph4096	6	turn	off	71	1	1	2377.1	2.97	main card 0	13.43	eager
+graph4096	6	turn	off	71	1	2	2379.8	2.65	main card 1	12.78	eager
+graph4096	6	turn	off	71	1	3	2382.7	2.89	main card 2	13.68	eager
+graph4096	6	turn	off	71	1	4	2385.0	2.3	main card 3	11.06	eager
+graph4096	6	turn	off	71	1	5	2387.6	2.65	main card 4	12.84	eager
+graph4096	6	turn	off	71	1	6	2390.2	2.56	main card 5	11.59	eager
+graph4096	6	turn	off	71	1	7	2392.9	2.69	main card 6	12.61	eager
+graph4096	6	turn	off	71	1	8	2394.7	1.86	main card 7	8.32	eager
+graph4096	7	fresh	off	4097	0	0	0.0	403.97	draft card 8		not ready
+graph4096	7	fresh	off	4097	0	1	4.7	4.74	main card 0		not ready
+graph4096	7	fresh	off	4097	0	2	9.3	4.52	main card 1		not ready
+graph4096	7	fresh	off	4097	0	3	14.0	4.75	main card 2		not ready
+graph4096	7	fresh	off	4097	0	4	18.0	4.04	main card 3		not ready
+graph4096	7	fresh	off	4097	0	5	22.7	4.6	main card 4		not ready
+graph4096	7	fresh	off	4097	0	6	27.1	4.47	main card 5		not ready
+graph4096	7	fresh	off	4097	0	7	31.8	4.67	main card 6		not ready
+graph4096	7	fresh	off	4097	0	8	34.8	2.98	main card 7		not ready
+graph4096	7	fresh	off	4097	1	0	213.6	178.78	main card 8		not ready
+graph4096	7	fresh	off	4097	1	1	220.1	6.57	main card 0		not ready
+graph4096	7	fresh	off	4097	1	2	226.6	6.46	main card 1		not ready
+graph4096	7	fresh	off	4097	1	3	233.2	6.61	main card 2		not ready
+graph4096	7	fresh	off	4097	1	4	239.1	5.93	main card 3		not ready
+graph4096	7	fresh	off	4097	1	5	245.6	6.51	main card 4		not ready
+graph4096	7	fresh	off	4097	1	6	252.0	6.32	main card 5		not ready
+graph4096	7	fresh	off	4097	1	7	258.4	6.49	main card 6		not ready
+graph4096	7	fresh	off	4097	1	8	263.5	5.04	main card 7		not ready
+graph4096	7	fresh	off	4097	2	0	481.2	217.74	main card 8	662.63	eager
+graph4096	7	fresh	off	4097	2	1	1130.9	649.7	main card 0	677.94	eager
+graph4096	7	fresh	off	4097	2	2	1705.2	574.29	main card 1	623.56	eager
+graph4096	7	fresh	off	4097	2	3	2433.1	727.93	main card 2	652.0	eager
+graph4096	7	fresh	off	4097	2	4	2690.6	257.48	main card 3	522.43	eager
+graph4096	7	fresh	off	4097	2	5	3510.2	819.59	main card 4		not ready
+graph4096	7	fresh	off	4097	2	6	3941.5	431.25	main card 5		not ready
+graph4096	7	fresh	off	4097	2	7	4686.7	745.21	main card 6		not ready
+graph4096	7	fresh	off	4097	2	8	4695.0	8.38	main card 7		not ready
+graph4096	7	fresh	off	4097	3	0	4872.3	177.26	main card 8	681.06	eager
+graph4096	7	fresh	off	4097	3	1	4879.1	6.77	main card 0	702.5	eager
+graph4096	7	fresh	off	4097	3	2	4885.9	6.85	main card 1	637.36	eager
+graph4096	7	fresh	off	4097	3	3	4892.9	7.0	main card 2	675.61	eager
+graph4096	7	fresh	off	4097	3	4	4899.2	6.31	main card 3	535.88	eager
+graph4096	7	fresh	off	4097	3	5	4907.3	8.04	main card 4	630.57	eager
+graph4096	7	fresh	off	4097	3	6	4917.7	10.42	main card 5	550.77	eager
+graph4096	7	fresh	off	4097	3	7	5511.9	594.2	main card 6	623.06	eager
+graph4096	7	fresh	off	4097	3	8	5518.4	6.54	main card 7	231.08	eager
+graph4096	7	fresh	off	4097	4	0	11744.9	380.85	draft card 8		not ready
+graph4096	7	fresh	off	4097	4	1	11752.7	7.8	main card 0		not ready
+graph4096	7	fresh	off	4097	4	2	11760.0	7.29	main card 1		not ready
+graph4096	7	fresh	off	4097	4	3	11767.6	7.54	main card 2		not ready
+graph4096	7	fresh	off	4097	4	4	11774.3	6.74	main card 3		not ready
+graph4096	7	fresh	off	4097	4	5	11781.6	7.35	main card 4		not ready
+graph4096	7	fresh	off	4097	4	6	11788.8	7.19	main card 5		not ready
+graph4096	7	fresh	off	4097	4	7	11796.2	7.39	main card 6		not ready
+graph4096	7	fresh	off	4097	4	8	11802.1	5.88	main card 7		not ready
+graph4096	7	fresh	off	4097	5	0	12118.4	316.26	main card 8		not ready
+graph4096	7	fresh	off	4097	5	1	12127.9	9.56	main card 0		not ready
+graph4096	7	fresh	off	4097	5	2	12137.2	9.32	main card 1		not ready
+graph4096	7	fresh	off	4097	5	3	12146.8	9.58	main card 2		not ready
+graph4096	7	fresh	off	4097	5	4	12155.5	8.67	main card 3		not ready
+graph4096	7	fresh	off	4097	5	5	12164.9	9.36	main card 4		not ready
+graph4096	7	fresh	off	4097	5	6	12174.0	9.15	main card 5		not ready
+graph4096	7	fresh	off	4097	5	7	12183.3	9.33	main card 6		not ready
+graph4096	7	fresh	off	4097	5	8	12191.2	7.87	main card 7		not ready
+graph4096	7	fresh	off	4097	6	0	12402.5	211.25	main card 8	689.24	eager
+graph4096	7	fresh	off	4097	6	1	12992.5	590.04	main card 0	734.59	eager
+graph4096	7	fresh	off	4097	6	2	13559.4	566.86	main card 1	656.72	eager
+graph4096	7	fresh	off	4097	6	3	14375.2	815.82	main card 2	711.63	eager
+graph4096	7	fresh	off	4097	6	4	14645.3	270.11	main card 3	557.57	eager
+graph4096	7	fresh	off	4097	6	5	15492.9	847.59	main card 4	641.72	eager
+graph4096	7	fresh	off	4097	6	6	15994.4	501.51	main card 5	588.53	eager
+graph4096	7	fresh	off	4097	6	7	16731.3	736.94	main card 6	645.13	eager
+graph4096	7	fresh	off	4097	6	8	16739.7	8.36	main card 7	250.15	eager
+graph4096	7	fresh	off	4097	7	0	20777.3	953.92	draft card 8	722.86	eager
+graph4096	7	fresh	off	4097	7	1	20786.6	9.38	main card 0	767.73	eager
+graph4096	7	fresh	off	4097	7	2	20795.8	9.18	main card 1	677.73	eager
+graph4096	7	fresh	off	4097	7	3	20805.1	9.29	main card 2	741.68	eager
+graph4096	7	fresh	off	4097	7	4	20813.6	8.49	main card 3	568.66	eager
+graph4096	7	fresh	off	4097	7	5	20822.7	9.16	main card 4	655.75	eager
+graph4096	7	fresh	off	4097	7	6	20831.7	8.91	main card 5	612.39	eager
+graph4096	7	fresh	off	4097	7	7	20840.8	9.18	main card 6	727.47	eager
+graph4096	7	fresh	off	4097	7	8	20848.5	7.69	main card 7	258.7	eager
+graph4096	7	fresh	off	4097	8	0	27666.3	667.67	draft card 8	14.06	eager
+graph4096	7	fresh	off	4097	8	1	27669.3	3.02	main card 0	16.8	eager
+graph4096	7	fresh	off	4097	8	2	27672.1	2.8	main card 1	12.92	eager
+graph4096	7	fresh	off	4097	8	3	27675.1	2.97	main card 2	14.27	eager
+graph4096	7	fresh	off	4097	8	4	27677.6	2.45	main card 3	10.85	eager
+graph4096	7	fresh	off	4097	8	5	27680.3	2.77	main card 4	12.86	eager
+graph4096	7	fresh	off	4097	8	6	27683.0	2.68	main card 5	12.11	eager
+graph4096	7	fresh	off	4097	8	7	27685.8	2.82	main card 6	12.79	eager
+graph4096	7	fresh	off	4097	8	8	27687.8	1.95	main card 7	8.37	eager
+graph4096	8	fresh	on	4097	0	0	0.0	76.62	draft card 8		not ready
+graph4096	8	fresh	on	4097	0	1	4.1	4.13	main card 0		not ready
+graph4096	8	fresh	on	4097	0	2	7.7	3.6	main card 1		not ready
+graph4096	8	fresh	on	4097	0	3	11.5	3.77	main card 2		not ready
+graph4096	8	fresh	on	4097	0	4	14.6	3.09	main card 3		not ready
+graph4096	8	fresh	on	4097	0	5	18.2	3.61	main card 4		not ready
+graph4096	8	fresh	on	4097	0	6	21.5	3.31	main card 5		not ready
+graph4096	8	fresh	on	4097	0	7	25.2	3.73	main card 6		not ready
+graph4096	8	fresh	on	4097	0	8	26.9	1.71	main card 7		not ready
+graph4096	8	fresh	on	4097	1	0	53.8	26.84	main card 8		not ready
+graph4096	8	fresh	on	4097	1	1	58.9	5.08	main card 0		not ready
+graph4096	8	fresh	on	4097	1	2	63.8	4.89	main card 1		not ready
+graph4096	8	fresh	on	4097	1	3	68.9	5.12	main card 2		not ready
+graph4096	8	fresh	on	4097	1	4	73.3	4.41	main card 3		not ready
+graph4096	8	fresh	on	4097	1	5	78.2	4.94	main card 4		not ready
+graph4096	8	fresh	on	4097	1	6	82.9	4.64	main card 5		not ready
+graph4096	8	fresh	on	4097	1	7	88.3	5.4	main card 6		not ready
+graph4096	8	fresh	on	4097	1	8	91.4	3.14	main card 7		not ready
+graph4096	8	fresh	on	4097	2	0	121.8	30.42	main card 8	175.06	eager
+graph4096	8	fresh	on	4097	2	1	282.4	160.55	main card 0	161.26	eager
+graph4096	8	fresh	on	4097	2	2	422.8	140.44	main card 1	151.85	eager
+graph4096	8	fresh	on	4097	2	3	598.4	175.57	main card 2	157.18	eager
+graph4096	8	fresh	on	4097	2	4	659.7	61.36	main card 3	131.25	eager
+graph4096	8	fresh	on	4097	2	5	867.4	207.69	main card 4		not ready
+graph4096	8	fresh	on	4097	2	6	973.6	106.13	main card 5		not ready
+graph4096	8	fresh	on	4097	2	7	1154.7	181.18	main card 6		not ready
+graph4096	8	fresh	on	4097	2	8	1158.1	3.37	main card 7		not ready
+graph4096	8	fresh	on	4097	3	0	1183.4	25.33	main card 8	176.38	eager
+graph4096	8	fresh	on	4097	3	1	1187.2	3.78	main card 0		not ready
+graph4096	8	fresh	on	4097	3	2	1190.8	3.55	main card 1		not ready
+graph4096	8	fresh	on	4097	3	3	1194.6	3.78	main card 2		not ready
+graph4096	8	fresh	on	4097	3	4	1197.6	3.09	main card 3		not ready
+graph4096	8	fresh	on	4097	3	5	1202.6	4.99	main card 4		not ready
+graph4096	8	fresh	on	4097	3	6	1207.4	4.79	main card 5		not ready
+graph4096	8	fresh	on	4097	3	7	1323.4	115.96	main card 6		not ready
+graph4096	8	fresh	on	4097	3	8	1326.8	3.39	main card 7		not ready
+graph4096	8	fresh	on	4097	4	0	1417.6	90.82	main card 8		not ready
+graph4096	8	fresh	on	4097	4	1	1424.0	6.37	main card 0		not ready
+graph4096	8	fresh	on	4097	4	2	1430.2	6.22	main card 1		not ready
+graph4096	8	fresh	on	4097	4	3	1436.6	6.4	main card 2		not ready
+graph4096	8	fresh	on	4097	4	4	1442.4	5.77	main card 3		not ready
+graph4096	8	fresh	on	4097	4	5	1448.5	6.15	main card 4		not ready
+graph4096	8	fresh	on	4097	4	6	1454.6	6.05	main card 5		not ready
+graph4096	8	fresh	on	4097	4	7	1510.4	55.87	main card 6		not ready
+graph4096	8	fresh	on	4097	4	8	1515.7	5.31	main card 7		not ready
+graph4096	8	fresh	on	4097	5	0	1612.4	96.7	main card 8		not ready
+graph4096	8	fresh	on	4097	5	1	1619.4	6.98	main card 0		not ready
+graph4096	8	fresh	on	4097	5	2	1641.4	21.95	main card 1		not ready
+graph4096	8	fresh	on	4097	5	3	1830.0	188.66	main card 2		not ready
+graph4096	8	fresh	on	4097	5	4	1892.8	62.73	main card 3		not ready
+graph4096	8	fresh	on	4097	5	5	2104.0	211.29	main card 4		not ready
+graph4096	8	fresh	on	4097	5	6	2220.3	116.25	main card 5		not ready
+graph4096	8	fresh	on	4097	5	7	2406.0	185.67	main card 6		not ready
+graph4096	8	fresh	on	4097	5	8	2411.7	5.75	main card 7		not ready
+graph4096	8	fresh	on	4097	6	0	2505.2	93.45	main card 8	682.72	eager
+graph4096	8	fresh	on	4097	6	1	2552.8	47.66	main card 0	690.5	eager
+graph4096	8	fresh	on	4097	6	2	3122.3	569.51	main card 1	632.93	eager
+graph4096	8	fresh	on	4097	6	3	3855.9	733.54	main card 2	673.9	eager
+graph4096	8	fresh	on	4097	6	4	4108.5	252.61	main card 3	534.6	eager
+graph4096	8	fresh	on	4097	6	5	4926.2	817.67	main card 4		not ready
+graph4096	8	fresh	on	4097	6	6	5376.0	449.83	main card 5		not ready
+graph4096	8	fresh	on	4097	6	7	6119.5	743.51	main card 6		not ready
+graph4096	8	fresh	on	4097	6	8	6125.8	6.3	main card 7		not ready
+graph4096	8	fresh	on	4097	7	0	6180.9	55.14	main card 8	442.85	eager
+graph4096	8	fresh	on	4097	7	1	6186.7	5.74	main card 0	443.62	eager
+graph4096	8	fresh	on	4097	7	2	6191.7	5.06	main card 1	405.36	eager
+graph4096	8	fresh	on	4097	7	3	6197.7	5.99	main card 2	427.88	eager
+graph4096	8	fresh	on	4097	7	4	6203.4	5.69	main card 3	347.75	eager
+graph4096	8	fresh	on	4097	7	5	6214.0	10.6	main card 4	397.41	eager
+graph4096	8	fresh	on	4097	7	6	6238.9	24.91	main card 5	350.28	eager
+graph4096	8	fresh	on	4097	7	7	6993.2	754.28	main card 6	396.52	eager
+graph4096	8	fresh	on	4097	7	8	6998.3	5.12	main card 7	149.64	eager
+graph4096	8	fresh	on	4097	8	0	10772.1	126.59	draft card 8		not ready
+graph4096	8	fresh	on	4097	8	1	10779.6	7.59	main card 0		not ready
+graph4096	8	fresh	on	4097	8	2	10787.2	7.59	main card 1		not ready
+graph4096	8	fresh	on	4097	8	3	10795.0	7.74	main card 2		not ready
+graph4096	8	fresh	on	4097	8	4	10801.7	6.77	main card 3		not ready
+graph4096	8	fresh	on	4097	8	5	10809.1	7.4	main card 4		not ready
+graph4096	8	fresh	on	4097	8	6	10816.5	7.4	main card 5		not ready
+graph4096	8	fresh	on	4097	8	7	10823.9	7.39	main card 6		not ready
+graph4096	8	fresh	on	4097	8	8	10829.9	5.92	main card 7		not ready
+graph4096	8	fresh	on	4097	9	0	10928.6	98.71	main card 8		not ready
+graph4096	8	fresh	on	4097	9	1	10937.7	9.1	main card 0		not ready
+graph4096	8	fresh	on	4097	9	2	10946.6	8.97	main card 1		not ready
+graph4096	8	fresh	on	4097	9	3	10955.7	9.12	main card 2		not ready
+graph4096	8	fresh	on	4097	9	4	10964.1	8.3	main card 3		not ready
+graph4096	8	fresh	on	4097	9	5	10973.0	8.97	main card 4		not ready
+graph4096	8	fresh	on	4097	9	6	10981.8	8.82	main card 5		not ready
+graph4096	8	fresh	on	4097	9	7	10990.9	9.01	main card 6		not ready
+graph4096	8	fresh	on	4097	9	8	10998.4	7.58	main card 7		not ready
+graph4096	8	fresh	on	4097	10	0	11307.7	309.22	main card 8	266.66	eager
+graph4096	8	fresh	on	4097	10	1	12014.2	706.56	main card 0	278.65	eager
+graph4096	8	fresh	on	4097	10	2	12578.4	564.15	main card 1	261.27	eager
+graph4096	8	fresh	on	4097	10	3	13400.4	821.99	main card 2	273.52	eager
+graph4096	8	fresh	on	4097	10	4	13668.8	268.48	main card 3	221.75	eager
+graph4096	8	fresh	on	4097	10	5	14521.2	852.33	main card 4		not ready
+graph4096	8	fresh	on	4097	10	6	15022.3	501.14	main card 5		not ready
+graph4096	8	fresh	on	4097	10	7	15760.7	738.38	main card 6		not ready
+graph4096	8	fresh	on	4097	10	8	15765.2	4.49	main card 7		not ready
+graph4096	8	fresh	on	4097	11	0	15802.3	37.08	main card 8	294.2	eager
+graph4096	8	fresh	on	4097	11	1	15807.4	5.1	main card 0	299.59	eager
+graph4096	8	fresh	on	4097	11	2	15812.4	5.06	main card 1	273.27	eager
+graph4096	8	fresh	on	4097	11	3	15817.5	5.05	main card 2		not ready
+graph4096	8	fresh	on	4097	11	4	15822.1	4.68	main card 3		not ready
+graph4096	8	fresh	on	4097	11	5	15828.7	6.54	main card 4		not ready
+graph4096	8	fresh	on	4097	11	6	15889.4	60.75	main card 5		not ready
+graph4096	8	fresh	on	4097	11	7	16653.4	763.99	main card 6		not ready
+graph4096	8	fresh	on	4097	11	8	16658.1	4.71	main card 7		not ready
+graph4096	8	fresh	on	4097	12	0	16697.9	39.72	main card 8	289.62	eager
+graph4096	8	fresh	on	4097	12	1	16703.0	5.12	main card 0		not ready
+graph4096	8	fresh	on	4097	12	2	16708.0	5.01	main card 1		not ready
+graph4096	8	fresh	on	4097	12	3	16714.7	6.7	main card 2		not ready
+graph4096	8	fresh	on	4097	12	4	16720.4	5.7	main card 3		not ready
+graph4096	8	fresh	on	4097	12	5	16726.8	6.43	main card 4		not ready
+graph4096	8	fresh	on	4097	12	6	16733.0	6.14	main card 5		not ready
+graph4096	8	fresh	on	4097	12	7	17139.8	406.87	main card 6		not ready
+graph4096	8	fresh	on	4097	12	8	17144.7	4.83	main card 7		not ready
+graph4096	8	fresh	on	4097	13	0	17181.1	36.44	main card 8	285.05	eager
+graph4096	8	fresh	on	4097	13	1	17187.7	6.57	main card 0	296.85	eager
+graph4096	8	fresh	on	4097	13	2	17194.4	6.71	main card 1	273.39	eager
+graph4096	8	fresh	on	4097	13	3	17200.9	6.51	main card 2	283.29	eager
+graph4096	8	fresh	on	4097	13	4	17206.7	5.85	main card 3	225.23	eager
+graph4096	8	fresh	on	4097	13	5	17381.0	174.29	main card 4	249.63	eager
+graph4096	8	fresh	on	4097	13	6	17588.2	207.14	main card 5	223.23	eager
+graph4096	8	fresh	on	4097	13	7	17898.3	310.15	main card 6	245.04	eager
+graph4096	8	fresh	on	4097	13	8	17903.0	4.7	main card 7	95.01	eager
+graph4096	8	fresh	on	4097	14	0	20901.7	659.97	draft card 8		not ready
+graph4096	8	fresh	on	4097	14	1	20906.2	4.46	main card 0		not ready
+graph4096	8	fresh	on	4097	14	2	20910.5	4.29	main card 1		not ready
+graph4096	8	fresh	on	4097	14	3	20915.0	4.52	main card 2		not ready
+graph4096	8	fresh	on	4097	14	4	20918.8	3.77	main card 3		not ready
+graph4096	8	fresh	on	4097	14	5	20923.0	4.28	main card 4		not ready
+graph4096	8	fresh	on	4097	14	6	20927.1	4.07	main card 5		not ready
+graph4096	8	fresh	on	4097	14	7	20931.5	4.38	main card 6		not ready
+graph4096	8	fresh	on	4097	14	8	20934.1	2.59	main card 7		not ready
+graph4096	8	fresh	on	4097	15	0	20961.9	27.82	main card 8		not ready
+graph4096	8	fresh	on	4097	15	1	20967.7	5.76	main card 0		not ready
+graph4096	8	fresh	on	4097	15	2	20973.2	5.52	main card 1		not ready
+graph4096	8	fresh	on	4097	15	3	20978.9	5.76	main card 2		not ready
+graph4096	8	fresh	on	4097	15	4	20983.9	4.97	main card 3		not ready
+graph4096	8	fresh	on	4097	15	5	20989.4	5.52	main card 4		not ready
+graph4096	8	fresh	on	4097	15	6	20994.8	5.33	main card 5		not ready
+graph4096	8	fresh	on	4097	15	7	21000.3	5.54	main card 6		not ready
+graph4096	8	fresh	on	4097	15	8	21004.2	3.86	main card 7		not ready
+graph4096	8	fresh	on	4097	16	0	21043.7	39.54	main card 8	180.33	eager
+graph4096	8	fresh	on	4097	16	1	21240.8	197.06	main card 0	170.91	eager
+graph4096	8	fresh	on	4097	16	2	21397.2	156.44	main card 1	157.27	eager
+graph4096	8	fresh	on	4097	16	3	21626.5	229.29	main card 2	171.1	eager
+graph4096	8	fresh	on	4097	16	4	21696.5	70.01	main card 3	133.2	eager
+graph4096	8	fresh	on	4097	16	5	21934.3	237.77	main card 4		not ready
+graph4096	8	fresh	on	4097	16	6	22061.1	126.89	main card 5		not ready
+graph4096	8	fresh	on	4097	16	7	22251.1	189.92	main card 6		not ready
+graph4096	8	fresh	on	4097	16	8	22256.9	5.88	main card 7		not ready
+graph4096	8	fresh	on	4097	17	0	22283.3	26.36	main card 8	200.17	eager
+graph4096	8	fresh	on	4097	17	1	22287.9	4.54	main card 0		not ready
+graph4096	8	fresh	on	4097	17	2	22292.2	4.36	main card 1		not ready
+graph4096	8	fresh	on	4097	17	3	22296.8	4.55	main card 2		not ready
+graph4096	8	fresh	on	4097	17	4	22300.5	3.74	main card 3		not ready
+graph4096	8	fresh	on	4097	17	5	22306.2	5.69	main card 4		not ready
+graph4096	8	fresh	on	4097	17	6	22311.5	5.32	main card 5		not ready
+graph4096	8	fresh	on	4097	17	7	22499.5	187.95	main card 6		not ready
+graph4096	8	fresh	on	4097	17	8	22503.4	3.91	main card 7		not ready
+graph4096	8	fresh	on	4097	18	0	22529.6	26.21	main card 8		not ready
+graph4096	8	fresh	on	4097	18	1	22535.4	5.79	main card 0		not ready
+graph4096	8	fresh	on	4097	18	2	22540.9	5.55	main card 1		not ready
+graph4096	8	fresh	on	4097	18	3	22546.7	5.78	main card 2		not ready
+graph4096	8	fresh	on	4097	18	4	22551.7	5.03	main card 3		not ready
+graph4096	8	fresh	on	4097	18	5	22557.3	5.57	main card 4		not ready
+graph4096	8	fresh	on	4097	18	6	22563.0	5.69	main card 5		not ready
+graph4096	8	fresh	on	4097	18	7	22664.8	101.82	main card 6		not ready
+graph4096	8	fresh	on	4097	18	8	22668.9	4.06	main card 7		not ready
+graph4096	8	fresh	on	4097	19	0	22697.8	28.9	main card 8	174.33	eager
+graph4096	8	fresh	on	4097	19	1	22703.5	5.69	main card 0	167.12	eager
+graph4096	8	fresh	on	4097	19	2	22782.8	79.3	main card 1	154.81	eager
+graph4096	8	fresh	on	4097	19	3	23002.4	219.66	main card 2	160.3	eager
+graph4096	8	fresh	on	4097	19	4	23073.2	70.8	main card 3	126.82	eager
+graph4096	8	fresh	on	4097	19	5	23303.3	230.13	main card 4		not ready
+graph4096	8	fresh	on	4097	19	6	23432.8	129.45	main card 5		not ready
+graph4096	8	fresh	on	4097	19	7	23623.1	190.32	main card 6		not ready
+graph4096	8	fresh	on	4097	19	8	23627.1	3.95	main card 7		not ready
+graph4096	8	fresh	on	4097	20	0	23653.2	26.12	main card 8		not ready
+graph4096	8	fresh	on	4097	20	1	23657.7	4.53	main card 0		not ready
+graph4096	8	fresh	on	4097	20	2	23662.2	4.46	main card 1		not ready
+graph4096	8	fresh	on	4097	20	3	23666.9	4.7	main card 2		not ready
+graph4096	8	fresh	on	4097	20	4	23670.7	3.81	main card 3		not ready
+graph4096	8	fresh	on	4097	20	5	23676.2	5.54	main card 4		not ready
+graph4096	8	fresh	on	4097	20	6	23682.1	5.91	main card 5		not ready
+graph4096	8	fresh	on	4097	20	7	23785.6	103.43	main card 6		not ready
+graph4096	8	fresh	on	4097	20	8	23789.6	4.0	main card 7		not ready
+graph4096	8	fresh	on	4097	21	0	23817.1	27.52	main card 8	188.73	eager
+graph4096	8	fresh	on	4097	21	1	23822.8	5.75	main card 0	188.92	eager
+graph4096	8	fresh	on	4097	21	2	23828.4	5.6	main card 1	180.73	eager
+graph4096	8	fresh	on	4097	21	3	23834.2	5.74	main card 2	195.42	eager
+graph4096	8	fresh	on	4097	21	4	23839.3	5.12	main card 3	151.53	eager
+graph4096	8	fresh	on	4097	21	5	23844.9	5.62	main card 4	167.49	eager
+graph4096	8	fresh	on	4097	21	6	23850.3	5.4	main card 5	145.38	eager
+graph4096	8	fresh	on	4097	21	7	23936.3	85.95	main card 6	157.13	eager
+graph4096	8	fresh	on	4097	21	8	23940.3	3.98	main card 7	62.72	eager
+graph4096	8	fresh	on	4097	22	0	26224.4	655.9	draft card 8	14.19	eager
+graph4096	8	fresh	on	4097	22	1	26227.4	2.92	main card 0	13.41	eager
+graph4096	8	fresh	on	4097	22	2	26230.1	2.76	main card 1	12.93	eager
+graph4096	8	fresh	on	4097	22	3	26233.1	3.02	main card 2	13.95	eager
+graph4096	8	fresh	on	4097	22	4	26235.5	2.39	main card 3	10.81	eager
+graph4096	8	fresh	on	4097	22	5	26238.3	2.81	main card 4	12.77	eager
+graph4096	8	fresh	on	4097	22	6	26241.0	2.66	main card 5	11.96	eager
+graph4096	8	fresh	on	4097	22	7	26243.9	2.88	main card 6	12.84	eager
+graph4096	8	fresh	on	4097	22	8	26245.8	1.88	main card 7	8.48	eager
+graph4096	9	fresh	on	4097	0	0	0.0	88.15	draft card 8		not ready
+graph4096	9	fresh	on	4097	0	1	3.8	3.77	main card 0		not ready
+graph4096	9	fresh	on	4097	0	2	7.4	3.61	main card 1		not ready
+graph4096	9	fresh	on	4097	0	3	11.4	3.97	main card 2		not ready
+graph4096	9	fresh	on	4097	0	4	14.4	3.02	main card 3		not ready
+graph4096	9	fresh	on	4097	0	5	17.9	3.54	main card 4		not ready
+graph4096	9	fresh	on	4097	0	6	21.2	3.31	main card 5		not ready
+graph4096	9	fresh	on	4097	0	7	24.8	3.61	main card 6		not ready
+graph4096	9	fresh	on	4097	0	8	26.6	1.75	main card 7		not ready
+graph4096	9	fresh	on	4097	1	0	75.3	48.69	main card 8		not ready
+graph4096	9	fresh	on	4097	1	1	80.4	5.09	main card 0		not ready
+graph4096	9	fresh	on	4097	1	2	85.3	4.89	main card 1		not ready
+graph4096	9	fresh	on	4097	1	3	90.4	5.16	main card 2		not ready
+graph4096	9	fresh	on	4097	1	4	94.8	4.38	main card 3		not ready
+graph4096	9	fresh	on	4097	1	5	99.7	4.94	main card 4		not ready
+graph4096	9	fresh	on	4097	1	6	104.4	4.65	main card 5		not ready
+graph4096	9	fresh	on	4097	1	7	109.4	5.05	main card 6		not ready
+graph4096	9	fresh	on	4097	1	8	112.6	3.17	main card 7		not ready
+graph4096	9	fresh	on	4097	2	0	166.0	53.44	main card 8	187.35	eager
+graph4096	9	fresh	on	4097	2	1	282.0	115.92	main card 0	177.07	eager
+graph4096	9	fresh	on	4097	2	2	420.0	138.05	main card 1	156.68	eager
+graph4096	9	fresh	on	4097	2	3	600.9	180.86	main card 2	167.01	eager
+graph4096	9	fresh	on	4097	2	4	663.6	62.76	main card 3	136.26	eager
+graph4096	9	fresh	on	4097	2	5	868.2	204.6	main card 4		not ready
+graph4096	9	fresh	on	4097	2	6	975.2	106.92	main card 5		not ready
+graph4096	9	fresh	on	4097	2	7	1159.1	183.97	main card 6		not ready
+graph4096	9	fresh	on	4097	2	8	1162.4	3.29	main card 7		not ready
+graph4096	9	fresh	on	4097	3	0	1213.1	50.72	main card 8	182.96	eager
+graph4096	9	fresh	on	4097	3	1	1217.1	3.95	main card 0	180.23	eager
+graph4096	9	fresh	on	4097	3	2	1220.7	3.59	main card 1		not ready
+graph4096	9	fresh	on	4097	3	3	1224.5	3.8	main card 2		not ready
+graph4096	9	fresh	on	4097	3	4	1227.6	3.11	main card 3		not ready
+graph4096	9	fresh	on	4097	3	5	1232.6	5.02	main card 4		not ready
+graph4096	9	fresh	on	4097	3	6	1238.8	6.22	main card 5		not ready
+graph4096	9	fresh	on	4097	3	7	1347.8	108.96	main card 6		not ready
+graph4096	9	fresh	on	4097	3	8	1351.2	3.39	main card 7		not ready
+graph4096	9	fresh	on	4097	4	0	1593.5	242.37	main card 8		not ready
+graph4096	9	fresh	on	4097	4	1	1598.6	5.04	main card 0		not ready
+graph4096	9	fresh	on	4097	4	2	1604.8	6.22	main card 1		not ready
+graph4096	9	fresh	on	4097	4	3	1611.2	6.39	main card 2		not ready
+graph4096	9	fresh	on	4097	4	4	1616.9	5.71	main card 3		not ready
+graph4096	9	fresh	on	4097	4	5	1623.1	6.21	main card 4		not ready
+graph4096	9	fresh	on	4097	4	6	1629.1	6.04	main card 5		not ready
+graph4096	9	fresh	on	4097	4	7	1635.4	6.26	main card 6		not ready
+graph4096	9	fresh	on	4097	4	8	1640.5	5.09	main card 7		not ready
+graph4096	9	fresh	on	4097	5	0	1832.6	192.16	main card 8		not ready
+graph4096	9	fresh	on	4097	5	1	1839.6	6.93	main card 0		not ready
+graph4096	9	fresh	on	4097	5	2	1846.4	6.82	main card 1		not ready
+graph4096	9	fresh	on	4097	5	3	1877.9	31.46	main card 2		not ready
+graph4096	9	fresh	on	4097	5	4	1941.7	63.83	main card 3		not ready
+graph4096	9	fresh	on	4097	5	5	2159.3	217.63	main card 4		not ready
+graph4096	9	fresh	on	4097	5	6	2281.8	122.52	main card 5		not ready
+graph4096	9	fresh	on	4097	5	7	2476.5	194.69	main card 6		not ready
+graph4096	9	fresh	on	4097	5	8	2482.3	5.75	main card 7		not ready
+graph4096	9	fresh	on	4097	6	0	2754.0	271.71	main card 8	682.44	eager
+graph4096	9	fresh	on	4097	6	1	2761.9	7.89	main card 0	680.04	eager
+graph4096	9	fresh	on	4097	6	2	3310.7	548.83	main card 1	624.47	eager
+graph4096	9	fresh	on	4097	6	3	4046.5	735.83	main card 2	658.56	eager
+graph4096	9	fresh	on	4097	6	4	4302.0	255.43	main card 3	529.66	eager
+graph4096	9	fresh	on	4097	6	5	5123.9	821.98	main card 4		not ready
+graph4096	9	fresh	on	4097	6	6	5580.9	456.99	main card 5		not ready
+graph4096	9	fresh	on	4097	6	7	6338.0	757.05	main card 6		not ready
+graph4096	9	fresh	on	4097	6	8	6346.9	8.89	main card 7		not ready
+graph4096	9	fresh	on	4097	7	0	6473.1	126.27	main card 8	452.45	eager
+graph4096	9	fresh	on	4097	7	1	6478.4	5.23	main card 0	455.02	eager
+graph4096	9	fresh	on	4097	7	2	6483.6	5.23	main card 1	411.46	eager
+graph4096	9	fresh	on	4097	7	3	6488.9	5.3	main card 2	431.4	eager
+graph4096	9	fresh	on	4097	7	4	6493.4	4.48	main card 3	350.8	eager
+graph4096	9	fresh	on	4097	7	5	6499.7	6.31	main card 4	403.13	eager
+graph4096	9	fresh	on	4097	7	6	6506.0	6.33	main card 5	356.3	eager
+graph4096	9	fresh	on	4097	7	7	7186.3	680.32	main card 6	396.8	eager
+graph4096	9	fresh	on	4097	7	8	7191.5	5.14	main card 7	148.41	eager
+graph4096	9	fresh	on	4097	8	0	11274.2	280.15	draft card 8		not ready
+graph4096	9	fresh	on	4097	8	1	11281.7	7.47	main card 0		not ready
+graph4096	9	fresh	on	4097	8	2	11289.1	7.38	main card 1		not ready
+graph4096	9	fresh	on	4097	8	3	11296.7	7.56	main card 2		not ready
+graph4096	9	fresh	on	4097	8	4	11303.4	6.75	main card 3		not ready
+graph4096	9	fresh	on	4097	8	5	11310.7	7.33	main card 4		not ready
+graph4096	9	fresh	on	4097	8	6	11318.1	7.32	main card 5		not ready
+graph4096	9	fresh	on	4097	8	7	11325.4	7.36	main card 6		not ready
+graph4096	9	fresh	on	4097	8	8	11331.3	5.87	main card 7		not ready
+graph4096	9	fresh	on	4097	9	0	11636.9	305.56	main card 8		not ready
+graph4096	9	fresh	on	4097	9	1	11646.0	9.15	main card 0		not ready
+graph4096	9	fresh	on	4097	9	2	11655.1	9.09	main card 1		not ready
+graph4096	9	fresh	on	4097	9	3	11664.2	9.11	main card 2		not ready
+graph4096	9	fresh	on	4097	9	4	11672.4	8.25	main card 3		not ready
+graph4096	9	fresh	on	4097	9	5	11681.4	8.97	main card 4		not ready
+graph4096	9	fresh	on	4097	9	6	11690.1	8.73	main card 5		not ready
+graph4096	9	fresh	on	4097	9	7	11699.1	8.95	main card 6		not ready
+graph4096	9	fresh	on	4097	9	8	11706.6	7.53	main card 7		not ready
+graph4096	9	fresh	on	4097	10	0	11882.3	175.64	main card 8	253.78	eager
+graph4096	9	fresh	on	4097	10	1	12607.8	725.52	main card 0	260.5	eager
+graph4096	9	fresh	on	4097	10	2	13187.4	579.56	main card 1	249.13	eager
+graph4096	9	fresh	on	4097	10	3	14031.6	844.22	main card 2	255.6	eager
+graph4096	9	fresh	on	4097	10	4	14309.8	278.22	main card 3	216.28	eager
+graph4096	9	fresh	on	4097	10	5	15194.9	885.06	main card 4	239.28	eager
+graph4096	9	fresh	on	4097	10	6	15754.3	559.47	main card 5		not ready
+graph4096	9	fresh	on	4097	10	7	16575.2	820.84	main card 6		not ready
+graph4096	9	fresh	on	4097	10	8	16580.9	5.74	main card 7		not ready
+graph4096	9	fresh	on	4097	11	0	16677.3	96.44	main card 8	255.43	eager
+graph4096	9	fresh	on	4097	11	1	16682.7	5.41	main card 0	300.45	eager
+graph4096	9	fresh	on	4097	11	2	16687.8	5.03	main card 1		not ready
+graph4096	9	fresh	on	4097	11	3	16693.1	5.33	main card 2		not ready
+graph4096	9	fresh	on	4097	11	4	16697.5	4.39	main card 3		not ready
+graph4096	9	fresh	on	4097	11	5	16702.4	4.92	main card 4		not ready
+graph4096	9	fresh	on	4097	11	6	16708.5	6.1	main card 5		not ready
+graph4096	9	fresh	on	4097	11	7	17286.9	578.4	main card 6		not ready
+graph4096	9	fresh	on	4097	11	8	17291.5	4.56	main card 7		not ready
+graph4096	9	fresh	on	4097	12	0	17384.9	93.44	main card 8	261.01	eager
+graph4096	9	fresh	on	4097	12	1	17390.2	5.26	main card 0		not ready
+graph4096	9	fresh	on	4097	12	2	17396.6	6.46	main card 1		not ready
+graph4096	9	fresh	on	4097	12	3	17403.1	6.49	main card 2		not ready
+graph4096	9	fresh	on	4097	12	4	17409.0	5.87	main card 3		not ready
+graph4096	9	fresh	on	4097	12	5	17415.4	6.38	main card 4		not ready
+graph4096	9	fresh	on	4097	12	6	17421.6	6.21	main card 5		not ready
+graph4096	9	fresh	on	4097	12	7	17762.7	341.17	main card 6		not ready
+graph4096	9	fresh	on	4097	12	8	17767.7	4.96	main card 7		not ready
+graph4096	9	fresh	on	4097	13	0	17872.5	104.84	main card 8	291.79	eager
+graph4096	9	fresh	on	4097	13	1	17878.9	6.4	main card 0	288.07	eager
+graph4096	9	fresh	on	4097	13	2	17886.4	7.46	main card 1	259.75	eager
+graph4096	9	fresh	on	4097	13	3	17892.9	6.5	main card 2	277.95	eager
+graph4096	9	fresh	on	4097	13	4	17898.7	5.82	main card 3	220.68	eager
+graph4096	9	fresh	on	4097	13	5	18142.9	244.21	main card 4	247.16	eager
+graph4096	9	fresh	on	4097	13	6	18329.9	186.93	main card 5	220.99	eager
+graph4096	9	fresh	on	4097	13	7	18607.4	277.58	main card 6	239.58	eager
+graph4096	9	fresh	on	4097	13	8	18612.1	4.67	main card 7	92.52	eager
+graph4096	9	fresh	on	4097	14	0	21607.0	720.44	draft card 8		not ready
+graph4096	9	fresh	on	4097	14	1	21611.4	4.44	main card 0		not ready
+graph4096	9	fresh	on	4097	14	2	21615.8	4.36	main card 1		not ready
+graph4096	9	fresh	on	4097	14	3	21620.3	4.51	main card 2		not ready
+graph4096	9	fresh	on	4097	14	4	21624.0	3.74	main card 3		not ready
+graph4096	9	fresh	on	4097	14	5	21628.4	4.32	main card 4		not ready
+graph4096	9	fresh	on	4097	14	6	21632.5	4.17	main card 5		not ready
+graph4096	9	fresh	on	4097	14	7	21636.9	4.35	main card 6		not ready
+graph4096	9	fresh	on	4097	14	8	21639.5	2.58	main card 7		not ready
+graph4096	9	fresh	on	4097	15	0	21690.3	50.89	main card 8		not ready
+graph4096	9	fresh	on	4097	15	1	21696.1	5.78	main card 0		not ready
+graph4096	9	fresh	on	4097	15	2	21701.7	5.53	main card 1		not ready
+graph4096	9	fresh	on	4097	15	3	21707.4	5.75	main card 2		not ready
+graph4096	9	fresh	on	4097	15	4	21712.4	4.99	main card 3		not ready
+graph4096	9	fresh	on	4097	15	5	21717.9	5.53	main card 4		not ready
+graph4096	9	fresh	on	4097	15	6	21723.2	5.26	main card 5		not ready
+graph4096	9	fresh	on	4097	15	7	21728.8	5.6	main card 6		not ready
+graph4096	9	fresh	on	4097	15	8	21732.7	3.89	main card 7		not ready
+graph4096	9	fresh	on	4097	16	0	21777.0	44.34	main card 8	163.75	eager
+graph4096	9	fresh	on	4097	16	1	21905.4	128.44	main card 0	171.87	eager
+graph4096	9	fresh	on	4097	16	2	22046.9	141.47	main card 1	163.36	eager
+graph4096	9	fresh	on	4097	16	3	22252.4	205.47	main card 2	171.03	eager
+graph4096	9	fresh	on	4097	16	4	22316.0	63.64	main card 3	141.1	eager
+graph4096	9	fresh	on	4097	16	5	22540.6	224.63	main card 4		not ready
+graph4096	9	fresh	on	4097	16	6	22664.4	123.76	main card 5		not ready
+graph4096	9	fresh	on	4097	16	7	22842.7	178.25	main card 6		not ready
+graph4096	9	fresh	on	4097	16	8	22846.6	3.96	main card 7		not ready
+graph4096	9	fresh	on	4097	17	0	22896.1	49.46	main card 8	168.21	eager
+graph4096	9	fresh	on	4097	17	1	22900.6	4.49	main card 0		not ready
+graph4096	9	fresh	on	4097	17	2	22904.9	4.34	main card 1		not ready
+graph4096	9	fresh	on	4097	17	3	22909.4	4.47	main card 2		not ready
+graph4096	9	fresh	on	4097	17	4	22913.1	3.72	main card 3		not ready
+graph4096	9	fresh	on	4097	17	5	22918.6	5.51	main card 4		not ready
+graph4096	9	fresh	on	4097	17	6	22925.5	6.87	main card 5		not ready
+graph4096	9	fresh	on	4097	17	7	23026.2	100.73	main card 6		not ready
+graph4096	9	fresh	on	4097	17	8	23030.1	3.91	main card 7		not ready
+graph4096	9	fresh	on	4097	18	0	23086.1	55.94	main card 8		not ready
+graph4096	9	fresh	on	4097	18	1	23091.8	5.77	main card 0		not ready
+graph4096	9	fresh	on	4097	18	2	23097.4	5.6	main card 1		not ready
+graph4096	9	fresh	on	4097	18	3	23103.2	5.79	main card 2		not ready
+graph4096	9	fresh	on	4097	18	4	23108.3	5.02	main card 3		not ready
+graph4096	9	fresh	on	4097	18	5	23114.5	6.26	main card 4		not ready
+graph4096	9	fresh	on	4097	18	6	23119.9	5.34	main card 5		not ready
+graph4096	9	fresh	on	4097	18	7	23188.9	69.02	main card 6		not ready
+graph4096	9	fresh	on	4097	18	8	23192.8	3.97	main card 7		not ready
+graph4096	9	fresh	on	4097	19	0	23250.2	57.38	main card 8	174.0	eager
+graph4096	9	fresh	on	4097	19	1	23256.9	6.64	main card 0	179.58	eager
+graph4096	9	fresh	on	4097	19	2	23333.3	76.46	main card 1	167.73	eager
+graph4096	9	fresh	on	4097	19	3	23543.2	209.91	main card 2	174.6	eager
+graph4096	9	fresh	on	4097	19	4	23608.4	65.19	main card 3	143.62	eager
+graph4096	9	fresh	on	4097	19	5	23831.1	222.63	main card 4		not ready
+graph4096	9	fresh	on	4097	19	6	23950.4	119.35	main card 5		not ready
+graph4096	9	fresh	on	4097	19	7	24123.4	172.98	main card 6		not ready
+graph4096	9	fresh	on	4097	19	8	24127.4	3.98	main card 7		not ready
+graph4096	9	fresh	on	4097	20	0	24169.8	42.4	main card 8		not ready
+graph4096	9	fresh	on	4097	20	1	24174.3	4.55	main card 0		not ready
+graph4096	9	fresh	on	4097	20	2	24178.7	4.39	main card 1		not ready
+graph4096	9	fresh	on	4097	20	3	24183.4	4.64	main card 2		not ready
+graph4096	9	fresh	on	4097	20	4	24187.2	3.81	main card 3		not ready
+graph4096	9	fresh	on	4097	20	5	24192.9	5.78	main card 4		not ready
+graph4096	9	fresh	on	4097	20	6	24198.3	5.4	main card 5		not ready
+graph4096	9	fresh	on	4097	20	7	24277.9	79.54	main card 6		not ready
+graph4096	9	fresh	on	4097	20	8	24281.9	4.0	main card 7		not ready
+graph4096	9	fresh	on	4097	21	0	24316.8	34.94	main card 8	165.08	eager
+graph4096	9	fresh	on	4097	21	1	24322.6	5.79	main card 0	176.89	eager
+graph4096	9	fresh	on	4097	21	2	24328.2	5.58	main card 1	171.25	eager
+graph4096	9	fresh	on	4097	21	3	24334.2	5.98	main card 2	182.0	eager
+graph4096	9	fresh	on	4097	21	4	24339.4	5.19	main card 3	149.69	eager
+graph4096	9	fresh	on	4097	21	5	24344.9	5.58	main card 4	166.59	eager
+graph4096	9	fresh	on	4097	21	6	24350.3	5.4	main card 5	140.81	eager
+graph4096	9	fresh	on	4097	21	7	24507.1	156.77	main card 6	151.77	eager
+graph4096	9	fresh	on	4097	21	8	24511.1	3.98	main card 7	56.17	eager
+graph4096	9	fresh	on	4097	22	0	26660.8	669.43	draft card 8	14.86	eager
+graph4096	9	fresh	on	4097	22	1	26663.9	3.03	main card 0	14.22	eager
+graph4096	9	fresh	on	4097	22	2	26666.7	2.83	main card 1	13.32	eager
+graph4096	9	fresh	on	4097	22	3	26669.7	3.0	main card 2	14.29	eager
+graph4096	9	fresh	on	4097	22	4	26672.1	2.38	main card 3	11.24	eager
+graph4096	9	fresh	on	4097	22	5	26674.9	2.77	main card 4	13.37	eager
+graph4096	9	fresh	on	4097	22	6	26677.5	2.67	main card 5	12.36	eager
+graph4096	9	fresh	on	4097	22	7	26680.4	2.87	main card 6	13.3	eager
+graph4096	9	fresh	on	4097	22	8	26682.4	1.98	main card 7	8.52	eager
+graph4096	10	fresh	off	4097	0	0	0.0	275.26	draft card 8		not ready
+graph4096	10	fresh	off	4097	0	1	4.7	4.68	main card 0		not ready
+graph4096	10	fresh	off	4097	0	2	9.2	4.55	main card 1		not ready
+graph4096	10	fresh	off	4097	0	3	13.9	4.7	main card 2		not ready
+graph4096	10	fresh	off	4097	0	4	18.0	4.07	main card 3		not ready
+graph4096	10	fresh	off	4097	0	5	22.5	4.53	main card 4		not ready
+graph4096	10	fresh	off	4097	0	6	26.8	4.3	main card 5		not ready
+graph4096	10	fresh	off	4097	0	7	31.4	4.58	main card 6		not ready
+graph4096	10	fresh	off	4097	0	8	34.4	3.0	main card 7		not ready
+graph4096	10	fresh	off	4097	1	0	146.0	111.59	main card 8		not ready
+graph4096	10	fresh	off	4097	1	1	152.6	6.61	main card 0		not ready
+graph4096	10	fresh	off	4097	1	2	159.1	6.5	main card 1		not ready
+graph4096	10	fresh	off	4097	1	3	165.8	6.65	main card 2		not ready
+graph4096	10	fresh	off	4097	1	4	171.7	5.95	main card 3		not ready
+graph4096	10	fresh	off	4097	1	5	178.2	6.49	main card 4		not ready
+graph4096	10	fresh	off	4097	1	6	184.5	6.29	main card 5		not ready
+graph4096	10	fresh	off	4097	1	7	191.0	6.47	main card 6		not ready
+graph4096	10	fresh	off	4097	1	8	196.0	5.0	main card 7		not ready
+graph4096	10	fresh	off	4097	2	0	485.4	289.42	main card 8	665.59	eager
+graph4096	10	fresh	off	4097	2	1	1143.6	658.2	main card 0	685.17	eager
+graph4096	10	fresh	off	4097	2	2	1721.2	577.62	main card 1	627.28	eager
+graph4096	10	fresh	off	4097	2	3	2455.7	734.49	main card 2	657.22	eager
+graph4096	10	fresh	off	4097	2	4	2715.2	259.45	main card 3	527.51	eager
+graph4096	10	fresh	off	4097	2	5	3538.1	822.99	main card 4		not ready
+graph4096	10	fresh	off	4097	2	6	3978.5	440.35	main card 5		not ready
+graph4096	10	fresh	off	4097	2	7	4729.9	751.42	main card 6		not ready
+graph4096	10	fresh	off	4097	2	8	4738.3	8.36	main card 7		not ready
+graph4096	10	fresh	off	4097	3	0	4835.3	97.01	main card 8	696.45	eager
+graph4096	10	fresh	off	4097	3	1	4842.3	7.0	main card 0	709.61	eager
+graph4096	10	fresh	off	4097	3	2	4849.2	6.89	main card 1	644.57	eager
+graph4096	10	fresh	off	4097	3	3	4856.3	7.15	main card 2	676.96	eager
+graph4096	10	fresh	off	4097	3	4	4862.5	6.19	main card 3	541.79	eager
+graph4096	10	fresh	off	4097	3	5	4871.0	8.44	main card 4	629.38	eager
+graph4096	10	fresh	off	4097	3	6	4880.7	9.78	main card 5	555.53	eager
+graph4096	10	fresh	off	4097	3	7	5498.9	618.11	main card 6	623.74	eager
+graph4096	10	fresh	off	4097	3	8	5505.5	6.61	main card 7	230.32	eager
+graph4096	10	fresh	off	4097	4	0	11484.1	108.67	draft card 8		not ready
+graph4096	10	fresh	off	4097	4	1	11491.9	7.8	main card 0		not ready
+graph4096	10	fresh	off	4097	4	2	11499.3	7.41	main card 1		not ready
+graph4096	10	fresh	off	4097	4	3	11507.0	7.68	main card 2		not ready
+graph4096	10	fresh	off	4097	4	4	11513.9	6.92	main card 3		not ready
+graph4096	10	fresh	off	4097	4	5	11521.2	7.36	main card 4		not ready
+graph4096	10	fresh	off	4097	4	6	11528.7	7.45	main card 5		not ready
+graph4096	10	fresh	off	4097	4	7	11536.1	7.41	main card 6		not ready
+graph4096	10	fresh	off	4097	4	8	11542.0	5.85	main card 7		not ready
+graph4096	10	fresh	off	4097	5	0	11644.9	102.9	main card 8		not ready
+graph4096	10	fresh	off	4097	5	1	11654.5	9.64	main card 0		not ready
+graph4096	10	fresh	off	4097	5	2	11663.8	9.29	main card 1		not ready
+graph4096	10	fresh	off	4097	5	3	11673.3	9.53	main card 2		not ready
+graph4096	10	fresh	off	4097	5	4	11682.1	8.81	main card 3		not ready
+graph4096	10	fresh	off	4097	5	5	11691.5	9.34	main card 4		not ready
+graph4096	10	fresh	off	4097	5	6	11700.6	9.16	main card 5		not ready
+graph4096	10	fresh	off	4097	5	7	11710.0	9.37	main card 6		not ready
+graph4096	10	fresh	off	4097	5	8	11718.0	7.99	main card 7		not ready
+graph4096	10	fresh	off	4097	6	0	12029.0	310.98	main card 8	684.97	eager
+graph4096	10	fresh	off	4097	6	1	12758.4	729.41	main card 0	727.4	eager
+graph4096	10	fresh	off	4097	6	2	13342.1	583.71	main card 1	644.24	eager
+graph4096	10	fresh	off	4097	6	3	14200.5	858.38	main card 2	702.69	eager
+graph4096	10	fresh	off	4097	6	4	14475.5	275.01	main card 3	548.69	eager
+graph4096	10	fresh	off	4097	6	5	15362.4	886.9	main card 4	640.28	eager
+graph4096	10	fresh	off	4097	6	6	15876.2	513.77	main card 5	579.03	eager
+graph4096	10	fresh	off	4097	6	7	16638.4	762.23	main card 6	621.12	eager
+graph4096	10	fresh	off	4097	6	8	16646.7	8.31	main card 7	243.12	eager
+graph4096	10	fresh	off	4097	7	0	26931.2	729.37	draft card 8	15.02	eager
+graph4096	10	fresh	off	4097	7	1	26934.2	2.95	main card 0	14.18	eager
+graph4096	10	fresh	off	4097	7	2	26937.0	2.78	main card 1	13.83	eager
+graph4096	10	fresh	off	4097	7	3	26940.0	3.01	main card 2	14.32	eager
+graph4096	10	fresh	off	4097	7	4	26942.4	2.4	main card 3	11.23	eager
+graph4096	10	fresh	off	4097	7	5	26945.2	2.79	main card 4	14.05	eager
+graph4096	10	fresh	off	4097	7	6	26947.9	2.72	main card 5	12.37	eager
+graph4096	10	fresh	off	4097	7	7	26950.7	2.83	main card 6	13.36	eager
+graph4096	10	fresh	off	4097	7	8	26952.7	1.97	main card 7	8.48	eager
+host4096	1	reset	off	1549	0	0	0.0	1802.32	draft card 8	787.49	
+host4096	1	reset	off	1549	0	1	805.0	22.68	main card 0	689.64	
+host4096	1	reset	off	1549	0	2	1460.8	15.74	main card 1	690.82	
+host4096	1	reset	off	1549	0	3	2149.8	15.89	main card 2	731.22	
+host4096	1	reset	off	1549	0	4	2999.2	1.79	main card 3	605.49	
+host4096	1	reset	off	1549	0	5	3674.3	42.06	main card 4	703.33	
+host4096	1	reset	off	1549	0	6	4343.7	14.64	main card 5	586.1	
+host4096	1	reset	off	1549	0	7	5033.2	20.31	main card 6	704.13	
+host4096	1	reset	off	1549	0	8	5759.4	1.91	main card 7	214.55	
+host4096	1	reset	off	1549	1	0	6316.9	313.27	main card 8	657.73	
+host4096	1	reset	off	1549	1	1	6322.6	2.53	main card 0	662.32	
+host4096	1	reset	off	1549	1	2	6328.1	2.51	main card 1	624.82	
+host4096	1	reset	off	1549	1	3	6333.4	2.49	main card 2	636.59	
+host4096	1	reset	off	1549	1	4	6338.7	2.4	main card 3	518.99	
+host4096	1	reset	off	1549	1	5	6343.6	2.53	main card 4	611.01	
+host4096	1	reset	off	1549	1	6	6349.0	2.51	main card 5	514.78	
+host4096	1	reset	off	1549	1	7	6354.1	2.52	main card 6	600.54	
+host4096	1	reset	off	1549	1	8	6359.5	2.56	main card 7	214.86	
+host4096	1	reset	off	1549	2	0	6974.6	613.86	main card 8	429.1	
+host4096	1	reset	off	1549	2	1	7667.5	341.84	main card 0	104.63	
+host4096	1	reset	off	1549	2	2	8323.5	623.04	main card 1	97.19	
+host4096	1	reset	off	1549	2	3	8991.8	636.03	main card 2	95.92	
+host4096	1	reset	off	1549	2	4	9540.1	516.55	main card 3	81.0	
+host4096	1	reset	off	1549	2	5	10181.9	610.08	main card 4	95.08	
+host4096	1	reset	off	1549	2	6	10728.4	513.2	main card 5	81.44	
+host4096	1	reset	off	1549	2	7	11360.7	599.41	main card 6	97.56	
+host4096	1	reset	off	1549	2	8	11607.4	212.26	main card 7	36.7	
+host4096	1	reset	off	1549	3	0	14005.3	846.03	draft card 8	651.22	
+host4096	1	reset	off	1549	3	1	14011.7	3.22	main card 0	666.02	
+host4096	1	reset	off	1549	3	2	14017.8	3.21	main card 1	621.05	
+host4096	1	reset	off	1549	3	3	14023.8	3.21	main card 2	644.96	
+host4096	1	reset	off	1549	3	4	14029.8	3.07	main card 3	523.96	
+host4096	1	reset	off	1549	3	5	14035.4	3.24	main card 4	613.11	
+host4096	1	reset	off	1549	3	6	14041.4	3.23	main card 5	521.62	
+host4096	1	reset	off	1549	3	7	14047.2	3.22	main card 6	594.33	
+host4096	1	reset	off	1549	3	8	14053.2	3.24	main card 7	222.88	
+host4096	1	reset	off	1549	4	0	20166.1	657.19	draft card 8	71.52	
+host4096	1	reset	off	1549	4	1	20232.6	0.44	main card 0	32.17	
+host4096	1	reset	off	1549	4	2	20250.0	0.9	main card 1	36.46	
+host4096	1	reset	off	1549	4	3	20298.4	0.93	main card 2	29.24	
+host4096	1	reset	off	1549	4	4	20319.6	0.35	main card 3	26.48	
+host4096	1	reset	off	1549	4	5	20358.7	0.4	main card 4	34.06	
+host4096	1	reset	off	1549	4	6	20381.8	0.91	main card 5	32.57	
+host4096	1	reset	off	1549	4	7	20409.9	0.99	main card 6	33.07	
+host4096	1	reset	off	1549	4	8	20454.2	1.25	main card 7	15.66	
+host4096	2	turn	off	430	0	0	0.0	2209.04	draft card 8	606.14	
+host4096	2	turn	off	430	0	1	6.3	3.03	main card 0	612.38	
+host4096	2	turn	off	430	0	2	12.3	3.05	main card 1	546.96	
+host4096	2	turn	off	430	0	3	18.1	3.01	main card 2	584.28	
+host4096	2	turn	off	430	0	4	23.9	2.86	main card 3	462.91	
+host4096	2	turn	off	430	0	5	29.3	3.02	main card 4	538.19	
+host4096	2	turn	off	430	0	6	35.1	3.03	main card 5	479.32	
+host4096	2	turn	off	430	0	7	40.8	3.04	main card 6	543.15	
+host4096	2	turn	off	430	0	8	46.6	3.06	main card 7	222.36	
+host4096	2	turn	off	430	1	0	6691.6	1670.05	draft card 8	14.18	
+host4096	2	turn	off	430	1	1	6694.6	0.46	main card 0	12.54	
+host4096	2	turn	off	430	1	2	6697.5	0.44	main card 1	12.44	
+host4096	2	turn	off	430	1	3	6700.1	0.45	main card 2	13.13	
+host4096	2	turn	off	430	1	4	6702.8	0.34	main card 3	10.56	
+host4096	2	turn	off	430	1	5	6705.1	0.38	main card 4	12.61	
+host4096	2	turn	off	430	1	6	6707.7	0.43	main card 5	11.13	
+host4096	2	turn	off	430	1	7	6710.5	0.42	main card 6	12.56	
+host4096	2	turn	off	430	1	8	6713.1	0.5	main card 7	7.91	
+host4096	3	turn	off	1359	0	0	0.0	1273.87	draft card 8	691.25	
+host4096	3	turn	off	1359	0	1	380.0	4.36	main card 0	718.07	
+host4096	3	turn	off	1359	0	2	860.3	4.33	main card 1	651.62	
+host4096	3	turn	off	1359	0	3	1818.5	4.32	main card 2	690.31	
+host4096	3	turn	off	1359	0	4	2293.6	4.4	main card 3	618.04	
+host4096	3	turn	off	1359	0	5	3288.0	4.34	main card 4	637.36	
+host4096	3	turn	off	1359	0	6	3770.4	4.34	main card 5	576.86	
+host4096	3	turn	off	1359	0	7	4236.2	4.33	main card 6	628.65	
+host4096	3	turn	off	1359	0	8	5143.7	4.35	main card 7	238.03	
+host4096	3	turn	off	1359	1	0	5370.7	225.42	main card 8	581.88	
+host4096	3	turn	off	1359	1	1	5378.2	3.38	main card 0	594.53	
+host4096	3	turn	off	1359	1	2	5981.5	3.52	main card 1	547.51	
+host4096	3	turn	off	1359	1	3	6596.6	3.36	main card 2	574.27	
+host4096	3	turn	off	1359	1	4	7165.1	3.2	main card 3	458.51	
+host4096	3	turn	off	1359	1	5	7758.9	3.38	main card 4	532.92	
+host4096	3	turn	off	1359	1	6	8238.6	3.36	main card 5	479.49	
+host4096	3	turn	off	1359	1	7	8792.4	3.37	main card 6	547.98	
+host4096	3	turn	off	1359	1	8	9293.0	3.4	main card 7	199.37	
+host4096	3	turn	off	1359	2	0	12616.7	2108.35	draft card 8	691.81	
+host4096	3	turn	off	1359	2	1	12625.6	5.71	main card 0	716.65	
+host4096	3	turn	off	1359	2	2	12634.2	5.68	main card 1	634.65	
+host4096	3	turn	off	1359	2	3	12642.7	5.69	main card 2	702.66	
+host4096	3	turn	off	1359	2	4	12651.0	5.42	main card 3	544.69	
+host4096	3	turn	off	1359	2	5	12659.1	5.71	main card 4	630.43	
+host4096	3	turn	off	1359	2	6	12667.5	5.72	main card 5	580.59	
+host4096	3	turn	off	1359	2	7	12675.7	5.71	main card 6	686.57	
+host4096	3	turn	off	1359	2	8	12684.2	5.74	main card 7	248.97	
+host4096	3	turn	off	1359	3	0	19220.1	675.8	draft card 8	18.26	
+host4096	3	turn	off	1359	3	1	19223.4	0.51	main card 0	13.61	
+host4096	3	turn	off	1359	3	2	19226.5	0.51	main card 1	12.79	
+host4096	3	turn	off	1359	3	3	19229.4	0.51	main card 2	13.76	
+host4096	3	turn	off	1359	3	4	19232.3	0.41	main card 3	11.02	
+host4096	3	turn	off	1359	3	5	19234.8	0.43	main card 4	13.38	
+host4096	3	turn	off	1359	3	6	19237.7	0.5	main card 5	11.72	
+host4096	3	turn	off	1359	3	7	19240.4	0.5	main card 6	12.55	
+host4096	3	turn	off	1359	3	8	19243.4	0.56	main card 7	8.37	
+host4096	4	turn	off	258	0	0	0.0	851.5	draft card 8	449.9	
+host4096	4	turn	off	258	0	1	6.6	3.23	main card 0	465.74	
+host4096	4	turn	off	258	0	2	12.8	3.17	main card 1	414.74	
+host4096	4	turn	off	258	0	3	18.9	3.19	main card 2	448.82	
+host4096	4	turn	off	258	0	4	24.9	3.02	main card 3	354.54	
+host4096	4	turn	off	258	0	5	30.5	3.22	main card 4	407.04	
+host4096	4	turn	off	258	0	6	36.6	3.22	main card 5	371.54	
+host4096	4	turn	off	258	0	7	42.4	3.18	main card 6	401.43	
+host4096	4	turn	off	258	0	8	48.4	3.27	main card 7	156.84	
+host4096	4	turn	off	258	1	0	4360.2	671.15	draft card 8	14.48	
+host4096	4	turn	off	258	1	1	4363.4	0.51	main card 0	13.59	
+host4096	4	turn	off	258	1	2	4366.2	0.5	main card 1	12.96	
+host4096	4	turn	off	258	1	3	4368.9	0.5	main card 2	13.85	
+host4096	4	turn	off	258	1	4	4371.6	0.41	main card 3	11.08	
+host4096	4	turn	off	258	1	5	4373.9	0.44	main card 4	12.87	
+host4096	4	turn	off	258	1	6	4376.6	0.51	main card 5	11.7	
+host4096	4	turn	off	258	1	7	4379.1	0.5	main card 6	12.81	
+host4096	4	turn	off	258	1	8	4381.9	0.58	main card 7	8.45	
+host4096	5	turn	off	31	0	0	0.0	703.34	draft card 8	154.38	
+host4096	5	turn	off	31	0	1	6.4	1.47	main card 0	159.55	
+host4096	5	turn	off	31	0	2	11.8	1.29	main card 1	148.71	
+host4096	5	turn	off	31	0	3	17.5	1.69	main card 2	149.82	
+host4096	5	turn	off	31	0	4	22.2	0.66	main card 3	121.08	
+host4096	5	turn	off	31	0	5	26.5	0.7	main card 4	146.35	
+host4096	5	turn	off	31	0	6	31.5	1.09	main card 5	130.35	
+host4096	5	turn	off	31	0	7	36.7	1.43	main card 6	141.46	
+host4096	5	turn	off	31	0	8	42.2	1.53	main card 7	50.52	
+host4096	5	turn	off	31	1	0	1904.0	672.26	draft card 8	14.7	
+host4096	5	turn	off	31	1	1	1907.1	0.51	main card 0	13.79	
+host4096	5	turn	off	31	1	2	1910.0	0.52	main card 1	12.89	
+host4096	5	turn	off	31	1	3	1912.7	0.51	main card 2	13.83	
+host4096	5	turn	off	31	1	4	1915.5	0.41	main card 3	10.97	
+host4096	5	turn	off	31	1	5	1917.8	0.44	main card 4	12.92	
+host4096	5	turn	off	31	1	6	1920.5	0.55	main card 5	11.73	
+host4096	5	turn	off	31	1	7	1923.0	0.5	main card 6	12.84	
+host4096	5	turn	off	31	1	8	1925.9	0.6	main card 7	8.32	
+host4096	6	turn	off	71	0	0	0.0	710.21	draft card 8	228.2	
+host4096	6	turn	off	71	0	1	19.0	2.05	main card 0	232.28	
+host4096	6	turn	off	71	0	2	24.9	1.9	main card 1	204.82	
+host4096	6	turn	off	71	0	3	31.5	2.55	main card 2	210.46	
+host4096	6	turn	off	71	0	4	36.5	1.07	main card 3	168.8	
+host4096	6	turn	off	71	0	5	41.2	1.15	main card 4	206.34	
+host4096	6	turn	off	71	0	6	46.7	1.63	main card 5	183.07	
+host4096	6	turn	off	71	0	7	52.5	1.98	main card 6	198.11	
+host4096	6	turn	off	71	0	8	58.8	2.47	main card 7	68.52	
+host4096	6	turn	off	71	1	0	2430.2	668.41	draft card 8	14.38	
+host4096	6	turn	off	71	1	1	2433.3	0.52	main card 0	13.5	
+host4096	6	turn	off	71	1	2	2436.1	0.51	main card 1	12.81	
+host4096	6	turn	off	71	1	3	2438.8	0.5	main card 2	13.72	
+host4096	6	turn	off	71	1	4	2441.5	0.42	main card 3	11.07	
+host4096	6	turn	off	71	1	5	2443.8	0.44	main card 4	12.83	
+host4096	6	turn	off	71	1	6	2446.5	0.5	main card 5	11.6	
+host4096	6	turn	off	71	1	7	2449.0	0.5	main card 6	12.61	
+host4096	6	turn	off	71	1	8	2452.1	0.57	main card 7	8.33	
+host4096	7	fresh	off	4097	0	0	0.0	371.58	draft card 8	664.51	
+host4096	7	fresh	off	4097	0	1	5.0	1.81	main card 0	640.75	
+host4096	7	fresh	off	4097	0	2	9.7	1.8	main card 1	596.83	
+host4096	7	fresh	off	4097	0	3	14.3	1.78	main card 2	614.32	
+host4096	7	fresh	off	4097	0	4	18.9	1.74	main card 3	506.67	
+host4096	7	fresh	off	4097	0	5	23.1	1.81	main card 4	593.21	
+host4096	7	fresh	off	4097	0	6	27.6	1.79	main card 5	497.57	
+host4096	7	fresh	off	4097	0	7	31.9	1.81	main card 6	592.1	
+host4096	7	fresh	off	4097	0	8	36.4	1.85	main card 7	248.47	
+host4096	7	fresh	off	4097	1	0	664.5	626.95	main card 8	661.44	
+host4096	7	fresh	off	4097	1	1	1339.1	671.27	main card 0	673.75	
+host4096	7	fresh	off	4097	1	2	1976.8	634.73	main card 1	626.73	
+host4096	7	fresh	off	4097	1	3	2624.8	645.24	main card 2	648.14	
+host4096	7	fresh	off	4097	1	4	3163.7	535.87	main card 3	523.92	
+host4096	7	fresh	off	4097	1	5	3790.8	624.72	main card 4	614.16	
+host4096	7	fresh	off	4097	1	6	4322.2	528.61	main card 5	525.41	
+host4096	7	fresh	off	4097	1	7	4947.9	623.13	main card 6	613.25	
+host4096	7	fresh	off	4097	1	8	5230.2	279.48	main card 7	214.46	
+host4096	7	fresh	off	4097	2	0	5409.6	178.14	main card 8	671.49	
+host4096	7	fresh	off	4097	2	1	5416.4	3.38	main card 0	675.72	
+host4096	7	fresh	off	4097	2	2	5422.8	3.25	main card 1	623.44	
+host4096	7	fresh	off	4097	2	3	5428.8	3.3	main card 2	651.58	
+host4096	7	fresh	off	4097	2	4	5435.2	3.14	main card 3	521.54	
+host4096	7	fresh	off	4097	2	5	5441.1	3.26	main card 4	606.26	
+host4096	7	fresh	off	4097	2	6	5448.6	3.35	main card 5	526.31	
+host4096	7	fresh	off	4097	2	7	5803.1	352.02	main card 6	608.58	
+host4096	7	fresh	off	4097	2	8	6052.0	246.05	main card 7	218.08	
+host4096	7	fresh	off	4097	3	0	6222.3	168.82	main card 8	689.21	
+host4096	7	fresh	off	4097	3	1	6787.6	561.85	main card 0	714.36	
+host4096	7	fresh	off	4097	3	2	7446.2	655.57	main card 1	647.98	
+host4096	7	fresh	off	4097	3	3	8133.1	684.04	main card 2	687.09	
+host4096	7	fresh	off	4097	3	4	8688.1	552.02	main card 3	542.67	
+host4096	7	fresh	off	4097	3	5	9329.6	639.05	main card 4	649.49	
+host4096	7	fresh	off	4097	3	6	9891.2	558.71	main card 5	565.32	
+host4096	7	fresh	off	4097	3	7	10534.9	640.38	main card 6	633.71	
+host4096	7	fresh	off	4097	3	8	10788.2	249.65	main card 7	237.38	
+host4096	7	fresh	off	4097	4	0	13180.4	362.24	draft card 8	703.83	
+host4096	7	fresh	off	4097	4	1	13188.2	4.63	main card 0	702.85	
+host4096	7	fresh	off	4097	4	2	13195.7	4.64	main card 1	625.87	
+host4096	7	fresh	off	4097	4	3	13203.1	4.61	main card 2	678.62	
+host4096	7	fresh	off	4097	4	4	13211.2	4.4	main card 3	530.82	
+host4096	7	fresh	off	4097	4	5	13218.2	4.63	main card 4	614.12	
+host4096	7	fresh	off	4097	4	6	13225.5	4.64	main card 5	554.57	
+host4096	7	fresh	off	4097	4	7	13232.9	4.63	main card 6	618.65	
+host4096	7	fresh	off	4097	4	8	13240.4	4.68	main card 7	236.98	
+host4096	7	fresh	off	4097	5	0	13884.3	642.69	main card 8	695.68	
+host4096	7	fresh	off	4097	5	1	14623.8	736.3	main card 0	738.9	
+host4096	7	fresh	off	4097	5	2	15293.6	666.78	main card 1	646.97	
+host4096	7	fresh	off	4097	5	3	16008.8	712.36	main card 2	715.59	
+host4096	7	fresh	off	4097	5	4	16574.6	562.75	main card 3	550.1	
+host4096	7	fresh	off	4097	5	5	17225.4	647.41	main card 4	646.24	
+host4096	7	fresh	off	4097	5	6	17816.6	586.81	main card 5	588.29	
+host4096	7	fresh	off	4097	5	7	18471.7	652.5	main card 6	648.95	
+host4096	7	fresh	off	4097	5	8	18745.3	270.69	main card 7	248.01	
+host4096	7	fresh	off	4097	6	0	18956.6	209.92	main card 8	694.93	
+host4096	7	fresh	off	4097	6	1	18965.4	5.67	main card 0	741.38	
+host4096	7	fresh	off	4097	6	2	18974.0	5.74	main card 1	653.77	
+host4096	7	fresh	off	4097	6	3	18982.5	5.64	main card 2	709.76	
+host4096	7	fresh	off	4097	6	4	18990.7	5.38	main card 3	556.17	
+host4096	7	fresh	off	4097	6	5	18998.7	5.67	main card 4	637.27	
+host4096	7	fresh	off	4097	6	6	19007.1	5.64	main card 5	656.63	
+host4096	7	fresh	off	4097	6	7	19381.9	372.11	main card 6	645.51	
+host4096	7	fresh	off	4097	6	8	19666.8	282.07	main card 7	254.12	
+host4096	7	fresh	off	4097	7	0	26521.4	951.94	draft card 8	785.36	
+host4096	7	fresh	off	4097	7	1	26531.0	6.41	main card 0	766.81	
+host4096	7	fresh	off	4097	7	2	26540.3	6.4	main card 1	673.03	
+host4096	7	fresh	off	4097	7	3	26549.4	6.41	main card 2	735.75	
+host4096	7	fresh	off	4097	7	4	26558.4	6.1	main card 3	571.16	
+host4096	7	fresh	off	4097	7	5	26567.1	6.42	main card 4	653.3	
+host4096	7	fresh	off	4097	7	6	26576.4	6.43	main card 5	609.14	
+host4096	7	fresh	off	4097	7	7	26585.4	6.42	main card 6	716.49	
+host4096	7	fresh	off	4097	7	8	26594.7	6.49	main card 7	261.65	
+host4096	7	fresh	off	4097	8	0	33447.1	662.85	draft card 8	14.48	
+host4096	7	fresh	off	4097	8	1	33450.2	0.54	main card 0	13.5	
+host4096	7	fresh	off	4097	8	2	33453.2	0.53	main card 1	12.91	
+host4096	7	fresh	off	4097	8	3	33456.0	0.52	main card 2	14.23	
+host4096	7	fresh	off	4097	8	4	33458.8	0.43	main card 3	10.85	
+host4096	7	fresh	off	4097	8	5	33461.2	0.46	main card 4	12.98	
+host4096	7	fresh	off	4097	8	6	33464.0	0.52	main card 5	11.96	
+host4096	7	fresh	off	4097	8	7	33466.7	0.53	main card 6	12.79	
+host4096	7	fresh	off	4097	8	8	33469.5	0.6	main card 7	8.48	
+host4096	8	fresh	on	4097	0	0	0.0	69.49	draft card 8	173.31	
+host4096	8	fresh	on	4097	0	1	4.5	0.38	main card 0	161.31	
+host4096	8	fresh	on	4097	0	2	8.3	0.38	main card 1	151.52	
+host4096	8	fresh	on	4097	0	3	11.9	0.39	main card 2	153.56	
+host4096	8	fresh	on	4097	0	4	15.6	0.35	main card 3	131.69	
+host4096	8	fresh	on	4097	0	5	18.7	0.39	main card 4	150.57	
+host4096	8	fresh	on	4097	0	6	22.3	0.38	main card 5	124.18	
+host4096	8	fresh	on	4097	0	7	25.6	0.38	main card 6	145.61	
+host4096	8	fresh	on	4097	0	8	29.2	0.4	main card 7	53.01	
+host4096	8	fresh	on	4097	1	0	173.3	142.87	main card 8	170.77	
+host4096	8	fresh	on	4097	1	1	340.0	162.81	main card 0	163.25	
+host4096	8	fresh	on	4097	1	2	496.7	153.36	main card 1	150.14	
+host4096	8	fresh	on	4097	1	3	655.6	155.59	main card 2	155.38	
+host4096	8	fresh	on	4097	1	4	792.3	133.28	main card 3	130.19	
+host4096	8	fresh	on	4097	1	5	948.3	153.17	main card 4	146.02	
+host4096	8	fresh	on	4097	1	6	1077.8	126.27	main card 5	121.73	
+host4096	8	fresh	on	4097	1	7	1228.8	148.0	main card 6	148.45	
+host4096	8	fresh	on	4097	1	8	1287.1	55.07	main card 7	55.06	
+host4096	8	fresh	on	4097	2	0	1310.2	21.71	main card 8	174.52	
+host4096	8	fresh	on	4097	2	1	1314.3	0.44	main card 0	162.29	
+host4096	8	fresh	on	4097	2	2	1318.1	0.39	main card 1	152.77	
+host4096	8	fresh	on	4097	2	3	1321.6	0.38	main card 2	159.16	
+host4096	8	fresh	on	4097	2	4	1325.3	0.34	main card 3	131.87	
+host4096	8	fresh	on	4097	2	5	1328.4	0.38	main card 4	148.16	
+host4096	8	fresh	on	4097	2	6	1332.0	0.41	main card 5	122.92	
+host4096	8	fresh	on	4097	2	7	1397.0	62.18	main card 6	144.87	
+host4096	8	fresh	on	4097	2	8	1457.4	57.09	main card 7	53.49	
+host4096	8	fresh	on	4097	3	0	1484.8	26.0	main card 8	177.79	
+host4096	8	fresh	on	4097	3	1	1652.4	163.76	main card 0	172.34	
+host4096	8	fresh	on	4097	3	2	1810.4	154.63	main card 1	155.82	
+host4096	8	fresh	on	4097	3	3	1974.9	161.2	main card 2	164.95	
+host4096	8	fresh	on	4097	3	4	2111.8	133.46	main card 3	134.2	
+host4096	8	fresh	on	4097	3	5	2265.3	150.76	main card 4	156.34	
+host4096	8	fresh	on	4097	3	6	2393.5	124.89	main card 5	126.7	
+host4096	8	fresh	on	4097	3	7	2543.8	147.3	main card 6	148.66	
+host4096	8	fresh	on	4097	3	8	2602.6	55.52	main card 7	56.05	
+host4096	8	fresh	on	4097	4	0	2691.1	86.96	main card 8	661.0	
+host4096	8	fresh	on	4097	4	1	2696.4	2.16	main card 0	645.53	
+host4096	8	fresh	on	4097	4	2	2701.4	2.18	main card 1	598.98	
+host4096	8	fresh	on	4097	4	3	2706.2	2.14	main card 2	624.0	
+host4096	8	fresh	on	4097	4	4	2711.1	2.06	main card 3	510.97	
+host4096	8	fresh	on	4097	4	5	2715.6	2.16	main card 4	592.3	
+host4096	8	fresh	on	4097	4	6	2720.4	2.15	main card 5	502.91	
+host4096	8	fresh	on	4097	4	7	2759.3	36.47	main card 6	595.35	
+host4096	8	fresh	on	4097	4	8	2820.7	58.62	main card 7	206.87	
+host4096	8	fresh	on	4097	5	0	3352.1	530.1	main card 8	667.38	
+host4096	8	fresh	on	4097	5	1	4031.8	676.55	main card 0	688.48	
+host4096	8	fresh	on	4097	5	2	4671.3	636.45	main card 1	633.56	
+host4096	8	fresh	on	4097	5	3	5329.4	655.23	main card 2	659.57	
+host4096	8	fresh	on	4097	5	4	5872.9	540.14	main card 3	530.89	
+host4096	8	fresh	on	4097	5	5	6499.3	624.0	main card 4	617.87	
+host4096	8	fresh	on	4097	5	6	7036.3	534.21	main card 5	534.44	
+host4096	8	fresh	on	4097	5	7	7665.7	626.74	main card 6	619.69	
+host4096	8	fresh	on	4097	5	8	7906.6	238.15	main card 7	220.78	
+host4096	8	fresh	on	4097	6	0	8000.1	92.22	main card 8	683.87	
+host4096	8	fresh	on	4097	6	1	8006.9	3.58	main card 0	692.09	
+host4096	8	fresh	on	4097	6	2	8013.6	3.69	main card 1	632.84	
+host4096	8	fresh	on	4097	6	3	8019.9	3.58	main card 2	671.56	
+host4096	8	fresh	on	4097	6	4	8026.3	3.41	main card 3	533.63	
+host4096	8	fresh	on	4097	6	5	8032.2	3.58	main card 4	625.39	
+host4096	8	fresh	on	4097	6	6	8038.6	3.63	main card 5	544.41	
+host4096	8	fresh	on	4097	6	7	8555.7	514.52	main card 6	622.9	
+host4096	8	fresh	on	4097	6	8	8811.3	252.83	main card 7	222.41	
+host4096	8	fresh	on	4097	7	0	8863.8	51.17	main card 8	437.29	
+host4096	8	fresh	on	4097	7	1	9406.9	539.62	main card 0	447.86	
+host4096	8	fresh	on	4097	7	2	10073.3	663.28	main card 1	413.73	
+host4096	8	fresh	on	4097	7	3	10778.4	702.17	main card 2	435.85	
+host4096	8	fresh	on	4097	7	4	11344.0	562.47	main card 3	352.9	
+host4096	8	fresh	on	4097	7	5	12003.1	656.52	main card 4	412.08	
+host4096	8	fresh	on	4097	7	6	12581.1	575.04	main card 5	356.65	
+host4096	8	fresh	on	4097	7	7	13237.6	653.03	main card 6	398.8	
+host4096	8	fresh	on	4097	7	8	13493.5	253.02	main card 7	146.81	
+host4096	8	fresh	on	4097	8	0	14904.2	98.65	draft card 8	702.53	
+host4096	8	fresh	on	4097	8	1	14912.0	4.67	main card 0	704.78	
+host4096	8	fresh	on	4097	8	2	14919.6	4.62	main card 1	626.48	
+host4096	8	fresh	on	4097	8	3	14926.9	4.63	main card 2	676.79	
+host4096	8	fresh	on	4097	8	4	14934.5	4.41	main card 3	536.83	
+host4096	8	fresh	on	4097	8	5	14941.4	4.64	main card 4	614.82	
+host4096	8	fresh	on	4097	8	6	14948.8	4.66	main card 5	556.25	
+host4096	8	fresh	on	4097	8	7	14956.4	4.64	main card 6	617.24	
+host4096	8	fresh	on	4097	8	8	14963.8	4.68	main card 7	280.57	
+host4096	8	fresh	on	4097	9	0	15606.7	641.73	main card 8	694.01	
+host4096	8	fresh	on	4097	9	1	16347.9	737.9	main card 0	736.45	
+host4096	8	fresh	on	4097	9	2	17016.5	665.41	main card 1	654.08	
+host4096	8	fresh	on	4097	9	3	17729.5	710.14	main card 2	713.01	
+host4096	8	fresh	on	4097	9	4	18300.8	568.31	main card 3	552.24	
+host4096	8	fresh	on	4097	9	5	18951.9	648.74	main card 4	649.56	
+host4096	8	fresh	on	4097	9	6	19544.5	589.6	main card 5	588.18	
+host4096	8	fresh	on	4097	9	7	20197.8	650.7	main card 6	645.95	
+host4096	8	fresh	on	4097	9	8	20514.6	313.91	main card 7	248.49	
+host4096	8	fresh	on	4097	10	0	20547.4	31.6	main card 8	268.11	
+host4096	8	fresh	on	4097	10	1	20553.4	1.64	main card 0	279.07	
+host4096	8	fresh	on	4097	10	2	20558.5	1.64	main card 1	264.66	
+host4096	8	fresh	on	4097	10	3	20563.4	1.65	main card 2	277.51	
+host4096	8	fresh	on	4097	10	4	20568.7	1.54	main card 3	219.67	
+host4096	8	fresh	on	4097	10	5	20573.2	1.64	main card 4	243.42	
+host4096	8	fresh	on	4097	10	6	20578.1	1.64	main card 5	218.44	
+host4096	8	fresh	on	4097	10	7	21107.8	526.68	main card 6	239.11	
+host4096	8	fresh	on	4097	10	8	21389.0	277.76	main card 7	90.53	
+host4096	8	fresh	on	4097	11	0	21423.8	33.24	main card 8	295.02	
+host4096	8	fresh	on	4097	11	1	21429.3	1.61	main card 0	300.24	
+host4096	8	fresh	on	4097	11	2	21434.6	1.64	main card 1	272.79	
+host4096	8	fresh	on	4097	11	3	21662.6	224.74	main card 2	289.55	
+host4096	8	fresh	on	4097	11	4	21891.5	225.16	main card 3	233.71	
+host4096	8	fresh	on	4097	11	5	22145.9	251.48	main card 4	265.88	
+host4096	8	fresh	on	4097	11	6	22374.8	225.54	main card 5	238.5	
+host4096	8	fresh	on	4097	11	7	22623.4	245.46	main card 6	259.23	
+host4096	8	fresh	on	4097	11	8	22723.4	96.68	main card 7	100.58	
+host4096	8	fresh	on	4097	12	0	22757.3	32.43	main card 8	288.65	
+host4096	8	fresh	on	4097	12	1	22762.9	1.75	main card 0	289.19	
+host4096	8	fresh	on	4097	12	2	22768.1	1.74	main card 1	266.0	
+host4096	8	fresh	on	4097	12	3	22773.2	1.72	main card 2	280.04	
+host4096	8	fresh	on	4097	12	4	22849.2	72.57	main card 3	219.89	
+host4096	8	fresh	on	4097	12	5	23126.4	274.22	main card 4	245.37	
+host4096	8	fresh	on	4097	12	6	23375.7	245.88	main card 5	219.06	
+host4096	8	fresh	on	4097	12	7	23644.6	265.7	main card 6	247.42	
+host4096	8	fresh	on	4097	12	8	23754.8	106.83	main card 7	97.48	
+host4096	8	fresh	on	4097	13	0	23788.2	31.94	main card 8	283.01	
+host4096	8	fresh	on	4097	13	1	23793.8	1.72	main card 0	295.94	
+host4096	8	fresh	on	4097	13	2	23799.0	1.73	main card 1	273.41	
+host4096	8	fresh	on	4097	13	3	23907.1	104.82	main card 2	285.17	
+host4096	8	fresh	on	4097	13	4	24136.3	225.54	main card 3	228.2	
+host4096	8	fresh	on	4097	13	5	24391.4	252.17	main card 4	254.37	
+host4096	8	fresh	on	4097	13	6	24621.3	226.53	main card 5	226.26	
+host4096	8	fresh	on	4097	13	7	24878.4	253.93	main card 6	249.27	
+host4096	8	fresh	on	4097	13	8	24985.4	103.64	main card 7	95.6	
+host4096	8	fresh	on	4097	14	0	27538.7	673.16	draft card 8	197.19	
+host4096	8	fresh	on	4097	14	1	27543.5	1.14	main card 0	196.4	
+host4096	8	fresh	on	4097	14	2	27547.9	1.13	main card 1	184.03	
+host4096	8	fresh	on	4097	14	3	27552.2	1.14	main card 2	192.89	
+host4096	8	fresh	on	4097	14	4	27556.7	1.05	main card 3	154.83	
+host4096	8	fresh	on	4097	14	5	27560.5	1.1	main card 4	166.89	
+host4096	8	fresh	on	4097	14	6	27564.9	1.15	main card 5	142.46	
+host4096	8	fresh	on	4097	14	7	27568.9	1.14	main card 6	159.31	
+host4096	8	fresh	on	4097	14	8	27573.3	1.2	main card 7	61.62	
+host4096	8	fresh	on	4097	15	0	27735.9	161.26	main card 8	206.91	
+host4096	8	fresh	on	4097	15	1	27937.6	197.95	main card 0	204.16	
+host4096	8	fresh	on	4097	15	2	28126.8	185.72	main card 1	188.58	
+host4096	8	fresh	on	4097	15	3	28325.0	194.92	main card 2	198.31	
+host4096	8	fresh	on	4097	15	4	28484.9	156.41	main card 3	155.6	
+host4096	8	fresh	on	4097	15	5	28657.2	169.48	main card 4	169.98	
+host4096	8	fresh	on	4097	15	6	28805.0	144.56	main card 5	151.81	
+host4096	8	fresh	on	4097	15	7	28969.6	160.8	main card 6	166.61	
+host4096	8	fresh	on	4097	15	8	29036.5	63.56	main card 7	66.9	
+host4096	8	fresh	on	4097	16	0	29060.4	22.49	main card 8	180.0	
+host4096	8	fresh	on	4097	16	1	29065.2	1.14	main card 0	173.99	
+host4096	8	fresh	on	4097	16	2	29069.7	1.15	main card 1	158.59	
+host4096	8	fresh	on	4097	16	3	29074.1	1.09	main card 2	172.4	
+host4096	8	fresh	on	4097	16	4	29078.5	1.03	main card 3	134.17	
+host4096	8	fresh	on	4097	16	5	29082.3	1.09	main card 4	154.15	
+host4096	8	fresh	on	4097	16	6	29086.6	1.1	main card 5	133.91	
+host4096	8	fresh	on	4097	16	7	29215.6	126.16	main card 6	143.91	
+host4096	8	fresh	on	4097	16	8	29287.8	68.9	main card 7	59.35	
+host4096	8	fresh	on	4097	17	0	29311.5	22.28	main card 8	201.99	
+host4096	8	fresh	on	4097	17	1	29419.3	104.17	main card 0	194.79	
+host4096	8	fresh	on	4097	17	2	29583.1	160.24	main card 1	175.14	
+host4096	8	fresh	on	4097	17	3	29760.8	174.39	main card 2	190.5	
+host4096	8	fresh	on	4097	17	4	29900.0	135.74	main card 3	148.08	
+host4096	8	fresh	on	4097	17	5	30059.5	156.72	main card 4	165.28	
+host4096	8	fresh	on	4097	17	6	30198.7	135.93	main card 5	146.73	
+host4096	8	fresh	on	4097	17	7	30348.0	146.25	main card 6	159.45	
+host4096	8	fresh	on	4097	17	8	30412.6	60.95	main card 7	65.35	
+host4096	8	fresh	on	4097	18	0	30436.4	22.4	main card 8	177.5	
+host4096	8	fresh	on	4097	18	1	30441.3	1.2	main card 0	171.94	
+host4096	8	fresh	on	4097	18	2	30445.8	1.19	main card 1	160.52	
+host4096	8	fresh	on	4097	18	3	30450.2	1.14	main card 2	162.76	
+host4096	8	fresh	on	4097	18	4	30454.7	1.09	main card 3	130.78	
+host4096	8	fresh	on	4097	18	5	30458.6	1.16	main card 4	144.13	
+host4096	8	fresh	on	4097	18	6	30563.6	101.83	main card 5	129.09	
+host4096	8	fresh	on	4097	18	7	30728.4	161.79	main card 6	146.8	
+host4096	8	fresh	on	4097	18	8	30799.0	67.37	main card 7	58.95	
+host4096	8	fresh	on	4097	19	0	30822.7	22.27	main card 8	174.73	
+host4096	8	fresh	on	4097	19	1	30827.5	1.14	main card 0	167.36	
+host4096	8	fresh	on	4097	19	2	30956.3	125.4	main card 1	154.51	
+host4096	8	fresh	on	4097	19	3	31124.4	164.79	main card 2	160.41	
+host4096	8	fresh	on	4097	19	4	31260.2	132.37	main card 3	126.87	
+host4096	8	fresh	on	4097	19	5	31409.7	146.64	main card 4	140.02	
+host4096	8	fresh	on	4097	19	6	31544.1	131.08	main card 5	123.61	
+host4096	8	fresh	on	4097	19	7	31696.2	149.12	main card 6	139.22	
+host4096	8	fresh	on	4097	19	8	31760.4	60.93	main card 7	56.13	
+host4096	8	fresh	on	4097	20	0	31784.3	22.48	main card 8	189.22	
+host4096	8	fresh	on	4097	20	1	31789.2	1.15	main card 0	185.24	
+host4096	8	fresh	on	4097	20	2	31793.7	1.15	main card 1	172.35	
+host4096	8	fresh	on	4097	20	3	31798.1	1.15	main card 2	178.83	
+host4096	8	fresh	on	4097	20	4	31802.6	1.07	main card 3	144.15	
+host4096	8	fresh	on	4097	20	5	31806.4	1.15	main card 4	157.23	
+host4096	8	fresh	on	4097	20	6	31899.8	90.15	main card 5	134.76	
+host4096	8	fresh	on	4097	20	7	32044.3	141.61	main card 6	154.56	
+host4096	8	fresh	on	4097	20	8	32105.8	58.15	main card 7	60.82	
+host4096	8	fresh	on	4097	21	0	32129.7	22.5	main card 8	189.88	
+host4096	8	fresh	on	4097	21	1	32163.8	30.2	main card 0	189.49	
+host4096	8	fresh	on	4097	21	2	32341.4	174.17	main card 1	180.6	
+host4096	8	fresh	on	4097	21	3	32525.5	180.84	main card 2	195.59	
+host4096	8	fresh	on	4097	21	4	32674.7	145.75	main card 3	151.6	
+host4096	8	fresh	on	4097	21	5	32837.3	159.73	main card 4	169.53	
+host4096	8	fresh	on	4097	21	6	32977.5	136.84	main card 5	148.71	
+host4096	8	fresh	on	4097	21	7	33137.3	156.88	main card 6	161.25	
+host4096	8	fresh	on	4097	21	8	33203.5	62.85	main card 7	64.23	
+host4096	8	fresh	on	4097	22	0	34511.1	647.27	draft card 8	14.35	
+host4096	8	fresh	on	4097	22	1	34514.2	0.54	main card 0	13.46	
+host4096	8	fresh	on	4097	22	2	34517.1	0.52	main card 1	12.9	
+host4096	8	fresh	on	4097	22	3	34519.8	0.52	main card 2	13.93	
+host4096	8	fresh	on	4097	22	4	34522.7	0.43	main card 3	10.82	
+host4096	8	fresh	on	4097	22	5	34525.1	0.48	main card 4	12.76	
+host4096	8	fresh	on	4097	22	6	34527.9	0.53	main card 5	11.93	
+host4096	8	fresh	on	4097	22	7	34530.5	0.52	main card 6	12.8	
+host4096	8	fresh	on	4097	22	8	34533.4	0.61	main card 7	8.37	
+host4096	9	fresh	on	4097	0	0	0.0	84.98	draft card 8	172.73	
+host4096	9	fresh	on	4097	0	1	4.2	0.4	main card 0	158.98	
+host4096	9	fresh	on	4097	0	2	7.9	0.38	main card 1	152.98	
+host4096	9	fresh	on	4097	0	3	11.6	0.38	main card 2	159.57	
+host4096	9	fresh	on	4097	0	4	15.3	0.34	main card 3	131.4	
+host4096	9	fresh	on	4097	0	5	18.5	0.38	main card 4	149.44	
+host4096	9	fresh	on	4097	0	6	22.1	0.39	main card 5	128.06	
+host4096	9	fresh	on	4097	0	7	25.4	0.38	main card 6	143.5	
+host4096	9	fresh	on	4097	0	8	29.0	0.4	main card 7	53.85	
+host4096	9	fresh	on	4097	1	0	172.8	142.46	main card 8	177.03	
+host4096	9	fresh	on	4097	1	1	337.0	160.51	main card 0	163.66	
+host4096	9	fresh	on	4097	1	2	495.2	154.78	main card 1	153.02	
+host4096	9	fresh	on	4097	1	3	660.1	161.58	main card 2	157.5	
+host4096	9	fresh	on	4097	1	4	796.5	132.97	main card 3	133.22	
+host4096	9	fresh	on	4097	1	5	951.4	152.07	main card 4	151.93	
+host4096	9	fresh	on	4097	1	6	1084.8	130.07	main card 5	125.56	
+host4096	9	fresh	on	4097	1	7	1233.6	145.92	main card 6	149.26	
+host4096	9	fresh	on	4097	1	8	1292.8	55.92	main card 7	56.61	
+host4096	9	fresh	on	4097	2	0	1343.4	49.13	main card 8	189.22	
+host4096	9	fresh	on	4097	2	1	1347.6	0.44	main card 0	177.82	
+host4096	9	fresh	on	4097	2	2	1351.6	0.43	main card 1	158.1	
+host4096	9	fresh	on	4097	2	3	1355.1	0.38	main card 2	167.93	
+host4096	9	fresh	on	4097	2	4	1358.9	0.36	main card 3	136.97	
+host4096	9	fresh	on	4097	2	5	1362.0	0.39	main card 4	156.85	
+host4096	9	fresh	on	4097	2	6	1365.5	0.39	main card 5	128.23	
+host4096	9	fresh	on	4097	2	7	1421.7	53.09	main card 6	151.52	
+host4096	9	fresh	on	4097	2	8	1483.6	58.62	main card 7	55.69	
+host4096	9	fresh	on	4097	3	0	1532.6	47.63	main card 8	184.65	
+host4096	9	fresh	on	4097	3	1	1715.7	179.35	main card 0	174.41	
+host4096	9	fresh	on	4097	3	2	1879.0	159.81	main card 1	162.23	
+host4096	9	fresh	on	4097	3	3	2052.2	169.91	main card 2	168.14	
+host4096	9	fresh	on	4097	3	4	2194.2	138.55	main card 3	138.69	
+host4096	9	fresh	on	4097	3	5	2356.4	159.09	main card 4	162.08	
+host4096	9	fresh	on	4097	3	6	2489.8	130.03	main card 5	133.58	
+host4096	9	fresh	on	4097	3	7	2646.7	153.89	main card 6	155.04	
+host4096	9	fresh	on	4097	3	8	2707.7	57.73	main card 7	55.3	
+host4096	9	fresh	on	4097	4	0	2943.4	234.24	main card 8	672.71	
+host4096	9	fresh	on	4097	4	1	2948.8	2.18	main card 0	652.13	
+host4096	9	fresh	on	4097	4	2	2954.0	2.19	main card 1	602.18	
+host4096	9	fresh	on	4097	4	3	2958.8	2.16	main card 2	633.24	
+host4096	9	fresh	on	4097	4	4	2963.8	2.08	main card 3	513.32	
+host4096	9	fresh	on	4097	4	5	2968.2	2.15	main card 4	603.04	
+host4096	9	fresh	on	4097	4	6	2973.1	2.15	main card 5	595.81	
+host4096	9	fresh	on	4097	4	7	2977.8	2.16	main card 6	647.66	
+host4096	9	fresh	on	4097	4	8	2982.8	2.21	main card 7	210.23	
+host4096	9	fresh	on	4097	5	0	3616.1	632.19	main card 8	671.7	
+host4096	9	fresh	on	4097	5	1	4302.4	683.1	main card 0	685.75	
+host4096	9	fresh	on	4097	5	2	4946.1	640.64	main card 1	630.55	
+host4096	9	fresh	on	4097	5	3	5613.3	664.4	main card 2	659.59	
+host4096	9	fresh	on	4097	5	4	6159.2	542.89	main card 3	527.77	
+host4096	9	fresh	on	4097	5	5	6796.4	634.84	main card 4	629.64	
+host4096	9	fresh	on	4097	5	6	7426.3	627.16	main card 5	532.16	
+host4096	9	fresh	on	4097	5	7	8108.0	679.11	main card 6	618.01	
+host4096	9	fresh	on	4097	5	8	8352.3	241.52	main card 7	217.83	
+host4096	9	fresh	on	4097	6	0	8619.5	265.89	main card 8	745.82	
+host4096	9	fresh	on	4097	6	1	8626.5	3.6	main card 0	677.83	
+host4096	9	fresh	on	4097	6	2	8632.9	3.57	main card 1	628.88	
+host4096	9	fresh	on	4097	6	3	8639.2	3.56	main card 2	660.16	
+host4096	9	fresh	on	4097	6	4	8645.4	3.39	main card 3	528.51	
+host4096	9	fresh	on	4097	6	5	8651.3	3.59	main card 4	621.74	
+host4096	9	fresh	on	4097	6	6	8657.6	3.56	main card 5	540.37	
+host4096	9	fresh	on	4097	6	7	8823.7	163.58	main card 6	619.51	
+host4096	9	fresh	on	4097	6	8	9076.4	249.27	main card 7	227.77	
+host4096	9	fresh	on	4097	7	0	9365.3	287.64	main card 8	451.62	
+host4096	9	fresh	on	4097	7	1	10076.7	707.91	main card 0	463.22	
+host4096	9	fresh	on	4097	7	2	10739.2	659.33	main card 1	417.85	
+host4096	9	fresh	on	4097	7	3	11433.0	690.79	main card 2	438.21	
+host4096	9	fresh	on	4097	7	4	11993.4	557.33	main card 3	361.64	
+host4096	9	fresh	on	4097	7	5	12648.7	652.67	main card 4	414.84	
+host4096	9	fresh	on	4097	7	6	13222.7	571.05	main card 5	365.02	
+host4096	9	fresh	on	4097	7	7	13875.8	650.36	main card 6	409.41	
+host4096	9	fresh	on	4097	7	8	14137.3	257.2	main card 7	149.87	
+host4096	9	fresh	on	4097	8	0	15740.6	270.62	draft card 8	711.43	
+host4096	9	fresh	on	4097	8	1	15748.4	4.65	main card 0	726.74	
+host4096	9	fresh	on	4097	8	2	15755.9	4.63	main card 1	644.48	
+host4096	9	fresh	on	4097	8	3	15763.3	4.62	main card 2	695.62	
+host4096	9	fresh	on	4097	8	4	15770.6	4.39	main card 3	544.9	
+host4096	9	fresh	on	4097	8	5	15777.5	4.64	main card 4	636.44	
+host4096	9	fresh	on	4097	8	6	15784.9	4.65	main card 5	572.25	
+host4096	9	fresh	on	4097	8	7	15792.1	4.65	main card 6	639.76	
+host4096	9	fresh	on	4097	8	8	15799.6	4.69	main card 7	239.94	
+host4096	9	fresh	on	4097	9	0	16452.1	651.36	main card 8	700.4	
+host4096	9	fresh	on	4097	9	1	17215.3	759.38	main card 0	745.41	
+host4096	9	fresh	on	4097	9	2	17896.1	677.69	main card 1	661.07	
+host4096	9	fresh	on	4097	9	3	18628.0	729.09	main card 2	716.57	
+host4096	9	fresh	on	4097	9	4	19207.3	575.87	main card 3	560.42	
+host4096	9	fresh	on	4097	9	5	19880.1	670.35	main card 4	655.27	
+host4096	9	fresh	on	4097	9	6	20488.6	605.65	main card 5	592.4	
+host4096	9	fresh	on	4097	9	7	21164.5	673.29	main card 6	646.53	
+host4096	9	fresh	on	4097	9	8	21440.7	273.31	main card 7	250.88	
+host4096	9	fresh	on	4097	10	0	21535.8	93.75	main card 8	250.62	
+host4096	9	fresh	on	4097	10	1	21541.5	1.66	main card 0	262.62	
+host4096	9	fresh	on	4097	10	2	21546.9	1.65	main card 1	248.62	
+host4096	9	fresh	on	4097	10	3	21552.0	1.65	main card 2	263.81	
+host4096	9	fresh	on	4097	10	4	21557.3	1.56	main card 3	209.61	
+host4096	9	fresh	on	4097	10	5	21561.8	1.64	main card 4	233.65	
+host4096	9	fresh	on	4097	10	6	21566.7	1.65	main card 5	203.67	
+host4096	9	fresh	on	4097	10	7	22007.6	437.8	main card 6	225.84	
+host4096	9	fresh	on	4097	10	8	22291.0	279.96	main card 7	86.0	
+host4096	9	fresh	on	4097	11	0	22383.3	90.73	main card 8	255.99	
+host4096	9	fresh	on	4097	11	1	22388.7	1.62	main card 0	265.14	
+host4096	9	fresh	on	4097	11	2	22393.8	1.6	main card 1	251.21	
+host4096	9	fresh	on	4097	11	3	22587.4	190.25	main card 2	264.42	
+host4096	9	fresh	on	4097	11	4	22806.1	215.09	main card 3	213.58	
+host4096	9	fresh	on	4097	11	5	23049.2	239.67	main card 4	242.68	
+host4096	9	fresh	on	4097	11	6	23263.5	210.91	main card 5	210.46	
+host4096	9	fresh	on	4097	11	7	23498.8	231.96	main card 6	234.27	
+host4096	9	fresh	on	4097	11	8	23594.5	92.2	main card 7	89.96	
+host4096	9	fresh	on	4097	12	0	23684.1	88.15	main card 8	260.11	
+host4096	9	fresh	on	4097	12	1	23689.8	1.89	main card 0	266.02	
+host4096	9	fresh	on	4097	12	2	23695.1	1.73	main card 1	247.55	
+host4096	9	fresh	on	4097	12	3	23700.0	1.74	main card 2	260.86	
+host4096	9	fresh	on	4097	12	4	23705.2	1.63	main card 3	206.5	
+host4096	9	fresh	on	4097	12	5	23919.1	211.11	main card 4	230.56	
+host4096	9	fresh	on	4097	12	6	24140.4	217.89	main card 5	202.39	
+host4096	9	fresh	on	4097	12	7	24384.3	240.7	main card 6	224.32	
+host4096	9	fresh	on	4097	12	8	24483.7	95.99	main card 7	88.71	
+host4096	9	fresh	on	4097	13	0	24584.9	99.74	main card 8	288.99	
+host4096	9	fresh	on	4097	13	1	24590.4	1.72	main card 0	286.79	
+host4096	9	fresh	on	4097	13	2	24595.6	1.71	main card 1	259.61	
+host4096	9	fresh	on	4097	13	3	24744.5	145.31	main card 2	280.58	
+host4096	9	fresh	on	4097	13	4	24960.0	211.81	main card 3	224.06	
+host4096	9	fresh	on	4097	13	5	25200.0	237.08	main card 4	252.81	
+host4096	9	fresh	on	4097	13	6	25411.9	208.37	main card 5	224.57	
+host4096	9	fresh	on	4097	13	7	25645.8	230.77	main card 6	243.48	
+host4096	9	fresh	on	4097	13	8	25744.0	94.8	main card 7	92.82	
+host4096	9	fresh	on	4097	14	0	28314.6	697.34	draft card 8	173.43	
+host4096	9	fresh	on	4097	14	1	28319.5	1.14	main card 0	174.03	
+host4096	9	fresh	on	4097	14	2	28324.0	1.15	main card 1	162.32	
+host4096	9	fresh	on	4097	14	3	28328.4	1.14	main card 2	173.85	
+host4096	9	fresh	on	4097	14	4	28332.8	1.04	main card 3	145.29	
+host4096	9	fresh	on	4097	14	5	28336.8	1.15	main card 4	160.56	
+host4096	9	fresh	on	4097	14	6	28341.2	1.14	main card 5	136.4	
+host4096	9	fresh	on	4097	14	7	28345.2	1.14	main card 6	147.4	
+host4096	9	fresh	on	4097	14	8	28349.6	1.2	main card 7	57.81	
+host4096	9	fresh	on	4097	15	0	28488.1	137.15	main card 8	162.57	
+host4096	9	fresh	on	4097	15	1	28667.4	175.58	main card 0	166.75	
+host4096	9	fresh	on	4097	15	2	28835.6	164.8	main card 1	163.27	
+host4096	9	fresh	on	4097	15	3	29014.8	175.82	main card 2	173.64	
+host4096	9	fresh	on	4097	15	4	29165.1	146.85	main card 3	143.58	
+host4096	9	fresh	on	4097	15	5	29331.1	163.14	main card 4	160.69	
+host4096	9	fresh	on	4097	15	6	29472.8	138.42	main card 5	137.41	
+host4096	9	fresh	on	4097	15	7	29625.6	149.61	main card 6	151.59	
+host4096	9	fresh	on	4097	15	8	29688.8	59.91	main card 7	58.25	
+host4096	9	fresh	on	4097	16	0	29729.6	39.39	main card 8	163.87	
+host4096	9	fresh	on	4097	16	1	29734.5	1.17	main card 0	173.3	
+host4096	9	fresh	on	4097	16	2	29739.0	1.13	main card 1	164.73	
+host4096	9	fresh	on	4097	16	3	29743.3	1.09	main card 2	172.36	
+host4096	9	fresh	on	4097	16	4	29747.8	1.03	main card 3	142.04	
+host4096	9	fresh	on	4097	16	5	29751.6	1.1	main card 4	154.8	
+host4096	9	fresh	on	4097	16	6	29756.1	1.1	main card 5	130.15	
+host4096	9	fresh	on	4097	16	7	29808.3	49.28	main card 6	143.44	
+host4096	9	fresh	on	4097	16	8	29871.8	60.27	main card 7	56.54	
+host4096	9	fresh	on	4097	17	0	29919.7	46.42	main card 8	168.94	
+host4096	9	fresh	on	4097	17	1	30071.7	148.23	main card 0	173.69	
+host4096	9	fresh	on	4097	17	2	30241.7	166.43	main card 1	167.9	
+host4096	9	fresh	on	4097	17	3	30419.3	174.39	main card 2	175.11	
+host4096	9	fresh	on	4097	17	4	30566.4	143.64	main card 3	141.43	
+host4096	9	fresh	on	4097	17	5	30726.6	157.21	main card 4	158.93	
+host4096	9	fresh	on	4097	17	6	30862.1	132.21	main card 5	132.66	
+host4096	9	fresh	on	4097	17	7	31010.8	145.71	main card 6	145.27	
+host4096	9	fresh	on	4097	17	8	31072.7	58.62	main card 7	57.38	
+host4096	9	fresh	on	4097	18	0	31127.9	53.77	main card 8	165.85	
+host4096	9	fresh	on	4097	18	1	31132.8	1.2	main card 0	173.57	
+host4096	9	fresh	on	4097	18	2	31137.4	1.2	main card 1	157.43	
+host4096	9	fresh	on	4097	18	3	31142.0	1.15	main card 2	164.0	
+host4096	9	fresh	on	4097	18	4	31146.4	1.07	main card 3	133.64	
+host4096	9	fresh	on	4097	18	5	31150.3	1.14	main card 4	149.42	
+host4096	9	fresh	on	4097	18	6	31154.7	1.14	main card 5	127.85	
+host4096	9	fresh	on	4097	18	7	31218.1	60.49	main card 6	141.44	
+host4096	9	fresh	on	4097	18	8	31280.7	59.37	main card 7	55.37	
+host4096	9	fresh	on	4097	19	0	31333.2	50.99	main card 8	173.9	
+host4096	9	fresh	on	4097	19	1	31472.3	135.37	main card 0	179.78	
+host4096	9	fresh	on	4097	19	2	31634.9	158.78	main card 1	167.76	
+host4096	9	fresh	on	4097	19	3	31804.2	165.96	main card 2	174.66	
+host4096	9	fresh	on	4097	19	4	31942.9	135.14	main card 3	143.63	
+host4096	9	fresh	on	4097	19	5	32097.7	152.03	main card 4	160.55	
+host4096	9	fresh	on	4097	19	6	32230.8	129.77	main card 5	136.41	
+host4096	9	fresh	on	4097	19	7	32377.6	143.8	main card 6	153.11	
+host4096	9	fresh	on	4097	19	8	32438.3	57.45	main card 7	59.98	
+host4096	9	fresh	on	4097	20	0	32479.2	39.31	main card 8	167.43	
+host4096	9	fresh	on	4097	20	1	32484.1	1.2	main card 0	179.78	
+host4096	9	fresh	on	4097	20	2	32488.7	1.2	main card 1	171.12	
+host4096	9	fresh	on	4097	20	3	32493.0	1.15	main card 2	176.16	
+host4096	9	fresh	on	4097	20	4	32497.5	1.07	main card 3	148.77	
+host4096	9	fresh	on	4097	20	5	32501.8	1.61	main card 4	165.64	
+host4096	9	fresh	on	4097	20	6	32506.1	1.14	main card 5	140.57	
+host4096	9	fresh	on	4097	20	7	32657.8	148.73	main card 6	151.59	
+host4096	9	fresh	on	4097	20	8	32722.9	61.75	main card 7	57.19	
+host4096	9	fresh	on	4097	21	0	32754.4	30.12	main card 8	166.12	
+host4096	9	fresh	on	4097	21	1	32831.4	73.24	main card 0	177.66	
+host4096	9	fresh	on	4097	21	2	33007.8	172.92	main card 1	171.41	
+host4096	9	fresh	on	4097	21	3	33189.2	178.11	main card 2	182.16	
+host4096	9	fresh	on	4097	21	4	33343.0	150.32	main card 3	149.61	
+host4096	9	fresh	on	4097	21	5	33514.1	168.26	main card 4	168.39	
+host4096	9	fresh	on	4097	21	6	33660.0	142.63	main card 5	144.01	
+host4096	9	fresh	on	4097	21	7	33816.9	153.95	main card 6	155.61	
+host4096	9	fresh	on	4097	21	8	33879.5	59.27	main card 7	57.5	
+host4096	9	fresh	on	4097	22	0	35052.6	652.71	draft card 8	15.21	
+host4096	9	fresh	on	4097	22	1	35055.8	0.53	main card 0	14.18	
+host4096	9	fresh	on	4097	22	2	35058.7	0.52	main card 1	13.3	
+host4096	9	fresh	on	4097	22	3	35061.5	0.52	main card 2	14.26	
+host4096	9	fresh	on	4097	22	4	35064.4	0.42	main card 3	11.23	
+host4096	9	fresh	on	4097	22	5	35066.8	0.48	main card 4	13.4	
+host4096	9	fresh	on	4097	22	6	35069.7	0.54	main card 5	12.37	
+host4096	9	fresh	on	4097	22	7	35072.4	0.52	main card 6	13.33	
+host4096	9	fresh	on	4097	22	8	35075.2	0.61	main card 7	8.5	
+host4096	10	fresh	off	4097	0	0	0.0	270.85	draft card 8	668.43	
+host4096	10	fresh	off	4097	0	1	5.0	1.8	main card 0	643.08	
+host4096	10	fresh	off	4097	0	2	9.7	1.78	main card 1	603.62	
+host4096	10	fresh	off	4097	0	3	14.2	1.8	main card 2	625.53	
+host4096	10	fresh	off	4097	0	4	18.9	1.69	main card 3	508.68	
+host4096	10	fresh	off	4097	0	5	23.0	1.83	main card 4	595.63	
+host4096	10	fresh	off	4097	0	6	27.5	1.8	main card 5	505.29	
+host4096	10	fresh	off	4097	0	7	31.9	1.84	main card 6	598.92	
+host4096	10	fresh	off	4097	0	8	36.5	1.83	main card 7	249.73	
+host4096	10	fresh	off	4097	1	0	668.5	630.76	main card 8	662.66	
+host4096	10	fresh	off	4097	1	1	1345.3	673.59	main card 0	669.75	
+host4096	10	fresh	off	4097	1	2	1990.0	641.66	main card 1	620.39	
+host4096	10	fresh	off	4097	1	3	2649.3	656.47	main card 2	639.46	
+host4096	10	fresh	off	4097	1	4	3190.1	537.83	main card 3	518.76	
+host4096	10	fresh	off	4097	1	5	3819.6	627.01	main card 4	612.2	
+host4096	10	fresh	off	4097	1	6	4358.7	536.3	main card 5	517.67	
+host4096	10	fresh	off	4097	1	7	4991.3	630.0	main card 6	604.01	
+host4096	10	fresh	off	4097	1	8	5274.8	280.64	main card 7	214.94	
+host4096	10	fresh	off	4097	2	0	5368.3	92.24	main card 8	679.88	
+host4096	10	fresh	off	4097	2	1	5374.7	3.24	main card 0	686.71	
+host4096	10	fresh	off	4097	2	2	5380.8	3.21	main card 1	629.05	
+host4096	10	fresh	off	4097	2	3	5386.8	3.2	main card 2	658.43	
+host4096	10	fresh	off	4097	2	4	5392.7	3.05	main card 3	527.9	
+host4096	10	fresh	off	4097	2	5	5398.2	3.22	main card 4	623.51	
+host4096	10	fresh	off	4097	2	6	5404.4	3.23	main card 5	529.93	
+host4096	10	fresh	off	4097	2	7	5765.0	358.08	main card 6	613.97	
+host4096	10	fresh	off	4097	2	8	6014.4	246.58	main card 7	222.65	
+host4096	10	fresh	off	4097	3	0	6119.8	104.2	main card 8	695.09	
+host4096	10	fresh	off	4097	3	1	6777.4	654.33	main card 0	721.16	
+host4096	10	fresh	off	4097	3	2	7441.6	661.29	main card 1	649.76	
+host4096	10	fresh	off	4097	3	3	8135.1	690.63	main card 2	690.05	
+host4096	10	fresh	off	4097	3	4	8696.5	558.37	main card 3	546.5	
+host4096	10	fresh	off	4097	3	5	9355.2	656.32	main card 4	642.01	
+host4096	10	fresh	off	4097	3	6	9920.3	562.3	main card 5	567.35	
+host4096	10	fresh	off	4097	3	7	10569.4	646.11	main card 6	636.93	
+host4096	10	fresh	off	4097	3	8	10827.1	254.9	main card 7	237.36	
+host4096	10	fresh	off	4097	4	0	12841.9	101.58	draft card 8	717.21	
+host4096	10	fresh	off	4097	4	1	12850.0	4.65	main card 0	729.54	
+host4096	10	fresh	off	4097	4	2	12857.5	4.62	main card 1	648.37	
+host4096	10	fresh	off	4097	4	3	12864.9	4.63	main card 2	701.47	
+host4096	10	fresh	off	4097	4	4	12872.2	4.41	main card 3	548.27	
+host4096	10	fresh	off	4097	4	5	12879.3	4.64	main card 4	640.96	
+host4096	10	fresh	off	4097	4	6	12886.7	4.65	main card 5	630.01	
+host4096	10	fresh	off	4097	4	7	12893.8	4.64	main card 6	697.44	
+host4096	10	fresh	off	4097	4	8	12901.2	4.67	main card 7	240.43	
+host4096	10	fresh	off	4097	5	0	13559.2	656.77	main card 8	699.83	
+host4096	10	fresh	off	4097	5	1	14325.5	763.07	main card 0	747.41	
+host4096	10	fresh	off	4097	5	2	15010.5	681.93	main card 1	659.64	
+host4096	10	fresh	off	4097	5	3	15748.6	735.3	main card 2	724.09	
+host4096	10	fresh	off	4097	5	4	16331.7	580.02	main card 3	564.91	
+host4096	10	fresh	off	4097	5	5	17009.3	675.2	main card 4	655.03	
+host4096	10	fresh	off	4097	5	6	17675.7	663.67	main card 5	595.49	
+host4096	10	fresh	off	4097	5	7	18409.7	731.35	main card 6	649.39	
+host4096	10	fresh	off	4097	5	8	18686.7	274.16	main card 7	254.19	
+host4096	10	fresh	off	4097	6	0	18780.1	92.15	main card 8	746.86	
+host4096	10	fresh	off	4097	6	1	18789.0	5.68	main card 0	726.57	
+host4096	10	fresh	off	4097	6	2	18797.5	5.65	main card 1	641.47	
+host4096	10	fresh	off	4097	6	3	18805.9	5.65	main card 2	703.5	
+host4096	10	fresh	off	4097	6	4	18814.3	5.39	main card 3	546.84	
+host4096	10	fresh	off	4097	6	5	18822.3	5.67	main card 4	634.96	
+host4096	10	fresh	off	4097	6	6	18830.7	5.67	main card 5	575.8	
+host4096	10	fresh	off	4097	6	7	19137.2	303.91	main card 6	622.11	
+host4096	10	fresh	off	4097	6	8	19428.3	288.25	main card 7	247.09	
+host4096	10	fresh	off	4097	7	0	26004.1	725.09	draft card 8	690.21	
+host4096	10	fresh	off	4097	7	1	26013.7	6.41	main card 0	735.9	
+host4096	10	fresh	off	4097	7	2	26023.0	6.37	main card 1	656.01	
+host4096	10	fresh	off	4097	7	3	26032.0	6.36	main card 2	715.86	
+host4096	10	fresh	off	4097	7	4	26041.0	6.07	main card 3	551.86	
+host4096	10	fresh	off	4097	7	5	26049.7	6.43	main card 4	643.91	
+host4096	10	fresh	off	4097	7	6	26058.9	6.42	main card 5	588.05	
+host4096	10	fresh	off	4097	7	7	26067.8	6.41	main card 6	630.56	
+host4096	10	fresh	off	4097	7	8	26077.0	6.43	main card 7	251.83	
+host4096	10	fresh	off	4097	8	0	32595.5	646.15	draft card 8	15.08	
+host4096	10	fresh	off	4097	8	1	32598.6	0.52	main card 0	14.16	
+host4096	10	fresh	off	4097	8	2	32601.5	0.52	main card 1	13.34	
+host4096	10	fresh	off	4097	8	3	32604.2	0.52	main card 2	14.45	
+host4096	10	fresh	off	4097	8	4	32607.3	0.43	main card 3	11.27	
+host4096	10	fresh	off	4097	8	5	32609.8	0.48	main card 4	13.39	
+host4096	10	fresh	off	4097	8	6	32612.6	0.53	main card 5	12.36	
+host4096	10	fresh	off	4097	8	7	32615.3	0.51	main card 6	13.33	
+host4096	10	fresh	off	4097	8	8	32618.1	0.59	main card 7	8.49	

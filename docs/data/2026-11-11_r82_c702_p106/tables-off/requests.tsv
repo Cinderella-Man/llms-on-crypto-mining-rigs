@@ -1,0 +1,31 @@
+load	request	kind	task	arm	prompt_n	prompt_ms	calls_logged	checkpoint_saves_ms	graphs_reused	graph_reallocs_main	draft_reallocs	draft_reallocs_changed	taper	micro_batches	window_ms	window_vs_prompt_ms	draft_evals_in_window	main_how
+warm4096	1	reset	bugfix-javascript-triangle	off	1549	22501.44	1033 1545	632.7 632.0	0	0/0	11	0						
+warm4096	2	turn	bugfix-javascript-triangle	off	430	8324.37		629.1 650.1	2	0/0	1	0						
+warm4096	3	turn	bugfix-javascript-triangle	off	1359	19877.12	843 1355	654.6 639.4	3	0/0	7	0						
+warm4096	4	turn	bugfix-javascript-triangle	off	258	5338.32		630.5 652.2	3	0/0	2	0						
+warm4096	5	turn	bugfix-javascript-triangle	off	31	2793.45		651.2 638.0	4	0/0	1	0						
+warm4096	6	turn	bugfix-javascript-triangle	off	71	3328.4		630.3 652.5	4	0/0	1	0						
+warm4096	7	fresh	fresh0	off	4097	28199.43	2048 3581 4093	634.3 631.2	4	0/0	30	0						
+warm4096	8	fresh	fresh0	on	4097	26371.8	2048 3581 4093	647.5 632.6	4	0/0	30	0	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 0, tail 1, 6 ubatches: 512 509 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8					
+warm4096	9	fresh	fresh1	on	4097	26821.4	2048 3581 4093	636.7 659.9	4	0/0	30	0	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 0, tail 1, 6 ubatches: 512 509 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8					
+warm4096	10	fresh	fresh1	off	4097	27170.76	2048 3581 4093	652.4 638.1	4	0/0	30	0						
+graph4096	1	reset	bugfix-javascript-triangle	off	1549	22585.47	1033 1545	652.5 653.0	0	0/0	11	0		5	19910.5	-2675.0	27	eager:36 not ready:9
+graph4096	2	turn	bugfix-javascript-triangle	off	430	8622.79		630.5 631.5	2	0/0	1	0		2	6817.1	-1805.7	9	eager:18
+graph4096	3	turn	bugfix-javascript-triangle	off	1359	20081.97	843 1355	652.3 664.8	3	0/0	7	0		4	19173.1	-908.9	23	eager:36
+graph4096	4	turn	bugfix-javascript-triangle	off	258	5323.77		630.0 631.3	3	0/0	2	0		2	4470.4	-853.3	5	eager:18
+graph4096	5	turn	bugfix-javascript-triangle	off	31	2896.88		649.0 652.5	4	0/0	1	0		2	1990.2	-906.6	3	eager:18
+graph4096	6	turn	bugfix-javascript-triangle	off	71	3293.89		631.6 632.0	4	0/0	1	0		2	2486.7	-807.2	3	eager:18
+graph4096	7	fresh	fresh0	off	4097	28172.75	2048 3581 4093	631.6 643.4	4	0/0	30	0		9	27783.8	-388.9	65	eager:41 not ready:40
+graph4096	8	fresh	fresh0	on	4097	26409.26	2048 3581 4093	630.7 638.0	4	0/0	30	0	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 0, tail 1, 6 ubatches: 512 509 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	23	26338.4	-70.9	65	eager:67 not ready:140
+graph4096	9	fresh	fresh1	on	4097	26863.05	2048 3581 4093	659.3 637.1	4	0/0	30	0	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 0, tail 1, 6 ubatches: 512 509 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	23	26779.7	-83.4	65	eager:68 not ready:139
+graph4096	10	fresh	fresh1	off	4097	27226.12	2048 3581 4093	632.5 633.9	4	0/0	30	0		8	27050.6	-175.5	63	eager:32 not ready:40
+host4096	1	reset	bugfix-javascript-triangle	off	1549	22375.8	1033 1545	629.5 631.2	0	0/0	11	0		5	20483.9	-1891.9	27	:45
+host4096	2	turn	bugfix-javascript-triangle	off	430	8008.96		629.3 633.6	2	0/0	1	0		2	6802.9	-1206.0	9	:18
+host4096	3	turn	bugfix-javascript-triangle	off	1359	20610.35	843 1355	658.4 641.0	3	0/0	7	0		4	19340.7	-1269.6	23	:36
+host4096	4	turn	bugfix-javascript-triangle	off	258	5322.88		628.4 636.4	3	0/0	2	0		2	4476.4	-846.5	5	:18
+host4096	5	turn	bugfix-javascript-triangle	off	31	2718.52		651.6 634.9	4	0/0	1	0		2	2020.4	-698.2	3	:18
+host4096	6	turn	bugfix-javascript-triangle	off	71	3251.62		628.4 635.6	4	0/0	1	0		2	2545.5	-706.1	3	:18
+host4096	7	fresh	fresh0	off	4097	33930.23	2048 3581 4093	632.4 641.9	4	0/0	30	0		9	33564.1	-366.1	65	:81
+host4096	8	fresh	fresh0	on	4097	34690.63	2048 3581 4093	647.8 631.9	4	0/0	30	0	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 0, tail 1, 6 ubatches: 512 509 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	23	34627.3	-63.4	65	:207
+host4096	9	fresh	fresh1	on	4097	35252.04	2048 3581 4093	637.1 633.9	4	0/0	30	0	2048 tokens, head 1, tail 0, 8 ubatches: 64x4 512x3 256 ; 1533 tokens, head 0, tail 1, 6 ubatches: 512 509 128x4 ; 512 tokens, head 1, tail 1, 8 ubatches: 64x8	23	35173.3	-78.7	65	:207
+host4096	10	fresh	fresh1	off	4097	32880.94	2048 3581 4093	632.3 629.9	4	0/0	30	0		9	32716.2	-164.7	65	:81

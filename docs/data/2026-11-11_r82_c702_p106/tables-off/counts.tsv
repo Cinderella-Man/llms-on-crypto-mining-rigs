@@ -1,0 +1,10 @@
+load	evaluations	how	n
+graph4096	draft	capture	53
+graph4096	draft	eager	216
+graph4096	draft	replay	231
+graph4096	main	capture	36
+graph4096	main	eager	478
+graph4096	main	not ready	368
+graph4096	main	replay	9
+host4096	draft	(host profile)	514
+host4096	main	(host profile)	936
