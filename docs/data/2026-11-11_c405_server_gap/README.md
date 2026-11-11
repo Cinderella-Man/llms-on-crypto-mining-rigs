@@ -21,8 +21,9 @@ the server's, and `step_gap.py` splits every step. With the switch off, every ar
 - the drafter runs passes the slot then throws away at a reply's end (Q1314);
 - every output read waits for the device again.
 
-How the 7.84 ms splits on a P106 is the rig run (Q1313), not run yet. The six moves below (Q1307–Q1312) are read from
-the code, and that run ranks them.
+On a P106 the gap is 7.51 ms on the v4 line, and 5.61 ms of it is the scheduler copying card 0's inputs. The host's own
+stages take 1.48 ms (Q1313, [2026-11-11_r86_step_trace](../2026-11-11_r86_step_trace/README.md)). The six moves below
+(Q1307–Q1312) were read from the code; that run ranks them.
 
 ## The change
 
@@ -145,15 +146,17 @@ What the CPU traces already show (`cpu_gap_mtp.md`; a tiny model on a desktop CP
 | waits per output read: every getter synchronizes once | runs of 6 waits after each drafting pass and of 24 in the acceptance | on the CUDA backend a wait with nothing in flight sweeps all nine cards unless `LLAMA_INPUT_UPLOAD` is on (C714/Q1266); the trace counts them |
 | the trace's own cost | a line's write 50 µs, between steps | the rig run compares the step with and without the trace |
 
-## The rig run (Q1313, not run yet)
+## The rig run (Q1313)
 
 One untimed load of the v3 preset on rig 1 with both files, and one with the host profile alone, each answering S37's
-greedy request and the agent's first-turn request (`run/rig_trace.sh`, about 15 minutes of rig time). The build is
-this branch's rig tarball `llama.cpp-20261111-ca8725c62-pascal-p106-v4-b12246-c405` (md5
-`b257824e744109af446e14609f4c6240`, `TESTS=1`, sm_61, 0 AVX instructions). It is the v4 line, so the run also gives
-the v4 line's step split beside S37's v3.0 one. `step_gap.py` splits the gap stage by stage. S37's `step_split.py` on
-both loads checks that the trace leaves the step alone, on the greedy request's paired steps (it draws nothing at
-random).
+greedy request and the agent's first-turn request (`run/rig_trace.sh`, about 15 minutes of rig time). It ran on the v4
+night merge `pascal-p106-v4-b12246-night` (`c408dabcb`), which holds this branch, with every other switch off. This
+branch's own rig tarball is `llama.cpp-20261111-ca8725c62-pascal-p106-v4-b12246-c405` (md5
+`b257824e744109af446e14609f4c6240`, `TESTS=1`, sm_61, 0 AVX instructions). The run also gives the v4 line's step split
+beside S37's v3.0 one. `step_gap.py` splits the gap stage by stage. S37's `step_split.py` on both loads checks that
+the trace leaves the step alone, on the greedy request's paired steps (it draws nothing at random). The result, the
+tables and the commands are in [2026-11-11_r86_step_trace](../2026-11-11_r86_step_trace/README.md); its server log
+lacked the profile's anchor line, so its `run/align_t0.py` finds the profile's offset from the trace.
 
 ## Files
 

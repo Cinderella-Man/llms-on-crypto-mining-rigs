@@ -1,0 +1,5 @@
+load	request	seconds	mem_available_start_mib	mem_available_min_mib	swap_used_start_mib	swap_used_end_mib	swapped_out_mib	pressure_some_max_pct	pressure_full_max_pct
+trace	greedy	19.8	917	377	0	0	0	0.02	0.02
+trace	long	45.4	385	238	0	78	78	1.26	1.00
+prof	greedy	18.8	884	372	0	0	0	0.00	0.00
+prof	long	49.4	576	271	0	203	203	2.89	2.27

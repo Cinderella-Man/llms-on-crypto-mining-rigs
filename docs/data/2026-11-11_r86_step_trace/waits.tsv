@@ -1,0 +1,5 @@
+load	request	generation_steps	steps_with_a_long_turn	after_pass0	after_pass1	after_pass2	after_the_last_pass	sum_long_turns_ms	median_long_turn_ms	first_step	last_step
+trace	greedy	84	0	0	0	0	0	0.0	0.0		
+trace	long	93	7	0	0	0	7	854.9	117.1	0	6
+prof	greedy	84	0	0	0	0	0	0.0	0.0		
+prof	long	92	23	1	1	1	20	2992.6	117.7	0	26
