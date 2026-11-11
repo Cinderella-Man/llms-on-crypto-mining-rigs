@@ -11,7 +11,9 @@ setting slowed the decode step at depth 0 to 282.35 and 282.53 ms against 113.12
 that gives prompt micro-batches their own threshold, its checks without a GPU, the check set for a P106 and the rig
 commands that time it.
 
-**Status: written, built and checked on a CPU; the check set for a P106 is recorded; not yet run on any GPU.** Miner
+**Status: written, built and checked on a CPU; the check set for a P106 is recorded; through the compute_61 PTX on a
+newer card its runs `qp-stock` and `qp-m2` pass 72 of 72 cases, the sparse kernel at 129, 256 and 512 query tokens
+included ([FN63](../2026-11-11_fn63_sparse_256_512/README.md)); not yet run on a P106.** Miner
 Llama branch `pascal-p106-v4-b12246-c705` `baac08803` (one commit on `pascal-p106-v4` `84f7bd3d2`), behind
 `GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT` (off by default; then the switch takes exactly the calls it took on
 `pascal-p106-v4`, and the GPU code of every kernel is the same).

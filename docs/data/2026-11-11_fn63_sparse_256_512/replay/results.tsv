@@ -1,0 +1,3 @@
+run	switches	expect	cases	fail_lines	exit	memcheck_errors	verdict	known_fail
+qp-stock	GGML_CUDA_FATTN_SPARSE_PASCAL=0	pass	72/72	0	0		ok	
+qp-m2	GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT_NQ=512	pass	72/72	0	0		ok	

@@ -1,0 +1,10 @@
+2026-11-11T16:42:33+01:00 == ptx_check SET=$SET BIN=$BIN RUNS='qp-stock qp-m2' image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T16:42:34+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 1 s)
+2026-11-11T16:42:34+01:00 md5 of $SET_TAR
+2026-11-11T16:42:43+01:00 unpacked: md5 9a498be37790ab86555e0050084af11d, 2124977165 B, 255 entries in cases/
+2026-11-11T16:42:43+01:00 container fn63-ptx
+2026-11-11T15:42:45+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02;
+2026-11-11T15:42:46+00:00 archs: == test-backend-ops md5 77bf0ba5e598d58226805ff21799de6f machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx; 
+2026-11-11T15:42:46+00:00 replay: RUNS_FILE=$SET/runs-ptx.tsv RUNS='qp-stock qp-m2' ENV_ALL=CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T15:43:29+00:00 replay exit 0: == 2026-11-11T15:43:29+00:00 done: 2 runs as expected, 0 WRONG
+2026-11-11T16:43:29+01:00 container exit 0

@@ -1,0 +1,6 @@
+== 2026-11-11T15:42:46+00:00 replay_checks SET=$SET BIN=$BIN DEV=0 runs: qp-stock qp-m2 of runs-ptx.tsv
+   suite: qsa-prompt;recorded: 2026-11-10T22:41:19+01:00;name: llama.cpp-20261110-baac08803-pascal-p106-v4-b12246-c705;commit: baac08803b3649cde50cfde4a941c1c687b2ce35 (2026-11-10 21:54:32 +0100);
+   0, NVIDIA GeForce RTX 3080, 1 MiB
+qp-stock                 GGML_CUDA_FATTN_SPARSE_PASCAL=0              72/72 tests passed;72 cases replayed, 0 selected by the filter have no record;replay cpu-check: 0 cases, 0 references identical, 0 verdicts differ;    0 FAIL  exit 0   expect pass ok
+qp-m2                    GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT_NQ=512 72/72 tests passed;72 cases replayed, 0 selected by the filter have no record;    0 FAIL  exit 0   expect pass ok
+== 2026-11-11T15:43:29+00:00 done: 2 runs as expected, 0 WRONG
