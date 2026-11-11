@@ -19,9 +19,12 @@ The code is on the fork's branch `pascal-p106-v4-b12246-c727` (on the v4 day mer
   (`GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`, `_KCOL_TABLE=0`) the k-column kernel takes them at 2–8 tokens, and the
   one-token Pascal kernel (`mul_mat_vec_q_pascal`) at one token, so a token's sums in a verify are not the ones it gets
   in plain decoding.
-- **Not taken here:** the shared expert's two Q6_K layers (2,560 → 640) and the MTP draft's Q6_K output layer
-  (2,560 → 248,320) have 2,560-wide rows: two lanes per row, whose 420-byte segments are not whole 16-byte units, and
-  rows that start 4 bytes off a 16-byte boundary. They stay on the k-column kernel (a new row, C782/Q1371).
+- **In a served verify pass** (R79's `off` load, [2026-11-11_r79_c722_p106](../2026-11-11_r79_c722_p106/README.md)):
+  `attn_output` 1.054 ms (4 layers) and `ssm_out` 0.525 ms (2 layers) a pass.
+- **Not taken here:** Q6_K `attn_k` and `attn_v` (2,560 → 512; 0.046 and 0.131 ms of that pass), the shared expert's two
+  Q6_K layers (2,560 → 640; 0.061 and 0.062 ms) and the MTP draft's Q6_K output layer (2,560 → 248,320) have 2,560-wide
+  rows: two lanes per row, whose 420-byte segments are not whole 16-byte units, and rows that start 4 bytes off a
+  16-byte boundary. They stay on the k-column kernel (a new row, C782/Q1371).
 
 ## The design
 
