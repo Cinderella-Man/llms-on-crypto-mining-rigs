@@ -8,6 +8,15 @@ tuning, the fork's earlier path. This lets each change, and each small gain, be 
 How to use them:
 - Environment variables are read once, when the process first needs them. Set them on the command line, for example
   `GGML_CUDA_MMVQ_2WARPS=0 llama-server ...`.
+- **Which switches a server ran with:** from `pascal-p106-v4-b12246-c770` on, llama-server logs one line at load at
+  its default verbosity, `common_params_print_info: switches: <n> set: NAME=value ...; not read by this build:
+  NAME=value ... (this build reads <N> LLAMA_ and GGML_ names)`, or `switches: none set (...)`. It lists every
+  `LLAMA_` and `GGML_` variable in the server's environment in name order; one under "not read by this build" is a
+  typo or a switch of another branch. The build takes its names from its own sources when it is compiled
+  (`common/switch-names.cmake`), so a new switch needs no edit to be recognised. A value that is empty or holds a space
+  is in double quotes, and names with `KEY`, `TOKEN`, `SECRET` or `PASSWORD` show `(hidden)`. The lines the engine
+  itself logs when a switch acts are at the library's INFO level, which llama-server prints only from `-lv 4` on
+  ([C770](data/2026-11-11_c770_switch_log/README.md)).
 - Flags (`--pipe-depth`, `--ctx-checkpoints-vram`, ...) are llama-server or tool arguments.
 - "Compute 6.1" is the P106-090's architecture. Kernels marked so run only there unless their switch says `2` (any
   NVIDIA GPU, for tests).

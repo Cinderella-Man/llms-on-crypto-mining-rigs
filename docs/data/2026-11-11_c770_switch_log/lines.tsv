@@ -1,0 +1,7 @@
+arm	build	switch_lines	library_line	line
+none	base	0	0	
+none	tip	1	0	common_param: common_params_print_info: switches: none set (this build reads 815 LLAMA_ and GGML_ names)
+several	base	0	0	
+several	tip	1	0	common_param: common_params_print_info: switches: 5 set: GGML_CUDA_KEEPALIVE=decode GGML_CUDA_MMVQ_PASCAL_SKIP="" LLAMA_ARG_NO_UI=1 LLAMA_GPU_KQ_MASK=1 LLAMA_SAMPLING_TOP_K_ROWS=1 (this build reads 815 LLAMA_ and GGML_ names)
+unknown	base	0	0	
+unknown	tip	1	0	common_param: common_params_print_info: switches: 8 set: GGML_CUDA_KEEPALIVE=decode GGML_CUDA_MMVQ_PASCAL_SKIP="" LLAMA_ARG_NO_UI=1 LLAMA_GPU_KQ_MASK=1 LLAMA_SAMPLING_TOP_K_ROWS=1; not read by this build: LLAMA_C770_NOTE="two words" LLAMA_C770_TOKEN=(hidden) LLAMA_SAMPLNG_TOP_K_ROWS=1 (this build reads 815 LLAMA_ and GGML_ names)
