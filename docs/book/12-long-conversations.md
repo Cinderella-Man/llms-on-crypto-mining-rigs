@@ -31,7 +31,7 @@ On the v3 release, two loads at each depth:
 | 32,768 | 241.65 and 242.49 | 1.96× |
 | 49,152 | 301.90 and 301.48 | 2.45× |
 
-That is 3.6 ms more per step for every thousand tokens of history. A coding agent on a real task reaches these
+That is est. 3.64 ms more per step for every thousand tokens of history (the first load's two ends). A coding agent on a real task reaches these
 depths ([chapter 11](11-after-v3.md)), so by the time it matters most, the model writes at less than half its
 starting speed.
 

@@ -6,9 +6,8 @@
 > - On v3, 30.72 % of the reading time went to saving checkpoints: each one stopped the nine-card pipeline and copied
 >   112.6 MiB to the host.
 > - Keeping the checkpoints on the cards, and then saving them without stopping the pipeline, took most of that
->   away: a replay of the agent check's prompts went from 509.16 s to 338.96 s a pass.
-> - While reading a long prompt only 1.42 of the nine cards were busy on average. Recording each batch as one launch
->   removed one cause: 10.2 % off a long prompt.
+>   away: a replay of the agent check's prompts went from 509.16 s to 338.96 s a pass. While reading a long prompt
+>   only 1.42 of the nine cards were busy on average; recording each batch as one launch took 10.2 % off it.
 > - The draft must read every prompt too, which costs 28.4 % of reading speed on an empty cache and 41.3 % deep into
 >   a conversation. A slimmer catch-up pass took a quarter of that cost away.
 > - One loss is still open: on the stacked line, turns with 1,024 or more new tokens read slower than on v3.

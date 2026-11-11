@@ -5,8 +5,8 @@
 >   where does a token's time go on the released build?
 > - Real work is long. A coding agent on a real repository writes tens of thousands of tokens in one attempt, so
 >   speed deep into a conversation matters more than speed at its start.
-> - A new map of the release build says 93 % of a pass is GPU time. The next milliseconds are in the kernels and in
->   what grows with the conversation, not in the host.
+> - A new map of the release build says 93.3 % of a one-token pass is GPU time. The next milliseconds are in the
+>   kernels and in what grows with the conversation, not in the host.
 > - Three working rules came out of it: measure the map before the idea, compare the time of one step and not only
 >   tokens per second, and prove a change exact in four ways before a mining card times it.
 > - Everything built since sits in one build, each change behind a switch that is off by default.
@@ -99,7 +99,8 @@ cause in the source and ran again without the draft.
 
 **Why it matters.** Two readings of this table drove everything after it.
 
-- **The cards hold 93 % of a pass.** Hops, host work and gaps are 3.26 ms of a one-token pass. Six days earlier that
+- **The cards hold 93.3 % of a one-token pass and 93.6 % of a four-token pass.** Hops, host work and gaps are
+  3.26 ms of a one-token pass. Six days earlier that
   line had been 11.60 ms ([chapter 6](06-gpu-code.md)). Ideas that speed up the hand-offs have at most 3.26 ms of a
   one-token pass and 5.84 ms of a four-token pass left to win.
 - **A fourth token is cheap, a fifth is not.** From one to four tokens a pass grows 14.30 ms per added token. The
@@ -234,8 +235,8 @@ Then each switch gets its turn on a rig, alone on the merged build, against the 
 ## What to remember
 
 - After a release, refresh the plan against what shipped. Estimates made against an old total rank ideas wrongly.
-- Measure the map before the idea. On v3 the cards hold 93 % of a pass; that one number retired a whole family of
-  host-side ideas.
+- Measure the map before the idea. On v3 the cards hold 93.3 % of a one-token pass; that one number retired a whole
+  family of host-side ideas.
 - A check pass is not a plain pass. It computes the output at every guessed position and keeps rollback copies:
   14 ms that only a profile of real generation showed.
 - Judge a change on the time of one step. Tokens per second also moves when the text changes.

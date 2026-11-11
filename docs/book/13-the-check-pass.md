@@ -3,8 +3,9 @@
 > **In short**
 > - With the draft on, the model's main work is a *check pass*: one pass over the newest token and three guesses. On
 >   v3 it took 102.10 ms of GPU time, where a pass over one token takes 45.05.
-> - Two kernels rewritten for two to four tokens took the step from 122 ms to 116 and to 114, each alone: the output
->   layer for four tokens fell from 8.11 to 3.15 ms, and the products of two weight formats from 16.21 to 8.29 ms.
+> - Two kernels rewritten for two to four tokens shortened the step, each alone: from 122.11 to 116.37 ms with the
+>   output layer's (8.105 to 3.149 ms for four tokens), and from 122.10 to 114.01 ms with the one for two weight
+>   formats (16.212 to 8.291 ms a check).
 > - Both add each token's numbers in exactly the order plain one-token decoding does. On v3 a check over several
 >   tokens was a slightly different arithmetic, and this model turns that into different text.
 > - Accepting guesses by probability instead of by exact match made writing 2.97 % faster on the rig.
