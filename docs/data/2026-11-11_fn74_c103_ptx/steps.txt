@@ -1,0 +1,12 @@
+2026-11-11T16:20:29+01:00 == ptx_check SET=$SET BIN=$BIN FASP=$FASP image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T16:20:31+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 2 s)
+2026-11-11T16:20:31+01:00 md5 of $SET_TAR
+2026-11-11T16:20:50+01:00 unpacked: md5 4f7fa912d83889c50cb84a353abecea1, 4462987087 B, 405 entries in cases/
+2026-11-11T16:20:50+01:00 container fn74-ptx
+2026-11-11T15:20:51+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02;
+2026-11-11T15:20:52+00:00 archs: == test-backend-ops machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx; == fasp_check machine code:  2 sm_61.cubin; PTX:  1 sm_61.ptx; 
+2026-11-11T15:20:52+00:00 replay: RUNS_FILE=$SET/runs-ptx.tsv ENV_ALL=CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T15:24:17+00:00 replay exit 0: == 2026-11-11T15:24:17+00:00 done: 9 runs as expected, 0 WRONG
+2026-11-11T15:24:17+00:00 fasp_check --gpu --nsm 5 (CUDA_FORCE_PTX_JIT=1)
+2026-11-11T15:27:14+00:00 fasp_check exit 0: union same cells 128       q8_0    1     4  2051 | 2.26e-06  6.76e-06     | 2.14e-06  6.76e-06    | 0.00e+00 same  | pass fasp_check: 58 of 58 cases pass (fault 0, nsm 5, gpu) 
+2026-11-11T16:27:14+01:00 container exit 0

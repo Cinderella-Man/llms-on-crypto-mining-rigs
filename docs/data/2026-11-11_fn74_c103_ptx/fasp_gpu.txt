@@ -1,0 +1,62 @@
+case                       type    S  lst | model: rel64  nmse_ggml | gpu: rel64  nmse_ggml
+flash-next decode          f16    10 2051 | 3.57e-07  1.23e-05     | 3.96e-07  1.23e-05    | pass
+flash-next verify 5        f16     2 2051 | 5.83e-08  1.33e-07     | 6.06e-08  1.33e-07    | pass
+flash-next 32k             f16    10 2051 | 3.85e-07  1.09e-05     | 4.64e-07  1.09e-05    | pass
+flash-next 1 split         f16     1 2051 | 9.52e-07  1.05e-05     | 1.04e-06  1.05e-05    | pass
+flash-next 32 splits       f16    32 2051 | 1.57e-08  3.51e-08     | 1.68e-08  3.51e-08    | pass
+two streams                f16     2 2051 | 6.29e-08  1.34e-07     | 6.12e-08  1.34e-07    | pass
+head 128, 8 per KV, sinks  f16     5 1027 | 3.15e-07  5.46e-06     | 2.86e-07  5.46e-06    | pass
+head 128, 4 per KV         f16     2  333 | 7.84e-08  2.17e-07     | 5.61e-08  2.17e-07    | pass
+16 per KV, short list      f16     1   31 | 2.60e-07  2.30e-07     | 2.19e-07  2.30e-07    | pass
+one tile                   f16     1   32 | 9.91e-08  3.51e-08     | 9.24e-08  3.51e-08    | pass
+flash-next prompt 16       f16     1 2051 | 1.19e-07  4.98e-07     | 1.27e-07  4.98e-07    | pass
+flash-next prompt 128      f16     1 2051 | 1.63e-07  5.14e-14     | 1.52e-07  5.16e-14    | pass
+1,024 columns (512 tokens) f16     1  333 | 1.72e-07  1.18e-13     | 1.67e-07  1.20e-13    | pass
+flash-next decode          q8_0   10 2051 | 4.16e-07  6.69e-06     | 4.31e-07  6.69e-06    | pass
+flash-next verify 5        q8_0    2 2051 | 6.51e-08  1.90e-08     | 6.33e-08  1.90e-08    | pass
+flash-next 32k             q8_0   10 2051 | 3.67e-07  6.74e-06     | 3.65e-07  6.74e-06    | pass
+flash-next 1 split         q8_0    1 2051 | 9.50e-07  6.14e-06     | 9.46e-07  6.14e-06    | pass
+flash-next 32 splits       q8_0   32 2051 | 1.89e-08  4.91e-09     | 1.99e-08  4.91e-09    | pass
+two streams                q8_0    2 2051 | 5.47e-08  1.99e-08     | 5.44e-08  1.99e-08    | pass
+head 128, 8 per KV, sinks  q8_0    5 1027 | 3.04e-07  6.19e-06     | 3.03e-07  6.19e-06    | pass
+head 128, 4 per KV         q8_0    2  333 | 5.35e-08  1.94e-07     | 4.94e-08  1.94e-07    | pass
+16 per KV, short list      q8_0    1   31 | 2.63e-07  5.37e-06     | 2.19e-07  5.37e-06    | pass
+one tile                   q8_0    1   32 | 1.20e-07  2.22e-07     | 1.09e-07  2.22e-07    | pass
+flash-next prompt 16       q8_0    1 2051 | 1.23e-07  7.02e-08     | 1.26e-07  7.02e-08    | pass
+flash-next prompt 128      q8_0    1 2051 | 1.51e-07  5.49e-07     | 1.43e-07  5.49e-07    | pass
+1,024 columns (512 tokens) q8_0    1  333 | 1.73e-07  4.37e-06     | 1.58e-07  4.37e-06    | pass
+
+union case                 type    S   tpb   lst | model: rel64  nmse_ggml | gpu: rel64  nmse_ggml | vs_tok   bits 
+union verify 2             f16    10     2  2051 | 2.23e-08  3.27e-08     | 1.96e-08  3.27e-08    | 3.35e-08 -     | pass
+union verify 4             f16    10     4  4716 | 2.17e-08  1.09e-07     | 2.70e-08  1.09e-07    | 4.47e-08 -     | pass
+union verify 5 (4+1)       f16     5     4  5178 | 3.25e-08  1.23e-07     | 3.23e-08  1.23e-07    | 7.27e-08 -     | pass
+union verify 8, 32k        f16     5     4  5727 | 4.46e-08  2.43e-07     | 4.92e-08  2.43e-07    | 7.38e-08 -     | pass
+union verify 4, shared 90  f16    10     4  2655 | 4.36e-07  4.55e-05     | 4.06e-07  4.55e-05    | 7.19e-07 -     | pass
+union prompt 128           f16     1     4  3542 | 1.32e-07  5.60e-14     | 1.39e-07  5.63e-14    | 5.22e-08 -     | pass
+union prompt 128, shr 90   f16     1     4  2659 | 1.75e-06  6.22e-13     | 1.78e-06  6.25e-13    | 5.52e-07 -     | pass
+union two streams (4+2)    f16     3     4  3589 | 4.92e-08  3.37e-07     | 4.88e-08  3.37e-07    | 1.16e-07 -     | pass
+union 1 split              f16     1     4  4794 | 1.00e-07  1.06e-07     | 1.04e-07  1.06e-07    | 8.94e-08 -     | pass
+union 32 splits            f16    32     3  3605 | 1.63e-08  6.99e-08     | 1.64e-08  6.99e-08    | 4.10e-08 -     | pass
+union h128, 4/KV (8+5)     f16     5     8  1721 | 3.58e-08  3.98e-07     | 3.79e-08  3.98e-07    | 9.74e-08 -     | pass
+union h128, 8/KV, sinks    f16     3     6  3060 | 9.88e-08  5.87e-07     | 9.88e-08  5.87e-07    | 1.20e-07 -     | pass
+union 16/KV (3+2), short   f16     1     3    33 | 1.37e-07  8.94e-08     | 1.48e-07  8.94e-08    | 1.19e-07 -     | pass
+union one tile             f16     2     4    54 | 1.84e-07  7.79e-08     | 1.59e-07  7.79e-08    | 2.39e-07 -     | pass
+union same cells 4         f16     3     4  2051 | 6.16e-07  4.50e-05     | 7.75e-07  4.50e-05    | 0.00e+00 same  | pass
+union same cells 128       f16     1     4  2051 | 2.18e-06  6.18e-13     | 2.18e-06  6.21e-13    | 0.00e+00 same  | pass
+union verify 2             q8_0   10     2  2051 | 1.82e-08  5.01e-09     | 1.91e-08  5.01e-09    | 2.98e-08 -     | pass
+union verify 4             q8_0   10     4  4716 | 2.57e-08  1.51e-08     | 2.12e-08  1.51e-08    | 6.71e-08 -     | pass
+union verify 5 (4+1)       q8_0    5     4  5178 | 3.16e-08  1.80e-08     | 3.26e-08  1.80e-08    | 7.82e-08 -     | pass
+union verify 8, 32k        q8_0    5     4  5727 | 3.43e-08  3.42e-08     | 3.43e-08  3.42e-08    | 6.35e-08 -     | pass
+union verify 4, shared 90  q8_0   10     4  2655 | 3.34e-07  6.42e-06     | 4.07e-07  6.42e-06    | 7.77e-07 -     | pass
+union prompt 128           q8_0    1     4  3542 | 1.45e-07  5.89e-07     | 1.39e-07  5.89e-07    | 5.22e-08 -     | pass
+union prompt 128, shr 90   q8_0    1     4  2659 | 1.95e-06  6.10e-06     | 1.81e-06  6.10e-06    | 5.52e-07 -     | pass
+union two streams (4+2)    q8_0    3     4  3589 | 5.69e-08  4.59e-08     | 6.06e-08  4.59e-08    | 1.23e-07 -     | pass
+union 1 split              q8_0    1     4  4794 | 9.39e-08  1.42e-08     | 9.69e-08  1.42e-08    | 1.01e-07 -     | pass
+union 32 splits            q8_0   32     3  3605 | 1.66e-08  1.02e-08     | 1.66e-08  1.02e-08    | 4.10e-08 -     | pass
+union h128, 4/KV (8+5)     q8_0    5     8  1721 | 3.67e-08  3.59e-07     | 3.99e-08  3.59e-07    | 1.05e-07 -     | pass
+union h128, 8/KV, sinks    q8_0    3     6  3060 | 8.05e-08  5.22e-07     | 1.07e-07  5.22e-07    | 1.01e-07 -     | pass
+union 16/KV (3+2), short   q8_0    1     3    33 | 2.26e-07  1.82e-06     | 1.72e-07  1.82e-06    | 1.79e-07 -     | pass
+union one tile             q8_0    2     4    54 | 1.74e-07  9.39e-07     | 1.74e-07  9.39e-07    | 2.38e-07 -     | pass
+union same cells 4         q8_0    3     4  2051 | 8.83e-07  6.33e-06     | 7.61e-07  6.33e-06    | 0.00e+00 same  | pass
+union same cells 128       q8_0    1     4  2051 | 2.26e-06  6.76e-06     | 2.14e-06  6.76e-06    | 0.00e+00 same  | pass
+fasp_check: 58 of 58 cases pass (fault 0, nsm 5, gpu)

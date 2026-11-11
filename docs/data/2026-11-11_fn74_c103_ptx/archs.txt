@@ -1,0 +1,6 @@
+== test-backend-ops
+machine code:  187 sm_61.cubin;
+PTX:  187 sm_61.ptx;
+== fasp_check
+machine code:  2 sm_61.cubin;
+PTX:  1 sm_61.ptx;

@@ -11,7 +11,7 @@ sent 128-token prompt micro-batches through the per-token kernel and read prompt
 the union kernel: a block takes several consecutive query tokens and reads the union of their kept cells once. It holds
 its checks without a GPU, the check set for a P106 and the rig commands that check and time it.
 
-**Status: written, built and checked on a CPU; the check set for a P106 is recorded; not yet run on any GPU.** Miner
+**Status: written, built and checked on a CPU; correct on a GPU through the compute_61 PTX ([Q1316](../2026-11-11_fn74_c103_ptx/README.md)); the check set for a P106 is recorded; not yet run on a P106.** Miner
 Llama branch `pascal-p106-v4-b12246-c103` `4a3423134` (six commits on the prompt
 rule's `pascal-p106-v4-b12246-c705` `baac08803`), behind `GGML_CUDA_FATTN_SPARSE_PASCAL_UNION` (off by default; then the
 switch takes exactly the calls it took on `-c705`, and the per-token kernel keeps its source and machine code).
