@@ -5,6 +5,7 @@
                            [--draft-cost 0.22] [--mode markov|factorized] [--copy-min 4]
                            [--ctx-bins 4096,8192,16384,32768] [--lattice auto|fb|prod]
                            [--tool-open ID --tool-close ID --think-open ID --think-close ID]
+                           [--shapes auto|none|WxMxL,...] [--pass-cost 0.025]
     python3 tree_replay.py --check DUMP.jsonl[.gz] [...]
     python3 tree_replay.py --selftest
 
@@ -34,8 +35,19 @@ always form a tree. "markov" multiplies the lattice's conditional rows along the
 drafters that record marginals given their drafted prefix. The chain is the drafter's own walk (its greedy path),
 truncated to the budget.
 
+With verification by rejection (the dump's "verify": "reject", --spec-draft-sampling probabilistic), the continuation
+is the same rebuilt sequence: where the walk's token is accepted it is the walk's, and at its first rejection it is the
+target's draw from the residual. The chain's value is then exactly what the server accepted, and a node beside the walk
+at that position is worth 1 when the residual's draw is its token: the value of a tree verified as the chain is, with the
+residual's draw matched against the position's other nodes. Nodes below an off-walk node are factorized estimates.
+
+Trees for a sequential drafter (shapes.csv, siblings.csv; MTP, a draft model): the walk cut to L tokens with w - 1
+sibling leaves at each of its first m positions, which the drafter's candidates give without another drafting pass and
+which are valued exactly; full trees of width w over the first m positions (estimates); each against the chain with as
+many verified tokens, on the same steps.
+
 Output in DIR: summary.md (all tables) and chain.csv, budgets.csv, ranks.csv, calibration.csv, by_ctx.csv,
-by_content.csv, check.txt. Standard library only.
+by_content.csv, shapes.csv, siblings.csv, check.txt. Standard library only.
 """
 import argparse
 import gzip
@@ -532,6 +544,148 @@ def analyse(steps, budgets, mode, rs, draft_cost, copy_min, ctx_bins, tgt=True, 
     return report, tables
 
 
+# ---------------------------------------------------------------- trees for a sequential drafter (MTP)
+
+
+def siblings_at(lat, j, w):
+    """The w - 1 most probable candidates at position j other than the walk's own, as candidate indices."""
+    walk = lat.chain()
+    own = walk[j] if j < len(walk) else -1
+    order = sorted(range(lat.K[j]), key=lambda b: -lat.marg[j][b])
+    return [b for b in order if b != own][:w - 1]
+
+
+def walk_tokens(lat):
+    return [lat.ids[i][b] for i, b in enumerate(lat.chain())]
+
+
+def tau_siblings(lat, y, w, m, L):
+    """Accepted tokens + 1 of the walk cut to L with w - 1 sibling leaves at each of its first m positions. Exact for a
+    drafter whose candidates are conditional on its own walk (MTP, a draft model): a sibling's row is the one the walk
+    already produced, and the tree is verified as the chain is (the walk first; on its first rejection, the token the
+    target draws there is matched against that position's siblings, whose next token the same pass has computed)."""
+    wt = walk_tokens(lat)
+    a = 0
+    while a < L and a < len(wt) and a < len(y) and wt[a] == y[a]:
+        a += 1
+    bonus = 0
+    if a < L and a < m and a < len(y):
+        bonus = 1 if y[a] in [lat.ids[a][b] for b in siblings_at(lat, a, w)] else 0
+    return 1 + a + bonus, bonus
+
+
+def tau_full(lat, y, w, m, L):
+    """Accepted tokens + 1 of every path over the w most probable candidates at each of the first m positions, the walk
+    going on to L below its own node at depth m. An estimate for a sequential drafter: below an off-walk node the
+    candidates are the walk's (factorized), where a drafter would have drafted from that node."""
+    wt = walk_tokens(lat)
+    d = 0
+    while d < m and d < len(y) and d < lat.D:
+        top = [lat.ids[d][b] for b in sorted(range(lat.K[d]), key=lambda b: -lat.marg[d][b])[:w]]
+        if wt[d] not in top:
+            top = top[:w - 1] + [wt[d]]
+        if y[d] not in top:
+            break
+        d += 1
+    if d == m and y[:m] == wt[:m]:
+        while d < L and d < len(wt) and d < len(y) and wt[d] == y[d]:
+            d += 1
+    return 1 + d
+
+
+def tau_best_first(lat, y, B):
+    nodes = best_first(lat, B)
+    acc = []
+    for (d, b, parent, pr, on) in nodes:
+        acc.append(1 if ((parent < 0 or acc[parent]) and d < len(y) and lat.ids[d][b] == y[d]) else 0)
+    return 1 + sum(acc)
+
+
+def parse_shapes(spec, D):
+    """'auto' or 'wxmxL,...': sibling and full trees of width w over the first m positions on a walk of L."""
+    if spec == "none":
+        return []
+    if spec == "auto":
+        return [(w, m, L) for L in range(2, D + 1) for w in (2, 3) for m in range(1, min(3, L) + 1)]
+    out = []
+    for x in spec.split(","):
+        w, m, L = (int(v) for v in x.lower().split("x"))
+        if not (w >= 2 and 1 <= m <= L):
+            raise SystemExit(f"--shapes: {x} is not width >= 2, 1 <= m <= L")
+        out.append((w, m, L))
+    return out
+
+
+def analyse_shapes(steps, shapes, rs, pass_cost, source="prod"):
+    """Trees a sequential drafter can verify, each against the chain with as many verified tokens, on the same steps.
+    A step counts for a shape when its walk reaches max(L, nodes) positions and the continuation is known that far."""
+    recs = []
+    for s in steps:
+        v = block_view(s, source)
+        if v is None:
+            continue
+        lat = Lattice(v, "factorized")
+        if lat.D == 0 or len(s["_y"]) < lat.D or len(lat.chain()) < lat.D:
+            continue
+        recs.append((lat, s["_y"], s.get("_key")))
+    if not recs:
+        return {}
+    D = max(lat.D for lat, _, _ in recs)
+    rows = []
+    for (w, m, L) in shapes:
+        for kind in ("siblings", "full"):
+            nodes = L + (w - 1) * m if kind == "siblings" else sum(w ** i for i in range(1, m + 1)) + (L - m)
+            # the chain of as many verified tokens needs a walk that long; without one the tree is scored alone
+            chain_known = nodes <= D
+            need = max(L, nodes) if chain_known else L
+            have = [(lat, y) for lat, y, _ in recs if lat.D >= need]
+            row = {"shape": f"{kind} {w}x{m} on {L}", "kind": kind, "width": w, "positions": m, "walk": L,
+                   "nodes": nodes, "exact": "yes" if kind == "siblings" else "est.", "steps": len(have)}
+            if not have:
+                rows.append(row)
+                continue
+            if kind == "siblings":
+                tt, hits = zip(*(tau_siblings(lat, y, w, m, L) for lat, y in have))
+            else:
+                tt = [tau_full(lat, y, w, m, L) for lat, y in have]
+                hits = None
+            nan = float("nan")
+            tc = [1 + min(_acc(lat, y), nodes) for lat, y in have] if chain_known else None
+            tb = [tau_best_first(lat, y, nodes) for lat, y in have]
+            row.update({"tau_tree": mean(tt), "tau_chain_same_nodes": mean(tc) if tc else nan,
+                   "tree_minus_chain": mean(tt) - mean(tc) if tc else nan,
+                   "se": se([a - b for a, b in zip(tt, tc)]) if tc else nan,
+                   "tau_best_first_same_nodes": mean(tb),
+                   "tau_walk_L": mean(1 + min(_acc(lat, y), L) for lat, y in have),
+                   "sibling_hits": mean(hits) if hits else float("nan"),
+                   "passes_tree": L, "passes_chain": nodes})
+            for r_ in rs:
+                row[f"S_tree_r{r_:g}"] = row["tau_tree"] / (1.0 + L * pass_cost + nodes * r_)
+                row[f"S_chain_r{r_:g}"] = row["tau_chain_same_nodes"] / (1.0 + nodes * pass_cost + nodes * r_)
+            rows.append(row)
+    # the siblings' value by position: the walk's first rejection at j, and whether the target's token there is among
+    # the k most probable other candidates
+    sib = []
+    K = max(max(lat.K) for lat, _, _ in recs)
+    for j in range(D):
+        rej = [(lat, y) for lat, y, _ in recs if lat.D > j and _acc(lat, y) == j and j < len(y)]
+        row = {"position": j + 1, "rejections": len(rej)}
+        for k in range(1, K):
+            row[f"in_top{k}_others"] = mean(1 if y[j] in [lat.ids[j][b] for b in siblings_at(lat, j, k + 1)] else 0
+                                            for lat, y in rej) if rej else float("nan")
+        sib.append(row)
+    return {"shapes": rows, "siblings": sib}
+
+
+def _acc(lat, y):
+    """The walk's accepted length against the continuation."""
+    wt = walk_tokens(lat)
+    a = 0
+    while a < len(wt) and a < len(y) and wt[a] == y[a]:
+        a += 1
+    return a
+
+
 # ---------------------------------------------------------------- acceptance by position along the drafter's walk
 
 # tails to read the measurement against (Q804's research note, section 3.2): P_j, the probability that the first j
@@ -896,6 +1050,32 @@ def summary_md(report, tables, args, rs):
     return "\n".join(s) + "\n"
 
 
+def shapes_summary_md(tables, args, rs):
+    s = ["## Trees for a sequential drafter, against the chain of as many verified tokens\n"]
+    s.append("A *siblings* tree is the walk cut to L tokens with w - 1 leaves beside each of its first m tokens: the "
+             "drafter's next most probable candidates there, from the passes that drafted the walk, so it needs no "
+             "drafting pass more than the walk's L. Its value is exact: the walk is verified as a chain is, and on its "
+             "first rejection the target's token there is matched against that position's leaves (a leaf that matches "
+             "is accepted, and the pass has already computed the token after it). A *full* tree verifies every path "
+             "over the w most probable candidates at each of the first m positions and goes on along the walk below "
+             "its own node; it is an estimate: below a candidate off the walk it takes the walk's candidates "
+             "(factorized), where the drafter would have drafted from that candidate. *nodes* is the verified tokens "
+             "beyond the anchor, the chain's length for the same verify width; *tau* is accepted tokens + 1 per verify "
+             "step on the steps whose walk reaches max(L, nodes); *se* is the standard error of the paired difference; "
+             "*best-first* is the factorized best-first tree of as many nodes (an estimate); S = tau / (1 + passes x "
+             f"{args.pass_cost:g} + nodes x r) in one-token steps.\n")
+    cols = ["shape", "exact", "nodes", "steps", "tau_tree", "tau_chain_same_nodes", "tree_minus_chain", "se",
+            "tau_best_first_same_nodes", "tau_walk_L", "sibling_hits"]
+    s.append(md_table(tables["shapes"], cols))
+    s.append("\n### Speed-ups of the same shapes (est.: the pass cost and r are assumptions)\n")
+    s.append(md_table(tables["shapes"], ["shape", "nodes", "passes_tree", "passes_chain"]
+                      + [c for r_ in rs for c in (f"S_tree_r{r_:g}", f"S_chain_r{r_:g}")]))
+    s.append("\n### The siblings' value by position: the walk's first rejection there, and the share of those where "
+             "the target's token is among the k most probable other candidates\n")
+    s.append(md_table(tables["siblings"]))
+    return "\n".join(s) + "\n"
+
+
 def block_summary_md(report, tables, args, rs):
     s = ["## Acceptance by position along the drafter's walk\n"]
     s.append(f"{report['n_block_steps']} steps, {report['n_second_block']} of them through the second block of "
@@ -1247,6 +1427,64 @@ def selftest():
         os.unlink(tf.name)
     expect(toks == vocab and [toks.index(t) for t in ("<tool_call>", "</tool_call>", "<think>", "</think>")] == [3, 4, 1, 2],
            "gguf_markers reads the vocabulary from a GGUF header past scalar and numeric-array values")
+
+    # 8. trees for a sequential drafter (MTP), verified by rejection: siblings and full trees on two hand-made steps,
+    #    then random steps whose target accepts each walk token with 0.6 and, on a rejection, takes the best candidate
+    #    other than the walk's with 0.5, the second with 0.2 and a token outside the candidates with 0.3
+    def mtp(task, pick, truth, n_acc):
+        cand = [[11, 12, 13], [21, 22, 23], [31, 32, 33]]
+        p = [[0.6, 0.3, 0.1], [0.5, 0.4, 0.1], [0.7, 0.2, 0.1]]
+        return {"v": 1, "step": 0, "task": task, "slot": 0, "pos": 100, "n_prompt": 50, "verify": "reject",
+                "type": "draft-mtp", "last": 5, "draft": [cand[i][b] for i, b in enumerate(pick)],
+                "sampled": truth[:n_acc + 1], "n_acc": n_acc, "lattice": False, "k": 3, "cand": cand, "p": p,
+                "pick": pick, "truth": truth, "_file": 0}
+
+    m1 = mtp(1, [0, 0, 0], [11, 22, 40, 41], 1)
+    m2 = mtp(2, [2, 0, 0], [11, 21, 31, 41], 0)
+    good8, lines8 = check([m1, m2])
+    expect(good8, "hand-made MTP steps are consistent: " + lines8[0])
+    l1, l2 = Lattice(m1, "factorized"), Lattice(m2, "factorized")
+    expect(tau_siblings(l1, m1["_y"], 2, 2, 3) == (3, 1), "a sibling at position 2 takes the target's token: tau 3")
+    expect(tau_siblings(l1, m1["_y"], 2, 1, 3) == (2, 0), "with a sibling at position 1 only, the step keeps tau 2")
+    expect(tau_siblings(l2, m2["_y"], 2, 1, 3) == (2, 1),
+           "a walk token drafted outside the top 2 has the best candidate as its sibling")
+    expect(tau_full(l1, m1["_y"], 2, 2, 3) == 3, "the full 2x2 tree accepts the off-walk path (11, 22)")
+    expect(tau_full(l2, m2["_y"], 2, 2, 3) == 3, "the full 2x2 tree keeps the walk's token at position 1 and stops at 2")
+    expect(_acc(l1, m1["_y"]) == 1 and tau_best_first(l1, m1["_y"], 2) == 2, "the walk accepts 1; best-first of 2 nodes too")
+    rng8 = random.Random(88)
+    st8 = []
+    for i in range(4000):
+        pick = [rng8.choice((0, 0, 0, 1, 2)) for _ in range(3)]
+        cand = [[11, 12, 13], [21, 22, 23], [31, 32, 33]]
+        truth, n_acc = [], 3
+        for j in range(3):
+            if rng8.random() < 0.6:
+                truth.append(cand[j][pick[j]])
+                continue
+            others = [cand[j][b] for b in range(3) if b != pick[j]]
+            u = rng8.random()
+            truth.append(others[0] if u < 0.5 else (others[1] if u < 0.7 else 999))
+            n_acc = j
+            break
+        truth += [600 + rng8.randrange(50) for _ in range(4 - len(truth))]
+        st8.append(mtp(1000 + i, pick, truth, n_acc))
+    good8b, lines8b = check(st8)
+    expect(good8b, "random MTP steps are consistent: " + lines8b[0])
+    tab8 = analyse_shapes(st8, parse_shapes("auto", 3), [0.1], 0.025)
+    sib = {r["position"]: r for r in tab8["siblings"]}
+    for j in (1, 2, 3):
+        n8 = sib[j]["rejections"]
+        for k, want in ((1, 0.5), (2, 0.7)):
+            got = sib[j][f"in_top{k}_others"]
+            z = abs(got - want) / math.sqrt(want * (1 - want) / max(n8, 1))
+            expect(z < 4.0, f"position {j}: the target's token among the {k} best other candidates on "
+                            f"{got:.3f} of {n8} rejections (want {want}, |z| {z:.2f})")
+    row8 = [r for r in tab8["shapes"] if r["shape"] == "siblings 2x3 on 3"][0]
+    want8 = 1 + (0.24 + 2 * 0.144 + 3 * 0.216) + (1 - 0.216) * 0.5
+    expect(abs(row8["tau_tree"] - want8) < 0.06 and row8["nodes"] == 6,
+           f"siblings 2x3 on a walk of 3: tau {row8['tau_tree']:.3f} against {want8:.3f}, 6 nodes")
+    expect(all(r["steps"] == 0 or r["tau_tree"] >= r["tau_walk_L"] - 1e-9 for r in tab8["shapes"]),
+           "a tree never accepts less than its own walk")
     print("selftest", "passed" if ok else "FAILED")
     return 0 if ok else 1
 
@@ -1272,6 +1510,12 @@ def main():
                         help="token id of the marker that opens or closes a tool call / the reasoning; with them the "
                              "tables split by segment (gguf_markers.py prints them for a model)")
     ap.add_argument("--no-target", action="store_true", help="leave out the expected values from the target's rows")
+    ap.add_argument("--shapes", default="auto",
+                    help="trees for a sequential drafter, against the chain of as many verified tokens: 'auto' (width 2 "
+                         "and 3 over the first 1 to 3 positions, every walk length), 'none', or a list wxmxL,...")
+    ap.add_argument("--pass-cost", type=float, default=0.025,
+                    help="one drafting pass of a sequential drafter, in one-token steps, for the shapes' S (default "
+                         "0.025)")
     ap.add_argument("--check", action="store_true", help="only check the dumps' consistency")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args()
@@ -1296,12 +1540,18 @@ def main():
     text = summary_md(report, tables, args, rs)
     if btables:
         text += "\n" + block_summary_md(breport, btables, args, rs)
+    stables = {}
+    if args.shapes != "none" and tables:
+        D = max(r["position"] for r in tables["chain"])
+        stables = analyse_shapes(steps, parse_shapes(args.shapes, D), rs, args.pass_cost, source=args.lattice)
+        if stables:
+            text += "\n" + shapes_summary_md(stables, args, rs)
     if args.out:
         out = Path(args.out)
         out.mkdir(parents=True, exist_ok=True)
         (out / "check.txt").write_text("\n".join(lines) + "\n")
         (out / "summary.md").write_text(text)
-        for name, rows in list(tables.items()) + list(btables.items()):
+        for name, rows in list(tables.items()) + list(btables.items()) + list(stables.items()):
             write_csv(out / f"{name}.csv", rows)
     print(text)
     return 0 if good else 1

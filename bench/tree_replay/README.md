@@ -12,8 +12,8 @@ tree code is written. Registry row Q688 in [quants/experiments.md](../../quants/
 ## What goes in: llama-server's verify-step dump
 
 Miner Llama's branch `pascal-p106-v3-b12076-specdump` (and `-specdump2`, one commit on it, which adds the last two
-fields) writes one JSON line per speculative verify step when `LLAMA_SPEC_DUMP=<file>` is set (off by default; nothing
-is computed without it):
+fields; both are in the v3.0 engine and in `pascal-p106-v4`) writes one JSON line per speculative verify step when
+`LLAMA_SPEC_DUMP=<file>` is set (off by default; nothing is computed without it):
 
 | Field | What |
 |---|---|
@@ -77,6 +77,35 @@ accepted tokens after a checkpoint restore, and synthetic acceptance, are not wr
   block with the second block on the same steps: how often the draft's first j tokens equal the second block's walk,
   and each walk's P_j against the same continuation.
 
+## The MTP draft and other sequential drafters (Q1395)
+
+The MTP draft drafts one token per pass, each pass conditional on the tokens drafted before it, and the dump keeps its
+`LLAMA_SPEC_DUMP_K` most probable candidates at every drafted position (the draft's sampler takes its top 10; with the
+preset's `-bs` they are drawn on the card and the candidates come back with their probabilities). Such a dump is read
+with `--mode factorized`. [bench/draft_count](../draft_count/README.md) runs the loads that write it, at draft lengths
+of 3 to 7, with `DUMP_K` = 3.
+
+- **Verification by rejection** (`--spec-draft-sampling probabilistic`, the dump's `"verify": "reject"`): the drafted
+  token is a draw from the draft's distribution and is accepted with probability min(1, p / q); at the first rejection
+  the main model draws from the residual. The rebuilt continuation is that sequence, so the chain's value is exactly what
+  the server accepted, and a node beside the walk at the first rejection is worth 1 when the residual's draw is its
+  token. That is the value of a tree verified the same way: the walk by rejection, then the residual's draw matched
+  against the position's other nodes. With sample-and-match the same reading holds with the main model's own draw.
+- **Siblings** (`shapes.csv`, kind `siblings`): the walk cut to L tokens with w − 1 leaves beside each of its first m
+  tokens, the drafter's next most probable candidates at those positions. They come from the passes that drafted the
+  walk, so the tree needs no drafting pass beyond the walk's L, and their value is exact. A leaf that matches gives the
+  token after it too, since the verify pass has computed it.
+- **Full trees** (kind `full`): every path over the w most probable candidates at each of the first m positions, the walk
+  going on to L below its own node. Below a candidate off the walk the dump has only the walk's candidates, so the
+  value is an estimate (`est.`): a drafter would have drafted from that candidate.
+- Each tree is set against the chain with as many verified tokens on the same steps (`tau_chain_same_nodes`: the walk
+  cut to the tree's node count, which needs a walk that long), and against the factorized best-first tree of as many
+  nodes. `--shapes auto` takes width 2 and 3 over the first 1 to 3 positions on every walk length; `--shapes 2x2x3,...`
+  lists them as width x positions x walk. The speed-ups count the drafting passes (`--pass-cost`, in one-token steps)
+  and the verified tokens (r), both assumptions until the rig's step map gives them.
+- `siblings.csv`: at each position, the steps whose walk was first rejected there, and the share of them where the main
+  model's token is among the k most probable other candidates: a sibling leaf's value per position.
+
 ## Use
 
 ```
@@ -84,7 +113,7 @@ python3 tree_replay.py --selftest
 python3 tree_replay.py --check DUMP.jsonl[.gz] ...
 python3 tree_replay.py DUMP.jsonl[.gz] ... --out DIR [--budgets 3,4,6,8,12,16] [--r 0.08,0.10,0.12,0.40] \
     [--draft-cost 0.22] [--mode markov|factorized] [--copy-min 4] [--ctx-bins 4096,8192,16384,32768] \
-    [--lattice auto|fb|prod] [$(python3 gguf_markers.py MODEL.gguf)]
+    [--lattice auto|fb|prod] [--shapes auto|none|2x2x3,...] [--pass-cost 0.025] [$(python3 gguf_markers.py MODEL.gguf)]
 ```
 
 `--lattice` picks the lattice every table walks: the second block's (`fb`), the draft's own (`prod`), or the second
@@ -98,8 +127,10 @@ are drawn from the lattice itself (each rank's value must equal its mean path pr
 hand-made request whose by-position acceptance, censoring, τ(k), S(k) and width comparison are known exactly, the
 segment labels of a token stream, 8,000 random second blocks with a known conditional acceptance at each of 7 positions
 in two groups (P_j, the conditionals, the context, segment, grammar and content splits, the selector's predicted
-probability and a request's end censoring must come out within sampling error), and the marker helper on a synthetic
-GGUF header.
+probability and a request's end censoring must come out within sampling error), the marker helper on a synthetic
+GGUF header, and the trees of a sequential drafter verified by rejection: siblings and full trees on two hand-made MTP
+steps with known values, then 4,000 random steps whose sibling values and siblings tree are known (within sampling
+error).
 
 Output in DIR: `summary.md` (every table and Q614's gate), `chain.csv` (acceptance by position, drafter's walk and
 the verified draft), `budgets.csv` (τ of chain and tree, their difference, off-walk nodes and their value, S at each
@@ -110,6 +141,7 @@ chosen per step, Q687), `copy_gated.csv`, `check.txt`. Acceptance by position: `
 standard error, conditional, strict, the selector's predicted P_j), `block_speed.csv` (τ(k) and S(k) at each r),
 `block_vs_reference.csv` (the best k and its S, measured and on the note's two tails), `block_by_ctx.csv`,
 `block_by_segment.csv`, `block_by_gram.csv`, `block_by_content.csv` (P_j and the conditionals per group, with the steps
-counted at each position) and `block_width.csv` (the draft's block against the second block). Standard library only.
+counted at each position) and `block_width.csv` (the draft's block against the second block). Trees for a sequential
+drafter: `shapes.csv` and `siblings.csv`. Standard library only.
 
 The run on Flash-Next's agent sessions: [docs/data/2026-11-04_tree_replay](../../docs/data/2026-11-04_tree_replay/README.md).
