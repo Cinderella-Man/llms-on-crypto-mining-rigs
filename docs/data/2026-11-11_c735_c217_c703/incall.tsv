@@ -1,0 +1,91 @@
+build	arm	seed	config	ckpt_dft	ckpt_spec	prompt	drafts	end	cut_on	joined_off	old_off	old_on_control	waited_cut_joined	status
+rig	plain	1	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	1	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	1	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	1	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	1	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	2	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	2	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	2	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	2	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	2	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	3	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	3	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	3	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	3	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	plain	3	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	1	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	1	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	1	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	1	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	1	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	2	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	2	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	2	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	2	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	2	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	3	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	3	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	3	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	3	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage1check	3	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	1	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	1	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	1	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	1	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	1	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	2	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	2	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	2	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	2	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	2	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	3	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	3	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	3	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	3	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+rig	stage2check	3	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	1	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	1	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	1	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	1	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	1	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	2	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	2	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	2	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	2	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	2	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	3	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	3	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	3	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	3	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	plain	3	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	1	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	1	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	1	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	1	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	1	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	2	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	2	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	2	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	2	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	2	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	3	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	3	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	3	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	3	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage1check	3	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	1	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	1	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	1	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	1	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	1	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	2	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	2	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	2	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	2	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	2	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	3	f16 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	3	f16	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	3	q8_0 fa	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	3	f16 fa kv-only	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK
+tip	stage2check	3	f16 fa host	identical	identical	identical	identical	identical	identical	identical	identical	differs	5/2	OK

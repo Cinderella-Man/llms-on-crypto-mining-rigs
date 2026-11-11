@@ -1,0 +1,46 @@
+build	arm	seed	config	checkpoint	prompt	drafts	end	ckpt_spec	waited_off_on	status
+tip	plain	1	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	1	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	1	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	1	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	1	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	2	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	2	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	2	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	2	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	2	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	3	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	3	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	3	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	3	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	plain	3	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	1	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	1	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	1	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	1	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	1	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	2	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	2	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	2	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	2	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	2	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	3	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	3	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	3	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	3	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	stage1check	3	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	1	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	1	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	1	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	1	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	1	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	2	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	2	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	2	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	2	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	2	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	3	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	3	f16	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	3	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	3	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+tip	stage2check	3	f16 fa host	identical	identical	identical	identical	identical	0/4	OK

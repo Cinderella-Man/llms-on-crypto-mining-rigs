@@ -1,0 +1,43 @@
+check	verdict	detail
+cpu	OK	rc=0; commit 9e4bbe8979a6df76017473d640a8bbfa3fe25254 test-llama-archs --mtp-incall-overlap: in-call checkpoints' draft parts and drafts against separate calls, LLAMA_MTP_CATCHUP_OVERLAP off and on (C735); all targets; 3 warning lines, 0 error lines
+incall-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+incall-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+incall-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+incall-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-tip-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-tip-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-tip-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+nohalf	AS-EXPECTED	rc=1; get_state_at reads from the buffer's start; 5 of 5 configurations differ in the driver's state at the checkpoints only; Summary: 5 test(s) executed, 5 failed
+overlap-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+overlap-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+overlap-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+overlap-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-tip-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-tip-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-tip-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+kvonly-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+kvonly-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+kvonly-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+kvonly-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+context	OK	3 models; 72 case runs, 0 FAIL; store_at/store_at_p OK in 6 runs; MTP model: qwen4exp-moe-mtp.gguf
+off-base	OK	rc=0; BASE_CPU (5b329df16): 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+build-rig	OK	llama.cpp-20261111-9e4bbe897-pascal-p106-v4-b12246-c735; commit: 9e4bbe8979a6df76017473d640a8bbfa3fe25254 (2026-11-11 09:29:14 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-9e4bbe897-pascal-p106-v4-b12246-c735/bin
+incall-rig-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+incall-rig-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+incall-rig-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+incall-rig-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-rig-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-rig-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-rig-stage2check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-rig-stage2check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+incall-rig-stage2check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=2 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+server	OK	off = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);ovl = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);incall = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);incall2 = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);both = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);both2 = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);incall4 = base4 (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);both4 = base4 (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same);sincall = sbase (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 30 checkpoints at the same token counts; 70 verify steps the same);sboth = sbase (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 30 checkpoints at the same token counts; 70 verify steps the same);incall: 9 checkpoints taken inside a call;incall2: 8 checkpoints taken inside a call;both: 9 checkpoints taken inside a call;both2: 8 checkpoints taken inside a call;incall4: 9 checkpoints taken inside a call;both4: 9 checkpoints taken inside a call;sincall: 16 checkpoints taken inside a call;sboth: 16 checkpoints taken inside a call;ovl: the overlap is on; 15 catch-ups ran after the next call was queued;both: the overlap is on; 6 catch-ups ran after the next call was queued;both2: the overlap is on; 7 catch-ups ran after the next call was queued;both4: the overlap is on; 6 catch-ups ran after the next call was queued;sboth: the overlap is on; 9 catch-ups ran after the next call was queued;incall2: 4 checkpoint(s) moved to the host;both2: 4 checkpoint(s) moved to the host;bboth (the control, the base with both switches): bboth differs from base at Q2; 0 checkpoints inside a call, 2 erased (expected);

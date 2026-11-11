@@ -1,0 +1,27 @@
+off = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+ovl = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+incall = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+incall2 = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+both = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+both2 = base (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+incall4 = base4 (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+both4 = base4 (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 10 checkpoints at the same token counts; 70 verify steps the same)
+sincall = sbase (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 30 checkpoints at the same token counts; 70 verify steps the same)
+sboth = sbase (tokens, top probabilities, prompt_n, cache_n, restored checkpoint and draft counts of Q1-Q5; 30 checkpoints at the same token counts; 70 verify steps the same)
+incall: 9 checkpoints taken inside a call
+incall2: 8 checkpoints taken inside a call
+both: 9 checkpoints taken inside a call
+both2: 8 checkpoints taken inside a call
+incall4: 9 checkpoints taken inside a call
+both4: 9 checkpoints taken inside a call
+sincall: 16 checkpoints taken inside a call
+sboth: 16 checkpoints taken inside a call
+ovl: the overlap is on; 15 catch-ups ran after the next call was queued
+both: the overlap is on; 6 catch-ups ran after the next call was queued
+both2: the overlap is on; 7 catch-ups ran after the next call was queued
+both4: the overlap is on; 6 catch-ups ran after the next call was queued
+sboth: the overlap is on; 9 catch-ups ran after the next call was queued
+incall2: 4 checkpoint(s) moved to the host
+both2: 4 checkpoint(s) moved to the host
+bboth (the control, the base with both switches): bboth differs from base at Q2; 0 checkpoints inside a call, 2 erased (expected)
+PASS
