@@ -1,0 +1,2758 @@
+request	pass	n_pool	n_tokens	host_us	kib_per_card
+(load)		64	2	22.0	1.6
+(load)		64	2	9.0	1.6
+warmup 0		64	60	24.0	10.5
+warmup 0		64	60	19.0	10.5
+warmup 0		64	4	9.0	1.9
+warmup 0		64	4	8.0	1.9
+warmup 0		64	1	8.0	1.4
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	4	9.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	8.0	1.9
+warmup 0		64	4	8.0	1.9
+warmup 0		64	1	8.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	7.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	7.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	9.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	4	9.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	8.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	8.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	9.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	8.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	8.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	8.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	9.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	4.0	1.4
+warmup 0		64	4	9.0	1.9
+warmup 0		64	4	9.0	1.9
+warmup 0		64	1	7.0	1.4
+warmup 0		64	1	6.0	1.4
+warmup 0		64	1	5.0	1.4
+warmup 0		64	4	8.0	1.9
+warmup 0		64	4	8.0	1.9
+decode 0 p1	main	64	60	25.0	10.5
+decode 0 p1	draft	64	60	21.0	10.5
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	10.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	4.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	4.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	17.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	4.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	main	64	4	10.0	1.9
+decode 0 p1	draft	64	4	8.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	9.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	11.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	16.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	7.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	8.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	9.0	1.9
+decode 0 p1	draft	64	4	11.0	1.9
+decode 0 p1	draft	64	1	11.0	1.4
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	10.0	1.9
+decode 0 p1	draft	64	1	7.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	draft	64	1	5.0	1.4
+decode 0 p1	main	64	4	8.0	1.9
+decode 0 p1	draft	64	4	9.0	1.9
+decode 0 p1	draft	64	1	9.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	draft	64	1	6.0	1.4
+decode 0 p1	main	128	4	10.0	3.7
+decode 0 p1	draft	128	4	10.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	main	128	4	10.0	3.7
+decode 0 p1	draft	128	4	10.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	10.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	main	128	4	10.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	main	128	4	8.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	8.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	11.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	8.0	3.7
+decode 0 p1	draft	128	4	10.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	8.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	9.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	10.0	3.7
+decode 0 p1	draft	128	4	11.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	11.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	main	128	4	9.0	3.7
+decode 0 p1	draft	128	4	10.0	3.7
+decode 0 p1	draft	128	1	9.0	2.8
+decode 0 p1	draft	128	1	7.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	main	128	4	10.0	3.7
+decode 0 p1	draft	128	4	10.0	3.7
+decode 0 p1	draft	128	1	8.0	2.8
+decode 0 p1	draft	128	1	6.0	2.8
+decode 0 p1	draft	128	1	5.0	2.8
+decode 0 p1	main	128	2	9.0	3.1
+decode 0 p1	draft	128	2	10.0	3.1
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	11.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	18.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	22.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	17.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	10.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	11.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	9.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	draft	64	1	4.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	22.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	7.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	8.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	7.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	9.0	1.9
+decode 0 p2	draft	64	1	9.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	main	64	4	8.0	1.9
+decode 0 p2	draft	64	4	10.0	1.9
+decode 0 p2	draft	64	1	8.0	1.4
+decode 0 p2	draft	64	1	6.0	1.4
+decode 0 p2	draft	64	1	5.0	1.4
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	14.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	8.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	8.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	main	128	4	8.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	5.0	2.8
+decode 0 p2	main	128	4	8.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	10.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	main	128	4	23.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	8.0	3.7
+decode 0 p2	draft	128	4	8.0	3.7
+decode 0 p2	draft	128	1	8.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	main	128	4	9.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	main	128	4	8.0	3.7
+decode 0 p2	draft	128	4	9.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	4	22.0	3.7
+decode 0 p2	draft	128	4	10.0	3.7
+decode 0 p2	draft	128	1	9.0	2.8
+decode 0 p2	draft	128	1	7.0	2.8
+decode 0 p2	draft	128	1	6.0	2.8
+decode 0 p2	main	128	2	9.0	3.1
+decode 0 p2	draft	128	2	9.0	3.1
+prime 16384		192	512	232.0	210.8
+prime 16384		320	512	279.0	341.3
+prime 16384		448	512	272.0	471.8
+prime 16384		576	512	293.0	602.3
+prime 16384		64	128	34.0	21.0
+prime 16384		128	128	37.0	38.3
+prime 16384		128	128	37.0	38.3
+prime 16384		192	128	41.0	55.5
+prime 16384		192	128	39.0	55.5
+prime 16384		256	128	40.0	72.8
+prime 16384		256	128	43.0	72.8
+prime 16384		320	128	45.0	90.0
+prime 16384		320	128	46.0	90.0
+prime 16384		384	128	47.0	107.3
+prime 16384		384	128	48.0	107.3
+prime 16384		448	128	50.0	124.5
+prime 16384		448	128	51.0	124.5
+prime 16384		512	128	54.0	141.8
+prime 16384		512	128	55.0	141.8
+prime 16384		576	128	60.0	159.0
+prime 16384		704	512	408.0	732.8
+prime 16384		832	512	418.0	863.3
+prime 16384		960	512	523.0	993.8
+prime 16384		1088	512	517.0	1124.3
+prime 16384		576	128	60.0	159.0
+prime 16384		640	128	64.0	176.3
+prime 16384		640	128	63.0	176.3
+prime 16384		704	128	108.0	193.5
+prime 16384		704	128	65.0	193.5
+prime 16384		768	128	67.0	210.8
+prime 16384		768	128	68.0	210.8
+prime 16384		832	128	73.0	228.0
+prime 16384		832	128	71.0	228.0
+prime 16384		896	128	78.0	245.3
+prime 16384		896	128	83.0	245.3
+prime 16384		960	128	78.0	262.5
+prime 16384		960	128	78.0	262.5
+prime 16384		1024	128	81.0	279.8
+prime 16384		1024	128	82.0	279.8
+prime 16384		1088	128	92.0	297.0
+prime 16384		1216	512	938.0	1254.8
+prime 16384		1344	512	402.0	1385.3
+prime 16384		1472	512	684.0	1515.8
+prime 16384		1600	512	803.0	1646.3
+prime 16384		1088	128	127.0	297.0
+prime 16384		1152	128	91.0	314.3
+prime 16384		1152	128	96.0	314.3
+prime 16384		1216	128	93.0	331.5
+prime 16384		1216	128	101.0	331.5
+prime 16384		1280	128	100.0	348.8
+prime 16384		1280	128	121.0	348.8
+prime 16384		1344	128	101.0	366.0
+prime 16384		1344	128	102.0	366.0
+prime 16384		1408	128	103.0	383.3
+prime 16384		1408	128	105.0	383.3
+prime 16384		1472	128	108.0	400.5
+prime 16384		1472	128	110.0	400.5
+prime 16384		1536	128	115.0	417.8
+prime 16384		1536	128	112.0	417.8
+prime 16384		1600	128	117.0	435.0
+prime 16384		1728	512	523.0	1776.8
+prime 16384		1856	512	850.0	1907.3
+prime 16384		1984	512	633.0	2037.8
+prime 16384		2112	512	952.0	2168.3
+prime 16384		1600	128	106.0	435.0
+prime 16384		1664	128	121.0	452.3
+prime 16384		1664	128	122.0	452.3
+prime 16384		1728	128	125.0	469.5
+prime 16384		1728	128	125.0	469.5
+prime 16384		1792	128	127.0	486.8
+prime 16384		1792	128	234.0	486.8
+prime 16384		1856	128	133.0	504.0
+prime 16384		1856	128	144.0	504.0
+prime 16384		1920	128	137.0	521.3
+prime 16384		1920	128	135.0	521.3
+prime 16384		1984	128	139.0	538.5
+prime 16384		1984	128	148.0	538.5
+prime 16384		2048	128	148.0	555.8
+prime 16384		2048	128	151.0	555.8
+prime 16384		2112	128	162.0	573.0
+prime 16384		2240	512	600.0	2298.8
+prime 16384		2368	512	629.0	2429.3
+prime 16384		2496	512	1139.0	2559.8
+prime 16384		2624	512	1148.0	2690.3
+prime 16384		2112	128	136.0	573.0
+prime 16384		2176	128	150.0	590.3
+prime 16384		2176	128	151.0	590.3
+prime 16384		2240	128	155.0	607.5
+prime 16384		2240	128	199.0	607.5
+prime 16384		2304	128	162.0	624.8
+prime 16384		2304	128	164.0	624.8
+prime 16384		2368	128	176.0	642.0
+prime 16384		2368	128	165.0	642.0
+prime 16384		2432	128	196.0	659.3
+prime 16384		2432	128	169.0	659.3
+prime 16384		2496	128	170.0	676.5
+prime 16384		2496	128	173.0	676.5
+prime 16384		2560	128	187.0	693.8
+prime 16384		2560	128	181.0	693.8
+prime 16384		2624	128	179.0	711.0
+prime 16384		2752	512	778.0	2820.8
+prime 16384		2880	512	1094.0	2951.3
+prime 16384		3008	512	995.0	3081.8
+prime 16384		3136	512	1317.0	3212.3
+prime 16384		2624	128	157.0	711.0
+prime 16384		2688	128	184.0	728.3
+prime 16384		2688	128	188.0	728.3
+prime 16384		2752	128	190.0	745.5
+prime 16384		2752	128	200.0	745.5
+prime 16384		2816	128	191.0	762.8
+prime 16384		2816	128	191.0	762.8
+prime 16384		2880	128	212.0	780.0
+prime 16384		2880	128	199.0	780.0
+prime 16384		2944	128	201.0	797.3
+prime 16384		2944	128	229.0	797.3
+prime 16384		3008	128	205.0	814.5
+prime 16384		3008	128	206.0	814.5
+prime 16384		3072	128	212.0	831.8
+prime 16384		3072	128	211.0	831.8
+prime 16384		3136	128	215.0	849.0
+prime 16384		3264	512	901.0	3342.8
+prime 16384		3392	512	934.0	3473.3
+prime 16384		3520	512	1869.0	3603.8
+prime 16384		3648	512	1406.0	3734.3
+prime 16384		3136	128	186.0	849.0
+prime 16384		3200	128	221.0	866.3
+prime 16384		3200	128	219.0	866.3
+prime 16384		3264	128	223.0	883.5
+prime 16384		3264	128	235.0	883.5
+prime 16384		3328	128	230.0	900.8
+prime 16384		3328	128	233.0	900.8
+prime 16384		3392	128	231.0	918.0
+prime 16384		3392	128	233.0	918.0
+prime 16384		3456	128	238.0	935.3
+prime 16384		3456	128	239.0	935.3
+prime 16384		3520	128	252.0	952.5
+prime 16384		3520	128	243.0	952.5
+prime 16384		3584	128	245.0	969.8
+prime 16384		3584	128	257.0	969.8
+prime 16384		3648	128	249.0	987.0
+prime 16384		3776	512	1312.0	3864.8
+prime 16384		3904	512	1541.0	3995.3
+prime 16384		3968	444	995.0	3531.5
+prime 16384		3648	128	214.0	987.0
+prime 16384		3712	128	266.0	1004.3
+prime 16384		3712	128	277.0	1004.3
+prime 16384		3776	128	259.0	1021.5
+prime 16384		3776	128	272.0	1021.5
+prime 16384		3840	128	274.0	1038.8
+prime 16384		3840	128	274.0	1038.8
+prime 16384		3904	128	266.0	1056.0
+prime 16384		3904	128	268.0	1056.0
+prime 16384		3968	128	284.0	1073.3
+prime 16384		3968	128	272.0	1073.3
+prime 16384		3968	60	157.0	544.3
+prime 16384		4096	512	1112.0	4191.0
+prime 16384		4032	128	251.0	1090.5
+prime 16384		4032	128	267.0	1090.5
+prime 16384		4096	128	281.0	1107.8
+prime 16384		4096	128	273.0	1107.8
+prime 16384		4096	4	190.0	112.2
+prime 16384		4096	4	73.0	112.2
+decode 16384 p1		4096	60	417.0	561.8
+decode 16384 p1		4096	60	192.0	561.8
+decode 16384 p1		4160	4	113.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	95.0	89.4
+decode 16384 p1		4160	1	82.0	89.4
+decode 16384 p1		4160	4	114.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	98.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	79.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	87.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	4	78.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	63.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	79.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	67.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	107.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	78.0	89.4
+decode 16384 p1		4160	1	78.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	74.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	100.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	85.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	78.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	77.0	113.9
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	94.0	113.9
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	1	67.0	89.4
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	80.0	89.4
+decode 16384 p1		4160	1	79.0	89.4
+decode 16384 p1		4160	1	75.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	4	72.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	75.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	83.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	67.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	1	67.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	4	72.0	113.9
+decode 16384 p1		4160	4	92.0	113.9
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	67.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	108.0	89.4
+decode 16384 p1		4160	4	85.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	91.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	73.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	1	80.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	78.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	68.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	73.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	86.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	77.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	73.0	89.4
+decode 16384 p1		4160	1	74.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	4	96.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	85.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	86.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	79.0	89.4
+decode 16384 p1		4160	1	80.0	89.4
+decode 16384 p1		4160	1	77.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	71.0	89.4
+decode 16384 p1		4160	1	69.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	72.0	89.4
+decode 16384 p1		4160	1	70.0	89.4
+decode 16384 p1		4160	1	66.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	76.0	113.9
+decode 16384 p1		4160	1	80.0	89.4
+decode 16384 p1		4160	1	80.0	89.4
+decode 16384 p1		4160	1	65.0	89.4
+decode 16384 p1		4160	4	74.0	113.9
+decode 16384 p1		4160	4	75.0	113.9
+decode 16384 p1		4160	1	75.0	89.4
+decode 16384 p1		4160	1	64.0	89.4
+decode 16384 p1		4160	1	83.0	89.4
+decode 16384 p1		4160	4	72.0	113.9
+decode 16384 p1		4160	4	77.0	113.9
+decode 16384 p1		4160	1	116.0	89.4
+decode 16384 p1		4160	1	89.0	89.4
+decode 16384 p2	main	4160	4	105.0	113.9
+decode 16384 p2	draft	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	1	74.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	75.0	89.4
+decode 16384 p2	main	4160	4	103.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	244.0	89.4
+decode 16384 p2	draft	4160	1	79.0	89.4
+decode 16384 p2	draft	4160	1	79.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	main	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	84.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	main	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	72.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	92.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	80.0	89.4
+decode 16384 p2	draft	4160	1	78.0	89.4
+decode 16384 p2	draft	4160	1	77.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	94.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	main	4160	4	203.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	73.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	75.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	74.0	89.4
+decode 16384 p2	draft	4160	1	62.0	89.4
+decode 16384 p2	main	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	82.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	81.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	85.0	113.9
+decode 16384 p2	draft	4160	4	92.0	113.9
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	63.0	89.4
+decode 16384 p2	main	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	84.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	72.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	114.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	79.0	89.4
+decode 16384 p2	draft	4160	1	85.0	89.4
+decode 16384 p2	draft	4160	1	77.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	72.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	main	4160	4	89.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	78.0	89.4
+decode 16384 p2	draft	4160	1	109.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	79.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	95.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	73.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	81.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	63.0	89.4
+decode 16384 p2	main	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	94.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	64.0	89.4
+decode 16384 p2	main	4160	4	84.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	76.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	78.0	89.4
+decode 16384 p2	main	4160	4	73.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	main	4160	4	86.0	113.9
+decode 16384 p2	draft	4160	4	101.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	69.0	89.4
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+decode 16384 p2	draft	4160	1	66.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	68.0	89.4
+decode 16384 p2	draft	4160	1	67.0	89.4
+decode 16384 p2	main	4160	4	74.0	113.9
+decode 16384 p2	draft	4160	4	76.0	113.9
+decode 16384 p2	draft	4160	1	71.0	89.4
+decode 16384 p2	draft	4160	1	65.0	89.4
+decode 16384 p2	draft	4160	1	72.0	89.4
+decode 16384 p2	main	4160	4	75.0	113.9
+decode 16384 p2	draft	4160	4	75.0	113.9
+decode 16384 p2	main	4160	1	103.0	89.4
+decode 16384 p2	draft	4160	1	70.0	89.4
+prime 49152		4096	512	1925.0	4191.0
+prime 49152		4224	512	1989.0	4321.5
+prime 49152		4352	512	3509.0	4452.0
+prime 49152		4480	512	2012.0	4582.5
+prime 49152		4032	128	271.0	1090.5
+prime 49152		4032	128	291.0	1090.5
+prime 49152		4096	128	292.0	1107.8
+prime 49152		4096	128	275.0	1107.8
+prime 49152		4160	128	293.0	1125.0
+prime 49152		4160	128	278.0	1125.0
+prime 49152		4224	128	341.0	1142.3
+prime 49152		4224	128	282.0	1142.3
+prime 49152		4288	128	309.0	1159.5
+prime 49152		4288	128	285.0	1159.5
+prime 49152		4352	128	296.0	1176.8
+prime 49152		4352	128	310.0	1176.8
+prime 49152		4416	128	315.0	1194.0
+prime 49152		4416	128	453.0	1194.0
+prime 49152		4480	128	308.0	1211.3
+prime 49152		4480	128	313.0	1211.3
+prime 49152		4608	512	1704.0	4713.0
+prime 49152		4736	512	1797.0	4843.5
+prime 49152		4864	512	1851.0	4974.0
+prime 49152		4992	512	1573.0	5104.5
+prime 49152		4544	128	260.0	1228.5
+prime 49152		4544	128	374.0	1228.5
+prime 49152		4608	128	315.0	1245.8
+prime 49152		4608	128	309.0	1245.8
+prime 49152		4672	128	339.0	1263.0
+prime 49152		4672	128	316.0	1263.0
+prime 49152		4736	128	327.0	1280.3
+prime 49152		4736	128	342.0	1280.3
+prime 49152		4800	128	330.0	1297.5
+prime 49152		4800	128	326.0	1297.5
+prime 49152		4864	128	338.0	1314.8
+prime 49152		4864	128	347.0	1314.8
+prime 49152		4928	128	355.0	1332.0
+prime 49152		4928	128	361.0	1332.0
+prime 49152		4992	128	346.0	1349.3
+prime 49152		4992	128	351.0	1349.3
+prime 49152		5120	512	1734.0	5235.0
+prime 49152		5248	512	1840.0	5365.5
+prime 49152		5376	512	1974.0	5496.0
+prime 49152		5504	512	1964.0	5626.5
+prime 49152		5056	128	288.0	1366.5
+prime 49152		5056	128	342.0	1366.5
+prime 49152		5120	128	356.0	1383.8
+prime 49152		5120	128	463.0	1383.8
+prime 49152		5184	128	358.0	1401.0
+prime 49152		5184	128	353.0	1401.0
+prime 49152		5248	128	364.0	1418.3
+prime 49152		5248	128	401.0	1418.3
+prime 49152		5312	128	365.0	1435.5
+prime 49152		5312	128	360.0	1435.5
+prime 49152		5376	128	374.0	1452.8
+prime 49152		5376	128	422.0	1452.8
+prime 49152		5440	128	403.0	1470.0
+prime 49152		5440	128	385.0	1470.0
+prime 49152		5504	128	380.0	1487.3
+prime 49152		5504	128	390.0	1487.3
+prime 49152		5632	512	2002.0	5757.0
+prime 49152		5760	512	2035.0	5887.5
+prime 49152		5888	512	1555.0	6018.0
+prime 49152		6016	512	1484.0	6148.5
+prime 49152		5568	128	320.0	1504.5
+prime 49152		5568	128	380.0	1504.5
+prime 49152		5632	128	399.0	1521.8
+prime 49152		5632	128	397.0	1521.8
+prime 49152		5696	128	396.0	1539.0
+prime 49152		5696	128	411.0	1539.0
+prime 49152		5760	128	409.0	1556.3
+prime 49152		5760	128	411.0	1556.3
+prime 49152		5824	128	421.0	1573.5
+prime 49152		5824	128	405.0	1573.5
+prime 49152		5888	128	410.0	1590.8
+prime 49152		5888	128	421.0	1590.8
+prime 49152		5952	128	415.0	1608.0
+prime 49152		5952	128	454.0	1608.0
+prime 49152		6016	128	428.0	1625.3
+prime 49152		6016	128	415.0	1625.3
+prime 49152		6144	512	1893.0	6279.0
+prime 49152		6272	512	1653.0	6409.5
+prime 49152		6400	512	2166.0	6540.0
+prime 49152		6528	512	2230.0	6670.5
+prime 49152		6080	128	350.0	1642.5
+prime 49152		6080	128	461.0	1642.5
+prime 49152		6144	128	439.0	1659.8
+prime 49152		6144	128	594.0	1659.8
+prime 49152		6208	128	437.0	1677.0
+prime 49152		6208	128	448.0	1677.0
+prime 49152		6272	128	451.0	1694.3
+prime 49152		6272	128	445.0	1694.3
+prime 49152		6336	128	465.0	1711.5
+prime 49152		6336	128	441.0	1711.5
+prime 49152		6400	128	447.0	1728.8
+prime 49152		6400	128	466.0	1728.8
+prime 49152		6464	128	465.0	1746.0
+prime 49152		6464	128	464.0	1746.0
+prime 49152		6528	128	459.0	1763.3
+prime 49152		6528	128	449.0	1763.3
+prime 49152		6656	512	1793.0	6801.0
+prime 49152		6784	512	4810.0	6931.5
+prime 49152		6912	512	2722.0	7062.0
+prime 49152		7040	512	2134.0	7192.5
+prime 49152		6592	128	523.0	1780.5
+prime 49152		6592	128	467.0	1780.5
+prime 49152		6656	128	491.0	1797.8
+prime 49152		6656	128	495.0	1797.8
+prime 49152		6720	128	489.0	1815.0
+prime 49152		6720	128	469.0	1815.0
+prime 49152		6784	128	487.0	1832.3
+prime 49152		6784	128	474.0	1832.3
+prime 49152		6848	128	495.0	1849.5
+prime 49152		6848	128	477.0	1849.5
+prime 49152		6912	128	642.0	1866.8
+prime 49152		6912	128	483.0	1866.8
+prime 49152		6976	128	512.0	1884.0
+prime 49152		6976	128	668.0	1884.0
+prime 49152		7040	128	496.0	1901.3
+prime 49152		7040	128	501.0	1901.3
+prime 49152		7168	512	2275.0	7323.0
+prime 49152		7296	512	2342.0	7453.5
+prime 49152		7424	512	2364.0	7584.0
+prime 49152		7552	512	2573.0	7714.5
+prime 49152		7104	128	409.0	1918.5
+prime 49152		7104	128	510.0	1918.5
+prime 49152		7168	128	514.0	1935.8
+prime 49152		7168	128	518.0	1935.8
+prime 49152		7232	128	556.0	1953.0
+prime 49152		7232	128	514.0	1953.0
+prime 49152		7296	128	528.0	1970.3
+prime 49152		7296	128	509.0	1970.3
+prime 49152		7360	128	528.0	1987.5
+prime 49152		7360	128	527.0	1987.5
+prime 49152		7424	128	653.0	2004.8
+prime 49152		7424	128	533.0	2004.8
+prime 49152		7488	128	540.0	2022.0
+prime 49152		7488	128	536.0	2022.0
+prime 49152		7552	128	609.0	2039.3
+prime 49152		7552	128	542.0	2039.3
+prime 49152		7680	512	2435.0	7845.0
+prime 49152		7808	512	1886.0	7975.5
+prime 49152		7936	512	2414.0	8106.0
+prime 49152		8064	512	2392.0	8236.5
+prime 49152		7616	128	455.0	2056.5
+prime 49152		7616	128	531.0	2056.5
+prime 49152		7680	128	544.0	2073.8
+prime 49152		7680	128	551.0	2073.8
+prime 49152		7744	128	574.0	2091.0
+prime 49152		7744	128	598.0	2091.0
+prime 49152		7808	128	569.0	2108.3
+prime 49152		7808	128	562.0	2108.3
+prime 49152		7872	128	605.0	2125.5
+prime 49152		7872	128	555.0	2125.5
+prime 49152		7936	128	613.0	2142.8
+prime 49152		7936	128	628.0	2142.8
+prime 49152		8000	128	613.0	2160.0
+prime 49152		8000	128	575.0	2160.0
+prime 49152		8064	128	611.0	2177.3
+prime 49152		8064	128	584.0	2177.3
+prime 49152		8192	512	2446.0	8367.0
+prime 49152		8320	512	2260.0	8497.5
+prime 49152		8448	512	1952.0	8628.0
+prime 49152		8576	512	2717.0	8758.5
+prime 49152		8128	128	636.0	2194.5
+prime 49152		8128	128	585.0	2194.5
+prime 49152		8192	128	622.0	2211.8
+prime 49152		8192	128	599.0	2211.8
+prime 49152		8256	128	589.0	2229.0
+prime 49152		8256	128	750.0	2229.0
+prime 49152		8320	128	592.0	2246.3
+prime 49152		8320	128	600.0	2246.3
+prime 49152		8384	128	759.0	2263.5
+prime 49152		8384	128	750.0	2263.5
+prime 49152		8448	128	604.0	2280.8
+prime 49152		8448	128	595.0	2280.8
+prime 49152		8512	128	767.0	2298.0
+prime 49152		8512	128	664.0	2298.0
+prime 49152		8576	128	805.0	2315.3
+prime 49152		8576	128	759.0	2315.3
+prime 49152		8704	512	3017.0	8889.0
+prime 49152		8832	512	2675.0	9019.5
+prime 49152		8960	512	3279.0	9150.0
+prime 49152		9088	512	2848.0	9280.5
+prime 49152		8640	128	520.0	2332.5
+prime 49152		8640	128	625.0	2332.5
+prime 49152		8704	128	632.0	2349.8
+prime 49152		8704	128	630.0	2349.8
+prime 49152		8768	128	637.0	2367.0
+prime 49152		8768	128	660.0	2367.0
+prime 49152		8832	128	789.0	2384.3
+prime 49152		8832	128	635.0	2384.3
+prime 49152		8896	128	783.0	2401.5
+prime 49152		8896	128	628.0	2401.5
+prime 49152		8960	128	651.0	2418.8
+prime 49152		8960	128	652.0	2418.8
+prime 49152		9024	128	642.0	2436.0
+prime 49152		9024	128	632.0	2436.0
+prime 49152		9088	128	674.0	2453.3
+prime 49152		9088	128	641.0	2453.3
+prime 49152		9216	512	2814.0	9411.0
+prime 49152		9344	512	3011.0	9541.5
+prime 49152		9472	512	2395.0	9672.0
+prime 49152		9600	512	2450.0	9802.5
+prime 49152		9152	128	561.0	2470.5
+prime 49152		9152	128	689.0	2470.5
+prime 49152		9216	128	694.0	2487.8
+prime 49152		9216	128	653.0	2487.8
+prime 49152		9280	128	663.0	2505.0
+prime 49152		9280	128	677.0	2505.0
+prime 49152		9344	128	687.0	2522.3
+prime 49152		9344	128	800.0	2522.3
+prime 49152		9408	128	685.0	2539.5
+prime 49152		9408	128	679.0	2539.5
+prime 49152		9472	128	676.0	2556.8
+prime 49152		9472	128	681.0	2556.8
+prime 49152		9536	128	681.0	2574.0
+prime 49152		9536	128	692.0	2574.0
+prime 49152		9600	128	711.0	2591.3
+prime 49152		9600	128	694.0	2591.3
+prime 49152		9728	512	2235.0	9933.0
+prime 49152		9856	512	2357.0	10063.5
+prime 49152		9984	512	3297.0	10194.0
+prime 49152		10112	512	2398.0	10324.5
+prime 49152		9664	128	575.0	2608.5
+prime 49152		9664	128	696.0	2608.5
+prime 49152		9728	128	724.0	2625.8
+prime 49152		9728	128	705.0	2625.8
+prime 49152		9792	128	732.0	2643.0
+prime 49152		9792	128	731.0	2643.0
+prime 49152		9856	128	704.0	2660.3
+prime 49152		9856	128	686.0	2660.3
+prime 49152		9920	128	734.0	2677.5
+prime 49152		9920	128	718.0	2677.5
+prime 49152		9984	128	728.0	2694.8
+prime 49152		9984	128	677.0	2694.8
+prime 49152		10048	128	752.0	2712.0
+prime 49152		10048	128	727.0	2712.0
+prime 49152		10112	128	745.0	2729.3
+prime 49152		10112	128	733.0	2729.3
+prime 49152		10240	512	2754.0	10455.0
+prime 49152		10368	512	3102.0	10585.5
+prime 49152		10496	512	2581.0	10716.0
+prime 49152		10624	512	4164.0	10846.5
+prime 49152		10176	128	735.0	2746.5
+prime 49152		10176	128	784.0	2746.5
+prime 49152		10240	128	822.0	2763.8
+prime 49152		10240	128	935.0	2763.8
+prime 49152		10304	128	742.0	2781.0
+prime 49152		10304	128	769.0	2781.0
+prime 49152		10368	128	776.0	2798.3
+prime 49152		10368	128	758.0	2798.3
+prime 49152		10432	128	771.0	2815.5
+prime 49152		10432	128	760.0	2815.5
+prime 49152		10496	128	774.0	2832.8
+prime 49152		10496	128	748.0	2832.8
+prime 49152		10560	128	772.0	2850.0
+prime 49152		10560	128	764.0	2850.0
+prime 49152		10624	128	773.0	2867.3
+prime 49152		10624	128	753.0	2867.3
+prime 49152		10752	512	2737.0	10977.0
+prime 49152		10880	512	3050.0	11107.5
+prime 49152		11008	512	3241.0	11238.0
+prime 49152		11136	512	2710.0	11368.5
+prime 49152		10688	128	724.0	2884.5
+prime 49152		10688	128	782.0	2884.5
+prime 49152		10752	128	787.0	2901.8
+prime 49152		10752	128	818.0	2901.8
+prime 49152		10816	128	791.0	2919.0
+prime 49152		10816	128	775.0	2919.0
+prime 49152		10880	128	792.0	2936.3
+prime 49152		10880	128	795.0	2936.3
+prime 49152		10944	128	803.0	2953.5
+prime 49152		10944	128	756.0	2953.5
+prime 49152		11008	128	813.0	2970.8
+prime 49152		11008	128	843.0	2970.8
+prime 49152		11072	128	817.0	2988.0
+prime 49152		11072	128	792.0	2988.0
+prime 49152		11136	128	831.0	3005.3
+prime 49152		11136	128	833.0	3005.3
+prime 49152		11264	512	2669.0	11499.0
+prime 49152		11392	512	2499.0	11629.5
+prime 49152		11520	512	2673.0	11760.0
+prime 49152		11648	512	2828.0	11890.5
+prime 49152		11200	128	723.0	3022.5
+prime 49152		11200	128	752.0	3022.5
+prime 49152		11264	128	866.0	3039.8
+prime 49152		11264	128	824.0	3039.8
+prime 49152		11328	128	844.0	3057.0
+prime 49152		11328	128	834.0	3057.0
+prime 49152		11392	128	842.0	3074.3
+prime 49152		11392	128	851.0	3074.3
+prime 49152		11456	128	859.0	3091.5
+prime 49152		11456	128	839.0	3091.5
+prime 49152		11520	128	872.0	3108.8
+prime 49152		11520	128	828.0	3108.8
+prime 49152		11584	128	850.0	3126.0
+prime 49152		11584	128	842.0	3126.0
+prime 49152		11648	128	1005.0	3143.3
+prime 49152		11648	128	829.0	3143.3
+prime 49152		11776	512	3339.0	12021.0
+prime 49152		11904	512	3218.0	12151.5
+prime 49152		12032	512	3352.0	12282.0
+prime 49152		12160	512	8244.0	12412.5
+prime 49152		11712	128	705.0	3160.5
+prime 49152		11712	128	872.0	3160.5
+prime 49152		11776	128	884.0	3177.8
+prime 49152		11776	128	865.0	3177.8
+prime 49152		11840	128	875.0	3195.0
+prime 49152		11840	128	888.0	3195.0
+prime 49152		11904	128	892.0	3212.3
+prime 49152		11904	128	839.0	3212.3
+prime 49152		11968	128	857.0	3229.5
+prime 49152		11968	128	826.0	3229.5
+prime 49152		12032	128	905.0	3246.8
+prime 49152		12032	128	826.0	3246.8
+prime 49152		12096	128	889.0	3264.0
+prime 49152		12096	128	893.0	3264.0
+prime 49152		12160	128	1040.0	3281.3
+prime 49152		12160	128	907.0	3281.3
+prime 49152		12288	512	3077.0	12543.0
+prime 49152		12224	128	722.0	3298.5
+prime 49152		12224	128	903.0	3298.5
+prime 49152		12288	128	943.0	3315.8
+prime 49152		12288	128	905.0	3315.8
+prime 49152		12288	4	258.0	336.2
+prime 49152		12288	4	205.0	336.2
+decode 49152 p1		12288	60	427.0	1681.8
+decode 49152 p1		12288	60	442.0	1681.8
+decode 49152 p1		12352	4	249.0	337.9
+decode 49152 p1		12352	4	213.0	337.9
+decode 49152 p1		12352	1	202.0	265.4
+decode 49152 p1		12352	1	215.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	256.0	337.9
+decode 49152 p1		12352	4	208.0	337.9
+decode 49152 p1		12352	1	215.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	277.0	337.9
+decode 49152 p1		12352	1	202.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	187.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	222.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	214.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	225.0	337.9
+decode 49152 p1		12352	1	180.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	211.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	208.0	265.4
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	207.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	182.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	208.0	337.9
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	4	223.0	337.9
+decode 49152 p1		12352	1	182.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	4	216.0	337.9
+decode 49152 p1		12352	4	208.0	337.9
+decode 49152 p1		12352	1	180.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	238.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	180.0	265.4
+decode 49152 p1		12352	1	204.0	265.4
+decode 49152 p1		12352	1	202.0	265.4
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	201.0	265.4
+decode 49152 p1		12352	1	205.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	224.0	337.9
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	204.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	212.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	204.0	265.4
+decode 49152 p1		12352	4	214.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	213.0	265.4
+decode 49152 p1		12352	1	205.0	265.4
+decode 49152 p1		12352	1	176.0	265.4
+decode 49152 p1		12352	4	214.0	337.9
+decode 49152 p1		12352	4	223.0	337.9
+decode 49152 p1		12352	1	182.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	199.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	1	202.0	265.4
+decode 49152 p1		12352	4	216.0	337.9
+decode 49152 p1		12352	4	227.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	200.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	211.0	265.4
+decode 49152 p1		12352	4	214.0	337.9
+decode 49152 p1		12352	4	221.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	203.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	228.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	4	213.0	337.9
+decode 49152 p1		12352	4	223.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	4	215.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	179.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	229.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	200.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	213.0	265.4
+decode 49152 p1		12352	1	205.0	265.4
+decode 49152 p1		12352	1	182.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	184.0	265.4
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	179.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	4	219.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	217.0	265.4
+decode 49152 p1		12352	1	207.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	226.0	337.9
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	179.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	180.0	265.4
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	243.0	265.4
+decode 49152 p1		12352	1	206.0	265.4
+decode 49152 p1		12352	1	179.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	4	215.0	337.9
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	1	212.0	265.4
+decode 49152 p1		12352	1	190.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	4	213.0	337.9
+decode 49152 p1		12352	4	219.0	337.9
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	202.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	184.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	4	214.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	1	203.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	221.0	337.9
+decode 49152 p1		12352	1	187.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	181.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	220.0	265.4
+decode 49152 p1		12352	1	206.0	265.4
+decode 49152 p1		12352	1	210.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	1	204.0	265.4
+decode 49152 p1		12352	1	199.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	1	182.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	202.0	265.4
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	318.0	265.4
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	203.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	1	203.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	222.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	217.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	215.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	1	211.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	209.0	265.4
+decode 49152 p1		12352	1	189.0	265.4
+decode 49152 p1		12352	1	211.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	224.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	177.0	265.4
+decode 49152 p1		12352	1	191.0	265.4
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	1	213.0	265.4
+decode 49152 p1		12352	1	190.0	265.4
+decode 49152 p1		12352	1	198.0	265.4
+decode 49152 p1		12352	4	214.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	177.0	265.4
+decode 49152 p1		12352	1	202.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	221.0	337.9
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	207.0	337.9
+decode 49152 p1		12352	1	213.0	265.4
+decode 49152 p1		12352	1	190.0	265.4
+decode 49152 p1		12352	1	210.0	265.4
+decode 49152 p1		12352	4	215.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	180.0	265.4
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	4	222.0	337.9
+decode 49152 p1		12352	1	196.0	265.4
+decode 49152 p1		12352	1	177.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	4	203.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	225.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	4	215.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	195.0	265.4
+decode 49152 p1		12352	1	177.0	265.4
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	178.0	265.4
+decode 49152 p1		12352	4	205.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	211.0	265.4
+decode 49152 p1		12352	1	193.0	265.4
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	4	216.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	211.0	265.4
+decode 49152 p1		12352	1	205.0	265.4
+decode 49152 p1		12352	1	197.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	206.0	337.9
+decode 49152 p1		12352	1	211.0	265.4
+decode 49152 p1		12352	1	203.0	265.4
+decode 49152 p1		12352	1	208.0	265.4
+decode 49152 p1		12352	4	204.0	337.9
+decode 49152 p1		12352	4	223.0	337.9
+decode 49152 p1		12352	1	194.0	265.4
+decode 49152 p1		12352	1	192.0	265.4
+decode 49152 p1		12352	1	209.0	265.4
+decode 49152 p1		12352	3	377.0	313.7
+decode 49152 p1		12352	3	218.0	313.7
+decode 49152 p2		12352	4	243.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	206.0	265.4
+decode 49152 p2		12352	1	211.0	265.4
+decode 49152 p2		12352	1	191.0	265.4
+decode 49152 p2		12352	4	260.0	337.9
+decode 49152 p2		12352	4	209.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	221.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	185.0	265.4
+decode 49152 p2		12352	4	211.0	337.9
+decode 49152 p2		12352	4	209.0	337.9
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	215.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	208.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	210.0	337.9
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	203.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	212.0	265.4
+decode 49152 p2		12352	1	203.0	265.4
+decode 49152 p2		12352	1	203.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	1	202.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	223.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	200.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	206.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	1	205.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	1	182.0	265.4
+decode 49152 p2		12352	1	323.0	265.4
+decode 49152 p2		12352	1	201.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	180.0	265.4
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	1	182.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	212.0	265.4
+decode 49152 p2		12352	1	208.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	180.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	4	211.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	210.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	199.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	225.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	183.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	183.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	191.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	210.0	337.9
+decode 49152 p2		12352	1	212.0	265.4
+decode 49152 p2		12352	1	189.0	265.4
+decode 49152 p2		12352	1	203.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	178.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	178.0	265.4
+decode 49152 p2		12352	4	201.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	213.0	265.4
+decode 49152 p2		12352	1	204.0	265.4
+decode 49152 p2		12352	1	178.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	209.0	337.9
+decode 49152 p2		12352	1	200.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	182.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	214.0	265.4
+decode 49152 p2		12352	1	205.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	184.0	265.4
+decode 49152 p2		12352	4	212.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	184.0	265.4
+decode 49152 p2		12352	4	212.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	183.0	265.4
+decode 49152 p2		12352	4	211.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	184.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	221.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	180.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	213.0	337.9
+decode 49152 p2		12352	4	224.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	4	212.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	4	211.0	337.9
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	213.0	265.4
+decode 49152 p2		12352	1	189.0	265.4
+decode 49152 p2		12352	1	204.0	265.4
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	210.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	1	202.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	214.0	265.4
+decode 49152 p2		12352	1	191.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	212.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	177.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	182.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	207.0	265.4
+decode 49152 p2		12352	1	204.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	182.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	212.0	337.9
+decode 49152 p2		12352	4	216.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	205.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	1	206.0	265.4
+decode 49152 p2		12352	1	205.0	265.4
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	1	207.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	182.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	4	261.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	207.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	181.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	1	206.0	265.4
+decode 49152 p2		12352	1	205.0	265.4
+decode 49152 p2		12352	4	201.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	213.0	265.4
+decode 49152 p2		12352	1	189.0	265.4
+decode 49152 p2		12352	1	202.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	212.0	337.9
+decode 49152 p2		12352	4	223.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	180.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	208.0	337.9
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	180.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	221.0	265.4
+decode 49152 p2		12352	1	180.0	265.4
+decode 49152 p2		12352	1	199.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	212.0	265.4
+decode 49152 p2		12352	1	190.0	265.4
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	4	225.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	187.0	265.4
+decode 49152 p2		12352	1	204.0	265.4
+decode 49152 p2		12352	4	201.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	214.0	265.4
+decode 49152 p2		12352	1	178.0	265.4
+decode 49152 p2		12352	1	198.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	222.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	211.0	265.4
+decode 49152 p2		12352	1	190.0	265.4
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	4	201.0	337.9
+decode 49152 p2		12352	4	218.0	337.9
+decode 49152 p2		12352	1	195.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	204.0	337.9
+decode 49152 p2		12352	1	216.0	265.4
+decode 49152 p2		12352	1	205.0	265.4
+decode 49152 p2		12352	1	183.0	265.4
+decode 49152 p2		12352	4	203.0	337.9
+decode 49152 p2		12352	4	221.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	192.0	265.4
+decode 49152 p2		12352	1	179.0	265.4
+decode 49152 p2		12352	4	211.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	178.0	265.4
+decode 49152 p2		12352	4	211.0	337.9
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	1	197.0	265.4
+decode 49152 p2		12352	1	193.0	265.4
+decode 49152 p2		12352	1	184.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	206.0	337.9
+decode 49152 p2		12352	1	196.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	202.0	265.4
+decode 49152 p2		12352	4	202.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	211.0	265.4
+decode 49152 p2		12352	1	203.0	265.4
+decode 49152 p2		12352	1	206.0	265.4
+decode 49152 p2		12352	4	205.0	337.9
+decode 49152 p2		12352	4	207.0	337.9
+decode 49152 p2		12352	1	211.0	265.4
+decode 49152 p2		12352	1	194.0	265.4
+decode 49152 p2		12352	1	199.0	265.4
+decode 49152 p2		12352	3	238.0	313.7
+decode 49152 p2		12352	3	203.0	313.7

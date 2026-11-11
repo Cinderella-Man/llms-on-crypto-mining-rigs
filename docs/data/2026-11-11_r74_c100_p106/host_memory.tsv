@@ -1,0 +1,46 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+check (whole load)	1373	91	91	49	+9	0.50	0.46
+dev (whole load)	881	257	257	827	+1	2.54	2.24
+host (whole load)	946	204	204	712	+420	3.40	2.35
+hostdev (whole load)	947	194	194	203	+0	7.49	6.46
+warm (whole load)	879	173	173	710	+445	2.20	1.44
+warm decode pass 1 depth 0	14	442	442	9	+0	0.00	0.00
+warm decode pass 2 depth 0	13	438	438	9	+0	0.00	0.00
+warm prime pass 0 depth 16384	125	297	297	9	+0	0.19	0.19
+warm decode pass 1 depth 16384	18	173	173	48	+39	0.64	0.46
+warm decode pass 2 depth 16384	15	209	209	48	+0	0.12	0.09
+warm prime pass 0 depth 49152	401	295	295	565	+517	2.20	1.44
+warm decode pass 1 depth 49152	23	676	676	710	+145	2.18	1.35
+warm decode pass 2 depth 49152	17	708	708	710	-248	0.32	0.21
+dev decode pass 1 depth 0	14	471	471	26	+0	0.02	0.02
+dev decode pass 2 depth 0	13	470	470	26	+0	0.00	0.00
+dev prime pass 0 depth 16384	126	323	323	26	+0	0.00	0.00
+dev decode pass 1 depth 16384	20	257	257	143	+117	2.53	2.24
+dev decode pass 2 depth 16384	14	257	257	143	+0	0.51	0.45
+dev prime pass 0 depth 49152	402	381	381	705	+562	2.54	1.63
+dev decode pass 1 depth 49152	23	812	812	827	+122	2.00	1.36
+dev decode pass 2 depth 49152	16	823	823	827	-8	0.33	0.22
+check decode pass 1 depth 0	15	471	471	26	+0	0.00	0.00
+check decode pass 2 depth 0	15	469	469	26	+0	0.00	0.00
+check prime pass 0 depth 16384	239	321	321	26	+0	0.26	0.18
+check decode pass 1 depth 16384	19	184	184	26	+0	0.50	0.46
+check decode pass 2 depth 16384	15	191	191	26	+0	0.08	0.07
+check prime pass 0 depth 49152	776	171	171	28	+2	0.01	0.01
+check decode pass 1 depth 49152	23	96	96	49	+21	0.18	0.18
+check decode pass 2 depth 49152	19	91	91	49	+0	0.01	0.01
+host decode pass 1 depth 0	14	481	481	35	+0	0.00	0.00
+host decode pass 2 depth 0	13	481	481	35	+0	0.00	0.00
+host prime pass 0 depth 16384	142	328	328	35	+0	0.00	0.00
+host decode pass 1 depth 16384	18	204	204	40	+5	0.18	0.18
+host decode pass 2 depth 16384	15	204	204	40	+0	0.03	0.03
+host prime pass 0 depth 49152	450	296	296	580	+540	3.40	2.35
+host decode pass 1 depth 49152	24	675	675	712	+132	2.79	1.93
+host decode pass 2 depth 49152	17	719	719	712	-249	0.54	0.33
+hostdev decode pass 1 depth 0	14	483	483	46	+0	0.00	0.00
+hostdev decode pass 2 depth 0	13	479	479	46	+0	0.00	0.00
+hostdev prime pass 0 depth 16384	142	349	349	46	+0	0.18	0.18
+hostdev decode pass 1 depth 16384	18	219	219	46	+0	0.28	0.28
+hostdev decode pass 2 depth 16384	15	217	217	46	+0	0.05	0.05
+hostdev prime pass 0 depth 49152	452	198	198	46	+0	0.01	0.01
+hostdev decode pass 1 depth 49152	26	194	194	203	+157	7.49	6.46
+hostdev decode pass 2 depth 49152	16	209	209	203	-16	0.83	0.71
