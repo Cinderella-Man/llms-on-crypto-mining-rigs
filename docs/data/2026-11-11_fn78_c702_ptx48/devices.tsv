@@ -1,0 +1,19 @@
+runs	line
+off, on	using device CUDA0 (NVIDIA GeForce RTX 3080) - 9652 MiB free
+off, on	n_layer = 40
+off, on	n_layer_all = 40
+off, on	offloading output layer to GPU
+off, on	offloading 15 repeating layers to GPU
+off, on	offloaded 16/41 layers to GPU
+off, on	CPU_Mapped model buffer size = 12019.76 MiB
+off, on	CUDA0 model buffer size = 7443.38 MiB
+off, on	CUDA_Host output buffer size = 0.95 MiB
+off, on	CPU KV buffer size = 24.02 MiB
+off, on	CUDA0 KV buffer size = 16.02 MiB
+off, on	CPU RS buffer size = 39.78 MiB
+off, on	CUDA0 RS buffer size = 23.03 MiB
+off, on	CUDA0 compute buffer size = 46.74 MiB
+off, on	CUDA_Host compute buffer size = 9.91 MiB
+off, on	n_ctx = 2048, n_batch = 2048, n_ubatch = 48; calculating perplexity over 8 chunks, n_ctx=2048, batch_size=2048, n_seq=1
+on	GGML_CUDA_PROFILE_MODE=graph: timing whole evaluations into $OUT/prof-on.csv, no synchronization
+on	GGML_CUDA_GRAPHS_FORCE: batched graphs are captured at every change (devices with VMM)

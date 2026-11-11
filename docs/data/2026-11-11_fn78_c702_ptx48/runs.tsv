@@ -1,0 +1,3 @@
+run	llama-perplexity arguments (with -m MODEL -f TEXT -c 2048 -b 2048 -fa on --fit off -lv 4 --kl-divergence-base)	switch	exit	final estimate	card memory, largest sample (MiB)	samples	JIT cache after the run	wall time (s)	where it ran
+off	-ub 48 --chunks 8 -ngl 16 --no-op-offload	off	0	PPL = 4.8290 +/- 0.12306	7821	1146	26 files, 148,957,472 B (from empty)	650	the card: 15 layers and the output; the other 25 layers on the CPU
+on	-ub 48 --chunks 8 -ngl 16 --no-op-offload	GGML_CUDA_GRAPHS_FORCE=1, GGML_CUDA_PROFILE_MODE=graph	0	PPL = 4.8290 +/- 0.12306	7821	1000	unchanged	642	the same

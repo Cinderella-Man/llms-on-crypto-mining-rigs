@@ -28,8 +28,8 @@ eagerly, at 512-token and at 48-token micro-batches.**
   replayed 31 times, and the base files are again identical (508,079,116 B each, md5
   `fd83eed66fda37a0a540bb8ae63bd065`), perplexity `4.5914 +/- 0.32867` both. So the expert products through MMQ (the
   P106's prompt kernels), with the attention, gated delta net and router layers in the same graphs, run captured and
-  replayed through the PTX and give eager's bytes. The same pair over 8 chunks was stopped in its eager run to free the
-  card for another job: Q1386.
+  replayed through the PTX and give eager's bytes. The same pair over 8 chunks gave eager's bytes too, with 86 captures
+  and 255 replays: [FN78](../2026-11-11_fn78_c702_ptx48/README.md) (Q1386).
 - **Eager is repeatable on this card:** chunk 1 of the sizing trial (a separate process) and chunk 1 of the 512-token
   pair's eager run are the same bytes, so the identity above is not a coincidence of a nondeterministic path.
 
@@ -78,7 +78,8 @@ load 16 of its 41 layers onto the card (`-ngl 16`: the output layer and layers 2
 - cuBLAS's own kernels run as the card's native code, not as PTX (the 512-token pair's dense products).
 - Decode and verify graphs (8 tokens or fewer) keep the warm-up by design; pipeline parallelism over several cards is
   R82's.
-- The 48-token pair scored one chunk (1,023 positions); its 8-chunk run is Q1386.
+- The 48-token pair scored one chunk (1,023 positions) here; its 8-chunk run is
+  [FN78](../2026-11-11_fn78_c702_ptx48/README.md) (Q1386).
 
 ## How to run it
 

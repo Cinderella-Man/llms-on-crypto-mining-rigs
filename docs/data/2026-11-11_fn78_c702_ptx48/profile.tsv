@@ -1,0 +1,7 @@
+graph	how	launch groups in the graph	evaluations	which
+1	eager	524	1	chunk 1, micro-batch 1 (each context's first batched graph runs eagerly)
+1	capture	524	7	micro-batch 1 of chunks 2 to 8 (an empty cache: 524 launch groups)
+1	capture	502	32	the odd micro-batches where a recorded property changed
+1	replay	502	127	the other odd micro-batches
+2	capture	523	47	the even micro-batches where a recorded property changed
+2	replay	523	128	the other even micro-batches

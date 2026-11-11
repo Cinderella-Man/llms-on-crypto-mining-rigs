@@ -1,0 +1,10 @@
+chunk	evaluations written	eager	capture	replay	sequence (both graphs in evaluation order: e eager, c capture, r replay)
+1	43	1	10	32	ecrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+2	43	0	11	32	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+3	43	0	11	32	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+4	43	0	11	32	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+5	43	0	11	32	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+6	43	0	11	32	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+7	43	0	11	32	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrrrc
+8	41	0	10	31	ccrrrcrrrrcrrrrrcrrrccrrrcrrrrrcrrrrcrrrr
+all	342	1	86	255	(the last evaluation of each graph, in chunk 8, is never written)
