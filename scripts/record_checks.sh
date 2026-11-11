@@ -45,6 +45,9 @@
 #                 among them) with the 2-4-token kernel that decodes each weight once (GGML_CUDA_MMVQ_PASCAL_DMT, C722) at
 #                 each setting, under the Flash-Next preset's k-column switches, and without it
 #                 (docs/data/2026-11-11_c722_short_batch_products)
+#   top-k-rows    TOP_K at Flash-Next's 248,320 columns over one to eight rows against the CPU, and TOP_K_ROWS: the
+#                 top-k of several rows in one op against each row's own, on the card (the backend samplers' one top-k
+#                 over the output rows, LLAMA_SAMPLING_TOP_K_ROWS, C691; docs/data/2026-11-11_c691_sampling_launches)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -53,7 +56,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -84,6 +87,8 @@ LID='n_cells=|nh=4,|nb=(1|32),'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
+# the top-k cases at Flash-Next's vocabulary
+TKV='ne=\[248320,'
 suite_filters() {
     case $1 in
         kshape)
@@ -107,6 +112,8 @@ suite_filters() {
             printf '%s\t%s\n' RANGE_MASK '.' ;;
         dmt)
             printf '%s\t%s\n' MUL_MAT "$DMT" ;;
+        top-k-rows)
+            printf '%s\t%s\n' TOP_K "$TKV" TOP_K_ROWS '.' ;;
         *) return 1 ;;
     esac
 }
@@ -220,6 +227,9 @@ suite_runs() {
                      "dmt-skip-iq4xs:$KP $M=1 ${M}_SKIP=iq4_xs" "dmt-skip:$KP $M=1 ${P}_SKIP=iq4_xs,q4_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$DMT"
             done ;;
+        top-k-rows)
+            # C691: no CUDA switch (the change is in the graph); the op at the vocabulary's width, and its rows
+            printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which

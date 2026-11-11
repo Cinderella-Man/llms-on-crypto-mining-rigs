@@ -1,0 +1,3 @@
+run	switches	ops	filter	expect	wrap
+tk	-	TOP_K	ne=\[248320,	pass	-
+tk-rows	-	TOP_K_ROWS	.	pass	-

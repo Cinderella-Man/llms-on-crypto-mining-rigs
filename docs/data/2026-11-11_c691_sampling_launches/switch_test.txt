@@ -1,0 +1,6 @@
+chains 0 and 1: 17 outputs, 226 candidates, the same with the switch off and on
+chains 0 and 0: 17 outputs, 340 candidates, the same with the switch off and on
+chains 2 and 3: 17 outputs, 208 candidates, the same with the switch off and on
+chains 3 and 2: 17 outputs, 268 candidates, the same with the switch off and on
+chains 0 and 4: 17 outputs, 340 candidates, the same with the switch off and on
+backend top-k rows switch test PASSED

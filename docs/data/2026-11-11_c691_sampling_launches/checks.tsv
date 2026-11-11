@@ -1,0 +1,11 @@
+check	command	build	setting	result
+the rig build	TESTS=1 scripts/build_llamacpp_docker.sh fork/pascal-p106-v4-b12246-c691	d18c71761	-	builds: llama.cpp-20261110-d18c71761-pascal-p106-v4-b12246-c691.tar.gz, 647,609,710 B, md5 777e3e858347099e2ae79b3f9459fcf5; 0 AVX instructions, GLIBC_2.38 at most; test-backend-ops md5 e8959071c177a8806c809175f0c77a27
+the CPU builds	cmake -DGGML_CUDA=OFF -DGGML_NATIVE=ON, targets test-backend-sampler test-backend-ops	d18c71761 and 84f7bd3d2	-	both build; no warning in the changed files
+the operator cases on the CPU	test-backend-ops -b CPU -o TOP_K,TOP_K_ROWS (the rig build's CPU code against itself)	d18c71761	-	682 of 682 OK (607 TOP_K, 75 TOP_K_ROWS); cpu_cases.tsv
+the sampler tests, switch unset	test-backend-sampler --device cpu --test <each> tiny-flint.gguf	d18c71761	unset	21 of 22 pass; test_logit_bias fails (sampled 85513, expected 12405), as in the base; sampler_tests.tsv
+the sampler tests, switch on	the same with LLAMA_SAMPLING_TOP_K_ROWS=1 for the whole process	d18c71761	on	21 of 22 pass; test_logit_bias fails the same way
+the sampler tests, base	the same	84f7bd3d2	-	20 of 21 pass; test_logit_bias fails the same way (its +10 bias does not win on random weights)
+the switch test, off against on	test-backend-sampler --test test_top_k_rows_switch	d18c71761	0 and 1 per context	5 pairs of chains, 17 outputs each: every sampled token, probability, logit and candidate the same bit for bit, and every token from llama_sampler_sample; switch_test.txt
+the graphs	GGML_SCHED_DEBUG=2 test-backend-sampler --test test_multi_output_cpu_suffix	84f7bd3d2; d18c71761	-; 0; 1	base and off: the same 4,491 node lines (addresses removed); on: 4,455, with 18 TOP_K (27), 0 PAD (18), 171 GET_ROWS (180); graph_nodes.tsv
+the recorded set	OUT=sets SUITE=top-k-rows BIN=<tarball>/bin bash scripts/record_checks.sh	d18c71761	-	114 cases (39 TOP_K at 248,320 columns, 75 TOP_K_ROWS), 371,482,360 B of files; tar 371,793,920 B, md5 185aca24175a7a998955483c2389327f; set_manifest.tsv, set_runs.tsv
+the recorded set, read back on the CPU	test-backend-ops -b CPU -o TOP_K -p 'ne=\[248320,' --replay; -o TOP_K_ROWS -p . --replay	d18c71761	-	39 of 39 and 75 of 75 OK, none missing; cpu_replay_cases.tsv

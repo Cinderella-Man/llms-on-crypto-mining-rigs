@@ -1,0 +1,66 @@
+build	setting	test	exit
+d18c71761	unset	test_greedy	0
+d18c71761	unset	test_greedy_filtered	0
+d18c71761	unset	test_greedy_filtered_common	0
+d18c71761	unset	test_temp	0
+d18c71761	unset	test_temp_ext	0
+d18c71761	unset	test_top_k	0
+d18c71761	unset	test_top_p	0
+d18c71761	unset	test_min_p	0
+d18c71761	unset	test_logit_bias	134
+d18c71761	unset	test_penalties	0
+d18c71761	unset	test_multi_sequence	0
+d18c71761	unset	test_dist	0
+d18c71761	unset	test_dist_and_cpu	0
+d18c71761	unset	test_mixed	0
+d18c71761	unset	test_cpu_mixed	0
+d18c71761	unset	test_set_sampler	0
+d18c71761	unset	test_multi_output_limit	0
+d18c71761	unset	test_multi_output_multi_sequence_dist	0
+d18c71761	unset	test_multi_output_dist_transaction	0
+d18c71761	unset	test_multi_output_sampling_chain	0
+d18c71761	unset	test_multi_output_cpu_suffix	0
+d18c71761	unset	test_top_k_rows_switch	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_greedy	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_greedy_filtered	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_greedy_filtered_common	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_temp	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_temp_ext	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_top_k	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_top_p	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_min_p	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_logit_bias	134
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_penalties	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_multi_sequence	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_dist	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_dist_and_cpu	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_mixed	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_cpu_mixed	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_set_sampler	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_multi_output_limit	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_multi_output_multi_sequence_dist	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_multi_output_dist_transaction	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_multi_output_sampling_chain	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_multi_output_cpu_suffix	0
+d18c71761	LLAMA_SAMPLING_TOP_K_ROWS=1 (process)	test_top_k_rows_switch	0
+84f7bd3d2	-	test_greedy	0
+84f7bd3d2	-	test_greedy_filtered	0
+84f7bd3d2	-	test_greedy_filtered_common	0
+84f7bd3d2	-	test_temp	0
+84f7bd3d2	-	test_temp_ext	0
+84f7bd3d2	-	test_top_k	0
+84f7bd3d2	-	test_top_p	0
+84f7bd3d2	-	test_min_p	0
+84f7bd3d2	-	test_logit_bias	134
+84f7bd3d2	-	test_penalties	0
+84f7bd3d2	-	test_multi_sequence	0
+84f7bd3d2	-	test_dist	0
+84f7bd3d2	-	test_dist_and_cpu	0
+84f7bd3d2	-	test_mixed	0
+84f7bd3d2	-	test_cpu_mixed	0
+84f7bd3d2	-	test_set_sampler	0
+84f7bd3d2	-	test_multi_output_limit	0
+84f7bd3d2	-	test_multi_output_multi_sequence_dist	0
+84f7bd3d2	-	test_multi_output_dist_transaction	0
+84f7bd3d2	-	test_multi_output_sampling_chain	0
+84f7bd3d2	-	test_multi_output_cpu_suffix	0
