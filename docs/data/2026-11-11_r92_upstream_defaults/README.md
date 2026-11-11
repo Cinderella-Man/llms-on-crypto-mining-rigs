@@ -1,4 +1,4 @@
-# Upstream b12246's two new defaults on a P106: the MTP draft's row buffer and the early fetch (R92, Q1325; 2026-11-11)
+# Upstream b12246's two new defaults on a P106: the MTP draft's row buffer and the early fetch (R92, Q1367; 2026-11-11)
 
 What this measured: what each of the two defaults that upstream llama.cpp b12246 brought to the rig does on nine
 P106-090 cards, each turned off alone through C693's switches
@@ -16,7 +16,7 @@ The line is the Miner Llama v3 release preset
 the MTP draft of three tokens, a 65,536-token context, `-b 2048 -ub 512`), timed in generation and prompt reading at
 context depths 0, 16,384 and 49,152 tokens with [bench/deep_lane](../../../bench/deep_lane/README.md). The build is
 the fork's `pascal-p106-v4-b12246-c693` `8d329fa0e` (the v4 line with b12246, C748 and the two switches; with both
-switches at their defaults it computes what `-c748` computes). Registry row Q1325 in
+switches at their defaults it computes what `-c748` computes). Registry row Q1367 in
 [quants/experiments.md](../../../quants/experiments.md).
 
 | Arm | What it is |

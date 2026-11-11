@@ -72,7 +72,7 @@ switch's speed is measured here.
 
 ## What the rig run must show (R92)
 
-R92 ([Q1325](../../../quants/experiments.md)) runs one deep-lane run ([bench/deep_lane](../../../bench/deep_lane/README.md))
+R92 ([Q1367](../../../quants/experiments.md)) runs one deep-lane run ([bench/deep_lane](../../../bench/deep_lane/README.md))
 on Flash-Next's preset with the MTP draft, on this tarball, after R57 (`-ladder6` on a P106, which loads the buffer
 first):
 
