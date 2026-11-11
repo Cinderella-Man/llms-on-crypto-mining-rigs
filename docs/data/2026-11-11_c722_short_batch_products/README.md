@@ -206,6 +206,8 @@ All on a build machine's CPU, in containers without a GPU; nothing here ran a ke
 
 ## The rig run (R79)
 
+Run on 2026-11-11 on the v4 night merge: [2026-11-11_r79_c722_p106](../2026-11-11_r79_c722_p106/README.md). Exact at every setting, and at R = 1 a gain at every Flash-Next shape at 2–4 tokens.
+
 `run/rig_c722.sh` on one P106 of an idle rig, detached. Its steps:
 
 - **replay:** the recorded set through `scripts/replay_checks.sh`. Passing: every run's line ends `ok`.
