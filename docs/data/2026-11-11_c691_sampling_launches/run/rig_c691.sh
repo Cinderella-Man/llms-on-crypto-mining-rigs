@@ -76,7 +76,9 @@ if step served; then
         log "served $k $arm start"
         BIN="$BIN" MODEL="$MODEL" DRAFT="$DRAFT" PRESET="$pf" RIG_SERVER="$RIG_SERVER" REQ="$REQ" OUT="$OUT/served/$k-$arm" \
             LOADS="$LOADS" bash "$VERIFY_PROF" > "$OUT/served/$k-$arm.console.txt" 2>&1
-        log "served $k $arm exit $?: the switch's line in the server logs $(cat "$OUT/served/$k-$arm"/*/server-*.log 2>/dev/null | grep -c 'LLAMA_SAMPLING_TOP_K_ROWS=1')"
+        # the engine's own line (one per context made with the switch on); rig_server.sh's start line also echoes the
+        # environment, so the variable alone would count it too
+        log "served $k $arm exit $?: the switch's line in the server logs $(cat "$OUT/served/$k-$arm"/*/server-*.log 2>/dev/null | grep -c 'one top-k over the output rows')"
     done
 fi
 
