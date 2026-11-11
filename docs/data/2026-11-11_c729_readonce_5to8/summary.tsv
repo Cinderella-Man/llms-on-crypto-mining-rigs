@@ -1,0 +1,17 @@
+check	verdict	detail
+base	OK	llama.cpp-20261111-18d0fa309-pascal-p106-v4-b12246-day: commit: 18d0fa309986f206f501d490e4065f5610eec234 (2026-11-11 14:27:22 +0100); its tarball md5 75ee052be102df1e559e74cb94a837cf (deleted); 195 CUDA objects kept
+build	OK	rc=0; llama.cpp-20261111-3f166ab56-pascal-p106-v4-b12246-c729.tar.gz md5 7de99457a7cac7a5b5b21b8c2a719e39, 674193830 B; commit: 3f166ab568525904fb8c0d40c6cd682a2cc76f56 (2026-11-11 16:39:06 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 fbeb3be306a55b69457d7237829f4bdc
+sass	SAME	rc=0/0; objects 195, functions base 9007 tip 9031, same 9007, differ 0, base only 0, tip only 24; llama-server functions 8902 / 8926, same 8902, tip only 24; read-once instantiations 64 (24 new); unexpected 0; Build cuda_12.9.r12.9/compiler.36001619_0; 0 error lines
+sass-new	CLEAN	the 24 new instantiations: at most 167 registers; with stack, local memory or spills: none
+pick-build	FAIL	rc=0; base 18d0fa309, tip 3f166ab56; the expressions pick.cu repeats found: base 5 of 4, tip 5 of 4; 32 arm files, 1408 products each
+bitid-build	OK	rc=0; multitoken_bitid md5 28862d6311a217e511e673a9379bd1cf; the two takes functions defined in it: 2 of 2; linked against 3f166ab56
+cpu-base	OK	rc=0; commit 18d0fa309986f206f501d490e4065f5610eec234 Merge -c767 (C767: GGML_CUDA_MMVQ_PASCAL_Q5K_1R, the one-token Q5_K products on C690's kernel) into -day (C773); all targets; 3 warning lines, 0 error lines
+cpu-tip	OK	rc=0; commit 3f166ab568525904fb8c0d40c6cd682a2cc76f56 C729 (Q1288): GGML_CUDA_MMVQ_PASCAL_RO8, 5 to 8 tokens on the read-once kernels; all targets; 3 warning lines, 0 error lines
+off-base	OK	rc=0; the base's test-llama-archs: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; ; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-tip-ro8	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_RO8=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+record	OK	rc=0; 259 cases, 13 runs; ro8.tar 2546042880 B, md5 e4839b4ed92fa24c07fb32b31eb1cfc9
+pick-build	OK	rc=0; base 18d0fa309, tip 3f166ab56; the expressions pick.cu repeats found: base 5 of 5, tip 5 of 5; 32 arm files, 1408 products each
+pick-1to4	SAME	16 arms x 1-4 tokens (10240 product lines in all): the tip's launch the base's; differ: none
+pick-5to8	OK	5-8 tokens: the base none in any arm; the tip only in the arms with RO8, every one at R = 1 (6912 product lines taken in all); wrong: none

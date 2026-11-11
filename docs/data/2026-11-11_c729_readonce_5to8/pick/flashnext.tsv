@@ -1,0 +1,31 @@
+type	NT	K	nsb	R	PF	warps	L	smem	gstride	kernel
+iq4_xs	4	2560	10	1	1	6	2	37840	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 1, true>
+iq4_xs	4	6144	24	1	1	4	8	45536	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 4, 1, true>
+iq4_xs	5	2560	10	1	1	6	2	40720	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	6144	24	1	1	3	8	48096	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	6	2560	10	1	1	6	2	43600	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	6144	24	1	1	1	8	46304	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	7	2560	10	1	1	6	2	46480	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	6144	24	declined (48 KB)
+iq4_xs	8	2560	10	1	1	5	2	45008	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	6144	24	declined (48 KB)
+q4_K	4	2560	10	1	1	6	2	40688	288	mul_mat_vec_q_pascal_dmt<q4_K, 4, 1, true>
+q4_K	4	6144	24	1	1	3	8	45120	1152	mul_mat_vec_q_pascal_dmt<q4_K, 4, 1, true>
+q4_K	5	2560	10	1	1	6	2	43888	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	6144	24	1	1	2	8	48192	1152	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	6	2560	10	1	1	6	2	47088	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	6144	24	declined (48 KB)
+q4_K	7	2560	10	1	1	5	2	45680	288	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	6144	24	declined (48 KB)
+q4_K	8	2560	10	1	1	5	2	48880	288	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	6144	24	declined (48 KB)
+q5_K	4	2560	10	1	0	6	2	46832	352	mul_mat_vec_q5_K_pascal_mt<4, 1, false>
+q5_K	4	6144	24	1	0	3	8	48192	1408	mul_mat_vec_q5_K_pascal_mt<4, 1, false>
+q5_K	5	2560	10	1	0	5	2	44400	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	6144	24	1	0	1	8	44608	1408	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	6	2560	10	1	0	5	2	47600	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	6144	24	declined (48 KB)
+q5_K	7	2560	10	1	0	4	2	45168	352	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	6144	24	declined (48 KB)
+q5_K	8	2560	10	1	0	4	2	48368	352	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	6144	24	declined (48 KB)

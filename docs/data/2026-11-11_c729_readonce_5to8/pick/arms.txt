@@ -1,0 +1,16 @@
+none:
+dmt:DMT=1 Q5K_MT=1
+dmt-nopf:DMT=2 Q5K_MT=2
+dmt-r2:DMT=1 DMT_R=2 Q5K_MT=1 Q5K_MT_R=2
+dmt-pf:DMT=1 DMT_PF=1 Q5K_MT=1 Q5K_MT_PF=1
+dmt-nw2:DMT=1 DMT_NW=2 Q5K_MT=1 Q5K_MT_NW=2
+q5k1r:Q5K_1R=1
+ro8:RO8=1
+ro8-nopf:RO8=2
+ro8-pf:RO8=1 Q5K_MT_PF=1 DMT_PF=1
+ro8-r2:RO8=1 DMT_R=2 Q5K_MT_R=2
+ro8-r0:RO8=1 DMT_R=0
+ro8-nw2:RO8=1 DMT_NW=2 Q5K_MT_NW=2
+ro8-dmt-nopf:RO8=1 DMT=2 Q5K_MT=2
+ro8-all:RO8=1 DMT=1 Q5K_MT=1 Q5K_1R=1
+ro8-all-nopf:RO8=2 DMT=2 Q5K_MT=2 Q5K_1R=1

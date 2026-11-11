@@ -1,0 +1,961 @@
+type	NT	K	nsb	R	PF	warps	L	smem	gstride	kernel
+iq4_xs	4	256	1	off
+iq4_xs	4	512	2	off
+iq4_xs	4	768	3	off
+iq4_xs	4	1024	4	off
+iq4_xs	4	1280	5	off
+iq4_xs	4	1536	6	off
+iq4_xs	4	1792	7	off
+iq4_xs	4	2048	8	off
+iq4_xs	4	2304	9	off
+iq4_xs	4	2560	10	off
+iq4_xs	4	2816	11	off
+iq4_xs	4	3072	12	off
+iq4_xs	4	3328	13	off
+iq4_xs	4	3584	14	off
+iq4_xs	4	3840	15	off
+iq4_xs	4	4096	16	off
+iq4_xs	4	4352	17	off
+iq4_xs	4	4608	18	off
+iq4_xs	4	4864	19	off
+iq4_xs	4	5120	20	off
+iq4_xs	4	5376	21	off
+iq4_xs	4	5632	22	off
+iq4_xs	4	5888	23	off
+iq4_xs	4	6144	24	off
+iq4_xs	4	6400	25	off
+iq4_xs	4	6656	26	off
+iq4_xs	4	6912	27	off
+iq4_xs	4	7168	28	off
+iq4_xs	4	7424	29	off
+iq4_xs	4	7680	30	off
+iq4_xs	4	7936	31	off
+iq4_xs	4	8192	32	off
+iq4_xs	4	8448	33	off
+iq4_xs	4	8704	34	off
+iq4_xs	4	8960	35	off
+iq4_xs	4	9216	36	off
+iq4_xs	4	9472	37	off
+iq4_xs	4	9728	38	off
+iq4_xs	4	9984	39	off
+iq4_xs	4	10240	40	off
+iq4_xs	4	10496	41	off
+iq4_xs	4	10752	42	off
+iq4_xs	4	11008	43	off
+iq4_xs	4	11264	44	off
+iq4_xs	4	11520	45	off
+iq4_xs	4	11776	46	off
+iq4_xs	4	12032	47	off
+iq4_xs	4	12288	48	off
+iq4_xs	4	12544	49	off
+iq4_xs	4	12800	50	off
+iq4_xs	4	13056	51	off
+iq4_xs	4	13312	52	off
+iq4_xs	4	13568	53	off
+iq4_xs	4	13824	54	off
+iq4_xs	4	14080	55	off
+iq4_xs	4	14336	56	off
+iq4_xs	4	14592	57	off
+iq4_xs	4	14848	58	off
+iq4_xs	4	15104	59	off
+iq4_xs	4	15360	60	off
+iq4_xs	4	15616	61	off
+iq4_xs	4	15872	62	off
+iq4_xs	4	16128	63	off
+iq4_xs	4	16384	64	off
+iq4_xs	5	256	1	declined (segment not whole 16-byte units)
+iq4_xs	5	512	2	1	1	6	2	29040	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	768	3	declined (segment not whole 16-byte units)
+iq4_xs	5	1024	4	1	1	6	4	31952	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	1280	5	declined (segment not whole 16-byte units)
+iq4_xs	5	1536	6	1	1	6	2	34880	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	1792	7	declined (segment not whole 16-byte units)
+iq4_xs	5	2048	8	1	1	6	8	37792	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	2304	9	declined (segment not whole 16-byte units)
+iq4_xs	5	2560	10	1	1	6	2	40720	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	2816	11	declined (segment not whole 16-byte units)
+iq4_xs	5	3072	12	1	1	6	4	43632	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	3328	13	declined (segment not whole 16-byte units)
+iq4_xs	5	3584	14	1	1	6	2	46560	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	3840	15	declined (segment not whole 16-byte units)
+iq4_xs	5	4096	16	1	1	5	16	45120	2176	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	4352	17	declined (segment not whole 16-byte units)
+iq4_xs	5	4608	18	1	1	5	2	48048	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	4864	19	declined (segment not whole 16-byte units)
+iq4_xs	5	5120	20	1	1	4	4	46608	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	5376	21	declined (segment not whole 16-byte units)
+iq4_xs	5	5632	22	1	1	3	2	45184	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	5888	23	declined (segment not whole 16-byte units)
+iq4_xs	5	6144	24	1	1	3	8	48096	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	6400	25	declined (segment not whole 16-byte units)
+iq4_xs	5	6656	26	1	1	2	2	46672	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	6912	27	declined (segment not whole 16-byte units)
+iq4_xs	5	7168	28	1	1	1	4	45232	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	7424	29	declined (segment not whole 16-byte units)
+iq4_xs	5	7680	30	1	1	1	2	48160	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 5, 1, true>
+iq4_xs	5	7936	31	declined (segment not whole 16-byte units)
+iq4_xs	5	8192	32	declined (48 KB)
+iq4_xs	5	8448	33	declined (segment not whole 16-byte units)
+iq4_xs	5	8704	34	declined (48 KB)
+iq4_xs	5	8960	35	declined (segment not whole 16-byte units)
+iq4_xs	5	9216	36	declined (48 KB)
+iq4_xs	5	9472	37	declined (segment not whole 16-byte units)
+iq4_xs	5	9728	38	declined (48 KB)
+iq4_xs	5	9984	39	declined (segment not whole 16-byte units)
+iq4_xs	5	10240	40	declined (48 KB)
+iq4_xs	5	10496	41	declined (segment not whole 16-byte units)
+iq4_xs	5	10752	42	declined (48 KB)
+iq4_xs	5	11008	43	declined (segment not whole 16-byte units)
+iq4_xs	5	11264	44	declined (48 KB)
+iq4_xs	5	11520	45	declined (segment not whole 16-byte units)
+iq4_xs	5	11776	46	declined (48 KB)
+iq4_xs	5	12032	47	declined (segment not whole 16-byte units)
+iq4_xs	5	12288	48	declined (48 KB)
+iq4_xs	5	12544	49	declined (segment not whole 16-byte units)
+iq4_xs	5	12800	50	declined (48 KB)
+iq4_xs	5	13056	51	declined (segment not whole 16-byte units)
+iq4_xs	5	13312	52	declined (48 KB)
+iq4_xs	5	13568	53	declined (segment not whole 16-byte units)
+iq4_xs	5	13824	54	declined (48 KB)
+iq4_xs	5	14080	55	declined (segment not whole 16-byte units)
+iq4_xs	5	14336	56	declined (48 KB)
+iq4_xs	5	14592	57	declined (segment not whole 16-byte units)
+iq4_xs	5	14848	58	declined (48 KB)
+iq4_xs	5	15104	59	declined (segment not whole 16-byte units)
+iq4_xs	5	15360	60	declined (48 KB)
+iq4_xs	5	15616	61	declined (segment not whole 16-byte units)
+iq4_xs	5	15872	62	declined (48 KB)
+iq4_xs	5	16128	63	declined (segment not whole 16-byte units)
+iq4_xs	5	16384	64	declined (48 KB)
+iq4_xs	6	256	1	declined (segment not whole 16-byte units)
+iq4_xs	6	512	2	1	1	6	2	29616	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	768	3	declined (segment not whole 16-byte units)
+iq4_xs	6	1024	4	1	1	6	4	33104	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	1280	5	declined (segment not whole 16-byte units)
+iq4_xs	6	1536	6	1	1	6	2	36608	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	1792	7	declined (segment not whole 16-byte units)
+iq4_xs	6	2048	8	1	1	6	8	40096	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	2304	9	declined (segment not whole 16-byte units)
+iq4_xs	6	2560	10	1	1	6	2	43600	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	2816	11	declined (segment not whole 16-byte units)
+iq4_xs	6	3072	12	1	1	6	4	47088	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	3328	13	declined (segment not whole 16-byte units)
+iq4_xs	6	3584	14	1	1	5	2	46240	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	3840	15	declined (segment not whole 16-byte units)
+iq4_xs	6	4096	16	1	1	4	16	45376	2176	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	4352	17	declined (segment not whole 16-byte units)
+iq4_xs	6	4608	18	1	1	4	2	48880	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	4864	19	declined (segment not whole 16-byte units)
+iq4_xs	6	5120	20	1	1	3	4	48016	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	5376	21	declined (segment not whole 16-byte units)
+iq4_xs	6	5632	22	1	1	2	2	47168	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	5888	23	declined (segment not whole 16-byte units)
+iq4_xs	6	6144	24	1	1	1	8	46304	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true>
+iq4_xs	6	6400	25	declined (segment not whole 16-byte units)
+iq4_xs	6	6656	26	declined (48 KB)
+iq4_xs	6	6912	27	declined (segment not whole 16-byte units)
+iq4_xs	6	7168	28	declined (48 KB)
+iq4_xs	6	7424	29	declined (segment not whole 16-byte units)
+iq4_xs	6	7680	30	declined (48 KB)
+iq4_xs	6	7936	31	declined (segment not whole 16-byte units)
+iq4_xs	6	8192	32	declined (48 KB)
+iq4_xs	6	8448	33	declined (segment not whole 16-byte units)
+iq4_xs	6	8704	34	declined (48 KB)
+iq4_xs	6	8960	35	declined (segment not whole 16-byte units)
+iq4_xs	6	9216	36	declined (48 KB)
+iq4_xs	6	9472	37	declined (segment not whole 16-byte units)
+iq4_xs	6	9728	38	declined (48 KB)
+iq4_xs	6	9984	39	declined (segment not whole 16-byte units)
+iq4_xs	6	10240	40	declined (48 KB)
+iq4_xs	6	10496	41	declined (segment not whole 16-byte units)
+iq4_xs	6	10752	42	declined (48 KB)
+iq4_xs	6	11008	43	declined (segment not whole 16-byte units)
+iq4_xs	6	11264	44	declined (48 KB)
+iq4_xs	6	11520	45	declined (segment not whole 16-byte units)
+iq4_xs	6	11776	46	declined (48 KB)
+iq4_xs	6	12032	47	declined (segment not whole 16-byte units)
+iq4_xs	6	12288	48	declined (48 KB)
+iq4_xs	6	12544	49	declined (segment not whole 16-byte units)
+iq4_xs	6	12800	50	declined (48 KB)
+iq4_xs	6	13056	51	declined (segment not whole 16-byte units)
+iq4_xs	6	13312	52	declined (48 KB)
+iq4_xs	6	13568	53	declined (segment not whole 16-byte units)
+iq4_xs	6	13824	54	declined (48 KB)
+iq4_xs	6	14080	55	declined (segment not whole 16-byte units)
+iq4_xs	6	14336	56	declined (48 KB)
+iq4_xs	6	14592	57	declined (segment not whole 16-byte units)
+iq4_xs	6	14848	58	declined (48 KB)
+iq4_xs	6	15104	59	declined (segment not whole 16-byte units)
+iq4_xs	6	15360	60	declined (48 KB)
+iq4_xs	6	15616	61	declined (segment not whole 16-byte units)
+iq4_xs	6	15872	62	declined (48 KB)
+iq4_xs	6	16128	63	declined (segment not whole 16-byte units)
+iq4_xs	6	16384	64	declined (48 KB)
+iq4_xs	7	256	1	declined (segment not whole 16-byte units)
+iq4_xs	7	512	2	1	1	6	2	30192	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	768	3	declined (segment not whole 16-byte units)
+iq4_xs	7	1024	4	1	1	6	4	34256	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	1280	5	declined (segment not whole 16-byte units)
+iq4_xs	7	1536	6	1	1	6	2	38336	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	1792	7	declined (segment not whole 16-byte units)
+iq4_xs	7	2048	8	1	1	6	8	42400	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	2304	9	declined (segment not whole 16-byte units)
+iq4_xs	7	2560	10	1	1	6	2	46480	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	2816	11	declined (segment not whole 16-byte units)
+iq4_xs	7	3072	12	1	1	5	4	46192	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	3328	13	declined (segment not whole 16-byte units)
+iq4_xs	7	3584	14	1	1	4	2	45920	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	3840	15	declined (segment not whole 16-byte units)
+iq4_xs	7	4096	16	1	1	3	16	45632	2176	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	4352	17	declined (segment not whole 16-byte units)
+iq4_xs	7	4608	18	1	1	2	2	45360	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	4864	19	declined (segment not whole 16-byte units)
+iq4_xs	7	5120	20	1	1	1	4	45072	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	5376	21	declined (segment not whole 16-byte units)
+iq4_xs	7	5632	22	1	1	1	2	49152	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 7, 1, true>
+iq4_xs	7	5888	23	declined (segment not whole 16-byte units)
+iq4_xs	7	6144	24	declined (48 KB)
+iq4_xs	7	6400	25	declined (segment not whole 16-byte units)
+iq4_xs	7	6656	26	declined (48 KB)
+iq4_xs	7	6912	27	declined (segment not whole 16-byte units)
+iq4_xs	7	7168	28	declined (48 KB)
+iq4_xs	7	7424	29	declined (segment not whole 16-byte units)
+iq4_xs	7	7680	30	declined (48 KB)
+iq4_xs	7	7936	31	declined (segment not whole 16-byte units)
+iq4_xs	7	8192	32	declined (48 KB)
+iq4_xs	7	8448	33	declined (segment not whole 16-byte units)
+iq4_xs	7	8704	34	declined (48 KB)
+iq4_xs	7	8960	35	declined (segment not whole 16-byte units)
+iq4_xs	7	9216	36	declined (48 KB)
+iq4_xs	7	9472	37	declined (segment not whole 16-byte units)
+iq4_xs	7	9728	38	declined (48 KB)
+iq4_xs	7	9984	39	declined (segment not whole 16-byte units)
+iq4_xs	7	10240	40	declined (48 KB)
+iq4_xs	7	10496	41	declined (segment not whole 16-byte units)
+iq4_xs	7	10752	42	declined (48 KB)
+iq4_xs	7	11008	43	declined (segment not whole 16-byte units)
+iq4_xs	7	11264	44	declined (48 KB)
+iq4_xs	7	11520	45	declined (segment not whole 16-byte units)
+iq4_xs	7	11776	46	declined (48 KB)
+iq4_xs	7	12032	47	declined (segment not whole 16-byte units)
+iq4_xs	7	12288	48	declined (48 KB)
+iq4_xs	7	12544	49	declined (segment not whole 16-byte units)
+iq4_xs	7	12800	50	declined (48 KB)
+iq4_xs	7	13056	51	declined (segment not whole 16-byte units)
+iq4_xs	7	13312	52	declined (48 KB)
+iq4_xs	7	13568	53	declined (segment not whole 16-byte units)
+iq4_xs	7	13824	54	declined (48 KB)
+iq4_xs	7	14080	55	declined (segment not whole 16-byte units)
+iq4_xs	7	14336	56	declined (48 KB)
+iq4_xs	7	14592	57	declined (segment not whole 16-byte units)
+iq4_xs	7	14848	58	declined (48 KB)
+iq4_xs	7	15104	59	declined (segment not whole 16-byte units)
+iq4_xs	7	15360	60	declined (48 KB)
+iq4_xs	7	15616	61	declined (segment not whole 16-byte units)
+iq4_xs	7	15872	62	declined (48 KB)
+iq4_xs	7	16128	63	declined (segment not whole 16-byte units)
+iq4_xs	7	16384	64	declined (48 KB)
+iq4_xs	8	256	1	declined (segment not whole 16-byte units)
+iq4_xs	8	512	2	1	1	6	2	30768	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	768	3	declined (segment not whole 16-byte units)
+iq4_xs	8	1024	4	1	1	6	4	35408	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	1280	5	declined (segment not whole 16-byte units)
+iq4_xs	8	1536	6	1	1	6	2	40064	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	1792	7	declined (segment not whole 16-byte units)
+iq4_xs	8	2048	8	1	1	6	8	44704	1088	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	2304	9	declined (segment not whole 16-byte units)
+iq4_xs	8	2560	10	1	1	5	2	45008	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	2816	11	declined (segment not whole 16-byte units)
+iq4_xs	8	3072	12	1	1	4	4	45296	544	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	3328	13	declined (segment not whole 16-byte units)
+iq4_xs	8	3584	14	1	1	3	2	45600	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	3840	15	declined (segment not whole 16-byte units)
+iq4_xs	8	4096	16	1	1	2	16	45888	2176	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	4352	17	declined (segment not whole 16-byte units)
+iq4_xs	8	4608	18	1	1	1	2	46192	272	mul_mat_vec_q_pascal_dmt<iq4_xs, 8, 1, true>
+iq4_xs	8	4864	19	declined (segment not whole 16-byte units)
+iq4_xs	8	5120	20	declined (48 KB)
+iq4_xs	8	5376	21	declined (segment not whole 16-byte units)
+iq4_xs	8	5632	22	declined (48 KB)
+iq4_xs	8	5888	23	declined (segment not whole 16-byte units)
+iq4_xs	8	6144	24	declined (48 KB)
+iq4_xs	8	6400	25	declined (segment not whole 16-byte units)
+iq4_xs	8	6656	26	declined (48 KB)
+iq4_xs	8	6912	27	declined (segment not whole 16-byte units)
+iq4_xs	8	7168	28	declined (48 KB)
+iq4_xs	8	7424	29	declined (segment not whole 16-byte units)
+iq4_xs	8	7680	30	declined (48 KB)
+iq4_xs	8	7936	31	declined (segment not whole 16-byte units)
+iq4_xs	8	8192	32	declined (48 KB)
+iq4_xs	8	8448	33	declined (segment not whole 16-byte units)
+iq4_xs	8	8704	34	declined (48 KB)
+iq4_xs	8	8960	35	declined (segment not whole 16-byte units)
+iq4_xs	8	9216	36	declined (48 KB)
+iq4_xs	8	9472	37	declined (segment not whole 16-byte units)
+iq4_xs	8	9728	38	declined (48 KB)
+iq4_xs	8	9984	39	declined (segment not whole 16-byte units)
+iq4_xs	8	10240	40	declined (48 KB)
+iq4_xs	8	10496	41	declined (segment not whole 16-byte units)
+iq4_xs	8	10752	42	declined (48 KB)
+iq4_xs	8	11008	43	declined (segment not whole 16-byte units)
+iq4_xs	8	11264	44	declined (48 KB)
+iq4_xs	8	11520	45	declined (segment not whole 16-byte units)
+iq4_xs	8	11776	46	declined (48 KB)
+iq4_xs	8	12032	47	declined (segment not whole 16-byte units)
+iq4_xs	8	12288	48	declined (48 KB)
+iq4_xs	8	12544	49	declined (segment not whole 16-byte units)
+iq4_xs	8	12800	50	declined (48 KB)
+iq4_xs	8	13056	51	declined (segment not whole 16-byte units)
+iq4_xs	8	13312	52	declined (48 KB)
+iq4_xs	8	13568	53	declined (segment not whole 16-byte units)
+iq4_xs	8	13824	54	declined (48 KB)
+iq4_xs	8	14080	55	declined (segment not whole 16-byte units)
+iq4_xs	8	14336	56	declined (48 KB)
+iq4_xs	8	14592	57	declined (segment not whole 16-byte units)
+iq4_xs	8	14848	58	declined (48 KB)
+iq4_xs	8	15104	59	declined (segment not whole 16-byte units)
+iq4_xs	8	15360	60	declined (48 KB)
+iq4_xs	8	15616	61	declined (segment not whole 16-byte units)
+iq4_xs	8	15872	62	declined (48 KB)
+iq4_xs	8	16128	63	declined (segment not whole 16-byte units)
+iq4_xs	8	16384	64	declined (48 KB)
+q4_K	4	256	1	off
+q4_K	4	512	2	off
+q4_K	4	768	3	off
+q4_K	4	1024	4	off
+q4_K	4	1280	5	off
+q4_K	4	1536	6	off
+q4_K	4	1792	7	off
+q4_K	4	2048	8	off
+q4_K	4	2304	9	off
+q4_K	4	2560	10	off
+q4_K	4	2816	11	off
+q4_K	4	3072	12	off
+q4_K	4	3328	13	off
+q4_K	4	3584	14	off
+q4_K	4	3840	15	off
+q4_K	4	4096	16	off
+q4_K	4	4352	17	off
+q4_K	4	4608	18	off
+q4_K	4	4864	19	off
+q4_K	4	5120	20	off
+q4_K	4	5376	21	off
+q4_K	4	5632	22	off
+q4_K	4	5888	23	off
+q4_K	4	6144	24	off
+q4_K	4	6400	25	off
+q4_K	4	6656	26	off
+q4_K	4	6912	27	off
+q4_K	4	7168	28	off
+q4_K	4	7424	29	off
+q4_K	4	7680	30	off
+q4_K	4	7936	31	off
+q4_K	4	8192	32	off
+q4_K	4	8448	33	off
+q4_K	4	8704	34	off
+q4_K	4	8960	35	off
+q4_K	4	9216	36	off
+q4_K	4	9472	37	off
+q4_K	4	9728	38	off
+q4_K	4	9984	39	off
+q4_K	4	10240	40	off
+q4_K	4	10496	41	off
+q4_K	4	10752	42	off
+q4_K	4	11008	43	off
+q4_K	4	11264	44	off
+q4_K	4	11520	45	off
+q4_K	4	11776	46	off
+q4_K	4	12032	47	off
+q4_K	4	12288	48	off
+q4_K	4	12544	49	off
+q4_K	4	12800	50	off
+q4_K	4	13056	51	off
+q4_K	4	13312	52	off
+q4_K	4	13568	53	off
+q4_K	4	13824	54	off
+q4_K	4	14080	55	off
+q4_K	4	14336	56	off
+q4_K	4	14592	57	off
+q4_K	4	14848	58	off
+q4_K	4	15104	59	off
+q4_K	4	15360	60	off
+q4_K	4	15616	61	off
+q4_K	4	15872	62	off
+q4_K	4	16128	63	off
+q4_K	4	16384	64	off
+q4_K	5	256	1	1	1	6	1	29280	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	512	2	1	1	6	2	30896	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	768	3	1	1	6	1	32528	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	1024	4	1	1	6	4	34144	576	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	1280	5	1	1	6	1	35776	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	1536	6	1	1	6	2	37392	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	1792	7	1	1	6	1	39024	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	2048	8	1	1	6	8	40640	1152	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	2304	9	1	1	6	1	42272	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	2560	10	1	1	6	2	43888	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	2816	11	1	1	6	1	45520	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	3072	12	1	1	6	4	47136	576	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	3328	13	1	1	6	1	48768	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	3584	14	1	1	5	2	45776	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	3840	15	1	1	5	1	47408	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	4096	16	1	1	5	16	49024	2304	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	4352	17	1	1	4	1	46048	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	4608	18	1	1	4	2	47664	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	4864	19	1	1	3	1	44688	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	5120	20	1	1	3	4	46304	576	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	5376	21	1	1	3	1	47936	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	5632	22	1	1	2	2	44944	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	5888	23	1	1	2	1	46576	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	6144	24	1	1	2	8	48192	1152	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	6400	25	1	1	1	1	45216	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	6656	26	1	1	1	2	46832	288	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	6912	27	1	1	1	1	48464	144	mul_mat_vec_q_pascal_dmt<q4_K, 5, 1, true>
+q4_K	5	7168	28	declined (48 KB)
+q4_K	5	7424	29	declined (48 KB)
+q4_K	5	7680	30	declined (48 KB)
+q4_K	5	7936	31	declined (48 KB)
+q4_K	5	8192	32	declined (48 KB)
+q4_K	5	8448	33	declined (48 KB)
+q4_K	5	8704	34	declined (48 KB)
+q4_K	5	8960	35	declined (48 KB)
+q4_K	5	9216	36	declined (48 KB)
+q4_K	5	9472	37	declined (48 KB)
+q4_K	5	9728	38	declined (48 KB)
+q4_K	5	9984	39	declined (48 KB)
+q4_K	5	10240	40	declined (48 KB)
+q4_K	5	10496	41	declined (48 KB)
+q4_K	5	10752	42	declined (48 KB)
+q4_K	5	11008	43	declined (48 KB)
+q4_K	5	11264	44	declined (48 KB)
+q4_K	5	11520	45	declined (48 KB)
+q4_K	5	11776	46	declined (48 KB)
+q4_K	5	12032	47	declined (48 KB)
+q4_K	5	12288	48	declined (48 KB)
+q4_K	5	12544	49	declined (48 KB)
+q4_K	5	12800	50	declined (48 KB)
+q4_K	5	13056	51	declined (48 KB)
+q4_K	5	13312	52	declined (48 KB)
+q4_K	5	13568	53	declined (48 KB)
+q4_K	5	13824	54	declined (48 KB)
+q4_K	5	14080	55	declined (48 KB)
+q4_K	5	14336	56	declined (48 KB)
+q4_K	5	14592	57	declined (48 KB)
+q4_K	5	14848	58	declined (48 KB)
+q4_K	5	15104	59	declined (48 KB)
+q4_K	5	15360	60	declined (48 KB)
+q4_K	5	15616	61	declined (48 KB)
+q4_K	5	15872	62	declined (48 KB)
+q4_K	5	16128	63	declined (48 KB)
+q4_K	5	16384	64	declined (48 KB)
+q4_K	6	256	1	1	1	6	1	29600	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	512	2	1	1	6	2	31536	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	768	3	1	1	6	1	33488	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	1024	4	1	1	6	4	35424	576	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	1280	5	1	1	6	1	37376	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	1536	6	1	1	6	2	39312	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	1792	7	1	1	6	1	41264	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	2048	8	1	1	6	8	43200	1152	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	2304	9	1	1	6	1	45152	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	2560	10	1	1	6	2	47088	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	2816	11	1	1	6	1	49040	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	3072	12	1	1	5	4	46368	576	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	3328	13	1	1	5	1	48320	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	3584	14	1	1	4	2	45648	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	3840	15	1	1	4	1	47600	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	4096	16	1	1	3	16	44928	2304	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	4352	17	1	1	3	1	46880	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	4608	18	1	1	3	2	48816	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	4864	19	1	1	2	1	46160	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	5120	20	1	1	2	4	48096	576	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	5376	21	1	1	1	1	45440	144	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	5632	22	1	1	1	2	47376	288	mul_mat_vec_q_pascal_dmt<q4_K, 6, 1, true>
+q4_K	6	5888	23	declined (48 KB)
+q4_K	6	6144	24	declined (48 KB)
+q4_K	6	6400	25	declined (48 KB)
+q4_K	6	6656	26	declined (48 KB)
+q4_K	6	6912	27	declined (48 KB)
+q4_K	6	7168	28	declined (48 KB)
+q4_K	6	7424	29	declined (48 KB)
+q4_K	6	7680	30	declined (48 KB)
+q4_K	6	7936	31	declined (48 KB)
+q4_K	6	8192	32	declined (48 KB)
+q4_K	6	8448	33	declined (48 KB)
+q4_K	6	8704	34	declined (48 KB)
+q4_K	6	8960	35	declined (48 KB)
+q4_K	6	9216	36	declined (48 KB)
+q4_K	6	9472	37	declined (48 KB)
+q4_K	6	9728	38	declined (48 KB)
+q4_K	6	9984	39	declined (48 KB)
+q4_K	6	10240	40	declined (48 KB)
+q4_K	6	10496	41	declined (48 KB)
+q4_K	6	10752	42	declined (48 KB)
+q4_K	6	11008	43	declined (48 KB)
+q4_K	6	11264	44	declined (48 KB)
+q4_K	6	11520	45	declined (48 KB)
+q4_K	6	11776	46	declined (48 KB)
+q4_K	6	12032	47	declined (48 KB)
+q4_K	6	12288	48	declined (48 KB)
+q4_K	6	12544	49	declined (48 KB)
+q4_K	6	12800	50	declined (48 KB)
+q4_K	6	13056	51	declined (48 KB)
+q4_K	6	13312	52	declined (48 KB)
+q4_K	6	13568	53	declined (48 KB)
+q4_K	6	13824	54	declined (48 KB)
+q4_K	6	14080	55	declined (48 KB)
+q4_K	6	14336	56	declined (48 KB)
+q4_K	6	14592	57	declined (48 KB)
+q4_K	6	14848	58	declined (48 KB)
+q4_K	6	15104	59	declined (48 KB)
+q4_K	6	15360	60	declined (48 KB)
+q4_K	6	15616	61	declined (48 KB)
+q4_K	6	15872	62	declined (48 KB)
+q4_K	6	16128	63	declined (48 KB)
+q4_K	6	16384	64	declined (48 KB)
+q4_K	7	256	1	1	1	6	1	29920	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	512	2	1	1	6	2	32176	288	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	768	3	1	1	6	1	34448	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	1024	4	1	1	6	4	36704	576	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	1280	5	1	1	6	1	38976	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	1536	6	1	1	6	2	41232	288	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	1792	7	1	1	6	1	43504	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	2048	8	1	1	6	8	45760	1152	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	2304	9	1	1	6	1	48032	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	2560	10	1	1	5	2	45680	288	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	2816	11	1	1	5	1	47952	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	3072	12	1	1	4	4	45600	576	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	3328	13	1	1	4	1	47872	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	3584	14	1	1	3	2	45520	288	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	3840	15	1	1	3	1	47792	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	4096	16	1	1	2	16	45440	2304	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	4352	17	1	1	2	1	47712	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	4608	18	1	1	1	2	45360	288	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	4864	19	1	1	1	1	47632	144	mul_mat_vec_q_pascal_dmt<q4_K, 7, 1, true>
+q4_K	7	5120	20	declined (48 KB)
+q4_K	7	5376	21	declined (48 KB)
+q4_K	7	5632	22	declined (48 KB)
+q4_K	7	5888	23	declined (48 KB)
+q4_K	7	6144	24	declined (48 KB)
+q4_K	7	6400	25	declined (48 KB)
+q4_K	7	6656	26	declined (48 KB)
+q4_K	7	6912	27	declined (48 KB)
+q4_K	7	7168	28	declined (48 KB)
+q4_K	7	7424	29	declined (48 KB)
+q4_K	7	7680	30	declined (48 KB)
+q4_K	7	7936	31	declined (48 KB)
+q4_K	7	8192	32	declined (48 KB)
+q4_K	7	8448	33	declined (48 KB)
+q4_K	7	8704	34	declined (48 KB)
+q4_K	7	8960	35	declined (48 KB)
+q4_K	7	9216	36	declined (48 KB)
+q4_K	7	9472	37	declined (48 KB)
+q4_K	7	9728	38	declined (48 KB)
+q4_K	7	9984	39	declined (48 KB)
+q4_K	7	10240	40	declined (48 KB)
+q4_K	7	10496	41	declined (48 KB)
+q4_K	7	10752	42	declined (48 KB)
+q4_K	7	11008	43	declined (48 KB)
+q4_K	7	11264	44	declined (48 KB)
+q4_K	7	11520	45	declined (48 KB)
+q4_K	7	11776	46	declined (48 KB)
+q4_K	7	12032	47	declined (48 KB)
+q4_K	7	12288	48	declined (48 KB)
+q4_K	7	12544	49	declined (48 KB)
+q4_K	7	12800	50	declined (48 KB)
+q4_K	7	13056	51	declined (48 KB)
+q4_K	7	13312	52	declined (48 KB)
+q4_K	7	13568	53	declined (48 KB)
+q4_K	7	13824	54	declined (48 KB)
+q4_K	7	14080	55	declined (48 KB)
+q4_K	7	14336	56	declined (48 KB)
+q4_K	7	14592	57	declined (48 KB)
+q4_K	7	14848	58	declined (48 KB)
+q4_K	7	15104	59	declined (48 KB)
+q4_K	7	15360	60	declined (48 KB)
+q4_K	7	15616	61	declined (48 KB)
+q4_K	7	15872	62	declined (48 KB)
+q4_K	7	16128	63	declined (48 KB)
+q4_K	7	16384	64	declined (48 KB)
+q4_K	8	256	1	1	1	6	1	30240	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	512	2	1	1	6	2	32816	288	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	768	3	1	1	6	1	35408	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	1024	4	1	1	6	4	37984	576	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	1280	5	1	1	6	1	40576	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	1536	6	1	1	6	2	43152	288	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	1792	7	1	1	6	1	45744	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	2048	8	1	1	6	8	48320	1152	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	2304	9	1	1	5	1	46304	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	2560	10	1	1	5	2	48880	288	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	2816	11	1	1	4	1	46864	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	3072	12	1	1	3	4	44832	576	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	3328	13	1	1	3	1	47424	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	3584	14	1	1	2	2	45392	288	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	3840	15	1	1	2	1	47984	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	4096	16	1	1	1	16	45952	2304	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	4352	17	1	1	1	1	48544	144	mul_mat_vec_q_pascal_dmt<q4_K, 8, 1, true>
+q4_K	8	4608	18	declined (48 KB)
+q4_K	8	4864	19	declined (48 KB)
+q4_K	8	5120	20	declined (48 KB)
+q4_K	8	5376	21	declined (48 KB)
+q4_K	8	5632	22	declined (48 KB)
+q4_K	8	5888	23	declined (48 KB)
+q4_K	8	6144	24	declined (48 KB)
+q4_K	8	6400	25	declined (48 KB)
+q4_K	8	6656	26	declined (48 KB)
+q4_K	8	6912	27	declined (48 KB)
+q4_K	8	7168	28	declined (48 KB)
+q4_K	8	7424	29	declined (48 KB)
+q4_K	8	7680	30	declined (48 KB)
+q4_K	8	7936	31	declined (48 KB)
+q4_K	8	8192	32	declined (48 KB)
+q4_K	8	8448	33	declined (48 KB)
+q4_K	8	8704	34	declined (48 KB)
+q4_K	8	8960	35	declined (48 KB)
+q4_K	8	9216	36	declined (48 KB)
+q4_K	8	9472	37	declined (48 KB)
+q4_K	8	9728	38	declined (48 KB)
+q4_K	8	9984	39	declined (48 KB)
+q4_K	8	10240	40	declined (48 KB)
+q4_K	8	10496	41	declined (48 KB)
+q4_K	8	10752	42	declined (48 KB)
+q4_K	8	11008	43	declined (48 KB)
+q4_K	8	11264	44	declined (48 KB)
+q4_K	8	11520	45	declined (48 KB)
+q4_K	8	11776	46	declined (48 KB)
+q4_K	8	12032	47	declined (48 KB)
+q4_K	8	12288	48	declined (48 KB)
+q4_K	8	12544	49	declined (48 KB)
+q4_K	8	12800	50	declined (48 KB)
+q4_K	8	13056	51	declined (48 KB)
+q4_K	8	13312	52	declined (48 KB)
+q4_K	8	13568	53	declined (48 KB)
+q4_K	8	13824	54	declined (48 KB)
+q4_K	8	14080	55	declined (48 KB)
+q4_K	8	14336	56	declined (48 KB)
+q4_K	8	14592	57	declined (48 KB)
+q4_K	8	14848	58	declined (48 KB)
+q4_K	8	15104	59	declined (48 KB)
+q4_K	8	15360	60	declined (48 KB)
+q4_K	8	15616	61	declined (48 KB)
+q4_K	8	15872	62	declined (48 KB)
+q4_K	8	16128	63	declined (48 KB)
+q4_K	8	16384	64	declined (48 KB)
+q5_K	4	256	1	off
+q5_K	4	512	2	off
+q5_K	4	768	3	off
+q5_K	4	1024	4	off
+q5_K	4	1280	5	off
+q5_K	4	1536	6	off
+q5_K	4	1792	7	off
+q5_K	4	2048	8	off
+q5_K	4	2304	9	off
+q5_K	4	2560	10	off
+q5_K	4	2816	11	off
+q5_K	4	3072	12	off
+q5_K	4	3328	13	off
+q5_K	4	3584	14	off
+q5_K	4	3840	15	off
+q5_K	4	4096	16	off
+q5_K	4	4352	17	off
+q5_K	4	4608	18	off
+q5_K	4	4864	19	off
+q5_K	4	5120	20	off
+q5_K	4	5376	21	off
+q5_K	4	5632	22	off
+q5_K	4	5888	23	off
+q5_K	4	6144	24	off
+q5_K	4	6400	25	off
+q5_K	4	6656	26	off
+q5_K	4	6912	27	off
+q5_K	4	7168	28	off
+q5_K	4	7424	29	off
+q5_K	4	7680	30	off
+q5_K	4	7936	31	off
+q5_K	4	8192	32	off
+q5_K	4	8448	33	off
+q5_K	4	8704	34	off
+q5_K	4	8960	35	off
+q5_K	4	9216	36	off
+q5_K	4	9472	37	off
+q5_K	4	9728	38	off
+q5_K	4	9984	39	off
+q5_K	4	10240	40	off
+q5_K	4	10496	41	off
+q5_K	4	10752	42	off
+q5_K	4	11008	43	off
+q5_K	4	11264	44	off
+q5_K	4	11520	45	off
+q5_K	4	11776	46	off
+q5_K	4	12032	47	off
+q5_K	4	12288	48	off
+q5_K	4	12544	49	off
+q5_K	4	12800	50	off
+q5_K	4	13056	51	off
+q5_K	4	13312	52	off
+q5_K	4	13568	53	off
+q5_K	4	13824	54	off
+q5_K	4	14080	55	off
+q5_K	4	14336	56	off
+q5_K	4	14592	57	off
+q5_K	4	14848	58	off
+q5_K	4	15104	59	off
+q5_K	4	15360	60	off
+q5_K	4	15616	61	off
+q5_K	4	15872	62	off
+q5_K	4	16128	63	off
+q5_K	4	16384	64	off
+q5_K	5	256	1	1	0	6	1	35424	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	512	2	1	0	6	2	37040	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	768	3	1	0	6	1	38672	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	1024	4	1	0	6	4	40288	704	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	1280	5	1	0	6	1	41920	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	1536	6	1	0	6	2	43536	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	1792	7	1	0	6	1	45168	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	2048	8	1	0	6	8	46784	1408	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	2304	9	1	0	6	1	48416	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	2560	10	1	0	5	2	44400	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	2816	11	1	0	5	1	46032	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	3072	12	1	0	5	4	47648	704	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	3328	13	1	0	4	1	43648	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	3584	14	1	0	4	2	45264	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	3840	15	1	0	4	1	46896	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	4096	16	1	0	4	16	48512	2816	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	4352	17	1	0	3	1	44512	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	4608	18	1	0	3	2	46128	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	4864	19	1	0	3	1	47760	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	5120	20	1	0	2	4	43744	704	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	5376	21	1	0	2	1	45376	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	5632	22	1	0	2	2	46992	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	5888	23	1	0	2	1	48624	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	6144	24	1	0	1	8	44608	1408	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	6400	25	1	0	1	1	46240	176	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	6656	26	1	0	1	2	47856	352	mul_mat_vec_q5_K_pascal_mt<5, 1, false>
+q5_K	5	6912	27	declined (48 KB)
+q5_K	5	7168	28	declined (48 KB)
+q5_K	5	7424	29	declined (48 KB)
+q5_K	5	7680	30	declined (48 KB)
+q5_K	5	7936	31	declined (48 KB)
+q5_K	5	8192	32	declined (48 KB)
+q5_K	5	8448	33	declined (48 KB)
+q5_K	5	8704	34	declined (48 KB)
+q5_K	5	8960	35	declined (48 KB)
+q5_K	5	9216	36	declined (48 KB)
+q5_K	5	9472	37	declined (48 KB)
+q5_K	5	9728	38	declined (48 KB)
+q5_K	5	9984	39	declined (48 KB)
+q5_K	5	10240	40	declined (48 KB)
+q5_K	5	10496	41	declined (48 KB)
+q5_K	5	10752	42	declined (48 KB)
+q5_K	5	11008	43	declined (48 KB)
+q5_K	5	11264	44	declined (48 KB)
+q5_K	5	11520	45	declined (48 KB)
+q5_K	5	11776	46	declined (48 KB)
+q5_K	5	12032	47	declined (48 KB)
+q5_K	5	12288	48	declined (48 KB)
+q5_K	5	12544	49	declined (48 KB)
+q5_K	5	12800	50	declined (48 KB)
+q5_K	5	13056	51	declined (48 KB)
+q5_K	5	13312	52	declined (48 KB)
+q5_K	5	13568	53	declined (48 KB)
+q5_K	5	13824	54	declined (48 KB)
+q5_K	5	14080	55	declined (48 KB)
+q5_K	5	14336	56	declined (48 KB)
+q5_K	5	14592	57	declined (48 KB)
+q5_K	5	14848	58	declined (48 KB)
+q5_K	5	15104	59	declined (48 KB)
+q5_K	5	15360	60	declined (48 KB)
+q5_K	5	15616	61	declined (48 KB)
+q5_K	5	15872	62	declined (48 KB)
+q5_K	5	16128	63	declined (48 KB)
+q5_K	5	16384	64	declined (48 KB)
+q5_K	6	256	1	1	0	6	1	35744	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	512	2	1	0	6	2	37680	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	768	3	1	0	6	1	39632	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	1024	4	1	0	6	4	41568	704	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	1280	5	1	0	6	1	43520	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	1536	6	1	0	6	2	45456	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	1792	7	1	0	6	1	47408	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	2048	8	1	0	5	8	43712	1408	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	2304	9	1	0	5	1	45664	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	2560	10	1	0	5	2	47600	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	2816	11	1	0	4	1	43920	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	3072	12	1	0	4	4	45856	704	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	3328	13	1	0	4	1	47808	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	3584	14	1	0	3	2	44112	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	3840	15	1	0	3	1	46064	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	4096	16	1	0	3	16	48000	2816	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	4352	17	1	0	2	1	44320	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	4608	18	1	0	2	2	46256	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	4864	19	1	0	2	1	48208	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	5120	20	1	0	1	4	44512	704	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	5376	21	1	0	1	1	46464	176	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	5632	22	1	0	1	2	48400	352	mul_mat_vec_q5_K_pascal_mt<6, 1, false>
+q5_K	6	5888	23	declined (48 KB)
+q5_K	6	6144	24	declined (48 KB)
+q5_K	6	6400	25	declined (48 KB)
+q5_K	6	6656	26	declined (48 KB)
+q5_K	6	6912	27	declined (48 KB)
+q5_K	6	7168	28	declined (48 KB)
+q5_K	6	7424	29	declined (48 KB)
+q5_K	6	7680	30	declined (48 KB)
+q5_K	6	7936	31	declined (48 KB)
+q5_K	6	8192	32	declined (48 KB)
+q5_K	6	8448	33	declined (48 KB)
+q5_K	6	8704	34	declined (48 KB)
+q5_K	6	8960	35	declined (48 KB)
+q5_K	6	9216	36	declined (48 KB)
+q5_K	6	9472	37	declined (48 KB)
+q5_K	6	9728	38	declined (48 KB)
+q5_K	6	9984	39	declined (48 KB)
+q5_K	6	10240	40	declined (48 KB)
+q5_K	6	10496	41	declined (48 KB)
+q5_K	6	10752	42	declined (48 KB)
+q5_K	6	11008	43	declined (48 KB)
+q5_K	6	11264	44	declined (48 KB)
+q5_K	6	11520	45	declined (48 KB)
+q5_K	6	11776	46	declined (48 KB)
+q5_K	6	12032	47	declined (48 KB)
+q5_K	6	12288	48	declined (48 KB)
+q5_K	6	12544	49	declined (48 KB)
+q5_K	6	12800	50	declined (48 KB)
+q5_K	6	13056	51	declined (48 KB)
+q5_K	6	13312	52	declined (48 KB)
+q5_K	6	13568	53	declined (48 KB)
+q5_K	6	13824	54	declined (48 KB)
+q5_K	6	14080	55	declined (48 KB)
+q5_K	6	14336	56	declined (48 KB)
+q5_K	6	14592	57	declined (48 KB)
+q5_K	6	14848	58	declined (48 KB)
+q5_K	6	15104	59	declined (48 KB)
+q5_K	6	15360	60	declined (48 KB)
+q5_K	6	15616	61	declined (48 KB)
+q5_K	6	15872	62	declined (48 KB)
+q5_K	6	16128	63	declined (48 KB)
+q5_K	6	16384	64	declined (48 KB)
+q5_K	7	256	1	1	0	6	1	36064	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	512	2	1	0	6	2	38320	352	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	768	3	1	0	6	1	40592	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	1024	4	1	0	6	4	42848	704	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	1280	5	1	0	6	1	45120	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	1536	6	1	0	6	2	47376	352	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	1792	7	1	0	5	1	44016	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	2048	8	1	0	5	8	46272	1408	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	2304	9	1	0	5	1	48544	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	2560	10	1	0	4	2	45168	352	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	2816	11	1	0	4	1	47440	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	3072	12	1	0	3	4	44064	704	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	3328	13	1	0	3	1	46336	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	3584	14	1	0	3	2	48592	352	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	3840	15	1	0	2	1	45232	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	4096	16	1	0	2	16	47488	2816	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	4352	17	1	0	1	1	44128	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	4608	18	1	0	1	2	46384	352	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	4864	19	1	0	1	1	48656	176	mul_mat_vec_q5_K_pascal_mt<7, 1, false>
+q5_K	7	5120	20	declined (48 KB)
+q5_K	7	5376	21	declined (48 KB)
+q5_K	7	5632	22	declined (48 KB)
+q5_K	7	5888	23	declined (48 KB)
+q5_K	7	6144	24	declined (48 KB)
+q5_K	7	6400	25	declined (48 KB)
+q5_K	7	6656	26	declined (48 KB)
+q5_K	7	6912	27	declined (48 KB)
+q5_K	7	7168	28	declined (48 KB)
+q5_K	7	7424	29	declined (48 KB)
+q5_K	7	7680	30	declined (48 KB)
+q5_K	7	7936	31	declined (48 KB)
+q5_K	7	8192	32	declined (48 KB)
+q5_K	7	8448	33	declined (48 KB)
+q5_K	7	8704	34	declined (48 KB)
+q5_K	7	8960	35	declined (48 KB)
+q5_K	7	9216	36	declined (48 KB)
+q5_K	7	9472	37	declined (48 KB)
+q5_K	7	9728	38	declined (48 KB)
+q5_K	7	9984	39	declined (48 KB)
+q5_K	7	10240	40	declined (48 KB)
+q5_K	7	10496	41	declined (48 KB)
+q5_K	7	10752	42	declined (48 KB)
+q5_K	7	11008	43	declined (48 KB)
+q5_K	7	11264	44	declined (48 KB)
+q5_K	7	11520	45	declined (48 KB)
+q5_K	7	11776	46	declined (48 KB)
+q5_K	7	12032	47	declined (48 KB)
+q5_K	7	12288	48	declined (48 KB)
+q5_K	7	12544	49	declined (48 KB)
+q5_K	7	12800	50	declined (48 KB)
+q5_K	7	13056	51	declined (48 KB)
+q5_K	7	13312	52	declined (48 KB)
+q5_K	7	13568	53	declined (48 KB)
+q5_K	7	13824	54	declined (48 KB)
+q5_K	7	14080	55	declined (48 KB)
+q5_K	7	14336	56	declined (48 KB)
+q5_K	7	14592	57	declined (48 KB)
+q5_K	7	14848	58	declined (48 KB)
+q5_K	7	15104	59	declined (48 KB)
+q5_K	7	15360	60	declined (48 KB)
+q5_K	7	15616	61	declined (48 KB)
+q5_K	7	15872	62	declined (48 KB)
+q5_K	7	16128	63	declined (48 KB)
+q5_K	7	16384	64	declined (48 KB)
+q5_K	8	256	1	1	0	6	1	36384	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	512	2	1	0	6	2	38960	352	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	768	3	1	0	6	1	41552	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	1024	4	1	0	6	4	44128	704	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	1280	5	1	0	6	1	46720	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	1536	6	1	0	5	2	43664	352	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	1792	7	1	0	5	1	46256	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	2048	8	1	0	5	8	48832	1408	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	2304	9	1	0	4	1	45792	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	2560	10	1	0	4	2	48368	352	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	2816	11	1	0	3	1	45328	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	3072	12	1	0	3	4	47904	704	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	3328	13	1	0	2	1	44864	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	3584	14	1	0	2	2	47440	352	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	3840	15	1	0	1	1	44400	176	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	4096	16	1	0	1	16	46976	2816	mul_mat_vec_q5_K_pascal_mt<8, 1, false>
+q5_K	8	4352	17	declined (48 KB)
+q5_K	8	4608	18	declined (48 KB)
+q5_K	8	4864	19	declined (48 KB)
+q5_K	8	5120	20	declined (48 KB)
+q5_K	8	5376	21	declined (48 KB)
+q5_K	8	5632	22	declined (48 KB)
+q5_K	8	5888	23	declined (48 KB)
+q5_K	8	6144	24	declined (48 KB)
+q5_K	8	6400	25	declined (48 KB)
+q5_K	8	6656	26	declined (48 KB)
+q5_K	8	6912	27	declined (48 KB)
+q5_K	8	7168	28	declined (48 KB)
+q5_K	8	7424	29	declined (48 KB)
+q5_K	8	7680	30	declined (48 KB)
+q5_K	8	7936	31	declined (48 KB)
+q5_K	8	8192	32	declined (48 KB)
+q5_K	8	8448	33	declined (48 KB)
+q5_K	8	8704	34	declined (48 KB)
+q5_K	8	8960	35	declined (48 KB)
+q5_K	8	9216	36	declined (48 KB)
+q5_K	8	9472	37	declined (48 KB)
+q5_K	8	9728	38	declined (48 KB)
+q5_K	8	9984	39	declined (48 KB)
+q5_K	8	10240	40	declined (48 KB)
+q5_K	8	10496	41	declined (48 KB)
+q5_K	8	10752	42	declined (48 KB)
+q5_K	8	11008	43	declined (48 KB)
+q5_K	8	11264	44	declined (48 KB)
+q5_K	8	11520	45	declined (48 KB)
+q5_K	8	11776	46	declined (48 KB)
+q5_K	8	12032	47	declined (48 KB)
+q5_K	8	12288	48	declined (48 KB)
+q5_K	8	12544	49	declined (48 KB)
+q5_K	8	12800	50	declined (48 KB)
+q5_K	8	13056	51	declined (48 KB)
+q5_K	8	13312	52	declined (48 KB)
+q5_K	8	13568	53	declined (48 KB)
+q5_K	8	13824	54	declined (48 KB)
+q5_K	8	14080	55	declined (48 KB)
+q5_K	8	14336	56	declined (48 KB)
+q5_K	8	14592	57	declined (48 KB)
+q5_K	8	14848	58	declined (48 KB)
+q5_K	8	15104	59	declined (48 KB)
+q5_K	8	15360	60	declined (48 KB)
+q5_K	8	15616	61	declined (48 KB)
+q5_K	8	15872	62	declined (48 KB)
+q5_K	8	16128	63	declined (48 KB)
+q5_K	8	16384	64	declined (48 KB)

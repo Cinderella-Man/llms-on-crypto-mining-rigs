@@ -139,7 +139,8 @@ if step pick; then
     git -C "$SRC" archive "$BASE" ggml | tar -x -C "$P/base"
     git -C "$SRC" archive "$TIP" ggml | tar -x -C "$P/tip"
     cp "$HERE/pick.cu" "$P/pick.cu"
-    # the expressions pick.cu repeats, in each tree
+    # the expressions pick.cu repeats, in each tree: the token-count tests of both takes functions, Q5_K's R (in the
+    # warps' count and in the launcher) and its prefetch, 5 lines
     B=$P/base/ggml/src/ggml-cuda T2=$P/tip/ggml/src/ggml-cuda
     lb=$(( $(grep -c 'if (dmt_mode() == 0 || ncols < 2 || ncols > DMT_MAX_COLS ||' "$B/mmvq-pascal-dmt.cu") + \
            $(grep -c '(ncols == 1 ? !q5kmt_one_row(nrows) : q5kmt_mode() == 0)' "$B/mmvq-pascal-q5k.cu") + \
@@ -187,9 +188,9 @@ ro8-all-nopf:RO8=2 DMT=2 Q5K_MT=2 Q5K_1R=1'
             done
         done < '"$P"'/arms.txt' > "$WORK/logs/pick.log" 2>&1
     rc=$?
-    pickok=$([ $rc = 0 ] && [ "$lb" = 4 ] && [ "$lt" = 4 ] && [ -s "$P/arms/ro8-tip.tsv" ] && echo 1 || echo 0)
+    pickok=$([ $rc = 0 ] && [ "$lb" = 5 ] && [ "$lt" = 5 ] && [ -s "$P/arms/ro8-tip.tsv" ] && echo 1 || echo 0)
     verdict pick-build "$([ "$pickok" = 1 ] && echo OK || echo FAIL)" \
-        "rc=$rc; base ${BASE:0:9}, tip ${TIP:0:9}; the expressions pick.cu repeats found: base $lb of 4, tip $lt of 4; $(ls "$P/arms" | wc -l) arm files, $(tail -n +2 "$P/arms/ro8-tip.tsv" 2> /dev/null | wc -l) products each"
+        "rc=$rc; base ${BASE:0:9}, tip ${TIP:0:9}; the expressions pick.cu repeats found: base $lb of 5, tip $lt of 5; $(ls "$P/arms" | wc -l) arm files, $(tail -n +2 "$P/arms/ro8-tip.tsv" 2> /dev/null | wc -l) products each"
 fi
 if step pick && [ "${pickok:-0}" = 1 ]; then
     A=$P/arms
