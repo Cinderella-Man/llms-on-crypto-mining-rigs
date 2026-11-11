@@ -52,6 +52,9 @@
 #                 (GGML_CUDA_FATTN_SPARSE_PASCAL_UNION, docs/data/2026-11-11_c103_union_gather): mode 1 with and without
 #                 them and their threshold, mode 2 through the union kernel at three split counts, the four faults. Its
 #                 runs-ptx.tsv holds the mode-2 runs, as mode 1 leaves a newer card on its own kernels
+#   v4night       the seven suites of the v4 night's branches in one set, as merged in pascal-p106-v4-b12246-night
+#                 (docs/data/2026-11-11_v4_night_merge): NIGHT below; each filter recorded once, every suite's runs
+#                 (runs-ptx.tsv: a suite's PTX runs where it has them, else its native runs)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -60,7 +63,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -93,6 +96,7 @@ Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 # the top-k cases at Flash-Next's vocabulary
 TKV='ne=\[248320,'
+NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
 suite_filters() {
     case $1 in
         kshape)
@@ -120,6 +124,9 @@ suite_filters() {
             printf '%s\t%s\n' TOP_K "$TKV" TOP_K_ROWS '.' ;;
         qsa-union)
             printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
+        v4night)
+            local s
+            for s in $NIGHT; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
         *) return 1 ;;
     esac
 }
@@ -238,6 +245,9 @@ suite_runs() {
             printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;
         qsa-union)
             suite_runs_qsa_union 1 ;;
+        v4night)
+            local s
+            for s in $NIGHT; do suite_runs "$s"; done ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
@@ -302,6 +312,11 @@ suite_runs_ptx() {
         n2p) suite_runs_n2p 'n=[1-8],' "type_a=" ;;
         qsa-prompt) suite_runs_qsa_prompt 2 ;;
         qsa-union) suite_runs_qsa_union 2 ;;
+        v4night)
+            local s
+            for s in $NIGHT; do
+                if [ -n "$(suite_runs_ptx "$s")" ]; then suite_runs_ptx "$s"; else suite_runs "$s"; fi
+            done ;;
     esac
 }
 suite_filters "$SUITE" > /dev/null || { echo "unknown SUITE $SUITE" >&2; exit 1; }

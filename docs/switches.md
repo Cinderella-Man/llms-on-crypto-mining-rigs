@@ -29,6 +29,13 @@ upstream has since merged a change that a switch describes, the row says "v4:" a
 gives; [what upstream changed by default](#what-upstream-changed-by-default-on-the-v4-line) lists the behaviour that
 came with the merge and has no switch.
 
+The switches of the night of 2026-11-10/11, one fork branch each (`pascal-p106-v4-b12246-<row>`, or `-<row>`, in the
+**Branch** column), are all in one build, `pascal-p106-v4-b12246-night`, the merge of those 17 branches on
+`pascal-p106-v4`; none is in a release build yet. With every switch at its
+default it gives `pascal-p106-v4`'s logits bit for bit on every architecture `test-llama-archs` builds, and each
+branch's own check passes on it with its switch on
+([docs/data/2026-11-11_v4_night_merge/](data/2026-11-11_v4_night_merge/README.md)).
+
 ## Which preset sets each switch
 
 Each v3 model has a preset, `release/<model>-v3/settings.env`: the switches (`PRESET_ENV`) and the command line

@@ -1,0 +1,219 @@
+tip	row	check	verdict	detail
+24ae0aa83	c620	build-rig	OK	llama.cpp-20261111-24ae0aa83-pascal-p106-v4-b12246-night; commit: 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 (2026-11-11 02:16:06 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+24ae0aa83	c620	build-extra	OK	test-llama-archs in llama.cpp-20261111-24ae0aa83-pascal-p106-v4-b12246-night/bin
+24ae0aa83	c620	cpubuild	OK	rc=0; commit 24ae0aa83
+24ae0aa83	c620	kvonly-rig-s1	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c620	kvonly-rig-s2	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c620	kvonly-rig-s3	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c620	kvonly-cpu-s1	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c620	kvonly-cpu-s2	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c620	kvonly-cpu-s3	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c620	off	OK	base wrote 146 logits files; 146 compared, 0 differ: none; base: Summary: all 151 test(s) passed; branch: Summary: all 151 test(s) passed; base rc=0 branch rc=0 
+24ae0aa83	set	record	OK	rc=0; manifest: 967 cases, 9666907377 bytes in cases/; tar: $M/sets/v4night.tar 9669294080 bytes, md5 95a1ac635a761619e1f4fe6790424b85
+24ae0aa83	set	replay -o FLASH_ATTN_EXT -p n_kv_max=[1-9]	OK	rc=0; 0 FAIL lines; 135/135 tests passed;   replay: $M/sets/v4night: 135 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o MUL_MAT -p type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],	OK	rc=0; 0 FAIL lines; 102/102 tests passed;   replay: $M/sets/v4night: 102 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o MUL_MAT -p type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],	OK	rc=0; 0 FAIL lines; 295/295 tests passed;   replay: $M/sets/v4night: 295 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o LIGHTNING_INDEXER -p n_cells=|nh=4,|nb=(1|32),	OK	rc=0; 0 FAIL lines; 269/269 tests passed;   replay: $M/sets/v4night: 269 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o LIGHTNING_INDEXER -p n_cells=	OK	rc=0; 0 FAIL lines; 113/113 tests passed;   replay: $M/sets/v4night: 113 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o RANGE_MASK -p .	OK	rc=0; 0 FAIL lines; 22/22 tests passed;   replay: $M/sets/v4night: 22 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o TOP_K -p ne=\[248320,	OK	rc=0; 0 FAIL lines; 39/39 tests passed;   replay: $M/sets/v4night: 39 cases replayed, 0 selected by the filter have no record
+24ae0aa83	set	replay -o TOP_K_ROWS -p .	OK	rc=0; 0 FAIL lines; 75/75 tests passed;   replay: $M/sets/v4night: 75 cases replayed, 0 selected by the filter have no record
+24ae0aa83	c702	tests-build	OK	rc=0; test-cuda-graph-force test-cuda-profile-light at 24ae0aa83
+24ae0aa83	c702	test-cuda-graph-force	OK	rc=0; random runs: 2000 x 400 evaluations; switch on: 200993 captures, 465116 replays, none stale, at most 1 eager batched graph a run; the control replayed stale executables in 711 of 2000 runs test-cuda-graph-force: 6070 checks, 0 failed 
+24ae0aa83	c702	test-cuda-profile-light	OK	rc=0; test-cuda-profile-light: 49267 checks, 0 failed 
+24ae0aa83	c703	overlap-rig-s1	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c703	overlap-rig-s2	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c703	overlap-rig-s3	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c703	overlap-cpu-s1	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c703	overlap-cpu-s2	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c703	overlap-cpu-s3	OK	rc=0; Summary: all 5 test(s) passed
+24ae0aa83	c103	fattn_sparse check	OK	check rc=0: 18 ok, 0 WRONG (2026-11-11T03:08:10+01:00); 18 ok, 0 WRONG
+24ae0aa83	c690	sass counts	SAME	13 kernels, the table of the branch's own build
+24ae0aa83	c722	sass counts	SAME	26 kernels, the table of the branch's own build
+24ae0aa83	c704	cpu build of 24ae0aa83	LOG	cpu build of 24ae0aa83
+24ae0aa83	c704	cpu rc=0	LOG	cpu rc=0
+24ae0aa83	c704	tbo lid	LOG	rc=0; 0 FAIL lines;   323/323 tests passed
+24ae0aa83	c704	archs off	LOG	146 compared, 0 differ: ; Summary: all 151 test(s) passed
+24ae0aa83	c704	archs on	LOG	146 compared, 0 differ: ; Summary: all 151 test(s) passed
+24ae0aa83	c704	archs top8-on	LOG	2 compared, 0 differ: ; Summary: all 2 test(s) passed
+24ae0aa83	c704	archs top8-vs-all	LOG	2 compared, 2 differ: qwen4exp glm5-next ; Summary: 2 test(s) executed, 2 failed
+24ae0aa83	c704	archs	LOG	base wrote 146, top8-off wrote 2; base rc=0 off rc=0 on rc=0 top8-off rc=0 top8-on rc=0 top8-vs-all rc=1 
+24ae0aa83	c704	graph off	LOG	rc=0; node lines 8806, GET_ROWS 555, LIGHTNING_INDEXER 37, of them reading the gathered copy 37
+24ae0aa83	c704	graph on	LOG	rc=0; node lines 8769, GET_ROWS 518, LIGHTNING_INDEXER 37, of them reading the gathered copy 0
+24ae0aa83	c691	cpu builds of 24ae0aa83 and fork/pascal-p106-v4	LOG	cpu builds of 24ae0aa83 and fork/pascal-p106-v4
+24ae0aa83	c691	cpu rc=0	LOG	cpu rc=0 commit 24ae0aa83 cpu-base rc=0 commit 84f7bd3d2 
+24ae0aa83	c691	tbo	LOG	rc=0; 0 FAIL lines;   682/682 tests passed
+24ae0aa83	c691	sampler off	LOG	22 tests, 21 pass; failing: test_logit_bias (rc 134) 
+24ae0aa83	c691	sampler on	LOG	22 tests, 21 pass; failing: test_logit_bias (rc 134) 
+24ae0aa83	c691	sampler base	LOG	21 tests, 20 pass; failing: test_logit_bias (rc 134) 
+24ae0aa83	c691	sampler switch test (off run)	LOG	chains 0 and 1: 17 outputs, 226 candidates, the same with the switch off and on chains 0 and 0: 17 outputs, 340 candidates, the same with the switch off and on chains 2 and 3: 17 outputs, 208 candidates, the same with the switch off and on chains 3 and 2: 17 outputs, 268 candidates, the same with the switch off and on chains 0 and 4: 17 outputs, 340 candidates, the same with the switch off and on backend top-k rows switch test PASSED 
+24ae0aa83	c691	graph base	LOG	rc=0; node lines 4491, TOP_K 27, PAD 18, GET_ROWS 180
+24ae0aa83	c691	graph off	LOG	rc=0; node lines 4491, TOP_K 27, PAD 18, GET_ROWS 180
+24ae0aa83	c691	graph on	LOG	rc=0; node lines 4455, TOP_K 18, PAD 0, GET_ROWS 171
+24ae0aa83	c691	graph	LOG	base and off the same node lines
+24ae0aa83	c100	build tip	OK	rc=0; commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 speculative: C217's get_state_at runs a pending catch-up first, as C703 makes every other public function do; 3 warning lines, 0 error lines
+24ae0aa83	c100	model qwen4exp	OK	$M/c100/cpu/models/qwen4exp-moe.gguf; qwen4exp-moe.gguf 
+24ae0aa83	c100	kpool seq-k0-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches, 1 full updates, 14203 rows uploaded (49.1 a ubatch), 289 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool seq-k0-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches, 1 full updates, 14119 rows uploaded (48.0 a ubatch), 294 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool seq-k0-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches, 1 full updates, 12244 rows uploaded (51.2 a ubatch), 239 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool seq-k0-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches, 1 full updates, 12136 rows uploaded (51.2 a ubatch), 237 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool seq-k32-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches, 1 full updates, 14203 rows uploaded (49.1 a ubatch), 289 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool seq-k32-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches, 1 full updates, 14119 rows uploaded (48.0 a ubatch), 294 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool seq-k32-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches, 1 full updates, 12244 rows uploaded (51.2 a ubatch), 239 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool seq-k32-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches, 1 full updates, 12136 rows uploaded (51.2 a ubatch), 237 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool unified-k0-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches, 1 full updates, 11306 rows uploaded (39.1 a ubatch), 289 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool unified-k0-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches, 1 full updates, 10844 rows uploaded (36.9 a ubatch), 294 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool unified-k0-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches, 1 full updates, 9335 rows uploaded (39.1 a ubatch), 239 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool unified-k0-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches, 1 full updates, 8836 rows uploaded (37.3 a ubatch), 237 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool unified-k32-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches, 1 full updates, 11306 rows uploaded (39.1 a ubatch), 289 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool unified-k32-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches, 1 full updates, 10844 rows uploaded (36.9 a ubatch), 294 checked; 891 checks, 0 failed
+24ae0aa83	c100	kpool unified-k32-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches, 1 full updates, 9335 rows uploaded (39.1 a ubatch), 239 checked; 887 checks, 0 failed
+24ae0aa83	c100	kpool unified-k32-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches, 1 full updates, 8836 rows uploaded (37.3 a ubatch), 237 checked; 891 checks, 0 failed
+24ae0aa83	c100	archs base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed
+24ae0aa83	c100	archs off	SAME	rc=0; 146 models compared, 0 differ: ; written by this build only: 0; 
+24ae0aa83	c100	archs on	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; 
+24ae0aa83	c100	archs check	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; 
+24ae0aa83	c100	archs draft	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; 
+24ae0aa83	c719	build tip	OK	rc=0; commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 speculative: C217's get_state_at runs a pending catch-up first, as C703 makes every other public function do; 3 warning lines, 0 error lines
+24ae0aa83	c719	model qwen4exp	OK	$M/c719/cpu/models/qwen4exp-moe.gguf; qwen4exp-moe.gguf 
+24ae0aa83	c719	mask seq-k0-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches sent the ranges, 289 checked (289 masks); context 3: 289 ubatches with the k-pool tables on the device, 289 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask seq-k0-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches sent the ranges, 294 checked (294 masks); context 3: 294 ubatches with the k-pool tables on the device, 294 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask seq-k0-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches sent the ranges, 239 checked (239 masks); context 3: 239 ubatches with the k-pool tables on the device, 239 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask seq-k0-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches sent the ranges, 237 checked (237 masks); context 3: 237 ubatches with the k-pool tables on the device, 237 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask seq-k32-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches sent the ranges, 289 checked (289 masks); context 3: 289 ubatches with the k-pool tables on the device, 289 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask seq-k32-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches sent the ranges, 294 checked (294 masks); context 3: 294 ubatches with the k-pool tables on the device, 294 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask seq-k32-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches sent the ranges, 239 checked (239 masks); context 3: 239 ubatches with the k-pool tables on the device, 239 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask seq-k32-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches sent the ranges, 237 checked (237 masks); context 3: 237 ubatches with the k-pool tables on the device, 237 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask unified-k0-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches sent the ranges, 289 checked (289 masks); context 3: 289 ubatches with the k-pool tables on the device, 289 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask unified-k0-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches sent the ranges, 294 checked (294 masks); context 3: 294 ubatches with the k-pool tables on the device, 294 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask unified-k0-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches sent the ranges, 239 checked (239 masks); context 3: 239 ubatches with the k-pool tables on the device, 239 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask unified-k0-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches sent the ranges, 237 checked (237 masks); context 3: 237 ubatches with the k-pool tables on the device, 237 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask unified-k32-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 289 ubatches sent the ranges, 289 checked (289 masks); context 3: 289 ubatches with the k-pool tables on the device, 289 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask unified-k32-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 294 ubatches sent the ranges, 294 checked (294 masks); context 3: 294 ubatches with the k-pool tables on the device, 294 checked; 1180 checks, 0 failed
+24ae0aa83	c719	mask unified-k32-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; context 1: 239 ubatches sent the ranges, 239 checked (239 masks); context 3: 239 ubatches with the k-pool tables on the device, 239 checked; 1172 checks, 0 failed
+24ae0aa83	c719	mask unified-k32-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; context 1: 237 ubatches sent the ranges, 237 checked (237 masks); context 3: 237 ubatches with the k-pool tables on the device, 237 checked; 1180 checks, 0 failed
+24ae0aa83	c719	archs base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed
+24ae0aa83	c719	archs off	SAME	rc=0; 146 models compared, 0 differ: ; written by this build only: 0; ; 
+24ae0aa83	c719	archs on	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; ; 
+24ae0aa83	c719	archs check	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; ; 
+24ae0aa83	c719	archs check-v	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; 1 ubatches checked: 1 masks built on the devices identical to the host mask (n_pool 64, 64 tokens); 2 ubatches, 2 checked (2 masks) 9 ubatches, 9 checked (9 masks) 32 ubatches, 32 checked (32 masks) 
+24ae0aa83	c719	archs draft	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; ; 
+24ae0aa83	c719	archs kpool	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; 1 ubatches checked: 1 masks built on the devices identical to the host mask (n_pool 64, 64 tokens); 2 ubatches, 2 checked (2 masks) 9 ubatches, 9 checked (9 masks) 32 ubatches, 32 checked (32 masks) 
+24ae0aa83	c720	build tip	OK	rc=0; commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 speculative: C217's get_state_at runs a pending catch-up first, as C703 makes every other public function do; 3 warning lines, 0 error lines
+24ae0aa83	c720	model qwen4exp	OK	$M/c720/cpu/models/qwen4exp-moe.gguf; qwen4exp-moe.gguf 
+24ae0aa83	c720	archs base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed
+24ae0aa83	c720	archs off	SAME	rc=0; 146 models compared, 0 differ: ; written by this build only: 0; stage lines: 0; 
+24ae0aa83	c720	archs on	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; stage lines: 0; 
+24ae0aa83	c720	archs check	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; stage lines: 0; 
+24ae0aa83	c720	archs check_v	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; stage lines: 3; 1 ubatches checked: 1 copies identical to the tables without the switch (n_pool 64, 64 rows updated, rewritten)
+24ae0aa83	c720	archs draft	SAME	rc=0; 1 models compared, 0 differ: ; written by this build only: 0; stage lines: 0; 
+24ae0aa83	c675	tip tree	OK	commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 speculative: C217's get_state_at runs a pending catch-up first, as C703 makes every other public function do
+24ae0aa83	c675	tip build	OK	rc=0; targets test-llama-archs test-spec-reject-stop test-speculative-rejection-sampling test-sampling; 3 warning lines, 0 error lines
+24ae0aa83	c675	tip ctest	OK	100% tests passed, 0 tests failed out of 5
+24ae0aa83	c675	base tree	OK	commit 84f7bd3d2e89aeedb065554eaca47ce4401cfd79 gemma4: no row pruning before the KV-shared layers with the masks built on the device (Q1073)
+24ae0aa83	c675	base build	OK	rc=0; targets test-speculative-rejection-sampling; 3 warning lines, 0 error lines
+24ae0aa83	c675	ident distribution	SAME	128 token lines, 20000 trials; base rc=0 tip rc=0 tip-on rc=0 
+24ae0aa83	c711	tip tree	OK	commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 speculative: C217's get_state_at runs a pending catch-up first, as C703 makes every other public function do;
+24ae0aa83	c711	tip build	OK	rc=0; targets test-llama-archs test-spec-reject-stop test-spec-block test-speculative-rejection-sampling test-sampling; 3 warning lines, 0 error lines
+24ae0aa83	c711	tip ctest	OK	100% tests passed, 0 tests failed out of 6
+24ae0aa83	c711	base tree	OK	commit b2763cce74f5f1ceebd00e6b611f0c4c1ed1b34e sampling: LLAMA_SPEC_REJECT_STOP=1 stops token-by-token rejection after an accepted EOG, as sample-and-match does (Q1187);laid over: tests/test-spec-reject-stop.cpp from 24ae0aa83;
+24ae0aa83	c711	base build	OK	rc=0; targets test-spec-reject-stop test-spec-block; 3 warning lines, 0 error lines
+24ae0aa83	c711	ident block-off	SAME	digest base 1404fbd5c5a6a29a over 4000 trials, tip 1404fbd5c5a6a29a over 4000 trials; reject-stop-base rc=1 spec-block-base rc=0 reject-stop-tip rc=0 spec-block-tip rc=0 
+24ae0aa83	c711	ident spec-block	SAME	11 configuration lines of base, 0 not printed alike by tip; tip prints 13 lines
+24ae0aa83	c701	tip tree	OK	commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 speculative: C217's get_state_at runs a pending catch-up first, as C703 
+24ae0aa83	c701	tip build	FAIL	rc=2; 0 warning lines, 1 error lines
+24ae0aa83	c217	cpubuild	OK	rc=0 (1 = branch, 2 = base); branch 24ae0aa83, base 84f7bd3d2
+24ae0aa83	c217	context	OK	3 models; 71 case runs, 0 FAIL; store_at/store_at_p OK in 6 runs
+24ae0aa83	c217	control	OK	6 case runs report; one call without cuts ends elsewhere than the cut calls in 6 of 10 (model, flags, n_rs_seq), the cuts without the rule of the rollback snapshots in 4 of 4
+24ae0aa83	c217	server	OK	off = base (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts);incall = base (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts);incall2 = base (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts);incall4 = base4 (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 10 checkpoints at the same token counts);sincall = sbase (tokens, top probabilities, prompt_n, cache_n and restored checkpoint of Q1-Q5; 30 checkpoints at the same token counts);incall: 9 checkpoints taken inside a call;incall2: 8 checkpoints taken inside a call;incall4: 9 checkpoints taken inside a call;sincall: 16 checkpoints taken inside a call;incall2: 4 checkpoint(s) moved to the host;
+24ae0aa83	c405	cpubuild	OK	rc=0; commit 24ae0aa83; logs/cpu-build.log
+24ae0aa83	c405	identity	OK	15 of 15 replies identical to base (off, on, bad x R1-R3 x mtp; off, on x R1-R3 x sim), 0 differ; rc=0
+24ae0aa83	c405	trace-mtp	OK	on-mtp trace: 212 lines; drafted 597 (server 597), accepted 0 (server 0); on-mtp step_gap check rc=0: check: OK (0 problems)
+24ae0aa83	c405	trace-sim	OK	on-sim trace: 90 lines; drafted 180 (server 180), accepted 122 (server 122); on-sim step_gap check rc=0: check: OK (0 problems)
+24ae0aa83	c405	off-writes-nothing	OK	trace files from off arms: 0
+24ae0aa83	c405	bad-path	OK	bad-mtp: 0.00.005.417 E operator(): cannot write LLAMA_STEP_TRACE=/nonexistent/c405/trace.jsonl, no step trace; its replies are in the identity count
+24ae0aa83	c565 static	night tree	OK	commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 
+24ae0aa83	c565 static	night build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+24ae0aa83	c565 static	night ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+24ae0aa83	c565 static	night net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+24ae0aa83	c565 static	night archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+24ae0aa83	c565 static	night archs write	OK	Summary: all 151 test(s) passed; write rc=0
+24ae0aa83	c565 static	night archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+24ae0aa83	c565 static	night archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+24ae0aa83	c565 static	night hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+24ae0aa83	c565 static	night hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+24ae0aa83	c565 static	night hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+24ae0aa83	c565 static	night hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+24ae0aa83	c565 static	night hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+24ae0aa83	c565 static	night hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+24ae0aa83	c565 static	night hand thread-safety	OK	test-thread-safety rc=0: 0.00.041.156 I All threads finished without errors.
+24ae0aa83	c565 static	night hand context-model	OK	test-llama-context rc=0: failed   : 0
+24ae0aa83	c565 static	night hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.537333
+24ae0aa83	c565 shared	night tree	OK	commit 24ae0aa8385a2c1f4f379afe3871828c2d86a1d5 
+24ae0aa83	c565 shared	night build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+24ae0aa83	c565 shared	night ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+24ae0aa83	c565 shared	night net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+24ae0aa83	c565 shared	night archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+24ae0aa83	c565 shared	night archs write	OK	Summary: all 151 test(s) passed; write rc=0
+24ae0aa83	c565 shared	night archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+24ae0aa83	c565 shared	night archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+24ae0aa83	c565 shared	night hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+24ae0aa83	c565 shared	night hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+24ae0aa83	c565 shared	night hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+24ae0aa83	c565 shared	night hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+24ae0aa83	c565 shared	night hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+24ae0aa83	c565 shared	night hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+24ae0aa83	c565 shared	night hand thread-safety	OK	test-thread-safety rc=0: 0.00.033.953 I All threads finished without errors.
+24ae0aa83	c565 shared	night hand context-model	OK	test-llama-context rc=0: failed   : 0
+24ae0aa83	c565 shared	night hand eval-callback	OK	llama-eval-callback rc=0:     sum = 1.568669
+24ae0aa83	c720	stage seq-k0-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1445 reading ops compared (k_idxs 289, tail_idxs 289, new_pool_idxs 289, new_pool_rep 289, new_pool_pos 289), 12487 values, 0 differ; without the switch 1445 reads of the host's tensors and 0 of casts, with it 0 and 1445; context 1: 289 ubatches, 1 full updates, 14203 rows uploaded (49.1 a ubatch), 289 checked; 4064 checks, 0 failed
+24ae0aa83	c720	stage seq-k0-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1470 reading ops compared (k_idxs 294, tail_idxs 294, new_pool_idxs 294, new_pool_rep 294, new_pool_pos 294), 12684 values, 0 differ; without the switch 1470 reads of the host's tensors and 0 of casts, with it 0 and 1470; context 1: 294 ubatches, 1 full updates, 14119 rows uploaded (48.0 a ubatch), 294 checked; 4122 checks, 0 failed
+24ae0aa83	c720	stage seq-k0-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1195 reading ops compared (k_idxs 239, tail_idxs 239, new_pool_idxs 239, new_pool_rep 239, new_pool_pos 239), 12073 values, 0 differ; without the switch 1195 reads of the host's tensors and 0 of casts, with it 0 and 1195; context 1: 239 ubatches, 1 full updates, 12244 rows uploaded (51.2 a ubatch), 239 checked; 3564 checks, 0 failed
+24ae0aa83	c720	stage seq-k0-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1185 reading ops compared (k_idxs 237, tail_idxs 237, new_pool_idxs 237, new_pool_rep 237, new_pool_pos 237), 12189 values, 0 differ; without the switch 1185 reads of the host's tensors and 0 of casts, with it 0 and 1185; context 1: 237 ubatches, 1 full updates, 12136 rows uploaded (51.2 a ubatch), 237 checked; 3552 checks, 0 failed
+24ae0aa83	c720	stage seq-k32-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1445 reading ops compared (k_idxs 289, tail_idxs 289, new_pool_idxs 289, new_pool_rep 289, new_pool_pos 289), 12487 values, 0 differ; without the switch 1445 reads of the host's tensors and 0 of casts, with it 0 and 1445; context 1: 289 ubatches, 1 full updates, 14203 rows uploaded (49.1 a ubatch), 289 checked; 4064 checks, 0 failed
+24ae0aa83	c720	stage seq-k32-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1470 reading ops compared (k_idxs 294, tail_idxs 294, new_pool_idxs 294, new_pool_rep 294, new_pool_pos 294), 12684 values, 0 differ; without the switch 1470 reads of the host's tensors and 0 of casts, with it 0 and 1470; context 1: 294 ubatches, 1 full updates, 14119 rows uploaded (48.0 a ubatch), 294 checked; 4122 checks, 0 failed
+24ae0aa83	c720	stage seq-k32-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1195 reading ops compared (k_idxs 239, tail_idxs 239, new_pool_idxs 239, new_pool_rep 239, new_pool_pos 239), 12073 values, 0 differ; without the switch 1195 reads of the host's tensors and 0 of casts, with it 0 and 1195; context 1: 239 ubatches, 1 full updates, 12244 rows uploaded (51.2 a ubatch), 239 checked; 3564 checks, 0 failed
+24ae0aa83	c720	stage seq-k32-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1185 reading ops compared (k_idxs 237, tail_idxs 237, new_pool_idxs 237, new_pool_rep 237, new_pool_pos 237), 12189 values, 0 differ; without the switch 1185 reads of the host's tensors and 0 of casts, with it 0 and 1185; context 1: 237 ubatches, 1 full updates, 12136 rows uploaded (51.2 a ubatch), 237 checked; 3552 checks, 0 failed
+24ae0aa83	c720	stage unified-k0-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1445 reading ops compared (k_idxs 289, tail_idxs 289, new_pool_idxs 289, new_pool_rep 289, new_pool_pos 289), 12487 values, 0 differ; without the switch 1445 reads of the host's tensors and 0 of casts, with it 0 and 1445; context 1: 289 ubatches, 1 full updates, 11306 rows uploaded (39.1 a ubatch), 289 checked; 4064 checks, 0 failed
+24ae0aa83	c720	stage unified-k0-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1470 reading ops compared (k_idxs 294, tail_idxs 294, new_pool_idxs 294, new_pool_rep 294, new_pool_pos 294), 12684 values, 0 differ; without the switch 1470 reads of the host's tensors and 0 of casts, with it 0 and 1470; context 1: 294 ubatches, 1 full updates, 10844 rows uploaded (36.9 a ubatch), 294 checked; 4122 checks, 0 failed
+24ae0aa83	c720	stage unified-k0-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1195 reading ops compared (k_idxs 239, tail_idxs 239, new_pool_idxs 239, new_pool_rep 239, new_pool_pos 239), 12073 values, 0 differ; without the switch 1195 reads of the host's tensors and 0 of casts, with it 0 and 1195; context 1: 239 ubatches, 1 full updates, 9335 rows uploaded (39.1 a ubatch), 239 checked; 3564 checks, 0 failed
+24ae0aa83	c720	stage unified-k0-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1185 reading ops compared (k_idxs 237, tail_idxs 237, new_pool_idxs 237, new_pool_rep 237, new_pool_pos 237), 12189 values, 0 differ; without the switch 1185 reads of the host's tensors and 0 of casts, with it 0 and 1185; context 1: 237 ubatches, 1 full updates, 8836 rows uploaded (37.3 a ubatch), 237 checked; 3552 checks, 0 failed
+24ae0aa83	c720	stage unified-k32-u16-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1445 reading ops compared (k_idxs 289, tail_idxs 289, new_pool_idxs 289, new_pool_rep 289, new_pool_pos 289), 12487 values, 0 differ; without the switch 1445 reads of the host's tensors and 0 of casts, with it 0 and 1445; context 1: 289 ubatches, 1 full updates, 11306 rows uploaded (39.1 a ubatch), 289 checked; 4064 checks, 0 failed
+24ae0aa83	c720	stage unified-k32-u16-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1470 reading ops compared (k_idxs 294, tail_idxs 294, new_pool_idxs 294, new_pool_rep 294, new_pool_pos 294), 12684 values, 0 differ; without the switch 1470 reads of the host's tensors and 0 of casts, with it 0 and 1470; context 1: 294 ubatches, 1 full updates, 10844 rows uploaded (36.9 a ubatch), 294 checked; 4122 checks, 0 failed
+24ae0aa83	c720	stage unified-k32-u512-s1	OK	rc=0; 239 decodes, 1020 outputs compared, 0 differ; 39 rollbacks, 20 two-sequence batches, 12/5 checkpoints saved/restored, 13/3 sequence states saved/restored, 3 clears; inputs read: 1195 reading ops compared (k_idxs 239, tail_idxs 239, new_pool_idxs 239, new_pool_rep 239, new_pool_pos 239), 12073 values, 0 differ; without the switch 1195 reads of the host's tensors and 0 of casts, with it 0 and 1195; context 1: 239 ubatches, 1 full updates, 9335 rows uploaded (39.1 a ubatch), 239 checked; 3564 checks, 0 failed
+24ae0aa83	c720	stage unified-k32-u512-s2	OK	rc=0; 237 decodes, 1234 outputs compared, 0 differ; 28 rollbacks, 13 two-sequence batches, 14/7 checkpoints saved/restored, 12/4 sequence states saved/restored, 3 clears; inputs read: 1185 reading ops compared (k_idxs 237, tail_idxs 237, new_pool_idxs 237, new_pool_rep 237, new_pool_pos 237), 12189 values, 0 differ; without the switch 1185 reads of the host's tensors and 0 of casts, with it 0 and 1185; context 1: 237 ubatches, 1 full updates, 8836 rows uploaded (37.3 a ubatch), 237 checked; 3552 checks, 0 failed
+c408dabcb	c620	build-rig	OK	llama.cpp-20261111-c408dabcb-pascal-p106-v4-b12246-night; commit: c408dabcb31782e85b140817911b3d49fb7e8078 (2026-11-11 03:34:44 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+c408dabcb	c620	build-extra	OK	test-llama-archs in llama.cpp-20261111-c408dabcb-pascal-p106-v4-b12246-night/bin
+c408dabcb	c620	cpubuild	OK	rc=0; commit c408dabcb
+c408dabcb	c620	kvonly-rig-s1	OK	rc=0; Summary: all 5 test(s) passed
+c408dabcb	c620	kvonly-rig-s2	OK	rc=0; Summary: all 5 test(s) passed
+c408dabcb	c620	kvonly-rig-s3	OK	rc=0; Summary: all 5 test(s) passed
+c408dabcb	c620	kvonly-cpu-s1	OK	rc=0; Summary: all 5 test(s) passed
+c408dabcb	c620	kvonly-cpu-s2	OK	rc=0; Summary: all 5 test(s) passed
+c408dabcb	c620	kvonly-cpu-s3	OK	rc=0; Summary: all 5 test(s) passed
+c408dabcb	c620	off	OK	base wrote 146 logits files; 146 compared, 0 differ: none; base: Summary: all 151 test(s) passed; branch: Summary: all 151 test(s) passed; base rc=0 branch rc=0 
+c408dabcb	combo	qsa four on	OK	1 compared, 0 differ; Summary: all 1 test(s) passed; on rc=0
+c408dabcb	combo	qsa four top8-on	OK	1 compared, 0 differ; Summary: all 1 test(s) passed; top8-on rc=0
+c408dabcb	set	replay -o FLASH_ATTN_EXT -p n_kv_max=[1-9]	OK	rc=0; 0 FAIL lines; 135/135 tests passed;   replay: $M/sets/v4night: 135 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o MUL_MAT -p type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],	OK	rc=0; 0 FAIL lines; 102/102 tests passed;   replay: $M/sets/v4night: 102 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o MUL_MAT -p type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],	OK	rc=0; 0 FAIL lines; 295/295 tests passed;   replay: $M/sets/v4night: 295 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o LIGHTNING_INDEXER -p n_cells=|nh=4,|nb=(1|32),	OK	rc=0; 0 FAIL lines; 269/269 tests passed;   replay: $M/sets/v4night: 269 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o LIGHTNING_INDEXER -p n_cells=	OK	rc=0; 0 FAIL lines; 113/113 tests passed;   replay: $M/sets/v4night: 113 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o RANGE_MASK -p .	OK	rc=0; 0 FAIL lines; 22/22 tests passed;   replay: $M/sets/v4night: 22 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o TOP_K -p ne=\[248320,	OK	rc=0; 0 FAIL lines; 39/39 tests passed;   replay: $M/sets/v4night: 39 cases replayed, 0 selected by the filter have no record
+c408dabcb	set	replay -o TOP_K_ROWS -p .	OK	rc=0; 0 FAIL lines; 75/75 tests passed;   replay: $M/sets/v4night: 75 cases replayed, 0 selected by the filter have no record
+c408dabcb	c701	tip tree	OK	commit c408dabcb31782e85b140817911b3d49fb7e8078 ggml-rpc: GGML_OP_RANGE_MASK (C719) is the 106th op: the static assert, 
+c408dabcb	c701	tip build	OK	rc=0; 3 warning lines, 0 error lines
+c408dabcb	c701	base tree	OK	commit 84f7bd3d2e89aeedb065554eaca47ce4401cfd79 gemma4: no row pruning before the KV-shared layers with the masks built 
+c408dabcb	c701	base build	OK	rc=0; 3 warning lines, 0 error lines
+c408dabcb	c701	model write	OK	$M/c701/cpu/models/qwen4exp-moe.gguf; $M/c701/cpu/models/qwen4exp-moe.gguf: 492130240 bytes $M/c701/cpu/models/vocab.gguf: 5928682 bytes 
+c408dabcb	c701	cpu text	OK	base, off, on: 075f2419 075f2419 075f2419, 95 bytes; rc 0 0 0
+c408dabcb	c701	cpu off-silent	OK	trace lines: off 0, base 0
+c408dabcb	c701	cpu on-lines	OK	decode-trace 18, ubatch-trace 25, sched-trace 24, sched-replan 0, galloc-trigger 0, galloc-grow 1
+c408dabcb	c701	rpc text	OK	base, off, on: 075f2419 075f2419 075f2419, 95 bytes; rc 0 0 0
+c408dabcb	c701	rpc off-silent	OK	trace lines: off 0, base 0
+c408dabcb	c701	rpc on-lines	OK	decode-trace 18, ubatch-trace 25, sched-trace 24, sched-replan 0, galloc-trigger 0, galloc-grow 2
+c408dabcb	c701	rpc splits	OK	24 of 24 evaluations with 2+ splits; 24 of 24 micro-batches with a card0
+c408dabcb	c701	server text	OK	off, on: 0cf04996 0cf04996
+c408dabcb	c701	server lines	OK	off: trace 0, phase 0; on: ubatch 28, sched 26, phase 1
+c408dabcb	c701	table rpc	OK	log $M/c701/cpu/runs/rpc-on.err: 18 decode calls, 24 micro-batches, 48 splits, 0 re-plans, 0 evaluations outside a micro-batch; min tokens 1
