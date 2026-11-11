@@ -1,0 +1,46 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+check (whole load)	1395	157	157	47	+1	0.66	0.66
+hostmask (whole load)	933	147	147	47	+0	9.49	9.16
+kpool (whole load)	878	91	91	41	+4	1.00	0.82
+mask (whole load)	878	512	512	1042	+714	11.00	10.67
+warm (whole load)	881	160	160	704	+14	6.13	5.60
+warm decode pass 1 depth 0	13	443	443	22	+0	0.00	0.00
+warm decode pass 2 depth 0	13	434	434	22	+0	0.00	0.00
+warm prime pass 0 depth 16384	126	307	307	22	+0	0.20	0.18
+warm decode pass 1 depth 16384	17	161	161	22	+0	0.13	0.01
+warm decode pass 2 depth 16384	15	160	160	22	+0	0.02	0.00
+warm prime pass 0 depth 49152	404	257	257	554	+532	6.13	5.60
+warm decode pass 1 depth 49152	22	657	657	704	+150	2.57	1.74
+warm decode pass 2 depth 49152	17	692	692	704	-249	0.34	0.23
+kpool decode pass 1 depth 0	14	486	486	36	+0	0.00	0.00
+kpool decode pass 2 depth 0	13	483	483	36	+0	0.00	0.00
+kpool prime pass 0 depth 16384	126	329	329	36	+0	0.18	0.18
+kpool decode pass 1 depth 16384	18	211	211	41	+5	1.00	0.82
+kpool decode pass 2 depth 16384	15	209	209	41	+0	0.20	0.16
+kpool prime pass 0 depth 49152	404	188	188	41	+0	0.36	0.18
+kpool decode pass 1 depth 49152	22	96	96	41	+0	0.00	0.00
+kpool decode pass 2 depth 49152	17	91	91	41	+0	0.00	0.00
+mask decode pass 1 depth 0	14	512	512	41	+0	0.00	0.00
+mask decode pass 2 depth 0	13	522	522	41	+0	0.00	0.00
+mask prime pass 0 depth 16384	125	523	523	375	+334	2.96	1.69
+mask decode pass 1 depth 16384	20	697	697	605	+230	5.28	3.53
+mask decode pass 2 depth 16384	15	803	803	605	+0	0.87	0.58
+mask prime pass 0 depth 49152	395	890	890	918	+313	1.62	1.10
+mask decode pass 1 depth 49152	21	1072	1072	1042	+124	4.89	3.93
+mask decode pass 2 depth 49152	17	1095	1095	1042	-9	0.93	0.77
+check decode pass 1 depth 0	16	560	560	46	+0	0.01	0.00
+check decode pass 2 depth 0	15	560	560	46	+0	0.00	0.00
+check prime pass 0 depth 16384	240	403	403	46	+0	0.18	0.18
+check decode pass 1 depth 16384	18	267	267	46	+0	0.14	0.14
+check decode pass 2 depth 16384	17	267	267	46	+0	0.01	0.01
+check prime pass 0 depth 49152	795	233	233	46	+0	0.00	0.00
+check decode pass 1 depth 49152	24	157	157	47	+1	0.18	0.18
+check decode pass 2 depth 49152	19	161	161	47	+0	0.36	0.36
+hostmask decode pass 1 depth 0	14	561	561	47	+0	0.29	0.22
+hostmask decode pass 2 depth 0	12	565	565	47	+0	0.05	0.04
+hostmask prime pass 0 depth 16384	142	411	411	47	+0	0.01	0.01
+hostmask decode pass 1 depth 16384	17	274	274	47	+0	0.00	0.00
+hostmask decode pass 2 depth 16384	15	274	274	47	+0	0.00	0.00
+hostmask prime pass 0 depth 49152	442	268	268	47	+0	0.18	0.18
+hostmask decode pass 1 depth 49152	22	147	147	47	+0	0.00	0.00
+hostmask decode pass 2 depth 49152	17	149	149	47	+0	0.00	0.00

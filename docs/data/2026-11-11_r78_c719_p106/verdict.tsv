@@ -1,0 +1,13 @@
+set	depth	pass	warm	base_loads	switch_loads	mask_minus_kpool	base_mean	switch_mean	delta	spread	class
+this run	0	1	125.41	kpool=125.98	mask=125.58;hostmask=126.15	-0.40	125.98	125.87	-0.11	0.57	negligible
+this run	0	2	121.40	kpool=122.18	mask=121.60;hostmask=121.96	-0.58	122.18	121.78	-0.40	0.36	gain
+this run	16384	1	167.35	kpool=165.63	mask=195.55;hostmask=164.44	29.91	165.63	179.99	14.36	31.10	negligible
+this run	16384	2	149.33	kpool=146.70	mask=145.43;hostmask=146.11	-1.27	146.70	145.77	-0.93	0.68	gain
+this run	49152	1	226.26	kpool=208.38	mask=206.63;hostmask=207.07	-1.74	208.38	206.85	-1.53	0.43	gain
+this run	49152	2	180.38	kpool=173.87	mask=172.04;hostmask=172.82	-1.83	173.87	172.43	-1.44	0.78	gain
+with the base arm's loads of other runs	0	1	125.41	kpool=125.98;R74dev=125.38;R74hostdev=125.94;R80dev=125.89;R80hostdev=126.31	mask=125.58;hostmask=126.15	-0.40	125.90	125.87	-0.03	0.93	negligible
+with the base arm's loads of other runs	0	2	121.40	kpool=122.18;R74dev=121.66;R74hostdev=121.97;R80dev=121.52;R80hostdev=122.15	mask=121.60;hostmask=121.96	-0.58	121.90	121.78	-0.12	0.66	negligible
+with the base arm's loads of other runs	16384	1	167.35	kpool=165.63;R74dev=182.70;R74hostdev=165.60;R80dev=165.40;R80hostdev=172.55	mask=195.55;hostmask=164.44	29.91	170.38	179.99	9.62	31.10	negligible
+with the base arm's loads of other runs	16384	2	149.33	kpool=146.70;R74dev=146.62;R74hostdev=146.97;R80dev=146.77;R80hostdev=147.05	mask=145.43;hostmask=146.11	-1.27	146.82	145.77	-1.05	0.68	gain
+with the base arm's loads of other runs	49152	1	226.26	kpool=208.38;R74dev=227.80;R74hostdev=247.25;R80dev=208.81;R80hostdev=221.29	mask=206.63;hostmask=207.07	-1.74	222.71	206.85	-15.85	38.87	negligible
+with the base arm's loads of other runs	49152	2	180.38	kpool=173.87;R74dev=173.97;R74hostdev=174.15;R80dev=174.00;R80hostdev=174.24	mask=172.04;hostmask=172.82	-1.83	174.05	172.43	-1.61	0.78	gain
