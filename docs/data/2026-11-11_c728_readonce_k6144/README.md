@@ -64,7 +64,7 @@ new code follows C722's; no device line of the existing kernels moved):
   distinct banks (C722's whole staging writes sub-block fastest: 8 lanes on the same banks). The next tile's loads go
   into registers (at most 4 16-byte units a thread) before the current tile's products, so their latency hides behind
   them. Two barriers a tile: after the raw stores, and after the conversion.
-- **Which products:** only those C722's kernel takes, at R = 1. With `GGML_CUDA_MMVQ_PASCAL_DMT_KT=1` the tiles take a
+- **Which products:** only IQ4_XS and Q4_K products that C722's kernel takes, at R = 1 (the tiles decline any other type the file's host function passes, such as C727's Q6_K). With `GGML_CUDA_MMVQ_PASCAL_DMT_KT=1` the tiles take a
   product where they give a block more warps than the whole staging does (at Flash-Next's widths: K = 6,144 at 4 tokens,
   both types, and Q4_K's at 3 tokens); `=2` wherever they fit (the checks run every width that way). The k-column
   kernel's and C757's GLU kernel's decisions call `ggml_cuda_mmvq_pascal_dmt_takes`, whose answer does not change.
@@ -99,11 +99,11 @@ On the build machine's CPU, in containers without GPUs at low priority, one step
 
 | Check | Result |
 |---|---|
-| Rig tarball | `llama.cpp-20261111-22dbaccc8-pascal-p106-v4-b12246-c728.tar.gz`, 673,977,654 B, md5 `dec8408133d658bc4ac0dcb37d792e2f`, `TESTS=1`, sm_61, 0 AVX instructions, GLIBC_2.38 at most; its `test-backend-ops` md5 `69524f94be3bdb7d4f82a7035a35176b` |
+| Rig tarball | `llama.cpp-20261111-894ed8d1c-pascal-p106-v4-b12246-c728.tar.gz`, 673,971,772 B, md5 `e58e04b0cd177939e1b10715cd9e3312`, `TESTS=1`, sm_61, 0 AVX instructions, GLIBC_2.38 at most; its `test-backend-ops` md5 `d82742863341457065a25e5744bab6c3` |
 | Every other function | llama-server's SASS and PTX, function by function against the base's (the per-file hashes of anonymous namespaces masked): 8,507 functions, 8,483 the base's code, the 24 `mul_mat_vec_q_pascal_dmt_kt` the only new ones, none gone or changed ([sass_functions.tsv](sass_functions.tsv)) |
 | The new kernels | 24 instantiations (2 types × 2–4 tokens × M = 1, 2 × prefetch on and off), 99 to 167 registers, no stack or local memory. The super-block step's instruction counts are those of C722's kernel of the same type and tokens at R = 1 (four tokens: 256 dp4a, 68 FFMA, 200 PRMT for IQ4_XS; 264, 104, 16 for Q4_K). Q4_K ends each super-block with `t = FFMA(·, ·, acc); acc = FFMA(·, −dmin, t)`, as the one-token kernel does. I2F: Q4_K's `(float) sum` of the staging only, none in IQ4_XS (C722's kernels also hold one `I2F.F32.S32.RP` each, of the integer division in their staging, which the tiles do without). 2 barriers ([sass_counts.tsv](sass_counts.tsv)) |
-| Replay set `dmtkt` | 345 cases (IQ4_XS's and Q4_K's `MUL_MAT` at 1–5 tokens: 315 hardlinked from C722's `dmt` set, the 30 new K = 6,144 cases recorded), 12 runs, one of them the fault ([replay_cases.tsv](replay_cases.tsv), [replay_runs.tsv](replay_runs.tsv)); `dmtkt.tar` 1,173,278,720 B, md5 `3f10371bc253b2cf2e1994a62505bf33` |
-| Bit-identity harness | `multitoken_bitid` with mode `dmtkt`, linked against the tip: md5 `a6aa200332ed2f37292358a70f05e380`, 90,383,496 B |
+| Replay set `dmtkt` | 345 cases (IQ4_XS's and Q4_K's `MUL_MAT` at 1–5 tokens: 315 hardlinked from C722's `dmt` set, the 30 new K = 6,144 cases recorded), 12 runs, one of them the fault ([replay_cases.tsv](replay_cases.tsv), [replay_runs.tsv](replay_runs.tsv)); `dmtkt.tar` 1,173,278,720 B, md5 `3f10371bc253b2cf2e1994a62505bf33`, recorded with the `test-backend-ops` of the branch's commit before last (`22dbaccc8`: the same test sources and CPU code; its CPU backend alone computes the references) |
+| Bit-identity harness | `multitoken_bitid` with mode `dmtkt`, linked against the tip: md5 `ae2d12e7ab19fd9ea51af182d33d24ac`, 90,383,496 B |
 | Off = base | `test-llama-archs -b CPU -s 1`: the base's static CPU build writes 146 architectures' logits, the tip's gives the same 146 with no switch and with `GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1` (CUDA switches, so the CPU path must not move) |
 | ctest | 70 of 70 in the tip's CPU build (the seven tests that need a download, the network or torch not run) |
 

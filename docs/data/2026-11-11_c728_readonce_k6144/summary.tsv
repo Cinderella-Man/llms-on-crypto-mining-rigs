@@ -1,13 +1,13 @@
 check	verdict	detail
-build	OK	rc=0; llama.cpp-20261111-22dbaccc8-pascal-p106-v4-b12246-c728.tar.gz md5 dec8408133d658bc4ac0dcb37d792e2f, 673977654 B; commit: 22dbaccc82cd04ed92815648f594e7f50bed5856 (2026-11-11 16:51:18 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 69524f94be3bdb7d4f82a7035a35176b
-record	OK	rc=0; linked 315 of 345 selected cases in all; tar: sets/dmtkt.tar 1173278720 bytes, md5 3f10371bc253b2cf2e1994a62505bf33; manifest lines 345, runs 12
-bitid-build	OK	rc=0; md5 a6aa200332ed2f37292358a70f05e380, 90383496 B; modes: 1 dmtkt strings
+build	OK	rc=0; llama.cpp-20261111-894ed8d1c-pascal-p106-v4-b12246-c728.tar.gz md5 e58e04b0cd177939e1b10715cd9e3312, 673971772 B; commit: 894ed8d1ce4be7af23db0db856370fee0fffd63d (2026-11-11 17:43:06 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 d82742863341457065a25e5744bab6c3
+functions-sass	SAME	8507 functions: 8483 the base's code, 24 new (24 mul_mat_vec_q_pascal_dmt_kt); else: none
+functions-ptx	SAME	8507 functions: 8483 the base's code, 24 new (24 mul_mat_vec_q_pascal_dmt_kt); else: none
+sass-kt	OK	rc=0; 24 instantiations, 0 kernels of the file with stack or local memory; registers 99-167; 0 with other I2F counts than C722's kernel of their type and tokens, those of a division left out
+bitid-build	OK	rc=0; md5 ae2d12e7ab19fd9ea51af182d33d24ac, 90383496 B; modes: 1 dmtkt strings
+cpu	OK	rc=0; commit 894ed8d1ce4be7af23db0db856370fee0fffd63d C728: a comment's line break; 3 warning lines, 0 error lines
+record	OK	recorded with the 22dbaccc8 tarball's test-backend-ops (the CPU backend only; the same test sources); rc=0; linked 315 of 345 selected cases in all; tar: sets/dmtkt.tar 1173278720 bytes, md5 3f10371bc253b2cf2e1994a62505bf33; manifest lines 345, runs 12
 cpubase	OK	rc=0; commit 18d0fa309986f206f501d490e4065f5610eec234 Merge -c767 (C767: GGML_CUDA_MMVQ_PASCAL_Q5K_1R, the one-token Q5_K products on C690's kernel) into -day (C773); 3 warning lines, 0 error lines
-cpu	OK	rc=0; commit 22dbaccc82cd04ed92815648f594e7f50bed5856 C728: the raw tile's token by compares, not a division; 3 warning lines, 0 error lines
 off-base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
 off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
 off-kt	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
-functions-sass	SAME	8507 functions: 8483 the base's code, 24 new (24 mul_mat_vec_q_pascal_dmt_kt); else: none
-functions-ptx	SAME	8507 functions: 8483 the base's code, 24 new (24 mul_mat_vec_q_pascal_dmt_kt); else: none
-sass-kt	OK	rc=0; 24 instantiations, 0 kernels of the file with stack or local memory; registers 99-167; 0 with other I2F counts than C722's kernel of their type and tokens, those of a division left out
