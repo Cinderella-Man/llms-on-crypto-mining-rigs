@@ -1,0 +1,5 @@
+load	groups	net_ms	generation_steps	net_ms_per_step
+1-off	3032	178.357	167	1.068
+2-on	1352	84.833	167	0.508
+3-on	1352	84.973	167	0.509
+4-off	3032	178.209	167	1.067

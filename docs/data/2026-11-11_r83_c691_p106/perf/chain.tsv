@@ -1,0 +1,3 @@
+pass	top_k_1row	four_top_k_1row	pad_4rows	off_chain_ops	top_k_4rows	on_chain_ops	saving	top_k_4rows_over_1row
+1	109.15	436.60	213.59	650.19	227.05	227.05	423.14	2.08
+2	105.55	422.20	214.96	637.16	227.38	227.38	409.78	2.15

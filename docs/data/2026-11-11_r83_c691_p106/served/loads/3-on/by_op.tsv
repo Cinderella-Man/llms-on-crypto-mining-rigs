@@ -1,0 +1,129 @@
+trace	cards	first_op	groups_per_pass	ms_per_pass
+verify-r1	cards 0 to 7	MUL_MAT	737.00	51.0477
+verify-r1	cards 0 to 7	MUL_MAT_ID	92.00	19.5668
+verify-r1	cards 0 to 7	GATED_DELTA_NET	35.00	8.6888
+verify-r1	cards 0 to 7	SCALE	197.00	1.4841
+verify-r1	cards 0 to 7	FLASH_ATTN_EXT	11.00	0.9541
+verify-r1	cards 0 to 7	RMS_NORM	174.00	0.9426
+verify-r1	cards 0 to 7	MUL	134.00	0.8061
+verify-r1	cards 0 to 7	GDN_CONV	35.00	0.7372
+verify-r1	cards 0 to 7	CONT	31.00	0.5300
+verify-r1	cards 0 to 7	SOFT_MAX	46.00	0.5179
+verify-r1	cards 0 to 7	DSV4_HC_PRE	92.00	0.4971
+verify-r1	cards 0 to 7	ADD	119.00	0.3676
+verify-r1	cards 0 to 7	CPY	20.00	0.2928
+verify-r1	cards 0 to 7	SIGMOID	93.00	0.2686
+verify-r1	cards 0 to 7	SILU	93.00	0.1987
+verify-r1	cards 0 to 7	GET_ROWS	23.00	0.1955
+verify-r1	cards 0 to 7	SOFTPLUS	35.00	0.1752
+verify-r1	cards 0 to 7	SET_ROWS	34.00	0.1468
+verify-r1	cards 0 to 7	TOP_K	11.00	0.1355
+verify-r1	cards 0 to 7	CONCAT	12.00	0.1325
+verify-r1	cards 0 to 7	ROPE	44.00	0.1116
+verify-r1	cards 0 to 7	LIGHTNING_INDEXER	11.00	0.1017
+verify-r1	cards 0 to 7	TOP_K_MASK	11.00	0.0822
+verify-r1	cards 0 to 7	SWIGLU	40.00	0.0740
+verify-r1	cards 0 to 7	FILL	33.00	0.0473
+verify-r1	cards 0 to 7	REPEAT	2.00	0.0186
+verify-r1	cards 0 to 7	ARANGE	1.00	0.0079
+verify-r1	cards 0 to 7	SQRT	1.00	0.0042
+verify-r1	cards 0 to 7	SGN	1.00	0.0041
+verify-r1	cards 0 to 7	CLAMP	1.00	0.0040
+verify-r1	cards 0 to 7	ABS	1.00	0.0028
+verify-r1	cards 0 to 7	SUM_ROWS	1.00	0.0026
+verify-r1	card 8	MUL_MAT	36.00	10.5042
+verify-r1	card 8	MUL_MAT_ID	4.00	0.8564
+verify-r1	card 8	GATED_DELTA_NET	1.00	0.2516
+verify-r1	card 8	TOP_K	2.00	0.2351
+verify-r1	card 8	FLASH_ATTN_EXT	1.00	0.0873
+verify-r1	card 8	MUL	5.00	0.0844
+verify-r1	card 8	SCALE	19.00	0.0838
+verify-r1	card 8	RMS_NORM	10.00	0.0532
+verify-r1	card 8	GET_ROWS	24.00	0.0503
+verify-r1	card 8	SOFT_MAX	6.00	0.0310
+verify-r1	card 8	ADD	13.00	0.0308
+verify-r1	card 8	SOFTPLUS	1.00	0.0294
+verify-r1	card 8	CPY	5.00	0.0265
+verify-r1	card 8	SIGMOID	5.00	0.0261
+verify-r1	card 8	DSV4_HC_PRE	4.00	0.0231
+verify-r1	card 8	CONT	3.00	0.0197
+verify-r1	card 8	GDN_CONV	1.00	0.0184
+verify-r1	card 8	SET_ROWS	8.00	0.0182
+verify-r1	card 8	ROPE	4.00	0.0137
+verify-r1	card 8	LIGHTNING_INDEXER	1.00	0.0104
+verify-r1	card 8	SILU	5.00	0.0102
+verify-r1	card 8	TOP_K_MASK	1.00	0.0089
+verify-r1	card 8	FILL	3.00	0.0075
+verify-r1	card 8	CUMSUM	4.00	0.0072
+verify-r1	card 8	SUM	4.00	0.0067
+verify-r1	card 8	CLAMP	4.00	0.0061
+verify-r1	card 8	STEP	4.00	0.0055
+verify-r1	card 8	SWIGLU	2.00	0.0054
+verify-r1	card 8	ARGSORT	4.00	0.0042
+verify-r1	card 8	ARGMAX	8.00	0.0032
+verify-r1	card 8	CONCAT	1.00	0.0030
+verify-r1	card 8	LOG	4.00	0.0028
+verify-r2	cards 0 to 7	MUL_MAT	737.00	51.0543
+verify-r2	cards 0 to 7	MUL_MAT_ID	92.00	19.5618
+verify-r2	cards 0 to 7	GATED_DELTA_NET	35.00	8.6910
+verify-r2	cards 0 to 7	SCALE	197.00	1.4696
+verify-r2	cards 0 to 7	FLASH_ATTN_EXT	11.00	0.9444
+verify-r2	cards 0 to 7	RMS_NORM	174.00	0.9425
+verify-r2	cards 0 to 7	MUL	134.00	0.7577
+verify-r2	cards 0 to 7	GDN_CONV	35.00	0.7542
+verify-r2	cards 0 to 7	CONT	31.00	0.5251
+verify-r2	cards 0 to 7	DSV4_HC_PRE	92.00	0.5172
+verify-r2	cards 0 to 7	SOFT_MAX	46.00	0.5120
+verify-r2	cards 0 to 7	ADD	119.00	0.3761
+verify-r2	cards 0 to 7	SIGMOID	93.00	0.3105
+verify-r2	cards 0 to 7	CPY	20.00	0.2972
+verify-r2	cards 0 to 7	SILU	93.00	0.1967
+verify-r2	cards 0 to 7	SOFTPLUS	35.00	0.1848
+verify-r2	cards 0 to 7	GET_ROWS	23.00	0.1786
+verify-r2	cards 0 to 7	SET_ROWS	34.00	0.1531
+verify-r2	cards 0 to 7	TOP_K	11.00	0.1389
+verify-r2	cards 0 to 7	CONCAT	12.00	0.1372
+verify-r2	cards 0 to 7	ROPE	44.00	0.1122
+verify-r2	cards 0 to 7	LIGHTNING_INDEXER	11.00	0.0994
+verify-r2	cards 0 to 7	TOP_K_MASK	11.00	0.0824
+verify-r2	cards 0 to 7	SWIGLU	40.00	0.0782
+verify-r2	cards 0 to 7	FILL	33.00	0.0497
+verify-r2	cards 0 to 7	REPEAT	2.00	0.0228
+verify-r2	cards 0 to 7	ARANGE	1.00	0.0161
+verify-r2	cards 0 to 7	SQRT	1.00	0.0043
+verify-r2	cards 0 to 7	CLAMP	1.00	0.0030
+verify-r2	cards 0 to 7	SUM_ROWS	1.00	0.0021
+verify-r2	cards 0 to 7	SGN	1.00	0.0018
+verify-r2	cards 0 to 7	ABS	1.00	0.0016
+verify-r2	card 8	MUL_MAT	36.00	10.5339
+verify-r2	card 8	MUL_MAT_ID	4.00	0.8618
+verify-r2	card 8	GATED_DELTA_NET	1.00	0.2563
+verify-r2	card 8	TOP_K	2.00	0.2317
+verify-r2	card 8	FLASH_ATTN_EXT	1.00	0.0870
+verify-r2	card 8	SCALE	19.00	0.0863
+verify-r2	card 8	MUL	5.00	0.0809
+verify-r2	card 8	RMS_NORM	10.00	0.0546
+verify-r2	card 8	GET_ROWS	24.00	0.0521
+verify-r2	card 8	ADD	13.00	0.0317
+verify-r2	card 8	SOFT_MAX	6.00	0.0298
+verify-r2	card 8	SIGMOID	5.00	0.0292
+verify-r2	card 8	CPY	5.00	0.0262
+verify-r2	card 8	DSV4_HC_PRE	4.00	0.0241
+verify-r2	card 8	SET_ROWS	8.00	0.0203
+verify-r2	card 8	GDN_CONV	1.00	0.0201
+verify-r2	card 8	CONT	3.00	0.0191
+verify-r2	card 8	ROPE	4.00	0.0141
+verify-r2	card 8	SOFTPLUS	1.00	0.0112
+verify-r2	card 8	LIGHTNING_INDEXER	1.00	0.0103
+verify-r2	card 8	SILU	5.00	0.0103
+verify-r2	card 8	TOP_K_MASK	1.00	0.0089
+verify-r2	card 8	FILL	3.00	0.0076
+verify-r2	card 8	SWIGLU	2.00	0.0066
+verify-r2	card 8	CLAMP	4.00	0.0062
+verify-r2	card 8	ARGMAX	8.00	0.0056
+verify-r2	card 8	LOG	4.00	0.0054
+verify-r2	card 8	CUMSUM	4.00	0.0054
+verify-r2	card 8	ARGSORT	4.00	0.0040
+verify-r2	card 8	SUM	4.00	0.0037
+verify-r2	card 8	STEP	4.00	0.0036
+verify-r2	card 8	CONCAT	1.00	0.0032

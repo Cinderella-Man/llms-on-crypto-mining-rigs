@@ -1,0 +1,79 @@
+trace	cards	passes	part	ms_per_pass
+verify-r1	cards 0 to 7	81	routed experts	19.569
+verify-r1	cards 0 to 7	81	shared expert	4.630
+verify-r1	cards 0 to 7	81	hyper-connections (BF16)	12.388
+verify-r1	cards 0 to 7	81	router	2.301
+verify-r1	cards 0 to 7	81	attention and recurrent projections	32.798
+verify-r1	cards 0 to 7	81	Gated DeltaNet state and conv	8.684
+verify-r1	cards 0 to 7	81	attention (FLASH_ATTN_EXT)	0.952
+verify-r1	cards 0 to 7	81	output layer	0.000
+verify-r1	cards 0 to 7	81	token embeddings	0.000
+verify-r1	cards 0 to 7	81	other ops without weights	6.100
+verify-r1	cards 0 to 7	81	other weights	0.734
+verify-r1	cards 0 to 7	81	sum of the parts	88.156
+verify-r1	card 8	81	routed experts	0.857
+verify-r1	card 8	81	shared expert	0.276
+verify-r1	card 8	81	hyper-connections (BF16)	0.562
+verify-r1	card 8	81	router	0.102
+verify-r1	card 8	81	attention and recurrent projections	1.423
+verify-r1	card 8	81	Gated DeltaNet state and conv	0.254
+verify-r1	card 8	81	attention (FLASH_ATTN_EXT)	0.088
+verify-r1	card 8	81	output layer	8.109
+verify-r1	card 8	81	token embeddings	0.000
+verify-r1	card 8	81	other ops without weights	1.070
+verify-r1	card 8	81	other weights	0.152
+verify-r1	card 8	81	sum of the parts	12.894
+verify-r1	all cards	81	routed experts	20.426
+verify-r1	all cards	81	shared expert	4.907
+verify-r1	all cards	81	hyper-connections (BF16)	12.950
+verify-r1	all cards	81	router	2.403
+verify-r1	all cards	81	attention and recurrent projections	34.221
+verify-r1	all cards	81	Gated DeltaNet state and conv	8.939
+verify-r1	all cards	81	attention (FLASH_ATTN_EXT)	1.040
+verify-r1	all cards	81	output layer	8.109
+verify-r1	all cards	81	token embeddings	0.000
+verify-r1	all cards	81	other ops without weights	7.170
+verify-r1	all cards	81	other weights	0.886
+verify-r1	all cards	81	sum of the parts	101.050
+verify-r1	card 8	81	by position: before the head's product	4.134
+verify-r1	card 8	81	by position: the head's product	8.109
+verify-r1	card 8	81	by position: after the head's product	0.651
+verify-r2	cards 0 to 7	80	routed experts	19.565
+verify-r2	cards 0 to 7	80	shared expert	4.638
+verify-r2	cards 0 to 7	80	hyper-connections (BF16)	12.399
+verify-r2	cards 0 to 7	80	router	2.303
+verify-r2	cards 0 to 7	80	attention and recurrent projections	32.760
+verify-r2	cards 0 to 7	80	Gated DeltaNet state and conv	8.703
+verify-r2	cards 0 to 7	80	attention (FLASH_ATTN_EXT)	0.945
+verify-r2	cards 0 to 7	80	output layer	0.000
+verify-r2	cards 0 to 7	80	token embeddings	0.000
+verify-r2	cards 0 to 7	80	other ops without weights	6.110
+verify-r2	cards 0 to 7	80	other weights	0.736
+verify-r2	cards 0 to 7	80	sum of the parts	88.160
+verify-r2	card 8	80	routed experts	0.861
+verify-r2	card 8	80	shared expert	0.279
+verify-r2	card 8	80	hyper-connections (BF16)	0.563
+verify-r2	card 8	80	router	0.103
+verify-r2	card 8	80	attention and recurrent projections	1.427
+verify-r2	card 8	80	Gated DeltaNet state and conv	0.259
+verify-r2	card 8	80	attention (FLASH_ATTN_EXT)	0.087
+verify-r2	card 8	80	output layer	8.113
+verify-r2	card 8	80	token embeddings	0.000
+verify-r2	card 8	80	other ops without weights	1.076
+verify-r2	card 8	80	other weights	0.153
+verify-r2	card 8	80	sum of the parts	12.921
+verify-r2	all cards	80	routed experts	20.427
+verify-r2	all cards	80	shared expert	4.917
+verify-r2	all cards	80	hyper-connections (BF16)	12.963
+verify-r2	all cards	80	router	2.405
+verify-r2	all cards	80	attention and recurrent projections	34.188
+verify-r2	all cards	80	Gated DeltaNet state and conv	8.962
+verify-r2	all cards	80	attention (FLASH_ATTN_EXT)	1.032
+verify-r2	all cards	80	output layer	8.113
+verify-r2	all cards	80	token embeddings	0.000
+verify-r2	all cards	80	other ops without weights	7.185
+verify-r2	all cards	80	other weights	0.888
+verify-r2	all cards	80	sum of the parts	101.080
+verify-r2	card 8	80	by position: before the head's product	4.157
+verify-r2	card 8	80	by position: the head's product	8.113
+verify-r2	card 8	80	by position: after the head's product	0.651

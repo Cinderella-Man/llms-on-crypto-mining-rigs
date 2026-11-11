@@ -1,0 +1,37 @@
+trace	cards	passes	where	ms_per_pass
+verify-r1	cards 0 to 7	81	the head's product	0.000
+verify-r1	cards 0 to 7	81	the sampling chain after the product	0.000
+verify-r1	cards 0 to 7	81	the output's hyper-connection products	0.000
+verify-r1	cards 0 to 7	81	GATED_DELTA_NET	8.689
+verify-r1	cards 0 to 7	81	GDN_CONV	0.737
+verify-r1	cards 0 to 7	81	copies of the PLE conv history (cache_ple_r)	0.069
+verify-r1	cards 0 to 7	81	routed experts	19.567
+verify-r1	cards 0 to 7	81	shared expert, router, hyper-connections	19.340
+verify-r1	cards 0 to 7	81	everything else	39.745
+verify-r1	card 8	81	the head's product	8.069
+verify-r1	card 8	81	the sampling chain after the product	0.317
+verify-r1	card 8	81	the output's hyper-connection products	0.107
+verify-r1	card 8	81	GATED_DELTA_NET	0.252
+verify-r1	card 8	81	GDN_CONV	0.018
+verify-r1	card 8	81	copies of the PLE conv history (cache_ple_r)	0.000
+verify-r1	card 8	81	routed experts	0.856
+verify-r1	card 8	81	shared expert, router, hyper-connections	0.944
+verify-r1	card 8	81	everything else	1.961
+verify-r2	cards 0 to 7	80	the head's product	0.000
+verify-r2	cards 0 to 7	80	the sampling chain after the product	0.000
+verify-r2	cards 0 to 7	80	the output's hyper-connection products	0.000
+verify-r2	cards 0 to 7	80	GATED_DELTA_NET	8.691
+verify-r2	cards 0 to 7	80	GDN_CONV	0.754
+verify-r2	cards 0 to 7	80	copies of the PLE conv history (cache_ple_r)	0.070
+verify-r2	cards 0 to 7	80	routed experts	19.562
+verify-r2	cards 0 to 7	80	shared expert, router, hyper-connections	19.341
+verify-r2	cards 0 to 7	80	everything else	39.758
+verify-r2	card 8	80	the head's product	8.085
+verify-r2	card 8	80	the sampling chain after the product	0.316
+verify-r2	card 8	80	the output's hyper-connection products	0.108
+verify-r2	card 8	80	GATED_DELTA_NET	0.256
+verify-r2	card 8	80	GDN_CONV	0.020
+verify-r2	card 8	80	copies of the PLE conv history (cache_ple_r)	0.000
+verify-r2	card 8	80	routed experts	0.862
+verify-r2	card 8	80	shared expert, router, hyper-connections	0.950
+verify-r2	card 8	80	everything else	1.954
