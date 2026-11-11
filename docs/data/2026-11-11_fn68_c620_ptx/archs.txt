@@ -1,0 +1,3 @@
+== test-llama-archs md5 27cbad9f678e26435a8e0f9619876755
+machine code:  187 sm_61.cubin;
+PTX:  187 sm_61.ptx;

@@ -173,8 +173,10 @@ and 32,768 tokens with `LLAMA_SPEC_DUMP` in the control and in the cut arm: ever
 probabilities must be the same wherever the control repeats itself. Second, R53's deep-lane primes with the control,
 the cut arm (`ARM_ENV_kvonly=LLAMA_MTP_KV_ONLY=1`) and no draft, two loads each, read with
 [`draft_ubatch.py`](../2026-11-10_deep_lane/run/draft_ubatch.py) for the share of the draft's prompt cost the cut
-takes away at each depth. FN68 (Q1280) checks the identity through the compute 6.1 PTX on a build machine's card
-first, if a card is free. The commands, with the `wait` and `collect` steps of
+takes away at each depth. `test-llama-archs --mtp-kv-only` runs on the CPU only (it gives its model no device): run
+from the rig tree in a container with one card, it passed 15 of 15 runs without touching the card
+([FN68](../2026-11-11_fn68_c620_ptx/README.md), Q1280), so step (a) on the rig is the cut pass's first check on CUDA;
+a device option for the check is Q1370. The commands, with the `wait` and `collect` steps of
 [bench/deep_lane](../../../bench/deep_lane/README.md) after each:
 
 ```bash

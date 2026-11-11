@@ -1,0 +1,16 @@
+seed	config	kv_prompt	drafts	kv_end	nodes_off_on	status
+1	f16 fa	identical	identical	identical	1458/531	OK
+1	f16	identical	identical	identical	1503/549	OK
+1	q8_0 fa	identical	identical	identical	1566/585	OK
+1	f16 fa top-k	identical	identical	identical	1647/531	OK
+1	f16 fa dist	identical	identical	identical	2043/2043	OK
+2	f16 fa	identical	identical	identical	1458/531	OK
+2	f16	identical	identical	identical	1503/549	OK
+2	q8_0 fa	identical	identical	identical	1566/585	OK
+2	f16 fa top-k	identical	identical	identical	1647/531	OK
+2	f16 fa dist	identical	identical	identical	2043/2043	OK
+3	f16 fa	identical	identical	identical	1458/531	OK
+3	f16	identical	identical	identical	1503/549	OK
+3	q8_0 fa	identical	identical	identical	1566/585	OK
+3	f16 fa top-k	identical	identical	identical	1647/531	OK
+3	f16 fa dist	identical	identical	identical	2043/2043	OK

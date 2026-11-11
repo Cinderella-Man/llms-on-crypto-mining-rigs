@@ -1,0 +1,14 @@
+2026-11-11T16:52:45+01:00 == ptx_check BIN=$BIN SEEDS='1 2 3' CONTROL=1 image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T16:53:05+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 20 s)
+2026-11-11T16:53:06+01:00 container fn68-ptx
+2026-11-11T15:53:06+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02, 1 MiB;
+2026-11-11T15:53:06+00:00 PTX-mode settings: CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T15:53:07+00:00 archs: == test-llama-archs md5 27cbad9f678e26435a8e0f9619876755 machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx;
+2026-11-11T15:53:09+00:00 kvonly-s1 (--mtp-kv-only -s 1): rc=0; Summary: all 5 test(s) passed; card memory max 4 MiB over 4 samples; JIT cache 0 files, 0 B
+2026-11-11T15:53:10+00:00 kvonly-s2 (--mtp-kv-only -s 2): rc=0; Summary: all 5 test(s) passed; card memory max 4 MiB over 4 samples; JIT cache 0 files, 0 B
+2026-11-11T15:53:12+00:00 kvonly-s3 (--mtp-kv-only -s 3): rc=0; Summary: all 5 test(s) passed; card memory max 4 MiB over 4 samples; JIT cache 0 files, 0 B
+2026-11-11T15:53:14+00:00 kvonly-s1-v4 (--mtp-kv-only -s 1 -v 4): rc=0; Summary: all 5 test(s) passed; card memory max 4 MiB over 4 samples; JIT cache 0 files, 0 B
+2026-11-11T15:53:14+00:00 kvonly-s1-v4 device lines: 0 naming CUDA; buffers:  10 CPU output buffer; 20 CPU KV buffer; 20 CPU compute buffer; 1 CPU model buffer; 4 CPU rotation buffer;
+2026-11-11T15:53:41+00:00 control (-a qwen4exp -b CUDA0 -s 1): rc=0; Summary: all 1 test(s) passed; card memory max 293 MiB over 52 samples; JIT cache 24 files, 44564702 B
+2026-11-11T15:53:41+00:00 table: 15 rows,  15 OK;
+2026-11-11T16:53:41+01:00 container exit 0

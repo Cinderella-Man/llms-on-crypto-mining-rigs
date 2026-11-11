@@ -1,0 +1,6 @@
+run	arguments	exit	summary	card_memory_samples_mib	card_memory_max_mib	jit_cache_files	jit_cache_bytes	where_the_work_ran
+kvonly-s1	--mtp-kv-only -s 1	0	all 5 test(s) passed	1 4 1 1	4	0	0	CPU
+kvonly-s2	--mtp-kv-only -s 2	0	all 5 test(s) passed	1 4 1 1	4	0	0	CPU
+kvonly-s3	--mtp-kv-only -s 3	0	all 5 test(s) passed	1 4 1 1	4	0	0	CPU
+kvonly-s1-v4	--mtp-kv-only -s 1 -v 4	0	all 5 test(s) passed	1 4 1 1	4	0	0	CPU: 1 model, 20 KV, 20 compute, 10 output and 4 rotation buffers, all CPU; 20 scheduler graphs, 1 split each
+control	-a qwen4exp -b CUDA0 -s 1	0	all 1 test(s) passed	52 samples, the largest 293	293	24	44564702	the card: qwen4exp MoE on CUDA0, NMSE vs. CPU 1.19e-07, roundtrip OK, mixed batch 4.34e-08
