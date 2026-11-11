@@ -37,6 +37,15 @@
 // switch at 0 the k-column kernel takes every product of 1 to 8 tokens, whose sums are already the one-token ones, so
 // that run also gives 0 differences; GGML_CUDA_MMVQ_PASCAL_Q3K_MT_FAULT=1 (each token takes the next token's
 // activations) must give differences.
+// `multitoken_bitid glu` checks a gate and an up product of their own types and their SWIGLU, 2 to 8 tokens (C757: the
+// one launch of mmvq-pascal-glu.cu with GGML_CUDA_MMVQ_PASCAL_GLU_MT=1 or 2), against the same two products run apart
+// and the GLU op run apart, at the same tokens ("GLU/apart") and token by token ("GLU/1-tok"): the 15 type pairs of
+// Qwen3.8-Flash-Next's shared experts at 2560 -> 640 that the kernel takes (its two Q6_K pairs are left to the separate
+// products), and every ordered pair of Q2_0, Q3_K, Q4_K, Q5_K and IQ4_XS at 77 x 1024 (a partial row block), 33 x 8192
+// (32 lanes per row) and 200 x 512; 2 to 8 tokens where both types are Q2_0 or Q3_K, else 2 to 4. Run it with the
+// switches whose separate kernels it repeats (GGML_CUDA_MMVQ_PASCAL_DMT=1, GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1, the
+// k-column kernels on); GGML_CUDA_MMVQ_PASCAL_GLU_MT_FAULT=1 (each token takes the next token's activations) must give
+// differences.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -127,6 +136,114 @@ static void report(const char * what, ggml_type type, int n, int64_t m, int64_t 
 
 struct mm { int64_t m, k; };
 
+// as report, for a pair of types (gate+up)
+static void report_label(const char * what, const char * types, int n, int64_t m, int64_t k, const std::vector<float> & a,
+                         const std::vector<std::vector<float>> & cols, int64_t col_elems) {
+    int64_t ndiff = 0;
+    double maxrel = 0.0;
+    for (int j = 0; j < n; ++j) {
+        for (int64_t i = 0; i < col_elems; ++i) {
+            const float x = a[j * col_elems + i], y = cols[j][i];
+            if (memcmp(&x, &y, 4) != 0) {
+                ndiff++;
+                maxrel = std::max(maxrel, (double) std::abs(x - y) / (std::abs(y) + 1e-30));
+            }
+        }
+    }
+    n_checked++;
+    if (ndiff) n_diff++;
+    printf("%-14s %-13s n=%d m=%-6lld k=%-5lld: %s (%lld of %lld values differ, max rel %.2e)\n", what, types, n,
+           (long long) m, (long long) k, ndiff ? "DIFFERENT" : "bit-identical", (long long) ndiff,
+           (long long) (n * col_elems), maxrel);
+}
+
+// gate (tg) and up (tu) of m rows of k weights, SWIGLU, at 2..n_max tokens: one graph (the fused launch where the
+// backend takes it) against the products and the GLU run apart at n tokens and token by token
+static void glu_check(ggml_backend_t be, ggml_type tg, ggml_type tu, int64_t m, int64_t k, int n_max) {
+    ggml_init_params wp = { 4 * ggml_tensor_overhead(), nullptr, true };
+    ggml_context * wctx = ggml_init(wp);
+    ggml_tensor * G = ggml_new_tensor_2d(wctx, tg, k, m);
+    ggml_tensor * U = ggml_new_tensor_2d(wctx, tu, k, m);
+    ggml_backend_buffer_t wbuf = ggml_backend_alloc_ctx_tensors(wctx, be);
+    fill_weights_pool(G);
+    fill_weights_pool(U);
+    char label[48];
+    snprintf(label, sizeof(label), "%s+%s", ggml_type_name(tg), ggml_type_name(tu));
+    for (int n = 2; n <= n_max; ++n) {
+        ggml_init_params ip = { 16 * ggml_tensor_overhead(), nullptr, true };
+        ggml_context * ictx = ggml_init(ip);
+        ggml_tensor * x   = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, k, n);
+        ggml_tensor * gn  = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, m, n); // the products apart, as inputs of the GLU
+        ggml_tensor * un  = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, m, n);
+        ggml_tensor * g1  = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, m, 1);
+        ggml_tensor * u1  = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, m, 1);
+        ggml_backend_buffer_t ibuf = ggml_backend_alloc_ctx_tensors(ictx, be);
+        fill_f32(x, 1.0f);
+
+        ggml_init_params gp = { 4096 * ggml_tensor_overhead() + 64 * ggml_graph_overhead_custom(64, false), nullptr, true };
+        ggml_context * g = ggml_init(gp);
+        const std::vector<float> fused = run(be, g, ggml_swiglu_split(g, ggml_mul_mat(g, G, x), ggml_mul_mat(g, U, x)));
+        // apart at n tokens: each product alone, then the GLU op alone on their results
+        {
+            const std::vector<float> gv = run(be, g, ggml_mul_mat(g, G, x));
+            const std::vector<float> uv = run(be, g, ggml_mul_mat(g, U, x));
+            ggml_backend_tensor_set(gn, gv.data(), 0, gv.size() * sizeof(float));
+            ggml_backend_tensor_set(un, uv.data(), 0, uv.size() * sizeof(float));
+            const std::vector<float> apart = run(be, g, ggml_swiglu_split(g, gn, un));
+            std::vector<std::vector<float>> cols;
+            for (int j = 0; j < n; ++j) {
+                cols.emplace_back(apart.begin() + j * m, apart.begin() + (j + 1) * m);
+            }
+            report_label("GLU/apart", label, n, m, k, fused, cols, m);
+        }
+        // token by token: each one-token product alone, then the GLU op alone
+        {
+            std::vector<std::vector<float>> cols;
+            for (int j = 0; j < n; ++j) {
+                ggml_tensor * xj = ggml_view_2d(g, x, k, 1, x->nb[1], j * x->nb[1]);
+                const std::vector<float> gv = run(be, g, ggml_mul_mat(g, G, xj));
+                const std::vector<float> uv = run(be, g, ggml_mul_mat(g, U, xj));
+                ggml_backend_tensor_set(g1, gv.data(), 0, gv.size() * sizeof(float));
+                ggml_backend_tensor_set(u1, uv.data(), 0, uv.size() * sizeof(float));
+                cols.push_back(run(be, g, ggml_swiglu_split(g, g1, u1)));
+            }
+            report_label("GLU/1-tok", label, n, m, k, fused, cols, m);
+        }
+        ggml_free(g);
+        ggml_backend_buffer_free(ibuf);
+        ggml_free(ictx);
+    }
+    ggml_backend_buffer_free(wbuf);
+    ggml_free(wctx);
+}
+
+static int glu_main(ggml_backend_t be) {
+    const ggml_type Q2 = GGML_TYPE_Q2_0, Q3 = GGML_TYPE_Q3_K, Q4 = GGML_TYPE_Q4_K, Q5 = GGML_TYPE_Q5_K,
+                    I4 = GGML_TYPE_IQ4_XS;
+    const auto n_max = [](ggml_type a, ggml_type b) {
+        return (a == GGML_TYPE_Q2_0 || a == GGML_TYPE_Q3_K) && (b == GGML_TYPE_Q2_0 || b == GGML_TYPE_Q3_K) ? 8 : 4;
+    };
+    // Qwen3.8-Flash-Next's shared experts (Swift GSQ-RCO Q2_0), gate+up, by layer count
+    const std::vector<std::pair<ggml_type, ggml_type>> fn = {
+        { Q2, Q3 }, { Q3, Q3 }, { Q2, Q2 }, { Q3, Q2 }, { Q2, Q4 }, { Q2, I4 }, { I4, Q3 }, { Q4, Q4 }, { Q4, Q3 },
+        { Q4, Q2 }, { Q3, I4 }, { I4, Q2 }, { Q5, Q3 }, { Q3, Q5 }, { I4, Q4 },
+    };
+    for (const auto & [tg, tu] : fn) {
+        glu_check(be, tg, tu, 640, 2560, n_max(tg, tu));
+    }
+    const ggml_type types[] = { Q2, Q3, Q4, Q5, I4 };
+    for (ggml_type tg : types) {
+        for (ggml_type tu : types) {
+            for (const mm s : { mm{ 77, 1024 }, mm{ 33, 8192 }, mm{ 200, 512 } }) {
+                glu_check(be, tg, tu, s.m, s.k, n_max(tg, tu));
+            }
+        }
+    }
+    printf("%d comparisons, %d with differences\n", n_checked, n_diff);
+    ggml_backend_free(be);
+    return n_diff != 0;
+}
+
 // one model's types and shapes: dense products, E experts of which U used, experts' hidden width H and FFN width F
 struct mode_cfg {
     std::vector<ggml_type> types;
@@ -148,6 +265,9 @@ static int32_t route(int r, int i, int j, int E, int U) {
 int main(int argc, char ** argv) {
     ggml_backend_t be = ggml_backend_cuda_init(0);
     GGML_ASSERT(be);
+    if (argc > 1 && strcmp(argv[1], "glu") == 0) {
+        return glu_main(be);
+    }
     const bool ornith = argc > 1 && strcmp(argv[1], "ornith") == 0;
     const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;
     const bool dmt    = argc > 1 && strcmp(argv[1], "dmt") == 0;

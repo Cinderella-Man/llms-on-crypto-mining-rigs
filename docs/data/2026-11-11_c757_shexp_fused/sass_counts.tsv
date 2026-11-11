@@ -1,0 +1,15 @@
+kernel	NT	PF	REG	STACK	LOCAL	IDP	I2F	LDS	STS	LDG	FFMA	FMUL	FADD	MUFU	SHFL	PRMT	BAR	swiglu
+mul_mat_vec_q_pascal_glu	8	0	149	0	0	784	3	422	33	20	160	140	270	30	80	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	8	1	189	0	0	784	3	422	33	31	160	140	270	30	80	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	7	0	140	0	0	688	3	380	31	20	140	130	240	30	70	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	7	1	186	0	0	688	3	380	31	31	140	130	240	30	70	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	6	0	147	0	0	592	3	335	29	20	120	120	210	30	60	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	6	1	190	0	0	592	3	335	29	31	120	120	210	30	60	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	5	0	142	0	0	496	3	290	27	20	100	110	180	30	50	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	5	1	179	0	0	496	3	290	27	31	100	110	180	30	50	112	3	14 of 14 the same
+mul_mat_vec_q_pascal_glu	4	0	184	0	0	1168	3	678	66	49	356	187	271	72	100	400	6	35 of 35 the same
+mul_mat_vec_q_pascal_glu	4	1	240	0	0	1168	3	678	66	89	356	187	271	72	100	400	6	35 of 35 the same
+mul_mat_vec_q_pascal_glu	3	0	153	0	0	880	3	542	61	49	267	177	226	72	75	400	6	35 of 35 the same
+mul_mat_vec_q_pascal_glu	3	1	235	0	0	880	3	542	61	89	267	177	226	72	75	400	6	35 of 35 the same
+mul_mat_vec_q_pascal_glu	2	0	150	0	0	592	3	411	56	49	178	167	181	72	50	400	6	35 of 35 the same
+mul_mat_vec_q_pascal_glu	2	1	212	0	0	592	3	411	56	89	178	167	181	72	50	400	6	35 of 35 the same

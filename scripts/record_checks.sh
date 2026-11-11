@@ -68,6 +68,11 @@
 #                 shared expert's Q3_K products among them) with the 2-8-token kernel in the k-column kernel's order
 #                 (GGML_CUDA_MMVQ_PASCAL_Q3K_MT, C726) at each setting, under the Flash-Next preset's k-column switches,
 #                 without it, and its fault (docs/data/2026-11-11_c726_q3k_multitoken)
+#   glumt         MUL_MAT_GLU: a gate and an up product of their own types and their SWIGLU at 1-8 tokens (Qwen3.8-Flash-
+#                 Next's shared-expert type pairs at 2560 -> 640, and every pair of Q2_0, Q3_K, Q4_K, Q5_K and IQ4_XS at
+#                 other shapes) with the one launch of GGML_CUDA_MMVQ_PASCAL_GLU_MT (C757) at each setting, under the
+#                 preset's k-column switches with the read-once kernels it repeats (_DMT=1 _DMT_R=1, _Q5K_MT=1), without
+#                 some of them, off, and its fault (docs/data/2026-11-11_c757_shexp_fused)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -76,7 +81,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -108,6 +113,10 @@ HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
+# C757's gate/up/SWIGLU cases (MUL_MAT_GLU), and those its kernel takes under every run but the ones that turn its
+# kernels off: 2-8 tokens of Q2_0 and Q3_K pairs at the shared expert's shape
+GLUMT='type_gate=[^,]+,type_up=[^,]+,m=[0-9]+,n=[1-8],'
+GLUMT4='type_gate=(q2_0|q3_K),type_up=(q2_0|q3_K),m=640,n=[2-8],'
 # the top-k cases at Flash-Next's vocabulary
 TKV='ne=\[248320,'
 # BF16's 2-D products of 1-8 tokens, and those GGML_CUDA_MMVF_PASCAL_EXACT's 32-lane kernel takes on 5 SMs (3-4 tokens,
@@ -144,6 +153,8 @@ suite_filters() {
             printf '%s\t%s\n' MUL_MAT "$DMT" ;;
         q3kmt)
             printf '%s\t%s\n' MUL_MAT "$Q3MT" ;;
+        glumt)
+            printf '%s\t%s\n' MUL_MAT_GLU "$GLUMT" ;;
         top-k-rows)
             printf '%s\t%s\n' TOP_K "$TKV" TOP_K_ROWS '.' ;;
         qsa-union)
@@ -281,6 +292,18 @@ suite_runs() {
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q3MT"
             done
             printf '%s\t%s\t%s\t%s\tfail\t\n' q3kmt-fault "$KP $M=1 ${M}_FAULT=1" MUL_MAT "$Q3MT" ;;
+        glumt)
+            # C757: the preset's k-column switches with the read-once kernels the one launch repeats (C722's at R = 1,
+            # C690's), then its settings (without the prefetch; 1 and 4 warp pairs a block), without the preset, without
+            # C722's and C690's kernels (only Q2_0 and Q3_K pairs taken), the k-column kernel off (no pair taken), the
+            # switch off, and the fault (each token takes the next token's activations), which must fail cases
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" RO="${P}_DMT=1 ${P}_DMT_R=1 ${P}_Q5K_MT=1" M="${P}_GLU_MT"
+            for r in "glumt-on:$KP $RO $M=1" "glumt-nopf:$KP $RO $M=2" "glumt-np1:$KP $RO $M=1 ${M}_NP=1" \
+                     "glumt-np4:$KP $RO $M=1 ${M}_NP=4" "glumt-defaults:$RO $M=1" "glumt-ro-off:$KP $M=1" \
+                     "glumt-kcol-off:$RO $M=1 ${P}_KCOL=0" "glumt-off:$KP $RO"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT_GLU "$GLUMT"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' glumt-fault "$KP $RO $M=1 ${M}_FAULT=1" MUL_MAT_GLU "$GLUMT4" ;;
         top-k-rows)
             # C691: no CUDA switch (the change is in the graph); the op at the vocabulary's width, and its rows
             printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;
