@@ -1,0 +1,205 @@
+arm	kind	n_tokens	n_outputs	splits	evaluations	splits_on_second
+r	dec	1	1	CPU:n4 dev1:n348 dev2:n21	4	1
+r	dec	1	1	CPU:n4 dev1:n350 dev2:n19	1	1
+r	dec	2	2	CPU:n4 dev1:n348 dev2:n21	4	1
+r	dec	3	3	CPU:n4 dev1:n348 dev2:n21	4	1
+r	dec	4	1	CPU:n4 dev1:n348 dev2:n21	4	1
+r	dec	4	4	CPU:n4 dev1:n348 dev2:n21	398	1
+r	dec	68	0	CPU:n4 dev1:n348 dev2:n21	2	1
+r	dec	84	0	CPU:n4 dev1:n348 dev2:n21	2	1
+r	dec	128	0	CPU:n4 dev1:n348 dev2:n21	10	1
+r	mtp	1	0	dev1:n1 dev2:n168	4	1
+r	mtp	1	1	dev1:n1 dev2:n167	1218	1
+r	mtp	2	0	dev1:n1 dev2:n168	4	1
+r	mtp	2	1	dev1:n1 dev2:n167	1	1
+r	mtp	3	0	dev1:n1 dev2:n168	4	1
+r	mtp	4	0	dev1:n1 dev2:n168	404	1
+r	mtp	20	0	dev1:n1 dev2:n168	2	1
+r	mtp	64	0	dev1:n1 dev2:n168	24	1
+re	dec	1	1	CPU:n4 dev1:n348 dev2:n21	4	1
+re	dec	1	1	CPU:n4 dev1:n350 dev2:n19	1	1
+re	dec	2	2	CPU:n4 dev1:n348 dev2:n21	4	1
+re	dec	3	3	CPU:n4 dev1:n348 dev2:n21	4	1
+re	dec	4	1	CPU:n4 dev1:n348 dev2:n21	4	1
+re	dec	4	4	CPU:n4 dev1:n348 dev2:n21	398	1
+re	dec	68	0	CPU:n4 dev1:n348 dev2:n21	2	1
+re	dec	84	0	CPU:n4 dev1:n348 dev2:n21	2	1
+re	dec	128	0	CPU:n4 dev1:n348 dev2:n21	10	1
+re	mtp	1	0	dev1:n1 dev2:n168	4	1
+re	mtp	1	1	dev1:n1 dev2:n167	1218	1
+re	mtp	2	0	dev1:n1 dev2:n168	4	1
+re	mtp	2	1	dev1:n1 dev2:n167	1	1
+re	mtp	3	0	dev1:n1 dev2:n168	4	1
+re	mtp	4	0	dev1:n1 dev2:n168	404	1
+re	mtp	20	0	dev1:n1 dev2:n168	2	1
+re	mtp	64	0	dev1:n1 dev2:n168	24	1
+rd	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rd	dec	1	1	CPU:n4 dev1:n359 dev2:n19	1	1
+rd	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rd	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rd	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rd	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rd	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rd	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rd	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rd	mtp	1	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rd	mtp	1	1	dev2:n7 dev1:n1 dev2:n169	1218	2
+rd	mtp	2	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rd	mtp	2	1	dev2:n7 dev1:n1 dev2:n169	1	2
+rd	mtp	3	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rd	mtp	4	0	dev2:n7 dev1:n1 dev2:n170	404	2
+rd	mtp	20	0	dev2:n7 dev1:n1 dev2:n170	2	2
+rd	mtp	64	0	dev2:n7 dev1:n1 dev2:n170	24	2
+rde	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rde	dec	1	1	CPU:n4 dev1:n359 dev2:n19	1	1
+rde	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rde	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rde	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rde	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rde	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rde	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rde	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rde	mtp	1	0	dev1:n1 dev2:n177	4	1
+rde	mtp	1	1	dev1:n1 dev2:n176	1218	1
+rde	mtp	2	0	dev1:n1 dev2:n177	4	1
+rde	mtp	2	1	dev1:n1 dev2:n176	1	1
+rde	mtp	3	0	dev1:n1 dev2:n177	4	1
+rde	mtp	4	0	dev1:n1 dev2:n177	404	1
+rde	mtp	20	0	dev1:n1 dev2:n177	2	1
+rde	mtp	64	0	dev1:n1 dev2:n177	24	1
+rdc	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdc	dec	1	1	CPU:n4 dev1:n359 dev2:n19	1	1
+rdc	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rdc	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rdc	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdc	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rdc	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdc	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdc	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rdc	mtp	1	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rdc	mtp	1	1	dev2:n7 dev1:n1 dev2:n169	1218	2
+rdc	mtp	2	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rdc	mtp	2	1	dev2:n7 dev1:n1 dev2:n169	1	2
+rdc	mtp	3	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rdc	mtp	4	0	dev2:n7 dev1:n1 dev2:n170	404	2
+rdc	mtp	20	0	dev2:n7 dev1:n1 dev2:n170	2	2
+rdc	mtp	64	0	dev2:n7 dev1:n1 dev2:n170	24	2
+rdce	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdce	dec	1	1	CPU:n4 dev1:n359 dev2:n19	1	1
+rdce	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rdce	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rdce	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdce	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rdce	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdce	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdce	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rdce	mtp	1	0	dev1:n1 dev2:n177	4	1
+rdce	mtp	1	1	dev1:n1 dev2:n176	1218	1
+rdce	mtp	2	0	dev1:n1 dev2:n177	4	1
+rdce	mtp	2	1	dev1:n1 dev2:n176	1	1
+rdce	mtp	3	0	dev1:n1 dev2:n177	4	1
+rdce	mtp	4	0	dev1:n1 dev2:n177	404	1
+rdce	mtp	20	0	dev1:n1 dev2:n177	2	1
+rdce	mtp	64	0	dev1:n1 dev2:n177	24	1
+rds	dec	1	1	CPU:n4 dev1:n366 dev2:n21	4	1
+rds	dec	1	1	CPU:n4 dev1:n368 dev2:n19	1	1
+rds	dec	2	2	CPU:n4 dev1:n366 dev2:n21	4	1
+rds	dec	3	3	CPU:n4 dev1:n366 dev2:n21	4	1
+rds	dec	4	1	CPU:n4 dev1:n366 dev2:n21	4	1
+rds	dec	4	4	CPU:n4 dev1:n366 dev2:n21	398	1
+rds	dec	68	0	CPU:n4 dev1:n366 dev2:n21	2	1
+rds	dec	84	0	CPU:n4 dev1:n366 dev2:n21	2	1
+rds	dec	128	0	CPU:n4 dev1:n366 dev2:n21	10	1
+rds	mtp	1	0	dev2:n7 dev1:n1 dev2:n179	4	2
+rds	mtp	1	1	dev2:n7 dev1:n1 dev2:n178	1218	2
+rds	mtp	2	0	dev2:n7 dev1:n1 dev2:n179	4	2
+rds	mtp	2	1	dev2:n7 dev1:n1 dev2:n178	1	2
+rds	mtp	3	0	dev2:n7 dev1:n1 dev2:n179	4	2
+rds	mtp	4	0	dev2:n7 dev1:n1 dev2:n179	404	2
+rds	mtp	20	0	dev2:n7 dev1:n1 dev2:n179	2	2
+rds	mtp	64	0	dev2:n7 dev1:n1 dev2:n179	24	2
+rdse	dec	1	1	CPU:n4 dev1:n366 dev2:n21	4	1
+rdse	dec	1	1	CPU:n4 dev1:n368 dev2:n19	1	1
+rdse	dec	2	2	CPU:n4 dev1:n366 dev2:n21	4	1
+rdse	dec	3	3	CPU:n4 dev1:n366 dev2:n21	4	1
+rdse	dec	4	1	CPU:n4 dev1:n366 dev2:n21	4	1
+rdse	dec	4	4	CPU:n4 dev1:n366 dev2:n21	398	1
+rdse	dec	68	0	CPU:n4 dev1:n366 dev2:n21	2	1
+rdse	dec	84	0	CPU:n4 dev1:n366 dev2:n21	2	1
+rdse	dec	128	0	CPU:n4 dev1:n366 dev2:n21	10	1
+rdse	mtp	1	0	dev1:n1 dev2:n186	4	1
+rdse	mtp	1	1	dev1:n1 dev2:n185	1218	1
+rdse	mtp	2	0	dev1:n1 dev2:n186	4	1
+rdse	mtp	2	1	dev1:n1 dev2:n185	1	1
+rdse	mtp	3	0	dev1:n1 dev2:n186	4	1
+rdse	mtp	4	0	dev1:n1 dev2:n186	404	1
+rdse	mtp	20	0	dev1:n1 dev2:n186	2	1
+rdse	mtp	64	0	dev1:n1 dev2:n186	24	1
+rdk	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdk	dec	1	1	CPU:n4 dev1:n359 dev2:n19	1	1
+rdk	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rdk	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rdk	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdk	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rdk	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdk	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdk	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rdk	mtp	1	0	dev2:n7 dev1:n1 dev2:n59	4	2
+rdk	mtp	1	1	dev2:n7 dev1:n1 dev2:n169	1218	2
+rdk	mtp	2	0	dev2:n7 dev1:n1 dev2:n59	4	2
+rdk	mtp	2	1	dev2:n7 dev1:n1 dev2:n169	1	2
+rdk	mtp	3	0	dev2:n7 dev1:n1 dev2:n59	4	2
+rdk	mtp	4	0	dev2:n7 dev1:n1 dev2:n59	404	2
+rdk	mtp	20	0	dev2:n7 dev1:n1 dev2:n59	2	2
+rdk	mtp	64	0	dev2:n7 dev1:n1 dev2:n59	24	2
+rdke	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdke	dec	1	1	CPU:n4 dev1:n359 dev2:n19	1	1
+rdke	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rdke	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rdke	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdke	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rdke	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdke	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdke	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rdke	mtp	1	0	dev1:n1 dev2:n66	4	1
+rdke	mtp	1	1	dev1:n1 dev2:n176	1218	1
+rdke	mtp	2	0	dev1:n1 dev2:n66	4	1
+rdke	mtp	2	1	dev1:n1 dev2:n176	1	1
+rdke	mtp	3	0	dev1:n1 dev2:n66	4	1
+rdke	mtp	4	0	dev1:n1 dev2:n66	404	1
+rdke	mtp	20	0	dev1:n1 dev2:n66	2	1
+rdke	mtp	64	0	dev1:n1 dev2:n66	24	1
+rdb	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdb	dec	1	1	CPU:n4 dev1:n359 dev2:n204	1	1
+rdb	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rdb	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rdb	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdb	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rdb	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdb	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdb	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rdb	mtp	1	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rdb	mtp	1	1	dev2:n7 dev1:n1 dev2:n169	1218	2
+rdb	mtp	2	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rdb	mtp	2	1	dev2:n7 dev1:n1 dev2:n169	1	2
+rdb	mtp	3	0	dev2:n7 dev1:n1 dev2:n170	4	2
+rdb	mtp	4	0	dev2:n7 dev1:n1 dev2:n170	404	2
+rdb	mtp	20	0	dev2:n7 dev1:n1 dev2:n170	2	2
+rdb	mtp	64	0	dev2:n7 dev1:n1 dev2:n170	24	2
+rdbe	dec	1	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdbe	dec	1	1	CPU:n4 dev1:n359 dev2:n204	1	1
+rdbe	dec	2	2	CPU:n4 dev1:n357 dev2:n21	4	1
+rdbe	dec	3	3	CPU:n4 dev1:n357 dev2:n21	4	1
+rdbe	dec	4	1	CPU:n4 dev1:n357 dev2:n21	4	1
+rdbe	dec	4	4	CPU:n4 dev1:n357 dev2:n21	398	1
+rdbe	dec	68	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdbe	dec	84	0	CPU:n4 dev1:n357 dev2:n21	2	1
+rdbe	dec	128	0	CPU:n4 dev1:n357 dev2:n21	10	1
+rdbe	mtp	1	0	dev1:n1 dev2:n177	4	1
+rdbe	mtp	1	1	dev1:n1 dev2:n176	1218	1
+rdbe	mtp	2	0	dev1:n1 dev2:n177	4	1
+rdbe	mtp	2	1	dev1:n1 dev2:n176	1	1
+rdbe	mtp	3	0	dev1:n1 dev2:n177	4	1
+rdbe	mtp	4	0	dev1:n1 dev2:n177	404	1
+rdbe	mtp	20	0	dev1:n1 dev2:n177	2	1
+rdbe	mtp	64	0	dev1:n1 dev2:n177	24	1

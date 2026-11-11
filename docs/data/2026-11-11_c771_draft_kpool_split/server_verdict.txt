@@ -1,0 +1,16 @@
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+re = r (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rde = rd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rdce = rdc (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rdse = rds (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rdke = rdk (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+rdbe = rdb (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+(r = base as well)
+r -> re: 1661 draft evaluations one to one; splits on the second device per evaluation {1: 1661} -> {1: 1661}; splits per evaluation {2: 1661} -> {2: 1661}; the same nodes on each device in all 2090 evaluations; 429 target evaluations with the same splits
+rd -> rde: 1661 draft evaluations one to one; splits on the second device per evaluation {2: 1661} -> {1: 1661}; splits per evaluation {3: 1661} -> {2: 1661}; the same nodes on each device in all 2090 evaluations; 429 target evaluations with the same splits
+rdc -> rdce: 1661 draft evaluations one to one; splits on the second device per evaluation {2: 1661} -> {1: 1661}; splits per evaluation {3: 1661} -> {2: 1661}; the same nodes on each device in all 2090 evaluations; 429 target evaluations with the same splits
+rds -> rdse: 1661 draft evaluations one to one; splits on the second device per evaluation {2: 1661} -> {1: 1661}; splits per evaluation {3: 1661} -> {2: 1661}; the same nodes on each device in all 2090 evaluations; 429 target evaluations with the same splits
+rdk -> rdke: 1661 draft evaluations one to one; splits on the second device per evaluation {2: 1661} -> {1: 1661}; splits per evaluation {3: 1661} -> {2: 1661}; the same nodes on each device in all 2090 evaluations; 429 target evaluations with the same splits
+rdb -> rdbe: 1661 draft evaluations one to one; splits on the second device per evaluation {2: 1661} -> {1: 1661}; splits per evaluation {3: 1661} -> {2: 1661}; the same nodes on each device in all 2090 evaluations; 429 target evaluations with the same splits
+PASS

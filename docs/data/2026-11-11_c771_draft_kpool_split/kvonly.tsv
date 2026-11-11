@@ -1,0 +1,106 @@
+build	arm	seed	config	kv_prompt	drafts	kv_end	nodes_off_on	full_off_on	rows_off_on	catchup_ubatches	copies_off_on	bytes_off_on	status
+tip	dev1check	1	f16 fa	identical	identical	identical	1539/594	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	1	f16	identical	identical	identical	1584/612	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	1	q8_0 fa	identical	identical	identical	1647/648	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	1	f16 fa top-k	identical	identical	identical	1728/594	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	1	f16 fa dist	identical	identical	identical	2124/2124	1/1	574/574	9/9	63/63	44092/44092	OK (ubatches checked off/on 12/12)
+tip	dev1check	2	f16 fa	identical	identical	identical	1539/594	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	2	f16	identical	identical	identical	1584/612	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	2	q8_0 fa	identical	identical	identical	1647/648	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	2	f16 fa top-k	identical	identical	identical	1728/594	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	2	f16 fa dist	identical	identical	identical	2124/2124	1/1	574/574	9/9	63/63	44092/44092	OK (ubatches checked off/on 12/12)
+tip	dev1check	3	f16 fa	identical	identical	identical	1539/594	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	3	f16	identical	identical	identical	1584/612	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	3	q8_0 fa	identical	identical	identical	1647/648	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	3	f16 fa top-k	identical	identical	identical	1728/594	1/1	574/574	9/9	63/45	44092/29672	OK (ubatches checked off/on 12/12)
+tip	dev1check	3	f16 fa dist	identical	identical	identical	2124/2124	1/1	574/574	9/9	63/63	44092/44092	OK (ubatches checked off/on 12/12)
+tip	dev1	1	f16 fa	identical	identical	identical	1539/594	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	1	f16	identical	identical	identical	1584/612	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	1	q8_0 fa	identical	identical	identical	1647/648	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	1	f16 fa top-k	identical	identical	identical	1728/594	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	1	f16 fa dist	identical	identical	identical	2124/2124	1/1	574/574	9/9	63/63	44092/44092	OK
+tip	dev1	2	f16 fa	identical	identical	identical	1539/594	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	2	f16	identical	identical	identical	1584/612	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	2	q8_0 fa	identical	identical	identical	1647/648	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	2	f16 fa top-k	identical	identical	identical	1728/594	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	2	f16 fa dist	identical	identical	identical	2124/2124	1/1	574/574	9/9	63/63	44092/44092	OK
+tip	dev1	3	f16 fa	identical	identical	identical	1539/594	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	3	f16	identical	identical	identical	1584/612	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	3	q8_0 fa	identical	identical	identical	1647/648	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	3	f16 fa top-k	identical	identical	identical	1728/594	1/1	574/574	9/9	63/45	44092/29672	OK
+tip	dev1	3	f16 fa dist	identical	identical	identical	2124/2124	1/1	574/574	9/9	63/63	44092/44092	OK
+tip	plain	1	f16 fa	identical	identical	identical	1458/531	-	-	-	-	-	OK
+tip	plain	1	f16	identical	identical	identical	1503/549	-	-	-	-	-	OK
+tip	plain	1	q8_0 fa	identical	identical	identical	1566/585	-	-	-	-	-	OK
+tip	plain	1	f16 fa top-k	identical	identical	identical	1647/531	-	-	-	-	-	OK
+tip	plain	1	f16 fa dist	identical	identical	identical	2043/2043	-	-	-	-	-	OK
+tip	plain	2	f16 fa	identical	identical	identical	1458/531	-	-	-	-	-	OK
+tip	plain	2	f16	identical	identical	identical	1503/549	-	-	-	-	-	OK
+tip	plain	2	q8_0 fa	identical	identical	identical	1566/585	-	-	-	-	-	OK
+tip	plain	2	f16 fa top-k	identical	identical	identical	1647/531	-	-	-	-	-	OK
+tip	plain	2	f16 fa dist	identical	identical	identical	2043/2043	-	-	-	-	-	OK
+tip	plain	3	f16 fa	identical	identical	identical	1458/531	-	-	-	-	-	OK
+tip	plain	3	f16	identical	identical	identical	1503/549	-	-	-	-	-	OK
+tip	plain	3	q8_0 fa	identical	identical	identical	1566/585	-	-	-	-	-	OK
+tip	plain	3	f16 fa top-k	identical	identical	identical	1647/531	-	-	-	-	-	OK
+tip	plain	3	f16 fa dist	identical	identical	identical	2043/2043	-	-	-	-	-	OK
+tip	qsa4check	1	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	1	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	1	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	1	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	1	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	31200/31200	OK (ubatches checked off/on 12/12)
+tip	qsa4check	2	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	2	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	2	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	2	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	2	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	31200/31200	OK (ubatches checked off/on 12/12)
+tip	qsa4check	3	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	3	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	3	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	3	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	31200/30376	OK (ubatches checked off/on 12/12)
+tip	qsa4check	3	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	31200/31200	OK (ubatches checked off/on 12/12)
+tip	stage1check	1	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	1	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	1	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	1	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	1	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK (ubatches checked off/on 12/12)
+tip	stage1check	2	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	2	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	2	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	2	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	2	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK (ubatches checked off/on 12/12)
+tip	stage1check	3	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	3	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	3	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	3	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage1check	3	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK (ubatches checked off/on 12/12)
+tip	stage1	1	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	1	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	1	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	1	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	1	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK
+tip	stage1	2	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	2	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	2	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	2	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	2	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK
+tip	stage1	3	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	3	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	3	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	3	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK
+tip	stage1	3	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK
+tip	stage2check	1	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	1	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	1	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	1	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	1	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK (ubatches checked off/on 12/12)
+tip	stage2check	2	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	2	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	2	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	2	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	2	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK (ubatches checked off/on 12/12)
+tip	stage2check	3	f16 fa	identical	identical	identical	1620/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	3	f16	identical	identical	identical	1665/675	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	3	q8_0 fa	identical	identical	identical	1728/711	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	3	f16 fa top-k	identical	identical	identical	1809/657	1/1	574/574	9/9	18/9	43560/30376	OK (ubatches checked off/on 12/12)
+tip	stage2check	3	f16 fa dist	identical	identical	identical	2205/2205	1/1	574/574	9/9	18/18	43560/43560	OK (ubatches checked off/on 12/12)
