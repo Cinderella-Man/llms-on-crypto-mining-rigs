@@ -302,6 +302,14 @@ the release check's recorded requests.
   timed loads ([docs/data/2026-11-10_v4_candidate](../../docs/data/2026-11-10_v4_candidate/README.md)).
   [run/v4c_table.py](../../docs/data/2026-11-10_v4_candidate/run/v4c_table.py) reads such a run per depth and load,
   decode, the sampler pass and prompts side by side, with a class for each.
+- **The eleventh run on the rig** put two builds in one run: v4's day build with every gain and with no switch against
+  the v3.0 release, `ARM_BIN_v3` naming v3.0's llama-server beside `BIN`, the loads in an order that answers the main
+  question first (`LOADS="warm:v3 v31:v3 gains1:gains v32:v3 gains2:gains off1:off off2:off"`). The RAM watchdog
+  stopped one load (MemAvailable 54 MiB at 32,768 tokens with the checkpoints in host memory); the folder copied back
+  and `remote.sh start` again resumed the run, skipping the four finished loads
+  ([docs/data/2026-11-11_r90_v4_vs_v3](../../docs/data/2026-11-11_r90_v4_vs_v3/README.md)). A launcher whose own
+  `DRAFT` names the draft file must pass `DRAFT=on` to this driver: its `DRAFT` is on or off, and any other value
+  drops `-md`.
 - **The model notices the join.** A deep prompt is recorded sessions cut at a token count with the tail's 64 tokens
   behind them. In 10 of the 12 greedy replies at depths above 0 the model opened by saying that the context looked
   cut or garbled; at depth 0 it continued the tail's turn. Decode and prompt speed do not depend on what is written.

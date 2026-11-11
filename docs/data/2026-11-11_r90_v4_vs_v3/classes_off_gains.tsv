@@ -1,0 +1,67 @@
+metric	depth	arm	control	control_loads	arm_loads	spread	delta	percent	class
+decode	0	gains	off	27.32 26.99	27.15 27.10	0.34	-0.03	-0.12	negligible
+decode_ms_token	0	gains	off	36.60 37.05	36.84 36.90	0.45	0.04	0.12	negligible
+step_pass1	0	gains	off	123.27 125.89	112.16 112.15	2.62	-12.43	-9.98	gain
+step_pass2	0	gains	off	121.64 122.03	108.42 108.80	0.38	-13.23	-10.86	gain
+share	0	gains	off	0.7996 0.7996	0.6779 0.6779	0.0000	-0.1216	-15.21	loss
+tokens_step	0	gains	off	3.346 3.346	2.994 2.994	0.000	-0.352	-10.53	loss
+sample	0	gains	off	16.65 16.65	19.08 19.09	0.01	2.43	14.59	gain
+sample_share	0	gains	off	0.4506 0.4506	0.4189 0.4189	0.0000	-0.0317	-7.04	loss
+sample_tokens_step	0	gains	off	2.327 2.327	2.246 2.246	0.000	-0.082	-3.51	loss
+sample_step	0	gains	off	139.75 139.74	117.71 117.64	0.08	-22.07	-15.79	gain
+prompt	0	gains	off	33.1 32.8	53.6 52.1	1.6	19.9	60.54	gain
+decode	8192	gains	off	18.01 22.48	20.86 20.90	4.47	0.63	3.14	negligible
+decode_ms_token	8192	gains	off	55.52 44.49	47.94 47.86	11.04	-2.11	-4.22	negligible
+step_pass1	8192	gains	off	256.03 174.85	155.69 155.62	81.19	-59.78	-27.75	negligible
+step_pass2	8192	gains	off	152.27 152.73	127.22 126.80	0.46	-25.49	-16.71	gain
+share	8192	gains	off	0.9075 0.9075	0.6660 0.6660	0.0000	-0.2415	-26.61	loss
+tokens_step	8192	gains	off	3.683 3.683	2.960 2.960	0.000	-0.724	-19.65	loss
+sample	8192	gains	off	16.10 15.83	24.66 24.64	0.27	8.68	54.39	gain
+sample_share	8192	gains	off	0.5288 0.5288	0.7426 0.7426	0.0000	0.2138	40.43	gain
+sample_tokens_step	8192	gains	off	2.560 2.560	3.200 3.200	0.000	0.640	25.00	gain
+sample_step	8192	gains	off	159.00 161.71	129.78 129.86	2.71	-30.53	-19.04	gain
+prompt	8192	gains	off	133.0 137.7	142.0 142.0	4.7	6.6	4.89	gain
+decode	16384	gains	off	16.68 15.98	25.47 25.38	0.70	9.10	55.71	gain
+decode_ms_token	16384	gains	off	59.96 62.58	39.26 39.40	2.63	-21.94	-35.81	gain
+step_pass1	16384	gains	off	214.60 231.94	134.40 135.02	17.34	-88.56	-39.66	gain
+step_pass2	16384	gains	off	181.30 181.18	130.06 130.33	0.27	-51.04	-28.16	gain
+share	16384	gains	off	0.7778 0.7778	0.8072 0.8072	0.0000	0.0294	3.78	gain
+tokens_step	16384	gains	off	3.303 3.303	3.368 3.368	0.000	0.065	1.97	gain
+sample	16384	gains	off	17.86 17.53	27.15 27.18	0.33	9.47	53.54	gain
+sample_share	16384	gains	off	0.7807 0.7807	0.8852 0.8852	0.0000	0.1045	13.38	gain
+sample_tokens_step	16384	gains	off	3.282 3.282	3.606 3.606	0.000	0.324	9.86	gain
+sample_step	16384	gains	off	183.76 187.25	132.79 132.65	3.49	-52.79	-28.45	gain
+prompt	16384	gains	off	113.3 113.9	125.8 125.0	0.8	11.8	10.42	gain
+decode	32768	gains	off	11.46 11.55	19.71 19.67	0.09	8.19	71.17	gain
+decode_ms_token	32768	gains	off	87.25 86.59	50.73 50.84	0.66	-36.14	-41.58	gain
+step_pass1	32768	gains	off	269.51 265.46	145.29 145.39	4.05	-122.14	-45.66	gain
+step_pass2	32768	gains	off	240.89 241.08	140.05 140.58	0.53	-100.67	-41.77	gain
+share	32768	gains	off	0.6595 0.6595	0.6111 0.6111	0.0000	-0.0484	-7.34	loss
+tokens_step	32768	gains	off	2.926 2.926	2.813 2.813	0.000	-0.113	-3.85	loss
+sample	32768	gains	off	10.68 10.67	20.39 20.46	0.06	9.75	91.29	gain
+sample_share	32768	gains	off	0.5521 0.5521	0.6786 0.6786	0.0000	0.1265	22.91	gain
+sample_tokens_step	32768	gains	off	2.639 2.639	3.012 3.012	0.000	0.373	14.12	gain
+sample_step	32768	gains	off	247.08 247.28	147.69 147.23	0.45	-99.72	-40.34	gain
+prompt	32768	gains	off	93.8 93.3	98.5 98.7	0.5	5.0	5.39	gain
+decode	49152	gains	off	11.32 11.31	21.06 20.05	1.01	9.24	81.66	gain
+decode_ms_token	49152	gains	off	88.32 88.45	47.49 49.88	2.38	-39.70	-44.92	gain
+step_pass1	49152	gains	off	303.56 304.26	170.14 185.90	15.76	-125.89	-41.42	gain
+step_pass2	49152	gains	off	299.38 299.53	149.81 150.10	0.29	-149.50	-49.92	gain
+share	49152	gains	off	0.8265 0.8265	0.8108 0.8108	0.0000	-0.0157	-1.90	loss
+tokens_step	49152	gains	off	3.413 3.413	3.368 3.368	0.000	-0.045	-1.32	loss
+sample	49152	gains	off	10.91 10.92	19.75 19.97	0.23	8.95	81.97	gain
+sample_share	49152	gains	off	0.7885 0.7885	0.7090 0.7090	0.0000	-0.0795	-10.09	loss
+sample_tokens_step	49152	gains	off	3.325 3.325	3.084 3.084	0.000	-0.240	-7.23	loss
+sample_step	49152	gains	off	304.66 304.60	156.19 154.43	1.77	-149.32	-49.02	gain
+prompt	49152	gains	off	71.8 71.5	75.5 76.5	1.0	4.4	6.07	gain
+decode	all depths	gains	off	15.26 15.67	22.50 22.24	0.41	6.90	44.64	gain
+decode_ms_token	all depths	gains	off	65.53 63.83	44.45 44.97	1.70	-19.97	-30.87	gain
+step_pass1	all depths	gains	off	233.32 221.93	143.21 146.18	11.39	-82.93	-36.43	gain
+step_pass2	all depths	gains	off	201.05 201.25	130.85 131.06	0.21	-70.20	-34.90	gain
+share	all depths	gains	off	0.7884 0.7884	0.7084 0.7084	0.0000	-0.0799	-10.14	loss
+tokens_step	all depths	gains	off	3.316 3.316	3.084 3.084	0.000	-0.232	-6.99	loss
+sample	all depths	gains	off	13.76 13.68	21.79 21.86	0.08	8.11	59.10	gain
+sample_share	all depths	gains	off	0.6006 0.6006	0.6612 0.6612	0.0000	0.0606	10.09	gain
+sample_tokens_step	all depths	gains	off	2.771 2.771	2.956 2.956	0.000	0.186	6.70	gain
+sample_step	all depths	gains	off	201.36 202.57	135.67 135.22	1.21	-66.52	-32.94	gain
+prompt	all depths	gains	off	91.5 91.5	97.0 97.6	0.6	5.8	6.31	gain

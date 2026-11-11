@@ -1,0 +1,281 @@
+depth	arm	load	metric	value
+0	v3	v31	decode	26.92
+0	v3	v32	decode	26.62
+0	off	off1	decode	27.32
+0	off	off2	decode	26.99
+0	v3	v31	decode_ms_token	37.15
+0	v3	v32	decode_ms_token	37.57
+0	off	off1	decode_ms_token	36.60
+0	off	off2	decode_ms_token	37.05
+0	v3	v31	step_pass1	124.96
+0	v3	v32	step_pass1	127.65
+0	off	off1	step_pass1	123.27
+0	off	off2	step_pass1	125.89
+0	v3	v31	step_pass2	123.66
+0	v3	v32	step_pass2	123.70
+0	off	off1	step_pass2	121.64
+0	off	off2	step_pass2	122.03
+0	v3	v31	share	0.7996
+0	v3	v32	share	0.7996
+0	off	off1	share	0.7996
+0	off	off2	share	0.7996
+0	v3	v31	tokens_step	3.346
+0	v3	v32	tokens_step	3.346
+0	off	off1	tokens_step	3.346
+0	off	off2	tokens_step	3.346
+0	v3	v31	sample	17.03
+0	v3	v32	sample	16.12
+0	off	off1	sample	16.65
+0	off	off2	sample	16.65
+0	v3	v31	sample_share	0.4506
+0	v3	v32	sample_share	0.4506
+0	off	off1	sample_share	0.4506
+0	off	off2	sample_share	0.4506
+0	v3	v31	sample_tokens_step	2.327
+0	v3	v32	sample_tokens_step	2.327
+0	off	off1	sample_tokens_step	2.327
+0	off	off2	sample_tokens_step	2.327
+0	v3	v31	sample_step	136.65
+0	v3	v32	sample_step	144.40
+0	off	off1	sample_step	139.75
+0	off	off2	sample_step	139.74
+0	v3	v31	prompt	32.8
+0	v3	v32	prompt	31.7
+0	off	off1	prompt	33.1
+0	off	off2	prompt	32.8
+8192	v3	v31	decode	19.43
+8192	v3	v32	decode	19.30
+8192	off	off1	decode	18.01
+8192	off	off2	decode	22.48
+8192	v3	v31	decode_ms_token	51.47
+8192	v3	v32	decode_ms_token	51.80
+8192	off	off1	decode_ms_token	55.52
+8192	off	off2	decode_ms_token	44.49
+8192	v3	v31	step_pass1	234.86
+8192	v3	v32	step_pass1	217.84
+8192	off	off1	step_pass1	256.03
+8192	off	off2	step_pass1	174.85
+8192	v3	v31	step_pass2	158.48
+8192	v3	v32	step_pass2	152.65
+8192	off	off1	step_pass2	152.27
+8192	off	off2	step_pass2	152.73
+8192	v3	v31	share	0.9643
+8192	v3	v32	share	0.8849
+8192	off	off1	share	0.9075
+8192	off	off2	share	0.9075
+8192	v3	v31	tokens_step	3.821
+8192	v3	v32	tokens_step	3.580
+8192	off	off1	tokens_step	3.683
+8192	off	off2	tokens_step	3.683
+8192	v3	v31	sample	19.33
+8192	v3	v32	sample	17.11
+8192	off	off1	sample	16.10
+8192	off	off2	sample	15.83
+8192	v3	v31	sample_share	0.7160
+8192	v3	v32	sample_share	0.6007
+8192	off	off1	sample_share	0.5288
+8192	off	off2	sample_share	0.5288
+8192	v3	v31	sample_tokens_step	3.122
+8192	v3	v32	sample_tokens_step	2.783
+8192	off	off1	sample_tokens_step	2.560
+8192	off	off2	sample_tokens_step	2.560
+8192	v3	v31	sample_step	161.49
+8192	v3	v32	sample_step	162.61
+8192	off	off1	sample_step	159.00
+8192	off	off2	sample_step	161.71
+8192	v3	v31	prompt	124.6
+8192	v3	v32	prompt	125.7
+8192	off	off1	prompt	133.0
+8192	off	off2	prompt	137.7
+16384	v3	v31	decode	18.36
+16384	v3	v32	decode	16.61
+16384	off	off1	decode	16.68
+16384	off	off2	decode	15.98
+16384	v3	v31	decode_ms_token	54.46
+16384	v3	v32	decode_ms_token	60.19
+16384	off	off1	decode_ms_token	59.96
+16384	off	off2	decode_ms_token	62.58
+16384	v3	v31	step_pass1	208.69
+16384	v3	v32	step_pass1	254.45
+16384	off	off1	step_pass1	214.60
+16384	off	off2	step_pass1	231.94
+16384	v3	v31	step_pass2	184.07
+16384	v3	v32	step_pass2	185.79
+16384	off	off1	step_pass2	181.30
+16384	off	off2	step_pass2	181.18
+16384	v3	v31	share	0.8810
+16384	v3	v32	share	0.8986
+16384	off	off1	share	0.7778
+16384	off	off2	share	0.7778
+16384	v3	v31	tokens_step	3.606
+16384	v3	v32	tokens_step	3.657
+16384	off	off1	tokens_step	3.303
+16384	off	off2	tokens_step	3.303
+16384	v3	v31	sample	17.57
+16384	v3	v32	sample	16.10
+16384	off	off1	sample	17.86
+16384	off	off2	sample	17.53
+16384	v3	v31	sample_share	0.7706
+16384	v3	v32	sample_share	0.7597
+16384	off	off1	sample_share	0.7807
+16384	off	off2	sample_share	0.7807
+16384	v3	v31	sample_tokens_step	3.282
+16384	v3	v32	sample_tokens_step	3.241
+16384	off	off1	sample_tokens_step	3.282
+16384	off	off2	sample_tokens_step	3.282
+16384	v3	v31	sample_step	186.82
+16384	v3	v32	sample_step	201.23
+16384	off	off1	sample_step	183.76
+16384	off	off2	sample_step	187.25
+16384	v3	v31	prompt	108.5
+16384	v3	v32	prompt	108.4
+16384	off	off1	prompt	113.3
+16384	off	off2	prompt	113.9
+32768	v3	v31	decode	11.58
+32768	v3	v32	decode	10.83
+32768	off	off1	decode	11.46
+32768	off	off2	decode	11.55
+32768	v3	v31	decode_ms_token	86.38
+32768	v3	v32	decode_ms_token	92.32
+32768	off	off1	decode_ms_token	87.25
+32768	off	off2	decode_ms_token	86.59
+32768	v3	v31	step_pass1	264.26
+32768	v3	v32	step_pass1	261.33
+32768	off	off1	step_pass1	269.51
+32768	off	off2	step_pass1	265.46
+32768	v3	v31	step_pass2	244.09
+32768	v3	v32	step_pass2	244.11
+32768	off	off1	step_pass2	240.89
+32768	off	off2	step_pass2	241.08
+32768	v3	v31	share	0.6576
+32768	v3	v32	share	0.5898
+32768	off	off1	share	0.6595
+32768	off	off2	share	0.6595
+32768	v3	v31	tokens_step	2.943
+32768	v3	v32	tokens_step	2.738
+32768	off	off1	tokens_step	2.926
+32768	off	off2	tokens_step	2.926
+32768	v3	v31	sample	10.42
+32768	v3	v32	sample	8.73
+32768	off	off1	sample	10.68
+32768	off	off2	sample	10.67
+32768	v3	v31	sample_share	0.5505
+32768	v3	v32	sample_share	0.4017
+32768	off	off1	sample_share	0.5521
+32768	off	off2	sample_share	0.5521
+32768	v3	v31	sample_tokens_step	2.612
+32768	v3	v32	sample_tokens_step	2.188
+32768	off	off1	sample_tokens_step	2.639
+32768	off	off2	sample_tokens_step	2.639
+32768	v3	v31	sample_step	250.65
+32768	v3	v32	sample_step	250.63
+32768	off	off1	sample_step	247.08
+32768	off	off2	sample_step	247.28
+32768	v3	v31	prompt	90.0
+32768	v3	v32	prompt	90.1
+32768	off	off1	prompt	93.8
+32768	off	off2	prompt	93.3
+49152	v3	v31	decode	11.68
+49152	v3	v32	decode	10.36
+49152	off	off1	decode	11.32
+49152	off	off2	decode	11.31
+49152	v3	v31	decode_ms_token	85.60
+49152	v3	v32	decode_ms_token	96.54
+49152	off	off1	decode_ms_token	88.32
+49152	off	off2	decode_ms_token	88.45
+49152	v3	v31	step_pass1	306.48
+49152	v3	v32	step_pass1	319.27
+49152	off	off1	step_pass1	303.56
+49152	off	off2	step_pass1	304.26
+49152	v3	v31	step_pass2	302.25
+49152	v3	v32	step_pass2	302.37
+49152	off	off1	step_pass2	299.38
+49152	off	off2	step_pass2	299.53
+49152	v3	v31	share	0.8762
+49152	v3	v32	share	0.7591
+49152	off	off1	share	0.8265
+49152	off	off2	share	0.8265
+49152	v3	v31	tokens_step	3.556
+49152	v3	v32	tokens_step	3.220
+49152	off	off1	tokens_step	3.413
+49152	off	off2	tokens_step	3.413
+49152	v3	v31	sample	8.71
+49152	v3	v32	sample	10.57
+49152	off	off1	sample	10.91
+49152	off	off2	sample	10.92
+49152	v3	v31	sample_share	0.5771
+49152	v3	v32	sample_share	0.7629
+49152	off	off1	sample_share	0.7885
+49152	off	off2	sample_share	0.7885
+49152	v3	v31	sample_tokens_step	2.695
+49152	v3	v32	sample_tokens_step	3.241
+49152	off	off1	sample_tokens_step	3.325
+49152	off	off2	sample_tokens_step	3.325
+49152	v3	v31	sample_step	309.56
+49152	v3	v32	sample_step	306.58
+49152	off	off1	sample_step	304.66
+49152	off	off2	sample_step	304.60
+49152	v3	v31	prompt	69.3
+49152	v3	v32	prompt	69.5
+49152	off	off1	prompt	71.8
+49152	off	off2	prompt	71.5
+all depths	v3	v31	decode	15.87
+all depths	v3	v32	decode	14.77
+all depths	off	off1	decode	15.26
+all depths	off	off2	decode	15.67
+all depths	v3	v31	decode_ms_token	63.01
+all depths	v3	v32	decode_ms_token	67.68
+all depths	off	off1	decode_ms_token	65.53
+all depths	off	off2	decode_ms_token	63.83
+all depths	v3	v31	step_pass1	227.62
+all depths	v3	v32	step_pass1	237.46
+all depths	off	off1	step_pass1	233.32
+all depths	off	off2	step_pass1	221.93
+all depths	v3	v31	step_pass2	204.19
+all depths	v3	v32	step_pass2	205.44
+all depths	off	off1	step_pass2	201.05
+all depths	off	off2	step_pass2	201.25
+all depths	v3	v31	share	0.8260
+all depths	v3	v32	share	0.7744
+all depths	off	off1	share	0.7884
+all depths	off	off2	share	0.7884
+all depths	v3	v31	tokens_step	3.427
+all depths	v3	v32	tokens_step	3.274
+all depths	off	off1	tokens_step	3.316
+all depths	off	off2	tokens_step	3.316
+all depths	v3	v31	sample	13.22
+all depths	v3	v32	sample	12.76
+all depths	off	off1	sample	13.76
+all depths	off	off2	sample	13.68
+all depths	v3	v31	sample_share	0.5990
+all depths	v3	v32	sample_share	0.5703
+all depths	off	off1	sample_share	0.6006
+all depths	off	off2	sample_share	0.6006
+all depths	v3	v31	sample_tokens_step	2.765
+all depths	v3	v32	sample_tokens_step	2.683
+all depths	off	off1	sample_tokens_step	2.771
+all depths	off	off2	sample_tokens_step	2.771
+all depths	v3	v31	sample_step	209.11
+all depths	v3	v32	sample_step	210.24
+all depths	off	off1	sample_step	201.36
+all depths	off	off2	sample_step	202.57
+all depths	v3	v31	prompt	87.7
+all depths	v3	v32	prompt	88.0
+all depths	off	off1	prompt	91.5
+all depths	off	off2	prompt	91.5
+load	v3	v31	min_avail_mib	207.00
+load	v3	v31	max_swap_used_mib	975.00
+load	v3	v31	swap_change_mib	20.00
+load	v3	v31	max_psi_full	11.80
+load	v3	v32	min_avail_mib	80.00
+load	v3	v32	max_swap_used_mib	1151.00
+load	v3	v32	swap_change_mib	796.00
+load	v3	v32	max_psi_full	17.22
+load	off	off1	min_avail_mib	310.00
+load	off	off1	max_swap_used_mib	1085.00
+load	off	off1	swap_change_mib	785.00
+load	off	off1	max_psi_full	22.45
+load	off	off2	min_avail_mib	81.00
+load	off	off2	max_swap_used_mib	207.00
+load	off	off2	swap_change_mib	168.00
+load	off	off2	max_psi_full	2.91
