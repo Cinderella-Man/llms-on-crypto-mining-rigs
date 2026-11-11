@@ -273,12 +273,14 @@ suite_runs() {
                 range-mask "" RANGE_MASK . pass \
                 range-mask-fault GGML_CUDA_RANGE_MASK_FAULT=1 RANGE_MASK . fail ;;
         dmt)
-            # C722, as q5kmt: the preset's k-column switches, then the kernel's settings (R chosen per product, forced to
-            # 1 and 2; without the prefetch; fewer warps), without the preset, off, each type left out, the one-token
-            # kernels off for both types (so the new kernel is too)
+            # C722, as q5kmt: the preset's k-column switches, then the kernel's settings (the default, forced to R = 1
+            # and 2, C722's choice per product; without the prefetch; fewer warps), without the preset, off, each type
+            # left out, the one-token kernels off for both types (so the new kernel is too). Since C758 (-c758) the
+            # default is R = 1 and _R=0 is C722's choice; before it _R=0 was the default, so there dmt-rule = dmt-on.
             local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_DMT"
             for r in "dmt-on:$KP $M=1" "dmt-nopf:$KP $M=2" "dmt-r1:$KP $M=1 ${M}_R=1" "dmt-r2:$KP $M=1 ${M}_R=2" \
-                     "dmt-r1-nopf:$KP $M=2 ${M}_R=1" "dmt-nw1:$KP $M=1 ${M}_NW=1" "dmt-nw2:$KP $M=1 ${M}_NW=2" \
+                     "dmt-r1-nopf:$KP $M=2 ${M}_R=1" "dmt-r2-nopf:$KP $M=2 ${M}_R=2" "dmt-rule:$KP $M=1 ${M}_R=0" \
+                     "dmt-nw1:$KP $M=1 ${M}_NW=1" "dmt-nw2:$KP $M=1 ${M}_NW=2" \
                      "dmt-defaults:$M=1" "dmt-off:$KP" "dmt-skip-q4k:$KP $M=1 ${M}_SKIP=q4_K" \
                      "dmt-skip-iq4xs:$KP $M=1 ${M}_SKIP=iq4_xs" "dmt-skip:$KP $M=1 ${P}_SKIP=iq4_xs,q4_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$DMT"
