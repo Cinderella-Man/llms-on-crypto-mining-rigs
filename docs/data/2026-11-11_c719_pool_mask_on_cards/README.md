@@ -27,8 +27,11 @@ today, at every micro-batch, and every logit is the same with the switch and wit
   `LLAMA_QSA_POOL_MASK_DEV=1`, with the check (at `-v 5` its three contexts logged 2, 9 and 32 micro-batches, 43 masks
   read back, all equal), with `=2` (which leaves this test's contexts off: none of them is an MTP draft) and with
   C100's switch and both checks.
-- **Still to build:** the rig tarball (`TESTS=1`) and the record of its `RANGE_MASK` cases for the replay (set
-  `range-mask`), both queued on the build machine.
+- **The rig tarball builds** (`TESTS=1`, sm_61, 0 AVX instructions, GLIBC_2.38): `b59cfb001`, 647,941,112 B, md5
+  `0bc2cecac62b9a47a90ccbe6bc1e7d40`.
+- **The CUDA cases are recorded for a P106:** every `RANGE_MASK` case of that tarball's `test-backend-ops` with the
+  CPU's results (22 cases, [record.tsv](record.tsv); the set `range-mask.tar`, 121,733,120 B, md5
+  `81d491308ebd67cb91d3d7512b41784c`), and the set reads back on the CPU: 22 of 22 cases pass against their record.
 
 What a CPU cannot show is the CUDA kernel on a P106 and the speed: the rig row R78 ([Q1284](../../../quants/experiments.md))
 below.
@@ -172,6 +175,11 @@ WORK=$WORK SRC=$SRC TIP=b59cfb001 BASE_BIN=$BASE_BIN JOBS=8 THREADS=4 \
 WORK=$WORK TESTS=1 JOBS=8 DOCKER_ARGS="--cpu-shares 256" nice -n 19 bash scripts/build_llamacpp_docker.sh fork/pascal-p106-v4-b12246-c719
 # the RANGE_MASK cases with the CPU's results, from that tarball (BIN: its bin/, unpacked)
 OUT=$WORK/sets SUITE=range-mask BIN=$BIN JOBS=4 nice -n 19 bash scripts/record_checks.sh
+# the record read back on the CPU before a rig sees it, in the CUDA image without GPUs and with the toolkit's libcuda
+# stub on the library path, as record_checks.sh runs it
+docker run --rm --network none -v $BIN:$BIN:ro -v $WORK/sets:$WORK/sets:ro nvidia/cuda:12.9.2-devel-ubuntu24.04 sh -c \
+  "mkdir -p /tmp/stub && ln -sf /usr/local/cuda/lib64/stubs/libcuda.so /tmp/stub/libcuda.so.1 &&
+   LD_LIBRARY_PATH=/tmp/stub $BIN/test-backend-ops -b CPU -o RANGE_MASK --replay $WORK/sets/range-mask"
 ```
 
 ## Files
@@ -180,6 +188,7 @@ OUT=$WORK/sets SUITE=range-mask BIN=$BIN JOBS=4 nice -n 19 bash scripts/record_c
 |---|---|
 | [summary.tsv](summary.tsv) | every check of the CPU run: its arm, verdict and detail |
 | [mask.tsv](mask.tsv) | per `test-pool-mask-dev` arm: decodes, outputs compared, rollbacks, checkpoints and states restored, micro-batches, checks and masks compared |
+| [record.tsv](record.tsv) | the recorded `RANGE_MASK` cases: id, case, input and reference bytes and md5 |
 | [run/cpu_check.sh](run/cpu_check.sh) | the CPU check |
 
 The branch's own files: `ggml/include/ggml.h`, `ggml/src/ggml.c`, `ggml/src/ggml-cpu/ops.cpp` and
