@@ -66,7 +66,7 @@
 // GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 or 2), at Qwen3.8-Flash-Next's Q6_K attn_output and ssm_out (6144 -> 2560) and at the
 // other row widths the kernel takes at 2 to 4 tokens (8 and 16 lanes per row), with partial last row blocks. With the
 // switch at 0 the k-column kernel takes these products and its sums differ from the one-token kernel's;
-// GGML_CUDA_MMVQ_PASCAL_Q6K_MT_FAULT=1 (each token takes the next token's activations) must give differences.
+// GGML_CUDA_MMVQ_PASCAL_Q6K_MT_FAULT=1 (every token stages the first token's activations) must give differences.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"

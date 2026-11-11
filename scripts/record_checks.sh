@@ -87,8 +87,8 @@
 #                 token's activations), which must fail cases (docs/data/2026-11-11_c729_readonce_5to8)
 #   q6kmt         Q6_K's products of 1-5 tokens (Qwen3.8-Flash-Next's Q6_K attn_output and ssm_out, 6144 -> 2560, among them)
 #                 with C722's 2-4-token kernel (GGML_CUDA_MMVQ_PASCAL_Q6K_MT, C727) at each setting, under the preset's
-#                 k-column switches, without them, beside _DMT=1, off, Q6_K left out, and its fault (each token takes the
-#                 next token's activations), which must fail cases, and the fault without the switch, which must not
+#                 k-column switches, without them, beside _DMT=1, off, Q6_K left out, and its fault (every token stages the
+#                 first token's activations), which must fail cases, and the fault without the switch, which must not
 #                 (docs/data/2026-11-11_c727_q6k_readonce)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
@@ -321,7 +321,7 @@ suite_runs() {
         q6kmt)
             # C727, as dmt: the preset's k-column switches, then the kernel's settings (R = 1 by default, forced to 2;
             # without the prefetch; one warp a block allowed; at most 2 warps), beside _DMT=1, without the preset, off,
-            # Q6_K left out of the kernel and of the Pascal kernels, the fault (each token takes the next token's
+            # Q6_K left out of the kernel and of the Pascal kernels, the fault (every token stages the first token's
             # activations), which must fail cases, and the fault without the switch, which must not
             local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_Q6K_MT" D="${P}_DMT"
             for r in "q6kmt-on:$KP $M=1" "q6kmt-nopf:$KP $M=2" "q6kmt-r2:$KP $M=1 ${D}_R=2" \

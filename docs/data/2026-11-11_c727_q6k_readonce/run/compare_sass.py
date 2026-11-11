@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """C727: compare two builds' device code, function by function, from cuobjdump's output (no GPU). From C767's
 compare_sass.py (2026-11-11_c767_q5k_one_row/run/), with C727's expectations: the tip (pascal-p106-v4-b12246-c727) adds
-the Q6_K instantiations mul_mat_vec_q_pascal_dmt<GGML_TYPE_Q6_K, NT, R, PF> (NT 2-4, R 1-2, PF 0-1: 12) to
+the Q6_K instantiations mul_mat_vec_q_pascal_dmt<GGML_TYPE_Q6_K, NT, R, PF> (NT 2-4; R = 1 with and without the
+prefetch, R = 2 without it: 9) to
 mmvq-pascal-dmt.cu, and every other function keeps the base's code, IQ4_XS's and Q4_K's instantiations of the same
 kernel among them.
 
@@ -124,9 +125,9 @@ def main():
             r = res.get(n, (-1, -1, -1))
             n_spill += t[0] == 14 and (r[1] != 0 or r[2] != 0)
             f.write(f'{TYPES.get(t[0], t[0])}\t{t[1]}\t{t[2]}\t{t[3]}\t{ha[:12]}\t{hb[:12]}\t{state}\t{r[0]}\t{r[1]}\t{r[2]}\n')
-    if n_new != 12:
+    if n_new != 9:
         bad += 1
-        lines.append(f'mmvq-pascal-dmt.cu\tQ6_K instantiations\t{n_new} new, 12 expected\tUNEXPECTED')
+        lines.append(f'mmvq-pascal-dmt.cu\tQ6_K instantiations\t{n_new} new, 9 expected\tUNEXPECTED')
     if n_spill:
         bad += 1
         lines.append(f'mmvq-pascal-dmt.cu\tQ6_K instantiations\t{n_spill} with stack or local memory\tUNEXPECTED')

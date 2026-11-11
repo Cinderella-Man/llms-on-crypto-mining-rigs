@@ -9,7 +9,7 @@
 #           src/ and ccache/ it uses; its md5
 #   sass    CUDA 12.9's cuobjdump -sass of both tarballs' bin/llama-server (BASE_TARBALL's extracted), -sass and
 #           -res-usage of the tip's mmvq-pascal-dmt.cu.o; run/compare_sass.py (every function the base's code but the 12
-#           new Q6_K instantiations, none with stack or local memory) and run/sass_check.sh (their instruction counts)
+#           new Q6_K instantiations (9), none with stack or local memory) and run/sass_check.sh (their instruction counts)
 #   cpu     a static native CPU build (GGML_CUDA=OFF) of the tip, every target, in WORK/cpu/tree with its ccache in
 #           WORK/cpu/ccache (seeded from CPU_CCACHE_SEED when given)
 #   off     test-llama-archs -b CPU -s 1 of the tip against a copy of BASE_LOGITS (every architecture's logits as the
