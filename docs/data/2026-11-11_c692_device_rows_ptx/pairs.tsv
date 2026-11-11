@@ -1,0 +1,169 @@
+a	b	prompt	rep	same_ids	first_diff_token	steps_a	steps_b	same_steps	first_diff_step	field	pos_at_diff	max_dp_draft	max_dp_target
+rel-pre	day-pre	warmup	0	1		11	11	1				0.00000	0.00000
+rel-pre	day-pre	code	1	1		166	166	1				0.00000	0.00000
+rel-pre	day-pre	code	2	1		163	163	1				0.00000	0.00000
+rel-pre	day-pre	prose	1	1		191	191	1				0.00000	0.00000
+rel-pre	day-pre	prose	2	1		187	187	1				0.00000	0.00000
+rel-pre	day-pre	long	1	1		193	193	1				0.00000	0.00000
+rel-pre	day-pre	long	2	1		190	190	1				0.00000	0.00000
+rel-pre	day-hdev0	warmup	0	1		11	11	1				0.00000	0.00000
+rel-pre	day-hdev0	code	1	1		166	166	1				0.00000	0.00000
+rel-pre	day-hdev0	code	2	1		163	163	1				0.00000	0.00000
+rel-pre	day-hdev0	prose	1	1		191	191	1				0.00000	0.00000
+rel-pre	day-hdev0	prose	2	1		187	187	1				0.00000	0.00000
+rel-pre	day-hdev0	long	1	1		193	193	1				0.00000	0.00000
+rel-pre	day-hdev0	long	2	1		190	190	1				0.00000	0.00000
+rel-pre	rel-cache	warmup	0	1		11	11	1				0.00000	0.00000
+rel-pre	rel-cache	code	1	1		166	166	1				0.00000	0.00000
+rel-pre	rel-cache	code	2	1		163	163	1				0.00000	0.00000
+rel-pre	rel-cache	prose	1	1		191	191	1				0.00000	0.00000
+rel-pre	rel-cache	prose	2	1		187	187	1				0.00000	0.00000
+rel-pre	rel-cache	long	1	1		193	193	1				0.00000	0.00000
+rel-pre	rel-cache	long	2	1		190	190	1				0.00000	0.00000
+rel-pre	day-cache	warmup	0	1		11	11	1				0.00000	0.00000
+rel-pre	day-cache	code	1	1		166	166	1				0.00000	0.00000
+rel-pre	day-cache	code	2	1		163	163	1				0.00000	0.00000
+rel-pre	day-cache	prose	1	1		191	191	1				0.00000	0.00000
+rel-pre	day-cache	prose	2	1		187	187	1				0.00000	0.00000
+rel-pre	day-cache	long	1	1		193	193	1				0.00000	0.00000
+rel-pre	day-cache	long	2	1		190	190	1				0.00000	0.00000
+rel-pre	rel-carry	warmup	0	1		11	11	1				0.00000	0.00000
+rel-pre	rel-carry	code	1	1		166	166	1				0.00000	0.00000
+rel-pre	rel-carry	code	2	1		163	163	1				0.00000	0.00000
+rel-pre	rel-carry	prose	1	1		191	191	1				0.00000	0.00000
+rel-pre	rel-carry	prose	2	1		187	187	1				0.00000	0.00000
+rel-pre	rel-carry	long	1	1		193	193	1				0.00000	0.00000
+rel-pre	rel-carry	long	2	1		190	190	1				0.00000	0.00000
+rel-pre	day-carry	warmup	0	1		11	11	1				0.00000	0.00000
+rel-pre	day-carry	code	1	1		166	166	1				0.00000	0.00000
+rel-pre	day-carry	code	2	1		163	163	1				0.00000	0.00000
+rel-pre	day-carry	prose	1	1		191	191	1				0.00000	0.00000
+rel-pre	day-carry	prose	2	1		187	187	1				0.00000	0.00000
+rel-pre	day-carry	long	1	1		193	193	1				0.00000	0.00000
+rel-pre	day-carry	long	2	1		190	190	1				0.00000	0.00000
+day-pre	day-hdev0	warmup	0	1		11	11	1				0.00000	0.00000
+day-pre	day-hdev0	code	1	1		166	166	1				0.00000	0.00000
+day-pre	day-hdev0	code	2	1		163	163	1				0.00000	0.00000
+day-pre	day-hdev0	prose	1	1		191	191	1				0.00000	0.00000
+day-pre	day-hdev0	prose	2	1		187	187	1				0.00000	0.00000
+day-pre	day-hdev0	long	1	1		193	193	1				0.00000	0.00000
+day-pre	day-hdev0	long	2	1		190	190	1				0.00000	0.00000
+day-pre	rel-cache	warmup	0	1		11	11	1				0.00000	0.00000
+day-pre	rel-cache	code	1	1		166	166	1				0.00000	0.00000
+day-pre	rel-cache	code	2	1		163	163	1				0.00000	0.00000
+day-pre	rel-cache	prose	1	1		191	191	1				0.00000	0.00000
+day-pre	rel-cache	prose	2	1		187	187	1				0.00000	0.00000
+day-pre	rel-cache	long	1	1		193	193	1				0.00000	0.00000
+day-pre	rel-cache	long	2	1		190	190	1				0.00000	0.00000
+day-pre	day-cache	warmup	0	1		11	11	1				0.00000	0.00000
+day-pre	day-cache	code	1	1		166	166	1				0.00000	0.00000
+day-pre	day-cache	code	2	1		163	163	1				0.00000	0.00000
+day-pre	day-cache	prose	1	1		191	191	1				0.00000	0.00000
+day-pre	day-cache	prose	2	1		187	187	1				0.00000	0.00000
+day-pre	day-cache	long	1	1		193	193	1				0.00000	0.00000
+day-pre	day-cache	long	2	1		190	190	1				0.00000	0.00000
+day-pre	rel-carry	warmup	0	1		11	11	1				0.00000	0.00000
+day-pre	rel-carry	code	1	1		166	166	1				0.00000	0.00000
+day-pre	rel-carry	code	2	1		163	163	1				0.00000	0.00000
+day-pre	rel-carry	prose	1	1		191	191	1				0.00000	0.00000
+day-pre	rel-carry	prose	2	1		187	187	1				0.00000	0.00000
+day-pre	rel-carry	long	1	1		193	193	1				0.00000	0.00000
+day-pre	rel-carry	long	2	1		190	190	1				0.00000	0.00000
+day-pre	day-carry	warmup	0	1		11	11	1				0.00000	0.00000
+day-pre	day-carry	code	1	1		166	166	1				0.00000	0.00000
+day-pre	day-carry	code	2	1		163	163	1				0.00000	0.00000
+day-pre	day-carry	prose	1	1		191	191	1				0.00000	0.00000
+day-pre	day-carry	prose	2	1		187	187	1				0.00000	0.00000
+day-pre	day-carry	long	1	1		193	193	1				0.00000	0.00000
+day-pre	day-carry	long	2	1		190	190	1				0.00000	0.00000
+day-hdev0	rel-cache	warmup	0	1		11	11	1				0.00000	0.00000
+day-hdev0	rel-cache	code	1	1		166	166	1				0.00000	0.00000
+day-hdev0	rel-cache	code	2	1		163	163	1				0.00000	0.00000
+day-hdev0	rel-cache	prose	1	1		191	191	1				0.00000	0.00000
+day-hdev0	rel-cache	prose	2	1		187	187	1				0.00000	0.00000
+day-hdev0	rel-cache	long	1	1		193	193	1				0.00000	0.00000
+day-hdev0	rel-cache	long	2	1		190	190	1				0.00000	0.00000
+day-hdev0	day-cache	warmup	0	1		11	11	1				0.00000	0.00000
+day-hdev0	day-cache	code	1	1		166	166	1				0.00000	0.00000
+day-hdev0	day-cache	code	2	1		163	163	1				0.00000	0.00000
+day-hdev0	day-cache	prose	1	1		191	191	1				0.00000	0.00000
+day-hdev0	day-cache	prose	2	1		187	187	1				0.00000	0.00000
+day-hdev0	day-cache	long	1	1		193	193	1				0.00000	0.00000
+day-hdev0	day-cache	long	2	1		190	190	1				0.00000	0.00000
+day-hdev0	rel-carry	warmup	0	1		11	11	1				0.00000	0.00000
+day-hdev0	rel-carry	code	1	1		166	166	1				0.00000	0.00000
+day-hdev0	rel-carry	code	2	1		163	163	1				0.00000	0.00000
+day-hdev0	rel-carry	prose	1	1		191	191	1				0.00000	0.00000
+day-hdev0	rel-carry	prose	2	1		187	187	1				0.00000	0.00000
+day-hdev0	rel-carry	long	1	1		193	193	1				0.00000	0.00000
+day-hdev0	rel-carry	long	2	1		190	190	1				0.00000	0.00000
+day-hdev0	day-carry	warmup	0	1		11	11	1				0.00000	0.00000
+day-hdev0	day-carry	code	1	1		166	166	1				0.00000	0.00000
+day-hdev0	day-carry	code	2	1		163	163	1				0.00000	0.00000
+day-hdev0	day-carry	prose	1	1		191	191	1				0.00000	0.00000
+day-hdev0	day-carry	prose	2	1		187	187	1				0.00000	0.00000
+day-hdev0	day-carry	long	1	1		193	193	1				0.00000	0.00000
+day-hdev0	day-carry	long	2	1		190	190	1				0.00000	0.00000
+rel-cache	day-cache	warmup	0	1		11	11	1				0.00000	0.00000
+rel-cache	day-cache	code	1	1		166	166	1				0.00000	0.00000
+rel-cache	day-cache	code	2	1		163	163	1				0.00000	0.00000
+rel-cache	day-cache	prose	1	1		191	191	1				0.00000	0.00000
+rel-cache	day-cache	prose	2	1		187	187	1				0.00000	0.00000
+rel-cache	day-cache	long	1	1		193	193	1				0.00000	0.00000
+rel-cache	day-cache	long	2	1		190	190	1				0.00000	0.00000
+rel-cache	rel-carry	warmup	0	1		11	11	1				0.00000	0.00000
+rel-cache	rel-carry	code	1	1		166	166	1				0.00000	0.00000
+rel-cache	rel-carry	code	2	1		163	163	1				0.00000	0.00000
+rel-cache	rel-carry	prose	1	1		191	191	1				0.00000	0.00000
+rel-cache	rel-carry	prose	2	1		187	187	1				0.00000	0.00000
+rel-cache	rel-carry	long	1	1		193	193	1				0.00000	0.00000
+rel-cache	rel-carry	long	2	1		190	190	1				0.00000	0.00000
+rel-cache	day-carry	warmup	0	1		11	11	1				0.00000	0.00000
+rel-cache	day-carry	code	1	1		166	166	1				0.00000	0.00000
+rel-cache	day-carry	code	2	1		163	163	1				0.00000	0.00000
+rel-cache	day-carry	prose	1	1		191	191	1				0.00000	0.00000
+rel-cache	day-carry	prose	2	1		187	187	1				0.00000	0.00000
+rel-cache	day-carry	long	1	1		193	193	1				0.00000	0.00000
+rel-cache	day-carry	long	2	1		190	190	1				0.00000	0.00000
+day-cache	rel-carry	warmup	0	1		11	11	1				0.00000	0.00000
+day-cache	rel-carry	code	1	1		166	166	1				0.00000	0.00000
+day-cache	rel-carry	code	2	1		163	163	1				0.00000	0.00000
+day-cache	rel-carry	prose	1	1		191	191	1				0.00000	0.00000
+day-cache	rel-carry	prose	2	1		187	187	1				0.00000	0.00000
+day-cache	rel-carry	long	1	1		193	193	1				0.00000	0.00000
+day-cache	rel-carry	long	2	1		190	190	1				0.00000	0.00000
+day-cache	day-carry	warmup	0	1		11	11	1				0.00000	0.00000
+day-cache	day-carry	code	1	1		166	166	1				0.00000	0.00000
+day-cache	day-carry	code	2	1		163	163	1				0.00000	0.00000
+day-cache	day-carry	prose	1	1		191	191	1				0.00000	0.00000
+day-cache	day-carry	prose	2	1		187	187	1				0.00000	0.00000
+day-cache	day-carry	long	1	1		193	193	1				0.00000	0.00000
+day-cache	day-carry	long	2	1		190	190	1				0.00000	0.00000
+rel-carry	day-carry	warmup	0	1		11	11	1				0.00000	0.00000
+rel-carry	day-carry	code	1	1		166	166	1				0.00000	0.00000
+rel-carry	day-carry	code	2	1		163	163	1				0.00000	0.00000
+rel-carry	day-carry	prose	1	1		191	191	1				0.00000	0.00000
+rel-carry	day-carry	prose	2	1		187	187	1				0.00000	0.00000
+rel-carry	day-carry	long	1	1		193	193	1				0.00000	0.00000
+rel-carry	day-carry	long	2	1		190	190	1				0.00000	0.00000
+rel-pre#1	rel-pre#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+rel-pre#1	rel-pre#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+rel-pre#1	rel-pre#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000
+day-pre#1	day-pre#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+day-pre#1	day-pre#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+day-pre#1	day-pre#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000
+day-hdev0#1	day-hdev0#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+day-hdev0#1	day-hdev0#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+day-hdev0#1	day-hdev0#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000
+rel-cache#1	rel-cache#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+rel-cache#1	rel-cache#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+rel-cache#1	rel-cache#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000
+day-cache#1	day-cache#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+day-cache#1	day-cache#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+day-cache#1	day-cache#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000
+rel-carry#1	rel-carry#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+rel-carry#1	rel-carry#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+rel-carry#1	rel-carry#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000
+day-carry#1	day-carry#2	code	2	1		166	163	0	0	cand	79	0.00000	0.00000
+day-carry#1	day-carry#2	prose	2	1		191	187	0	0	cand	71	0.00000	0.00000
+day-carry#1	day-carry#2	long	2	1		193	190	0	1	cand	3300	0.00542	0.00000

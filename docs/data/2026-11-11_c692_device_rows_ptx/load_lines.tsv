@@ -1,0 +1,339 @@
+label	n	line
+rel-pre	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+rel-pre	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+rel-pre	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+rel-pre	4	load_tensors: offloaded 49/49 layers to GPU
+rel-pre	5	load_tensors:          CPU model buffer size =   260.50 MiB
+rel-pre	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+rel-pre	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+rel-pre	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+rel-pre	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+rel-pre	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+rel-pre	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+rel-pre	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+rel-pre	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+rel-pre	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+rel-pre	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+rel-pre	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+rel-pre	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+rel-pre	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+rel-pre	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+rel-pre	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+rel-pre	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+rel-pre	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+rel-pre	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+rel-pre	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+rel-pre	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+rel-pre	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+rel-pre	27	load_tensors: offloaded 50/50 layers to GPU
+rel-pre	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+rel-pre	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+rel-pre	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+rel-pre	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+rel-pre	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+rel-pre	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+rel-pre	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+rel-pre	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+rel-pre	36	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+rel-pre	37	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+rel-pre	38	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+rel-pre	39	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+rel-pre	40	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+rel-pre	41	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+rel-pre	42	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+rel-pre	43	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+rel-pre	44	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+rel-pre	45	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_rel-pre.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+rel-pre	46	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it
+day-pre	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+day-pre	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+day-pre	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+day-pre	4	load_tensors: offloaded 49/49 layers to GPU
+day-pre	5	load_tensors:          CPU model buffer size =   260.50 MiB
+day-pre	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+day-pre	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+day-pre	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+day-pre	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+day-pre	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+day-pre	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+day-pre	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+day-pre	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+day-pre	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+day-pre	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+day-pre	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+day-pre	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+day-pre	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+day-pre	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-pre	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-pre	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-pre	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+day-pre	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+day-pre	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+day-pre	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+day-pre	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+day-pre	27	load_tensors: offloaded 50/50 layers to GPU
+day-pre	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+day-pre	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+day-pre	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+day-pre	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-pre	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+day-pre	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-pre	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-pre	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-pre	36	h_nextn_dev_alloc:      CUDA2 h_nextn buffer size =    80.04 MiB
+day-pre	37	spec common_specu: - target h rows on the device: yes
+day-pre	38	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+day-pre	39	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+day-pre	40	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-pre	41	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-pre	42	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-pre	43	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-pre	44	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-pre	45	sched_reserve:      CUDA2 compute buffer size =   281.53 MiB
+day-pre	46	sched_reserve:  CUDA_Host compute buffer size =   123.28 MiB
+day-pre	47	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_day-pre.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+day-pre	48	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it
+day-hdev0	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+day-hdev0	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+day-hdev0	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+day-hdev0	4	load_tensors: offloaded 49/49 layers to GPU
+day-hdev0	5	load_tensors:          CPU model buffer size =   260.50 MiB
+day-hdev0	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+day-hdev0	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+day-hdev0	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+day-hdev0	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+day-hdev0	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+day-hdev0	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+day-hdev0	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+day-hdev0	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+day-hdev0	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+day-hdev0	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+day-hdev0	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+day-hdev0	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+day-hdev0	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+day-hdev0	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-hdev0	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-hdev0	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-hdev0	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+day-hdev0	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+day-hdev0	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+day-hdev0	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+day-hdev0	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+day-hdev0	27	load_tensors: offloaded 50/50 layers to GPU
+day-hdev0	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+day-hdev0	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+day-hdev0	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+day-hdev0	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-hdev0	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+day-hdev0	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-hdev0	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-hdev0	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-hdev0	36	set_embeddings_nextn_dev: LLAMA_MTP_H_DEV=0, extracting the h_nextn rows to host memory
+day-hdev0	37	spec common_specu: - target h rows on the device: no
+day-hdev0	38	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+day-hdev0	39	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+day-hdev0	40	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-hdev0	41	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-hdev0	42	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-hdev0	43	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-hdev0	44	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-hdev0	45	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+day-hdev0	46	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+day-hdev0	47	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_day-hdev0.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+day-hdev0	48	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it
+rel-cache	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+rel-cache	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+rel-cache	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+rel-cache	4	load_tensors: offloaded 49/49 layers to GPU
+rel-cache	5	load_tensors:          CPU model buffer size =   260.50 MiB
+rel-cache	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+rel-cache	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+rel-cache	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+rel-cache	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+rel-cache	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+rel-cache	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+rel-cache	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+rel-cache	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+rel-cache	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+rel-cache	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+rel-cache	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+rel-cache	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+rel-cache	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+rel-cache	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+rel-cache	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+rel-cache	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+rel-cache	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+rel-cache	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+rel-cache	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+rel-cache	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+rel-cache	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+rel-cache	27	load_tensors: offloaded 50/50 layers to GPU
+rel-cache	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+rel-cache	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+rel-cache	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+rel-cache	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+rel-cache	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+rel-cache	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+rel-cache	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+rel-cache	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+rel-cache	36	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+rel-cache	37	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+rel-cache	38	embd_cache_init: draft embedding row cache: 8192 rows of q8_0 (21.25 MiB) in CUDA2, for batches of up to 16 tokens; the table is in CUDA1
+rel-cache	39	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+rel-cache	40	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+rel-cache	41	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+rel-cache	42	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+rel-cache	43	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+rel-cache	44	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+rel-cache	45	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+rel-cache	46	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_rel-cache.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+rel-cache	47	spec embd_cache_r: draft embedding row cache: 7024 token rows read from it, 490 of them copied from the table first; 56 batches read the table
+rel-cache	48	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it
+day-cache	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+day-cache	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+day-cache	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+day-cache	4	load_tensors: offloaded 49/49 layers to GPU
+day-cache	5	load_tensors:          CPU model buffer size =   260.50 MiB
+day-cache	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+day-cache	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+day-cache	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+day-cache	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+day-cache	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+day-cache	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+day-cache	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+day-cache	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+day-cache	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+day-cache	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+day-cache	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+day-cache	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+day-cache	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+day-cache	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-cache	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-cache	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-cache	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+day-cache	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+day-cache	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+day-cache	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+day-cache	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+day-cache	27	load_tensors: offloaded 50/50 layers to GPU
+day-cache	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+day-cache	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+day-cache	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+day-cache	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-cache	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+day-cache	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-cache	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-cache	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-cache	36	h_nextn_dev_alloc:      CUDA2 h_nextn buffer size =    80.04 MiB
+day-cache	37	spec common_specu: - target h rows on the device: yes
+day-cache	38	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+day-cache	39	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+day-cache	40	embd_cache_init: draft embedding row cache: 8192 rows of q8_0 (21.25 MiB) in CUDA2, for batches of up to 16 tokens; the table is in CUDA1
+day-cache	41	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-cache	42	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-cache	43	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-cache	44	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-cache	45	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-cache	46	sched_reserve:      CUDA2 compute buffer size =   281.53 MiB
+day-cache	47	sched_reserve:  CUDA_Host compute buffer size =   123.28 MiB
+day-cache	48	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_day-cache.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+day-cache	49	spec embd_cache_r: draft embedding row cache: 7024 token rows read from it, 490 of them copied from the table first; 56 batches read the table
+day-cache	50	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it
+rel-carry	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+rel-carry	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+rel-carry	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+rel-carry	4	load_tensors: offloaded 49/49 layers to GPU
+rel-carry	5	load_tensors:          CPU model buffer size =   260.50 MiB
+rel-carry	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+rel-carry	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+rel-carry	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+rel-carry	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+rel-carry	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+rel-carry	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+rel-carry	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+rel-carry	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+rel-carry	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+rel-carry	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+rel-carry	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+rel-carry	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+rel-carry	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+rel-carry	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+rel-carry	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+rel-carry	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+rel-carry	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+rel-carry	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+rel-carry	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+rel-carry	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+rel-carry	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+rel-carry	27	load_tensors: offloaded 50/50 layers to GPU
+rel-carry	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+rel-carry	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+rel-carry	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+rel-carry	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+rel-carry	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+rel-carry	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+rel-carry	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+rel-carry	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+rel-carry	36	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+rel-carry	37	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+rel-carry	38	nextn_carry_init: draft hidden rows kept on the device: 1 rows of 10240 F32 (0.04 MiB) in CUDA2
+rel-carry	39	spec h_carry_init: draft hidden rows: a step's drafting passes keep them on the device
+rel-carry	40	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+rel-carry	41	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+rel-carry	42	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+rel-carry	43	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+rel-carry	44	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+rel-carry	45	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+rel-carry	46	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+rel-carry	47	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_rel-carry.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+rel-carry	48	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it
+day-carry	1	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 23861 MiB free
+day-carry	2	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 23826 MiB free
+day-carry	3	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 23861 MiB free
+day-carry	4	load_tensors: offloaded 49/49 layers to GPU
+day-carry	5	load_tensors:          CPU model buffer size =   260.50 MiB
+day-carry	6	load_tensors:        CUDA0 model buffer size = 12484.53 MiB
+day-carry	7	load_tensors:        CUDA1 model buffer size = 11755.51 MiB
+day-carry	8	load_tensors:        CUDA2 model buffer size = 11490.00 MiB
+day-carry	9	load_tensors:   CPU_Mapped model buffer size = 27465.95 MiB
+day-carry	10	llama_context:  CUDA_Host  output buffer size =     3.79 MiB
+day-carry	11	llama_kv_cache:      CUDA0 KV buffer size =   512.50 MiB
+day-carry	12	llama_kv_cache:      CUDA1 KV buffer size =   512.50 MiB
+day-carry	13	llama_kv_cache:      CUDA2 KV buffer size =   512.50 MiB
+day-carry	14	alloc_tensors:      CUDA0 RS buffer size =   163.50 MiB
+day-carry	15	alloc_tensors:      CUDA1 RS buffer size =   149.62 MiB
+day-carry	16	alloc_tensors:      CUDA2 RS buffer size =   137.16 MiB
+day-carry	17	llama_kv_cache:      CUDA0 KV buffer size =   128.50 MiB
+day-carry	18	llama_kv_cache:      CUDA1 KV buffer size =   128.50 MiB
+day-carry	19	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-carry	20	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-carry	21	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-carry	22	sched_reserve:      CUDA2 compute buffer size =   281.52 MiB
+day-carry	23	sched_reserve:  CUDA_Host compute buffer size =   123.26 MiB
+day-carry	24	llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:06:00.0) - 10189 MiB free
+day-carry	25	llama_prepare_model_devices: using device CUDA1 (NVIDIA GeForce RTX 3090) (0000:0e:00.0) - 10962 MiB free
+day-carry	26	llama_prepare_model_devices: using device CUDA2 (NVIDIA GeForce RTX 3090) (0000:0f:00.0) - 11273 MiB free
+day-carry	27	load_tensors: offloaded 50/50 layers to GPU
+day-carry	28	load_tensors:        CUDA1 model buffer size =   644.14 MiB
+day-carry	29	load_tensors:        CUDA2 model buffer size =  1917.90 MiB
+day-carry	30	llama_context:  CUDA_Host  output buffer size =     0.95 MiB
+day-carry	31	llama_kv_cache:      CUDA2 KV buffer size =   128.50 MiB
+day-carry	32	llama_kv_cache:      CUDA2 KV buffer size =    32.50 MiB
+day-carry	33	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-carry	34	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-carry	35	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-carry	36	h_nextn_dev_alloc:      CUDA2 h_nextn buffer size =    80.04 MiB
+day-carry	37	spec common_specu: - target h rows on the device: yes
+day-carry	38	head_shortlist_init: draft head shortlist: the ids below 32768 and up to 8192 more, in CUDA2 (0.85 MiB)
+day-carry	39	spec   short_init: draft head shortlist: 32801 ids (below 32768, 33 special, 0 from the file; the context's tokens join up to 8192 more), full head for 2 drafts after a target token outside it
+day-carry	40	nextn_carry_init: draft hidden rows kept on the device: 1 rows of 10240 F32 (0.04 MiB) in CUDA2
+day-carry	41	spec h_carry_init: draft hidden rows: a step's drafting passes keep them on the device
+day-carry	42	sched_reserve:      CUDA1 compute buffer size =     1.25 MiB
+day-carry	43	sched_reserve:      CUDA2 compute buffer size =    57.46 MiB
+day-carry	44	sched_reserve:  CUDA_Host compute buffer size =     9.96 MiB
+day-carry	45	sched_reserve:      CUDA0 compute buffer size =   345.28 MiB
+day-carry	46	sched_reserve:      CUDA1 compute buffer size =   281.51 MiB
+day-carry	47	sched_reserve:      CUDA2 compute buffer size =   281.53 MiB
+day-carry	48	sched_reserve:  CUDA_Host compute buffer size =   123.28 MiB
+day-carry	49	LLAMA_SPEC_DUMP: verify steps to '$WORK/dump_day-carry.jsonl' (k 8, target k 8, n-gram 16, full block 0)
+day-carry	50	spec short_report: draft head shortlist: 949 drafts with it, 51 with the full head, 26 target tokens outside it; 32913 ids in it

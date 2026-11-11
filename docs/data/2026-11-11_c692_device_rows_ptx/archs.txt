@@ -1,0 +1,2 @@
+rel md5 c735e40f184f3de61f16ffd5e2ab5ea5 machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx; 
+day md5 662b6f341e0b0f399c5c33d93b7ad461 machine code:  192 sm_61.cubin; PTX:  192 sm_61.ptx; 
