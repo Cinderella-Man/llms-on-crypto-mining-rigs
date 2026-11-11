@@ -16,6 +16,9 @@
 // GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 or 2), at Qwen3.8-Flash-Next's output layer (2560 -> 248,320) and at row widths that
 // give 1 to 32 lanes per row, weights drawn from a row pool as for ornith; with the switch at 0 the k-column kernel takes
 // these products and its sums differ from the one-token kernel's.
+// `multitoken_bitid dmt` checks IQ4_XS's and Q4_K's dense products the same way (C722: the kernel of
+// mmvq-pascal-dmt.cu with GGML_CUDA_MMVQ_PASCAL_DMT=1 or 2), at Qwen3.8-Flash-Next's attention and recurrent projections
+// (2560 -> 10240, 6144 and 12288; 6144 -> 2560) and at row widths that give 1 to 32 lanes per row.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -129,6 +132,7 @@ int main(int argc, char ** argv) {
     GGML_ASSERT(be);
     const bool ornith = argc > 1 && strcmp(argv[1], "ornith") == 0;
     const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;
+    const bool dmt    = argc > 1 && strcmp(argv[1], "dmt") == 0;
     const mode_cfg cfg = ornith
         ? mode_cfg{ { GGML_TYPE_IQ2_S, GGML_TYPE_IQ3_XXS, GGML_TYPE_N2P, GGML_TYPE_N3P, GGML_TYPE_Q8_0, GGML_TYPE_Q5_0 },
                     { { 8192, 3072 }, { 3072, 8192 }, { 3072, 1024 }, { 1024, 3072 }, { 4097, 3072 } },
@@ -137,6 +141,11 @@ int main(int argc, char ** argv) {
         ? mode_cfg{ { GGML_TYPE_Q5_K },
                     { { 248320, 2560 }, { 4097, 2560 }, { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 },
                       { 64, 8192 } },
+                    1, 1, 256, 256, true, 0 }
+        : dmt
+        ? mode_cfg{ { GGML_TYPE_IQ4_XS, GGML_TYPE_Q4_K },
+                    { { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 }, { 2560, 6144 }, { 4097, 2560 }, { 200, 512 },
+                      { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 } },
                     1, 1, 256, 256, true, 0 }
         : mode_cfg{ { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS,
                       GGML_TYPE_Q6_K },

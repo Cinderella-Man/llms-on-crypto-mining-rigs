@@ -41,6 +41,10 @@
 #   range-mask    RANGE_MASK, every case: the QSA pool mask built on the card from each token's range of visible pools
 #                 (exact), and the fault that makes one more column visible after each range
 #                 (docs/data/2026-11-11_c719_pool_mask_on_cards)
+#   dmt           IQ4_XS's and Q4_K's products of 1-5 tokens (Qwen3.8-Flash-Next's attention and recurrent projections
+#                 among them) with the 2-4-token kernel that decodes each weight once (GGML_CUDA_MMVQ_PASCAL_DMT, C722) at
+#                 each setting, under the Flash-Next preset's k-column switches, and without it
+#                 (docs/data/2026-11-11_c722_short_batch_products)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -49,7 +53,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -79,6 +83,7 @@ N4='(n2p|n3p|n2p_128|n3p_128)'
 LID='n_cells=|nh=4,|nb=(1|32),'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
+DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 suite_filters() {
     case $1 in
         kshape)
@@ -100,6 +105,8 @@ suite_filters() {
             printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
         range-mask)
             printf '%s\t%s\n' RANGE_MASK '.' ;;
+        dmt)
+            printf '%s\t%s\n' MUL_MAT "$DMT" ;;
         *) return 1 ;;
     esac
 }
@@ -202,6 +209,17 @@ suite_runs() {
             printf '%s\t%s\t%s\t%s\t%s\t\n' \
                 range-mask "" RANGE_MASK . pass \
                 range-mask-fault GGML_CUDA_RANGE_MASK_FAULT=1 RANGE_MASK . fail ;;
+        dmt)
+            # C722, as q5kmt: the preset's k-column switches, then the kernel's settings (R chosen per product, forced to
+            # 1 and 2; without the prefetch; fewer warps), without the preset, off, each type left out, the one-token
+            # kernels off for both types (so the new kernel is too)
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_DMT"
+            for r in "dmt-on:$KP $M=1" "dmt-nopf:$KP $M=2" "dmt-r1:$KP $M=1 ${M}_R=1" "dmt-r2:$KP $M=1 ${M}_R=2" \
+                     "dmt-r1-nopf:$KP $M=2 ${M}_R=1" "dmt-nw1:$KP $M=1 ${M}_NW=1" "dmt-nw2:$KP $M=1 ${M}_NW=2" \
+                     "dmt-defaults:$M=1" "dmt-off:$KP" "dmt-skip-q4k:$KP $M=1 ${M}_SKIP=q4_K" \
+                     "dmt-skip-iq4xs:$KP $M=1 ${M}_SKIP=iq4_xs" "dmt-skip:$KP $M=1 ${P}_SKIP=iq4_xs,q4_K"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$DMT"
+            done ;;
     esac
 }
 # the prompt rule's runs: <1 natively (mode 1 on a P106) | 2 through the PTX on a newer card (mode 2 only)>; which
