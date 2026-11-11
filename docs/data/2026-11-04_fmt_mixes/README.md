@@ -19,8 +19,8 @@ each with pascal-mix's tools, and builds the files that price them:
 `dniq23` are built and scored on all three texts: agent ([results](#results-so-far-agent-text-kld-2026-11-05)), wiki
 ([results](#wiki-text-kld-2026-11-06)) and code ([results](#code-text-kld-2026-11-10), with the three texts side by
 side); the allocation over the three texts (`galloc.py solve`) is solved and its pick at the start's bytes, `gmix-q2`,
-is built ([the v3.1 pick](#the-v31-pick-2026-11-11)); its measured KLD (Q1366) and its rig check (Q1367) come next; the
-rig timing (C323) is a run file for a rig. Registry rows Q219, Q888, Q889, Q901, Q1366, Q1367 in
+is built ([the v3.1 pick](#the-v31-pick-2026-11-11)); its measured KLD (Q1381) and its rig check (Q1382) come next; the
+rig timing (C323) is a run file for a rig. Registry rows Q219, Q888, Q889, Q901, Q1381, Q1382 in
 [quants/experiments.md](../../../quants/experiments.md).
 
 ## Results so far: agent-text KLD (2026-11-05)
@@ -215,7 +215,7 @@ of the 16 switches' changes ([additivity.tsv](additivity.tsv), [run/additivity.p
 
 So over a whole build the single switches' changes add up to within 11 % of the measured change, less than the sum on
 agent text and more on wiki and code. Q167 accepted a prediction within two standard errors of the measured KLD; the
-measurement of `gmix-q2` on the three texts is the test (Q1366).
+measurement of `gmix-q2` on the three texts is the test (Q1381).
 
 **The file.** `run/build_pick.sh` with `galloc.py final`'s two steps, on four CPU threads at nice 19 and idle I/O
 priority, 17 min 6 s on 2026-11-11: step 1 takes 372 tensors from `pmix-iq3-fast` (`guiq30`, `denseiq31`,
