@@ -1,0 +1,101 @@
+trace	request	depth	pass	typical_steps	what	ms_a_step
+shallow	R49 r1	79 to 335	1	81	main, cards 0 to 7	88.13
+shallow	R49 r1	79 to 335	1	81	main, card 8	12.86
+shallow	R49 r1	79 to 335	1	81	draft	13.05
+shallow	R49 r1	79 to 335	1	81	GPU time of the step	114.04
+shallow	R49 r1	79 to 335	1	81	draft passes a step	4
+shallow	R49 r1	79 to 335	1	81	wall time a step under the profiler	159.13
+shallow	R49 r1	79 to 335	1	81	outside the kernels	24.72
+shallow	R49 r1	79 to 335	1	81	the profiler's subtracted cost	20.38
+shallow	R49 r1	79 to 335	1	81	server's ms a step, profiled	
+shallow	R49 r1	79 to 335	1	81	server's ms a step, unprofiled load	
+shallow	R49 r2	79 to 335	2	80	main, cards 0 to 7	88.13
+shallow	R49 r2	79 to 335	2	80	main, card 8	12.87
+shallow	R49 r2	79 to 335	2	80	draft	11.05
+shallow	R49 r2	79 to 335	2	80	GPU time of the step	112.05
+shallow	R49 r2	79 to 335	2	80	draft passes a step	4
+shallow	R49 r2	79 to 335	2	80	wall time a step under the profiler	159.00
+shallow	R49 r2	79 to 335	2	80	outside the kernels	26.56
+shallow	R49 r2	79 to 335	2	80	the profiler's subtracted cost	20.39
+shallow	R49 r2	79 to 335	2	80	server's ms a step, profiled	
+shallow	R49 r2	79 to 335	2	80	server's ms a step, unprofiled load	
+deep	0 p1	0	1	74	main, cards 0 to 7	87.75
+deep	0 p1	0	1	74	main, card 8	12.98
+deep	0 p1	0	1	74	draft	12.12
+deep	0 p1	0	1	74	GPU time of the step	112.86
+deep	0 p1	0	1	74	draft passes a step	4
+deep	0 p1	0	1	74	wall time a step under the profiler	159.61
+deep	0 p1	0	1	74	outside the kernels	26.39
+deep	0 p1	0	1	74	the profiler's subtracted cost	20.37
+deep	0 p1	0	1	74	server's ms a step, profiled	157.95
+deep	0 p1	0	1	74	server's ms a step, unprofiled load	125.54
+deep	0 p2	0	2	71	main, cards 0 to 7	87.78
+deep	0 p2	0	2	71	main, card 8	12.99
+deep	0 p2	0	2	71	draft	10.87
+deep	0 p2	0	2	71	GPU time of the step	111.65
+deep	0 p2	0	2	71	draft passes a step	4
+deep	0 p2	0	2	71	wall time a step under the profiler	155.92
+deep	0 p2	0	2	71	outside the kernels	23.90
+deep	0 p2	0	2	71	the profiler's subtracted cost	20.38
+deep	0 p2	0	2	71	server's ms a step, profiled	154.49
+deep	0 p2	0	2	71	server's ms a step, unprofiled load	121.62
+deep	16384 p1	16384	1	67	main, cards 0 to 7	101.67
+deep	16384 p1	16384	1	67	main, card 8	14.16
+deep	16384 p1	16384	1	67	draft	13.67
+deep	16384 p1	16384	1	67	GPU time of the step	129.50
+deep	16384 p1	16384	1	67	draft passes a step	4
+deep	16384 p1	16384	1	67	wall time a step under the profiler	187.26
+deep	16384 p1	16384	1	67	outside the kernels	37.38
+deep	16384 p1	16384	1	67	the profiler's subtracted cost	20.37
+deep	16384 p1	16384	1	67	server's ms a step, profiled	185.49
+deep	16384 p1	16384	1	67	server's ms a step, unprofiled load	147.11
+deep	16384 p2	16384	2	67	main, cards 0 to 7	101.64
+deep	16384 p2	16384	2	67	main, card 8	14.16
+deep	16384 p2	16384	2	67	draft	13.52
+deep	16384 p2	16384	2	67	GPU time of the step	129.31
+deep	16384 p2	16384	2	67	draft passes a step	4
+deep	16384 p2	16384	2	67	wall time a step under the profiler	185.90
+deep	16384 p2	16384	2	67	outside the kernels	36.21
+deep	16384 p2	16384	2	67	the profiler's subtracted cost	20.38
+deep	16384 p2	16384	2	67	server's ms a step, profiled	183.80
+deep	16384 p2	16384	2	67	server's ms a step, unprofiled load	145.34
+deep	32768 p1	32768	1	93	main, cards 0 to 7	103.45
+deep	32768 p1	32768	1	93	main, card 8	14.37
+deep	32768 p1	32768	1	93	draft	15.14
+deep	32768 p1	32768	1	93	GPU time of the step	132.96
+deep	32768 p1	32768	1	93	draft passes a step	4
+deep	32768 p1	32768	1	93	wall time a step under the profiler	207.82
+deep	32768 p1	32768	1	93	outside the kernels	54.49
+deep	32768 p1	32768	1	93	the profiler's subtracted cost	20.37
+deep	32768 p1	32768	1	93	server's ms a step, profiled	228.72
+deep	32768 p1	32768	1	93	server's ms a step, unprofiled load	174.26
+deep	32768 p2	32768	2	93	main, cards 0 to 7	103.43
+deep	32768 p2	32768	2	93	main, card 8	14.38
+deep	32768 p2	32768	2	93	draft	14.11
+deep	32768 p2	32768	2	93	GPU time of the step	131.92
+deep	32768 p2	32768	2	93	draft passes a step	4
+deep	32768 p2	32768	2	93	wall time a step under the profiler	205.70
+deep	32768 p2	32768	2	93	outside the kernels	53.41
+deep	32768 p2	32768	2	93	the profiler's subtracted cost	20.38
+deep	32768 p2	32768	2	93	server's ms a step, profiled	203.96
+deep	32768 p2	32768	2	93	server's ms a step, unprofiled load	156.79
+deep	49152 p1	49152	1	73	main, cards 0 to 7	106.40
+deep	49152 p1	49152	1	73	main, card 8	14.62
+deep	49152 p1	49152	1	73	draft	15.01
+deep	49152 p1	49152	1	73	GPU time of the step	136.03
+deep	49152 p1	49152	1	73	draft passes a step	4
+deep	49152 p1	49152	1	73	wall time a step under the profiler	224.59
+deep	49152 p1	49152	1	73	outside the kernels	68.19
+deep	49152 p1	49152	1	73	the profiler's subtracted cost	20.37
+deep	49152 p1	49152	1	73	server's ms a step, profiled	222.09
+deep	49152 p1	49152	1	73	server's ms a step, unprofiled load	173.22
+deep	49152 p2	49152	2	73	main, cards 0 to 7	106.31
+deep	49152 p2	49152	2	73	main, card 8	14.62
+deep	49152 p2	49152	2	73	draft	14.70
+deep	49152 p2	49152	2	73	GPU time of the step	135.63
+deep	49152 p2	49152	2	73	draft passes a step	4
+deep	49152 p2	49152	2	73	wall time a step under the profiler	220.40
+deep	49152 p2	49152	2	73	outside the kernels	64.39
+deep	49152 p2	49152	2	73	the profiler's subtracted cost	20.38
+deep	49152 p2	49152	2	73	server's ms a step, profiled	218.14
+deep	49152 p2	49152	2	73	server's ms a step, unprofiled load	168.94

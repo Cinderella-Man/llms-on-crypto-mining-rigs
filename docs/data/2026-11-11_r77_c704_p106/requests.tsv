@@ -1,0 +1,17 @@
+trace	request	kind	depth	pass	main_passes	prompt_passes	steps	draft_passes_a_step	typical_steps	server_ms_step_profiled	server_ms_step_unprofiled
+shallow		load			1						
+shallow	R49 r1	decode	79 to 335	1	88	3	84	4:84	81		
+shallow	R49 r2	decode	79 to 335	2	84	0	83	4:83	80		
+deep		load			1						
+deep	warmup 0	warmup	0	0	13						
+deep	0 p1	decode	0	1	79	1	77	4:77	74	157.95	125.54
+deep	0 p2	decode	0	2	75	0	74	4:74	71	154.49	121.62
+deep	prime 16384	prime	16384	0	47						
+deep	16384 p1	decode	16384	1	72	1	70	4:70	67	185.49	147.11
+deep	16384 p2	decode	16384	2	71	0	70	4:70	67	183.80	145.34
+deep	prime 32768	prime	32768	0	45						
+deep	32768 p1	decode	32768	1	98	1	96	4:96	93	228.72	174.26
+deep	32768 p2	decode	32768	2	97	0	96	4:96	93	203.96	156.79
+deep	prime 49152	prime	49152	0	45						
+deep	49152 p1	decode	49152	1	78	1	76	4:76	73	222.09	173.22
+deep	49152 p2	decode	49152	2	77	0	76	4:76	73	218.14	168.94

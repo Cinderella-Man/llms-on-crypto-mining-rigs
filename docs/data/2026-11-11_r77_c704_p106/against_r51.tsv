@@ -1,0 +1,55 @@
+request	what	R51_ms	R77_ms	R77_less_R51_ms
+16384 p1	the gather of every pooled key (GET_ROWS before the indexer)	4.972	0.000	-4.972
+16384 p1	the indexer's scores (LIGHTNING_INDEXER)	1.980	2.664	+0.684
+16384 p1	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.889	0.900	+0.011
+16384 p1	the indexer's other launch groups (projections, norms, RoPE)	0.698	0.688	-0.010
+16384 p1	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	14.810	14.715	-0.095
+16384 p1	the output heads (` output:`)	10.787	10.754	-0.033
+16384 p1	everything else	100.109	99.784	-0.325
+16384 p1	GPU time of the step	134.24	129.50	-4.74
+16384 p1	server's ms a step, unprofiled load	170.07	147.11	-22.96
+16384 p2	the gather of every pooled key (GET_ROWS before the indexer)	4.974	0.000	-4.974
+16384 p2	the indexer's scores (LIGHTNING_INDEXER)	1.980	2.664	+0.684
+16384 p2	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.898	0.902	+0.004
+16384 p2	the indexer's other launch groups (projections, norms, RoPE)	0.703	0.680	-0.023
+16384 p2	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	14.811	14.718	-0.093
+16384 p2	the output heads (` output:`)	10.629	10.585	-0.044
+16384 p2	everything else	100.124	99.762	-0.362
+16384 p2	GPU time of the step	134.12	129.31	-4.81
+16384 p2	server's ms a step, unprofiled load	151.42	145.34	-6.08
+32768 p1	the gather of every pooled key (GET_ROWS before the indexer)	9.836	0.000	-9.836
+32768 p1	the indexer's scores (LIGHTNING_INDEXER)	3.690	5.676	+1.986
+32768 p1	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.977	0.987	+0.010
+32768 p1	the indexer's other launch groups (projections, norms, RoPE)	0.684	0.702	+0.018
+32768 p1	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	14.771	14.583	-0.188
+32768 p1	the output heads (` output:`)	11.076	11.763	+0.687
+32768 p1	everything else	99.793	99.248	-0.545
+32768 p1	GPU time of the step	140.83	132.96	-7.87
+32768 p1	server's ms a step, unprofiled load	184.07	174.26	-9.81
+32768 p2	the gather of every pooled key (GET_ROWS before the indexer)	9.837	0.000	-9.837
+32768 p2	the indexer's scores (LIGHTNING_INDEXER)	3.691	5.679	+1.988
+32768 p2	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	0.981	0.997	+0.016
+32768 p2	the indexer's other launch groups (projections, norms, RoPE)	0.701	0.726	+0.025
+32768 p2	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	14.775	14.592	-0.183
+32768 p2	the output heads (` output:`)	10.803	10.746	-0.057
+32768 p2	everything else	99.797	99.174	-0.623
+32768 p2	GPU time of the step	140.59	131.92	-8.67
+32768 p2	server's ms a step, unprofiled load	165.67	156.79	-8.88
+49152 p1	the gather of every pooled key (GET_ROWS before the indexer)	14.686	0.000	-14.686
+49152 p1	the indexer's scores (LIGHTNING_INDEXER)	5.392	8.459	+3.067
+49152 p1	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	1.080	1.102	+0.022
+49152 p1	the indexer's other launch groups (projections, norms, RoPE)	0.689	0.708	+0.019
+49152 p1	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	15.070	14.968	-0.102
+49152 p1	the output heads (` output:`)	11.347	11.269	-0.078
+49152 p1	everything else	100.094	99.520	-0.574
+49152 p1	GPU time of the step	148.36	136.03	-12.33
+49152 p1	server's ms a step, unprofiled load	202.76	173.22	-29.54
+49152 p2	the gather of every pooled key (GET_ROWS before the indexer)	14.685	0.000	-14.685
+49152 p2	the indexer's scores (LIGHTNING_INDEXER)	5.392	8.454	+3.062
+49152 p2	the indexer's top-k and mask (TOP_K, TOP_K_MASK)	1.078	1.096	+0.018
+49152 p2	the indexer's other launch groups (projections, norms, RoPE)	0.696	0.714	+0.018
+49152 p2	attention (FLASH_ATTN_EXT: the list of kept cells and the kernel)	15.060	14.960	-0.100
+49152 p2	the output heads (` output:`)	11.058	10.990	-0.068
+49152 p2	everything else	100.130	99.416	-0.714
+49152 p2	GPU time of the step	148.10	135.63	-12.47
+49152 p2	server's ms a step, unprofiled load	181.86	168.94	-12.92

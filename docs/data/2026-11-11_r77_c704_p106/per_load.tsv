@@ -1,0 +1,237 @@
+depth	arm	load	metric	value
+0	v4c	v4c1	decode	27.04
+0	v4c	v4c2	decode	27.06
+0	rows	rows1	decode	27.07
+0	rows	rows2	decode	27.09
+0	v4c	v4c1	decode_ms_token	36.98
+0	v4c	v4c2	decode_ms_token	36.96
+0	rows	rows1	decode_ms_token	36.94
+0	rows	rows2	decode_ms_token	36.91
+0	v4c	v4c1	step_pass1	125.81
+0	v4c	v4c2	step_pass1	125.66
+0	rows	rows1	step_pass1	125.54
+0	rows	rows2	step_pass1	125.39
+0	v4c	v4c1	step_pass2	121.58
+0	v4c	v4c2	step_pass2	121.62
+0	rows	rows1	step_pass2	121.62
+0	rows	rows2	step_pass2	121.56
+0	v4c	v4c1	share	0.7996
+0	v4c	v4c2	share	0.7996
+0	rows	rows1	share	0.7996
+0	rows	rows2	share	0.7996
+0	v4c	v4c1	tokens_step	3.346
+0	v4c	v4c2	tokens_step	3.346
+0	rows	rows1	tokens_step	3.346
+0	rows	rows2	tokens_step	3.346
+0	v4c	v4c1	sample	—
+0	v4c	v4c2	sample	—
+0	rows	rows1	sample	—
+0	rows	rows2	sample	—
+0	v4c	v4c1	sample_share	—
+0	v4c	v4c2	sample_share	—
+0	rows	rows1	sample_share	—
+0	rows	rows2	sample_share	—
+0	v4c	v4c1	sample_tokens_step	—
+0	v4c	v4c2	sample_tokens_step	—
+0	rows	rows1	sample_tokens_step	—
+0	rows	rows2	sample_tokens_step	—
+0	v4c	v4c1	sample_step	—
+0	v4c	v4c2	sample_step	—
+0	rows	rows1	sample_step	—
+0	rows	rows2	sample_step	—
+0	v4c	v4c1	prompt	49.0
+0	v4c	v4c2	prompt	49.5
+0	rows	rows1	prompt	49.6
+0	rows	rows2	prompt	49.6
+16384	v4c	v4c1	decode	24.00
+16384	v4c	v4c2	decode	24.00
+16384	rows	rows1	decode	24.66
+16384	rows	rows2	decode	24.73
+16384	v4c	v4c1	decode_ms_token	41.67
+16384	v4c	v4c2	decode_ms_token	41.67
+16384	rows	rows1	decode_ms_token	40.55
+16384	rows	rows2	decode_ms_token	40.44
+16384	v4c	v4c1	step_pass1	151.23
+16384	v4c	v4c2	step_pass1	151.07
+16384	rows	rows1	step_pass1	147.11
+16384	rows	rows2	step_pass1	146.70
+16384	v4c	v4c1	step_pass2	149.29
+16384	v4c	v4c2	step_pass2	149.46
+16384	rows	rows1	step_pass2	145.34
+16384	rows	rows2	step_pass2	144.94
+16384	v4c	v4c1	share	0.8810
+16384	v4c	v4c2	share	0.8810
+16384	rows	rows1	share	0.8810
+16384	rows	rows2	share	0.8810
+16384	v4c	v4c1	tokens_step	3.606
+16384	v4c	v4c2	tokens_step	3.606
+16384	rows	rows1	tokens_step	3.606
+16384	rows	rows2	tokens_step	3.606
+16384	v4c	v4c1	sample	—
+16384	v4c	v4c2	sample	—
+16384	rows	rows1	sample	—
+16384	rows	rows2	sample	—
+16384	v4c	v4c1	sample_share	—
+16384	v4c	v4c2	sample_share	—
+16384	rows	rows1	sample_share	—
+16384	rows	rows2	sample_share	—
+16384	v4c	v4c1	sample_tokens_step	—
+16384	v4c	v4c2	sample_tokens_step	—
+16384	rows	rows1	sample_tokens_step	—
+16384	rows	rows2	sample_tokens_step	—
+16384	v4c	v4c1	sample_step	—
+16384	v4c	v4c2	sample_step	—
+16384	rows	rows1	sample_step	—
+16384	rows	rows2	sample_step	—
+16384	v4c	v4c1	prompt	135.4
+16384	v4c	v4c2	prompt	134.6
+16384	rows	rows1	prompt	134.2
+16384	rows	rows2	prompt	134.5
+32768	v4c	v4c1	decode	15.26
+32768	v4c	v4c2	decode	15.27
+32768	rows	rows1	decode	15.94
+32768	rows	rows2	decode	15.92
+32768	v4c	v4c1	decode_ms_token	65.52
+32768	v4c	v4c2	decode_ms_token	65.49
+32768	rows	rows1	decode_ms_token	62.72
+32768	rows	rows2	decode_ms_token	62.80
+32768	v4c	v4c1	step_pass1	181.69
+32768	v4c	v4c2	step_pass1	181.41
+32768	rows	rows1	step_pass1	174.26
+32768	rows	rows2	step_pass1	174.06
+32768	v4c	v4c1	step_pass2	164.16
+32768	v4c	v4c2	step_pass2	164.28
+32768	rows	rows1	step_pass2	156.79
+32768	rows	rows2	step_pass2	157.42
+32768	v4c	v4c1	share	0.5540
+32768	v4c	v4c2	share	0.5540
+32768	rows	rows1	share	0.5540
+32768	rows	rows2	share	0.5540
+32768	v4c	v4c1	tokens_step	2.639
+32768	v4c	v4c2	tokens_step	2.639
+32768	rows	rows1	tokens_step	2.639
+32768	rows	rows2	tokens_step	2.639
+32768	v4c	v4c1	sample	—
+32768	v4c	v4c2	sample	—
+32768	rows	rows1	sample	—
+32768	rows	rows2	sample	—
+32768	v4c	v4c1	sample_share	—
+32768	v4c	v4c2	sample_share	—
+32768	rows	rows1	sample_share	—
+32768	rows	rows2	sample_share	—
+32768	v4c	v4c1	sample_tokens_step	—
+32768	v4c	v4c2	sample_tokens_step	—
+32768	rows	rows1	sample_tokens_step	—
+32768	rows	rows2	sample_tokens_step	—
+32768	v4c	v4c1	sample_step	—
+32768	v4c	v4c2	sample_step	—
+32768	rows	rows1	sample_step	—
+32768	rows	rows2	sample_step	—
+32768	v4c	v4c1	prompt	100.2
+32768	v4c	v4c2	prompt	100.3
+32768	rows	rows1	prompt	100.3
+32768	rows	rows2	prompt	100.2
+49152	v4c	v4c1	decode	18.31
+49152	v4c	v4c2	decode	18.27
+49152	rows	rows1	decode	19.43
+49152	rows	rows2	decode	19.43
+49152	v4c	v4c1	decode_ms_token	54.62
+49152	v4c	v4c2	decode_ms_token	54.72
+49152	rows	rows1	decode_ms_token	51.46
+49152	rows	rows2	decode_ms_token	51.47
+49152	v4c	v4c1	step_pass1	183.62
+49152	v4c	v4c2	step_pass1	183.73
+49152	rows	rows1	step_pass1	173.22
+49152	rows	rows2	step_pass1	173.10
+49152	v4c	v4c1	step_pass2	179.58
+49152	v4c	v4c2	step_pass2	180.15
+49152	rows	rows1	step_pass2	168.94
+49152	rows	rows2	step_pass2	169.16
+49152	v4c	v4c1	share	0.7885
+49152	v4c	v4c2	share	0.7885
+49152	rows	rows1	share	0.7885
+49152	rows	rows2	share	0.7885
+49152	v4c	v4c1	tokens_step	3.325
+49152	v4c	v4c2	tokens_step	3.325
+49152	rows	rows1	tokens_step	3.325
+49152	rows	rows2	tokens_step	3.325
+49152	v4c	v4c1	sample	—
+49152	v4c	v4c2	sample	—
+49152	rows	rows1	sample	—
+49152	rows	rows2	sample	—
+49152	v4c	v4c1	sample_share	—
+49152	v4c	v4c2	sample_share	—
+49152	rows	rows1	sample_share	—
+49152	rows	rows2	sample_share	—
+49152	v4c	v4c1	sample_tokens_step	—
+49152	v4c	v4c2	sample_tokens_step	—
+49152	rows	rows1	sample_tokens_step	—
+49152	rows	rows2	sample_tokens_step	—
+49152	v4c	v4c1	sample_step	—
+49152	v4c	v4c2	sample_step	—
+49152	rows	rows1	sample_step	—
+49152	rows	rows2	sample_step	—
+49152	v4c	v4c1	prompt	77.4
+49152	v4c	v4c2	prompt	77.3
+49152	rows	rows1	prompt	77.5
+49152	rows	rows2	prompt	77.4
+all depths	v4c	v4c1	decode	20.12
+all depths	v4c	v4c2	decode	20.12
+all depths	rows	rows1	decode	20.87
+all depths	rows	rows2	decode	20.87
+all depths	v4c	v4c1	decode_ms_token	49.70
+all depths	v4c	v4c2	decode_ms_token	49.71
+all depths	rows	rows1	decode_ms_token	47.92
+all depths	rows	rows2	decode_ms_token	47.91
+all depths	v4c	v4c1	step_pass1	161.96
+all depths	v4c	v4c2	step_pass1	161.83
+all depths	rows	rows1	step_pass1	156.28
+all depths	rows	rows2	step_pass1	156.06
+all depths	v4c	v4c1	step_pass2	154.59
+all depths	v4c	v4c2	step_pass2	154.81
+all depths	rows	rows1	step_pass2	148.93
+all depths	rows	rows2	step_pass2	149.07
+all depths	v4c	v4c1	share	0.7406
+all depths	v4c	v4c2	share	0.7406
+all depths	rows	rows1	share	0.7406
+all depths	rows	rows2	share	0.7406
+all depths	v4c	v4c1	tokens_step	3.185
+all depths	v4c	v4c2	tokens_step	3.185
+all depths	rows	rows1	tokens_step	3.185
+all depths	rows	rows2	tokens_step	3.185
+all depths	v4c	v4c1	sample	—
+all depths	v4c	v4c2	sample	—
+all depths	rows	rows1	sample	—
+all depths	rows	rows2	sample	—
+all depths	v4c	v4c1	sample_share	—
+all depths	v4c	v4c2	sample_share	—
+all depths	rows	rows1	sample_share	—
+all depths	rows	rows2	sample_share	—
+all depths	v4c	v4c1	sample_tokens_step	—
+all depths	v4c	v4c2	sample_tokens_step	—
+all depths	rows	rows1	sample_tokens_step	—
+all depths	rows	rows2	sample_tokens_step	—
+all depths	v4c	v4c1	sample_step	—
+all depths	v4c	v4c2	sample_step	—
+all depths	rows	rows1	sample_step	—
+all depths	rows	rows2	sample_step	—
+all depths	v4c	v4c1	prompt	98.7
+all depths	v4c	v4c2	prompt	98.6
+all depths	rows	rows1	prompt	98.6
+all depths	rows	rows2	prompt	98.6
+load	v4c	v4c1	min_avail_mib	443.00
+load	v4c	v4c1	max_swap_used_mib	9.00
+load	v4c	v4c1	swap_change_mib	0.00
+load	v4c	v4c1	max_psi_full	0.00
+load	v4c	v4c2	min_avail_mib	439.00
+load	v4c	v4c2	max_swap_used_mib	9.00
+load	v4c	v4c2	swap_change_mib	0.00
+load	v4c	v4c2	max_psi_full	0.00
+load	rows	rows1	min_avail_mib	442.00
+load	rows	rows1	max_swap_used_mib	9.00
+load	rows	rows1	swap_change_mib	0.00
+load	rows	rows1	max_psi_full	0.00
+load	rows	rows2	min_avail_mib	441.00
+load	rows	rows2	max_swap_used_mib	9.00
+load	rows	rows2	swap_change_mib	0.00
+load	rows	rows2	max_psi_full	0.00

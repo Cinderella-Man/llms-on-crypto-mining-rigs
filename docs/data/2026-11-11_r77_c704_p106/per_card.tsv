@@ -1,0 +1,111 @@
+trace	request	depth	pass	card	what	ms_a_step
+shallow	R49 r1	79 to 335	1	0	main pass	12.489
+shallow	R49 r1	79 to 335	1	1	main pass	11.182
+shallow	R49 r1	79 to 335	1	2	main pass	11.365
+shallow	R49 r1	79 to 335	1	3	main pass	11.436
+shallow	R49 r1	79 to 335	1	4	main pass	9.261
+shallow	R49 r1	79 to 335	1	5	main pass	11.402
+shallow	R49 r1	79 to 335	1	6	main pass	9.561
+shallow	R49 r1	79 to 335	1	7	main pass	11.432
+shallow	R49 r1	79 to 335	1	8	main pass	12.858
+shallow	R49 r1	79 to 335	1	4	draft passes	0.019
+shallow	R49 r1	79 to 335	1	8	draft passes	13.031
+shallow	R49 r2	79 to 335	2	0	main pass	12.488
+shallow	R49 r2	79 to 335	2	1	main pass	11.187
+shallow	R49 r2	79 to 335	2	2	main pass	11.367
+shallow	R49 r2	79 to 335	2	3	main pass	11.440
+shallow	R49 r2	79 to 335	2	4	main pass	9.255
+shallow	R49 r2	79 to 335	2	5	main pass	11.407
+shallow	R49 r2	79 to 335	2	6	main pass	9.550
+shallow	R49 r2	79 to 335	2	7	main pass	11.438
+shallow	R49 r2	79 to 335	2	8	main pass	12.869
+shallow	R49 r2	79 to 335	2	4	draft passes	0.020
+shallow	R49 r2	79 to 335	2	8	draft passes	11.026
+deep	0 p1	0	1	0	main pass	12.240
+deep	0 p1	0	1	1	main pass	10.843
+deep	0 p1	0	1	2	main pass	11.339
+deep	0 p1	0	1	3	main pass	11.477
+deep	0 p1	0	1	4	main pass	9.157
+deep	0 p1	0	1	5	main pass	11.539
+deep	0 p1	0	1	6	main pass	9.569
+deep	0 p1	0	1	7	main pass	11.592
+deep	0 p1	0	1	8	main pass	12.983
+deep	0 p1	0	1	4	draft passes	0.017
+deep	0 p1	0	1	8	draft passes	12.105
+deep	0 p2	0	2	0	main pass	12.242
+deep	0 p2	0	2	1	main pass	10.881
+deep	0 p2	0	2	2	main pass	11.321
+deep	0 p2	0	2	3	main pass	11.474
+deep	0 p2	0	2	4	main pass	9.169
+deep	0 p2	0	2	5	main pass	11.548
+deep	0 p2	0	2	6	main pass	9.559
+deep	0 p2	0	2	7	main pass	11.588
+deep	0 p2	0	2	8	main pass	12.991
+deep	0 p2	0	2	4	draft passes	0.018
+deep	0 p2	0	2	8	draft passes	10.855
+deep	16384 p1	16384	1	0	main pass	13.517
+deep	16384 p1	16384	1	1	main pass	13.378
+deep	16384 p1	16384	1	2	main pass	12.679
+deep	16384 p1	16384	1	3	main pass	14.011
+deep	16384 p1	16384	1	4	main pass	10.426
+deep	16384 p1	16384	1	5	main pass	12.821
+deep	16384 p1	16384	1	6	main pass	12.029
+deep	16384 p1	16384	1	7	main pass	12.805
+deep	16384 p1	16384	1	8	main pass	14.164
+deep	16384 p1	16384	1	4	draft passes	0.017
+deep	16384 p1	16384	1	8	draft passes	13.655
+deep	16384 p2	16384	2	0	main pass	13.515
+deep	16384 p2	16384	2	1	main pass	13.389
+deep	16384 p2	16384	2	2	main pass	12.684
+deep	16384 p2	16384	2	3	main pass	14.002
+deep	16384 p2	16384	2	4	main pass	10.418
+deep	16384 p2	16384	2	5	main pass	12.813
+deep	16384 p2	16384	2	6	main pass	12.015
+deep	16384 p2	16384	2	7	main pass	12.801
+deep	16384 p2	16384	2	8	main pass	14.159
+deep	16384 p2	16384	2	4	draft passes	0.019
+deep	16384 p2	16384	2	8	draft passes	13.496
+deep	32768 p1	32768	1	0	main pass	13.781
+deep	32768 p1	32768	1	1	main pass	13.764
+deep	32768 p1	32768	1	2	main pass	12.738
+deep	32768 p1	32768	1	3	main pass	14.403
+deep	32768 p1	32768	1	4	main pass	10.522
+deep	32768 p1	32768	1	5	main pass	12.917
+deep	32768 p1	32768	1	6	main pass	12.400
+deep	32768 p1	32768	1	7	main pass	12.926
+deep	32768 p1	32768	1	8	main pass	14.371
+deep	32768 p1	32768	1	4	draft passes	0.018
+deep	32768 p1	32768	1	8	draft passes	15.120
+deep	32768 p2	32768	2	0	main pass	13.753
+deep	32768 p2	32768	2	1	main pass	13.763
+deep	32768 p2	32768	2	2	main pass	12.752
+deep	32768 p2	32768	2	3	main pass	14.404
+deep	32768 p2	32768	2	4	main pass	10.522
+deep	32768 p2	32768	2	5	main pass	12.917
+deep	32768 p2	32768	2	6	main pass	12.390
+deep	32768 p2	32768	2	7	main pass	12.932
+deep	32768 p2	32768	2	8	main pass	14.375
+deep	32768 p2	32768	2	4	draft passes	0.017
+deep	32768 p2	32768	2	8	draft passes	14.088
+deep	49152 p1	49152	1	0	main pass	14.045
+deep	49152 p1	49152	1	1	main pass	14.281
+deep	49152 p1	49152	1	2	main pass	13.043
+deep	49152 p1	49152	1	3	main pass	14.938
+deep	49152 p1	49152	1	4	main pass	10.829
+deep	49152 p1	49152	1	5	main pass	13.170
+deep	49152 p1	49152	1	6	main pass	12.883
+deep	49152 p1	49152	1	7	main pass	13.216
+deep	49152 p1	49152	1	8	main pass	14.616
+deep	49152 p1	49152	1	4	draft passes	0.017
+deep	49152 p1	49152	1	8	draft passes	14.990
+deep	49152 p2	49152	2	0	main pass	14.040
+deep	49152 p2	49152	2	1	main pass	14.284
+deep	49152 p2	49152	2	2	main pass	13.050
+deep	49152 p2	49152	2	3	main pass	14.932
+deep	49152 p2	49152	2	4	main pass	10.822
+deep	49152 p2	49152	2	5	main pass	13.165
+deep	49152 p2	49152	2	6	main pass	12.799
+deep	49152 p2	49152	2	7	main pass	13.213
+deep	49152 p2	49152	2	8	main pass	14.622
+deep	49152 p2	49152	2	4	draft passes	0.017
+deep	49152 p2	49152	2	8	draft passes	14.685
