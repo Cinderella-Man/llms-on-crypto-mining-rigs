@@ -45,6 +45,11 @@
 #                 among them) with the 2-4-token kernel that decodes each weight once (GGML_CUDA_MMVQ_PASCAL_DMT, C722) at
 #                 each setting, under the Flash-Next preset's k-column switches, and without it
 #                 (docs/data/2026-11-11_c722_short_batch_products)
+#   dmtkt         dmt's cases (with K = 6144 at 333 and 4097 rows and a view of wider rows) with the kernel's K tiles
+#                 (GGML_CUDA_MMVQ_PASCAL_DMT_KT, C728) at each setting: where they help (=1) and wherever they fit (=2),
+#                 two row blocks a round, without the prefetch, fewer warps, R = 2 (no tiles), without the preset, the
+#                 kernel without them, and the fault (each iteration takes the next tile's activations), which must fail
+#                 cases (docs/data/2026-11-11_c728_readonce_k6144)
 #   top-k-rows    TOP_K at Flash-Next's 248,320 columns over one to eight rows against the CPU, and TOP_K_ROWS: the
 #                 top-k of several rows in one op against each row's own, on the card (the backend samplers' one top-k
 #                 over the output rows, LLAMA_SAMPLING_TOP_K_ROWS, C691; docs/data/2026-11-11_c691_sampling_launches)
@@ -99,7 +104,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -177,7 +182,7 @@ suite_filters() {
             printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
         range-mask)
             printf '%s\t%s\n' RANGE_MASK '.' ;;
-        dmt)
+        dmt|dmtkt)
             printf '%s\t%s\n' MUL_MAT "$DMT" ;;
         q3kmt)
             printf '%s\t%s\n' MUL_MAT "$Q3MT" ;;
@@ -357,6 +362,19 @@ suite_runs() {
                      "dmt-skip-iq4xs:$KP $M=1 ${M}_SKIP=iq4_xs" "dmt-skip:$KP $M=1 ${P}_SKIP=iq4_xs,q4_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$DMT"
             done ;;
+        dmtkt)
+            # C728, as dmt: the preset's k-column switches and the read-once kernel, then its K tiles at each setting
+            # (=1 where they give a block more warps, =2 wherever they fit, two row blocks a round, without the prefetch,
+            # 4 and 1 warps a block), with R = 2 (no tiles), without the preset, the kernel without tiles, and the fault
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_DMT"
+            for r in "dmtkt-kt1:$KP $M=1 ${M}_KT=1" "dmtkt-kt2:$KP $M=1 ${M}_KT=2" "dmtkt-kt1-m2:$KP $M=1 ${M}_KT=1 ${M}_KT_M=2" \
+                     "dmtkt-kt2-m2:$KP $M=1 ${M}_KT=2 ${M}_KT_M=2" "dmtkt-kt1-nopf:$KP $M=2 ${M}_KT=1" \
+                     "dmtkt-kt2-nopf:$KP $M=2 ${M}_KT=2" "dmtkt-kt2-nw4:$KP $M=1 ${M}_KT=2 ${M}_KT_NW=4" \
+                     "dmtkt-kt2-nw1:$KP $M=1 ${M}_KT=2 ${M}_KT_NW=1" "dmtkt-kt1-r2:$KP $M=1 ${M}_R=2 ${M}_KT=1" \
+                     "dmtkt-defaults:$M=1 ${M}_KT=1" "dmtkt-on:$KP $M=1"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$DMT"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' dmtkt-fault "$KP $M=1 ${M}_KT=1 ${M}_KT_FAULT=1" MUL_MAT "$DMT" ;;
         q3kmt)
             # C726, as dmt: the preset's k-column switches, then the kernel's settings (R = 1 by default, forced to 2;
             # without the prefetch; fewer warps; no slot padding), without the preset, off, the k-column kernel off or

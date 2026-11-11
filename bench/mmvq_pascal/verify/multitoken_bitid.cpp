@@ -19,6 +19,10 @@
 // `multitoken_bitid dmt` checks IQ4_XS's and Q4_K's dense products the same way (C722: the kernel of
 // mmvq-pascal-dmt.cu with GGML_CUDA_MMVQ_PASCAL_DMT=1 or 2), at Qwen3.8-Flash-Next's attention and recurrent projections
 // (2560 -> 10240, 6144 and 12288; 6144 -> 2560) and at row widths that give 1 to 32 lanes per row.
+// `multitoken_bitid dmtkt` checks the same products with their K tiles (C728: GGML_CUDA_MMVQ_PASCAL_DMT=1 with
+// GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 or 2): dmt's shapes, K = 12288, and K = 6144 at 333 and 4097 rows (a partial last round
+// and row block). GGML_CUDA_MMVQ_PASCAL_DMT_KT_FAULT=1 (each iteration takes the next one's activations) must give
+// differences at K = 6144.
 // `multitoken_bitid bf16` checks BF16's dense products the same way (C750: the Pascal BF16 kernel of mmvf-pascal.cu with
 // GGML_CUDA_MMVF_PASCAL_EXACT=1 or 2), at Qwen3.8-Flash-Next's BF16 shapes (the hyper-connections 10240 -> 320 and
 // 320 -> 10240, 10240 -> 4, the indexer's 2560 -> 512, the recurrent layers' 2560 -> 48) and at row widths whose
@@ -371,6 +375,7 @@ int main(int argc, char ** argv) {
     const bool ornith = argc > 1 && strcmp(argv[1], "ornith") == 0;
     const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;
     const bool dmt    = argc > 1 && strcmp(argv[1], "dmt") == 0;
+    const bool dmtkt  = argc > 1 && strcmp(argv[1], "dmtkt") == 0;
     const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
     const bool f32    = argc > 1 && strcmp(argv[1], "f32") == 0;
     const bool q3k    = argc > 1 && strcmp(argv[1], "q3k") == 0;
@@ -407,6 +412,12 @@ int main(int argc, char ** argv) {
         ? mode_cfg{ { GGML_TYPE_Q5_K },
                     { { 248320, 2560 }, { 4097, 2560 }, { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 },
                       { 64, 8192 }, { 2560, 6144 }, { 512, 2560 }, { 640, 2560 } },
+                    1, 1, 256, 256, true, 0 }
+        : dmtkt
+        ? mode_cfg{ { GGML_TYPE_IQ4_XS, GGML_TYPE_Q4_K },
+                    { { 2560, 6144 }, { 333, 6144 }, { 4097, 6144 }, { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 },
+                      { 4097, 2560 }, { 200, 512 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 },
+                      { 96, 12288 } },
                     1, 1, 256, 256, true, 0 }
         : dmt || dmt8
         ? mode_cfg{ { GGML_TYPE_IQ4_XS, GGML_TYPE_Q4_K },
