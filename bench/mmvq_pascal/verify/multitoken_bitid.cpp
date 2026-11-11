@@ -46,12 +46,22 @@
 // switches whose separate kernels it repeats (GGML_CUDA_MMVQ_PASCAL_DMT=1, GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1, the
 // k-column kernels on); GGML_CUDA_MMVQ_PASCAL_GLU_MT_FAULT=1 (each token takes the next token's activations) must give
 // differences.
+// `multitoken_bitid q5k1` checks Q5_K's one-token products (C767: the kernel of mmvq-pascal-q5k.cu with
+// GGML_CUDA_MMVQ_PASCAL_Q5K_1R=1) against the one-token kernel's, which no single process can run beside it (the
+// switch is read once): with BITID_REF=<file> missing, the run writes every product's values to it; with the file
+// there, it compares every product with it bit for bit. So: once with GGML_CUDA_MMVQ_PASCAL_Q5K_1R=0 (the one-token
+// kernel writes the file), then with =1 and its settings. The weights and inputs come from the fixed seed, so both runs
+// build the same ones. Shapes: q5k's, Qwen3.8-Flash-Next's other Q5_K products (6144 -> 2560, 2560 -> 512 and 640) and
+// K = 256 (one super-block a row), each with inputs of standard deviation 1 and 250,000.
+// GGML_CUDA_MMVQ_PASCAL_Q5K_1R_FAULT=1 (each row's last iteration left out) must give differences.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
 #include "ggml-cuda.h"
 
+#include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <random>
 #include <vector>
@@ -244,6 +254,68 @@ static int glu_main(ggml_backend_t be) {
     return n_diff != 0;
 }
 
+// Q5_K's one-token products, written to or compared with the file BITID_REF (see the top)
+static int q5k1_main(ggml_backend_t be) {
+    const char * ref = getenv("BITID_REF");
+    if (ref == nullptr) {
+        fprintf(stderr, "q5k1: set BITID_REF=<file>\n");
+        return 2;
+    }
+    FILE * f = fopen(ref, "rb");
+    const bool write = f == nullptr;
+    if (write) {
+        f = fopen(ref, "wb");
+    }
+    GGML_ASSERT(f);
+    int n_written = 0;
+    const std::vector<mm> shapes = { { 248320, 2560 }, { 2560, 6144 }, { 512, 2560 }, { 640, 2560 }, { 4097, 2560 },
+                                     { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 },
+                                     { 96, 12288 }, { 16, 256 } };
+    for (const mm & s : shapes) {
+        ggml_init_params wp = { 4 * ggml_tensor_overhead(), nullptr, true };
+        ggml_context * wctx = ggml_init(wp);
+        ggml_tensor * W = ggml_new_tensor_2d(wctx, GGML_TYPE_Q5_K, s.k, s.m);
+        ggml_backend_buffer_t wbuf = ggml_backend_alloc_ctx_tensors(wctx, be);
+        fill_weights_pool(W);
+        for (const float sigma : { 1.0f, 250000.0f }) {
+            ggml_init_params ip = { 4 * ggml_tensor_overhead(), nullptr, true };
+            ggml_context * ictx = ggml_init(ip);
+            ggml_tensor * x = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, s.k, 1);
+            ggml_backend_buffer_t ibuf = ggml_backend_alloc_ctx_tensors(ictx, be);
+            fill_f32(x, sigma);
+            ggml_init_params gp = { 64 * ggml_tensor_overhead() + 4 * ggml_graph_overhead_custom(64, false), nullptr, true };
+            ggml_context * g = ggml_init(gp);
+            const std::vector<float> out = run(be, g, ggml_mul_mat(g, W, x));
+            if (write) {
+                GGML_ASSERT(fwrite(out.data(), sizeof(float), out.size(), f) == out.size());
+                n_written++;
+            } else {
+                std::vector<std::vector<float>> cols(1, std::vector<float>(out.size(), NAN));
+                if (fread(cols[0].data(), sizeof(float), out.size(), f) != out.size()) {
+                    printf("q5k1: %s ends before m=%lld k=%lld\n", ref, (long long) s.m, (long long) s.k);
+                    n_checked++;
+                    n_diff++;
+                } else {
+                    report(sigma > 1.0f ? "MUL_MAT/big" : "MUL_MAT", GGML_TYPE_Q5_K, 1, s.m, s.k, out, cols, s.m);
+                }
+            }
+            ggml_free(g);
+            ggml_backend_buffer_free(ibuf);
+            ggml_free(ictx);
+        }
+        ggml_backend_buffer_free(wbuf);
+        ggml_free(wctx);
+    }
+    fclose(f);
+    if (write) {
+        printf("wrote %d products to %s (the reference)\n", n_written, ref);
+    } else {
+        printf("%d comparisons, %d with differences\n", n_checked, n_diff);
+    }
+    ggml_backend_free(be);
+    return n_diff != 0;
+}
+
 // one model's types and shapes: dense products, E experts of which U used, experts' hidden width H and FFN width F
 struct mode_cfg {
     std::vector<ggml_type> types;
@@ -267,6 +339,9 @@ int main(int argc, char ** argv) {
     GGML_ASSERT(be);
     if (argc > 1 && strcmp(argv[1], "glu") == 0) {
         return glu_main(be);
+    }
+    if (argc > 1 && strcmp(argv[1], "q5k1") == 0) {
+        return q5k1_main(be);
     }
     const bool ornith = argc > 1 && strcmp(argv[1], "ornith") == 0;
     const bool q5k    = argc > 1 && strcmp(argv[1], "q5k") == 0;

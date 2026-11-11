@@ -1,0 +1,11 @@
+check	verdict	detail
+build-rig	OK	llama.cpp-20261111-b58a98253-pascal-p106-v4-b12246-c767; commit: b58a98253879fb3a740296c99f97e509464f14b6 (2026-11-11 13:50:46 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-b58a98253-pascal-p106-v4-b12246-c767/bin
+sass	SAME	rc=0/0; objects 193, functions base 8952 tip 8956, same 8952, differ 0, base only 0, tip only 4; llama-server functions 8847 / 8851, same 8847, tip only 4; q5k instantiations 16 (4 new); unexpected 0; sass_check.sh rows of the base's instantiations same; Build cuda_12.9.r12.9/compiler.36001619_0; 0/0 error lines
+cpu-tip	OK	rc=0; commit b58a98253879fb3a740296c99f97e509464f14b6 mmvq-pascal-q5k: GGML_CUDA_MMVQ_PASCAL_Q5K_1R=1 runs plain one-token Q5_K products on the multi-token kernel, bit for bit (C767); all targets; 3 warning lines, 0 error lines
+off-base	OK	rc=0; the base's test-llama-archs: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+record	OK	rc=0; 29 cases, 11 runs; q5k1r.tar 526018560 B, md5 1971666b3feaaf237df9cd146e044610
+bitid-build	OK	rc=0; multitoken_bitid md5 7734d7ac17165463244e090ea6c4f140; modes q5k and q5k1 2 q5k1 strings; linked against b58a98253
+emul	SAME	rc=0; 22 products, 555264 outputs, 0 differ; 45879296 sub-blocks, 0 with x or scales differing; controls differ in 20 and 22 of 22 products

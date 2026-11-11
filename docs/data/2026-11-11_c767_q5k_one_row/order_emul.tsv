@@ -1,0 +1,23 @@
+product	K	rows	activations	lanes_per_row	outputs	differ_1R_vs_one_token	sub_blocks	sub_blocks_x_or_scales_differ	control_other_lanes_differ	control_not_contracted_differ	outputs_zero
+output (the head)	2560	248320	normal	2	248320	0	19865600	0	179308	115714	0
+attn_output, ssm_out	6144	2560	normal	8	2560	0	491520	0	2136	1236	0
+attn_k, attn_v	2560	512	normal	2	512	0	40960	0	368	227	0
+ffn_gate_shexp, ffn_up_shexp	2560	640	normal	2	640	0	51200	0	426	276	0
+K = 256 (1 lane)	256	4096	normal	1	4096	0	32768	0	0	382	0
+K = 768 (1 lane)	768	4096	normal	1	4096	0	98304	0	1961	1410	0
+K = 1024 (4 lanes)	1024	4096	normal	4	4096	0	131072	0	2404	229	0
+K = 2048 (8 lanes)	2048	4096	normal	8	4096	0	262144	0	2802	269	0
+K = 4096 (16 lanes)	4096	4096	normal	16	4096	0	524288	0	3209	383	0
+K = 8192 (32 lanes)	8192	4096	normal	32	4096	0	1048576	0	3415	487	0
+K = 12288 (16 lanes)	12288	1024	normal	16	1024	0	393216	0	884	583	0
+output (the head)	2560	248320	uniform x 250000	2	248320	0	19865600	0	175990	117894	0
+attn_output, ssm_out	6144	2560	uniform x 250000	8	2560	0	491520	0	2078	1209	0
+attn_k, attn_v	2560	512	uniform x 250000	2	512	0	40960	0	376	238	0
+ffn_gate_shexp, ffn_up_shexp	2560	640	uniform x 250000	2	640	0	51200	0	453	296	0
+K = 256 (1 lane)	256	4096	uniform x 250000	1	4096	0	32768	0	0	436	0
+K = 768 (1 lane)	768	4096	uniform x 250000	1	4096	0	98304	0	1866	1562	0
+K = 1024 (4 lanes)	1024	4096	uniform x 250000	4	4096	0	131072	0	2402	213	0
+K = 2048 (8 lanes)	2048	4096	uniform x 250000	8	4096	0	262144	0	3028	369	0
+K = 4096 (16 lanes)	4096	4096	uniform x 250000	16	4096	0	524288	0	3215	392	0
+K = 8192 (32 lanes)	8192	4096	uniform x 250000	32	4096	0	1048576	0	3201	389	0
+K = 12288 (16 lanes)	12288	1024	uniform x 250000	16	1024	0	393216	0	888	512	0

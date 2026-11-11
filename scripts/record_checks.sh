@@ -73,6 +73,10 @@
 #                 other shapes) with the one launch of GGML_CUDA_MMVQ_PASCAL_GLU_MT (C757) at each setting, under the
 #                 preset's k-column switches with the read-once kernels it repeats (_DMT=1 _DMT_R=1, _Q5K_MT=1), without
 #                 some of them, off, and its fault (docs/data/2026-11-11_c757_shexp_fused)
+#   q5k1r         Q5_K's one-token products (q5kmt's one-token cases and Qwen3.8-Flash-Next's other Q5_K shapes) with
+#                 C690's kernel at one token (GGML_CUDA_MMVQ_PASCAL_Q5K_1R, C767) at each setting, under the preset's
+#                 k-column switches, without them, with the 2-4-token switch too, off, Q5_K left out, and its fault (each
+#                 row's last iteration left out), which must fail cases (docs/data/2026-11-11_c767_q5k_one_row)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -81,7 +85,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -111,6 +115,7 @@ N4='(n2p|n3p|n2p_128|n3p_128)'
 LID='n_cells=|nh=4,|nb=(1|32),'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
+Q51='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=1,'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
 # C757's gate/up/SWIGLU cases (MUL_MAT_GLU), and those its kernel takes under every run but the ones that turn its
@@ -145,6 +150,8 @@ suite_filters() {
             printf '%s\t%s\n' FLASH_ATTN_EXT "$QSA" ;;
         q5kmt)
             printf '%s\t%s\n' MUL_MAT "$Q5MT" ;;
+        q5k1r)
+            printf '%s\t%s\n' MUL_MAT "$Q51" ;;
         indexer-rows)
             printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
         range-mask)
@@ -260,6 +267,19 @@ suite_runs() {
                      "q5kmt-skip:$KP $M=1 ${P}_SKIP=q5_K"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q5MT"
             done ;;
+        q5k1r)
+            # C767: the preset's k-column switches, then the one-token switch at each setting of the kernel (R = 1 and 2,
+            # with and without the prefetch, one warp a block, the output layer alone), with the 2-4-token switch too,
+            # without the preset, off, Q5_K left to llama.cpp's kernels (so the new path is too), and the fault (each
+            # row's last iteration left out of the one-token products), which must fail cases
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_Q5K_MT" O="${P}_Q5K_1R"
+            for r in "q5k1r-on:$KP $O=1" "q5k1r-r2:$KP $O=1 ${M}_R=2" "q5k1r-pf:$KP $O=1 ${M}_PF=1" \
+                     "q5k1r-r2-pf:$KP $O=1 ${M}_R=2 ${M}_PF=1" "q5k1r-nw1:$KP $O=1 ${M}_NW=1" \
+                     "q5k1r-head:$KP $O=1 ${O}_ROWS=100000" "q5k1r-mt:$KP $M=1 $O=1" "q5k1r-defaults:$O=1" \
+                     "q5k1r-off:$KP" "q5k1r-skip:$KP $O=1 ${P}_SKIP=q5_K"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q51"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' q5k1r-fault "$KP $O=1 ${O}_FAULT=1" MUL_MAT "$Q51" ;;
         indexer-rows)
             # C704: the LID cases, then the in-place reads with GGML_CUDA_LID_ROWS_FAULT=1, which scores rows i mod n_cells
             # instead of the listed ones and so must fail every case (C749; before it, rows 0 to n-1 and lists up to n_cells)
