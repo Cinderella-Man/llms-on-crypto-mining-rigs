@@ -136,6 +136,8 @@ pass ([set_runs.tsv](set_runs.tsv)); the cases, their sizes and md5s are in [set
 
 ## The rig row (Q1300)
 
+Run on 2026-11-11 as R83 on the v4 night merge (only this switch set; the replay was the night replay's `tk` and `tk-rows`): every row keeps its candidates, the chain takes 0.323, 0.314, 0.317 and 0.316 ms a verify pass against 0.650, 0.655, 0.651 and 0.651, and the warm step is a gain ([2026-11-11_r83_c691_p106](../2026-11-11_r83_c691_p106/README.md)).
+
 On one rig, est. 75 minutes (pad: 90): the relay est. 10 (a 648 MB tarball and the 372 MB set), the replay est. 5,
 the operator times est. 5, R49's served profile with the switch off, on, on, off, each a warm and a profiled load,
 est. 48, collecting est. 5. Paths are variables: `RIG` (the rig's ssh alias), `BUILD` (the build machine's), `W` (the
