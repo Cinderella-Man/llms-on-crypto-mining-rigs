@@ -66,7 +66,7 @@ ms after the catch-up's work ends on card 8 (`trace`, greedy, median; 0.31 in `p
 | 2 | C740 (Q1309), `seq_rm` bounded by the used cells | its draft-context call is in `s.drf.end → s.ckpt` 0.393; the main context's call after the acceptance (`s.acc.spec → s.rm`) is 0.779, after the catch-up is queued | 0.39 + up to 0.28 = 0.67 |
 | 3 | C739 (Q1308), the draft context's `seq_rm` after the verify pass's launch | in `s.drf.end → s.ckpt` 0.393 | up to 0.39 (the same call as C740's first part) |
 | 4 | C741 (Q1310), fewer yields | 0.100 + 0.004 in the gap; the catch-up's pair (`s.cu.out → s.cu.end`) 0.124 after the catch-up | 0.10 + up to 0.12 |
-| 5 | C742 (Q1311), no h row back from the last drafting pass | inside the 0.336 ms way back | 0.05 (10 KB at the card-to-host rate of ~213 MB/s, [mining_rig.md](../../mining_rig.md)) |
+| 5 | C742 (Q1311), no h row back from the last drafting pass | inside the 0.336 ms way back | 0.19 (Flash-Next's 40 KB row, 10,240 F32 values, at the card-to-host rate of ~213 MB/s, [mining_rig.md](../../mining_rig.md); [C742](../2026-11-11_c742_last_draft_row/README.md)) |
 | 6 | C743 (Q1312), the per-step settings before the draft | 0.009 | 0.01 |
 
 **Q1104 (C619) ranks above all six.** The draft context builds its graph again twice a step on the rig: for the
