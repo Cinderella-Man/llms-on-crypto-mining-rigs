@@ -62,6 +62,11 @@
 // ggml_cuda_mmvq_pascal_q5k_mt_takes), and those it leaves are printed as "declined" and not counted, unless BITID_ALL=1
 // (the control: with GGML_CUDA_MMVQ_PASCAL_RO8=0 and BITID_ALL=1 the k-column kernel's sums must differ).
 // GGML_CUDA_MMVQ_PASCAL_RO8_FAULT=1 (every token stages the first token's activations) must give differences.
+// `multitoken_bitid q6k` checks Q6_K's dense products at 2 to 4 tokens (C727: the kernel of mmvq-pascal-dmt.cu with
+// GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 or 2), at Qwen3.8-Flash-Next's Q6_K attn_output and ssm_out (6144 -> 2560) and at the
+// other row widths the kernel takes at 2 to 4 tokens (8 and 16 lanes per row), with partial last row blocks. With the
+// switch at 0 the k-column kernel takes these products and its sums differ from the one-token kernel's;
+// GGML_CUDA_MMVQ_PASCAL_Q6K_MT_FAULT=1 (each token takes the next token's activations) must give differences.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -369,6 +374,7 @@ int main(int argc, char ** argv) {
     const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
     const bool f32    = argc > 1 && strcmp(argv[1], "f32") == 0;
     const bool q3k    = argc > 1 && strcmp(argv[1], "q3k") == 0;
+    const bool q6k    = argc > 1 && strcmp(argv[1], "q6k") == 0;
     const bool dmt8   = argc > 1 && strcmp(argv[1], "dmt8") == 0;
     const bool q5k8   = argc > 1 && strcmp(argv[1], "q5k8") == 0;
     const bool count_all = getenv("BITID_ALL") != nullptr && atoi(getenv("BITID_ALL")) == 1;
@@ -378,7 +384,11 @@ int main(int argc, char ** argv) {
         fprintf(stderr, "%s: this build has no read-once kernels (ggml_cuda_mmvq_pascal_*_takes)\n", argv[1]);
         return 2;
     }
-    const mode_cfg cfg = q3k
+    const mode_cfg cfg = q6k
+        ? mode_cfg{ { GGML_TYPE_Q6_K },
+                    { { 2560, 6144 }, { 1001, 6144 }, { 4097, 2048 }, { 200, 2048 }, { 77, 4096 }, { 333, 4096 } },
+                    1, 1, 256, 256, true, 0 }
+        : q3k
         ? mode_cfg{ { GGML_TYPE_Q3_K },
                     { { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 }, { 2560, 6144 }, { 640, 2560 }, { 4097, 2560 },
                       { 200, 512 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 }, { 96, 12288 },

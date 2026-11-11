@@ -85,6 +85,11 @@
 #                 (GGML_CUDA_MMVQ_PASCAL_RO8, C729) at each setting, under the preset's k-column switches, with the 2-4-
 #                 token switches too, without the preset, off, types left out, and its fault (every token stages the first
 #                 token's activations), which must fail cases (docs/data/2026-11-11_c729_readonce_5to8)
+#   q6kmt         Q6_K's products of 1-5 tokens (Qwen3.8-Flash-Next's Q6_K attn_output and ssm_out, 6144 -> 2560, among them)
+#                 with C722's 2-4-token kernel (GGML_CUDA_MMVQ_PASCAL_Q6K_MT, C727) at each setting, under the preset's
+#                 k-column switches, without them, beside _DMT=1, off, Q6_K left out, and its fault (each token takes the
+#                 next token's activations), which must fail cases, and the fault without the switch, which must not
+#                 (docs/data/2026-11-11_c727_q6k_readonce)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -94,7 +99,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -126,6 +131,7 @@ HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 Q51='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=1,'
 RO8='type_a=(iq4_xs|q4_K|q5_K),(type_b=f32,)?m=[0-9]+,n=[5-8],'
+Q6MT='type_a=q6_K,(type_b=f32,)?m=[0-9]+,n=[1-5],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
 # C757's gate/up/SWIGLU cases (MUL_MAT_GLU), and those its kernel takes under every run but the ones that turn its
@@ -165,6 +171,8 @@ suite_filters() {
             printf '%s\t%s\n' MUL_MAT "$Q51" ;;
         ro8)
             printf '%s\t%s\n' MUL_MAT "$RO8" ;;
+        q6kmt)
+            printf '%s\t%s\n' MUL_MAT "$Q6MT" ;;
         indexer-rows)
             printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
         range-mask)
@@ -310,6 +318,20 @@ suite_runs() {
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$RO8"
             done
             printf '%s\t%s\t%s\t%s\tfail\t\n' ro8-fault "$KP $M=1 ${M}_FAULT=1" MUL_MAT "$RO8" ;;
+        q6kmt)
+            # C727, as dmt: the preset's k-column switches, then the kernel's settings (R = 1 by default, forced to 2;
+            # without the prefetch; one warp a block allowed; at most 2 warps), beside _DMT=1, without the preset, off,
+            # Q6_K left out of the kernel and of the Pascal kernels, the fault (each token takes the next token's
+            # activations), which must fail cases, and the fault without the switch, which must not
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_Q6K_MT" D="${P}_DMT"
+            for r in "q6kmt-on:$KP $M=1" "q6kmt-nopf:$KP $M=2" "q6kmt-r2:$KP $M=1 ${D}_R=2" \
+                     "q6kmt-r2-nopf:$KP $M=2 ${D}_R=2" "q6kmt-nw1:$KP $M=1 ${D}_NW=1" "q6kmt-nw2:$KP $M=1 ${D}_NW=2" \
+                     "q6kmt-dmt:$KP $M=1 $D=1" "q6kmt-defaults:$M=1" "q6kmt-off:$KP" \
+                     "q6kmt-skip:$KP $M=1 ${D}_SKIP=q6_K" "q6kmt-pskip:$KP $M=1 ${P}_SKIP=q6_K" \
+                     "q6kmt-fault-off:$KP ${M}_FAULT=1"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q6MT"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' q6kmt-fault "$KP $M=1 ${M}_FAULT=1" MUL_MAT "$Q6MT" ;;
         indexer-rows)
             # C704: the LID cases, then the in-place reads with GGML_CUDA_LID_ROWS_FAULT=1, which scores rows i mod n_cells
             # instead of the listed ones and so must fail every case (C749; before it, rows 0 to n-1 and lists up to n_cells)
