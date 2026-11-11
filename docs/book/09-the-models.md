@@ -9,7 +9,8 @@
 > - Since 2026-11-02 there is one goal: Qwen3.8 Flash-Next, a 125B-parameter model, well above 5–8 tok/s on one rig. On
 >   2026-11-04 it stood at 12.2 tok/s with a draft network; the v3 release runs it at 20.40 ([Chapter 10](10-v3.md)).
 > - Across all four, the engine carried most of the speed, the file decided the quality, and the 4 GB host decided what
->   could load at all. Facts as of 2026-11-04; the release results of 2026-11-06 are in [Chapter 10](10-v3.md).
+>   could load at all. Facts as of 2026-11-04; the release results of 2026-11-06 are in [Chapter 10](10-v3.md), and
+>   the work on Flash-Next since then in [Chapters 11 to 15](11-after-v3.md).
 
 The earlier chapters explain the tools; this one follows each model through them. For quantization and file mixes see
 [Chapter 4](04-smaller-models.md), for the card split and the host memory [Chapter 5](05-nine-cards.md), for the
@@ -154,7 +155,8 @@ reverse of Flint, so a mix copied from Flint would have spent bits in the wrong 
 And a draft trained with the model guesses well; it only pays once checking several tokens is cheap.
 
 **What is open.** Kernels that read each weight once for 2–4 tokens were built and checked on a P106. The agent check
-with the draft layer on them is estimated at about 18.7 tok/s and has not run. Pipelined drafting for hybrid models
+with the draft layer on them is estimated at about 18.7 tok/s and has not run. It ran for the v3 release and did
+not pay: 13.01 tok/s against 16.42 without the draft ([chapter 10](10-v3.md#109-flint-and-ornith-on-the-new-build)). Pipelined drafting for hybrid models
 was estimated at 35–41 tok/s; Flash-Next's 1.6× slowdown with pipelined guesses ([Chapter 8](08-guessing-ahead.md))
 now argues for caution. Nothing has run on Ornith since 2026-10-28.
 
@@ -235,6 +237,13 @@ checking several tokens at once.
   estimated at about 15 tok/s before any draft.
 - **Two rigs:** 18 cards over the network for a larger file, planned, estimated at 5.5–6.3 tok/s plain.
 
+**What happened next.** Three of the four turned out differently than planned. The stacked run became the v3
+release at 20.40 tok/s, with the makers' file, because the speed file's saving no longer showed on the faster
+kernels ([chapter 10](10-v3.md)). The cut files kept agent and code quality and lost general knowledge
+([chapter 4](04-smaller-models.md)). Two rigs have not run; priced on v3's token they are est. 10.7 to 12.3 tok/s.
+And after v3 the work turned to what the list above does not name at all: speed deep into a conversation, the
+pass that checks guessed tokens, and prompt reading ([chapters 11 to 15](11-after-v3.md)).
+
 ## 9.6 The releases
 
 | Release | Date | What it held | Headline |
@@ -243,10 +252,13 @@ checking several tokens at once.
 | **v2.0** | 2026-10-26 | 32-bit sums, a persistent kernel per expert layer, the fused shared expert, faster prompt reading, GPU sampling for tool requests, pipelined speculation; my Flint Pascal Q5 GGUF file | Flint Q8_0 at 262,144 tokens: 45.9 and 44.6 tok/s in two runs, 12 of 12 each |
 | **v2.1** | not released | was to add the answer store and a trained drafter | the drafter was stopped; the store measured +1.4 % |
 | **v3** | 2026-11-06 | Flash-Next first; also Flint Pascal Q8 GGUF and the re-read fix, Ornith-1.5-122B Pascal N2P GGUF and its kernels; every feature behind a switch, a preset per model ([chapter 10](10-v3.md)) | Flash-Next 20.40 tok/s for a coding agent; Flint 45.9 and Ornith 16.3 on the same build |
+| **v4** | not released; the line on 2026-11-11 | a newer upstream base; attention that reads only the cells the model picks; kernels for the check pass; checkpoints in card memory, taken without stopping the pipeline; more than forty changes, each behind a switch ([chapters 11 to 15](11-after-v3.md)) | against v3 on the same rig: writing 45.97 % faster over 49,152 tokens of conversation, a coding agent's task in 9.4 % less time |
 
 Every release keeps the answers the same: the kernels change only the order of additions, and the speculation keeps
 exactly the tokens plain decoding would produce. Each one ships with the command line and the measurements behind its
-headline.
+headline. "Only the order of additions" has a consequence that showed after v3: on Flash-Next a check over several
+tokens adds in another order than a pass over one, and this model turns the last bits into another text at
+temperature 0. The distributions are the same; the text is not always ([chapter 13](13-the-check-pass.md)).
 
 ## What to remember
 
@@ -257,7 +269,7 @@ headline.
 - A big model fits only at 2–3 bits. There, where the bits go matters more than the format, and my own file beat the
   common one on both speed and quality.
 - Flash-Next went from 7.8 to 12.2 tok/s in two days and to 20.40 in v3 ([chapter 10](10-v3.md)); its floor is about
-  35 tok/s.
+  35 tok/s. The line after v3 wrote 24.85 on the same check ([chapter 15](15-toward-v4.md)).
 
 ## Where the details are
 

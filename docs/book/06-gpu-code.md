@@ -129,8 +129,9 @@ in one pass. If each weight is read once and applied to all k tokens, a 5-token 
 
 **What I did.** Two kernel families. The **k-column kernels** (one column per token) decode each weight block once
 into 8-bit words and multiply it with `dp4a` against every token's activations. The **multi-token expert kernel**
-groups the tokens that picked the same expert, reads that expert once and applies it to each of them. Both give
-results bit for bit identical to the one-token kernels.
+groups the tokens that picked the same expert, reads that expert once and applies it to each of them. For most
+formats they give the one-token kernels' results bit for bit. For two 4-bit formats and the output layer they add
+the same numbers in another order, which turned out to matter ([chapter 13](13-the-check-pass.md)).
 
 **What happened.** The whole model, ms per pass on nine cards:
 
@@ -170,7 +171,10 @@ One plain token went from 82.4 to 74.9 ms, 9.1 % faster, from one launch setting
 budget does not help: kernels for the grid-based IQ formats use 171–221 registers per thread, so only two blocks fit
 per SM whatever the shared memory, and there the smaller tile is 5–19 % slower. So the new default rule asks the
 compiled kernel for its register count and picks the 32 KB tile only where a third block really fits. That build is
-checked for correctness but not yet timed on the rig: open as of 2026-11-04.
+checked for correctness but not yet timed on the rig: open as of 2026-11-04. Timed that evening, with the alignment
+check of the last section fixed, the 32 KB budget took a five-token pass from 205.3 to 180.2 ms and left one token
+at 74.1. v3's preset for Flash-Next sets the 32 KB budget and leaves the per-kernel rule off
+([chapter 10](10-v3.md)).
 
 **Why.** On a 5-SM card, occupancy is the lever. The best shape depends on registers, row width and token count
 together, so the rule reads them from the compiler instead of hard-coding one answer.
@@ -204,6 +208,9 @@ and their own effect on the rig is open.
 | Sparse attention | The attention layers need only 2,051 selected cache cells a token, but llama.cpp's gather needs a newer GPU, so a P106 reads the whole cache: 64 MiB per layer and token at 32k where 4 MiB would do | reads only each token's kept cells | −3 to −5 ms a token at 5k of context, −34 to −37 at 32k |
 | Fused recurrent layers | 36 of the 48 layers are recurrent (a fixed-size state updated each token); each took 11 tiny launches, and its 3 MiB state was copied first | updates the state in place: 11 launches become 3, logits identical on the CPU | −5 to −7 ms a token (in the 82 ms build, not timed alone) |
 | CUDA graphs per verify width | A CUDA graph is a recorded launch sequence, replayed like a prepared statement. llama.cpp keeps one, so each change of verify width re-records it: est. 10–20 ms per change | one recorded graph per width up to 8 (a port of upstream drafts) | +2–7 % per draft step |
+
+The first of the three was timed on 2026-11-10. With the draft on, a step at 32,768 tokens of context got
+76.27 ms shorter, and at 49,152 tokens 120.82 ms. [Chapter 12](12-long-conversations.md) tells that story.
 
 ## How I profile
 
@@ -329,7 +336,8 @@ the standalone engine only if a measurement finds ≥ 5 ms of host time a pass t
   "before" row is the v3 base in [verify_cost](../data/2026-11-03_verify_cost/README.md), the "after" row fork
   branch `pascal-p106-v3-b12076-ladder3` in [kcurve_p106](../data/2026-11-04_kcurve_p106/README.md).
 - Attention: Q151 (FAP in v2, off), Q675 (the local-memory fix); [fap_spills](../data/2026-11-04_fap_spills/README.md).
-  Sparse attention: Q230; [qsa_sparse_attn](../data/2026-11-04_qsa_sparse_attn/README.md).
+  Sparse attention: Q230; [qsa_sparse_attn](../data/2026-11-04_qsa_sparse_attn/README.md); its timing on the rig,
+  Q1143 ([chapter 12](12-long-conversations.md)).
 - Recurrent fusions: Q436–Q438; [gdn_fusions](../data/2026-11-04_gdn_fusions/README.md). Verify graphs: Q52, Q701;
   [vgraphs](../data/2026-11-04_vgraphs/README.md). All merged in
   [ladder3_merge](../data/2026-11-04_ladder3_merge/README.md).

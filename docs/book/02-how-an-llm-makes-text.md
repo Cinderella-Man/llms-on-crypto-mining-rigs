@@ -177,7 +177,8 @@ Both stay this small because only some layers keep the whole history. Flint's 14
 The cache also costs time: attention reads it on every token, so writing slows as the conversation grows. In
 Flash-Next's 12 attention layers, at the measured speed of the current attention code, that is est. 0.7 ms per token
 with an empty context, est. 6.0 ms at 5,000 tokens of context and est. 38 ms at 32,000. A coding agent's context grows every turn, so this cost matters
-([chapter 3](03-measuring.md)).
+([chapter 3](03-measuring.md)). Flash-Next's attention is built to read only a small, chosen part of the cache; on
+these cards it first read all of it. [Chapter 12](12-long-conversations.md) tells how that was measured and fixed.
 
 ### Recurrent state: a running total instead of a log
 
@@ -199,7 +200,9 @@ instead of the tokens.
 So the server saves *checkpoints*: copies of the recurrent state at chosen positions. On the rig, each checkpoint is
 112.6 MiB, and it lives in host RAM. Saving one took 674.2 ms and restoring one 636.8 ms, the first of each in the
 first test's logs, over the slow links.
-With 4 GB of host RAM, the server keeps at most a few of them ([chapter 1](01-the-rig.md)).
+With 4 GB of host RAM, the server keeps at most a few of them ([chapter 1](01-the-rig.md)). Saving them turned out
+to cost 30.72 % of all prompt reading time on v3; [chapter 14](14-reading-prompts.md) tells how most of that went
+away.
 
 ## Reading the prompt: a different speed
 
@@ -285,7 +288,7 @@ Because one pass is mostly reading weights, a pass could check several guessed t
 the arithmetic stayed cheap. That is *speculative decoding*: guess a few tokens cheaply, check them all in one pass,
 keep the ones the model agrees with. It is optimistic execution with rollback. On these small cards, checking 2.90
 tokens at once cost 2.22 times one token (57.7 against 25.9 ms), so the obvious way pays poorly. [Chapter 8](08-guessing-ahead.md) tells
-what worked instead.
+what worked instead, and [chapter 13](13-the-check-pass.md) how the check itself got cheaper after v3.
 
 ## What to remember
 

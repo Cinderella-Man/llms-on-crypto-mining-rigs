@@ -135,6 +135,11 @@ P104 mining cards, the GTX 10 series and the Tesla P4/P40.
   8 bits between cards, an MTP draft with a cheaper output head, a keep-alive that holds every card at its boost clock,
   and every feature behind its own switch, with one preset per model ([release notes](release/notes-v3.0.md),
   [what v3 changed and why](docs/book/10-v3.md)).
+- **v4 (in progress, not released):** a newer upstream base, attention that reads only the cache cells the model
+  picks, kernels for the pass that checks guessed tokens, and checkpoints kept on the cards and taken without stopping
+  the pipeline. On 2026-11-11 this line wrote 45.97 % faster than v3 over a conversation of up to 49,152 tokens and
+  took 9.4 % less time for a coding agent's task, on the same rig the same day
+  ([the work since v3](docs/book/11-after-v3.md)).
 - **The answers don't change:** the kernels change only the order of additions, and speculation gives exactly the
   tokens of plain decoding.
 

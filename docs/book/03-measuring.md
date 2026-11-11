@@ -103,6 +103,15 @@ The v2 release settings were chosen on it, not on single requests. Some examples
 And the headline numbers come from it. Flint on nine cards: stock llama.cpp 14.4 tok/s and 8 of 12 tasks, Miner
 Llama v2 45.9 and 44.6 tok/s in two runs and 12 of 12 ([preface](00-preface.md)).
 
+### What it cannot see
+
+The twelve bugs are small. Their conversations end at 2,800 to 10,000 tokens, while an attempt at a real repository
+task writes more than 40,000. So the agent check says nothing about speed deep into a conversation. After v3 it got
+a companion, the *deep lane*, which times the same requests at set depths up to 49,152 tokens, and a rule to judge
+changes on the time of one step, because tokens per second also moves when the text changes
+([chapter 11](11-after-v3.md)). The two tests can disagree, and both be right: one set of changes was worth
+45.97 % on the deep lane and 9.4 % of a task's time on the agent check ([chapter 15](15-toward-v4.md)).
+
 ## Quality: KLD and "same top token"
 
 ### The problem
@@ -161,7 +170,9 @@ Flash-Next's files, against Swift-1.5's 8-bit file, on held-out agent sessions:
 
 The trade is plain in that table. Better files read more bytes per token and leave less room on the cards. Which one
 the rig should run is **open** on 2026-11-04: it waits on the agent check of the 3-bit file and on new GPU code for
-these formats.
+these formats. v3 shipped the 2-bit file ([chapter 10](10-v3.md)). A mix of the same size that scores a
+KLD of 0.236 on agent text, where the mix it started from scores 0.279 on the same cards, followed
+([chapter 15](15-toward-v4.md)); the 3-bit file's agent check has still not run.
 
 ### Story: does a short-text score predict agent quality?
 

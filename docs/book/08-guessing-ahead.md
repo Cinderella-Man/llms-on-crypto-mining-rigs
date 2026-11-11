@@ -39,6 +39,8 @@ flowchart LR
 The output is the same as without guessing. Every kept token is one the model chose itself; the guesser only decides
 how many tokens each pass yields. With random sampling instead of always taking the top token, a slightly more careful
 acceptance rule keeps the output's statistics the same ([section 8.9](#89-exact-or-only-nearly-block-verification-and-a-hidden-bias)).
+One caveat surfaced after v3: a pass over several tokens can add its numbers in another order than a pass over one,
+and on Flash-Next that is enough to change the text ([chapter 13](13-the-check-pass.md)).
 
 What decides the gain is the **acceptance rate** p, the chance that a guess is right. If every guess is right with
 probability p and the guesser keeps going, a pass yields on average about 1 / (1 − p) tokens: 1.33 at p = 0.25 and
@@ -99,6 +101,7 @@ against 127 ms for one plain token. So it gained 3.10 × 127 / 347 = 1.13×, not
 | Route once per block | every token in the block uses the first token's experts | est. −14.5 to −17 ms at 5 tokens, but too lossy: quality score (KLD) 0.288 at 2 tokens, 0.898 at 5 |
 | New kernel shapes for 2–5 tokens | tune the launch for small batches | built, not yet timed on a P106 |
 | Smaller fixes | 8-bit hand-offs, k-aware one-token paths, batched table reads | est. −12, −5 to −14 and 0 to −6 ms, open |
+| After v3: kernels that keep the one-token layout at two to four tokens | the output layer and two 4-bit formats | the output layer for four tokens 8.105 → 3.149 ms, the two formats 16.212 → 8.291 ms a check ([chapter 13](13-the-check-pass.md)) |
 
 ## 8.3 Free guesses: copying from the context
 
@@ -250,7 +253,9 @@ check is next.
 
 **Why, and what is open.** The draft works because it was trained for this model. But 12.2 compares two different
 engine builds: the newer one has faster kernels without a draft too. A no-draft run on the same build will split the
-gain between engine and draft; it is planned.
+gain between engine and draft; it is planned. The faster kernels answered it first: on them the same draft gave
+14.6 tok/s against 14.3 without it, and paid again only once its output head got cheaper
+([chapter 10](10-v3.md#105-story-a-draft-that-stopped-paying-and-a-cheaper-head)).
 
 ## 8.7 DFlash2: a whole block in one draft pass
 
@@ -281,7 +286,12 @@ using the measured cost of each pass width. The output stays exact; only the num
 today's cost curve the rule checks no drafted tokens at a confidence of 0.5 per token, two at 0.6–0.8, four at 0.85
 and five at 0.9.
 
-**What happened.** The estimate is +5–12 % over the best fixed length. The rig run is **open**; it will settle it.
+**What happened.** The estimate was +5–12 % over the best fixed length. The rig run of 2026-11-05 did not confirm
+it: on the agent check the rule came out at 0.99 times the fixed draft at equal work, and 1.02 times on the eleven
+tasks without a runaway, where two sessions of the fixed draft are 1.00 to 1.01 times each other. It yielded 2.80
+tokens a step against 3.10 to 3.12. Negligible, so the switch stays in the build, off. With widths of 1, 3 and 4
+and a steep cost curve the rule mostly shortened drafts. After v3 the check got cheaper, and the rule is priced
+again on recorded drafts of up to seven tokens ([chapter 13](13-the-check-pass.md)).
 
 ## 8.9 Exact, or only nearly? Block verification and a hidden bias
 
@@ -308,13 +318,21 @@ draws across the restore fixed it (p = 0.24); block verification, which already 
 drafters on hybrid models, and models that can't remove part of a sequence. The rig's MTP and DFlash2 lines don't replay
 (their drafts fit within the saved snapshots), so their numbers stand. Upstream llama.cpp has the same code path.
 
+The one-by-one rule itself was timed on Flash-Next's draft after v3: it yields more tokens a step than the release's
+match rule and wrote 2.97 % faster on the rig ([chapter 13](13-the-check-pass.md)).
+
 ## 8.10 The open cost: copying the answers back
 
 Each checked position returns a row of scores, one per vocabulary entry: 248,320 32-bit numbers, 993,280 bytes. A 5-token
 check therefore ships 4.97 MB from the last card over its PCIe 1.0 x1 link, an estimated 20 ms, and then the
 two-core host samples each row. My pass timings never include it, because the benchmark tool returns only one row.
 Every real agent-check step pays it. The plan is to measure it first, then, if it is large, sample on the last card and
-send back only the accepted tokens. **Open.**
+send back only the accepted tokens.
+
+**What the measurement said** (2026-11-04). The rows never cross the link. The release line samples on the last
+card, for a check's four positions as for a single token, and only the chosen tokens come back. But the same
+profile found a larger sum where nobody had looked: of a 179 ms step, about 41 ms were on no card's clock at all.
+Splitting that sum took a second kind of profile, and [chapter 11](11-after-v3.md) has the result.
 
 ## What to remember
 
@@ -358,7 +376,7 @@ send back only the accepted tokens. **Open.**
 - Adaptive draft length: [data](../data/2026-11-04_adaptive_draft/README.md) (Q687; switch `LLAMA_SPEC_ADAPT=1`).
 - Block verification and the replay bias: [data](../data/2026-11-04_block_verify/README.md) (Q797, Q808; switches
   `LLAMA_SPEC_BLOCK_VERIFY=1` and `LLAMA_SPEC_KEEP_DRAWS=1`; Sun et al., [arXiv:2403.10444](https://arxiv.org/abs/2403.10444)).
-- The verify pass's logits copy: Q900 (planned).
+- The verify pass's logits copy: Q900.
 - Sources differ on one point: the answer store's benchmark page and [drafter.md](../drafter.md) say it ships with
   v2.1, while the same page's latest section and [release/flint-v2.1](../../release/flint-v2.1/README.md) say it is not
   published yet; this chapter follows the latter.

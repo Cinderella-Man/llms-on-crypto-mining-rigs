@@ -7,8 +7,9 @@
 >   slower than a file twice their size.
 > - Where the bits go matters more than which format you pick. My best files keep the sensitive parts at 8 bits and
 >   squeeze the rest.
-> - For the 125B model I run now, the rig leaves est. 2.84 bits per expert weight. Two ways to win more room, cutting
->   rarely used experts and trellis formats, are still open.
+> - For the 125B model I run now, the rig leaves est. 2.84 bits per expert weight. Two ways to win more room were
+>   scored: cutting rarely used experts keeps agent and code quality and loses general knowledge, and a trellis
+>   format scores well but decodes too slowly on these cards.
 
 The facts in this chapter are from 2026-11-04.
 
@@ -145,7 +146,8 @@ each byte budget. The idea of measuring each change and solving for the set came
 
 **What happened.** The chosen file scored a KLD of 0.0656, against 0.0580 for the Q8_0 it started from, reading
 11.0 % fewer bytes per token (a 40.43 GB file). The prediction landed 0.0011 from the real file's score. On the rig it
-was 6.3 % faster per generated token than Q8_0 (21.58 against 22.92 ms). Whether it replaces Q8_0 in a release is still open.
+was 6.3 % faster per generated token than Q8_0 (21.58 against 22.92 ms). It shipped in v3 as Flint Pascal Q8 GGUF,
+beside plain Q8_0, and ran the agent check at 47.4 tok/s on the release build ([chapter 10](10-v3.md)).
 
 **Why.** When the costs of separate changes simply add up, a cheap search finds the best file without building hundreds
 of them. On Flint they added up well.
@@ -197,8 +199,14 @@ token falls from 82.4 to 72.4 ms, which is 12.1 to 13.8 tok/s before any guessin
 0.2866 to 0.2792.
 
 **Why.** Raising 1,106 million dense weights from 3.44 to 4.25 bits barely changed the score. So the error of the Q2_0 file
-lives in its routed experts, and the dense part can be chosen for speed. This is still open: the speed is an estimate
-from kernel timings, the rig runs are queued, and the IQ3_XXS version is built but not yet scored.
+lives in its routed experts, and the dense part can be chosen for speed. On 2026-11-04 this was open: the speed was
+an estimate from kernel timings.
+
+**What the rig said.** The mix carried the first fast runs: 14.3 tok/s on the agent check without a draft and 18.8
+with one. But on the v3 release build it ran at 20.75 tok/s and the makers' file at 20.40, closer than two runs of
+one setting. The release's kernels had made the makers' formats fast too, so v3 ships the makers' file and the mix
+stays a recipe ([chapter 10](10-v3.md)). The same method was later turned to quality at equal size, which the
+kernels cannot give ([chapter 15](15-toward-v4.md)).
 
 ## Choosing Flash-Next's file
 
@@ -220,7 +228,7 @@ learned rounding is what makes it work.
 
 **What happened.** IQ3_XXS is the best file that fits. It cuts the agent-text KLD 1.62 times against Q2_0 (0.176 against
 0.285), for an estimated 17–21 % slower decoding, with IQ2_XS as the fallback. Q2_0 is what the rig runs today: it fit first, and the
-kernels were built for it. The agent check of IQ3_XXS on the rig is open.
+kernels were built for it. The agent check of IQ3_XXS on the rig is open. v3 shipped Q2_0 ([chapter 10](10-v3.md)).
 
 **The n-gram table** stays at 28.8 GB in 4.5-bit IQ4_NL. At 4.1 bits it would save 2.6 GB but moved prose outside the
 noise; at 3.1 bits it failed. Its weights look like Gaussian noise with no empty rows, so there is nothing to prune.
@@ -242,10 +250,22 @@ not fit, from 512 experts per layer to 464, 448 and 416.
 - **Usage has a cheap tail.** In the median layer 54 experts carry half the routings, and 406 carry 99 %. Keeping 464
   per layer keeps 99.78 % of all routings, and keeping 416 keeps 99.08 %.
 - **The cuts save 4.74, 6.32 and 9.48 GB.** At 416 experts the file fits 64k tokens of context on whole layers.
-- **The first quality check is too small to decide.** On a CPU, with only 1,024 tokens of agent text, the three cuts
+- **The first quality check was too small to decide.** On a CPU, with only 1,024 tokens of agent text, the three cuts
   scored a KLD of 0.060, 0.044 and 0.056 against the uncut file. That is about the size of IQ3_S's whole lead over IQ3_XXS (0.055),
   and the sample cannot rank the cuts.
-- **Open:** a GPU run on all three texts decides whether a cut IQ3_S beats IQ3_XXS at the same size.
+- **The GPU run on all three texts decided it the same evening.** KLD against the 8-bit reference:
+
+  | File | Agent text | Wiki text | Code |
+  |---|---:|---:|---:|
+  | IQ3_S, all 512 experts | 0.118 | 0.153 | 0.032 |
+  | IQ3_S cut to 464 | 0.123 | 0.446 | 0.034 |
+  | IQ3_S cut to 448 | 0.122 | 0.551 | 0.034 |
+  | IQ3_S cut to 416 | 0.131 | 0.724 | 0.043 |
+  | IQ3_XXS, uncut | 0.176 | 0.248 | 0.054 |
+
+  A cut ranked on agent sessions keeps agent and code quality: even at 416 experts it beats the uncut IQ3_XXS on
+  both. It loses general knowledge: on wiki text every cut is far worse than either uncut file. The experts that
+  agent sessions never call are the ones other text needs.
 
 **ISTA's Coder cut.** ISTA, the lab that published the GSQ-RCO files of the original model, also published a Coder file
 that keeps 256 of 512 experts per layer, chosen on code, agent, vision and spatial text. On my agent text those 256
@@ -253,7 +273,12 @@ carry only 66.8 % of the routings; the 256 most used would carry 90.8 %. Against
 moves the KLD from 0.117 to 0.274 on agent text and from 0.161 to 0.846 on wiki text. Published pruning research agrees:
 coding scores drop 1.9 % with a quarter of the experts removed and 6.9 % with half.
 
-**Why.** Cut on the traffic you serve, and cut lightly. Halving the experts is far past the cheap tail.
+**Why.** Cut on the traffic you serve, and cut lightly. Halving the experts is far past the cheap tail. And a cut is
+a bet on the traffic: the file gets better at what it was cut for and worse at the rest.
+
+Cutting and merging parts of a model has since become its own line of work, in the sister repository
+[elixir-agents-on-mining-rigs](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs). This book stays with
+the engine and the file formats.
 
 ## Trellis formats: fewer bits, more decode work
 
@@ -267,8 +292,10 @@ read from a 2,048-entry codebook, which yields two weights. Everything else in t
 experts per layer and puts 19.29 GiB on the GPUs, 55 % of what Swift Q2_0 puts there.
 
 **What happened.** agentionai report a KLD of 0.118 on C++ code and 0.579 on held-out text, against their own Q8_0 on
-their own texts. Those numbers are not on my scale. My scoring of both Gyro files on the same three texts as every other
-file here was set up on 2026-11-04 and is open.
+their own texts. Those numbers are not on my scale. So I scored both Gyro files on the same texts and against the
+same 8-bit reference as every other file here. The full-size file, with all 512 experts, scores 0.148 on agent text
+and 0.046 on code at 34.35 GiB on the cards: about half the KLD of Swift Q2_0 at the same size (0.285 and 0.112),
+and better than Swift IQ3_XXS, which is 9 GiB larger (0.176 and 0.054). Gyro-Coder scores 0.281 and 0.133.
 
 **Can a P106 decode it?** Pascal has no single instruction for a 32-bit multiply, so the hash costs three. My
 first estimate was 9–28 ps per weight. To pay, a trellis decode needs to come in near 5 ps per weight. On one P106,
@@ -276,8 +303,11 @@ with the codebook held in the card's fast on-chip memory, agentionai's kernels t
 gate and up products and 37.8 ps for the down product at one token (10.0 and 22.3 in their best layouts), against 3.3
 and 3.9 for Miner Llama's Q2_0. They miss the line.
 
-**Why it is worth the trouble.** If both answers come back good, half the expert bytes would buy room for better types
-elsewhere, or for the MTP draft model, on the same nine cards.
+**Why.** The quality answer came back good and the speed answer did not. A trellis file is the best Flash-Next file
+of its size that I have scored, and on a P106 its experts take 23.8 and 37.8 ps per weight where Q2_0's take 3.3
+and 3.9.
+A format is only as good as the kernel a card can run for it. A trellis code designed for what Pascal decodes fast
+is a row on the list, not a result.
 
 ## What didn't work
 
@@ -300,8 +330,8 @@ elsewhere, or for the MTP draft model, on the same nine cards.
 - Where the bits go beats which format: measure what each tensor group costs, and spend bits where they are cheap.
 - A format's cost belongs to its kernel. When the kernels change, measure the file choices again.
 - Cut experts by measured usage, on the traffic you serve, and cut lightly.
-- An estimate is not a result. The Pascal-fast files, the cut files and the trellis formats stay open until they are
-  measured on the rig.
+- An estimate is not a result. The Pascal-fast file's estimated saving vanished once the kernels were fast; the cut
+  files kept agent quality and lost general knowledge; the trellis format scored well and decoded too slowly.
 
 ## Where the details are
 
@@ -326,7 +356,9 @@ elsewhere, or for the MTP draft model, on the same nine cards.
   [2026-11-03_bf16_kernel](../data/2026-11-03_bf16_kernel/README.md); the k-curve with both files: Q591,
   [2026-11-04_kcurve_p106](../data/2026-11-04_kcurve_p106/README.md). Hyper-connections below Q8_0: Q620, open.
 - Pascal-fast files: Q880–Q889 and Q899, [2026-11-04_pascal_mix](../data/2026-11-04_pascal_mix/README.md),
-  [2026-11-04_gguf_compose](../data/2026-11-04_gguf_compose/README.md).
+  [2026-11-04_gguf_compose](../data/2026-11-04_gguf_compose/README.md); on the rig,
+  [2026-11-04_s35_stack](../data/2026-11-04_s35_stack/README.md) and [chapter 10](10-v3.md); the later mix at equal
+  size, Q219 and Q1381 ([chapter 15](15-toward-v4.md)).
 - File choice: Q811, [2026-11-04_file_choice](../data/2026-11-04_file_choice/README.md); quality chain (FN1, FN2):
   Q216, Q217, [2026-11-03_flash_next_quality](../data/2026-11-03_flash_next_quality/README.md); the bit budget:
   [sub_1_bit_quants.md](../research/notes/sub_1_bit_quants.md); the Q2_0 kernel: Q223,
@@ -334,12 +366,12 @@ elsewhere, or for the MTP draft model, on the same nine cards.
 - N-gram table bits: Q433, [2026-11-03_table_bits](../data/2026-11-03_table_bits/README.md).
 - Expert usage and pruning: Q232, [2026-11-04_expert_usage](../data/2026-11-04_expert_usage/README.md); the cut tool
   and files: Q890, [2026-11-04_gguf_prune](../data/2026-11-04_gguf_prune/README.md),
-  [scripts/gguf_prune.py](../../scripts/gguf_prune.py); the GPU score of the cuts: Q891, open. ISTA's Coder and
+  [scripts/gguf_prune.py](../../scripts/gguf_prune.py); the GPU score of the cuts: Q891. ISTA's Coder and
   published pruning results:
   [models_large_moe_and_compression.md](../research/notes/models_large_moe_and_compression.md),
   [flash_next_variants.md](../research/notes/flash_next_variants.md).
-- Gyro and trellis formats: Q896 (scores, open), [2026-11-04_gyro_kld](../data/2026-11-04_gyro_kld/README.md); Q895
-  (P106 decode timing, open), Q241 (the earlier estimate, parked);
+- Gyro and trellis formats: Q896 (scores), [2026-11-04_gyro_kld](../data/2026-11-04_gyro_kld/README.md); Q895
+  (P106 decode timing), Q241 (the earlier estimate, parked); a trellis code for Pascal, Q929;
   [flash_next_news_2026-11.md](../research/notes/flash_next_news_2026-11.md).
 - What didn't work: Q13 and Q304 (Hadamard), Q6 (fewer experts per token; its per-token version for Flash-Next is
   Q618, open), Q305 (uniform grids), [2026-10-27_slq](../data/2026-10-27_slq/README.md) (SLQ formats), Q44,

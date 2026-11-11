@@ -18,13 +18,23 @@ _Avoid_: rig, lab
 ### Software
 
 **Miner Llama**:
-This project and its llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1 and v2 are its
-releases.
+This project and its llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1, v2 and v3
+are its releases.
 _Avoid_: Pascal engine, Flint fork, model branch
 
 **Model page**:
 The folder `models/<model>/` that holds one model's recommended file, command line, and measured speed and quality.
 _Avoid_: profile
+
+**Switch**:
+A run-time setting, usually an environment variable, that turns one engine change on or off; every change in Miner
+Llama sits behind one, and all switches at their defaults give the earlier build's results.
+_Avoid_: feature toggle
+
+**Preset**:
+The switches and the command line one model's own agent check ran with, kept in
+`release/<model>-<version>/settings.env`.
+_Avoid_: profile, config
 
 ### Models
 
@@ -62,6 +72,30 @@ A mix that keeps another quant's per-tensor bit budget but replaces each format 
 _Avoid_: format change
 
 ### Speed
+
+**Step**:
+With a draft on, one check pass of the main model plus the draft's passes that prepare the next guesses; it yields
+one token of the model's own and every guessed token the model accepts.
+_Avoid_: token (for this unit), iteration
+
+**Check pass**:
+The main model's pass over its newest token and the guessed tokens behind it; the engine's name for it is the verify
+pass.
+_Avoid_: batch pass
+
+**Depth**:
+The number of tokens already in the conversation when a request is timed.
+_Avoid_: context length (that is the window's size)
+
+**Deep lane**:
+The test that times the same requests at set depths from 0 to 49,152 tokens, two loads of the model per setting,
+and reports the time of a step, the writing speed and the prompt reading speed at each depth.
+_Avoid_: long-context benchmark
+
+**Gain, negligible, loss**:
+The three verdicts a timed change can get, against the spread between repeated loads of one setting: faster by more
+than the spread, inside it, or slower by more than it; a negligible change stays in the build behind its switch.
+_Avoid_: not worth it, too small
 
 **Decode efficiency**:
 Effective bandwidth during generation (weight bytes read per token × tokens per second) divided by the card's measured

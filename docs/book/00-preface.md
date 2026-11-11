@@ -6,6 +6,8 @@
 > - My own version of llama.cpp, Miner Llama, made one model three times faster on it for a coding agent.
 > - The main model today is Qwen3.8-Flash-Next, a 125-billion-parameter model. Miner Llama v3 runs it at 20.40 tokens
 >   per second for a coding agent, from 7.8 on v2.0's code ([chapter 10](10-v3.md)).
+> - The work since v3 is not released yet. On 2026-11-11 it wrote 45.97 % faster than v3 across a long conversation
+>   and took 9.4 % less time for a coding agent's task ([chapter 15](15-toward-v4.md)).
 > - This book explains what I tried, how each idea was meant to work, what happened and why.
 
 Facts in this book are from 2026-11-04 unless a chapter says otherwise.
@@ -95,10 +97,26 @@ So it works, and it gets the tasks right. But 7.8 and 9.0 tokens per second are 
 2026-11-04 was new GPU code for this model's shapes, a better-quality file that still fits, and ways to guess several
 tokens at once. Each of those has its own chapter, and [chapter 10](10-v3.md) tells how they added up to 20.40 in v3.
 
+### After v3
+
+v3 was released on 2026-11-06. The work since then is the v4 line, and it is not released. It started with a
+question, not an idea: where does the time go on the build that shipped, and on real work? The answers moved the
+effort to three places: long conversations, the pass that checks guessed tokens, and reading prompts. On
+2026-11-11, with every change proven so far switched on, the same rig compared with v3 the same day:
+
+| Flash-Next on nine cards | v3 | The v4 line |
+|---|---|---|
+| Writing across a conversation of up to 49,152 tokens, tok/s (two loads each) | 15.87 and 14.77 | 22.50 and 22.24 |
+| One step with 49,152 tokens of context, ms (two loads each) | 302.25 and 302.37 | 149.81 and 150.10 |
+| Coding agent, minutes per task at equal work | 3.08 | 2.79 |
+| Coding agent, bugs fixed | 11 of 12 | 12 of 12 |
+
+[Chapters 11 to 15](11-after-v3.md) tell that part.
+
 ## How the chapters connect
 
-The book has three parts. The first part gives you the tools to read the rest. The second part tells the experiments.
-The third part steps back.
+The book has four parts. The first part gives you the tools to read the rest. The second part tells the experiments.
+The third part follows the models to the v3 release. The fourth part is the work since v3.
 
 | Chapter | The question it answers |
 |---|---|
@@ -112,11 +130,17 @@ The third part steps back.
 | [8. Guessing ahead](08-guessing-ahead.md) | Can I guess the next tokens cheaply and check them in bulk? |
 | [9. The models](09-the-models.md) | Where does each model stand, and how did it get there? |
 | [10. v3](10-v3.md) | What did the v3 release change, and why did each change help? |
-| 11. Lessons (not written yet) | What carries over to other systems? |
-| [Glossary](../../GLOSSARY.md) | Every term, in one place. |
+| [11. After v3](11-after-v3.md) | Where does the time go on the released build, and on real work? |
+| [12. Long conversations](12-long-conversations.md) | Why did writing slow down as a conversation grew, and what removed that? |
+| [13. The check pass](13-the-check-pass.md) | What makes checking four tokens cost more than twice one, and how much of it can go? |
+| [14. Reading prompts](14-reading-prompts.md) | Why does an agent wait before each first word, and what shortens the wait? |
+| [15. Toward v4](15-toward-v4.md) | What do the changes since v3 add up to, and what comes next? |
+| 16. Lessons (not written yet) | What carries over to other systems? |
+| [Glossary](../../GLOSSARY.md) | The project's own terms, in one place. |
 
-Chapters 1 to 3 build on each other, so read them in order. After that, each chapter stands mostly on its own. Read
-whatever interests you. When a chapter needs an idea from another one, it says so and links to it.
+Chapters 1 to 3 build on each other, so read them in order. Chapters 4 to 9 each stand mostly on their own. Read
+whatever interests you. Chapter 10 and chapters 11 to 15 tell a story in order: read 11 before 12 to 15. When a
+chapter needs an idea from another one, it says so and links to it.
 
 ```mermaid
 flowchart LR
@@ -126,7 +150,11 @@ flowchart LR
     C --> F[6. GPU code]
     C --> G[7. Experts]
     C --> H[8. Guessing ahead]
-    D & E & F & G & H --> I[9. The models] --> K[10. v3] --> J[11. Lessons, not written yet]
+    D & E & F & G & H --> I[9. The models] --> K[10. v3] --> L[11. After v3]
+    L --> M[12. Long conversations]
+    L --> N[13. The check pass]
+    L --> O[14. Reading prompts]
+    M & N & O --> P[15. Toward v4] --> J[16. Lessons, not written yet]
 ```
 
 ## How to read it
@@ -138,8 +166,10 @@ flowchart LR
   file, engine and settings; repeated runs are listed by value ("45.9 and 44.6 tok/s in two runs"), never as a span.
   Every number comes from a measurement or a source in this repository. My own estimates and predictions are marked
   est., and only those may be ranges.
-- **Open questions stay open.** Some experiments were still running on 2026-11-04. Those are marked "open", with what
-  would settle them.
+- **Open questions stay open.** Some experiments were still running when a chapter was written. Those are marked
+  "open", with what would settle them. Where a later chapter has the answer, the earlier one says so and links to it.
+- **Each chapter has a date.** Chapters 1 to 9 describe the project on 2026-11-04, chapter 10 the release of
+  2026-11-06, chapters 11 to 15 the work up to 2026-11-11.
 - **Identifiers live at the end.** Each chapter ends with "Where the details are": data folders, benchmark pages and
   registry IDs such as Q215. The registry, [quants/experiments.md](../../quants/experiments.md), has one row per idea,
   with its outcome. You never need an ID to follow the text.
@@ -154,7 +184,10 @@ flowchart LR
 - Miner Llama, my llama.cpp fork, took a coding agent on Flint from 14.4 to 45.9 tokens per second.
 - The main model now is Qwen3.8-Flash-Next. Miner Llama v3 runs it at 20.40 tokens per second for an agent, from 7.8 on
   v2.0's code.
-- Read chapters 1 to 3 first. The rest can be read in any order.
+- Since v3 the work went where real agent sessions spend their time: deep into long conversations, in the pass that
+  checks guessed tokens, and in reading prompts. A step with 49,152 tokens of context takes half the time it took
+  on v3.
+- Read chapters 1 to 3 first. Chapters 4 to 9 can be read in any order; chapters 10 to 15 are best read in order.
 
 ## Where the details are
 
@@ -163,6 +196,10 @@ flowchart LR
 - Flint's v2 release numbers and commands: [release/flint-v2/results.md](../../release/flint-v2/results.md).
 - Flash-Next: [models/qwen3.8-flash-next](../../models/qwen3.8-flash-next/README.md) and its v3 release,
   [release/flash-next-v3](../../release/flash-next-v3/README.md).
+- The v4 line against v3: registry row Q1322 ([data](../data/2026-11-11_r90_v4_vs_v3/README.md)); the three reviews
+  that ordered the work since v3: [first](../research/notes/flash_next_review_2026-11.md),
+  [second](../research/notes/flash_next_review2_2026-11.md),
+  [third](../research/notes/flash_next_review3_2026-11.md).
 - Flash-Next on the coding agent: stock against Miner Llama is registry row Q215
   ([data](../data/2026-11-03_flash_next_baseline/README.md)); the faster-format file is step 2 of Q551
   ([data](../data/2026-11-03_retype_agent/README.md)).

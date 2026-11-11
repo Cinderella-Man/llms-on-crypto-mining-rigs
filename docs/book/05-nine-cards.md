@@ -4,8 +4,8 @@
 > - No card can hold a whole model, so each card holds a slice of layers. A token passes from card 1 to card 9, and
 >   only one card works at a time.
 > - Between two cards the model's state crosses the host over PCIe 1.0 x1. For Flash-Next one crossing takes 0.455 ms,
->   3.64 ms a token, and the cost is bytes, not latency. Sending the state in 8 bits should cut that to est. 1.01 ms
->   (open).
+>   3.64 ms a token, and the cost is bytes, not latency. Sending the state in 8 bits was estimated to cut that to
+>   1.01 ms; it shipped in v3 and saved 8.1 ms a token, three times what the bytes predicted.
 > - The host has 4 GB of RAM, and pinned memory is the fight. A kernel boot flag, `kho=off`, gave back ~0.8 GB that the
 >   kernel had fenced off and made the memory numbers honest.
 > - The 28.8 GB n-gram table lives on the SSD and costs est. 0.2 to 1.3 % of decode. Two rigs over the network are built but not
@@ -126,7 +126,9 @@ same at every position.
 **What happened.** From the table above, Q8_0 staged in two chunks would bring the hop from 455.1 to 126.7 µs,
 est. 1.01 ms a token instead of 3.64. That is an estimate from the microbenchmark; it is not yet measured in the running model.
 Two things are open: a KLD check that eight roundings per token stay within noise on the real model, and a timed run on
-the rig.
+the rig. Both were done for v3: the KLD check showed no measurable change, and on the rig the 8-bit hop saved
+8.1 ms a token where the bytes predicted 2.6
+([chapter 10](10-v3.md#104-story-a-smaller-message-between-cards)).
 
 **Why it should hold.** In the CPU test one Q8_0 round trip moved the state by 0.54 % of its typical size. Eight
 boundaries would add est. 1.1 % of a block's largest value. The KLD check on the real model will say whether that is within noise.
@@ -153,7 +155,7 @@ That was the first of a set of flags every command line here now carries:
 |---|---|---|
 | `-ub 128` (above ~100k context) | 512 | the pinned attention-mask buffer, est. 1 GiB → 258 MiB at 262k |
 | `--cache-ram 0` | 8,192 MiB | a prompt cache in host RAM larger than the whole host |
-| `--ctx-checkpoints 0–4` | 32 | each Flash-Next checkpoint is 112.6 MiB of host RAM |
+| `--ctx-checkpoints 0–4` | 32 | each Flash-Next checkpoint is 112.6 MiB of host RAM; later work keeps them in card memory instead ([chapter 14](14-reading-prompts.md)) |
 | `--no-host` | off | 260 MiB of Flash-Next token embeddings kept in ordinary, swappable memory instead of pinned |
 | `-lm dio` | memory-mapped load | the default load first maps the whole 37.7 GB file, which the host cannot hold, then reads it again; I stopped it after 30 GB with nothing on the cards. Direct reads load in 326 s (322 s on stock llama.cpp) |
 
@@ -232,7 +234,9 @@ cache to count the disk reads.
 sessions), and 52 % of its tokens read nothing at all (68 % in the other sessions): new n-grams are rarer than they
 look. That is est. 0.15–0.87 ms a token, est. 0.2–1.3 % of decode. On the rig, single requests made 16.9, 16.3, 20.9
 and 15.9 reads per token after prompts of 65, 1,382, 7,183 and 32,674 tokens. Against 135.96 ms of GPU time per token,
-they do not show in the speed. Counting them during real agent sessions is still open.
+they do not show in the speed. Counting them during real agent sessions is still open. Once the engine had become
+much faster they did show: [chapter 13](13-the-check-pass.md) finds them on the path of every check pass, and
+[chapter 14](14-reading-prompts.md) at the start of every fresh prompt batch.
 
 **Why.** Random reads from flash are fine when they cost est. 1 % of a step. I measured the access pattern before building
 a cache for it, and the cache was not needed.
@@ -249,7 +253,8 @@ a second router, traffic into them had crawled at 21 kB/s (28 kB/s through an en
 On a plain gigabit switch it runs at 95 MB/s (85 MB/s tunnelled), and rig to rig at 941 Mbit/s each way. The IQ3_S file fits 18 cards with 1,780 MiB to spare at 64k tokens of context.
 
 **What happened.** It has not run on the rigs yet. The estimate says it will be slower than one rig: 158–181 ms a
-token, 5.5–6.3 tok/s, against an estimated 6.5–6.9 for IQ3_XXS on one rig on the same basis.
+token, 5.5–6.3 tok/s, against an estimated 6.5–6.9 for IQ3_XXS on one rig on the same basis. Priced again on v3's
+faster token, the same setup is est. 10.7 to 12.3 tok/s. It has still not run.
 
 **Why it should be slower.** The stock RPC server synchronizes the remote cards before every command that touches data,
 and several commands wait for a reply. Each of the remote rig's eight card boundaries then costs a hop plus a network
@@ -294,7 +299,7 @@ That rule is why this chapter exists. It forced every item above:
   mapped-memory hand-off idea, Q270, rests on that earlier figure.
 - The hop cast and the staged hop: Q750, Q231, Q751, Q755, Q756–Q759, Q820;
   [2026-11-04_card_hops](../data/2026-11-04_card_hops/README.md); switches `LLAMA_HOP_CAST=q8_0` with
-  `LLAMA_HOP_CAST_AT`, and `GGML_CUDA_HOP_STAGED=1`. The KLD gate and the rig run (C200k, C200r) are open.
+  `LLAMA_HOP_CAST_AT`, and `GGML_CUDA_HOP_STAGED=1`. The KLD gate and the rig run (C200k, C200r) were done for v3.
 - Host memory: [setup.md](../setup.md) ("Running llama-server on a 4 GB host"),
   [host_ram_4gb.md](../research/notes/host_ram_4gb.md), [2026-10-22-qwen-baselines](../benchmarks/2026-10-22-qwen-baselines.md)
   (the first crash); headless boot: [2026-11-03_headless](../data/2026-11-03_headless/README.md); package clean-up:
@@ -315,7 +320,7 @@ That rule is why this chapter exists. It forced every item above:
 - Two rigs: Q743, Q505, Q816–Q819, [2026-11-04_two_rigs](../data/2026-11-04_two_rigs/README.md),
   [flash_next_two_rigs.md](../research/notes/flash_next_two_rigs.md), [multi_rig.md](../research/notes/multi_rig.md);
   the network: Q511, [2026-11-03_rig_network](../data/2026-11-03_rig_network/README.md); the first run on both rigs:
-  Q816, open.
+  Q816, open; its estimate on v3's token, Q1169.
 - The rigs as sold: Q86 and Q339 (a bigger memory module, parked), [host_ram_4gb.md](../research/notes/host_ram_4gb.md).
 - Where sources differ, this chapter uses the latest: the hop is C140's measured 0.455 ms for Flash-Next, which
   replaces the 0.55–0.65 ms inferred for Flint and the estimates in card_hops_x1.md.

@@ -6,8 +6,9 @@
 > - That makes one token cheap: it uses about 6 B of the model's 125 B parameters.
 > - It makes a check of several tokens expensive: five consecutive tokens of real text pick 30.86 different experts per
 >   layer, so the check reads 3.09 times the expert bytes of one token.
-> - Every shortcut that changes which experts run has cost real quality so far. Route-once was too lossy and Flint's
->   fixed cut was not worth it; skipping each token's weak experts is still being measured.
+> - Shortcuts that change which experts run mostly cost real quality. Route-once was too lossy and Flint's fixed
+>   cut was not worth it. Skipping each token's weakest experts costs nothing measurable at a 90 % threshold, and
+>   gained nothing measurable in speed either.
 
 The facts are from 2026-11-04. The model is Qwen3.8 Flash-Next, in the fine-tune and files the rigs run, unless a
 section names Flint, the model of the first two releases.
@@ -168,9 +169,20 @@ est. 8.3 ms at p = 0.8, out of the 27.80 ms of 2-bit expert products (routed and
 estimated from. The greedy text changed in 10 of 12 requests at p = 0.9,
 but on a 2-bit model any small change flips near-ties, so that is not a quality measure.
 
-**Open as of 2026-11-04.** The GPU KLD by threshold against the 8-bit reference, on agent, wiki and code texts,
-settles it; its noise floor, the same file scored on five and on seven cards, is +0.0015 ± 0.0020 on agent text. That
-result decides whether the kernel-side skip is built.
+**What the GPU run said.** Scored against the 8-bit reference on agent, wiki and code texts, with a noise floor of
++0.0015 ± 0.0020 on agent text (the same file on five and on seven cards):
+
+| Threshold p | Experts kept of 10 | Routed bytes not read | Change in KLD: agent, wiki, code |
+|---|---:|---:|---|
+| 0.9 | 8.77 | 12 % | −0.003 ± 0.008, +0.001 ± 0.002, +0.0035 ± 0.0012 |
+| 0.8 | 7.27 | 27 % | wiki +0.025 ± 0.003, code +0.011 ± 0.002 |
+
+At 0.9 the cost is at the noise floor. At 0.8 it costs quality on two texts.
+
+**What the rig said.** So the kernel that really skips the dropped experts was built, and timed on the rig on
+2026-11-05 at p = 0.9. A one-token pass got 1.8 ms shorter, 2.8 %, where two loads of the unchanged setting were
+2.2 ms apart. That is inside the spread: negligible. The switch stays in the build, off, with the other small
+ones.
 
 **Why.** A skip pays only if the router is confident. Measure how peaked it is before building the kernel: here it
 is flat, so the gain is bounded before any quality cost.
@@ -186,7 +198,12 @@ I cut Flash-Next's 3-bit IQ3_S file, which scores better than the rig's 2-bit fi
 context, to 464, 448 and 416 experts per layer. That saves 4.74, 6.32 and 9.48 GB (8.6, 11.5 and 17.3 %), and the 464
 cut fits nine cards at 64k. A cut does not make a token faster, since each token still reads 10 experts; its value is
 fit. A CPU sample put the three cuts at a KLD of 0.060, 0.044 and 0.056 from the uncut file, too few tokens to rank them, with almost all of it in
-one stretch of text. The GPU run against the 8-bit reference decides, and it is open as of 2026-11-04.
+one stretch of text. The GPU run against the 8-bit reference decided it the same evening: on agent text the cuts
+score 0.123, 0.122 and 0.131 against the uncut file's 0.118, and on code 0.034, 0.034 and 0.043 against 0.032; on
+wiki text they score 0.446, 0.551 and 0.724 against 0.153. A cut ranked on agent sessions keeps agent and code
+quality and loses general knowledge ([chapter 4](04-smaller-models.md) has the table). Cutting and merging experts
+has since moved to the sister repository,
+[elixir-agents-on-mining-rigs](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs).
 
 ## What Flint's fixed cut taught
 
@@ -241,7 +258,7 @@ the per-token skip above measures the router's shape first.
   Coder file; a second calibration text is Q892).
 - Route-once: Q860 (switch `LLAMA_MOE_ROUTE_ONCE`), the softer forms Q863, Q864, Q874, the agent-check pricing Q862;
   [route_once](../data/2026-11-04_route_once/README.md), [multitoken_verify_hybrid.md](../research/notes/multitoken_verify_hybrid.md).
-- Skipping weak experts: Q618 (switch `LLAMA_MOE_TAIL`), the kernel-side skip Q660, the KLD run C122;
+- Skipping weak experts: Q618 (switch `LLAMA_MOE_TAIL`), the kernel-side skip Q660 and its verdict Q1023, the KLD run C122;
   [bytes_switches](../data/2026-11-04_bytes_switches/README.md), [moe_tail_kld](../data/2026-11-04_moe_tail_kld/README.md).
 - Pruning: Q890 (`scripts/gguf_prune.py`), Q891 (the GPU KLD, task C331);
   [gguf_prune](../data/2026-11-04_gguf_prune/README.md).

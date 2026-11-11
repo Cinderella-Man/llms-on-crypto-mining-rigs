@@ -191,6 +191,8 @@ server lives:
 | Saved checkpoints (`--ctx-checkpoints`) | 32 | 0 to 4 | Each one holds a copy of the model's running state in host RAM |
 
 These flags are in every command line since. [Chapter 2](02-how-an-llm-makes-text.md) explains the checkpoints.
+Later work moved the checkpoints off the host altogether, into card memory, which turned out faster as well
+([chapter 14](14-reading-prompts.md)).
 
 **Flash-Next squeezes even harder.** On 2026-11-03, a coding-agent session on Flash-Next left as little as 195 MiB of
 RAM available, with up to 1,043 MiB swapped out. That is why a small extra model, which guesses tokens ahead, at first
