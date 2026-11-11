@@ -1,0 +1,18 @@
+type	tokens	kernel or verdict	products
+iq4_xs	2-4	declined (48 KB)	20
+iq4_xs	2-4	declined (segment not whole 16-byte units)	96
+iq4_xs	2-4	mul_mat_vec_q_pascal_dmt	45
+iq4_xs	2-4	mul_mat_vec_q_pascal_dmt_kt	31
+iq4_xs	5-8	declined (48 KB)	81
+iq4_xs	5-8	declined (segment not whole 16-byte units)	128
+iq4_xs	5-8	mul_mat_vec_q_pascal_dmt	47
+q4_K	2-4	declined (48 KB)	49
+q4_K	2-4	mul_mat_vec_q_pascal_dmt	72
+q4_K	2-4	mul_mat_vec_q_pascal_dmt_kt	71
+q4_K	5-8	declined (48 KB)	171
+q4_K	5-8	mul_mat_vec_q_pascal_dmt	85
+q6_K	2-4	declined (48 KB)	10
+q6_K	2-4	declined (one warp)	1
+q6_K	2-4	declined (segment not whole 16-byte units)	168
+q6_K	2-4	mul_mat_vec_q_pascal_dmt	13
+q6_K	5-8	off	256

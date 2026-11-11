@@ -13,8 +13,11 @@
 #   sass    cuobjdump -sass and -ptx of bin/llama-server of the merged tarball, of BASE_TREE (the base's rig tarball) and
 #           of the three branches' own tarballs (BR_C727, BR_C728, BR_C729), anonymous-namespace hashes masked, cut into
 #           functions and attributed (the day merge's sass_attrib.py attrib): every function the base's or the code of
-#           the one branch that changed it, none missing, lost or merged. Then each branch's own tables on the merged
-#           objects, against the tables it published: C727's run/sass_check.sh (Q6_K's kernels; equal), C728's
+#           the one branch that changed it, none missing, lost or merged; and the merged objects of the three branches'
+#           files dumped as each branch's checks dump its own
+#   sasscmp the comparisons, from the sass step's dumps: the functions attrib lists in the PTX, if any, compared in text
+#           with the per-file suffix of static names masked as well (a name, not code); then each branch's own tables on
+#           the merged objects, against the tables it published: C727's run/sass_check.sh (Q6_K's kernels; equal), C728's
 #           run/sass_check.sh (every row it published; the rows more are C727's Q6_K and C729's 5-8 tokens) and C729's
 #           run/compare_sass.py's kernel table (every row it published: code, registers, stack, local memory, spills,
 #           counts; the rows more are C727's Q6_K)
@@ -37,6 +40,8 @@
 #   combo   test-llama-archs with every switch of the four merges on together against the base's logits; the late merge's
 #           run/server_combo.sh (arms base bbase late latn) with the three kernel switches added to its late arms,
 #           against the base's llama-server
+#   combocheck  server_combo.sh's verdict read for a base that has C770: its only failing lines may be the two base
+#           arms' switch line (the script wants none from a base before C770)
 #   c565    2026-11-05_c565_ladder4fix/run/cpu_tests.sh, static and then shared: ctest, the network test, archs, the hand
 #           tests; each build tree removed after its run
 #   trim    the CPU build tree removed (the binaries stay)
@@ -63,7 +68,7 @@ THREADS=${THREADS:-8}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 CPU_IMAGE=${CPU_IMAGE:-pq-c565-cpu:24.04}
 SRV_IMAGE=${SRV_IMAGE:-pq-c735-srv:24.04}
-STEPS=${STEPS:-rig names sass cpu off pick emul bitid record combo c565 trim}
+STEPS=${STEPS:-rig names sass sasscmp cpu off pick emul bitid record combo combocheck c565 trim}
 ROOM_GB=${ROOM_GB:-52}
 DA="--label pascal-quants=1 --cpu-shares=256 ${DOCKER_ARGS:-}"
 D=$REPO/docs/data
@@ -178,33 +183,70 @@ if step sass; then
         nice -n 19 cuobjdump -sass '"$T"'/bin/llama-server > '"$S"'/c729/kern/llama-server.sass
         md5sum '"$O"'/mmvq-pascal-dmt.cu.o '"$O"'/mmvq-pascal-q5k.cu.o '"$O"'/mmvq-pascal.cu.o > '"$S"'/obj/md5.txt
         chown -R '"$(id -u):$(id -g)"' '"$S"'' > "$M/logs/sass.log" 2>&1
-    rc=$?
+    echo $? > "$S/dump_rc.txt"
+    log "sass done"
+fi
+
+# the comparisons, from the sass step's dumps
+if step sasscmp; then
+    S=$M/sass
+    rc=$(cat "$S/dump_rc.txt" 2> /dev/null || echo 1)
+    for f in "$S"/obj/dmt.sass.gz "$S"/c729/kern/llama-server.sass.gz "$S"/c729/kern/obj/*.gz; do
+        [ -f "$f" ] && gunzip -f "$f"
+    done
+    # the functions attrib lists in the PTX, if any: each one's text in the build that changed it and in the base, the
+    # per-file suffix of static names masked as well (_cu_<hash>_<number>); the same text means only a name differs
+    L=$S/ptx_listed
+    rm -rf "$L" && mkdir -p "$L"
+    sed -n 's/^  [A-Z]*: \([^:]*\): changed by \([a-z0-9]*\);.*/\1 \2/p' "$S/attrib_ptx.txt" > "$L/list.txt"
+    nl=$(grep -c ' ' "$L/list.txt")
+    nall=$(sed -n 's/.*; listed \([0-9]*\)$/\1/p' "$S/attrib_ptx.txt")
+    if [ "$nl" -gt 0 ]; then
+        cut -d' ' -f1 "$L/list.txt" > "$L/names.txt"
+        for b in base $(cut -d' ' -f2 "$L/list.txt" | sort -u); do
+            case $b in base) bin=$BASE_TREE ;; c727) bin=$BR_C727 ;; c728) bin=$BR_C728 ;; c729) bin=$BR_C729 ;; *) continue ;; esac
+            # shellcheck disable=SC2086
+            locked docker run --rm $DA --network none -v "$bin:$bin:ro" "$IMAGE" nice -n 19 cuobjdump -ptx "$bin/bin/llama-server" \
+                | awk -v names="$L/names.txt" 'BEGIN { while ((getline n < names) > 0) want[n] = 1 }
+                    /\.(entry|func)/ { on = 0; for (n in want) if (index($0, n)) { on = 1; cur = n } }
+                    on { print cur "\t" $0 }' | sed -E "$MASK;s/_cu_X_[0-9]+/_cu_X_N/g" > "$L/$b.txt"
+        done
+        nsame=0 nchk=0
+        while read -r f b; do
+            nchk=$((nchk + 1))
+            if [ -n "$(grep -F "$f	" "$L/base.txt")" ] && diff -q <(grep -F "$f	" "$L/base.txt" | cut -f2-) <(grep -F "$f	" "$L/$b.txt" | cut -f2-) > /dev/null; then
+                nsame=$((nsame + 1))
+            fi
+        done < "$L/list.txt"
+        add sass "ptx listed: names only" "$([ "$nsame" = "$nchk" ] && [ "$nchk" = "$nall" ] && echo OK || echo CHECK)" \
+            "attrib listed $nall PTX functions, $nchk of them changed by one branch; with static names' per-file suffixes masked, $nsame the base's text in that branch's build (the merged build has the base's code: attrib); $(cut -d' ' -f2 "$L/list.txt" | sort | uniq -c | tr -s ' ' | tr '\n' ';')"
+    fi
     # C727: its table of the Q6_K instantiations, equal to the one it published
     SASS=$S/obj nice -n 19 bash "$D/2026-11-11_c727_q6k_readonce/run/sass_check.sh" > "$S/c727_counts.tsv" 2> "$S/c727_counts.err"
     P7=$D/2026-11-11_c727_q6k_readonce/sass_counts.tsv
     d7=$(diff "$P7" "$S/c727_counts.tsv" | grep -c '^[<>]')
-    add c727 "sass_check.sh on the merged object" "$([ $rc = 0 ] && [ "$d7" = 0 ] && [ "$(wc -l < "$S/c727_counts.tsv")" -gt 1 ] && echo SAME || echo DIFFERS)" \
+    add c727 "sass_check.sh on the merged object" "$([ "$rc" = 0 ] && [ "$d7" = 0 ] && [ "$(wc -l < "$S/c727_counts.tsv")" -gt 1 ] && echo SAME || echo DIFFERS)" \
         "$(($(wc -l < "$S/c727_counts.tsv") - 1)) Q6_K instantiations; lines that differ from C727's published table: $d7; with stack or local memory: $(awk -F'\t' 'NR > 1 && ($6 != 0 || $7 != 0)' "$S/c727_counts.tsv" | wc -l)"
     # C728: every row it published, the same; the rows more are other branches' instantiations
     SASS=$S/obj nice -n 19 bash "$D/2026-11-11_c728_readonce_k6144/run/sass_check.sh" > "$S/c728_counts.tsv" 2> "$S/c728_counts.err"
     P8=$D/2026-11-11_c728_readonce_k6144/sass_counts.tsv
     lost8=$(grep -vxFf "$S/c728_counts.tsv" "$P8" | wc -l)
     more8=$(grep -vxFf "$P8" "$S/c728_counts.tsv" | awk -F'\t' '!($2 == "type14" || $3 >= 5)' | wc -l)
-    add c728 "sass_check.sh on the merged objects" "$([ $rc = 0 ] && [ "$lost8" = 0 ] && [ "$more8" = 0 ] && echo SAME || echo DIFFERS)" \
+    add c728 "sass_check.sh on the merged objects" "$([ "$rc" = 0 ] && [ "$lost8" = 0 ] && [ "$more8" = 0 ] && echo SAME || echo DIFFERS)" \
         "$(($(wc -l < "$P8") - 1)) rows published, not in the merged table as they are: $lost8; $(grep -vxFf "$P8" "$S/c728_counts.tsv" | wc -l) rows more ($(grep -vxFf "$P8" "$S/c728_counts.tsv" | awk -F'\t' '$2 == "type14"' | wc -l) Q6_K, $(grep -vxFf "$P8" "$S/c728_counts.tsv" | awk -F'\t' '$3 >= 5' | wc -l) of 5-8 tokens), others: $more8; kt with stack or local memory: $(awk -F'\t' 'NR > 1 && $1 == "mul_mat_vec_q_pascal_dmt_kt" && ($7 != 0 || $8 != 0)' "$S/c728_counts.tsv" | wc -l)"
     # C729: its kernel table on the merged objects (both sides the merged build), every row it published the same in the
-    # tip's columns (code, registers, stack, local memory, spills, counts, the last two FFMA)
+    # tip's columns (code, registers, stack, local memory, spills, counts, the last two FFMA). Its script names the types
+    # it knows (q4_K, q5_K, iq4_xs) and gives Q6_K by its number, 14
     python3 -I "$D/2026-11-11_c729_readonce_5to8/run/compare_sass.py" "$S/c729/kern" "$S/c729/kern" "$S/c729/out" > "$S/c729/compare.txt" 2>&1
     P9=$D/2026-11-11_c729_readonce_5to8/sass/sass_kernels.tsv
+    # kernel, type, NT, R, PF, code, registers, stack, local, LDL, STL, IDP, LDS, LDG, FFMA, FADD, I2F, the last two FFMA
     cut9() { awk -F'\t' 'BEGIN { OFS = "\t" } NR > 1 { print $1, $2, $3, $4, $5, $7, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21 }' "$1" | sort; }
     cut9 "$P9" > "$S/c729/published.tsv"
     cut9 "$S/c729/out/sass_kernels.tsv" > "$S/c729/merged.tsv"
     lost9=$(comm -23 "$S/c729/published.tsv" "$S/c729/merged.tsv" | wc -l)
-    more9=$(comm -13 "$S/c729/published.tsv" "$S/c729/merged.tsv" | awk -F'\t' '$2 != "q6_K"' | wc -l)
+    more9=$(comm -13 "$S/c729/published.tsv" "$S/c729/merged.tsv" | awk -F'\t' '$2 != "14"' | wc -l)
     add c729 "compare_sass.py's kernel table on the merged objects" "$([ "$lost9" = 0 ] && [ "$more9" = 0 ] && [ -s "$S/c729/merged.tsv" ] && echo SAME || echo DIFFERS)" \
-        "$(wc -l < "$S/c729/published.tsv") rows published, not in the merged table as they are: $lost9; rows more: $(comm -13 "$S/c729/published.tsv" "$S/c729/merged.tsv" | wc -l) (Q6_K: $(comm -13 "$S/c729/published.tsv" "$S/c729/merged.tsv" | awk -F'\t' '$2 == "q6_K"' | wc -l)), others: $more9; with stack, local memory or spills: $(awk -F'\t' '$9 != 0 || $10 != 0 || $11 != 0 || $12 != 0' "$S/c729/merged.tsv" | wc -l)"
-    gzip -f "$S/obj/dmt.sass" "$S/c729/kern/llama-server.sass" "$S"/c729/kern/obj/*.sass "$S"/c729/kern/obj/*.ptx
-    log "sass done"
+        "$(wc -l < "$S/c729/published.tsv") rows published, not in the merged table as they are: $lost9; rows more: $(comm -13 "$S/c729/published.tsv" "$S/c729/merged.tsv" | wc -l) (Q6_K, type 14: $(comm -13 "$S/c729/published.tsv" "$S/c729/merged.tsv" | awk -F'\t' '$2 == "14"' | wc -l)), others: $more9; of the $(wc -l < "$S/c729/merged.tsv") instantiations, with stack, local memory or spill instructions: $(awk -F'\t' '$8 != 0 || $9 != 0 || $10 != 0 || $11 != 0' "$S/c729/merged.tsv" | wc -l)"
 fi
 
 C=$M/cpu
@@ -235,7 +277,7 @@ if step off; then
     rc=$?
     nb=$(ls "$A"/base/logits-*.f32 2> /dev/null | wc -l)
     add off "base writes" "$([ $rc = 0 ] && [ "$nb" -gt 0 ] && echo OK || echo FAIL)" "rc=$rc; ${BC%/bin}: $nb logits files; $(grep -a -m 1 '^Summary' "$A/base.log")"
-    for arm in "tip:" "q6kmt:${P}_Q6K_MT=1""q6kmt-fault:${P}_Q6K_MT=1 ${P}_Q6K_MT_FAULT=1" "dmtkt:${P}_DMT=1 ${P}_DMT_KT=1" \
+    for arm in "tip:" "q6kmt:${P}_Q6K_MT=1" "q6kmt-fault:${P}_Q6K_MT=1 ${P}_Q6K_MT_FAULT=1" "dmtkt:${P}_DMT=1 ${P}_DMT_KT=1" \
                "dmtkt-fault:${P}_DMT=1 ${P}_DMT_KT=1 ${P}_DMT_KT_FAULT=1" "ro8:${P}_RO8=1" "ro8-fault:${P}_RO8=1 ${P}_RO8_FAULT=1" \
                "kern:${P}_DMT=1 ${P}_Q5K_MT=1 ${P}_Q6K_MT=1 ${P}_DMT_KT=1 ${P}_RO8=1"; do
         tag=${arm%%:*} envs=${arm#*:}
@@ -450,6 +492,17 @@ GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 GGML_CUDA_MMVQ_PAS
     log "combo done"
 fi
 
+# server_combo.sh wants no switch line from the base, whose base (the day merge) had no C770; this base has C770, so
+# its two arms log the line with LLAMA_SPEC_DUMP alone: every other verdict line of the script must pass
+if step combocheck; then
+    V=$M/combo/server/verdict.txt
+    other=$(grep -v '^PASS$\|^FAIL$' "$V" | grep -vE '^(base|bbase): the base logs a switch line: switches: 1 set: LLAMA_SPEC_DUMP=[^ ]+ \(this build reads 850 LLAMA_ and GGML_ names\)$' \
+        | grep -cvE '^(late|latn) = (bbase|base) \(|^(late|latn): the switch line names 21 set, every one read by this build$|^(late|latn): C744.s cap: [1-9][0-9]* drafting passes left out')
+    nb=$(grep -cE '^(base|bbase): the base logs a switch line: switches: 1 set: LLAMA_SPEC_DUMP=' "$V")
+    add combo "server_combo with a base that has C770" "$([ "$other" = 0 ] && [ "$nb" = 2 ] && [ "$(grep -c ' = b*base (' "$V")" = 2 ] && echo OK || echo FAIL)" \
+        "the script's FAIL is its two base arms' switch line (the base, 08634ce00, has C770's line: 1 set, LLAMA_SPEC_DUMP, 850 names): $nb of 2; other lines that are not a pass: $other; $(grep -E ' = b*base \(| names 21 set' "$V" | tr '\n' ';')"
+fi
+
 if step c565; then
     for sh in OFF ON; do
         v=$([ $sh = OFF ] && echo static || echo shared)
@@ -467,6 +520,7 @@ fi
 
 if step trim; then
     rm -rf "$C/tree"
+    gzip -f "$M"/sass/obj/dmt.sass "$M"/sass/c729/kern/llama-server.sass "$M"/sass/c729/kern/obj/*.sass "$M"/sass/c729/kern/obj/*.ptx 2> /dev/null
     add trim "CPU tree" OK "removed (the binaries in cpu/bin stay); $(du -sh "$M" | cut -f1) in $M; $(free_gb) GB free"
 fi
 

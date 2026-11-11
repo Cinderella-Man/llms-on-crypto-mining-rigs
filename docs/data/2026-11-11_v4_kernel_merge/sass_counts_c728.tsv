@@ -1,0 +1,76 @@
+kernel	type	NT	R or M	PF	REG	STACK	LOCAL	IDP	LDS	STS	LDG	FFMA	FMUL	FADD	I2F	I2F.RP	SHFL	XMAD	PRMT	BAR	last two FFMA
+mul_mat_vec_q_pascal_dmt	iq4_xs	2	1	0	72	0	0	128	66	12	18	34	8	10	1	1	10	79	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	2	1	1	104	0	0	128	66	12	27	34	8	10	1	1	10	79	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	2	2	0	111	0	0	256	83	21	27	68	16	20	1	1	20	99	392	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	2	2	1	164	0	0	256	83	21	45	68	16	20	1	1	20	105	392	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	3	1	0	84	0	0	192	89	12	18	51	8	15	1	1	15	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	3	1	1	119	0	0	192	89	12	27	51	8	15	1	1	15	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	3	2	0	110	0	0	384	106	21	27	102	16	30	1	1	30	103	392	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	3	2	1	173	0	0	384	106	21	45	102	16	30	1	1	30	109	392	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	4	1	0	92	0	0	256	114	12	18	68	8	20	1	1	20	79	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	4	1	1	127	0	0	256	114	12	27	68	8	20	1	1	20	79	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	4	2	0	114	0	0	512	130	21	27	136	16	40	1	1	40	99	392	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	4	2	1	184	0	0	512	130	21	45	136	16	40	1	1	40	105	392	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	5	1	0	95	0	0	320	138	12	18	85	8	25	1	1	25	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	5	1	1	135	0	0	320	138	12	27	85	8	25	1	1	25	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	6	1	0	96	0	0	384	163	12	18	102	8	30	1	1	30	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	6	1	1	136	0	0	384	163	12	27	102	8	30	1	1	30	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	7	1	0	103	0	0	448	187	12	18	119	8	35	1	1	35	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	7	1	1	140	0	0	448	187	12	27	119	8	35	1	1	35	83	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	8	1	0	108	0	0	512	210	12	18	136	8	40	1	1	40	79	200	1	
+mul_mat_vec_q_pascal_dmt	iq4_xs	8	1	1	142	0	0	512	210	12	27	136	8	40	1	1	40	79	200	1	
+mul_mat_vec_q_pascal_dmt	q4_K	2	1	0	80	0	0	136	57	13	18	52	9	26	2	1	10	78	16	1	FFMA.FTZ R18, R18, R27, R56; FFMA.FTZ R56, R13, -R12.reuse, R18
+mul_mat_vec_q_pascal_dmt	q4_K	2	1	1	113	0	0	136	57	13	27	52	9	26	2	1	10	79	16	1	FFMA.FTZ R61, R61, R60, R14; FFMA.FTZ R14, R55, -R54.reuse, R61
+mul_mat_vec_q_pascal_dmt	q4_K	2	2	0	110	0	0	264	66	22	27	104	17	52	2	1	20	99	32	1	FFMA.FTZ R18, R28, R35.reuse, R93; FFMA.FTZ R93, R32, -R17.reuse, R18
+mul_mat_vec_q_pascal_dmt	q4_K	2	2	1	168	0	0	264	66	22	45	104	17	52	2	1	20	105	32	1	FFMA.FTZ R90, R108, R98, R135; FFMA.FTZ R135, R124, -R95.reuse, R90
+mul_mat_vec_q_pascal_dmt	q4_K	3	1	0	95	0	0	200	81	13	18	78	9	31	2	1	15	82	16	1	FFMA.FTZ R60, R18, R35.reuse, R60; FFMA.FTZ R60, R19, -R26.reuse, R60
+mul_mat_vec_q_pascal_dmt	q4_K	3	1	1	127	0	0	200	81	13	27	78	9	31	2	1	15	82	16	1	FFMA.FTZ R16, R18, R33.reuse, R95; FFMA.FTZ R95, R19, -R26, R16
+mul_mat_vec_q_pascal_dmt	q4_K	3	2	0	117	0	0	392	90	22	27	156	17	62	2	1	30	102	32	1	FFMA.FTZ R93, R30, R40, R93; FFMA.FTZ R93, R72, -R18.reuse, R93
+mul_mat_vec_q_pascal_dmt	q4_K	3	2	1	191	0	0	392	90	22	45	156	17	62	2	1	30	108	32	1	FFMA.FTZ R119, R119, R130, R148; FFMA.FTZ R148, R142, -R109.reuse, R119
+mul_mat_vec_q_pascal_dmt	q4_K	4	1	0	96	0	0	264	105	13	18	104	9	36	2	1	20	79	16	1	FFMA.FTZ R39, R39, R33.reuse, R68; FFMA.FTZ R68, R13, -R28.reuse, R39
+mul_mat_vec_q_pascal_dmt	q4_K	4	1	1	136	0	0	264	105	13	27	104	9	36	2	1	20	79	16	1	FFMA.FTZ R69, R70, R66.reuse, R23; FFMA.FTZ R23, R71, -R62.reuse, R69
+mul_mat_vec_q_pascal_dmt	q4_K	4	2	0	134	0	0	520	114	22	27	208	17	72	2	1	40	99	32	1	FFMA.FTZ R92, R61, R44, R92; FFMA.FTZ R92, R21, -R51, R92
+mul_mat_vec_q_pascal_dmt	q4_K	4	2	1	204	0	0	520	114	22	45	208	17	72	2	1	40	105	32	1	FFMA.FTZ R125, R126, R131, R32; FFMA.FTZ R32, R32, -R146, R125
+mul_mat_vec_q_pascal_dmt	q4_K	5	1	0	104	0	0	328	129	13	18	130	9	41	2	1	25	82	16	1	FFMA.FTZ R22, R24, R41.reuse, R22; FFMA.FTZ R22, R25, -R48.reuse, R22
+mul_mat_vec_q_pascal_dmt	q4_K	5	1	1	141	0	0	328	129	13	27	130	9	41	2	1	25	82	16	1	FFMA.FTZ R19, R64, R81, R19; FFMA.FTZ R19, R65, -R60.reuse, R19
+mul_mat_vec_q_pascal_dmt	q4_K	6	1	0	111	0	0	392	153	13	18	156	9	46	2	1	30	82	16	1	FFMA.FTZ R69, R51, R38.reuse, R69; FFMA.FTZ R69, R63, -R48.reuse, R69
+mul_mat_vec_q_pascal_dmt	q4_K	6	1	1	143	0	0	392	153	13	27	156	9	46	2	1	30	82	16	1	FFMA.FTZ R22, R81, R83, R22; FFMA.FTZ R22, R119, -R92.reuse, R22
+mul_mat_vec_q_pascal_dmt	q4_K	7	1	0	114	0	0	456	177	13	18	182	9	51	2	1	35	82	16	1	FFMA.FTZ R46, R50, R95, R8; FFMA.FTZ R8, R101, -R84, R46
+mul_mat_vec_q_pascal_dmt	q4_K	7	1	1	151	0	0	456	177	13	27	182	9	51	2	1	35	82	16	1	FFMA.FTZ R14, R85, R147, R14; FFMA.FTZ R14, R97, -R128, R14
+mul_mat_vec_q_pascal_dmt	q4_K	8	1	0	117	0	0	520	201	13	18	208	9	56	2	1	40	79	16	1	FFMA.FTZ R24, R30, R89, R21; FFMA.FTZ R21, R31, -R93, R24
+mul_mat_vec_q_pascal_dmt	q4_K	8	1	1	155	0	0	520	201	13	27	208	9	56	2	1	40	79	16	1	FFMA.FTZ R20, R65, R139, R20; FFMA.FTZ R20, R126, -R105, R20
+mul_mat_vec_q_pascal_dmt	type14	2	1	0	90	0	0	136	110	18	23	50	16	26	1	1	10	81	69	1	
+mul_mat_vec_q_pascal_dmt	type14	2	1	1	148	0	0	136	110	18	37	50	16	26	1	1	10	81	69	1	
+mul_mat_vec_q_pascal_dmt	type14	2	2	0	154	0	0	264	164	32	37	100	32	52	1	1	20	100	138	1	
+mul_mat_vec_q_pascal_dmt	type14	3	1	0	89	0	0	200	138	18	23	75	16	39	1	1	15	85	69	1	
+mul_mat_vec_q_pascal_dmt	type14	3	1	1	161	0	0	200	138	18	37	75	16	39	1	1	15	85	69	1	
+mul_mat_vec_q_pascal_dmt	type14	3	2	0	156	0	0	392	192	32	37	150	32	78	1	1	30	105	138	1	
+mul_mat_vec_q_pascal_dmt	type14	4	1	0	116	0	0	264	167	18	23	100	16	52	1	1	20	81	69	1	
+mul_mat_vec_q_pascal_dmt	type14	4	1	1	168	0	0	264	167	18	37	100	16	52	1	1	20	81	69	1	
+mul_mat_vec_q_pascal_dmt	type14	4	2	0	149	0	0	520	220	32	37	200	32	104	1	1	40	101	138	1	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	2	1	0	99	0	0	128	75	16	21	34	8	10	0	0	10	46	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	2	1	1	122	0	0	128	75	16	30	34	8	10	0	0	10	61	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	2	2	0	125	0	0	128	75	16	21	34	8	20	0	0	20	52	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	2	2	1	142	0	0	128	75	16	30	34	8	20	0	0	20	61	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	3	1	0	107	0	0	192	98	16	21	51	8	15	0	0	15	110	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	3	1	1	140	0	0	192	98	16	30	51	8	15	0	0	15	125	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	3	2	0	122	0	0	192	98	16	21	51	8	30	0	0	30	116	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	3	2	1	151	0	0	192	98	16	30	51	8	30	0	0	30	125	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	4	1	0	108	0	0	256	123	16	21	68	8	20	0	0	20	130	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	4	1	1	148	0	0	256	123	16	30	68	8	20	0	0	20	147	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	4	2	0	126	0	0	256	123	16	21	68	8	40	0	0	40	138	200	2	
+mul_mat_vec_q_pascal_dmt_kt	iq4_xs	4	2	1	158	0	0	256	123	16	30	68	8	40	0	0	40	147	200	2	
+mul_mat_vec_q_pascal_dmt_kt	q4_K	2	1	0	126	0	0	136	66	17	21	52	9	26	1	0	10	46	16	2	FFMA.FTZ R82, R40, R53, R82; FFMA.FTZ R82, R41, -R36.reuse, R82
+mul_mat_vec_q_pascal_dmt_kt	q4_K	2	1	1	128	0	0	136	66	17	30	52	9	26	1	0	10	61	16	2	FFMA.FTZ R9, R66, R65.reuse, R9; FFMA.FTZ R9, R67, -R70, R9
+mul_mat_vec_q_pascal_dmt_kt	q4_K	2	2	0	145	0	0	136	66	17	21	52	9	36	1	0	20	52	16	2	FFMA.FTZ R52, R28, R61, R27; FFMA.FTZ R23, R35, -R34, R52
+mul_mat_vec_q_pascal_dmt_kt	q4_K	2	2	1	155	0	0	136	66	17	30	52	9	36	1	0	20	61	16	2	FFMA.FTZ R18, R26, R31.reuse, R19; FFMA.FTZ R15, R27, -R84.reuse, R18
+mul_mat_vec_q_pascal_dmt_kt	q4_K	3	1	0	127	0	0	200	90	17	21	78	9	31	1	0	15	97	16	2	FFMA.FTZ R44, R44, R42.reuse, R87; FFMA.FTZ R87, R45, -R38.reuse, R44
+mul_mat_vec_q_pascal_dmt_kt	q4_K	3	1	1	147	0	0	200	90	17	30	78	9	31	1	0	15	124	16	2	FFMA.FTZ R88, R88, R22, R18; FFMA.FTZ R18, R27, -R26.reuse, R88
+mul_mat_vec_q_pascal_dmt_kt	q4_K	3	2	0	133	0	0	200	90	17	21	78	9	46	1	0	30	115	16	2	FFMA.FTZ R50, R50, R57.reuse, R92; FFMA.FTZ R95, R45, -R40.reuse, R50
+mul_mat_vec_q_pascal_dmt_kt	q4_K	3	2	1	162	0	0	200	90	17	30	78	9	46	1	0	30	124	16	2	FFMA.FTZ R19, R72, R91.reuse, R18; FFMA.FTZ R112, R73, -R76.reuse, R19
+mul_mat_vec_q_pascal_dmt_kt	q4_K	4	1	0	131	0	0	264	114	17	21	104	9	36	1	0	20	109	16	2	FFMA.FTZ R28, R28, R57.reuse, R82; FFMA.FTZ R82, R39, -R26.reuse, R28
+mul_mat_vec_q_pascal_dmt_kt	q4_K	4	1	1	155	0	0	264	114	17	30	104	9	36	1	0	20	147	16	2	FFMA.FTZ R23, R23, R93, R18; FFMA.FTZ R18, R33, -R22, R23
+mul_mat_vec_q_pascal_dmt_kt	q4_K	4	2	0	140	0	0	264	114	17	21	104	9	56	1	0	40	138	16	2	FFMA.FTZ R25, R47, R66, R25; FFMA.FTZ R21, R63, -R58.reuse, R25
+mul_mat_vec_q_pascal_dmt_kt	q4_K	4	2	1	167	0	0	264	114	17	30	104	9	56	1	0	40	147	16	2	FFMA.FTZ R85, R74, R95, R85; FFMA.FTZ R117, R75, -R86, R85
+mul_mat_vec_q_pascal (one token)	q4_K	1	1	-																	FFMA.FTZ R13, R16, R13, R123; FFMA.FTZ R123, R8, -R11, R13
+mul_mat_vec_q_pascal (one token)	iq4_xs	1	1	-																	

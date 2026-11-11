@@ -48,10 +48,13 @@ branch's own check passes on it with its switch on
 The switches of 2026-11-11 are merged the same way on top: the day's 17 branches in `pascal-p106-v4-b12246-day`
 ([docs/data/2026-11-11_v4_day_merge/](data/2026-11-11_v4_day_merge/README.md)), and the four that finished after it
 (`LLAMA_MTP_EMBD_FIRST`, `LLAMA_MTP_DRAFT_CAP`, `LLAMA_MTP_SKIP_LAST_ROW` and the switch line in llama-server's log)
-merged on it into `pascal-p106-v4` itself ([docs/data/2026-11-11_v4_late_merge/](data/2026-11-11_v4_late_merge/README.md)).
-So `pascal-p106-v4` holds the switches of the night's, the day's and these four branches, each off by default: with
-nothing set it computes what `pascal-p106-v4-b12246-c748` computes, and each branch's check passes on it with its switch
-on.
+merged on it into `pascal-p106-v4` itself ([docs/data/2026-11-11_v4_late_merge/](data/2026-11-11_v4_late_merge/README.md)),
+then the three read-once kernel branches (`GGML_CUDA_MMVQ_PASCAL_Q6K_MT`, `_DMT_KT` and `_RO8`)
+([docs/data/2026-11-11_v4_kernel_merge/](data/2026-11-11_v4_kernel_merge/README.md)). So `pascal-p106-v4` holds the
+switches of the night's, the day's and these seven branches, each off by default: with nothing set it computes what
+`pascal-p106-v4-b12246-c748` computes, and each branch's check passes on it with its switch on. Where the three kernel
+switches meet, each product keeps its own branch's kernel: Q6_K's products of 5–8 tokens stay on the k-column kernel
+under `_RO8`, and the K tiles take only IQ4_XS and Q4_K at 2–4 tokens.
 
 ## Which preset sets each switch
 
