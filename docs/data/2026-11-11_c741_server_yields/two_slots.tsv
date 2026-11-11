@@ -1,0 +1,5 @@
+load	b_during_a	b_post_step	b_prompt_step	steps_between	reads	reads_failed	q_read	answered_in_step	left_to_step_end	answered_posted_before	max_step_ends_crossed	step_ends_crossed	read_ms_median	read_ms_max	step_ms_median	step_ms_max
+p2base	1				228	0	0	0	0	0	1	0: 214, 1: 14	0.3655	25.7990	3.3720	75.4780
+p2off	1	19	20	1	234	0	229	225	4	0	1	0: 215, 1: 19	0.3280	20.0500	3.4415	83.4620
+p2y1	1	19	20	1	185	0	181	168	13	0	1	0: 166, 1: 19	0.8370	28.8570	3.2115	75.4070
+p2y2	1	19	20	1	191	0	184	174	10	0	1	0: 147, 1: 44	0.5920	28.4770	3.3870	80.8460

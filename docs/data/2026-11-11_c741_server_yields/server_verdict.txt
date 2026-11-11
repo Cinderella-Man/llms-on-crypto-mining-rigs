@@ -1,0 +1,21 @@
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+y1 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+y2 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+y2nt = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+boff = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+by1 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+by2 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+off: each of 406 generation steps 3 yields and 3 wakes of the worker
+y1: each of 406 generation steps 1 yields and 1 wakes of the worker
+y2: each of 406 generation steps 1 yields and 0 wakes of the worker
+boff: each of 406 generation steps 3 yields and 3 wakes of the worker
+by1: each of 406 generation steps 1 yields and 1 wakes of the worker
+by2: each of 406 generation steps 1 yields and 0 wakes of the worker
+p2base: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 228 reads answered
+p2off: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 234 reads answered
+p2y1: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 185 reads answered
+p2y2: A = base's G2 and B = base's G1 (tokens, top probabilities, draft counts); B came after A's 16th token; 191 reads answered
+p2off: B's prompt 1 step(s) after the step it came in (p2off: 1); of 229 reads posted in a step 225 answered in a yield of that step, 4 at its end
+p2y1: B's prompt 1 step(s) after the step it came in (p2off: 1); of 181 reads posted in a step 168 answered in a yield of that step, 13 at its end
+p2y2: B's prompt 1 step(s) after the step it came in (p2off: 1); of 184 reads posted in a step 174 answered in a yield of that step, 10 at its end
+PASS
