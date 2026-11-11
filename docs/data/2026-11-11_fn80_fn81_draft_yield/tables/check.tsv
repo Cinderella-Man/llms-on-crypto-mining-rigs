@@ -1,0 +1,71 @@
+label	check	verdict	detail
+d3-1	rows	OK	66 rows, 0 with an error
+d3-1	trace sums = timings	OK	trace accepted 11698 drafted 15436; timings 11698 15436
+d3-1	no restore inside a step	OK	0 steps restored a checkpoint
+d3-1	metrics per position = trace	OK	metrics [4539, 3864, 3295]; trace [4539, 3864, 3295]
+d3-1	metrics steps and sums = trace	OK	metrics steps 5154.0 accepted 11698.0 drafted 15436.0
+d3-1	dump = trace	OK	dump 5154 steps, trace 5154; the first difference at 5154
+d3-1	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d4-1	rows	OK	66 rows, 0 with an error
+d4-1	trace sums = timings	OK	trace accepted 11979 drafted 17420; timings 11979 17420
+d4-1	no restore inside a step	OK	0 steps restored a checkpoint
+d4-1	metrics per position = trace	OK	metrics [3780, 3184, 2714, 2301]; trace [3780, 3184, 2714, 2301]
+d4-1	metrics steps and sums = trace	OK	metrics steps 4363.0 accepted 11979.0 drafted 17420.0
+d4-1	dump = trace	OK	dump 4363 steps, trace 4363; the first difference at 4363
+d4-1	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d5-1	rows	OK	66 rows, 0 with an error
+d5-1	trace sums = timings	OK	trace accepted 14228 drafted 22375; timings 14228 22375
+d5-1	no restore inside a step	OK	0 steps restored a checkpoint
+d5-1	metrics per position = trace	OK	metrics [3904, 3255, 2720, 2346, 2003]; trace [3904, 3255, 2720, 2346, 2003]
+d5-1	metrics steps and sums = trace	OK	metrics steps 4487.0 accepted 14228.0 drafted 22375.0
+d5-1	dump = trace	OK	dump 4487 steps, trace 4487; the first difference at 4487
+d5-1	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d6-1	rows	OK	66 rows, 0 with an error
+d6-1	trace sums = timings	OK	trace accepted 12631 drafted 21141; timings 12631 21141
+d6-1	no restore inside a step	OK	0 steps restored a checkpoint
+d6-1	metrics per position = trace	OK	metrics [3046, 2604, 2180, 1842, 1591, 1368]; trace [3046, 2604, 2180, 1842, 1591, 1368]
+d6-1	metrics steps and sums = trace	OK	metrics steps 3537.0 accepted 12631.0 drafted 21141.0
+d6-1	dump = trace	OK	dump 3537 steps, trace 3537; the first difference at 3537
+d6-1	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d7-1	rows	OK	66 rows, 0 with an error
+d7-1	trace sums = timings	OK	trace accepted 11712 drafted 22794; timings 11712 22794
+d7-1	no restore inside a step	OK	0 steps restored a checkpoint
+d7-1	metrics per position = trace	OK	metrics [2780, 2261, 1862, 1554, 1283, 1075, 897]; trace [2780, 2261, 1862, 1554, 1283, 1075, 897]
+d7-1	metrics steps and sums = trace	OK	metrics steps 3278.0 accepted 11712.0 drafted 22794.0
+d7-1	dump = trace	OK	dump 3278 steps, trace 3278; the first difference at 3278
+d7-1	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d7-2	rows	OK	66 rows, 0 with an error
+d7-2	trace sums = timings	OK	trace accepted 11712 drafted 22794; timings 11712 22794
+d7-2	no restore inside a step	OK	0 steps restored a checkpoint
+d7-2	metrics per position = trace	OK	metrics [2780, 2261, 1862, 1554, 1283, 1075, 897]; trace [2780, 2261, 1862, 1554, 1283, 1075, 897]
+d7-2	metrics steps and sums = trace	OK	metrics steps 3278.0 accepted 11712.0 drafted 22794.0
+d7-2	dump = trace	OK	dump 3278 steps, trace 3278; the first difference at 3278
+d7-2	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d6-2	rows	OK	66 rows, 0 with an error
+d6-2	trace sums = timings	OK	trace accepted 12631 drafted 21141; timings 12631 21141
+d6-2	no restore inside a step	OK	0 steps restored a checkpoint
+d6-2	metrics per position = trace	OK	metrics [3046, 2604, 2180, 1842, 1591, 1368]; trace [3046, 2604, 2180, 1842, 1591, 1368]
+d6-2	metrics steps and sums = trace	OK	metrics steps 3537.0 accepted 12631.0 drafted 21141.0
+d6-2	dump = trace	OK	dump 3537 steps, trace 3537; the first difference at 3537
+d6-2	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d5-2	rows	OK	66 rows, 0 with an error
+d5-2	trace sums = timings	OK	trace accepted 14228 drafted 22375; timings 14228 22375
+d5-2	no restore inside a step	OK	0 steps restored a checkpoint
+d5-2	metrics per position = trace	OK	metrics [3904, 3255, 2720, 2346, 2003]; trace [3904, 3255, 2720, 2346, 2003]
+d5-2	metrics steps and sums = trace	OK	metrics steps 4487.0 accepted 14228.0 drafted 22375.0
+d5-2	dump = trace	OK	dump 4487 steps, trace 4487; the first difference at 4487
+d5-2	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d4-2	rows	OK	66 rows, 0 with an error
+d4-2	trace sums = timings	OK	trace accepted 11979 drafted 17420; timings 11979 17420
+d4-2	no restore inside a step	OK	0 steps restored a checkpoint
+d4-2	metrics per position = trace	OK	metrics [3780, 3184, 2714, 2301]; trace [3780, 3184, 2714, 2301]
+d4-2	metrics steps and sums = trace	OK	metrics steps 4363.0 accepted 11979.0 drafted 17420.0
+d4-2	dump = trace	OK	dump 4363 steps, trace 4363; the first difference at 4363
+d4-2	requests = tasks	OK	66 of 66 tasks matched to requests in order
+d3-2	rows	OK	66 rows, 0 with an error
+d3-2	trace sums = timings	OK	trace accepted 11698 drafted 15436; timings 11698 15436
+d3-2	no restore inside a step	OK	0 steps restored a checkpoint
+d3-2	metrics per position = trace	OK	metrics [4539, 3864, 3295]; trace [4539, 3864, 3295]
+d3-2	metrics steps and sums = trace	OK	metrics steps 5154.0 accepted 11698.0 drafted 15436.0
+d3-2	dump = trace	OK	dump 5154 steps, trace 5154; the first difference at 5154
+d3-2	requests = tasks	OK	66 of 66 tasks matched to requests in order
