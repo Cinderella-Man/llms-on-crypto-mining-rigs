@@ -1,0 +1,8 @@
+check	verdict	detail
+cpubuild	OK	rc=0; commit ca8725c62; logs/cpu-build.log
+archs	OK	base wrote 146 logits files; 146 compared, 0 differ: none; base: Summary: all 151 test(s) passed; branch: Summary: all 151 test(s) passed; base rc=0 branch rc=0 
+identity	OK	15 of 15 replies identical to base (off, on, bad x R1-R3 x mtp; off, on x R1-R3 x sim), 0 differ; rc=0
+trace-mtp	OK	on-mtp trace: 212 lines; drafted 597 (server 597), accepted 0 (server 0); on-mtp step_gap check rc=0: check: OK (0 problems)
+trace-sim	OK	on-sim trace: 90 lines; drafted 180 (server 180), accepted 122 (server 122); on-sim step_gap check rc=0: check: OK (0 problems)
+off-writes-nothing	OK	trace files from off arms: 0
+bad-path	OK	bad-mtp: 0.00.005.527 E operator(): cannot write LLAMA_STEP_TRACE=/nonexistent/c405/trace.jsonl, no step trace; its replies are in the identity count
