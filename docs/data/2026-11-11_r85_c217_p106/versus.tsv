@@ -1,0 +1,5 @@
+load	arm	turns	prompt_s_by_pass	mean_s	base_s_by_pass	delta_s	delta_pct	spread_s	class	greedy_same_as_base
+v	off	62	416.56, 410.60	413.58	416.56, 410.60	+0.00	+0.00	5.96	base	62/62
+v	on	62	344.00, 343.60	343.80	416.56, 410.60	-69.78	-16.87	5.96	gain	61/62
+i	off	62	338.96, 331.09	335.03	416.56, 410.60	-78.55	-18.99	7.87	gain	62/62
+i	on	62	321.40, 321.09	321.25	416.56, 410.60	-92.33	-22.32	5.96	gain	62/62

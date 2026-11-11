@@ -1,0 +1,15 @@
+fresh off: 4 requests; prompt_n the same in 4; checkpoints at the same token counts in the same order in 4 (8 in v, 8 in i, of them 4 inside a call, 4 filled, 1.1 ms logged); restores the same in 4 (0 and 0)
+fresh on: 4 requests; prompt_n the same in 4; checkpoints at the same token counts in the same order in 4 (8 in v, 8 in i, of them 4 inside a call, 4 filled, 1.0 ms logged); restores the same in 4 (0 and 0)
+reset off: 22 requests; prompt_n the same in 22; checkpoints at the same token counts in the same order in 22 (44 in v, 44 in i, of them 23 inside a call, 23 filled, 6.3 ms logged); restores the same in 22 (21 and 21)
+reset on: 22 requests; prompt_n the same in 22; checkpoints at the same token counts in the same order in 22 (44 in v, 44 in i, of them 22 inside a call, 22 filled, 6.3 ms logged); restores the same in 22 (22 and 22)
+turn off: 124 requests; prompt_n the same in 124; checkpoints at the same token counts in the same order in 124 (248 in v, 248 in i, of them 170 inside a call, 170 filled, 44.5 ms logged); restores the same in 124 (2 and 2)
+turn on: 124 requests; prompt_n the same in 124; checkpoints at the same token counts in the same order in 124 (248 in v, 248 in i, of them 170 inside a call, 170 filled, 44.1 ms logged); restores the same in 124 (2 and 2)
+
+v: switch_on 0, switch_off_warning 0, not_taken_inside 0, no_free_store 0, erased 0, moved_to_host 0, catchup_overlap 0; error lines 0, warning lines 3, by text:
+  1 x W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/#)
+  1 x W srv          init: --cache-idle-slots requires --cache-ram, disabling
+  1 x W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)
+i: switch_on 1, switch_off_warning 0, not_taken_inside 0, no_free_store 0, erased 0, moved_to_host 0, catchup_overlap 0; error lines 0, warning lines 3, by text:
+  1 x W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/#)
+  1 x W srv          init: --cache-idle-slots requires --cache-ram, disabling
+  1 x W srv          init: chat template supports preserving reasoning, it is enabled by default (may use more tokens, disable via --no-reasoning-preserve)

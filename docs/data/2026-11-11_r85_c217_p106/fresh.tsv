@@ -1,0 +1,17 @@
+load	arm	prompt	prompt_n	prompt_s	tok_s	checkpoints_created	created_s
+v	off	fresh0	2049	14.38	142.52	2	0.12
+v	on	fresh0	2049	15.18	134.96	2	0.12
+v	on	fresh1	2049	15.19	134.86	2	0.12
+v	off	fresh1	2049	14.51	141.24	2	0.12
+v	off	fresh2	2049	14.33	143.03	2	0.12
+v	on	fresh2	2049	15.32	133.71	2	0.11
+v	on	fresh3	2049	15.44	132.69	2	0.12
+v	off	fresh3	2049	14.33	142.94	2	0.12
+i	off	fresh0	2049	12.27	167.01	2	0.06
+i	on	fresh0	2049	12.07	169.69	2	0.06
+i	on	fresh1	2049	12.23	167.51	2	0.06
+i	off	fresh1	2049	12.38	165.49	2	0.06
+i	off	fresh2	2049	12.41	165.08	2	0.06
+i	on	fresh2	2049	12.30	166.58	2	0.06
+i	on	fresh3	2049	12.24	167.46	2	0.06
+i	off	fresh3	2049	12.14	168.80	2	0.06

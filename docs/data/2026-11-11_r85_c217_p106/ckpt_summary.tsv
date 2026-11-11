@@ -1,0 +1,7 @@
+kind	arm	requests	same_prompt_n	same_checkpoints	checkpoints_v	checkpoints_i	joined_i	filled_i	fill_ms_i	same_restores	restored_v	restored_i
+fresh	off	4	4	4	8	8	4	4	1.1	4	0	0
+fresh	on	4	4	4	8	8	4	4	1.0	4	0	0
+reset	off	22	22	22	44	44	23	23	6.3	22	21	21
+reset	on	22	22	22	44	44	22	22	6.3	22	22	22
+turn	off	124	124	124	248	248	170	170	44.5	124	2	2
+turn	on	124	124	124	248	248	170	170	44.1	124	2	2

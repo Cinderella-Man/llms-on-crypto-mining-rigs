@@ -26,8 +26,14 @@ without the cuts ends in another state in all 6 runs without snapshots, and the 
 checkpoints on every request, with checkpoints at the base's token counts in the base's order, in four switch-on
 arms: 9, 8, 9 and 21 checkpoints taken inside calls (at the preset's 4 and 4 too, and with every other checkpoint
 moved to the host). With the switch off, 146 of 146 architectures give the base's logits bit for bit. The rig tarball
-builds. Not run on a card yet: whether the copies keep their order on the cards and what the prompts gain is the rig
-row Q1306.
+builds.
+
+**On nine P106-090 cards (Q1306, R85, the v4 night merge `c408dabcb` with only this switch set):** a gain of 18.99 %
+of prompt time with every reply, checkpoint and restore unchanged. With the taper off, R43's replay of the agent
+check's 62 prompts took 338.96 and 331.09 s a pass against 416.56 and 410.60 s with `--ctx-checkpoints-vram 4` alone.
+The greedy replies are the same on 62 of 62 turns. The checkpoints are at the same token counts, in the same order,
+with the same restores, on all 300 requests; 85 of the 124 checkpoints a pass go inside a call. With the taper on: 321.40
+and 321.09 s against 344.00 and 343.60 s ([2026-11-11_r85_c217_p106](../2026-11-11_r85_c217_p106/README.md)).
 
 ## The change
 
@@ -137,17 +143,17 @@ logged fewer `created` lines than its base: in-call checkpoints evicted before t
 spread arm took fewer checkpoints inside calls (7) because a part went on only when a store was free before room was
 made; since `9fb51d28f` a full list counts the store that making room frees.
 
-## What is not checked yet
+## What the CPU cannot check, and the rig row
 
 - **The cards.** On the CPU the copies are synchronous, so the CPU checks cover the positions, the bytes and the
   splits, not the stream order on the cards (a copy queued behind its micro-batch's work, ahead of the next one's). The
   rig row checks it the way that shows: the greedy replies, the checkpoints' positions and the restores against the
-  switch off, in one build.
+  switch off, in one build. On nine P106s all three are the switch-off load's (Q1306).
 - **The MTP draft.** The random models have no MTP block, so the draft's cuts and fills and its pending row at a
-  checkpoint run only on the rig. A one-card run of the `store_at` cases on the build machine (Q1301) checks the fills'
-  stream order on a CUDA card before the rig does.
-- **Any speed.** Est. (not measured): most of R43's 77.28 s a pass, the drains at the checkpoints; the micro-batches
-  stay the cut calls' (the 4-token one at a prompt's end too), so the line stays above `--ctx-checkpoints 0`'s.
+  checkpoint run only on the rig, where the replies and restores above cover them. A one-card run of the `store_at`
+  cases on the build machine (Q1301) checks the fills' stream order on a CUDA card directly.
+- **The speed.** Measured on the rig: 78.55 s a pass (−18.99 %) of the agent check's prompts with the taper off. The
+  micro-batches stay the cut calls' (the 4-token one at a prompt's end too).
 
 ## The rig row (Q1306)
 

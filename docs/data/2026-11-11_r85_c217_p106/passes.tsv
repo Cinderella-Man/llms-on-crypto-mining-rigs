@@ -1,0 +1,9 @@
+load	arm	pass	turns	prompt_tokens	prompt_s	tok_s	turns_reprocessed	checkpoints_created	created_s	checkpoints_restored	restored_s
+v	off	0	62	36793	416.56	88.33	1	124	3.66	1	0.00
+v	off	3	62	36793	410.60	89.61	1	124	3.68	1	0.00
+v	on	1	62	36793	344.00	106.95	1	124	3.69	1	0.00
+v	on	2	62	36793	343.60	107.08	1	124	3.68	1	0.00
+i	off	0	62	36793	338.96	108.55	1	124	0.18	1	0.00
+i	off	3	62	36793	331.09	111.13	1	124	0.18	1	0.00
+i	on	1	62	36793	321.40	114.48	1	124	0.18	1	0.00
+i	on	2	62	36793	321.09	114.59	1	124	0.18	1	0.00
