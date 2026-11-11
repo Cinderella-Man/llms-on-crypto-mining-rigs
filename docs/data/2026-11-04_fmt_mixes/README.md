@@ -18,8 +18,10 @@ each with pascal-mix's tools, and builds the files that price them:
 **Status:** the tools are written and tested; all 30 single-switch files (8 for C326, 22 for Q219) and the control
 `dniq23` are built and scored on all three texts: agent ([results](#results-so-far-agent-text-kld-2026-11-05)), wiki
 ([results](#wiki-text-kld-2026-11-06)) and code ([results](#code-text-kld-2026-11-10), with the three texts side by
-side); the allocation over the three texts (`galloc.py solve`) comes next; the rig timing (C323) is a run file for a
-rig. Registry rows Q219, Q888, Q889, Q901 in [quants/experiments.md](../../../quants/experiments.md).
+side); the allocation over the three texts (`galloc.py solve`) is solved and its pick at the start's bytes, `gmix-q2`,
+is built ([the v3.1 pick](#the-v31-pick-2026-11-11)); its measured KLD (Q1366) and its rig check (Q1367) come next; the
+rig timing (C323) is a run file for a rig. Registry rows Q219, Q888, Q889, Q901, Q1366, Q1367 in
+[quants/experiments.md](../../../quants/experiments.md).
 
 ## Results so far: agent-text KLD (2026-11-05)
 
@@ -55,8 +57,7 @@ share the text and the reference logits, so their differences are tighter than t
   not: `guiq35` (−0.0088), `guiq34` (−0.0055), `guiq30` (−0.0073), `guiq25` (−0.0068) and `guiq21` (−0.0083) are less
   than 0.0054 below it. One control covers one class in one group (down projections of layers 24–31), so it is no
   proof for the gate/up and dense switches.
-- **Next:** `galloc.py solve` for the best set at each budget, now that every file has its three texts. The best
-  switches stacked into one file are a candidate after the v3 release, not part of it.
+- **The allocation** over all three texts and its first pick: [the v3.1 pick](#the-v31-pick-2026-11-11).
 
 ## Wiki-text KLD (2026-11-06)
 
@@ -151,9 +152,97 @@ by side.
   group 4 from IQ3_XXS. Group 3's pays on agent and wiki text. Group 1's pays on one text per build: agent text from
   IQ2_XS (`guiq21`), code text from IQ3_XXS (`guiq31`, by 0.00006). The dense classes, the agent text's best per byte
   (`denseiq31`, the attention output), pay on agent text only.
-- **Next:** `galloc.py solve` (its `--texts` defaults to all three). It takes each switch's change from the start's
-  score on the same text, read by `galloc.py collect` from the logs: for code text that is the start's four-card log
-  (the log folder of the [commands](#commands) in which it stands under the start's name).
+- **The allocation over the three texts** follows in [the v3.1 pick](#the-v31-pick-2026-11-11). `galloc.py collect`
+  read each switch's change from the start's score on the same text from the logs: for code text the start's
+  four-card log (the log folder of the [commands](#commands) in which it stands under the start's name).
+
+## The v3.1 pick (2026-11-11)
+
+`galloc.py solve` over the three texts ([solve.tsv](solve.tsv); each switch's cost in
+[solve-switches.tsv](solve-switches.tsv)), with Q219's switches of [switches.tsv](switches.tsv) and the scores of the
+three tables (`kld.tsv` from `galloc.py collect`). The damage is Q167's, the sum over the texts of each switch's KLD
+change relative to the start's KLD on that text, so a fraction of the start counts the same on every text. Three
+budgets on the cards: `pmix-q2-fast`'s own bytes (37,470,389,760, so the pick fits wherever the start fits), and the
+44.3 GB and 47 GB of [the allocation](#1-q219-the-routed-experts-per-8-layer-group). C326's arms are not options: they
+take tensors that the dense switches take too, and none of them gains on wiki or code text.
+
+| Budget on the cards | Switches | Bytes added | Est. ms a token | Predicted KLD agent / wiki / code | ± of the summed switches |
+|---|---|---:|---:|---|---|
+| `pmix-q2-fast` (start, measured) | — | — | 72.44 | 0.279228 / 0.426376 / 0.108328 | — |
+| 37.47 GB, the start's | `guiq30`, `guiq21`, `denseiq31`, `denseiq32`, `guiq23` | −25,891,840 | 78.35 | **0.21610 / 0.41379 / 0.09212** | 0.01148 / 0.01304 / 0.00840 |
+| 44.3 GB | 15: gate/up `guiq20`, `guiq21`, `guiq22`, `guiq23`, `guiq24`, `guiq35`; down `dniq30`, `dniq33`, `dniq34`, `dniq35`; dense of groups 0, 1, 2, 4, 5 | +6,643,681,280 | 88.80 | 0.14835 / 0.28020 / 0.06266 | 0.02028 / 0.02232 / 0.01464 |
+| 47 GB | 15: gate/up `guiq20`, `guiq31`, `guiq32`, `guiq23`, `guiq34`, `guiq35`; down and dense as at 44.3 GB | +9,068,513,280 | 91.19 | 0.14933 / 0.26671 / 0.06007 | 0.02030 / 0.02230 / 0.01464 |
+
+The est. ms are the timed kernels of `bench/file_choice/efficiency.tsv`, in which IQ2_XXS and IQ2_XS gate/up run at
+llama.cpp's IQ2_S speed (27.5 GB/s; C2's Pascal kernel is expected at 42.6), so the IQ2_XS switches cost less than
+shown once that kernel lands. The ± column is the root sum of squares of the picked switches' own ±. All the files
+share the text and the reference logits, so the ± of a difference between them is smaller.
+
+**The pick at the start's bytes is `gmix-q2`,** built as one file (below). Group by group:
+
+| Group (layers) | Switch | What changes | MiB on the cards | Change agent / wiki / code |
+|---|---|---|---:|---|
+| 0 (0–7) | `guiq30` | routed gate/up from Swift IQ3_XXS (its IQ2_XS ×8, IQ2_XXS ×8 in these layers) | −100.0 | −0.00727 / −0.00661 / −0.00880 |
+| 1 (8–15) | `guiq21` | routed gate/up from Swift IQ2_XS (IQ2_XXS ×8, IQ1_M ×4, IQ2_S ×4) | −225.0 | −0.00828 / −0.00067 / −0.00327 |
+| 1 (8–15) | `denseiq31` | the other tensors from `pmix-iq3-fast` | +55.7 | −0.01933 / +0.00072 / −0.00125 |
+| 2 (16–23) | `denseiq32` | the other tensors from `pmix-iq3-fast` | +44.6 | −0.01208 / +0.00033 / −0.00088 |
+| 3 (24–31) | `guiq23` | routed gate/up from Swift IQ2_XS (IQ2_S ×10, IQ2_XXS ×6) | +200.0 | −0.01617 / −0.00636 / −0.00201 |
+| groups 4 and 5 | — | the start's | 0 | — |
+| **sum** | | | **−24.7** | **−0.06313 / −0.01259 / −0.01621** |
+
+- **What it predicts:** agent KLD 0.279228 → 0.21610 (−0.06313), wiki 0.426376 → 0.41379 (−0.01259), code 0.108328 →
+  0.09212 (−0.01621), at 24.7 MiB fewer on the cards. Agent text gains most: three of the five switches gain on agent
+  text only (`denseiq31`, `denseiq32`, `guiq21`), and `guiq21` is picked mostly for its 225 MiB, which pay for the
+  others.
+- **What it costs:** est. +5.91 ms a token on the timed kernels (78.35 against 72.44), +4.21 ms on the expected ones;
+  4.68 ms of the 5.91 are the three gate/up switches, whose IQ1_M, IQ2_XXS, IQ2_XS and IQ2_S tensors run at IQ2_S's
+  speed in that table.
+- **The 44.3 GB and 47 GB picks** take every group's routed experts from a better build and the dense tensors of five
+  groups; they are solved, not built ([Q1196](../../../quants/experiments.md)'s size ladder builds files at these sizes
+  with more donors).
+
+**Do the switches add up?** The prediction sums single switches. `pmix-iq3-fast` is the start with every IQ3_XXS
+switch at once (16 scored switches, plus the Q2_0 down projections of groups 1–2 in IQ3_XXS's rounding, which no
+switch file holds, and its token embeddings, which stay in host memory, in another type), and it is measured
+([pascal-mix](../2026-11-04_pascal_mix/README.md)'s `kld.tsv`, five cards). Its change from the start against the sum
+of the 16 switches' changes ([additivity.tsv](additivity.tsv), [run/additivity.py](run/additivity.py)):
+
+| Text | Sum of the 16 switches | `pmix-iq3-fast`, measured | Whole over sum |
+|---|---:|---:|---:|
+| agent | −0.11758 | −0.10572 | 0.899 |
+| wiki | −0.16071 | −0.17732 | 1.103 |
+| code | −0.04866 | −0.05289 | 1.087 |
+
+So over a whole build the single switches' changes add up to within 11 % of the measured change, less than the sum on
+agent text and more on wiki and code. Q167 accepted a prediction within two standard errors of the measured KLD; the
+measurement of `gmix-q2` on the three texts is the test (Q1366).
+
+**The file.** `run/build_pick.sh` with `galloc.py final`'s two steps, on four CPU threads at nice 19 and idle I/O
+priority, 17 min 6 s on 2026-11-11: step 1 takes 372 tensors from `pmix-iq3-fast` (`guiq30`, `denseiq31`,
+`denseiq32`: +322,560 bytes), step 2 takes 32 from Swift IQ2_XS (`guiq21`, `guiq23`: −26,214,400 bytes), and
+`gguf_compose.py verify` passes both: every one of the 1,224 tensors is byte for byte its donor's or the step's base.
+Shards 1 and 2 hold 10,787,009,120 and 26,941,664,896 bytes (md5 `35f5b9f67c343f55969f91cfd5835c98` and
+`e36684c6ee4724b06a24322cf54efca8`), 25,891,840 fewer than `pmix-q2-fast`'s, as the solve said; shard 3 is the
+start's n-gram table, unchanged. Every tensor type in it is one that `pmix-iq3-fast` or Swift IQ2_XS already holds.
+
+**Its fit at 64k on nine 6 GB cards**, from the headers ([run/pick_fit.sh](run/pick_fit.sh)): `split_plan.py` on the
+two nine-card lines whose costs [fewer_hops](../2026-11-04_fewer_hops/README.md) calibrated against llama.cpp's
+projection on the rig (f16 cache, `-b 2048 -ub 512`), both files on the same split; the start's rows match the rig's
+projection to 1 MiB a card ([pick_fit_64k_cards.txt](pick_fit_64k_cards.txt)). MiB on each card, `pmix-q2-fast` →
+`gmix-q2`:
+
+| Line | Card 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | Fullest card's free MiB |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| no draft, `-ts 6,5,5,6,5,5,6,5,6` | 4,943 → 4,918 | 4,243 → 4,029 | 4,427 → 4,396 | 5,001 → 5,033 | 4,271 → 4,471 | 4,432 → 4,445 | 5,009 | 4,276 | 4,868 | 1,014 → 990 |
+| MTP draft's body on card 8, `-ts 6,6,6,6,5,6,5,6,3` | 4,990 → 4,965 | 5,179 → 4,929 | 5,047 → 5,070 | 5,200 → 5,227 | 4,312 → 4,524 | 5,057 → 5,045 | 4,461 | 5,064 | 4,632 | 823 → 796 |
+
+Card 4 gains 200 to 212 MiB and card 1 loses 214 to 250; cards 6–8 hold only unswitched layers. The fullest card is
+card 3, with 24 and 27 MiB less free than the start's fullest (card 6 without a draft, card 3 with it). With the MTP
+line's 645 MiB of draft token embeddings on card 4 (`-otd token_embd=CUDA4`) that card keeps 854 MiB free, more than
+card 3. `fit.py`'s whole grid ([fit-gmix-q2.tsv](fit-gmix-q2.tsv), beside
+[pmix-q2-fast's](../2026-11-04_n2p_flash/fit/fit-pmix-q2-fast.tsv), which it reproduces byte for byte) gives every 64k
+line of the start a whole-layer split for `gmix-q2`: the same free MiB on the fullest card without a draft at every
+micro-batch, 9 to 21 MiB less with the MTP draft, 34 to 109 MiB more with DFlash2.
 
 ## 1. Q219: the routed experts per 8-layer group
 
@@ -365,8 +454,19 @@ python3 -I tools/docs/data/2026-11-04_fmt_mixes/run/kld_table.py --meta kld_agen
 sed 's/^pmix-q2-fast-4card\t/pmix-q2-fast\t/' <OUT>/mem_peak.tsv > mem_peak_code.tsv
 bash tools/docs/data/2026-11-04_fmt_mixes/run/kld_texts.sh . > kld_texts.tsv    # kld_agent, kld_wiki, kld_code in .
 python3 -I tools/bench/pascal_mix/galloc.py collect kld.tsv pmix-q2-fast=<OUT4>/pmix-q2-fast guiq35=<OUT4>/guiq35 ...
-python3 -I tools/bench/pascal_mix/galloc.py solve --switches switches.tsv --kld kld.tsv --out solve.tsv
+python3 -I tools/bench/pascal_mix/galloc.py solve --switches switches.tsv --kld kld.tsv --out solve.tsv \
+  --budgets 37470389760,44.3e9,47e9    # the start's bytes on the cards, then the two of the allocation
 python3 -I tools/bench/pascal_mix/galloc.py solve --switches switches.tsv --kld kld.tsv --out solve_ms.tsv --ms-budget 80
+# does a whole build add up: pmix-iq3-fast's change against its switches' summed changes (header dumps from DUMPS)
+python3 -I tools/docs/data/2026-11-04_fmt_mixes/run/additivity.py solve-switches.tsv \
+  tools/docs/data/2026-11-04_pascal_mix/kld.tsv $DUMPS/pmix-q2-fast.json $DUMPS/pmix-iq3-fast.json > additivity.tsv
+# the pick at the start's bytes as one file (the build exports above; MODELS on a disk with room for two copies, ~76 GB,
+# while the steps run), then its fit at 64k from the headers and its header copies for a rig
+REPO=$PWD/tools SWITCHES=tools/docs/data/2026-11-04_fmt_mixes/switches.tsv \
+  PICKS=guiq30,denseiq31,guiq21,denseiq32,guiq23 NAME=gmix-q2 PREFIX=<the start's file prefix> \
+  DONORS="pmix-iq3-fast=$IQ3 swift-iq2_xs=$IQ2" bash tools/docs/data/2026-11-04_fmt_mixes/run/build_pick.sh
+REPO=$PWD/tools OUT=<folder> FILES="pmix-q2-fast=<its three shards, comma separated> gmix-q2=<its three shards>" \
+  bash tools/docs/data/2026-11-04_fmt_mixes/run/pick_fit.sh
 ```
 
 The selector (standard library; `qerr.py` needs numpy and gguf-py):
@@ -396,6 +496,12 @@ python3 -I tools/bench/pascal_mix/vmix.py select --start pmix-q2-fast.json --pub
 | [kld_wiki.tsv](kld_wiki.tsv) | wiki-text KLD of the same files: the same columns, then the change from the control `dniq23` and the class against it |
 | [kld_code.tsv](kld_code.tsv) | code-text KLD of the same files, the wiki table's columns; every score, the start's included, from the same four cards |
 | [kld_texts.tsv](kld_texts.tsv) | the three texts side by side: each file's change from the start and its class on agent, wiki and code text, and on how many texts it gains and loses |
+| [solve_kld.tsv](solve_kld.tsv) | the solve's scores (`galloc.py collect`): each file's KLD, ± and same top token per text, the start's code score from the four cards |
+| [solve.tsv](solve.tsv) | `galloc.py solve`'s picks at the start's bytes, 44.3 GB and 47 GB: switches, bytes, damage, est. ms, predicted KLD per text and the summed switches' ± |
+| [solve-switches.tsv](solve-switches.tsv) | each switch's cost in the solve: bytes, est. ms, damage, its KLD change per text, damage per GB |
+| [additivity.tsv](additivity.tsv) | `pmix-iq3-fast`'s measured change against the sum of its 16 switches' changes, per text |
+| [pick_fit_64k_cards.txt](pick_fit_64k_cards.txt) | `pmix-q2-fast` and `gmix-q2` on the two nine-card 64k lines: layers and MiB per card |
+| [fit-gmix-q2.tsv](fit-gmix-q2.tsv) | `fit.py`'s grid for `gmix-q2`: every context, cache type, micro-batch and draft, whole layers and with experts moved |
 | [mem_peak_code.tsv](mem_peak_code.tsv) | the code-text runs' peak memory per file and card (the cards' index on the machine), MiB: the 31 files and the start |
 | [run/kld_table.py](run/kld_table.py) | one text's table from llama-perplexity's logs (standard library) |
 | [run/kld_texts.sh](run/kld_texts.sh) | `kld_texts.tsv` from the three tables |
@@ -408,6 +514,8 @@ python3 -I tools/bench/pascal_mix/vmix.py select --start pmix-q2-fast.json --pub
 | [design/](design/) | the first picks: `plan.tsv`, `summary.tsv`, `types.txt`, `take.txt`, `retype.txt` each |
 | [run/chain.sh](run/chain.sh), [run/build_switches.sh](run/build_switches.sh) | the single-switch builds, C326's arms then Q219's switches |
 | [run/build_pick.sh](run/build_pick.sh) | a chosen set of switches as one file |
+| [run/additivity.py](run/additivity.py) | do the single switches' changes add up: a whole build against its switches |
+| [run/pick_fit.sh](run/pick_fit.sh) | a pick's fit at 64k from its headers beside the start's, `fit.py`'s grid and header copies for a rig |
 | [run/spine_arms.tsv](run/spine_arms.tsv) | C326's arms (`galloc.py switches --spec`) |
 | [run/qerr.sh](run/qerr.sh) | the error measurement in a Python container |
 | [run/rig_types.sh](run/rig_types.sh) | C323 on one P106 |

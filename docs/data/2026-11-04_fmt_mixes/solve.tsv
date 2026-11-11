@@ -1,0 +1,4 @@
+budget_bytes	switches	delta_bytes	on_card_bytes	damage	delta_ms	est_ms	pred_agent	pred_wiki	pred_code	switch_se_agent	switch_se_wiki	switch_se_code
+37470389760	guiq30,denseiq31,guiq21,denseiq32,guiq23	-25891840	37444497920	-0.4052	5.91	78.35	0.21610	0.41379	0.09212	0.01148	0.01304	0.00840
+44300000000	denseiq30,dniq30,guiq20,denseiq31,guiq21,denseiq32,guiq22,dniq33,guiq23,denseiq34,dniq34,guiq24,denseiq35,dniq35,guiq35	6643681280	44114071040	-1.2331	16.36	88.80	0.14835	0.28020	0.06266	0.02028	0.02232	0.01464
+47000000000	denseiq30,dniq30,guiq20,denseiq31,guiq31,denseiq32,guiq32,dniq33,guiq23,denseiq34,dniq34,guiq34,denseiq35,dniq35,guiq35	9068513280	46538903040	-1.2852	18.75	91.19	0.14933	0.26671	0.06007	0.02030	0.02230	0.01464

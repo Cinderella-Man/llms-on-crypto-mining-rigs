@@ -1,0 +1,5 @@
+text	switches_summed	sum_of_changes	pmix_iq3_fast_change	whole_over_sum
+agent	16	-0.11758	-0.10572	0.899
+wiki	16	-0.16071	-0.17732	1.103
+code	16	-0.04866	-0.05289	1.087
+# tensors outside the blocks whose type differs between the two files: token_embd.weight
