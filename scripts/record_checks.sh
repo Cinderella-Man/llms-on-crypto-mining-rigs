@@ -95,6 +95,10 @@
 #                 k-column switches, without them, beside _DMT=1, off, Q6_K left out, and its fault (every token stages the
 #                 first token's activations), which must fail cases, and the fault without the switch, which must not
 #                 (docs/data/2026-11-11_c727_q6k_readonce)
+#   v4kern        the three kernel suites of the v4 kernel merge in one set, as merged in pascal-p106-v4 (C796,
+#                 docs/data/2026-11-11_v4_kernel_merge): KERN below, each filter recorded once, every suite's runs, and
+#                 runs with GGML_CUDA_MMVQ_PASCAL_Q6K_MT, _DMT_KT and _RO8 on together over all their cases, at several
+#                 settings and with each one's fault (which must fail cases)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -104,7 +108,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt|v4kern}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -155,6 +159,7 @@ F32X='type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
 F32X4='type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
 NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
 DAY='dmt q5kmt q3kmt bf16x f32x glumt q5k1r'
+KERN='q6kmt dmtkt ro8'
 suite_filters() {
     case $1 in
         kshape)
@@ -202,6 +207,9 @@ suite_filters() {
         v4day)
             local s
             for s in $DAY; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
+        v4kern)
+            local s
+            for s in $KERN; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
         *) return 1 ;;
     esac
 }
@@ -415,6 +423,22 @@ suite_runs() {
         v4day)
             local s
             for s in $DAY; do suite_runs "$s"; done ;;
+        v4kern)
+            # C796: the three suites' runs, then the three switches on together over every case of the three (each
+            # product on the kernel of the branch that owns it), at the preset's settings, without the prefetch, the tiles
+            # wherever they fit and two row blocks a round, R = 2 at 2-4 tokens, without the preset; then each branch's
+            # fault with all three on, which must fail cases
+            local s KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" ALL="$DMT|$Q6MT|$RO8" r
+            local ON="${P}_DMT=1 ${P}_DMT_KT=1 ${P}_Q6K_MT=1 ${P}_RO8=1 ${P}_Q5K_MT=1"
+            for s in $KERN; do suite_runs "$s"; done
+            for r in "kern-all:$KP $ON" "kern-all-nopf:$KP ${P}_DMT=2 ${P}_DMT_KT=1 ${P}_Q6K_MT=2 ${P}_RO8=2 ${P}_Q5K_MT=2" \
+                     "kern-all-kt2:$KP ${P}_DMT=1 ${P}_DMT_KT=2 ${P}_Q6K_MT=1 ${P}_RO8=1 ${P}_Q5K_MT=1" \
+                     "kern-all-m2:$KP $ON ${P}_DMT_KT_M=2" "kern-all-r2:$KP $ON ${P}_DMT_R=2" "kern-all-defaults:$ON"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$ALL"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' kern-q6k-fault "$KP $ON ${P}_Q6K_MT_FAULT=1" MUL_MAT "$ALL" \
+                kern-kt-fault "$KP $ON ${P}_DMT_KT_FAULT=1" MUL_MAT "$ALL" \
+                kern-ro8-fault "$KP $ON ${P}_RO8_FAULT=1" MUL_MAT "$ALL" ;;
     esac
 }
 # C754's runs: <1 natively (the switch on compute 6.1) | 2 through the PTX on a newer card (the switch on any NVIDIA
