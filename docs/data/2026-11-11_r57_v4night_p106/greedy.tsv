@@ -1,0 +1,5 @@
+prompt	build	md5	bytes	eval
+code	llama.cpp-20261105-1551f5fe1-pascal-p106-v3-b12076-ladder5	4384ebc02147be1ee6f38d1ce4a43f21	745	18710.20 ms /   255 runs   (   73.37 ms per token,    13.63 tokens per second)
+code	llama.cpp-20261111-c408dabcb-pascal-p106-v4-b12246-night	4384ebc02147be1ee6f38d1ce4a43f21	745	17979.87 ms /   255 runs   (   70.51 ms per token,    14.18 tokens per second)
+prose	llama.cpp-20261105-1551f5fe1-pascal-p106-v3-b12076-ladder5	b21ce2b8a3573b92754e8cac6068b811	1200	18797.66 ms /   255 runs   (   73.72 ms per token,    13.57 tokens per second)
+prose	llama.cpp-20261111-c408dabcb-pascal-p106-v4-b12246-night	b21ce2b8a3573b92754e8cac6068b811	1200	17893.26 ms /   255 runs   (   70.17 ms per token,    14.25 tokens per second)

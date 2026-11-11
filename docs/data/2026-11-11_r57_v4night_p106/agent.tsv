@@ -1,0 +1,4 @@
+arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref
+v3rel	11/12	60	68.7	20.97	7.50	16.39	13.63	0.700	3.10	33.0	2.03	2.75	+0.0 %
+t1swift	12/12	66	69.4	20.40	6.89	15.89	13.61	0.718	3.15	32.2	1.80	2.77	+0.7 %
+v4night	12/12	66	69.8	20.65	6.94	15.23	13.33	0.733	3.20	35.6	2.11	2.75	+0.0 %
