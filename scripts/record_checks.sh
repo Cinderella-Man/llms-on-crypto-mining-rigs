@@ -80,6 +80,11 @@
 #                 C690's kernel at one token (GGML_CUDA_MMVQ_PASCAL_Q5K_1R, C767) at each setting, under the preset's
 #                 k-column switches, without them, with the 2-4-token switch too, off, Q5_K left out, and its fault (each
 #                 row's last iteration left out), which must fail cases (docs/data/2026-11-11_c767_q5k_one_row)
+#   ro8           IQ4_XS's, Q4_K's and Q5_K's products of 5-8 tokens (Qwen3.8-Flash-Next's attention and recurrent
+#                 projections and its Q5_K products among them) with the read-once kernels of C722 and C690 at 5-8 tokens
+#                 (GGML_CUDA_MMVQ_PASCAL_RO8, C729) at each setting, under the preset's k-column switches, with the 2-4-
+#                 token switches too, without the preset, off, types left out, and its fault (every token stages the first
+#                 token's activations), which must fail cases (docs/data/2026-11-11_c729_readonce_5to8)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -89,7 +94,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -120,6 +125,7 @@ LID='n_cells=|nh=4,|nb=(1|32),'
 HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 Q51='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=1,'
+RO8='type_a=(iq4_xs|q4_K|q5_K),(type_b=f32,)?m=[0-9]+,n=[5-8],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
 # C757's gate/up/SWIGLU cases (MUL_MAT_GLU), and those its kernel takes under every run but the ones that turn its
@@ -157,6 +163,8 @@ suite_filters() {
             printf '%s\t%s\n' MUL_MAT "$Q5MT" ;;
         q5k1r)
             printf '%s\t%s\n' MUL_MAT "$Q51" ;;
+        ro8)
+            printf '%s\t%s\n' MUL_MAT "$RO8" ;;
         indexer-rows)
             printf '%s\t%s\n' LIGHTNING_INDEXER "$LID" ;;
         range-mask)
@@ -288,6 +296,20 @@ suite_runs() {
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$Q51"
             done
             printf '%s\t%s\t%s\t%s\tfail\t\n' q5k1r-fault "$KP $O=1 ${O}_FAULT=1" MUL_MAT "$Q51" ;;
+        ro8)
+            # C729: the preset's k-column switches, then 5-8 tokens on the read-once kernels at each setting (with and
+            # without the prefetch, Q5_K's prefetch, one and two warps a block, the 2-4-token kernels' R = 2, which 5-8
+            # tokens do not take), with the 2-4-token switches too, without the preset, off, Q4_K or every type left to
+            # the other kernels, and the fault (every token stages the first token's activations), which must fail cases
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_RO8" D="${P}_DMT" Q="${P}_Q5K_MT"
+            for r in "ro8-on:$KP $M=1" "ro8-nopf:$KP $M=2" "ro8-pf:$KP $M=1 ${Q}_PF=1" \
+                     "ro8-nw1:$KP $M=1 ${D}_NW=1 ${Q}_NW=1" "ro8-nw2:$KP $M=1 ${D}_NW=2 ${Q}_NW=2" \
+                     "ro8-r2:$KP $M=1 ${D}_R=2 ${Q}_R=2" "ro8-mt:$KP $D=1 $Q=1 $M=1" "ro8-mt-nopf:$KP $D=2 $Q=2 $M=2" \
+                     "ro8-defaults:$M=1" "ro8-off:$KP" "ro8-skip-q4k:$KP $M=1 ${D}_SKIP=q4_K" \
+                     "ro8-skip:$KP $M=1 ${P}_SKIP=iq4_xs,q4_K,q5_K"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$RO8"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' ro8-fault "$KP $M=1 ${M}_FAULT=1" MUL_MAT "$RO8" ;;
         indexer-rows)
             # C704: the LID cases, then the in-place reads with GGML_CUDA_LID_ROWS_FAULT=1, which scores rows i mod n_cells
             # instead of the listed ones and so must fail every case (C749; before it, rows 0 to n-1 and lists up to n_cells)

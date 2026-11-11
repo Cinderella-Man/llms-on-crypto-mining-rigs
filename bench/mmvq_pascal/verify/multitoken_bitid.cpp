@@ -54,6 +54,14 @@
 // build the same ones. Shapes: q5k's, Qwen3.8-Flash-Next's other Q5_K products (6144 -> 2560, 2560 -> 512 and 640) and
 // K = 256 (one super-block a row), each with inputs of standard deviation 1 and 250,000.
 // GGML_CUDA_MMVQ_PASCAL_Q5K_1R_FAULT=1 (each row's last iteration left out) must give differences.
+// `multitoken_bitid dmt8` and `multitoken_bitid q5k8` check dmt's and q5k's products at 5 to 8 tokens (C729: the same
+// kernels with GGML_CUDA_MMVQ_PASCAL_RO8=1 or 2), at dmt's and q5k's shapes, q5k8 with Qwen3.8-Flash-Next's other Q5_K
+// products (6144 -> 2560, 2560 -> 512 and 640). The kernels leave a product whose activations and one warp's staging pass
+// 48 KB of shared memory to the k-column kernel, whose sums are not the one-token kernel's (6144-wide rows from 6 or 7
+// tokens on, 8192-wide ones at every count): the build itself says which it takes (ggml_cuda_mmvq_pascal_dmt_takes,
+// ggml_cuda_mmvq_pascal_q5k_mt_takes), and those it leaves are printed as "declined" and not counted, unless BITID_ALL=1
+// (the control: with GGML_CUDA_MMVQ_PASCAL_RO8=0 and BITID_ALL=1 the k-column kernel's sums must differ).
+// GGML_CUDA_MMVQ_PASCAL_RO8_FAULT=1 (every token stages the first token's activations) must give differences.
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -67,6 +75,13 @@
 #include <vector>
 
 static std::mt19937 rng(42);
+
+// the fork's tests of whether its read-once kernels take a product (mmvq-pascal-dmt.cu, mmvq-pascal-q5k.cu), for dmt8
+// and q5k8; weak, so that the other modes still link against builds without them
+bool ggml_cuda_mmvq_pascal_dmt_takes(ggml_type type, int64_t K, int64_t nrows, int64_t ncols, int64_t row_bytes,
+                                     const void * x) __attribute__((weak));
+bool ggml_cuda_mmvq_pascal_q5k_mt_takes(int64_t K, int64_t nrows, int64_t ncols, int64_t row_bytes,
+                                        const void * x) __attribute__((weak));
 
 static void fill_weights(ggml_tensor * t) {
     const int64_t k = t->ne[0];
@@ -122,10 +137,11 @@ static std::vector<float> run(ggml_backend_t be, ggml_context * ctx, ggml_tensor
     return r;
 }
 
-static int n_checked = 0, n_diff = 0;
+static int n_checked = 0, n_diff = 0, n_declined = 0;
 
+// counted = false: printed, but not counted (a product the kernel under test declines)
 static void report(const char * what, ggml_type type, int n, int64_t m, int64_t k, const std::vector<float> & a,
-                   const std::vector<std::vector<float>> & cols, int64_t col_elems) {
+                   const std::vector<std::vector<float>> & cols, int64_t col_elems, bool counted = true) {
     int64_t ndiff = 0;
     double maxrel = 0.0;
     for (int j = 0; j < n; ++j) {
@@ -137,8 +153,12 @@ static void report(const char * what, ggml_type type, int n, int64_t m, int64_t 
             }
         }
     }
-    n_checked++;
-    if (ndiff) n_diff++;
+    if (counted) {
+        n_checked++;
+        if (ndiff) n_diff++;
+    } else {
+        n_declined++;
+    }
     printf("%-14s %-7s n=%d m=%-6lld k=%-5lld: %s (%lld of %lld values differ, max rel %.2e)\n", what, ggml_type_name(type), n,
            (long long) m, (long long) k, ndiff ? "DIFFERENT" : "bit-identical", (long long) ndiff,
            (long long) (n * col_elems), maxrel);
@@ -349,7 +369,15 @@ int main(int argc, char ** argv) {
     const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
     const bool f32    = argc > 1 && strcmp(argv[1], "f32") == 0;
     const bool q3k    = argc > 1 && strcmp(argv[1], "q3k") == 0;
-    const int  n_max  = f32 || q3k ? 8 : 4;
+    const bool dmt8   = argc > 1 && strcmp(argv[1], "dmt8") == 0;
+    const bool q5k8   = argc > 1 && strcmp(argv[1], "q5k8") == 0;
+    const bool count_all = getenv("BITID_ALL") != nullptr && atoi(getenv("BITID_ALL")) == 1;
+    const int  n_min  = dmt8 || q5k8 ? 5 : 2;
+    const int  n_max  = f32 || q3k || dmt8 || q5k8 ? 8 : 4;
+    if ((dmt8 && !ggml_cuda_mmvq_pascal_dmt_takes) || (q5k8 && !ggml_cuda_mmvq_pascal_q5k_mt_takes)) {
+        fprintf(stderr, "%s: this build has no read-once kernels (ggml_cuda_mmvq_pascal_*_takes)\n", argv[1]);
+        return 2;
+    }
     const mode_cfg cfg = q3k
         ? mode_cfg{ { GGML_TYPE_Q3_K },
                     { { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 }, { 2560, 6144 }, { 640, 2560 }, { 4097, 2560 },
@@ -365,7 +393,12 @@ int main(int argc, char ** argv) {
                     { { 248320, 2560 }, { 4097, 2560 }, { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 },
                       { 64, 8192 } },
                     1, 1, 256, 256, true, 0 }
-        : dmt
+        : q5k8
+        ? mode_cfg{ { GGML_TYPE_Q5_K },
+                    { { 248320, 2560 }, { 4097, 2560 }, { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 },
+                      { 64, 8192 }, { 2560, 6144 }, { 512, 2560 }, { 640, 2560 } },
+                    1, 1, 256, 256, true, 0 }
+        : dmt || dmt8
         ? mode_cfg{ { GGML_TYPE_IQ4_XS, GGML_TYPE_Q4_K },
                     { { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 }, { 2560, 6144 }, { 4097, 2560 }, { 200, 512 },
                       { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 } },
@@ -401,7 +434,7 @@ int main(int argc, char ** argv) {
             if (cfg.pool) fill_weights_pool(t); else fill_weights(t);
         }
 
-        for (int n = 2; n <= n_max; ++n) {
+        for (int n = n_min; n <= n_max; ++n) {
             ggml_init_params ip = { 256 * ggml_tensor_overhead() + 64 * ggml_graph_overhead_custom(64, false), nullptr, true };
             // inputs
             ggml_context * ictx = ggml_init(ip);
@@ -424,7 +457,13 @@ int main(int argc, char ** argv) {
                     ggml_tensor * bj = ggml_view_2d(g, B[s], B[s]->ne[0], 1, B[s]->nb[1], j * B[s]->nb[1]);
                     cols.push_back(run(be, g, ggml_mul_mat(g, W[s], bj)));
                 }
-                report("MUL_MAT", type, n, dense[s].m, dense[s].k, all, cols, dense[s].m);
+                // dmt8, q5k8: whether the read-once kernel takes the product (else the k-column kernel does)
+                const int64_t rb = W[s]->nb[1];
+                const bool taken = dmt8 ? ggml_cuda_mmvq_pascal_dmt_takes(type, dense[s].k, dense[s].m, n, rb, W[s]->data)
+                                 : q5k8 ? ggml_cuda_mmvq_pascal_q5k_mt_takes(dense[s].k, dense[s].m, n, rb, W[s]->data)
+                                 : true;
+                report(taken ? "MUL_MAT" : "MUL_MAT/declined", type, n, dense[s].m, dense[s].k, all, cols, dense[s].m,
+                       taken || count_all);
                 ggml_free(g);
             }
             for (int r = 0; r < cfg.n_routes; ++r) {
@@ -465,6 +504,9 @@ int main(int argc, char ** argv) {
         }
         ggml_backend_buffer_free(wbuf);
         ggml_free(wctx);
+    }
+    if (dmt8 || q5k8) {
+        printf("%d declined by the read-once kernel, %s\n", n_declined, count_all ? "counted (BITID_ALL=1)" : "not counted");
     }
     printf("%d comparisons, %d with differences\n", n_checked, n_diff);
     ggml_backend_free(be);
