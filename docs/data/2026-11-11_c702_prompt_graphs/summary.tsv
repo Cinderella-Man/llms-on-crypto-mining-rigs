@@ -1,0 +1,5 @@
+check	verdict	detail
+build-rig	OK	llama.cpp-20261110-2ec3a0927-pascal-p106-v4-b12246-c702; commit: 2ec3a0927ad1864c04fa2c544c17b30b6cf4b055 (2026-11-10 23:41:42 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+tests-build	OK	rc=0; test-cuda-graph-force test-cuda-profile-light at 2ec3a0927
+test-cuda-graph-force	OK	rc=0; random runs: 2000 x 400 evaluations; switch on: 200993 captures, 465116 replays, none stale, at most 1 eager batched graph a run; the control replayed stale executables in 711 of 2000 runs test-cuda-graph-force: 6070 checks, 0 failed 
+test-cuda-profile-light	OK	rc=0; test-cuda-profile-light: 49267 checks, 0 failed 

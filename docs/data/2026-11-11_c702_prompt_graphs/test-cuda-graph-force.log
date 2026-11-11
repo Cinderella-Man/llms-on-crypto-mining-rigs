@@ -1,0 +1,2 @@
+random runs: 2000 x 400 evaluations; switch on: 200993 captures, 465116 replays, none stale, at most 1 eager batched graph a run; the control replayed stale executables in 711 of 2000 runs
+test-cuda-graph-force: 6070 checks, 0 failed
