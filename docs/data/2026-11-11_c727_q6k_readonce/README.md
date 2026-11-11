@@ -59,9 +59,9 @@ now takes Q6_K when `GGML_CUDA_MMVQ_PASCAL_Q6K_MT` is set.
   and the reads meet 2 words a bank.
 - **One row per lane group by default** (`_DMT_R=2` shares the activation loads between two rows), the register
   prefetch of each warp's next segments at R = 1 (`GGML_CUDA_MMVQ_PASCAL_Q6K_MT=2` runs without it; at R = 2 the two
-  rows' prefetched segments took 255 registers and 24 bytes of stack at 4 tokens, so R = 2 never prefetches), and a product whose
-  activations leave room for one warp's staging only is left to the k-column kernel (C722's kernel lost 46–47 % to it
-  at one warp a block, [R79](../2026-11-11_r79_c722_p106/README.md)), unless `_DMT_NW=1`.
+  rows' prefetched segments took 255 registers and 24 bytes of stack at 4 tokens, so R = 2 never prefetches), and a
+  product whose activations leave room for one warp's staging only is left to the k-column kernel (C722's kernel lost
+  46–47 % to it at one warp a block, [R79](../2026-11-11_r79_c722_p106/README.md)), unless `_DMT_NW=1`.
 - **`_Q6K_MT_FAULT=1`** (checks only): every token stages the first token's activations (a column stride of 0, set on
   the host); the checks must fail.
 - **IQ4_XS and Q4_K unchanged:** the type branches are compile-time, the kernel's arguments and staging code are
@@ -80,11 +80,75 @@ The shapes at Flash-Next's width (the host code's rules; R = 1 unless noted):
 At four tokens a SM holds 4 warps (2 blocks of 2), the K = 6,144 case of Q1287 (C728), which tiles K for this kernel
 family.
 
-{{SASS_COUNTS}}
+### The code
+
+From `run/sass_check.sh` on the tip's `mmvq-pascal-dmt.cu.o` ([sass_counts.tsv](sass_counts.tsv), every Q6_K
+instantiation; "a step" is the main loop: a warp's staging, its next segments' prefetch, one super-block of the lane
+group's rows for every token, the reduction and the stores):
+
+| Tokens, R, prefetch | Registers | Stack, local | dp4a | FFMA | FMUL | FADD (+ FADD32I) | I2F | shared loads | instructions |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2, 1, no | 90 | 0, 0 | 128 | 50 | 16 | 26 (+ 16) | 0 | 110 | 817 |
+| 2, 1, yes | 148 | 0, 0 | 128 | 50 | 16 | 26 (+ 16) | 0 | 110 | 821 |
+| 3, 1, yes | 161 | 0, 0 | 192 | 75 | 16 | 39 (+ 16) | 0 | 138 | 962 |
+| 4, 1, no | 116 | 0, 0 | 256 | 100 | 16 | 52 (+ 16) | 0 | 167 | 1,102 |
+| 4, 1, yes | 168 | 0, 0 | 256 | 100 | 16 | 52 (+ 16) | 0 | 167 | 1,110 |
+| 4, 2, no | 149 | 0, 0 | 512 | 200 | 32 | 104 (+ 32) | 0 | 220 | 2,140 |
+
+- **The counts are the design's:** 64 dp4a a token per row (8 sub-blocks of two 4-dp4a chains), 25 FFMA a token per
+  row (per sub-block the two exact products and the sumf FFMA with d8; per super-block the FFMA with d), 8 FADD a token
+  per row (the halves' sums) plus the shuffle reduction's, and per row 16 scales as `PRMT …, 0x765x, 0x4b400000`,
+  `FADD32I −12583040` and 16 `FMUL −12582912`. No I2F in any step (the kernel's one I2F is the staging loop's integer
+  division, outside it); the XMAD in the steps are addresses.
+- **No spills:** 89 to 168 registers, no stack and no local memory in the 9 instantiations (2–4 tokens; R = 1 with and
+  without the prefetch, R = 2 without it).
 
 ## What was checked without a GPU
 
-{{CHECKS}}
+All on a build machine's CPU, in containers without a GPU, under the build machine's lock, at low priority; nothing
+here ran a kernel. [summary.tsv](summary.tsv) holds every step's verdict (`run/checks.sh`).
+
+- **The rig tarball builds** (`scripts/build_llamacpp_docker.sh`, `TESTS=1`, compute 6.1 only, CPU code without AVX):
+  `0e113d1f3`, the branch's tip, `llama.cpp-20261111-0e113d1f3-pascal-p106-v4-b12246-c727.tar.gz`, 672,374,961 B, md5
+  `95ad9981f03eb7bbb9ff086e6682c314`, 0 AVX instructions, glibc 2.38 at most; its `test-backend-ops` md5
+  `64de5bd83a1fd9b97ef655ee9785082c`.
+- **Every other kernel's code is the base's** ([sass_binary.tsv](sass_binary.tsv), [sass_dmt.tsv](sass_dmt.tsv),
+  [sass_differ.txt](sass_differ.txt); `run/compare_sass.py`): `cuobjdump -sass` of both tarballs' `bin/llama-server`,
+  which links every kernel, function by function with the anonymous namespaces' hashes masked: the base's 8,902
+  functions all the same in the tip (IQ4_XS's and Q4_K's 24 instantiations of the same kernel among them), and 9 new,
+  the Q6_K instantiations.
+- **The emulation** ([q6k_emul.tsv](q6k_emul.tsv), [q6k_exact.tsv](q6k_exact.tsv); `run/q6k_emul.c`): the one-token
+  kernel's and the new kernel's arithmetic from the same super-block bytes, read as each kernel reads them (32-bit words
+  around a 2-byte-aligned super-block in a 16-byte-aligned staging, shifted at odd half-words), with the same lanes,
+  order and shuffles. At Flash-Next's 2,560 × 6,144 and at 8, 16 and 32 lanes per row (K = 2,048, 4,096, 8,192,
+  12,288), random and extreme weights (every code 0 or 63, scales −128 or 127) times normal, large (uniform × 250,000)
+  and extreme (±127) activations: 30 products, 61,440 outputs, **0 differ**; 8,847,360 sub-blocks, 0 where x0 + x1 or a
+  scale is not the one-token kernel's (float) integer expression or (float) scale. Both controls differ in all 30
+  products (the one-token arithmetic at half the lanes: 295 to 1,464 outputs a product; the halves folded inexactly,
+  `fmaf(F1, sc1, x0 − 12582912 · sc1)`: 482 to 4,094). And exhaustively: the dp4a start's float for every
+  e in [−65,536, 65,536] (131,073 cases), (float) scale for all 256 bytes, `fmaf(12582912 + e, sc, −12582912 · sc)` =
+  (float) (sc · e) for every scale and every such e (33,554,688), and x0 + x1 = (float) (sc0 · e0 + sc1 · e1) at 100
+  million random and extreme operands: 0 differ.
+- **The replay set `q6kmt`** (`scripts/record_checks.sh`): 139 cases, every Q6_K `MUL_MAT` case of `test-backend-ops`
+  at 1–5 tokens (the new ones, the k-column ones, the large activations, upstream's), each case's inputs and the CPU
+  backend's references recorded by the tip's `test-backend-ops` on the build machine's CPU, 13 runs
+  ([replay_cases.tsv](replay_cases.tsv), [replay_runs.tsv](replay_runs.tsv)): the kernel's settings under the preset's
+  k-column switches (`=1`, `=2`, `_DMT_R=2` with and without the prefetch switch, `_DMT_NW=1` and `=2`, beside
+  `_DMT=1`), the defaults alone, the switch off, Q6_K left out (`_DMT_SKIP`, `GGML_CUDA_MMVQ_PASCAL_SKIP`), the fault
+  without the switch (must pass) and the fault (must fail). `q6kmt.tar` 493,434,880 B, md5
+  `60b8a228ccd75fa323c3d2655aac90fd`.
+- **The bit-identity harness** (`multitoken_bitid q6k`) links against the tip's tree: md5
+  `0d40552d75cdd6e8ed9eb24e2cee72ae`.
+- **With every switch off the CPU results are the base's:** a static native CPU build of the tip, `test-llama-archs -b
+  CPU -s 1` against the logits the base's own static CPU build wrote: 146 architectures compared, 0 differ, with no
+  switch, with `GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1` and with its fault too; ctest 70 of 70 (C565's exclusions).
+- **The first tip, `6a5686dd7`, failed two of these** and was superseded the same hour: the fault was made in the
+  staging code (each token took the next token's activations), and with it `mul_mat_vec_q_pascal_dmt<Q4_K, 4, 1,
+  false>` compiled to other code than the base's; and the Q6_K instantiation at four tokens, R = 2 with the prefetch
+  took 255 registers and 24 bytes of stack. `0e113d1f3` makes the fault on the host and runs R = 2 without the
+  prefetch; every check above is the second tip's.
+- **Not checked:** any result on a GPU. That the sums are the one-token kernel's on a P106 rests on the emulation and
+  the reading above until the rig's `bitid` step; the speed is unknown until its `perf` step.
 
 ## The rig run (R117)
 
@@ -107,11 +171,55 @@ each pass by value; the Q6_K products' time per verify pass.
 
 ## Files
 
-{{FILES}}
+| File | What |
+|---|---|
+| [summary.tsv](summary.tsv) | every check's verdict and detail (`run/checks.sh`) |
+| [sass_binary.tsv](sass_binary.tsv) | `bin/llama-server`'s GPU functions, base against tip: the same, different, only in one |
+| [sass_dmt.tsv](sass_dmt.tsv) | every instantiation of `mul_mat_vec_q_pascal_dmt`: code hash in each build, registers, stack, local memory |
+| [sass_differ.txt](sass_differ.txt) | every function only in one build or different, and whether expected (the 9 new ones) |
+| [sass_counts.tsv](sass_counts.tsv) | the Q6_K instantiations' registers and instruction counts, whole kernel and main loop (`run/sass_check.sh`) |
+| [q6k_emul.tsv](q6k_emul.tsv) | the emulation: per product and sample, outputs that differ, sub-blocks whose terms differ, the two controls |
+| [q6k_exact.tsv](q6k_exact.tsv) | the exhaustive checks of the exact conversions |
+| [replay_cases.tsv](replay_cases.tsv) | the replay set's 139 cases (record id, case) |
+| [replay_runs.tsv](replay_runs.tsv) | its 13 runs: name, switches, ops, case filter, pass or fail expected |
+| `run/checks.sh` | the check chain on a build machine (build, sass, cpu, off, ctest, record, bitid, emul) |
+| `run/compare_sass.py` | the function-by-function comparison of the two builds' SASS |
+| `run/sass_check.sh` | the Q6_K instantiations' registers and instruction counts |
+| `run/q6k_emul.c` | the CPU emulation of both kernels' Q6_K arithmetic |
+| `run/rig_c727.sh` | the rig run (R117): replay, bitid, perf, served |
 
 ## Commands
 
-{{COMMANDS}}
+On a build machine with Docker (no GPU needed), from this repository, with a llama.cpp clone of the fork in
+`$WORK/rig/src` (remote `fork` with an https URL; a clone of an earlier build's tree with `git clone --local` works, its
+`origin` set back to `https://github.com/ggml-org/llama.cpp`) and, to save time, an earlier build's ccache copied to
+`$WORK/rig/ccache`:
+
+```bash
+WORK=<work dir> REPO=$PWD BRANCH=pascal-p106-v4-b12246-c727 \
+  BASE_TARBALL=<the day merge's rig tarball, llama.cpp-20261111-18d0fa309-pascal-p106-v4-b12246-day.tar.gz> \
+  BASE_LOGITS=<the logits-*.f32 that the day merge's static CPU build's test-llama-archs wrote> \
+  CPU_CCACHE_SEED=<an earlier CPU build's ccache> LOCK=<flock file> JOBS=8 \
+  bash docs/data/2026-11-11_c727_q6k_readonce/run/checks.sh
+```
+
+The emulation alone, on any x86-64 machine with GCC 12 or later:
+
+```bash
+gcc -O2 -ffp-contract=off -o q6k_emul docs/data/2026-11-11_c727_q6k_readonce/run/q6k_emul.c -lm
+./q6k_emul rows > q6k_emul.tsv && ./q6k_emul exact > q6k_exact.tsv
+```
+
+On a P106 rig, the rig run (its header lists the inputs; the tarball, the set and the harness come from the build
+machine):
+
+```bash
+BIN=<tarball>/bin OUT=<out> SET=<q6kmt folder> REPLAY=scripts/replay_checks.sh BITID=<multitoken_bitid> MODEL=<model> \
+  DRAFT=<MTP draft> PRESET=release/flash-next-v3/settings.env RIG_SERVER=bench/agent_check/rig_server.sh \
+  REQ=docs/data/2026-11-04_draft_one_card/run/greedy_request.json \
+  VERIFY_PROF=docs/data/2026-11-10_served_verify_parts/run/verify_prof.sh \
+  setsid -f nohup bash docs/data/2026-11-11_c727_q6k_readonce/run/rig_c727.sh > console.txt 2>&1 < /dev/null
+```
 
 ## Provenance and licence
 

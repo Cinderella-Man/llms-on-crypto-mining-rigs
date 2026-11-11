@@ -1,0 +1,11 @@
+check	verdict	detail
+build	OK	rc=0; llama.cpp-20261111-0e113d1f3-pascal-p106-v4-b12246-c727.tar.gz md5 95ad9981f03eb7bbb9ff086e6682c314, 672374961 B; commit: 0e113d1f38807417f733e1714ccde0e785ac4399 (2026-11-11 17:03:44 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 64de5bd83a1fd9b97ef655ee9785082c; 34 warning lines
+sass	SAME	rc=0/0; llama-server functions 8902 / 8911, same 8902, differ 0, base only 0, tip only 9; dmt instantiations 33 (9 new Q6_K), Q6_K registers 89-168, 0 with stack or local memory; unexpected 0; main loops with I2F: 0, with XMAD (addressing; none in the products): 9 (of 9); Build cuda_12.9.r12.9/compiler.36001619_0
+cpu	OK	rc=0; commit 0e113d1f38807417f733e1714ccde0e785ac4399 CUDA: Q6_K's read-once kernel: the fault on the host, no prefetch at R = 2 (C727); all targets; 3 warning lines, 0 error lines
+off-tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-q6kmt	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-q6kmt-fault	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q6K_MT_FAULT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+record	OK	rc=0; 139 cases, 13 runs; q6kmt.tar 493434880 B, md5 60b8a228ccd75fa323c3d2655aac90fd
+bitid-build	OK	rc=0; multitoken_bitid md5 0d40552d75cdd6e8ed9eb24e2cee72ae, mode q6k in it; linked against 0e113d1f3
+emul	SAME	rc=0; 30 products, 61440 outputs, 0 differ; 8847360 sub-blocks, 0 with x0 + x1 or scales differing; controls differ in 30 and 30 of 30 products; exact checks: 133686017 cases, 0 differ

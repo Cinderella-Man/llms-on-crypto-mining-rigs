@@ -1,0 +1,31 @@
+product	K	rows	weights	activations	lanes_per_row	outputs	differ_new_vs_one_token	sub_blocks	sub_blocks_x_or_scales_differ	control_other_lanes_differ	control_inexact_fold_differ	outputs_zero
+attn_output, ssm_out	6144	2560	random	normal	8	2560	0	491520	0	1421	2558	0
+K = 2048 (8 lanes)	2048	4096	random	normal	8	4096	0	262144	0	1153	4093	0
+K = 4096 (16 lanes)	4096	2048	random	normal	16	2048	0	262144	0	674	2047	0
+K = 8192 (32 lanes)	8192	1024	random	normal	32	1024	0	262144	0	412	1023	0
+K = 12288 (16 lanes)	12288	512	random	normal	16	512	0	196608	0	297	512	0
+attn_output, ssm_out	6144	2560	random	uniform x 250000	8	2560	0	491520	0	1401	2559	0
+K = 2048 (8 lanes)	2048	4096	random	uniform x 250000	8	4096	0	262144	0	1162	4094	0
+K = 4096 (16 lanes)	4096	2048	random	uniform x 250000	16	2048	0	262144	0	746	2045	0
+K = 8192 (32 lanes)	8192	1024	random	uniform x 250000	32	1024	0	262144	0	418	1024	0
+K = 12288 (16 lanes)	12288	512	random	uniform x 250000	16	512	0	196608	0	306	512	0
+attn_output, ssm_out	6144	2560	random	extreme	8	2560	0	491520	0	1436	2558	0
+K = 2048 (8 lanes)	2048	4096	random	extreme	8	4096	0	262144	0	1157	4090	0
+K = 4096 (16 lanes)	4096	2048	random	extreme	16	2048	0	262144	0	672	2041	0
+K = 8192 (32 lanes)	8192	1024	random	extreme	32	1024	0	262144	0	414	1022	0
+K = 12288 (16 lanes)	12288	512	random	extreme	16	512	0	196608	0	298	512	0
+attn_output, ssm_out	6144	2560	extreme	normal	8	2560	0	491520	0	1464	2554	0
+K = 2048 (8 lanes)	2048	4096	extreme	normal	8	4096	0	262144	0	1145	4090	0
+K = 4096 (16 lanes)	4096	2048	extreme	normal	16	2048	0	262144	0	685	2046	0
+K = 8192 (32 lanes)	8192	1024	extreme	normal	32	1024	0	262144	0	440	1023	0
+K = 12288 (16 lanes)	12288	512	extreme	normal	16	512	0	196608	0	295	511	0
+attn_output, ssm_out	6144	2560	extreme	uniform x 250000	8	2560	0	491520	0	1424	2553	0
+K = 2048 (8 lanes)	2048	4096	extreme	uniform x 250000	8	4096	0	262144	0	1160	4093	0
+K = 4096 (16 lanes)	4096	2048	extreme	uniform x 250000	16	2048	0	262144	0	671	2046	0
+K = 8192 (32 lanes)	8192	1024	extreme	uniform x 250000	32	1024	0	262144	0	420	1022	0
+K = 12288 (16 lanes)	12288	512	extreme	uniform x 250000	16	512	0	196608	0	305	511	0
+attn_output, ssm_out	6144	2560	extreme	extreme	8	2560	0	491520	0	1389	2444	0
+K = 2048 (8 lanes)	2048	4096	extreme	extreme	8	4096	0	262144	0	1118	3760	0
+K = 4096 (16 lanes)	4096	2048	extreme	extreme	16	2048	0	262144	0	619	1951	0
+K = 8192 (32 lanes)	8192	1024	extreme	extreme	32	1024	0	262144	0	422	986	0
+K = 12288 (16 lanes)	12288	512	extreme	extreme	16	512	0	196608	0	312	482	0

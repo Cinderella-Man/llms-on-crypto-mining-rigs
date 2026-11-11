@@ -1,0 +1,5 @@
+check	cases	differ
+as_float(0x4B400000 + e) = 12582912 + e, e in [-65536, 65536]	131073	0
+(float) sc from the byte, sc in [-128, 127]	256	0
+fmaf(12582912 + e, sc, -12582912 sc) = (float) (sc e)	33554688	0
+x0 + x1 = (float) (sc0 e0 + sc1 e1), random and extreme (|e| <= 16 * 32 * 127)	100000000	0
