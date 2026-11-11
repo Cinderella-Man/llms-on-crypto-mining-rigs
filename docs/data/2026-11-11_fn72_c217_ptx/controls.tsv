@@ -1,0 +1,15 @@
+model	case	n_rs_seq	control	native CPU build (C217, store_at only)	the card (row, both)	the rig build on the CPU (cpu)
+qwen4exp-moe	store_at	0	one call without the cuts	ends elsewhere	ends elsewhere	ends the same
+qwen4exp-moe	store_at	3	one call without the cuts	ends the same	ends elsewhere	ends the same
+qwen4exp-moe	store_at	3	the cuts without the snapshots' rule	ends elsewhere	ends elsewhere	ends the same
+qwen4exp-moe	store_at_p	0	one call without the cuts	not run	ends elsewhere	ends the same
+qwen4exp-moe	store_at_p	3	one call without the cuts	not run	ends elsewhere	ends the same
+qwen4exp-moe	store_at_p	3	the cuts without the snapshots' rule	not run	ends elsewhere	ends the same
+qwen35-dense	store_at	0	one call without the cuts	ends elsewhere	ends elsewhere	ends the same
+qwen35-dense	store_at	3	one call without the cuts	ends the same	ends elsewhere	ends the same
+qwen35-dense	store_at	3	the cuts without the snapshots' rule	ends elsewhere	ends elsewhere	ends the same
+qwen35-dense	store_at_p	0	one call without the cuts	not run	ends elsewhere	ends the same
+qwen35-dense	store_at_p	3	one call without the cuts	not run	ends elsewhere	ends the same
+qwen35-dense	store_at_p	3	the cuts without the snapshots' rule	not run	ends elsewhere	ends the same
+mamba-dense	store_at	0	one call without the cuts	ends elsewhere	ends elsewhere	ends the same
+mamba-dense	store_at_p	0	one call without the cuts	not run	ends elsewhere	ends the same

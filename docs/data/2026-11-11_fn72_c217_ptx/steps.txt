@@ -1,0 +1,16 @@
+2026-11-11T17:08:42+01:00 == ptx_check BIN=$BIN MODELS=$MODELS image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T17:09:16+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 33 s)
+2026-11-11T17:09:16+01:00 container fn72-ptx
+2026-11-11T16:09:23+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02, 1 MiB;
+2026-11-11T16:09:23+00:00 PTX-mode settings: CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T16:09:24+00:00 archs: == test-llama-context md5 99e11c15741e625c2286b7e4d98f2107 machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx; 
+2026-11-11T16:09:54+00:00 row (table: -ngl 99 --test ^store_at): rc=0; card memory max 399 MiB over 58 samples; JIT cache 27 files, 47611492 B
+2026-11-11T16:09:54+00:00 row verdicts: models: 3 passed, 0 failed (of 3); Model store_at;mamba-dense.gguf OK ;qwen35-dense.gguf OK ;qwen4exp-moe.gguf OK ;
+2026-11-11T16:09:59+00:00 both (each: -ngl 99 -lv 4 --test store_at(_p)?): rc=0; card memory max 341 MiB over 10 samples; JIT cache 27 files, 47611492 B
+2026-11-11T16:09:59+00:00 both verdicts: == mamba-dense.gguf;store_at OK;store_at_p OK;passed : 2;skipped : 0;failed : 0;== qwen35-dense.gguf;store_at OK;store_at_p OK;passed : 2;skipped : 0;failed : 0;== qwen4exp-moe.gguf;store_at OK;store_at_p OK;passed : 2;skipped : 0;failed : 0;
+2026-11-11T16:10:03+00:00 cpu (each: -dev none -lv 4 --test store_at(_p)?): rc=0; card memory max 4 MiB over 7 samples; JIT cache 27 files, 47611492 B
+2026-11-11T16:10:03+00:00 cpu verdicts: == mamba-dense.gguf;store_at OK;store_at_p OK;passed : 2;skipped : 0;failed : 0;== qwen35-dense.gguf;store_at OK;store_at_p OK;passed : 2;skipped : 0;failed : 0;== qwen4exp-moe.gguf;store_at OK;store_at_p OK;passed : 2;skipped : 0;failed : 0;
+2026-11-11T16:10:03+00:00 reports: 30 lines;  6 both	store_at; 6 both	store_at_p; 6 cpu	store_at; 6 cpu	store_at_p; 6 row	store_at;
+2026-11-11T16:10:03+00:00 both device lines: CUDA0 compute buffer x120; CUDA0 RS buffer x120; CUDA0 model buffer x3; CUDA0 KV buffer x120; CUDA_Host output buffer x120; offloaded 3/3 layers to GPU x3; a state store in 'CUDA0' x40; CPU_Mapped model buffer x6; CUDA_Host compute buffer x120; 
+2026-11-11T16:10:03+00:00 cpu device lines: CPU compute buffer x120; a state store in 'CPU' x40; CPU RS buffer x120; offloaded 3/3 layers to GPU x3; CPU output buffer x120; CPU_Mapped model buffer x77; CPU KV buffer x120; 
+2026-11-11T17:10:03+01:00 container exit 0

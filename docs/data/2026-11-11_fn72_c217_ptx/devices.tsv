@@ -1,0 +1,47 @@
+run	model	what	lines
+both	mamba-dense	CPU_Mapped model buffer	3
+both	mamba-dense	CUDA0 RS buffer	40
+both	mamba-dense	CUDA0 compute buffer	40
+both	mamba-dense	CUDA0 model buffer	1
+both	mamba-dense	CUDA_Host compute buffer	40
+both	mamba-dense	CUDA_Host output buffer	40
+both	mamba-dense	a state store in 'CUDA0'	8
+both	mamba-dense	offloaded 3/3 layers to GPU	1
+both	qwen35-dense	CPU_Mapped model buffer	1
+both	qwen35-dense	CUDA0 KV buffer	40
+both	qwen35-dense	CUDA0 RS buffer	40
+both	qwen35-dense	CUDA0 compute buffer	40
+both	qwen35-dense	CUDA0 model buffer	1
+both	qwen35-dense	CUDA_Host compute buffer	40
+both	qwen35-dense	CUDA_Host output buffer	40
+both	qwen35-dense	a state store in 'CUDA0'	16
+both	qwen35-dense	offloaded 3/3 layers to GPU	1
+both	qwen4exp-moe	CPU_Mapped model buffer	2
+both	qwen4exp-moe	CUDA0 KV buffer	80
+both	qwen4exp-moe	CUDA0 RS buffer	40
+both	qwen4exp-moe	CUDA0 compute buffer	40
+both	qwen4exp-moe	CUDA0 model buffer	1
+both	qwen4exp-moe	CUDA_Host compute buffer	40
+both	qwen4exp-moe	CUDA_Host output buffer	40
+both	qwen4exp-moe	a state store in 'CUDA0'	16
+both	qwen4exp-moe	offloaded 3/3 layers to GPU	1
+cpu	mamba-dense	CPU RS buffer	40
+cpu	mamba-dense	CPU compute buffer	40
+cpu	mamba-dense	CPU output buffer	40
+cpu	mamba-dense	CPU_Mapped model buffer	8
+cpu	mamba-dense	a state store in 'CPU'	8
+cpu	mamba-dense	offloaded 3/3 layers to GPU	1
+cpu	qwen35-dense	CPU KV buffer	40
+cpu	qwen35-dense	CPU RS buffer	40
+cpu	qwen35-dense	CPU compute buffer	40
+cpu	qwen35-dense	CPU output buffer	40
+cpu	qwen35-dense	CPU_Mapped model buffer	32
+cpu	qwen35-dense	a state store in 'CPU'	16
+cpu	qwen35-dense	offloaded 3/3 layers to GPU	1
+cpu	qwen4exp-moe	CPU KV buffer	80
+cpu	qwen4exp-moe	CPU RS buffer	40
+cpu	qwen4exp-moe	CPU compute buffer	40
+cpu	qwen4exp-moe	CPU output buffer	40
+cpu	qwen4exp-moe	CPU_Mapped model buffer	37
+cpu	qwen4exp-moe	a state store in 'CPU'	16
+cpu	qwen4exp-moe	offloaded 3/3 layers to GPU	1

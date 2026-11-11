@@ -151,7 +151,9 @@ made; since `9fb51d28f` a full list counts the store that making room frees.
   switch off, in one build. On nine P106s all three are the switch-off load's (Q1306).
 - **The MTP draft.** The random models have no MTP block, so the draft's cuts and fills and its pending row at a
   checkpoint run only on the rig, where the replies and restores above cover them. A one-card run of the `store_at`
-  cases on the build machine (Q1301) checks the fills' stream order on a CUDA card directly.
+  cases on the build machine (Q1301) checks the fills' stream order on a CUDA card directly. It passes: both cases on one
+  RTX 3080 through the compute 6.1 PTX, with the models and the state stores on the card
+  ([FN72](../2026-11-11_fn72_c217_ptx/README.md)).
 - **The speed.** Measured on the rig: 78.55 s a pass (−18.99 %) of the agent check's prompts with the taper off. The
   micro-batches stay the cut calls' (the 4-token one at a prompt's end too).
 

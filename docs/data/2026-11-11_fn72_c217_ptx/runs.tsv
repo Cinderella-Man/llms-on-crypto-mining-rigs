@@ -1,0 +1,4 @@
+run	mode	arguments	exit	verdicts	card_memory_samples	card_memory_max_mib	jit_cache_after	where_it_ran
+row	one table over the 3 models (--models)	-ngl 99 --test '^store_at'	0	store_at OK on mamba-dense, qwen35-dense and qwen4exp-moe (3 of 3 models passed)	58	399	27 files, 47,611,492 B (empty before)	the card
+both	one model at a time (-m)	-ngl 99 -lv 4 --test 'store_at(_p)?'	0	store_at and store_at_p OK on each of the 3 models (6 of 6)	10	341	27 files, 47,611,492 B (unchanged)	the card: each model 3/3 layers and its CUDA0 model buffer, every KV, RS and compute buffer on CUDA0, the 40 state stores in CUDA0
+cpu	one model at a time (-m)	-dev none -lv 4 --test 'store_at(_p)?'	0	store_at and store_at_p OK on each of the 3 models (6 of 6)	7	4	27 files, 47,611,492 B (unchanged)	the CPU: every buffer and the 40 state stores on the CPU
