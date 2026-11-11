@@ -1,0 +1,11 @@
+load	kind	evals	cpu_l_med	card0_med	card_c_med	inputs_med	call_us_med	rows	ahead	pages_checked	resident
+troff	verify	410	817.0	-1.0		33.0	0.0	6512	0	5739	5739
+troff	verify4	402	817.5	-1.0		33.0	0.0	6432	0	5653	5653
+troff	one	5	588	-1		19	0	20	0	20	20
+troff	prompt	14	9446.0	-1.0		66.5	0.0	6336	0	0	0
+# C615: draft prefetch off, cap 1024 KiB: 0 calls issued the rows of 0 tokens (0 rows, 0 already issued, 0 tokens over the cap, most 0 B of pages in a window, 0.000 ms in the calls); 429 evaluations set 12868 rows, 0 issued ahead; 415 of up to 64 tokens set 6532 rows, 0 issued ahead; pages 6221, 5759 of 5759 checked in the page cache
+trc	verify	410	854.0	-1.0		35.0	22.0	6512	6448	5739	5739
+trc	verify4	402	855.0	-1.0		35.0	22.0	6432	6368	5653	5653
+trc	one	5	662	-1		22	0	20	0	20	20
+trc	prompt	14	9359.5	-1.0		68.0	0.0	6336	0	0	0
+# C615: draft prefetch on, cap 1024 KiB: 1624 calls issued the rows of 1624 tokens (6420 rows, 76 already issued, 0 tokens over the cap, most 81920 B of pages in a window, 8.727 ms in the calls); 429 evaluations set 12868 rows, 6448 issued ahead; 415 of up to 64 tokens set 6532 rows, 6448 issued ahead; pages 6221, 5759 of 5759 checked in the page cache

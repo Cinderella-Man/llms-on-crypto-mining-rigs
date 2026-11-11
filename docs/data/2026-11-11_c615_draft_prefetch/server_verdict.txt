@@ -1,0 +1,28 @@
+## server
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ons = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+cap0 = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+offs = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+bons = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged
+bons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged
+cap0: 1624 calls, every one of 1624 tokens over the cap, nothing issued, nothing found ahead
+offs: 429 evaluations counted, no prefetch call
+PASS
+## merge-server
+moff = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+mons = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+mboth = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+mons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged
+mboth: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged
+PASS
+## rsrv
+ons = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ons: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged
+PASS
+## trace
+troff = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+trc = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+trc: 406 evaluations after a draft, each with every row issued ahead (6448 of 6448 rows), 1624 prefetch calls; C615 line logged
+PASS
