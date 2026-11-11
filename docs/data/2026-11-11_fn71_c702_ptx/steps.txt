@@ -1,0 +1,57 @@
+# sizing trial: one chunk eagerly, 16 of 41 layers on the card (OUT = trial)
+2026-11-11T17:23:16+01:00 == fn71_check BIN=$BIN MODEL=$MODEL NGL=16 CHUNKS=1 RUNS=off image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T17:23:19+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 3 s)
+2026-11-11T17:23:19+01:00 container fn71-trial
+2026-11-11T16:23:20+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02, 10240 MiB, 1 MiB;
+2026-11-11T16:23:20+00:00 PTX-mode settings: CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T16:23:22+00:00 archs: == llama-perplexity md5 847d9baa8db509d33d97e3f62150751a machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx;
+2026-11-11T16:23:22+00:00 model Qwen3.6-35B-A3B-Q4_K_M.gguf: 20419565568 B; text wiki.test.raw: 1290590 B
+2026-11-11T16:23:22+00:00 off: start (no switch)
+2026-11-11T16:29:19+00:00 off: rc=0 after 356 s; card memory max 9477 MiB over 531 samples; JIT cache 25 files, 146501338 B
+2026-11-11T16:29:19+00:00 off: Final estimate: PPL = 4.6131 +/- 0.33264
+# (the trial's base file, md5 58fe36e5edb12de7bd05490caa0114f0, against the 512-token pair's off file: chunk 1's tokens and log-probabilities the same bytes)
+
+# the row's pair: -ub 512, 8 chunks (OUT = ub512)
+2026-11-11T17:30:31+01:00 == fn71_check BIN=$BIN MODEL=$MODEL NGL=16 CHUNKS=8 RUNS=off on image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T17:30:33+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 2 s)
+2026-11-11T17:30:33+01:00 container fn71-ptx
+2026-11-11T16:30:33+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02, 10240 MiB, 1 MiB;
+2026-11-11T16:30:33+00:00 PTX-mode settings: CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T16:30:34+00:00 archs: == llama-perplexity md5 847d9baa8db509d33d97e3f62150751a machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx;
+2026-11-11T16:30:34+00:00 model Qwen3.6-35B-A3B-Q4_K_M.gguf: 20419565568 B; text wiki.test.raw: 1290590 B
+2026-11-11T16:30:34+00:00 off: start (no switch)
+2026-11-11T16:46:18+00:00 off: rc=0 after 941 s; card memory max 9479 MiB over 1725 samples; JIT cache 25 files, 146501338 B
+2026-11-11T16:46:18+00:00 off: Final estimate: PPL = 4.8454 +/- 0.12392
+2026-11-11T16:46:18+00:00 on: start GGML_CUDA_GRAPHS_FORCE=1 GGML_CUDA_PROFILE=$OUT/prof-on.csv GGML_CUDA_PROFILE_MODE=graph
+2026-11-11T17:01:18+00:00 on: rc=0 after 899 s; card memory max 9481 MiB over 1661 samples; JIT cache 25 files, 146501338 B
+2026-11-11T17:01:18+00:00 on: Final estimate: PPL = 4.8454 +/- 0.12392
+2026-11-11T17:01:35+00:00 kld: off.kld 4064632788 B md5 d3e0e84ccfcb5d5dd5f901d9d4036d47;on.kld 4064632788 B md5 d3e0e84ccfcb5d5dd5f901d9d4036d47;cmp off.kld on.kld: identical;
+2026-11-11T17:01:35+00:00 perplexity: off = on in every digit (chunks 1:4.6131 2:5.8151 3:6.1611 4:6.2442 5:6.1504 6:5.3325 7:4.8434 8:4.8454 ; Final estimate: PPL = 4.8454 +/- 0.12392)
+2026-11-11T17:01:35+00:00 profile: 13920 lines; by kind: capture 628; replay 6; eager 13286; graphs: 928
+2026-11-11T18:01:35+01:00 container exit 0
+
+# the 48-token pair: -ub 48 --no-op-offload, 1 chunk (OUT = ub48)
+2026-11-11T18:02:30+01:00 == fn71_check BIN=$BIN MODEL=$MODEL NGL=16 CHUNKS=1 UB=48 PPL_ARGS=--no-op-offload RUNS=off on image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T18:02:32+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 2 s)
+2026-11-11T18:02:32+01:00 container fn71-ptx-ub48
+2026-11-11T17:02:33+00:00 inside: NVIDIA GeForce RTX 3080, 8.6, 595.99.02, 10240 MiB, 1 MiB;
+2026-11-11T17:02:33+00:00 PTX-mode settings: CUDA_FORCE_PTX_JIT=0 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5
+2026-11-11T17:02:34+00:00 archs: == llama-perplexity md5 847d9baa8db509d33d97e3f62150751a machine code:  187 sm_61.cubin; PTX:  187 sm_61.ptx;
+2026-11-11T17:02:34+00:00 model Qwen3.6-35B-A3B-Q4_K_M.gguf: 20419565568 B; text wiki.test.raw: 1290590 B
+2026-11-11T17:02:34+00:00 off: start (no switch)
+2026-11-11T17:05:20+00:00 off: rc=0 after 165 s; card memory max 7821 MiB over 316 samples; JIT cache 26 files, 148957472 B
+2026-11-11T17:05:20+00:00 off: Final estimate: PPL = 4.5914 +/- 0.32867
+2026-11-11T17:05:20+00:00 on: start GGML_CUDA_GRAPHS_FORCE=1 GGML_CUDA_PROFILE=$OUT/prof-on.csv GGML_CUDA_PROFILE_MODE=graph
+2026-11-11T17:06:40+00:00 on: rc=0 after 79 s; card memory max 7821 MiB over 149 samples; JIT cache 26 files, 148957472 B
+2026-11-11T17:06:40+00:00 on: Final estimate: PPL = 4.5914 +/- 0.32867
+2026-11-11T17:06:41+00:00 kld: off.kld 508079116 B md5 fd83eed66fda37a0a540bb8ae63bd065;on.kld 508079116 B md5 fd83eed66fda37a0a540bb8ae63bd065;cmp off.kld on.kld: identical;
+2026-11-11T17:06:41+00:00 perplexity: off = on in every digit (chunks 1:4.5914 ; Final estimate: PPL = 4.5914 +/- 0.32867)
+2026-11-11T17:06:41+00:00 profile: 41 lines; by kind: capture 9; replay 31; eager 1; graphs: 2
+2026-11-11T18:06:43+01:00 container exit 0
+
+# the same over 8 chunks: stopped during its eager run, the card handed to another job (no result)
+2026-11-11T18:07:03+01:00 == fn71_check BIN=$BIN MODEL=$MODEL NGL=16 CHUNKS=8 UB=48 PPL_ARGS=--no-op-offload RUNS=off on image nvidia/cuda:12.9.2-devel-ubuntu24.04
+2026-11-11T18:07:05+01:00 preflight: PREFLIGHT OK: 1 device, each with a context, a 16 MiB allocation and a copy both ways (in 2 s)
+2026-11-11T18:07:05+01:00 container fn71-ptx-ub48
+2026-11-11T17:07:07+00:00 off: start (no switch)
+2026-11-11T18:12:03+01:00 container exit 137

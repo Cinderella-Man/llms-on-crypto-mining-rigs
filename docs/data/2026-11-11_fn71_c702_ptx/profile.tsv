@@ -1,0 +1,18 @@
+pair	how	launch groups in the graph	evaluations	graphs (keys) in the pair
+ub512	capture	1	40	928
+ub512	capture	2	386	928
+ub512	capture	3	195	928
+ub512	capture	5	7	928
+ub512	replay	2	6	928
+ub512	eager	1	5630	928
+ub512	eager	2	5038	928
+ub512	eager	3	1875	928
+ub512	eager	5	713	928
+ub512	eager	503	7	928
+ub512	eager	524	15	928
+ub512	eager	525	8	928
+ub48	eager	524	1	2
+ub48	capture	502	4	2
+ub48	capture	523	5	2
+ub48	replay	502	15	2
+ub48	replay	523	16	2

@@ -1,0 +1,19 @@
+pair	runs	line
+both	off, on	n_layer = 40
+both	off, on	offloading output layer to GPU
+both	off, on	offloading 15 repeating layers to GPU
+both	off, on	offloaded 16/41 layers to GPU
+both	off, on	CPU_Mapped model buffer size = 12019.76 MiB
+both	off, on	CUDA0 model buffer size = 7443.38 MiB
+both	off, on	CUDA_Host output buffer size = 0.95 MiB
+both	off, on	CPU KV buffer size = 24.02 MiB
+both	off, on	CUDA0 KV buffer size = 16.02 MiB
+both	off, on	CPU RS buffer size = 39.78 MiB
+both	off, on	CUDA0 RS buffer size = 23.03 MiB
+ub512	off, on	CUDA0 compute buffer size = 505.00 MiB
+ub512	off, on	CUDA_Host compute buffer size = 26.12 MiB
+ub48	off, on	CUDA0 compute buffer size = 46.74 MiB
+ub48	off, on	CUDA_Host compute buffer size = 9.91 MiB
+both	on	GGML_CUDA_PROFILE_MODE=graph: timing whole evaluations into $OUT/prof-on.csv, no synchronization
+both	on	GGML_CUDA_GRAPHS_FORCE: batched graphs are captured at every change (devices with VMM)
+both	off, on	using device CUDA0 (NVIDIA GeForce RTX 3080) - 9652 MiB free

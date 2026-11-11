@@ -1,0 +1,4 @@
+pair	compared	bytes	md5	cmp
+ub512	off.kld, on.kld	4,064,632,788 each	d3e0e84ccfcb5d5dd5f901d9d4036d47 both	identical
+ub48	off.kld, on.kld	508,079,116 each	fd83eed66fda37a0a540bb8ae63bd065 both	identical
+trial against ub512	chunk 1: tokens (8,192 B from offset 20 in both) and log-probabilities (508,070,904 B from offset 8,212 in the trial's file and 65,556 in ub512's off file)	—	trial file 58fe36e5edb12de7bd05490caa0114f0	identical (two eager runs in separate processes)
