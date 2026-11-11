@@ -168,7 +168,7 @@ Verdicts land in `$WORK/summary.tsv`, the check's table in `$WORK/checks/kvonly/
 
 ## On the rig
 
-Not run yet. R76 (Q1278) relays this tarball to a rig and runs two things. First, untimed loads of the deep lane at 0
+R76 (Q1278, [data](../2026-11-11_r76_c620_p106/README.md)) ran it on nine P106-090 cards, from the v4 night merge `c408dabcb`, which holds this change: the same 39 verify steps as the control in the identity loads, a load's four prompt chunks 10.0 % faster (101.4 and 101.8 against 92.2 and 92.6 tok/s, 24.9 % of the draft's prompt cost taken away) and the repeated request's step faster at four of five depths. It ran two things. First, untimed loads of the deep lane at 0
 and 32,768 tokens with `LLAMA_SPEC_DUMP` in the control and in the cut arm: every verify step's drafted tokens and
 probabilities must be the same wherever the control repeats itself. Second, R53's deep-lane primes with the control,
 the cut arm (`ARM_ENV_kvonly=LLAMA_MTP_KV_ONLY=1`) and no draft, two loads each, read with
@@ -211,7 +211,7 @@ part goes, the chunk read on 32,188 cached tokens takes est. 10.69 and 10.67 ms 
 14.27 measured in R53's two loads (70.0 and 70.1 tok/s): est. 93.5 and 93.7 tok/s, against 119.5 and 119.6 without the
 draft. The share of the constant part (2.23 ms a token on an empty cache in R39b) that goes with the queries, the MoE
 and the head is not known. The cut keeps `eh_proj` over
-the four streams, the mixer, K, V and the indexer's keys.
+the four streams, the mixer, K, V and the indexer's keys. R76 measured 80.8 and 80.8 tok/s there: of the 3.89 ms a prompt token by which the draft's cost grows from 8,192 to 49,152 tokens, 2.87 remain with the cut, so most of the growing part lies outside the draft layer's attention.
 
 ## Files
 

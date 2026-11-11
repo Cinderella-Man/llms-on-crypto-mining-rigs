@@ -1,0 +1,19 @@
+window	samples	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_used_change_mib	max_psi_some	max_psi_full
+draft1 (whole load)	541	173	173	22	+0	0.23	0.23
+draft2 (whole load)	540	184	184	53	+4	0.66	0.53
+kvonly1 (whole load)	520	263	263	128	+16	1.81	1.44
+draft1 decode pass 1 depth 0	7	446	446	22	+0	0.00	0.00
+draft1 decode pass 2 depth 0	5	444	444	22	+0	0.00	0.00
+draft1 prime pass 0 depth 32768	293	187	187	22	+0	0.23	0.23
+draft1 decode pass 1 depth 32768	8	173	173	22	+0	0.23	0.23
+draft1 decode pass 2 depth 32768	5	173	173	22	+0	0.15	0.15
+kvonly1 decode pass 1 depth 0	6	417	417	22	+0	0.00	0.00
+kvonly1 decode pass 2 depth 0	5	417	417	22	+0	0.00	0.00
+kvonly1 prime pass 0 depth 32768	274	280	280	128	+106	0.00	0.00
+kvonly1 decode pass 1 depth 32768	10	263	263	128	+106	1.81	1.44
+kvonly1 decode pass 2 depth 32768	5	263	263	128	-90	1.21	0.97
+draft2 decode pass 1 depth 0	7	421	421	37	+0	0.00	0.00
+draft2 decode pass 2 depth 0	5	432	432	37	+0	0.00	0.00
+draft2 prime pass 0 depth 32768	294	220	220	53	+16	0.23	0.23
+draft2 decode pass 1 depth 32768	8	184	184	53	+16	0.37	0.37
+draft2 decode pass 2 depth 32768	5	184	184	53	-12	0.30	0.30

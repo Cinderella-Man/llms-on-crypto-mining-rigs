@@ -1,0 +1,7 @@
+load	arm	avail_after_load_mib	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_change_load_mib	swap_moved_primes_mib	max_swapout_10s_mib	max_psi_some	max_psi_full	watchdog_kill
+draft1	draft	907	154	154	848	+469	691	252	5.47	3.84	none
+draft2	draft	870	249	249	988	+1	812	217	6.33	4.60	none
+kvonly1	kvonly	899	93	93	467	+1	406	145	2.49	1.71	none
+kvonly2	kvonly	905	66	66	55	+0	0	5	1.51	1.35	none
+nodraft1	nodraft	1006	665	665	934	+2	622	339	12.67	10.52	none
+nodraft2	nodraft	1009	548	548	917	+594	593	229	13.59	13.26	none

@@ -1,0 +1,43 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	kvonly	draft	9.96 9.95	10.01 9.88	0.13	0.01	0.1	negligible
+generation	0	nodraft	draft	20.05 20.11	10.01 9.88	0.13	10.13	101.8	gain
+generation	8192	kvonly	draft	7.18 7.17	7.10 6.86	0.24	0.20	2.8	negligible
+generation	8192	nodraft	draft	8.53 8.23	7.10 6.86	0.29	1.40	20.1	gain
+generation	16384	kvonly	draft	17.00 17.05	12.93 13.30	0.37	3.91	29.8	gain
+generation	16384	nodraft	draft	8.30 11.06	12.93 13.30	2.76	-3.44	-26.2	loss
+generation	32768	kvonly	draft	14.72 14.70	10.79 13.62	2.83	2.51	20.5	negligible
+generation	32768	nodraft	draft	15.84 10.83	10.79 13.62	5.01	1.14	9.3	negligible
+generation	49152	kvonly	draft	12.91 17.27	14.00 16.94	4.37	-0.38	-2.5	negligible
+generation	49152	nodraft	draft	14.96 14.24	14.00 16.94	2.94	-0.87	-5.6	negligible
+generation_all	all	kvonly	draft	11.26 11.78	10.37 11.00	0.63	0.84	7.8	gain
+generation_all	all	nodraft	draft	11.97 11.79	10.37 11.00	0.63	1.20	11.2	gain
+step_pass1	0	kvonly	draft	247.51 247.84	243.93 248.57	4.64	1.42	0.6	negligible
+step_pass1	0	nodraft	draft	50.65 50.42	243.93 248.57	4.64	-195.71	-79.5	no class (the draft differs)
+step_pass1	8192	kvonly	draft	254.16 254.65	256.98 274.50	17.53	-11.34	-4.3	negligible
+step_pass1	8192	nodraft	draft	177.25 159.04	256.98 274.50	18.20	-97.59	-36.7	no class (the draft differs)
+step_pass1	16384	kvonly	draft	139.31 138.61	208.88 211.64	2.76	-71.30	-33.9	gain
+step_pass1	16384	nodraft	draft	184.36 107.23	208.88 211.64	77.13	-64.47	-30.7	no class (the draft differs)
+step_pass1	32768	kvonly	draft	138.77 138.61	232.01 158.11	73.90	-56.37	-28.9	negligible
+step_pass1	32768	nodraft	draft	64.99 123.09	232.01 158.11	73.90	-101.02	-51.8	no class (the draft differs)
+step_pass1	49152	kvonly	draft	261.01 156.89	226.35 160.60	104.13	15.47	8.0	negligible
+step_pass1	49152	nodraft	draft	67.78 74.47	226.35 160.60	65.75	-122.35	-63.2	no class (the draft differs)
+step_pass2	0	kvonly	draft	109.54 109.56	111.12 111.24	0.13	-1.63	-1.5	gain
+step_pass2	0	nodraft	draft	49.09 49.06	111.12 111.24	0.13	-62.11	-55.9	no class (the draft differs)
+step_pass2	8192	kvonly	draft	241.01 241.00	243.90 243.77	0.13	-2.83	-1.2	gain
+step_pass2	8192	nodraft	draft	57.34 83.87	243.90 243.77	26.53	-173.23	-71.0	no class (the draft differs)
+step_pass2	16384	kvonly	draft	129.67 129.50	144.60 132.04	12.57	-8.73	-6.3	negligible
+step_pass2	16384	nodraft	draft	56.62 73.56	144.60 132.04	16.94	-73.23	-52.9	no class (the draft differs)
+step_pass2	32768	kvonly	draft	132.94 133.52	138.74 135.65	3.09	-3.96	-2.9	gain
+step_pass2	32768	nodraft	draft	61.25 61.51	138.74 135.65	3.09	-75.81	-55.3	no class (the draft differs)
+step_pass2	49152	kvonly	draft	152.25 151.85	154.48 154.22	0.39	-2.30	-1.5	gain
+step_pass2	49152	nodraft	draft	65.94 65.94	154.48 154.22	0.26	-88.41	-57.3	no class (the draft differs)
+prompt	0	kvonly	draft	33.5 32.9	33.6 32.8	0.8	-0.0	-0.0	negligible
+prompt	0	nodraft	draft	34.1 33.7	33.6 32.8	0.8	0.7	2.2	negligible
+prompt	8192	kvonly	draft	146.4 147.9	138.1 138.6	1.5	8.8	6.4	gain
+prompt	8192	nodraft	draft	180.1 181.4	138.1 138.6	1.3	42.4	30.7	gain
+prompt	16384	kvonly	draft	122.9 123.6	114.8 115.1	0.7	8.3	7.2	gain
+prompt	16384	nodraft	draft	167.9 168.1	114.8 115.1	0.3	53.0	46.1	gain
+prompt	32768	kvonly	draft	103.2 103.7	93.6 94.4	0.8	9.4	10.0	gain
+prompt	32768	nodraft	draft	150.8 150.7	93.6 94.4	0.8	56.7	60.3	gain
+prompt	49152	kvonly	draft	80.8 80.8	72.2 72.3	0.2	8.5	11.8	gain
+prompt	49152	nodraft	draft	121.6 120.9	72.2 72.3	0.7	49.0	67.8	gain
