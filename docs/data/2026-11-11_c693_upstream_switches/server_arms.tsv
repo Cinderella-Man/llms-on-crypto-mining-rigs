@@ -1,0 +1,10 @@
+arm	switches	identical_to_base	device_buffer	device_buffer_expected	host0_line	host0_expected	no_events_line	overlap	verdict
+base	-	3/3	no	no	no	no	yes	-	OK
+default	-	3/3	no	no	no	no	yes	-	OK
+hdev0	LLAMA_MTP_H_DEV=0	3/3	no	no	yes	yes	no	-	OK
+hdev2	LLAMA_MTP_H_DEV=2	3/3	yes	yes	no	no	no	-	OK
+nopf	GGML_SCHED_PREFETCH=0	3/3	no	no	no	no	yes	-	OK
+both	LLAMA_MTP_H_DEV=0,GGML_SCHED_PREFETCH=0	3/3	no	no	yes	yes	no	-	OK
+ovl	LLAMA_MTP_CATCHUP_OVERLAP=1	3/3	yes	yes	no	no	no	on	OK
+hdev0ovl	LLAMA_MTP_H_DEV=0,LLAMA_MTP_CATCHUP_OVERLAP=1	3/3	no	no	yes	yes	no	off	OK
+hdev2ovl	LLAMA_MTP_H_DEV=2,LLAMA_MTP_CATCHUP_OVERLAP=1	3/3	yes	yes	no	no	no	on	OK

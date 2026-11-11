@@ -138,6 +138,7 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_SCHED_PER_SIZE` | `0` | `1`: a scheduler per verify width | -vgraphs | Q701 |
 | `LLAMA_GRAPH_META_CALLOC` | `1` | `0`: the graph metadata buffer touched page by page, as before | -vgraphs | Q701 |
 | `GGML_SCHED_CTX_PER_GRAPH` | `1` | *new.* `0`: one scheduler context buffer sized for the largest graph, made at creation, as upstream | -vgraphs, -flags | Q701, Q1025 |
+| `GGML_SCHED_PREFETCH` | `1` | *v4, not yet in a release build.* `1`: before a split runs, the scheduler starts copying to host memory the inputs of the next split that this split's card already holds, so that a CPU split after it waits for those copies and not for the card's whole split (upstream #30966). `0`: each split's inputs are copied when that split runs, as before b12246. Acts only on a card (a backend with asynchronous reads and events). With `LLAMA_UBATCH_TRACE` a scheduler logs its first early fetch and, when freed, the count ([checks](data/2026-11-11_c693_upstream_switches/README.md)) | v4: `pascal-p106-v4-b12246-c693` | Q1226 |
 | `LLAMA_GRAPH_REUSE_WAIT` | `0` | `1`: with pipeline parallelism, reuse a graph after a full wait instead of only when nothing is in flight | base | Q87 |
 | `LLAMA_SAMPLER_RESERVE` | `0` | `1`: a scheduler reserve on every backend-sampler attach and detach (upstream) | base | Q111 |
 | `LLAMA_INPUT_ON_GPU` | `0` | `1`: the token-embedding lookup on the first card | base | Q150 |
@@ -184,7 +185,8 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_DRAFT_SHARE` | off | `embd[,head]`: the MTP draft reads the target's token embeddings and head | -draftmem | Q564 |
 | `LLAMA_DRAFT_SHORTLIST` (`_FILE`) | off | `k[,m[,r]]`: the MTP draft's head over a token shortlist | -draftmem | Q592, Q635 |
 | `LLAMA_DRAFT_EMBD_CACHE` | off | `<rows>[,<max tokens>]`: the draft's token rows cached on its layer's card | -draft1card | Q961 |
-| `LLAMA_DRAFT_H_CARRY` | off | `1`: the draft's hidden rows stay on its card between passes. v4: the rows the draft reads from the target stay on the target's output card by default, upstream's #31927; this switch still covers the draft's own passes | -draft1card | Q961 |
+| `LLAMA_DRAFT_H_CARRY` | off | `1`: the draft's hidden rows stay on its card between passes. v4: the rows the draft reads from the target stay on the target's output card by default, upstream's #31927 (`LLAMA_MTP_H_DEV`); this switch still covers the draft's own passes | -draft1card | Q961 |
+| `LLAMA_MTP_H_DEV` | `1` | *v4, not yet in a release build.* Where the target keeps the hidden rows that an MTP draft with its own memory (Flash-Next's) reads. `1`: in a buffer on the target's output card, one row per batch position, read there by the draft's graph, wherever that card has events (upstream #31927; est. 80.0 MiB for Flash-Next at `-b 2048`). `0`: copied to host memory after each decode, as before b12246 (the v3 release's path); `LLAMA_MTP_CATCHUP_OVERLAP` needs the buffer and stays off. `2`: as `1`, and the CPU takes the buffer too (checks). The draft's caches and drafts are the same bytes with the rows on the host and in the buffer on a CPU ([checks](data/2026-11-11_c693_upstream_switches/README.md)) | v4: `pascal-p106-v4-b12246-c693` | Q1226 |
 | `LLAMA_FIT_DRAFT_CTX`, `LLAMA_FIT_NEXTN_SKIP` | `1` | `0`: `--fit` measures a draft alone and leaves skipped NextN layers out, as b12076 (upstream #31610, #31569). v4: upstream merged #31569, so `LLAMA_FIT_NEXTN_SKIP=1` is upstream's own count | -ckptrc | Q706 |
 | `LLAMA_SPEC_ADAPT` (`_COST`, `_S`, `_WIDTHS`, `_LOG`, ...) | off | `1`: the draft length chosen per step from the drafter's probabilities and a verify-cost table | -adraft | Q687 |
 | `LLAMA_SPEC_BLOCK_VERIFY` | off | `1`: sampled drafts verified as a block | -blockver | Q797 |
@@ -264,14 +266,15 @@ Q1040.
 ## What upstream changed by default on the v4 line
 
 The merge of upstream b12246 brings 154 upstream commits. These change what the engine does with no switch set, on
-the models Miner Llama serves; none has a switch of its own
-([the full list and the checks](data/2026-11-10_ladder6/README.md#what-upstream-changed-by-default)):
+the models Miner Llama serves
+([the full list and the checks](data/2026-11-10_ladder6/README.md#what-upstream-changed-by-default)). Two of them have
+a switch on `pascal-p106-v4-b12246-c693`, named in the table; the others have none:
 
 | Upstream change | What changes with no switch set |
 |---|---|
-| [#31927](https://github.com/ggml-org/llama.cpp/pull/31927) | An MTP draft with one head and its own memory (Flash-Next's) reads the target's hidden rows from a buffer on the target's output card instead of the host. The buffer holds one row per batch position: 80.0 MiB for Flash-Next at `-b 2048` (est. from the code: 2,049 rows of 10,240 F32 values). If it cannot be allocated the rows go through the host as before |
+| [#31927](https://github.com/ggml-org/llama.cpp/pull/31927) | An MTP draft with one head and its own memory (Flash-Next's) reads the target's hidden rows from a buffer on the target's output card instead of the host. The buffer holds one row per batch position: 80.0 MiB for Flash-Next at `-b 2048` (est. from the code: 2,049 rows of 10,240 F32 values). If it cannot be allocated the rows go through the host as before. `LLAMA_MTP_H_DEV=0` puts them back on the host |
 | [#31660](https://github.com/ggml-org/llama.cpp/pull/31660) | Recurrent models with rollback snapshots store the conv history of all snapshots in one write (the fused GDN path, the default for qwen4exp, already did) |
-| [#31419](https://github.com/ggml-org/llama.cpp/pull/31419), [#30966](https://github.com/ggml-org/llama.cpp/pull/30966) | The scheduler does not upload the inputs of nodes that are not computed, and fetches a CPU split's inputs from the previous card before that card's split runs |
+| [#31419](https://github.com/ggml-org/llama.cpp/pull/31419), [#30966](https://github.com/ggml-org/llama.cpp/pull/30966) | The scheduler does not upload the inputs of nodes that are not computed, and fetches a CPU split's inputs from the previous card before that card's split runs. `GGML_SCHED_PREFETCH=0` turns the early fetch off |
 | [#31084](https://github.com/ggml-org/llama.cpp/pull/31084), [#31803](https://github.com/ggml-org/llama.cpp/pull/31803), [#31005](https://github.com/ggml-org/llama.cpp/pull/31005) | CUDA kernels on the decode path: the top-k of device sampling picks tied candidates in a fixed order, the lightning indexer (Flash-Next's sparse attention) lays out its shared memory differently, the fused MoE router replaces a NaN score |
 | [#31851](https://github.com/ggml-org/llama.cpp/pull/31851), [#31854](https://github.com/ggml-org/llama.cpp/pull/31854) | Attention without flash attention asks for BF16 accumulators instead of F32; the CPU backend multiplies F16 and BF16 matrices with F32 activations |
 | [#31683](https://github.com/ggml-org/llama.cpp/pull/31683) | Context shift moves the KV cells correctly, and each model builds its own RoPE |

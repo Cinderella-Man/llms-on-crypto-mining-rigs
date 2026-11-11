@@ -1,0 +1,27 @@
+check	verdict	detail
+cpu-tip	OK	rc=0; commit 8d329fa0ed2af00d5b75f912efc49f8aebd4df90 test-llama-archs --mtp-h-dev: LLAMA_MTP_H_DEV's host and device rows give the draft the same caches and drafts (C693); all targets; 3 warning lines, 0 error lines
+hdev-tip-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+hdev-tip-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+hdev-tip-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+hdev-tip-nopf-s1	OK	rc=0; GGML_SCHED_PREFETCH=0; Summary: all 5 test(s) passed
+hdev-tip-nopf-s2	OK	rc=0; GGML_SCHED_PREFETCH=0; Summary: all 5 test(s) passed
+hdev-tip-nopf-s3	OK	rc=0; GGML_SCHED_PREFETCH=0; Summary: all 5 test(s) passed
+hdev-tip-stage1check-s1	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+hdev-tip-stage1check-s2	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+hdev-tip-stage1check-s3	OK	rc=0; LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_KPOOL_DEV_CHECK=1; Summary: all 5 test(s) passed
+overlap-s1	OK	rc=0; Summary: all 5 test(s) passed
+overlap-s2	OK	rc=0; Summary: all 5 test(s) passed
+overlap-s3	OK	rc=0; Summary: all 5 test(s) passed
+off-base	OK	rc=0; BASE: 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-hdev0	SAME	rc=0; LLAMA_MTP_H_DEV=0; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-hdev2	SAME	rc=0; LLAMA_MTP_H_DEV=2; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-nopf	SAME	rc=0; GGML_SCHED_PREFETCH=0; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-both	SAME	rc=0; LLAMA_MTP_H_DEV=0 GGML_SCHED_PREFETCH=0; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+build-rig	OK	llama.cpp-20261111-8d329fa0e-pascal-p106-v4-b12246-c693; commit: 8d329fa0ed2af00d5b75f912efc49f8aebd4df90 (2026-11-11 09:21:40 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-8d329fa0e-pascal-p106-v4-b12246-c693/bin
+hdev-rig-plain-s1	OK	rc=0; no switch; Summary: all 5 test(s) passed
+hdev-rig-plain-s2	OK	rc=0; no switch; Summary: all 5 test(s) passed
+hdev-rig-plain-s3	OK	rc=0; no switch; Summary: all 5 test(s) passed
+server	OK	rc=0; 9 of 9 arms give base's tokens and draft counts on R1-R3 with the h rows where their switches put them; server/arms.tsv
