@@ -5,8 +5,10 @@ What this is: a design note and the checks behind a change to C722's kernel
 products of 2–4 tokens with every weight read and decoded once, each token's sums the one-token kernel's), not yet a
 measurement on a P106. The rig run that checks and times it natively is the last section.
 
-The code is on the fork's branch `pascal-p106-v4-b12246-c728` (on the v4 day merge `pascal-p106-v4-b12246-day`,
-`18d0fa309`, so it carries C758's R = 1 default), behind its own switch, off by default:
+The code is on the fork's branch `pascal-p106-v4-b12246-c728` (`aa8879e50`, on the v4 day merge
+`pascal-p106-v4-b12246-day`, `18d0fa309`, so it carries C758's R = 1 default; the checks below ran on `894ed8d1c`, and the
+last two commits change only a host condition for merges with other branches: the tiles decline token counts other than
+2–4, which this branch never passes them), behind its own switch, off by default:
 `GGML_CUDA_MMVQ_PASCAL_DMT_KT` ([docs/switches.md](../../switches.md)). Registry row
 [Q1287](../../../quants/experiments.md).
 
