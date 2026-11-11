@@ -32,3 +32,4 @@ guiq23	gu	24-31	swift-iq2_xs	+200.0	+1.38	0.1063	0.0038	-0.0020	96.19	0.13	negli
 guiq22	gu	16-23	swift-iq2_xs	+300.0	+1.32	0.1038	0.0037	-0.0045	96.15	0.14	gain	-0.0053	gain
 guiq21	gu	8-15	swift-iq2_xs	-225.0	+1.47	0.1051	0.0038	-0.0033	96.16	0.14	negligible	-0.0041	gain
 guiq20	gu	0-7	swift-iq2_xs	+300.0	+1.32	0.1007	0.0036	-0.0077	96.20	0.13	gain	-0.0085	gain
+gmix-q2	pick	0-31	pmix-iq3-fast+swift-iq2_xs	-24.7	+5.91	0.0958	0.0035	-0.0125	96.37	0.13	gain	-0.0134	gain

@@ -19,8 +19,10 @@ each with pascal-mix's tools, and builds the files that price them:
 `dniq23` are built and scored on all three texts: agent ([results](#results-so-far-agent-text-kld-2026-11-05)), wiki
 ([results](#wiki-text-kld-2026-11-06)) and code ([results](#code-text-kld-2026-11-10), with the three texts side by
 side); the allocation over the three texts (`galloc.py solve`) is solved and its pick at the start's bytes, `gmix-q2`,
-is built ([the v3.1 pick](#the-v31-pick-2026-11-11)); its measured KLD (Q1381) and its rig check (Q1382) come next; the
-rig timing (C323) is a run file for a rig. Registry rows Q219, Q888, Q889, Q901, Q1381, Q1382 in
+is built ([the v3.1 pick](#the-v31-pick-2026-11-11)) and scored on the three texts: a gain on all three, as predicted on
+wiki and code text and 0.684 of the predicted gain on agent text ([measured](#gmix-q2-measured-on-the-three-texts-q1381-2026-11-11));
+its rig check (Q1382) comes next; the rig timing (C323) is a run file for a rig. Registry rows Q219, Q888, Q889, Q901,
+Q1381, Q1382, Q1392 in
 [quants/experiments.md](../../../quants/experiments.md).
 
 ## Results so far: agent-text KLD (2026-11-05)
@@ -215,7 +217,7 @@ of the 16 switches' changes ([additivity.tsv](additivity.tsv), [run/additivity.p
 
 So over a whole build the single switches' changes add up to within 11 % of the measured change, less than the sum on
 agent text and more on wiki and code. Q167 accepted a prediction within two standard errors of the measured KLD; the
-measurement of `gmix-q2` on the three texts is the test (Q1381).
+measurement of `gmix-q2` on the three texts is the test ([below](#gmix-q2-measured-on-the-three-texts-q1381-2026-11-11)).
 
 **The file.** `run/build_pick.sh` with `galloc.py final`'s two steps, on four CPU threads at nice 19 and idle I/O
 priority, 17 min 6 s on 2026-11-11: step 1 takes 372 tensors from `pmix-iq3-fast` (`guiq30`, `denseiq31`,
@@ -243,6 +245,41 @@ card 3. `fit.py`'s whole grid ([fit-gmix-q2.tsv](fit-gmix-q2.tsv), beside
 [pmix-q2-fast's](../2026-11-04_n2p_flash/fit/fit-pmix-q2-fast.tsv), which it reproduces byte for byte) gives every 64k
 line of the start a whole-layer split for `gmix-q2`: the same free MiB on the fullest card without a draft at every
 micro-batch, 9 to 21 MiB less with the MTP draft, 34 to 109 MiB more with DFlash2.
+
+### `gmix-q2` measured on the three texts (Q1381, 2026-11-11)
+
+`gmix-q2` is scored like the switches, each text on its table's cards (agent and wiki text on the five cards, code text
+on the four of the code table), against the Swift-1.5 Q8_0's logits ([kld_pick.tsv](kld_pick.tsv), written by
+[run/pick_kld.py](run/pick_kld.py) from `solve.tsv` and the logs; its rows, class `pick`, in
+[kld_agent.tsv](kld_agent.tsv), [kld_wiki.tsv](kld_wiki.tsv), [kld_code.tsv](kld_code.tsv) and
+[kld_texts.tsv](kld_texts.tsv)):
+
+| Text | `pmix-q2-fast` | Predicted | `gmix-q2`, measured | Measured − predicted (in the measured ±) | Measured change over predicted | Same top token |
+|---|---:|---:|---:|---:|---:|---:|
+| agent | 0.279228 ± 0.005378 | 0.21610 | **0.236062 ± 0.004490** | +0.019962 (4.45) | 0.684 | 90.967 ± 0.129 % |
+| wiki | 0.426376 ± 0.005852 | 0.41379 | **0.414086 ± 0.005688** | +0.000296 (0.05) | 0.976 | 77.882 ± 0.291 % |
+| code | 0.108328 ± 0.003850 | 0.09212 | **0.095812 ± 0.003486** | +0.003692 (1.06) | 0.772 | 96.368 ± 0.131 % |
+
+- **A gain on every text, with 24.7 MiB fewer on the cards:** −0.043166 on agent text (8.0 times the start's ±),
+  −0.012290 on wiki text, −0.012516 on code text, and against the control `dniq23` as well (−0.0394, −0.0156,
+  −0.0134). The same top token rises from 90.70 %, 77.71 % and 96.06 % at the start. On agent and code text the file
+  scores below every single switch (the best, `denseiq31` 0.2599 and `guiq30` 0.0995); on wiki text eight single
+  switches score lower, all of them routed experts of groups 2, 4 and 5 that the pick at these bytes leaves out (the
+  best, `guiq35` 0.3833).
+- **The sum of the single switches predicts wiki and code text, not agent text.** On wiki and code text the measured
+  KLD is within one of its ± of the prediction (0.05 and 1.06). On agent text the five switches' changes sum to
+  −0.06313 and the file gains −0.043166, 0.684 of the sum: 4.45 of the measured ± above the prediction (1.74 of the
+  summed switches' ± of 0.01148, which overstates the ± of a difference between files scored on the same text). By
+  Q167's test, a prediction within two standard errors of the measured KLD, the prediction holds on wiki and code text
+  and fails on agent text. Over a whole build of 16 switches agent text came to 0.899 of the sum (the additivity table
+  above); here five switches give 0.684. Three of the five gain on agent text only (`denseiq31`, `denseiq32`,
+  `guiq21`), and two of those change the same layers (group 1's gate/up and its other tensors). Which switches overlap
+  is not measured ([Q1392](../../../quants/experiments.md)); until it is, the agent-text predictions of the 44.3 GB and
+  47 GB picks (0.14835 and 0.14933, 15 switches each) rest on the same sums.
+- **Each text ran whole on the cards:** the cards' memory peaks sum to 40,070 MiB on agent text and 39,620 MiB on wiki
+  text over the five cards, and to 38,852 MiB on code text over the four, 2,872 MiB more than the file's two weight
+  shards (35,980 MiB), as the start's 38,824 MiB are 2,818 more than its own ([mem_peak_pick.tsv](mem_peak_pick.tsv);
+  the code rows also in [mem_peak_code.tsv](mem_peak_code.tsv)).
 
 ## 1. Q219: the routed experts per 8-layer group
 
@@ -467,6 +504,15 @@ REPO=$PWD/tools SWITCHES=tools/docs/data/2026-11-04_fmt_mixes/switches.tsv \
   DONORS="pmix-iq3-fast=$IQ3 swift-iq2_xs=$IQ2" bash tools/docs/data/2026-11-04_fmt_mixes/run/build_pick.sh
 REPO=$PWD/tools OUT=<folder> FILES="pmix-q2-fast=<its three shards, comma separated> gmix-q2=<its three shards>" \
   bash tools/docs/data/2026-11-04_fmt_mixes/run/pick_fit.sh
+# the pick scored like the switches, one text at a time on its table's cards (agent, then wiki text with the five-card
+# exports above and TEXTS=agent, TEXTS=wiki, each with its own DONE folder; then code text with the four-card exports),
+# LIST="gmix-q2 <its first shard> <its build marker>"; then its rows in the tables, with the solve's log folder (OUT4)
+# holding its three logs: a copy of kld_agent.tsv with one more row is the meta
+printf "gmix-q2\tpick\t0-31\tpmix-iq3-fast+swift-iq2_xs\t-24.7\t+5.91\t-\t-\t-\t-\t-\t-\n" | cat kld_agent.tsv - > meta.tsv
+python3 -I tools/docs/data/2026-11-04_fmt_mixes/run/kld_table.py --meta meta.tsv --logs <OUT4> --text agent | cut -f1-12 > kld_agent.tsv
+# then kld_wiki.tsv, kld_code.tsv and kld_texts.tsv as above, and the pick against its prediction:
+python3 -I tools/docs/data/2026-11-04_fmt_mixes/run/pick_kld.py --solve solve.tsv --budget 37470389760 --logs <OUT4> \
+  --name gmix-q2 > kld_pick.tsv
 ```
 
 The selector (standard library; `qerr.py` needs numpy and gguf-py):
@@ -492,7 +538,7 @@ python3 -I tools/bench/pascal_mix/vmix.py select --start pmix-q2-fast.json --pub
 |---|---|
 | [switches.tsv](switches.tsv) | Q219's 30 switches and the start (`galloc.py switches`): tensors, type changes, bytes and est. ms added |
 | [spine_switches.tsv](spine_switches.tsv) | C326's 8 arms, the same columns |
-| [kld_agent.tsv](kld_agent.tsv) | agent-text KLD of the 30 single-switch files, the control `dniq23`, `pmix-q2-fast` and spine6: ±, change, same top token, class |
+| [kld_agent.tsv](kld_agent.tsv) | agent-text KLD of the 30 single-switch files, the control `dniq23`, `pmix-q2-fast`, spine6 and the pick `gmix-q2`: ±, change, same top token, class |
 | [kld_wiki.tsv](kld_wiki.tsv) | wiki-text KLD of the same files: the same columns, then the change from the control `dniq23` and the class against it |
 | [kld_code.tsv](kld_code.tsv) | code-text KLD of the same files, the wiki table's columns; every score, the start's included, from the same four cards |
 | [kld_texts.tsv](kld_texts.tsv) | the three texts side by side: each file's change from the start and its class on agent, wiki and code text, and on how many texts it gains and loses |
@@ -502,9 +548,12 @@ python3 -I tools/bench/pascal_mix/vmix.py select --start pmix-q2-fast.json --pub
 | [additivity.tsv](additivity.tsv) | `pmix-iq3-fast`'s measured change against the sum of its 16 switches' changes, per text |
 | [pick_fit_64k_cards.txt](pick_fit_64k_cards.txt) | `pmix-q2-fast` and `gmix-q2` on the two nine-card 64k lines: layers and MiB per card |
 | [fit-gmix-q2.tsv](fit-gmix-q2.tsv) | `fit.py`'s grid for `gmix-q2`: every context, cache type, micro-batch and draft, whole layers and with experts moved |
-| [mem_peak_code.tsv](mem_peak_code.tsv) | the code-text runs' peak memory per file and card (the cards' index on the machine), MiB: the 31 files and the start |
+| [mem_peak_code.tsv](mem_peak_code.tsv) | the code-text runs' peak memory per file and card (the cards' index on the machine), MiB: the 31 files, the start and `gmix-q2` |
+| [kld_pick.tsv](kld_pick.tsv) | `gmix-q2` measured against its prediction per text: the start, predicted and measured KLD with their ±, the changes, measured minus predicted in KLD and in the measured ±, Q167's two-standard-error test, the measured change over the predicted one, same top token |
+| [mem_peak_pick.tsv](mem_peak_pick.tsv) | `gmix-q2`'s peak memory per text and card (the cards' index on the machine), MiB |
 | [run/kld_table.py](run/kld_table.py) | one text's table from llama-perplexity's logs (standard library) |
 | [run/kld_texts.sh](run/kld_texts.sh) | `kld_texts.tsv` from the three tables |
+| [run/pick_kld.py](run/pick_kld.py) | a built pick's measured KLD against `galloc.py solve`'s prediction, one row per text (standard library) |
 | [run/readahead.sh](run/readahead.sh) | beside a one-text scoring run: the next file read from a slow disk into the page cache while the current one is scored |
 | [times_kshape.tsv](times_kshape.tsv) | the P106 product times `vmix.py` uses (type, row width, rows, tokens, µs, source) |
 | [pk_s33_mtp2d.txt](pk_s33_mtp2d.txt) | P(k) from S33's `mtp2d` arm (`vmix.py pk`) |
