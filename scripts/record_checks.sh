@@ -55,6 +55,9 @@
 #   v4night       the seven suites of the v4 night's branches in one set, as merged in pascal-p106-v4-b12246-night
 #                 (docs/data/2026-11-11_v4_night_merge): NIGHT below; each filter recorded once, every suite's runs
 #                 (runs-ptx.tsv: a suite's PTX runs where it has them, else its native runs)
+#   v4day         the seven kernel suites of the v4 day's branches in one set, as merged in pascal-p106-v4-b12246-day
+#                 (docs/data/2026-11-11_v4_day_merge): DAY below, each filter recorded once, every suite's runs, as v4night (on
+#                 that build _DMT=1 and _Q5K_MT=1 run R = 1, C758 and C766)
 #   bf16x         BF16's 2-D products of 1-8 tokens (Qwen3.8-Flash-Next's hyper-connections, indexer and recurrent gates
 #                 among them) under the launch rule and with GGML_CUDA_MMVF_PASCAL_EXACT=1 (C750: the 3-4-token products
 #                 in the one-token order) at three rules and as for 10 SMs, with =2, and the fault that leaves a quarter
@@ -80,12 +83,13 @@
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
-#   EXTRA_P (a -p regex every filter must also match, e.g. a "model shapes only" set), LINK_FROM (a complete set whose
-#   cases this suite selects are hardlinked in instead of recorded again), IMAGE, DOCKER_ARGS
+#   EXTRA_P (a -p regex every filter must also match, e.g. a "model shapes only" set), LINK_FROM (complete sets, separated by
+#   spaces, whose cases this suite selects are hardlinked in instead of recorded again; the first set that holds a case
+#   gives it), IMAGE, DOCKER_ARGS
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -133,6 +137,7 @@ BFX4='type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,
 F32X='type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
 F32X4='type_a=f32,type_b=f32,m=(1|512|48|33|129|7|256),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
 NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
+DAY='dmt q5kmt q3kmt bf16x f32x glumt q5k1r'
 suite_filters() {
     case $1 in
         kshape)
@@ -173,6 +178,9 @@ suite_filters() {
         v4night)
             local s
             for s in $NIGHT; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
+        v4day)
+            local s
+            for s in $DAY; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
         *) return 1 ;;
     esac
 }
@@ -342,6 +350,9 @@ suite_runs() {
         v4night)
             local s
             for s in $NIGHT; do suite_runs "$s"; done ;;
+        v4day)
+            local s
+            for s in $DAY; do suite_runs "$s"; done ;;
     esac
 }
 # C754's runs: <1 natively (the switch on compute 6.1) | 2 through the PTX on a newer card (the switch on any NVIDIA
@@ -446,6 +457,11 @@ suite_runs_ptx() {
             for s in $NIGHT; do
                 if [ -n "$(suite_runs_ptx "$s")" ]; then suite_runs_ptx "$s"; else suite_runs "$s"; fi
             done ;;
+        v4day)
+            local s
+            for s in $DAY; do
+                if [ -n "$(suite_runs_ptx "$s")" ]; then suite_runs_ptx "$s"; else suite_runs "$s"; fi
+            done ;;
     esac
 }
 suite_filters "$SUITE" > /dev/null || { echo "unknown SUITE $SUITE" >&2; exit 1; }
@@ -512,18 +528,28 @@ if step record; then
     if [ -n "${LINK_FROM:-}" ] && [ "${DRY:-0}" != 1 ]; then
         # cases a complete set already holds (the same case string, so the same id): hardlinked in and kept, not drawn
         # and quantized again
-        [ -f "$LINK_FROM/manifest.tsv" ] || { echo "no manifest.tsv in $LINK_FROM" >&2; exit 1; }
+        for L in $LINK_FROM; do
+            [ -f "$L/manifest.tsv" ] || { echo "no manifest.tsv in $L" >&2; exit 1; }
+        done
         mkdir -p "$S/cases"
         while IFS=$'\t' read -r ops params; do
             tbo -b CPU -o "$ops" -p "$(flt "$params")" --record-dry 2> /dev/null \
                 | sed -n 's/^  \(.*\): in [0-9]* B, ref [0-9]* B$/\1/p'
         done < <(suite_filters "$SUITE") > "$S/selected.txt"
-        awk -F'\t' 'NR == FNR { sel[$0] = 1; next } ($2 in sel) { print $1 }' "$S/selected.txt" "$LINK_FROM/manifest.tsv" \
-            > "$S/linked.txt"
-        while read -r id; do
-            for e in in ref meta; do ln -f "$LINK_FROM/cases/$id.$e" "$S/cases/$id.$e"; done
-        done < "$S/linked.txt"
-        log "linked $(wc -l < "$S/linked.txt") of $(wc -l < "$S/selected.txt") selected cases from $LINK_FROM"
+        : > "$S/linked.txt"
+        for L in $LINK_FROM; do
+            awk -F'\t' 'NR == FNR { sel[$0] = 1; next } ($2 in sel) { print $1 }' "$S/selected.txt" "$L/manifest.tsv" > "$S/link1.txt"
+            n=0
+            while read -r id; do
+                [ -e "$S/cases/$id.meta" ] && continue
+                for e in in ref meta; do ln -f "$L/cases/$id.$e" "$S/cases/$id.$e"; done
+                echo "$id" >> "$S/linked.txt"
+                n=$((n + 1))
+            done < "$S/link1.txt"
+            rm -f "$S/link1.txt"
+            log "linked $n of $(wc -l < "$S/selected.txt") selected cases from $L"
+        done
+        log "linked $(wc -l < "$S/linked.txt") of $(wc -l < "$S/selected.txt") selected cases in all"
     fi
     n=0
     while IFS=$'\t' read -r ops params; do
