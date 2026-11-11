@@ -1,0 +1,12 @@
+off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+small = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+offtr = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+ontr = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+on: 4 calls planned, 4128 n-gram rows issued by the helper, 8740 by set_input, 0 differed; at most 7757824 bytes ahead (cap 50331648)
+small: 4 calls planned, 248 n-gram rows issued by the helper, 12620 by set_input, 0 differed; at most 65536 bytes ahead (cap 65536)
+ontr: 4 calls planned, 4128 n-gram rows issued by the helper, 8740 by set_input, 0 differed; at most 7757824 bytes ahead (cap 50331648)
+ngram calls: 425 calls, each with the same tokens, micro-batches, rows, pages and digest off and on
+rows: off 12868 (helper 0), on 12868 = helper 4128 + inline 8740; 0 rows differed; 4 calls planned; pages off 6083, on 6083; window max 7757824 of cap 50331648 bytes, 0 calls over the cap
+ngram calls: PASS
+PASS

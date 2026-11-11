@@ -1,0 +1,16 @@
+check	verdict	detail
+cpu-tip	OK	rc=0; commit cbc2531315087951d0a53577944f0d59846f0eac trace: the per-input split names nested input classes by their own name; LLAMA_NGRAM_PREFETCH's lines at WARN (C761); all targets; 3 warning lines, 0 error lines
+npf-tip-s1	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+npf-tip-s2	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+npf-tip-s3	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+server	OK	rc=0; off = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);small = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);offtr = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);ontr = base (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);on: 4 calls planned, 4128 n-gram rows issued by the helper, 8740 by set_input, 0 differed; at most 7757824 bytes ahead (cap 50331648);small: 4 calls planned, 248 n-gram rows issued by the helper, 12620 by set_input, 0 differed; at most 65536 bytes ahead (cap 65536);ontr: 4 calls planned, 4128 n-gram rows issued by the helper, 8740 by set_input, 0 differed; at most 7757824 bytes ahead (cap 50331648);ngram calls: 425 calls, each with the same tokens, micro-batches, rows, pages and digest off and on;rows: off 12868 (helper 0), on 12868 = helper 4128 + inline 8740; 0 rows differed; 4 calls planned; pages off 6083, on 6083; window max 7757824 of cap 50331648 bytes, 0 calls over the cap;ngram calls: PASS;
+off-base	OK	rc=0; $BASE_CPU (5b329df16's static CPU build): 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off-tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-pf1	SAME	rc=0; LLAMA_NGRAM_PREFETCH=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off-stats	SAME	rc=0; LLAMA_NGRAM_PREFETCH_STATS=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+build-rig	OK	llama.cpp-20261111-cbc253131-pascal-p106-v4-b12246-c761; commit: cbc2531315087951d0a53577944f0d59846f0eac (2026-11-11 13:08:09 +0100) avx instructions in llama-bench: 0 highest glibc symbol: GLIBC_2.38 
+build-extra	OK	test-llama-archs in llama.cpp-20261111-cbc253131-pascal-p106-v4-b12246-c761/bin
+npf-rig-s1	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+npf-rig-s2	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
+npf-rig-s3	OK	rc=0; 3 arms OK; Summary: all 3 test(s) passed
