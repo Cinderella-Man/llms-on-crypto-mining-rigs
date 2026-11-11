@@ -128,7 +128,7 @@ Which kernel each multi-token case takes in each run, from the rule (`S` the per
 
 ## On a P106
 
-Two parts on one rig, nothing else running on it (registry row Q1310).
+Two parts on one rig, nothing else running on it (registry row Q1315).
 
 **1. The native check** (est. 35 min): the set on card 0 with the branch's own `test-backend-ops`. It passes when every
 console line ends `ok` (`qu-fault2`, `qu-fault3` and `qu-fault4` must fail cases, every other run passes every case),
