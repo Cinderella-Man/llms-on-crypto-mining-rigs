@@ -30,6 +30,11 @@ once per process, off by default, and acts only on a draft pass that reads token
 graph is not touched. Fork branch `pascal-p106-v4-b12246-c771` `fa7035917`, one commit on `pascal-p106-v4-b12246-c748`
 `5b329df16` (15 lines in `src/models/qwen4exp.cpp`).
 
+With C762's `LLAMA_DRAFT_EMBD_DEV=layer` ([design](../2026-11-11_c762_draft_rows/README.md)) the draft's token
+embeddings move to card 8 with its layer, so the gather runs there too and the draft is one card-8 split in either
+order, by the scheduler's rule (it cuts only where the device changes; not run here, as C762 is on its own branch):
+this switch matters only while the embeddings stay on card 4.
+
 **Why a switch, though the CPU check shows the new order could be the only one:** the results are the same bytes in
 every arm, and without the tables on the cards the splits are the same too. The switch stays so that the rig run can
 time the same build off and on (R113), and so that a negligible result can join the negligible group, which is tested
