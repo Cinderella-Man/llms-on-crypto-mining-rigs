@@ -1,0 +1,12 @@
+run	switches	expect	cases	fail_lines	exit	memcheck_errors	verdict	known_fail	unrecorded
+f32x-off	defaults	pass	163/163	0	0		ok		0
+f32x-on	GGML_CUDA_MMVF_F32_MT=1	pass	163/163	0	0		ok		0
+f32x-fault	GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_FAULT=1	fail	0/35	37	1		ok		0
+f32x-fault-above	GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_FAULT=1	pass	32/32	0	0		ok		0
+f32x-on-rows0	GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_ROWS=0	pass	163/163	0	0		ok		0
+f32x-fault-rows0	GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_ROWS=0 GGML_CUDA_MMVF_F32_MT_FAULT=1	fail	0/32	34	1		ok		0
+f32x-on2	GGML_CUDA_MMVF_F32_MT=2	pass	163/163	0	0		ok		0
+f32x-fault2	GGML_CUDA_MMVF_F32_MT=2 GGML_CUDA_MMVF_F32_MT_FAULT=1	fail	0/35	37	1		ok		0
+f32x-fault2-above	GGML_CUDA_MMVF_F32_MT=2 GGML_CUDA_MMVF_F32_MT_FAULT=1	pass	32/32	0	0		ok		0
+f32x-fault2-rows0	GGML_CUDA_MMVF_F32_MT=2 GGML_CUDA_MMVF_F32_MT_ROWS=0 GGML_CUDA_MMVF_F32_MT_FAULT=1	fail	0/32	34	1		ok		0
+f32x-fault-off	GGML_CUDA_MMVF_F32_MT_FAULT=1	pass	67/67	0	0		ok		0

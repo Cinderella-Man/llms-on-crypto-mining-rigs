@@ -1,0 +1,6 @@
+mode	arm	switches	comparisons	with differences	of them at most 32 rows	exit	expect	verdict
+f32r	on	GGML_CUDA_MMVF_F32_MT=1	42	0	0	0	0	ok
+f32r	on2	GGML_CUDA_MMVF_F32_MT=2	42	0	0	0	0	ok
+f32r	control	(off)	42	30	30	1	differ	ok
+f32	rows0	GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_ROWS=0	42	0	0	0	0	ok
+f32	limit	GGML_CUDA_MMVF_F32_MT=1	42	20	0	1	differ above 32 rows only	ok

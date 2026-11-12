@@ -1,0 +1,46 @@
+2026-11-12T20:18:41+01:00 quiet: load 0.89 0.47 0.65; llama processes 0; MemAvailable: 3212612 kB
+2026-11-12T20:18:41+01:00 replay start
+2026-11-12T20:19:33+01:00 replay exit 0: == 2026-11-12T20:19:33+01:00 done: 11 runs as expected, 0 WRONG
+2026-11-12T20:19:33+01:00 f32x-fault:      35 FAIL 
+2026-11-12T20:19:33+01:00 f32x-fault2:      35 FAIL 
+2026-11-12T20:19:33+01:00 f32x-fault-above:      32 OK 
+2026-11-12T20:19:33+01:00 f32x-fault2-above:      32 OK 
+2026-11-12T20:19:33+01:00 f32x-fault-rows0:      32 FAIL 
+2026-11-12T20:19:33+01:00 f32x-fault2-rows0:      32 FAIL 
+2026-11-12T20:19:33+01:00 bitid f32r on start (GGML_CUDA_MMVF_F32_MT=1)
+2026-11-12T20:19:33+01:00 bitid f32r on exit 0: 42 comparisons, 0 with differences
+2026-11-12T20:19:33+01:00 bitid f32r on2 start (GGML_CUDA_MMVF_F32_MT=2)
+2026-11-12T20:19:34+01:00 bitid f32r on2 exit 0: 42 comparisons, 0 with differences
+2026-11-12T20:19:34+01:00 bitid f32r control start ()
+2026-11-12T20:19:34+01:00 bitid f32r control exit 1: 42 comparisons, 30 with differences
+2026-11-12T20:19:34+01:00 bitid f32 rows0 start (GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_ROWS=0)
+2026-11-12T20:19:35+01:00 bitid f32 rows0 exit 0: 42 comparisons, 0 with differences
+2026-11-12T20:19:35+01:00 bitid f32 limit start (GGML_CUDA_MMVF_F32_MT=1)
+2026-11-12T20:19:36+01:00 bitid f32 limit exit 1: 42 comparisons, 20 with differences
+2026-11-12T20:19:36+01:00 quiet: load 1.04 0.59 0.68; llama processes 0; MemAvailable: 3100564 kB
+2026-11-12T20:19:36+01:00 perf off pass 1 start ()
+2026-11-12T20:20:48+01:00 perf off pass 1 exit 0: 64 lines
+2026-11-12T20:20:48+01:00 quiet: load 1.06 0.70 0.71; llama processes 0; MemAvailable: 3183024 kB
+2026-11-12T20:20:48+01:00 perf on pass 1 start (GGML_CUDA_MMVF_F32_MT=1)
+2026-11-12T20:21:59+01:00 perf on pass 1 exit 0: 64 lines
+2026-11-12T20:21:59+01:00 quiet: load 1.02 0.77 0.74; llama processes 0; MemAvailable: 3192732 kB
+2026-11-12T20:21:59+01:00 perf rows0 pass 1 start (GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_ROWS=0)
+2026-11-12T20:23:13+01:00 perf rows0 pass 1 exit 0: 64 lines
+2026-11-12T20:23:13+01:00 quiet: load 1.24 0.88 0.78; llama processes 0; MemAvailable: 3178716 kB
+2026-11-12T20:23:13+01:00 perf off pass 2 start ()
+2026-11-12T20:24:26+01:00 perf off pass 2 exit 0: 64 lines
+2026-11-12T20:24:26+01:00 quiet: load 1.16 0.94 0.81; llama processes 0; MemAvailable: 3198428 kB
+2026-11-12T20:24:26+01:00 perf on pass 2 start (GGML_CUDA_MMVF_F32_MT=1)
+2026-11-12T20:25:37+01:00 perf on pass 2 exit 0: 64 lines
+2026-11-12T20:25:37+01:00 quiet: load 1.13 0.97 0.83; llama processes 0; MemAvailable: 3187436 kB
+2026-11-12T20:25:37+01:00 perf rows0 pass 2 start (GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_MMVF_F32_MT_ROWS=0)
+2026-11-12T20:26:51+01:00 perf rows0 pass 2 exit 0: 64 lines
+2026-11-12T20:26:51+01:00 served 1 off start
+2026-11-12T20:39:13+01:00 served 1 off exit 0
+2026-11-12T20:39:13+01:00 served 2 on start
+2026-11-12T20:51:19+01:00 served 2 on exit 0
+2026-11-12T20:51:19+01:00 served 3 on start
+2026-11-12T21:03:26+01:00 served 3 on exit 0
+2026-11-12T21:03:26+01:00 served 4 off start
+2026-11-12T21:15:25+01:00 served 4 off exit 0
+2026-11-12T21:15:25+01:00 quiet: load 0.92 1.10 1.11; llama processes 0; MemAvailable: 3214140 kB

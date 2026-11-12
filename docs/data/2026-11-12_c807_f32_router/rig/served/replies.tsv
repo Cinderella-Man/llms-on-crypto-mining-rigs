@@ -1,0 +1,17 @@
+run	load	request	text_md5	same_text_as_first	prompt_n	predicted_n	draft_n	draft_n_accepted	steps_server	tokens_a_step	predicted_ms	ms_a_step_server	tok_s
+1-off	warm	greedy-1	e460d038a1f6	yes	79	256	255	170	86	2.98	11676.36	135.77	21.84
+1-off	warm	greedy-2	e460d038a1f6	yes	4	256	247	172	84	3.05	10253.90	122.07	24.87
+1-off	prof	greedy-1	e460d038a1f6	yes	79	256	255	170	86	2.98	15209.98	176.86	16.77
+1-off	prof	greedy-2	e460d038a1f6	yes	4	256	247	172	84	3.05	13032.25	155.15	19.57
+2-on	warm	greedy-1	b851d07caac9	NO	79	256	272	164	92	2.78	13090.15	142.28	19.48
+2-on	warm	greedy-2	b851d07caac9	NO	4	256	266	166	90	2.84	11075.28	123.06	23.02
+2-on	prof	greedy-1	b851d07caac9	NO	79	256	272	164	92	2.78	18120.31	196.96	14.07
+2-on	prof	greedy-2	b851d07caac9	NO	4	256	266	166	90	2.84	13984.50	155.38	18.23
+3-on	warm	greedy-1	b851d07caac9	NO	79	256	272	164	92	2.78	12813.24	139.27	19.90
+3-on	warm	greedy-2	b851d07caac9	NO	4	256	266	166	90	2.84	10946.90	121.63	23.29
+3-on	prof	greedy-1	b851d07caac9	NO	79	256	272	164	92	2.78	18170.76	197.51	14.03
+3-on	prof	greedy-2	b851d07caac9	NO	4	256	266	166	90	2.84	13971.34	155.24	18.25
+4-off	warm	greedy-1	e460d038a1f6	yes	79	256	255	170	86	2.98	11121.29	129.32	22.93
+4-off	warm	greedy-2	e460d038a1f6	yes	4	256	247	172	84	3.05	10343.80	123.14	24.65
+4-off	prof	greedy-1	e460d038a1f6	yes	79	256	255	170	86	2.98	14827.07	172.41	17.20
+4-off	prof	greedy-2	e460d038a1f6	yes	4	256	247	172	84	3.05	13173.49	156.83	19.36

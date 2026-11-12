@@ -1,0 +1,473 @@
+trace	cards	label	groups_per_pass	ms_per_pass
+verify-r1	cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.7004
+verify-r1	cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.6483
+verify-r1	cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	7.0020
+verify-r1	cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4182
+verify-r1	cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9382
+verify-r1	cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8723
+verify-r1	cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5265
+verify-r1	cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5723
+verify-r1	cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.4801
+verify-r1	cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4571
+verify-r1	cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3812
+verify-r1	cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.2976
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.2958
+verify-r1	cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1323
+verify-r1	cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.8209
+verify-r1	cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2505
+verify-r1	cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1531
+verify-r1	cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0592
+verify-r1	cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0281
+verify-r1	cards 0 to 7	FLASH_ATTN_EXT node	11.00	0.9465
+verify-r1	cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9284
+verify-r1	cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8307
+verify-r1	cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7700
+verify-r1	cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7481
+verify-r1	cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7197
+verify-r1	cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7133
+verify-r1	cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.7016
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.6055
+verify-r1	cards 0 to 7	RMS_NORM+MUL node	95.00	0.6050
+verify-r1	cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5545
+verify-r1	cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5248
+verify-r1	cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5071
+verify-r1	cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.4944
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4539
+verify-r1	cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4345
+verify-r1	cards 0 to 7	MUL gate	35.00	0.3925
+verify-r1	cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3912
+verify-r1	cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3749
+verify-r1	cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3676
+verify-r1	cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3558
+verify-r1	cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3244
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3172
+verify-r1	cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3116
+verify-r1	cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.2944
+verify-r1	cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2833
+verify-r1	cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2806
+verify-r1	cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2654
+verify-r1	cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2635
+verify-r1	cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2557
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2301
+verify-r1	cards 0 to 7	SOFTPLUS a_softplus	35.00	0.2277
+verify-r1	cards 0 to 7	CONT ple_conv1d	4.00	0.2212
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2036
+verify-r1	cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1974
+verify-r1	cards 0 to 7	ADD node	73.00	0.1970
+verify-r1	cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1926
+verify-r1	cards 0 to 7	GET_ROWS node	23.00	0.1844
+verify-r1	cards 0 to 7	SCALE node	105.00	0.1802
+verify-r1	cards 0 to 7	SILU node	93.00	0.1692
+verify-r1	cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1665
+verify-r1	cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1654
+verify-r1	cards 0 to 7	CPY hop_wide	7.00	0.1545
+verify-r1	cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1496
+verify-r1	cards 0 to 7	CONCAT node	12.00	0.1461
+verify-r1	cards 0 to 7	CONT gate_reshaped	11.00	0.1447
+verify-r1	cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1445
+verify-r1	cards 0 to 7	ADD ffn_out	46.00	0.1407
+verify-r1	cards 0 to 7	TOP_K indexer_top_k	11.00	0.1336
+verify-r1	cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1305
+verify-r1	cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1244
+verify-r1	cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1240
+verify-r1	cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1219
+verify-r1	cards 0 to 7	CPY hop_narrow	8.00	0.1199
+verify-r1	cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1144
+verify-r1	cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1084
+verify-r1	cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1061
+verify-r1	cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	0.1041
+verify-r1	cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1018
+verify-r1	cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0912
+verify-r1	cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0873
+verify-r1	cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.0815
+verify-r1	cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0782
+verify-r1	cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0749
+verify-r1	cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0684
+verify-r1	cards 0 to 7	SET_ROWS cache_ple_r_l1_(view)_(view)	1.00	0.0682
+verify-r1	cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0681
+verify-r1	cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0662
+verify-r1	cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0645
+verify-r1	cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0617
+verify-r1	cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0612
+verify-r1	cards 0 to 7	FILL node	33.00	0.0593
+verify-r1	cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0487
+verify-r1	cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0394
+verify-r1	cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0389
+verify-r1	cards 0 to 7	ROPE Qcur	11.00	0.0368
+verify-r1	cards 0 to 7	MUL node	6.00	0.0344
+verify-r1	cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0330
+verify-r1	cards 0 to 7	ROPE node	11.00	0.0285
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0250
+verify-r1	cards 0 to 7	ROPE indexer_q	11.00	0.0218
+verify-r1	cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0194
+verify-r1	cards 0 to 7	REPEAT hc_init	1.00	0.0118
+verify-r1	cards 0 to 7	MUL ple_gated_value	1.00	0.0115
+verify-r1	cards 0 to 7	CPY ple_conv1d	4.00	0.0112
+verify-r1	cards 0 to 7	SIGMOID ple_gate	1.00	0.0093
+verify-r1	cards 0 to 7	REPEAT node	1.00	0.0056
+verify-r1	cards 0 to 7	SQRT node	1.00	0.0044
+verify-r1	cards 0 to 7	ARANGE node	1.00	0.0041
+verify-r1	cards 0 to 7	SGN node	1.00	0.0038
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0032
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0031
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0031
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0030
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0030
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0030
+verify-r1	cards 0 to 7	CONT _(cont)	1.00	0.0029
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0028
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0028
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0027
+verify-r1	cards 0 to 7	CPY s_slot_rev	1.00	0.0027
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0027
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0026
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0026
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0026
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0026
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0026
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0025
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0025
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0025
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0025
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0024
+verify-r1	cards 0 to 7	SUM_ROWS node	1.00	0.0022
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0022
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0021
+verify-r1	cards 0 to 7	ABS node	1.00	0.0018
+verify-r1	cards 0 to 7	CLAMP node	1.00	0.0016
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0011
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0011
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0008
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0007
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0005
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0005
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0004
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0010
+verify-r1	cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0012
+verify-r1	cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0020
+verify-r1	card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.0982
+verify-r1	card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5476
+verify-r1	card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3465
+verify-r1	card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3076
+verify-r1	card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2944
+verify-r1	card 8	TOP_K top_k	4.00	0.2927
+verify-r1	card 8	GATED_DELTA_NET+CPY node	1.00	0.2563
+verify-r1	card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2396
+verify-r1	card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2274
+verify-r1	card 8	PAD node	1.00	0.2161
+verify-r1	card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1881
+verify-r1	card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1226
+verify-r1	card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1094
+verify-r1	card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1074
+verify-r1	card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1059
+verify-r1	card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1023
+verify-r1	card 8	FLASH_ATTN_EXT node	1.00	0.0876
+verify-r1	card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0560
+verify-r1	card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0544
+verify-r1	card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0539
+verify-r1	card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0488
+verify-r1	card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0457
+verify-r1	card 8	GET_ROWS node	11.00	0.0426
+verify-r1	card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0418
+verify-r1	card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0415
+verify-r1	card 8	MUL gate	1.00	0.0404
+verify-r1	card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0399
+verify-r1	card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0393
+verify-r1	card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0387
+verify-r1	card 8	SIGMOID beta_sigmoid	1.00	0.0380
+verify-r1	card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0374
+verify-r1	card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0296
+verify-r1	card 8	RMS_NORM+MUL node	5.00	0.0294
+verify-r1	card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0293
+verify-r1	card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0284
+verify-r1	card 8	SOFTPLUS a_softplus	1.00	0.0246
+verify-r1	card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0233
+verify-r1	card 8	DSV4_HC_PRE hc_mixed	4.00	0.0231
+verify-r1	card 8	CPY hop_wide	1.00	0.0222
+verify-r1	card 8	ADD node	7.00	0.0202
+verify-r1	card 8	GDN_CONV+CPY gdn_conv	1.00	0.0173
+verify-r1	card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0170
+verify-r1	card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0169
+verify-r1	card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0142
+verify-r1	card 8	RMS_NORM+MUL norm	4.00	0.0142
+verify-r1	card 8	CONT gate_reshaped	1.00	0.0141
+verify-r1	card 8	SCALE node	6.00	0.0135
+verify-r1	card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0132
+verify-r1	card 8	TOP_K indexer_top_k	1.00	0.0129
+verify-r1	card 8	SILU node	5.00	0.0117
+verify-r1	card 8	GET_ROWS top_k_rows	4.00	0.0106
+verify-r1	card 8	LIGHTNING_INDEXER indexer_score	1.00	0.0100
+verify-r1	card 8	GET_ROWS top_p_candidates	4.00	0.0100
+verify-r1	card 8	FILL node	3.00	0.0096
+verify-r1	card 8	SCALE top_p_ones	4.00	0.0094
+verify-r1	card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0090
+verify-r1	card 8	GET_ROWS greedy_sampled_token	4.00	0.0085
+verify-r1	card 8	ARGMAX greedy_argmax	4.00	0.0085
+verify-r1	card 8	TOP_K_MASK indexer_sel	1.00	0.0081
+verify-r1	card 8	SUM top_p_index_f32	4.00	0.0081
+verify-r1	card 8	ADD ffn_out	2.00	0.0075
+verify-r1	card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0073
+verify-r1	card 8	SET_ROWS h_nextn_dev_(view)	1.00	0.0068
+verify-r1	card 8	MUL ffn_shexp_gated	2.00	0.0066
+verify-r1	card 8	SIGMOID+MUL node	1.00	0.0065
+verify-r1	card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0061
+verify-r1	card 8	ADD top_p_logits	4.00	0.0060
+verify-r1	card 8	STEP top_p_mask	4.00	0.0060
+verify-r1	card 8	CPY _(copy)	4.00	0.0059
+verify-r1	card 8	SCALE top_p_cdf_scaled	4.00	0.0057
+verify-r1	card 8	SWIGLU ffn_swiglu	2.00	0.0055
+verify-r1	card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0053
+verify-r1	card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0052
+verify-r1	card 8	ARGMAX temp_max_idx	4.00	0.0051
+verify-r1	card 8	SOFT_MAX top_p_softmax	4.00	0.0051
+verify-r1	card 8	CUMSUM top_p_cdf	4.00	0.0049
+verify-r1	card 8	LOG top_p_bias	4.00	0.0048
+verify-r1	card 8	GET_ROWS top_p_sorted_logits	4.00	0.0048
+verify-r1	card 8	ROPE Qcur	1.00	0.0047
+verify-r1	card 8	CLAMP node	4.00	0.0045
+verify-r1	card 8	ARGSORT top_p_sorted_idx	4.00	0.0044
+verify-r1	card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0038
+verify-r1	card 8	ROPE+SET_ROWS Kcur	1.00	0.0035
+verify-r1	card 8	ROPE node	1.00	0.0032
+verify-r1	card 8	ROPE indexer_q	1.00	0.0029
+verify-r1	card 8	CONCAT node	1.00	0.0029
+verify-r1	card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0028
+verify-r1	card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0028
+verify-r1	card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0028
+verify-r1	card 8	SCALE result_norm	1.00	0.0027
+verify-r2	cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	40.00	10.6988
+verify-r2	cards 0 to 7	GATED_DELTA_NET+CPY node	35.00	8.6424
+verify-r2	cards 0 to 7	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	46.00	6.9952
+verify-r2	cards 0 to 7	MUL_MAT attn_qkv:q3_K:2560x10240	18.00	5.4195
+verify-r2	cards 0 to 7	MUL_MAT attn_gate:q3_K:2560x6144	25.00	4.9421
+verify-r2	cards 0 to 7	MUL_MAT ssm_out:iq4_xs:6144x2560	17.00	3.8702
+verify-r2	cards 0 to 7	MUL_MAT attn_qkv:iq4_xs:2560x10240	12.00	3.5226
+verify-r2	cards 0 to 7	MUL_MAT hc_attn_down:bf16:10240x320	46.00	2.5670
+verify-r2	cards 0 to 7	MUL_MAT hc_attn_up:bf16:320x10240	46.00	2.4895
+verify-r2	cards 0 to 7	MUL_MAT hc_ffn_up:bf16:320x10240	46.00	2.4553
+verify-r2	cards 0 to 7	MUL_MAT hc_ffn_down:bf16:10240x320	46.00	2.3800
+verify-r2	cards 0 to 7	MUL_MAT ssm_out:q4_K:6144x2560	10.00	2.2998
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_inp:f32:2560x512	46.00	2.2977
+verify-r2	cards 0 to 7	MUL_MAT attn_q:q3_K:2560x12288	6.00	2.1321
+verify-r2	cards 0 to 7	MUL_MAT_ID+MUL_MAT_ID+SWIGLU+MUL_MAT+MUL_MAT+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640 ffn_gate_shexp:q2_0:2560x640 ffn_up_shexp:q2_0:2560x640	6.00	1.8157
+verify-r2	cards 0 to 7	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	92.00	1.2668
+verify-r2	cards 0 to 7	MUL_MAT attn_qkv:q4_K:2560x10240	4.00	1.1537
+verify-r2	cards 0 to 7	MUL_MAT attn_output:q6_K:6144x2560	4.00	1.0557
+verify-r2	cards 0 to 7	MUL_MAT attn_q:iq4_xs:2560x12288	3.00	1.0254
+verify-r2	cards 0 to 7	FLASH_ATTN_EXT node	11.00	0.9387
+verify-r2	cards 0 to 7	MUL_MAT attn_output:q4_K:6144x2560	4.00	0.9287
+verify-r2	cards 0 to 7	MUL_MAT ssm_out:q3_K:6144x2560	3.00	0.8313
+verify-r2	cards 0 to 7	MUL_MAT attn_gate:iq4_xs:2560x6144	4.00	0.7702
+verify-r2	cards 0 to 7	GDN_CONV+CPY gdn_conv	35.00	0.7319
+verify-r2	cards 0 to 7	MUL_MAT attn_output:q5_K:6144x2560	3.00	0.7202
+verify-r2	cards 0 to 7	MUL_MAT ssm_out:q5_K:6144x2560	3.00	0.7133
+verify-r2	cards 0 to 7	MUL_MAT ffn_up_shexp:q3_K:2560x640	20.00	0.6993
+verify-r2	cards 0 to 7	RMS_NORM+MUL node	95.00	0.6012
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	46.00	0.5939
+verify-r2	cards 0 to 7	MUL_MAT ffn_down_shexp:q4_0:640x2560	15.00	0.5566
+verify-r2	cards 0 to 7	MUL_MAT ssm_out:q6_K:6144x2560	2.00	0.5246
+verify-r2	cards 0 to 7	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	46.00	0.5200
+verify-r2	cards 0 to 7	DSV4_HC_PRE hc_mixed	92.00	0.4951
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_shexp:q3_K:2560x640	12.00	0.4551
+verify-r2	cards 0 to 7	MUL_MAT attn_gate:q2_0:2560x6144	4.00	0.4318
+verify-r2	cards 0 to 7	MUL_MAT attn_q:q2_0:2560x12288	2.00	0.3907
+verify-r2	cards 0 to 7	MUL gate	35.00	0.3890
+verify-r2	cards 0 to 7	MUL_MAT attn_gate:q4_K:2560x6144	2.00	0.3741
+verify-r2	cards 0 to 7	MUL_MAT hc_ffn_inject:bf16:10240x4	46.00	0.3706
+verify-r2	cards 0 to 7	MUL_MAT hc_attn_inject:bf16:10240x4	46.00	0.3703
+verify-r2	cards 0 to 7	MUL_MAT ffn_down_shexp:q2_0:640x2560	16.00	0.3226
+verify-r2	cards 0 to 7	MUL_MAT indexer.q_proj:bf16:2560x512	11.00	0.3106
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_shexp:q2_0:2560x640	15.00	0.3092
+verify-r2	cards 0 to 7	MUL_MAT ffn_down_shexp:q5_0:640x2560	7.00	0.2835
+verify-r2	cards 0 to 7	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	46.00	0.2830
+verify-r2	cards 0 to 7	MUL_MAT ssm_alpha:bf16:2560x48	35.00	0.2734
+verify-r2	cards 0 to 7	MUL_MAT ssm_beta:bf16:2560x48	35.00	0.2718
+verify-r2	cards 0 to 7	MUL_MAT ffn_down_shexp:iq4_nl:640x2560	7.00	0.2698
+verify-r2	cards 0 to 7	RMS_NORM+MUL+SIGMOID+MUL norm	35.00	0.2470
+verify-r2	cards 0 to 7	SOFTPLUS a_softplus	35.00	0.2313
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_shexp:iq4_xs:2560x640	6.00	0.2280
+verify-r2	cards 0 to 7	CONT ple_conv1d	4.00	0.2224
+verify-r2	cards 0 to 7	ADD node	73.00	0.2212
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_shexp:q4_K:2560x640	6.00	0.2028
+verify-r2	cards 0 to 7	MUL_MAT ffn_up_shexp:q4_K:2560x640	6.00	0.1983
+verify-r2	cards 0 to 7	GET_ROWS node	23.00	0.1922
+verify-r2	cards 0 to 7	MUL_MAT ffn_up_shexp:iq4_xs:2560x640	5.00	0.1889
+verify-r2	cards 0 to 7	SCALE node	105.00	0.1837
+verify-r2	cards 0 to 7	SILU node	93.00	0.1756
+verify-r2	cards 0 to 7	MUL_MAT ple_key:q2_0:2560x10240	1.00	0.1688
+verify-r2	cards 0 to 7	MUL_MAT attn_qkv:q2_0:2560x10240	1.00	0.1671
+verify-r2	cards 0 to 7	CPY hop_wide	7.00	0.1549
+verify-r2	cards 0 to 7	MUL_MAT indexer.k_proj:bf16:2560x128	11.00	0.1501
+verify-r2	cards 0 to 7	CONT gate_reshaped	11.00	0.1439
+verify-r2	cards 0 to 7	ADD ffn_out	46.00	0.1430
+verify-r2	cards 0 to 7	CONCAT node	12.00	0.1424
+verify-r2	cards 0 to 7	MUL_MAT ffn_up_shexp:q2_0:2560x640	7.00	0.1385
+verify-r2	cards 0 to 7	TOP_K indexer_top_k	11.00	0.1366
+verify-r2	cards 0 to 7	MUL_MAT attn_v:q6_K:2560x512	3.00	0.1313
+verify-r2	cards 0 to 7	MUL_MAT attn_k:iq4_xs:2560x512	4.00	0.1244
+verify-r2	cards 0 to 7	CPY hop_narrow	8.00	0.1208
+verify-r2	cards 0 to 7	SIGMOID beta_sigmoid	35.00	0.1180
+verify-r2	cards 0 to 7	MUL ffn_shexp_gated	46.00	0.1173
+verify-r2	cards 0 to 7	MUL_MAT attn_k:q3_K:2560x512	3.00	0.1139
+verify-r2	cards 0 to 7	MUL_MAT attn_v:iq4_xs:2560x512	3.00	0.1087
+verify-r2	cards 0 to 7	MUL_MAT ple_value:bf16:2560x2560	1.00	0.1086
+verify-r2	cards 0 to 7	RMS_NORM+MUL norm	44.00	0.1084
+verify-r2	cards 0 to 7	LIGHTNING_INDEXER indexer_score	11.00	0.0995
+verify-r2	cards 0 to 7	CONT node_(view)_(transposed)_(cont)	4.00	0.0877
+verify-r2	cards 0 to 7	TOP_K_MASK indexer_sel	11.00	0.0866
+verify-r2	cards 0 to 7	SIGMOID shared_expert_gate_sigmoid	46.00	0.0842
+verify-r2	cards 0 to 7	SWIGLU ffn_swiglu	40.00	0.0784
+verify-r2	cards 0 to 7	MUL_MAT attn_v:q5_K:2560x512	2.00	0.0782
+verify-r2	cards 0 to 7	SET_ROWS cache_ple_r_l1_(view)_(view)	1.00	0.0684
+verify-r2	cards 0 to 7	MUL_MAT attn_k:q5_K:2560x512	2.00	0.0679
+verify-r2	cards 0 to 7	MUL_MAT attn_k:q4_K:2560x512	2.00	0.0660
+verify-r2	cards 0 to 7	MUL_MAT attn_v:q4_K:2560x512	2.00	0.0649
+verify-r2	cards 0 to 7	CONT _(reshaped)_(view)_(cont)	11.00	0.0647
+verify-r2	cards 0 to 7	MUL_MAT ffn_up_shexp:q6_K:2560x640	1.00	0.0616
+verify-r2	cards 0 to 7	MUL_MAT ffn_gate_shexp:q6_K:2560x640	1.00	0.0610
+verify-r2	cards 0 to 7	FILL node	33.00	0.0503
+verify-r2	cards 0 to 7	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0491
+verify-r2	cards 0 to 7	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0393
+verify-r2	cards 0 to 7	MUL_MAT attn_v:q3_K:2560x512	1.00	0.0388
+verify-r2	cards 0 to 7	ROPE Qcur	11.00	0.0365
+verify-r2	cards 0 to 7	MUL node	6.00	0.0359
+verify-r2	cards 0 to 7	SIGMOID+MUL gate_sigmoid	11.00	0.0300
+verify-r2	cards 0 to 7	ROPE node	11.00	0.0288
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)	1.00	0.0288
+verify-r2	cards 0 to 7	ROPE indexer_q	11.00	0.0217
+verify-r2	cards 0 to 7	ROPE+SET_ROWS Kcur	11.00	0.0188
+verify-r2	cards 0 to 7	CPY ple_conv1d	4.00	0.0127
+verify-r2	cards 0 to 7	REPEAT node	1.00	0.0121
+verify-r2	cards 0 to 7	REPEAT hc_init	1.00	0.0117
+verify-r2	cards 0 to 7	MUL ple_gated_value	1.00	0.0070
+verify-r2	cards 0 to 7	SIGMOID ple_gate	1.00	0.0054
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)	1.00	0.0041
+verify-r2	cards 0 to 7	CLAMP node	1.00	0.0039
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l3_(view)	1.00	0.0036
+verify-r2	cards 0 to 7	ARANGE node	1.00	0.0032
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)_(view)	1.00	0.0031
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l19_(view)	1.00	0.0031
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l31_(view)	1.00	0.0031
+verify-r2	cards 0 to 7	CPY s_slot_rev	1.00	0.0030
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)_(view)	1.00	0.0029
+verify-r2	cards 0 to 7	CONT _(cont)	1.00	0.0028
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)	1.00	0.0028
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)	1.00	0.0027
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)	1.00	0.0027
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)_(view)	1.00	0.0027
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l35_(view)_(view)	1.00	0.0027
+verify-r2	cards 0 to 7	SGN node	1.00	0.0027
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l7_(view)	1.00	0.0027
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l7_(view)	1.00	0.0027
+verify-r2	cards 0 to 7	SQRT node	1.00	0.0027
+verify-r2	cards 0 to 7	ABS node	1.00	0.0027
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l3_(view)_(view)	1.00	0.0026
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l31_(view)_(view)	1.00	0.0026
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l19_(view)	1.00	0.0026
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l39_(view)	1.00	0.0026
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l11_(view)_(view)	1.00	0.0026
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)	1.00	0.0025
+verify-r2	cards 0 to 7	SUM_ROWS node	1.00	0.0025
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l35_(view)	1.00	0.0025
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l23_(view)_(view)	1.00	0.0024
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)	1.00	0.0024
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l15_(view)_(view)	1.00	0.0014
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l43_(view)_(view)	1.00	0.0010
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l23_(view)	1.00	0.0007
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l39_(view)	1.00	0.0005
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l15_(view)	1.00	0.0005
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l43_(view)	1.00	0.0005
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l11_(view)	1.00	0.0004
+verify-r2	cards 0 to 7	SET_ROWS cache_v_l27_(view)	1.00	-0.0010
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)	1.00	-0.0010
+verify-r2	cards 0 to 7	SET_ROWS cache_idx_k_l27_(view)_(view)	1.00	-0.0020
+verify-r2	card 8	MUL_MAT output:q5_K:2560x248320	1.00	8.1041
+verify-r2	card 8	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	2.00	0.5486
+verify-r2	card 8	MUL_MAT attn_q:iq4_xs:2560x12288	1.00	0.3461
+verify-r2	card 8	MUL_MAT_ID ffn_down_exps:q2_0:640x2560	2.00	0.3088
+verify-r2	card 8	TOP_K top_k	4.00	0.2947
+verify-r2	card 8	MUL_MAT attn_qkv:iq4_xs:2560x10240	1.00	0.2928
+verify-r2	card 8	GATED_DELTA_NET+CPY node	1.00	0.2597
+verify-r2	card 8	MUL_MAT attn_output:q5_K:6144x2560	1.00	0.2400
+verify-r2	card 8	MUL_MAT ssm_out:q4_K:6144x2560	1.00	0.2274
+verify-r2	card 8	PAD node	1.00	0.2163
+verify-r2	card 8	MUL_MAT attn_gate:q4_K:2560x6144	1.00	0.1885
+verify-r2	card 8	MUL_MAT hc_attn_down:bf16:10240x320	2.00	0.1243
+verify-r2	card 8	MUL_MAT hc_ffn_up:bf16:320x10240	2.00	0.1094
+verify-r2	card 8	MUL_MAT hc_attn_up:bf16:320x10240	2.00	0.1074
+verify-r2	card 8	MUL_MAT hc_ffn_down:bf16:10240x320	2.00	0.1059
+verify-r2	card 8	MUL_MAT ffn_gate_inp:f32:2560x512	2.00	0.1019
+verify-r2	card 8	FLASH_ATTN_EXT node	1.00	0.0869
+verify-r2	card 8	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	4.00	0.0579
+verify-r2	card 8	MUL_MAT output_hc_up:bf16:320x10240	1.00	0.0546
+verify-r2	card 8	MUL_MAT output_hc_down:bf16:10240x320	1.00	0.0539
+verify-r2	card 8	MUL gate	1.00	0.0527
+verify-r2	card 8	MUL_MAT ffn_down_shexp:q8_0:640x2560	1.00	0.0494
+verify-r2	card 8	MUL_MAT attn_k:q6_K:2560x512	1.00	0.0459
+verify-r2	card 8	MUL_MAT ffn_gate_shexp:q5_K:2560x640	1.00	0.0417
+verify-r2	card 8	MUL_MAT ffn_up_shexp:q5_K:2560x640	1.00	0.0416
+verify-r2	card 8	GET_ROWS node	11.00	0.0410
+verify-r2	card 8	MUL_MAT attn_v:q5_K:2560x512	1.00	0.0399
+verify-r2	card 8	MUL_MAT ffn_gate_shexp:q3_K:2560x640	1.00	0.0393
+verify-r2	card 8	MUL_MAT ffn_up_shexp:q3_K:2560x640	1.00	0.0389
+verify-r2	card 8	MUL_MAT ffn_down_shexp:q4_0:640x2560	1.00	0.0375
+verify-r2	card 8	SIGMOID beta_sigmoid	1.00	0.0340
+verify-r2	card 8	RMS_NORM+MUL node	5.00	0.0331
+verify-r2	card 8	MUL_MAT indexer.q_proj:bf16:2560x512	1.00	0.0290
+verify-r2	card 8	MUL_MAT ffn_gate_inp_shexp:f32:2560x1	2.00	0.0282
+verify-r2	card 8	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	2.00	0.0239
+verify-r2	card 8	MUL_MAT ssm_beta:bf16:2560x48	1.00	0.0237
+verify-r2	card 8	ADD node	7.00	0.0231
+verify-r2	card 8	CPY hop_wide	1.00	0.0227
+verify-r2	card 8	DSV4_HC_PRE hc_mixed	4.00	0.0226
+verify-r2	card 8	GDN_CONV+CPY gdn_conv	1.00	0.0188
+verify-r2	card 8	MUL_MAT hc_ffn_inject:bf16:10240x4	2.00	0.0177
+verify-r2	card 8	MUL_MAT hc_attn_inject:bf16:10240x4	2.00	0.0174
+verify-r2	card 8	SOFTPLUS a_softplus	1.00	0.0170
+verify-r2	card 8	SCALE node	6.00	0.0144
+verify-r2	card 8	RMS_NORM+MUL norm	4.00	0.0142
+verify-r2	card 8	MUL_MAT indexer.k_proj:bf16:2560x128	1.00	0.0142
+verify-r2	card 8	GET_ROWS top_p_candidates	4.00	0.0142
+verify-r2	card 8	CONT gate_reshaped	1.00	0.0140
+verify-r2	card 8	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	2.00	0.0134
+verify-r2	card 8	TOP_K indexer_top_k	1.00	0.0126
+verify-r2	card 8	SILU node	5.00	0.0111
+verify-r2	card 8	LIGHTNING_INDEXER indexer_score	1.00	0.0103
+verify-r2	card 8	GET_ROWS top_k_rows	4.00	0.0086
+verify-r2	card 8	TOP_K_MASK indexer_sel	1.00	0.0082
+verify-r2	card 8	ARGSORT top_p_sorted_idx	4.00	0.0082
+verify-r2	card 8	ADD top_p_logits	4.00	0.0080
+verify-r2	card 8	RMS_NORM+MUL+SIGMOID+MUL norm	1.00	0.0080
+verify-r2	card 8	FILL node	3.00	0.0078
+verify-r2	card 8	SUM top_p_index_f32	4.00	0.0078
+verify-r2	card 8	GET_ROWS top_p_sorted_logits	4.00	0.0076
+verify-r2	card 8	ARGMAX greedy_argmax	4.00	0.0074
+verify-r2	card 8	MUL_MAT ssm_alpha:bf16:2560x48	1.00	0.0073
+verify-r2	card 8	SET_ROWS h_nextn_dev_(view)	1.00	0.0069
+verify-r2	card 8	ARGMAX temp_max_idx	4.00	0.0067
+verify-r2	card 8	GET_ROWS greedy_sampled_token	4.00	0.0066
+verify-r2	card 8	LOG top_p_bias	4.00	0.0065
+verify-r2	card 8	ADD ffn_out	2.00	0.0064
+verify-r2	card 8	MUL ffn_shexp_gated	2.00	0.0064
+verify-r2	card 8	SIGMOID+MUL node	1.00	0.0063
+verify-r2	card 8	SOFT_MAX top_p_softmax	4.00	0.0058
+verify-r2	card 8	SWIGLU ffn_swiglu	2.00	0.0056
+verify-r2	card 8	CONT _(reshaped)_(view)_(cont)	2.00	0.0054
+verify-r2	card 8	CPY _(copy)	4.00	0.0052
+verify-r2	card 8	SIGMOID shared_expert_gate_sigmoid	2.00	0.0050
+verify-r2	card 8	STEP top_p_mask	4.00	0.0049
+verify-r2	card 8	ROPE Qcur	1.00	0.0045
+verify-r2	card 8	CLAMP node	4.00	0.0044
+verify-r2	card 8	SET_ROWS top_p_mask_(reshaped)_(view)	4.00	0.0041
+verify-r2	card 8	SCALE top_p_ones	4.00	0.0040
+verify-r2	card 8	SIGMOID+MUL gate_sigmoid	1.00	0.0040
+verify-r2	card 8	CUMSUM top_p_cdf	4.00	0.0039
+verify-r2	card 8	SCALE top_p_cdf_scaled	4.00	0.0038
+verify-r2	card 8	ROPE+SET_ROWS Kcur	1.00	0.0034
+verify-r2	card 8	ROPE node	1.00	0.0033
+verify-r2	card 8	ROPE indexer_q	1.00	0.0032
+verify-r2	card 8	CONCAT node	1.00	0.0031
+verify-r2	card 8	SET_ROWS cache_idx_k_l47_(view)	1.00	0.0028
+verify-r2	card 8	SET_ROWS cache_v_l47_(view)	1.00	0.0028
+verify-r2	card 8	SCALE result_norm	1.00	0.0028
+verify-r2	card 8	SET_ROWS cache_idx_k_l47_(view)_(view)	1.00	0.0028
