@@ -1,0 +1,61 @@
+build	switch	seed	model arch.	config	checkpoint	prompt	drafts	end	ckpt spec	waited off/on	status
+rig	unset	1	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	1	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	1	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	1	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	1	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	2	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	2	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	2	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	2	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	2	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	3	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	3	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	3	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	3	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+rig	unset	3	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+rig	1	1	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	1	1	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+rig	1	1	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	1	1	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+rig	1	1	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+rig	1	2	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	1	2	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+rig	1	2	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	1	2	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+rig	1	2	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+rig	1	3	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	1	3	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+rig	1	3	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+rig	1	3	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+rig	1	3	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	1	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	1	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	1	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	1	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	1	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	2	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	2	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	2	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	2	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	2	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	3	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	3	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	3	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	3	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+cpu	unset	3	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	1	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	1	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	1	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	1	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	1	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	2	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	2	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	2	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	2	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	2	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	3	qwen4exp	f16 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	3	qwen4exp	f16	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	3	qwen4exp	q8_0 fa	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	3	qwen4exp	f16 fa kv-only	identical	identical	identical	identical	identical	0/4	OK
+cpu	1	3	qwen4exp	f16 fa host	identical	identical	identical	identical	identical	0/4	OK

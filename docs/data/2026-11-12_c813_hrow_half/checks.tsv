@@ -1,0 +1,73 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c813	OK	tip cb1ae3145 (C813: --mtp-hrow-lazy writes a step's halves after ';', so the table's cells stay whole); files changed against the base:  4 files changed, 510 insertions(+), 3 deletions(-); under ggml/: 0
+rig	build	OK	rc=0; llama.cpp-20261112-cb1ae3145-pascal-p106-v4-b12246-c813.tar.gz md5 db7f414713ea4948bc67b7938bc122ed, 744359212 B; commit: cb1ae3145d864f5b95dcc1f2813f5ce485366f48 (2026-11-12 20:49:18 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 ba21f738bf206534c74a999277df2f59; llama-server md5 799ca051b3f2a923aff0b3f1a138b0d1; test-llama-archs in bin/: yes; 34 warning lines
+names	switch list	OK	868 names in the build's list; LLAMA_MTP_HROW_LAZY in it: 1; lines of bin/llama-server and lib/ holding it: 4
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	DIFFERS	8540 functions (8540 in the base's); dumps: files differ; merged 8540 functions: base 8530; listed 10; NEW: _Z15flash_attn_tileILi128ELi128ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi128ELi128ELi1ELi2ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi128ELi128ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi128ELi128ELi2ELi1ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi1ELi2ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi2ELi1ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi64ELi64ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi64ELi64ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;
+cpu	build	OK	rc=0; commit cb1ae3145d864f5b95dcc1f2813f5ce485366f48 C813: --mtp-hrow-lazy writes a step's halves after ';', so the table's cells stay whole; static, every target; 3 warning lines, 0 error lines
+lazy	rig-hrow -s 1	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed
+lazy	rig-hrow -s 2	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed
+lazy	rig-hrow -s 3	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed
+lazy	rig-overlap -s 1	OK	rc=0; no switch; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	rig-overlap -s 2	OK	rc=0; no switch; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	rig-overlap -s 3	OK	rc=0; no switch; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	rig-overlap-lazy -s 1	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	rig-overlap-lazy -s 2	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	rig-overlap-lazy -s 3	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-hrow -s 1	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed
+lazy	cpu-hrow -s 2	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed
+lazy	cpu-hrow -s 3	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed
+lazy	cpu-overlap -s 1	OK	rc=0; no switch; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-overlap -s 2	OK	rc=0; no switch; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-overlap -s 3	OK	rc=0; no switch; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-overlap-lazy -s 1	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-overlap-lazy -s 2	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-overlap-lazy -s 3	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-catchup-overlap; Summary: all 5 test(s) passed
+lazy	cpu-incall-lazy -s 1	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-incall-overlap; Summary: all 5 test(s) passed
+lazy	cpu-hdev-lazy -s 1	OK	rc=0; LLAMA_MTP_HROW_LAZY=1; --mtp-h-dev; Summary: all 5 test(s) passed
+off	base writes	OK	rc=0; <b9a1c1fa7 CPU build>: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	lazy1	SAME	rc=0; LLAMA_MTP_HROW_LAZY=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	lazy2	SAME	rc=0; LLAMA_MTP_HROW_LAZY=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c565 static	c813 tree	OK	commit cb1ae3145d864f5b95dcc1f2813f5ce485366f48 
+c565 static	c813 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c813 ctest	OK	100% tests passed, 0 tests failed out of 71; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c813 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c813 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c813 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c813 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c813 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c813 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c813 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c813 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c813 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c813 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c813 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c813 hand thread-safety	OK	test-thread-safety rc=0: 0.00.046.858 I All threads finished without errors.
+c565 static	c813 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c813 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.214830
+c565 shared	c813 tree	OK	commit cb1ae3145d864f5b95dcc1f2813f5ce485366f48 
+c565 shared	c813 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c813 ctest	OK	100% tests passed, 0 tests failed out of 71; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c813 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c813 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c813 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c813 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c813 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c813 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c813 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c813 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c813 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c813 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c813 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c813 hand thread-safety	OK	test-thread-safety rc=0: 0.00.029.339 I All threads finished without errors.
+c565 shared	c813 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c813 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -0.956891
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 6.5G in <work root>; 535 GB free
+start	pascal-p106-v4-b12246-c813	OK	tip cb1ae3145 (C813: --mtp-hrow-lazy writes a step's halves after ';', so the table's cells stay whole); files changed against the base:  4 files changed, 510 insertions(+), 3 deletions(-); under ggml/: 0
+merged	pascal-p106-v4	OK	65ac9a47d (Merge -c813 (C813: LLAMA_MTP_HROW_LAZY=1, with LLAMA_MTP_CATCHUP_OVERLAP the MTP hidden-row buffer keeps one half until ); merges since the base: 3; 65ac9a47d Merge -c813 (C813: LLAMA_MTP_HROW_LAZY=1, with LLA;e572eb1e6 Merge -c817 (C817: at GGML_CUDA_KEEPALIVE_EAGER 1 ;14710289b Merge -c815 (C815: LLAMA_SPEC_ADAPT_ONLINE=1|2 tak;
+merged	cpu build	OK	rc=0; 65ac9a47d; static, every target; 3 warning lines, 0 error lines
+moff	base writes	OK	rc=0; <b9a1c1fa7 CPU build>: 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	merged-lazy1	SAME	rc=0; LLAMA_MTP_HROW_LAZY=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+lazy	merged-hrow -s 1	OK	rc=0; no switch; --mtp-hrow-lazy; Summary: all 25 test(s) passed

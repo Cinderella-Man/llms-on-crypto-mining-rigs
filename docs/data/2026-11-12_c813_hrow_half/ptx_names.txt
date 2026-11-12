@@ -1,0 +1,11 @@
+lines: new 10670256, base 10670256
+differing lines: 70
+their internal names (with the number after the hash):
+     14 _cu_8a22d1c2_482320
+     14 _cu_8a22d1c2_487420
+      7 _cu_8a22d1c2_503420
+     14 _cu_b8226404_479820
+     14 _cu_b8226404_485820
+      7 _cu_b8226404_501120
+masked md5: new 80551b469e1173101aab20a1fb7ebee5, base 80551b469e1173101aab20a1fb7ebee5
+verdict: SAME

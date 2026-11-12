@@ -1,0 +1,151 @@
+build	seed	model arch.	config	arm	checkpoint	prompt	drafts	end	ckpt spec	waited	halves	status
+rig	1	qwen4exp	f16 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	1	qwen4exp	f16 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	1	qwen4exp	f16	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	q8_0 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	q8_0 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	q8_0 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	q8_0 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	1	qwen4exp	q8_0 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16 fa kv-only	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16 fa kv-only	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16 fa kv-only	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16 fa kv-only	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	1	qwen4exp	f16 fa kv-only	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16 fa host	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	1	qwen4exp	f16 fa host	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16 fa host	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	1	qwen4exp	f16 fa host	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	1	qwen4exp	f16 fa host	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	2	qwen4exp	f16 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	2	qwen4exp	f16	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	q8_0 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	q8_0 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	q8_0 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	q8_0 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	2	qwen4exp	q8_0 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16 fa kv-only	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16 fa kv-only	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16 fa kv-only	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16 fa kv-only	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	2	qwen4exp	f16 fa kv-only	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16 fa host	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	2	qwen4exp	f16 fa host	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16 fa host	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	2	qwen4exp	f16 fa host	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	2	qwen4exp	f16 fa host	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	3	qwen4exp	f16 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	3	qwen4exp	f16	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	q8_0 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	q8_0 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	q8_0 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	q8_0 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	3	qwen4exp	q8_0 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16 fa kv-only	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16 fa kv-only	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16 fa kv-only	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16 fa kv-only	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	3	qwen4exp	f16 fa kv-only	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16 fa host	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+rig	3	qwen4exp	f16 fa host	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16 fa host	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+rig	3	qwen4exp	f16 fa host	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+rig	3	qwen4exp	f16 fa host	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	1	qwen4exp	f16 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	1	qwen4exp	f16	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	q8_0 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	q8_0 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	q8_0 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	q8_0 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	1	qwen4exp	q8_0 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16 fa kv-only	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16 fa kv-only	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16 fa kv-only	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16 fa kv-only	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	1	qwen4exp	f16 fa kv-only	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16 fa host	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	1	qwen4exp	f16 fa host	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16 fa host	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	1	qwen4exp	f16 fa host	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	1	qwen4exp	f16 fa host	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	2	qwen4exp	f16 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	2	qwen4exp	f16	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	q8_0 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	q8_0 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	q8_0 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	q8_0 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	2	qwen4exp	q8_0 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16 fa kv-only	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16 fa kv-only	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16 fa kv-only	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16 fa kv-only	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	2	qwen4exp	f16 fa kv-only	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16 fa host	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	2	qwen4exp	f16 fa host	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16 fa host	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	2	qwen4exp	f16 fa host	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	2	qwen4exp	f16 fa host	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	3	qwen4exp	f16 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	3	qwen4exp	f16	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	q8_0 fa	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	q8_0 fa	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	q8_0 fa	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	q8_0 fa	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	3	qwen4exp	q8_0 fa	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16 fa kv-only	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16 fa kv-only	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16 fa kv-only	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16 fa kv-only	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	3	qwen4exp	f16 fa kv-only	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16 fa host	off	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
+cpu	3	qwen4exp	f16 fa host	on	identical	identical	identical	identical	identical	2	2;2;2 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16 fa host	lazy	identical	identical	identical	identical	identical	2	1;1;1 2,2,2;2;2 2;2	OK
+cpu	3	qwen4exp	f16 fa host	noroom	identical	identical	identical	identical	identical	0	1;1;1 1,1,1;1;1 1;1	OK
+cpu	3	qwen4exp	f16 fa host	off+lazy	identical	identical	identical	identical	identical	0	0;0;0 0,0,0;0;0 0;0	OK
