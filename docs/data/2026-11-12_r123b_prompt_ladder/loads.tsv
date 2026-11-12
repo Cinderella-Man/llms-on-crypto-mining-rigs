@@ -1,0 +1,7 @@
+load	start	up_s	replay_end	done	switches_set	checkpoint_lines	taper_lines	replay
+base	2026-11-12T16:26:52+01:00	226	2026-11-12T16:40:58+01:00	2026-11-12T16:41:06+01:00	26	315	150	short=600:64: 2 passes, 124 turns, 73586 prompt tokens in 487.8 s (150.9 tok/s); per pass 243.9 s
+embd	2026-11-12T16:41:39+01:00	226	2026-11-12T16:55:41+01:00	2026-11-12T16:55:50+01:00	27	315	150	short=600:64: 2 passes, 124 turns, 73586 prompt tokens in 484.9 s (151.8 tok/s); per pass 242.4 s
+sparse	2026-11-12T16:56:19+01:00	226	2026-11-12T17:10:21+01:00	2026-11-12T17:10:29+01:00	28	315	150	short=600:64: 2 passes, 124 turns, 73586 prompt tokens in 484.3 s (151.9 tok/s); per pass 242.2 s
+queues	2026-11-12T17:10:55+01:00	226	2026-11-12T17:24:57+01:00	2026-11-12T17:25:05+01:00	28	315	150	short=600:64: 2 passes, 124 turns, 73586 prompt tokens in 482.7 s (152.4 tok/s); per pass 241.4 s
+b4096	2026-11-12T17:25:37+01:00	226	2026-11-12T17:39:36+01:00	2026-11-12T17:39:44+01:00	28	315	146	short=600:64: 2 passes, 124 turns, 73586 prompt tokens in 477.1 s (154.2 tok/s); per pass 238.5 s
+base2	2026-11-12T17:40:13+01:00	226	2026-11-12T17:54:26+01:00	2026-11-12T17:54:34+01:00	26	315	150	short=600:64: 2 passes, 124 turns, 73586 prompt tokens in 495.3 s (148.6 tok/s); per pass 247.7 s

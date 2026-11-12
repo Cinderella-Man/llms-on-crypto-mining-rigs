@@ -1,0 +1,7 @@
+load	turns	same_as_base	same_as_base2	passes_agree	turns_not_as_base
+base	62	62	62	62	-
+embd	62	62	62	62	-
+sparse	62	62	62	62	-
+queues	62	62	62	62	-
+b4096	62	62	62	62	-
+base2	62	62	62	62	-

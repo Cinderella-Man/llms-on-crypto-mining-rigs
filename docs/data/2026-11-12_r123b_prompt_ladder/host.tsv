@@ -1,0 +1,13 @@
+load	when	total_mib	used_mib	free_mib	shared_mib	buff_cache_mib	available_mib
+base	loaded	3836	2901	436	201	949	935
+base	after	3836	3365	128	292	884	471
+embd	loaded	3836	2992	328	264	1028	844
+embd	after	3836	3445	102	355	893	391
+sparse	loaded	3836	2989	372	264	987	847
+sparse	after	3836	3448	130	355	861	388
+queues	loaded	3836	3316	300	264	758	520
+queues	after	3836	2932	119	355	1387	904
+b4096	loaded	3836	3289	241	264	825	547
+b4096	after	3836	2950	123	435	1445	886
+base2	loaded	3836	2885	444	201	955	951
+base2	after	3836	3380	110	292	885	456

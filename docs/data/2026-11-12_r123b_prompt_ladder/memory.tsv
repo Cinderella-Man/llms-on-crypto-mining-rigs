@@ -1,0 +1,7 @@
+load	samples	lowest_memavailable_mib	at_s	first_mib	last_mib
+base	422	470	294	3157	1029
+embd	420	388	801	3147	1042
+sparse	420	393	699	3160	1041
+queues	422	171	275	3145	1275
+b4096	421	183	247	3163	1280
+base2	426	470	838	3154	2122
