@@ -1,0 +1,5 @@
+load	when	total_mib	used_mib	free_mib	shared_mib	buff_cache_mib	available_mib
+embd	loaded	3836	2992	328	264	1028	844
+embd	after	3836	3445	102	355	893	391
+pp1	loaded	3836	2906	358	199	1006	929
+pp1	after	3836	2916	109	290	1350	920

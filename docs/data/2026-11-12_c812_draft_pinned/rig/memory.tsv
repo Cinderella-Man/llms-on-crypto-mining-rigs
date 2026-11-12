@@ -1,0 +1,5 @@
+load	samples	lowest_memavailable_mib	at_s	first_mib	last_mib
+base	422	470	294	3157	1029
+embd	420	388	801	3147	1042
+pp1	418	494	281	3150	1987
+base2	426	470	838	3154	2122

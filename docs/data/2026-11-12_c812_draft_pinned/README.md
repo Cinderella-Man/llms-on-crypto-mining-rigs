@@ -3,8 +3,8 @@
 What this is: the cause of the 64.81 MiB of pinned host memory that the MTP draft's context took once its token table
 moved to its layer's card ([R123b](../2026-11-12_r123b_prompt_ladder/README.md), Q1401 (b)), a change that gives it
 back behind a new switch, `LLAMA_PP_MULTI_SPLIT` (off by default), and its checks on a build machine's CPU. It also
-names what `-b 4096` adds on card 8. The check on nine P106 cards is the rig row R135 (Q1421, below); it has not run
-yet. Registry [Q1420](../../../quants/experiments.md); switch list [docs/switches.md](../../switches.md).
+names what `-b 4096` adds on card 8, and the check on nine P106 cards, the rig row R135 (Q1421, below). Registry
+[Q1420](../../../quants/experiments.md); switch list [docs/switches.md](../../switches.md).
 
 ## Result
 
@@ -24,7 +24,14 @@ every arm.**
   and so do the switch alone and the switch with C762's. ctest is 70 of 70, static and shared. `llama-server`'s GPU code
   is the base's. The rig tarball is built. The branch is merged into `pascal-p106-v4` as `f91533730`, and the merged
   tree's "every switch off" check passes (below).
-- **The P106 check is R135 (Q1421), not run:** one load of R43's replay with the switch, against R123b's `embd` load.
+- **On nine P106 cards (R135, Q1421) the switch does what it should, and it joins the stacked line beside
+  `LLAMA_DRAFT_EMBD_DEV=layer`.** In one load of R43's replay with R123b's `embd` line, the draft's reserves have one
+  copy (`sched copies = 1`, one split, the switch's line once). Its pinned host buffer is 21.60 MiB against `embd`'s
+  86.41, and its card-8 buffer 195.49 MiB against 278.39. After loading, card 8 holds 5,461 MiB against 5,545 and
+  the host has 929 MiB available against 844. The greedy replies are `base`'s on 62 of 62 turns in both passes. The
+  host swapped 496 MiB of the server's memory from 289 s on, which `embd` did not (below), so the lowest
+  MemAvailable, 494 MiB against 388, is not a like-for-like number. At the same moment of the replay, before the swap,
+  the host had 69 MiB more available (494 against 425 MiB at 281 s).
 
 ## What R123b saw
 
@@ -159,27 +166,73 @@ step is dumped (`LLAMA_SPEC_DUMP`). The draft's reserves, from [server_reserves.
 | The rig tarball (`TESTS=1`, sm_61) | `llama.cpp-20261112-d679a6d9d-pascal-p106-v4-b12246-c812.tar.gz`, 678,437,620 B, md5 `7b73ac4c778c5c9d03bf4163120e2dd8`; 0 AVX instructions; `test-backend-ops` in `bin/` |
 | The merged `pascal-p106-v4` (`f91533730`) | a static CPU build of every target; `test-llama-archs` 146 of 146 the same as the base with every switch off and with `LLAMA_PP_MULTI_SPLIT=1` |
 
-## The rig check (R135, Q1421, not run)
+## The rig check (R135, Q1421)
 
-One load of R43's replay on nine P106 cards: R123b's `embd` rung's line (R123a's kept line,
-`LLAMA_DRAFT_EMBD_DEV=layer`, `r43_run.sh` without `-otd token_embd=CUDA4`) with `LLAMA_PP_MULTI_SPLIT=1`, on this
-tarball, launched by [run/r135_load.sh](run/r135_load.sh) (`RUNG=pp1`). R123b's reader
-([r123b_logs.sh](../2026-11-12_r123b_prompt_ladder/run/r123b_logs.sh)) gives the buffers, cards and host tables for the
-load and for R123b's `embd` folder. Read against `embd`:
+**On nine P106 cards the draft gets one copy of each input, as on the `-otd` line, with the table still on card 8. Card 8
+gets 84 MiB back and the host 85 MiB after loading, and the replies are `base`'s on all 62 turns.
+`LLAMA_PP_MULTI_SPLIT=1` joins the stacked line beside `LLAMA_DRAFT_EMBD_DEV=layer`.**
 
-| What | R123b `embd` | R135, est. |
-|---|---:|---:|
-| The draft's reserves | `sched copies = 4`, splits 1 | `sched copies = 1`, splits 1, the `LLAMA_PP_MULTI_SPLIT` line once |
-| The draft's `CUDA_Host` compute buffer | 86.41 MiB | 21.60 MiB |
-| The draft's card 8 compute buffer | 278.39 MiB | 213.59 MiB |
-| Card 8 after loading | 5,545 MiB | 5,480 MiB |
-| The host's available memory after loading | 844 MiB | 909 MiB |
-| The host's lowest MemAvailable during the replay | 388 MiB | 453 MiB |
-| Replies | `base`'s greedy replies on 62 of 62 turns | the same |
+One load of R43's replay (the agent check's 62 prompts, two passes) on nine P106 cards. The line is R123b's `embd`
+rung: R123a's kept line, `LLAMA_DRAFT_EMBD_DEV=layer`, and `r43_run.sh` without `-otd token_embd=CUDA4`. To that the
+load adds `LLAMA_PP_MULTI_SPLIT=1`. It ran on this tarball (`bin/llama-server` md5 `b8365b25864cf1aab0b81b47ec2f40a7`),
+launched by [run/r135_load.sh](run/r135_load.sh) with `RUNG=pp1`. The tables in [rig/](rig/) come from three readers:
+- R123b's reader, [r123b_logs.sh](../2026-11-12_r123b_prompt_ladder/run/r123b_logs.sh), run on this load and R123b's
+  `embd` folder;
+- R123a's ladder, [r123a_ladder.py](../2026-11-12_r123a_prompt_ladder/run/r123a_ladder.py), with `base`, `embd`, this
+  load and `base2`;
+- [run/r135_extra.sh](run/r135_extra.sh), for the reserves, the swap and the MemAvailable over time.
 
-- **The time is a diagnostic:** `embd` ran on the `-kern` build, this load on `-c812`, and R123b's spread was 3.77 s a
-  pass. Est. no change: the draft's catch-up copies its inputs as `base` did.
-- A `RUNG=embd` load on the same tarball (the switch unset) gives a same-build reference if the time is wanted.
+Read against R123b's `embd`:
+
+| What | R123b `embd` | R135 `pp1` | Est. before the run |
+|---|---:|---:|---:|
+| The draft's reserves ([reserves.tsv](rig/reserves.tsv)) | `sched copies = 4`, 1 split | `sched copies = 1`, 1 split, the switch's line in the first reserve | `sched copies = 1`, the line once |
+| The draft's `CUDA_Host` compute buffer | 86.41 MiB | 21.60 MiB | 21.60 MiB |
+| The draft's card-8 compute buffer | 278.39 MiB | 195.49 MiB | 213.59 MiB |
+| Card 8 after loading ([cards.tsv](rig/cards.tsv)) | 5,545 MiB | 5,461 MiB | 5,480 MiB |
+| Card 8 after the replay | 5,627 MiB | 5,543 MiB | — |
+| The host after loading: used, shared, available ([host.tsv](rig/host.tsv)) | 2,992, 264, 844 MiB | 2,906, 199, 929 MiB | available 909 MiB |
+| The host's swap used, after loading and after the replay ([swap.tsv](rig/swap.tsv)) | 20, 20 MiB | 22, 518 MiB | — |
+| The host's lowest MemAvailable ([memory.tsv](rig/memory.tsv)) | 388 MiB at 801 s | 494 MiB at 281 s (swap from 289 s on) | 453 MiB |
+| MemAvailable at 281 s, both loads ([memavail.tsv](rig/memavail.tsv)) | 425 MiB | 494 MiB | — |
+| Greedy replies ([replies.tsv](rig/replies.tsv)) | 62 of 62 as `base` | 62 of 62 as `base`, both passes | the same |
+| Seconds a pass ([ladder.tsv](rig/ladder.tsv)) | 246.53, 238.34 | 244.89, 233.83 | no change |
+| The target graph's reallocations ([realloc_marks.tsv](rig/realloc_marks.tsv)) | 0 in 146 requests | 0 in 146 requests | — |
+
+- **The draft's buffers are the `-otd` line's.** The pinned host buffer is `base`'s 21.60 MiB. The card-8 buffer is
+  195.49 MiB, against `base`'s 195.48 on card 8 plus 5.00 on card 4. It is 82.90 MiB below `embd`'s, more than the
+  64.80 the estimate took off (three copies of the host inputs). The target's reserves are `embd`'s to the hundredth
+  of a MiB, with four copies and ten splits. The switch's line, in the draft's first reserve:
+  `sched_reserve: LLAMA_PP_MULTI_SPLIT: the graph runs as one split (pp 1, tg 1): planned without pipeline parallelism,
+  one copy of each input`.
+- **Card 8: −84 MiB** after loading and after the replay (5,461 and 5,543 against 5,545 and 5,627). Cards 0 to 7 are
+  the same to the MiB.
+- **The host after loading: 85 MiB more available** (929 against 844). Shared memory, where the driver's pinned
+  buffers count, is 65 MiB lower (199 against 264), the draft's 64.81 MiB.
+- **The swap.** During the replay the host moved 496 MiB of the server's memory to swap: 518 MiB used after the replay
+  against 22 after loading. It was freed when the server stopped (22 MiB a minute later). Swap is read only after
+  loading and after the replay; it began at about 289 s into the load, a minute into the replay, where `pp1`'s
+  MemAvailable starts to climb while `embd`'s stays flat ([memavail.tsv](rig/memavail.tsv)). In
+  every R123b load swap stayed at 20 MiB. The server grew as much as in `embd` (used plus swap after the replay 3,412
+  against 3,445 MiB). The host kept its page cache (1,350 MiB after the replay against 893) and swapped instead.
+  - **This load started with a different host.** It began with 1,622 MiB of page cache, the `-c812` tree unpacked onto
+    the build drive 0 to 6 minutes before, at a load average of 3.05. `embd` began with 687 MiB of page cache at 0.67.
+    The switch only removes pinned memory, so est. the swap is that host state and not the switch. The new row Q1430
+    tells the two apart.
+  - **The lowest MemAvailable compares only up to 288 s.** Until then both loads track each other: `pp1` is 61.2 MiB
+    above `embd` on average, from 21 (the servers up 2 s apart) to 75. Both reach their low of that stretch at the
+    same sample: 494 against 425 MiB at 281 s, +69. After that, `pp1`'s MemAvailable climbs as the swap fills (938 MiB
+    at 801 s, where `embd` reached its lowest, 388). The whole-run lowest, 494 against 388, holds the swap and is not a
+    like-for-like number. The est. 453 MiB against 388 is neither confirmed nor refuted.
+- **The time is a diagnostic across builds.** `embd` ran on the `-kern` build (`d097d6d88`), this load on `-c812`
+  (`d679a6d9d`, on `e27947287`). The ladder's rule calls it negligible: 244.89 and 233.83 s a pass against
+  246.53 and 238.34, means 239.36 against 242.43, −3.07 s (−1.27 %), within R123b's spread of 3.77. By new tokens:
+  −0.19, −0.46, −1.83 and −0.59 s. The swap did not slow it.
+- **Every count as `embd`:** 315 checkpoint lines, 150 taper lines, "4 catch-ups ran after the next call was queued",
+  0 graph reallocations, the table on card 8 ("token_embd.weight (644.14 MiB q8_0) in CUDA8"), 28 switches set (27 and
+  the new one). The server was up after 224 s (`embd`: 226). The load ran 20:11:36–20:25:39.
+- **No same-build `embd` load was run**, so the time against `embd` mixes the two builds. Q1430's `embd` load on this
+  tarball also gives that reference.
 
 ## New ideas
 
@@ -192,6 +245,11 @@ load and for R123b's `embd` folder. Read against `embd`:
 - **C814 (Q1423): the draft's context on its layer's card alone** (`-devd`), above: the same one copy without code,
   one GPU backend instead of nine in the draft's scheduler. Planned: a CPU check with two RPC devices
   (`-devd <second>`) first.
+- **Q1430: why R135's host swapped 496 MiB.** The candidates are the switch, the `-c812` build, or a page cache full of
+  the tree unpacked minutes before. Run two loads on this tarball, with the tree unpacked well before the first:
+  `RUNG=embd` (the switch unset, which also gives a same-build time) and `RUNG=pp1` again. Each logs swap every 2 s
+  beside MemAvailable. Each reads swap used, the lowest MemAvailable and the time. Est. no swap in either load, and
+  `pp1`'s lowest MemAvailable about 65 MiB above `embd`'s.
 
 ## Commands
 
@@ -229,11 +287,23 @@ done
 grep -o 'h_nextn_dev_alloc: .*' r123b_*/load-A/server.log   # the hidden-row buffer: 160.08 MiB, 320.08 with -b 4096
 ```
 
-R135 on a rig (an ssh alias in `RIG`; the tarball unpacked in `BUILDS`; R43's folder in `WORK`):
+R135 on a rig (an ssh alias in `RIG`; the tarball unpacked in `BUILDS`; R43's folder in `WORK`), then its tables on
+any machine with R123b's load folders and this one in `data/` (R123b's six as `r123b_<rung>`, this one as `r135_pp1`):
 
 ```bash
 RIG=<alias> WORK=<R43's folder> BUILDS=/opt/llama-builds BUILD=llama.cpp-20261112-d679a6d9d-pascal-p106-v4-b12246-c812 \
   MODEL=<Swift Q2_0's first shard> DRAFT=<the MTP draft> RUNG=pp1 bash docs/data/2026-11-12_c812_draft_pinned/run/r135_load.sh
+ssh "$RIG" "while [ ! -e $WORK/r135_pp1/DONE ]; do sleep 30; done"
+ssh "$RIG" "tar cf - -C $WORK r135_pp1 r135_pp1.out r135_pp1.launch" | tar xf - -C data/
+
+# R123b's reader and R123a's ladder (md5 cd13ac0ade46bafb95f3f8cc22fd0503), then the reserves, swap and MemAvailable
+P=docs/data/2026-11-12_r123b_prompt_ladder/run
+OUT=rig REPO=<this repository> bash $P/r123b_logs.sh embd=data/r123b_embd pp1=data/r135_pp1
+python3 -I docs/data/2026-11-12_r123a_prompt_ladder/run/r123a_ladder.py --load base=data/r123b_base/load-A \
+  --load embd=data/r123b_embd/load-A --load pp1=data/r135_pp1/load-A --load base2=data/r123b_base2/load-A \
+  --base base --base2 base2 --out rig
+DATA=data OUT=rig bash docs/data/2026-11-12_c812_draft_pinned/run/r135_extra.sh embd=r123b_embd pp1=r135_pp1 \
+  base=r123b_base base2=r123b_base2
 ```
 
 ## Files
@@ -248,11 +318,19 @@ RIG=<alias> WORK=<R43's folder> BUILDS=/opt/llama-builds BUILD=llama.cpp-2026111
 | [run/checks.sh](run/checks.sh) | the build machine's steps: the rig tarball, the switch list, the GPU code, the CPU and RPC builds, the server check, the logits identity, ctest static and shared, the merged tree |
 | [run/server_check.sh](run/server_check.sh) | the two-device check's arms, its reserve reader and its verdict |
 | [run/r135_load.sh](run/r135_load.sh) | R135's launcher on a rig |
+| [run/r135_extra.sh](run/r135_extra.sh) | R135's reserves, swap and side-by-side MemAvailable tables |
+| [rig/reserves.tsv](rig/reserves.tsv) | R135: every reserve of `embd`, `pp1`, `base` and `base2`: context, nodes, splits, scheduler copies, every compute buffer, whether the switch's line is in the block |
+| [rig/swap.tsv](rig/swap.tsv) | R135: swap used after loading and after the replay, per load |
+| [rig/memavail.tsv](rig/memavail.tsv) | R135: `embd`'s and `pp1`'s MemAvailable every 2 s side by side, and the difference |
+| [rig/host.tsv](rig/host.tsv), [rig/cards.tsv](rig/cards.tsv), [rig/buffers.tsv](rig/buffers.tsv), [rig/loads.tsv](rig/loads.tsv), [rig/switch_lines.txt](rig/switch_lines.txt), [rig/realloc_marks.tsv](rig/realloc_marks.tsv) | R135: R123b's reader on `embd` and `pp1` (its columns are in [R123b's README](../2026-11-12_r123b_prompt_ladder/README.md)) |
+| [rig/ladder.tsv](rig/ladder.tsv), [rig/replies.tsv](rig/replies.tsv), [rig/memory.tsv](rig/memory.tsv), [rig/first.tsv](rig/first.tsv), [rig/decision.md](rig/decision.md), [rig/turns.csv](rig/turns.csv) | R135: R123a's ladder over `base`, `embd`, `pp1` and `base2` (`pp1` classed against `embd`, the rung before) |
 
 ## Limits
 
 - The CPU check shows the scheduler's copies and the buffers' sizes in proportion, not the rig's own numbers: R135
   measures those.
+- R135 is one load against R123b's on another build, with the host swapping in R135 and not in R123b. The buffers,
+  cards and host after loading are exact; the lowest MemAvailable and the time are not like for like (Q1430).
 - The switch decides from the reserved graphs (the prompt-sized and the one-token one). A context whose later graphs had
   more splits than its reserve's would keep one copy; no context of the Flash-Next line does that (the weights decide
   the splits, and they do not move).
