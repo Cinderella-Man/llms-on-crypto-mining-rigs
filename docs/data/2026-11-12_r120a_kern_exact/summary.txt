@@ -1,0 +1,17 @@
+replay: == 2026-11-12T13:37:17+01:00 done: 47 runs as expected, 0 WRONG
+bitid: 54 arms, 43 ok, 11 WRONG
+bitid WRONG: q3k on, 15 of 91 with differences (exit 1, expect 0)
+bitid WRONG: q3k nopf, 15 of 91 with differences (exit 1, expect 0)
+bitid WRONG: q3k r2, 18 of 91 with differences (exit 1, expect 0)
+bitid WRONG: q3k pad0, 15 of 91 with differences (exit 1, expect 0)
+bitid WRONG: q3k kcol, 25 of 91 with differences (exit 1, expect 0)
+bitid WRONG: glu on, 42 of 668 with differences (exit 1, expect 0)
+bitid WRONG: glu nopf, 42 of 668 with differences (exit 1, expect 0)
+bitid WRONG: glu np1, 42 of 668 with differences (exit 1, expect 0)
+bitid WRONG: glu off, 42 of 668 with differences (exit 1, expect 0)
+bitid WRONG: q3k all6, 15 of 91 with differences (exit 1, expect 0)
+bitid WRONG: glu all6, 24 of 668 with differences (exit 1, expect 0)
+diag q3k kcol-nobudget: 12 of 91 with differences
+diag q3k on-nobudget: 9 of 91 with differences
+diag glu on-nobudget: 31 of 668 with differences
+diag q3k kcol-48k: 12 of 91 with differences

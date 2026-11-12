@@ -132,6 +132,11 @@ It decides, per switch and together: exact on the card or not (any difference is
 negligible or loss per shape and token count against `mt`, each pass by value, and the products' time in a served
 verify pass.
 
+R120a ran the replay and the bit identity on rig 1 on 2026-11-12, with the bit-identity list extended to C726's `q3k`,
+C757's `glu` and C754's `f32` modes and all six verify-pass switches on: [2026-11-12_r120a_kern_exact](../2026-11-12_r120a_kern_exact/README.md).
+C727, C728, C729 and C754 are exact on the card, alone and together; the `q3k` and `glu` differences are the k-column
+kernel's declined products, the same with every switch off (Q1411).
+
 ## Files
 
 | File | What |
