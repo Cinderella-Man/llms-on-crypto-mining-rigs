@@ -1,0 +1,46 @@
+check	load	L	here	cut_tsv	ok
+fixed cut = FN80's cut.tsv	d3-1	2	2.6304	2.6304	OK
+fixed cut = FN80's cut.tsv	d3-1	3	3.2697	3.2697	OK
+fixed cut = FN80's cut.tsv	d3-2	2	2.6304	2.6304	OK
+fixed cut = FN80's cut.tsv	d3-2	3	3.2697	3.2697	OK
+fixed cut = FN80's cut.tsv	d4-1	2	2.5961	2.5961	OK
+fixed cut = FN80's cut.tsv	d4-1	3	3.2182	3.2182	OK
+fixed cut = FN80's cut.tsv	d4-1	4	3.7456	3.7456	OK
+fixed cut = FN80's cut.tsv	d4-2	2	2.5961	2.5961	OK
+fixed cut = FN80's cut.tsv	d4-2	3	3.2182	3.2182	OK
+fixed cut = FN80's cut.tsv	d4-2	4	3.7456	3.7456	OK
+fixed cut = FN80's cut.tsv	d5-1	2	2.5955	2.5955	OK
+fixed cut = FN80's cut.tsv	d5-1	3	3.2017	3.2017	OK
+fixed cut = FN80's cut.tsv	d5-1	4	3.7245	3.7245	OK
+fixed cut = FN80's cut.tsv	d5-1	5	4.1709	4.1709	OK
+fixed cut = FN80's cut.tsv	d5-2	2	2.5955	2.5955	OK
+fixed cut = FN80's cut.tsv	d5-2	3	3.2017	3.2017	OK
+fixed cut = FN80's cut.tsv	d5-2	4	3.7245	3.7245	OK
+fixed cut = FN80's cut.tsv	d5-2	5	4.1709	4.1709	OK
+fixed cut = FN80's cut.tsv	d6-1	2	2.5974	2.5974	OK
+fixed cut = FN80's cut.tsv	d6-1	3	3.2137	3.2137	OK
+fixed cut = FN80's cut.tsv	d6-1	4	3.7345	3.7345	OK
+fixed cut = FN80's cut.tsv	d6-1	5	4.1843	4.1843	OK
+fixed cut = FN80's cut.tsv	d6-1	6	4.5711	4.5711	OK
+fixed cut = FN80's cut.tsv	d6-2	2	2.5974	2.5974	OK
+fixed cut = FN80's cut.tsv	d6-2	3	3.2137	3.2137	OK
+fixed cut = FN80's cut.tsv	d6-2	4	3.7345	3.7345	OK
+fixed cut = FN80's cut.tsv	d6-2	5	4.1843	4.1843	OK
+fixed cut = FN80's cut.tsv	d6-2	6	4.5711	4.5711	OK
+fixed cut = FN80's cut.tsv	d7-1	2	2.5378	2.5378	OK
+fixed cut = FN80's cut.tsv	d7-1	3	3.1059	3.1059	OK
+fixed cut = FN80's cut.tsv	d7-1	4	3.5799	3.5799	OK
+fixed cut = FN80's cut.tsv	d7-1	5	3.9713	3.9713	OK
+fixed cut = FN80's cut.tsv	d7-1	6	4.2993	4.2993	OK
+fixed cut = FN80's cut.tsv	d7-1	7	4.5729	4.5729	OK
+fixed cut = FN80's cut.tsv	d7-2	2	2.5378	2.5378	OK
+fixed cut = FN80's cut.tsv	d7-2	3	3.1059	3.1059	OK
+fixed cut = FN80's cut.tsv	d7-2	4	3.5799	3.5799	OK
+fixed cut = FN80's cut.tsv	d7-2	5	3.9713	3.9713	OK
+fixed cut = FN80's cut.tsv	d7-2	6	4.2993	4.2993	OK
+fixed cut = FN80's cut.tsv	d7-2	7	4.5729	4.5729	OK
+loads of one length give the same arms	d3-1 d3-2				OK
+loads of one length give the same arms	d4-1 d4-2				OK
+loads of one length give the same arms	d5-1 d5-2				OK
+loads of one length give the same arms	d6-1 d6-2				OK
+loads of one length give the same arms	d7-1 d7-2				OK

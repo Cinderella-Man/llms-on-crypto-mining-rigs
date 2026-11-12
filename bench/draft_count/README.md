@@ -85,3 +85,35 @@ every table against them, and checks that a per-position counter or a dump that 
 
 The CPU dry run that checked the tools end to end, on a random-weight model with an MTP block:
 [docs/data/2026-11-11_c798_draft_count_tools](../../docs/data/2026-11-11_c798_draft_count_tools/README.md).
+
+## The length chosen per step, replayed (`adapt_replay.py`, FN82)
+
+`adapt_replay.py` replays llama-server's `LLAMA_SPEC_ADAPT` rule (Q687: each draft cut to the prefix that pays, from the
+draft's own probabilities and a table of verify costs) on the dumps the loads write, and prices it against every fixed
+length on the same steps. Its rule is a line-by-line port of `common_spec_adapt_choose` and `common_spec_adapt_state`
+(`common/speculative.cpp`). The dump's `p[i][pick[i]]` is the probability the switch reads. A step cut to n drafted
+tokens keeps 1 + min(`n_acc`, n) tokens, because each position's test depends only on the tokens before it.
+
+```
+python3 adapt_replay.py WORK/dump-d6-1.jsonl [...] --out DIR [--n-max 3,4,5,6] [--fixed 3,4,5,6] [--cols 8,10,12,14,16] \
+  [--table NAME=FILE] [--step3 128.92] [--pass-ms 3.645] [--also ARM,...] [--check-cut TABLES/cut.tsv]
+python3 adapt_replay.py --selftest
+```
+
+- **The arms:**
+  - fixed lengths;
+  - the rule as built, which drafts n_max and then cuts;
+  - the same rule decided while drafting (est.: not built);
+  - the drafter's own `--spec-draft-p-min` stop;
+  - the perfect cut, as a ceiling.
+
+  The rule runs over S `run` and `step`, the default or every width, and five threshold scales.
+- **A step's est. time** is its drafting passes × `--pass-ms` + V(verified + 1). V comes from `--cols`
+  (V(k) = step3 − 3 × pass + (k − 4) × column) or from `--table` (a TSV with columns `k` and `ms`).
+- **Output in DIR:**
+  - `arms.tsv`: tokens a verify step, columns and drafting passes a step, est. ms and tok/s;
+  - `compare.tsv`: the main arms against every fixed length, with a paired 95 % bootstrap interval over requests;
+  - `calibration.tsv`, `check.tsv` and `summary.md`.
+
+  Standard library only.
+- **First use:** [docs/data/2026-11-12_fn82_adaptive_draft](../../docs/data/2026-11-12_fn82_adaptive_draft/README.md).
