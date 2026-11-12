@@ -217,8 +217,12 @@ The loss sits somewhere else. The night's build with only the checkpoint switche
 pass against 192.99 s, and a fresh 2,049-token prompt in 12.27, 12.38, 12.41 and 12.14 s against 23.36, 22.94, 23.32
 and 22.97. The server logs show the difference. On the stacked line every request rebuilds its graph's memory plan
 partway through, 1,547 times in one load of 373 requests, and the night's build never did. Each rebuild makes the
-host wait for all nine cards, so the pipeline of section 14.2 empties there. Which switch causes it is the next thing
-to find (Q1405).
+host wait for all nine cards, so the pipeline of section 14.2 empties there. One switch causes it: the single top-k
+over all output rows (`LLAMA_SAMPLING_TOP_K_ROWS`, Q1300). It adds one padding step to a batch only when the batch
+has no outputs, so the graph changes shape between the middle of a prompt and its end, and every change of shape
+forces a new plan. Without that switch the same line made no new plan in eight requests, gave the same replies, and
+read a 3,313-token turn in 21.14 s instead of 42.49 (Q1405). The fix keeps the switch and gives its graph one shape
+in every batch (Q1406).
 
 One more gap shows in these numbers. The switches of this chapter were timed on a fresh 4,097-token prompt or on
 8,128-token chunks, never on the mix of sizes an agent really sends. The next runs replay an agent session's own

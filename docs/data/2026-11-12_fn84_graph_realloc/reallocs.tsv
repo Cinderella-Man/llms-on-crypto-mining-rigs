@@ -1,0 +1,6 @@
+log	prompt_tokens	requests	prompt_s	reallocs_same	reallocs_changed	requests_with_realloc	graphs_reused
+topk	0-511	3	10.3	0	0	0	6
+topk	512-1023	1	11.5	0	0	0	0
+topk	1024-1999	1	22.2	0	0	0	0
+topk	2000+	3	44.3	0	0	0	7
+topk	all	8	88.4	0	0	0	13

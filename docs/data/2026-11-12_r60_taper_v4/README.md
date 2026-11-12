@@ -113,7 +113,8 @@ else set) are beside this run's:
   indexer's k-pool on the cards; how many pools a micro-batch re-pools changes with the micro-batch),
   `LLAMA_QSA_INDEXER_ROWS=1` and `LLAMA_SAMPLING_TOP_K_ROWS=1`. The build itself can be the cause too: R85 ran the
   night merge, this run the `-kern` tarball. Q1405 finds which, by counting reallocations with one switch off at a
-  time.
+  time. **It is `LLAMA_SAMPLING_TOP_K_ROWS=1`** ([2026-11-12_fn84_graph_realloc](../2026-11-12_fn84_graph_realloc/README.md)):
+  without it the same line reallocates nothing, with the same replies and checkpoints.
 - **Decoding is faster on this line all the same:** the same turn's 8 tokens took 40.73 ms a token here against 62.70
   on R85's `i`.
 
