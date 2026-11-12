@@ -1,0 +1,8 @@
+suite	runs	pass_runs	pass_runs_ok	cases_a_pass_run	case_replays_in_pass_runs	OK_in_pass_runs	unrecorded_a_run	fault_runs	fault_runs_ok	fault_runs_failed_of_replayed
+dmt	14	14	0	315x14	4410	4410	30x14	0	0	-
+q5kmt	10	10	10	124x10	1240	1240	0x10	0	0	-
+q3kmt	12	11	11	170x11	1870	1870	0x12	1	1	q3kmt-fault:103/170
+bf16x	9	7	7	152x6,8x1	920	920	0x9	2	2	bf16x-fault:8/8,bf16x-fault2:8/8
+f32x	6	4	4	115x3,37x1	382	382	0x6	2	2	f32x-fault:37/37,f32x-fault2:37/37
+glumt	9	8	8	636x8	5088	5088	0x9	1	1	glumt-fault:28/28
+q5k1r	11	10	10	29x10	290	290	0x11	1	1	q5k1r-fault:11/29

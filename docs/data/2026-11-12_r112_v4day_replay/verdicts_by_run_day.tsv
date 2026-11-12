@@ -1,0 +1,15 @@
+run	expect	verdict	cases	OK	FAIL	other	other_verdicts
+dmt-on	pass	ok	315	315	0	0	-
+dmt-nopf	pass	ok	315	315	0	0	-
+dmt-r1	pass	ok	315	315	0	0	-
+dmt-r2	pass	ok	315	315	0	0	-
+dmt-r1-nopf	pass	ok	315	315	0	0	-
+dmt-r2-nopf	pass	ok	315	315	0	0	-
+dmt-rule	pass	ok	315	315	0	0	-
+dmt-nw1	pass	ok	315	315	0	0	-
+dmt-nw2	pass	ok	315	315	0	0	-
+dmt-defaults	pass	ok	315	315	0	0	-
+dmt-off	pass	ok	315	315	0	0	-
+dmt-skip-q4k	pass	ok	315	315	0	0	-
+dmt-skip-iq4xs	pass	ok	315	315	0	0	-
+dmt-skip	pass	ok	315	315	0	0	-

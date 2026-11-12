@@ -108,7 +108,8 @@ C750's and C754's), and 9 were recorded with the merged build. Set `v4day`: 71 r
 `f23c05d9365e55b70df90401eb064ca4`. On a rig:
 `scripts/replay_checks.sh` with `SET` the unpacked set and `BIN` the merged tarball's `bin/`, every run of its
 `runs.tsv`; it stands for the replay steps of the kernel rows (C750, C754, C726, C757, C767) and for the `dmt` and `q5kmt`
-runs at the new defaults.
+runs at the new defaults. Replayed on a P106 by R112 ([2026-11-12_r112_v4day_replay](../2026-11-12_r112_v4day_replay/README.md)):
+every case passes, every fault is caught.
 
 ## The rig tarball
 
