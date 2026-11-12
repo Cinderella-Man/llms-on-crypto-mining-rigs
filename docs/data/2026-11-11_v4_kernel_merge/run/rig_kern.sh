@@ -10,8 +10,10 @@
 #           own CPU; passing: every run ends "ok" and each fault run fails cases
 #   bitid   bench/mmvq_pascal/verify/multitoken_bitid, every product against its columns' one-token products, bit for
 #           bit: each branch's own arms (q6k: C727's; dmtkt: C728's; dmt8 and q5k8: C729's), then every mode (q6k, dmtkt,
-#           dmt, dmt8, q5k, q5k8) with the three switches on together (and _KT=2); 0 comparisons may differ, and each
-#           fault and control must differ
+#           dmt, dmt8, q5k, q5k8) with the three switches on together (and _KT=2); then the day's three verify-pass
+#           kernels of the day merge with their own rows' arms (q3k: C726's, R103; glu: C757's, R107; f32: C754's, R99),
+#           and those three modes with all six switches on together (the stack of R120b's served "on" arm), each with its
+#           fault; 0 comparisons may differ, and each fault and control must differ
 #   perf    test-backend-ops perf at Qwen3.8-Flash-Next's IQ4_XS, Q4_K, Q5_K and Q6_K shapes, 1-8 tokens, the arms of
 #           PERF_ARMS alternated over PASSES passes: off (the preset's k-column switches), mt (+ the day's read-once
 #           kernels _DMT=1 _Q5K_MT=1), kern (mt + the three switches), kernm2 (kern with two row blocks a tile round)
@@ -69,6 +71,9 @@ if step bitid; then
     : "${BITID:?}"
     mkdir -p "$OUT/bitid"
     Q6="${P}_Q6K_MT" D="${P}_DMT" R8="${P}_RO8" ALL="$KP $MT $KERN"
+    Q3="${P}_Q3K_MT" GL="${P}_GLU_MT" F=GGML_CUDA_MMVF_F32_MT # C726, C757, C754 (the day merge)
+    RO="$MT ${D}_R=1"                                          # the read-once kernels C757's launch repeats
+    ALL6="$ALL $Q3=1 $GL=1 $F=1"                               # the six verify-pass switches on together
     # mode:name:switches
     for a in "q6k:on:$KP $Q6=1" "q6k:nopf:$KP $Q6=2" "q6k:r2:$KP $Q6=1 ${D}_R=2" "q6k:nw1:$KP $Q6=1 ${D}_NW=1" \
              "q6k:kcol:$KP" "q6k:fault:$KP $Q6=1 ${Q6}_FAULT=1" \
@@ -81,7 +86,14 @@ if step bitid; then
              "q5k8:control:$KP BITID_ALL=1" "q5k8:fault:$KP $R8=1 ${R8}_FAULT=1" \
              "q6k:all:$ALL" "dmtkt:all:$ALL" "dmt:all:$ALL" "dmt8:all:$ALL" "q5k:all:$ALL" "q5k8:all:$ALL" \
              "dmtkt:all-kt2:$KP $MT $Q6=1 $R8=1 ${D}_KT=2" "q6k:all-fault:$ALL ${Q6}_FAULT=1" \
-             "dmtkt:all-fault:$ALL ${D}_KT_FAULT=1" "dmt8:all-fault:$ALL ${R8}_FAULT=1"; do
+             "dmtkt:all-fault:$ALL ${D}_KT_FAULT=1" "dmt8:all-fault:$ALL ${R8}_FAULT=1" \
+             "q3k:on:$KP $Q3=1" "q3k:nopf:$KP $Q3=2" "q3k:r2:$KP $Q3=1 ${Q3}_R=2" "q3k:pad0:$KP $Q3=1 ${Q3}_PAD=0" \
+             "q3k:kcol:$KP" "q3k:fault:$KP $Q3=1 ${Q3}_FAULT=1" \
+             "glu:on:$KP $RO $GL=1" "glu:nopf:$KP $RO $GL=2" "glu:np1:$KP $RO $GL=1 ${GL}_NP=1" "glu:off:$KP $RO" \
+             "glu:fault:$KP $RO $GL=1 ${GL}_FAULT=1" \
+             "f32:on:$F=1" "f32:on2:$F=2" "f32:control:" \
+             "q3k:all6:$ALL6" "glu:all6:$ALL6" "f32:all6:$ALL6" "q3k:all6-fault:$ALL6 ${Q3}_FAULT=1" \
+             "glu:all6-fault:$ALL6 ${GL}_FAULT=1" "f32:all6-fault:$ALL6 ${F}_FAULT=1"; do
         mode=${a%%:*} rest=${a#*:}
         n=${rest%%:*} sw=${rest#*:}
         log "bitid $mode $n start ($sw)"
