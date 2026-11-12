@@ -213,12 +213,15 @@ Read against R123b's `embd`:
   against 22 after loading. It was freed when the server stopped (22 MiB a minute later). Swap is read only after
   loading and after the replay; it began at about 289 s into the load, a minute into the replay, where `pp1`'s
   MemAvailable starts to climb while `embd`'s stays flat ([memavail.tsv](rig/memavail.tsv)). In
-  every R123b load swap stayed at 20 MiB. The server grew as much as in `embd` (used plus swap after the replay 3,412
-  against 3,445 MiB). The host kept its page cache (1,350 MiB after the replay against 893) and swapped instead.
+  R123b's `base`, `embd`, `sparse` and `base2` loads swap stayed at 20 MiB; its `queues` and `b4096` loads, with the
+  doubled launch queue's 222 MiB more host memory, swapped 867 and 929 MiB. The server grew as much as in `embd`
+  (used plus swap after the replay 3,412 against 3,445 MiB). The host kept its page cache (1,350 MiB after the replay
+  against 893) and swapped instead.
   - **This load started with a different host.** It began with 1,622 MiB of page cache, the `-c812` tree unpacked onto
     the build drive 0 to 6 minutes before, at a load average of 3.05. `embd` began with 687 MiB of page cache at 0.67.
     The switch only removes pinned memory, so est. the swap is that host state and not the switch. The new row Q1430
-    tells the two apart.
+    tells the two apart. It did ([R138](../2026-11-12_r138_swap_cause/README.md)): on the `-c812` build neither
+    `embd` nor `pp1` swapped, `embd` with 1,817 MiB of page cache at its start.
   - **The lowest MemAvailable compares only up to 288 s.** Until then both loads track each other: `pp1` is 61.2 MiB
     above `embd` on average, from 21 (the servers up 2 s apart) to 75. Both reach their low of that stretch at the
     same sample: 494 against 425 MiB at 281 s, +69. After that, `pp1`'s MemAvailable climbs as the swap fills (938 MiB

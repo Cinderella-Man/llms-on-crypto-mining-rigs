@@ -1,0 +1,3 @@
+load	read_at	load_avg_1m_5m_15m	used_mib	free_mib	buff_cache_mib	available_mib	swap_used_mib	cached_kb	active_file_kb	inactive_file_kb	swap_cached_kb	mem_available_kb	swap_free_kb
+embd	20:59:27	0.00, 0.25, 0.58	687	1588	1817	3149	20	1744256	271308	1479192	4028	3224928	3910864
+pp1	21:14:10	0.61, 1.04, 0.96	687	2868	530	3149	20	439864	93872	353356	4012	3225060	3910892

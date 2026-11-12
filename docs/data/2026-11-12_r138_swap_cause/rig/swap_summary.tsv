@@ -1,0 +1,10 @@
+load	start_buff_cache_mib	start_available_mib	start_swap_used_mib	start_load_avg_1m	swap_used_loaded_mib	swap_used_after_mib	swap_used_first_sample_mib	swap_used_max_mib	swap_max_at_s	swap_rise_16_at_s	lowest_memavailable_mib	lowest_at_s
+embd	1817	3140	20	0.00	20	20	20	20	0		379	750
+pp1	531	3135	20	0.61	20	20	20	20	0		446	795
+r123b_base	657	3148	20	0.07	20	20					470	294
+r123b_embd	687	3149	20	0.67	20	20					388	801
+r123b_sparse	633	3158	20	0.66	20	20					393	699
+r123b_queues	601	3144	20	0.71	20	887					171	275
+r123b_b4096	1128	3154	20	0.82	20	949					183	247
+r123b_base2	1105	3160	20	0.88	20	20					470	838
+r135_pp1	1622	3142	22	3.05	22	518					494	281
