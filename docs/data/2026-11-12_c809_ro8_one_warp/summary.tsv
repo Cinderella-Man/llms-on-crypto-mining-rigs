@@ -1,0 +1,64 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c809	OK	tip 215d522c7 (mmvq-pascal: _RO8 leaves a launch of one warp a block to the k-column kernel (C809, Q1415)); files changed against the base:  2 files changed, 20 insertions(+), 9 deletions(-)
+pick	the decision's lines in each tree	OK	base and c809 counts of the eight expressions c809_pick.cu repeats: 11 10 01 01 11 11 10 01 (expected 11 10 01 01 11 11 10 01)
+pick	 switch off: the base's choices	SAME	rc=0; 58 arm-programs without _RO8 (of 54 arms x 2 programs), 1856 products each: every line the base's; differ: none
+pick	 switch on: only the one-warp launches change, all declined	OK	50 arm-programs with _RO8; lines changed per arm-program: ro8/dmt 15; ro8/q5k 11; ro8-nopf/dmt 15; ro8-nopf/q5k 11; ro8-pf/dmt 15; ro8-pf/q5k 11; ro8-r2/dmt 15; ro8-r2/q5k 11; ro8-nw2/dmt 15; ro8-nw2/q5k 11; ro8-dmt/dmt 15; ro8-dmt/q5k 11; ro8-dmt-nopf/dmt 15; ro8-dmt-nopf/q5k 11; q6k-ro8/dmt 15; q6k-ro8/q5k 11; kt-ro8/dmt 15; kt-ro8/q5k 11; kt2-ro8/dmt 15; kt2-ro8/q5k 11; all/dmt 15; all/q5k 11; all-kt2/dmt 15; all-kt2/q5k 11; all-nopf/dmt 15; all-nopf/q5k 11; all-r2/dmt 15; all-r2/q5k 11; all-nw1/dmt 0; all-nw1/q5k 11; all-m2/dmt 15; all-m2/q5k 11; ro8-q5kpf/dmt 15; ro8-q5kpf/q5k 11; ro8-q5knw1/dmt 15; ro8-q5knw1/q5k 0; ro8-q5knw2/dmt 15; ro8-q5knw2/q5k 11; ro8-q5k/dmt 15; ro8-q5k/q5k 11; ro8-nopf-q5kpf/dmt 15; ro8-nopf-q5kpf/q5k 11; kern/dmt 15; kern/q5k 11; kern-m2/dmt 15; kern-m2/q5k 11; kern-nw1/dmt 0; kern-nw1/q5k 0; ro8-3/dmt 15; ro8-3/q5k 11; ; failing: none
+pick	R120b's two losses	OK	iq4_xs 6 tokens K 6144: 1 1 1 8 46304 1088 mul_mat_vec_q_pascal_dmt<iq4_xs, 6, 1, true> -> declined (one warp); q5_K 5 tokens K 6144: 1 0 1 8 44608 1408 mul_mat_vec_q5_K_pascal_mt<5, 1, false> -> declined (one warp); 
+pick	the products declined under _RO8=1	OK	iq4_xs 5 tokens: 2 widths; iq4_xs 6 tokens: 1 widths; iq4_xs 7 tokens: 2 widths; iq4_xs 8 tokens: 1 widths; q4_K 5 tokens: 3 widths; q4_K 6 tokens: 2 widths; q4_K 7 tokens: 2 widths; q4_K 8 tokens: 2 widths; q5_K 5 tokens: 3 widths; q5_K 6 tokens: 3 widths; q5_K 7 tokens: 3 widths; q5_K 8 tokens: 2 widths; 
+start	pascal-p106-v4-b12246-c809	OK	tip 215d522c7 (mmvq-pascal: _RO8 leaves a launch of one warp a block to the k-column kernel (C809, Q1415)); files changed against the base:  2 files changed, 20 insertions(+), 9 deletions(-)
+rig	build	OK	rc=0; llama.cpp-20261112-215d522c7-pascal-p106-v4-b12246-c809.tar.gz md5 08c93faca074cefa7f7243f4cc4772a0, 678346098 B; commit: 215d522c7c8d6b634b09b44baf0dede612fe00de (2026-11-12 17:55:24 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 839d59c0f4134175c7417bb435e23a78; 34 warning lines
+names	switch list	SAME	861 names in the build's list, 861 in the base's; the same names: yes
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	the four objects against the base's	SAME	mmvq-pascal-dmt.cu.o mmvq-pascal-q5k.cu.o mmvq.cu.o mmvq-pascal-kcol.cu.o, sass and ptx: 8 dumps, 1186 functions; dumps that differ: 0 
+cpu	build	OK	rc=0; commit 215d522c7c8d6b634b09b44baf0dede612fe00de mmvq-pascal: _RO8 leaves a launch of one warp a block to the k-column kernel (C809, Q1415); static, every target; 3 warning lines, 0 error lines
+off	base writes	OK	rc=0; the base CPU build (C802): 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	ro8-1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_RO8=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	ro8-2	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_RO8=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+bitid	build	OK	rc=0; multitoken_bitid md5 97bc6cced0d39c0077da2ded571acd12, 90842200 B; modes in it: dmt8 q5k8 dmt q5k ; linked against 215d522c7
+c565 static	c809 tree	OK	commit 215d522c7c8d6b634b09b44baf0dede612fe00de 
+c565 static	c809 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c809 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c809 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c809 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c809 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c809 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c809 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c809 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c809 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c809 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c809 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c809 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c809 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c809 hand thread-safety	OK	test-thread-safety rc=0: 0.00.048.827 I All threads finished without errors.
+c565 static	c809 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c809 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.443119
+c565 shared	c809 tree	OK	commit 215d522c7c8d6b634b09b44baf0dede612fe00de 
+c565 shared	c809 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c809 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c809 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c809 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c809 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c809 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c809 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c809 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c809 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c809 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c809 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c809 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c809 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c809 hand thread-safety	OK	test-thread-safety rc=0: 0.00.031.581 I All threads finished without errors.
+c565 shared	c809 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c809 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 2.195229
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 5.6G in the work folder; 327 GB free
+start	pascal-p106-v4-b12246-c809	OK	tip 215d522c7 (mmvq-pascal: _RO8 leaves a launch of one warp a block to the k-column kernel (C809, Q1415)); files changed against the base:  2 files changed, 20 insertions(+), 9 deletions(-)
+merged	pascal-p106-v4	OK	d7cdd032a (Merge -c809 (C809: with _RO8 the read-once kernels leave a launch of one warp a block to the k-column kernel's path; hos); commits since the base: 8
+merged	cpu build	OK	rc=0; d7cdd032a; static, every target; 3 warning lines, 0 error lines
+moff	base writes	OK	rc=0; the base CPU build (C802): 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	merged-ro8-1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_RO8=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+merged	pick: the decision's lines in each tree	OK	f91533730 and d7cdd032a counts of the eight expressions c809_pick.cu repeats: 11 10 01 01 11 11 10 01 (expected 11 10 01 01 11 11 10 01)
+merged	pick f91533730 -> d7cdd032a: switch off: the base's choices	SAME	rc=0; 58 arm-programs without _RO8 (of 54 arms x 2 programs), 1856 products each: every line the base's; differ: none
+merged	pick f91533730 -> d7cdd032a: switch on: only the one-warp launches change, all declined	OK	50 arm-programs with _RO8; lines changed per arm-program: ro8/dmt 15; ro8/q5k 11; ro8-nopf/dmt 15; ro8-nopf/q5k 11; ro8-pf/dmt 15; ro8-pf/q5k 11; ro8-r2/dmt 15; ro8-r2/q5k 11; ro8-nw2/dmt 15; ro8-nw2/q5k 11; ro8-dmt/dmt 15; ro8-dmt/q5k 11; ro8-dmt-nopf/dmt 15; ro8-dmt-nopf/q5k 11; q6k-ro8/dmt 15; q6k-ro8/q5k 11; kt-ro8/dmt 15; kt-ro8/q5k 11; kt2-ro8/dmt 15; kt2-ro8/q5k 11; all/dmt 15; all/q5k 11; all-kt2/dmt 15; all-kt2/q5k 11; all-nopf/dmt 15; all-nopf/q5k 11; all-r2/dmt 15; all-r2/q5k 11; all-nw1/dmt 0; all-nw1/q5k 11; all-m2/dmt 15; all-m2/q5k 11; ro8-q5kpf/dmt 15; ro8-q5kpf/q5k 11; ro8-q5knw1/dmt 15; ro8-q5knw1/q5k 0; ro8-q5knw2/dmt 15; ro8-q5knw2/q5k 11; ro8-q5k/dmt 15; ro8-q5k/q5k 11; ro8-nopf-q5kpf/dmt 15; ro8-nopf-q5kpf/q5k 11; kern/dmt 15; kern/q5k 11; kern-m2/dmt 15; kern-m2/q5k 11; kern-nw1/dmt 0; kern-nw1/q5k 0; ro8-3/dmt 15; ro8-3/q5k 11; ; failing: none
+merged	pick: the same changes as c809 against its base	SAME	598 changed lines on the merged tree, 598 on c809 against d21820340
