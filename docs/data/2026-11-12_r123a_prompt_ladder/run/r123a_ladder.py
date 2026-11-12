@@ -16,8 +16,8 @@ Writes, in --out:
                  prompt_n the turn's new tokens, prompt_ms the server's prompt time, ttft_s the request's wall time:
                  its prompt plus 8 greedy tokens, as the replay streams no first token)
   ladder.tsv     per load and bucket: turns, tokens, the server's prompt seconds of each pass by value, their mean,
-                 tok/s over the mean, the load before's mean, the difference, the spread and the class; the last
-                 rung also against the base's mean as "stack"
+                 tok/s over the mean, the load before's mean, the difference, the spread and the class; every rung
+                 from the second on also against the base, with every rung up to it on
   first.tsv      per load and pass: the median and p90 of the request's wall time and of the server's prompt time over
                  the 62 turns
   replies.tsv    per load: turns whose greedy reply (8 tokens) is in the base's set in both passes, the same against
@@ -109,7 +109,7 @@ with open(f"{a.out}/ladder.tsv", "w") as f:
             pairs = [(a.base, "reference")]
         else:
             pairs = [(order[i - 1], None)]
-            if i == len(order) - 2:
+            if i > 1:
                 pairs.append((a.base, "stack"))
         for ref, tag in pairs:
             for lo, hi in BUCKETS:
@@ -199,7 +199,7 @@ with open(f"{a.out}/decision.md", "w") as f:
                 verdict = ("into the stacked line" if into else "to its own row") + (
                     f"; loses at {', '.join(lost)}" if lost else "")
             else:
-                verdict = "the stack against the base"
+                verdict = f"every rung up to {name} against the base"
             f.write(f"- {name} against {ref}: {fmt(v)} s a pass against {fmt(rv)} (means {m:.2f} and {rm:.2f}, "
                     f"{d:+.2f} s, {pct:+.2f} %, spread {sp:.2f}) → {c}; replies {rep[name]} of {nk} as {a.base}; "
                     f"lowest MemAvailable {mem[name]} MiB → {verdict}. By new tokens: {per}\n")

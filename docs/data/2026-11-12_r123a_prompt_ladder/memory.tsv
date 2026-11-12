@@ -1,0 +1,7 @@
+load	samples	lowest_memavailable_mib	at_s	first_mib	last_mib
+base	491	468	936	3147	2073
+graphs	436	467	693	3153	2414
+kvonly	424	464	699	3136	1026
+overlap	421	472	677	3141	1018
+ngram	426	470	830	3139	1028
+base2	494	465	938	3143	2794
