@@ -1,0 +1,59 @@
+row	check	verdict	detail
+branch	commits	OK	8a55934f36 sampling: C802's pad is one row of none of the logits' rows (C802, Q1406);2b76bb7066 ggml-alloc: the re-plan trace names a place the plan gave no memory (C802);1444b0237c sampling: LLAMA_SAMPLING_TOP_K_ROWS keeps one graph for every micro-batch (C802, Q1406);8841636834 test-backend-sampler: test_top_k_rows_fixed_graph, one node count and no re-plan with LLAMA_SAMPLING_TOP_K_ROWS (C802, Q1406);;  3 files changed, 188 insertions(+), 2 deletions(-)
+cpu	test build	OK	rc=0; commit 8841636834e35909239658c74b05678b5d6ba049 test-backend-sampler: test_top_k_rows_fixed_graph, one node count and no re-plan with LLAMA_SAMPLING_TOP_K_ROWS (C802, Q1406); static; test-backend-sampler; 3 warning lines, 0 error lines
+cpu	view build	OK	rc=0; commit 8a55934f3696bd81d87ed5a4c24fbc2f11de9082 sampling: C802's pad is one row of none of the logits' rows (C802, Q1406);patch view.patch md5 9acdc8cedfb3be7247bc878dfe25783f; static; test-backend-sampler; 3 warning lines, 0 error lines
+cpu	tip build	OK	rc=0; commit 8a55934f3696bd81d87ed5a4c24fbc2f11de9082 sampling: C802's pad is one row of none of the logits' rows (C802, Q1406); static; test-backend-sampler test-backend-ops test-llama-archs; 3 warning lines, 0 error lines
+fixed	test	FAILS AS EXPECTED	rc=134; 8 allocator trigger lines; compute buffer (off, on) MiB: reserved 5.21 2.35 , at the end 5.2100 2.3463 ; switch off: one node count (490 a graph), re-plans: 0;switch on: MORE THAN ONE node count (481 a graph), re-plans: 8;../../src/tests/test-backend-sampler.cpp:2373: GGML_ASSERT(one) failed;
+fixed	view	FAILS AS EXPECTED	rc=134; 8 allocator trigger lines; compute buffer (off, on) MiB: reserved 5.21 2.35 , at the end 5.2100 2.3463 ; switch off: one node count (490 a graph), re-plans: 0;switch on: one node count (481 a graph), re-plans: 8;../../src/tests/test-backend-sampler.cpp:2374: GGML_ASSERT(!r->traced || r->n_trigger == 0) failed;
+fixed	tip	PASS	rc=0; 0 allocator trigger lines; compute buffer (off, on) MiB: reserved 5.21 2.92 , at the end 5.2100 2.9190 ; switch off: one node count (490 a graph), re-plans: 0;switch on: one node count (482 a graph), re-plans: 0;the same 17 sampled tokens and 340 candidates off and on;backend top-k rows fixed graph test PASSED;
+rig	build	OK	rc=0; llama.cpp-20261112-8a55934f3-pascal-p106-v4-b12246-c802.tar.gz md5 ee37cb87c2211a1b90c3e19b70b9fbe4, 678285106 B; commit: 8a55934f3696bd81d87ed5a4c24fbc2f11de9082 (2026-11-12 15:05:42 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 3d4b837dd154e8754ad4a9f7824bd6b7; 34 warning lines
+sampler	off	OK	23 tests, 22 pass; failing: test_logit_bias (rc 134) 
+sampler	on	OK	23 tests, 22 pass; failing: test_logit_bias (rc 134) 
+sampler	base	OK	23 tests, 21 pass; failing: test_logit_bias (rc 134) test_top_k_rows_fixed_graph (rc 134) 
+sampler	off test_top_k_rows_switch	PASS	chains 0 and 1: 17 outputs, 226 candidates, the same with the switch off and on;chains 0 and 0: 17 outputs, 340 candidates, the same with the switch off and on;chains 2 and 3: 17 outputs, 208 candidates, the same with the switch off and on;chains 3 and 2: 17 outputs, 268 candidates, the same with the switch off and on;chains 0 and 4: 17 outputs, 340 candidates, the same with the switch off and on;
+sampler	off test_top_k_rows_fixed_graph	PASS	switch off: one node count (490 a graph), re-plans: 0;switch on: one node count (482 a graph), re-plans: 0;the same 17 sampled tokens and 340 candidates off and on;
+sampler	on test_top_k_rows_switch	PASS	chains 0 and 1: 17 outputs, 226 candidates, the same with the switch off and on;chains 0 and 0: 17 outputs, 340 candidates, the same with the switch off and on;chains 2 and 3: 17 outputs, 208 candidates, the same with the switch off and on;chains 3 and 2: 17 outputs, 268 candidates, the same with the switch off and on;chains 0 and 4: 17 outputs, 340 candidates, the same with the switch off and on;
+sampler	on test_top_k_rows_fixed_graph	PASS	switch off: one node count (490 a graph), re-plans: 0;switch on: one node count (482 a graph), re-plans: 0;the same 17 sampled tokens and 340 candidates off and on;
+graph	base	OK	LLAMA_SAMPLING_TOP_K_ROWS=0; node lines 4491, TOP_K 27, PAD 18 (computed 18), GET_ROWS 180
+graph	off	OK	LLAMA_SAMPLING_TOP_K_ROWS=0; node lines 4491, TOP_K 27, PAD 18 (computed 18), GET_ROWS 180
+graph	on	OK	LLAMA_SAMPLING_TOP_K_ROWS=1; node lines 4473, TOP_K 18, PAD 18 (computed 0), GET_ROWS 171
+graph	base against off	SAME	the same 4491 node lines
+off	base writes	OK	rc=0; <BASE_CPU>: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	tkr	SAME	rc=0; LLAMA_SAMPLING_TOP_K_ROWS=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+replay	tk	OK	rc=0; -o TOP_K -p 'ne=\[248320,'; 0 FAIL lines;  39/39 tests passed;   replay: <SET>: 39 cases replayed, 0 selected by the filter have no record
+replay	tk-rows	OK	rc=0; -o TOP_K_ROWS -p '.'; 0 FAIL lines;  75/75 tests passed;   replay: <SET>: 75 cases replayed, 0 selected by the filter have no record
+c565 static	c802 tree	OK	commit 8a55934f3696bd81d87ed5a4c24fbc2f11de9082 
+c565 static	c802 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c802 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c802 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c802 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c802 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c802 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c802 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c802 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c802 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c802 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c802 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c802 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c802 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c802 hand thread-safety	OK	test-thread-safety rc=0: 0.00.066.894 I All threads finished without errors.
+c565 static	c802 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c802 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -0.489044
+c565 shared	c802 tree	OK	commit 8a55934f3696bd81d87ed5a4c24fbc2f11de9082 
+c565 shared	c802 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c802 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c802 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c802 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c802 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c802 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c802 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c802 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c802 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c802 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c802 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c802 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c802 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c802 hand thread-safety	OK	test-thread-safety rc=0: 0.00.046.235 I All threads finished without errors.
+c565 shared	c802 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c802 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 0.730450

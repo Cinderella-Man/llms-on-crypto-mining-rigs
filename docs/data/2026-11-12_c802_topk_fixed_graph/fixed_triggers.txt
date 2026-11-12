@@ -1,0 +1,16 @@
+test	galloc-trigger: nodes 480 -> 481
+test	galloc-trigger: nodes 481 -> 480
+test	galloc-trigger: node 296 'node_296' (GET_ROWS) ne = [256, 4, 1, 1] needs 4096 bytes in CPU, planned 1024
+test	galloc-trigger: nodes 480 -> 481
+test	galloc-trigger: nodes 481 -> 480
+test	galloc-trigger: node 0 'embd' (GET_ROWS) ne = [256, 8, 1, 1] needs 8192 bytes in CPU, planned 6144
+test	galloc-trigger: nodes 480 -> 481
+test	galloc-trigger: nodes 481 -> 480
+view	galloc-trigger: node 341 'node_341' (PAD) ne = [150144, 1, 1, 1] needs 600576 bytes, planned none
+view	galloc-trigger: node 296 'node_296' (GET_ROWS) ne = [256, 1, 1, 1] needs 1024 bytes in CPU, planned 0
+view	galloc-trigger: node 296 'node_296' (GET_ROWS) ne = [256, 4, 1, 1] needs 4096 bytes in CPU, planned 1024
+view	galloc-trigger: node 0 'embd' (GET_ROWS) ne = [256, 8, 1, 1] needs 8192 bytes in CPU, planned 4096
+view	galloc-trigger: node 296 'node_296' (GET_ROWS) ne = [256, 2, 1, 1] needs 2048 bytes in CPU, planned 0
+view	galloc-trigger: node 0 'embd' (GET_ROWS) ne = [256, 8, 1, 1] needs 8192 bytes in CPU, planned 6144
+view	galloc-trigger: node 341 'node_341' (PAD) ne = [150144, 1, 1, 1] needs 600576 bytes, planned none
+view	galloc-trigger: node 296 'node_296' (GET_ROWS) ne = [256, 1, 1, 1] needs 1024 bytes in CPU, planned 0
