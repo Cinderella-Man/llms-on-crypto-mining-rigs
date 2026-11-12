@@ -14,6 +14,9 @@
 # load-<L>/reallocs.tsv and one line in run.log ("load <L>: graph reallocations: W of N requests (S at the same size,
 # D changed)"). The loads and the requests are the same as before; a switch whose loads reallocate where its line
 # without it does not is marked with scripts/realloc_counts.py --marks.
+# Since R138 (Q1430, 2026-11-12) the watchdog writes SwapFree beside MemAvailable: load-<L>/memavail.txt has three
+# columns, epoch seconds, MemAvailable MiB and SwapFree MiB, every 2 s (readers that take the first two are unchanged),
+# and the end-of-load line in run.log also gives the lowest SwapFree.
 # Env: BUILDS (folder of the builds), BUILD (the taper build's folder), MODEL (first shard), OUT (default ./out),
 #      CTX (65536), ARGS (default '-b 2048 -ub 512 -ts 6,5,5,6,5,5,6,5,6 -fit off -lm dio'), PORT (8095),
 #      LOADS ("A B"), PASSES_A ("off on on off"; a spec such as short=2048:128 is a pass too), PASSES_B ("off on"),
@@ -83,12 +86,12 @@ for L in $LOADS; do
     srv=$!
     # host-memory watchdog: the 4 GB host must not swap the server out or start the OOM killer
     ( while kill -0 $srv 2> /dev/null; do
-          a=$(awk '/MemAvailable/ { print int($2 / 1024) }' /proc/meminfo)
+          read -r a sf <<< "$(awk '/^MemAvailable:/ { a = int($2 / 1024) } /^SwapFree:/ { s = int($2 / 1024) } END { print a, s }' /proc/meminfo)"
           if [ "$a" -lt "$MIN_AVAIL_MB" ]; then
               echo "$(date -Is) watchdog: MemAvailable $a MiB < $MIN_AVAIL_MB, stopping the server" >> "$OUT/run.log"
               kill -INT $srv; break
           fi
-          echo "$(date +%s) $a" >> "$d/memavail.txt"
+          echo "$(date +%s) $a $sf" >> "$d/memavail.txt"
           sleep 2
       done ) &
     wd=$!
@@ -110,7 +113,7 @@ for L in $LOADS; do
     kill -INT $srv 2> /dev/null; sleep 8; pkill -9 -x llama-server; kill $wd 2> /dev/null
     sed 's/\x1b\[[0-9;]*m//g' "$d/server.log" | grep -oE '(created|restored) context checkpoint.*' > "$d/checkpoints.txt"
     sed 's/\x1b\[[0-9;]*m//g' "$d/server.log" | grep -o 'ubatch taper: .*' > "$d/taper_lines.txt"
-    log "load $L: $(wc -l < "$d/checkpoints.txt") checkpoint lines, $(wc -l < "$d/taper_lines.txt") taper lines, lowest MemAvailable $(sort -k2 -n "$d/memavail.txt" | head -n 1 | cut -d' ' -f2) MiB"
+    log "load $L: $(wc -l < "$d/checkpoints.txt") checkpoint lines, $(wc -l < "$d/taper_lines.txt") taper lines, lowest MemAvailable $(sort -k2 -n "$d/memavail.txt" | head -n 1 | cut -d' ' -f2) MiB, lowest SwapFree $(sort -k3 -n "$d/memavail.txt" | head -n 1 | cut -d' ' -f3) MiB"
     log "load $L: $(realloc_count "$d/server.log" "$d/reallocs.tsv")"
 done
 log "done"
