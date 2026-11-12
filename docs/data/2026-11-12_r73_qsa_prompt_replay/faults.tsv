@@ -1,0 +1,4 @@
+run	expect	replayed	failing	failing_that_mode2_sends_to_the_kernel	largest_failing_error
+qp-fault1	pass	72	0	0	-
+qp-fault2	fail	72	59	59	0.00446692
+qp-fault3	fail	72	49	49	0.0498893

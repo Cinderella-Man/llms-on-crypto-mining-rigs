@@ -13,7 +13,9 @@ commands that time it.
 
 **Status: written, built and checked on a CPU; the check set for a P106 is recorded; through the compute_61 PTX on a
 newer card its runs `qp-stock` and `qp-m2` pass 72 of 72 cases, the sparse kernel at 129, 256 and 512 query tokens
-included ([FN63](../2026-11-11_fn63_sparse_256_512/README.md)); not yet run on a P106.** Miner
+included ([FN63](../2026-11-11_fn63_sparse_256_512/README.md)); natively on a P106 every run passes every case it
+must and every case takes the kernel the rule names
+([R73 part 1](../2026-11-12_r73_qsa_prompt_replay/README.md)); the timing on a P106 is not yet run.** Miner
 Llama branch `pascal-p106-v4-b12246-c705` `baac08803` (one commit on `pascal-p106-v4` `84f7bd3d2`), behind
 `GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT` (off by default; then the switch takes exactly the calls it took on
 `pascal-p106-v4`, and the GPU code of every kernel is the same).
@@ -126,7 +128,10 @@ Two parts on one rig, nothing else running on it (registry row Q1272).
 when every console line ends `ok` (`qp-fault2` and `qp-fault3` must fail cases, every other run passes every case),
 and when each prompt case's error in a run equals its error in `qp-stock` where the table above says `d` and differs
 where it says `S` (the per-case errors are in `OUT/<run>.tsv`). The decode and verify cases follow the rule of
-`pascal-p106-v4` in every run.
+`pascal-p106-v4` in every run. Run on 2026-11-12 with `pascal-p106-v4` `d097d6d88`, which holds this rule
+([R73 part 1](../2026-11-12_r73_qsa_prompt_replay/README.md)): every case passes and takes the kernel the rule names.
+That build's `test-backend-ops` also selects C103's 50 cases, which this set does not hold, so the replay marks the
+passing runs `WRONG` for them alone.
 
 **2. The timing on the deep lane** (est. 2 h 45 min): [bench/deep_lane](../../../bench/deep_lane/README.md) on the
 branch's build, the release preset's line, R52's three arms (the sixth run's) and two more, two loads an arm after a

@@ -1,0 +1,11 @@
+run	expect	replayed	OK	FAIL	rule_S	rule_d	S_and_differs	d_and_equal	S_but_equal	d_but_differs	not_judged
+qp-sparse1	pass	72	72	0	21	51	21	51	0	0	0
+qp-prompt	pass	72	72	0	45	27	45	27	0	0	0
+qp-r100	pass	72	72	0	47	25	47	25	0	0	0
+qp-pratio	pass	72	72	0	38	34	38	34	0	0	0
+qp-pnq512	pass	72	72	0	51	21	51	21	0	0	0
+qp-m2	pass	72	72	0	59	13	59	13	0	0	0
+qp-m2-off	pass	72	72	0	29	43	29	43	0	0	0
+qp-fault1	pass	72	72	0	59	13	59	13	0	0	0
+qp-fault2	fail	72	13	59	59	13	0	13	0	0	59
+qp-fault3	fail	72	23	49	59	13	10	13	0	0	49

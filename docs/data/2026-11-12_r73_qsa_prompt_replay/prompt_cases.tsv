@@ -1,0 +1,25 @@
+id	query_tokens	cells	n_kv_max	sequences	type	qp-sparse1 (table rule errors verdict)	qp-prompt (table rule errors verdict)	qp-r100 (table rule errors verdict)	qp-pratio (table rule errors verdict)	qp-pnq512 (table rule errors verdict)	qp-m2 (table rule errors verdict)	qp-m2-off (table rule errors verdict)	qp-stock
+2039dfef17cee3479ee9	9	8192	2051	1	q8_0	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+e104d11b378e07f5fc68	9	8192	2051	1	f16	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+557e8b89809514893308	16	8192	2051	1	f16	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+f0d887d4a29d0163f65d	16	8192	2051	1	q8_0	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+2ec8a51e488b23791d38	64	8192	2051	1	q8_0	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+6adacdc4f92f96b1e835	64	8192	2051	1	f16	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+3d9ebc7043beb99cfaef	128	8192	2051	1	f16	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+a65a2c81e868f7b9a628	128	8192	2051	1	q8_0	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+32845418082b5091ad15	9	3072	2051	1	q8_0	d d = OK	S S x OK	S S x OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+605c374f778ba987a489	9	3072	2051	1	f16	d d = OK	S S x OK	S S x OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+05f3fc2556cf4f61841e	128	3072	2051	1	q8_0	d d = OK	S S x OK	S S x OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+5918a9ce23eb59fcc2db	128	3072	2051	1	f16	d d = OK	S S x OK	S S x OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+4609e8303030ac80f4a1	128	32768	2051	1	q8_0	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+e04bacc2a218b70ecf96	128	32768	2051	1	f16	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+19e34e762e8f65b819ba	64	4096	2051	2	q8_0	d d = OK	S S x OK	S S x OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+fd46679b3d3e66d7992b	64	4096	2051	2	f16	d d = OK	S S x OK	S S x OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+5b620b2da254ff08da2e	32	4096	1027	1	f16	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+b0f5d898127a341c440c	32	4096	1027	1	q8_0	d d = OK	S S x OK	S S x OK	S S x OK	S S x OK	S S x OK	d d = OK	OK
+16b99960a5f8fe001170	129	4096	2051	1	q8_0	d d = OK	d d = OK	d d = OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+59bb52d3b1a2b021bb96	129	4096	2051	1	f16	d d = OK	d d = OK	d d = OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+d5314233b44a89eef6c3	256	4096	2051	1	f16	d d = OK	d d = OK	d d = OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+e1f0f05eff0c5e098b27	256	4096	2051	1	q8_0	d d = OK	d d = OK	d d = OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+076de9dca23bb7c425ff	512	4096	2051	1	q8_0	d d = OK	d d = OK	d d = OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
+2902d02ce83bccfe8d28	512	4096	2051	1	f16	d d = OK	d d = OK	d d = OK	d d = OK	S S x OK	S S x OK	d d = OK	OK
