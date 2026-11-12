@@ -1,0 +1,6 @@
+|Model arch.|          Config|   Drafts|      End|Short|   Re-plans base p/s/t|   Re-plans keep p/s/t|   Re-plans plan p/s/t| Growths b/k/p|   Plans|  Compute KiB k/p|Status
+|  qwen4exp|       f16 short|identical|identical|   on|                4/68/0|                1/26/0|                 0/0/0|        0/27/0|       6|        6188/6593|OK keep's first: nodes 0 -> 183
+|  qwen4exp| f16 short kpool|identical|identical|   on|                4/68/0|                1/26/0|                 0/0/0|        0/27/0|       6|        6132/6522|OK keep's first: nodes 0 -> 192
+|  qwen4exp|             f16|identical|identical|  off|                 0/0/0|                1/24/0|                 0/0/0|        0/25/0|       5|        5873/6211|OK keep's first: nodes 0 -> 183
+|  qwen4exp|      q8_0 short|identical|identical|   on|                4/68/0|                1/26/0|                 0/0/0|        0/27/0|       6|        6188/6593|OK keep's first: nodes 0 -> 195
+Summary: all 4 test(s) passed

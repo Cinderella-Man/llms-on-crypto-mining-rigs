@@ -1,0 +1,476 @@
+log	request	phase	context	n_tokens	n_outputs	graph	replan	reason	cards_changed	drain_us	plan_us	grow_mib
+r60line	-1	load	draft	2	1	rebuilt	0		0	0	0	304.44
+r60line	0	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+r60line	0	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+r60line	0	prompt	draft	9	0	rebuilt	0		0	0	0	0.00
+r60line	0	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+r60line	0	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r60line	1	prompt	draft	381	0	rebuilt	0		0	0	0	0.00
+r60line	1	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+r60line	1	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	1	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	1	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	1	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	1	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	3	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 3, 1, 1] needs 3072 B, planned 1024 B	0	0	0	0.00
+r60line	1	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	1	gen	draft	2	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 2, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	1	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r60line	2	prompt	draft	512	0	rebuilt	1	node 'kpool_stage-2' (CONT) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	0	0	0.00
+r60line	2	prompt	draft	512	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [3584, 1, 1, 1] needs 7168 B, planned 6144 B	0	0	0	0.00
+r60line	2	prompt	draft	512	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [4096, 1, 1, 1] needs 8192 B, planned 7168 B	0	0	0	0.00
+r60line	2	prompt	draft	512	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [4608, 1, 1, 1] needs 9216 B, planned 8192 B	0	0	0	0.00
+r60line	2	prompt	draft	512	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [5120, 1, 1, 1] needs 10240 B, planned 9216 B	0	0	0	0.00
+r60line	2	prompt	draft	238	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [5376, 1, 1, 1] needs 10752 B, planned 10240 B	0	0	0	0.00
+r60line	2	prompt	draft	512	0	rebuilt	1	node 'kpool_stage-2' (CONT) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	0	0	0.00
+r60line	2	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	2	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	2	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	2	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	2	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	3	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	2	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	2	gen	draft	2	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 2, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	2	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r60line	3	prompt	draft	299	0	rebuilt	1	node 'kpool_stage-2' (CONT) larger than planned ne = [1152, 1, 1, 1] needs 4608 B, planned 3072 B	0	0	0	0.00
+r60line	3	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	3	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	3	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	3	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 3, 1, 1] needs 3072 B, planned 1024 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	3	gen	draft	2	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 2, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	3	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r60line	4	prompt	draft	27	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 27, 1, 1] needs 27648 B, planned 2048 B	0	0	0	0.00
+r60line	4	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	4	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	4	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	4	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	4	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	3	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 3, 1, 1] needs 3072 B, planned 1024 B	0	0	0	0.00
+r60line	4	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	4	gen	draft	2	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 2, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	4	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r60line	5	prompt	draft	89	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 89, 1, 1] needs 91136 B, planned 2048 B	0	0	0	0.00
+r60line	5	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	5	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	5	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	5	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	5	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	3	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	5	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	5	gen	draft	2	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 2, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	5	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r60line	6	prompt	draft	512	0	rebuilt	1	node 'kpool_stage-2' (CONT) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	0	0	0.00
+r60line	6	prompt	draft	512	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [1024, 1, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	6	prompt	draft	509	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [1536, 1, 1, 1] needs 3072 B, planned 2048 B	0	0	0	0.00
+r60line	6	prompt	draft	512	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 512, 1, 1] needs 524288 B, planned 521216 B	0	0	0	0.00
+r60line	6	prompt	draft	4	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [2304, 1, 1, 1] needs 4608 B, planned 4096 B	0	0	0	0.00
+r60line	6	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	6	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	6	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	6	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	6	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	3	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	6	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	6	gen	draft	2	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 2, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	6	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r60line	7	prompt	draft	512	0	rebuilt	1	node 'kpool_stage-2' (CONT) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	0	0	0.00
+r60line	7	prompt	draft	512	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [1024, 1, 1, 1] needs 2048 B, planned 1024 B	0	0	0	0.00
+r60line	7	prompt	draft	509	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [1536, 1, 1, 1] needs 3072 B, planned 2048 B	0	0	0	0.00
+r60line	7	prompt	draft	512	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 512, 1, 1] needs 524288 B, planned 521216 B	0	0	0	0.00
+r60line	7	prompt	draft	4	0	rebuilt	1	node 'node_78' (FILL) larger than planned ne = [2304, 1, 1, 1] needs 4608 B, planned 4096 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	7	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	4	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	7	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	4	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 4, 1, 1] needs 4096 B, planned 1024 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	rebuilt	1	node 'h_nextn-2' (GET_ROWS) larger than planned ne = [1024, 1, 1, 1] needs 4096 B, planned 0 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	3	0	rebuilt	1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned ne = [256, 3, 1, 1] needs 3072 B, planned 1024 B	0	0	0	0.00
+r60line	7	gen	draft	1	1	rebuilt	1	nodes 176 -> 186	0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r60line	7	gen	draft	2	0	rebuilt	1	nodes 186 -> 176	0	0	0	0.00
+r60line	7	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	-1	load	draft	2	1	rebuilt	0		0	0	0	93.74
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	9	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	0	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	0	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	1	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	1	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	1	prompt	draft	125	0	rebuilt	0		0	0	0	0.00
+r85line	1	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	1	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	1	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	1	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	1	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	1	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	1	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	110	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	2	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	2	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	2	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	2	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	3	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	3	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	3	prompt	draft	43	0	rebuilt	0		0	0	0	0.00
+r85line	3	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	3	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	3	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	4	prompt	draft	27	0	rebuilt	0		0	0	0	0.00
+r85line	4	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	4	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	4	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	5	prompt	draft	89	0	rebuilt	0		0	0	0	0.00
+r85line	5	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	5	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	5	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	125	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	6	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	6	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	6	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	6	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	125	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	rebuilt	0		0	0	0	0.00
+r85line	7	prompt	draft	128	0	reused	0		0	0	0	0.00
+r85line	7	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	4	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	1	1	reused	0		0	0	0	0.00
+r85line	7	gen	draft	2	0	rebuilt	0		0	0	0	0.00
+r85line	7	gen	draft	1	0	rebuilt	0		0	0	0	0.00

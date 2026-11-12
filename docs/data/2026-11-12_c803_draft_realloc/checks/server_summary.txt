@@ -1,0 +1,30 @@
+r60	draft	evaluations 208	replans prompt 20 gen 84 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 2 (304.44 MiB)
+r60	draft	  24	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned
+r60	draft	  22	nodes 176 -> 186
+r60	draft	  22	nodes 186 -> 176
+r60	draft	  20	node 'h_nextn-2' (GET_ROWS) larger than planned
+r60	draft	  11	node 'node_78' (FILL) larger than planned
+r60	draft	  5	node 'kpool_stage-2' (CONT) larger than planned
+r60	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r60keep	draft	evaluations 208	replans prompt 5 gen 20 load 1	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 28 (305.61 MiB)
+r60keep	draft	  19	node 'node_78' (FILL) larger than planned
+r60keep	draft	  6	nodes 0 -> 176
+r60keep	draft	  1	nodes 0 -> 186
+r60keep	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r60plan	draft	evaluations 208	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (310.07 MiB)
+r60plan	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r85	draft	evaluations 267	replans prompt 44 gen 84 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 2 (93.74 MiB)
+r85	draft	  28	node 'node_71' (FILL) larger than planned
+r85	draft	  26	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned
+r85	draft	  22	nodes 168 -> 178
+r85	draft	  22	nodes 178 -> 168
+r85	draft	  20	node 'h_nextn-2' (GET_ROWS) larger than planned
+r85	draft	  10	node 'node_77' (GET_ROWS) larger than planned
+r85	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)
+r85keep	draft	evaluations 267	replans prompt 5 gen 20 load 1	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 28 (99.77 MiB)
+r85keep	draft	  19	node 'node_71' (FILL) larger than planned
+r85keep	draft	  6	nodes 0 -> 168
+r85keep	draft	  1	nodes 0 -> 178
+r85keep	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)
+r85plan	draft	evaluations 267	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (155.23 MiB)
+r85plan	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)

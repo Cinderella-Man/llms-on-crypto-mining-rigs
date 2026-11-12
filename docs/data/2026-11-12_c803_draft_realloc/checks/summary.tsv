@@ -1,0 +1,51 @@
+row	check	verdict	detail
+branch	commits	OK	bd632176f0 context: a per-size scheduler's plan keeps the k-pool lists at a ubatch's bounds (C803);611a00bb34 test-llama-archs --mtp-replan: a reserve of the shared scheduler is not a re-plan (C803);568a979c3a context: LLAMA_SCHED_PER_SIZE_RESERVE plans each per-size scheduler once over the whole memory (C803, Q1407);;  9 files changed, 564 insertions(+), 6 deletions(-)
+cpu	tip build	OK	rc=0; commit bd632176f03b560c94bbf20061458b986ec8ffb8 context: a per-size scheduler's plan keeps the k-pool lists at a ubatch's bounds (C803); static; test-llama-archs llama-server test-backend-ops; 3 warning lines, 0 error lines
+replan	--mtp-replan	PASS	rc=0; |Model arch.| Config| Drafts| End|Short| Re-plans base p/s/t| Re-plans keep p/s/t| Re-plans plan p/s/t| Growths b/k/p| Plans| Compute KiB k/p|Status;| qwen4exp| f16 short|identical|identical| on| 4/68/0| 1/26/0| 0/0/0| 0/27/0| 6| 6188/6593|OK keep's first: nodes 0 -> 183;| qwen4exp| f16 short kpool|identical|identical| on| 4/68/0| 1/26/0| 0/0/0| 0/27/0| 6| 6132/6522|OK keep's first: nodes 0 -> 192;| qwen4exp| f16|identical|identical| off| 0/0/0| 1/24/0| 0/0/0| 0/25/0| 5| 5873/6211|OK keep's first: nodes 0 -> 183;| qwen4exp| q8_0 short|identical|identical| on| 4/68/0| 1/26/0| 0/0/0| 0/27/0| 6| 6188/6593|OK keep's first: nodes 0 -> 195;; Summary: all 4 test(s) passed
+keep	off	PASS	rc=0; no switch; Summary: all 8 test(s) passed
+keep	on	PASS	rc=0; LLAMA_SCHED_PER_SIZE_RESERVE=1; Summary: all 8 test(s) passed
+keep	off against on	SAME	the same rows up to the builds (9 rows); compute KiB off: ComputeKiB 1411/2278 1447/2339 1411/2278 1411/2278 1411/1713 1411/2278 1411/2358 1411/1793 , on: ComputeKiB 1411/2414 1447/2474 1411/2414 1411/2414 1411/1785 1411/2414 1411/2559 1411/1930 
+server	r60	OK	rc=0; draft re-plans 104; evaluations 208 replans prompt 20 gen 84 load 0; buffer growths 7; per-size plans 0; replies against r60: identical 8 8 57 57
+server	r60keep	OK	rc=0; draft re-plans 26; evaluations 208 replans prompt 5 gen 20 load 1; buffer growths 33; per-size plans 0; replies against r60: identical 8 8 57 57
+server	r60plan	OK	rc=0; draft re-plans 0; evaluations 208 replans prompt 0 gen 0 load 0; buffer growths 14; per-size plans 7; replies against r60: identical 8 8 57 57
+server	r85	OK	rc=0; draft re-plans 128; evaluations 267 replans prompt 44 gen 84 load 0; buffer growths 7; per-size plans 0; replies against r85: identical 8 8 57 57
+server	r85keep	OK	rc=0; draft re-plans 26; evaluations 267 replans prompt 5 gen 20 load 1; buffer growths 33; per-size plans 0; replies against r85: identical 8 8 57 57
+server	r85plan	OK	rc=0; draft re-plans 0; evaluations 267 replans prompt 0 gen 0 load 0; buffer growths 14; per-size plans 7; replies against r85: identical 8 8 57 57
+off	base writes	OK	rc=0; BASE_CPU (8a55934f3): 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	plan	SAME	rc=0; LLAMA_SCHED_PER_SIZE_RESERVE=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+rig	build	OK	rc=0; llama.cpp-20261112-bd632176f-pascal-p106-v4-b12246-c803.tar.gz md5 dca813b0206e1e58e3947db62a4c1f59, 678340600 B; commit: bd632176f03b560c94bbf20061458b986ec8ffb8 (2026-11-12 17:12:56 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 a50d9c02f4e78d8a50d229dcebc151cf; 34 warning lines
+c565 static	c803 tree	OK	commit bd632176f03b560c94bbf20061458b986ec8ffb8 
+c565 static	c803 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c803 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c803 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c803 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c803 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c803 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c803 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c803 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c803 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c803 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c803 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c803 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c803 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c803 hand thread-safety	OK	test-thread-safety rc=0: 0.00.051.992 I All threads finished without errors.
+c565 static	c803 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c803 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 0.588582
+c565 shared	c803 tree	OK	commit bd632176f03b560c94bbf20061458b986ec8ffb8 
+c565 shared	c803 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c803 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c803 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c803 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c803 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c803 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c803 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c803 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c803 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c803 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c803 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c803 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c803 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c803 hand thread-safety	OK	test-thread-safety rc=0: 0.00.029.663 I All threads finished without errors.
+c565 shared	c803 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c803 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -2.864642
