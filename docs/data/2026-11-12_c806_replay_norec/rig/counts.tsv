@@ -1,0 +1,17 @@
+run	expect	verdict	cases	ok_lines	fail_lines	norec_lines	unrecorded_listed	norec_lines_are_the_list	same_30_as_r112	norec_also_replayed
+dmt-on	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-nopf	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-r1	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-r2	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-r1-nopf	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-r2-nopf	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-rule	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-nw1	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-nw2	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-defaults	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-off	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-skip-q4k	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-skip-iq4xs	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-skip	pass	ok	315/315	315	0	30	30	yes	yes	0
+dmt-q3f-pass	pass	WRONG	382/485	382	103	30	30	yes	yes	0
+dmt-q3f-fail	fail	ok	382/485	382	103	30	30	yes	yes	0

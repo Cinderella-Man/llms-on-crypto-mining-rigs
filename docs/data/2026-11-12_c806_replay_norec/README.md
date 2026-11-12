@@ -15,7 +15,9 @@ recorded case passed. Twice on 2026-11-12 this cost a rerun and a check by hand:
   `WRONG`.
 
 Registry row [Q1412](../../../quants/experiments.md). The fix has two parts: the replay names those cases, and the
-script tells them apart from failing ones. Neither changes a verdict on a recorded case.
+script tells them apart from failing ones. Neither changes a verdict on a recorded case. On a P106
+([R129](#on-a-p106-rig-row-r129)) the `v4day` set replays on the new build in one run: R112's 14 `dmt` runs read
+`ok, 30 unrecorded` with the 30 named, and a run with failing cases still reads `WRONG`.
 
 ## The change
 
@@ -87,30 +89,54 @@ Two lines of [checks.tsv](checks.tsv) read FAIL. Both were errors in the checks 
   string but have different ids (the id counts the earlier cases with the same string). The rerun compares ids.
 - `setcpu` first expected 315 and 485 cases, but a CPU declines the large-activation ones.
 
-## On a P106 (the rig row)
+## On a P106 (rig row R129)
 
-The fix is done when the replay above reads right on a card (rig row R129). The set `v4day` stays on rig 1 from R112, so
-the row needs only the tarball:
+**The replay reads right on a card: every run gets the verdict written for it, and the console ends with
+`15 runs as expected, 1 WRONG`** (the one is `dmt-q3f-pass`, which must read `WRONG`).
 
-- Rig tarball `llama.cpp-20261112-74881101b-pascal-p106-v4-b12246-c806.tar.gz` (678,328,540 B, md5
-  `fca33ab691240ca5d1c292e4aaa1a337`, sm_61, no AVX, `test-backend-ops` in `bin/`).
-- [run/rig_c806.sh](run/rig_c806.sh) runs [`scripts/replay_checks.sh`](../../../scripts/replay_checks.sh) on the 16 runs
-  of [run/rig_runs.tsv](run/rig_runs.tsv), on card 0:
+The set `v4day` (R112's, recorded with `pascal-p106-v4-b12246-day`) replayed on card 0 of a P106-090 rig on 2026-11-12,
+17:58:31–18:02:37 (4 min 6 s), with:
+
+- the rig tarball `llama.cpp-20261112-74881101b-pascal-p106-v4-b12246-c806.tar.gz` (678,328,540 B, md5
+  `fca33ab691240ca5d1c292e4aaa1a337`, sm_61, no AVX; `test-backend-ops` md5 `2d2d8225aafb4f53cc49682caa0333d9`), md5
+  checked on both ends of the copy;
+- [`scripts/replay_checks.sh`](../../../scripts/replay_checks.sh) as C806 left it (md5 `c723029fe001f5544780b2612be38f05`);
+- [run/rig_c806.sh](run/rig_c806.sh) on the 16 runs of [run/rig_runs.tsv](run/rig_runs.tsv):
   - R112's 14 `dmt` runs, as the set's `runs.tsv` has them;
   - `dmt-q3f-pass` and `dmt-q3f-fail`: the `dmt` filter joined with the `q3kmt` suite's, under
-    `GGML_CUDA_MMVQ_PASCAL_Q3K_MT_FAULT=1`. That gives the same 30 unrecorded cases beside recorded cases that fail
-    (103 of 170 in R112's `q3kmt-fault`), expected to pass and to fail.
-- It passes when:
-  - the 14 `dmt` runs read `ok, 30 unrecorded`, with the 30 named;
-  - `dmt-q3f-pass` reads `WRONG, 30 unrecorded`;
-  - `dmt-q3f-fail` reads `ok, 30 unrecorded`;
-  - the console's last line reads `15 runs as expected, 1 WRONG` (the one is `dmt-q3f-pass`).
-- About 5 minutes on the card; R112's 14 `dmt` runs took 3 min 21 s.
+    `GGML_CUDA_MMVQ_PASCAL_Q3K_MT_FAULT=1`. That gives the same 30 unrecorded cases beside recorded cases that fail,
+    expected to pass and to fail.
+
+| Runs | Cases replayed | Pass | Fail | Unrecorded (`NOREC`) | FAIL lines, exit | Verdict |
+|---|---|---|---|---|---|---|
+| each of the 14 `dmt` runs | 315 | 315 | 0 | 30 | 3, 1 | `ok, 30 unrecorded` |
+| `dmt-q3f-pass` (expect pass) | 485 | 382 | 103 | 30 | 106, 1 | `WRONG, 30 unrecorded` |
+| `dmt-q3f-fail` (expect fail) | 485 | 382 | 103 | 30 | 106, 1 | `ok, 30 unrecorded` |
+
+- **The 30 are named:** in full under `dmt-on`, then `the same 30 unrecorded cases as dmt-on` under each of the other 15
+  runs ([rig/console.txt](rig/console.txt)). In every run they are R112's 30, C728's K-tile cases: IQ4_XS and Q4_K at
+  K = 6,144 and 1-5 tokens, with m = 333 and 4,097, and m = 129 with `k_v` = 6,656. Each run's per-case table has
+  exactly the 30 `NOREC` lines that `unrecorded.tsv` lists for it, and none of the 30 ids is among the ids it replayed
+  ([rig/counts.tsv](rig/counts.tsv)).
+- **The FAIL lines:** 3 in each `dmt` run. Those are the replay summary's no-record line and the two lines a failing
+  run ends with, which the script sets apart. The `dmt-q3f` runs have the same 3 plus their 103 failing cases. Those
+  103 are q3_K cases, the same 103 in both runs ([rig/failing.tsv](rig/failing.tsv)).
+- **Against R112 on `-kern`:** `-kern` has the same GPU code (8,540 of 8,540 functions), and every case of every run
+  here has R112's verdict and R112's errors to every printed digit:
+  - each `dmt` run's 315 cases, against R112's run of the same name;
+  - in the two `dmt-q3f` runs, the 315 IQ4_XS and Q4_K cases against R112's `dmt-on`, and the 170 q3_K cases against
+    R112's `q3kmt-fault` (its 103 failing cases included);
+  - 0 differences in 5,380 replayed cases ([rig/vs_r112.tsv](rig/vs_r112.tsv)).
+- The card read 0 MiB before and after the run. The kernel log had no Xid line before or after.
 
 ```bash
 # on the rig, with the tarball unpacked in $D and the set in $SET (R112's v4day)
 SET=$SET BIN=$D/llama.cpp-20261112-74881101b-pascal-p106-v4-b12246-c806/bin OUT=$D/out \
   CHECKS=<repo>/scripts/replay_checks.sh DEV=0 bash <repo>/docs/data/2026-11-12_c806_replay_norec/run/rig_c806.sh
+# then, on any machine with the output copied off the rig and R112's -kern replay output at hand (CPU only)
+RIG_OUT=<the run's out/replay> R112_OUT=<R112's -kern replay output> \
+  R112_UNREC=docs/data/2026-11-12_c806_replay_norec/saved/unrecorded_r112_dmt.tsv OUT=<the tables' folder> \
+  SET_DIR=<the set's folder on the rig> RUN_DIR=<$D> bash docs/data/2026-11-12_c806_replay_norec/run/r129_tables.sh
 ```
 
 ## Files
@@ -132,6 +158,12 @@ SET=$SET BIN=$D/llama.cpp-20261112-74881101b-pascal-p106-v4-b12246-c806/bin OUT=
 | [run/checks.sh](run/checks.sh) | the driver on the build machine |
 | [run/norec_tests.sh](run/norec_tests.sh), [run/saved_logs.sh](run/saved_logs.sh) | the CPU tests and the saved-log tests |
 | [run/rig_c806.sh](run/rig_c806.sh), [run/rig_runs.tsv](run/rig_runs.tsv) | the rig row's script and run list |
+| [rig/console.txt](rig/console.txt), [rig/results.tsv](rig/results.tsv), [rig/unrecorded.tsv](rig/unrecorded.tsv) | R129 on a P106: `replay_checks.sh`'s console (the rig's folders written as `$SET` and `$D`), its per-run table and its list of each run's unrecorded cases (run, id, case) |
+| [rig/counts.tsv](rig/counts.tsv) | per run: the verdict, the per-case table's `OK`, `FAIL` and `NOREC` lines, and whether the `NOREC` lines are the listed 30 and R112's 30 |
+| [rig/vs_r112.tsv](rig/vs_r112.tsv), [rig/vs_r112_diff.tsv](rig/vs_r112_diff.tsv) | each run against R112's replay on `-kern`, case by case (same verdict and errors, differing, missing), and the differing cases (none) |
+| [rig/failing.tsv](rig/failing.tsv) | the 103 failing cases of each `dmt-q3f` run, with their errors |
+| [rig/cases.tsv.gz](rig/cases.tsv.gz) | every case line of every run's per-case table (run, id, case, verdict, errors) |
+| [run/r129_tables.sh](run/r129_tables.sh) | the script that made the `rig/` tables from the run's output and R112's |
 
 ## Commands
 

@@ -1,0 +1,19 @@
+run	part	r112_run	cases	same_verdict_and_errors	differ	not_in_r112_run
+dmt-on	all	dmt-on	315	315	0	0
+dmt-nopf	all	dmt-nopf	315	315	0	0
+dmt-r1	all	dmt-r1	315	315	0	0
+dmt-r2	all	dmt-r2	315	315	0	0
+dmt-r1-nopf	all	dmt-r1-nopf	315	315	0	0
+dmt-r2-nopf	all	dmt-r2-nopf	315	315	0	0
+dmt-rule	all	dmt-rule	315	315	0	0
+dmt-nw1	all	dmt-nw1	315	315	0	0
+dmt-nw2	all	dmt-nw2	315	315	0	0
+dmt-defaults	all	dmt-defaults	315	315	0	0
+dmt-off	all	dmt-off	315	315	0	0
+dmt-skip-q4k	all	dmt-skip-q4k	315	315	0	0
+dmt-skip-iq4xs	all	dmt-skip-iq4xs	315	315	0	0
+dmt-skip	all	dmt-skip	315	315	0	0
+dmt-q3f-pass	iq4_xs and q4_K	dmt-on	315	315	0	0
+dmt-q3f-pass	q3_K	q3kmt-fault	170	170	0	0
+dmt-q3f-fail	iq4_xs and q4_K	dmt-on	315	315	0	0
+dmt-q3f-fail	q3_K	q3kmt-fault	170	170	0	0
