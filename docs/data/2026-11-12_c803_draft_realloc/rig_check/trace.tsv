@@ -1,0 +1,301 @@
+log	request	phase	context	n_tokens	n_outputs	graph	replan	reason	cards_changed	drain_us	plan_us	grow_mib
+base	-1	load	draft	2	1	rebuilt	0		0	0	0	472.62
+base	0	prompt	draft	512	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	61	195	0.00
+base	0	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	22845	192	0.00
+base	0	prompt	draft	9	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [1280, 1, 1, 1] needs 2560 B, planned 2048 B	0	180003	203	0.00
+base	0	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	1005281	203	0.00
+base	0	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+base	1	prompt	draft	380	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [2048, 1, 1, 1] needs 4096 B, planned 3584 B	0	93	188	0.00
+base	1	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	153195	195	0.00
+base	1	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+base	1	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	63	214	0.00
+base	1	gen	draft	1	1	reused	0		0	0	0	0.00
+base	1	gen	draft	1	1	reused	0		0	0	0	0.00
+base	1	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	97	210	0.00
+base	1	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	79	201	0.00
+base	1	gen	draft	1	1	reused	0		0	0	0	0.00
+base	1	gen	draft	1	1	reused	0		0	0	0	0.00
+base	1	gen	draft	3	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	65	182	0.00
+base	2	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	153	221	0.00
+base	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [896, 512, 1, 1] needs 917504 B, planned 786432 B	0	207968	197	0.00
+base	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1024, 512, 1, 1] needs 1048576 B, planned 917504 B	0	218974	198	0.00
+base	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1152, 512, 1, 1] needs 1179648 B, planned 1048576 B	0	217773	199	0.00
+base	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1280, 512, 1, 1] needs 1310720 B, planned 1179648 B	0	125	201	0.00
+base	2	prompt	draft	237	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [5376, 1, 1, 1] needs 10752 B, planned 10240 B	0	235466	201	0.00
+base	2	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	124275	199	0.00
+base	2	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+base	2	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	1030	204	0.00
+base	2	gen	draft	1	1	reused	0		0	0	0	0.00
+base	2	gen	draft	1	1	reused	0		0	0	0	0.00
+base	2	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	102	241	0.00
+base	2	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	377	196	0.00
+base	2	gen	draft	1	1	reused	0		0	0	0	0.00
+base	2	gen	draft	1	1	reused	0		0	0	0	0.00
+base	2	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	78	211	0.00
+base	2	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+base	3	prompt	draft	298	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1152, 1, 1, 1] needs 4608 B, planned 3072 B	0	174	224	0.00
+base	3	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+base	3	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	2267	201	0.00
+base	3	gen	draft	1	1	reused	0		0	0	0	0.00
+base	3	gen	draft	1	1	reused	0		0	0	0	0.00
+base	3	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	96	262	0.00
+base	3	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	465	199	0.00
+base	3	gen	draft	1	1	reused	0		0	0	0	0.00
+base	3	gen	draft	1	1	reused	0		0	0	0	0.00
+base	3	gen	draft	3	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	76	184	0.00
+base	4	prompt	draft	26	0	rebuilt	1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned ne = [26, 1, 1, 1] needs 104 B, planned 12 B	0	137	200	0.00
+base	4	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+base	4	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	2350	206	0.00
+base	4	gen	draft	1	1	reused	0		0	0	0	0.00
+base	4	gen	draft	1	1	reused	0		0	0	0	0.00
+base	4	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	95	263	0.00
+base	4	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	466	207	0.00
+base	4	gen	draft	1	1	reused	0		0	0	0	0.00
+base	4	gen	draft	1	1	reused	0		0	0	0	0.00
+base	4	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	97	236	0.00
+base	4	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	796	200	0.00
+base	4	gen	draft	1	1	reused	0		0	0	0	0.00
+base	4	gen	draft	1	1	reused	0		0	0	0	0.00
+base	4	gen	draft	3	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	78	184	0.00
+base	5	prompt	draft	88	0	rebuilt	1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned ne = [88, 1, 1, 1] needs 352 B, planned 12 B	0	91	193	0.00
+base	5	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+base	5	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	2353	203	0.00
+base	5	gen	draft	1	1	reused	0		0	0	0	0.00
+base	5	gen	draft	1	1	reused	0		0	0	0	0.00
+base	5	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	77	231	0.00
+base	5	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	654	210	0.00
+base	5	gen	draft	1	1	reused	0		0	0	0	0.00
+base	5	gen	draft	1	1	reused	0		0	0	0	0.00
+base	5	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	77	235	0.00
+base	5	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	762	205	0.00
+base	5	gen	draft	1	1	reused	0		0	0	0	0.00
+base	5	gen	draft	1	1	reused	0		0	0	0	0.00
+base	5	gen	draft	2	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	78	185	0.00
+base	6	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	141	198	0.00
+base	6	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	167665	197	0.00
+base	6	prompt	draft	509	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [384, 509, 1, 1] needs 390912 B, planned 327680 B	0	179438	198	0.00
+base	6	prompt	draft	512	0	rebuilt	1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned ne = [512, 1, 1, 1] needs 2048 B, planned 2036 B	0	182557	200	0.00
+base	6	prompt	draft	4	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [2304, 1, 1, 1] needs 4608 B, planned 4096 B	0	106	232	0.00
+base	6	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	2173	199	0.00
+base	6	gen	draft	1	1	reused	0		0	0	0	0.00
+base	6	gen	draft	1	1	reused	0		0	0	0	0.00
+base	6	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	98	221	0.00
+base	6	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	391	198	0.00
+base	6	gen	draft	1	1	reused	0		0	0	0	0.00
+base	6	gen	draft	1	1	reused	0		0	0	0	0.00
+base	6	gen	draft	3	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	143	194	0.00
+base	6	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+base	7	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	164	196	0.00
+base	7	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	167525	200	0.00
+base	7	prompt	draft	509	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [384, 509, 1, 1] needs 390912 B, planned 327680 B	0	179401	199	0.00
+base	7	prompt	draft	512	0	rebuilt	1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned ne = [512, 1, 1, 1] needs 2048 B, planned 2036 B	0	181493	198	0.00
+base	7	prompt	draft	4	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [2304, 1, 1, 1] needs 4608 B, planned 4096 B	0	127	212	0.00
+base	7	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	2354	199	0.00
+base	7	gen	draft	1	1	reused	0		0	0	0	0.00
+base	7	gen	draft	1	1	reused	0		0	0	0	0.00
+base	7	gen	draft	4	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	76	212	0.00
+base	7	gen	draft	1	1	rebuilt	1	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)	1	427	198	0.00
+base	7	gen	draft	1	1	reused	0		0	0	0	0.00
+base	7	gen	draft	1	1	reused	0		0	0	0	0.00
+base	7	gen	draft	3	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	99	215	0.00
+base	7	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+keep	-1	load	draft	2	1	rebuilt	1	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)	1	78	765	474.74
+keep	0	prompt	draft	512	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	61	216	0.00
+keep	0	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	22744	205	0.00
+keep	0	prompt	draft	9	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [1280, 1, 1, 1] needs 2560 B, planned 2048 B	0	175119	208	0.00
+keep	0	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	1005294	207	0.00
+keep	0	prompt	draft	4	0	rebuilt	1	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)	1	181550	951	1.50
+keep	1	prompt	draft	380	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [2048, 1, 1, 1] needs 4096 B, planned 3584 B	0	73	203	0.00
+keep	1	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	154661	206	0.00
+keep	1	prompt	draft	4	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [640, 4, 1, 1] needs 5120 B, planned 3584 B	0	201943	1245	0.00
+keep	1	gen	draft	1	1	rebuilt	1	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)	1	1120	947	2.20
+keep	1	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	1	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	1	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	1	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	1	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	1	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	1	gen	draft	3	0	rebuilt	1	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)	1	80	1094	1.13
+keep	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [768, 512, 1, 1] needs 786432 B, planned 655360 B	0	146	214	0.00
+keep	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [896, 512, 1, 1] needs 917504 B, planned 786432 B	0	207223	207	0.00
+keep	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1024, 512, 1, 1] needs 1048576 B, planned 917504 B	0	215725	205	0.00
+keep	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1152, 512, 1, 1] needs 1179648 B, planned 1048576 B	0	222025	206	0.00
+keep	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1280, 512, 1, 1] needs 1310720 B, planned 1179648 B	0	111	202	0.00
+keep	2	prompt	draft	237	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [5376, 1, 1, 1] needs 10752 B, planned 10240 B	0	235194	206	0.00
+keep	2	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	128771	206	0.00
+keep	2	prompt	draft	4	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1472, 4, 1, 1] needs 11776 B, planned 5120 B	0	243810	627	0.00
+keep	2	gen	draft	1	1	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1472, 1, 1, 1] needs 2944 B, planned 1280 B	0	2380	490	0.01
+keep	2	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	2	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	2	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	2	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	2	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	2	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	2	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	2	gen	draft	1	0	rebuilt	1	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)	1	83	962	0.97
+keep	3	prompt	draft	298	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [6144, 1, 1, 1] needs 12288 B, planned 11776 B	0	169	198	0.00
+keep	3	prompt	draft	4	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1536, 4, 1, 1] needs 12288 B, planned 11776 B	0	157658	604	0.01
+keep	3	gen	draft	1	1	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 3072 B, planned 2944 B	0	2654	527	0.00
+keep	3	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	3	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	3	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	3	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	3	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	3	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	3	gen	draft	3	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1536, 3, 1, 1] needs 9216 B, planned 3840 B	0	112	1220	0.00
+keep	4	prompt	draft	26	0	rebuilt	0		0	0	0	0.00
+keep	4	prompt	draft	4	0	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	4	gen	draft	3	0	reused	0		0	0	0	0.00
+keep	5	prompt	draft	88	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [6400, 1, 1, 1] needs 12800 B, planned 12288 B	0	146	198	0.00
+keep	5	prompt	draft	4	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1600, 4, 1, 1] needs 12800 B, planned 12288 B	0	55349	598	0.00
+keep	5	gen	draft	1	1	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1600, 1, 1, 1] needs 3200 B, planned 3072 B	0	2690	550	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	5	gen	draft	2	0	rebuilt	1	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)	1	104	668	0.98
+keep	6	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	155	226	0.00
+keep	6	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	179536	212	0.00
+keep	6	prompt	draft	509	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [384, 509, 1, 1] needs 390912 B, planned 327680 B	0	173000	207	0.00
+keep	6	prompt	draft	512	0	rebuilt	1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned ne = [512, 1, 1, 1] needs 2048 B, planned 2036 B	0	180690	207	0.00
+keep	6	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+keep	6	gen	draft	1	1	rebuilt	1	node 'node_177' (MUL_MAT_ID) larger than planned ne = [1, 211, 1, 1] needs 844 B, planned 724 B	0	2095	196	0.00
+keep	6	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	6	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	6	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	6	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	6	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	6	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	6	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+keep	6	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+keep	7	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+keep	7	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+keep	7	prompt	draft	509	0	rebuilt	0		0	0	0	0.00
+keep	7	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+keep	7	prompt	draft	4	0	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	7	gen	draft	4	0	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	1	reused	0		0	0	0	0.00
+keep	7	gen	draft	3	0	reused	0		0	0	0	0.00
+keep	7	gen	draft	1	0	reused	0		0	0	0	0.00
+plan	-1	load	draft	2	1	rebuilt	0		0	0	0	474.94
+plan	0	prompt	draft	512	0	rebuilt	1	cards changed (node 40 'node_12' CPU -> CUDA8)	1	62	189	0.00
+plan	0	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	22893	189	0.00
+plan	0	prompt	draft	9	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [1280, 1, 1, 1] needs 2560 B, planned 2048 B	0	176191	189	0.00
+plan	0	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	1005412	191	0.00
+plan	0	prompt	draft	4	0	rebuilt	0		0	0	0	1.81
+plan	1	prompt	draft	380	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [2048, 1, 1, 1] needs 4096 B, planned 3584 B	0	146	208	0.00
+plan	1	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	153453	192	0.00
+plan	1	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+plan	1	gen	draft	1	1	rebuilt	0		0	0	0	2.23
+plan	1	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	1	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	1	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	1	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	1	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	1	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	1	gen	draft	3	0	rebuilt	0		0	0	0	1.39
+plan	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [768, 512, 1, 1] needs 786432 B, planned 655360 B	0	150	193	0.00
+plan	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [896, 512, 1, 1] needs 917504 B, planned 786432 B	0	208445	189	0.00
+plan	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1024, 512, 1, 1] needs 1048576 B, planned 917504 B	0	218502	190	0.00
+plan	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1152, 512, 1, 1] needs 1179648 B, planned 1048576 B	0	218993	221	0.00
+plan	2	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [1280, 512, 1, 1] needs 1310720 B, planned 1179648 B	0	163	190	0.00
+plan	2	prompt	draft	237	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [5376, 1, 1, 1] needs 10752 B, planned 10240 B	0	235183	191	0.00
+plan	2	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 4608 B	0	122002	194	0.00
+plan	2	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+plan	2	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+plan	2	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	2	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	2	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	2	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	2	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	2	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	2	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	2	gen	draft	1	0	rebuilt	0		0	0	0	0.99
+plan	3	prompt	draft	298	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [6144, 1, 1, 1] needs 12288 B, planned 11776 B	0	142	211	0.00
+plan	3	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+plan	3	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+plan	3	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	3	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	3	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	3	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	3	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	3	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	3	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+plan	4	prompt	draft	26	0	rebuilt	0		0	0	0	0.00
+plan	4	prompt	draft	4	0	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	4	gen	draft	3	0	reused	0		0	0	0	0.00
+plan	5	prompt	draft	88	0	rebuilt	1	node 'node_76' (FILL) larger than planned ne = [6400, 1, 1, 1] needs 12800 B, planned 12288 B	0	151	220	0.00
+plan	5	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+plan	5	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	5	gen	draft	2	0	rebuilt	0		0	0	0	1.04
+plan	6	prompt	draft	512	0	rebuilt	1	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned ne = [1536, 1, 1, 1] needs 6144 B, planned 3072 B	0	126	180	0.00
+plan	6	prompt	draft	512	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [320, 512, 1, 1] needs 327680 B, planned 196608 B	0	168343	196	0.00
+plan	6	prompt	draft	509	0	rebuilt	1	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned ne = [384, 509, 1, 1] needs 390912 B, planned 327680 B	0	176256	190	0.00
+plan	6	prompt	draft	512	0	rebuilt	1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned ne = [512, 1, 1, 1] needs 2048 B, planned 2036 B	0	180937	191	0.00
+plan	6	prompt	draft	4	0	rebuilt	0		0	0	0	0.00
+plan	6	gen	draft	1	1	rebuilt	0		0	0	0	0.00
+plan	6	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	6	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	6	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	6	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	6	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	6	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	6	gen	draft	3	0	rebuilt	0		0	0	0	0.00
+plan	6	gen	draft	1	0	rebuilt	0		0	0	0	0.00
+plan	7	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+plan	7	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+plan	7	prompt	draft	509	0	rebuilt	0		0	0	0	0.00
+plan	7	prompt	draft	512	0	rebuilt	0		0	0	0	0.00
+plan	7	prompt	draft	4	0	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	7	gen	draft	4	0	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	1	reused	0		0	0	0	0.00
+plan	7	gen	draft	3	0	reused	0		0	0	0	0.00
+plan	7	gen	draft	1	0	reused	0		0	0	0	0.00

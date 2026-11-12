@@ -1,0 +1,24 @@
+base	draft	evaluations 100	replans prompt 26 gen 32 load 0	after a change of cards 33	drains 3443.7 ms	plans 11.9 ms	buffer growths 20 (472.62 MiB)
+base	draft	  17	cards changed (node 40 'node_12' CPU -> CUDA8)
+base	draft	  16	cards changed (node 40 'mtp_h_input (reshaped)' CUDA8 -> CPU)
+base	draft	  9	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned
+base	draft	  7	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned
+base	draft	  5	node 'node_76' (FILL) larger than planned
+base	draft	  4	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned
+base	target	evaluations 59	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 20 (5428.01 MiB)
+keep	draft	evaluations 100	replans prompt 24 gen 9 load 1	after a change of cards 7	drains 3752.5 ms	plans 15.4 ms	buffer growths 90 (481.54 MiB)
+keep	draft	  16	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned
+keep	draft	  6	cards changed (node 0 'kpool_upd (view)' CUDA0 -> CPU)
+keep	draft	  5	node 'node_76' (FILL) larger than planned
+keep	draft	  4	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned
+keep	draft	  1	cards changed (node 40 'node_12' CPU -> CUDA8)
+keep	draft	  1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned
+keep	draft	  1	node 'node_177' (MUL_MAT_ID) larger than planned
+keep	target	evaluations 59	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 20 (5428.01 MiB)
+plan	draft	evaluations 100	replans prompt 19 gen 0 load 0	after a change of cards 1	drains 2887.6 ms	plans 3.7 ms	buffer growths 80 (482.40 MiB)
+plan	draft	  8	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned
+plan	draft	  5	node 'node_76' (FILL) larger than planned
+plan	draft	  4	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned
+plan	draft	  1	cards changed (node 40 'node_12' CPU -> CUDA8)
+plan	draft	  1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned
+plan	target	evaluations 59	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 20 (5428.01 MiB)

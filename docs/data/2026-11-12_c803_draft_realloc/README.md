@@ -36,6 +36,16 @@ shared. The cost is memory planned up front, not computation. Merged into `pasca
 saves on a P106 is est. small: R81 timed about 0.18 ms of planning a re-plan there (6.2 ms a fresh 4,097-token prompt),
 plus the drains once the draft's passes queue ahead.
 
+On nine P106-090 cards ([the rig check, R130](#the-rig-check-r130)), FN84's load on R60's line: with both switches
+the per-size schedulers are planned once each and re-plan 0 times (15 times with `LLAMA_MTP_GRAPH_KEEP=1` alone), their
+buffers never grow, and the 8 replies and context checkpoints are those of the loads without the switch and R60's.
+The draft re-plans 19 times in all against 58 with neither switch and 34 with `LLAMA_MTP_GRAPH_KEEP=1`, none in
+generation. The 19 left are the shared scheduler's, in prompts, the same 19 with or without the new switch: the first
+catch-up pass of a load puts the hidden-row input on card 8, where the start plan had it on the host, so that plan is
+dropped and every later one fits only its own context ([Q1427](../../../quants/experiments.md)). Cost: 0.50 MiB
+more on card 8 and 0.36 MiB more host memory than `LLAMA_MTP_GRAPH_KEEP=1` alone at a context of about 6,200 tokens,
+and no more as the context grows.
+
 ## Where the re-plans fall: five rig loads
 
 `run/draft_reallocs.py` reads llama-server's `-lv 5` log. Each re-plan whose card assignment stayed the same logs
@@ -206,23 +216,93 @@ the merge adds exactly the branch's diff against `c96561876`. The checks ran on 
 ## The rig check (R130)
 
 A CPU has one compute buffer per context, so it cannot show the re-plans that follow a change of cards (R81's 4 a
-prompt at the draft's hidden-row input, two a step in generation) or the device allocations. R130 runs FN84's load
-on rig 1 with the `-c803` rig tarball, R60's whole `gains` line (C691's switch on: `-c803` holds C802) and
-`LLAMA_UBATCH_TRACE=1`, three times (`run/r130_loads.sh`, one load each, nothing else on the rig):
+prompt at the draft's hidden-row input, two a step in generation) or the device allocations. R130 ran FN84's load on
+nine P106-090 cards with the branch's rig tarball (`llama.cpp-20261112-bd632176f-pascal-p106-v4-b12246-c803.tar.gz`,
+678,340,600 bytes, md5 `dca813b0206e1e58e3947db62a4c1f59`; `llama-server` md5 `39fba761d806618af555690eb4429050`),
+three times, with `run/r130_loads.sh`: R60's whole `gains` line (C691's switch on: `-c803` holds C802), one task of
+R43's replay with the taper off, then one fresh 2,049-token prompt with the taper off and then on, the server at
+`-lv 5` with `LLAMA_UBATCH_TRACE=1`. One load at a time, nothing else on the rig, each up after 226 s and done in 5.5
+minutes, replay exit 0.
 
-| Load | `ADD_ENV` |
-|---|---|
-| `base` | `LLAMA_UBATCH_TRACE=1` |
-| `keep` | `LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1` |
-| `plan` | `LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_SCHED_PER_SIZE_RESERVE=1` |
+| Load | `ADD_ENV` | Draft re-plans: prompts / generation / at load | After a change of cards | `-lv 5` count | Drains, plans (ms) | `switches:` set |
+|---|---|---:|---:|---:|---:|---:|
+| `base` | `LLAMA_UBATCH_TRACE=1` | 26 / 32 / 0 | 33 | 25 | 3,443.7, 11.9 | 15 |
+| `keep` | `LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1` | 24 / 9 / 1 | 7 | 27 | 3,752.5, 15.4 | 16 |
+| `plan` | `LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_SCHED_PER_SIZE_RESERVE=1` | **19 / 0 / 0** | 1 | 18 | 2,887.6, 3.7 | 17 |
 
-Tables on a build machine's CPU: `run/draft_trace.py parse` (the draft's re-plans per request and phase, those after a
-change of cards, their drains and plans in µs, the buffer growths) and FN84's `run/fn84_requests.py` (replies and
-checkpoints, R60's load `a` as the reference). **Done when:** `plan` re-plans the draft 0 times after its per-size
-plans, in prompts and in generation; its 8 replies and checkpoints are `base`'s and `keep`'s (and R60's for the 6
-replay requests); its `switches:` line names `LLAMA_SCHED_PER_SIZE_RESERVE=1`; and each load's lowest MemAvailable,
-the draft's compute buffers per card at exit, and `base`'s and `keep`'s draft re-plans with their drains and plans are
-given by value. The prompt times per request are one request each, not a timing class.
+**Result: with `LLAMA_SCHED_PER_SIZE_RESERVE=1` the six per-size schedulers are planned once each and then re-plan 0
+times, in prompts and in generation, and none grows its buffers; the 8 replies and context checkpoints are `base`'s and
+`keep`'s, R60's for the 6 replay requests and R127's for all 8.** The `switches:` line names
+`LLAMA_SCHED_PER_SIZE_RESERVE=1`. The 19 re-plans left are the shared scheduler's, in prompts, the same 19 as in `keep`.
+The switch joins `LLAMA_MTP_GRAPH_KEEP=1` in the stacked line: it removes every re-plan it is for, with the same
+replies, for a fixed 0.50 MiB on card 8; its time is est. small and not measured here.
+
+By scheduler (`rig_check/replans.tsv`; the per-size schedulers take the draft's passes of up to 8 tokens):
+
+| Load | Scheduler | Phase | Re-plans | After a change of cards | Drains (ms) | Plans (ms) |
+|---|---|---|---:|---:|---:|---:|
+| `base` | shared | prompts | 26 | 1 | 3,425.2 | 5.239 |
+| `base` | shared | generation | 32 | 32 | 18.4 | 6.706 |
+| `keep` | shared | prompts | 19 | 1 | 2,900.8 | 3.939 |
+| `keep` | per-size | at load | 1 | 1 | 0.1 | 0.765 |
+| `keep` | per-size | prompts | 5 | 1 | 840.3 | 4.025 |
+| `keep` | per-size | generation | 9 | 4 | 11.3 | 6.654 |
+| `plan` | shared | prompts | 19 | 1 | 2,887.6 | 3.714 |
+| `plan` | per-size | any | **0** | 0 | 0 | 0 |
+
+- **Neither switch (`base`):** in generation every re-plan follows a change of cards, two a step. Node 40, the
+  hidden-row input's view, is on the host in a drafting pass (one token, one output; `mtp_h_input`) and on card 8 in
+  the catch-up pass after it (`node_12`): 16 times each. `-lv 5`'s count leaves those out, so it is 25, as in FN84's
+  and R127's loads. In the prompts, one change of cards at the load's first catch-up pass, then 25 at the same graph
+  size, each a tensor larger than its plan as the context grows: the k-pool's pool mask (9), the k-pool tables'
+  update (7), the QSA layer's `FILL` over the cells (5) and an input view (`leaf_9`, 4).
+- **`LLAMA_MTP_GRAPH_KEEP=1` alone (`keep`):** the drafting and catch-up shapes of up to 8 tokens get six schedulers
+  of their own, so the shared scheduler no longer re-plans in generation. Each per-size scheduler is planned from its
+  first graph (6 of their 15 re-plans, logged as a change of cards since a new scheduler has no assignment yet) and
+  again when the context outgrows it (9: the pool mask 8 times, once the shortlist head's `MUL_MAT_ID` over 211 ids),
+  with 10 buffers allocated again larger.
+- **Both switches (`plan`):** each per-size scheduler is planned once when it is made (`sched_small_plan`: 9.287,
+  183.286, 5.998, 1.900, 2.049 and 1.555 ms). A plan first waits for the scheduler's cards; the 4-token scheduler was
+  made behind a queued pass, where `keep`'s first 4-token batch waited 181.550 ms. After that no per-size scheduler
+  re-plans and none grows.
+- **Left with both:** the shared scheduler's 19 re-plans in prompts, all in passes of more than 8 tokens. Its start
+  plan, made at load over the whole memory, has node 40 on the host; the load's first catch-up pass (512 tokens, no
+  output) has it on card 8. So that plan is replaced by one sized to that pass's context, and 18 more follow as the
+  context grows (the pool mask 8, the tables' update 4, the `FILL` 5, `leaf_9` 1). Planning the shared scheduler over
+  the whole memory again after such a change of cards, or reserving it with node 40 on card 8, is
+  [Q1427](../../../quants/experiments.md).
+
+Per request (`rig_check/compare.tsv` against R60's load `a` and R127's, `rig_check/compare_base.tsv` against `base`):
+
+| Request | New tokens | Draft re-plans, prompt + generation: `base` / `keep` / `plan` | `-lv 5` count | Reply and checkpoints | Prompt ms: `base` / `keep` / `plan` |
+|---|---:|---|---|---|---:|
+| prefix | 1,549 | 4+0 / 5+0 / 4+0 | 3 / 3 / 3 | the same in all three, R60's | 22,190.9 / 21,599.9 / 22,010.1 |
+| turn 1 | 896 | 2+4 / 3+2 / 2+0 | 2 / 3 / 2 | the same, R60's | 11,501.1 / 11,096.7 / 11,489.9 |
+| turn 2 | 3,313 | 7+4 / 8+2 / 7+0 | 7 / 9 / 7 | the same, R60's | 20,934.4 / 20,781.6 / 20,860.6 |
+| turn 3 | 302 | 1+4 / 2+2 / 1+0 | 1 / 4 / 1 | the same, R60's | 4,801.0 / 4,767.8 / 4,789.6 |
+| turn 4 | 30 | 1+6 / 0+0 / 0+0 | 1 / 0 / 0 | the same, R60's | 2,252.2 / 1,665.1 / 2,256.3 |
+| turn 5 | 92 | 1+6 / 2+2 / 1+0 | 1 / 3 / 1 | the same, R60's | 3,304.8 / 3,305.5 / 3,306.1 |
+| fresh prompt, taper off | 2,049 | 5+4 / 4+1 / 4+0 | 5 / 5 / 4 | the same, R127's | 11,604.4 / 11,718.6 / 11,487.4 |
+| fresh prompt, taper on | 2,049 | 5+4 / 0+0 / 0+0 | 5 / 0 / 0 | the same, R127's | 11,375.5 / 11,357.1 / 11,362.8 |
+
+`keep` also re-planned once at load (its first per-size scheduler, made by the draft's first decode, of 2 tokens, before
+the first request). The prompt times are
+one request each, not a timing class.
+
+Memory (`rig_check/buffers.tsv`, `rig_check/memory.tsv`). The draft's compute buffers at exit, from the allocator's
+trace (the shared scheduler's match the `~llama_context` lines at exit); cards 0 to 3 and 5 to 7 hold none of them.
+`common_memory_breakdown_print` covers the main model's context only, so the draft's memory shows in card 8's
+`unaccounted` and free columns:
+
+| Load | Shared scheduler: CUDA4 / CUDA8 / host (MiB) | Per-size schedulers: CUDA4 / CUDA8 / host (MiB) | Made, planned, buffers grown | Card 8 MiB after loading, at the end | Card 8 free at exit (breakdown) | Lowest MemAvailable |
+|---|---|---|---|---:|---:|---:|
+| `base` | 5.00 / 194.22 / 37.09 | — | 0, 0, 0 | 4,785, 4,875 | 1,193 MiB | 449 MiB |
+| `keep` | 5.00 / 194.22 / 37.09 | 0.13 / 8.61 / 0.18 | 6, 0, 10 | 4,789, 4,891 | 1,177 MiB | 449 MiB |
+| `plan` | 5.00 / 194.22 / 37.09 | 0.13 / 9.11 / 0.54 | 6, 6, 0 | 4,789, 4,891 | 1,177 MiB | 447 MiB |
+
+Cards 0 to 7 hold the same MiB in all three loads. With the switch the per-size buffers have their whole-context size
+from the start: 9.78 MiB in all against `keep`'s 8.92 at the end of its load, whose longest context was about 6,200
+tokens; without the switch they keep growing with the context.
 
 ## Files
 
@@ -233,6 +313,13 @@ given by value. The prompt times per request are one request each, not a timing 
 | `run/trace.sh` | the CPU trace: the tiny model and its draft file, then llama-server in each arm |
 | `run/checks.sh` | the checks of the fix on a build machine's CPU, and the rig tarball |
 | `run/r130_loads.sh` | R130's load on the rig: FN84's with switches added (`ADD_ENV`) |
+| `run/r130_tables.py` | R130's tables: the draft's re-plans by scheduler and phase, its compute buffers per card, the memory per card |
+| `rig_check/trace.tsv`, `rig_check/trace_summary.txt` | R130's three loads per draft evaluation (and each re-planned one of the main model), and per load and reason (`run/draft_trace.py parse`) |
+| `rig_check/replans.tsv` | the draft's re-plans per load, phase and scheduler, with their drains and plans |
+| `rig_check/buffers.tsv` | the draft's compute buffers per card at exit, the shared scheduler's and the per-size ones' |
+| `rig_check/memory.tsv` | per load and card: MiB after loading and at the end, the breakdown's free and unaccounted MiB at exit, the lowest MemAvailable |
+| `rig_check/requests_reallocs.tsv` | FN84's `fn84_requests.py` for R60's load `a` (first 6 requests), R127's load and R130's three |
+| `rig_check/compare.tsv`, `rig_check/compare_base.tsv` | per request: prompt ms, re-plans, the reply's and the checkpoints' md5, against R60's load `a` and against `base` |
 | `rig_logs/requests.tsv`, `rig_logs/summary.tsv` | the five rig loads, per request and per prompt size |
 | `cpu_trace/lines.tsv`, `iso.tsv`, `keep.tsv` and their `*_summary.txt` | the CPU trace on `d097d6d88`, per draft evaluation and per arm |
 | `checks/summary.tsv` | every check's verdict and detail on the tip |
@@ -278,14 +365,38 @@ only) and `SEED_SRC` a llama.cpp clone with the fork as remote `fork`:
 M=$WORK REPO=$PWD LOCK=$LOCK BASE_CPU=$BASE_CPU SEED_SRC=$SRC JOBS=8 THREADS=8 bash docs/data/2026-11-12_c803_draft_realloc/run/checks.sh
 ```
 
-R130, from a machine that reaches the rig, once per load (`NAME` and `ADD_ENV` from the table above):
+R130, from a machine that reaches the rig and only runs ssh, once per load and one at a time (`NAME` and `ADD_ENV`
+from the table above; `WORK` the rig's folder with R43's `r43_run.sh`, `rig_taper.sh`, `taper_replay.py`, `turns.csv`
+and the v3 preset's `settings.env`; each load ends with `$WORK/fn84_<NAME>/DONE`):
 
 ```bash
-RIG=rig WORK=$R43 BUILDS=/opt/llama-builds BUILD=llama.cpp-20261112-bd632176f-pascal-p106-v4-b12246-c803 MODEL=$MODEL DRAFT=$DRAFT NAME=c803-plan ADD_ENV='LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_SCHED_PER_SIZE_RESERVE=1' bash run/r130_loads.sh
+RIG=$RIG WORK=$R43 BUILDS=/opt/llama-builds BUILD=llama.cpp-20261112-bd632176f-pascal-p106-v4-b12246-c803 MODEL=$MODEL DRAFT=$DRAFT NAME=c803-base ADD_ENV='LLAMA_UBATCH_TRACE=1' bash run/r130_loads.sh
+```
+
+```bash
+RIG=$RIG WORK=$R43 BUILDS=/opt/llama-builds BUILD=llama.cpp-20261112-bd632176f-pascal-p106-v4-b12246-c803 MODEL=$MODEL DRAFT=$DRAFT NAME=c803-keep ADD_ENV='LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1' bash run/r130_loads.sh
+```
+
+```bash
+RIG=$RIG WORK=$R43 BUILDS=/opt/llama-builds BUILD=llama.cpp-20261112-bd632176f-pascal-p106-v4-b12246-c803 MODEL=$MODEL DRAFT=$DRAFT NAME=c803-plan ADD_ENV='LLAMA_UBATCH_TRACE=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_SCHED_PER_SIZE_RESERVE=1' bash run/r130_loads.sh
+```
+
+R130's tables on a build machine's CPU, with `$L/<name>` the three load folders copied from the rig, `$R60` R60's load
+`a` (`load-A/`) and `$R127` R127's load:
+
+```bash
+B=$L/fn84_c803-base/load-A K=$L/fn84_c803-keep/load-A P=$L/fn84_c803-plan/load-A F=../2026-11-12_fn84_graph_realloc/run C=../2026-11-12_c802_topk_fixed_graph/run
+python3 -I run/draft_trace.py parse base=$B/server.log keep=$K/server.log plan=$P/server.log > rig_check/trace.tsv 2> rig_check/trace_summary.txt
+python3 -I run/r130_tables.py replans rig_check/trace.tsv base=$B/server.log keep=$K/server.log plan=$P/server.log > rig_check/replans.tsv
+python3 -I run/r130_tables.py buffers base=$B/server.log keep=$K/server.log plan=$P/server.log > rig_check/buffers.tsv
+python3 -I run/r130_tables.py memory base=$B keep=$K plan=$P > rig_check/memory.tsv
+python3 -I $F/fn84_requests.py r60a=$R60/server.log:6 c802=$R127/server.log base=$B/server.log keep=$K/server.log plan=$P/server.log > rig_check/requests_reallocs.tsv
+python3 -I $C/r127_compare.py rig_check/requests_reallocs.tsv r60a=$R60/requests.tsv:6 c802=$R127/requests.tsv base=$B/requests.tsv keep=$K/requests.tsv plan=$P/requests.tsv > rig_check/compare.tsv
+python3 -I $C/r127_compare.py rig_check/requests_reallocs.tsv base=$B/requests.tsv keep=$K/requests.tsv plan=$P/requests.tsv > rig_check/compare_base.tsv
 ```
 
 ## Provenance and licence
 
-The rig logs are this project's own runs: FN84, R60 and R85 (their folders link the commands and the model). The CPU
-runs use test-llama-archs's model with random weights, made by the build itself, and prompts of token ids from a
-Park-Miller generator: no outside data. Everything here is this repository's licence.
+The rig logs are this project's own runs: FN84, R60, R85, R127 and R130 (their folders link the commands and
+the model). The CPU runs use test-llama-archs's model with random weights, made by the build itself, and prompts of
+token ids from a Park-Miller generator: no outside data. Everything here is this repository's licence.

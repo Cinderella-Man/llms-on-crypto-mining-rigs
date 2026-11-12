@@ -1,0 +1,16 @@
+load	phase	scheduler	replans	after_a_change_of_cards	drains_ms	plans_ms
+base	load	shared	0	0	0.0	0.000
+base	prompt	shared	26	1	3425.2	5.239
+base	gen	shared	32	32	18.4	6.706
+keep	load	shared	0	0	0.0	0.000
+keep	load	per-size	1	1	0.1	0.765
+keep	prompt	shared	19	1	2900.8	3.939
+keep	prompt	per-size	5	1	840.3	4.025
+keep	gen	shared	0	0	0.0	0.000
+keep	gen	per-size	9	4	11.3	6.654
+plan	load	shared	0	0	0.0	0.000
+plan	load	per-size	0	0	0.0	0.000
+plan	prompt	shared	19	1	2887.6	3.714
+plan	prompt	per-size	0	0	0.0	0.000
+plan	gen	shared	0	0	0.0	0.000
+plan	gen	per-size	0	0	0.0	0.000

@@ -1,0 +1,9 @@
+req	kind_turn	prompt_tokens	base_prompt_ms	keep_prompt_ms	plan_prompt_ms	base_reallocs_same	base_reallocs_changed	keep_reallocs_same	keep_reallocs_changed	plan_reallocs_same	plan_reallocs_changed	base_target_reallocs	keep_target_reallocs	plan_target_reallocs	base_draft_reallocs	keep_draft_reallocs	plan_draft_reallocs	base_gen_md5	keep_gen_md5	plan_gen_md5	base_checkpoints_md5	keep_checkpoints_md5	plan_checkpoints_md5	keep_reply_as_base	plan_reply_as_base	keep_checkpoints_as_base	plan_checkpoints_as_base
+0	reset 0	1549	22190.9	21599.9	22010.1	0	0	0	0	0	0	-	-	-	3	3	3	e0cd717285	e0cd717285	e0cd717285	ff45739cb9	ff45739cb9	ff45739cb9	yes	yes	yes	yes
+1	turn 1	896	11501.1	11096.7	11489.9	0	0	0	0	0	0	-	-	-	2	3	2	c32ed09dad	c32ed09dad	c32ed09dad	56f14c6bad	56f14c6bad	56f14c6bad	yes	yes	yes	yes
+2	turn 2	3313	20934.4	20781.6	20860.6	0	0	0	0	0	0	-	-	-	7	9	7	5afe740c76	5afe740c76	5afe740c76	a9b28a443f	a9b28a443f	a9b28a443f	yes	yes	yes	yes
+3	turn 3	302	4801.0	4767.8	4789.6	0	0	0	0	0	0	-	-	-	1	4	1	7cf5051806	7cf5051806	7cf5051806	c20c1945ee	c20c1945ee	c20c1945ee	yes	yes	yes	yes
+4	turn 4	30	2252.2	1665.1	2256.3	0	0	0	0	0	0	-	-	-	1	0	0	3863fb46dd	3863fb46dd	3863fb46dd	7287043c15	7287043c15	7287043c15	yes	yes	yes	yes
+5	turn 5	92	3304.8	3305.5	3306.1	0	0	0	0	0	0	-	-	-	1	3	1	c654ec080f	c654ec080f	c654ec080f	2e4e5c5c4d	2e4e5c5c4d	2e4e5c5c4d	yes	yes	yes	yes
+6	fresh 0	2049	11604.4	11718.6	11487.4	0	0	0	0	0	0	-	-	-	5	5	4	0dbb275f99	0dbb275f99	0dbb275f99	5bee42a1f9	5bee42a1f9	5bee42a1f9	yes	yes	yes	yes
+7	fresh 1	2049	11375.5	11357.1	11362.8	0	0	0	0	0	0	-	-	-	5	0	0	0dbb275f99	0dbb275f99	0dbb275f99	5bee42a1f9	5bee42a1f9	5bee42a1f9	yes	yes	yes	yes
