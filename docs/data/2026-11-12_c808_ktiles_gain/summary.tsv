@@ -1,0 +1,61 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c808	OK	tip 6c24e2025 (mmvq-pascal-dmt: the K tiles only where they gain on a P106, two row blocks a round by default (C808)); files changed against the base:  2 files changed, 26 insertions(+), 10 deletions(-)
+rig	build	OK	rc=0; llama.cpp-20261112-6c24e2025-pascal-p106-v4-b12246-c808.tar.gz md5 8e7b83ff793714741daf7662b30b0f6e, 678343653 B; commit: 6c24e20252038893d4cfceb322856531a75d7659 (2026-11-12 17:56:37 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 7e184fe650416b34516bbe8a6e45e2b6; 34 warning lines
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	mmvq-pascal-dmt.cu.o against the base's	SAME	sass and ptx: 2 dumps, 146 functions (48 of them the tiles' kernels); dumps that differ: 0 
+cpu	build	OK	rc=0; commit 6c24e20252038893d4cfceb322856531a75d7659 mmvq-pascal-dmt: the K tiles only where they gain on a P106, two row blocks a round by defau; static, every target; 3 warning lines, 0 error lines
+off	base writes	OK	rc=0; $WORK/c803/cpu/tip: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	kt1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	kt1-m1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT_M=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+pick	build	OK	rc=0; base d21820340, c808 6c24e2025; the expressions kern_pick.cu repeats: base 1111 c808 1111 (expected base 1111 c808 1111); 48 arms (19 with _DMT_KT=1, each also without the tiles on the base), 1344 products each
+pickcmp	_DMT_KT unset (or 0, 3): the base's lines	SAME	23 arms, 30912 lines, 0 changed, tiles base 0, c808 0; unexpected: none
+pickcmp	_DMT_KT=2: the base's lines, the tiles' M the new default	OK	6 arms, 8064 lines, 816 changed, tiles base 1228, c808 1228; unexpected: none
+pickcmp	_DMT_KT=1: tiles only for Q4_K at 4 tokens from at most 3 warps, M the new default	OK	19 arms, 25536 lines, 1629 changed, tiles base 1689, c808 181; unexpected: none
+pickcmp	R120b: _DMT_KT_M=2 against unset (base tree)	OK	kernm2 against kern: lines that differ in a tile's M 102, any other line 0
+pickcmp	R120b: _DMT_KT_M=2 against unset (c808 tree)	OK	kernm2 against kern: lines that differ in a tile's M 0, any other line 0
+pickcmp	tables	OK	pick/r120b_cases.tsv, pick/kern_tiles.tsv (102 tile products in the base under kern, 10 in c808), pick/flashnext_kern.tsv, pick/counts.tsv, pick/changes.tsv
+bitid	build	OK	rc=0; multitoken_bitid md5 ad6a2c8d38250ca60e0e6e5be22d6d71, 90842192 B; modes in it: dmtkt dmt q6k ; linked against 6c24e2025 (needs a GPU: run on the rig)
+c565 static	c808 tree	OK	commit 6c24e20252038893d4cfceb322856531a75d7659 
+c565 static	c808 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c808 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c808 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c808 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c808 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c808 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c808 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c808 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c808 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c808 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c808 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c808 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c808 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c808 hand thread-safety	OK	test-thread-safety rc=0: 0.00.046.726 I All threads finished without errors.
+c565 static	c808 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c808 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 2.348015
+c565 shared	c808 tree	OK	commit 6c24e20252038893d4cfceb322856531a75d7659 
+c565 shared	c808 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c808 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c808 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c808 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c808 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c808 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c808 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c808 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c808 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c808 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c808 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c808 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c808 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c808 hand thread-safety	OK	test-thread-safety rc=0: 0.00.035.580 I All threads finished without errors.
+c565 shared	c808 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c808 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 2.013572
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 5.5G in $WORK/c808; 327 GB free
+merged	pascal-p106-v4	OK	a1347d9dd (Merge -c808 (C808: GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 takes the K tiles only for Q4_K's 4-token products from at most 3 warp); its tree is not 6c24e2025's; commits since the base: 10; mmvq-pascal-dmt.cu differs from 6c24e2025's
+merged	cpu build	OK	rc=0; a1347d9dd; static, every target; 3 warning lines, 0 error lines
+moff	base writes	OK	rc=0; $WORK/c803/cpu/tip: 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	merged-kt1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+merged	kern_pick.cu's expressions in the merged tree	OK	the switch test, the tiles' call, the shared memory found 111 (111 = modelled); the one-warp rule: C809's (Q6_K and 5-8 tokens), PICK_Q6K1 set to it
+merged	kern_pick.cu: merged against 6c24e2025	OK	rc=0; 48 arms; lines that differ: 285, of them one-warp launches of 5-8 tokens the merged tree declines (C809): 285; unexpected: none (mpick/by_arm.tsv)
