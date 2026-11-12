@@ -8,6 +8,10 @@ run.
 - **R72a, `gains`:** R90's line exactly ([2026-11-11_r90_v4_vs_v3](../2026-11-11_r90_v4_vs_v3/README.md)), now on the
   kernel-merge build `d097d6d88` (`pascal-p106-v4`, tarball `llama.cpp-20261111-d097d6d88-pascal-p106-v4-b12246-kern`)
   instead of the day build `18d0fa309`. It is the reference for R72's later arms and a second run of R90's `gains`.
+- **R72b, `v4c2`:** v4's candidate line on the C802 build `8a55934f3` (tarball
+  `llama.cpp-20261112-8a55934f3-pascal-p106-v4-b12246-c802`, four commits on the kernel merge `d097d6d88`): the `gains`
+  line with R60's taper, C691's switch kept now that C802 keeps its graph fixed, and the switches 2026-11-12's rig rows
+  kept ([below](#r72b-v4c2-the-v4-candidate-line)).
 
 ## R72a: `gains` on the kernel-merge build
 
@@ -82,6 +86,126 @@ Q1405); the reference keeps R90's line, that switch included.
 - **Per task** ([gains_compare.md](gains_compare.md)): every task passed; the slowest was `bugfix-python-affine-cipher`
   (4.8 minutes, 9 turns), the quickest `bugfix-javascript-space-age` (1.0 minutes, 5 turns).
 
+## R72b: `v4c2`, the v4 candidate line
+
+**At equal work `v4c2` takes 2.44 minutes a task, against 2.80 for `gains` (R72a) and 3.08 for v3.0 (R90's `v3`,
+−20.8 %), with 11 of 12 tasks passed.** Prompts read at 136.0 tok/s against `gains`' 73.2, generation runs at
+26.12 tok/s against 24.75, and the first token of a turn comes after 2.42 s at the median and 9.29 s at p90 (`gains`
+4.23 and 24.54). On R90's 11 tasks it takes 1.61 minutes a task, against 1.96 for `gains` and 2.27 for `v3` (−29.1 %).
+One task failed: `bugfix-javascript-complex-numbers`, which `gains` passed in 2.0 minutes and 5 turns, ran to its
+12-minute cap in 35 turns. Because of that task the arm's wall time is longer than `gains`' (31.3 minutes for the 12
+tasks against 26.1); without it, `v4c2` does the other 11 in 19.3 minutes against 24.1.
+
+### The line
+
+- **Build:** `pascal-p106-v4-b12246-c802` `8a55934f3` (`llama-server` md5 `61fb0827bdc0715fc0396153ea0e4501`).
+- **Environment:** the v3 preset's six switches, R90's `GAINS_ENV` (`LLAMA_SAMPLING_TOP_K_ROWS=1` included), and
+  - C720's and C719's k-pool switches: `LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_POOL_MASK_DEV=1`;
+  - R122's eight host switches: `LLAMA_DRAFT_PREFETCH=1 LLAMA_VERIFY_PREPARE=2 LLAMA_MTP_GRAPH_KEEP=1
+    LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_MTP_EMBD_FIRST=1 LLAMA_MTP_DRAFT_CAP=1 LLAMA_MTP_SKIP_LAST_ROW=1`;
+  - R123a's three: `GGML_CUDA_GRAPHS_FORCE=1 LLAMA_MTP_KV_ONLY=1 LLAMA_MTP_CATCHUP_OVERLAP=1`;
+  - R120b's three verify-pass kernels: `GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_GLU_MT=1
+    GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1`;
+  - FN66's stop on a rejected draft: `LLAMA_SPEC_REJECT_STOP=1`;
+  - R123b's draft token table on its layer's card and the sparse prompt rule: `LLAMA_DRAFT_EMBD_DEV=layer
+    GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1`.
+- **Arguments:** R90's `gains` arguments with `--ubatch-taper short=600:64` in place of `on`, `-b 4096` in place of
+  `-b 2048`, and without `-otd token_embd=CUDA4`.
+- **Checked at the start:** the server's `switches:` line reads `33 set`, the 33 names and values above, none unknown
+  to the build. The line as started is `run/r72b.sh`'s `v4c2` arm: the 33 variables, then `llama-server` with the
+  common part, `-b 4096 -ub 512 -ts 6,6,6,6,5,6,5,6,3 -fit off -lm dio -md <draft> --spec-type draft-mtp
+  --spec-draft-n-max 3 --spec-draft-n-ubatch 512 --no-host --spec-draft-sampling probabilistic --spec-draft-p-min 0
+  --ctx-checkpoints-vram 4 --ctx-checkpoints-incall --ubatch-taper short=600:64`.
+
+### The run
+
+- **Timeline:** the server started at 18:12:37 and answered after 313 s; the 12 tasks 18:17:58–18:49:35; the report
+  18:49:47–18:49:51; the rig without a llama process and with 0 MiB on every card at 18:49:51.
+- **Settings:** R72a's: one attempt a task, a 12-minute cap a task (one task reached it), a 40-minute budget for the
+  arm (not reached), the RAM watchdog at 60 MiB, the client on another machine's CPU at `--cpu-shares 256` with no GPU.
+  R72a's prep (bench files, sandbox image, the 12 tasks validated) was reused.
+
+### All 12 tasks ([agent.tsv](agent.tsv))
+
+| Arm | Build | Passed | Turns | Prompt tok/s | Generation tok/s | First token per turn, median and p90, s | Turn 1, median s | Draft acceptance | Tokens a step | Minutes, all tasks | Equal work, min a task | Against `r90v3` |
+|---|---|---|---:|---:|---:|---|---:|---:|---:|---:|---:|---:|
+| `r90v3` | v3.0 `1551f5fe1` | 11/12 | 66 | 65.5 | 20.66 | 6.52, 16.17 | 13.54 | 0.696 | 3.09 | 37.0 | 3.08 | — |
+| `r90gains` | day `18d0fa309` | 12/12 | 66 | 73.9 | 24.85 | 4.55, 24.48 | 10.68 | 0.757 | 3.27 | 28.7 | 2.79 | −9.4 % |
+| `gains` (R72a) | kernel merge `d097d6d88` | 12/12 | 69 | 73.2 | 24.75 | 4.23, 24.54 | 10.75 | 0.762 | 3.29 | 26.1 | 2.80 | −9.1 % |
+| `v4c2` (R72b) | C802 `8a55934f3` | 11/12 | 92 | 136.0 | 26.12 | 2.42, 9.29 | 6.65 | 0.726 | 3.18 | 31.3 | 2.44 | −20.8 % |
+
+Equal work prices R90's `v3` work (its prompt tokens, generated tokens and time outside the server) at each arm's
+speeds, so the runaway task's 35 turns count only through the speeds they were read and written at. 35 of `v4c2`'s 92
+turns are that task's.
+
+### The 11 tasks R90 compared ([agent_11.tsv](agent_11.tsv))
+
+| Arm | Passed | Turns | Prompt tok/s | Generation tok/s | First token per turn, median and p90, s | Minutes, all tasks | Equal work, min a task | Against `r90v3` |
+|---|---|---:|---:|---:|---|---:|---:|---:|
+| `r90v3` | 11/11 | 64 | 65.6 | 20.63 | 6.47, 16.15 | 25.0 | 2.27 | — |
+| `r90gains` | 11/11 | 61 | 73.8 | 24.85 | 4.38, 22.82 | 24.1 | 1.96 | −13.7 % |
+| `gains` (R72a) | 11/11 | 63 | 73.0 | 24.88 | 4.11, 21.06 | 23.5 | 1.96 | −13.7 % |
+| `v4c2` (R72b) | 10/11 | 87 | 133.8 | 25.72 | 2.40, 9.49 | 26.3 | 1.61 | −29.1 % |
+
+### Without the runaway task ([agent_nocx.tsv](agent_nocx.tsv))
+
+The same table without `bugfix-javascript-complex-numbers` in any arm (R90's `v3` passed 10 of these 11):
+
+| Arm | Passed | Turns | Prompt tok/s | Generation tok/s | First token per turn, median and p90, s | Minutes, all tasks | Equal work, min a task | Against `r90v3` |
+|---|---|---:|---:|---:|---|---:|---:|---:|
+| `r90v3` | 10/11 | 59 | 66.6 | 20.92 | 6.52, 16.46 | 34.4 | 3.13 | — |
+| `r90gains` | 11/11 | 61 | 74.1 | 24.87 | 4.38, 20.90 | 26.0 | 2.87 | −8.3 % |
+| `gains` (R72a) | 11/11 | 64 | 73.2 | 24.80 | 4.17, 21.82 | 24.1 | 2.88 | −8.0 % |
+| `v4c2` (R72b) | 11/11 | 57 | 148.7 | 27.48 | 2.99, 8.72 | 19.3 | 2.45 | −21.7 % |
+
+The acceptance and tokens-a-step columns of [agent_nocx.tsv](agent_nocx.tsv) are the whole arm's (the server log's
+count over the session), so they do not change when a task is left out; the split per task is below.
+
+### Prompts by the size of a turn's new prompt ([prompt_buckets.tsv](prompt_buckets.tsv))
+
+| New prompt tokens | `r90v3`: turns, tok/s, median first token s | `r90gains` | `gains` (R72a) | `v4c2` (R72b) |
+|---|---|---|---|---|
+| 0–511 | 42, 39.4, 3.57 | 42, 64.4, 2.12 | 44, 61.1, 2.39 | 56, 92.8, 1.68 |
+| 512–1,023 | 11, 61.3, 11.45 | 9, 71.2, 10.78 | 9, 72.5, 10.61 | 15, 112.8, 6.60 |
+| 1,024–1,999 | 10, 90.5, 16.02 | 8, 80.1, 18.26 | 9, 79.0, 18.91 | 13, 163.5, 7.97 |
+| 2,000 and more | 2, 93.3, 25.73 | 7, 76.4, 27.67 | 7, 75.8, 26.73 | 7, 169.8, 11.69 |
+
+`v4c2` reads every size faster than `v3` and `gains`, and the long-prompt loss of the `gains` line is gone: turns of
+1,024–1,999 new tokens at 163.5 tok/s and of 2,000 or more at 169.8, against `v3`'s 90.5 and 93.3 and `gains`' 79.0 and
+75.8. (`v4c2` has 91 timed turns: the runaway task's last request was cut by its cap.)
+
+### The runaway task and the draft's acceptance ([task_acceptance.tsv](task_acceptance.tsv))
+
+- **What the agent did:** in `bugfix-javascript-complex-numbers` its 34 tool calls are all well formed (2 returned an
+  error), every turn ends in a tool call, and the server log has no NaN. At the cap the task's tests stood at 38 of 40
+  passed, 2 failed in dividing a complex number by a real one; the agent's last turns read the test framework's own
+  matcher code and wrote a scratch test to trace that comparison. One run cannot tell whether the line or the sampling
+  (temperature 1.0) sent it there; R90's `v3` lost a different task to its cap the same way.
+- **Acceptance per task**, from the server's metrics before and after each task ([run/task_acceptance.py](run/task_acceptance.py)):
+  the runaway task accepted 8,215 of 12,426 drafted tokens (0.661), 37 % of the arm's drafts. The other 11 tasks
+  accepted 15,840 of 20,823 (0.761), against 15,272 of 20,010 (0.763) for the same 11 in `gains`. The draft accepts as
+  much on `v4c2` as on `gains`; the arm's 0.726 is that one task.
+
+### The host and the report
+
+- **Host memory:** the lowest MemAvailable in the RAM watchdog's samples (`ram_watchdog-v4c2.tsv`) is 392 MiB, at
+  18:18:28 during the first task (`rig/meminfo.log` over the arm: 435 MiB). Swap in use went from 19 to 472 MiB, all of
+  it between 18:18:28 and 18:26:48 (the first four tasks), and stayed there; MemAvailable was 698 MiB at 18:47:48. The
+  watchdog did not act. `gains` (R72a): 479 MiB, swap 18 → 72 MiB.
+- **The report's lines** ([v4c2_gonogo.md](v4c2_gonogo.md), [v4c2_compare.md](v4c2_compare.md),
+  [v4c2_report_table.md](v4c2_report_table.md), both arms): infrastructure GO (24 of 24 attempts); proxy rows NO-GO
+  only for the runaway task (35 rows, 34 replies, one row without timings: its last request, cut by the cap); first
+  token against prefill GO; tool calls 0 malformed of 150; median cache hit 97.0 % from the second turn on. The server
+  log of `v4c2` has 17 checkpoint restores, 1 checkpoint erased, no NaN and one full re-processing: the first request
+  of `bugfix-python-pig-latin`, right after the runaway task's context of more than 25,000 tokens, shared 1,553 tokens
+  with it and found no checkpoint below that, so it read all 2,324 tokens (in `gains` 775 new and 1,549 from the
+  cache). The memory line is NO-GO by the report's rule (at least 600 MB available, at most
+  16 MB of swap growth), so the overall line is NO-GO, as in R72a and R90.
+- **Per task** ([v4c2_compare.md](v4c2_compare.md)): 9 of the 11 passed tasks were quicker than in `gains`
+  (`bugfix-python-affine-cipher` 2.5 minutes against 4.8); `bugfix-python-list-ops` (2.3 against 1.9) and
+  `bugfix-javascript-variable-length-quantity` (5.0 against 2.6, 5 turns each, 6,726 drafted tokens against 2,004)
+  were slower.
+
 ## Commands
 
 The run, from the repository root on a machine that only runs ssh (aliases, paths and ports are the user's own):
@@ -115,15 +239,52 @@ awk 'NF >= 3 && $1 ~ /^[0-9]+$/ { if (m == "" || $2 < m) m = $2; if (s0 == "") s
 R72's later arms use the same client folders (`CLIENT_DIR`, `CLIENT_OUT`) with `STEPS="agent report"` and their own
 arm names; their tables add their arms to `merge_named.py`'s list, with `r90v3` kept as the reference.
 
+R72b, the arm `v4c2` in R72a's client folders (the same ports and `CLIENT_DIR`, `CLIENT_OUT`; prep not repeated):
+
+```bash
+RIG=<rig alias> CLIENT=<client alias> \
+  MODEL=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf DRAFT=<folder>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+  NEW=llama.cpp-20261112-8a55934f3-pascal-p106-v4-b12246-c802 REF=llama.cpp-20261111-d097d6d88-pascal-p106-v4-b12246-kern \
+  RIGDIR=<folder on the rig> OUT=<local folder> STEPS="agent report" AGENT_ORDER=v4c2 REPORT_ARMS="gains v4c2" \
+  RIG_PORT=<port> RELAY_PORT=<port> CLIENT_PORT=<port> PROXY_PORT=<port> \
+  CLIENT_DIR=<folder on the client> CLIENT_OUT=<folder on the client> CPU_SHARES=256 \
+  setsid nohup bash docs/data/2026-11-12_r72_agent_v4c2/run/r72b.sh > r72b.log 2>&1 < /dev/null &
+```
+
+Its tables, on the client's CPU (`nice -n 19`):
+
+```bash
+python3 -I docs/data/2026-11-12_r72_agent_v4c2/run/merge_named.py merged \
+  <R90's agent folder>:v3:r90v3 <R90's agent folder>:gains:r90gains \
+  <R72's agent folder>:gains:gains <R72's agent folder>:v4c2:v4c2
+python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py merged r90v3 r90gains gains v4c2
+SKIP_TASKS=bugfix-javascript-variable-length-quantity OUT_TAG=_11 \
+  python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py merged r90v3 r90gains gains v4c2
+SKIP_TASKS=bugfix-javascript-complex-numbers OUT_TAG=_nocx \
+  python3 -I docs/data/2026-11-05_keepalive/run/agent_tables.py merged r90v3 r90gains gains v4c2
+python3 -I docs/data/2026-11-11_r90_v4_vs_v3/run/prompt_buckets.py merged/res/turns.csv r90v3 r90gains gains v4c2 \
+  > prompt_buckets.tsv
+SKIP_TASKS=bugfix-javascript-complex-numbers python3 -I docs/data/2026-11-12_r72_agent_v4c2/run/task_acceptance.py \
+  <R72's agent folder>/res gains v4c2 > task_acceptance.tsv
+# the lowest MemAvailable and swap in the RAM watchdog's samples (epoch, avail_mib, cma_free_mib, usable_mib, swap_used_mib, ...)
+awk -F'\t' '!/^#/ && NF >= 5 { if (m == "" || $2 < m) m = $2; if (s0 == "") s0 = $5; if ($5 > s) s = $5 }
+  END { print "lowest MemAvailable " m " MiB; swap " s0 " -> " s " MiB" }' <R72's agent folder>/rig/ram_watchdog-v4c2.tsv
+```
+
 ## Files
 
 | File | Content |
 |---|---|
-| [agent.tsv](agent.tsv), [agent_11.tsv](agent_11.tsv) | the agent check per arm, all 12 tasks and the 11 |
-| [prompt_buckets.tsv](prompt_buckets.tsv) | prompt reading by the size of a turn's new prompt |
+| [agent.tsv](agent.tsv), [agent_11.tsv](agent_11.tsv) | the agent check per arm (`r90v3`, `r90gains`, `gains`, `v4c2`), all 12 tasks and R90's 11 |
+| [agent_nocx.tsv](agent_nocx.tsv) | the same without `bugfix-javascript-complex-numbers` (R72b's runaway task) |
+| [prompt_buckets.tsv](prompt_buckets.tsv) | prompt reading by the size of a turn's new prompt, the four arms |
+| [task_acceptance.tsv](task_acceptance.tsv) | the draft's accepted and drafted tokens per task, `gains` and `v4c2`, with each arm's total and its total without the runaway task |
 | [gains_compare.md](gains_compare.md), [gains_report_table.md](gains_report_table.md), [gains_gonogo.md](gains_gonogo.md) | the agent check's own report of R72a's arm (`bench/agent_check/client_report.sh`) |
-| [run/r72a.sh](run/r72a.sh) | the run: R90's `run/r90.sh` without its deep-lane step, the report over `REPORT_ARMS` |
+| [v4c2_compare.md](v4c2_compare.md), [v4c2_report_table.md](v4c2_report_table.md), [v4c2_gonogo.md](v4c2_gonogo.md) | the agent check's own report of R72b's run, `gains` and `v4c2` side by side |
+| [run/r72a.sh](run/r72a.sh) | R72a's run: R90's `run/r90.sh` without its deep-lane step, the report over `REPORT_ARMS` |
+| [run/r72b.sh](run/r72b.sh) | R72b's run: `r72a.sh` with the arm `v4c2` |
 | [run/merge_named.py](run/merge_named.py) | several checks' arms in one folder, each under its own name |
+| [run/task_acceptance.py](run/task_acceptance.py) | the draft's acceptance per task from the server's metrics before and after each task |
 
 Provenance: measured on a Manli M-P106L9-N6G (nine P106-090) with the builds and files named above; R90's rows are
 R90's own measurements. The prompts are the agent sessions of bench/agent_check's bugfix set; no prompt text is in

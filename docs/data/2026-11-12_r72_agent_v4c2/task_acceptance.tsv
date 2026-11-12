@@ -1,0 +1,29 @@
+arm	task_id	accepted	drafted	acceptance
+gains	bugfix-javascript-complex-numbers	651	882	0.738
+gains	bugfix-javascript-grade-school	506	663	0.763
+gains	bugfix-javascript-phone-number	511	627	0.815
+gains	bugfix-javascript-space-age	616	693	0.889
+gains	bugfix-javascript-triangle	573	717	0.799
+gains	bugfix-javascript-variable-length-quantity	1415	2004	0.706
+gains	bugfix-python-affine-cipher	2957	4065	0.727
+gains	bugfix-python-list-ops	1241	1599	0.776
+gains	bugfix-python-phone-number	1073	1401	0.766
+gains	bugfix-python-pig-latin	1977	2697	0.733
+gains	bugfix-python-scale-generator	2386	3117	0.765
+gains	bugfix-python-variable-length-quantity	2017	2427	0.831
+gains	all	15923	20892	0.762
+gains	without bugfix-javascript-complex-numbers	15272	20010	0.763
+v4c2	bugfix-javascript-complex-numbers	8215	12426	0.661
+v4c2	bugfix-javascript-grade-school	444	546	0.813
+v4c2	bugfix-javascript-phone-number	650	816	0.797
+v4c2	bugfix-javascript-space-age	396	468	0.846
+v4c2	bugfix-javascript-triangle	445	546	0.815
+v4c2	bugfix-javascript-variable-length-quantity	5291	6726	0.787
+v4c2	bugfix-python-affine-cipher	1645	2379	0.691
+v4c2	bugfix-python-list-ops	2049	2778	0.738
+v4c2	bugfix-python-phone-number	689	849	0.812
+v4c2	bugfix-python-pig-latin	978	1323	0.739
+v4c2	bugfix-python-scale-generator	1719	2493	0.690
+v4c2	bugfix-python-variable-length-quantity	1534	1899	0.808
+v4c2	all	24055	33249	0.723
+v4c2	without bugfix-javascript-complex-numbers	15840	20823	0.761
