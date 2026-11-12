@@ -17,6 +17,8 @@
 #   --cuda-graphs-pascal  also apply llama.cpp PR #27721, which re-enables CUDA graphs on Pascal (compute 6.1)
 # Env PATCHES: extra patch files (paths relative to $WORK, applied with git apply), e.g. PATCHES=patches/x.diff
 #     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`)
+#     EXTRA_TARGETS="t1 t2": also build these targets (tests need TESTS=1) and copy them into bin/, e.g. a test the
+#     rig runs on its cards
 #     SCHED_COPIES=N: ggml scheduler input copies for pipeline parallelism (default 4); each copy holds the inputs of
 #     one ubatch, the attention mask included, so fewer copies leave room for a larger -ub at long context
 #     JOBS=N: parallel compile jobs (default: all cores), e.g. on a shared build machine
@@ -34,7 +36,7 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 WORK=${WORK:-$HOME/llama-builds}
 mkdir -p "$WORK/ccache"
 
-docker run --rm ${DOCKER_ARGS:-} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e RPC="${RPC:-0}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+docker run --rm ${DOCKER_ARGS:-} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e EXTRA_TARGETS="${EXTRA_TARGETS:-}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e RPC="${RPC:-0}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
     -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
@@ -75,12 +77,13 @@ docker run --rm ${DOCKER_ARGS:-} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${P
     cmake --build build -j "${JOBS:-$(nproc)}" --target llama-bench llama-server llama-cli llama-completion \
         llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) $([ "$RPC" = 1 ] && echo ggml-rpc-server) \
         $([ -d examples/pipespec ] && echo llama-pipespec) $([ -d examples/screen-check ] && echo llama-screen-check) \
-        $(grep -qs llama-pipe-drafter-check examples/pipespec/CMakeLists.txt && echo llama-pipe-drafter-check) > /dev/null
+        $(grep -qs llama-pipe-drafter-check examples/pipespec/CMakeLists.txt && echo llama-pipe-drafter-check) $EXTRA_TARGETS > /dev/null
 
     out=/work/$name
     rm -rf "$out" && mkdir -p "$out/bin"
     cp build/bin/llama-* "$out/bin/"
     [ "$TESTS" = 1 ] && cp build/bin/test-backend-ops "$out/bin/"
+    for t in $EXTRA_TARGETS; do cp "build/bin/$t" "$out/bin/"; done
     [ "$RPC" = 1 ] && cp build/bin/ggml-rpc-server "$out/bin/"
     {
         echo "name: $name"
