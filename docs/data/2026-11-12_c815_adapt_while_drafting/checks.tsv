@@ -1,0 +1,62 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c815	OK	tip c33c894da (C815: the adapt log's header is not const (it takes the online field)); files changed against the base:  4 files changed, 433 insertions(+), 15 deletions(-); under ggml/: 0
+cpu	build	OK	rc=0; commit c33c894da96ebd65fbb87234e480dd8c58fcdddc C815: the adapt log's header is not const (it takes the online field); static, every target; 3 warning lines, 0 error lines
+bsrv	build	OK	rc=0; commit b9a1c1fa7b9b98dfe919374897afe6fde60b7219 Merge -c779 (C779: GGML_CUDA_GRAPHS_PATCH=1, with GGML_CUDA_GRAPHS_FORCE=1 a forced graph wh; static, llama-server and test-llama-archs; 0 error lines
+unit	test-spec-adapt run 1	OK	rc=0; online: 20000 drafts; drafting passes a draft 6.5261 as built, 3.1759 at online 1, 2.4505 at online 2; 160000 extensions of a settled prefix; 6047 of 130522 next tokens kept whatever their probability; 434271/434271 checks passed
+unit	test-spec-adapt run 2	OK	rc=0; online: 20000 drafts; drafting passes a draft 6.5261 as built, 3.1759 at online 1, 2.4505 at online 2; 160000 extensions of a settled prefix; 6047 of 130522 next tokens kept whatever their probability; 434271/434271 checks passed
+unit	the two runs' output	SAME	seeded: the same counts both times
+model	qwen4exp with an MTP block	OK	rc=0; 32807008 B; md5 b67f1d9cb2fc872e707b92c5e1af753a
+server	server_check.sh	FAIL	rc=1; 3 arms equal to their reference; dvpb's verify steps differ from dbase's (or dbase wrote none);dvpb (as built with VP=1): no verify pass prepared, as expected;pfault (control): did not show the draws matter (G: same; S1 and S2 the same as pbase);
+off	base writes	OK	rc=0; b9a1c1fa7: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	online	SAME	rc=0; LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_ONLINE=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+rig	build	OK	rc=0; llama.cpp-20261112-c33c894da-pascal-p106-v4-b12246-c815.tar.gz md5 1a615ccc61567ab512b1f8fb97b6cb23, 678590643 B; commit: c33c894da96ebd65fbb87234e480dd8c58fcdddc (2026-11-12 20:59:27 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 435c713a800921eb0cee3d6a25caebf0; llama-server md5 9ea48ddbe318838d1d49bd77907d76dd; 34 warning lines
+names	switch list	OK	869 names in the build's list; LLAMA_SPEC_ADAPT_ONLINE and LLAMA_SPEC_ADAPT_ONLINE_FAULT in it: 2 of 2; lines of bin/llama-server holding LLAMA_SPEC_ADAPT_ONLINE: 5
+server2	server_check.sh	FAIL	rc=1; 15 arms equal to their reference; dvpb = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; d;dbase kept (length: steps) 0: 207, 2: 68, 4: 2, 6: 130;wbase kept (length: steps) 0: 205, 1: 43, 2: 37, 3: 17, 4: 105;rbase kept (length: steps) 0: 405, 1: 1, 2: 1, 4: 1;bbase kept (length: steps) 0: 207, 2: 68, 4: 2, 6: 130;pbase kept (length: steps) 0: 290, 2: 47, 4: 1, 6: 70;vbase kept (length: steps) 0: 408;dvpb (as built with VP=1): no verify pass prepared, as expected;pfault (control): G1 and G2 = pbase, S1 or S2 differ: without the draws a probabilistic draft's later steps change (AS-E;
+server3	server_check.sh	PASS	rc=0; 16 arms equal to their reference; dvpb = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; d;dbase kept (length: steps) 0: 207, 2: 68, 4: 2, 6: 130;wbase kept (length: steps) 0: 205, 1: 43, 2: 37, 3: 17, 4: 105;rbase kept (length: steps) 0: 206, 1: 44, 2: 36, 3: 17, 4: 104;bbase kept (length: steps) 0: 207, 2: 68, 4: 2, 6: 130;pbase kept (length: steps) 0: 290, 2: 47, 4: 1, 6: 70;vbase kept (length: steps) 0: 408;dvpb (as built with VP=1): no verify pass prepared, as expected;pfault (control): G1 and G2 = pbase, S1 or S2 differ: without the draws a probabilistic draft's later steps change (AS-E;
+rigbase	build	OK	rc=0; llama.cpp-20261112-b9a1c1fa7.tar.gz md5 34beab8b5313778728d17428e1fa6160; commit: b9a1c1fa7b9b98dfe919374897afe6fde60b7219 (2026-11-12 20:02:14 +0100);
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+c565 static	c815 tree	OK	commit c33c894da96ebd65fbb87234e480dd8c58fcdddc 
+c565 static	c815 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c815 ctest	OK	100% tests passed, 0 tests failed out of 71; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c815 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c815 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c815 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c815 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c815 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c815 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c815 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c815 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c815 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c815 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c815 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c815 hand thread-safety	OK	test-thread-safety rc=0: 0.00.031.618 I All threads finished without errors.
+c565 static	c815 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c815 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 1.327201
+c565 shared	c815 tree	OK	commit c33c894da96ebd65fbb87234e480dd8c58fcdddc 
+c565 shared	c815 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c815 ctest	OK	100% tests passed, 0 tests failed out of 71; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c815 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c815 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c815 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c815 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c815 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c815 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c815 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c815 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c815 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c815 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c815 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c815 hand thread-safety	OK	test-thread-safety rc=0: 0.00.030.515 I All threads finished without errors.
+c565 shared	c815 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c815 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 0.665743
+trim	CPU trees	OK	removed (the binaries in cpu/bin and bsrv/bin stay); 7.3G in $M; 533 GB free
+start	pascal-p106-v4-b12246-c815	OK	tip c33c894da (C815: the adapt log's header is not const (it takes the online field)); files changed against the base:  4 files changed, 433 insertions(+), 15 deletions(-); under ggml/: 0
+merged	pascal-p106-v4	OK	14710289b (Merge -c815 (C815: LLAMA_SPEC_ADAPT_ONLINE=1|2 takes LLAMA_SPEC_ADAPT's rule while drafting, the same verified tokens an); commits since the base: 3; merges since the base: Merge -c815 (C815: LLAMA_SPEC_ADAPT_ONLI;
+merged	cpu build	OK	rc=0; 14710289b; static, every target; 3 warning lines, 0 error lines
+merged	test-spec-adapt	OK	rc=0; 434271/434271 checks passed
+moff	base writes	OK	rc=0; b9a1c1fa7: 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	merged-online	SAME	rc=0; LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_ONLINE=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+merged	server_check.sh, d arms	PASS	rc=0; 4 arms equal to dbase

@@ -1,0 +1,44 @@
+dbuilt = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens against 2382, each step's a prefix)
+don1 = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens against 2382, each step's a prefix)
+don2 = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens against 2382, each step's a prefix)
+dvp = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens against 2382, each step's a prefix)
+dvpb = dbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens against 2382, each step's a prefix)
+won1 = wbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 202 verify steps and 407 rule steps the same; drafted 989 tokens against 2382, each step's a prefix)
+won2 = wbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 202 verify steps and 407 rule steps the same; drafted 954 tokens against 2382, each step's a prefix)
+ron1 = rbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 201 verify steps and 407 rule steps the same; drafted 984 tokens against 2382, each step's a prefix)
+ron2 = rbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 201 verify steps and 407 rule steps the same; drafted 949 tokens against 2382, each step's a prefix)
+bon2 = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens against 2382, each step's a prefix)
+bvp = bbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens against 2382, each step's a prefix)
+pon1 = pbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 118 verify steps and 408 rule steps the same; drafted 1184 tokens against 2388, each step's a prefix)
+pon2 = pbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 118 verify steps and 408 rule steps the same; drafted 1184 tokens against 2388, each step's a prefix)
+pvp = pbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 118 verify steps and 408 rule steps the same; drafted 1184 tokens against 2388, each step's a prefix)
+von2 = vbase (tokens, top probabilities and draft counts of G1 G2 S1 S2; 0 verify steps and 408 rule steps the same; drafted 812 tokens against 2388, each step's a prefix)
+don1: drafted 1462 tokens against dbase's 2382 (3.592137592137592 against 5.8525798525798525 a step); the drafter stopped 277 drafts early and left out 980 passes, made 980 sampler draws for them
+don2: drafted 1462 tokens against dbase's 2382 (3.592137592137592 against 5.8525798525798525 a step); the drafter stopped 277 drafts early and left out 980 passes, made 980 sampler draws for them
+dvp: drafted 1462 tokens against dbase's 2382 (3.592137592137592 against 5.8525798525798525 a step); the drafter stopped 277 drafts early and left out 980 passes, made 980 sampler draws for them
+won1: drafted 989 tokens against wbase's 2382 (2.42997542997543 against 5.8525798525798525 a step); the drafter stopped 407 drafts early and left out 1453 passes, made 1453 sampler draws for them
+won2: drafted 954 tokens against wbase's 2382 (2.343980343980344 against 5.8525798525798525 a step); the drafter stopped 407 drafts early and left out 1488 passes, made 1488 sampler draws for them
+ron1: drafted 984 tokens against rbase's 2382 (2.4176904176904177 against 5.8525798525798525 a step); the drafter stopped 407 drafts early and left out 1458 passes, made 1458 sampler draws for them
+ron2: drafted 949 tokens against rbase's 2382 (2.3316953316953315 against 5.8525798525798525 a step); the drafter stopped 407 drafts early and left out 1493 passes, made 1493 sampler draws for them
+bon2: drafted 1462 tokens against bbase's 2382 (3.592137592137592 against 5.8525798525798525 a step); the drafter stopped 277 drafts early and left out 980 passes, made 980 sampler draws for them
+bvp: drafted 1462 tokens against bbase's 2382 (3.592137592137592 against 5.8525798525798525 a step); the drafter stopped 277 drafts early and left out 980 passes, made 980 sampler draws for them
+pon1: drafted 1184 tokens against pbase's 2388 (2.9019607843137254 against 5.852941176470588 a step); the drafter stopped 338 drafts early and left out 1264 passes, made 1264 sampler draws for them
+pon2: drafted 1184 tokens against pbase's 2388 (2.9019607843137254 against 5.852941176470588 a step); the drafter stopped 338 drafts early and left out 1264 passes, made 1264 sampler draws for them
+pvp: drafted 1184 tokens against pbase's 2388 (2.9019607843137254 against 5.852941176470588 a step); the drafter stopped 338 drafts early and left out 1264 passes, made 1264 sampler draws for them
+von2: drafted 812 tokens against vbase's 2388 (1.9901960784313726 against 5.852941176470588 a step); the drafter stopped 408 drafts early and left out 1636 passes, made 1636 sampler draws for them
+don2 drafted 1462 tokens, don1 1462
+won2 drafted 954 tokens, won1 989
+ron2 drafted 949 tokens, ron1 984
+pon2 drafted 1184 tokens, pon1 1184
+dbase kept (length: steps) 0: 207, 2: 68, 4: 2, 6: 130
+wbase kept (length: steps) 0: 205, 1: 43, 2: 37, 3: 17, 4: 105
+rbase kept (length: steps) 0: 206, 1: 44, 2: 36, 3: 17, 4: 104
+bbase kept (length: steps) 0: 207, 2: 68, 4: 2, 6: 130
+pbase kept (length: steps) 0: 290, 2: 47, 4: 1, 6: 70
+vbase kept (length: steps) 0: 408
+dvp: 75 verify passes prepared during the last drafting pass (75 last passes the rule kept)
+bvp: 75 verify passes prepared during the last drafting pass (75 last passes the rule kept)
+pvp: 51 verify passes prepared during the last drafting pass (51 last passes the rule kept)
+dvpb (as built with VP=1): no verify pass prepared, as expected
+pfault (control): G1 and G2 = pbase, S1 or S2 differ: without the draws a probabilistic draft's later steps change (AS-EXPECTED)
+PASS
