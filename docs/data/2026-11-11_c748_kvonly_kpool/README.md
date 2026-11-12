@@ -135,6 +135,11 @@ Right when `check` logs no difference and its full rewrites stay far below its s
 all five loads match. The verdict is `kvdev` against `kv` and `dev` at 16,384 and 49,152, classed against the spread
 (gain, negligible or loss).
 
+**The rig run** ([2026-11-12_r91_c748_rig](../2026-11-12_r91_c748_rig/README.md), with two loads of `kv`, `dev` and
+`kvdev` for the spread): exact on the cards, with 1 full rewrite in the draft's 2,196 micro-batches, and the two
+switches stack. With both on, the step is 1.83 and 3.84 ms shorter than with `kv` at 16,384 and 49,152 tokens, and the
+prompt chunks read 9.31 % and 11.78 % faster than with `dev`.
+
 ```bash
 # from a machine that reaches the rig over ssh (RIG: its ssh alias; BIN: the c748 tarball's bin/ on the rig; MODEL,
 # MODEL_DRAFT: paths on the rig; WORK: a folder on the rig; TEXT_LOCAL: the release check's recorded requests)

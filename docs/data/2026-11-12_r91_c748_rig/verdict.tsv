@@ -1,0 +1,17 @@
+measure	switch	control	depth	pass	control_loads	switch_loads	control_mean	switch_mean	delta	delta_pct	spread	class
+step_ms	kvdev	kv	0	1	124.82 124.53	124.61 124.58	124.67	124.59	-0.08	-0.06	0.29	negligible
+step_ms	kvdev	kv	0	2	120.63 120.62	120.35 120.40	120.62	120.37	-0.25	-0.21	0.05	gain
+step_ms	kvdev	kv	16384	1	181.80 208.84	205.49 164.09	195.32	184.79	-10.52	-5.39	41.40	negligible
+step_ms	kvdev	kv	16384	2	147.34 147.48	145.67 145.47	147.41	145.57	-1.83	-1.24	0.20	gain
+step_ms	kvdev	kv	49152	1	223.21 203.24	215.96 208.16	213.22	212.06	-1.16	-0.55	19.97	negligible
+step_ms	kvdev	kv	49152	2	178.75 178.80	176.41 173.47	178.78	174.94	-3.84	-2.15	2.93	gain
+prompt_tok_s	kvdev	kv	16384		141.44 141.21	141.71 142.59	141.33	142.15	0.82	0.58	0.88	negligible
+prompt_tok_s	kvdev	kv	49152		92.80 92.75	92.76 92.12	92.78	92.44	-0.34	-0.36	0.63	negligible
+step_ms	kvdev	dev	0	1	126.57 125.59	124.61 124.58	126.08	124.59	-1.49	-1.18	0.97	gain
+step_ms	kvdev	dev	0	2	121.95 121.69	120.35 120.40	121.82	120.37	-1.44	-1.18	0.26	gain
+step_ms	kvdev	dev	16384	1	174.91 165.22	205.49 164.09	170.07	184.79	14.73	8.66	41.40	negligible
+step_ms	kvdev	dev	16384	2	146.63 146.54	145.67 145.47	146.59	145.57	-1.01	-0.69	0.20	gain
+step_ms	kvdev	dev	49152	1	210.02 208.86	215.96 208.16	209.44	212.06	2.62	1.25	7.80	negligible
+step_ms	kvdev	dev	49152	2	176.12 178.00	176.41 173.47	177.06	174.94	-2.12	-1.20	2.93	negligible
+prompt_tok_s	kvdev	dev	16384		128.97 131.12	141.71 142.59	130.04	142.15	12.11	9.31	2.16	gain
+prompt_tok_s	kvdev	dev	49152		82.75 82.66	92.76 92.12	82.70	92.44	9.74	11.78	0.63	gain
