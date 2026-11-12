@@ -281,6 +281,17 @@ on the four of the code table), against the Swift-1.5 Q8_0's logits ([kld_pick.t
   shards (35,980 MiB), as the start's 38,824 MiB are 2,818 more than its own ([mem_peak_pick.tsv](mem_peak_pick.tsv);
   the code rows also in [mem_peak_code.tsv](mem_peak_code.tsv)).
 
+### `gmix-q2` on a P106 (Q1382, 2026-11-12)
+
+On nine P106-090 cards with v4's line, `gmix-q2` is a loss in decode and in prompts against `pmix-q2-fast`
+([2026-11-12_r115_gmix_step](../2026-11-12_r115_gmix_step/README.md), two loads a file):
+- **Decode:** a step on the repeated request takes 125.83 and 125.86 ms against 107.80 and 107.77 over depths 0 and
+  8,192 (+18.06 ms, +16.75 %), about three times the est. +5.91 ms a token above.
+- **Prompts:** an 8,128-token prompt reads at 122.5 and 127.5 tok/s against 152.2 and 150.6 (−17.43 %).
+- **The fit:** llama-server's projection matches [pick_fit_64k_cards.txt](pick_fit_64k_cards.txt) to 2 MiB a card.
+
+Which products cost the 18 ms is [Q1409](../../../quants/experiments.md).
+
 ## 1. Q219: the routed experts per 8-layer group
 
 Tool: [bench/pascal_mix/galloc.py](../../../bench/pascal_mix/galloc.py) (`specs`, `switches`, `same`, `collect`,

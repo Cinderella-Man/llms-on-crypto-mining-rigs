@@ -1,0 +1,13 @@
+log	prompt_tokens	requests	prompt_s	reallocs_same	reallocs_changed	requests_with_realloc	graphs_reused
+pmix1	0-511	7	9.6	0	0	0	1927
+pmix1	2000+	1	53.4	0	0	0	284
+pmix1	all	8	63.0	0	0	0	2211
+gmix1	0-511	7	10.3	0	0	0	2168
+gmix1	2000+	1	66.3	0	0	0	317
+gmix1	all	8	76.6	0	0	0	2485
+pmix2	0-511	7	9.6	0	0	0	1927
+pmix2	2000+	1	54.0	0	0	0	284
+pmix2	all	8	63.6	0	0	0	2211
+gmix2	0-511	7	9.9	0	0	0	2168
+gmix2	2000+	1	63.8	0	0	0	317
+gmix2	all	8	73.7	0	0	0	2485

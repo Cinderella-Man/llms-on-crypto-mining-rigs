@@ -1,0 +1,149 @@
+depth	arm	load	metric	value
+0	pmix	pmix1	decode	27.44
+0	pmix	pmix2	decode	26.91
+0	gmix	gmix1	decode	18.18
+0	gmix	gmix2	decode	18.19
+0	pmix	pmix1	decode_ms_token	36.45
+0	pmix	pmix2	decode_ms_token	37.15
+0	gmix	gmix1	decode_ms_token	55.00
+0	gmix	gmix2	decode_ms_token	54.96
+0	pmix	pmix1	step_pass1	102.34
+0	pmix	pmix2	step_pass1	106.02
+0	gmix	gmix1	step_pass1	125.98
+0	gmix	gmix2	step_pass1	125.87
+0	pmix	pmix1	step_pass2	99.37
+0	pmix	pmix2	step_pass2	99.60
+0	gmix	gmix1	step_pass2	118.71
+0	gmix	gmix2	step_pass2	118.63
+0	pmix	pmix1	share	0.6000
+0	pmix	pmix2	share	0.6000
+0	gmix	gmix1	share	0.4147
+0	gmix	gmix2	share	0.4147
+0	pmix	pmix1	tokens_step	2.768
+0	pmix	pmix2	tokens_step	2.768
+0	gmix	gmix1	tokens_step	2.226
+0	gmix	gmix2	tokens_step	2.226
+0	pmix	pmix1	sample	20.69
+0	pmix	pmix2	sample	20.04
+0	gmix	gmix1	sample	20.22
+0	gmix	gmix2	sample	20.61
+0	pmix	pmix1	sample_share	0.5270
+0	pmix	pmix2	sample_share	0.5270
+0	gmix	gmix1	sample_share	0.6398
+0	gmix	gmix2	sample_share	0.6398
+0	pmix	pmix1	sample_tokens_step	2.560
+0	pmix	pmix2	sample_tokens_step	2.560
+0	gmix	gmix1	sample_tokens_step	2.876
+0	gmix	gmix2	sample_tokens_step	2.876
+0	pmix	pmix1	sample_step	123.71
+0	pmix	pmix2	sample_step	127.75
+0	gmix	gmix1	sample_step	142.25
+0	gmix	gmix2	sample_step	139.56
+0	pmix	pmix1	prompt	54.4
+0	pmix	pmix2	prompt	53.0
+0	gmix	gmix1	prompt	51.3
+0	gmix	gmix2	prompt	51.2
+8192	pmix	pmix1	decode	23.00
+8192	pmix	pmix2	decode	23.34
+8192	gmix	gmix1	decode	18.31
+8192	gmix	gmix2	decode	18.30
+8192	pmix	pmix1	decode_ms_token	43.48
+8192	pmix	pmix2	decode_ms_token	42.84
+8192	gmix	gmix1	decode_ms_token	54.62
+8192	gmix	gmix2	decode_ms_token	54.64
+8192	pmix	pmix1	step_pass1	150.56
+8192	pmix	pmix2	step_pass1	146.98
+8192	gmix	gmix1	step_pass1	170.84
+8192	gmix	gmix2	step_pass1	170.81
+8192	pmix	pmix1	step_pass2	117.26
+8192	pmix	pmix2	step_pass2	116.94
+8192	gmix	gmix1	step_pass2	134.59
+8192	gmix	gmix2	step_pass2	134.75
+8192	pmix	pmix1	share	0.7033
+8192	pmix	pmix2	share	0.7033
+8192	gmix	gmix1	share	0.6127
+8192	gmix	gmix2	share	0.6127
+8192	pmix	pmix1	tokens_step	3.084
+8192	pmix	pmix2	tokens_step	3.084
+8192	gmix	gmix1	tokens_step	2.798
+8192	gmix	gmix2	tokens_step	2.798
+8192	pmix	pmix1	sample	23.29
+8192	pmix	pmix2	sample	23.18
+8192	gmix	gmix1	sample	19.68
+8192	gmix	gmix2	sample	19.68
+8192	pmix	pmix1	sample_share	0.6350
+8192	pmix	pmix2	sample_share	0.6350
+8192	gmix	gmix1	sample_share	0.6157
+8192	gmix	gmix2	sample_share	0.6157
+8192	pmix	pmix1	sample_tokens_step	2.876
+8192	pmix	pmix2	sample_tokens_step	2.876
+8192	gmix	gmix1	sample_tokens_step	2.813
+8192	gmix	gmix2	sample_tokens_step	2.813
+8192	pmix	pmix1	sample_step	123.50
+8192	pmix	pmix2	sample_step	124.07
+8192	gmix	gmix1	sample_step	142.93
+8192	gmix	gmix2	sample_step	142.92
+8192	pmix	pmix1	prompt	152.2
+8192	pmix	pmix2	prompt	150.6
+8192	gmix	gmix1	prompt	122.5
+8192	gmix	gmix2	prompt	127.5
+all depths	pmix	pmix1	decode	25.02
+all depths	pmix	pmix2	decode	25.00
+all depths	gmix	gmix1	decode	18.24
+all depths	gmix	gmix2	decode	18.25
+all depths	pmix	pmix1	decode_ms_token	39.96
+all depths	pmix	pmix2	decode_ms_token	40.00
+all depths	gmix	gmix1	decode_ms_token	54.81
+all depths	gmix	gmix2	decode_ms_token	54.80
+all depths	pmix	pmix1	step_pass1	125.23
+all depths	pmix	pmix2	step_pass1	125.46
+all depths	gmix	gmix1	step_pass1	145.63
+all depths	gmix	gmix2	step_pass1	145.56
+all depths	pmix	pmix1	step_pass2	107.80
+all depths	pmix	pmix2	step_pass2	107.77
+all depths	gmix	gmix1	step_pass2	125.83
+all depths	gmix	gmix2	step_pass2	125.86
+all depths	pmix	pmix1	share	0.6490
+all depths	pmix	pmix2	share	0.6490
+all depths	gmix	gmix1	share	0.5021
+all depths	gmix	gmix2	share	0.5021
+all depths	pmix	pmix1	tokens_step	2.917
+all depths	pmix	pmix2	tokens_step	2.917
+all depths	gmix	gmix1	tokens_step	2.479
+all depths	gmix	gmix2	tokens_step	2.479
+all depths	pmix	pmix1	sample	21.92
+all depths	pmix	pmix2	sample	21.50
+all depths	gmix	gmix1	sample	19.95
+all depths	gmix	gmix2	sample	20.14
+all depths	pmix	pmix1	sample_share	0.5778
+all depths	pmix	pmix2	sample_share	0.5778
+all depths	gmix	gmix1	sample_share	0.6276
+all depths	gmix	gmix2	sample_share	0.6276
+all depths	pmix	pmix1	sample_tokens_step	2.709
+all depths	pmix	pmix2	sample_tokens_step	2.709
+all depths	gmix	gmix1	sample_tokens_step	2.844
+all depths	gmix	gmix2	sample_tokens_step	2.844
+all depths	pmix	pmix1	sample_step	123.61
+all depths	pmix	pmix2	sample_step	126.02
+all depths	gmix	gmix1	sample_step	142.60
+all depths	gmix	gmix2	sample_step	141.26
+all depths	pmix	pmix1	prompt	152.2
+all depths	pmix	pmix2	prompt	150.6
+all depths	gmix	gmix1	prompt	122.5
+all depths	gmix	gmix2	prompt	127.5
+load	pmix	pmix1	min_avail_mib	379.00
+load	pmix	pmix1	max_swap_used_mib	21.00
+load	pmix	pmix1	swap_change_mib	16.00
+load	pmix	pmix1	max_psi_full	0.54
+load	pmix	pmix2	min_avail_mib	377.00
+load	pmix	pmix2	max_swap_used_mib	22.00
+load	pmix	pmix2	swap_change_mib	1.00
+load	pmix	pmix2	max_psi_full	0.00
+load	gmix	gmix1	min_avail_mib	328.00
+load	gmix	gmix1	max_swap_used_mib	21.00
+load	gmix	gmix1	swap_change_mib	0.00
+load	gmix	gmix1	max_psi_full	0.00
+load	gmix	gmix2	min_avail_mib	330.00
+load	gmix	gmix2	max_swap_used_mib	22.00
+load	gmix	gmix2	swap_change_mib	0.00
+load	gmix	gmix2	max_psi_full	0.00

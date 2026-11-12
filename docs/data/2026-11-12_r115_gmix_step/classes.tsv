@@ -1,0 +1,34 @@
+metric	depth	arm	control	control_loads	arm_loads	spread	delta	percent	class
+decode	0	gmix	pmix	27.44 26.91	18.18 18.19	0.52	-8.99	-33.07	loss
+decode_ms_token	0	gmix	pmix	36.45 37.15	55.00 54.96	0.71	18.18	49.41	loss
+step_pass1	0	gmix	pmix	102.34 106.02	125.98 125.87	3.67	21.74	20.87	loss
+step_pass2	0	gmix	pmix	99.37 99.60	118.71 118.63	0.23	19.19	19.28	loss
+share	0	gmix	pmix	0.6000 0.6000	0.4147 0.4147	0.0000	-0.1853	-30.88	loss
+tokens_step	0	gmix	pmix	2.768 2.768	2.226 2.226	0.000	-0.541	-19.57	loss
+sample	0	gmix	pmix	20.69 20.04	20.22 20.61	0.65	0.05	0.24	negligible
+sample_share	0	gmix	pmix	0.5270 0.5270	0.6398 0.6398	0.0000	0.1128	21.41	gain
+sample_tokens_step	0	gmix	pmix	2.560 2.560	2.876 2.876	0.000	0.316	12.36	gain
+sample_step	0	gmix	pmix	123.71 127.75	142.25 139.56	4.04	15.18	12.07	loss
+prompt	0	gmix	pmix	54.4 53.0	51.3 51.2	1.4	-2.5	-4.58	loss
+decode	8192	gmix	pmix	23.00 23.34	18.31 18.30	0.34	-4.87	-21.00	loss
+decode_ms_token	8192	gmix	pmix	43.48 42.84	54.62 54.64	0.64	11.47	26.57	loss
+step_pass1	8192	gmix	pmix	150.56 146.98	170.84 170.81	3.58	22.05	14.82	loss
+step_pass2	8192	gmix	pmix	117.26 116.94	134.59 134.75	0.31	17.57	15.01	loss
+share	8192	gmix	pmix	0.7033 0.7033	0.6127 0.6127	0.0000	-0.0906	-12.88	loss
+tokens_step	8192	gmix	pmix	3.084 3.084	2.798 2.798	0.000	-0.287	-9.29	loss
+sample	8192	gmix	pmix	23.29 23.18	19.68 19.68	0.11	-3.56	-15.30	loss
+sample_share	8192	gmix	pmix	0.6350 0.6350	0.6157 0.6157	0.0000	-0.0193	-3.04	loss
+sample_tokens_step	8192	gmix	pmix	2.876 2.876	2.813 2.813	0.000	-0.063	-2.20	loss
+sample_step	8192	gmix	pmix	123.50 124.07	142.93 142.92	0.57	19.14	15.47	loss
+prompt	8192	gmix	pmix	152.2 150.6	122.5 127.5	4.9	-26.4	-17.43	loss
+decode	all depths	gmix	pmix	25.02 25.00	18.24 18.25	0.02	-6.77	-27.05	loss
+decode_ms_token	all depths	gmix	pmix	39.96 40.00	54.81 54.80	0.04	14.83	37.08	loss
+step_pass1	all depths	gmix	pmix	125.23 125.46	145.63 145.56	0.23	20.25	16.16	loss
+step_pass2	all depths	gmix	pmix	107.80 107.77	125.83 125.86	0.03	18.06	16.75	loss
+share	all depths	gmix	pmix	0.6490 0.6490	0.5021 0.5021	0.0000	-0.1469	-22.64	loss
+tokens_step	all depths	gmix	pmix	2.917 2.917	2.479 2.479	0.000	-0.438	-15.01	loss
+sample	all depths	gmix	pmix	21.92 21.50	19.95 20.14	0.42	-1.66	-7.67	loss
+sample_share	all depths	gmix	pmix	0.5778 0.5778	0.6276 0.6276	0.0000	0.0498	8.62	gain
+sample_tokens_step	all depths	gmix	pmix	2.709 2.709	2.844 2.844	0.000	0.135	5.00	gain
+sample_step	all depths	gmix	pmix	123.61 126.02	142.60 141.26	2.41	17.12	13.71	loss
+prompt	all depths	gmix	pmix	152.2 150.6	122.5 127.5	4.9	-26.4	-17.43	loss
