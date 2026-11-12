@@ -1,0 +1,57 @@
+type	rows	K	tokens	preset (base)	KCOL_EXACT=1	KCOL_EXACT=2
+q3_K	129	2048	1	1 x 1, R 1, itt 1, 19584 B	1 x 1, R 1, itt 1, 19584 B	1 x 1, R 1, itt 1, 19584 B
+q3_K	129	2048	2	1 x 2, R 1, itt 1, 22784 B	1 x 2, R 1, itt 1, 22784 B	1 x 2, R 1, itt 1, 22784 B
+q3_K	129	2048	3	1 x 3, R 1, itt 1, 25984 B	1 x 3, R 1, itt 1, 25984 B	1 x 3, R 1, itt 1, 25984 B
+q3_K	129	2048	4	1 x 4, R 1, itt 1, 29184 B	1 x 4, R 1, itt 1, 29184 B	1 x 4, R 1, itt 1, 29184 B
+q3_K	129	2048	5	1 x 5, R 1, itt 1, 32384 B	1 x 5, R 1, itt 1, 32384 B	1 x 5, R 1, itt 1, 32384 B
+q3_K	129	2048	6	declined	1 x 6, R 1, itt 1, 35584 B	2 x 3, R 1, itt 1, 25984 B
+q3_K	129	2048	7	declined	1 x 7, R 1, itt 1, 38784 B	2 x 4, R 1, itt 1, 29184 B
+q3_K	129	2048	8	declined	1 x 8, R 1, itt 1, 41984 B	2 x 4, R 1, itt 1, 29184 B
+q3_K	77	4096	1	1 x 1, R 1, itt 1, 22784 B	1 x 1, R 1, itt 1, 22784 B	1 x 1, R 1, itt 1, 22784 B
+q3_K	77	4096	2	1 x 2, R 1, itt 1, 29184 B	1 x 2, R 1, itt 1, 29184 B	1 x 2, R 1, itt 1, 29184 B
+q3_K	77	4096	3	declined	1 x 3, R 1, itt 1, 35584 B	2 x 2, R 1, itt 1, 29184 B
+q3_K	77	4096	4	declined	1 x 4, R 1, itt 1, 41984 B	2 x 2, R 1, itt 1, 29184 B
+q3_K	77	4096	5	declined	1 x 5, R 1, itt 1, 48384 B	3 x 2, R 1, itt 1, 29184 B
+q3_K	77	4096	6	declined	2 x 3, R 1, itt 1, 35584 B	3 x 2, R 1, itt 1, 29184 B
+q3_K	77	4096	7	declined	2 x 4, R 1, itt 1, 41984 B	4 x 2, R 1, itt 1, 29184 B
+q3_K	77	4096	8	declined	2 x 4, R 1, itt 1, 41984 B	4 x 2, R 1, itt 1, 29184 B
+q3_K	2560	6144	1	1 x 1, R 1, itt 3, 25984 B	1 x 1, R 1, itt 3, 25984 B	1 x 1, R 1, itt 3, 25984 B
+q3_K	2560	6144	2	1 x 2, R 1, itt 2, 29184 B	1 x 2, R 1, itt 2, 29184 B	1 x 2, R 1, itt 2, 29184 B
+q3_K	2560	6144	3	1 x 3, R 1, itt 1, 25984 B	1 x 3, R 1, itt 1, 25984 B	1 x 3, R 1, itt 1, 25984 B
+q3_K	2560	6144	4	1 x 4, R 1, itt 1, 29184 B	1 x 4, R 1, itt 1, 29184 B	1 x 4, R 1, itt 1, 29184 B
+q3_K	2560	6144	5	1 x 5, R 1, itt 1, 32384 B	1 x 5, R 1, itt 1, 32384 B	1 x 5, R 1, itt 1, 32384 B
+q3_K	2560	6144	6	declined	1 x 6, R 1, itt 1, 35584 B	2 x 3, R 1, itt 1, 25984 B
+q3_K	2560	6144	7	declined	1 x 7, R 1, itt 1, 38784 B	2 x 4, R 1, itt 1, 29184 B
+q3_K	2560	6144	8	declined	1 x 8, R 1, itt 1, 41984 B	2 x 4, R 1, itt 1, 29184 B
+q3_K	33	8192	1	1 x 1, R 1, itt 1, 29184 B	1 x 1, R 1, itt 1, 29184 B	1 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	2	declined	1 x 2, R 1, itt 1, 41984 B	2 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	3	declined	2 x 2, R 1, itt 1, 41984 B	3 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	4	declined	2 x 2, R 1, itt 1, 41984 B	4 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	5	declined	3 x 2, R 1, itt 1, 41984 B	5 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	6	declined	3 x 2, R 1, itt 1, 41984 B	6 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	7	declined	4 x 2, R 1, itt 1, 41984 B	7 x 1, R 1, itt 1, 29184 B
+q3_K	33	8192	8	declined	4 x 2, R 1, itt 1, 41984 B	8 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	1	1 x 1, R 1, itt 1, 29184 B	1 x 1, R 1, itt 1, 29184 B	1 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	2	declined	1 x 2, R 1, itt 1, 41984 B	2 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	3	declined	2 x 2, R 1, itt 1, 41984 B	3 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	4	declined	2 x 2, R 1, itt 1, 41984 B	4 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	5	declined	3 x 2, R 1, itt 1, 41984 B	5 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	6	declined	3 x 2, R 1, itt 1, 41984 B	6 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	7	declined	4 x 2, R 1, itt 1, 41984 B	7 x 1, R 1, itt 1, 29184 B
+q3_K	64	8192	8	declined	4 x 2, R 1, itt 1, 41984 B	8 x 1, R 1, itt 1, 29184 B
+q3_K	96	12288	1	1 x 1, R 1, itt 2, 29184 B	1 x 1, R 1, itt 2, 29184 B	1 x 1, R 1, itt 2, 29184 B
+q3_K	96	12288	2	1 x 2, R 1, itt 1, 29184 B	1 x 2, R 1, itt 1, 29184 B	1 x 2, R 1, itt 1, 29184 B
+q3_K	96	12288	3	declined	1 x 3, R 1, itt 1, 35584 B	2 x 2, R 1, itt 1, 29184 B
+q3_K	96	12288	4	declined	1 x 4, R 1, itt 1, 41984 B	2 x 2, R 1, itt 1, 29184 B
+q3_K	96	12288	5	declined	1 x 5, R 1, itt 1, 48384 B	3 x 2, R 1, itt 1, 29184 B
+q3_K	96	12288	6	declined	2 x 3, R 1, itt 1, 35584 B	3 x 2, R 1, itt 1, 29184 B
+q3_K	96	12288	7	declined	2 x 4, R 1, itt 1, 41984 B	4 x 2, R 1, itt 1, 29184 B
+q3_K	96	12288	8	declined	2 x 4, R 1, itt 1, 41984 B	4 x 2, R 1, itt 1, 29184 B
+q2_0	33	8192	1	one-token	one-token	one-token
+q2_0	33	8192	2	1 x 2, R 1, itt 2, 27136 B	1 x 2, R 1, itt 2, 27136 B	1 x 2, R 1, itt 2, 27136 B
+q2_0	33	8192	3	1 x 3, R 1, itt 1, 21504 B	1 x 3, R 1, itt 1, 21504 B	1 x 3, R 1, itt 1, 21504 B
+q2_0	33	8192	4	1 x 4, R 1, itt 1, 27136 B	1 x 4, R 1, itt 1, 27136 B	1 x 4, R 1, itt 1, 27136 B
+q2_0	33	8192	5	1 x 5, R 1, itt 1, 32768 B	1 x 5, R 1, itt 1, 32768 B	1 x 5, R 1, itt 1, 32768 B
+q2_0	33	8192	6	declined	1 x 6, R 1, itt 1, 38400 B	2 x 3, R 1, itt 1, 21504 B
+q2_0	33	8192	7	declined	1 x 7, R 1, itt 1, 44032 B	2 x 4, R 1, itt 1, 27136 B
+q2_0	33	8192	8	declined	2 x 4, R 1, itt 1, 27136 B	2 x 4, R 1, itt 1, 27136 B

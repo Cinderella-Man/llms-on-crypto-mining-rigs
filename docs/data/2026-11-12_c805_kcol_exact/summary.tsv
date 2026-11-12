@@ -1,0 +1,70 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c805	OK	tip dd755a09c (C805: GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT also keeps the one-column products this kernel runs (Q3_K, IQ4_NL, short-row Q8_0); files changed against the base:  3 files changed, 98 insertions(+), 7 deletions(-)
+rig	build	OK	rc=0; llama.cpp-20261112-dd755a09c-pascal-p106-v4-b12246-c805.tar.gz md5 00dd0b7eac7a0530aca4198e15461c5b, 678327506 B; commit: dd755a09ca8b66ceb80e49cc51da98e9d2378f7a (2026-11-12 15:04:10 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 9892ee34e95403cd290f721e7e3601b8; 34 warning lines
+names	switch list	OK	860 names in the build's list (the base's: 858); the two new names missing from it: none, from bin/llama-server: none
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	k-column objects against the base's	DIFFERS	17 objects, sass and ptx: 34 dumps, 0 functions; dumps that differ: 0 
+cpu	build	OK	rc=0; commit dd755a09ca8b66ceb80e49cc51da98e9d2378f7a C805: GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT also keeps the one-column products this kernel runs (; static, every target; 3 warning lines, 0 error lines
+off	base writes	OK	rc=0; <the base's CPU build>: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	exact1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	exact2	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	exact1-fault	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1 GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT_FAULT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	preset-exact1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+pick	the decision's lines in each tree	OK	base and c805 counts of the seven lines kcol_pick.cu repeats: 11 11 11 10 01 01 01 (expected 11 11 11 10 01 01 01)
+pick	switch off: the base's choices	SAME	rc=0; 10 arms (9 settings without KCOL_EXACT, preset with KCOL_EXACT=3), 26880 products each (16 types, 15 widths, 14 row counts, 1-8 tokens): every line the base's; differ: none
+pick	switch on: only the four types' declined products change, all taken, within 48 KB	FAIL	arm, lines changed, changes not of the kind, products of the four types not taken, launches past 48 KB or not covering the tokens, split products: awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;awk: line 13: syntax error at or near ++;awk: line 15: syntax error at or near >;; arms failing: awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > awk: line 13: syntax error at or near ++ awk: line 15: syntax error at or near > 
+pick	=1 splits only past 48 KB	OK	preset-x1's split products and the base's declines at KCOL_SMEM=49152 KCOL_TABLE=0 (of the products preset-x1 takes): split 308, mismatches 0
+pick	the fault changes no choice	SAME	preset-x1f (KCOL_EXACT_FAULT=1) against preset-x1 in the new tree
+bitid	build	OK	rc=0; multitoken_bitid md5 f1b99a3a1beb210aef8130c4eb1d7260, 90842192 B; modes in it: q3k glu ; linked against dd755a09c
+c565 static	c805 tree	OK	commit dd755a09ca8b66ceb80e49cc51da98e9d2378f7a 
+c565 static	c805 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c805 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c805 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c805 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c805 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c805 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c805 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c805 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c805 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c805 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c805 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c805 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c805 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c805 hand thread-safety	OK	test-thread-safety rc=0: 0.00.115.123 I All threads finished without errors.
+c565 static	c805 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c805 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -2.159130
+c565 shared	c805 tree	OK	commit dd755a09ca8b66ceb80e49cc51da98e9d2378f7a 
+c565 shared	c805 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c805 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c805 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c805 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c805 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c805 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c805 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c805 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c805 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c805 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c805 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c805 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c805 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c805 hand thread-safety	OK	test-thread-safety rc=0: 0.00.031.586 I All threads finished without errors.
+c565 shared	c805 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c805 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -0.771298
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 7.4G in $M; 367 GB free
+start	pascal-p106-v4-b12246-c805	OK	tip dd755a09c (C805: GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT also keeps the one-column products this kernel runs (Q3_K, IQ4_NL, short-row Q8_0); files changed against the base:  3 files changed, 98 insertions(+), 7 deletions(-)
+sass	k-column objects against the base's	SAME	17 objects, sass and ptx: 34 dumps, 544 functions; dumps that differ: 0 
+pick	switch off: the base's choices	DIFFERS	rc=1; 10 arms (9 settings without KCOL_EXACT, preset with KCOL_EXACT=3), 26880 products each (16 types, 15 widths, 14 row counts, 1-8 tokens): every line the base's; differ: none
+pick	switch on: only the four types' declined products change, all taken, within 48 KB	FAIL	arm, lines changed, changes not of the kind, products of the four types not taken, launches past 48 KB or not covering the tokens, split products: none-x1 781 0 0 0 308;preset-x1 882 0 0 0 308;table0-x1 308 0 0 0 308;smem48-x1 308 0 0 0 308;r1-x1 882 0 0 0 308;r2-x1 1904 0 0 0 308;itt1-x1 308 0 0 0 308;mode2-x1 308 0 0 0 308;smem24-x1 1526 0 0 0 308;none-x2 781 0 0 0 308;preset-x2 882 0 0 0 658;table0-x2 308 0 0 0 308;r2-x2 1904 0 0 0 1498;preset-x1f 882 0 0 0 308;; arms failing: none
+pick	=1 splits only past 48 KB	OK	preset-x1's split products and the base's declines at KCOL_SMEM=49152 KCOL_TABLE=0 (of the products preset-x1 takes): split 308, mismatches 0
+pick	R120a's products under the preset	OK	56 lines (pick/r120a_products.tsv); at 2-8 tokens declined by the base: 35, taken at =1 and =2: 49 of 49
+pick	the fault changes no choice	SAME	preset-x1f (KCOL_EXACT_FAULT=1) against preset-x1 in the new tree
+start	pascal-p106-v4-b12246-c805	OK	tip dd755a09c (C805: GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT also keeps the one-column products this kernel runs (Q3_K, IQ4_NL, short-row Q8_0); files changed against the base:  3 files changed, 98 insertions(+), 7 deletions(-)
+pick	switch off: the base's choices	SAME	rc=0; 10 arms (9 settings without KCOL_EXACT, preset with KCOL_EXACT=3), 26880 products each (16 types, 15 widths, 14 row counts, 1-8 tokens): every line the base's; differ: none
+pick	switch on: only the four types' declined products change, all taken, within 48 KB	OK	arm, lines changed, changes not of the kind, products of the four types not taken, launches past 48 KB or not covering the tokens, split products: none-x1 781 0 0 0 308;preset-x1 882 0 0 0 308;table0-x1 308 0 0 0 308;smem48-x1 308 0 0 0 308;r1-x1 882 0 0 0 308;r2-x1 1904 0 0 0 308;itt1-x1 308 0 0 0 308;mode2-x1 308 0 0 0 308;smem24-x1 1526 0 0 0 308;none-x2 781 0 0 0 308;preset-x2 882 0 0 0 658;table0-x2 308 0 0 0 308;r2-x2 1904 0 0 0 1498;preset-x1f 882 0 0 0 308;; arms failing: none
+pick	=1 splits only past 48 KB	OK	preset-x1's split products and the base's declines at KCOL_SMEM=49152 KCOL_TABLE=0 (of the products preset-x1 takes): split 308, mismatches 0
+pick	R120a's products under the preset	OK	56 lines (pick/r120a_products.tsv); at 2-8 tokens declined by the base: 35, taken at =1 and =2: 49 of 49
+pick	the fault changes no choice	SAME	preset-x1f (KCOL_EXACT_FAULT=1) against preset-x1 in the new tree
+start	pascal-p106-v4-b12246-c805	OK	tip dd755a09c (C805: GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT also keeps the one-column products this kernel runs (Q3_K, IQ4_NL, short-row Q8_0); files changed against the base:  3 files changed, 98 insertions(+), 7 deletions(-)
+merged	pascal-p106-v4	OK	d569b8bc2 (Merge -c805 (C805: GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT, the k-column kernel keeps its declined products; off by default) in); its tree is dd755a09c's; commits since the base: 3
