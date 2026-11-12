@@ -1,0 +1,15 @@
+load	min_mem_available_mib	swap_start_mib	swap_max_mib	major_faults	pswpin	pswpout
+base	499	19	19	3347	6	0
+a	505	19	19	15	14	0
+b	517	19	19	0	0	0
+c	519	19	19	2	1	0
+d	503	19	19	1	1	0
+e	505	19	19	1	0	0
+f	519	19	19	1	0	0
+base-2	515	19	19	3	1	0
+a-2	520	19	19	0	0	0
+b-2	522	19	19	0	0	0
+c-2	513	19	19	2	1	0
+d-2	478	19	19	1	0	0
+e-2	513	19	19	3	1	0
+f-2	510	19	19	3	3	0

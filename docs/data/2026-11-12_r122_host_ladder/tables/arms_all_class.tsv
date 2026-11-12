@@ -1,0 +1,37 @@
+load	value	step_ms	ref_a_ms	ref_b_ms	minus_ref_mean_ms	class
+a	mean of the medians	114.758	119.216	119.087	-4.393	gain
+a	greedy, median	110.569	115.363	115.261	-4.743	gain
+a	long, median	118.948	123.070	122.913	-4.043	gain
+b	mean of the medians	113.848	119.216	119.087	-5.304	gain
+b	greedy, median	109.945	115.363	115.261	-5.367	gain
+b	long, median	117.751	123.070	122.913	-5.240	gain
+c	mean of the medians	112.885	119.216	119.087	-6.266	gain
+c	greedy, median	108.718	115.363	115.261	-6.594	gain
+c	long, median	117.053	123.070	122.913	-5.939	gain
+d	mean of the medians	112.654	119.216	119.087	-6.497	gain
+d	greedy, median	108.482	115.363	115.261	-6.830	gain
+d	long, median	116.827	123.070	122.913	-6.165	gain
+e	mean of the medians	112.438	119.216	119.087	-6.713	gain
+e	greedy, median	108.319	115.363	115.261	-6.993	gain
+e	long, median	116.558	123.070	122.913	-6.434	gain
+f	mean of the medians	111.887	119.216	119.087	-7.265	gain
+f	greedy, median	108.093	115.363	115.261	-7.219	gain
+f	long, median	115.680	123.070	122.913	-7.311	gain
+a-2	mean of the medians	114.659	119.216	119.087	-4.493	gain
+a-2	greedy, median	110.426	115.363	115.261	-4.886	gain
+a-2	long, median	118.892	123.070	122.913	-4.100	gain
+b-2	mean of the medians	114.178	119.216	119.087	-4.974	gain
+b-2	greedy, median	110.133	115.363	115.261	-5.179	gain
+b-2	long, median	118.223	123.070	122.913	-4.769	gain
+c-2	mean of the medians	113.078	119.216	119.087	-6.074	gain
+c-2	greedy, median	108.971	115.363	115.261	-6.341	gain
+c-2	long, median	117.185	123.070	122.913	-5.806	gain
+d-2	mean of the medians	112.644	119.216	119.087	-6.507	gain
+d-2	greedy, median	108.540	115.363	115.261	-6.772	gain
+d-2	long, median	116.749	123.070	122.913	-6.243	gain
+e-2	mean of the medians	112.636	119.216	119.087	-6.516	gain
+e-2	greedy, median	108.509	115.363	115.261	-6.803	gain
+e-2	long, median	116.762	123.070	122.913	-6.230	gain
+f-2	mean of the medians	111.989	119.216	119.087	-7.162	gain
+f-2	greedy, median	107.924	115.363	115.261	-7.388	gain
+f-2	long, median	116.055	123.070	122.913	-6.936	gain

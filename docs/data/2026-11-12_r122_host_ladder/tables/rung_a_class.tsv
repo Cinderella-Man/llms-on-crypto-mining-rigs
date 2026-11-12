@@ -1,0 +1,7 @@
+load	value	step_ms	ref_a_ms	ref_b_ms	minus_ref_mean_ms	class
+a	mean of the medians	114.758	119.216	119.087	-4.393	gain
+a	greedy, median	110.569	115.363	115.261	-4.743	gain
+a	long, median	118.948	123.070	122.913	-4.043	gain
+a-2	mean of the medians	114.659	119.216	119.087	-4.493	gain
+a-2	greedy, median	110.426	115.363	115.261	-4.886	gain
+a-2	long, median	118.892	123.070	122.913	-4.100	gain

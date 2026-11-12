@@ -1,0 +1,7 @@
+load	value	step_ms	ref_a_ms	ref_b_ms	minus_ref_mean_ms	class
+e	mean of the medians	112.438	112.654	112.644	-0.211	gain
+e	greedy, median	108.319	108.482	108.540	-0.192	gain
+e	long, median	116.558	116.827	116.749	-0.230	gain
+e-2	mean of the medians	112.636	112.654	112.644	-0.014	gain
+e-2	greedy, median	108.509	108.482	108.540	-0.002	negligible
+e-2	long, median	116.762	116.827	116.749	-0.026	negligible

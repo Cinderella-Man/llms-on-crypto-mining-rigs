@@ -1,0 +1,33 @@
+load	line
+a	C615: draft prefetch on, cap 1024 KiB: 708 calls issued the rows of 708 tokens (11320 rows, 8 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 139.504 ms in the calls); 188 evaluations set 56736 rows, 11312 issued ahead; 182 of up to 64 tokens set 12640 rows, 11312 issued ahead; pages 0, 0 of 0 checked in the page cache
+b	C738: 1 verify passes prepared during the last drafting pass, of 1
+b	C738: 161 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 966 inputs uploaded ahead
+b	C615: draft prefetch on, cap 1024 KiB: 648 calls issued the rows of 648 tokens (10368 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 119.437 ms in the calls); 173 evaluations set 55776 rows, 10352 issued ahead; 167 of up to 64 tokens set 11680 rows, 10352 issued ahead; pages 0, 0 of 0 checked in the page cache
+c	C738: 1 verify passes prepared during the last drafting pass, of 1
+c	C738: 170 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1020 inputs uploaded ahead
+c	C615: draft prefetch on, cap 1024 KiB: 684 calls issued the rows of 684 tokens (10944 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 130.021 ms in the calls); 182 evaluations set 56352 rows, 10928 issued ahead; 176 of up to 64 tokens set 12256 rows, 10928 issued ahead; pages 0, 0 of 0 checked in the page cache
+d	C738: 1 verify passes prepared during the last drafting pass, of 1
+d	C738: 168 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1008 inputs uploaded ahead
+d	C615: draft prefetch on, cap 1024 KiB: 684 calls issued the rows of 684 tokens (10944 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 131.616 ms in the calls); 182 evaluations set 56304 rows, 10880 issued ahead; 176 of up to 64 tokens set 12208 rows, 10880 issued ahead; pages 0, 0 of 0 checked in the page cache
+e	C738: 1 verify passes prepared during the last drafting pass, of 1
+e	C738: 167 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1002 inputs uploaded ahead
+e	C615: draft prefetch on, cap 1024 KiB: 672 calls issued the rows of 672 tokens (10752 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 134.266 ms in the calls); 180 evaluations set 56176 rows, 10736 issued ahead; 174 of up to 64 tokens set 12080 rows, 10736 issued ahead; pages 0, 0 of 0 checked in the page cache
+f	C738: 1 verify passes prepared during the last drafting pass, of 1
+f	C738: 166 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 996 inputs uploaded ahead
+f	C615: draft prefetch on, cap 1024 KiB: 667 calls issued the rows of 667 tokens (10664 rows, 8 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 123.879 ms in the calls); 178 evaluations set 56096 rows, 10672 issued ahead; 172 of up to 64 tokens set 12000 rows, 10672 issued ahead; pages 0, 0 of 0 checked in the page cache
+a-2	C615: draft prefetch on, cap 1024 KiB: 688 calls issued the rows of 688 tokens (11008 rows, 0 already issued, 0 tokens over the cap, most 286720 B of pages in a window, 129.603 ms in the calls); 183 evaluations set 56400 rows, 10976 issued ahead; 177 of up to 64 tokens set 12304 rows, 10976 issued ahead; pages 0, 0 of 0 checked in the page cache
+b-2	C738: 1 verify passes prepared during the last drafting pass, of 1
+b-2	C738: 171 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1026 inputs uploaded ahead
+b-2	C615: draft prefetch on, cap 1024 KiB: 692 calls issued the rows of 692 tokens (11064 rows, 8 already issued, 0 tokens over the cap, most 286720 B of pages in a window, 135.042 ms in the calls); 184 evaluations set 56464 rows, 11040 issued ahead; 178 of up to 64 tokens set 12368 rows, 11040 issued ahead; pages 0, 0 of 0 checked in the page cache
+c-2	C738: 1 verify passes prepared during the last drafting pass, of 1
+c-2	C738: 167 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1002 inputs uploaded ahead
+c-2	C615: draft prefetch on, cap 1024 KiB: 672 calls issued the rows of 672 tokens (10744 rows, 8 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 132.830 ms in the calls); 179 evaluations set 56160 rows, 10736 issued ahead; 173 of up to 64 tokens set 12064 rows, 10736 issued ahead; pages 0, 0 of 0 checked in the page cache
+d-2	C738: 1 verify passes prepared during the last drafting pass, of 1
+d-2	C738: 166 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 996 inputs uploaded ahead
+d-2	C615: draft prefetch on, cap 1024 KiB: 676 calls issued the rows of 676 tokens (10816 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 133.289 ms in the calls); 181 evaluations set 56192 rows, 10752 issued ahead; 175 of up to 64 tokens set 12096 rows, 10752 issued ahead; pages 0, 0 of 0 checked in the page cache
+e-2	C738: 1 verify passes prepared during the last drafting pass, of 1
+e-2	C738: 173 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1038 inputs uploaded ahead
+e-2	C615: draft prefetch on, cap 1024 KiB: 696 calls issued the rows of 696 tokens (11136 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 139.530 ms in the calls); 186 evaluations set 56560 rows, 11120 issued ahead; 180 of up to 64 tokens set 12464 rows, 11120 issued ahead; pages 0, 0 of 0 checked in the page cache
+f-2	C738: 1 verify passes prepared during the last drafting pass, of 1
+f-2	C738: 175 decodes prepared ahead of their last token ids, 0 not prepared, 0 dropped; 1050 inputs uploaded ahead
+f-2	C615: draft prefetch on, cap 1024 KiB: 703 calls issued the rows of 703 tokens (11248 rows, 0 already issued, 0 tokens over the cap, most 282624 B of pages in a window, 136.597 ms in the calls); 188 evaluations set 56688 rows, 11248 issued ahead; 182 of up to 64 tokens set 12592 rows, 11248 issued ahead; pages 0, 0 of 0 checked in the page cache
