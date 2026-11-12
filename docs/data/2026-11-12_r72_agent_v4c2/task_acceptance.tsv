@@ -27,3 +27,17 @@ v4c2	bugfix-python-scale-generator	1719	2493	0.690
 v4c2	bugfix-python-variable-length-quantity	1534	1899	0.808
 v4c2	all	24055	33249	0.723
 v4c2	without bugfix-javascript-complex-numbers	15840	20823	0.761
+v4c2g	bugfix-javascript-complex-numbers	628	912	0.689
+v4c2g	bugfix-javascript-grade-school	797	1017	0.784
+v4c2g	bugfix-javascript-phone-number	1180	1572	0.751
+v4c2g	bugfix-javascript-space-age	481	660	0.729
+v4c2g	bugfix-javascript-triangle	481	594	0.810
+v4c2g	bugfix-javascript-variable-length-quantity	1334	1725	0.773
+v4c2g	bugfix-python-affine-cipher	1485	1992	0.745
+v4c2g	bugfix-python-list-ops	1052	1338	0.786
+v4c2g	bugfix-python-phone-number	814	1092	0.745
+v4c2g	bugfix-python-pig-latin	1427	2025	0.705
+v4c2g	bugfix-python-scale-generator	4813	6537	0.736
+v4c2g	bugfix-python-variable-length-quantity	1107	1407	0.787
+v4c2g	all	15599	20871	0.747
+v4c2g	without bugfix-javascript-complex-numbers	14971	19959	0.750
