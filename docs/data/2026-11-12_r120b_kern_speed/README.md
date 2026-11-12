@@ -59,8 +59,8 @@ value beyond every `off` value and the means apart by more than the larger of th
 - **The other products of the pass** do not move beyond their loads' spread, except "everything else" by −0.248 ms
   (hyper-connections, other ops without weights and attention, each under 0.1 ms; the arms run different replies,
   80 and 81 verify passes a request against 77 and 79).
-- **Without the two losses the stack would take est. 3.48 ms off the pass** (−1.828 − 1.341 − 0.307, est.: not measured
-  as one load).
+- **The three switches that gain take est. 3.227 ms off the pass together** (the sum of their products: 2.498 + 0.494 +
+  0.235; est.: not measured as one load).
 - The median raw GPU time of a typical verify pass: 105.58, 105.77, 105.61 and 105.74 ms `off`, 103.26, 103.23, 103.21
   and 103.35 `on` ([served/loads/](served/loads/), `cut.tsv`).
 
