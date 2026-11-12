@@ -1,6 +1,7 @@
 # The read-once kernels of 5–8 tokens without their one-warp launches (C809, Q1415, 2026-11-12)
 
-What this is: a host-side rule and its checks on a build machine without a GPU. C729's read-once kernels take
+What this is: a host-side rule, its checks on a build machine without a GPU, and its speed on a P106-090
+([R134](#the-p106-check-r134)). C729's read-once kernels take
 IQ4_XS's, Q4_K's and Q5_K's products of 5–8 tokens under `GGML_CUDA_MMVQ_PASCAL_RO8`
 ([C729](../2026-11-11_c729_readonce_5to8/README.md)), so that every token's sums are the one-token kernel's. On a
 P106-090 they gained in 30 of their 32 `perf` cases at Qwen3.8-Flash-Next's shapes and lost in the two whose launch holds
@@ -110,6 +111,31 @@ and Q6_K shapes, 1–8 tokens, the arms `off` (the preset's k-column switches), 
 2,560 × 6,144 at 5 tokens negligible in `kern` against `mt` (the same kernel in both arms now), and `_RO8`'s other 30
 cases gains as in R120b.
 
+**It passes (2026-11-12, 20:39:49–20:52:24, card 0 of the second rig).** Both one-warp products now take `mt`'s time,
+and the other 30 `_RO8` cases are gains as before. R120b ran on the first rig; the two rigs are the same model with the
+same cards ([mining_rig.md](../../mining_rig.md)), but the comparison spans two machines. µs a product, pass 1 / pass 2:
+
+| Product | Tokens | R120b `mt` | R120b `kern` (before C809) | R134 `mt` | R134 `kern` | R134 change | Spread | Class |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| IQ4_XS 2,560 × 6,144 | 6 | 277.57 / 279.01 | 595.98 / 595.90 | 276.14 / 277.00 | 278.10 / 276.60 | +0.7 % / −0.1 % | 1.2 % | negligible |
+| Q5_K 2,560 × 6,144 | 5 | 309.21 / 308.22 | 520.89 / 519.46 | 303.29 / 304.02 | 303.16 / 303.85 | −0.0 % / −0.1 % | 1.6 % | negligible |
+
+- **`_RO8`'s other 30 cases are gains in both passes.** The smallest is Q5_K 512 × 2,560 at 5 tokens,
+  −20.1 % / −21.4 %; the largest Q4_K 6,144 × 2,560 at 5 tokens, −56.0 % / −55.9 %. In every pass of the 30, R134's
+  `kern` time is within 2.0 % of R120b's; the farthest is Q5_K 512 × 2,560 at 5 tokens, 20.70 / 20.70 µs against
+  20.30 / 20.30. For example IQ4_XS 2,560 × 6,144 at 5 tokens: 255.95 / 256.19 → 168.15 / 169.26 (R120b 169.97 /
+  169.85). All 32 side by side: [rig/ro8_r120b_r134.tsv](rig/ro8_r120b_r134.tsv).
+- **The other switches keep R120b's classes:** `_Q6K_MT` gains at 2–4 tokens (170.56 / 171.20 → 104.34 / 104.28 at
+  2); `_DMT_KT` gains on Q4_K at 4 tokens (141.20 / 143.09 → 134.46 / 135.59) and loses on IQ4_XS at 4
+  (112.52 / 112.11 → 132.73 / 132.03) and Q4_K at 3 (97.97 / 97.59 → 110.90 / 110.02), the losses C808 handles.
+- **Controls:** of the 39 cases where `mt` and `kern` run the same kernel, 34 are negligible and 5 mixed (each over
+  the spread in one pass only); R120b had 35 negligible.
+- **Conditions:** the rig idle (load 1.48 at the start, no llama process), cards at 0 MiB before and after; each arm's
+  run printed 88 cases.
+
+So `_RO8` with C809 is a gain at every Flash-Next product of 5–8 tokens it takes, and costs nothing where it declines:
+ready for C797's drafts of 5+ tokens. The declined products' sums are `_RO8=0`'s (the section above).
+
 ## Files
 
 | File | What |
@@ -121,6 +147,10 @@ cases gains as in R120b.
 | [pick_arms.txt](pick_arms.txt) | the 54 switch settings of the kernel-choice check |
 | [run/checks.sh](run/checks.sh) | the driver: every step above |
 | [run/c809_pick.cu](run/c809_pick.cu) | the read-once kernels' choices of one tree, without a GPU |
+| [rig/us_run.tsv](rig/us_run.tsv) | R134: every case's µs per product (arm, pass, type, m, k, tokens, µs), as `rig_kern.sh` writes it |
+| [rig/perf.md](rig/perf.md), [rig/verdict.tsv](rig/verdict.tsv), [rig/wide.tsv](rig/wide.tsv), [rig/spread.tsv](rig/spread.tsv) | R134: `perf_table.py`'s report and tables (each comparison's class per case, every arm and pass by case, the spread per shape) |
+| [rig/ro8_r120b_r134.tsv](rig/ro8_r120b_r134.tsv) | R134: `_RO8`'s 32 cases, R120b's and R134's `mt` and `kern` times per pass with each run's class |
+| [run/r134_ro8.sh](run/r134_ro8.sh) | joins R120b's and R134's `verdict.tsv` into `ro8_r120b_r134.tsv` |
 
 ## Commands
 
@@ -146,6 +176,8 @@ STEPS=perf PERF_ARMS="off mt kern" PASSES=2 BIN=$BUILD/bin OUT=<dir> \
   setsid -f nohup bash docs/data/2026-11-11_v4_kernel_merge/run/rig_kern.sh > console.txt 2>&1 < /dev/null
 # then, on a build machine:
 nice -n 19 python3 -I docs/data/2026-11-12_r120b_kern_speed/run/perf_table.py <OUT>/perf/us_run.tsv --out <tables> > <tables>/perf.md
+nice -n 19 bash docs/data/2026-11-12_c809_ro8_one_warp/run/r134_ro8.sh docs/data/2026-11-12_r120b_kern_speed/perf/verdict.tsv \
+  <tables>/verdict.tsv > <tables>/ro8_r120b_r134.tsv
 ```
 
 ## Provenance and licence
