@@ -8,7 +8,8 @@
 #           RATE (curl's --limit-rate per download, e.g. 35M: keep the sum below what the target disks write
 #           steadily; a QLC system disk stalled the whole machine under an unthrottled 26 GB),
 #           REUSE_DIRS (space-separated folders searched for an identical ple-fp8.gguf before downloading it),
-#           LINK_FROM (a finished sibling model folder: files with the same SHA-256 are hard-linked, not fetched).
+#           LINK_FROM (a finished sibling model folder: files with the same SHA-256 are hard-linked, not fetched;
+#           its verification record in $WORK/dl is trusted, and linked files are not hashed a second time).
 # Output:   $WORK/models/<name>/        the model folder (data only)
 #           $WORK/dl/<name>.manifest.tsv  path, bytes, sha256 (or -) from the Hugging Face API
 #           $WORK/dl/<name>.log           progress
@@ -49,7 +50,10 @@ while IFS=$'\t' read -r path size oid; do
   [ -e "$DEST/$path" ] && continue
   mkdir -p "$(dirname "$DEST/$path")"
   if [ -n "$LINK_FROM" ] && [ -f "$LINK_FROM/$path" ] && [ "$(stat -L -c %s "$LINK_FROM/$path")" = "$size" ]; then
-    if [ "$(sha_of "$LINK_FROM/$path")" = "$oid" ]; then ln "$LINK_FROM/$path" "$DEST/$path" && say "linked $path from $LINK_FROM"; fi
+    # the sibling's own verification record saves hashing it again; without one the file is hashed here
+    if grep -q -F -x "OK sha256 $path $oid" "$DL/$(basename "$LINK_FROM").verify" 2>/dev/null || [ "$(sha_of "$LINK_FROM/$path")" = "$oid" ]; then
+      ln "$LINK_FROM/$path" "$DEST/$path" && { say "linked $path from $LINK_FROM"; echo "$path" >> "$DL/$NAME.linked"; }
+    fi
   fi
 done < "$MAN"
 if [ -n "$REUSE_DIRS" ] && [ ! -e "$DEST/ple-fp8.gguf" ]; then
@@ -80,7 +84,9 @@ bad=0
 while IFS=$'\t' read -r path size oid; do
   f="$DEST/$path"
   if [ ! -f "$f" ] || [ "$(stat -L -c %s "$f")" != "$size" ]; then echo "FAIL size $path" >> "$DL/$NAME.verify"; bad=1; continue; fi
-  if [ "$oid" != "-" ]; then
+  if [ "$oid" != "-" ] && grep -q -F -x "$path" "$DL/$NAME.linked" 2>/dev/null; then
+    echo "OK linked $path $oid" >> "$DL/$NAME.verify"      # the same file as the sibling's, verified there
+  elif [ "$oid" != "-" ]; then
     got=$(sha_of "$f")
     if [ "$got" != "$oid" ]; then echo "FAIL sha256 $path $got" >> "$DL/$NAME.verify"; bad=1; continue; fi
     echo "OK sha256 $path $got" >> "$DL/$NAME.verify"

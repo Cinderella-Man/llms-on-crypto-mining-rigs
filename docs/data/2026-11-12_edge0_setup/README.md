@@ -1,18 +1,25 @@
-# Q1438: Edge0 145B Q3_K set up on an RTX 3090 machine (2026-11-12)
+# Q1438: Edge0 145B and 120B (Q3_K) set up on an RTX 3090 machine (2026-11-12)
 
-How one Edge0 model folder was fetched, checked and made runnable on a machine with RTX 3090 cards, one day after the
-weights appeared. What Edge0 is, the safety review and what it means for a P106 rig are in
+How two Edge0 model folders were fetched, checked and made runnable on a machine with RTX 3090 cards, one day after
+the weights appeared. What Edge0 is, the safety review and what it means for a P106 rig are in
 [edge0.md](../../research/notes/edge0.md); the registry row is Q1438 in
 [quants/experiments.md](../../../quants/experiments.md#rigs-and-other-models).
 
 ## Result
 
-**Status on 2026-11-12, 21:46: the engine is built and sees the card; the folder is downloaded and its hash check is
-running; no token has been generated yet.**
+**Edge0 145B Q3_K loads on one RTX 3090 and answers.** The first load took about 11 minutes, nearly all of it reading
+91 GB from two hard disks, and left 23.6 GB on the card and about 90 GB of host memory in use (48 GB of it the n-gram
+table, loaded with `ple-io=ram`). One request then returned a correct function and explanation: 532 tokens in
+15.37 s by the engine's own timing, 34.6 tok/s, with 334 of 398 drafted tokens accepted, after a 73-token prompt read
+in 2.75 s. That is one cold request on a machine that was also compiling, a check that the set-up works, not a
+measurement of speed.
 
-- **The folder:** `Edge0/Edge0-145B-q3k` at Hugging Face revision `main` on 2026-11-12, 76 files, 105.37 GB. Every
-  file has the size the repository lists, and the 11 files it stores by hash have that SHA-256
+- **The 145B folder:** `Edge0/Edge0-145B-q3k` at revision `d7de835cfce7d9bb22a3d5ebb7d1e8565d4ecf74`, 76 files,
+  105.37 GB. Every file has the size the repository lists, and the 11 files it stores by hash have that SHA-256
   ([manifest_145b_q3k.tsv](manifest_145b_q3k.tsv) lists all 76 with the hash of each).
+- **The 120B folder:** `Edge0/Edge0-120B-q3k` at revision `51a60a20d6fd51385a11e8d1e5f6c767c6715088`, 75 files,
+  92.28 GB ([manifest_120b_q3k.tsv](manifest_120b_q3k.tsv)). Eight of the 11 files it stores by hash are the 145B folder's, byte for
+  byte, so they were hard-linked and only 32.7 GB was downloaded. It has not been loaded yet.
 - **The engine:** Edge0 `b7900cbb322926ccebdcd0c0c5a1280497ecff22`, `edge0-strata` built for `sm_86` with CUDA 13.4
   and `edge0-infer` with its `cpu` preset, in an Ubuntu 24.04 container that mounts the host's CUDA toolkit read-only.
   ggml comes from llama.cpp `3cf03257f219afbe7334045ff7c6a06ac68c627d`. The compile took 4 min 47 s at `-j 8`
@@ -44,8 +51,9 @@ download stopped.
 
 | File | What it is |
 |---|---|
-| [manifest_145b_q3k.tsv](manifest_145b_q3k.tsv) | path, bytes and SHA-256 of all 76 files of the folder, and whether the hash was checked against the repository's (`lfs`) or computed here (`local`) |
+| [manifest_145b_q3k.tsv](manifest_145b_q3k.tsv), [manifest_120b_q3k.tsv](manifest_120b_q3k.tsv) | path, bytes and SHA-256 of every file of each folder, and whether the hash was checked against the repository's (`lfs`) or computed here (`local`) |
 | [run/fetch_edge0.sh](run/fetch_edge0.sh) | resumable download with curl, the file list and hashes from the Hugging Face API, hard links to a sibling folder for identical files, verification |
+| [run/smoke_request.sh](run/smoke_request.sh) | one chat request to a running server: the reply, the token counts and the engine's timings |
 | [run/relocate_big_files.sh](run/relocate_big_files.sh) | moves named files to other disks and leaves symlinks |
 | [run/build_edge0.sh](run/build_edge0.sh) | builds `edge0-strata` and `edge0-infer` from a pinned commit in a container; no GPU needed |
 | [run/run_edge0.sh](run/run_edge0.sh) | serves one folder on one card, on the host's loopback address |

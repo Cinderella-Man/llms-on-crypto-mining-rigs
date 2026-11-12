@@ -3,13 +3,14 @@
 [Edge0](https://github.com/Edge0-AI/Edge0) released two models on 2026-11-12, Edge0 145B and Edge0 120B, with the claim
 "145B on a laptop". This note answers four questions: what the models are, how they are run, whether the files and
 the engine are safe to use, and where they fit: an RTX 3090 machine and a nine-card P106 rig. Sources were read on
-2026-11-12, one day after the weights were uploaded: the Edge0 repository at `b7900cb`, the four model folders on
-Hugging Face, and upstream [Strata](https://github.com/Niko1221/Strata) at `c62d5e3`. The engine was built and the
-files were checked; no token has been generated here yet.
+2026-11-12, one day after the weights were uploaded: the Edge0 repository at `b7900cb`, three of the four model
+folders on Hugging Face (both Q3_K folders and the 145B's NVFP4), and upstream
+[Strata](https://github.com/Niko1221/Strata) at `c62d5e3`. The engine was built, both Q3_K folders were checked file
+by file, and the 145B was loaded on one RTX 3090 and answered a request.
 
 **Edge0 is Qwen3.8-Flash-Next with narrower experts, run by a fork of Strata, and it runs on RTX 20-class cards and
-newer, not on Pascal as released.** An RTX 3090 machine can run it today: the engine builds for its cards with CUDA 13
-and every file checks out. A P106 rig cannot: the release needs CUDA 13, one card with far more host RAM than the
+newer, not on Pascal as released.** An RTX 3090 machine runs it today: the engine builds for its cards with CUDA 13,
+every file checks out, and the 145B answers from one card. A P106 rig cannot: the release needs CUDA 13, one card with far more host RAM than the
 rig's 4 GB, and kernels written for tensor cores. The 120B model is still the most interesting file for the rig that
 has appeared since Flash-Next itself, because its experts take 28.6 GB where the experts of Flash-Next's 2-bit file
 take about 34 GB. Getting it onto nine 6 GB cards means either teaching Miner Llama the new expert layout or porting
@@ -143,6 +144,10 @@ An RTX 3090 is compute capability 8.6 with 24 GB, the class the maker measured o
 `b7900cb` with CUDA 13.4, in a container, with
 [build_edge0.sh](../../data/2026-11-12_edge0_setup/run/build_edge0.sh) **[project]**. The method, the file list with
 hashes and the scripts are in [the data folder](../../data/2026-11-12_edge0_setup/README.md).
+
+The 145B at Q3_K loaded on one card and answered **[project]**: 23.6 GB on the card, and one request of 532 tokens
+at 34.6 tok/s by the engine's own timing, with 334 of 398 drafted tokens accepted. That is a single cold request on
+a busy machine, a check that it works. The maker's RTX 4090 row gives 69.9 tok/s for chat.
 
 Three things will set its speed below the maker's RTX 4090 row, by an amount only a run can give **[estimate]**:
 
