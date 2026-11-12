@@ -1,0 +1,39 @@
+== 2026-11-12T16:21:57+00:00 replay_checks SET=$W/v4day/v4day BIN=$W/setcpu/shim DEV=0 runs: dmt-on dmt-q3f-pass dmt-q3f-fail of rig_runs.tsv
+   suite: v4day;recorded: 2026-11-11T15:47:03+01:00;name: llama.cpp-20261111-18d0fa309-pascal-p106-v4-b12246-day;commit: 18d0fa309986f206f501d490e4065f5610eec234 (2026-11-11 14:27:22 +0100);
+   
+dmt-on                   GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 295/295 tests passed;295 cases replayed, 30 selected by the filter have no record (FAIL: the record does not cover this filter);    3 FAIL  exit 1   expect pass ok, 30 unrecorded
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=333,n=1,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=333,n=2,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=333,n=3,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=333,n=4,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=333,n=5,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=4097,n=1,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=4097,n=2,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=4097,n=3,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=4097,n=4,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=4097,n=5,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=129,n=1,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=129,n=2,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=129,n=3,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=129,n=4,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=iq4_xs,type_b=f32,m=129,n=5,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=333,n=1,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=333,n=2,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=333,n=3,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=333,n=4,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=333,n=5,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=4097,n=1,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=4097,n=2,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=4097,n=3,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=4097,n=4,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=4097,n=5,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=129,n=1,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=129,n=2,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=129,n=3,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=129,n=4,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q4_K,type_b=f32,m=129,n=5,k=6144,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=6656,o=1,src_overlap=0,m_v=0,pad=0)
+dmt-q3f-pass             GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT_FAULT=1 462/462 tests passed;462 cases replayed, 30 selected by the filter have no record (FAIL: the record does not cover this filter);    3 FAIL  exit 1   expect pass ok, 30 unrecorded
+    the same 30 unrecorded cases as dmt-on
+dmt-q3f-fail             GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT_FAULT=1 462/462 tests passed;462 cases replayed, 30 selected by the filter have no record (FAIL: the record does not cover this filter);    3 FAIL  exit 1   expect fail WRONG, 30 unrecorded
+    the same 30 unrecorded cases as dmt-on
+== 2026-11-12T16:22:09+00:00 done: 2 runs as expected, 1 WRONG; 3 runs with cases the set holds no record of ($W/setcpu/replay/unrecorded.tsv)

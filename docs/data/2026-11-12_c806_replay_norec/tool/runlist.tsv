@@ -1,0 +1,15 @@
+a-same	A	-	F	pass	-	ok	0
+a-wide	A	-	FW	pass	-	ok	4
+a-wide-am	A	GGML_TEST_REPLAY_ALLOW_MISSING=1	FW	pass	-	ok	4
+a-only	A	-	FQ	pass	-	WRONG	4
+a-only-am	A	GGML_TEST_REPLAY_ALLOW_MISSING=1	FQ	pass	-	WRONG	4
+a-fault	A	-	FW	fail	-	WRONG	4
+a-fault-same	A	-	F	fail	-	WRONG	0
+b-same	B	-	F	pass	-	WRONG	0
+b-wide	B	-	FW	pass	-	WRONG	4
+b-wide-am	B	GGML_TEST_REPLAY_ALLOW_MISSING=1	FW	pass	-	WRONG	4
+b-fault	B	-	FW	fail	-	ok	4
+b-fault-same	B	-	F	fail	-	ok	0
+b-known	B	-	FW	pass	K	ok	4
+b-known-same	B	-	F	pass	K	ok	0
+b-known-am	B	GGML_TEST_REPLAY_ALLOW_MISSING=1	FW	pass	K	ok	4

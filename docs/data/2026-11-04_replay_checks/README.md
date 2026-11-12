@@ -54,7 +54,10 @@ it, each branch's `gpu_checks.sh`, replay unchanged):
 - **Caps:** `--sample N` records about one case in N (chosen by a hash of the case string, the same cases every run),
   `--record-max-case-mb` and `--record-budget-gb` leave cases out, `--record-dry` prints the sizes and writes nothing.
   Replaying a filter that selects cases the record lacks prints `not recorded` lines and fails the run, unless
-  `--replay-allow-missing` (`GGML_TEST_REPLAY_ALLOW_MISSING=1`) is given.
+  `--replay-allow-missing` (`GGML_TEST_REPLAY_ALLOW_MISSING=1`) is given. Builds from `pascal-p106-v4-b12246-c806` on
+  name each such case with the verdict `NOREC`, in the output and in the replay log, with or without that flag, and
+  `replay_checks.sh` gives a run whose recorded cases all pass `ok` with the unrecorded cases counted and named
+  ([C806](../2026-11-12_c806_replay_norec/README.md)).
 
 ## The suites and their sizes
 

@@ -1,0 +1,11 @@
+6a48c4e69b41c965f703040e5a9cd607  ./llama-batched-bench
+67e6996b6063c9a81e43b527decd18cd  ./llama-bench
+256e06b768940e138b52f8216443d0ee  ./llama-cli
+499bce50b985e464a5a859e14e94461e  ./llama-completion
+54d0bbae8b83d28cf0e85e0897cc8efb  ./llama-gguf
+4c60de62e0509b7dc4e40244a9586796  ./llama-perplexity
+108c6e03fa542b403fb751e6cd472c19  ./llama-pipe-drafter-check
+e5729273dcbfd31e722356d9cf994db7  ./llama-pipespec
+1c704d824e526aac7beec6fcf38605c4  ./llama-screen-check
+bdfe8f5fc97b69e7a35d5f582a7c143a  ./llama-server
+2d2d8225aafb4f53cc49682caa0333d9  ./test-backend-ops

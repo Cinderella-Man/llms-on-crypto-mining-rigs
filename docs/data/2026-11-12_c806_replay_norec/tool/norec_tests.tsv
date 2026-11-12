@@ -1,0 +1,11 @@
+test	build	verdict	detail
+c372	new	PASS	7 of 7 PASS; t5 PASS: wider filter: exit 1, 4 not-recorded lines, summary FAIL line 1; allowed: exit 0; replay: the cases' tensors and references from $W/tool/c372/a 49/49 tests passed
+n0	new	PASS	A holds 49 cases (exit 0); FW selects 53 on a live run, 4 of them q5_0: 4 unrecorded expected
+n1	new	PASS	FW on A: exit 1; 4 NOREC lines, 0 'not recorded' lines (of 4 unrecorded), 0 not q5_0, 0 in A; replay log 49 OK, 4 NOREC; summary FAIL lines 1
+n2	new	PASS	FW on A, --replay-allow-missing: exit 0; 4 NOREC lines, 0 'not recorded' lines; replay log 49 OK, 4 NOREC; FAIL lines 0
+n1	old	PASS	FW on A: exit 1; 0 NOREC lines, 4 'not recorded' lines (of 4 unrecorded), 0 not q5_0, 0 in A; replay log 49 OK, 0 NOREC; summary FAIL lines 1
+n2	old	PASS	FW on A, --replay-allow-missing: exit 0; 0 NOREC lines, 0 'not recorded' lines; replay log 49 OK, 0 NOREC; FAIL lines 0
+n3	new	PASS	case 0e7f58ab2f7dfb40e367 (MUL_MAT(type_a=q8_0,type_b=f32,m=16,n=1,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)) references doubled plus one: exit 1, 1 value FAIL line, 3 FAIL lines, 0 record mismatches
+n4	both	PASS	CHECKS: every run as wanted on both builds; OLD_CHECKS: every run without unrecorded cases CHECKS' verdict; the two scripts differ on: a-wide (WRONG -> ok) a-only-am (ok -> WRONG) a-fault (ok -> WRONG) b-known (WRONG -> ok) 
+n4	names	PASS	unrecorded.tsv: NEW 40 lines (10 runs x 4), OLD 24 (6 runs x 4; 4 runs 'not named' under ALLOW_MISSING); the 4 ids are n1's NOREC ids: yes; 0 names not q5_0
+n5	new	PASS	NOREC=wrong: a-same:ok/0 a-wide:WRONG/4 a-fault-same:WRONG/0 b-known:WRONG/4 b-known-same:ok/0 

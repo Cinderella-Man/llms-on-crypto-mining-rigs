@@ -1,0 +1,9 @@
+test	source	verdict	detail
+stub	r112-kern	PASS	OLD_CHECKS' results.tsv on the stub the saved one byte for byte: yes (71 runs)
+new	r112-kern	PASS	71 runs, 71 ok; 14 with unrecorded cases, 14 of them dmt runs with 30 (saved WRONG, now ok); verdicts changed in 14 runs; other columns or verdicts off: none; unrecorded.tsv 420 lines, 30 distinct ids, 0 not IQ4_XS/Q4_K k = 6144 n = 1-5, 0 among the ids the replay ran
+names	r112-kern	PASS	console: 14 run lines end 'ok, 30 unrecorded'; 30 NOREC name lines; 13 'the same 30 unrecorded cases as dmt-on' lines; last line: done: 71 runs as expected, 0 WRONG; 14 runs with cases the set holds no record of ($W/saved/r112-kern/new/unrecorded.tsv)
+stub	r112-day	PASS	OLD_CHECKS' results.tsv on the stub the saved one byte for byte: yes (14 runs)
+new	r112-day	PASS	14 dmt runs: 14 ok with 0 unrecorded; verdicts changed in 0; off: none
+stub	r73	PASS	OLD_CHECKS' results.tsv on the stub the saved one byte for byte: yes (11 runs)
+new	r73	PASS	11 runs: 11 ok with 50 unrecorded (the 9 that must pass were WRONG, now ok; the 2 faults ok as before); verdicts changed in 9; off: none; the 50 ids are R73's published unrecorded.tsv: yes
+fake	saved	PASS	CHECKS: dmt-on-fail:WRONG/30 qp-stock-fail:WRONG/50 qp-fault2:ok/50 qp-fault2-missed:WRONG/50 ; OLD_CHECKS: dmt-on-fail:WRONG qp-stock-fail:WRONG qp-fault2:ok qp-fault2-missed:ok 

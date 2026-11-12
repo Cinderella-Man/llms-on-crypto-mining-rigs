@@ -1,0 +1,53 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c806	OK	tip 74881101b (test-backend-ops replay: name each case the record does not hold, verdict NOREC (C806)); files changed against the base:  1 file changed, 17 insertions(+), 8 deletions(-)
+saved	stub r112-kern	PASS	OLD_CHECKS' results.tsv on the stub the saved one byte for byte: yes (71 runs)
+saved	new r112-kern	PASS	71 runs, 71 ok; 14 with unrecorded cases, 14 of them dmt runs with 30 (saved WRONG, now ok); verdicts changed in 14 runs; other columns or verdicts off: none; unrecorded.tsv 420 lines, 30 distinct ids, 0 not IQ4_XS/Q4_K k = 6144 n = 1-5, 0 among the ids the replay ran
+saved	names r112-kern	PASS	console: 14 run lines end 'ok, 30 unrecorded'; 30 NOREC name lines; 13 'the same 30 unrecorded cases as dmt-on' lines; last line: done: 71 runs as expected, 0 WRONG; 14 runs with cases the set holds no record of ($W/saved/r112-kern/new/unrecorded.tsv)
+saved	stub r112-day	PASS	OLD_CHECKS' results.tsv on the stub the saved one byte for byte: yes (14 runs)
+saved	new r112-day	PASS	14 dmt runs: 14 ok with 0 unrecorded; verdicts changed in 0; off: none
+saved	stub r73	PASS	OLD_CHECKS' results.tsv on the stub the saved one byte for byte: yes (11 runs)
+saved	new r73	PASS	11 runs: 11 ok with 50 unrecorded (the 9 that must pass were WRONG, now ok; the 2 faults ok as before); verdicts changed in 9; off: none; the 50 ids are R73's published unrecorded.tsv: yes
+saved	fake saved	PASS	CHECKS: dmt-on-fail:WRONG/30 qp-stock-fail:WRONG/50 qp-fault2:ok/50 qp-fault2-missed:WRONG/50 ; OLD_CHECKS: dmt-on-fail:WRONG qp-stock-fail:WRONG qp-fault2:ok qp-fault2-missed:ok 
+start	pascal-p106-v4-b12246-c806	OK	tip 74881101b (test-backend-ops replay: name each case the record does not hold, verdict NOREC (C806)); files changed against the base:  1 file changed, 17 insertions(+), 8 deletions(-)
+rig	build	OK	rc=0; llama.cpp-20261112-74881101b-pascal-p106-v4-b12246-c806.tar.gz md5 fca33ab691240ca5d1c292e4aaa1a337, 678328540 B; commit: 74881101b0ab92c1a1a115a42cc0d406cfb0a6e3 (2026-11-12 16:41:50 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 2d2d8225aafb4f53cc49682caa0333d9; 34 warning lines
+diff	files	OK	against c96561876: tests/test-backend-ops.cpp (1 file changed, 17 insertions(+), 8 deletions(-)); ggml/src/ggml-cuda against -c805 dd755a09c: 0 files
+sass	llama-server sass against -kern	SAME	8540 functions (8540 in -kern's); dumps: the same file; merged 8540 functions: base 8540; listed 0
+sass	llama-server ptx against -kern	SAME	8540 functions (8540 in -kern's); dumps: the same file; merged 8540 functions: base 8540; listed 0
+sass	llama-server sass against -c805	SAME	8540 functions (8540 in -c805's); dumps: the same file; merged 8540 functions: base 8540; listed 0
+sass	llama-server ptx against -c805	SAME	8540 functions (8540 in -c805's); dumps: the same file; merged 8540 functions: base 8540; listed 0
+cpu	test-backend-ops base	OK	rc=0; commit c96561876; static, CPU only; md5 2148ae68408cdb8e2bd15b0cd5690415; 0 warning lines
+cpu	test-backend-ops tip	OK	rc=0; commit 74881101b; static, CPU only; md5 e1d96fc14e788aff12b82e3435186034; 0 warning lines
+tool	c372 new	PASS	7 of 7 PASS; t5 PASS: wider filter: exit 1, 4 not-recorded lines, summary FAIL line 1; allowed: exit 0; replay: the cases' tensors and references from $W/tool/c372/a 49/49 tests passed
+tool	n0 new	PASS	A holds 49 cases (exit 0); FW selects 53 on a live run, 4 of them q5_0: 4 unrecorded expected
+tool	n1 new	PASS	FW on A: exit 1; 4 NOREC lines, 0 'not recorded' lines (of 4 unrecorded), 0 not q5_0, 0 in A; replay log 49 OK, 4 NOREC; summary FAIL lines 1
+tool	n2 new	PASS	FW on A, --replay-allow-missing: exit 0; 4 NOREC lines, 0 'not recorded' lines; replay log 49 OK, 4 NOREC; FAIL lines 0
+tool	n1 old	PASS	FW on A: exit 1; 0 NOREC lines, 4 'not recorded' lines (of 4 unrecorded), 0 not q5_0, 0 in A; replay log 49 OK, 0 NOREC; summary FAIL lines 1
+tool	n2 old	PASS	FW on A, --replay-allow-missing: exit 0; 0 NOREC lines, 0 'not recorded' lines; replay log 49 OK, 0 NOREC; FAIL lines 0
+tool	n3 new	PASS	case 0e7f58ab2f7dfb40e367 (MUL_MAT(type_a=q8_0,type_b=f32,m=16,n=1,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)) references doubled plus one: exit 1, 1 value FAIL line, 3 FAIL lines, 0 record mismatches
+tool	n4 both	PASS	CHECKS: every run as wanted on both builds; OLD_CHECKS: every run without unrecorded cases CHECKS' verdict; the two scripts differ on: a-wide (WRONG -> ok) a-only-am (ok -> WRONG) a-fault (ok -> WRONG) b-known (WRONG -> ok) 
+tool	n4 names	FAIL	unrecorded.tsv: NEW 40 lines (10 runs x 4), OLD 24 (6 runs x 4; 4 runs 'not named' under ALLOW_MISSING); the names are n1's: no, 0 not q5_0
+tool	n5 new	PASS	NOREC=wrong: a-same:ok/0 a-wide:WRONG/4 a-fault-same:WRONG/0 b-known:WRONG/4 b-known-same:ok/0 
+c565 static	c806 tree	OK	commit 74881101b0ab92c1a1a115a42cc0d406cfb0a6e3 
+c565 static	c806 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c806 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c806 tree	OK	commit 74881101b0ab92c1a1a115a42cc0d406cfb0a6e3 
+c565 shared	c806 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c806 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+start	pascal-p106-v4-b12246-c806	OK	tip 74881101b (test-backend-ops replay: name each case the record does not hold, verdict NOREC (C806)); files changed against the base:  1 file changed, 17 insertions(+), 8 deletions(-)
+start	pascal-p106-v4-b12246-c806	OK	tip 74881101b (test-backend-ops replay: name each case the record does not hold, verdict NOREC (C806)); files changed against the base:  1 file changed, 17 insertions(+), 8 deletions(-)
+tool	c372 new	PASS	7 of 7 PASS; t5 PASS: wider filter: exit 1, 4 not-recorded lines, summary FAIL line 1; allowed: exit 0; replay: the cases' tensors and references from $W/tool/c372/a 49/49 tests passed
+tool	n0 new	PASS	A holds 49 cases (exit 0); FW selects 53 on a live run, 4 of them q5_0: 4 unrecorded expected
+tool	n1 new	PASS	FW on A: exit 1; 4 NOREC lines, 0 'not recorded' lines (of 4 unrecorded), 0 not q5_0, 0 in A; replay log 49 OK, 4 NOREC; summary FAIL lines 1
+tool	n2 new	PASS	FW on A, --replay-allow-missing: exit 0; 4 NOREC lines, 0 'not recorded' lines; replay log 49 OK, 4 NOREC; FAIL lines 0
+tool	n1 old	PASS	FW on A: exit 1; 0 NOREC lines, 4 'not recorded' lines (of 4 unrecorded), 0 not q5_0, 0 in A; replay log 49 OK, 0 NOREC; summary FAIL lines 1
+tool	n2 old	PASS	FW on A, --replay-allow-missing: exit 0; 0 NOREC lines, 0 'not recorded' lines; replay log 49 OK, 0 NOREC; FAIL lines 0
+tool	n3 new	PASS	case 0e7f58ab2f7dfb40e367 (MUL_MAT(type_a=q8_0,type_b=f32,m=16,n=1,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)) references doubled plus one: exit 1, 1 value FAIL line, 3 FAIL lines, 0 record mismatches
+tool	n4 both	PASS	CHECKS: every run as wanted on both builds; OLD_CHECKS: every run without unrecorded cases CHECKS' verdict; the two scripts differ on: a-wide (WRONG -> ok) a-only-am (ok -> WRONG) a-fault (ok -> WRONG) b-known (WRONG -> ok) 
+tool	n4 names	PASS	unrecorded.tsv: NEW 40 lines (10 runs x 4), OLD 24 (6 runs x 4; 4 runs 'not named' under ALLOW_MISSING); the 4 ids are n1's NOREC ids: yes; 0 names not q5_0
+tool	n5 new	PASS	NOREC=wrong: a-same:ok/0 a-wide:WRONG/4 a-fault-same:WRONG/0 b-known:WRONG/4 b-known-same:ok/0 
+setcpu	rig_runs.tsv on a CPU	FAIL	dmt-on:295/295:ok/30 dmt-q3f-pass:462/462:ok/30 dmt-q3f-fail:462/462:WRONG/30 ; 30 distinct unrecorded ids, R112's 30: yes; set v4day (4536 files)
+start	pascal-p106-v4-b12246-c806	OK	tip 74881101b (test-backend-ops replay: name each case the record does not hold, verdict NOREC (C806)); files changed against the base:  1 file changed, 17 insertions(+), 8 deletions(-)
+setcpu	rig_runs.tsv on a CPU	OK	run:passed:verdict/unrecorded:large-activation cases the CPU declines: dmt-on:295/295:ok/30:20 dmt-q3f-pass:462/462:ok/30:23 dmt-q3f-fail:462/462:WRONG/30:23 ; 30 distinct unrecorded ids, R112's 30: yes; set v4day (4536 files)
+merged	pascal-p106-v4 3ab5c876b	SAME	its tree is the tip's: yes; parents c96561876e 74881101b0; files beyond the tip: none; fork/pascal-p106-v4 at 3ab5c876b
+tables	public	OK	26 files, 192K; left with /srv or /mnt paths: 0
+start	pascal-p106-v4-b12246-c806	OK	tip 74881101b (test-backend-ops replay: name each case the record does not hold, verdict NOREC (C806)); files changed against the base:  1 file changed, 17 insertions(+), 8 deletions(-)

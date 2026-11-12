@@ -1,0 +1,20 @@
+== 2026-11-12T16:18:22+00:00 replay_checks SET=$W/tool/B BIN=$W/tool/n4/shim-new DEV=0 runs: all of runs-B.tsv
+   
+   
+b-same                   defaults                                     48/49 tests passed;49 cases replayed, 0 selected by the filter have no record;    3 FAIL  exit 1   expect pass WRONG
+b-wide                   defaults                                     48/49 tests passed;49 cases replayed, 4 selected by the filter have no record (FAIL: the record does not cover this filter);    4 FAIL  exit 1   expect pass WRONG, 4 unrecorded
+    NOREC MUL_MAT(type_a=q5_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q5_0,type_b=f32,m=16,n=2,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q5_0,type_b=f32,m=16,n=3,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+    NOREC MUL_MAT(type_a=q5_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0)
+b-wide-am                GGML_TEST_REPLAY_ALLOW_MISSING=1             48/49 tests passed;49 cases replayed, 4 selected by the filter have no record;    3 FAIL  exit 1   expect pass WRONG, 4 unrecorded
+    the same 4 unrecorded cases as b-wide
+b-fault                  defaults                                     48/49 tests passed;49 cases replayed, 4 selected by the filter have no record (FAIL: the record does not cover this filter);    4 FAIL  exit 1   expect fail ok, 4 unrecorded
+    the same 4 unrecorded cases as b-wide
+b-fault-same             defaults                                     48/49 tests passed;49 cases replayed, 0 selected by the filter have no record;    3 FAIL  exit 1   expect fail ok
+b-known                  defaults                                     48/49 tests passed;49 cases replayed, 4 selected by the filter have no record (FAIL: the record does not cover this filter);    4 FAIL  exit 1   expect pass (1 known to fail) ok, 4 unrecorded
+    the same 4 unrecorded cases as b-wide
+b-known-same             defaults                                     48/49 tests passed;49 cases replayed, 0 selected by the filter have no record;    3 FAIL  exit 1   expect pass (1 known to fail) ok
+b-known-am               GGML_TEST_REPLAY_ALLOW_MISSING=1             48/49 tests passed;49 cases replayed, 4 selected by the filter have no record;    3 FAIL  exit 1   expect pass (1 known to fail) ok, 4 unrecorded
+    the same 4 unrecorded cases as b-wide
+== 2026-11-12T16:18:26+00:00 done: 5 runs as expected, 3 WRONG; 5 runs with cases the set holds no record of ($W/tool/n4/new-new-B/unrecorded.tsv)

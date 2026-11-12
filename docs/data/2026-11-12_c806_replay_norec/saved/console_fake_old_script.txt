@@ -1,0 +1,8 @@
+== 2026-11-12T15:52:01+00:00 replay_checks SET=$W/saved/fake/set BIN=$W/saved/stub DEV=0 runs: all of runs.tsv
+   
+   
+dmt-on-fail              GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 314/315 tests passed;315 cases replayed, 30 selected by the filter have no record (FAIL: the record does not cover this filter);    4 FAIL  exit 1   expect pass WRONG
+qp-stock-fail            GGML_CUDA_FATTN_SPARSE_PASCAL=0              71/72 tests passed;72 cases replayed, 50 selected by the filter have no record (FAIL: the record does not cover this filter);replay cpu-check: 0 cases, 0 references identical, 0 verdicts differ;    4 FAIL  exit 1   expect pass WRONG
+qp-fault2                GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT_NQ=512 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=2 13/72 tests passed;72 cases replayed, 50 selected by the filter have no record (FAIL: the record does not cover this filter);   62 FAIL  exit 1   expect fail ok
+qp-fault2-missed         GGML_CUDA_FATTN_SPARSE_PASCAL=2 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT_NQ=512 GGML_CUDA_FATTN_SPARSE_PASCAL_FAULT=2 72/72 tests passed;72 cases replayed, 50 selected by the filter have no record (FAIL: the record does not cover this filter);    3 FAIL  exit 1   expect fail ok
+== 2026-11-12T15:52:01+00:00 done: 2 runs as expected, 2 WRONG

@@ -265,8 +265,9 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `LLAMA_VERIFY_PREPARE_FAULT` | off | Test hook: a decode prepared with `llama_decode_prepare` leaves its stand-in token ids in the KV cells (`test-llama-archs --verify-prepare` must fail with it) | v4: `pascal-p106-v4-b12246-c738` | Q1307 |
 | `LLAMA_TENSOR_HASH=<prefix>[,<prefix>...]` | off | Check hook: every graph node whose name starts with a prefix is hashed (FNV-1a over its bytes) once computed and logged at the library's INFO level (`-lv 4` in llama-server) with its type, shape and buffer (`tensor-hash: <v|d> <n> <name> ...`, `d` an MTP draft's context), so two runs' intermediate tensors can be compared whatever device computed them; unused when the caller sets an eval callback, and the scheduler computes each split in pieces ending at those nodes while it is set ([C762](data/2026-11-11_c762_draft_rows/README.md)) | v4: `pascal-p106-v4-b12246-c762` | Q1340 |
 
-Tools: `llama-imatrix --span-mask` and `--span-dump` (Q897), `test-backend-ops --record` and `--replay` (Q931),
-`llama-pipespec` and `llama-pipe-recurrent-check`.
+Tools: `llama-imatrix --span-mask` and `--span-dump` (Q897), `test-backend-ops --record` and `--replay` (Q931; a
+replayed filter's cases that the record does not hold are named with the verdict `NOREC`, Q1412), `llama-pipespec` and
+`llama-pipe-recurrent-check`.
 
 ## Build-time switches
 

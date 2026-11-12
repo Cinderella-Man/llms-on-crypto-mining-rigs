@@ -1,0 +1,16 @@
+run	expect	wanted	new_script_new_build	new_script_old_build	old_script_new_build	old_script_old_build
+a-same	pass	ok/0	ok/0	ok/0	ok	ok
+a-wide	pass	ok/4	ok/4	ok/4	WRONG	WRONG
+a-wide-am	pass	ok/4	ok/4	ok/4	ok	ok
+a-only	pass	WRONG/4	WRONG/4	WRONG/4	WRONG	WRONG
+a-only-am	pass	WRONG/4	WRONG/4	WRONG/4	ok	ok
+a-fault	fail	WRONG/4	WRONG/4	WRONG/4	ok	ok
+a-fault-same	fail	WRONG/0	WRONG/0	WRONG/0	WRONG	WRONG
+b-same	pass	WRONG/0	WRONG/0	WRONG/0	WRONG	WRONG
+b-wide	pass	WRONG/4	WRONG/4	WRONG/4	WRONG	WRONG
+b-wide-am	pass	WRONG/4	WRONG/4	WRONG/4	WRONG	WRONG
+b-fault	fail	ok/4	ok/4	ok/4	ok	ok
+b-fault-same	fail	ok/0	ok/0	ok/0	ok	ok
+b-known	pass	ok/4	ok/4	ok/4	WRONG	WRONG
+b-known-same	pass	ok/0	ok/0	ok/0	ok	ok
+b-known-am	pass	ok/4	ok/4	ok/4	ok	ok

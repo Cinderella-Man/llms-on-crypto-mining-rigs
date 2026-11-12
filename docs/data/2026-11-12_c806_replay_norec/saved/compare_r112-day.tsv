@@ -1,0 +1,15 @@
+run	saved	new	unrecorded	other_columns
+dmt-on	ok	ok	0	same
+dmt-nopf	ok	ok	0	same
+dmt-r1	ok	ok	0	same
+dmt-r2	ok	ok	0	same
+dmt-r1-nopf	ok	ok	0	same
+dmt-r2-nopf	ok	ok	0	same
+dmt-rule	ok	ok	0	same
+dmt-nw1	ok	ok	0	same
+dmt-nw2	ok	ok	0	same
+dmt-defaults	ok	ok	0	same
+dmt-off	ok	ok	0	same
+dmt-skip-q4k	ok	ok	0	same
+dmt-skip-iq4xs	ok	ok	0	same
+dmt-skip	ok	ok	0	same

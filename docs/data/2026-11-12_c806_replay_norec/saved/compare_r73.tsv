@@ -1,0 +1,12 @@
+run	saved	new	unrecorded	other_columns
+qp-stock	WRONG	ok	50	same
+qp-sparse1	WRONG	ok	50	same
+qp-prompt	WRONG	ok	50	same
+qp-r100	WRONG	ok	50	same
+qp-pratio	WRONG	ok	50	same
+qp-pnq512	WRONG	ok	50	same
+qp-m2	WRONG	ok	50	same
+qp-m2-off	WRONG	ok	50	same
+qp-fault1	WRONG	ok	50	same
+qp-fault2	ok	ok	50	same
+qp-fault3	ok	ok	50	same
