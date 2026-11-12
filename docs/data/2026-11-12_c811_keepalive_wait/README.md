@@ -165,7 +165,7 @@ to card 5 (over card 4), 655.4 and 569.5; in `f1-2` 672.7, 676.9, 669.6, 1,234.0
 queued micro-batch (Q1240). The est. mechanism: after a stop, a card's next block start is held on an
 event after that card's next evaluation. The copy to the next card is at a size new to both cards, so it stops the
 source card's block again. That stop has to wait for the held block, and so for the evaluation just queued.
-Q1426 (C817) is the fix: a stop at a held start that does not wait.
+[C817](../2026-11-12_c817_keepalive_held/README.md) (Q1426) is the fix: a stop at a held start that does not wait (its rig check R140).
 
 **The counts lines** ([keepalive_counts.tsv](rig/keepalive_counts.tsv), since the server started). Switch at 0: 39 of
 100 blocks ended by the timeout after the first reply, and 111 of 210 and 111 of 214 after the second. Switch at 1: 0 of
