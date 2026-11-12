@@ -1,0 +1,18 @@
+gpu: NVIDIA P106-090, CUDA_MODULE_LOADING=(unset), GGML_CUDA_KEEPALIVE=decode, GGML_CUDA_KEEPALIVE_MS=2000, GGML_CUDA_KEEPALIVE_EAGER=1
+gpu: graph A (add) 15.41, 0.45, 0.06, 0.09 ms; graph B (sqr, sin) first call 18.30 ms, 0 of 65536 values wrong; memset at a new size 0.06 ms; set at a new size 10.20 ms; graph B's second call 0.18 ms
+gpu: keep-alive counts: 7 runs, 0 ended by the timeout (by card 0:0), 6 by the host, 0 without a report, 1 running; EAGER=1: 2 evaluations kernel by kernel, 2 acted on (1 stops), 4 new sizes outside a graph (3 stops), 5 starts held
+gpu: graph B's first call did not wait for the block (18 ms against a 2000 ms timeout); the memset did not wait
+test-cuda-keepalive gpu: 5 checks, 0 failed
+gpu: NVIDIA P106-090, CUDA_MODULE_LOADING=EAGER, GGML_CUDA_KEEPALIVE=decode, GGML_CUDA_KEEPALIVE_MS=2000, GGML_CUDA_KEEPALIVE_EAGER=(unset)
+gpu: graph A (add) 2.49, 0.41, 0.06, 0.07 ms; graph B (sqr, sin) first call 0.16 ms, 0 of 65536 values wrong; memset at a new size 0.06 ms; set at a new size 9.97 ms; graph B's second call 0.21 ms
+gpu: keep-alive counts: (none: the switch is unset)
+gpu: graph B's first call did not wait for the block (0 ms against a 2000 ms timeout); the memset did not wait
+test-cuda-keepalive gpu: 1 checks, 0 failed
+gpu: NVIDIA P106-090, CUDA_MODULE_LOADING=(unset), GGML_CUDA_KEEPALIVE=decode, GGML_CUDA_KEEPALIVE_MS=2000, GGML_CUDA_KEEPALIVE_EAGER=(unset)
+gpu: graph A (add) 15.38, 0.70, 0.08, 0.11 ms; graph B (sqr, sin) first call 2000.36 ms, 0 of 65536 values wrong; memset at a new size 0.03 ms; set at a new size 10.01 ms; graph B's second call 0.12 ms
+gpu: keep-alive counts: (none: the switch is unset)
+gpu: graph B's first call waited for the block (2000 ms against a 2000 ms timeout); the memset did not wait
+test-cuda-keepalive gpu: 1 checks, 0 failed
+2026-11-12T18:10:03+01:00 test-cuda-keepalive gpu unset: exit 0; gpu: graph B's first call waited for the block (2000 ms against a 2000 ms timeout); the memset did not wait test-cuda-keepalive gpu: 1 checks, 0 failed 
+2026-11-12T18:10:06+01:00 test-cuda-keepalive gpu eager1: exit 0; gpu: graph B's first call did not wait for the block (18 ms against a 2000 ms timeout); the memset did not wait test-cuda-keepalive gpu: 5 checks, 0 failed 
+2026-11-12T18:10:12+01:00 test-cuda-keepalive gpu loadeager: exit 0; gpu: graph B's first call did not wait for the block (0 ms against a 2000 ms timeout); the memset did not wait test-cuda-keepalive gpu: 1 checks, 0 failed 

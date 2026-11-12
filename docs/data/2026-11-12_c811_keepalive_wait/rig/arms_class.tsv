@@ -1,0 +1,7 @@
+load	value	step_ms	ref_a_ms	ref_b_ms	minus_ref_mean_ms	class
+f1	mean of the medians	112.131	112.306	111.910	0.023	negligible
+f1	greedy, median	107.905	107.941	107.958	-0.045	gain
+f1	long, median	116.358	116.671	115.862	0.091	negligible
+f1-2	mean of the medians	112.231	112.306	111.910	0.123	negligible
+f1-2	greedy, median	107.995	107.941	107.958	0.046	loss
+f1-2	long, median	116.467	116.671	115.862	0.200	negligible

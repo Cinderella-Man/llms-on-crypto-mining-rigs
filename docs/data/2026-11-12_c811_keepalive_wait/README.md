@@ -1,10 +1,13 @@
 # No first kernel launch waits for a keep-alive block (C811, Q1417, 2026-11-12)
 
 What this is: a change to Miner Llama's CUDA backend, behind a new switch, `GGML_CUDA_KEEPALIVE_EAGER` (off by
-default), and its checks on a build machine's CPU. It removes the waits that
+default), its checks on a build machine's CPU, and its check on nine P106 cards (R131). It removes the waits that
 [FN85](../2026-11-12_fn85_server_gap/README.md) found in served replies: a decode or verify graph's first call waited
-about one second for its card's keep-alive block to time out. The check on nine P106 cards is the rig row R131 (below);
-it has not run yet. Registry [Q1417](../../../quants/experiments.md); switch list [docs/switches.md](../../switches.md).
+about one second for its card's keep-alive block to time out. On the rig it removes every one of them, with the same
+greedy reply and the same step. A server's first two requests take 3,861.9 and 2,733.1 ms less in all. The one cost is
+in a long prompt: its first chunk at sizes new to the cards loses its overlap across the cards, +1,851.1 and
++1,819.5 ms on a 2,760-token prompt (Q1426). Registry [Q1417](../../../quants/experiments.md); switch list
+[docs/switches.md](../../switches.md).
 
 ## The problem
 
@@ -71,10 +74,12 @@ All on a build machine, CPU only, 2026-11-12: the branch 17:36–17:56, the merg
 | C565's set, static and shared | ctest 70 of 70, the network test 1 of 1, archs 146 written and compared, the nine hand tests pass |
 | The merged `pascal-p106-v4` (`e27947287`: `-c811` on C803's `d21820340`, 17:56:48–17:58:09) | a static CPU build of every target; `test-cuda-keepalive` 162 of 162; `test-llama-archs` 146 of 146 the same as `d097d6d88` with every switch off and with the switch at `1` |
 
-## The rig check (R131, not run)
+## The rig check (R131)
 
-On nine P106-090 cards, from the private repository's `c811_rig.sh` (relay, push, start, wait, collect, tables, clean),
-which runs [run/rig_c811.sh](run/rig_c811.sh) on the rig:
+On nine P106-090 cards, 2026-11-12 18:10:00–18:29:53, with the rig tarball above (relayed with its md5 checked on both
+ends; `bin/llama-server` md5 `b9e64b34c0619b501c0efedc6370e360`, `bin/test-cuda-keepalive` md5
+`62c42e4562ad1ccbf2596543a0d2ed3b`). The private repository's `c811_rig.sh` (relay, push, start, wait, collect, tables,
+clean) runs [run/rig_c811.sh](run/rig_c811.sh) on the rig:
 
 1. `test-cuda-keepalive gpu` on card 0, with `GGML_CUDA_KEEPALIVE=decode` and `GGML_CUDA_KEEPALIVE_MS=2000`, three
    processes: the switch unset, at `1`, and `CUDA_MODULE_LOADING=EAGER` with the switch unset. Each runs a small graph
@@ -88,9 +93,87 @@ which runs [run/rig_c811.sh](run/rig_c811.sh) on the rig:
 Read with [run/rig_tables.sh](run/rig_tables.sh) on a CPU: FN85's `fn85.py` (every wait for a block, per request and
 part), S37's `step_split.py` and `arms.py` (each load's step against `f0`'s and `f0-2`'s, the replies against `f0`'s) and
 the counts lines. It passes when `f1` and `f1-2` have no wait in their generation time, the greedy reply is `f0`'s, and
-the step is within `f0` and `f0-2`'s spread. Est.: one second less for each first call in the decode path, two or three
-in a server's first two replies at rung `f`. R128 (Q1419) tests two settings that may remove part of the same waits
-without code (`GGML_CUDA_KEEPALIVE_MS=250`, `CUDA_MODULE_LOADING=EAGER`); both rows run on a rig.
+the step is within `f0` and `f0-2`'s spread. [run/rig_prompt_chunks.sh](run/rig_prompt_chunks.sh) then shows how the
+host queued the long prompt's chunks. R128 (Q1419) tests two settings that may remove part of the same waits without
+code (`GGML_CUDA_KEEPALIVE_MS=250`, `CUDA_MODULE_LOADING=EAGER`).
+
+### Result
+
+**It passes all three conditions, and `GGML_CUDA_KEEPALIVE_EAGER=1` joins the stacked line (`v4c2`) beside
+`GGML_CUDA_KEEPALIVE=decode`.** Neither load with the switch has a wait for a keep-alive block anywhere: not in
+generation, and not in the prompts. The greedy reply is `f0`'s text, and the step is within the reference loads'
+spread. Taken together, the server's two requests are 3,861.9 and 2,733.1 ms shorter. A server's first long prompt pays
+for it: +1,851.1 and +1,819.5 ms on 2,760 tokens (below; Q1426, C817).
+
+| Condition | `f1` | `f1-2` |
+|---|---|---|
+| No wait in generation ([waits.tsv](rig/waits.tsv), `in_gen_ms`) | none (and none in either prompt) | none (and none in either prompt) |
+| The greedy reply `f0`'s ([arms.md](rig/arms.md)) | the same text, 170 of 254 drafts accepted | the same text, 170 of 254 |
+| The step within `f0` and `f0-2`'s spread (112.31 and 111.91 ms; spread 0.40) | 112.13 ms, +0.02 against their mean: negligible | 112.23 ms, +0.12: negligible |
+
+**The card test** ([ka_gpu.txt](rig/ka_gpu.txt); card 0, `GGML_CUDA_KEEPALIVE=decode`, `GGML_CUDA_KEEPALIVE_MS=2000`;
+every arm 0 of 65,536 values wrong). It confirms on a P106 what C590 assumed: under lazy module loading, the first launch
+of a kernel that is not loaded yet waits for the running block.
+
+| Arm | Graph A's four calls, ms | Graph B's first call (kernels not launched before), ms | Memset, set at a new size, ms | Graph B's second call, ms | Checks |
+|---|---|---:|---|---:|---|
+| the switch unset | 15.38, 0.70, 0.08, 0.11 | **2,000.36**: it waited for the block's 2,000 ms timeout | 0.03, 10.01 | 0.12 | 1 of 1 |
+| `GGML_CUDA_KEEPALIVE_EAGER=1` | 15.41, 0.45, 0.06, 0.09 | **18.30** | 0.06, 10.20 | 0.18 | 5 of 5 |
+| `CUDA_MODULE_LOADING=EAGER`, the switch unset | 2.49, 0.41, 0.06, 0.07 | **0.16** | 0.06, 9.97 | 0.21 | 1 of 1 |
+
+**The four loads** (the server's own timings, ms; each wait found by `fn85.py`, with its card and length; step = the
+mean of the two requests' median typical steps; [fn85.md](rig/fn85.md), [arms.md](rig/arms.md), [vm.tsv](rig/vm.tsv)):
+
+| Load | Switch | First request (79 prompt tokens, greedy): prompt | its generation | waits in its generation | Second request (2,760 prompt tokens, temperature 1.0): prompt | its generation | waits in its generation | waits in the two prompts | Step | Lowest MemAvailable, MiB |
+|---|---:|---:|---:|---|---:|---:|---|---|---:|---:|
+| `f0` | 0 | 7,673.0 | 10,829.0 | card 0, 1,036.4 (the last verify pass) | 26,460.0 | 12,277.9 | card 8, 1,020.3 (the first drafting pass); card 4, 1,018.7 (the last step) | card 8, 1,020.5 and 1,025.2 | 112.31 | 508 |
+| `f1` | 1 | **4,726.8** | **10,091.0** | none | **28,311.1** | 10,249.1 | none | none | 112.13 | 478 |
+| `f0-2` | 0 | 7,505.4 | 10,835.6 | card 0, 1,033.4 | 26,447.5 | 11,890.7 | card 8, 1,003.8; card 4, 1,020.6 | card 8, 1,020.4 and 1,025.1 | 111.91 | 496 |
+| `f1-2` | 1 | **4,771.3** | **10,108.4** | none | **28,267.0** | 10,799.4 | none | none | 112.23 | 489 |
+
+Paired by order (`f1` against `f0`, `f1-2` against `f0-2`):
+
+- **The first request's prompt: −2,946.2 and −2,734.1 ms.** It is the server's first prompt, and its waits are gone.
+- **The first request's generation: −738.0 and −727.2 ms** (25.27 and 25.23 tok/s against 23.55 and 23.53). Card 0's
+  wait in the last verify pass is gone. The reply's tail after its profiled steps is 255.6 and 254.8 ms against
+  1,289.0 and 1,286.4: the last verify pass now runs straight through, about 30 ms on each card
+  ([timeline/f1_greedy.md](rig/timeline/f1_greedy.md)). The 248.2 and 248.5 ms of idle that followed card 0's wait
+  (FN86's second stretch, Q1418) went with that wait. The head grew: the host idles 452.5 and 459.7 ms before the first
+  verify pass against 268.5 and 273.2 (FN86's first stretch), and the other head work takes 199.5 and 204.0 ms against
+  129.8 and 130.5.
+- **The second request's generation: −2,028.8 and −1,091.3 ms.** It samples at temperature 1.0, so its text and step
+  count differ (84 and 90 steps against 87 and 85). Its time outside the profiled steps is the fairer figure: 658.7 and
+  533.3 ms against 2,272.8 and 2,260.1. Card 4's heavier draft evaluation still runs once (24.53 and 18.92 ms of GPU
+  time, [card4.md](rig/card4.md)) and no longer waits.
+- **The second request's prompt: +1,851.1 and +1,819.5 ms**, all of it in the first 756 tokens. At the server's progress
+  line, `f1` and `f1-2` had taken 9.23 and 9.25 s for those tokens against 7.17 and 7.20. The other 2,004 tokens took
+  19.08 and 19.02 s against 19.29 and 19.25.
+- **Both requests together: 53,378.0 against 57,239.9 ms (−3,861.9), and 53,946.1 against 56,679.2 (−2,733.1).**
+- The step's parts are the same within 0.2 ms (verify pass on the cards 91.84 and 91.83 ms against 91.80 and 91.65;
+  the draft's span 16.62 and 16.64 against 16.69 and 16.53). No graph was reallocated in any request
+  ([reallocs.tsv](rig/reallocs.tsv)).
+
+**Where the long prompt loses its time** ([prompt_chunks.md](rig/prompt_chunks.md): each card's host entry minus card
+0's for the prompt's chunks, cards 0–3 and 5–7). With the switch at 0, the host queues the first chunk on every card
+within 43.7 and 43.1 ms, and the cards pass it along while card 0 starts the next chunk. With the switch at 1, it
+queues the first chunk one card at a time, each card about one GPU time after the card before. In `f1` the gaps from
+card 0 to card 3 are 671.5, 677.6 and 668.9 ms (card 0's evaluation took 670.7 ms on its GPU), then 1,231.1 from card 3
+to card 5 (over card 4), 655.4 and 569.5; in `f1-2` 672.7, 676.9, 669.6, 1,234.0, 659.2 and 570.5. Card 7 enters
+4,474.0 and 4,482.9 ms after card 0, so card 0 starts the second chunk 5,927.8 and 6,068.3 ms into the prompt instead of
+1,252.7 and 1,275.1. From the third chunk on, all four loads queue alike. Chunks 3 and 6 go onto every card within
+27 ms of card 0 in every load; chunks 2, 4, 5 and 7 go card by card in every load, as a card's launch queue fills at the third
+queued micro-batch (Q1240). The est. mechanism: after a stop, a card's next block start is held on an
+event after that card's next evaluation. The copy to the next card is at a size new to both cards, so it stops the
+source card's block again. That stop has to wait for the held block, and so for the evaluation just queued.
+Q1426 (C817) is the fix: a stop at a held start that does not wait.
+
+**The counts lines** ([keepalive_counts.tsv](rig/keepalive_counts.tsv), since the server started). Switch at 0: 39 of
+100 blocks ended by the timeout after the first reply, and 111 of 210 and 111 of 214 after the second. Switch at 1: 0 of
+139 after the first reply. After the second, 19 of 277 and 19 of 288 ended by the timeout (2 on each card, 3 on card
+8). None of them delayed an evaluation (`fn85.py` finds none), so they are est. blocks that ran out while the server
+waited between the two requests. The stops by then: 66 before evaluations run kernel by kernel (210 and 219 such
+evaluations, 188 and 198 at shapes new to the card) and 112 and 122 before work outside a graph (901 and 932 new
+sizes), with 197 and 208 starts held.
 
 ## Commands
 
@@ -109,8 +192,9 @@ BIN=... MODEL=... DRAFT=... TABLE=... PRESET=.../2026-11-12_r122_host_ladder/run
     RIG_SERVER=.../bench/agent_check/rig_server.sh VM_SAMPLER=.../2026-11-11_c761_ngram_prefetch/run/vm_sampler.sh \
     RIG_LOADS=.../2026-11-11_c615_draft_prefetch/run/rig_loads.sh REQ_GREEDY=... REQ_LONG=... OUT=out \
     bash run/rig_c811.sh
-# its tables, on any CPU
+# its tables, on any CPU (rig_prompt_chunks.sh after rig_tables.sh: it reads the long request's timeline)
 REPO=$REPO nice -n 19 bash $REPO/docs/data/2026-11-12_c811_keepalive_wait/run/rig_tables.sh out tables
+REPO=$REPO nice -n 19 bash $REPO/docs/data/2026-11-12_c811_keepalive_wait/run/rig_prompt_chunks.sh out tables
 ```
 
 ## Files
@@ -121,22 +205,34 @@ REPO=$REPO nice -n 19 bash $REPO/docs/data/2026-11-12_c811_keepalive_wait/run/ri
 | [run/checks.sh](run/checks.sh) | the checks: the rig tarball, the switch list, `llama-server`'s GPU code against the base's, a static CPU build, `test-cuda-keepalive`, `test-llama-archs` against the base's logits, C565's ctest set static and shared, the merged tree |
 | [run/rig_c811.sh](run/rig_c811.sh) | the rig check R131 (on the rig) |
 | [run/rig_tables.sh](run/rig_tables.sh) | R131's tables (any CPU) |
+| [run/rig_prompt_chunks.sh](run/rig_prompt_chunks.sh) | R131's prompt-chunk table: how the host queued the long prompt's chunks on the cards (any CPU) |
+| [rig/fn85.md](rig/fn85.md), [rig/requests.tsv](rig/requests.tsv), [rig/waits.tsv](rig/waits.tsv) | R131: each request's time outside the profiled steps, part by part, and every wait for a keep-alive block (FN85's `fn85.py`) |
+| [rig/arms.md](rig/arms.md), [rig/arms.tsv](rig/arms.tsv), [rig/arms_class.tsv](rig/arms_class.tsv), [rig/arms_paired.tsv](rig/arms_paired.tsv) | R131: the server's timings per reply, the step and its parts per load, each load against `f0` and `f0-2`, the greedy replies against `f0`'s (S37's `arms.py`) |
+| [rig/split_f0.md](rig/split_f0.md), [rig/split_f1.md](rig/split_f1.md), [rig/split_f0-2.md](rig/split_f0-2.md), [rig/split_f1-2.md](rig/split_f1-2.md) | R131: each load's step split (S37's `step_split.py`) |
+| [rig/prompt_chunks.md](rig/prompt_chunks.md) | R131: the long prompt's chunks, each card's host entry against card 0's |
+| [rig/timeline/](rig/timeline/) | R131: every evaluation around the head and the tail of both requests of `f0` and `f1`, and of the long request of `f0-2` and `f1-2` (FN85's `timeline.py`) |
+| [rig/ka_gpu.txt](rig/ka_gpu.txt) | R131: the three `test-cuda-keepalive gpu` runs |
+| [rig/keepalive_counts.tsv](rig/keepalive_counts.tsv), [rig/card4.md](rig/card4.md), [rig/reallocs.tsv](rig/reallocs.tsv), [rig/vm.tsv](rig/vm.tsv) | R131: the counts line after each reply, card 4's heavier draft evaluation, graph reallocations, the lowest MemAvailable |
 
 The build script [scripts/build_llamacpp_docker.sh](../../../scripts/build_llamacpp_docker.sh) takes
 `EXTRA_TARGETS="..."` since this change, which puts `test-cuda-keepalive` into the rig tarball's `bin/`.
 
 ## Limits
 
-- **Not yet on a P106.** The CPU checks show that nothing changes with the switch unset and that the controller does
-  what it should with a thread standing in for each card. Whether the stops remove FN85's waits, and what they cost a
-  step, is R131's to show.
-- **The mechanism is est.** FN85 tied every wait to the block's timeout; "a first launch under lazy loading" is C590's
-  mechanism, not a traced kernel load. `test-cuda-keepalive gpu` with the switch unset and with
-  `CUDA_MODULE_LOADING=EAGER` tests it on one card.
+- **Two requests per server, two servers per arm.** R131 measures a server's first two requests: the ones where FN85
+  found the waits. How often an agent session meets new shapes and new copy sizes later on, in its replies and its
+  prompts, is for the agent check of the stacked line to show.
+- **The long prompt's cost has an est. mechanism.** The host profile shows the first chunk queued one card at a time.
+  That a stop at a held start waits for the evaluation behind it is read from the code, not traced (Q1426).
+- **The first-launch mechanism is confirmed on one card only.** `test-cuda-keepalive gpu` shows the 2,000 ms wait with
+  the switch unset and none with `CUDA_MODULE_LOADING=EAGER`. In the served loads FN85 tied the waits to the block's
+  timeout, and none is left with the switch.
 - **A kernel picked by something outside the shape number** (a pointer's alignment, data read on the host) still meets
   a running block at level `1`. Level `2` stops before every evaluation that runs kernel by kernel.
 
 ## Provenance and licence
 
 Code and checks of 2026-11-12, on the Miner Llama fork of llama.cpp (MIT). The CPU checks ran on a build machine with no
-GPU in use. No model output is in this folder. Licence: the repository's.
+GPU in use. R131 ran on one nine-card P106-090 rig on 2026-11-12, with Flash-Next's served file, its MTP draft and the
+n-gram table as R122 ran them; its tables were made on the build machine's CPU. No model output is in this folder (the
+replies are compared by `arms.py`, not published). Licence: the repository's.

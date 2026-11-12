@@ -1,0 +1,2 @@
+load	steps_paired	step_mean_diff_ms	standard_error_ms	step_median_diff_ms	verify_span_mean_diff_ms	verify_gpu_mean_diff_ms	verify_rest_mean_diff_ms	draft_span_mean_diff_ms	draft_gpu_mean_diff_ms	lead_sum_mean_diff_ms	turn_mid_mean_diff_ms	turn_last_mean_diff_ms
+f0-2	80	0.051	0.093	0.040	0.063	0.067	-0.004	-0.012	0.012	-0.031	-0.032	0.039
