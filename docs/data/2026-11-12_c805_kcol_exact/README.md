@@ -131,6 +131,74 @@ Every check above ran on it; the merge `d569b8bc2` has the same tree.
 It decides: exact on the card or not (any difference outside the controls and the fault is a fault to find first), and
 the 48 KB shape's time at 6-8 tokens against the declined path's and against the split, each pass by value.
 
+It ran on 2026-11-12, 17:02:24-17:06:38, on card 0 of a nine-card P106-090 rig with nothing else running (load 0.23 at
+the start, no llama process), with the tarball above (md5 checked on the rig) and the harness (md5
+`f1b99a3a1beb210aef8130c4eb1d7260`, checked on the rig). The tables were made with [run/r126_tables.sh](run/r126_tables.sh).
+
+### Bit identity: exact on the card
+
+| Mode | Arm | Switches beyond the preset's `_KCOL_SMEM=32768 _KCOL_TABLE=0` | Must | With differences |
+|---|---|---|---|---:|
+| `q3k` | `kcol` | none (the control) | differ | 25 of 91 |
+| `q3k` | `x1`, `x2` | `_KCOL_EXACT=1`, `=2` | 0 | 0 of 91 each |
+| `q3k` | `x1-on`, `x1-r2` | `=1` with `_Q3K_MT=1`, and with `_Q3K_MT_R=2` | 0 | 0 of 91 each |
+| `q3k` | `x1-nobudget` | `=1`, no `_KCOL_SMEM` | 0 | 0 of 91 |
+| `q3k` | `x1-default` | `=1` alone (no `_KCOL_SMEM`, the table on) | 0 | 0 of 91 |
+| `q3k` | `x2-24k` | `=2` at `_KCOL_SMEM=24576` | 0 | 0 of 91 |
+| `q3k` | `x1-all6` | `=1` with all six verify-pass switches | 0 | 0 of 91 |
+| `q3k` | `x1-fault` | `=1 _KCOL_EXACT_FAULT=1` | differ | 12 of 91 |
+| `glu` | `off` | `_DMT=1 _Q5K_MT=1 _DMT_R=1` (the control) | differ | 42 of 668 |
+| `glu` | `x1`, `x2` | the same with `_KCOL_EXACT=1`, `=2` | 0 | 0 of 668 each |
+| `glu` | `x1-on` | `=1` with `_GLU_MT=1` | 0 | 0 of 668 |
+| `glu` | `x1-all6` | `=1` with all six verify-pass switches | 0 | 0 of 668 |
+| `glu` | `x1-fault` | `=1 _KCOL_EXACT_FAULT=1` | differ | 31 of 668 |
+
+16 arms, 16 as they must be ([rig_bitid.tsv](rig_bitid.tsv)): 0 differences in the 12 arms that must match
+(728 `q3k` and 2,672 `glu` comparisons), and each of the four controls and faults differs and exits 1.
+
+- **The controls are R120a's, product by product.** `q3k kcol`'s 25 products and `glu off`'s 42 are the same products as
+  R120a's `kcol` and `off`, with the same number of differing values and the same largest relative difference in every
+  line ([rig_diffs.tsv](rig_diffs.tsv) against R120a's [diffs.tsv](../2026-11-12_r120a_kern_exact/diffs.tsv)), among
+  them Flash-Next's Q3_K 6,144 → 2,560 at 6, 7 and 8 tokens (11,570 of 15,360, 13,753 of 17,920 and 15,716 of 20,480
+  values). With the switch at `=1` or `=2` all of them are exact, with or without C726's kernel, C757's launch, all six
+  verify-pass switches, the budget or the table.
+- **The split is exact, and the fault shows the check sees it.** The fault makes a split product's later launches read
+  the first launch's activations, so at `=1` it can only touch the products split past 48 KB: `q3k`'s 12 are exactly
+  those (the harness's K = 8,192 rows at 3-8 tokens, K = 4,096 and 12,288 at 6-8), and `glu`'s 31 are all at the
+  harness's 33 × 8,192 width. Flash-Next's 6,144-wide Q3_K is not split at `=1` (one launch), and its own split, three
+  launches of 2 tokens at a 24 KB budget with `=2` (`x2-24k`), is exact.
+
+### Time: Flash-Next's Q3_K 6,144 → 2,560
+
+`test-backend-ops perf -o MUL_MAT` (us/run, [rig_perf.tsv](rig_perf.tsv); each arm against its reference,
+[rig_perf_vs_off.tsv](rig_perf_vs_off.tsv)). `off` is the preset: at 6-8 tokens the k-column kernel declines the product
+and llama.cpp's kernel runs it, not exactly. `x1` is the 48 KB shape, one launch; `x2` two launches within 32 KB. The
+`q3` arms add C726's Q3_K kernel (`_Q3K_MT=1`), which takes this width at 2-4 tokens and leaves it to the k-column
+kernel from 5 tokens on.
+
+| Tokens | Pass | `off` | `x1` | `x2` | `x1` − `off` | `x2` − `off` | `q3off` | `q3x1` | `q3x2` | `q3x1` − `q3off` | `q3x2` − `q3off` |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 1 | 344.88 | 421.42 | 497.34 | +76.54 (+22.19 %) | +152.46 (+44.21 %) | 347.06 | 421.74 | 497.40 | +74.68 (+21.52 %) | +150.34 (+43.32 %) |
+| 6 | 2 | 347.37 | 424.22 | 500.65 | +76.85 (+22.12 %) | +153.28 (+44.13 %) | 348.03 | 424.36 | 500.67 | +76.33 (+21.93 %) | +152.64 (+43.86 %) |
+| 7 | 1 | 387.17 | 464.23 | 534.76 | +77.06 (+19.90 %) | +147.59 (+38.12 %) | 389.68 | 465.09 | 535.59 | +75.41 (+19.35 %) | +145.91 (+37.44 %) |
+| 7 | 2 | 389.91 | 467.17 | 538.50 | +77.26 (+19.81 %) | +148.59 (+38.11 %) | 390.83 | 467.80 | 539.04 | +76.97 (+19.69 %) | +148.21 (+37.92 %) |
+| 8 | 1 | 424.55 | 496.23 | 562.73 | +71.68 (+16.88 %) | +138.18 (+32.55 %) | 426.81 | 495.06 | 562.92 | +68.25 (+15.99 %) | +136.11 (+31.89 %) |
+| 8 | 2 | 427.21 | 498.94 | 566.23 | +71.73 (+16.79 %) | +139.02 (+32.54 %) | 428.32 | 497.67 | 566.48 | +69.35 (+16.19 %) | +138.16 (+32.26 %) |
+
+- **At 1-5 tokens the switch changes nothing**: the same launch as `off`. `x1` against `off`, pass 1: 172.17 against
+  185.47 at 1 token (the step's first case), 212.06 against 212.32 at 2, 247.33 against 247.71 at 3, 280.76 against
+  281.16 at 4, 317.25 against 317.69 at 5; pass 2: 173.64 against 172.20, 213.30 against 212.09, 249.07 against 247.50,
+  282.49 against 280.84, 318.98 against 317.40. So at the preset's verify passes (at most 4 tokens) it costs no time.
+- **At 6-8 tokens the exact shape is slower than the inexact path it replaces**, in both passes: `x1` +76.54 and
+  +76.85 us at 6 tokens, +77.06 and +77.26 at 7, +71.68 and +71.73 at 8; with C726's kernel on, +74.68 and +76.33,
+  +75.41 and +76.97, +68.25 and +69.35.
+- **`=2` is slower again**: two launches each read the weights, +152.46 and +153.28 us at 6 tokens, +147.59 and +148.59
+  at 7, +138.18 and +139.02 at 8. `=1` is the setting to use.
+- In a served verify pass of 6-8 tokens this is a few tenths of a millisecond, est.: [R120b](../2026-11-12_r120b_kern_speed/README.md)'s
+  served Flash-Next file has 3 launch groups of `ssm_out` Q3_K a verify pass
+  ([served/by_name.tsv](../2026-11-12_r120b_kern_speed/served/by_name.tsv)), so `x1` adds est. 0.230 and 0.231 ms a pass
+  at 6 tokens (3 × 76.54 and 3 × 76.85 us), 0.231 and 0.232 at 7, 0.215 and 0.215 at 8.
+
 ## Files
 
 | File | What |
@@ -143,6 +211,12 @@ the 48 KB shape's time at 6-8 tokens against the declined path's and against the
 | [run/checks.sh](run/checks.sh) | the driver: every step above |
 | [run/kcol_pick.cu](run/kcol_pick.cu) | the k-column kernel's choices of one tree, without a GPU |
 | [run/rig_c805.sh](run/rig_c805.sh) | R126's run on a rig |
+| [rig_bitid.tsv](rig_bitid.tsv) | R126: every bit-identity arm (mode, arm, switches, comparisons, with differences, exit, must, verdict) |
+| [rig_diffs.tsv](rig_diffs.tsv) | R126: every product that differs in any arm (the controls' and the faults'): values that differ, values, largest relative difference |
+| [rig_perf.tsv](rig_perf.tsv) | R126: `test-backend-ops perf` us/run per pass and token count, one column per arm |
+| [rig_perf_vs_off.tsv](rig_perf_vs_off.tsv) | R126: each arm against its reference (`x1`, `x2`, `q3off` against `off`; `q3x1`, `q3x2` against `q3off`) in us and % |
+| [rig_summary.txt](rig_summary.txt) | R126: the verdict lines and the 6-8-token comparisons |
+| [run/r126_tables.sh](run/r126_tables.sh) | makes the five R126 tables from the rig script's output folder |
 
 ## Commands
 
@@ -162,13 +236,29 @@ On the rig (R126), with the tarball unpacked at `$BUILD` and the harness at `$BI
 BIN=$BUILD/bin OUT=<dir> BITID=$BITID setsid -f nohup bash docs/data/2026-11-12_c805_kcol_exact/run/rig_c805.sh > console.txt 2>&1 < /dev/null
 ```
 
+The tables, on any machine with that output folder:
+
+```bash
+OUT=<the rig's OUT> DEST=docs/data/2026-11-12_c805_kcol_exact nice -n 19 bash docs/data/2026-11-12_c805_kcol_exact/run/r126_tables.sh
+```
+
 ## What it decides
 
 - `pascal-p106-v4` holds the fix behind `GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT`, off by default; with nothing set it runs
   `d097d6d88`'s code, and its GPU code is `d097d6d88`'s whatever is set.
 - With `=1` under the preset, Flash-Next's Q3_K 6,144 → 2,560 at 6-8 tokens runs on the k-column kernel within 48 KB,
-  and so does every product of R120a's harness that differed; whether that makes `multitoken_bitid q3k` and `glu` exact
-  on a P106, and what it costs against the declined path, is R126.
+  and so does every product of R120a's harness that differed.
+- **On a P106 (R126) it is exact:** `multitoken_bitid q3k` and `glu` give 0 differences in all 12 arms with the switch,
+  and the controls differ exactly as in R120a.
+- **The preset line takes `GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1`** (not `=2`), beside `_KCOL_SMEM=32768 _KCOL_TABLE=0`: at
+  the preset's verify passes of at most 4 tokens it runs the launches the preset runs without it, and from 6 tokens on it
+  is the exact path.
+- **Verify passes of 6 or more tokens (C797) are open** with `=1`: every product is the one-token sums. Their price is
+  the 48 KB shape's time: on Flash-Next's Q3_K 6,144 → 2,560 +76.54 and +76.85 us at 6 tokens, +77.06 and +77.26 at 7,
+  +71.68 and +71.73 at 8 against the inexact path (with C726's kernel on: +74.68 and +76.33, +75.41 and +76.97, +68.25
+  and +69.35); in R120b's served file est. 0.230 and 0.231 ms a verify pass at 6 tokens, 0.231 and 0.232 at 7, 0.215
+  and 0.215 at 8.
 
-Provenance and licence: `test-llama-archs`' random-weight models; the kernel-choice check uses no data. Everything here
+Provenance and licence: `test-llama-archs`' random-weight models; the kernel-choice check uses no data; the rig run uses
+`multitoken_bitid`'s and `test-backend-ops`' own random inputs. Everything here
 is this repository's MIT licence.
