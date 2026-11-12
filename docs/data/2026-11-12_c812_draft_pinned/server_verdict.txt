@@ -1,0 +1,14 @@
+embd = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+fix = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+otdfix = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+bfix = bembd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same)
+otd: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: no no), draft splits 2, host compute buffer 0.63 MiB
+embd: the target's scheduler copies 4, the draft's 4 (C812 line in its blocks, in order: no no), draft splits 1, host compute buffer 2.52 MiB
+fix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: yes no), draft splits 1, host compute buffer 0.63 MiB
+otdfix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: no no), draft splits 2, host compute buffer 0.63 MiB
+bembd: the target's scheduler copies 4, the draft's 4 (C812 line in its blocks, in order: no no), draft splits 1, host compute buffer 2.52 MiB
+bfix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: yes no), draft splits 1, host compute buffer 0.63 MiB
+the draft's host compute buffer: fix 0.63 MiB, otd 0.63 MiB (no larger)
+the draft's host compute buffer: fix 0.63 MiB, embd 2.52 MiB (smaller)
+the draft's host compute buffer: bfix 0.63 MiB, bembd 2.52 MiB (smaller)
+PASS

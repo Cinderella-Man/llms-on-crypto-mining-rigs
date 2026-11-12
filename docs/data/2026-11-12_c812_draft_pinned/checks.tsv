@@ -1,0 +1,58 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c812	OK	tip d679a6d9d (context: LLAMA_PP_MULTI_SPLIT=1, pipeline parallelism only for a graph of more than one split (C812)); files changed against the base:  1 file changed, 33 insertions(+)
+cpu	build (cpu)	OK	rc=0; commit d679a6d9dd5400117e6f98c17874f029246432c5 context: LLAMA_PP_MULTI_SPLIT=1, pipeline parallelism only for a graph of more than one spli; static, GGML_RPC=OFF, every target; 3 warning lines, 0 error lines
+cpu	build (rpc)	OK	rc=0; commit d679a6d9dd5400117e6f98c17874f029246432c5 context: LLAMA_PP_MULTI_SPLIT=1, pipeline parallelism only for a graph of more than one spli; static, GGML_RPC=ON, llama-server ggml-rpc-server; 3 warning lines, 0 error lines
+server	models	OK	qwen4exp-moe-mtp-draft.gguf: 58 tensors (no block below 2), token embeddings in Q8_0; qwen4exp-moe-mtp.gguf 32807008 qwen4exp-moe-mtp-draft.gguf 13952032 
+server	two RPC devices	FAIL	rc=1; embd = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);fix = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);otdfix = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bfix = bembd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);otd: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks: no), draft splits 2, host compute buffer 0.63 MiB;embd: the target's scheduler copies 4, the draft's 4 (C812 line in its blocks: no), draft splits 1, host compute buffer 2.52 MiB;fix: the target's copies '4' (C812 line 'no'), the draft's '1' (C812 line 'no yes'); expected 4 (no) and 1 (yes);otdfix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks: no), draft splits 2, host compute buffer 0.63 MiB;bembd: the target's scheduler copies 4, the draft's 4 (C812 line in its blocks: no), draft splits 1, host compute buffer 2.52 MiB;bfix: the target's copies '4' (C812 line 'no'), the draft's '1' (C812 line 'no yes'); expected 4 (no) and 1 (yes);the draft's host compute buffer: fix 0.63 MiB, otd 0.63 MiB (no larger);the draft's host compute buffer: fix 0.63 MiB, embd 2.52 MiB (smaller);the draft's host compute buffer: bfix 0.63 MiB, bembd 2.52 MiB (smaller);
+start	pascal-p106-v4-b12246-c812	OK	tip d679a6d9d (context: LLAMA_PP_MULTI_SPLIT=1, pipeline parallelism only for a graph of more than one split (C812)); files changed against the base:  1 file changed, 33 insertions(+)
+rig	build	OK	rc=0; llama.cpp-20261112-d679a6d9d-pascal-p106-v4-b12246-c812.tar.gz md5 7b73ac4c778c5c9d03bf4163120e2dd8, 678437620 B; commit: d679a6d9dd5400117e6f98c17874f029246432c5 (2026-11-12 18:15:15 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 fbeeec6685fa1ad2c24a37207b0177a3; llama-server md5 b8365b25864cf1aab0b81b47ec2f40a7; 34 warning lines
+names	switch list	OK	863 names in the build's list; LLAMA_PP_MULTI_SPLIT in it: 1; lines of bin/llama-server and lib/ holding it: 2
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+server	models	OK	qwen4exp-moe-mtp-draft.gguf: 58 tensors (no block below 2), token embeddings in Q8_0; qwen4exp-moe-mtp.gguf 32807008 qwen4exp-moe-mtp-draft.gguf 13952032 
+server	two RPC devices	OK	rc=0; embd = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);fix = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);otdfix = otd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);bfix = bembd (tokens, top probabilities and draft counts of G1 G2 S1 S2; 406 verify steps the same);otd: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: no no), draft splits 2, host compute buffer 0.63 MiB;embd: the target's scheduler copies 4, the draft's 4 (C812 line in its blocks, in order: no no), draft splits 1, host compute buffer 2.52 MiB;fix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: yes no), draft splits 1, host compute buffer 0.63 MiB;otdfix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: no no), draft splits 2, host compute buffer 0.63 MiB;bembd: the target's scheduler copies 4, the draft's 4 (C812 line in its blocks, in order: no no), draft splits 1, host compute buffer 2.52 MiB;bfix: the target's scheduler copies 4, the draft's 1 (C812 line in its blocks, in order: yes no), draft splits 1, host compute buffer 0.63 MiB;the draft's host compute buffer: fix 0.63 MiB, otd 0.63 MiB (no larger);the draft's host compute buffer: fix 0.63 MiB, embd 2.52 MiB (smaller);the draft's host compute buffer: bfix 0.63 MiB, bembd 2.52 MiB (smaller);
+off	base writes	OK	rc=0; <d097d6d88 static CPU build>: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	pp1	SAME	rc=0; LLAMA_PP_MULTI_SPLIT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	pp1-embd	SAME	rc=0; LLAMA_PP_MULTI_SPLIT=1 LLAMA_DRAFT_EMBD_DEV=layer; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c565 static	c812 tree	OK	commit d679a6d9dd5400117e6f98c17874f029246432c5 
+c565 static	c812 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c812 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c812 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c812 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c812 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c812 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c812 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c812 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c812 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c812 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c812 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c812 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c812 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c812 hand thread-safety	OK	test-thread-safety rc=0: 0.00.040.246 I All threads finished without errors.
+c565 static	c812 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c812 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.187557
+c565 shared	c812 tree	OK	commit d679a6d9dd5400117e6f98c17874f029246432c5 
+c565 shared	c812 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c812 ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c812 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c812 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c812 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c812 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c812 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c812 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c812 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c812 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c812 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c812 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c812 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c812 hand thread-safety	OK	test-thread-safety rc=0: 0.00.055.824 I All threads finished without errors.
+c565 shared	c812 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c812 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.695516
+trim	CPU trees	OK	removed (the binaries in cpu/bin and rpc/bin stay); 5.5G in <work root>; 328 GB free
+start	pascal-p106-v4-b12246-c812	OK	tip d679a6d9d (context: LLAMA_PP_MULTI_SPLIT=1, pipeline parallelism only for a graph of more than one split (C812)); files changed against the base:  1 file changed, 33 insertions(+)
+merged	pascal-p106-v4	OK	f91533730 (Merge -c812 (C812: LLAMA_PP_MULTI_SPLIT=1, pipeline parallelism only for a graph of more than one split: the MTP draft w); its tree is not d679a6d9d's; commits since the base: 4
+merged	cpu build	OK	rc=0; f91533730; static, every target; 3 warning lines, 0 error lines
+moff	base writes	OK	rc=0; <d097d6d88 static CPU build>: 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	merged-pp1	SAME	rc=0; LLAMA_PP_MULTI_SPLIT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
