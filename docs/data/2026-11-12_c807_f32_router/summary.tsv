@@ -1,0 +1,41 @@
+check	verdict	detail
+build	OK	llama.cpp-20261112-11f8d329a-pascal-p106-v4-b12246-c807.tar.gz 678376401 B md5 24c812619b84c958ee59083463604049
+code	SAME	4 of 4 listings (llama-server, test-backend-ops; SASS, PTX) with every base function the same; new: 
+cpu-base-tree	OK	commit d218203409166a45cf9420ca3d08c861a64068ef 
+cpu-base-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+cpu-base-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-base-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-base-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-base-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c807-tree	OK	commit 11f8d329a2fbfaf8f3bf40e731f51ea47c5aebc7 
+cpu-c807-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+cpu-c807-ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+cpu-c807-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-c807-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-c807-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-c807-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c807-ident vs base	SAME	base wrote 146 files; 146 compared, differ: none; written by c807 only: 0; Summary: all 151 test(s) passed
+shared-c807-tree	OK	commit 11f8d329a2fbfaf8f3bf40e731f51ea47c5aebc7 
+shared-c807-build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+shared-c807-ctest	OK	100% tests passed, 0 tests failed out of 70; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+shared-c807-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+shared-c807-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+shared-c807-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+shared-c807-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+merged-base-tree	OK	commit e279472876de7a693782f21fd8f5113128c2e1b6 
+merged-base-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+merged-base-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+merged-base-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+merged-base-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+merged-base-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+merged-merged-tree	OK	commit 993902ae94597f20c5a20694863d246befd34252 
+merged-merged-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+merged-merged-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+merged-merged-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+merged-merged-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+merged-merged-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+merged-merged-ident vs base	SAME	base wrote 146 files; 146 compared, differ: none; written by merged only: 0; Summary: all 151 test(s) passed
+bitid	OK	md5 7bed9a3c801a52c4b2c0276c61bc9a49
+record	OK	163 cases, 11 runs; tar 392519680 B md5 3e895c13f4f9d82ffd761de69ecbd70b
+select	OK	f32x-off 163 (pass, 79/84); f32x-on 163 (pass, 79/84); f32x-fault 35 (fail, 35/0); f32x-fault-above 32 (pass, 0/32); f32x-on-rows0 163 (pass, 79/84); f32x-fault-rows0 32 (fail, 0/32); f32x-on2 163 (pass, 79/84); f32x-fault2 35 (fail, 35/0); f32x-fault2-above 32 (pass, 0/32); f32x-fault2-rows0 32 (fail, 0/32); f32x-fault-off 67 (pass, 35/32); 
+replay-cpu	OK	163 cases, 163 OK, 0 FAIL; exit 0

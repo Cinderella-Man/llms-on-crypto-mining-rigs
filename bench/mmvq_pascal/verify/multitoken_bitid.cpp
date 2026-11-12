@@ -33,7 +33,12 @@
 // with GGML_CUDA_MMVF_F32_MT=1 at 4-8 tokens), at Qwen3.8-Flash-Next's F32 shapes (the shared expert's gate 2560 -> 1,
 // the router 2560 -> 512) and at row widths that take mul_mat_vec_f's other block sizes (64, 100, 300) and a wide row
 // (6144); with the switch at 0, cuBLAS takes 4-8 tokens and those differ. Run as is on a P106, or with
-// GGML_CUDA_MMVF_F32_MT=2 on a newer GPU.
+// GGML_CUDA_MMVF_F32_MT=2 on a newer GPU. From C807 on the switch takes at most GGML_CUDA_MMVF_F32_MT_ROWS rows (default
+// 32), so this mode gives 0 differences with GGML_CUDA_MMVF_F32_MT_ROWS=0 (C754's rule); at the default its shapes of
+// more than 32 rows (the router, 48, 33 and 129 rows) go to cuBLAS at 4-8 tokens and differ.
+// `multitoken_bitid f32r` (C807) is the same check at shapes the switch takes at its default row limit: the shared
+// expert's gate (2560 -> 1), the limit's edge at each block size (32 rows of 2560 and 64, 31 of 100, 17 of 300) and 7 of
+// 6144; with the switch on, 0 differences.
 // `multitoken_bitid q3k` checks Q3_K's dense products at 2 to 8 tokens (C726: the kernel of mmvq-pascal-q3kmt.cu with
 // GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 or 2, whose one-token kernel is the k-column kernel), at Qwen3.8-Flash-Next's Q3_K
 // projections (2560 -> 10240, 6144 and 12288; 6144 -> 2560; the shared expert's 2560 -> 640), at row widths that give 1
@@ -378,13 +383,14 @@ int main(int argc, char ** argv) {
     const bool dmtkt  = argc > 1 && strcmp(argv[1], "dmtkt") == 0;
     const bool bf16   = argc > 1 && strcmp(argv[1], "bf16") == 0;
     const bool f32    = argc > 1 && strcmp(argv[1], "f32") == 0;
+    const bool f32r   = argc > 1 && strcmp(argv[1], "f32r") == 0;
     const bool q3k    = argc > 1 && strcmp(argv[1], "q3k") == 0;
     const bool q6k    = argc > 1 && strcmp(argv[1], "q6k") == 0;
     const bool dmt8   = argc > 1 && strcmp(argv[1], "dmt8") == 0;
     const bool q5k8   = argc > 1 && strcmp(argv[1], "q5k8") == 0;
     const bool count_all = getenv("BITID_ALL") != nullptr && atoi(getenv("BITID_ALL")) == 1;
     const int  n_min  = dmt8 || q5k8 ? 5 : 2;
-    const int  n_max  = f32 || q3k || dmt8 || q5k8 ? 8 : 4;
+    const int  n_max  = f32 || f32r || q3k || dmt8 || q5k8 ? 8 : 4;
     if ((dmt8 && !ggml_cuda_mmvq_pascal_dmt_takes) || (q5k8 && !ggml_cuda_mmvq_pascal_q5k_mt_takes)) {
         fprintf(stderr, "%s: this build has no read-once kernels (ggml_cuda_mmvq_pascal_*_takes)\n", argv[1]);
         return 2;
@@ -432,6 +438,10 @@ int main(int argc, char ** argv) {
         : f32
         ? mode_cfg{ { GGML_TYPE_F32 },
                     { { 1, 2560 }, { 512, 2560 }, { 48, 64 }, { 33, 100 }, { 129, 300 }, { 7, 6144 } },
+                    1, 1, 256, 256, false, 0 }
+        : f32r
+        ? mode_cfg{ { GGML_TYPE_F32 },
+                    { { 1, 2560 }, { 32, 2560 }, { 32, 64 }, { 31, 100 }, { 17, 300 }, { 7, 6144 } },
                     1, 1, 256, 256, false, 0 }
         : mode_cfg{ { GGML_TYPE_Q8_0, GGML_TYPE_Q5_0, GGML_TYPE_Q4_1, GGML_TYPE_Q4_0, GGML_TYPE_Q5_K, GGML_TYPE_IQ4_XS,
                       GGML_TYPE_Q6_K },
