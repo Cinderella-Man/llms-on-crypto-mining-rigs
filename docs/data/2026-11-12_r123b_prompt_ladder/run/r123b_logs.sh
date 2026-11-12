@@ -38,6 +38,6 @@ for spec in "$@"; do
     [ -f "$d.launch" ] && grep -E '^CUDA_' "$d.launch" | sed 's/^/env: /' || true
     grep -m1 '^ARGS=' "$d/env.txt" | grep -o -- '-otd [^ ]*' | sed 's/^/line: /' || echo "line: no -otd rule"
     grep -o -E 'n_u?batch *= *[0-9]+' <<< "$log" | sed -E 's/ +/ /g' | sort | uniq -c | sed -E 's/^ +//; s/^/contexts: /' || true
-    grep -E 'token_embd\.weight .* in CUDA|LLAMA_DRAFT_EMBD_DEV|FATTN_SPARSE_PASCAL_PROMPT|GGML_CUDA_GRAPHS_FORCE:|LLAMA_MTP_KV_ONLY:|LLAMA_MTP_CATCHUP_OVERLAP:' <<< "$log" \
+    grep -E 'token_embd\.weight.*(overridden to|in CUDA|using CUDA)|LLAMA_DRAFT_EMBD_DEV|FATTN_SPARSE_PASCAL_PROMPT|GGML_CUDA_GRAPHS_FORCE:|LLAMA_MTP_KV_ONLY:|LLAMA_MTP_CATCHUP_OVERLAP:' <<< "$log" \
       | sed -E 's/^[0-9.]+ [A-Z] //' | sort | uniq -c | sed -E 's/^ +//' || true; } >> "$OUT/switch_lines.txt"
 done
