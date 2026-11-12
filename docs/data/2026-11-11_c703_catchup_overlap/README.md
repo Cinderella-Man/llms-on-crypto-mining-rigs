@@ -186,7 +186,12 @@ setsid -f nohup bash docs/data/2026-11-11_c703_catchup_overlap/run/checks.sh > <
 
 ## On the rig
 
-Not run yet: Q1304. It relays the tarball to a rig and runs three things, each with the `wait` and `collect` steps of
+**(a) ran on 2026-11-12 ([2026-11-12_r84a_c703_identity](../2026-11-12_r84a_c703_identity/README.md)): the identity
+holds on a P106.** With the switch the load gives the same 39 verify steps as both control loads, every field the same,
+and logs 20 kept catch-ups; the output card holds 80 MiB more. It ran on `pascal-p106-v4` `d097d6d88`, which holds this
+branch, in place of the tarball below. (b) and (c) are not run yet: they are the overlap rung of R123a (Q1401).
+
+Q1304 relays the tarball to a rig and runs three things, each with the `wait` and `collect` steps of
 [bench/deep_lane](../../../bench/deep_lane/README.md) or R42's driver.
 
 ```bash

@@ -1,0 +1,6 @@
+steps: draft1 39, overlap1 39, draft2 39; paired 39; with the draft's probabilities 39
+drafted tokens and probabilities: draft1 and draft2 agree on 39 steps (113 drafted tokens), differ on 0; overlap1 the same on 39 of those (113 tokens), different on 0
+every field: draft1 and draft2 agree on 39 steps; overlap1 the same on 39 of those
+largest draft probability difference: overlap1 - draft1 0.00000, draft2 - draft1 0.00000
+first difference where the controls agree: None
+PASS
