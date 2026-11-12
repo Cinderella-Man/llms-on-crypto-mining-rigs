@@ -1,0 +1,7 @@
+load	value	step_ms	ref_a_ms	ref_b_ms	minus_ref_mean_ms	class
+fka250	mean of the medians	112.275	111.887	111.989	0.338	loss
+fka250	greedy, median	107.939	108.093	107.924	-0.070	negligible
+fka250	long, median	116.612	115.680	116.055	0.745	loss
+feager	mean of the medians	165.702	111.887	111.989	53.764	loss
+feager	greedy, median	214.928	108.093	107.924	106.920	loss
+feager	long, median	116.477	115.680	116.055	0.609	loss

@@ -25,7 +25,9 @@ Waits. The fork's keep-alive (GGML_CUDA_KEEPALIVE, keepalive.cu) runs one block 
 computed on the card for GGML_CUDA_KEEPALIVE_MS (default 1,000 ms); the controller beats the card's block right after
 each evaluation's exit. An evaluation is "timeout-ended" when it ends between 1,000 and 1,000 + --win ms after its
 card's last beat (the latest exit of an earlier evaluation on that card, or its own exit when the host left it before
-the GPU finished): it waited for the block to end by itself. Its wait runs from its entry (or from the start of a host
+the GPU finished): it waited for the block to end by itself. --timeout sets the block's timeout when the run set
+GGML_CUDA_KEEPALIVE_MS (R128's fka250: 250), --min-wait the shortest wait counted (default 300 ms; R128 uses 100 with
+--timeout 250). Its wait runs from its entry (or from the start of a host
 idle of 100 ms or more right before it, when one precedes it) to its end. An evaluation ends at entry + the longer of
 its host span and its GPU time.
 
@@ -120,6 +122,8 @@ def main():
     ap.add_argument("--step-split", required=True)
     ap.add_argument("--tol", type=float, default=2.0)
     ap.add_argument("--win", type=float, default=60.0)
+    ap.add_argument("--timeout", type=float, default=TIMEOUT_MS)
+    ap.add_argument("--min-wait", type=float, default=300.0)
     ap.add_argument("--tsv-dir")
     a = ap.parse_args()
     sys.path.insert(0, a.step_split)
@@ -173,10 +177,10 @@ def main():
                 if not beats:
                     continue
                 since = end - max(beats)
-                if not (TIMEOUT_MS <= since <= TIMEOUT_MS + a.win):
+                if not (a.timeout <= since <= a.timeout + a.win):
                     continue
                 w0 = idle_before[i][0] if i in idle_before else en
-                if end - w0 < 300.0:
+                if end - w0 < a.min_wait:
                     continue  # an ordinary evaluation that happens to end near a timeout
                 j = in_main.get(i)
                 if end <= t_s:
@@ -232,7 +236,7 @@ def main():
     for r in req_rows:
         print("| " + " | ".join(f"{r[c]:.1f}" if isinstance(r[c], float) else str(r[c]) for c in cols) + " |")
     print()
-    print("## Every wait for a keep-alive block (an evaluation that ended 1,000 to 1,000 + "
+    print(f"## Every wait for a keep-alive block (an evaluation that ended {a.timeout:,.0f} to {a.timeout:,.0f} + "
           f"{a.win:.0f} ms after its card's last beat)")
     print()
     wcols = ["load", "request", "card", "evaluation", "where", "from_t_s_ms", "to_t_end_ms", "idle_before_ms",

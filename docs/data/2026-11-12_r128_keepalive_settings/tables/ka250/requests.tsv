@@ -1,0 +1,3 @@
+load	request	delta_ms	anchor	prompt_ms	predicted_ms	rest_ms	outside_ms	head_ms	head_waits_ms	head_idle_ms	head_other_ms	tail_ms	tail_waits_ms	tail_idle_ms	tail_other_ms	waits_in_gen	waits_in_gen_ms	waits_in_prompt	outside_less_waits_ms	last_eval_to_t_end_ms
+fka250	greedy	460.389	2 progress lines	4519.710	10094.130	9140.101	954.029	416.592	0.000	287.046	129.546	537.437	283.825	248.927	4.685	1	283.825	1	670.204	0.442
+fka250	long	540.981	2 progress lines, 3 fits (the largest)	24722.010	9535.100	9025.940	509.160	287.526	265.679	0.000	21.848	221.634	0.000	0.000	221.634	1	265.679	4	243.481	92.838

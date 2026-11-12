@@ -1,0 +1,11 @@
+load	min_mem_available_mib	swap_start_mib	swap_max_mib	major_faults	pswpin	pswpout
+e	505	19	19	1	0	0
+e-2	513	19	19	3	1	0
+f	519	19	19	1	0	0
+f-2	510	19	19	3	3	0
+fka250	529	20	20	28	1	0
+feager	79	20	1825	26069	44028	424074
+e771	520	27	27	3849	40	0
+e744	523	27	27	43	8	0
+e742	506	27	27	26	10	0
+fnoprof	510	27	27	19	4	0
