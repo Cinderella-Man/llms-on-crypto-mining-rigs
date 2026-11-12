@@ -7,7 +7,8 @@
 # Writes $OUT/loads.tsv (the load's start, server up, replay end and done times from run.log, the server's count of
 # switches set, checkpoint and taper lines, the replay's own per-pass line), $OUT/cards.tsv (each card's memory after
 # the load and after the replay), $OUT/host.tsv (the host's used, buff/cache and available MiB from free -m after the
-# load and after the replay) and $OUT/switch_lines.txt (per load: the switch list, the CUDA_ variables, the -otd rule
+# load and after the replay), $OUT/buffers.tsv (every model, KV and compute buffer line of the server log in order:
+# the target's context first, then the draft's) and $OUT/switch_lines.txt (per load: the switch list, the CUDA_ variables, the -otd rule
 # in the line, n_batch, where the draft's token table went, and the lines the ladder's switches print; colour codes
 # removed).
 # Since C804 (Q1408, 2026-11-12) also $OUT/realloc_marks.tsv: the target graph's reallocations per load from each
@@ -20,6 +21,7 @@ mkdir -p "$OUT"
 printf 'load\tstart\tup_s\treplay_end\tdone\tswitches_set\tcheckpoint_lines\ttaper_lines\treplay\n' > "$OUT/loads.tsv"
 printf 'load\twhen\tcard\tmemory_used_mib\n' > "$OUT/cards.tsv"
 printf 'load\twhen\ttotal_mib\tused_mib\tfree_mib\tshared_mib\tbuff_cache_mib\tavailable_mib\n' > "$OUT/host.tsv"
+printf 'load\tn\twhere\tdevice\tkind\tmib\n' > "$OUT/buffers.tsv"
 : > "$OUT/switch_lines.txt"
 for spec in "$@"; do
   n=${spec%%=*}; d=${spec#*=}
@@ -32,6 +34,8 @@ for spec in "$@"; do
   ck=$(wc -l < "$d/load-A/checkpoints.txt"); tp=$(wc -l < "$d/load-A/taper_lines.txt")
   log=$(sed 's/\x1b\[[0-9;]*m//g' "$d/load-A/server.log")
   sw=$(grep -m1 -o 'switches: [0-9]* set' <<< "$log" | cut -d' ' -f2)
+  grep -E '^(load_tensors|llama_kv_cache|sched_reserve|llama_memory_recurrent): +[A-Za-z0-9_]+ (model|KV|compute|RS) buffer size' <<< "$(sed -E 's/^[0-9.]+ [A-Z] //' <<< "$log")" \
+    | awk -v n="$n" '{ sub(":", "", $1); for (i = 1; i <= NF; i++) if ($i == "=") v = $(i + 1); printf "%s\t%d\t%s\t%s\t%s\t%s\n", n, NR, $1, $2, $3, v }' >> "$OUT/buffers.tsv" || true
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$n" "$start" "$up" "$rend" "$done_t" "$sw" "$ck" "$tp" "$rep" >> "$OUT/loads.tsv"
   for w in loaded after; do
     grep -E '^[0-9]+, [0-9]+ MiB' "$d/load-A/memory_$w.txt" | sed -E "s/^([0-9]+), ([0-9]+) MiB.*/$n\t$w\t\1\t\2/" >> "$OUT/cards.tsv"
