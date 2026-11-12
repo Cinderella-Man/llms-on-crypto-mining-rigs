@@ -1,0 +1,51 @@
+ok   rig: the run ends with DEEP_DONE
+ok   rig: 16 requests in each of 10 timed loads and 4 in the warm-up load (164)
+ok   rig: a warm-up load, then the arms alternated twice
+ok   rig: every prompt is exactly its depth (depth 0: the 64-id tail)
+ok   rig: 64 tokens out on every timed request, times valid
+ok   rig: the same prompt ids on every load
+ok   rig: the tag keeps one arm's 6 sessions (6)
+ok   rig: the preset's line as it is
+ok   rig: the draft-off arm has no -md, --spec-* or -otd
+ok   rig: the context arm has -c 131072 -ub 256
+ok   rig: the arm's variable and the preset's reach the server
+ok   rig: an arm as fast as the control is negligible at every depth
+ok   rig: the faster arm is a gain at every depth
+ok   rig: the arm without the draft is a loss at every depth
+ok   rig: the step's time per pass: the same line negligible, the faster one a gain, no class for the arm without the draft
+ok   rig: draft counters and tokens a step with the draft, none without
+ok   rig: the greedy reply is the same in every arm at every depth
+ok   rig: a prime reads only the chunk past the previous depth's checkpoint (516 on 444)
+ok   rig: pass 1 reads the tail on the prime's checkpoint, pass 2 the last 4 tokens
+ok   rig: the sampler pass writes another reply than the greedy passes
+ok   rig: the quiet check and the loaded cards are written per load
+ok   rig: no stop, so no stopped/ folder, no stop line, nothing about stops in the table
+ok   resume: every load skipped, the same requests.csv
+ok   other: a folder of another run is refused and left as it is
+ok   busy: refused before any load
+ok   ptx: done, every request marked valid=0
+ok   ptx: no speed in the tables, the draft counters kept
+ok   ptx: three equal cards, -otd dropped, the RUNNER and the STOP_CMD used
+ok   ptx: a CUDA_CACHE_PATH added, the keep-alive variable dropped
+ok   fresh: no prime, every request reads its whole prompt
+ok   fresh: plain text with a tail text, depth 0 the tail alone
+ok   short: too little text stops the run in the warm-up load
+ok   ctx: a depth beyond the context is refused before any load
+ok   stop1: two loads stopped, the run ends with DEEP_DONE
+ok   stop1: the stopped loads run again after the other loads, in the order they stopped (['warm', 'base1', 'host1', 'base2', 'host2', 'host1', 'base2'])
+ok   stop1: loads.tsv lists every start and every stop ([('warm', '0'), ('base1', '1'), ('host1', '1'), ('host1', 'stopped'), ('base2', 'stopped'), ('host2', '1'), ('host1', '1'), ('base2', '1')])
+ok   stop1: host1's files set aside in stopped/host1-1, stopped between 512 and its last request (5 requests)
+ok   stop1: base2 stopped while loading, its files in stopped/base2-1
+ok   stop1: the loads run again have files of their own, and finish
+ok   stop1: requests.csv holds each load once, without the stopped requests (51)
+ok   stop1: the table lists both stops, where and why, and the loads in the order they ran
+ok   stop1: the slower arm is classed on its two loads, the one run again among them
+ok   stop2: a second stop of host1 ends the run
+ok   stop2: the other loads ran between the two stops; both stops set aside and listed
+ok   stop0: with RETRY_STOPPED=0 the first stop ends the run, its files left in place
+ok   table: inside the spread negligible, above it gain, below it loss ({('x', '0'): 'negligible', ('x', '8192'): 'gain', ('x', '16384'): 'loss'})
+ok   table: spread 0.20, +1.05 tok/s, +7.0 % at 8,192 (0.20, 1.05, 7.0)
+ok   table: each load's ms a token beside its tok/s, no step table without a draft
+ok   table: replies that differ between the control's own loads are counted per arm, not called a difference between arms
+selftest passed
+new: selftest.sh exited 0 after 121 s

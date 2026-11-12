@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# selftest.sh WORK: the deep lane end to end against bench/agent_check/mock_server.py: no model, no GPU, under a
-# minute of one CPU core. It runs deep_lane.sh on the real release preset (release/flash-next-v3/settings.env) with the
+# selftest.sh WORK: the deep lane end to end against bench/agent_check/mock_server.py: no model, no GPU. It runs deep_lane.sh on the real release preset (release/flash-next-v3/settings.env) with the
 # mock as the server, on recorded text it writes itself, and checks the results. nvidia-smi and ps are stand-ins in
 # WORK/bin, so the quiet checks see an idle machine (or a busy one, FAKE_BUSY=1) whatever runs on this one.
 # Runs, each in WORK/<name> with its console in WORK/<name>.console:
@@ -14,8 +13,13 @@
 #   fresh   CACHE=0 on plain text with a TAIL_TEXT
 #   short   a depth the recorded text cannot fill: stops in the warm-up load
 #   ctx     a depth the context cannot hold: refused before any load
+#   stop1   the RAM watchdog (scripts/ram_watchdog.sh on a stand-in /proc/meminfo) stops host1 in the middle of its
+#           requests and base2 while it loads: both set aside and run again after the other loads, the run done
+#   stop2   the watchdog stops host1 on both starts: the second stop ends the run
+#   stop0   RETRY_STOPPED=0: the first stop ends the run, as before C778
 #   table   deep_table.py alone on a hand-made requests.csv with a gain, a negligible and a loss
-# Uses port DEEP_TEST_PORT (default 18097) on 127.0.0.1. Prints one line per check and exits non-zero if one fails.
+# About two minutes of one CPU core, most of it the stop runs' slower host arm. Uses port DEEP_TEST_PORT (default
+# 18097) on 127.0.0.1. Prints one line per check and exits non-zero if one fails.
 set -uo pipefail
 WORK=$(realpath -m "${1:?usage: selftest.sh WORK}")
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -39,6 +43,29 @@ echo bash
 exit 0
 EOF
 chmod +x "$WORK/bin/nvidia-smi" "$WORK/bin/ps"
+# The RAM watchdog as deep_lane.sh starts it, on a stand-in /proc/meminfo: 3,900 MiB available, and 50 MiB (below its
+# floor of 60) on the starts DEEP_TEST_STOPS names, each "load:when:starts": the load's first <starts> starts, from the
+# watchdog's first sample (when=load) or from the moment the client has written decode pass 1 at depth <when>
+cat > "$WORK/bin/watchdog.sh" << 'EOF'
+#!/usr/bin/env bash
+out=$(dirname "$SERVER_LOG"); load=$(basename "$SERVER_LOG" .log); load=${load#server-}
+mem=$DEEP_TEST_WORK/mem-$(basename "$out")/$load
+mkdir -p "${mem%/*}"
+n=$(($(cat "$mem.starts" 2> /dev/null || echo 0) + 1)); echo "$n" > "$mem.starts"
+avail() { printf 'MemAvailable: %d kB\nCmaFree: 0 kB\nSwapTotal: 0 kB\nSwapFree: 0 kB\n' $(($1 * 1024)) > "$mem.tmp"; mv "$mem.tmp" "$mem"; }
+avail 3900
+for s in ${DEEP_TEST_STOPS:-}; do
+  IFS=: read -r l when starts <<< "$s"
+  [ "$l" = "$load" ] && [ "$n" -le "$starts" ] || continue
+  if [ "$when" = load ]; then
+    avail 50
+  else
+    (for _ in $(seq 600); do grep -qs ",decode,1,$when," "$out/requests-$load.csv" && { avail 50; break; }; sleep 0.1; done) \
+      > /dev/null 2>&1 < /dev/null &
+  fi
+done
+MEMINFO=$mem PSI=/nonexistent KILL_SWAPOUT_MIB=off MIN_AVAIL_MB=60 exec bash "$DEEP_TEST_WATCHDOG"
+EOF
 
 # Recorded text: 12 sessions of two arms as the agent check's proxy writes them (4 requests each, the history
 # growing), and a plain text of agent turns
@@ -97,6 +124,12 @@ run ptx FAKE_BUSY=1 QUIET=0 RUNNER="nice -n 19" STOP_CMD="touch $WORK/ptx-stoppe
 run fresh TEXT="$WORK/text/agent.txt" TAG= TAIL_TEXT=$'\n### assistant\n' CACHE=0 REPS=1 WARM=0
 run short DEPTHS="0 60000"
 run ctx DEPTHS="0 65536"
+# the host arm decodes 200 times slower, so that a stop in its requests lands seconds before the load's last request
+STOP_ARMS=(ARMS="base host" "ARM_ARGS_host=--decode-ms 40" WATCHDOG="$WORK/bin/watchdog.sh" DEEP_TEST_WORK="$WORK"
+  DEEP_TEST_WATCHDOG="$HERE/../../scripts/ram_watchdog.sh")
+run stop1 "${STOP_ARMS[@]}" DEEP_TEST_STOPS="host1:512:1 base2:load:1"
+run stop2 "${STOP_ARMS[@]}" DEEP_TEST_STOPS="host1:512:2"
+run stop0 "${STOP_ARMS[@]}" DEEP_TEST_STOPS="host1:512:1" RETRY_STOPPED=0
 
 # deep_table.py alone: control c (20.0 and 20.2 tok/s at depth 0, 15.0 and 15.1 at 8,192, 12.0 and 12.1 at 16,384)
 # against x: 20.1 and 20.3 (inside the spread), 16.0 and 16.2 (above it), 11.0 and 11.3 (below it)
@@ -123,7 +156,7 @@ python3 -I "$HERE/deep_table.py" "$WORK/table" --out "$WORK/table/table.md" --ts
 echo $? > "$WORK/table.rc"
 
 python3 -I - "$WORK" << 'EOF'
-import csv, json, sys
+import csv, json, re, sys
 from pathlib import Path
 w = Path(sys.argv[1])
 fails = []
@@ -185,6 +218,8 @@ check(all(p1[k]['cache_n'] == str(int(k[1]) - 68) and p2[k]['cache_n'] == str(in
 sm = [r for r in timed if r['kind'] == 'sample']
 check(len(sm) == 40 and all(r['ids_md5'] != p1[(r['load'], r['depth'])]['ids_md5'] for r in sm), 'rig: the sampler pass writes another reply than the greedy passes')
 check(text('rig/quiet_base1.txt').count('no llama process') == 1 and (w / 'rig/fit_base1.txt').exists(), 'rig: the quiet check and the loaded cards are written per load')
+check(not (w / 'rig/stopped').exists() and {r['timed'] for r in table('rig/loads.tsv', True)} == {'0', '1'}
+      and 'RAM watchdog' not in text('rig/table.md') + text('rig.console'), 'rig: no stop, so no stopped/ folder, no stop line, nothing about stops in the table')
 # resume, other settings
 check(text('resume.console').count('skipped') == 10 and 'LOAD warm' not in text('resume.console')
       and 'DEEP_DONE' in text('resume.console') and text('rig-first.csv') == text('rig/requests.csv'), 'resume: every load skipped, the same requests.csv')
@@ -213,6 +248,55 @@ check(text('short.rc').strip() == '1' and 'need 59936 for depth 60000' in text('
       and not (w / 'short/requests-base1.csv').exists(), 'short: too little text stops the run in the warm-up load')
 check(text('ctx.rc').strip() == '1' and 'does not fit its context of 65536' in text('ctx.console') and not (w / 'ctx/loads.tsv').exists(),
       'ctx: a depth beyond the context is refused before any load')
+# stop1, stop2, stop0: the RAM watchdog's stops
+def starts(run):  # the loads in the order the console started them
+    return re.findall(r'^\S+ LOAD (\S+) \(', text(f'{run}.console'), re.M)
+def lines(run):  # (load, timed) of every line in loads.tsv
+    return [(r['load'], r['timed']) for r in table(f'{run}/loads.tsv', True)]
+def folders(run):
+    p = w / run / 'stopped'
+    return sorted(x.name for x in p.iterdir()) if p.exists() else []
+WHY = 'watchdog: MemAvailable 50 MiB, below 60, killing'
+check(text('stop1.rc').strip() == '0' and 'DEEP_DONE' in text('stop1.console') and (w / 'stop1/done').exists()
+      and not (w / 'stop1/failed').exists(), 'stop1: two loads stopped, the run ends with DEEP_DONE')
+check(starts('stop1') == ['warm', 'base1', 'host1', 'base2', 'host2', 'host1', 'base2'],
+      f'stop1: the stopped loads run again after the other loads, in the order they stopped ({starts("stop1")})')
+check(lines('stop1') == [('warm', '0'), ('base1', '1'), ('host1', '1'), ('host1', 'stopped'), ('base2', 'stopped'),
+                         ('host2', '1'), ('host1', '1'), ('base2', '1')], f'stop1: loads.tsv lists every start and every stop ({lines("stop1")})')
+h, b = w / 'stop1/stopped/host1-1', w / 'stop1/stopped/base2-1'
+hrows = table('stop1/stopped/host1-1/requests-host1.csv')
+check(folders('stop1') == ['base2-1', 'host1-1'] and WHY in text('stop1/stopped/host1-1/server-host1.log')
+      and ' KILL ' in text('stop1/stopped/host1-1/ram_watchdog-host1.tsv') and (h / 'host1.jsonl').exists()
+      and (h / 'quiet_host1.txt').exists() and (h / 'fit_host1.txt').exists()
+      and any((r['kind'], r['pass'], r['depth']) == ('decode', '1', '512') for r in hrows)
+      and not any(r['depth'] == '2048' and r['kind'] == 'decode' for r in hrows),
+      f'stop1: host1\'s files set aside in stopped/host1-1, stopped between 512 and its last request ({len(hrows)} requests)')
+check(WHY in text('stop1/stopped/base2-1/server-base2.log') and (b / 'ram_watchdog-base2.tsv').exists()
+      and (b / 'quiet_base2.txt').exists() and not (b / 'fit_base2.txt').exists() and not (b / 'requests-base2.csv').exists(),
+      'stop1: base2 stopped while loading, its files in stopped/base2-1')
+check(all('watchdog:' not in text(f'stop1/server-{l}.log') and text(f'stop1/server-{l}.log').count('=== ') == 1
+          and (w / f'stop1/load-{l}.done').exists() for l in ('host1', 'base2')), 'stop1: the loads run again have files of their own, and finish')
+rows = table('stop1/requests.csv')
+keys = [(r['load'], r['kind'], r['pass'], r['depth']) for r in rows]
+check(len(rows) == 4 * 12 + 3 and len(set(keys)) == len(keys), f'stop1: requests.csv holds each load once, without the stopped requests ({len(rows)})')
+t = text('stop1/table.md')
+check('Timed loads, in their order: base1, host2, host1, base2.' in t
+      and re.search(r'- Stopped by the RAM watchdog \(2 stops, each load\'s files set aside\): `host1` \(host\) after '
+                    r'(decode pass [12]|the prime) at depth (512|1,024|2,048) \(MemAvailable 50 MiB, below 60\), `stopped/host1-1`, run again; '
+                    r'`base2` \(base\) while loading \(MemAvailable 50 MiB, below 60\), `stopped/base2-1`, run again\.', t) is not None,
+      'stop1: the table lists both stops, where and why, and the loads in the order they ran')
+c = classes('stop1/classes.tsv')
+check(all(c.get(('host', d)) == 'loss' for d in depths), 'stop1: the slower arm is classed on its two loads, the one run again among them')
+check(text('stop2.rc').strip() == '1' and 'DEEP_FAILED: load host1: the RAM watchdog stopped the server a second time' in text('stop2.console')
+      and (w / 'stop2/failed').exists() and not (w / 'stop2/done').exists(), 'stop2: a second stop of host1 ends the run')
+check(starts('stop2') == ['warm', 'base1', 'host1', 'base2', 'host2', 'host1'] and folders('stop2') == ['host1-1', 'host1-2']
+      and all(WHY in text(f'stop2/stopped/{x}/server-host1.log') for x in ('host1-1', 'host1-2'))
+      and [l for l in lines('stop2') if l[1] == 'stopped'] == [('host1', 'stopped')] * 2
+      and (w / 'stop2/load-base2.done').exists() and (w / 'stop2/load-host2.done').exists() and not (w / 'stop2/load-host1.done').exists(),
+      'stop2: the other loads ran between the two stops; both stops set aside and listed')
+check(text('stop0.rc').strip() == '1' and 'DEEP_FAILED: load host1: the RAM watchdog stopped the server (server-host1.log)' in text('stop0.console')
+      and starts('stop0') == ['warm', 'base1', 'host1'] and folders('stop0') == [] and WHY in text('stop0/server-host1.log')
+      and 'stopped' not in {t for _, t in lines('stop0')}, 'stop0: with RETRY_STOPPED=0 the first stop ends the run, its files left in place')
 # table
 c = classes('table/classes.tsv')
 check(text('table.rc').strip() == '0' and (c.get(('x', '0')), c.get(('x', '8192')), c.get(('x', '16384'))) == ('negligible', 'gain', 'loss'),

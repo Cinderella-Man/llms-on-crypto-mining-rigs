@@ -41,9 +41,14 @@
 #   WATCHDOG  scripts/ram_watchdog.sh for the server (default ram_watchdog.sh beside this script, else the
 #             repository's; none with a RUNNER); a host under 8 GB needs it or WATCHDOG=off; WD_ENV its limits
 #             (e.g. MIN_AVAIL_MB=60)
+#   RETRY_STOPPED (1): a load the RAM watchdog stops is set aside and the run goes on: its files go to
+#             OUT/stopped/<load>-<n>/, loads.tsv gets a line with timed "stopped", and the load runs again after the
+#             other loads (a stopped warm-up load is not run again). A second stop of the same load in one run ends
+#             the run. RETRY_STOPPED=0: every stop ends the run, its files left in OUT.
 #   MONITOR (1) per-card temperature, power, clock, memory and utilization every 10 s to OUT/gpu.csv
 #   PORT (8097), LOAD_TIMEOUT_S (1800), DRY (0; 1 prints each arm's line and stops)
-# Prints "LOAD <name> done" per load, then DEEP_DONE (and writes OUT/done), or DEEP_FAILED with the reason (OUT/failed).
+# Prints "LOAD <name> done" per load ("LOAD <name> stopped by the RAM watchdog" for a stop), then DEEP_DONE (and writes
+# OUT/done), or DEEP_FAILED with the reason (OUT/failed).
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 : "${BIN:?BIN=<llama-server>}" "${OUT:?OUT=<results folder>}" "${TEXT:?TEXT=<recorded agent text>}"
@@ -73,6 +78,7 @@ DRAFT_FLAGS=${DRAFT_FLAGS:-^(-md|--model-draft|-otd|--override-tensor-draft|-ngl
 RUNNER=${RUNNER:-}
 PORT=${PORT:-8097}
 LOAD_TIMEOUT_S=${LOAD_TIMEOUT_S:-1800}
+RETRY_STOPPED=${RETRY_STOPPED:-1}
 [ -d "$BIN" ] && BIN=$BIN/llama-server
 if [ -z "${WATCHDOG:-}" ]; then
   WATCHDOG=none
@@ -81,7 +87,8 @@ if [ -z "${WATCHDOG:-}" ]; then
   fi
 fi
 mkdir -p "$OUT"
-SRV='' WD='' MON=''
+SRV='' WD='' MON='' WD_TSV=''
+STOPPED='' RETRY=''  # the loads the RAM watchdog stopped in this run; the specs of those that run again at the end
 
 say() { echo "$(date +%H:%M:%S) $*"; }
 fail() { echo "DEEP_FAILED: $* $(date -Is)"; rm -f "$OUT/done"; echo "$*" > "$OUT/failed"; exit 1; }
@@ -175,7 +182,10 @@ wd_start() {  # wd_start LOAD: the RAM watchdog on the server, at real-time prio
   WD=$!
   until grep -qs '^[0-9]' "$WD_TSV"; do  # its first sample
     n=$((n + 1))
-    if [ "$n" -gt 12 ] || ! kill -0 "$WD" 2> /dev/null; then say "the RAM watchdog did not come up:"; cat "$OUT/watchdog.out"; return 1; fi
+    if [ "$n" -gt 12 ] || ! kill -0 "$WD" 2> /dev/null; then
+      grep -qs '^[0-9]' "$WD_TSV" && break  # it sampled, and ended: it stopped the server at its first sample
+      say "the RAM watchdog did not come up:"; cat "$OUT/watchdog.out"; return 1
+    fi
     sleep 0.5
   done
   say "$(grep -m 1 'ram_watchdog:' "$WD_TSV" | sed 's/^# [0-9]* /watchdog up: /')"
@@ -231,6 +241,48 @@ combine() {  # OUT/requests.csv: every finished or running load's requests, in t
     if [ $first = 1 ]; then cat "$f"; first=0; else tail -n +2 "$f"; fi >> "$OUT/requests.csv.tmp"
   done
   mv "$OUT/requests.csv.tmp" "$OUT/requests.csv"
+}
+
+load_line() {  # load_line TIMED: the load's line in loads.tsv (1, 0 for the warm-up, "stopped" for a stop)
+  local line="${ENVS[*]} ${LINE[*]}"  # as it ran, the draft named by its file alone
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$arm" "$1" "$VALID" "$A_DRAFT" "$A_CTX" \
+    "$A_UB" "$CACHE" "$N_PREDICT" "$started" "$LOAD_S" "$(basename "$MODEL")" "$A_ENV" "$A_ARGS" \
+    "${line//$MODEL_DRAFT/$(basename "$MODEL_DRAFT")}" "$A_BIN" >> "$OUT/loads.tsv"
+}
+
+wd_stopped() {  # wd_stopped LOAD: 0 when the RAM watchdog stopped the load's server (its line in the server log or its KILL)
+  if [ -n "$WD" ] && ! kill -0 "$SRV" 2> /dev/null; then  # the server is gone: the watchdog logs why and ends within 1 s
+    for _ in 1 2 3 4 5 6; do kill -0 "$WD" 2> /dev/null || break; sleep 0.5; done
+  fi
+  grep -qs '^watchdog:' "$OUT/server-$1.log" || grep -qs '^# [0-9]* KILL ' "$WD_TSV"
+}
+
+stopped() {  # stopped SPEC: after a load failed. 1 when the RAM watchdog did not stop it; else the load is set aside and
+  # runs again at the end (0), or the run ends: with RETRY_STOPPED=0, or on the load's second stop in this run
+  local n=1 f why dir
+  wd_stopped "$name" || return 1
+  [ "$RETRY_STOPPED" = 1 ] || fail "load $name: the RAM watchdog stopped the server (server-$name.log)"
+  why=$(sed -n 's/^watchdog: \(.*\), killing .*/\1/p' "$OUT/server-$name.log" 2> /dev/null | head -n 1)
+  [ -n "$why" ] || why=$(sed -n 's/^# [0-9]* KILL [^:]*: //p' "$WD_TSV" 2> /dev/null | head -n 1)
+  stop_server
+  while [ -e "$OUT/stopped/$name-$n" ]; do n=$((n + 1)); done
+  dir=stopped/$name-$n
+  mkdir -p "$OUT/$dir"
+  for f in "server-$name.log" "ram_watchdog-$name.tsv" "requests-$name.csv" "$name.jsonl" "quiet_$name.txt" \
+    "fit_$name.txt" watchdog.out; do
+    [ -e "$OUT/$f" ] && mv "$OUT/$f" "$OUT/$dir/"
+  done
+  combine
+  load_line stopped
+  say "LOAD $name stopped by the RAM watchdog ($why): its files in $dir"
+  [[ " $STOPPED " == *" $name "* ]] && fail "load $name: the RAM watchdog stopped the server a second time in this run ($dir)"
+  STOPPED="$STOPPED $name"
+  if [ "$name" = warm ]; then
+    say "  the warm-up load is not run again"
+  else
+    RETRY="$RETRY $1"
+    say "  it runs again after the other loads"
+  fi
 }
 
 cleanup() {
@@ -307,11 +359,11 @@ if [ "${MONITOR:-1}" = 1 ] && command -v nvidia-smi > /dev/null; then
   MON=$!
 fi
 
-for spec in $RUN; do
-  name=${spec%%:*}; arm=${spec#*:}; CUR=$name
+run_load() {  # run_load SPEC: one load (name:arm); a load the RAM watchdog stopped is set aside by stopped
+  name=${1%%:*}; arm=${1#*:}; CUR=$name
   timed=1; depths=$DEPTHS
   if [ "$name" = warm ]; then timed=0; depths=$WARM_DEPTHS; fi
-  if [ -f "$OUT/load-$name.done" ] && [ "$timed" = 1 ]; then say "LOAD $name: done in an earlier run, skipped"; continue; fi
+  if [ -f "$OUT/load-$name.done" ] && [ "$timed" = 1 ]; then say "LOAD $name: done in an earlier run, skipped"; return 0; fi
   arm_config "$arm"
   if [ "$QUIET" = 1 ]; then
     waited=0
@@ -322,14 +374,12 @@ for spec in $RUN; do
   fi
   say "LOAD $name ($arm)"
   started=$(date -Is)
+  LOAD_S=''
   if ! start_server "$name"; then
-    grep -q '^watchdog:' "$OUT/server-$name.log" && fail "load $name: the RAM watchdog stopped the server (server-$name.log)"
-    fail "load $name: the server did not start (server-$name.log)"
+    stopped "$1" || fail "load $name: the server did not start (server-$name.log)"
+    return 0
   fi
-  line="${ENVS[*]} ${LINE[*]}"  # as it ran, the draft named by its file alone
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$name" "$arm" "$timed" "$VALID" "$A_DRAFT" "$A_CTX" \
-    "$A_UB" "$CACHE" "$N_PREDICT" "$started" "$LOAD_S" "$(basename "$MODEL")" "$A_ENV" "$A_ARGS" \
-    "${line//$MODEL_DRAFT/$(basename "$MODEL_DRAFT")}" "$A_BIN" >> "$OUT/loads.tsv"
+  load_line "$timed"
   # shellcheck disable=SC2086
   python3 -I "$HERE/deep_client.py" --port "$PORT" --arm "$arm" --load "$name" --depths "${depths// /,}" \
     --need-depth "$max_depth" --n-predict "$N_PREDICT" --text $TEXT "--tag=${TAG:-}" --tail-ids "${TAIL_IDS:-64}" \
@@ -339,14 +389,18 @@ for spec in $RUN; do
   rc=$?
   combine
   if [ "$rc" != 0 ]; then
-    grep -q '^watchdog:' "$OUT/server-$name.log" && fail "load $name: the RAM watchdog stopped the server (server-$name.log)"
-    fail "load $name: the client exited with $rc"
+    stopped "$1" || fail "load $name: the client exited with $rc"
+    return 0
   fi
   stop_server
   touch "$OUT/load-$name.done"
   say "LOAD $name done"
-done
+}
+
+for spec in $RUN; do run_load "$spec"; done
+for spec in $RETRY; do say "LOAD ${spec%%:*} again, after the RAM watchdog stopped it"; run_load "$spec"; done
 [ "$QUIET" = 1 ] && { quiet end || say "not idle after the last load (quiet_end.txt)"; }
+[ -z "$STOPPED" ] || say "the RAM watchdog stopped$STOPPED once each in this run (loads.tsv, stopped/, table.md)"
 python3 -I "$HERE/deep_table.py" "$OUT" --out "$OUT/table.md" --tsv "$OUT/classes.tsv" > /dev/null || fail "deep_table.py failed"
 touch "$OUT/done"
 echo "DEEP_DONE $(date -Is): $OUT/table.md"

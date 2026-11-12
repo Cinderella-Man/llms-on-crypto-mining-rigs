@@ -18,7 +18,9 @@ it every load but `warm` counts as timed) and prints Markdown, also written to -
   arm (its token ids' md5 where the server returned them, else its text's) or how many replies each arm's loads
   wrote, what each prime read, and the target graph's reallocations per load (C804, Q1408: each request's change in
   the server log's `graph reallocs = S / D`, as scripts/realloc_counts.py counts it), with an arm marked when its
-  loads reallocate where the control's do not.
+  loads reallocate where the control's do not; and every load the RAM watchdog stopped (C778: a loads.tsv line with
+  timed `stopped`, the n-th of a load with its files in stopped/<load>-<n>/): the last request it answered, the
+  watchdog's reason, and whether the load ran again. A load listed more than once counts with its last start.
 The class of an arm against the control (--control, default the first arm): the spread is the larger of the two
 arms' differences between their fastest and slowest load; gain when the arm's mean is above the control's by more
 than the spread (for a time: below it), loss when below by more than it (for a time: above), else negligible; with
@@ -46,10 +48,14 @@ MIN_READ = 32  # prompt tokens a request must have read for its prompt speed to 
 
 with open(os.path.join(A.src, 'requests.csv'), newline='') as f:
     rows = list(csv.DictReader(f))
-loads = {}
+loads, stops = {}, []
 if os.path.exists(os.path.join(A.src, 'loads.tsv')):
     with open(os.path.join(A.src, 'loads.tsv'), newline='') as f:
         for r in csv.DictReader(f, delimiter='\t', quoting=csv.QUOTE_NONE):
+            if r['timed'] == 'stopped':  # a load the RAM watchdog stopped (C778): its files in stopped/<load>-<n>/
+                stops.append(r)
+                continue
+            loads.pop(r['load'], None)  # a load started again counts with its last start, in that place
             loads[r['load']] = r
 else:
     for r in rows:
@@ -354,6 +360,45 @@ else:
         marks.append(f'`{control}` reallocates itself.')
     md.append('- Graph reallocations of the target, requests with one per load: ' + '; '.join(cells) + '.'
               + (' ' + ' '.join(marks) if marks else ''))
+
+
+def stop_note(r, k):
+    """C778: a load the RAM watchdog stopped, from its k-th stop line and the folder stopped/<load>-<k>: where it was
+    (the last request answered), why, and whether the load ran again."""
+    ld = r['load']
+    d = os.path.join(A.src, 'stopped', f'{ld}-{k}')
+    why = ''
+    if os.path.exists(os.path.join(d, f'server-{ld}.log')):
+        with open(os.path.join(d, f'server-{ld}.log'), errors='replace') as f:
+            m = next((re.match(r'watchdog: (.*), killing ', x) for x in f if x.startswith('watchdog:')), None)
+            why = m.group(1) if m else ''
+    done = []
+    if os.path.exists(os.path.join(d, f'requests-{ld}.csv')):
+        with open(os.path.join(d, f'requests-{ld}.csv'), newline='') as f:
+            done = list(csv.DictReader(f))
+    if not os.path.isdir(d):
+        where = 'its files not here'
+    elif not os.path.exists(os.path.join(d, f'fit_{ld}.txt')):
+        where = 'while loading'
+    elif not done:
+        where = 'before its first reply'
+    else:
+        x = done[-1]
+        at = f' at depth {int(x["depth"]):,}'
+        where = 'after ' + {'decode': f'decode pass {x["pass"]}{at}', 'prime': f'the prime{at}',
+                            'sample': f'the sampler pass{at}'}.get(x['kind'], 'its warm-up request')
+    again = 'run again' if ld in timed else ('the warm-up, not run again' if ld == 'warm' else 'not run again')
+    return f'`{ld}` ({r["arm"]}) {where}' + (f' ({why})' if why else '') + f', `stopped/{ld}-{k}`, {again}'
+
+
+if stops:
+    seen = {}
+    notes = []
+    for r in stops:
+        seen[r['load']] = seen.get(r['load'], 0) + 1
+        notes.append(stop_note(r, seen[r['load']]))
+    md.append(f'- Stopped by the RAM watchdog ({len(stops)} {"stop" if len(stops) == 1 else "stops"}, each load\'s files '
+              'set aside): ' + '; '.join(notes) + '.')
 text = '\n'.join(md) + '\n'
 if A.out:
     with open(A.out, 'w') as f:

@@ -59,6 +59,23 @@ run. `QUIET=0` skips the check for a machine where speed is not measured, and ma
 tables of such a run print no speed. On a host under 8 GB the server runs under
 [scripts/ram_watchdog.sh](../../scripts/ram_watchdog.sh), which stops it before the host runs out of memory.
 
+**A load the RAM watchdog stops runs again at the end** (`RETRY_STOPPED=1`, the default). How close a load comes to
+the watchdog's floor differs from start to start: each of the three loads it stopped before this setting existed (the
+eighth and eleventh runs below, and
+[docs/data/2026-11-11_r92_upstream_defaults](../../docs/data/2026-11-11_r92_upstream_defaults/README.md)) ran through
+when it was started again. The driver:
+
+1. moves the stopped load's files (its server log, the watchdog's samples, its requests, the quiet check and the
+   loaded cards) to `stopped/<load>-<n>/`, the first stop of a load being `<load>-1`;
+2. writes a line for the stop in `loads.tsv`, with `stopped` in the `timed` column;
+3. goes on with the next load;
+4. after the other loads, starts each stopped load again, in the order they stopped.
+
+A load stopped a second time in one run ends the run, with its second set of files in `stopped/<load>-2/`. A stopped
+warm-up load is set aside and not run again. With `RETRY_STOPPED=0` every stop ends the run and leaves the files in
+place, as before this setting. The tables count only the load's start that finished, and the last check lists every
+stop.
+
 **The prompts** are cut from recorded agent text passed by path (`TEXT`), never from text in this repository:
 
 - Recorded chat requests (the agent check's `proxy.jsonl.bodies.gz`, optionally filtered by tag with `TAG`) count once
@@ -137,7 +154,8 @@ Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
 | File in `OUT` | Content |
 |---|---|
 | `requests.csv` | one line per request, every load |
-| `loads.tsv` | one line per load: arm, timed or warm-up, valid, draft, context, start, load seconds, the line as it ran, the binary |
+| `loads.tsv` | one line per load start: arm, timed (1), warm-up (0) or stopped by the RAM watchdog (`stopped`), valid, draft, context, start, load seconds, the line as it ran, the binary |
+| `stopped/<load>-<n>/` | the files of a load the RAM watchdog stopped, its `n`-th stop: `server-<load>.log`, `ram_watchdog-<load>.tsv`, `requests-<load>.csv` and `<load>.jsonl` as far as the load got, `quiet_<load>.txt`, `fit_<load>.txt` |
 | `table.md`, `classes.tsv` | the tables below; the classes as a table |
 | `quiet_<load>.txt`, `fit_<load>.txt` | the quiet check before the load; memory per card and on the host after it |
 | `server-<load>.log`, `ram_watchdog-<load>.tsv`, `gpu.csv` | the server's log, the watchdog's samples, the cards every 10 s |
@@ -175,7 +193,9 @@ and the server logs hold token ids, reply text and paths: publish them only if t
   own reply again on pass 2: a difference between arms cannot be told from one between loads there. The last check
   counts the target graph's reallocations per load from `server-<load>.log` (each request's change in the server's
   `graph reallocs = S / D`; C804) and marks an arm whose loads reallocate where the control's do not: a reallocation
-  makes the scheduler wait for every card, so such an arm's prompt cost is not in its decode speed.
+  makes the scheduler wait for every card, so such an arm's prompt cost is not in its decode speed. When the RAM
+  watchdog stopped a load, a last line lists each stop: the load, the last request it answered (or "while loading"),
+  the watchdog's reason, its folder in `stopped/` and whether the load ran again.
 
 Every value is one load of one arm at one depth. A number quoted from a table names its arm, load and depth.
 
@@ -185,13 +205,17 @@ Every value is one load of one arm at one depth. A number quoted from a table na
 [mock_server.py](../agent_check/mock_server.py) in place of llama-server, on recorded text it writes itself, with
 stand-ins for `nvidia-smi` and `ps`. For this the mock speaks `/tokenize`, `/apply-template` and `/completion`, and its
 `timings` carry `cache_n`, `cache_src`, the per-second fields and, when the line has `-md`, `draft_n` and
-`draft_n_accepted`. It rolls its cache back to checkpoints as a recurrent model's server does.
+`draft_n_accepted`. It rolls its cache back to checkpoints as a recurrent model's server does. For the stops, the real
+[ram_watchdog.sh](../../scripts/ram_watchdog.sh) guards the mock and reads a stand-in for `/proc/meminfo`, which shows
+50 MiB available (below a floor of 60) on the starts a run names: from the watchdog's first sample, or from the moment
+a load has answered a given request.
 
-On 2026-11-10 all 36 checks passed, on a Linux machine's CPU under Python 3.14:
+On 2026-11-12 all 49 checks passed, on a Linux machine's CPU under Python 3.14, in about two minutes (most of it
+the stop runs' slower arm):
 
 | Run | What it showed |
 |---|---|
-| five arms × 2 loads, quiet checks on | 164 requests; every prompt exactly its depth; the preset's nine-card line unchanged; the draft-off arm without `-md`, `--spec-*` and `-otd`; the context arm with `-c 131072 -ub 256`; an arm as fast as the control negligible, a faster one a gain, the one without the draft a loss, at every depth; the step's time classed the same way, with no class for the arm without the draft; the same greedy reply in every arm; each prime read only the chunk past the previous depth's checkpoint |
+| five arms × 2 loads, quiet checks on | 164 requests; every prompt exactly its depth; the preset's nine-card line unchanged; the draft-off arm without `-md`, `--spec-*` and `-otd`; the context arm with `-c 131072 -ub 256`; an arm as fast as the control negligible, a faster one a gain, the one without the draft a loss, at every depth; the step's time classed the same way, with no class for the arm without the draft; the same greedy reply in every arm; each prime read only the chunk past the previous depth's checkpoint; no stop, no `stopped/` folder |
 | the same command again | every load skipped, the same `requests.csv` |
 | the same folder, another setting | refused, the folder untouched |
 | a llama process running | refused before any load |
@@ -199,9 +223,15 @@ On 2026-11-10 all 36 checks passed, on a Linux machine's CPU under Python 3.14:
 | `CACHE=0` on plain text | no prime, every request read its whole prompt |
 | a depth the text cannot fill | stopped in the warm-up load, before any timed load |
 | a depth the context cannot hold | refused before any load |
+| two arms × 2 loads under the RAM watchdog, which stops `host1` after its decode pass 1 at depth 512 and `base2` while it loads | the run done; the loads started in the order warm, base1, host1, base2, host2, then host1 and base2 again; `loads.tsv` with a `stopped` line for each stop; `stopped/host1-1` with the server log (the watchdog's line), the watchdog's samples (its `KILL`), 5 requests and the quiet and fit files, `stopped/base2-1` with no requests; 51 requests in `requests.csv`, each load once; the table's loads in the order they ran and its last check naming both stops, where and why |
+| the watchdog stops `host1` on both starts | the run ends at the second stop (`failed`), after `base2` and `host2` ran between the two; both stops set aside and listed |
+| `RETRY_STOPPED=0`, one stop | the run ends at the first stop with the message it always had, the files left in place, no `stopped/` folder |
 | `deep_table.py` on hand-made speeds | inside the spread negligible, above it a gain, below it a loss; each load's ms a token; replies that differ between the control's own loads counted per arm |
 
-Four more checks on the same day:
+The cases without a stop wrote the same files, with the same content but for the clock, as the driver before
+`RETRY_STOPPED` ([docs/data/2026-11-12_c778_lane_retry](../../docs/data/2026-11-12_c778_lane_retry/README.md)).
+
+Four more checks on 2026-11-10:
 
 - The driver ran on requests a real agent recorded: the 15 sessions of the agent check's own self-test (pi against the
   mock, through the logging proxy), at depths 0, 2,048, 8,192 and 16,384.
@@ -260,7 +290,7 @@ the release check's recorded requests.
   `ARM_ARGS_<arm>`, and the line without the draft), two loads each, 108 minutes, same data page. With
   `N_PREDICT=16` a load with the draft took 14 minutes instead of the second pair's 16, and the primes' numbers
   repeated that pair's. `LOADS` put the arm most likely to be stopped by the RAM watchdog last in each round, since a
-  stop ends the run; it was not stopped. [run/draft_ubatch.py](../../docs/data/2026-11-10_deep_lane/run/draft_ubatch.py)
+  stop then ended the run; it was not stopped. [run/draft_ubatch.py](../../docs/data/2026-11-10_deep_lane/run/draft_ubatch.py)
   reads such a run: prompt reading of every arm against the control and the floor, and the host's memory per load.
 - **The fifth run on the rig** profiled a step at depth: `LOADS="warm:sparse prof:prof"` with the profiler in
   `ARM_ENV_prof` and `PAUSE=4`, depths 16,384, 32,768 and 49,152, the unprofiled load first at the same depths
@@ -284,7 +314,7 @@ the release check's recorded requests.
 - **The eighth run on the rig** timed five settings of the sparse switch's threshold (`ARM_ENV_<arm>`, with
   `ENV_ADD` for the variable all five share) at 0, 4,096, 8,192 and 12,288 tokens, two loads an arm
   ([docs/data/2026-11-10_deep_lane](../../docs/data/2026-11-10_deep_lane/README.md)). The RAM watchdog stopped the
-  fifth load, which ends a run. `collect` with `CLEAN=0` kept the rig's folder, and the same command with a `LOADS`
+  fifth load, which then ended the run. `collect` with `CLEAN=0` kept the rig's folder, and the same command with a `LOADS`
   that put the stopped arm last resumed it two minutes later: the four finished loads were skipped, a warm-up load ran
   again, and the stopped load ran whole. The resumed run appends to `loads.tsv`, so it lists the stopped start too;
   the tables take each load's last line. Depths 4,096 tokens apart restore an older checkpoint at the third prime

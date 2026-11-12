@@ -1,0 +1,9 @@
+busy: 6 files before, 6 after; only before: none; only after: none; different content: none
+ctx: 0 files before, 0 after; only before: none; only after: none; different content: none
+fresh: 16 files before, 16 after; only before: none; only after: none; different content: none
+ptx: 23 files before, 23 after; only before: none; only after: none; different content: none
+rig: 76 files before, 76 after; only before: none; only after: none; different content: none
+short: 9 files before, 9 after; only before: none; only after: none; different content: none
+table: 3 files before, 3 after; only before: none; only after: none; different content: none
+consoles of the cases both ran (busy.console, ctx.console, fresh.console, other.console, ptx.console, resume.console, rig.console, short.console): different: none
+the same files and content in every case both ran

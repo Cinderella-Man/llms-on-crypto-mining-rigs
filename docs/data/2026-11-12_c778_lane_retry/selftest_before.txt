@@ -1,0 +1,38 @@
+ok   rig: the run ends with DEEP_DONE
+ok   rig: 16 requests in each of 10 timed loads and 4 in the warm-up load (164)
+ok   rig: a warm-up load, then the arms alternated twice
+ok   rig: every prompt is exactly its depth (depth 0: the 64-id tail)
+ok   rig: 64 tokens out on every timed request, times valid
+ok   rig: the same prompt ids on every load
+ok   rig: the tag keeps one arm's 6 sessions (6)
+ok   rig: the preset's line as it is
+ok   rig: the draft-off arm has no -md, --spec-* or -otd
+ok   rig: the context arm has -c 131072 -ub 256
+ok   rig: the arm's variable and the preset's reach the server
+ok   rig: an arm as fast as the control is negligible at every depth
+ok   rig: the faster arm is a gain at every depth
+ok   rig: the arm without the draft is a loss at every depth
+ok   rig: the step's time per pass: the same line negligible, the faster one a gain, no class for the arm without the draft
+ok   rig: draft counters and tokens a step with the draft, none without
+ok   rig: the greedy reply is the same in every arm at every depth
+ok   rig: a prime reads only the chunk past the previous depth's checkpoint (516 on 444)
+ok   rig: pass 1 reads the tail on the prime's checkpoint, pass 2 the last 4 tokens
+ok   rig: the sampler pass writes another reply than the greedy passes
+ok   rig: the quiet check and the loaded cards are written per load
+ok   resume: every load skipped, the same requests.csv
+ok   other: a folder of another run is refused and left as it is
+ok   busy: refused before any load
+ok   ptx: done, every request marked valid=0
+ok   ptx: no speed in the tables, the draft counters kept
+ok   ptx: three equal cards, -otd dropped, the RUNNER and the STOP_CMD used
+ok   ptx: a CUDA_CACHE_PATH added, the keep-alive variable dropped
+ok   fresh: no prime, every request reads its whole prompt
+ok   fresh: plain text with a tail text, depth 0 the tail alone
+ok   short: too little text stops the run in the warm-up load
+ok   ctx: a depth beyond the context is refused before any load
+ok   table: inside the spread negligible, above it gain, below it loss ({('x', '0'): 'negligible', ('x', '8192'): 'gain', ('x', '16384'): 'loss'})
+ok   table: spread 0.20, +1.05 tok/s, +7.0 % at 8,192 (0.20, 1.05, 7.0)
+ok   table: each load's ms a token beside its tok/s, no step table without a draft
+ok   table: replies that differ between the control's own loads are counted per arm, not called a difference between arms
+selftest passed
+old: selftest.sh exited 0 after 40 s
