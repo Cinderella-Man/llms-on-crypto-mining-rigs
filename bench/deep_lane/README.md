@@ -172,7 +172,10 @@ and the server logs hold token ids, reply text and paths: publish them only if t
 - **Checks:** the same prompt ids on every load, the tokens out, and per depth whether the greedy reply is the same on
   every pass and load of every arm. Arms that change only speed must write the same reply. Where the control's own
   loads wrote different replies, the line counts the replies per arm instead and says whether every load wrote its
-  own reply again on pass 2: a difference between arms cannot be told from one between loads there.
+  own reply again on pass 2: a difference between arms cannot be told from one between loads there. The last check
+  counts the target graph's reallocations per load from `server-<load>.log` (each request's change in the server's
+  `graph reallocs = S / D`; C804) and marks an arm whose loads reallocate where the control's do not: a reallocation
+  makes the scheduler wait for every card, so such an arm's prompt cost is not in its decode speed.
 
 Every value is one load of one arm at one depth. A number quoted from a table names its arm, load and depth.
 

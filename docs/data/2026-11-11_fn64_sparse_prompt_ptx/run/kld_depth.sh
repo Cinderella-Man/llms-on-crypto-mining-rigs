@@ -18,6 +18,10 @@
 #      (nvidia/cuda:12.9.2-devel-ubuntu24.04); DOCKER_ARGS (labels, CPU share); CNAME (kld-depth)
 # Output: OUT/base.<D>.kld, OUT/<arm>.<D>.log (llama-perplexity's log), OUT/runs.tsv (arm, depth, -ub, exit status,
 #         start and end), OUT/done, and OUT/failed if any run failed. Finished runs are skipped when run again.
+# Since C804 (Q1408, 2026-11-12) every run has GGML_SCHED_DEBUG_REALLOC=$SCHED_DEBUG_REALLOC (default 1; 0 leaves it
+# out): ggml's scheduler aborts at a reallocation of an unchanged graph size, which waits for every card (FN84), so a
+# switch that adds one fails its run here, named in the console ("graph reallocation at an unchanged size"). No MTP
+# draft is loaded, so nothing else aborts (the draft's own graph does reallocate so: C803).
 set -uo pipefail
 : "${BIN:?}" "${MODEL:?}" "${TEXT:?}" "${OUT:?}" "${GPUS:?}" "${ARMS:?}"
 DEPTHS=${DEPTHS:-8192 16384 32768 49152}
@@ -37,6 +41,7 @@ for arm in $ARMS; do
     ubv=ARM_UB_$arm envv=ARM_ENV_$arm
     ub=${!ubv:-512} aenv=${!envv:-}
     envs="CUDA_CACHE_PATH=$OUT/jit CUDA_CACHE_MAXSIZE=4294967296 ${PRESET_ENV:-} GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=$NSM $aenv"
+    [ "${SCHED_DEBUG_REALLOC:-1}" = 0 ] || envs="$envs GGML_SCHED_DEBUG_REALLOC=${SCHED_DEBUG_REALLOC:-1}"
     eargs=(); for e in $envs; do eargs+=(-e "$e"); done
     for d in $DEPTHS; do
         base=$OUT/base.$d.kld log=$OUT/$arm.$d.log
@@ -57,6 +62,8 @@ for arm in $ARMS; do
             "$BIN/llama-perplexity" -m "$MODEL" -f "$TEXT" -c "$d" --chunks 1 -b "$BATCH" -ub "$ub" $ARGS $kargs \
             > "$log" 2>&1 < /dev/null
         rc=$?
+        grep -a -q 'unexpected graph reallocation' "$log" \
+            && echo "   graph reallocation at an unchanged size in $arm $d: $(grep -a -m1 -o 'unexpected graph reallocation.*' "$log")"
         if [ "$arm" = "$base_arm" ]; then
             if [ $rc -eq 0 ] && grep -q "Final estimate" "$log"; then
                 mv "$base.partial" "$base"

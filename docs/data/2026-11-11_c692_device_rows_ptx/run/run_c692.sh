@@ -36,6 +36,12 @@
 # WORK/archs_<build>.txt, WORK/server-<label>.log, WORK/fit_<label>.txt, WORK/jit_<label>.txt,
 # WORK/requests_<label>.jsonl, WORK/dump_<label>.jsonl, WORK/tables/, then WORK/done or WORK/failed; prints CHAIN_DONE
 # or CHAIN_FAILED as its last line.
+# Since C804 (Q1408, 2026-11-12): every load also counts the target graph's reallocations per request from its server
+# log (print_timing's `graph reallocs = S / D`, as scripts/realloc_counts.py counts them), WORK/reallocs_<label>.tsv
+# and a line "LOAD <label>: graph reallocations: W of N requests (...)"; SCHED_DEBUG_REALLOC=1 (default 0) runs every
+# server with GGML_SCHED_DEBUG_REALLOC=1, which aborts at a reallocation of an unchanged graph size: off by default,
+# since the MTP draft's own graph reallocates so 2-3 times a request on every line (C803, Q1407). The loads and the
+# requests are the same as before.
 set -uo pipefail
 : "${WORK:?WORK=<work folder>}" "${REPO:?REPO=<checkout of this repository>}" "${MODEL:?MODEL=<first shard>}"
 : "${MODEL_DRAFT:?MODEL_DRAFT=<draft>}" "${GPUS:?GPUS=<docker device list>}"
@@ -125,6 +131,9 @@ start_server() {  # start_server LABEL BUILD ARM: the server in its container, i
   v=ENV_$arm
   # shellcheck disable=SC2206
   ENVS+=(${!v})
+  # C804: GGML_SCHED_DEBUG_REALLOC aborts the server at a reallocation of an unchanged graph size; off by default here,
+  # since every load holds the MTP draft, whose own graph reallocates so 2-3 times a request on every line (C803)
+  [ "${SCHED_DEBUG_REALLOC:-0}" = 0 ] || ENVS+=("GGML_SCHED_DEBUG_REALLOC=$SCHED_DEBUG_REALLOC")
   SLOG=$WORK/server-$label.log
   # shellcheck disable=SC2086
   set -- docker run --rm --init --name "$NAME" $labels --cpu-shares "$CPU_SHARES" ${DOCKER_ARGS:-} \
@@ -134,6 +143,20 @@ start_server() {  # start_server LABEL BUILD ARM: the server in its container, i
   printf '%s\t%s\t%s\t%s\t%s\n' "$label" "$b" "$arm" "$(date -Is)" "${ENVS[*]} $BIN -m $MODEL ${LINE[*]}" >> "$WORK/loads.tsv"
   "$@" >> "$SLOG" 2>&1 < /dev/null &
   SRV=$!
+}
+
+# realloc_count SERVER_LOG TSV (C804): the target graph's reallocations per request from print_timing's running count
+# (`graph reallocs = S / D` since the load, after the request's `prompt eval time = X ms / N tokens`); writes one row
+# per request to TSV and prints the summary. The MTP draft's own reallocations are not in it (C803).
+realloc_count() {
+  sed 's/\x1b\[[0-9;]*m//g' "$1" 2> /dev/null | awk -v out="$2" '
+    BEGIN { print "req\tprompt_tokens\tprompt_ms\treallocs_same\treallocs_changed" > out }
+    /prompt eval time =/ { t = $0; sub(/.*prompt eval time = */, "", t); split(t, p, " "); ms = p[1]; n = p[4]; cur = 1; next }
+    cur && /graph reallocs =/ { t = $0; sub(/.*graph reallocs = */, "", t); split(t, q, " ")
+      s = q[1] - ps; d = q[3] - pd; ps = q[1]; pd = q[3]; cur = 0
+      printf "%d\t%s\t%s\t%d\t%d\n", k, n, ms, s, d > out
+      k++; ts += s; td += d; if (s + d > 0) w++ }
+    END { printf "graph reallocations: %d of %d requests (%d at the same size, %d changed)\n", w, k, ts, td }'
 }
 
 wait_ready() {
@@ -173,6 +196,7 @@ for spec in $LOADS; do
   stop_server
   echo "$(find "$JITDIR" -type f | wc -l) files, $(du -sb "$JITDIR" | cut -f1) B" > "$WORK/jit_$label.txt"
   say "LOAD $label: client exit $rc; JIT cache $JITDIR: $(cat "$WORK/jit_$label.txt"); dump $(wc -l < "$WORK/dump_$label.jsonl" 2> /dev/null || echo 0) steps"
+  say "LOAD $label: $(realloc_count "$SLOG" "$WORK/reallocs_$label.tsv")"
   [ "$rc" = 0 ] || fail "the client of $label ended with $rc"
   touch "$WORK/load-$label.done"
 done

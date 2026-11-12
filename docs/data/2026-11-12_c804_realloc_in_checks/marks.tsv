@@ -1,0 +1,26 @@
+case	load	against	requests	requests_with_realloc	reallocs_same	reallocs_changed	against_requests_with_realloc	mark
+r122_ladder	base	-	2	0	0	0	-	-
+r122_ladder	a	base,base-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	b	a,a-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	c	b,b-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	d	c,c-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	e	d,d-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	f	e,e-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	base-2	-	2	0	0	0	-	-
+r122_ladder	a-2	base,base-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	b-2	a,a-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	c-2	b,b-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	d-2	c,c-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	e-2	d,d-2	2	0	0	0	0 of 2,0 of 2	none
+r122_ladder	f-2	e,e-2	2	0	0	0	0 of 2,0 of 2	none
+r123a_ladder	base	-	146	0	0	0	-	-
+r123a_ladder	graphs	base,base2	146	0	0	0	0 of 146,0 of 146	none
+r123a_ladder	kvonly	graphs	146	0	0	0	0 of 146	none
+r123a_ladder	overlap	kvonly	146	0	0	0	0 of 146	none
+r123a_ladder	ngram	overlap	146	0	0	0	0 of 146	none
+r123a_ladder	base2	-	146	0	0	0	-	-
+switch	base	-	8	0	0	0	-	-
+switch	sw	base,base2	373	373	802	745	0 of 8,0 of 8	reallocates
+switch	base2	-	8	0	0	0	-	-
+switch	mixed	sw	381	373	802	745	373 of 373	as its line
+switch	sw2	mixed	373	373	802	745	373 of 381	reallocates more

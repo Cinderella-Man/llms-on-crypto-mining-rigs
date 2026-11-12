@@ -10,6 +10,10 @@
 # load and after the replay) and $OUT/switch_lines.txt (per load: the switch list, the CUDA_ variables, the -otd rule
 # in the line, n_batch, where the draft's token table went, and the lines the ladder's switches print; colour codes
 # removed).
+# Since C804 (Q1408, 2026-11-12) also $OUT/realloc_marks.tsv: the target graph's reallocations per load from each
+# server log (scripts/realloc_counts.py --marks ladder: every rung against the rung before, a repeat such as base2 in
+# its rung), and a load marked `reallocates` where the rung before has none. Needs python3 and this repository's
+# scripts/ (REPO, default the checkout this script is in); without them the file is not written.
 set -euo pipefail
 : "${OUT:?}"
 mkdir -p "$OUT"
@@ -41,3 +45,11 @@ for spec in "$@"; do
     grep -E 'token_embd\.weight.*(overridden to|in CUDA|using CUDA)|LLAMA_DRAFT_EMBD_DEV|FATTN_SPARSE_PASCAL_PROMPT|GGML_CUDA_GRAPHS_FORCE:|LLAMA_MTP_KV_ONLY:|LLAMA_MTP_CATCHUP_OVERLAP:' <<< "$log" \
       | sed -E 's/^[0-9.]+ [A-Z] //' | sort | uniq -c | sed -E 's/^ +//' || true; } >> "$OUT/switch_lines.txt"
 done
+REPO=${REPO:-$(cd "$(dirname "$0")/../../../.." && pwd)}
+if [ -f "$REPO/scripts/realloc_counts.py" ]; then
+  logs=()
+  for spec in "$@"; do logs+=("${spec%%=*}=${spec#*=}/load-A/server.log"); done
+  python3 -I "$REPO/scripts/realloc_counts.py" --marks ladder "${logs[@]}" > "$OUT/realloc_marks.tsv"
+else
+  echo "no $REPO/scripts/realloc_counts.py: realloc_marks.tsv not written" >&2
+fi

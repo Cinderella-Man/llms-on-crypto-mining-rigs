@@ -16,7 +16,9 @@ it every load but `warm` counts as timed) and prints Markdown, also written to -
 - the sampler pass, when the run has one;
 - the checks: the same prompt ids on every load, the tokens out, the greedy reply the same on every pass, load and
   arm (its token ids' md5 where the server returned them, else its text's) or how many replies each arm's loads
-  wrote, what each prime read.
+  wrote, what each prime read, and the target graph's reallocations per load (C804, Q1408: each request's change in
+  the server log's `graph reallocs = S / D`, as scripts/realloc_counts.py counts it), with an arm marked when its
+  loads reallocate where the control's do not.
 The class of an arm against the control (--control, default the first arm): the spread is the larger of the two
 arms' differences between their fastest and slowest load; gain when the arm's mean is above the control's by more
 than the spread (for a time: below it), loss when below by more than it (for a time: above), else negligible; with
@@ -29,6 +31,7 @@ each load's value, spread, delta, percent, class).
 import argparse
 import csv
 import os
+import re
 import sys
 
 ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -306,6 +309,51 @@ if primes:
     seen = sorted({(d, r['prompt_n'], r['cache_n'] or '0', r['cache_src']) for _, d, r in primes})
     md.append('- Primes (read on cached, the cache\'s source): '
               + '; '.join(f'{d:,}: {n} on {c}' + (f' ({s})' if s else '') for d, n, c, s in seen) + '.')
+
+
+def reallocs(ld):
+    """C804: (requests, requests with a reallocation, same size, changed) of the target graph in the load's server log,
+    from print_timing's running count since the load; None without the log or its lines."""
+    path = os.path.join(A.src, f'server-{ld}.log')
+    if not os.path.exists(path):
+        return None
+    n = w = same = diff = 0
+    prev, cur = (0, 0), False
+    with open(path, errors='replace') as f:
+        for line in f:
+            line = re.sub(r'\x1b\[[0-9;]*m', '', line)
+            if re.search(r'prompt eval time =\s*[0-9.]+ ms /\s*[0-9]+ tokens', line):
+                cur = True
+                continue
+            m = re.search(r'graph reallocs =\s*([0-9]+)\s*/\s*([0-9]+)', line) if cur else None
+            if m:
+                s_, d_ = int(m.group(1)), int(m.group(2))
+                n, w = n + 1, w + (s_ + d_ > prev[0] + prev[1])
+                same, diff = same + s_ - prev[0], diff + d_ - prev[1]
+                prev, cur = (s_, d_), False
+    return (n, w, same, diff) if n else None
+
+
+RA = {ld: reallocs(ld) for ld in timed}
+if not any(RA.values()):
+    md.append('- Graph reallocations: no `graph reallocs` line in the server logs (no logs here, or a build that does '
+              'not print the count).')
+else:
+    cells = [f'{ld}: {RA[ld][1]} of {RA[ld][0]} requests' + (f' ({RA[ld][2]} same size, {RA[ld][3]} changed)'
+                                                               if RA[ld][1] else '') if RA[ld] else f'{ld}: no count'
+             for ld in timed]
+    ctl_w = [RA[ld][1] for ld in by_arm[control] if RA[ld]]
+    marks = []
+    for a in arms:
+        if a == control:
+            continue
+        aw = [RA[ld][1] for ld in by_arm[a] if RA[ld]]
+        if aw and any(aw) and ctl_w and not any(ctl_w):
+            marks.append(f'**`{a}` reallocates where `{control}` does not.**')
+    if ctl_w and any(ctl_w):
+        marks.append(f'`{control}` reallocates itself.')
+    md.append('- Graph reallocations of the target, requests with one per load: ' + '; '.join(cells) + '.'
+              + (' ' + ' '.join(marks) if marks else ''))
 text = '\n'.join(md) + '\n'
 if A.out:
     with open(A.out, 'w') as f:

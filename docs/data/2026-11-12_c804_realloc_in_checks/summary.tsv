@@ -1,0 +1,48 @@
+step	check	verdict	detail
+syntax	bash -n rig_taper.sh	OK	
+syntax	bash -n rig_loads.sh	OK	
+syntax	bash -n run_c692.sh	OK	
+syntax	bash -n run_draft_count.sh	OK	
+syntax	bash -n run_pv_replies.sh	OK	
+syntax	bash -n r123a_logs.sh	OK	
+syntax	bash -n r123b_logs.sh	OK	
+syntax	bash -n kld_depth.sh	OK	
+syntax	bash -n test_c804.sh	OK	
+syntax	parse realloc_counts.py	OK	
+syntax	parse deep_table.py	OK	
+tool	R60's reallocs.tsv	OK	a: 373 of 373 requests, 802 same, 745 changed
+tool	FN84's reallocs.tsv	OK	0 of 8 requests
+tool	R123a's reallocs.tsv	OK	0 of 876 requests in 6 loads
+tool	same as R60's script on 18 logs	OK	76 rows
+awk	rig_taper with mawk	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	rig_taper with busybox	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	rig_loads with mawk	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	rig_loads with busybox	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	run_c692 with mawk	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	run_c692 with busybox	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	run_draft_count with mawk	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	run_draft_count with busybox	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	run_pv_replies with mawk	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+awk	run_pv_replies with busybox	OK	18 summaries, 2060 requests; a: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);topk: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);c692_day-pre: graph reallocations: 0 of 7 requests (0 at the same size, 0 changed);
+marks	R122's ladder (14 loads)	OK	base:-:- a:base,base-2:none b:a,a-2:none c:b,b-2:none d:c,c-2:none e:d,d-2:none f:e,e-2:none base-2:-:- a-2:base,base-2:none b-2:a,a-2:none c-2:b,b-2:none d-2:c,c-2:none e-2:d,d-2:none f-2:e,e-2:none 
+marks	R123a's ladder (6 loads)	OK	base:-:- graphs:base,base2:none kvonly:graphs:none overlap:kvonly:none ngram:overlap:none base2:-:- 
+marks	a switch's load against FN84's line	OK	base:-:0/8:- sw:base,base2:373/373:reallocates base2:-:0/8:- mixed:sw:373/381:as its line sw2:mixed:373/373:reallocates more 
+logs	r123a: the files it wrote before, unchanged	OK	cards.tsv loads.tsv switch_lines.txt 
+logs	r123a: realloc_marks.tsv	OK	base:- graphs:none kvonly:none overlap:none ngram:none base2:- 
+logs	r123b: the files it wrote before, unchanged	OK	cards.tsv host.tsv loads.tsv switch_lines.txt 
+logs	r123b: realloc_marks.tsv	OK	base:- graphs:none kvonly:none overlap:none ngram:none base2:- 
+logs	r123a: loads.tsv as published	OK	7 lines
+kld	the switch in every run, none with SCHED_DEBUG_REALLOC=0	OK	on: 2 of 2 runs; off: 0
+kld	an aborted run named and failed	OK	   graph reallocation at an unchanged size in sw 8192: unexpected graph reallocation (graph size = 9000, nodes = 6944, l
+taper	rig_taper.sh: run.log as before plus one line a load	OK	2 added, 0 removed: load A: graph reallocations: 0 of 8 requests (0 at the same size, 0 changed);load B: graph reallocations: 373 of 373 requests (802 at the same size, 745 changed);
+taper	rig_taper.sh: FN84 0 of 8, R60 373 of 373	OK	checkpoints.txt load_lines.txt memavail.txt memory_after.txt memory_loaded.txt reallocs.tsv server.log taper_lines.txt 
+taper	rig_taper.sh: every other file of a load unchanged	OK	reallocs.tsv added
+loads	rig_loads.sh (real): status.txt as before plus the count lines	OK	15 added, 0 removed
+loads	rig_loads.sh (real): realloc_marks.tsv	OK	base:-:- a:base,base-2:none b:a,a-2:none c:b,b-2:none d:c,c-2:none e:d,d-2:none f:e,e-2:none base-2:-:- a-2:base,base-2:none b-2:a,a-2:none c-2:b,b-2:none d-2:c,c-2:none e-2:d,d-2:none f-2:e,e-2:none 
+loads	rig_loads.sh (swap): status.txt as before plus the count lines	OK	16 added, 0 removed
+loads	rig_loads.sh (swap): realloc_marks.tsv	OK	base:-:- a:base,base-2:reallocates b:a,a-2:none c:b,b-2:none d:c,c-2:none e:d,d-2:none f:e,e-2:none base-2:-:- a-2:base,base-2:reallocates b-2:a,a-2:none c-2:b,b-2:none d-2:c,c-2:none e-2:d,d-2:none f-2:e,e-2:none 
+loads	rig_loads.sh (swap): the line that names load a	OK	graph reallocations: a reallocates (373 of 373 requests; its line without the switch, base,base-2: 0 of 2,0 of 2);graph reallocations: a-2 reallocates (373 of 373 requests; its line without the switch, base,base-2: 0 of 2,0 of 2);
+deep	deep_lane's selftest with the new deep_table.py	OK	36 ok lines; selftest passed
+deep	the mock's logs: no count, said so	OK	- Graph reallocations: no `graph reallocs` line in the server logs (no logs here, or a build that do
+deep	fast's loads marked against base	OK	- Graph reallocations of the target, requests with one per load: base1: 0 of 8 requests; same1: 0 of 8 requests; fast1: 373 of 373 requests (802 same size, 745 changed); nodraft1: 0 of 8 requests; big1: 0 of 8 requests; base2: 0 of 8 reques
+deep	the table as before plus one line	OK	1 added, 0 removed

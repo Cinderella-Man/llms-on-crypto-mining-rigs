@@ -34,6 +34,12 @@
 # WORK/not_started).
 # A finished load leaves WORK/load-<label>.done and is skipped by a second start. Writes WORK/done (the chain ended; see
 # not_started) or WORK/failed; prints CHAIN_DONE or CHAIN_FAILED as its last line.
+# Since C804 (Q1408, 2026-11-12): every load also counts the target graph's reallocations per request from its server
+# log (print_timing's `graph reallocs = S / D`, as scripts/realloc_counts.py counts them), WORK/reallocs_<label>.tsv
+# and a line "LOAD <label>: graph reallocations: W of N requests (...)"; SCHED_DEBUG_REALLOC=1 (default 0) runs every
+# server with GGML_SCHED_DEBUG_REALLOC=1, which aborts at a reallocation of an unchanged graph size: off by default,
+# since the MTP draft's own graph reallocates so 2-3 times a request on every line (C803, Q1407). The loads and the
+# requests are the same as before.
 set -uo pipefail
 : "${WORK:?WORK=<work folder>}" "${REPO:?REPO=<checkout of this repository>}" "${BIN:?BIN=<llama-server>}"
 : "${MODEL:?MODEL=<first shard>}" "${MODEL_DRAFT:?MODEL_DRAFT=<draft>}" "${LOG:?LOG=<recorded proxy.jsonl>}"
@@ -143,6 +149,9 @@ start_server() {  # start_server LABEL ARM: the server in its container, its out
   v=ENV_$arm
   # shellcheck disable=SC2206
   ENVS+=(${!v:-})
+  # C804: GGML_SCHED_DEBUG_REALLOC aborts the server at a reallocation of an unchanged graph size; off by default here,
+  # since every load holds the MTP draft, whose own graph reallocates so 2-3 times a request on every line (C803)
+  [ "${SCHED_DEBUG_REALLOC:-0}" = 0 ] || ENVS+=("GGML_SCHED_DEBUG_REALLOC=$SCHED_DEBUG_REALLOC")
   [ "$GPUS" = cpu ] || gpu_args=(--gpus "\"device=$GPUS\"")
   SLOG=$WORK/server-$label.log
   # shellcheck disable=SC2086
@@ -153,6 +162,20 @@ start_server() {  # start_server LABEL ARM: the server in its container, its out
   printf '%s\t%s\t%s\t%s\t%s\n' "$label" "$arm" "${n_max:-preset}" "$(date -Is)" "${ENVS[*]} ${LINE[*]}" >> "$WORK/loads.tsv"
   "$@" >> "$SLOG" 2>&1 < /dev/null &
   SRV=$!
+}
+
+# realloc_count SERVER_LOG TSV (C804): the target graph's reallocations per request from print_timing's running count
+# (`graph reallocs = S / D` since the load, after the request's `prompt eval time = X ms / N tokens`); writes one row
+# per request to TSV and prints the summary. The MTP draft's own reallocations are not in it (C803).
+realloc_count() {
+  sed 's/\x1b\[[0-9;]*m//g' "$1" 2> /dev/null | awk -v out="$2" '
+    BEGIN { print "req\tprompt_tokens\tprompt_ms\treallocs_same\treallocs_changed" > out }
+    /prompt eval time =/ { t = $0; sub(/.*prompt eval time = */, "", t); split(t, p, " "); ms = p[1]; n = p[4]; cur = 1; next }
+    cur && /graph reallocs =/ { t = $0; sub(/.*graph reallocs = */, "", t); split(t, q, " ")
+      s = q[1] - ps; d = q[3] - pd; ps = q[1]; pd = q[3]; cur = 0
+      printf "%d\t%s\t%s\t%d\t%d\n", k, n, ms, s, d > out
+      k++; ts += s; td += d; if (s + d > 0) w++ }
+    END { printf "graph reallocations: %d of %d requests (%d at the same size, %d changed)\n", w, k, ts, td }'
 }
 
 wait_ready() {
@@ -192,6 +215,7 @@ for arm in $LOADS; do
   # the counters of the whole load, before the server goes
   curl -sf "http://127.0.0.1:$PORT/metrics" > "$WORK/metrics-$label.txt" 2> /dev/null || rm -f "$WORK/metrics-$label.txt"
   stop_server
+  say "LOAD $label: $(realloc_count "$SLOG" "$WORK/reallocs_$label.tsv")"
   [ "$rc" = 0 ] || fail "the replay of $label ended with $rc: $(tail -n 2 "$WORK/client-$label.txt" | tr '\n' ' ')"
   [ -s "$WORK/metrics-$label.txt" ] || fail "no /metrics from the server of $label"
   python3 -I - "$WORK/replay-$label.jsonl" "$NROWS" << 'EOF' || fail "the replay of $label is not whole"

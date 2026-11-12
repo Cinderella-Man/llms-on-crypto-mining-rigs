@@ -9,6 +9,11 @@
 #      that A's and B's fresh prompts give the drains' cost, and B with the taper on approximates no drains plus taper
 # Every load logs its time, memory per card and on the host, the checkpoint and taper lines of its server log, and a
 # watchdog stops the server when MemAvailable falls below MIN_AVAIL_MB.
+# Since C804 (Q1408, 2026-11-12) every load also counts the target graph's reallocations per request from its server
+# log's print_timing lines (`graph reallocs = S / D`, as scripts/realloc_counts.py counts them): the table in
+# load-<L>/reallocs.tsv and one line in run.log ("load <L>: graph reallocations: W of N requests (S at the same size,
+# D changed)"). The loads and the requests are the same as before; a switch whose loads reallocate where its line
+# without it does not is marked with scripts/realloc_counts.py --marks.
 # Env: BUILDS (folder of the builds), BUILD (the taper build's folder), MODEL (first shard), OUT (default ./out),
 #      CTX (65536), ARGS (default '-b 2048 -ub 512 -ts 6,5,5,6,5,5,6,5,6 -fit off -lm dio'), PORT (8095),
 #      LOADS ("A B"), PASSES_A ("off on on off"; a spec such as short=2048:128 is a pass too), PASSES_B ("off on"),
@@ -36,6 +41,19 @@ FORCE=${FORCE:-0}
 mkdir -p "$OUT"
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 log() { echo "$(date -Is) $*" | tee -a "$OUT/run.log"; }
+# realloc_count SERVER_LOG TSV (C804): the target graph's reallocations per request from print_timing's running count
+# (`graph reallocs = S / D` since the load, after the request's `prompt eval time = X ms / N tokens`); writes one row
+# per request to TSV and prints the summary
+realloc_count() {
+    sed 's/\x1b\[[0-9;]*m//g' "$1" 2> /dev/null | awk -v out="$2" '
+        BEGIN { print "req\tprompt_tokens\tprompt_ms\treallocs_same\treallocs_changed" > out }
+        /prompt eval time =/ { t = $0; sub(/.*prompt eval time = */, "", t); split(t, p, " "); ms = p[1]; n = p[4]; cur = 1; next }
+        cur && /graph reallocs =/ { t = $0; sub(/.*graph reallocs = */, "", t); split(t, q, " ")
+            s = q[1] - ps; d = q[3] - pd; ps = q[1]; pd = q[3]; cur = 0
+            printf "%d\t%s\t%s\t%d\t%d\n", k, n, ms, s, d > out
+            k++; ts += s; td += d; if (s + d > 0) w++ }
+        END { printf "graph reallocations: %d of %d requests (%d at the same size, %d changed)\n", w, k, ts, td }'
+}
 
 apps=$(nvidia-smi --query-compute-apps=pid,process_name --format=csv,noheader 2>/dev/null)
 if [ -n "$apps" ] && [ "$FORCE" != 1 ]; then
@@ -93,6 +111,7 @@ for L in $LOADS; do
     sed 's/\x1b\[[0-9;]*m//g' "$d/server.log" | grep -oE '(created|restored) context checkpoint.*' > "$d/checkpoints.txt"
     sed 's/\x1b\[[0-9;]*m//g' "$d/server.log" | grep -o 'ubatch taper: .*' > "$d/taper_lines.txt"
     log "load $L: $(wc -l < "$d/checkpoints.txt") checkpoint lines, $(wc -l < "$d/taper_lines.txt") taper lines, lowest MemAvailable $(sort -k2 -n "$d/memavail.txt" | head -n 1 | cut -d' ' -f2) MiB"
+    log "load $L: $(realloc_count "$d/server.log" "$d/reallocs.tsv")"
 done
 log "done"
 touch "$OUT/DONE"
