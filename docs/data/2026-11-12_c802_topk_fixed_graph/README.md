@@ -10,7 +10,7 @@ without it.
 
 This folder holds the fix, why the first idea for it (a view of the logits in the pad's place) does not work, and the
 checks on a build machine's CPU. The registry row is [Q1406](../../../quants/experiments.md); the switch is in
-[docs/switches.md](../../switches.md). The check on a P106 is the rig row R126 below.
+[docs/switches.md](../../switches.md). The check on a P106 is the rig row R127 below.
 
 **Result:** with the fix, the switch keeps one graph in every micro-batch, and the allocator never plans again. A test
 model with Flint's 150,144-token vocabulary ran 13 decodes: prompt middles, prompt ends, decode steps and verify
@@ -147,9 +147,9 @@ its graph (the same in the second run) planned a 5.21 MiB compute buffer. The se
 re-plans. Each verdict line of those two runs is in [summary_earlier.tsv](summary_earlier.tsv).
 
 The two-card run with `GGML_SCHED_DEBUG_REALLOC=1` that Q1406 lists did not run: the build machine's cards were in use.
-R126's load on nine P106 cards counts the scheduler's reallocations directly, so it stands in for that run.
+R127's load on nine P106 cards counts the scheduler's reallocations directly, so it stands in for that run.
 
-## The rig check (R126)
+## The rig check (R127)
 
 FN84's load ([run/fn84_loads.sh](../2026-11-12_fn84_graph_realloc/run/fn84_loads.sh)) with nothing dropped
 (`DROP=`), on this branch's rig tarball. That is R60's whole `gains` line, `LLAMA_SAMPLING_TOP_K_ROWS=1` included: one
