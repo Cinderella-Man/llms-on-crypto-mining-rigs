@@ -14,7 +14,8 @@ The comparisons, each paired pass by pass (the arms alternate within a pass):
                       merged tree's kernel choices at Flash-Next's widths (2026-11-11_v4_kernel_merge/pick_flashnext_all.tsv):
                       Q6K_MT for Q6_K at 2-4 tokens; DMT_KT for IQ4_XS at K = 6,144 and 4 tokens and Q4_K at K = 6,144
                       and 3-4 tokens; RO8 for IQ4_XS, Q4_K and Q5_K at 5-8 tokens, except where it declines (IQ4_XS at
-                      K = 6,144 and 7-8 tokens, Q4_K at K = 6,144 and 6-8 tokens: the k-column kernel, as in mt); "none"
+                      K = 6,144 and 7-8 tokens, Q4_K and Q5_K at K = 6,144 and 6-8 tokens: the k-column kernel, as in mt;
+                      2026-11-11_c729_readonce_5to8/README.md's table of warps); "none"
                       where both arms run the same kernel
   kernm2 against mt   the same with two row blocks a tile round
   kernm2 against kern _DMT_KT_M=2 alone (the tile cases)
@@ -68,7 +69,7 @@ def owner(cmp, t, k, n):
     if tile:
         return "DMT_KT"
     if n >= 5 and t in ("iq4_xs", "q4_K", "q5_K"):
-        if k == 6144 and ((t == "iq4_xs" and n >= 7) or (t == "q4_K" and n >= 6)):
+        if k == 6144 and ((t == "iq4_xs" and n >= 7) or (t in ("q4_K", "q5_K") and n >= 6)):
             return "none"
         return "RO8"
     return "none"

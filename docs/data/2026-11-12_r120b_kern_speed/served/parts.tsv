@@ -1,0 +1,97 @@
+run	trace	part	ms_per_pass
+1-off	verify-r1	routed experts	20.503
+1-off	verify-r1	shared expert	4.580
+1-off	verify-r1	hyper-connections (BF16)	12.949
+1-off	verify-r1	router	2.412
+1-off	verify-r1	attention and recurrent projections	26.083
+1-off	verify-r1	Gated DeltaNet state and conv	8.930
+1-off	verify-r1	attention (FLASH_ATTN_EXT)	1.056
+1-off	verify-r1	output layer	3.151
+1-off	verify-r1	token embeddings	0.000
+1-off	verify-r1	other ops without weights	7.211
+1-off	verify-r1	other weights	0.885
+1-off	verify-r1	sum of the parts	87.760
+1-off	verify-r2	routed experts	20.536
+1-off	verify-r2	shared expert	4.588
+1-off	verify-r2	hyper-connections (BF16)	12.980
+1-off	verify-r2	router	2.405
+1-off	verify-r2	attention and recurrent projections	26.031
+1-off	verify-r2	Gated DeltaNet state and conv	8.956
+1-off	verify-r2	attention (FLASH_ATTN_EXT)	1.054
+1-off	verify-r2	output layer	3.158
+1-off	verify-r2	token embeddings	0.000
+1-off	verify-r2	other ops without weights	7.276
+1-off	verify-r2	other weights	0.889
+1-off	verify-r2	sum of the parts	87.874
+2-on	verify-r1	routed experts	20.453
+2-on	verify-r1	shared expert	3.865
+2-on	verify-r1	hyper-connections (BF16)	12.894
+2-on	verify-r1	router	4.072
+2-on	verify-r1	attention and recurrent projections	23.518
+2-on	verify-r1	Gated DeltaNet state and conv	8.922
+2-on	verify-r1	attention (FLASH_ATTN_EXT)	1.027
+2-on	verify-r1	output layer	3.165
+2-on	verify-r1	token embeddings	0.000
+2-on	verify-r1	other ops without weights	7.167
+2-on	verify-r1	other weights	0.888
+2-on	verify-r1	sum of the parts	85.970
+2-on	verify-r2	routed experts	20.499
+2-on	verify-r2	shared expert	3.874
+2-on	verify-r2	hyper-connections (BF16)	12.865
+2-on	verify-r2	router	4.072
+2-on	verify-r2	attention and recurrent projections	23.540
+2-on	verify-r2	Gated DeltaNet state and conv	8.936
+2-on	verify-r2	attention (FLASH_ATTN_EXT)	1.024
+2-on	verify-r2	output layer	3.166
+2-on	verify-r2	token embeddings	0.000
+2-on	verify-r2	other ops without weights	7.140
+2-on	verify-r2	other weights	0.884
+2-on	verify-r2	sum of the parts	86.001
+3-on	verify-r1	routed experts	20.463
+3-on	verify-r1	shared expert	3.871
+3-on	verify-r1	hyper-connections (BF16)	12.891
+3-on	verify-r1	router	4.073
+3-on	verify-r1	attention and recurrent projections	23.552
+3-on	verify-r1	Gated DeltaNet state and conv	8.930
+3-on	verify-r1	attention (FLASH_ATTN_EXT)	1.029
+3-on	verify-r1	output layer	3.162
+3-on	verify-r1	token embeddings	0.000
+3-on	verify-r1	other ops without weights	7.102
+3-on	verify-r1	other weights	0.885
+3-on	verify-r1	sum of the parts	85.958
+3-on	verify-r2	routed experts	20.497
+3-on	verify-r2	shared expert	3.851
+3-on	verify-r2	hyper-connections (BF16)	12.913
+3-on	verify-r2	router	4.085
+3-on	verify-r2	attention and recurrent projections	23.553
+3-on	verify-r2	Gated DeltaNet state and conv	8.933
+3-on	verify-r2	attention (FLASH_ATTN_EXT)	1.026
+3-on	verify-r2	output layer	3.168
+3-on	verify-r2	token embeddings	0.000
+3-on	verify-r2	other ops without weights	7.081
+3-on	verify-r2	other weights	0.883
+3-on	verify-r2	sum of the parts	85.991
+4-off	verify-r1	routed experts	20.503
+4-off	verify-r1	shared expert	4.580
+4-off	verify-r1	hyper-connections (BF16)	12.968
+4-off	verify-r1	router	2.404
+4-off	verify-r1	attention and recurrent projections	26.054
+4-off	verify-r1	Gated DeltaNet state and conv	8.952
+4-off	verify-r1	attention (FLASH_ATTN_EXT)	1.058
+4-off	verify-r1	output layer	3.152
+4-off	verify-r1	token embeddings	0.000
+4-off	verify-r1	other ops without weights	7.188
+4-off	verify-r1	other weights	0.898
+4-off	verify-r1	sum of the parts	87.757
+4-off	verify-r2	routed experts	20.544
+4-off	verify-r2	shared expert	4.593
+4-off	verify-r2	hyper-connections (BF16)	12.945
+4-off	verify-r2	router	2.410
+4-off	verify-r2	attention and recurrent projections	26.057
+4-off	verify-r2	Gated DeltaNet state and conv	8.961
+4-off	verify-r2	attention (FLASH_ATTN_EXT)	1.054
+4-off	verify-r2	output layer	3.152
+4-off	verify-r2	token embeddings	0.000
+4-off	verify-r2	other ops without weights	7.227
+4-off	verify-r2	other weights	0.896
+4-off	verify-r2	sum of the parts	87.840

@@ -1,0 +1,3 @@
+request	main_passes	prompt_passes	generation_steps	draft_passes_a_step	typical_steps	median_raw_ms_typical_verify	profiled_ms_pass_to_pass	first_host_ms	last_host_ms
+r1	87	3	83	4:83	80	103.26	140.09	27974.8	48408.2
+r2	85	0	84	4:84	81	103.23	139.55	53766.8	65685.1
