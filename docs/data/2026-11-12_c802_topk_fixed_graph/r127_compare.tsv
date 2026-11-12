@@ -1,0 +1,9 @@
+req	kind_turn	prompt_tokens	r60a_prompt_ms	topk_prompt_ms	c802_prompt_ms	r60a_reallocs_same	r60a_reallocs_changed	topk_reallocs_same	topk_reallocs_changed	c802_reallocs_same	c802_reallocs_changed	r60a_target_reallocs	topk_target_reallocs	c802_target_reallocs	r60a_draft_reallocs	topk_draft_reallocs	c802_draft_reallocs	r60a_gen_md5	topk_gen_md5	c802_gen_md5	r60a_checkpoints_md5	topk_checkpoints_md5	c802_checkpoints_md5	topk_reply_as_r60a	c802_reply_as_r60a	topk_checkpoints_as_r60a	c802_checkpoints_as_r60a
+0	reset 0	1549	23418.2	22239.0	22489.5	3	1	0	0	0	0	6944,6944,6944,6943c	-	-	3	3	3	e0cd717285	e0cd717285	e0cd717285	ff45739cb9	ff45739cb9	ff45739cb9	yes	yes	yes	yes
+1	turn 1	896	11809.7	11528.5	11508.7	2	2	0	0	0	0	6944c,6944,6943c,6943	-	-	2	2	2	c32ed09dad	c32ed09dad	c32ed09dad	56f14c6bad	56f14c6bad	56f14c6bad	yes	yes	yes	yes
+2	turn 2	3313	42492.2	21139.9	21135.7	7	2	0	0	0	0	6944c,6944,6944,6944,6944,6944,6944,6943c,6943	-	-	7	7	7	5afe740c76	5afe740c76	5afe740c76	a9b28a443f	a9b28a443f	a9b28a443f	yes	yes	yes	yes
+3	turn 3	302	4883.1	4776.7	4785.0	1	2	0	0	0	0	6944c,6943c,6943	-	-	1	1	1	7cf5051806	7cf5051806	7cf5051806	c20c1945ee	c20c1945ee	c20c1945ee	yes	yes	yes	yes
+4	turn 4	30	2360.1	2253.5	2265.3	1	2	0	0	0	0	6944c,6943c,6943	-	-	1	1	1	3863fb46dd	3863fb46dd	3863fb46dd	7287043c15	7287043c15	7287043c15	yes	yes	yes	yes
+5	turn 5	92	3400.7	3308.0	3311.4	1	2	0	0	0	0	6944c,6943c,6943	-	-	1	1	1	c654ec080f	c654ec080f	c654ec080f	2e4e5c5c4d	2e4e5c5c4d	2e4e5c5c4d	yes	yes	yes	yes
+6	fresh 0	2049	-	11718.3	11652.7	-	-	0	0	0	0	-	-	-	-	5	5	-	0dbb275f99	0dbb275f99	-	5bee42a1f9	5bee42a1f9	-	-	-	-
+7	fresh 1	2049	-	11416.4	11487.7	-	-	0	0	0	0	-	-	-	-	5	5	-	0dbb275f99	0dbb275f99	-	5bee42a1f9	5bee42a1f9	-	-	-	-

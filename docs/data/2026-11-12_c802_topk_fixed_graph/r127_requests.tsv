@@ -1,0 +1,9 @@
+label	pass	arm	kind	task	turn	n_new	prompt_n	cache_n	prompt_ms	predicted_n	predicted_ms	wall_s	gen_md5
+A	0	off	reset	bugfix-javascript-complex-numbers	0	0	1549	0	22489.5	1	0.0	22.49	e0cd717285
+A	0	off	turn	bugfix-javascript-complex-numbers	1	896	896	1549	11508.7	8	3660.8	15.18	c32ed09dad
+A	0	off	turn	bugfix-javascript-complex-numbers	2	3312	3313	2452	21135.7	8	1406.5	22.55	5afe740c76
+A	0	off	turn	bugfix-javascript-complex-numbers	3	301	302	5772	4785.0	8	287.2	5.08	7cf5051806
+A	0	off	turn	bugfix-javascript-complex-numbers	4	29	30	6081	2265.3	8	420.7	2.7	3863fb46dd
+A	0	off	turn	bugfix-javascript-complex-numbers	5	91	92	6118	3311.4	8	738.9	4.09	c654ec080f
+A	1	off	fresh	fresh0	0	2049	2049	0	11652.7	8	346.9	12.0	0dbb275f99
+A	1	on	fresh	fresh0	1	2049	2049	0	11487.7	8	334.3	11.83	0dbb275f99
