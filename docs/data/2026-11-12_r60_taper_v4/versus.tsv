@@ -1,0 +1,7 @@
+load	arm	turns	prompt_s_by_pass	mean_s	base_s_by_pass	delta_s	delta_pct	spread_s	class	greedy_same_as_base
+a	off	62	492.68, 480.70	486.69	492.68, 480.70	+0.00	+0.00	11.98	base	62/62
+a	on	62	486.04	486.04	492.68, 480.70	-0.65	-0.13	11.98	negligible	62/62
+a	short=600:64	62	469.17	469.17	492.68, 480.70	-17.52	-3.60	11.98	gain	62/62
+a	tail=512:128,short=600:64	62	473.82	473.82	492.68, 480.70	-12.87	-2.64	11.98	gain	61/62
+ro8	off	62	483.93	483.93	492.68, 480.70	-2.76	-0.57	11.98	negligible	62/62
+ro8	on	62	497.08	497.08	492.68, 480.70	+10.39	+2.14	11.98	negligible	61/62

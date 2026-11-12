@@ -207,7 +207,7 @@ that loses, or changes a reply, goes back to a run of its own. Est. 12.5 hours f
 
 | # | What | Why it is next |
 |---|---|---|
-| 1 | The taper's rule by prompt size | the one loss on the line; turns of 1,024 or more new tokens hold 62 % of the reading time |
+| 1 | The taper's rule by prompt size | done: the taper without its head rule, `short=600:64`; the loss itself comes from graph rebuilds ([14.9](14-reading-prompts.md#149-the-loss-that-is-still-open)) |
 | 2 | The eight switches between two steps, as a ladder | est. up to 8 ms of a 131.6 ms step, and no new code |
 | 3 | The prompt switches on an agent session's own prompts, as a ladder | est. 10 to 20 % of reading time |
 | 4 | The check-pass kernels: the checks on a card, then one timed pair with all of them on | the largest group of products left in a check pass has no fast kernel in use yet |

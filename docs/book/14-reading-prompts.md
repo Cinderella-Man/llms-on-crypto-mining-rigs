@@ -207,9 +207,18 @@ and long turns slower:
 The median wait for a first word fell from 6.52 s to 4.55. The wait that one turn in ten exceeds rose from 16.17 s
 to 24.48.
 
-The suspect is the taper of section 14.5, which loses in the same size range in the replay. It has not been
-confirmed on this line. Until it is, the taper is not part of any preset, and settling it is the first row of
-[chapter 15](15-toward-v4.md)'s list.
+The suspect was the taper of section 14.5, which loses in the same size range in the replay. On this line it is
+not the cause. With the taper off, the replay reads turns of 1,024 to 1,999 new tokens at 79.3 and 81.1 tok/s in two
+passes, the agent check's speed. The full taper loses from 512 new tokens up, because of its small batches at the
+start of a call. Without that head rule, `short=600:64` reads a pass in 469.17 s against 492.68 and 480.70 with the
+taper off, and loses in no size range. So the line takes the short rule only.
+
+The loss sits somewhere else. The night's build with only the checkpoint switches read the same turns in 112.12 s a
+pass against 192.99 s, and a fresh 2,049-token prompt in 12.27, 12.38, 12.41 and 12.14 s against 23.36, 22.94, 23.32
+and 22.97. The server logs show the difference. On the stacked line every request rebuilds its graph's memory plan
+partway through, 1,547 times in one load of 373 requests, and the night's build never did. Each rebuild makes the
+host wait for all nine cards, so the pipeline of section 14.2 empties there. Which switch causes it is the next thing
+to find (Q1405).
 
 One more gap shows in these numbers. The switches of this chapter were timed on a fresh 4,097-token prompt or on
 8,128-token chunks, never on the mix of sizes an agent really sends. The next runs replay an agent session's own

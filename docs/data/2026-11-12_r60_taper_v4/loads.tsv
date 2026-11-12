@@ -1,0 +1,3 @@
+load	checkpoints_created	created_median_ms	created_sum_s	created_on_devices_mib	checkpoints_restored	restored_median_ms	restored_sum_s	lowest_memavailable_mib	memavail_samples
+a	746	0.3	2.9	112.6	59	2.6	0.2	434	1677
+ro8	308	0.3	2.1	112.6	23	2.6	0.1	421	839

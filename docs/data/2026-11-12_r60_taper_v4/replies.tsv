@@ -1,0 +1,7 @@
+load	setting	reference	turns	same_reply
+a	on	a:off	62	62
+a	tail+short	a:off	62	61
+a	short	a:off	62	62
+ro8	off	a:off	62	62
+ro8	on	a:off	62	61
+ro8	on	a:on	62	61
