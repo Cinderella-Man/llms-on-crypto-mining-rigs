@@ -2,8 +2,9 @@
 
 Code, CPU checks and the rig tarball of `GGML_CUDA_GRAPHS_PATCH`, on the fork branch `pascal-p106-v4-b12246-c779`
 (`771cafa97`, five commits on `pascal-p106-v4` `e27947287`), merged into `pascal-p106-v4` as `b9a1c1fa7`. Off by
-default; with it unset, nothing changes. Its P106 check is R136 (not run here). Registry row:
-[Q1368](../../../quants/experiments.md).
+default; with it unset, nothing changes. Its P106 check is R136: in part 1 (2026-11-13) the patch load gave the force
+load's replies and verify steps, but it patched none of its captures ([the rig check](#the-rig-check-r136)). Registry
+row: [Q1368](../../../quants/experiments.md).
 
 ## The problem
 
@@ -83,7 +84,7 @@ evaluation), a dispatch loop that fuses patterns of up to six nodes on condition
 groups that make one to three CUDA nodes (one kind's count depends on a property), and a rare group that holds pool
 memory into the next. It shows patches replaying without a GPU, and that the window must cover the longest fusion.
 
-## The rig check (R136, not run)
+## The rig check (R136)
 
 On nine P106-090 cards, with [run/r136_run.sh](run/r136_run.sh), against `GGML_CUDA_GRAPHS_FORCE=1` alone (in `v4c2`'s
 line since R123a). Three parts, each one run:
@@ -102,6 +103,29 @@ line since R123a). Three parts, each one run:
 Est. up to ~0.2 s a fresh 4,097-token prompt (the captures' and updates' host time), more if a patch dispatches few
 groups. If part 2 shows most groups dispatched again at the 32-node window, `ARM=patchw` (window `W`, 8 by default)
 runs parts 1 and 2 at a shorter window; it must keep part 1's dumps.
+
+### Part 1 on a P106 (2026-11-13): the same replies and steps, but no capture patched
+
+The `-c779` build (`771cafa97`) on nine P106-090 cards: the load `force1` 08:18:27 to 08:27:46, then `patch1` 08:27:46
+to 08:37:01, each started on a quiet rig ([r136/lane/table.md](r136/lane/table.md)).
+
+- **Identity holds.** The greedy reply is the same on every pass and load, at depth 0 and at 32,768. The patch load
+  gives the force load's 40 verify steps with every field the same: the drafted tokens, their candidates and
+  probabilities, the main model's targets and probabilities, the tokens kept
+  ([r136/lane/dump_compare.tsv](r136/lane/dump_compare.tsv)). The two dumps differ only in `run`, the field that names
+  the process. Neither load reallocated the target's graph.
+- **But the patch load patched no capture, so part 1 did not test a patched graph.** Its last counts line reads 0 of
+  768 captures patched, all 768 in the 32,768-token prime
+  ([r136/lane/patch_counts.tsv](r136/lane/patch_counts.tsv)). Every capture was full, for one of three reasons:
+  - **`structure`, 705 of 768.** The check compares a node's sources as tensor objects (`src[j]` and `view_src`), and
+    they changed from one micro-batch to the next. The likely cause (est.) is the scheduler's four rotating input
+    copies: each copy is a separate tensor. C779's CPU model treated the rotation as a change of properties.
+  - **`api`, 62 of the 63 captures whose structure held.** CUDA refused a parameter update, after 1,302 CUDA nodes in
+    all had been set. The counts line does not say which call it refused: kernel, memset or memcpy.
+  - **`nodes`, 1:** the scratch capture made other CUDA nodes than the recording.
+- **What it shows:** patch mode's full captures are exact on a P106, nothing more. Parts 2 and 3 would time patch mode
+  with every capture full. C826 (Q1449) compares sources by what they hold and logs which update CUDA refuses; part 1
+  then runs again.
 
 ## Commands
 
@@ -126,7 +150,15 @@ STEP=r42 ARM=force bash docs/data/2026-11-12_c779_graph_replay/run/r136_run.sh  
 STEP=r42 ARM=patch bash docs/data/2026-11-12_c779_graph_replay/run/r136_run.sh    # after r42-force/DONE
 STEP=agent ARM=force bash docs/data/2026-11-12_c779_graph_replay/run/r136_run.sh  # ends with $R43/r136_force/DONE
 STEP=agent ARM=patch bash docs/data/2026-11-12_c779_graph_replay/run/r136_run.sh
+
+# part 1's reading, on a build machine's CPU, in a folder that holds the collected lane/
+python3 -I $REPO/docs/data/2026-11-11_r82_c702_p106/run/dump_compare.py --control lane/dump-force.jsonl \
+  --control2 lane/dump-force.jsonl --arm lane/dump-patch.jsonl --out lane/dump_compare.tsv
+python3 -I $REPO/docs/data/2026-11-12_c779_graph_replay/run/patch_counts.py lane/server-patch1.log > lane/patch_counts.tsv
 ```
+
+The lane's greedy replies and its other checks are `deep_table.py`'s, in `table.md`; `requests.csv` holds each reply's
+md5.
 
 Part 1's dumps compare with R82's [dump_compare.py](../2026-11-11_r82_c702_p106/run/dump_compare.py) (the force load
 as both controls), part 2's tables with R42's
@@ -142,17 +174,22 @@ as both controls), part 2's tables with R42's
 | [run/checks.sh](run/checks.sh) | the checks: `ggml-cuda.cu` alone, the rig tarball, the switch list, `llama-server`'s GPU code against the base's, a static CPU build, `test-cuda-graph-patch`, `test-llama-archs` against the base's logits, C565's ctest set static and shared, the merged tree |
 | [run/ptx_names.sh](run/ptx_names.sh) | the PTX comparison with internal names' numbers masked |
 | [run/r136_run.sh](run/r136_run.sh) | the rig check R136 (from a machine that runs ssh) |
+| [r136/lane/table.md](r136/lane/table.md), [classes.tsv](r136/lane/classes.tsv), [requests.csv](r136/lane/requests.csv), [loads.tsv](r136/lane/loads.tsv) | R136 part 1, the lane: `deep_table.py`'s tables and checks, every request, each load's line |
+| [r136/lane/dump_compare.tsv](r136/lane/dump_compare.tsv) | the 40 verify steps: the patch load against the force load (as both controls), and which fields differ |
+| [r136/lane/patch_counts.tsv](r136/lane/patch_counts.tsv) | the patch load's counts lines: decisions, captures patched, CUDA nodes set, full captures by reason |
+| [run/patch_counts.py](run/patch_counts.py) | the counts lines of a server log as a TSV |
 
 ## Limits
 
-- **Not yet on a P106.** The CPU checks show that nothing changes with the switch unset or on a CPU, that the device
-  code is the base's, and that the patch logic gives a fresh capture's executables in a model. That CUDA's driver
-  accepts every update on the rig, how many groups a real split dispatches again, and what it saves, are R136's to
-  show.
+- **Not yet patched on a P106.** The CPU checks show that nothing changes with the switch unset or on a CPU, that the
+  device code is the base's, and that the patch logic gives a fresh capture's executables in a model. R136's part 1
+  shows patch mode exact on a P106 with every capture full: none of 768 was patched (`structure` 705, `api` 62,
+  `nodes` 1). Whether CUDA's driver accepts the updates, how many groups a real split dispatches again, and what it
+  saves wait for C826 and R136's parts 2 and 3.
 - **The window is a bound, not a measurement.** 32 nodes covers the fusions the loop tries on a prompt graph; a fusion
   that reads further ahead than the window, conditioned on a property that changes between micro-batches, would keep
   the old partition while a fresh capture fuses differently: the same nodes computed by other kernels. R136's part 1
-  compares every verify step's dump with the force load's.
+  compares every verify step's dump with the force load's, which tests the window only once captures are patched.
 - **A full capture costs more in patch mode:** it instantiates each chunk anew (the patch needs the graph its
   executable was instantiated from), where the force switch alone updates the executable. It happens once a graph,
   and after any fallback.
@@ -161,4 +198,6 @@ as both controls), part 2's tables with R42's
 ## Provenance and licence
 
 Code and checks of 2026-11-12, on the Miner Llama fork of llama.cpp (MIT). The CPU checks ran on a build machine with no
-GPU in use. No model output is in this folder. Licence: the repository's.
+GPU in use. R136 ran on a P106 rig on 2026-11-13. The recorded agent text that its lane cuts prompts from, the dumps
+(which hold token ids of that text) and the server logs are not published; its tables hold counts, times, ids and
+md5s only. No model output is in this folder. Licence: the repository's.
