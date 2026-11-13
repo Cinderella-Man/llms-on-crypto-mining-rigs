@@ -11,7 +11,7 @@ sent 128-token prompt micro-batches through the per-token kernel and read prompt
 the union kernel: a block takes several consecutive query tokens and reads the union of their kept cells once. It holds
 its checks without a GPU, the check set for a P106 and the rig commands that check and time it.
 
-**Status: written, built and checked on a CPU; correct on a GPU through the compute_61 PTX ([Q1316](../2026-11-11_fn74_c103_ptx/README.md)); the check set for a P106 is recorded; not yet run on a P106.** Miner
+**Status: written, built and checked on a CPU; correct on a GPU through the compute_61 PTX ([Q1316](../2026-11-11_fn74_c103_ptx/README.md)); correct on a P106 ([the native check](#the-native-check-on-a-p106-r88-part-1), Q1315 part 1: the check set replays as designed on Miner Llama `v4-rc2`, every multi-token case on the kernel the rule names); not yet timed on a P106.** Miner
 Llama branch `pascal-p106-v4-b12246-c103` `4a3423134` (six commits on the prompt
 rule's `pascal-p106-v4-b12246-c705` `baac08803`), behind `GGML_CUDA_FATTN_SPARSE_PASCAL_UNION` (off by default; then the
 switch takes exactly the calls it took on `-c705`, and the per-token kernel keeps its source and machine code).
@@ -172,6 +172,9 @@ step at depth 0 must stay `ub512`'s: the decode calls are the same.
 | [registers.tsv](registers.tsv) | registers, stack and spills of every instance of the sparse kernel (ptxas, sm_61) |
 | [set.tsv](set.tsv) | the check set: one line per recorded case (id, case string, input and reference bytes) |
 | [runs.tsv](runs.tsv), [runs-ptx.tsv](runs-ptx.tsv) | the set's runs on a P106 and through the compute_61 PTX on a newer card |
+| [rig/](rig/) | the native check on a P106 (R88 part 1): the replay's [console.txt](rig/console.txt), [results.tsv](rig/results.tsv) and per-case errors (`<run>.tsv`), [record.txt](rig/record.txt) of the set recorded again with `v4-rc2`, [classes.txt](rig/classes.txt) (the rule case by case), [errors.tsv](rig/errors.tsv) (as the PTX run's table), [fasp_gpu.txt](rig/fasp_gpu.txt) |
+| [run/kernel_classes.py](run/kernel_classes.py) | which kernel took each multi-token case of a replay, against [rule.txt](rule.txt)'s table, and against another replay of the same set |
+| [run/rig_r88.sh](run/rig_r88.sh) | the rig driver: the replay, then `fasp_check --gpu` and `--bench` on one card |
 | [bench/fattn_sparse](../../../bench/fattn_sparse/README.md) | the CPU check (the union kernel's host model and cases, fault 4, five new mutations, the union rule in `--rule`, the union bench are new here) |
 | [scripts/record_checks.sh](../../../scripts/record_checks.sh), [scripts/replay_checks.sh](../../../scripts/replay_checks.sh) | the recording (suite `qsa-union` is new here) and the replay |
 
@@ -179,6 +182,89 @@ Test cases added to `tests/test-backend-ops.cpp`: Flash-Next's QSA call (head 25
 8 and 128 query tokens on 4,096 and 12,288 cells and at 2, 4, 8 and 128 on 49,152, 6 tokens in two sequences on 8,192, head 128 with 4 query
 heads per KV head at 8 and 13 tokens, with 8 and sinks at 7, and head 256 with 16 at 5 tokens and 31 cells, F16 and
 Q8_0.
+
+## The native check on a P106 (R88 part 1)
+
+2026-11-13, one rig, card 0, nothing else running on it. **The union kernel is correct on a P106.** The check set
+replays as designed in all 13 runs: the 9 runs that must pass pass all 122 cases the card takes, and the three faults
+fail cases. In every run that must pass, each of the 74 multi-token cases the rule's table lists keeps `qu-stock`'s
+errors where the rule names the dense kernels and has other errors where it names the per-token or the union kernel.
+`fasp_check --gpu` passes the 32 cases it finished, of 58. The bench was not measured.
+
+| | |
+|---|---|
+| Build | Miner Llama `v4-rc2` (`pascal-p106-v4` `eb82916d3`, which holds this branch merged), from the rig tarball `llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828.tar.gz` (834,148,416 B, md5 `ac5f32d66ec286eeef4cf28f5d484816`), whose tree is `eb82916d3`'s; md5 compared on both ends of the relay |
+| Check set | `qsa-union` recorded again with that build's `test-backend-ops` (md5 `e38809f0b16869abc065483f07c4798a`) on the build machine's CPU, 4 workers, 24 s: 135 cases, 4,462,913,848 B ([rig/record.txt](rig/record.txt)); relayed as a tar stream, md5 `02733eb802fe710a2b5bfbfb0cba8015` on both ends; replayed with `NOREC=wrong` (the build that recorded it) |
+| Why recorded again | upstream tag b12360, merged into `v4-rc1`, added `q_head_padding` to `FLASH_ATTN_EXT`'s case string, so the set recorded above with `-c103`'s `test-backend-ops` has no record of any case a later build runs: on `v4-rc1` every one of the 13 runs replayed 0 of its 122 cases ("the record does not cover this filter") |
+| Replay | 15:54:17–16:06:02, 11 min 45 s; [rig/console.txt](rig/console.txt), [rig/results.tsv](rig/results.tsv), the per-case errors in `rig/<run>.tsv`. `CPU_CHECK=200` drew none of the 122 cases for the live CPU check |
+
+| Run | Must | Cases passing | FAIL lines | Exit | Verdict |
+|---|---|---:|---:|---:|---|
+| `qu-stock` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-sparse1` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-union` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-uprompt` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-ur05` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-m2` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-m2-union` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-m2-union-s1` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-m2-union-s32` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-fault1` | pass | 122 / 122 | 0 | 0 | ok |
+| `qu-fault2` | fail | 13 / 122 | 111 | 1 | ok |
+| `qu-fault3` | fail | 38 / 122 | 86 | 1 | ok |
+| `qu-fault4` | fail | 27 / 122 | 97 | 1 | ok |
+
+**Which kernel took each multi-token case** ([rig/classes.txt](rig/classes.txt), made by
+[run/kernel_classes.py](run/kernel_classes.py) from the per-case files and [rule.txt](rule.txt)). A case is "as stock"
+when every node's error, to the digits printed, equals its error in `qu-stock`. Cells: cases that hold / cases of that
+class in the rule's table (74 of the 102 multi-token cases the card takes); the mode-2 runs take `qu-m2-union`'s column:
+
+| Run | `d`: as stock | `S`: other errors | `U`: other errors | The rule holds |
+|---|---:|---:|---:|---:|
+| `qu-sparse1` | 60 / 60 | 14 / 14 | — | 74 / 74 |
+| `qu-union` | 36 / 36 | — | 38 / 38 | 74 / 74 |
+| `qu-uprompt` | 10 / 10 | — | 64 / 64 | 74 / 74 |
+| `qu-ur05` | — | — | 74 / 74 | 74 / 74 |
+| `qu-m2` | — | 74 / 74 | — | 74 / 74 |
+| `qu-m2-union`, `-s1`, `-s32`, `qu-fault1` | — | — | 74 / 74 each | 74 / 74 each |
+
+- Of the 28 multi-token cases the table does not list, 21 are as stock in `qu-sparse1`, 17 in `qu-union`, 11 in
+  `qu-uprompt` and 7 in every other run: the 7 that stay on the dense kernels everywhere (heads of 512 and 576, and a
+  4-token head-128 case with `max_bias`).
+- **Against the compute_61 PTX on a newer card** ([Q1316](../2026-11-11_fn74_c103_ptx/README.md)): in each of the nine
+  runs both replays hold, every one of the 122 cases is as stock on the P106 exactly where it was there.
+  [rig/errors.tsv](rig/errors.tsv) is that run's table for the P106 (the same script). Two counts differ by one case:
+  in `qu-m2` and `qu-m2-union` 8 of the 102 multi-token cases have the same errors under the per-token and the union
+  kernel (7 through the PTX), and with 32 splits 7 keep `qu-m2-union`'s errors (8 through the PTX). Fault 3 fails 84
+  cases here, 86 through the PTX.
+
+**`fasp_check` on the card** (md5 `eb92db897d645252db1920586cfad9c2`, the same binary as through the PTX):
+
+- `--gpu --nsm 5 --threads 2` ([rig/fasp_gpu.txt](rig/fasp_gpu.txt)): **32 of 58 cases pass, none fails**: all 26
+  per-token cases and the first 6 of the 32 union cases (F16: verify 2, 4, 5 (4+1), 8 on 32,768 cells, 4 sharing 90 %,
+  prompt 128). Its 32 cases took 64 min 53 s. Each case also computes the host model of the warp, the FP64 softmax
+  and ggml's CPU kernel over the whole masked cache on the rig's 2-core Celeron, and the seventh union case (128
+  tokens on 16,384 cells sharing 90 %) was still on the CPU after 15 min 57 s. It was stopped there, so that the rig
+  could take the replay and part 2 the same day.
+- `--bench --nsm 5`: **no timing.** `--bench` runs the 58 cases on the host first and times the kernels after them,
+  so in 39 min 37 s it repeated the CPU part (31 cases passed on the host model) and timed nothing; it was stopped.
+  The bench needs a `--bench` that skips the cases (Q1473), or the references recorded on the build machine (Q977).
+
+Commands, with `DIR` the rig's work folder and `T` the tarball's name (the set's tar stream and the build relayed
+through the operator's machine as above):
+
+```bash
+OUT=<work>/sets SUITE=qsa-union BIN=<tree of T>/bin JOBS=4 STEPS=record nice -n 19 bash scripts/record_checks.sh
+ssh $CLIENT "cd <work>/sets && tar cf - qsa-union" | ssh $RIG "tee >(md5sum > $DIR/qsa-union.md5) | tar xf - -C $DIR"
+ssh $RIG "SET=$DIR/qsa-union BIN=/opt/llama-builds/$T/bin OUT=$DIR/out DEV=0 CPU_CHECK=200 NOREC=wrong \
+  setsid nohup bash $DIR/replay_checks.sh > $DIR/replay.log 2>&1 < /dev/null &"
+python3 -I docs/data/2026-11-11_c103_union_gather/run/kernel_classes.py <OUT> docs/data/2026-11-11_c103_union_gather/rule.txt \
+  docs/data/2026-11-11_fn74_c103_ptx/replay > classes.txt
+python3 -I docs/data/2026-11-11_fn74_c103_ptx/run/errors.py <OUT> $DIR/qsa-union/runs.tsv > errors.tsv
+```
+
+[run/rig_r88.sh](run/rig_r88.sh) is the driver that ran the replay and both `fasp_check` steps in order on the first
+attempt (the replay part of it on `v4-rc1`, with the set recorded above).
 
 ## Commands
 

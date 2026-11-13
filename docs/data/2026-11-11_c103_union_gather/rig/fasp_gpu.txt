@@ -1,0 +1,35 @@
+case                       type    S  lst | model: rel64  nmse_ggml | gpu: rel64  nmse_ggml
+flash-next decode          f16    10 2051 | 3.57e-07  2.34e-05     | 3.96e-07  2.34e-05    | pass
+flash-next verify 5        f16     2 2051 | 5.83e-08  1.33e-07     | 6.06e-08  1.33e-07    | pass
+flash-next 32k             f16    10 2051 | 3.85e-07  2.26e-05     | 4.64e-07  2.26e-05    | pass
+flash-next 1 split         f16     1 2051 | 9.52e-07  2.16e-05     | 1.04e-06  2.16e-05    | pass
+flash-next 32 splits       f16    32 2051 | 1.57e-08  3.51e-08     | 1.68e-08  3.51e-08    | pass
+two streams                f16     2 2051 | 6.29e-08  1.34e-07     | 6.12e-08  1.34e-07    | pass
+head 128, 8 per KV, sinks  f16     5 1027 | 3.15e-07  1.13e-05     | 2.86e-07  1.13e-05    | pass
+head 128, 4 per KV         f16     2  333 | 7.84e-08  2.17e-07     | 5.61e-08  2.17e-07    | pass
+16 per KV, short list      f16     1   31 | 2.60e-07  3.46e-07     | 2.19e-07  3.46e-07    | pass
+one tile                   f16     1   32 | 9.91e-08  3.51e-08     | 9.24e-08  3.51e-08    | pass
+flash-next prompt 16       f16     1 2051 | 1.19e-07  4.98e-07     | 1.27e-07  4.98e-07    | pass
+flash-next prompt 128      f16     1 2051 | 1.63e-07  5.14e-14     | 1.52e-07  5.16e-14    | pass
+1,024 columns (512 tokens) f16     1  333 | 1.72e-07  1.18e-13     | 1.67e-07  1.20e-13    | pass
+flash-next decode          q8_0   10 2051 | 4.16e-07  6.69e-06     | 4.31e-07  6.69e-06    | pass
+flash-next verify 5        q8_0    2 2051 | 6.51e-08  1.90e-08     | 6.33e-08  1.90e-08    | pass
+flash-next 32k             q8_0   10 2051 | 3.67e-07  6.74e-06     | 3.65e-07  6.74e-06    | pass
+flash-next 1 split         q8_0    1 2051 | 9.50e-07  6.14e-06     | 9.46e-07  6.14e-06    | pass
+flash-next 32 splits       q8_0   32 2051 | 1.89e-08  4.91e-09     | 1.99e-08  4.91e-09    | pass
+two streams                q8_0    2 2051 | 5.47e-08  1.99e-08     | 5.44e-08  1.99e-08    | pass
+head 128, 8 per KV, sinks  q8_0    5 1027 | 3.04e-07  6.19e-06     | 3.03e-07  6.19e-06    | pass
+head 128, 4 per KV         q8_0    2  333 | 5.35e-08  1.94e-07     | 4.94e-08  1.94e-07    | pass
+16 per KV, short list      q8_0    1   31 | 2.63e-07  5.37e-06     | 2.19e-07  5.37e-06    | pass
+one tile                   q8_0    1   32 | 1.20e-07  2.22e-07     | 1.09e-07  2.22e-07    | pass
+flash-next prompt 16       q8_0    1 2051 | 1.23e-07  7.02e-08     | 1.26e-07  7.02e-08    | pass
+flash-next prompt 128      q8_0    1 2051 | 1.51e-07  5.49e-07     | 1.43e-07  5.49e-07    | pass
+1,024 columns (512 tokens) q8_0    1  333 | 1.73e-07  4.37e-06     | 1.58e-07  4.37e-06    | pass
+
+union case                 type    S   tpb   lst | model: rel64  nmse_ggml | gpu: rel64  nmse_ggml | vs_tok   bits 
+union verify 2             f16    10     2  2051 | 2.23e-08  3.27e-08     | 1.96e-08  3.27e-08    | 3.35e-08 -     | pass
+union verify 4             f16    10     4  4716 | 2.17e-08  1.09e-07     | 2.70e-08  1.09e-07    | 4.47e-08 -     | pass
+union verify 5 (4+1)       f16     5     4  5178 | 3.25e-08  1.23e-07     | 3.23e-08  1.23e-07    | 7.27e-08 -     | pass
+union verify 8, 32k        f16     5     4  5727 | 4.46e-08  2.43e-07     | 4.92e-08  2.43e-07    | 7.38e-08 -     | pass
+union verify 4, shared 90  f16    10     4  2655 | 4.36e-07  4.55e-05     | 4.06e-07  4.55e-05    | 7.19e-07 -     | pass
+union prompt 128           f16     1     4  3542 | 1.32e-07  5.60e-14     | 1.39e-07  5.63e-14    | 5.22e-08 -     | pass

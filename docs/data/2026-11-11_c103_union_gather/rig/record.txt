@@ -1,0 +1,8 @@
+suite: qsa-union
+recorded: 2026-11-13T15:08:59+01:00
+name: llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828
+commit: eb312b7bce5c4fead88a0a29dad7ebe62cd29447 (2026-11-13 13:48:25 +0100)
+recording CPU: AMD Ryzen 9 5900X 12-Core Processor
+test-backend-ops md5: e38809f0b16869abc065483f07c4798a
+filters (-o, -p):
+  FLASH_ATTN_EXT	n_kv_max=[1-9]

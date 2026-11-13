@@ -1,0 +1,14 @@
+run	expect	cases	pass	fail	same as qu-stock: 1 token	same as qu-stock: 2+ tokens	same as qu-m2: 1 token	same as qu-m2: 2+ tokens	same as qu-m2-union: 1 token	same as qu-m2-union: 2+ tokens
+qu-stock	pass	122	122	0	20/20	102/102	6/20	7/102	6/20	7/102
+qu-sparse1	pass	122	122	0	6/20	81/102	20/20	28/102	20/20	7/102
+qu-union	pass	122	122	0	6/20	53/102	20/20	7/102	20/20	56/102
+qu-uprompt	pass	122	122	0	6/20	21/102	20/20	8/102	20/20	88/102
+qu-ur05	pass	122	122	0	6/20	7/102	20/20	8/102	20/20	102/102
+qu-m2	pass	122	122	0	6/20	7/102	20/20	102/102	20/20	8/102
+qu-m2-union	pass	122	122	0	6/20	7/102	20/20	8/102	20/20	102/102
+qu-m2-union-s1	pass	122	122	0	6/20	7/102	8/20	8/102	8/20	37/102
+qu-m2-union-s32	pass	122	122	0	6/20	7/102	8/20	7/102	8/20	7/102
+qu-fault1	pass	122	122	0	6/20	7/102	6/20	7/102	6/20	7/102
+qu-fault2	fail	122	13	109	6/20	7/102	6/20	7/102	6/20	7/102
+qu-fault3	fail	122	38	84	6/20	7/102	6/20	7/102	6/20	7/102
+qu-fault4	fail	122	27	95	6/20	7/102	20/20	7/102	20/20	7/102

@@ -1,0 +1,56 @@
+qu-stock: 122 cases, 102 of two or more query tokens, 74 of them in the rule's table
+run	rule column	d: as stock	S: not as stock	U: not as stock	holds	does not hold
+qu-sparse1	qp-sparse1	60/60	14/14	0/0	74	0
+qu-union	qu-union	36/36	0/0	38/38	74	0
+qu-uprompt	qu-uprompt	10/10	0/0	64/64	74	0
+qu-ur05	qu-ur05	0/0	0/0	74/74	74	0
+qu-m2	qu-m2	0/0	74/74	0/0	74	0
+qu-m2-union	qu-m2-union	0/0	0/0	74/74	74	0
+qu-m2-union-s1	qu-m2-union	0/0	0/0	74/74	74	0
+qu-m2-union-s32	qu-m2-union	0/0	0/0	74/74	74	0
+qu-fault1	qu-m2-union	0/0	0/0	74/74	74	0
+
+run	rule	observed	case where the rule does not hold
+(0 cases)
+
+multi-token cases outside the rule's table: as stock (s) or other errors (o) per run
+case	qu-sparse1	qu-union	qu-uprompt	qu-ur05	qu-m2	qu-m2-union	qu-m2-union-s1	qu-m2-union-s32	qu-fault1	qu-fault2	qu-fault3	qu-fault4
+FLASH_ATTN_EXT(hsk=512,hsv=512,nh=1,nr23=[8,2],kv=4096,nb=3,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=768)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=576,hsv=512,nh=1,nr23=[16,2],kv=4096,nb=2,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=1,n_kv_max=768)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=1,nr23=[8,1],kv=4096,nb=4,mask=1,sinks=0,max_bias=8.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=512,hsv=512,nh=1,nr23=[8,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=512,hsv=512,nh=1,nr23=[8,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2048)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=576,hsv=512,nh=1,nr23=[16,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=1,n_kv_max=512)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=576,hsv=512,nh=1,nr23=[16,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=1,n_kv_max=2048)	s	s	s	s	s	s	s	s	s	s	s	s
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=1,nr23=[8,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=1,nr23=[8,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=1,nr23=[8,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2048)	s	s	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=8192,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=1,nr23=[12,2],kv=8192,nb=67,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=1,nr23=[8,1],kv=4096,nb=64,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	s	s	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=1,nr23=[8,1],kv=5003,nb=4,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,1,2,3],kv_view=1,v_is_view_of_k=0,n_kv_max=512)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=2,nr23=[4,1],kv=4096,nb=7,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=333)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=4096,nb=2,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=32)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=128,hsv=128,nh=2,nr23=[4,1],kv=4096,nb=7,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=333)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=4096,nb=2,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=32)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=4096,nb=6,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	s	s	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=4096,nb=7,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	s	s	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=12288,nb=3,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=12288,nb=6,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=12288,nb=7,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=f16,type_V=f16,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=4096,nb=6,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	s	s	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=4096,nb=7,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	s	s	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=12288,nb=3,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	o	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=12288,nb=6,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	o	o	o	o	o	o	o	o	o	o	o
+FLASH_ATTN_EXT(hsk=256,hsv=256,nh=2,nr23=[12,1],kv=12288,nb=7,mask=1,sinks=0,max_bias=0.000000,logit_softcap=0.000000,prec=f32,type_K=q8_0,type_V=q8_0,permute=[0,2,1,3],kv_view=1,v_is_view_of_k=0,n_kv_max=2051)	s	o	o	o	o	o	o	o	o	o	o	o
+
+run	cases in both	same as-stock pattern as REF	differ
+qu-stock	122	122	0
+qu-m2	122	122	0
+qu-m2-union	122	122	0
+qu-m2-union-s1	122	122	0
+qu-m2-union-s32	122	122	0
+qu-fault1	122	122	0
+qu-fault2	122	122	0
+qu-fault3	122	122	0
+qu-fault4	122	122	0
