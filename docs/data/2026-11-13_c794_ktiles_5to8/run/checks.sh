@@ -6,12 +6,12 @@
 # Steps (STEPS, in this order by default):
 #   obj     mmvq-pascal-dmt.cu of the tip and of the base compiled alone with the base build's flags (sm_61 and
 #           compute_61), before the rig build: every function of the base's object the same code in the tip's, the new
-#           ones only mul_mat_vec_q_pascal_dmt_kt at NT = 5 to 8 (2 types x 2 M x 2 PF x 4 = 32); their registers,
+#           ones only mul_mat_vec_q_pascal_dmt_kt at NT = 5 to 8 (2 types x 2 M x (2 PF at 5 and 6, 1 at 7 and 8) = 24); their registers,
 #           stack and local memory (no spills) and instruction counts (C728's sass_check.sh)
 #   rig     the rig tarball of BRANCH (scripts/build_llamacpp_docker.sh, TESTS=1) in $M/main/rig
 #   sass    cuobjdump -sass and -ptx of bin/llama-server of the new tarball and of BASE_TREE (the base's rig tarball),
 #           anonymous-namespace hashes masked, cut into functions (the day merge's sass_attrib.py): every function the
-#           base's code, the new ones only the 32 tile kernels
+#           base's code, the new ones only the 24 tile kernels
 #   sassobj mmvq-pascal-dmt.cu's object of the rig build against BASE_OBJ's, function by function, and sass_check.sh's
 #           table of the rig build's kernels (registers, spills, counts)
 #   record  the replay set ro8kt (scripts/record_checks.sh SUITE=ro8kt) with the tarball's test-backend-ops; the cases a
@@ -55,7 +55,7 @@ SRC=$M/main/rig/src
 O=$SRC/build/ggml/src/ggml-cuda/CMakeFiles/ggml-cuda.dir
 MASK='s/_GLOBAL__N__[0-9a-f]{8}_/_GLOBAL__N__X_/g;s/_cu_[0-9a-f]{8}/_cu_X/g;s/_INTERNAL_[0-9a-f]{8}/_INTERNAL_X/g'
 P=GGML_CUDA_MMVQ_PASCAL
-KTN=32 # new tile kernels: IQ4_XS and Q4_K, M = 1 and 2, with and without the prefetch, NT = 5 to 8
+KTN=24 # new tile kernels: IQ4_XS and Q4_K, M = 1 and 2, at NT = 5 and 6 with and without the prefetch, at 7 and 8 without
 mkdir -p "$M/logs"
 rm -f "$M/DONE"
 [ -f "$M/summary.tsv" ] || printf 'row\tcheck\tverdict\tdetail\n' > "$M/summary.tsv"
