@@ -1,0 +1,10 @@
+plan	draft	evaluations 100	replans prompt 19 gen 0 load 0	after a change of cards 1	drains 2887.6 ms	plans 3.7 ms	buffer growths 80 (482.40 MiB)
+plan	draft	  8	src 'kpool_pool_mask' of 'kpool_pool_mask (view)' (NONE) larger than planned
+plan	draft	  5	node 'node_76' (FILL) larger than planned
+plan	draft	  4	src 'kpool_upd' of 'kpool_upd (view)' (NONE) larger than planned
+plan	draft	  1	cards changed (node 40 'node_12' CPU -> CUDA8)
+plan	draft	  1	src 'leaf_9' of 'leaf_9 (view)' (NONE) larger than planned
+plan	target	evaluations 59	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 20 (5428.01 MiB)
+whole	draft	evaluations 100	replans prompt 1 gen 0 load 0	after a change of cards 1	drains 0.1 ms	plans 0.2 ms	buffer growths 81 (482.40 MiB)
+whole	draft	  1	cards changed (node 40 'node_12' CPU -> CUDA8)
+whole	target	evaluations 59	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 20 (5428.01 MiB)

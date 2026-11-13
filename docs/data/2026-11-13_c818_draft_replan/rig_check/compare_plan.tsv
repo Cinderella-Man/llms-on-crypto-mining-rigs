@@ -1,0 +1,9 @@
+req	kind_turn	prompt_tokens	plan_prompt_ms	whole_prompt_ms	plan_reallocs_same	plan_reallocs_changed	whole_reallocs_same	whole_reallocs_changed	plan_target_reallocs	whole_target_reallocs	plan_draft_reallocs	whole_draft_reallocs	plan_gen_md5	whole_gen_md5	plan_checkpoints_md5	whole_checkpoints_md5	whole_reply_as_plan	whole_checkpoints_as_plan
+0	reset 0	1549	22010.1	22002.9	0	0	0	0	-	-	3	0	e0cd717285	e0cd717285	ff45739cb9	ff45739cb9	yes	yes
+1	turn 1	896	11489.9	11410.9	0	0	0	0	-	-	2	0	c32ed09dad	c32ed09dad	56f14c6bad	56f14c6bad	yes	yes
+2	turn 2	3313	20860.6	20812.4	0	0	0	0	-	-	7	0	5afe740c76	5afe740c76	a9b28a443f	a9b28a443f	yes	yes
+3	turn 3	302	4789.6	4772.9	0	0	0	0	-	-	1	0	7cf5051806	7cf5051806	c20c1945ee	c20c1945ee	yes	yes
+4	turn 4	30	2256.3	2268.4	0	0	0	0	-	-	0	0	3863fb46dd	3863fb46dd	7287043c15	7287043c15	yes	yes
+5	turn 5	92	3306.1	3339.4	0	0	0	0	-	-	1	0	c654ec080f	c654ec080f	2e4e5c5c4d	2e4e5c5c4d	yes	yes
+6	fresh 0	2049	11487.4	11530.8	0	0	0	0	-	-	4	0	0dbb275f99	0dbb275f99	5bee42a1f9	5bee42a1f9	yes	yes
+7	fresh 1	2049	11362.8	11334.3	0	0	0	0	-	-	0	0	0dbb275f99	0dbb275f99	5bee42a1f9	5bee42a1f9	yes	yes
