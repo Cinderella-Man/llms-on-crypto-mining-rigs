@@ -74,7 +74,9 @@
 #                 takes (docs/data/2026-11-11_c754_f32_mmvf). Its runs-ptx.tsv runs them on a newer card at =2. From
 #                 C807 on the switch takes at most GGML_CUDA_MMVF_F32_MT_ROWS rows (default 32): the fault fails the
 #                 products of up to 32 rows, passes those above the limit, and fails those too with _ROWS=0
-#                 (docs/data/2026-11-12_c807_f32_router)
+#                 (docs/data/2026-11-12_c807_f32_router). From C822 on also at _ROWS=auto (48 rows at 4 tokens, 64 at
+#                 5-8) and at the list 64,48, the products each takes and those it leaves, listed when the set holds
+#                 C822's cases (docs/data/2026-11-13_c822_f32_rows)
 #   q3kmt         Q3_K's products of 1-8 tokens (Qwen3.8-Flash-Next's Q3_K attention and recurrent projections and the
 #                 shared expert's Q3_K products among them) with the 2-8-token kernel in the k-column kernel's order
 #                 (GGML_CUDA_MMVQ_PASCAL_Q3K_MT, C726) at each setting, under the Flash-Next preset's k-column switches,
@@ -156,13 +158,20 @@ TKV='ne=\[248320,'
 # 128 lanes at one token)
 BFX='type_a=bf16,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
 BFX4='type_a=bf16,type_b=f32,m=(320|333),n=[34],k=(10240|4104|4392|4736),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=0,'
-# F32's 2-D products of 1-8 tokens; of C754's and C807's shapes (4-8 tokens, rows of an even width at an even stride)
-# those GGML_CUDA_MMVF_F32_MT takes at its default row limit (at most 32 rows: F32X4) and those above it (F32X4A), which
-# it takes only with GGML_CUDA_MMVF_F32_MT_ROWS=0; F32X4R0: both
+# F32's 2-D products of 1-8 tokens; of C754's, C807's and C822's shapes (4-8 tokens, rows of an even width at an even
+# stride) those GGML_CUDA_MMVF_F32_MT takes at its default row limit (at most 32 rows: F32X4) and those above it
+# (F32X4A), which it takes only with GGML_CUDA_MMVF_F32_MT_ROWS=0; F32X4R0: both. C822: those _ROWS=auto takes (48 rows
+# at 4 tokens, 64 at 5-8: F32X4AUTO) and leaves (F32X4AUTOA), and those the list 64,48 takes (64 rows at 4 tokens, 48
+# at 5-8: F32X4LIST) and leaves (F32X4LISTA)
 F32X='type_a=f32,type_b=f32,m=[0-9]+,n=[1-8],k=[0-9]+,bs=\[1,1\],nr=\[1,1\],'
-F32X4R0='type_a=f32,type_b=f32,m=(1|7|17|31|32|33|48|129|256|512),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
-F32X4='type_a=f32,type_b=f32,m=(1|7|17|31|32),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
-F32X4A='type_a=f32,type_b=f32,m=(33|48|129|256|512),n=[4-8],k=(2560|64|100|300|6144|320),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
+F32XK='k=(2560|64|100|300|6144|320|2048),bs=\[1,1\],nr=\[1,1\],per=\[0,1,2,3\],k_v=(0|336),'
+F32X4R0="type_a=f32,type_b=f32,m=(1|7|17|31|32|33|48|49|64|65|129|256|512),n=[4-8],$F32XK"
+F32X4="type_a=f32,type_b=f32,m=(1|7|17|31|32),n=[4-8],$F32XK"
+F32X4A="type_a=f32,type_b=f32,m=(33|48|49|64|65|129|256|512),n=[4-8],$F32XK"
+F32X4AUTO="type_a=f32,type_b=f32,(m=(1|7|17|31|32|33|48),n=[4-8]|m=(49|64),n=[5-8]),$F32XK"
+F32X4AUTOA="type_a=f32,type_b=f32,(m=(49|64),n=4|m=(65|129|256|512),n=[4-8]),$F32XK"
+F32X4LIST="type_a=f32,type_b=f32,(m=(1|7|17|31|32|33|48),n=[4-8]|m=(49|64),n=4),$F32XK"
+F32X4LISTA="type_a=f32,type_b=f32,(m=(49|64),n=[5-8]|m=(65|129|256|512),n=[4-8]),$F32XK"
 NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
 DAY='dmt q5kmt q3kmt bf16x f32x glumt q5k1r'
 KERN='q6kmt dmtkt ro8'
@@ -450,9 +459,14 @@ suite_runs() {
 # C754's runs: <1 natively (the switch on compute 6.1) | 2 through the PTX on a newer card (the switch on any NVIDIA
 # GPU)>. cuBLAS at 4-8 tokens; the switch, which sends those to mul_mat_vec_f; the fault in the products it takes must
 # fail them, and without the switch it reaches nothing. C807: the fault leaves the products above the row limit alone
-# (cuBLAS takes them), and with _ROWS=0 (C754's rule) reaches them too
+# (cuBLAS takes them), and with _ROWS=0 (C754's rule) reaches them too. C822: at _ROWS=auto the fault fails exactly the
+# products of at most 48 rows at 4 tokens and 64 at 5-8 and passes the rest; at the list 64,48 (the limits the other
+# way round) exactly those of at most 64 rows at 4 tokens and 48 at 5-8. Those runs are listed only when the set holds
+# C822's cases (49 rows of 2560 at 4 tokens), which a build records from C822 on: a build before it reads "auto" as 0
+# (any row count) and a list as its first entry, so there they would fail
 suite_runs_f32x() {
-    local F=GGML_CUDA_MMVF_F32_MT M=$1
+    local F=GGML_CUDA_MMVF_F32_MT M=$1 A=0
+    [ -f "$S/manifest.tsv" ] && grep -q 'type_a=f32,type_b=f32,m=49,n=4,k=2560,' "$S/manifest.tsv" && A=1
     printf '%s\t%s\t%s\t%s\t%s\t\n' f32x-off "" MUL_MAT "$F32X" pass
     [ "$M" = 1 ] && printf '%s\t%s\t%s\t%s\t%s\t\n' \
         f32x-on "$F=1" MUL_MAT "$F32X" pass \
@@ -460,12 +474,21 @@ suite_runs_f32x() {
         f32x-fault-above "$F=1 ${F}_FAULT=1" MUL_MAT "$F32X4A" pass \
         f32x-on-rows0 "$F=1 ${F}_ROWS=0" MUL_MAT "$F32X" pass \
         f32x-fault-rows0 "$F=1 ${F}_ROWS=0 ${F}_FAULT=1" MUL_MAT "$F32X4A" fail
+    [ "$M" = 1 ] && [ $A = 1 ] && printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        f32x-on-auto "$F=1 ${F}_ROWS=auto" MUL_MAT "$F32X" pass \
+        f32x-fault-auto "$F=1 ${F}_ROWS=auto ${F}_FAULT=1" MUL_MAT "$F32X4AUTO" fail \
+        f32x-fault-auto-above "$F=1 ${F}_ROWS=auto ${F}_FAULT=1" MUL_MAT "$F32X4AUTOA" pass \
+        f32x-fault-list "$F=1 ${F}_ROWS=64,48 ${F}_FAULT=1" MUL_MAT "$F32X4LIST" fail \
+        f32x-fault-list-above "$F=1 ${F}_ROWS=64,48 ${F}_FAULT=1" MUL_MAT "$F32X4LISTA" pass
     printf '%s\t%s\t%s\t%s\t%s\t\n' \
         f32x-on2 "$F=2" MUL_MAT "$F32X" pass \
         f32x-fault2 "$F=2 ${F}_FAULT=1" MUL_MAT "$F32X4" fail \
         f32x-fault2-above "$F=2 ${F}_FAULT=1" MUL_MAT "$F32X4A" pass \
-        f32x-fault2-rows0 "$F=2 ${F}_ROWS=0 ${F}_FAULT=1" MUL_MAT "$F32X4A" fail \
-        f32x-fault-off "${F}_FAULT=1" MUL_MAT "$F32X4R0" pass
+        f32x-fault2-rows0 "$F=2 ${F}_ROWS=0 ${F}_FAULT=1" MUL_MAT "$F32X4A" fail
+    [ $A = 1 ] && printf '%s\t%s\t%s\t%s\t%s\t\n' \
+        f32x-fault2-auto "$F=2 ${F}_ROWS=auto ${F}_FAULT=1" MUL_MAT "$F32X4AUTO" fail \
+        f32x-fault2-auto-above "$F=2 ${F}_ROWS=auto ${F}_FAULT=1" MUL_MAT "$F32X4AUTOA" pass
+    printf '%s\t%s\t%s\t%s\t%s\t\n' f32x-fault-off "${F}_FAULT=1" MUL_MAT "$F32X4R0" pass
 }
 # C750's runs: <the switches every run starts with ("" natively; on a newer card the kernel on and the P106-090's 5 SMs)>.
 # The launch rule alone; the switch at rules 2 (the default), 1 and 0, as for 10 SMs (the one-token shapes where 3-4
@@ -664,6 +687,9 @@ if step record; then
                 $1 == "ref" { rb = $2; rm = $3 } END { print i "\t" n "\t" ib "\t" im "\t" rb "\t" rm }' "$m"
         done | sort -n > "$S/manifest.tsv"
         log "manifest: $(wc -l < "$S/manifest.tsv") cases, $(du -sb "$S/cases" | cut -f1) bytes in cases/"
+        # again, now from the set's cases (f32x lists C822's runs only when the set holds C822's cases)
+        write_runs
+        log "runs: $(wc -l < "$S/runs.tsv") runs written into $S/runs.tsv"
     fi
 fi
 
