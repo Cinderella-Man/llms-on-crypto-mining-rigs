@@ -85,7 +85,9 @@
 #                 Next's shared-expert type pairs at 2560 -> 640, and every pair of Q2_0, Q3_K, Q4_K, Q5_K and IQ4_XS at
 #                 other shapes) with the one launch of GGML_CUDA_MMVQ_PASCAL_GLU_MT (C757) at each setting, under the
 #                 preset's k-column switches with the read-once kernels it repeats (_DMT=1 _DMT_R=1, _Q5K_MT=1), without
-#                 some of them, off, and its fault (docs/data/2026-11-11_c757_shexp_fused)
+#                 some of them, off, and its fault (docs/data/2026-11-11_c757_shexp_fused); and the same at
+#                 _GLU_MT=3 and 4 with _RO8 (C793: IQ4_XS, Q4_K and Q5_K pairs at 5-8 tokens too), with that fault
+#                 (docs/data/2026-11-13_c793_glu_5to8)
 #   q5k1r         Q5_K's one-token products (q5kmt's one-token cases and Qwen3.8-Flash-Next's other Q5_K shapes) with
 #                 C690's kernel at one token (GGML_CUDA_MMVQ_PASCAL_Q5K_1R, C767) at each setting, under the preset's
 #                 k-column switches, without them, with the 2-4-token switch too, off, Q5_K left out, and its fault (each
@@ -160,6 +162,9 @@ Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
 # kernels off: 2-8 tokens of Q2_0 and Q3_K pairs at the shared expert's shape
 GLUMT='type_gate=[^,]+,type_up=[^,]+,m=[0-9]+,n=[1-8],'
 GLUMT4='type_gate=(q2_0|q3_K),type_up=(q2_0|q3_K),m=640,n=[2-8],'
+# C793: the pairs with an IQ4_XS, Q4_K or Q5_K product at 5-8 tokens at the shared expert's shape (taken at
+# _GLU_MT=3 or 4 with _RO8)
+GLUMT8='type_gate=(q4_K|q5_K|iq4_xs),type_up=(q2_0|q3_K|q4_K|q5_K|iq4_xs),m=640,n=[5-8],|type_gate=(q2_0|q3_K),type_up=(q4_K|q5_K|iq4_xs),m=640,n=[5-8],'
 # the top-k cases at Flash-Next's vocabulary
 TKV='ne=\[248320,'
 # BF16's 2-D products of 1-8 tokens, and those GGML_CUDA_MMVF_PASCAL_EXACT's 32-lane kernel takes on 5 SMs (3-4 tokens,
@@ -446,7 +451,18 @@ suite_runs() {
                      "glumt-kcol-off:$RO $M=1 ${P}_KCOL=0" "glumt-off:$KP $RO"; do
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT_GLU "$GLUMT"
             done
-            printf '%s\t%s\t%s\t%s\tfail\t\n' glumt-fault "$KP $RO $M=1 ${M}_FAULT=1" MUL_MAT_GLU "$GLUMT4" ;;
+            printf '%s\t%s\t%s\t%s\tfail\t\n' glumt-fault "$KP $RO $M=1 ${M}_FAULT=1" MUL_MAT_GLU "$GLUMT4"
+            # C793: _GLU_MT=3 (=4 without the prefetch) with C729's _RO8, which also takes the IQ4_XS, Q4_K and Q5_K pairs
+            # at 5-8 tokens: on, without the prefetch (_RO8=2 too), 1 warp pair a block, without the 2-4-token read-once
+            # kernels, without _RO8 (none of those pairs taken at 5-8), the value 1 with _RO8 (the same), the switch off
+            # with _RO8, and the fault over those pairs at 5-8, which must fail cases
+            local R8="${P}_RO8=1"
+            for r in "glumt8-on:$KP $RO $R8 $M=3" "glumt8-nopf:$KP $RO ${P}_RO8=2 $M=4" "glumt8-np1:$KP $RO $R8 $M=3 ${M}_NP=1" \
+                     "glumt8-ro8only:$KP $R8 $M=3" "glumt8-ro8-off:$KP $RO $M=3" "glumt8-m1:$KP $RO $R8 $M=1" \
+                     "glumt8-off:$KP $RO $R8"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT_GLU "$GLUMT"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' glumt8-fault "$KP $RO $R8 $M=3 ${M}_FAULT=1" MUL_MAT_GLU "$GLUMT8" ;;
         top-k-rows)
             # C691: no CUDA switch (the change is in the graph); the op at the vocabulary's width, and its rows
             printf '%s\t%s\t%s\t%s\tpass\t\n' tk "" TOP_K "$TKV" tk-rows "" TOP_K_ROWS '.' ;;

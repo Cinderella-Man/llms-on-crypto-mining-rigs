@@ -51,10 +51,13 @@
 // and the GLU op run apart, at the same tokens ("GLU/apart") and token by token ("GLU/1-tok"): the 15 type pairs of
 // Qwen3.8-Flash-Next's shared experts at 2560 -> 640 that the kernel takes (its two Q6_K pairs are left to the separate
 // products), and every ordered pair of Q2_0, Q3_K, Q4_K, Q5_K and IQ4_XS at 77 x 1024 (a partial row block), 33 x 8192
-// (32 lanes per row) and 200 x 512; 2 to 8 tokens where both types are Q2_0 or Q3_K, else 2 to 4. Run it with the
-// switches whose separate kernels it repeats (GGML_CUDA_MMVQ_PASCAL_DMT=1, GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1, the
-// k-column kernels on); GGML_CUDA_MMVQ_PASCAL_GLU_MT_FAULT=1 (each token takes the next token's activations) must give
-// differences.
+// (32 lanes per row) and 200 x 512; 2 to 8 tokens for every pair. Run it with the switches whose separate kernels it
+// repeats (GGML_CUDA_MMVQ_PASCAL_DMT=1, GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1, the k-column kernels on, and for 5 to 8 tokens
+// of IQ4_XS, Q4_K and Q5_K GGML_CUDA_MMVQ_PASCAL_RO8=1 with GGML_CUDA_MMVQ_PASCAL_GLU_MT=3 or 4, C793). A pair with an
+// IQ4_XS, Q4_K or Q5_K product of 5 to 8 tokens that the read-once kernels do not take (the build says which, as in
+// dmt8) runs on the k-column kernel, whose sums are not the one-token ones: its "GLU/1-tok" line is printed as
+// "declined" and not counted, unless BITID_ALL=1; its "GLU/apart" line is counted. GGML_CUDA_MMVQ_PASCAL_GLU_MT_FAULT=1
+// (each token takes the next token's activations) must give differences.
 // `multitoken_bitid q5k1` checks Q5_K's one-token products (C767: the kernel of mmvq-pascal-q5k.cu with
 // GGML_CUDA_MMVQ_PASCAL_Q5K_1R=1) against the one-token kernel's, which no single process can run beside it (the
 // switch is read once): with BITID_REF=<file> missing, the run writes every product's values to it; with the file
@@ -186,7 +189,7 @@ struct mm { int64_t m, k; };
 
 // as report, for a pair of types (gate+up)
 static void report_label(const char * what, const char * types, int n, int64_t m, int64_t k, const std::vector<float> & a,
-                         const std::vector<std::vector<float>> & cols, int64_t col_elems) {
+                         const std::vector<std::vector<float>> & cols, int64_t col_elems, bool counted = true) {
     int64_t ndiff = 0;
     double maxrel = 0.0;
     for (int j = 0; j < n; ++j) {
@@ -198,8 +201,12 @@ static void report_label(const char * what, const char * types, int n, int64_t m
             }
         }
     }
-    n_checked++;
-    if (ndiff) n_diff++;
+    if (counted) {
+        n_checked++;
+        if (ndiff) n_diff++;
+    } else {
+        n_declined++;
+    }
     printf("%-14s %-13s n=%d m=%-6lld k=%-5lld: %s (%lld of %lld values differ, max rel %.2e)\n", what, types, n,
            (long long) m, (long long) k, ndiff ? "DIFFERENT" : "bit-identical", (long long) ndiff,
            (long long) (n * col_elems), maxrel);
@@ -255,7 +262,23 @@ static void glu_check(ggml_backend_t be, ggml_type tg, ggml_type tu, int64_t m, 
                 ggml_backend_tensor_set(u1, uv.data(), 0, uv.size() * sizeof(float));
                 cols.push_back(run(be, g, ggml_swiglu_split(g, g1, u1)));
             }
-            report_label("GLU/1-tok", label, n, m, k, fused, cols, m);
+            // 5 to 8 tokens (C793): an IQ4_XS, Q4_K or Q5_K product is on the one-token order only where the read-once
+            // kernels take it (else the k-column kernel's sums, separate and fused alike)
+            bool one_tok = true;
+            if (n > 4) {
+                for (const ggml_tensor * w : { G, U }) {
+                    if (w->type == GGML_TYPE_Q2_0 || w->type == GGML_TYPE_Q3_K) {
+                        continue;
+                    }
+                    one_tok = one_tok &&
+                        (w->type == GGML_TYPE_Q5_K
+                             ? ggml_cuda_mmvq_pascal_q5k_mt_takes && ggml_cuda_mmvq_pascal_q5k_mt_takes(k, m, n, w->nb[1], w->data)
+                             : ggml_cuda_mmvq_pascal_dmt_takes && ggml_cuda_mmvq_pascal_dmt_takes(w->type, k, m, n, w->nb[1], w->data));
+                }
+            }
+            const char * all = getenv("BITID_ALL");
+            report_label(one_tok ? "GLU/1-tok" : "GLU/1-tok/decl", label, n, m, k, fused, cols, m,
+                         one_tok || (all != nullptr && atoi(all) == 1));
         }
         ggml_free(g);
         ggml_backend_buffer_free(ibuf);
@@ -268,9 +291,8 @@ static void glu_check(ggml_backend_t be, ggml_type tg, ggml_type tu, int64_t m, 
 static int glu_main(ggml_backend_t be) {
     const ggml_type Q2 = GGML_TYPE_Q2_0, Q3 = GGML_TYPE_Q3_K, Q4 = GGML_TYPE_Q4_K, Q5 = GGML_TYPE_Q5_K,
                     I4 = GGML_TYPE_IQ4_XS;
-    const auto n_max = [](ggml_type a, ggml_type b) {
-        return (a == GGML_TYPE_Q2_0 || a == GGML_TYPE_Q3_K) && (b == GGML_TYPE_Q2_0 || b == GGML_TYPE_Q3_K) ? 8 : 4;
-    };
+    // 2 to 8 tokens for every pair (C793; C757 checked IQ4_XS, Q4_K and Q5_K pairs at 2 to 4)
+    const auto n_max = [](ggml_type, ggml_type) { return 8; };
     // Qwen3.8-Flash-Next's shared experts (Swift GSQ-RCO Q2_0), gate+up, by layer count
     const std::vector<std::pair<ggml_type, ggml_type>> fn = {
         { Q2, Q3 }, { Q3, Q3 }, { Q2, Q2 }, { Q3, Q2 }, { Q2, Q4 }, { Q2, I4 }, { I4, Q3 }, { Q4, Q4 }, { Q4, Q3 },
@@ -287,7 +309,8 @@ static int glu_main(ggml_backend_t be) {
             }
         }
     }
-    printf("%d comparisons, %d with differences\n", n_checked, n_diff);
+    printf("%d comparisons, %d with differences; %d one-token comparisons declined (not on the read-once kernels), %s\n",
+           n_checked, n_diff, n_declined, getenv("BITID_ALL") && atoi(getenv("BITID_ALL")) == 1 ? "counted (BITID_ALL=1)" : "not counted");
     ggml_backend_free(be);
     return n_diff != 0;
 }
