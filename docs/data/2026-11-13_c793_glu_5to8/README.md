@@ -45,7 +45,7 @@ into `pascal-p106-v4` as `eb204a388` (on C826's `36ef48889`). Every check passed
 | Replay set `glumt` | 636 cases (C757's, linked), 17 runs: C757's 9 and C793's 8 (`glumt8-*`: on, without the prefetch, one warp pair a block, without the 2–4-token read-once kernels, without `RO8`, the value 1, off, and the fault over the new pairs at 5–8 tokens, which must fail); `glumt.tar` 353,658,880 B, md5 `b6d4472926e40005dcd39e3fccd8af92` ([replay_runs.tsv](replay_runs.tsv)) |
 | Off | `test-llama-archs -b CPU -s 1`: 146 of 146 architectures the same as the base with no switch, with `GLU_MT=3 RO8=1` and with `GLU_MT=4 RO8=2` |
 | ctest | 72 of 72, static and shared, plus the network test, the archs files and the hand tests |
-| Merged `eb204a388` | MERGED_RESULT |
+| Merged `eb204a388` | a static native CPU build of the merged tip (C818's and C826's merges included); `test-llama-archs` 146 of 146 the same as the base with no switch and with `GLU_MT=3 RO8=1` |
 
 ### What waited for the rig, and why
 

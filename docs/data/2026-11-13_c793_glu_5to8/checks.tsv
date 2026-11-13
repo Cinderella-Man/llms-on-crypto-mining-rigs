@@ -1,0 +1,55 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c793	OK	tip ad97b59ca (CUDA: GGML_CUDA_MMVQ_PASCAL_GLU_MT=3/4 takes IQ4_XS, Q4_K and Q5_K pairs at 5-8 tokens where RO8 runs them read once (C7); files changed against the base:  2 files changed, 93 insertions(+), 19 deletions(-); ggml/src/ggml-cuda/mmvq-pascal-glu.cu ggml/src/ggml-cuda/mmvq-pascal-glu.cuh 
+rig	build	OK	rc=0; llama.cpp-20261113-ad97b59ca-pascal-p106-v4-b12246-c793.tar.gz md5 e01f9f34b135fb8d3f94f9037790134c, 750874423 B; commit: ad97b59ca6b0116a7de10097333badb4f20c1ca2 (2026-11-13 09:39:41 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 2c713e7615dbdd15bb739daddcfa8c35; llama-server md5 90fa3dd65803cf9646e4e0cc68b7d422; test-llama-archs in bin/: yes; 34 warning lines
+sass	llama-server sass against the base	OK	8548 functions (8540 in the base's): 8540 the same, 8 new (0 not mul_mat_vec_q_pascal_glu_ro8), 0 differ or missing: 
+sass	llama-server ptx against the base	OK	8548 functions (8540 in the base's): 8540 the same, 8 new (0 not mul_mat_vec_q_pascal_glu_ro8), 0 differ or missing: 
+sass	GLU kernels	OK	22 instantiations (8 mul_mat_vec_q_pascal_glu_ro8), 0 with stack or local memory; registers of the new: NT 8 PF 0 212; NT 8 PF 1 245; NT 7 PF 0 205; NT 7 PF 1 243; NT 6 PF 0 201; NT 6 PF 1 243; NT 5 PF 0 195; NT 5 PF 1 245; the others 140-240
+sass	swiglu	SAME	every instantiation's SWIGLU against unary_gated_op_kernel<op_silu, float>: 602 of 602 the same op sequence (swiglu.txt)
+bitid	build	OK	rc=0; md5 94ff9ee795118cec9fe7a13ac0599efe; takes functions defined: 2
+record	glumt	OK	rc=0; 2026-11-13T10:07:26+01:00 tar: <work>/sets/glumt.tar 353658880 bytes, md5 b6d4472926e40005dcd39e3fccd8af92; cases 636, runs 17; glumt.tar 353658880 B, md5 b6d4472926e40005dcd39e3fccd8af92
+cpu	build	OK	rc=0; ad97b59ca; static, every target; 3 warning lines, 0 error lines
+off	archs base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+off	archs tip	SAME	rc=0; no switch; 146 compared, 0 differ: none; Summary: all 151 test(s) passed
+off	archs glu3	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_GLU_MT=3 GGML_CUDA_MMVQ_PASCAL_RO8=1; 146 compared, 0 differ: none; Summary: all 151 test(s) passed
+off	archs glu4	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_GLU_MT=4 GGML_CUDA_MMVQ_PASCAL_RO8=2; 146 compared, 0 differ: none; Summary: all 151 test(s) passed
+c565 static	c793 tree	OK	commit ad97b59ca6b0116a7de10097333badb4f20c1ca2 
+c565 static	c793 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c793 ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c793 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c793 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c793 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c793 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c793 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c793 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c793 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c793 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c793 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c793 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c793 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c793 hand thread-safety	OK	test-thread-safety rc=0: 0.00.083.039 I All threads finished without errors.
+c565 static	c793 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c793 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 3.037165
+c565 shared	c793 tree	OK	commit ad97b59ca6b0116a7de10097333badb4f20c1ca2 
+c565 shared	c793 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c793 ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c793 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c793 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c793 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c793 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c793 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c793 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c793 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c793 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c793 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c793 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c793 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c793 hand thread-safety	OK	test-thread-safety rc=0: 0.00.134.133 I All threads finished without errors.
+c565 shared	c793 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c793 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 2.120560
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay)
+start	pascal-p106-v4-b12246-c793	OK	tip ad97b59ca (CUDA: GGML_CUDA_MMVQ_PASCAL_GLU_MT=3/4 takes IQ4_XS, Q4_K and Q5_K pairs at 5-8 tokens where RO8 runs them read once (C7); files changed against the base:  2 files changed, 93 insertions(+), 19 deletions(-); ggml/src/ggml-cuda/mmvq-pascal-glu.cu ggml/src/ggml-cuda/mmvq-pascal-glu.cuh 
+merged	pascal-p106-v4	OK	eb204a388 (Merge -c793 (C793: GGML_CUDA_MMVQ_PASCAL_GLU_MT=3 or 4, the one gate/up/SWIGLU launch also for IQ4_XS, Q4_K and Q5_K pai); merges since the base: 3
+merged	cpu build	OK	rc=0; eb204a388; static, every target; 3 warning lines, 0 error lines
+merged	archs base	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed; 0 self-differences
+merged	archs merged	SAME	rc=0; no switch; 146 compared, 0 differ: none; Summary: all 151 test(s) passed
+merged	archs merged-glu3	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_GLU_MT=3 GGML_CUDA_MMVQ_PASCAL_RO8=1; 146 compared, 0 differ: none; Summary: all 151 test(s) passed
