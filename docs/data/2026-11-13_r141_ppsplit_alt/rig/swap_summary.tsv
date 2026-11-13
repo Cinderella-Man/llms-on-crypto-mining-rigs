@@ -1,0 +1,7 @@
+load	start_buff_cache_mib	start_available_mib	start_swap_used_mib	start_load_avg_1m	swap_used_loaded_mib	swap_used_after_mib	swap_used_first_sample_mib	swap_used_max_mib	swap_max_at_s	swap_rise_16_at_s	lowest_memavailable_mib	lowest_at_s
+embd1	596	3165	5	0.09	5	5	5	5	0		383	703
+pp1_2	533	3120	5	0.92	5	5	5	5	0		453	720
+pp1_3	583	3135	5	0.45	5	5	5	5	0		447	695
+embd4	586	3124	5	1.31	5	5	5	5	0		381	697
+r138_embd	1817	3140	20	0.00	20	20	20	20	0		379	750
+r138_pp1	531	3135	20	0.61	20	20	20	20	0		446	795
