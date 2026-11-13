@@ -1,0 +1,3 @@
+load	start_buff_cache_mib	start_available_mib	start_swap_used_mib	start_load_avg_1m	swap_used_loaded_mib	swap_used_after_mib	swap_used_first_sample_mib	swap_used_max_mib	swap_max_at_s	swap_rise_16_at_s	lowest_memavailable_mib	lowest_at_s
+b4096	1128	3154	20	0.82	20	949					183	247
+lazy	1667	3122	0	3.86	0	770					120	281

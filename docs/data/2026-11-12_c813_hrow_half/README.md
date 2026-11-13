@@ -94,23 +94,70 @@ C703's own test (`--mtp-catchup-overlap`) passes with the switch unset and at `1
 from the first call, so the second half is made at once, and its four catch-ups still wait. C735's
 (`--mtp-incall-overlap`) and C693's (`--mtp-h-dev`) pass with the switch at `1`.
 
-## The rig check (R139, Q1432, not run)
+## The rig check (R139, Q1432)
 
-One load of R43's replay with R123b's `b4096` line and the switch, on the `-c813` tarball, against R123b's `b4096` load
-([R123b](../2026-11-12_r123b_prompt_ladder/README.md)). Rig commands: [run/r139_load.sh](run/r139_load.sh). It samples
-card 8's memory every 2 s beside the load, which R123b's loads did not.
+**On nine P106 cards card 8 gets the whole 160 MiB back: 5,545 MiB after loading and 5,627 after the replay, against
+5,705 and 5,787 without the switch, and 5,627 MiB is also its peak. The buffer keeps one half all session, the replies
+are `base`'s on all 62 turns, and the time is the same. `LLAMA_MTP_HROW_LAZY=1` joins the stacked line beside
+`-b 4096`.**
 
-What to read:
-- the server log's `h_nextn buffer size = 160.04 MiB (one half ...)` line, no `h_nextn_grow` line, and
-  `0 catch-ups ran after the next call was queued`;
-- card 8 after loading against R123b's 5,705 MiB (est. 5,545) and after the replay against 5,787 (est. 5,627); the other
-  cards and the host as R123b's;
-- card 8's peak from the sample (est. the after-replay value);
-- 62 of 62 replies as R123b's `base`;
-- the time a pass against `b4096`'s 243.95 and 233.12 s. It is a diagnostic across builds: the code path is the same
-  call for call, so est. within R123b's spread of 3.77 s.
+One load of R43's replay (the agent check's 62 prompts, two passes) on nine P106 cards, 2026-11-13. The line is R123b's
+`b4096` rung: R123a's kept line, `LLAMA_DRAFT_EMBD_DEV=layer`, `GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1`,
+`CUDA_SCALE_LAUNCH_QUEUES=2x`, `-b 4096` and `r43_run.sh` without `-otd token_embd=CUDA4`. The load adds
+`LLAMA_MTP_HROW_LAZY=1`; the two loads' launch files differ in that one line. It ran on this tarball
+(`bin/llama-server` md5 `799ca051b3f2a923aff0b3f1a138b0d1`), launched by [run/r139_load.sh](run/r139_load.sh) with
+`RUNG=lazy`, which also sampled card 8's memory every 2 s ([card8.csv](rig/card8.csv)). R123b's `b4096` ran on the
+`-kern` build (`d097d6d88`), so the time is a diagnostic across builds. The tables in [rig/](rig/) come from three
+readers:
+- R123b's reader, [r123b_logs.sh](../2026-11-12_r123b_prompt_ladder/run/r123b_logs.sh), on this load and R123b's
+  `b4096` folder;
+- R123a's ladder, [r123a_ladder.py](../2026-11-12_r123a_prompt_ladder/run/r123a_ladder.py), with `base`, `b4096`,
+  this load and `base2`;
+- R138's [r138_swap.sh](../2026-11-12_r138_swap_cause/run/r138_swap.sh), for the host's start, its swap and its
+  MemAvailable over time.
 
-A pass puts `LLAMA_MTP_HROW_LAZY=1` into the stacked line beside `-b 4096`.
+Read against R123b's `b4096`:
+
+| What | R123b `b4096` | R139 `lazy` | Est. before the run |
+|---|---:|---:|---:|
+| The `h_nextn` buffer on card 8 (server log) | `320.08 MiB (two halves)` | `160.04 MiB (one half, the second at the first held call: LLAMA_MTP_HROW_LAZY)` | 160.04 MiB |
+| `h_nextn_grow` lines | — | none | none |
+| Catch-ups queued behind the next call (server log at exit) | 0 | 0 | 0 |
+| Card 8 after loading ([cards.tsv](rig/cards.tsv)) | 5,705 MiB | 5,545 MiB | 5,545 MiB |
+| Card 8 after the replay | 5,787 MiB | 5,627 MiB | 5,627 MiB |
+| Card 8's peak, every 2 s ([card8.csv](rig/card8.csv)) | not sampled | 5,627 MiB (from 09:20:27 on; 205 of 425 samples) | 5,627 MiB |
+| Cards 0 to 7, after loading and after the replay | [cards.tsv](rig/cards.tsv) | the same to the MiB | the same |
+| Every model, KV and compute buffer line ([buffers.tsv](rig/buffers.tsv)) | 113 lines with the other loads | the same | the same |
+| The host after loading: used, shared, available ([host.tsv](rig/host.tsv)) | 3,289, 264, 547 MiB | 3,281, 265, 555 MiB | the same |
+| The host after the replay: used, buff/cache, available | 2,950, 1,445, 886 MiB | 3,205, 1,187, 631 MiB | the same |
+| Swap used after loading and after the replay ([swap_summary.tsv](rig/swap_summary.tsv)) | 20, 949 MiB | 0, 770 MiB | — |
+| The host's lowest MemAvailable ([memory.tsv](rig/memory.tsv)) | 183 MiB at 247 s | 120 MiB at 281 s | the same |
+| Greedy replies ([replies.tsv](rig/replies.tsv)) | 62 of 62 as `base` | 62 of 62 as `base`, both passes | the same |
+| Seconds a pass ([ladder.tsv](rig/ladder.tsv)) | 243.95, 233.12 | 242.46, 231.43 | within 3.77 s |
+| The target graph's reallocations ([realloc_marks.tsv](rig/realloc_marks.tsv)) | 0 in 146 requests | 0 in 146 requests | — |
+
+- **The buffer does what C813 said.** It is one half at load, and no prompt of the replay was cut into calls at
+  `-b 4096`, so no call held its rows and the second half was never made. Card 8 is 160 MiB lower after loading and
+  after the replay, the buffer's 160.04 MiB. The sample shows card 8 at 5,545 MiB when the server came up (09:17:09),
+  growing during the replay's first pass to 5,627 at 09:20:27, and never above it.
+- **The time:** 242.46 and 231.43 s a pass against 243.95 and 233.12, −1.59 s on the means (−0.67 %), negligible
+  against R123b's spread of 3.77 s. Every size bucket is within its spread or faster.
+- **The host held more of the server in RAM during the replay, and swapped less of it.**
+  - After loading the host is the same (555 against 547 MiB available). While the model loaded, the lowest
+    MemAvailable was 431 against 438 MiB.
+  - In both loads the host moved part of the server to swap during the replay (R123b's `b4096` and `queues` loads were
+    the ones that swapped). This load swapped 179 MiB less (770 against 949), so more of the server stayed in RAM:
+    lined up at the second the server came up (247 and 226 s), its MemAvailable was 215.7 MiB lower on average over
+    the next 600 s, 292 MiB at the widest (440 s). Used plus swap after the replay is 3,975 MiB against 3,899, +76.
+  - The lowest MemAvailable came in the replay's first minute in both: 120 MiB, 34 s after the server came up,
+    against 183, 21 s after.
+  - The switch only changes a buffer on card 8, and every host-side buffer line is `b4096`'s. Two other things differ
+    from R123b's load: this one started 11 s after the `-c813` tree was unpacked, at a load average of 3.86 with
+    1,667 MiB of page cache (R123b's: 0.82 and 1,128 MiB), the start [R138](../2026-11-12_r138_swap_cause/README.md)
+    links to R135's swap; and the card sampler (`nvidia-smi -l 2`) ran beside it. Est. the host difference is those
+    two and not the switch. Q1451 (R146) separates them with a `b4096` load on this build.
+- **No swap over time:** the rig's copy of `rig_taper.sh` in R43's folder predates R138's SwapFree column, so swap is
+  read only after loading and after the replay ([swap_time.tsv](rig/swap_time.tsv) has MemAvailable alone).
 
 ## Commands
 
@@ -154,6 +201,21 @@ python3 -I docs/data/2026-11-12_r123a_prompt_ladder/run/r123a_ladder.py --load b
   --base base --base2 base2 --out rig
 grep -h 'h_nextn buffer size\|h_nextn_grow\|catch-ups ran' data/r139_lazy/load-A/server.log
 awk -F', ' '$2 > m { m = $2; t = $1 } END { print "card 8 peak", m, "MiB at", t }' data/r139_lazy.card.csv
+DATA=data OUT=rig bash docs/data/2026-11-12_r138_swap_cause/run/r138_swap.sh b4096=r123b_b4096 lazy=r139_lazy
+cp data/r139_lazy.card.csv rig/card8.csv
+```
+
+As run on 2026-11-13: the tarball relayed to the rig's model drive, its md5 checked, unpacked into `/opt/llama-builds`
+and the tarball deleted (09:09:40–09:12:50); the load started 09:13:01, the server up after 247 s, the replay's end
+09:27:16, `DONE` 09:27:25; the tables read on a CPU at `nice -n 19`. The MemAvailable comparison lines each load up at
+its server's start (226 s for `b4096`, 247 s for `lazy`) and pairs the 2 s samples over the next 600 s, from
+[rig/swap_time.tsv](rig/swap_time.tsv):
+
+```bash
+awk -F'\t' 'NR > 1 { if ($1 == "b4096") { t = $2 - 226; if (t >= 0 && t <= 600) b[int(t / 2)] = $3 }
+  if ($1 == "lazy") { t = $2 - 247; if (t >= 0 && t <= 600) l[int(t / 2)] = $3 } }
+  END { for (k in l) if (k in b) { d = l[k] - b[k]; n++; s += d; if (n == 1 || d < mn) { mn = d; at = k * 2 } }
+  printf "pairs %d, mean %.1f, widest %d at %d s\n", n, s / n, mn, at }' rig/swap_time.tsv
 ```
 
 ## Files
@@ -166,11 +228,15 @@ awk -F', ' '$2 > m { m = $2; t = $1 } END { print "card 8 peak", m, "MiB at", t 
 | [run/checks.sh](run/checks.sh) | the build machine's steps: the rig tarball, the switch list, the GPU code, the CPU build, the tests, the logits identity, ctest static and shared, the merged tree |
 | [ptx_names.txt](ptx_names.txt) | the PTX of `llama-server` against the `-kern` build's with the numbers in internal names masked: the differing lines' names and the masked dumps' md5s |
 | [run/r139_load.sh](run/r139_load.sh) | R139's launcher on a rig |
+| [rig/](rig/) | R139's tables: R123b's reader (`loads.tsv`, `cards.tsv`, `host.tsv`, `buffers.tsv`, `switch_lines.txt`, `realloc_marks.tsv`) on `b4096` and `lazy`; R123a's ladder (`ladder.tsv`, `decision.md`, `replies.tsv`, `first.tsv`, `memory.tsv`, `turns.csv`) on `base`, `b4096`, `lazy` and `base2`; R138's swap reader (`swap_summary.tsv`, `swap_time.tsv`) on `b4096` and `lazy`; `card8.csv`, card 8's used MiB every 2 s (nvidia-smi's timestamp, MiB) |
 
 ## Limits
 
 - The CPU check shows the buffer's halves, its growth and the bytes the draft sees, not card 8's own numbers: R139
   measures those.
+- R139's replay never cut a prompt into calls at `-b 4096`, so the growth (`h_nextn_grow`) and the no-room path have
+  run on the CPU only. On a card they run the first time a prompt is longer than `n_batch`.
+- Card 8's peak is sampled in R139's load only; R123b's loads read the cards after loading and after the replay.
 - On the CPU the growth's copy is a memory copy; on a card it is a device-to-device copy of the ggml CUDA buffer. Both
   are ggml's `ggml_backend_tensor_copy`, and the rows a draft reads after it are the ones the test compares.
 - The no-room path is checked with `2`, which refuses the growth before allocating. A refused CUDA allocation takes the

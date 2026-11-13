@@ -1,0 +1,5 @@
+load	samples	lowest_memavailable_mib	at_s	first_mib	last_mib
+base	422	470	294	3157	1029
+b4096	421	183	247	3163	1280
+lazy	429	120	281	3125	1927
+base2	426	470	838	3154	2122
