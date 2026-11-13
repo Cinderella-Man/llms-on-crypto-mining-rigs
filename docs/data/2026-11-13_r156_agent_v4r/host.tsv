@@ -2,3 +2,4 @@ arm	lowest_memavailable_mib	at_unix_s	swap_start_mib	swap_max_mib
 v4c3	478	1794563152	5	475
 v4c32	376	1794567923	8	8
 v4r	312	1794592353	21	21
+v4r2	419	1794593064	36	404
