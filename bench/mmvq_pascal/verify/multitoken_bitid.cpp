@@ -83,9 +83,23 @@
 // other row widths the kernel takes at 2 to 4 tokens (8 and 16 lanes per row), with partial last row blocks. With the
 // switch at 0 the k-column kernel takes these products and its sums differ from the one-token kernel's;
 // GGML_CUDA_MMVQ_PASCAL_Q6K_MT_FAULT=1 (every token stages the first token's activations) must give differences.
+// `multitoken_bitid shdown` checks Q4_0's and Q5_0's dense products at 2 to 4 tokens against their one-token products
+// (C755: Qwen3.8-Flash-Next's shared-expert down projections, 640 -> 2560, which the preset's
+// GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 gives the k-column kernel; GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0 gives them to
+// mul_mat_vec_q_pascal_mc, which runs the one-token kernel's block arithmetic for every token). Shapes: 2560 x 640,
+// 4097 x 640 (a partial last row block), 640 x 2560 and 333 x 4096. Three inputs per shape and token count: standard
+// normal activations ("MUL_MAT"), uniform on [-1, 1] ("MUL_MAT/unif"), and weights with one sign per column for every
+// row times activations of that sign ("MUL_MAT/big"), whose blocks' integer sums I pass 2^13, where the k-column
+// kernel's round(I * d) * d8 and the one-token kernel's d * round(d8 * I) part; each product line is followed by the
+// count of such blocks (est., the activations quantized on the CPU as quantize_q8_1 does). The controls: with the
+// preset's switches and no skip (the k-column kernel) the "big" products differ, and with the skip and
+// GGML_CUDA_MMVQ_PASCAL_MC=0 (llama.cpp's mul_mat_vec_q at 2-4 tokens) products differ.
+// BITID_CPU=1 runs any mode on ggml's CPU backend instead of CUDA0 (the harness's own check: no GPU needed; the CPU's
+// products are computed column by column, so every comparison must be bit-identical).
 #include "ggml.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
+#include "ggml-cpu.h"
 #include "ggml-cuda.h"
 
 #include <cmath>
@@ -103,6 +117,9 @@ bool ggml_cuda_mmvq_pascal_dmt_takes(ggml_type type, int64_t K, int64_t nrows, i
                                      const void * x) __attribute__((weak));
 bool ggml_cuda_mmvq_pascal_q5k_mt_takes(int64_t K, int64_t nrows, int64_t ncols, int64_t row_bytes,
                                         const void * x) __attribute__((weak));
+// whether the k-column hook takes a type at all (mmvq-pascal-kcol.cu: GGML_CUDA_MMVQ_PASCAL_KCOL not 0, the type one of
+// its kernels', not in GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP), printed by shdown
+bool ggml_cuda_mmvq_pascal_kcol_on(ggml_type type) __attribute__((weak));
 
 static void fill_weights(ggml_tensor * t) {
     const int64_t k = t->ne[0];
@@ -377,6 +394,119 @@ static int q5k1_main(ggml_backend_t be) {
     return n_diff != 0;
 }
 
+// shdown: the blocks of 32 weights and one token whose integer sum I = sum (code - offset) * q reaches 2^13, with the
+// activations x (n columns of k) quantized as quantize_q8_1 does (est.: the GPU's division, done on the CPU)
+static int64_t shdown_big_blocks(ggml_type type, const std::vector<uint8_t> & w, int64_t m, int64_t k,
+                                 const std::vector<float> & x, int n) {
+    const size_t  bs = ggml_type_size(type);
+    const int64_t nb = k / 32;
+    std::vector<int8_t> q(x.size());
+    for (size_t b = 0; b < x.size() / 32; ++b) {
+        float amax = 0.0f;
+        for (int i = 0; i < 32; ++i) amax = std::max(amax, std::abs(x[b * 32 + i]));
+        const float d = amax / 127;
+        for (int i = 0; i < 32; ++i) q[b * 32 + i] = amax == 0.0f ? 0 : (int8_t) roundf(x[b * 32 + i] / d);
+    }
+    int64_t big = 0;
+    int c[32];
+    for (int64_t r = 0; r < m; ++r) {
+        for (int64_t b = 0; b < nb; ++b) {
+            const uint8_t * blk = w.data() + (r * nb + b) * bs;
+            if (type == GGML_TYPE_Q4_0) {
+                for (int j = 0; j < 16; ++j) {
+                    c[j]      = (blk[2 + j] & 15) - 8;
+                    c[j + 16] = (blk[2 + j] >> 4) - 8;
+                }
+            } else {
+                uint32_t qh;
+                memcpy(&qh, blk + 2, 4);
+                for (int j = 0; j < 16; ++j) {
+                    c[j]      = ((blk[6 + j] & 15) | (((qh >> j) << 4) & 0x10)) - 16;
+                    c[j + 16] = ((blk[6 + j] >> 4) | ((qh >> (j + 12)) & 0x10)) - 16;
+                }
+            }
+            for (int t = 0; t < n; ++t) {
+                const int8_t * qt = q.data() + t * k + b * 32;
+                int s = 0;
+                for (int i = 0; i < 32; ++i) s += c[i] * qt[i];
+                big += std::abs(s) >= 8192;
+            }
+        }
+    }
+    return big;
+}
+
+static std::vector<uint8_t> set_quantized(ggml_tensor * t, const std::vector<float> & f) {
+    std::vector<uint8_t> q(ggml_nbytes(t));
+    ggml_quantize_chunk(t->type, f.data(), q.data(), 0, ggml_nrows(t), t->ne[0], nullptr);
+    ggml_backend_tensor_set(t, q.data(), 0, q.size());
+    return q;
+}
+
+// Q4_0's and Q5_0's products of 2 to 4 tokens against their one-token products (see the top)
+static int shdown_main(ggml_backend_t be) {
+    const std::vector<mm> shapes = { { 2560, 640 }, { 4097, 640 }, { 640, 2560 }, { 333, 4096 } };
+    static const char * what[3] = { "MUL_MAT", "MUL_MAT/unif", "MUL_MAT/big" };
+    std::normal_distribution<float> nd(0.0f, 1.0f);
+    std::uniform_real_distribution<float> ud(0.0f, 1.0f);
+    for (const ggml_type type : { GGML_TYPE_Q4_0, GGML_TYPE_Q5_0 }) {
+        if (ggml_cuda_mmvq_pascal_kcol_on) {
+            printf("%s: the k-column hook %s this type\n", ggml_type_name(type),
+                   ggml_cuda_mmvq_pascal_kcol_on(type) ? "takes" : "leaves");
+        }
+        for (const mm & s : shapes) {
+            // W: weights of standard deviation 0.02; S: one sign per column for every row, magnitudes 0.01 to 0.02
+            std::vector<float> sign(s.k), wf(s.k * s.m), sf(s.k * s.m);
+            for (auto & v : sign) v = (rng() & 1) ? 1.0f : -1.0f;
+            for (auto & v : wf) v = 0.02f * nd(rng);
+            for (int64_t i = 0; i < s.k * s.m; ++i) sf[i] = sign[i % s.k] * 0.01f * (1.0f + ud(rng));
+            ggml_init_params wp = { 4 * ggml_tensor_overhead(), nullptr, true };
+            ggml_context * wctx = ggml_init(wp);
+            ggml_tensor * W = ggml_new_tensor_2d(wctx, type, s.k, s.m);
+            ggml_tensor * S = ggml_new_tensor_2d(wctx, type, s.k, s.m);
+            ggml_backend_buffer_t wbuf = ggml_backend_alloc_ctx_tensors(wctx, be);
+            const std::vector<uint8_t> wq = set_quantized(W, wf);
+            const std::vector<uint8_t> sq = set_quantized(S, sf);
+            for (int n = 2; n <= 4; ++n) {
+                ggml_init_params ip = { 4 * ggml_tensor_overhead(), nullptr, true };
+                ggml_context * ictx = ggml_init(ip);
+                ggml_tensor * B = ggml_new_tensor_2d(ictx, GGML_TYPE_F32, s.k, n);
+                ggml_backend_buffer_t ibuf = ggml_backend_alloc_ctx_tensors(ictx, be);
+                for (int c = 0; c < 3; ++c) {
+                    // activations: standard normal, uniform on [-1, 1], or the column's sign times 0.75 to 1
+                    std::vector<float> x(s.k * n);
+                    for (int64_t i = 0; i < s.k * n; ++i) {
+                        x[i] = c == 0 ? nd(rng) : c == 1 ? 2.0f * ud(rng) - 1.0f : sign[i % s.k] * (1.0f - 0.25f * ud(rng));
+                    }
+                    ggml_backend_tensor_set(B, x.data(), 0, x.size() * sizeof(float));
+                    ggml_tensor * A = c == 2 ? S : W;
+                    ggml_init_params gp = { 64 * ggml_tensor_overhead() + 8 * ggml_graph_overhead_custom(64, false), nullptr, true };
+                    ggml_context * g = ggml_init(gp);
+                    const std::vector<float> all = run(be, g, ggml_mul_mat(g, A, B));
+                    std::vector<std::vector<float>> cols;
+                    for (int j = 0; j < n; ++j) {
+                        ggml_tensor * bj = ggml_view_2d(g, B, s.k, 1, B->nb[1], j * B->nb[1]);
+                        cols.push_back(run(be, g, ggml_mul_mat(g, A, bj)));
+                    }
+                    report(what[c], type, n, s.m, s.k, all, cols, s.m);
+                    printf("%-14s %-7s n=%d m=%-6lld k=%-5lld: %lld of %lld blocks with |I| >= 2^13 (est.)\n", "", ggml_type_name(type),
+                           n, (long long) s.m, (long long) s.k,
+                           (long long) shdown_big_blocks(type, c == 2 ? sq : wq, s.m, s.k, x, n),
+                           (long long) (s.m * (s.k / 32) * n));
+                    ggml_free(g);
+                }
+                ggml_backend_buffer_free(ibuf);
+                ggml_free(ictx);
+            }
+            ggml_backend_buffer_free(wbuf);
+            ggml_free(wctx);
+        }
+    }
+    printf("%d comparisons, %d with differences\n", n_checked, n_diff);
+    ggml_backend_free(be);
+    return n_diff != 0;
+}
+
 // one model's types and shapes: dense products, E experts of which U used, experts' hidden width H and FFN width F
 struct mode_cfg {
     std::vector<ggml_type> types;
@@ -396,8 +526,13 @@ static int32_t route(int r, int i, int j, int E, int U) {
 }
 
 int main(int argc, char ** argv) {
-    ggml_backend_t be = ggml_backend_cuda_init(0);
+    const bool on_cpu = getenv("BITID_CPU") != nullptr && atoi(getenv("BITID_CPU")) == 1;
+    ggml_backend_t be = on_cpu ? ggml_backend_cpu_init() : ggml_backend_cuda_init(0);
     GGML_ASSERT(be);
+    printf("backend: %s\n", ggml_backend_name(be));
+    if (argc > 1 && strcmp(argv[1], "shdown") == 0) {
+        return shdown_main(be);
+    }
     if (argc > 1 && strcmp(argv[1], "glu") == 0) {
         return glu_main(be);
     }

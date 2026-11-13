@@ -1,0 +1,6 @@
+ggml/src/ggml-cuda/mmvq-pascal-glu.cu:726:        const char * env = getenv("GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP");
+ggml/src/ggml-cuda/mmvq-pascal-kcol.cu:48:// GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_K,q6_K: weight types (ggml type names) left to the other kernels
+ggml/src/ggml-cuda/mmvq-pascal-kcol.cu:52:        const char * env = getenv("GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP");
+ggml/src/ggml-cuda/mmvq-pascal-kcol.cuh:17:// bits at a time); 2 every product of 1 to 8 columns of these types. GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_K,q6_K: types
+ggml/src/ggml-cuda/mmvq-pascal-kcol.cuh:39:// not in GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP); the caller checks GGML_CUDA_MMVQ_PASCAL. For kernels that keep their sums
+ggml/src/ggml-cuda/mmvq-pascal-q3kmt.cuh:19:// GGML_CUDA_MMVQ_PASCAL_KCOL and GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP: it takes nothing where the k-column kernel does not

@@ -1,0 +1,5 @@
+file	type	tensors	names (blk.N. left out)	ne0 x ne1
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf	Q4_0	3	ffn_down_shexp.weight	640 x 2560
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf	Q5_0	2	ffn_down_shexp.weight	640 x 2560
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00002-of-00003.gguf	Q4_0	13	ffn_down_shexp.weight	640 x 2560
+Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00002-of-00003.gguf	Q5_0	5	ffn_down_shexp.weight	640 x 2560
