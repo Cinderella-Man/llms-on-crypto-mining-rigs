@@ -5,6 +5,7 @@
 #   V4RD4_ENV appended to v4r's environment: GGML_CUDA_MMVQ_PASCAL_RO8=1 (C729 with C809: IQ4_XS, Q4_K and Q5_K
 #   products of 5-8 tokens read once, exact on a P106, R134) and GGML_CUDA_MMVQ_PASCAL_RO8_KT (C794's K tiles at 5-8
 #   tokens, exact on a P106 and a gain, R149)
+# v4rd42 is v4rd4's line exactly, a second run of it (R163b, on the other rig).
 # Everything else (the draft's micro-batch, probabilistic verification, C675's stop) stays v4r's. This is R156's
 # driver below with the arm v4rd4 added; its results go into R72's client folder like R156's and R158's.
 # R156's header follows; its arms stay as they were.
@@ -135,7 +136,7 @@ if has agent; then
         v4c2|v4c22) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV"; args=$MT_V4C2 ;;
         v4c3|v4c32) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV $V4C3_ENV"; args=$MT_V4C2 ;;
         v4r|v4r2) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV $V4R_ENV"; args=$MT_V4R ;;
-        v4rd4) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV $V4R_ENV $V4RD4_ENV"; args=$MT_V4RD4 ;;
+        v4rd4|v4rd42) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV $V4R_ENV $V4RD4_ENV"; args=$MT_V4RD4 ;;
         gains) b=$NEW; e="$PRESET_ENV $GAINS_ENV"; args=$MT_GAINS ;;
         v3) b=$REF; e=$PRESET_ENV; args=$MT ;;
         *) say "unknown arm $a"; exit 1 ;;
