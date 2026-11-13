@@ -155,7 +155,7 @@ Read against R123b's `b4096`:
     from R123b's load: this one started 11 s after the `-c813` tree was unpacked, at a load average of 3.86 with
     1,667 MiB of page cache (R123b's: 0.82 and 1,128 MiB), the start [R138](../2026-11-12_r138_swap_cause/README.md)
     links to R135's swap; and the card sampler (`nvidia-smi -l 2`) ran beside it. Est. the host difference is those
-    two and not the switch. Q1451 (R146) separates them with a `b4096` load on this build.
+    two and not the switch. Q1457 (R151) separates them with a `b4096` load on this build.
 - **No swap over time:** the rig's copy of `rig_taper.sh` in R43's folder predates R138's SwapFree column, so swap is
   read only after loading and after the replay ([swap_time.tsv](rig/swap_time.tsv) has MemAvailable alone).
 
