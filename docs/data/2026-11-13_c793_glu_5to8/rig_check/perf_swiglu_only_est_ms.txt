@@ -1,0 +1,8 @@
+est. ms a verify pass, pass 1, 5 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 1, 6 tokens: 0.000 saved by the 22 new-pair layers; -0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 1, 7 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 1, 8 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 2, 5 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 2, 6 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 2, 7 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)
+est. ms a verify pass, pass 2, 8 tokens: 0.000 saved by the 22 new-pair layers; 0.000 by the 17 Q2_0/Q3_K layers (the same launch in both arms: the spread)

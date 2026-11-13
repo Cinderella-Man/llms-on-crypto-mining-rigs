@@ -1,0 +1,16 @@
+on: 1260 lines, 126 differ (by shape: 33 x 8192: 126); at 640 x 2560: 210 lines, 0 differ; harness: 1176 comparisons, 42 with differences; 84 one-token comparisons declined (not on the read-once kernels), not counted
+nopf: 1260 lines, 126 differ (by shape: 33 x 8192: 126); at 640 x 2560: 210 lines, 0 differ; harness: 1176 comparisons, 42 with differences; 84 one-token comparisons declined (not on the read-once kernels), not counted
+np1: 1260 lines, 126 differ (by shape: 33 x 8192: 126); at 640 x 2560: 210 lines, 0 differ; harness: 1176 comparisons, 42 with differences; 84 one-token comparisons declined (not on the read-once kernels), not counted
+m1: 1260 lines, 126 differ (by shape: 33 x 8192: 126); at 640 x 2560: 210 lines, 0 differ; harness: 1176 comparisons, 42 with differences; 84 one-token comparisons declined (not on the read-once kernels), not counted
+off: 1260 lines, 126 differ (by shape: 33 x 8192: 126); at 640 x 2560: 210 lines, 0 differ; harness: 1176 comparisons, 42 with differences; 84 one-token comparisons declined (not on the read-once kernels), not counted
+fault: 1260 lines, 1126 differ (by shape: 33 x 8192: 216, 77 x 1024: 350, 200 x 512: 350, 640 x 2560: 210); at 640 x 2560: 210 lines, 210 differ; harness: 1176 comparisons, 1042 with differences; 84 one-token comparisons declined (not on the read-once kernels), not counted
+on against m1 (=1): lines that differ only here 0, only at m1 0
+nopf against m1 (=1): lines that differ only here 0, only at m1 0
+np1 against m1 (=1): lines that differ only here 0, only at m1 0
+on against off: lines that differ only here 14, only off 14; their checks, tokens and shapes: here GLU/apart n=2 33 x 8192: 9, GLU/apart n=3 33 x 8192: 5; off GLU/1-tok n=2 33 x 8192: 9, GLU/1-tok n=3 33 x 8192: 5
+nopf against off: lines that differ only here 14, only off 14; their checks, tokens and shapes: here GLU/apart n=2 33 x 8192: 9, GLU/apart n=3 33 x 8192: 5; off GLU/1-tok n=2 33 x 8192: 9, GLU/1-tok n=3 33 x 8192: 5
+np1 against off: lines that differ only here 14, only off 14; their checks, tokens and shapes: here GLU/apart n=2 33 x 8192: 9, GLU/apart n=3 33 x 8192: 5; off GLU/1-tok n=2 33 x 8192: 9, GLU/1-tok n=3 33 x 8192: 5
+m1 against off: lines that differ only here 14, only off 14; their checks, tokens and shapes: here GLU/apart n=2 33 x 8192: 9, GLU/apart n=3 33 x 8192: 5; off GLU/1-tok n=2 33 x 8192: 9, GLU/1-tok n=3 33 x 8192: 5
+fault: lines at 5-8 tokens of the new pairs: 592, differ: 508; pairs 21, pairs with no differing line: 0 ; at 640 x 2560: 88 lines of 11 pairs, 88 differ
+fault: lines at 5-8 tokens of the new pairs that do not differ (by check, shape): GLU/apart 33 x 8192: 84
+on: the same lines (new pairs, 5-8 tokens, 33 x 8192, GLU/apart): bit-identical: 84
