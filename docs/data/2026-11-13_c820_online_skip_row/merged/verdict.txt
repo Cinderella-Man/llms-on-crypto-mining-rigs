@@ -1,0 +1,15 @@
+dbase = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ds1 = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ds2 = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ws1 = woff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 202 verify steps and 407 rule steps the same; drafted 954 tokens)
+ws2 = woff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 202 verify steps and 407 rule steps the same; drafted 954 tokens)
+ns1 = noff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+ns2 = noff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+cs1 = coff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+cs2 = coff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+d: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead
+w: =1 copied 954, left out 0 in 407 drafts; =2 copied 876, left out 78 in 407 drafts, 78 of them below n_max, 69 by the look-ahead
+n: =1 copied 2035, left out 407 in 407 drafts; =2 copied 2035, left out 407 in 407 drafts, 0 of them below n_max, 0 by the look-ahead
+c: =1 copied 1995, left out 387 in 407 drafts; =2 copied 1975, left out 407 in 407 drafts, 20 of them below n_max, 0 by the look-ahead
+the look-ahead left out 69 rows over the ONLINE groups
+PASS

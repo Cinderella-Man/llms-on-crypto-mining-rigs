@@ -1,0 +1,63 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c820	OK	tip b86f1b7fc (speculative: LLAMA_MTP_SKIP_LAST_ROW=2, the last drafting pass at any length copies no hidden row (C820, Q1434)); files changed against the base:  3 files changed, 122 insertions(+), 9 deletions(-); under ggml/: 0
+cpu	build	OK	rc=0; commit b86f1b7fcd7bff01dd8a62d5ab035105e0ce7b84 speculative: LLAMA_MTP_SKIP_LAST_ROW=2, the last drafting pass at any length copies no hidde; static, every target; 3 warning lines, 0 error lines
+bsrv	build	OK	rc=0; commit 2144cf7600aefd2b6810c14d9101553f9264592e Merge -c822 (C822: GGML_CUDA_MMVF_F32_MT_ROWS=auto, 48 rows at 4 tokens and 64 at 5-8, or a ; static, llama-server and test-llama-archs; 0 error lines
+unit	test-spec-adapt run 1	OK	rc=0; online: 20000 drafts; drafting passes a draft 6.5261 as built, 3.1759 at online 1, 2.4505 at online 2; 160000 extensions of a settled prefix; 6047 of 130522 next tokens kept whatever their probability;stops_next (C820): online 1: 9742 of 63517 passes known last, 12188 of 20000 drafts' last pass known before it ran; online 2: 6050 of 49010, 7828 of 20000;; 673134/673134 checks passed
+unit	test-spec-adapt run 2	OK	rc=0; online: 20000 drafts; drafting passes a draft 6.5261 as built, 3.1759 at online 1, 2.4505 at online 2; 160000 extensions of a settled prefix; 6047 of 130522 next tokens kept whatever their probability;stops_next (C820): online 1: 9742 of 63517 passes known last, 12188 of 20000 drafts' last pass known before it ran; online 2: 6050 of 49010, 7828 of 20000;; 673134/673134 checks passed
+unit	the two runs' output	SAME	seeded: the same counts both times
+model	qwen4exp with an MTP block	OK	rc=0; 32807008 B; md5 b67f1d9cb2fc872e707b92c5e1af753a
+server	server_check.sh	PASS	rc=0; 17 arms equal to their reference; d: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead;w: =1 copied 954, left out 0 in 407 drafts; =2 copied 876, left out 78 in 407 drafts, 78 of them below n_max, 69 by the look-ahead;r: =1 copied 949, left out 0 in 407 drafts; =2 copied 872, left out 77 in 407 drafts, 77 of them below n_max, 68 by the look-ahead;b: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead;p: =1 copied 1114, left out 70 in 408 drafts; =2 copied 1100, left out 84 in 408 drafts, 14 of them below n_max, 0 by the look-ahead;v: =1 copied 812, left out 0 in 408 drafts; =2 copied 404, left out 408 in 408 drafts, 408 of them below n_max, 396 by the look-ahead;n: =1 copied 2035, left out 407 in 407 drafts; =2 copied 2035, left out 407 in 407 drafts, 0 of them below n_max, 0 by the look-ahead;c: =1 copied 1995, left out 387 in 407 drafts; =2 copied 1975, left out 407 in 407 drafts, 20 of them below n_max, 0 by the look-ahead;the look-ahead left out 533 rows over the ONLINE groups;
+off	base writes	OK	rc=0; 2144cf760: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	skip2	SAME	rc=0; LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_ONLINE=2 LLAMA_MTP_SKIP_LAST_ROW=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+rig	build	OK	rc=0; llama.cpp-20261113-b86f1b7fc-pascal-p106-v4-b12246-c820.tar.gz md5 285b98efec53c08f398d2ea20171df59, 678636571 B; commit: b86f1b7fcd7bff01dd8a62d5ab035105e0ce7b84 (2026-11-13 09:39:27 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 eb1a6ae823a5175428b45cae0bdc2130; llama-server md5 f5e75ef330a0cd7c1bf63a1b8fd7a66e; 34 warning lines
+names	switch list	OK	870 names in the build's list; LLAMA_MTP_SKIP_LAST_ROW in it: 1 of 1; lines of bin/llama-server holding LLAMA_MTP_SKIP_LAST_ROW: 1
+rigbase	build	OK	rc=0; llama.cpp-20261113-2144cf760.tar.gz md5 35456bc301c226cfcbbae68f84d66356; commit: 2144cf7600aefd2b6810c14d9101553f9264592e (2026-11-13 09:00:06 +0100);
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+c565 static	c820 tree	OK	commit b86f1b7fcd7bff01dd8a62d5ab035105e0ce7b84 
+c565 static	c820 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c820 ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c820 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c820 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c820 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c820 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c820 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c820 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c820 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c820 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c820 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c820 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c820 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c820 hand thread-safety	OK	test-thread-safety rc=0: 0.00.128.210 I All threads finished without errors.
+c565 static	c820 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c820 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -1.455937
+c565 shared	c820 tree	OK	commit b86f1b7fcd7bff01dd8a62d5ab035105e0ce7b84 
+c565 shared	c820 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c820 ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c820 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c820 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c820 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c820 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c820 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c820 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c820 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c820 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c820 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c820 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c820 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c820 hand thread-safety	OK	test-thread-safety rc=0: 0.00.555.314 I Model 2/2, Context 1/4: The meaning of life is3a496c492c4552510b44272d7b263113f737f5443731210d116a7f7ab6c67b3a6b7359373ab71487ba4f1f7a44d12436b28
+c565 shared	c820 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c820 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -3.263465
+trim	CPU trees	OK	removed (the binaries in cpu/bin and bsrv/bin stay); 7.5G in $M; 399 GB free
+start	pascal-p106-v4-b12246-c820	OK	tip b86f1b7fc (speculative: LLAMA_MTP_SKIP_LAST_ROW=2, the last drafting pass at any length copies no hidden row (C820, Q1434)); files changed against the base:  3 files changed, 122 insertions(+), 9 deletions(-); under ggml/: 0
+merged	pascal-p106-v4	OK	2a3d6bf0d (Merge -c820 (C820: LLAMA_MTP_SKIP_LAST_ROW=2, a step's last MTP drafting pass copies no hidden row to the host at any dr); commits since the base: 10; merges since the base: Merge -c820 (C820: LLAMA_MTP_SKIP_LAST_R;Merge -c793 (C793: GGML_CUDA_MMVQ_PASCAL;Merge -c826 (C826: GGML_CUDA_GRAPHS_PATC;Merge -c818 (C818: LLAMA_SCHED_PER_SIZE_;
+merged	cpu build	OK	rc=0; 2a3d6bf0d; static, every target; 3 warning lines, 0 error lines
+merged	test-spec-adapt	OK	rc=0; 673134/673134 checks passed
+moff	base writes	OK	rc=0; 2144cf760: 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	merged-skip2	SAME	rc=0; LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_ONLINE=2 LLAMA_MTP_SKIP_LAST_ROW=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+merged	server_check.sh, d, n and c arms	FAIL	rc=1; 5 arms equal to their reference
+start	pascal-p106-v4-b12246-c820	OK	tip b86f1b7fc (speculative: LLAMA_MTP_SKIP_LAST_ROW=2, the last drafting pass at any length copies no hidden row (C820, Q1434)); files changed against the base:  3 files changed, 122 insertions(+), 9 deletions(-); under ggml/: 0
+merged	pascal-p106-v4	OK	80c94fe0d (Merge -c794 (C794: GGML_CUDA_MMVQ_PASCAL_RO8_KT=1 runs IQ4_XS's and Q4_K's 5-8-token products of _RO8 on C728's K tiles ); commits since the base: 13; merges since the base: Merge -c794 (C794: GGML_CUDA_MMVQ_PASCAL;Merge -c820 (C820: LLAMA_MTP_SKIP_LAST_R;Merge -c793 (C793: GGML_CUDA_MMVQ_PASCAL;Merge -c826 (C826: GGML_CUDA_GRAPHS_PATC;Merge -c818 (C818: LLAMA_SCHED_PER_SIZE_;
+merged	server_check.sh, d, w, n and c arms	PASS	rc=0; 9 arms equal to their reference

@@ -1,0 +1,27 @@
+dbase = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ds1 = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ds2 = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ws1 = woff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 202 verify steps and 407 rule steps the same; drafted 954 tokens)
+ws2 = woff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 202 verify steps and 407 rule steps the same; drafted 954 tokens)
+rs1 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 201 verify steps and 407 rule steps the same; drafted 949 tokens)
+rs2 = roff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 201 verify steps and 407 rule steps the same; drafted 949 tokens)
+bs1 = boff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+bs2 = boff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+ps1 = poff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 118 verify steps and 408 rule steps the same; drafted 1184 tokens)
+ps2 = poff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 118 verify steps and 408 rule steps the same; drafted 1184 tokens)
+vs1 = voff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 0 verify steps and 408 rule steps the same; drafted 812 tokens)
+vs2 = voff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 0 verify steps and 408 rule steps the same; drafted 812 tokens)
+ns1 = noff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+ns2 = noff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+cs1 = coff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+cs2 = coff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 2382 tokens)
+d: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead
+w: =1 copied 954, left out 0 in 407 drafts; =2 copied 876, left out 78 in 407 drafts, 78 of them below n_max, 69 by the look-ahead
+r: =1 copied 949, left out 0 in 407 drafts; =2 copied 872, left out 77 in 407 drafts, 77 of them below n_max, 68 by the look-ahead
+b: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead
+p: =1 copied 1114, left out 70 in 408 drafts; =2 copied 1100, left out 84 in 408 drafts, 14 of them below n_max, 0 by the look-ahead
+v: =1 copied 812, left out 0 in 408 drafts; =2 copied 404, left out 408 in 408 drafts, 408 of them below n_max, 396 by the look-ahead
+n: =1 copied 2035, left out 407 in 407 drafts; =2 copied 2035, left out 407 in 407 drafts, 0 of them below n_max, 0 by the look-ahead
+c: =1 copied 1995, left out 387 in 407 drafts; =2 copied 1975, left out 407 in 407 drafts, 20 of them below n_max, 0 by the look-ahead
+the look-ahead left out 533 rows over the ONLINE groups
+PASS
