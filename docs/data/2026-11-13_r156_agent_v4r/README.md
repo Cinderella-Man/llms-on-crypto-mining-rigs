@@ -1,4 +1,4 @@
-# The agent check of Flash-Next's final v4 settings `v4r` on `v4-rc2` (R156, Q1474; 2026-11-13)
+# The agent check of Flash-Next's final v4 settings `v4r` on `v4-rc2`, and a second v3.0 run (R156, Q1474; R158, Q1476; 2026-11-13)
 
 R156 runs the release check's coding-agent arm ([bench/agent_check](../../../bench/agent_check/README.md), 12 bug-fix
 tasks) on `v4r`, Flash-Next's final v4 settings, on the release candidate `v4-rc2` (`pascal-p106-v4` `eb82916d3`, the
@@ -7,6 +7,8 @@ the maker's Swift GSQ-RCO Q2_0 with the MTP draft, on a mining rig of nine P106-
 ([2026-11-13_r142_agent_v4c3](../2026-11-13_r142_agent_v4c3/README.md)) with the results of 2026-11-13's rig rows
 applied. Two runs, one arm each: R156a (`v4r`, on rig 2) and R156b (`v4r2`, the same line again, on rig 1). The two
 rigs are the same model of machine. Registry row Q1474 in [quants/experiments.md](../../../quants/experiments.md).
+R158 (registry row Q1476) added a second v3.0 run on rig 1 the same evening, arm `v3b`: R90's `v3` line exactly, so
+that v3.0 and v4 each stand on two runs ([Both v3.0 runs](#both-v30-runs-r158)).
 
 **Flash-Next's v4 numbers (`v4r` on `v4-rc2`, both runs passed 12 of 12 tasks):**
 
@@ -14,7 +16,15 @@ rigs are the same model of machine. Registry row Q1474 in [quants/experiments.md
 |---|---|---|---|
 | R156b, rig 1 | **27.61 tok/s** (+33.6 % against `v3`) | **2.37** (−23.1 %) | 27.58 tok/s, 2.46 min |
 | R156a, rig 2 | **26.67 tok/s** (+29.1 %) | **2.43** (−21.1 %) | 27.59 tok/s, 2.46 min |
-| R90's `v3` | 20.66 tok/s | 3.08 | 20.92 tok/s, 3.13 min |
+| R90's `v3` (v3.0), rig 1 | 20.66 tok/s | 3.08 | 20.92 tok/s, 3.13 min |
+| R158's `v3b` (v3.0), rig 1 | 18.92 tok/s | 3.19 | 20.82 tok/s, 3.09 min |
+
+**The release table's Flash-Next line** (Swift GSQ-RCO Q2_0 with the MTP draft, the agent check's 12 tasks, minutes a
+task at equal work and generation speed, each run by value with its rig):
+- **v3.0:** 3.08 minutes and 20.66 tok/s (R90, rig 1); 3.19 minutes and 18.92 tok/s (R158, rig 1). Each run passed 11
+  of 12.
+- **v4:** 2.37 minutes and 27.61 tok/s (R156b, rig 1); 2.43 minutes and 26.67 tok/s (R156a, rig 2). Each run passed 12
+  of 12.
 
 **Against `v4c3`, `v4r` is negligible.** `v4c3`'s two runs on rig 1 took 2.35 and 2.44 minutes a task at 28.03 and
 26.16 tok/s.
@@ -72,6 +82,60 @@ draft's graph budget.
 
 The client ran on the build machine's CPU at `--cpu-shares 256`, with no GPU. Both runs wrote into R72's client folder,
 beside R72's, R142's and R154's arms.
+
+## Both v3.0 runs (R158)
+
+R158 ran the v3.0 release on rig 1: the tag `miner-llama-v3.0` (`1551f5fe1`, `pascal-p106-v3-b12076-ladder5`; the
+tree's `llama-server` md5 `c735e40f184f3de61f16ffd5e2ab5ea5`) with the preset as shipped
+([release/flash-next-v3/settings.env](../../../release/flash-next-v3/settings.env)), Swift Q2_0 and the MTP draft. The
+started command (environment, binary and arguments, 659 bytes) equals R90's `v3` byte for byte. The server started at
+19:56:46 and was up after 311 s (R90's `v3`: 313 s). The 12 tasks ran 20:02:01–20:40:24, and the report ran
+20:40:46–20:40:50. The client and its folder were R156's.
+
+| | R90 `v3` (rig 1) | **R158 `v3b` (rig 1)** | R156a `v4r` (rig 2) | R156b `v4r2` (rig 1) |
+|---|---|---|---|---|
+| passed | 11/12 | **11/12** | 12/12 | 12/12 |
+| equal work, min a task | 3.08 | **3.19** (+3.6 %) | 2.43 | 2.37 |
+| equal work on the 10 tasks neither v3.0 run ran away on | 2.24 | **2.21** (−1.3 %) | 1.52 | 1.52 |
+| turns | 66 | **85** | 95 | 69 |
+| generation tok/s | 20.66 | **18.92** | 26.67 | 27.61 |
+| generation tok/s, the 10 tasks | 20.90 | **20.98** | 27.52 | 27.53 |
+| prompt tok/s | 65.5 | **66.3** | 133.9 | 144.6 |
+| prompt tok/s at 1,024–1,999, 2,000+ new tokens | 90.5, 93.3 | **86.8, 104.0** | 152.4, 181.7 | 185.5, 177.5 |
+| first token median, p90 s | 6.52, 16.17 | **6.51, 16.63** | 2.42, 9.00 | 2.48, 8.65 |
+| first token on a task's first turn, median s | 13.54 | **13.84** | 6.68 | 6.65 |
+| acceptance, tokens a step | 0.696, 3.09 | **0.671, 3.01** | 0.749, 3.25 | 0.759, 3.28 |
+| minutes, all 12 tasks (wall) | 37.0 | **38.2** | 33.4 | 30.6 |
+
+- **Each v3.0 run had one task run to the agent's 12-minute cap, and failed it.** R90's was JS
+  `variable-length-quantity` (2 turns); `v3b` passed it in 212 s. `v3b`'s was `complex-numbers`: 26 turns, 25 tool
+  calls and 7,923 drafted tokens at 0.542 acceptance ([task_acceptance.tsv](task_acceptance.tsv)); R90's `v3` passed
+  it in 154 s. Those long turns at a growing context generate slowly, which is why `v3b`'s 12-task generation is 18.92
+  tok/s.
+- **On the 10 tasks neither run ran away on ([agent_10.tsv](agent_10.tsv)), the two v3.0 runs agree:** 2.24 and 2.21
+  minutes a task at equal work, 20.90 and 20.98 tok/s. `v4r`'s two runs take 1.52 and 1.52 minutes there (−32.1 %
+  against R90's `v3`), at 27.52 and 27.53 tok/s.
+- **Without `complex-numbers` ([agent_nocx.tsv](agent_nocx.tsv)):** `v3b` 3.09 minutes a task, 20.82 tok/s; R90's `v3`
+  3.13 and 20.92. On R90's 11 ([agent_11.tsv](agent_11.tsv)), which keep `v3b`'s runaway: 2.41 against 2.27, 18.81
+  against 20.63 tok/s.
+- **Draft acceptance by task without `complex-numbers`:** 14,691 of 20,394 drafted tokens (0.720).
+- **Per task** against R90's `v3` on the same rig, seconds: `affine-cipher` 200 (248), `space-age` 71 (84), Python
+  `phone-number` 95 (142), `triangle` 69 (74), Python `variable-length-quantity` 389 (110), JS `phone-number` 82 (83),
+  `list-ops` 109 (161), `grade-school` 66 (86), `scale-generator` 139 (183), `complex-numbers` 720, failed (154),
+  `pig-latin` 141 (176), JS `variable-length-quantity` 212 (720, failed).
+- **Host** ([host.tsv](host.tsv), from the rig's RAM watchdog): lowest MemAvailable 209 MiB at 20:02:35, in the first
+  task; swap grew from 35 to 628 MiB by 20:07:19 and then stayed flat. The watchdog did not act. R90's `v3`: 66 MiB,
+  swap 24 → 963 MiB.
+- **Cards** (peak MiB, 19:56:46–20:40:50): 0:5,101 1:5,137 2:5,005 3:5,153 4:4,913 5:5,021 6:4,423 7:5,033 8:4,625.
+  Card 8 matches R90's v3.0 loads (4,627 and 4,625 in its deep lane).
+- **Server log:** 13 checkpoint restores and 1 erased; one full re-processing at 20:34:30, where `complex-numbers`
+  ended and `pig-latin` began (1,553 tokens shared with the cache, no checkpoint below them), as in R156a. No NaN or
+  inf, no watchdog kill, no error line.
+- **The report** ([v3b_gonogo.md](v3b_gonogo.md), over every arm in the folder): GO on infrastructure (120 of 120
+  attempts), tool calls (0 malformed of 729), first token against prefill and cache. NO-GO on proxy rows: `v3b`'s
+  `complex-numbers` (26 rows, 25 replies) is one of the attempts listed, the cap having cut off its last reply. NO-GO on
+  memory: it reads `meminfo.log` over every arm and both rigs (215 MB at its lowest); `v3b`'s own lowest is the
+  209 MiB above.
 
 ## All 12 tasks ([agent.tsv](agent.tsv))
 
@@ -221,17 +285,47 @@ awk -F', ' -v a='2026/11/13 18:57:34' -v b='2026/11/13 19:34:45' '$1 >= a && $1 
   END { for (i = 0; i < 9; i++) printf " %d:%d", i, p[i]; print "" }' <R72's client results folder>/rig/gpu.csv
 ```
 
+R158 ran [run/r158.sh](run/r158.sh), R156's driver with the arm `v3b` (R90's `v3` line on `REF`), on rig 1 with R156b's
+ports and client folders:
+
+```bash
+RIG=<rig alias> CLIENT=<client alias> \
+  MODEL=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf DRAFT=<folder>/mtp-Qwen3.8-Flash-Next-draft.gguf \
+  NEW=llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828 REF=llama.cpp-20261105-1551f5fe1-pascal-p106-v3-b12076-ladder5 \
+  RIGDIR=<folder on the rig> OUT=<local folder> STEPS="agent report" AGENT_ORDER=v3b \
+  REPORT_ARMS="gains v4c2 v4c22 v4c2g v4c3 v4c32 v4c3ad v4r v4r2 v3b" \
+  RIG_PORT=<port> RELAY_PORT=<port> CLIENT_PORT=<port> PROXY_PORT=<port> \
+  CLIENT_DIR=<folder on the client> CLIENT_OUT=<folder on the client> CPU_SHARES=256 \
+  setsid nohup bash docs/data/2026-11-13_r156_agent_v4r/run/r158.sh > r158.log 2>&1 < /dev/null &
+```
+
+Its tables add `v3b`'s rows to R156b's and leave every other row as it was; `agent_10.tsv` leaves out both tasks a
+v3.0 run ran to the cap:
+
+```bash
+REPO=<this repository> R90=<R90's client results folder> R72=<R72's client results folder> NEWARMS="v4c3 v4c32 v4r v4r2 v3b" \
+  bash <this repository>/docs/data/2026-11-13_r142_agent_v4c3/run/tables.sh
+SKIP_TASKS=bugfix-javascript-variable-length-quantity,bugfix-javascript-complex-numbers OUT_TAG=_10 \
+  nice -n 19 python3 -I <this repository>/docs/data/2026-11-05_keepalive/run/agent_tables.py merged \
+  r90v3 r90gains gains v4c2 v4c22 v4c2g v4c3 v4c32 v4r v4r2 v3b
+awk -F', ' -v a='2026/11/13 19:56:46' -v b='2026/11/13 20:40:50' '$1 >= a && $1 <= b { v = $6 + 0; if (v > p[$2]) p[$2] = v }
+  END { for (i = 0; i < 9; i++) printf " %d:%d", i, p[i]; print "" }' <R72's client results folder>/rig/gpu.csv
+```
+
 ## Files
 
 | File | What |
 |---|---|
 | [agent.tsv](agent.tsv), [agent_11.tsv](agent_11.tsv), [agent_nocx.tsv](agent_nocx.tsv) | each arm against R90's `v3`: all 12 tasks, R90's 11, and the 12 without `complex-numbers` |
+| [agent_10.tsv](agent_10.tsv) | the same without both tasks a v3.0 run ran to the cap (JS `variable-length-quantity` and `complex-numbers`) |
 | [prompt_buckets.tsv](prompt_buckets.tsv) | prompt speed and first token by a turn's new prompt |
 | [task_acceptance.tsv](task_acceptance.tsv) | the draft's acceptance by task |
-| [host.tsv](host.tsv) | lowest MemAvailable and swap of `v4c3`, `v4c32`, `v4r` and `v4r2` (each on its own rig) |
+| [host.tsv](host.tsv) | lowest MemAvailable and swap of `v4c3`, `v4c32`, `v4r`, `v4r2` and `v3b` (each on its own rig) |
 | [v4r_compare.md](v4r_compare.md), [v4r_report_table.md](v4r_report_table.md), [v4r_gonogo.md](v4r_gonogo.md) | the agent check's report over R72's, R142's, R154's and R156a's arms |
 | [v4r2_compare.md](v4r2_compare.md), [v4r2_report_table.md](v4r2_report_table.md), [v4r2_gonogo.md](v4r2_gonogo.md) | the same report with R156b's arm `v4r2` added |
+| [v3b_compare.md](v3b_compare.md), [v3b_report_table.md](v3b_report_table.md), [v3b_gonogo.md](v3b_gonogo.md) | the same report with R158's arm `v3b` added |
 | [run/r156.sh](run/r156.sh) | the driver: R142's with the arms `v4r` and `v4r2` |
+| [run/r158.sh](run/r158.sh) | R156's driver with the arm `v3b` (R90's `v3` line) |
 
 The tasks are the agent check's bug-fix set ([bench/agent_check](../../../bench/agent_check/README.md)); the model files
 are the maker's (Swift GSQ-RCO Q2_0) and the MTP draft, as in R142.
