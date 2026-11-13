@@ -439,7 +439,7 @@ if step sass; then
     dumpbin base "$TB/bin/llama-server"
     for w in sass ptx; do
         python3 "$RUN/sass_diff.py" "$SD/tip.$w.tsv" "$SD/base.$w.tsv" "$SD/diff_$w.tsv" > "$SD/diff_$w.txt" 2>&1
-        add sass "llama-server $w against the base" "$(head -n 1 "$SD/diff_$w.txt" | grep -q 'changed 0, new 0, gone 0' && echo SAME || echo REVIEW)" \
+        add sass "llama-server $w against the base" "$(head -n 1 "$SD/diff_$w.txt" | grep -q "changed 0, new 0, gone 0" && echo SAME || echo REVIEW)" \
             "$(head -n 1 "$SD/diff_$w.txt"); $(sed -n '2,13p' "$SD/diff_$w.txt" | sed 's/^ *//' | tr '\n' ';')"
     done
     log "sass done"

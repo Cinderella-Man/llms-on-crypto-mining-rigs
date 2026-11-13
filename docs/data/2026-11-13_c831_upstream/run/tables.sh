@@ -14,11 +14,11 @@ cp "$M/union/union.tsv" "$OUT/union.tsv"
 # per random model: the tip's and the revert build's logits against the base's (nmse, max abs diff, differing logits)
 {
     printf 'arch\ttip_nmse\ttip_max_abs\ttip_differ\trevert_nmse\trevert_max_abs\trevert_differ\n'
-    join -t $'\t' \
+    LC_ALL=C join -t $'\t' \
         <(awk '{ a = $1; sub(":", "", a); for (i = 1; i <= NF; i++) { if ($i == "nmse") n = $(i + 1); if ($i == "diff") d = $(i + 1); if ($i == "of") c = $(i - 1) }
-                 gsub(",", "", n); gsub(",", "", d); print a "\t" n "\t" d "\t" c }' "$M/off/tip.lines.txt" | sort) \
+                 gsub(",", "", n); gsub(",", "", d); print a "\t" n "\t" d "\t" c }' "$M/off/tip.lines.txt" | LC_ALL=C sort) \
         <(awk '{ a = $1; sub(":", "", a); for (i = 1; i <= NF; i++) { if ($i == "nmse") n = $(i + 1); if ($i == "diff") d = $(i + 1); if ($i == "of") c = $(i - 1) }
-                 gsub(",", "", n); gsub(",", "", d); print a "\t" n "\t" d "\t" c }' "$M/off/revert.lines.txt" | sort)
+                 gsub(",", "", n); gsub(",", "", d); print a "\t" n "\t" d "\t" c }' "$M/off/revert.lines.txt" | LC_ALL=C sort)
 } > "$OUT/logits-by-model.tsv"
 
 # the fork's test-llama-archs checks: mode, verdict, the summary line

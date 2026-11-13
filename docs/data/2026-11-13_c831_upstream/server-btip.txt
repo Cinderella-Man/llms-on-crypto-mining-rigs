@@ -1,0 +1,3 @@
+dbase differs from doff at G1
+the look-ahead left out no row (no w, r or v group in ARMS)
+FAIL

@@ -1,0 +1,82 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12360-up	OK	tip da2920d45 (Merge upstream b12360 (2d8a32502) into pascal-p106-v4 (C831, Q1462)); against the base:  548 files changed, 23876 insertions(+), 13918 deletions(-); upstream commits merged: 114
+union	lines of neither upstream nor OWN	REVIEW	548 files changed against 80c94fe0d; 15 hold lines of neither (added 98, removed 83): common_speculative.cpp ggml_include_ggml-rpc.h ggml_src_ggml-cuda_common.cuh ggml_src_ggml-cuda_ggml-cuda.cu ggml_src_ggml-cuda_graph.cuh ggml_src_ggml-cuda_mmvf.cu ggml_src_ggml-cuda_mmvq-pascal-glu.cu ggml_src_ggml-cuda_moe-persistent.cu ggml_src_ggml.c src_llama-context.cpp src_llama-context.h src_llama-ext.h src_llama-graph.cpp src_llama-kv-cache.cpp tests_test-backend-ops.cpp 
+cpu	build	OK	rc=0; commit da2920d45cbb3630b6b6cceba215fcf49e0717b1 Merge upstream b12360 (2d8a32502) into pascal-p106-v4 (C831, Q1462); static, every target (123 binaries); 3 warning lines, 0 error lines
+bcpu	build	OK	rc=0; commit 80c94fe0d8d73364981df9e7323cfee94a6d151b Merge -c794 (C794: GGML_CUDA_MMVQ_PASCAL_RO8_KT=1 runs IQ4_XS's and Q4_K; static; 0 error lines
+rcpu	build	OK	rc=0; commit da2920d45cbb3630b6b6cceba215fcf49e0717b1 Merge upstream b12360 (2d8a32502) into pascal-p106-v4 (C831, Q1462);reverted 7f24aacde cpu: accumulate flash attention V in F32 (#29810);; 0 error lines
+model	qwen4exp with an MTP block	OK	rc=0; 32807520 B; md5 adcf00dbf9dc44a298a6d6ddc74c7a14; the draft alone 13952192 B
+off	base writes	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed
+off	tip	DIFFERS	rc=1; no switch; 146 compared, 143 differ: llama llama-moe llama4 deci falcon baichuan gpt2 gptneox mpt starcoder refact refact-moe bloom stablelm qwen qwen2 qwen2moe qwen2vl sensenova_u1 qwen3 qwen3moe flint qwen3next qwen3vl qwen3vlmoe qwen35 qwen35moe clover_moe qwen4exp phi2 phi3 phimoe plamo plamo2 plamo3 codeshell orion internlm2 minicpm minicpm-moe minicpm3 gemma gemma2 gemma3 gemma3n gemma4 starcoder2 maple jamba falcon-h1 xverse command-r cohere2 cohere2moe dbrx olmo olmo2 olmoe muse-glimmer muse-spark openelm arctic deepseek deepseek2 deepseek32 deepseek4 deepseek41 xing4_0 chatglm glm4 glm4moe glm-dsa bitnet jais jais2 nemotron nemotron_h nemotron_h_moe metis16 exaone exaone4 exaone-moe granite granite-moe granitemoe granitemoe-moe granitehybrid granite_swa bailingmoe bailingmoe2 bailingmoe3 dots1 dots3note arcee afmoe laguna ernie4_5 ernie4_5-moe hunyuan-moe hunyuan-dense hunyuan_vl hy_v3 hy_v4 smollm3 gpt-oss lfm2 lfm2moe lfm3 smallthinker seed_oss grovemoe apertus minimax-m2 cogvlm pangu-embedded mistral3 mistral3-moe mistral4 mistral-large4 paddleocr mimo2 step35 spark2_5 maincoder maion-coder kimi-linear kimi-k3 kimi-k31 glm5-next talkie mellum minimax-m3 nanbeige qwen3tts pockettts minimax-01 hrm_text k2-horizon k2-horizon-moe beam kolibri1 limite ricursive ; written by this build only: 0; Summary: 151 test(s) executed, 77 failed
+off	revert	SAME	rc=0; no switch; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+self-base	base writes	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed
+self-base	base-all	SAME	rc=0; LLAMA_MTP_KV_ONLY=1 LLAMA_MTP_CATCHUP_OVERLAP=1 LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_INDEXER_ROWS=1 LLAMA_SAMPLING_TOP_K_ROWS=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_VERIFY_PREPARE=2 LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_NGRAM_PREFETCH=1 LLAMA_DRAFT_PREFETCH=1 LLAMA_DRAFT_EMBD_DEV=layer LLAMA_MTP_H_DEV=2 GGML_SCHED_PREFETCH=0 LLAMA_MTP_EMBD_FIRST=1 LLAMA_MTP_DRAFT_CAP=1 LLAMA_MTP_SKIP_LAST_ROW=2 LLAMA_SCHED_PER_SIZE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_PP_MULTI_SPLIT=1 LLAMA_MTP_HROW_LAZY=1 LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_ONLINE=2 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_GLU_MT=3 GGML_CUDA_MMVF_PASCAL_EXACT=1 GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_UNION=1 GGML_CUDA_GRAPHS_FORCE=1 GGML_CUDA_GRAPHS_PATCH=1 GGML_CUDA_MMVQ_PASCAL_Q5K_1R=1 GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=1 GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1 GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+self	tip writes	OK	rc=0; 146 logits files; Summary: all 151 test(s) passed
+self	tip-all	SAME	rc=0; LLAMA_MTP_KV_ONLY=1 LLAMA_MTP_CATCHUP_OVERLAP=1 LLAMA_QSA_KPOOL_DEV=1 LLAMA_QSA_KPOOL_STAGE=1 LLAMA_QSA_POOL_MASK_DEV=1 LLAMA_QSA_INDEXER_ROWS=1 LLAMA_SAMPLING_TOP_K_ROWS=1 LLAMA_MTP_GRAPH_KEEP=1 LLAMA_VERIFY_PREPARE=2 LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_NGRAM_PREFETCH=1 LLAMA_DRAFT_PREFETCH=1 LLAMA_DRAFT_EMBD_DEV=layer LLAMA_MTP_H_DEV=2 GGML_SCHED_PREFETCH=0 LLAMA_MTP_EMBD_FIRST=1 LLAMA_MTP_DRAFT_CAP=1 LLAMA_MTP_SKIP_LAST_ROW=2 LLAMA_SCHED_PER_SIZE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_PP_MULTI_SPLIT=1 LLAMA_MTP_HROW_LAZY=1 LLAMA_SPEC_ADAPT=1 LLAMA_SPEC_ADAPT_ONLINE=2 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_GLU_MT=3 GGML_CUDA_MMVF_PASCAL_EXACT=1 GGML_CUDA_MMVF_F32_MT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_PROMPT=1 GGML_CUDA_FATTN_SPARSE_PASCAL_UNION=1 GGML_CUDA_GRAPHS_FORCE=1 GGML_CUDA_GRAPHS_PATCH=1 GGML_CUDA_MMVQ_PASCAL_Q5K_1R=1 GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=1 GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1 GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1; 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+modes	--kv-shift	OK	rc=0; Summary: all 113 test(s) passed;
+modes	--ngram-prefetch	OK	rc=0; Summary: all 3 test(s) passed;
+modes	--mtp-kv-only	OK	rc=0; Summary: all 5 test(s) passed;
+modes	--mtp-catchup-overlap	OK	rc=0; Summary: all 5 test(s) passed;
+modes	--mtp-hrow-lazy	OK	rc=0; Summary: all 25 test(s) passed;
+modes	--kv-seq-rm	FAIL	rc=134; 
+modes	--mtp-graph-keep	OK	rc=0; Summary: all 8 test(s) passed;
+modes	--mtp-replan	OK	rc=0; Summary: all 4 test(s) passed;
+modes	--verify-prepare	OK	rc=0; Summary: all 272 test(s) passed;
+modes	--mtp-h-dev	OK	rc=0; Summary: all 5 test(s) passed;
+modes	--mtp-incall-overlap	OK	rc=0; Summary: all 5 test(s) passed;
+server	server_check.sh, every group	FAIL	rc=1; 16 arms equal to their reference; dbase differs from doff at G1;d: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead;w: =1 copied 954, left out 0 in 407 drafts; =2 copied 876, left out 78 in 407 drafts, 78 of them below n_max, 69 by the look-ahead;r: =1 copied 949, left out 0 in 407 drafts; =2 copied 872, left out 77 in 407 drafts, 77 of them below n_max, 68 by the look-ahead;b: =1 copied 1332, left out 130 in 407 drafts; =2 copied 1318, left out 144 in 407 drafts, 14 of them below n_max, 0 by the look-ahead;p: =1 copied 1114, left out 70 in 408 drafts; =2 copied 1100, left out 84 in 408 drafts, 14 of them below n_max, 0 by the look-ahead;v: =1 copied 812, left out 0 in 408 drafts; =2 copied 404, left out 408 in 408 drafts, 408 of them below n_max, 396 by the look-ahead;n: =1 copied 2035, left out 407 in 407 drafts; =2 copied 2035, left out 407 in 407 drafts, 0 of them below n_max, 0 by the look-ahead;
+rserver	dbase doff, the revert build	FAIL	rc=1; dbase differs from doff at G1;dbase: 4 error lines in its log;
+draftmd	base: -md draft at -ub 512, draft ubatch 128	FAIL	base rc=1; tokens predicted: none; drafted/accepted: ; max_nodes lines: ; graphs: 
+draftmd	tip: -md draft at -ub 512, draft ubatch 128	FAIL	tip rc=0; tokens predicted: none; drafted/accepted: null/null; max_nodes lines:  2 max_nodes = 1920; 1 max_nodes = 1925; 3 max_nodes = 4992;; graphs: graph: nodes = 373;graph: nodes = 373;graph: nodes = 162;graph: nodes = 373;graph: nodes = 162;graph: nodes = 168;
+draftmd	the replies' tokens	DIFFERS	base against tip, greedy, 0 characters
+rig	build	OK	rc=0; llama.cpp-20261113-da2920d45-pascal-p106-v4-b12360-up.tar.gz md5 07e5263e8d3043f8bfb24c6b3c98d3c7, 834149106 B; commit: da2920d45cbb3630b6b6cceba215fcf49e0717b1 (2026-11-13 12:02:38 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; bin/: llama-server a4fc23234a95c0bb44f1fb2c0e8cb097 test-backend-ops 60b979897ebbff26e1620d52ce7426c1 test-cuda-keepalive 73ced00de8d9985792ab8a6b3c50b5d1 test-llama-archs cbc5add7651a7bdc8c9341882e7c33e3 ; 34 warning lines
+rigbase	build	OK	rc=0; llama.cpp-20261113-80c94fe0d.tar.gz md5 447d689fa499e3468f743df7d9bccfb4, 819659427 B; commit: 80c94fe0d8d73364981df9e7323cfee94a6d151b (2026-11-13 11:08:02 +0100);; llama-server md5 67f43a5527c4c04eda692bdfea56f194
+names	switch list	OK	the tip's build reads 880 names, the base's 872; differ: >GGML_CUDA_POOL_DEBUG <GGML_OP_ADD1 >GGML_OPENCL_FA_DECOMPOSE >GGML_OPENCL_FA_DECOMPOSE_MB >GGML_OPENCL_FA_KQ_P8 >GGML_OPENCL_FA_KQV_DIRECT >GGML_SYCL_MMID_SCHED >GGML_VK_FORCE_XE_FA >LLAMA_ARG_ALLOW_UNAUTHENTICATED_TOOLS <LLAMA_ARG_DEFRAG_THOLD >LLAMA_ARG_MEDIA_ALLOW_PRIVATE_URLS >LLAMA_SERVER_DEBUG_PROXY_ALLOW_PRIVATE 
+sass	llama-server sass against the base	REVIEW	functions: new build 8797, base 8572; same 6681, changed 1889, new 227, gone 2; mul_mat_q_stream_k_fixup: changed 896;mul_mat_q: changed 722;flash_attn_ext_f16: changed 216, new 52;mul_mat_vec_f: new 88;flash_attn_stream_k_fixup_general: changed 24, new 8;flash_attn_stream_k_fixup_uniform: changed 24, new 8;mul_mat_q_few: new 30;flash_attn_ext_vec: new 12;flash_attn_combine_results: changed 5;cpy_scalar_contiguous: new 4;k_get_rows_float: new 4;convert_unary: new 3;
+sass	llama-server ptx against the base	REVIEW	functions: new build 8797, base 8572; same 6666, changed 1904, new 227, gone 2; mul_mat_q_stream_k_fixup: changed 896;mul_mat_q: changed 726;flash_attn_ext_f16: changed 216, new 52;mul_mat_vec_f: changed 1, new 88;flash_attn_stream_k_fixup_general: changed 24, new 8;flash_attn_stream_k_fixup_uniform: changed 24, new 8;mul_mat_q_few: new 30;flash_attn_ext_vec: new 12;flash_attn_tile: changed 10;flash_attn_combine_results: changed 5;cpy_scalar_contiguous: new 4;k_get_rows_float: new 4;
+c565 static	c831 tree	OK	commit da2920d45cbb3630b6b6cceba215fcf49e0717b1 
+c565 static	c831 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c831 ctest	FAIL	97% tests passed, 2 tests failed out of 75; failed: test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c831 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c831 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c831 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c831 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c831 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c831 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c831 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c831 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c831 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c831 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c831 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c831 hand thread-safety	OK	test-thread-safety rc=0: 0.00.064.864 I All threads finished without errors.
+c565 static	c831 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c831 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 1.940730
+c565 shared	c831 tree	OK	commit da2920d45cbb3630b6b6cceba215fcf49e0717b1 
+c565 shared	c831 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c831 ctest	FAIL	97% tests passed, 2 tests failed out of 75; failed: test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c831 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c831 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c831 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c831 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c831 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c831 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c831 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c831 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c831 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c831 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c831 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c831 hand thread-safety	OK	test-thread-safety rc=0: 0.00.084.223 I All threads finished without errors.
+c565 shared	c831 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c831 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -0.028467
+trim	CPU trees	OK	removed (the binaries stay); 12G in $M; 396 GB free
+start	pascal-p106-v4-b12360-up	OK	tip da2920d45 (Merge upstream b12360 (2d8a32502) into pascal-p106-v4 (C831, Q1462)); against the base:  548 files changed, 23876 insertions(+), 13918 deletions(-); upstream commits merged: 114
+seqrm	--kv-seq-rm, plamo2's 4-sequence tests left out, tip	OK	rc=0; 2 left out; Summary: all 436 test(s) passed
+seqrm	--kv-seq-rm, plamo2's 4-sequence tests left out, base	OK	rc=0; 2 left out; Summary: all 436 test(s) passed
+bmodel	the base's qwen4exp with an MTP block	OK	rc=0; md5 b67f1d9cb2fc872e707b92c5e1af753a
+bmodel	qwen4exp-moe-mtp: the tip's file against the base's	REVIEW	tensors: a 156, b 150; only tip 6, only base 0, differ 0; only tip: blk.0.attn_k.k_scale ((1,), 0);only tip: blk.0.attn_v.v_scale ((1,), 0);only tip: blk.1.attn_k.k_scale ((1,), 0);only tip: blk.1.attn_v.v_scale ((1,), 0);only tip: blk.2.attn_k.k_scale ((1,), 0);only tip: blk.2.attn_v.v_scale ((1,), 0);
+bmodel	qwen4exp-moe-mtp-draft: the tip's file against the base's	REVIEW	tensors: a 60, b 58; only tip 2, only base 0, differ 0; only tip: blk.2.attn_k.k_scale ((1,), 0);only tip: blk.2.attn_v.v_scale ((1,), 0);
+bserver	dbase doff on the base's model, tip's llama-server	FAIL	rc=1; dbase differs from doff at G1;the look-ahead left out no row (no w, r or v group in ARMS);
+bserver	dbase doff on the base's model, rev's llama-server	PASS	rc=0; dbase = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens);the look-ahead left out no row (no w, r or v group in ARMS);
+draftmd	base-bmodel: -md draft at -ub 512, draft ubatch 128	OK	base-bmodel rc=0 n_vocab=128; tokens predicted: 96; drafted/accepted: 549/0; max_nodes lines:  4 max_nodes = 20480; 2 max_nodes = 5120; 1 max_nodes = 5125;; graphs: graph: nodes = 373;graph: nodes = 373;graph: nodes = 162;graph: nodes = 373;graph: nodes = 162;graph: nodes = 168;graph: nodes = 371;
+draftmd	tip-bmodel: -md draft at -ub 512, draft ubatch 128	OK	tip-bmodel rc=0 n_vocab=128; tokens predicted: 96; drafted/accepted: 549/0; max_nodes lines:  2 max_nodes = 1856; 1 max_nodes = 1861; 6 max_nodes = 4800;; graphs: graph: nodes = 373;graph: nodes = 373;graph: nodes = 162;graph: nodes = 373;graph: nodes = 162;graph: nodes = 168;graph: nodes = 371;
+draftmd	tip-model: -md draft at -ub 512, draft ubatch 128	OK	tip-model rc=0 n_vocab=128; tokens predicted: 96; drafted/accepted: 549/0; max_nodes lines:  2 max_nodes = 1920; 1 max_nodes = 1925; 6 max_nodes = 4992;; graphs: graph: nodes = 373;graph: nodes = 373;graph: nodes = 162;graph: nodes = 373;graph: nodes = 162;graph: nodes = 168;graph: nodes = 371;
+draftmd	the base's model: the replies' tokens and draft counts	SAME	base against tip, greedy, 96 tokens

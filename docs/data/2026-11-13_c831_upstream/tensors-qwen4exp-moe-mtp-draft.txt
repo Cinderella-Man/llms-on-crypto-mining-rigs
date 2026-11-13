@@ -1,0 +1,3 @@
+tensors: a 60, b 58; only tip 2, only base 0, differ 0
+only tip: blk.2.attn_k.k_scale ((1,), 0)
+only tip: blk.2.attn_v.v_scale ((1,), 0)

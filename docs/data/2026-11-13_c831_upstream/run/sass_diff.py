@@ -5,8 +5,10 @@ Usage: sass_diff.py <new funcs.tsv> <base funcs.tsv> [<out.tsv>]
 
 Both files are sass_attrib.py dump's output (docs/data/2026-11-11_v4_day_merge/run/sass_attrib.py: one line per function,
 its name and the sorted md5s of its copies, anonymous-namespace hashes masked). Every function is one of:
-  same     in both builds, the same code
-  changed  in both builds, different code
+  same     in both builds, the same code, as many copies (a function compiled into several files has a copy in each)
+  copies   in both builds, the same distinct code, a different number of copies (e.g. a header kernel compiled into
+           more files)
+  changed  in both builds, a code that no copy in the base has
   new      only in the new build
   gone     only in the base build
 Prints the counts, then per kernel family (the demangled name up to its template or argument list, with c++filt when
@@ -57,13 +59,18 @@ def main():
     cls = {}
     for n in set(new) | set(base):
         if n in new and n in base:
-            cls[n] = "same" if new[n] == base[n] else "changed"
+            if new[n] == base[n]:
+                cls[n] = "same"
+            elif set(new[n].split(",")) <= set(base[n].split(",")):
+                cls[n] = "copies"
+            else:
+                cls[n] = "changed"
         elif n in new:
             cls[n] = "new"
         else:
             cls[n] = "gone"
     counts = Counter(cls.values())
-    print(f"functions: new build {len(new)}, base {len(base)}; same {counts['same']}, changed {counts['changed']}, "
+    print(f"functions: new build {len(new)}, base {len(base)}; same {counts['same']}, copies {counts['copies']}, changed {counts['changed']}, "
           f"new {counts['new']}, gone {counts['gone']}")
     diff = sorted(n for n, c in cls.items() if c != "same")
     dm = demangle(diff)
@@ -71,7 +78,7 @@ def main():
     for n in diff:
         fam[family(dm[n])][cls[n]] += 1
     for f, c in sorted(fam.items(), key=lambda kv: (-sum(kv[1].values()), kv[0])):
-        print(f"  {f}: " + ", ".join(f"{k} {c[k]}" for k in ("changed", "new", "gone") if c[k]))
+        print(f"  {f}: " + ", ".join(f"{k} {c[k]}" for k in ("changed", "copies", "new", "gone") if c[k]))
     if len(sys.argv) > 3:
         with open(sys.argv[3], "w") as f:
             f.write("class\tfamily\tname\n")

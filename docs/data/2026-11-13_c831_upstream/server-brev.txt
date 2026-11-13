@@ -1,0 +1,3 @@
+dbase = doff (tokens, top probabilities and draft counts of G1 G2 S1 S2; 200 verify steps and 407 rule steps the same; drafted 1462 tokens)
+the look-ahead left out no row (no w, r or v group in ARMS)
+PASS

@@ -1,0 +1,19 @@
+      6 llama_model_loader: loaded meta data with 178 key-value pairs and 150 tensors from $M/server/bmodels/qwen4exp-moe-mtp.gguf (version GGUF V3 (latest))
+      3 llama_model_loader: loaded meta data with 178 key-value pairs and 156 tensors from $M/server/models/qwen4exp-moe-mtp.gguf (version GGUF V3 (latest))
+      4 llama_model_loader: loaded meta data with 178 key-value pairs and 58 tensors from $M/server/bmodels/qwen4exp-moe-mtp-draft.gguf (version GGUF V3 (latest))
+      2 llama_model_loader: loaded meta data with 178 key-value pairs and 60 tensors from $M/server/models/qwen4exp-moe-mtp-draft.gguf (version GGUF V3 (latest))
+      1 sched_new: reusing scheduler: max_nodes = 4800 (current max_nodes = 4800)
+      1 sched_new: reusing scheduler: max_nodes = 4992 (current max_nodes = 4992)
+      6 sched_reserve: graph: nodes = 162, splits = 1, input objects = 5, input tensors = 14
+      3 sched_reserve: graph: nodes = 168, splits = 1, input objects = 6, input tensors = 14
+      3 sched_reserve: graph: nodes = 371, splits = 1, input objects = 6, input tensors = 18
+      9 sched_reserve: graph: nodes = 373, splits = 1, input objects = 6, input tensors = 18
+      2 sched_reserve: max_nodes = 1856
+      1 sched_reserve: max_nodes = 1861
+      2 sched_reserve: max_nodes = 1920
+      1 sched_reserve: max_nodes = 1925
+      4 sched_reserve: max_nodes = 20480
+      4 sched_reserve: max_nodes = 4800
+      4 sched_reserve: max_nodes = 4992
+      2 sched_reserve: max_nodes = 5120
+      1 sched_reserve: max_nodes = 5125

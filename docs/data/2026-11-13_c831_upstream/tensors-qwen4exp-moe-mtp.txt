@@ -1,0 +1,7 @@
+tensors: a 156, b 150; only tip 6, only base 0, differ 0
+only tip: blk.0.attn_k.k_scale ((1,), 0)
+only tip: blk.0.attn_v.v_scale ((1,), 0)
+only tip: blk.1.attn_k.k_scale ((1,), 0)
+only tip: blk.1.attn_v.v_scale ((1,), 0)
+only tip: blk.2.attn_k.k_scale ((1,), 0)
+only tip: blk.2.attn_v.v_scale ((1,), 0)

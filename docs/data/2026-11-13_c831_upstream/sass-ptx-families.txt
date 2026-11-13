@@ -1,0 +1,29 @@
+functions: new build 8797, base 8572; same 6666, copies 55, changed 1849, new 227, gone 2
+  mul_mat_q_stream_k_fixup: changed 896
+  mul_mat_q: changed 726
+  flash_attn_ext_f16: changed 216, new 52
+  mul_mat_vec_f: changed 1, new 88
+  flash_attn_stream_k_fixup_general: copies 24, new 8
+  flash_attn_stream_k_fixup_uniform: copies 24, new 8
+  mul_mat_q_few: new 30
+  flash_attn_ext_vec: new 12
+  flash_attn_tile: changed 10
+  flash_attn_combine_results: copies 5
+  cpy_scalar_contiguous: new 4
+  k_get_rows_float: new 4
+  convert_unary: new 3
+  convert_unary_cont_vec4: new 3
+  cpy_scalar_transpose: new 2
+  flash_attn_mask_to_KV_max: copies 2
+  k_set_rows: new 2
+  pad_reflect_1d_kernel_f32: new 1, gone 1
+  quantize_mmq_few_q8_1: new 2
+  _Z10cpy_scalarIXadL_ZN36_INTERNAL_X_6_cpy_cu_X12cpy_1_scalarI13__nv_bfloat1615ggml_fp8_e4m3_tEEvPKcPcEEEvS5_S6_lllllllllllllll: new 1
+  _Z10cpy_scalarIXadL_ZN36_INTERNAL_X_6_cpy_cu_X12cpy_1_scalarI15ggml_fp8_e4m3_tfEEvPKcPcEEEvS4_S5_lllllllllllllll: new 1
+  _Z10cpy_scalarIXadL_ZN36_INTERNAL_X_6_cpy_cu_X12cpy_1_scalarI6__half15ggml_fp8_e4m3_tEEvPKcPcEEEvS5_S6_lllllllllllllll: new 1
+  _Z10cpy_scalarIXadL_ZN36_INTERNAL_X_6_cpy_cu_X12cpy_1_scalarIf15ggml_fp8_e4m3_tEEvPKcPcEEEvS4_S5_lllllllllllllll: new 1
+  _Z10cpy_scalarIXadL_ZN36_INTERNAL_X_6_cpy_cu_X12cpy_1_scalarIhhEEvPKcPcEEEvS3_S4_lllllllllllllll: new 1
+  diag_mask_inf_f32: gone 1
+  fp8_amax_final: new 1
+  fp8_amax_partials: new 1
+  quantize_fp8_e4m3: new 1
