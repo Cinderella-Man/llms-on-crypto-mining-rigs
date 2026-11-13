@@ -10,9 +10,10 @@ Q4_K) are the ones C729's read-once kernel handles worst:
   one-token kernel's.
 
 The tiles hold 6 warps a block at every count from 5 to 8, with each token's sums the one-token kernel's bit for bit.
-This folder holds the design, the CPU checks (all passed) and the rig run, R149 (Q1455), which is not run yet. The
-switch is in [docs/switches.md](../../switches.md). The fork branch is `pascal-p106-v4-b12246-c794`, merged off by
-default into `pascal-p106-v4`.
+This folder holds the design, the CPU checks (all passed) and the rig run, R149 (Q1455): on a P106 the tiles are bit
+for bit the one-token products and a gain at every count from 5 to 8. The switch is in
+[docs/switches.md](../../switches.md). The fork branch is `pascal-p106-v4-b12246-c794`, merged off by default into
+`pascal-p106-v4`.
 
 ## The change (`ggml/src/ggml-cuda/mmvq-pascal-dmt.cu`)
 
@@ -95,7 +96,97 @@ The first run of the chain stopped after its `obj` step: five kernels at 7 and 8
 (Q4_K M = 1 and 2 at 7 and 8 tokens: 8, 32, 24 and 40 bytes of stack; IQ4_XS at 8 tokens, M = 2: 8 bytes). The fork's
 second commit leaves the prefetch out there, and every row above is from the second run.
 
-## The rig run (R149, not run)
+## The rig run (R149)
+
+**The tiles are a gain at every count from 5 to 8 tokens, for both types, and bit for bit the one-token products.** On
+`v4-rc2` with `_RO8_KT=1`, a 2,560 × 6,144 IQ4_XS product of 5 tokens takes 144.89 and 146.50 µs (two passes) against
+166.79 and 168.47 for C729's whole staging (`kern`). At 8 tokens it takes 231.28 and 233.29 µs against 364.43 and 369.48
+µs. For a verify pass's est. 17 IQ4_XS and 15 Q4_K such products, the tiles save est. 0.620 and 0.625 ms at 5 tokens
+and est. 5.258 and 5.340 ms at 8. M = 1 (`ktm1`) is slower than the default M = 2 at every count from 5 to 8, except
+IQ4_XS at 8 tokens, where the two are within the spread.
+
+R149 (Q1455) ran on a P106 rig on 2026-11-13, card 0, with no model. The rig was idle: no llama process, 0 MiB on
+every card before and after. Perf ran 20:25:33–20:27:08 and bitid 20:27:35–20:28:17.
+
+- **Build:** `v4-rc2` (`pascal-p106-v4` `eb82916d3`), which holds C794 (merged as `80c94fe0d`, switch off by default).
+  Its tree is C828's tarball's: `bin/llama-server` md5 `e7afd26db01f4c671549ef12c504ada3`, `test-backend-ops`
+  `e38809f0b16869abc065483f07c4798a`, checked on the rig before and after the run.
+- **Harness:** `multitoken_bitid` built against `v4-rc2`'s tree (C828's, md5 `284b3baa0dcbb8e1649819eea2c37551`,
+  94,451,944 B, the md5 equal at both ends of the copy). This branch's own harness (md5
+  `5ae2dedf20c1f8a40ad3c3b1353a47c7`) links ggml statically, so it would have tested `c4e82a856`'s kernels instead of the
+  release candidate's.
+- **No replay:** R153 replayed the set `ro8kt` with `v4-rc1`'s build on 2026-11-13: 16 of 16 runs as expected
+  ([../2026-11-13_c831_upstream/](../2026-11-13_c831_upstream/README.md)). `v4-rc2` adds only C828's host code to
+  `v4-rc1`, so C794's sm_61 code is the same in both.
+- **Commands:** `STEPS=perf`, then `STEPS=bitid`, of [run/rig_c794.sh](run/rig_c794.sh) with `BIN` set to `v4-rc2`'s
+  `bin/`; tables by [run/tables.sh](run/tables.sh) and [run/r149_diffs.sh](run/r149_diffs.sh) on the build machine.
+
+**Bit identity** ([rig/bitid.tsv](rig/bitid.tsv)). `multitoken_bitid kt8` makes 104 products of 5 to 8 tokens. 17 of
+them are shapes the read-once kernel declines (K = 8,192 and 12,288 at both types, and Q4_K 77 × 4,096 at 8 tokens), so
+they are not counted. The other 87 are each compared with their columns' one-token products:
+
+| Arm | Switches (and the preset's k-column ones) | Exit | Compared | With differences |
+|---|---|---:|---:|---:|
+| `kt1` | `_RO8=1 _RO8_KT=1` | 0 | 87 | 0 |
+| `kt2` | `_RO8=1 _RO8_KT=2` | 0 | 87 | 0 |
+| `kt2m1` | `_RO8=1 _RO8_KT=2 _DMT_KT_M=1` | 0 | 87 | 0 |
+| `kt2nopf` | `_RO8=2 _RO8_KT=2` (no prefetch) | 0 | 87 | 0 |
+| `fault` | `_RO8=1 _RO8_KT=2 _DMT_KT_FAULT=1` | 1 | 87 | 56 |
+| `control` | `_RO8=1`, no tiles, `BITID_ALL=1` | 1 | 104 | 35 |
+
+The fault is caught on all 56 tile products (K = 2,560 and 6,144). The control's 35 differences all lie on products
+the read-once kernel declines without the tiles: there the k-column kernel's sums are not the one-token kernel's.
+
+**Perf** ([rig/perf.tsv](rig/perf.tsv), [rig/diffs.tsv](rig/diffs.tsv), [rig/us_run.tsv](rig/us_run.tsv)): µs a
+2,560 × 6,144 product, passes 1 and 2:
+
+| Type | Tokens | `off` | `kern` | `kt` (M = 2) | `ktm1` (M = 1) |
+|---|---:|---:|---:|---:|---:|
+| IQ4_XS | 4 | 241.05, 226.60 | 112.82, 112.47 | 111.81, 112.05 | 111.41, 111.73 |
+| IQ4_XS | 5 | 254.50, 255.33 | 166.79, 168.47 | 144.89, 146.50 | 152.15, 152.82 |
+| IQ4_XS | 6 | 273.25, 275.74 | 274.67, 276.44 | 166.18, 167.05 | 175.04, 175.61 |
+| IQ4_XS | 7 | 324.06, 324.85 | 318.47, 325.04 | 202.50, 204.34 | 215.23, 215.05 |
+| IQ4_XS | 8 | 368.86, 370.79 | 364.43, 369.48 | 231.28, 233.29 | 232.77, 233.03 |
+| Q4_K | 4 | 230.75, 232.22 | 140.38, 141.57 | 140.85, 142.25 | 140.87, 141.72 |
+| Q4_K | 5 | 265.91, 265.66 | 168.59, 170.14 | 152.08, 153.38 | 161.20, 162.56 |
+| Q4_K | 6 | 327.54, 331.85 | 330.44, 334.99 | 174.75, 176.43 | 189.23, 189.27 |
+| Q4_K | 7 | 383.09, 386.36 | 382.61, 387.12 | 210.56, 212.51 | 226.04, 226.00 |
+| Q4_K | 8 | 440.07, 445.96 | 439.82, 443.88 | 240.16, 242.21 | 247.39, 247.36 |
+
+At 4 tokens the tiles do not run, so `kern`, `kt` and `ktm1` run the same kernel there: the control. At 6 to 8 tokens
+`kern` runs the k-column kernel, as `off` does, because whole staging holds one warp or none.
+
+**A verify pass** ([rig/verify.tsv](rig/verify.tsv), [rig/verify_diffs.tsv](rig/verify_diffs.tsv)): est. ms of a
+pass's est. 17 IQ4_XS and 15 Q4_K products, passes 1 and 2:
+
+| Tokens | `off` | `kern` | `kt` | `ktm1` | `kt` − `kern` | `ktm1` − `kt` |
+|---:|---:|---:|---:|---:|---:|---:|
+| 4 | 7.559, 7.335 | 4.024, 4.036 | 4.014, 4.039 | 4.007, 4.025 | −0.010, +0.003 | −0.006, −0.013 |
+| 5 | 8.315, 8.326 | 5.364, 5.416 | 4.744, 4.791 | 5.005, 5.036 | −0.620, −0.625 | +0.260, +0.245 |
+| 6 | 9.558, 9.665 | 9.626, 9.724 | 5.446, 5.486 | 5.814, 5.824 | −4.180, −4.238 | +0.368, +0.338 |
+| 7 | 11.255, 11.318 | 11.153, 11.332 | 6.601, 6.661 | 7.050, 7.046 | −4.552, −4.671 | +0.449, +0.384 |
+| 8 | 12.872, 12.993 | 12.793, 12.939 | 7.534, 7.599 | 7.668, 7.672 | −5.258, −5.340 | +0.134, +0.073 |
+
+**Verdicts**, against the spread of each arm's two passes:
+
+- **`kt` against `kern` and `off`: a gain** at 5, 6, 7 and 8 tokens, at both types. `kt` − `kern` is −21.90, −21.97
+  µs (IQ4_XS, 5 tokens) and −16.51, −16.76 (Q4_K, 5 tokens). At 6, 7 and 8 tokens it is −108.49, −109.39;
+  −115.97, −120.70; −133.15, −136.19 µs (IQ4_XS) and −155.69, −158.56; −172.05, −174.61; −199.66, −201.67 (Q4_K).
+  `kern`'s own two passes lie 1.68, 1.77, 6.57 and 5.05 µs apart (IQ4_XS, 5 to 8 tokens) and 1.55, 4.55, 4.51 and
+  4.06 (Q4_K).
+- **At 4 tokens (the control): negligible**, as expected for one kernel: `kt` − `kern` −1.01, −0.42 µs (IQ4_XS) and
+  +0.47, +0.68 (Q4_K); est. −0.010 and +0.003 ms a pass.
+- **`ktm1` against `kern`: a gain** at 5 to 8 tokens at both types. **Against `kt`: a loss** at 5, 6 and 7 tokens at both
+  types: `ktm1` − `kt` +7.26, +6.32; +8.86, +8.56; +12.73, +10.71 µs (IQ4_XS, 5, 6, 7 tokens) and +9.12, +9.18;
+  +14.48, +12.84; +15.48, +13.49 (Q4_K). At 8 tokens Q4_K loses too (+7.23, +5.15); IQ4_XS is negligible (+1.49,
+  −0.26; `kt`'s passes 2.01 µs apart). The default M = 2 stays.
+
+The switch is not in the v4 release settings, because drafts of five or more tokens lost on agentic speed on
+2026-11-13 (R154a). For a later preset whose verify passes reach five tokens, `_RO8_KT=1` (M = 2) is the setting to
+take. Its served pair waits for Q1459, which looks into R133's finding that half of the served M = 2 tile launches at
+4 tokens ran at the switch-off time.
+
+### How the run is set up
 
 [run/rig_c794.sh](run/rig_c794.sh), on one P106 card of an idle rig, needs only the tarball, the set and the harness, no
 model. Default steps `replay bitid perf`:
@@ -132,6 +223,11 @@ and for a preset whose verify passes reach five tokens (the Miner Llama v3 prese
 | [run/checks.sh](run/checks.sh) | the check driver |
 | [run/rig_c794.sh](run/rig_c794.sh) | R149's run on the rig |
 | [run/tables.sh](run/tables.sh) | R149's tables |
+| [run/r149_diffs.sh](run/r149_diffs.sh) | R149's verdict tables: `kt` and `ktm1` against `kern`, `ktm1` against `kt`, in µs and est. ms a pass |
+| [rig/bitid.tsv](rig/bitid.tsv) | R149: each `kt8` arm's switches, exit, declined, compared and differing products |
+| [rig/us_run.tsv](rig/us_run.tsv) | R149: µs a product by arm, pass, type and token count (`rig_c794.sh`'s output) |
+| [rig/perf.tsv](rig/perf.tsv), [rig/verify.tsv](rig/verify.tsv) | R149: `tables.sh`'s per-type table and est. ms a verify pass |
+| [rig/diffs.tsv](rig/diffs.tsv), [rig/verify_diffs.tsv](rig/verify_diffs.tsv) | R149: `r149_diffs.sh`'s differences and `kern`'s pass spread |
 
 Also changed: `scripts/record_checks.sh` (suite `ro8kt`), `bench/mmvq_pascal/verify/multitoken_bitid.cpp` (mode `kt8`).
 
@@ -148,8 +244,12 @@ STEPS=merged FINAL_REF=refs/c794/merge <the same env> bash docs/data/2026-11-13_
 # R149, on the rig (card 0):
 BIN=<tarball>/bin OUT=<out> BITID=<multitoken_bitid> SET=<ro8kt folder> REPLAY=scripts/replay_checks.sh \
   setsid -f nohup bash docs/data/2026-11-13_c794_ktiles_5to8/run/rig_c794.sh > console.txt 2>&1 < /dev/null
+# R149 as run (v4-rc2's tree; the harness built against it; no replay):
+#   STEPS=perf BIN=<tree>/bin OUT=<out-perf> setsid nohup bash docs/data/2026-11-13_c794_ktiles_5to8/run/rig_c794.sh ...
+#   STEPS=bitid BIN=<tree>/bin BITID=<multitoken_bitid> OUT=<out-bitid> setsid nohup bash docs/data/2026-11-13_c794_ktiles_5to8/run/rig_c794.sh ...
 # its tables, on a build machine:
 IN=<out>/perf/us_run.tsv OUT=<tables dir> bash docs/data/2026-11-13_c794_ktiles_5to8/run/tables.sh
+IN=<out>/perf/us_run.tsv OUT=<tables dir> bash docs/data/2026-11-13_c794_ktiles_5to8/run/r149_diffs.sh
 ```
 
 ## Provenance and licence

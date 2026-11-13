@@ -1,0 +1,7 @@
+arm	switches (with the preset's KCOL_SMEM=32768 KCOL_TABLE=0)	exit	declined, not counted	compared	with differences
+kt1	_RO8=1 _RO8_KT=1	0	17	87	0
+kt2	_RO8=1 _RO8_KT=2	0	17	87	0
+kt2m1	_RO8=1 _RO8_KT=2 _DMT_KT_M=1	0	17	87	0
+kt2nopf	_RO8=2 _RO8_KT=2	0	17	87	0
+fault	_RO8=1 _RO8_KT=2 _DMT_KT_FAULT=1	1	17	87	56
+control	_RO8=1 BITID_ALL=1	1	0	104	35
