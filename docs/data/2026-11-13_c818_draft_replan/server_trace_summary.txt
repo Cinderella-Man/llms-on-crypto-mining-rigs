@@ -1,0 +1,40 @@
+r60plan	draft	evaluations 208	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (310.07 MiB)
+r60plan	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r60whole	draft	evaluations 208	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (310.07 MiB)
+r60whole	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r60plancards	draft	evaluations 208	replans prompt 18 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (310.07 MiB)
+r60plancards	draft	  13	node 'node_78' (FILL) larger than planned
+r60plancards	draft	  4	node 'kpool_stage-2' (CONT) larger than planned
+r60plancards	draft	  1	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned
+r60plancards	target	evaluations 157	replans prompt 49 gen 7 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r60plancards	target	  28	node 'node_277' (FILL) larger than planned
+r60plancards	target	  13	node 'node_357' (GET_ROWS) larger than planned
+r60plancards	target	  12	node 'node_0' (GET_ROWS) larger than planned
+r60plancards	target	  3	node 'indexer_score-1' (LIGHTNING_INDEXER) larger than planned
+r60wholecards	draft	evaluations 208	replans prompt 1 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (310.07 MiB)
+r60wholecards	draft	  1	node 'node_78' (FILL) larger than planned
+r60wholecards	target	evaluations 157	replans prompt 49 gen 7 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (891.47 MiB)
+r60wholecards	target	  28	node 'node_277' (FILL) larger than planned
+r60wholecards	target	  13	node 'node_357' (GET_ROWS) larger than planned
+r60wholecards	target	  12	node 'node_0' (GET_ROWS) larger than planned
+r60wholecards	target	  3	node 'indexer_score-1' (LIGHTNING_INDEXER) larger than planned
+r85plan	draft	evaluations 267	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (155.23 MiB)
+r85plan	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)
+r85whole	draft	evaluations 267	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (155.23 MiB)
+r85whole	target	evaluations 157	replans prompt 0 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)
+r85plancards	draft	evaluations 267	replans prompt 42 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (155.23 MiB)
+r85plancards	draft	  31	node 'node_71' (FILL) larger than planned
+r85plancards	draft	  9	node 'node_77' (GET_ROWS) larger than planned
+r85plancards	draft	  2	node 'mtp_tok_embd-2' (GET_ROWS) larger than planned
+r85plancards	target	evaluations 157	replans prompt 49 gen 7 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)
+r85plancards	target	  28	node 'node_270' (FILL) larger than planned
+r85plancards	target	  13	node 'node_349' (GET_ROWS) larger than planned
+r85plancards	target	  12	node 'node_0' (GET_ROWS) larger than planned
+r85plancards	target	  3	node 'node_276' (GET_ROWS) larger than planned
+r85wholecards	draft	evaluations 267	replans prompt 1 gen 0 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 9 (155.23 MiB)
+r85wholecards	draft	  1	node 'node_77' (GET_ROWS) larger than planned
+r85wholecards	target	evaluations 157	replans prompt 49 gen 7 load 0	after a change of cards 0	drains 0.0 ms	plans 0.0 ms	buffer growths 5 (786.03 MiB)
+r85wholecards	target	  28	node 'node_270' (FILL) larger than planned
+r85wholecards	target	  13	node 'node_349' (GET_ROWS) larger than planned
+r85wholecards	target	  12	node 'node_0' (GET_ROWS) larger than planned
+r85wholecards	target	  3	node 'node_276' (GET_ROWS) larger than planned

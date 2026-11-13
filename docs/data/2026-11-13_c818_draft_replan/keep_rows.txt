@@ -1,0 +1,36 @@
+off s1|Model arch.| Config| Prompt| Drafts| End| Short| Built, prompt| Built, steps| Compute KiB|Status
+off s1| qwen4exp| f16 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2278|OK
+off s1| qwen4exp| f16| identical| identical| identical| off| 7/7| 32/4 of 64| 1447/2339|OK
+off s1| qwen4exp| q8_0 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2278|OK
+off s1| qwen4exp| f16 fa host| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2278|OK
+off s1| qwen4exp| f16 fa kv-only| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/1713|OK
+off s1| qwen4exp| f16 fa short| identical| identical| identical| on| 7/7| 32/4 of 64| 1411/2278|OK
+off s1| qwen4exp| f16 fa carry| identical| identical| identical| off| 7/7| 48/5 of 64| 1411/2358|OK
+off s1| qwen4exp| f16 fa kv+sl+carry| identical| identical| identical| on| 7/7| 48/5 of 64| 1411/1793|OK
+plan s1|Model arch.| Config| Prompt| Drafts| End| Short| Built, prompt| Built, steps| Compute KiB|Status
+plan s1| qwen4exp| f16 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+plan s1| qwen4exp| f16| identical| identical| identical| off| 7/7| 32/4 of 64| 1447/2474|OK
+plan s1| qwen4exp| q8_0 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+plan s1| qwen4exp| f16 fa host| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+plan s1| qwen4exp| f16 fa kv-only| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/1785|OK
+plan s1| qwen4exp| f16 fa short| identical| identical| identical| on| 7/7| 32/4 of 64| 1411/2414|OK
+plan s1| qwen4exp| f16 fa carry| identical| identical| identical| off| 7/7| 48/5 of 64| 1411/2559|OK
+plan s1| qwen4exp| f16 fa kv+sl+carry| identical| identical| identical| on| 7/7| 48/5 of 64| 1411/1930|OK
+whole s1|Model arch.| Config| Prompt| Drafts| End| Short| Built, prompt| Built, steps| Compute KiB|Status
+whole s1| qwen4exp| f16 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+whole s1| qwen4exp| f16| identical| identical| identical| off| 7/7| 32/4 of 64| 1447/2474|OK
+whole s1| qwen4exp| q8_0 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+whole s1| qwen4exp| f16 fa host| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+whole s1| qwen4exp| f16 fa kv-only| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/1785|OK
+whole s1| qwen4exp| f16 fa short| identical| identical| identical| on| 7/7| 32/4 of 64| 1411/2414|OK
+whole s1| qwen4exp| f16 fa carry| identical| identical| identical| off| 7/7| 48/5 of 64| 1411/2559|OK
+whole s1| qwen4exp| f16 fa kv+sl+carry| identical| identical| identical| on| 7/7| 48/5 of 64| 1411/1930|OK
+wholecards s1|Model arch.| Config| Prompt| Drafts| End| Short| Built, prompt| Built, steps| Compute KiB|Status
+wholecards s1| qwen4exp| f16 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+wholecards s1| qwen4exp| f16| identical| identical| identical| off| 7/7| 32/4 of 64| 1447/2474|OK
+wholecards s1| qwen4exp| q8_0 fa| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+wholecards s1| qwen4exp| f16 fa host| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/2414|OK
+wholecards s1| qwen4exp| f16 fa kv-only| identical| identical| identical| off| 7/7| 32/4 of 64| 1411/1785|OK
+wholecards s1| qwen4exp| f16 fa short| identical| identical| identical| on| 7/7| 32/4 of 64| 1411/2414|OK
+wholecards s1| qwen4exp| f16 fa carry| identical| identical| identical| off| 7/7| 48/5 of 64| 1411/2559|OK
+wholecards s1| qwen4exp| f16 fa kv+sl+carry| identical| identical| identical| on| 7/7| 48/5 of 64| 1411/1930|OK

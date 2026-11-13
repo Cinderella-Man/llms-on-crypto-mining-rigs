@@ -1,0 +1,76 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c818	OK	tip 46c8ae936 (C818: =2 plans the shared scheduler at the start plan's batch shape, with the re-planning batch's kind of input); files changed against the base:  7 files changed, 265 insertions(+), 24 deletions(-); under ggml/: 4
+rig	build	OK	rc=0; llama.cpp-20261113-46c8ae936-pascal-p106-v4-b12246-c818.tar.gz md5 45cb414a8f2bec992d08de4eb9a4f019, 744437345 B; commit: 46c8ae936626c2daaf89fffae2924b0040792fe8 (2026-11-13 09:02:02 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; test-backend-ops md5 d136e8567a5419a9baad0fa5553778a9; llama-server md5 8cc94801546e8d640d13b6a1fc4ae758; test-llama-archs in bin/: yes; 34 warning lines
+names	switch list	OK	871 names in the build's list; LLAMA_SCHED_TEST_REPLAN in it: 1, LLAMA_SCHED_PER_SIZE_RESERVE: 1; lines of bin/llama-server and lib/ holding LLAMA_SCHED_TEST_REPLAN: 3
+sass	llama-server sass against the base	SAME	8540 functions (8540 in the base's); dumps: the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against the base	DIFFERS	8540 functions (8540 in the base's); dumps: files differ; merged 8540 functions: base 8530; listed 10; NEW: _Z15flash_attn_tileILi128ELi128ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi128ELi128ELi1ELi2ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi128ELi128ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi128ELi128ELi2ELi1ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi1ELi2ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi256ELi256ELi2ELi1ELb1EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi64ELi64ELi1ELi2ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;NEW: _Z15flash_attn_tileILi64ELi64ELi2ELi1ELb0EEvPKcS1_S1_S1_S1_PKiS3_PfP6float2ffffjfi5uint3iiiiiiiiiiiliiliiiiil: no branch changed it; not the base's code;
+sass	llama-server ptx, internal-name numbers masked	SAME	lines: new 10670256, base 10670256;differing lines: 70;their internal names (with the number after the hash):; 14 _cu_8a22d1c2_482320; 14 _cu_8a22d1c2_487420; 7 _cu_8a22d1c2_503420; 14 _cu_df5b3b2f_486520; 14 _cu_df5b3b2f_491820; 7 _cu_df5b3b2f_507820;masked md5: new 80551b469e1173101aab20a1fb7ebee5, base 80551b469e1173101aab20a1fb7ebee5;
+cpu	build	OK	rc=0; commit 46c8ae936626c2daaf89fffae2924b0040792fe8 C818: =2 plans the shared scheduler at the start plan's batch shape, with the re-planning ba; static, every target; 3 warning lines, 0 error lines
+replan	cpu -s 1	OK	rc=0; no switch; --mtp-replan; Summary: all 4 test(s) passed
+replan	cpu -s 2	OK	rc=0; no switch; --mtp-replan; Summary: all 4 test(s) passed
+replan	cpu -s 3	OK	rc=0; no switch; --mtp-replan; Summary: all 4 test(s) passed
+replan	rig -s 1	OK	rc=0; no switch; --mtp-replan; Summary: all 4 test(s) passed
+keep	off -s 1	OK	rc=0; no switch; --mtp-graph-keep; Summary: all 8 test(s) passed
+keep	plan -s 1	OK	rc=0; LLAMA_SCHED_PER_SIZE_RESERVE=1; --mtp-graph-keep; Summary: all 8 test(s) passed
+keep	whole -s 1	OK	rc=0; LLAMA_SCHED_PER_SIZE_RESERVE=2; --mtp-graph-keep; Summary: all 8 test(s) passed
+keep	wholecards -s 1	OK	rc=0; LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_SCHED_TEST_REPLAN=1; --mtp-graph-keep; Summary: all 8 test(s) passed
+keep	off against plan	SAME	the same rows up to the builds (9 rows); compute KiB off: ComputeKiB 1411/2278 1447/2339 1411/2278 1411/2278 1411/1713 1411/2278 1411/2358 1411/1793 , plan: ComputeKiB 1411/2414 1447/2474 1411/2414 1411/2414 1411/1785 1411/2414 1411/2559 1411/1930 
+keep	off against whole	SAME	the same rows up to the builds (9 rows); compute KiB off: ComputeKiB 1411/2278 1447/2339 1411/2278 1411/2278 1411/1713 1411/2278 1411/2358 1411/1793 , whole: ComputeKiB 1411/2414 1447/2474 1411/2414 1411/2414 1411/1785 1411/2414 1411/2559 1411/1930 
+keep	off against wholecards	SAME	the same rows up to the builds (9 rows); compute KiB off: ComputeKiB 1411/2278 1447/2339 1411/2278 1411/2278 1411/1713 1411/2278 1411/2358 1411/1793 , wholecards: ComputeKiB 1411/2414 1447/2474 1411/2414 1411/2414 1411/1785 1411/2414 1411/2559 1411/1930 
+server	r60plan	OK	rc=0; draft re-plans 0, in passes of more than 8 tokens 0; draft plans from a graph in hand (test) 0, over the whole memory 0, a new plan after one 0; target's 0, 0; evaluations 208 replans prompt 0 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (310.07 MiB); buffer growths 14; per-size plans 7; replies against r60plan: identical 8 8 57 57
+server	r60whole	OK	rc=0; draft re-plans 0, in passes of more than 8 tokens 0; draft plans from a graph in hand (test) 0, over the whole memory 0, a new plan after one 0; target's 0, 0; evaluations 208 replans prompt 0 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (310.07 MiB); buffer growths 14; per-size plans 7; replies against r60plan: identical 8 8 57 57
+server	r60plancards	OK	rc=0; draft re-plans 18, in passes of more than 8 tokens 18; draft plans from a graph in hand (test) 1, over the whole memory 0, a new plan after one 0; target's 1, 0; evaluations 208 replans prompt 18 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (310.07 MiB); buffer growths 14; per-size plans 7; replies against r60plan: identical 8 8 57 57
+server	r60wholecards	OK	rc=0; draft re-plans 1, in passes of more than 8 tokens 1; draft plans from a graph in hand (test) 1, over the whole memory 1, a new plan after one 0; target's 1, 0; evaluations 208 replans prompt 1 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (310.07 MiB); buffer growths 14; per-size plans 7; replies against r60plan: identical 8 8 57 57
+server	r85plan	OK	rc=0; draft re-plans 0, in passes of more than 8 tokens 0; draft plans from a graph in hand (test) 0, over the whole memory 0, a new plan after one 0; target's 0, 0; evaluations 267 replans prompt 0 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (155.23 MiB); buffer growths 14; per-size plans 7; replies against r85plan: identical 8 8 57 57
+server	r85whole	OK	rc=0; draft re-plans 0, in passes of more than 8 tokens 0; draft plans from a graph in hand (test) 0, over the whole memory 0, a new plan after one 0; target's 0, 0; evaluations 267 replans prompt 0 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (155.23 MiB); buffer growths 14; per-size plans 7; replies against r85plan: identical 8 8 57 57
+server	r85plancards	OK	rc=0; draft re-plans 42, in passes of more than 8 tokens 42; draft plans from a graph in hand (test) 1, over the whole memory 0, a new plan after one 0; target's 1, 0; evaluations 267 replans prompt 42 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (155.23 MiB); buffer growths 14; per-size plans 7; replies against r85plan: identical 8 8 57 57
+server	r85wholecards	OK	rc=0; draft re-plans 1, in passes of more than 8 tokens 1; draft plans from a graph in hand (test) 1, over the whole memory 1, a new plan after one 0; target's 1, 0; evaluations 267 replans prompt 1 gen 0 load 0 after a change of cards 0 drains 0.0 ms plans 0.0 ms buffer growths 9 (155.23 MiB); buffer growths 14; per-size plans 7; replies against r85plan: identical 8 8 57 57
+off	base writes	OK	rc=0; $V/c813/merged: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+off	whole	SAME	rc=0; LLAMA_SCHED_PER_SIZE_RESERVE=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+off	test	SAME	rc=0; LLAMA_SCHED_TEST_REPLAN=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+off	persize	SAME	rc=0; LLAMA_SCHED_PER_SIZE=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+off	persize-whole	SAME	rc=0; LLAMA_SCHED_PER_SIZE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+off	persize-whole-test	SAME	rc=0; LLAMA_SCHED_PER_SIZE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_SCHED_TEST_REPLAN=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+c565 static	c818 tree	OK	commit 46c8ae936626c2daaf89fffae2924b0040792fe8 
+c565 static	c818 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c818 ctest	OK	100% tests passed, 0 tests failed out of 71; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c818 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c818 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c818 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c818 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c818 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c818 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c818 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c818 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c818 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c818 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c818 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c818 hand thread-safety	OK	test-thread-safety rc=0: 0.00.074.501 I All threads finished without errors.
+c565 static	c818 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c818 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -0.980224
+c565 shared	c818 tree	OK	commit 46c8ae936626c2daaf89fffae2924b0040792fe8 
+c565 shared	c818 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c818 ctest	OK	100% tests passed, 0 tests failed out of 71; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c818 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c818 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c818 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c818 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c818 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c818 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c818 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c818 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c818 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c818 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c818 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c818 hand thread-safety	OK	test-thread-safety rc=0: 0.00.030.623 I All threads finished without errors.
+c565 shared	c818 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c818 hand eval-callback	OK	llama-eval-callback rc=0:     [
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 6.2G in $V/c818; 415 GB free
+start	pascal-p106-v4-b12246-c818	OK	tip 46c8ae936 (C818: =2 plans the shared scheduler at the start plan's batch shape, with the re-planning batch's kind of input); files changed against the base:  7 files changed, 265 insertions(+), 24 deletions(-); under ggml/: 4
+merged	pascal-p106-v4	OK	7663f3221 (Merge -c818 (C818: LLAMA_SCHED_PER_SIZE_RESERVE=2, =1 plus the shared scheduler planned again as at the start, the large); merges since the base: 2; 7663f32219 Merge -c818 (C818: LLAMA_SCHED_PER_SIZE_RESERVE=2;2144cf7600 Merge -c822 (C822: GGML_CUDA_MMVF_F32_MT_ROWS=aut;
+merged	cpu build	OK	rc=0; 7663f3221; static, every target; 3 warning lines, 0 error lines
+moff	base writes	OK	rc=0; $V/c813/merged: 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+moff	merged-persize-whole-test	SAME	rc=0; LLAMA_SCHED_PER_SIZE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_SCHED_TEST_REPLAN=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; test plans 0, whole plans 0; Summary: all 151 test(s) passed
+merged	replan -s 1	OK	rc=0; no switch; --mtp-replan; Summary: all 4 test(s) passed
