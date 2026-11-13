@@ -1,0 +1,51 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12360-c828	OK	tip eb312b7bc (C828: the header comment rewrapped (comment only)); files changed against the base:  2 files changed, 27 insertions(+), 3 deletions(-); ggml/src/ggml-cuda/mmvq-pascal-kcol.cu ggml/src/ggml-cuda/mmvq-pascal-kcol.cuh 
+rig	build	OK	rc=0; llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828.tar.gz md5 ac5f32d66ec286eeef4cf28f5d484816, 834148416 B; commit: eb312b7bce5c4fead88a0a29dad7ebe62cd29447 (2026-11-13 13:48:25 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; llama-server md5 e7afd26db01f4c671549ef12c504ada3; test-backend-ops md5 e38809f0b16869abc065483f07c4798a; test-cuda-keepalive md5 e5f2e0f90cddd2d0b459f5c351455e27; test-llama-archs md5 7a1ebe27b514f684badf2e91447a58a1; 34 warning lines
+route	build	OK	rc=0; ggml_cuda_mmvq_pascal_kcol_skips defined in libggml-cuda.a: 1; 0 error lines
+route	unset	OK	rc=0; 56 rows (7 types x 8 token counts); not as designed: none; skipped: none; Q4_0 and Q5_0 tokens:kernel 1:one-token Pascal kernel;2:k-column;3:k-column;4:k-column;5:k-column;6:k-column;7:k-column;8:k-column;
+route	q4_0,q5_0	OK	rc=0; 56 rows (7 types x 8 token counts); not as designed: none; skipped: q4_0@1 q4_0@2 q4_0@3 q4_0@4 q5_0@1 q5_0@2 q5_0@3 q5_0@4 ; Q4_0 and Q5_0 tokens:kernel 1:one-token Pascal kernel;2:mul_mat_vec_q_pascal_mc;3:mul_mat_vec_q_pascal_mc;4:mul_mat_vec_q_pascal_mc;5:k-column;6:k-column;7:k-column;8:k-column;
+route	q4_0,q5_0,q8_0,q2_0,q3_K,q4_K,iq4_xs	OK	rc=0; 56 rows (7 types x 8 token counts); not as designed: none; skipped: q4_0@1 q4_0@2 q4_0@3 q4_0@4 q5_0@1 q5_0@2 q5_0@3 q5_0@4 q8_0@1 q8_0@2 q8_0@3 q8_0@4 q2_0@1 q2_0@2 q2_0@3 q2_0@4 q3_K@1 q3_K@2 q3_K@3 q3_K@4 q4_K@1 q4_K@2 q4_K@3 q4_K@4 iq4_xs@1 iq4_xs@2 iq4_xs@3 iq4_xs@4 ; Q4_0 and Q5_0 tokens:kernel 1:one-token Pascal kernel;2:mul_mat_vec_q_pascal_mc;3:mul_mat_vec_q_pascal_mc;4:mul_mat_vec_q_pascal_mc;5:k-column;6:k-column;7:k-column;8:k-column;
+sass	llama-server sass against v4-rc1's	SAME	8797 functions (8797 in the base's); masked dumps: the same file; md5 715388aa and 715388aa; merged 8797 functions: base 8797; listed 0; 
+sass	llama-server ptx against v4-rc1's	SAME	8797 functions (8797 in the base's); masked dumps: the same file; md5 7f13f752 and 7f13f752; merged 8797 functions: base 8797; listed 0; 
+cpu	build	OK	rc=0; commit eb312b7bce5c4fead88a0a29dad7ebe62cd29447 C828: the header comment rewrapped (comment only); static, every target; 3 warning lines, 0 error lines
+off	base writes	OK	rc=0; <v4-rc1 CPU build>: 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	skip	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c565 static	c828 tree	OK	commit eb312b7bce5c4fead88a0a29dad7ebe62cd29447 
+c565 static	c828 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c828 ctest	FAIL	97% tests passed, 2 tests failed out of 75; failed: test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c828 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c828 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c828 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c828 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c828 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c828 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c828 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c828 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c828 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c828 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c828 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c828 hand thread-safety	OK	test-thread-safety rc=0: 0.00.072.865 I All threads finished without errors.
+c565 static	c828 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c828 hand eval-callback	OK	llama-eval-callback rc=0:             [      0.0000,      -0.0000,      -0.0000,    ...,      -0.0000
+c565 shared	c828 tree	OK	commit eb312b7bce5c4fead88a0a29dad7ebe62cd29447 
+c565 shared	c828 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c828 ctest	FAIL	97% tests passed, 2 tests failed out of 75; failed: test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c828 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c828 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c828 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c828 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c828 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c828 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c828 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c828 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c828 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c828 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c828 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c828 hand thread-safety	OK	test-thread-safety rc=0: 0.00.063.726 I All threads finished without errors.
+c565 shared	c828 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c828 hand eval-callback	OK	llama-eval-callback rc=0:     sum = -0.898736
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 7.4G in <work>; 393 GB free
+start	pascal-p106-v4-b12360-c828	OK	tip eb312b7bc (C828: the header comment rewrapped (comment only)); files changed against the base:  2 files changed, 27 insertions(+), 3 deletions(-); ggml/src/ggml-cuda/mmvq-pascal-kcol.cu ggml/src/ggml-cuda/mmvq-pascal-kcol.cuh 
+bitid	build	OK	rc=0; multitoken_bitid md5 284b3baa0dcbb8e1649819eea2c37551, 94451944 B; linked against the rig build of eb312b7bc; 0 warning lines
+bitid	cpu shdown	OK	rc=0; 72 product lines (expected 72: 2 types x 4 shapes x 2-4 tokens x 3 inputs), 0 differ; 72 comparisons, 0 with differences
