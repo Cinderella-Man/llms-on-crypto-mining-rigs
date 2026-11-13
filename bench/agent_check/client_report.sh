@@ -2,13 +2,17 @@
 # client_report.sh OUT ARMS: release_check.sh's reports, written into OUT (the client's results folder): compare.md
 # (arms side by side, ARMS = arm,arm,… with the reference first; per-request rows in res/turns.csv), table.md
 # (res/attempts.csv) and gonogo.md (with the rig's meminfo.log and server logs when they are in OUT/rig). Runs in the
-# sandbox image (release_check.sh starts it there), or anywhere with Python 3.
+# sandbox image (release_check.sh starts it there), or anywhere with Python 3. The server logs also go to compare.md:
+# each arm's graph reallocations, an arm marked where another's logs have none (C804, Q1408; report.py imports
+# scripts/realloc_counts.py, which the prep copies beside the bench files).
 set -uo pipefail
 OUT=${1:?usage: client_report.sh OUT ARMS}
 ARMS=${2:?usage: client_report.sh OUT ARMS}
 R=$(cd "$(dirname "$0")" && pwd)/report.py
 cd "$OUT" || exit 1
-python3 -I "$R" compare res --log proxy.jsonl --arms "$ARMS" > compare.md || exit 1
+COMPARE=(--log proxy.jsonl --arms "$ARMS")
+ls rig/server-*.log > /dev/null 2>&1 && COMPARE+=(--server-log rig/server-*.log)
+python3 -I "$R" compare res "${COMPARE[@]}" > compare.md || exit 1
 python3 -I "$R" table res --log proxy.jsonl --csv res/attempts.csv > table.md || exit 1
 GONOGO=(--log proxy.jsonl --rtt 0.3)
 [ -f rig/meminfo.log ] && GONOGO+=(--meminfo rig/meminfo.log)

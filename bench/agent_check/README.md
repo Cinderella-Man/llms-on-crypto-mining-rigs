@@ -394,7 +394,8 @@ bench/agent_check/pilot.sh <out folder>
   - memory: MemAvailable ≥ 600 MB, no swap growth;
   - time: within 2× of the estimates;
   - replay: within 5 % of the live per-token costs;
-  - the server logs' counts of backend-sampling, checkpoint, re-processing and NaN lines.
+  - the server logs' counts of backend-sampling, checkpoint, re-processing and NaN lines, and of the requests that
+    reallocated the target's graph.
 - A failing item means fixing and repeating that step, not the whole pilot.
 
 ## The release check (one command, ~1 h)
@@ -447,9 +448,18 @@ checkpoints:
   that many minutes, so a slow arm cannot overrun the slot. The comparison then uses the tasks both arms scored.
 - **Outputs** in `<out>`: `compare.md` (per task: result, minutes, turns, tool calls all / failed / malformed and the
   time ratio; per arm: tasks passed, minutes, time to first token over all turns, the server's prompt and generation
-  speeds; the ratio of total and per-task times; the median time to first token per turn), `res/turns.csv` (every
-  request), `table.md` and `res/attempts.csv`, `gonogo.md` (harness, tool calls, cache paths, the rig's memory and
-  server log lines), the rig's logs in `rig/`, and every attempt's events, session, diff and test output under `res/`.
+  speeds; the ratio of total and per-task times; each arm's graph reallocations of the target, an arm marked
+  `reallocates` where another arm's server logs have none; the median time to first token per turn), `res/turns.csv`
+  (every request), `table.md` and `res/attempts.csv`, `gonogo.md` (harness, tool calls, cache paths, the rig's memory
+  and server log lines with each log's graph reallocations), the rig's logs in `rig/`, and every attempt's events,
+  session, diff and test output under `res/`.
+- **Graph reallocations** (C804, Q1408): Miner Llama's builds log each request's running count of the target graph's
+  reallocations (`graph reallocs = S / D`, at an unchanged and at a changed graph size). The reports count, per server
+  log, the requests with one: `graph reallocations W of N requests (S same size, D changed)`. A switch that rebuilds
+  the compute graph on every request (C691's `LLAMA_SAMPLING_TOP_K_ROWS=1` before C802: a 3,313-token turn read in
+  42.49 s against 21.14 s without it, FN84, one request each) shows up in its own agent run. The count is
+  [scripts/realloc_counts.py](../../scripts/realloc_counts.py)'s, which the prep copies beside the bench files on the
+  client; a log without the count line (stock llama.cpp, the mock) says `not counted`.
 - **Times through the relay:** the time to first token is measured at the client, so it includes the relay's two
   hops (the same for both arms); the server's own prompt time is in `turns.csv` (`prompt_ms`).
 - **Dry run without a model:** point `RIG` at the client and both binaries at [mock_server.py](mock_server.py) (it

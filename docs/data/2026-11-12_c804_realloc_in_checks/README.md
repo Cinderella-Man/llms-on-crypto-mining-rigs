@@ -59,9 +59,10 @@ so.
 or `-2` is a repeat of that rung), or explicit `load=ref[,ref]` pairs. The rig drivers count with a short `awk`
 program of their own (`realloc_count`), so a rig folder needs no new file.
 
-`bench/agent_check` is not changed yet: tonight's agent check (R72) runs from it. Its part, the same count per server
-log in `report.py gonogo`'s server-log lines and an arm marked against the other in `report.py compare`, follows once
-R72 is recorded.
+`bench/agent_check` counts the same since 2026-11-13 ([C804 step (a)](../2026-11-13_c804a_agent_realloc/README.md)):
+`report.py gonogo`'s server-log lines end with each log's count, and `report.py compare` marks an arm `reallocates`
+where another arm's server logs have none. Rebuilt from R90's and R72's runs, the `gains` line reallocates in every
+request (70 of 70, 69 of 69) and the C802 build in none (0 of 91, 65 and 65).
 
 ## The correctness runs on the quant machine
 

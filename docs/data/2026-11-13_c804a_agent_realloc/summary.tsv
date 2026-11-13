@@ -1,0 +1,45 @@
+step	check	verdict	detail
+syntax	bash -n client_report.sh	OK	
+syntax	bash -n selftest.sh	OK	
+syntax	bash -n release_check.sh	OK	
+syntax	bash -n race_rigs.sh	OK	
+syntax	bash -n release_check_s12.sh	OK	
+syntax	bash -n test_c804a.sh	OK	
+syntax	parse report.py	OK	
+syntax	parse realloc_counts.py	OK	
+selftest	bench/agent_check/selftest.sh	OK	34 checks ok, 0 failed
+selftest	gonogo: each server log	OK	gonogo: each server log's graph reallocations, a resumed load counted from its start (['- server log server-mock-cap.log: backend sampling off 0, checkpoint restored 0, checkpoint created 0, checkpoint erased 0, full re-processing 0, screened head 0, NaN / inf 0, watchdog kill 0, graph reallocations 0 of 2 requests (0 same size, 0 changed)', '- server log server-mock.log: backend sampling off 0, checkpoint restored 0, checkpoint created 0, checkpoint erased 0, full re-processing 0, screened head 0, NaN / inf 0, watchdog kill 0, graph reallocations 2 of 3 requests (5 same size, 2 changed)', '- server log server-nocount.log: backend sampling off 0, checkpoint restored 0, checkpoint created 0, checkpoint erased 0, full re-processing 0, screened head 0, NaN / inf 0, watchdog kill 0, graph reallocations not counted (no `graph reallocs` line)'])
+selftest	compare: the arm that reallocates	OK	compare: the arm that reallocates is marked where the other does not (['- mock: graph reallocations 2 of 3 requests (5 same size, 2 changed): **reallocates** where mock-cap does not', '- mock-cap: graph reallocations 0 of 2 requests (0 same size, 0 changed)'])
+selftest	compare: every other line	OK	compare: every other line as without the server logs
+reports	r90: client_report.sh (old)	OK	arms v3,gains
+reports	r90: client_report.sh (new)	OK	arms v3,gains
+reports	r90: compare.md before = the run's own	OK	
+reports	r90: gonogo.md before = the run's own	OK	
+reports	r90: table.md after = before	OK	
+reports	r90: attempts.csv after = before	OK	
+reports	r90: turns.csv after = before	OK	
+reports	r90: compare.md after = before plus the count	OK	0 lines changed, 5 added: v3: graph reallocations 0 of 65 requests (0 same size, 0 changed);gains: graph reallocations 70 of 70 requests (352 same size, 139 changed): **reallocates** where v3 does not
+reports	r90: gonogo.md after = before plus the count	OK	10 lines, 2 server-log lines extended
+reports	r90: gonogo's counts	OK	server-gains.log: graph reallocations 70 of 70 requests (352 same size, 139 changed);server-v3.log: graph reallocations 0 of 65 requests (0 same size, 0 changed)
+reports	r72: client_report.sh (old)	OK	arms gains,v4c2,v4c22,v4c2g
+reports	r72: client_report.sh (new)	OK	arms gains,v4c2,v4c22,v4c2g
+reports	r72: compare.md before = the run's own	OK	
+reports	r72: gonogo.md before = the run's own	OK	
+reports	r72: table.md after = before	OK	
+reports	r72: attempts.csv after = before	OK	
+reports	r72: turns.csv after = before	OK	
+reports	r72: compare.md after = before plus the count	OK	0 lines changed, 7 added: gains: graph reallocations 69 of 69 requests (329 same size, 137 changed): **reallocates** where v4c2, v4c22, v4c2g do not;v4c2: graph reallocations 0 of 91 requests (0 same size, 0 changed);v4c22: graph reallocations 0 of 65 requests (0 same size, 0 changed);v4c2g: graph reallocations 0 of 65 requests (0 same size, 0 changed)
+reports	r72: gonogo.md after = before plus the count	OK	12 lines, 4 server-log lines extended
+reports	r72: gonogo's counts	OK	server-gains.log: graph reallocations 69 of 69 requests (329 same size, 137 changed);server-v4c2.log: graph reallocations 0 of 91 requests (0 same size, 0 changed);server-v4c22.log: graph reallocations 0 of 65 requests (0 same size, 0 changed);server-v4c2g.log: graph reallocations 0 of 65 requests (0 same size, 0 changed)
+reports	the counter's table of the six agent logs	OK	30 rows
+client	the prep's tar puts realloc_counts.py beside task_results.py	OK	
+client	report.py from the copy = from the checkout (gonogo, compare)	OK	
+client	a copy without realloc_counts.py: the reports are written and say so	OK	gonogo 4 lines, compare 4 lines
+counter	after = before, buckets, 18 logs	OK	77 lines
+counter	after = before, requests, 18 logs	OK	2061 lines
+counter	after = before, line, 18 logs	OK	18 lines
+counter	after = before, marks, 18 logs	OK	19 lines
+counter	R60's reallocs.tsv	OK	
+counter	FN84's reallocs.tsv	OK	
+counter	R123a's reallocs.tsv	OK	
+counter	two loads in one log: each counted from its start	OK	one load: graph reallocations: 69 of 69 requests (329 at the same size, 137 changed); two: graph reallocations: 138 of 138 requests (658 at the same size, 274 changed); before step (a): graph reallocations: 137 of 138 requests (329 at the same size, 137 changed)

@@ -17,7 +17,10 @@
 #   behind the others, passes the second task on try 2 and scores the third's last try as it stands; a second run
 #   resumes; a plain --gen-mark stops without a fresh try; token_mark.py prices the mark on a run without it (the
 #   attempts it stops, the pass it loses below the passing task's tokens, the stop at the token run.py stops at) and
-#   sums up the arms by the try that passed.
+#   sums up the arms by the try that passed;
+# - the graph reallocations from server logs (C804): gonogo's server-log lines gain the count (a resumed load's count
+#   starts again, a log without the count says so), compare marks the arm that reallocates where the other does not,
+#   and compare's other lines are those it writes without the logs.
 set -euo pipefail
 OUT=${1:?usage: selftest.sh OUT}
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -72,6 +75,20 @@ python3 -I "$HERE/replay.py" summary "$OUT/replay.jsonl" --log "$OUT/proxy.jsonl
 python3 -I "$HERE/report.py" table "$OUT/res" --log "$OUT/proxy.jsonl" > "$OUT/table.md"
 python3 -I "$HERE/report.py" gonogo "$OUT/res" --log "$OUT/proxy.jsonl" --replay "$OUT/replay.jsonl" \
   --replay-label replay-stream > "$OUT/gonogo.md" || true
+pe() { echo "slot print_timing: id  0 | task $1 | prompt eval time =     100.00 ms /   $2 tokens"; }
+gr() { echo "slot print_timing: id  0 | task $1 |   graph reallocs =   $2    /   $3        (same size) / (changed)"; }
+mkdir -p "$OUT/rig"
+{ echo "=== mock: load 1"; pe 1 600; gr 1 2 1; pe 2 20; gr 2 2 1
+  echo "=== mock: load 2, resumed"; echo "srv  llama_server: initializing ..."; pe 1 900; gr 1 3 1
+} > "$OUT/rig/server-mock.log"
+{ echo "=== mock-cap: load 1"; pe 1 600; gr 1 0 0; pe 2 30; gr 2 0 0; } > "$OUT/rig/server-mock-cap.log"
+{ echo "=== nocount: load 1"; pe 1 600; } > "$OUT/rig/server-nocount.log"
+python3 -I "$HERE/report.py" gonogo "$OUT/res" --log "$OUT/proxy.jsonl" --server-log "$OUT"/rig/server-*.log \
+  > "$OUT/gonogo_realloc.md" || true
+python3 -I "$HERE/report.py" compare "$OUT/res" --log "$OUT/proxy.jsonl" --arms mock,mock-cap \
+  --turns-csv "$OUT/turns_realloc.csv" > "$OUT/compare_plain.md"
+python3 -I "$HERE/report.py" compare "$OUT/res" --log "$OUT/proxy.jsonl" --arms mock,mock-cap \
+  --turns-csv "$OUT/turns_realloc.csv" --server-log "$OUT"/rig/server-*.log > "$OUT/compare_realloc.md"
 python3 -I - "$HERE" "$OUT" <<'EOF'
 import csv, json, sys, zlib
 from pathlib import Path
@@ -118,6 +135,22 @@ body1 = {l["id"]: l["body"] for l in map(json.loads, __import__("gzip").open(out
 check(len(r4) == 1 and r4[0]["max_tokens"] == body1[r4[0]["rec_id"]].get("max_tokens"),
       f"replay --reply-limit request keeps the request's own max_tokens ({r4[0]['max_tokens'] if r4 else None})")
 check("GO" in (out / "gonogo.md").read_text(), "gonogo report written")
+# graph reallocations (C804)
+gl = {l.split(":")[0]: l for l in (out / "gonogo_realloc.md").read_text().splitlines() if l.startswith("- server log")}
+want = {"mock": "graph reallocations 2 of 3 requests (5 same size, 2 changed)",
+        "mock-cap": "graph reallocations 0 of 2 requests (0 same size, 0 changed)",
+        "nocount": "graph reallocations not counted (no `graph reallocs` line)"}
+check(len(gl) == 3 and all(gl[f"- server log server-{k}.log"].endswith(", " + v) for k, v in want.items()),
+      f"gonogo: each server log's graph reallocations, a resumed load counted from its start ({list(gl.values())})")
+plain = (out / "compare_plain.md").read_text().splitlines()
+withl = (out / "compare_realloc.md").read_text().splitlines()
+added = [l for l in withl if l.startswith("- mock") and "graph reallocations" in l]
+check(added == [f"- mock: {want['mock']}: **reallocates** where mock-cap does not", f"- mock-cap: {want['mock-cap']}"],
+      f"compare: the arm that reallocates is marked where the other does not ({added})")
+i = next((k for k, l in enumerate(withl) if l.startswith("Graph reallocations of the target")), None)
+# sorted: compare orders tasks that started in the same second (the mock's) by Python's per-process set order
+check(i is not None and sorted(withl[:i - 1] + withl[i + 4:]) == sorted(plain),
+      "compare: every other line as without the server logs")
 # the token mark
 t1, t2, t3 = (here / "tasks/polyglot/order.txt").read_text().split()[:3]
 res = lambda arm, t, d="a1": json.loads((out / "mark" / arm / t / d / "result.json").read_text())

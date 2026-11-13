@@ -1,0 +1,7 @@
+run	arm	build	top_k_rows	requests	requests_with_realloc	reallocs_same	reallocs_changed
+r90	gains	llama.cpp-20261111-18d0fa309-pascal-p106-v4-b12246-day	1	70	70	352	139
+r90	v3	llama.cpp-20261105-1551f5fe1-pascal-p106-v3-b12076-ladder5	0	65	0	0	0
+r72	gains	llama.cpp-20261111-d097d6d88-pascal-p106-v4-b12246-kern	1	69	69	329	137
+r72	v4c2	llama.cpp-20261112-8a55934f3-pascal-p106-v4-b12246-c802	1	91	0	0	0
+r72	v4c22	llama.cpp-20261112-8a55934f3-pascal-p106-v4-b12246-c802	1	65	0	0	0
+r72	v4c2g	llama.cpp-20261112-8a55934f3-pascal-p106-v4-b12246-c802	1	65	0	0	0

@@ -11,9 +11,11 @@ switch adds them (Q1408).
 Every request's print_timing block logs its prompt (`prompt eval time = X ms / N tokens`), the graphs reused and the
 target context's running count of graph reallocations (`graph reallocs = S / D`: S with the graph's size unchanged,
 D changed; both count since the load). The line is logged at the server's default verbosity on Miner Llama's v4 builds.
-The difference to the previous request's count is that request's reallocations. A reallocation makes the scheduler
-wait for every card before it moves the buffers, so a layer-split prompt call loses the overlap of its micro-batches
-there. Only the target's context is counted: the MTP draft's own graph has its own count (C803, Q1407).
+The difference to the previous request's count is that request's reallocations. A server start in the log
+(llama-server's `llama_server: initializing`, or rig_server.sh's `=== ` line, as when an agent-check arm is resumed
+into the same log) or a count lower than the one before starts the count from zero again. A reallocation makes the
+scheduler wait for every card before it moves the buffers, so a layer-split prompt call loses the overlap of its
+micro-batches there. Only the target's context is counted: the MTP draft's own graph has its own count (C803, Q1407).
 
 Outputs (one at a time):
 - default: per log and bucket of prompt tokens (R90's buckets: under 512, 512-1,023, 1,024-1,999, 2,000 and more, and
@@ -40,6 +42,7 @@ GR = re.compile(r"graph reallocs =\s*([0-9]+)\s*/\s*([0-9]+)")
 GU = re.compile(r"graphs reused =\s*([0-9]+)")
 TASK = re.compile(r"\| task ([0-9]+) \|")
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
+START = re.compile(r"llama_server: initializing|^=== ")
 
 
 def bname(lo, hi):
@@ -51,6 +54,9 @@ def requests(path):
     reqs, cur, prev = [], None, (0, 0)
     for line in open(path, errors="replace"):
         line = ANSI.sub("", line)
+        if START.search(line):
+            prev, cur = (0, 0), None
+            continue
         m = PE.search(line)
         if m:
             t = TASK.search(line)
@@ -66,6 +72,8 @@ def requests(path):
         m = GR.search(line)
         if m:
             s, d = int(m.group(1)), int(m.group(2))
+            if s < prev[0] or d < prev[1]:
+                prev = (0, 0)
             cur["same"], cur["diff"] = s - prev[0], d - prev[1]
             prev = (s, d)
             reqs.append(cur)

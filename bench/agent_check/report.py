@@ -4,6 +4,7 @@
     python3 report.py gonogo RESULTS --log … [--replay REPLAY.jsonl --replay-label v2-ud --live-arm v2-ud]
                       [--meminfo RIG/meminfo.log] [--server-log RIG/server-*.log …] [--expect-min v2-ud=3.9,v1-ud=5.5]
     python3 report.py compare RESULTS --log … [--arms stock,rel] [--turns-csv RESULTS/turns.csv]
+                      [--server-log RIG/server-*.log …]
 
 `table` writes one row per scored attempt in the column layout of ../task_results.py (lane agent_polyglot, file =
 arm, category = track, cluster = task), so ../paired_tasks.py reads it, followed by the agent columns: turns, requests,
@@ -13,7 +14,9 @@ and cached, cache hit rate, peak context, time to first token, and the process f
 `compare` puts the arms side by side (the first arm is the reference): per task the result, minutes, turns and tool
 calls (all, failed, malformed) with the time ratio; per arm the tasks passed, minutes, time to first token over all
 turns, the server's prompt and generation speeds and the tool-call failures; the ratio of total and per-task times on
-the tasks every arm scored; and the median time to first token per turn. Every request's row goes to turns.csv.
+the tasks every arm scored; and the median time to first token per turn. Every request's row goes to turns.csv. With
+the rig's server logs (`server-<arm>.log`, or ARM=PATH), it also gives each arm's graph reallocations of the target (as
+in gonogo) and marks an arm `reallocates` where another arm's logs have none (C804, Q1408).
 
 `gonogo` applies the pilot's checks (agent_workload_check.md §6.3):
 - harness: at least 5 of 6 attempts finish without an infrastructure failure; every request with a proxy row and timings; the proxy's
@@ -28,7 +31,10 @@ the tasks every arm scored; and the median time to first token per turn. Every r
 - time: median minutes per task within 2× of the note's estimate per arm;
 - replay: its ms per prompt and per generated token within 5 % of the live rows of the same traces;
 - server logs: counts of the lines that show backend sampling off, checkpoint restores, full re-processing, the
-  screened head's decisions, NaN or watchdog kills.
+  screened head's decisions, NaN or watchdog kills; and the target graph's reallocations, `graph reallocations W of N
+  requests (S same size, D changed)`: the requests with one, of all, and the reallocations at an unchanged and at a
+  changed graph size, from each request's running count in the log (scripts/realloc_counts.py; C804, Q1408). A switch
+  that rebuilds the compute graph on every request shows up there.
 """
 import argparse
 import csv
@@ -43,8 +49,13 @@ from statistics import median
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE))
+sys.path.append(str(HERE.parent.parent / "scripts"))  # realloc_counts.py; a client's copy has it beside task_results.py
 from task_results import COLUMNS  # noqa: E402
 from replay import costs, load_log, load_replay  # noqa: E402
+try:
+    from realloc_counts import requests as realloc_requests, total as realloc_total  # noqa: E402
+except ImportError:
+    realloc_requests = None
 
 AGENT_COLUMNS = ["track", "turns", "requests", "wall_s", "prefill_s", "decode_s", "fixed_s", "other_s",
                  "prompt_new", "prompt_cached", "cache_hit", "peak_context", "ttft_p50", "ttft_max",
@@ -162,6 +173,23 @@ def verdict(ok):
     return "GO" if ok else "NO-GO"
 
 
+def realloc_count(paths):
+    """The target graph's reallocations in server logs: (requests, requests with one, at the same size, changed), None
+    when no log has a `graph reallocs` line, or the reason it is not counted."""
+    if realloc_requests is None:
+        return "not counted (scripts/realloc_counts.py not found)"
+    reqs = [q for p in paths for q in realloc_requests(p)]
+    return realloc_total(reqs) if reqs else None
+
+
+def realloc_phrase(t):
+    if t is None:
+        return "graph reallocations not counted (no `graph reallocs` line)"
+    if isinstance(t, str):
+        return "graph reallocations " + t
+    return f"graph reallocations {t[1]} of {t[0]} requests ({t[2]} same size, {t[3]} changed)"
+
+
 def cmd_gonogo(a):
     results, rows, infra, exhausted, traces = build(a)
     lines = []
@@ -266,7 +294,8 @@ def cmd_gonogo(a):
         for p in a.server_log:
             text = Path(p).read_text(errors="replace")
             counts = {k: len(re.findall(v, text, re.I)) for k, v in pats.items()}
-            lines.append(f"- server log {Path(p).name}: " + ", ".join(f"{k} {v}" for k, v in counts.items()))
+            lines.append(f"- server log {Path(p).name}: " + ", ".join(f"{k} {v}" for k, v in counts.items())
+                         + ", " + realloc_phrase(realloc_count([p])))
     print("\n".join(lines))
     print(f"\n**Overall: {verdict(allok)}**")
 
@@ -361,6 +390,25 @@ def cmd_compare(a):
                   f"range {min(ratios, default=float('nan')):.2f}–{max(ratios, default=float('nan')):.2f}); passed "
                   f"{sum(by[(arm, t)]['pass'] for t in both)} against {sum(by[(arms[0], t)]['pass'] for t in both)}")
 
+    logs = defaultdict(list)
+    for s in a.server_log or []:
+        arm, p = s.split("=", 1) if "=" in s else (re.sub(r"^server-|\.log$", "", Path(s).name), s)
+        if arm in arms and p not in logs[arm]:
+            logs[arm].append(p)
+    if logs:
+        cnt = {arm: realloc_count(logs[arm]) for arm in arms if arm in logs}
+        none = [arm for arm, t in cnt.items() if isinstance(t, tuple) and not t[1]]
+        print("\nGraph reallocations of the target in each arm's server logs (C804): an arm is marked `reallocates` "
+              "where another arm's logs have none.\n")
+        for arm in arms:
+            if arm not in cnt:
+                print(f"- {arm}: no server log")
+                continue
+            t = cnt[arm]
+            mark = (f": **reallocates** where {', '.join(none)} {'does' if len(none) == 1 else 'do'} not"
+                    if isinstance(t, tuple) and t[1] and none else "")
+            print(f"- {arm}: {realloc_phrase(t)}{mark}")
+
     print("\n### Time to first token per turn\n")
     print("Median over tasks of the seconds from the request to its first token as the client sees it (network "
           "included), and of the prompt tokens the server processed for it (the rest came from its cache).\n")
@@ -389,6 +437,8 @@ def main():
         elif name == "compare":
             p.add_argument("--arms", help="arm,arm,… in this order; the first is the reference (default: all)")
             p.add_argument("--turns-csv", type=Path, help="default RESULTS/turns.csv")
+            p.add_argument("--server-log", nargs="*", help="the rig's server logs, server-<arm>.log or ARM=PATH: each "
+                           "arm's graph reallocations, an arm marked where another arm's logs have none")
         else:
             p.add_argument("--replay", nargs="*")
             p.add_argument("--replay-label")

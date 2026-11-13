@@ -4,6 +4,8 @@
 # and files it uses). And besides stock and rel it takes any arm name A for which ARGS_A is set: REL_BIN with
 # "$COMMON $ARGS_A" and REL_ENV. The client names an arm's containers acrel-<arm>-*, so two checks that share a client
 # need different arm names (Q226 ran nodraft and mtp while another check ran its rel arm on the same client).
+# Since 2026-11-13 (C804 step (a), Q1408) the prep also copies scripts/realloc_counts.py beside the bench files, so the
+# client's reports count each server log's graph reallocations.
 #
 # release_check.sh OUT: the agent check as a release validation. A coding agent fixes small bugs (the bugfix task set:
 # 12 tasks, Python and JavaScript alternating, 5-10 tool calls each) against llama-server on the rig, once with stock
@@ -221,6 +223,7 @@ trap 'exit 130' INT TERM
 if has prep; then
   say "prep: bench files to $CLIENT:$CLIENT_DIR"
   tar -C "$HERE/.." --exclude=__pycache__ -cf - agent_check task_results.py paired_tasks.py \
+    -C "$HERE/../../scripts" realloc_counts.py \
     | cl "mkdir -p $CLIENT_DIR && tar -C $CLIENT_DIR -xf -" || { say "copy failed"; exit 1; }
   say "prep: sandbox image $IMAGE on the client"
   cl "mkdir -p $CLIENT_OUT && cd $CAC && docker build -q --label $LABEL -t $IMAGE -f docker/Dockerfile . \

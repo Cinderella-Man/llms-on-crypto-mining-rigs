@@ -216,6 +216,7 @@ trap 'exit 130' INT TERM
 if has prep; then
   say "prep: bench files to $CLIENT:$CLIENT_DIR"
   tar -C "$HERE/.." --exclude=__pycache__ -cf - agent_check task_results.py paired_tasks.py \
+    -C "$HERE/../../scripts" realloc_counts.py \
     | cl "mkdir -p $CLIENT_DIR && tar -C $CLIENT_DIR -xf -" || { say "copy failed"; exit 1; }
   say "prep: sandbox image $IMAGE on the client"
   cl "mkdir -p $CLIENT_OUT && cd $CAC && docker build -q --label $LABEL -t $IMAGE -f docker/Dockerfile . \
