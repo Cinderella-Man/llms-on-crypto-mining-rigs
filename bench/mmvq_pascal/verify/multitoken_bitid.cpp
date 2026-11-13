@@ -71,6 +71,10 @@
 // ggml_cuda_mmvq_pascal_q5k_mt_takes), and those it leaves are printed as "declined" and not counted, unless BITID_ALL=1
 // (the control: with GGML_CUDA_MMVQ_PASCAL_RO8=0 and BITID_ALL=1 the k-column kernel's sums must differ).
 // GGML_CUDA_MMVQ_PASCAL_RO8_FAULT=1 (every token stages the first token's activations) must give differences.
+// `multitoken_bitid kt8` checks dmtkt's products at 5 to 8 tokens (C794: the K tiles at 5 to 8 tokens with
+// GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=1 or 2), declined products counted as in dmt8: at K = 6144 the
+// tiles take every product (6 warps a block) where whole staging holds at most 3 warps or none.
+// GGML_CUDA_MMVQ_PASCAL_DMT_KT_FAULT=1 (each iteration takes the next one's activations) must give differences.
 // `multitoken_bitid q6k` checks Q6_K's dense products at 2 to 4 tokens (C727: the kernel of mmvq-pascal-dmt.cu with
 // GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 or 2), at Qwen3.8-Flash-Next's Q6_K attn_output and ssm_out (6144 -> 2560) and at the
 // other row widths the kernel takes at 2 to 4 tokens (8 and 16 lanes per row), with partial last row blocks. With the
@@ -388,10 +392,11 @@ int main(int argc, char ** argv) {
     const bool q6k    = argc > 1 && strcmp(argv[1], "q6k") == 0;
     const bool dmt8   = argc > 1 && strcmp(argv[1], "dmt8") == 0;
     const bool q5k8   = argc > 1 && strcmp(argv[1], "q5k8") == 0;
+    const bool kt8    = argc > 1 && strcmp(argv[1], "kt8") == 0;
     const bool count_all = getenv("BITID_ALL") != nullptr && atoi(getenv("BITID_ALL")) == 1;
-    const int  n_min  = dmt8 || q5k8 ? 5 : 2;
-    const int  n_max  = f32 || f32r || q3k || dmt8 || q5k8 ? 8 : 4;
-    if ((dmt8 && !ggml_cuda_mmvq_pascal_dmt_takes) || (q5k8 && !ggml_cuda_mmvq_pascal_q5k_mt_takes)) {
+    const int  n_min  = dmt8 || q5k8 || kt8 ? 5 : 2;
+    const int  n_max  = f32 || f32r || q3k || dmt8 || q5k8 || kt8 ? 8 : 4;
+    if (((dmt8 || kt8) && !ggml_cuda_mmvq_pascal_dmt_takes) || (q5k8 && !ggml_cuda_mmvq_pascal_q5k_mt_takes)) {
         fprintf(stderr, "%s: this build has no read-once kernels (ggml_cuda_mmvq_pascal_*_takes)\n", argv[1]);
         return 2;
     }
@@ -419,7 +424,7 @@ int main(int argc, char ** argv) {
                     { { 248320, 2560 }, { 4097, 2560 }, { 200, 768 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 },
                       { 64, 8192 }, { 2560, 6144 }, { 512, 2560 }, { 640, 2560 } },
                     1, 1, 256, 256, true, 0 }
-        : dmtkt
+        : dmtkt || kt8
         ? mode_cfg{ { GGML_TYPE_IQ4_XS, GGML_TYPE_Q4_K },
                     { { 2560, 6144 }, { 333, 6144 }, { 4097, 6144 }, { 10240, 2560 }, { 6144, 2560 }, { 12288, 2560 },
                       { 4097, 2560 }, { 200, 512 }, { 1000, 1024 }, { 129, 2048 }, { 77, 4096 }, { 64, 8192 },
@@ -488,9 +493,9 @@ int main(int argc, char ** argv) {
                     ggml_tensor * bj = ggml_view_2d(g, B[s], B[s]->ne[0], 1, B[s]->nb[1], j * B[s]->nb[1]);
                     cols.push_back(run(be, g, ggml_mul_mat(g, W[s], bj)));
                 }
-                // dmt8, q5k8: whether the read-once kernel takes the product (else the k-column kernel does)
+                // dmt8, kt8, q5k8: whether the read-once kernel takes the product (else the k-column kernel does)
                 const int64_t rb = W[s]->nb[1];
-                const bool taken = dmt8 ? ggml_cuda_mmvq_pascal_dmt_takes(type, dense[s].k, dense[s].m, n, rb, W[s]->data)
+                const bool taken = dmt8 || kt8 ? ggml_cuda_mmvq_pascal_dmt_takes(type, dense[s].k, dense[s].m, n, rb, W[s]->data)
                                  : q5k8 ? ggml_cuda_mmvq_pascal_q5k_mt_takes(dense[s].k, dense[s].m, n, rb, W[s]->data)
                                  : true;
                 report(taken ? "MUL_MAT" : "MUL_MAT/declined", type, n, dense[s].m, dense[s].k, all, cols, dense[s].m,
@@ -536,7 +541,7 @@ int main(int argc, char ** argv) {
         ggml_backend_buffer_free(wbuf);
         ggml_free(wctx);
     }
-    if (dmt8 || q5k8) {
+    if (dmt8 || q5k8 || kt8) {
         printf("%d declined by the read-once kernel, %s\n", n_declined, count_all ? "counted (BITID_ALL=1)" : "not counted");
     }
     printf("%d comparisons, %d with differences\n", n_checked, n_diff);

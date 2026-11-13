@@ -104,6 +104,13 @@
 #                 docs/data/2026-11-11_v4_kernel_merge): KERN below, each filter recorded once, every suite's runs, and
 #                 runs with GGML_CUDA_MMVQ_PASCAL_Q6K_MT, _DMT_KT and _RO8 on together over all their cases, at several
 #                 settings and with each one's fault (which must fail cases)
+#   ro8kt         IQ4_XS's and Q4_K's products of 5-8 tokens (ro8's cases and dmtkt's K = 6144 cases at 5-8 tokens) with the
+#                 K tiles at 5-8 tokens (GGML_CUDA_MMVQ_PASCAL_RO8_KT, C794) at each setting: where whole staging holds at
+#                 most 3 warps (=1) and wherever they fit (=2), one row block a round, without the prefetch, 4 warps a
+#                 block (no tiles at K = 6144), one-warp whole staging allowed, with the 2-4-token switches too, without the
+#                 preset, Q4_K left out, the tiles without RO8 (they never run), the kernels without tiles, off, the fault
+#                 (each iteration takes the next tile's activations), which must fail cases, and the fault with the tiles
+#                 off, which must not (docs/data/2026-11-13_c794_ktiles_5to8)
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -113,7 +120,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt|v4kern}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt|v4kern|ro8kt}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -145,6 +152,7 @@ HW='(q2_0|q6_K|iq2_xxs|iq2_xs|iq2_s|iq3_xxs|iq3_s)'
 Q5MT='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=[1-4],'
 Q51='type_a=q5_K,(type_b=f32,)?m=[0-9]+,n=1,'
 RO8='type_a=(iq4_xs|q4_K|q5_K),(type_b=f32,)?m=[0-9]+,n=[5-8],'
+RO8KT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[5-8],'
 Q6MT='type_a=q6_K,(type_b=f32,)?m=[0-9]+,n=[1-5],'
 DMT='type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],'
 Q3MT='type_a=q3_K,(type_b=f32,)?m=[0-9]+,n=[1-8],'
@@ -196,6 +204,8 @@ suite_filters() {
             printf '%s\t%s\n' MUL_MAT "$Q51" ;;
         ro8)
             printf '%s\t%s\n' MUL_MAT "$RO8" ;;
+        ro8kt)
+            printf '%s\t%s\n' MUL_MAT "$RO8KT" ;;
         q6kmt)
             printf '%s\t%s\n' MUL_MAT "$Q6MT" ;;
         indexer-rows)
@@ -346,6 +356,20 @@ suite_runs() {
                 printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$RO8"
             done
             printf '%s\t%s\t%s\t%s\tfail\t\n' ro8-fault "$KP $M=1 ${M}_FAULT=1" MUL_MAT "$RO8" ;;
+        ro8kt)
+            # C794: the preset's k-column switches and RO8, then the K tiles at 5-8 tokens at each setting, beside the
+            # 2-4-token switches, without the preset, Q4_K left out, the tiles without RO8 (they never run), the kernels
+            # without tiles, off, the fault, which must fail cases at K = 6144, and the fault without the tiles
+            local KP="${P}_KCOL_SMEM=32768 ${P}_KCOL_TABLE=0" M="${P}_RO8" T="${P}_RO8_KT" K="${P}_DMT_KT"
+            for r in "ro8kt-kt1:$KP $M=1 $T=1" "ro8kt-kt2:$KP $M=1 $T=2" "ro8kt-kt1-m1:$KP $M=1 $T=1 ${K}_M=1" \
+                     "ro8kt-kt2-m1:$KP $M=1 $T=2 ${K}_M=1" "ro8kt-kt1-nopf:$KP $M=2 $T=1" "ro8kt-kt2-nopf:$KP $M=2 $T=2" \
+                     "ro8kt-kt2-nw4:$KP $M=1 $T=2 ${K}_NW=4" "ro8kt-kt1-nw1:$KP $M=1 $T=1 ${P}_DMT_NW=1" \
+                     "ro8kt-all:$KP ${P}_DMT=1 $K=1 ${P}_Q6K_MT=1 $M=1 $T=1" "ro8kt-defaults:$M=1 $T=1" \
+                     "ro8kt-skip-q4k:$KP $M=1 $T=1 ${P}_DMT_SKIP=q4_K" "ro8kt-kt-only:$KP $T=1" "ro8kt-on:$KP $M=1" \
+                     "ro8kt-off:$KP" "ro8kt-fault-off:$KP $M=1 ${K}_FAULT=1"; do
+                printf '%s\t%s\t%s\t%s\tpass\t\n' "${r%%:*}" "${r#*:}" MUL_MAT "$RO8KT"
+            done
+            printf '%s\t%s\t%s\t%s\tfail\t\n' ro8kt-fault "$KP $M=1 $T=1 ${K}_FAULT=1" MUL_MAT "$RO8KT" ;;
         q6kmt)
             # C727, as dmt: the preset's k-column switches, then the kernel's settings (R = 1 by default, forced to 2;
             # without the prefetch; one warp a block allowed; at most 2 warps), beside _DMT=1, without the preset, off,
