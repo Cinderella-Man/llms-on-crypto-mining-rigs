@@ -17,6 +17,12 @@ every fork kernel is unchanged; the one changed code a P106 runs is upstream's `
 tokens), which R153 (Q1463) runs on a P106 with the GPU checks the quant cards could not run today. `v4-rc1` is not
 tagged here: it is the next step.
 
+**On a P106 (R153, below): `v4-rc1` is correct.** Its changed `mul_mat_q` passes every case past 8 tokens of the
+`kshape`, `flashnext-moe` and `n2p` suites (3,969 case replays), and `80c94fe0d`, replaying the same records, gives
+the same errors on all 3,938 cases both hold. C662's one-card set passes natively as it did through the PTX, the fork
+kernels' sets `v4kern` and `ro8kt` pass with every planted fault caught, and the card's logits differ from
+`80c94fe0d`'s on the same 143 random models as on the CPU, where C831 traced the difference to upstream's #29810.
+
 ## The branch
 
 `pascal-p106-v4-b12360-up` at **`da2920d45`**, one merge commit on `pascal-p106-v4` `80c94fe0d` (the second parent
@@ -102,16 +108,69 @@ of the CPU's numbers apart from everything else. Every verdict line is in [summa
 | the sm_61 code of every GPU function of `llama-server` against `80c94fe0d`'s rig build ([sass-sass-families.txt](sass-sass-families.txt), [sass-sass-by-function.tsv](sass-sass-by-function.tsv)) | REVIEW: of `80c94fe0d`'s 8,572 functions 6,681 have the same code, 55 the same code compiled into more files (the attention's fixup, combine and mask kernels, now also in the FP8 attention files), 1,834 changed and 2 are gone; 227 are new. **Every fork kernel is unchanged** (the Pascal matrix-vector, k-column, multi-token, read-once, persistent MoE, attention and sparse attention kernels). The changed ones are upstream's: `mul_mat_q` (722: #26048's write-back, which now scales by the NVFP4 weight scale only for NVFP4, a constant 1 otherwise), its stream-k fixup (896: #32067; **stream-k is off in all 286 Pascal MMQ configurations**, so a P106 never launches it) and the tensor-core attention `flash_attn_ext_f16` (216; never chosen below Turing). New: FP8 (#28413: MMVF, attention vector kernels, copies, quantization), few-row MMQ (#31533, Ampere and newer only); gone: `diag_mask_inf_f32` (#29801) and the old `pad_reflect_1d` kernel (#32179). **So the one changed code a P106 runs is `mul_mat_q`**, for products past 8 tokens that the fork's kernels decline (prompt micro-batches): R153 replays it on a P106. Through the compute 6.1 PTX also `flash_attn_tile` (10) and one `mul_mat_vec_f` differ, for the PTX checks on a newer card. The two `sass` lines of `summary.tsv` were written before `sass_diff.py` told copies apart (they count the 55 as changed) |
 | C565's CPU test set, static and then shared (ctest: every registered test, the fork's unit tests among them; the test with network; the archs runs; the hand tests) | **OK, static and shared alike, but for two upstream tests the test machine cannot run**: ctest 73 of 75 (the fork's unit tests and `test-backend-ops` among the 73), the test with network 1 of 1, the archs runs 151 of 151 three times with 146 logits files the same, the nine hand tests. The two: `test-kv-cache-scales` (new, #28392) imports `torch`, which the test image lacks (as `test-conversion-fp8`, which the set already leaves out); `test-jinja-py`'s 14 new TTS-normalizer cases ([#32053](https://github.com/ggml-org/llama.cpp/pull/32053)) find their script through `__FILE__`, which the build's ccache base folder makes relative: run from the folder where it resolves, `test-jinja -py` passes 413 of 413 |
 
+## On a P106 (R153, Q1463)
+
+R153 ran the GPU checks natively on one P106-090 of a mining rig (card 0, 2026-11-13 13:15–15:44; the sets recorded 13:14–13:45), with the rig
+tarballs of the tip (`da2920d45`, tagged `v4-rc1`) and of `80c94fe0d`; nothing is timed. The rig's 2-core CPU computes
+no reference: every `test-backend-ops` run replays a record made on the build machine's CPU with the tip's own
+`test-backend-ops` ([scripts/record_checks.sh](../../../scripts/record_checks.sh), `nice -n 19` in a container
+without GPUs), so the card computes and the stored CPU results judge it.
+
+**Upstream renamed the cases.** b12360 adds `offset_a` to every `MUL_MAT` case's parameters (`...,pad=0,offset_a=0`)
+and renames the fused matrix-vector test class (#26048), and a record finds its case by the md5 of class and
+parameters. So sets recorded before the merge do not fit the tip: the `v4kern` set of 2026-11-11 replays 33 of
+`kern-all`'s 722 cases on it (689 not recorded), and its two fault runs that fail no case among those 33 are WRONG. Every
+set R153 replays is recorded again with the tip's `test-backend-ops`. To give both builds the same stored inputs and
+references, [run/alias_base.py](run/alias_base.py) writes each set again under `80c94fe0d`'s case names (hard links,
+the tensors unchanged: at `offset_a=0` the view is built as before; it checks every source id against the md5 of its
+key), and [run/compare_builds.sh](run/compare_builds.sh) joins the two builds' replays case by case by id.
+
+**Part (1), `mul_mat_q` natively.** The record/replay suites `kshape`, `flashnext-moe` and `n2p`, cut to their cases
+past 8 tokens (`EXTRA_P='n=(9|[1-9][0-9]+),'`), the products that reach `mul_mat_q`, the one changed code a P106 runs;
+for `MUL_MAT_VEC_FUSION` `n` is the row count, so its cases at every token count are in. Each suite's runs that select
+recorded cases ([run/runs_past8.sh](run/runs_past8.sh)) replay with both builds on the same card.
+
+| Set | Cases (GB) | Runs | Tip | `80c94fe0d` (same record) | Case by case |
+|---|---:|---:|---|---|---|
+| `kshape` | 772 (11.9) | 7 of 18 (the six `mtok` runs, `mtok-iq`) | 7 of 7 ok: 1,872 case replays, 0 failed | 7 of 7 ok: 1,866, 0 failed | every case in both (1,866) the same verdict and the same errors; 6 cases only the tip's test list holds (`MUL_MAT_ID` IQ3_S, 37 experts), passed |
+| `flashnext-moe` | 8 (1.96) | 2 of 2 | 2 of 2 ok: 16, 0 failed | 2 of 2 ok: 16, 0 failed | 16 of 16 the same errors |
+| `n2p` | 1,313 (17.5) | 9 of 9 (`np-mmq` among them) | 9 of 9 ok: 2,081, 0 failed | 9 of 9 ok: 2,056, 0 failed | every case in both (2,056) the same verdict and the same errors, `np-mmq`'s 40 among them; 25 cases only the tip's test list holds (16 in `reg-half`, 9 in `reg-rows`), passed |
+| all three | 2,093 (summed over the sets) | 18 | 3,969 case replays, 0 failed | 3,938, 0 failed | **3,938 of 3,938 the same errors** |
+
+One `kshape` case is held twice by the test list (`MUL_MAT_ID` Q2_0, 4 experts, 2 used, 512 rows, 32 tokens: keys
+`#0` and `#1`, two records): replayed five times with each build on card 1 ([run/case_repeat.sh](run/case_repeat.sh)),
+each build gives both records' errors, 3.41459379e-08 and 3.5426209e-08, every time.
+
+**Part (2), C662's one-card set natively** (the checks C662 ran through the compute 6.1 PTX:
+[2026-11-10_ladder6](../2026-11-10_ladder6/README.md)), the tip's build:
+
+| Check | Result |
+|---|---|
+| `test-llama-archs -b CUDA0` plain, the fork's paths forced on (`=2`), and the card-built mask checked ([check.sh](../2026-11-03_upstream_rebase/run/check.sh) `NATIVE=1`) | **OK**: 153 of 153 tests pass three times, 0 FAIL lines; 1,579 card masks identical to the host's (C662 through the PTX: the same counts) |
+| the persistent MoE kernel's self-check and its planted fault, the fused norm (`MOE_LAYER`, `ADD_RMS_NORM_MUL_Q8`, replayed from the set `onecard`) | **OK**: the self-check 17 of 17 layers, 0 differing from the per-op path (17 of 17 cases pass); the planted routing error (`GGML_CUDA_PERSISTENT_MOE_FAULT=2`) reported in 17 of 17; the fused norm 32 of 32. Every case replayed, none unrecorded (C662 through the PTX: the same counts) |
+| the -ladder4 merge's [gpu_checks.sh](../2026-11-04_ladder4_merge/run/gpu_checks.sh) `MODE=native`: skipped expert slots past 8 tokens, with the defaults, with `GGML_CUDA_MMVQ_PASCAL=0` and with `_MTOK=0`, the tail op and the fused router chain (replayed from `onecard`) | **OK**: past 8 tokens 110 of 110, with the defaults 633 of 633, with `GGML_CUDA_MMVQ_PASCAL=0` 633 of 633, Q2_0 with `_MTOK=0` 41 of 41, the tail op and the router chain 544 of 544; 0 FAIL lines, every case replayed (C662 through the PTX: 100, 604, 604, 41, 533; upstream's new cases since) |
+| the same: `test-llama-archs` on the card with the tail op (`LLAMA_MOE_TAIL=p=0.8,renorm=1`) as the op, with `skip=0` and with `repeat=1`, against the graph-level ops | **OK**: 146 compared three times, 0 with a difference, exit 0, largest nmse 2.672e-08 (C662 through the PTX: 1.481e-06) |
+| the same: the tiered random model with the cut at `-ub` 128 and 1 | **OK** both: the op = the graph-level cut bit for bit; KLD tiered against untiered 0.000000, the cut 0.397970 |
+| the same: `test-llama-archs` on the card, every switch off, the tip against `80c94fe0d`'s logits | **REVIEW, as on the CPU**: 143 of 146 models differ, largest nmse 7.303e-07 (gemma4). The same 143 models differ in C831's CPU comparison (none differs on one side only), each by about the same amount (gemma4 7.319e-07 on the CPU, beam 5.942e-07 here and 5.943e-07 there; 62 of 146 the same nmse as printed), where C831 traced it to upstream's #29810. C662 through the PTX, against the v3.0 release: 141 of 143 |
+| the fork kernels' sets, recorded again with the tip: `v4kern` (C796's three kernel suites and the three switches together) | **OK**: 47 of 47 runs as expected, 16,240 case replays: every case of the 41 passing runs passes; the 6 faults fail cases (`q6kmt` 42, `dmtkt` 5, `ro8` 193, and the same with all three switches on: 42, 5, 193) |
+| `ro8kt` (C794's K tiles at 5–8 tokens) | **OK**: 16 of 16 runs as expected, 3,232 case replays: 202 of 202 in every passing run (the fault with the tiles off among them); the fault fails 34 |
+
+**Not run, by the main session's word** (rig time; C831 found every fork kernel's sm_61 code unchanged since
+`80c94fe0d`): gpu_checks.sh's `experts` run (every expert case without skipped slots, 5,121 cases, 42.2 GB to
+record) and its `dense` part (`MUL_MAT` at 1–8 tokens, 4,308 cases, 15.5 GB), whose kernels are the fork's; and its
+`moeids` part, as the release tarball holds no `test-moe-ids`. A change to those kernels' sm_61 code reopens them.
+
 ## Not checked here
 
-- **Nothing on a card.** The GPU checks that C662 ran through the compute 6.1 PTX on a quant card, and the native run
-  of `mul_mat_q`, the one changed code a P106 runs, are R153 (Q1463), a rig row: not run.
 - **Speed and memory on a P106.** Nothing is timed. The release tests of `v4-rc1` (Flash-Next, Flint and Ornith, on
   one build) measure them; upstream's changes that act on a P106 are listed above (the scheduler kept at a re-reserve,
   the reused CUDA graphs' skipped walk, the separate draft's graph budget).
 - **The release's model files** were not opened by the merged loader here (a full read of each file on a shared
   machine). Upstream's loader changes add optional tensors only (the KV scales) and let qwen3.5 read its merged
-  tensors or the separate ones; qwen4exp's loader is unchanged. R153 loads all three.
+  tensors or the separate ones; qwen4exp's loader is unchanged. R153's part (3), a run of its own, loads all three
+  with their greedy replies against `80c94fe0d`'s.
+- **C662's whole `test-backend-ops` in five shards through the compute 6.1 PTX** (the fork's paths off and forced on):
+  it needs a quant card.
 
 ## Files
 
@@ -130,6 +189,17 @@ of the CPU's numbers apart from everything else. Every verdict line is in [summa
 | [draftmd-graphs.txt](draftmd-graphs.txt) | the separate draft's contexts: their graph budgets (`max_nodes`) and nodes, counted over the arms |
 | `sass-*-families.txt`, `sass-*-by-function.tsv` | `llama-server`'s GPU functions against `80c94fe0d`'s build, SASS and PTX: the counts by kernel family, and every function that is not the same |
 | [switch-names-tip.txt](switch-names-tip.txt) | the switch names the tip's rig build reads (C770's list) |
+| [run/runs_past8.sh](run/runs_past8.sh) | R153: a set's run list cut to the cases a record made with `EXTRA_P` holds |
+| [run/alias_base.py](run/alias_base.py) | R153: a set recorded with the tip's `test-backend-ops` written again under `80c94fe0d`'s case names |
+| [run/compare_builds.sh](run/compare_builds.sh) | R153: two builds' replays of one record compared case by case |
+| [run/case_repeat.sh](run/case_repeat.sh) | R153: one recorded case replayed N times with each build |
+| [run/r153_tables.sh](run/r153_tables.sh) | R153: the `rig-*` tables from the rig's output and the record logs |
+| [rig-sets.tsv](rig-sets.tsv) | R153: each set recorded with the tip's `test-backend-ops`: cases, bytes, cases linked from another set, when |
+| [rig-replays.tsv](rig-replays.tsv) | R153: every replayed run, both builds (and the `oldset` rows: the sets of 2026-11-11 on the tip) |
+| [rig-compare.tsv](rig-compare.tsv) | R153 part (1): the two builds case by case, per set and run |
+| [rig-archs-off.tsv](rig-archs-off.tsv) | R153: per random model, the tip's logits against `80c94fe0d`'s on the card and on the CPU |
+| [rig-part2.txt](rig-part2.txt) | R153 part (2): the consoles of `check.sh` and `gpu_checks.sh` |
+| [rig-repeat.tsv](rig-repeat.tsv) | R153: the case held twice, five replays with each build |
 
 ## Commands
 
@@ -148,6 +218,40 @@ M=<same> REPO=<this repository> ... STEPS='seqrm bmodel bserver draftmd' bash do
 # the tables of this folder
 M=<work root> OUT=<dir> bash docs/data/2026-11-13_c831_upstream/run/tables.sh
 ```
+
+R153 on the P106 (`$TIP` and `$BASE`: the two unpacked rig tarballs; `$S`: the sets; `$O`: the output):
+
+```bash
+# on the build machine's CPU, with the tip's test-backend-ops (SUITE kshape first: the others link its cases)
+OUT=$S SUITE=kshape BIN=$TIP/bin STEPS=record JOBS=8 EXTRA_P='n=(9|[1-9][0-9]+),' bash scripts/record_checks.sh
+OUT=$S SUITE=n2p BIN=$TIP/bin STEPS=record JOBS=8 EXTRA_P='n=(9|[1-9][0-9]+),' LINK_FROM=$S/kshape bash scripts/record_checks.sh
+#   (flashnext-moe the same way; onecard with LINK_FROM="$S/kshape $S/n2p $S/flashnext-moe" and no EXTRA_P; v4kern;
+#   ro8kt with LINK_FROM=$S/v4kern)
+SET=$S/n2p EXTRA_P='n=(9|[1-9][0-9]+),' bash docs/data/2026-11-13_c831_upstream/run/runs_past8.sh
+python3 -I docs/data/2026-11-13_c831_upstream/run/alias_base.py $S/n2p $S/n2p-base
+# on the rig, card 0: part (1) with both builds, then the comparison (on any machine)
+SET=$S/n2p BIN=$TIP/bin OUT=$O/n2p-tip RUNS_FILE=$S/n2p/runs-past8.tsv bash scripts/replay_checks.sh
+SET=$S/n2p-base BIN=$BASE/bin OUT=$O/n2p-base RUNS_FILE=$S/n2p-base/runs-past8.tsv bash scripts/replay_checks.sh
+TIP=$O/n2p-tip BASE=$O/n2p-base ALIAS=$S/n2p-base/alias.tsv bash docs/data/2026-11-13_c831_upstream/run/compare_builds.sh
+# part (2)
+NATIVE=1 BIN=$TIP ARCHS=$TIP/bin/test-llama-archs WORK=$O/archs GPU=0 ARCHS_ARGS='-b CUDA0' \
+  RUNS='archs archs-on archs-mask' bash docs/data/2026-11-03_upstream_rebase/run/check.sh
+GGML_TEST_REPLAY=$S/onecard NATIVE=1 BIN=$TIP ARCHS=$TIP/bin/test-llama-archs WORK=$O/moe GPU=0 \
+  RUNS='moe-check moe-fault norm-q8' bash docs/data/2026-11-03_upstream_rebase/run/check.sh
+MODE=native DEV=0 BIN=$TIP/bin BASE_BIN=$BASE/bin OUT=$O/gpu-a CHECKS=<random models: checks.sh's coldtier step> \
+  TEXT=<text file> PARTS='moeskip combo' RUNS='archs-off archs-tail' bash docs/data/2026-11-04_ladder4_merge/run/gpu_checks.sh
+GGML_TEST_REPLAY=$S/onecard MODE=native DEV=0 BIN=$TIP/bin OUT=$O/gpu-b CHECKS=... TEXT=... PARTS=moeskip \
+  RUNS='skip-mmq skip skip-mmvq skip-mtok0 tail' bash docs/data/2026-11-04_ladder4_merge/run/gpu_checks.sh
+SET=$S/v4kern BIN=$TIP/bin OUT=$O/v4kern bash scripts/replay_checks.sh      # and ro8kt
+# the repeated case, on card 1
+TIP=... BASE=... TIP_SET=$S/kshape BASE_SET=$S/kshape-base OPS=MUL_MAT_ID \
+  P='^type_a=q2_0,type_b=f32,n_mats=4,n_used=2,b=0,m=512,n=32,k=256,m_v=0,ids_offset=0,skip=0$' N=5 DEV=1 OUT=<dir> \
+  bash docs/data/2026-11-13_c831_upstream/run/case_repeat.sh
+```
+
+The random models of the combo part are those of C662's checks (`checks.sh`'s coldtier step,
+[2026-11-04_ladder4_merge](../2026-11-04_ladder4_merge/README.md)), and the text file for `llama-perplexity` the one
+C662 used.
 
 Provenance: the fork is [Cinderella-Man/miner-llama](https://github.com/Cinderella-Man/miner-llama) (MIT, as
 llama.cpp), upstream is [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) at tag b12360; the random models

@@ -113,6 +113,14 @@
 #                 preset, Q4_K left out, the tiles without RO8 (they never run), the kernels without tiles, off, the fault
 #                 (each iteration takes the next tile's activations), which must fail cases, and the fault with the tiles
 #                 off, which must not (docs/data/2026-11-13_c794_ktiles_5to8)
+#   onecard       the test-backend-ops cases of C662's one-card set that R153 ran on a P106
+#                 (docs/data/2026-11-13_c831_upstream): the upstream rebase's check.sh runs moe-check, moe-fault and
+#                 norm-q8 (MOE_LAYER, ADD_RMS_NORM_MUL_Q8) and the runs of the -ladder4 merge's gpu_checks.sh part
+#                 moeskip with skipped expert slots and the tail op (MUL_MAT_ID and MUL_MAT_VEC_FUSION with skip=1;
+#                 MOE_TAIL, TOPK_MOE_TAIL, GET_ROWS, ADD_ID). Those scripts replay it with GGML_TEST_REPLAY=<this set>;
+#                 its runs.tsv repeats their runs that must pass (moe-fault is judged by check.sh's own summary). Not
+#                 in it: moeskip's experts run (5,121 cases, 42.2 GB) and the dense part (MUL_MAT at 1-8 tokens, 4,308
+#                 cases, 15.5 GB), whose kernels are the fork's
 # Env: OUT (folder for the records), SUITE, BIN (bin/ of an unpacked rig tarball; the build step sets it), WORK and
 #   REPO and BRANCH (build step), JOBS (test-backend-ops -j workers, default 4), SAMPLE (record about one case in N),
 #   MAX_CASE_MB, BUDGET_GB (caps: cases over them are left out and replay reports them), DRY=1 (sizes only),
@@ -122,7 +130,7 @@
 # Usage: OUT=<dir> SUITE=kshape BIN=<rig tarball>/bin bash scripts/record_checks.sh
 set -uo pipefail
 OUT=${OUT:?OUT=<folder for the records>}
-SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt|v4kern|ro8kt}
+SUITE=${SUITE:?SUITE=kshape|ladder3-rest|fap|flashnext-moe|n2p|qsa-prompt|q5kmt|indexer-rows|range-mask|dmt|dmtkt|top-k-rows|qsa-union|v4night|bf16x|f32x|q3kmt|glumt|q5k1r|v4day|ro8|q6kmt|v4kern|ro8kt|onecard}
 STEPS=${STEPS:-record tar}
 JOBS=${JOBS:-4}
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
@@ -188,6 +196,9 @@ F32X4LISTA="type_a=f32,type_b=f32,(m=(49|64),n=[5-8]|m=(65|129|256|512),n=[4-8])
 NIGHT='qsa-prompt qsa-union q5kmt dmt indexer-rows range-mask top-k-rows'
 DAY='dmt q5kmt q3kmt bf16x f32x glumt q5k1r'
 KERN='q6kmt dmtkt ro8'
+# C662's one-card set: the expert ops with skipped slots, the tail op's ops
+MO=MUL_MAT_ID,MUL_MAT_VEC_FUSION
+OC_TAIL=MOE_TAIL,TOPK_MOE_TAIL,GET_ROWS,ADD_ID
 suite_filters() {
     case $1 in
         kshape)
@@ -240,6 +251,8 @@ suite_filters() {
         v4kern)
             local s
             for s in $KERN; do suite_filters "$s"; done | awk '!seen[$0]++' ;;
+        onecard)
+            printf '%s\t%s\n' MOE_LAYER '.' ADD_RMS_NORM_MUL_Q8 '.' $MO 'skip=1' $OC_TAIL '.' ;;
         *) return 1 ;;
     esac
 }
@@ -494,6 +507,14 @@ suite_runs() {
             printf '%s\t%s\t%s\t%s\tfail\t\n' kern-q6k-fault "$KP $ON ${P}_Q6K_MT_FAULT=1" MUL_MAT "$ALL" \
                 kern-kt-fault "$KP $ON ${P}_DMT_KT_FAULT=1" MUL_MAT "$ALL" \
                 kern-ro8-fault "$KP $ON ${P}_RO8_FAULT=1" MUL_MAT "$ALL" ;;
+        onecard)
+            # check.sh's and gpu_checks.sh's (MODE=native) test-backend-ops runs of this set that must pass, with their
+            # switches
+            local CON="${P}=2 GGML_CUDA_PERSISTENT_MOE=2 GGML_CUDA_FATTN_PASCAL=2 GGML_CUDA_FATTN_TILE_PASCAL=2 GGML_CUDA_ATTN_BLOCK=2 GGML_CUDA_NORM_Q8=1"
+            printf '%s\t%s\t%s\t%s\tpass\t\n' moe-check "$CON GGML_CUDA_PERSISTENT_MOE_CHECK=1" MOE_LAYER '.' \
+                norm-q8 "${P}=0 GGML_CUDA_PERSISTENT_MOE=0 GGML_CUDA_NORM_Q8=1 GGML_CUDA_NORM_Q8_DEBUG=1" ADD_RMS_NORM_MUL_Q8 '.' \
+                skip-mmq "" $MO 'n=(17|33|129),.*skip=1' skip "" $MO 'skip=1' skip-mmvq "${P}=0" $MO 'skip=1' \
+                skip-mtok0 "${P}_MTOK=0" $MO '(type_a|type)=q2_0,.*skip=1' tail "" $OC_TAIL '.' ;;
     esac
 }
 # C754's runs: <1 natively (the switch on compute 6.1) | 2 through the PTX on a newer card (the switch on any NVIDIA

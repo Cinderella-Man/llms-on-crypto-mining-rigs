@@ -5,6 +5,10 @@
 #
 # Usage: BIN=<unpacked rig tarball built with TESTS=1> ARCHS=<test-llama-archs binary> WORK=<dir> [GPU=n] [RUNS="tag ..."]
 #        [DOCKER_ARGS=...] check.sh
+#        NATIVE=1 (R153): no container, on a P106-090 itself: each run on card GPU (CUDA_DEVICE_ORDER=PCI_BUS_ID) with
+#        the host's CUDA; ARCHS_ARGS (e.g. "-b CUDA0": the card against the CPU only) go to the test-llama-archs runs,
+#        and GGML_TEST_REPLAY=<a set of scripts/record_checks.sh, suite onecard> in the environment makes the
+#        test-backend-ops runs replay references recorded on another machine's CPU
 # Runs, each logged to $WORK/logs/<tag>.log with "exit <status>" as its last line:
 #   tbo-off     test-backend-ops, every case, with the fork's CUDA paths off: the Pascal matrix-vector kernels, the
 #               persistent MoE kernel, both Pascal attention kernels, the two-launch attention block, the norm's Q8_1 copy
@@ -42,6 +46,12 @@ run() { # tag, extra env (space-separated K=V), binary, args...
     wanted "$tag" || return 0
     local e=()
     for kv in $envs; do e+=(-e "$kv"); done
+    if [ "${NATIVE:-0}" = 1 ]; then
+        # shellcheck disable=SC2086
+        env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES="${GPU:-0}" $envs timeout 7200 "$@" > "$WORK/logs/$tag.log" 2>&1
+        echo "exit $?" >> "$WORK/logs/$tag.log"
+        return
+    fi
     docker run --rm --name "pq-check-$tag" --cpu-shares=256 --label pascal-quants=1 ${DOCKER_ARGS:-} \
         --gpus "\"device=${GPU:-0}\"" -v "$WORK:$WORK" -v "$BIN:$BIN:ro" -v "$ARCHS:$ARCHS:ro" \
         -e CUDA_CACHE_PATH="$WORK/nvcache" -e CUDA_CACHE_MAXSIZE=4294967296 "${e[@]}" \
@@ -55,9 +65,12 @@ run tbo-on    "$ON"  $T
 run moe-check "$ON GGML_CUDA_PERSISTENT_MOE_CHECK=1" $T -o MOE_LAYER
 run moe-fault "$ON GGML_CUDA_PERSISTENT_MOE_CHECK=1 GGML_CUDA_PERSISTENT_MOE_FAULT=2" $T -o MOE_LAYER
 run norm-q8   "GGML_CUDA_MMVQ_PASCAL=0 GGML_CUDA_PERSISTENT_MOE=0 GGML_CUDA_NORM_Q8=1 GGML_CUDA_NORM_Q8_DEBUG=1" $T -o ADD_RMS_NORM_MUL_Q8
-run archs      "" "$ARCHS"
-run archs-on   "$ON" "$ARCHS"
-run archs-mask "LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1" "$ARCHS" -v 4
+# shellcheck disable=SC2086
+run archs      "" "$ARCHS" ${ARCHS_ARGS:-}
+# shellcheck disable=SC2086
+run archs-on   "$ON" "$ARCHS" ${ARCHS_ARGS:-}
+# shellcheck disable=SC2086
+run archs-mask "LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1" "$ARCHS" ${ARCHS_ARGS:-} -v 4
 
 for tag in $ALL; do
     wanted "$tag" || continue
