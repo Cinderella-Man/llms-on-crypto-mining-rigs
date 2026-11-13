@@ -19,11 +19,17 @@
 #           which change nothing on a CPU): the base and the tip, SAME expected on both
 #   modes   the fork's own test-llama-archs checks (MODES: the MTP draft, the caches, the prepared decode, the n-gram
 #           prefetch) on the tip, each passing as its row's checks did
+#   seqrm   test-llama-archs --kv-seq-rm on the tip and the base with plamo2's two 4-sequence tests left out
+#           (LLAMA_ARCHS_SKIP), which abort on both, as C740 recorded
 #   server  C820's server_check.sh on the random MTP model: every MTP drafting group (C815's online rule, C742's and
 #           C820's skipped rows, C744's cap) on the tip's llama-server, dbase the base's; rserver: dbase and doff again
 #           with the revert build's llama-server as the branch's
-#   draftmd the random model with its MTP block as a separate draft file (-md, Flash-Next's draft settings) in the tip's and
-#           the base's llama-server: each context's graph budget (upstream #32078 sizes it by tensor count only) and nodes
+#   bmodel  the base's own random qwen4exp model with an MTP block (the base cannot load the tip's), and both files'
+#           tensors compared by name, shape and type (run/gguf_names.py)
+#   bserver server_check.sh's dbase and doff on the base's model, with the tip's and the revert build's llama-server
+#   draftmd the random model with its MTP block as a separate draft file (-md, Flash-Next's draft settings): the base and the
+#           tip on the base's model, the tip on its own; each context's graph budget (upstream #32078 sizes it by tensor
+#           count only) and nodes, and the base's and the tip's replies on the base's model
 #   rig     the rig tarball of the tip (scripts/build_llamacpp_docker.sh, TESTS=1, EXTRA_TARGETS: sm_61, no AVX) in
 #           $M/main/rig
 #   rigbase the same build of BASE_COMMIT in the same folder
@@ -56,7 +62,7 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 CPU_IMAGE=${CPU_IMAGE:-pq-c565-cpu:24.04}
 SRV_IMAGE=${SRV_IMAGE:-pq-c735-srv:24.04}
 EXTRA_TARGETS=${EXTRA_TARGETS:-test-cuda-keepalive test-llama-archs}
-STEPS=${STEPS:-union cpu bcpu rcpu model off self modes server draftmd rig rigbase names sass c565 trim}
+STEPS=${STEPS:-union cpu bcpu rcpu model off self modes seqrm server bmodel bserver draftmd rig rigbase names sass c565 trim}
 ROOM_GB=${ROOM_GB:-52}
 MODES=${MODES:---kv-shift --ngram-prefetch --mtp-kv-only --mtp-catchup-overlap --mtp-hrow-lazy --kv-seq-rm --mtp-graph-keep --mtp-replan --verify-prepare --mtp-h-dev --mtp-incall-overlap}
 # the line's switches on together: the host ones that compute what the defaults compute, and the CUDA ones
@@ -275,6 +281,19 @@ if step modes; then
     done
 fi
 
+# --kv-seq-rm aborts on plamo2's two 4-sequence tests without its switch as well (GGML_ASSERT in ggml.c, a view past
+# its source), on the base too; C740 left them out (docs/data/2026-11-11_c740_seq_rm_bound). The rest, on both builds
+if step seqrm; then
+    mkdir -p "$M/modes"
+    for b in tip:$C base:$BC; do
+        l=${b%%:*} d=${b#*:}
+        box "$CPU_IMAGE" bash -c 'LLAMA_ARCHS_SKIP="^plamo2 Dense 4 " nice -n 19 '"$d"'/bin/test-llama-archs --kv-seq-rm -s 1 2>&1 | sed "s/\x1b\[[0-9;]*m//g" > '"$M/modes/kv-seq-rm-skip-$l.log"'; exit ${PIPESTATUS[0]}'
+        rc=$?
+        add seqrm "--kv-seq-rm, plamo2's 4-sequence tests left out, $l" "$([ $rc = 0 ] && echo OK || echo FAIL)" \
+            "rc=$rc; $(grep -ac 'LLAMA_ARCHS_SKIP' "$M/modes/kv-seq-rm-skip-$l.log") left out; $(grep -a -m 1 '^Summary' "$M/modes/kv-seq-rm-skip-$l.log")"
+    done
+fi
+
 if step server; then
     rm -rf "$S/out" "$S/rout"
     # shellcheck disable=SC2086
@@ -294,39 +313,77 @@ if step server; then
     log "server done"
 fi
 
+# The tip's random qwen4exp model has 156 tensors, the base's loader expects 150 (upstream's tensor lists changed), so
+# the base's llama-server cannot load it: the server step's dbase arm fails to start. bmodel writes the base's own
+# random model and lists the two files' tensors; bserver runs the dbase/doff pair on the base's model, with the tip's
+# llama-server and with the revert build's
+if step bmodel; then
+    mkdir -p "$M/tools" && git -C "$SRC" archive "$TIP" gguf-py | tar -x -C "$M/tools"
+    rm -rf "$S/bmodels" && mkdir -p "$S/bmodels"
+    box "$CPU_IMAGE" bash -c "nice -n 19 $BC/bin/test-llama-archs -a '^qwen4exp\$' -s 1 -o $S/bmodels --mtp-draft > $S/bmodels/save.log 2>&1"
+    rc=$?
+    add bmodel "the base's qwen4exp with an MTP block" "$([ $rc = 0 ] && [ -s "$S/bmodels/qwen4exp-moe-mtp.gguf" ] && echo OK || echo FAIL)" \
+        "rc=$rc; md5 $(md5sum < "$S/bmodels/qwen4exp-moe-mtp.gguf" | cut -d' ' -f1)"
+    for f in qwen4exp-moe-mtp qwen4exp-moe-mtp-draft; do
+        nice -n 19 python3 -I "$RUN/gguf_names.py" "$M/tools/gguf-py" "$S/models/$f.gguf" "$S/bmodels/$f.gguf" > "$S/names-$f.txt" 2>&1
+        add bmodel "$f: the tip's file against the base's" "$(head -n 1 "$S/names-$f.txt" | grep -q 'only tip 0, only base 0, differ 0' && echo SAME || echo REVIEW)" \
+            "$(head -n 1 "$S/names-$f.txt"); $(sed -n '2,9p' "$S/names-$f.txt" | tr '\n' ';' | cut -c1-500)"
+    done
+fi
+
+if step bserver; then
+    for b in tip:$C rev:$RC; do
+        l=${b%%:*} d=${b#*:}
+        rm -rf "$S/b$l"
+        # shellcheck disable=SC2086
+        locked docker run --rm $DA --network none -v "$M:$M" -v "$REPO:$REPO:ro" "$SRV_IMAGE" bash -c \
+            "BASE=$BC/bin BIN=$d/bin MODEL=$S/bmodels/qwen4exp-moe-mtp.gguf OUT=$S/b$l THREADS=$THREADS ARMS='dbase doff' \
+             SARGS='--override-kv qwen4exp.context_length=int:16384' nice -n 19 bash $SRVCHK" > "$S/b$l.console.txt" 2>&1
+        rc=$?
+        add bserver "dbase doff on the base's model, $l's llama-server" "$([ $rc = 0 ] && tail -n 1 "$S/b$l/verdict.txt" | grep -qx PASS && echo PASS || echo FAIL)" \
+            "rc=$rc; $(grep -v '^PASS$\|^FAIL$' "$S/b$l/verdict.txt" 2> /dev/null | cut -c1-200 | tr '\n' ';')"
+    done
+fi
+
 # upstream #32078 sizes a context's graph budget by its tensor count only (no longer by -ub): a separate MTP draft file
-# (Flash-Next's preset: -md, --spec-draft-n-ubatch 128) gets far fewer nodes than before. Each build serves the random
-# model with its MTP block as a separate draft at the preset's draft settings, one greedy request; every context's
-# budget (max_nodes) and its graphs' nodes are logged (-lv 5)
+# (Flash-Next's preset: -md, --spec-draft-n-ubatch 128) gets far fewer nodes than before. The random model with its MTP
+# block as a separate draft, at the preset's draft settings, one greedy request of 200 prompt tokens (C820's G1, drawn
+# below the vocabulary size); every context's budget (max_nodes) and its graphs' nodes are logged (-lv 5). Arms: the
+# base and the tip on the base's model, the tip on its own
 if step draftmd; then
     DM=$M/draftmd
     rm -rf "$DM" && mkdir -p "$DM"
     # shellcheck disable=SC2016
     locked docker run --rm $DA --network none -v "$M:$M" "$SRV_IMAGE" bash -c '
+        toks() { awk -v n="$1" -v s="$2" -v v="$3" "BEGIN { x = s; for (i = 0; i < n; i++) { x = (x * 16807) % 2147483647; printf \"%s%d\", (i ? \",\" : \"\"), 1 + x % (v - 1) } }"; }
         one() {
-            local O='"$DM"'/$1 pid i
+            local O='"$DM"'/$1 pid nv
             mkdir -p "$O"
-            nice -n 19 "$2"/llama-server -m '"$S"'/models/qwen4exp-moe-mtp.gguf -md '"$S"'/models/qwen4exp-moe-mtp-draft.gguf \
+            nice -n 19 "$2"/llama-server -m "$3"/qwen4exp-moe-mtp.gguf -md "$3"/qwen4exp-moe-mtp-draft.gguf \
                 --spec-type draft-mtp --spec-draft-n-max 6 --spec-draft-p-min 0 --spec-draft-n-ubatch 128 -b 2048 -ub 512 \
                 -c 8192 -np 1 -t '"$THREADS"' --host 127.0.0.1 --port 18831 -lv 5 \
                 --override-kv qwen4exp.context_length=int:16384 > "$O/server.log" 2>&1 &
             pid=$!
-            for i in $(seq 1 300); do curl -sf http://127.0.0.1:18831/health > /dev/null && break; kill -0 $pid 2> /dev/null || break; sleep 1; done
+            for i in $(seq 1 300); do curl -s http://127.0.0.1:18831/health | grep -q "\"ok\"" && break; kill -0 $pid 2> /dev/null || break; sleep 1; done
+            nv=$(curl -s http://127.0.0.1:18831/v1/models | jq -r ".data[0].meta.n_vocab")
             curl -s http://127.0.0.1:18831/completion -H "Content-Type: application/json" \
-                -d "{\"prompt\": [$(seq -s, 10 137)], \"n_predict\": 48, \"temperature\": 0, \"cache_prompt\": false}" > "$O/reply.json"
+                -d "{\"prompt\": [$(toks 200 11 "${nv:-2}")], \"n_predict\": 96, \"temperature\": 0, \"return_tokens\": true, \"cache_prompt\": false}" > "$O/reply.json"
             kill $pid 2> /dev/null; wait $pid
-            echo "$1 rc=$?"
+            echo "$1 rc=$? n_vocab=$nv"
         }
-        one base '"$BC/bin"'
-        one tip '"$C/bin"'' > "$DM/rc.txt" 2>&1
-    for l in base tip; do
+        one base-bmodel '"$BC/bin"' '"$S/bmodels"'
+        one tip-bmodel '"$C/bin"' '"$S/bmodels"'
+        one tip-model '"$C/bin"' '"$S/models"'' > "$DM/rc.txt" 2>&1
+    for l in base-bmodel tip-bmodel tip-model; do
         L=$DM/$l/server.log
         ntok=$(jq -r '.tokens_predicted // empty' "$DM/$l/reply.json" 2> /dev/null)
         add draftmd "$l: -md draft at -ub 512, draft ubatch 128" "$([ -n "$ntok" ] && [ "$ntok" -gt 0 ] && ! grep -aqE 'GGML_ASSERT|not enough space' "$L" && echo OK || echo FAIL)" \
             "$(grep "^$l rc=" "$DM/rc.txt"); tokens predicted: ${ntok:-none}; drafted/accepted: $(jq -r '[.timings.draft_n, .timings.draft_n_accepted] | map(tostring) | join("/")' "$DM/$l/reply.json" 2> /dev/null); max_nodes lines: $(grep -aoE 'max_nodes = [0-9]+' "$L" | sort | uniq -c | tr -s ' ' | tr '\n' ';'); graphs: $(grep -aoE 'graph( \(pp bs=[0-9]+, tg bs=[0-9]+\))?: nodes = [0-9 /]+' "$L" | tr '\n' ';')"
     done
-    cmp -s <(jq -c '.tokens' "$DM/base/reply.json" 2> /dev/null) <(jq -c '.tokens' "$DM/tip/reply.json" 2> /dev/null)
-    add draftmd "the replies' tokens" "$([ $? = 0 ] && echo SAME || echo DIFFERS)" "base against tip, greedy, $(jq -r '.content | length' "$DM/tip/reply.json" 2> /dev/null) characters"
+    cmp -s <(jq -c '[.tokens, .timings.draft_n, .timings.draft_n_accepted]' "$DM/base-bmodel/reply.json" 2> /dev/null) \
+           <(jq -c '[.tokens, .timings.draft_n, .timings.draft_n_accepted]' "$DM/tip-bmodel/reply.json" 2> /dev/null)
+    add draftmd "the base's model: the replies' tokens and draft counts" "$([ $? = 0 ] && echo SAME || echo DIFFERS)" \
+        "base against tip, greedy, $(jq -r '.tokens | length' "$DM/tip-bmodel/reply.json" 2> /dev/null) tokens"
 fi
 
 rig_build() {   # <ref> <log>
