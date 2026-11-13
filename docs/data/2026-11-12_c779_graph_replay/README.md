@@ -124,8 +124,9 @@ to 08:37:01, each started on a quiet rig ([r136/lane/table.md](r136/lane/table.m
     all had been set. The counts line does not say which call it refused: kernel, memset or memcpy.
   - **`nodes`, 1:** the scratch capture made other CUDA nodes than the recording.
 - **What it shows:** patch mode's full captures are exact on a P106, nothing more. Parts 2 and 3 would time patch mode
-  with every capture full. C826 (Q1449) compares sources by what they hold and logs which update CUDA refuses; part 1
-  then runs again.
+  with every capture full. [C826](../2026-11-13_c826_graph_patch_fix/README.md) (Q1449) compares sources by kind,
+  leaves unchanged memsets and memcpys alone and names every refused update; R145 (Q1450) runs part 1 again on its
+  tarball, and parts 2 and 3 follow on it.
 
 ## Commands
 
