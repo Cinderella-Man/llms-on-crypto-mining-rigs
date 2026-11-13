@@ -1,7 +1,7 @@
 # A row limit that follows the token count: `GGML_CUDA_MMVF_F32_MT_ROWS=auto` (C822, Q1436, 2026-11-13)
 
 What this is: a new value for the row limit of C754's F32 switch, with its checks on a build machine's CPU, with no
-GPU. The rig run that places the numbers is [R144](#what-the-rig-run-must-show-r144) (Q1448), not run yet.
+GPU, and its timing on a P106-090 ([R144](#on-a-p106-r144), Q1448), which places the numbers.
 
 `GGML_CUDA_MMVF_F32_MT=1` sends an F32 weight matrix times 4 to 8 tokens to llama.cpp's `mul_mat_vec_f` instead of
 cuBLAS, for a matrix of at most `GGML_CUDA_MMVF_F32_MT_ROWS` rows (32 by default, [C807](../2026-11-12_c807_f32_router/README.md)).
@@ -18,9 +18,9 @@ Registry row [Q1436](../../../quants/experiments.md) (from [Q1413](../../../quan
 `pascal-p106-v4-b12246-c822` (`cc97bb6b6`), merged into `pascal-p106-v4` as `2144cf760`.
 
 **The answer:**
-- **`GGML_CUDA_MMVF_F32_MT_ROWS=auto` sets a limit per token count: 48 rows at 4 tokens, 64 at 5-8** (estimates from
-  R132; R144 places them). A list such as `48,64` sets one limit per token count from 4 tokens on, its last entry
-  holding after it. A single number keeps C807's meaning at every token count, and **the default stays 32**.
+- **`GGML_CUDA_MMVF_F32_MT_ROWS=auto` sets a limit per token count: 48 rows at 4 tokens, 64 at 5-8**, and a P106
+  holds both at widths 2,560 and 2,048 ([R144](#on-a-p106-r144)). A list such as `48,64` sets one limit per token
+  count from 4 tokens on, its last entry holding after it. A single number keeps C807's meaning at every token count, and **the default stays 32**.
 - **Nothing changes for Qwen3.8-Flash-Next.** Its F32 matrices are 1 row (the shared expert's gate) and 512 rows (the
   router). Unset, at 32 and at `auto` the gate goes to `mul_mat_vec_f` and the router to cuBLAS at 4-8 tokens: the
   same products, so the same kernels and the same sums. The GPU code is the base's, function for function.
@@ -124,6 +124,47 @@ cases at the default are llama.cpp's own (1 row of 2,048 at 7 and 8 tokens), whi
    rule) and gives, per width and token count, the largest row count up to which `mul_mat_vec_f` gains over cuBLAS in
    both passes. That places `auto`'s two numbers and the default; a change to either is a new code row.
 
+## On a P106 (R144)
+
+Step 2, the perf step, on one P106-090 (card 0 of a nine-card rig, nothing else running), 2026-11-13 20:38:56-20:52:41:
+`test-backend-ops perf` of `v4-rc2` (`pascal-p106-v4` `eb82916d3`, which holds C822 as `2144cf760`; the rig tree built
+from `eb312b7bc`, `test-backend-ops` md5 `e38809f0b16869abc065483f07c4798a`), arms `off`, `on`, `rows0`, `auto` in
+that order, two passes, 96 cases an arm and pass (768 in all). Step 1, the replay, is not run here: the set `f32x` was
+recorded with the b12246 test program, and upstream b12360's `test-backend-ops` names its `MUL_MAT` cases differently,
+so the set does not replay on `v4-rc2`. It needs the set recorded again with `v4-rc2`'s test program.
+
+**Where `mul_mat_vec_f` beats cuBLAS** (`rows0` against `off`, each case a gain only when faster by more than its
+shape's spread in both passes; [rig/place.tsv](rig/place.tsv)):
+
+| width | tokens | gains up to (rows) | the next row count |
+|---:|---:|---:|---|
+| 2,560 | 4 | 48 | 56 negligible (12.91 / 12.76 and 13.02 / 12.78 µs, cuBLAS / `mul_mat_vec_f`, passes 1 and 2; spread 3.1 %), 64 a loss (13.65 / 14.24 and 13.62 / 14.28) |
+| 2,560 | 5, 6, 7, 8 | 64 | none: a gain at every row count measured |
+| 2,048 | 4 | 48 | 56 a loss (10.79 / 11.55 and 10.88 / 11.59, +7.0 % and +6.5 %; spread 6.0 %), 64 a loss (10.81 / 12.31 and 10.90 / 12.34) |
+| 2,048 | 5, 6, 7 | 64 | none: a gain at every row count measured |
+| 2,048 | 8 | 56 | 64 negligible (27.85 / 25.78 and 28.08 / 25.83, -7.4 % and -8.0 %; spread 8.5 %) |
+
+- **`auto`'s 48 rows at 4 tokens holds at both widths:** 48 rows gain (2,560: 12.87 / 10.70 and 12.97 / 10.72 µs;
+  2,048: 10.76 / 9.66 and 10.84 / 9.67), 56 is no gain at either width and a loss at 2,048, 64 a loss at both.
+- **`auto`'s 64 rows at 5-8 tokens holds:** at 2,560 every row count to 64 gains at every token count from 5 to 8; at
+  2,048 the one case that is not a gain, 64 rows at 8 tokens, is negligible (faster in both passes, within the
+  spread), not a loss. `auto` itself against `off` there is a gain: 25.43 and 25.43 µs against 27.85 and 28.08
+  (-8.7 % and -9.4 %, spread 8.5 %).
+- **`auto` against `off` is a gain at every case where they differ** (4-8 tokens at 32-48 rows and 5-8 tokens at 56 and
+  64 rows, both widths), and **against `on` (the default, 32 rows) at every case where they differ** (33-48 rows at 4
+  tokens, 33-64 at 5-8; 46 cases). Where `auto` leaves a product to cuBLAS (56 and 64 rows at 4 tokens), against
+  `rows0` (`mul_mat_vec_f`): 56 rows negligible at both widths (2,560: 12.76 / 13.15 and 12.78 / 13.17 µs, `rows0` /
+  `auto`; 2,048: 11.55 / 10.99 and 11.59 / 10.98), 64 rows a gain (2,560: 14.24 / 13.75 and 14.28 / 13.78; 2,048:
+  12.31 / 11.01 and 12.34 / 10.92).
+- **The default 32** keeps products of 33-64 rows on cuBLAS, which is slower at every one of them up to 48 rows at 4
+  tokens and up to 64 at 5-8 (the `auto` against `on` cases).
+- The spread of a shape is the largest over its 1-3-token cases, where every arm runs `mul_mat_vec_f`
+  ([rig/spread.tsv](rig/spread.tsv)). Two shapes at 2,048 have wide ones, both from 2 tokens: 33 rows 10.5 % and 64
+  rows 8.5 %.
+
+Every case's µs per arm and pass is in [rig/wide.tsv](rig/wide.tsv) (1-8 tokens) and, with each comparison's class, in
+[rig/perf.md](rig/perf.md).
+
 ## Files
 
 | File | What |
@@ -135,6 +176,12 @@ cases at the default are llama.cpp's own (1 row of 2,048 at 7 and 8 tokens), whi
 | [run/chain.sh](run/chain.sh) | the build machine's checks |
 | [run/rig_r144.sh](run/rig_r144.sh) | the rig run (R144) |
 | [run/perf_r144.py](run/perf_r144.py) | its perf tables, classes and placement (on R132's data it gives R132's classes) |
+| [rig/us_run.tsv](rig/us_run.tsv) | R144's perf on a P106: one line per arm, pass and case (arm, pass, type, rows, width, tokens, µs/run) |
+| [rig/wide.tsv](rig/wide.tsv) | the same, one line per case: µs/run of every arm and pass |
+| [rig/place.tsv](rig/place.tsv) | per width and token count: each row count's class (`rows0` against `off`), the largest row count up to which all gain, the first that does not |
+| [rig/verdict.tsv](rig/verdict.tsv) | every comparison at 4-8 tokens (`rows0`, `auto`, `on` against `off`; `auto` against `on` and `rows0`): µs per pass, change, spread, class |
+| [rig/spread.tsv](rig/spread.tsv) | each shape's spread at 1-3 tokens |
+| [rig/perf.md](rig/perf.md) | `perf_r144.py`'s report: the tables above as Markdown |
 
 Also changed for this row: `scripts/record_checks.sh` (suite `f32x`), [docs/switches.md](../../switches.md).
 
@@ -156,6 +203,13 @@ On the rig (the branch's tarball unpacked, the set and the replay harness copied
 
 ```bash
 BIN=<tarball>/bin OUT=<out> SET=<set>/f32x REPLAY=scripts/replay_checks.sh \
+    setsid nohup bash docs/data/2026-11-13_c822_f32_rows/run/rig_r144.sh > console.txt 2>&1 < /dev/null &
+```
+
+R144 ran the perf step alone, on `v4-rc2`'s rig tree (`BIN` its `bin/`):
+
+```bash
+STEPS=perf BIN=<v4-rc2 tree>/bin OUT=<out> \
     setsid nohup bash docs/data/2026-11-13_c822_f32_rows/run/rig_r144.sh > console.txt 2>&1 < /dev/null &
 ```
 

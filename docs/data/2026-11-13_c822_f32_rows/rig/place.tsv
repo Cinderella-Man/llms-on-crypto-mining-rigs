@@ -1,0 +1,11 @@
+k	n	classes	gains_up_to	first_not_gain
+2048	4	32:gain 33:gain 40:gain 48:gain 56:loss 64:loss	48	56:loss
+2048	5	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
+2048	6	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
+2048	7	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
+2048	8	32:gain 33:gain 40:gain 48:gain 56:gain 64:negligible	56	64:negligible
+2560	4	32:gain 33:gain 40:gain 48:gain 56:negligible 64:loss	48	56:negligible
+2560	5	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
+2560	6	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
+2560	7	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
+2560	8	32:gain 33:gain 40:gain 48:gain 56:gain 64:gain	64	
