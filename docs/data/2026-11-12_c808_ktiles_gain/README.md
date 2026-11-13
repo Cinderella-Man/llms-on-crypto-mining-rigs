@@ -5,7 +5,15 @@ What this is: a narrower rule for C728's K tiles (`GGML_CUDA_MMVQ_PASCAL_DMT_KT`
 lost at IQ4_XS 2,560 × 6,144 at 4 tokens and at Q4_K at 3 tokens, and gained only at Q4_K at 4 tokens. In the served
 verify pass IQ4_XS `ssm_out` cost 0.360 ms more, so the switch as a whole was a loss and stayed out of the v4 candidate
 line. With this change `_DMT_KT=1` takes only the case that gained, at two row blocks a tile round (`_DMT_KT_M=2`, now
-the default), so the switch can join the line once a P106 confirms it.
+the default).
+
+**On a P106 (R133, 2026-11-13) the switch is a loss in the served verify pass, +0.115 ms a pass.** In
+`test-backend-ops` the change does what it should: IQ4_XS at 4 tokens and Q4_K at 3 run C722's kernel again at its
+times, and Q4_K at 4 tokens is 8.8 % and 8.3 % faster than C722's kernel. In the served verify pass, though, about half
+of the Q4_K `ssm_out` and `attn_output` launches run 22 µs slower than with the switch off. The other half run at the
+switch-off time, and none at the tiles' `test-backend-ops` time. So Q4_K `ssm_out` takes 0.133 ms more a pass and
+`attn_output` 0.053 ms more. The switch stays out of the line until the slow launches are explained (C829). R120b's two
+moved products were moved by the tiles that ran before them in the same process, not by the environment.
 
 The change is on the fork branch `pascal-p106-v4-b12246-c808`, merged into `pascal-p106-v4` as `a1347d9dd`. It is host code only: no
 GPU function changes. This folder holds the design, the checks on a build machine's CPU, why `_DMT_KT_M=2` seemed to move
@@ -73,6 +81,14 @@ consequence: the tool repeats a graph of 636 products until a second has passed,
 A move that follows the earlier tiles shows in `perf` and not in `alone`. A move that follows the environment shows
 `kernm2` against `kern` in both.
 
+**It was the earlier tiles** (R133, [rig/perf/perf.md](rig/perf/perf.md)). In `perf`, `kernm2` against `kern`
+(identical choices, one more variable) is within the spread at every one of 77 cases: Q6_K at 4 tokens 236.02 / 235.49
+→ 236.08 / 235.56 µs, Q4_K at 5 168.71 / 168.93 → 169.99 / 168.58. `kernm1` (the one tile product, Q4_K at 4 tokens,
+at M = 1 earlier in the process) moves them: Q6_K at 4 tokens 232.43 / 232.37 (−1.5 % / −1.3 %, within the 2.1 %
+spread) and Q4_K at 5 174.05 / 174.76 (+3.2 % / +3.5 %, beyond it). In `alone`, with no tile before them, the three
+arms agree to 0.04 µs: Q6_K at 4 tokens 229.58 / 229.52, 229.56 / 229.53 and 229.57 / 229.54 µs; Q4_K at 5 170.86 /
+170.92, 170.84 / 170.91 and 170.85 / 170.91.
+
 ## The checks
 
 On a build machine's CPU ([run/checks.sh](run/checks.sh)), 2026-11-12 18:01-19:28, every step in a container without
@@ -133,26 +149,83 @@ Under `kernm1` this tree's Q4_K at 4 tokens is the tiles at M = 1; every other l
 
 ## The rig run (R133)
 
-[run/rig_c808.sh](run/rig_c808.sh) on a P106-090 rig, the rig idle, with this branch's tarball, Flash-Next and its MTP
-draft:
+[run/rig_c808.sh](run/rig_c808.sh) on a P106-090 rig, 2026-11-13 09:11-10:20, the rig idle (load 0.05, no other
+process, 0 MiB on every card), with this branch's rig tarball (md5 `8e7b83ff793714741daf7662b30b0f6e`), Flash-Next
+(Swift Q2_0) and its MTP draft. Every step exited 0. The tables were built on a build machine's CPU at the lowest
+priority with [run/tables.sh](run/tables.sh) and [run/launch_modes.sh](run/launch_modes.sh).
 
-1. **perf:** `test-backend-ops perf` at Flash-Next's IQ4_XS, Q4_K, Q5_K and Q6_K shapes, 1-8 tokens (R120b's cases),
-   arms `off` (the preset's k-column switches), `mt` (+ C722's and C690's read-once kernels), `kern` (+ `_Q6K_MT=1`,
-   `_DMT_KT=1`, `_RO8=1`: the tiles now at Q4_K's 4-token products only, M = 2), `kernm1` (`kern` at M = 1) and `kernm2`
-   (`kern` with `_DMT_KT_M=2` set, the same choices), two passes, each pass by value. At K = 6,144 `kern` runs C722's kernel
-   again for IQ4_XS at 4 tokens and Q4_K at 3, so it must match `mt` there (R120b: 112.60 / 113.33 and 98.07 / 99.10
-   µs), and Q4_K at 4 tokens must gain over `mt` as R120b's M = 2 did (129.45 / 129.39 against 142.29 / 141.75 µs).
+1. **perf:** `test-backend-ops perf` at Flash-Next's IQ4_XS, Q4_K, Q5_K and Q6_K shapes, 1-8 tokens (R120b's 88
+   cases), five arms, two passes, alternated within a pass:
+   - `off`: the preset's k-column switches;
+   - `mt`: `off` plus C722's and C690's read-once kernels;
+   - `kern`: `mt` plus `_Q6K_MT=1`, `_DMT_KT=1` and `_RO8=1` (the tiles now at Q4_K's 4-token products only, M = 2);
+   - `kernm1`: `kern` at M = 1;
+   - `kernm2`: `kern` with `_DMT_KT_M=2` set (the same choices).
 2. **alone:** Q6_K 2,560 × 6,144 at 4 tokens, Q4_K at 5 and Q4_K at 4, each in a process of its own, arms `kern`,
-   `kernm1` and `kernm2`, two passes: which of the two causes above moved R120b's two products.
+   `kernm1` and `kernm2`, two passes.
 3. **served:** R49's profile of a served verify pass
    ([verify_prof.sh](../2026-11-10_served_verify_parts/run/verify_prof.sh), through the v4 kernel merge's
-   [rig_kern.sh](../2026-11-11_v4_kernel_merge/run/rig_kern.sh)) on the Flash-Next preset with the MTP draft, both
-   arms with `_DMT=1 _Q5K_MT=1`, `on` adding `GGML_CUDA_MMVQ_PASCAL_DMT_KT=1`, loads `off on on off`: Q4_K `ssm_out` and
-   `attn_output` a pass must fall (est. −0.05 ms a pass) and IQ4_XS `ssm_out` must be `off`'s.
-4. **bitid** (optional): `multitoken_bitid dmtkt` at `_DMT_KT=1`, at `_DMT_KT=2` (M = 2 and 1) and the fault arm, which
-   must differ.
+   [rig_kern.sh](../2026-11-11_v4_kernel_merge/run/rig_kern.sh)) on the Flash-Next preset with the MTP draft. Both arms
+   have `_DMT=1 _Q5K_MT=1`; `on` adds `GGML_CUDA_MMVQ_PASCAL_DMT_KT=1`. Loads `off on on off`, each with two greedy
+   requests to warm up and two profiled.
 
-`_DMT_KT=1` is then a gain, negligible or a loss by the served pass, each load by value.
+The optional bit-identity step did not run: R120a found the same tile kernels exact on a P106 at M = 1 and M = 2.
+
+### perf: the products behave as planned
+
+µs per product at 2,560 × 6,144 (`ssm_out`, `attn_output`), pass 1 / pass 2
+([rig/perf/focus.tsv](rig/perf/focus.tsv); every case in [rig/perf/perf.md](rig/perf/perf.md)). A class needs the
+change beyond the shape's spread in both passes (2.1 % for Q4_K and Q6_K, 1.4 % for IQ4_XS):
+
+| Product | Tokens | `mt` | `kern` | `kern` against `mt` | Class | R120b `mt` | R120b `kern` (old rule, M = 1) |
+|---|---:|---:|---:|---:|---|---:|---:|
+| IQ4_XS | 4 | 110.28 / 111.32 | 111.65 / 111.23 | +1.2 % / −0.1 % | negligible (C722's kernel again) | 112.60 / 113.33 | 132.96 / 133.04 |
+| Q4_K | 3 | 96.57 / 97.79 | 96.88 / 97.05 | +0.3 % / −0.8 % | negligible (C722's kernel again) | 98.07 / 99.10 | 110.40 / 110.94 |
+| Q4_K | 4 | 141.23 / 140.70 | 128.80 / 128.98 | −8.8 % / −8.3 % | gain (the tiles, M = 2) | 142.29 / 141.75 | 136.07 / 135.90 |
+
+- **M = 2 beats M = 1:** `kernm1` runs Q4_K at 4 tokens at 134.01 / 134.35 µs, 4.1 % and 4.2 % slower than `kern`, and
+  `alone` agrees (133.84 / 133.86 against 128.94 / 129.01).
+- **`kernm2` is `kern`:** 73 of 77 cases negligible, 4 mixed, none a gain or a loss.
+- **The other switches as in R120b:** `_Q6K_MT` gains at 2-4 tokens (Q6_K at 4 tokens 260.30 / 260.33 → 236.02 /
+  235.49). `_RO8` gains in 30 of 32 cases. It loses at IQ4_XS 2,560 × 6,144 and 6 tokens and Q5_K at 5 tokens (272.25 /
+  272.30 → 592.44 / 590.27 and 300.84 / 305.12 → 513.47 / 514.42 µs), the one-warp launches that C809 sends back to
+  the k-column kernel. This branch does not have C809.
+
+### served: Q4_K's projections are slower with the switch
+
+ms a verify pass, all cards, two profiled requests a load
+([rig/served/stack.md](rig/served/stack.md), [rig/served/served.md](rig/served/served.md)):
+
+| Products | 1 `off` | 2 `on` | 3 `on` | 4 `off` | `on` − `off` (means) | Spread | Class |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Q4_K `ssm_out` (11 a pass) | 1.536 / 1.531 | 1.665 / 1.667 | 1.670 / 1.669 | 1.537 / 1.534 | +0.133 | 0.006 | loss |
+| Q4_K `attn_output` (4 a pass) | 0.564 / 0.562 | 0.614 / 0.615 | 0.615 / 0.618 | 0.563 / 0.562 | +0.053 | 0.004 | loss |
+| IQ4_XS `ssm_out` (17 a pass) | 1.899 / 1.905 | 1.901 / 1.901 | 1.900 / 1.902 | 1.904 / 1.902 | −0.002 | 0.007 | negligible |
+| every other unit: Q3_K, the shared expert (GLU), Q6_K, the router, the shared expert's gate, the rest | | | | | −0.002, −0.004, −0.001, −0.002, +0.002, −0.062 | | negligible, each |
+| the whole pass (all launch groups) | 87.433 / 87.487 | 87.524 / 87.529 | 87.567 / 87.603 | 87.387 / 87.457 | +0.115 | 0.100 | loss |
+
+Every reply is the same text (md5 `1c45f5e1b111…`), with 173 of 243 and 172 of 246 drafts accepted in every load.
+
+**Why it loses:** the launches split in two ([rig/served/launch_modes.tsv](rig/served/launch_modes.tsv); one-op
+Q4_K `ssm_out` and `attn_output` launch groups of 135 to 250 µs on cards 0 to 7, the profiler's event cost of about
+7.6 µs included; the shorter and longer groups left out, 167 of 2,380 in load 1 and 118 in load 2):
+
+| Load | Launches under 158 µs | Their mean, µs | Launches from 158 µs | Their mean, µs |
+|---|---:|---:|---:|---:|
+| 1 `off` | 2,195 | 148.27 | 18 | 184.32 |
+| 2 `on` | 1,176 | 148.77 | 1,086 | 170.97 |
+| 3 `on` | 1,143 | 148.72 | 1,124 | 170.89 |
+| 4 `off` | 2,199 | 148.21 | 28 | 184.36 |
+
+With the switch, about half of the launches take 22 µs more than C722's kernel. The rest take C722's time. None take
+the tiles' `test-backend-ops` time (128.8 µs plus the event cost, est. 136.4). Every card and both names have both
+modes, about half each (card 0's `ssm_out`: 75 of 165 launches from 158 µs in load 2). R120b's served loads, with the old
+rule at M = 1, had one mode ([rig/served/launch_modes_r120b.tsv](rig/served/launch_modes_r120b.tsv)): 2,331 and 2,327
+launches at 144.82 and 144.86 µs with the switch (8 and 11 from 158 µs), against 2,206 and 2,213 at 149.30 and 149.33
+without. What makes half of the served M = 2
+launches slow, and why the other half run at C722's time, is C829.
+
+**Class: loss.** `_DMT_KT=1` stays out of the v4 candidate line. `_DMT_KT_M=1` in a served pair is R152.
 
 ## Files
 
@@ -168,6 +241,15 @@ draft:
 | [pick/arms.txt](pick/arms.txt) | the 48 arms (switches without the `GGML_CUDA_MMVQ_PASCAL_` prefix) |
 | [run/checks.sh](run/checks.sh) | the build machine's checks |
 | [run/rig_c808.sh](run/rig_c808.sh) | the rig run (R133) |
+| [run/tables.sh](run/tables.sh), [run/perf_c808.py](run/perf_c808.py), [run/launch_modes.sh](run/launch_modes.sh) | the rig run's tables (perf and alone with C808's kernel choices; the served launches' two modes) |
+| [rig/perf/perf.md](rig/perf/perf.md) | perf and alone: every case by arm and pass, the spread per shape, every comparison's class |
+| [rig/perf/focus.tsv](rig/perf/focus.tsv), [rig/perf/alone.tsv](rig/perf/alone.tsv) | the five products at 2,560 × 6,144 beside R120b's; alone beside perf |
+| `rig/perf/wide.tsv`, `spread.tsv`, `verdict.tsv` | every case's us/run per arm and pass; the spread per shape; every comparison by case |
+| `rig/perf/us_run.tsv`, `alone_us_run.tsv` | the rig's us/run lines (arm, pass, type, m, k, n, us) |
+| [rig/served/stack.md](rig/served/stack.md), `stack.tsv` | the verify pass by unit, `on` against `off`, with each class |
+| [rig/served/served.md](rig/served/served.md), `replies.tsv`, `products.tsv`, `by_name.tsv`, `parts.tsv` | the replies; the products by type and by name, ms a pass; the pass's parts |
+| [rig/served/launch_modes.tsv](rig/served/launch_modes.tsv), `launch_modes_r120b.tsv` | Q4_K `ssm_out` and `attn_output` launches under and from 158 µs, per load, this run and R120b's |
+| `rig/served/loads/<k>-<arm>/` | each profiled load's `verify_parts.py` tables and report |
 
 ## Commands
 
@@ -192,6 +274,14 @@ BIN=<tarball>/bin OUT=<out> RIG_KERN=docs/data/2026-11-11_v4_kernel_merge/run/ri
     RIG_SERVER=bench/agent_check/rig_server.sh REQ=docs/data/2026-11-04_draft_one_card/run/greedy_request.json \
     VERIFY_PROF=docs/data/2026-11-10_served_verify_parts/run/verify_prof.sh \
     setsid nohup bash docs/data/2026-11-12_c808_ktiles_gain/run/rig_c808.sh > console.txt 2>&1 < /dev/null &
+```
+
+The tables, on a build machine's CPU, from this repository's root (`$W/out` the rig's `out/`, each served load's
+`prof/prof-verify.csv` in `$W/traces/<k>-<arm>/prof/`):
+
+```bash
+IN=$W/out TRACES=$W/traces OUT=$W/tables bash docs/data/2026-11-12_c808_ktiles_gain/run/tables.sh
+TRACES=$W/traces nice -n 19 bash docs/data/2026-11-12_c808_ktiles_gain/run/launch_modes.sh > $W/tables/served/launch_modes.tsv
 ```
 
 ## Provenance and licence
