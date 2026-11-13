@@ -1,0 +1,30 @@
+2026-11-13T12:55:58+01:00 quiet: load 0.26 0.25 0.59; llama processes 0; MemAvailable: 3210804 kB
+2026-11-13T12:55:58+01:00 bitid on start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0)
+2026-11-13T12:56:00+01:00 bitid on exit 0: 0 differ, 0 of them big; 72 comparisons, 0 with differences
+2026-11-13T12:56:00+01:00 bitid table start ()
+2026-11-13T12:56:03+01:00 bitid table exit 0: 0 differ, 0 of them big; 72 comparisons, 0 with differences
+2026-11-13T12:56:03+01:00 bitid off start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0)
+2026-11-13T12:56:05+01:00 bitid off exit 1: 44 differ, 24 of them big; 72 comparisons, 44 with differences
+2026-11-13T12:56:05+01:00 bitid mc0 start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0 GGML_CUDA_MMVQ_PASCAL_MC=0)
+2026-11-13T12:56:07+01:00 bitid mc0 exit 1: 72 differ, 24 of them big; 72 comparisons, 72 with differences
+2026-11-13T12:56:08+01:00 quiet: load 0.38 0.28 0.60; llama processes 0; MemAvailable: 3138936 kB
+2026-11-13T12:56:08+01:00 perf kcol pass 1 start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0)
+2026-11-13T12:56:28+01:00 perf kcol pass 1 exit 0: 16 lines
+2026-11-13T12:56:28+01:00 quiet: load 0.55 0.33 0.61; llama processes 0; MemAvailable: 3181664 kB
+2026-11-13T12:56:28+01:00 perf mc pass 1 start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0)
+2026-11-13T12:56:48+01:00 perf mc pass 1 exit 0: 16 lines
+2026-11-13T12:56:48+01:00 quiet: load 0.76 0.39 0.62; llama processes 0; MemAvailable: 3169104 kB
+2026-11-13T12:56:48+01:00 perf kcol pass 2 start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0)
+2026-11-13T12:57:09+01:00 perf kcol pass 2 exit 0: 16 lines
+2026-11-13T12:57:09+01:00 quiet: load 0.83 0.43 0.63; llama processes 0; MemAvailable: 3199528 kB
+2026-11-13T12:57:09+01:00 perf mc pass 2 start (GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0)
+2026-11-13T12:57:29+01:00 perf mc pass 2 exit 0: 16 lines
+2026-11-13T12:57:29+01:00 served 1 off start
+2026-11-13T13:06:35+01:00 served 1 off exit 0
+2026-11-13T13:06:35+01:00 served 2 on start
+2026-11-13T13:15:40+01:00 served 2 on exit 0
+2026-11-13T13:15:40+01:00 served 3 on start
+2026-11-13T13:24:46+01:00 served 3 on exit 0
+2026-11-13T13:24:46+01:00 served 4 off start
+2026-11-13T13:33:51+01:00 served 4 off exit 0
+2026-11-13T13:33:51+01:00 quiet: load 1.08 1.12 1.04; llama processes 0; MemAvailable: 3238868 kB

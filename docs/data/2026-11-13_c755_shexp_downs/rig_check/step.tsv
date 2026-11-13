@@ -1,0 +1,5 @@
+load	request	on_values	off_values	on_minus_off_ms	spread_ms	class
+warm	greedy-1	127.06,126.92	131.36,129.23	-3.31	2.13	gain
+warm	greedy-2	121.16,121.25	121.67,121.64	-0.45	0.09	gain
+prof	greedy-1	171.51,173.1	172.1,173.07	-0.28	1.59	negligible
+prof	greedy-2	156.25,155.77	156.52,154.71	+0.39	1.81	negligible

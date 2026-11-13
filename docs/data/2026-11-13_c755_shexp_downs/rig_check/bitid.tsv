@@ -1,0 +1,25 @@
+arm	hook_takes	input	type	comparisons	differing	values_differing	values
+on	leaves, leaves	MUL_MAT	q4_0	12	0	0	68670
+on	leaves, leaves	MUL_MAT/unif	q4_0	12	0	0	68670
+on	leaves, leaves	MUL_MAT/big	q4_0	12	0	0	68670
+on	leaves, leaves	MUL_MAT	q5_0	12	0	0	68670
+on	leaves, leaves	MUL_MAT/unif	q5_0	12	0	0	68670
+on	leaves, leaves	MUL_MAT/big	q5_0	12	0	0	68670
+table	takes, takes	MUL_MAT	q4_0	12	0	0	68670
+table	takes, takes	MUL_MAT/unif	q4_0	12	0	0	68670
+table	takes, takes	MUL_MAT/big	q4_0	12	0	0	68670
+table	takes, takes	MUL_MAT	q5_0	12	0	0	68670
+table	takes, takes	MUL_MAT/unif	q5_0	12	0	0	68670
+table	takes, takes	MUL_MAT/big	q5_0	12	0	0	68670
+off	takes, takes	MUL_MAT	q4_0	12	0	0	68670
+off	takes, takes	MUL_MAT/unif	q4_0	12	0	0	68670
+off	takes, takes	MUL_MAT/big	q4_0	12	12	7717	68670
+off	takes, takes	MUL_MAT	q5_0	12	8	23	68670
+off	takes, takes	MUL_MAT/unif	q5_0	12	12	676	68670
+off	takes, takes	MUL_MAT/big	q5_0	12	12	9815	68670
+mc0	leaves, leaves	MUL_MAT	q4_0	12	12	47853	68670
+mc0	leaves, leaves	MUL_MAT/unif	q4_0	12	12	47403	68670
+mc0	leaves, leaves	MUL_MAT/big	q4_0	12	12	20882	68670
+mc0	leaves, leaves	MUL_MAT	q5_0	12	12	47675	68670
+mc0	leaves, leaves	MUL_MAT/unif	q5_0	12	12	47777	68670
+mc0	leaves, leaves	MUL_MAT/big	q5_0	12	12	21140	68670

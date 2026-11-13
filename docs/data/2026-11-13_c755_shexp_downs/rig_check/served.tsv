@@ -1,0 +1,6 @@
+unit	1-off_verify-r1	1-off_verify-r2	2-on_verify-r1	2-on_verify-r2	3-on_verify-r1	3-on_verify-r2	4-off_verify-r1	4-off_verify-r2	on_minus_off_ms	spread_ms	class
+Q4_0 shexp down	0.580	0.586	0.387	0.383	0.389	0.385	0.581	0.581	-0.196	0.006	gain
+Q5_0 shexp down	0.276	0.276	0.258	0.261	0.258	0.263	0.277	0.280	-0.017	0.006	gain
+both downs	0.857	0.862	0.646	0.643	0.646	0.649	0.858	0.860	-0.213	0.005	gain
+the rest	99.684	99.710	99.698	99.775	99.728	99.821	99.723	99.748	+0.040	0.124	negligible
+all groups	100.540	100.571	100.343	100.418	100.375	100.470	100.581	100.608	-0.174	0.127	gain
