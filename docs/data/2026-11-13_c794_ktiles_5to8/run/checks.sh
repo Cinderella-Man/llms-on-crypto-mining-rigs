@@ -220,7 +220,7 @@ fi
 
 if step record; then
     mkdir -p "$M/sets"
-    locked env OUT="$M/sets" SUITE=ro8kt BIN="$T/bin" JOBS="$JOBS" LINK_FROM="${LINK_FROM:-}" DOCKER_ARGS="${DOCKER_ARGS:-}" \
+    locked env STEPS="record tar" OUT="$M/sets" SUITE=ro8kt BIN="$T/bin" JOBS="$JOBS" LINK_FROM="${LINK_FROM:-}" DOCKER_ARGS="${DOCKER_ARGS:-}" \
         nice -n 19 bash "$REPO/scripts/record_checks.sh" > "$M/logs/record.log" 2>&1
     rc=$?
     add record "set ro8kt" "$([ $rc = 0 ] && [ -f "$M/sets/ro8kt.tar" ] && echo OK || echo FAIL)" \
