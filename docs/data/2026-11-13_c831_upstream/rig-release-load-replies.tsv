@@ -1,0 +1,19 @@
+model	load	prompt	tokens	md5	drafted	accepted	gen_tok_s_diag	start
+flashnext	rc2	code	256	765e21aa9b2ce0bef1e70ee347741f18	239	175	21.74	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	rc2	prose	256	06bdf748aeb15da6e716e8819d191eca	281	160	18.54	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	rc2-noub	code	256	765e21aa9b2ce0bef1e70ee347741f18	239	175	21.82	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	rc2-noub	prose	256	06bdf748aeb15da6e716e8819d191eca	281	160	18.89	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	ref	code	256	765e21aa9b2ce0bef1e70ee347741f18	239	175	22.38	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	ref	prose	256	06bdf748aeb15da6e716e8819d191eca	281	160	19.52	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flintq5	rc2	code	256	9963f082f73ae5c07bfde959cbc28c06			59.42	 The function should handle timezone-aware strings, and the 
+flintq5	rc2	prose	256	7915fe00cb343f2bf4baea7b3a112ef7			51.28	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq5	ref	code	256	9963f082f73ae5c07bfde959cbc28c06			73.25	 The function should handle timezone-aware strings, and the 
+flintq5	ref	prose	256	7915fe00cb343f2bf4baea7b3a112ef7			51.08	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	rc2	code	256	5bb2804ec9a96885ac9aad846d1e9c6d			53.26	 The function should handle timezone-aware strings, and the 
+flintq8	rc2	prose	256	1586394daf8a9781a6c8b5fb683d9776			44.39	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	ref	code	256	5bb2804ec9a96885ac9aad846d1e9c6d			39.38	 The function should handle timezone-aware strings, and the 
+flintq8	ref	prose	256	1586394daf8a9781a6c8b5fb683d9776			35.88	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+ornith	rc2	code	256	c3e5184716bcaebe327169ae3a60b939			15.38	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	rc2	prose	256	47180e43fcade087a9652ff3d624c0d0			17.07	\n\n<think>\nA hash map handles collisions when two different k
+ornith	ref	code	256	c3e5184716bcaebe327169ae3a60b939			15.55	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	ref	prose	256	47180e43fcade087a9652ff3d624c0d0			17.07	\n\n<think>\nA hash map handles collisions when two different k

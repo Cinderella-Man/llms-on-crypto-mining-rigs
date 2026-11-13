@@ -23,6 +23,12 @@ the same errors on all 3,938 cases both hold. C662's one-card set passes nativel
 kernels' sets `v4kern` and `ro8kt` pass with every planted fault caught, and the card's logits differ from
 `80c94fe0d`'s on the same 143 random models as on the CPU, where C831 traced the difference to upstream's #29810.
 
+**The release files on `v4-rc2` (R153 part 3): they load, fit and give the same greedy replies as before the merge.**
+The four release files load and fit on nine P106 cards and the 4 GB host with their release lines: Flash-Next with its
+MTP draft, Flint Pascal Q5 and Q8 GGUF, and Ornith-1.5-122B Pascal N2P GGUF. Every card holds the same memory as on the
+last pre-merge build, `65ac9a47d`, and every greedy reply is the same bytes on both builds. Flash-Next's draft runs the
+same at `--spec-draft-n-ubatch` 128 and at 512; 512 takes 146 MiB more on its card.
+
 ## The branch
 
 `pascal-p106-v4-b12360-up` at **`da2920d45`**, one merge commit on `pascal-p106-v4` `80c94fe0d` (the second parent
@@ -160,15 +166,89 @@ each build gives both records' errors, 3.41459379e-08 and 3.5426209e-08, every t
 record) and its `dense` part (`MUL_MAT` at 1–8 tokens, 4,308 cases, 15.5 GB), whose kernels are the fork's; and its
 `moeids` part, as the release tarball holds no `test-moe-ids`. A change to those kernels' sm_61 code reopens them.
 
+### Part (3): the release files load on `v4-rc2`
+
+On the same rig, all nine cards, 2026-11-13 15:58–18:27, nothing timed. The new build is `v4-rc2` (`pascal-p106-v4`
+`eb82916d3`: `v4-rc1` plus C828, host code behind a switch that is off by default; its rig tarball has md5
+`ac5f32d66ec286eeef4cf28f5d484816`). The reference is the last v4 build before the merge, `65ac9a47d` (C825's tip). Every
+switch added after it is off by default, so with the release lines both builds take the same fork paths. Each file is
+loaded with its release line: the v3 presets in [release/](../../../release/), with the v4 release file in place of
+v3's.
+
+- **Flash-Next:** UkisAI's Swift-1.5 GSQ-RCO Q2_0 (its n-gram table as the third shard) with the MTP draft, on
+  `release/flash-next-v3/settings.env` (65,536 tokens, `--spec-draft-n-ubatch 128`).
+- **Flint Pascal Q8 GGUF** (`p065`): `release/flint-v3/settings.env` (262,144 tokens, `-ts 6,6,5,5,6,5,5,6,6`,
+  `--pipe-depth 4`).
+- **Flint Pascal Q5 GGUF** (K2h-r16): the same line with layers by count (no `-ts`), as in the 5-bit lane of
+  `release/flint-v3/README.md`.
+- **Ornith-1.5-122B Pascal N2P GGUF** (`valid1`): `release/ornith-v3/settings.env` (49,152 tokens).
+
+[run/r153_load.sh](run/r153_load.sh) works through each file and build in turn, rc2 first:
+- It starts one llama-server under the RAM watchdog (`bench/agent_check/rig_server.sh`).
+- 20 s after the server answers, it reads the memory of each card and the host's MemAvailable.
+- It sends two greedy requests (`/completion`, temperature 0, 256 tokens, no prompt cache): a coding request and a
+  prose paragraph.
+- Then [rig_greedy.sh](../2026-11-05_ladder5/run/rig_greedy.sh), the v3.0 release tests' greedy check, decodes the
+  coding request with `llama-completion` on both builds, one token a pass, at `-c 4096` and each model's no-draft split.
+- Flash-Next is loaded once more on rc2 without `--spec-draft-n-ubatch`. The draft's micro-batch then follows `-ub`,
+  512.
+
+**Every file loads and fits on both builds, with the same memory on every card to the MiB**
+([rig-release-load-memory.tsv](rig-release-load-memory.tsv)):
+
+| File | Load, s (rc2, ref) | MiB per card, cards 0–8 (both builds) | Sum, MiB | MemAvailable 20 s after, kB (rc2, ref) | Lowest during the load, kB (rc2, ref) |
+|---|---|---|---:|---|---|
+| Flash-Next, draft micro-batch 128 | 314, 313 | 5,059 5,095 4,963 5,111 4,875 4,979 4,381 4,991 4,647 | 44,101 | 892,368, 893,840 | 423,356, 452,488 |
+| Flash-Next on rc2, the flag left out (draft micro-batch 512) | 313 | 5,059 5,095 4,963 5,111 **4,879** 4,979 4,381 4,991 **4,793** | 44,251 | 857,652 | 414,648 |
+| Flint Pascal Q8 GGUF | 589, 591 | 5,383 5,923 5,081 5,591 5,923 5,081 5,545 5,293 4,793 | 48,613 | 1,427,444, 1,448,744 | 1,216,088, 1,240,608 |
+| Flint Pascal Q5 GGUF | 437, 433 | 4,981 4,763 3,641 4,707 3,631 4,683 3,595 4,141 4,055 | 38,197 | 1,442,556, 1,466,760 | 1,261,280, 1,280,820 |
+| Ornith-1.5-122B Pascal N2P GGUF | 684, 681 | 5,603 5,635 5,549 5,635 5,243 5,351 5,513 5,601 5,009 | 49,139 | 1,538,512, 1,552,528 | 1,222,096, 1,242,376 |
+
+- **After the two requests**, each card holds a little more (the TSV), again the same on both builds.
+- **MemAvailable** is one reading per load; the lowest value comes from the 2-second log over the whole load.
+- **rc2 reads lower than the reference on every file:** 20 s after the server answers, by 1,472, 21,300, 24,204 and
+  14,016 kB (Flash-Next, Flint Q8, Flint Q5, Ornith). rc2 always loaded first, so the two builds did not start from the
+  same page cache.
+- **The lowest reading of any load**, 414,648 kB, is Flash-Next without the flag while it loads. That is far above the
+  watchdog's 60 MB floor, and the watchdog stopped no load.
+- **Swap.** Flash-Next (direct I/O, `-lm dio`) leaves the swap where it was, 15,192 kB in use. Flint and Ornith read
+  their files through mmap, and the most swap in use during the load was about the same on both builds (kB, rc2 then
+  ref):
+
+  | File | Most swap in use, rc2 | Most swap in use, ref |
+  |---|---:|---:|
+  | Flint Pascal Q8 GGUF | 297,108 | 300,688 |
+  | Flint Pascal Q5 GGUF | 301,776 | 303,636 |
+  | Ornith-1.5-122B Pascal N2P GGUF | 343,532 | 344,192 |
+
+**Every greedy reply is the same bytes on both builds**
+([rig-release-reply-agree.tsv](rig-release-reply-agree.tsv), [rig-release-greedy.tsv](rig-release-greedy.tsv)):
+
+| File | Server, coding request | Server, prose | Drafted and accepted (coding; prose) | `rig_greedy.sh` (`llama-completion`) |
+|---|---|---|---|---|
+| Flash-Next | the same, 743 characters | the same, 1,196 | 239 and 175; 281 and 160 on both builds, and on rc2 without the flag | SAME, md5 `4384ebc02147be1ee6f38d1ce4a43f21`, 745 B |
+| Flint Pascal Q8 GGUF | the same, 813 | the same, 1,187 | — | SAME, md5 `c5b2d8f20654728edfe38c37458b4c5c`, 972 B |
+| Flint Pascal Q5 GGUF | the same, 1,288 | the same, 1,335 | — | SAME, md5 `d72ca1b968a8c1eb2b1ebeea22458ff9`, 1,113 B |
+| Ornith-1.5-122B Pascal N2P GGUF | the same, 728 | the same, 1,257 | — | SAME, md5 `35f987c059c7d2f521404e964995cd2d`, 974 B |
+
+- **The replies are sane text:** Flash-Next and Ornith begin their reasoning about the request ("The user wants …").
+  Flint continues the raw prompt (`/completion` applies no chat template) with prose about the task.
+- **#29810 changes none of them.** It changes the CPU's attention, and no release line runs attention on the CPU.
+- **Flash-Next's `llama-completion` text is the same as v3.0's:** the same bytes as v3.0 (`1551f5fe1`) and the
+  2026-11-11 night build gave in R57 ([2026-11-11_r57_v4night_p106](../2026-11-11_r57_v4night_p106/README.md), the same
+  prompt and split).
+
+**The draft setting for the v4 presets.** rc2 needs no particular `--spec-draft-n-ubatch` for Flash-Next's MTP draft.
+At 128 (the v3 preset) and at 512 (the flag left out, so `-ub`'s value) it loads, drafts the same tokens and gives the
+same reply, and the server log has no warning or error at either value. 512 takes 146 MiB more on card 8 (the draft's
+card) and 4 MiB more on card 4. MemAvailable 20 s after the server answered was 34,716 kB lower at 512 (one reading
+each). So either value is safe on rc2: 512 for the faster prompt reads, 128 where card 8 needs the room.
+
 ## Not checked here
 
-- **Speed and memory on a P106.** Nothing is timed. The release tests of `v4-rc1` (Flash-Next, Flint and Ornith, on
-  one build) measure them; upstream's changes that act on a P106 are listed above (the scheduler kept at a re-reserve,
-  the reused CUDA graphs' skipped walk, the separate draft's graph budget).
-- **The release's model files** were not opened by the merged loader here (a full read of each file on a shared
-  machine). Upstream's loader changes add optional tensors only (the KV scales) and let qwen3.5 read its merged
-  tensors or the separate ones; qwen4exp's loader is unchanged. R153's part (3), a run of its own, loads all three
-  with their greedy replies against `80c94fe0d`'s.
+- **Speed on a P106.** Nothing is timed here; the release agent checks on `v4-rc2` measure it. Upstream's changes that
+  act on a P106 are listed above: the scheduler kept at a re-reserve, the reused CUDA graphs' skipped walk, and the
+  separate draft's graph budget. Part (3) has the memory.
 - **C662's whole `test-backend-ops` in five shards through the compute 6.1 PTX** (the fork's paths off and forced on):
   it needs a quant card.
 
@@ -200,6 +280,12 @@ record) and its `dense` part (`MUL_MAT` at 1–8 tokens, 4,308 cases, 15.5 GB), 
 | [rig-archs-off.tsv](rig-archs-off.tsv) | R153: per random model, the tip's logits against `80c94fe0d`'s on the card and on the CPU |
 | [rig-part2.txt](rig-part2.txt) | R153 part (2): the consoles of `check.sh` and `gpu_checks.sh` |
 | [rig-repeat.tsv](rig-repeat.tsv) | R153: the case held twice, five replays with each build |
+| [run/r153_load.sh](run/r153_load.sh) | R153 part (3): each release file with its release line on two builds: memory per card, MemAvailable, greedy replies, then `rig_greedy.sh` |
+| [run/r153_load_tables.py](run/r153_load_tables.py) | R153 part (3): the `rig-release-*` tables from `r153_load.sh`'s output (standard library only) |
+| [rig-release-load-memory.tsv](rig-release-load-memory.tsv) | R153 part (3): per file and load, seconds to load, MiB per card 20 s after the server answered and after the two requests, MemAvailable then and its lowest during the load |
+| [rig-release-load-replies.tsv](rig-release-load-replies.tsv) | R153 part (3): per load and prompt, tokens, md5 of the reply, drafted and accepted tokens, the server's tok/s for that one request (a diagnostic, not compared), the reply's first characters |
+| [rig-release-reply-agree.tsv](rig-release-reply-agree.tsv) | R153 part (3): each reply against the reference build's (the same or not, common prefix in characters and words) |
+| [rig-release-greedy.tsv](rig-release-greedy.tsv) | R153 part (3): `rig_greedy.sh`'s rows per file (md5, bytes, `llama-completion`'s eval line) |
 
 ## Commands
 
@@ -247,6 +333,12 @@ SET=$S/v4kern BIN=$TIP/bin OUT=$O/v4kern bash scripts/replay_checks.sh      # an
 TIP=... BASE=... TIP_SET=$S/kshape BASE_SET=$S/kshape-base OPS=MUL_MAT_ID \
   P='^type_a=q2_0,type_b=f32,n_mats=4,n_used=2,b=0,m=512,n=32,k=256,m_v=0,ids_offset=0,skip=0$' N=5 DEV=1 OUT=<dir> \
   bash docs/data/2026-11-13_c831_upstream/run/case_repeat.sh
+# part (3), from a machine that only runs ssh (the build folders under /opt/llama-builds on the rig)
+RIG=<alias> NEW=llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828 REF=llama.cpp-20261113-65ac9a47d-pascal-p106-v4 \
+  FN=<Swift Q2_0 shard 1> DRAFT=<MTP draft> FLINT_Q5=<flint-pascal-Q5.gguf> FLINT_Q8=<Flint Pascal Q8 GGUF> \
+  ORNITH=<Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf> RIGDIR=<folder on the rig> OUT=<dir> \
+  bash docs/data/2026-11-13_c831_upstream/run/r153_load.sh
+python3 -I docs/data/2026-11-13_c831_upstream/run/r153_load_tables.py <dir> <tables dir>
 ```
 
 The random models of the combo part are those of C662's checks (`checks.sh`'s coldtier step,

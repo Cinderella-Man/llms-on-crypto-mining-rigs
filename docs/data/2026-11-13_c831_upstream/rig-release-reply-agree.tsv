@@ -1,0 +1,11 @@
+model	prompt	load	vs_ref	common_prefix_chars	ref_chars	chars	common_prefix_words	ref_words	words
+flashnext	code	rc2	same	743	743	743	110	110	110
+flashnext	prose	rc2	same	1196	1196	1196	196	196	196
+flashnext	code	rc2-noub	same	743	743	743	110	110	110
+flashnext	prose	rc2-noub	same	1196	1196	1196	196	196	196
+flintq5	code	rc2	same	1288	1288	1288	191	191	191
+flintq5	prose	rc2	same	1335	1335	1335	203	203	203
+flintq8	code	rc2	same	813	813	813	105	105	105
+flintq8	prose	rc2	same	1187	1187	1187	188	188	188
+ornith	code	rc2	same	728	728	728	106	106	106
+ornith	prose	rc2	same	1257	1257	1257	202	202	202

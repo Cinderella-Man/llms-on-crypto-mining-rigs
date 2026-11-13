@@ -1,0 +1,9 @@
+model	build	md5	bytes	eval	common_prefix_chars_vs_first	common_words
+flashnext	llama.cpp-20261113-65ac9a47d-pascal-p106-v4	4384ebc02147be1ee6f38d1ce4a43f21	745	18220.78 ms /   255 runs   (   71.45 ms per token,    14.00 tokens per second)	745	110 of 110/110
+flashnext	llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828	4384ebc02147be1ee6f38d1ce4a43f21	745	18034.91 ms /   255 runs   (   70.73 ms per token,    14.14 tokens per second)	745	110 of 110/110
+flintq5	llama.cpp-20261113-65ac9a47d-pascal-p106-v4	d72ca1b968a8c1eb2b1ebeea22458ff9	1113	7855.77 ms /   255 runs   (   30.81 ms per token,    32.46 tokens per second)	1113	147 of 147/147
+flintq5	llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828	d72ca1b968a8c1eb2b1ebeea22458ff9	1113	8003.17 ms /   255 runs   (   31.38 ms per token,    31.86 tokens per second)	1113	147 of 147/147
+flintq8	llama.cpp-20261113-65ac9a47d-pascal-p106-v4	c5b2d8f20654728edfe38c37458b4c5c	972	10026.95 ms /   255 runs   (   39.32 ms per token,    25.43 tokens per second)	972	126 of 126/126
+flintq8	llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828	c5b2d8f20654728edfe38c37458b4c5c	972	9839.54 ms /   255 runs   (   38.59 ms per token,    25.92 tokens per second)	972	126 of 126/126
+ornith	llama.cpp-20261113-65ac9a47d-pascal-p106-v4	35f987c059c7d2f521404e964995cd2d	974	19464.40 ms /   255 runs   (   76.33 ms per token,    13.10 tokens per second)	972	146 of 146/146
+ornith	llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828	35f987c059c7d2f521404e964995cd2d	974	19523.64 ms /   255 runs   (   76.56 ms per token,    13.06 tokens per second)	972	146 of 146/146
