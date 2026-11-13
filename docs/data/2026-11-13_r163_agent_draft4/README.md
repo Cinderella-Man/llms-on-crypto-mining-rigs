@@ -75,7 +75,7 @@ for 5–8-token verify passes; this one has both.
 - **The agent tables' `tokens_per_step` column** is 1 + 3 × acceptance, which assumes a draft of 3 tokens: for the
   4-token arms it reads 3.05 and 3.08, which is wrong. Use [steps.tsv](steps.tsv) for these arms.
 
-Not classed as a gain or a loss: one run on each rig. Both runs point the same way, against both 3-token runs.
+Not classed in R163 (one run on each rig). R163b classed the two runs against `v4r`'s two as **a loss** ([r163b.md](r163b.md)): each rig is slower than its own `v4r` run, beyond both arms' spread.
 
 ## The host and the cards (rig 1, R163)
 
@@ -157,6 +157,8 @@ awk -F', ' -v a=<first line> -v b=<last line> 'NR >= a && NR <= b { v = $6 + 0; 
 | [host.tsv](host.tsv) | per arm: lowest MemAvailable, when, and swap |
 | [v4rd4_report_table.md](v4rd4_report_table.md), [v4rd4_compare.md](v4rd4_compare.md), [v4rd4_gonogo.md](v4rd4_gonogo.md) | the agent check's report after R163's run |
 | [run/r163.sh](run/r163.sh) | the driver: R156's with the arms `v4rd4` and `v4rd42` |
+| [r163b.md](r163b.md) | R163b: run 2's checks (started command, server log, swap on rig 2) and the class of the two runs against `v4r`'s two |
+| [v4rd42_compare.md](v4rd42_compare.md), [v4rd42_report_table.md](v4rd42_report_table.md), [v4rd42_gonogo.md](v4rd42_gonogo.md) | the agent check's report over all 12 arms, `v4rd4` and `v4rd42` included |
 | [run/steps.sh](run/steps.sh) | tokens and ms a step from the server logs |
 
 Provenance: the agent check's 12 bugfix tasks come from Exercism's Python and JavaScript tracks (MIT; see
