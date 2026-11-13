@@ -313,19 +313,19 @@ if step server; then
     log "server done"
 fi
 
-# The tip's random qwen4exp model has 156 tensors, the base's loader expects 150 (upstream's tensor lists changed), so
-# the base's llama-server cannot load it: the server step's dbase arm fails to start. bmodel writes the base's own
+# The tip's random qwen4exp model has 156 tensors and the base creates 150 of them (the tip writes the optional KV
+# scales of upstream #28392, which the base does not know), so the base's llama-server cannot load it: the server
+# step's dbase arm fails to start. bmodel writes the base's own
 # random model and lists the two files' tensors; bserver runs the dbase/doff pair on the base's model, with the tip's
 # llama-server and with the revert build's
 if step bmodel; then
-    mkdir -p "$M/tools" && git -C "$SRC" archive "$TIP" gguf-py | tar -x -C "$M/tools"
     rm -rf "$S/bmodels" && mkdir -p "$S/bmodels"
     box "$CPU_IMAGE" bash -c "nice -n 19 $BC/bin/test-llama-archs -a '^qwen4exp\$' -s 1 -o $S/bmodels --mtp-draft > $S/bmodels/save.log 2>&1"
     rc=$?
     add bmodel "the base's qwen4exp with an MTP block" "$([ $rc = 0 ] && [ -s "$S/bmodels/qwen4exp-moe-mtp.gguf" ] && echo OK || echo FAIL)" \
         "rc=$rc; md5 $(md5sum < "$S/bmodels/qwen4exp-moe-mtp.gguf" | cut -d' ' -f1)"
     for f in qwen4exp-moe-mtp qwen4exp-moe-mtp-draft; do
-        nice -n 19 python3 -I "$RUN/gguf_names.py" "$M/tools/gguf-py" "$S/models/$f.gguf" "$S/bmodels/$f.gguf" > "$S/names-$f.txt" 2>&1
+        nice -n 19 python3 -I "$RUN/gguf_names.py" "$S/models/$f.gguf" "$S/bmodels/$f.gguf" > "$S/names-$f.txt" 2>&1
         add bmodel "$f: the tip's file against the base's" "$(head -n 1 "$S/names-$f.txt" | grep -q 'only tip 0, only base 0, differ 0' && echo SAME || echo REVIEW)" \
             "$(head -n 1 "$S/names-$f.txt"); $(sed -n '2,9p' "$S/names-$f.txt" | tr '\n' ';' | cut -c1-500)"
     done
