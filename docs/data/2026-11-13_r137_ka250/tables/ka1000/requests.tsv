@@ -1,0 +1,5 @@
+load	request	delta_ms	anchor	prompt_ms	predicted_ms	rest_ms	outside_ms	head_ms	head_waits_ms	head_idle_ms	head_other_ms	tail_ms	tail_waits_ms	tail_idle_ms	tail_other_ms	waits_in_gen	waits_in_gen_ms	waits_in_prompt	outside_less_waits_ms	last_eval_to_t_end_ms
+f1	greedy	455.720	2 progress lines	4287.730	10044.470	9173.619	870.851	578.764	0	375.530	203.234	292.087	0	228.441	63.646	0	0	0	870.851	-1.521
+f1	long	651.433	2 progress lines, 6 fits (the largest)	24793.300	9858.950	9314.021	544.929	303.042	0	0.000	303.042	241.887	0	0.000	241.887	0	0	0	544.929	75.810
+f1-2	greedy	436.051	2 progress lines	4022.430	10095.420	9145.645	949.775	657.591	0	460.123	197.468	292.184	0	231.448	60.736	0	0	0	949.775	-1.455
+f1-2	long	538.363	3 progress lines	24751.750	10650.850	10121.517	529.333	170.207	0	0.000	170.207	359.126	0	0.000	359.126	0	0	0	529.333	191.926

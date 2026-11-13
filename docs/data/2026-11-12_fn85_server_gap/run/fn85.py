@@ -114,6 +114,11 @@ def anchor(s, ps, task, draft_last, tol):
     return max(ok), f"{len(lines)} progress lines" + ("" if len(ok) == 1 else f", {len(ok)} fits (the largest)")
 
 
+# waits.tsv's columns, written as the header alone when no load has a wait (R137, 2026-11-13: EAGER=1 left none)
+WAIT_KEYS = ["load", "request", "card", "evaluation", "where", "start_ms", "enter_ms", "host_ms", "gpu_ms", "end_ms",
+             "wait_ms", "idle_before_ms", "after_beat_ms", "from_t_s_ms", "to_t_end_ms", "in_gen_ms"]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
@@ -248,7 +253,7 @@ def main():
     if a.tsv_dir:
         os.makedirs(a.tsv_dir, exist_ok=True)
         for fn, rows, cs in [("requests.tsv", req_rows, list(req_rows[0].keys())),
-                             ("waits.tsv", wait_rows, list(wait_rows[0].keys()))]:
+                             ("waits.tsv", wait_rows, list(wait_rows[0].keys()) if wait_rows else WAIT_KEYS)]:
             with open(os.path.join(a.tsv_dir, fn), "w") as f:
                 w = csv.writer(f, delimiter="\t", lineterminator="\n")
                 w.writerow(cs)

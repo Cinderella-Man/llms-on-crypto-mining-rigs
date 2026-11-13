@@ -1,0 +1,10 @@
+load	min_mem_available_mib	swap_start_mib	swap_max_mib	major_faults	pswpin	pswpout
+f1	521	5	5	4000	12	0
+f1-2	490	5	5	0	0	0
+f1np	494	5	5	1	1	0
+f1ka250	516	5	5	568	1	0
+f1ka250-2	493	5	5	0	0	0
+f1ka250np	493	5	5	1	1	0
+f0ka250	503	5	5	13	1	0
+f0ka250-2	466	5	5	0	0	0
+f0ka250np	498	5	5	0	0	0

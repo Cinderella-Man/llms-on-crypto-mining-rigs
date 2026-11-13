@@ -1,0 +1,4 @@
+load	steps_paired	step_mean_diff_ms	standard_error_ms	step_median_diff_ms	verify_span_mean_diff_ms	verify_gpu_mean_diff_ms	verify_rest_mean_diff_ms	draft_span_mean_diff_ms	draft_gpu_mean_diff_ms	lead_sum_mean_diff_ms	turn_mid_mean_diff_ms	turn_last_mean_diff_ms
+f1-2	78	-0.375	0.187	-0.053	0.008	0.007	0.002	-0.383	0.004	0.017	-0.038	-0.365
+f1ka250	78	-0.183	0.216	-0.021	0.018	0.020	-0.002	-0.200	-0.016	0.024	0.006	-0.214
+f1ka250-2	78	-0.308	0.190	-0.044	0.003	-0.003	0.006	-0.311	0.026	0.021	-0.041	-0.317

@@ -1,0 +1,110 @@
+2026-11-13T09:44:14+01:00 f1: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T09:44:14+01:00 quiet: load 4.16 2.02 1.26; llama processes 0; MemAvailable: 3227920 kB
+watchdog up: 2026-11-13T09:44:14+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 8276
+server f1 up after 226 s
+2026-11-13T09:48:05+01:00 f1 greedy: request start 1794559685.610
+2026-11-13T09:48:19+01:00 f1 greedy: request exit 0 end 1794559699.974 (1949 bytes); table resident bytes ?
+2026-11-13T09:48:23+01:00 f1 long: request start 1794559703.994
+2026-11-13T09:48:58+01:00 f1 long: request exit 0 end 1794559738.720 (1777 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T09:49:01+01:00 f1: stopped
+2026-11-13T09:49:01+01:00 f1: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T09:49:03+01:00 f1ka250: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T09:49:03+01:00 quiet: load 1.26 2.08 1.56; llama processes 0; MemAvailable: 3232236 kB
+watchdog up: 2026-11-13T09:49:03+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 9239
+server f1ka250 up after 224 s
+2026-11-13T09:52:52+01:00 f1ka250 greedy: request start 1794559972.563
+2026-11-13T09:53:06+01:00 f1ka250 greedy: request exit 0 end 1794559986.695 (1947 bytes); table resident bytes ?
+2026-11-13T09:53:10+01:00 f1ka250 long: request start 1794559990.710
+2026-11-13T09:53:45+01:00 f1ka250 long: request exit 0 end 1794560025.438 (1750 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T09:53:48+01:00 f1ka250: stopped
+2026-11-13T09:53:48+01:00 f1ka250: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T09:53:50+01:00 f0ka250: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T09:53:50+01:00 quiet: load 1.08 1.47 1.43; llama processes 0; MemAvailable: 3250892 kB
+watchdog up: 2026-11-13T09:53:50+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 10172
+server f0ka250 up after 224 s
+2026-11-13T09:57:39+01:00 f0ka250 greedy: request start 1794560259.486
+2026-11-13T09:57:54+01:00 f0ka250 greedy: request exit 0 end 1794560274.057 (1947 bytes); table resident bytes ?
+2026-11-13T09:57:58+01:00 f0ka250 long: request start 1794560278.077
+2026-11-13T09:58:24+01:00 f0ka250 long: request exit 0 end 1794560304.982 (1248 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T09:58:28+01:00 f0ka250: stopped
+2026-11-13T09:58:28+01:00 f0ka250: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T09:58:30+01:00 f1np: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T09:58:30+01:00 quiet: load 1.13 1.29 1.36; llama processes 0; MemAvailable: 3182580 kB
+watchdog up: 2026-11-13T09:58:30+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 11096
+server f1np up after 225 s
+2026-11-13T10:02:19+01:00 f1np greedy: request start 1794560539.172
+2026-11-13T10:02:33+01:00 f1np greedy: request exit 0 end 1794560553.155 (1947 bytes); table resident bytes ?
+2026-11-13T10:02:37+01:00 f1np long: request start 1794560557.174
+2026-11-13T10:03:08+01:00 f1np long: request exit 0 end 1794560588.367 (1756 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T10:03:11+01:00 f1np: stopped
+2026-11-13T10:03:11+01:00 f1np: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T10:03:13+01:00 f1ka250np: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T10:03:13+01:00 quiet: load 0.93 1.18 1.30; llama processes 0; MemAvailable: 3193760 kB
+watchdog up: 2026-11-13T10:03:13+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 12023
+server f1ka250np up after 224 s
+2026-11-13T10:07:02+01:00 f1ka250np greedy: request start 1794560822.403
+2026-11-13T10:07:16+01:00 f1ka250np greedy: request exit 0 end 1794560836.431 (1949 bytes); table resident bytes ?
+2026-11-13T10:07:20+01:00 f1ka250np long: request start 1794560840.448
+2026-11-13T10:07:51+01:00 f1ka250np long: request exit 0 end 1794560871.600 (1861 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T10:07:54+01:00 f1ka250np: stopped
+2026-11-13T10:07:54+01:00 f1ka250np: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T10:07:56+01:00 f0ka250np: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T10:07:56+01:00 quiet: load 0.91 1.06 1.21; llama processes 0; MemAvailable: 3239596 kB
+watchdog up: 2026-11-13T10:07:56+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 12950
+server f0ka250np up after 225 s
+2026-11-13T10:11:45+01:00 f0ka250np greedy: request start 1794561105.404
+2026-11-13T10:11:59+01:00 f0ka250np greedy: request exit 0 end 1794561119.847 (1945 bytes); table resident bytes ?
+2026-11-13T10:12:03+01:00 f0ka250np long: request start 1794561123.864
+2026-11-13T10:12:35+01:00 f0ka250np long: request exit 0 end 1794561155.434 (1934 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T10:12:38+01:00 f0ka250np: stopped
+2026-11-13T10:12:38+01:00 f0ka250np: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T10:12:40+01:00 f1-2: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T10:12:40+01:00 quiet: load 1.15 1.11 1.19; llama processes 0; MemAvailable: 3233988 kB
+watchdog up: 2026-11-13T10:12:40+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 13882
+server f1-2 up after 225 s
+2026-11-13T10:16:29+01:00 f1-2 greedy: request start 1794561389.102
+2026-11-13T10:16:43+01:00 f1-2 greedy: request exit 0 end 1794561403.259 (1950 bytes); table resident bytes ?
+2026-11-13T10:16:47+01:00 f1-2 long: request start 1794561407.276
+2026-11-13T10:17:22+01:00 f1-2 long: request exit 0 end 1794561442.733 (1786 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T10:17:25+01:00 f1-2: stopped
+2026-11-13T10:17:25+01:00 f1-2: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T10:17:27+01:00 f1ka250-2: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T10:17:27+01:00 quiet: load 1.16 1.14 1.18; llama processes 0; MemAvailable: 3236748 kB
+watchdog up: 2026-11-13T10:17:27+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 14820
+server f1ka250-2 up after 224 s
+2026-11-13T10:21:16+01:00 f1ka250-2 greedy: request start 1794561676.602
+2026-11-13T10:21:30+01:00 f1ka250-2 greedy: request exit 0 end 1794561690.760 (1948 bytes); table resident bytes ?
+2026-11-13T10:21:34+01:00 f1ka250-2 long: request start 1794561694.776
+2026-11-13T10:22:10+01:00 f1ka250-2 long: request exit 0 end 1794561730.253 (1831 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T10:22:12+01:00 f1ka250-2: stopped
+2026-11-13T10:22:12+01:00 f1ka250-2: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T10:22:15+01:00 f0ka250-2: n-gram table cache dropped, resident bytes ? -> ?
+2026-11-13T10:22:15+01:00 quiet: load 1.04 1.10 1.15; llama processes 0; MemAvailable: 3229364 kB
+watchdog up: 2026-11-13T10:22:15+0100 ram_watchdog: usable < 20 MiB for 2 s; MemAvailable < 60 MiB; psi full > 40 % for 10 s, some > 40 % for 10 s; swap-out > 600 MiB in 10 s; guards pid 15754
+server f0ka250-2 up after 225 s
+2026-11-13T10:26:04+01:00 f0ka250-2 greedy: request start 1794561964.197
+2026-11-13T10:26:18+01:00 f0ka250-2 greedy: request exit 0 end 1794561978.715 (1948 bytes); table resident bytes ?
+2026-11-13T10:26:22+01:00 f0ka250-2 long: request start 1794561982.732
+2026-11-13T10:26:57+01:00 f0ka250-2 long: request exit 0 end 1794562017.973 (1882 bytes); table resident bytes ?
+server stopped
+monitors stopped
+2026-11-13T10:27:00+01:00 f0ka250-2: stopped
+2026-11-13T10:27:00+01:00 f0ka250-2: graph reallocations: 0 of 2 requests (0 at the same size, 0 changed)
+2026-11-13T10:27:00+01:00 graph reallocations: no load reallocates where its line without its switch does not
+2026-11-13T10:27:02+01:00 quiet: load 0.94 1.07 1.12; llama processes 0; MemAvailable: 3220592 kB
