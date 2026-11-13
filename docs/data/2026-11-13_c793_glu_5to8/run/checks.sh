@@ -268,6 +268,16 @@ if step ptx; then
         fi
         add ptx "glu $tag" "$v" "$envs; ${sum:-no summary}; new pairs at 5-8 tokens: $newn lines, $newd differ; $(grep -a '^rc=' "$X/$tag.log")"
     done
+    # the set's C793 runs replayed through the PTX (the fault run must fail its cases)
+    R8RUNS="glumt8-on glumt8-nopf glumt8-np1 glumt8-ro8only glumt8-ro8-off glumt8-m1 glumt8-off glumt8-fault"
+    # shellcheck disable=SC2086
+    locked docker run --rm --label pascal-quants=1 --cpu-shares=256 ${DOCKER_ARGS:-} --network none --gpus "device=$GPU" \
+        -v "$M:$M" "$IMAGE" bash -c 'env LD_LIBRARY_PATH=/usr/local/cuda/lib64 SET='"$M/sets/glumt"' BIN='"$T/bin"' \
+            OUT='"$X/replay"' DEV=0 RUNS="'"$R8RUNS"'" ENV_ALL="'"$P"'=2 CUDA_FORCE_PTX_JIT=1" nice -n 19 \
+            bash '"$REPO"'/scripts/replay_checks.sh' > "$X/replay-console.txt" 2>&1
+    rc=$?
+    add ptx "replay glumt8" "$([ $rc = 0 ] && ! grep -q WRONG "$X/replay/results.tsv" 2> /dev/null && [ "$(wc -l < "$X/replay/results.tsv" 2> /dev/null)" -ge 8 ] && echo OK || echo CHECK)" \
+        "rc=$rc; $(awk -F'\t' '{ printf "%s %s %s; ", $1, $4, $8 }' "$X/replay/results.tsv" 2> /dev/null)"
 fi
 
 if step merged; then

@@ -1,0 +1,184 @@
+separate GLU kernel (unary_gated_op_kernel<op_silu, float>):
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<8, 0>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<8, 1>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<8, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<8, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<7, 0>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<7, 1>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<7, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<7, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<6, 0>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<6, 1>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<6, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<6, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<5, 0>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<5, 1>: 14 of 14 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<5, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu_ro8<5, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<4, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<4, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<3, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<3, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<2, 0>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
+mul_mat_vec_q_pascal_glu<2, 1>: 35 of 35 the same; the first:
+  FMUL32I.FTZ R, R, -1.4426950216293334961
+  RRO.EX2 R, R
+  MUFU.EX2 R, R
+  FADD.FTZ R, R, 1
+  MUFU.RCP R, R
+  FMUL.FTZ R, R, R
+  FMUL.FTZ R, R, R
