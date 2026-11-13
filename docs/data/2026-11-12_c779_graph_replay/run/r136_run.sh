@@ -41,13 +41,14 @@ arm_env() {
 }
 case $STEP in
 lane)
-  RIG=$RIG WORK=$WORK/lane BIN=$B/llama-server MODEL=$MODEL MODEL_DRAFT=$DRAFT \
+  L=$WORK/lane  # the lane's folder; the dumps go to its out/, which lanecollect takes
+  RIG=$RIG WORK=$L BIN=$B/llama-server MODEL=$MODEL MODEL_DRAFT=$DRAFT \
     TEXT_LOCAL=${RECORDED:?}/proxy.jsonl.bodies.gz TAG='^t1swift/' \
     WD_ENV=MIN_AVAIL_MB=60 N_PREDICT=16 DEPTHS="0 32768" \
     ARMS="force patch patchw" \
-    ARM_ENV_force="$V4C_ENV $FORCE LLAMA_SPEC_DUMP=$WORK/lane/out/dump-force.jsonl" ARM_ARGS_force="$V4C_ARGS" \
-    ARM_ENV_patch="$V4C_ENV $PATCH LLAMA_SPEC_DUMP=$WORK/lane/out/dump-patch.jsonl" ARM_ARGS_patch="$V4C_ARGS" \
-    ARM_ENV_patchw="$V4C_ENV $PATCH GGML_CUDA_GRAPHS_PATCH_WINDOW=${W:-8} LLAMA_SPEC_DUMP=$WORK/lane/out/dump-patchw.jsonl" ARM_ARGS_patchw="$V4C_ARGS" \
+    ARM_ENV_force="$V4C_ENV $FORCE LLAMA_SPEC_DUMP=$L/out/dump-force.jsonl" ARM_ARGS_force="$V4C_ARGS" \
+    ARM_ENV_patch="$V4C_ENV $PATCH LLAMA_SPEC_DUMP=$L/out/dump-patch.jsonl" ARM_ARGS_patch="$V4C_ARGS" \
+    ARM_ENV_patchw="$V4C_ENV $PATCH GGML_CUDA_GRAPHS_PATCH_WINDOW=${W:-8} LLAMA_SPEC_DUMP=$L/out/dump-patchw.jsonl" ARM_ARGS_patchw="$V4C_ARGS" \
     LOADS="${LANE_LOADS:-force1:force patch1:patch}" \
     bash bench/deep_lane/remote.sh start
   ;;
