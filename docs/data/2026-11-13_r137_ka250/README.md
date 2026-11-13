@@ -19,7 +19,7 @@ with the switch on? Registry [Q1429](../../../quants/experiments.md).
   - Each full 512-token chunk takes less GPU time without the switch: pass 3 adds up to 5,013.6 ms over the nine
     cards, against 5,238.3 with it (`tables/prompt_passes.md`). The timeout makes no difference there: `f1ka250` has
     5,222.1.
-  - So the switch costs the long prompt time in its full chunks: est. 314.4 ms profiled (the mean of `f1` and `f1-2` against the mean of `f0ka250` and `f0ka250-2`) and 230.6 ms unprofiled. This is new: Q1461 (C829).
+  - So the switch costs the long prompt time in its full chunks: est. 314.4 ms profiled (the mean of `f1` and `f1-2` against the mean of `f0ka250` and `f0ka250-2`) and 230.6 ms unprofiled. This is new: Q1461 (C830).
 
 ## The loads
 
