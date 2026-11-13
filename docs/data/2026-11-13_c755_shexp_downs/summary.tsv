@@ -1,4 +1,4 @@
 check	verdict	detail
-build	OK	rc=0; multitoken_bitid md5 00ecfab07d32021d060dff1c5b6960a9, 91806832 B; linked against 65ac9a47d (Merge -c813 (C813: LLAMA_MTP_HROW_LAZY=1, with LLAMA_MTP_CATCHUP_OVERL); 0 warning lines
+build	OK	rc=0; multitoken_bitid md5 f1f61714c977a0c2adde28494625f382, 91810952 B; linked against 65ac9a47d (Merge -c813 (C813: LLAMA_MTP_HROW_LAZY=1, with LLAMA_MTP_CATCHUP_OVERL); 0 warning lines
 cpu	OK	rc=0; 72 product lines (expected 72: 2 types x 4 shapes x 2-4 tokens x 3 inputs); 72 comparisons, 0 with differences
 route	OK	rc=0; 1258 tensors; Q4_0/Q5_0: 3 Q4_0 ffn_down_shexp.weight x 640 x 2560; 2 Q5_0 ffn_down_shexp.weight x 640 x 2560; 13 Q4_0 ffn_down_shexp.weight x 640 x 2560; 5 Q5_0 ffn_down_shexp.weight x 640 x 2560; other Q4_0/Q5_0 tensors: 0; the switch is read in ggml/src/ggml-cuda/mmvq-pascal-glu.cu ggml/src/ggml-cuda/mmvq-pascal-kcol.cu ggml/src/ggml-cuda/mmvq-pascal-kcol.cuh ggml/src/ggml-cuda/mmvq-pascal-q3kmt.cuh 

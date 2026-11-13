@@ -733,7 +733,8 @@ runs:
   relative to one token.
 - `verify/multitoken_bitid.cpp` (built by `verify/build_multitoken_bitid.sh` against a test build from
   `scripts/build_llamacpp_tests_docker.sh`) checks that every 2–4-token product equals the single-token products of
-  its columns bit for bit.
+  its columns bit for bit. Its modes (the first argument) pick the types and shapes; the comment at the top of the file
+  lists them. `BITID_CPU=1` runs a mode on ggml's CPU backend, a check of the harness itself that needs no GPU.
 
 ```bash
 ssh rig "BIN=/opt/llama-builds/<build>/bin bash -s" < bench/mmvq_pascal/multitoken_perf.sh

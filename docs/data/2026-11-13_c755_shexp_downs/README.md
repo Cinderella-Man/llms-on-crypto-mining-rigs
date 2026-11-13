@@ -80,8 +80,8 @@ At the start, for each type, the mode prints whether the k-column hook takes it 
 
 | Check | Verdict | What |
 |---|---|---|
-| build | OK | `multitoken_bitid` linked against the static ggml of the `pascal-p106-v4` rig build `65ac9a47d` (the merge of C813), image `nvidia/cuda:12.9.2-devel-ubuntu24.04`, sm_61 and compute_61 PTX, 0 warnings: **md5 `00ecfab07d32021d060dff1c5b6960a9`**, 91,806,832 bytes |
-| cpu | OK | `BITID_CPU=1 multitoken_bitid shdown` in that image without a GPU (the CUDA driver library is the toolkit's stub, never called): 72 product lines, 72 comparisons, 0 with differences ([cpu_table.tsv](cpu_table.tsv)) |
+| build | OK | `multitoken_bitid` linked against the static ggml of the `pascal-p106-v4` rig build `65ac9a47d` (the merge of C813), image `nvidia/cuda:12.9.2-devel-ubuntu24.04`, sm_61 and compute_61 PTX, 0 warnings: **md5 `f1f61714c977a0c2adde28494625f382`**, 91,810,952 bytes |
+| cpu | OK | `BITID_CPU=1 multitoken_bitid shdown` in that image without a GPU (the CUDA driver library is the toolkit's stub, never called): 72 product lines, 72 comparisons, 0 with differences ([cpu_table.tsv](cpu_table.tsv), by [run/cpu_table.py](run/cpu_table.py)) |
 | route | OK | [types.tsv](types.tsv), every tensor of the served files by [run/gguf_types.py](run/gguf_types.py) (headers only): 1,258 tensors; Q4_0 and Q5_0 only in `ffn_down_shexp.weight`, 16 and 7 ([route.tsv](route.tsv), per file and type [types_count.tsv](types_count.tsv)) |
 
 Between `65ac9a47d` and the line's tip of that day (`2144cf760`), only C822's F32 host code changed. The k-column hook,
@@ -90,7 +90,7 @@ Between `65ac9a47d` and the line's tip of that day (`2144cf760`), only C822's F3
 ## What the rig run must show (R150)
 
 [run/rig_c755.sh](run/rig_c755.sh), on a P106 rig, the rig idle, on the `pascal-p106-v4` tarball and the
-`multitoken_bitid` above (md5 `00ecfab07d32021d060dff1c5b6960a9`). It loads the rig's own CUDA 12.9 runtime libraries,
+`multitoken_bitid` above (md5 `f1f61714c977a0c2adde28494625f382`). It loads the rig's own CUDA 12.9 runtime libraries,
 as the tarball's binaries do.
 
 1. **bitid:** `multitoken_bitid shdown` in four arms:
@@ -123,11 +123,12 @@ pass; and the served pair puts the switch in one class: gain, negligible or loss
 | [summary.tsv](summary.tsv) | the three checks with their verdicts |
 | [cpu_table.tsv](cpu_table.tsv) | the CPU run: each type, shape, token count and input, its result, and the blocks with \|I\| ≥ 2^13 (est.) |
 | [types.tsv](types.tsv) | every tensor of the served files: name, type, shape, file |
-| [types_count.tsv](types_count.tsv) | tensors per file and type |
+| [types_count.tsv](types_count.tsv) | tensors per file and type, counted from types.tsv |
 | [route.tsv](route.tsv) | the Q4_0 and Q5_0 tensors, per file and name |
 | [skip_readers.txt](skip_readers.txt) | every line of the build's ggml that names `GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP` |
 | [run/checks.sh](run/checks.sh) | the build, the CPU run and the routing dump |
 | [run/gguf_types.py](run/gguf_types.py) | lists a GGUF file's tensors from its header (standard library only) |
+| [run/cpu_table.py](run/cpu_table.py) | the CPU run's output as cpu_table.tsv |
 | [run/rig_c755.sh](run/rig_c755.sh) | R150 on a P106 rig: bitid, perf, served |
 
 Also changed for this row: `bench/mmvq_pascal/verify/multitoken_bitid.cpp` (the mode `shdown`, `BITID_CPU=1`).
