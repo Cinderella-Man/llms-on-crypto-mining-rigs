@@ -43,6 +43,7 @@
 #             C811 with C817's fix (R140)            GGML_CUDA_KEEPALIVE_EAGER=1 (the timeout stays at its default)
 #             C813's lazy hidden row (R139)          LLAMA_MTP_HROW_LAZY=1
 #             C805's exact k-columns (R126)          GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1
+#   v4c32   v4c3's line exactly, a second run of it (R142b)
 # Env: RIG, CLIENT (ssh aliases), MODEL (Swift Q2_0's first shard on the rig), DRAFT (the MTP draft on the rig), NEW, REF
 #   (build folders under /opt/llama-builds; REF is unused unless AGENT_ORDER names v3), RIGDIR (a folder on the rig for
 #   the agent check's logs), OUT (a local folder), STEPS ("prep agent report"), AGENT_ORDER ("v4c3"), REPORT_ARMS
@@ -97,7 +98,7 @@ if has agent; then
     for a in $AGENT_ORDER; do
       case $a in
         v4c2|v4c22) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV"; args=$MT_V4C2 ;;
-        v4c3) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV $V4C3_ENV"; args=$MT_V4C2 ;;
+        v4c3|v4c32) b=$NEW; e="$PRESET_ENV $GAINS_ENV $V4C2_ENV $V4C3_ENV"; args=$MT_V4C2 ;;
         gains) b=$NEW; e="$PRESET_ENV $GAINS_ENV"; args=$MT_GAINS ;;
         v3) b=$REF; e=$PRESET_ENV; args=$MT ;;
         *) say "unknown arm $a"; exit 1 ;;
