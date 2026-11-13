@@ -1,0 +1,63 @@
+row	check	verdict	detail
+start	pascal-p106-v4-b12246-c794	OK	tip c4e82a856 (CUDA: the K tiles at 7 and 8 tokens without the register prefetch (C794): its kernels spilled 8 to 40 bytes at 168 regis); files changed against the base:  2 files changed, 97 insertions(+), 25 deletions(-)
+obj	compile	OK	tip rc=0, base rc=0; 2 warning lines in the tip's
+obj	mmvq-pascal-dmt.cu sass: tip against base	SAME	97 functions: 73 the same code, 24 new tile kernels, 0 other (new, gone or differing; $M/obj/tip-vs-base.sass.tsv)
+obj	mmvq-pascal-dmt.cu ptx: tip against base	SAME	97 functions: 73 the same code, 24 new tile kernels, 0 other (new, gone or differing; $M/obj/tip-vs-base.ptx.tsv)
+obj	tile kernels at 5-8 tokens	OK	24 instantiations; kernels of the file with stack or local memory: 0; registers 112-168 (at most 168 for 2 blocks of 6 warps); BAR a kernel at 5-8 tokens: 3 
+rig	build	OK	rc=0; llama.cpp-20261113-c4e82a856-pascal-p106-v4-b12246-c794.tar.gz md5 e01a333ae37284969076f3b9cea01c58, 682729820 B; commit: c4e82a85619abb984ca13de5be40344d4066e3a2 (2026-11-13 09:58:08 +0100);avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;; llama-server md5 4ce942095a768ee00797a3a90bdb5e30; test-backend-ops md5 6bb51d7762ae794eac1d99e3a6c4eec4; 34 warning lines
+sass	llama-server sass against the base	SAME	8564 functions: 8540 the base's code, 24 new tile kernels (expected 24), 0 other (new, gone or differing)
+sass	llama-server ptx against the base	SAME	8564 functions: 8540 the base's code, 24 new tile kernels (expected 24), 0 other (new, gone or differing)
+sassobj	mmvq-pascal-dmt.cu sass: c794 against base	SAME	97 functions: 73 the same code, 24 new tile kernels, 0 other (new, gone or differing; $M/sass/obj/c794-vs-base.sass.tsv)
+sassobj	mmvq-pascal-dmt.cu ptx: c794 against base	SAME	97 functions: 73 the same code, 24 new tile kernels, 0 other (new, gone or differing; $M/sass/obj/c794-vs-base.ptx.tsv)
+sassobj	tile kernels at 5-8 tokens	OK	24 instantiations; kernels of the file with stack or local memory: 0; registers 112-168 (at most 168 for 2 blocks of 6 warps); BAR a kernel at 5-8 tokens: 3 
+sassobj	mmvq-pascal.cu.o (the one-token kernels)	SAME	SASS, masked, against the base's
+record	set ro8kt	FAIL	rc=0; linked 179 of 197 selected cases in all; manifest: 197 cases, 694818408 bytes in cases/; runs 16; runs: 16 runs written into $M/sets/ro8kt/runs.tsv
+bitid	build	OK	rc=0; multitoken_bitid md5 5ae2dedf20c1f8a40ad3c3b1353a47c7, 91345320 B; modes in it: kt8 dmtkt dmt8 ; linked against c4e82a856 (needs a GPU: run on the rig)
+cpu	cpu build	OK	rc=0; c4e82a856; static, every target; 3 warning lines, 0 error lines
+off	base writes	OK	rc=0; the base CPU build (65ac9a47d): 146 logits files; Summary: all 151 test(s) passed
+off	tip	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	ro8kt1	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	ro8kt2	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=2; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+off	all	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+c565 static	c794 tree	OK	commit c4e82a85619abb984ca13de5be40344d4066e3a2 
+c565 static	c794 build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+c565 static	c794 ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 static	c794 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 static	c794 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 static	c794 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 static	c794 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 static	c794 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 static	c794 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 static	c794 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c794 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 static	c794 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 static	c794 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 static	c794 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 static	c794 hand thread-safety	OK	test-thread-safety rc=0: 0.00.050.356 I All threads finished without errors.
+c565 static	c794 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 static	c794 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 0.023076
+c565 shared	c794 tree	OK	commit c4e82a85619abb984ca13de5be40344d4066e3a2 
+c565 shared	c794 build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c565 shared	c794 ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+c565 shared	c794 net	OK	100% tests passed, 0 tests failed out of 1; test-arg-parser, with network
+c565 shared	c794 archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+c565 shared	c794 archs write	OK	Summary: all 151 test(s) passed; write rc=0
+c565 shared	c794 archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+c565 shared	c794 archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+c565 shared	c794 hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+c565 shared	c794 hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c794 hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+c565 shared	c794 hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+c565 shared	c794 hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+c565 shared	c794 hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+c565 shared	c794 hand thread-safety	OK	test-thread-safety rc=0: 0.00.049.284 I All threads finished without errors.
+c565 shared	c794 hand context-model	OK	test-llama-context rc=0: failed   : 0
+c565 shared	c794 hand eval-callback	OK	llama-eval-callback rc=0:     sum = 3.952407
+trim	CPU tree	OK	removed (the binaries in cpu/bin stay); 7.7G in $M; 404 GB free
+start	pascal-p106-v4-b12246-c794	OK	tip c4e82a856 (CUDA: the K tiles at 7 and 8 tokens without the register prefetch (C794): its kernels spilled 8 to 40 bytes at 168 regis); files changed against the base:  2 files changed, 97 insertions(+), 25 deletions(-)
+merged	pascal-p106-v4	OK	80c94fe0d (Merge -c794 (C794: GGML_CUDA_MMVQ_PASCAL_RO8_KT=1 runs IQ4_XS's and Q4_K's 5-8-token products of _RO8 on C728's K tiles ); mmvq-pascal-dmt.cu the same as c4e82a856's; files against c4e82a856:  16 files changed, 1032 insertions(+), 146 deletions(-)
+merged	mmvq-pascal-dmt.cu	SAME	the file and its header are the tip's: the obj step stands
+merged	cpu build	OK	rc=0; 80c94fe0d; static, every target; 3 warning lines, 0 error lines
+moff	base writes	OK	rc=0; the base CPU build (65ac9a47d): 146 logits files; Summary: all 151 test(s) passed
+moff	merged	SAME	rc=0; no switch; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed
+moff	all	SAME	rc=0; GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_DMT_KT=1 GGML_CUDA_MMVQ_PASCAL_RO8=1 GGML_CUDA_MMVQ_PASCAL_RO8_KT=1; against the base's 146 files: 146 compared, 0 differ: none; written by this build only: 0; Summary: all 151 test(s) passed

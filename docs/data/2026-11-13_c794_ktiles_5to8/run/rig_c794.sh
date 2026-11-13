@@ -12,9 +12,10 @@
 #   perf    test-backend-ops perf at 2,560 x 6,144, IQ4_XS and Q4_K, 5 to 8 tokens (and 4, for the step from it), the arms
 #           of PERF_ARMS alternated over PASSES passes: off (the Flash-Next preset's k-column switches), kern (+ the
 #           read-once kernels _DMT=1 _Q5K_MT=1 and C729's _RO8=1: whole staging where it fits, else the k-column kernel)
-#           and kt (kern + _RO8_KT=1, the tiles)
+#           kt (kern + _RO8_KT=1, the tiles, M = 2 by default) and ktm1 (kt with _DMT_KT_M=1: R133 found half of the served
+#           M = 2 tile launches at 4 tokens slow, C829)
 # Env: BIN (bin/ of the C794 rig tarball), OUT, DEV (card, default 0; CUDA_DEVICE_ORDER=PCI_BUS_ID), PASSES (2),
-#   PERF_ARMS (default "off kern kt"); bitid: BITID (the multitoken_bitid binary built against the same tree); replay:
+#   PERF_ARMS (default "off kern kt ktm1"); bitid: BITID (the multitoken_bitid binary built against the same tree); replay:
 #   SET (the unpacked set ro8kt), REPLAY (scripts/replay_checks.sh)
 # Output: $OUT/perf/us_run.tsv (arm, pass, type, rows, K, tokens, us per product), $OUT/bitid/*.txt, $OUT/replay/
 #   (replay_checks.sh's), $OUT/status.txt; run/tables.sh turns us_run.tsv into the per-token-count table and the est. ms
@@ -25,7 +26,7 @@ set -uo pipefail
 STEPS=${STEPS:-replay bitid perf}
 DEV=${DEV:-0}
 PASSES=${PASSES:-2}
-PERF_ARMS=${PERF_ARMS:-off kern kt}
+PERF_ARMS=${PERF_ARMS:-off kern kt ktm1}
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 mkdir -p "$OUT"
 rm -f "$OUT/DONE"
