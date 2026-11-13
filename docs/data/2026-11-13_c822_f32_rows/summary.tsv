@@ -1,0 +1,42 @@
+check	verdict	detail
+build	OK	llama.cpp-20261113-cc97bb6b6-pascal-p106-v4-b12246-c822.tar.gz 678645408 B md5 83a53352b160d2d21f47831bb3317489; llama-server md5 2f65512306e49218469e6e088c32b10f, test-backend-ops md5 e01a8db17d7f696f7349c97e00bb7c6b, test-cuda-mmvf-f32-rows md5 430f40e8b5703411cdb86a3b5858181f
+code	SAME	4 of 4 listings (llama-server, test-backend-ops; SASS, PTX) with every base function the same; new: 
+rows-rig	OK	9152269 checks, 0 failed; exit 0
+cpu-base-tree	OK	commit 65ac9a47d6933025bc5d11db82158700d1352ddb 
+cpu-base-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+cpu-base-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-base-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-base-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-base-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c822-tree	OK	commit cc97bb6b6c4fcfb9abcbd1b66a2dc42b899019be 
+cpu-c822-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+cpu-c822-ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+cpu-c822-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+cpu-c822-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+cpu-c822-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+cpu-c822-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+cpu-c822-ident vs base	SAME	base wrote 146 files; 146 compared, differ: none; written by c822 only: 0; Summary: all 151 test(s) passed
+shared-c822-tree	OK	commit cc97bb6b6c4fcfb9abcbd1b66a2dc42b899019be 
+shared-c822-build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+shared-c822-ctest	OK	100% tests passed, 0 tests failed out of 72; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+shared-c822-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+shared-c822-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+shared-c822-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+shared-c822-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+merged-base-tree	OK	commit 65ac9a47d6933025bc5d11db82158700d1352ddb 
+merged-base-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs; 0 error lines
+merged-base-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+merged-base-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+merged-base-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+merged-base-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+merged-merged-tree	OK	commit 2144cf7600aefd2b6810c14d9101553f9264592e 
+merged-merged-build	OK	rc=0; BUILD_SHARED_LIBS=OFF; test-llama-archs,test-cuda-mmvf-f32-rows; 0 error lines
+merged-merged-archs plain	OK	Summary: all 151 test(s) passed; plain rc=0
+merged-merged-archs write	OK	Summary: all 151 test(s) passed; write rc=0
+merged-merged-archs compare	OK	Summary: all 151 test(s) passed; compare rc=0
+merged-merged-archs files	OK	146 files written; 146 compared, differ: none; compared while writing (a shared file): none
+merged-merged-ident vs base	SAME	base wrote 146 files; 146 compared, differ: none; written by merged only: 0; Summary: all 151 test(s) passed
+rows-merged	OK	9152269 checks, 0 failed; exit 0
+record	OK	227 cases, 18 runs; tar 472432640 B md5 8e1eed113ca7d1d35a8aa9224ffb70fa
+select	OK	f32x-off 227 (pass, 0/227); f32x-on 227 (pass, 48/179); f32x-fault 37 (fail, 37/0); f32x-fault-above 72 (pass, 0/72); f32x-on-rows0 227 (pass, 133/94); f32x-fault-rows0 72 (fail, 72/0); f32x-on-auto 227 (pass, 90/137); f32x-fault-auto 79 (fail, 79/0); f32x-fault-auto-above 30 (pass, 0/30); f32x-fault-list 64 (fail, 64/0); f32x-fault-list-above 45 (pass, 0/45); f32x-on2 227 (pass, 48/179); f32x-fault2 37 (fail, 37/0); f32x-fault2-above 72 (pass, 0/72); f32x-fault2-rows0 72 (fail, 72/0); f32x-fault2-auto 79 (fail, 79/0); f32x-fault2-auto-above 30 (pass, 0/30); f32x-fault-off 109 (pass, 0/109); 
+replay-cpu	OK	227 cases, 227 OK, 0 FAIL; exit 0
