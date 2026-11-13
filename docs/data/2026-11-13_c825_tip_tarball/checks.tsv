@@ -1,0 +1,13 @@
+step	check	verdict	detail
+start	pascal-p106-v4	OK	tip 65ac9a47d (Merge -c813 (C813: LLAMA_MTP_HROW_LAZY=1, with LLAMA_MTP_CATCHUP_OVERLAP the MTP hidden-row buffer keeps one half until ); 438 GB free
+rig	build	OK	rc=0; llama.cpp-20261113-65ac9a47d-pascal-p106-v4; TESTS=1 EXTRA_TARGETS="test-cuda-keepalive test-llama-archs" JOBS=8; 34 warning lines
+info	BUILDINFO	OK	name: llama.cpp-20261113-65ac9a47d-pascal-p106-v4;commit: 65ac9a47d6933025bc5d11db82158700d1352ddb (2026-11-12 22:23:28 +0100);image: nvidia/cuda:12.9.2-devel-ubuntu24.04;built: 2026-11-13T07:22:07+00:00;avx instructions in llama-bench: 0;highest glibc symbol: GLIBC_2.38;
+info	tarball	OK	llama.cpp-20261113-65ac9a47d-pascal-p106-v4.tar.gz 807543830 B md5 c6c9496354a3fb25e0857e15cce3b987
+info	bin/llama-server	OK	md5 9cbea9859c17e3355c9eb51d14a4a863; c813's: 799ca051b3f2a923aff0b3f1a138b0d1
+info	bin/test-backend-ops	OK	md5 450390d8469c4c549a6fedc3c3defee2; c813's: ba21f738bf206534c74a999277df2f59
+info	bin/test-cuda-keepalive	OK	md5 0f763d45485f80d42d9e3d32c5694e42; c813's: none
+info	bin/test-llama-archs	OK	md5 c0024459a1cdf93b05eb7cafb53753af; c813's: bef987bc4bb91fd282c0a819905e35bf
+info	bin/ files	OK	13 files; byte for byte c813's: 
+names	switch list	OK	870 names in the build's list (868 in c813's); added: LLAMA_SPEC_ADAPT_ONLINE LLAMA_SPEC_ADAPT_ONLINE_FAULT ; gone: none
+sass	llama-server sass against c813's	SAME	8540 functions (8540 in c813's); dumps: the same file; c813's own dump (<the -c813 checks' sass folder>): the same file; merged 8540 functions: base 8540; listed 0; 
+sass	llama-server ptx against c813's	SAME	8540 functions (8540 in c813's); dumps: the same file; c813's own dump (<the -c813 checks' sass folder>): the same file; merged 8540 functions: base 8540; listed 0; 
