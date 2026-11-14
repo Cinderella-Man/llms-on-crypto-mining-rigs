@@ -81,25 +81,26 @@ On one rig, with this file, both arms on the same line:
 
 Measured on 2026-11-14 on nine P106-090 cards with this file and line, Flint Pascal Q8 GGUF at 262,144 tokens, 12
 bugfix tasks, two runs each, alternated, each run its own load
-([data](../../docs/data/2026-11-14_r159_flint_release_agent/README.md)). Every value is one run; generation and
-prompts at the agent check's report rounding.
+([data](../../docs/data/2026-11-14_r159_flint_release_agent/README.md)). Every value is one run.
 
-**v4 is negligible against v3.0**: every speed of its two runs lies within the spread of v3.0's two runs.
+**v4 is negligible against v3.0 on minutes a task at equal work** (the same work at each run's speeds), on
+generation and on first token; **prompt tok/s alone is a loss** (−1.3 %, beyond the spread of the two runs). The deep
+lane below, where both read the same prompts, measured v4's prompts as a gain (+3.1 %).
 
 | | v4, run 1 | v4, run 2 | v3.0, run 1 | v3.0, run 2 | Class |
 |---|---|---|---|---|---|
 | passed | 12 / 12 | 12 / 12 | 11 / 12 | 12 / 12 | |
-| generation tok/s | 47.4 | 48.2 | 48.5 | 48.0 | negligible (−0.9 %) |
-| prompt tok/s | 177 | 179 | 179 | 181 | negligible (−1.1 %) |
+| generation tok/s | 47.45 | 48.19 | 48.55 | 48.02 | negligible (−1.0 %) |
+| prompt tok/s | 176.9 | 178.9 | 179.2 | 181.3 | loss (−1.3 %) |
 | first token median s | 2.85 | 2.56 | 2.65 | 2.61 | negligible (+2.9 %) |
 | first token p90 s | 7.84 | 6.76 | 7.20 | 7.97 | negligible (−3.8 %) |
-| minutes a task at equal work | 1.85 | not tabled | 1.81 | not tabled | |
+| minutes a task at equal work | 1.85 | 1.82 | 1.81 | 1.82 | negligible (+1.1 %) |
 | minutes, all 12 tasks | 31.3 | 29.2 | 24.7 | 19.7 | different work |
 | graph reallocations | 323 in 71 of 73 requests | 308 in 79 of 80 | 188 in 64 of 65 | 237 in 66 of 68 | |
 | lowest MemAvailable | 885 MiB | 873 MiB | 948 MiB | 947 MiB | |
 
 v4's runs took longer in all because their attempts wrote and read more (decode 120 and 112 s a task against 49 and
-73, 73 and 80 turns against 66 and 68), not because the engine was slower; registry row Q1488 checks whether a
+73, 73 and 80 turns against 66 and 68); on the same work their minutes a task are within v3.0's. Registry row Q1488 checks whether a
 switch changes what Flint samples. v3.0's first run stopped one task at the 12-minute cap.
 
 ## The deep lane: v4 against v3.0 at depth
