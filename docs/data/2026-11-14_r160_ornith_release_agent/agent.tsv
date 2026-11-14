@@ -1,3 +1,4 @@
 arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref
 v3ka	12/12	63	60.1	16.42	9.34	19.86	16.39	nan	nan	30.2	2.11	2.52	+0.0 %
 o4a	12/12	62	56.6	16.53	8.65	19.22	16.32	nan	nan	29.7	2.07	2.57	+2.0 %
+o4sa	12/12	63	114.5	16.30	3.05	10.97	8.45	nan	nan	27.6	1.94	2.08	-17.5 %
