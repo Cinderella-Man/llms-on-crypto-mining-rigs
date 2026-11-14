@@ -12,8 +12,10 @@ R159d `f3b`**.
   `c735e40f184f3de61f16ffd5e2ab5ea5`) with [release/flint-v3/settings.env](../../../release/flint-v3/settings.env) as
   shipped (no switch).
 
-Registry row Q1478 in [quants/experiments.md](../../../quants/experiments.md). This folder fills as the runs land; the
-report over the four runs and the verdict come after R159d. Until then each run stands alone and is not classed.
+Registry row Q1478 in [quants/experiments.md](../../../quants/experiments.md); the speed table is in
+[release/flint-v4/README.md](../../../release/flint-v4/README.md). **The verdict: v4 against v3.0 is negligible**:
+every speed of the two v4 runs lies within the spread of the two v3.0 runs (the
+[report over the four runs](#the-report-over-the-four-runs) below).
 
 ## The runs
 
@@ -22,6 +24,54 @@ report over the four runs and the verdict come after R159d. Until then each run 
 | R159a | `f4a` | rig 1 | 12:09:16, up after 586 s | 12:19:05–12:50:32 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
 | R159b | `f3a` | rig 1 | 14:05:56, up after 586 s | 14:15:45–14:40:37 | 11 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
 | R159c | `f4b` | rig 1 | 14:51:45, up after 587 s | 15:01:35–15:30:55 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
+| R159d | `f3b` | rig 1 | 15:44:46, up after 584 s | 15:54:35–16:14:24 | 12 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
+
+## The report over the four runs
+
+The harness's report with all four arms ([r159_compare.md](r159_compare.md), [r159_report_table.md](r159_report_table.md),
+[r159_gonogo.md](r159_gonogo.md)). It prints generation tok/s to one decimal and prompt tok/s to whole numbers, so
+every run is given at that rounding here (R159a's and R159b's two-decimal figures are in [agent.tsv](agent.tsv)).
+Each value is one run:
+
+| | v4 `f4a` | v4 `f4b` | v3.0 `f3a` | v3.0 `f3b` | v4 against v3.0 |
+|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 11 / 12 | 12 / 12 | |
+| minutes a task at equal work (`v3base`'s work) | 1.85 | not tabled | 1.81 | not tabled | |
+| generation tok/s | 47.4 | 48.2 | 48.5 | 48.0 | negligible (−0.9 %) |
+| prompt tok/s | 177 | 179 | 179 | 181 | negligible (−1.1 %) |
+| first token median s | 2.85 | 2.56 | 2.65 | 2.61 | negligible (+2.9 %) |
+| first token p90 s | 7.84 | 6.76 | 7.20 | 7.97 | negligible (−3.8 %) |
+| first token on a task's first turn, median s | 4.29 | 4.16 | 4.17 | 4.18 | negligible (+1.2 %) |
+| graph reallocations (target) | 323 in 71 of 73 requests | 308 in 79 of 80 | 188 in 64 of 65 | 237 in 66 of 68 | |
+| lowest MemAvailable, swap during the load | 885 MiB; 30 → 295 MiB | 873 MiB; 32 → 296 MiB | 948 MiB; 31 → 293 MiB | 947 MiB; 32 → 295 MiB | |
+| minutes, all 12 tasks (wall) | 31.3 | 29.2 | 24.7 | 19.7 | (different work) |
+| turns | 73 | 80 | 66 | 68 | |
+| decode seconds a task, mean | 120 | 112 | 49 | 73 | |
+| prompt tokens processed a task | 6,007 | 5,560 | 3,111 | 4,099 | |
+
+- **The class** (the release check's rule: a gain or a loss only beyond the larger of the two arms' spreads between
+  their runs, else negligible): generation 47.4 and 48.2 tok/s against 48.5 and 48.0 (means 47.8 and 48.25, spreads
+  0.8 and 0.5), prompts 177 and 179 against 179 and 181 (spreads 2 and 2), first token median 2.85 and 2.56 s against
+  2.65 and 2.61 (spreads 0.29 and 0.04), p90 7.84 and 6.76 against 7.20 and 7.97 (spreads 1.08 and 0.77). Each
+  difference is within the larger spread, and v4's faster run matches or beats v3.0's slower run on every speed. The deep lane on
+  the same file and line, where both arms do the same work, measured v4 as a gain: decode +0.7 %, prompts +3.1 %
+  ([2026-11-14_r161_flint_release_deep](../2026-11-14_r161_flint_release_deep/README.md)).
+- **The wall minutes differ because the work differed, not the speed.** v4's two runs took 31.3 and 29.2 minutes for
+  all tasks against v3.0's 24.7 and 19.7, at the same speeds: their attempts wrote more (decode 120 and 112 s a task
+  against 49 and 73), read more (6,007 and 5,560 prompt tokens a task against 3,111 and 4,099) and took more turns
+  (73 and 80 against 66 and 68). Most of it is three tasks: JavaScript `variable-length-quantity` (4.5 and 8.7 minutes
+  against 1.3 and 2.0), Python `pig-latin` (4.4 and 4.0 against 2.3 and 2.2) and Python `list-ops` (3.5 and 2.1
+  against 1.7 and 1.7). Whether that is chance in sampled replies at temperature 1.0 over two runs, or one of the
+  preset's switches changing what the sampler picks, is registry row Q1488.
+- **Not tabled:** the sandbox-image tables were not run for R159c and R159d (the driving machine's permission check
+  refused them), so `f4b`'s and `f3b`'s two-decimal speeds, minutes a task at equal work, reallocations per bucket of
+  prompt tokens and per request, and card peaks are missing, and [agent.tsv](agent.tsv) and [host.tsv](host.tsv)
+  hold R159a's and R159b's rows only. The commands that make them are in [How to run it](#how-to-run-it).
+- **Go/no-go** ([r159_gonogo.md](r159_gonogo.md)): infrastructure GO (48 of 48 attempts), tool calls GO (0 malformed
+  of 260), cache GO (median hit 94.4 % from the second turn), first token against prefill GO; proxy rows NO-GO for
+  R159b's capped attempt alone; memory NO-GO on the swap growth during each load (the gate allows 16 MiB), with
+  MemAvailable above its 600 MB floor in every run. Its memory line reads the shared client folder's appended logs;
+  each run's own low is in the table above.
 
 ## R159a: `f4a`, the v4 preset (2026-11-14)
 
@@ -177,6 +227,26 @@ v3.0 runs are R159b and R159d):
   `f3a` and `f4a` beside `f4b`), [f4b_gonogo.md](f4b_gonogo.md); the per-request and per-attempt rows:
   [agent/f4b/](agent/f4b/).
 
+## R159d: `f3b`, v3.0's second run (2026-11-14)
+
+- **The started command** is R159b's, byte for byte (331 bytes, the same md5): no switch in front, the harness's
+  `COMMON` line and the arm's flags. v3.0's build prints no `switches:` line; the running server's environment, read
+  during the load, held no `LLAMA_*` or `GGML_*` variable.
+- **Numbers** (one run, from the report over the four runs and the rig's memory log): 12 of 12 passed, 19.7 minutes
+  for all tasks, 68 turns, a task's median 1.2 minutes; generation 48.0 tok/s and prompts 181 tok/s (the report's
+  rounding); first token median 2.61 s, p90 7.97 s, on a task's first turn 4.18 s; tool calls 61 / 0 failed / 0
+  malformed; graph reallocations 237 with the graph's size unchanged, 0 changed, in 66 of 68 requests. Minutes a task
+  at equal work: not tabled.
+- **Tasks:** Python `scale-generator` passed in 5.7 minutes in 6 turns (R159b's `f3a` reached the cap on it), Python
+  `affine-cipher` 2.2, Python `pig-latin` 2.2, JavaScript `variable-length-quantity` 2.0, Python `list-ops` 1.7; every
+  other task under 1.6 minutes.
+- **Host** (the rig's `meminfo.log`, this run's lines only): swap grew from 32 to 295 MiB during the load (its highest
+  at 15:54:32, before the first task at 15:54:35); MemAvailable was lowest at 947 MiB (16:10:04) and 1,392 MiB at the
+  end. The RAM watchdog did not stop the server.
+- **Server log:** 14 checkpoint restores, none created or erased, no full re-processing, no NaN or inf, no watchdog
+  kill.
+- Its per-request and per-attempt rows: [agent/f3b/](agent/f3b/); its report is the report over the four runs.
+
 ## How to run it
 
 [run/r159.sh](run/r159.sh) runs one arm. It reads the settings file of the arm's version and stops if its
@@ -212,3 +282,13 @@ R159c ran R159a's call with arm `f4b` (`. release/flint-v4/settings.env`, `REL_B
 `llama-server`, `ARGS_f4b` and `BUDGET_MIN_f4b=40` as above), then `STEPS="report collect"` with `ARMS=f4b`. Its
 tables are `agent_tables.py OUT v3p065 f4a f3a f4b` over the same folder with `f4b`'s rows added,
 `realloc_counts.py f4b=server-f4b.log` (default and `--requests`) and `host_summary.py RIGDIR R159c f4b`.
+These were not run with R159c (see [the report over the four runs](#the-report-over-the-four-runs)).
+
+R159d ran R159b's call with arm `f3b` (`. release/flint-v3/settings.env`, `REL_BIN` the v3.0 tree's `llama-server`,
+`ARGS_f3b` and `BUDGET_MIN_f3b=40` as above). The report over the four runs is the same environment with
+`ARMS="f3a f4a f3b f4b" STEPS="report collect"` and an `ARGS_<arm>` for each (with `run/r159.sh`: `ARM=f3b
+ARMS="f3a f4a f3b f4b" STEPS="report collect"`). The tables for all four, not run: `agent_tables.py OUT v3p065 f4a
+f3a f4b f3b` over a folder holding `v3base`'s rows (arm `v3p065`) beside the report's `res/turns.csv` and
+`res/attempts.csv` and the four server logs in `rig/`; `realloc_counts.py <arm>=rig/server-<arm>.log` (default and
+`--requests`) for `f4b` and `f3b`; `host_summary.py RIGDIR R159c f4b` on R159c's collected rig logs and
+`host_summary.py RIGDIR R159d f3b` on R159d's, each in the sandbox image.
