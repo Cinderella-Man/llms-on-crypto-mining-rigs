@@ -26,6 +26,7 @@ report over the six runs and the verdict come after R160f. Until then each run s
 | R160b | `o4sa` | rig 2 | 14:55:39, up after 651 s | 15:06:32–15:34:18 | 12 / 12 | 549 bytes, md5 `cccb6a6fb839fc14b24f91c63dae8e17` |
 | R160c | `o3a` | rig 2 | 16:22:21, up after 651 s | 16:33:16–17:09:13 | 12 / 12 | 349 bytes, md5 `d9e48849bb95aea7d055a6f0ed35c34a` |
 | R160d | `o4b` | rig 2 | 17:17:31, up after 651 s | 17:28:25–17:59:33 | 12 / 12 | 423 bytes, md5 `7b16f13d060c8b1fde8f9af58493226a` |
+| R160e | `o4sb` | rig 2 | 18:06:47, up after 653 s | 18:17:42–18:43:44 | 12 / 12 | 549 bytes, md5 `cccb6a6fb839fc14b24f91c63dae8e17` |
 
 ## R160a: `o4a`, the v4 preset (2026-11-14)
 
@@ -253,6 +254,55 @@ not made):
 - The report's files: [o4b_compare.md](o4b_compare.md), [o4b_report_table.md](o4b_report_table.md) (the four runs'
   attempts), [o4b_gonogo.md](o4b_gonogo.md); the per-request and per-attempt rows: [agent/o4b/](agent/o4b/).
 
+## R160e: `o4sb`, the candidate stack's second run (2026-11-14)
+
+- **The started command** is R160b's, byte for byte (549 bytes, md5 `cccb6a6fb839fc14b24f91c63dae8e17`): the
+  preset's four switches and the stack's two, the harness's `COMMON` line, then `--temp 0.6 -b 4096 -ub 512 -ts
+  6,6,6,6,5,5,5,5,6 -fit off --ctx-checkpoints-vram 4 --ctx-checkpoints-incall --ubatch-taper short=600:64`, with
+  one `-b`, 4096. The server's `switches:` line, read during the load, says `6 set: GGML_CUDA_GRAPHS_FORCE=1
+  GGML_CUDA_HOP_STAGED=1 GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1 LLAMA_SAMPLING_TOP_K_ROWS=1
+  LLAMA_SERVER_YIELD=2`.
+
+**Numbers** (one run each; [agent.tsv](agent.tsv), [host.tsv](host.tsv)):
+
+| | v3.0, `ka` (2026-11-06, the same rig) | R160a `o4a` | R160b `o4sa` | R160c `o3a` | R160d `o4b` | **R160e `o4sb`** |
+|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | **12 / 12** |
+| minutes a task at equal work (`ka`'s work) | 2.52 | 2.57 | 2.08 | 2.52 | 2.45 | **2.06** |
+| minutes, all 12 tasks (wall) | 30.2 | 29.7 | 27.6 | 35.8 | 31.0 | **25.9** |
+| minutes a task, median | 2.11 | 2.07 | 1.94 | 2.49 | 1.97 | **1.50** |
+| turns | 63 | 62 | 63 | 71 | 57 | **65** |
+| generation tok/s | 16.42 | 16.53 | 16.30 | 16.22 | 16.37 | **16.52** |
+| prompt tok/s | 60.1 | 56.6 | 114.5 | 61.1 | 65.4 | **113.7** |
+| first token median, p90 s | 9.34, 19.86 | 8.65, 19.22 | 3.05, 10.97 | 7.26, 19.56 | 9.58, 20.29 | **3.27, 11.28** |
+| first token on a task's first turn, median s | 16.39 | 16.32 | 8.45 | 16.34 | 16.26 | **8.44** |
+| tool calls / failed / malformed | 63 / 1 / 0 | 62 / 0 / 0 | 64 / 0 / 0 | 71 / 2 / 0 | 57 / 0 / 0 | **65 / 1 / 0** |
+| graph reallocations (target) | not counted | 0 in 62 requests | 0 in 63 requests | 0 in 71 requests | 0 in 57 requests | **0 in 65 requests** |
+| lowest MemAvailable, swap | | 803 MiB at 14:24:35; swap 29 → 336 MiB | 1,252 MiB at 15:28:56; swap 30 → 335 MiB | 732 MB, swap up to 341 MB (the report's gate) | 718 MiB at 17:51:05; swap 31 → 335 MiB | **1,260 MiB at 18:43:59; swap 31 → 336 MiB** |
+
+- **The same arm twice:** `o4sa` and `o4sb` ran the same command on the same rig. `o4sb` took 2.06 minutes a task at
+  equal work against `o4sa`'s 2.08, generated at 16.52 tok/s against 16.30 and read prompts at 113.7 tok/s against
+  114.5. The v4 preset's two runs: 2.57 and 2.45 minutes, 16.53 and 16.37 tok/s, 56.6 and 65.4 tok/s. These are five
+  runs of six; the verdict comes from the report over all six.
+- **Where the wall minutes went** ([o4sb_report_table.md](o4sb_report_table.md), the five runs' attempts): `o4sb`'s
+  attempts spent a mean 97 s a task generating (`o4a` 93, `o4b` 99, `o4sa` 107, `o3a` 117) and 30 s reading prompts
+  (53, 54, 29, 59), and processed 3,439 prompt tokens a task (2,991, 3,506, 3,316, 3,618). Python `scale-generator`
+  took 5.0 minutes in 5 turns (`o4a` 5.6, `o4b` 8.4, `o4sa` 8.6, `o3a` 9.2), Python `pig-latin` 4.7 in 9 turns and
+  Python `affine-cipher` 3.4 in 11; every other task took 2.6 minutes or less. No task came near the 12-minute cap.
+- **Graph reallocations** ([o4sb_reallocs.tsv](o4sb_reallocs.tsv),
+  [o4sb_requests_reallocs.tsv](o4sb_requests_reallocs.tsv)): 0 in every bucket (39 requests under 512 tokens, 11 at
+  512–1,023, 10 at 1,024–1,999, 5 at 2,000+).
+- **Host** ([host.tsv](host.tsv), R160e's own lines of `meminfo.log` and `gpu.csv`, from 18:06:47): lowest
+  MemAvailable 1,260 MiB at 18:43:59, the second after the client finished (checkpoints on the cards, as `o4sa`),
+  2,522 MiB at the end; swap 31 MiB at the start, 336 MiB at its highest at 18:14:57, during the load. The report's
+  memory gate ([o4sb_gonogo.md](o4sb_gonogo.md)) reads the shared log: its 718 MB low is R160d's, its 341 MB swap high
+  R160c's. NO-GO on the swap growth, as for the earlier runs. The RAM watchdog did not stop the server. Card peaks
+  MiB: 5,735 5,755 5,681 5,755 5,363 5,471 5,631 5,707 5,115.
+- **Server log:** 13 checkpoint restores, none created or erased, no full re-processing, no NaN or inf, no watchdog
+  kill ([o4sb_gonogo.md](o4sb_gonogo.md)).
+- The report's files: [o4sb_compare.md](o4sb_compare.md), [o4sb_report_table.md](o4sb_report_table.md) (the five
+  runs' attempts), [o4sb_gonogo.md](o4sb_gonogo.md); the per-request and per-attempt rows: [agent/o4sb/](agent/o4sb/).
+
 ## How to run it
 
 [run/r160.sh](run/r160.sh) runs one arm. It reads the settings file of the arm's version and stops if its
@@ -300,3 +350,10 @@ R160d was started as R160a with arm `o4b` (with `run/r160.sh`: `ARM=o4b`). Its r
 rows, so only those whose `tag` starts with `o4b/`), the four runs' server logs, and the lines of `meminfo.log` and
 `gpu.csv` that R160d added (from 17:17:31): `agent_tables.py OUT v3ka o4a o4sa o3a o4b`, `realloc_counts.py
 o4b=rig/server-o4b.log` (default and `--requests`), `run/host.py <those lines> R160d o4b`.
+
+R160e was started as R160b with arm `o4sb` (with `run/r160.sh`: `ARM=o4sb`). Its report: `STEPS="report collect"`
+with `ARMS=o4sb`. Its tables ran in the sandbox image from a folder holding R160d's table rows (`v3ka`, `o4a`, `o4sa`,
+`o3a`, `o4b`) plus `o4sb`'s rows of `res/turns.csv` and of `res/attempts.csv` (only those whose `tag` starts with
+`o4sb/`), the five runs' server logs, and the lines of `meminfo.log` and `gpu.csv` that R160e added (from 18:06:47):
+`agent_tables.py OUT v3ka o4a o4sa o3a o4b o4sb`, `realloc_counts.py o4sb=rig/server-o4sb.log` (default and
+`--requests`), `run/host.py <those lines> R160e o4sb`.
