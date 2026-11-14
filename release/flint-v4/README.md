@@ -76,3 +76,39 @@ On one rig, with this file, both arms on the same line:
   warm-up load, prompts of 0, 4,096, 8,192, 16,384, 32,768 and 49,152 tokens, 256 tokens written at each, with the
   sampler pass.
 - Then the candidates above, each as an arm against `v4` in the agent check, two runs each.
+
+## The deep lane: v4 against v3.0 at depth
+
+Measured on 2026-11-14 on nine P106-090 cards with this file and line, two loads each after a warm-up, 256 tokens
+written twice at each depth ([data](../../docs/data/2026-11-14_r161_flint_release_deep/README.md)). Every value is
+one load; classes by the deep lane's rule (a gain or a loss beyond the larger of the two arms' spreads between their
+loads, else negligible).
+
+**v4 decodes 40.25 and 40.36 tok/s over six depths from 0 to 49,152 tokens against v3.0's 40.02 and 40.04 (+0.7 %,
+a gain), and reads prompts at 318.9 and 321.3 tok/s against 309.9 and 311.0 (+3.1 %, a gain)**, with the same greedy
+reply as v3.0 at every depth:
+
+| Depth (tokens) | Decode tok/s, v3.0 | v4 | Class | Prompt tok/s, v3.0 | v4 | Class |
+|---:|---|---|---|---|---|---|
+| 0 | 49.94, 49.96 | 49.78, 50.79 | negligible (+0.7 %) | 85.1, 85.2 | 84.5, 84.0 | loss (−1.1 %) |
+| 4,096 | 76.51, 76.54 | 77.31, 77.33 | gain (+1.0 %) | 477.5, 478.2 | 503.3, 515.7 | gain (+6.6 %) |
+| 8,192 | 48.37, 48.37 | 48.77, 48.62 | gain (+0.7 %) | 442.6, 446.7 | 443.6, 476.3 | negligible (+3.4 %) |
+| 16,384 | 66.56, 66.74 | 66.91, 67.20 | gain (+0.6 %) | 472.6, 475.4 | 488.5, 490.8 | gain (+3.3 %) |
+| 32,768 | 26.18, 26.16 | 26.35, 26.36 | gain (+0.7 %) | 321.9, 322.3 | 332.7, 332.2 | gain (+3.2 %) |
+| 49,152 | 23.29, 23.31 | 23.44, 23.44 | gain (+0.6 %) | 212.7, 213.6 | 218.0, 219.2 | gain (+2.6 %) |
+| all | 40.02, 40.04 | 40.25, 40.36 | gain (+0.7 %) | 309.9, 311.0 | 318.9, 321.3 | gain (+3.1 %) |
+
+Prompts at depth 0 are the 64-token tail on an empty cache; at the other depths the chunk read on top of the previous
+depth's cache (the row "all" is the five chunks, 53,200 tokens).
+
+**The candidates stacked lose at depth.** The same run held a third arm, this preset plus every candidate above but
+`LLAMA_SCHED_PER_SIZE_RESERVE=2` (no load re-planned): `GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1
+GGML_CUDA_HOP_STAGED=1 GGML_CUDA_GRAPHS_FORCE=1 --ctx-checkpoints-vram 4 --ctx-checkpoints-incall
+--ubatch-taper short=600:64`. It fits (at most 5,971 MiB on a card, 1,099 MiB of host memory left at the lowest) and
+writes the same replies. Against this preset it gains at depth 0 (decode +3.0 %, the 64-token prompt +31.3 %) and on
+the 4,096-token prompt (+6.1 %), and loses from 4,096 tokens on: decode −1.2 %, −1.1 %, −1.4 %, −2.0 % and −3.1 % at
+4,096, 8,192, 16,384, 32,768 and 49,152 tokens, prompts −5.2 %, −20.6 % and −17.3 % at 16,384, 32,768 and 49,152.
+Over all depths it decodes 39.67 and 39.79 tok/s against 40.25 and 40.36 (−1.4 %) and reads 271.7 and 273.5 tok/s
+against 318.9 and 321.3 (−14.8 %). The stack is split to find the candidate that costs it. On Flint the server turns
+`--ctx-checkpoints-incall` off at load (`not with sliding-window layers`), so of that candidate only
+`--ctx-checkpoints-vram 4` acts.
