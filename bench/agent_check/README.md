@@ -424,6 +424,14 @@ checkpoints:
   - the controlling machine runs only ssh: it copies the files over, starts and stops everything, and relays the
     client's requests to the rig through two forwards, `ssh -L` to the rig and `ssh -R` to the client. Neither the rig
     nor the client has to reach the other, and the server never listens beyond the rig's loopback.
+  - **`CLIENT=local`** (in the release harness
+    [release_check_s12.sh](../../docs/data/2026-11-03_flash_next_mtp/run/release_check_s12.sh), since C842): the
+    controlling machine is the client too, for one with Docker but no SSH server. The client's commands run in a
+    local shell, there is no `ssh -R`, and the client uses the `ssh -L` relay's own port (`CLIENT_PORT` is
+    `RELAY_PORT`), which the containers reach on the host network. Run by a user other than root, every container runs
+    as that user (`AC_DOCKER_USER`, read by [common.py](common.py) and [client_arm.sh](client_arm.sh)), so the files
+    the tests and pi leave behind stay the user's to remove. Two checks can share it at once, each with its own ports,
+    arm names and `CLIENT_OUT`.
 - **Run it** from the controlling machine, with the machine-specific values in the environment (the header of
   [release_check.sh](release_check.sh) lists them: ssh aliases, four ports, folders on the client, the two binaries and
   the model on the rig; [release.env.example](release.env.example) has the values of the v2.0 runs to copy and fill

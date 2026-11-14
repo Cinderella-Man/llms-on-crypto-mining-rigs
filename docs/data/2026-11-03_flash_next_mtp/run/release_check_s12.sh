@@ -6,6 +6,13 @@
 # need different arm names (Q226 ran nodraft and mtp while another check ran its rel arm on the same client).
 # Since 2026-11-13 (C804 step (a), Q1408) the prep also copies scripts/realloc_counts.py beside the bench files, so the
 # client's reports count each server log's graph reallocations.
+# Since 2026-11-14 (C842, Q1485) CLIENT=local makes the controlling machine its own client, for one that has Docker but
+# no SSH server: the client's commands run in a local shell (from $HOME, as over ssh), there is no -R forward, and the
+# client's port is the -L relay's own end, so CLIENT_PORT is RELAY_PORT (a different CLIENT_PORT is overridden). The
+# containers run on the host network (client_arm.sh, common.py) and reach it on the loopback. A local client that is
+# not root runs every container as its own user (AC_DOCKER_USER), so the files they leave in its folders stay its to
+# remove: run.py replaces each slot's workspace, which fails on a root container's __pycache__. Two checks can share the
+# local client at once with their own ports, arm names and CLIENT_OUT. CLIENT=<ssh alias> runs as before.
 #
 # release_check.sh OUT: the agent check as a release validation. A coding agent fixes small bugs (the bugfix task set:
 # 12 tasks, Python and JavaScript alternating, 5-10 tool calls each) against llama-server on the rig, once with stock
@@ -32,10 +39,11 @@
 # every arm scored).
 #
 # Environment (the machine-specific values; keep them in a private file):
-#   RIG, CLIENT              ssh aliases, non-interactive
+#   RIG, CLIENT              ssh aliases, non-interactive (CLIENT=local: this machine is the client)
 #   RIG_PORT                 llama-server's port on the rig's loopback
 #   RELAY_PORT               this machine's end of the -L forward (loopback)
-#   CLIENT_PORT, PROXY_PORT  the -R forward's end and the proxy, both on the client's loopback
+#   CLIENT_PORT, PROXY_PORT  the -R forward's end and the proxy, both on the client's loopback (CLIENT=local:
+#                            CLIENT_PORT is RELAY_PORT and need not be set)
 #   CLIENT_DIR               folder on the client that receives the bench files (agent_check/ inside)
 #   CLIENT_OUT               results folder on the client
 #   STOCK_BIN, REL_BIN, MODEL   on the rig
@@ -65,8 +73,11 @@
 set -uo pipefail
 OUT=$(realpath -m "${1:?usage: release_check.sh OUT}")
 HERE=$(cd "${BENCH:?BENCH=the bench/agent_check folder}" && pwd)
-: "${RIG:?}" "${CLIENT:?}" "${RIG_PORT:?}" "${RELAY_PORT:?}" "${CLIENT_PORT:?}" "${PROXY_PORT:?}" "${CLIENT_DIR:?}" \
-  "${CLIENT_OUT:?}"
+: "${RIG:?}" "${CLIENT:?}" "${RIG_PORT:?}" "${RELAY_PORT:?}" "${PROXY_PORT:?}" "${CLIENT_DIR:?}" "${CLIENT_OUT:?}"
+GIVEN_CLIENT_PORT=${CLIENT_PORT:-}
+if [ "$CLIENT" = local ]; then CLIENT_PORT=$RELAY_PORT; else : "${CLIENT_PORT:?}"; fi
+DUSER=  # CLIENT=local as a user other than root: every container runs as this user (AC_DOCKER_USER, common.py)
+if [ "$CLIENT" = local ] && [ "$(id -u)" != 0 ]; then DUSER=$(id -u):$(id -g); export AC_DOCKER_USER=$DUSER; fi
 ARMS=${ARMS:-stock rel}; TASK_SET=${TASK_SET:-bugfix}; TASKS=${TASKS:-all}; CTX=${CTX:-65536}
 TIME_CAP_MIN=${TIME_CAP_MIN:-15}; CPU_SHARES=${CPU_SHARES:-256}; IMAGE=${IMAGE:-agent-check:0.87.1}
 LABEL=${LABEL:-pascal-quants=1}; RIG_LOGDIR=${RIG_LOGDIR:-/tmp/agent-check-rel}
@@ -80,7 +91,11 @@ mkdir -p "$OUT"
 
 say() { echo "$(date +%H:%M:%S) $*" | tee -a "$OUT/run.log"; }
 has() { [[ " $STEPS " == *" $1 "* ]]; }
-cl() { ssh "${SSH_OPTS[@]}" "$CLIENT" "$@"; }
+cl() {  # a command on the client: over ssh, or with CLIENT=local in a local shell from $HOME (stdin passes through)
+  if [ "$CLIENT" = local ]; then (cd ~ && exec bash -c "$*"); else ssh "${SSH_OPTS[@]}" "$CLIENT" "$@"; fi
+}
+[ "$CLIENT" = local ] && [ -n "$GIVEN_CLIENT_PORT" ] && [ "$GIVEN_CLIENT_PORT" != "$RELAY_PORT" ] \
+  && say "CLIENT=local: CLIENT_PORT $GIVEN_CLIENT_PORT ignored; the client uses the relay's port $RELAY_PORT"
 
 arm_config() {  # sets SERVER_BIN, SERVER_ENV and SERVER_ARGS for an arm
   case $1 in
@@ -108,6 +123,11 @@ relay_start() {
   (relay_loop L -L "127.0.0.1:$RELAY_PORT:127.0.0.1:$RIG_PORT" "$RIG") >> "$OUT/relay.log" 2>&1 &
   RELAY_L=$!
   sleep 2
+  if [ "$CLIENT" = local ]; then
+    sleep 3
+    say "relay: client here 127.0.0.1:$RELAY_PORT -> rig 127.0.0.1:$RIG_PORT"
+    return
+  fi
   (relay_loop R -R "127.0.0.1:$CLIENT_PORT:127.0.0.1:$RELAY_PORT" "$CLIENT") >> "$OUT/relay.log" 2>&1 &
   RELAY_R=$!
   sleep 3
@@ -260,8 +280,8 @@ if has report && [ -n "${REPLAY_LOG:-}" ]; then
     ${REPLAY_REF:+--reference $REPLAY_REF} > $CLIENT_OUT/replay.md && cat $CLIENT_OUT/replay.md" | tee -a "$OUT/run.log"
 elif has report; then
   say "report on the client"
-  cl "docker run --rm --label $LABEL --cpu-shares $CPU_SHARES -v $CLIENT_DIR:$CLIENT_DIR:ro -v $CLIENT_OUT:$CLIENT_OUT \
-    $IMAGE bash $CAC/client_report.sh $CLIENT_OUT ${ARMS// /,}" | tee -a "$OUT/run.log"
+  cl "docker run --rm --label $LABEL --cpu-shares $CPU_SHARES ${DUSER:+--user $DUSER} -v $CLIENT_DIR:$CLIENT_DIR:ro \
+    -v $CLIENT_OUT:$CLIENT_OUT $IMAGE bash $CAC/client_report.sh $CLIENT_OUT ${ARMS// /,}" | tee -a "$OUT/run.log"
 fi
 
 if has collect; then

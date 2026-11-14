@@ -13,7 +13,9 @@
 #   CTX (65536, pi's context window = the server's -c), CPU_SHARES (256), IMAGE (agent-check:0.87.1),
 #   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings),
 #   PREFIX (acrel: the containers are PREFIX-ARM-*, and both ends remove every PREFIX-ARM-* container),
-#   RUN_ARGS (more run.py options, e.g. the token mark: "--gen-budget 65536 --mark-tries 2")
+#   RUN_ARGS (more run.py options, e.g. the token mark: "--gen-budget 65536 --mark-tries 2"),
+#   AC_DOCKER_USER ("uid:gid": every container runs as that user; release_check_s12.sh's CLIENT=local sets it on a
+#                  client that is not root, see common.py)
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 : "${OUT:?}" "${ARM:?}" "${PROXY_PORT:?}"
@@ -43,8 +45,8 @@ trap 'echo "stopped"; exit 143' TERM INT HUP
 
 docker rm -f "$PFX-proxy" > /dev/null 2>&1
 docker run -d --name "$PFX-proxy" --label "$LABEL" --cpu-shares "$CPU_SHARES" --network host \
-  -v "$HERE:$HERE:ro" -v "$OUT:$OUT" "$IMAGE" python3 -I "$HERE/${PROXY[0]}" "${PROXY[@]:1}" \
-  --listen "127.0.0.1:$PROXY_PORT" --log "$OUT/proxy.jsonl" > /dev/null \
+  ${AC_DOCKER_USER:+--user "$AC_DOCKER_USER"} -v "$HERE:$HERE:ro" -v "$OUT:$OUT" "$IMAGE" \
+  python3 -I "$HERE/${PROXY[0]}" "${PROXY[@]:1}" --listen "127.0.0.1:$PROXY_PORT" --log "$OUT/proxy.jsonl" > /dev/null \
   || { echo "proxy container did not start"; exit 1; }
 sleep 2
 [ "$(docker inspect -f '{{.State.Running}}' "$PFX-proxy" 2> /dev/null)" = true ] \
