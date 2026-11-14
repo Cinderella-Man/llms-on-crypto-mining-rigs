@@ -17,10 +17,10 @@ Registry row Q1481 in [quants/experiments.md](../../../quants/experiments.md).
 ## Result
 
 **v4 alone is level with v3.0 on Ornith.** Decode over all six depths runs 12.92 and 12.92 tok/s in `v4`'s two loads
-against v3.0's 12.88 and 12.88 (+0.3 %): a gain at every depth by the lane's rule, from +0.1 % to +0.6 %, since the
+against v3.0's 12.88 and 12.88 (+0.3 %): a gain at every depth by the lane's rule (+0.3, +0.4, +0.6, +0.4, +0.2 and +0.1 %), since the
 loads of each arm differ by at most 0.02 tok/s. Prompts read 145.2 and 145.0 tok/s over all five primes (54,736
 tokens) against 146.8 and 146.7 (−1.1 %, a loss): a gain at 4,096 tokens (+1.1 %), a loss at every depth from 8,192
-(−0.9 % to −2.1 %). `v4` writes the same greedy reply as v3.0 at every depth.
+(−0.9, −0.9, −2.1 and −0.9 %). `v4` writes the same greedy reply as v3.0 at every depth.
 
 **The candidate stack reads prompts 15.1 % faster than `v4` and decodes level with it.** `v4s` reads all five primes
 at 167.2 and 166.9 tok/s against `v4`'s 145.2 and 145.0 (+15.1 %, a gain at every depth): 327.3 and 328.0 s against
