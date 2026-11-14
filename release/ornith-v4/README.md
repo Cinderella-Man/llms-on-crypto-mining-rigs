@@ -83,3 +83,39 @@ On one rig, with this file, both arms on the same line:
   warm-up load, prompts of 0, 4,096, 8,192, 16,384, 32,768 and 48,640 tokens (the deepest that leaves room for the 256
   tokens written in the 49,152-token context), with the sampler pass.
 - Then the candidates above, each as an arm against `v4` in the agent check, two runs each.
+
+## The deep lane: v4 against v3.0 at depth
+
+Measured on 2026-11-14 on nine P106-090 cards with this file and line, two loads each after a warm-up, 256 tokens
+written twice at each depth ([data](../../docs/data/2026-11-14_r162_ornith_release_deep/README.md)). Every value is
+one load; classes by the deep lane's rule (a gain or a loss beyond the larger of the two arms' spreads between their
+loads, else negligible).
+
+**v4 is level with v3.0 at depth: it decodes 12.92 and 12.92 tok/s over six depths from 0 to 48,640 tokens against
+v3.0's 12.88 and 12.88 (+0.3 %, a gain), and reads prompts at 145.2 and 145.0 tok/s against 146.8 and 146.7 (−1.1 %, a
+loss)**, with the same greedy reply as v3.0 at every depth:
+
+| Depth (tokens) | Decode tok/s, v3.0 | v4 | Class | Prompt tok/s, v3.0 | v4 | Class |
+|---:|---|---|---|---|---|---|
+| 0 | 18.34, 18.32 | 18.38, 18.39 | gain (+0.3 %) | 24.6, 24.3 | 24.6, 24.6 | negligible (+0.5 %) |
+| 4,096 | 16.82, 16.80 | 16.87, 16.86 | gain (+0.4 %) | 132.4, 132.2 | 133.8, 133.9 | gain (+1.1 %) |
+| 8,192 | 15.46, 15.45 | 15.54, 15.54 | gain (+0.6 %) | 144.8, 144.5 | 143.2, 143.6 | loss (−0.9 %) |
+| 16,384 | 13.34, 13.33 | 13.39, 13.38 | gain (+0.4 %) | 193.8, 193.4 | 191.9, 191.7 | loss (−0.9 %) |
+| 32,768 | 10.43, 10.42 | 10.46, 10.44 | gain (+0.2 %) | 155.5, 155.5 | 152.3, 152.3 | loss (−2.1 %) |
+| 48,640 | 8.61, 8.61 | 8.63, 8.62 | gain (+0.1 %) | 120.7, 120.5 | 119.7, 119.2 | loss (−0.9 %) |
+| all | 12.88, 12.88 | 12.92, 12.92 | gain (+0.3 %) | 146.8, 146.7 | 145.2, 145.0 | loss (−1.1 %) |
+
+Prompts at depth 0 are the 64-token tail on an empty cache; at the other depths the chunk read on top of the previous
+depth's cache (the row "all" is the five chunks, 54,736 tokens).
+
+**The candidates stacked read prompts 15.1 % faster.** The same run held a third arm, this preset plus every candidate
+above but `LLAMA_SCHED_PER_SIZE_RESERVE=2` (no load re-planned): `GGML_CUDA_HOP_STAGED=1 GGML_CUDA_GRAPHS_FORCE=1
+--ctx-checkpoints-vram 4 --ctx-checkpoints-incall --ubatch-taper short=600:64 -b 4096`. It fits (at most 5,773 MiB on
+a card, 1,227 MiB of host memory left at the lowest, in a fit load at 48,640 tokens). Against this preset it reads
+prompts faster at every depth: +65.1 % on the 64-token prompt, +26.4 %, +27.1 %, +14.5 %, +10.8 % and +14.3 % at
+4,096, 8,192, 16,384, 32,768 and 48,640 tokens, all five chunks at 167.2 and 166.9 tok/s against 145.2 and 145.0
+(+15.1 %). Decode is level: 12.94 and 12.93 tok/s against 12.92 and 12.92 over all depths (+0.1 %, a gain), a gain at
+0 and 4,096 tokens, negligible at 8,192, 32,768 and 48,640, a loss of 0.1 % at 16,384. With the checkpoints on the
+cards the host's lowest MemAvailable is 1,238 and 1,254 MiB against 651 and 655. The stack writes another greedy
+reply than this preset at 8,192, 16,384 and 32,768 tokens (the same at 0, 4,096 and 48,640); which candidate changes
+it is registry row Q1487. Whether the stack also wins the agent check decides the preset.

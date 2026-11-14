@@ -1,0 +1,13 @@
+# R162's fit load of v4s alone (2026-11-14 09:59:46-10:15:31): load 573 s, one prompt of 48,640 tokens (48,516 read at 182.5 tok/s), 256 tokens greedy twice and once sampled
+# card: MiB of 6,144 after loading (the driver's check) and the highest of run/fitmon.sh's samples, one a second over the whole load
+card	after_load_mib	peak_mib	total_mib
+0	5603	5757	6144
+1	5635	5773	6144
+2	5549	5703	6144
+3	5635	5773	6144
+4	5243	5381	6144
+5	5351	5489	6144
+6	5513	5651	6144
+7	5601	5723	6144
+8	5009	5129	6144
+# host: MemAvailable after loading 1,511 MiB (1,547,392 kB); lowest 1,227 MiB (10:15:08, the sampled request at 48,640); CmaFree 0; most swap in use 348 MiB; the limit was 400 MB
