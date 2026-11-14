@@ -20,6 +20,7 @@ report over the four runs and the verdict come after R159d. Until then each run 
 | Run | Arm | Rig | Server started, up | Tasks | Passed | Started command |
 |---|---|---|---|---|---|---|
 | R159a | `f4a` | rig 1 | 12:09:16, up after 586 s | 12:19:05–12:50:32 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
+| R159b | `f3a` | rig 1 | 14:05:56, up after 586 s | 14:15:45–14:40:37 | 11 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
 
 ## R159a: `f4a`, the v4 preset (2026-11-14)
 
@@ -53,7 +54,7 @@ v3.0 runs are R159b and R159d):
 | first token median, p90 s | 2.66, 6.75 | **2.85, 7.84** |
 | first token on a task's first turn, median s | 4.23 | **4.29** |
 | tool calls / failed / malformed | 74 / 2 / 0 | **70 / 1 / 0** |
-| graph reallocations (target) | not logged by v3.0's build | **323 with the graph's size unchanged, 0 changed, in 71 of 73 requests** |
+| graph reallocations (target) | not counted | **323 with the graph's size unchanged, 0 changed, in 71 of 73 requests** |
 | lowest MemAvailable, swap | | **885 MiB at 12:40:35; swap 30 → 295 MiB** |
 
 - "Equal work" means `v3base`'s work (its prompt and generated tokens, and its time outside the server) at each arm's
@@ -63,9 +64,9 @@ v3.0 runs are R159b and R159d):
   took 4.4 minutes in 11 turns.
 - **Graph reallocations** ([f4a_reallocs.tsv](f4a_reallocs.tsv), per request in
   [f4a_requests_reallocs.tsv](f4a_requests_reallocs.tsv)): under 512 prompt tokens 67 in 44 of 45 requests;
-  512–1,023, 46 in 12 of 12; 1,024–1,999, 53 in 9 of 9; 2,000 and more, 157 in 6 of 7. v4's builds log the count
-  (`graph reallocs = S / D`); v3.0's do not, so the report cannot mark `f3*` against it. R161's deep lane on the same
-  preset counted none ([2026-11-14_r161_flint_release_deep](../2026-11-14_r161_flint_release_deep/README.md)).
+  512–1,023, 46 in 12 of 12; 1,024–1,999, 53 in 9 of 9; 2,000 and more, 157 in 6 of 7. Both builds log the count
+  (`graph reallocs = S / D`), v3.0's included (R159b, below). R161's deep lane on the same preset counted none
+  ([2026-11-14_r161_flint_release_deep](../2026-11-14_r161_flint_release_deep/README.md)).
   `release/flint-v4/README.md`'s candidate `LLAMA_SCHED_PER_SIZE_RESERVE=2` was to be tried only if an agent report
   counts reallocations above 0, and this one does.
 - **Host and cards** ([host.tsv](host.tsv)): swap grew from 30 to 295 MiB during the load (its highest at 12:18:53,
@@ -76,6 +77,61 @@ v3.0 runs are R159b and R159d):
   kill ([f4a_gonogo.md](f4a_gonogo.md)).
 - The report's files: [f4a_compare.md](f4a_compare.md), [f4a_report_table.md](f4a_report_table.md),
   [f4a_gonogo.md](f4a_gonogo.md); the per-request and per-attempt rows: [agent/f4a/](agent/f4a/).
+
+## R159b: `f3a`, v3.0 (2026-11-14)
+
+- **The started command** (no switch in front: `release/flint-v3/settings.env` sets `PRESET_ENV=""`):
+
+  ```
+  <v3.0>/bin/llama-server -ngl 99 -fa on -c 262144 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja
+  --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui --alias flint -b 512
+  -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4
+  ```
+
+  Every flag of the settings file's `PRESET_ARGS` is in it. v3.0's build prints no `switches:` line, so the running
+  server's environment was read during the load instead: no `LLAMA_*` or `GGML_*` variable set.
+- This arm is the same build, file and line as the reference column `v3base`, run eight days later.
+
+**Numbers** (one run; the same reference column as R159a):
+
+| | v3.0, `v3base` (2026-11-06) | R159a `f4a` | **R159b `f3a`** |
+|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | **11 / 12** |
+| minutes a task at equal work (`v3base`'s work) | 1.86 | 1.85 | **1.81** |
+| minutes, all 12 tasks (wall) | 22.3 | 31.3 | **24.7** |
+| minutes a task, median | 1.03 | 1.21 | **1.17** |
+| turns | 78 | 73 | **66** |
+| generation tok/s | 47.38 | 47.45 | **48.55** |
+| prompt tok/s | 175.2 | 176.9 | **179.2** |
+| first token median, p90 s | 2.66, 6.75 | 2.85, 7.84 | **2.65, 7.20** |
+| first token on a task's first turn, median s | 4.23 | 4.29 | **4.17** |
+| tool calls / failed / malformed | 74 / 2 / 0 | 70 / 1 / 0 | **57 / 0 / 0** |
+| graph reallocations (target) | not counted | 323 same size, 0 changed, in 71 of 73 requests | **188 same size, 0 changed, in 64 of 65 requests** |
+| lowest MemAvailable, swap | | 885 MiB at 12:40:35; swap 30 → 295 MiB | **948 MiB at 14:39:09; swap 31 → 293 MiB** |
+
+- **The failed task:** Python `scale-generator` reached the 12-minute cap in 4 turns (the report's "runaway (time)").
+  Its fourth reply started after 3.0 s and was still generating when the cap stopped the task, 652.9 s into the
+  request. The server never logged that request's timing, so it counts in none of the speeds (est. ~31,000 tokens at
+  48.55 tok/s). In R159a the same task passed at 11.5 minutes. Every other task passed: Python `pig-latin` 2.3
+  minutes, `list-ops` 1.7, `affine-cipher` 1.7; the rest under 1.5 minutes each.
+- **Graph reallocations** ([f3a_reallocs.tsv](f3a_reallocs.tsv), per request in
+  [f3a_requests_reallocs.tsv](f3a_requests_reallocs.tsv)): under 512 prompt tokens 61 in 41 of 41 requests;
+  512–1,023, 44 in 11 of 11; 1,024–1,999, 70 in 11 of 11; 2,000 and more, 13 in 1 of 2. Bucket by bucket
+  against `f4a`: under 512 tokens 61 in 41 requests against 67 in 45, 512–1,023 44 in 11 against 46 in 12,
+  1,024–1,999 70 in 11 against 53 in 9, 2,000 and more 13 in 2 against 157 in 7.
+- **Host and cards** ([host.tsv](host.tsv), made by [run/host_summary.py](run/host_summary.py)): swap grew from 31 to
+  293 MiB during the load (its highest at 14:15:31, before the first task at 14:15:45);
+  MemAvailable was lowest at 948 MiB (14:39:09) and 1,426 MiB at the end. Peak MiB per card: 5,413 5,953 5,109 5,619
+  5,953 5,109 5,573 5,323 4,837. The RAM watchdog did not stop the server.
+- **The report's go/no-go lines** ([f3a_gonogo.md](f3a_gonogo.md)) read the client folder that R159a–d share, where
+  the host logs of each run are appended and the attempts of each run are kept: its harness and cache lines count both
+  runs' 24 attempts, and its memory line (885 MB, swap 30 → 295 MB) is R159a's run. This run's own host numbers are
+  the ones above, and its swap growth is over the gate's 16 MiB too. The proxy-rows line says NO-GO for the capped
+  attempt alone (4 proxy rows against 3 replies; its last row has no timings).
+- **Server log:** 13 checkpoint restores, none created or erased, no full re-processing, no NaN or inf, no watchdog
+  kill.
+- The report's files: [f3a_compare.md](f3a_compare.md), [f3a_report_table.md](f3a_report_table.md) (its table lists
+  `f4a` beside `f3a`), [f3a_gonogo.md](f3a_gonogo.md); the per-request and per-attempt rows: [agent/f3a/](agent/f3a/).
 
 ## How to run it
 
@@ -99,3 +155,11 @@ flint -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4"`, `BUDGET_MIN_f4a=40`
 table: `agent_tables.py OUT v3p065 f4a` over a folder holding `v3base`'s `turns.csv` and `attempts.csv` (its arm
 `rel` renamed `v3p065`) beside `f4a`'s, and `f4a`'s server log; the reallocations: `scripts/realloc_counts.py
 f4a=server-f4a.log` (default and `--requests`). Both ran in the sandbox image.
+
+R159b ran the same call with arm `f3a` (`. release/flint-v3/settings.env`, `REL_BIN` the v3.0 tree's
+`llama-server`, `ARGS_f3a` and `BUDGET_MIN_f3a=40` as above), then `STEPS="report collect"` with `ARMS=f3a`. Its
+tables: `agent_tables.py OUT v3p065 f4a f3a` over the same folder with `f3a`'s rows added (so [agent.tsv](agent.tsv)
+holds all three arms at `v3base`'s work), `realloc_counts.py f3a=server-f3a.log`, and
+`host_summary.py RIGDIR R159b f3a` ([run/host_summary.py](run/host_summary.py): one [host.tsv](host.tsv) row from the
+rig's `meminfo.log` and `gpu.csv`, reading only the last run where the shared client folder appended several; on
+R159a's logs it gives R159a's row exactly), all three in the sandbox image.
