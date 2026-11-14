@@ -60,7 +60,7 @@ report over the six runs and the verdict come after R160f. Until then each run s
 | first token median, p90 s | 9.34, 19.86 | **8.65, 19.22** |
 | first token on a task's first turn, median s | 16.39 | **16.32** |
 | tool calls / failed / malformed | 63 / 1 / 0 | **62 / 0 / 0** |
-| graph reallocations (target) | not logged by v3.0's build | **0 in 62 requests** |
+| graph reallocations (target) | not counted (its server log is not in its folder) | **0 in 62 requests** |
 | lowest MemAvailable, swap | | **803 MiB at 14:24:35; swap 29 → 336 MiB** |
 
 - "Equal work" means `ka`'s work (its prompt and generated tokens, and its time outside the server) at each arm's own
@@ -73,7 +73,9 @@ report over the six runs and the verdict come after R160f. Until then each run s
 - **Graph reallocations** ([o4a_reallocs.tsv](o4a_reallocs.tsv), per request in
   [o4a_requests_reallocs.tsv](o4a_requests_reallocs.tsv)): none in any prompt-size bucket (38 requests under 512
   prompt tokens, 11 at 512–1,023, 10 at 1,024–1,999, 3 at 2,000 and more). Flint's R159a on the same build counted
-  323 in 71 of 73 requests. `release/ornith-v4/README.md`'s candidate `LLAMA_SCHED_PER_SIZE_RESERVE=2` is to be tried
+  323 in 71 of 73 requests. v3.0's build logs the count as well (`graph reallocs = S / D`,
+  [R159b](../2026-11-14_r159_flint_release_agent/README.md)), so R160c and R160f count `o3*`'s.
+  `release/ornith-v4/README.md`'s candidate `LLAMA_SCHED_PER_SIZE_RESERVE=2` is to be tried
   only if an agent report counts reallocations above 0, and this one does not.
 - **Host and cards** ([host.tsv](host.tsv), from the rig's `meminfo.log` and `gpu.csv` by [run/host.py](run/host.py)):
   swap grew from 29 to 336 MiB during the load (its highest at 14:10:07, before the first task) and was 50 MiB when the
