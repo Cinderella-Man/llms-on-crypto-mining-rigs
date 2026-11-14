@@ -21,6 +21,7 @@ report over the four runs and the verdict come after R159d. Until then each run 
 |---|---|---|---|---|---|---|
 | R159a | `f4a` | rig 1 | 12:09:16, up after 586 s | 12:19:05–12:50:32 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
 | R159b | `f3a` | rig 1 | 14:05:56, up after 586 s | 14:15:45–14:40:37 | 11 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
+| R159c | `f4b` | rig 1 | 14:51:45, up after 587 s | 15:01:35–15:30:55 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
 
 ## R159a: `f4a`, the v4 preset (2026-11-14)
 
@@ -133,6 +134,49 @@ v3.0 runs are R159b and R159d):
 - The report's files: [f3a_compare.md](f3a_compare.md), [f3a_report_table.md](f3a_report_table.md) (its table lists
   `f4a` beside `f3a`), [f3a_gonogo.md](f3a_gonogo.md); the per-request and per-attempt rows: [agent/f3a/](agent/f3a/).
 
+## R159c: `f4b`, the v4 preset's second run (2026-11-14)
+
+- **The started command** is R159a's, byte for byte (401 bytes, the same md5): the preset's three switches, then the
+  harness's `COMMON` line and the arm's flags. The server's `switches:` line, read during the load, says
+  `3 set: LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SAMPLING_TOP_K_ROWS=1 LLAMA_SERVER_YIELD=2`.
+
+**Numbers** (one run; from the harness's own report and the rig's memory log):
+
+| | R159a `f4a` | R159b `f3a` | **R159c `f4b`** |
+|---|---|---|---|
+| passed | 12 / 12 | 11 / 12 | **12 / 12** |
+| minutes a task at equal work (`v3base`'s work) | 1.85 | 1.81 | **not yet tabled** |
+| minutes, all 12 tasks (wall) | 31.3 | 24.7 | **29.2** |
+| turns | 73 | 66 | **80** |
+| generation tok/s (the report's rounding) | 47.4 | 48.5 | **48.2** |
+| prompt tok/s (the report's rounding) | 177 | 179 | **179** |
+| first token median, p90 s | 2.85, 7.84 | 2.65, 7.20 | **2.56, 6.76** |
+| first token on a task's first turn, median s | 4.29 | 4.17 | **4.16** |
+| tool calls / failed / malformed | 70 / 1 / 0 | 57 / 0 / 0 | **72 / 0 / 0** |
+| graph reallocations (target) | 323 same size, 0 changed, in 71 of 73 requests | 188 same size, 0 changed, in 64 of 65 requests | **308 same size, 0 changed, in 79 of 80 requests** |
+| lowest MemAvailable, swap | 885 MiB at 12:40:35; swap 30 → 295 MiB | 948 MiB at 14:39:09; swap 31 → 293 MiB | **873 MiB at 15:30:47; swap 32 → 296 MiB** |
+
+- The report prints generation tok/s to one decimal and prompt tok/s to whole numbers; R159a's and R159b's columns
+  above are the same report's figures for them (their two-decimal figures, 47.45 and 48.55, are in
+  [agent.tsv](agent.tsv)). This run's two-decimal speeds, its minutes a task at equal work, its reallocations per
+  bucket of prompt tokens and its card peaks come from the tables of [How to run it](#how-to-run-it)
+  (`agent_tables.py`, `realloc_counts.py`, `host_summary.py`), which were not run with this run; they are added to
+  [agent.tsv](agent.tsv) and [host.tsv](host.tsv) with them.
+- **Long tasks:** JavaScript `variable-length-quantity` 8.7 minutes in 13 turns, Python `scale-generator` 7.8 minutes
+  in 9 turns (it passed; R159b's `f3a` reached the cap on it, R159a's `f4a` passed at 11.5 minutes), Python
+  `pig-latin` 4.0 minutes in 10 turns, Python `list-ops` 2.1 minutes. Every other task took under 2 minutes.
+- **Host** (the rig's `meminfo.log`, this run's lines only): swap grew from 32 to 296 MiB during the load (its highest
+  at 15:01:32, before the first task at 15:01:35); MemAvailable was lowest at 873 MiB (15:30:47, in the last task)
+  and 1,388 MiB at the end. The RAM watchdog did not stop the server.
+- **The report's go/no-go lines** ([f4b_gonogo.md](f4b_gonogo.md)) read the shared client folder, as for R159b: its
+  harness and cache lines count the three runs' 36 attempts, the proxy-rows NO-GO is R159b's capped attempt, and its
+  memory line's 873 MB is this run's low (below R159a's and R159b's) with R159a's starting swap of 30 MB.
+- **Server log:** 14 checkpoint restores, none created or erased, no full re-processing, no NaN or inf, no watchdog
+  kill.
+- The report's files: [f4b_compare.md](f4b_compare.md), [f4b_report_table.md](f4b_report_table.md) (its table lists
+  `f3a` and `f4a` beside `f4b`), [f4b_gonogo.md](f4b_gonogo.md); the per-request and per-attempt rows:
+  [agent/f4b/](agent/f4b/).
+
 ## How to run it
 
 [run/r159.sh](run/r159.sh) runs one arm. It reads the settings file of the arm's version and stops if its
@@ -163,3 +207,8 @@ holds all three arms at `v3base`'s work), `realloc_counts.py f3a=server-f3a.log`
 `host_summary.py RIGDIR R159b f3a` ([run/host_summary.py](run/host_summary.py): one [host.tsv](host.tsv) row from the
 rig's `meminfo.log` and `gpu.csv`, reading only the last run where the shared client folder appended several; on
 R159a's logs it gives R159a's row exactly), all three in the sandbox image.
+
+R159c ran R159a's call with arm `f4b` (`. release/flint-v4/settings.env`, `REL_BIN` the `v4-rc2` tree's
+`llama-server`, `ARGS_f4b` and `BUDGET_MIN_f4b=40` as above), then `STEPS="report collect"` with `ARMS=f4b`. Its
+tables are `agent_tables.py OUT v3p065 f4a f3a f4b` over the same folder with `f4b`'s rows added,
+`realloc_counts.py f4b=server-f4b.log` (default and `--requests`) and `host_summary.py RIGDIR R159c f4b`.
