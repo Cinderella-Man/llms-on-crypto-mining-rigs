@@ -1,0 +1,6 @@
+log	prompt_tokens	requests	prompt_s	reallocs_same	reallocs_changed	requests_with_realloc	graphs_reused
+q5f4t	0-511	49	54.6	84	0	49	88501
+q5f4t	512-1023	10	33.4	38	0	10	18388
+q5f4t	1024-1999	10	61.1	60	0	10	14617
+q5f4t	2000+	5	161.2	113	0	4	8461
+q5f4t	all	74	310.3	295	0	73	129967

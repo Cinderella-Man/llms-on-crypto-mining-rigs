@@ -1,0 +1,2 @@
+run	arm	lowest_memavailable_mib	at	swap_start_mib	swap_max_mib	swap_max_at	memavailable_end_mib	card_peak_mib_0_to_8
+R170a	q5f4t	1104	20:52:19	17	290	20:28:59	3114	5027,4813,3683,4751,3673,4727,3637,4191,4105
