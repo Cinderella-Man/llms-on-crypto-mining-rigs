@@ -1,0 +1,2 @@
+run	arm	lowest_memavailable_mib	at	swap_start_mib	swap_max_mib	swap_max_at	memavailable_end_mib	card_peak_mib_0_to_8
+R166a	o4sna	1225	14:28:59	31	338	13:57:08	3187	5733,5753,5679,5753,5363,5471,5631,5707,5113
