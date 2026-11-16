@@ -16,13 +16,18 @@ R159d `f3b`**.
   class as a loss over all depths, `GGML_CUDA_GRAPHS_FORCE=1` and `LLAMA_SCHED_PER_SIZE_RESERVE=2` in the environment,
   `--ctx-checkpoints-vram 4` and `--ubatch-taper short=600:64` on the line. It leaves out the keep-alive (that split's
   loss) and staged hops (`GGML_CUDA_HOP_STAGED=1`, a loss on the 8,192-token prompt chunk there). Its two runs are
-  compared with `f4a` and `f4b` ([R159e](#r159e-f4ta-the-tuned-preset-f4ts-first-run-2026-11-16) below).
+  classed against `f4a` and `f4b` and against v3.0 in [the report over the six runs](#the-report-over-the-six-runs-the-tuned-preset-f4t)
+  below.
 
 Registry row Q1478 in [quants/experiments.md](../../../quants/experiments.md); the speed table is in
 [release/flint-v4/README.md](../../../release/flint-v4/README.md). **The verdict: v4 against v3.0 is negligible** on
 minutes a task at equal work (1.85 and 1.82 against 1.81 and 1.82), and on generation and first token; **prompt
 tok/s alone is a loss** (−1.3 %: 176.9 and 178.9 against 179.2 and 181.3), as the
-[report over the four runs](#the-report-over-the-four-runs) below gives.
+[report over the four runs](#the-report-over-the-four-runs) below gives. **The tuned preset `f4t` against the v4
+preset** ([the report over the six runs](#the-report-over-the-six-runs-the-tuned-preset-f4t)): prompts a gain
+(+19.1 %), first token median a gain (−34.2 %), first token on a task's first turn a gain (−24.0 %); minutes a task
+at equal work (−3.8 %), generation (+0.7 %) and first token p90 (−11.2 %) negligible. Against v3.0 the same, except
+that p90 is a gain too (−14.6 %).
 
 ## The runs
 
@@ -33,6 +38,61 @@ tok/s alone is a loss** (−1.3 %: 176.9 and 178.9 against 179.2 and 181.3), as 
 | R159c | `f4b` | rig 1 | 14:51:45, up after 587 s | 15:01:35–15:30:55 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
 | R159d | `f3b` | rig 1 | 15:44:46, up after 584 s | 15:54:35–16:14:24 | 12 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
 | R159e (2026-11-16) | `f4ta` | rig 1 | 15:56:50, up after 587 s | 16:06:40–16:35:36 | 11 / 12 | 509 bytes, md5 `85b1ebffdbee2705ba57d648df2bded0` |
+| R159f (2026-11-16) | `f4tb` | rig 1 | 16:46:19, up after 587 s | 16:56:09–17:19:56 | 12 / 12 | 509 bytes, md5 `85b1ebffdbee2705ba57d648df2bded0` |
+
+## The report over the six runs: the tuned preset `f4t`
+
+The harness's report with all six arms ([r159_six_compare.md](r159_six_compare.md),
+[r159_six_report_table.md](r159_six_report_table.md), [r159_six_gonogo.md](r159_six_gonogo.md)), the tables over
+them ([agent.tsv](agent.tsv), [host.tsv](host.tsv), [prompt_by_size.tsv](prompt_by_size.tsv)) and the class
+([class.tsv](class.tsv), made by [run/class_arms.py](run/class_arms.py) from `agent.tsv`). Each arm is two runs, given
+by value:
+
+| | `f4t` (`f4ta`, `f4tb`) | v4 preset (`f4a`, `f4b`) | v3.0 (`f3a`, `f3b`) | `f4t` against the v4 preset | `f4t` against v3.0 |
+|---|---|---|---|---|---|
+| passed | 11 / 12, 12 / 12 | 12 / 12, 12 / 12 | 11 / 12, 12 / 12 | | |
+| minutes a task at equal work (`v3base`'s work) | 1.72, 1.81 | 1.85, 1.82 | 1.81, 1.82 | negligible (−3.8 %) | negligible (−2.8 %) |
+| generation tok/s | 49.32, 46.99 | 47.45, 48.19 | 48.55, 48.02 | negligible (+0.7 %) | negligible (−0.3 %) |
+| prompt tok/s | 219.7, 204.1 | 176.9, 178.9 | 179.2, 181.3 | **gain (+19.1 %)** | **gain (+17.6 %)** |
+| first token median s | 1.74, 1.82 | 2.85, 2.56 | 2.65, 2.61 | **gain (−34.2 %)** | **gain (−32.3 %)** |
+| first token p90 s | 6.61, 6.35 | 7.84, 6.76 | 7.20, 7.97 | negligible (−11.2 %) | **gain (−14.6 %)** |
+| first token on a task's first turn, median s | 3.24, 3.18 | 4.29, 4.16 | 4.17, 4.18 | **gain (−24.0 %)** | **gain (−23.1 %)** |
+| Python `scale-generator` against the 12-minute cap | capped (5 turns); passed in 10.2 min (6 turns) | passed in 11.5 min (9 turns); passed in 7.8 min (9 turns) | capped (4 turns); passed in 5.7 min (6 turns) | | |
+
+- **The rule** (the release check's): a gain or a loss only where the difference of the two arms' means is beyond the
+  larger of their two spreads (the difference between an arm's two runs), else negligible; the percentage is the
+  difference over the base's mean. The same script on `f4` against v3.0 gives the
+  [report over the four runs](#the-report-over-the-four-runs)' classes.
+- **Prompts:** means 211.9 against 177.9 and 180.25 tok/s, spreads 15.6, 2.0 and 2.1; the differences, 34.0 and
+  31.65, are beyond `f4t`'s own spread, and `f4t`'s slower run (204.1) is faster than every other run. Without
+  Python `scale-generator` (in `f4tb` its timed requests reached 26,171 tokens of context; in `f4ta` they stayed at
+  4,088 or less before the cap stopped the fifth reply) its two runs read prompts at 218.8 and 221.2 tok/s.
+- **First token:** median 1.78 against 2.705 and 2.63 s (spreads 0.08, 0.29, 0.04), on a task's first turn 3.21
+  against 4.225 and 4.175 s (spreads 0.06, 0.13, 0.01): gains against both. p90 6.48 against 7.30 and 7.585 s
+  (spreads 0.26, 1.08, 0.77): the difference to the v4 preset, 0.82 s, is within its spread of 1.08, so negligible;
+  to v3.0, 1.105 s, beyond 0.77, so a gain.
+- **Minutes a task at equal work:** means 1.765 against 1.835 and 1.815, spreads 0.09, 0.03 and 0.01: the
+  differences, 0.07 and 0.05, are within `f4t`'s own spread, so negligible. `v3base`'s work is mostly generation
+  (85 s of decode against 23 s of prefill a task), so this measure follows generation speed, and `f4tb` generated at
+  46.99 tok/s, the slowest of the six runs, against `f4ta`'s 49.32, the fastest.
+- **Generation:** means 48.155 against 47.82 and 48.285 tok/s, `f4t`'s spread 2.33: negligible. Without Python
+  `scale-generator` (its long replies at deep context count only where they were timed) the six runs generated at
+  49.35 and 47.80 (`f4t`), 48.74 and 48.99 (v4 preset), 48.54 and 48.69 tok/s (v3.0), so `f4tb`'s lower speed is not
+  that one task alone.
+- **Python `scale-generator` and the 12-minute cap:** two of the six runs reached the cap on it, `f3a` (v3.0) in its
+  fourth reply and `f4ta` (`f4t`) in its fifth; in each, the reply still generating when the cap stopped the task
+  never logged a timing. `f4tb` passed it in 10.2 minutes (613 s, 107 s under the cap), `f4a` in 11.5 (28 s under),
+  `f4b` in 7.8 and `f3b` in 5.7. Every other task passed in all six runs.
+- **Graph reallocations** (the target, the same size in every case, none changed): 250 in 71 of 72 requests and 290
+  in 70 of 71 (`f4t`) against 323 in 71 of 73 and 308 in 79 of 80 (v4 preset) and 188 in 64 of 65 and 237 in 66 of 68
+  (v3.0). `LLAMA_SCHED_PER_SIZE_RESERVE=2` does not bring them to 0.
+- **Host:** lowest MemAvailable 1,084 and 1,100 MiB (`f4t`) against 885 and 873 (v4 preset) and 948 and 947 MiB
+  (v3.0); swap grew to 296 and 299 MiB during the load, as in every run.
+- **Go/no-go** ([r159_six_gonogo.md](r159_six_gonogo.md), over the shared client folder's 72 attempts):
+  infrastructure GO (72 of 72), tool calls GO (0 malformed of 396), cache GO (median hit 94.5 % from the second
+  turn), first token against prefill GO; proxy rows NO-GO for the two capped attempts alone; memory NO-GO on the swap
+  growth during each load (its line reads R159c's low of 873 MB and the highest swap of the six runs, `f4tb`'s 299 MB), with
+  MemAvailable above the 600 MB floor in every run.
 
 ## The report over the four runs
 
@@ -277,8 +337,8 @@ v3.0 runs are R159b and R159d):
   both plans: `context checkpoints on the devices: the newest 4 of each slot, older ones move to the host in the
   background` and `micro-batch taper of prompt calls: short=600:64 (n_ubatch 128)`. The file fitted on the first load.
 
-**Numbers** (one run of two, not classed; beside R159's four runs, every arm at `v3base`'s work in
-[agent.tsv](agent.tsv)):
+**Numbers** (one run, beside R159's four runs, every arm at `v3base`'s work in [agent.tsv](agent.tsv); classed with
+R159f in [the report over the six runs](#the-report-over-the-six-runs-the-tuned-preset-f4t)):
 
 | | v4 `f4a` | v4 `f4b` | v3.0 `f3a` | v3.0 `f3b` | **`f4t` `f4ta`** |
 |---|---|---|---|---|---|
@@ -334,6 +394,56 @@ v3.0 runs are R159b and R159d):
 - The report's files: [f4ta_compare.md](f4ta_compare.md), [f4ta_report_table.md](f4ta_report_table.md) (its table
   lists the four earlier arms beside `f4ta`), [f4ta_gonogo.md](f4ta_gonogo.md); the per-request and per-attempt rows:
   [agent/f4ta/](agent/f4ta/).
+
+## R159f: `f4tb`, the tuned preset `f4t`'s second run (2026-11-16)
+
+- **The started command** is R159e's, byte for byte (509 bytes, the same md5). The server's `switches:` line, read
+  during the load, says `5 set: GGML_CUDA_GRAPHS_FORCE=1 LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SAMPLING_TOP_K_ROWS=1
+  LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_SERVER_YIELD=2`, and at the end of the load it printed both plans, as in
+  R159e. The file fitted on the first load.
+
+**Numbers** (one run, beside R159's five earlier runs, every arm at `v3base`'s work in [agent.tsv](agent.tsv)):
+
+| | v4 `f4a` | v4 `f4b` | v3.0 `f3a` | v3.0 `f3b` | `f4t` `f4ta` | **`f4t` `f4tb`** |
+|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 11 / 12 | 12 / 12 | 11 / 12 | **12 / 12** |
+| minutes a task at equal work (`v3base`'s work) | 1.85 | 1.82 | 1.81 | 1.82 | 1.72 | **1.81** |
+| minutes, all 12 tasks (wall) | 31.3 | 29.2 | 24.7 | 19.7 | 28.8 | **23.3** |
+| minutes a task, median | 1.21 | 0.95 | 1.17 | 1.25 | 1.10 | **1.13** |
+| turns | 73 | 80 | 66 | 68 | 73 | **71** |
+| generation tok/s | 47.45 | 48.19 | 48.55 | 48.02 | 49.32 | **46.99** |
+| prompt tok/s | 176.9 | 178.9 | 179.2 | 181.3 | 219.7 | **204.1** |
+| first token median s | 2.85 | 2.56 | 2.65 | 2.61 | 1.74 | **1.82** |
+| first token p90 s | 7.84 | 6.76 | 7.20 | 7.97 | 6.61 | **6.35** |
+| first token on a task's first turn, median s | 4.29 | 4.16 | 4.17 | 4.18 | 3.24 | **3.18** |
+| tool calls / failed / malformed | 70 / 1 / 0 | 72 / 0 / 0 | 57 / 0 / 0 | 61 / 0 / 0 | 68 / 3 / 0 | **68 / 1 / 0** |
+| graph reallocations (target) | 323 in 71 of 73 requests | 308 in 79 of 80 | 188 in 64 of 65 | 237 in 66 of 68 | 250 in 71 of 72 | **290 in 70 of 71** |
+| lowest MemAvailable, swap during the load | 885 MiB; 30 → 295 MiB | 873 MiB; 32 → 296 MiB | 948 MiB; 31 → 293 MiB | 947 MiB; 32 → 295 MiB | 1,084 MiB; 30 → 296 MiB | **1,100 MiB at 17:15:51; 30 → 299 MiB** |
+| decode seconds a task, mean | 120 | 112 | 49 | 73 | 64 | **86** |
+| prompt tokens processed a task | 6,007 | 5,560 | 3,111 | 4,099 | 4,076 | **5,093** |
+
+- **Every task passed.** Python `scale-generator` took 10.2 minutes (613 s, 107 s under the 12-minute cap) in 6
+  turns, with 478 s of decode; its six requests generated 22,006 tokens at 46.05 tok/s and reached 26,171 tokens of
+  context. R159b's `f3a` and R159e's `f4ta` reached the cap on it. The other long tasks: JavaScript
+  `variable-length-quantity` 2.2 minutes in 6 turns, Python `pig-latin` 1.7 in 5, `affine-cipher` 1.7 in 6,
+  `phone-number` 1.6 in 8; every other task took 1.2 minutes or less. All 71 requests were timed.
+- **Prompt speed by prompt size** ([prompt_by_size.tsv](prompt_by_size.tsv)): under 512 tokens 183.8 tok/s (43
+  requests), 512–1,023 217.5 (13), 1,024–1,999 230.7 (10), 2,000 and more 196.0 (5); `f4ta` 172.7, 220.3, 236.9 and
+  236.2 in the same buckets, the four earlier runs in [R159e](#r159e-f4ta-the-tuned-preset-f4ts-first-run-2026-11-16).
+- **Checkpoints:** 15 restores, all from the cards (52.5 MiB on the devices): the first, 11 min 50 s after the
+  server started, in 162.7 ms, the other 14 in 2.1, 2.2 or 2.6 ms. None created on the host or erased, no full
+  re-processing, no NaN or inf, no watchdog kill.
+- **Graph reallocations** ([f4tb_reallocs.tsv](f4tb_reallocs.tsv), per request in
+  [f4tb_requests_reallocs.tsv](f4tb_requests_reallocs.tsv)), the same size in every case, none changed: under 512
+  prompt tokens 74 in 43 of 43 requests; 512–1,023, 48 in 13 of 13; 1,024–1,999, 59 in 10 of 10; 2,000 and more, 109
+  in 4 of 5.
+- **Host and cards** ([host.tsv](host.tsv)): swap grew from 30 to 299 MiB during the load (its highest at 16:56:00,
+  before the first task at 16:56:09); MemAvailable was lowest at 1,100 MiB (17:15:51, in JavaScript
+  `complex-numbers`) and 2,817 MiB at the end. The RAM watchdog did not stop the server. Peak MiB per card: 5,439
+  5,985 5,133 5,643 5,985 5,133 5,597 5,355 4,859 (`f4ta`: 5,433 5,979 5,129 5,639 5,979 5,129 5,593 5,349 4,853).
+- The run's own report: [f4tb_compare.md](f4tb_compare.md). Its report table and go/no-go lines read the shared
+  client folder and came out identical to the six-run report's, [r159_six_report_table.md](r159_six_report_table.md)
+  and [r159_six_gonogo.md](r159_six_gonogo.md). The per-request and per-attempt rows: [agent/f4tb/](agent/f4tb/).
 
 ## How to run it
 
@@ -402,3 +512,18 @@ added (the collected `res/attempts.csv` holds every arm of the shared client fol
 starts with `f4ta/` were added; the five earlier rows of [agent.tsv](agent.tsv) came out unchanged),
 `realloc_counts.py f4ta=rig/server-f4ta.log` (default and `--requests`), `host_summary.py RIGDIR R159e f4ta` on the
 collected rig logs, and `run/prompt_by_size.py . f4a f3a f4b f3b f4ta` in this folder.
+
+R159f ran R159e's call with the arm renamed `f4tb` (`ARGS_f4tb`, `BUDGET_MIN_f4tb=40`, `ARMS=f4tb`); its started
+command is R159e's byte for byte. Its own report is the same environment with `STEPS="report collect"`. The report
+over the six runs is the harness's report step alone with `ARMS="f3a f4a f3b f4b f4ta f4tb"` and
+`STEPS="report collect"` ([r159_six_compare.md](r159_six_compare.md), [r159_six_report_table.md](r159_six_report_table.md),
+[r159_six_gonogo.md](r159_six_gonogo.md)). Its tables, in the sandbox image: `agent_tables.py OUT v3p065 f4a f3a f4b
+f3b f4ta f4tb` over R159e's table folder with `f4tb`'s turns and attempts added (only the rows whose `tag` starts with
+`f4tb/`; the six earlier rows of [agent.tsv](agent.tsv) came out unchanged), `realloc_counts.py
+f4tb=rig/server-f4tb.log` (default and `--requests`), `host_summary.py RIGDIR R159f f4tb` on the collected rig logs,
+`run/prompt_by_size.py . f4a f3a f4b f3b f4ta f4tb` in this folder, and the class
+([class.tsv](class.tsv), [run/class_arms.py](run/class_arms.py)):
+
+```bash
+python3 run/class_arms.py agent.tsv f4t=f4ta,f4tb f4=f4a,f4b v3.0=f3a,f3b
+```
