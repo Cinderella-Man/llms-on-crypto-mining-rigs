@@ -11,6 +11,12 @@ R159d `f3b`**.
 - `f3*` is the v3.0 release (`miner-llama-v3.0`, `1551f5fe1`, `pascal-p106-v3-b12076-ladder5`; md5
   `c735e40f184f3de61f16ffd5e2ab5ea5`) with [release/flint-v3/settings.env](../../../release/flint-v3/settings.env) as
   shipped (no switch).
+- `f4t*` (R159e `f4ta` and R159f `f4tb`, 2026-11-16) is the tuned v4 preset: `f4` plus the four candidates that the
+  deep lane's split ([2026-11-16_r165_flint_stack_split](../2026-11-16_r165_flint_stack_split/README.md)) does not
+  class as a loss over all depths, `GGML_CUDA_GRAPHS_FORCE=1` and `LLAMA_SCHED_PER_SIZE_RESERVE=2` in the environment,
+  `--ctx-checkpoints-vram 4` and `--ubatch-taper short=600:64` on the line. It leaves out the keep-alive (that split's
+  loss) and staged hops (`GGML_CUDA_HOP_STAGED=1`, a loss on the 8,192-token prompt chunk there). Its two runs are
+  compared with `f4a` and `f4b` ([R159e](#r159e-f4ta-the-tuned-preset-f4ts-first-run-2026-11-16) below).
 
 Registry row Q1478 in [quants/experiments.md](../../../quants/experiments.md); the speed table is in
 [release/flint-v4/README.md](../../../release/flint-v4/README.md). **The verdict: v4 against v3.0 is negligible** on
@@ -26,6 +32,7 @@ tok/s alone is a loss** (−1.3 %: 176.9 and 178.9 against 179.2 and 181.3), as 
 | R159b | `f3a` | rig 1 | 14:05:56, up after 586 s | 14:15:45–14:40:37 | 11 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
 | R159c | `f4b` | rig 1 | 14:51:45, up after 587 s | 15:01:35–15:30:55 | 12 / 12 | 401 bytes, md5 `46991da4e7acc094a91dec01c16252d3` |
 | R159d | `f3b` | rig 1 | 15:44:46, up after 584 s | 15:54:35–16:14:24 | 12 / 12 | 331 bytes, md5 `fc324d8e91ff8ea133f6f7a6b9ffc05a` |
+| R159e (2026-11-16) | `f4ta` | rig 1 | 15:56:50, up after 587 s | 16:06:40–16:35:36 | 11 / 12 | 509 bytes, md5 `85b1ebffdbee2705ba57d648df2bded0` |
 
 ## The report over the four runs
 
@@ -253,6 +260,81 @@ v3.0 runs are R159b and R159d):
   kill.
 - Its per-request and per-attempt rows: [agent/f3b/](agent/f3b/); its report is the report over the four runs.
 
+## R159e: `f4ta`, the tuned preset `f4t`'s first run (2026-11-16)
+
+- **The started command** is R159c's plus exactly the four additions (509 bytes): the preset's three switches, the
+  two new ones, then the harness's `COMMON` line and the arm's flags with the two new flags at the end:
+
+  ```
+  LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_SAMPLING_TOP_K_ROWS=1 GGML_CUDA_GRAPHS_FORCE=1
+  LLAMA_SCHED_PER_SIZE_RESERVE=2 <v4-rc2>/bin/llama-server -ngl 99 -fa on -c 262144 -np 1 -bs --ctx-checkpoints 4
+  --cache-ram 0 --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui
+  --alias flint -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4 --ctx-checkpoints-vram 4 --ubatch-taper short=600:64
+  ```
+
+  The server's `switches:` line, read during the load, says `5 set: GGML_CUDA_GRAPHS_FORCE=1 LLAMA_KV_SEQ_RM_BOUND=1
+  LLAMA_SAMPLING_TOP_K_ROWS=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 LLAMA_SERVER_YIELD=2`. At the end of the load it printed
+  both plans: `context checkpoints on the devices: the newest 4 of each slot, older ones move to the host in the
+  background` and `micro-batch taper of prompt calls: short=600:64 (n_ubatch 128)`. The file fitted on the first load.
+
+**Numbers** (one run of two, not classed; beside R159's four runs, every arm at `v3base`'s work in
+[agent.tsv](agent.tsv)):
+
+| | v4 `f4a` | v4 `f4b` | v3.0 `f3a` | v3.0 `f3b` | **`f4t` `f4ta`** |
+|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 11 / 12 | 12 / 12 | **11 / 12** |
+| minutes a task at equal work (`v3base`'s work) | 1.85 | 1.82 | 1.81 | 1.82 | **1.72** |
+| minutes, all 12 tasks (wall) | 31.3 | 29.2 | 24.7 | 19.7 | **28.8** |
+| minutes a task, median | 1.21 | 0.95 | 1.17 | 1.25 | **1.10** |
+| turns | 73 | 80 | 66 | 68 | **73** |
+| generation tok/s | 47.45 | 48.19 | 48.55 | 48.02 | **49.32** |
+| prompt tok/s | 176.9 | 178.9 | 179.2 | 181.3 | **219.7** |
+| first token median s | 2.85 | 2.56 | 2.65 | 2.61 | **1.74** |
+| first token p90 s | 7.84 | 6.76 | 7.20 | 7.97 | **6.61** |
+| first token on a task's first turn, median s | 4.29 | 4.16 | 4.17 | 4.18 | **3.24** |
+| tool calls / failed / malformed | 70 / 1 / 0 | 72 / 0 / 0 | 57 / 0 / 0 | 61 / 0 / 0 | **68 / 3 / 0** |
+| graph reallocations (target) | 323 in 71 of 73 requests | 308 in 79 of 80 | 188 in 64 of 65 | 237 in 66 of 68 | **250 in 71 of 72** |
+| lowest MemAvailable, swap during the load | 885 MiB; 30 → 295 MiB | 873 MiB; 32 → 296 MiB | 948 MiB; 31 → 293 MiB | 947 MiB; 32 → 295 MiB | **1,084 MiB at 16:35:19; 30 → 296 MiB** |
+| decode seconds a task, mean | 120 | 112 | 49 | 73 | **64** |
+| prompt tokens processed a task | 6,007 | 5,560 | 3,111 | 4,099 | **4,076** |
+
+- **The capped task:** Python `scale-generator` reached the 12-minute cap in 5 turns (the report's "runaway
+  (time)"). Its fifth reply's first token came after 3.25 s, and it was still generating when the cap stopped the
+  task, 705.2 s into the request. The server never logged that request's timing, so it counts in none of the speeds
+  (73 turns, 72 timed requests; est. ~34,600 tokens at 49.32 tok/s). R159b's `f3a` reached the cap on the same task;
+  `f4a`, `f4b` and `f3b` passed it in 11.5, 7.8 and 5.7 minutes. The other long tasks: JavaScript
+  `variable-length-quantity` 3.7 minutes in 8 turns, Python `pig-latin` 3.1 in 8, `affine-cipher` 2.9 in 5,
+  `list-ops` 1.8 in 6; every other task took 1.2 minutes or less.
+- **Prompt speed by prompt size** ([prompt_by_size.tsv](prompt_by_size.tsv), from each arm's timed turns in
+  `agent/<arm>/turns.csv`; [run/prompt_by_size.py](run/prompt_by_size.py)). Each run reads its own prompts, so the
+  buckets hold different requests:
+
+  | prompt tokens | `f4a` | `f4b` | `f3a` | `f3b` | **`f4ta`** |
+  |---|---|---|---|---|---|
+  | under 512 | 123.5 (45) | 121.5 (56) | 124.5 (41) | 107.9 (44) | **172.7 (48)** |
+  | 512–1,023 | 175.6 (12) | 181.0 (12) | 177.5 (11) | 171.3 (9) | **220.3 (10)** |
+  | 1,024–1,999 | 215.5 (9) | 208.3 (7) | 211.7 (11) | 216.2 (10) | **236.9 (9)** |
+  | 2,000 and more | 184.8 (7) | 200.5 (5) | 235.4 (2) | 209.3 (5) | **236.2 (5)** |
+
+  Tokens a second over the bucket's requests (their number in parentheses).
+- **Checkpoints:** 14 restores, all from the cards (52.5 MiB on the devices) in 2.0, 2.1, 2.2 or 2.3 ms each; `f4b`'s
+  14 came from host memory in 292.0, 292.1, 292.2 or 294.6 ms. None created on the host or erased, no full
+  re-processing, no NaN or inf, no watchdog kill.
+- **Graph reallocations** ([f4ta_reallocs.tsv](f4ta_reallocs.tsv), per request in
+  [f4ta_requests_reallocs.tsv](f4ta_requests_reallocs.tsv)), the same size in every case, none changed: under 512
+  prompt tokens 82 in 48 of 48 requests; 512–1,023, 42 in 10 of 10; 1,024–1,999, 52 in 9 of 9; 2,000 and more, 74 in
+  4 of 5. With `LLAMA_SCHED_PER_SIZE_RESERVE=2` the target still reallocates at every size.
+- **Host and cards** ([host.tsv](host.tsv)): swap grew from 30 to 296 MiB during the load (its highest at 16:06:29,
+  before the first task at 16:06:40); MemAvailable was lowest at 1,084 MiB (16:35:19, in the last task) and 1,915 MiB
+  at the end. The RAM watchdog did not stop the server. Peak MiB per card: 5,433 5,979 5,129 5,639 5,979 5,129 5,593
+  5,349 4,853 (`f4b`: 5,413 5,951 5,107 5,617 5,951 5,107 5,571 5,321 4,833).
+- **The report's go/no-go lines** ([f4ta_gonogo.md](f4ta_gonogo.md)) read the shared client folder, now with five
+  runs' 60 attempts: the proxy-rows NO-GO is the two capped attempts (`f3a`'s and this one's), and the memory line's
+  873 MB is R159c's low. This run's own host numbers are the ones above.
+- The report's files: [f4ta_compare.md](f4ta_compare.md), [f4ta_report_table.md](f4ta_report_table.md) (its table
+  lists the four earlier arms beside `f4ta`), [f4ta_gonogo.md](f4ta_gonogo.md); the per-request and per-attempt rows:
+  [agent/f4ta/](agent/f4ta/).
+
 ## How to run it
 
 [run/r159.sh](run/r159.sh) runs one arm. It reads the settings file of the arm's version and stops if its
@@ -298,3 +380,25 @@ f3a f4b f3b` over a folder holding `v3base`'s rows (arm `v3p065`) beside the rep
 `res/attempts.csv` and the four server logs in `rig/`; `realloc_counts.py <arm>=rig/server-<arm>.log` (default and
 `--requests`) for `f4b` and `f3b`; `host_summary.py RIGDIR R159c f4b` on R159c's collected rig logs and
 `host_summary.py RIGDIR R159d f3b` on R159d's, each in the sandbox image.
+
+R159e ran the harness directly ([run/r159.sh](run/r159.sh) takes only the preset's own switches and flags), with
+`f4b`'s call and the four additions, from the repository's root on the machine that drives the rig:
+
+```bash
+. release/flint-v4/settings.env
+BENCH=$PWD/bench/agent_check RIG=<rig alias> CLIENT=local CTX=262144 TIME_CAP_MIN=12 CPU_SHARES=256 \
+  MODEL=<rig path>/flint-near-q8-p065.gguf RIG_LOGDIR=<rig folder>/agent-logs \
+  RIG_PORT=8272 RELAY_PORT=8276 PROXY_PORT=18773 CLIENT_DIR=<client folder>/bench CLIENT_OUT=<client folder>/r159 \
+  REL_BIN=<rig path>/llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828/bin/llama-server \
+  REL_ENV="$PRESET_ENV GGML_CUDA_GRAPHS_FORCE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2" \
+  ARGS_f4ta="--alias flint -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 --pipe-depth 4 --ctx-checkpoints-vram 4 --ubatch-taper short=600:64" \
+  BUDGET_MIN_f4ta=40 ARMS=f4ta STEPS=run \
+  bash docs/data/2026-11-03_flash_next_mtp/run/release_check_s12.sh <out>/agent-f4ta
+```
+
+Its report is the same environment with `STEPS="report collect"`. Its tables, in the sandbox image:
+`agent_tables.py OUT v3p065 f4a f3a f4b f3b f4ta` over R159d's table folder with `f4ta`'s 73 turns and 12 attempts
+added (the collected `res/attempts.csv` holds every arm of the shared client folder, so only the rows whose `tag`
+starts with `f4ta/` were added; the five earlier rows of [agent.tsv](agent.tsv) came out unchanged),
+`realloc_counts.py f4ta=rig/server-f4ta.log` (default and `--requests`), `host_summary.py RIGDIR R159e f4ta` on the
+collected rig logs, and `run/prompt_by_size.py . f4a f3a f4b f3b f4ta` in this folder.
