@@ -1,0 +1,7 @@
+measure	o4sna	o4snb	o4nea	o4neb	o4sn_mean	o4ne_mean	o4sn_spread	o4ne_spread	difference	difference_pct	class
+minutes a task at equal work	2.11	2.13	2.12	2.18	2.1200	2.1500	0.02	0.06	+0.0300	+1.4	negligible
+generation tok/s	16.52	16.13	16.58	16.17	16.3250	16.3750	0.39	0.41	+0.0500	+0.3	negligible
+prompt tok/s	103.0	105.9	100.2	96.8	104.4500	98.5000	2.90	3.40	-5.9500	-5.7	loss
+first token median s	6.69	6.06	6.74	6.43	6.3750	6.5850	0.63	0.31	+0.2100	+3.3	negligible
+first token p90 s	11.29	11.32	10.71	10.08	11.3050	10.3950	0.03	0.63	-0.9100	-8.0	gain
+first token on a task's first turn, median s	8.43	8.45	8.30	8.35	8.4400	8.3250	0.02	0.05	-0.1150	-1.4	gain
