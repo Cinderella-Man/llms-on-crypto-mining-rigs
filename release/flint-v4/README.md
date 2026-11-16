@@ -100,18 +100,39 @@ requests, 16,290 tokens each; [data](../../docs/data/2026-11-16_c843_flint_sampl
 minutes for all twelve tasks (v3.0 24.7 and 19.7, the host switches 31.3 and 29.2, this preset 28.8 and 23.3) are
 different work in each run and are not compared.
 
-In the deep lane below, `v4` is the three host switches alone, measured before this preset took its prompt switches.
-
 ## The deep lane: v4 against v3.0 at depth
 
-Measured on 2026-11-14 on nine P106-090 cards with this file and line, two loads each after a warm-up, 256 tokens
-written twice at each depth ([data](../../docs/data/2026-11-14_r161_flint_release_deep/README.md)). Every value is
-one load; classes by the deep lane's rule (a gain or a loss beyond the larger of the two arms' spreads between their
-loads, else negligible).
+Measured on 2026-11-16 on nine P106-090 cards with this file and this preset as it is, two loads each after a
+warm-up, 256 tokens written twice at each depth
+([data](../../docs/data/2026-11-16_r168_flint_f4t_deep/README.md)). Every value is one load; classes by the deep
+lane's rule (a gain or a loss beyond the larger of the two arms' spreads between their loads, else negligible).
 
-**v4 decodes 40.25 and 40.36 tok/s over six depths from 0 to 49,152 tokens against v3.0's 40.02 and 40.04 (+0.7 %,
-a gain), and reads prompts at 318.9 and 321.3 tok/s against 309.9 and 311.0 (+3.1 %, a gain)**, with the same greedy
-reply as v3.0 at every depth:
+**This preset decodes 40.58 and 40.57 tok/s over six depths from 0 to 49,152 tokens against v3.0's 40.24 and 40.00
+(+1.1 %, a gain), and reads prompts at 329.9 and 334.1 tok/s against 312.7 and 312.0 (+6.3 %, a gain)**, with the
+same greedy reply as v3.0 at every depth:
+
+| Depth (tokens) | Decode tok/s, v3.0 | v4 | Class | Prompt tok/s, v3.0 | v4 | Class |
+|---:|---|---|---|---|---|---|
+| 0 | 50.68, 48.26 | 50.75, 50.34 | negligible (+2.2 %) | 86.4, 83.8 | 91.1, 88.3 | gain (+5.4 %) |
+| 4,096 | 76.66, 76.63 | 77.67, 77.61 | gain (+1.3 %) | 479.7, 479.9 | 549.3, 566.8 | gain (+16.3 %) |
+| 8,192 | 48.44, 48.58 | 49.11, 49.43 | gain (+1.6 %) | 450.0, 432.1 | 524.7, 540.5 | gain (+20.8 %) |
+| 16,384 | 66.88, 66.96 | 67.61, 67.61 | gain (+1.0 %) | 477.2, 475.7 | 520.4, 539.0 | gain (+11.2 %) |
+| 32,768 | 26.28, 26.28 | 26.52, 26.51 | gain (+0.9 %) | 327.6, 326.0 | 338.6, 342.2 | gain (+4.2 %) |
+| 49,152 | 23.43, 23.43 | 23.57, 23.58 | gain (+0.6 %) | 213.3, 214.1 | 221.2, 222.0 | gain (+3.7 %) |
+| all | 40.24, 40.00 | 40.58, 40.57 | gain (+1.1 %) | 312.7, 312.0 | 329.9, 334.1 | gain (+6.3 %) |
+
+Prompts at depth 0 are the 64-token tail on an empty cache; at the other depths the chunk read on top of the previous
+depth's cache (the row "all" is the five chunks, 53,200 tokens). In each first load the four
+52.5 MiB checkpoints are restored from the cards in 2.1, 2.1, 2.2 and 2.1 ms, where v3.0 reads them from host memory
+in 291.9, 292.0, 294.8 and 291.9 ms, and the host keeps about 190 MiB more free at its lowest (1,149 and 1,130 MiB
+against 940 and 952). Cards 1 and 4 peak at 5,987 MiB of 6,144 (v3.0: 5,953). No graph
+reallocated in either arm.
+
+**The earlier measurement, the three host switches alone.** On 2026-11-14, before this preset took its prompt
+switches, the same lane timed `v4-rc2` with v3.0's line and only the three host switches against v3.0
+([data](../../docs/data/2026-11-14_r161_flint_release_deep/README.md)). It decoded 40.25 and 40.36 tok/s over six
+depths against v3.0's 40.02 and 40.04 (+0.7 %, a gain) and read prompts at 318.9 and 321.3 tok/s against 309.9 and
+311.0 (+3.1 %, a gain), with the same greedy reply as v3.0 at every depth:
 
 | Depth (tokens) | Decode tok/s, v3.0 | v4 | Class | Prompt tok/s, v3.0 | v4 | Class |
 |---:|---|---|---|---|---|---|
@@ -126,19 +147,19 @@ reply as v3.0 at every depth:
 Prompts at depth 0 are the 64-token tail on an empty cache; at the other depths the chunk read on top of the previous
 depth's cache (the row "all" is the five chunks, 53,200 tokens).
 
-**The candidates stacked lose at depth.** The same run held a third arm, this preset plus every candidate above but
+**The candidates stacked lose at depth.** The same run held a third arm, the three host switches plus every candidate then untried but
 `LLAMA_SCHED_PER_SIZE_RESERVE=2` (no load re-planned): `GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1
 GGML_CUDA_HOP_STAGED=1 GGML_CUDA_GRAPHS_FORCE=1 --ctx-checkpoints-vram 4 --ctx-checkpoints-incall
 --ubatch-taper short=600:64`. It fits (at most 5,971 MiB on a card, 1,099 MiB of host memory left at the lowest) and
-writes the same replies. Against this preset it gains at depth 0 (decode +3.0 %, the 64-token prompt +31.3 %) and on
+writes the same replies. Against the host switches alone it gains at depth 0 (decode +3.0 %, the 64-token prompt +31.3 %) and on
 the 4,096-token prompt (+6.1 %), and loses from 4,096 tokens on: decode −1.2 %, −1.1 %, −1.4 %, −2.0 % and −3.1 % at
 4,096, 8,192, 16,384, 32,768 and 49,152 tokens, prompts −5.2 %, −20.6 % and −17.3 % at 16,384, 32,768 and 49,152.
 Over all depths it decodes 39.67 and 39.79 tok/s against 40.25 and 40.36 (−1.4 %) and reads 271.7 and 273.5 tok/s
 against 318.9 and 321.3 (−14.8 %). The stack is split to find the candidate that costs it. Forced graphs and staged
-hops, each alone against this preset, are not it
+hops, each alone against the host switches, are not it
 ([data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)). At 32,768 and 49,152 tokens both read prompts
-within this preset's spread, and both decode as fast or faster. **The keep-alive is the stack's deep cost**
-(`GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1`, the same data). Alone against this preset it reads the
+within the host switches' spread, and both decode as fast or faster. **The keep-alive is the stack's deep cost**
+(`GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1`, the same data). Alone against the host switches it reads the
 32,768 and 49,152 chunks −20.1 % and −16.8 % slower, the stack's −20.6 % and −17.3 %. It decodes −3.0 % over all
 depths and gains only on the 64-token prompt at depth 0. The checkpoints on the cards and the taper, each alone, are
 slower at no depth. On Flint the server turns

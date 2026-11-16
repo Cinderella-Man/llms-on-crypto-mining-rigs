@@ -1,0 +1,5 @@
+load	arm	avail_after_load_mib	min_avail_mib	min_usable_mib	max_swap_used_mib	swap_moved_primes_mib	max_swapout_10s_mib	max_psi_some	max_psi_full	watchdog_kill
+v31	v3	1435	940	940	293	0	148	7.45	6.36	none
+v32	v3	1432	952	952	294	0	206	16.21	15.22	none
+v41	v4	1420	1149	1149	294	0	203	21.26	18.77	none
+v42	v4	1427	1130	1130	295	0	220	12.31	11.20	none
