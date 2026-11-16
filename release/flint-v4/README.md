@@ -100,8 +100,12 @@ lane below, where both read the same prompts, measured v4's prompts as a gain (+
 | lowest MemAvailable | 885 MiB | 873 MiB | 948 MiB | 947 MiB | |
 
 v4's runs took longer in all because their attempts wrote and read more (decode 120 and 112 s a task against 49 and
-73, 73 and 80 turns against 66 and 68); on the same work their minutes a task are within v3.0's. Registry row Q1488 checks whether a
-switch changes what Flint samples. v3.0's first run stopped one task at the 12-minute cap.
+73, 73 and 80 turns against 66 and 68); on the same work their minutes a task are within v3.0's. v3.0's first run stopped one task at the 12-minute cap.
+
+**The longer runs were chance, not the preset:** with the same seed, v4 with this preset (and without
+`LLAMA_SAMPLING_TOP_K_ROWS=1`) wrote v3.0's token ids in all 26 replies to recorded agent requests, 16,290 tokens
+each, with the same lengths and ends; the agent sends no seed, so each run draws its own reply lengths (2026-11-16,
+[data](../../docs/data/2026-11-16_c843_flint_sampling/README.md)).
 
 ## The deep lane: v4 against v3.0 at depth
 
