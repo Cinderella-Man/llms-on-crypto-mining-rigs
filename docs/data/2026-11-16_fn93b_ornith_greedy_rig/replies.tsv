@@ -1,0 +1,29 @@
+depth	arm	load	ids_md5	pass2	vs_v4	token_v4	vs_v4s	token_v4s
+0	v4	v4	b8279751702b64bd93868f577002931f	same	same	0	same	0
+0	b4096	b4096	b8279751702b64bd93868f577002931f	same	same	0	same	0
+0	taper	taper	b8279751702b64bd93868f577002931f	same	same	0	same	0
+0	incall	incall	b8279751702b64bd93868f577002931f	same	same	0	same	0
+0	ckvram	ckvram	b8279751702b64bd93868f577002931f	same	same	0	same	0
+0	hop	hop	b8279751702b64bd93868f577002931f	same	same	0	same	0
+0	graphs	graphs	b8279751702b64bd93868f577002931f	same	same	0	same	0
+4096	v4	v4	5eb4b34a7837668b5097f3181056ccfc	same	same	0	same	0
+4096	b4096	b4096	5eb4b34a7837668b5097f3181056ccfc	same	same	0	same	0
+4096	taper	taper	c45afe38fb72afa2b59d2b385c0dd3d1	same	differs at token 21	21	differs at token 21	21
+4096	incall	incall	5eb4b34a7837668b5097f3181056ccfc	same	same	0	same	0
+4096	ckvram	ckvram	5eb4b34a7837668b5097f3181056ccfc	same	same	0	same	0
+4096	hop	hop	5eb4b34a7837668b5097f3181056ccfc	same	same	0	same	0
+4096	graphs	graphs	5eb4b34a7837668b5097f3181056ccfc	same	same	0	same	0
+8192	v4	v4	eea8bef31dda2a8da383789a89b35205	same	same	0	differs at token 11	11
+8192	b4096	b4096	eea8bef31dda2a8da383789a89b35205	same	same	0	differs at token 11	11
+8192	taper	taper	5e66d7864ef0b3f0347988eb1e258772	same	differs at token 11	11	same	0
+8192	incall	incall	eea8bef31dda2a8da383789a89b35205	same	same	0	differs at token 11	11
+8192	ckvram	ckvram	eea8bef31dda2a8da383789a89b35205	same	same	0	differs at token 11	11
+8192	hop	hop	eea8bef31dda2a8da383789a89b35205	same	same	0	differs at token 11	11
+8192	graphs	graphs	eea8bef31dda2a8da383789a89b35205	same	same	0	differs at token 11	11
+16384	v4	v4	d7e7c76f960356629ad21b74f5f8b0d4	same	same	0	differs at token 6	6
+16384	b4096	b4096	d7e7c76f960356629ad21b74f5f8b0d4	same	same	0	differs at token 6	6
+16384	taper	taper	a15fa437298413e414caa53fa4d4fb01	same	differs at token 6	6	same	0
+16384	incall	incall	d7e7c76f960356629ad21b74f5f8b0d4	same	same	0	differs at token 6	6
+16384	ckvram	ckvram	d7e7c76f960356629ad21b74f5f8b0d4	same	same	0	differs at token 6	6
+16384	hop	hop	d7e7c76f960356629ad21b74f5f8b0d4	same	same	0	differs at token 6	6
+16384	graphs	graphs	d7e7c76f960356629ad21b74f5f8b0d4	same	same	0	differs at token 6	6
