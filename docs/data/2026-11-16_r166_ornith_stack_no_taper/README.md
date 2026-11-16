@@ -19,14 +19,15 @@ load a run: **R166a `o4sna`, R166b `o4snb`**.
   preset (`o4a`, `o4b`).
 
 Registry row Q1491 in [quants/experiments.md](../../../quants/experiments.md). R166a and R166b ran on 2026-11-16;
-the report over the six runs and the class are in "The class over the six runs" below.
+the report and the class are in "The class over eight runs" below.
 
 **Verdict:** without the taper the stack is a **loss** against the stack with it: 2.11 and 2.13 minutes a task at
 equal work against 2.08 and 2.06 (+2.4 % on the means), prompts −8.5 %, the first-token median +101.7 %. Generation,
 the first token's p90 and a task's first turn are negligible. Against the v4 preset it is still a **gain**: −15.5 %
 minutes a task at equal work, prompts +71.2 %, first token −30.1 %. The stack with the taper took 17.5 % less than
 the preset, so without the taper it keeps 15.5 points of that. The taper's share is in the short prompts of the later
-turns.
+turns. Against the v3.0 release it is a **gain** as well: −16.2 % minutes a task at equal work, prompts +74.8 %,
+first token −20.6 %, generation negligible.
 
 ## The runs
 
@@ -35,31 +36,34 @@ turns.
 | R166a | `o4sna` | rig 2 | 13:51:30, up after 539 s | 14:00:33–14:29:45 | 12 / 12 | 521 bytes, md5 `211f8db2edeacd267705795e4911d8c9` |
 | R166b | `o4snb` | rig 2 | 14:43:03, up after 538 s | 14:52:05–15:29:03 | 12 / 12 | 521 bytes, md5 `211f8db2edeacd267705795e4911d8c9` |
 
-## The class over the six runs
+## The class over eight runs
 
-Each value is one run ([agent.tsv](agent.tsv), [host.tsv](host.tsv), [r166_reallocs.tsv](r166_reallocs.tsv),
-[o4snb_report_table.md](o4snb_report_table.md); R160's rows from its
+R166's two runs against R160's six: v3.0 as released (`o3a`, `o3b`,
+[release/ornith-v3/settings.env](../../../release/ornith-v3/settings.env)), the v4 preset (`o4a`, `o4b`) and the
+stack with the taper (`o4sa`, `o4sb`). Each value is one run ([agent.tsv](agent.tsv), [host.tsv](host.tsv),
+[r166_reallocs.tsv](r166_reallocs.tsv), [o4snb_report_table.md](o4snb_report_table.md); R160's rows from its
 [agent.tsv](../2026-11-14_r160_ornith_release_agent/agent.tsv),
-[host.tsv](../2026-11-14_r160_ornith_release_agent/host.tsv) and `o4a_reallocs.tsv`, `o4b_reallocs.tsv` there).
+[host.tsv](../2026-11-14_r160_ornith_release_agent/host.tsv) and `o3a_reallocs.tsv`, `o3b_reallocs.tsv`,
+`o4a_reallocs.tsv`, `o4b_reallocs.tsv` there).
 Minutes a task at equal work price the same work, `ka`'s (v3.0's 2026-11-06 run on the same rig, file and line:
 2.52), at each run's own speeds. The class compares the means of an arm's two runs, as R160's: a gain or a loss when
 the difference is larger than the larger of the two arms' spreads (the gap between an arm's two runs), negligible
 otherwise.
 
-| | v4 `o4a` | v4 `o4b` | stack `o4sa` | stack `o4sb` | no taper `o4sna` | no taper `o4snb` | no taper against the stack | no taper against v4 |
-|---|---|---|---|---|---|---|---|---|
-| passed | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | | |
-| minutes a task at equal work | 2.57 | 2.45 | 2.08 | 2.06 | 2.11 | 2.13 | **loss (+2.4 %; spreads 0.02, 0.02)** | **gain (−15.5 %; 0.02, 0.12)** |
-| generation tok/s | 16.53 | 16.37 | 16.30 | 16.52 | 16.52 | 16.13 | negligible (−0.5 %; 0.39, 0.22) | negligible (−0.8 %; 0.39, 0.16) |
-| prompt tok/s | 56.6 | 65.4 | 114.5 | 113.7 | 103.0 | 105.9 | **loss (−8.5 %; 2.9, 0.8)** | **gain (+71.2 %; 2.9, 8.8)** |
-| first token median s | 8.65 | 9.58 | 3.05 | 3.27 | 6.69 | 6.06 | **loss (+101.7 %; 0.63, 0.22)** | **gain (−30.1 %; 0.63, 0.93)** |
-| first token p90 s | 19.22 | 20.29 | 10.97 | 11.28 | 11.29 | 11.32 | negligible (+1.6 %; 0.03, 0.31) | **gain (−42.8 %; 0.03, 1.07)** |
-| first token on a task's first turn, median s | 16.32 | 16.26 | 8.45 | 8.44 | 8.43 | 8.45 | negligible (−0.1 %; 0.02, 0.01) | **gain (−48.2 %; 0.02, 0.06)** |
-| prompt s for the requests under 512 tokens; requests | 199.2; 38 | 193.0; 34 | 80.3; 39 | 83.7; 39 | 116.3; 37 | 144.8; 46 | | |
-| minutes, all 12 tasks; turns | 29.7; 62 | 31.0; 57 | 27.6; 63 | 25.9; 65 | 29.1; 63 | 36.8; 73 | different work | different work |
-| tool calls / failed / malformed | 62 / 0 / 0 | 57 / 0 / 0 | 64 / 0 / 0 | 65 / 1 / 0 | 63 / 2 / 0 | 73 / 2 / 0 | | |
-| graph reallocations | 0 in 62 requests | 0 in 57 | 0 in 63 | 0 in 65 | 0 in 63 | 0 in 73 | | |
-| lowest MemAvailable MiB | 803 | 718 | 1,252 | 1,260 | 1,225 | 1,228 | | |
+| | v3.0 `o3a` | v3.0 `o3b` | v4 `o4a` | v4 `o4b` | stack `o4sa` | stack `o4sb` | no taper `o4sna` | no taper `o4snb` | no taper against the stack | no taper against v4 | no taper against v3.0 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | | | |
+| minutes a task at equal work | 2.52 | 2.54 | 2.57 | 2.45 | 2.08 | 2.06 | 2.11 | 2.13 | **loss (+2.4 %; spreads 0.02, 0.02)** | **gain (−15.5 %; 0.02, 0.12)** | **gain (−16.2 %; 0.02, 0.02)** |
+| generation tok/s | 16.22 | 16.49 | 16.53 | 16.37 | 16.30 | 16.52 | 16.52 | 16.13 | negligible (−0.5 %; 0.39, 0.22) | negligible (−0.8 %; 0.39, 0.16) | negligible (−0.2 %; 0.39, 0.27) |
+| prompt tok/s | 61.1 | 58.4 | 56.6 | 65.4 | 114.5 | 113.7 | 103.0 | 105.9 | **loss (−8.5 %; 2.9, 0.8)** | **gain (+71.2 %; 2.9, 8.8)** | **gain (+74.8 %; 2.9, 2.7)** |
+| first token median s | 7.26 | 8.80 | 8.65 | 9.58 | 3.05 | 3.27 | 6.69 | 6.06 | **loss (+101.7 %; 0.63, 0.22)** | **gain (−30.1 %; 0.63, 0.93)** | **gain (−20.6 %; 0.63, 1.54)** |
+| first token p90 s | 19.56 | 19.25 | 19.22 | 20.29 | 10.97 | 11.28 | 11.29 | 11.32 | negligible (+1.6 %; 0.03, 0.31) | **gain (−42.8 %; 0.03, 1.07)** | **gain (−41.7 %; 0.03, 0.31)** |
+| first token on a task's first turn, median s | 16.34 | 16.52 | 16.32 | 16.26 | 8.45 | 8.44 | 8.43 | 8.45 | negligible (−0.1 %; 0.02, 0.01) | **gain (−48.2 %; 0.02, 0.06)** | **gain (−48.6 %; 0.02, 0.18)** |
+| prompt s for the requests under 512 tokens; requests | 220.3; 45 | 212.1; 39 | 199.2; 38 | 193.0; 34 | 80.3; 39 | 83.7; 39 | 116.3; 37 | 144.8; 46 | | | |
+| minutes, all 12 tasks; turns | 35.8; 71 | 26.6; 60 | 29.7; 62 | 31.0; 57 | 27.6; 63 | 25.9; 65 | 29.1; 63 | 36.8; 73 | different work | different work | different work |
+| tool calls / failed / malformed | 71 / 2 / 0 | 60 / 0 / 0 | 62 / 0 / 0 | 57 / 0 / 0 | 64 / 0 / 0 | 65 / 1 / 0 | 63 / 2 / 0 | 73 / 2 / 0 | | | |
+| graph reallocations | 0 in 71 requests | 0 in 60 | 0 in 62 | 0 in 57 | 0 in 63 | 0 in 65 | 0 in 63 | 0 in 73 | | | |
+| lowest MemAvailable MiB | 731 | 799 | 803 | 718 | 1,252 | 1,260 | 1,225 | 1,228 | | | |
 
 - **Without the taper against the stack with it: a loss.** On the same work the two runs without the taper took
   2.11 and 2.13 minutes a task, the stack with it 2.08 and 2.06: 2.12 against 2.07 on the means, a difference of 0.05
@@ -74,6 +78,12 @@ otherwise.
   checkpoints on the cards still cut a task at equal work from 2.57 and 2.45 minutes to 2.11 and 2.13 (−15.5 % on the
   means), and a task's first turn from 16.32 and 16.26 s to 8.43 and 8.45 s. The stack with the taper took 2.08 and
   2.06 (−17.5 %).
+- **Without the taper against v3.0: a gain.** v3.0 as released took 2.52 and 2.54 minutes a task at equal work, so
+  2.11 and 2.13 are −16.2 % on the means (R160 found v4's preset negligible against v3.0). Prompts read at 103.0 and
+  105.9 tok/s against 61.1 and 58.4, a task's first turn takes 8.43 and 8.45 s against 16.34 and 16.52 s, and a request
+  under 512 tokens 3.14 and 3.15 s of prompt against 4.90 and 5.44 s (220.3 s for 45, 212.1 s for 39). The first-token
+  median, 6.69 and 6.06 s against 7.26 and 8.80 s, is a gain by 1.66 s on the means against v3.0's spread of 1.54 s.
+  Generation is the same (16.52 and 16.13 tok/s against 16.22 and 16.49).
 - **The taper's other side** is its effect on the replies: on 512-token calls a mean KLD of 0.047 against the preset's
   512-token micro-batch, with the same perplexity
   ([2026-11-16_fn93c_ornith_taper_kld](../2026-11-16_fn93c_ornith_taper_kld/README.md)). This run measures its speed:
@@ -112,7 +122,7 @@ otherwise.
 
 - **Minutes a task at equal work** price the same work, `ka`'s (v3.0's 2026-11-06 run on the same rig, file and
   line: 2.52), at each run's own speeds. `o4sna` took 2.11, against the stack's 2.08 and 2.06 and the v4 preset's 2.57
-  and 2.45. The class over both runs is in "The class over the six runs" above.
+  and 2.45. The class over both runs is in "The class over eight runs" above.
 - **Where the prompts slowed** ([o4sna_reallocs.tsv](o4sna_reallocs.tsv), the server's prompt seconds per size of
   prompt): requests under 512 tokens took 116.3 s for 37 requests, against 80.3 s for 39 (`o4sa`) and 83.7 s for 39
   (`o4sb`) with the taper, and 199.2 s for 38 (`o4a`) and 193.0 s for 34 (`o4b`) on the preset. Prompts of 1,024–1,999
