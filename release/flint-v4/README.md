@@ -1,21 +1,23 @@
 # Flint on Miner Llama v4
 
-The v4 preset for Flint: the one command that starts it, the settings it adds to v3.0, and the switches still to be
-tried on it. The file is my Flint Pascal Q8 GGUF (`p065`), the headline Flint file, on nine P106-090 cards at the full
-262,144-token context. Which files to download and every v3.0 setting explained are in
-[release/flint-v3](../flint-v3/README.md); the model's page is [models/flint](../../models/flint/README.md).
+The v4 preset for Flint: the one command that starts it and the settings it adds to v3.0. The file is my Flint Pascal
+Q8 GGUF (`p065`), the headline Flint file, on nine P106-090 cards at the full 262,144-token context. Which files to
+download and every v3.0 setting explained are in [release/flint-v3](../flint-v3/README.md); the model's page is
+[models/flint](../../models/flint/README.md).
 
 ## What v4 changes for Flint
 
-Little. v4's engine work was done on Flash-Next, whose speed comes from checking three drafted tokens in one pass;
-Flint decodes one token a step (its pipelined guesses are one-token steps too), so v4's new kernels for several
-tokens never run for it. Flint gets the newer upstream base (b12360) and three small host-side switches that give the
-same tokens: a dropped guess frees its cache cells without sweeping all 262,144 of them, the server's reader thread
-is woken only when a read waits, and the card's sampler finds the top 20 tokens in one pass with one copy less. On
-`v4-rc2` the file loads with the same memory on every card and gives the same greedy replies as before the upstream
-merge ([data](../../docs/data/2026-11-13_c831_upstream/README.md)). Whether v4 is faster than v3.0 on Flint is what
-the release test below measures; v3.0 on this file and line: 47.4 tok/s, 12 of 12
-([data](../../docs/data/2026-11-05_release_regression/README.md)).
+Prompts. Flint decodes one token a step (its pipelined guesses are one-token steps too), so v4's kernels for several
+tokens never run for it, and generation stays where v3.0 left it. What v4 brings is a faster way to read prompts:
+
+- prompt micro-batches captured as CUDA graphs;
+- the scheduler's plan kept for the largest batch after a re-plan;
+- the context checkpoints of Flint's sliding-window layers kept on the cards, so a restore takes 2 ms instead of 292;
+- short prompt calls read as a pipeline across the nine cards (the prompt taper).
+
+Each gives the same tokens, and on Flint the taper gives the same numbers to the digit. On a coding agent's twelve
+tasks this preset reads prompts at 219.7 and 204.1 tok/s against v3.0's 179.2 and 181.3 (+17.6 %), and the first token
+of a turn comes at a median of 1.74 and 1.82 s against 2.65 and 2.61 s (−32.3 %).
 
 ## Run it
 
@@ -27,85 +29,78 @@ MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/flint-v4/settings.env &
 ```
 
 Unsloth's Q8_0 runs on the same line (`PRESET_MODEL=flint-Q8_0.gguf` after sourcing the preset); Flint Pascal Q5 GGUF
-runs it without `-ts` (layers by count), as in v3.0.
+runs it without `-ts` (layers by count), as in v3.0. With the checkpoints on the cards two cards peak at 5,985 MiB of
+6,144, and the host's lowest free memory in the agent check was 1,084 and 1,100 MiB.
 
 ## The preset: [settings.env](settings.env)
 
-v3.0's command line, unchanged, and three switches:
+v3.0's command line and these:
 
 | Switch | What it does on Flint | Proved by |
 |---|---|---|
 | `LLAMA_KV_SEQ_RM_BOUND=1` | when pipelined speculation drops a wrong guess, its cells are freed by visiting only the cells the guess can hold, not every cell of the 262,144-token cache; the same cells and head as without it | C740 (Q1309); on nine P106 cards with Flash-Next, −0.33 ms a step (R122) |
 | `LLAMA_SERVER_YIELD=2` | a step's hand-over to the server's reader thread wakes it only when a read waits | C741 (Q1310); R122, with Flash-Next |
-| `LLAMA_SAMPLING_TOP_K_ROWS=1` | the card's sampling chain (`-bs`, top-k 20) runs one top-k over its output rows and reads the logits without their padded copy; the same tokens | C691 (Q1223), its graph fixed by C802 (Q1406); R83, with Flash-Next |
-
-Each acts in host code or the sampling graph, the same for every model, and was checked on nine P106 cards.
+| `LLAMA_SAMPLING_TOP_K_ROWS=1` | the card's sampling chain (`-bs`, top-k 20) runs one top-k over its output rows and reads the logits without their padded copy; the same tokens | C691 (Q1223), its graph fixed by C802 (Q1406); R83, with Flash-Next; on Flint the same sampled tokens as v3.0 with the same seed ([C843](../../docs/data/2026-11-16_c843_flint_sampling/README.md)) |
+| `GGML_CUDA_GRAPHS_FORCE=1` | prompt micro-batches captured as CUDA graphs without the two-call warm-up that pipeline parallelism never lets a prompt complete | C702; at depth slower at no depth, the same replies ([R165a](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)) |
+| `LLAMA_SCHED_PER_SIZE_RESERVE=2` | after a re-plan of the shared scheduler, the plan for the largest batch over the whole memory again; Flint re-plans in agent use (hundreds of graph reallocations a run) | C818 (Q1447); R143 |
+| `--ctx-checkpoints-vram 4` | a slot's newest four checkpoints of the sliding-window state on the cards instead of in host memory: a restore takes 2.0 to 2.2 ms instead of 292 ms, and the host keeps about 200 MiB more free | Q440, Q548; at depth slower at no depth, the same replies ([R165b](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)) |
+| `--ubatch-taper short=600:64` | a prompt call of at most 600 tokens read in micro-batches of 64 instead of one of 128, which the nine cards work on as a pipeline; every agent turn ends with such a call | Q771; on Flint the same numbers to the digit: KL divergence 0, perplexity 0.000 %, a repeat exact ([FN96](../../docs/data/2026-11-16_fn96_flint_taper_kld/README.md)); at depth slower at no depth (R165b) |
 
 ## What is left out, and why
 
 | Switches | Why not on Flint |
 |---|---|
+| `GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1` | at depth a loss against the host switches alone: prompts −16.5 % over all five chunks (−20.1 % at 32,768 tokens), decode −3.0 % ([R165b](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)) |
+| `GGML_CUDA_HOP_STAGED=1` | decode +1.5 % at depth, but a loss on the 8,192-token prompt chunk (−7.7 %, [R165a](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)); left out |
+| `--ctx-checkpoints-incall` | the server turns it off on Flint (sliding-window layers) |
 | The sparse QSA attention and its tables (`GGML_CUDA_FATTN_SPARSE_PASCAL*`, `LLAMA_QSA_*`) | only Flash-Next's QSA layers have them |
 | The MTP draft's switches (`LLAMA_MTP_*`, `LLAMA_DRAFT_*`, `LLAMA_VERIFY_PREPARE`, `LLAMA_SPEC_REJECT_STOP`, `--spec-*`) and the n-gram table's prefetch | Flint runs no draft model and has no n-gram table |
 | `LLAMA_HOP_CAST=q8_0` | Flint's graph does not call it (Q1125) |
 | The kernels of 2–8-token passes: `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM`, `_KCOL_TABLE`, `_KCOL_EXACT` (takes Q8_0), `_KCOL_SKIP=q4_0,q5_0` (takes Q5_0), `_Q3K_MT`, `_Q5K_MT`, `_Q6K_MT`, `_DMT`, `_GLU_MT`, `GGML_CUDA_MMVF_F32_MT` | all exact, but they act only on products of 2–8 tokens, which Flint's line runs at most in a prompt's last micro-batch; the file holds Q8_0 and Q5_0 weights, F16 routers and F32 norms, so of their types only Q8_0 (`_KCOL_EXACT`) and Q5_0 (`_KCOL_SKIP`) occur |
 | `-b 4096` | Flint's `-b 512 -ub 128` keeps the 262,144-token context within the 4 GB host: a larger batch pins about 1 GiB of host memory at this context |
 
-## Candidates
-
-Switches that may help Flint but were never run on it. Each is an arm of the release test, the preset plus that one
-candidate, never a default until it measures a gain or negligible there:
-
-| Candidate | What it could buy | Why it is not in the preset |
-|---|---|---|
-| `GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1` | the cards held at their boost clock while they decode, without the ~1 s wait at a kernel's first launch: Ornith gained 16.3 against 14.9 tok/s from the keep-alive on v3.0 | on Flint the keep-alive ran only together with the re-read fix, 44.7 against 45.9 tok/s, one run each, within v2.0's own two runs (45.9 and 44.6); never alone, never with the eager stop. **Deep lane alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)): a loss, and the stack's deep cost.** Prompts a loss on every chunk from 4,096 tokens on (−13.9, −9.7, −11.2, −20.1 and −16.8 % at 4,096, 8,192, 16,384, 32,768 and 49,152), all five chunks 267.7 and 266.9 tok/s against 321.1 and 319.0 (−16.5 %); decode a loss at every depth from 4,096 on, over all depths 39.06 and 38.94 against 40.55 and 39.86 (−3.0 %); a gain only on the 64-token prompt at depth 0 (+27.3 %); the same replies. Not for this preset |
-| `GGML_CUDA_HOP_STAGED=1` | each hop between cards through a pinned host ring; exact on Flint's F32 hops; part of Flash-Next's v3.0 preset | not run on Flint in v3.0. **Deep lane alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)):** decode a gain over all depths (40.99 and 41.03 tok/s against 40.42 and 40.40, +1.5 %), a gain at every depth but 8,192 (negligible); prompts negligible over all five chunks (321.4 and 318.3 against 324.2 and 320.3, −0.7 %), a gain at depth 0 (+2.6 %) and a loss on the 8,192 chunk (446.1 and 437.4 against 478.2 and 479.2, −7.7 %); the same replies; 26 and 21 MiB less host memory after loading. Not yet run on the agent check |
-| `GGML_CUDA_GRAPHS_FORCE=1` | prompt micro-batches captured as CUDA graphs without the two-call warm-up that pipeline parallelism never lets a prompt complete | proved on Flash-Next only together with two draft switches (R123a); graphs take card memory, and this file fills two cards to 5,923 MiB. **Deep lane alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)):** slower at no depth: decode a gain over all depths (40.50 and 40.55 tok/s against 40.42 and 40.40, +0.3 %) and negligible at each depth; prompts negligible over all five chunks (325.7 and 321.9 against 324.2 and 320.3, +0.5 %), a gain on the 16,384 chunk (+5.5 %); the same replies and the same card memory after loading. Not yet run on the agent check |
-| `--ctx-checkpoints-vram 4 --ctx-checkpoints-incall` | Flint keeps most of its attention in a 513-token window, so the server takes context checkpoints; on the cards and inside a prompt's call they took 18.99 % off Flash-Next's prompt time (R85) | the checkpoints take card memory beside the 5,923 MiB two cards already hold; the fit is checked first. On Flint the server turns `--ctx-checkpoints-incall` off at load (sliding-window layers), so only `--ctx-checkpoints-vram 4` acts. **Deep lane, `--ctx-checkpoints-vram 4` alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)):** slower at no depth: decode negligible over all depths (40.67 and 40.62 tok/s against 40.55 and 39.86, +1.1 %); prompts a gain on the four chunks read on a checkpoint (+13.4, +3.9, +0.9 and +1.4 % at 8,192, 16,384, 32,768 and 49,152), all five chunks negligible (322.2 and 329.7 against 321.1 and 319.0, +1.8 %); a checkpoint restored in 2.0, 2.1 or 2.2 ms from the cards against 291.9 or 292.0 ms from host memory; the same replies; the host's lowest MemAvailable 1,165 and 1,144 MiB against 949 and 932; cards 1 and 4 peaked at 5,985 MiB against 5,953. Not yet run on the agent check |
-| `--ubatch-taper short=600:64` | a prompt of at most 600 tokens in micro-batches of 64 (Flash-Next, R60) | Flint already reads prompts in micro-batches of 128. **Deep lane alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)):** slower at no depth: decode negligible over all depths (40.28 and 40.41 tok/s against 40.55 and 39.86, +0.4 %); prompts a gain on the 8,192 and 16,384 chunks (+9.0 and +2.2 %), all five chunks negligible (321.0 and 324.5 against 321.1 and 319.0, +0.8 %); the same replies. In the lane it can act only on a prime's last call; the agent check's tool results of 65 to 600 tokens are where it acts most, and on Ornith it changes the replies (FN93c). Not yet run on the agent check |
-| `LLAMA_SCHED_PER_SIZE_RESERVE=2` | after a re-plan of the shared scheduler, the plan for the largest batch over the whole memory again | it acts only when the scheduler re-plans: an arm only if the release test's report counts graph reallocations above 0 |
-
-## The release test
-
-On one rig, with this file, both arms on the same line:
-
-- **The agent check** ([bench/agent_check](../../bench/agent_check/README.md), 12 bugfix tasks, a 12-minute cap a
-  task): `v3` (the v3.0 release build `1551f5fe1`, tag `miner-llama-v3.0`, with [release/flint-v3](../flint-v3/settings.env)'s
-  switches) against `v4` (`v4-rc2` with this preset), two runs each, alternated, each run its own load.
-- **The deep lane** ([bench/deep_lane](../../bench/deep_lane/README.md)): the same two arms, two loads each after a
-  warm-up load, prompts of 0, 4,096, 8,192, 16,384, 32,768 and 49,152 tokens, 256 tokens written at each, with the
-  sampler pass.
-- Then the candidates above, each as an arm against `v4` in the agent check, two runs each.
-
 ## The agent check: v4 against v3.0
 
-Measured on 2026-11-14 on nine P106-090 cards with this file and line, Flint Pascal Q8 GGUF at 262,144 tokens, 12
-bugfix tasks, two runs each, alternated, each run its own load
+Measured on 2026-11-14 and 2026-11-16 on nine P106-090 cards with this file, Flint Pascal Q8 GGUF at 262,144 tokens,
+12 bugfix tasks ([bench/agent_check](../../bench/agent_check/README.md), a 12-minute cap a task). Three arms, two runs
+each, each run its own load: v3.0 (the release build `1551f5fe1` with [release/flint-v3](../flint-v3/settings.env)),
+`v4-rc2` with the three host switches alone, and this preset
 ([data](../../docs/data/2026-11-14_r159_flint_release_agent/README.md)). Every value is one run.
 
-**v4 is negligible against v3.0 on minutes a task at equal work** (the same work at each run's speeds), on
-generation and on first token; **prompt tok/s alone is a loss** (−1.3 %, beyond the spread of the two runs). The deep
-lane below, where both read the same prompts, measured v4's prompts as a gain (+3.1 %).
+**This preset reads prompts 17.6 % faster than v3.0 and brings the first token 32.3 % sooner;** a task's minutes at
+equal work and generation are level.
 
-| | v4, run 1 | v4, run 2 | v3.0, run 1 | v3.0, run 2 | Class |
-|---|---|---|---|---|---|
-| passed | 12 / 12 | 12 / 12 | 11 / 12 | 12 / 12 | |
-| generation tok/s | 47.45 | 48.19 | 48.55 | 48.02 | negligible (−1.0 %) |
-| prompt tok/s | 176.9 | 178.9 | 179.2 | 181.3 | loss (−1.3 %) |
-| first token median s | 2.85 | 2.56 | 2.65 | 2.61 | negligible (+2.9 %) |
-| first token p90 s | 7.84 | 6.76 | 7.20 | 7.97 | negligible (−3.8 %) |
-| minutes a task at equal work | 1.85 | 1.82 | 1.81 | 1.82 | negligible (+1.1 %) |
-| minutes, all 12 tasks | 31.3 | 29.2 | 24.7 | 19.7 | different work |
-| graph reallocations | 323 in 71 of 73 requests | 308 in 79 of 80 | 188 in 64 of 65 | 237 in 66 of 68 | |
-| lowest MemAvailable | 885 MiB | 873 MiB | 948 MiB | 947 MiB | |
+| Arm, run | Passed | Minutes a task, equal work | Generation tok/s | Prompt tok/s | First token, median s | First token, p90 s | A task's first turn, s | Graph reallocations | Lowest MemAvailable |
+|---|---|---:|---:|---:|---:|---:|---:|---|---:|
+| v3.0, run 1 | 11 / 12 | 1.81 | 48.55 | 179.2 | 2.65 | 7.20 | 4.17 | 188 in 64 of 65 requests | 948 MiB |
+| v3.0, run 2 | 12 / 12 | 1.82 | 48.02 | 181.3 | 2.61 | 7.97 | 4.18 | 237 in 66 of 68 | 947 MiB |
+| v4, host switches only, run 1 | 12 / 12 | 1.85 | 47.45 | 176.9 | 2.85 | 7.84 | 4.29 | 323 in 71 of 73 | 885 MiB |
+| v4, host switches only, run 2 | 12 / 12 | 1.82 | 48.19 | 178.9 | 2.56 | 6.76 | 4.16 | 308 in 79 of 80 | 873 MiB |
+| **this preset, run 1** | **11 / 12** | **1.72** | **49.32** | **219.7** | **1.74** | **6.61** | **3.24** | 250 in 71 of 72 | **1,084 MiB** |
+| **this preset, run 2** | **12 / 12** | **1.81** | **46.99** | **204.1** | **1.82** | **6.35** | **3.18** | 290 in 70 of 71 | **1,100 MiB** |
 
-v4's runs took longer in all because their attempts wrote and read more (decode 120 and 112 s a task against 49 and
-73, 73 and 80 turns against 66 and 68); on the same work their minutes a task are within v3.0's. v3.0's first run stopped one task at the 12-minute cap.
+| Class (means of two runs) | This preset against v3.0 | This preset against the host switches alone |
+|---|---|---|
+| minutes a task at equal work | negligible (−2.8 %) | negligible (−3.8 %) |
+| generation tok/s | negligible (−0.3 %) | negligible (+0.7 %) |
+| prompt tok/s | gain (+17.6 %) | gain (+19.1 %) |
+| first token median | gain (−32.3 %) | gain (−34.2 %) |
+| first token p90 | gain (−14.6 %) | negligible (−11.2 %) |
+| a task's first turn | gain (−23.1 %) | gain (−24.0 %) |
 
-**The longer runs were chance, not the preset:** with the same seed, v4 with this preset (and without
-`LLAMA_SAMPLING_TOP_K_ROWS=1`) wrote v3.0's token ids in all 26 replies to recorded agent requests, 16,290 tokens
-each, with the same lengths and ends; the agent sends no seed, so each run draws its own reply lengths (2026-11-16,
-[data](../../docs/data/2026-11-16_c843_flint_sampling/README.md)).
+A class compares the means of an arm's two runs: a gain or a loss beyond the larger of the two arms' spreads,
+negligible within it. The prompt gain sits in the short calls the taper reads as a pipeline: prompts under 512 tokens
+at 172.7 and 183.8 tok/s against 123.5 and 121.5 with the host switches alone and 124.5 and 107.9 on v3.0
+([prompt_by_size.tsv](../../docs/data/2026-11-14_r159_flint_release_agent/prompt_by_size.tsv)).
+
+The run that missed a task stopped it at the 12-minute cap, Python `scale-generator` both times (v3.0's first run and
+this preset's first): one reply was still being written after more than 650 s. The agent sends no seed, so each run
+draws its own reply lengths, and with the same seed v4 writes v3.0's tokens exactly (26 replies to recorded agent
+requests, 16,290 tokens each; [data](../../docs/data/2026-11-16_c843_flint_sampling/README.md)). The same is why the
+minutes for all twelve tasks (v3.0 24.7 and 19.7, the host switches 31.3 and 29.2, this preset 28.8 and 23.3) are
+different work in each run and are not compared.
+
+In the deep lane below, `v4` is the three host switches alone, measured before this preset took its prompt switches.
 
 ## The deep lane: v4 against v3.0 at depth
 
