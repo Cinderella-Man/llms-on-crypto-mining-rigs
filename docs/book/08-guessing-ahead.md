@@ -291,7 +291,10 @@ it: on the agent check the rule came out at 0.99 times the fixed draft at equal 
 tasks without a runaway, where two sessions of the fixed draft are 1.00 to 1.01 times each other. It yielded 2.80
 tokens a step against 3.10 to 3.12. Negligible, so the switch stays in the build, off. With widths of 1, 3 and 4
 and a steep cost curve the rule mostly shortened drafts. After v3 the check got cheaper, and the rule is priced
-again on recorded drafts of up to seven tokens ([chapter 13](13-the-check-pass.md)).
+again on recorded drafts of up to seven tokens ([chapter 13](13-the-check-pass.md)). On the rig, with drafts of up to
+six, it yielded 4.049 tokens a step and still wrote slower than the fixed draft of three, 25.26 against 28.03 and
+26.16 tokens per second, because each step cost more. v4 keeps the fixed three
+([chapter 16](16-v4.md#165-the-last-round-what-lost)).
 
 ## 8.9 Exact, or only nearly? Block verification and a hidden bias
 
