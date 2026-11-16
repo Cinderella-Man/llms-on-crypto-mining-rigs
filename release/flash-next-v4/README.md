@@ -39,6 +39,11 @@ two loads per arm; [data](../../docs/data/2026-11-13_r157_release_deep/README.md
 Greedy decode at depth 0 is the one loss (23.50 and 23.49 against 26.71 and 26.77 tok/s): v4 writes another greedy
 reply to that 64-token prompt and its draft is accepted less often on it, while its step is 20.1 % shorter.
 
+The keep-alive at depth (R167b, [data](../../docs/data/2026-11-16_r167_keepalive_depth/README.md)): without
+`GGML_CUDA_KEEPALIVE=decode` and `GGML_CUDA_KEEPALIVE_EAGER=1` this line reads prompts 2.3 % faster over all chunks but
+decodes 1.3 % slower over six depths and 9.9 % slower at 49,152 tokens; without the eager stop alone it reads prompts no
+faster and decodes 0.9 % slower.
+
 ## Run it
 
 Set up the files as in [release/flash-next-v3](../flash-next-v3/README.md#run-it), steps 1 to 3 (`MODELS` holds
