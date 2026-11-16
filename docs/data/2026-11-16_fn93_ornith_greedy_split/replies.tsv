@@ -1,0 +1,52 @@
+run	arm	load	kind	pass	depth	gen_n	ids_md5	vs_v4	vs_v4s	vs_rig_v4	vs_rig_v4s	vs_rig_own_arm
+step1	v4s	s1	decode	1	0	256	70538883	same	same	token 7	token 7	token 7
+step1	v4s	s1	decode	2	0	256	70538883	same	same	token 7	token 7	token 7
+step1	v4s	s1	sample	s	0	256	608c5402	same	same	token 7	token 7	token 7
+step1	v4s	s1	decode	1	4096	256	0d12768b	same	same	token 6	token 6	token 6
+step1	v4s	s1	decode	2	4096	256	0d12768b	same	same	token 6	token 6	token 6
+step1	v4s	s1	sample	s	4096	256	9df7659a	same	same	token 6	token 6	token 6
+step1	v4s	s1	decode	1	8192	256	0cb4701b	token 2	same	token 3	token 3	token 3
+step1	v4s	s1	decode	2	8192	256	0cb4701b	token 2	same	token 3	token 3	token 3
+step1	v4s	s1	sample	s	8192	256	7a8f9f10	token 2	same	token 5	token 5	token 5
+step1	v4s	s1	decode	1	16384	256	ca3d8c65	token 4	same	token 6	after char 160	after char 160
+step1	v4s	s1	decode	2	16384	256	ca3d8c65	token 4	same	token 6	after char 160	after char 160
+step1	v4s	s1	sample	s	16384	256	2a5d3835	token 4	same	token 4	token 5	token 5
+step1	v4s	s1	decode	1	32768	256	c6330512	same	same	token 8	token 17	token 17
+step1	v4s	s1	decode	2	32768	256	c6330512	same	same	token 8	token 17	token 17
+step1	v4s	s1	sample	s	32768	256	427ecd1c	token 7	same	token 3	token 7	token 7
+step1	v4s	s1	decode	1	48640	256	d340d86e	same	same	same	same	same
+step1	v4s	s1	decode	2	48640	256	d340d86e	same	same	same	same	same
+step1	v4s	s1	sample	s	48640	256	71433dd4	same	same	token 2	token 2	token 2
+step1	v4	v41	decode	1	0	256	70538883	same	same	token 7	token 7	token 7
+step1	v4	v41	decode	2	0	256	70538883	same	same	token 7	token 7	token 7
+step1	v4	v41	sample	s	0	256	608c5402	same	same	token 7	token 7	token 7
+step1	v4	v41	decode	1	4096	256	0d12768b	same	same	token 6	token 6	token 6
+step1	v4	v41	decode	2	4096	256	0d12768b	same	same	token 6	token 6	token 6
+step1	v4	v41	sample	s	4096	256	9df7659a	same	same	token 6	token 6	token 6
+step1	v4	v41	decode	1	8192	256	5834318a	same	token 2	token 2	token 2	token 2
+step1	v4	v41	decode	2	8192	256	5834318a	same	token 2	token 2	token 2	token 2
+step1	v4	v41	sample	s	8192	256	c2433b9b	same	token 2	token 2	token 2	token 2
+step1	v4	v41	decode	1	16384	256	21053999	same	token 4	token 4	token 4	token 4
+step1	v4	v41	decode	2	16384	256	21053999	same	token 4	token 4	token 4	token 4
+step1	v4	v41	sample	s	16384	256	1f856942	same	token 4	token 4	token 4	token 4
+step1	v4	v41	decode	1	32768	256	c6330512	same	same	token 8	token 17	token 8
+step1	v4	v41	decode	2	32768	256	c6330512	same	same	token 8	token 17	token 8
+step1	v4	v41	sample	s	32768	256	73107b8b	same	token 7	token 3	token 7	token 3
+step1	v4	v41	decode	1	48640	256	d340d86e	same	same	same	same	same
+step1	v4	v41	decode	2	48640	256	d340d86e	same	same	same	same	same
+step1	v4	v41	sample	s	48640	256	71433dd4	same	same	token 2	token 2	token 2
+step1	v4	v42	decode	1	0	256	70538883	same	same	token 7	token 7	token 7
+step1	v4	v42	decode	2	0	256	70538883	same	same	token 7	token 7	token 7
+step1	v4	v42	sample	s	0	256	608c5402	same	same	token 7	token 7	token 7
+step1	v4	v42	decode	1	4096	256	0d12768b	same	same	token 6	token 6	token 6
+step1	v4	v42	decode	2	4096	256	0d12768b	same	same	token 6	token 6	token 6
+step1	v4	v42	sample	s	4096	256	9df7659a	same	same	token 6	token 6	token 6
+step1	v4	v42	decode	1	8192	256	5834318a	same	token 2	token 2	token 2	token 2
+step1	v4	v42	decode	2	8192	256	5834318a	same	token 2	token 2	token 2	token 2
+step1	v4	v42	sample	s	8192	256	c2433b9b	same	token 2	token 2	token 2	token 2
+step1	v4	v42	decode	1	16384	256	21053999	same	token 4	token 4	token 4	token 4
+step1	v4	v42	decode	2	16384	256	21053999	same	token 4	token 4	token 4	token 4
+step1	v4	v42	sample	s	16384	256	1f856942	same	token 4	token 4	token 4	token 4
+step1	v4	v42	decode	1	32768	256	c6330512	same	same	token 8	token 17	token 8
+step1	v4	v42	decode	2	32768	256	c6330512	same	same	token 8	token 17	token 8
+step1	v4	v42	sample	s	32768	256	73107b8b	same	token 7	token 3	token 7	token 3

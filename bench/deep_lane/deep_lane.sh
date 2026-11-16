@@ -34,7 +34,8 @@
 #   DEPTHS ("0 8192 16384 32768 49152"), N_PREDICT (256), CACHE (1: each depth extends the cache; 0: every request
 #   reads its prompt fresh), SAMPLER_PASS (0; 1 adds a pass with the server line's sampler), TAIL_IDS (64), TAIL_RANK
 #   (1), TAIL_TEXT, IGNORE_EOS (1), SEED (1), PAUSE (0: seconds of idle before every request, so that a profiler's
-#   trace, GGML_CUDA_PROFILE in an arm's ARM_ENV, cuts into one piece per request)
+#   trace, GGML_CUDA_PROFILE in an arm's ARM_ENV, cuts into one piece per request), KEEP_REPLY (0; 1 keeps every
+#   reply whole in OUT/<load>.jsonl beside its token ids: its text and each id's text)
 #   QUIET (1): before every load the machine must hold no llama process and at most QUIET_MAX_MIB (100) MiB on any
 #   card, waited for up to QUIET_WAIT_S (60), written to OUT/quiet_<load>.txt. QUIET=0 skips the checks and marks
 #   every request valid=0: its times are not measurements (a machine where speed is not measured).
@@ -385,6 +386,7 @@ run_load() {  # run_load SPEC: one load (name:arm); a load the RAM watchdog stop
     --need-depth "$max_depth" --n-predict "$N_PREDICT" --text $TEXT "--tag=${TAG:-}" --tail-ids "${TAIL_IDS:-64}" \
     --tail-rank "${TAIL_RANK:-1}" "--tail-text=${TAIL_TEXT:-}" --cache "$CACHE" --sampler-pass "${SAMPLER_PASS:-0}" \
     --ignore-eos "${IGNORE_EOS:-1}" --seed "${SEED:-1}" --pause "${PAUSE:-0}" --valid "$VALID" --prompts "$OUT/prompts.json" \
+    --keep-reply "${KEEP_REPLY:-0}" \
     --csv "$OUT/requests-$name.csv" --jsonl "$OUT/$name.jsonl"
   rc=$?
   combine

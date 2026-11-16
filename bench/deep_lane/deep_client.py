@@ -4,7 +4,7 @@
     python3 -I deep_client.py --port 8097 --arm dense --load dense1 --depths 0,8192,16384 --text RECORDED [RECORDED …]
         --csv OUT/requests-dense1.csv [--jsonl OUT/dense1.jsonl] [--prompts OUT/prompts.json] [--cache 0|1]
         [--sampler-pass 1] [--valid 0|1] [--n-predict 256] [--need-depth N] [--tag REGEX] [--tail-ids 64]
-        [--tail-rank 1] [--tail-text TEXT] [--ignore-eos 0|1] [--seed 1] [--pause S]
+        [--tail-rank 1] [--tail-text TEXT] [--ignore-eos 0|1] [--seed 1] [--pause S] [--keep-reply 0|1]
 
 deep_lane.sh runs it once per load, beside the server, so no prompt crosses a network. Standard library only.
 
@@ -42,7 +42,9 @@ token ids, when the server returns them), draft_n and draft_accepted (the server
 tokens_per_step, prompt_md5 (the ids sent), cache_src, valid (--valid: 1 when the machine was checked quiet, so the
 times count), wall_s, time. A decode step yields one token of its own and the draft tokens it accepts, so
 steps = gen_n - draft_accepted and tokens_per_step = gen_n / steps. --jsonl also keeps each request's whole `timings`,
-the first 160 characters of the reply and the reply's token ids (`ids`, where two replies first differ).
+the first 160 characters of the reply and the reply's token ids (`ids`, where two replies first differ); with
+--keep-reply 1 also `content` (the whole reply's text) and `pieces` (each id's text, from /detokenize after the
+request, so that a difference can be read in the text; left out when the server has no /detokenize).
 """
 import argparse
 import csv
@@ -82,6 +84,7 @@ ap.add_argument('--prompts', default='')
 ap.add_argument('--csv', required=True)
 ap.add_argument('--jsonl', default='')
 ap.add_argument('--pause', type=float, default=0)
+ap.add_argument('--keep-reply', type=int, default=0)
 A = ap.parse_args()
 DEPTHS = sorted({int(d) for d in A.depths.split(',')})
 
@@ -284,9 +287,14 @@ def main():
         table.writerow(row)
         out.flush()
         if log:
-            log.write(json.dumps({**row, 'stop_type': r.get('stop_type'), 'content_head': text[:160], 'ids': ids,
-                                  'timings': t})
-                      + '\n')
+            rec = {**row, 'stop_type': r.get('stop_type'), 'content_head': text[:160], 'ids': ids, 'timings': t}
+            if A.keep_reply:
+                rec['content'] = text
+                try:  # each id's text, read after the request, so nothing timed changes
+                    rec['pieces'] = [post('/detokenize', {'tokens': [i]}).get('content', '') for i in ids]
+                except (urllib.error.URLError, ValueError, KeyError):
+                    pass
+            log.write(json.dumps(rec) + '\n')
             log.flush()
         line = (f"{A.load} {kind:6s} depth {depth:6d} pass {pas}: {len(prompt):6d} ids, {row['cache_n'] or 0} cached, "
                 f"{row['prompt_n'] or 0} read | {gen_n} out")
