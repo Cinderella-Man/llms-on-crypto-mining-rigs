@@ -38,6 +38,23 @@ older rows are in those rows' Status cells, marked "2026-11-16". The order, firs
    state is still open, the merge wants two steps and a count of launches a token, and Flint and Ornith have
    published drafters to price (Q1543, Q1544).
 
+**The rank after the night's research (2026-11-17).** Two code rows and five online researches ended in the night
+(Q1521, Q1499 and Q1504 done; notes for Q1527, Q1528, Q1530, Q1531 and Q1532). What they change in the order above:
+- **First on a rig, before any speed row: are answers right at depth** (Q1546). Upstream has a report of a hybrid
+  model answering wrongly at about 60,000 tokens on a Pascal card, and no rig run here has checked past 49,152.
+- **The surest gain is text reuse on Flint** (Q260 again), now that the agent tables count the tokens read (Q1521).
+- **The cheapest new arms:** Ornith with the fused gate and up product off (Q350's first arm, from an open upstream
+  change), and the K-quant scale multiply in FP32 (Q1549, ten lines from ik_llama.cpp).
+- **The largest new idea:** published drafters for Flint and Ornith and a distilled draft head for Flash-Next
+  (Q1543, Q1544, Q1545), each tried by counting accepted tokens first; the maps (Q1510) now time Flint's passes of
+  several tokens too.
+- **The race is ready to run:** its runner and count mode are done against mock servers (Q1504, Q1499), and the
+  attempt race keeps a finished attempt only if the project's own tests pass on it (Q1536).
+- **Hardware has one lever left,** the clock offsets (Q133, Q135): no driver setting holds a P106's clock (Q1530),
+  nothing on a P106-090 can be unlocked for compute (Q1531) and driver branch 580 is confirmed (Q1532).
+- **The upstream merge is two steps** (Q1525): b12410 first, with a count of launches a token; the server's rewrite
+  once upstream's fix for recurrent models is in a tag.
+
 **The release (2026-11-16):** v4.0's release tests are done and its three presets are fixed. The build is `pascal-p106-v4`
 `eb82916d3` (the release candidate `v4-rc2`, upstream b12360 merged, Q1462 and Q1463). Flash-Next's preset `v4r`:
 27.61 and 26.67 tok/s and 2.37 and 2.43 minutes a task on the agent check against v3.0's 20.66 and 18.92 and 3.08 and
@@ -1500,7 +1517,7 @@ work is in "Now" at the top of this file.
 | Q1507 | (R175, same review) **The draft shortlist's fallback at one step.** After a shortlist miss the draft runs its full head for the next steps; the preset's third shortlist value is 2 (est.: read from the preset, not checked in the code). An arm with 1 on the agent check's replies. A drafting pass's mean less its median is est. 2.14 ms a step on the greedy request and 0.36 on the sampled one ([R122](../docs/data/2026-11-12_r122_host_ladder/README.md)) | planned | — | one rig, est. 50 min; with Q1103 |
 | Q1508 | (C847, same review) **Rollback snapshots sized to the step's own draft.** Snapshots are sized to the draft's limit, so a rule that allows six tokens may pay for six in a step that drafts three. Snapshots cost 5.52 and 5.54 ms a verify pass on v3.0 (Q686, Q1159) | planned | — | code; ranked by Q1393's map |
 | Q1509 | (FN100, same review) **A draft temperature for the accept rule, priced with the replay tool.** The draft is pessimistic where it is unsure: tokens it gives under 0.5 (mean 0.2367) are accepted 0.5283 of the time. Q800 lists the fit only. Price the accepted tokens a step with `bench/tree_replay` on recorded agent replies before any rig run | planned | — | no rig |
-| Q1510 | (R176, from the Flint and Ornith review, 2026-11-16) **The one-token step's map for Flint and Ornith on v4.0.** No per-part profile of either release file exists, so every decode estimate for them (Q350, Q702, Q1125, Q634) is priced from another model or an older build. The per-part profile of Flint Pascal Q8 GGUF and Ornith-1.5-122B Pascal N2P GGUF on each v4 preset at depth 0 and 8,192 tokens; for Ornith also passes of 2, 3 and 4 tokens (v3.0's passes of 1 to 4 took 104.6, 183.9, 208.7 and 293.3 ms), which prices its draft (Q1281, Q1513) | planned | — | one rig, est. 1 h a model; no code |
+| Q1510 | (R176, from the Flint and Ornith review, 2026-11-16) **The one-token step's map for Flint and Ornith on v4.0.** No per-part profile of either release file exists, so every decode estimate for them (Q350, Q702, Q1125, Q634) is priced from another model or an older build. The per-part profile of Flint Pascal Q8 GGUF and Ornith-1.5-122B Pascal N2P GGUF on each v4 preset at depth 0 and 8,192 tokens; for Ornith also passes of 2, 3 and 4 tokens (v3.0's passes of 1 to 4 took 104.6, 183.9, 208.7 and 293.3 ms), which prices its draft (Q1281, Q1513) | planned; **widened 2026-11-17:** also Flint's passes of 2, 4 and 8 tokens, which price its published drafter (Q1543) | — | one rig, est. 1 h a model; no code |
 | Q1511 | (C848, same review and the hardware review) **Flint's staged hops on decode only.** With staged hops Flint decodes 40.99 and 41.03 tok/s against 40.42 and 40.40 but reads the 8,192-token chunk at 446.1 and 437.4 tok/s against 478.2 and 479.2 ([R165](../docs/data/2026-11-16_r165_flint_stack_split/README.md)). Two forms keep the gain without the loss: stage a hop only below a size cap, or only in decode graphs. Est. 0.42 ms a token at the start (2.3 %); decode est. +1.5 % over six depths | planned | — | code: small; one rig, est. 1 h 30 min |
 | Q1512 | (R177, same review) **Ornith's card-built attention mask alone, at depth.** Pipelined speculation (Q162) is parked, but its card-built mask for Ornith's kind of model is built and exact. Ornith's decode grows by 10.44 ms a token at 8,192 tokens and 61.77 at 48,640 ([R167a](../docs/data/2026-11-16_r167_keepalive_depth/README.md)); whether that is the attention kernel or the mask built on the host is open. The mask alone, timed at depth | planned | — | one rig; after Q1510 |
 | Q1513 | (C849, same review) **Probabilistic verification for Ornith's own draft.** Q731 covers Flash-Next's drafts only. Offline Ornith's MTP layer is accepted 0.843 and 0.740 on drafts one and two (Q397): est. 2.49 tokens a step against 2.14 served on v3.0. Break-even is est. 152.1 ms a step (2.49 × 61.1); v3.0's step took 165.1 | planned | — | code: small; with Q1281, after Q1510's passes of 2 to 4 tokens |
