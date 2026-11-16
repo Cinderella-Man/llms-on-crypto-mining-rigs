@@ -27,7 +27,7 @@ Turing and Ampere CMP cards, not Pascal ([Pascal forks](pascal_forks_and_quants.
 | **PCIe link generation: Gen1 (2.5 GT/s)** | The card advertises 2.5 GT/s as its maximum (`LnkCap`); a link trains to the fastest rate both ends advertise | Nothing public for P106/P104. The CMP Gen2 unlocks use the GSP policy path + open modules (Turing+) | n/a | n/a | **Not available** (restates [hardware tuning](hardware_tuning.md) §4). Even if it existed: est. ~1 % decode on nine cards |
 | **PCIe link width: this rig is one physical lane per card** | The Manli board wires every GPU slot as a single lane through ASM1184e switches; the card's `LnkCap` on this rig advertises width x4 | One tool (`P106-90-Unlock-X16`) runs a closed boot-time EFI binary that writes the width registers x4→x16, volatile per boot — but "EFI cannot create physical lanes that do not exist" | Volatile (re-run each boot; nothing written to the card) | Closed prebuilt binary; needs Secure Boot off and edits the ESP + boot order | **Do not use, and moot here.** The binary is unauditable, and there is one physical lane per card on this board regardless |
 | **Cross-flash to a P106-100 / GTX 1060 image** (for the other 5 SMs or more VRAM) | VBIOS signature check (Falcon, since Maxwell) + nvflash GPU/Board-ID match | `nvflashk` forces nvflash's ID-mismatch bypass, but still needs a **signed** image and cannot disable the on-die signature check; the fused-off SMs stay off whatever image boots | Written to the card (persistent); reversible only by reflashing the backup | Bricking one of nine cards on a headless switch-fanout board; LUKS reboots are at the console | **The owner's decision, and pointless.** No compute gain (SMs are fused, the 6 GB is already present); real brick risk |
-| **No 3D / display path in the driver** | The VBIOS reports no display outputs; the driver's device-ID list omits the mining SKU for graphics | `NVIDIA-patcher` adds the device ID to the driver and re-signs it (Windows) or byte-patches `nv-kernel.o` (Linux) | Driver files on the host, not the card; undone by reinstalling the driver | Windows path impersonates an "NVIDIA Corporation" signing cert and needs test-signing | **Not needed.** This rig already has full CUDA compute on Linux; the Windows path is a do-not-use |
+| **No 3D / display path in the driver** (owner named `dartraiden/NVIDIA-patcher`) | The driver's device-ID list marks the mining SKU as a headless/compute-only part | `NVIDIA-patcher` byte-patches that list in the driver blob (Linux) or re-signs it (Windows) so the card gets the graphics path | Host driver files, not the card; `.backup` + stock reinstall undoes it | Safe for the cards (writes nothing to them). Host risk only: replaces the apt-managed driver; the Windows path impersonates an "NVIDIA Corporation" cert | **Not malware, cannot break the cards, but not needed — do not install on the rig** (full answer, §6). CUDA already works; this adds a display path the rig never uses |
 | **A possible per-instruction throttle** (dp4a, FFMA, …) | Unknown — never measured on a P106-090 | n/a (this is a measurement, not an unlock) | n/a | one card, 1 h | **Measure it:** registry Q103 is still worth its one-hour calibration (below) |
 
 ### In short
@@ -161,13 +161,58 @@ The two load-bearing facts:
 | `WifiLast/torch-cmp-patch` | GitHub user `WifiLast` | not stated | — | Userspace CUDA/PyTorch patch | **Not applicable** (CMP, software) |
 | `notfromstatefarm/nvflashk` | GitHub user `notfromstatefarm` / "kefinator" | Closed — "base … copyright nVIDIA … provided in a modified fashion"; binary-only | **Yes** — binary only (no source) | **Writes the card's VBIOS** by bypassing ID checks | **The owner's decision only, and discouraged.** A closed binary that flashes firmware, for zero gain here (§2) |
 | `DaZuiZZZZ/P106-90-Unlock-X16` | GitHub user `DaZuiZZZZ` | No top-level licence; only a TianoCore BSD on a template file. Core `NVPermissiveEFI.efi` is **not in the repo** (release-only, closed) | **Yes** — release EFI + UEFI Shell, closed | Copies to the ESP, adds a firmware boot entry, writes GPU PCIe width registers at each boot (volatile) | **Do not use.** Unauditable boot-time binary; needs Secure Boot off; and width is physically fixed here |
-| `dartraiden/NVIDIA-patcher` | GitHub user `dartraiden` | No top-level licence file found | **Yes** — bundles Windows tooling (`signtool.exe`, `7z`, `PEChecksum`) and a cert archive | Windows: generates a self-signed cert naming "NVIDIA Corporation", re-signs the driver, needs test-signing. Linux: byte-patches `nv-kernel.o` and reinstalls | **Not needed; do not use.** Adds a graphics path the rig does not use; the Windows path impersonates an NVIDIA signing identity |
+| `dartraiden/NVIDIA-patcher` (owner-named) | GitHub user `dartraiden` | No top-level licence file found | **Yes** — bundles Windows tooling (`signtool.exe`, `7z`, `PEChecksum`, MS signing DLLs) and a cert archive; **Linux ships no binaries** | Linux: a ~70-line bash script that extracts the user's own NVIDIA `.run`, backs up and byte-patches `nv-kernel.o_binary`, reinstalls — **downloads nothing, writes nothing to a card**. Windows: self-signs a cert naming "NVIDIA Corporation" through a local timestamp server, re-signs the driver, needs test-signing; an optional NVENC step fetches third-party patches from GitHub/gist | **Not needed; do not install on the rig** (full safety answer in §6). Safe for the cards (host-software only, reversible); adds a graphics path the rig does not use; fights the apt-managed driver |
 | `DualCoder/vgpu_unlock` | Jonathan Johansson | MIT | No (Python + C source) | Hooks the GRID driver's ioctls and makes `nv-kernel.o`'s rodata writable to spoof vGPU capability | **Not applicable.** Enables vGPU virtualization, needs the GRID driver; no bearing on single-host inference speed |
 
 General safety notes that apply to all of the above: every one needs Secure Boot off and either a patched kernel module,
 a re-signed or impersonated driver, a closed boot-time binary, or a firmware flash. None is "fine to try" on a production
 rig. The only ones that even target a P106 (`nvflashk` by way of a cross-flash, `P106-90-Unlock-X16`, `NVIDIA-patcher`)
 deliver nothing this rig can use, for the physical reasons in §1–§4.
+
+## 6. The tool named directly — `dartraiden/NVIDIA-patcher`: is it malware, and can it break the cards?
+
+This is the one tool read not just for the table but for a plain safety answer, read-only from a fresh clone. It is a
+popular community project that **adds a 3D/display/graphics path** to mining cards (P106-090 among them) by removing them
+from an internal device-ID list in the proprietary driver, so the driver stops treating them as headless compute-only
+SKUs. The three questions:
+
+**Is it malware?** On the path that matters for this rig — Linux — **no, and it is fully auditable.** `linux.sh` is a
+~70-line bash script with no obfuscation. It takes an `NVIDIA-Linux-*.run` installer the user downloads from nvidia.com
+(the script fetches nothing), runs `--extract-only`, copies `kernel/nvidia/nv-kernel.o_binary` to a `.backup`, hex-dumps
+it, blanks a short list of device-ID words with `sed`, and writes it back. The list for this rig's family (its `P1xx`
+pattern) is the little-endian IDs `1b07 1b87 1bc7 1c07 1c09` — and `1c09` is the P106-090; each is overwritten to `ffff`
+so the driver's restricted-SKU table no longer matches the card. No network call, no persistence, no card write. A
+read-only static scan of the whole repo found outbound URLs only in the **Windows** tooling, and even there the signing
+flow uses a *local* timestamp server (`http://localhost`); the one genuine external fetch is an **optional** NVENC step
+(`Edit/Download_NVENC.bat`) that pulls third-party patches from `raw.githubusercontent.com/keylase/nvidia-patch` and a
+gist. Caveat, stated plainly: the Windows side ships **prebuilt binaries** (`signtool.exe`, `7z`, `PEChecksum`, Microsoft
+signing DLLs) that were **not** run or built here, and it generates a self-signed certificate naming "NVIDIA Corporation"
+to re-sign the driver under test-signing — identity impersonation plus opaque binaries that a source read cannot fully
+vouch for. Nothing in the text points to data theft or a backdoor, but the Windows path is not something to trust
+blindly. The rig runs Linux, where none of that applies.
+
+**Can it break the cards?** **No.** It modifies host **driver software** on disk, never the card: it writes nothing to
+VBIOS, fuses, or any GPU register, so it cannot brick a GPU, and `linux.sh` keeps a `.backup` so a stock driver reinstall
+undoes it. The only thing at risk is the **driver install on the host** — a mispatched driver can fail to load. And there
+is the operational collision: this rig's driver comes from **distribution packages** (held on purpose, since a background
+driver change breaks CUDA until reboot — [hardware tuning](hardware_tuning.md) verdict). The patcher works on a
+hand-extracted `.run`, so using it means replacing the apt-managed `580` driver with a manually patched one.
+
+**Does the rig need it?** **No.** These cards already expose full **CUDA compute** on Linux under the stock driver —
+that is what Miner Llama runs on. The patch adds a **graphics/3D/display** path a headless compute rig never uses; it does
+not touch CUDA, the PCIe link, or power states. (One neutral aside, a *claim to test* only: presenting a card as a display
+GPU is what an NVIDIA X screen — and thus the Coolbits overclock route — needs; but the project already prefers the NVML
+overclock route, which needs no X screen, so this is not a reason to install the patcher.)
+
+Whether the patched 580 driver runs cleanly on *this exact* P106-090 is itself a **claim to test**: the project publishes
+patched-driver releases tracking branch 580 (e.g. 580.178.04) and lists the P106-090 as supported, but no first-hand
+P106-090-on-580 Linux result was found, and it is moot given the rig does not need the patch.
+
+**Verdict: not malware on the Linux path (transparent, no network, no card write), and it cannot break the cards (host
+software only, reversible). But do not install it on the rig — it adds a display path the compute rig does not use, buys
+no compute, and would replace the distribution-managed driver with a hand-patched one. If the owner ever wants it on a
+*different, display-oriented* machine, the Linux script is the safe side; treat the Windows binaries and the
+"NVIDIA Corporation" signing step with more caution.**
 
 ## What this leaves for the plan
 
@@ -202,7 +247,7 @@ Tools, read at source after a read-only clone (P)
 - [Cyridd/cmpunlocker](https://github.com/Cyridd/cmpunlocker) (README; TU106, open-module versions `580.173.02`–`620.70.06`, CPU-RM GSP-OFF)
 - [notfromstatefarm/nvflashk](https://github.com/notfromstatefarm/nvflashk) (README; ID-mismatch bypass, "Nothing changed!/Invalid firmware image", recovery via iGPU)
 - [DaZuiZZZZ/P106-90-Unlock-X16](https://github.com/DaZuiZZZZ/P106-90-Unlock-X16) (README + `startup.nsh`; `NVPermissiveEFI.efi pcie-gen2-x16`, width-only, release-only closed binary)
-- [dartraiden/NVIDIA-patcher](https://github.com/dartraiden/NVIDIA-patcher) (README + `Presets.txt` + `docs/README-PATCHER-LINUX.md`; device-ID add, re-sign/byte-patch, "NVIDIA Corporation" generated cert)
+- [dartraiden/NVIDIA-patcher](https://github.com/dartraiden/NVIDIA-patcher) (owner-named; read in full for §6: `linux.sh` — extract-only, backup, `sed` hex blank of IDs incl. `1c09`, no network, no card write; `Presets.txt`; `docs/README-PATCHER-LINUX.md`; Windows local-timestamp signing and the optional NVENC fetch from `raw.githubusercontent.com/keylase/nvidia-patch` and a gist; lists P106-090 supported, publishes 580-branch releases e.g. 580.178.04)
 - [DualCoder/vgpu_unlock](https://github.com/DualCoder/vgpu_unlock) (README; ioctl spoof of vGPU capability, MIT)
 - [Wh1stle05/cmp90hx](https://github.com/Wh1stle05/cmp90hx), [Rhonstin/beellama-cmp90hx](https://github.com/Rhonstin/beellama-cmp90hx), [WifiLast/torch-cmp-patch](https://github.com/WifiLast/torch-cmp-patch)
 
