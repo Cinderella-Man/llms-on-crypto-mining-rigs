@@ -6,8 +6,8 @@
 > - My own version of llama.cpp, Miner Llama, made one model three times faster on it for a coding agent.
 > - The main model today is Qwen3.8-Flash-Next, a 125-billion-parameter model. Miner Llama v3 runs it at 20.40 tokens
 >   per second for a coding agent, from 7.8 on v2.0's code ([chapter 10](10-v3.md)).
-> - The work since v3 is not released yet. On 2026-11-11 it wrote 45.97 % faster than v3 across a long conversation
->   and took 9.4 % less time for a coding agent's task ([chapter 15](15-toward-v4.md)).
+> - Miner Llama v4 writes it at 27.61 and 26.67 tokens per second in two runs. With 49,152 tokens of conversation
+>   behind it, v4 reads and writes more than twice as fast as v3 ([chapter 16](16-v4.md)).
 > - This book explains what I tried, how each idea was meant to work, what happened and why.
 
 Facts in this book are from 2026-11-04 unless a chapter says otherwise.
@@ -68,12 +68,15 @@ why I measure that and not a simple speed number.
 | Miner Llama v1 | 25.7 | 11 of 12 | 4.0 s |
 | Miner Llama v2 | 45.9 and 44.6 (two runs) | 12 of 12 | 2.6 s |
 | Miner Llama v3 | 45.9 | 12 of 12 | 2.67 s |
+| Miner Llama v4, on my own 8-bit file | 49.32 and 46.99 (two runs) | 11 and 12 of 12 | 1.74 and 1.82 s |
 
 A *token* is a piece of a word, the unit a model reads and writes; [chapter 2](02-how-an-llm-makes-text.md) explains it.
 
 Stock llama.cpp and v1 ran with a 65,536-token context here, because a larger one does not fit their memory needs on
-the 4 GB host. Miner Llama v2 and v3 ran with the full 262,144 tokens. The released engines are on
-[GitHub](https://github.com/Cinderella-Man/miner-llama/releases): v2.0 and v3.0.
+the 4 GB host. Miner Llama v2, v3 and v4 ran with the full 262,144 tokens. v4 was measured on my own 8-bit file of
+Flint, which is a little smaller than Unsloth's; v3 on that file wrote 48.55 and 48.02 tokens per second, with
+the first token after 2.65 and 2.61 s. So v4 writes Flint as fast as v3 and answers sooner. The released engines are
+on [GitHub](https://github.com/Cinderella-Man/miner-llama/releases): v2.0, v3.0 and v4.0.
 
 ### The main model today
 
@@ -92,31 +95,37 @@ the rig's small SSD. The same coding-agent test gives this picture:
 | Miner Llama, v2.0 code | 7.8 | 9 of 9 tried |
 | Miner Llama, with its slowest weights converted to a format the cards read faster | 9.0 | 12 of 12 |
 | Miner Llama v3, the release preset (2026-11-06) | 20.40 | 12 of 12 |
+| Miner Llama v4, the release preset (2026-11-13) | 27.61 and 26.67 (two runs) | 12 of 12, twice |
 
 So it works, and it gets the tasks right. But 7.8 and 9.0 tokens per second are slow for an agent. The open work on
 2026-11-04 was new GPU code for this model's shapes, a better-quality file that still fits, and ways to guess several
 tokens at once. Each of those has its own chapter, and [chapter 10](10-v3.md) tells how they added up to 20.40 in v3.
 
-### After v3
+### From v3 to v4
 
-v3 was released on 2026-11-06. The work since then is the v4 line, and it is not released. It started with a
-question, not an idea: where does the time go on the build that shipped, and on real work? The answers moved the
-effort to three places: long conversations, the pass that checks guessed tokens, and reading prompts. On
-2026-11-11, with every change proven so far switched on, the same rig compared with v3 the same day:
+v3 was released on 2026-11-06. The work after it became v4. It started with a question, not an idea: where does
+the time go on the build that shipped, and on real work? The answers moved the effort to three places: long
+conversations, the pass that checks guessed tokens, and reading prompts. The release tests ended on 2026-11-16.
+The same rigs, v4 against v3:
 
-| Flash-Next on nine cards | v3 | The v4 line |
+| Flash-Next on nine cards | v3 | v4 |
 |---|---|---|
-| Writing across a conversation of up to 49,152 tokens, tok/s (two loads each) | 15.87 and 14.77 | 22.50 and 22.24 |
-| One step with 49,152 tokens of context, ms (two loads each) | 302.25 and 302.37 | 149.81 and 150.10 |
-| Coding agent, minutes per task at equal work | 3.08 | 2.79 |
-| Coding agent, bugs fixed | 11 of 12 | 12 of 12 |
+| Coding agent, minutes per task at equal work (two runs each) | 3.08 and 3.19 | 2.37 and 2.43 |
+| Coding agent, tokens written per second | 20.66 and 18.92 | 27.61 and 26.67 |
+| Coding agent, bugs fixed | 11 of 12, twice | 12 of 12, twice |
+| Writing across a conversation of up to 49,152 tokens, tok/s (two loads each) | 16.41 and 16.61 | 26.15 and 26.14 |
+| Reading prompts across that conversation, tok/s | 91.2 and 91.4 | 218.5 and 218.8 |
+| One step with 49,152 tokens of context, ms | 301.39 and 299.47 | 137.42 and 137.52 |
 
-[Chapters 11 to 15](11-after-v3.md) tell that part.
+Flint and Ornith-1.5-122B run on the same build, each with its own settings. They write as fast as on v3 and read
+prompts faster: an agent's task on Ornith takes 16.2 % less time, and Flint's first word comes 32.3 % sooner.
+
+[Chapters 11 to 16](11-after-v3.md) tell that part.
 
 ## How the chapters connect
 
 The book has four parts. The first part gives you the tools to read the rest. The second part tells the experiments.
-The third part follows the models to the v3 release. The fourth part is the work since v3.
+The third part follows the models to the v3 release. The fourth part is the work from v3 to v4.
 
 | Chapter | The question it answers |
 |---|---|
@@ -134,13 +143,14 @@ The third part follows the models to the v3 release. The fourth part is the work
 | [12. Long conversations](12-long-conversations.md) | Why did writing slow down as a conversation grew, and what removed that? |
 | [13. The check pass](13-the-check-pass.md) | What makes checking four tokens cost more than twice one, and how much of it can go? |
 | [14. Reading prompts](14-reading-prompts.md) | Why does an agent wait before each first word, and what shortens the wait? |
-| [15. Toward v4](15-toward-v4.md) | What do the changes since v3 add up to, and what comes next? |
-| 16. Lessons (not written yet) | What carries over to other systems? |
+| [15. Toward v4](15-toward-v4.md) | What did the changes since v3 add up to five days before the release, and what was planned? |
+| [16. v4](16-v4.md) | What did v4 ship for each model, and which ideas lost on the way? |
+| 17. Lessons (not written yet) | What carries over to other systems? |
 | [Glossary](../../GLOSSARY.md) | The project's own terms, in one place. |
 
 Chapters 1 to 3 build on each other, so read them in order. Chapters 4 to 9 each stand mostly on their own. Read
-whatever interests you. Chapter 10 and chapters 11 to 15 tell a story in order: read 11 before 12 to 15. When a
-chapter needs an idea from another one, it says so and links to it.
+whatever interests you. Chapters 10 to 16 tell a story in order: read 11 before 12 to 16. When a chapter needs an
+idea from another one, it says so and links to it.
 
 ```mermaid
 flowchart LR
@@ -154,7 +164,7 @@ flowchart LR
     L --> M[12. Long conversations]
     L --> N[13. The check pass]
     L --> O[14. Reading prompts]
-    M & N & O --> P[15. Toward v4] --> J[16. Lessons, not written yet]
+    M & N & O --> P[15. Toward v4] --> Q[16. v4] --> J[17. Lessons, not written yet]
 ```
 
 ## How to read it
@@ -169,7 +179,7 @@ flowchart LR
 - **Open questions stay open.** Some experiments were still running when a chapter was written. Those are marked
   "open", with what would settle them. Where a later chapter has the answer, the earlier one says so and links to it.
 - **Each chapter has a date.** Chapters 1 to 9 describe the project on 2026-11-04, chapter 10 the release of
-  2026-11-06, chapters 11 to 15 the work up to 2026-11-11.
+  2026-11-06, chapters 11 to 15 the work up to 2026-11-11, chapter 16 the v4 release and its tests up to 2026-11-16.
 - **Identifiers live at the end.** Each chapter ends with "Where the details are": data folders, benchmark pages and
   registry IDs such as Q215. The registry, [quants/experiments.md](../../quants/experiments.md), has one row per idea,
   with its outcome. You never need an ID to follow the text.
@@ -183,11 +193,11 @@ flowchart LR
   limit. The rig stays as sold: no new parts.
 - Miner Llama, my llama.cpp fork, took a coding agent on Flint from 14.4 to 45.9 tokens per second.
 - The main model now is Qwen3.8-Flash-Next. Miner Llama v3 runs it at 20.40 tokens per second for an agent, from 7.8 on
-  v2.0's code.
-- Since v3 the work went where real agent sessions spend their time: deep into long conversations, in the pass that
-  checks guessed tokens, and in reading prompts. A step with 49,152 tokens of context takes half the time it took
-  on v3.
-- Read chapters 1 to 3 first. Chapters 4 to 9 can be read in any order; chapters 10 to 15 are best read in order.
+  v2.0's code, and v4 at 27.61 and 26.67 in two runs.
+- After v3 the work went where real agent sessions spend their time: deep into long conversations, in the pass that
+  checks guessed tokens, and in reading prompts. On v4 a step with 49,152 tokens of context takes less than half the
+  time it took on v3, and an agent's task on Flash-Next takes 2.37 and 2.43 minutes against 3.08 and 3.19.
+- Read chapters 1 to 3 first. Chapters 4 to 9 can be read in any order; chapters 10 to 16 are best read in order.
 
 ## Where the details are
 
@@ -196,7 +206,12 @@ flowchart LR
 - Flint's v2 release numbers and commands: [release/flint-v2/results.md](../../release/flint-v2/results.md).
 - Flash-Next: [models/qwen3.8-flash-next](../../models/qwen3.8-flash-next/README.md) and its v3 release,
   [release/flash-next-v3](../../release/flash-next-v3/README.md).
-- The v4 line against v3: registry row Q1322 ([data](../data/2026-11-11_r90_v4_vs_v3/README.md)); the three reviews
+- The v4 release: [release/notes-v4.0.md](../../release/notes-v4.0.md) and the model pages
+  [flash-next-v4](../../release/flash-next-v4/README.md), [flint-v4](../../release/flint-v4/README.md) and
+  [ornith-v4](../../release/ornith-v4/README.md). Flash-Next's release numbers: registry rows Q1474 to Q1476
+  ([agent check](../data/2026-11-13_r156_agent_v4r/README.md), [by depth](../data/2026-11-13_r157_release_deep/README.md));
+  Flint's, Q1478 ([data](../data/2026-11-14_r159_flint_release_agent/README.md)).
+- The v4 line against v3 on 2026-11-11: registry row Q1322 ([data](../data/2026-11-11_r90_v4_vs_v3/README.md)); the three reviews
   that ordered the work since v3: [first](../research/notes/flash_next_review_2026-11.md),
   [second](../research/notes/flash_next_review2_2026-11.md),
   [third](../research/notes/flash_next_review3_2026-11.md).

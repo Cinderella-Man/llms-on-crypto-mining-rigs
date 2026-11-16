@@ -4,8 +4,9 @@ Qwen3.8-Flash-Next is a 125B mixture-of-experts model with about 6B active param
 add a 51B-parameter n-gram table and a 4B multi-token-prediction block, 180B in all. On 2026-11-03 it ran for the first time on a retired mining rig
 built around 6 GB cards on single PCIe 1.0 lanes, a 2-core Celeron and 4 GB of RAM. This page is that first run,
 with stock llama.cpp as the baseline; what came of each next step is at the end. Miner Llama v3 runs it at 20.40
-tokens per second for a coding agent; every file's checksum and the steps to run it:
-[release/flash-next-v3](../../release/flash-next-v3/README.md).
+tokens per second for a coding agent, and v4 at 27.61 and 26.67 in two runs. Every file's checksum and the steps to
+set the files up: [release/flash-next-v3](../../release/flash-next-v3/README.md). The v4 preset, its one command
+and its numbers: [release/flash-next-v4](../../release/flash-next-v4/README.md).
 
 ## The headline: a 125B-parameter model on nine 6 GB mining cards and 4 GB of RAM, with stock llama.cpp
 
@@ -92,6 +93,8 @@ speed-up.
 | The BF16 projections to Q8_0, and Pascal kernels for Flash-Next's shapes | the 30 % above, then the experts | done in v3: 9.0 tok/s with the projections retyped, then the v3 kernels ([book, chapter 10](../../docs/book/10-v3.md)) |
 | An MTP draft (2.7 GB) | several tokens per step, as pipelined speculation does for Flint | done in v3: the Gyro draft with a shortlist head, in the release preset (20.40 tok/s, 12 of 12) |
 | The better file: Swift IQ3_XXS (47.2 GB on the cards), and the quality of each file against Swift's Q8_0 | which file to ship | v3 ships UkisAI's Swift Q2_0; the files compared: [2026-11-04_file_choice](../../docs/data/2026-11-04_file_choice/README.md) (Q811); the reference is Swift's Q8_0 (Q216, its tensors checked byte for byte against the BF16's; about 0.022 KLD from the BF16 by its maker's card), the scores Q217 |
+| Speed deep into a conversation, the pass that verifies drafted tokens, prompt reading | what a coding agent on real tasks spends its time on | done in v4: 27.61 and 26.67 tok/s and 2.37 and 2.43 minutes a task against v3.0's 20.66 and 18.92 and 3.08 and 3.19; at 49,152 tokens of context prompts at 180.7 and 180.8 tok/s against 70.3 and 70.6, generation at 24.26 and 24.14 against 10.66 and 10.98 ([release/flash-next-v4](../../release/flash-next-v4/README.md); [book, chapters 11 to 16](../../docs/book/11-after-v3.md)) |
+| A better file at the same size | a mix that scores better on agent, wiki and code text | built and scored; on the rig it costs 18.06 ms a step, so v4 ships UkisAI's Swift Q2_0 again ([data](../../docs/data/2026-11-12_r115_gmix_step/README.md), Q1382) |
 | Two rigs together | 18 cards and 108 GB, for a better file than one rig holds | not run (Q505) |
 
 Every step has its row in the registry, [quants/experiments.md](../../quants/experiments.md), and its research in

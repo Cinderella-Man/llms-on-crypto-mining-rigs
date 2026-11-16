@@ -1,20 +1,23 @@
 # 15. Toward v4: the stack so far
 
 > **In short**
-> - v4 is not released. On 2026-11-11 its build holds every change since v3, each behind a switch that is off by
->   default.
+> - On 2026-11-11 v4 was a line under test, not a release: one build with every change since v3, each behind a switch
+>   that is off by default.
 > - Eleven of those switches, on together, against v3 on the same rig the same day: Flash-Next writes 45.97 % faster
 >   over five depths, 86.51 % faster at 49,152 tokens, and reads prompts 10.74 % faster.
 > - On the agent check the same line takes 9.4 % less time per task at equal work, 2.79 against 3.08 minutes, with
 >   12 of 12 tasks passed.
 > - The agent check gained far less than the deep lane because an agent on small tasks works near the start of a
 >   conversation and spends a third of its time reading.
-> - 21 more switches are written and checked and have never been timed on a mining card. What comes next is ranked
+> - 21 more switches were written and checked and had never been timed on a mining card. What came next was ranked
 >   by where an agent task's time goes.
+> - This chapter is the state of that evening. What the line became, and the release's own numbers, are in
+>   [chapter 16](16-v4.md).
 
 Facts in this chapter are from 2026-11-11. The model is Qwen3.8-Flash-Next in UkisAI's Swift Q2_0 file on nine
 cards with its draft, as in the v3 release ([chapter 10](10-v3.md)). "The v4 line" means the release preset plus the
-switches named in section 15.2.
+switches named in section 15.2. v4 was released from this line five days later; where a later result settles
+something this chapter leaves open, a note says so and links to [chapter 16](16-v4.md).
 
 ## 15.1 The first stack: five switches that needed no code
 
@@ -100,7 +103,8 @@ a change is judged on the step.
 | The host's free memory at its lowest | 66 MiB | 415 MiB |
 
 Two earlier runs of v3's preset on the other rig took 3.03 and 3.06 minutes a task, so 2.79 is outside v3's own
-spread. It is still one run, and the next stacked check repeats it.
+spread. It is still one run, and the next stacked check repeats it. It did, a day later: 2.80 minutes on the same
+line ([chapter 16](16-v4.md#163-the-candidate-line)).
 
 **What got worse.** Three things, each with a row on the list:
 
@@ -171,6 +175,10 @@ builds the file without one switch at a time will say.
 from before the kernels of [chapter 13](13-the-check-pass.md), so the estimate is stale. The file is on a rig and
 is timed next, as a pair of steps against the start.
 
+**What happened next.** On the rig a step with the new mix took 18.06 ms more than with the start, three times the
+estimate, and an agent task took longer with it. v4 ships the makers' file
+([chapter 16](16-v4.md#164-story-the-better-file-was-slower)).
+
 **Why.** On Flint the costs of separate switches added up well, and a cheap search found the best file. Here they
 mostly did, and where they did not, the measurement said so the same evening. A prediction is a reason to build
 the file, not a substitute for scoring it.
@@ -203,11 +211,14 @@ they are timed as *ladders*: the first load runs the line as it is, the next add
 the whole round runs twice. Each rung is judged against the one before it, and the top against the bottom. A rung
 that loses, or changes a reply, goes back to a run of its own. Est. 12.5 hours for the first pass.
 
+The ladders ran the next day. Most rungs gained, a few lost, and a stack of six kernels that gained hid two that
+lost ([chapter 16](16-v4.md#161-ladders-timing-what-was-written)).
+
 ## 15.7 The order from here
 
 | # | What | Why it is next |
 |---|---|---|
-| 1 | The taper's rule by prompt size | done: the taper without its head rule, `short=600:64`; the loss itself comes from graph rebuilds ([14.9](14-reading-prompts.md#149-the-loss-that-is-still-open)) |
+| 1 | The taper's rule by prompt size | done: the taper without its head rule, `short=600:64`; the loss itself comes from graph rebuilds ([14.9](14-reading-prompts.md#149-the-loss-on-long-turns)) |
 | 2 | The eight switches between two steps, as a ladder | est. up to 8 ms of a 131.6 ms step, and no new code |
 | 3 | The prompt switches on an agent session's own prompts, as a ladder | est. 10 to 20 % of reading time |
 | 4 | The check-pass kernels: the checks on a card, then one timed pair with all of them on | the largest group of products left in a check pass has no fast kernel in use yet |
@@ -216,10 +227,23 @@ that loses, or changes a reply, goes back to a run of its own. Est. 12.5 hours f
 | 7 | A longer draft, fixed or chosen step by step | only if the map shows a checked token under est. 13 ms |
 | 8 | The stacked agent check again, with everything proven since | the day's bottom line, and the second run this line still lacks |
 
+**What became of the list** ([chapter 16](16-v4.md)):
+
+| # | Outcome |
+|---|---|
+| 2 | every rung a gain: a step of 111.94 ms against 119.15 |
+| 3 | reading time 18.95 % shorter with three switches, 2.20 % with four more settings; two candidates stayed out |
+| 4 | 1.828 ms off a check pass; two of the six kernels lost inside the stack |
+| 5 | not run before the release; it is the first open item after v4 |
+| 6 | a loss: the step 3.31 ms slower at 4,096 tokens and 16.98 ms slower at 8,192 |
+| 7 | both lost, a fixed four and a length chosen step by step: more tokens a step, at a higher cost a step |
+| 8 | 2.44 and 2.37 minutes a task against v3's 3.08 |
+
 ## 15.8 What v4 will be
 
-v4 will be cut the way v3 was ([chapter 10](10-v3.md)): one build, every feature behind a switch, a preset per
-model with the switches its own agent check ran with. The plan for the cut is written down:
+On 2026-11-11 the plan was this. v4 will be cut the way v3 was ([chapter 10](10-v3.md)): one build, every feature
+behind a switch, a preset per model with the switches its own agent check ran with. The plan for the cut is written
+down:
 
 1. No new feature starts. Every finished branch is merged once, and that commit becomes the release candidate.
 2. The candidate gets the full set of checks on a mining card: the kernel cases whose machine code changed, and the
@@ -228,7 +252,8 @@ model with the switches its own agent check ran with. The plan for the cut is wr
 4. The preset files and the release notes are written from those numbers. A fix during the freeze makes a second
    candidate and repeats only the affected checks.
 
-Until then the numbers in this chapter are a line under test, not a release.
+The cut followed this plan, second candidate included ([chapter 16](16-v4.md#166-the-freeze-and-two-candidates)).
+The numbers in this chapter are a line under test; the release's numbers are in chapter 16.
 
 ## What to remember
 
@@ -259,5 +284,6 @@ Until then the numbers in this chapter are a line under test, not a release.
 - Fewer tokens: [tokens_per_solved_task.md](../research/notes/tokens_per_solved_task.md); the race, Q1195
   ([bench/agent_check](../../bench/agent_check/README.md)); the fresh attempt, Q1200
   ([data](../data/2026-11-11_fn58_stop_and_retry/README.md)).
+- What happened after 2026-11-11, and the v4 release: [chapter 16](16-v4.md).
 - Every switch and its default: [docs/switches.md](../switches.md).
 - Registry: [quants/experiments.md](../../quants/experiments.md).

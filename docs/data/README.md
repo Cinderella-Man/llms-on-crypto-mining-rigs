@@ -14,7 +14,10 @@ row says what it measured, where its result is written up, and what of its data 
 
 Run scripts reach the rig through the SSH alias in `RIG` (default `rig`) and take model, build and work paths from
 `MODEL`, `MODELS`, `BIN`, `WORK` and `OUT`. Quality work (quantization, KLD, task checks, training) ran on a separate
-machine with 3 × RTX 3090, 2 × V100 32 GB and 2 × RTX 3080; speed is only ever measured on the rig.
+machine with 3 × RTX 3090, 2 × V100 32 GB and 2 × RTX 3080, and from November 2026 with RTX 3090 and 3080 cards only.
+Speed is only ever measured on the rig. The quality checks of the v4 release
+(2026-11-16) ran on the rig's own P106 cards, because newer cards do not write the rig's replies
+([2026-11-16_fn93_ornith_greedy_split](2026-11-16_fn93_ornith_greedy_split/README.md)).
 
 ## Task-level quality
 

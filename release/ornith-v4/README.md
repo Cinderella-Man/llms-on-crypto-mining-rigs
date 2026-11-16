@@ -20,12 +20,17 @@ numbers, so it is not in the preset ([below](#opt-in-the-micro-batch-taper)).
 
 ## Run it
 
-From a clone of this repository, with the v4 engine (the fork's tag `v4-rc2`) built or unpacked beside it as
-`llama-p106-v4/`, and the file downloaded as in [release/ornith-v3](../ornith-v3/README.md#the-file):
+From a clone of this repository, with
+[Miner Llama v4.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0) unpacked beside it as
+`llama-p106-v4.0/` (or built from the fork's tag `miner-llama-v4.0`), and the file downloaded as in
+[release/ornith-v3](../ornith-v3/README.md#the-file):
 
 ```bash
-MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/ornith-v4/settings.env && env $PRESET_ENV llama-p106-v4/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
+MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/ornith-v4/settings.env && env $PRESET_ENV llama-p106-v4.0/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
 ```
+
+v4.0 is the same commit as the release candidate `v4-rc2` that the runs on this page name
+([release notes](../notes-v4.0.md)).
 
 Keep the host quiet while it works. With the checkpoints on the cards its lowest free memory in the agent check was
 1,225 and 1,228 MiB, against 731 and 799 MiB on v3.0.
@@ -158,4 +163,4 @@ reply than the host switches alone at 8,192, 16,384 and 32,768 tokens (the same 
 alone does that ([data](../../docs/data/2026-11-16_fn93b_ornith_greedy_rig/README.md)); the other five give the same
 replies, which is why they are in the preset and the taper is opt-in.
 
-**This preset at depth, with and without the keep-alive** (R167a, [data](../../docs/data/2026-11-16_r167_keepalive_depth/README.md#r167a-ornith)): this file as it is decodes 12.97 and 12.98 tok/s over the six depths and reads all five prompt chunks at 159.9 and 159.8 tok/s (at 48,640 tokens 8.66 and 8.67, and 137.2 and 137.2); without `GGML_CUDA_KEEPALIVE=decode` and `GGML_CUDA_KEEPALIVE_EAGER=1` it reads prompts 2.6 % faster but decodes 3.4 % slower; without the eager stop alone it reads prompts 2.4 % faster and decodes 0.2 % faster, with the same replies (the agent check decides, Q1496).
+**This preset at depth, with and without the keep-alive** (R167a, [data](../../docs/data/2026-11-16_r167_keepalive_depth/README.md#r167a-ornith)): this file as it is decodes 12.97 and 12.98 tok/s over the six depths and reads all five prompt chunks at 159.9 and 159.8 tok/s (at 48,640 tokens 8.66 and 8.67, and 137.2 and 137.2); without `GGML_CUDA_KEEPALIVE=decode` and `GGML_CUDA_KEEPALIVE_EAGER=1` it reads prompts 2.6 % faster but decodes 3.4 % slower; without the eager stop alone it reads prompts 2.4 % faster and decodes 0.2 % faster, with the same replies. On the agent check the eager stop changes nothing in a task's time: 2.12 and 2.18 minutes a task without it against 2.11 and 2.13 with it, negligible. Short prompts are slower without it (a request under 512 tokens takes 3.41 and 3.33 s of prompt against 3.14 and 3.15 s) and long ones a little faster, so it stays in the preset ([data](../../docs/data/2026-11-16_r169_ornith_no_eager/README.md), Q1496).

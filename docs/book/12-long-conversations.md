@@ -101,7 +101,8 @@ but lost 2.50, 2.71 and 2.70 ms at 4,096.
 **Why.** The new kernel has a fixed cost: it works from a list, one token at a time. On a small cache the old
 kernel's plain scan is cheaper. There is a crossover, as between an index lookup and a table scan in a database,
 and it has to be measured, not assumed. A kernel that serves a check's four tokens from one shared read is written
-and waits for its rig run; whether it moves the crossover lower is open.
+and waits for its rig run; whether it moves the crossover lower is open. It ran on 2026-11-13 and lost: a step was
+3.31 ms slower at 4,096 tokens and 16.98 ms slower at 8,192 ([chapter 16](16-v4.md#165-the-last-round-what-lost)).
 
 ## 12.4 Story: what still grew
 
@@ -211,6 +212,10 @@ What is left has a clear shape. Between the start and 8,192 tokens the step stil
 loads, and that stretch is exactly where an agent on small tasks works. It has not been profiled with all of these changes on. That map is
 the next step for depth.
 
+v4 was released five days later without that map; it is the first open item after the release. With the release
+preset a step at 49,152 tokens takes 137.42 and 137.52 ms, and the model writes 24.26 and 24.14 tokens per second
+there against v3's 10.66 and 10.98 ([chapter 16](16-v4.md#167-flash-next-the-release-numbers)).
+
 ## What to remember
 
 - A cost that grows with the conversation is worth more than its size at the start suggests: real agent work
@@ -250,5 +255,7 @@ the next step for depth.
   the same question on the v4 line, Q1403. The other engines' runs are in
   [the second review](../research/notes/flash_next_review2_2026-11.md).
 - v3 against the v4 line by depth: Q1322 ([data](../data/2026-11-11_r90_v4_vs_v3/README.md)); the map between the
-  start and 8,192 tokens, Q1393.
+  start and 8,192 tokens, Q1393. The release by depth: Q1475
+  ([data](../data/2026-11-13_r157_release_deep/README.md)); the shared read for a check's four tokens on the rig
+  ([data](../data/2026-11-13_r88_union_deep/README.md)).
 - Registry: [quants/experiments.md](../../quants/experiments.md).

@@ -174,7 +174,8 @@ Every timed change now gets one of three verdicts, against the spread between tw
 
 There is no verdict "not worth it". A change that saves half a millisecond is kept. [Chapter 10](10-v3.md) made the
 case for this, and the weeks since have confirmed it: the largest result so far is a stack of eleven
-changes ([chapter 15](15-toward-v4.md)).
+changes ([chapter 15](15-toward-v4.md)). The v4 release grew that stack to 33 switches on top of v3's
+preset ([chapter 16](16-v4.md)).
 
 ## 11.7 A newer base under everything
 

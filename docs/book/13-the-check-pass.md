@@ -99,11 +99,16 @@ model to the next.
 **What the new kernels change.** Both kernels of the last two sections are built to give each token exactly the
 sums of the one-token kernel. With them on, a check pass and plain decoding do the same arithmetic in those
 products. The text at the start of a conversation changes once, because the check's numbers are now plain
-decoding's. A few products still add in another order; their kernels are written and wait for a rig.
+decoding's. A few products still add in another order; their kernels are written and wait for a rig. The kernels
+for the 3-bit and 6-bit products ran the next day, were exact on a mining card, and are in v4's preset
+([chapter 16](16-v4.md#161-ladders-timing-what-was-written)).
 
 **One thing left open.** In the stacked run of [chapter 15](15-toward-v4.md), the new texts at the two shallowest
 depths accepted fewer guesses than v3's: 85 steps against 75 for 256 tokens at the start, 84 against 67 and 71 at
 8,192 tokens. At the three deeper points they did not. One text per depth cannot tell bad luck from a real effect. A count over 66 recorded requests can, and it is queued.
+It was still queued when v4 was released. On the agent check, where the text is drawn at random, v4's guesses were
+accepted more often than v3's: 0.759 and 0.749 against 0.696 and 0.671
+([chapter 16](16-v4.md#167-flash-next-the-release-numbers)).
 
 **Why.** "Exact" has levels. The draft was exact in its logic. The engine under it was not bit-identical between
 pass sizes, and nobody had checked, because on most models a difference in the last bits stays there.
@@ -195,6 +200,12 @@ about one number, the cost of a checked token with the new kernels, and that is 
 the length step by step from the draft's own confidence is in the build since v3; it will be priced on the same
 recordings.
 
+**What happened next.** Both were run on the agent check instead, and both lost. Drafts of four yielded 3.7305 and
+3.7760 tokens a step, as counted here, but the step cost est. 152.44 and 151.11 ms against 118.74 and 121.71, and
+the model wrote 24.47 and 24.99 tokens per second against 27.61 and 26.67. The rule that picks the length yielded
+4.049 tokens a step at est. 160.3 ms and wrote 25.26 tokens per second in its one run, against 28.03 and 26.16
+without it. v4 keeps drafts of three ([chapter 16](16-v4.md#165-the-last-round-what-lost)).
+
 ## 13.9 The 7.5 ms between two steps
 
 **The puzzle.** Between the draft's last pass and the next check, the server spent 7.82 ms doing nothing a card could
@@ -222,6 +233,10 @@ Five changes for this gap are written and checked on a CPU. None is timed yet:
 | Limit a cache clean-up to the cells it can change | 0.67 ms |
 | Yield to the server's request queue once a step instead of three times | 0.23 to 0.37 ms |
 
+Timed as one ladder on 2026-11-12, all five gained: 4.44, 0.70, 1.03, 0.33 and 0.11 ms a step in the table's
+order. With three more small changes a step took 111.94 ms against 119.15
+([chapter 16](16-v4.md#161-ladders-timing-what-was-written)).
+
 **Why.** A cost of 1 % stops being 1 % when everything around it gets faster. Old "too small to matter" verdicts
 have a date on them.
 
@@ -240,6 +255,10 @@ switch, and waits for its turn on a rig:
 | The shared expert's small 32-bit products at four tokens and more | they fall to a slow general routine at four tokens: 0.448 ms |
 | The shared expert's three products as one launch | fewer launches in most layers |
 | The output layer at one token | the same kernel run for a single token; est. 2.58 ms against 3.02 |
+
+Six of them were timed together the next day. A check pass took 1.828 ms less with the stack, and inside it the
+3-bit kernel alone saved 2.498 ms. The tile-by-tile version and the 32-bit routine lost; the second was fixed with a
+row limit, the first stayed out ([chapter 16](16-v4.md#161-ladders-timing-what-was-written)).
 
 ## What to remember
 
@@ -276,7 +295,12 @@ switch, and waits for its turn on a rig:
 - Swift's own draft layer: Q1168 ([data](../data/2026-11-10_swift_own_mtp_head/README.md)).
 - Longer drafts and trees: Q1396 and Q1397 ([data](../data/2026-11-11_fn80_fn81_draft_yield/README.md)), the tools
   Q1395 ([data](../data/2026-11-11_c798_draft_count_tools/README.md)); the rig arms Q1394; the length chosen per
-  step, Q687 and Q1402.
+  step, Q687 and Q1402. On the agent check: drafts of four, Q1483
+  ([data](../data/2026-11-13_r163_agent_draft4/README.md)); the chosen length, Q1465
+  ([data](../data/2026-11-13_r154_agent_adapt/README.md)).
+- The ladders of 2026-11-12: between two steps, Q1400 ([data](../data/2026-11-12_r122_host_ladder/README.md)); the
+  kernels of section 13.10, Q1391 ([exactness](../data/2026-11-12_r120a_kern_exact/README.md),
+  [speed](../data/2026-11-12_r120b_kern_speed/README.md)).
 - Between two steps: the step trace, Q960 and Q1313 ([code](../data/2026-11-11_c405_server_gap/README.md),
   [rig](../data/2026-11-11_r86_step_trace/README.md)); the batch trace, Q1295
   ([data](../data/2026-11-11_r81_ubatch_trace/README.md)). The five changes: Q1354

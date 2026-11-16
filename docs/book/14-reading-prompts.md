@@ -10,7 +10,9 @@
 >   only 1.42 of the nine cards were busy on average; recording each batch as one launch took 10.2 % off it.
 > - The draft must read every prompt too, which costs 28.4 % of reading speed on an empty cache and 41.3 % deep into
 >   a conversation. A slimmer catch-up pass took a quarter of that cost away.
-> - One loss is still open: on the stacked line, turns with 1,024 or more new tokens read slower than on v3.
+> - One loss showed on the stacked line: turns with 1,024 or more new tokens read slower than on v3. Its cause was
+>   one switch that made the engine rebuild its memory plan on every request. With the fix, v4 reads an agent's
+>   prompts at 144.6 and 133.9 tokens per second against v3's 65.5 and 66.3 ([chapter 16](16-v4.md)).
 
 Facts in this chapter are from 2026-11-11. The model is Qwen3.8-Flash-Next on the release preset with its draft.
 Reading a prompt is the *prompt pass* of [chapter 2](02-how-an-llm-makes-text.md): many tokens share one read of
@@ -192,7 +194,7 @@ the server, so it is watched in every run that uses it.
 **Why.** Ask what a step must leave behind, not what it computes. A pass kept only for its side effect can drop
 everything else.
 
-## 14.9 The loss that is still open
+## 14.9 The loss on long turns
 
 Put together on the agent check, the changes of this chapter and the last two read short turns much faster than v3
 and long turns slower:
@@ -222,7 +224,9 @@ over all output rows (`LLAMA_SAMPLING_TOP_K_ROWS`, Q1300). It adds one padding s
 has no outputs, so the graph changes shape between the middle of a prompt and its end, and every change of shape
 forces a new plan. Without that switch the same line made no new plan in eight requests, gave the same replies, and
 read a 3,313-token turn in 21.14 s instead of 42.49 (Q1405). The fix keeps the switch and gives its graph one shape
-in every batch (Q1406).
+in every batch (Q1406). On the rig the fixed build made no new plan in eight requests and gave the same replies.
+On the agent check the same evening, reading went from 73.2 tokens per second to 136.0 and 147.6
+([chapter 16](16-v4.md#162-the-long-turns-closed)).
 
 One more gap shows in these numbers. The switches of this chapter were timed on a fresh 4,097-token prompt or on
 8,128-token chunks, never on the mix of sizes an agent really sends. The next runs replay an agent session's own
@@ -244,6 +248,14 @@ the start of a conversation took 282.35 and 282.53 ms against 113.12 and 113.14.
 which leaves writing alone. On newer cards its output is as close to the reference as the standard path's: a KL
 divergence of 0.026896 at 32,768 tokens against 0.035516 for the standard path at its usual batch size. Its rig
 timing is queued.
+
+**What happened next.** All four were timed on 2026-11-12, on the replay of an agent session's 62 prompts. The
+catch-up during the next call went in, with the batches recorded as one launch and the slimmer catch-up pass:
+together a pass took 247.11 and 240.02 s against 305.38 and 295.68. The helper thread for the table's rows lost,
+5.09 s a pass, and stayed out. The draft's table on the last card and the prompt rule for the sparse kernel were
+each inside the spread and went in ([chapter 16](16-v4.md#161-ladders-timing-what-was-written)). Deep in a
+conversation the release reads at 180.7 and 180.8 tokens per second on 49,152 cached tokens, where v3 reads 70.3
+and 70.6.
 
 ## What to remember
 
@@ -285,5 +297,10 @@ timing is queued.
   ([data](../data/2026-11-11_c762_draft_rows/README.md)); prompts through the sparse kernel, Q1214 in the deep lane's
   folder, the rule Q1272 ([data](../data/2026-11-11_c705_sparse_prompt_rule/README.md)), its quality Q1248
   ([data](../data/2026-11-11_fn64_sparse_prompt_ptx/README.md)). The prompt switches on an agent session's own
-  prompts: Q1401.
+  prompts: Q1401 ([first ladder](../data/2026-11-12_r123a_prompt_ladder/README.md),
+  [second](../data/2026-11-12_r123b_prompt_ladder/README.md)).
+- The loss on long turns: the cause, Q1405 ([data](../data/2026-11-12_fn84_graph_realloc/README.md)); the fix, Q1406
+  ([data](../data/2026-11-12_c802_topk_fixed_graph/README.md)); the taper's rule by size, Q1235
+  ([data](../data/2026-11-12_r60_taper_v4/README.md)). What the taper changes in each model's numbers:
+  [chapter 16](16-v4.md#169-story-results-unchanged).
 - Registry: [quants/experiments.md](../../quants/experiments.md).

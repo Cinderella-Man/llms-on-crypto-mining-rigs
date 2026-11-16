@@ -7,10 +7,11 @@
 > - Qwen3.6-35B-A3B showed early that a mixture-of-experts model runs fast here. Ornith-1.5-122B showed that a 122B model
 >   fits at 2–3 bits, and reached 14.5 tok/s, and 16.3 on v3.
 > - Since 2026-11-02 there is one goal: Qwen3.8 Flash-Next, a 125B-parameter model, well above 5–8 tok/s on one rig. On
->   2026-11-04 it stood at 12.2 tok/s with a draft network; the v3 release runs it at 20.40 ([Chapter 10](10-v3.md)).
+>   2026-11-04 it stood at 12.2 tok/s with a draft network; the v3 release runs it at 20.40 ([Chapter 10](10-v3.md)),
+>   and v4 at 27.61 and 26.67 in two runs ([Chapter 16](16-v4.md)).
 > - Across all four, the engine carried most of the speed, the file decided the quality, and the 4 GB host decided what
 >   could load at all. Facts as of 2026-11-04; the release results of 2026-11-06 are in [Chapter 10](10-v3.md), and
->   the work on Flash-Next since then in [Chapters 11 to 15](11-after-v3.md).
+>   the work since then, up to the v4 release, in [Chapters 11 to 16](11-after-v3.md).
 
 The earlier chapters explain the tools; this one follows each model through them. For quantization and file mixes see
 [Chapter 4](04-smaller-models.md), for the card split and the host memory [Chapter 5](05-nine-cards.md), for the
@@ -21,10 +22,10 @@ kernels [Chapter 6](06-gpu-code.md), for experts [Chapter 7](07-experts.md) and 
 
 | Model | Parameters, total / per token | Kind | File on the rig | Best coding-agent speed | Where it stands |
 |---|---|---|---|---|---|
-| Flint | 39.8 B / 2.5 B | mixture of experts | Q8_0, 42.3 GB | 45.9 tok/s (Q8_0, v3; v2.0: 45.9 and 44.6), 49.4 (Flint Pascal Q5 GGUF, v3; v2.0: 53.8) | released in v2.0 and v3 |
+| Flint | 39.8 B / 2.5 B | mixture of experts | Q8_0, 42.3 GB | 45.9 tok/s (Q8_0, v3; v2.0: 45.9 and 44.6), 49.4 (Flint Pascal Q5 GGUF, v3; v2.0: 53.8); on v4, my 8-bit file 49.32 and 46.99, my 5-bit file 52.01 | released in v2.0, v3 and v4 |
 | Qwen3.6-35B-A3B | 36 B / 3 B | hybrid mixture of experts | Q4_0, 20.8 GB | no agent check; 29.0 tok/s on one request | waiting |
-| Ornith-1.5-122B | 122 B / 10 B | hybrid mixture of experts | Ornith-1.5-122B Pascal N2P GGUF, my 2–3-bit file, 48.2 GB | 16.3 tok/s (v3; 14.5 on 2026-10-28) | released in v3 |
-| Qwen3.8 Flash-Next | 125 B / 6 B (plus a 51 B n-gram table and a 4 B MTP block: 180 B in the weights) | hybrid mixture of experts with an n-gram table | Swift Q2_0, 37.7 GB on the cards | 20.40 tok/s (v3; 12.2 on 2026-11-04) | released in v3, the headline |
+| Ornith-1.5-122B | 122 B / 10 B | hybrid mixture of experts | Ornith-1.5-122B Pascal N2P GGUF, my 2–3-bit file, 48.2 GB | 16.52 and 16.13 tok/s (v4; v3: 16.3; 14.5 on 2026-10-28) | released in v3 and v4 |
+| Qwen3.8 Flash-Next | 125 B / 6 B (plus a 51 B n-gram table and a 4 B MTP block: 180 B in the weights) | hybrid mixture of experts with an n-gram table | Swift Q2_0, 37.7 GB on the cards | 27.61 and 26.67 tok/s (v4; v3: 20.40; 12.2 on 2026-11-04) | released in v3 and v4, the headline of both |
 
 "Per token" is what matters for speed: the cards read only that part of the weights for each token
 ([Chapter 2](02-how-an-llm-makes-text.md)). A *hybrid* model mixes attention layers, which cache every past token,
@@ -96,6 +97,10 @@ a steering vector that nudges it towards brevity is estimated at 1.1–1.3× per
 are estimated at +8–15 %. Both are planned; apart from the v3 release tests, no Flint work has run since the lead
 moved to Flash-Next on 2026-11-02.
 
+**In v4.** Flint writes as fast as on v3 and reads prompts faster. On my 8-bit file the first token of a turn comes
+after 1.74 and 1.82 s against 2.65 and 2.61, and prompts are read at 219.7 and 204.1 tok/s against 179.2 and 181.3
+([chapter 16](16-v4.md#168-flint-and-ornith-stack-then-split-on-a-loss)).
+
 ## 9.3 Qwen3.6-35B-A3B: the first proof
 
 **What it is.** Qwen's 36B hybrid mixture-of-experts model uses about 3B parameters per token. 30 of its 40 layers are
@@ -159,6 +164,11 @@ with the draft layer on them is estimated at about 18.7 tok/s and has not run. I
 not pay: 13.01 tok/s against 16.42 without the draft ([chapter 10](10-v3.md#109-flint-and-ornith-on-the-new-build)). Pipelined drafting for hybrid models
 was estimated at 35–41 tok/s; Flash-Next's 1.6× slowdown with pipelined guesses ([Chapter 8](08-guessing-ahead.md))
 now argues for caution. Nothing has run on Ornith since 2026-10-28.
+
+**In v4.** Ornith writes as fast as on v3 and reads prompts 74.8 % faster. An agent's task takes 2.11 and 2.13
+minutes against 2.52 and 2.54, and a task's first answer comes after 8.43 and 8.45 s against 16.34 and 16.52. One
+switch that would bring the first word of every turn sooner still changes Ornith's numbers, so it is opt-in
+([chapter 16](16-v4.md#169-story-results-unchanged)).
 
 **Its smaller sibling, Ornith-1.5-35B,** has Qwen3.6's shapes. My best file for it (25.4 GB) scores a KLD of 0.028 on
 wiki text, and its draft layer is right 0.88–0.91 of the time. It has not run on the rig yet.
@@ -242,7 +252,9 @@ release at 20.40 tok/s, with the makers' file, because the speed file's saving n
 kernels ([chapter 10](10-v3.md)). The cut files kept agent and code quality and lost general knowledge
 ([chapter 4](04-smaller-models.md)). Two rigs have not run; priced on v3's token they are est. 10.7 to 12.3 tok/s.
 And after v3 the work turned to what the list above does not name at all: speed deep into a conversation, the
-pass that checks guessed tokens, and prompt reading ([chapters 11 to 15](11-after-v3.md)).
+pass that checks guessed tokens, and prompt reading ([chapters 11 to 15](11-after-v3.md)). That work is v4: a
+coding agent's task takes 2.37 and 2.43 minutes against v3's 3.08 and 3.19, at 27.61 and 26.67 tok/s
+([chapter 16](16-v4.md)).
 
 ## 9.6 The releases
 
@@ -252,7 +264,7 @@ pass that checks guessed tokens, and prompt reading ([chapters 11 to 15](11-afte
 | **v2.0** | 2026-10-26 | 32-bit sums, a persistent kernel per expert layer, the fused shared expert, faster prompt reading, GPU sampling for tool requests, pipelined speculation; my Flint Pascal Q5 GGUF file | Flint Q8_0 at 262,144 tokens: 45.9 and 44.6 tok/s in two runs, 12 of 12 each |
 | **v2.1** | not released | was to add the answer store and a trained drafter | the drafter was stopped; the store measured +1.4 % |
 | **v3** | 2026-11-06 | Flash-Next first; also Flint Pascal Q8 GGUF and the re-read fix, Ornith-1.5-122B Pascal N2P GGUF and its kernels; every feature behind a switch, a preset per model ([chapter 10](10-v3.md)) | Flash-Next 20.40 tok/s for a coding agent; Flint 45.9 and Ornith 16.3 on the same build |
-| **v4** | not released; the line on 2026-11-11 | a newer upstream base; attention that reads only the cells the model picks; kernels for the check pass; checkpoints in card memory, taken without stopping the pipeline; more than forty changes, each behind a switch ([chapters 11 to 15](11-after-v3.md)) | against v3 on the same rig: writing 45.97 % faster over 49,152 tokens of conversation, a coding agent's task in 9.4 % less time |
+| **v4** | the build of 2026-11-13, tested until 2026-11-16 | a newer upstream base; attention that reads only the cells the model picks; kernels for the check pass; less host work between two steps; checkpoints in card memory, taken without stopping the pipeline; a preset per model again ([chapters 11 to 16](11-after-v3.md)) | Flash-Next: a coding agent's task in 2.37 and 2.43 minutes against v3's 3.08 and 3.19, 27.61 and 26.67 tok/s; at 49,152 tokens of conversation more than twice v3's speed in reading and writing. Ornith's task in 16.2 % less time; Flint's first token 32.3 % sooner |
 
 Every release keeps the answers the same: the kernels change only the order of additions, and the speculation keeps
 exactly the tokens plain decoding would produce. Each one ships with the command line and the measurements behind its
@@ -260,7 +272,9 @@ headline. "Only the order of additions" has a consequence that showed after v3: 
 tokens adds in another order than a pass over one, and this model turns the last bits into another text at
 temperature 0. Every kept token is still the model's own choice. The difference is rounding noise of the
 kind [chapter 3](03-measuring.md) measures between two types of GPU, and it is enough to change the text
-([chapter 13](13-the-check-pass.md)).
+([chapter 13](13-the-check-pass.md)). v4 met the same effect in reading: a short prompt read in smaller batches
+adds in another order too. That is exact on Flint and small on Flash-Next. On Ornith it moves the numbers about as
+much as the file's quantization does, so there it is left off unless asked for ([chapter 16](16-v4.md)).
 
 ## What to remember
 
@@ -271,7 +285,9 @@ kind [chapter 3](03-measuring.md) measures between two types of GPU, and it is e
 - A big model fits only at 2–3 bits. There, where the bits go matters more than the format, and my own file beat the
   common one on both speed and quality.
 - Flash-Next went from 7.8 to 12.2 tok/s in two days and to 20.40 in v3 ([chapter 10](10-v3.md)); its floor is about
-  35 tok/s. The line after v3 wrote 24.85 on the same check ([chapter 15](15-toward-v4.md)).
+  35 tok/s. v4 writes 27.61 and 26.67 on the same check ([chapter 16](16-v4.md)).
+- A setting is judged per model. The same switch was a gain on two models and a loss on the third, and another was
+  exact on one model and not on another.
 
 ## Where the details are
 
@@ -296,4 +312,6 @@ kind [chapter 3](03-measuring.md) measures between two types of GPU, and it is e
   [two rigs](../data/2026-11-04_two_rigs/README.md) (Q505, Q816); the baseline is Q215, the Pascal mixes Q880–Q885,
   the expert cuts Q890–Q891 (fork tool `scripts/gguf_prune.py`), the stacked run Q899.
 - Releases: [v1 notes](../../release/notes-v1.0.md), [v2.0 notes](../../release/notes-v2.0.md) (fork tag
-  `miner-llama-v2.0`, engine `37e717ff6`; v1 was `eeaa59660`), [v2.1](../../release/flint-v2.1/README.md).
+  `miner-llama-v2.0`, engine `37e717ff6`; v1 was `eeaa59660`), [v2.1](../../release/flint-v2.1/README.md),
+  [v3.0 notes](../../release/notes-v3.0.md) (fork tag `miner-llama-v3.0`), [v4.0 notes](../../release/notes-v4.0.md)
+  (fork tag `miner-llama-v4.0`).

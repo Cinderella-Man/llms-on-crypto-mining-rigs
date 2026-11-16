@@ -110,7 +110,8 @@ task writes more than 40,000. So the agent check says nothing about speed deep i
 a companion, the *deep lane*, which times the same requests at set depths up to 49,152 tokens, and a rule to judge
 changes on the time of one step, because tokens per second also moves when the text changes
 ([chapter 11](11-after-v3.md)). The two tests can disagree, and both be right: one set of changes was worth
-45.97 % on the deep lane and 9.4 % of a task's time on the agent check ([chapter 15](15-toward-v4.md)).
+45.97 % on the deep lane and 9.4 % of a task's time on the agent check ([chapter 15](15-toward-v4.md)). The v4
+release is reported on both ([chapter 16](16-v4.md)).
 
 ## Quality: KLD and "same top token"
 
@@ -172,7 +173,8 @@ The trade is plain in that table. Better files read more bytes per token and lea
 the rig should run is **open** on 2026-11-04: it waits on the agent check of the 3-bit file and on new GPU code for
 these formats. v3 shipped the 2-bit file ([chapter 10](10-v3.md)). A mix of the same size that scores a
 KLD of 0.236 on agent text, where the mix it started from scores 0.279 on the same cards, followed
-([chapter 15](15-toward-v4.md)); the 3-bit file's agent check has still not run.
+([chapter 15](15-toward-v4.md)); the 3-bit file's agent check has still not run. On the rig that mix cost
+18.06 ms a step, so v4 ships the 2-bit file too ([chapter 16](16-v4.md#164-story-the-better-file-was-slower)).
 
 ### Story: does a short-text score predict agent quality?
 

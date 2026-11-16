@@ -5,10 +5,29 @@
 A llama.cpp fork for Pascal cards: nine P106-090s, one PCIe 1.0 lane each, a 2-core Celeron, 4 GB of RAM</p>
 
 <p align="center">
-  <a href="https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v3.0"><img alt="release" src="https://img.shields.io/badge/release-v3.0-d4a017"></a>
+  <a href="https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0"><img alt="release" src="https://img.shields.io/badge/release-v4.0-d4a017"></a>
   <a href="https://huggingface.co/CinderellaMan"><img alt="models" src="https://img.shields.io/badge/models-Hugging%20Face-ffcc4d"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue"></a>
 </p>
+
+| A coding agent on nine P106 cards, two runs each | Miner Llama v3 | **Miner Llama v4** |
+|---|---:|---:|
+| **Qwen3.8-Flash-Next 125B, 2-bit:** tokens written per second | 20.66, 18.92 | **27.61, 26.67** |
+| minutes a task, at equal work | 3.08, 3.19 | **2.37, 2.43** |
+| 49,152 tokens into a conversation: prompt tok/s | 70.3, 70.6 | **180.7, 180.8** |
+| 49,152 tokens into a conversation: tokens written per second | 10.66, 10.98 | **24.26, 24.14** |
+| **Ornith-1.5-122B, 2–3-bit:** minutes a task, at equal work | 2.52, 2.54 | **2.11, 2.13** |
+| prompt tok/s | 61.1, 58.4 | **103.0, 105.9** |
+| **Flint 39.8B, 8-bit:** seconds to the first token of a turn | 2.65, 2.61 | **1.74, 1.82** |
+| tokens written per second | 48.55, 48.02 | 49.32, 46.99 |
+
+Every value is one run on the same rigs, each engine with the model's own preset; "equal work" is the same prompt and
+reply tokens at each run's own speeds. The files are UkisAI's Swift-1.5 GSQ-RCO Q2_0 and my own
+[Ornith-1.5-122B Pascal N2P GGUF](https://huggingface.co/CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF) and
+[Flint Pascal Q8 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF). Flint and Ornith write one token a
+step, so v4 changes how fast they read, not how fast they write ([release notes](release/notes-v4.0.md)).
+
+Against stock llama.cpp, measured for v3 (stock was not measured again for v4):
 
 | A coding agent, tok/s | Stock llama.cpp b12076 | **Miner Llama v3** | **Miner Llama v3, my quant** |
 |---|---:|---:|---:|
@@ -32,23 +51,26 @@ software runs models slowly on it. Miner Llama makes such rigs useful: a llama.c
 
 ## What it does
 
-**Miner Llama v3 runs three models on one build, each with its own preset** ([release notes](release/notes-v3.0.md)):
+**Miner Llama v4 runs three models on one build, each with its own preset** ([release notes](release/notes-v4.0.md)):
 
-- **[Qwen3.8-Flash-Next](release/flash-next-v3/README.md)**, a 125B-parameter mixture of experts with 6B active per
-  token, in UkisAI's 2-bit Swift-1.5 GSQ-RCO Q2_0, with a 65,536-token context.
-- **[Flint](release/flint-v3/README.md)**, a 39.8B mixture of experts, in near-lossless 8-bit (Unsloth's Q8_0,
-  42.3 GB) with its full 262,144-token context.
-  [Flint Pascal Q8 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) (40.4 GB) generates 3.3 % faster,
-  and [Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB) is the fastest file of all, 49.4 tok/s at
-  the full context, and runs on six cards at a shorter context.
-- **[Ornith-1.5-122B](release/ornith-v3/README.md)** in
+- **[Qwen3.8-Flash-Next](release/flash-next-v4/README.md)**, a 125B-parameter mixture of experts with 6B active per
+  token, in UkisAI's 2-bit Swift-1.5 GSQ-RCO Q2_0, with a 65,536-token context. A coding agent gets 27.61 and 26.67
+  tok/s, and the speed holds deep into a long conversation.
+- **[Flint](release/flint-v4/README.md)**, a 39.8B mixture of experts, in near-lossless 8-bit with its full
+  262,144-token context: [Flint Pascal Q8 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) (40.4 GB)
+  or Unsloth's Q8_0 (42.3 GB). [Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF)
+  (29.4 GB) is the fastest file of all, 52.01 tok/s at the full context on v4, and runs on six cards at a shorter
+  context.
+- **[Ornith-1.5-122B](release/ornith-v4/README.md)** in
   [Ornith-1.5-122B Pascal N2P GGUF](https://huggingface.co/CinderellaMan/Ornith-1.5-122B-Pascal-N2P-GGUF) (48.2 GB),
   whose 2- and 3-bit types only Miner Llama loads, with a 49,152-token context.
 
-Every speed in the table above comes from [the agent check](bench/agent_check/README.md): a coding agent fixing twelve
-small bugs in Python and JavaScript, with tool calls, real test runs and a context that grows every turn, timed over
-the whole session. Each number's command and data are in [docs/data](docs/data/README.md). Flint's path from stock
-llama.cpp through v1 to v2 is in [release/flint-v2/results.md](release/flint-v2/results.md).
+Every speed in the tables above comes from two tests. [The agent check](bench/agent_check/README.md) is a coding
+agent fixing twelve small bugs in Python and JavaScript, with tool calls, real test runs and a context that grows
+every turn, timed over the whole session. [The deep lane](bench/deep_lane/README.md) times the same requests at set
+depths of a conversation, up to 49,152 tokens. Each number's command and data are in
+[docs/data](docs/data/README.md). The whole story, from stock llama.cpp to v4, with what failed on the way, is told
+in [the book](docs/book/00-preface.md).
 
 ## Run it
 
@@ -63,7 +85,7 @@ and a PC to connect from.
 
    Reboot; `nvidia-smi` should list your cards ([setup guide](docs/setup.md)).
 
-2. **Miner Llama v3:** from its [GitHub release](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v3.0),
+2. **Miner Llama v4:** from its [GitHub release](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0),
    download the two archives and `SHA256SUMS` into one folder, then:
 
    ```bash
@@ -71,17 +93,18 @@ and a PC to connect from.
    ```
 
    ```bash
-   tar xzf llama-p106-v3.0-bin-ubuntu-cuda12.9-sm61.tar.gz && tar xzf cudart-llama-p106-v3.0-bin-ubuntu-cuda12.9.tar.gz
+   tar xzf llama-p106-v4.0-bin-ubuntu-cuda12.9-sm61.tar.gz && tar xzf cudart-llama-p106-v4.0-bin-ubuntu-cuda12.9.tar.gz
    ```
 
-3. **A model** onto the model drive. Flint in Unsloth's Q8_0 (42.3 GB):
+3. **A model** onto the model drive. Flint in my Flint Pascal Q8 GGUF (40.4 GB), the file Flint's v4 preset names:
 
    ```bash
-   wget -c -P /mnt/models https://huggingface.co/unsloth/flint-GGUF/resolve/20468edfc38ab43d6914cc88b08cbecb05d0fc62/flint-Q8_0.gguf
+   wget -c -P /mnt/models https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF/resolve/main/flint-pascal-Q8.gguf
    ```
 
-   The [Qwen3.8-Flash-Next](release/flash-next-v3/README.md) and [Ornith-1.5-122B](release/ornith-v3/README.md) pages
-   list their own files.
+   The [Qwen3.8-Flash-Next](release/flash-next-v3/README.md#run-it) and
+   [Ornith-1.5-122B](release/ornith-v3/README.md#the-file) pages list their own files, and
+   [the Flint page](release/flint-v3/README.md#the-files) Unsloth's Q8_0.
 
 4. **Check the rig** (driver, cards, host memory, the model's read speed):
 
@@ -90,13 +113,13 @@ and a PC to connect from.
    ```
 
    ```bash
-   BIN=$PWD/llama-p106-v3.0 MODEL=/mnt/models/flint-Q8_0.gguf llms-on-crypto-mining-rigs/scripts/p106_check.sh
+   BIN=$PWD/llama-p106-v4.0 MODEL=/mnt/models/flint-pascal-Q8.gguf llms-on-crypto-mining-rigs/scripts/p106_check.sh
    ```
 
 5. **Start the server with the model's preset** (Flint here; the other models have their own `settings.env`):
 
    ```bash
-   MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/flint-v3/settings.env && env $PRESET_ENV llama-p106-v3.0/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
+   MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/flint-v4/settings.env && env $PRESET_ENV llama-p106-v4.0/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
    ```
 
 6. **Connect from your PC** through an SSH tunnel, then open `http://127.0.0.1:8080`, or point any OpenAI-compatible
@@ -106,18 +129,19 @@ and a PC to connect from.
    ssh -N -L 8080:127.0.0.1:8080 <your rig>
    ```
 
-What each preset sets and why: the [Qwen3.8-Flash-Next](release/flash-next-v3/README.md),
-[Flint](release/flint-v3/README.md) and [Ornith-1.5-122B](release/ornith-v3/README.md) pages. To build the engine
-yourself: `TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v3.0`
-([reproduce/engine.md](release/flint-v2/reproduce/engine.md) walks through it for v2.0).
+What each preset sets and why: the [Qwen3.8-Flash-Next](release/flash-next-v4/README.md),
+[Flint](release/flint-v4/README.md) and [Ornith-1.5-122B](release/ornith-v4/README.md) pages. To build the engine
+yourself: `TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v4.0`
+([reproduce/engine.md](release/flint-v2/reproduce/engine.md) walks through it for v2.0). v3.0 and its presets
+(`release/<model>-v3/`) keep working as they are.
 
 ## Models
 
 | Model | What it is | On the reference rig |
 |---|---|---|
-| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v3 release: Q8_0 on nine cards, 45.9 tok/s for a coding agent (v2.0: 45.9 and 44.6 in two runs) |
-| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v3 release: UkisAI's Swift-1.5 Q2_0 on nine cards, the table on the SSD, the MTP draft; 20.40 tok/s and 12 of 12 tasks for a coding agent (stock llama.cpp b12076 8.20 on the same file) |
-| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | v3 release: Ornith-1.5-122B Pascal N2P GGUF (48.2 GB) on nine cards, 16.3 tok/s and 12 of 12 tasks for a coding agent (stock llama.cpp b12076 6.0 on Unsloth's UD-Q2_K_XL) |
+| [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v4 release: Flint Pascal Q8 GGUF on nine cards, 49.32 and 46.99 tok/s for a coding agent, the first token of a turn after 1.74 and 1.82 s (v3: 48.55 and 48.02 tok/s, 2.65 and 2.61 s; Unsloth's Q8_0 on v3: 45.9 tok/s) |
+| [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v4 release: UkisAI's Swift-1.5 Q2_0 on nine cards, the table on the SSD, the MTP draft; 27.61 and 26.67 tok/s and 12 of 12 tasks twice for a coding agent (v3: 20.66 and 18.92; stock llama.cpp b12076: 8.20 on the same file) |
+| [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | v4 release: Ornith-1.5-122B Pascal N2P GGUF (48.2 GB) on nine cards, 16.52 and 16.13 tok/s and 12 of 12 tasks twice for a coding agent, a task in 2.11 and 2.13 minutes at equal work (v3: 2.52 and 2.54; stock llama.cpp b12076: 6.0 tok/s on Unsloth's UD-Q2_K_XL) |
 
 Each model page gives the file, the command line, speed, quality and what is not measured yet. Model names only
 identify the models; this project is not affiliated with their makers.
@@ -135,16 +159,19 @@ P104 mining cards, the GTX 10 series and the Tesla P4/P40.
   8 bits between cards, an MTP draft with a cheaper output head, a keep-alive that holds every card at its boost clock,
   and every feature behind its own switch, with one preset per model ([release notes](release/notes-v3.0.md),
   [what v3 changed and why](docs/book/10-v3.md)).
-- **v4 (in progress, not released):** a newer upstream base, attention that reads only the cache cells the model
-  picks, kernels for the pass that checks guessed tokens, and checkpoints kept on the cards and taken without stopping
-  the pipeline. On 2026-11-11 this line wrote 45.97 % faster than v3 over a conversation of up to 49,152 tokens and
-  took 9.4 % less time for a coding agent's task, on the same rig the same day
-  ([the work since v3](docs/book/11-after-v3.md)).
+- **v4:** a newer upstream base (b12360), attention that reads only the cache cells the model picks, kernels that
+  read each weight once for the pass that checks guessed tokens, less host work between two steps, and checkpoints
+  kept on the cards and taken without stopping the pipeline. Flash-Next writes 58.4 % faster and reads prompts
+  139.4 % faster than on v3 over a conversation of up to 49,152 tokens; Flint and Ornith read prompts faster
+  ([release notes](release/notes-v4.0.md), [how v4 came about](docs/book/16-v4.md)).
 - **The answers stay the model's own:** the kernels change only the order of additions, and a guessed token is kept
-  only when it is the one the model picks itself. Flint's pipelined speculation gives plain decoding's tokens bit for
-  bit. Flash-Next's draft is checked several tokens at a time, and such a pass adds the same numbers in another order
-  than a one-token pass. That model amplifies the last bits, so at temperature 0 its text can differ from plain
-  decoding's ([why](docs/book/13-the-check-pass.md#134-story-a-check-was-a-different-arithmetic)).
+  only when it is the one the model picks itself, or, on Flash-Next's v4 preset, one it accepts by its own
+  probabilities. Flint's pipelined speculation gives plain decoding's tokens bit for bit, and with the same seed v4
+  writes v3's tokens on Flint. Flash-Next amplifies the last bits, so at temperature 0 its text can differ from
+  plain decoding's, and v4's differs from v3's
+  ([why](docs/book/13-the-check-pass.md#134-story-a-check-was-a-different-arithmetic)). One v4 prompt switch, the
+  micro-batch taper, changes Ornith's numbers about as much as its file's quantization does, so Ornith's preset
+  leaves it off ([the measurement](docs/book/16-v4.md#169-story-results-unchanged)).
 
 Each change with its measured gain: [the Flint page](models/flint/README.md#how-it-got-here) and
 [the fork's scope](docs/research/notes/fork_scope.md). Other Pascal cards run the same code but were not measured. NVIDIA's
@@ -171,11 +198,16 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
 
 ## More
 
-- [release/flint-v2](release/flint-v2/README.md): the v2 release in one folder, with how to rebuild the engine and the
-  model file from scratch.
+- [release/notes-v4.0.md](release/notes-v4.0.md): the v4 release, and its three models:
+  [Qwen3.8-Flash-Next](release/flash-next-v4/README.md), [Flint](release/flint-v4/README.md) and
+  [Ornith-1.5-122B](release/ornith-v4/README.md), each with its preset, one command and its tests against v3.0.
 - [release/notes-v3.0.md](release/notes-v3.0.md): the v3 release, and its three models:
   [Qwen3.8-Flash-Next](release/flash-next-v3/README.md), [Flint](release/flint-v3/README.md) and
   [Ornith-1.5-122B](release/ornith-v3/README.md), each with the files to download, its preset and one command.
+- [release/flint-v2](release/flint-v2/README.md): the v2 release in one folder, with how to rebuild the engine and the
+  model file from scratch.
+- [docs/book/](docs/book/00-preface.md): the project as a book for backend developers, from the rig to v4: what I
+  tried, how each idea was meant to work, what happened and why.
 - [docs/overview.md](docs/overview.md): why a mining rig suits LLMs at all, and the terms used here.
 - [docs/what_i_tried.md](docs/what_i_tried.md): a guided tour of everything tried in the first week, why, what each
   result taught, and where each model stands.

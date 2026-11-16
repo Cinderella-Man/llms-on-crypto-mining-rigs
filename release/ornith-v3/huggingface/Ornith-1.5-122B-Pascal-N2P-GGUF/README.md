@@ -21,18 +21,20 @@ cards, with more bits in the late layers, where Ornith is most sensitive. It is 
 cards (compute capability 6.1: the P106 and P104 cards of retired mining rigs, the GTX 10 series, the Tesla P4/P40);
 its speed is measured on P106-090 mining cards only.
 
-**It runs only on Miner Llama v3.** N2P and N3P are the fork's own types: stock llama.cpp, the apps built on it and
-older Miner Llama releases cannot load this file.
+**It runs only on Miner Llama v3 and later.** N2P and N3P are the fork's own types: stock llama.cpp, the apps built
+on it and older Miner Llama releases cannot load this file.
 
 **Why pick it.** Against Ornith's own 8-bit file it is closer than Unsloth's UD-Q2_K_XL, the common file of about the
 same size, on all three texts measured (prose, coding-agent sessions, code), for 3.66 GB more.
 
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
 card on a single PCIe 1.0 lane, a 2-core Celeron host with 4 GB of RAM), 49,152 tokens of context: **16.3 tokens per
-second** with Miner Llama v3's preset, all twelve tasks passed; 14.9 without its keep-alive switch.
+second** with Miner Llama v3's preset, all twelve tasks passed; 14.9 without its keep-alive switch. Miner Llama v4
+writes it as fast (16.52 and 16.13 in two runs) and reads prompts 74.8 % faster, so the same work takes an agent
+16.2 % less time: 2.11 and 2.13 minutes a task against 2.52 and 2.54 on v3.
 
 **Which Ornith file should you pick?**
-- **Nine 6 GB Pascal cards and Miner Llama v3: this file.**
+- **Nine 6 GB Pascal cards and Miner Llama v3 or v4: this file.**
 - **Any other engine or GPU: Unsloth's [UD-Q2_K_XL](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF)**
   (44.5 GB), which every llama.cpp build loads.
 
@@ -40,37 +42,50 @@ second** with Miner Llama v3's preset, all twelve tasks passed; 14.9 without its
 
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
-2. **Download** the Pascal engine, Miner Llama v3.0, from the fork's
+2. **Download** the Pascal engine, Miner Llama v4.0, from the fork's
    [releases](https://github.com/Cinderella-Man/miner-llama/releases), unpack it, and download
    `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf` from this page.
-3. **Start it**, on nine cards with Ornith's v3 preset:
+3. **Start it**, on nine cards with Ornith's v4 preset, written out:
 
    ```bash
-   GGML_CUDA_KEEPALIVE=decode llama-p106-v3.0/llama-server -m Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf -ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off --host 127.0.0.1 --port 8080
+   GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1 LLAMA_SERVER_YIELD=2 LLAMA_SAMPLING_TOP_K_ROWS=1 GGML_CUDA_HOP_STAGED=1 GGML_CUDA_GRAPHS_FORCE=1 llama-p106-v4.0/llama-server -m Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf -ngl 99 -fa on -c 49152 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 -b 4096 -ub 512 -ts 6,6,6,6,5,5,5,5,6 -fit off --ctx-checkpoints-vram 4 --ctx-checkpoints-incall --host 127.0.0.1 --port 8080
    ```
 
-   `GGML_CUDA_KEEPALIVE=decode` is the keep-alive, which holds the cards at their boost clock. Then open
-   `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`), or point
-   any OpenAI-compatible client at it.
+   `GGML_CUDA_KEEPALIVE=decode` is the keep-alive, which holds the cards at their boost clock; the other settings make
+   v4 read prompts faster. Then open `http://127.0.0.1:8080` through an SSH tunnel from your PC
+   (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`), or point any OpenAI-compatible client at it.
+
+   On Miner Llama v3.0 the line is
+   `GGML_CUDA_KEEPALIVE=decode llama-p106-v3.0/llama-server` with the same flags, `-b 2048` in place of `-b 4096`,
+   and without `--ctx-checkpoints-vram 4 --ctx-checkpoints-incall`.
 
 The preset as a file and what each setting does:
-[the release page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/ornith-v3/README.md);
+[the v4 release page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/ornith-v4/README.md)
+(and [v3's](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/ornith-v3/README.md));
 the model on these rigs: [the Ornith page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/ornith-1.5-122b/README.md).
+
+One v4 switch is left out of the preset: `--ubatch-taper short=600:64` brings the first token of a turn after 3.05
+and 3.27 s instead of 6.69 and 6.06, but it moves this file's next-token probabilities about as much as its
+quantization does (a mean KL divergence of 0.047 against the line without it, the same perplexity). Add it if a faster
+first token matters more to you than the exact numbers.
 
 ## What you need
 
 - **Nine 6 GB cards:** the file puts 46.4 GB on them, the context takes the rest. The layer split above is set by
   memory; another card count needs its own `-ts`.
-- **Miner Llama v3.** The rig's 4 GB of host memory is enough: on 2026-10-28 the agent check left 563 MB free at the lowest.
+- **Miner Llama v3 or v4.** The rig's 4 GB of host memory is enough: on 2026-10-28 the agent check left 563 MB free at
+  the lowest, and with v4's preset, which keeps the checkpoints on the cards, 1,225 and 1,228 MiB.
 
 ## Speed
 
 The [agent check](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/bench/agent_check) gives a
 coding agent twelve small bug-fix tasks (Python and JavaScript, real test runs, the context growing every turn) and
-records every turn. Nine P106-090, 49,152-token context, one run per row:
+records every turn. Nine P106-090, 49,152-token context, one run per row unless it says two:
 
 | Engine and file | Tasks passed | Generation, tokens/s | Prompt reading, tokens/s | First token per turn (median) | Data |
 |---|---|---|---|---|---|
+| **Miner Llama v4.0, this file, its preset, 2026-11-16, two runs** | **12 of 12, 12 of 12** | **16.52, 16.13** | **103.0, 105.9** | **6.69 s, 6.06 s** | [2026-11-16_r166_ornith_stack_no_taper](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-16_r166_ornith_stack_no_taper/README.md) |
+| Miner Llama v3.0 (`1551f5fe1`), this file, its preset, 2026-11-14 and 2026-11-16, two runs | 12 of 12, 12 of 12 | 16.22, 16.49 | 61.1, 58.4 | 7.26 s, 8.80 s | [2026-11-14_r160_ornith_release_agent](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-14_r160_ornith_release_agent/README.md) |
 | Stock llama.cpp b12076 (`20a51f24a`), tuned (`-b 2048 -ub 256 -fa on`), Unsloth UD-Q2_K_XL, 2026-11-06 | 11 of 12 | 6.0 | 55 | 12.57 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Stock llama.cpp b12076, this file | cannot load it: N2P and N3P are this fork's types | — | — | — | — |
 | Miner Llama v3 (`1551f5fe1`), Unsloth UD-Q2_K_XL, no switch, 2026-11-06 | 12 of 12 | 12.6 | 69 | 7.90 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |

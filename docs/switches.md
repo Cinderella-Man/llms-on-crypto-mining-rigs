@@ -1,7 +1,7 @@
 # Miner Llama's switches
 
-Every behaviour that Miner Llama adds to upstream llama.cpp (b12076) can be turned on or off on its own, at run time, in
-one binary. Each switch's default is the engine's own behaviour: the features that are on stay on, and the experiments
+Every behaviour that Miner Llama adds to upstream llama.cpp (b12076 in v3.0, b12360 in v4.0) can be turned on or off
+on its own, at run time, in one binary. Each switch's default is the engine's own behaviour: the features that are on stay on, and the experiments
 that are off stay off. Setting a switch to its other value gives upstream's path for that one change, or, for a
 tuning, the fork's earlier path. This lets each change, and each small gain, be measured on its own on the rig.
 
@@ -40,7 +40,7 @@ came with the merge and has no switch.
 
 The switches of the night of 2026-11-10/11, one fork branch each (`pascal-p106-v4-b12246-<row>`, or `-<row>`, in the
 **Branch** column), are all in one build, `pascal-p106-v4-b12246-night`, the merge of those 17 branches on
-`pascal-p106-v4`; none is in a release build yet. With every switch at its
+`pascal-p106-v4`. With every switch at its
 default it gives `pascal-p106-v4`'s logits bit for bit on every architecture `test-llama-archs` builds, and each
 branch's own check passes on it with its switch on
 ([docs/data/2026-11-11_v4_night_merge/](data/2026-11-11_v4_night_merge/README.md)).
@@ -56,11 +56,52 @@ switches of the night's, the day's and these seven branches, each off by default
 switches meet, each product keeps its own branch's kernel: Q6_K's products of 5–8 tokens stay on the k-column kernel
 under `_RO8`, and the K tiles take only IQ4_XS and Q4_K at 2–4 tokens.
 
+**The v4.0 release build** is `pascal-p106-v4` at `eb82916d3`: the tag `miner-llama-v4.0`, which is the release
+candidate `v4-rc2` unchanged. It holds everything above, the switches and fixes of 2026-11-12 and 2026-11-13, each
+merged with its default unchanged, and upstream b12360
+([docs/data/2026-11-13_c831_upstream/](data/2026-11-13_c831_upstream/README.md)). With no switch set it computes on a
+CPU what the build before the upstream merge computes, bit for bit on all 146 random models, once one upstream change
+to the CPU's attention arithmetic is set aside. The four release files load on it with the same memory on every
+card and give the same greedy replies as before that merge.
+
 ## Which preset sets each switch
 
-Each v3 model has a preset, `release/<model>-v3/settings.env`: the switches (`PRESET_ENV`) and the command line
-(`PRESET_ARGS`) its agent check ran with. A switch no preset names stays at its default. These are the switches the
-presets set:
+Each model has a preset per release, `release/<model>-<version>/settings.env`: the switches (`PRESET_ENV`) and the
+command line (`PRESET_ARGS`) its agent check ran with. A switch no preset names stays at its default.
+
+### v4.0
+
+A v4 preset is the model's v3.0 preset plus the switches and flags below; a dash means the preset does not set it.
+Each release page explains every one and names the run that proved it.
+
+| Switch or flag | [Flash-Next](../release/flash-next-v4/settings.env) | [Flint](../release/flint-v4/settings.env) | [Ornith-1.5-122B](../release/ornith-v4/settings.env) |
+|---|---|---|---|
+| v3.0's `GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768`, `_KCOL_TABLE=0`, `LLAMA_HOP_CAST=q8_0`, `LLAMA_DRAFT_SHORTLIST=32768,8192,2` | set | — | — |
+| `GGML_CUDA_HOP_STAGED=1` | set (v3.0's) | — (decode +1.5 % at depth, the 8,192-token prompt chunk −7.7 %) | set |
+| `GGML_CUDA_KEEPALIVE=decode` | set (v3.0's) | — (at depth prompts −16.5 %, decode −3.0 %) | set (v3.0's) |
+| `GGML_CUDA_KEEPALIVE_EAGER=1` | set | — | set |
+| `LLAMA_SERVER_YIELD=2`, `LLAMA_SAMPLING_TOP_K_ROWS=1` | set | set | set |
+| `LLAMA_KV_SEQ_RM_BOUND=1` | set | set | — (without speculation it acts once a request) |
+| `GGML_CUDA_GRAPHS_FORCE=1` | set | set | set |
+| `LLAMA_SCHED_PER_SIZE_RESERVE=2` | set | set | — (no run on Ornith re-planned) |
+| `--ctx-checkpoints-vram 4` | set | set | set |
+| `--ctx-checkpoints-incall` | set | — (the server turns it off on sliding-window layers) | set |
+| `--ubatch-taper short=600:64` | set (mean KL divergence 0.0127 against the line without it) | set (0, the same numbers to the digit) | opt-in (0.047, about the file's own quantization) |
+| `-b 4096` | set | — (`-b 512 -ub 128` keeps the 262,144-token context within the 4 GB host) | set |
+| The sparse attention and its tables: `GGML_CUDA_FATTN_SPARSE_PASCAL=1`, `_MIN_RATIO=1.0`, `_NSM=5`, `_PROMPT=1`, `LLAMA_QSA_INDEXER_ROWS=1`, `LLAMA_QSA_KPOOL_DEV=1`, `LLAMA_QSA_KPOOL_STAGE=1`, `LLAMA_QSA_POOL_MASK_DEV=1` | set | — (only Flash-Next's layers have them) | — |
+| The verify-pass kernels: `GGML_CUDA_MMVQ_PASCAL_DMT=1`, `_Q5K_MT=1`, `_Q3K_MT=1`, `_Q6K_MT=1`, `_GLU_MT=1`, `_KCOL_EXACT=1`, `_KCOL_SKIP=q4_0,q5_0`, `GGML_CUDA_MMVF_F32_MT=1` | set | — (one token a step) | — (one token a step) |
+| The draft's switches: `LLAMA_DRAFT_PREFETCH=1`, `LLAMA_VERIFY_PREPARE=2`, `LLAMA_MTP_GRAPH_KEEP=1`, `LLAMA_MTP_EMBD_FIRST=1`, `LLAMA_MTP_DRAFT_CAP=1`, `LLAMA_MTP_SKIP_LAST_ROW=1`, `LLAMA_MTP_KV_ONLY=1`, `LLAMA_MTP_CATCHUP_OVERLAP=1`, `LLAMA_MTP_HROW_LAZY=1`, `LLAMA_DRAFT_EMBD_DEV=layer`, `LLAMA_SPEC_REJECT_STOP=1`, `--spec-draft-sampling probabilistic --spec-draft-p-min 0`, `--spec-draft-n-ubatch 512` | set | — (no draft model) | — (no draft) |
+| `--pipe-depth 4` | — | set (v3.0's) | — |
+
+Flash-Next's column is 33 switches on top of v3.0's six. Measured with these presets on `v4-rc2`: Flash-Next 27.61 and
+26.67 tok/s for a coding agent, 12 of 12 twice ([2026-11-13_r156_agent_v4r](data/2026-11-13_r156_agent_v4r/README.md));
+Flint's prompts 219.7 and 204.1 tok/s ([2026-11-14_r159_flint_release_agent](data/2026-11-14_r159_flint_release_agent/README.md));
+Ornith 2.11 and 2.13 minutes a task at equal work
+([2026-11-16_r166_ornith_stack_no_taper](data/2026-11-16_r166_ornith_stack_no_taper/README.md)).
+
+### v3.0
+
+These are the switches the v3 presets set:
 
 | Switch | [Flash-Next](../release/flash-next-v3/settings.env) | [Flint](../release/flint-v3/settings.env) | [Ornith-1.5-122B](../release/ornith-v3/settings.env) |
 |---|---|---|---|
@@ -319,7 +360,9 @@ Q1040.
 The merge of upstream b12246 brings 154 upstream commits. These change what the engine does with no switch set, on
 the models Miner Llama serves
 ([the full list and the checks](data/2026-11-10_ladder6/README.md#what-upstream-changed-by-default)). Two of them have
-a switch on `pascal-p106-v4-b12246-c693`, named in the table; the others have none:
+a switch on `pascal-p106-v4-b12246-c693`, named in the table; the others have none. The v4.0 release build also holds
+the merge of upstream b12360, 114 more upstream commits; what they change on the release models' paths is in
+[that merge's data](data/2026-11-13_c831_upstream/README.md#what-upstream-changed-on-flash-nexts-paths).
 
 | Upstream change | What changes with no switch set |
 |---|---|

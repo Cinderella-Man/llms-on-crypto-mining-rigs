@@ -29,7 +29,8 @@ generated each token in 0.941 of Q8_0's time, at the same prompt speed. Its KL d
 **How fast.** A coding agent fixing twelve small bugs on a Manli mining rig with nine P106-090 cards (6 GB each, every
 card on a single PCIe 1.0 lane, a 2-core Celeron host with 4 GB of RAM), the full 262,144-token context: **47.4
 tokens per second**, all twelve tasks passed, on the Miner Llama v3 release build, against 45.9 for Unsloth's Q8_0 on
-the same build.
+the same build. On Miner Llama v4 it generates 49.32 and 46.99 tokens per second in two runs and answers sooner: the
+first token of a turn comes after 1.74 and 1.82 s, against 2.65 and 2.61 s on v3.
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: this file or Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF/tree/20468edfc38ab43d6914cc88b08cbecb05d0fc62)**
@@ -42,21 +43,26 @@ the same build.
 
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
-2. **Download** the Pascal engine, Miner Llama v3.0, from the fork's
+2. **Download** the Pascal engine, Miner Llama v4.0, from the fork's
    [releases](https://github.com/Cinderella-Man/miner-llama/releases), unpack it, and download `flint-pascal-Q8.gguf`
    from this page.
-3. **Start it**, on nine cards with the full context (v2's release line, Flint's v3 preset):
+3. **Start it**, on nine cards with the full context (Flint's v4 preset, written out):
 
    ```bash
-   llama-p106-v3.0/llama-server -m flint-pascal-Q8.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
+   LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_SAMPLING_TOP_K_ROWS=1 GGML_CUDA_GRAPHS_FORCE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 llama-p106-v4.0/llama-server -m flint-pascal-Q8.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -ts 6,6,5,5,6,5,5,6,6 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --ctx-checkpoints-vram 4 --ubatch-taper short=600:64 --host 127.0.0.1 --port 8080
    ```
 
    Then open `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`),
    or point any OpenAI-compatible client at it.
 
+   On Miner Llama v3.0 leave out the five variables in front and the last two flags before `--host`
+   (`--ctx-checkpoints-vram 4 --ubatch-taper short=600:64`): that is v2's release line and Flint's v3 preset.
+
 What each flag does and how to use it for coding agents:
 [the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md); the
-v3 release: [release/flint-v3](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v3/README.md).
+v4 release and what its switches do:
+[release/flint-v4](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v4/README.md);
+the v3 release: [release/flint-v3](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v3/README.md).
 
 ## What you need
 
@@ -68,16 +74,21 @@ v3 release: [release/flint-v3](https://github.com/Cinderella-Man/llms-on-crypto-
 
 The [agent check](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/bench/agent_check) gives the
 [pi](https://github.com/earendil-works/pi) coding agent twelve small bug-fix tasks (Python and JavaScript, real test
-runs, the context growing every turn) and records every turn. Nine P106-090, 262,144-token context, the command line
-above, one run per row:
+runs, the context growing every turn) and records every turn. Nine P106-090, 262,144-token context, each engine with
+its own release line, one run per row unless it says two:
 
 | Engine and file | Tasks passed | Generation, tokens/s | Prompt reading, tokens/s | First token per turn (median) | Data |
 |---|---|---|---|---|---|
+| **Miner Llama v4.0, this file, 2026-11-16, two runs** | **11 of 12, 12 of 12** | **49.32, 46.99** | **219.7, 204.1** | **1.74 s, 1.82 s** | [2026-11-14_r159_flint_release_agent](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-14_r159_flint_release_agent/README.md) |
+| Miner Llama v3.0 (`1551f5fe1`), this file, 2026-11-14, two runs | 11 of 12, 12 of 12 | 48.55, 48.02 | 179.2, 181.3 | 2.65 s, 2.61 s | the same |
 | Stock llama.cpp b12076 (`20a51f24a`), Unsloth Q8_0, 65,536-token context, 2026-11-05 and 2026-11-06 | 10 of 12 | 14.4 | 148 | 4.13 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v3 (`1f7215948`), Unsloth Q8_0, 2026-11-05 | 12 of 12 | 45.9 | 168 | 2.67 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | **Miner Llama v3 (`1551f5fe1`), this file, 2026-11-06** | **12 of 12** | **47.4** | 175 | 2.66 s | [2026-11-05_release_regression](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-05_release_regression/README.md) |
 | Miner Llama v2.0 (`37e717ff6`), this file, 2026-10-28 | 12 of 12 | 47.1 | — | — | [2026-10-27_flint_near_q8](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-10-27_flint_near_q8/README.md) |
 
+- **v4 against v3.0:** generation is level, prompts are read 17.6 % faster and the first token comes 32.3 % sooner.
+  With the same seed v4 writes v3.0's tokens exactly. Each engine missed one task once, the same one, stopped at the
+  agent's 12-minute cap.
 - **`1f7215948`** gives the same greedy output as the release build `1551f5fe1`.
 - **On the release build** this file generates 3.3 % faster than Unsloth's Q8_0 (47.4 against 45.9 tokens/s), with a
   median task of 1.0 against 1.2 minutes. Its sessions wrote more text, so all twelve tasks took 22.3 against 19.2

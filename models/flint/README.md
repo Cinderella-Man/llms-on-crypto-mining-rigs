@@ -1,6 +1,6 @@
 # Flint on Pascal mining rigs
 
-[![Flint](https://img.shields.io/badge/Flint-v3%20release-2b6cb0)](#speed)
+[![Flint](https://img.shields.io/badge/Flint-v4%20release-2b6cb0)](#speed)
 
 [Flint](https://huggingface.co/RecursiveSI/flint) is a 39.8 B-parameter mixture-of-experts model that uses 2.5 B
 parameters per token, keeps most of its attention local, and reads up to 262,144 tokens of context. It reasons before
@@ -19,12 +19,16 @@ as fast as stock llama.cpp for a coding agent.** Unsloth's Q8_0 (42.3 GB) picks 
 at ~150 GB/s of a card's ~179, so Q8_0 runs within about 15 % of the 4-bit files; the fastest file is my own Flint
 Pascal Q5 GGUF (49.4 tok/s on v3, all twelve tasks; 53.8 on v2.0).
 
+**Miner Llama v4 answers sooner.** Flint writes on v4 as fast as on v3, and reads prompts faster: on my Flint Pascal
+Q8 GGUF the first token of a turn comes after 1.74 and 1.82 s in two runs against v3.0's 2.65 and 2.61, and prompts
+are read at 219.7 and 204.1 tok/s against 179.2 and 181.3 ([below](#on-miner-llama-v4-2026-11-14-and-2026-11-16)).
+
 ## Recommended setup
 
 | | |
 |---|---|
-| Engine | Miner Llama v3, commit `1551f5fe1`: the [v3.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v3.0) release archives (tag `miner-llama-v3.0`) with Flint's preset, [release/flint-v3](../../release/flint-v3/README.md), or a build from source ([how](../../README.md#run-it)). v2.0 (`37e717ff6`, tag `miner-llama-v2.0`) runs the same command line |
-| Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits |
+| Engine | Miner Llama v4: the [v4.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0) release archives (tag `miner-llama-v4.0`) with Flint's preset, [release/flint-v4](../../release/flint-v4/README.md), or a build from source ([how](../../README.md#run-it)). v3.0 (`1551f5fe1`, tag `miner-llama-v3.0`, [release/flint-v3](../../release/flint-v3/README.md)) and v2.0 (`37e717ff6`, tag `miner-llama-v2.0`) run the command lines below |
+| Model file, nine cards | Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF) (42.3 GB): near-lossless, the full context fits. My [Flint Pascal Q8 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q8-GGUF) (40.4 GB) has Q8_0's quality in fewer bytes; it is the file v4's preset names and was measured on |
 | Model file, six cards, or the most speed on nine | [Flint Pascal Q5 GGUF](https://huggingface.co/CinderellaMan/Flint-Pascal-Q5-GGUF) (29.4 GB; recipe K2h-r16), this project's own file, better than UD-Q4_K_XL in quality and faster on the same engine |
 | Cards | all nine for Q8_0 at the full 262,144-token context; six run Flint Pascal Q5 GGUF or UD-Q4_K_XL for one short conversation about as fast as nine, and leave three cards free |
 | Sampling | the makers' settings: temperature 1.0, top-p 0.95, top-k 20, min-p 0 |
@@ -34,6 +38,15 @@ too; Flint Pascal Q5 GGUF was 6.1 % faster than it for a coding agent on v2.0 (5
 measured fidelity.
 
 ## Command lines
+
+**On v4,** start Flint with its preset, from a clone of this repository with the v4.0 archives unpacked in
+`llama-p106-v4.0/` ([release/flint-v4](../../release/flint-v4/README.md) explains each switch):
+
+```bash
+MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/flint-v4/settings.env && env $PRESET_ENV llama-p106-v4.0/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
+```
+
+The preset is the line below plus v4's prompt switches. The line itself, flag by flag:
 
 Chat with the full context on nine cards, served on the rig's loopback address, with the release archives unpacked
 in `llama-p106-v3.0/` (a build from source has the same binary in `llama.cpp/build/bin/`). It is v2's release line
@@ -68,6 +81,29 @@ Open the built-in web UI through an SSH tunnel from your PC: `ssh -N -L 8080:127
 `http://127.0.0.1:8080`.
 
 ## Speed
+
+### On Miner Llama v4 (2026-11-14 and 2026-11-16)
+
+The agent check on v4 against v3.0, nine cards, 262,144 tokens of context, each engine with its own preset. Every
+value is one run; the 8-bit file has two runs an engine
+([2026-11-14_r159_flint_release_agent](../../docs/data/2026-11-14_r159_flint_release_agent/README.md),
+[2026-11-16_r170_flint_q5](../../docs/data/2026-11-16_r170_flint_q5/README.md)):
+
+| File | Engine | Tasks passed | Minutes a task, equal work | Generation tok/s | Prompt tok/s | First token of a turn, median s |
+|---|---|---|---|---|---|---|
+| Flint Pascal Q8 GGUF (`p065`, 40.4 GB) | v3.0 | 11 of 12, 12 of 12 | 1.81, 1.82 | 48.55, 48.02 | 179.2, 181.3 | 2.65, 2.61 |
+| | **v4** | 11 of 12, 12 of 12 | 1.72, 1.81 | 49.32, 46.99 | **219.7, 204.1** | **1.74, 1.82** |
+| Flint Pascal Q5 GGUF (29.4 GB) | v3.0 | 12 of 12 | 2.55 | 51.77 | 169.1 | 2.81 |
+| | **v4** | 12 of 12 | 2.45 | 52.01 | **195.6** | **1.82** |
+
+v4 changes how Flint reads prompts, not how it writes. Flint decodes one token a step, so v4's kernels for passes of
+several tokens never run for it and generation is level. Prompts are read 17.6 % faster on the 8-bit file and the
+first token comes 32.3 % sooner: the checkpoints of its sliding-window layers stay on the cards (a restore takes
+2 ms instead of 292), and every short prompt call is read as a pipeline across the nine cards. "Equal work" has its
+own reference run per file, so compare within a file. The run that missed a task stopped it at the 12-minute cap.
+Deep in a context v4 decodes 1.1 % faster and reads prompts 6.3 % faster than v3.0, with the same replies at
+temperature 0. Unsloth's files run on the same lines and were not measured on v4. The preset, what it leaves out and
+every table: [release/flint-v4](../../release/flint-v4/README.md).
 
 ### On Miner Llama v3 (2026-11-05 and 2026-11-06)
 
@@ -274,6 +310,8 @@ v1's steps, `llama-bench` on UD-Q4_K_XL, six cards:
 
 ## More
 
+- [release/flint-v4](../../release/flint-v4/README.md): Flint on the v4 release, its preset, one command and the
+  tests against v3.0.
 - [release/flint-v3](../../release/flint-v3/README.md): Flint on the v3 release, its files, preset and one command.
 - [release/flint-v2](../../release/flint-v2/README.md): everything about the v2 release in one folder, with the recipes
   that rebuild the engine and Flint Pascal Q5 GGUF from scratch and every number behind the release.

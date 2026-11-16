@@ -34,7 +34,9 @@ card on a single PCIe 1.0 lane, a 2-core Celeron host). With Miner Llama v3 (202
 went long (complex-numbers, 14,024 tokens, its context past 24,000 tokens); on the other eleven tasks it generated 53.64
 tokens per second, as on v2.0 (54.04), and at fixed context depths v3 writes the same tokens as v2.0 at the same speed.
 Unsloth's UD-Q5_K_XL on v3: 46.4 tokens per second. Stock llama.cpp b12076 on UD-Q5_K_XL: 13.7 (at 65,536 tokens of
-context); this file on an older stock commit: 15.6.
+context); this file on an older stock commit: 15.6. With Miner Llama v4 (2026-11-16, one run) it generated 52.01
+tokens per second, all twelve tasks passed, and answered sooner than v3 the same night: the first token of a turn
+after 1.82 against 2.81 s, prompts read at 195.6 against 169.1 tokens per second, generation 52.01 against 51.77.
 
 **Which Flint file should you pick?**
 - **Nine 6 GB cards, best quality: Unsloth's [Q8_0](https://huggingface.co/unsloth/flint-GGUF)** (42.3 GB). It is
@@ -50,17 +52,22 @@ context); this file on an older stock commit: 15.6.
 
 1. **Driver:** Ubuntu 24.04 or newer with NVIDIA's driver 580, the last one for Pascal cards
    ([setup guide](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/setup.md)).
-2. **Download** the Pascal engine, Miner Llama v3 (the two archives of its
-   [release](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v3.0)), unpack both into one folder,
+2. **Download** the Pascal engine, Miner Llama v4 (the two archives of its
+   [release](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0)), unpack both into one folder,
    and download `flint-pascal-Q5.gguf` from this page.
-3. **Start it**, here on nine cards with the full context:
+3. **Start it**, here on nine cards with the full context (Flint's v4 preset, written out, with the layers split by
+   count):
 
    ```bash
-   llama-p106-v3.0/llama-server -m flint-pascal-Q5.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --pipe-depth 4 --host 127.0.0.1 --port 8080
+   LLAMA_KV_SEQ_RM_BOUND=1 LLAMA_SERVER_YIELD=2 LLAMA_SAMPLING_TOP_K_ROWS=1 GGML_CUDA_GRAPHS_FORCE=1 LLAMA_SCHED_PER_SIZE_RESERVE=2 llama-p106-v4.0/llama-server -m flint-pascal-Q5.gguf --alias flint -ngl 99 -fa on -c 262144 -np 1 -b 512 -ub 128 -bs --ctx-checkpoints 4 --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --pipe-depth 4 --ctx-checkpoints-vram 4 --ubatch-taper short=600:64 --host 127.0.0.1 --port 8080
    ```
 
    Then open `http://127.0.0.1:8080` through an SSH tunnel from your PC (`ssh -N -L 8080:127.0.0.1:8080 <your rig>`),
    or point any OpenAI-compatible client at it.
+
+   On Miner Llama v3.0 leave out the five variables in front and the two flags
+   `--ctx-checkpoints-vram 4 --ubatch-taper short=600:64`. What the v4 switches do:
+   [release/flint-v4](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/release/flint-v4/README.md).
 
 What each flag does, how to run on six cards, and how to use it for coding agents:
 [the Flint page](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/models/flint/README.md).
@@ -80,7 +87,18 @@ The measure is a coding agent at work, because that is what a rig like this is f
 [agent check](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/tree/main/bench/agent_check) gives the
 [pi](https://github.com/earendil-works/pi) coding agent twelve small bug-fix tasks (Python and JavaScript, real test
 runs, five to ten tool calls each, the context growing every turn) within a time budget, and records every turn. Nine
-P106-090, 262,144-token context, the command line above unless noted. With Miner Llama v3 (`1551f5fe1`), 2026-11-06:
+P106-090, 262,144-token context. With Miner Llama v4.0 against v3.0, each on its own line, one run each on the same
+rig the same night (2026-11-16):
+
+| File and engine | Tasks passed | Minutes a task, equal work | Generation, tokens/s | Prompt reading, tokens/s | First token (median) |
+|---|---|---|---|---|---|
+| **This file, Miner Llama v4.0** | **12 of 12** | **2.45** | **52.01** | **195.6** | **1.82 s** |
+| This file, Miner Llama v3.0 | 12 of 12 | 2.55 | 51.77 | 169.1 | 2.81 s |
+
+"Equal work" prices one reference run's prompt and reply tokens at each run's own speeds. The runs:
+[2026-11-16_r170_flint_q5](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/docs/data/2026-11-16_r170_flint_q5/README.md).
+
+With Miner Llama v3 (`1551f5fe1`), 2026-11-06, v3's command line:
 
 | File and engine | Tasks passed | Minutes per task (median) | Generation, tokens/s | Prompt reading, tokens/s | First token (median) |
 |---|---|---|---|---|---|

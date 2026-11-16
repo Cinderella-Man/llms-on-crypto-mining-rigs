@@ -18,8 +18,8 @@ _Avoid_: rig, lab
 ### Software
 
 **Miner Llama**:
-This project and its llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1, v2 and v3
-are its releases.
+This project and its llama.cpp fork for GPUs of compute capability 6.1, one code line for every model; v1, v2, v3
+and v4 are its releases.
 _Avoid_: Pascal engine, Flint fork, model branch
 
 **Model page**:
@@ -33,8 +33,14 @@ _Avoid_: feature toggle
 
 **Preset**:
 The switches and the command line one model's own agent check ran with, kept in
-`release/<model>-<version>/settings.env`.
+`release/<model>-<version>/settings.env`. A switch can be a gain on one model and a loss on another, so each model
+has its own.
 _Avoid_: profile, config
+
+**Release candidate**:
+A tagged build that takes no new feature and gets the release's full checks; a fix during those checks makes the
+next candidate, and the last candidate becomes the release unchanged.
+_Avoid_: beta, preview
 
 ### Models
 
@@ -96,6 +102,26 @@ _Avoid_: long-context benchmark
 The three verdicts a timed change can get, against the spread between repeated loads of one setting: faster by more
 than the spread, inside it, or slower by more than it; a negligible change stays in the build behind its switch.
 _Avoid_: not worth it, too small
+
+**Equal work**:
+The agent check's measure for comparing engines: one reference run's prompt tokens, generated tokens and time outside
+the server, priced at each run's own prompt and generation speeds, in minutes a task.
+_Avoid_: wall time, total minutes (those depend on what each run happened to write)
+
+**Stack**:
+Several switches turned on together and timed as one setting; it is split into its switches only when it loses or
+changes a reply.
+_Avoid_: bundle, combo
+
+**Ladder**:
+One run that adds one switch per load on top of the loads before it, so each switch is judged against the rung below
+and the top against the bottom.
+_Avoid_: sweep, ablation
+
+**Taper**:
+Reading a short prompt call in smaller micro-batches (64 tokens) so that the nine cards work on it as a pipeline;
+another order of additions, exact on Flint and not on Ornith-1.5-122B, where it is opt-in.
+_Avoid_: small-batch mode
 
 **Decode efficiency**:
 Effective bandwidth during generation (weight bytes read per token × tokens per second) divided by the card's measured

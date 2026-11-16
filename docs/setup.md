@@ -19,7 +19,7 @@ repository. All of them run on the rig as root unless noted.
 | 6 | **A model drive** | ext4 with a label, mounted by `LABEL=` with `nofail` ([below](#storing-models)). Keep the SSD's free space for files that need fast random reads, such as Flash-Next's 28.8 GB n-gram table ([storage data](data/2026-11-03_table_storage/README.md)) | `findmnt --verify` clean, and the drive mounts after a reboot |
 | 7 | **Two tools for the checks** | `apt install --no-install-recommends fio iperf3` (no daemon is started) | both run |
 | 8 | **The network, both directions** | `iperf3 -s` on the rig, then `iperf3 -c <rig>` and `iperf3 -c <rig> -R` from another machine on the network ([commands](data/2026-11-03_rig_network/README.md#how-it-ran)). A fault in one direction is invisible to `ping` and to downloads | ~940 Mbit/s each way, 0 % ping loss |
-| 9 | **The engine, a model and the release check** | The README's [Run it](../README.md#run-it), steps 2–4, then the check with `SERVE=1` on Flint Q8_0 | 0 FAIL; chat ~35.5 tok/s, a 16k prompt at ~580 tok/s (the same on two rigs) |
+| 9 | **The engine, a model and the release check** | The README's [Run it](../README.md#run-it), steps 2–4, then the check with `SERVE=1` on the Flint file | 0 FAIL; measured on v3.0 with Unsloth's Flint Q8_0: chat ~35.5 tok/s, a 16k prompt at ~580 tok/s (the same on two rigs) |
 
 Steps 4 and 5 left two rigs with 34 and 39 GB free on the SSD. The only warning step 9 gave was a slow USB stick.
 
@@ -100,7 +100,7 @@ the kernel's out-of-memory killer, which may take parts of the desktop with it:
 |---|---|---|---|
 | `-ub` (micro-batch) | 512 | `-ub 128` (with `-b 512`) above ~100k tokens of context | The attention mask lives in pinned host memory, four copies of context × micro-batch; at 262,144 tokens the default needs ~1 GiB |
 | `--cache-ram` | 8192 MiB | `--cache-ram 0` | Prompt cache kept in host RAM |
-| `--ctx-checkpoints` | 32 per conversation | 0–4 | Each checkpoint of a hybrid model (Qwen3.6, Qwen3.8) holds the recurrent state of its linear-attention layers in host RAM |
+| `--ctx-checkpoints` | 32 per conversation | 0–4; on Miner Llama v4 with `--ctx-checkpoints-vram 4` | Each checkpoint of a hybrid model (Qwen3.6, Qwen3.8) holds the recurrent state of its linear-attention layers in host RAM. Miner Llama v4 can keep a conversation's newest four on the cards instead: with Ornith-1.5-122B the host's lowest free memory in an agent run was 1,225 and 1,228 MiB against 731 and 799 without it ([release/ornith-v4](../release/ornith-v4/README.md)) |
 
 Bind the server to `127.0.0.1` unless you mean to expose it. `MemAvailable` in `/proc/meminfo` is not enough to watch: on
 the rigs' kernels a quarter of the RAM is CMA-marked and counted in it though pinned buffers cannot use it, so a host that is

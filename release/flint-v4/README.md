@@ -21,12 +21,17 @@ of a turn comes at a median of 1.74 and 1.82 s against 2.65 and 2.61 s (−32.3 
 
 ## Run it
 
-From a clone of this repository, with the v4 engine (the fork's tag `v4-rc2`) built or unpacked beside it as
-`llama-p106-v4/`, and the file downloaded as in [release/flint-v3](../flint-v3/README.md#the-files):
+From a clone of this repository, with
+[Miner Llama v4.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0) unpacked beside it as
+`llama-p106-v4.0/` (or built from the fork's tag `miner-llama-v4.0`), and the file downloaded as in
+[release/flint-v3](../flint-v3/README.md#the-files):
 
 ```bash
-MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/flint-v4/settings.env && env $PRESET_ENV llama-p106-v4/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
+MODELS=/mnt/models; . llms-on-crypto-mining-rigs/release/flint-v4/settings.env && env $PRESET_ENV llama-p106-v4.0/llama-server -m "$MODELS/$PRESET_MODEL" $PRESET_ARGS --host 127.0.0.1 --port 8080
 ```
+
+v4.0 is the same commit as the release candidate `v4-rc2` that the runs on this page name
+([release notes](../notes-v4.0.md)).
 
 Unsloth's Q8_0 runs on the same line (`PRESET_MODEL=flint-Q8_0.gguf` after sourcing the preset); Flint Pascal Q5 GGUF
 runs it without `-ts` (layers by count), as in v3.0. With the checkpoints on the cards two cards peak at 5,985 MiB of

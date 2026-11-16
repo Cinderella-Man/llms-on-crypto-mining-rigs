@@ -206,7 +206,8 @@ an estimate from kernel timings.
 with one. But on the v3 release build it ran at 20.75 tok/s and the makers' file at 20.40, closer than two runs of
 one setting. The release's kernels had made the makers' formats fast too, so v3 ships the makers' file and the mix
 stays a recipe ([chapter 10](10-v3.md)). The same method was later turned to quality at equal size, which the
-kernels cannot give ([chapter 15](15-toward-v4.md)).
+kernels cannot give ([chapter 15](15-toward-v4.md)). That mix scored better and ran slower, 18.06 ms a step, so v4
+ships the makers' file as well ([chapter 16](16-v4.md#164-story-the-better-file-was-slower)).
 
 ## Choosing Flash-Next's file
 
@@ -358,7 +359,8 @@ is a row on the list, not a result.
 - Pascal-fast files: Q880–Q889 and Q899, [2026-11-04_pascal_mix](../data/2026-11-04_pascal_mix/README.md),
   [2026-11-04_gguf_compose](../data/2026-11-04_gguf_compose/README.md); on the rig,
   [2026-11-04_s35_stack](../data/2026-11-04_s35_stack/README.md) and [chapter 10](10-v3.md); the later mix at equal
-  size, Q219 and Q1381 ([chapter 15](15-toward-v4.md)).
+  size, Q219 and Q1381 ([chapter 15](15-toward-v4.md)), and its speed on the rig, Q1382
+  ([data](../data/2026-11-12_r115_gmix_step/README.md)).
 - File choice: Q811, [2026-11-04_file_choice](../data/2026-11-04_file_choice/README.md); quality chain (FN1, FN2):
   Q216, Q217, [2026-11-03_flash_next_quality](../data/2026-11-03_flash_next_quality/README.md); the bit budget:
   [sub_1_bit_quants.md](../research/notes/sub_1_bit_quants.md); the Q2_0 kernel: Q223,

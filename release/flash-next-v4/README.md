@@ -12,7 +12,11 @@ on nine P106 cards and each giving the same tokens or the same reply distributio
 step cheaper: the three drafted tokens are checked in kernels that read each weight once for all of them, the draft
 and the host do less between steps, and the sparse attention skips most of a long context. A few read prompts
 faster: bigger prompt calls, prompt micro-batches as CUDA graphs, checkpoints kept on the cards. The coding agent
-gets 27.61 and 26.67 tok/s against v3.0's 20.66, and deep in a context v4 reads prompts at more than twice v3.0's speed.
+gets 27.61 and 26.67 tok/s against v3.0's 20.66 and 18.92, and deep in a context v4 reads prompts at more than twice
+v3.0's speed.
+
+The engine is Miner Llama v4.0: the fork's tag `miner-llama-v4.0`, the same commit as the release candidate `v4-rc2`
+that every run on this page names ([release notes](../notes-v4.0.md)).
 
 ## Speed
 
@@ -22,9 +26,13 @@ A coding agent fixing twelve small bugs, with real tool calls and test runs, 65,
 
 | Engine and line | Tasks passed | Minutes a task, equal work | Generation tok/s | Prompt tok/s | First token per turn, s (median, p90) | Draft tokens a step |
 |---|---|---:|---:|---:|---|---:|
-| v3.0 (`1551f5fe1`), its preset | 11 of 12 | 3.08 | 20.66 | 65.5 | 6.52, 16.17 | 3.09 |
+| v3.0 (`1551f5fe1`), its preset, run 1 | 11 of 12 | 3.08 | 20.66 | 65.5 | 6.52, 16.17 | 3.09 |
+| v3.0 (`1551f5fe1`), its preset, run 2 (the evening of v4's runs) | 11 of 12 | 3.19 | 18.92 | 66.3 | 6.51, 16.63 | 3.01 |
 | **v4 (`v4-rc2`), this preset, run 1 (a second rig)** | **12 of 12** | **2.43** | **26.67** | 133.9 | 2.42, 9.00 | 3.25 |
 | **v4 (`v4-rc2`), this preset, run 2** | **12 of 12** | **2.37** | **27.61** | 144.6 | 2.48, 8.65 | 3.28 |
+
+Each v3.0 run lost one task to the agent's 12-minute cap, a different task each time; on the ten tasks neither ran
+away on, v3.0 takes 2.24 and 2.21 minutes a task and v4 1.52 and 1.52.
 
 Deep in a context (the [deep lane](../../bench/deep_lane/README.md): one prompt of each depth, 256 tokens written,
 two loads per arm; [data](../../docs/data/2026-11-13_r157_release_deep/README.md)):
@@ -47,11 +55,12 @@ faster and decodes 0.9 % slower.
 ## Run it
 
 Set up the files as in [release/flash-next-v3](../flash-next-v3/README.md#run-it), steps 1 to 3 (`MODELS` holds
-shards 1 and 2, the link to shard 3 and the MTP draft). Then, from a clone of this repository, with the v4 engine
-(the fork's tag `v4-rc2`) built or unpacked beside it as `llama-p106-v4/`:
+shards 1 and 2, the link to shard 3 and the MTP draft). Then, from a clone of this repository, with
+[Miner Llama v4.0](https://github.com/Cinderella-Man/miner-llama/releases/tag/miner-llama-v4.0) unpacked beside it as
+`llama-p106-v4.0/` (or built from the fork's tag `miner-llama-v4.0`):
 
 ```bash
-. llms-on-crypto-mining-rigs/release/flash-next-v4/settings.env && env $PRESET_ENV llama-p106-v4/llama-server -m "$MODELS/$PRESET_MODEL" -md "$MODELS/$PRESET_DRAFT" $PRESET_ARGS --host 127.0.0.1 --port 8080
+. llms-on-crypto-mining-rigs/release/flash-next-v4/settings.env && env $PRESET_ENV llama-p106-v4.0/llama-server -m "$MODELS/$PRESET_MODEL" -md "$MODELS/$PRESET_DRAFT" $PRESET_ARGS --host 127.0.0.1 --port 8080
 ```
 
 Keep the host quiet while it works: in the two agent runs its lowest free memory was 312 and 419 MiB.
