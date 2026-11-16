@@ -1,10 +1,11 @@
 # Miner Llama {{VERSION}}: llama.cpp for P106 mining rigs and other Pascal GPUs
 
 A llama.cpp build for NVIDIA GPUs of compute capability 6.1: the P106 and P104 mining cards, the GTX 10 series and the
-Tesla P4/P40. Built from commit `{{COMMIT}}` of this fork (branch `pascal-p106-v4`, on upstream llama.cpp b12360), for
-Linux on x86-64 without AVX, so it runs on mining rigs' Celeron hosts. This release is tuned and measured on three
-models on nine P106-090 cards; other compute-6.1 cards run the same code but were not measured. Measurements, settings
-and the scripts behind every number:
+Tesla P4/P40. Built from commit `{{COMMIT}}` of this fork, on upstream llama.cpp b12360, for Linux on x86-64 without
+AVX, so it runs on mining rigs' Celeron hosts. The tag `miner-llama-{{VERSION}}` is `eb82916d3` on the branch
+`pascal-p106-v4`: the merge of that commit, with the same source tree. The binaries are the build the release tests
+below ran on. This release is tuned and measured on three models on nine P106-090 cards; other compute-6.1 cards run
+the same code but were not measured. Measurements, settings and the scripts behind every number:
 [llms-on-crypto-mining-rigs](https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs).
 
 ## Speed
