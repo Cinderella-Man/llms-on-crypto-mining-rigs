@@ -18,14 +18,69 @@ load a run: **R166a `o4sna`, R166b `o4snb`**.
   stack's gain holds without it. The comparison arms are R160's: the stack with the taper (`o4sa`, `o4sb`) and the v4
   preset (`o4a`, `o4b`).
 
-Registry row Q1491 in [quants/experiments.md](../../../quants/experiments.md). R166a ran on 2026-11-16; R166b, and
-the class of `o4sn` against the stack and the preset, follow.
+Registry row Q1491 in [quants/experiments.md](../../../quants/experiments.md). R166a and R166b ran on 2026-11-16;
+the report over the six runs and the class are in "The class over the six runs" below.
+
+**Verdict:** without the taper the stack is a **loss** against the stack with it: 2.11 and 2.13 minutes a task at
+equal work against 2.08 and 2.06 (+2.4 % on the means), prompts −8.5 %, the first-token median +101.7 %. Generation,
+the first token's p90 and a task's first turn are negligible. Against the v4 preset it is still a **gain**: −15.5 %
+minutes a task at equal work, prompts +71.2 %, first token −30.1 %. The stack with the taper took 17.5 % less than
+the preset, so without the taper it keeps 15.5 points of that. The taper's share is in the short prompts of the later
+turns.
 
 ## The runs
 
 | Run | Arm | Rig | Server started, up | Tasks | Passed | Started command |
 |---|---|---|---|---|---|---|
 | R166a | `o4sna` | rig 2 | 13:51:30, up after 539 s | 14:00:33–14:29:45 | 12 / 12 | 521 bytes, md5 `211f8db2edeacd267705795e4911d8c9` |
+| R166b | `o4snb` | rig 2 | 14:43:03, up after 538 s | 14:52:05–15:29:03 | 12 / 12 | 521 bytes, md5 `211f8db2edeacd267705795e4911d8c9` |
+
+## The class over the six runs
+
+Each value is one run ([agent.tsv](agent.tsv), [host.tsv](host.tsv), [r166_reallocs.tsv](r166_reallocs.tsv),
+[o4snb_report_table.md](o4snb_report_table.md); R160's rows from its
+[agent.tsv](../2026-11-14_r160_ornith_release_agent/agent.tsv),
+[host.tsv](../2026-11-14_r160_ornith_release_agent/host.tsv) and `o4a_reallocs.tsv`, `o4b_reallocs.tsv` there).
+Minutes a task at equal work price the same work, `ka`'s (v3.0's 2026-11-06 run on the same rig, file and line:
+2.52), at each run's own speeds. The class compares the means of an arm's two runs, as R160's: a gain or a loss when
+the difference is larger than the larger of the two arms' spreads (the gap between an arm's two runs), negligible
+otherwise.
+
+| | v4 `o4a` | v4 `o4b` | stack `o4sa` | stack `o4sb` | no taper `o4sna` | no taper `o4snb` | no taper against the stack | no taper against v4 |
+|---|---|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | | |
+| minutes a task at equal work | 2.57 | 2.45 | 2.08 | 2.06 | 2.11 | 2.13 | **loss (+2.4 %; spreads 0.02, 0.02)** | **gain (−15.5 %; 0.02, 0.12)** |
+| generation tok/s | 16.53 | 16.37 | 16.30 | 16.52 | 16.52 | 16.13 | negligible (−0.5 %; 0.39, 0.22) | negligible (−0.8 %; 0.39, 0.16) |
+| prompt tok/s | 56.6 | 65.4 | 114.5 | 113.7 | 103.0 | 105.9 | **loss (−8.5 %; 2.9, 0.8)** | **gain (+71.2 %; 2.9, 8.8)** |
+| first token median s | 8.65 | 9.58 | 3.05 | 3.27 | 6.69 | 6.06 | **loss (+101.7 %; 0.63, 0.22)** | **gain (−30.1 %; 0.63, 0.93)** |
+| first token p90 s | 19.22 | 20.29 | 10.97 | 11.28 | 11.29 | 11.32 | negligible (+1.6 %; 0.03, 0.31) | **gain (−42.8 %; 0.03, 1.07)** |
+| first token on a task's first turn, median s | 16.32 | 16.26 | 8.45 | 8.44 | 8.43 | 8.45 | negligible (−0.1 %; 0.02, 0.01) | **gain (−48.2 %; 0.02, 0.06)** |
+| prompt s for the requests under 512 tokens; requests | 199.2; 38 | 193.0; 34 | 80.3; 39 | 83.7; 39 | 116.3; 37 | 144.8; 46 | | |
+| minutes, all 12 tasks; turns | 29.7; 62 | 31.0; 57 | 27.6; 63 | 25.9; 65 | 29.1; 63 | 36.8; 73 | different work | different work |
+| tool calls / failed / malformed | 62 / 0 / 0 | 57 / 0 / 0 | 64 / 0 / 0 | 65 / 1 / 0 | 63 / 2 / 0 | 73 / 2 / 0 | | |
+| graph reallocations | 0 in 62 requests | 0 in 57 | 0 in 63 | 0 in 65 | 0 in 63 | 0 in 73 | | |
+| lowest MemAvailable MiB | 803 | 718 | 1,252 | 1,260 | 1,225 | 1,228 | | |
+
+- **Without the taper against the stack with it: a loss.** On the same work the two runs without the taper took
+  2.11 and 2.13 minutes a task, the stack with it 2.08 and 2.06: 2.12 against 2.07 on the means, a difference of 0.05
+  against spreads of 0.02. The loss is in the short prompts. A request under 512 tokens took 3.14 and 3.15 s of prompt
+  on average without the taper (116.3 s for 37, 144.8 s for 46), 2.06 and 2.15 s with it (80.3 s for 39, 83.7 s for
+  39), and 5.24 and 5.68 s on the v4 preset (199.2 s for 38, 193.0 s for 34). The first-token median follows them,
+  since the turns after the second send short prompts (in `o4snb` a median 262 new tokens at turn 3, 218 at turn 4,
+  152 or fewer after): 6.69 and 6.06 s against 3.05 and 3.27 s. A task's first
+  turn, a long prompt (a median 789 new tokens), is as fast without the taper: 8.43 and 8.45 s against 8.45 and
+  8.44 s. Generation does not change.
+- **Without the taper against the v4 preset: a gain.** The staged hops, the forced graphs, `-b 4096` and the
+  checkpoints on the cards still cut a task at equal work from 2.57 and 2.45 minutes to 2.11 and 2.13 (−15.5 % on the
+  means), and a task's first turn from 16.32 and 16.26 s to 8.43 and 8.45 s. The stack with the taper took 2.08 and
+  2.06 (−17.5 %).
+- **The taper's other side** is its effect on the replies: on 512-token calls a mean KLD of 0.047 against the preset's
+  512-token micro-batch, with the same perplexity
+  ([2026-11-16_fn93c_ornith_taper_kld](../2026-11-16_fn93c_ornith_taper_kld/README.md)). This run measures its speed:
+  2.4 % of a task's time at equal work.
+- **Host:** both runs' swap peaked during the load (338 and 337 MiB, from 31); the lowest MemAvailable came during
+  the last task (1,225 and 1,228 MiB, checkpoints on the cards, as `o4sa` and `o4sb`). The RAM watchdog never stopped
+  a server; no graph reallocation in 136 requests.
 
 ## R166a: `o4sna`, the stack without the taper, first run (2026-11-16)
 
@@ -57,7 +112,7 @@ the class of `o4sn` against the stack and the preset, follow.
 
 - **Minutes a task at equal work** price the same work, `ka`'s (v3.0's 2026-11-06 run on the same rig, file and
   line: 2.52), at each run's own speeds. `o4sna` took 2.11, against the stack's 2.08 and 2.06 and the v4 preset's 2.57
-  and 2.45. This is one run of two; the class waits for R166b.
+  and 2.45. The class over both runs is in "The class over the six runs" above.
 - **Where the prompts slowed** ([o4sna_reallocs.tsv](o4sna_reallocs.tsv), the server's prompt seconds per size of
   prompt): requests under 512 tokens took 116.3 s for 37 requests, against 80.3 s for 39 (`o4sa`) and 83.7 s for 39
   (`o4sb`) with the taper, and 199.2 s for 38 (`o4a`) and 193.0 s for 34 (`o4b`) on the preset. Prompts of 1,024–1,999
@@ -85,12 +140,64 @@ the class of `o4sn` against the stack and the preset, follow.
 - The report's files: [o4sna_compare.md](o4sna_compare.md), [o4sna_report_table.md](o4sna_report_table.md),
   [o4sna_gonogo.md](o4sna_gonogo.md); the per-request and per-attempt rows: [agent/o4sna/](agent/o4sna/).
 
+## R166b: `o4snb`, the stack without the taper, second run (2026-11-16)
+
+- **The started command** is R166a's byte for byte (521 bytes, md5 `211f8db2edeacd267705795e4911d8c9`), with one
+  `-b`, 4096. The server's `switches:` line, read during the load, is R166a's: `6 set: GGML_CUDA_GRAPHS_FORCE=1
+  GGML_CUDA_HOP_STAGED=1 GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1 LLAMA_SAMPLING_TOP_K_ROWS=1
+  LLAMA_SERVER_YIELD=2`. The harness, the bench and the settings file are R166a's.
+
+**Numbers** (one run; [agent.tsv](agent.tsv), [host.tsv](host.tsv); R166a's in brackets):
+
+| | **no taper `o4snb`** |
+|---|---|
+| passed | **12 / 12** (12 / 12) |
+| minutes a task at equal work (`ka`'s work) | **2.13** (2.11) |
+| minutes, all 12 tasks (wall); a task, median | **36.8; 2.34** (29.1; 2.15) |
+| turns | **73** (63) |
+| generation tok/s | **16.13** (16.52) |
+| prompt tok/s | **105.9** (103.0) |
+| first token median, p90 s | **6.06, 11.32** (6.69, 11.29) |
+| first token on a task's first turn, median s | **8.45** (8.43) |
+| tool calls / failed / malformed | **73 / 2 / 0** (63 / 2 / 0) |
+| graph reallocations | **0 in 73 requests** (0 in 63) |
+| lowest MemAvailable MiB | **1,228** (1,225) |
+
+- **Where the prompt time went** ([o4snb_reallocs.tsv](o4snb_reallocs.tsv), the server's prompt seconds per size of
+  prompt): requests under 512 tokens took 144.8 s for 46 requests (R166a 116.3 s for 37), 512–1,023 tokens 95.0 s for
+  11 (93.5 s for 11), 1,024–1,999 tokens 101.6 s for 10 (101.6 s for 10), 2,000 or more 126.4 s for 6 (85.3 s for 5).
+  The four stack runs side by side are in [r166_reallocs.tsv](r166_reallocs.tsv).
+- **Where the wall minutes went** ([o4snb_report_table.md](o4snb_report_table.md), the eight R160 and R166 runs'
+  attempts): `o4snb`'s attempts spent a mean 143 s a task generating (`o4sna` 110; `o4sa` 107, `o4sb` 97) and 39 s
+  reading prompts (33; 29, 30), and processed 4,130 prompt tokens a task (3,405; 3,316, 3,439). Python
+  `scale-generator` took 10.8 minutes in 8 turns (`o4sna` 4.5; `o4sa` 8.6, `o4sb` 5.0), generating 8,705 tokens in
+  569.5 s; Python `pig-latin` 5.7 in 5 (3.8; 2.2, 4.7), 4,737 tokens; Python `affine-cipher` 4.3 in 14 turns (2.5 in
+  9); JavaScript `variable-length-quantity` 3.3 in 11 (4.2 in 5); every other task took 2.8 minutes or less.
+  `scale-generator` ended 1.2 minutes before the 12-minute cap; no task reached it. The longer replies are more work,
+  which the minutes a task at equal work price at the run's own speeds.
+- **Graph reallocations** ([o4snb_reallocs.tsv](o4snb_reallocs.tsv),
+  [o4snb_requests_reallocs.tsv](o4snb_requests_reallocs.tsv)): 0 in every bucket.
+- **Host** ([host.tsv](host.tsv), R166b's own lines of `meminfo.log` and `gpu.csv`, from 14:43:03): lowest
+  MemAvailable 1,228 MiB at 15:28:26, during the last task, 3,168 MiB at the end; swap 31 MiB at the start, 337 MiB at
+  its highest at 14:50:41, during the load. The report's memory gate ([o4snb_gonogo.md](o4snb_gonogo.md)) reads the
+  client's log shared with R160's runs and R166a: its 718 MB low is R160d's, its 341 MB swap high R160c's. NO-GO on
+  the swap growth, as before. The RAM watchdog did not stop the server. Card peaks MiB: 5,755 5,771 5,701 5,771 5,381
+  5,489 5,649 5,721 5,127.
+- **Server log:** 14 checkpoint restores, none created or erased, no full re-processing, no NaN or inf, no watchdog
+  kill ([o4snb_gonogo.md](o4snb_gonogo.md)).
+- The report's files: [o4snb_compare.md](o4snb_compare.md), [o4snb_report_table.md](o4snb_report_table.md),
+  [o4snb_gonogo.md](o4snb_gonogo.md); the per-request and per-attempt rows: [agent/o4snb/](agent/o4snb/).
+
 ## Files
 
 | File | What it holds |
 |---|---|
-| [agent.tsv](agent.tsv) | per arm: passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes for all tasks, a task's median, minutes a task at equal work against `v3ka` (R160's rows and `o4sna`'s) |
-| [host.tsv](host.tsv) | R166a's lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the end, each card's peak memory |
+| [agent.tsv](agent.tsv) | per arm: passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes for all tasks, a task's median, minutes a task at equal work against `v3ka` (R160's rows, `o4sna`'s and `o4snb`'s) |
+| [host.tsv](host.tsv) | R166a's and R166b's lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the end, each card's peak memory |
+| [r166_reallocs.tsv](r166_reallocs.tsv) | the four stack runs (`o4sa`, `o4sb`, `o4sna`, `o4snb`): graph reallocations and prompt seconds per prompt size |
+| [o4snb_compare.md](o4snb_compare.md), [o4snb_report_table.md](o4snb_report_table.md), [o4snb_gonogo.md](o4snb_gonogo.md) | R166b's report, as R166a's below (its table over R160's six runs, R166a and R166b) |
+| [o4snb_reallocs.tsv](o4snb_reallocs.tsv), [o4snb_requests_reallocs.tsv](o4snb_requests_reallocs.tsv) | R166b's graph reallocations and prompt seconds per prompt size, and per request |
+| [agent/o4snb/](agent/o4snb/) | R166b's `turns.csv` and `attempts.csv` |
 | [o4sna_compare.md](o4sna_compare.md) | the report: per task and per arm, first token per turn |
 | [o4sna_report_table.md](o4sna_report_table.md) | per arm over the client's attempts (R160's six runs and R166a): pass@1, minutes, prefill, decode, prompt tokens, cache hit |
 | [o4sna_gonogo.md](o4sna_gonogo.md) | the report's gates and each server log's counts |
@@ -128,9 +235,17 @@ R166a added (from 13:51:31): `agent_tables.py OUT v3ka o4a o4sa o3a o4b o4sb o3b
 `scripts/realloc_counts.py o4sna=rig/server-o4sna.log` (default and `--requests`), `run/host.py <those lines> R166a
 o4sna`.
 
+R166b was the same call with `o4snb` in place of `o4sna` (`ARM=o4snb`, `OUT=<out>/agent-o4snb`), from a fresh copy
+of `v4`; its report the same with `ARMS=o4snb`. Its tables ran in the same image from R166a's table folder plus
+`o4snb`'s rows (its `res/turns.csv` rows and the `res/attempts.csv` rows whose `tag` starts with `o4snb/`), its server
+log and the lines of `meminfo.log` and `gpu.csv` that R166b added (from 14:43:03): `agent_tables.py OUT v3ka o4a o4sa
+o3a o4b o4sb o3b o4sna o4snb` (the earlier arms' rows come out as R166a's), `scripts/realloc_counts.py
+o4snb=rig/server-o4snb.log` (default and `--requests`), `scripts/realloc_counts.py o4sa=… o4sb=… o4sna=… o4snb=…` for
+[r166_reallocs.tsv](r166_reallocs.tsv), and `run/host.py <those lines> R166b o4snb`.
+
 ## Provenance and licence
 
 The tasks are the agent check's 12 bug fixes, derived from Exercism's Python and JavaScript exercises (MIT; source,
 licences and commits in [bench/agent_check](../../../bench/agent_check/README.md)); this folder holds only their IDs
-(in [agent/o4sna/attempts.csv](agent/o4sna/attempts.csv)). The tables summarize this project's own runs and are
+(in [agent/o4sna/attempts.csv](agent/o4sna/attempts.csv) and [agent/o4snb/attempts.csv](agent/o4snb/attempts.csv)). The tables summarize this project's own runs and are
 published under the repository's licence.
