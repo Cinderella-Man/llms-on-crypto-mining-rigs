@@ -5,18 +5,34 @@
                       [--meminfo RIG/meminfo.log] [--server-log RIG/server-*.log …] [--expect-min v2-ud=3.9,v1-ud=5.5]
     python3 report.py compare RESULTS --log … [--arms stock,rel] [--turns-csv RESULTS/turns.csv]
                       [--server-log RIG/server-*.log …]
+    python3 report.py work [NAME=]TURNS.csv [[NAME=]TURNS.csv …] [--arms stock,rel] [--tsv WORK.tsv]
 
 `table` writes one row per scored attempt in the column layout of ../task_results.py (lane agent_polyglot, file =
 arm, category = track, cluster = task), so ../paired_tasks.py reads it, followed by the agent columns: turns, requests,
 wall-clock split into prefill, decode, fixed per-request cost and the rest (tools and client), prompt tokens processed
-and cached, cache hit rate, peak context, time to first token, and the process failures. It prints a summary per arm.
+and cached, cache hit rate, peak context, time to first token, the process failures, and the reply re-reads (turns,
+tokens, their prompt seconds). It prints a summary per arm, which ends with the work columns below.
 
 `compare` puts the arms side by side (the first arm is the reference): per task the result, minutes, turns and tool
 calls (all, failed, malformed) with the time ratio; per arm the tasks passed, minutes, time to first token over all
 turns, the server's prompt and generation speeds and the tool-call failures; the ratio of total and per-task times on
-the tasks every arm scored; and the median time to first token per turn. Every request's row goes to turns.csv. With
+the tasks every arm scored; and the median time to first token per turn. The per-arm table ends with the work
+columns below. Every request's row goes to turns.csv, with its cache path and the reply tokens it read again. With
 the rig's server logs (`server-<arm>.log`, or ARM=PATH), it also gives each arm's graph reallocations of the target (as
 in gonogo) and marks an arm `reallocates` where another arm's logs have none (C804, Q1408).
+
+The work columns (C852, Q1521) count what a run did, beside how fast it did it. Speeds and "minutes at equal work"
+hold the tokens fixed, so a change that removes tokens (text reuse, which stops reply re-reads) does not show in them:
+- prompt tokens read: the prompt tokens the server processed over the run (Σ prompt_n; the rest came from its cache);
+- reply tokens re-read: on a turn whose cached prefix stops short of the previous reply's end (the cache paths "reply
+  re-read" and "older checkpoint" below), the tokens of that reply past the cached prefix, which the server reads
+  again as prompt; with them the number of such turns and those turns' prompt seconds of the run's prompt seconds;
+- the longest first-token wait: the longest time from a request to its first token, with its task and turn.
+
+`work` prints the same counts, with the tokens generated, from turns.csv tables alone (compare's per-request rows, the
+layout published in a run's data folder), one row per run, and lists every turn that read a reply again. A run is
+one arm of one table, named by the arm; NAME=TURNS.csv names a table's run (two tables that hold the same arm name
+need it, or they are told apart by their paths). --tsv writes the per-run rows as a table.
 
 `gonogo` applies the pilot's checks (agent_workload_check.md §6.3):
 - harness: at least 5 of 6 attempts finish without an infrastructure failure; every request with a proxy row and timings; the proxy's
@@ -60,7 +76,8 @@ except ImportError:
 AGENT_COLUMNS = ["track", "turns", "requests", "wall_s", "prefill_s", "decode_s", "fixed_s", "other_s",
                  "prompt_new", "prompt_cached", "cache_hit", "peak_context", "ttft_p50", "ttft_max",
                  "tool_calls", "tool_errors", "unknown_tool", "invalid_args", "markup_in_text", "length_stops",
-                 "runaway_kind", "compactions", "hidden_pass", "tests_untouched", "n_pass", "n_total", "tag"]
+                 "runaway_kind", "compactions", "hidden_pass", "tests_untouched", "n_pass", "n_total", "tag",
+                 "reread_turns", "reread_n", "reread_s"]
 SLACK = 16  # tokens of template between one request's end and the next request's new part
 
 
@@ -98,6 +115,68 @@ def cache_paths(reqs):
     return out
 
 
+REREAD = ("reply re-read", "older checkpoint")  # the cache paths on which the previous reply is read again
+
+
+def reread_tokens(prev, cur, path):
+    """Tokens of the previous reply that a request read again as prompt: the part of that reply past the request's
+    cached prefix (all of it when the cache stops at the previous prompt's end or before), 0 on any other path."""
+    if path not in REREAD:
+        return 0
+    gen = prev.get("predicted_n") or 0
+    return max(0, min(gen, cur.get("prompt_n") or 0, prev["cache_n"] + prev["prompt_n"] + gen - cur["cache_n"]))
+
+
+def trace_paths(reqs):
+    """Per request of a trace, in order: its cache path ("first" for the first) and the reply tokens it read again."""
+    return [("first", 0)] + [(p, reread_tokens(a, b, p)) for a, b, p in zip(reqs, reqs[1:], cache_paths(reqs))]
+
+
+def work(traces):
+    """The work in a list of traces (each a trace's requests in turn order): requests, prompt tokens read, tokens
+    generated, prompt seconds; the turns that read the previous reply again (how many, of them from an older
+    checkpoint, the reply tokens read again, those turns' prompt seconds); the longest first-token wait with its task,
+    turn and cache path."""
+    w = dict(requests=0, prompt_n=0, predicted_n=0, prompt_s=0.0, reread_turns=0, older_turns=0, reread_n=0,
+             reread_s=0.0, ttft_max=None, ttft_task="", ttft_turn="", ttft_path="")
+    for reqs in traces:
+        for q, (path, n) in zip(reqs, trace_paths(reqs)):
+            w["requests"] += 1
+            w["prompt_n"] += q.get("prompt_n") or 0
+            w["predicted_n"] += q.get("predicted_n") or 0
+            w["prompt_s"] += (q.get("prompt_ms") or 0) / 1000
+            if path in REREAD:
+                w["reread_turns"] += 1
+                w["older_turns"] += path == "older checkpoint"
+                w["reread_n"] += n
+                w["reread_s"] += (q.get("prompt_ms") or 0) / 1000
+            t = q.get("t_first_token")
+            if t is not None and (w["ttft_max"] is None or t > w["ttft_max"]):
+                task, turn = q.get("task"), q.get("turn")
+                if task is None:  # a proxy row: its tag is <arm>/<task>/a<k>/t<n>/<turn>
+                    tag = (q.get("tag") or "//").split("/")
+                    task, turn = tag[1], tag[-1]
+                w.update(ttft_max=t, ttft_task=task, ttft_turn=turn, ttft_path=path)
+    return w
+
+
+WORK_HEAD = ("reply tokens re-read (turns; their prompt s of all prompt s)", "longest first-token wait s (task, turn)")
+
+
+def work_cells(w, tasks=0):
+    """The work columns of a per-arm row: prompt tokens read (with the mean per task when `tasks` is given), reply
+    tokens re-read, the longest first-token wait."""
+    if not w["requests"]:
+        return ["—", "—", "—"]
+    read = str(w["prompt_n"]) + (f" ({w['prompt_n'] / tasks:.0f})" if tasks else "")
+    older = f", {w['older_turns']} from an older checkpoint" if w["older_turns"] else ""
+    reread = f"{w['reread_n']} ({w['reread_turns']}{older}; {w['reread_s']:.1f} of {w['prompt_s']:.1f})"
+    if w["ttft_max"] is None:
+        return [read, reread, "—"]
+    return [read, reread, f"{w['ttft_max']:.2f} ({w['ttft_task']}, {w['ttft_turn']}"
+                          f"{', a re-read' if w['ttft_path'] in REREAD else ''})"]
+
+
 def attempt_row(r, reqs):
     pre = sum(q.get("prompt_ms") or 0 for q in reqs) / 1000
     dec = sum(q.get("predicted_ms") or 0 for q in reqs) / 1000
@@ -106,6 +185,7 @@ def attempt_row(r, reqs):
     cn = sum(q.get("cache_n") or 0 for q in reqs)
     gn = sum(q.get("predicted_n") or 0 for q in reqs)
     ttft = [q["t_first_token"] for q in reqs if q.get("t_first_token") is not None]
+    w = work([reqs])
     stop = "runaway_" + r["runaway"] if r["runaway"] else ("length" if r["length_stops"] else "stop")
     row = dict(lane="agent_polyglot", task_id=r["task_id"], cluster=r["task_id"], category=r["track"], file=r["arm"],
                attempt=r["attempt"], seed="", error_type=r.get("error_type") or ("" if r["success"] else "tests"),
@@ -122,7 +202,9 @@ def attempt_row(r, reqs):
                tool_calls=r["tool_calls"], tool_errors=r["tool_errors"], unknown_tool=r["unknown_tool"],
                invalid_args=r["invalid_args"], markup_in_text=r["markup_in_text"], length_stops=r["length_stops"],
                runaway_kind=r["runaway"], compactions=r["compactions"], hidden_pass=r["hidden_pass"],
-               tests_untouched=r["tests_untouched"], n_pass=r["n_pass"], n_total=r["n_total"], tag=r["tag"])
+               tests_untouched=r["tests_untouched"], n_pass=r["n_pass"], n_total=r["n_total"], tag=r["tag"],
+               reread_turns=w["reread_turns"] if reqs else "", reread_n=w["reread_n"] if reqs else "",
+               reread_s=round(w["reread_s"], 2) if reqs else "")
     row["pass"] = r["success"]
     row["malformed"] = int(r["malformed_calls"] > 0)
     row["runaway"] = int(bool(r["runaway"]) or r["length_stops"] > 0)
@@ -137,7 +219,7 @@ def build(a):
 
 
 def cmd_table(a):
-    _, rows, infra, exhausted, _ = build(a)
+    _, rows, infra, exhausted, traces = build(a)
     out = a.csv or Path(a.results) / "attempts.csv"
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COLUMNS + AGENT_COLUMNS, extrasaction="ignore")
@@ -149,8 +231,9 @@ def cmd_table(a):
     for r in rows:
         by[r["file"]].append(r)
     print("| arm | attempts | pass@1 | minutes per task (median, p90) | prefill / decode / fixed / other (s, mean) | "
-          "turns (median) | prompt tokens processed per task | cache hit | TTFT p50 s | malformed calls | runaways |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|")
+          "turns (median) | prompt tokens processed per task | cache hit | TTFT p50 s | malformed calls | runaways | "
+          f"prompt tokens read | {WORK_HEAD[0]} | {WORK_HEAD[1]} |")
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
     for arm, rr in by.items():
         mins = sorted(r["wall_s"] / 60 for r in rr)
         p90 = mins[min(len(mins) - 1, int(0.9 * len(mins)))]
@@ -159,14 +242,15 @@ def cmd_table(a):
         bad = sum(r["unknown_tool"] + r["invalid_args"] + r["markup_in_text"] for r in rr)
         hit = [r["cache_hit"] for r in rr if r["cache_hit"] != ""]
         ttft = [r["ttft_p50"] for r in rr if r["ttft_p50"] != ""]
+        cells = " | ".join(work_cells(work([traces.get(r["tag"], []) for r in rr])))
         print(f"| {arm} | {len(rr)} | {100 * sum(r['pass'] for r in rr) / len(rr):.1f} % | {median(mins):.1f}, "
               f"{p90:.1f} | {mean('prefill_s'):.0f} / {mean('decode_s'):.0f} / {mean('fixed_s'):.0f} / "
               f"{mean('other_s'):.0f} | {median(r['turns'] for r in rr)} | {mean('prompt_new'):.0f} | "
               f"{100 * sum(hit) / len(hit):.1f} % | {median(ttft) if ttft else float('nan'):.2f} | "
-              f"{bad}/{calls} | {sum(r['runaway'] for r in rr)} |" if hit else
+              f"{bad}/{calls} | {sum(r['runaway'] for r in rr)} | {cells} |" if hit else
               f"| {arm} | {len(rr)} | {100 * sum(r['pass'] for r in rr) / len(rr):.1f} % | {median(mins):.1f}, "
               f"{p90:.1f} | (no proxy rows) | {median(r['turns'] for r in rr)} | | | | {bad}/{calls} | "
-              f"{sum(r['runaway'] for r in rr)} |")
+              f"{sum(r['runaway'] for r in rr)} | {cells} |")
 
 
 def verdict(ok):
@@ -300,6 +384,10 @@ def cmd_gonogo(a):
     print(f"\n**Overall: {verdict(allok)}**")
 
 
+TURN_COLUMNS = ["arm", "task_id", "attempt", "turn", "ttft_s", "t_end_s", "prompt_n", "cache_n", "prompt_ms",
+                "predicted_n", "predicted_ms", "finish_reason", "n_tool_calls", "cache_path", "reread_n"]
+
+
 def pct(xs, q):
     s = sorted(xs)
     return s[min(len(s) - 1, int(q * len(s)))] if s else float("nan")
@@ -319,16 +407,14 @@ def cmd_compare(a):
     turn_of = lambda q: int(q["tag"].rsplit("/", 1)[1])
 
     out = a.turns_csv or Path(a.results) / "turns.csv"
-    cols = ["arm", "task_id", "attempt", "turn", "ttft_s", "t_end_s", "prompt_n", "cache_n", "prompt_ms", "predicted_n",
-            "predicted_ms", "finish_reason", "n_tool_calls"]
     with open(out, "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(cols)
+        w.writerow(TURN_COLUMNS)
         for r in rows:
-            for q in reqs[r["tag"]]:
+            for q, (path, n) in zip(reqs[r["tag"]], trace_paths(reqs[r["tag"]])):
                 w.writerow([r["file"], r["task_id"], r["attempt"], turn_of(q), q.get("t_first_token"), q.get("t_end"),
                             q.get("prompt_n"), q.get("cache_n"), q.get("prompt_ms"), q.get("predicted_n"),
-                            q.get("predicted_ms"), q.get("finish_reason"), q.get("n_tool_calls")])
+                            q.get("predicted_ms"), q.get("finish_reason"), q.get("n_tool_calls"), path, n])
 
     def result(r):
         if r is None:
@@ -361,8 +447,9 @@ def cmd_compare(a):
 
     print("\n### Per arm\n")
     print("| arm | tasks passed | minutes, all tasks | minutes per task (median) | TTFT per turn s (median, p90) | "
-          "prompt tok/s | generation tok/s | tool calls / failed / malformed | runaways |")
-    print("|---|---|---|---|---|---|---|---|---|")
+          "prompt tok/s | generation tok/s | tool calls / failed / malformed | runaways | "
+          f"prompt tokens read (per task) | {WORK_HEAD[0]} | {WORK_HEAD[1]} |")
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|")
     for arm in arms:
         rr = [r for r in rows if r["file"] == arm]
         if not rr:
@@ -376,7 +463,8 @@ def cmd_compare(a):
               f"{median(r['wall_s'] / 60 for r in rr):.1f} | {median(ttft) if ttft else float('nan'):.2f}, "
               f"{pct(ttft, 0.9):.2f} | {1000 * pn / pms if pms else float('nan'):.0f} | "
               f"{1000 * gn / gms if gms else float('nan'):.1f} | {sum(r['tool_calls'] for r in rr)} / "
-              f"{sum(r['tool_errors'] for r in rr)} / {bad} | {sum(r['runaway'] for r in rr)} |")
+              f"{sum(r['tool_errors'] for r in rr)} / {bad} | {sum(r['runaway'] for r in rr)} | "
+              + " | ".join(work_cells(work([reqs[r["tag"]] for r in rr]), len(rr))) + " |")
     if len(arms) > 1:
         both = [t for t in tasks if all((arm, t) in by for arm in arms)]
         print(f"\nTasks scored on every arm: {len(both)}.")
@@ -425,9 +513,89 @@ def cmd_compare(a):
         print(f"| {k} | " + " | ".join(cells) + " |")
 
 
+def load_turns(specs):
+    """Traces from turns.csv tables (compare's per-request rows): {(run, task, attempt): requests in turn order}, the
+    requests keyed as the proxy's rows, so the counts are those of `table` and `compare`. A run is one arm of one
+    table: tables are never merged. Its name is the arm's; for a table given as NAME=PATH it is NAME (NAME:arm when
+    the table holds several arms); an arm name that several tables share gets its table's path."""
+    num = lambda v, kind: kind(float(v)) if v not in ("", None) else None
+    tables = []
+    for spec in specs:
+        name, path = spec.split("=", 1) if "=" in spec and not Path(spec).exists() else (None, spec)
+        with open(path, newline="") as f:
+            rows = list(csv.DictReader(f))
+        tables.append((name, path, rows, list(dict.fromkeys(r["arm"] for r in rows))))
+    shared = [arm for name, _, _, arms in tables if name is None for arm in arms]
+    traces, table_of = defaultdict(list), {}
+    for i, (name, path, rows, arms) in enumerate(tables):
+        for r in rows:
+            run = r["arm"] if name is None else name if len(arms) == 1 else f"{name}:{r['arm']}"
+            if name is None and shared.count(r["arm"]) > 1:
+                run = f"{r['arm']} ({path})"
+            if table_of.setdefault(run, i) != i:
+                sys.exit(f"two tables hold a run named {run}: name each with NAME=PATH")
+            traces[(run, r["task_id"], r["attempt"])].append(dict(
+                tag=f"{run}/{r['task_id']}/a{r['attempt']}/{r['turn']}", task=r["task_id"], turn=int(r["turn"]),
+                t_first_token=num(r["ttft_s"], float), prompt_n=num(r["prompt_n"], int),
+                cache_n=num(r["cache_n"], int), prompt_ms=num(r["prompt_ms"], float),
+                predicted_n=num(r["predicted_n"], int), predicted_ms=num(r["predicted_ms"], float)))
+    return {k: sorted(v, key=lambda q: q["turn"]) for k, v in traces.items()}
+
+
+def cmd_work(a):
+    traces = load_turns(a.turns)
+    arms = a.arms.split(",") if a.arms else list(dict.fromkeys(k[0] for k in traces))
+    print("### The work of each run\n")
+    print("Prompt tokens read: the prompt tokens the server processed (the rest came from its cache). Reply tokens "
+          "re-read: on a turn whose cached prefix stops short of the previous reply's end, the tokens of that reply "
+          "past the cached prefix, which are read again as prompt. The longest first-token wait is as the client "
+          "sees it.\n")
+    print("| arm | tasks | turns | prompt tokens read (per task) | tokens generated (per task) | "
+          f"{WORK_HEAD[0]} | {WORK_HEAD[1]} |")
+    print("|---|---|---|---|---|---|---|")
+    tsv = ["arm\ttasks\tturns\tprompt_read\tgenerated\treread_turns\tolder_checkpoint_turns\treread_n\treread_s\t"
+           "prompt_s\tttft_max_s\tttft_max_task\tttft_max_turn\tttft_max_reread"]
+    detail = []
+    for arm in arms:
+        tt = [v for k, v in traces.items() if k[0] == arm]
+        if not tt:
+            continue
+        w = work(tt)
+        read, reread, wait = work_cells(w, len(tt))
+        print(f"| {arm} | {len(tt)} | {w['requests']} | {read} | {w['predicted_n']} "
+              f"({w['predicted_n'] / len(tt):.0f}) | {reread} | {wait} |")
+        tsv.append("\t".join(map(str, [
+            arm, len(tt), w["requests"], w["prompt_n"], w["predicted_n"], w["reread_turns"], w["older_turns"],
+            w["reread_n"], f"{w['reread_s']:.3f}", f"{w['prompt_s']:.3f}",
+            "" if w["ttft_max"] is None else f"{w['ttft_max']:.4f}", w["ttft_task"], w["ttft_turn"],
+            int(w["ttft_path"] in REREAD)])))
+        for reqs in tt:
+            for prev, q, (path, n) in zip([None] + reqs, reqs, trace_paths(reqs)):
+                if path in REREAD:
+                    end = prev["cache_n"] + prev["prompt_n"]
+                    detail.append(f"| {arm} | {q['task']} | {q['turn']} | {path} | {end} | "
+                                  f"{prev.get('predicted_n') or 0} | {q['cache_n']} | {n} | {q['prompt_n']} | "
+                                  f"{(q.get('prompt_ms') or 0) / 1000:.2f} | "
+                                  + ("—" if q["t_first_token"] is None else f"{q['t_first_token']:.2f}") + " |")
+    print("\n### The turns that read a reply again\n")
+    if detail:
+        print("| arm | task | turn | cache path | previous prompt's end | previous reply's tokens | cached | "
+              "reply tokens re-read | prompt tokens read | prompt s | first token s |")
+        print("|---|---|---|---|---|---|---|---|---|---|---|")
+        print("\n".join(detail))
+    else:
+        print("None.")
+    if a.tsv:
+        Path(a.tsv).write_text("\n".join(tsv) + "\n")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("work")
+    p.add_argument("turns", nargs="+", help="turns.csv tables (compare's per-request rows), each PATH or NAME=PATH")
+    p.add_argument("--arms", help="run,run,… in this order (default: all, in the tables' order)")
+    p.add_argument("--tsv", type=Path, help="also write the per-arm rows as a TSV")
     for name in ("table", "gonogo", "compare"):
         p = sub.add_parser(name)
         p.add_argument("results")
@@ -447,7 +615,7 @@ def main():
             p.add_argument("--expect-min", help="arm=minutes,… (the note's estimate per task)")
             p.add_argument("--rtt", type=float, default=0.1, help="network round trip to the server, s")
     a = ap.parse_args()
-    {"table": cmd_table, "gonogo": cmd_gonogo, "compare": cmd_compare}[a.cmd](a)
+    {"table": cmd_table, "gonogo": cmd_gonogo, "compare": cmd_compare, "work": cmd_work}[a.cmd](a)
 
 
 if __name__ == "__main__":

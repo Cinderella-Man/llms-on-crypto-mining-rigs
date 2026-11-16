@@ -20,7 +20,10 @@
 #   sums up the arms by the try that passed;
 # - the graph reallocations from server logs (C804): gonogo's server-log lines gain the count (a resumed load's count
 #   starts again, a log without the count says so), compare marks the arm that reallocates where the other does not,
-#   and compare's other lines are those it writes without the logs.
+#   and compare's other lines are those it writes without the logs;
+# - the work counts (C852): from a fixed per-request table with every cache path (exact, a reply read again whole and
+#   in part, an older checkpoint, a row without timings), `report.py work` counts the prompt tokens read, the reply
+#   tokens re-read with their turns and prompt seconds, and the longest first-token wait.
 set -euo pipefail
 OUT=${1:?usage: selftest.sh OUT}
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -89,6 +92,18 @@ python3 -I "$HERE/report.py" compare "$OUT/res" --log "$OUT/proxy.jsonl" --arms 
   --turns-csv "$OUT/turns_realloc.csv" > "$OUT/compare_plain.md"
 python3 -I "$HERE/report.py" compare "$OUT/res" --log "$OUT/proxy.jsonl" --arms mock,mock-cap \
   --turns-csv "$OUT/turns_realloc.csv" --server-log "$OUT"/rig/server-*.log > "$OUT/compare_realloc.md"
+cat > "$OUT/work_turns.csv" <<'CSV'
+arm,task_id,attempt,turn,ttft_s,t_end_s,prompt_n,cache_n,prompt_ms,predicted_n,predicted_ms,finish_reason,n_tool_calls
+w,t,1,1,4.1,5,1000,0,4000,100,1000,tool_calls,1
+w,t,1,2,0.4,5,50,1099,300,400,4000,tool_calls,1
+w,t,1,3,2.1,5,450,1145,2000,200,2000,tool_calls,1
+w,t,1,4,0.7,5,130,1695,600,50,500,tool_calls,1
+w,t,1,5,9.5,10,900,1000,3600,20,200,tool_calls,1
+w,t,1,6,1.0,700,,,,,,,0
+w,u,1,2,0.2,1,20,509,100,6,60,stop,0
+w,u,1,1,2.2,3,500,0,2000,10,100,tool_calls,1
+CSV
+python3 -I "$HERE/report.py" work "$OUT/work_turns.csv" --tsv "$OUT/work.tsv" > "$OUT/work.md"
 python3 -I - "$HERE" "$OUT" <<'EOF'
 import csv, json, sys, zlib
 from pathlib import Path
@@ -151,6 +166,18 @@ i = next((k for k, l in enumerate(withl) if l.startswith("Graph reallocations of
 # sorted: compare orders tasks that started in the same second (the mock's) by Python's per-process set order
 check(i is not None and sorted(withl[:i - 1] + withl[i + 4:]) == sorted(plain),
       "compare: every other line as without the server logs")
+# the work counts (C852): task t's turns 3 and 4 read the previous reply again (400 tokens, then the last 100 of 200),
+# turn 5 restarts from an older checkpoint (the 50-token reply again), turn 6 has no timings; task u's rows are exact
+wk = list(csv.DictReader((out / "work.tsv").open(), delimiter="\t"))
+want = dict(arm="w", tasks="2", turns="8", prompt_read="3050", generated="786", reread_turns="3",
+            older_checkpoint_turns="1", reread_n="550", reread_s="6.200", prompt_s="12.600", ttft_max_s="9.5000",
+            ttft_max_task="t", ttft_max_turn="5", ttft_max_reread="1")
+check(wk == [want], f"work: prompt tokens read, reply tokens re-read and the longest first-token wait of a turns table ({wk})")
+wl = (out / "work.md").read_text().splitlines()
+check("| w | 2 | 8 | 3050 (1525) | 786 (393) | 550 (3, 1 from an older checkpoint; 6.2 of 12.6) | 9.50 (t, 5, a re-read) |" in wl
+      and [l.split(" | ")[2:4] for l in wl if l.startswith("| w | t | ")]
+      == [["3", "reply re-read"], ["4", "reply re-read"], ["5", "older checkpoint"]],
+      "work: the per-arm row, and a line per turn that read a reply again with its cache path")
 # the token mark
 t1, t2, t3 = (here / "tasks/polyglot/order.txt").read_text().split()[:3]
 res = lambda arm, t, d="a1": json.loads((out / "mark" / arm / t / d / "result.json").read_text())

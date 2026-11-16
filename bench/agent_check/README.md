@@ -79,7 +79,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [race_proxy.py](race_proxy.py) | The first-finish race: one chat request to N servers with a seed each, the first complete reply to the agent, the others cancelled; a row per sample; `summary` ([below](#the-first-finish-race-across-servers)) |
 | [race_quant.sh](race_quant.sh), [race_rigs.sh](race_rigs.sh) | The race's runs: one server per card set on a GPU machine with Docker (counts only), one server per rig across rigs |
 | [replay.py](replay.py) | Re-sends recorded traces to any server (same prompts, seeds and `max_tokens`); picks traces; summarizes and compares per-token costs |
-| [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn |
+| [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn, and the work a run did: prompt tokens read, reply tokens re-read, the longest first-token wait ([below](#the-work-a-run-did-beside-its-speed)) |
 | [token_mark.py](token_mark.py) | The generated-token mark: what a mark would have stopped, lost and saved on recorded runs (`price`), and arms run with it side by side by the try that passed (`arms`) ([below](#the-token-mark-and-a-fresh-attempt)) |
 | [validate.py](validate.py) | Oracle, empty-change and visible-subset checks of every task, no model |
 | [common.py](common.py) | Tasks, the sandbox, the test check, the stream parser |
@@ -254,6 +254,52 @@ The recorded runs' prices are in [2026-11-11_fn58_stop_and_retry](../../docs/dat
   loads of one setup wrote the same reply in 37 of 66 replayed requests
   ([data](../../docs/data/2026-11-10_prob_verify_acceptance/README.md)), so a replay comparison there takes two or
   more loads per setup and reads the difference against their spread.
+
+## The work a run did, beside its speed
+
+Speeds, and minutes a task at equal work (one run's token counts priced at another run's speeds), hold the tokens
+fixed. A change that removes tokens does not show in them. Text reuse (`LLAMA_SERVER_TEXT_REUSE=1`) stops the server
+reading a reply again when that reply comes back split into other tokens. On v3.0 it was classed negligible, 2.59
+against 2.60 minutes a task at equal work, in a run that read 2,982 prompt tokens a task against 5,847
+([data](../../docs/data/2026-11-06_flint_side_rig2/README.md)). So `report.py` counts the work as well (registry
+Q1521). Each arm's row in `table.md` and in `compare.md`'s per-arm table ends with three columns:
+
+| Column | What it counts |
+|---|---|
+| prompt tokens read | The prompt tokens the server processed over the run (the sum of `prompt_n`); the rest of every prompt came from its cache. `compare.md` adds the mean per task, which `table.md` has as "prompt tokens processed per task" |
+| reply tokens re-read (turns; their prompt s of all prompt s) | The tokens of earlier replies that the server read again as prompt, the number of turns that did so, and those turns' prompt seconds beside the run's prompt seconds |
+| longest first-token wait s (task, turn) | The longest time from a request to its first token as the client sees it, with its task and turn, and `a re-read` when that turn read a reply again |
+
+- **A turn reads a reply again** when its cached prefix stops short of the previous reply's end: the cache paths
+  "reply re-read" and "older checkpoint" [above](#the-proxy-and-the-replay). The cell names the turns from an older
+  checkpoint when there are any.
+- **Its reply tokens** come from the server's counters, without a tokenizer: the previous prompt's end plus the
+  previous reply's generated tokens, less this turn's `cache_n`, at most that reply's tokens and at most this turn's
+  `prompt_n`. A cache that stops inside the reply counts only the part after it.
+- **Its prompt seconds** are the turn's whole `prompt_ms`, the tool result that follows the reply included.
+- **Per attempt and per request:** `attempts.csv` ends with `reread_turns`, `reread_n` and `reread_s`, and
+  `turns.csv` with `cache_path` (`first` on an attempt's first request) and `reread_n`. The columns before them are
+  unchanged.
+- **From published tables:** `report.py work` gives the same counts, and the tokens generated, from `turns.csv`
+  tables alone: one row a run, then every turn that read a reply again. A run is one arm of one table, and tables are
+  never merged. `NAME=PATH` names a table's run, which two tables holding the same arm name need. `--tsv` writes the
+  rows as a table.
+
+  ```bash
+  python3 bench/agent_check/report.py work docs/data/2026-11-14_r159_flint_release_agent/agent/f4t?/turns.csv
+  A=docs/data/2026-11-06_flint_side_rig2/agent
+  python3 bench/agent_check/report.py work v3base=$A/flint-v3base/turns.csv reread=$A/flint-reread/turns.csv
+  ```
+
+- **Reading them:** the agent sends no seed, so every run does its own work and two runs of one arm differ. Flint
+  Pascal Q8 GGUF on the tuned v4 preset read 4,076 and 5,093 prompt tokens a task in its two runs
+  ([why](../../docs/data/2026-11-16_c843_flint_sampling/README.md)). Compare arms on two runs each, every run by
+  value. Reply tokens re-read is the count a change to the cache moves directly. In v3.0's run above (one run an arm),
+  text reuse brought it from 33,728 tokens in 7 turns, which took 191.7 of 390.5 prompt seconds, to 0, and the
+  longest first-token wait from 73.65 to 12.47 s.
+
+The counts of ten published runs, and the check of the re-read seconds against a count made by hand, are in
+[2026-11-17_c852_agent_work_counts](../../docs/data/2026-11-17_c852_agent_work_counts/README.md).
 
 ## The first-finish race across servers
 
@@ -456,9 +502,11 @@ checkpoints:
   that many minutes, so a slow arm cannot overrun the slot. The comparison then uses the tasks both arms scored.
 - **Outputs** in `<out>`: `compare.md` (per task: result, minutes, turns, tool calls all / failed / malformed and the
   time ratio; per arm: tasks passed, minutes, time to first token over all turns, the server's prompt and generation
-  speeds; the ratio of total and per-task times; each arm's graph reallocations of the target, an arm marked
-  `reallocates` where another arm's server logs have none; the median time to first token per turn), `res/turns.csv`
-  (every request), `table.md` and `res/attempts.csv`, `gonogo.md` (harness, tool calls, cache paths, the rig's memory
+  speeds, and the work it did: prompt tokens read, reply tokens re-read, the longest first-token wait
+  ([above](#the-work-a-run-did-beside-its-speed)); the ratio of total and per-task times; each arm's graph
+  reallocations of the target, an arm marked `reallocates` where another arm's server logs have none; the median time
+  to first token per turn), `res/turns.csv` (every request, with its cache path), `table.md` and `res/attempts.csv`,
+  `gonogo.md` (harness, tool calls, cache paths, the rig's memory
   and server log lines with each log's graph reallocations), the rig's logs in `rig/`, and every attempt's events,
   session, diff and test output under `res/`.
 - **Graph reallocations** (C804, Q1408): Miner Llama's builds log each request's running count of the target graph's
@@ -546,7 +594,10 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
     starts it again behind the other tasks, passes the second task on try 2 and scores the third's last try as it
     stands; a second run resumes; `--gen-mark` alone stops without a fresh try; `token_mark.py price` on a run
     without a mark stops the looping attempt at the token run.py stops at, loses no pass at 3,000 and the passing
-    task's pass at 50; `token_mark.py arms` counts the passes by try.
+    task's pass at 50; `token_mark.py arms` counts the passes by try;
+  - the work counts: from a fixed per-request table that holds every cache path (exact, a reply read again whole
+    and in part, an older checkpoint, a row without timings), `report.py work` counts the prompt tokens read, the
+    reply tokens re-read with their turns and prompt seconds, and the longest first-token wait.
 - **`selftest_race.sh`** (`AC_TEST_PORT=… bench/agent_check/selftest_race.sh <scratch folder>`, no sandbox) puts
   race proxies in front of mocks of different speeds, one that answers HTTP 500, one that drops its stream half-way
   and a port nobody listens on. It checks that:

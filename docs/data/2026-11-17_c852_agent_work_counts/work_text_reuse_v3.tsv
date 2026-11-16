@@ -1,0 +1,3 @@
+arm	tasks	turns	prompt_read	generated	reread_turns	older_checkpoint_turns	reread_n	reread_s	prompt_s	ttft_max_s	ttft_max_task	ttft_max_turn	ttft_max_reread
+v3base	12	75	70159	65307	7	0	33728	191.732	390.500	73.6466	bugfix-python-list-ops	5	1
+reread	12	77	35780	55801	0	0	0	0.000	200.101	12.4665	bugfix-javascript-complex-numbers	2	0

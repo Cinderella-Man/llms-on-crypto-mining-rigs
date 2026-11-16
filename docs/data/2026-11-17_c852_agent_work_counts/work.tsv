@@ -1,0 +1,9 @@
+arm	tasks	turns	prompt_read	generated	reread_turns	older_checkpoint_turns	reread_n	reread_s	prompt_s	ttft_max_s	ttft_max_task	ttft_max_turn	ttft_max_reread
+f3a	12	66	37335	28677	6	0	3868	26.045	208.326	13.0395	bugfix-javascript-complex-numbers	2	0
+f3b	12	68	49185	41976	6	0	16470	86.333	271.225	55.4708	bugfix-python-scale-generator	4	1
+f4a	12	73	72086	68241	9	0	36767	211.736	407.488	88.8554	bugfix-python-scale-generator	6	1
+f4b	12	80	66718	64569	5	0	31643	167.914	373.015	78.0547	bugfix-python-scale-generator	8	1
+f4ta	12	73	48907	37846	4	0	14632	67.612	222.579	24.6951	bugfix-python-affine-cipher	3	1
+f4tb	12	71	61112	48656	5	0	24755	141.722	299.467	93.8782	bugfix-python-scale-generator	4	1
+o4sna	12	63	40863	21810	2	0	4831	30.604	396.630	28.1413	bugfix-python-affine-cipher	1	0
+o4snb	12	73	49555	27605	3	0	12332	71.880	467.817	32.2363	bugfix-python-scale-generator	7	1
