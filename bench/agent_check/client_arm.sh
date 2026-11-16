@@ -14,7 +14,8 @@
 #   LABEL (pascal-quants=1), SAMPLING (JSON set on every request; default run.py's, Flint's makers' settings),
 #   PREFIX (acrel: the containers are PREFIX-ARM-*, and both ends remove every PREFIX-ARM-* container),
 #   RUN_ARGS (more run.py options, e.g. the token mark: "--gen-budget 65536 --mark-tries 2"),
-#   AC_DOCKER_USER ("uid:gid": every container runs as that user; release_check_s12.sh's CLIENT=local sets it on a
+#   AC_DOCKER_USER ("uid:gid": every container runs as that user; CLIENT=local sets it in release_check_s12.sh and
+#                  race_rigs.sh on a
 #                  client that is not root, see common.py)
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)

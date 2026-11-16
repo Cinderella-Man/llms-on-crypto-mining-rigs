@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # selftest_race.sh OUT: race_proxy.py against mock_server.py servers of different speeds (no model, no sandbox, light;
-# standard library only). Uses ports AC_TEST_PORT to AC_TEST_PORT+18 on 127.0.0.1 (default 18190).
+# standard library only). Uses ports AC_TEST_PORT to AC_TEST_PORT+21 on 127.0.0.1 (default 18190).
 # Checks, and exits non-zero if any fails:
 # - two and three servers: the fastest one's reply reaches the client, streamed and not, and the others are cancelled
 #   (the mocks log the cancel); each sample carries its seed (the tag's CRC32 + 104729 × i);
@@ -11,6 +11,11 @@
 # - keep-alive comment lines while a streamed race runs, which the stream parser skips;
 # - the next request of a trace records which server won and which lost the one before (`prev`);
 # - a client that goes away cancels every sample; /health is 200 only when every upstream is up;
+# - count mode (--count): nobody is cancelled, the client gets the first whole reply only once every sample has ended,
+#   streamed and not, and the request is logged as a pair (each sample's tokens and seconds, which came first), with
+#   the time each sample passed --marks tokens; with --win-at reasoning the client follows the first whole reply to
+#   end its reasoning; --count-wait-s stops a sample that runs on after the first whole reply; `summary` prints the
+#   count tables (one server alone, each rule, a late second sample);
 # - two requests at once; the request log (proxy.py's layout, with the winner's timings), the bodies and `summary`.
 set -euo pipefail
 OUT=${1:?usage: selftest_race.sh OUT}
@@ -52,6 +57,9 @@ race 14 rall -- 3 7
 race 15 rlen -- 5 6
 race 16 rreason --win-at reasoning -- 2 0
 race 17 rkeep --keepalive-s 0.05 -- 2 1
+race 19 rcount --count --marks 10,50 -- 5 6
+race 20 rcountr --count --win-at reasoning -- 2 0
+race 21 rwait --count --count-wait-s 0.3 -- 5 6
 python3 -I "$HERE/proxy.py" --listen 127.0.0.1:$((P + 18)) --upstream 127.0.0.1:$P --log "$OUT/one/proxy.jsonl" \
   > "$OUT/one.out" 2>&1 &
 PIDS+=($!)
@@ -252,6 +260,68 @@ th = [threading.Thread(target=lambda k=k: res.append(ask(11, f"race/t-par{k}/a1/
 check(len(res) == 2 and all(r[0] == 200 and r[2].reply()["reasoning_content"].startswith("[fast") for r in res),
       "two requests at once through one race proxy")
 
+# count mode: nobody is cancelled, the reply comes once every sample has ended, each request is a pair
+# seed 71: lenA writes its reasoning 32 times and lenB (seed 104800) once; seed 40: lenA once, lenB (104769) ten times
+near = lambda a, b: abs(a - b) <= 0.002
+for turn, seed, stream, first in ((1, 71, True, 1), (2, 40, True, 0), (3, 71, False, 1)):
+    tag = f"count/t-count/a1/t1/{turn}"
+    how = "streamed" if stream else "not streamed"
+    st, raw, s = ask(19, tag, stream, seed=seed, n_assistant=turn - 1)
+    rows = samples("rcount", tag, 2)
+    rq = request_row("rcount", tag)
+    rc = rq.get("race", {})
+    name, sd = ("lenA", "lenB")[first], (seed, seed + 104729)
+    check(st == 200 and s.reply()["reasoning_content"].startswith(f"[{name} seed {sd[first]}]")
+          and outcomes(rows) == (["finished", "won"] if first else ["won", "finished"])
+          and all(r.get("count") for r in rows) and [r["first"] for r in rows] == [first == 0, first == 1],
+          f"count mode, {how}: the client gets the first whole reply and the other sample runs to its end "
+          f"({outcomes(rows)})")
+    check([m["outcome"] for m in mock_rows("lenA", sd[0], 2 if seed == 71 and turn == 3 else 1)
+           + mock_rows("lenB", sd[1], 2 if seed == 71 and turn == 3 else 1)].count("done") >= 2
+          and "cancelled" not in [m["outcome"] for m in mock_rows("lenA", sd[0]) + mock_rows("lenB", sd[1])],
+          "  both mocks finished, neither saw a cancel")
+    late = max(r["t_end"] for r in rows)
+    check(rc.get("count") is True and rc.get("first") == first and rc.get("winner") == first
+          and near(rc["t_win"], rows[first]["t_end"]) and rc["t_all"] >= late - 0.002
+          and rq["t_first_token"] >= late - 0.002 and rows[1 - first]["t_end"] > rows[first]["t_end"],
+          "  the reply reached the client only once the slower sample had ended")
+    check([(x["i"], x["outcome"], x["tokens"], x["seconds"]) for x in rc.get("pair", [])]
+          == [(r["i"], r["outcome"], r["predicted_n"], r["t_end"]) for r in rows]
+          and all(r["predicted_n"] and r["predicted_n"] >= r["n_deltas"] for r in rows),
+          f"  the request row holds the pair: each sample's tokens and seconds "
+          f"({[(x['tokens'], x['seconds']) for x in rc.get('pair', [])]})")
+    if turn == 1:
+        long_, short = rows[0], rows[1]  # lenA wrote 32 times the reasoning, lenB once
+        tm = long_["t_marks"]
+        check(set(tm) == {"10", "50"} and long_["t_first_token"] <= tm["10"] < tm["50"] < long_["t_end"]
+              and "50" not in short["t_marks"] and rc.get("first_reasoning") == 1,
+              f"  each sample's time at the marks of 10 and 50 tokens ({tm}); the short one never reached 50")
+    if turn == 2:
+        check([r["prev"] for r in rows] == ["lost", "won"],
+              "  the next request records who won and who lost the one before, as in a race")
+    if not stream:
+        check(all(r["t_marks"] == {} for r in rows), "  a reply that is not streamed has no marks")
+tag = "countr/t-reason/a1/t1/5"
+st, raw, s = ask(20, tag, n_assistant=4)
+rows = samples("rcountr", tag, 2)
+rq = request_row("rcountr", tag)
+rc = rq.get("race", {})
+check(st == 200 and s.reply()["reasoning_content"].startswith("[fast") and s.finish_reason == "stop"
+      and outcomes(rows) == ["finished", "won"] and rc.get("win_at") == "reasoning" and rc.get("first_reasoning") == 1
+      and near(rc["t_win"], rows[1]["t_answer"]) and rq["t_first_token"] >= rows[0]["t_end"] - 0.002
+      and [m["outcome"] for m in mock_rows("slow", rows[0]["seed"])] == ["done"],
+      "count mode with --win-at reasoning: the first whole reply to end its reasoning, after the slow one ended")
+tag = "wait/t-wait/a1/t1/1"
+st, raw, s = ask(21, tag, seed=60)  # lenA writes its reasoning 21 times, lenB (seed 104789) 30 times, four times slower
+rows = samples("rwait", tag, 2)
+rc = request_row("rwait", tag).get("race", {})
+check(st == 200 and s.reply()["reasoning_content"].startswith("[lenA seed 60]") and outcomes(rows) == ["won", "cancelled"]
+      and rows[1]["t_end"] >= rows[0]["t_end"] + 0.3 - 0.002 and rows[1]["predicted_n"] >= 1
+      and rows[1]["finish_reason"] is None and rc.get("first") == 0 and rc["pair"][1]["outcome"] == "cancelled"
+      and [m["outcome"] for m in mock_rows("lenB", 104789)] == ["cancelled"],
+      f"--count-wait-s 0.3: a sample still running 0.3 s after the first whole reply is stopped "
+      f"({rows[0]['t_end']} s, {rows[1]['t_end']} s)")
+
 # health
 def health(off):
     c = http.client.HTTPConnection("127.0.0.1", P + off, timeout=20)
@@ -272,6 +342,29 @@ check(sm.returncode == 0 and "## Per arm" in sm.stdout and any(l.startswith("| r
       and catch and catch[0].split("|")[2].strip() == "1" and share
       and 0.8 < float(share[0].split("|")[-2]) < 1.25,  # the mock's reply names its seed, so lengths differ a little
       "summary: wins per server, the losers' catch-up pairs, the share against one server")
+check("## Count mode" not in sm.stdout, "summary: no count tables for a race without --count")
+sm = subprocess.run([sys.executable, "-I", str(here / "race_proxy.py"), "summary", str(out / "rcount/proxy.samples.jsonl"),
+                     str(out / "rwait/proxy.samples.jsonl"), "--marks", "10,50"], capture_output=True, text=True)
+(out / "summary_count.md").write_text(sm.stdout + sm.stderr)
+cells = lambda l: [c.strip() for c in l.strip().strip("|").split("|")]
+tab = {(c[0], c[1]): c for c in map(cells, sm.stdout.splitlines()) if len(c) == 10 and c[0] in ("count", "wait")}
+num = lambda x: float(x.replace(",", ""))
+a0, a1, rep_, rea = (tab.get(("count", k)) for k in ("server 0 alone", "server 1 alone", "the first whole reply",
+                                                     "the first to end its reasoning"))
+rows3 = [samples("rcount", f"count/t-count/a1/t1/{t}", 2) for t in (1, 2, 3)]
+want = sum(min(r["t_end"] for r in rr) for rr in rows3)
+check(sm.returncode == 0 and all((a0, a1, rep_, rea)) and a0[2] == "3" and rep_[3] == "1, 2"
+      and abs(num(rep_[4]) - want) <= 0.06 and num(rep_[4]) < min(num(a0[4]), num(a1[4]))
+      and num(rep_[5]) < 1 and num(rep_[7]) < 1 and num(rep_[9]) < 1
+      and int(rep_[8].replace(",", "")) == sum(min(rr, key=lambda r: r["t_end"])["predicted_n"] for rr in rows3),
+      f"summary, count tables: the first whole reply's seconds and tokens are each request's sooner sample's "
+      f"({rep_[4] if rep_ else None} s against {a0[4] if a0 else None} and {a1[4] if a1 else None} alone)")
+late = [c for c in map(cells, sm.stdout.splitlines()) if len(c) == 8 and c[0] == "count" and c[1] == "0"]
+check(len(late) == 2 and [c[2] for c in late] == ["10", "50"] and all(int(c[4]) >= 1 for c in late)
+      and all(num(c[7]) <= 1 for c in late) and num(late[0][6]) <= num(late[1][6]) + 0.05
+      and tab.get(("wait", "the first whole reply"), [""] * 4)[3] == "1, 0"
+      and "wait: 1 of 1 requests, 1 of them with a sample stopped early" in sm.stdout,
+      "summary, count tables: a late second sample at each mark; the stopped sample is counted as stopped early")
 sys.exit(1 if fails else 0)
 EOF
-echo "race selftest passed; logs in $OUT (summary.md)"
+echo "race selftest passed; logs in $OUT (summary.md, summary_count.md)"

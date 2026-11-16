@@ -186,7 +186,8 @@ class Sandbox:
             for k, v in base_env.items():
                 argv += ["--setenv", k, v]
             return argv + cmd, None, None
-        # docker; AC_DOCKER_USER ("uid:gid", set by release_check_s12.sh's CLIENT=local for a client that is not root)
+        # docker; AC_DOCKER_USER ("uid:gid", set by CLIENT=local in release_check_s12.sh and race_rigs.sh for a
+        # client that is not root)
         # runs the container as that user, so the files it leaves in the host's folders stay the client's to remove
         user = os.environ.get("AC_DOCKER_USER")
         argv = ["docker", "run", "--rm", "-i", "--init", "--label", self.label,

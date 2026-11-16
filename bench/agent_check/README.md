@@ -76,8 +76,8 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 |---|---|
 | [run.py](run.py) | The runner: one arm (server configuration) at a time, fresh workspace per attempt, pi headless, caps, hidden-test scoring, resumable; infrastructure failures re-run, never scored |
 | [proxy.py](proxy.py) | Pass-through logging proxy between pi and llama-server: timings, usage, cache, first token, tools, the request bodies |
-| [race_proxy.py](race_proxy.py) | The first-finish race: one chat request to N servers with a seed each, the first complete reply to the agent, the others cancelled; a row per sample; `summary` ([below](#the-first-finish-race-across-servers)) |
-| [race_quant.sh](race_quant.sh), [race_rigs.sh](race_rigs.sh) | The race's runs: one server per card set on a GPU machine with Docker (counts only), one server per rig across rigs |
+| [race_proxy.py](race_proxy.py) | The first-finish race: one chat request to N servers with a seed each, the first complete reply to the agent, the others cancelled; a row per sample; a count mode in which every sample runs to its end and each request is logged as a pair; `summary` ([below](#the-first-finish-race-across-servers)) |
+| [race_quant.sh](race_quant.sh), [race_rigs.sh](race_rigs.sh) | The race's runs: one server per card set on a GPU machine with Docker (counts only); one server per rig across rigs, on a release preset (v4's by default), with the client on a second machine or on the one that drives the rigs |
 | [replay.py](replay.py) | Re-sends recorded traces to any server (same prompts, seeds and `max_tokens`); picks traces; summarizes and compares per-token costs |
 | [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn, and the work a run did: prompt tokens read, reply tokens re-read, the longest first-token wait ([below](#the-work-a-run-did-beside-its-speed)) |
 | [token_mark.py](token_mark.py) | The generated-token mark: what a mark would have stopped, lost and saved on recorded runs (`price`), and arms run with it side by side by the try that passed (`arms`) ([below](#the-token-mark-and-a-fresh-attempt)) |
@@ -334,10 +334,54 @@ its own rig's speed, so a second rig can speed up one agent.
   - `proxy.samples.jsonl`, one row per sample: server, seed, outcome (`won`, `finished` after the winner,
     `cancelled`, `error`), times, finish reason, generated tokens, prompt and cache tokens, and `prev`, what that
     server did on the trace's previous request. On streamed requests the proxy asks llama-server for
-    `timings_per_token`, so a cancelled sample's count is its tokens when it was cancelled.
+    `timings_per_token`, so a cancelled sample's count is its tokens when it was cancelled. `t_marks` holds when a
+    streamed sample passed 250, 500, 1,000, 2,000 and 4,000 generated tokens (`--marks`).
 - **`race_proxy.py summary`** reads the sample rows and prints three tables: per arm, the wins per server and the
   winners' and all samples' tokens; the losers' catch-up; per task, the winner's tokens and, with `--one` and a
-  one-server run's `proxy.jsonl`, the share of that run's tokens.
+  one-server run's `proxy.jsonl`, the share of that run's tokens. Rows written in count mode add the count tables
+  below.
+
+### Count mode: every sample runs to its end
+
+A race run gives one arm: the losers are cancelled, so nobody knows how long they would have taken. A task's time
+also differs between runs of one setup by minutes, so showing a race's gain against a one-server run takes several
+runs of each. With `--count` (registry Q1499) one run answers for every rule at once, on the same requests:
+
+- **Nobody is cancelled.** Every sample runs to its end. Only then does the agent get the kept reply: the first
+  whole reply, or with `--win-at reasoning` the first whole reply to end its reasoning. Every server is therefore
+  idle when the next request comes, and all of them start it together.
+- **Each request is logged as a pair.** The request row's `race` field has `count`, `first` (the sample whose whole
+  reply came first), `first_reasoning` (the whole reply whose reasoning ended first), `t_all` (when every sample had
+  ended) and `pair`: per sample its outcome, tokens and seconds, and when its reasoning ended. The sample rows carry
+  `count` and `first`; a sample that ran on after the kept one has the outcome `finished`.
+- **The conversation follows the race's path.** The next request carries the kept reply, so the server that lost
+  restores its checkpoint and reads that reply, as in a race. Its row has `prev` = `lost` and the read's tokens and
+  milliseconds.
+- **A count run's own minutes are not a result.** Each request lasts as long as its slowest sample, so the run is
+  slower than one server, and a task needs a longer time cap. A reply can run to the request's `max_tokens`;
+  `--count-wait-s S` stops the samples still running S seconds after the first whole reply. Such a sample is logged
+  as `cancelled`, and its seconds and tokens are lower bounds.
+
+`summary` then prints, per arm, over the requests with a kept reply and no failed sample:
+
+| Row | What it is |
+|---|---|
+| server i alone | The sum of sample i's seconds and tokens: what one server takes |
+| the first whole reply | Each request's sooner sample: the reply race (Q1195, `--win-at reply`) |
+| the first to end its reasoning | Each request's sample whose reasoning ended first, to the end of its reply: Q1271, `--win-at reasoning` |
+| a late second sample | The first server starts at once and the others when its reply passes a mark of 500, 1,000, 2,000 or 4,000 tokens (`summary --marks`); the reply that ends first is kept (Q1199) |
+
+- **Seconds** run from the request's arrival at the proxy to the end of a sample's reply, so they hold the prompt
+  read, the reply and the relay.
+- **The catch-up is taken out for one server alone.** A server that lost the request before reads the kept reply
+  first, which a server alone never does. "Before the catch-up" subtracts that read from its seconds: est., its
+  prompt milliseconds less the previous winner's on the same request. "One server" is the mean of the servers alone
+  before the catch-up, and every share is against it.
+- **A rule's seconds hold the catch-up the run's own rule caused.** A run with `--count` prices the reply race as
+  it would run; its row for the other rule and its late-start rows are est. on the same requests. A run with
+  `--count --win-at reasoning` follows the other rule's path.
+- **The late-start rows** are before the catch-up, and before the longer read of a server that sat out earlier
+  requests. A reply's time at a mark is its `t_marks`, or a straight line between the points its row has.
 
 ### What a losing server reads to catch up
 
@@ -353,12 +397,13 @@ The next request carries the winner's reply, not the loser's. This catch-up is w
 - **The winner** reads only the tool result.
 
 So each loser pays one checkpoint restore per turn, plus the winner's reply at prompt speed, and starts the next race
-that much later. A restore takes 2.3 and 2.4 ms with the checkpoints on the cards (`--ctx-checkpoints-vram 4`) and
-622.2 ms from the host, the v3 preset's way. At the preset's 88.7 tok/s on the same rig's prompts, the re-read costs
-est. 11.3 s for every 1,000 tokens of the winner's reply
-([the v4 candidate's deep lane](../../docs/data/2026-11-10_v4_candidate/README.md)).
-`race_proxy.py summary` measures it: per request after a race, each loser's prompt tokens and milliseconds against
-those of the previous winner on the same request.
+that much later. A restore takes 2.3 and 2.4 ms with the checkpoints on the cards (`--ctx-checkpoints-vram 4`, in
+v4's presets) and 622.2 ms from the host, the v3 preset's way
+([the v4 candidate's deep lane](../../docs/data/2026-11-10_v4_candidate/README.md)). On v4's preset a rig read
+prompts of 512 to 1,023 new tokens at 112.3 and 123.0 tok/s in its two release runs
+([R156](../../docs/data/2026-11-13_r156_agent_v4r/README.md)), so the re-read costs est. 8.9 and 8.1 s for every
+1,000 tokens of the winner's reply. `race_proxy.py summary` measures it: per request after a race, each loser's
+prompt tokens and milliseconds against those of the previous winner on the same request.
 
 ### The race's runs
 
@@ -370,20 +415,36 @@ Both scripts run `one race2 one race2` by default, each a pass over the bugfix s
 The servers load once and serve every run. [client_arm.sh](client_arm.sh) takes `UPSTREAM_PORTS` (several ports) for a
 race arm. The results are `compare.md` (the runs side by side) and `race.md` (the summary).
 
-- [race_quant.sh](race_quant.sh) runs on a GPU machine with Docker: one server of the preset per card set, without
+- [race_quant.sh](race_quant.sh) runs on a GPU machine with Docker: one server of the v3 preset per card set, without
   the preset's nine-card split. It gives counts only (passes, turns, tokens per task, the samples, the catch-up),
   since times on a shared machine are not speed results.
 - [race_rigs.sh](race_rigs.sh) runs across rigs, with the release check's three machines: one server of the preset
   per rig, an `ssh -L`/`-R` relay pair per rig, and the client's containers. It gives the rigs' times.
+  - **The preset** is a folder of [release/](../../release/): `PRESET=flash-next-v4` (the default), `flint-v4`,
+    `ornith-v4` or an older one, or a settings file. Its `PRESET_ENV` and `PRESET_ARGS` run as they are, with
+    `--metrics --no-webui`. `MODELS` is the folder on the rigs with the preset's files: the model is
+    `MODELS/<PRESET_MODEL>`, and a preset with a draft (Flash-Next's MTP draft) gets `-md MODELS/<PRESET_DRAFT>`.
+    pi's context window and the sampling every request carries are the preset's `-c` and its `--temp`, `--top-p`,
+    `--top-k` and `--min-p`.
+  - **`CLIENT=local`** makes the machine that drives the rigs the client too, as in the release harness (C842,
+    [below](#the-release-check-one-command-1-h)): the client's commands run in a local shell, there is no `ssh -R`,
+    and rig k's port on the client is the `ssh -L` relay's own (`RELAY_PORT` + k − 1). Run by a user other than
+    root, every container runs as that user.
+  - **`countN`** in `RUNS` is a run in [count mode](#count-mode-every-sample-runs-to-its-end) over the first N rigs,
+    and `countNr` the same with `--win-at reasoning`. `COUNT_WAIT_S` sets `--count-wait-s`. Give a count run a longer
+    `TIME_CAP_MIN`.
+  - **`STEPS=show`** prints the preset's command for every rig and each run's proxy, then stops. It copies nothing
+    and reaches no machine, so it checks a line before the rigs' slot.
 
 ```
-# two servers of the preset on two card sets of a GPU machine with Docker
+# two servers of the v3 preset on two card sets of a GPU machine with Docker
 REPO=<checkout> BIN=<llama-server> MODEL=<first shard> MODEL_DRAFT=<MTP draft> MOUNTS="<folders the server reads>" \
   GPU_SETS="<set 1> <set 2>" PORT=<first port> bash bench/agent_check/race_quant.sh <out>
-# two rigs, from a machine that only runs ssh (release_check.sh's machine values; the client has Docker)
-RIGS="<rig 1> <rig 2>" CLIENT=<client> RIG_PORT=<port> RELAY_PORT=<port> CLIENT_PORT=<port> PROXY_PORT=<port> \
-  CLIENT_DIR=<folder> CLIENT_OUT=<folder> BIN=<llama-server on the rigs> MODEL=<first shard> MODEL_DRAFT=<draft> \
-  bench/agent_check/race_rigs.sh <out>
+# two rigs on v4's Flash-Next preset, the client on the machine that drives them; first the lines, then a count run
+RIGS="<rig 1> <rig 2>" CLIENT=local RIG_PORT=<port> RELAY_PORT=<port> PROXY_PORT=<port> CLIENT_DIR=<folder> \
+  CLIENT_OUT=<folder> BIN=<llama-server on the rigs> MODELS=<the preset's files on the rigs> \
+  STEPS=show bench/agent_check/race_rigs.sh <out>
+RIGS=… (the same values) RUNS="count2" TIME_CAP_MIN=30 bench/agent_check/race_rigs.sh <out>
 ```
 
 Each script's header lists its options and a dry run against [mock_server.py](mock_server.py). In `RUNS`, `raceNr`
@@ -610,7 +671,12 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
   - keep-alive comment lines come before the winner's stream, and the stream parser skips them;
   - the next request of a trace records which server won and which lost the one before;
   - a client that goes away cancels every sample, `/health` is 200 only with every server up, two requests at once
-    both succeed, and `summary` prints its three tables.
+    both succeed, and `summary` prints its three tables;
+  - count mode: nobody is cancelled (both mocks log a finished reply), the client gets the first whole reply only
+    once the slower sample has ended, streamed and not, and the request row holds the pair with each sample's tokens
+    and seconds; a sample's time at the marks; with `--win-at reasoning` the kept reply is the first to end its
+    reasoning; `--count-wait-s` stops a sample that runs on; `summary`'s count tables give the first whole reply's
+    seconds and tokens as each request's sooner sample's.
 - **`selftest_pilot.sh`** runs `pilot.sh` (or `full_run.sh`) against a fake rig on the laptop. An `ssh` stand-in runs
   the rig-side script locally and forwards the port, and the "llama-server" is the mock. That checks the server
   starts and stops, the monitors, the log collection and cleanup, and the reports.
