@@ -159,7 +159,7 @@ Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
 | `table.md`, `classes.tsv` | the tables below; the classes as a table |
 | `quiet_<load>.txt`, `fit_<load>.txt` | the quiet check before the load; memory per card and on the host after it |
 | `server-<load>.log`, `ram_watchdog-<load>.tsv`, `gpu.csv` | the server's log, the watchdog's samples, the cards every 10 s |
-| `<load>.jsonl`, `prompts.json` | each request's whole `timings` and the first 160 characters of its reply; the prompts' token ids |
+| `<load>.jsonl`, `prompts.json` | each request's whole `timings`, the first 160 characters of its reply and its token ids (`ids`); the prompts' token ids |
 | `done` or `failed` | how the run ended |
 
 The columns of `requests.csv`: `arm`, `load`, `kind` (warmup, prime, decode, sample), `pass`, `depth`,

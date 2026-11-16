@@ -41,8 +41,8 @@ the cache), prompt_n and prompt_ms (read), gen_n and gen_ms (generated), text_md
 token ids, when the server returns them), draft_n and draft_accepted (the server's draft counters, 0 without a draft),
 tokens_per_step, prompt_md5 (the ids sent), cache_src, valid (--valid: 1 when the machine was checked quiet, so the
 times count), wall_s, time. A decode step yields one token of its own and the draft tokens it accepts, so
-steps = gen_n - draft_accepted and tokens_per_step = gen_n / steps. --jsonl also keeps each request's whole `timings`
-and the first 160 characters of the reply.
+steps = gen_n - draft_accepted and tokens_per_step = gen_n / steps. --jsonl also keeps each request's whole `timings`,
+the first 160 characters of the reply and the reply's token ids (`ids`, where two replies first differ).
 """
 import argparse
 import csv
@@ -284,7 +284,8 @@ def main():
         table.writerow(row)
         out.flush()
         if log:
-            log.write(json.dumps({**row, 'stop_type': r.get('stop_type'), 'content_head': text[:160], 'timings': t})
+            log.write(json.dumps({**row, 'stop_type': r.get('stop_type'), 'content_head': text[:160], 'ids': ids,
+                                  'timings': t})
                       + '\n')
             log.flush()
         line = (f"{A.load} {kind:6s} depth {depth:6d} pass {pas}: {len(prompt):6d} ids, {row['cache_n'] or 0} cached, "
