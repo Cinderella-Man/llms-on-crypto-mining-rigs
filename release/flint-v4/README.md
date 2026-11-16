@@ -59,8 +59,8 @@ candidate, never a default until it measures a gain or negligible there:
 | Candidate | What it could buy | Why it is not in the preset |
 |---|---|---|
 | `GGML_CUDA_KEEPALIVE=decode GGML_CUDA_KEEPALIVE_EAGER=1` | the cards held at their boost clock while they decode, without the ~1 s wait at a kernel's first launch: Ornith gained 16.3 against 14.9 tok/s from the keep-alive on v3.0 | on Flint the keep-alive ran only together with the re-read fix, 44.7 against 45.9 tok/s, one run each, within v2.0's own two runs (45.9 and 44.6); never alone, never with the eager stop |
-| `GGML_CUDA_HOP_STAGED=1` | each hop between cards through a pinned host ring; exact on Flint's F32 hops; part of Flash-Next's v3.0 preset | not run on Flint in v3.0 |
-| `GGML_CUDA_GRAPHS_FORCE=1` | prompt micro-batches captured as CUDA graphs without the two-call warm-up that pipeline parallelism never lets a prompt complete | proved on Flash-Next only together with two draft switches (R123a); graphs take card memory, and this file fills two cards to 5,923 MiB |
+| `GGML_CUDA_HOP_STAGED=1` | each hop between cards through a pinned host ring; exact on Flint's F32 hops; part of Flash-Next's v3.0 preset | not run on Flint in v3.0. **Deep lane alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)):** decode a gain over all depths (40.99 and 41.03 tok/s against 40.42 and 40.40, +1.5 %), a gain at every depth but 8,192 (negligible); prompts negligible over all five chunks (321.4 and 318.3 against 324.2 and 320.3, −0.7 %), a gain at depth 0 (+2.6 %) and a loss on the 8,192 chunk (446.1 and 437.4 against 478.2 and 479.2, −7.7 %); the same replies; 26 and 21 MiB less host memory after loading. Not yet run on the agent check |
+| `GGML_CUDA_GRAPHS_FORCE=1` | prompt micro-batches captured as CUDA graphs without the two-call warm-up that pipeline parallelism never lets a prompt complete | proved on Flash-Next only together with two draft switches (R123a); graphs take card memory, and this file fills two cards to 5,923 MiB. **Deep lane alone against this preset (2026-11-16, [data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)):** slower at no depth: decode a gain over all depths (40.50 and 40.55 tok/s against 40.42 and 40.40, +0.3 %) and negligible at each depth; prompts negligible over all five chunks (325.7 and 321.9 against 324.2 and 320.3, +0.5 %), a gain on the 16,384 chunk (+5.5 %); the same replies and the same card memory after loading. Not yet run on the agent check |
 | `--ctx-checkpoints-vram 4 --ctx-checkpoints-incall` | Flint keeps most of its attention in a 513-token window, so the server takes context checkpoints; on the cards and inside a prompt's call they took 18.99 % off Flash-Next's prompt time (R85) | the checkpoints take card memory beside the 5,923 MiB two cards already hold; the fit is checked first |
 | `--ubatch-taper short=600:64` | a prompt of at most 600 tokens in micro-batches of 64 (Flash-Next, R60) | Flint already reads prompts in micro-batches of 128 |
 | `LLAMA_SCHED_PER_SIZE_RESERVE=2` | after a re-plan of the shared scheduler, the plan for the largest batch over the whole memory again | it acts only when the scheduler re-plans: an arm only if the release test's report counts graph reallocations above 0 |
@@ -135,6 +135,10 @@ writes the same replies. Against this preset it gains at depth 0 (decode +3.0 %,
 the 4,096-token prompt (+6.1 %), and loses from 4,096 tokens on: decode −1.2 %, −1.1 %, −1.4 %, −2.0 % and −3.1 % at
 4,096, 8,192, 16,384, 32,768 and 49,152 tokens, prompts −5.2 %, −20.6 % and −17.3 % at 16,384, 32,768 and 49,152.
 Over all depths it decodes 39.67 and 39.79 tok/s against 40.25 and 40.36 (−1.4 %) and reads 271.7 and 273.5 tok/s
-against 318.9 and 321.3 (−14.8 %). The stack is split to find the candidate that costs it. On Flint the server turns
+against 318.9 and 321.3 (−14.8 %). The stack is split to find the candidate that costs it. Forced graphs and staged
+hops, each alone against this preset, are not it
+([data](../../docs/data/2026-11-16_r165_flint_stack_split/README.md)). At 32,768 and 49,152 tokens both read prompts
+within this preset's spread, and both decode as fast or faster. So the stack's deep loss lies in the keep-alive, the
+checkpoints on the cards or the taper, which are timed next. On Flint the server turns
 `--ctx-checkpoints-incall` off at load (`not with sliding-window layers`), so of that candidate only
 `--ctx-checkpoints-vram 4` acts.
