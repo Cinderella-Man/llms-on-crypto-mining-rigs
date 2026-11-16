@@ -72,6 +72,14 @@ preset:
 Left out after their rig rows: C812's prompt split (`LLAMA_PP_MULTI_SPLIT=1`, a loss), the union gather (a loss for
 the decode step at every depth with context), the adaptive draft length (below `v4c3` in its first run).
 
+The prompt taper (`--ubatch-taper short=600:64`) reads a prompt call of at most 600 tokens in micro-batches of 64,
+which is not the same arithmetic as one of 512. On Flash-Next it moves the next-token distributions by a mean KL
+divergence of 0.0127 (96.9 % the same top token), 4 % of the file's own distance from Swift's Q8_0 on agent text
+(0.285), with perplexity −0.31 % ± 0.31 % (lower, within its error); a repeat is exact
+([data](../../docs/data/2026-11-16_fn95_flashnext_taper_kld/README.md)). It stays in the preset. On Ornith the same
+switch moves the numbers about as much as the file's quantization does, so there it is opt-in
+([release/ornith-v4](../ornith-v4/README.md#opt-in-the-micro-batch-taper)).
+
 ## Candidates
 
 None: every v4 switch Flash-Next's path runs was decided on the rig, and the final line `v4r` measured within the
