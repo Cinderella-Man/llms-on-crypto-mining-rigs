@@ -1,0 +1,6 @@
+log	prompt_tokens	requests	prompt_s	reallocs_same	reallocs_changed	requests_with_realloc	graphs_reused
+o3a	0-511	45	220.3	0	0	0	411905
+o3a	512-1023	10	149.5	0	0	0	121787
+o3a	1024-1999	11	206.6	0	0	0	78770
+o3a	2000+	5	134.2	0	0	0	71029
+o3a	all	71	710.6	0	0	0	683491

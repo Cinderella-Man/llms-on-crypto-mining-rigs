@@ -15,8 +15,12 @@ run, alternated: **R160a `o4a`, R160b `o4sa`, R160c `o3a`, R160d `o4b`, R160e `o
 - `o3*` is the v3.0 release (`miner-llama-v3.0`, `1551f5fe1`, `pascal-p106-v3-b12076-ladder5`) with
   [release/ornith-v3/settings.env](../../../release/ornith-v3/settings.env) as shipped (the keep-alive).
 
-Registry row Q1479 in [quants/experiments.md](../../../quants/experiments.md). This folder fills as the runs land; the
-report over the six runs and the verdict come after R160f. Until then each run stands alone and is not classed.
+Registry row Q1479 in [quants/experiments.md](../../../quants/experiments.md). R160a–e ran on 2026-11-14 and R160f on
+2026-11-16; the report over the six runs and the verdict are in "The verdict over the six runs" below.
+
+**Verdict:** v4 against v3.0 is **negligible** on every measure (minutes a task at equal work −0.8 %, generation
++0.6 %, prompts +2.1 %, first token within v3.0's spread). The stack against the v4 preset is a **gain**: −17.5 %
+minutes a task at equal work, prompts +87.0 %, first token −65.3 %, generation negligible (−0.2 %).
 
 ## The runs
 
@@ -27,6 +31,44 @@ report over the six runs and the verdict come after R160f. Until then each run s
 | R160c | `o3a` | rig 2 | 16:22:21, up after 651 s | 16:33:16–17:09:13 | 12 / 12 | 349 bytes, md5 `d9e48849bb95aea7d055a6f0ed35c34a` |
 | R160d | `o4b` | rig 2 | 17:17:31, up after 651 s | 17:28:25–17:59:33 | 12 / 12 | 423 bytes, md5 `7b16f13d060c8b1fde8f9af58493226a` |
 | R160e | `o4sb` | rig 2 | 18:06:47, up after 653 s | 18:17:42–18:43:44 | 12 / 12 | 549 bytes, md5 `cccb6a6fb839fc14b24f91c63dae8e17` |
+| R160f | `o3b` | rig 2 | 2026-11-16 10:11:07, up after 541 s | 10:20:12–10:46:59 | 12 / 12 | 349 bytes, md5 `d9e48849bb95aea7d055a6f0ed35c34a` |
+
+## The verdict over the six runs
+
+Each value is one run ([agent.tsv](agent.tsv), [host.tsv](host.tsv), [r160_compare.md](r160_compare.md),
+[r160_report_table.md](r160_report_table.md), [r160_gonogo.md](r160_gonogo.md)). Minutes a task at equal work price
+the same work, `ka`'s (v3.0's 2026-11-06 run on the same rig, file and line), at each run's own speeds. The class
+compares the means of an arm's two runs: a gain or a loss when the difference is larger than the larger of the two
+arms' spreads (the gap between an arm's two runs), negligible otherwise.
+
+| | v4 `o4a` | v4 `o4b` | v3.0 `o3a` | v3.0 `o3b` | stack `o4sa` | stack `o4sb` | v4 against v3.0 | stack against v4 |
+|---|---|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | | |
+| minutes a task at equal work | 2.57 | 2.45 | 2.52 | 2.54 | 2.08 | 2.06 | negligible (−0.8 %; spreads 0.12, 0.02) | **gain (−17.5 %; 0.02, 0.12)** |
+| generation tok/s | 16.53 | 16.37 | 16.22 | 16.49 | 16.30 | 16.52 | negligible (+0.6 %; 0.16, 0.27) | negligible (−0.2 %; 0.22, 0.16) |
+| prompt tok/s | 56.6 | 65.4 | 61.1 | 58.4 | 114.5 | 113.7 | negligible (+2.1 %; 8.8, 2.7) | **gain (+87.0 %; 0.8, 8.8)** |
+| first token median s | 8.65 | 9.58 | 7.26 | 8.80 | 3.05 | 3.27 | negligible (+13.5 %; 0.93, 1.54) | **gain (−65.3 %; 0.22, 0.93)** |
+| first token p90 s | 19.22 | 20.29 | 19.56 | 19.25 | 10.97 | 11.28 | negligible (+1.8 %; 1.07, 0.31) | **gain (−43.7 %; 0.31, 1.07)** |
+| first token on a task's first turn, median s | 16.32 | 16.26 | 16.34 | 16.52 | 8.45 | 8.44 | negligible (−0.9 %; 0.06, 0.18) | **gain (−48.2 %; 0.01, 0.06)** |
+| minutes, all 12 tasks; turns | 29.7; 62 | 31.0; 57 | 35.8; 71 | 26.6; 60 | 27.6; 63 | 25.9; 65 | different work | different work |
+| graph reallocations | 0 in 62 requests | 0 in 57 | 0 in 71 | 0 in 60 | 0 in 63 | 0 in 65 | | |
+| lowest MemAvailable MiB | 803 | 718 | 731 | 799 | 1,252 | 1,260 | | |
+
+- **v4 against v3.0: negligible.** On the same work v4's two runs took 2.57 and 2.45 minutes a task, v3.0's 2.52 and
+  2.54. v4's first token median is 1.09 s slower on the means, within v3.0's own spread (7.26 and 8.80 s). R162's deep
+  lane, where both read the same prompts, measured decode +0.3 % and prompts −1.1 %.
+- **The stack against the v4 preset: a gain.** Prompts at 114.5 and 113.7 tok/s against 56.6 and 65.4 cut the first
+  token on a task's first turn from 16.32 and 16.26 s to 8.45 and 8.44 s, and the minutes a task at equal work from
+  2.57 and 2.45 to 2.08 and 2.06. Generation is unchanged. It also left more host memory: 1,252 and 1,260 MiB at the
+  lowest against 803 and 718 (checkpoints on the cards).
+- **On v3.0's own work** ([agent_o3aref.tsv](agent_o3aref.tsv), `o3a`'s work as the reference) the classes are the
+  same: v4 2.96 against v3.0 2.99 minutes a task on the means (−1.0 %), the stack 2.50 against v4's 2.96 (−15.5 %).
+- **Wall minutes** differ with the work each run did: decode a mean 81 s a task for `o3b` against `o3a`'s 117,
+  2,936 prompt tokens processed a task against 3,618. No run stopped a task at the 12-minute cap; no tool call was
+  malformed in 379.
+- **Host:** every run's swap peaked during the load: 336, 335, 340, 335, 336 and 331 MiB (R160a to R160f; R160f from 0, after a fresh
+  boot); the report's memory gate is NO-GO on swap growth for all six, as in each run's own report. The RAM watchdog
+  never stopped a server.
 
 ## R160a: `o4a`, the v4 preset (2026-11-14)
 
@@ -303,6 +345,32 @@ not made):
 - The report's files: [o4sb_compare.md](o4sb_compare.md), [o4sb_report_table.md](o4sb_report_table.md) (the five
   runs' attempts), [o4sb_gonogo.md](o4sb_gonogo.md); the per-request and per-attempt rows: [agent/o4sb/](agent/o4sb/).
 
+## R160f: `o3b`, v3.0's second run (2026-11-16)
+
+- **The started command** is R160c's, byte for byte (349 bytes, md5 `d9e48849bb95aea7d055a6f0ed35c34a`):
+  `GGML_CUDA_KEEPALIVE=decode`, the harness's `COMMON` line, then `--temp 0.6 -b 2048 -ub 512 -ts 6,6,6,6,5,5,5,5,6
+  -fit off`. The v3.0 build prints no `switches:` line.
+- **Numbers** (one run; [agent.tsv](agent.tsv), [host.tsv](host.tsv)): 12 of 12 passed, **2.54 minutes a task at
+  equal work** (`ka`'s work; `o3a` 2.52), 26.6 minutes for all tasks, 1.82 minutes a task at the median, 60 turns,
+  generation **16.49 tok/s** (`o3a` 16.22), prompts **58.4 tok/s** (61.1), first token median 8.80 s and p90 19.25 s
+  (7.26, 19.56), a task's first turn 16.52 s (16.34), tool calls 60 / 0 / 0.
+- **Where the wall minutes went** ([r160_report_table.md](r160_report_table.md)): decode a mean 81 s a task, prefill
+  50 s, 2,936 prompt tokens processed a task. JavaScript `variable-length-quantity` took 4.4 minutes in 6 turns, Python
+  `scale-generator` 3.6 in 5 (`o3a` 9.2 in 7), Python `affine-cipher` 3.3 in 8; every other task 2.8 minutes or less.
+- **Graph reallocations** ([o3b_reallocs.tsv](o3b_reallocs.tsv),
+  [o3b_requests_reallocs.tsv](o3b_requests_reallocs.tsv)): 0 in every bucket (39 requests under 512 tokens, 8 at
+  512–1,023, 10 at 1,024–1,999, 3 at 2,000+). `o3a`'s: [o3a_reallocs.tsv](o3a_reallocs.tsv),
+  [o3a_requests_reallocs.tsv](o3a_requests_reallocs.tsv), 0 in 71 requests.
+- **Host** ([host.tsv](host.tsv), R160f's own lines of `meminfo.log` and `gpu.csv`, from 10:11:08): lowest
+  MemAvailable 799 MiB at 10:37:44, 3,085 MiB at the end; swap 0 MiB at the start (the rig had just booted), 331 MiB
+  at its highest at 10:19:42, during the load. Card peaks MiB: 5,665 5,697 5,611 5,697 5,307 5,415 5,575 5,663
+  5,069, the same as `o3a`'s. `o3a`'s host row (R160c's own lines, from 16:22:21): lowest 731 MiB at 17:01:28, swap
+  30 → 340 MiB.
+- **Server log:** 12 checkpoint restores, none created or erased, no full re-processing, no NaN or inf, no watchdog
+  kill ([r160_gonogo.md](r160_gonogo.md)). The load took 541 s, against 651 s for each run on 2026-11-14.
+- The report over the six runs: [r160_compare.md](r160_compare.md), [r160_report_table.md](r160_report_table.md),
+  [r160_gonogo.md](r160_gonogo.md); the per-request and per-attempt rows: [agent/o3b/](agent/o3b/).
+
 ## How to run it
 
 [run/r160.sh](run/r160.sh) runs one arm. It reads the settings file of the arm's version and stops if its
@@ -357,3 +425,13 @@ with `ARMS=o4sb`. Its tables ran in the sandbox image from a folder holding R160
 `o4sb/`), the five runs' server logs, and the lines of `meminfo.log` and `gpu.csv` that R160e added (from 18:06:47):
 `agent_tables.py OUT v3ka o4a o4sa o3a o4b o4sb`, `realloc_counts.py o4sb=rig/server-o4sb.log` (default and
 `--requests`), `run/host.py <those lines> R160e o4sb`.
+
+R160f was started as R160c with arm `o3b` (with `run/r160.sh`: `ARM=o3b`). The report over the six runs came from the
+same environment with every arm's `ARGS_<arm>` and `BUDGET_MIN_<arm>=50` set, `ARMS="o4a o4sa o3a o4b o4sb o3b"
+STEPS="report collect"`. Its tables ran in the sandbox image from a folder holding R160e's table rows (`v3ka`, `o4a`,
+`o4sa`, `o3a`, `o4b`, `o4sb`) plus `o3b`'s rows of `res/turns.csv` and of `res/attempts.csv` (only those whose `tag`
+starts with `o3b/`), the six runs' server logs, and the lines of `meminfo.log` and `gpu.csv` that R160c and R160f
+added: `agent_tables.py OUT v3ka o4a o4sa o3a o4b o4sb o3b` ([agent.tsv](agent.tsv)), `OUT_TAG=_o3aref agent_tables.py
+OUT o3a o3b o4a o4b o4sa o4sb` ([agent_o3aref.tsv](agent_o3aref.tsv)), `realloc_counts.py <arm>=rig/server-<arm>.log`
+for `o3a` and `o3b` (default and `--requests`), `run/host.py <those lines> R160c o3a` and `run/host.py <those lines>
+R160f o3b`.

@@ -84,6 +84,35 @@ On one rig, with this file, both arms on the same line:
   tokens written in the 49,152-token context), with the sampler pass.
 - Then the candidates above, each as an arm against `v4` in the agent check, two runs each.
 
+## The agent check: v4 against v3.0, and the candidate stack
+
+Measured on 2026-11-14 and 2026-11-16 on nine P106-090 cards with this file and line, Ornith-1.5-122B Pascal N2P GGUF
+(valid1) at 49,152 tokens, 12 bugfix tasks, three arms with two runs each, alternated, each run its own load
+([data](../../docs/data/2026-11-14_r160_ornith_release_agent/README.md)). The stack is this preset plus
+`GGML_CUDA_HOP_STAGED=1 GGML_CUDA_GRAPHS_FORCE=1 --ctx-checkpoints-vram 4 --ctx-checkpoints-incall --ubatch-taper
+short=600:64 -b 4096`. Every value is one run.
+
+**v4 is negligible against v3.0** on minutes a task at equal work (the same work at each run's speeds), generation,
+prompts and first token. **The stack is a gain against this preset:** prompts at 114.5 and 113.7 tok/s against 56.6
+and 65.4 cut the first token median by 65.3 %, and a task takes 17.5 % fewer minutes at equal work. Generation is unchanged.
+
+| | v4, run 1 | v4, run 2 | v3.0, run 1 | v3.0, run 2 | stack, run 1 | stack, run 2 | v4 against v3.0 | stack against v4 |
+|---|---|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | | |
+| minutes a task at equal work | 2.57 | 2.45 | 2.52 | 2.54 | 2.08 | 2.06 | negligible (−0.8 %) | gain (−17.5 %) |
+| generation tok/s | 16.53 | 16.37 | 16.22 | 16.49 | 16.30 | 16.52 | negligible (+0.6 %) | negligible (−0.2 %) |
+| prompt tok/s | 56.6 | 65.4 | 61.1 | 58.4 | 114.5 | 113.7 | negligible (+2.1 %) | gain (+87.0 %) |
+| first token median s | 8.65 | 9.58 | 7.26 | 8.80 | 3.05 | 3.27 | negligible (+13.5 %) | gain (−65.3 %) |
+| first token p90 s | 19.22 | 20.29 | 19.56 | 19.25 | 10.97 | 11.28 | negligible (+1.8 %) | gain (−43.7 %) |
+| first token on a task's first turn s | 16.32 | 16.26 | 16.34 | 16.52 | 8.45 | 8.44 | negligible (−0.9 %) | gain (−48.2 %) |
+| minutes, all 12 tasks | 29.7 | 31.0 | 35.8 | 26.6 | 27.6 | 25.9 | different work | different work |
+| graph reallocations | 0 in 62 requests | 0 in 57 | 0 in 71 | 0 in 60 | 0 in 63 | 0 in 65 | | |
+| lowest MemAvailable | 803 MiB | 718 MiB | 731 MiB | 799 MiB | 1,252 MiB | 1,260 MiB | | |
+
+A class compares the means of an arm's two runs: a gain or a loss beyond the larger of the two arms' spreads,
+negligible within it. v4's first token median is 1.09 s slower on the means, within v3.0's own spread (7.26 and
+8.80 s). No reallocation in any run, so `LLAMA_SCHED_PER_SIZE_RESERVE=2` is not an arm on Ornith.
+
 ## The deep lane: v4 against v3.0 at depth
 
 Measured on 2026-11-14 on nine P106-090 cards with this file and line, two loads each after a warm-up, 256 tokens
