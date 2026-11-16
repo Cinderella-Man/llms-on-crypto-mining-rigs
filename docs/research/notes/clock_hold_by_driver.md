@@ -94,6 +94,23 @@ its work at a higher clock. So it holds the power state and leaves the clock ins
 is what NVIDIA's profiler did by default until its 2026.1 release, to make timings repeatable, and it could do the
 same for this project's diagnostic A/B runs (Q1555).
 
+### No route here waits on an X screen on the cards
+
+- The mode was set on the rig with the stock driver: `nvidia-settings` reached all nine cards as GPU targets through
+  the desktop's X server, whose display is on the integrated graphics (measured, Q141). No card carried an X screen
+  of its own.
+- Through NVML the mode needs no X server at all (claim to test).
+- The registry keys, `nvidia-smi` and the driver's control calls never involve X.
+
+So the verdict would be the same if a P106 could carry an X screen. Where a screen driven by the card would matter
+is a setting the driver ties to one, such as the Coolbits clock offsets ([hardware tuning](hardware_tuning.md) §1.3,
+route B), and those have an NVML route too. The stock driver treats a P106 as a compute-only card and refuses it the
+3D path (a report); whether it would still let the card carry an X screen is not known here. The owner named
+[dartraiden/NVIDIA-patcher](https://github.com/dartraiden/NVIDIA-patcher), which patches NVIDIA's Linux installer so
+that mining cards, the P106-090 among them, get that path. It is the possible way to an X screen on these cards
+(claim to test). [What a P106-090 holds back](p106_090_holds_back.md) §6 reads the patch and its safety. It replaces
+the host's driver files, which is the owner's decision, and no route in this note needs it.
+
 ## 2. Registry keys as a kernel-module parameter
 
 **The carrier is real and documented in source.** The kernel-interface source shipped with the driver
@@ -264,6 +281,8 @@ behind. Registry Q1553.
    (Q1556).
 8. A driver-held top clock, if any route gave one, would cost less than the keep-alive's +72 W for nine cards
    (step 3 of the test).
+9. A P106 on a driver patched with NVIDIA-patcher can carry an X screen, and settings tied to one then apply (not
+   queued: no route here needs an X screen on the cards).
 
 ## Already covered
 
@@ -296,6 +315,10 @@ NVIDIA documentation and source (P)
 - Nsight Compute release notes, <https://docs.nvidia.com/nsight-compute/ReleaseNotes/index.html> (read 2026-11-17):
   the boost lock in 2025.4, the default in 2026.1; the 2020.1 notes,
   <https://docs.nvidia.com/nsight-compute/2020.1/ReleaseNotes/index.html>: Pascal support removed
+
+A tool named by the owner, not read for this note
+- [dartraiden/NVIDIA-patcher](https://github.com/dartraiden/NVIDIA-patcher): read in
+  [what a P106-090 holds back](p106_090_holds_back.md) §6
 
 Reports (S), NVIDIA developer forum unless named
 1. "GeForce/Quadro power management on a headless Linux machine (without X server)", 2015-04-27,
