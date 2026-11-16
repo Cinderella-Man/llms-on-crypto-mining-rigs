@@ -1,0 +1,25 @@
+# FN95: what each llama-perplexity load logged about its line (counts of identical lines; -lv 4)
+## base
+1 calculating perplexity over 24 chunks, n_ctx=512, batch_size=512, n_seq=1
+1 Final estimate: PPL = 2.3854 +/- 0.06579
+1 LLAMA_SCHED_PER_SIZE_RESERVE=2 needs per-size schedulers (LLAMA_MTP_GRAPH_KEEP=1 or LLAMA_SCHED_PER_SIZE=1), ignored
+1 load time = 286780.18 ms
+1 n_batch = 512
+1 n_ubatch = 512
+1 n_vocab = 248320
+## taper
+1 computing over 24 chunks, n_ctx=512, batch_size=512, n_seq=1
+1 LLAMA_SCHED_PER_SIZE_RESERVE=2 needs per-size schedulers (LLAMA_MTP_GRAPH_KEEP=1 or LLAMA_SCHED_PER_SIZE=1), ignored
+1 load time = 286145.21 ms
+1 n_batch = 512
+1 n_ubatch = 512
+1 n_vocab = 248320
+1 set_ubatch_taper: micro-batch taper short=600:64 (n_ubatch 512)
+24 ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+## rep
+1 computing over 24 chunks, n_ctx=512, batch_size=512, n_seq=1
+1 LLAMA_SCHED_PER_SIZE_RESERVE=2 needs per-size schedulers (LLAMA_MTP_GRAPH_KEEP=1 or LLAMA_SCHED_PER_SIZE=1), ignored
+1 load time = 285056.80 ms
+1 n_batch = 512
+1 n_ubatch = 512
+1 n_vocab = 248320
