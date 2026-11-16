@@ -1,0 +1,6 @@
+log	prompt_tokens	requests	prompt_s	reallocs_same	reallocs_changed	requests_with_realloc	graphs_reused
+o4nea	0-511	37	126.2	0	0	0	298849
+o4nea	512-1023	11	92.3	0	0	0	113907
+o4nea	1024-1999	10	99.7	0	0	0	63389
+o4nea	2000+	4	77.0	0	0	0	47841
+o4nea	all	62	395.1	0	0	0	523986
