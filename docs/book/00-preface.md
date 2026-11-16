@@ -105,8 +105,8 @@ tokens at once. Each of those has its own chapter, and [chapter 10](10-v3.md) te
 
 v3 was released on 2026-11-06. The work after it became v4. It started with a question, not an idea: where does
 the time go on the build that shipped, and on real work? The answers moved the effort to three places: long
-conversations, the pass that checks guessed tokens, and reading prompts. The release tests ended on 2026-11-16.
-The same rigs, v4 against v3:
+conversations, the pass that checks guessed tokens, and reading prompts. v4 was released on 2026-11-16. The same
+rigs, v4 against v3:
 
 | Flash-Next on nine cards | v3 | v4 |
 |---|---|---|
