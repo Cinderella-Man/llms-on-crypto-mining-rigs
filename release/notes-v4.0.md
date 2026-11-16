@@ -224,8 +224,9 @@ From a clone of the repository, one command starts a preset (Flint here; `MODELS
 | `{{CUDART_ASSET}}` | {{CUDART_MB}} MB | `{{CUDART_SHA256}}` |
 
 `BUILDINFO.txt` in the first archive records the commit, the build image, and that the binaries contain no AVX
-instructions and need glibc 2.38 at most. A third archive carries `test-backend-ops`, llama.cpp's operator tests, for
-anyone who wants to check the kernels on their own cards.
+instructions and need glibc 2.38 at most. A third archive carries three test programs for anyone who wants to check
+the engine on their own cards: `test-backend-ops` (llama.cpp's operator tests), `test-llama-archs` and
+`test-cuda-keepalive`.
 
 ## Licences
 
