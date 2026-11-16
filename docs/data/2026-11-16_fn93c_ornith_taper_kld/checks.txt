@@ -1,0 +1,22 @@
+# FN93c: what each llama-perplexity load logged about its line (counts of identical lines; -lv 4)
+## base
+1 calculating perplexity over 24 chunks, n_ctx=512, batch_size=512, n_seq=1
+1 Final estimate: PPL = 4.0730 +/- 0.14899
+1 load time = 537504.70 ms
+1 n_batch = 512
+1 n_ubatch = 512
+1 n_vocab = 248320
+## taper
+1 computing over 24 chunks, n_ctx=512, batch_size=512, n_seq=1
+1 load time = 537183.79 ms
+1 n_batch = 512
+1 n_ubatch = 512
+1 n_vocab = 248320
+1 set_ubatch_taper: micro-batch taper short=600:64 (n_ubatch 512)
+24 ubatch taper: 512 tokens, head 1, tail 1, 8 ubatches: 64x8
+## rep
+1 computing over 24 chunks, n_ctx=512, batch_size=512, n_seq=1
+1 load time = 537358.46 ms
+1 n_batch = 512
+1 n_ubatch = 512
+1 n_vocab = 248320
