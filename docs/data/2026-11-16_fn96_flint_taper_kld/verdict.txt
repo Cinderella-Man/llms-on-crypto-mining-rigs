@@ -1,0 +1,2 @@
+taper: mean KLD 0.000000 <= 0.0066: met; perplexity -0.000% (+0.000% against the repeat) within +/-0.1%: met; within two paired errors (+/-2.250%): yes
+rep: 24 of 24 chunks equal to the base, same top 100.000%, mean KLD 0.000000, max |dp| 0.006%: exact

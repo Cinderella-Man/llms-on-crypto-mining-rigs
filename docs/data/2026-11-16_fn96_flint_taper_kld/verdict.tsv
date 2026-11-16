@@ -1,0 +1,3 @@
+arm	mean KLD	error	99.0% KLD	same top p %	PPL	PPL(base own)	change %	paired error %	within 2 errors	chunks equal to base	max |dp| %	PPL(rep)	change against rep %
+taper	0.000000	0.000000	0.000038	100.000	19.741385	19.7414	-0.000	1.125	yes	24 of 24	0.006	19.741385	+0.000
+rep	0.000000	0.000000	0.000038	100.000	19.741385	19.7414	-0.000	1.125	yes	24 of 24	0.006	19.741385	+0.000
