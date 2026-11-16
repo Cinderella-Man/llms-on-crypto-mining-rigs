@@ -157,3 +157,5 @@ cards the host's lowest MemAvailable is 1,238 and 1,254 MiB against 651 and 655.
 reply than the host switches alone at 8,192, 16,384 and 32,768 tokens (the same at 0, 4,096 and 48,640). The taper
 alone does that ([data](../../docs/data/2026-11-16_fn93b_ornith_greedy_rig/README.md)); the other five give the same
 replies, which is why they are in the preset and the taper is opt-in.
+
+**This preset at depth, with and without the keep-alive** (R167a, [data](../../docs/data/2026-11-16_r167_keepalive_depth/README.md#r167a-ornith)): this file as it is decodes 12.97 and 12.98 tok/s over the six depths and reads all five prompt chunks at 159.9 and 159.8 tok/s (at 48,640 tokens 8.66 and 8.67, and 137.2 and 137.2); without `GGML_CUDA_KEEPALIVE=decode` and `GGML_CUDA_KEEPALIVE_EAGER=1` it reads prompts 2.6 % faster but decodes 3.4 % slower; without the eager stop alone it reads prompts 2.4 % faster and decodes 0.2 % faster, with the same replies (the agent check decides, Q1496).

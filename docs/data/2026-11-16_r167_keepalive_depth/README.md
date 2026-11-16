@@ -11,7 +11,7 @@ preset with the variables changed, two loads an arm, on one build (`v4-rc2`) and
 | Part | Model | Arms | State |
 |---|---|---|---|
 | R167b | Swift Qwen3.8-Flash-Next Pascal Q2 GGUF with its MTP draft ([release/flash-next-v4](../../../release/flash-next-v4/README.md)) | `v4r` the preset as it is (control); `v4nk` the preset less both keep-alive variables; `v4ne` the preset less `GGML_CUDA_KEEPALIVE_EAGER=1` alone | done, below |
-| R167a | Ornith-1.5-122B Pascal N2P GGUF ([release/ornith-v4](../../../release/ornith-v4/README.md)) | the same three arms on Ornith's v4 preset | not yet run |
+| R167a | Ornith-1.5-122B Pascal N2P GGUF ([release/ornith-v4](../../../release/ornith-v4/README.md)) | the same three arms on Ornith's v4 preset: `o4` the preset as it is (control); `o4nk` less both keep-alive variables; `o4ne` less `GGML_CUDA_KEEPALIVE_EAGER=1` alone | done, [below](#r167a-ornith) |
 | R167c | Flint Pascal Q8 GGUF ([release/flint-v4](../../../release/flint-v4/README.md)) | the v4 preset (which sets neither variable) against it plus `GGML_CUDA_KEEPALIVE=decode` alone | not yet run |
 
 Registry row Q1492 in [quants/experiments.md](../../../quants/experiments.md).
@@ -97,6 +97,123 @@ is a load's speed: both greedy passes' tokens over their time.
   same preset and build on the same rig: decode over all depths 26.15 and 26.11 tok/s here against 26.15 and 26.14
   there, all chunks 212.6 and 215.3 against 218.5 and 218.8. These are different runs, so they get no class.
 
+## R167a: Ornith
+
+**On Ornith the keep-alive pays for itself; the eager stop costs a little at depth.**
+
+Without both keep-alive variables (`o4nk`), prompts read a little faster and decode is clearly slower:
+- All five prompt chunks of a load (54,736 tokens) read at 164.0 and 164.1 tok/s against `o4`'s 159.9 and 159.8
+  (+2.6 %, a gain). Every chunk from 4,096 tokens on gains (+2.1, +1.5, +1.6, +3.1, +3.2 %). The 64-token prompt at depth 0 is the
+  exception: it reads at 33.9 and 33.2 tok/s against 40.9 and 40.8 (−17.8 %, a loss).
+- Decode over all six depths runs 12.45 and 12.63 tok/s against 12.97 and 12.98 (−3.4 %, a loss). It loses at 0,
+  4,096, 16,384 and 32,768 tokens (−6.9, −7.9, −4.8, −3.5 %), gains at 8,192 (+1.1 %) and is negligible at 48,640.
+- The two passes split apart. The first greedy request after a prompt runs faster without the keep-alive at 8,192,
+  32,768 and 48,640 tokens: at 48,640 a step takes 105.9 and 102.0 ms against 115.6 and 115.4. Every later request at
+  the same depth is slower, at every depth. Pass 2 at 48,640 takes 128.9 and 126.5 ms a step against 115.4 and 115.2.
+  The sampled request at 48,640 runs at 7.54 and 7.54 tok/s against 8.66 and 8.68. On pass 2 alone,
+  decode over all depths is 11.71 and 11.82 tok/s against 13.01 and 13.02 (−9.6 %;
+  [r167a_table_pass2.md](r167a_table_pass2.md)). This run does not show why the first pass is faster without it.
+
+Without the eager stop alone (`o4ne`), Ornith is a little faster on both prompts and decode:
+- Prompts gain at every depth from 4,096 tokens on (+1.7, +2.5, +1.6, +2.8, +2.5 %). All chunks read at 163.6 and
+  163.6 tok/s (+2.4 %, a gain). The 64-token prompt at depth 0 reads at 40.8 and 40.7 against 40.9 and 40.8 (−0.3 %,
+  a loss by the rule).
+- Decode gains at every depth, by +0.1 or +0.2 %. The loads of each arm differ by at most 0.02 tok/s, so even this
+  small difference is beyond the spread. Over all depths decode is 13.00 and 13.00 tok/s (+0.2 %, a gain).
+- The wait for the keep-alive block that the eager stop removes on Flash-Next (R167b, above) does not show here. At
+  4,096 tokens `o4ne`'s first request takes 58.9 and 58.9 ms a step against 59.1 and 59.1.
+- R162 found v4's host switches reading prompts 1.1 % slower than v3.0 from 8,192 tokens on, and v4 added the eager
+  stop to v3.0's line ([2026-11-14_r162_ornith_release_deep](../2026-11-14_r162_ornith_release_deep/README.md)).
+  This run is consistent with the eager stop being that cost, but R162 compared two builds, so it does not show it.
+
+In short, for Ornith's preset:
+- The keep-alive costs 2.6 % of prompt speed at depth and buys 3.4 % decode over all depths.
+- The eager stop costs 2.4 % of prompt speed and 0.2 % of decode at depth, with the same replies.
+- Whether the eager stop stays in Ornith's preset is the agent check's call (registry row Q1496).
+
+Every arm wrote the same greedy reply on every pass and load at every depth. Every value is one load. Run on one rig on
+2026-11-16, 17:15:05–19:39:49: a warm-up load of `o4`, then `o1 n1 e1 o2 n2 e2`, every load through. The RAM
+watchdog did not act.
+
+### Per depth (R167a)
+
+`o4`'s loads are listed `o1`, `o2`; `o4nk`'s `n1`, `n2`; `o4ne`'s `e1`, `e2`. Each class is against `o4`. Decode
+is a load's speed: both greedy passes' tokens over their time.
+
+| Depth (tokens) | Decode tok/s, `o4` | `o4nk` | Class | `o4ne` | Class |
+|---:|---|---|---|---|---|
+| 0 | 18.51, 18.49 | 17.18, 17.28 | loss (−6.9 %) | 18.53, 18.53 | gain (+0.1 %) |
+| 4,096 | 16.98, 16.98 | 15.39, 15.87 | loss (−7.9 %) | 17.01, 17.01 | gain (+0.2 %) |
+| 8,192 | 15.60, 15.62 | 15.83, 15.73 | gain (+1.1 %) | 15.63, 15.64 | gain (+0.2 %) |
+| 16,384 | 13.43, 13.42 | 12.66, 12.89 | loss (−4.8 %) | 13.45, 13.44 | gain (+0.2 %) |
+| 32,768 | 10.47, 10.48 | 10.09, 10.12 | loss (−3.5 %) | 10.49, 10.50 | gain (+0.2 %) |
+| 48,640 | 8.66, 8.67 | 8.52, 8.75 | negligible (−0.4 %) | 8.69, 8.69 | gain (+0.2 %) |
+| all | 12.97, 12.98 | 12.45, 12.63 | loss (−3.4 %) | 13.00, 13.00 | gain (+0.2 %) |
+
+| Depth (tokens) | Read, on cached | Prompt tok/s, `o4` | `o4nk` | Class | `o4ne` | Class |
+|---:|---|---|---|---|---|---|
+| 0 | 64 on 0 | 40.9, 40.8 | 33.9, 33.2 | loss (−17.8 %) | 40.8, 40.7 | loss (−0.3 %) |
+| 4,096 | 4,032 on 0 | 170.7, 168.6 | 173.8, 172.5 | gain (+2.1 %) | 172.5, 172.6 | gain (+1.7 %) |
+| 8,192 | 4,612 on 3,516 | 158.2, 158.8 | 160.3, 161.3 | gain (+1.5 %) | 162.4, 162.4 | gain (+2.5 %) |
+| 16,384 | 12,804 on 3,516 | 203.0, 203.1 | 206.5, 206.1 | gain (+1.6 %) | 206.3, 206.1 | gain (+1.6 %) |
+| 32,768 | 16,900 on 15,804 | 157.8, 157.8 | 162.5, 162.8 | gain (+3.1 %) | 162.3, 162.1 | gain (+2.8 %) |
+| 48,640 | 16,388 on 32,188 | 137.2, 137.2 | 141.5, 141.7 | gain (+3.2 %) | 140.6, 140.6 | gain (+2.5 %) |
+| all chunks | 54,736 | 159.9, 159.8 | 164.0, 164.1 | gain (+2.6 %) | 163.6, 163.6 | gain (+2.4 %) |
+
+**The step on each pass** (ms; pass 1, pass 2 per load; [r167a_prompt_depth.md](r167a_prompt_depth.md), "Generation,
+a check"):
+
+| Depth (tokens) | `o4` | `o4nk` | `o4ne` |
+|---:|---|---|---|
+| 0 | 54.5, 53.5; 54.7, 53.5 | 58.4, 58.0; 58.2, 57.6 | 54.5, 53.5; 54.5, 53.5 |
+| 4,096 | 59.1, 58.7; 59.1, 58.7 | 59.2, 70.7; 57.5, 68.5 | 58.9, 58.7; 58.9, 58.7 |
+| 8,192 | 64.3, 64.0; 64.2, 63.9 | 61.3, 65.1; 61.8, 65.3 | 64.0, 63.9; 64.0, 63.9 |
+| 16,384 | 74.6, 74.3; 74.6, 74.4 | 75.6, 82.4; 73.9, 81.2 | 74.4, 74.4; 74.4, 74.4 |
+| 32,768 | 95.7, 95.4; 95.6, 95.3 | 91.0, 107.3; 89.3, 108.4 | 95.3, 95.2; 95.3, 95.2 |
+| 48,640 | 115.6, 115.4; 115.4, 115.2 | 105.9, 128.9; 102.0, 126.5 | 115.1, 115.1; 115.1, 115.1 |
+
+### The released preset at depth (R167a's `o4`)
+
+`o4` is [release/ornith-v4/settings.env](../../../release/ornith-v4/settings.env) as released. This run is the first
+time the deep lane measures that preset. Beside it are R162's two controls
+([2026-11-14_r162_ornith_release_deep](../2026-11-14_r162_ornith_release_deep/README.md)), on the same rig, model,
+text and depths:
+- `v4` is `v4-rc2` with v3.0's line and the three host switches (`-b 2048`, checkpoints in host memory).
+- `v3` is the v3.0 release on v3.0's preset.
+
+R162 ran two days earlier, so these columns get no class, and the percentages are est.
+
+| Depth (tokens) | Decode tok/s, `o4` | R162 `v4` | R162 `v3` | Prompt tok/s, `o4` | R162 `v4` | R162 `v3` |
+|---:|---|---|---|---|---|---|
+| 0 | 18.51, 18.49 | 18.38, 18.39 | 18.34, 18.32 | 40.9, 40.8 | 24.6, 24.6 | 24.6, 24.3 |
+| 4,096 | 16.98, 16.98 | 16.87, 16.86 | 16.82, 16.80 | 170.7, 168.6 | 133.8, 133.9 | 132.4, 132.2 |
+| 8,192 | 15.60, 15.62 | 15.54, 15.54 | 15.46, 15.45 | 158.2, 158.8 | 143.2, 143.6 | 144.8, 144.5 |
+| 16,384 | 13.43, 13.42 | 13.39, 13.38 | 13.34, 13.33 | 203.0, 203.1 | 191.9, 191.7 | 193.8, 193.4 |
+| 32,768 | 10.47, 10.48 | 10.46, 10.44 | 10.43, 10.42 | 157.8, 157.8 | 152.3, 152.3 | 155.5, 155.5 |
+| 48,640 | 8.66, 8.67 | 8.63, 8.62 | 8.61, 8.61 | 137.2, 137.2 | 119.7, 119.2 | 120.7, 120.5 |
+| all | 12.97, 12.98 | 12.92, 12.92 | 12.88, 12.88 | 159.9, 159.8 | 145.2, 145.0 | 146.8, 146.7 |
+
+Against v3.0 the released preset reads all five prompt chunks about 8.9 % faster (est.) and decodes about 0.7 % faster
+(est.). R162's stack with the opt-in micro-batch taper (`v4s`) read all chunks at 167.2 and 166.9 tok/s. `o4` writes
+v3.0's and R162's `v4`'s greedy reply at every depth (the same reply md5s). The taper is what wrote another reply in
+R162's `v4s` ([FN93b](../2026-11-16_fn93b_ornith_greedy_rig/README.md)).
+
+### The replies, the host and the cards (R167a)
+
+- **Every arm writes the same greedy reply on every pass and load at every depth.**
+- **No target graph reallocated** on any of the 24 requests of any load. Every timed request gave 256 tokens, and
+  every load read the same prompt ids.
+- **The host's lowest MemAvailable:** `o4` 1,228 and 1,248 MiB, `o4nk` 1,236 and 1,240, `o4ne` 1,245 and 1,237.
+  MemAvailable after loading was 1,506 and 1,485 MiB (`o4`), 1,494 and 1,504 (`o4nk`), 1,497 and 1,508 (`o4ne`).
+  With the checkpoints on the cards, Ornith keeps over 1.2 GB of host memory free at 48,640 tokens.
+- **Swap:** the most swap in use was 338 and 338 MiB (`o4`), 338 and 338 (`o4nk`), 337 and 339 (`o4ne`), and none
+  moved during the prompts (+0 MiB in every load), unlike R167b's `v4nk` loads on Flash-Next. The most written in
+  10 s was 257 and 232 MiB (`o4`), 249 and 228 (`o4nk`), 252 and 229 (`o4ne`), under the watchdog's 600.
+- **The cards after loading** held the same memory in every load: 49,139 MiB over the nine, as in R162.
+- **Each server printed the switches it was given.** `o4` printed `switches: 6 set`, the preset's six variables.
+  `o4nk` printed `4 set` and `o4ne` `5 set`, each `o4`'s list less exactly the variables the arm drops. Every
+  started line held one `-b`, 4096, and both checkpoint flags ([r167a_loads.tsv](r167a_loads.tsv)).
+
 ## Method
 
 - **The deep lane** ([bench/deep_lane](../../../bench/deep_lane/README.md)) as R157 ran it on Flash-Next
@@ -118,6 +235,21 @@ is a load's speed: both greedy passes' tokens over their time.
   environment is the preset's as a set, `v4nk`'s is `v4r`'s less the two keep-alive variables, `v4ne`'s less the eager
   stop, and the binary, model and flags are the same in all three. [r167b_loads.tsv](r167b_loads.tsv) holds the lines
   as they ran.
+- **R167a (Ornith)** ran the same way, with R162's settings for Ornith:
+  - the model is Ornith-1.5-122B Pascal N2P GGUF (`valid1`), no draft, a 49,152-token context;
+  - the depths are 0, 4,096, 8,192, 16,384, 32,768 and 48,640 tokens (the deepest whose 256 written tokens fit the
+    context);
+  - the sampler pass uses the server line's own sampler (`--temp 0.6 --top-p 0.95 --top-k 20 --min-p 0`);
+  - the loads are one untimed warm-up load of `o4`, then `o1 n1 e1 o2 n2 e2`, under the RAM watchdog with its default
+    limits.
+
+  Its dry run printed the three lines first:
+  - `o4`'s environment is the preset's six variables, and its flags are the preset's `PRESET_ARGS` (one `-b 4096`,
+    `--ctx-checkpoints-vram 4` and `--ctx-checkpoints-incall`, no taper);
+  - `o4nk`'s environment is `o4`'s less the two keep-alive variables, and `o4ne`'s is `o4`'s less the eager stop;
+  - the binary, model and flags are the same in all three.
+
+  [r167a_loads.tsv](r167a_loads.tsv) holds the lines as they ran.
 - **Classes** (the lane's rule), per depth and over all depths: the spread is the larger of the two arms' differences
   between their two loads; an arm is a gain when its mean is better than the control's by more than the spread, a loss
   when worse by more than it, else negligible.
@@ -139,6 +271,15 @@ RIG=<rig alias> WORK=<run folder on the rig> PRESET=release/flash-next-v4/settin
 RIG=<rig alias> WORK=<run folder on the rig> STEP=wait bash docs/data/2026-11-16_r167_keepalive_depth/run/r167.sh
 RIG=<rig alias> WORK=<run folder on the rig> STEP=collect OUT=<folder> \
   bash docs/data/2026-11-16_r167_keepalive_depth/run/r167.sh
+
+# R167a (DRY=1 first), then STEP=wait and STEP=collect as above
+RIG=<rig alias> WORK=<run folder on the rig> PRESET=release/ornith-v4/settings.env \
+  BIN=<v4-rc2 tree on the rig>/bin/llama-server \
+  MODEL=<models>/Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf \
+  TEXT_LOCAL=<the release check's proxy.jsonl.bodies.gz> DEPTHS="0 4096 8192 16384 32768 48640" \
+  ARMS="o4 o4nk o4ne" ARM_DROP_o4nk="GGML_CUDA_KEEPALIVE GGML_CUDA_KEEPALIVE_EAGER" \
+  ARM_DROP_o4ne=GGML_CUDA_KEEPALIVE_EAGER LOADS="warm:o4 o1:o4 n1:o4nk e1:o4ne o2:o4 n2:o4nk e2:o4ne" \
+  bash docs/data/2026-11-16_r167_keepalive_depth/run/r167.sh
 ```
 
 The tables (the driver writes `table.md` and `classes.tsv` at the end of the run; here they were built on the rig
@@ -150,6 +291,7 @@ python3 -I bench/deep_lane/deep_table.py <folder> --control v4r --class-on pass2
   --tsv r167b_classes_pass2.tsv
 python3 -I docs/data/2026-11-10_deep_lane/run/prompt_depth.py <folder> --control v4r --out r167b_prompt_depth.md \
   --tsv r167b_prompt_depth
+# R167a: the same three with --control o4 and the r167a_ names
 ```
 
 ## Files
@@ -160,6 +302,10 @@ python3 -I docs/data/2026-11-10_deep_lane/run/prompt_depth.py <folder> --control
 | [r167b_table_pass2.md](r167b_table_pass2.md), [r167b_classes_pass2.tsv](r167b_classes_pass2.tsv) | the same, decode classed on pass 2 alone |
 | [r167b_prompt_depth.md](r167b_prompt_depth.md), [r167b_prompt_depth_prompt.tsv](r167b_prompt_depth_prompt.tsv), [r167b_prompt_depth_generation.tsv](r167b_prompt_depth_generation.tsv), [r167b_prompt_depth_memory.tsv](r167b_prompt_depth_memory.tsv) | R167b, `prompt_depth.py`'s tables: prompt reading per depth and over all chunks, the host's memory and each card's per load, generation as a check |
 | [r167b_loads.tsv](r167b_loads.tsv), [r167b_requests.csv](r167b_requests.csv) | R167b, per load its line and binary as it ran; per request its counts, times and reply md5s |
+| [r167a_table.md](r167a_table.md), [r167a_classes.tsv](r167a_classes.tsv) | R167a, `deep_table.py`'s tables, control `o4`: decode by depth and over all depths, the step on pass 1, prompts, the sampler pass, the checks |
+| [r167a_table_pass2.md](r167a_table_pass2.md), [r167a_classes_pass2.tsv](r167a_classes_pass2.tsv) | the same, decode classed on pass 2 alone |
+| [r167a_prompt_depth.md](r167a_prompt_depth.md), [r167a_prompt_depth_prompt.tsv](r167a_prompt_depth_prompt.tsv), [r167a_prompt_depth_generation.tsv](r167a_prompt_depth_generation.tsv), [r167a_prompt_depth_memory.tsv](r167a_prompt_depth_memory.tsv) | R167a, `prompt_depth.py`'s tables: prompt reading per depth and over all chunks, the host's memory and each card's per load, generation with the step on both passes |
+| [r167a_loads.tsv](r167a_loads.tsv), [r167a_requests.csv](r167a_requests.csv) | R167a, per load its line and binary as it ran; per request its counts, times and reply md5s |
 | [run/r167.sh](run/r167.sh) | the run, every part: start, wait, status, collect; the preset and each arm's drops and adds from the environment |
 
 ## Provenance and licence
@@ -167,6 +313,8 @@ python3 -I docs/data/2026-11-10_deep_lane/run/prompt_depth.py <folder> --control
 Code: Miner Llama (MIT, like llama.cpp), `v4-rc2` (`pascal-p106-v4` `eb82916d3`; the rig build's `llama-server`
 reports `eb312b7bc`, whose tree is `v4-rc2`'s). Model: Swift-1.5 GSQ-RCO Qwen3.8-Flash-Next Q2_0
 ([ukisai](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-Flash-Next-GSQ-RCO-GGUF), Swift Open License 1.0 and
-qwen-community-1.0), as retyped by [Q218](../2026-11-03_retype/README.md), with its MTP draft file; the prompts are
+qwen-community-1.0), as retyped by [Q218](../2026-11-03_retype/README.md), with its MTP draft file (R167b);
+Ornith-1.5-122B as Ornith-1.5-122B Pascal N2P GGUF (`valid1`), described with its licence in
+[release/ornith-v3](../../../release/ornith-v3/README.md) (R167a); the prompts are
 the deep lane's recorded agent text ([bench/deep_lane](../../../bench/deep_lane/README.md)). The tables and
 `requests.csv` hold times, counts and md5s, no text. Measured on a Manli M-P106L9-N6G (nine P106-090).

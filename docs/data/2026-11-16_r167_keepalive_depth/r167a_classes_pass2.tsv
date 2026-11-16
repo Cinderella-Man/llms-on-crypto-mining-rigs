@@ -1,0 +1,27 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	o4nk	o4	17.24 17.37	18.69 18.71	0.13	-1.39	-7.4	loss
+generation	0	o4ne	o4	18.70 18.71	18.69 18.71	0.01	0.00	0.0	negligible
+generation	4096	o4nk	o4	14.14 14.59	17.03 17.04	0.45	-2.67	-15.7	loss
+generation	4096	o4ne	o4	17.05 17.04	17.03 17.04	0.01	0.01	0.0	negligible
+generation	8192	o4nk	o4	15.37 15.31	15.63 15.65	0.06	-0.30	-1.9	loss
+generation	8192	o4ne	o4	15.64 15.64	15.63 15.65	0.02	0.00	0.0	negligible
+generation	16384	o4nk	o4	12.14 12.31	13.45 13.44	0.17	-1.22	-9.1	loss
+generation	16384	o4ne	o4	13.45 13.44	13.45 13.44	0.01	-0.00	-0.0	negligible
+generation	32768	o4nk	o4	9.32 9.23	10.48 10.49	0.09	-1.21	-11.6	loss
+generation	32768	o4ne	o4	10.50 10.50	10.48 10.49	0.01	0.01	0.1	gain
+generation	48640	o4nk	o4	7.76 7.91	8.67 8.68	0.15	-0.84	-9.7	loss
+generation	48640	o4ne	o4	8.69 8.69	8.67 8.68	0.01	0.01	0.2	gain
+generation_all	all	o4nk	o4	11.71 11.82	13.01 13.02	0.11	-1.24	-9.6	loss
+generation_all	all	o4ne	o4	13.02 13.02	13.01 13.02	0.01	0.01	0.1	negligible
+prompt	0	o4nk	o4	33.9 33.2	40.9 40.8	0.8	-7.3	-17.8	loss
+prompt	0	o4ne	o4	40.8 40.7	40.9 40.8	0.1	-0.1	-0.3	loss
+prompt	4096	o4nk	o4	173.8 172.5	170.7 168.6	2.1	3.5	2.1	gain
+prompt	4096	o4ne	o4	172.5 172.6	170.7 168.6	2.1	2.9	1.7	gain
+prompt	8192	o4nk	o4	160.3 161.3	158.2 158.8	0.9	2.3	1.5	gain
+prompt	8192	o4ne	o4	162.4 162.4	158.2 158.8	0.6	3.9	2.5	gain
+prompt	16384	o4nk	o4	206.5 206.1	203.0 203.1	0.5	3.3	1.6	gain
+prompt	16384	o4ne	o4	206.3 206.1	203.0 203.1	0.1	3.2	1.6	gain
+prompt	32768	o4nk	o4	162.5 162.8	157.8 157.8	0.3	4.9	3.1	gain
+prompt	32768	o4ne	o4	162.3 162.1	157.8 157.8	0.1	4.4	2.8	gain
+prompt	48640	o4nk	o4	141.5 141.7	137.2 137.2	0.3	4.4	3.2	gain
+prompt	48640	o4ne	o4	140.6 140.6	137.2 137.2	0.0	3.4	2.5	gain
