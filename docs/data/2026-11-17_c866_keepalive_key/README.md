@@ -110,7 +110,7 @@ none is in a changed line.
 controller stops a block before a new key only. It was built, not run: the quant machine runs no tests for now, and
 the laptop runs none. It runs first in the rig check (seconds, CPU).
 
-## The rig check (next row, R194; not run here)
+## The rig check (next row, R195; not run here)
 
 On rig 2, with Flash-Next's v4 preset and `GGML_CUDA_KEEPALIVE_EAGER=3`:
 
