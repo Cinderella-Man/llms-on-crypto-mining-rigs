@@ -1,0 +1,31 @@
+same: r159_agent: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-14_r159_flint_release_agent/agent.tsv
+same: r17_agent: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-17_r17_flint_textreuse/agent.tsv
+same: r160_agent: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-14_r160_ornith_release_agent/agent.tsv
+same: r160_agent_o3aref: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-14_r160_ornith_release_agent/agent_o3aref.tsv
+same: r166_agent: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-16_r166_ornith_stack_no_taper/agent.tsv
+same: r169_agent: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-16_r169_ornith_no_eager/agent.tsv
+same: r170_agent: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-16_r170_flint_q5/agent.tsv
+same: r170_agent_ref_q5f3: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-16_r170_flint_q5/agent_ref_q5f3.tsv
+same: side_agent_t2d: the new table's first 14 columns are the old script's table
+  and the old script's table is the published 2026-11-06_flint_side_rig2/agent_t2d.tsv
+same: mtp_agent_part1: the new table's first 14 columns are the old script's table
+  the old script's table differs from the published 2026-11-06_ornith_mtp_rig2/agent_part1.tsv in: acceptance, tokens_per_step
+same: mtp_agent_part1_9tasks: the new table's first 14 columns are the old script's table
+  the old script's table differs from the published 2026-11-06_ornith_mtp_rig2/agent_part1_9tasks.tsv in: acceptance, tokens_per_step
+same: mtp_agent_mtpadapt: the new table's first 14 columns are the old script's table
+  the old script's table differs from the published 2026-11-06_ornith_mtp_rig2/agent_mtpadapt.tsv in: acceptance, tokens_per_step
+same: mtp_agent_mtpadapt_11tasks: the new table's first 14 columns are the old script's table
+  the old script's table differs from the published 2026-11-06_ornith_mtp_rig2/agent_mtpadapt_11tasks.tsv in: acceptance, tokens_per_step
+same: R159's class.tsv from the published agent.tsv, old class_arms.py
+same: R159's class.tsv from the published agent.tsv, new class_arms.py
+same: R159's class.tsv: the new class's first 13 lines, from the new table
+tables and classes in docs/data/2026-11-17_c855_class_work_counts/tables
+every old column and class line the same

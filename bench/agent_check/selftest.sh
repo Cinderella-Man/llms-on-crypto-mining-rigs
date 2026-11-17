@@ -23,7 +23,10 @@
 #   and compare's other lines are those it writes without the logs;
 # - the work counts (C852): from a fixed per-request table with every cache path (exact, a reply read again whole and
 #   in part, an older checkpoint, a row without timings), `report.py work` counts the prompt tokens read, the reply
-#   tokens re-read with their turns and prompt seconds, and the longest first-token wait.
+#   tokens re-read with their turns and prompt seconds, and the longest first-token wait;
+# - the class tables (C855): agent_tables.py adds a task's work counts after its old columns, the same as report.py
+#   work's; class_arms.py classes a run that reads fewer tokens a gain beyond the spread while its minutes are
+#   negligible, gives no share against a base of 0, and on a table without the work columns gives the time measures.
 set -euo pipefail
 OUT=${1:?usage: selftest.sh OUT}
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -104,6 +107,33 @@ w,u,1,2,0.2,1,20,509,100,6,60,stop,0
 w,u,1,1,2.2,3,500,0,2000,10,100,tool_calls,1
 CSV
 python3 -I "$HERE/report.py" work "$OUT/work_turns.csv" --tsv "$OUT/work.tsv" > "$OUT/work.md"
+# the class tables (C855): run w is the work table above, run e caches every turn exactly
+mkdir -p "$OUT/class/res"
+{ cat "$OUT/work_turns.csv"; cat <<'CSV'
+e,t,1,1,4.0,5,1000,0,4000,100,1000,tool_calls,1
+e,t,1,2,0.5,5,50,1100,250,100,1000,stop,0
+e,u,1,1,2.0,3,500,0,2000,10,100,stop,0
+CSV
+} > "$OUT/class/res/turns.csv"
+cat > "$OUT/class/res/attempts.csv" <<'CSV'
+task_id,file,attempt,wall_s,pass
+t,w,1,60,1
+u,w,1,30,1
+t,e,1,50,1
+u,e,1,30,0
+CSV
+python3 -I "$HERE/agent_tables.py" "$OUT/class" e w > /dev/null
+cat > "$OUT/class/runs.tsv" <<'TSV'
+arm	equal_work_min_per_task	gen_tok_s	prompt_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	prompt_read_per_task	reread_per_task	reread_s_per_task	ttft_max_s
+a1	1.80	47	200	1.7	6	3.2	2900	0	0	12
+a2	1.82	48	210	1.8	6.5	3.3	3000	0	0	13
+b1	1.81	47	200	1.7	6	3.2	4000	1200	5	25
+b2	1.83	48	210	1.8	6.5	3.3	5000	2000	12	94
+TSV
+python3 -I "$HERE/class_arms.py" "$OUT/class/runs.tsv" a=a1,a2 b=b1,b2 > "$OUT/class/class_ab.tsv"
+python3 -I "$HERE/class_arms.py" "$OUT/class/runs.tsv" b=b1,b2 a=a1,a2 > "$OUT/class/class_ba.tsv"
+cut -f1-7 "$OUT/class/runs.tsv" > "$OUT/class/runs_time.tsv"
+python3 -I "$HERE/class_arms.py" "$OUT/class/runs_time.tsv" a=a1,a2 b=b1,b2 > "$OUT/class/class_time.tsv"
 python3 -I - "$HERE" "$OUT" <<'EOF'
 import csv, json, sys, zlib
 from pathlib import Path
@@ -178,6 +208,30 @@ check("| w | 2 | 8 | 3050 (1525) | 786 (393) | 550 (3, 1 from an older checkpoin
       and [l.split(" | ")[2:4] for l in wl if l.startswith("| w | t | ")]
       == [["3", "reply re-read"], ["4", "reply re-read"], ["5", "older checkpoint"]],
       "work: the per-arm row, and a line per turn that read a reply again with its cache path")
+# the class tables (C855): agent_tables.py's work columns, class_arms.py's work measures
+tsv = lambda name: list(csv.DictReader((out / "class" / name).open(), delimiter="\t"))
+ag = {r["arm"]: r for r in tsv("agent.tsv")}
+cols = (out / "class/agent.tsv").read_text().splitlines()[0].split("\t")
+wcols = ["prompt_read_per_task", "reread_per_task", "reread_s_per_task", "reread_turns", "ttft_max_s"]
+check(cols[13] == "equal_work_vs_ref" and cols[14:] == wcols
+      and [ag["w"][c] for c in wcols] == ["1525", "275", "3.10", "3", "9.50"]
+      and [ag["e"][c] for c in wcols] == ["775", "0", "0.00", "0", "4.00"],
+      f"agent_tables: the work columns after the old ones, a task's counts as report.py work's "
+      f"({[ag[a][c] for a in 'we' for c in wcols]})")
+cl = {r["measure"]: r for r in tsv("class_ab.tsv")}
+want = {"minutes a task at equal work": "negligible", "prompt tokens read a task": "gain",
+        "reply tokens re-read a task": "gain", "prompt s of the turns that re-read a reply, a task": "gain",
+        "longest first-token wait s": "negligible"}
+check(len(cl) == 10 and all(cl[m]["class"] == c for m, c in want.items()),
+      f"class_arms: fewer tokens read is a gain beyond the spread, equal minutes negligible "
+      f"({[(m, cl[m]['class']) for m in want if m in cl]})")
+ba = {r["measure"]: r for r in tsv("class_ba.tsv")}
+check(ba["reply tokens re-read a task"]["class"] == "loss" and ba["reply tokens re-read a task"]["diff_pct"] == "—",
+      "class_arms: against a base that re-read nothing, a loss with no share of the base")
+check([r["measure"] for r in tsv("class_time.tsv")] == [
+      "minutes a task at equal work", "generation tok/s", "prompt tok/s", "first token median s", "first token p90 s",
+      "first token on a task's first turn, median s"],
+      "class_arms: a table without the work columns gives the time measures alone")
 # the token mark
 t1, t2, t3 = (here / "tasks/polyglot/order.txt").read_text().split()[:3]
 res = lambda arm, t, d="a1": json.loads((out / "mark" / arm / t / d / "result.json").read_text())

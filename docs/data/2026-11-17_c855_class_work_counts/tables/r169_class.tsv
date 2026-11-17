@@ -1,0 +1,11 @@
+measure	arm	base	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+minutes a task at equal work	o4ne	o4sn	2.12 2.18	2.11 2.13	2.15	2.12	0.06	0.02	+0.03	+1.4 %	negligible
+generation tok/s	o4ne	o4sn	16.58 16.17	16.52 16.13	16.38	16.32	0.41	0.39	+0.05	+0.3 %	negligible
+prompt tok/s	o4ne	o4sn	100.2 96.8	103 105.9	98.5	104.5	3.4	2.9	-5.95	-5.7 %	loss
+first token median s	o4ne	o4sn	6.74 6.43	6.69 6.06	6.585	6.375	0.31	0.63	+0.21	+3.3 %	negligible
+first token p90 s	o4ne	o4sn	10.71 10.08	11.29 11.32	10.39	11.3	0.63	0.03	-0.91	-8.0 %	gain
+first token on a task's first turn, median s	o4ne	o4sn	8.3 8.35	8.43 8.45	8.325	8.44	0.05	0.02	-0.115	-1.4 %	gain
+prompt tokens read a task	o4ne	o4sn	3299 3003	3405 4130	3151	3768	296	725	-616.5	-16.4 %	negligible
+reply tokens re-read a task	o4ne	o4sn	299 0	403 1028	149.5	715.5	299	625	-566	-79.1 %	negligible
+prompt s of the turns that re-read a reply, a task	o4ne	o4sn	2.27 0	2.55 5.99	1.135	4.27	2.27	3.44	-3.135	-73.4 %	negligible
+longest first-token wait s	o4ne	o4sn	32.19 27.69	28.14 32.24	29.94	30.19	4.5	4.1	-0.25	-0.8 %	negligible

@@ -80,6 +80,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [race_quant.sh](race_quant.sh), [race_rigs.sh](race_rigs.sh) | The race's runs: one server per card set on a GPU machine with Docker (counts only); one server per rig across rigs, on a release preset (v4's by default), with the client on a second machine or on the one that drives the rigs |
 | [replay.py](replay.py) | Re-sends recorded traces to any server (same prompts, seeds and `max_tokens`); picks traces; summarizes and compares per-token costs |
 | [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn, and the work a run did: prompt tokens read, reply tokens re-read, the longest first-token wait ([below](#the-work-a-run-did-beside-its-speed)) |
+| [agent_tables.py](agent_tables.py), [class_arms.py](class_arms.py) | Runs side by side (`agent.tsv`: speeds, first-token times, minutes at equal work, the work a run did) and an arm's class against a base, measure by measure (`class.tsv`) ([below](#classing-runs-agenttsv-and-classtsv)) |
 | [token_mark.py](token_mark.py) | The generated-token mark: what a mark would have stopped, lost and saved on recorded runs (`price`), and arms run with it side by side by the try that passed (`arms`) ([below](#the-token-mark-and-a-fresh-attempt)) |
 | [validate.py](validate.py) | Oracle, empty-change and visible-subset checks of every task, no model |
 | [common.py](common.py) | Tasks, the sandbox, the test check, the stream parser |
@@ -300,6 +301,60 @@ Q1521). Each arm's row in `table.md` and in `compare.md`'s per-arm table ends wi
 
 The counts of ten published runs, and the check of the re-read seconds against a count made by hand, are in
 [2026-11-17_c852_agent_work_counts](../../docs/data/2026-11-17_c852_agent_work_counts/README.md).
+
+## Classing runs: agent.tsv and class.tsv
+
+Two tools turn runs into a class: gain, negligible or loss (registry Q1526).
+
+- **`agent_tables.py OUT REF RUN…`** writes `OUT/agent.tsv`, one row a run, from a table folder: `res/turns.csv`,
+  `res/attempts.csv`, and `rig/server-<run>.log` where the draft's acceptance is wanted. Each row holds tasks passed,
+  turns, prompt and generation tok/s, first-token times, minutes, and minutes a task at equal work (REF's token counts
+  priced at the run's speeds). `SKIP_TASKS`, `OUT_TAG` and `NMAX` are in its header.
+- **`class_arms.py agent.tsv ARM=RUN,RUN BASE=RUN,RUN …`** classes the first arm against each base, one measure at a
+  time. A difference of the two arms' means beyond the larger of their spreads (the gap between an arm's highest and
+  lowest run) is a gain or a loss; anything smaller is negligible.
+
+**The work columns.** Equal work holds the tokens fixed, so it shows a faster engine but not a change that leaves work
+out. The last five columns of `agent.tsv` count the work each run did, as `report.py work` counts it
+([above](#the-work-a-run-did-beside-its-speed)):
+
+| Column | In plain words | Classed |
+|---|---|---|
+| `prompt_read_per_task` | The prompt tokens the server had to read for a task; the rest of each prompt came from its cache | yes |
+| `reread_per_task` | Of those, the tokens of a reply the model had just written, read again because the cache stopped inside that reply | yes |
+| `reread_s_per_task` | The seconds the server spent on the prompts of those turns, a task | yes |
+| `reread_turns` | How many turns read a reply again, over the run | no |
+| `ttft_max_s` | The longest the agent waited for a first token, over the run | yes |
+
+The four classed work measures are better lower and follow the six time measures in `class.tsv`. A table made before
+the work columns gives the time measures alone, line for line as before. The columns before the work columns are those
+of the copies that made the tables published before 2026-11-17
+([agent_tables.py](../../docs/data/2026-11-05_keepalive/run/agent_tables.py),
+[class_arms.py](../../docs/data/2026-11-14_r159_flint_release_agent/run/class_arms.py)), cell for cell: on 13
+published tables and R159's class ([check](../../docs/data/2026-11-17_c855_class_work_counts/README.md)).
+
+**What they show.** Text reuse (`LLAMA_SERVER_TEXT_REUSE=1`) stops the server reading a reply again. In its first run
+on Flint Pascal Q8 GGUF (R17a, one run), against the tuned v4 preset's two runs, the minutes a task at equal work were
+1.81 against 1.72 and 1.81 (negligible). The work measures show the change: 0 reply tokens re-read a task against
+1,219 and 2,063, 0 s on those turns against 5.63 and 11.81, and 2,970 prompt tokens read a task against 4,076 and
+5,093, three gains.
+
+**Reading a work class.** The agent sends no seed, so every run writes different replies and does different work. The
+gap between two runs of one arm is often smaller than the gap chance makes between two arms. v4-rc2's preset against
+v3.0 (R159, two runs each) is a loss on all four work measures, 6,007 and 5,560 prompt tokens read a task against
+3,111 and 4,099, while the two draw exactly the same tokens (Q1488). So a work gain or loss counts when the change has
+a cause that removes or adds the tokens (text reuse re-reads 0 tokens on every turn), or when it holds on more runs
+(Q1575).
+
+```bash
+# a table folder from published rows, the table, then R17a's class against the tuned preset's two runs
+D=docs/data; F=$D/2026-11-14_r159_flint_release_agent/agent
+python3 -I $D/2026-11-17_r17_flint_textreuse/run/merge_rows.py t \
+  v3p065=$D/2026-11-05_release_regression/agent/flint-p065-v3base:rel f4ta=$F/f4ta f4tb=$F/f4tb \
+  f4tr=$D/2026-11-17_r17_flint_textreuse/agent/f4tr
+python3 -I bench/agent_check/agent_tables.py t v3p065 f4ta f4tb f4tr          # t/agent.tsv
+python3 -I bench/agent_check/class_arms.py t/agent.tsv f4tr=f4tr f4t=f4ta,f4tb
+```
 
 ## The first-finish race across servers
 
@@ -658,7 +713,11 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
     task's pass at 50; `token_mark.py arms` counts the passes by try;
   - the work counts: from a fixed per-request table that holds every cache path (exact, a reply read again whole
     and in part, an older checkpoint, a row without timings), `report.py work` counts the prompt tokens read, the
-    reply tokens re-read with their turns and prompt seconds, and the longest first-token wait.
+    reply tokens re-read with their turns and prompt seconds, and the longest first-token wait;
+  - the class tables: `agent_tables.py` puts a task's work counts after its other columns, the same as
+    `report.py work`'s; `class_arms.py` classes a run that reads fewer tokens a gain beyond the spread while its
+    minutes are negligible, gives no share of a base whose mean is 0, and gives the time measures alone on a table
+    without the work columns.
 - **`selftest_race.sh`** (`AC_TEST_PORT=… bench/agent_check/selftest_race.sh <scratch folder>`, no sandbox) puts
   race proxies in front of mocks of different speeds, one that answers HTTP 500, one that drops its stream half-way
   and a port nobody listens on. It checks that:
