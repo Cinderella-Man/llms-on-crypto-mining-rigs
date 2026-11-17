@@ -1,0 +1,18 @@
+C866 (Q1562): does GGML_CUDA_KEEPALIVE_EAGER=3's build change any GPU kernel? (2026-11-17)
+
+Binaries compared (both built with scripts/build_llamacpp_docker.sh, nvidia/cuda:12.9.2-devel-ubuntu24.04, sm_61):
+  base: Miner Llama v4.0's release build, llama-server md5 e7afd26db01f4c671549ef12c504ada3
+  new:  llama.cpp-20261117-087eb3b67-pascal-p106-v5-keepalive-key, llama-server md5 3defbfcff219a50dd48f79c7bb19f19a
+
+Method, per binary (CPU only, in the CUDA image):
+  cuobjdump -sass bin/llama-server | c++filt | python3 sass_compare.py hash > h-<binary>.tsv
+  python3 sass_compare.py compare h-base.tsv h-new.tsv cmp
+sass_compare.py is C861 (a)'s (docs/data/2026-11-17_c861a_fp32_scale/): one row per kernel, a SHA-1 of its SASS text
+with whitespace normalized, and its instruction counts.
+
+Result:
+  base kernels (names): 8797; identical in new: 8797; different: 0; missing in new: 0; only in new: 0
+  The two hash tables are the same file: md5 27cde4d20bf08456e7ded9266d09230a (2,553,421 bytes each).
+
+So every GPU kernel in the new build is v4.0's machine code; the change is host code only (the keep-alive's key, the
+sparse attention's checks moved into fasp_check, the top-k's path picked by top_k_pick).
