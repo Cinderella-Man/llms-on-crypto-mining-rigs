@@ -1,0 +1,10 @@
+2026-11-17 10:54:40.669 watchdog start: pid 10460, gpu 0, 9 cards, temp-max 70.0 C, power-max 55.0 W for 5.0 s, xid pattern 'NVRM: Xid', interval 0.5 s
+2026-11-17 10:57:33.656 TRIP 1: gpu 0 above 55.0 W for 5.0 s (now 61.6 W) | gpu 0 offsets now mem 0, gpc 0 | killed mmvq_pascal[10591]
+2026-11-17 10:58:45.803 watchdog stop after 1 trips
+2026-11-17 10:58:46.890 watchdog start: pid 10769, gpu 0, 9 cards, temp-max 70.0 C, power-max 65.0 W for 5.0 s, xid pattern 'NVRM: Xid', interval 0.5 s
+2026-11-17 12:42:00.270 watchdog stop after 0 trips
+2026-11-17 12:42:00.617 watchdog start: pid 14813, gpu 0, 9 cards, temp-max 70.0 C, power-max 80.0 W for 5.0 s, xid pattern 'NVRM: Xid', interval 0.5 s
+2026-11-17 13:48:56.763 watchdog stop after 0 trips
+2026-11-17 13:50:52.277 watchdog start: pid 17429, gpu 0, 9 cards, temp-max 70.0 C, power-max 80.0 W for 5.0 s, xid pattern 'NVRM: Xid', interval 0.5 s
+2026-11-17 13:52:52.390 watchdog stop after 0 trips
+21140 samples of all nine cards, every 0.5 s

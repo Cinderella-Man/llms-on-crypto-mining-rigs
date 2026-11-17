@@ -133,10 +133,16 @@ six cards. GPU0 holds the first layers of the six-card split, so its weights tak
 - **A hung card** (Xid 79, or a CUDA process that never returns) needs a reboot, after which every card is at stock.
 - **Run on a quiet rig.** Nothing else should use the card under test. `memoc_steps.sh` refuses to start if a compute
   process is on it (`FORCE=1` overrides), and the soak uses cards 0–5.
-- **Not verified before the first run on the rig:**
-  - `set` and `units` on a P106-090: the kit only read the offset APIs on driver 580 on other cards;
-  - whether an offset set by one process stays after it exits while Xorg holds the driver (every offset change in
-    `steps.log` is followed by a read-back from a new process, and the memory clock under load shows it);
-  - `cuda_memtest`'s run time for 6 GB of a P106 (it stops after `MEMTEST_MIN` either way). On an RTX 3090 the
-    binaries ran through the compute_61 PTX: `mmvq_pascal --check-only` passes, and a 64 MB `cuda_memtest` pass
-    takes 3.1 s, 2.2 s of it in test 6.
+- **Measured on a P106-090 on 2026-11-17** (Q133/Q135, [data](../../docs/data/2026-11-17_q133_q135_clock_offsets/README.md)):
+  - `set` and `units` work with no X server on driver 580.178.04; the raw unit is MT/s (raw +100 moved the memory clock
+    under load from 4,006 to 4,050 MHz); the ranges are −2,000 to +2,000 (memory) and −200 to +1,200 (core);
+  - an offset set by one process stays after it exits while another process holds the card (with persistence mode off
+    and no X server, that sitting kept an NVML watchdog running for the purpose);
+  - `cuda_memtest` on the card's 6 GB: tests 0–5, 7, 8 and 10 in 79 s, test 6 alone in about 5 min.
+- **The kernel checks and `cuda_memtest` are not enough to pass a step.** On the card tested, +1,400 MT/s passed all of
+  `mmvq_pascal`'s checks and a `cuda_memtest` pass, yet changed Flint's token probabilities (not its text). The
+  sitting judged each step with a greedy run hashed with every token's top-10 probabilities
+  ([greedy_check.py](../../docs/data/2026-11-17_q133_q135_clock_offsets/run/greedy_check.py)); `memoc_steps.sh` does
+  not run it yet (Q1564).
+- **Step only upward.** After the offset went down from +800 to 0, that card ran slower at the lower memory clocks with
+  every offset at 0 (Q1563).

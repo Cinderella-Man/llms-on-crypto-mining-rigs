@@ -1,0 +1,70 @@
+# The exact one-token check (exact_check.sh): 4,096 one-token steps of Flint Pascal Q5 GGUF over wikitext-2 on nine cards
+
+2026-11-17 10:58:08 exact_check: base: writing base.kld at offset 0 (8 x 512 one-token steps on cards 0,1,2,3,4,5,6,7,8)
+2026-11-17 11:06:17 exact_check: kld stock: 8 x 512 one-token steps on cards 0,1,2,3,4,5,6,7,8
+2026-11-17 11:14:24 exact_check: base: reference statistics in kld-stock.stats
+2026-11-17 13:40:14 exact_check: kld combined-m1000-c275: 8 x 512 one-token steps on cards 0,1,2,3,4,5,6,7,8
+2026-11-17 13:48:20 exact_check: kld combined-m1000-c275: PASS (statistics identical to the stock rerun)
+
+## Statistics block of the stock rerun (the reference)
+Mean PPL(Q)                   :  25.442420 ±   2.338938
+Mean PPL(base)                :  24.075365 ±   2.094230
+Cor(ln(PPL(Q)), ln(PPL(base))):  99.11%
+Mean ln(PPL(Q)/PPL(base))     :   0.055229 ±   0.012898
+Mean PPL(Q)/PPL(base)         :   1.056782 ±   0.013630
+Mean PPL(Q)-PPL(base)         :   1.367055 ±   0.383156
+Mean    KLD:  -0.000000 ±   0.000000
+Maximum KLD:   0.000050
+99.9%   KLD:   0.000049
+99.0%   KLD:   0.000036
+95.0%   KLD:   0.000025
+90.0%   KLD:   0.000017
+Median  KLD:  -0.000000
+10.0%   KLD:  -0.000018
+Minimum KLD:  -0.000055
+Mean    Δp:  0.000 ± 0.000 %
+Maximum Δp:  0.005%
+99.9%   Δp:  0.004%
+99.0%   Δp:  0.002%
+95.0%   Δp:  0.001%
+90.0%   Δp:  0.000%
+75.0%   Δp:  0.000%
+Median  Δp: -0.000%
+25.0%   Δp: -0.000%
+10.0%   Δp: -0.000%
+Minimum Δp: -0.005%
+RMS Δp    :  0.001 ± 0.000 %
+Same top p: 100.000 ± 0.000 %
+
+## Statistics block at memory +1,000 MT/s and core +275 MHz on card 0
+Mean PPL(Q)                   :  25.442420 ±   2.338938
+Mean PPL(base)                :  24.075365 ±   2.094230
+Cor(ln(PPL(Q)), ln(PPL(base))):  99.11%
+Mean ln(PPL(Q)/PPL(base))     :   0.055229 ±   0.012898
+Mean PPL(Q)/PPL(base)         :   1.056782 ±   0.013630
+Mean PPL(Q)-PPL(base)         :   1.367055 ±   0.383156
+Mean    KLD:  -0.000000 ±   0.000000
+Maximum KLD:   0.000050
+99.9%   KLD:   0.000049
+99.0%   KLD:   0.000036
+95.0%   KLD:   0.000025
+90.0%   KLD:   0.000017
+Median  KLD:  -0.000000
+10.0%   KLD:  -0.000018
+Minimum KLD:  -0.000055
+Mean    Δp:  0.000 ± 0.000 %
+Maximum Δp:  0.005%
+99.9%   Δp:  0.004%
+99.0%   Δp:  0.002%
+95.0%   Δp:  0.001%
+90.0%   Δp:  0.000%
+75.0%   Δp:  0.000%
+Median  Δp: -0.000%
+25.0%   Δp: -0.000%
+10.0%   Δp: -0.000%
+Minimum Δp: -0.005%
+RMS Δp    :  0.001 ± 0.000 %
+Same top p: 100.000 ± 0.000 %
+
+## The two blocks compared
+identical, digit for digit
