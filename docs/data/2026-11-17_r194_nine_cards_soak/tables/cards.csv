@@ -1,0 +1,10 @@
+card,stock_peak_mhz_r193,set_mem_mts,set_core_mhz,core_steps,expected_peak_mhz,readback_mem_mts,readback_core_mhz,step1_peak_sm_mhz,step1_mean_w,step1_peak_c,step1_checks_pass,step1_checks_fail,stock_stream_gbs_r193,step1_stream_gbs,stream_gain_pct,step1_greedy,step1_xid,step1_verdict,soak_rounds,soak_rounds_pass,soak_checks_pass,soak_checks_fail,soak_stream_gbs_min,soak_stream_gbs_max,soak_peak_c,soak_mean_w,soak_peak_w,soak_longest_run_over_80w,soak_peak_sm_mhz,memtest_exit,memtest_error_blocks,memtest6_exit,memtest6_error_blocks
+0,1860,1200,300,23,2151,1200,300,2151,58.47,46,516,0,179.15,204.76,+14.3,same,0,PASS,0,0,0,0,,,,,,,,,,,
+1,1860,1200,300,23,2151,1200,300,2151,60.41,51,516,0,179.34,204.60,+14.1,same,0,PASS,0,0,0,0,,,,,,,,,,,
+2,1911,1200,249,19,2151,1200,249,2138,59.36,43,516,0,179.24,204.76,+14.2,same,0,PASS,0,0,0,0,,,,,,,,,,,
+3,1911,1200,249,19,2151,1200,249,2151,59.82,49,516,0,179.26,204.62,+14.1,same,0,PASS,0,0,0,0,,,,,,,,,,,
+4,1885,1200,275,21,2151,1200,275,2138,36.24,36,114,2,179.47,204.6,+14.0,not run,0,FAIL,0,0,0,0,,,,,,,,,,,
+5,1911,,,,,,,,,,,,179.31,,,,,,0,0,0,0,,,,,,,,,,,
+6,1885,,,,,,,,,,,,179.15,,,,,,0,0,0,0,,,,,,,,,,,
+7,1911,,,,,,,,,,,,179.40,,,,,,0,0,0,0,,,,,,,,,,,
+8,1898,,,,,,,,,,,,179.21,,,,,,0,0,0,0,,,,,,,,,,,

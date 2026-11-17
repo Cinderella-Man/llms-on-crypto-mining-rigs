@@ -1,0 +1,3 @@
+card,shape,type,variant,gbs,err_over_tol,checks_run_before
+4,attn_q,iq4_xs,p_r2c1,108.5,549.358,54
+4,attn_output,q8_0,llama,106.3,727.012,114
