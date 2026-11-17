@@ -1,0 +1,13 @@
+piece 0: 225 rows, 18 on card 0, host_ms 28171.5 to 33242.0
+piece 1: 90 rows, 9 on card 0, host_ms 37577.4 to 66584.3
+piece 2: 1019 rows, 79 on card 0, host_ms 70778.7 to 81415.3, generation request 1
+piece 3: 999 rows, 77 on card 0, host_ms 85463.8 to 94113.9, generation request 2
+piece 4: 130 rows, 13 on card 0, host_ms 98609.0 to 137850.3
+piece 5: 914 rows, 71 on card 0, host_ms 141923.9 to 151506.4, generation request 3
+piece 6: 881 rows, 68 on card 0, host_ms 155548.7 to 163630.7, generation request 4
+piece 7: 170 rows, 17 on card 0, host_ms 168123.7 to 220691.9
+piece 8: 906 rows, 70 on card 0, host_ms 224938.1 to 234327.0, generation request 5
+piece 9: 883 rows, 68 on card 0, host_ms 238377.6 to 246333.1, generation request 6
+depth 4096: <RES>/gp-k1-d4096.csv
+depth 6144: <RES>/gp-k1-d6144.csv
+depth 8192: <RES>/gp-k1-d8192.csv
