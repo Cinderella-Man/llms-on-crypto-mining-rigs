@@ -1,0 +1,11 @@
+role	type	shape	tensors
+blk.N.ffn_gate_exps.weight	N2P	3072x1024x256	25
+blk.N.ffn_gate_exps.weight	N3P	3072x1024x256	24
+blk.N.ffn_gate_shexp.weight	Q5_0	3072x1024	49
+blk.N.ffn_up_exps.weight	N2P	3072x1024x256	25
+blk.N.ffn_up_exps.weight	N3P	3072x1024x256	24
+blk.N.ffn_up_shexp.weight	Q5_0	3072x1024	49
+
+layers whose gate and up share a type (the triple can fuse): routed, shared
+exps	gate N2P up N2P: 25, gate N3P up N3P: 24
+shexp	gate Q5_0 up Q5_0: 49
