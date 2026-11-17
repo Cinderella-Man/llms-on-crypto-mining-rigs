@@ -1,0 +1,108 @@
+{
+ "note": "replay of R194 (2026-11-17, rig 1) from its raw output by test/make_replay_fixtures.py; the stock round of the replay is simulated: its check times (mmvq 70 s, the full 516-check sweep; greedy 20 s) are those of the passing cards at the offsets",
+ "cards": 9,
+ "stock_peaks": [
+  1860,
+  1860,
+  1911,
+  1911,
+  1885,
+  1911,
+  1885,
+  1911,
+  1898
+ ],
+ "greedy_s": 20,
+ "mmvq_s": 70,
+ "points": [
+  {
+   "card": 0,
+   "mem": 1200,
+   "core": 300,
+   "peak": 2151,
+   "set_at": "2026-11-17 15:24:43",
+   "greedy": {
+    "line": "greedy {tag}: hash 200fe90f478c1933, 512 tokens, prompt tok/s 17.65 55.44, generation tok/s 28.47 30.30 | SAME as ref",
+    "s": 20,
+    "rc": 0
+   },
+   "mmvq": {
+    "csv": "r194/mmvq_card0.csv.gz",
+    "log": "r194/mmvq_card0.log.gz",
+    "rc": 0,
+    "s": 74.0
+   }
+  },
+  {
+   "card": 1,
+   "mem": 1200,
+   "core": 300,
+   "peak": 2151,
+   "set_at": "2026-11-17 15:26:18",
+   "greedy": {
+    "line": "greedy {tag}: hash 200fe90f478c1933, 512 tokens, prompt tok/s 55.78 60.13, generation tok/s 32.33 32.12 | SAME as ref",
+    "s": 20,
+    "rc": 0
+   },
+   "mmvq": {
+    "csv": "r194/mmvq_card1.csv.gz",
+    "log": "r194/mmvq_card1.log.gz",
+    "rc": 0,
+    "s": 71.0
+   }
+  },
+  {
+   "card": 2,
+   "mem": 1200,
+   "core": 249,
+   "peak": 2138,
+   "set_at": "2026-11-17 15:27:50",
+   "greedy": {
+    "line": "greedy {tag}: hash 200fe90f478c1933, 512 tokens, prompt tok/s 55.26 60.10, generation tok/s 32.27 32.19 | SAME as ref",
+    "s": 20,
+    "rc": 0
+   },
+   "mmvq": {
+    "csv": "r194/mmvq_card2.csv.gz",
+    "log": "r194/mmvq_card2.log.gz",
+    "rc": 0,
+    "s": 70.0
+   }
+  },
+  {
+   "card": 3,
+   "mem": 1200,
+   "core": 249,
+   "peak": 2151,
+   "set_at": "2026-11-17 15:29:21",
+   "greedy": {
+    "line": "greedy {tag}: hash 200fe90f478c1933, 512 tokens, prompt tok/s 54.45 60.15, generation tok/s 32.42 32.23 | SAME as ref",
+    "s": 20,
+    "rc": 0
+   },
+   "mmvq": {
+    "csv": "r194/mmvq_card3.csv.gz",
+    "log": "r194/mmvq_card3.log.gz",
+    "rc": 0,
+    "s": 71.0
+   }
+  },
+  {
+   "card": 4,
+   "mem": 1200,
+   "core": 275,
+   "peak": 2138,
+   "set_at": "2026-11-17 15:30:53",
+   "greedy": {
+    "not_recorded": true,
+    "s": 20
+   },
+   "mmvq": {
+    "log": "r194/mmvq_card4.log.gz",
+    "rc": null,
+    "s": null,
+    "note": "hung: killed by hand; its log is all it printed"
+   }
+  }
+ ]
+}

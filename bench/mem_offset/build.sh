@@ -52,8 +52,9 @@ docker run --rm ${DOCKER_ARGS:-} -e JOBS="${JOBS:-8}" -v "$work:/w" -w /w "$IMAG
     chown -R $(stat -c %u:%g /w) kit src
 '
 
-cp "$here/nvml_memoc.py" "$here/memoc_steps.sh" "$here/exact_check.sh" "$here/README.md" "$work/kit/"
-(cd "$work/kit" && md5sum bin/* *.py *.sh > MD5SUMS)
+cp "$here/nvml_memoc.py" "$here/memoc_steps.sh" "$here/exact_check.sh" "$here/README.md" "$here/climb.py" \
+    "$here/greedy_check.py" "$here/memoc_units.json" "$here/../../scripts/nvml_watchdog.py" "$work/kit/"
+(cd "$work/kit" && md5sum bin/* *.py *.sh *.json > MD5SUMS)
 name=mem_offset-kit-$(date +%Y%m%d)
 rm -rf "$work/$name" && cp -r "$work/kit" "$work/$name"
 tar czf "$work/$name.tar.gz" -C "$work" "$name"

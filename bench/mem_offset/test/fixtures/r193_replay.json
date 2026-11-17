@@ -1,0 +1,78 @@
+{
+ "note": "replay of R193 (2026-11-17, rig 1) from its raw output by test/make_replay_fixtures.py; the stock round of the replay is simulated: its check times (mmvq 70 s, the full 516-check sweep; greedy 20 s) are those of the passing cards at the offsets",
+ "cards": 9,
+ "stock_peaks": [
+  1860,
+  1860,
+  1911,
+  1911,
+  1885,
+  1911,
+  1885,
+  1911,
+  1898
+ ],
+ "greedy_s": 20,
+ "mmvq_s": 70,
+ "points": [
+  {
+   "card": 0,
+   "mem": 1200,
+   "core": 300,
+   "peak": 2151,
+   "set_at": "2026-11-17 14:47:28",
+   "greedy": {
+    "line": "greedy {tag}: hash 200fe90f478c1933, 512 tokens, prompt tok/s 55.66 60.48, generation tok/s 32.25 32.15 | SAME as ref",
+    "s": 20,
+    "rc": 0
+   },
+   "mmvq": {
+    "csv": "r193/mmvq_card0.csv.gz",
+    "log": "r193/mmvq_card0.log.gz",
+    "rc": 0,
+    "s": 71.0
+   }
+  },
+  {
+   "card": 1,
+   "mem": 1200,
+   "core": 300,
+   "peak": 2151,
+   "set_at": "2026-11-17 14:49:00",
+   "greedy": {
+    "line": "greedy {tag}: hash 200fe90f478c1933, 512 tokens, prompt tok/s 55.41 60.39, generation tok/s 32.29 32.35 | SAME as ref",
+    "s": 20,
+    "rc": 0
+   },
+   "mmvq": {
+    "csv": "r193/mmvq_card1.csv.gz",
+    "log": "r193/mmvq_card1.log.gz",
+    "rc": 0,
+    "s": 71.0
+   }
+  },
+  {
+   "card": 2,
+   "mem": 1200,
+   "core": 300,
+   "peak": 2202,
+   "set_at": "2026-11-17 14:50:32",
+   "greedy": {
+    "line": "greedy {tag}: request failed: Remote end closed connection without response",
+    "s": 20,
+    "rc": 3
+   },
+   "xid": [
+    {
+     "after_s": 36.0,
+     "line": "NVRM: Xid (PCI:0000:05:00): 31, pid=4603, name=mmvq_pascal, channel 0x00000018, intr 10000000. MMU Fault: ENGINE GRAPHICS GPC0 GPCCLIENT_T1_0 faulted @ 0x7a72_f0548000. Fault is of type FAULT_PDE ACCESS_TYPE_READ"
+    }
+   ],
+   "mmvq": {
+    "log": "r193/mmvq_card2.log.gz",
+    "rc": 1,
+    "s": 37.0
+   }
+  }
+ ]
+}

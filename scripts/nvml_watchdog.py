@@ -14,19 +14,32 @@ file. It keeps sampling afterwards; a condition that persists trips again, at mo
 The cards under test are --gpu (one card), or --gpus (a comma-separated list, or "all"). With --gpus the log gets two
 more columns per card under test at the end of each row, g<N>_mem_off and g<N>_gpc_off.
 
+With --per-card-xid (bench/mem_offset/climb.py uses it), an Xid line that names a card under test by its PCI address
+("NVRM: Xid (PCI:0000:05:00): 31, ...") trips that card only: its two offsets go to 0 and are read back, the processes
+listed in --card-pids DIR/<card>.pids and the process the line names (pid=N) are killed, and a line "CARD <card> TRIP"
+goes to --card-marker (not to --marker). The other cards keep their offsets and loads. Heat, power, a card that does
+not answer NVML, and an Xid line that names no card under test still trip every card.
+
+With --ledger FILE, every offset it sets back to 0 from a non-zero value is appended to FILE with a tag of the current
+boot (a hash of /proc/sys/kernel/random/boot_id), so that a later run can tell that an offset stepped down since the
+last boot (Q1563: a card stays slow after a step down until a reboot).
+
 While it runs it also holds every card open, so a power limit or an offset set by a short-lived process stays in
 place with persistence mode off. Stop it with SIGTERM or SIGINT, or by creating the --stop file.
 
   nvml_watchdog.py (--gpu 0 | --gpus all) --log wd.csv --marker TRIPPED [--temp-max 70] [--power-max 55] [--power-secs 5]
                    [--interval 0.5] [--xid-pattern 'NVRM: Xid'] [--kill mmvq_pascal,cuda_memtest,llama-server,...]
                    [--stop STOPFILE] [--duration SECONDS]
+                   [--per-card-xid --card-pids DIR --card-marker FILE] [--ledger FILE]
 
 Needs root (the kernel log and the offset calls). Exit status 0 on a clean stop, 2 on a usage or NVML error.
 """
 import argparse
 import ctypes
 import errno
+import hashlib
 import os
+import re
 import signal
 import sys
 import time
@@ -44,6 +57,40 @@ class ClockOffset(ctypes.Structure):  # nvmlClockOffset_v1_t
 
 
 CLOCK_OFFSET_V1 = ctypes.sizeof(ClockOffset) | (1 << 24)
+
+
+class PciInfo(ctypes.Structure):  # nvmlPciInfo_t
+    _fields_ = [("busIdLegacy", ctypes.c_char * 16), ("domain", ctypes.c_uint), ("bus", ctypes.c_uint),
+                ("device", ctypes.c_uint), ("pciDeviceId", ctypes.c_uint), ("pciSubSystemId", ctypes.c_uint),
+                ("busId", ctypes.c_char * 32)]
+
+
+PCI_RE = re.compile(r"\(PCI:([0-9a-fA-F]+):([0-9a-fA-F]{2}):([0-9a-fA-F]{2})(?:\.[0-7])?\)")
+
+
+def xid_card(line, bus_of):
+    """The card a kernel-log line names by PCI address, from {card: (domain, bus, device)}; None if it names none."""
+    m = PCI_RE.search(line)
+    if not m:
+        return None
+    key = tuple(int(v, 16) for v in m.groups())
+    for g, k in bus_of.items():
+        if k == key:
+            return g
+    return None
+
+
+def xid_pid(line):
+    m = re.search(r"\bpid=(\d+)", line)
+    return int(m.group(1)) if m else None
+
+
+def boot_tag():
+    try:
+        with open("/proc/sys/kernel/random/boot_id") as f:
+            return hashlib.sha256(f.read().strip().encode()).hexdigest()[:12]
+    except OSError:
+        return "unknown"
 
 
 class MemInfo(ctypes.Structure):  # nvmlMemory_t
@@ -80,6 +127,10 @@ class Nvml:
     def vf(self, h, dom):
         v = ctypes.c_int()
         return v.value if self.call(f"nvmlDeviceGet{dom}VfOffset", h, ctypes.byref(v)) == OK else None
+
+    def pci(self, h):
+        p = PciInfo()
+        return (p.domain, p.bus, p.device) if self.call("nvmlDeviceGetPciInfo_v3", h, ctypes.byref(p)) == OK else None
 
     def reset_offsets(self, h):
         """Both offsets to 0 through both APIs; returns the read-back (mem, gpc)."""
@@ -146,6 +197,42 @@ def kill_named(names):
     return victims
 
 
+def comm_of(pid):
+    with open(f"/proc/{pid}/comm") as f:
+        return f.read().strip()
+
+
+def kill_pids(pids):
+    """TERM, then KILL after 2 s to each pid still running the same program; returns [(pid, comm)] signalled."""
+    sent = []
+    for pid in sorted(set(pids)):
+        if pid == os.getpid():
+            continue
+        try:
+            comm = comm_of(pid)
+            os.kill(pid, signal.SIGTERM)
+            sent.append((pid, comm))
+        except OSError:
+            pass
+    if sent:
+        time.sleep(2)
+        for pid, comm in sent:
+            try:
+                if comm_of(pid) == comm:
+                    os.kill(pid, signal.SIGKILL)
+            except OSError:
+                pass
+    return sent
+
+
+def card_pids(directory, card):
+    try:
+        with open(os.path.join(directory, f"{card}.pids")) as f:
+            return [int(v) for v in f.read().split() if v.isdigit()]
+    except OSError:
+        return []
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--gpu", type=int, default=0, help="the card under test (NVML index, PCI bus order)")
@@ -160,6 +247,11 @@ def main():
     p.add_argument("--kill", default=DEFAULT_KILL, help="comma-separated process names (as in /proc/PID/comm)")
     p.add_argument("--stop", help="exit cleanly when this file exists")
     p.add_argument("--duration", type=float, default=0, help="exit after this many seconds (0: run until stopped)")
+    p.add_argument("--per-card-xid", action="store_true",
+                   help="an Xid line naming a card under test by PCI address trips that card only")
+    p.add_argument("--card-pids", help="folder of <card>.pids files: the processes a card trip kills")
+    p.add_argument("--card-marker", help="file that gets one line per card trip (default: the --marker file + .cards)")
+    p.add_argument("--ledger", help="append every offset set back to 0 from a non-zero value, tagged with the boot")
     a = p.parse_args()
     if os.geteuid() != 0:
         print("needs root", file=sys.stderr)
@@ -177,6 +269,9 @@ def main():
         print(f"cards under test {tested}: not all among the {len(handles)} cards", file=sys.stderr)
         return 2
     ht = handles[tested[0]]
+    bus_of = {i: nv.pci(handles[i]) for i in tested}
+    card_marker = a.card_marker or a.marker + ".cards"
+    boot = boot_tag()
     kmsg = Kmsg()
     stop = {"now": False}
     for s in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
@@ -200,8 +295,20 @@ def main():
         log.write(f"# {line}\n")
 
     event(f"watchdog start: pid {os.getpid()}, gpu {','.join(map(str, tested))}, {len(handles)} cards, temp-max {a.temp_max} C, "
-          f"power-max {a.power_max} W for {a.power_secs} s, xid pattern {a.xid_pattern!r}, interval {a.interval} s",
-          marker=False)
+          f"power-max {a.power_max} W for {a.power_secs} s, xid pattern {a.xid_pattern!r}, interval {a.interval} s"
+          + (", per-card xid" if a.per_card_xid else ""), marker=False)
+
+    def reset_card(i, why):
+        """Both offsets of card i to 0 and read back; a step down from a non-zero value goes to the ledger."""
+        before = (nv.vf(handles[i], "MemClk"), nv.vf(handles[i], "GpcClk"))
+        after = nv.reset_offsets(handles[i])
+        if a.ledger and any(before):
+            with open(a.ledger, "a") as f:
+                f.write(f"{boot} {time.strftime('%Y-%m-%d %H:%M:%S')} card {i} mem {before[0]}->{after[0]} "
+                        f"core {before[1]}->{after[1]} watchdog: {why}\n")
+        return after
+
+    last_card_trip = {}
     over_since = {i: None for i in tested}
     last_trip = 0.0
     trips = 0
@@ -236,18 +343,35 @@ def main():
                         reasons.append(f"gpu {i} above {a.power_max} W for {t0 - over_since[i]:.1f} s (now {w:.1f} W)")
                 else:
                     over_since[i] = None
+        card_trips = []
         for line in kmsg.new_lines():
             if a.xid_pattern in line:
-                reasons.append(f"kernel log: {line}")
+                g = xid_card(line, bus_of) if a.per_card_xid else None
+                if g is None:
+                    reasons.append(f"kernel log: {line}")
+                else:
+                    card_trips.append((g, line))
         mem_off, gpc_off = nv.vf(ht, "MemClk"), nv.vf(ht, "GpcClk")
         if a.gpus:
             for i in tested:
                 row += [nv.vf(handles[i], "MemClk"), nv.vf(handles[i], "GpcClk")]
         log.write(",".join(str(x) if x is not None else "" for x in [now(), trips, mem_off, gpc_off] + row) + "\n")
+        for g, line in card_trips:
+            if reasons or t0 - last_card_trip.get(g, 0.0) < 5:
+                continue  # a global trip below covers it; or this card tripped under 5 s ago
+            last_card_trip[g] = t0
+            m, c = reset_card(g, f"card trip: {line}")
+            killed = kill_pids(card_pids(a.card_pids, g) + ([xid_pid(line)] if xid_pid(line) else [])) \
+                if a.card_pids or xid_pid(line) else []
+            msg = (f"{now()} CARD {g} TRIP: kernel log: {line} | offsets now gpu {g} mem {m}, gpc {c} | "
+                   f"killed {', '.join(f'{cm}[{p}]' for p, cm in killed) or 'nothing'}")
+            with open(card_marker, "a") as f:
+                f.write(msg + "\n")
+            log.write(f"# {msg}\n")
         if reasons and t0 - last_trip >= 5:
             trips += 1
             last_trip = t0
-            back = [(i, nv.reset_offsets(handles[i])) for i in tested]
+            back = [(i, reset_card(i, "; ".join(reasons))) for i in tested]
             killed = kill_named(kill_names)
             offs = "; ".join(f"gpu {i} mem {m}, gpc {g}" for i, (m, g) in back)
             event(f"TRIP {trips}: {'; '.join(reasons)} | offsets now {offs} | "

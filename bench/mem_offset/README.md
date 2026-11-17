@@ -15,6 +15,151 @@ the protocol of the note's section 5.2:
 
 The offset goes back to 0 at the end, on any failure and on Ctrl-C. Nothing persists across a reboot or driver reload.
 
+For a whole rig, use `climb.py` (next section): it finds every card's memory and core offsets in one sitting.
+
+## Every card in one sitting: `climb.py`
+
+**In plain words.** Every card has its own limit. On one nine-card rig, card 2 crashed at a 2,202 MHz core peak, card 4
+gave wrong answers and then hung at memory +1,200 MT/s with a 2,138 MHz peak, and cards 0 to 3 passed both
+([R193](../../docs/data/2026-11-17_r193_nine_cards_soak/README.md),
+[R194](../../docs/data/2026-11-17_r194_nine_cards_soak/README.md)). A card whose offset goes down stays about 8 % slow
+until the next boot, so testing one card after another would cost a reboot for every failure. `climb.py` climbs all
+cards together: each step raises every card that is still climbing, checks every card, and a card that fails goes back
+to 0 and drops out while the others go on. At the end it writes a profile with each card's settings one step under the
+last step that card passed. After a reboot, `climb.py apply` sets the profile and checks every card once.
+
+### The rules it enforces
+
+- **Offsets only go up, and only after a fresh boot.** The climb and `apply` start only when every offset reads 0 and no
+  offset went down since the last boot. Every step down (a failure, a stop, the end of the climb) is written to a small
+  ledger, `/var/tmp/mem_offset_stepdowns.log`, tagged with the boot it happened in. `apply` also refuses to run on the
+  boot the climb ran on.
+- **A reboot after any step down.** A card whose memory offset went down ran about 8 % slower at stock until the next
+  boot ([Q1563](../../quants/experiments.md)). The climb ends by setting every card to 0, so the rig is rebooted
+  before `apply`.
+- **The watchdog always on** ([scripts/nvml_watchdog.py](../../scripts/nvml_watchdog.py)). The climb and `apply`
+  refuse to start without it and stop everything if it stops. Above 70 °C on any card, or above 80 W for 5 s, it sets
+  every offset of every card to 0 and kills every load. With `--per-card-xid`, which the kit uses, a driver error (Xid)
+  that names one card by its PCI address sets only that card to 0 and kills only that card's processes; an Xid that
+  names no card still stops everything. It also holds every card open, which keeps the offsets in place.
+
+### One step of the climb
+
+1. Every card still climbing gets its next offset, read back from a new process.
+2. Every card runs its checks at the same time:
+   - **the greedy check** on that card's own `llama-server`: two prompts, 256 tokens each, temperature 0, hashed with
+     every token's top-10 probabilities ([greedy_check.py](greedy_check.py)). It must equal the card's own stock hash.
+     This is the check that caught a memory error that `cuda_memtest` and all 516 kernel checks missed
+     ([Q1564](../../quants/experiments.md));
+   - then **a short `mmvq_pascal` run**: 31 kernel checks against a CPU reference and the streaming read (GB/s), at most
+     two cards at a time to spare the host's 4 GB.
+3. **Every check has a time limit:** 3 × the time the same check took on that card at stock, and at least 30 s. A check
+   past its limit fails its card. This catches a card that gives wrong answers and then hangs without any error, as
+   card 4 did in R194 ([Q1572](../../quants/experiments.md)).
+4. An Xid in the kernel log fails the card it names.
+5. A card that fails is set to 0 and read back first, then its checks and its server are stopped. It leaves the climb;
+   its last clean step is kept.
+
+### The order
+
+- **Stock round, twice:** every card's greedy hash (the second run must give the same hash, or the check is not
+  deterministic and the climb refuses), every check's time (the limits), and every card's stock peak core clock, read
+  from the watchdog's samples.
+- **Memory, with the core at 0:** +200, +400, +600, +800 MT/s, then +100 at a time up to +1,400. It stops at +1,400 or
+  when every card has failed.
+- **Core, for the cards that never failed:** each card's memory stays at its last clean step (lowering it would be a
+  step down). The core climbs by target peak clock: every card is aimed at the same peak, using its own stock peak
+  ([Q1570](../../quants/experiments.md)), two of the driver's ~12.66 MHz steps (25 MHz) at a time, up to a 2,250 MHz
+  peak. A card whose stock peak is above the target stays at 0 until the target passes it. `climb.py plan` prints
+  every step's offsets.
+- **End:** every card to 0, read back; the servers stopped; the profile.
+
+A card that failed in the memory climb gets no core value in this sitting (it was stepped down). With card 0 of rig 1
+failing at +1,400, many cards may fail there; `--mem-steps "200 400 600 800 900 1000 1100 1200"` stops the memory
+climb at +1,200 and leaves more cards for the core climb.
+
+**What stops everything** (every offset of every card to 0, read back; the servers stopped; the profile written as far
+as the climb got): the watchdog's trip or its absence, an Xid that names no climbing card, a check or a server that
+does not stop when killed, less than 300 MiB of host memory free, a reset that does not read back 0, a step down
+(a bug), `climb.py stop`, and Ctrl-C or SIGTERM.
+
+### The check model
+
+Each card serves its own copy of one GGUF that fits a 6 GB card with room to spare: about 2 to 4.5 GB, for example a
+7B model at Q4_0 (3.8 GB). Bigger covers more of the card's memory. The servers load one after another at stock
+(each card's weights go in before any offset), with a 1,024-token context. Host memory decides how many `mmvq_pascal`
+runs fit beside the nine servers: the climb reads it after the servers load, lowers `--mmvq-jobs` to fit, and refuses
+to start (before any offset) if not even one fits.
+
+### The profile
+
+`out/profile.json`, public-ready (no host names; the boot is a hash). Per card:
+
+| Field | What |
+|---|---|
+| `memory_mts`, `core_mhz` | the settings: one step under the card's last clean step (memory in MT/s, core in MHz as passed to NVML) |
+| `core_steps`, `expected_peak_mhz` | the core offset in the driver's steps, and the stock peak plus those steps |
+| `stock_peak_mhz` | the card's peak core clock at stock, measured |
+| `memory`, `core` | the last clean step, the step that failed (if any), whether the card took part in the core climb |
+| `failure` | the phase, offsets, reason and time of the card's failure |
+| `needs_reboot_before_use` | true for a card that failed in this sitting (it was set back to 0 then) |
+
+`out/steps.csv` has one row per card and step (offsets, expected and measured peak clock, each check's result, time and
+limit, Xid count, verdict and reason); `out/climb.log` is the plain log; `out/climb.json` the state, from which
+`climb.py profile` rewrites the profile.
+
+### Commands
+
+Run as root on the rig, with someone at the console (a hung card needs a reboot, and the reboot needs the disk
+passphrase). The kit's tarball has `bin/mmvq_pascal`; copy `climb.py`, `greedy_check.py`, `memoc_units.json` and
+`scripts/nvml_watchdog.py` next to it. `BIN` is the llama.cpp build's bin folder, `CHECK_MODEL` the check model. The
+kit and the work folder go under `/var/tmp`, which survives the reboot between the climb and `apply` (`/tmp` is
+usually emptied at boot).
+
+```bash
+cd /var/tmp/oc/mem_offset-kit-<date>
+export BIN=/path/to/llama.cpp/bin CHECK_MODEL=/path/to/check-model.gguf WORK=/var/tmp/climb
+python3 climb.py state                # read-only
+python3 climb.py start-check          # read-only: every offset 0, no step down this boot, 0 MiB, default power limit
+python3 climb.py plan                 # read-only: the steps (stock peaks of rig 1 until the climb measures its own)
+python3 climb.py trip-test            # the watchdog's four trips with stand-in processes, before any offset
+python3 climb.py watchdog start
+python3 climb.py climb                # detached; about 50 min for nine cards (est.)
+tail -f /var/tmp/climb/out/climb.log
+python3 climb.py stop                 # only to stop early: every offset to 0, the profile as far as it got
+cat /var/tmp/climb/CLIMB_DONE /var/tmp/climb/out/profile.json
+python3 climb.py watchdog stop
+# reboot at the console, then:
+python3 climb.py start-check && python3 climb.py watchdog start
+python3 climb.py apply /var/tmp/climb/out/profile.json   # detached; about 15 min (est.)
+cat /var/tmp/climb/APPLY_DONE                             # exit 0: the offsets are set; keep the watchdog running
+```
+
+### Dry run and tests (any Linux machine, no GPU)
+
+`--dry-run` prints every command a run would send and sets nothing: no root, no GPU, no NVML. It runs on a simulated
+rig with a simulated clock (nine cards with rig 1's stock peaks; a full climb takes a second). `--scenario FILE` makes
+simulated cards fail at chosen offsets.
+
+```bash
+python3 bench/mem_offset/climb.py --dry-run --check-model /models/check.gguf climb
+python3 -I bench/mem_offset/test/test_climb.py
+```
+
+[test/test_climb.py](test/test_climb.py) checks:
+- **R193 and R194 replayed** through the climb's own set, check and failure code, from their recorded benchmark output
+  ([test/fixtures/](test/fixtures/), built by [test/make_replay_fixtures.py](test/make_replay_fixtures.py) from the
+  runs' raw output). R193: cards 0 and 1 pass (516 checks, 204.70 and 204.80 GB/s); card 2 fails on its Xid 31, which
+  names it by PCI address, and is set to 0 while cards 0 and 1 keep their offsets. R194: cards 0 to 3 pass; card 4
+  fails on its two wrong kernel results and on the time limit, which ends its hang 210 s after it started (the recorded
+  hang was stopped by hand after 383 s).
+- **A full climb with the recorded failures** as simulated cards: card 0's memory at +1,400 (only the greedy check
+  sees it), card 2's core at a 2,202 MHz peak (an Xid), card 4's memory at +1,200 (wrong results, then a hang). Each
+  fails in the right phase for the right reason, the others reach the top of both climbs, no offset ever goes down
+  before a card's reset, and the profile holds one step under each last clean step.
+- the stops that end everything, `apply`'s refusals (the climb's boot, a step down this boot) and its reset on a
+  failure, and that `--dry-run` starts no process.
+
 ## What is in it
 
 | File | What it does |
@@ -24,6 +169,10 @@ The offset goes back to 0 at the end, on any failure and on Ctrl-C. Nothing pers
 | `exact_check.sh` | The exact output check on Flint: one-token llama-perplexity statistics and a greedy-decoding hash against stock. |
 | `build.sh` | Builds `mmvq_pascal` and `cuda_memtest` for compute capability 6.1 in Docker and packs the kit into a tarball with MD5 sums. |
 | `test/dryrun.sh` | Runs `memoc_steps.sh` against stub programs on any Linux machine (no GPU, no root) to check its control flow: a clean run, a failed exact check (step back), an Xid, an interrupt, and a memory test that cannot run. |
+| `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply` (section above). |
+| `greedy_check.py` | The greedy check: a running llama-server's output at temperature 0, hashed with every token's top-10 probabilities, against a reference. |
+| `memoc_units.json` | NVML's memory offset unit, measured on a P106-090 with driver 580.178.04 (MT/s); measure it again with `nvml_memoc.py units` on another driver. |
+| `test/test_climb.py`, `test/make_replay_fixtures.py`, `test/fixtures/` | The climb's tests, and the replays of R193 and R194 from their recorded output. |
 
 The tarball adds `bin/mmvq_pascal` ([bench/mmvq_pascal](../mmvq_pascal/README.md): streaming-read bandwidth, plus
 correctness checks and timing of the decode kernels) and `bin/cuda_memtest`
@@ -142,7 +291,7 @@ six cards. GPU0 holds the first layers of the six-card split, so its weights tak
 - **The kernel checks and `cuda_memtest` are not enough to pass a step.** On the card tested, +1,400 MT/s passed all of
   `mmvq_pascal`'s checks and a `cuda_memtest` pass, yet changed Flint's token probabilities (not its text). The
   sitting judged each step with a greedy run hashed with every token's top-10 probabilities
-  ([greedy_check.py](../../docs/data/2026-11-17_q133_q135_clock_offsets/run/greedy_check.py)); `memoc_steps.sh` does
-  not run it yet (Q1564).
+  ([greedy_check.py](greedy_check.py)); `climb.py` runs it on every card at every step, `memoc_steps.sh` does not
+  (Q1564).
 - **Step only upward.** After the offset went down from +800 to 0, that card ran slower at the lower memory clocks with
   every offset at 0 (Q1563).
