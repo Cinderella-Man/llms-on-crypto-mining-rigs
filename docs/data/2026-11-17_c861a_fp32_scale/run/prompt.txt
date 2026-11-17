@@ -1,0 +1,65 @@
+You are reviewing a pull request. Read the Python module below, find the bug that makes the retry loop give up too early, and explain the fix in a few sentences before writing the corrected function.
+
+```python
+import random
+import time
+from dataclasses import dataclass, field
+
+
+@dataclass
+class RetryPolicy:
+    attempts: int = 5
+    base_delay: float = 0.2
+    max_delay: float = 5.0
+    jitter: float = 0.1
+    retry_on: tuple = (TimeoutError, ConnectionError)
+    history: list = field(default_factory=list)
+
+    def delay(self, attempt: int) -> float:
+        """Exponential back-off with a cap and a little random jitter."""
+        d = min(self.max_delay, self.base_delay * (2 ** attempt))
+        return d + random.uniform(-self.jitter, self.jitter) * d
+
+    def record(self, attempt: int, error: Exception | None, waited: float) -> None:
+        self.history.append({"attempt": attempt, "error": repr(error), "waited": waited})
+
+
+class Client:
+    def __init__(self, transport, policy: RetryPolicy | None = None):
+        self.transport = transport
+        self.policy = policy or RetryPolicy()
+
+    def fetch(self, path: str, timeout: float = 2.0) -> bytes:
+        last_error = None
+        for attempt in range(1, self.policy.attempts):
+            try:
+                response = self.transport.get(path, timeout=timeout)
+                if response.status == 503:
+                    raise ConnectionError("service unavailable")
+                response.raise_for_status()
+                self.policy.record(attempt, None, 0.0)
+                return response.body
+            except self.policy.retry_on as error:
+                last_error = error
+                waited = self.policy.delay(attempt)
+                self.policy.record(attempt, error, waited)
+                time.sleep(waited)
+        raise RuntimeError(f"{path}: gave up after {self.policy.attempts} attempts") from last_error
+
+    def fetch_many(self, paths: list[str]) -> dict[str, bytes]:
+        results = {}
+        for path in paths:
+            try:
+                results[path] = self.fetch(path)
+            except RuntimeError:
+                results[path] = b""
+        return results
+
+
+def summarize(policy: RetryPolicy) -> str:
+    failures = [h for h in policy.history if h["error"] != "None"]
+    total_wait = sum(h["waited"] for h in policy.history)
+    return f"{len(policy.history)} calls, {len(failures)} failures, {total_wait:.2f} s waiting"
+```
+
+The tests that fail are `test_fetch_retries_five_times` and `test_first_delay_is_base_delay`. Explain both failures.

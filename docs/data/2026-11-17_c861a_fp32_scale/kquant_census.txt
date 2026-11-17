@@ -1,0 +1,72 @@
+## Flint Pascal Q8 GGUF (p065)
+type	tensors	bytes	share
+Q8_0	366	36947574784	91.40%
+Q5_0	120	3428040704	8.48%
+F16	47	49283072	0.12%
+F32	246	867456	0.00%
+k-quant role	type	shape	tensors
+
+## Flint Pascal Q5 GGUF (K2h-r16)
+type	tensors	bytes	share
+Q5_0	246	23668817920	80.55%
+Q8_0	240	5666373632	19.28%
+F16	47	49283072	0.17%
+F32	246	867456	0.00%
+k-quant role	type	shape	tensors
+
+## Ornith-1.5-122B Pascal N2P GGUF (valid1)
+type	tensors	bytes	share
+N2P	82	22183673856	46.04%
+N3P	65	21265121280	44.13%
+Q5_0	355	3719823360	7.72%
+Q8_0	27	853966848	1.77%
+F32	370	163137536	0.34%
+k-quant role	type	shape	tensors
+
+## UkisAI Swift-1.5 GSQ-RCO Q2_0 (Flash-Next v4 preset)
+type	tensors	bytes	share
+Q2_0	202	34047037440	51.17%
+IQ4_NL	8	28806589440	43.29%
+BF16	387	1349386240	2.03%
+Q3_K	91	772428800	1.16%
+Q5_K	16	520622080	0.78%
+IQ4_XS	56	437811200	0.66%
+F32	388	262213120	0.39%
+Q4_K	38	232243200	0.35%
+Q6_K	12	84403200	0.13%
+Q4_0	16	14745600	0.02%
+Q5_0	7	7884800	0.01%
+Q8_0	2	3481600	0.01%
+F16	1	81920	0.00%
+k-quant role	type	shape	tensors
+output.weight	Q5_K	2560x248320	1
+token_embd.weight	Q3_K	2560x248320	1
+blk.N.attn_gate.weight	Q4_K	2560x6144	3
+blk.N.ffn_up_shexp.weight	Q3_K	2560x640	21
+blk.N.ssm_out.weight	Q5_K	6144x2560	3
+blk.N.ssm_out.weight	Q4_K	6144x2560	11
+blk.N.attn_k.weight	Q3_K	2560x512	3
+blk.N.attn_output.weight	Q4_K	6144x2560	4
+blk.N.attn_v.weight	Q5_K	2560x512	3
+blk.N.attn_gate.weight	Q3_K	2560x6144	25
+blk.N.attn_qkv.weight	Q3_K	2560x10240	18
+blk.N.ffn_up_shexp.weight	Q6_K	2560x640	1
+blk.N.ffn_up_shexp.weight	Q4_K	2560x640	6
+blk.N.ssm_out.weight	Q3_K	6144x2560	3
+blk.N.attn_k.weight	Q4_K	2560x512	2
+blk.N.attn_v.weight	Q3_K	2560x512	1
+blk.N.attn_output.weight	Q6_K	6144x2560	4
+blk.N.attn_q.weight	Q3_K	2560x12288	6
+blk.N.ffn_gate_shexp.weight	Q3_K	2560x640	13
+blk.N.ffn_gate_shexp.weight	Q4_K	2560x640	6
+blk.N.attn_k.weight	Q5_K	2560x512	2
+blk.N.attn_output.weight	Q5_K	6144x2560	4
+blk.N.attn_v.weight	Q4_K	2560x512	2
+blk.N.ffn_up_shexp.weight	Q5_K	2560x640	2
+blk.N.attn_qkv.weight	Q4_K	2560x10240	4
+blk.N.ffn_gate_shexp.weight	Q6_K	2560x640	1
+blk.N.attn_v.weight	Q6_K	2560x512	3
+blk.N.ssm_out.weight	Q6_K	6144x2560	2
+blk.N.ffn_gate_shexp.weight	Q5_K	2560x640	1
+blk.N.attn_k.weight	Q6_K	2560x512	1
+
