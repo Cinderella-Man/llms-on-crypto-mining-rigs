@@ -67,10 +67,11 @@ card and give the same greedy replies as before that merge.
 **The v5 line** collects in `pascal-p106-v5`, cut at the v4.0 tag. Its first three switches
 (`GGML_CUDA_MMQ_KQ_FP32SCALE`, `GGML_CUDA_MMID_GLU_UNFUSE` and `GGML_CUDA_KEEPALIVE_EAGER=3`) are merged into it at
 `a112712e3`, each off by default. With all three unset, every kernel a P106 runs is v4.0's machine code
-([docs/data/2026-11-17_v5_merge_switches/](data/2026-11-17_v5_merge_switches/README.md)). The candidate
-`pascal-p106-v5-cand-b12410` adds upstream llama.cpp b12410 to the same switches; with all three unset its kernels
-are those of b12410 on v4.0 ([docs/data/2026-11-17_v5_cand_b12410/](data/2026-11-17_v5_cand_b12410/README.md)), and
-`pascal-p106-v5` moves to it once it passes its checks on a P106.
+([docs/data/2026-11-17_v5_merge_switches/](data/2026-11-17_v5_merge_switches/README.md)). Since 2026-11-17
+the line also holds upstream llama.cpp b12410 (`pascal-p106-v5` = `1f1110c67`, the candidate
+`pascal-p106-v5-cand-b12410`; [docs/data/2026-11-17_v5_cand_b12410/](data/2026-11-17_v5_cand_b12410/README.md)): with
+all three switches unset it runs every release file as v4.0 does on a P106, the same replies, memory and kernel
+launches ([docs/data/2026-11-17_v5_cand_p106_check/](data/2026-11-17_v5_cand_p106_check/README.md)).
 
 ## Which preset sets each switch
 

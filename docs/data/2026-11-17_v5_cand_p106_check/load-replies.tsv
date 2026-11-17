@@ -1,0 +1,17 @@
+model	load	prompt	tokens	md5	drafted	accepted	gen_tok_s_diag	start
+flashnext	cand	code	256	765e21aa9b2ce0bef1e70ee347741f18	242	174	27.92	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	cand	prose	256	8dbac6224928c4de85b178d687e55b08	278	162	26.17	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	ref	code	256	765e21aa9b2ce0bef1e70ee347741f18	242	174	27.69	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	ref	prose	256	8dbac6224928c4de85b178d687e55b08	278	162	26.2	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flintq5	cand	code	256	9963f082f73ae5c07bfde959cbc28c06			52.89	 The function should handle timezone-aware strings, and the 
+flintq5	cand	prose	256	7915fe00cb343f2bf4baea7b3a112ef7			41.56	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq5	ref	code	256	9963f082f73ae5c07bfde959cbc28c06			61.35	 The function should handle timezone-aware strings, and the 
+flintq5	ref	prose	256	7915fe00cb343f2bf4baea7b3a112ef7			51.97	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	cand	code	256	5bb2804ec9a96885ac9aad846d1e9c6d			53.38	 The function should handle timezone-aware strings, and the 
+flintq8	cand	prose	256	1586394daf8a9781a6c8b5fb683d9776			44.56	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	ref	code	256	5bb2804ec9a96885ac9aad846d1e9c6d			52.34	 The function should handle timezone-aware strings, and the 
+flintq8	ref	prose	256	1586394daf8a9781a6c8b5fb683d9776			38.79	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+ornith	cand	code	256	c3e5184716bcaebe327169ae3a60b939			16.25	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	cand	prose	256	47180e43fcade087a9652ff3d624c0d0			16.75	\n\n<think>\nA hash map handles collisions when two different k
+ornith	ref	code	256	c3e5184716bcaebe327169ae3a60b939			16.93	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	ref	prose	256	47180e43fcade087a9652ff3d624c0d0			17.74	\n\n<think>\nA hash map handles collisions when two different k
