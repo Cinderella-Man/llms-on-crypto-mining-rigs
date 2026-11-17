@@ -1,0 +1,30 @@
+== sync: the embedded copies
+ok    bench/agent_check/rig_server.sh embeds scripts/card_log.py unchanged
+ok    scripts/bench.sh embeds scripts/card_log.py unchanged
+ok    bench/deep_lane/remote.sh copies scripts/card_log.py to the rig
+== static: what card_log.py may call
+ok    no NVML function that sets anything
+ok    no PCI, UUID or serial query
+== fake: card_log.py on a stand-in for NVML, then card_table.py
+ok    duration: the stand-in run ends with status 0
+ok    duration: the stop line names why (after 1.2 s)
+ok    signal: the stand-in run ends with status 0
+ok    signal: the stop line names why (signal)
+ok    stopfile: the stand-in run ends with status 0
+ok    stopfile: the stop line names why (stop file)
+ok    parent: the stand-in run ends with status 0
+ok    parent: the stop line names why (parent [0-9]* is gone)
+ok    the header: epoch, time, took_ms and 8 fields for each of 2 cards
+ok    every row has 19 fields, none empty
+ok    a sample row as the stand-in gave it
+ok    --duration 1.2 at 0.05 s: 20 to 27 rows plus the header (25)
+ok    the start line: driver, cards, limits and offsets
+ok    the stop line: CPU seconds and sampling time
+ok    SIGTERM stops it within 0.3 s of the signal
+ok    every NVML call is a Get from the list
+ok    card_table.py reads the log
+ok    card_table.py: busy by utilization
+ok    card_table.py: card 1's slow stretch, 12 samples at 1,354 MHz
+ok    card_table.py: no stretch on card 0
+ok    card_table.py: card 1 has 12 busy samples below 1,800 MHz and power cap in every sample
+card_log_test: 26 passed, 0 failed

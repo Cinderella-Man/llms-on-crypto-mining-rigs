@@ -46,7 +46,10 @@
 #             OUT/stopped/<load>-<n>/, loads.tsv gets a line with timed "stopped", and the load runs again after the
 #             other loads (a stopped warm-up load is not run again). A second stop of the same load in one run ends
 #             the run. RETRY_STOPPED=0: every stop ends the run, its files left in OUT.
-#   MONITOR (1) per-card temperature, power, clock, memory and utilization every 10 s to OUT/gpu.csv
+#   MONITOR (1) the card log, scripts/card_log.py (card_log.py beside this script, else the repository's): every
+#             card's P-state, SM and memory clock, power, temperature, memory used, utilization and throttle
+#             reasons every CARD_LOG_S (0.5) s, read-only through NVML, one process for the whole run, to
+#             OUT/cards.csv (scripts/card_table.py summarises it); a log that does not come up is reported
 #   PORT (8097), LOAD_TIMEOUT_S (1800), DRY (0; 1 prints each arm's line and stops)
 # Prints "LOAD <name> done" per load ("LOAD <name> stopped by the RAM watchdog" for a stop), then DEEP_DONE (and writes
 # OUT/done), or DEEP_FAILED with the reason (OUT/failed).
@@ -288,7 +291,11 @@ stopped() {  # stopped SPEC: after a load failed. 1 when the RAM watchdog did no
 
 cleanup() {
   stop_server
-  [ -z "$MON" ] || kill "$MON" 2> /dev/null
+  if [ -n "$MON" ]; then  # the card log writes its stop line (samples, CPU seconds) as it ends
+    kill "$MON" 2> /dev/null
+    wait "$MON" 2> /dev/null
+    [ -s "$OUT/card_log.out" ] || rm -f "$OUT/card_log.out"
+  fi
   rm -f "$OUT/driver.pid"
 }
 trap cleanup EXIT
@@ -354,10 +361,24 @@ RUN=$LOADS
 [ "$pending" -gt 0 ] || RUN=${LOADS#warm:* }  # every timed load is done: no warm-up either, only the tables
 echo $$ > "$OUT/driver.pid"
 [ -s "$OUT/loads.tsv" ] || printf 'load\tarm\ttimed\tvalid\tdraft\tctx\tub\tcache\tn_predict\tstarted\tload_s\tmodel\tarm_env\tarm_args\tline\tbin\n' > "$OUT/loads.tsv"
-if [ "${MONITOR:-1}" = 1 ] && command -v nvidia-smi > /dev/null; then
-  nvidia-smi --query-gpu=timestamp,index,temperature.gpu,power.draw,clocks.sm,memory.used,utilization.gpu \
-    --format=csv,noheader -l 10 >> "$OUT/gpu.csv" 2>&1 < /dev/null &
-  MON=$!
+if [ "${MONITOR:-1}" = 1 ]; then  # the card log: every card every CARD_LOG_S s until this driver ends
+  card_log=''
+  for c in "$HERE/card_log.py" "$HERE/../../scripts/card_log.py"; do [ -r "$c" ] && { card_log=$c; break; }; done
+  if [ -z "$card_log" ]; then
+    say "card log: no card_log.py beside this script or in the repository's scripts/; the run goes on without it"
+  else
+    python3 -I "$card_log" --log "$OUT/cards.csv" --interval "${CARD_LOG_S:-0.5}" --parent $$ \
+      > "$OUT/card_log.out" 2>&1 < /dev/null &
+    MON=$!
+    n=0
+    until grep -qs '^[0-9]' "$OUT/cards.csv"; do
+      n=$((n + 1))
+      if ! kill -0 "$MON" 2> /dev/null; then say "card log: not running: $(tr '\n' ' ' < "$OUT/card_log.out")"; MON=''; break; fi
+      if [ "$n" -gt 20 ]; then say "card log: no sample after 10 s (it keeps trying; card_log.out)"; break; fi
+      sleep 0.5
+    done
+    [ -n "$MON" ] && grep -qs '^[0-9]' "$OUT/cards.csv" && say "card log: every card every ${CARD_LOG_S:-0.5} s to cards.csv"
+  fi
 fi
 
 run_load() {  # run_load SPEC: one load (name:arm); a load the RAM watchdog stopped is set aside by stopped

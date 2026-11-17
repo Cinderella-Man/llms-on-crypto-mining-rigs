@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Summarises an nvidia-smi sample log (smi.csv: timestamp, index, pstate, clocks.current.sm, clocks.current.memory,
 power.draw, temperature.gpu, utilization.gpu, memory.used, clocks_event_reasons.active) by phase, to see whether the
-cards run at a lower SM clock after a heavy prompt phase (Q117's order-effect question).
+cards run at a lower SM clock after a heavy prompt phase (Q117's order-effect question). bench.sh wrote smi.csv until
+2026-11-17; it now writes cards.csv (scripts/card_log.py), which scripts/card_table.py reads.
 
 Usage: smi_phases.py smi.csv [gpus]     gpus: comma list (default: every index with memory in use)
 

@@ -98,8 +98,8 @@ So for every Vulkan run:
 - choose the cards with `GGML_VK_VISIBLE_DEVICES`, which takes indices into that list
   (`ggml-vulkan.cpp:5290-5306`); [scripts/bench.sh](../scripts/bench.sh) sets it from `GPU_SETS`, like
   `CUDA_VISIBLE_DEVICES`;
-- check which physical cards ran in the `smi.csv` that `bench.sh` writes (utilisation and power per CUDA index), and
-  use the same cards for the CUDA run.
+- check which physical cards ran in the `cards.csv` that `bench.sh` writes (utilisation and power per card, in
+  `nvidia-smi`'s order), and use the same cards for the CUDA run.
 
 ## Which of Flint's operations run on Vulkan
 

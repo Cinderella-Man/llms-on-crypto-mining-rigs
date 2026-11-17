@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # remote.sh start|wait|status|collect|stop: deep_lane.sh on a rig over ssh, detached there, so the run does not depend
 # on this machine, which only runs ssh.
-#   start    copies this folder, the preset and scripts/ram_watchdog.sh to WORK on the rig, and the files of
-#            TEXT_LOCAL to WORK/text (they become the run's TEXT; a proxy.jsonl beside a .bodies.gz goes with it), writes
-#            the run's settings to WORK/run.env and starts deep_lane.sh there: its console in WORK/console.txt, its
-#            results in WORK/out
+#   start    copies this folder, the preset, scripts/ram_watchdog.sh and scripts/card_log.py to WORK on the rig, and
+#            the files of TEXT_LOCAL to WORK/text (they become the run's TEXT; a proxy.jsonl beside a .bodies.gz goes
+#            with it), writes the run's settings to WORK/run.env and starts deep_lane.sh there: its console in
+#            WORK/console.txt, its results in WORK/out (the card log in WORK/out/cards.csv)
 #   wait     one ssh call that returns when the run has ended (done, failed or stopped); nothing else runs on the rig
 #   status   the console's last lines and whether the run has ended; not while a timed load runs
 #   collect  WORK/out and the console to OUT here; once the run has ended WORK is removed on the rig (CLEAN=0 keeps it)
@@ -25,7 +25,7 @@ SSH=${SSH:-ssh}
 WORK=${WORK:-/tmp/deep-lane}
 PASS="BIN MODELS MODEL MODEL_DRAFT TEXT TAG TS CTX UB DRAFT DRAFT_FLAGS ARGS_DROP ARGS_SET ENV_DROP ENV_ADD RUNNER
 STOP_CMD ARMS REPS LOADS WARM WARM_DEPTHS DEPTHS N_PREDICT CACHE SAMPLER_PASS TAIL_IDS TAIL_RANK TAIL_TEXT IGNORE_EOS
-SEED PAUSE QUIET QUIET_MAX_MIB QUIET_WAIT_S WATCHDOG WD_ENV RETRY_STOPPED MONITOR PORT LOAD_TIMEOUT_S DRY"
+SEED PAUSE QUIET QUIET_MAX_MIB QUIET_WAIT_S WATCHDOG WD_ENV RETRY_STOPPED MONITOR CARD_LOG_S PORT LOAD_TIMEOUT_S DRY"
 rig() { $SSH "$RIG" "$@"; }
 ended="[ -e $WORK/out/done ] || [ -e $WORK/out/failed ] || ! kill -0 \$(cat $WORK/out/driver.pid 2> /dev/null) 2> /dev/null"
 
@@ -39,6 +39,8 @@ start)
   rig "cat > $WORK/deep_lane/settings.env" < "$PRESET"
   wd=$HERE/../../scripts/ram_watchdog.sh
   [ -r "$wd" ] && rig "cat > $WORK/deep_lane/ram_watchdog.sh" < "$wd"
+  cl=$HERE/../../scripts/card_log.py
+  [ -r "$cl" ] && rig "cat > $WORK/deep_lane/card_log.py" < "$cl"
   for f in ${TEXT_LOCAL:-}; do
     [ -r "$f" ] || { echo "no recorded text at $f"; exit 1; }
     rig "cat > $WORK/text/$(basename "$f")" < "$f"

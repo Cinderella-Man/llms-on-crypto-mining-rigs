@@ -579,7 +579,12 @@ checkpoints:
 - **Three machines** (any two can be the same):
   - the rig runs llama-server on its loopback only ([rig_server.sh](rig_server.sh), with its monitors and the RAM
     watchdog [scripts/ram_watchdog.sh](../../scripts/ram_watchdog.sh): MemAvailable minus CmaFree, memory pressure and
-    swap-out, `oom_score_adj` 1000, real-time priority; its TSV lands in the rig logs as `ram_watchdog-<arm>.tsv`);
+    swap-out, `oom_score_adj` 1000, real-time priority; its TSV lands in the rig logs as `ram_watchdog-<arm>.tsv`).
+    Its monitors write `vmstat.log`, `meminfo.log` (the host's free memory every 2 s) and `cards.csv`, the card log
+    ([scripts/card_log.py](../../scripts/card_log.py), embedded in rig_server.sh, read-only): every card's power state,
+    SM and memory clock, power, temperature, memory used, utilization and throttle reasons every 0.5 s through the
+    whole run. [scripts/card_table.py](../../scripts/card_table.py) gives one line per card from it and every stretch
+    in which a busy card ran below 1,800 MHz;
   - a client, any Linux machine with Docker, runs pi, the logging proxy and the tests, each in a container
     ([client_arm.sh](client_arm.sh)), labelled and at a low CPU share (`--cpu-shares 256`), so it can share a machine
     with other jobs;

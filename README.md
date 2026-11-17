@@ -184,6 +184,14 @@ The numbers above are at the cards' stock clocks. On this rig, keep `-ub 128` an
 background driver upgrade breaks CUDA until the next reboot. Clock offsets are measured in a later release.
 Details: [hardware tuning](docs/research/notes/hardware_tuning.md).
 
+The agent check, the deep lane and `scripts/bench.sh` record each card's clock, power, temperature, power state and the
+reasons the driver held its clock back, twice a second through the whole run, without changing anything
+([scripts/card_log.py](scripts/card_log.py)).
+[scripts/card_table.py](scripts/card_table.py) turns that record into one line per card (its clock while it worked,
+how often it worked below 1,800 MHz, its hottest and most power-hungry moment) and lists every stretch of 2 seconds
+or more in which a working card ran slow. So a run that was slower than it should be can be checked against what its
+cards were doing at that moment.
+
 ## The reference rig
 
 | | |

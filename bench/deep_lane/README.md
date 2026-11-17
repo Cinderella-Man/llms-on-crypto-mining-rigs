@@ -158,7 +158,8 @@ Every variable is listed at the top of [deep_lane.sh](deep_lane.sh).
 | `stopped/<load>-<n>/` | the files of a load the RAM watchdog stopped, its `n`-th stop: `server-<load>.log`, `ram_watchdog-<load>.tsv`, `requests-<load>.csv` and `<load>.jsonl` as far as the load got, `quiet_<load>.txt`, `fit_<load>.txt` |
 | `table.md`, `classes.tsv` | the tables below; the classes as a table |
 | `quiet_<load>.txt`, `fit_<load>.txt` | the quiet check before the load; memory per card and on the host after it |
-| `server-<load>.log`, `ram_watchdog-<load>.tsv`, `gpu.csv` | the server's log, the watchdog's samples, the cards every 10 s |
+| `server-<load>.log`, `ram_watchdog-<load>.tsv` | the server's log, the watchdog's samples |
+| `cards.csv` | the card log ([scripts/card_log.py](../../scripts/card_log.py), read-only): every card's power state, SM and memory clock, power, temperature, memory used, utilization and throttle reasons every 0.5 s from the driver's start to its end. `python3 -I scripts/card_table.py cards.csv` gives one line per card and every stretch in which a busy card ran below 1,800 MHz; `--since` and `--until` with two loads' `started` from `loads.tsv` give one load. A `card_log.out` beside it means the log did not start (its reason) |
 | `<load>.jsonl`, `prompts.json` | each request's whole `timings`, the first 160 characters of its reply and its token ids (`ids`; with `KEEP_REPLY=1` also the whole reply's text and each id's text, so that the first token where two replies differ can be read); the prompts' token ids |
 | `done` or `failed` | how the run ended |
 
