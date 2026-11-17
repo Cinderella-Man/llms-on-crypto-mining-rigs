@@ -1,0 +1,4 @@
+name	try	target	prompt_tokens	measured_tokens	depths	found	n_found	pass	in_reasoning	finish_reason	completion_tokens	prompt_s	prompt_tps	gen_tps	wall_s	sha256	first_line
+recall-8000	1	8000	8074	8074	8029,7992,7950,4009,993,286	pumpernickel,dundee,volvo,lighthouse,metropolis,hibiscus	6	1	pumpernickel,dundee,volvo,lighthouse,metropolis,hibiscus	stop	1621	24.5	329.71	30.24	78.4	a6ef78063d0824677f3a1f5be4a9046f42f9035343907da21bddcb6b29d3cd3b	- Has a cat named Pumpernickel
+recall-56460	1	56460	56437	56437	47998,32014,15987,4009,993,286		0	0		length	8192	275.6	204.81	27.51	576.4	4602df5b45c07c42b4923aa059a79f760c1d09d74ae4a038a1ff7bd1ba87e7a2	
+recall-56460	2	56460	56437	56437	47998,32014,15987,4009,993,286		0	0		length	8192	274.5	205.59	27.61	574.2	4602df5b45c07c42b4923aa059a79f760c1d09d74ae4a038a1ff7bd1ba87e7a2	

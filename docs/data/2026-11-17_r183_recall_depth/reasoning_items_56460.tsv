@@ -1,0 +1,386 @@
+item	line the reasoning lists	user message at that place in the prompt	same
+1	I listened to a podcast about travelling.	I listened to a podcast about travelling.	1
+2	I went for a walk in the park; the apple trees have finished flowering.	I went for a walk in the park; the apple trees have finished flowering.	1
+3	I listened to a podcast about travelling.	I listened to a podcast about travelling.	1
+4	I bought some new plants for the balcony.	I bought some new plants for the balcony.	1
+5	I am trying to go to bed earlier this week.	I am trying to go to bed earlier this week.	1
+6	Lots of small chores have piled up since Monday.	Lots of small chores have piled up since Monday.	1
+7	I am trying to go to bed earlier this week.	I am trying to go to bed earlier this week.	1
+8	I rearranged the furniture in the living room.	I rearranged the furniture in the living room.	1
+9	Lots of small chores have piled up since Monday.	Lots of small chores have piled up since Monday.	1
+10	I listened to a podcast about travelling.	I listened to a podcast about travelling.	1
+11	I went for a walk in the park; the apple trees have finished flowering.	I went for a walk in the park; the apple trees have finished flowering.	1
+12	I bought some new plants for the balcony.	I finally sorted out my old photos.	0
+13	I am trying to go to bed earlier this week.	I am trying to go to bed earlier this week.	1
+14	I am thinking of doing a big clean-up at the weekend.	How are you today? Anything new?	0
+15	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+16	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+17	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+18	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+19	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+20	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+21	I tried a new route to work and it was quicker.	I tried cooking a new dish and it came out quite well.	0
+22	I am trying to go to bed earlier this week.	Lots of small chores have piled up since Monday.	0
+23	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+24	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+25	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+26	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+27	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+28	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+29	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+30	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+31	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+32	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+33	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+34	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+35	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+36	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+37	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+38	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+39	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+40	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+41	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+42	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+43	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+44	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+45	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+46	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+47	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+48	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+49	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+50	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+51	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+52	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+53	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+54	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+55	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+56	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+57	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+58	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+59	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+60	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+61	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+62	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+63	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+64	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+65	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+66	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+67	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+68	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+69	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+70	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+71	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+72	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+73	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+74	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+75	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+76	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+77	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+78	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+79	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+80	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+81	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+82	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+83	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+84	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+85	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+86	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+87	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+88	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+89	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+90	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+91	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+92	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+93	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+94	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+95	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+96	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+97	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+98	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+99	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+100	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+101	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+102	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+103	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+104	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+105	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+106	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+107	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+108	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+109	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+110	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+111	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+112	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+113	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+114	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+115	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+116	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+117	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+118	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+119	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+120	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+121	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+122	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+123	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+124	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+125	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+126	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+127	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+128	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+129	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+130	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+131	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+132	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+133	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+134	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+135	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+136	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+137	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+138	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+139	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+140	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+141	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+142	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+143	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+144	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+145	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+146	I tried cooking a new dish and it came out quite well.	I finally sorted out my old photos.	0
+147	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+148	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+149	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+150	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+151	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+152	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+153	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+154	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+155	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+156	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+157	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+158	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+159	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+160	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+161	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+162	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+163	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+164	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+165	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+166	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+167	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+168	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+169	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+170	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+171	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+172	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+173	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+174	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+175	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+176	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+177	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+178	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+179	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+180	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+181	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+182	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+183	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+184	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+185	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+186	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+187	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+188	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+189	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+190	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+191	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+192	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+193	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+194	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+195	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+196	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+197	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+198	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+199	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+200	I tried cooking a new dish and it came out quite well.	I finally sorted out my old photos.	0
+201	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+202	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+203	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+204	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+205	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+206	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+207	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+208	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+209	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+210	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+211	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+212	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+213	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+214	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+215	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+216	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+217	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+218	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+219	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+220	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+221	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+222	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+223	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+224	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+225	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+226	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+227	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+228	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+229	I watched a series last night, an ordinary detective story.	By the way, I have a cat called Pumpernickel.	0
+230	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+231	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+232	I tried cooking a new dish and it came out quite well.	I finally sorted out my old photos.	0
+233	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+234	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+235	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+236	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+237	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+238	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+239	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+240	I tried cooking a new dish and it came out quite well.	I went for a walk in the park; the apple trees have finished flowering.	0
+241	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+242	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+243	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+244	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+245	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+246	I tried cooking a new dish and it came out quite well.	Lots of small chores have piled up since Monday.	0
+247	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+248	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+249	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+250	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+251	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+252	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+253	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+254	I tried cooking a new dish and it came out quite well.	I finally sorted out my old photos.	0
+255	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+256	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+257	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+258	I tried cooking a new dish and it came out quite well.	I finally sorted out my old photos.	0
+259	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+260	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+261	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+262	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+263	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+264	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+265	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+266	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+267	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+268	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+269	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+270	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+271	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+272	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+273	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+274	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+275	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+276	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+277	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+278	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+279	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+280	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+281	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+282	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+283	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+284	I tried cooking a new dish and it came out quite well.	I watched a series last night, an ordinary detective story.	0
+285	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+286	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+287	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+288	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+289	I watched a series last night, an ordinary detective story.	I am trying to go to bed earlier this week.	0
+290	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+291	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+292	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+293	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+294	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+295	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+296	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+297	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+298	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+299	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+300	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+301	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+302	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+303	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+304	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+305	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+306	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+307	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+308	I tried cooking a new dish and it came out quite well.	I tried cooking a new dish and it came out quite well.	1
+309	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+310	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+311	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+312	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+313	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+314	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+315	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+316	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+317	I watched a series last night, an ordinary detective story.	I went for a walk in the park; the apple trees have finished flowering.	0
+318	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+319	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+320	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+321	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+322	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+323	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+324	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+325	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+326	I tried cooking a new dish and it came out quite well.	I listened to a podcast about travelling.	0
+327	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+328	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+329	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+330	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+331	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+332	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+333	I watched a series last night, an ordinary detective story.	I am thinking of doing a big clean-up at the weekend.	0
+334	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+335	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+336	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+337	I watched a series last night, an ordinary detective story.	I watched a series last night, an ordinary detective story.	1
+338	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+339	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+340	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+341	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+342	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+343	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+344	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+345	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+346	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+347	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+348	I tried cooking a new dish and it came out quite well.	Tonight I plan to rest and do nothing at all.	0
+349	I watched a series last night, an ordinary detective story.	I rearranged the furniture in the living room.	0
+350	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+351	I watched a series last night, an ordinary detective story.	How are you today? Anything new?	0
+352	I tried cooking a new dish and it came out quite well.	My neighbour is learning to play the piano.	0
+353	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+354	I tried cooking a new dish and it came out quite well.	I am trying to go to bed earlier this week.	0
+355	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+356	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+357	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0
+358	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+359	I watched a series last night, an ordinary detective story.	I listened to a podcast about travelling.	0
+360	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+361	I watched a series last night, an ordinary detective story.	I finally sorted out my old photos.	0
+362	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+363	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+364	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+365	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+366	I tried cooking a new dish and it came out quite well.	How are you today? Anything new?	0
+367	I watched a series last night, an ordinary detective story.	Lots of small chores have piled up since Monday.	0
+368	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+369	I watched a series last night, an ordinary detective story.	My neighbour is learning to play the piano.	0
+370	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+371	I watched a series last night, an ordinary detective story.	I tried a new route to work and it was quicker.	0
+372	I tried cooking a new dish and it came out quite well.	I bought some new plants for the balcony.	0
+373	I watched a series last night, an ordinary detective story.	A friend recommended a new bookshop to me.	0
+374	I tried cooking a new dish and it came out quite well.	I rearranged the furniture in the living room.	0
+375	I watched a series last night, an ordinary detective story.	The weather keeps changing every hour.	0
+376	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+377	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+378	I tried cooking a new dish and it came out quite well.	The weather keeps changing every hour.	0
+379	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+380	I tried cooking a new dish and it came out quite well.	A friend recommended a new bookshop to me.	0
+381	I watched a series last night, an ordinary detective story.	I bought some new plants for the balcony.	0
+382	I tried cooking a new dish and it came out quite well.	I am thinking of doing a big clean-up at the weekend.	0
+383	I watched a series last night, an ordinary detective story.	Tonight I plan to rest and do nothing at all.	0
+384	I tried cooking a new dish and it came out quite well.	I tried a new route to work and it was quicker.	0
+385	I watched a series last night, an ordinary detective story.	I tried cooking a new dish and it came out quite well.	0

@@ -1,0 +1,118 @@
+# Recall at depth on Flash-Next with Miner Llama v4.0 (R183, Q1546; 2026-11-17)
+
+What this checked: whether Flash-Next on nine P106-090 cards still gives a right answer deep into a long prompt.
+Upstream llama.cpp issue [#32375](https://github.com/ggml-org/llama.cpp/issues/32375) (2026-11-16) reports a Tesla
+P100 (compute 6.0) that answers a 60,240-token recall prompt on a hybrid model with a short echo and none of six
+planted facts, with no error, while the same binary on the CPU lists all six; the same prompt family passes at 56,460
+tokens. A P106 is compute 6.1 and runs its own kernels, and no rig run of this project had checked an answer past
+49,152 tokens. This is Flash-Next's arm of registry row Q1546 in [quants/experiments.md](../../../quants/experiments.md);
+Ornith-1.5-122B's arm is still to run.
+
+The test is this project's own version of the issue's ([bench/recall_depth](../../../bench/recall_depth/README.md)):
+small talk in which the user states six facts about themselves, planted 48,000, 32,000, 16,000, 4,000, 1,000 and 300
+tokens from the end of the prompt, then asks for every fact as a list; greedy decoding; a prompt passes when the
+answer holds all six facts' marker words. One short control prompt (8,074 tokens) proves the harness. A prompt that
+misses facts is sent once more to see whether the miss repeats, and the run stops there.
+
+## Result
+
+**The check could not answer the question on Flash-Next: at 56,437 tokens the reply never reached an answer.** It
+spent all 8,192 reply tokens in its reasoning and ended at the cap (finish "length") with no answer text: 0 of 6
+facts. It did so twice, byte for byte the same reasoning (29,470 characters, md5
+`63f16f33c793652576a6527c9f296784` in both tries). The control prompt passed: 6 of 6 at 8,074 tokens.
+
+**This miss is not upstream's failure.** Upstream's P100 ignored the context: it echoed the last small-talk line and
+stopped after 17 tokens. Here the model read the start of the prompt correctly. Asked for every fact, it began its
+reasoning by listing the conversation's user messages in order, one per line, and its first 11 lines are exactly the
+prompt's first 11 user messages, the oldest text in the prompt, about 56,000 tokens back
+([reasoning_items_56460.tsv](reasoning_items_56460.tsv)). From line 12 the list no longer follows the prompt: lines 12
+to 22 are six small-talk lines in an order the prompt does not have, two of them already alternating from line 15.
+From line 23 it alternates between those two lines ("I watched a series last night, an ordinary detective story." and
+"I tried cooking a new dish and it came out quite well.") until line 385, where the cap ended the reply. The prompt holds 1,535 user messages; the first fact is user message 229, which the list never
+reached. Greedy decoding has no randomness to leave such a loop.
+
+So the run neither shows the upstream fault on a P106 nor rules it out at 56,437 tokens. The 60,240-token prompt, the
+length that fails upstream, was not sent: the run stops after a repeated miss. The 85,000-token prompt does not fit
+the v4 preset's 65,536-token context and was not built.
+
+| Prompt | Try | Tokens (server) | Fact depths, tokens from the end | Found | Finish | Reply tokens | Prompt s | Prompt tok/s | Reply tok/s | The reply |
+|---|---:|---:|---|---:|---|---:|---:|---:|---:|---|
+| control, `recall-8000` | 1 | 8,074 | 8,029, 7,992, 7,950, 4,009, 993, 286 | **6/6** | stop | 1,621 | 24.5 | 329.71 | 30.24 | a list of 22 lines, the first "- Has a cat named Pumpernickel": all six facts and the small talk |
+| `recall-56460` | 1 | 56,437 | 47,998, 32,014, 15,987, 4,009, 993, 286 | **0/6** | length | 8,192 | 275.6 | 204.81 | 27.51 | no answer: reasoning only, a two-line loop from its 23rd item |
+| `recall-56460` | 2 | 56,437 | 47,998, 32,014, 15,987, 4,009, 993, 286 | **0/6** | length | 8,192 | 274.5 | 205.59 | 27.61 | the same reasoning, byte for byte |
+
+- Each fact by value: [table.md](table.md) (the tool's own table, one column a fact), and every request's numbers in
+  [results.tsv](results.tsv) (the facts found in the answer and in the reasoning, the prompt's SHA-256 as rendered by
+  the server's chat template).
+- Fact depths are measured on each final prompt by the server's tokenizer, from the fact's first token to the end.
+  In the control the three deepest facts sit at its start, as a fact deeper than the prompt does.
+- The speeds are one request each, full prompts read from an empty cache (`cache_prompt: false`): diagnostics, not
+  results. The reply speed of the 56,437-token prompt is that of a loop the draft predicts well (draft acceptance
+  6,128 of 6,186 and 6,129 of 6,184 tokens).
+- The server's own count of each prompt equals the client's measurement (8,074 and 56,437 tokens).
+
+### What would answer the question
+
+These are new rows for the queue, not run here:
+- the same prompts with the reasoning off, or with a question that does not invite a listing of every message, so
+  that a greedy reply cannot loop in a list before it answers;
+- the same check with the makers' sampling (temperature 1.0, top-p 0.95, top-k 20) at several seeds, as an agent runs
+  the model;
+- the 60,240-token prompt, the length that fails upstream;
+- the v4 preset's own file, UkisAI's Swift-1.5 GSQ-RCO Q2_0 (this run used the Pascal mix of it, below);
+- the same prompt on another device (a CPU reference or a newer card), to see whether the loop is the model's under
+  greedy decoding or the cards'.
+
+## The run
+
+| | |
+|---|---|
+| Rig | one rig, nine P106-090 cards; idle before the load (no llama process, 0 MiB on every card) and after the stop |
+| Build | Miner Llama v4.0: the tag `miner-llama-v4.0` (`eb82916d3`); the rig tree is C828's (`eb312b7bc`, `pascal-p106-v4-b12360-c828`, the tag commit's second parent, the same tree); `llama-server` md5 `e7afd26db01f4c671549ef12c504ada3`, checked on the rig before the load |
+| Model | Swift Qwen3.8-Flash-Next Pascal Q2 GGUF (`pmix-q2-fast`): my Pascal type mix of UkisAI's Swift-1.5 GSQ-RCO Q2_0, shard 1 md5 `dcbe9ae703ec77ddf0e1329852b7d7b9` (10,999,371,360 bytes), shard 2 `ab9aeccd468d88272defa43009f207bd` (26,755,194,496), shard 3 the n-gram table `98ce140e641bc5d68af9f31df0f1c048` (28,800,138,432); all checked on the rig before the load. The v4 preset's own file is UkisAI's unmixed Q2_0; the mix changes the dense and shared-expert tensor types only ([release/flash-next-v3](../../../release/flash-next-v3/README.md)) |
+| Draft | the MTP draft `mtp-Qwen3.8-Flash-Next-draft.gguf`, sha256 `008183784ac5aa2cdcd3d7777e4e6febb0645ae4b8d1da1c065b2149c1d6391b`, checked |
+| Settings | [release/flash-next-v4/settings.env](../../../release/flash-next-v4/settings.env) unchanged (md5 `dfc25d073a85961ee17746f7963f6564` on both ends): its `PRESET_ENV` and `PRESET_ARGS`, `-c 65536 -np 1`, `-lm dio`, the draft by `-md`, `--host 127.0.0.1 --port 8080`; the RAM watchdog on the server ([scripts/ram_watchdog.sh](../../../scripts/ram_watchdog.sh)) |
+| Requests | `/v1/chat/completions`, not streamed: `temperature` 0, `top_k` 1, `top_p` 1, `min_p` 0, `seed` 1546, `cache_prompt` false, `max_tokens` 8,192 (the room left in the context was larger for both prompts). The model's chat template adds its default system block ("Reasoning effort is set to xhigh"); the server splits the reasoning from the answer (`--reasoning-format deepseek`) |
+| Prompts | `recall_depth.py`, seed 1546: the control (target 8,000), then target 56,460; 60,240 was next and not sent |
+| Times | server started 09:22:10, answering at 09:26:02 (the model loaded after 225 s); the control 09:27:57–09:29:15; the 56,437-token prompt 09:29:15–09:38:59 and 09:38:59–09:48:33; the server stopped 09:48:51 |
+| Host memory | the lowest MemAvailable over the load, 365 MiB (the watchdog's table; no kill) |
+| Client | `recall_depth.py` on another machine on the same network, through an ssh tunnel to the server's loopback port |
+
+A first start of the client was stopped during the control's request and its files discarded: its prompts put every
+fact about 43 tokens nearer the end than planned (255 tokens for 300, 957 for 1,000), because the model's template
+puts its system block at the start of every prompt and the first version counted it at the end. The tool was fixed
+(`costs()` measures the question from its text to the end) and the whole run started again; every number here is
+from that second start.
+
+## Files
+
+| File | What it is |
+|---|---|
+| [table.md](table.md) | `recall_depth.py table`: one row a request, each fact found or not by value |
+| [results.tsv](results.tsv) | the client's table: one row a request (prompt length as counted by the server and by the client, fact depths, facts found in the answer and in the reasoning, finish, reply tokens, prompt and reply speed, wall time, the prompt's SHA-256, the answer's first line) |
+| [reasoning_items_56460.tsv](reasoning_items_56460.tsv) | the 56,437-token reply's reasoning as its 385 listed lines, each beside the user message at that place in the prompt, and whether they are the same |
+| [run/r183.sh](run/r183.sh) | the run's steps: `load` (copy, start, wait), `run` (the client), `end` (stop, collect, clean up) |
+
+The tool: [bench/recall_depth](../../../bench/recall_depth/README.md) (`recall_depth.py`, `serve.sh`, `remote.sh`).
+
+## Commands
+
+```bash
+export RIG=rig BIN=<v4.0's bin folder on the rig> \
+  MODEL=<folder>/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-pmix-fast-00001-of-00003.gguf \
+  DRAFT=<folder>/mtp-Qwen3.8-Flash-Next-draft.gguf OUT=<results here>
+bash docs/data/2026-11-17_r183_recall_depth/run/r183.sh load
+ssh -N -L 18080:127.0.0.1:8080 "$RIG" &
+bash docs/data/2026-11-17_r183_recall_depth/run/r183.sh run      # TARGETS="8000 56460 60240"; stopped after 56460
+bash docs/data/2026-11-17_r183_recall_depth/run/r183.sh end
+OUT=$OUT/client python3 bench/recall_depth/recall_depth.py table > table.md
+```
+
+The same seed and model give the same prompts: `URL=<server> python3 bench/recall_depth/recall_depth.py show 56460`
+prints the 56,437-token prompt and its SHA-256 (`4602df5b45c07c42…` here, in [results.tsv](results.tsv)).
+
+## Provenance and licence
+
+The prompts' text (small talk, facts, question) is this project's own, written for the tool. The model's replies are
+summarized; the raw replies, the server's log and the watchdog's table are not published. Upstream's issue was read
+only; nothing of its code was run.
