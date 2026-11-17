@@ -1,0 +1,18 @@
+2026-11-17T14:26:08+01:00
+GGUF v3, 899 tensors, 46 keys; token_embd.weight: type Q8_0 (8), dims [3072, 248320]
+row 248077 (token '[PAD248077]'): 3264 bytes at 1345187168, 3049 of them not zero
+  3072 values: 3072 are exactly zero; largest magnitude 0
+  first 16: 0 0 -0 -0 0 0 -0 -0 0 0 -0 -0 0 0 -0 -0
+  96 block scales: 96 are zero; first 8: 0 0 0 0 0 0 0 0
+row 248076 (token '<|audio_pad|>'): 3264 bytes at 1345183904, 3161 of them not zero
+  3072 values: 7 are exactly zero; largest magnitude 0.000249803
+  first 16: -4.959e-05 -2.766e-05 -3.767e-05 -5.341e-05 -2.956e-05 3.052e-05 5.293e-05 -4.673e-05 -4.244e-05 4.578e-05 -4.53e-05 4.244e-05 5.102e-05 -4.148e-05 5.293e-05 -3.958e-05
+  96 block scales: 0 are zero; first 8: 4.768e-07 1.252e-06 8.345e-07 1.788e-06 1.609e-06 1.55e-06 7.153e-07 1.013e-06
+row 248078 (token '[PAD248078]'): 3264 bytes at 1345190432, 3052 of them not zero
+  3072 values: 3072 are exactly zero; largest magnitude 0
+  first 16: -0 -0 -0 -0 0 -0 0 0 -0 -0 0 -0 -0 -0 0 -0
+  96 block scales: 96 are zero; first 8: 0 0 0 0 0 0 0 0
+row 1000 (token 'Ġwould'): 3264 bytes at 538727840, 3234 of them not zero
+  3072 values: 29 are exactly zero; largest magnitude 0.0703082
+  first 16: -0.06256 -0.008304 0.03266 -0.01661 -0.01439 0.001661 0.04097 0.001107 -0.01772 0.009965 -0.007197 -0.031 0.02989 -0.01993 0.009411 -0.07031
+  96 block scales: 0 are zero; first 8: 0.0005536 0.0003865 0.0003767 0.0002904 0.0004921 0.0003171 0.0003786 0.0002596

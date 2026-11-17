@@ -1,0 +1,361 @@
+load	request	trace	cards	passes	where	ms_per_pass
+w1g1	d0p1	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g1	d0p1	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g1	d0p1	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g1	d0p1	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.136
+w1g1	d0p1	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g1	d0p1	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d0p1	verify-r1	cards 0 to 7	251	routed experts	16.096
+w1g1	d0p1	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.853
+w1g1	d0p1	verify-r1	cards 0 to 7	251	everything else	21.497
+w1g1	d0p1	verify-r1	card 8	251	the head's product	3.013
+w1g1	d0p1	verify-r1	card 8	251	the sampling chain after the product	0.211
+w1g1	d0p1	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g1	d0p1	verify-r1	card 8	251	GATED_DELTA_NET	0.322
+w1g1	d0p1	verify-r1	card 8	251	GDN_CONV	0.000
+w1g1	d0p1	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d0p1	verify-r1	card 8	251	routed experts	1.386
+w1g1	d0p1	verify-r1	card 8	251	shared expert, router, hyper-connections	0.354
+w1g1	d0p1	verify-r1	card 8	251	everything else	1.969
+w1g1	d0p2	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g1	d0p2	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g1	d0p2	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g1	d0p2	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.145
+w1g1	d0p2	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g1	d0p2	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d0p2	verify-r1	cards 0 to 7	251	routed experts	16.108
+w1g1	d0p2	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.860
+w1g1	d0p2	verify-r1	cards 0 to 7	251	everything else	21.489
+w1g1	d0p2	verify-r1	card 8	251	the head's product	3.014
+w1g1	d0p2	verify-r1	card 8	251	the sampling chain after the product	0.211
+w1g1	d0p2	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g1	d0p2	verify-r1	card 8	251	GATED_DELTA_NET	0.326
+w1g1	d0p2	verify-r1	card 8	251	GDN_CONV	0.000
+w1g1	d0p2	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d0p2	verify-r1	card 8	251	routed experts	1.387
+w1g1	d0p2	verify-r1	card 8	251	shared expert, router, hyper-connections	0.354
+w1g1	d0p2	verify-r1	card 8	251	everything else	1.962
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.189
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	routed experts	16.158
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.851
+w1g1	d8192p1	verify-r1	cards 0 to 7	251	everything else	30.728
+w1g1	d8192p1	verify-r1	card 8	251	the head's product	3.014
+w1g1	d8192p1	verify-r1	card 8	251	the sampling chain after the product	0.214
+w1g1	d8192p1	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g1	d8192p1	verify-r1	card 8	251	GATED_DELTA_NET	0.298
+w1g1	d8192p1	verify-r1	card 8	251	GDN_CONV	0.000
+w1g1	d8192p1	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d8192p1	verify-r1	card 8	251	routed experts	1.377
+w1g1	d8192p1	verify-r1	card 8	251	shared expert, router, hyper-connections	0.348
+w1g1	d8192p1	verify-r1	card 8	251	everything else	2.883
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.200
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	routed experts	16.146
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.869
+w1g1	d8192p2	verify-r1	cards 0 to 7	251	everything else	30.722
+w1g1	d8192p2	verify-r1	card 8	251	the head's product	3.014
+w1g1	d8192p2	verify-r1	card 8	251	the sampling chain after the product	0.214
+w1g1	d8192p2	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g1	d8192p2	verify-r1	card 8	251	GATED_DELTA_NET	0.295
+w1g1	d8192p2	verify-r1	card 8	251	GDN_CONV	0.000
+w1g1	d8192p2	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g1	d8192p2	verify-r1	card 8	251	routed experts	1.378
+w1g1	d8192p2	verify-r1	card 8	251	shared expert, router, hyper-connections	0.347
+w1g1	d8192p2	verify-r1	card 8	251	everything else	2.886
+w1g2	d0p1	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g2	d0p1	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g2	d0p1	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g2	d0p1	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.145
+w1g2	d0p1	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g2	d0p1	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d0p1	verify-r1	cards 0 to 7	251	routed experts	16.076
+w1g2	d0p1	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.867
+w1g2	d0p1	verify-r1	cards 0 to 7	251	everything else	21.480
+w1g2	d0p1	verify-r1	card 8	251	the head's product	3.013
+w1g2	d0p1	verify-r1	card 8	251	the sampling chain after the product	0.211
+w1g2	d0p1	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g2	d0p1	verify-r1	card 8	251	GATED_DELTA_NET	0.299
+w1g2	d0p1	verify-r1	card 8	251	GDN_CONV	0.000
+w1g2	d0p1	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d0p1	verify-r1	card 8	251	routed experts	1.382
+w1g2	d0p1	verify-r1	card 8	251	shared expert, router, hyper-connections	0.352
+w1g2	d0p1	verify-r1	card 8	251	everything else	2.027
+w1g2	d0p2	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g2	d0p2	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g2	d0p2	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g2	d0p2	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.155
+w1g2	d0p2	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g2	d0p2	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d0p2	verify-r1	cards 0 to 7	251	routed experts	16.083
+w1g2	d0p2	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.872
+w1g2	d0p2	verify-r1	cards 0 to 7	251	everything else	21.469
+w1g2	d0p2	verify-r1	card 8	251	the head's product	3.014
+w1g2	d0p2	verify-r1	card 8	251	the sampling chain after the product	0.211
+w1g2	d0p2	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g2	d0p2	verify-r1	card 8	251	GATED_DELTA_NET	0.306
+w1g2	d0p2	verify-r1	card 8	251	GDN_CONV	0.000
+w1g2	d0p2	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d0p2	verify-r1	card 8	251	routed experts	1.381
+w1g2	d0p2	verify-r1	card 8	251	shared expert, router, hyper-connections	0.357
+w1g2	d0p2	verify-r1	card 8	251	everything else	2.018
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.196
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	routed experts	16.136
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.898
+w1g2	d8192p1	verify-r1	cards 0 to 7	251	everything else	30.723
+w1g2	d8192p1	verify-r1	card 8	251	the head's product	3.014
+w1g2	d8192p1	verify-r1	card 8	251	the sampling chain after the product	0.214
+w1g2	d8192p1	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g2	d8192p1	verify-r1	card 8	251	GATED_DELTA_NET	0.307
+w1g2	d8192p1	verify-r1	card 8	251	GDN_CONV	0.000
+w1g2	d8192p1	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d8192p1	verify-r1	card 8	251	routed experts	1.386
+w1g2	d8192p1	verify-r1	card 8	251	shared expert, router, hyper-connections	0.355
+w1g2	d8192p1	verify-r1	card 8	251	everything else	2.853
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	the head's product	0.000
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	the sampling chain after the product	0.000
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	the output's hyper-connection products	0.000
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	GATED_DELTA_NET	3.184
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	GDN_CONV	0.000
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	routed experts	16.142
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	shared expert, router, hyper-connections	3.902
+w1g2	d8192p2	verify-r1	cards 0 to 7	251	everything else	30.766
+w1g2	d8192p2	verify-r1	card 8	251	the head's product	3.017
+w1g2	d8192p2	verify-r1	card 8	251	the sampling chain after the product	0.215
+w1g2	d8192p2	verify-r1	card 8	251	the output's hyper-connection products	0.000
+w1g2	d8192p2	verify-r1	card 8	251	GATED_DELTA_NET	0.306
+w1g2	d8192p2	verify-r1	card 8	251	GDN_CONV	0.000
+w1g2	d8192p2	verify-r1	card 8	251	copies of the PLE conv history (cache_ple_r)	0.000
+w1g2	d8192p2	verify-r1	card 8	251	routed experts	1.385
+w1g2	d8192p2	verify-r1	card 8	251	shared expert, router, hyper-connections	0.357
+w1g2	d8192p2	verify-r1	card 8	251	everything else	2.856
+w2g1	d0p1	verify-r1	cards 0 to 7	131	the head's product	0.000
+w2g1	d0p1	verify-r1	cards 0 to 7	131	the sampling chain after the product	0.000
+w2g1	d0p1	verify-r1	cards 0 to 7	131	the output's hyper-connection products	0.000
+w2g1	d0p1	verify-r1	cards 0 to 7	131	GATED_DELTA_NET	5.882
+w2g1	d0p1	verify-r1	cards 0 to 7	131	GDN_CONV	0.000
+w2g1	d0p1	verify-r1	cards 0 to 7	131	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d0p1	verify-r1	cards 0 to 7	131	routed experts	28.661
+w2g1	d0p1	verify-r1	cards 0 to 7	131	shared expert, router, hyper-connections	6.226
+w2g1	d0p1	verify-r1	cards 0 to 7	131	everything else	43.663
+w2g1	d0p1	verify-r1	card 8	131	the head's product	5.541
+w2g1	d0p1	verify-r1	card 8	131	the sampling chain after the product	0.394
+w2g1	d0p1	verify-r1	card 8	131	the output's hyper-connection products	0.000
+w2g1	d0p1	verify-r1	card 8	131	GATED_DELTA_NET	0.344
+w2g1	d0p1	verify-r1	card 8	131	GDN_CONV	0.000
+w2g1	d0p1	verify-r1	card 8	131	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d0p1	verify-r1	card 8	131	routed experts	1.749
+w2g1	d0p1	verify-r1	card 8	131	shared expert, router, hyper-connections	0.426
+w2g1	d0p1	verify-r1	card 8	131	everything else	2.974
+w2g1	d0p2	verify-r1	cards 0 to 7	131	the head's product	0.000
+w2g1	d0p2	verify-r1	cards 0 to 7	131	the sampling chain after the product	0.000
+w2g1	d0p2	verify-r1	cards 0 to 7	131	the output's hyper-connection products	0.000
+w2g1	d0p2	verify-r1	cards 0 to 7	131	GATED_DELTA_NET	5.887
+w2g1	d0p2	verify-r1	cards 0 to 7	131	GDN_CONV	0.000
+w2g1	d0p2	verify-r1	cards 0 to 7	131	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d0p2	verify-r1	cards 0 to 7	131	routed experts	28.684
+w2g1	d0p2	verify-r1	cards 0 to 7	131	shared expert, router, hyper-connections	6.217
+w2g1	d0p2	verify-r1	cards 0 to 7	131	everything else	43.705
+w2g1	d0p2	verify-r1	card 8	131	the head's product	5.549
+w2g1	d0p2	verify-r1	card 8	131	the sampling chain after the product	0.396
+w2g1	d0p2	verify-r1	card 8	131	the output's hyper-connection products	0.000
+w2g1	d0p2	verify-r1	card 8	131	GATED_DELTA_NET	0.344
+w2g1	d0p2	verify-r1	card 8	131	GDN_CONV	0.000
+w2g1	d0p2	verify-r1	card 8	131	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d0p2	verify-r1	card 8	131	routed experts	1.751
+w2g1	d0p2	verify-r1	card 8	131	shared expert, router, hyper-connections	0.427
+w2g1	d0p2	verify-r1	card 8	131	everything else	2.977
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	the head's product	0.000
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	the sampling chain after the product	0.000
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	the output's hyper-connection products	0.000
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	GATED_DELTA_NET	5.896
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	GDN_CONV	0.000
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	routed experts	28.988
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	shared expert, router, hyper-connections	6.219
+w2g1	d8192p1	verify-r1	cards 0 to 7	130	everything else	55.293
+w2g1	d8192p1	verify-r1	card 8	130	the head's product	5.558
+w2g1	d8192p1	verify-r1	card 8	130	the sampling chain after the product	0.405
+w2g1	d8192p1	verify-r1	card 8	130	the output's hyper-connection products	0.000
+w2g1	d8192p1	verify-r1	card 8	130	GATED_DELTA_NET	0.345
+w2g1	d8192p1	verify-r1	card 8	130	GDN_CONV	0.000
+w2g1	d8192p1	verify-r1	card 8	130	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d8192p1	verify-r1	card 8	130	routed experts	1.786
+w2g1	d8192p1	verify-r1	card 8	130	shared expert, router, hyper-connections	0.427
+w2g1	d8192p1	verify-r1	card 8	130	everything else	4.006
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	the head's product	0.000
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	the sampling chain after the product	0.000
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	the output's hyper-connection products	0.000
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	GATED_DELTA_NET	5.898
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	GDN_CONV	0.000
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	routed experts	28.990
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	shared expert, router, hyper-connections	6.225
+w2g1	d8192p2	verify-r1	cards 0 to 7	129	everything else	55.289
+w2g1	d8192p2	verify-r1	card 8	129	the head's product	5.556
+w2g1	d8192p2	verify-r1	card 8	129	the sampling chain after the product	0.406
+w2g1	d8192p2	verify-r1	card 8	129	the output's hyper-connection products	0.000
+w2g1	d8192p2	verify-r1	card 8	129	GATED_DELTA_NET	0.345
+w2g1	d8192p2	verify-r1	card 8	129	GDN_CONV	0.000
+w2g1	d8192p2	verify-r1	card 8	129	copies of the PLE conv history (cache_ple_r)	0.000
+w2g1	d8192p2	verify-r1	card 8	129	routed experts	1.786
+w2g1	d8192p2	verify-r1	card 8	129	shared expert, router, hyper-connections	0.427
+w2g1	d8192p2	verify-r1	card 8	129	everything else	4.005
+w3g1	d0p1	verify-r1	cards 0 to 7	96	the head's product	0.000
+w3g1	d0p1	verify-r1	cards 0 to 7	96	the sampling chain after the product	0.000
+w3g1	d0p1	verify-r1	cards 0 to 7	96	the output's hyper-connection products	0.000
+w3g1	d0p1	verify-r1	cards 0 to 7	96	GATED_DELTA_NET	8.483
+w3g1	d0p1	verify-r1	cards 0 to 7	96	GDN_CONV	0.000
+w3g1	d0p1	verify-r1	cards 0 to 7	96	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d0p1	verify-r1	cards 0 to 7	96	routed experts	41.092
+w3g1	d0p1	verify-r1	cards 0 to 7	96	shared expert, router, hyper-connections	8.017
+w3g1	d0p1	verify-r1	cards 0 to 7	96	everything else	52.726
+w3g1	d0p1	verify-r1	card 8	96	the head's product	7.016
+w3g1	d0p1	verify-r1	card 8	96	the sampling chain after the product	0.626
+w3g1	d0p1	verify-r1	card 8	96	the output's hyper-connection products	0.000
+w3g1	d0p1	verify-r1	card 8	96	GATED_DELTA_NET	0.497
+w3g1	d0p1	verify-r1	card 8	96	GDN_CONV	0.000
+w3g1	d0p1	verify-r1	card 8	96	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d0p1	verify-r1	card 8	96	routed experts	2.498
+w3g1	d0p1	verify-r1	card 8	96	shared expert, router, hyper-connections	0.541
+w3g1	d0p1	verify-r1	card 8	96	everything else	3.586
+w3g1	d0p2	verify-r1	cards 0 to 7	96	the head's product	0.000
+w3g1	d0p2	verify-r1	cards 0 to 7	96	the sampling chain after the product	0.000
+w3g1	d0p2	verify-r1	cards 0 to 7	96	the output's hyper-connection products	0.000
+w3g1	d0p2	verify-r1	cards 0 to 7	96	GATED_DELTA_NET	8.490
+w3g1	d0p2	verify-r1	cards 0 to 7	96	GDN_CONV	0.000
+w3g1	d0p2	verify-r1	cards 0 to 7	96	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d0p2	verify-r1	cards 0 to 7	96	routed experts	41.123
+w3g1	d0p2	verify-r1	cards 0 to 7	96	shared expert, router, hyper-connections	8.016
+w3g1	d0p2	verify-r1	cards 0 to 7	96	everything else	52.732
+w3g1	d0p2	verify-r1	card 8	96	the head's product	7.018
+w3g1	d0p2	verify-r1	card 8	96	the sampling chain after the product	0.629
+w3g1	d0p2	verify-r1	card 8	96	the output's hyper-connection products	0.000
+w3g1	d0p2	verify-r1	card 8	96	GATED_DELTA_NET	0.497
+w3g1	d0p2	verify-r1	card 8	96	GDN_CONV	0.000
+w3g1	d0p2	verify-r1	card 8	96	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d0p2	verify-r1	card 8	96	routed experts	2.501
+w3g1	d0p2	verify-r1	card 8	96	shared expert, router, hyper-connections	0.541
+w3g1	d0p2	verify-r1	card 8	96	everything else	3.589
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	the head's product	0.000
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	the sampling chain after the product	0.000
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	the output's hyper-connection products	0.000
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	GATED_DELTA_NET	8.512
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	GDN_CONV	0.000
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	routed experts	41.667
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	shared expert, router, hyper-connections	8.012
+w3g1	d8192p1	verify-r1	cards 0 to 7	94	everything else	70.273
+w3g1	d8192p1	verify-r1	card 8	94	the head's product	7.079
+w3g1	d8192p1	verify-r1	card 8	94	the sampling chain after the product	0.638
+w3g1	d8192p1	verify-r1	card 8	94	the output's hyper-connection products	0.000
+w3g1	d8192p1	verify-r1	card 8	94	GATED_DELTA_NET	0.501
+w3g1	d8192p1	verify-r1	card 8	94	GDN_CONV	0.000
+w3g1	d8192p1	verify-r1	card 8	94	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d8192p1	verify-r1	card 8	94	routed experts	2.556
+w3g1	d8192p1	verify-r1	card 8	94	shared expert, router, hyper-connections	0.545
+w3g1	d8192p1	verify-r1	card 8	94	everything else	5.210
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	the head's product	0.000
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	the sampling chain after the product	0.000
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	the output's hyper-connection products	0.000
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	GATED_DELTA_NET	8.512
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	GDN_CONV	0.000
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	routed experts	41.676
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	shared expert, router, hyper-connections	8.019
+w3g1	d8192p2	verify-r1	cards 0 to 7	94	everything else	70.251
+w3g1	d8192p2	verify-r1	card 8	94	the head's product	7.080
+w3g1	d8192p2	verify-r1	card 8	94	the sampling chain after the product	0.638
+w3g1	d8192p2	verify-r1	card 8	94	the output's hyper-connection products	0.000
+w3g1	d8192p2	verify-r1	card 8	94	GATED_DELTA_NET	0.501
+w3g1	d8192p2	verify-r1	card 8	94	GDN_CONV	0.000
+w3g1	d8192p2	verify-r1	card 8	94	copies of the PLE conv history (cache_ple_r)	0.000
+w3g1	d8192p2	verify-r1	card 8	94	routed experts	2.559
+w3g1	d8192p2	verify-r1	card 8	94	shared expert, router, hyper-connections	0.544
+w3g1	d8192p2	verify-r1	card 8	94	everything else	5.214
+w4g1	d0p1	verify-r1	cards 0 to 7	86	the head's product	0.000
+w4g1	d0p1	verify-r1	cards 0 to 7	86	the sampling chain after the product	0.000
+w4g1	d0p1	verify-r1	cards 0 to 7	86	the output's hyper-connection products	0.000
+w4g1	d0p1	verify-r1	cards 0 to 7	86	GATED_DELTA_NET	11.034
+w4g1	d0p1	verify-r1	cards 0 to 7	86	GDN_CONV	0.000
+w4g1	d0p1	verify-r1	cards 0 to 7	86	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d0p1	verify-r1	cards 0 to 7	86	routed experts	52.414
+w4g1	d0p1	verify-r1	cards 0 to 7	86	shared expert, router, hyper-connections	9.173
+w4g1	d0p1	verify-r1	cards 0 to 7	86	everything else	59.708
+w4g1	d0p1	verify-r1	card 8	86	the head's product	8.480
+w4g1	d0p1	verify-r1	card 8	86	the sampling chain after the product	0.860
+w4g1	d0p1	verify-r1	card 8	86	the output's hyper-connection products	0.000
+w4g1	d0p1	verify-r1	card 8	86	GATED_DELTA_NET	0.646
+w4g1	d0p1	verify-r1	card 8	86	GDN_CONV	0.000
+w4g1	d0p1	verify-r1	card 8	86	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d0p1	verify-r1	card 8	86	routed experts	3.163
+w4g1	d0p1	verify-r1	card 8	86	shared expert, router, hyper-connections	0.607
+w4g1	d0p1	verify-r1	card 8	86	everything else	4.099
+w4g1	d0p2	verify-r1	cards 0 to 7	86	the head's product	0.000
+w4g1	d0p2	verify-r1	cards 0 to 7	86	the sampling chain after the product	0.000
+w4g1	d0p2	verify-r1	cards 0 to 7	86	the output's hyper-connection products	0.000
+w4g1	d0p2	verify-r1	cards 0 to 7	86	GATED_DELTA_NET	11.043
+w4g1	d0p2	verify-r1	cards 0 to 7	86	GDN_CONV	0.000
+w4g1	d0p2	verify-r1	cards 0 to 7	86	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d0p2	verify-r1	cards 0 to 7	86	routed experts	52.460
+w4g1	d0p2	verify-r1	cards 0 to 7	86	shared expert, router, hyper-connections	9.169
+w4g1	d0p2	verify-r1	cards 0 to 7	86	everything else	59.759
+w4g1	d0p2	verify-r1	card 8	86	the head's product	8.481
+w4g1	d0p2	verify-r1	card 8	86	the sampling chain after the product	0.862
+w4g1	d0p2	verify-r1	card 8	86	the output's hyper-connection products	0.000
+w4g1	d0p2	verify-r1	card 8	86	GATED_DELTA_NET	0.646
+w4g1	d0p2	verify-r1	card 8	86	GDN_CONV	0.000
+w4g1	d0p2	verify-r1	card 8	86	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d0p2	verify-r1	card 8	86	routed experts	3.165
+w4g1	d0p2	verify-r1	card 8	86	shared expert, router, hyper-connections	0.609
+w4g1	d0p2	verify-r1	card 8	86	everything else	4.098
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	the head's product	0.000
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	the sampling chain after the product	0.000
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	the output's hyper-connection products	0.000
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	GATED_DELTA_NET	11.082
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	GDN_CONV	0.000
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	routed experts	54.103
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	shared expert, router, hyper-connections	9.311
+w4g1	d8192p1	verify-r1	cards 0 to 7	80	everything else	77.325
+w4g1	d8192p1	verify-r1	card 8	80	the head's product	8.557
+w4g1	d8192p1	verify-r1	card 8	80	the sampling chain after the product	0.874
+w4g1	d8192p1	verify-r1	card 8	80	the output's hyper-connection products	0.000
+w4g1	d8192p1	verify-r1	card 8	80	GATED_DELTA_NET	0.652
+w4g1	d8192p1	verify-r1	card 8	80	GDN_CONV	0.000
+w4g1	d8192p1	verify-r1	card 8	80	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d8192p1	verify-r1	card 8	80	routed experts	3.311
+w4g1	d8192p1	verify-r1	card 8	80	shared expert, router, hyper-connections	0.612
+w4g1	d8192p1	verify-r1	card 8	80	everything else	5.717
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	the head's product	0.000
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	the sampling chain after the product	0.000
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	the output's hyper-connection products	0.000
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	GATED_DELTA_NET	11.082
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	GDN_CONV	0.000
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	routed experts	54.103
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	shared expert, router, hyper-connections	9.304
+w4g1	d8192p2	verify-r1	cards 0 to 7	80	everything else	77.335
+w4g1	d8192p2	verify-r1	card 8	80	the head's product	8.556
+w4g1	d8192p2	verify-r1	card 8	80	the sampling chain after the product	0.873
+w4g1	d8192p2	verify-r1	card 8	80	the output's hyper-connection products	0.000
+w4g1	d8192p2	verify-r1	card 8	80	GATED_DELTA_NET	0.651
+w4g1	d8192p2	verify-r1	card 8	80	GDN_CONV	0.000
+w4g1	d8192p2	verify-r1	card 8	80	copies of the PLE conv history (cache_ple_r)	0.000
+w4g1	d8192p2	verify-r1	card 8	80	routed experts	3.312
+w4g1	d8192p2	verify-r1	card 8	80	shared expert, router, hyper-connections	0.612
+w4g1	d8192p2	verify-r1	card 8	80	everything else	5.717
