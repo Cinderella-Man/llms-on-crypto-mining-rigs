@@ -1,0 +1,4 @@
+# The started server lines, R192's timed load against R191's, one word a line; the run folder and the load's
+# file tag made equal (r192 and r191 -> RUN, -g1. and -k1. -> -L1.); the warm loads' lines are identical
+144a145
+> GGML_CUDA_KEEPALIVE_EAGER=0

@@ -1,0 +1,5 @@
+pass	a_first_how	a_first_ms	a_repeat_how	a_repeat_ms	a_excess_ms	b_first_how	b_first_ms	b_repeat_how	b_repeat_ms	b_excess_ms
+0: the prompt's last 4 tokens	EEEEEEEEE	235.65	EEEEEEEEE	118.65	117.00	EEEEEEEEE	102.29	EEEEEEEEE	100.57	1.71
+1: the first verify pass	EEEEEEEEE	219.92	EEEEEEEEE	118.12	101.80	EEEEEEEEE	100.67	EEEEEEEEE	102.94	-2.27
+2: the second verify pass	CCCCCCCCC	102.09	CCCCCCCCC	103.58	-1.48	CCCCCCCCC	98.78	CCCCCCCCC	94.07	4.71
+last pass	EEEEEEEEE	188.19	not written			EEEEEEEEE	70.26	not written		
