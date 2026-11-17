@@ -191,7 +191,7 @@ Trying it anyway means a small program that calls the driver's control device di
 MIT-licensed headers). Its read-only half would say whether the rated-point limiter is what holds a lightly loaded
 P106 at exactly 1,354 MHz with no event reason set. Its other half would ask for the lock at the boost point on one
 card. Both are undocumented calls into a closed driver; a card that hangs needs a reboot, and the disk passphrase
-at the console. Est. the request is refused or ignored. Parked as Q1556.
+at the console. Est. the request is refused or ignored. The program is [bench/rated_clock](../../../bench/rated_clock/README.md) (Q1556).
 
 ## 5. What owners of Pascal cards report
 
