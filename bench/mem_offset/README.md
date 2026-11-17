@@ -78,6 +78,12 @@ A card that failed in the memory climb gets no core value in this sitting (it wa
 failing at +1,400, many cards may fail there; `--mem-steps "200 400 600 800 900 1000 1100 1200"` stops the memory
 climb at +1,200 and leaves more cards for the core climb.
 
+**What the climb's result is, and is not.** It is a quick map of where each card fails at once: 17 minutes for nine
+cards on the second rig. It is not a setting: its one check a step passes offsets that fail a longer run, and in the
+core phase each card's memory sits at its last clean step, where memory errors begin, so a memory error there is
+charged to the core (the likely reading of two of R200's five core failures, at +16 and +104 MHz). The settings come from the soak ladder below, started two or three
+steps under the climb's values, and a fair core value from a core climb with the memory at a soaked value.
+
 **What stops everything** (every offset of every card to 0, read back; the servers stopped; the profile written as far
 as the climb got): the watchdog's trip or its absence, an Xid that names no climbing card, a check or a server that
 does not stop when killed, less than 300 MiB of host memory free, a reset that does not read back 0, a step down
@@ -160,6 +166,82 @@ python3 -I bench/mem_offset/test/test_climb.py
 - the stops that end everything, `apply`'s refusals (the climb's boot, a step down this boot) and its reset on a
   failure, and that `--dry-run` starts no process.
 
+## Holding a profile: `soak.py`, the ladder and the whole-memory check
+
+**In plain words.** The climb's one check a step shows where a card fails at once. It does not show where a card
+never fails: on the second rig, three cards failed a 30-minute soak one and two steps under the last step they had
+passed in the climb ([R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md)). A profile is settled by soaks,
+and the soaks are built on four facts from that run:
+
+- **An error near the edge is rare and it passes.** In 6 of R200's 13 failed checks the first of the check's two
+  requests went wrong and the second, run right after it on the same loaded server, was bit-identical to stock again.
+  The model in the card's memory was intact; one answer was spoiled. So a soak can count a card's differing checks
+  over the whole time instead of ending at the first, and one card's error need not end the other cards' soak.
+- **Thirty clean minutes are a weak proof.** No error in 30 minutes shows only that errors come less often than about
+  once in 10 minutes (95 % confidence). Daily use needs clean hours.
+- **Offsets only go up in a boot, so the search goes up too.** A soak that starts at the edge and steps a failing
+  card down costs a reboot for every step. `soak.py --ladder` starts low and raises the clean cards a rung at a time:
+  one boot gives every card its highest rung that held.
+- **One thing changes per rung.** Memory rungs first with the core where `apply` set it, then a rung that adds the
+  core, so a card that starts to differ names the offset that did it.
+
+**The rule for the setting to use:** the highest rung a card held clean that is at least two steps under the lowest
+offset at which that card ever failed, in a climb or a soak.
+
+### The three modes of `soak.py`
+
+| Mode | What happens when a card's check differs | Ends with |
+|---|---|---|
+| plain | every offset of every card to 0, the soak ends | `SOAK_DONE` "exit 1 card N round R: …", or "exit 0 rounds N" |
+| `--keep-going` | it is counted and the soak goes on for the full time. A card that differs three times at an offset (`--max-differs`), or whose check fails or runs past its limit, is set to 0 alone (`climb.py reset-card`) and leaves; the others go on | the offsets as they are; "exit 0 rounds N differs 0" only if nothing differed and no card left |
+| `--ladder P2.json P3.json …` | as `--keep-going`; after each rung the cards that have not differed go up to the next profile's values (read back), a card that differed stays where it is | the same, and `soak/soaked.json` |
+
+With every offset 0, `--keep-going` is the stock control: it shows that the check itself never differs on that rig.
+`soak/rungs.csv` has one row per card and rung (offsets, rounds, passes, differing checks, the first differing
+round), `soak/soak.csv` one row per card and round. `soak/soaked.json` is a profile `climb.py apply` reads: each card
+at the highest rung it held for the full minutes with no differing check, from the first rung on, and 0 for a card
+with none. A ladder is refused before any server starts if a rung would step a card down or go above
+`--mem-cap` / `--core-cap`.
+
+### One boot without a person in the loop: `soak_chain.sh`
+
+```bash
+# in the kit folder on a freshly booted rig, as root; WORK is a fresh folder, BIN and CHECK_MODEL as for climb.py
+export WORK=/var/tmp/soak1 MODEL=/path/to/served-model.gguf SETTINGS=/path/to/release/settings.env OUT=/var/tmp/soak1-model
+PROFILE=rung1.json LADDER="rung2.json rung3.json rung4.json" \
+  setsid nohup bash soak_chain.sh > /var/tmp/soak1.console 2>&1 < /dev/null &
+cat /var/tmp/soak1/CHAIN_DONE          # when it exists: what happened, in one line
+```
+
+1. The start check, then [model_check.sh](model_check.sh) at stock: the model the rig serves, on all cards with its
+   release settings, answers the greedy check twice (the reference, and each round's generation tok/s).
+2. The watchdog, then `climb.py apply` with the lowest rung.
+3. `soak.py --keep-going` with the ladder, `MINUTES` (30) a rung.
+4. If no card differed: the served model again with the offsets set, for `MODEL_MINUTES` (30), every round against
+   the stock reference. The climb's check model covers about 2 GB of a 6 GB card; this covers what the rig really
+   loads, and since the output is the same token for token, its tok/s against step 1's is what the offsets buy on
+   that model.
+
+A soak in which a card differed or left ends with every offset at 0 and `soaked.json` as the next fresh boot's
+profile. When everything passes, the offsets stay set while the watchdog runs. No step starts unless it ends by
+`END_BY` (21:50).
+
+### Tests (any Linux machine, no GPU)
+
+```bash
+python3 -I bench/mem_offset/test/test_soak.py     # ~90 s
+bash bench/mem_offset/test/test_chain.sh
+```
+
+[test/test_soak.py](test/test_soak.py) runs the real `soak.py`, `greedy_check.py`, `model_check.sh` and
+`climb.py reset-card` against a stand-in rig in a temporary folder (a `llama-server` that answers wrongly once, every
+time or exits from a chosen memory offset on; an `nvml_memoc.py` that keeps the offsets in a file). It checks a
+four-rung ladder (clean cards go up, memory then core; a card that differs once stays; a card that differs three
+times and a card whose server dies are set to 0 alone; `soaked.json` holds each card's highest clean rung and
+`apply` reads it), plain mode's reset of every card, the stock control, and the refusal of a ladder that steps down.
+[test/test_chain.sh](test/test_chain.sh) runs `soak_chain.sh` against stand-ins for its three programs: every
+ending, and the `END_BY` rule.
+
 ## What is in it
 
 | File | What it does |
@@ -170,9 +252,13 @@ python3 -I bench/mem_offset/test/test_climb.py
 | `build.sh` | Builds `mmvq_pascal` and `cuda_memtest` for compute capability 6.1 in Docker and packs the kit into a tarball with MD5 sums. |
 | `test/dryrun.sh` | Runs `memoc_steps.sh` against stub programs on any Linux machine (no GPU, no root) to check its control flow: a clean run, a failed exact check (step back), an Xid, an interrupt, and a memory test that cannot run. |
 | `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply` (section above). |
+| `soak.py` | Holds the offsets `apply` set with every card loaded: plain, counting (`--keep-going`) or a ladder of profiles (section above). |
+| `soak_chain.sh` | One fresh boot without a person in the loop: the served model's stock reference, `apply`, the soak or ladder, the served model with the offsets. |
+| `model_check.sh` | The whole-memory check: the served model's greedy output on all cards, at stock and with the offsets, with each round's tok/s. |
 | `greedy_check.py` | The greedy check: a running llama-server's output at temperature 0, hashed with every token's top-10 probabilities, against a reference. |
 | `memoc_units.json` | NVML's memory offset unit, measured on a P106-090 with driver 580.178.04 (MT/s); measure it again with `nvml_memoc.py units` on another driver. |
 | `test/test_climb.py`, `test/make_replay_fixtures.py`, `test/fixtures/` | The climb's tests, and the replays of R193 and R194 from their recorded output. |
+| `test/test_soak.py`, `test/test_chain.sh` | The soak's, the ladder's and the chain's tests against a stand-in rig. |
 
 The tarball adds `bin/mmvq_pascal` ([bench/mmvq_pascal](../mmvq_pascal/README.md): streaming-read bandwidth, plus
 correctness checks and timing of the decode kernels) and `bin/cuda_memtest`

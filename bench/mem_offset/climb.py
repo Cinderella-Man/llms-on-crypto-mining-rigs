@@ -27,7 +27,9 @@ card's offsets one step under its last clean step.
                     back, then each card's greedy check against its own stock result; any failure sets every offset of
                     every card to 0. On success the offsets stay; the watchdog must keep running (it holds the cards)
   reset-all         every offset of every card to 0, read back
-  stop              a running climb or apply stops at its next check: every offset to 0, the profile written
+  reset-card N      both offsets of card N to 0, read back; the step down goes into the ledger (soak.py uses it for a
+                    card that leaves a soak while the others go on)
+  stop             a running climb or apply stops at its next check: every offset to 0, the profile written
 
 Needs root on the rig, except --dry-run, which prints every command it would run and sets nothing: no root, no GPU,
 no NVML. --scenario FILE gives the simulated cards' failure points (see test/). Exit status: 0 done or passed, 1 a
@@ -1555,6 +1557,7 @@ def parse(argv=None):
     for name in ("state", "start-check", "plan", "trip-test", "climb", "run-climb", "profile", "reset-all", "stop"):
         sub.add_parser(name)
     sub.add_parser("watchdog").add_argument("what", choices=("start", "stop"))
+    sub.add_parser("reset-card").add_argument("card", type=int)
     for name in ("apply", "run-apply"):
         s = sub.add_parser(name)
         s.add_argument("profile")
@@ -1606,6 +1609,16 @@ def main(argv=None, x=None):
     if a.cmd == "reset-all":
         k.smi()
         return 0 if k.reset_all("reset-all") else 1
+    if a.cmd == "reset-card":
+        if a.card not in k.smi():
+            print(f"card {a.card} is not on this rig", file=sys.stderr)
+            return 2
+        try:
+            k.reset_card(a.card, "reset-card")
+        except GlobalStop as e:
+            k.log(f"RESET FAILED: {e}. Power the rig off at the console.")
+            return 1
+        return 0
     if a.cmd == "stop":
         x.touch(os.path.join(a.work, "STOP"))
         print(f"asked to stop ({os.path.join(a.work, 'STOP')}): the climb stops at its next look, every offset to 0")

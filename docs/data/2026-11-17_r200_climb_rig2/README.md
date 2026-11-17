@@ -21,19 +21,39 @@ was card 0 at 52 °C, in the climb.
   error is rare rather than constant, so the climb's single check per step passes a setting that a longer run does
   not. Card 7 needs memory +1,000 MT/s or less. The other eight cards' last values held 157 rounds over four
   boots (cards 0, 1, 3, 5, 6 and 8), 144 over three (card 4) and 133 over two (card 2) ([tables/soak.csv](tables/soak.csv)).
-- **A card's stock clock moves between boots, and a stored offset moves with it.** Card 4 peaked at 1,898 MHz at stock
-  on the climb's boot and at 1,911 on the next; card 0 at 1,873 and then 1,860. The profile stores a core offset, so
-  card 4's +231 MHz gave a measured 2,138 MHz in the first soak, the peak of its last clean climb step rather than one
-  step under it, and card 4 failed there. A profile should store each card's target peak clock instead
-  ([Q1586](../../../quants/experiments.md)).
+- **An error passes.** Each greedy check sends two requests, one after the other, to the same loaded server. In 6 of
+  the 13 failed checks the first request differed and the second was bit-identical to stock; in 3 only the second
+  differed; in 4 both did, three of them at the 2,177 MHz core target
+  ([tables/greedy_failures.csv](tables/greedy_failures.csv)). A request that is clean right after a wrong one shows
+  that the weights in the card's memory were intact: an error near the edge spoils one answer, not the loaded model.
+  So a soak can count a card's errors over its whole time instead of ending at the first
+  ([bench/mem_offset/soak.py](../../../bench/mem_offset/README.md), [Q1591](../../../quants/experiments.md)).
+- **Thirty clean minutes are a weak proof.** No error in 30 minutes shows only that a card errs less often than
+  about once in 10 minutes (95 % confidence). The six cards that never failed each have 157 clean rounds, about 30 minutes
+  in all, spread over four boots.
+- **Why card 4 failed the first soak is not known.** It ran at memory +1,300 MT/s and core +231 MHz, and both were
+  lowered for the next try. Card 2 failed the next soak at the same memory offset with no core offset. Card 8, with
+  card 4's exact offsets and the same climb result (last clean at +256 MHz, failed at +282), held 157 rounds. The
+  memory offset explains card 4's failure at least as well as the core does.
+- **The stock peak clock read in two short stock rounds carries one driver step of error.** It differed between
+  boots (card 4: 1,898 MHz on the climb's boot, then 1,911, 1,898, 1,911 and 1,911; card 0: 1,873, then 1,860 three
+  times, then 1,873) and inside one boot: in the 30-minute stock control cards 7 and 8 reached 1,911 MHz on a boot
+  whose stock rounds had read 1,898. The offset is what the driver holds fixed: card 0 at +256 MHz peaked at 2,126 MHz
+  in all four soaks, card 8 at +231 at 2,138 and card 4 at +206 at 2,113, whatever the stock rounds had read. A
+  longer look also catches the top step more often, so for the same offset a soak's peak sat one or two steps above
+  the climb's 20-second reading (card 0 at +256: 2,100 in the climb, 2,126 in the soaks; card 8 at +231: 2,113 and
+  2,138; card 4 at +231: 2,126 and 2,138). A core offset derived from one short stock reading would be a step off in
+  either direction ([Q1586](../../../quants/experiments.md)).
 - **One rig's cards are not another's.** The first rig's card 0 failed memory at +1,400 MT/s and held the core to a
   2,151 MHz peak ([Q133 and Q135](../2026-11-17_q133_q135_clock_offsets/README.md)); its card 4 failed at +1,200 MT/s
   with a 2,138 MHz peak ([R194](../2026-11-17_r194_nine_cards_soak/README.md)). Here card 1 failed memory at +1,200,
   card 6 at +1,300, cards 5 and 7 at +1,400, and five cards passed +1,400 in the climb.
 - **The core edge looks shared.** The three cards that reached the top of the core climb (0, 4 and 8) passed the
-  2,151 MHz target and failed at the 2,177 MHz target, as the first rig's cards passed 2,151 and its card 2 failed at
-  2,202 (R193). Cards 2 and 3 failed the core climb at far lower clocks with memory held at +1,400, the step cards 5
-  and 7 had just failed: memory failures charged to the core.
+  2,151 MHz target and failed at the 2,177 MHz target within three seconds of each other, as the first rig's cards
+  passed 2,151 and its card 2 failed at 2,202 (R193). Cards 2 and 3 failed the core climb at far lower clocks with
+  memory held at +1,400, the step cards 5 and 7 had just failed: memory failures charged to the core. The core climb
+  holds each card's memory at its last clean step, which is the step where memory errors begin, so a core value is
+  fair only when it is found with the memory at a soaked value ([Q1578](../../../quants/experiments.md)).
 - **The probability-hashed greedy check is the test that matters** ([Q1564](../../../quants/experiments.md)). It
   caught every failure; the kernel checks caught none, and a check of the generated text alone would have missed six
   of the thirteen ([tables/greedy_failures.csv](tables/greedy_failures.csv)).
@@ -56,10 +76,10 @@ changed ([tables/profiles.csv](tables/profiles.csv)):
 | 8 | 1,898 MHz | +1,400, — | +256 (2,151), +282 (2,177) | +1,300 MT/s, +231 MHz (2,126 MHz) | held 157 rounds |
 
 A soak stops at the first card that differs, so the rounds a card held are the rounds its soaks lasted; none has had
-the full 30 minutes in one boot. Rig 2 is left at stock. The next try, card 7 at +1,000 MT/s with the rest as they
-held, and the whole-memory check with Ornith that is ready for the first soak that passes, are
-[Q1587](../../../quants/experiments.md); the core climb for the cards that got none is
-[Q1588](../../../quants/experiments.md).
+the full 30 minutes in one boot. Rig 2 is left at stock. The next sitting is a ladder of soaks that starts two steps
+under these values and goes up, with every card's errors counted for the whole time, and then the whole-memory check
+with Ornith ([Q1587](../../../quants/experiments.md), [Q1591](../../../quants/experiments.md)); the core climb for
+the cards that got none is [Q1588](../../../quants/experiments.md).
 
 ## What was done
 
@@ -164,11 +184,11 @@ no Xid, no trip, no check past its time limit, and no card above 47 °C (card 6,
 reading in a soak was 83.85 W (card 0, try 3), and never five seconds in a row above 80 W
 ([tables/soak.csv](tables/soak.csv)).
 
-**Why card 4 failed at its profile.** A card's stock peak core clock moved one driver step between boots: card 4
-peaked at 1,898 MHz on the climb's boot and at 1,911 on the first apply's, card 0 at 1,873 and then 1,860. The
-profile stores a core offset, so the same +231 MHz put card 4 at a measured 2,138 MHz in the soak: the measured peak
-of its last clean climb step, not one step under it. A profile should store each card's target peak and `apply`
-should set the offset from the card's stock peak on its own boot ([Q1586](../../../quants/experiments.md)).
+**Card 4's failure names no cause.** In the first soak card 4 peaked at 2,138 MHz, the measured peak of its last
+clean climb step. So did card 8 at the same offsets (2,138 MHz, its last clean climb peak) and card 0 (2,126 MHz, its
+own), and both held every round of all four soaks. Card 4's memory was at +1,300 MT/s, the offset at which card 2
+failed the next soak with no core offset at all. Its memory and its core were lowered together for try 2, so the two
+were never told apart.
 
 **Why one step under the edge was not enough for cards 2 and 7.** Both failed in the memory dimension with no core
 offset, at one step under their last clean climb step (card 2: +1,300 against +1,400; card 7: +1,200 against
