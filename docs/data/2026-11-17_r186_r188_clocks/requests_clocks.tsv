@@ -1,0 +1,13 @@
+arm	order	ms_a_token	lowest_card_clock_before	pstates_before	lowest_clock_first_1s	lowest_clock_in_decode	pct_samples_1800_or_more	samples_all_cards
+A_mode0	1	9.697	139	P8	1354	1354	34.9	146
+A_mode1	2	8.836	1847	P0	1847	1847	100.0	135
+A_mode1	3	8.854	1847	P0	1847	1847	100.0	144
+A_mode0	4	8.844	1847	P0	1847	1847	100.0	135
+A_mode0	5	8.841	1847	P0	1847	1847	100.0	135
+A_mode1	6	9.423	1354	P0	1354	1354	40.7	150
+A_mode1	7	8.84	1847	P0	1847	1847	100.0	144
+A_mode0	8	8.859	1847	P0	1847	1847	100.0	142
+B_keepalive	1	9.79	1860	P0	1860	1860	100.0	160
+B_keepalive	2	9.087	1860	P0	1860	1847	100.0	144
+B_keepalive	3	9.099	1847	P0	1847	1847	100.0	144
+B_keepalive	4	9.098	1847	P0	1847	1847	100.0	144

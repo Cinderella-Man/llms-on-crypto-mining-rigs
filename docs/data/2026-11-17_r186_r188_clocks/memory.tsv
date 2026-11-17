@@ -1,0 +1,7 @@
+snapshot	MemTotal_MiB	MemFree_MiB	MemAvailable_MiB	Cached_MiB	AnonPages_MiB	Shmem_MiB	Unevictable_MiB	Mlocked_MiB	Slab_MiB	SUnreclaim_MiB	KernelStack_MiB	PageTables_MiB	VmallocUsed_MiB	CmaFree_MiB	SwapTotal_MiB	SwapFree_MiB	llama_server_rss_MiB	largest_other_rss_MiB
+empty	3836	2472	3201	751	43	1	0	0	122	87	3	3	197	0	3839	3839	0	40
+loadedA	3836	113	1431	1876	388	374	0	0	173	143	3	7	224	0	3839	3571	1528	25
+loadedA_end	3836	172	1167	1569	582	390	0	0	178	148	3	8	224	0	3839	3572	1746	32
+stoppedA	3836	2065	3159	1279	32	0	0	0	126	96	3	3	197	0	3839	3813	0	32
+loadedB	3836	115	1437	1882	385	375	0	0	173	144	3	8	224	0	3839	3563	1530	25
+end	3836	1991	3193	1386	23	0	0	0	126	97	3	3	197	0	3839	3805	0	27

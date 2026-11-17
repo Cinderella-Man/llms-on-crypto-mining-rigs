@@ -1,0 +1,11 @@
+step	command	exit code	what the driver said	card 0 while it was set (6 samples over 3 s, NVML and nvidia-smi agree)	verdict
+before	(none)	—	PowerMizer mode 0 (adaptive), supported modes 0, 1 and 2 (mask 0b0111)	P8, SM 139 MHz, memory 405 MHz, 5.49–5.88 W, reason GpuIdle	—
+(a) locked clocks	nvidia-smi -i 0 -lgc 1911,1911	0	"Setting locked GPU clocks is not supported for GPU 00000000:03:00.0. Treating as warning and moving on. All done."	P8, 139 MHz, 405 MHz, GpuIdle (no change)	refused
+(a) undo	nvidia-smi -i 0 -rgc	0	"Setting locked gpu clocks is not supported for GPU 00000000:03:00.0. Treating as warning and moving on. All done."	P8, 139 MHz	nothing to undo
+(b) CUDA clock override	nvidia-smi -i 0 -cc 1	0	"Overriding CUDA clock limit is not supported for this device. Treating as warning and moving on. All done."	P8, 139 MHz, 405 MHz, GpuIdle (no change)	refused
+(b) undo	nvidia-smi -i 0 -cc 0	0	the same message	P8, 139 MHz	nothing to undo
+(c) PowerMizer mode 1	nvmlDeviceSetPowerMizerMode_v1(card 0, mode 1), no X server	NVML_SUCCESS	read back: mode 1 (prefer maximum performance)	P0, SM 1,354 MHz, memory 4,006 MHz, 14.0 W at the first sample then 25.90 W, no reason active	accepted: the card is held awake at its base clock
+(c) PowerMizer mode 3	nvmlDeviceSetPowerMizerMode_v1(card 0, mode 3)	NVML_ERROR_INVALID_ARGUMENT (2)	read back: mode 1 still; mode 3 is not in the supported mask	P0, 1,354 MHz, 25.90 W (mode 1's state)	refused
+(c) undo	nvmlDeviceSetPowerMizerMode_v1(card 0, mode 2)	NVML_SUCCESS	read back: mode 2 (auto)	P0 1,354 MHz for 1.8 s, then GpuIdle and 772 MHz at 23.4 W, then P8 at 177 MHz and 5.5 W, 4.9 s after the set	the card sleeps again
+after	a fresh process, NVML released by the test	—	every card reads mode 0, as before the test: the mode lasts only while a process holds the card (persistence mode is off)	P8, 139 MHz, 0 MiB	as before
+restore	nvmlDeviceSetPowerMizerMode_v1(card 0, mode 0)	NVML_SUCCESS	read back: mode 0; a fresh process 6 s later: mode 0 on all nine cards	P8, 139 MHz, 5.68 W, 0 MiB	as before

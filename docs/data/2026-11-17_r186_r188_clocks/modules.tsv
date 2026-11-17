@@ -1,0 +1,5 @@
+module	size_bytes	size_MiB	users
+nvidia_uvm	2080768	1.98	0
+nvidia_drm	139264	0.13	0
+nvidia_modeset	1687552	1.61	1
+nvidia	105373696	100.49	3
