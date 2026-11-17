@@ -1,0 +1,41 @@
+== kld-stock.stats
+Mean PPL(Q)                   :  25.442420 ±   2.338938
+Mean PPL(base)                :  24.075365 ±   2.094230
+Cor(ln(PPL(Q)), ln(PPL(base))):  99.11%
+Mean ln(PPL(Q)/PPL(base))     :   0.055229 ±   0.012898
+Mean PPL(Q)/PPL(base)         :   1.056782 ±   0.013630
+Mean PPL(Q)-PPL(base)         :   1.367055 ±   0.383156
+Mean    KLD:  -0.000000 ±   0.000000
+Maximum KLD:   0.000050
+99.9%   KLD:   0.000049
+99.0%   KLD:   0.000036
+95.0%   KLD:   0.000025
+90.0%   KLD:   0.000017
+Median  KLD:  -0.000000
+10.0%   KLD:  -0.000018
+Minimum KLD:  -0.000055
+Mean    Δp:  0.000 ± 0.000 %
+Maximum Δp:  0.005%
+99.9%   Δp:  0.004%
+99.0%   Δp:  0.002%
+95.0%   Δp:  0.001%
+90.0%   Δp:  0.000%
+75.0%   Δp:  0.000%
+Median  Δp: -0.000%
+25.0%   Δp: -0.000%
+10.0%   Δp: -0.000%
+Minimum Δp: -0.005%
+RMS Δp    :  0.001 ± 0.000 %
+Same top p: 100.000 ± 0.000 %
+
+== exact_check.log
+2026-11-17 14:22:21 exact_check: base: writing base.kld at offset 0 (8 x 512 one-token steps on cards 0,1,2,3,4,5,6,7,8)
+    Final estimate: PPL = 25.4424 +/- 2.33894
+2026-11-17 14:30:31 exact_check: kld stock: 8 x 512 one-token steps on cards 0,1,2,3,4,5,6,7,8
+    Mean PPL(Q)                   :  25.442420 ±   2.338938
+    Mean PPL(Q)/PPL(base)         :   1.056782 ±   0.013630
+    Mean PPL(Q)-PPL(base)         :   1.367055 ±   0.383156
+    Mean    KLD:  -0.000000 ±   0.000000
+    Maximum KLD:   0.000050
+    Same top p: 100.000 ± 0.000 %
+2026-11-17 14:38:40 exact_check: base: reference statistics in kld-stock.stats

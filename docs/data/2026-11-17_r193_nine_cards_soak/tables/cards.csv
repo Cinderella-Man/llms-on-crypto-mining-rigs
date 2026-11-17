@@ -1,0 +1,10 @@
+card,stock_stream_gbs,readback_mem_mts,readback_core_mhz,step1_checks_pass,step1_checks_fail,step1_stream_gbs,stream_gain_pct,step1_greedy,step1_xid,step1_verdict,soak_rounds,soak_rounds_pass,soak_checks_fail,soak_stream_gbs_min,soak_stream_gbs_max,memtest_exit,memtest_error_blocks,memtest6_exit,memtest6_error_blocks
+0,179.15,1200,300,516,0,204.70,+14.3,same,0,PASS,0,0,0,,,,,,
+1,179.34,1200,300,516,0,204.80,+14.2,same,0,PASS,0,0,0,,,,,,
+2,179.24,1200,300,0,0,,,ERROR,1,FAIL,0,0,0,,,,,,
+3,179.26,,,,,,,,,,0,0,0,,,,,,
+4,179.47,,,,,,,,,,0,0,0,,,,,,
+5,179.31,,,,,,,,,,0,0,0,,,,,,
+6,179.15,,,,,,,,,,0,0,0,,,,,,
+7,179.40,,,,,,,,,,0,0,0,,,,,,
+8,179.21,,,,,,,,,,0,0,0,,,,,,

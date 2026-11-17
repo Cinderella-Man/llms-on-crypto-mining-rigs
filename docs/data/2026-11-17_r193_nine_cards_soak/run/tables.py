@@ -113,7 +113,6 @@ def main():
         "soak, all nine cards": (min(r["start"] for r in soak) if soak else None, max(r["end"] for r in soak) if soak else None),
         "cuda_memtest, all nine cards": (log_time(log, r"post: cuda_memtest on every card"), log_time(log, r"post: cuda_memtest: ")),
         "exact check at the offsets": (log_time(log, r"post: cuda_memtest: "), log_time(log, r"post: exact check at")),
-        "greedy check after the soak": (log_time(log, r"post: exact check at"), log_time(log, r"post: PASS|post: .*greedy")),
     }
     fields = ["phase", "start", "end", "card", "samples", "peak_c", "mean_c", "peak_w", "mean_w", "samples_over_80w",
               "longest_run_over_80w", "samples_power_cap", "samples_thermal_or_hw_slowdown", "peak_sm_mhz", "peak_mem_mhz",

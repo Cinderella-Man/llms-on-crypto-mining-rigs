@@ -1,0 +1,4 @@
+2026-11-17 14:22:07.314 watchdog start: pid 2041, gpu 0,1,2,3,4,5,6,7,8, 9 cards, temp-max 70.0 C, power-max 80.0 W for 5.0 s, xid pattern 'NVRM: Xid', interval 0.5 s
+2026-11-17 14:51:13.911 TRIP 1: kernel log: NVRM: Xid (PCI:0000:05:00): 31, pid=4603, name=mmvq_pascal, channel 0x00000018, intr 10000000. MMU Fault: ENGINE GRAPHICS GPC0 GPCCLIENT_T1_0 faulted @ 0x7a72_f0548000. Fault is of type FAULT_PDE ACCESS_TYPE_READ | offsets now gpu 0 mem 0, gpc 0; gpu 1 mem 0, gpc 0; gpu 2 mem 0, gpc 0; gpu 3 mem 0, gpc 0; gpu 4 mem 0, gpc 0; gpu 5 mem 0, gpc 0; gpu 6 mem 0, gpc 0; gpu 7 mem 0, gpc 0; gpu 8 mem 0, gpc 0 | killed llama-server[3035]
+2026-11-17 14:52:05.478 watchdog stop after 1 trips
+samples: 3587, from 2026-11-17 14:22:07.361 to 2026-11-17 14:52:05.476

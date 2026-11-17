@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # r193.sh: every card of a P106-090 rig at one memory and core clock offset, checked card by card, soaked all at once,
-# then checked again (R193, Q1567). The checks are the one-card sitting's (Q133/Q135,
+# then checked again (R193, Q1569). The checks are the one-card sitting's (Q133/Q135,
 # docs/data/2026-11-17_q133_q135_clock_offsets/). Run as root on the rig, with the memory-offset kit (bench/mem_offset)
 # unpacked in $KIT and this folder's files (plus scripts/nvml_watchdog.py and the sitting's run/greedy_check.py) in the
 # same folder as this script.
@@ -17,8 +17,8 @@
 #   r193.sh cards             step 1, detached: card by card, memory +$MEM and core +$CORE (going up only), read back
 #                             from a new process, the full mmvq sweep on that card, the greedy check, an Xid scan
 #   r193.sh soak MIN          step 2, detached: one mmvq loop per card and one greedy loop, all at once, MIN minutes
-#   r193.sh post              step 3, detached: the server stopped, cuda_memtest on every card at once (tests 0-5, 7,
-#                             8 and 10, then test 6), the exact check, the server again and the greedy check
+#   r193.sh post              step 3, detached: the greedy check on the still loaded server, the server stopped,
+#                             cuda_memtest on every card at once (tests 0-5, 7, 8 and 10, then test 6), the exact check
 #   r193.sh server start|stop llama-server with $MODEL on all cards, greedy only (port $PORT)
 #   r193.sh reset-all         every offset of every card to 0, read back
 #   r193.sh hottest [MIN]     each card's highest temperature and power in the watchdog log over the last MIN minutes
@@ -309,8 +309,12 @@ memtest_card() {  # memtest_card CARD
 
 post() {
     local t0 g bad rc
-    server stop
     for g in $CARDS; do [ "$(readback "$g")" = "$MEM $CORE" ] || { fail_all "post: card $g is not at its offsets"; return 1; }; done
+    curl -sf "http://127.0.0.1:$PORT/health" > /dev/null || server start || { fail_all "post: the server did not start"; return 1; }
+    greedy final; rc=$?
+    log "post: greedy check after the soak: $([ $rc = 0 ] && echo "same hash as stock" || echo "exit $rc")"
+    [ $rc = 0 ] || { fail_all "post: the greedy check after the soak gave another hash (exit $rc)"; return 1; }
+    server stop
     t0=$(date '+%F %T')
     echo "card,exit_0_5_7_8_10,blocks_with_errors,exit_6,blocks_with_errors_6,end" > "$OUT/memtest.csv"
     log "post: cuda_memtest on every card at once"
@@ -325,10 +329,6 @@ post() {
     log "post: exact check at the offsets: exit $rc ($([ $rc = 0 ] && echo PASS || echo FAIL)), Xid $(xid_since "$t0")"
     tripped && { fail_all "post: the watchdog tripped during the exact check"; return 9; }
     [ $rc = 0 ] && [ "$(xid_since "$t0")" = 0 ] || { fail_all "post: the exact check failed"; return 1; }
-    server start || { fail_all "post: the server did not start"; return 1; }
-    greedy final; rc=$?
-    server stop
-    [ $rc = 0 ] || { fail_all "post: the greedy check after the soak gave another hash (exit $rc)"; return 1; }
     for g in $CARDS; do log "post: card $g offsets (mem core) $(readback "$g")"; done
     log "post: PASS"
 }
