@@ -1,0 +1,19 @@
+hp-h1.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 58 529 528 65 731 729
+server-h1.log: 6 pipelined-guess lines for 6 requests that generate
+st-h1.jsonl: 6 pieces for 6 requests; steps per piece: 2 2 1 17 2 1
+gp-g1.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 58 529 528 65 731 730
+server-g1.log: 6 pipelined-guess lines for 6 requests that generate
+hp-s8.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 10 50 49 65 36 34
+server-s8.log: 6 pipelined-guess lines for 6 requests that generate
+st-s8.jsonl: 6 pieces for 6 requests; steps per piece: 10 50 49 17 36 35
+hp-s4.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 19 125 124 65 66 64
+server-s4.log: 6 pipelined-guess lines for 6 requests that generate
+st-s4.jsonl: 6 pieces for 6 requests; steps per piece: 19 125 124 17 66 65
+hp-s2.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 22 152 151 65 134 132
+server-s2.log: 6 pipelined-guess lines for 6 requests that generate
+st-s2.jsonl: 6 pieces for 6 requests; steps per piece: 22 152 151 17 134 133
+hp-h2.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 58 529 528 65 731 729
+server-h2.log: 6 pipelined-guess lines for 6 requests that generate
+st-h2.jsonl: 6 pieces for 6 requests; steps per piece: 2 2 1 17 2 1
+gp-g2.csv: 7 pieces for 6 requests; card 0's evaluations per piece: 2 58 529 528 65 731 730
+server-g2.log: 6 pipelined-guess lines for 6 requests that generate
