@@ -2,19 +2,22 @@
 """A safety watchdog for clock-offset tests on NVIDIA cards, through NVML (ctypes on libnvidia-ml.so.1, no install).
 
 Samples every card every INTERVAL seconds (temperature, power, power limit, SM and memory clocks, P-state, memory used,
-clock event reasons, and the memory and graphics clock offsets of the card under test) and logs every sample to a CSV
+clock event reasons, and the memory and graphics clock offsets of the cards under test) and logs every sample to a CSV
 file. It reads the kernel log (/dev/kmsg) as it grows. It trips on any of:
   - any card above --temp-max degrees C;
-  - the card under test above --power-max W for --power-secs seconds in a row;
+  - a card under test above --power-max W for --power-secs seconds in a row;
   - a new kernel log line that contains --xid-pattern (default "NVRM: Xid").
-On a trip it at once sets both clock offsets of the card under test back to 0 (both NVML offset APIs), reads them
+On a trip it at once sets both clock offsets of every card under test back to 0 (both NVML offset APIs), reads them
 back, kills every process whose name is in --kill (TERM, then KILL after 2 s), and appends a line to the --marker
 file. It keeps sampling afterwards; a condition that persists trips again, at most once every 5 s.
+
+The cards under test are --gpu (one card), or --gpus (a comma-separated list, or "all"). With --gpus the log gets two
+more columns per card under test at the end of each row, g<N>_mem_off and g<N>_gpc_off.
 
 While it runs it also holds every card open, so a power limit or an offset set by a short-lived process stays in
 place with persistence mode off. Stop it with SIGTERM or SIGINT, or by creating the --stop file.
 
-  nvml_watchdog.py --gpu 0 --log wd.csv --marker TRIPPED [--temp-max 70] [--power-max 55] [--power-secs 5]
+  nvml_watchdog.py (--gpu 0 | --gpus all) --log wd.csv --marker TRIPPED [--temp-max 70] [--power-max 55] [--power-secs 5]
                    [--interval 0.5] [--xid-pattern 'NVRM: Xid'] [--kill mmvq_pascal,cuda_memtest,llama-server,...]
                    [--stop STOPFILE] [--duration SECONDS]
 
@@ -146,6 +149,7 @@ def kill_named(names):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--gpu", type=int, default=0, help="the card under test (NVML index, PCI bus order)")
+    p.add_argument("--gpus", help='several cards under test: a comma-separated list of NVML indices, or "all"')
     p.add_argument("--log", required=True)
     p.add_argument("--marker", required=True)
     p.add_argument("--temp-max", type=float, default=70.0)
@@ -165,7 +169,14 @@ def main():
     n = ctypes.c_uint()
     nv.call("nvmlDeviceGetCount_v2", ctypes.byref(n))
     handles = [nv.handle(i) for i in range(n.value)]
-    ht = handles[a.gpu]
+    if a.gpus:
+        tested = list(range(len(handles))) if a.gpus == "all" else [int(x) for x in a.gpus.split(",")]
+    else:
+        tested = [a.gpu]
+    if not tested or any(g < 0 or g >= len(handles) for g in tested):
+        print(f"cards under test {tested}: not all among the {len(handles)} cards", file=sys.stderr)
+        return 2
+    ht = handles[tested[0]]
     kmsg = Kmsg()
     stop = {"now": False}
     for s in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
@@ -176,6 +187,9 @@ def main():
         cols = ["time", "tripped", "gpu_mem_offset", "gpu_gpc_offset"]
         for i in range(len(handles)):
             cols += [f"g{i}_{k}" for k in ("pstate", "sm_mhz", "mem_mhz", "w", "limit_w", "c", "used_mib", "reasons")]
+        if a.gpus:
+            for i in tested:
+                cols += [f"g{i}_mem_off", f"g{i}_gpc_off"]
         log.write(",".join(cols) + "\n")
 
     def event(msg, marker=True):
@@ -185,10 +199,10 @@ def main():
                 m.write(line + "\n")
         log.write(f"# {line}\n")
 
-    event(f"watchdog start: pid {os.getpid()}, gpu {a.gpu}, {len(handles)} cards, temp-max {a.temp_max} C, "
+    event(f"watchdog start: pid {os.getpid()}, gpu {','.join(map(str, tested))}, {len(handles)} cards, temp-max {a.temp_max} C, "
           f"power-max {a.power_max} W for {a.power_secs} s, xid pattern {a.xid_pattern!r}, interval {a.interval} s",
           marker=False)
-    over_since = None
+    over_since = {i: None for i in tested}
     last_trip = 0.0
     trips = 0
     t_end = time.time() + a.duration if a.duration else None
@@ -215,24 +229,28 @@ def main():
                 reasons.append(f"gpu {i} does not answer NVML (temperature {tc}, power {w})")
             elif tc > a.temp_max:
                 reasons.append(f"gpu {i} at {tc} C > {a.temp_max} C")
-            if i == a.gpu and w is not None:
+            if i in over_since and w is not None:
                 if w > a.power_max:
-                    over_since = over_since or t0
-                    if t0 - over_since >= a.power_secs:
-                        reasons.append(f"gpu {i} above {a.power_max} W for {t0 - over_since:.1f} s (now {w:.1f} W)")
+                    over_since[i] = over_since[i] or t0
+                    if t0 - over_since[i] >= a.power_secs:
+                        reasons.append(f"gpu {i} above {a.power_max} W for {t0 - over_since[i]:.1f} s (now {w:.1f} W)")
                 else:
-                    over_since = None
+                    over_since[i] = None
         for line in kmsg.new_lines():
             if a.xid_pattern in line:
                 reasons.append(f"kernel log: {line}")
         mem_off, gpc_off = nv.vf(ht, "MemClk"), nv.vf(ht, "GpcClk")
+        if a.gpus:
+            for i in tested:
+                row += [nv.vf(handles[i], "MemClk"), nv.vf(handles[i], "GpcClk")]
         log.write(",".join(str(x) if x is not None else "" for x in [now(), trips, mem_off, gpc_off] + row) + "\n")
         if reasons and t0 - last_trip >= 5:
             trips += 1
             last_trip = t0
-            back = nv.reset_offsets(ht)
+            back = [(i, nv.reset_offsets(handles[i])) for i in tested]
             killed = kill_named(kill_names)
-            event(f"TRIP {trips}: {'; '.join(reasons)} | gpu {a.gpu} offsets now mem {back[0]}, gpc {back[1]} | "
+            offs = "; ".join(f"gpu {i} mem {m}, gpc {g}" for i, (m, g) in back)
+            event(f"TRIP {trips}: {'; '.join(reasons)} | offsets now {offs} | "
                   f"killed {', '.join(f'{c}[{p}]' for p, c in killed) or 'nothing'}")
         if a.stop and os.path.exists(a.stop):
             break

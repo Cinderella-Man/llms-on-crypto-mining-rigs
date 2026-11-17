@@ -1,0 +1,10 @@
+{
+ "gpu": 0,
+ "api": "vf",
+ "raw_per_mts": 1.0,
+ "unit": "MT/s (transfer-rate units)",
+ "base_mhz": 4006,
+ "raw": 100,
+ "loaded_mhz": 4050,
+ "measured": "2026-11-17 11:24:24"
+}
