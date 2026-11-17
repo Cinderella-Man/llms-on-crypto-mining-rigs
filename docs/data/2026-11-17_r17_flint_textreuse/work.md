@@ -7,6 +7,7 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | f4ta | 12 | 73 | 48907 (4076) | 37846 (3154) | 14632 (4; 67.6 of 222.6) | 24.70 (bugfix-python-affine-cipher, 3, a re-read) |
 | f4tb | 12 | 71 | 61112 (5093) | 48656 (4055) | 24755 (5; 141.7 of 299.5) | 93.88 (bugfix-python-scale-generator, 4, a re-read) |
 | f4tr | 12 | 77 | 35635 (2970) | 65384 (5449) | 0 (0; 0.0 of 169.7) | 11.68 (bugfix-javascript-complex-numbers, 2) |
+| f4trb | 12 | 70 | 35309 (2942) | 46509 (3876) | 0 (0; 0.0 of 170.1) | 12.57 (bugfix-javascript-complex-numbers, 2) |
 
 ### The turns that read a reply again
 

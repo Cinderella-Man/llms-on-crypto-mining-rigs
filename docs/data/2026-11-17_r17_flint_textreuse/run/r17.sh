@@ -2,7 +2,9 @@
 # R17 (Q260): the agent check (bench/agent_check: 12 bug-fix tasks, a 12-minute cap a task, a 40-minute budget) on
 # Flint Pascal Q8 GGUF (flint-near-q8-p065.gguf) at 262,144 tokens on nine P106-090 cards, with Flint's released v4
 # preset (release/flint-v4/settings.env) on Miner Llama v4.0 (tag miner-llama-v4.0, pascal-p106-v4 eb82916d3) and one
-# variable added: LLAMA_SERVER_TEXT_REUSE=1. The arm (ARM, default f4tr; run b names its own) is the release harness's
+# variable added: LLAMA_SERVER_TEXT_REUSE=1. Runs a and b both ran the arm f4tr (ARM, the default), each with its own
+# CLIENT_OUT, ports and RIG_LOGDIR, so their started commands are the same; the tables name run b f4trb (merge_rows.py
+# f4trb=<run b's folder>:f4tr). The arm is the release harness's
 # custom arm (docs/data/2026-11-03_flash_next_mtp/run/release_check_s12.sh: ARGS_<arm> after the harness's COMMON line,
 # REL_ENV the preset's five switches and then LLAMA_SERVER_TEXT_REUSE=1). Its flags are the preset's PRESET_ARGS less
 # what COMMON already passes (-ngl 99 -fa on -c 262144 -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 and Flint's
