@@ -1,0 +1,25 @@
+# pascal-p106-v5 (1f1110c67, upstream b12410) against pascal-p106-v5-cand-b12483 (602691153, upstream b12483 + #32434): llama-server, cuobjdump -sass, sm_61
+
+## md5
+5b134f43f3a3e885bfba02538ffebcbe  llama.cpp-20261117-1f1110c67-pascal-p106-v5-cand-b12410/bin/llama-server
+86607661d5a19d1a90d19ee4db10c90b  llama.cpp-20261117-602691153-pascal-p106-v5-cand-b12483/bin/llama-server
+
+## kernels with every switch unset (kq_fp32=false and plain kernels; the base build's kq_fp32=true kernels kept apart)
+base kernels (names): 8835; identical in new with kq_fp32 off: 7924; different: 911; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 176
+
+## the differing kernels by family, kind and size (sass_classify.py; const = only MOV32I constants differ, reorder = the same opcodes in another order or with other operands)
+    268 flash_attn_ext_f16	const	30 or fewer (error stub)
+      3 ggml_cuda_gated_delta_net_mma::gdn_single	const	30 or fewer (error stub)
+    628 mul_mat_q	reorder	30 or fewer (error stub)
+     12 topk_moe_cuda	reorder	over 30 instructions
+
+## the differing kernels line by line (sass_compare.py linediff)
+kernels compared: 911; differing only in MOV32I constants: 271; differing otherwise: 640
+MOV32I 365 -> 409 (+44): 3 lines
+MOV32I 424 -> 0 (+-424): 74 lines
+MOV32I 720 -> 0 (+-720): 74 lines
+MOV32I 2117 -> 2165 (+48): 282 lines
+(the other 640: mul_mat_q stubs load their message strings' addresses from other constant-bank slots, MOV R10/R11, c[0x4][...]; topk_moe_cuda<N, true> swaps two MOV Rx, RZ lines)
+
+## C861's kq_fp32=true kernels (only with GGML_CUDA_MMQ_KQ_FP32SCALE set)
+176 in both builds; 56 identical (every kernel over 30 instructions among them, up to 2,058); 120 differ, all 30-instruction error stubs with the same instruction count
