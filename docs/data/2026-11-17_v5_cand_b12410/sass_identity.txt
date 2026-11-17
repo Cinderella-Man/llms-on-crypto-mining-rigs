@@ -1,0 +1,28 @@
+# sass_compare.py compare: C854's llama-server (base: pascal-p106-v5-b12410-up b3dfb0d89, upstream b12410 on v4.0,
+# md5 99fa3375aeac9a60a8393141b7137407) against llama.cpp-20261117-1f1110c67-pascal-p106-v5-cand-b12410's
+# (new, md5 5b134f43f3a3e885bfba02538ffebcbe), cuobjdump -sass, sm_61
+base kernels (names): 8835; identical in new with kq_fp32 off: 8135; different: 700; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 176
+differing kernels: 700, longest 30 instructions; kernels over 200 instructions: 5529, differing: 0
+(kernels over 200 instructions counted per name: 5117, differing: 0)
+
+# sass_compare.py linediff over the 700 (addresses and encodings stripped), C854's against the candidate's
+kernels compared: 700; differing only in MOV32I constants: 568; differing otherwise: 132
+MOV32I 296 -> 0 (+-296): 21 lines
+MOV32I 424 -> 0 (+-424): 111 lines
+MOV32I 1083 -> 1102 (+19): 700 lines
+(the 132 others also differ in 'MOV Rn, c[0x4][...]' string addresses, as in the v5 switch merge's build)
+
+# the 700: every one is mul_mat_q's NO_DEVICE_CODE stub (ggml/src/ggml-cuda/mmq.cuh, line 1083 at b3dfb0d89, 1102 here,
+# moved by C861's added lines)
+
+# against the v5 switch merge's build (pascal-p106-v5 a112712e3: the same switches on v4.0;
+# ../2026-11-17_v5_merge_switches/sass_identity.txt)
+differ.list vs the merge's differ.list (sorted): same
+ext-N.txt vs the merge's ext-N.txt: identical
+ext-B.txt (C854) vs the merge's ext-B.txt (v4.0): identical
+kq_on.list vs the merge's kq_on.list: same (176 kernels)
+cmp.kq.tsv vs the merge's cmp.kq.tsv: identical
+kq_fp32=true kernels' SHA-1 vs the merge's: identical
+# so the 700 stubs are v4.0's in C854's build and the switch merge's in the candidate, byte for byte;
+# the 176 kq_fp32 kernels (Q3_K 32, Q4_K 48, Q5_K 48, Q6_K 48) are the switch merge's byte for byte, and their
+# instruction table is ../2026-11-17_c861a_fp32_scale/kq_instructions.tsv (md5 093fe674a96f08ded8b81a9852c2a8cb)
