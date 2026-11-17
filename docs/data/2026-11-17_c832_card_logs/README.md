@@ -83,7 +83,7 @@ python3 -I scripts/card_table.py cards.csv --since 2026-11-17T15:20:00+01:00 --u
 
 | File | What it holds |
 |---|---|
-| [tables/r194_cards.md](tables/r194_cards.md), [tables/r194_cards.tsv](tables/r194_cards.tsv) | `card_table.py` on R194's whole watchdog log (2,480 samples, 15:17:01 to 15:37:44): per card, and the first 50 of 62 stretches |
+| [tables/r194_cards.md](tables/r194_cards.md), [tables/r194_cards.tsv](tables/r194_cards.tsv) | `card_table.py` on R194's whole watchdog log (2,480 samples, 15:17:01 to 15:37:44): per card, and the first 50 of 62 stretches. The watchdog reads a sample's milliseconds from a second clock call, so 3 of its rows are stamped about 1 s early; the table sorts rows by time, and its longest gap (4.11 s) may hold one such second ([Q1576](../../../quants/experiments.md)) |
 | [tables/r194_cards_step1.md](tables/r194_cards_step1.md) | the same over R194's step 1 alone (15:24:42 to 15:37:16), the window of R194's `phases.csv` |
 | [tables/card_log_test.txt](tables/card_log_test.txt) | `card_log_test.sh`'s output: 26 of 26 checks pass |
 | [../../../scripts/card_log.py](../../../scripts/card_log.py) | the logger |
