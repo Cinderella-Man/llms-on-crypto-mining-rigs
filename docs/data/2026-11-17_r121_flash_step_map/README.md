@@ -144,12 +144,11 @@ profile and step trace it is 306.31 and 327.19 ms; R157 measured 444.11 and 351.
 - **What it is not:** not the draft's catch-up (−1.41 and −0.93 ms), not a graph built again on the host (the main
   graph is built once in the generation of both requests), and not short host memory (the lowest MemAvailable of the
   width-4 loads 292, 309, 304, 283 and 319 MiB; no watchdog stop).
-- **What it most likely is (est., from v4.0's code):** a pass whose graph properties are new runs its kernels one
-  launch at a time; ggml captures a CUDA graph only after the warm-up of unchanged calls, and
-  `GGML_CUDA_GRAPHS_FORCE` skips that warm-up only for graphs of more than 8 tokens (prompt micro-batches). The first
-  pass of a width after the prompt, and the reply's shorter last pass, are new at each cache size; the repeat finds
-  the graphs the first request left at the same cache size. A spread of every launch, not one kernel, is what eager
-  launches look like. The check is a load with `GGML_CUDA_GRAPH_DEBUG=1` (R192).
+- **What it is ([R192](../2026-11-17_r192_first_request_graphs/README.md)):** both requests run these passes kernel
+  by kernel (ggml captures a decode or verify graph only after the warm-up of unchanged calls;
+  `GGML_CUDA_GRAPHS_FORCE` skips it only for graphs of more than 8 tokens), and the repeat's are fast. The first
+  request's are at shapes new to every card (a new cache size), and before each such evaluation
+  `GGML_CUDA_KEEPALIVE_EAGER` ends the card's clock-holding block: 30 stops in the first request, none in the repeat.
 - **What it costs an agent:** every reply is a first request at a new cache size, so est. 3.93 ms a step at 4,096
   (310.85 ms over 79 steps), 3.3 % of the agent's 118.74 ms step.
 
