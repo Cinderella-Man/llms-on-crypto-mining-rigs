@@ -1,0 +1,4 @@
+arm	turns	gen_tok_s	turns_wo	gen_tok_s_wo	prompt_tok_s_wo	task_turns	task_gen_tokens	task_gen_tok_s	task_max_prompt_ctx
+f4ta	72	49.32	68	49.35	218.8	4	86	39.03	4088
+f4tb	71	46.99	65	47.80	221.2	6	22006	46.05	26171
+f4tr	77	46.74	69	49.23	214.1	8	28294	43.84	32424
