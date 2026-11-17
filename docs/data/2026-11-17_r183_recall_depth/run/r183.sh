@@ -15,6 +15,7 @@ TOOL=$HERE/../../../../bench/recall_depth
 LPORT=${LPORT:-18080}
 TARGETS=${TARGETS:-8000 56460 60240}
 export RIG BIN MODEL DRAFT
+export QUESTION=list  # R183's question, every fact as a list (the tool's default became R190's since)
 case ${1:?usage: r183.sh load|run|end} in
 load) bash "$TOOL/remote.sh" put && bash "$TOOL/remote.sh" start && bash "$TOOL/remote.sh" wait ;;
 # shellcheck disable=SC2086

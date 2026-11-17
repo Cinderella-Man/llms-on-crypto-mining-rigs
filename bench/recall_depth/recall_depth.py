@@ -7,7 +7,9 @@ facts, while the same binary on the CPU listed all six; the same prompt family p
 
 For every target length the script builds one conversation: small talk between a user and an assistant, in which the
 user states six facts about themselves, each planted a fixed number of tokens from the end of the prompt (FACTS:
-48,000, 32,000, 16,000, 4,000, 1,000 and 300), and a last question that asks for every fact as a list. The
+48,000, 32,000, 16,000, 4,000, 1,000 and 300), and a last question (QUESTION): by default it names the six facts'
+kinds (which pet, city, car, job, film and drink), so the answer needs no list of the messages; QUESTION=list asks
+for every fact as a list instead, the question of the first run (R183). The
 conversation is built backward from the question, so the six depths do not depend on the length: a longer prompt only
 has more small talk at its start. A fact deeper than the prompt is long goes to its start, in order.
 
@@ -18,8 +20,9 @@ fact's first token to the end of the prompt. The small talk is drawn from a fixe
 
 The request is greedy (temperature 0, top-k 1) and reads the whole prompt (cache_prompt false, so a repeat computes
 everything again). A fact counts as recalled when its marker word is in the reply's answer (its content, without the
-reasoning); a prompt passes with all six. A prompt that misses facts is sent once more (REPEAT_MISS=1) to see whether
-the miss repeats, and the run stops after that second try, whatever it gives.
+reasoning); a prompt passes with all six. What follows a prompt that misses facts is ON_MISS's: by default (repeat) it
+is sent once more, the same request, to see whether the miss repeats, and the run stops after that second try,
+whatever it gives.
 
     URL=http://127.0.0.1:8080 OUT=<results folder> python3 recall_depth.py run 8000 56460 60240
     OUT=<results folder> python3 recall_depth.py table > table.md
@@ -29,10 +32,18 @@ Env:
   URL         the llama-server (default http://127.0.0.1:8080)
   OUT         results folder: prompts/<name>.json.gz (the messages), <name>-<try>.json (request settings, measured
               depths and the full reply), results.tsv (one row a request)
-  SEED        the small talk's seed (default 1546)
+  QUESTION    the last message: kinds (default; which pet, city, car, job, film and drink) or list (every fact as a
+              list, R183's)
+  SEED        the small talk's seed (default 1546), and the seed of every request
   CTX         the server's context (default 65536): a reply gets at most CTX minus the prompt, less 16 tokens
   MAX_TOKENS  the reply's cap (default 8192)
-  REPEAT_MISS 1 (default): a prompt that misses a fact is sent once more, then the run stops; 0: no repeat, go on
+  ON_MISS     what follows a prompt that misses a fact:
+                repeat  (default) send it once more, the same greedy request, then stop the run
+                sample  stop the run at once, unless the reply hit the cap with no answer (finish "length", no
+                        answer text): then send it once more with SAMPLING and the seed, and stop the run after that
+                go      no repeat, go on to the next prompt (also REPEAT_MISS=0, the older name)
+  SAMPLING    the sampled try's temperature,top_p,top_k,min_p (default 1.0,0.95,20,0: the makers' sampling, as the
+              Flash-Next presets set it)
   TIMEOUT_S   one request's timeout (default 7200)
   NAME        the prompts' name prefix (default "recall"): prompt <NAME>-<target length>
 """
@@ -50,7 +61,8 @@ OUT = os.environ.get('OUT', '')
 SEED = int(os.environ.get('SEED', '1546'))
 CTX = int(os.environ.get('CTX', '65536'))
 MAX_TOKENS = int(os.environ.get('MAX_TOKENS', '8192'))
-REPEAT_MISS = os.environ.get('REPEAT_MISS', '1') == '1'
+ON_MISS = os.environ.get('ON_MISS', 'go' if os.environ.get('REPEAT_MISS') == '0' else 'repeat')
+SAMPLING = [float(x) for x in os.environ.get('SAMPLING', '1.0,0.95,20,0').split(',')]
 TIMEOUT_S = int(os.environ.get('TIMEOUT_S', '7200'))
 NAME = os.environ.get('NAME', 'recall')
 
@@ -84,8 +96,17 @@ FILLER = [
     ("I finally sorted out my old photos.", "That is satisfying. Did you find any nice memories?"),
     ("I am trying to go to bed earlier this week.", "Good luck! Sleep makes everything easier."),
 ]
-QUESTION = ("Think back over our whole conversation: what have I told you about myself? "
-            "List every fact as a short list, without comments.")
+QUESTIONS = {
+    # R183's: asks for every fact as a list. On Flash-Next at 56,437 tokens its greedy reasoning listed the messages
+    # one by one and looped before it answered.
+    'list': ("Think back over our whole conversation: what have I told you about myself? "
+             "List every fact as a short list, without comments."),
+    # R190's: names the six facts' kinds, so the answer needs no list of the messages.
+    'kinds': ("Which pet, city, car, job, film and drink did I mention in our conversation? "
+              "Answer in six short lines, one for each, without comments."),
+}
+QUESTION_KEY = os.environ.get('QUESTION', 'kinds')
+QUESTION = QUESTIONS[QUESTION_KEY]
 
 
 def post(path, body):
@@ -189,7 +210,7 @@ def score(content):
 
 COLS = ['name', 'try', 'target', 'prompt_tokens', 'measured_tokens', 'depths', 'found', 'n_found', 'pass',
         'in_reasoning', 'finish_reason', 'completion_tokens', 'prompt_s', 'prompt_tps', 'gen_tps', 'wall_s',
-        'sha256', 'first_line']
+        'sha256', 'first_line', 'question', 'sampling']
 
 
 def run(targets):
@@ -213,8 +234,12 @@ def run(targets):
             json.dump(msgs, f, ensure_ascii=False)
         print(f'{name}: {n} tokens, {len(msgs)} messages, fact depths {depths}, sha256 {sha[:16]}', flush=True)
         max_tokens = min(MAX_TOKENS, CTX - n - 16)
-        body = {'messages': msgs, 'max_tokens': max_tokens, 'temperature': 0.0, 'top_k': 1, 'top_p': 1.0,
-                'min_p': 0.0, 'seed': SEED, 'cache_prompt': False, 'stream': False}
+        greedy = {'messages': msgs, 'max_tokens': max_tokens, 'temperature': 0.0, 'top_k': 1, 'top_p': 1.0,
+                  'min_p': 0.0, 'seed': SEED, 'cache_prompt': False, 'stream': False}
+        temp, top_p, top_k, min_p = SAMPLING
+        sampled = dict(greedy, temperature=temp, top_p=top_p, top_k=int(top_k), min_p=min_p)
+        sampled_label = f'temperature {temp:g}, top_p {top_p:g}, top_k {int(top_k)}, min_p {min_p:g}, seed {SEED}'
+        body = greedy
         for t in (1, 2):
             t0 = time.time()
             reply = post('/v1/chat/completions', body)
@@ -236,21 +261,31 @@ def run(targets):
                        first_line=first_line(content).replace('\t', ' ')[:200])
             row['try'] = t
             row['pass'] = int(len(found) == len(FACTS))
+            row['question'] = QUESTION_KEY
+            row['sampling'] = 'greedy' if body is greedy else sampled_label
             with open(os.path.join(OUT, f'{name}-{t}.json'), 'w') as f:
                 json.dump({'row': row, 'request': {k: v for k, v in body.items() if k != 'messages'},
                            'reply': reply}, f, ensure_ascii=False, indent=1)
             with open(tsv, 'a') as f:
                 f.write('\t'.join(str(row[c]) for c in COLS) + '\n')
-            print(f'{name} try {t}: {len(found)}/{len(FACTS)} [{row["found"]}], {row["finish_reason"]}, '
-                  f'{row["completion_tokens"]} tokens, prompt {row["prompt_tokens"]} at {row["prompt_tps"]} tok/s, '
-                  f'{wall:.0f} s; first line: {row["first_line"][:100]}', flush=True)
+            print(f'{name} try {t} ({row["sampling"]}): {len(found)}/{len(FACTS)} [{row["found"]}], '
+                  f'{row["finish_reason"]}, {row["completion_tokens"]} tokens, prompt {row["prompt_tokens"]} at '
+                  f'{row["prompt_tps"]} tok/s, {wall:.0f} s; first line: {row["first_line"][:100]}', flush=True)
             if row['pass'] and t == 1:
                 break
             if t == 2:
                 print(f'{name} was sent once more after a miss: stopping here', flush=True)
                 return 1
-            if not REPEAT_MISS:
+            if ON_MISS == 'go':
                 break
+            if ON_MISS == 'sample':
+                if row['finish_reason'] == 'length' and not content.strip():
+                    print(f'{name}: the cap with no answer; once more with {sampled_label}', flush=True)
+                    body = sampled
+                    continue
+                print(f'{name}: the answer misses facts: stopping here', flush=True)
+                return 1
+            # repeat: the same request once more
     return 0
 
 
@@ -270,7 +305,8 @@ def table():
         depths = ', '.join(f'{int(d):,}' for d in r['depths'].split(','))
         cells = ['yes' if m in found else '**no**' for m in markers]
         line = r['first_line'].replace('|', '\\|') or '(no answer: the reply has reasoning only)'
-        print(f"| {r['name']} | {r['try']} | {int(r['prompt_tokens']):,} | {depths} | " + ' | '.join(cells)
+        try_ = r['try'] + ('' if r.get('sampling', 'greedy') == 'greedy' else ' (sampled)')
+        print(f"| {r['name']} | {try_} | {int(r['prompt_tokens']):,} | {depths} | " + ' | '.join(cells)
               + f" | {r['n_found']}/{len(FACTS)} | {r['finish_reason']} | {r['completion_tokens']} | "
               f"{r['prompt_tps']} | {line} |")
 
