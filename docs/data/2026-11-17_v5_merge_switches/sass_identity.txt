@@ -1,0 +1,23 @@
+# sass_compare.py compare: v4.0 release build's llama-server (base, md5 e7afd26db01f4c671549ef12c504ada3) against
+# llama.cpp-20261117-a112712e3-pascal-p106-v5's (new, md5 42f0b1f2ff2de02cd2e83836b5ff9841), cuobjdump -sass, sm_61
+base kernels (names): 8797; identical in new with kq_fp32 off: 8097; different: 700; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 176
+differing kernels: 700, longest 30 instructions; kernels over 200 instructions: 5492, differing: 0
+(kernels over 200 instructions counted per name: 5080, differing: 0)
+
+# the differing kernels against C861's own build (llama.cpp-20261117-abd6a2deb-pascal-p106-v5-kq-fp32scale's test-backend-ops)
+differ.list vs C861's differ2.list (sorted): same
+ext-N.txt vs C861's ext2-N.txt: identical
+ext-B.txt vs C861's ext2-B.txt: identical
+kq_on.list: 176 kernels; C861's build: 176
+
+# sass_compare.py linediff over the 700 (addresses and encodings stripped)
+kernels compared: 700; differing only in MOV32I constants: 568; differing otherwise: 132
+MOV32I 296 -> 0 (+-296): 21 lines
+MOV32I 424 -> 0 (+-424): 111 lines
+MOV32I 1083 -> 1102 (+19): 700 lines
+(the 132 others also differ in 'MOV Rn, c[0x4][...]' string addresses, as in C861's build)
+
+# the 700: every one is mul_mat_q's NO_DEVICE_CODE stub (ggml/src/ggml-cuda/mmq.cuh, line 1083 at eb82916d3, 1102 here)
+# kernels only in the new build: 176 mul_mat_q<..., kq_fp32 = true>: Q3_K 32, Q4_K 48, Q5_K 48, Q6_K 48;
+# J 8 to 128 in steps of 8 (11 each); (fallback, has_fusion) (false, false) 64, (false, true) 48, (true, false) 64.
+# Their instruction counts: ../2026-11-17_c861a_fp32_scale/kq_instructions.tsv (this build's table is the same file, md5 093fe674a96f08ded8b81a9852c2a8cb)
