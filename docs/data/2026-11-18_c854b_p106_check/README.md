@@ -392,7 +392,9 @@ from the build folder's name. The server's `switches:` line names the same six s
 `LLAMA_` and `GGML_` names, the candidate 889). It ran on the same rig 1 h 15 min after part (5)'s run, with part
 (6)'s Flash-Next run in between: the server started at 15:55:02 and was up after 683 s (part (5): 683 s), the tasks
 ran 16:06:27–16:31:32. Every card at stock before and after (75 W, 1,911 / 4,004 MHz maximum, no Xid; the card log
-reads offset 0 on every card).
+reads offset 0 on every card). From 16:01 to 16:23 the client machine also ran the client of another rig's agent
+check. The prompt and generation times are the rig's server's own, so the matched requests are not affected; the
+minutes and the first-token times, which the client measures, shared that machine from the first task to 16:23.
 
 | | **`1f1110c67` `o4v5a` (this rig)** | candidate `o4c2` (this rig, part (5)) | v4.0 `o4sna` (second rig) | v4.0 `o4snb` (second rig) | the candidate against `1f1110c67` by the rule (the spread: `o4snb` against `o4sna`) |
 |---|---|---|---|---|---|
