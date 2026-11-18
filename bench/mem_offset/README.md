@@ -286,7 +286,8 @@ values, which cards climb, and the core steps.
 R202, the second sitting on the second rig, after R201's ladder: the six cards without a fair core value (1, 5, 6
 and 7 failed the memory climb; 2 and 3 failed the core climb with the memory at +1,400 MT/s) climb the core with the
 memory at the values R201 held. Add to `--core-cards` any card R201's ladder left without a core value; `plan`
-lists them.
+lists them. It ran on 2026-11-18 from R201's use profile in 11 min 55 s: all six cards climbed to +231 MHz or more, and
+cards 2 and 3 went to +294 and +256 MHz ([R202](../../docs/data/2026-11-18_r202_core_climb_rig2/README.md)).
 
 ```bash
 # in the kit folder on a freshly booted rig, as root; BIN and CHECK_MODEL as for climb.py, a fresh WORK

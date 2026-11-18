@@ -1,0 +1,10 @@
+card,memory_mts,first_core_failure_mhz,first_core_failure_target_peak_mhz,suggested_core_mhz,suggested_target_peak_mhz,suggested_measured_peak_mhz,source
+0,1300,,,256,2126,2126,"the profile's core, checked in this sitting's check round"
+1,1000,307,2202,256,2152,2138,two climb steps under this sitting's first failure (memory at the profile's value)
+2,1000,320,2202,269,2152,2151,two climb steps under this sitting's first failure (memory at the profile's value)
+3,1100,282,2152,231,2101,2100,two climb steps under this sitting's first failure (memory at the profile's value)
+4,1100,,,206,2101,2113,"the profile's core, checked in this sitting's check round"
+5,1200,256,2152,206,2101,2100,two climb steps under this sitting's first failure (memory at the profile's value)
+6,900,332,2202,282,2152,2151,two climb steps under this sitting's first failure (memory at the profile's value)
+7,900,307,2202,256,2152,2151,two climb steps under this sitting's first failure (memory at the profile's value)
+8,1300,,,231,2139,2126,"the profile's core, checked in this sitting's check round"

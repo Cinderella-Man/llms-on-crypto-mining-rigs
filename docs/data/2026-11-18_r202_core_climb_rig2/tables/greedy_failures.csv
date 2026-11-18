@@ -1,0 +1,13 @@
+run,card,check,prompt,tokens,text_identical,first_token_differs,tokens_differ,first_probability_differs,max_chosen_logprob_change_before
+climb,1,core2202,1,256,True,,0,,0
+climb,1,core2202,2,256,False,82,1,0,0.0607
+climb,2,core2202,1,256,True,,0,,0
+climb,2,core2202,2,256,False,5,246,0,0.0429
+climb,3,core2152,1,256,True,,0,190,0.193
+climb,3,core2152,2,256,True,,0,,0
+climb,5,core2152,1,256,False,123,125,69,0.119
+climb,5,core2152,2,256,False,82,1,0,0.0661
+climb,6,core2202,1,256,True,,0,197,0.0358
+climb,6,core2202,2,256,True,,0,,0
+climb,7,core2202,1,256,True,,0,,0
+climb,7,core2202,2,256,True,,0,191,0.0959
