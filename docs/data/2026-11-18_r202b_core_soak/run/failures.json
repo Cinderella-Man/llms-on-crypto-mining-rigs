@@ -1,0 +1,115 @@
+{
+ "what": "Rig 2's failures before R202b, the input of `soak.py --failures`: each entry counts against the offset it names",
+ "failures": [
+  {
+   "card": 1,
+   "memory_mts": 1200,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the climb"
+  },
+  {
+   "card": 2,
+   "memory_mts": 1300,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): soak try 2"
+  },
+  {
+   "card": 2,
+   "memory_mts": 1400,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the core climb at +16 MHz with memory +1,400, read as a memory error"
+  },
+  {
+   "card": 3,
+   "memory_mts": 1400,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the core climb at +104 MHz with memory +1,400, read as a memory error"
+  },
+  {
+   "card": 4,
+   "memory_mts": 1300,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): soak try 1 at +1,300 MT/s and +231 MHz, read as a memory error"
+  },
+  {
+   "card": 5,
+   "memory_mts": 1400,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the climb"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1300,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the climb"
+  },
+  {
+   "card": 7,
+   "memory_mts": 1400,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the climb"
+  },
+  {
+   "card": 7,
+   "memory_mts": 1200,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): soak try 3"
+  },
+  {
+   "card": 7,
+   "memory_mts": 1100,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): soak try 4"
+  },
+  {
+   "card": 0,
+   "core_mhz": 307,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the core climb (the 2,177 MHz target) with memory +1,400"
+  },
+  {
+   "card": 4,
+   "core_mhz": 282,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the core climb (the 2,177 MHz target) with memory +1,400"
+  },
+  {
+   "card": 8,
+   "core_mhz": 282,
+   "where": "R200 (docs/data/2026-11-17_r200_climb_rig2): the core climb (the 2,177 MHz target) with memory +1,400"
+  },
+  {
+   "card": 3,
+   "memory_mts": 1300,
+   "where": "R201 (docs/data/2026-11-18_r201_soak_ladder): rung 3, 2 differing checks"
+  },
+  {
+   "card": 2,
+   "memory_mts": 1200,
+   "where": "R201 (docs/data/2026-11-18_r201_soak_ladder): rung 4, 1 differing check"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1100,
+   "where": "R201 (docs/data/2026-11-18_r201_soak_ladder): rung 4, 1 differing check"
+  },
+  {
+   "card": 1,
+   "core_mhz": 307,
+   "where": "R202 (docs/data/2026-11-18_r202_core_climb_rig2): the core climb with memory at R201's use profile"
+  },
+  {
+   "card": 2,
+   "core_mhz": 320,
+   "where": "R202 (docs/data/2026-11-18_r202_core_climb_rig2): the core climb with memory at R201's use profile"
+  },
+  {
+   "card": 3,
+   "core_mhz": 282,
+   "where": "R202 (docs/data/2026-11-18_r202_core_climb_rig2): the core climb with memory at R201's use profile"
+  },
+  {
+   "card": 5,
+   "core_mhz": 256,
+   "where": "R202 (docs/data/2026-11-18_r202_core_climb_rig2): the core climb with memory at R201's use profile"
+  },
+  {
+   "card": 6,
+   "core_mhz": 332,
+   "where": "R202 (docs/data/2026-11-18_r202_core_climb_rig2): the core climb with memory at R201's use profile"
+  },
+  {
+   "card": 7,
+   "core_mhz": 307,
+   "where": "R202 (docs/data/2026-11-18_r202_core_climb_rig2): the core climb with memory at R201's use profile"
+  }
+ ]
+}

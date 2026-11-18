@@ -52,6 +52,7 @@ wantnot "no reset when everything passes" "reset-all" "$(cat "$CALLS")"
 run soak-differs MODEL=m.gguf LADDER="p2.json" STUB_SOAK="exit 1 rounds 90 differs 2 left 7"
 want "says the soak did not pass" "the soak did not pass (exit 1 rounds 90 differs 2 left 7)" "$DONE"
 want "points at soaked.json" "soak/soaked.json" "$DONE"
+want "points at use.json" "soak/use.json, the next fresh boot's profile" "$DONE"
 want "every offset to 0" "^climb reset-all$" "$(cat "$CALLS")"
 wantnot "no model check after a failed soak" "TAG=profile" "$(cat "$CALLS")"
 
@@ -88,4 +89,21 @@ run no-reference MODEL=m.gguf STUB_MODEL_STOCK=1
 want "the soak still runs without a reference" "^soak " "$(cat "$CALLS")"
 want "and says so" "no model reference (1)" "$DONE"
 
-if [ "$fails" = 0 ]; then echo "test_chain: 10 runs, all checks pass"; else echo "test_chain: $fails check(s) FAILED"; exit 1; fi
+# R201: an env file that exports the rung's MINUTES=30 made the stock reference run 30 minutes, not two rounds
+run stock-own-minutes MODEL=m.gguf MINUTES=30 LADDER="p2.json"
+want "the stock reference: two rounds, no minutes" "^model TAG=stock ROUNDS=2 MINUTES=0$" "$(cat "$CALLS")"
+want "the rungs keep their minutes" "^soak --minutes 30 " "$(cat "$CALLS")"
+want "the model with the offsets keeps MODEL_MINUTES" "^model TAG=profile ROUNDS=2 MINUTES=30$" "$(cat "$CALLS")"
+
+run stock-minutes-set MODEL=m.gguf MINUTES=30 STOCK_MINUTES=20
+want "a longer stock control is its own setting" "^model TAG=stock ROUNDS=2 MINUTES=20$" "$(cat "$CALLS")"
+
+run stock-too-late MODEL=m.gguf STOCK_MINUTES=60 CHAIN_NOW=20:50
+wantnot "no stock control that would end after END_BY" "TAG=stock" "$(cat "$CALLS")"
+want "the soak still runs" "^soak " "$(cat "$CALLS")"
+want "and no model check without the reference" "no model reference (too late)" "$DONE"
+
+run failures FAILURES=earlier.json LADDER="p2.json"
+want "the earlier failures reach soak.py" "^soak --minutes 30 --keep-going --profile p1.json --failures earlier.json --ladder p2.json$" "$(cat "$CALLS")"
+
+if [ "$fails" = 0 ]; then echo "test_chain: 14 runs, all checks pass"; else echo "test_chain: $fails check(s) FAILED"; exit 1; fi

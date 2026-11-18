@@ -12,6 +12,12 @@ The real greedy_check.py and the real `climb.py reset-all` and `reset-card` run 
   a card that differs three times, and a card whose server dies, are set to 0 alone while the others go on;
   soaked.json holds each card's highest clean rung, `climb.py apply` reads it, and so does
   `climb.py --from-profile` (memory straight to the soaked values, the core climb for the cards without one);
+  use.json applies the rule with the earlier failures given in --failures, and `apply` reads it too;
+- a card that held a value for a rung and differed at the same value in the next is not offered that value;
+- the use rule: which offset a failure counts against, the caps two steps under, and on R201's and R202b's published
+  soaked.json and failures it gives exactly the use profiles made by hand for those runs;
+- --use-from writes the use profile from a finished soak's soaked.json and touches nothing else;
+- an unreadable failures file is refused before any server starts;
 - plain mode: the first differing check sets every card to 0;
 - a stock control with --keep-going: no difference, exit 0;
 - a ladder that would step a card down, or go above a cap, is refused before any server starts.
@@ -31,6 +37,7 @@ import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 KIT = os.path.dirname(HERE)
+DATA = os.path.join(KIT, "..", "..", "docs", "data")
 sys.path.insert(0, KIT)
 import climb  # noqa: E402
 import soak  # noqa: E402
@@ -43,9 +50,11 @@ g = os.environ.get("CUDA_VISIBLE_DEVICES", "0")
 port = int(sys.argv[sys.argv.index("--port") + 1])
 fault = json.loads(os.environ.get("FAKE_FAULTS", "{}")).get(g)
 seen = {"n": 0}
-def mem():
+def mem(card=g):
     with open(os.environ["FAKE_STATE"]) as f:
-        return json.load(f).get(g, [0, 0])[0]
+        return json.load(f).get(card, [0, 0])[0]
+def faulty():   # from mem_min on; with when_card, only once that card's memory is at when_mem or above
+    return mem() >= fault["mem_min"] and ("when_card" not in fault or mem(fault["when_card"]) >= fault["when_mem"])
 class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
@@ -61,7 +70,7 @@ class H(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         req = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
         text = "answer to " + req["prompt"][:24]
-        if fault and mem() >= fault["mem_min"]:
+        if fault and faulty():
             seen["n"] += 1
             if fault.get("die"):
                 os._exit(1)
@@ -221,6 +230,88 @@ class Pure(unittest.TestCase):
         self.assertEqual(soak.soaked_values([clean, (1100, 0, 0, False, 0, False)]), (1000, 0, 0))   # a rung cut short
         self.assertEqual(soak.soaked_values([(1000, 0, 0, True, 0, True)]), (0, 0, 0))               # the card left
         self.assertEqual(soak.soaked_values([]), (0, 0, 0))
+        # R201's card 2: +1,200 held a whole rung, then differed at +1,200 in the next; it is not offered +1,200
+        self.assertEqual(soak.soaked_values([clean, (1100, 0, 0, True, 0, False), (1200, 0, 0, True, 0, False),
+                                             (1200, 0, 0, True, 1, False)]), (1100, 0, 0))
+        self.assertEqual(soak.soaked_values([clean, (1000, 0, 0, True, 2, False)]), (0, 0, 0))      # held, then not
+        # a failure with the core up does not take away the memory rung under it, which never had that core
+        self.assertEqual(soak.soaked_values([(1300, 0, 0, True, 0, False), (1300, 256, 20, True, 1, False)]),
+                         (1300, 0, 0))
+
+    def test_soak_failures_count_against_the_offset_that_went_up(self):
+        h = [(1100, 0, 0, True, 0, False), (1200, 0, 0, True, 1, False)]
+        self.assertEqual(soak.soak_failures(h), [(2, 1200, 0, "memory", 1, False)])
+        h = [(1300, 0, 0, True, 0, False), (1300, 256, 20, True, 2, False)]
+        self.assertEqual(soak.soak_failures(h)[0][3], "core")
+        h = [(1300, 206, 16, True, 0, False), (1300, 231, 18, True, 0, True)]          # left in the core rung
+        self.assertEqual(soak.soak_failures(h), [(2, 1300, 231, "core", 0, True)])
+        h = [(1200, 206, 16, True, 0, False), (1300, 206, 16, True, 1, False)]
+        self.assertEqual(soak.soak_failures(h)[0][3], "memory")
+        self.assertEqual(soak.soak_failures([(1200, 206, 16, True, 1, False)])[0][3], "both")   # the first rung
+        h = [(1200, 206, 16, True, 0, False), (1200, 206, 16, True, 1, False)]          # nothing changed
+        self.assertEqual(soak.soak_failures(h)[0][3], "both")
+        self.assertEqual(soak.soak_failures([(0, 206, 16, True, 1, False)])[0][3], "core")
+        self.assertEqual(soak.soak_failures([(1000, 0, 0, True, 0, False)]), [])
+
+    def test_core_steps(self):
+        for mhz, bins in ((0, 0), (155, 12), (206, 16), (231, 18), (256, 20), (269, 21), (282, 22), (307, 24),
+                          (320, 25), (332, 26)):
+            self.assertEqual(soak.core_bins(mhz, 12.66), bins)
+            self.assertEqual(soak.core_offset(bins, 12.66), mhz)
+            self.assertEqual(soak.core_offset(bins, 12.66), climb.core_offset(bins, 12.66))
+
+    def test_the_use_rule(self):
+        def card(g, rungs):
+            return {"card": g, "memory_mts": 0, "core_mhz": 0, "core_steps": 0,
+                    "soak": {"rungs": [{"memory_mts": m, "core_mhz": c, "core_steps": soak.core_bins(c, 12.66),
+                                        "complete": True, "differing_checks": d, "left": False} for m, c, d in rungs],
+                             "first_differed": None, "left": None}}
+        soaked = {"what": "test", "date": "2026-11-18", "complete": True, "cards": [
+            card(0, [(1100, 0, 0), (1200, 0, 0), (1300, 0, 0), (1300, 256, 0)]),   # clean; earlier core failure +282
+            card(1, [(1000, 0, 0), (1100, 0, 0), (1200, 0, 1)]),                   # differed at +1,200
+            card(2, [(1000, 0, 0), (1100, 0, 0)]),                                 # clean; earlier memory failure
+            card(3, [(1000, 0, 0), (1000, 231, 1)]),                               # the core rung differed
+            card(4, [(900, 0, 1)])]}                                               # no clean rung
+        earlier = [{"card": 0, "core_mhz": 282, "where": "a climb"}, {"card": 2, "memory_mts": 1200, "where": "a climb"},
+                   {"card": 2, "memory_mts": 1300, "where": "a soak"}]
+        use, rows = soak.use_profile(soaked, earlier)
+        got = {c["card"]: (c["memory_mts"], c["core_mhz"], c["core_steps"]) for c in use["cards"]}
+        self.assertEqual(got, {0: (1300, 231, 18), 1: (1000, 0, 0), 2: (1000, 0, 0), 3: (1000, 0, 0), 4: (0, 0, 0)})
+        self.assertTrue(all("soak" not in c for c in use["cards"]))
+        self.assertEqual(len(rows), 5)
+        self.assertIn("+1,000 MT/s (2 steps under +1,200, soak 2026-11-18, rung 3: 1 differing check", rows[1])
+        # every failure it used is listed, so use.json is the next run's --failures
+        self.assertEqual(len(use["failures"]), 6)
+        self.assertIn({"card": 3, "core_mhz": 231, "where": "soak 2026-11-18, rung 2: 1 differing check at +1,000 MT/s, "
+                                                             "+231 MHz"}, use["failures"])
+        tmp = tempfile.mkdtemp(prefix="soak-use-")
+        try:
+            path = os.path.join(tmp, "use.json")
+            soak.write_use(use, rows, path)
+            self.assertEqual(soak.read_failures(path), use["failures"])
+            self.assertTrue(os.path.exists(os.path.join(tmp, "use-choice.md")))
+            with open(path, "w") as f:
+                json.dump({"failures": [{"card": 1, "memory_mts": "1200"}]}, f)
+            with self.assertRaises(ValueError):
+                soak.read_failures(path)
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_the_use_rule_gives_r201_and_r202b_hand_made_profiles(self):
+        """R201's and R202b's use profiles (docs/data) were made by hand by the same rule, from their soaked.json and
+        the failures of the runs before them; the rule here gives every card the same values and fields."""
+        for run in ("2026-11-18_r201_soak_ladder", "2026-11-18_r202b_core_soak"):
+            d = os.path.join(DATA, run)
+            with open(os.path.join(d, "soaked.json")) as f:
+                soaked = json.load(f)
+            with open(os.path.join(d, "use-profile.json")) as f:
+                hand = json.load(f)
+            use, _ = soak.use_profile(soaked, soak.read_failures(os.path.join(d, "run", "failures.json")))
+            self.assertEqual(use["cards"], hand["cards"], run)
+        # R201's soaked.json offered card 2 +1,200 and card 6 +1,100, values they differed at in rung 4
+        with open(os.path.join(DATA, "2026-11-18_r201_soak_ladder", "soaked.json")) as f:
+            r201 = {c["card"]: c for c in json.load(f)["cards"]}
+        self.assertEqual([soak.soaked_values(soak.card_history(r201[g]))[0] for g in (2, 3, 6)], [1100, 1200, 1000])
 
 
 class Ladder(unittest.TestCase):
@@ -228,8 +319,11 @@ class Ladder(unittest.TestCase):
         rig = Rig(RUNG1, {7: {"mem_min": 900}, 2: {"mem_min": 1200, "every": True}, 5: {"mem_min": 1200, "die": True}})
         try:
             p1 = rig.write("p1.json", RUNG1)
-            rc, done, out = rig.soak("--minutes", "0.1", "--profile", p1, "--ladder", rig.write("p2.json", RUNG2),
-                                     rig.write("p3.json", RUNG3), rig.write("p4.json", RUNG4))
+            earlier = os.path.join(rig.tmp, "earlier.json")
+            with open(earlier, "w") as f:
+                json.dump({"failures": [{"card": 0, "core_mhz": 282, "where": "an earlier core climb"}]}, f)
+            rc, done, out = rig.soak("--minutes", "0.1", "--profile", p1, "--failures", earlier, "--ladder",
+                                     rig.write("p2.json", RUNG2), rig.write("p3.json", RUNG3), rig.write("p4.json", RUNG4))
             self.assertEqual(rc, 1, out)
             self.assertRegex(done, r"^exit 1 rounds \d+ differs 4 left 2,5$")
             # the clean cards at the top rung, memory then core; card 7 where it differed; cards 2 and 5 at 0
@@ -257,6 +351,25 @@ class Ladder(unittest.TestCase):
                              [("1", "1000", "0", "yes"), ("2", "1100", "0", "yes"), ("3", "1200", "3", "no")])
             self.assertIn("request failed", next(r for r in rows if r["card"] == "5" and r["rung"] == "3")["left"])
             self.assertTrue(all(int(r["rounds"]) >= 2 for r in rows if r["complete"] == "yes"))
+            # use.json: card 0's core two steps under its earlier failure at +282; cards 2, 5 and 7 two memory steps
+            # under where they differed or left; card 8 as soaked
+            with open(os.path.join(rig.work, "soak", "use.json")) as f:
+                use = json.load(f)
+            got = {c["card"]: (c["memory_mts"], c["core_mhz"], c["core_steps"]) for c in use["cards"]}
+            self.assertEqual(got, {0: (1300, 231, 18), 2: (1000, 0, 0), 5: (1000, 0, 0), 7: (700, 0, 0),
+                                   8: (1300, 231, 18)})
+            self.assertEqual(sorted((e["card"], e.get("memory_mts"), e.get("core_mhz")) for e in use["failures"]),
+                             [(0, None, 282), (2, 1200, None), (5, 1200, None), (7, 900, None)])
+            with open(os.path.join(rig.work, "soak", "use-choice.md")) as f:
+                self.assertEqual(len(f.read().splitlines()), 2 + len(CARDS))
+            self.assertIn("card 7: use +700 MT/s, +0 MHz", out)
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                rc = climb.main(["--dry-run", "--work", os.path.join(rig.tmp, "apply-use"), "--check-model",
+                                 "check.gguf", "apply", os.path.join(rig.work, "soak", "use.json")])
+            self.assertEqual(rc, 0, buf.getvalue()[-2000:])
+            self.assertIn("set 7 700", buf.getvalue())
+            self.assertIn("--core set 0 231", buf.getvalue())
             # `climb.py apply` reads soaked.json (the simulated rig: nothing is set)
             buf = io.StringIO()
             with contextlib.redirect_stdout(buf):
@@ -284,6 +397,44 @@ class Ladder(unittest.TestCase):
             self.assertEqual(got, {0: (1300, False), 2: (1100, True), 5: (1100, True), 7: (800, True), 8: (1300, False)})
             self.assertEqual([c["core_mhz"] for c in out["cards"] if c["card"] in (0, 8)], [256, 231])
             self.assertTrue(all(c["core_mhz"] > 0 for c in out["cards"] if c["card"] in (2, 5, 7)))
+        finally:
+            rig.close()
+
+    def test_a_value_held_for_a_rung_and_differing_in_the_next_is_not_offered(self):
+        """R201's cards 2 and 6: a card that held a value for a whole rung and differed at the same value in the next
+        (the ladder did not raise it). Card 7 here: +700, +800 clean, then +800 differs once in rung 3."""
+        ra = {0: (1100, 0, 0), 2: (1000, 0, 0), 5: (1000, 0, 0), 7: (700, 0, 0), 8: (1100, 0, 0)}
+        rb = {0: (1200, 0, 0), 2: (1100, 0, 0), 5: (1100, 0, 0), 7: (800, 0, 0), 8: (1200, 0, 0)}
+        rc_ = {0: (1300, 0, 0), 2: (1200, 0, 0), 5: (1200, 0, 0), 7: (800, 0, 0), 8: (1300, 0, 0)}
+        rig = Rig(ra, {7: {"mem_min": 800, "when_card": "0", "when_mem": 1300}})   # once card 0 is at rung 3
+        try:
+            rc, done, out = rig.soak("--minutes", "0.1", "--profile", rig.write("a.json", ra), "--ladder",
+                                     rig.write("b.json", rb), rig.write("c.json", rc_))
+            self.assertEqual(rc, 1, out)
+            self.assertRegex(done, r"^exit 1 rounds \d+ differs 1$")
+            with open(os.path.join(rig.work, "soak", "rungs.csv")) as f:
+                r7 = [(r["rung"], r["mem_mts"], r["differs"]) for r in csv.DictReader(f) if r["card"] == "7"]
+            self.assertEqual(r7, [("1", "700", "0"), ("2", "800", "0"), ("3", "800", "1")])
+            with open(os.path.join(rig.work, "soak", "soaked.json")) as f:
+                soaked = {c["card"]: c["memory_mts"] for c in json.load(f)["cards"]}
+            self.assertEqual(soaked, {0: 1300, 2: 1200, 5: 1200, 7: 700, 8: 1300})     # not +800
+            with open(os.path.join(rig.work, "soak", "use.json")) as f:
+                use = {c["card"]: c["memory_mts"] for c in json.load(f)["cards"]}
+            self.assertEqual(use, {0: 1300, 2: 1200, 5: 1200, 7: 600, 8: 1300})        # two steps under +800
+        finally:
+            rig.close()
+
+    def test_an_unreadable_failures_file_is_refused_before_any_server(self):
+        rig = Rig(RUNG1)
+        try:
+            bad = os.path.join(rig.tmp, "bad.json")
+            with open(bad, "w") as f:
+                json.dump({"failures": [{"card": 7, "memory_mts": "+1,100"}]}, f)
+            rc, done, out = rig.soak("--minutes", "0.05", "--profile", rig.write("p1.json", RUNG1), "--failures", bad)
+            self.assertEqual(rc, 1)
+            self.assertIn("refused: the failures file cannot be read", done)
+            self.assertNotIn("server: card", out)
+            self.assertEqual(rig.offsets()["0"], [1100, 0])
         finally:
             rig.close()
 
@@ -337,6 +488,32 @@ class PlainAndControl(unittest.TestCase):
             self.assertEqual(got, {0: 1100, 2: 1000, 5: 1000, 7: 0, 8: 1100})
         finally:
             rig.close()
+
+
+class UseFrom(unittest.TestCase):
+    def test_use_from_writes_the_use_profile_and_nothing_else(self):
+        d = os.path.join(DATA, "2026-11-18_r201_soak_ladder")
+        tmp = tempfile.mkdtemp(prefix="soak-use-from-")
+        try:
+            work, out = os.path.join(tmp, "work"), os.path.join(tmp, "use.json")
+            p = subprocess.run([sys.executable, "-I", os.path.join(KIT, "soak.py"), "--use-from",
+                                os.path.join(d, "soaked.json"), "--failures", os.path.join(d, "run", "failures.json"),
+                                "--use-out", out], env=dict(os.environ, WORK=work), capture_output=True, text=True,
+                               timeout=60)
+            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+            self.assertIn("| 2 | +1,100, +0 | +1,000 MT/s", p.stdout)
+            with open(out) as f:
+                got = json.load(f)
+            with open(os.path.join(d, "use-profile.json")) as f:
+                self.assertEqual(got["cards"], json.load(f)["cards"])
+            self.assertTrue(os.path.exists(os.path.join(tmp, "use-choice.md")))
+            self.assertFalse(os.path.exists(work))                  # no work folder, no SOAK_DONE
+            p = subprocess.run([sys.executable, "-I", os.path.join(KIT, "soak.py"), "--use-from",
+                                os.path.join(d, "soaked.json")], capture_output=True, text=True, timeout=60)
+            self.assertNotEqual(p.returncode, 0)
+            self.assertIn("--use-from needs --use-out", p.stderr)
+        finally:
+            shutil.rmtree(tmp)
 
 
 class ResetCard(unittest.TestCase):

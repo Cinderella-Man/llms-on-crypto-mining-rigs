@@ -277,6 +277,7 @@ steps between boots.
 | [run/r201-rung1.json](run/r201-rung1.json) … [run/r201-rung4.json](run/r201-rung4.json) | The four rungs, as `apply` and `soak.py --ladder` read them |
 | [run/make_rungs.py](run/make_rungs.py) | Writes the rungs from R200's last profile |
 | [run/make_use.py](run/make_use.py) | Writes the use profile from `soaked.json` and prints the table above |
+| [run/failures.json](run/failures.json) | Rig 2's failures before this run (R200's), as `soak.py --failures` reads them: with them `soak.py --use-from soaked.json` gives every card the values of `use-profile.json` |
 | [run/tables.py](run/tables.py) | Builds the tables from the work folder |
 | [run/MD5SUMS](run/MD5SUMS) | The md5 sums of the kit files and settings copied to the rig, checked there before each boot's run |
 | [use-profile/cards.csv](use-profile/cards.csv) | The second boot, one row per card: the profile's offsets, the soak's rounds, passes and differing checks, peak temperature, power and clocks in the soak and in Ornith's run |
@@ -305,6 +306,8 @@ The tables and the use profile, on any machine, from the copied folders:
 
 ```bash
 python3 -I run/make_use.py WORK/soak/soaked.json use-profile.json
+# or by the kit's own rule, the same values on every card:
+python3 -I ../../../bench/mem_offset/soak.py --use-from WORK/soak/soaked.json --failures run/failures.json --use-out use-again.json
 python3 -I run/tables.py WORK ORNITH_OUT use-profile.json tables
 python3 -I ../2026-11-17_r200_climb_rig2/run/greedy_diff.py WORK/soak tables/greedy_failures.csv WORK/out r201-ladder
 ```

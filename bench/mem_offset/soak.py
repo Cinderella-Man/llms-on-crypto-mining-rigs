@@ -2,7 +2,9 @@
 """soak.py: the offsets `climb.py apply` set, held with every card loaded at once, every card checked every round.
 
   soak.py [--minutes 30] [--limit 45] [--keep-going] [--profile P1.json] [--ladder P2.json [P3.json ...]]
-          (run detached, as root, in the kit folder, after `apply` passed)
+          [--failures EARLIER.json]   (run detached, as root, in the kit folder, after `apply` passed)
+  soak.py --use-from soaked.json [--failures EARLIER.json] --use-out use.json
+          (the use profile again from a soak's soaked.json; sets and runs nothing, needs no rig)
 
 Needs: `apply` passed on this boot (WORK/APPLY_DONE says "exit 0"), the climb kit's watchdog running, each card's
 stock hash from `apply`'s stock round (WORK/out/cardN/greedy-stock.sha).
@@ -27,8 +29,24 @@ Three ways to run it:
                  is. One boot gives every card its highest rung that held the full MINUTES.
 
 Writes WORK/soak/soak.csv (one row per card and round), rungs.csv (one row per card and rung: the offsets, rounds,
-passes, differing checks), soak.log, soaked.json and, at the end, WORK/SOAK_DONE. soaked.json is a profile
-`climb.py apply` reads: each card at the highest rung it held clean from the first rung on, 0 for a card with none.
+passes, differing checks), soak.log, soaked.json, use.json, use-choice.md and, at the end, WORK/SOAK_DONE.
+
+soaked.json is a profile `climb.py apply` reads: each card at the highest rung it held clean from the first rung on,
+never at the offsets of a rung where it differed or left (offsets only go up, so a later rung can repeat a value that
+held before), 0 for a card with none.
+
+use.json is the setting to use, by the rule (README, "Holding a profile"): each offset at the card's highest clean
+rung, but no higher than two steps under the lowest value at which that offset ever failed on that card. Two memory
+steps are 2 x --mem-step-mts (200 MT/s); two core steps are 2 x --core-step-bins of the driver's core steps (4 steps,
+about 51 MHz). The failures are this soak's (a rung where the card differed or left counts against the offset that
+went up into that rung: one thing changes per rung; with the core at 0 against the memory, with the memory at 0
+against the core, against both when it cannot be told) and those from earlier runs in --failures:
+
+  {"failures": [{"card": 1, "memory_mts": 1200, "where": "the climb, 2026-11-17"},
+                {"card": 0, "core_mhz": 307, "where": "the core climb, 2026-11-17"}]}
+
+An entry counts against the offset it names (both if it names both). use.json lists every failure it used under
+"failures", so it is the next run's --failures. use-choice.md has the reason for each card's values.
 
 What still stops everything (every offset of every card to 0): a watchdog trip, the watchdog no longer running, a
 card that does not read back 0 after its reset, and a crash of this script. A STOP file in WORK ends the soak after
@@ -125,13 +143,148 @@ def ladder_errors(start, rungs, cards, mem_cap, core_cap):
 
 def soaked_values(history):
     """A card's rungs, in order, as (mem, core, steps, complete, differs, left) -> the (mem, core, steps) of the
-    highest rung it held clean from the first rung on; (0, 0, 0) if the first rung was not clean."""
+    highest rung it held clean from the first rung on, never at or above (both offsets) a rung where it differed or
+    left; (0, 0, 0) if there is none."""
+    bad = [(h[0], h[1]) for h in history if h[4] or h[5]]
     best = (0, 0, 0)
     for mem, core, steps, complete, differs, left in history:
         if not complete or differs or left:
             break
-        best = (mem, core, steps)
+        if not any(mem >= m and core >= c for m, c in bad):
+            best = (mem, core, steps)
     return best
+
+
+def soak_failures(history):
+    """A card's rungs as for soaked_values() -> [(rung, mem, core, against, differs, left)] for each rung where it
+    differed or left. `against` is the offset that went up into that rung ("memory", "core" or "both"): with the core
+    at 0 the memory, with the memory at 0 the core, else the one that changed from the rung before; both when it
+    cannot be told (the first rung, both changed, or neither did)."""
+    out, prev = [], None
+    for i, (mem, core, steps, complete, differs, left) in enumerate(history, 1):
+        if differs or left:
+            if core == 0:
+                against = "memory"
+            elif mem == 0:
+                against = "core"
+            elif prev and mem > prev[0] and core == prev[1]:
+                against = "memory"
+            elif prev and core > prev[1] and mem == prev[0]:
+                against = "core"
+            else:
+                against = "both"
+            out.append((i, mem, core, against, differs, left))
+        prev = (mem, core)
+    return out
+
+
+def core_offset(bins, bin_mhz):
+    """The MHz for `bins` whole steps of the core clock, as climb.py sets them (n steps plus a quarter step)."""
+    return 0 if bins <= 0 else int(round(bins * bin_mhz + bin_mhz / 4))
+
+
+def core_bins(mhz, bin_mhz):
+    """The whole core steps an offset of `mhz` gives, the inverse of core_offset()."""
+    return 0 if mhz <= 0 else int(round((mhz - bin_mhz / 4) / bin_mhz))
+
+
+def read_failures(path):
+    """Earlier failures from a JSON file ({"failures": [...]}, a list, or a use.json soak.py wrote) ->
+    [{"card", "memory_mts" and/or "core_mhz", "where"}]; ValueError for an entry that is not one."""
+    with open(path) as f:
+        data = json.load(f)
+    items = data.get("failures") if isinstance(data, dict) else data
+    if not isinstance(items, list):
+        raise ValueError(f"{path}: no list of failures")
+    out = []
+    for i, e in enumerate(items):
+        ok = isinstance(e, dict) and isinstance(e.get("card"), int) and any(k in e for k in ("memory_mts", "core_mhz"))
+        ok = ok and all(isinstance(e[k], int) and e[k] >= 0 for k in ("memory_mts", "core_mhz") if k in e)
+        if not ok:
+            raise ValueError(f"{path}: failure {i + 1} needs a card and a whole memory_mts or core_mhz: {e!r}")
+        out.append({k: e[k] for k in ("card", "memory_mts", "core_mhz", "where") if k in e})
+    return out
+
+
+def card_history(card):
+    """A soaked.json card -> its rungs as (mem, core, steps, complete, differs, left). A soaked.json from before
+    the rungs carried core_steps and left has them filled in: the steps from the MHz, the card's left on its last rung."""
+    rungs = (card.get("soak") or {}).get("rungs") or []
+    left_card = bool((card.get("soak") or {}).get("left"))
+    hist = []
+    for i, r in enumerate(rungs):
+        steps = r["core_steps"] if "core_steps" in r else core_bins(r["core_mhz"], 12.66)
+        left = r["left"] if "left" in r else (left_card and i == len(rungs) - 1)
+        hist.append((r["memory_mts"], r["core_mhz"], steps, bool(r["complete"]), int(r["differing_checks"]), left))
+    return hist
+
+
+def use_profile(soaked, earlier, mem_step=100, bin_mhz=12.66, step_bins=2, under=2, source="soaked.json"):
+    """The setting to use from a soak's soaked.json and the failures known from earlier runs (read_failures()):
+    each card's offsets at its highest clean rung, each no higher than `under` steps under the lowest value at which
+    that offset ever failed on the card. Returns (the use profile, [one Markdown table row per card])."""
+    use = {k: v for k, v in soaked.items() if k not in ("cards", "each_card")}
+    use["what"] = ("P106 clock offsets to use, from bench/mem_offset/soak.py: each card's highest clean rung of the "
+                   "soak, at most two steps under its lowest failure anywhere; `climb.py apply` reads it")
+    use["from"] = f"{source}, by soak.py"
+    use["each_card"] = (f"memory_mts and core_mhz are the card's highest clean rung (soaked.json), each no higher than "
+                        f"{under} steps under the lowest value at which that offset failed on the card (memory "
+                        f"steps of {mem_step} MT/s, core steps of {step_bins} x {bin_mhz} MHz); 0 if no rung held")
+    use["cards"], known, rows = [], [], []
+    date = soaked.get("date", "")
+    for c in soaked.get("cards", []):
+        g = c["card"]
+        hist = card_history(c)
+        held = soaked_values(hist)
+        mem_f = [(e["memory_mts"], e.get("where", "an earlier run")) for e in earlier
+                 if e["card"] == g and "memory_mts" in e]
+        core_f = [(e["core_mhz"], e.get("where", "an earlier run")) for e in earlier
+                  if e["card"] == g and "core_mhz" in e]
+        known += [e for e in earlier if e["card"] == g]
+        for rung, mem, core, against, differs, left in soak_failures(hist):
+            what = (f"{differs} differing check" + ("s" if differs != 1 else "")) if differs else "left the soak"
+            where = f"soak {date}, rung {rung}: {what} at +{mem:,} MT/s, +{core} MHz"
+            if against in ("memory", "both"):
+                mem_f.append((mem, where))
+                known.append({"card": g, "memory_mts": mem, "where": where})
+            if against in ("core", "both"):
+                core_f.append((core, where))
+                known.append({"card": g, "core_mhz": core, "where": where})
+        mem, core, steps = held
+        mem_cap = core_cap = None
+        if mem_f:
+            low = min(mem_f, key=lambda v: v[0])
+            mem_cap = (max(0, low[0] - under * mem_step), low)
+            mem = min(mem, mem_cap[0])
+        if core_f:
+            low = min(core_f, key=lambda v: v[0])
+            cap_bins = max(0, core_bins(low[0], bin_mhz) - under * step_bins)
+            core_cap = (core_offset(cap_bins, bin_mhz), low)
+            if core_bins(core, bin_mhz) > cap_bins:
+                core, steps = core_cap[0], cap_bins
+        if core == 0:
+            steps = 0
+        u = {k: v for k, v in c.items() if k != "soak"}
+        u.update({"memory_mts": mem, "core_mhz": core, "core_steps": steps})
+        use["cards"].append(u)
+
+        def cap_text(cap, unit):
+            return "none" if cap is None else f"+{cap[0]:,} {unit} ({under} steps under +{cap[1][0]:,}, {cap[1][1]})"
+        rows.append(f"| {g} | +{held[0]:,}, +{held[1]} | {cap_text(mem_cap, 'MT/s')} | {cap_text(core_cap, 'MHz')} | "
+                    f"**+{mem:,}, +{core}** |")
+    use["failures"] = known
+    return use, rows
+
+
+USE_TABLE = ["| Card | Highest clean rung (MT/s, MHz) | Memory cap | Core cap | **Use (MT/s, MHz)** |",
+             "|---|---|---|---|---|"]
+
+
+def write_use(use, rows, path):
+    with open(path, "w") as f:
+        json.dump(use, f, indent=1)
+    with open(os.path.splitext(path)[0] + "-choice.md", "w") as f:
+        f.write("\n".join(USE_TABLE + rows) + "\n")
 
 
 def main(argv=None):
@@ -158,7 +311,26 @@ def main(argv=None):
     ap.add_argument("--greedy", default=os.environ.get("GREEDY", os.path.join(HERE, "greedy_check.py")))
     ap.add_argument("--mem-cap", type=int, default=int(os.environ.get("MEM_CAP", "1400")))
     ap.add_argument("--core-cap", type=int, default=int(os.environ.get("CORE_CAP", "400")))
+    ap.add_argument("--failures", default=os.environ.get("FAILURES") or None, metavar="EARLIER.json",
+                    help="the cards' failures from earlier runs, for use.json (a use.json of an earlier soak will do)")
+    ap.add_argument("--mem-step-mts", type=int, default=int(os.environ.get("MEM_STEP_MTS", "100")),
+                    help="one memory step of the use rule, MT/s")
+    ap.add_argument("--core-bin-mhz", type=float, default=float(os.environ.get("CORE_BIN_MHZ", "12.66")))
+    ap.add_argument("--core-step-bins", type=int, default=int(os.environ.get("CORE_STEP_BINS", "2")),
+                    help="one core step of the use rule, in the driver's core steps (as climb.py's)")
+    ap.add_argument("--use-from", metavar="SOAKED.json", help="only write the use profile from this soaked.json")
+    ap.add_argument("--use-out", metavar="USE.json", help="with --use-from: where to write it")
     a = ap.parse_args(argv)
+    if a.use_from:   # the use profile again from a finished soak: nothing is set, started or checked
+        if not a.use_out:
+            ap.error("--use-from needs --use-out")
+        with open(a.use_from) as f:
+            soaked = json.load(f)
+        use, rows = use_profile(soaked, read_failures(a.failures) if a.failures else [], a.mem_step_mts,
+                                a.core_bin_mhz, a.core_step_bins, source=os.path.basename(a.use_from))
+        write_use(use, rows, a.use_out)
+        print("\n".join(USE_TABLE + rows))
+        return 0
     keep = a.keep_going or bool(a.ladder)
     work, cards = a.work, [int(v) for v in a.cards.split()]
     sd = os.path.join(work, "soak")
@@ -247,6 +419,10 @@ def main(argv=None):
         except (OSError, ValueError):
             if a.ladder:
                 raise SystemExit(f"units file {a.units} not readable: no ladder")
+        try:
+            earlier = read_failures(a.failures) if a.failures else []
+        except (OSError, ValueError) as e:
+            raise SystemExit(f"the failures file cannot be read: {e}")
         rungs = []
         for path in a.ladder:
             with open(path) as f:
@@ -450,14 +626,16 @@ def main(argv=None):
                           "date": time.strftime("%Y-%m-%d"), "complete": True, "climb_boot": None,
                           "rungs": 1 + len(rungs), "minutes_a_rung": a.minutes,
                           "each_card": "memory_mts and core_mhz are the highest rung the card held for the full "
-                                       "minutes with no differing check, from the first rung on; 0 if none",
+                                       "minutes with no differing check, from the first rung on, never at the "
+                                       "offsets of a rung where it differed or left; 0 if none",
                           "cards": []}
                 for g in cards:
                     c = dict(by.get(g, {"card": g}))
                     fd = first_diff.get(g)
                     c.update({"memory_mts": held[g][0], "core_mhz": held[g][1], "core_steps": held[g][2],
-                              "soak": {"rungs": [{"memory_mts": h[0], "core_mhz": h[1], "complete": h[3],
-                                                  "differing_checks": h[4]} for h in hist[g]],
+                              "soak": {"rungs": [{"memory_mts": h[0], "core_mhz": h[1], "core_steps": h[2],
+                                                  "complete": h[3], "differing_checks": h[4], "left": h[5]}
+                                                 for h in hist[g]],
                                        "first_differed": {"rung": fd[0], "round": fd[1], "memory_mts": fd[2],
                                                           "core_mhz": fd[3]} if fd else None,
                                        "left": left.get(g)}})
@@ -467,6 +645,11 @@ def main(argv=None):
                 with open(os.path.join(sd, "soaked.json"), "w") as f:
                     json.dump(soaked, f, indent=1)
                 log(work, f"soaked: {os.path.join(sd, 'soaked.json')}")
+                use, rows = use_profile(soaked, earlier, a.mem_step_mts, a.core_bin_mhz, a.core_step_bins)
+                write_use(use, rows, os.path.join(sd, "use.json"))
+                for c in use["cards"]:
+                    log(work, f"card {c['card']}: use +{c['memory_mts']} MT/s, +{c['core_mhz']} MHz")
+                log(work, f"use profile: {os.path.join(sd, 'use.json')}, the reasons in use-choice.md")
         log(work, f"soak done: {rnd} rounds; passes per card " + " ".join(f"{g}:{passes[g]}" for g in cards)
             + (f"; differs per card " + " ".join(f"{g}:{differs[g]}" for g in cards)
                + (f"; left: {sorted(left)}" if left else "") + "; the offsets stay as they are while the watchdog runs"

@@ -172,6 +172,9 @@ The tables and the use profile, from the work folder copied off the rig:
 python3 -I run/tables.py WORK_COPY tables
 python3 -I run/make_use.py WORK_COPY/soak/soaked.json ../2026-11-18_r201_soak_ladder/use-profile.json \
   ../2026-11-18_r202_core_climb_rig2/tables/steps.csv use-profile.json
+# or by the kit's own rule, the same values on every card:
+python3 -I ../../../bench/mem_offset/soak.py --use-from WORK_COPY/soak/soaked.json --failures run/failures.json \
+  --use-out use-again.json
 ```
 
 ## Files
@@ -189,6 +192,7 @@ python3 -I run/make_use.py WORK_COPY/soak/soaked.json ../2026-11-18_r201_soak_la
 | [run/env.sh](run/env.sh), [run/env-r202b.sh](run/env-r202b.sh), [run/MD5SUMS](run/MD5SUMS) | the rig's settings as sourced, and the md5 of every file that ran |
 | [run/r202b-rung1.json](run/r202b-rung1.json), [rung2](run/r202b-rung2.json), [rung3](run/r202b-rung3.json) | the three rungs |
 | [run/make_rungs.py](run/make_rungs.py), [run/make_use.py](run/make_use.py), [run/tables.py](run/tables.py) | the scripts that made the rungs, the use profile and the tables |
+| [run/failures.json](run/failures.json) | rig 2's failures before this run (R200's, R201's and R202's), as `soak.py --failures` reads them: with them `soak.py --use-from soaked.json` gives every card the values of `use-profile.json` |
 
 ## Provenance and licence
 

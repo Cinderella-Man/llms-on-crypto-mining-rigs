@@ -192,8 +192,9 @@ and the soaks are built on four facts from that run:
 - **One thing changes per rung.** Memory rungs first with the core where `apply` set it, then a rung that adds the
   core, so a card that starts to differ names the offset that did it.
 
-**The rule for the setting to use:** the highest rung a card held clean that is at least two steps under the lowest
-offset at which that card ever failed, in a climb or a soak.
+**The rule for the setting to use:** each offset at the highest rung the card held clean, but at least two steps
+under the lowest value at which that offset ever failed on that card, in a climb or a soak. `soak.py` applies it at
+the end of a soak and writes `soak/use.json`, the profile for the next boot (below).
 
 ### The three modes of `soak.py`
 
@@ -201,14 +202,50 @@ offset at which that card ever failed, in a climb or a soak.
 |---|---|---|
 | plain | every offset of every card to 0, the soak ends | `SOAK_DONE` "exit 1 card N round R: …", or "exit 0 rounds N" |
 | `--keep-going` | it is counted and the soak goes on for the full time. A card that differs three times at an offset (`--max-differs`), or whose check fails or runs past its limit, is set to 0 alone (`climb.py reset-card`) and leaves; the others go on | the offsets as they are; "exit 0 rounds N differs 0" only if nothing differed and no card left |
-| `--ladder P2.json P3.json …` | as `--keep-going`; after each rung the cards that have not differed go up to the next profile's values (read back), a card that differed stays where it is | the same, and `soak/soaked.json` |
+| `--ladder P2.json P3.json …` | as `--keep-going`; after each rung the cards that have not differed go up to the next profile's values (read back), a card that differed stays where it is | the same, and `soak/soaked.json` and `soak/use.json` |
 
 With every offset 0, `--keep-going` is the stock control: it shows that the check itself never differs on that rig.
 `soak/rungs.csv` has one row per card and rung (offsets, rounds, passes, differing checks, the first differing
-round), `soak/soak.csv` one row per card and round. `soak/soaked.json` is a profile `climb.py apply` reads: each card
-at the highest rung it held for the full minutes with no differing check, from the first rung on, and 0 for a card
-with none. A ladder is refused before any server starts if a rung would step a card down or go above
-`--mem-cap` / `--core-cap`.
+round), `soak/soak.csv` one row per card and round. A ladder is refused before any server starts if a rung would step
+a card down or go above `--mem-cap` / `--core-cap`.
+
+Two profiles come out of a soak with `--profile` or `--ladder`; `climb.py apply` reads both:
+
+- **`soak/soaked.json`: what held.** Each card at the highest rung it held for the full minutes with no differing
+  check, from the first rung on, and never at the offsets of a rung where it differed or left: a card the ladder did
+  not raise can hold a value for a whole rung and differ at it in the next (cards 2 and 6 in
+  [R201](../../docs/data/2026-11-18_r201_soak_ladder/README.md)), and that value is not offered. 0 for a card with no
+  such rung.
+- **`soak/use.json`: the setting to use, by the rule above.** Each card's memory and core start at its `soaked.json`
+  values; each is lowered to two steps under the lowest value at which that offset failed on the card, if that is
+  lower. Two memory steps are 200 MT/s (`--mem-step-mts`, 100); two core steps are four of the driver's core steps,
+  about 51 MHz (`--core-step-bins` 2 and `--core-bin-mhz` 12.66, as the climb's). `soak/use-choice.md` gives each
+  card's reason.
+
+The failures it counts are the soak's own and those of earlier runs on the same rig, given with `--failures`
+(`FAILURES` in the chain). A rung in which a card differed or left counts against the offset that went up into that
+rung, since one thing changes per rung; with the core at 0 against the memory, with the memory at 0 against the core,
+and against both when it cannot be told (the first rung, or a rung where both or neither changed). An earlier failure
+counts against the offset its entry names, both if it names both:
+
+```json
+{"failures": [{"card": 1, "memory_mts": 1200, "where": "the climb, 2026-11-17"},
+              {"card": 4, "memory_mts": 1300, "where": "a soak at +1,300 MT/s and +231 MHz, read as a memory error"},
+              {"card": 0, "core_mhz": 307, "where": "the core climb, 2026-11-17"}]}
+```
+
+`use.json` lists every failure it used under `failures`, so it is the next soak's `--failures` as it stands. A
+failures file that cannot be read is refused before any server starts. To make the use profile again from a finished
+soak (other failures, or a `soaked.json` from before this rule), on any machine, with nothing set or started:
+
+```bash
+python3 -I soak.py --use-from WORK/soak/soaked.json --failures earlier.json --use-out use.json
+```
+
+On R201's and R202b's published `soaked.json` and the failures before them
+([R201's](../../docs/data/2026-11-18_r201_soak_ladder/run/failures.json),
+[R202b's](../../docs/data/2026-11-18_r202b_core_soak/run/failures.json)) this gives every card the values of the use
+profiles made by hand for those runs.
 
 ### One boot without a person in the loop: `soak_chain.sh`
 
@@ -221,22 +258,24 @@ cat /var/tmp/soak1/CHAIN_DONE          # when it exists: what happened, in one l
 ```
 
 1. The start check, then [model_check.sh](model_check.sh) at stock: the model the rig serves, on all cards with its
-   release settings, answers the greedy check twice (the reference, and each round's generation tok/s).
+   release settings, answers the greedy check twice (the reference, and each round's generation tok/s). Two rounds,
+   a few minutes: `MINUTES` is the rungs' and does not reach this step. A longer stock control is its own setting,
+   `STOCK_MINUTES` (0); a stock control that would end after `END_BY` does not run, and step 4 then has no reference.
 2. The watchdog, then `climb.py apply` with the lowest rung.
-3. `soak.py --keep-going` with the ladder, `MINUTES` (30) a rung.
+3. `soak.py --keep-going` with the ladder, `MINUTES` (30) a rung, and the earlier failures in `FAILURES` if set.
 4. If no card differed: the served model again with the offsets set, for `MODEL_MINUTES` (30), every round against
    the stock reference. The climb's check model covers about 2 GB of a 6 GB card; this covers what the rig really
    loads, and since the output is the same token for token, its tok/s against step 1's is what the offsets buy on
    that model.
 
-A soak in which a card differed or left ends with every offset at 0 and `soaked.json` as the next fresh boot's
+A soak in which a card differed or left ends with every offset at 0 and `soak/use.json` as the next fresh boot's
 profile. When everything passes, the offsets stay set while the watchdog runs. No step starts unless it ends by
 `END_BY` (21:50).
 
 ### Tests (any Linux machine, no GPU)
 
 ```bash
-python3 -I bench/mem_offset/test/test_soak.py     # ~90 s
+python3 -I bench/mem_offset/test/test_soak.py     # ~2 min
 bash bench/mem_offset/test/test_chain.sh
 ```
 
@@ -245,9 +284,13 @@ bash bench/mem_offset/test/test_chain.sh
 time or exits from a chosen memory offset on; an `nvml_memoc.py` that keeps the offsets in a file). It checks a
 four-rung ladder (clean cards go up, memory then core; a card that differs once stays; a card that differs three
 times and a card whose server dies are set to 0 alone; `soaked.json` holds each card's highest clean rung, and both
-`apply` and `climb.py --from-profile` read it), plain mode's reset of every card, the stock control, and the refusal
-of a ladder that steps down. [test/test_chain.sh](test/test_chain.sh) runs `soak_chain.sh` against stand-ins for its
-three programs: every ending, and the `END_BY` rule.
+`apply` and `climb.py --from-profile` read it; `use.json` applies the rule with an earlier failure given, and `apply`
+reads it), a card that differs at a value it held a rung before (not offered it), plain mode's reset of every card,
+the stock control, the refusal of a ladder that steps down and of a failures file that cannot be read, and
+`--use-from`. Its pure tests check which offset a failure counts against, the caps, and that the rule gives R201's and
+R202b's hand-made use profiles from their published data. [test/test_chain.sh](test/test_chain.sh) runs
+`soak_chain.sh` against stand-ins for its three programs: every ending, the `END_BY` rule, the stock reference's two
+rounds when an env file exports the rungs' `MINUTES`, `STOCK_MINUTES`, and `FAILURES`.
 
 ## A fair core climb: `climb.py --from-profile`
 
@@ -319,7 +362,7 @@ reboot, `apply` sets the memory with the cores a few steps lower, and the ladder
 | `build.sh` | Builds `mmvq_pascal` and `cuda_memtest` for compute capability 6.1 in Docker and packs the kit into a tarball with MD5 sums. |
 | `test/dryrun.sh` | Runs `memoc_steps.sh` against stub programs on any Linux machine (no GPU, no root) to check its control flow: a clean run, a failed exact check (step back), an Xid, an interrupt, and a memory test that cannot run. |
 | `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply`; with `--from-profile`, the core climb alone with each card's memory at a profile's value (sections above). |
-| `soak.py` | Holds the offsets `apply` set with every card loaded: plain, counting (`--keep-going`) or a ladder of profiles (section above). |
+| `soak.py` | Holds the offsets `apply` set with every card loaded: plain, counting (`--keep-going`) or a ladder of profiles, then writes what held (`soaked.json`) and the setting to use by the rule (`use.json`); `--use-from` makes the use profile again from a finished soak (section above). |
 | `soak_chain.sh` | One fresh boot without a person in the loop: the served model's stock reference, `apply`, the soak or ladder, the served model with the offsets. |
 | `model_check.sh` | The whole-memory check: the served model's greedy output on all cards, at stock and with the offsets, with each round's tok/s. |
 | `greedy_check.py` | The greedy check: a running llama-server's output at temperature 0, hashed with every token's top-10 probabilities, against a reference. |

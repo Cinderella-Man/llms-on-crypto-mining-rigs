@@ -11,20 +11,23 @@
 #   PROFILE       the profile `apply` sets: the lowest rung
 #   LADDER        the next rungs' profiles, lowest first (optional)
 #   MINUTES       minutes a rung [30];  SOAK_ARGS  soak.py's mode [--keep-going]
+#   FAILURES      the cards' failures from earlier runs, for the use profile (soak.py --failures; optional)
 #   MODEL, SETTINGS, OUT   the whole-memory check (model_check.sh); left out when MODEL is unset
+#   STOCK_MINUTES minutes of the model at stock [0: its two rounds only, the reference]
 #   MODEL_MINUTES minutes of the model with the offsets set [30]
 #   END_BY        no step starts unless it ends by this time of day [21:50]
 #
 # Every step writes its own marker; the chain writes WORK/CHAIN_DONE at the end. After a soak in which a card
-# differed or left, every offset is set to 0 and WORK/soak/soaked.json holds the values that held: the next fresh
-# boot's PROFILE. When everything passes, the offsets stay set while the watchdog runs.
+# differed or left, every offset is set to 0; WORK/soak/soaked.json holds the values that held and
+# WORK/soak/use.json the setting to use by the rule, the next fresh boot's PROFILE. When everything passes, the
+# offsets stay set while the watchdog runs.
 set -u -o pipefail
 cd "$(dirname "$0")"
 ENV_FILE=${ENV_FILE:-./env-chain.sh}
 if [ -f "$ENV_FILE" ]; then . "$ENV_FILE"; fi
 : "${PROFILE:?PROFILE=<the lowest rung profile.json>}" "${WORK:?WORK=<a fresh work folder>}"
 LADDER=${LADDER:-} MINUTES=${MINUTES:-30} MODEL_MINUTES=${MODEL_MINUTES:-30} END_BY=${END_BY:-21:50}
-SOAK_ARGS=${SOAK_ARGS:---keep-going} MODEL=${MODEL:-}
+SOAK_ARGS=${SOAK_ARGS:---keep-going} MODEL=${MODEL:-} STOCK_MINUTES=${STOCK_MINUTES:-0} FAILURES=${FAILURES:-}
 export WORK
 mkdir -p "$WORK"
 log() { echo "$(date '+%F %T') chain: $*" | tee -a "$WORK/chain.log"; }
@@ -40,8 +43,12 @@ rungs=$(( $# + 1 ))
 log "1. start check, then the model at stock (every offset 0)"
 python3 climb.py start-check | tee -a "$WORK/chain.log" || end "start check failed: stop (a fresh boot first)"
 model_stock=skipped
-if [ -n "$MODEL" ]; then
-  TAG=stock ROUNDS=2 bash model_check.sh; model_stock=$?
+if [ -n "$MODEL" ] && ! fits "$(awk -v m="$STOCK_MINUTES" 'BEGIN{print int(m + 15 + 0.999)}')"; then
+  model_stock="too late"
+  log "the model at stock: not run, it would end after $END_BY"
+elif [ -n "$MODEL" ]; then
+  # MINUTES is the rung's: the stock reference gets its own, STOCK_MINUTES (0: two rounds and done)
+  TAG=stock ROUNDS=2 MINUTES=$STOCK_MINUTES bash model_check.sh; model_stock=$?
   log "the model at stock: exit $model_stock"
   python3 climb.py start-check | tee -a "$WORK/chain.log" || end "start check failed after the model's stock run: stop"
 fi
@@ -55,12 +62,13 @@ while [ ! -f "$WORK/APPLY_DONE" ]; do sleep 3; done
 log "3. the soak: $rungs rung(s) of $MINUTES min ($SOAK_ARGS)"
 fits "$(awk -v r="$rungs" -v m="$MINUTES" 'BEGIN{print int(r * m + 5 + 0.999)}')" \
   || end "no soak: it would end after $END_BY; the profile stays set with the watchdog"
-python3 soak.py --minutes "$MINUTES" $SOAK_ARGS --profile "$PROFILE" ${LADDER:+--ladder $LADDER}
+python3 soak.py --minutes "$MINUTES" $SOAK_ARGS --profile "$PROFILE" ${FAILURES:+--failures "$FAILURES"} \
+  ${LADDER:+--ladder $LADDER}
 soak_done=$(cat "$WORK/SOAK_DONE" 2>/dev/null || echo "no SOAK_DONE")
 case "$soak_done" in
   "exit 0 "*) ;;
   *) python3 climb.py reset-all | tee -a "$WORK/chain.log"
-     end "the soak did not pass ($soak_done): every offset 0; the values that held are in $WORK/soak/soaked.json, the next fresh boot's profile" ;;
+     end "the soak did not pass ($soak_done): every offset 0; the values that held are in $WORK/soak/soaked.json, the setting to use in $WORK/soak/use.json, the next fresh boot's profile" ;;
 esac
 
 log "4. the model with the offsets set"
