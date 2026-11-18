@@ -50,8 +50,8 @@ but R200's first soak failed with card 4 at +1,300 MT/s and +231 MHz together, w
   2,113 MHz). The offset is what the driver is given; the peak it
   reaches is not a fixed property of a card.
 - **With a core offset on all nine cards, every card had power readings above 80 W:** 134 half-second samples in the
-  90 minutes, 8 to 21 a card, never two in a row, against the watchdog's limit of 80 W for 5 s. The mean power of each
-  card in a rung was 44.59 to 47.84 W.
+  90 minutes, never two in a row, against the watchdog's limit of 80 W for 5 s. Each card's count and its mean power
+  in each rung are in the [heat and power table](#heat-and-power-tablesheat_powercsv).
 
 ## What was done
 
