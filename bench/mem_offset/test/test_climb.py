@@ -11,6 +11,10 @@
   profile, the rule that offsets only go up, and the cards that go on;
 - the stops that end everything (the watchdog's trip, an Xid naming no card, a check that does not stop);
 - apply: refused on the climb's boot or after a step down, the profile set and checked, everything to 0 on a failure;
+- --from-profile: no memory climb (each card's memory set once, to the profile's value), one check round for every
+  card, the core climb only for the cards without a core value (or --core-cards) with the memory held, a card that
+  fails the check round (memory or a kept core) set to 0 alone, the profile `apply` reads, its refusals before any
+  offset, and a stop in the core climb;
 - the --dry-run command line starts no process.
 """
 import contextlib
@@ -440,7 +444,276 @@ class ApplyProfile(unittest.TestCase):
         self.assertIn("needs a reboot before the next try", log)
 
 
+# a soaked.json as soak.py writes it for rig 2 (R201's rung 4): cores on cards 0, 3, 4 and 8, none on the others
+SOAKED = {0: (1300, 256, 20), 1: (1000, 0, 0), 2: (1200, 0, 0), 3: (1300, 54, 4), 4: (1200, 206, 16),
+          5: (1200, 0, 0), 6: (1100, 0, 0), 7: (1000, 0, 0), 8: (1300, 231, 18)}
+CLIMBERS = [1, 2, 5, 6, 7]
+KEPT = [0, 3, 4, 8]
+
+
+def soaked(test, values=SOAKED, pci=None, **top):
+    """A source profile in a temporary folder, shaped like soak.py's soaked.json; returns its path."""
+    d = tempfile.mkdtemp(prefix="climb-src-")
+    test.addCleanup(shutil.rmtree, d, True)
+    prof = {"what": "P106 clock offsets that held a soak (test)", "complete": True, "climb_boot": None,
+            "cards": [{"card": g, "pci": (pci or {}).get(g, climb.SCENARIO["pci"][g]), "name": "NVIDIA P106-090",
+                       "vbios": "86.06.5B.00.0C", "stock_peak_mhz": 1898, "memory_mts": v[0], "core_mhz": v[1],
+                       "core_steps": v[2], "soak": {"left": None}} for g, v in sorted(values.items())]}
+    prof.update(top)
+    path = os.path.join(d, "soaked.json")
+    with open(path, "w") as f:
+        json.dump(prof, f)
+    return path
+
+
+class FromProfile(unittest.TestCase):
+    def run_fp(self, path, extra=(), scenario=None, x=None):
+        r = Rig(self, ["--from-profile", path, *extra], scenario, x=x)
+        with quiet():
+            rc = climb.FromProfile(r.k).run(r.a.from_profile)
+        return r, rc
+
+    def test_the_plan_from_a_profile(self):
+        prof = json.loads(slurp(soaked(self)))
+        plan, bad = climb.profile_plan(prof, list(range(9)), None, 1400, 400, 12.66)
+        self.assertEqual(bad, [])
+        self.assertEqual([g for g in range(9) if plan[g]["core_climb"]], CLIMBERS)
+        self.assertEqual((plan[3]["memory_mts"], plan[3]["core_mhz"], plan[3]["core_steps"]), (1300, 54, 4))
+        plan, bad = climb.profile_plan(prof, list(range(9)), [1, 2, 3, 5, 6, 7], 1400, 400, 12.66)
+        self.assertEqual(bad, [])
+        self.assertEqual((plan[3]["core_climb"], plan[3]["core_mhz"], plan[3]["profile_core_mhz"]), (True, 0, 54))
+        self.assertEqual((plan[0]["core_climb"], plan[0]["core_mhz"]), (False, 256))
+        # a core without its steps (a hand-made profile): the steps from the core
+        p2 = {"cards": [dict(prof["cards"][0], core_steps=None)]}
+        self.assertEqual(climb.profile_plan(p2, [0], None, 1400, 400, 12.66)[0][0]["core_steps"], 20)
+        # what cannot run, all named at once
+        broken = json.loads(json.dumps(prof))
+        broken["cards"] = [c for c in broken["cards"] if c["card"] != 8]
+        broken["cards"][1]["memory_mts"] = "x"
+        broken["cards"][2]["pci"] = ""
+        broken["cards"][4]["core_mhz"] = 450
+        _, bad = climb.profile_plan(broken, list(range(9)), None, 1200, 400, 12.66)
+        text = "; ".join(bad)
+        self.assertIn("card 8 is not in the profile", text)
+        self.assertIn("card 1: memory_mts, core_mhz or core_steps is not a whole number", text)
+        self.assertIn("card 2: the profile has no pci or name", text)
+        self.assertIn("card 4: core +450 MHz is above --core-cap 400", text)
+        self.assertIn("card 0: memory +1300 MT/s is above the cap +1200", text)
+        self.assertIn("--core-cards [9] are not among", "; ".join(
+            climb.profile_plan(prof, [0, 1], [1, 9], 1400, 400, 12.66)[1]))
+        self.assertEqual(climb.profile_plan({"cards": []}, [0], None, 1400, 400, 12.66)[1], ["the profile has no cards"])
+
+    def test_memory_straight_to_the_profile_then_the_core_climb_for_the_cards_without_one(self):
+        faults = [
+            {"card": 5, "mem_min": 1200, "check": "greedy", "kind": ["differs"]},   # its soaked memory fails here
+            {"card": 4, "peak_min": 2080, "check": "greedy", "kind": ["differs"]},  # its kept core fails here
+            {"card": 2, "peak_min": 2100, "check": "mmvq", "kind": ["xid"]},        # an Xid in the core climb
+        ]
+        path = soaked(self)
+        r, rc = self.run_fp(path, scenario={"faults": faults})
+        self.assertEqual(rc, 0)
+        p = r.profile()
+        self.assertTrue(p["complete"])
+        self.assertEqual((p["from_profile"], p["core_climb_cards"], p["memory_steps_mts"]),
+                         ("soaked.json", CLIMBERS, []))
+        cards = {c["card"]: c for c in p["cards"]}
+        sets = r.sets()
+        # no memory climb: each card's memory is set once, to the profile's value
+        mem_sets = [(g, v) for g, kind, v in sets if kind == "mem"]
+        self.assertEqual(sorted(mem_sets), sorted((g, v[0]) for g, v in SOAKED.items()))
+        # the kept cores are set with their memory, before the check round; the climbers' cores only after it
+        first_climb = next(i for i, (g, kind, v) in enumerate(sets) if kind == "core" and g in CLIMBERS)
+        last_mem = max(i for i, (g, kind, v) in enumerate(sets) if kind == "mem")
+        self.assertLess(last_mem, first_climb)
+        self.assertEqual([(g, v) for g, kind, v in sets[:first_climb] if kind == "core"],
+                         [(g, SOAKED[g][1]) for g in KEPT])
+        # offsets only go up, and a card is never set again after its reset
+        last, ended = {}, set()
+        for g, kind, v in sets:
+            if kind == "reset":
+                ended.add(g)
+                continue
+            self.assertNotIn(g, ended, f"card {g} set again after its reset")
+            self.assertGreater(v, last.get((g, kind), 0))
+            last[(g, kind)] = v
+        # card 5: its soaked memory fails the check round; to 0 alone, no core climb, nothing in the profile
+        c5 = cards[5]
+        self.assertEqual((c5["memory_mts"], c5["core_mhz"]), (0, 0))
+        self.assertEqual((c5["failure"]["phase"], c5["failure"]["reason"]), ("profile", "greedy output differs from stock"))
+        self.assertEqual((c5["memory"]["failed_at_mts"], c5["memory"]["limit_found"]), (1200, True))
+        self.assertFalse(c5["core"]["took_part"])
+        self.assertTrue(c5["needs_reboot_before_use"])
+        # card 4: its kept core fails the check round; to 0 alone (the limit is not named: memory and core were set)
+        c4 = cards[4]
+        self.assertEqual((c4["memory_mts"], c4["core_mhz"], c4["failure"]["phase"]), (0, 0, "profile"))
+        self.assertEqual((c4["failure"]["mem"], c4["failure"]["core"]), (1200, 206))
+        self.assertFalse(c4["memory"]["limit_found"])
+        self.assertTrue(c4["needs_reboot_before_use"])
+        # card 2: memory held at +1,200 through the core climb, which ends at its Xid; one step under the last clean
+        c2 = cards[2]
+        self.assertEqual(c2["memory_mts"], 1200)
+        self.assertEqual(c2["failure"]["phase"], "core")
+        self.assertEqual(c2["failure"]["mem"], 1200)
+        self.assertIn("Xid 31", c2["failure"]["reason"])
+        self.assertLess(c2["core_mhz"], c2["core"]["last_clean_mhz"])
+        self.assertLess(c2["core"]["last_clean_mhz"], c2["core"]["failed_at_mhz"])
+        self.assertGreaterEqual(c2["core"]["failed_at_peak_mhz"], 2100)
+        # the kept cards: their profile values, checked once, then to 0 at once
+        for g in (0, 3, 8):
+            c = cards[g]
+            self.assertEqual((c["memory_mts"], c["core_mhz"], c["core_steps"]), SOAKED[g])
+            self.assertEqual(c["memory"]["profile_check"], "PASS")
+            self.assertFalse(c["core"]["took_part"])
+            self.assertIsNone(c["failure"])
+            self.assertFalse(c["needs_reboot_before_use"])
+            self.assertEqual(r.k.card(g)["status"], "done")
+        # the climbers that never failed: their memory, and a core one step under the top of the climb
+        for g in (1, 6, 7):
+            c = cards[g]
+            self.assertEqual(c["memory_mts"], SOAKED[g][0])
+            self.assertTrue(c["core"]["took_part"])
+            self.assertIsNone(c["failure"])
+            self.assertGreater(c["core"]["last_clean_peak_mhz"], 2225)
+            self.assertEqual(c["core_mhz"], climb.core_offset(c["core_steps"], 12.66))
+            self.assertLess(c["core_mhz"], c["core"]["last_clean_mhz"])
+        # steps.csv: no memory step; one check row for every card; core rows only for the climbers
+        import csv
+        with open(os.path.join(r.work, "out", "steps.csv")) as f:
+            rows = list(csv.DictReader(f))
+        self.assertFalse([x for x in rows if x["phase"] == "memory"])
+        check = {int(x["card"]): x for x in rows if x["phase"] == "profile"}
+        self.assertEqual(sorted(check), list(range(9)))
+        self.assertEqual([g for g in range(9) if check[g]["verdict"] == "FAIL"], [4, 5])
+        self.assertEqual(check[0]["core_mhz"], "256")
+        self.assertEqual(sorted({int(x["card"]) for x in rows if x["phase"] == "core"}), [1, 2, 6, 7])   # not 5
+        self.assertTrue(all(x["mem_mts"] == str(SOAKED[int(x["card"])][0]) for x in rows if x["phase"] == "core"))
+        self.assertTrue(all(v == [0, 0] for v in r.x.off.values()))
+        # `climb.py profile` writes the same profile again from climb.json
+        with open(os.path.join(r.work, "out", "climb.json")) as f:
+            self.assertEqual(climb.build_profile(json.load(f)), p)
+        # apply reads it after a reboot: the cards that failed stay at 0
+        out = os.path.join(r.work, "out", "profile.json")
+        a = Rig(self, scenario={"boot_id": "after-a-reboot"})
+        a.k.a = a.a = climb.parse(["--dry-run", "--work", a.work, "--check-model", "/m/c.gguf", "--ledger",
+                                   a.a.ledger, "apply", out])
+        with quiet():
+            self.assertEqual(climb.Apply(a.k).run(out), 0)
+        for g, c in cards.items():
+            self.assertEqual(a.x.off[g], [c["memory_mts"], c["core_mhz"]])
+
+    def test_core_cards_climbs_a_card_from_0_whatever_core_the_profile_gives(self):
+        r, rc = self.run_fp(soaked(self), ["--core-cards", "1 2 3 5 6 7"])
+        self.assertEqual(rc, 0)
+        card3 = [v for g, kind, v in r.sets() if g == 3 and kind == "core"]
+        self.assertEqual(card3[0], 28)            # the climb's first step above its stock peak, not the profile's +54
+        self.assertEqual(card3, sorted(card3))
+        self.assertIn(" 3:+1300/+0 ", slurp(r.k.logf))   # the check round ran with its core at 0
+        c3 = next(c for c in r.profile()["cards"] if c["card"] == 3)
+        self.assertEqual((c3["memory_mts"], c3["core"]["took_part"], c3["core"]["from_profile_mhz"]), (1300, True, 54))
+        self.assertGreater(c3["core_mhz"], 54)
+        self.assertIn("card 3's core climbs from 0 (the profile's +54 MHz is not used)", slurp(r.k.logf))
+        self.assertEqual(r.profile()["core_climb_cards"], [1, 2, 3, 5, 6, 7])
+
+    def test_refusals_before_any_offset(self):
+        cases = [
+            (soaked(self, pci={2: "00000000:05:00.0", 3: "00000000:09:00.0"}), (), None, "card 3 is NVIDIA P106-090 at"),
+            (soaked(self, {g: SOAKED[g] for g in range(8)}), ("--cards", "0 1 2 3 4 5 6 7 8"), None,
+             "card 8 is not in the profile"),
+            (soaked(self), ("--mem-steps", "200 400 600 800 1000 1200"), None, "memory +1300 MT/s is above the cap"),
+            (soaked(self, climb_boot=climb.boot_tag("5f0c4b8e-0000-4000-8000-000000000000")), (), None,
+             "has not rebooted since the climb"),
+            (soaked(self), (), {"watchdog": False}, "the watchdog is not running"),
+        ]
+        for path, extra, sc, want in cases:
+            r = Rig(self, ["--from-profile", path, *extra], sc)
+            with quiet():
+                with self.assertRaises(climb.Refused) as e:
+                    climb.FromProfile(r.k).run(r.a.from_profile)
+            self.assertIn(want, str(e.exception))
+            self.assertEqual(r.sets(), [], want)
+        r = Rig(self, ["--from-profile", soaked(self)])
+        r.x.off[6] = [1100, 0]   # an offset left from before: the start check
+        with quiet():
+            with self.assertRaises(climb.Refused) as e:
+                climb.FromProfile(r.k).run(r.a.from_profile)
+        self.assertIn("card 6 offsets (mem core) 1100 0", str(e.exception))
+        self.assertEqual(r.sets(), [])
+
+    def test_a_trip_in_the_core_climb_ends_everything_and_keeps_what_was_found(self):
+        class Tripping(climb.SimExec):
+            def sleep(self, s):
+                super().sleep(s)
+                if self.t > self.trip_at and self.marker not in self.files:
+                    self.files[self.marker] = "2026-11-18 10:00:00 TRIP 1: gpu 6 at 71 C > 70.0 C\n"
+        x = Tripping(lambda s: None, None, FIX)
+        x.trip_at = x.t + 13 * 60   # servers 9 x 45 s, two stock rounds and the check round take ~10 min
+        r = Rig(self, ["--from-profile", soaked(self)], x=x)
+        x.marker = r.k.marker()
+        with quiet():
+            rc = climb.FromProfile(r.k).run(r.a.from_profile)
+        self.assertEqual(rc, 1)
+        p = r.profile()
+        self.assertFalse(p["complete"])
+        self.assertIn("the watchdog tripped", p["stop_reason"])
+        self.assertTrue(all(v == [0, 0] for v in x.off.values()))
+        cards = {c["card"]: c for c in p["cards"]}
+        for g in CLIMBERS:
+            self.assertEqual(cards[g]["memory_mts"], SOAKED[g][0])   # its check round passed
+            self.assertTrue(0 < cards[g]["core"]["last_clean_mhz"] < 300)
+        for g in KEPT:
+            self.assertEqual((cards[g]["memory_mts"], cards[g]["core_mhz"]), SOAKED[g][:2])
+
+    def test_an_xid_on_a_card_that_is_done_is_logged_not_a_stop(self):
+        class LateXid(climb.SimExec):
+            def sleep(self, s):
+                super().sleep(s)
+                if self.t > self.at and not self.xids:
+                    self.xids.append((self.t, self._xid_line(8)))
+        x = LateXid(lambda s: None, None, FIX)
+        x.at = x.t + 12 * 60
+        r = Rig(self, ["--from-profile", soaked(self)], x=x)
+        with quiet():
+            rc = climb.FromProfile(r.k).run(r.a.from_profile)
+        self.assertEqual(rc, 0)
+        self.assertIn("xid: on card 8, which already left the climb", slurp(r.k.logf))
+
+
 class CommandLine(unittest.TestCase):
+    def test_from_profile_dry_run_and_plan(self):
+        src = soaked(self)
+        work = tempfile.mkdtemp(prefix="climb-cli-")
+        self.addCleanup(shutil.rmtree, work, True)
+
+        def no(*a, **k):
+            raise AssertionError("a process was started in --dry-run")
+        saved = (subprocess.Popen, subprocess.run)
+        subprocess.Popen = subprocess.run = no
+        out, err = io.StringIO(), io.StringIO()
+        try:
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                base = ["--dry-run", "--work", work, "--check-model", "/m/check.gguf", "--ledger",
+                        os.path.join(work, "ledger"), "--from-profile", src]
+                rcs = [climb.main(base + ["plan"]), climb.main(base + ["climb"]),
+                       climb.main(base[:-1] + [soaked(self, {0: (1600, 0, 0)}), "climb"]),
+                       climb.main(base + ["--core-cards", "0 9", "plan"])]
+        finally:
+            subprocess.Popen, subprocess.run = saved
+        self.assertEqual(rcs, [0, 0, 1, 1])
+        text = out.getvalue()
+        self.assertIn("then the core climb for cards [1, 2, 5, 6, 7], memory held", text)
+        self.assertIn("3,1300,54,no,54", text)
+        self.assertIn("target_peak_mhz,card1_core_mhz,card2_core_mhz,card5_core_mhz,card6_core_mhz,card7_core_mhz", text)
+        self.assertIn("profile: check round at", text)
+        self.assertIn("--core-cards [9] are not among", text)
+        self.assertIn("REFUSED: profile", err.getvalue())
+        self.assertIn("memory +1600 MT/s is above the cap +1400", err.getvalue())
+        self.assertNotIn("Traceback", text + err.getvalue())
+
+    def test_core_cards_needs_from_profile(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                climb.parse(["--core-cards", "1 2", "climb"])
+
     def test_dry_run_starts_no_process(self):
         work = tempfile.mkdtemp(prefix="climb-cli-")
         self.addCleanup(shutil.rmtree, work, True)

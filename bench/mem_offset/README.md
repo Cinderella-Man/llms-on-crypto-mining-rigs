@@ -76,7 +76,8 @@ last step that card passed. After a reboot, `climb.py apply` sets the profile an
 
 A card that failed in the memory climb gets no core value in this sitting (it was stepped down). With card 0 of rig 1
 failing at +1,400, many cards may fail there; `--mem-steps "200 400 600 800 900 1000 1100 1200"` stops the memory
-climb at +1,200 and leaves more cards for the core climb.
+climb at +1,200 and leaves more cards for the core climb. Such a card gets its core value in a second sitting,
+`climb.py --from-profile` (below).
 
 **What the climb's result is, and is not.** It is a quick map of where each card fails at once: 17 minutes for nine
 cards on the second rig. It is not a setting: its one check a step passes offsets that fail a longer run, and in the
@@ -165,6 +166,12 @@ python3 -I bench/mem_offset/test/test_climb.py
   before a card's reset, and the profile holds one step under each last clean step.
 - the stops that end everything, `apply`'s refusals (the climb's boot, a step down this boot) and its reset on a
   failure, and that `--dry-run` starts no process.
+- **`--from-profile`** on a simulated rig with R201's rung-4 values: each card's memory is set once, to the profile's
+  value; the check round runs before any climbing core is set; a card whose memory fails the check round, and a card
+  whose kept core fails it, go to 0 alone with nothing in the profile; a card with an Xid in the core climb keeps its
+  memory and gets one step under its last clean core; the others reach the top; `apply` reads the result. Also its
+  refusals before any offset (another rig's card, a card missing from the profile, a value above a cap, the climb's
+  own boot, no watchdog, an offset left set), a watchdog trip in the core climb, and `--core-cards`.
 
 ## Holding a profile: `soak.py`, the ladder and the whole-memory check
 
@@ -237,10 +244,66 @@ bash bench/mem_offset/test/test_chain.sh
 `climb.py reset-card` against a stand-in rig in a temporary folder (a `llama-server` that answers wrongly once, every
 time or exits from a chosen memory offset on; an `nvml_memoc.py` that keeps the offsets in a file). It checks a
 four-rung ladder (clean cards go up, memory then core; a card that differs once stays; a card that differs three
-times and a card whose server dies are set to 0 alone; `soaked.json` holds each card's highest clean rung and
-`apply` reads it), plain mode's reset of every card, the stock control, and the refusal of a ladder that steps down.
-[test/test_chain.sh](test/test_chain.sh) runs `soak_chain.sh` against stand-ins for its three programs: every
-ending, and the `END_BY` rule.
+times and a card whose server dies are set to 0 alone; `soaked.json` holds each card's highest clean rung, and both
+`apply` and `climb.py --from-profile` read it), plain mode's reset of every card, the stock control, and the refusal
+of a ladder that steps down. [test/test_chain.sh](test/test_chain.sh) runs `soak_chain.sh` against stand-ins for its
+three programs: every ending, and the `END_BY` rule.
+
+## A fair core climb: `climb.py --from-profile`
+
+**In plain words.** In the first sitting each card's core climbs with its memory at its last clean step, where memory
+errors begin, so a memory error there counts against the core. On the second rig two of the five core failures came at
++16 and +104 MHz with the memory at +1,400 MT/s, the step two other cards had just failed
+([R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md)): most likely memory errors. `--from-profile` gives the
+core its own sitting: the memory goes straight to a value that has held a soak, and only the core climbs.
+
+In one fresh boot:
+1. **The stock rounds** as in a climb: each card's reference hash, the time limits and its stock peak clock.
+2. **No memory climb.** Every card's memory goes straight to the profile's value, read back. A card that keeps the
+   profile's core value gets that core too.
+3. **One check round** for every card at once at those values, with the climb's checks and limits. A card that fails
+   is set to 0 alone and gets nothing: 0 and 0 in the result.
+4. **The cards that keep their core are then done:** set to 0 (read back) and their servers stopped. Their values
+   go into the result as checked.
+5. **The core climb** for the other cards, as in a climb (by target peak clock, 25 MHz of peak a step, to 2,250 MHz),
+   with each card's memory held at the profile's value. A card climbs from 0 even if the profile gives it a core
+   value.
+6. **The end** as in a climb: every card to 0, read back; the servers stopped; `out/profile.json`.
+
+The input is a climb's `profile.json` or `soak.py`'s `soaked.json`; the cards are the profile's (or `--cards`). By
+default the cards whose core value in the profile is 0 climb the core; `--core-cards "1 2 3"` names them instead. The
+result is a profile `apply` and `soak.py --profile` read. Each card's `memory_mts` is the profile's value if the card
+passed the check round, and 0 if it failed. Its `core_mhz` is one step under its last clean step if it climbed, and
+the profile's value, checked in step 3, if it did not. `from_profile` names the input; `core_climb_cards` lists the
+cards that climbed.
+
+The climb's rules all hold: the start check (every offset 0, no step down this boot), the watchdog, a time limit on
+every check, a failing card set to 0 alone, and the stops that end everything. A profile with a card missing, another
+card at a card's PCI address, or a value above `--mem-steps`' top or `--core-cap` is refused before any offset, and
+before the climb detaches, so the refusal shows in the terminal. Run `plan` first: read-only, it prints each card's
+values, which cards climb, and the core steps.
+
+R202, the second sitting on the second rig, after R201's ladder: the six cards without a fair core value (1, 5, 6
+and 7 failed the memory climb; 2 and 3 failed the core climb with the memory at +1,400 MT/s) climb the core with the
+memory at the values R201 held. Add to `--core-cards` any card R201's ladder left without a core value; `plan`
+lists them.
+
+```bash
+# in the kit folder on a freshly booted rig, as root; BIN and CHECK_MODEL as for climb.py, a fresh WORK
+export WORK=/var/tmp/r202
+P=/var/tmp/r201/soak/soaked.json      # or the use profile, if it held its soak: its memory sits further from every failure
+python3 climb.py start-check
+python3 climb.py --from-profile $P --core-cards "1 2 3 5 6 7" plan     # read-only
+python3 climb.py trip-test && python3 climb.py watchdog start
+python3 climb.py --from-profile $P --core-cards "1 2 3 5 6 7" climb    # detached; about 15 min for nine cards (est.)
+tail -f /var/tmp/r202/out/climb.log
+cat /var/tmp/r202/CLIMB_DONE /var/tmp/r202/out/profile.json
+python3 climb.py watchdog stop
+```
+
+**What it is not.** Like the climb, it is a quick map: one check a step shows where each card's core fails at once,
+now with its memory at a value that holds. The core values it gives are the base of the next soak ladder (after a
+reboot, `apply` sets the memory with the cores a few steps lower, and the ladder raises the cores), not settings.
 
 ## What is in it
 
@@ -251,7 +314,7 @@ ending, and the `END_BY` rule.
 | `exact_check.sh` | The exact output check on Flint: one-token llama-perplexity statistics and a greedy-decoding hash against stock. |
 | `build.sh` | Builds `mmvq_pascal` and `cuda_memtest` for compute capability 6.1 in Docker and packs the kit into a tarball with MD5 sums. |
 | `test/dryrun.sh` | Runs `memoc_steps.sh` against stub programs on any Linux machine (no GPU, no root) to check its control flow: a clean run, a failed exact check (step back), an Xid, an interrupt, and a memory test that cannot run. |
-| `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply` (section above). |
+| `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply`; with `--from-profile`, the core climb alone with each card's memory at a profile's value (sections above). |
 | `soak.py` | Holds the offsets `apply` set with every card loaded: plain, counting (`--keep-going`) or a ladder of profiles (section above). |
 | `soak_chain.sh` | One fresh boot without a person in the loop: the served model's stock reference, `apply`, the soak or ladder, the served model with the offsets. |
 | `model_check.sh` | The whole-memory check: the served model's greedy output on all cards, at stock and with the offsets, with each round's tok/s. |

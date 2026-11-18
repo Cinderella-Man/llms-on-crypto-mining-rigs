@@ -22,6 +22,12 @@ card's offsets one step under its last clean step.
                     the watchdog on every card, detached (scripts/nvml_watchdog.py --per-card-xid)
   climb             detached: the climb (needs the watchdog); writes out/climb.log, out/steps.csv, out/climb.json and
                     out/profile.json; ends with every offset of every card at 0
+  --from-profile FILE climb
+                    detached: the core climb in its own boot, with no memory climb. Every card's offsets go straight to
+                    FILE's values (a climb's profile.json or soak.py's soaked.json), one check round there for every
+                    card, then the core climb for the cards FILE gives no core value (or --core-cards), each card's
+                    memory held at FILE's value. The same files out; out/profile.json keeps each card's memory at
+                    FILE's value. `plan` with --from-profile prints what it would set and climb
   profile           write out/profile.json again from out/climb.json
   apply PROFILE     detached: on a freshly started rig (needs the watchdog), every card's offsets from PROFILE, read
                     back, then each card's greedy check against its own stock result; any failure sets every offset of
@@ -164,38 +170,118 @@ def one_under(passed):
     return passed[-2] if len(passed) >= 2 else passed[0]
 
 
+def profile_plan(prof, cards, core_cards, mem_cap, core_cap, bin_mhz):
+    """--from-profile: what each card gets from a profile (a climb's profile.json or soak.py's soaked.json).
+
+    cards: the run's cards; core_cards: the cards named to climb the core, or None for the default, every card the
+    profile gives no core value. A card that climbs the core starts it at 0, whatever core value the profile has.
+    Returns ({card: {"memory_mts", "core_mhz", "core_steps", "core_climb", "profile_core_mhz"}}, [why it cannot run]):
+    a card missing from the profile, a value that is not a whole number or is below 0, a value above the caps, a card
+    the profile cannot be checked against (no pci or name), or a --core-cards card that is not in the run."""
+    by = {}
+    for c in (prof.get("cards") if isinstance(prof, dict) else None) or []:
+        if isinstance(c, dict) and isinstance(c.get("card"), int):
+            by[c["card"]] = c
+    plan, bad = {}, []
+    if not by:
+        return plan, ["the profile has no cards"]
+    for g in cards:
+        c = by.get(g)
+        if c is None:
+            bad.append(f"card {g} is not in the profile")
+            continue
+        try:
+            mem, core, steps = (int(c.get(k) or 0) for k in ("memory_mts", "core_mhz", "core_steps"))
+        except (TypeError, ValueError):
+            bad.append(f"card {g}: memory_mts, core_mhz or core_steps is not a whole number")
+            continue
+        climb = g in core_cards if core_cards is not None else core == 0
+        if min(mem, core, steps) < 0:
+            bad.append(f"card {g}: +{mem} MT/s, +{core} MHz: an offset below 0")
+        if mem > mem_cap:
+            bad.append(f"card {g}: memory +{mem} MT/s is above the cap +{mem_cap} (the top of --mem-steps)")
+        if not climb and core > core_cap:
+            bad.append(f"card {g}: core +{core} MHz is above --core-cap {core_cap}")
+        if not c.get("pci") or not c.get("name"):
+            bad.append(f"card {g}: the profile has no pci or name to check the card against")
+        if not climb and core and not steps:
+            steps = int(core / bin_mhz)
+        plan[g] = {"memory_mts": mem, "core_mhz": 0 if climb else core, "core_steps": 0 if climb else steps,
+                   "core_climb": climb, "profile_core_mhz": core}
+    if core_cards is not None:
+        extra = [g for g in core_cards if g not in cards]
+        if extra:
+            bad.append(f"--core-cards {extra} are not among this run's cards {cards}")
+    return plan, bad
+
+
+def card_profile(c, fp, bin_mhz):
+    """One card's profile values and records: (memory_mts, [core MHz, core steps, peak], memory {...}, core {...})."""
+    mem_passed = c["mem_passed"] or [0]
+    core_passed = c["core_passed"] or [[0, 0, c.get("stock_peak")]]
+    f = c["failure"]
+    phase = f["phase"] if f else None
+    if not fp:
+        mem_fail, core_fail = phase == "memory", phase == "core"
+        return one_under(mem_passed), one_under(core_passed), {
+            "last_clean_mts": mem_passed[-1], "failed_at_mts": f["mem"] if mem_fail else None,
+            "limit_found": mem_fail}, {
+            "took_part": c["core_took_part"], "last_clean_mhz": core_passed[-1][0],
+            "last_clean_peak_mhz": core_passed[-1][2], "failed_at_mhz": f["core"] if core_fail else None,
+            "failed_at_peak_mhz": f.get("peak") if core_fail else None, "limit_found": core_fail}
+    # --from-profile: the memory is the profile's value if the card passed its check round there, else 0; the core is
+    # one step under the last clean step for a card that climbed it, the profile's value for a card that kept it
+    src = c["from_profile"]
+    clean = c.get("profile_check") == "PASS"
+    mem = src["memory_mts"] if clean else 0
+    if not clean:
+        core = [0, 0, c.get("stock_peak")]
+    elif src["core_climb"]:
+        core = one_under(core_passed)
+    else:
+        core = [src["core_mhz"], src["core_steps"], c.get("profile_peak")]
+    at_profile = phase == "profile"
+    memory = {"from_profile_mts": src["memory_mts"], "profile_check": c.get("profile_check"),
+              "last_clean_mts": src["memory_mts"] if clean else None,
+              "failed_at_mts": f["mem"] if at_profile else None,
+              "limit_found": bool(at_profile and not f["core"])}
+    if src["core_climb"]:
+        core_fail = phase == "core"
+        cr = {"took_part": c["core_took_part"], "from_profile_mhz": src["profile_core_mhz"],
+              "last_clean_mhz": core_passed[-1][0] if clean else None,
+              "last_clean_peak_mhz": core_passed[-1][2] if clean else None,
+              "failed_at_mhz": f["core"] if core_fail else None,
+              "failed_at_peak_mhz": f.get("peak") if core_fail else None, "limit_found": core_fail}
+    else:
+        cr = {"took_part": False, "from_profile_mhz": src["profile_core_mhz"],
+              "last_clean_mhz": src["core_mhz"] if clean else None,
+              "last_clean_peak_mhz": c.get("profile_peak") if clean else None,
+              "failed_at_mhz": f["core"] if at_profile else None, "failed_at_peak_mhz": None, "limit_found": False}
+    return mem, core, memory, cr
+
+
 def build_profile(st):
     """The profile (public-ready JSON) from the climb's state."""
     cfg = st["config"]
     bin_mhz = cfg["core_bin_mhz"]
+    fp = st.get("from_profile")
     cards = []
     for c in st["cards"]:
-        mem_passed = c["mem_passed"] or [0]
-        core_passed = c["core_passed"] or [[0, 0, c.get("stock_peak")]]
-        prof_core = one_under(core_passed)
         stock = c.get("stock_peak")
-        mem_fail = c["failure"] and c["failure"]["phase"] == "memory"
-        core_fail = c["failure"] and c["failure"]["phase"] == "core"
+        mem, prof_core, memory, core = card_profile(c, fp, bin_mhz)
         cards.append({
             "card": c["card"], "pci": c["pci"], "name": c["name"], "vbios": c["vbios"],
             "stock_peak_mhz": stock,
-            "memory_mts": one_under(mem_passed),
+            "memory_mts": mem,
             "core_mhz": prof_core[0],
             "core_steps": prof_core[1],
             "expected_peak_mhz": round(stock + prof_core[1] * bin_mhz) if stock else None,
-            "memory": {"last_clean_mts": mem_passed[-1],
-                       "failed_at_mts": c["failure"]["mem"] if mem_fail else None,
-                       "limit_found": bool(mem_fail)},
-            "core": {"took_part": c["core_took_part"],
-                     "last_clean_mhz": core_passed[-1][0],
-                     "last_clean_peak_mhz": core_passed[-1][2],
-                     "failed_at_mhz": c["failure"]["core"] if core_fail else None,
-                     "failed_at_peak_mhz": c["failure"].get("peak") if core_fail else None,
-                     "limit_found": bool(core_fail)},
+            "memory": memory,
+            "core": core,
             "failure": c["failure"],
             "needs_reboot_before_use": bool(c["stepped_down_mid_climb"]),
         })
-    return {
+    out = {
         "what": "P106 clock-offset profile from bench/mem_offset/climb.py",
         "date": st["started"][:10],
         "climb_started": st["started"], "climb_ended": st.get("ended"),
@@ -204,7 +290,7 @@ def build_profile(st):
         "driver": st.get("driver"),
         "check_model": st.get("check_model"), "check_model_bytes": st.get("check_model_bytes"),
         "greedy_tokens_per_check": 2 * cfg["greedy_n"],
-        "memory_steps_mts": cfg["mem_steps"],
+        "memory_steps_mts": [] if fp else cfg["mem_steps"],
         "core_step_mhz": round(cfg["core_step_bins"] * bin_mhz, 2), "core_bin_mhz": bin_mhz,
         "units": {"memory_mts": "NVML MemClk VF offset in MT/s; +800 is +10 % of the P106-090's 8,008 MT/s",
                   "core_mhz": "NVML GpcClk VF offset in MHz; the driver moves the core in whole steps of core_bin_mhz"},
@@ -217,6 +303,15 @@ def build_profile(st):
                      "this sitting was set back to 0 then and needs a reboot before use",
         "cards": cards,
     }
+    if fp:
+        out["from_profile"] = fp
+        out["core_climb_cards"] = [c["card"] for c in st["cards"] if c["from_profile"]["core_climb"]]
+        out["each_card"] = ("memory_mts is the value from_profile gave the card, kept if the card passed one check "
+                            "round there (0 if it failed); core_mhz is one step under the last clean step for a card "
+                            "in core_climb_cards (the core climb ran with the memory at that value), and from_profile's "
+                            "value, checked in the same round, for the others; a card that failed in this sitting was "
+                            "set back to 0 then and needs a reboot before use")
+    return out
 
 
 def ledger_line(boot, card, mem, core, why):
@@ -1096,11 +1191,17 @@ class Climb:
             t += self.a.core_step_bins
         return out
 
-    def core_phase(self):
-        part = [g for g in self.a.cards if self.k.card(g)["status"] == "active"
-                and not self.k.card(g)["stepped_down_mid_climb"]]
+    def core_phase(self, part=None, memory_note="memory at each card's last clean step"):
+        """The core climb for the cards in `part` (default: every card that never failed), each card's memory held
+        where it is."""
+        if part is None:
+            part = [g for g in self.a.cards if self.k.card(g)["status"] == "active"
+                    and not self.k.card(g)["stepped_down_mid_climb"]]
+            if not part:
+                self.k.log("core: no card left (every card failed in the memory climb)")
+                return
         if not part:
-            self.k.log("core: no card left (every card failed in the memory climb)")
+            self.k.log("core: no card to climb")
             return
         b = self.a.core_bin_mhz
         for g in part:
@@ -1129,7 +1230,7 @@ class Climb:
                         self.fail_card(g, "core", why)
                         continue
                 plan.append(f"{g}:+{c['core']}")
-            self.k.log(f"core: step to a {peak} MHz peak (cards {' '.join(plan)} MHz; memory at each card's last clean step)")
+            self.k.log(f"core: step to a {peak} MHz peak (cards {' '.join(plan)} MHz; {memory_note})")
             act = [g for g in act if self.k.card(g)["status"] == "active"]
             tested = self.tested(act)
             t0 = self.x.now()
@@ -1179,6 +1280,15 @@ class Climb:
                    f"steps of {self.a.core_bin_mhz} MHz to a {self.a.core_peak_max} MHz peak, limits "
                    f"{self.a.limit_factor}x stock (at least {self.a.limit_floor} s), check model "
                    f"{st['check_model']}, boot {st['boot']}")
+        return self.sitting(st, self.climb_phases)
+
+    def climb_phases(self):
+        self.memory_phase()
+        self.core_phase()
+
+    def sitting(self, st, phases):
+        """The servers, the stock rounds, then phases(); whatever happens, every offset of every card to 0 at the end,
+        the servers stopped, the state and the profile written."""
         ok = False
         try:
             try:
@@ -1189,8 +1299,7 @@ class Climb:
                 st["stop_reason"] = f"refused before any offset: {e}"
                 self.k.log(f"REFUSED: {e}")
                 return 1
-            self.memory_phase()
-            self.core_phase()
+            phases()
             st["complete"] = True
             ok = True
         except GlobalStop as e:
@@ -1211,14 +1320,20 @@ class Climb:
         return 0 if ok else 1
 
     def summary(self):
-        self.k.log("summary (profile.json: one step under each card's last clean step):")
+        fp = self.k.st.get("from_profile")
+        self.k.log("summary (profile.json: " + (f"memory at {fp}'s value, core one step under the last clean step for "
+                                                "the cards that climbed it, kept for the others):" if fp else
+                                                "one step under each card's last clean step):"))
+        def plus(v):
+            return "none" if v is None else f"+{v}"
         for c in build_profile(self.k.st)["cards"]:
             f = c["failure"]
             self.k.log(f"  card {c['card']}: profile mem +{c['memory_mts']} MT/s, core +{c['core_mhz']} MHz "
-                       f"(peak ~{c['expected_peak_mhz']} MHz) | last clean mem +{c['memory']['last_clean_mts']}, core "
-                       f"+{c['core']['last_clean_mhz']} | "
-                       + (f"failed in the {f['phase']} climb at mem +{f['mem']}, core +{f['core']}: {f['reason']}"
-                          if f else "no failure")
+                       f"(peak ~{c['expected_peak_mhz']} MHz) | last clean mem {plus(c['memory']['last_clean_mts'])}, "
+                       f"core {plus(c['core']['last_clean_mhz'])}" + (" (climbed)" if fp and c["core"]["took_part"] else "")
+                       + " | "
+                       + (f"failed in the {f['phase']} {'check' if f['phase'] == 'profile' else 'climb'} at mem "
+                          f"+{f['mem']}, core +{f['core']}: {f['reason']}" if f else "no failure")
                        + (" | NEEDS A REBOOT BEFORE USE" if c["needs_reboot_before_use"] else ""))
         if self.k.any_set:
             self.k.log("every offset of every card is 0 now: reboot the rig before `climb.py apply` (offsets only go "
@@ -1233,6 +1348,122 @@ def write_profile(kit):
     with open(kit.p("profile.json"), "w") as f:
         json.dump(build_profile(kit.st), f, indent=1)
     kit.log(f"profile: {kit.p('profile.json')}")
+
+
+def read_profile(path):
+    try:
+        with open(path) as f:
+            prof = json.load(f)
+    except (OSError, ValueError) as e:
+        raise Refused(f"profile {path}: {e}")
+    if not isinstance(prof, dict):
+        raise Refused(f"profile {path}: not a profile")
+    return prof
+
+
+def profile_cards(a, prof):
+    """The cards of a --from-profile run: --cards (CARDS) if given, else every card in the profile."""
+    have = sorted(c["card"] for c in prof.get("cards") or [] if isinstance(c, dict) and isinstance(c.get("card"), int))
+    return list(a.cards) if a.cards_given else have
+
+
+# ---------------------------------------------------------------- the core climb from a profile (--from-profile)
+
+class FromProfile(Climb):
+    """No memory climb. After the stock rounds every card's memory goes straight to the profile's value (with its
+    core, for a card that keeps the profile's core value), every card runs one check round there, and the cards that
+    keep the profile's core are then done (set to 0, read back, their servers stopped). The others climb the core
+    from 0 with their memory held at the profile's value."""
+
+    def run(self, path):
+        prof = read_profile(path)
+        given = list(self.a.cards)
+        self.a.cards = profile_cards(self.a, prof)
+        if self.a.stock_peaks:   # one per card of --cards: kept with their cards
+            if any(g not in given for g in self.a.cards):
+                raise Refused(f"--stock-peaks gives cards {given}, the run has cards {self.a.cards}")
+            self.a.stock_peaks = [self.a.stock_peaks[given.index(g)] for g in self.a.cards]
+        plan, bad = profile_plan(prof, self.a.cards, self.a.core_cards, self.a.mem_cap, self.a.core_cap,
+                                 self.a.core_bin_mhz)
+        if bad:
+            raise Refused(f"profile {path}: " + "; ".join(bad))
+        smi, size = self.preflight()
+        by_card = {c["card"]: c for c in prof["cards"] if isinstance(c, dict)}
+        for g in self.a.cards:
+            if pci_key(smi[g]["pci"]) != pci_key(by_card[g]["pci"]) or smi[g]["name"] != by_card[g]["name"]:
+                raise Refused(f"card {g} is {smi[g]['name']} at {smi[g]['pci']}, the profile has "
+                              f"{by_card[g]['name']} at {by_card[g]['pci']}")
+        if prof.get("climb_boot") and self.k.boot() == prof["climb_boot"]:
+            raise Refused("the rig has not rebooted since the climb that wrote the profile: reboot first")
+        st = self.new_state(smi, size, "climb")
+        st["from_profile"] = os.path.basename(path)
+        for g in self.a.cards:
+            c = self.k.card(g)
+            c["from_profile"] = plan[g]
+            c["profile_check"] = None
+            c["profile_peak"] = None
+        self.save()
+        climbers = [g for g in self.a.cards if plan[g]["core_climb"]]
+        mems = " ".join("%d:+%d" % (g, plan[g]["memory_mts"]) for g in self.a.cards)
+        self.k.log(f"climb from profile {path}: cards {self.a.cards}; memory straight to the profile's values "
+                   f"(card:MT/s {mems}), one check round, "
+                   f"then the core climb for cards {climbers} (+{self.a.core_step_bins} steps of "
+                   f"{self.a.core_bin_mhz} MHz to a {self.a.core_peak_max} MHz peak); limits {self.a.limit_factor}x "
+                   f"stock (at least {self.a.limit_floor} s), check model {st['check_model']}, boot {st['boot']}")
+        for g in self.a.cards:
+            p = plan[g]
+            if p["core_climb"] and p["profile_core_mhz"]:
+                self.k.log(f"climb from profile: card {g}'s core climbs from 0 (the profile's +{p['profile_core_mhz']} "
+                           "MHz is not used)")
+        return self.sitting(st, self.from_profile_phases)
+
+    def from_profile_phases(self):
+        self.profile_round()
+        part = [g for g in self.a.cards if self.k.card(g)["status"] == "active"
+                and self.k.card(g)["from_profile"]["core_climb"]]
+        self.core_phase(part, "memory at the profile's value")
+
+    def profile_round(self):
+        """Every card to its profile values, read back, then one check round for every card at once."""
+        cards = [g for g in self.a.cards if self.k.card(g)["status"] == "active"]
+        self.check_host()
+        for g in cards:
+            c = self.k.card(g)
+            src = c["from_profile"]
+            core = None if src["core_climb"] else (src["core_mhz"] or None)
+            why = self.k.set_offsets(g, mem=src["memory_mts"] or None, core=core)
+            if core:
+                c["bins"] = src["core_steps"]
+            if why:
+                c["profile_check"] = "FAIL"
+                self.fail_card(g, "profile", why)
+        act = [g for g in cards if self.k.card(g)["status"] == "active"]
+        self.k.log("profile: check round at (card:memory MT/s/core MHz) "
+                   + " ".join(f"{g}:+{self.k.card(g)['mem']}/+{self.k.card(g)['core']}" for g in act))
+        tested = self.tested(act)
+        t0 = self.x.now()
+        res = self.k.run_round(act, "profile", "stock", self.limits(act),
+                               lambda g, why: self.fail_card(g, "profile", why))
+        peaks = self.x.peaks(os.path.join(self.a.work, "wd.csv"), act, t0, self.x.now())
+        for g in act:
+            c = self.k.card(g)
+            ok = res[g]["ok"] and c["status"] == "active"
+            c["profile_check"] = "PASS" if ok else "FAIL"
+            c["profile_peak"] = peaks[g][0]
+            if ok:
+                c["mem_passed"].append(c["from_profile"]["memory_mts"])
+            self.steps_row("profile", "check", g, res[g], peaks[g][0], tested[g])
+            c["history"].append(["profile", tested[g][0], tested[g][1], peaks[g][0], "PASS" if ok else "FAIL"])
+        passed = [g for g in act if self.k.card(g)["profile_check"] == "PASS"]
+        self.k.log(f"profile: check round done, PASS {passed}, FAIL {[g for g in cards if g not in passed]}")
+        done = [g for g in passed if not self.k.card(g)["from_profile"]["core_climb"]]
+        for g in done:   # nothing left to find for these: to 0 now rather than idle at their offsets until the end
+            self.k.card(g)["status"] = "done"
+            self.k.reset_card(g, "checked at the profile's values, no core climb")
+            self.k.stop_server(g)
+        if done:
+            self.k.log(f"profile: cards {done} keep the profile's values (checked); set to 0 now, servers stopped")
+        self.save()
 
 
 # ---------------------------------------------------------------- apply
@@ -1363,8 +1594,54 @@ def cmd_start_check(k):
     return 0 if not bad else 1
 
 
+def check_from_profile(a):
+    """--from-profile: the profile read and checked (read-only). Returns (profile, cards, plan) or raises Refused."""
+    prof = read_profile(a.from_profile)
+    cards = profile_cards(a, prof)
+    plan, bad = profile_plan(prof, cards, a.core_cards, a.mem_cap, a.core_cap, a.core_bin_mhz)
+    if bad:
+        raise Refused(f"profile {a.from_profile}: " + "; ".join(bad))
+    return prof, cards, plan
+
+
+def cmd_plan_from_profile(k):
+    a = k.a
+    try:
+        prof, cards, plan = check_from_profile(a)
+    except Refused as e:
+        print(f"REFUSED: {e}")
+        return 1
+    climbers = [g for g in cards if plan[g]["core_climb"]]
+    print(f"from profile {a.from_profile}: no memory climb; every card straight to these values, one check round, "
+          f"then the core climb for cards {climbers}, memory held")
+    print("card,memory_mts,core_mhz,core_climb,profile_core_mhz")
+    for g in cards:
+        p = plan[g]
+        print(f"{g},{p['memory_mts']},{p['core_mhz']},{'yes' if p['core_climb'] else 'no'},{p['profile_core_mhz']}")
+    if not climbers:
+        print("no card climbs the core")
+        return 0
+    by = {c["card"]: c for c in prof["cards"] if isinstance(c, dict)}
+    if a.stock_peaks:
+        peaks, src = [a.stock_peaks[a.cards.index(g)] for g in climbers], "--stock-peaks"
+    elif all(by[g].get("stock_peak_mhz") for g in climbers):
+        peaks, src = [int(by[g]["stock_peak_mhz"]) for g in climbers], "the profile's, from its own boot"
+    else:
+        peaks, src = [SCENARIO["stock_peaks"][g % 9] for g in climbers], "rig 1's (R193)"
+    print(f"core steps: {a.core_step_bins} steps of {a.core_bin_mhz} MHz of peak each, stock peaks "
+          f"{' '.join(str(p) for p in peaks)} MHz ({src}; the climb measures them)")
+    b = a.core_bin_mhz
+    sb = [stock_bin(p, b) for p in peaks]
+    print("target_peak_mhz," + ",".join(f"card{g}_core_mhz" for g in climbers))
+    for t, peak in Climb(k).core_targets(peaks):
+        print(f"{peak}," + ",".join(str(core_offset(max(0, t - s), b)) for s in sb))
+    return 0
+
+
 def cmd_plan(k):
     a = k.a
+    if a.from_profile:
+        return cmd_plan_from_profile(k)
     peaks = a.stock_peaks or SCENARIO["stock_peaks"][: len(a.cards)]
     if len(peaks) != len(a.cards):
         print("--stock-peaks needs one value per card", file=sys.stderr)
@@ -1540,6 +1817,13 @@ def parse(argv=None):
                    help="start the core climb at this target peak instead of one step above the lowest stock peak")
     p.add_argument("--core-cap", type=int, default=int(env("CORE_CAP", "400")))
     p.add_argument("--stock-peaks", default=env("STOCK_PEAKS", ""), help="one per card (MHz); default: measured")
+    p.add_argument("--from-profile", default=env("FROM_PROFILE", ""), metavar="FILE",
+                   help="climb: no memory climb; every card's memory straight to FILE's value (a climb's profile.json "
+                        "or soak.py's soaked.json), one check round, then the core climb for the cards FILE gives no "
+                        "core value; plan: what that would set and climb")
+    p.add_argument("--core-cards", default=env("CORE_CARDS", ""),
+                   help="--from-profile: the cards that climb the core (from 0), instead of those FILE gives no core "
+                        "value")
     p.add_argument("--limit-factor", type=float, default=float(env("LIMIT_FACTOR", "3")))
     p.add_argument("--limit-floor", type=float, default=float(env("LIMIT_FLOOR", "30")))
     p.add_argument("--mmvq-args", default=env("MMVQ_ARGS", "--types q8_0 --shapes attn_q"))
@@ -1568,6 +1852,10 @@ def parse(argv=None):
     a.mem_steps = ints(a.mem_steps)
     a.mem_cap = max(a.mem_steps)
     a.stock_peaks = ints(a.stock_peaks) if a.stock_peaks else None
+    a.core_cards = ints(a.core_cards) if a.core_cards.strip() else None
+    a.from_profile = os.path.abspath(a.from_profile) if a.from_profile else ""
+    if a.core_cards is not None and not a.from_profile:
+        p.error("--core-cards goes with --from-profile")
     a.order = [v for v in a.order.split(",") if v]
     a.work = os.path.abspath(a.work or ("climb-dryrun" if a.dry_run else "/var/tmp/climb"))
     if a.mem_steps != sorted(set(a.mem_steps)) or a.mem_steps[0] <= 0:
@@ -1628,6 +1916,12 @@ def main(argv=None, x=None):
             k.st = json.load(f)
         write_profile(k)
         return 0
+    if a.cmd == "climb" and a.from_profile:
+        try:
+            check_from_profile(a)   # read-only, so that a bad profile is refused here, not only in the detached log
+        except Refused as e:
+            print(f"REFUSED: {e}", file=sys.stderr)
+            return 1
     if a.cmd in ("climb", "apply") and not a.dry_run:
         return detach(a, a.cmd)
     if not x.dry and os.path.exists(os.path.join(a.work, "STOP")):
@@ -1643,7 +1937,7 @@ def main(argv=None, x=None):
     try:
         if name == "climb":
             try:
-                rc = Climb(k).run()
+                rc = FromProfile(k).run(a.from_profile) if a.from_profile else Climb(k).run()
             except Refused as e:
                 k.log(f"REFUSED: {e}")
                 rc = 1

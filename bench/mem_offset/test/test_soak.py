@@ -10,7 +10,8 @@ The real greedy_check.py and the real `climb.py reset-all` and `reset-card` run 
 
 - the ladder: clean cards go up a rung at a time (memory, then the core); a card that differs once stays where it is;
   a card that differs three times, and a card whose server dies, are set to 0 alone while the others go on;
-  soaked.json holds each card's highest clean rung and `climb.py apply` reads it;
+  soaked.json holds each card's highest clean rung, `climb.py apply` reads it, and so does
+  `climb.py --from-profile` (memory straight to the soaked values, the core climb for the cards without one);
 - plain mode: the first differing check sets every card to 0;
 - a stock control with --keep-going: no difference, exit 0;
 - a ladder that would step a card down, or go above a cap, is refused before any server starts.
@@ -21,6 +22,7 @@ import io
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -264,6 +266,24 @@ class Ladder(unittest.TestCase):
             self.assertIn("set 0 1300", buf.getvalue())
             self.assertIn("--core set 8 231", buf.getvalue())
             self.assertNotIn(" set 2 1200", buf.getvalue())
+            # and `climb.py --from-profile` reads it: memory straight to each card's soaked value, then the core
+            # climb for the cards it gives no core value (2, 5 and 7), their memory held
+            buf = io.StringIO()
+            fp = os.path.join(rig.tmp, "from-profile")
+            with contextlib.redirect_stdout(buf):
+                rc = climb.main(["--dry-run", "--work", fp, "--check-model", "check.gguf", "--ledger",
+                                 os.path.join(fp, "ledger"), "--from-profile",
+                                 os.path.join(rig.work, "soak", "soaked.json"), "climb"])
+            self.assertEqual(rc, 0, buf.getvalue()[-2000:])
+            mems = sorted(set(int(v) for v in re.findall(r"--state \S+ --cap \d+ set \d+ (\d+)", buf.getvalue())))
+            self.assertEqual(mems, [800, 1100, 1300])          # each soaked value, nothing climbed
+            with open(os.path.join(fp, "out", "profile.json")) as f:
+                out = json.load(f)
+            self.assertEqual(out["core_climb_cards"], [2, 5, 7])
+            got = {c["card"]: (c["memory_mts"], c["core"]["took_part"]) for c in out["cards"]}
+            self.assertEqual(got, {0: (1300, False), 2: (1100, True), 5: (1100, True), 7: (800, True), 8: (1300, False)})
+            self.assertEqual([c["core_mhz"] for c in out["cards"] if c["card"] in (0, 8)], [256, 231])
+            self.assertTrue(all(c["core_mhz"] > 0 for c in out["cards"] if c["card"] in (2, 5, 7)))
         finally:
             rig.close()
 
