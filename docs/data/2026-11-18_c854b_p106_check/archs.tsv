@@ -1,0 +1,4 @@
+run	summary	ok_rows	fail_lines	exit	mask_lines
+archs	Summary: all 155 test(s) passed	155	0	0	0
+archs-on	Summary: all 155 test(s) passed	155	0	0	0
+archs-mask	Summary: all 155 test(s) passed	154	0	0	1590
