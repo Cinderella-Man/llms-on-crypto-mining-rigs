@@ -6,11 +6,16 @@ the cache. With KEYS (one or more further runs' tables) only the requests matche
 set is the one a wider table shows. Prints one Markdown row a matched request (REF ms, RUN ms, RUN / REF), then the
 totals, how many requests RUN read slower, the same and faster than REF, and the median of the ratios; the same for
 the first turns alone, and for the requests with a cached prefix (every request but a session's first, which reads
-its whole prompt on cards that have just loaded). Standard library only: python3 -I paired_prompts.py ref=a.csv run=b.csv [keys=c.csv ...]
+its whole prompt on cards that have just loaded). CACHE_TOL=N (default 0) matches the cached tokens within N instead of
+exactly, as in same_prompts.py; the table then shows REF's count. Standard library only:
+python3 -I paired_prompts.py ref=a.csv run=b.csv [keys=c.csv ...]
 """
 import csv
+import os
 import statistics
 import sys
+
+TOL = int(os.environ.get("CACHE_TOL", "0"))
 
 
 def load(path):
@@ -26,7 +31,7 @@ args = [a.split("=", 1) for a in sys.argv[1:]]
 (rn, rp), (sn, sp) = args[:2]
 runs = [load(p) for _, p in args]
 common = [k for k in sorted(set.intersection(*(set(r) for r in runs)))
-          if len({r[k][0] for r in runs}) == 1]
+          if max(r[k][0] for r in runs) - min(r[k][0] for r in runs) <= TOL]
 ref, run = runs[0], runs[1]
 print(f"| task | turn | prompt tokens read | from the cache | {rn} prompt ms | {sn} prompt ms | {sn} / {rn} |")
 print("|---|---:|---:|---:|---:|---:|---:|")
