@@ -18,8 +18,8 @@ other. The switch acts only on batches of at most 8 tokens, so prompt reading sh
 
 - **Rig:** nine P106-090 6 GB cards on PCIe 1.0 x1 (the rig in [docs/mining_rig.md](../../mining_rig.md)), every card at
   stock before and after (75 W, 1,911 / 4,004 MHz maximum, no Xid; the card log reads offset 0 on every card).
-- **Engine:** the candidate `pascal-p106-v5-cand-b12483` `602691153` (upstream b12483 on `pascal-p106-v5`), the tree
-  the v5 line is about to move to ([its P106 check](../2026-11-18_c854b_p106_check/README.md)); `llama-server` md5
+- **Engine:** `602691153` (upstream b12483 on `1f1110c67`, built as the candidate `pascal-p106-v5-cand-b12483`), which became
+  `pascal-p106-v5` itself on 2026-11-18 ([its P106 check](../2026-11-18_c854b_p106_check/README.md)); `llama-server` md5
   `86607661d5a19d1a90d19ee4db10c90b`, checked on the rig before the run. The switch's code is unchanged from `1f1110c67`,
   the tree C865b measured.
 - **Model and preset:** Ornith-1.5-122B Pascal N2P GGUF (`valid1`, `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf`) with
