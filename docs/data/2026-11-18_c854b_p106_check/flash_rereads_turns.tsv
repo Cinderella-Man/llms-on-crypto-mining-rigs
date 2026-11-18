@@ -1,0 +1,41 @@
+run	task	turn	reply_tokens	cached	client	reasoning_trimmed	non_ascii_chars	n_tool_calls	lcp_into_reply	lcp_err	grammar_from	where
+v4rc2	bugfix-python-affine-cipher	2	71	2776	same	yes	0	2	23	1.4	11	in the tool call
+v4rc2	bugfix-python-variable-length-quantity	3	800	4472	same	yes	7	1	362	2.6	752	before the tool call
+v4rc2	bugfix-javascript-grade-school	4	150	4452	same, arguments re-serialized	yes	0	1	132	2.3	37	in the tool call
+v4rc2	bugfix-javascript-complex-numbers	5	1436	7773	same	yes	2	1	496	4.6	1206	before the tool call
+v4rc2	bugfix-javascript-complex-numbers	11	455	12501	same	yes	2	1	92	6.5	337	before the tool call
+v4rc2	bugfix-javascript-complex-numbers	21	322	22207	same	yes	1	1	209	11.3	262	before the tool call
+v4rc2	bugfix-python-pig-latin	3	1620	3453	same	yes	49	1	189	2.5	1572	before the tool call
+r156a_v4r	bugfix-javascript-complex-numbers	26	1077	22889	same	yes	14	1	813	12.0	884	before the tool call
+r156a_v4r	bugfix-python-pig-latin	3	3786	3423	same	yes	112	1	3130	3.6	3738	before the tool call
+r156b_v4r2	bugfix-python-pig-latin	3	761	3425	same	yes	22	1	497	2.1	713	before the tool call
+r72a_gains	bugfix-python-affine-cipher	3	1607	4125	same	yes	51	1	614	2.9	1560	before the tool call
+r72a_gains	bugfix-python-phone-number	6	270	6415	same	yes	5	1	270	3.3	112	in the tool call
+r72a_gains	bugfix-python-list-ops	3	1198	3595	same	yes	10	1	555	2.4	1151	before the tool call
+r72a_gains	bugfix-javascript-variable-length-quantity	2	73	2122	same	yes	0	2	20	1.1	11	in the tool call
+r72a_gains	bugfix-javascript-variable-length-quantity	3	1229	4257	same	yes	23	1	872	2.7	1188	before the tool call
+r72b_v4c2	bugfix-python-list-ops	3	2369	3593	same	yes	16	1	1910	3.0	2322	before the tool call
+r72b_v4c2	bugfix-javascript-complex-numbers	16	90	12545	same	yes	0	1	39	6.3	28	in the tool call
+r72b_v4c2	bugfix-javascript-complex-numbers	28	160	18494	same	yes	1	1	104	9.3	99	at the tool call's start
+r72b_v4c2	bugfix-javascript-complex-numbers	31	83	19700	same	yes	0	1	24	9.9	22	at the tool call's start
+r72b_v4c2	bugfix-javascript-complex-numbers	32	331	20954	same	yes	4	1	288	10.6	270	in the tool call
+r72b_v4c2	bugfix-javascript-complex-numbers	33	2442	21677	same	yes	44	1	2394	12.1	2383	at the tool call's start
+r72b_v4c2	bugfix-python-pig-latin	3	798	3429	same	yes	25	1	164	2.1	750	before the tool call
+r72c_v4c2g	bugfix-python-affine-cipher	2	72	2776	same	yes	0	2	24	1.4	12	in the tool call
+r72c_v4c2g	bugfix-python-variable-length-quantity	3	933	4450	same	yes	4	1	540	2.7	885	before the tool call
+r72c_v4c2g	bugfix-javascript-grade-school	2	79	1948	same	yes	0	2	22	1.0	11	in the tool call
+r72c_v4c2g	bugfix-python-pig-latin	4	486	4660	same, arguments re-serialized	yes	12	1	84	2.6	378	before the tool call
+r72d_v4c22	bugfix-python-affine-cipher	3	1773	4029	same	yes	60	1	664	2.9	1726	before the tool call
+r72d_v4c22	bugfix-python-pig-latin	3	290	3395	same	yes	5	1	128	1.8	242	before the tool call
+r142a_v4c3	bugfix-python-variable-length-quantity	3	1743	4452	same	yes	3	1	782	3.1	1695	before the tool call
+r142a_v4c3	bugfix-javascript-grade-school	4	215	4455	same, arguments re-serialized	yes	0	1	173	2.3	102	in the tool call
+r142b_v4c32	bugfix-python-affine-cipher	6	78	6567	same	no	0	1	38	3.3	40	at the tool call's start
+r142b_v4c32	bugfix-python-variable-length-quantity	3	1450	4452	same	yes	7	1	818	3.0	1402	before the tool call
+r142b_v4c32	bugfix-python-list-ops	3	2232	3486	same	yes	27	1	539	2.9	2185	before the tool call
+r142b_v4c32	bugfix-javascript-complex-numbers	22	97	15244	same	yes	0	1	36	7.7	34	at the tool call's start
+r142b_v4c32	bugfix-javascript-complex-numbers	25	75	18060	same	yes	0	1	21	9.1	15	at the tool call's start
+r142b_v4c32	bugfix-javascript-complex-numbers	28	1058	20889	same	yes	8	1	575	11.0	798	before the tool call
+r142b_v4c32	bugfix-python-pig-latin	3	568	3429	same	yes	5	1	272	2.0	520	before the tool call
+r142b_v4c32	bugfix-javascript-variable-length-quantity	3	4607	4514	same	yes	8	1	383	4.6	4568	before the tool call
+r154a_v4c3ad	bugfix-python-pig-latin	3	1371	3423	same	yes	62	1	229	2.4	1323	before the tool call
+r154a_v4c3ad	bugfix-javascript-variable-length-quantity	2	73	2122	same	yes	0	2	22	1.1	11	in the tool call

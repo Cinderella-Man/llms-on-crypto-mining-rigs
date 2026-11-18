@@ -1,0 +1,11 @@
+run	arm	requests	continuation_turns	reply_tokens_before	reread_turns	reread_tokens	reread_prompt_s	client_same	client_reserialized	client_differs	replies_untrimmed_reasoning	before_tool_call	in_tool_call	at_boundary	turns_after_non_ascii_reply	rereads_after_non_ascii_reply	rereads_per_1000_reply_tokens
+v4rc2	v4r	92	79	36674	7	4854	51.6	6	1	0	0	5	2	0	36	5	0.191
+r156a_v4r	v4r	95	83	39027	2	4863	31.0	2	0	0	0	2	0	0	39	2	0.051
+r156b_v4r2	v4r2	69	56	21009	1	761	6.9	1	0	0	0	1	0	0	23	1	0.048
+r72a_gains	gains	69	57	19958	5	4377	98.3	5	0	0	0	3	2	0	26	4	0.251
+r72b_v4c2	v4c2	92	79	31618	7	6273	80.1	7	0	0	0	2	2	3	35	5	0.221
+r72c_v4c2g	v4c2g	65	53	19386	4	1570	32.9	3	1	0	0	2	2	0	24	2	0.206
+r72d_v4c22	v4c22	65	53	20302	2	2063	13.1	2	0	0	0	2	0	0	21	2	0.099
+r142a_v4c3	v4c3	66	54	15248	2	1958	11.3	1	1	0	0	1	1	0	26	1	0.131
+r142b_v4c32	v4c32	98	86	30812	8	10165	82.8	8	0	0	1	5	0	3	38	5	0.26
+r154a_v4c3ad	v4c3ad	68	56	26307	2	1444	17.6	2	0	0	0	1	1	0	27	1	0.076

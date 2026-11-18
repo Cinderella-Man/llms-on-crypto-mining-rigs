@@ -18,8 +18,8 @@ between days, so the engine's share needs a reference on this rig.
 against 2.43 and 2.37, and generation ran at 27.00 tok/s against 26.67 and 27.61. The first turns read the same
 prompts in 82.28 s against 81.84 and 85.11 s, and one of the two v4.0 runs ran on this rig. 11 of 12 tasks passed:
 JavaScript `complex-numbers` ran to the 12-minute cap, a path this model has taken on that task before. The server
-read a previous reply again on 7 turns, against 2 and 1 in v4.0's runs. That cost little here, but its cause is not
-known yet.
+read a previous reply again on 7 turns, against 2 and 1 in v4.0's runs. That cost little here; part (10) finds the
+cause.
 
 **Part (7), the same-rig reference on Ornith (15:55–16:32):** `pascal-p106-v5`'s own build, with part (5)'s launcher
 on the same rig, read the 21 matched requests in 216.38 s; the candidate took 216.37 s. So part (5)'s 2.5 % was the
@@ -37,6 +37,14 @@ support moving `pascal-p106-v5` to the candidate.** On part (7)'s 20 warm reques
 the candidate 188.55 and 187.15 s: the means are 0.33 % apart, inside the candidate's own 0.74 % between its runs. The
 21 requests took 215.74 s on `1f1110c67` and 215.70 s on the candidate, as means of two. Generation at the same mix of
 contexts is 16.35 and 16.39 tok/s against 16.38 and 16.35. All four runs passed 12 of 12.
+
+**Part (10), why Flash-Next's prompts stopped matching inside 7 replies (from the recordings and the code): the
+replies themselves, not the new engine and not the client.** The client sent every reply back as the server gave it,
+and the server rebuilt the same text, but the model sometimes writes a word in other tokens than its tokenizer would
+cut that text into. The token match stops there, and Flash-Next's recurrent layers cannot step back a few tokens, so
+the server reads the whole reply again. Nine v4-era runs on this model did it as often: on 2, 1, 5, 7, 4, 2, 2, 8 and
+2 turns.
+`LLAMA_SERVER_TEXT_REUSE=1`, the fork's fix for the same cause on Flint, is not in Flash-Next's preset yet.
 
 The candidate is [`pascal-p106-v5-cand-b12483`](../2026-11-17_c854b_upstream_newest/README.md) `602691153`:
 `pascal-p106-v5` with upstream llama.cpp b12483 merged in and upstream's open #32434 (the slot scheduler's fix for
@@ -368,10 +376,8 @@ published row, figure for figure.
   restored the one at the previous prompt's end (4 tokens short) and read the whole reply again.
   The 7 turns re-read 4,854 tokens in 51.6 s; R156a's 2 turns re-read 4,863 tokens in 31.0 s. `pig-latin` turn 3
   re-reads in every run, and 3 of the 7 are in `complex-numbers`' long path. The other 3 are turns that re-read in
-  neither R156 run. Three things could cause it: the candidate's chat handling rendering a reply back into the
-  history differently from the tokens the model wrote, this run's client, or the replies themselves. Which one is
-  open: C884 (Q1598) renders this run's recorded requests with both builds and compares the tokens at each of those
-  points.
+  neither R156 run, and each of them re-read in another v4-era run. The cause is the replies themselves, as on v4.0:
+  [part (10)](#part-10-why-flash-nexts-prompts-stopped-matching-inside-replies-2026-11-18).
 - **Clocks** ([flash_clocks.tsv](flash_clocks.tsv)): this rig's busy medians 1,847 1,847 1,885 1,898 1,860 1,911 1,873
   1,911 1,873 MHz (cards 0–8), against 1,860 1,847 1,898 1,898 1,873 1,911 1,885 1,911 1,885 in R156b on the same
   rig; 1,878.3 against 1,885.3 on the mean (−0.4 %).
@@ -678,9 +684,87 @@ that follow each session's mix of prompts and reply depths.
 
 `pascal-p106-v5` stays `1f1110c67` until the owner moves it.
 
+## Part (10): why Flash-Next's prompts stopped matching inside replies (2026-11-18)
+
+**The re-reads of part (6) come from the model's own token choices, not from the candidate's engine or the client.**
+The client sent every reply back exactly as the server gave it, and the server's template and tokenizer rebuild that
+text unchanged. But at temperature 1.0 the model sometimes writes a word in other tokens than its tokenizer would cut
+the same text into, so the next prompt's tokens stop matching the cached ones there. Flash-Next's recurrent layers
+cannot step back a few tokens, so the server goes back to the checkpoint at the previous prompt's end and reads the
+whole reply again. Builds of the v4 line did this on the same model as often, and the code from a reply to its tokens
+did not change between the two builds. It is the cause Q260 found on Flint
+([2026-10-28_reply_rereads](../2026-10-28_reply_rereads/README.md)), and the fix is the one built then:
+`LLAMA_SERVER_TEXT_REUSE=1` keeps the cached ids wherever the prompt spells the same text. It is in the candidate
+and in Flint's preset, not in Flash-Next's; R210 (Q1604) runs Flash-Next's agent check with it.
+
+Nothing ran for this part: [run/reply_rereads.py](run/reply_rereads.py) reads the proxy's recorded request and reply
+bodies and the server log of part (6)'s run and of nine earlier Flash-Next agent runs on the v4 line, all on the same
+12 tasks: R72 (`gains` on `d097d6d88`; `v4c2`, `v4c2g` with the file `gmix-q2`, and `v4c22` on `8a55934f3`), R142
+(`v4c3`, `v4c32` on `65ac9a47d`), R154a (`v4c3ad`, the same build) and R156 (`v4r`, `v4r2` on v4.0's `eb312b7bc`).
+Every one of them runs a build before upstream b12410, so none has upstream's slot rewrite.
+
+| run, arm | build | re-read turns, of the turns after a task's first | reply tokens re-read | their prompt s | per 1,000 reply tokens | stop point: before the tool call, in it, at its start |
+|---|---|---|---|---|---|---|
+| part (6), `v4rc2` | candidate `602691153` | **7 of 79** | 4,854 | 51.6 | **0.191** | 5, 2, 0 |
+| R156a `v4r` | v4.0 `eb312b7bc` | 2 of 83 | 4,863 | 31.0 | 0.051 | 2, 0, 0 |
+| R156b `v4r2` | v4.0 `eb312b7bc` | 1 of 56 | 761 | 6.9 | 0.048 | 1, 0, 0 |
+| R72a `gains` | `d097d6d88` | 5 of 57 | 4,377 | 98.3 | 0.251 | 3, 2, 0 |
+| R72b `v4c2` | `8a55934f3` | 7 of 79 | 6,273 | 80.1 | 0.221 | 2, 2, 3 |
+| R72c `v4c2g` | `8a55934f3` | 4 of 53 | 1,570 | 32.9 | 0.206 | 2, 2, 0 |
+| R72d `v4c22` | `8a55934f3` | 2 of 53 | 2,063 | 13.1 | 0.099 | 2, 0, 0 |
+| R142a `v4c3` | `65ac9a47d` | 2 of 54 | 1,958 | 11.3 | 0.131 | 1, 1, 0 |
+| R142b `v4c32` | `65ac9a47d` | 8 of 86 | 10,165 | 82.8 | 0.260 | 5, 0, 3 |
+| R154a `v4c3ad` | `65ac9a47d` | 2 of 56 | 1,444 | 17.6 | 0.076 | 1, 1, 0 |
+
+- **The client sent every reply back unchanged** ([flash_rereads_runs.tsv](flash_rereads_runs.tsv)): on all 40
+  re-read turns of the ten runs, the next request's history holds the previous reply's reasoning, content and tool
+  calls as the server returned them. On 3 the client wrote an edit call's JSON argument without spaces. It does that
+  on every edit call (12 in part (6)'s run, 119 in the nine others), and 11 and 117 of those turns matched to the
+  reply's end, because the template writes a non-text argument back with its own `tojson` spacing. The machine that
+  drives the rig was part (6)'s client and the quant machine's CPU the nine others'; their request bodies have the
+  same fields.
+- **Where each match stopped** ([flash_rereads_turns.tsv](flash_rereads_turns.tsv)): the server log's prefix match
+  (`f_keep`, rounded to a thousandth, so within 0.0005 of the cached tokens) less the previous prompt's end gives the
+  point inside the reply. The log's count of tokens sampled under the tool-call grammar gives where the tool call
+  began. In part (6)'s run, 5 of the 7 points lie in the reasoning: 362, 496, 92, 209 and 189 tokens into replies of
+  800, 1,436, 455, 322 and 1,620 tokens, whose tool calls began at tokens 752, 1,206, 337, 262 and 1,572. There the
+  client and the template pass the text through as written, so the text is the same and only its tokens differ. The
+  other 2 lie inside a tool call: 12 tokens into the first of two file reads (`affine-cipher` turn 2) and inside an
+  edit call's JSON (`grade-school` turn 4). The nine v4-era runs have 19 points before the tool call, 8 inside it and
+  6 within the log's rounding of its start. All five re-reads after a reply of two tool calls stop at the same place,
+  12, 12, 11, 9 and 11 tokens into the first call, a file read (part (6)'s `affine-cipher` turn 2; `v4c2g`'s
+  `affine-cipher` turn 2 and `grade-school` turn 2; JavaScript `variable-length-quantity` turn 2 in `gains` and
+  `v4c3ad`).
+- **One text difference in 40:** R142b's `affine-cipher` turn 6. That reply's reasoning ended in two newlines, which
+  the template trims, and the match stopped at the reasoning's end. No reply in part (6)'s run ends that way.
+- **How often:** 7 re-read turns of 79 in part (6)'s run, against 2, 1, 5, 7, 4, 2, 2, 8 and 2 in the nine v4-era runs:
+  33 of 577 turns, over 223,667 reply tokens. At that rate part (6)'s 36,674 reply tokens give est. 5.41 re-reads,
+  and 7 or more come by chance est. 30 % of the time. The same turns re-read across builds: `pig-latin` turn 3 in 7 of
+  the 10 runs, Python `variable-length-quantity` turn 3 in 4, `affine-cipher` turn 2 and `grade-school` turn 4 in 2
+  each (part (6)'s run and one v4-era run), and `complex-numbers`' long path at changing turns in 4. Replies with a
+  character outside ASCII (✓, →, ⁻¹ in the reasoning) are followed by a re-read more often: 28 of the 295 turns after
+  such a reply, against 12 of the 361 after the others, over the ten runs.
+- **The code** (`git diff 1f1110c67 602691153 -- tools/server common src/llama-vocab.cpp` in the fork): upstream's slot
+  rewrite (#32154) moves the prefix match, the slot choice by prefix similarity and the checkpoint choice into
+  `server-slot-sched.cpp`. The match is still `server_tokens::get_common_prefix`, token by token. Its new SHA-256
+  hashes, one per 64 tokens and each covering every token before it, only let it start comparing after the blocks
+  known to be equal, so a match ends no earlier than before. `server_prompt::get_reuse` is the old checkpoint rule,
+  moved, with the fork's two sliding-window rules. Nothing that turns a reply back into tokens changed for this model.
+  The tokenizer changes are PLaMo-2/3's table build and a new Zonos3 pre-tokenizer. The chat parser gained an Inkling
+  parser. The template engine gained `tojson`'s `sort_keys`, `//`, unary signs where an operand is expected, string
+  comparisons and caller scopes, and still renders Flash-Next's turns as written: 72 of part (6)'s 79 turns matched
+  to the reply's end. `common/sampling.cpp`, `common/speculative.cpp` and the server's record of a reply's tokens are
+  unchanged. Text reuse builds the prompt's new token list with `server_tokens(ids)`, which computes the new hashes,
+  so it works on the candidate as on v4.0.
+- **No tokenizer or template check on a rig is needed.** The points lie where the text passes through unchanged, and
+  the code from reply to tokens is the same in both builds. Text reuse's own log line (`prompt ids differ from the
+  cache at N, same text: K more cached tokens kept`) gives each point's exact token in R210. It also tells the
+  in-call points apart: text reuse keeps cached ids only where both spell the same bytes.
+
 ## Not checked here
 
-- **Why Flash-Next's prompts stopped matching inside 7 replies** (part (6)): C884 (Q1598).
+- **The exact tokens at each re-read point** (part (10)): no run records the ids the model generated. R210 (Q1604)
+  logs each point with text reuse on.
 - **Why the candidate's card peaks in the agent run are above `1f1110c67`'s on every card** (parts (7) to (9)): the
   two builds load to the same MiB, both candidate runs peak at the same MiB on every card, and `1f1110c67`'s two runs
   within 2 MiB of each other; the peaks were not traced to an allocation.
@@ -724,6 +808,9 @@ that follow each session's mix of prompts and reply depths.
 | [flash_host.tsv](flash_host.tsv) | the three runs' lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the end, each card's peak memory (`v4rc2`'s from the NVML card log, 75 MiB over `nvidia-smi`'s on an idle card) |
 | [flash_reallocs.tsv](flash_reallocs.tsv) | `v4rc2`'s graph reallocations and prompt seconds per prompt size |
 | [flash_compare.md](flash_compare.md), [flash_report_table.md](flash_report_table.md), [flash_gonogo.md](flash_gonogo.md) | the agent check's report on the run (the harness's arm name `v4r`): per task, per arm and first token per turn; the attempts; the gates and the server log's counts |
+| [flash_rereads_runs.tsv](flash_rereads_runs.tsv) | part (10), one row a run (part (6)'s and nine v4-era Flash-Next runs): turns after a task's first, the reply tokens before them, re-read turns, reply tokens re-read and their prompt seconds, what the client sent back, where the matches stopped, and the turns and re-reads after a reply with a character outside ASCII |
+| [flash_rereads_turns.tsv](flash_rereads_turns.tsv) | part (10), one row a re-read turn: the reply's tokens, the checkpoint the server went back to, what the client sent back, whether the reasoning was trimmed, characters outside ASCII, tool calls, the match's stop point inside the reply and its rounding, where the tool call began, and where the point lies |
+| [run/reply_rereads.py](run/reply_rereads.py) | part (10)'s tables from each run's proxy rows, proxy bodies and server log (standard library only) |
 | [agent/v4rc2/](agent/v4rc2/), [agent/r90v3/](agent/r90v3/) | `turns.csv` and `attempts.csv` of this run (arm renamed from `v4r`) and of R90's `v3` (2026-11-11, the equal-work reference) |
 | [agent/r156a_v4r/](agent/r156a_v4r/), [agent/r156b_v4r2/](agent/r156b_v4r2/) | R156a's and R156b's per-request tables rebuilt from their server logs by `run/server_turns.py` (the client's columns empty, the cached count within one token) |
 | [run/flash_agent.sh](run/flash_agent.sh) | part (6)'s run and report |
@@ -896,4 +983,25 @@ RIG=$RIG CLIENT=local ARM=o4v5b MODEL=<the same> BIN=<the same> RIG_LOGDIR=<the 
 # o4v5b's host log (run/r207b_tables.sh lists them); the window is o4v5b's tasks, from the client's first request
 O4V5B_FROM="2026-11-18 17:50:54" O4V5B_TO="2026-11-18 18:19:11" \
   bash docs/data/2026-11-18_c854b_p106_check/run/r207b_tables.sh <tables folder>
+```
+
+Part (10), on the machine that holds the runs' proxy rows (`proxy.jsonl`), proxy bodies (`proxy.jsonl.bodies.gz`)
+and server logs (the raw logs are not published: they name the machine). R72's, R142's, R154a's and R156's client
+folder holds the nine v4-era arms' proxy rows and bodies in one pair of files:
+
+```bash
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/reply_rereads.py docs/data/2026-11-18_c854b_p106_check/flash_rereads \
+  v4rc2:v4r:<c854>/proxy.jsonl:<c854>/proxy.jsonl.bodies.gz:<c854>/server-v4r.log \
+  r156a_v4r:v4r:<r156a>/proxy.jsonl:<r156a>/proxy.jsonl.bodies.gz:<r156a>/server-v4r.log \
+  r156b_v4r2:v4r2:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r156b>/server-v4r2.log \
+  r72a_gains:gains:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r72a>/server-gains.log \
+  r72b_v4c2:v4c2:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r72b>/server-v4c2.log \
+  r72c_v4c2g:v4c2g:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r72c>/server-v4c2g.log \
+  r72d_v4c22:v4c22:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r72d>/server-v4c22.log \
+  r142a_v4c3:v4c3:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r142a>/server-v4c3.log \
+  r142b_v4c32:v4c32:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r142b>/server-v4c32.log \
+  r154a_v4c3ad:v4c3ad:<v4>/proxy.jsonl:<v4>/proxy.jsonl.bodies.gz:<r154a>/server-v4c3ad.log
+
+# the code, in the fork's clone
+git diff 1f1110c67 602691153 -- tools/server common src/llama-vocab.cpp
 ```
