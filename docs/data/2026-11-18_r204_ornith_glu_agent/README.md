@@ -4,15 +4,42 @@
 made Ornith-1.5-122B Pascal N2P GGUF decode 7.0 % faster over depths 0 and 8,192, with every reply the same bytes
 ([C865b](../2026-11-18_c865b_ornith_glu_rig1/README.md), Q1559). Release settings are chosen on the coding-agent
 check, so this runs that check with the switch added to Ornith's released v4 preset. Two runs with the switch are
-compared with two runs without it, on the same engine and rig. This page has run 1 so far. The verdict comes with run 2
-(R204b).
+compared with two runs without it, on the same engine and rig.
 
-**Run 1 (R204a): all 12 tasks passed, and a decode step at the same context took 6.5 % and 6.7 % less time than in the
-two runs without the switch.** Measured on the same mix of contexts, generation ran at 17.48 tok/s against 16.35 and
-16.32. Over the whole session it was 17.66 against 16.30 and 16.19 tok/s. A task at equal work took 2.04 minutes
-against 2.17 and 2.21. Prompt reading did not change: the requests read on the same prompt in all three runs took
-194.86 s with the switch against 195.22 and 194.05 s without it, the same as the two runs without it differ from each
-other. The switch acts only on batches of at most 8 tokens, so prompt reading should not change.
+**The verdict: a gain. With the switch each reply token takes 6.3 % less time, and reading the prompts takes the same
+time.** All 24 tasks of the two runs passed. At the same mix of contexts a decode step took 57.22 and 57.70 ms with
+the switch against 61.26 and 61.35 ms without it: 6.3 % less on the means, while the two runs with the switch differ
+from each other by 0.8 % and the two without by 0.2 %. A task at equal work took 2.04 and 2.05 minutes against 2.17 and
+2.21 (6.6 % less on the means; the pairs' own spreads 0.5 % and 1.8 %). The 19 requests read on the same prompt in all
+four runs took 194.86 and 194.60 s with the switch against 195.22 and 194.05 s without it (the means 0.05 % apart,
+inside both pairs' spreads). The switch acts only on batches of at most 8 tokens, so prompt reading should not change.
+**So Ornith's v5 preset should take `GGML_CUDA_MMID_GLU_UNFUSE=2`.** v4.0's engine does not read the switch, so the line
+goes into the v5 preset (`release/ornith-v5/settings.env`, made from `release/ornith-v4/settings.env`):
+`PRESET_ENV="$PRESET_ENV GGML_CUDA_MMID_GLU_UNFUSE=2"`. This page does not change any preset.
+
+| | `o4c2`, unset | `o4c3`, unset | **`o4g2a`, the switch** | **`o4g2b`, the switch** | the switch's mean against unset's | the switch's own spread (`o4g2b` against `o4g2a`) | unset's own spread (`o4c3` against `o4c2`) |
+|---|---|---|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | **12 / 12** | **12 / 12** | | | |
+| ms a decode step at the same mix of contexts | 61.26 | 61.35 | **57.22** | **57.70** | **−6.3 %** (57.46 against 61.30) | +0.8 % | +0.2 % |
+| generation tok/s at the same mix of contexts | 16.32 | 16.30 | **17.48** | **17.33** | +6.7 % (17.41 against 16.31) | −0.9 % | −0.1 % |
+| generation tok/s, the whole session | 16.30 | 16.19 | **17.66** | **17.28** | +7.5 % (17.47 against 16.25) | −2.2 % | −0.7 % |
+| minutes a task at equal work (`ka`'s work) | 2.17 | 2.21 | **2.04** | **2.05** | −6.6 % (2.045 against 2.19) | +0.5 % | +1.8 % |
+| the 19 requests read on the same prompt in all four runs, prompt s | 195.22 | 194.05 | **194.86** | **194.60** | 1.0005 | 0.9987 | 0.9940 |
+| of them, the 12 first turns | 119.20 | 118.02 | **118.71** | **118.68** | 1.0007 | 0.9997 | 0.9901 |
+| of them, the 18 with a cached prefix | 167.40 | 166.18 | **166.14** | **166.77** | 0.9980 | 1.0038 | 0.9927 |
+| the 22 matched with the cached tokens within one, prompt s | 224.50 | 223.32 | **224.03** | **223.88** | 1.0002 | 0.9993 | 0.9947 |
+| first token on a task's first turn, median s | 8.58 | 8.55 | **8.53** | **8.51** | | | |
+| first token median s; p90 | 7.56; 11.11 | 5.03; 10.34 | **6.99; 11.18** | **6.97; 11.74** | | | |
+| prompt tokens read a task | 3,259 | 3,146 | **3,235** | **3,322** | | | |
+| tokens generated a task; of them past 8,000 tokens of context | 1,689; 4,320 | 1,801; 5,042 | **1,376; 388** | **1,701; 5,200** | | | |
+
+Each value is one run ([r204b_decode_means.md](r204b_decode_means.md), [r204b_means.md](r204b_means.md),
+[r204b_means_tol1.md](r204b_means_tol1.md), [r204b_agent.tsv](r204b_agent.tsv), [r204b_work.md](r204b_work.md)). The
+class compares the switch's mean of two with unset's mean of two, and counts a gain or a loss only beyond both pairs'
+own spreads: decode, generation and the minutes a task are a **gain**; prompt reading is unchanged (**negligible**). The
+shared mix of contexts is the tokens all four runs generated in each context bucket, so run 1's figures in its own
+three-run table (57.19 against 61.18 and 61.28 ms) read 57.22 against 61.26 and 61.35 here. The whole-session speed
+also follows how deep each session's replies sat: run 2 generated 5,200 tokens past 8,000 tokens of context, run 1 388.
 
 ## The method
 
@@ -34,8 +61,8 @@ other. The switch acts only on batches of at most 8 tokens, so prompt reading sh
   [part (8)](../2026-11-18_c854b_p106_check/README.md#part-8-the-candidates-second-run-on-ornith-2026-11-18)). Their
   difference from each other is this tree's own spread on this rig. `pascal-p106-v5`'s own build `1f1110c67` also ran
   twice on the rig that day (`o4v5a` 16:06, `o4v5b` 17:50); those two appear only in the five-run tables.
-- **The class** (after run 2): the switch's two runs against the two controls, a gain or a loss only beyond the spread
-  of both pairs of runs.
+- **The class:** the switch's two runs against the two controls, the means of two against each other, a gain or a loss
+  only beyond the spread of both pairs of runs.
 
 ## Run 1 (R204a, arm `o4g2a`, 2026-11-18)
 
@@ -120,14 +147,73 @@ controls' rows as in parts (5) and (8)). A ratio is RUN / REF on the same reques
   load. The RAM watchdog stopped nothing. The report's memory gate ([o4g2a_gonogo.md](o4g2a_gonogo.md)) reads the
   client's log shared with earlier runs: NO-GO on its 718 MB low and its 343 MB swap, as for every run in that folder.
 - **Card memory:** the peaks in the NVML card log are 5,808 5,828 5,754 5,828 5,436 5,544 5,706 5,782 5,188 MiB on cards
-  0–8. That is 22 18 22 18 18 18 18 14 14 MiB below both controls, which peaked at the same MiB as each other. It is
-  `1f1110c67`'s first run (part (7)) to the MiB but card 5 (2 MiB lower). So with the fused launches off, the
-  candidate's extra peak memory against `1f1110c67` (parts (7) to (9), "Not checked here") is gone (Q1601).
+  0–8. That is 22 18 22 18 18 18 18 14 14 MiB below both controls, which peaked at the same MiB as each other, and
+  `1f1110c67`'s first run (part (7)) to the MiB but card 5 (2 MiB lower). The peaks follow the session's deepest
+  context, not the switch or the build: this run reached 8,322 tokens, run 2 (the switch again) 12,276 and peaked at
+  the controls' MiB (Q1601).
 - **The client machine** also ran another project's benchmark containers for the whole run. The prompt and generation
   times are the rig server's own and are not affected; the minutes and the first-token times are measured on the
   client.
 
-**The verdict waits for run 2 (R204b):** the same launcher, arm `o4g2b`, on the same tree and rig.
+## Run 2 (R204b, arm `o4g2b`, 2026-11-18)
+
+The same launcher, tree and rig, started 19 min after run 1 ended. The server started at 19:33:47 and was up after
+681 s; the tasks ran 19:45:09–20:11:57. The started command is run 1's byte for byte (549 B) and the server's
+`switches:` line too (7 set, 889 names read).
+
+| | **`o4g2b`, the switch (this run)** | `o4g2a`, the switch | `o4c2`, unset | `o4c3`, unset | this run against `o4c2`, `o4c3` |
+|---|---|---|---|---|---|
+| passed | **12 / 12** | 12 / 12 | 12 / 12 | 12 / 12 | |
+| ms a decode step at the same mix of contexts (four runs) | **57.70** | 57.22 | 61.26 | 61.35 | −5.8 %, −5.9 % |
+| generation tok/s, the whole session | **17.28** | 17.66 | 16.30 | 16.19 | +6.0 %, +6.7 % |
+| minutes a task at equal work | **2.05** | 2.04 | 2.17 | 2.21 | −5.5 %, −7.2 % |
+| the 19 requests read on the same prompt in all four runs, prompt s | **194.60** | 194.86 | 195.22 | 194.05 | 0.9968, 1.0028 |
+| prompt tok/s, the whole session | **102.8** | 98.5 | 96.2 | 92.0 | |
+| reply tokens re-read (turns; their prompt s of all prompt s) | **4,592 (2; 31.4 of 387.5)** | 3,406 (3; 31.2 of 394.3) | 2,143 (1; 13.2 of 406.6) | 1,371 (2; 17.4 of 410.2) | |
+| minutes, all 12 tasks; turns | **26.6; 59** | 22.6; 62 | 28.0; 63 | 29.5; 72 | different work |
+| tool calls / failed / malformed | **59 / 0 / 0** | 62 / 1 / 0 | 63 / 0 / 0 | 72 / 1 / 0 | |
+| checkpoints restored / created / erased; full re-processing | **13 / 0 / 0; 0** | 14 / 0 / 0; 0 | 12 / 0 / 0; 0 | 13 / 0 / 0; 0 | |
+| graph reallocations | **0 in 59 requests** | 0 in 62 | 0 in 63 | 0 in 72 | |
+| busy SM clock, mean of the nine cards' medians, MHz | **1,881.2** | 1,879.8 | 1,876.9 | 1,878.3 | |
+| lowest MemAvailable MiB; swap highest MiB | **1,205; 342** | 1,223; 343 | 1,199; 341 | 1,224; 342 | |
+| deepest context of the session, tokens | **12,276** | 8,322 | 12,380 | 11,997 | |
+
+Each value is one run ([r204b_agent.tsv](r204b_agent.tsv), [r204b_decode.md](r204b_decode.md),
+[r204b_pairs.md](r204b_pairs.md), [r204b_work.md](r204b_work.md), [r204b_clocks.tsv](r204b_clocks.tsv),
+[r204b_host.tsv](r204b_host.tsv), [r204b_reallocs.tsv](r204b_reallocs.tsv), [o4g2b_gonogo.md](o4g2b_gonogo.md)).
+
+- **Decode at the same context** ([r204b_decode.md](r204b_decode.md)): in every bucket a step took less time than in
+  both runs without the switch, and this run's requests reached every bucket, the deepest one included:
+
+  | middle context, tokens | `o4g2b` ms a token (requests) | `o4g2a` | `o4c2` | `o4c3` | `o4g2b` against `o4c2`, `o4c3` |
+  |---|---:|---:|---:|---:|---|
+  | under 3,000 | 53.12 (12) | 53.06 (12) | 56.77 (12) | 56.88 (12) | −6.4 %, −6.6 % |
+  | 3,000 to 4,500 | 55.12 (16) | 54.92 (17) | 58.94 (14) | 58.87 (15) | −6.5 %, −6.4 % |
+  | 4,500 to 6,000 | 56.92 (19) | 56.76 (20) | 60.51 (23) | 60.52 (22) | −5.9 %, −5.9 % |
+  | 6,000 to 8,000 | 59.05 (6) | 58.74 (12) | 61.88 (10) | 62.39 (19) | −4.6 %, −5.4 % |
+  | 8,000 and over | 62.33 (6) | 60.64 (1) | 66.08 (4) | 66.18 (4) | −5.7 %, −5.8 % |
+
+  In the four shallower buckets this run's step is 0.06 to 0.31 ms longer than run 1's, the 0.8 % between the two
+  runs at the same mix. The deep lane (C865b) had −6.8 % at depth 0 and −6.0 % at 8,192.
+- **Prompt reading** ([r204b_pairs.md](r204b_pairs.md), [r204b_means.md](r204b_means.md)): on the 19 requests read on the
+  same prompt in all four runs this run took 194.60 s, between the controls' 195.22 and 194.05 s (7 of 19 slower than
+  `o4c2`, 8 of 19 slower than `o4c3`), and 0.9987 of run 1's. The cold first request (Python `affine-cipher` turn 1,
+  2,742 tokens, nothing cached) took 27.83 s, against run 1's 28.72 and the controls' 27.82 and 27.87 s.
+- **The work:** 3,322 prompt tokens read a task. Two replies were read again (JavaScript `variable-length-quantity` turn
+  4, 1,908 tokens; Python `scale-generator` turn 4, 2,684 tokens), 31.4 s of the 387.5 s of prompt reading.
+  `scale-generator` took 8.0 minutes in 8 turns (run 1: 4.0 in 6); its turns 4 to 8 started at 9,497 to 12,054 tokens
+  of context, the run's only requests past 8,000. No tool call failed or was malformed; no NaN or inf, no watchdog kill ([o4g2b_gonogo.md](o4g2b_gonogo.md);
+  its memory gate reads the client's log shared with earlier runs, NO-GO on its 718 MB low as for every run there).
+- **Clocks** ([r204b_clocks.tsv](r204b_clocks.tsv)): busy medians 1,847 1,847 1,898 1,898 1,873 1,911 1,873 1,911 1,873
+  MHz on cards 0–8, run 1's card for card but card 4 (1,873 against 1,860).
+- **Host and cards** ([r204b_host.tsv](r204b_host.tsv)): lowest MemAvailable 1,205 MiB at 20:11:08, during the last
+  task; swap 31 MiB at the start and 342 MiB at its highest at 19:39:22, during the load. The card peaks are 5,830 5,846
+  5,776 5,846 5,454 5,562 5,724 5,796 5,202 MiB on cards 0–8, both controls' to the MiB and 22 18 22 18 18 18 18 14 14
+  MiB above run 1's. The day's runs that reached about 12,000 tokens of context (`o4c2`, `o4c3`, this run) peak at these
+  MiB; those that stayed at 9,310 or less (run 1, and `1f1110c67`'s `o4v5a` and `o4v5b`) at run 1's, within 2 MiB. So
+  the extra MiB come with a deeper session, not with the fused launches or the b12483 tree (Q1601).
+- **The client machine** ran another project's benchmark containers through this run too; as in run 1, the prompt and
+  generation times are the rig server's own.
 
 ## Files
 
@@ -135,8 +221,12 @@ controls' rows as in parts (5) and (8)). A ratio is RUN / REF on the same reques
 |---|---|
 | [run/ornith_agent_glu.sh](run/ornith_agent_glu.sh) | the launcher: part (5)'s `run/ornith_agent.sh` with `GGML_CUDA_MMID_GLU_UNFUSE=2` added to the server's environment |
 | [run/r204a_tables.sh](run/r204a_tables.sh) | every table of run 1 from the published per-request rows and the run's logs |
-| [agent/o4g2a/turns.csv](agent/o4g2a/turns.csv), [agent/o4g2a/attempts.csv](agent/o4g2a/attempts.csv) | the run's per-request rows (server times, prompt and cached tokens, generated tokens) and per-attempt rows (result, turns, tool calls), as the agent check's report writes them |
-| [o4g2a_report_table.md](o4g2a_report_table.md), [o4g2a_compare.md](o4g2a_compare.md), [o4g2a_gonogo.md](o4g2a_gonogo.md) | the agent check's own report after this run (over every run in the client's results folder) |
+| [run/r204b_tables.sh](run/r204b_tables.sh) | every table of run 2 and of the verdict (the four runs on this tree) |
+| [agent/o4g2a/turns.csv](agent/o4g2a/turns.csv), [agent/o4g2a/attempts.csv](agent/o4g2a/attempts.csv), [agent/o4g2b/turns.csv](agent/o4g2b/turns.csv), [agent/o4g2b/attempts.csv](agent/o4g2b/attempts.csv) | each run's per-request rows (server times, prompt and cached tokens, generated tokens) and per-attempt rows (result, turns, tool calls), as the agent check's report writes them |
+| [o4g2a_report_table.md](o4g2a_report_table.md), [o4g2a_compare.md](o4g2a_compare.md), [o4g2a_gonogo.md](o4g2a_gonogo.md), and the same three `o4g2b_*.md` | the agent check's own report after each run (over every run in the client's results folder) |
+| [r204b_decode_means.md](r204b_decode_means.md), [r204b_means.md](r204b_means.md), [r204b_means_tol1.md](r204b_means_tol1.md) | the verdict: the two-run means at the same mix of contexts, and on the requests matched in all four runs (exactly and with the cached tokens within one), with each pair's own spread |
+| [r204b_agent.tsv](r204b_agent.tsv), [r204b_decode.md](r204b_decode.md), [r204b_same_prompts.md](r204b_same_prompts.md), [r204b_same_prompts_tol1.md](r204b_same_prompts_tol1.md), [r204b_work.md](r204b_work.md), [r204b_work.tsv](r204b_work.tsv), [r204b_clocks.tsv](r204b_clocks.tsv), [r204b_host.tsv](r204b_host.tsv), [r204b_reallocs.tsv](r204b_reallocs.tsv) | run 1's tables again with run 2 added: the four runs on this tree |
+| `r204b_paired_*.md`, `r204b_paired_*_tol1.md`; [r204b_pairs.md](r204b_pairs.md), [r204b_pairs_tol1.md](r204b_pairs_tol1.md) | request by request on the requests matched in all four runs: each switch run against each control (`c2_g2a`, `c3_g2a`, `c2_g2b`, `c3_g2b`), the switch's two runs (`g2`) and the controls' two (`c`); the six pairs' totals in one table |
 | [r204a_agent.tsv](r204a_agent.tsv) | every Ornith arm of the client's results folder side by side, against `v3ka`: passed, turns, prompt and generation tok/s, first-token median and p90, minutes, minutes a task at equal work |
 | [r204a_decode.md](r204a_decode.md), [r204a_decode5.md](r204a_decode5.md) | decode speed by middle context and at one shared mix, the three runs on this tree, and with the day's two `1f1110c67` runs |
 | [r204a_same_prompts.md](r204a_same_prompts.md), [r204a_same_prompts_tol1.md](r204a_same_prompts_tol1.md) | the requests read on the same prompt in the three runs, side by side, exactly and with the cached tokens within one |
@@ -165,16 +255,21 @@ RIG=$RIG CLIENT=local ARM=o4g2a MODEL=<the same> BIN=<the same> RIG_LOGDIR=<the 
 # (run/r204a_tables.sh lists them); the window is o4g2a's tasks, from the client's first request
 O4G2A_FROM="2026-11-18 18:51:07" O4G2A_TO="2026-11-18 19:13:52" \
   bash docs/data/2026-11-18_r204_ornith_glu_agent/run/r204a_tables.sh <tables folder>
+
+# run 2: the same two commands with ARM=o4g2b and OUT=<out>/agent-o4g2b, then the verdict's tables on run 1's tables
+# folder with o4g2b's rows, server log, card log and host log added (run/r204b_tables.sh lists them)
+O4G2B_FROM="2026-11-18 19:45:09" O4G2B_TO="2026-11-18 20:11:57" \
+  bash docs/data/2026-11-18_r204_ornith_glu_agent/run/r204b_tables.sh <tables folder>
 ```
 
-`agent/o4g2a/` is the client's `res/turns.csv` and `res/attempts.csv` rows of the arm. `r204a_agent.tsv` is the script's `agent.tsv`. The card log is the rig's
-`cards.csv` from this run's own `card_log start` line on; the host log is the rig's `meminfo.log` from the server's
-start.
+`agent/o4g2a/` and `agent/o4g2b/` are the client's `res/turns.csv` and `res/attempts.csv` rows of each arm.
+`r204a_agent.tsv` and `r204b_agent.tsv` are the scripts' `agent.tsv`. A card log is the rig's `cards.csv` from that
+run's own `card_log start` line on; a host log is the rig's `meminfo.log` from the server's start.
 
 ## Provenance and licence
 
 The tasks are the agent check's 12 bug fixes, derived from Exercism's Python and JavaScript exercises (MIT; source,
 licences and commits in [bench/agent_check](../../../bench/agent_check/README.md)); this folder holds only their IDs
-(in [agent/o4g2a/attempts.csv](agent/o4g2a/attempts.csv)). The model file is Ornith-1.5-122B Pascal N2P GGUF
+(in `agent/<arm>/attempts.csv`). The model file is Ornith-1.5-122B Pascal N2P GGUF
 (`valid1`), as in [C865b](../2026-11-18_c865b_ornith_glu_rig1/README.md). The tables summarize this project's own runs
 and are published under the repository's licence.

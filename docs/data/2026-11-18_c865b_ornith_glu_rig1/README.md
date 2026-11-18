@@ -11,7 +11,8 @@ On the steady second pass a token takes 50.44 and 50.44 ms with `1` and 50.01 an
 and 53.70 ms unset at depth 0. That is 3.23 and 3.65 ms less on the means of two loads, a little more than R176's
 est. 2.9 ms. At 8,192 tokens it takes 60.84 and 60.93 ms with `1` and 60.16 and 60.23 ms with `2`, against 64.01 and
 64.14 ms. `2` is at least as fast as `1` everywhere, and faster at 8,192 (+1.3 %, a gain). The settings file is
-unchanged: release settings are chosen on the agent check, which comes next (R204).
+unchanged: release settings are chosen on the agent check. There `2` is a gain too, a decode step 6.3 % shorter at the
+same context with prompts unchanged, two runs against two ([R204](../2026-11-18_r204_ornith_glu_agent/README.md)).
 
 This is the timed part of C865's P106 row, whose first run on 2026-11-17 stopped before any timed load:
 [2026-11-17_c865_ornith_glu_unfuse](../2026-11-17_c865_ornith_glu_unfuse/README.md). The switch, its code and what it
@@ -143,9 +144,10 @@ One request a depth and load, with the preset's sampler and a fixed seed, so the
 - **Both arms are gains on decode, with the same replies.** `2` is upstream's own proposal, and it is the faster of
   the two at depth. If upstream merges #32239, a merge of its tag carries it into this engine with no fork change.
   Until then the switch is off by default and the v4 preset does not set it.
-- **R204 (Q1593), next:** Ornith's agent check ([bench/agent_check](../../../bench/agent_check/README.md)) with
-  `GGML_CUDA_MMID_GLU_UNFUSE=2` against the v4 preset, two runs each. Release settings and numbers are chosen on that
-  check, not on the deep lane.
+- **R204 (Q1593), done 2026-11-18:** Ornith's agent check ([bench/agent_check](../../../bench/agent_check/README.md)) with
+  `GGML_CUDA_MMID_GLU_UNFUSE=2` against the v4 preset, two runs each: a gain, a decode step at the same context 6.3 %
+  shorter on the means, a task at equal work 6.6 % shorter, prompts unchanged, 24 of 24 tasks
+  ([data](../2026-11-18_r204_ornith_glu_agent/README.md)).
 - **R205 (Q1594):** `2` turns off every fused matrix-vector product on Pascal, not only Ornith's. It therefore also
   reaches Flint's and Swift Qwen3.8-Flash-Next's one-token decode, and Flash-Next's draft verify passes of 2 to 8
   tokens. Their deep lanes with `1` and `2` against unset tell whether the setting is right for every release file.

@@ -1,0 +1,2 @@
+run	arm	lowest_memavailable_mib	at	swap_start_mib	swap_max_mib	swap_max_at	memavailable_end_mib	card_peak_mib_0_to_8
+R204b	o4g2b	1205	20:11:08	31	342	19:39:22	3121	5830,5846,5776,5846,5454,5562,5724,5796,5202
