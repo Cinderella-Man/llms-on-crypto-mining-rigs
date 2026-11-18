@@ -58,13 +58,74 @@ the dot product, so with the switch off every kernel is compiled from the unchan
 
    These are counts in the code, not timings: whether the prompt gets faster on a P106 is the rig row below.
 
-## The rig row (not run yet)
+## The rig row
 
-`run/rig_kq_ab.sh`, on one rig with nine P106-090, Flash-Next's v4 preset: per arm (off; on with the default types;
-on with `all`) the MMQ test cases of Q3_K to Q6_K in `test-backend-ops` (every case must pass), `llama-bench` prompts
-of 64, 128 and 512 tokens at micro-batches of 64 and 512 (five repetitions, two rounds), and one greedy reply of 128
-tokens to `run/prompt.txt` (about 600 tokens, read through the prompt kernels), which must be the same bytes in every
-arm.
+`run/rig_kq_ab.sh`, on one rig with nine P106-090, Flash-Next's v4 preset (`release/flash-next-v4/settings.env`, its
+environment and its layer split): per arm, `off`, `on` (the default types Q4_K, Q5_K, Q6_K) and `all` (Q3_K too),
+(1) the MMQ test cases of Q3_K to Q6_K in `test-backend-ops` (every case must pass), (2) `llama-bench` prompts of 64,
+128 and 512 tokens at micro-batches of 64 and 512 (five repetitions, two rounds in the order off, on, all), and (3)
+one greedy reply of 128 tokens to `run/prompt.txt` (621 tokens, read through the prompt kernels at micro-batches of
+512), which must be the same bytes in every arm.
+
+## Result (rig 1, 2026-11-18)
+
+Run on `pascal-p106-v5` at `602691153` (upstream b12483 merged; the switch has been in the v5 line since 2026-11-17),
+Flash-Next's v4 file, 20:23:59 to 21:16:35, nothing else on the rig. Step (1) was left out (`STEPS="bench greedy"`):
+`test-backend-ops` checks each case against the CPU backend, which on the rig's two Celeron cores takes hours. The
+greedy reply below and the exactness argument above cover correctness.
+
+**The replies are the same bytes in all three arms** (`rig1_greedy.tsv`: md5 `21e6e02ed314660e84cd3e2d781e7c2c`,
+417 bytes each). The FP32 form is exact on a P106, as the argument says.
+
+**Speed, a diagnostic** (`rig1_bench.md`; single requests, so Flash-Next's agent check decides whether its preset
+sets the switch):
+
+1. **The first load was slow in every test, and it was an `off` load.** `off` round 1 read 6.10, 4.02, 3.54, 4.16,
+   5.07 and 7.61 % slower than `off` round 2 (micro-batch 64: prompts of 64, 128, 512; micro-batch 512: the same),
+   every repetition lower. It was the evening's first load, after 12 minutes with the cards idle. The third load
+   (`all` round 1) was slow in its first two tests (4.41 and 3.57 % below `off` round 2) and the first repetition of
+   its third, then normal. So round 1's `on` against `off` (+6.35, +4.23, +3.67, +4.34, +5.43, +8.79 %) measures that
+   first load, not the switch. The comparison below is against `off` round 2, the one warm `off` load; with one
+   such load, `off`'s own spread is not measured, and the `on` and `all` loads' spreads stand in for it.
+2. **`on` (Q4_K, Q5_K, Q6_K): negligible.** Against `off` round 2, `on` round 1 and round 2:
+
+   | -ub | prompt | `on` r1 | `on` r2 | `on` r2 vs r1 |
+   |---|---|---|---|---|
+   | 64 | 64 | −0.13 % | +0.08 % | +0.22 % |
+   | 64 | 128 | +0.04 % | +0.09 % | +0.05 % |
+   | 64 | 512 | +0.00 % | +0.08 % | +0.08 % |
+   | 512 | 64 | −0.00 % | +0.05 % | +0.05 % |
+   | 512 | 128 | +0.09 % | +0.15 % | +0.06 % |
+   | 512 | 512 | +0.51 % | +0.35 % | −0.16 % |
+
+   Every change but one is 0.15 % or less, the size of the arm's own round-to-round spread in the last column;
+   512-token prompts at micro-batches of 512 read +0.51 and +0.35 % faster.
+3. **`all` (Q3_K too): a small gain at micro-batches of 512, negligible at 64.** Against `off` round 2:
+
+   | -ub | prompt | `all` r1 | `all` r2 | `all` r2 vs r1 |
+   |---|---|---|---|---|
+   | 64 | 64 | −4.41 % (slow start) | −0.21 % | +4.40 % |
+   | 64 | 128 | −3.57 % (slow start) | +0.37 % | +4.09 % |
+   | 64 | 512 | −0.07 % | +0.25 % | +0.32 % |
+   | 512 | 64 | +0.31 % | +0.28 % | −0.03 % |
+   | 512 | 128 | +0.50 % | +0.42 % | −0.07 % |
+   | 512 | 512 | +1.39 % | +0.84 % | −0.53 % |
+
+   At micro-batches of 512 both loads are above `off` by more than their own spread, and every repetition is above
+   the same repetition of `off` round 2 but one (512 tokens, round 2's first: 103.00 against 103.01 tok/s). Q3_K
+   holds 1.8 times the dense weights of the three default types, so `all` gains more than `on`.
+4. **Nothing near the P40's 5.7 %.** The switch reaches only Flash-Next's dense layers (637.4 M weights at the
+   default types, 1,162.0 M more in Q3_K, of 176.94 B); the routed experts, Q2_0 and IQ4_NL, take other kernels.
+   #2876's 5.7 % was on dense K-quant models.
+5. **The greedy replies' prompt pass** (`rig1_greedy.tsv`, the first pass of a fresh process, no warm-up, one each):
+   `off` 8,981.51 ms, `on` 8,449.99 ms, `all` 8,417.71 ms for the 621 tokens (69.14, 73.49 and 73.77 tok/s). One
+   pass per arm, with `off` first in its step as in the benchmark step: not a speed comparison. The warmed,
+   repeated `llama-bench` tests do not show a difference of that size.
+
+**Verdict:** exact; `GGML_CUDA_MMQ_KQ_FP32SCALE=1` with the default types is negligible, and with
+`GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` a small gain on prompts read in micro-batches of 512 (+0.28, +0.42 and
++0.84 % in round 2). Both stay off by default. Flash-Next's agent check with `1` and `all` against its preset decides
+the preset (registry Q1602), with the arms' order alternated, since the first load here was slow.
 
 ## Files
 
@@ -75,7 +136,10 @@ arm.
 | `kq_instructions.tsv` | per K-quant `mul_mat_q` kernel (type, tile width J, fallback, fused): instruction, XMAD, I2F, IDP, FFMA, FMUL and FADD counts with the switch's flag off and on |
 | `run/kquant_census.py` | the census (gguf-py, header only) |
 | `run/sass_compare.py` | the machine-code comparison: `hash`, `compare`, `extract`, `linediff` |
-| `run/rig_kq_ab.sh`, `run/prompt.txt` | the rig row |
+| `rig1_bench.md` | the rig row's `llama-bench` loads: every load's tok/s with each repetition, the changes against `off` per round and each arm's round-to-round spread, the means, and every load against `off` round 2 (per cent, and per repetition in tok/s) |
+| `rig1_greedy.tsv` | the greedy replies: per arm the md5 and bytes of the reply and its prompt pass |
+| `run/rig_kq_ab.sh`, `run/prompt.txt` | the rig row (run with `STEPS="bench greedy"`) |
+| `run/kq_ab_table.py` | the tables of `rig1_bench.md` from the runner's `bench-<arm>-<round>.jsonl` |
 
 ## Commands
 
@@ -110,6 +174,22 @@ python3 -I run/sass_compare.py linediff ext-base.txt ext-new.txt
 
 `BASE` is the v4.0 release build (`miner-llama-v4.0`, built from `eb312b7bc`, the tag commit's second parent with the
 same tree), `NEW` this branch's build.
+
+The rig row (2026-11-18, from a machine that reaches the rig as `$RIG`; `BIN` is the rig build of `pascal-p106-v5`
+`602691153`, `bin/llama-server` md5 `86607661d5a19d1a90d19ee4db10c90b`, whose `llama-bench` and `llama-completion`
+name `GGML_CUDA_MMQ_KQ_FP32SCALE`; `MODELS` the folder with Flash-Next's v4 file):
+
+```bash
+P=llms-on-crypto-mining-rigs; D=/tmp/c861a
+ssh $RIG "mkdir -p $D/run"
+for f in $P/docs/data/2026-11-17_c861a_fp32_scale/run/rig_kq_ab.sh $P/docs/data/2026-11-17_c861a_fp32_scale/run/prompt.txt \
+         $P/release/flash-next-v4/settings.env $P/scripts/ram_watchdog.sh; do ssh $RIG "cat > $D/run/$(basename $f)" < $f; done
+ssh $RIG "BIN=$BIN/bin MODEL=$MODELS/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf OUT=$D/out STEPS='bench greedy' \
+    setsid nohup bash $D/run/rig_kq_ab.sh > $D/rig_kq_ab.out 2>&1 < /dev/null &"
+# when $D/out/DONE exists: copy $D back, then rm -rf $D on the rig
+python3 -I run/kq_ab_table.py <copy of $D/out> "off on all" 2 off-2 > rig1_bench.md
+cp <copy of $D/out>/greedy.tsv rig1_greedy.tsv
+```
 
 ## Provenance and licence
 

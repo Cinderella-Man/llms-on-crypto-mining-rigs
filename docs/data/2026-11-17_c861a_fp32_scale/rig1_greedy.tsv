@@ -1,0 +1,4 @@
+arm	md5	bytes	prompt_eval
+off	21e6e02ed314660e84cd3e2d781e7c2c	417	8981.51 ms /   621 tokens (   14.46 ms per token,    69.14 tokens per second)
+on	21e6e02ed314660e84cd3e2d781e7c2c	417	8449.99 ms /   621 tokens (   13.61 ms per token,    73.49 tokens per second)
+all	21e6e02ed314660e84cd3e2d781e7c2c	417	8417.71 ms /   621 tokens (   13.56 ms per token,    73.77 tokens per second)
