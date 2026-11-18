@@ -686,7 +686,7 @@ that follow each session's mix of prompts and reply depths.
   within 2 MiB of each other; the peaks were not traced to an allocation.
 - **Why the candidate's first Ornith run read the requests with a cached prefix 0.7 % slower than the three runs after
   it** (part (9)): it was the day's first agent run on this rig, after the morning's kernel suite and loads; no run
-  timed the rig at that hour on another build.
+  timed the rig at that hour on another build (Q1600, parked).
 - **Speed on the same rig for Flash-Next against `1f1110c67`.** Parts (2) to (4) time nothing. Part (6) has one v4.0
   reference on this rig; part (7) is the same-rig reference for Ornith only.
 - **The switches on.** With a switch set the candidate runs the same switch code as `1f1110c67`; each switch has its
