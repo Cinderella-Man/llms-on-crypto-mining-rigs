@@ -561,8 +561,8 @@ Each value is one run ([r207_agent.tsv](r207_agent.tsv), [r207_r206set.md](r207_
 - **Host** ([r207_host.tsv](r207_host.tsv)): lowest MemAvailable 1,224 MiB at 17:27:38, as the server stopped after
   the last task, and 3,181 MiB at 17:27:58; swap 31 MiB at the start and 342 MiB at its highest at 16:55:02, during
   the load. The RAM watchdog stopped nothing. The card peaks in the NVML card log are 5,830 5,846 5,776 5,846 5,454
-  5,562 5,724 5,796 5,202 MiB: the candidate's first run's to the MiB on every card, so its 14 to 22 MiB above
-  `1f1110c67`'s peaks (part (7)) comes back. The report's memory gate ([o4c3_gonogo.md](o4c3_gonogo.md)) reads the
+  5,562 5,724 5,796 5,202 MiB: the candidate's first run's to the MiB on every card, so its 22 18 22 18 18 16 18 14
+  14 MiB above `1f1110c67`'s peaks on cards 0–8 (part (7)) come back. The report's memory gate ([o4c3_gonogo.md](o4c3_gonogo.md)) reads the
   client's log shared with R160's and R166's runs: NO-GO on its 718 MB low and its 342 MB swap, as before.
 
 `pascal-p106-v5` stays `1f1110c67`.
