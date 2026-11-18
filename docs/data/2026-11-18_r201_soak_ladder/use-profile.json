@@ -1,0 +1,105 @@
+{
+ "what": "R201's use profile for rig 2: each card's highest clean rung of the soak ladder, at most two memory steps under its lowest failure anywhere (R200's climb and soaks, R201's ladder)",
+ "date": "2026-11-18",
+ "complete": true,
+ "climb_boot": null,
+ "rungs": 4,
+ "minutes_a_rung": 30.0,
+ "each_card": "memory_mts and core_mhz are the highest rung the card held for the full minutes with no differing check, from the first rung on; 0 if none",
+ "cards": [
+  {
+   "card": 0,
+   "pci": "00000000:03:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1873,
+   "memory_mts": 1300,
+   "core_mhz": 256,
+   "core_steps": 20
+  },
+  {
+   "card": 1,
+   "pci": "00000000:04:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 1000,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 2,
+   "pci": "00000000:05:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 1000,
+   "core_mhz": 0,
+   "core_steps": 0,
+   "r200_soak_note": "R200 try 2, 2026-11-17: card 2 at +1300/0 differed from stock in round 11 of the soak; memory one step lower"
+  },
+  {
+   "card": 3,
+   "pci": "00000000:06:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1873,
+   "memory_mts": 1100,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 4,
+   "pci": "00000000:07:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 1100,
+   "core_mhz": 206,
+   "core_steps": 16,
+   "r200_soak_note": "R200 soak 2026-11-17: card 4 at +1300/+231 (measured peak 2138 MHz on the apply boot) differed from stock in round 13 of the soak; set one step lower on both"
+  },
+  {
+   "card": 5,
+   "pci": "00000000:0B:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 1200,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 6,
+   "pci": "00000000:0C:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1873,
+   "memory_mts": 900,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 7,
+   "pci": "00000000:0D:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 900,
+   "core_mhz": 0,
+   "core_steps": 0,
+   "r200_soak_note": "R200 try 3, 2026-11-17: card 7 at +1200/0 differed from stock in round 108 of the soak; memory one step lower"
+  },
+  {
+   "card": 8,
+   "pci": "00000000:0E:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 1300,
+   "core_mhz": 231,
+   "core_steps": 18
+  }
+ ],
+ "from": "R201 soaked.json, by results/2026-11-18_r201_soak_ladder/make_use.py"
+}
