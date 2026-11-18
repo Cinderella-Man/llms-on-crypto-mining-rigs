@@ -25,7 +25,7 @@ one on Flash-Next.**
   1.96 minutes a task at equal work and 17.89 tok/s: −4.39 % and +3.35 % against the three-card profile, −7.98 % and
   +8.95 % against stock. At the same context a decode step took 4.29 % and 4.73 % less time than with the three-card
   profile, and the same 19 prompts 5.08 % less. The references ran on another boot, so the class waits for a
-  same-boot test. Answers sound, hottest card 46 °C, no trip, no Xid; every offset 0 after it.
+  same-boot test (Q1603). Answers sound, hottest card 46 °C, no trip, no Xid; every offset 0 after it.
 
 At stock both models ran where they ran before on the same rig. Ornith: 12 of 12, 2.13 minutes, 16.42 tok/s (R166 two
 days earlier: 2.11 and 2.13 minutes, 16.52 and 16.13 tok/s). Flash-Next: 12 of 12, 2.36 minutes, 28.08 tok/s (R156a
@@ -451,7 +451,8 @@ ladder ([R202b](../2026-11-18_r202b_core_soak/README.md), Q1588) found a core of
 [use-profile.json](../2026-11-18_r202b_core_soak/use-profile.json): memory as before (+1,300, +1,000, +1,000, +1,100,
 +1,100, +1,200, +900, +900, +1,300 MT/s on cards 0 to 8), core +256, +256, +269, +231, +206, +206, +282, +256 and
 +231 MHz. It is a first look and not a verdict. `o4oc0` and `o4oc1` ran on the boot of 14:57 and this run on the boot
-of 20:47, so a change between boots is not separated from the offsets. The same-boot comparison is a later test.
+of 20:47, so a change between boots is not separated from the offsets. The same-boot comparison is a later test
+(Q1603).
 
 **12 of 12 tasks passed, 1.96 minutes a task at equal work, generation 17.89 tok/s.** Against the three-card
 profile's `o4oc1` (2.05 minutes, 17.31 tok/s) that is −4.39 % and +3.35 %. Against stock `o4oc0` (2.13 minutes,
@@ -509,7 +510,7 @@ two; [same_prompts.md](same_prompts.md) is that four-run table, unchanged.
   same preset moves between runs on this rig: R166a and R166b are 0.95 % and 2.42 % apart, and `o4oc0`, two days
   after R166, took 2.13 minutes against 2.11 and 2.13 and generated 16.42 tok/s against 16.52 and 16.13. The
   like-for-like pieces moved too, and in the direction of the offsets. So this looks like a gain on top of the three-card profile. It still has to be measured with stock and
-  the offsets on one boot.
+  the offsets on one boot (Q1603).
 - **Decode at the same context** ([steps.md](steps.md)). Under 4,000 tokens, 21 requests: 52.67 ms a token against
   55.03 and 57.82 (18.99 tok/s against 18.17 and 17.30: +4.51 % and +9.77 %). At 4,000 to 8,000 tokens, 36 requests
   with 14,319 tokens: 55.40 ms against 58.15 and 60.71 (18.05 tok/s: +4.94 % and +9.59 %). At 8,000 to 16,000 tokens,
