@@ -21,6 +21,12 @@ JavaScript `complex-numbers` ran to the 12-minute cap, a path this model has tak
 read a previous reply again on 7 turns, against 2 and 1 in v4.0's runs. That cost little here, but its cause is not
 known yet.
 
+**Part (7), the same-rig reference on Ornith (15:55–16:32):** `pascal-p106-v5`'s own build, with part (5)'s launcher
+on the same rig, read the 21 matched requests in 216.38 s; the candidate took 216.37 s. So part (5)'s 2.5 % was the
+rig, not the engine. Generation and the first turns are within the spread of v4.0's two runs. Leaving out each
+session's first request, which reads a whole prompt on cards that have just loaded, the candidate took 0.7 % longer on
+the other 20, more than v4.0's two runs differ there. One run of each build cannot settle a gap that small.
+
 The candidate is [`pascal-p106-v5-cand-b12483`](../2026-11-17_c854b_upstream_newest/README.md) `602691153`:
 `pascal-p106-v5` with upstream llama.cpp b12483 merged in and upstream's open #32434 (the slot scheduler's fix for
 recurrent and hybrid models, and LoRA) carried as one commit. Its rig build is
@@ -229,7 +235,7 @@ the second rig: 2.52) at each run's own prompt and generation speeds.
     boosts as far as its own chip allows ([ornith_clocks.tsv](ornith_clocks.tsv)).
 
   So the 2.5 % may be the rig, the day or the engine. The same launcher with `pascal-p106-v5`'s own build
-  (`1f1110c67`, part (2)'s reference) on this rig, next to this run, tells them apart.
+  (`1f1110c67`, part (2)'s reference) on this rig, next to this run, tells them apart: [part (7)](#part-7-the-same-rig-reference-on-ornith-2026-11-18).
 - **Host** ([ornith_host.tsv](ornith_host.tsv)): lowest MemAvailable 1,199 MiB at 14:39:36, during the last task
   (1,225 and 1,228 on v4.0), 3,105 MiB at the end; swap 30 MiB at the start and 341 MiB at its highest at 14:09:39,
   during the load (338 and 337). The RAM watchdog stopped nothing. This run's card log is `scripts/card_log.py`'s,
@@ -369,11 +375,108 @@ published row, figure for figure.
 
 `pascal-p106-v5` stays `1f1110c67`.
 
+## Part (7): the same-rig reference on Ornith (2026-11-18)
+
+**On the same rig the candidate reads Ornith's prompts as fast as `pascal-p106-v5`'s own build, so part (5)'s 2.5 %
+was the rig.** Part (5)'s launcher with `pascal-p106-v5`'s build `1f1110c67` read the 21 matched requests in
+216.38 s; the candidate read them in 216.37 s. Generation (16.30 tok/s on the candidate against 16.52) and the first
+turns are within the spread of v4.0's two runs. One small difference remains. A session's first request reads its
+whole prompt on cards that have just loaded, and it varies more than the band on its own. Without it, the candidate
+took 188.55 s on the other 20 against 187.20 s (+0.7 %), more than the 0.15 % between v4.0's two back-to-back runs on
+the same 20. With one run of each build, that is at the edge of what a run can show.
+
+The run (R206, Q1597) is part (5)'s, arm **`o4v5a`**: [run/ornith_agent.sh](run/ornith_agent.sh) with `ARM=o4v5a` and
+`BIN` = `pascal-p106-v5`'s build `1f1110c67` (`llama-server` md5 `5b134f43f3a3e885bfba02538ffebcbe`, part (2)'s
+reference). The started command (521 bytes, md5 `8c07491e57c50b7c1eb8f1d5c35cd646`) is `o4c2`'s byte for byte apart
+from the build folder's name. The server's `switches:` line names the same six settings (this build reads 888
+`LLAMA_` and `GGML_` names, the candidate 889). It ran on the same rig 1 h 15 min after part (5)'s run, with part
+(6)'s Flash-Next run in between: the server started at 15:55:02 and was up after 683 s (part (5): 683 s), the tasks
+ran 16:06:27–16:31:32. Every card at stock before and after (75 W, 1,911 / 4,004 MHz maximum, no Xid; the card log
+reads offset 0 on every card).
+
+| | **`1f1110c67` `o4v5a` (this rig)** | candidate `o4c2` (this rig, part (5)) | v4.0 `o4sna` (second rig) | v4.0 `o4snb` (second rig) | the candidate against `1f1110c67` by the rule (the spread: `o4snb` against `o4sna`) |
+|---|---|---|---|---|---|
+| passed | **12 / 12** | 12 / 12 | 12 / 12 | 12 / 12 | |
+| the 21 requests read on the same prompt in all four runs, prompt s | **216.38** | 216.37 | 211.35 | 210.86 | negligible (0.0 %; 0.49) |
+| of them, the 12 first turns | **119.59** | 119.20 | 115.83 | 115.29 | negligible (−0.3 %; 0.54) |
+| of them, the 20 with a cached prefix (all but a session's first request) | **187.20** | 188.55 | 184.62 | 184.35 | loss (+0.7 %; 0.27) |
+| a session's first request (Python `affine-cipher`, 2,742 tokens, nothing cached), prompt s | **29.19** | 27.82 | 26.73 | 26.51 | |
+| of the 21, read slower / faster than the reference column; median of the ratios | | 15 / 6; +0.21 % | | 12 / 9 against `o4sna`; +0.10 % | |
+| minutes a task at equal work (`ka`'s work) | **2.13** | 2.17 | 2.11 | 2.13 | loss (+1.9 %; 0.02); each session's prompt mix |
+| prompt tok/s, the whole session | **99.3** | 96.2 | 103.0 | 105.9 | a different mix of prompt sizes |
+| generation tok/s | **16.52** | 16.30 | 16.52 | 16.13 | negligible (−1.3 %; 0.39) |
+| first token median s | **6.56** | 7.56 | 6.69 | 6.06 | follows the turn mix |
+| first token p90 s | **11.10** | 11.11 | 11.29 | 11.32 | negligible (+0.1 %; 0.03) |
+| first token on a task's first turn, median s | **8.63** | 8.58 | 8.43 | 8.45 | gain (−0.6 %; 0.02) |
+| prompt tokens read a task | **3,114** | 3,259 | 3,405 | 4,130 | |
+| reply tokens re-read (turns; their prompt s of all prompt s) | **1,996 (1; 12.1 of 376.1)** | 2,143 (1; 13.2 of 406.6) | 4,831 (2; 30.6 of 396.6) | 12,332 (3; 71.9 of 467.8) | |
+| tokens generated a task | **1,501** | 1,689 | 1,818 | 2,300 | |
+| minutes, all 12 tasks; turns | **24.9; 61** | 28.0; 63 | 29.1; 63 | 36.8; 73 | different work |
+| tool calls / failed / malformed | **61 / 2 / 0** | 63 / 0 / 0 | 63 / 2 / 0 | 73 / 2 / 0 | |
+| checkpoints restored / created / erased; full re-processing | **12 / 0 / 0; 0** | 12 / 0 / 0; 0 | 13 / 0 / 0; 0 | 14 / 0 / 0; 0 | |
+| graph reallocations | **0 in 61 requests** | 0 in 63 | 0 in 63 | 0 in 73 | |
+| busy SM clock, mean of the nine cards' medians, MHz | **1,878.3** | 1,876.9 | 1,888.2 | 1,888.2 | |
+| lowest MemAvailable MiB | **1,228** | 1,199 | 1,225 | 1,228 | |
+
+Each value is one run ([r206_agent.tsv](r206_agent.tsv), [r206_same_prompts4.md](r206_same_prompts4.md),
+[r206_paired4.md](r206_paired4.md), [r206_paired_r166.md](r206_paired_r166.md), [r206_work.md](r206_work.md),
+[r206_clocks.tsv](r206_clocks.tsv), [r206_host.tsv](r206_host.tsv), [r206_reallocs.tsv](r206_reallocs.tsv),
+[o4v5a_gonogo.md](o4v5a_gonogo.md); the other runs' rows as in part (5)). The class is part (5)'s rule with
+`1f1110c67`'s run as the reference: a gain or a loss when the candidate's difference from it is larger than the gap
+between v4.0's two back-to-back runs, negligible otherwise.
+
+- **The rig, not the engine.** `1f1110c67` on this rig takes 2.5 % longer on the 21 requests than v4.0 on the second
+  rig (216.38 against 211.35 and 210.86 s), as the candidate does (216.37 s). With every switch off `1f1110c67`
+  launches v4.0's kernels in every evaluation ([the 2026-11-17 check](../2026-11-17_v5_cand_p106_check/README.md)),
+  so the gap is the first rig's and the day's, not an engine's. Its cards
+  ran as in part (5): busy medians 1,847 1,847 1,885 1,898 1,860 1,911 1,873 1,911 1,873 MHz (cards 0–8), the
+  candidate's run's on eight cards and 1,898 against 1,885 MHz on card 3 ([r206_clocks.tsv](r206_clocks.tsv)).
+- **A session's first request varies more than the band.** The 21 include each session's first request (Python
+  `affine-cipher`, turn 1: 2,742 tokens, nothing in the cache, the first request after the load). It took 29.19 s
+  here, 27.82 s on the candidate and 26.73 and 26.51 s on v4.0, a spread larger than the 0.49 s band of the 21
+  together, so it decides their total. On the other 20, the candidate took 188.55 s against 187.20 s (+0.7 %),
+  slower on 15 of them, the median request by 0.22 %. v4.0's two runs differ by 0.15 % there (184.62 and 184.35 s;
+  12 of 20 slower, median +0.10 %; [r206_paired_r166.md](r206_paired_r166.md)). By the rule that is a loss, est. 0.7 %
+  on prompts that start from a cached prefix, but it rests on one run of each build. A second run of each, in
+  alternating order on this rig, tells (Q1599).
+- **The two runs on this rig alone** match on 25 requests (the 21 and four later turns): 252.01 s on `1f1110c67`
+  against 252.03 s on the candidate, the 24 with a cached prefix 222.82 against 224.22 s (+0.6 %;
+  [r206_paired.md](r206_paired.md), [r206_same_prompts.md](r206_same_prompts.md)).
+- **Generation: negligible,** 16.30 tok/s on the candidate against 16.52 (−1.3 %; v4.0's two runs differ by 0.39
+  tok/s, 2.4 %). The candidate's run generated more tokens a task (1,689 against 1,501), and longer replies decode at
+  deeper contexts.
+- **Minutes a task at equal work** price `ka`'s work at each session's own prompt and generation speeds, and the
+  session's prompt tok/s counts its mix of prompt sizes (96.2 against 99.3, while the matched requests take the same
+  time). The +1.9 % follows that mix and the generation speed; it is a loss by the rule, as in part (5).
+- **The work:** 3,114 prompt tokens read a task, one reply read again (Python `list-ops`, turn 3, 1,996 tokens,
+  12.1 s, the turn the candidate's run and `o4snb` also re-read), 12 checkpoint restores, none created or erased, no
+  full re-processing; the report's cache hit is 85.7 % (the candidate's 85.8 %;
+  [o4v5a_report_table.md](o4v5a_report_table.md)). The candidate's slot scheduler reads no more than its own base.
+  Two tool calls in `affine-cipher` returned an error to the agent (the report's "failed"); none were malformed.
+- **Host** ([r206_host.tsv](r206_host.tsv)): lowest MemAvailable 1,228 MiB at 16:31:38, during the last task, and
+  3,177 MiB at the end; swap 30 MiB at the start and 341 MiB at its highest at 16:02:51, during the load (the
+  candidate's: 30 and 341). The RAM watchdog stopped nothing. The card peaks in the NVML card log (75 MiB over
+  `nvidia-smi`'s on an idle card) are 5,808 5,828 5,754 5,828 5,436 5,546 5,706 5,782 5,188 MiB, and the candidate's
+  run's 5,830 5,846 5,776 5,846 5,454 5,562 5,724 5,796 5,202: 22 18 22 18 18 16 18 14 14 MiB more, on every card.
+  At load the two builds take the same MiB on every card (part (3)). The report's memory gate
+  ([o4v5a_gonogo.md](o4v5a_gonogo.md)) reads the client's log shared with R160's and R166's runs: NO-GO on its 718 MB
+  low (R160d's) and its 342 MB swap, as before.
+- **Graph reallocations:** 0 in 61 requests, in every prompt-size bucket ([r206_reallocs.tsv](r206_reallocs.tsv)).
+
+This run is also the first control run of Q1593 (the v4 preset on `1f1110c67`, two runs); part (5)'s `o4c2` is the
+same preset on the candidate, so whichever tree Q1593 runs on has one control run already.
+
+`pascal-p106-v5` stays `1f1110c67`.
+
 ## Not checked here
 
 - **Why Flash-Next's prompts stopped matching inside 7 replies** (part (6)): C884 (Q1598).
-- **Speed on the same rig for Ornith.** Parts (2) to (4) time nothing. Part (5) is timed against references on another
-  rig; part (6) has one reference on this rig.
+- **Whether the candidate's 0.7 % on Ornith's prompts with a cached prefix is real** (part (7)): one run of each build
+  on the same rig; Q1599 runs a second pair.
+- **Why the candidate's card peaks in the agent run are above `1f1110c67`'s on every card** (part (7)): the two builds
+  load to the same MiB; the peaks were not traced to an allocation.
+- **Speed on the same rig for Flash-Next against `1f1110c67`.** Parts (2) to (4) time nothing. Part (6) has one v4.0
+  reference on this rig; part (7) is the same-rig reference for Ornith only.
 - **The switches on.** With a switch set the candidate runs the same switch code as `1f1110c67`; each switch has its
   own rig rows.
 - **C662's whole `test-backend-ops`** and the record sets past R153's two, as in the last check. No case needed a new
@@ -400,7 +503,7 @@ published row, figure for figure.
 | [ornith_reallocs.tsv](ornith_reallocs.tsv), [o4c2_requests_reallocs.tsv](o4c2_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size (the three runs), and per request (`o4c2`) |
 | [o4c2_compare.md](o4c2_compare.md), [o4c2_report_table.md](o4c2_report_table.md), [o4c2_gonogo.md](o4c2_gonogo.md) | the agent check's report on `o4c2`: per task, per arm and first token per turn; per arm over the client's attempts (R160's, R166's and two other runs); the gates and each server log's counts |
 | [agent/o4c2/](agent/o4c2/) | `turns.csv` (one row a request) and `attempts.csv` (one row a task) |
-| [run/ornith_agent.sh](run/ornith_agent.sh) | part (5)'s run and report |
+| [run/ornith_agent.sh](run/ornith_agent.sh) | parts (5) and (7)'s run and report (`ARM` names the arm: `o4c2`, the default, and `o4v5a`) |
 | [run/ornith_tables.sh](run/ornith_tables.sh) | part (5)'s tables, with [run/same_prompts.py](run/same_prompts.py), [run/busy_clocks.py](run/busy_clocks.py) and [run/host_cards.py](run/host_cards.py) (R166's `host.py` for the NVML card log) |
 | [flash_agent.tsv](flash_agent.tsv), [flash_agent_nocx.tsv](flash_agent_nocx.tsv) | part (6), `agent_tables.py` on R90's `v3` and `v4rc2`: passed, turns, prompt and generation tok/s, first token median, p90 and first turn, draft acceptance, minutes, minutes a task at equal work against R90's `v3`; all 12 tasks, and the 11 without `complex-numbers` |
 | [flash_same_prompts.md](flash_same_prompts.md) | the 11 requests read on the same prompt (task, turn, new tokens, cached tokens within one) in `v4rc2`, R156a `v4r` and R156b `v4r2`: each run's prompt ms; and each run's generation over all its requests |
@@ -413,6 +516,16 @@ published row, figure for figure.
 | [agent/r156a_v4r/](agent/r156a_v4r/), [agent/r156b_v4r2/](agent/r156b_v4r2/) | R156a's and R156b's per-request tables rebuilt from their server logs by `run/server_turns.py` (the client's columns empty, the cached count within one token) |
 | [run/flash_agent.sh](run/flash_agent.sh) | part (6)'s run and report |
 | [run/flash_tables.sh](run/flash_tables.sh) | part (6)'s tables, with [run/server_turns.py](run/server_turns.py) and [run/same_prompts.py](run/same_prompts.py) (`CACHE_TOL`) |
+| [r206_agent.tsv](r206_agent.tsv) | part (7), `agent_tables.py` on R160's and R166's runs, `o4c2` and `o4v5a`: the columns of `ornith_agent.tsv` |
+| [r206_same_prompts4.md](r206_same_prompts4.md), [r206_same_prompts.md](r206_same_prompts.md) | the requests read on the same prompt in `o4v5a`, `o4c2`, `o4sna` and `o4snb` (21), and in this rig's two runs alone (25): each run's prompt ms; and each run's generation over all its requests |
+| [r206_paired4.md](r206_paired4.md), [r206_paired.md](r206_paired.md), [r206_paired_r166.md](r206_paired_r166.md) | request by request, the candidate against `1f1110c67` on the 21 and on the 25, and `o4snb` against `o4sna` on the 21: each request's ratio, then the totals, the requests read slower and faster and the median ratio, for all, the first turns and the requests with a cached prefix |
+| [r206_work.md](r206_work.md), [r206_work.tsv](r206_work.tsv) | `report.py work` on the four runs' `turns.csv` |
+| [r206_clocks.tsv](r206_clocks.tsv) | each card's median SM clock while busy, and its share of busy samples below 1,800 MHz, over `o4v5a`'s and `o4c2`'s tasks |
+| [r206_host.tsv](r206_host.tsv) | `o4v5a`'s lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the end, each card's peak memory (NVML card log) |
+| [r206_reallocs.tsv](r206_reallocs.tsv) | graph reallocations and prompt seconds per prompt size, `o4v5a` and `o4c2` |
+| [o4v5a_compare.md](o4v5a_compare.md), [o4v5a_report_table.md](o4v5a_report_table.md), [o4v5a_gonogo.md](o4v5a_gonogo.md) | the agent check's report on `o4v5a`: per task, per arm and first token per turn; per arm over the client's attempts; the gates and each server log's counts |
+| [agent/o4v5a/](agent/o4v5a/) | `turns.csv` and `attempts.csv` of `o4v5a` |
+| [run/r206_tables.sh](run/r206_tables.sh) | part (7)'s tables, with [run/paired_prompts.py](run/paired_prompts.py) |
 
 In the tables `cand` is the candidate and `ref` is `pascal-p106-v5`'s build `1f1110c67`. The scripts are the last
 check's, byte for byte: [rig_suite.sh](../2026-11-17_v5_cand_p106_check/run/rig_suite.sh) (md5
@@ -497,3 +610,19 @@ bash docs/data/2026-11-18_c854b_p106_check/run/flash_tables.sh <tables folder>
 `agent/r90v3/` R90's `v3` rows, renamed from `v3`). The prefix-match points in part (6) are each re-read turn's
 `selected slot by LCP similarity ... f_keep` line in the server log times the cached tokens before it, less the
 previous prompt's end.
+
+Part (7), as part (5) with one more name and `pascal-p106-v5`'s build, from the repository root on the machine that
+drives the rig, with the rig clean:
+
+```bash
+REF=llama.cpp-20261117-1f1110c67-pascal-p106-v5-cand-b12410
+RIG=$RIG CLIENT=local ARM=o4v5a MODEL=$MODELS/Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf BIN=/opt/llama-builds/$REF/bin/llama-server \
+  RIG_LOGDIR=<rig folder>/agent-logs CLIENT_DIR=<client folder>/bench CLIENT_OUT=<client folder>/r160 OUT=<out>/agent-o4v5a \
+  bash docs/data/2026-11-18_c854b_p106_check/run/ornith_agent.sh
+RIG=$RIG CLIENT=local ARM=o4v5a MODEL=<the same> BIN=<the same> RIG_LOGDIR=<the same> CLIENT_DIR=<the same> \
+  CLIENT_OUT=<the same> OUT=<out>/agent STEPS="report collect" bash docs/data/2026-11-18_c854b_p106_check/run/ornith_agent.sh
+
+# the tables, on a folder holding part (5)'s table rows plus o4v5a's, both runs' server logs and o4v5a's host logs
+# (run/r206_tables.sh lists them)
+bash docs/data/2026-11-18_c854b_p106_check/run/r206_tables.sh <tables folder>
+```

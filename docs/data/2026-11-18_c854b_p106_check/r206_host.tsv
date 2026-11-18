@@ -1,0 +1,2 @@
+run	arm	lowest_memavailable_mib	at	swap_start_mib	swap_max_mib	swap_max_at	memavailable_end_mib	card_peak_mib_0_to_8
+R206	o4v5a	1228	16:31:38	30	341	16:02:51	3177	5808,5828,5754,5828,5436,5546,5706,5782,5188
