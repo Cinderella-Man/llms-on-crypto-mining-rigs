@@ -20,6 +20,12 @@ one on Flash-Next.**
 - **The answers stayed sound** in both runs with the offsets: no malformed tool call, no NaN or inf, and every passed
   task also passed its hidden tests. The watchdog never tripped, no card logged a GPU Xid, and the hottest card
   reached 50 °C. After the last run every offset read 0 again.
+- **The full profile, a first look** ([section](#the-full-profile-first-look-o4oc2-2026-11-18)): with a core offset
+  on every card ([R202b](../2026-11-18_r202b_core_soak/README.md)), one Ornith run on a later boot passed 12 of 12 at
+  1.96 minutes a task at equal work and 17.89 tok/s: −4.39 % and +3.35 % against the three-card profile, −7.98 % and
+  +8.95 % against stock. At the same context a decode step took 4.29 % and 4.73 % less time than with the three-card
+  profile, and the same 19 prompts 5.08 % less. The references ran on another boot, so the class waits for a
+  same-boot test. Answers sound, hottest card 46 °C, no trip, no Xid; every offset 0 after it.
 
 At stock both models ran where they ran before on the same rig. Ornith: 12 of 12, 2.13 minutes, 16.42 tok/s (R166 two
 days earlier: 2.11 and 2.13 minutes, 16.52 and 16.13 tok/s). Flash-Next: 12 of 12, 2.36 minutes, 28.08 tok/s (R156a
@@ -437,21 +443,138 @@ check found (+4.42 %). Flash-Next gained less, 1.92 to 2.65 % a decode step at t
 of stock runs over the whole session. Neither model's answers changed in kind: no malformed calls, no NaN, every task
 but one passed with its hidden tests, and the one that failed ran out of time on a sound reply.
 
+## The full profile (first look): `o4oc2` (2026-11-18)
+
+**In plain words.** The use profile above gives only three cards a core offset. Later the same day the core soak
+ladder ([R202b](../2026-11-18_r202b_core_soak/README.md), Q1588) found a core offset for every card that held
+90 minutes with no differing check. This run is one Ornith agent check with that full profile,
+[use-profile.json](../2026-11-18_r202b_core_soak/use-profile.json): memory as before (+1,300, +1,000, +1,000, +1,100,
++1,100, +1,200, +900, +900, +1,300 MT/s on cards 0 to 8), core +256, +256, +269, +231, +206, +206, +282, +256 and
++231 MHz. It is a first look and not a verdict. `o4oc0` and `o4oc1` ran on the boot of 14:57 and this run on the boot
+of 20:47, so a change between boots is not separated from the offsets. The same-boot comparison is a later test.
+
+**12 of 12 tasks passed, 1.96 minutes a task at equal work, generation 17.89 tok/s.** Against the three-card
+profile's `o4oc1` (2.05 minutes, 17.31 tok/s) that is −4.39 % and +3.35 %. Against stock `o4oc0` (2.13 minutes,
+16.42 tok/s) it is −7.98 % and +8.95 %. The like-for-like pieces point the same way:
+
+- At the same context a decode step took 4.29 %, 4.73 % and 3.98 % less time than in `o4oc1` and 8.91 %, 8.75 % and
+  6.25 % less than at stock.
+- The 19 identical prompts took 5.08 % less time than in `o4oc1` and 6.45 % less than at stock. With a core offset on
+  every card, prompt reading got faster too; the three-card profile had left it almost unchanged.
+
+**The run.** Rig 2 was rebooted at 20:47:19, after R202b had set every offset back to 0. At 20:49 there was no llama
+process, every card used 0 MiB, and the kit's read-only start check passed (every offset 0, no step-down this boot).
+The watchdog started at 20:49:44 and `apply` of the full profile at 20:49:50. Both stock rounds gave every card the
+hash `60ee0f178cfd67d5`. The offsets were set 20:54:05–20:54:12, each card "read back as set", and in the round with
+the offsets every card passed its greedy check: `APPLY_DONE` "exit 0" at 20:55:04. At 20:55:18 the kit's state showed
+every card at its profile value, the watchdog running, no GPU Xid, no step-down and 3,146 MiB of host memory
+available. The launcher is `o4oc1`'s with only the arm and its own rig folder changed, on a copy of this repository at
+`b1190e7b`. The started command is `o4oc0`'s and `o4oc1`'s byte for byte (521 bytes, md5
+`211f8db2edeacd267705795e4911d8c9`), and so is the server's `switches:` line. The server was up after 582 s
+(`o4oc0`: 642 s, `o4oc1`: 662 s), and the tasks ran 21:05:19–21:32:33. Nothing else used the client during the run.
+At 21:33:11 every card still read its profile value, the watchdog was running with no trip, and there was no GPU Xid.
+
+| | R203a `o4oc0`, stock | R203b `o4oc1`, three-card profile | **R203e `o4oc2`, the full profile** | change against `o4oc1` | change against `o4oc0` |
+|---|---|---|---|---|---|
+| boot | 14:57:26 | 14:57:26 | **20:47:19** | | |
+| passed | 12 / 12 | 12 / 12 | **12 / 12** | | |
+| minutes a task at equal work (`ka`'s work) | 2.13 | 2.05 | **1.96** | −4.39 % | −7.98 % |
+| generation tok/s | 16.42 | 17.31 | **17.89** | +3.35 % | +8.95 % |
+| prompt tok/s, the whole session | 102.2 | 101.6 | **109.9** | +8.17 % | +7.53 % |
+| first token median s | 7.07 | 6.60 | **7.39** | +11.97 % | +4.53 % |
+| first token p90 s | 11.51 | 10.82 | **10.75** | −0.65 % | −6.60 % |
+| first token on a task's first turn, median s | 8.48 | 8.30 | **8.01** | −3.49 % | −5.54 % |
+| the 19 requests read on the same prompt in these three runs, prompt s | 187.2 | 184.5 | **175.1** | −5.08 % | −6.45 % |
+| of them, the 12 first turns, prompt s | 116.9 | 115.4 | **109.4** | −5.16 % | −6.39 % |
+| prompt tokens read a task | 3,725 | 3,296 | **3,614** | | |
+| tokens generated a task | 1,980 | 1,418 | **1,793** | | |
+| reply tokens re-read (turns; their prompt s of all prompt s) | 8,860 (5; 65.6 of 437.3) | 4,074 (1; 28.8 of 389.2) | **8,130 (5; 59.1 of 394.5)** | | |
+| ms a decode step, middle context under 4,000 / 4,000–8,000 / 8,000–16,000 | 57.82 / 60.71 / 64.83 | 55.03 / 58.15 / 63.30 | **52.67 / 55.40 / 60.78** | −4.29 / −4.73 / −3.98 % | −8.91 / −8.75 / −6.25 % |
+| minutes, all 12 tasks; turns | 31.9; 67 | 24.1; 62 | **27.0; 63** | | |
+| minutes a task, median | 2.52 | 1.30 | **1.45** | | |
+| tool calls / failed / malformed | 67 / 2 / 0 | 62 / 2 / 0 | **63 / 0 / 0** | | |
+| checkpoints restored / created / erased; full re-processing | 16 / 0 / 0; 0 | 12 / 0 / 0; 0 | **16 / 0 / 0; 0** | | |
+| graph reallocations | 0 in 67 requests | 0 in 62 | **0 in 63** | | |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,883.9 | 1,959.8 | **2,125.6** | +8.46 % | +12.83 % |
+| highest card temperature °C; highest power W | 48; 82.77 | 47; 85.34 | **46; 86.74** | | |
+| lowest MemAvailable MiB; swap highest MiB | 1,207; 334 | 1,183; 358 | **1,238; 359** | | |
+
+Each value is one run ([agent.tsv](agent.tsv), [fulloc_same_prompts.md](fulloc_same_prompts.md), [work.md](work.md),
+[steps.md](steps.md), [clocks.tsv](clocks.tsv), [cards.md](cards.md), [host.tsv](host.tsv),
+[reallocs.tsv](reallocs.tsv), [o4oc2_gonogo.md](o4oc2_gonogo.md)). The same-prompt row matches requests over these
+three runs only, so its 19 requests are not quite the 19 that `o4oc1`'s section matched over four runs with R166's
+two; [same_prompts.md](same_prompts.md) is that four-run table, unchanged.
+
+- **The class waits for the same-boot test.** Against `o4oc1`, both numbers the class is set on moved more than the
+  same preset moves between runs on this rig: R166a and R166b are 0.95 % and 2.42 % apart, and `o4oc0`, two days
+  after R166, took 2.13 minutes against 2.11 and 2.13 and generated 16.42 tok/s against 16.52 and 16.13. The
+  like-for-like pieces moved too, and in the direction of the offsets. So this looks like a gain on top of the three-card profile. It still has to be measured with stock and
+  the offsets on one boot.
+- **Decode at the same context** ([steps.md](steps.md)). Under 4,000 tokens, 21 requests: 52.67 ms a token against
+  55.03 and 57.82 (18.99 tok/s against 18.17 and 17.30: +4.51 % and +9.77 %). At 4,000 to 8,000 tokens, 36 requests
+  with 14,319 tokens: 55.40 ms against 58.15 and 60.71 (18.05 tok/s: +4.94 % and +9.59 %). At 8,000 to 16,000 tokens,
+  6 requests with 3,706 tokens: 60.78 ms against 63.30 and 64.83 (16.45 tok/s: +4.11 % and +6.68 %). Over all
+  requests: 55.88 ms against 57.76 and 60.89 (−3.25 % and −8.23 %), which also carries the context mix. This run
+  generated 3,706 tokens above 8,000 tokens of context, against 428 and 2,965.
+- **The same prompts** ([fulloc_same_prompts.md](fulloc_same_prompts.md)): the 19 requests took 175.1 s against
+  184.5 s and 187.2 s. All 19 were faster than in `o4oc1`, most of all JavaScript `triangle`'s first turn (−10.62 %)
+  and `variable-length-quantity`'s (−9.30 %). 18 were faster than at stock; JavaScript `grade-school`'s first turn
+  took 0.07 % more time. The session's prompt speed rose 8.17 %, where the three-card profile had moved it −0.59 %.
+  Prompt reading is mostly compute, and now every card has a core offset.
+- **The work** ([work.md](work.md)): 1,793 tokens generated a task, between `o4oc1`'s 1,418 and `o4oc0`'s 1,980, in 63
+  turns. The agent read a reply again on 5 turns, as at stock. Python `scale-generator`, the longest task again, took
+  8 turns and 7.98 minutes (`o4oc1`: 5 turns, 6.4 minutes; `o4oc0`: 8 turns, 6.7 minutes).
+- **The answers looked sound.** All 12 tasks passed with the test files untouched, and the hidden tests passed too.
+  None of the 63 tool calls failed or was malformed, there were no calls inside the reasoning, and there was no NaN
+  or inf in the server log. The report's memory gate is NO-GO on the swap, as for the other two runs; every other
+  gate is GO ([o4oc2_gonogo.md](o4oc2_gonogo.md), over all three arms, as the client's results folder held them all).
+- **First token** follows the turn mix again. A task's first turn, the same request in every run, took a median
+  8.01 s (−3.49 % and −5.54 %), close to the same 12 first turns' −5.16 % and −6.39 %. The median over all turns rose
+  to 7.39 s because the agent read a reply again on five turns (first tokens of 8.08, 9.02, 11.02, 17.46 and
+  14.04 s), against one in `o4oc1`.
+- **The cards' busy clocks** ([clocks.tsv](clocks.tsv), busy = utilization above 0 %, 21:05:19–21:32:33): medians of
+  2,113 2,138 2,151 2,100 2,100 2,100 2,151 2,151 2,126 MHz on cards 0 to 8 (mean 2,125.6), against `o4oc1`'s 2,113
+  1,885 1,885 1,860 2,100 1,898 1,873 1,898 2,126 and `o4oc0`'s 1,860 1,885 1,885 1,860 1,898 1,898 1,873 1,898
+  1,898. Busy samples below 1,800 MHz: 0.68 0.59 0.63 0.56 0.68 0.90 1.08 0.85 1.24 %. The memory ran at the same busy
+  medians as in `o4oc1`: 4,657 4,498 4,498 4,551 4,551 4,608 4,455 4,455 4,657 MHz ([cards.md](cards.md)).
+- **`apply`** ([fulloc_apply.md](fulloc_apply.md), the kit's own table [o4oc2_apply_steps.csv](o4oc2_apply_steps.csv)):
+  every card's greedy check at the offsets equalled its stock hash. Streaming reads at stock and with the offsets,
+  GB/s: 179.23 → 207.33, 179.15 → 199.33, 179.12 → 199.71, 179.14 → 201.88, 179.15 → 202.17, 179.21 → 204.90,
+  179.12 → 197.47, 179.09 → 197.27, 179.24 → 207.21 on cards 0 to 8, as with the three-card profile, since the memory
+  offsets are the same. Peak core clocks with the offsets: 2,126 2,151 2,151 2,100 2,113 2,100 2,151 2,151 2,138 MHz.
+- **Heat and power** ([cards.md](cards.md), the card log every 0.5 s over the tasks): the hottest card was card 0 at
+  46 °C. Power went above 80 W only in single samples: 4, 6, 4, 0, 1, 1, 7, 4 and 3 samples on cards 0 to 8, of
+  3,270 each. The highest was 86.74 W on card 1. The watchdog trips at 80 W held for 5 s and never tripped.
+- **Host and cards** ([host.tsv](host.tsv)): lowest MemAvailable 1,238 MiB at 21:30:34, during the last task. Swap
+  was 43 MiB at the server's start, left from `apply`'s check servers on this boot, and 359 MiB at its highest at
+  20:58:41, during the load. The RAM watchdog stopped nothing. The card log's peaks, 5,830 5,846 5,776 5,846 5,456
+  5,564 5,724 5,796 5,202 MiB, are 20, 16, 20, 16, 18, 18, 16, 12 and 12 MiB above `o4oc1`'s; this session reached
+  deeper contexts (11,725 tokens on its longest task).
+- **Graph reallocations:** 0 in 63 requests, in every prompt-size bucket ([reallocs.tsv](reallocs.tsv),
+  [o4oc2_requests_reallocs.tsv](o4oc2_requests_reallocs.tsv)).
+- **The rig at the end** (21:33:15–21:33:27), in the kit's folder with this boot's `apply` work folder: `reset-all`
+  (each card to 0 0), `watchdog stop` ("watchdog stop after 0 trips"), `state`: every offset 0, 1,911 / 4,004 MHz
+  maximum on every card, no load, no GPU Xid. The kit's ledger counts the nine resets as step-downs this boot, so its
+  start check wants a fresh boot before the next offset is set.
+
 ## Files
 
 | File | What |
 |---|---|
-| [agent.tsv](agent.tsv) | per arm (`ka`'s reference `v3ka`, R166a `o4sna`, R166b `o4snb`, `o4oc0`, `o4oc1`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes for all tasks, a task's median, minutes a task at equal work against `v3ka` |
+| [agent.tsv](agent.tsv) | per arm (`ka`'s reference `v3ka`, R166a `o4sna`, R166b `o4snb`, `o4oc0`, `o4oc1`, `o4oc2`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes for all tasks, a task's median, minutes a task at equal work against `v3ka` |
 | [same_prompts.md](same_prompts.md) | the 19 requests read on the same prompt in `o4sna`, `o4snb`, `o4oc0` and `o4oc1` (task, turn, new tokens, cached tokens, each run's prompt ms); each run's generation over all its requests |
 | [work.md](work.md), [work.tsv](work.tsv) | the work of each run: prompt tokens read, tokens generated, reply tokens re-read and the turns that re-read a reply |
-| [steps.md](steps.md) | `o4oc0` and `o4oc1` by the context at a request's middle: requests, tokens, decode s, tok/s and ms a decode step (one token, no draft) |
+| [steps.md](steps.md) | `o4oc0`, `o4oc1` and `o4oc2` by the context at a request's middle: requests, tokens, decode s, tok/s and ms a decode step (one token, no draft) |
 | [clocks.tsv](clocks.tsv) | each card's busy SM clock median, their mean and each card's share of busy samples below 1,800 MHz, over each run's tasks |
-| [cards.md](cards.md) | per card over `o4oc0`'s and `o4oc1`'s tasks: highest temperature and power, samples above 80 W, the busy memory clock's median |
-| [host.tsv](host.tsv) | lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the log's end, each card's peak memory (`o4oc0`'s and `o4oc1`'s from the card log, 75 MiB over `nvidia-smi`'s on an idle card) |
-| [reallocs.tsv](reallocs.tsv), [o4oc0_requests_reallocs.tsv](o4oc0_requests_reallocs.tsv), [o4oc1_requests_reallocs.tsv](o4oc1_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size (the four runs), and per request (`o4oc0`, `o4oc1`) |
+| [cards.md](cards.md) | per card over `o4oc0`'s, `o4oc1`'s and `o4oc2`'s tasks: highest temperature and power, samples above 80 W, the busy memory clock's median |
+| [host.tsv](host.tsv) | lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the log's end, each card's peak memory (`o4oc0`'s, `o4oc1`'s and `o4oc2`'s from the card log, 75 MiB over `nvidia-smi`'s on an idle card) |
+| [reallocs.tsv](reallocs.tsv), [o4oc0_requests_reallocs.tsv](o4oc0_requests_reallocs.tsv), [o4oc1_requests_reallocs.tsv](o4oc1_requests_reallocs.tsv), [o4oc2_requests_reallocs.tsv](o4oc2_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size (the five runs), and per request (`o4oc0`, `o4oc1`, `o4oc2`) |
 | [o4oc0_compare.md](o4oc0_compare.md), [o4oc0_report_table.md](o4oc0_report_table.md), [o4oc0_gonogo.md](o4oc0_gonogo.md) | the agent check's report on `o4oc0`: per task, per arm and first token per turn; per arm over the client's attempts; the gates and the server log's counts |
 | [o4oc1_compare.md](o4oc1_compare.md), [o4oc1_report_table.md](o4oc1_report_table.md), [o4oc1_gonogo.md](o4oc1_gonogo.md) | the same on `o4oc1`; its report table and gates cover both arms, since the client's results folder held both |
-| [agent/o4oc0/](agent/o4oc0/), [agent/o4oc1/](agent/o4oc1/) | `turns.csv` (one row a request) and `attempts.csv` (one row a task) of each run |
+| [o4oc2_compare.md](o4oc2_compare.md), [o4oc2_report_table.md](o4oc2_report_table.md), [o4oc2_gonogo.md](o4oc2_gonogo.md) | the same on `o4oc2`, the full profile; its report table and gates cover all three arms |
+| [fulloc_same_prompts.md](fulloc_same_prompts.md) | the 19 requests read on the same prompt in `o4oc0`, `o4oc1` and `o4oc2` (task, turn, new tokens, cached tokens, each run's prompt ms); each run's generation over all its requests |
+| [fulloc_apply.md](fulloc_apply.md), [o4oc2_apply_steps.csv](o4oc2_apply_steps.csv) | the kit's `apply` of the full profile before `o4oc2`, card by card (as `flash_apply.md`), and the kit's own table |
+| [agent/o4oc0/](agent/o4oc0/), [agent/o4oc1/](agent/o4oc1/), [agent/o4oc2/](agent/o4oc2/) | `turns.csv` (one row a request) and `attempts.csv` (one row a task) of each run |
 | [run/ornith_agent.sh](run/ornith_agent.sh) | the harness call of both halves, the arm and the machine-specific values from the environment |
 | [run/tables.sh](run/tables.sh) | the tables, from a folder holding R166's rows and each arm's turn tables, server log, card log and host log |
 | [run/ornith_steps.py](run/ornith_steps.py) | `steps.md`, from each arm's server log and `agent/<arm>/turns.csv` |
@@ -522,6 +645,43 @@ python3 -I $D/run/ornith_steps.py o4oc0=<tables>/rig/server-o4oc0.log=$D/agent/o
   o4oc1=<tables>/rig/server-o4oc1.log=$D/agent/o4oc1/turns.csv > $D/steps.md
 python3 -I $D/run/flash_cards.py cards "o4oc0=<tables>/rig_o4oc0/cards.csv=2026-11-18 15:19:19=2026-11-18 15:51:25" \
   "o4oc1=<tables>/rig_o4oc1/cards.csv=2026-11-18 17:37:39=2026-11-18 18:01:59" > $D/cards.md
+```
+
+The full profile's run (`o4oc2`), on a later fresh boot of the same rig, with its own `apply`:
+
+```bash
+# on the rig, in the kit's folder, with a fresh work folder: the read-only start check, the watchdog, apply (detached;
+# it ends with APPLY_DONE in the work folder), then the state read back
+export WORK=<fresh work folder>
+python3 climb.py start-check && python3 climb.py watchdog start
+python3 climb.py apply use-profile.json     # docs/data/2026-11-18_r202b_core_soak/use-profile.json
+cat $WORK/APPLY_DONE && python3 climb.py state
+
+# the run and its report, as for o4oc1 with only the arm and the rig folder changed
+RIG=$RIG CLIENT=local ARM=o4oc2 MODEL=<the same> BIN=<the same> RIG_LOGDIR=<rig folder>/r203e/agent-logs \
+  CLIENT_DIR=<the same> CLIENT_OUT=<client folder>/r203 RELAY_PORT=8296 PROXY_PORT=18793 \
+  OUT=<out>/agent-o4oc2 bash docs/data/2026-11-18_r203_ornith_offsets/run/ornith_agent.sh
+RIG=$RIG CLIENT=local ARM=o4oc2 MODEL=<the same> BIN=<the same> RIG_LOGDIR=<the same> CLIENT_DIR=<the same> \
+  CLIENT_OUT=<the same> RELAY_PORT=8296 PROXY_PORT=18793 OUT=<out>/agent STEPS="report collect" \
+  bash docs/data/2026-11-18_r203_ornith_offsets/run/ornith_agent.sh
+
+# on the rig, as after o4oc1: every offset to 0, the watchdog stopped, read back
+python3 climb.py reset-all && python3 climb.py watchdog stop && python3 climb.py state
+
+# agent/o4oc2/ from the client's res/turns.csv and res/attempts.csv rows of o4oc2; then o4oc1's tables folder with
+# o4oc2's rows added to res/, its server log as rig/server-o4oc2.log, and rig_o4oc2/ holding its lines of the rig's
+# meminfo.log (from its server's start) and card log; o4oc2's window: 2026-11-18 21:05:19|2026-11-18 21:32:33
+D=docs/data/2026-11-18_r203_ornith_offsets
+bash $D/run/tables.sh <tables folder> o4oc0 o4oc1 o4oc2    # same_prompts.md stays the four-run table above
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/same_prompts.py o4oc0=$D/agent/o4oc0/turns.csv \
+  o4oc1=$D/agent/o4oc1/turns.csv o4oc2=$D/agent/o4oc2/turns.csv > $D/fulloc_same_prompts.md
+python3 -I $D/run/ornith_steps.py o4oc0=<tables>/rig/server-o4oc0.log=$D/agent/o4oc0/turns.csv \
+  o4oc1=<tables>/rig/server-o4oc1.log=$D/agent/o4oc1/turns.csv \
+  o4oc2=<tables>/rig/server-o4oc2.log=$D/agent/o4oc2/turns.csv > $D/steps.md
+python3 -I $D/run/flash_cards.py cards "o4oc0=<tables>/rig_o4oc0/cards.csv=2026-11-18 15:19:19=2026-11-18 15:51:25" \
+  "o4oc1=<tables>/rig_o4oc1/cards.csv=2026-11-18 17:37:39=2026-11-18 18:01:59" \
+  "o4oc2=<tables>/rig_o4oc2/cards.csv=2026-11-18 21:05:19=2026-11-18 21:32:33" > $D/cards.md
+python3 -I $D/run/flash_cards.py apply $D/o4oc2_apply_steps.csv > $D/fulloc_apply.md
 ```
 
 Flash-Next's stock half the same way (the rig's paths written as `$MODELS` and `/opt/llama-builds`, as in R156; rig 1's

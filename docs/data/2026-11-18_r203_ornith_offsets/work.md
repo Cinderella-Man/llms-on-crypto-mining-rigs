@@ -8,6 +8,7 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | o4snb | 12 | 73 | 49555 (4130) | 27605 (2300) | 12332 (3; 71.9 of 467.8) | 32.24 (bugfix-python-scale-generator, 7, a re-read) |
 | o4oc0 | 12 | 67 | 44697 (3725) | 23764 (1980) | 8860 (5; 65.6 of 437.3) | 28.07 (bugfix-python-affine-cipher, 1) |
 | o4oc1 | 12 | 62 | 39552 (3296) | 17016 (1418) | 4074 (1; 28.8 of 389.2) | 28.94 (bugfix-python-scale-generator, 4, a re-read) |
+| o4oc2 | 12 | 63 | 43369 (3614) | 21519 (1793) | 8130 (5; 59.1 of 394.5) | 26.67 (bugfix-python-affine-cipher, 1) |
 
 ### The turns that read a reply again
 
@@ -24,3 +25,8 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | o4oc0 | bugfix-python-scale-generator | 4 | reply re-read | 5435 | 815 | 5431 | 815 | 870 | 9.43 | 9.50 |
 | o4oc0 | bugfix-python-scale-generator | 7 | reply re-read | 7033 | 2625 | 7029 | 2625 | 2657 | 18.82 | 18.92 |
 | o4oc1 | bugfix-python-scale-generator | 4 | reply re-read | 5427 | 4074 | 5423 | 4074 | 4108 | 28.84 | 28.94 |
+| o4oc2 | bugfix-python-list-ops | 3 | reply re-read | 3431 | 604 | 3427 | 604 | 636 | 8.02 | 8.08 |
+| o4oc2 | bugfix-python-phone-number | 4 | reply re-read | 5804 | 663 | 5800 | 663 | 693 | 8.91 | 9.02 |
+| o4oc2 | bugfix-python-pig-latin | 4 | reply re-read | 4078 | 1725 | 4074 | 1725 | 1760 | 10.89 | 11.02 |
+| o4oc2 | bugfix-python-scale-generator | 4 | reply re-read | 5337 | 2818 | 5333 | 2818 | 2969 | 17.37 | 17.46 |
+| o4oc2 | bugfix-python-scale-generator | 7 | reply re-read | 9191 | 2320 | 9187 | 2320 | 2351 | 13.91 | 14.04 |
