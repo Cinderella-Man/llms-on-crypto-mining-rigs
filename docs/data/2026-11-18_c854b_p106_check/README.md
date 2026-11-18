@@ -14,6 +14,13 @@ fewer prompt tokens a task than v4.0 did, not more. Prompts were 2.5 % slower on
 earlier runs' rule; but the v4.0 runs it is compared with ran on the other rig, and that rig alone has moved as much
 between days, so the engine's share needs a reference on this rig.
 
+**Part (6), Flash-Next's agent run (14:55–15:33):** the speed is v4.0's. A task at equal work took 2.40 minutes
+against 2.43 and 2.37, and generation ran at 27.00 tok/s against 26.67 and 27.61. The first turns read the same
+prompts in 82.28 s against 81.84 and 85.11 s, and one of the two v4.0 runs ran on this rig. 11 of 12 tasks passed:
+JavaScript `complex-numbers` ran to the 12-minute cap, a path this model has taken on that task before. The server
+read a previous reply again on 7 turns, against 2 and 1 in v4.0's runs. That cost little here, but its cause is not
+known yet.
+
 The candidate is [`pascal-p106-v5-cand-b12483`](../2026-11-17_c854b_upstream_newest/README.md) `602691153`:
 `pascal-p106-v5` with upstream llama.cpp b12483 merged in and upstream's open #32434 (the slot scheduler's fix for
 recurrent and hybrid models, and LoRA) carried as one commit. Its rig build is
@@ -236,12 +243,137 @@ the second rig: 2.52) at each run's own prompt and generation speeds.
 
 `pascal-p106-v5` stays `1f1110c67`.
 
+## Part (6): the agent check on Flash-Next (2026-11-18)
+
+**The speed is v4.0's, 11 of 12 tasks passed, and the server read a previous reply again on more turns.** A task at
+equal work took 2.40 minutes against v4.0's 2.43 and 2.37. Generation ran at 27.00 tok/s against 26.67 and 27.61.
+The 11 first turns that read the same prompt in all three runs took 82.28 s against 81.84 and 85.11 s. All three are
+**negligible** by the rule of the earlier agent runs. One of the two v4.0 runs ran on this rig. JavaScript
+`complex-numbers` ran to the 12-minute cap after 34 turns; this model has taken that long path on that task before.
+The server read a previous reply again as prompt on 7 turns, against 2 and 1 in v4.0's runs. That cost 51.6 of the
+run's 413.9 prompt seconds, against 31.0 of 394.2 and 6.9 of 280.6. Why the prompts stopped matching inside those
+replies is not known yet.
+
+The run is R156's agent check ([R156](../2026-11-13_r156_agent_v4r/README.md),
+[bench/agent_check](../../../bench/agent_check/README.md): 12 bug-fix tasks, Python and JavaScript alternating, a
+12-minute cap a task, a 40-minute budget) on the maker's Swift GSQ-RCO Q2_0
+(`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, the n-gram table in the third shard) with the MTP draft
+(`mtp-Qwen3.8-Flash-Next-draft.gguf`) at 65,536 tokens, one arm, one load: the harness's arm `v4r`, **the released
+v4.0 preset ([release/flash-next-v4/settings.env](../../../release/flash-next-v4/settings.env)) with the candidate's
+`llama-server`** (md5 `86607661d5a19d1a90d19ee4db10c90b`). The tables call it `v4rc2`, to keep it apart from R156a's
+`v4r`. Its started command (1,689 bytes, md5 `4e11746b52bcc136ef186ffe9c161aa0`) is R156b's byte for byte apart from
+the build folder's name, and the server's `switches:` line names R156's 39 switches with the same values. It ran on
+the same rig as parts (2) to (5), with the machine that drives the rig as the agent's client. The server started at
+14:54:57 and was up after 311 s (R156b on this rig: 315 s), and the tasks ran 15:00:11–15:32:58. Every card was at
+stock before and after (75 W, 1,911 / 4,004 MHz maximum; the card log's start line reads core and memory offsets of 0
+on all nine), with no Xid.
+
+The references are R156's two runs of the same preset on v4.0 (`eb82916d3`), 2026-11-13: **R156a `v4r` on the second
+rig and R156b `v4r2` on this rig**. Both had the 7-GPU quant machine's CPU as the agent's client; this run's client is
+the machine that drives the rig. The client changes the time outside the server, not the server's own prompt and
+decode times. The proxy saw the first token a median 0.07 s after the server's prefill (p90 0.17 s), against 0.06 s
+(p90 0.16 s) in R156.
+
+| | v4.0 `v4r` (R156a, second rig) | v4.0 `v4r2` (R156b, this rig) | **candidate `v4rc2` (this rig)** | class by the rule (against the mean; the spread of the two v4.0 runs) |
+|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | **11 / 12** | `complex-numbers` at the cap |
+| minutes a task at equal work (R90 `v3`'s work) | 2.43 | 2.37 | **2.40** | negligible (0.0 %; 0.06) |
+| the same without `complex-numbers` | 2.46 | 2.46 | **2.44** | −0.8 %; the two v4.0 runs agree to 0.00 |
+| the 11 first turns read on the same prompt in all three runs, prompt s | 81.84 | 85.11 | **82.28** | negligible (−1.4 %; 3.27) |
+| prompt tok/s, the whole session | 133.9 | 144.6 | **139.2** | negligible (−0.0 %; 10.7); a different mix of prompt sizes |
+| the same without `complex-numbers` | 140.7 | 140.8 | **146.1** | +3.8 %; agree to 0.1 |
+| generation tok/s | 26.67 | 27.61 | **27.00** | negligible (−0.5 %; 0.94) |
+| the same without `complex-numbers` | 27.59 | 27.58 | **27.99** | +1.5 %; agree to 0.01 |
+| first token median s | 2.42 | 2.48 | **2.52** | loss (+2.9 %; 0.06); follows the turn mix |
+| first token p90 s | 9.00 | 8.65 | **9.54** | loss (+8.1 %; 0.35); follows the turn mix |
+| first token on a task's first turn, median s | 6.68 | 6.65 | **6.69** | negligible (+0.4 %; 0.03) |
+| prompt tokens read a task | 4,400 | 3,381 | **4,802** | |
+| the same without `complex-numbers` | 3,481 | 3,268 | **3,516** | |
+| reply tokens re-read (turns; their prompt s of all prompt s) | 4,863 (2; 31.0 of 394.2) | 761 (1; 6.9 of 280.6) | **4,854 (7; 51.6 of 413.9)** | |
+| draft acceptance (accepted of drafted tokens) | 0.749 | 0.759 | **0.740** | |
+| minutes, all 12 tasks; turns | 33.4; 95 | 30.6; 69 | **32.6; 92** | different work |
+| tool calls / failed / malformed | 90 / 3 / 0 | 65 / 5 / 0 | **90 / 3 / 0** | |
+| checkpoints restored / erased; full re-processing | 12 / 1; 1 | 12 / 0; 0 | **17 / 2; 1** | |
+| graph reallocations | 0 in 95 requests | 0 in 68 | **0 in 91** | |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,886.8 | 1,885.3 | **1,878.3** | |
+| lowest MemAvailable MiB; swap highest MiB | 312; 21 | 419; 404 | **387; 464** | |
+
+Each value is one run ([flash_agent.tsv](flash_agent.tsv), [flash_agent_nocx.tsv](flash_agent_nocx.tsv),
+[flash_same_prompts.md](flash_same_prompts.md), [flash_work.md](flash_work.md),
+[flash_work_nocx.tsv](flash_work_nocx.tsv), [flash_clocks.tsv](flash_clocks.tsv), [flash_host.tsv](flash_host.tsv),
+[flash_gonogo.md](flash_gonogo.md); R156's session figures from [its folder](../2026-11-13_r156_agent_v4r/agent.tsv)).
+The class is R156's and R166's rule: a gain or a loss when the difference from the two v4.0 runs' mean is larger than
+their spread (the gap between them), negligible otherwise. Where the two v4.0 runs agree to 0.00 or 0.01, that gap
+measures nothing, so those rows get no class. One task that takes a different path moves those figures by more. Minutes a task at equal work price R90 `v3`'s work (v3.0
+on this rig, 2026-11-11: 3.08) at each run's own prompt and generation speeds. The table's R90 row is R156's
+published row, figure for figure.
+
+- **The task at the cap.** `complex-numbers` ran 34 turns and 34 tool calls (2 failed) and hit the 12-minute cap with
+  its tests failing. On the v4 line this task has taken the long path before: in R156's client folder `v4c2` ran it to
+  the cap in 35 turns, `v4c32` passed it in 37 turns (10.8 minutes) and R156a in 29 (9.7 minutes), and v3.0's `v3b`
+  failed it at the cap. The other 11 tasks passed. JavaScript `variable-length-quantity` took 6.8 minutes in 6 turns,
+  writing long replies; R156a took 9.6 minutes on it and R156b hit the cap there.
+- **Prompts on the same work: negligible.** 11 requests read the same number of new tokens on the same cached prefix
+  in all three runs: every task's first turn except `pig-latin`'s ([flash_same_prompts.md](flash_same_prompts.md)).
+  They took 82.28 s here, against 81.84 s on the second rig and 85.11 s on this rig; R156b's first turn of JavaScript
+  `variable-length-quantity` took 5.39 s against 3.66 and 3.69 s. `pig-latin`'s first turn is not in the set. Here
+  and in R156a it read its whole 2,324-token prompt (12.34 and 12.69 s), because the long `complex-numbers` task
+  before it had pushed the shared system prefix's checkpoint out of the four kept on the cards. The server's log
+  says "no checkpoint below 1553". R156b read 775 tokens on the cached prefix.
+- **R156's per-request tables are rebuilt from its server logs** ([run/server_turns.py](run/server_turns.py),
+  [agent/r156a_v4r/](agent/r156a_v4r/), [agent/r156b_v4r2/](agent/r156b_v4r2/)). The client's tables of those runs
+  are not on the machine that drove this one. The server log holds every request in order, and the client log gives
+  each task's turns. On R90's and this run's logs the rebuild gives every request's prompt and decode tokens and
+  milliseconds exactly as the client's tables, and the cached count within one token: the release line counts the
+  last generated token on some requests only. On R156 it gives the published prompt tokens a task (4,400 and 3,381)
+  and generation (26.67 and 27.61 tok/s). The matched-prompt table therefore matches cached counts within one token
+  (`CACHE_TOL=1`).
+- **Generation: negligible**, 27.00 against 26.67 and 27.61 tok/s, and 27.99 against 27.59 and 27.58 without
+  `complex-numbers`. The draft's acceptance is 0.740 against 0.749 and 0.759.
+- **First token follows the turn mix.** The turns after the first read a median of 267 new tokens, against 215 and
+  216.5, and their server prefill took a median 2.23 s, against 2.16 and 2.08 s. A task's first turn is the same
+  request in every run, and it took 6.69 s against 6.68 and 6.65 s.
+- **The work, and the reply re-reads.** The agent read 4,802 prompt tokens a task, against 4,400 and 3,381; without
+  `complex-numbers`, 3,516 against 3,481 and 3,268 ([flash_work.md](flash_work.md),
+  [flash_work_nocx.tsv](flash_work_nocx.tsv)). On 7 turns the server read the previous reply again:
+  - `affine-cipher` turn 2 (a reply of 71 tokens);
+  - `variable-length-quantity` (Python) turn 3 (800 tokens);
+  - `grade-school` turn 4 (150 tokens);
+  - `complex-numbers` turns 5, 11 and 21 (1,436, 455 and 322 tokens);
+  - `pig-latin` turn 3 (1,620 tokens).
+
+  R156a re-read on 2 turns (`complex-numbers` turn 26 and `pig-latin` turn 3), and R156b on 1 (`pig-latin` turn 3).
+  The earlier published Flash-Next runs re-read on 0 to 2 turns each (2026-11-03's `mtp`, `mtp2`, `nodraft`,
+  baseline and pipelined runs, and R90's two arms). On each of the 7, the new prompt stopped matching the cached
+  tokens inside the previous reply. The server's logged prefix match (`f_keep`, rounded to a thousandth) puts that
+  point 23, 362, 132, 496, 92, 209 and 189 tokens into the replies listed above, in that order: inside the reasoning
+  on some, inside the tool call on others. On this hybrid model the server can only go back to a checkpoint, so it
+  restored the one at the previous prompt's end (4 tokens short) and read the whole reply again.
+  The 7 turns re-read 4,854 tokens in 51.6 s; R156a's 2 turns re-read 4,863 tokens in 31.0 s. `pig-latin` turn 3
+  re-reads in every run, and 3 of the 7 are in `complex-numbers`' long path. The other 3 are turns that re-read in
+  neither R156 run. Three things could cause it: the candidate's chat handling rendering a reply back into the
+  history differently from the tokens the model wrote, this run's client, or the replies themselves. Which one is
+  open: C884 (Q1598) renders this run's recorded requests with both builds and compares the tokens at each of those
+  points.
+- **Clocks** ([flash_clocks.tsv](flash_clocks.tsv)): this rig's busy medians 1,847 1,847 1,885 1,898 1,860 1,911 1,873
+  1,911 1,873 MHz (cards 0–8), against 1,860 1,847 1,898 1,898 1,873 1,911 1,885 1,911 1,885 in R156b on the same
+  rig; 1,878.3 against 1,885.3 on the mean (−0.4 %).
+- **Host** ([flash_host.tsv](flash_host.tsv)): lowest MemAvailable 387 MiB at 15:03:04, during the first task (419
+  and 312 MiB), and 3,054 MiB at the end. Swap went from 30 MiB at the start to 464 MiB at its highest, at 15:08:13
+  (36 → 404 and 21 → 21 MiB). The RAM watchdog stopped nothing. This run's card log is `scripts/card_log.py`'s, which
+  counts 75 MiB on each idle card that `nvidia-smi` (R156's card log) reads as 0 MiB. Less those 75 MiB, its card
+  peaks (5,117 5,161 5,019 5,175 4,275 5,035 4,429 5,047 5,625 MiB) are R156a's to 2 MiB. The report's memory gate
+  ([flash_gonogo.md](flash_gonogo.md)) is NO-GO on the 387 MB low and the 464 MB of swap, as R156's was (276 MB and
+  713 MB in its shared folder).
+- **Graph reallocations:** 0 in 91 requests, in every prompt-size bucket ([flash_reallocs.tsv](flash_reallocs.tsv)).
+
+`pascal-p106-v5` stays `1f1110c67`.
+
 ## Not checked here
 
-- **The server's new slot scheduling under an agent on Swift Qwen3.8-Flash-Next Pascal Q2 GGUF.** Upstream's #32154
-  and the carried #32434 change which cached state a turn reuses. Ornith's agent run is part (5); Flash-Next's, with
-  its draft and the work counts, comes before `pascal-p106-v5` moves.
-- **Speed on the same rig.** Parts (2) to (4) time nothing; part (5) is timed against references on another rig.
+- **Why Flash-Next's prompts stopped matching inside 7 replies** (part (6)): C884 (Q1598).
+- **Speed on the same rig for Ornith.** Parts (2) to (4) time nothing. Part (5) is timed against references on another
+  rig; part (6) has one reference on this rig.
 - **The switches on.** With a switch set the candidate runs the same switch code as `1f1110c67`; each switch has its
   own rig rows.
 - **C662's whole `test-backend-ops`** and the record sets past R153's two, as in the last check. No case needed a new
@@ -270,6 +402,17 @@ the second rig: 2.52) at each run's own prompt and generation speeds.
 | [agent/o4c2/](agent/o4c2/) | `turns.csv` (one row a request) and `attempts.csv` (one row a task) |
 | [run/ornith_agent.sh](run/ornith_agent.sh) | part (5)'s run and report |
 | [run/ornith_tables.sh](run/ornith_tables.sh) | part (5)'s tables, with [run/same_prompts.py](run/same_prompts.py), [run/busy_clocks.py](run/busy_clocks.py) and [run/host_cards.py](run/host_cards.py) (R166's `host.py` for the NVML card log) |
+| [flash_agent.tsv](flash_agent.tsv), [flash_agent_nocx.tsv](flash_agent_nocx.tsv) | part (6), `agent_tables.py` on R90's `v3` and `v4rc2`: passed, turns, prompt and generation tok/s, first token median, p90 and first turn, draft acceptance, minutes, minutes a task at equal work against R90's `v3`; all 12 tasks, and the 11 without `complex-numbers` |
+| [flash_same_prompts.md](flash_same_prompts.md) | the 11 requests read on the same prompt (task, turn, new tokens, cached tokens within one) in `v4rc2`, R156a `v4r` and R156b `v4r2`: each run's prompt ms; and each run's generation over all its requests |
+| [flash_work.md](flash_work.md), [flash_work.tsv](flash_work.tsv), [flash_work_nocx.tsv](flash_work_nocx.tsv) | `report.py work` on the three runs' per-request tables (prompt tokens read, tokens generated, replies re-read and each re-read turn), and the prompt tokens read and generated without `complex-numbers` |
+| [flash_clocks.tsv](flash_clocks.tsv) | each card's median SM clock while busy, and its share of busy samples below 1,800 MHz, over each run's tasks |
+| [flash_host.tsv](flash_host.tsv) | the three runs' lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the end, each card's peak memory (`v4rc2`'s from the NVML card log, 75 MiB over `nvidia-smi`'s on an idle card) |
+| [flash_reallocs.tsv](flash_reallocs.tsv) | `v4rc2`'s graph reallocations and prompt seconds per prompt size |
+| [flash_compare.md](flash_compare.md), [flash_report_table.md](flash_report_table.md), [flash_gonogo.md](flash_gonogo.md) | the agent check's report on the run (the harness's arm name `v4r`): per task, per arm and first token per turn; the attempts; the gates and the server log's counts |
+| [agent/v4rc2/](agent/v4rc2/), [agent/r90v3/](agent/r90v3/) | `turns.csv` and `attempts.csv` of this run (arm renamed from `v4r`) and of R90's `v3` (2026-11-11, the equal-work reference) |
+| [agent/r156a_v4r/](agent/r156a_v4r/), [agent/r156b_v4r2/](agent/r156b_v4r2/) | R156a's and R156b's per-request tables rebuilt from their server logs by `run/server_turns.py` (the client's columns empty, the cached count within one token) |
+| [run/flash_agent.sh](run/flash_agent.sh) | part (6)'s run and report |
+| [run/flash_tables.sh](run/flash_tables.sh) | part (6)'s tables, with [run/server_turns.py](run/server_turns.py) and [run/same_prompts.py](run/same_prompts.py) (`CACHE_TOL`) |
 
 In the tables `cand` is the candidate and `ref` is `pascal-p106-v5`'s build `1f1110c67`. The scripts are the last
 check's, byte for byte: [rig_suite.sh](../2026-11-17_v5_cand_p106_check/run/rig_suite.sh) (md5
@@ -330,3 +473,27 @@ bash docs/data/2026-11-18_c854b_p106_check/run/ornith_tables.sh <tables folder>
 
 `run/ornith_agent.sh` is the harness call the run and its report used, with the machine-specific values taken from
 the environment.
+
+Part (6), the same way (here the rig's paths are written as `$MODELS` and `/opt/llama-builds`, as in R156):
+
+```bash
+# the run (~5 min load, 12 tasks) and its report; r156.sh's agent and report steps, arm v4r, the candidate as NEW
+RIG=$RIG CLIENT=local MODEL=$MODELS/swift_q2_0/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+  DRAFT=$MODELS/mtp-Qwen3.8-Flash-Next-draft.gguf NEW=$NEW REF=llama.cpp-20261113-eb312b7bc-pascal-p106-v4-b12360-c828 \
+  RIGDIR=<rig folder> CLIENT_DIR=<client folder>/bench CLIENT_OUT=<client folder>/c854-flash OUT=<out> \
+  bash docs/data/2026-11-18_c854b_p106_check/run/flash_agent.sh
+
+# R156's per-request tables from their server logs and client logs (R156's raw logs, not published)
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/server_turns.py r156a-v4r <R156a>/server-v4r.log <R156a>/v4r.log \
+  > docs/data/2026-11-18_c854b_p106_check/agent/r156a_v4r/turns.csv
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/server_turns.py r156b-v4r2 <R156b>/server-v4r2.log <R156b>/v4r2.log \
+  > docs/data/2026-11-18_c854b_p106_check/agent/r156b_v4r2/turns.csv
+
+# the tables, on a folder holding the server logs and host logs run/flash_tables.sh lists
+bash docs/data/2026-11-18_c854b_p106_check/run/flash_tables.sh <tables folder>
+```
+
+`agent/v4rc2/` is the run's `res/turns.csv` and `res/attempts.csv` with the arm renamed from `v4r` (and
+`agent/r90v3/` R90's `v3` rows, renamed from `v3`). The prefix-match points in part (6) are each re-read turn's
+`selected slot by LCP similarity ... f_keep` line in the server log times the cached tokens before it, less the
+previous prompt's end.

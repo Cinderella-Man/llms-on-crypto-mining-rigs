@@ -7,9 +7,14 @@ the engines on the same work. Every task's first turn is the same request in eve
 the agent's earlier replies happened to have the same length. Prints one Markdown row a matched request (each run's
 prompt ms) and a total per run, then the decode speed of every run over all its requests (tokens generated / decode
 seconds) for reference. Standard library only: python3 -I same_prompts.py a=turns.csv b=turns.csv ...
+CACHE_TOL=N (default 0) matches the cached tokens within N instead of exactly, for tables rebuilt from server logs
+(server_turns.py), whose cache count is known to within one token; the table then shows the first run's count.
 """
 import csv
+import os
 import sys
+
+TOL = int(os.environ.get("CACHE_TOL", "0"))
 
 runs = []
 for a in sys.argv[1:]:
@@ -17,26 +22,27 @@ for a in sys.argv[1:]:
     rows = {}
     gen_n = gen_ms = 0.0
     for r in csv.DictReader(open(path)):
-        if r["attempt"] != "1":
+        if r["attempt"] != "1" or not r["prompt_n"]:  # a request without timings (cut by the task's cap)
             continue
-        key = (r["task_id"], int(r["turn"]), int(r["prompt_n"]), int(r["cache_n"]))
-        rows[key] = float(r["prompt_ms"])
+        key = (r["task_id"], int(r["turn"]), int(r["prompt_n"]))
+        rows[key] = (int(r["cache_n"]), float(r["prompt_ms"]))
         gen_n += int(r["predicted_n"])
         gen_ms += float(r["predicted_ms"])
     runs.append((name, rows, gen_n, gen_ms))
 
-common = sorted(set.intersection(*(set(r[1]) for r in runs)))
+common = [k for k in sorted(set.intersection(*(set(r[1]) for r in runs)))
+          if max(r[1][k][0] for r in runs) - min(r[1][k][0] for r in runs) <= TOL]
 names = [r[0] for r in runs]
 print("| task | turn | prompt tokens read | from the cache | " + " | ".join(f"{n} prompt ms" for n in names) + " |")
 print("|---|---:|---:|---:|" + "---:|" * len(names))
 for k in common:
-    print(f"| {k[0]} | {k[1]} | {k[2]} | {k[3]} | " + " | ".join(f"{r[1][k]:.1f}" for r in runs) + " |")
-tot = [sum(r[1][k] for k in common) for r in runs]
+    print(f"| {k[0]} | {k[1]} | {k[2]} | {runs[0][1][k][0]} | " + " | ".join(f"{r[1][k][1]:.1f}" for r in runs) + " |")
+tot = [sum(r[1][k][1] for k in common) for r in runs]
 toks = sum(k[2] for k in common)
 print(f"| **all {len(common)} matched requests** | | {toks} | | "
       + " | ".join(f"**{t:.1f}** ({toks / t * 1000:.1f} tok/s)" for t in tot) + " |")
 first = [k for k in common if k[1] == 1]
-tf = [sum(r[1][k] for k in first) for r in runs]
+tf = [sum(r[1][k][1] for k in first) for r in runs]
 tft = sum(k[2] for k in first)
 print(f"| **of them, the {len(first)} first turns** | | {tft} | | "
       + " | ".join(f"**{t:.1f}** ({tft / t * 1000:.1f} tok/s)" for t in tf) + " |")
