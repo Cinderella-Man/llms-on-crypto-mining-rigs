@@ -7,6 +7,7 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | o4sna | 12 | 63 | 40863 (3405) | 21810 (1818) | 4831 (2; 30.6 of 396.6) | 28.14 (bugfix-python-affine-cipher, 1) |
 | o4snb | 12 | 73 | 49555 (4130) | 27605 (2300) | 12332 (3; 71.9 of 467.8) | 32.24 (bugfix-python-scale-generator, 7, a re-read) |
 | o4oc0 | 12 | 67 | 44697 (3725) | 23764 (1980) | 8860 (5; 65.6 of 437.3) | 28.07 (bugfix-python-affine-cipher, 1) |
+| o4oc1 | 12 | 62 | 39552 (3296) | 17016 (1418) | 4074 (1; 28.8 of 389.2) | 28.94 (bugfix-python-scale-generator, 4, a re-read) |
 
 ### The turns that read a reply again
 
@@ -22,3 +23,4 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | o4oc0 | bugfix-python-pig-latin | 4 | reply re-read | 3541 | 392 | 3537 | 392 | 418 | 7.41 | 7.46 |
 | o4oc0 | bugfix-python-scale-generator | 4 | reply re-read | 5435 | 815 | 5431 | 815 | 870 | 9.43 | 9.50 |
 | o4oc0 | bugfix-python-scale-generator | 7 | reply re-read | 7033 | 2625 | 7029 | 2625 | 2657 | 18.82 | 18.92 |
+| o4oc1 | bugfix-python-scale-generator | 4 | reply re-read | 5427 | 4074 | 5423 | 4074 | 4108 | 28.84 | 28.94 |
