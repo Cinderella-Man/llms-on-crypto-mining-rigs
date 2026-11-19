@@ -65,6 +65,15 @@ last step that card passed. After a reboot, `climb.py apply` sets the profile an
 - **Stock round, twice:** every card's greedy hash (the second run must give the same hash, or the check is not
   deterministic and the climb refuses), every check's time (the limits), and every card's stock peak core clock, read
   from the watchdog's samples.
+- **The stock peak is the highest reading of a longer window:** from the start of the first stock round to the end of
+  the last, and the stock rounds go on (each must give the stock hash again) until they cover at least
+  `--stock-peak-secs` (90 s). Nine cards' two rounds took 98, 98, 103, 101 and 101 s on the second rig's five boots,
+  so only a smaller rig runs more. A card reads its top step mostly in the first seconds of the first round, while it
+  is still cool; the second round alone read a driver step low. On the second rig's five boots it read card 8 at
+  1,898 MHz every time, where both rounds read 1,911 MHz, the stock peak that card 8's soak peak implies (2,138 MHz
+  at +231 MHz, 18 steps); both rounds read cards 0, 4 and 8 at those implied peaks on all five boots
+  ([R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md), the test below). The reading is better, not exact:
+  cards 1, 3, 5 and 7 still differ by one step between boots, which is why `apply` keeps the offset (next section).
 - **Memory, with the core at 0:** +200, +400, +600, +800 MT/s, then +100 at a time up to +1,400. It stops at +1,400 or
   when every card has failed.
 - **Core, for the cards that never failed:** each card's memory stays at its last clean step (lowering it would be a
@@ -111,9 +120,26 @@ to start (before any offset) if not even one fits.
 | `failure` | the phase, offsets, reason and time of the card's failure |
 | `needs_reboot_before_use` | true for a card that failed in this sitting (it was set back to 0 then) |
 
+`stock_peak_window_s`, at the top, is how many seconds of stock rounds the stock peaks were read over.
 `out/steps.csv` has one row per card and step (offsets, expected and measured peak clock, each check's result, time and
 limit, Xid count, verdict and reason); `out/climb.log` is the plain log; `out/climb.json` the state, from which
 `climb.py profile` rewrites the profile.
+
+### `apply`: the profile's offsets, never more
+
+`apply` sets each card's offsets exactly as the profile gives them. It does not work the core offset out again from
+the stock peak it reads on its own boot: that reading moves a driver step between boots and even inside one, while a
+given offset gives the same peak on every boot (on the second rig, card 0 at +256 MHz peaked at 2,126 MHz in all four
+soaks, card 8 at +231 at 2,138 and card 4 at +206 at 2,113), so an offset worked out from one boot's low reading
+would put the card a step too high. For each card with a core offset the log shows the offset it set, the stock peak
+read on this boot and the one in the profile.
+
+Before any offset, and before it detaches (the refusal shows in the terminal and `APPLY_DONE` says `exit 1`, so
+`soak_chain.sh` ends instead of waiting), `apply` refuses a profile with a value that is not a whole number or is
+below 0, a memory value above the top of `--mem-steps`, a core above `--core-cap`, a card without its
+PCI address and name, or a `core_steps` that its `core_mhz` does not give (a hand edit of one and not the other: fix
+it). A profile without `core_steps` gets the steps its `core_mhz` gives. Every profile published in this repository
+passes.
 
 ### Commands
 
@@ -136,6 +162,7 @@ tail -f /var/tmp/climb/out/climb.log
 python3 climb.py stop                 # only to stop early: every offset to 0, the profile as far as it got
 cat /var/tmp/climb/CLIMB_DONE /var/tmp/climb/out/profile.json
 python3 climb.py watchdog stop
+python3 climb.py rungs /var/tmp/climb/out/profile.json   # the soak ladder's rungs, next to it (below; file work only)
 # reboot at the console, then:
 python3 climb.py start-check && python3 climb.py watchdog start
 python3 climb.py apply /var/tmp/climb/out/profile.json   # detached; about 15 min (est.)
@@ -172,6 +199,19 @@ python3 -I bench/mem_offset/test/test_climb.py
   memory and gets one step under its last clean core; the others reach the top; `apply` reads the result. Also its
   refusals before any offset (another rig's card, a card missing from the profile, a value above a cap, the climb's
   own boot, no watchdog, an offset left set), a watchdog trip in the core climb, and `--core-cards`.
+- **The stock peak on R200's five boots** ([test/fixtures/r200_stock.csv.gz](test/fixtures/r200_stock.csv.gz): every
+  watchdog sample of the two stock rounds, cut from the raw logs by `make_replay_fixtures.py --stock-windows`): the
+  second round alone gives exactly what the kit read then, on every card of every boot; both rounds read card 8 at
+  1,911 MHz on all five boots (round 2 alone: 1,898 on all five), card 0 at 1,873 (1,860 on three) and card 4 at
+  1,911 (1,898 on two), the peaks their soak peaks imply. On the simulated rig the window starts with the first round,
+  three cards get a third stock round, nine do not, and a stock round that differs is refused.
+- **`apply`** sets the profile's core and memory on boots whose stock peaks read a step low, a step high and as the
+  profile's; it refuses before any offset a `core_steps` its core does not give, a core above `--core-cap`, a memory
+  above the cap, a value that is not a whole number and a card without its PCI address, and before it detaches with
+  `APPLY_DONE` "exit 1" over an earlier "exit 0"; every published profile passes.
+- **`rungs`** (below): R201's rungs from R200's last profile, a fresh climb's profile (its rungs at its own values),
+  the caps, the floor at 0, no core rung when no card has a core, its refusals, and that `soak.py`'s ladder check,
+  `soak.py --failures` and `apply` read the rung files.
 
 ## Holding a profile: `soak.py`, the ladder and the whole-memory check
 
@@ -251,6 +291,42 @@ On R201's and R202b's published `soaked.json` and the failures before them
 ([R201's](../../docs/data/2026-11-18_r201_soak_ladder/run/failures.json),
 [R202b's](../../docs/data/2026-11-18_r202b_core_soak/run/failures.json)) this gives every card the values of the use
 profiles made by hand for those runs.
+
+### The ladder's rungs: `climb.py rungs`
+
+A ladder needs one profile per rung. `climb.py rungs` writes them from a profile (a climb's `profile.json`, or any
+profile `apply` reads) and each card's known failures. It sets and runs nothing and needs no rig.
+
+- **Memory first, core 0.** Rung 3 is each card's top value: the profile's memory, lowered to two steps under the
+  lowest memory value the card ever failed at, if that is lower. Rungs 1 and 2 are two steps and one step under it
+  (100 MT/s a step, never below 0).
+- **Then the core.** Rung 4 keeps rung 3's memory and adds the profile's core, lowered to two climb steps (four of the
+  driver's steps, about 51 MHz) under the lowest core value the card ever failed at, if that is lower. When no card
+  has a core value there is no rung 4.
+- **Why two steps under a failure:** it is the margin of the setting to use (the rule above). A rung above it might
+  hold, but `use.json` could never pick that value, so its 30 minutes would buy nothing.
+
+The failures are the profile's own (a card's memory failure in the climb counts against its memory, a core failure
+against its core) and those in `--failures` (`FAILURES`), the file `soak.py --failures` reads; a `use.json` works as
+either. Each rung file lists the failures it used under `failures`, and `rungs-choice.md` gives each card's caps and
+where they come from. `rungs` refuses a profile `apply` would refuse, a failures file that does not read, and rung files
+that are already there (`--overwrite` replaces them).
+
+```bash
+# anywhere the files are, as any user; writes rung1.json ... rung4.json and rungs-choice.md next to the profile
+python3 -I climb.py rungs /var/tmp/climb/out/profile.json --failures rig-failures.json
+# the soak chain's settings for that ladder (next section):
+#   PROFILE=rung1.json LADDER="rung2.json rung3.json rung4.json"
+```
+
+On R201's inputs, R200's last profile ([profile-try4.json](../../docs/data/2026-11-18_r201_soak_ladder/run/profile-try4.json))
+and the failures before R201 ([failures.json](../../docs/data/2026-11-18_r201_soak_ladder/run/failures.json)), it
+gives the rungs made by hand for cards 0, 1, 5, 6 and 8, and every card's core. Cards 2, 3, 4 and 7 come out one step
+(100 MT/s) lower in every rung: R201's rungs were made one step under each card's lowest failure, and `--cap-steps 1`
+gives R201's four files card for card. Two of the four values the kit leaves out differed in R201: card 3 at
++1,300 MT/s, twice in rung 3, and card 2 at +1,200 MT/s, once in rung 4. Cards 4 and 7 held +1,200 and +1,000 MT/s,
+values the use profile then could not take: it gave them +1,100 and +900, two steps under their failures at +1,300
+and +1,100 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/README.md)).
 
 ### One boot without a person in the loop: `soak_chain.sh`
 
@@ -366,7 +442,7 @@ reboot, `apply` sets the memory with the cores a few steps lower, and the ladder
 | `exact_check.sh` | The exact output check on Flint: one-token llama-perplexity statistics and a greedy-decoding hash against stock. |
 | `build.sh` | Builds `mmvq_pascal` and `cuda_memtest` for compute capability 6.1 in Docker and packs the kit into a tarball with MD5 sums. |
 | `test/dryrun.sh` | Runs `memoc_steps.sh` against stub programs on any Linux machine (no GPU, no root) to check its control flow: a clean run, a failed exact check (step back), an Xid, an interrupt, and a memory test that cannot run. |
-| `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply`; with `--from-profile`, the core climb alone with each card's memory at a profile's value (sections above). |
+| `climb.py` | Every card's memory and core offsets in one sitting, the profile, and `apply`; with `--from-profile`, the core climb alone with each card's memory at a profile's value; `rungs`, the soak ladder's rung profiles from a profile and the known failures (sections above). |
 | `soak.py` | Holds the offsets `apply` set with every card loaded: plain, counting (`--keep-going`) or a ladder of profiles, then writes what held (`soaked.json`) and the setting to use by the rule (`use.json`); `--use-from` makes the use profile again from a finished soak (section above). |
 | `soak_chain.sh` | One fresh boot without a person in the loop: the served model's stock reference, `apply`, the soak or ladder, the served model with the offsets. |
 | `model_check.sh` | The whole-memory check: the served model's greedy output on all cards, at stock and with the offsets, with each round's tok/s. |

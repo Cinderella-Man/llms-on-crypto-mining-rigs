@@ -15,7 +15,17 @@
   card, the core climb only for the cards without a core value (or --core-cards) with the memory held, a card that
   fails the check round (memory or a kept core) set to 0 alone, the profile `apply` reads, its refusals before any
   offset, and a stop in the core climb;
-- the --dry-run command line starts no process.
+- the --dry-run command line starts no process;
+- the stock peak: each card's highest reading from the start of the first stock round, over at least
+  --stock-peak-secs (more stock rounds on a rig whose rounds are short), checked on R200's five boots
+  (fixtures/r200_stock.*): round 2 alone, what the kit read then, is reproduced on every card of every boot, and the
+  longer window reads cards 0, 4 and 8 at the stock peaks their soak peaks imply on all five;
+- apply sets each card's offsets exactly as the profile gives them, whatever this boot's stock peak reads, and refuses
+  a profile it cannot trust before any offset (also before it detaches, with APPLY_DONE written); every profile
+  published so far passes;
+- `rungs`: the ladder's rung profiles by the rule, R201's from R200's last profile and the failures before R201 (with a
+  one-step cap R201's four files card for card; with the default two steps cards 2, 3, 4 and 7 one step lower), a
+  fresh climb's profile, the caps, the refusals, and soak.py's ladder check and apply reading the rungs.
 """
 import contextlib
 import gzip
@@ -34,6 +44,8 @@ import unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 KIT = os.path.dirname(HERE)
 FIX = os.path.join(HERE, "fixtures")
+DATA = os.path.join(KIT, "..", "..", "docs", "data")
+R201_RUN = os.path.join(DATA, "2026-11-18_r201_soak_ladder", "run")
 sys.path.insert(0, KIT)
 import climb  # noqa: E402
 
@@ -676,6 +688,345 @@ class FromProfile(unittest.TestCase):
             rc = climb.FromProfile(r.k).run(r.a.from_profile)
         self.assertEqual(rc, 0)
         self.assertIn("xid: on card 8, which already left the climb", slurp(r.k.logf))
+
+
+def no_processes(test):
+    """Makes any process start in the test an error (as the --dry-run tests do)."""
+    def no(*a, **k):
+        raise AssertionError("a process was started")
+    saved = (subprocess.Popen, subprocess.run)
+    subprocess.Popen = subprocess.run = no
+
+    def restore():
+        subprocess.Popen, subprocess.run = saved
+    test.addCleanup(restore)
+
+
+# R200's five boots over both stock rounds (the climb, then the applies of tries 1 to 4), cards 0 to 8, MHz
+R200_BOTH_ROUNDS = {
+    "climb": [1873, 1898, 1898, 1873, 1911, 1898, 1885, 1911, 1911],
+    "try1": [1873, 1898, 1898, 1873, 1911, 1898, 1885, 1911, 1911],
+    "try2": [1873, 1898, 1898, 1885, 1911, 1911, 1885, 1911, 1911],
+    "try3": [1873, 1898, 1898, 1885, 1911, 1911, 1885, 1911, 1911],
+    "try4": [1873, 1911, 1898, 1885, 1911, 1898, 1885, 1898, 1911],
+}
+# the soak peak each offset gave on every boot of R200 (card: (peak MHz, driver steps of its core offset))
+R200_SOAK_PEAKS = {0: (2126, 20), 4: (2113, 16), 8: (2138, 18)}
+
+
+class StockWindow(unittest.TestCase):
+    def test_r200s_five_boots_read_over_both_rounds(self):
+        with open(os.path.join(FIX, "r200_stock.json")) as f:
+            boots = json.load(f)["boots"]
+        d = tempfile.mkdtemp(prefix="climb-wd-")
+        self.addCleanup(shutil.rmtree, d, True)
+        wd = os.path.join(d, "wd.csv")
+        with open(wd, "w") as f:
+            f.write(fixture("r200_stock.csv.gz"))
+
+        def t(s):
+            return time.mktime(time.strptime(s, "%Y-%m-%d %H:%M:%S"))
+
+        def read(t0, t1):
+            p = climb.RealExec(lambda s: None).peaks(wd, list(range(9)), t0, t1)
+            return [p[g][0] for g in range(9)]
+        self.assertEqual([b["boot"] for b in boots], list(R200_BOTH_ROUNDS))
+        for b in boots:
+            # round 2 alone, as the kit read it then: every card of every boot reproduced
+            self.assertEqual(read(t(b["round2"]), t(b["end"])), b["kit_read_mhz"], b["boot"])
+            # from the start of round 1 (the window stock() now reads)
+            both = read(t(b["round1"]), t(b["end"]))
+            self.assertEqual(both, R200_BOTH_ROUNDS[b["boot"]], b["boot"])
+            self.assertTrue(all(n >= o for n, o in zip(both, b["kit_read_mhz"])))
+            # cards 0, 4 and 8 held a core offset for whole soaks, each at the same peak on every boot: the stock peak
+            # that peak implies is what both rounds read on every boot
+            for g, (peak, steps) in R200_SOAK_PEAKS.items():
+                self.assertEqual(climb.stock_bin(both[g], 12.66), climb.stock_bin(peak, 12.66) - steps, (b["boot"], g))
+        # round 2 alone read card 8 a driver step low on all five boots, card 0 on three and card 4 on two
+        low = {g: sum(climb.stock_bin(b["kit_read_mhz"][g], 12.66) < climb.stock_bin(p, 12.66) - s for b in boots)
+               for g, (p, s) in R200_SOAK_PEAKS.items()}
+        self.assertEqual(low, {0: 3, 4: 2, 8: 5})
+
+    def stock_only(self, extra=(), scenario=None):
+        r = Rig(self, extra, scenario)
+        with quiet():
+            smi, size = r.c.preflight()
+            r.c.new_state(smi, size, "climb")
+            r.k.start_servers(r.a.cards)
+            r.c.stock(r.a.cards)
+        return r
+
+    def test_the_window_starts_with_the_first_stock_round(self):
+        cold = [{"card": 8, "mhz": 13, "secs": 10}, {"card": 7, "mhz": 13, "secs": 10}]
+        r = self.stock_only(scenario={"cold_peaks": cold})
+        self.assertEqual([r.k.card(g)["stock_peak"] for g in range(9)],
+                         [1860, 1860, 1911, 1911, 1885, 1911, 1885, 1924, 1911])
+        # a window that starts after those first seconds (round 2 alone, the old reading) misses it
+        self.assertEqual(r.x.peaks("", [8], r.x.t_first + 11, r.x.now())[8][0], 1898)
+        self.assertIn("each card's stock peak is its highest reading in the", slurp(r.k.logf))
+        self.assertGreaterEqual(r.k.st["stock_peak_window_s"], 90)
+
+    def test_short_rounds_get_more_stock_rounds_to_fill_the_window(self):
+        r = self.stock_only(["--cards", "0 1 2"])
+        log = slurp(r.k.logf)
+        self.assertIn("stock: round 3 (the same result again; the stock peak window has run", log)
+        self.assertNotIn("stock: round 4", log)
+        self.assertGreaterEqual(r.k.st["stock_peak_window_s"], 90)
+        self.assertTrue(all(r.k.card(g)["limits"] for g in (0, 1, 2)))   # the limits still come from round 2
+        r = self.stock_only(["--cards", "0 1 2", "--stock-peak-secs", "0"])
+        self.assertNotIn("stock: round 3", slurp(r.k.logf))
+        self.assertLess(r.k.st["stock_peak_window_s"], 90)
+        r = self.stock_only()   # nine cards: two rounds already cover 90 s
+        self.assertNotIn("stock: round 3", slurp(r.k.logf))
+        self.assertGreaterEqual(r.k.st["stock_peak_window_s"], 90)
+
+    def test_a_stock_round_that_differs_is_refused(self):
+        r = Rig(self, ["--cards", "0 1 2"])
+        with quiet():
+            smi, size = r.c.preflight()
+            r.c.new_state(smi, size, "climb")
+            r.k.start_servers(r.a.cards)
+            orig = r.x._greedy
+
+            def third_differs(g, tag, ref, card_dir, out):
+                if tag == "stock3" and g == 1:
+                    r.x.s["faults"] = [{"card": 1, "mem_min": 0, "peak_min": 1, "check": "greedy", "kind": ["differs"]}]
+                return orig(g, tag, ref, card_dir, out)
+            r.x._greedy = third_differs
+            with self.assertRaises(climb.Refused) as e:
+                r.c.stock(r.a.cards)
+        self.assertIn("card 1 fails its check at stock", str(e.exception))
+
+    def test_the_profile_records_the_window(self):
+        r, _ = FullClimb.run_climb(self, {"faults": RECORDED_FAULTS})
+        self.assertGreaterEqual(r.profile()["stock_peak_window_s"], 90)
+
+
+class ApplyCore(unittest.TestCase):
+    def apply(self, path, scenario=None):
+        r = Rig(self, scenario=dict({"boot_id": "after-a-reboot"}, **(scenario or {})))
+        a = climb.parse(["--dry-run", "--work", r.work, "--check-model", "/models/check.gguf", "--ledger",
+                         r.a.ledger, "apply", path])
+        r.k.a = r.a = a
+        with quiet():
+            rc = climb.Apply(r.k).run(path)
+        return r, rc
+
+    def test_the_core_set_is_the_profiles_whatever_this_boot_reads(self):
+        path = soaked(self)   # R201's rung 4; every card's stock_peak_mhz 1898 in the profile
+        for peaks in ([1885] * 9, [1911] * 9, [1860, 1860, 1911, 1911, 1885, 1911, 1885, 1911, 1898]):
+            r, rc = self.apply(path, {"stock_peaks": peaks, "cold_peaks": [{"card": 4, "mhz": 13, "secs": 10}]})
+            self.assertEqual(rc, 0)
+            self.assertEqual([(g, v) for g, kind, v in r.sets() if kind == "core"],
+                             [(g, SOAKED[g][1]) for g in range(9) if SOAKED[g][1]])
+            self.assertEqual([(g, v) for g, kind, v in r.sets() if kind == "mem"],
+                             [(g, SOAKED[g][0]) for g in range(9)])
+            self.assertEqual({g: r.x.off[g] for g in range(9)}, {g: [v[0], v[1]] for g, v in SOAKED.items()})
+            self.assertEqual([r.k.card(g)["bins"] for g in range(9)], [SOAKED[g][2] for g in range(9)])
+        log = slurp(r.k.logf)
+        self.assertIn("apply: card 0 set mem +1300 MT/s, core +256 MHz, read back as set (the profile's offset, 20 "
+                      "steps; stock peak 1860 MHz on this boot, 1898 MHz in the profile)", log)
+
+    def test_refuses_a_profile_it_cannot_trust_before_any_offset(self):
+        cases = [
+            (soaked(self, {**SOAKED, 0: (1300, 256, 18)}),
+             "card 0: core +256 MHz is 20 of the driver's steps, its core_steps says 18: the profile disagrees"),
+            (soaked(self, {**SOAKED, 4: (1200, 450, 35)}), "card 4: core +450 MHz is above --core-cap 400"),
+            (soaked(self, {**SOAKED, 5: (1600, 0, 0)}), "card 5: memory +1600 MT/s is above the cap +1400"),
+            (soaked(self, {**SOAKED, 6: (1100.5, 0, 0)}), "card 6: memory_mts, core_mhz or core_steps is not a whole"),
+            (soaked(self, pci={3: ""}), "card 3: the profile has no pci or name"),
+        ]
+        for path, why in cases:
+            r = Rig(self, scenario={"boot_id": "after-a-reboot"})
+            a = climb.parse(["--dry-run", "--work", r.work, "--check-model", "/models/check.gguf", "--ledger",
+                             r.a.ledger, "--cards", "0 1 2 3 4 5 6 7 8", "apply", path])
+            r.k.a = r.a = a
+            with quiet():
+                rc = climb.Apply(r.k).run(path)
+            self.assertEqual(rc, 1, why)
+            self.assertIn("REFUSED: profile", slurp(r.k.logf))
+            self.assertIn(why, slurp(r.k.logf))
+            self.assertEqual(r.sets(), [])
+            self.assertFalse(any("llama-server" in cmd for cmd in r.x.commands))
+
+    def test_refused_before_it_detaches_with_apply_done_written(self):
+        work = tempfile.mkdtemp(prefix="climb-apply-")
+        self.addCleanup(shutil.rmtree, work, True)
+        with open(os.path.join(work, "APPLY_DONE"), "w") as f:
+            f.write("exit 0\n")   # an earlier apply's: soak_chain.sh must not read it as this one's
+        bad = soaked(self, {**SOAKED, 8: (1300, 231, 19)})
+        no_processes(self)
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err), quiet():
+            rc = climb.main(["--work", work, "--check-model", "/m/check.gguf", "--ledger", os.path.join(work, "ledger"),
+                             "apply", bad])
+        self.assertEqual(rc, 1)
+        self.assertEqual(slurp(os.path.join(work, "APPLY_DONE")), "exit 1\n")
+        self.assertIn("REFUSED: profile", err.getvalue())
+        self.assertIn("card 8: core +231 MHz is 18 of the driver's steps, its core_steps says 19", err.getvalue())
+
+    def test_the_plan_takes_the_steps_from_the_core(self):
+        prof = json.loads(slurp(soaked(self)))
+        plan, bad = climb.apply_plan(prof, list(range(9)), 1400, 400, 12.66)
+        self.assertEqual(bad, [])
+        self.assertEqual({g: (p["memory_mts"], p["core_mhz"], p["core_steps"]) for g, p in plan.items()}, SOAKED)
+        for c in prof["cards"]:   # a hand-made profile without core_steps: the steps the core gives
+            c.pop("core_steps")
+        plan, bad = climb.apply_plan(prof, list(range(9)), 1400, 400, 12.66)
+        self.assertEqual((bad, [plan[g]["core_steps"] for g in range(9)]), ([], [SOAKED[g][2] for g in range(9)]))
+        prof["cards"][0]["core_mhz"] = True
+        self.assertIn("not a whole number", climb.apply_plan(prof, [0], 1400, 400, 12.66)[1][0])
+        self.assertEqual(climb.apply_plan({"cards": []}, [0], 1400, 400, 12.66)[1], ["the profile has no cards"])
+        for n in range(0, 40):
+            self.assertEqual(climb.core_bins(climb.core_offset(n, 12.66), 12.66), n)
+
+    def test_every_published_profile_passes(self):
+        import glob
+        files = []
+        for path in sorted(glob.glob(os.path.join(DATA, "*", "**", "*.json"), recursive=True)):
+            try:
+                prof = json.loads(slurp(path))
+            except ValueError:
+                continue
+            if isinstance(prof, dict) and isinstance(prof.get("cards"), list) and prof["cards"] \
+                    and all(isinstance(c, dict) and "memory_mts" in c for c in prof["cards"]):
+                cards = [c["card"] for c in prof["cards"]]
+                self.assertEqual(climb.apply_plan(prof, cards, 1400, 400, 12.66)[1], [], path)
+                files.append(os.path.relpath(path, DATA))
+        self.assertGreaterEqual(len(files), 14, files)
+        self.assertIn(os.path.join("2026-11-18_r201_soak_ladder", "use-profile.json"), files)
+
+
+class Rungs(unittest.TestCase):
+    def rungs(self, profile, *extra):
+        out = tempfile.mkdtemp(prefix="climb-rungs-")
+        self.addCleanup(shutil.rmtree, out, True)
+        so, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(so), contextlib.redirect_stderr(err):
+            rc = climb.main(["rungs", profile, "--out", out, *extra])
+        return rc, out, so.getvalue(), err.getvalue()
+
+    def test_r201s_rungs_from_its_inputs(self):
+        no_processes(self)
+        prof, fails = os.path.join(R201_RUN, "profile-try4.json"), os.path.join(R201_RUN, "failures.json")
+        # cap 1: R201's hand rule (one step under each failure) gives its four files card for card; cap 2, the use
+        # rule's and the default: cards 2, 3, 4 and 7, whose hand-made top was one step under a failure, a step lower
+        for cap, lower in ((["--cap-steps", "1"], ()), ([], (2, 3, 4, 7))):
+            rc, out, text, err = self.rungs(prof, "--failures", fails, "--prefix", "r201-rung", *cap)
+            self.assertEqual((rc, err), (0, ""))
+            for n in range(1, 5):
+                mine = json.loads(slurp(os.path.join(out, f"r201-rung{n}.json")))
+                theirs = json.loads(slurp(os.path.join(R201_RUN, f"r201-rung{n}.json")))
+                self.assertEqual(len(mine["cards"]), 9)
+                for a, b in zip(mine["cards"], theirs["cards"]):
+                    if a["card"] in lower:
+                        self.assertEqual(a["memory_mts"], b["memory_mts"] - 100, (n, a["card"]))
+                        self.assertEqual(dict(a, memory_mts=0), dict(b, memory_mts=0))
+                    else:
+                        self.assertEqual(a, b, (n, a["card"]))
+                self.assertEqual((mine["rung"]["n"], mine["rung"]["of"]), (n, 4))
+                for k in ("climb_boot", "complete", "date", "driver", "memory_steps_mts", "core_bin_mhz"):
+                    self.assertEqual(mine[k], theirs[k])
+            self.assertIn('PROFILE=r201-rung1.json LADDER="r201-rung2.json r201-rung3.json r201-rung4.json"', text)
+        choice = slurp(os.path.join(out, "r201-rungs-choice.md"))
+        self.assertIn("| 7 | +1,100, +0 | +900 MT/s (2 steps under +1,100, R200 (docs/data/2026-11-17_r200_climb_rig2): "
+                      "soak try 4) | none | +700 | +800 | +900 | +0 |", choice)
+        self.assertIn("| 3 | +1,300, +54 | +1,200 MT/s (2 steps under +1,400", choice)
+        self.assertIn("+54 MHz (2 steps under +104, profile-try4.json: failed at +104 MHz)", choice)
+
+    def test_a_fresh_climbs_profile_gives_rungs_under_its_own_values(self):
+        r, _ = FullClimb.run_climb(self, {"faults": RECORDED_FAULTS})
+        path = os.path.join(r.work, "out", "profile.json")
+        prof = r.profile()
+        rc, out, _, _ = self.rungs(path)
+        self.assertEqual(rc, 0)
+        rungs = [json.loads(slurp(os.path.join(out, f"rung{n}.json"))) for n in range(1, 5)]
+        for c in prof["cards"]:
+            g = c["card"]
+            got = [next(x for x in rg["cards"] if x["card"] == g) for rg in rungs]
+            # each card's own failure is at least two steps above its profile value: the profile's values are the top
+            self.assertEqual([x["memory_mts"] for x in got], [c["memory_mts"] - 200, c["memory_mts"] - 100,
+                                                              c["memory_mts"], c["memory_mts"]], g)
+            self.assertEqual([x["core_mhz"] for x in got], [0, 0, 0, c["core_mhz"]])
+            self.assertEqual(got[3]["core_steps"], c["core_steps"])
+            self.assertNotIn("expected_peak_mhz", got[3])
+        fails = rungs[0]["failures"]
+        self.assertIn({"card": 0, "memory_mts": 1400, "where": "profile.json: failed at +1,400 MT/s"}, fails)
+        self.assertIn({"card": 4, "memory_mts": 1200, "where": "profile.json: failed at +1,200 MT/s"}, fails)
+        self.assertIn({"card": 2, "core_mhz": climb.core_offset(24, 12.66),
+                       "where": f"profile.json: failed at +{climb.core_offset(24, 12.66)} MHz"}, fails)
+
+    def test_the_caps_the_floor_and_no_core_rung(self):
+        def card(g, mem, core=0, mem_fail=None, core_fail=None):
+            return {"card": g, "pci": climb.SCENARIO["pci"][g], "name": "NVIDIA P106-090", "memory_mts": mem,
+                    "core_mhz": core, "core_steps": climb.core_bins(core, 12.66), "expected_peak_mhz": 2000,
+                    "memory": {"failed_at_mts": mem_fail}, "core": {"failed_at_mhz": core_fail}}
+        prof = {"cards": [card(0, 1300), card(1, 1300, mem_fail=1300), card(2, 300, mem_fail=300),
+                          card(3, 1200, 256, core_fail=282), card(4, 1000, 54, core_fail=307)],
+                "failures": [{"card": 0, "memory_mts": 1400, "where": "a use.json's list"}]}
+        earlier = [{"card": 1, "memory_mts": 1300, "where": "the same failure again"},
+                   {"card": 3, "core_mhz": 282, "where": "and again"}]
+        rungs, rows = climb.ladder_rungs(prof, earlier + climb.profile_failures(prof, "p.json"))
+        self.assertEqual(len(rungs), 4)
+        got = {c["card"]: [] for c in prof["cards"]}
+        for rg in rungs:
+            for c in rg["cards"]:
+                got[c["card"]].append((c["memory_mts"], c["core_mhz"], c["core_steps"]))
+        self.assertEqual(got[0], [(1000, 0, 0), (1100, 0, 0), (1200, 0, 0), (1200, 0, 0)])   # its list: +1,400
+        self.assertEqual(got[1], [(900, 0, 0), (1000, 0, 0), (1100, 0, 0), (1100, 0, 0)])    # its own: +1,300
+        self.assertEqual(got[2], [(0, 0, 0), (0, 0, 0), (100, 0, 0), (100, 0, 0)])           # never below 0
+        self.assertEqual(got[3][3], (1200, climb.core_offset(18, 12.66), 18))                # 2 x 2 steps under 22
+        self.assertEqual(got[4][3], (1000, 54, 4))                                           # under its cap: kept
+        self.assertEqual(len(rungs[0]["failures"]), 5)   # one entry per card, offset and value
+        self.assertEqual(rungs[0]["failures"][0]["where"], "the same failure again")
+        self.assertEqual(len(rows), 5)
+        self.assertNotIn("expected_peak_mhz", rungs[3]["cards"][0])
+        self.assertEqual(prof["cards"][0]["expected_peak_mhz"], 2000)   # the input is not changed
+        no_core = {"cards": [card(0, 1300), card(1, 1000)]}
+        rungs, _ = climb.ladder_rungs(no_core, [])
+        self.assertEqual([rg["rung"]["of"] for rg in rungs], [3, 3, 3])
+
+    def test_soak_and_apply_read_the_rungs(self):
+        spec = importlib.util.spec_from_file_location("soak", os.path.join(KIT, "soak.py"))
+        soak = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(soak)
+        rc, out, _, _ = self.rungs(os.path.join(R201_RUN, "profile-try4.json"), "--failures",
+                                   os.path.join(R201_RUN, "failures.json"))
+        self.assertEqual(rc, 0)
+        rungs = [json.loads(slurp(os.path.join(out, f"rung{n}.json"))) for n in range(1, 5)]
+        start = {g: soak.card_values(rungs[0], g)[:2] for g in range(9)}
+        self.assertEqual(soak.ladder_errors(start, rungs[1:], list(range(9)), 1400, 400), [])
+        # the failures a rung file carries read as soak.py --failures reads them
+        self.assertEqual(soak.read_failures(os.path.join(out, "rung1.json")), rungs[0]["failures"])
+        r, rc = ApplyCore.apply(self, os.path.join(out, "rung1.json"))
+        self.assertEqual(rc, 0)
+        self.assertEqual([(g, v) for g, kind, v in r.sets() if kind == "mem"],
+                         [(c["card"], c["memory_mts"]) for c in rungs[0]["cards"]])
+        self.assertEqual([s for s in r.sets() if s[1] == "core"], [])
+
+    def test_refusals(self):
+        no_processes(self)
+        prof = os.path.join(R201_RUN, "profile-try4.json")
+        d = tempfile.mkdtemp(prefix="climb-bad-")
+        self.addCleanup(shutil.rmtree, d, True)
+        bad_fail = os.path.join(d, "failures.json")
+        with open(bad_fail, "w") as f:
+            json.dump({"failures": [{"card": 1, "memory_mts": "1200"}]}, f)
+        rc, out, _, err = self.rungs(prof, "--failures", bad_fail)
+        self.assertEqual(rc, 1)
+        self.assertIn("REFUSED: failures", err)
+        self.assertEqual(os.listdir(out), [])
+        rc, out, _, err = self.rungs(soaked(self, {**SOAKED, 0: (1300, 256, 18)}))
+        self.assertEqual(rc, 1)
+        self.assertIn("its core_steps says 18", err)
+        self.assertEqual(os.listdir(out), [])
+        rc, out, _, err = self.rungs(prof)
+        self.assertEqual(rc, 0)
+        so, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(so), contextlib.redirect_stderr(err):
+            rcs = [climb.main(["rungs", prof, "--out", out]), climb.main(["rungs", prof, "--out", out, "--overwrite"])]
+        self.assertEqual(rcs, [1, 0])
+        self.assertIn("already there (--overwrite replaces them)", err.getvalue())
 
 
 class CommandLine(unittest.TestCase):

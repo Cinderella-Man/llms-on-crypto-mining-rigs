@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Builds the replay fixtures of test/test_climb.py from the raw output folders of R193 and R194 (2026-11-17).
+"""Builds the replay fixtures of test/test_climb.py from the raw output folders of R193 and R194 (2026-11-17), and the
+stock-round samples of R200's five boots.
 
   make_replay_fixtures.py R193_OUT R194_OUT [FIXTURES]
+  make_replay_fixtures.py --stock-windows R200_RUN [FIXTURES]   # R200_RUN: one folder per boot (climb, try1 ... try4),
+                                                                # each with the watchdog's wd*.csv.gz and out/climb.log
 
 R193_OUT and R194_OUT are the runs' `out/` folders (the files the data READMEs list: r193.log, greedy.log,
 mmvq_card*.csv/.log); FIXTURES defaults to test/fixtures next to this script. It copies, gzipped, the benchmark output
@@ -94,7 +97,56 @@ def build(run, out, fixtures):
     print(f"{run}: {len(points)} cards -> {os.path.join(fixtures, run + '_replay.json')}")
 
 
+def stock_windows(run_dir, fixtures, boots=("climb", "try1", "try2", "try3", "try4")):
+    """R200's stock rounds on its five boots (the climb and the four applies): every watchdog sample of the two stock
+    rounds (each card's P-state, SM and memory clock; nothing else), and each boot's round times and the stock peaks
+    the kit read then (round 2 alone), from the boot's climb.log. run_dir holds one folder per boot, each with the
+    watchdog's wd*.csv.gz and out/climb.log. Writes r200_stock.csv.gz and r200_stock.json."""
+    import glob
+    cols = ["time"] + [f"g{g}_{k}" for g in range(9) for k in ("pstate", "sm_mhz", "mem_mhz")]
+    rows, meta = [], []
+    for b in boots:
+        log = open(os.path.join(run_dir, b, "out", "climb.log")).read().splitlines()
+        i1 = max(i for i, ln in enumerate(log) if "stock: round 1 " in ln)
+        i2 = next(i for i in range(i1, len(log)) if "stock: round 2 " in log[i])
+        ends = [i for i in range(i2, len(log)) if re.search(r"stock: card \d+ hash", log[i])]
+        peaks = {int(re.search(r"card (\d+) hash", log[i]).group(1)): int(re.search(r"stock peak (\d+) MHz", log[i]).group(1))
+                 for i in ends[:9]}
+        win = {"boot": b, "round1": log[i1][:19], "round2": log[i2][:19], "end": log[ends[0]][:19],
+               "kit_read_mhz": [peaks[g] for g in range(9)]}
+        meta.append(win)
+        t0, t1 = t(win["round1"]) - 2, t(win["end"]) + 2
+        wd = sorted(glob.glob(os.path.join(run_dir, b, "wd*.csv.gz")))[0]
+        idx = None
+        with gzip.open(wd, "rt") as f:
+            for ln in f:
+                if ln.startswith("#"):
+                    continue
+                v = ln.rstrip("\n").split(",")
+                if idx is None:
+                    idx = {k: i for i, k in enumerate(v)}
+                    continue
+                try:
+                    ts = t(v[0][:19])
+                except ValueError:
+                    continue
+                if t0 <= ts <= t1:
+                    rows.append(",".join([v[0]] + [v[idx[c]] for c in cols[1:]]))
+    path = os.path.join(fixtures, "r200_stock.csv.gz")
+    with open(path, "wb") as raw, gzip.GzipFile(fileobj=raw, mode="wb", mtime=0, filename="") as g:
+        g.write(("\n".join([",".join(cols)] + rows) + "\n").encode())
+    note = ("R200's stock rounds on its five boots (2026-11-17, rig 2), from the watchdog's samples and the runs' "
+            "climb.log by test/make_replay_fixtures.py --stock-windows; kit_read_mhz is the stock peak the kit read "
+            "then, from round 2 alone")
+    with open(os.path.join(fixtures, "r200_stock.json"), "w") as f:
+        json.dump({"note": note, "boots": meta}, f, indent=1)
+    print(f"r200 stock windows: {len(meta)} boots, {len(rows)} samples -> {path}")
+
+
 def main():
+    if len(sys.argv) >= 3 and sys.argv[1] == "--stock-windows":
+        stock_windows(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else os.path.join(HERE, "fixtures"))
+        return 0
     if len(sys.argv) < 3:
         print(__doc__)
         return 2

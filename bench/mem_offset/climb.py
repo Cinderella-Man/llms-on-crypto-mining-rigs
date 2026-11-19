@@ -29,9 +29,16 @@ card's offsets one step under its last clean step.
                     memory held at FILE's value. The same files out; out/profile.json keeps each card's memory at
                     FILE's value. `plan` with --from-profile prints what it would set and climb
   profile           write out/profile.json again from out/climb.json
+  rungs PROFILE [--failures FILE] [--out DIR] [--prefix rung]
+                    the soak ladder's rung profiles (rung1.json ... rung4.json and rungs-choice.md) from a profile
+                    and each card's known failures; sets and runs nothing, needs no rig. Memory rungs two steps, one
+                    step and no step under each card's top value (the profile's, lowered to two steps under the
+                    card's lowest memory failure), core 0; then a rung that adds the core (the profile's, lowered to
+                    two climb steps under the card's lowest core failure)
   apply PROFILE     detached: on a freshly started rig (needs the watchdog), every card's offsets from PROFILE, read
                     back, then each card's greedy check against its own stock result; any failure sets every offset of
-                    every card to 0. On success the offsets stay; the watchdog must keep running (it holds the cards)
+                    every card to 0. On success the offsets stay; the watchdog must keep running (it holds the cards).
+                    Each offset is the profile's, never more: the core is never derived from this boot's stock peak
   reset-all         every offset of every card to 0, read back
   reset-card N      both offsets of card N to 0, read back; the step down goes into the ledger (soak.py uses it for a
                     card that leaves a soak while the others go on)
@@ -64,6 +71,7 @@ XID_CODE_RE = re.compile(r"Xid \([^)]*\):\s*(\d+)")
 TICK = 0.5          # seconds between looks at the running checks
 XID_EVERY = 5.0     # seconds between kernel-log scans while checks run
 STOCK_LIMIT = 900   # seconds any stock check may take (no reference yet)
+STOCK_ROUNDS_MAX = 12   # stock rounds at most, however short they are, while the stock peak window fills
 TEST_LINE = "clock-offset watchdog test line C871WDTEST"
 
 
@@ -110,6 +118,11 @@ def core_offset(bins, bin_mhz):
     """The MHz to pass for `bins` whole steps of the core clock. The driver drops the remainder of an offset (R194:
     +249 MHz gave 19 steps of ~12.65 MHz), so n steps plus a quarter step lands on n steps whether it drops or rounds."""
     return 0 if bins <= 0 else int(round(bins * bin_mhz + bin_mhz / 4))
+
+
+def core_bins(mhz, bin_mhz):
+    """The whole core steps an offset of `mhz` gives: the inverse of core_offset() (soak.py's, the same rule)."""
+    return 0 if mhz <= 0 else int(round((mhz - bin_mhz / 4) / bin_mhz))
 
 
 def stock_bin(peak, bin_mhz):
@@ -215,6 +228,182 @@ def profile_plan(prof, cards, core_cards, mem_cap, core_cap, bin_mhz):
     return plan, bad
 
 
+def whole(v):
+    """A profile's offset: a JSON whole number (None or absent is 0); ValueError for anything else."""
+    if v is None:
+        return 0
+    if isinstance(v, bool) or not isinstance(v, int):
+        raise ValueError(v)
+    return v
+
+
+def apply_plan(prof, cards, mem_cap, core_cap, bin_mhz):
+    """apply: the offsets each card gets, which are exactly the profile's. The core is the profile's core_mhz and
+    never more: it is not derived from this boot's stock peak (that reading moves a driver step between boots and
+    inside one, while a given offset gives the same peak on every boot, Q1586), and a profile whose core_steps and
+    core_mhz disagree is refused rather than guessed at.
+    Returns ({card: {"memory_mts", "core_mhz", "core_steps"}}, [why it cannot run]): a card missing, a value that is
+    not a whole number or is below 0, a value above the caps, core_steps that core_mhz does not give, or no pci or
+    name to check the card against."""
+    by = {}
+    for c in (prof.get("cards") if isinstance(prof, dict) else None) or []:
+        if isinstance(c, dict) and isinstance(c.get("card"), int):
+            by[c["card"]] = c
+    if not by:
+        return {}, ["the profile has no cards"]
+    plan, bad = {}, []
+    for g in cards:
+        c = by.get(g)
+        if c is None:
+            bad.append(f"card {g} is not in the profile")
+            continue
+        try:
+            mem, core, steps = (whole(c.get(k)) for k in ("memory_mts", "core_mhz", "core_steps"))
+        except ValueError:
+            bad.append(f"card {g}: memory_mts, core_mhz or core_steps is not a whole number")
+            continue
+        if min(mem, core, steps) < 0:
+            bad.append(f"card {g}: +{mem} MT/s, +{core} MHz, {steps} steps: an offset below 0")
+            continue
+        if mem > mem_cap:
+            bad.append(f"card {g}: memory +{mem} MT/s is above the cap +{mem_cap} (the top of --mem-steps)")
+        if core > core_cap:
+            bad.append(f"card {g}: core +{core} MHz is above --core-cap {core_cap}")
+        gives = core_bins(core, bin_mhz)
+        if steps and steps != gives:
+            bad.append(f"card {g}: core +{core} MHz is {gives} of the driver's steps, its core_steps says {steps}: "
+                       "the profile disagrees with itself (fix core_mhz or core_steps)")
+        if not c.get("pci") or not c.get("name"):
+            bad.append(f"card {g}: the profile has no pci or name to check the card against")
+        plan[g] = {"memory_mts": mem, "core_mhz": core, "core_steps": gives}
+    return plan, bad
+
+
+def failure_entries(items, where_default):
+    """Failure entries ({"card", "memory_mts" and/or "core_mhz", "where"}) checked as soak.py --failures checks them;
+    ValueError for an entry that is not one."""
+    out = []
+    for i, e in enumerate(items):
+        ok = isinstance(e, dict) and isinstance(e.get("card"), int) and any(k in e for k in ("memory_mts", "core_mhz"))
+        ok = ok and all(isinstance(e[k], int) and not isinstance(e[k], bool) and e[k] >= 0
+                        for k in ("memory_mts", "core_mhz") if k in e)
+        if not ok:
+            raise ValueError(f"failure {i + 1} needs a card and a whole memory_mts or core_mhz: {e!r}")
+        out.append(dict({k: e[k] for k in ("card", "memory_mts", "core_mhz") if k in e},
+                        where=e.get("where") or where_default))
+    return out
+
+
+def read_failures(path):
+    """Earlier failures from a JSON file, the format soak.py --failures reads ({"failures": [...]}, a list, or a
+    use.json soak.py wrote) -> [{"card", "memory_mts" and/or "core_mhz", "where"}]; ValueError if one is not."""
+    with open(path) as f:
+        data = json.load(f)
+    items = data.get("failures") if isinstance(data, dict) else data
+    if not isinstance(items, list):
+        raise ValueError(f"{path}: no list of failures")
+    try:
+        return failure_entries(items, os.path.basename(path))
+    except ValueError as e:
+        raise ValueError(f"{path}: {e}")
+
+
+def profile_failures(prof, source):
+    """The failures a profile records itself: each card's memory.failed_at_mts and core.failed_at_mhz (a climb's
+    profile.json: a failure in the memory climb counts against the memory, one in the core climb against the core, the
+    offset that went up into it; a failure in --from-profile's check round with both offsets set counts against both),
+    and the "failures" list of a use.json soak.py wrote. ValueError for an entry of that list that is not one."""
+    out = []
+    for c in prof.get("cards") or []:
+        if not isinstance(c, dict) or not isinstance(c.get("card"), int):
+            continue
+        g = c["card"]
+        m = (c.get("memory") or {}).get("failed_at_mts")
+        if isinstance(m, int) and not isinstance(m, bool):
+            out.append({"card": g, "memory_mts": m, "where": f"{source}: failed at +{m:,} MT/s"})
+        k = (c.get("core") or {}).get("failed_at_mhz")
+        if isinstance(k, int) and not isinstance(k, bool):
+            out.append({"card": g, "core_mhz": k, "where": f"{source}: failed at +{k} MHz"})
+    if isinstance(prof.get("failures"), list):
+        out += failure_entries(prof["failures"], source)
+    return out
+
+
+def rung_rule(under):
+    n = {1: "one step", 2: "two steps", 3: "three steps"}.get(under, f"{under} steps")
+    return ("memory_mts is two steps, one step or no step under the card's top value (rungs 1, 2, 3): the profile's "
+            f"memory_mts, lowered to {n} under the lowest value at which the card's memory failed, if that is lower; "
+            "core 0. The last rung keeps rung 3's memory and adds the core: the profile's core_mhz, lowered to "
+            f"{n} of the climb under the lowest value at which the card's core failed, if that is lower. Memory steps "
+            "are memory_step_mts, climb steps core_step_mhz; the failures used are under \"failures\"")
+
+
+def ladder_rungs(prof, failures, mem_step=100, bin_mhz=12.66, step_bins=2, under=2, source="profile.json"):
+    """The soak ladder's rung profiles from a profile and each card's known failures (README, "The ladder's rungs").
+    Each card's top memory value is its memory_mts, lowered to `under` memory steps under its lowest memory failure if
+    that is lower; rungs 1, 2 and 3 are two steps, one step and no step under the top (never below 0), core 0. Rung 4
+    keeps rung 3's memory and adds the core: core_mhz, lowered to `under` climb steps (each `step_bins` of the driver's
+    steps) under the card's lowest core failure if that is lower. With no core on any card there is no rung 4.
+    Each rung is a copy of the profile with each card's three offsets replaced and its expected peak dropped (it
+    depends on the boot's stock reading). Returns ([rung profiles], [one Markdown table row per card])."""
+    seen, used = set(), []
+    for e in failures:   # one entry per card, offset and value: the first one's "where" is kept
+        key = (e["card"], "memory_mts" in e, e.get("memory_mts"), "core_mhz" in e, e.get("core_mhz"))
+        if key not in seen:
+            seen.add(key)
+            used.append(e)
+    vals, rows = {}, []
+    for c in prof["cards"]:
+        g = c["card"]
+        mem, core = whole(c.get("memory_mts")), whole(c.get("core_mhz"))
+        mf = [e for e in used if e["card"] == g and "memory_mts" in e]
+        cf = [e for e in used if e["card"] == g and "core_mhz" in e]
+        top, mem_cap, core_cap = mem, None, None
+        if mf:
+            low = min(mf, key=lambda e: e["memory_mts"])
+            mem_cap = (max(0, low["memory_mts"] - under * mem_step), low)
+            top = min(top, mem_cap[0])
+        steps = core_bins(core, bin_mhz)
+        if cf:
+            low = min(cf, key=lambda e: e["core_mhz"])
+            cap_bins = max(0, core_bins(low["core_mhz"], bin_mhz) - under * step_bins)
+            core_cap = (core_offset(cap_bins, bin_mhz), low)
+            if steps > cap_bins:
+                core, steps = core_cap[0], cap_bins
+        mems = [max(0, top - (2 - i) * mem_step) for i in range(3)]
+        vals[g] = (mems, core, steps if core else 0)
+
+        def cap_text(cap, unit):
+            if cap is None:
+                return "none"
+            v = cap[1]["memory_mts" if unit == "MT/s" else "core_mhz"]
+            return f"+{cap[0]:,} {unit} ({under} steps under +{v:,}, {cap[1]['where']})"
+        rows.append(f"| {g} | +{mem:,}, +{whole(c.get('core_mhz'))} | {cap_text(mem_cap, 'MT/s')} | "
+                    f"{cap_text(core_cap, 'MHz')} | " + " | ".join(f"+{v:,}" for v in mems) + f" | +{core} |")
+    n = 4 if any(v[1] for v in vals.values()) else 3
+    rungs = []
+    for k in range(1, n + 1):
+        p = json.loads(json.dumps(prof))
+        under_text = {1: "two memory steps under each card's top value", 2: "one memory step under each card's top "
+                      "value", 3: "each card's top memory value"}
+        p["what"] = (f"P106 clock-offset soak ladder, rung {k} of {n}, from {source} by bench/mem_offset/climb.py "
+                     "rungs: " + (under_text[k] + ", core 0" if k <= 3 else "rung 3's memory with the core added"))
+        p["rung"] = {"n": k, "of": n, "from": source, "cap_steps": under, "memory_step_mts": mem_step}
+        p["each_card"] = rung_rule(under)
+        p["failures"] = used
+        for c in p["cards"]:
+            mems, core, steps = vals[c["card"]]
+            c["memory_mts"] = mems[min(k, 3) - 1]
+            c["core_mhz"], c["core_steps"] = (core, steps) if k == 4 else (0, 0)
+            c.pop("expected_peak_mhz", None)
+        rungs.append(p)
+    return rungs, rows
+
+
+RUNG_TABLE = ["| Card | Profile (MT/s, MHz) | Memory cap | Core cap | Rung 1 | Rung 2 | Rung 3 | Core (rung 4) |",
+              "|---|---|---|---|---|---|---|---|"]
+
+
 def card_profile(c, fp, bin_mhz):
     """One card's profile values and records: (memory_mts, [core MHz, core steps, peak], memory {...}, core {...})."""
     mem_passed = c["mem_passed"] or [0]
@@ -292,6 +481,7 @@ def build_profile(st):
         "greedy_tokens_per_check": 2 * cfg["greedy_n"],
         "memory_steps_mts": [] if fp else cfg["mem_steps"],
         "core_step_mhz": round(cfg["core_step_bins"] * bin_mhz, 2), "core_bin_mhz": bin_mhz,
+        "stock_peak_window_s": st.get("stock_peak_window_s"),
         "units": {"memory_mts": "NVML MemClk VF offset in MT/s; +800 is +10 % of the P106-090's 8,008 MT/s",
                   "core_mhz": "NVML GpcClk VF offset in MHz; the driver moves the core in whole steps of core_bin_mhz"},
         "rules": ["Offsets only go up, and only after a fresh boot: apply refuses a rig that has not rebooted since "
@@ -479,6 +669,8 @@ SCENARIO = {  # the simulated rig of --dry-run: R193's nine cards, nothing fails
     "server_s": 45, "greedy_s": 20, "mmvq_s": 8,
     "avail_mb": 1800,
     "faults": [],    # {"card": 4, "mem_min": 1200, "peak_min": 0, "check": "mmvq", "kind": ["wrong", "hang"]}
+    "cold_peaks": [],  # {"card": 8, "mhz": 13, "secs": 10}: a window that starts within secs of the run's first check
+                       # reads mhz higher, as R200's cool cards did in the first seconds of the first stock round
     "points": [],    # replay: {"card", "mem", "core", "greedy": {...}, "mmvq": {...}, "xid": [...], "peak": ...}
 }
 
@@ -500,6 +692,7 @@ class SimExec:
         self.xids = []          # (time, line)
         self.server_up = {}
         self.commands = []      # every command printed, for the tests
+        self.t_first = None     # when the run's first check started (cold_peaks)
 
     def _print(self, text):
         self.commands.append(text)
@@ -532,7 +725,9 @@ class SimExec:
         out = {}
         for g in cards:
             pt = self.point(g)
-            out[g] = [pt["peak"] if pt and pt.get("peak") else self.peak(g), int(4004 + self.off[g][0] / 2)]
+            cold = sum(c["mhz"] for c in self.s.get("cold_peaks", []) if c["card"] == g
+                       and self.t_first is not None and t0 <= self.t_first + c["secs"])
+            out[g] = [(pt["peak"] if pt and pt.get("peak") else self.peak(g)) + cold, int(4004 + self.off[g][0] / 2)]
         return out
 
     def point(self, g):
@@ -600,6 +795,8 @@ class SimExec:
             self.server_up[g] = self.t + self.s["server_s"]
             return SimProc(self, None, None)
         if k == "greedy":
+            if self.t_first is None:
+                self.t_first = self.t
             return self._greedy(op[1], op[2], op[3], op[4], out)
         if k == "mmvq":
             return self._mmvq(op[1], op[2], op[3], out)
@@ -1054,7 +1251,7 @@ class Climb:
         cfg = {k: getattr(self.a, k) for k in ("mem_steps", "core_bin_mhz", "core_step_bins", "core_peak_max",
                                                 "core_first_peak", "limit_factor", "limit_floor", "mmvq_args",
                                                 "mmvq_jobs", "greedy_n", "order", "server_args", "mem_cap",
-                                                "core_cap")}
+                                                "core_cap", "stock_peak_secs")}
         st = {"kind": kind, "started": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(self.x.now())),
               "boot": self.k.boot(), "driver": smi[self.a.cards[0]]["driver"],
               "check_model": os.path.basename(self.a.check_model), "check_model_bytes": size, "config": cfg,
@@ -1112,16 +1309,29 @@ class Climb:
         self.k.stop_server(g)
 
     def stock(self, cards):
-        """Two stock rounds: the reference hash (and the second must give the same: the check is deterministic), and
-        each card's check times, from which the limits come, and its stock peak clock."""
+        """Two stock rounds, and more while they have run less than --stock-peak-secs: the reference hash (every later
+        round must give the same: the check is deterministic), each card's check times in round 2, from which the
+        limits come, and its stock peak clock: the highest reading from the start of round 1 to the end of the last
+        round. Round 2 alone read a driver step low (R200: card 8 at 1,898 MHz on all five boots, where both rounds
+        read 1,911 and its soak peak at +231 MHz implies 1,911)."""
         def refuse(g, why):
             raise Refused(f"card {g} fails its check at stock: {why}")
+        t0 = self.x.now()
         self.k.log(f"stock: round 1 (each card's reference) on cards {cards}")
         r1 = self.k.run_round(cards, "stock", None, None, refuse)
-        t0 = self.x.now()
         self.k.log("stock: round 2 (the same result again, and the check times)")
         r2 = self.k.run_round(cards, "stock2", "stock", None, refuse)
-        peaks = self.x.peaks(os.path.join(self.a.work, "wd.csv"), cards, t0, self.x.now())
+        n = 2
+        while self.x.now() - t0 < self.a.stock_peak_secs and n < STOCK_ROUNDS_MAX:
+            n += 1
+            self.k.log(f"stock: round {n} (the same result again; the stock peak window has run "
+                       f"{self.x.now() - t0:.0f} s of --stock-peak-secs {self.a.stock_peak_secs:.0f})")
+            self.k.run_round(cards, f"stock{n}", "stock", None, refuse)
+        t1 = self.x.now()
+        self.k.st["stock_peak_window_s"] = round(t1 - t0)
+        peaks = self.x.peaks(os.path.join(self.a.work, "wd.csv"), cards, t0, t1)
+        self.k.log(f"stock: each card's stock peak is its highest reading in the {t1 - t0:.0f} s of the {n} stock "
+                   "rounds")
         hashes = set()
         for i, g in enumerate(cards):
             c = self.k.card(g)
@@ -1338,6 +1548,9 @@ class Climb:
         if self.k.any_set:
             self.k.log("every offset of every card is 0 now: reboot the rig before `climb.py apply` (offsets only go "
                        "up after a fresh boot)")
+        if not fp:
+            self.k.log(f"the soak ladder's rungs (file work, any machine): climb.py rungs {self.k.p('profile.json')} "
+                       "--failures EARLIER.json (the rig's failures before this climb, if any)")
         else:
             self.k.log("no offset was set in this run")
 
@@ -1468,16 +1681,31 @@ class FromProfile(Climb):
 
 # ---------------------------------------------------------------- apply
 
+def apply_cards(a, prof):
+    """apply's cards: --cards (CARDS) among the profile's if given, else every card in the profile."""
+    have = sorted(c["card"] for c in prof.get("cards") or [] if isinstance(c, dict) and isinstance(c.get("card"), int))
+    return [g for g in a.cards if g in have] if a.cards_given else have
+
+
+def check_apply(a):
+    """apply: the profile read and checked (read-only). Returns (profile, cards, plan) or raises Refused."""
+    prof = read_profile(a.profile)
+    cards = apply_cards(a, prof)
+    plan, bad = apply_plan(prof, cards, a.mem_cap, a.core_cap, a.core_bin_mhz)
+    if bad:
+        raise Refused(f"profile {a.profile}: " + "; ".join(bad))
+    return prof, cards, plan
+
+
 class Apply(Climb):
     def run(self, path):
+        self.a.profile = path
         try:
-            with open(path) as f:
-                prof = json.load(f)
-        except (OSError, ValueError) as e:
-            self.k.log(f"REFUSED: profile {path}: {e}")
+            prof, self.a.cards, plan = check_apply(self.a)
+        except Refused as e:
+            self.k.log(f"REFUSED: {e}")
             return 1
-        by_card = {c["card"]: c for c in prof["cards"]}
-        self.a.cards = [g for g in self.a.cards if g in by_card] if self.a.cards_given else sorted(by_card)
+        by_card = {c["card"]: c for c in prof["cards"] if isinstance(c, dict)}
         try:
             smi, size = self.preflight()
             for g in self.a.cards:
@@ -1508,12 +1736,17 @@ class Apply(Climb):
                 st["stop_reason"] = str(e)
                 return 1
             for g in self.a.cards:
-                want = by_card[g]
+                want = plan[g]   # the profile's offsets as they are: nothing here reads this boot's stock peak
                 why = self.k.set_offsets(g, mem=want["memory_mts"] or None, core=want["core_mhz"] or None)
                 c = self.k.card(g)
-                c["bins"] = want.get("core_steps", 0)
+                c["bins"] = want["core_steps"]
                 self.k.log(f"apply: card {g} set mem +{c['mem']} MT/s, core +{c['core']} MHz, read back "
-                           f"{'as set' if not why else why}")
+                           f"{'as set' if not why else why}" + (
+                               f" (the profile's offset, {c['bins']} steps; stock peak {c['stock_peak']} MHz on this "
+                               f"boot, {by_card[g].get('stock_peak_mhz')} MHz in the profile)" if c["core"] else ""))
+                if c["core"] > want["core_mhz"] or c["mem"] > want["memory_mts"]:
+                    raise GlobalStop(f"card {g}: mem +{c['mem']}, core +{c['core']} is above the profile's "
+                                     f"+{want['memory_mts']}, +{want['core_mhz']} (a bug in apply)")
                 if why:
                     raise GlobalStop(f"card {g}: {why}")
             for r in range(self.a.rounds):
@@ -1635,6 +1868,57 @@ def cmd_plan_from_profile(k):
     print("target_peak_mhz," + ",".join(f"card{g}_core_mhz" for g in climbers))
     for t, peak in Climb(k).core_targets(peaks):
         print(f"{peak}," + ",".join(str(core_offset(max(0, t - s), b)) for s in sb))
+    return 0
+
+
+def cmd_rungs(a):
+    """The ladder's rung profiles from a.profile and the known failures: file work only, nothing set or started."""
+    try:
+        prof = read_profile(a.profile)
+        cards = apply_cards(a, prof)
+        if a.cards_given:
+            prof["cards"] = [c for c in prof["cards"] if isinstance(c, dict) and c.get("card") in cards]
+        _, bad = apply_plan(prof, cards, a.mem_cap, a.core_cap, a.core_bin_mhz)
+        if bad:
+            raise Refused(f"profile {a.profile}: " + "; ".join(bad))
+        source = os.path.basename(a.profile)
+        fails = []
+        if a.failures:
+            try:
+                fails = read_failures(a.failures)
+            except (OSError, ValueError) as e:
+                raise Refused(f"failures {a.failures}: {e}")
+        try:
+            fails += profile_failures(prof, source)
+        except ValueError as e:
+            raise Refused(f"profile {a.profile}: its failures list: {e}")
+    except Refused as e:
+        print(f"REFUSED: {e}", file=sys.stderr)
+        return 1
+    rungs, rows = ladder_rungs(prof, fails, a.mem_step_mts, a.core_bin_mhz, a.core_step_bins, a.cap_steps, source)
+    out = a.out or os.path.dirname(os.path.abspath(a.profile))
+    paths = [os.path.join(out, f"{a.prefix}{k}.json") for k in range(1, len(rungs) + 1)]
+    choice = os.path.join(out, f"{a.prefix}s-choice.md")
+    there = [p for p in paths + [choice] if os.path.exists(p)]
+    if there and not a.overwrite:
+        print(f"REFUSED: {', '.join(there)} already there (--overwrite replaces them)", file=sys.stderr)
+        return 1
+    os.makedirs(out, exist_ok=True)
+    for p, r in zip(paths, rungs):
+        with open(p, "w") as f:
+            json.dump(r, f, indent=1)
+    with open(choice, "w") as f:
+        f.write(f"Rungs from {source}, by `climb.py rungs`" + (f", failures from {os.path.basename(a.failures)}"
+                                                               if a.failures else "") + ".\n\n")
+        f.write("\n".join(RUNG_TABLE + rows) + "\n")
+    print(f"rungs from {a.profile} and {len(rungs[0]['failures'])} known failures"
+          + (f" (with {a.failures})" if a.failures else " (the profile's own)") + "; card:MT/s/MHz")
+    for p, r in zip(paths, rungs):
+        print(f"  {os.path.basename(p)}: " + " ".join(f"{c['card']}:+{c['memory_mts']}/+{c['core_mhz']}"
+                                                     for c in r["cards"]))
+    print(f"  {os.path.basename(choice)}: each card's caps and why")
+    names = [os.path.basename(p) for p in paths]
+    print(f"soak_chain.sh: PROFILE={names[0]} LADDER=\"{' '.join(names[1:])}\"")
     return 0
 
 
@@ -1817,6 +2101,9 @@ def parse(argv=None):
                    help="start the core climb at this target peak instead of one step above the lowest stock peak")
     p.add_argument("--core-cap", type=int, default=int(env("CORE_CAP", "400")))
     p.add_argument("--stock-peaks", default=env("STOCK_PEAKS", ""), help="one per card (MHz); default: measured")
+    p.add_argument("--stock-peak-secs", type=float, default=float(env("STOCK_PEAK_SECS", "90")),
+                   help="the stock peak is each card's highest reading over the stock rounds, from the first on; "
+                        "more rounds run until they cover at least this many seconds")
     p.add_argument("--from-profile", default=env("FROM_PROFILE", ""), metavar="FILE",
                    help="climb: no memory climb; every card's memory straight to FILE's value (a climb's profile.json "
                         "or soak.py's soaked.json), one check round, then the core climb for the cards FILE gives no "
@@ -1846,6 +2133,18 @@ def parse(argv=None):
         s = sub.add_parser(name)
         s.add_argument("profile")
         s.add_argument("--rounds", type=int, default=1, help="greedy check rounds at the profile's offsets")
+    s = sub.add_parser("rungs", help="the soak ladder's rung profiles from a profile and the known failures")
+    s.add_argument("profile")
+    s.add_argument("--failures", default=env("FAILURES", ""),
+                   help="earlier failures, as soak.py --failures reads them (a use.json soak.py wrote works too)")
+    s.add_argument("--out", default="", help="folder for the rungs [the profile's]")
+    s.add_argument("--prefix", default="rung", help="file names PREFIX1.json ... and PREFIXs-choice.md [rung]")
+    s.add_argument("--overwrite", action="store_true", help="replace rung files already there")
+    s.add_argument("--mem-step-mts", type=int, default=int(env("MEM_STEP_MTS", "100")),
+                   help="one memory step of the rungs and of the cap (as soak.py's)")
+    s.add_argument("--cap-steps", type=int, default=2,
+                   help="the top rung stays this many steps under each failure [2, the use rule's; 1 gives R201's "
+                        "hand-made rungs]")
     a = p.parse_args(argv)
     a.cards_given = "CARDS" in os.environ or "--cards" in (argv if argv is not None else sys.argv)
     a.cards = ints(a.cards)
@@ -1869,6 +2168,8 @@ def parse(argv=None):
 
 def main(argv=None, x=None):
     a = parse(argv)
+    if a.cmd == "rungs":
+        return cmd_rungs(a)
     os.makedirs(a.work, exist_ok=True)
     if x is None:
         if a.dry_run:
@@ -1921,6 +2222,15 @@ def main(argv=None, x=None):
             check_from_profile(a)   # read-only, so that a bad profile is refused here, not only in the detached log
         except Refused as e:
             print(f"REFUSED: {e}", file=sys.stderr)
+            return 1
+    if a.cmd == "apply":
+        try:
+            check_apply(a)   # read-only: a bad profile is refused here, before any process, and APPLY_DONE says so
+        except Refused as e:
+            print(f"REFUSED: {e}", file=sys.stderr)
+            if not a.dry_run:
+                with open(os.path.join(a.work, "APPLY_DONE"), "w") as f:   # soak_chain.sh waits for it
+                    f.write("exit 1\n")
             return 1
     if a.cmd in ("climb", "apply") and not a.dry_run:
         return detach(a, a.cmd)
