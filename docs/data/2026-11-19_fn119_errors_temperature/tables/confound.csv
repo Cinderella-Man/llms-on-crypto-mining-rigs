@@ -1,0 +1,18 @@
+run,card,round,among,rounds,spearman_temp_vs_minutes,temp_sd
+try1,4,13,every soak,13,1.000,2.62
+try1,4,13,the same soak,13,1.000,2.62
+try2,2,11,every soak,24,0.987,2.42
+try2,2,11,the same soak,11,1.000,2.42
+try3,7,108,every soak,132,0.891,1.97
+try3,7,108,the same soak,108,0.801,1.46
+try4,7,25,every soak,25,0.999,2.30
+try4,7,25,the same soak,25,0.999,2.30
+r201,3,330,every soak,305,0.910,0.26
+r201,3,330,the same soak,305,0.910,0.26
+r201,3,384,every soak,305,0.910,0.26
+r201,3,384,the same soak,305,0.910,0.26
+r201,2,461,every soak,438,0.814,1.53
+r201,2,461,the same soak,305,0.895,0.14
+r201,6,467,every soak,462,0.788,1.62
+r201,6,467,the same soak,305,0.820,0.26
+every stratum of 20 or more rounds,,,every soak,12425,0.529,

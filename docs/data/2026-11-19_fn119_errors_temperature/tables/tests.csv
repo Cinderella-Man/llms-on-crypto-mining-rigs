@@ -1,0 +1,29 @@
+errors,among,measure,n_errors,mean_place,even,chance_2.5pct,chance_97.5pct,p_as_low_or_lower,p_as_high_or_higher
+all 8,"the card at that value, every soak","temperature, mean over the round",8,0.618,0.500,0.297,0.703,0.869,0.131
+all 8,"the card at that value, every soak","temperature, peak over the round",8,0.675,0.500,0.326,0.668,0.983,0.022
+all 8,"the card at that value, every soak","watts, mean over the round",8,0.526,0.500,0.296,0.702,0.598,0.402
+all 8,"the card at that value, every soak","core clock, mean over the round",8,0.514,0.500,0.299,0.697,0.550,0.450
+all 8,"the card at that value, every soak","all nine cards' temperature, mean over the round",8,0.642,0.500,0.297,0.704,0.911,0.089
+all 8,"the card at that value, every soak",minutes since the card's own change (FN118),8,0.689,0.500,0.296,0.704,0.965,0.035
+all 8,"the card at that value, every soak",minutes since any card's change (FN118),8,0.572,0.500,0.298,0.703,0.753,0.247
+all 8,"the card at that value, the same soak","temperature, mean over the round",8,0.564,0.500,0.294,0.706,0.727,0.273
+all 8,"the card at that value, the same soak","temperature, peak over the round",8,0.640,0.500,0.349,0.645,0.975,0.044
+all 8,"the card at that value, the same soak","watts, mean over the round",8,0.513,0.500,0.296,0.705,0.549,0.451
+all 8,"the card at that value, the same soak","core clock, mean over the round",8,0.523,0.500,0.299,0.699,0.585,0.415
+all 8,"the card at that value, the same soak","all nine cards' temperature, mean over the round",8,0.613,0.500,0.295,0.703,0.856,0.144
+all 8,"the card at that value, the same soak",minutes since the card's own change (FN118),8,0.675,0.500,0.294,0.705,0.951,0.049
+all 8,"the card at that value, the same soak",minutes since any card's change (FN118),8,0.601,0.500,0.295,0.705,0.827,0.173
+the 4 whose soak went on (R201),"the card at that value, every soak","temperature, mean over the round",4,0.322,0.500,0.220,0.779,0.113,0.887
+the 4 whose soak went on (R201),"the card at that value, every soak","temperature, peak over the round",4,0.550,0.500,0.287,0.675,0.820,0.516
+the 4 whose soak went on (R201),"the card at that value, every soak","watts, mean over the round",4,0.483,0.500,0.220,0.782,0.455,0.545
+the 4 whose soak went on (R201),"the card at that value, every soak","core clock, mean over the round",4,0.654,0.500,0.231,0.775,0.865,0.142
+the 4 whose soak went on (R201),"the card at that value, every soak","all nine cards' temperature, mean over the round",4,0.425,0.500,0.220,0.779,0.308,0.692
+the 4 whose soak went on (R201),"the card at that value, every soak",minutes since the card's own change (FN118),4,0.427,0.500,0.219,0.780,0.313,0.687
+the 4 whose soak went on (R201),"the card at that value, every soak",minutes since any card's change (FN118),4,0.194,0.500,0.219,0.782,0.016,0.984
+the 4 whose soak went on (R201),"the card at that value, the same soak","temperature, mean over the round",4,0.193,0.500,0.221,0.780,0.014,0.986
+the 4 whose soak went on (R201),"the card at that value, the same soak","temperature, peak over the round",4,0.467,0.500,0.467,0.592,0.744,0.983
+the 4 whose soak went on (R201),"the card at that value, the same soak","watts, mean over the round",4,0.480,0.500,0.219,0.781,0.448,0.553
+the 4 whose soak went on (R201),"the card at that value, the same soak","core clock, mean over the round",4,0.738,0.500,0.225,0.759,0.965,0.048
+the 4 whose soak went on (R201),"the card at that value, the same soak","all nine cards' temperature, mean over the round",4,0.345,0.500,0.220,0.780,0.148,0.853
+the 4 whose soak went on (R201),"the card at that value, the same soak",minutes since the card's own change (FN118),4,0.350,0.500,0.220,0.781,0.157,0.844
+the 4 whose soak went on (R201),"the card at that value, the same soak",minutes since any card's change (FN118),4,0.202,0.500,0.218,0.781,0.018,0.982

@@ -22,11 +22,11 @@ look rare only when a card's rounds are taken from one boot: both cards had alre
   is more than 1.88 times as likely to hold a wrong answer as a later round. For the last change of any card the
   95 % interval runs from 0.0776 to 11.1 times: a rig-wide effect of the size R201 suggested is neither shown nor
   ruled out.
-- **If anything the wrong answers came late.** On a scale where 0 is the first round after the card's own change and
-  1 its last round at that value, they sat at 0.689 on average, where an even spread gives 0.500; a place this late
-  or later comes by chance 3.5 % of the time. That was found while looking for the opposite, so it is a lead, not a
-  finding. One possible reason is heat: a card warms for some minutes after its check server starts, and a warmer card
-  may err more; that is a new desk check on the watchdog's samples ([Q1615](../../../quants/experiments.md), FN119).
+- **Their average place in time adds nothing.** On a scale where 0 is the first round after the card's own change and
+  1 its last round at that value, they sat at 0.689 on average, where an even spread gives 0.500, but R200's four
+  soaks stopped at their wrong answers, so each of those four is its soak's last round by design (places 1.000, 0.804,
+  1.000 and 1.000). The four in R201, whose soak went on, sat at 0.427. Nor did the wrong answers come when the cards
+  were warmer ([FN119](../2026-11-19_fn119_errors_temperature/README.md), [Q1615](../../../quants/experiments.md)).
 - **The clean soaks agree.** At values that never erred, 1,511 card-rounds fell within 20 rounds of one of 80 own
   changes (in R200's tries, [R201](../2026-11-18_r201_soak_ladder/README.md), R201's second boot and
   [R202b](../2026-11-18_r202b_core_soak/README.md)), and none differed: at those values a round right after a change
@@ -81,7 +81,9 @@ rounds it ran at that value. Three numbers come from that, each counted from the
 - **Rate ratio:** how many times as likely a wrong answer is in an early round as in a later one, the most likely
   value and its exact 95 % interval (every ratio under which the early count seen is not in either 2.5 % tail).
 - **Average place:** each wrong answer's place among its stratum's rounds ordered by minutes since the change (0 the
-  earliest, 1 the latest), averaged; its distribution from 100,000 random draws (seed 118). It needs no window.
+  earliest, 1 the latest), averaged; its distribution from 100,000 random draws (seed 118). It needs no window. A
+  soak that stopped at its wrong answer puts that answer at its soak's end, so R200's four answers move this statistic
+  by design.
 
 R200's tries stopped at their first wrong answer, so their strata end at an error, and drawing rounds evenly stands in
 for a fixed chance a round only approximately. The strata it touches most, R200 tries 1 and 2, are early in every
@@ -143,7 +145,8 @@ In minutes, all soaks together:
 
 Without R201's cards 2 and 6, the two that raised the question, the other six wrong answers give 2 early against 3.26
 (own change, 20 rounds) and 2 against 3.40 (any change, 20 rounds); in both the 2 are the R200 errors that could not
-have come later. Their average place is 0.692 and 0.751, as late or later by chance 5.9 % and 1.8 %.
+have come later. Their average place is 0.692 and 0.751, as late or later by chance 5.9 % and 1.8 %, both through
+R200's four.
 
 ### The values that erred ([tables/strata.csv](tables/strata.csv))
 
