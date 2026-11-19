@@ -15,7 +15,46 @@ the protocol of the note's section 5.2:
 
 The offset goes back to 0 at the end, on any failure and on Ctrl-C. Nothing persists across a reboot or driver reload.
 
-For a whole rig, use `climb.py` (next section): it finds every card's memory and core offsets in one sitting.
+For a whole rig, follow the five steps of the next section; `climb.py` (the section after it) does the climbs.
+
+## A rig's profile: the same five steps on every rig
+
+**In plain words.** Every rig gets its own profile, and every rig gets it the same way: five steps, each on a fresh
+boot, one kind of offset at a time, every offset only going up within a boot. Steps 1 and 3 are quick maps of where
+each card fails at once; steps 2 and 4 are long soaks that settle what holds; step 5 checks the result on the model
+the rig serves. A rig's limits come only from these steps, never from runs outside them. The second rig's profile
+came from steps 2 to 5 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/README.md),
+[R202](../../docs/data/2026-11-18_r202_core_climb_rig2/README.md),
+[R202b](../../docs/data/2026-11-18_r202b_core_soak/README.md),
+[R209](../../docs/data/2026-11-19_r209_oc_v5/README.md)), after a first climb of memory and core together
+([R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md)); the first rig's starts at step 1
+([R217](../../docs/data/2026-11-19_r217_climb_rig1/README.md)).
+
+| Step | What happens | How it runs | What it gives | Time |
+|---|---|---|---|---|
+| 1. Memory climb | every card's memory up together, +200 to +1,400 MT/s, the core at stock; every card checked at every step; a card that fails goes back to 0 and leaves | `CORE_PEAK_MAX=0 python3 climb.py climb` | `out/profile.json`: each card one step under its last clean memory step, core 0 | 12 min 45 s for nine cards (R217) |
+| 2. Memory soak ladder | three rungs of 30 minutes; each card starts two steps under its top value and goes up a rung while it stays clean; every card's differing checks are counted | `python3 climb.py rungs out/profile.json`, then `soak_chain.sh` with `PROFILE=rung1.json LADDER="rung2.json rung3.json" FAILURES=rung1.json` | `soak/use.json`: each card's memory | est. 2 h 30 min for nine cards, with the served model's checks |
+| 3. Core climb from the soaked memory | each card's memory straight to `use.json`'s value and one check round, then every card's core up by target peak clock | `python3 climb.py --from-profile soak/use.json climb` | `out/profile.json`: that memory, and each card's core one step under its last clean step | 11 min 55 s for six cards (R202) |
+| 4. Core soak ladder | the memory fixed at step 2's values; each card's core one climb step higher a rung, up to two steps under its core failure; three rungs of 30 minutes | rungs from step 2's `use.json` and step 3's `steps.csv` and profile by R202b's [make_rungs.py](../../docs/data/2026-11-18_r202b_core_soak/run/make_rungs.py), then `soak_chain.sh` with them | `soak/use.json`: the rig's profile | 90 minutes of soak for nine cards (R202b) |
+| 5. The profile on the served model | `apply` of step 4's `use.json`, then the served model on every card against its stock answer | R209's [apply_check.sh](../../docs/data/2026-11-19_r209_oc_v5/run/apply_check.sh), then the boot service ([below](#overclocked-at-every-boot-boot)) | the rig overclocked, at every boot once the owner enables it | `apply` 5 min 18 s for nine cards (R209), plus the model's check |
+
+The rules that make the steps repeatable:
+
+- **A fresh boot for every step.** Every step starts with every offset at 0 and none lowered since the boot, which the
+  kit's start check enforces: an offset that went down leaves its card about 8 % slow until the next boot
+  ([Q1563](../../quants/experiments.md)).
+- **One kind of offset at a time:** memory in steps 1 and 2, the core in steps 3 and 4, so a failure names the offset
+  that caused it. `climb.py climb` on its own also climbs the core, with each card's memory at its last clean step,
+  where memory errors begin; step 1 leaves that out with `CORE_PEAK_MAX=0` (no target peak lies under 0 MHz, so the
+  core climb has no step; `climb.py plan` lists none).
+- **Each step's failures go to the next, and only those:** the rung files and every `use.json` list the failures
+  they used, and step 4's `FAILURES` holds those of steps 1 to 3 in `soak.py --failures`' format (R202b's
+  [failures.json](../../docs/data/2026-11-18_r202b_core_soak/run/failures.json)).
+- **The setting keeps two steps under every failure:** each offset at the highest rung the card held clean, and at
+  least two steps (200 MT/s; four of the driver's core steps, about 51 MHz) under the lowest value at which that
+  offset failed on that card in these steps ([the rule](#holding-a-profile-soakpy-the-ladder-and-the-whole-memory-check)).
+- **A ladder in which a card differed still gives a `use.json`,** with that card at the highest value it held clean
+  (0 if none), and the next step starts from it.
 
 ## Every card in one sitting: `climb.py`
 
@@ -447,9 +486,9 @@ against 17.87 tok/s) and 2.26 instead of 2.36 with Flash-Next (30.69 against 27.
 ### First, a soaked profile for this rig
 
 Every card has its own limits, and so every rig needs its own profile; one rig's profile is never set on another.
-The profile comes from the steps above, on that rig: the climb (`climb.py climb`), the ladder (`climb.py rungs`, then
-`soak_chain.sh`), and for the core the climb from a profile and a core ladder. What the service sets is the ladder's
-`soak/use.json`: each card at the highest rung it held, and at least two steps under any value it ever failed at.
+The profile comes from the five steps of [A rig's profile](#a-rigs-profile-the-same-five-steps-on-every-rig), on that
+rig. What the service sets is step 4's `soak/use.json`: each card at the highest rung it held, and at least two steps
+under any value it ever failed at.
 The second rig's came from four runs: [R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md),
 [R201](../../docs/data/2026-11-18_r201_soak_ladder/README.md),
 [R202](../../docs/data/2026-11-18_r202_core_climb_rig2/README.md) and
