@@ -10,6 +10,19 @@ folder decides it for Ornith: four agent checks on one boot of the second rig, e
 alternating Ornith's v5 preset as it is (control) and the same plus text reuse, so the two settings share the boot, the
 clocks and the hour.
 
+**The class on two runs against two ([class.tsv](class.tsv), [below](#the-class-two-runs-against-two)): negligible on
+every measure, the work included, and slower on none.** Neither text-reuse run read an earlier reply again (0 and 0
+tokens a task), but control run b did not either, so the controls' own spread on re-reads (443 tokens a task, all of
+control run a's) is larger than the difference of the means (221.5). Prompt tokens read a task: 3,080 and 2,886 against
+3,407 and 3,008 (−224.5; the controls' spread 399). On time: 1.89 and 1.90 minutes a task at equal work against 1.87
+and 1.89; 19.41 and 19.01 tok/s generation against 19.12 and 19.50; the 19 requests every run read on the same prompt
+181.01 and 181.52 s against 179.73 and 181.42 s; a decode step at the runs' shared mix of contexts 51.35 and 51.28 ms
+against 51.33 and 51.29 ms. The switch did its work in both runs: the server logged it keeping cached tokens on 4 and
+5 later turns, 8,706 and 20,270 tokens that would otherwise have been read again (est.). Ornith spells a reply in other
+tokens than its tokenizer would on few turns, so two runs a side cannot show that removal beyond the controls' spread;
+on time the switch costs nothing measurable. Flint's and Flash-Next's v5 presets set it; Ornith's v5 preset
+([release/ornith-v5/settings.env](../../../release/ornith-v5/settings.env)) does not set it as of these runs.
+
 **Control run a (R17c, `o5t0a`, 2026-11-19 18:21–18:58): 12 of 12 tasks passed, 1.87 minutes a task at equal work,
 19.12 tok/s generation, and the server read two replies again: 5,321 tokens, 29.9 of the run's 370.4 seconds of
 prompt reading.** As context only, the same setting on the same rig on the morning's boot (R209e's `o5oc1`): 1.90
@@ -33,6 +46,16 @@ and lies between the two controls on those requests (190.52 s against 189.23 and
 controls' spread on every measure is in [the section below](#control-run-b-o5t0b-r17e-2026-11-19). No class before
 the fourth run.
 
+**Text reuse run b (R17f, `o5t1b`, 2026-11-19 20:32–21:18): 11 of 12 tasks passed, 1.90 minutes a task at equal work,
+19.01 tok/s generation, and no reply was read again: 0 tokens, 0.0 of 326.8 seconds of prompt reading.** The switch
+kept 1,297, 7,020 and 7,149 cached tokens on Python `list-ops` turns 3, 4 and 5 and 2,342 and 2,462 on `pig-latin`
+turns 4 and 5; turns 4 and 5 of `list-ops`, at 12,316 and 12,451 prompt tokens, read 30 and 36 new tokens and gave a
+first token after 1.42 and 1.46 s. Prompt tokens read: 2,886 a task, the fewest of the four runs. The task that failed,
+Python `scale-generator`, hit the 12-minute cap on its third turn while still writing one reply (10,192 tokens when
+the client stopped it); the switch acted on none of that task's turns, and Ornith has hit the cap on this task before
+without it ([2026-10-27](../2026-10-27_ornith/agent/v2/compare.md),
+[2026-11-05](../2026-11-05_release_regression/agent/ornith-ud-stock/compare.md)). At the shared mix of contexts a decode step took 51.28 ms, control run b's 51.29.
+
 ## The runs
 
 R17's Ornith arm runs the release check's coding-agent arm ([bench/agent_check](../../../bench/agent_check/README.md):
@@ -47,11 +70,11 @@ and one variable:
 | R17c, control a | `o5t0a` | none | done 18:21–18:58, 12/12 |
 | R17d, text reuse a | `o5t1a` | `LLAMA_SERVER_TEXT_REUSE=1` | done 19:07–19:40, 12/12 |
 | R17e, control b | `o5t0b` | none | done 19:50–20:22, 12/12 |
-| R17f, text reuse b | `o5t1b` | `LLAMA_SERVER_TEXT_REUSE=1` | to run |
+| R17f, text reuse b | `o5t1b` | `LLAMA_SERVER_TEXT_REUSE=1` | done 20:32–21:18, 11/12 |
 
-The class comes after the fourth run, two runs against two by
-[class_arms.py](../../../bench/agent_check/class_arms.py), as for Flint: a measure is a gain or a loss only where the
-difference of the two arms' means is beyond the larger of their spreads. Beside them, as context, R209e's `o5oc1`: the
+The class is two runs against two by [class_arms.py](../../../bench/agent_check/class_arms.py), as for Flint: a
+measure is a gain or a loss only where the difference of the two arms' means is beyond the larger of their spreads
+([the class](#the-class-two-runs-against-two)). Beside them, as context, R209e's `o5oc1`: the
 same rig, clock profile, engine, preset and started command on the morning's boot
 ([R209](../2026-11-19_r209_oc_v5/README.md#ornith-with-the-offsets-o5oc1-2026-11-19)).
 
@@ -219,13 +242,108 @@ a gain or a loss only where it is beyond the larger of the two settings' spreads
   peak memory the same as text reuse run a's, 22 18 22 18 18 18 18 14 14 MiB below control a's on cards 0 to 8, with
   a longest prompt of 7,160 tokens (control a 10,752).
 
+## Text reuse run b: `o5t1b` (R17f, 2026-11-19)
+
+The fourth run beside the other three. From this run on, [same_prompts.md](same_prompts.md) and
+[decode.md](decode.md) compare the five runs (with `o5oc1`) over what all of them share: 19 requests, and the same four
+context buckets weighted by the five runs' tokens. The sections above keep their own figures.
+
+| | R17c `o5t0a` (control a) | R17d `o5t1a` (text reuse a) | R17e `o5t0b` (control b) | **R17f `o5t1b` (text reuse b)** |
+|---|---|---|---|---|
+| passed | 12/12 | 12/12 | 12/12 | **11/12** (Python `scale-generator` at the 12-minute cap) |
+| minutes a task at equal work (`v3ka`'s work) | 1.87 | 1.89 | 1.89 | **1.90** |
+| generation tok/s, session | 19.12 | 19.41 | 19.50 | **19.01** |
+| ms a decode step at the five runs' shared mix of contexts; tok/s at it | 51.33; 19.48 | 51.35; 19.48 | 51.29; 19.50 | **51.28; 19.50** |
+| prompt tok/s, session | 110.4 | 102.5 | 100.9 | **106.0** |
+| the 19 requests read on the same prompt in all five runs, prompt s | 179.73 | 181.01 | 181.42 | **181.52** |
+| of them the 12 first turns, prompt s | 109.19 | 110.39 | 110.74 | **110.77** |
+| first token median; p90 s | 7.03; 10.60 | 6.13; 9.58 | 5.64; 9.62 | **6.94; 10.31** |
+| first token on a task's first turn, median s | 7.95 | 8.00 | 8.03 | **7.98** |
+| prompt tokens read (a task) | 40,888 (3,407) | 36,956 (3,080) | 36,100 (3,008) | **34,628 (2,886)** |
+| reply tokens re-read (turns; their prompt s of all prompt s) | 5,321 (2; 29.9 of 370.4) | 0 (0; 0.0 of 360.4) | 0 (0; 0.0 of 357.9) | **0 (0; 0.0 of 326.8)** |
+| turns where text reuse kept cached tokens; the tokens kept | | 4; 8,706 | | **5; 20,270** |
+| longest first-token wait s (task, turn) | 26.47 (Python `affine-cipher`, 1) | 26.70 (the same) | 26.96 (the same) | **26.89 (the same)** |
+| tokens generated (a task) | 20,554 (1,713) | 17,458 (1,455) | 16,209 (1,351) | **21,478 (1,790)**, and 10,192 in the capped reply |
+| minutes, all 12 tasks; turns | 24.5; 58 | 21.4; 64 | 20.3; 66 | **34.8; 55** |
+| tool calls / failed / malformed | 58 / 1 / 0 | 64 / 2 / 0 | 66 / 2 / 0 | **55 / 1 / 0** |
+| checkpoints restored / created / erased; full re-processing; graph reallocations | 13 / 0 / 0; 0; 0 in 58 | 11 / 0 / 0; 0; 0 in 64 | 11 / 0 / 0; 0; 0 in 66 | **11 / 0 / 0; 0; 0 in 54** |
+| busy SM clock medians, cards 0–8, MHz (mean) | 2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0) | 2113 2138 2138 2088 2100 2100 2151 2151 2126 (2,122.8) | 2113 2138 2138 2088 2100 2088 2151 2151 2113 (2,120.0) | **control b's on every card (2,120.0)** |
+| hottest card; highest power | 47 °C (card 0); 85.04 W (card 6) | 47 °C (card 0); 85.84 W (card 7) | 47 °C (card 0); 88.43 W (card 3) | **47 °C (card 0); 87.85 W (card 1)** |
+| watchdog trips; GPU Xid | 0; 0 | 0; 0 | 0; 0 | **0; 0** |
+| lowest MemAvailable MiB; swap MiB during the load | 1,233; 52 → 362 | 1,189; 53 → 363 | 1,225; 53 → 363 | **1,227; 53 → 363** |
+
+- **The switch's five turns** (`grep 'same text:' rig/server-o5t1b.log`): Python `list-ops` turns 3, 4 and 5 (ids
+  differ at token 5,266 each time; 1,297, 7,020 and 7,149 more tokens kept; 361, 30 and 36 new tokens read; first
+  token after 6.94, 1.42 and 1.46 s) and Python `pig-latin` turns 4 and 5 (at 3,749; 2,342 and 2,462 kept; 32 and 36
+  read; first token after 1.39 and 1.29 s). As in text reuse run a, the later turn of a pair meets the same point again:
+  the cache holds the model's own tokens for an earlier reply, and the agent sends that reply back as the same text in
+  other tokens. All later turns with a timed reply found the whole previous prompt and reply in the cache (median hit
+  94.8 %, [o5t1b_gonogo.md](o5t1b_gonogo.md)).
+- **The capped task:** Python `scale-generator`'s third turn gave its first token after 7.26 s and was still writing
+  one reply, 10,192 tokens at 17.01 tok/s with its context grown to 16,497 tokens, when the 12-minute cap stopped it
+  (720.25 s for the task). The switch kept no token on any of its three turns. The capped reply has no timings, so the
+  report's proxy-row check is NO-GO for it (3 rows, 2 replies) and the run's tables count 54 timed requests of 55. The
+  agent sends no seed, so each run writes different replies; this task took 157 s in control run b and Ornith has hit
+  the cap on it before (2026-10-27's `v2` and 2026-11-05's `ornith-ud-stock` runs, neither with the switch).
+- **Generation and the mix:** 19.01 tok/s over the session, the lowest of the four, because 5,697 of its 21,478 tokens
+  were decoded at 8,000 tokens of context and more (Python `list-ops`, to 12,451 tokens), against 4,770 of 20,554 in
+  control run a and none in text reuse run a or control run b; at the shared mix a decode step took 51.28 ms, control run b's 51.29 ([decode.md](decode.md)). The wall time of 34.8
+  minutes holds the capped task's 12.0 and `list-ops`' 8.6 (5,363 tokens in one reply); at equal work it is 1.90
+  minutes a task.
+- **Answers sound:** 11 tasks passed, also their hidden tests, test files untouched; 0 of 55 calls malformed, none
+  inside the reasoning; the one failed call (Python `affine-cipher`) is one the tool answered with an error. No NaN or
+  inf, no watchdog kill. The report's gates: GO except memory (the swap growth during the load, as always) and the proxy
+  rows (the capped reply).
+- **Heat and power** ([cards.md](cards.md)): above 80 W in 1 5 4 2 1 0 3 3 5 single samples on cards 0 to 8, the
+  highest 87.85 W on card 1; peak temperature control run b's on every card but card 7 (41 °C against 40). The clock
+  watchdog (70 °C, 80 W for 5 s) never tripped and the boot logged no GPU Xid. The busy SM clock median is control run
+  b's on every card ([clocks.tsv](clocks.tsv)).
+- **Host and cards** ([host.tsv](host.tsv)): lowest MemAvailable 1,227 MiB (21:01:18); each card's peak memory control
+  run a's to the MiB, with a longest prompt of 12,451 tokens.
+
+## The class: two runs against two
+
+`class_arms.py agent.tsv o5t1=o5t1a,o5t1b o5t0=o5t0a,o5t0b` ([class.tsv](class.tsv)). A measure is a gain or a loss
+only where the difference of the two settings' means is beyond the larger of their spreads (each setting's highest run
+minus its lowest); otherwise it is negligible. The last three rows are not in `class_arms.py`; they are the same rule
+applied to [same_prompts.md](same_prompts.md) and [decode.md](decode.md).
+
+| Measure | text reuse: R17d, R17f | control: R17c, R17e | Difference of the means (the larger spread) | Class |
+|---|---|---|---|---|
+| minutes a task at equal work | 1.89, 1.90 | 1.87, 1.89 | +0.015, +0.8 % (0.02) | negligible |
+| generation tok/s | 19.41, 19.01 | 19.12, 19.50 | −0.10, −0.5 % (0.40) | negligible |
+| prompt tok/s | 102.5, 106.0 | 110.4, 100.9 | −1.4, −1.3 % (9.5) | negligible |
+| first token median s | 6.13, 6.94 | 7.03, 5.64 | +0.20, +3.2 % (1.39) | negligible |
+| first token p90 s | 9.58, 10.31 | 10.60, 9.62 | −0.165, −1.6 % (0.98) | negligible |
+| first token on a task's first turn, median s | 8.00, 7.98 | 7.95, 8.03 | 0.00 (0.08) | negligible |
+| prompt tokens read a task | 3,080, 2,886 | 3,407, 3,008 | −224.5, −7.0 % (399) | negligible |
+| reply tokens re-read a task | 0, 0 | 443, 0 | −221.5, −100 % (443) | negligible |
+| prompt s of the turns that re-read a reply, a task | 0, 0 | 2.49, 0 | −1.245, −100 % (2.49) | negligible |
+| longest first-token wait s | 26.70, 26.89 | 26.47, 26.96 | +0.08, +0.3 % (0.49) | negligible |
+| the 19 same-prompt requests, prompt s | 181.01, 181.52 | 179.73, 181.42 | +0.69, +0.4 % (1.69) | negligible |
+| of them the 12 first turns, prompt s | 110.39, 110.77 | 109.19, 110.74 | +0.615, +0.6 % (1.55) | negligible |
+| ms a decode step at the shared mix | 51.35, 51.28 | 51.33, 51.29 | +0.005, +0.0 % (0.07) | negligible |
+
+- **No measure is slower beyond the spread,** so by the project's rule the switch is a negligible change that costs
+  nothing measurable, not a loss.
+- **On the work the rule cannot see the switch on two runs a side.** Ornith re-read a reply on 2 of control run a's 46
+  later turns and on none of control run b's 54, so the controls' own spread on re-reads is control run a's whole count.
+  The server's log shows what the switch removed in its own runs: on 4 and 5 later turns the new prompt left the
+  cache's tokens at a word the model had spelled in other tokens, and the switch kept 8,706 and 20,270 cached tokens
+  there. Without it those tokens would have been read again as prompt (est.; at control run a's rate for its re-reads,
+  5,321 tokens in 29.9 s, that is 49 s and 114 s of prompt reading, est.). Flint, whose replies re-read on far more
+  turns, showed the same removal as a gain ([R17a and R17b](../2026-11-17_r17_flint_textreuse/README.md#the-class-two-runs-against-two)).
+- **Prompt tokens read a task** fell in both text-reuse runs (3,080 and 2,886) below both controls' (3,407 and 3,008),
+  but the controls differ by 399 a task, more than the difference of the means (224.5).
+
 ## How it ran
 
 - **The rig:** the second rig, nine P106-090, booted at 14:04 and set to its soaked clock profile at 14:13 by the
   offset kit's `apply` ([R211](../2026-11-19_r209_oc_v5/README.md#the-profile-again-on-the-boot-of-1404)): memory
   +1,300 +1,000 +1,000 +1,100 +1,100 +1,200 +900 +900 +1,300 MT/s and core +256 +256 +269 +231 +206 +206 +282 +256 +231
   MHz on cards 0 to 8, the 75 W power limit, the kit's watchdog running. Before and after each run every card read back
-  at those values, no load process, 0 Xid, 0 step-downs. Nothing was set or reset for these runs.
+  at those values, no load process, 0 Xid, 0 step-downs. Nothing was set or reset during the four runs; after the
+  fourth, at 21:19, every offset was set to 0 and read back and the watchdog stopped, after 0 trips since 14:07.
 - **The build:** the v5 engine `602691153` (`pascal-p106-v5`, upstream b12483 merged), the rig's tarball
   `llama.cpp-20261117-602691153-pascal-p106-v5-cand-b12483` (`llama-server` md5 `86607661d5a19d1a90d19ee4db10c90b`,
   checked before and after).
@@ -245,7 +363,9 @@ a gain or a loss only where it is beyond the larger of the two settings' spreads
   after `GGML_CUDA_MMID_GLU_UNFUSE=2`, 575 bytes, nothing else changed (`cmp`). Text reuse run a started exactly that
   line (575 bytes, md5 `67aae3dba6542ab62ac9f096e24d3ae3`, `cmp` against the dry run), and its server logged
   `switches: 8 set`, the preset's seven and `LLAMA_SERVER_TEXT_REUSE=1`. Control run b started control run a's line
-  byte for byte (549 bytes, `cmp`) and logged control run a's `switches:` line (7 set).
+  byte for byte (549 bytes, `cmp`) and logged control run a's `switches:` line (7 set). Text reuse run b started text
+  reuse run a's line byte for byte (575 bytes, md5 `67aae3dba6542ab62ac9f096e24d3ae3`, `cmp`) and logged text reuse
+  run a's `switches:` line (8 set).
 - **The client** ran on the machine that drives the rig (`CLIENT=local`) in the sandbox image `agent-check:0.87.1` at
   `--cpu-shares 256`, with the bench files R209's runs used (the agent check as of C842, 2026-11-14; since then only
   comments changed in the client's code). Each run has its own client folder and container prefix
@@ -256,7 +376,8 @@ a gain or a loss only where it is beyond the larger of the two settings' spreads
   started at 19:07:54 and was up after 653 s; the client reached it at 19:18:49, the 12 tasks ran 19:18:49–19:40:25 and
   the logs went to the client at 19:40:43. Control run b's server started at 19:50:40 and was up after 660 s; the
   client reached it at 20:01:41, the 12 tasks ran 20:01:41–20:22:11 and the logs went to the client at 20:22:19.
-  Nothing else ran on the rig.
+  Text reuse run b's server started at 20:32:28 and was up after 662 s; the client reached it at 20:43:32, the 12
+  tasks ran 20:43:32–21:18:33 and the logs went to the client at 21:18:43. Nothing else ran on the rig.
 
 ## Commands
 
@@ -272,39 +393,46 @@ RIG=<rig alias> CLIENT=local ARM=o5t0a EXTRA_ENV= PREFIX=acr-r17c \
 # the report: the same with STEPS="report collect" OUT=<out>/agent
 # a text-reuse run: ARM=o5t1a EXTRA_ENV=LLAMA_SERVER_TEXT_REUSE=1, its own rig folder, client folder and PREFIX
 # control run b: ARM=o5t0b EXTRA_ENV= PREFIX=acr-r17e, its own rig folder and client folder
+# text reuse run b: ARM=o5t1b EXTRA_ENV=LLAMA_SERVER_TEXT_REUSE=1 PREFIX=acr-r17f, its own rig folder and client folder
 ```
 
 The tables, with Python 3 (no packages; a few seconds), in a folder holding `res/turns.csv` and `res/attempts.csv`
 with the rows of `v3ka` and `o5oc1` (R209's tables folder: `v3ka`'s rows as [R203](../2026-11-18_r203_ornith_offsets/README.md)
 published them, `o5oc1`'s = [R209's agent/o5oc1/](../2026-11-19_r209_oc_v5/agent/o5oc1/)) and each run's rows
-([agent/o5t0a/](agent/o5t0a/), [agent/o5t1a/](agent/o5t1a/), [agent/o5t0b/](agent/o5t0b/)), each run's server log as
+([agent/o5t0a/](agent/o5t0a/), [agent/o5t1a/](agent/o5t1a/), [agent/o5t0b/](agent/o5t0b/),
+[agent/o5t1b/](agent/o5t1b/)), each run's server log as
 `rig/server-<arm>.log`, and in `rig_<arm>/` its `meminfo.log`, `cards.csv` and `window` (`o5oc1`'s from R209's
 tables; from the driver's log, `o5t0a`'s window `2026-11-19 18:32:54|2026-11-19 18:57:39`, `o5t1a`'s
-`2026-11-19 19:18:49|2026-11-19 19:40:25` and `o5t0b`'s `2026-11-19 20:01:41|2026-11-19 20:22:11`):
+`2026-11-19 19:18:49|2026-11-19 19:40:25`, `o5t0b`'s `2026-11-19 20:01:41|2026-11-19 20:22:11` and `o5t1b`'s
+`2026-11-19 20:43:32|2026-11-19 21:18:33`):
 
 ```bash
-bash docs/data/2026-11-19_r17_ornith_textreuse/run/tables.sh <tables folder> o5t0a o5t1a o5t0b
+bash docs/data/2026-11-19_r17_ornith_textreuse/run/tables.sh <tables folder> o5t0a o5t1a o5t0b o5t1b
+python3 -I bench/agent_check/class_arms.py <tables folder>/agent.tsv o5t1=o5t1a,o5t1b o5t0=o5t0a,o5t0b > class.tsv
 ```
 
 The controls' spread in control run b's section is the difference between `o5t0a`'s and `o5t0b`'s rows of
-[agent.tsv](agent.tsv), [decode.md](decode.md) and [same_prompts.md](same_prompts.md), and its share of their mean.
+[agent.tsv](agent.tsv), [decode.md](decode.md) and [same_prompts.md](same_prompts.md), and its share of their mean. The
+last three rows of the class apply `class_arms.py`'s rule to the rows of [same_prompts.md](same_prompts.md) and
+[decode.md](decode.md) by hand.
 
-The server's text-reuse lines: `grep 'same text:' rig/server-o5t1a.log` (each names the token where the prompt's ids
+The server's text-reuse lines: `grep 'same text:' rig/server-o5t1a.log rig/server-o5t1b.log` (each names the token where the prompt's ids
 leave the cache's and how many more cached tokens it kept; the turn is the one whose prompt has that many tokens).
 
 ## Files
 
 | File | Content |
 |---|---|
-| [agent.tsv](agent.tsv) | per run (`v3ka`, `o5oc1`, `o5t0a`, `o5t1a`, `o5t0b`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes, minutes a task at equal work against `v3ka`, then the work: prompt tokens read a task, reply tokens re-read a task and their prompt s a task, the re-read turns, the longest first-token wait |
-| [work.md](work.md), [work.tsv](work.tsv) | `report.py work` on `o5oc1`, `o5t0a`, `o5t1a` and `o5t0b`: prompt tokens read, tokens generated, reply tokens re-read and their prompt seconds, the longest first-token wait; then every turn that read a reply again |
+| [class.tsv](class.tsv) | the class of text reuse (`o5t1a`, `o5t1b`) against the control (`o5t0a`, `o5t0b`) on each measure |
+| [agent.tsv](agent.tsv) | per run (`v3ka`, `o5oc1`, `o5t0a`, `o5t1a`, `o5t0b`, `o5t1b`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes, minutes a task at equal work against `v3ka`, then the work: prompt tokens read a task, reply tokens re-read a task and their prompt s a task, the re-read turns, the longest first-token wait |
+| [work.md](work.md), [work.tsv](work.tsv) | `report.py work` on `o5oc1`, `o5t0a`, `o5t1a`, `o5t0b` and `o5t1b`: prompt tokens read, tokens generated, reply tokens re-read and their prompt seconds, the longest first-token wait; then every turn that read a reply again |
 | [same_prompts.md](same_prompts.md) | the requests read on the same prompt in every run (task, turn, new tokens, cached tokens, each run's prompt ms); each run's generation over all its requests |
 | [decode.md](decode.md) | each run by the context at a request's middle (requests, tokens, decode s, tok/s, ms a token), and at their shared mix of contexts |
-| [reallocs.tsv](reallocs.tsv), [o5t0a_requests_reallocs.tsv](o5t0a_requests_reallocs.tsv), [o5t1a_requests_reallocs.tsv](o5t1a_requests_reallocs.tsv), [o5t0b_requests_reallocs.tsv](o5t0b_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size, and per request |
+| [reallocs.tsv](reallocs.tsv), [o5t0a_requests_reallocs.tsv](o5t0a_requests_reallocs.tsv), [o5t1a_requests_reallocs.tsv](o5t1a_requests_reallocs.tsv), [o5t0b_requests_reallocs.tsv](o5t0b_requests_reallocs.tsv), [o5t1b_requests_reallocs.tsv](o5t1b_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size, and per request |
 | [host.tsv](host.tsv) | the host's lowest MemAvailable, swap, and each card's peak memory |
 | [clocks.tsv](clocks.tsv), [cards.md](cards.md) | each card's busy SM clock median; its highest temperature and power, samples above 80 W and busy memory clock median, over each run's tasks |
-| [o5t0a_compare.md](o5t0a_compare.md), [o5t0a_report_table.md](o5t0a_report_table.md), [o5t0a_gonogo.md](o5t0a_gonogo.md); the same for `o5t1a` ([o5t1a_compare.md](o5t1a_compare.md), [o5t1a_report_table.md](o5t1a_report_table.md), [o5t1a_gonogo.md](o5t1a_gonogo.md)) and `o5t0b` ([o5t0b_compare.md](o5t0b_compare.md), [o5t0b_report_table.md](o5t0b_report_table.md), [o5t0b_gonogo.md](o5t0b_gonogo.md)) | the harness's report of each run: per task, per turn and the go/no-go |
-| [agent/o5t0a/](agent/o5t0a/), [agent/o5t1a/](agent/o5t1a/), [agent/o5t0b/](agent/o5t0b/) | per request (`turns.csv`) and per attempt (`attempts.csv`) rows of each run |
+| [o5t0a_compare.md](o5t0a_compare.md), [o5t0a_report_table.md](o5t0a_report_table.md), [o5t0a_gonogo.md](o5t0a_gonogo.md); the same for `o5t1a` ([o5t1a_compare.md](o5t1a_compare.md), [o5t1a_report_table.md](o5t1a_report_table.md), [o5t1a_gonogo.md](o5t1a_gonogo.md)) `o5t0b` ([o5t0b_compare.md](o5t0b_compare.md), [o5t0b_report_table.md](o5t0b_report_table.md), [o5t0b_gonogo.md](o5t0b_gonogo.md)) and `o5t1b` ([o5t1b_compare.md](o5t1b_compare.md), [o5t1b_report_table.md](o5t1b_report_table.md), [o5t1b_gonogo.md](o5t1b_gonogo.md)) | the harness's report of each run: per task, per turn and the go/no-go |
+| [agent/o5t0a/](agent/o5t0a/), [agent/o5t1a/](agent/o5t1a/), [agent/o5t0b/](agent/o5t0b/), [agent/o5t1b/](agent/o5t1b/) | per request (`turns.csv`) and per attempt (`attempts.csv`) rows of each run |
 | [run/ornith_switch.sh](run/ornith_switch.sh), [run/tables.sh](run/tables.sh) | the launcher of the four runs and the tables |
 
 ## Provenance and licence
