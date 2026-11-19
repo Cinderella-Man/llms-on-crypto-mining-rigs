@@ -1,0 +1,5 @@
+run	task	turn	reply_tokens	cached	client	reasoning_trimmed	non_ascii_chars	n_tool_calls	lcp_into_reply	lcp_err	grammar_from	where
+f5c1	bugfix-javascript-complex-numbers	34	200	30177	same	yes	1	1	139	15.2	95	in the tool call
+f5c1	bugfix-python-pig-latin	3	1291	3453	same	yes	37	1	266	2.4	1243	before the tool call
+f5c1	bugfix-python-pig-latin	7	128	6028	same	no	2	1	85	3.1	88	before the tool call
+f5c1	bugfix-python-pig-latin	8	187	6244	same	no	1	1	136	3.2	140	before the tool call
