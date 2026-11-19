@@ -433,6 +433,138 @@ python3 climb.py watchdog stop
 now with its memory at a value that holds. The core values it gives are the base of the next soak ladder (after a
 reboot, `apply` sets the memory with the cores a few steps lower, and the ladder raises the cores), not settings.
 
+## Overclocked at every boot: `boot/`
+
+**In plain words.** An offset lasts only until the next reboot, so a rig with a soaked profile runs overclocked only
+after someone runs `apply` on a fresh boot. The boot service does that at every boot. It checks that the cards are the
+ones the profile was made for, sets the profile with `apply`'s own per-card check, and keeps the watchdog running for
+as long as the offsets are set. If anything is off, every card stays at stock, or goes back to it. It is installed off
+and stays off until the owner turns it on for that rig, and a rig without its own soaked profile never gets it. On the
+second rig, the profile it sets made the coding agent take 1.90 minutes a task instead of 2.00 with Ornith (19.26
+against 17.87 tok/s) and 2.26 instead of 2.36 with Flash-Next (30.69 against 27.82 tok/s), with the same answers
+([R209](../../docs/data/2026-11-19_r209_oc_v5/README.md)).
+
+### First, a soaked profile for this rig
+
+Every card has its own limits, and so every rig needs its own profile; one rig's profile is never set on another.
+The profile comes from the steps above, on that rig: the climb (`climb.py climb`), the ladder (`climb.py rungs`, then
+`soak_chain.sh`), and for the core the climb from a profile and a core ladder. What the service sets is the ladder's
+`soak/use.json`: each card at the highest rung it held, and at least two steps under any value it ever failed at.
+The second rig's came from four runs: [R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md),
+[R201](../../docs/data/2026-11-18_r201_soak_ladder/README.md),
+[R202](../../docs/data/2026-11-18_r202_core_climb_rig2/README.md) and
+[R202b](../../docs/data/2026-11-18_r202b_core_soak/README.md), whose
+[use-profile.json](../../docs/data/2026-11-18_r202b_core_soak/use-profile.json) R209 set.
+
+### What it does at each boot
+
+1. **Waits** for the NVIDIA driver and the files the config names, at most `DRIVER_WAIT` (180 s).
+2. **Refuses, with no offset touched**, when: the config, the kit or the profile is missing or does not read; the
+   cards present are not the profile's (the same card numbers, and each card's PCI address, name and VBIOS as the
+   profile has them); with `GPU_SET_ID` set, the cards are not the set the config was made on (identical rigs share
+   PCI addresses, names and VBIOS: this catches a profile and config copied from another rig, and a changed card);
+   the driver is not `DRIVER` or the profile's; the model check is on and its files are missing; or the kit's
+   `start-check` fails (a load runs, a card's memory is in use, a power limit was changed, an offset is set, or an
+   offset went down since the boot).
+3. **Starts the watchdog**, then runs the kit's `apply` of the profile in the foreground (`climb.py run-apply`, which
+   is `apply` without detaching): each card set and read back, then each card's greedy check against its own stock
+   result. Nine cards took 5 min 18 s on the second rig (R209's run 3). `APPLY_LIMIT` (2,400 s) ends a hung apply.
+4. **Optional, off by default (`MODEL_CHECK=1`):** the served model's whole-memory check (`model_check.sh`): two
+   rounds on all cards with its release settings, each equal to the stock hash stored in `MODEL_REF`. R209's rig
+   runs used it as the gate. Ornith's load alone took 658 s there, so this adds about 12 minutes (est.) to the
+   boot's check.
+5. **Reads every offset back** against the profile.
+6. **Ready**: `overclocked: yes` in the state file, and the unit active. From then on the service is the unit's main
+   process: a watchdog trip, or the end of the watchdog, sets every card to 0 and ends the unit; a trip of one card
+   (an Xid that names it) leaves that card at 0, the others set, and says `overclocked: partly`. Stopping the unit
+   sets every card to 0 while the watchdog still holds them, then stops the watchdog.
+
+Any failure from step 3 on sets every offset of every card to 0, reads it back and stops the watchdog. Every command
+runs under a time limit, so a hung card cannot hang the service or the boot, and the boot does not wait for the
+service at all: the unit has no default dependencies, so the rest of the boot goes on while it checks. **Start
+nothing on the cards until the state file says `yes` or `no`:** `apply`'s check servers use every card.
+
+Each step goes to the journal and to `WORK/boot.log`; `WORK/out/climb.log` is `apply`'s own log. The state file,
+`/run/miner-llama/clocks.state`, is gone at every reboot, so it always tells about this boot:
+
+```
+overclocked: yes
+phase: overclocked
+reason: apply passed; the model check is off; the watchdog holds the cards
+time: 2026-11-19 09:31:02
+since: 2026-11-19 09:31:02
+boot: 3f2a9c41d0b7
+profile: /etc/miner-llama/clocks-profile.json
+profile_md5: …
+cards: 0:+1300/+256 1:+1000/+256 2:+1000/+269 …
+card_trips: 0
+model_check: off
+watchdog: running (pid 1234)
+work: /var/lib/miner-llama/clocks/work
+```
+
+`overclocked` is `yes`, `no`, `partly` (a card tripped) or `unknown` (a reset that did not read back 0: power the rig
+off at the console). Each start gets a fresh work folder; the previous ones are kept beside it, the last
+`KEEP_WORKS` (5). The watchdog's sample log is kept under `WD_LOG_MAX_MB` (64).
+
+### Install, turn on, check, turn off
+
+On the rig, as root, from a checkout of this repository or an unpacked kit tarball (which has `bin/mmvq_pascal`):
+
+```bash
+bash bench/mem_offset/boot/install.sh      # MMVQ_BIN=<kit>/bin/mmvq_pascal from a checkout; never enables anything
+python3 /opt/miner-llama/mem_offset/boot/clocks_at_boot.py gpu-set-id     # read-only: this rig's card-set id
+install -m 0644 <this rig's use.json> /etc/miner-llama/clocks-profile.json
+${EDITOR:-nano} /etc/miner-llama/clocks.env    # BIN, CHECK_MODEL, DRIVER and GPU_SET_ID at least
+```
+
+`install.sh` copies the kit's scripts to `/opt/miner-llama/mem_offset`, the unit to
+`/etc/systemd/system/miner-llama-clocks.service` and the example config to `/etc/miner-llama/clocks.env` (only if
+there is none), then runs `systemctl daemon-reload`. Machine paths live only in that config: `BIN` and `CHECK_MODEL`
+are the engine and check model the climb and soak used. Then, on a fresh boot:
+
+```bash
+systemctl start miner-llama-clocks         # once, now: returns when it is set (or has failed)
+cat /run/miner-llama/clocks.state          # or: python3 /opt/miner-llama/mem_offset/boot/clocks_at_boot.py status
+journalctl -u miner-llama-clocks -b        # every step of this boot
+systemctl enable miner-llama-clocks        # at every boot from now on
+```
+
+To turn it off: `systemctl disable miner-llama-clocks` (the next boots stay at stock); `systemctl stop
+miner-llama-clocks` sets every card to 0 now, and since an offset that went down leaves its card slower until the next
+boot, reboot before a timed run. In `/opt/miner-llama/mem_offset`,
+`WORK=/var/lib/miner-llama/clocks/work python3 climb.py state` shows every offset and sees the service's watchdog.
+After a new driver, the units need measuring again and the rig a new climb and soak (until then the service refuses
+the driver, since it is not `DRIVER`); after a new engine, model or settings, the model check needs a new stored hash.
+
+**The model check's stored hash**, once, at stock (the service not started in this boot), with the engine, model and
+settings the rig serves:
+
+```bash
+cd /opt/miner-llama/mem_offset && BIN=<engine>/bin MODEL=<served>.gguf SETTINGS=<release settings.env> \
+  OUT=/var/lib/miner-llama/model-ref TAG=stock ROUNDS=2 bash model_check.sh
+```
+
+then `MODEL_CHECK=1`, `MODEL`, `MODEL_BIN` and `SETTINGS` in the config. A stale hash fails safe: the check differs
+and every card goes back to stock.
+
+### Tests (any Linux machine, no GPU)
+
+```bash
+python3 -I bench/mem_offset/test/test_boot.py     # ~3 min
+```
+
+[test/test_boot.py](test/test_boot.py) runs the real `boot/clocks_at_boot.py` as the unit runs it (its own process, a
+stop signal, the notify socket), driving the real `climb.py` (`start-check`, `watchdog start` and `stop`,
+`run-apply`, `state`, `reset-all`), `greedy_check.py` and `model_check.sh` against a stand-in rig like
+`test_soak.py`'s; the only stand-in in `climb.py` itself is its root check. It checks the profile applied and held
+(READY, `yes` with the profile's md5, every card at its value, the watchdog's log kept small), the stop (every card
+0, the watchdog stopped), a second start in the same boot refused; a card whose check fails, a hung check past
+`APPLY_LIMIT` and a stop during `apply` (every card 0); thirteen refusals with no offset touched (among them another
+PCI address, VBIOS, driver or card set); a watchdog trip, the watchdog's end and one card's trip while held; the main
+process killed (`stop-post` resets); the model check passing and differing; `systemd-analyze verify` on the unit;
+`install.sh` into a test root from a checkout and from the tarball's layout, never enabling anything.
+
 ## What is in it
 
 | File | What it does |
@@ -450,6 +582,9 @@ reboot, `apply` sets the memory with the cores a few steps lower, and the ladder
 | `memoc_units.json` | NVML's memory offset unit, measured on a P106-090 with driver 580.178.04 (MT/s); measure it again with `nvml_memoc.py units` on another driver. |
 | `test/test_climb.py`, `test/make_replay_fixtures.py`, `test/fixtures/` | The climb's tests, and the replays of R193 and R194 from their recorded output. |
 | `test/test_soak.py`, `test/test_chain.sh` | The soak's, the ladder's and the chain's tests against a stand-in rig. |
+| `boot/clocks_at_boot.py`, `boot/miner-llama-clocks.service` | The boot service: the checks, the watchdog, `apply`, the optional model check and the reset, as the main process of a systemd unit (section above). |
+| `boot/install.sh`, `boot/clocks.env.example` | Installs the service on a rig, never enabled; the per-rig config, with every machine path. |
+| `test/test_boot.py` | The boot service's tests against a stand-in rig, the unit's `systemd-analyze verify` and the installer. |
 
 The tarball adds `bin/mmvq_pascal` ([bench/mmvq_pascal](../mmvq_pascal/README.md): streaming-read bandwidth, plus
 correctness checks and timing of the decode kernels) and `bin/cuda_memtest`
@@ -555,7 +690,9 @@ six cards. GPU0 holds the first layers of the six-card split, so its weights tak
 ## Safety notes
 
 - **What a reset clears.** Offset 0 restores stock at once, and any reboot or driver reload clears an offset. The
-  kit changes nothing persistent: no Xorg configuration, no files outside `/tmp/oc`, no service.
+  kit changes nothing persistent: no Xorg configuration, no files outside its work folders. The one exception is the
+  boot service, which `boot/install.sh` installs only when the owner runs it, and which stays off until the owner
+  enables it ([above](#overclocked-at-every-boot-boot)).
 - **A hung card** (Xid 79, or a CUDA process that never returns) needs a reboot, after which every card is at stock.
 - **Run on a quiet rig.** Nothing else should use the card under test. `memoc_steps.sh` refuses to start if a compute
   process is on it (`FORCE=1` overrides), and the soak uses cards 0–5.

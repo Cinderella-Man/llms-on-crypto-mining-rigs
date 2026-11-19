@@ -23,6 +23,10 @@ repository. All of them run on the rig as root unless noted.
 
 Steps 4 and 5 left two rigs with 34 and 39 GB free on the SSD. The only warning step 9 gave was a slow USB stick.
 
+**Later, optional: overclocked at every boot.** Once a rig has its own soaked clock-offset profile, a boot service sets
+it at every boot with its checks and the watchdog, off until you enable it for that rig
+([how](../bench/mem_offset/README.md#overclocked-at-every-boot-boot)).
+
 ## What the hardware dictates
 
 | Constraint | Consequence |

@@ -53,8 +53,12 @@ docker run --rm ${DOCKER_ARGS:-} -e JOBS="${JOBS:-8}" -v "$work:/w" -w /w "$IMAG
 '
 
 cp "$here/nvml_memoc.py" "$here/memoc_steps.sh" "$here/exact_check.sh" "$here/README.md" "$here/climb.py" \
-    "$here/greedy_check.py" "$here/memoc_units.json" "$here/../../scripts/nvml_watchdog.py" "$work/kit/"
-(cd "$work/kit" && md5sum bin/* *.py *.sh *.json > MD5SUMS)
+    "$here/greedy_check.py" "$here/memoc_units.json" "$here/model_check.sh" "$here/../../scripts/nvml_watchdog.py" \
+    "$work/kit/"
+mkdir -p "$work/kit/boot"   # the boot-time service (README, "Overclocked at every boot"): boot/install.sh
+cp "$here/boot/clocks_at_boot.py" "$here/boot/install.sh" "$here/boot/miner-llama-clocks.service" \
+    "$here/boot/clocks.env.example" "$work/kit/boot/"
+(cd "$work/kit" && md5sum bin/* *.py *.sh *.json boot/* > MD5SUMS)
 name=mem_offset-kit-$(date +%Y%m%d)
 rm -rf "$work/$name" && cp -r "$work/kit" "$work/$name"
 tar czf "$work/$name.tar.gz" -C "$work" "$name"

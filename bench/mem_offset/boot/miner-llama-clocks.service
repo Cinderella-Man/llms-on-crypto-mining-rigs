@@ -1,0 +1,34 @@
+# miner-llama-clocks.service: a rig's soaked clock-offset profile set at boot, checked, and held while the kit's
+# watchdog runs (bench/mem_offset/README.md, "Overclocked at every boot"). boot/install.sh puts it in
+# /etc/systemd/system and never enables it: `systemctl enable miner-llama-clocks` turns it on for the next boots.
+# The rig's settings are in /etc/miner-llama/clocks.env; the state is in /run/miner-llama/clocks.state.
+
+[Unit]
+Description=Miner Llama clock offsets: the rig's soaked profile, checked, with the watchdog
+Documentation=https://github.com/Cinderella-Man/llms-on-crypto-mining-rigs/blob/main/bench/mem_offset/README.md
+# Off the boot's critical path: with no default dependencies multi-user.target does not wait for the minutes the
+# check takes, so a slow or hung card cannot hold the boot. The ordering is the default one plus the driver.
+DefaultDependencies=no
+After=basic.target systemd-modules-load.service nvidia-persistenced.service
+Conflicts=shutdown.target
+Before=shutdown.target
+
+[Service]
+# Ready (active) only once apply, the optional model check and the read-back have passed: "activating" means it is
+# still checking; a refusal or a failure ends it as failed with every card at 0.
+Type=notify
+NotifyAccess=main
+ExecStart=/usr/bin/python3 -I /opt/miner-llama/mem_offset/boot/clocks_at_boot.py --config /etc/miner-llama/clocks.env start
+# Only if the main process ended without its own reset (killed, or a bug): every card to 0, the watchdog stopped.
+ExecStopPost=/usr/bin/python3 -I /opt/miner-llama/mem_offset/boot/clocks_at_boot.py --config /etc/miner-llama/clocks.env stop-post
+# The stop signal goes to the main process alone: it sets every card to 0 while the watchdog still holds the cards,
+# then stops the watchdog. Whatever is left afterwards (a check server of a stopped apply) is killed.
+KillMode=mixed
+# The wrapper extends this before each long step (EXTEND_TIMEOUT_USEC) by that step's own limit in the config.
+TimeoutStartSec=600
+TimeoutStopSec=420
+# Never again in the same boot: an offset that went down stays slow until the next boot, and apply refuses then.
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
