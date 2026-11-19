@@ -16,7 +16,7 @@ Each value is one load. Two values in a cell are the arm's two loads, in run ord
 
 ## Result in plain words
 
-- **The switches make a pass of 2 or 3 tokens about 3.5 % cheaper, and a pass of 4 tokens about 3.7 % dearer.**
+- **The switches make a pass of 2 or 3 tokens 3.47 % and 3.68 % cheaper, and a pass of 4 tokens 3.68 % dearer, at depth 0.**
   The verify pass costs 82.98 and 83.08 GPU ms at 2 tokens, against 85.99 and 86.02 without the switches (−3.47 %).
   At 3 tokens it is 107.36 and 107.42 against 111.50 and 111.49 (−3.68 %). At 4 tokens it is 137.82 and 137.67
   against 132.89 and 132.82 (+3.68 %). Each arm's two loads sit within 0.15 ms of each other, so these are a gain at
