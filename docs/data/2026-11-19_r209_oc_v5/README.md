@@ -22,6 +22,13 @@ at stock with v4.0's engine a day earlier ([R203c](../2026-11-18_r203_ornith_off
 a decode step at the same context took as long (this run +0.35 %, +0.08 % and −0.66 % in the three context buckets);
 the v5 engine's gain is Ornith's own switch, which Flash-Next's preset does not use.
 
+**Run 3, the kit's `apply` of the full profile with Ornith's whole-memory check: passed.** Every card was set to the
+profile, read back as set, and gave its stock answer on its own. Then Ornith, served on all nine cards with the
+offsets for 30 minutes, gave exactly the stock answer in all 58 rounds and generated 8.04 % faster on both of the
+check's prompts (18.00 against 16.66 tok/s, the same tokens). The hottest card reached 39 °C, the watchdog never
+tripped, and the boot logged no GPU error. This single-request number is a diagnostic; the verdict of the row is the
+agent checks with the offsets that follow on the same boot.
+
 Registry row Q1603 in [quants/experiments.md](../../../quants/experiments.md). The verdict of the row comes after the
 offset runs.
 
@@ -203,9 +210,99 @@ and generation speeds.
 - **No class:** this run is the stock reference of R209's Flash-Next comparison, `f5oc1` against `f5oc0` on this
   boot. The differences to `fnoc0` and `v4rc2` mix the engine with the day or the rig.
 
-## The full profile's `apply` and Ornith's whole-memory check
+## The full profile's `apply` and Ornith's whole-memory check (2026-11-19)
 
-Run 3 of the row; not run yet.
+**In plain words.** Run 3 set the full clock profile on all nine cards and checked it on the model the rig serves.
+First Ornith answered the kit's two fixed prompts twice at stock, the reference. Then the kit set each card's memory
+and core offset, read each one back and checked every card on its own with a small model. Then Ornith answered the
+same two prompts again and again for 30 minutes with the offsets set. All 58 rounds gave exactly the stock answer,
+token for token, and generated 8.04 % faster on both prompts: 18.00 tok/s against 16.66. No card went above 39 °C, the
+watchdog never tripped, and the boot logged no GPU error. The offsets stay set for runs 4 and 5.
+
+[run/apply_check.sh](run/apply_check.sh) ran it on the rig, detached, in the kit's folder: `soak_chain.sh`'s steps 1,
+2 and 4 without the soak, since the profile held its soak in [R202b](../2026-11-18_r202b_core_soak/README.md).
+
+1. **The start check** at 11:00:44 (every offset 0, P8, 0 MiB, no load process, no GPU Xid, no step-down this boot,
+   3,143 MiB of host memory available a minute before).
+2. **Ornith at stock** with the v5 engine and Ornith's v5 preset ([release/ornith-v5](../../../release/ornith-v5/settings.env),
+   copied into the kit, md5 `bc73c0439a83f0556f88a2dfc7ea9292`), the kit's `model_check.sh` with `ROUNDS=2 MINUTES=0`:
+   loaded in 658 s, two rounds 11:11:50–11:13:07. Each round is the kit's greedy check, two prompts of 256 tokens at
+   temperature 0 with every token's top-10 probabilities hashed.
+3. **The start check again, the watchdog** (11:13:10: every 0.5 s, a card trips above 70 °C or above 80 W held for
+   5 s, and on its own Xid) **and `apply`** of R202b's [use-profile.json](../2026-11-18_r202b_core_soak/use-profile.json)
+   (md5 `b32956cd064d8b449bdd6ac2b8a6d4f7` in the kit folder), 11:13:17–11:18:35: a check server on every card with the
+   kit's check model ([R200](../2026-11-17_r200_climb_rig2/README.md)'s, about 2 GB of each card) on the kit's engine
+   (v4.0's build, the same for every round of the step), two stock rounds, every card's offsets set 11:17:36–11:17:43
+   and each read back as set, then one round with the offsets: every card PASS at 11:18:28.
+4. **Ornith with the offsets**, the same engine, preset and output folder as step 2: loaded in 663 s, then 58 rounds
+   in 30 minutes, 11:29:43–12:00:12, each compared with stock's round 1. The two checks started the same server
+   command, and both servers' `switches:` lines are the v5 preset's (7 set, 889 names read).
+
+**Ornith's whole-memory check** ([model_check.md](model_check.md); every round in
+[model_rounds.tsv](model_rounds.tsv)):
+
+| | stock | with the offsets | change |
+|---|---|---|---|
+| load, s | 658 | 663 | |
+| host memory available when loaded, MiB | 1,496 | 1,492 | |
+| rounds; the same hash as stock's round 1 | 2; 1 (round 1 is the reference) | 58; 58 | |
+| hash | `adf47784f9b02d4b` | `adf47784f9b02d4b` in every round | |
+| generation tok/s in round 1 (prompts 1, 2) | 15.27, 16.15 | 16.42, 17.44 | +7.53 %, +7.99 % |
+| generation tok/s in round 2 (prompts 1, 2) | 16.66, 16.66 | 18.02, 18.01 | +8.16 %, +8.10 % |
+| generation tok/s, median of rounds 2 on (prompts 1, 2) | 16.66, 16.66 (round 2) | 18.00, 18.00 (57 rounds) | **+8.04 %, +8.04 %** |
+| prompt processing tok/s in round 2 (prompts 1, 2) | 26.95, 29.43 | 29.09, 31.84 | +7.94 %, +8.19 % |
+| prompt processing tok/s, median of rounds 2 on (prompts 1, 2) | 26.95, 29.43 (round 2) | 29.05, 32.06 (57 rounds) | +7.79 %, +8.94 % |
+
+- **Round 1 is each load's first request** and runs slower in both checks; prompt 1's prompt processing in round 1
+  read 13.05 tok/s at stock and 12.05 with the offsets. From round 2 on the check barely moves: with the offsets the
+  57 rounds read 17.99 tok/s at the lowest and 18.02 at the highest on prompt 1, 17.99 and 18.01 on prompt 2, so
+  stock's one round after the warm-up is the reference.
+- **Both loads used the same memory:** 5,603 5,635 5,549 5,635 5,243 5,351 5,513 5,601 5,009 MiB on cards 0 to 8.
+- The hash is the one R200 and R201 recorded with v4.0's engine and preset
+  ([R201](../2026-11-18_r201_soak_ladder/README.md)): the v5 engine with Ornith's v5 preset answers these two prompts
+  as v4.0 did.
+- As context only (another boot, profile, engine and preset): R201b's single-request check of the three-card use
+  profile on v4.0's engine gave +4.42 % (16.29 against 15.60 tok/s, medians of all rounds); the first look at this
+  profile in Ornith's agent check, R203e on v4.0's engine, gave +8.95 % generation against a stock run on an earlier
+  boot.
+
+**`apply`, card by card** ([apply.md](apply.md); the kit's own table [o5_apply_steps.csv](o5_apply_steps.csv) with
+both stock rounds' times and limits):
+
+| card | memory MT/s | core MHz | streaming read at stock, GB/s | with the offsets | change | peak core MHz at stock | with the offsets | greedy check | verdict |
+|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | +1,300 | +256 | 179.11 | 206.96 | +15.55 % | 1,873 | 2,126 | same as stock | PASS |
+| 1 | +1,000 | +256 | 179.21 | 199.44 | +11.29 % | 1,898 | 2,164 | same as stock | PASS |
+| 2 | +1,000 | +269 | 179.11 | 199.52 | +11.40 % | 1,885 | 2,151 | same as stock | PASS |
+| 3 | +1,100 | +231 | 179.18 | 201.98 | +12.72 % | 1,873 | 2,100 | same as stock | PASS |
+| 4 | +1,100 | +206 | 179.27 | 201.96 | +12.66 % | 1,911 | 2,113 | same as stock | PASS |
+| 5 | +1,200 | +206 | 179.12 | 204.62 | +14.24 % | 1,898 | 2,100 | same as stock | PASS |
+| 6 | +900 | +282 | 179.27 | 197.34 | +10.08 % | 1,885 | 2,164 | same as stock | PASS |
+| 7 | +900 | +256 | 179.24 | 197.49 | +10.18 % | 1,898 | 2,151 | same as stock | PASS |
+| 8 | +1,300 | +231 | 179.29 | 207.41 | +15.68 % | 1,911 | 2,126 | same as stock | PASS |
+
+Every card's offsets are the profile's, read back as set; every card's check model gave its stock hash
+(`60ee0f178cfd67d5` on all nine) and passed the 31 kernel checks with the offsets. As context, the same `apply` of the
+same profile on the boot of 2026-11-18 20:47 ([R203e](../2026-11-18_r203_ornith_offsets/README.md#the-full-profile-first-look-o4oc2-2026-11-18))
+also passed on every card; its peaks with the offsets were the same on cards 0, 2, 3, 4, 5 and 7, one driver step
+lower on cards 1 and 6 (2,151 MHz) and one higher on card 8 (2,138 MHz).
+
+**Heat, power and clocks** ([model_cards.md](model_cards.md), the watchdog's 3,658 samples a card over the 30 minutes
+with the offsets; the watchdog started after the stock check, so there are no stock samples):
+
+| card | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| highest °C | 39 | 36 | 33 | 31 | 36 | 32 | 39 | 34 | 34 |
+| highest W | 77.82 | 83.53 | 81.77 | 82.29 | 78.66 | 77.99 | 78.78 | 80.30 | 80.46 |
+| samples above 80 W | 0 | 8 | 4 | 4 | 0 | 0 | 0 | 2 | 2 |
+| SM clock median, MHz | 2,113 | 2,151 | 2,151 | 2,100 | 2,113 | 2,100 | 2,164 | 2,151 | 2,126 |
+| memory clock median, MHz | 4,657 | 4,498 | 4,498 | 4,551 | 4,551 | 4,608 | 4,455 | 4,455 | 4,657 |
+
+The hottest cards were cards 0 and 6 at 39 °C. Power went above 80 W only in single samples, never for the 5 s that
+trip the watchdog; the highest was 83.53 W on card 1. No sample tripped, and the boot logged no GPU Xid.
+
+**The rig at the end** (12:00:16, the kit's `state`): every card at its profile value, P0, no load process, the
+watchdog running, 0 GPU Xid, 0 step-downs, 3,121 MiB of host memory available. Runs 4 and 5 start from this state.
 
 ## Flash-Next with the offsets: `f5oc1`
 
@@ -243,6 +340,11 @@ identical prompts are the like-for-like measures.
 | [f5oc0_compare.md](f5oc0_compare.md), [f5oc0_report_table.md](f5oc0_report_table.md), [f5oc0_gonogo.md](f5oc0_gonogo.md) | the agent check's report on `f5oc0`, under the harness's arm name `v4r` |
 | [agent/f5oc0/](agent/f5oc0/) | `turns.csv` and `attempts.csv` of `f5oc0` (the harness's arm `v4r` renamed) |
 | [run/flash_tables.sh](run/flash_tables.sh) | Flash-Next's tables, from a folder holding the server, card and host logs it lists |
+| [model_check.md](model_check.md), [model_rounds.tsv](model_rounds.tsv) | run 3's whole-memory check: stock against the offsets (loads, hashes, generation and prompt tok/s in rounds 1 and 2 and the median of rounds 2 on), and every round of both checks (hash, compared with stock's round 1, tok/s of both prompts) |
+| [apply.md](apply.md), [o5_apply_steps.csv](o5_apply_steps.csv) | run 3's `apply`, card by card (the offsets, the streaming read and peak core clock at stock and with the offsets, the greedy check), and the kit's own table (both stock rounds' times and limits, the round with the offsets) |
+| [model_cards.md](model_cards.md) | each card's highest temperature and power, samples above 80 W, SM and memory clock medians and the offsets the watchdog read, over the 30 minutes with the offsets |
+| [run/apply_check.sh](run/apply_check.sh) | run 3 on the rig: the start check, the whole-memory check at stock, the watchdog, `apply`, the whole-memory check with the offsets; on any failure every offset back to 0 |
+| [run/model_rounds.py](run/model_rounds.py) | `model_rounds.tsv`, `model_check.md` and `model_cards.md` from `model_check.sh`'s log and the watchdog's samples |
 
 ## Commands
 
@@ -301,6 +403,32 @@ bash docs/data/2026-11-19_r209_oc_v5/run/flash_tables.sh <Flash-Next tables fold
 
 Flash-Next with the offsets runs the same command with its own rig and client folders (`r209d`), after the kit's
 `apply`; then `run/flash_tables.sh <Flash-Next tables folder> f5oc0 f5oc1`.
+
+Run 3, on the rig as root, with the kit's start check passing (after runs 1 and 2 on this boot every offset was still
+0 and no step-down was in the ledger); about 60 minutes (two ~11-minute loads, `apply` 5 minutes, 30 minutes with the
+offsets):
+
+```bash
+# in the kit's folder: Ornith's v5 preset and R202b's use profile beside the kit
+cp release/ornith-v5/settings.env $KIT/ornith-v5.env           # md5 bc73c0439a83f0556f88a2dfc7ea9292
+cp docs/data/2026-11-18_r202b_core_soak/use-profile.json $KIT/r202b-use.json   # md5 b32956cd064d8b449bdd6ac2b8a6d4f7
+cp docs/data/2026-11-19_r209_oc_v5/run/apply_check.sh $KIT/
+KIT=$KIT BIN=<the v5 tree>/bin MODEL=$MODELS/Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf \
+  SETTINGS=$KIT/ornith-v5.env PROFILE=$KIT/r202b-use.json WORK=<work folder> OUT=<model check folder> \
+  setsid -f nohup bash $KIT/apply_check.sh > <console> 2>&1 < /dev/null
+cat <work folder>/R209C_DONE      # "done 0": passed, the offsets set and the watchdog running
+
+# the tables, from the two folders copied off the rig
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py rounds <model check folder>/model.log > model_rounds.tsv
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py summary <model check folder>/model.log > model_check.md
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py cards <model check folder>/model.log <work folder>/wd.csv > model_cards.md
+cp <work folder>/out/apply_steps.csv o5_apply_steps.csv
+python3 -I docs/data/2026-11-18_r203_ornith_offsets/run/flash_cards.py apply o5_apply_steps.csv > apply.md
+```
+
+The kit's `env.sh` (R200's, [run/env.sh](../2026-11-17_r200_climb_rig2/run/env.sh) with v4.0's build as its engine)
+gives `apply` its check model and memory steps; `apply_check.sh` sets the work folder after it and passes the v5
+tree only to `model_check.sh`. The run's script was this one with the machine's paths written in.
 
 ## Provenance and licence
 
