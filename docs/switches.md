@@ -82,6 +82,17 @@ a P106 ([docs/data/2026-11-17_c854b_upstream_newest/](data/2026-11-17_c854b_upst
 Each model has a preset per release, `release/<model>-<version>/settings.env`: the switches (`PRESET_ENV`) and the
 command line (`PRESET_ARGS`) its agent check ran with. A switch no preset names stays at its default.
 
+### v5 (in progress)
+
+A v5 preset is the model's v4.0 preset plus the switches below, measured on the v5 engine. A model with no v5 preset yet
+runs its v4 preset; a dash means the preset does not set the switch.
+
+| Switch | [Flash-Next](../release/flash-next-v5/settings.env) | Flint | [Ornith-1.5-122B](../release/ornith-v5/settings.env) |
+|---|---|---|---|
+| `LLAMA_SERVER_TEXT_REUSE` | `1` (no earlier reply read again in two agent runs, where the two plain runs did on 4 and 2 turns; time neutral; [data](data/2026-11-19_r208_r210_flash_switches/README.md)) | — (no v5 preset yet; R17 classed it the same on Flint) | — |
+| `GGML_CUDA_MMID_GLU_UNFUSE` | — (a loss: a step 2.3 % longer at depth 0, the same replies; [data](data/2026-11-19_r205_flash_glu/README.md)) | — (not measured yet) | `2` (a decode step 6.3 % shorter on the agent check; [data](data/2026-11-18_r204_ornith_glu_agent/README.md)) |
+| `GGML_CUDA_MMQ_KQ_FP32SCALE` | — (negligible: 0.93 % on matched prompts, inside the controls' 0.95 %; [data](data/2026-11-19_r208_r210_flash_switches/README.md)) | — | — |
+
 ### v4.0
 
 A v4 preset is the model's v3.0 preset plus the switches and flags below; a dash means the preset does not set it.
