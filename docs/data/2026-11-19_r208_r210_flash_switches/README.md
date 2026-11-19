@@ -4,11 +4,12 @@ Registry rows [Q1602](../../../quants/experiments.md) (R208, the K-quant prompt 
 [Q1604](../../../quants/experiments.md) (R210, text reuse). Both switches are already in the v5 engine; this folder
 decides, on the coding-agent check, whether either goes into Flash-Next's v5 preset.
 
-**Run 1 of 6 done: the control ran as the same preset did the day before.** On the v4.0 preset and the v5 engine, 11
-of 12 tasks passed (JavaScript `complex-numbers` ran to the 12-minute cap again), a task at equal work took 2.42
-minutes against 2.40 the day before on the same rig, and the model generated at 26.98 tok/s against 27.00. The server
-read a previous reply again on 4 turns (23.6 s of prompt time), against 7 turns (51.6 s). The two switches are judged
-after all six runs, against this run and the second control.
+**Runs 1 and 2 of 6 done.** The control ran as the same preset did the day before: on the v4.0 preset and the v5
+engine, 11 of 12 tasks passed (JavaScript `complex-numbers` ran to the 12-minute cap again), a task at equal work took
+2.42 minutes against 2.40 the day before on the same rig, and the model generated at 26.98 tok/s against 27.00. With the
+FP32 scale (run 2) all 12 passed and a task at equal work took 2.38 minutes; the 13 requests that read the same new
+tokens on the same cached prefix in every run took 98.16 s against the control's 98.49 s, less than the difference on
+one of them. The two switches are judged after all six runs, against this day's two controls.
 
 ## What runs
 
@@ -19,7 +20,7 @@ that both switches share the two control runs and each switch has one run in eac
 | # | Run | Arm | What is added to the v4.0 preset | Status |
 |---|---|---|---|---|
 | 1 | R208a | `f5c1` | nothing (the control) | done 10:44–11:24 |
-| 2 | R208b | `f5s1` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | prepared |
+| 2 | R208b | `f5s1` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | done 11:33–11:59 |
 | 3 | R210a | `f5t1` | `LLAMA_SERVER_TEXT_REUSE=1` | prepared |
 | 4 | R208c | `f5c2` | nothing (the control) | planned |
 | 5 | R208d | `f5s2` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | planned |
@@ -92,8 +93,10 @@ Each value is one run ([agent.tsv](agent.tsv), [agent_nocx.tsv](agent_nocx.tsv),
 [work.md](work.md), [work_nocx.tsv](work_nocx.tsv), [first_token.tsv](first_token.tsv),
 [rereads_runs.tsv](rereads_runs.tsv), [clocks.tsv](clocks.tsv), [host.tsv](host.tsv), [reallocs.tsv](reallocs.tsv)).
 C854's figures are part (6)'s published ones; this folder's scripts give the same agent, matched-prompt and work
-figures from its published per-request tables. No class is given
-here: the switches are judged against this run and the second control.
+figures from its published per-request tables. The 16 matched requests and the 12 first turns are those two runs'
+match; with run 2 added, [same_prompts.md](same_prompts.md) matches the requests that read the same tokens in all
+three runs (13, run 2's section). No class is given here: the switches are judged against this run and the second
+control.
 
 - **The task at the cap.** `complex-numbers` ran 38 turns and 37 tool calls (720 s) with its tests failing, as in
   C854's run (34 turns). The other 11 tasks passed. Without it the two runs did nearly the same work: 3,499 against
@@ -115,10 +118,71 @@ here: the switches are judged against this run and the second control.
   start (C854: 30 MiB at the start, 464 at its highest). The RAM watchdog stopped nothing. Card peaks 5,190 5,234
   5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, within 2 MiB of C854's on every card.
 
-## Run 2, `f5s1` (R208b): the FP32 scale
+## Run 2, `f5s1` (R208b): the FP32 scale, 11:33–11:59
 
-Not run yet. Its launcher's server line, built without a load by [run/dry_line.sh](run/dry_line.sh), is the control's
-with `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` after the driver's last switch (1,755 bytes).
+**The requests both runs read alike took nearly the same time; the run did other work than the control.** 12 of 12
+tasks passed: JavaScript `complex-numbers`, at the cap after 38 turns in run 1, passed in 5 turns (64 s), and Python
+`pig-latin` took 24 turns (393 s) against 8 (142 s). The 13 requests that read the same new tokens on the same cached
+prefix in all three runs took 98.16 s against the control's 98.49 s; 7 of them were faster and 6 slower, and the whole
+difference is smaller than one request's: `scale-generator`'s first turn took 7.45 s against 7.92 s (7.20 s in C854's
+run), and without it the other 12 took 90.71 s against 90.56 s. The longest of them, `affine-cipher`'s first turn,
+which reads its whole 2,780-token prompt in micro-batches of 512 with nothing cached, took 27.95 s against 27.93 s. A
+task at equal work took 2.38 minutes against 2.42, and 2.47 against 2.44 without `complex-numbers`.
+
+Its started command (1,755 bytes, md5 `9b73d0302aa9ca72b5ac7f9f637f3b80`) equals [run/dry_line.sh](run/dry_line.sh)'s
+line for `f5s1` byte for byte: the control's with `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all`
+after the driver's last switch. The server's `switches:` line names 41: the control's 39 with the same values and these
+two. The server started at 11:33:13 and was up after 312 s; the tasks ran 11:38:28–11:59:37 and the report ended at
+11:59:49. Every card was at stock before and after (75 W, 1,911 / 4,004 MHz maximum, no offset), with no Xid line.
+
+| | C854 `v4rc2` (context) | `f5c1` (run 1) | **`f5s1` (R208b)** |
+|---|---|---|---|
+| passed | 11 / 12 | 11 / 12 (`complex-numbers` at the cap, 38 turns) | **12 / 12** (`complex-numbers` in 5 turns) |
+| minutes a task at equal work (R90 `v3`'s work) | 2.40 | 2.42 | **2.38** |
+| the same without `complex-numbers` | 2.44 | 2.44 | **2.47** |
+| the 13 requests that read the same new tokens on the same cached prefix in all three runs, prompt s | 97.67 | 98.49 | **98.16** |
+| of them, the 11 first turns (all but `pig-latin`'s) | 82.28 | 83.30 | **83.04** |
+| of them, `affine-cipher`'s first turn (2,780 tokens, nothing cached), prompt s | 28.57 | 27.93 | **27.95** |
+| `pig-latin`'s first turn: tokens read; prompt s | 2,324; 12.34 | 2,324; 12.66 | **775; 6.41** (the shared system prefix still cached) |
+| prompt tok/s, the whole session | 139.2 | 133.7 | **137.1** |
+| the same without `complex-numbers` | 146.1 | 141.7 | **132.8** |
+| generation tok/s | 27.00 | 26.98 | **27.85** |
+| the same without `complex-numbers` | 27.99 | 28.07 | **27.90** |
+| first token median s; p90 s | 2.52; 9.54 | 2.41; 9.04 | **2.13; 8.26** |
+| first token on a task's first turn, median s | 6.69 | 6.57 | **6.55** |
+| the longest first-token wait s | 28.82 | 27.97 | **27.99** (`affine-cipher` turn 1) |
+| prompt tokens read a task | 4,802 | 4,760 | **3,541** |
+| the same without `complex-numbers` | 3,516 | 3,499 | **3,428** |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 7; 4,854; 51.6 of 413.9 | 4; 1,806; 23.6 of 427.2 | **3; 2,071; 19.8 of 309.9** |
+| draft acceptance (accepted of drafted tokens) | 0.740 | 0.732 | **0.752** |
+| minutes, all 12 tasks; turns | 32.6; 92 | 33.6; 104 | **21.0; 82** |
+| graph reallocations | 0 in 91 requests | 0 in 103 | **0 in 82** |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,878.3 | 1,885.3 | **1,885.3** |
+| lowest MemAvailable MiB; swap highest MiB | 387; 464 | 285; 19 | **295; 19** |
+
+Each value is one run, from the same files as run 1's table; the first-turn rows are from `agent/<arm>/turns.csv`. No
+class is given here.
+
+- **Where the switch can act.** It changes only the K-quant prompt kernels of Flash-Next's dense layers, and on a
+  P106 `llama-bench` measured it faster only at micro-batches of 512, which the preset uses for prompts longer than 600
+  tokens. The matched requests and `affine-cipher`'s first turn are where it shows; the session's prompt tok/s also depends on which prompts a run reads and at what
+  depth, and this run read other ones (59 prompts of 600 tokens or fewer against 72, 23 longer against 31).
+- **The work.** Without `complex-numbers` this run read 3,428 prompt tokens a task against 3,499 and generated 2,248
+  against 2,552, over 77 requests against 66 ([work_nocx.tsv](work_nocx.tsv)); `pig-latin`'s 24 turns are most of the
+  difference.
+- **`pig-latin`'s first turn** read 775 tokens on the 1,549-token shared system prefix: the short `complex-numbers`
+  task before it left that prefix's checkpoint among the four kept on the cards (run 1's server log had "no checkpoint
+  below 1553" there; this run's has none).
+- **The reply re-reads** ([rereads_turns.tsv](rereads_turns.tsv)): `pig-latin` turns 4 and 21 (replies of 552 and
+  1,450 tokens; the prompt stopped matching 352 and 906 tokens in, before the tool call) and JavaScript
+  `variable-length-quantity` turn 2 (69 tokens; 23 in, inside the tool call). The client sent two replies back as the
+  server gave them and the 1,450-token one with its tool call's arguments re-serialized, after the point where the
+  prompt stopped matching. `pig-latin` turn 3, which re-read in run 1, C854's run and both R156 runs, did not.
+- **Clocks** ([clocks.tsv](clocks.tsv)): busy medians 1,860 1,847 1,898 1,898 1,873 1,911 1,885 1,911 1,885 MHz (cards
+  0–8), the same as run 1's on every card.
+- **Host** ([host.tsv](host.tsv)): the lowest MemAvailable was 295 MiB at 11:56:21, during `pig-latin`; swap stayed at
+  19 MiB. The RAM watchdog stopped nothing. Card peaks 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, the
+  same as run 1's on every card.
 
 ## Run 3, `f5t1` (R210a): text reuse
 

@@ -1,2 +1,3 @@
 run	arm	lowest_memavailable_mib	at	swap_start_mib	swap_max_mib	swap_max_at	memavailable_end_mib	card_peak_mib_0_to_8
 f5c1	f5c1	285	11:23:51	19	19	10:44:41	3060	5190,5234,5092,5250,4348,5108,4502,5120,5698
+f5s1	f5s1	295	11:56:21	19	19	11:33:13	3118	5190,5234,5092,5250,4348,5108,4502,5120,5698

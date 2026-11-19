@@ -3,3 +3,6 @@ f5c1	bugfix-javascript-complex-numbers	34	200	30177	same	yes	1	1	139	15.2	95	in 
 f5c1	bugfix-python-pig-latin	3	1291	3453	same	yes	37	1	266	2.4	1243	before the tool call
 f5c1	bugfix-python-pig-latin	7	128	6028	same	no	2	1	85	3.1	88	before the tool call
 f5c1	bugfix-python-pig-latin	8	187	6244	same	no	1	1	136	3.2	140	before the tool call
+f5s1	bugfix-python-pig-latin	4	552	4706	same	yes	4	1	352	2.6	463	before the tool call
+f5s1	bugfix-python-pig-latin	21	1450	12138	same, arguments re-serialized	yes	45	1	906	6.8	1340	before the tool call
+f5s1	bugfix-javascript-variable-length-quantity	2	69	2122	same	yes	0	2	23	1.1	11	in the tool call
