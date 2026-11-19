@@ -11,6 +11,12 @@
 | o5oc0 | 4,500 to 6,000 | 28 | 8182 | 460.6 | 17.76 | 56.30 |
 | o5oc0 | 6,000 to 8,000 | 6 | 1713 | 100.0 | 17.14 | 58.35 |
 | o5oc0 | **all** | 60 | 14253 | 797.6 | **17.87** | 55.96 |
+| o5oc1 | under 3,000 | 12 | 791 | 38.3 | 20.65 | 48.43 |
+| o5oc1 | 3,000 to 4,500 | 18 | 3508 | 174.4 | 20.12 | 49.71 |
+| o5oc1 | 4,500 to 6,000 | 22 | 7309 | 375.7 | 19.45 | 51.41 |
+| o5oc1 | 6,000 to 8,000 | 12 | 7910 | 421.0 | 18.79 | 53.23 |
+| o5oc1 | 8,000 and over | 3 | 704 | 40.6 | 17.35 | 57.64 |
+| o5oc1 | **all** | 67 | 20222 | 1050.0 | **19.26** | 51.93 |
 
 At the mix of o4c2, o4c3, o4g2a, o4g2b (the 4 buckets every run here decoded in, weighted by the 63,851 tokens those runs generated there: under 3,000 5.0 %, 3,000 to 4,500 27.4 %, 4,500 to 6,000 49.9 %, 6,000 to 8,000 17.7 %); those runs' own table had 5 buckets, so their rows here differ from it:
 
@@ -22,3 +28,4 @@ At the mix of o4c2, o4c3, o4g2a, o4g2b (the 4 buckets every run here decoded in,
 | o4g2b | 56.62 | 17.66 |
 | o4oc0 | 59.85 | 16.71 |
 | o5oc0 | 56.06 | 17.84 |
+| o5oc1 | 51.12 | 19.56 |

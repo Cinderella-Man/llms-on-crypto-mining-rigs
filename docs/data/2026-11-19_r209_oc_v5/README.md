@@ -9,6 +9,26 @@ second rig it runs five steps in order: Ornith at stock, Flash-Next at stock, th
 with Ornith's whole-memory check, Flash-Next with the offsets, Ornith with the offsets; then every offset back to 0.
 The comparison of the row is each model with the offsets against the same model at stock on this boot.
 
+**The verdict: they add up, for both models.** With every card at the full profile, on the v5 engine, Ornith's coding
+agent took 1.90 minutes a task at equal work against 2.00 at stock on the same boot (−5.00 %) and generated 19.26
+against 17.87 tok/s (+7.78 %). Flash-Next's took 2.26 against 2.36 minutes (−4.24 %) and generated 30.69 against
+27.82 tok/s (+10.32 %). Each moved beyond the spread of two stock runs of its preset, so for both models the
+overclock is a **gain** on top of the v5 engine. Where the runs did the same work, a decode step at the same context
+was 8.21 %, 9.17 %, 8.69 % and 8.77 % shorter for Ornith (its four context buckets) and 8.21 %, 8.49 % and 8.38 %
+shorter for Flash-Next (its three), and the requests read on the same prompt were 5.02 % and 5.78 % faster. The
+offsets shortened Ornith's decode step as much on the v5 engine as on v4.0's (R203e against R203a, two boots of
+2026-11-18: 8.91 %, 8.75 % and 6.25 % in R203's three buckets), so neither gain takes from the other. The answers stayed sound in every run, the
+hottest card reached 45 °C, the watchdog never tripped and the boot logged no GPU error.
+
+Against v4.0's released engine at stock on this rig a day earlier (another boot, so context only): Ornith 2.13 minutes
+a task and 16.42 tok/s ([R203a](../2026-11-18_r203_ornith_offsets/README.md#the-stock-half-o4oc0-2026-11-18)) against
+1.90 and 19.26 with the whole stack (−10.80 % and +17.30 %), a decode step at R204's mix of contexts 59.85 against
+51.12 ms (−14.59 %: −6.33 % from the engine and preset, −8.81 % from the offsets); Flash-Next 2.36 minutes and
+28.08 tok/s ([R203c](../2026-11-18_r203_ornith_offsets/README.md#flash-next-at-stock-fnoc0-2026-11-18)) against 2.26
+and 30.69 (−4.24 % and +9.29 %), its whole gain from the offsets, since its preset uses no v5 switch. These are this
+rig's numbers with this rig's soaked profile: each card's offsets come from its own soak
+([R202b](../2026-11-18_r202b_core_soak/README.md)), so another rig needs its own.
+
 **Run 1, Ornith at stock on the v5 engine: 12 of 12 tasks passed, 2.00 minutes a task at equal work, generation
 17.87 tok/s over the session and 17.84 tok/s at R204's mix of contexts.** This is the stock number the offset run on
 the same boot will be compared with. As context only (another engine, or another rig): on the same rig at stock with
@@ -38,8 +58,15 @@ core on three cards only, the same test on v4.0's engine was negligible
 ([R203d](../2026-11-18_r203_ornith_offsets/README.md#flash-next-with-the-offsets-fnoc1-2026-11-18)). The answers
 stayed sound, the hottest card reached 42 °C, the watchdog never tripped and the boot logged no GPU error.
 
-Registry row Q1603 in [quants/experiments.md](../../../quants/experiments.md). Ornith's verdict comes after its offset
-run.
+**Run 5, Ornith with the offsets: a gain. 12 of 12 tasks passed, 1.90 minutes a task at equal work and generation
+19.26 tok/s, against 2.00 minutes and 17.87 tok/s at stock on the same boot (−5.00 % and +7.78 %).** Both moved more
+than two stock runs of the same preset move apart (0.95 % and 2.42 %). Where the two runs did the same work the cards
+were faster too: a decode step took 8.21 %, 9.17 %, 8.69 % and 8.77 % less time at the same context in the four
+context buckets (8.81 % at R204's mix), and the 20 requests read on the same prompt took 5.02 % less time. The answers
+stayed sound, the hottest card reached 45 °C, the watchdog never tripped and the boot logged no GPU error. Then every
+offset went back to 0 and the watchdog stopped ([the rig at the end](#ornith-with-the-offsets-o5oc1-2026-11-19)).
+
+Registry row Q1603 in [quants/experiments.md](../../../quants/experiments.md).
 
 ## The method
 
@@ -429,25 +456,140 @@ Each value is one run ([flash_agent.tsv](flash_agent.tsv), [flash_steps.md](flas
 - **The rig at the end:** the offsets stayed set and the watchdog kept running for Ornith's offset run on the same
   boot (below).
 
-## Ornith with the offsets: `o5oc1`
+## Ornith with the offsets: `o5oc1` (2026-11-19)
 
-Run 5 of the row; not run yet. It is compared with `o5oc0` above: the decode steps at the same context and the
-identical prompts are the like-for-like measures.
+**12 of 12 tasks passed, 1.90 minutes a task at equal work, generation 19.26 tok/s. Against `o5oc0` on the same boot
+(2.00 minutes, 17.87 tok/s) that is −5.00 % and +7.78 %, both beyond the spread of two stock runs of the same preset
+(R166a and R166b: 2.11 and 2.13 minutes, 0.95 % apart; 16.52 and 16.13 tok/s, 2.42 % apart): a gain on the agent's
+speed.** It holds where the two runs did the same work. At the same context a decode step took 8.21 %, 9.17 %, 8.69 %
+and 8.77 % less time in the four context buckets, 8.81 % at R204's mix, and the 20 requests read on the same prompt
+took 5.02 % less time.
+
+**The run:** `o5oc0`'s launcher with its own run and rig folders and the same client folder, and the kit's state read
+with run 3's work folder, where the watchdog runs. No `apply` of its own: the offsets `apply` set in run 3 stayed set
+through run 4 and this run. At 12:46:24 the kit's state showed every card at its profile value, P8, 0 MiB, no load,
+the watchdog running, no GPU Xid, no step-down this boot and 3,125 MiB of host memory available. The card log's start
+line read the profile's offsets on every card. The started command (549 bytes) is `o5oc0`'s byte for byte, and so is
+the server's `switches:` line. The server started at 12:46:33 and was up after 661 s (`o5oc0`: 585 s), and the tasks
+ran 12:57:36–13:21:55. At 13:22:31 every card still read its profile value, with the watchdog running, no trip, no
+GPU Xid and no step-down. An agent check on the first rig used the same client from 12:50:12 to 13:17:59, with its own
+ports, folders and container names; that touches only the time outside the server, which minutes a task at equal
+work leave out.
+
+| | R209a `o5oc0`, stock | **R209e `o5oc1`, the full profile** | change | as context: R203e's change against R203a (the full profile on v4.0's engine, two boots) |
+|---|---|---|---|---|
+| passed | 12 / 12 | **12 / 12** | | 12 / 12 → 12 / 12 |
+| minutes a task at equal work (`ka`'s work) | 2.00 | **1.90** | −5.00 % | −7.98 % |
+| generation tok/s, the whole session | 17.87 | **19.26** | +7.78 % | +8.95 % |
+| ms a decode step at R204's mix of contexts (four buckets) | 56.06 | **51.12** | −8.81 % | |
+| generation tok/s at that mix | 17.84 | **19.56** | +9.64 % | |
+| ms a decode step, middle context under 3,000 / 3,000 to 4,500 / 4,500 to 6,000 / 6,000 to 8,000 | 52.76 / 54.73 / 56.30 / 58.35 | **48.43 / 49.71 / 51.41 / 53.23** | −8.21 / −9.17 / −8.69 / −8.77 % | in R203's three buckets −8.91 / −8.75 / −6.25 % |
+| requests in those buckets | 12 / 14 / 28 / 6 | **12 / 18 / 22 / 12** (and 3 at 8,000 and over) | | |
+| prompt tok/s, the whole session | 101.9 | **101.6** | −0.29 % | +7.53 % |
+| first token median s; p90 s | 6.78; 11.30 | **5.37; 10.04** | −20.80 %; −11.15 % | +4.53 %; −6.60 % |
+| first token on a task's first turn, median s | 8.43 | **7.94** | −5.81 % | −5.54 % |
+| first token on the later turns, median s | 4.77 | **4.40** | −7.76 % | |
+| the 20 requests read on the same prompt in all five runs, prompt s | 201.77 | **191.64** | −5.02 % | 19 requests in R203's three runs: −6.45 % |
+| of them, the 12 first turns, prompt s | 115.49 | **110.65** | −4.19 % | −6.39 % |
+| prompt tokens read a task | 3,213 | **3,138** | | |
+| tokens generated a task | 1,188 | **1,685** | | |
+| reply tokens re-read (turns; their prompt s of all prompt s) | 3,431 (2; 22.8 of 378.4) | **2,078 (3; 23.4 of 370.6)** | | |
+| minutes, all 12 tasks; turns | 20.0; 60 | **24.1; 67** | | |
+| minutes a task, median | 1.43 | **1.29** | | |
+| tool calls / failed / malformed | 60 / 2 / 0 | **67 / 1 / 0** | | |
+| checkpoints restored / created / erased; full re-processing | 13 / 0 / 0; 0 | **14 / 0 / 0; 0** | | |
+| graph reallocations | 0 in 60 requests | **0 in 67** | | |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,886.8 | **2,127.0** | +12.73 % | +12.83 % |
+| highest card temperature °C; highest power W | 44; 80.86 | **45; 89.80** | | |
+| watchdog trips; GPU Xid | no watchdog at stock; 0 | **0; 0** | | 0; 0 |
+| lowest MemAvailable MiB; swap highest MiB | 1,248; 336 | **1,183; 362** | | |
+
+Each value is one run ([agent.tsv](agent.tsv), [decode_r204_mix.md](decode_r204_mix.md),
+[same_prompts.md](same_prompts.md), [work.md](work.md), [clocks.tsv](clocks.tsv), [ornith_cards.md](ornith_cards.md),
+[host.tsv](host.tsv), [reallocs.tsv](reallocs.tsv), [o5oc1_gonogo.md](o5oc1_gonogo.md); the tool calls from
+`attempts.csv`, the later turns' first token from `turns.csv`). R203e's column is the change its run `o4oc2` showed
+against R203a's stock run `o4oc0`, a different boot of 2026-11-18
+([R203](../2026-11-18_r203_ornith_offsets/README.md#the-full-profile-first-look-o4oc2-2026-11-18)), in R203's own
+buckets and same-prompt set.
+
+- **The verdict: gain.** The two numbers the class is set on moved beyond the spread of two stock runs: minutes a task
+  at equal work by 5.00 % (the spread 0.95 %), generation by 7.78 % (2.42 %). The like-for-like measures agree. A
+  decode step at the same context was 8.21 %, 9.17 %, 8.69 % and 8.77 % shorter; at R204's mix it was 8.81 % shorter,
+  where two stock runs of this engine and preset on the first rig differ by 0.35 % (R204's `o4g2a` and `o4g2b`), and
+  this rig's stock run differs from them by 0.64 % and 0.99 %. The same prompts were 5.02 % faster, where those two
+  stock runs differ by 0.12 %.
+- **Generation over the session gained less than at the same mix** (+7.78 % against +9.64 %) because this run's
+  replies sat deeper: 12 requests with their middle context at 6,000 to 8,000 tokens and 3 above 8,000, against 6 and
+  none, and a decode step is slower at a longer context. The run also did more work: 1,685 tokens generated a task
+  against 1,188, most of the difference in Python `scale-generator` (6,172 tokens against 2,903, one reply of 5,405
+  tokens; 362 s against 197 s). Minutes a task at equal work price the same work at each run's own speeds, so this
+  does not move them.
+- **Decode at the same context** ([decode_r204_mix.md](decode_r204_mix.md)): under 3,000 tokens 48.43 against
+  52.76 ms a token (12 and 12 requests), 20.65 against 18.95 tok/s; at 3,000 to 4,500 tokens 49.71 against 54.73 ms
+  (18 and 14), 20.12 against 18.27 tok/s; at 4,500 to 6,000 tokens 51.41 against 56.30 ms (22 and 28), 19.45 against
+  17.76 tok/s; at 6,000 to 8,000 tokens 53.23 against 58.35 ms (12 and 6), 18.79 against 17.14 tok/s. Ornith decodes
+  one token a step (no drafts), so its step and its token are the same.
+- **The same prompts** ([same_prompts.md](same_prompts.md)): the same 20 requests as run 1's table (every task's
+  first turn and eight later turns), now read on the same prompt in all five runs. They took 191.64 s against 201.77 s
+  (−5.02 %); 18 of the 20 were faster, by 4.43 % (Python `affine-cipher`'s 2,742-token first turn, read with nothing
+  cached, 25.94 s against 27.15 s) to 6.49 % (Python `variable-length-quantity`'s second turn). The two that were not
+  are short first turns: JavaScript `grade-school` (403 new tokens) +3.57 % and `triangle` (430) +0.04 %. With the
+  cached tokens matched within one ([same_prompts_tol1.md](same_prompts_tol1.md)) 22 requests: 208.06 s against
+  219.14 s (−5.05 %).
+- **Prompts over the session look flat** (101.6 against 101.9 tok/s) only through the mix: 43 of this run's 67
+  requests read fewer than 512 new tokens, against 36 of 60, and such short reads are dominated by a request's fixed
+  cost ([reallocs.tsv](reallocs.tsv)). The same prompts above are the like-for-like measure.
+- **First token follows the turn mix.** A task's first turn took a median 7.94 s (8.43 s) and the later turns 4.40 s
+  (4.77 s), both faster. This run had 55 later turns against 48, so the fast later turns weigh more in the median of
+  all turns, which fell 20.80 % to 5.37 s.
+- **The answers looked sound.** Every task passed, also its hidden tests, with the test files untouched. None of the
+  67 tool calls was malformed, none was inside the reasoning, and there was no NaN or inf in the server log; 14
+  checkpoints restored, none created or erased, 0 full re-processing. The one failed call was the agent's own probe in
+  Python `variable-length-quantity`: it fed the decoder an incomplete byte sequence, which raised the error it should,
+  and the agent then fixed the bug and all 31 tests passed. The report's memory gate is NO-GO on the swap, as for every
+  Ornith run of this preset; every other gate is GO ([o5oc1_gonogo.md](o5oc1_gonogo.md), over both arms, as the
+  client's results folder held both).
+- **The cards' busy clocks** ([clocks.tsv](clocks.tsv), busy = utilization above 0 %, 12:57:36–13:21:55): medians of
+  2,113 2,138 2,151 2,100 2,113 2,100 2,151 2,151 2,126 MHz on cards 0 to 8 (mean 2,127.0), against `o5oc0`'s
+  1,860 1,885 1,885 1,873 1,911 1,898 1,873 1,898 1,898: +253, +253, +266, +227, +202, +202, +278, +253 and +228 MHz
+  while busy, against core offsets of +256, +256, +269, +231, +206, +206, +282, +256 and +231 MHz. Busy samples below
+  1,800 MHz fell to 0.65 0.64 0.56 0.52 1.05 1.02 1.15 1.21 1.02 % (`o5oc0`: 3.50 3.17 3.29 2.49 3.94 3.87 5.38 3.76
+  2.83 %). The memory ran at busy medians of 4,657 4,498 4,498 4,551 4,551 4,608 4,455 4,455 4,657 MHz against 4,006
+  on every card at stock ([ornith_cards.md](ornith_cards.md)).
+- **Heat and power** ([ornith_cards.md](ornith_cards.md), the card log every 0.5 s over the tasks, 2,920 samples a
+  card): the hottest card was card 0 at 45 °C (`o5oc0`: card 0 at 44 °C). Power went above 80 W only in single
+  samples, never two in a row: 0, 3, 2, 7, 1, 0, 1, 2 and 9 samples on cards 0 to 8. The highest was 89.80 W on card 7
+  at 13:07:15 (`o5oc0`: 80.86 W on card 7, 2 samples above 80 W). The watchdog's own samples over the same window
+  (2,917 a card) had 0, 3, 4, 3, 2, 0, 1, 1 and 2 single samples above 80 W, the highest 87.92 W on card 4. It trips at
+  80 W held for 5 s; it never tripped, and the boot logged no GPU Xid.
+- **Host and cards** ([host.tsv](host.tsv)): lowest MemAvailable 1,183 MiB at 13:22:10, as the server stopped
+  (1,188 MiB at 13:21:40 during the last task); swap 52 MiB at the start (left from the earlier runs) and 362 MiB at
+  its highest at 12:53:30, during the load. The RAM watchdog stopped nothing. The card log's peaks, 5,830 5,846 5,776
+  5,846 5,454 5,562 5,724 5,796 5,202 MiB on cards 0 to 8, are R204's `o4g2b`'s card for card.
+- **Graph reallocations:** 0 in 67 requests, in every prompt-size bucket ([reallocs.tsv](reallocs.tsv),
+  [o5oc1_requests_reallocs.tsv](o5oc1_requests_reallocs.tsv)).
+- **The rig at the end:** at 13:22:54–13:23:04 the kit's `reset-all` set every card's offsets to 0 and read them back,
+  and the watchdog stopped after 0 trips. The kit's state then showed every offset 0, P8, no load, no GPU Xid, and
+  1,911 / 4,004 MHz maximum on every card. Its start check now refuses a new offset until a reboot, since the ledger
+  holds the nine step-downs to 0 of this boot: a card stepped down can stay slower until the rig restarts.
 
 ## Files
 
 | File | What |
 |---|---|
-| [agent.tsv](agent.tsv) | per arm (`ka`'s reference `v3ka`, `o4oc0`, `o4g2a`, `o4g2b`, `o5oc0`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes for all tasks, a task's median, minutes a task at equal work against `v3ka` |
-| [decode.md](decode.md) | `o4oc0`, `o4g2a`, `o4g2b` and `o5oc0` by the context at a request's middle (requests, tokens, decode s, tok/s, ms a token), and at their own shared mix of contexts |
-| [decode_r204_mix.md](decode_r204_mix.md) | `o5oc0` and `o4oc0` by context, and every run at R204's mix (R204's four runs' tokens) over the buckets all of them decoded in |
-| [same_prompts.md](same_prompts.md), [same_prompts_tol1.md](same_prompts_tol1.md) | the requests read on the same prompt in `o4oc0`, `o4g2a`, `o4g2b` and `o5oc0` (task, turn, new tokens, cached tokens, each run's prompt ms), exactly and with the cached tokens within one; each run's generation over all its requests |
+| [agent.tsv](agent.tsv) | per arm (`ka`'s reference `v3ka`, `o4oc0`, `o4g2a`, `o4g2b`, `o5oc0`, `o5oc1`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, minutes for all tasks, a task's median, minutes a task at equal work against `v3ka` |
+| [decode.md](decode.md) | `o4oc0`, `o4g2a`, `o4g2b`, `o5oc0` and `o5oc1` by the context at a request's middle (requests, tokens, decode s, tok/s, ms a token), and at their own shared mix of contexts |
+| [decode_r204_mix.md](decode_r204_mix.md) | `o4oc0`, `o5oc0` and `o5oc1` by context, and every run at R204's mix (R204's four runs' tokens) over the buckets all of them decoded in |
+| [same_prompts.md](same_prompts.md), [same_prompts_tol1.md](same_prompts_tol1.md) | the requests read on the same prompt in `o4oc0`, `o4g2a`, `o4g2b`, `o5oc0` and `o5oc1` (task, turn, new tokens, cached tokens, each run's prompt ms), exactly and with the cached tokens within one; each run's generation over all its requests |
 | [work.md](work.md), [work.tsv](work.tsv) | the work of each run: prompt tokens read, tokens generated, reply tokens re-read and the turns that re-read a reply |
 | [clocks.tsv](clocks.tsv) | each card's busy SM clock median, their mean and each card's share of busy samples below 1,800 MHz, over each run's tasks |
 | [host.tsv](host.tsv) | lowest MemAvailable and its time, swap at the start and highest, MemAvailable at the log's end, each card's peak memory from the card log |
-| [reallocs.tsv](reallocs.tsv), [o5oc0_requests_reallocs.tsv](o5oc0_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size (the four runs), and per request (`o5oc0`) |
+| [reallocs.tsv](reallocs.tsv), [o5oc0_requests_reallocs.tsv](o5oc0_requests_reallocs.tsv), [o5oc1_requests_reallocs.tsv](o5oc1_requests_reallocs.tsv) | graph reallocations and prompt seconds per prompt size (the five runs), and per request (`o5oc0`, `o5oc1`) |
+| [ornith_cards.md](ornith_cards.md) | per card over `o5oc0`'s and `o5oc1`'s tasks: highest temperature and power, samples above 80 W, the busy memory clock's median |
 | [o5oc0_compare.md](o5oc0_compare.md), [o5oc0_report_table.md](o5oc0_report_table.md), [o5oc0_gonogo.md](o5oc0_gonogo.md) | the agent check's report on `o5oc0`: per task and first token per turn; per arm over the client's attempts; the gates and the server log's counts |
+| [o5oc1_compare.md](o5oc1_compare.md), [o5oc1_report_table.md](o5oc1_report_table.md), [o5oc1_gonogo.md](o5oc1_gonogo.md) | the same report after `o5oc1`, over both arms (the client's results folder held both) |
 | [agent/o5oc0/](agent/o5oc0/) | `turns.csv` (one row a request) and `attempts.csv` (one row a task) |
+| [agent/o5oc1/](agent/o5oc1/) | the same of `o5oc1` |
 | [run/ornith_run.sh](run/ornith_run.sh) | one Ornith run: the rig's and the kit's read-only state, then R204's harness call, the arm and the machine-specific values from the environment |
 | [run/tables.sh](run/tables.sh) | Ornith's tables, from a folder holding the rows, server logs, card logs and host logs it lists |
 | [run/decode_at_mix.py](run/decode_at_mix.py) | decode speed at a fixed mix of contexts taken from earlier runs, so a new run sits beside an earlier table without moving it |
@@ -497,8 +639,27 @@ bash docs/data/2026-11-19_r209_oc_v5/run/tables.sh <tables folder> o5oc0
 `res/` in the tables folder holds those rows plus the rows of `v3ka` and `o4oc0`
 ([R203](../2026-11-18_r203_ornith_offsets/README.md)) and of `o4g2a` and `o4g2b`
 ([R204](../2026-11-18_r204_ornith_glu_agent/README.md)); their server, host and card logs are the ones those folders'
-tables used. Ornith with the offsets runs the same two commands with `ARM=o5oc1` and its own rig folder, after the
-kit's `apply`; then `run/tables.sh <tables folder> o5oc0 o5oc1`.
+tables used.
+
+Ornith with the offsets ran the same two commands with `ARM=o5oc1`, its own rig folder (`r209e`) and the same
+client folder, after run 3's `apply` and run 4, with the kit's state read through a kit file that sets run 3's work
+folder (`WORK`, where the watchdog runs); then its tables:
+
+```bash
+# agent/o5oc1/ as agent/o5oc0/ (the client's res/turns.csv rows of o5oc1, its res/attempts.csv rows whose file is
+# o5oc1); in the tables folder of o5oc0, add those rows to res/, o5oc1's server log as rig/server-o5oc1.log, and in
+# rig_o5oc1/ its own lines of the client's rig/cards.csv and rig/meminfo.log (both arms append to them; o5oc1's begin
+# at its server's start, 12:46:33) and its window: 2026-11-19 12:57:36|2026-11-19 13:21:55
+bash docs/data/2026-11-19_r209_oc_v5/run/tables.sh <tables folder> o5oc0 o5oc1
+python3 -I docs/data/2026-11-18_r203_ornith_offsets/run/flash_cards.py cards \
+  "o5oc0=<tables>/rig_o5oc0/cards.csv=2026-11-19 09:51:09=2026-11-19 10:11:21" \
+  "o5oc1=<tables>/rig_o5oc1/cards.csv=2026-11-19 12:57:36=2026-11-19 13:21:55" > docs/data/2026-11-19_r209_oc_v5/ornith_cards.md
+```
+
+`o5oc1_compare.md`, `o5oc1_report_table.md` and `o5oc1_gonogo.md` are the client's `compare.md`, `table.md` and
+`gonogo.md` after `o5oc1`'s report. After the run, on the rig as root, in the kit's folder with run 3's work folder
+set: `python3 climb.py reset-all && python3 climb.py watchdog stop && python3 climb.py state` (every offset 0 read
+back; the start check then asks for a reboot before the next offset).
 
 Flash-Next at stock, R203c's run ([run/flash_run.sh](../2026-11-18_r203_ornith_offsets/run/flash_run.sh)) with the v5
 engine's build folder as `NEW` (the run itself was started from a launcher that did the same three steps with
@@ -572,5 +733,5 @@ tree only to `model_check.sh`. The run's script was this one with the machine's 
 ## Provenance and licence
 
 Measured on the project's own rig on 2026-11-19 with the repository's own scripts; the agent check's tasks are
-[bench/agent_check](../../../bench/agent_check/README.md)'s (their task IDs are in `agent/o5oc0/attempts.csv`, `agent/f5oc0/attempts.csv` and `agent/f5oc1/attempts.csv`). The
+[bench/agent_check](../../../bench/agent_check/README.md)'s (their task IDs are in `agent/o5oc0/attempts.csv`, `agent/o5oc1/attempts.csv`, `agent/f5oc0/attempts.csv` and `agent/f5oc1/attempts.csv`). The
 tables and scripts here are under the repository's licence.
