@@ -1,0 +1,10 @@
+card,pci,stock_peak_mhz,mem_last_clean_mts,mem_failed_at_mts,core_took_part,core_last_clean_mhz,core_last_clean_peak_mhz,core_failed_at_mhz,core_failed_at_peak_mhz,failure_reason,profile_mem_mts,profile_core_mhz,profile_expected_peak_mhz,apply_verdict
+0,03:00.0,1860,1300,1400,False,0,1860,,,greedy output differs from stock,1200,0,1860,
+1,04:00.0,1860,1300,1400,False,0,1860,,,greedy output differs from stock,1200,0,1860,
+2,05:00.0,1898,1200,1300,False,0,1898,,,greedy output differs from stock,1100,0,1898,
+3,06:00.0,1911,1300,1400,False,0,1911,,,greedy output differs from stock,1200,0,1911,
+4,07:00.0,1885,1400,,True,0,1885,,,,1300,0,1885,
+5,0B:00.0,1911,1400,,True,0,1911,,,,1300,0,1911,
+6,0C:00.0,1885,1300,1400,False,0,1885,,,greedy output differs from stock,1200,0,1885,
+7,0D:00.0,1911,1200,1300,False,0,1911,,,greedy output differs from stock,1100,0,1911,
+8,0E:00.0,1885,1000,1100,False,0,1885,,,greedy output differs from stock,900,0,1885,
