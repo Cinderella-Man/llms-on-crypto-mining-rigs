@@ -170,7 +170,7 @@ cat /var/tmp/r218/CHAIN_DONE     # when it exists: what happened, in one line
 | [tables/heat_power.csv](tables/heat_power.csv) | per phase and card, from the watchdog's samples: temperature, power, readings above 80 W, slowdowns, peak clocks |
 | [tables/greedy_failures.csv](tables/greedy_failures.csv) | per failed check and prompt: text identical or not, the first token and first probability that differ |
 | [tables/watchdog.txt](tables/watchdog.txt) | the watchdog's start and stop lines |
-| [run/env.sh](run/env.sh) | this rig's settings for the kit |
+| [run/env.sh](run/env.sh) | this rig's settings for the kit in this step; for the later steps the rig's `env.sh` is the same without `CORE_PEAK_MAX=0`, which step 3's core climb must not have ([the runbook](../../../bench/mem_offset/README.md#on-a-new-rig-every-command-from-a-fresh-install)) |
 | [run/failures.json](run/failures.json) | this climb's seven failures, as `soak.py --failures` reads them: the ladder's `FAILURES` |
 | [run/env-chain.sh](run/env-chain.sh), [run/MD5SUMS-r218](run/MD5SUMS-r218) | the ladder's settings for `soak_chain.sh` on the next boot (R218), and the MD5s of the files staged for it |
 | [run/tables.py](run/tables.py), [run/greedy_diff.py](run/greedy_diff.py) | the tables from the climb's work folder (R200's scripts) |
