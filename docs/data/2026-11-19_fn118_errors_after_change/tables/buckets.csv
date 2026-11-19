@@ -1,0 +1,129 @@
+since,unit,run,bucket,card_rounds,differing
+the card's own change,rounds,try1,1-5,45,0
+the card's own change,rounds,try1,6-20,72,1
+the card's own change,rounds,try1,21-60,0,0
+the card's own change,rounds,try1,61+,0,0
+the card's own change,rounds,try2,1-5,45,0
+the card's own change,rounds,try2,6-20,54,1
+the card's own change,rounds,try2,21-60,0,0
+the card's own change,rounds,try2,61+,0,0
+the card's own change,rounds,try3,1-5,45,0
+the card's own change,rounds,try3,6-20,135,0
+the card's own change,rounds,try3,21-60,360,0
+the card's own change,rounds,try3,61+,432,1
+the card's own change,rounds,try4,1-5,45,0
+the card's own change,rounds,try4,6-20,135,0
+the card's own change,rounds,try4,21-60,45,1
+the card's own change,rounds,try4,61+,0,0
+the card's own change,rounds,r201,1-5,150,0
+the card's own change,rounds,r201,6-20,450,0
+the card's own change,rounds,r201,21-60,1200,1
+the card's own change,rounds,r201,61+,3672,3
+the card's own change,rounds,r201b,1-5,45,0
+the card's own change,rounds,r201b,6-20,135,0
+the card's own change,rounds,r201b,21-60,360,0
+the card's own change,rounds,r201b,61+,828,0
+the card's own change,rounds,r202b,1-5,105,0
+the card's own change,rounds,r202b,6-20,315,0
+the card's own change,rounds,r202b,21-60,840,0
+the card's own change,rounds,r202b,61+,2925,0
+the card's own change,rounds,all,1-5,480,0
+the card's own change,rounds,all,6-20,1296,2
+the card's own change,rounds,all,21-60,2805,2
+the card's own change,rounds,all,61+,7857,4
+the card's own change,minutes,try1,0-2 min,0,0
+the card's own change,minutes,try1,2-5 min,44,0
+the card's own change,minutes,try1,5-15 min,73,1
+the card's own change,minutes,try1,15+ min,0,0
+the card's own change,minutes,try2,0-2 min,0,0
+the card's own change,minutes,try2,2-5 min,62,0
+the card's own change,minutes,try2,5-15 min,37,1
+the card's own change,minutes,try2,15+ min,0,0
+the card's own change,minutes,try3,0-2 min,0,0
+the card's own change,minutes,try3,2-5 min,61,0
+the card's own change,minutes,try3,5-15 min,455,0
+the card's own change,minutes,try3,15+ min,456,1
+the card's own change,minutes,try4,0-2 min,0,0
+the card's own change,minutes,try4,2-5 min,63,0
+the card's own change,minutes,try4,5-15 min,162,1
+the card's own change,minutes,try4,15+ min,0,0
+the card's own change,minutes,r201,0-2 min,210,0
+the card's own change,minutes,r201,2-5 min,380,0
+the card's own change,minutes,r201,5-15 min,1510,1
+the card's own change,minutes,r201,15+ min,3372,3
+the card's own change,minutes,r201b,0-2 min,0,0
+the card's own change,minutes,r201b,2-5 min,72,0
+the card's own change,minutes,r201b,5-15 min,458,0
+the card's own change,minutes,r201b,15+ min,838,0
+the card's own change,minutes,r202b,0-2 min,120,0
+the card's own change,minutes,r202b,2-5 min,246,0
+the card's own change,minutes,r202b,5-15 min,1089,0
+the card's own change,minutes,r202b,15+ min,2730,0
+the card's own change,minutes,all,0-2 min,330,0
+the card's own change,minutes,all,2-5 min,928,0
+the card's own change,minutes,all,5-15 min,3784,4
+the card's own change,minutes,all,15+ min,7396,4
+any card's change,rounds,try1,1-5,45,0
+any card's change,rounds,try1,6-20,72,1
+any card's change,rounds,try1,21-60,0,0
+any card's change,rounds,try1,61+,0,0
+any card's change,rounds,try2,1-5,45,0
+any card's change,rounds,try2,6-20,54,1
+any card's change,rounds,try2,21-60,0,0
+any card's change,rounds,try2,61+,0,0
+any card's change,rounds,try3,1-5,45,0
+any card's change,rounds,try3,6-20,135,0
+any card's change,rounds,try3,21-60,360,0
+any card's change,rounds,try3,61+,432,1
+any card's change,rounds,try4,1-5,45,0
+any card's change,rounds,try4,6-20,135,0
+any card's change,rounds,try4,21-60,45,1
+any card's change,rounds,try4,61+,0,0
+any card's change,rounds,r201,1-5,180,0
+any card's change,rounds,r201,6-20,540,2
+any card's change,rounds,r201,21-60,1440,1
+any card's change,rounds,r201,61+,3312,1
+any card's change,rounds,r201b,1-5,45,0
+any card's change,rounds,r201b,6-20,135,0
+any card's change,rounds,r201b,21-60,360,0
+any card's change,rounds,r201b,61+,828,0
+any card's change,rounds,r202b,1-5,135,0
+any card's change,rounds,r202b,6-20,405,0
+any card's change,rounds,r202b,21-60,1080,0
+any card's change,rounds,r202b,61+,2565,0
+any card's change,rounds,all,1-5,540,0
+any card's change,rounds,all,6-20,1476,4
+any card's change,rounds,all,21-60,3285,2
+any card's change,rounds,all,61+,7137,2
+any card's change,minutes,try1,0-2 min,0,0
+any card's change,minutes,try1,2-5 min,45,0
+any card's change,minutes,try1,5-15 min,72,1
+any card's change,minutes,try1,15+ min,0,0
+any card's change,minutes,try2,0-2 min,0,0
+any card's change,minutes,try2,2-5 min,63,0
+any card's change,minutes,try2,5-15 min,36,1
+any card's change,minutes,try2,15+ min,0,0
+any card's change,minutes,try3,0-2 min,0,0
+any card's change,minutes,try3,2-5 min,63,0
+any card's change,minutes,try3,5-15 min,459,0
+any card's change,minutes,try3,15+ min,450,1
+any card's change,minutes,try4,0-2 min,0,0
+any card's change,minutes,try4,2-5 min,63,0
+any card's change,minutes,try4,5-15 min,162,1
+any card's change,minutes,try4,15+ min,0,0
+any card's change,minutes,r201,0-2 min,270,1
+any card's change,minutes,r201,2-5 min,477,1
+any card's change,minutes,r201,5-15 min,1809,1
+any card's change,minutes,r201,15+ min,2916,1
+any card's change,minutes,r201b,0-2 min,0,0
+any card's change,minutes,r201b,2-5 min,72,0
+any card's change,minutes,r201b,5-15 min,459,0
+any card's change,minutes,r201b,15+ min,837,0
+any card's change,minutes,r202b,0-2 min,180,0
+any card's change,minutes,r202b,2-5 min,342,0
+any card's change,minutes,r202b,5-15 min,1395,0
+any card's change,minutes,r202b,15+ min,2268,0
+any card's change,minutes,all,0-2 min,450,1
+any card's change,minutes,all,2-5 min,1125,1
+any card's change,minutes,all,5-15 min,4392,4
+any card's change,minutes,all,15+ min,6471,2

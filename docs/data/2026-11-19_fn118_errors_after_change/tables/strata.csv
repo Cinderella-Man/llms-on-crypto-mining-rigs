@@ -1,0 +1,8 @@
+card,mem_mts,core_mhz,rounds,differing,runs,rate_one_in,only_soaks_that_stopped_at_the_error,chance_a_152_round_rung_is_clean,rounds_for_95_pct_to_see_one
+2,1200,0,438,1,try3 try4 r201,438,no,0.707,1311
+2,1300,0,24,1,try1 try2,24,yes,0.002,71
+3,1300,0,305,2,r201,152,no,0.368,456
+4,1300,231,13,1,try1,13,yes,0.000,38
+6,1100,0,462,1,try1 try2 try3 try4 r201,462,no,0.719,1383
+7,1100,0,25,1,try4,25,yes,0.002,74
+7,1200,0,132,1,try1 try2 try3,132,yes,0.315,394

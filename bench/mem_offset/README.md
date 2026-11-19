@@ -178,7 +178,7 @@ python3 -I bench/mem_offset/test/test_climb.py
 **In plain words.** The climb's one check a step shows where a card fails at once. It does not show where a card
 never fails: on the second rig, three cards failed a 30-minute soak one and two steps under the last step they had
 passed in the climb ([R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md)). A profile is settled by soaks,
-and the soaks are built on four facts from that run:
+and the soaks are built on these facts:
 
 - **An error near the edge is rare and it passes.** In 6 of R200's 13 failed checks the first of the check's two
   requests went wrong and the second, run right after it on the same loaded server, was bit-identical to stock again.
@@ -186,6 +186,11 @@ and the soaks are built on four facts from that run:
   over the whole time instead of ending at the first, and one card's error need not end the other cards' soak.
 - **Thirty clean minutes are a weak proof.** No error in 30 minutes shows only that errors come less often than about
   once in 10 minutes (95 % confidence). Daily use needs clean hours.
+- **The first minutes after a change are not special.** On the second rig's soaks none of 8 wrong answers came in
+  the first 5 rounds after its card's own offset changed, and counted from any card's change they fell as an even
+  spread would put them ([FN118](../../docs/data/2026-11-19_fn118_errors_after_change/README.md)): a rung counts
+  every round. What limits a soak is its length: a card that erred once in 438 rounds passes a 30-minute rung of 152
+  rounds clean 70.7 % of the time, which is why the setting to use keeps two steps under each failure.
 - **Offsets only go up in a boot, so the search goes up too.** A soak that starts at the edge and steps a failing
   card down costs a reboot for every step. `soak.py --ladder` starts low and raises the clean cards a rung at a time:
   one boot gives every card its highest rung that held.
