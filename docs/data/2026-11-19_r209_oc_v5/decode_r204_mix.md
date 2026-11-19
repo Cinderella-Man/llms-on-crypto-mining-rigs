@@ -1,0 +1,24 @@
+| run | middle context, tokens | requests | tokens generated | decode s | tok/s | ms a token |
+|---|---|---:|---:|---:|---:|---:|
+| o4oc0 | under 3,000 | 12 | 788 | 44.6 | 17.65 | 56.66 |
+| o4oc0 | 3,000 to 4,500 | 14 | 2650 | 155.0 | 17.10 | 58.48 |
+| o4oc0 | 4,500 to 6,000 | 21 | 11483 | 691.5 | 16.61 | 60.22 |
+| o4oc0 | 6,000 to 8,000 | 17 | 5878 | 363.6 | 16.17 | 61.86 |
+| o4oc0 | 8,000 and over | 3 | 2965 | 192.2 | 15.42 | 64.83 |
+| o4oc0 | **all** | 67 | 23764 | 1446.9 | **16.42** | 60.89 |
+| o5oc0 | under 3,000 | 12 | 792 | 41.8 | 18.95 | 52.76 |
+| o5oc0 | 3,000 to 4,500 | 14 | 3566 | 195.2 | 18.27 | 54.73 |
+| o5oc0 | 4,500 to 6,000 | 28 | 8182 | 460.6 | 17.76 | 56.30 |
+| o5oc0 | 6,000 to 8,000 | 6 | 1713 | 100.0 | 17.14 | 58.35 |
+| o5oc0 | **all** | 60 | 14253 | 797.6 | **17.87** | 55.96 |
+
+At the mix of o4c2, o4c3, o4g2a, o4g2b (the 4 buckets every run here decoded in, weighted by the 63,851 tokens those runs generated there: under 3,000 5.0 %, 3,000 to 4,500 27.4 %, 4,500 to 6,000 49.9 %, 6,000 to 8,000 17.7 %); those runs' own table had 5 buckets, so their rows here differ from it:
+
+| run | ms a token at the same mix | tok/s at the same mix |
+|---|---:|---:|
+| o4c2 | 60.14 | 16.63 |
+| o4c3 | 60.22 | 16.61 |
+| o4g2a | 56.42 | 17.72 |
+| o4g2b | 56.62 | 17.66 |
+| o4oc0 | 59.85 | 16.71 |
+| o5oc0 | 56.06 | 17.84 |
