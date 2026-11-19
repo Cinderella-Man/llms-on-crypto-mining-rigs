@@ -29,8 +29,17 @@ check's prompts (18.00 against 16.66 tok/s, the same tokens). The hottest card r
 tripped, and the boot logged no GPU error. This single-request number is a diagnostic; the verdict of the row is the
 agent checks with the offsets that follow on the same boot.
 
-Registry row Q1603 in [quants/experiments.md](../../../quants/experiments.md). The verdict of the row comes after the
-offset runs.
+**Run 4, Flash-Next with the offsets: a gain. 12 of 12 tasks passed, 2.26 minutes a task at equal work and generation
+30.69 tok/s, against 2.36 minutes and 27.82 tok/s at stock on the same boot (−4.24 % and +10.32 %).** Both moved more
+than two stock runs of the same preset move apart (2.53 % and 3.52 %). Where the two runs did the same work the cards
+were faster too: a decode step took 8.21 %, 8.49 % and 8.38 % less time at the same context in the three context
+buckets, and the 12 requests read on the same prompt took 5.78 % less time. With yesterday's profile, which raised the
+core on three cards only, the same test on v4.0's engine was negligible
+([R203d](../2026-11-18_r203_ornith_offsets/README.md#flash-next-with-the-offsets-fnoc1-2026-11-18)). The answers
+stayed sound, the hottest card reached 42 °C, the watchdog never tripped and the boot logged no GPU error.
+
+Registry row Q1603 in [quants/experiments.md](../../../quants/experiments.md). Ornith's verdict comes after its offset
+run.
 
 ## The method
 
@@ -172,7 +181,7 @@ C854's `v4rc2` (this engine, preset and model on the first rig, 2026-11-18,
 | lowest MemAvailable MiB; swap highest MiB | 414; 426 | 387; 464 | **382; 399** |
 
 Each value is one run ([flash_agent.tsv](flash_agent.tsv), [flash_steps.md](flash_steps.md),
-[flash_same_prompts.md](flash_same_prompts.md), [flash_work.md](flash_work.md), [flash_clocks.tsv](flash_clocks.tsv),
+[flash_same_prompts_3runs.md](flash_same_prompts_3runs.md), [flash_work.md](flash_work.md), [flash_clocks.tsv](flash_clocks.tsv),
 [flash_host.tsv](flash_host.tsv), [flash_reallocs.tsv](flash_reallocs.tsv), [f5oc0_gonogo.md](f5oc0_gonogo.md); the
 other runs' tool calls from their `attempts.csv`). The two context rows reproduce their own folders' published values.
 Minutes a task at equal work price R90 `v3`'s work (v3.0 on the first rig, 2026-11-11: 3.08) at each run's own prompt
@@ -184,7 +193,7 @@ and generation speeds.
   `fnoc0`: +0.35 % under 4,000 tokens (19 and 16 requests), +0.08 % at 4,000 to 8,000 (42 and 38), −0.66 % at 8,000 to
   16,000 (5 and 6). Against `v4rc2` on the first rig: +0.28 %, +0.07 %, +1.74 % (5 and 16 requests). The tokens
   generated a second follow the acceptance: 0.722 under 4,000 tokens here, 0.757 in `fnoc0`.
-- **The same prompts** ([flash_same_prompts.md](flash_same_prompts.md)): 13 requests read the same number of new
+- **The same prompts** ([flash_same_prompts_3runs.md](flash_same_prompts_3runs.md)): 13 requests read the same number of new
   tokens on the same cached prefix in all three runs (11 first turns, and the second turns of JavaScript `space-age`
   and `triangle`). They took 98.74 s here, against 99.49 s in `fnoc0` (−0.76 %) and 97.66 s in `v4rc2` (+1.11 %). One
   of them, JavaScript `variable-length-quantity`'s first turn, varies between runs (4.67 s here, 4.86 s and 3.66 s);
@@ -304,9 +313,121 @@ trip the watchdog; the highest was 83.53 W on card 1. No sample tripped, and the
 **The rig at the end** (12:00:16, the kit's `state`): every card at its profile value, P0, no load process, the
 watchdog running, 0 GPU Xid, 0 step-downs, 3,121 MiB of host memory available. Runs 4 and 5 start from this state.
 
-## Flash-Next with the offsets: `f5oc1`
+## Flash-Next with the offsets: `f5oc1` (2026-11-19)
 
-Run 4 of the row; not run yet.
+**12 of 12 tasks passed, 2.26 minutes a task at equal work, generation 30.69 tok/s. Against `f5oc0` on the same boot
+(2.36 minutes, 27.82 tok/s) that is −4.24 % and +10.32 %, both beyond the spread of two stock runs of the same preset
+(R156a and R156b: 2.43 and 2.37 minutes, 2.53 % apart; 26.67 and 27.61 tok/s, 3.52 % apart): a gain on the agent's
+speed.** It holds where the two runs did the same work. At the same context a decode step took 8.21 %, 8.49 % and
+8.38 % less time in the three context buckets, and the 12 requests read on the same prompt took 5.78 % less time,
+every one of them faster.
+
+**The run:** `f5oc0`'s launcher with its own output, rig and client folders, and the kit's state read with run 3's
+work folder, where the watchdog runs. No `apply` of its own: the offsets `apply` set in run 3 stayed set. At 12:10:09
+the kit's state showed every card at its profile value, P8, 0 MiB, no load, the watchdog running, no GPU Xid, no
+step-down this boot and 3,159 MiB of host memory available. The card log's start line read the profile's offsets on
+every card. The started command (1,689 bytes) is `f5oc0`'s byte for byte, and so is the server's `switches:` line
+after `switches:`. The server started at 12:10:18 and was up after 227 s (`f5oc0`: 226 s), and the tasks ran
+12:14:08–12:30:57. At 12:31:16 every card still read its profile value, with the watchdog running, no GPU Xid and no
+step-down. The kit's start check said FAIL, as it must with offsets set. An agent check on the first rig used the same
+client during these tasks, with its own ports and folders.
+
+| | R209b `f5oc0`, stock | **R209d `f5oc1`, the full profile** | change | as context: R203d's change (the three-card profile on v4.0's engine) |
+|---|---|---|---|---|
+| passed | 12 / 12 | **12 / 12** | | 12 / 12 → 11 / 12 |
+| minutes a task at equal work (R90 `v3`'s work) | 2.36 | **2.26** | −4.24 % | +1.27 % |
+| generation tok/s | 27.82 | **30.69** | +10.32 % | −3.38 % |
+| ms a decode step, middle context under 4,000 / 4,000 to 8,000 / 8,000 to 16,000 | 113.46 / 118.04 / 121.08 | **104.15 / 108.02 / 110.93** | −8.21 / −8.49 / −8.38 % | −2.65 / −1.92 / −0.66 % |
+| requests in those buckets | 19 / 42 / 5 | **17 / 39 / 5** | | |
+| ms a decode step, all requests | 117.51 | **107.75** | −8.31 % | |
+| draft acceptance (accepted of drafted tokens); tokens a decode step | 0.754; 3.27 | **0.767; 3.31** | | 0.765 → 0.737 |
+| prompt tok/s, the whole session | 144.1 | **152.5** | +5.83 % | +2.20 % |
+| first token median s; p90 s | 2.52; 8.32 | **2.66; 7.91** | +5.56 %; −4.93 % | +13.31 %; −0.96 % |
+| first token on a task's first turn, median s | 6.57 | **6.25** | −4.87 % | −2.40 % |
+| first token on the later turns, median s | 2.16 | **1.88** | −13.25 % | |
+| the 12 requests read on the same prompt in all four runs, prompt s | 91.84 | **86.53** | −5.78 % | |
+| of them, the 11 first turns, prompt s | 83.60 | **78.69** | −5.86 % | −0.99 % |
+| prompt tokens read a task | 3,425 | **3,145** | −8.18 % | +5.84 % |
+| tokens generated a task | 1,846 | **1,855** | | |
+| reply tokens re-read (turns; their prompt s of all prompt s) | 1,876 (3; 17.0 of 285.2) | **941 (1; 6.9 of 247.4)** | | |
+| minutes, all 12 tasks; turns | 18.5; 66 | **16.7; 61** | | |
+| minutes a task, median | 1.21 | **1.04** | | |
+| tool calls / failed / malformed | 60 / 3 / 0 | **56 / 1 / 0** | | |
+| checkpoints restored / created / erased; full re-processing | 14 / 0 / 0; 0 | **12 / 0 / 0; 0** | | |
+| graph reallocations | 0 in 66 requests | **0 in 61** | | |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,888.2 | **2,127.0** | +12.65 % | +3.95 % |
+| highest card temperature °C; highest power W | 42; 79.74 | **42; 87.80** | | |
+| watchdog trips; GPU Xid | no watchdog at stock; 0 | **0; 0** | | 0; 0 |
+| lowest MemAvailable MiB; swap highest MiB | 382; 399 | **384; 589** | | |
+
+Each value is one run ([flash_agent.tsv](flash_agent.tsv), [flash_steps.md](flash_steps.md),
+[flash_same_prompts.md](flash_same_prompts.md), [flash_work.md](flash_work.md), [flash_clocks.tsv](flash_clocks.tsv),
+[flash_cards.md](flash_cards.md), [flash_host.tsv](flash_host.tsv), [flash_reallocs.tsv](flash_reallocs.tsv),
+[f5oc1_gonogo.md](f5oc1_gonogo.md); the tool calls from `attempts.csv`, the later turns' first token from
+`turns.csv`). R203d's column is the change its run `fnoc1` showed against its own stock run `fnoc0` on 2026-11-18
+([R203](../2026-11-18_r203_ornith_offsets/README.md#flash-next-with-the-offsets-fnoc1-2026-11-18)).
+
+- **The verdict: gain.** The two numbers the class is set on moved beyond the spread of two stock runs: minutes a task
+  at equal work by 4.24 % (the spread 2.53 %), generation by 10.32 % (3.52 %). Both are session-wide, so they also
+  carry the work: this run read 8.18 % fewer prompt tokens a task and accepted more drafted tokens (0.767 against
+  0.754). The like-for-like measures do not carry the work, and they agree. A decode step at the same context was
+  8.21 %, 8.49 % and 8.38 % shorter, where two stock runs of this preset on this rig, on two engines a day apart, differ
+  by +0.35 %, +0.08 % and −0.66 % (`f5oc0` against R203c's `fnoc0`). The same prompts were 5.78 % faster, where those
+  two stock runs differ by 0.76 %. So one run of each arm is enough to set the class. The size of the generation gain
+  is less sure than its sign: the shorter decode step alone gives +9.06 % est. at equal acceptance, and the higher
+  acceptance the rest.
+- **Why yesterday's test was negligible:** R203d's profile raised the core on cards 0, 4 and 8 only, and its decode
+  step was 2.65 %, 1.92 % and 0.66 % shorter. This profile raises the core on every card (busy SM clocks +12.65 % on
+  the cards' mean, against +3.95 %), and the step is about 8 % shorter in every bucket. The engine is not the
+  difference: Flash-Next's preset decodes as fast on v4.0's engine as on this one (`f5oc0` above). A decode step passes
+  through all nine cards in turn, so with three cores raised the other six likely held it back.
+- **Decode at the same context** ([flash_steps.md](flash_steps.md), from the server logs' timings, R203's
+  [run/flash_steps.py](../2026-11-18_r203_ornith_offsets/run/flash_steps.py)): under 4,000 tokens 104.15 against
+  113.46 ms a step (17 and 19 requests), 32.87 against 28.04 tok/s; at 4,000 to 8,000 tokens, where 39 and 42 of the
+  requests fall, 108.02 against 118.04 ms, 30.41 against 27.85 tok/s; at 8,000 to 16,000 tokens 110.93 against
+  121.08 ms (5 and 5 requests), 31.05 against 26.71 tok/s. Tokens a second move with the acceptance too (0.800
+  against 0.722 under 4,000 tokens); a step's time does not.
+- **The same prompts** ([flash_same_prompts.md](flash_same_prompts.md)): 12 requests read the same number of new
+  tokens on the same cached prefix in all four runs (11 first turns and JavaScript `triangle`'s second turn; this run's
+  `space-age` took a different second turn, so the set is one smaller than `f5oc0`'s 13,
+  [flash_same_prompts_3runs.md](flash_same_prompts_3runs.md)). They took 86.53 s against 91.84 s (−5.78 %). All 12
+  were faster: by 3.55 % (Python `variable-length-quantity`) to 12.32 % (JavaScript `triangle`'s first turn); Python
+  `affine-cipher`'s 2,780-token first turn, read with nothing cached, 27.49 s against 28.66 s (−4.07 %). Without
+  JavaScript `variable-length-quantity`'s first turn, which varies between runs, the other 11 took 82.17 s against
+  87.17 s (−5.73 %). Prompt reading is mostly compute, so it follows the cores: with three cores raised it was 0.99 %
+  faster.
+- **Work:** the agent took 61 turns (every task 4 to 7 turns) and generated 1,855 tokens a task; the longest context
+  was 12,712 tokens (JavaScript `variable-length-quantity`'s seventh turn). The server read a reply again on 1 turn
+  (Python `pig-latin`, 941 tokens, 6.9 of 247.4 prompt seconds); `f5oc0` on 3.
+- **First token follows the turn mix.** A task's first turn took a median 6.25 s (6.57 s) and the later turns 1.88 s
+  (2.16 s), both faster. This run had 49 later turns against 54, so its 12 first turns, the slowest, weigh more in the
+  median of all turns, which rose to 2.66 s (2.52 s).
+- **The answers looked sound.** Every task passed, also its hidden tests, with the test files untouched. None of the
+  56 tool calls was malformed, none was inside the reasoning, and there was no NaN or inf in the server log; 12
+  checkpoints restored, none created or erased, 0 full re-processing. The one failed call was the agent's own extra
+  check in JavaScript `variable-length-quantity` after the task's tests had passed: a scratch script outside the task
+  folder imported the solution by a relative path that did not resolve, and the next call fixed the path and ran it.
+  The report's memory gate is NO-GO on the 385 MB low and the swap, as for `f5oc0`; every other gate is GO
+  ([f5oc1_gonogo.md](f5oc1_gonogo.md)).
+- **The cards' busy clocks** ([flash_clocks.tsv](flash_clocks.tsv), busy = utilization above 0 %, 12:14:08–12:30:57):
+  medians of 2,113 2,138 2,151 2,100 2,113 2,100 2,151 2,151 2,126 MHz on cards 0 to 8 (mean 2,127.0), against
+  `f5oc0`'s 1,860 1,898 1,885 1,873 1,911 1,898 1,873 1,898 1,898: +253, +240, +266, +227, +202, +202, +278, +253 and
+  +228 MHz while busy, against core offsets of +256, +256, +269, +231, +206, +206, +282, +256 and +231 MHz. Busy
+  samples below 1,800 MHz fell to 0.67 0.72 0.67 0.33 0.84 0.89 0.84 0.79 0.58 % (`f5oc0`: 3.56 1.96 2.91 2.06 2.13
+  1.97 2.70 2.73 1.06 %). The memory ran at busy medians of 4,657 4,498 4,498 4,551 4,551 4,608 4,455 4,455 4,657 MHz
+  against 4,006 on every card at stock ([flash_cards.md](flash_cards.md)).
+- **Heat and power** ([flash_cards.md](flash_cards.md), the card log every 0.5 s over the tasks): the hottest cards
+  were cards 0 and 6 at 42 °C (`f5oc0`: card 0 at 42 °C). Power went above 80 W only in single samples: 1, 0, 2, 2, 1,
+  0, 1, 0 and 3 samples on cards 0 to 8, of 2,020 each. The highest was 87.80 W on card 8 at 12:26:57 (`f5oc0`:
+  79.74 W on card 1, none above 80 W). The watchdog trips at 80 W held for 5 s; it never tripped, and the boot logged
+  no GPU Xid.
+- **Host and cards** ([flash_host.tsv](flash_host.tsv)): lowest MemAvailable 384 MiB at 12:17:04, during the third
+  task; swap 52 MiB at the start (left from the earlier runs) and 589 MiB at its highest at 12:24:24. The RAM
+  watchdog stopped nothing. The card log's peaks, 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB on cards 0
+  to 8, are `f5oc0`'s on every card.
+- **Graph reallocations:** 0 in 61 requests, in every prompt-size bucket ([flash_reallocs.tsv](flash_reallocs.tsv)).
+- **The rig at the end:** the offsets stayed set and the watchdog kept running for Ornith's offset run on the same
+  boot (below).
 
 ## Ornith with the offsets: `o5oc1`
 
@@ -330,15 +451,19 @@ identical prompts are the like-for-like measures.
 | [run/ornith_run.sh](run/ornith_run.sh) | one Ornith run: the rig's and the kit's read-only state, then R204's harness call, the arm and the machine-specific values from the environment |
 | [run/tables.sh](run/tables.sh) | Ornith's tables, from a folder holding the rows, server logs, card logs and host logs it lists |
 | [run/decode_at_mix.py](run/decode_at_mix.py) | decode speed at a fixed mix of contexts taken from earlier runs, so a new run sits beside an earlier table without moving it |
-| [flash_agent.tsv](flash_agent.tsv) | Flash-Next per arm (R90's `r90v3`, the equal-work reference, the context runs `fnoc0` and `v4rc2`, and `f5oc0`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, the draft's acceptance, tokens a decode step, minutes for all tasks, a task's median, minutes a task at equal work against `r90v3` |
-| [flash_steps.md](flash_steps.md) | `fnoc0`, `v4rc2` and `f5oc0` by the context at a request's middle: requests, tokens, decode s, tok/s, the draft's acceptance, tokens a decode step and ms a decode step |
-| [flash_same_prompts.md](flash_same_prompts.md) | the 13 requests read on the same prompt in `fnoc0`, `v4rc2` and `f5oc0` (task, turn, new tokens, cached tokens, each run's prompt ms); each run's generation over all its requests |
-| [flash_work.md](flash_work.md), [flash_work.tsv](flash_work.tsv) | the work of `fnoc0`, `v4rc2` and `f5oc0`: prompt tokens read, tokens generated, reply tokens re-read and the turns that re-read a reply |
+| [flash_agent.tsv](flash_agent.tsv) | Flash-Next per arm (R90's `r90v3`, the equal-work reference, the context runs `fnoc0` and `v4rc2`, `f5oc0` and `f5oc1`): passed, turns, prompt and generation tok/s, first token median, p90 and first turn, the draft's acceptance, tokens a decode step, minutes for all tasks, a task's median, minutes a task at equal work against `r90v3` |
+| [flash_steps.md](flash_steps.md) | `fnoc0`, `v4rc2`, `f5oc0` and `f5oc1` by the context at a request's middle: requests, tokens, decode s, tok/s, the draft's acceptance, tokens a decode step and ms a decode step |
+| [flash_same_prompts.md](flash_same_prompts.md) | the 12 requests read on the same prompt in `fnoc0`, `v4rc2`, `f5oc0` and `f5oc1` (task, turn, new tokens, cached tokens, each run's prompt ms); each run's generation over all its requests |
+| [flash_same_prompts_3runs.md](flash_same_prompts_3runs.md) | the same for the 13 requests read on the same prompt in `fnoc0`, `v4rc2` and `f5oc0`, the table of run 2 |
+| [flash_work.md](flash_work.md), [flash_work.tsv](flash_work.tsv) | the work of `fnoc0`, `v4rc2`, `f5oc0` and `f5oc1`: prompt tokens read, tokens generated, reply tokens re-read and the turns that re-read a reply |
 | [flash_clocks.tsv](flash_clocks.tsv) | each card's busy SM clock median, their mean and each card's share of busy samples below 1,800 MHz, over each Flash-Next run's tasks |
-| [flash_host.tsv](flash_host.tsv) | as `host.tsv`, for `fnoc0`, `v4rc2` and `f5oc0` (card peaks from the card log) |
-| [flash_reallocs.tsv](flash_reallocs.tsv) | graph reallocations and prompt seconds per prompt size, the three Flash-Next runs |
+| [flash_host.tsv](flash_host.tsv) | as `host.tsv`, for `fnoc0`, `v4rc2`, `f5oc0` and `f5oc1` (card peaks from the card log) |
+| [flash_reallocs.tsv](flash_reallocs.tsv) | graph reallocations and prompt seconds per prompt size, the four Flash-Next runs |
+| [flash_cards.md](flash_cards.md) | per card over `f5oc0`'s and `f5oc1`'s tasks: highest temperature and power, samples above 80 W, the busy memory clock's median |
 | [f5oc0_compare.md](f5oc0_compare.md), [f5oc0_report_table.md](f5oc0_report_table.md), [f5oc0_gonogo.md](f5oc0_gonogo.md) | the agent check's report on `f5oc0`, under the harness's arm name `v4r` |
+| [f5oc1_compare.md](f5oc1_compare.md), [f5oc1_report_table.md](f5oc1_report_table.md), [f5oc1_gonogo.md](f5oc1_gonogo.md) | the same on `f5oc1` |
 | [agent/f5oc0/](agent/f5oc0/) | `turns.csv` and `attempts.csv` of `f5oc0` (the harness's arm `v4r` renamed) |
+| [agent/f5oc1/](agent/f5oc1/) | the same of `f5oc1` |
 | [run/flash_tables.sh](run/flash_tables.sh) | Flash-Next's tables, from a folder holding the server, card and host logs it lists |
 | [model_check.md](model_check.md), [model_rounds.tsv](model_rounds.tsv) | run 3's whole-memory check: stock against the offsets (loads, hashes, generation and prompt tok/s in rounds 1 and 2 and the median of rounds 2 on), and every round of both checks (hash, compared with stock's round 1, tok/s of both prompts) |
 | [apply.md](apply.md), [o5_apply_steps.csv](o5_apply_steps.csv) | run 3's `apply`, card by card (the offsets, the streaming read and peak core clock at stock and with the offsets, the greedy check), and the kit's own table (both stock rounds' times and limits, the round with the offsets) |
@@ -401,8 +526,22 @@ sed 's/v4r/f5oc0/g; s/\r$//' <client folder>/r209b/res/attempts.csv > docs/data/
 bash docs/data/2026-11-19_r209_oc_v5/run/flash_tables.sh <Flash-Next tables folder> f5oc0
 ```
 
-Flash-Next with the offsets runs the same command with its own rig and client folders (`r209d`), after the kit's
-`apply`; then `run/flash_tables.sh <Flash-Next tables folder> f5oc0 f5oc1`.
+Flash-Next with the offsets ran the same command with its own rig, client and output folders (`r209d`), after run 3's
+`apply`, with the kit's state read through a kit file that sets run 3's work folder (`WORK`, where the watchdog runs);
+then its tables:
+
+```bash
+# agent/f5oc1/ as agent/f5oc0/ (the arm v4r renamed f5oc1); f5oc1's server log as rig/server-f5oc1.log and its card
+# and host logs in rig_f5oc1/ of f5oc0's tables folder; f5oc1's window: 2026-11-19 12:14:08|2026-11-19 12:30:57
+sed 's/v4r/f5oc1/g; s/\r$//' <client folder>/r209d/res/turns.csv > docs/data/2026-11-19_r209_oc_v5/agent/f5oc1/turns.csv
+sed 's/v4r/f5oc1/g; s/\r$//' <client folder>/r209d/res/attempts.csv > docs/data/2026-11-19_r209_oc_v5/agent/f5oc1/attempts.csv
+bash docs/data/2026-11-19_r209_oc_v5/run/flash_tables.sh <Flash-Next tables folder> f5oc0 f5oc1
+python3 -I docs/data/2026-11-18_r203_ornith_offsets/run/flash_cards.py cards \
+  "f5oc0=<tables>/rig_f5oc0/cards.csv=2026-11-19 10:25:37=2026-11-19 10:44:14" \
+  "f5oc1=<tables>/rig_f5oc1/cards.csv=2026-11-19 12:14:08=2026-11-19 12:30:57" > docs/data/2026-11-19_r209_oc_v5/flash_cards.md
+```
+
+`flash_same_prompts_3runs.md` is `run/flash_tables.sh <tables> f5oc0`'s `flash_same_prompts.md`, run 2's table.
 
 Run 3, on the rig as root, with the kit's start check passing (after runs 1 and 2 on this boot every offset was still
 0 and no step-down was in the ledger); about 60 minutes (two ~11-minute loads, `apply` 5 minutes, 30 minutes with the
@@ -433,5 +572,5 @@ tree only to `model_check.sh`. The run's script was this one with the machine's 
 ## Provenance and licence
 
 Measured on the project's own rig on 2026-11-19 with the repository's own scripts; the agent check's tasks are
-[bench/agent_check](../../../bench/agent_check/README.md)'s (their task IDs are in `agent/o5oc0/attempts.csv` and `agent/f5oc0/attempts.csv`). The
+[bench/agent_check](../../../bench/agent_check/README.md)'s (their task IDs are in `agent/o5oc0/attempts.csv`, `agent/f5oc0/attempts.csv` and `agent/f5oc1/attempts.csv`). The
 tables and scripts here are under the repository's licence.

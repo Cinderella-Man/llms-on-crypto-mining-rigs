@@ -7,6 +7,7 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | fnoc0 | 12 | 60 | 36978 (3082) | 22860 (1905) | 0 (0; 0.0 of 261.9) | 28.91 (bugfix-python-affine-cipher, 1) |
 | v4rc2 | 12 | 92 | 57624 (4802) | 39678 (3306) | 4854 (7; 51.6 of 413.9) | 28.82 (bugfix-python-affine-cipher, 1) |
 | f5oc0 | 12 | 66 | 41098 (3425) | 22146 (1846) | 1876 (3; 17.0 of 285.2) | 28.71 (bugfix-python-affine-cipher, 1) |
+| f5oc1 | 12 | 61 | 37739 (3145) | 22262 (1855) | 941 (1; 6.9 of 247.4) | 27.53 (bugfix-python-affine-cipher, 1) |
 
 ### The turns that read a reply again
 
@@ -22,3 +23,4 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | f5oc0 | bugfix-python-pig-latin | 3 | reply re-read | 3423 | 824 | 3419 | 824 | 1050 | 7.16 | 7.22 |
 | f5oc0 | bugfix-python-pig-latin | 5 | reply re-read | 4680 | 140 | 4676 | 140 | 259 | 2.19 | 2.24 |
 | f5oc0 | bugfix-python-variable-length-quantity | 3 | reply re-read | 4476 | 912 | 4472 | 912 | 1208 | 7.66 | 7.73 |
+| f5oc1 | bugfix-python-pig-latin | 3 | reply re-read | 3457 | 941 | 3453 | 941 | 1167 | 6.93 | 7.01 |
