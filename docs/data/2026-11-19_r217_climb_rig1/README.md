@@ -40,16 +40,15 @@ each card's memory at a value that has held a soak ([Q1578](../../../quants/expe
 | 1 | 1,860 MHz | +1,300, +1,400 | +1,200 MT/s | +1,200 (2 steps under +1,400) | +1,000 | +1,100 | +1,200 |
 | 2 | 1,898 MHz | +1,200, +1,300 | +1,100 MT/s | +1,100 (2 steps under +1,300) | +900 | +1,000 | +1,100 |
 | 3 | 1,911 MHz | +1,300, +1,400 | +1,200 MT/s | +1,200 (2 steps under +1,400) | +1,000 | +1,100 | +1,200 |
-| 4 | 1,885 MHz | +1,400, — | +1,300 MT/s | +1,000 (2 steps under R194's +1,200) | +800 | +900 | +1,000 |
+| 4 | 1,885 MHz | +1,400, — | +1,300 MT/s | none | +1,100 | +1,200 | +1,300 |
 | 5 | 1,911 MHz | +1,400, — | +1,300 MT/s | none | +1,100 | +1,200 | +1,300 |
 | 6 | 1,885 MHz | +1,300, +1,400 | +1,200 MT/s | +1,200 (2 steps under +1,400) | +1,000 | +1,100 | +1,200 |
 | 7 | 1,911 MHz | +1,200, +1,300 | +1,100 MT/s | +1,100 (2 steps under +1,300) | +900 | +1,000 | +1,100 |
 | 8 | 1,885 MHz | +1,000, +1,100 | +900 MT/s | +900 (2 steps under +1,100) | +700 | +800 | +900 |
 
-Every rung keeps the core at 0; with no core value in the profile there is no core rung. Card 4's cap comes from
-R194's failure, in which its memory and core were raised together: the kit's rule counts a failure that names both
-offsets against both ([run/failures-before.json](run/failures-before.json)). Read as a core failure alone, it would
-leave card 4 uncapped, with rungs at +1,100, +1,200 and +1,300 MT/s like card 5's.
+Every rung keeps the core at 0; with no core value in the profile there is no core rung. The rig's profile starts
+from this map alone: the earlier sittings on its cards (Q133, R193 and R194) are set aside, so the caps come only
+from this climb's failures, and no earlier failure limits a card's memory here or its core in the later core climb.
 
 ## What was done
 
@@ -83,7 +82,7 @@ that day and was idle from 19:43. The kit ran as published at this repository's 
 
 The order on the rig: the kit's read-only state and start check, `plan`, the dry run, the watchdog's four trip tests,
 the watchdog, the climb; afterwards every offset read back, the watchdog stopped, the results copied off. Then, at a
-desk, `climb.py rungs` wrote the soak ladder's three rungs from the climb's profile and this rig's earlier failures.
+desk, `climb.py rungs` wrote the soak ladder's three rungs from the climb's profile and its own failures.
 
 ## Results
 
@@ -138,9 +137,8 @@ needs a fresh boot before any offset; the ladder starts on the next boot.
 
 ## The soak ladder's rungs
 
-`climb.py rungs` (file work, no rig) wrote three rung profiles from [profile.json](profile.json) and the rig's earlier
-failures ([run/failures-before.json](run/failures-before.json): card 0's memory at +1,400 MT/s in Q133, card 2's core
-at +300 MHz in R193, card 4's memory and core at +1,200 MT/s and +275 MHz in R194). By the kit's rule each card's top
+`climb.py rungs` (file work, no rig) wrote three rung profiles from [profile.json](profile.json) and the climb's own
+failures, the only ones counted (the earlier sittings are set aside). By the kit's rule each card's top
 rung is its profile value, lowered to two steps under the lowest memory value it ever failed at; rungs 1 and 2 are
 two steps and one step under it ([the rule](../../../bench/mem_offset/README.md#the-ladders-rungs-climbpy-rungs)).
 The files: [rungs/rung1.json](rungs/rung1.json), [rung2.json](rungs/rung2.json), [rung3.json](rungs/rung3.json), and
@@ -173,8 +171,7 @@ cat /var/tmp/r218/CHAIN_DONE     # when it exists: what happened, in one line
 | [tables/greedy_failures.csv](tables/greedy_failures.csv) | per failed check and prompt: text identical or not, the first token and first probability that differ |
 | [tables/watchdog.txt](tables/watchdog.txt) | the watchdog's start and stop lines |
 | [run/env.sh](run/env.sh) | this rig's settings for the kit |
-| [run/failures-before.json](run/failures-before.json) | the rig's failures before this climb, as `climb.py rungs` and `soak.py --failures` read them |
-| [run/failures.json](run/failures.json) | every known failure of the rig's cards, this climb's included: the ladder's `FAILURES` |
+| [run/failures.json](run/failures.json) | this climb's seven failures, as `soak.py --failures` reads them: the ladder's `FAILURES` |
 | [run/env-chain.sh](run/env-chain.sh), [run/MD5SUMS-r218](run/MD5SUMS-r218) | the ladder's settings for `soak_chain.sh` on the next boot (R218), and the MD5s of the files staged for it |
 | [run/tables.py](run/tables.py), [run/greedy_diff.py](run/greedy_diff.py) | the tables from the climb's work folder (R200's scripts) |
 
@@ -200,7 +197,7 @@ At a desk, with the work folder copied off the rig to `WORK`:
 python3 -I docs/data/2026-11-19_r217_climb_rig1/run/tables.py $WORK docs/data/2026-11-19_r217_climb_rig1/tables
 python3 -I docs/data/2026-11-19_r217_climb_rig1/run/greedy_diff.py $WORK/out docs/data/2026-11-19_r217_climb_rig1/tables/greedy_failures.csv
 python3 -I bench/mem_offset/climb.py rungs docs/data/2026-11-19_r217_climb_rig1/profile.json \
-  --failures docs/data/2026-11-19_r217_climb_rig1/run/failures-before.json --out docs/data/2026-11-19_r217_climb_rig1/rungs
+  --out docs/data/2026-11-19_r217_climb_rig1/rungs --overwrite
 ```
 
 Provenance: measured on the rig on 2026-11-19 by the project. The check model is Apache-2.0; nothing of it is

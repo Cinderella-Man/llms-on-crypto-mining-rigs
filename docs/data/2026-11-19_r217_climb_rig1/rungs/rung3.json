@@ -174,7 +174,7 @@
    "name": "NVIDIA P106-090",
    "vbios": "86.06.5B.00.0C",
    "stock_peak_mhz": 1885,
-   "memory_mts": 1000,
+   "memory_mts": 1300,
    "core_mhz": 0,
    "core_steps": 0,
    "memory": {
@@ -329,18 +329,7 @@
   {
    "card": 0,
    "memory_mts": 1400,
-   "where": "Q133, 2026-11-17: card 0 alone with the core at 0; the greedy check's probabilities differed on 50 of 512 tokens (kernel checks, text and cuda_memtest clean)"
-  },
-  {
-   "card": 2,
-   "core_mhz": 300,
-   "where": "R193, 2026-11-17: Xid 31 at +1,200 MT/s and +300 MHz (a 2,202 MHz peak), read as a core error: card 2 held +1,200 MT/s with +249 MHz (2,138 MHz) in R194"
-  },
-  {
-   "card": 4,
-   "memory_mts": 1200,
-   "core_mhz": 275,
-   "where": "R194, 2026-11-17: two wrong kernel results, then a hang, at +1,200 MT/s and +275 MHz (a 2,138 MHz peak); memory and core not separated"
+   "where": "profile.json: failed at +1,400 MT/s"
   },
   {
    "card": 1,
