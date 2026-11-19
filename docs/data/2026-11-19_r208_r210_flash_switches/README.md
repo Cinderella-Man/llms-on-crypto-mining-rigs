@@ -4,12 +4,14 @@ Registry rows [Q1602](../../../quants/experiments.md) (R208, the K-quant prompt 
 [Q1604](../../../quants/experiments.md) (R210, text reuse). Both switches are already in the v5 engine; this folder
 decides, on the coding-agent check, whether either goes into Flash-Next's v5 preset.
 
-**Runs 1 and 2 of 6 done.** The control ran as the same preset did the day before: on the v4.0 preset and the v5
+**Runs 1 to 3 of 6 done.** The control ran as the same preset did the day before: on the v4.0 preset and the v5
 engine, 11 of 12 tasks passed (JavaScript `complex-numbers` ran to the 12-minute cap again), a task at equal work took
 2.42 minutes against 2.40 the day before on the same rig, and the model generated at 26.98 tok/s against 27.00. With the
 FP32 scale (run 2) all 12 passed and a task at equal work took 2.38 minutes; the 13 requests that read the same new
-tokens on the same cached prefix in every run took 98.16 s against the control's 98.49 s, less than the difference on
-one of them. The two switches are judged after all six runs, against this day's two controls.
+tokens on the same cached prefix in the first three runs took 98.16 s against the control's 98.49 s, less than the
+difference on one of them. With text reuse (run 3) no turn read an earlier reply again, against 4 turns in the control
+and 3 in run 2; it kept the cached tokens on 32 requests in two tasks, and a task at equal work took 2.43 minutes. The
+two switches are judged after all six runs, against this day's two controls.
 
 ## What runs
 
@@ -21,7 +23,7 @@ that both switches share the two control runs and each switch has one run in eac
 |---|---|---|---|---|
 | 1 | R208a | `f5c1` | nothing (the control) | done 10:44–11:24 |
 | 2 | R208b | `f5s1` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | done 11:33–11:59 |
-| 3 | R210a | `f5t1` | `LLAMA_SERVER_TEXT_REUSE=1` | prepared |
+| 3 | R210a | `f5t1` | `LLAMA_SERVER_TEXT_REUSE=1` | done 12:44–13:18 |
 | 4 | R208c | `f5c2` | nothing (the control) | planned |
 | 5 | R208d | `f5s2` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | planned |
 | 6 | R210b | `f5t2` | `LLAMA_SERVER_TEXT_REUSE=1` | planned |
@@ -184,10 +186,85 @@ class is given here.
   19 MiB. The RAM watchdog stopped nothing. Card peaks 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, the
   same as run 1's on every card.
 
-## Run 3, `f5t1` (R210a): text reuse
+## Run 3, `f5t1` (R210a): text reuse, 12:44–13:18
 
-Not run yet. Its launcher's server line is the control's with `LLAMA_SERVER_TEXT_REUSE=1` after the driver's last
-switch (1,715 bytes).
+**No turn read an earlier reply again.** The server read no previous reply a second time (0 turns, 0 of the run's 404.0
+prompt seconds), against 4 turns (1,806 tokens, 23.6 of 427.2 s) in the control and 3 (2,071 tokens, 19.8 of
+309.9 s) in run 2. The switch kept the cached tokens on 32 requests in two tasks. In Python `scale-generator` the third
+prompt split the second reply (5,058 tokens) into other tokens 3,647 tokens in; in JavaScript `complex-numbers` the
+thirteenth prompt did so 152 tokens into the twelfth reply (697 tokens). Both points lie in the reply's text before its
+tool call, and the client sent both replies back as the server gave them. 11 of 12 tasks passed: `complex-numbers` failed
+again, stopped at the 40-turn cap after 41 turns (537 s) where run 1 ran to the 12-minute cap after 38. A task at equal
+work took 2.43 minutes against the control's 2.42, and the model generated at 27.07 tok/s against 26.98. The 12
+requests that read the same new tokens on the same cached prefix in all four runs took 92.23 s against 91.56 s
+(control) and 91.27 s (run 2); text reuse did not act on any of them.
+
+Its started command (1,715 bytes, md5 `5f0cbde4375a316aafaf49ba4660efcc`) equals [run/dry_line.sh](run/dry_line.sh)'s
+line for `f5t1` byte for byte: the control's with `LLAMA_SERVER_TEXT_REUSE=1` after the driver's last switch. The
+server's `switches:` line names 40: the control's 39 with the same values and this one. The server started at 12:45:00
+and was up after 311 s; the tasks ran 12:50:14–13:17:51 and the report ended at 13:18:05. Every card was at stock before
+and after (75 W, 1,911 / 4,004 MHz maximum, no offset), with no Xid line. A first try at 12:07 lost its client at
+12:14: an agent check for the other rig started on the same client machine with the same harness arm, and its client,
+when it starts, removes the proxy container named for that arm, which was this run's proxy. That try was stopped at
+12:43 and the run started again with containers named for the run (Q1619); nothing of the first try is in these tables.
+
+| | C854 `v4rc2` (context) | `f5c1` (run 1) | `f5s1` (run 2) | **`f5t1` (R210a)** |
+|---|---|---|---|---|
+| passed | 11 / 12 | 11 / 12 (`complex-numbers` at the time cap, 38 turns) | 12 / 12 (`complex-numbers` in 5 turns) | **11 / 12** (`complex-numbers` at the turn cap, 41 turns) |
+| minutes a task at equal work (R90 `v3`'s work) | 2.40 | 2.42 | 2.38 | **2.43** |
+| the same without `complex-numbers` | 2.44 | 2.44 | 2.47 | **2.45** |
+| the 12 requests that read the same new tokens on the same cached prefix in all four runs, prompt s | 90.73 | 91.56 | 91.27 | **92.23** |
+| of them, the 11 first turns (all but `pig-latin`'s) | 82.28 | 83.30 | 83.04 | **83.98** |
+| of them, `affine-cipher`'s first turn (2,780 tokens, nothing cached), prompt s | 28.57 | 27.93 | 27.95 | **28.13** |
+| `pig-latin`'s first turn: tokens read; prompt s | 2,324; 12.34 | 2,324; 12.66 | 775; 6.41 | **2,324; 12.06** |
+| prompt tok/s, the whole session | 139.2 | 133.7 | 137.1 | **129.3** |
+| the same without `complex-numbers` | 146.1 | 141.7 | 132.8 | **141.8** |
+| generation tok/s | 27.00 | 26.98 | 27.85 | **27.07** |
+| the same without `complex-numbers` | 27.99 | 28.07 | 27.90 | **28.00** |
+| first token median s; p90 s | 2.52; 9.54 | 2.41; 9.04 | 2.13; 8.26 | **2.27; 8.89** |
+| first token on a task's first turn, median s | 6.69 | 6.57 | 6.55 | **6.69** |
+| the longest first-token wait s | 28.82 | 27.97 | 27.99 | **28.19** (`affine-cipher` turn 1) |
+| prompt tokens read a task | 4,802 | 4,760 | 3,541 | **4,354** |
+| the same without `complex-numbers` | 3,516 | 3,499 | 3,428 | **3,309** |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 7; 4,854; 51.6 of 413.9 | 4; 1,806; 23.6 of 427.2 | 3; 2,071; 19.8 of 309.9 | **0; 0; 0.0 of 404.0** |
+| requests on which text reuse kept the cached tokens (tasks; points) | — | — | — | **32 (2; 2)** |
+| draft acceptance (accepted of drafted tokens) | 0.740 | 0.732 | 0.752 | **0.735** |
+| minutes, all 12 tasks; turns | 32.6; 92 | 33.6; 104 | 21.0; 82 | **27.5; 103** |
+| graph reallocations | 0 in 91 requests | 0 in 103 | 0 in 82 | **0 in 102** |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,878.3 | 1,885.3 | 1,885.3 | **1,881.2** |
+| lowest MemAvailable MiB; swap highest MiB | 387; 464 | 285; 19 | 295; 19 | **279; 19** |
+
+Each value is one run, from the same files as run 1's table and [text_reuse_points.tsv](text_reuse_points.tsv). No class
+is given here: R210's verdict comes after its second run, against both controls.
+
+- **Where the switch acted** ([text_reuse_points.tsv](text_reuse_points.tsv), from the server's own line, for example
+  `prompt ids differ from the cache at 7954, same text: 1410 more cached tokens kept (9945 -> 9946 prompt tokens)`).
+  `scale-generator` turn 3: the ids differed at token 7,954, 3,647 tokens into turn 2's reply, whose tool call starts
+  at its token 5,011; the switch kept the reply's other 1,410 cached tokens, so the server read 582 new tokens. In
+  every re-read of runs 1 and 2 the server went back to the previous prompt's end and read the whole reply again; here
+  that would have been the 5,058-token reply (est.). `complex-numbers` turn 13: the ids differed at token 12,323, 152
+  tokens into turn 12's 697-token reply (its tool call from token 559); 545 cached tokens kept, 226 read.
+- **The same point on every later turn.** The cache keeps the ids the model generated, the client sends the whole
+  history as text each turn, and the tokenizer splits that reply its own way every time, so each later prompt of the
+  task differs from the cache at the same token: 2 more requests in `scale-generator` and 28 more in
+  `complex-numbers`, each kept by the switch. Each line's `kept` counts the cached tokens from that point to the end of
+  the cache, so they add up turn after turn.
+- **The work.** Without `complex-numbers` this run read 3,309 prompt tokens a task against 3,499 and 3,428 and
+  generated 2,107 against 2,552 and 2,248, over 62 requests against 66 and 77 ([work_nocx.tsv](work_nocx.tsv)).
+  `scale-generator` took 230 s (its 5,058-token reply), against 178 and 103 s.
+- **`pig-latin`'s first turn** read its whole 2,324-token prompt, as in run 1: the 41 turns of `complex-numbers` before
+  it pushed the shared system prefix's checkpoint out of the four kept on the cards (the server log: "no checkpoint
+  below 1553"). Its second turn read 1,047 tokens on 2,376 cached, where runs 1 and 2 read 1,051 on 2,406, so
+  [same_prompts.md](same_prompts.md) matches 12 requests in all four runs; run 2's figures above were from the
+  three-run match of 13.
+- **`affine-cipher`'s first turn**, the run's first request (2,780 tokens, nothing cached, where the switch has nothing
+  to compare), took 28.13 s against 27.93 and 27.95 s; the first try's load read it in 28.13 s too.
+- **Clocks** ([clocks.tsv](clocks.tsv)): busy medians 1,847 1,847 1,898 1,898 1,873 1,911 1,873 1,911 1,873 MHz (cards
+  0–8), one 13 MHz step below runs 1 and 2 on cards 0, 6 and 8.
+- **Host** ([host.tsv](host.tsv)): the lowest MemAvailable was 279 MiB at 13:17:58, 7 s after the last task ended and
+  before the harness stopped the server; during the tasks it was 290 MiB at 13:17:22. Swap stayed at 19 MiB. The RAM
+  watchdog stopped nothing. Card peaks 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, the same as runs 1
+  and 2 on every card.
 
 ## Runs 4 to 6, `f5c2`, `f5s2`, `f5t2`
 
@@ -210,6 +287,7 @@ wait.
 | [work.md](work.md), [work.tsv](work.tsv) | per run: prompt tokens read and generated a task, and every turn's cache path (reply re-reads, older checkpoints) |
 | [first_token.tsv](first_token.tsv) | per run: the longest first-token wait (task, turn, tokens read and cached, prompt ms) and the later turns' median and p90 |
 | [rereads_runs.tsv](rereads_runs.tsv), [rereads_turns.tsv](rereads_turns.tsv) | C854's [reply_rereads.py](../2026-11-18_c854b_p106_check/run/reply_rereads.py): per run the turns that read the previous reply again, their tokens and prompt seconds, and per such turn where inside the reply the prompt stopped matching |
+| [text_reuse_points.tsv](text_reuse_points.tsv) | [run/text_reuse_points.py](run/text_reuse_points.py): every request on which text reuse kept the cached tokens (the server's `same text` line), the token where the ids differed, the tokens kept, where that lies in the previous reply (before or inside its tool call) and whether the client sent the reply back unchanged |
 | [clocks.tsv](clocks.tsv) | each card's busy SM clock median per run, over the tasks' window |
 | [host.tsv](host.tsv) | lowest MemAvailable, swap at the start and its highest, MemAvailable at the end, each card's peak memory |
 | [reallocs.tsv](reallocs.tsv) | the target graph's reallocations per prompt-size bucket ([scripts/realloc_counts.py](../../../scripts/realloc_counts.py)) |
@@ -217,11 +295,14 @@ wait.
 | [run/dry_line.sh](run/dry_line.sh) | the server line a run would start, built by the unchanged driver chain without a load |
 | [run/tables.sh](run/tables.sh) | every table above from the runs' logs |
 | [run/rename_arm.py](run/rename_arm.py) | the client's tables with the arm renamed |
+| [run/text_reuse_points.py](run/text_reuse_points.py) | the `same text` lines of a run's server log placed on its turns (`tables.sh` runs it) |
 
 ## Commands
 
 From the repository root on the machine that drives the rig, with the rig clean; `ARM` is the run's arm, and every
-run gets its own `RIGDIR` and `CLIENT_OUT` (the driver skips attempts it finds finished in its client folder):
+run gets its own `RIGDIR` and `CLIENT_OUT` (the driver skips attempts it finds finished in its client folder). When
+another agent check may use the same client machine, give each run its own `PREFIX` as well (the client's container
+names; with the default, two runs of the same harness arm remove each other's containers, Q1619):
 
 ```bash
 ARM=f5c1 RIG=$RIG CLIENT=local \

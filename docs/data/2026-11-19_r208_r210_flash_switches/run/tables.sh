@@ -72,6 +72,8 @@ EOF
 rr=()
 for r in "${RUNS[@]}"; do rr+=("$r:v4r:$T/proxy_$r/proxy.jsonl:$T/proxy_$r/proxy.jsonl.bodies.gz:$T/rig/server-$r.log"); done
 py $C/run/reply_rereads.py "$D/rereads" "${rr[@]}" > "$T/rereads.out" 2>&1
+# where text reuse kept the cache: each `same text` line of the server logs on its turn (none in runs without it)
+py $D/run/text_reuse_points.py "$D/text_reuse_points.tsv" "${rr[@]}" > "$T/text_reuse.out" 2>&1
 # busy SM clocks, host memory and swap, graph reallocations
 cl=(); for r in "${RUNS[@]}"; do mapfile -t w < "$T/window_$r"; cl+=("$r=$T/rig_$r/cards.csv" "${w[0]}" "${w[1]}"); done
 py $C/run/busy_clocks.py "${cl[@]}" > "$D/clocks.tsv"

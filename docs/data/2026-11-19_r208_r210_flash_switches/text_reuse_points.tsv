@@ -1,0 +1,33 @@
+run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
+f5t1	bugfix-python-scale-generator	3	7954	1410	9945	9946	9364	582	4147.023	4307	5058	3647	5011	before the tool call	same
+f5t1	bugfix-python-scale-generator	4	7954	2212	10196	10197	10166	31	1013.206	9946	221	-1992		before the previous reply	same, arguments re-serialized
+f5t1	bugfix-python-scale-generator	5	7954	2311	10300	10301	10265	36	1093.332	10197	69	-2243		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	13	12323	545	13091	13094	12868	226	2176.071	12171	697	152	559	before the tool call	same
+f5t1	bugfix-javascript-complex-numbers	14	12323	863	14296	14299	13186	1113	9863.777	13094	93	-771		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	15	12323	2292	14654	14657	14615	42	1218.205	14299	317	-1976		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	16	12323	2406	15421	15424	14729	695	8601.821	14657	73	-2334		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	17	12323	3187	15657	15660	15510	150	1734.373	15424	87	-3101		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	18	12323	3423	15776	15779	15746	33	1009.689	15660	87	-3337		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	19	12323	3530	15869	15872	15853	19	806.392	15779	75	-3456		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	20	12323	3627	16000	16003	15950	53	1360.664	15872	79	-3549		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	21	12323	3749	16088	16091	16072	19	759.584	16003	70	-3680		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	22	12323	3851	16523	16526	16174	352	2639.025	16091	84	-3768		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	23	12323	4753	17253	17256	17076	180	1991.057	16526	551	-4203		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	24	12323	5323	17660	17665	17646	19	806.452	17256	391	-4933		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	25	12323	5454	17938	17943	17777	166	1992.087	17665	113	-5342		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	26	12323	5785	18173	18178	18108	70	1657.066	17943	166	-5620		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	27	12323	6491	19129	19134	18814	320	2360.095	18178	636	-5855		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	28	12323	6864	19431	19436	19187	249	2213.439	19134	54	-6811		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	29	12323	7717	20277	20282	20040	242	2192.6	19436	605	-7113		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	30	12323	8127	21189	21194	20450	744	9731.378	20282	168	-7959		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	31	12323	9008	21668	21673	21331	342	2477.552	21194	138	-8871		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	32	12323	9853	22863	22868	22176	692	9872.425	21673	503	-9350		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	33	12323	11059	23787	23792	23382	410	3258.007	22868	515	-10545		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	34	12323	11715	24602	24607	24038	569	3995.589	23792	247	-11469		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	35	12323	12648	24985	24990	24971	19	782.492	24607	365	-12284		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	36	12323	12856	25238	25243	25179	64	1462.499	24990	190	-12667		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	37	12323	12994	25331	25336	25317	19	758.887	25243	75	-12920		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	38	12323	13109	25445	25450	25432	18	796.956	25336	96	-13013		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	39	12323	13201	26200	26205	25524	681	10704.82	25450	75	-13127		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	40	12323	13963	26473	26478	26286	192	2056.117	26205	82	-13882		before the previous reply	same
+f5t1	bugfix-javascript-complex-numbers	41	12323	14242	26846	26851				26478	88	-14155		before the previous reply	same
