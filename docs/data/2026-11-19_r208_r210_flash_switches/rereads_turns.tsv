@@ -8,3 +8,5 @@ f5s1	bugfix-python-pig-latin	21	1450	12138	same, arguments re-serialized	yes	45	
 f5s1	bugfix-javascript-variable-length-quantity	2	69	2122	same	yes	0	2	23	1.1	11	in the tool call
 f5c2	bugfix-python-affine-cipher	8	152	6978	same	yes	0	1	88	3.6	6	in the tool call
 f5c2	bugfix-python-pig-latin	3	3381	3417	same	yes	95	1	2266	3.4	3337	before the tool call
+f5s2	bugfix-python-affine-cipher	3	733	4029	same	yes	20	1	533	2.4	685	before the tool call
+f5s2	bugfix-python-list-ops	3	1137	3617	same	yes	10	1	880	2.4	1090	before the tool call

@@ -9,6 +9,7 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | f5s1 | 12 | 82 | 42492 (3541) | 25651 (2138) | 2071 (3; 19.8 of 309.9) | 27.99 (bugfix-python-affine-cipher, 1) |
 | f5t1 | 12 | 103 | 52245 (4354) | 32381 (2698) | 0 (0; 0.0 of 404.0) | 28.19 (bugfix-python-affine-cipher, 1) |
 | f5c2 | 12 | 69 | 44521 (3710) | 37889 (3157) | 3533 (2; 19.3 of 300.0) | 28.16 (bugfix-python-affine-cipher, 1) |
+| f5s2 | 12 | 62 | 40936 (3411) | 28997 (2416) | 1870 (2; 15.1 of 271.5) | 28.08 (bugfix-python-affine-cipher, 1) |
 
 ### The turns that read a reply again
 
@@ -30,3 +31,5 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | f5s1 | bugfix-python-pig-latin | 21 | reply re-read | 12142 | 1450 | 12138 | 1450 | 1500 | 9.92 | 10.02 |
 | f5c2 | bugfix-python-affine-cipher | 8 | reply re-read | 6982 | 152 | 6978 | 152 | 548 | 3.87 | 3.94 |
 | f5c2 | bugfix-python-pig-latin | 3 | reply re-read | 3421 | 3381 | 3417 | 3381 | 3607 | 15.42 | 15.48 |
+| f5s2 | bugfix-python-affine-cipher | 3 | reply re-read | 4033 | 733 | 4029 | 733 | 994 | 7.06 | 7.11 |
+| f5s2 | bugfix-python-list-ops | 3 | reply re-read | 3621 | 1137 | 3617 | 1137 | 1500 | 8.02 | 8.06 |

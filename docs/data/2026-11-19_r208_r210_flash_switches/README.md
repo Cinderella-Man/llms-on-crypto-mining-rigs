@@ -4,7 +4,10 @@ Registry rows [Q1602](../../../quants/experiments.md) (R208, the K-quant prompt 
 [Q1604](../../../quants/experiments.md) (R210, text reuse). Both switches are already in the v5 engine; this folder
 decides, on the coding-agent check, whether either goes into Flash-Next's v5 preset.
 
-**Runs 1 to 4 of 6 done.** The control ran as the same preset did the day before: on the v4.0 preset and the v5
+**Runs 1 to 5 of 6 done; the FP32 scale is judged: negligible.** Its two runs read the 12 requests that every run read
+alike in 91.27 and 91.01 s, against the two controls' 91.56 and 92.43 s: 0.85 s (0.93 %) faster on the means, while the
+controls differ from each other by 0.87 s (0.95 %). It was slower on no measure, so it stays in the engine behind its
+switch, with the other negligible gains, and does not join the preset by itself ([the verdicts](#the-verdicts)). The control ran as the same preset did the day before: on the v4.0 preset and the v5
 engine, 11 of 12 tasks passed (JavaScript `complex-numbers` ran to the 12-minute cap again), a task at equal work took
 2.42 minutes against 2.40 the day before on the same rig, and the model generated at 26.98 tok/s against 27.00. With the
 FP32 scale (run 2) all 12 passed and a task at equal work took 2.38 minutes; the 13 requests that read the same new
@@ -14,8 +17,8 @@ and 3 in run 2; it kept the cached tokens on 32 requests in two tasks, and a tas
 second control (run 4) passed all 12 tasks; a task at equal work took 2.37 minutes, and the 12 requests that read the
 same new tokens on the same cached prefix in every run took 92.43 s against the first control's 91.56 s. How far the two
 controls differ is the spread each switch is judged against: 2.07 % on a task at equal work, 0.95 % on the matched
-requests and 1.59 % in generation (run 4's last column). The two switches are judged after all six runs, against this
-day's two controls.
+requests and 1.59 % in generation (run 4's last column). The FP32 scale's second run (run 5) passed all 12 tasks; a task
+at equal work took 2.35 minutes. Text reuse is judged after its second run (run 6), against the same two controls.
 
 ## What runs
 
@@ -29,7 +32,7 @@ that both switches share the two control runs and each switch has one run in eac
 | 2 | R208b | `f5s1` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | done 11:33–11:59 |
 | 3 | R210a | `f5t1` | `LLAMA_SERVER_TEXT_REUSE=1` | done 12:44–13:18 |
 | 4 | R208c | `f5c2` | nothing (the control) | done 13:59–14:33 |
-| 5 | R208d | `f5s2` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | planned |
+| 5 | R208d | `f5s2` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | done 14:43–15:11 |
 | 6 | R210b | `f5t2` | `LLAMA_SERVER_TEXT_REUSE=1` | planned |
 
 - **The FP32 scale** ([C861](../2026-11-17_c861a_fp32_scale/README.md), Q1549 (a)): the K-quant prompt kernels
@@ -344,16 +347,125 @@ here: both switches are judged after the sixth run.
   watchdog stopped nothing. Card peaks 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, the same as runs 1
   to 3 on every card.
 
-## Runs 5 and 6, `f5s2`, `f5t2`
+## Run 5, `f5s2` (R208d): the FP32 scale again, 14:43–15:11
+
+**The FP32 scale's second run read the shared prompts faster than either control, as its first run did.** 12 of 12
+tasks passed; JavaScript `complex-numbers` passed in 5 turns (46 s). The 12 requests that read the same new tokens on the
+same cached prefix in all six runs (today's five and C854's) took 91.01 s, against 91.27 s in run 2 and 91.56 and
+92.43 s in the two controls. `affine-cipher`'s first turn, the run's first request, took 28.04 s against 27.95, 27.93
+and 28.13 s. A task at equal work took 2.35 minutes, and 2.44 without `complex-numbers`; the model generated at 27.84
+tok/s. It was the day's shortest run in turns: 62, every task in 7 or fewer.
+
+Its started command (1,755 bytes, md5 `9b73d0302aa9ca72b5ac7f9f637f3b80`) equals run 2's and
+[run/dry_line.sh](run/dry_line.sh)'s line for `f5s2` byte for byte, and the server's `switches:` line is run 2's byte
+for byte (41 set). The server started at 14:43:40 and was up after 313 s; the tasks ran 14:48:56–15:11:29 and the report
+ended at 15:11:46. Every card was at stock before and after (75 W, 1,911 / 4,004 MHz maximum, no offset), with no Xid
+line.
+
+| | `f5c1` (run 1, control a) | `f5s1` (run 2, FP32 scale a) | `f5t1` (run 3) | `f5c2` (run 4, control b) | **`f5s2` (R208d, FP32 scale b)** |
+|---|---|---|---|---|---|
+| passed | 11 / 12 (`complex-numbers` at the time cap, 38 turns) | 12 / 12 | 11 / 12 (`complex-numbers` at the turn cap, 41 turns) | 12 / 12 | **12 / 12** (`complex-numbers` in 5 turns) |
+| minutes a task at equal work (R90 `v3`'s work) | 2.42 | 2.38 | 2.43 | 2.37 | **2.35** |
+| the same without `complex-numbers` | 2.44 | 2.47 | 2.45 | 2.46 | **2.44** |
+| the 12 requests that read the same new tokens on the same cached prefix in all six runs, prompt s | 91.56 | 91.27 | 92.23 | 92.43 | **91.01** |
+| of them, the 11 first turns (all but `pig-latin`'s) | 83.30 | 83.04 | 83.98 | 84.14 | **82.79** |
+| of them, `affine-cipher`'s first turn (2,780 tokens, nothing cached), prompt s | 27.93 | 27.95 | 28.13 | 28.13 | **28.04** |
+| `pig-latin`'s first turn: tokens read; prompt s | 2,324; 12.66 | 775; 6.41 | 2,324; 12.06 | 775; 6.50 | **775; 6.42** |
+| prompt tok/s, the whole session | 133.7 | 137.1 | 129.3 | 148.4 | **150.8** |
+| the same without `complex-numbers` | 141.7 | 132.8 | 141.8 | 145.0 | **147.3** |
+| generation tok/s | 26.98 | 27.85 | 27.07 | 27.41 | **27.84** |
+| the same without `complex-numbers` | 28.07 | 27.90 | 28.00 | 27.40 | **27.82** |
+| first token median s; p90 s | 2.41; 9.04 | 2.13; 8.26 | 2.27; 8.89 | 2.63; 8.45 | **2.48; 8.72** |
+| first token on a task's first turn, median s | 6.57 | 6.55 | 6.69 | 6.66 | **6.53** |
+| the longest first-token wait s | 27.97 | 27.99 | 28.19 | 28.16 | **28.08** (`affine-cipher` turn 1) |
+| prompt tokens read a task | 4,760 | 3,541 | 4,354 | 3,710 | **3,411** |
+| the same without `complex-numbers` | 3,499 | 3,428 | 3,309 | 3,610 | **3,286** |
+| tokens generated a task without `complex-numbers` | 2,552 | 2,248 | 2,107 | 3,398 | **2,592** |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 4; 1,806; 23.6 of 427.2 | 3; 2,071; 19.8 of 309.9 | 0; 0; 0.0 of 404.0 | 2; 3,533; 19.3 of 300.0 | **2; 1,870; 15.1 of 271.5** |
+| draft acceptance (accepted of drafted tokens) | 0.732 | 0.752 | 0.735 | 0.743 | **0.756** |
+| minutes, all 12 tasks; turns | 33.6; 104 | 21.0; 82 | 27.5; 103 | 28.5; 69 | **22.4; 62** |
+| graph reallocations | 0 in 103 requests | 0 in 82 | 0 in 102 | 0 in 69 | **0 in 62** |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,885.3 | 1,885.3 | 1,881.2 | 1,881.2 | **1,879.8** |
+| lowest MemAvailable MiB; swap highest MiB | 285; 19 | 295; 19 | 279; 19 | 316; 19 | **300; 18** |
+
+Each value is one run, from the same files as run 1's table; C854's context figures are in run 1's. The FP32 scale's
+class is in [the verdicts](#the-verdicts).
+
+- **The work.** Without `complex-numbers` this run read 3,286 prompt tokens a task and generated 2,592, over 57
+  requests, against 3,499 and 2,552 over 66 in control a and 3,610 and 3,398 over 64 in control b
+  ([work_nocx.tsv](work_nocx.tsv)). The longest replies were Python `scale-generator`'s (6,833 tokens over 5 turns,
+  289 s) and JavaScript `variable-length-quantity`'s (6,133 over 5 turns, 236 s).
+- **The session's prompt tok/s** follows which prompts a run reads: this run read 38 prompts of 511 tokens or fewer
+  (68.2 s) of its 62, control b 43 (77.1 s) of 69 and control a 66 (118.3 s) of 103 ([reallocs.tsv](reallocs.tsv)).
+  The matched requests are the comparison.
+- **`pig-latin`'s first turn** read 775 tokens on the 1,549-token shared system prefix, as in runs 2 and 4, so
+  [same_prompts.md](same_prompts.md) matches the same 12 requests in all six runs as in five.
+- **The reply re-reads** ([rereads_turns.tsv](rereads_turns.tsv)): `affine-cipher` turn 3 (a reply of 733 tokens; the
+  prompt stopped matching 533 tokens in, before the tool call; 7.06 s) and `list-ops` turn 3 (1,137 tokens; 880 in,
+  before the tool call; 8.02 s). The client sent both replies back as the server gave them.
+- **Clocks** ([clocks.tsv](clocks.tsv)): busy medians 1,847 1,847 1,898 1,898 1,860 1,911 1,873 1,911 1,873 MHz (cards
+  0–8), the same as runs 3 and 4 except card 4, one 13 MHz step lower (1,860 against 1,873).
+- **Host** ([host.tsv](host.tsv)): the lowest MemAvailable was 300 MiB at 15:11:42, 13 s after the last task ended and
+  before the harness stopped the server; during the tasks it was 316 MiB at 15:07:49. Swap stayed at 18 MiB. The RAM
+  watchdog stopped nothing. Card peaks 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, the same as runs 1
+  to 4 on every card.
+
+## Run 6, `f5t2`
 
 Not run yet.
 
 ## The verdicts
 
-After the six runs: each switch against the two controls, by R156's rule (a gain or a loss when the difference from
-the controls' mean is larger than their spread, negligible otherwise), on a task at equal work, the matched requests'
-prompt time and generation; for text reuse also the reply re-reads, their prompt seconds and the longest first-token
-wait. The controls' spread on each measure is run 4's last column.
+Each switch against the two controls, by R156's rule (a gain or a loss when the difference from the controls' mean is
+larger than their spread, negligible otherwise), on a task at equal work, the matched requests' prompt time and
+generation; for text reuse also the reply re-reads, their prompt seconds and the longest first-token wait. The
+controls' spread on each measure is run 4's last column. Text reuse is judged after run 6.
+
+### R208, the FP32 scale (`f5s1`, `f5s2`): negligible
+
+**Negligible, and slower on no measure.** On the 12 requests that every run read alike, where a prompt switch shows,
+the FP32 scale's two runs took 91.27 and 91.01 s against the controls' 91.56 and 92.43 s. Both of its runs were faster
+than both controls, but on the means the difference is 0.85 s (0.93 %) and the two controls differ by 0.87 s (0.95 %),
+so it stays inside their spread. A task at equal work and generation are inside the spread too, once the work is the
+same.
+
+The difference is the FP32 scale's mean less the controls' mean, with its percent of the controls' mean; the spread is
+control b less control a, with its percent of control a. The request rows are from [same_prompts.md](same_prompts.md)'s
+per-request milliseconds.
+
+| | control a `f5c1` | control b `f5c2` | FP32 scale a `f5s1` | FP32 scale b `f5s2` | FP32 scale against the controls | the controls' spread | class |
+|---|---|---|---|---|---|---|---|
+| the 12 matched requests, prompt s | 91.56 | 92.43 | 91.27 | 91.01 | −0.85 (−0.93 %) | 0.87 (0.95 %) | **negligible** |
+| of them, the 11 first turns | 83.30 | 84.14 | 83.04 | 82.79 | −0.81 (−0.96 %) | 0.84 (1.00 %) | negligible |
+| of them, the 8 that read more than 600 new tokens (micro-batches of 512) | 77.60 | 78.21 | 77.16 | 76.86 | −0.89 (−1.15 %) | 0.62 (0.79 %) | beyond the spread, a split made after the runs (below) |
+| of them, the 4 that read 600 or fewer (micro-batches of 64) | 13.96 | 14.22 | 14.11 | 14.15 | +0.04 (+0.31 %) | 0.25 (1.82 %) | negligible |
+| of them, `affine-cipher`'s first turn (2,780 tokens, nothing cached) | 27.93 | 28.13 | 27.95 | 28.04 | −0.03 (−0.12 %) | 0.19 (0.70 %) | negligible |
+| minutes a task at equal work | 2.42 | 2.37 | 2.38 | 2.35 | −0.03 (−1.25 %) | 0.05 (2.07 %) | **negligible** |
+| the same without `complex-numbers` | 2.44 | 2.46 | 2.47 | 2.44 | +0.005 (+0.20 %) | 0.02 (0.82 %) | negligible |
+| generation tok/s | 26.98 | 27.41 | 27.85 | 27.84 | +0.65 (+2.39 %) | 0.43 (1.59 %) | beyond the spread, from the work (below) |
+| the same without `complex-numbers` | 28.07 | 27.40 | 27.90 | 27.82 | +0.13 (+0.45 %) | 0.67 (2.39 %) | **negligible** |
+| first token on a task's first turn, median s | 6.57 | 6.66 | 6.55 | 6.53 | −0.08 (−1.13 %) | 0.09 (1.37 %) | negligible |
+| the longest first-token wait s | 27.97 | 28.16 | 27.99 | 28.08 | −0.03 (−0.11 %) | 0.19 (0.68 %) | negligible |
+| passed | 11 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | | | |
+
+- **Where it acts.** On a P106 `llama-bench` measured the switch faster only at micro-batches of 512
+  ([C861](../2026-11-17_c861a_fp32_scale/README.md#result-rig-1-2026-11-18)), and the preset reads a prompt of more than
+  600 new tokens in micro-batches of 512 (`--ubatch-taper short=600:64`). Split that way after the runs, the 8 longer
+  matched requests were 0.89 s (1.15 %) faster against a 0.62 s (0.79 %) spread, 7 of the 8 faster on the means, and
+  the 4 shorter ones +0.04 s (+0.31 %), as `llama-bench` at micro-batches of 64 showed nothing. The split was not part
+  of the rule set before the runs, and 0.48 s of the 0.89 s come from two requests on which one control alone was slow
+  (`space-age`'s first turn 7.29 s in control b against 6.62 s in a; `scale-generator`'s 7.92 s in control a against
+  7.02 s in b); without those two the other six were 0.41 s (0.65 %) faster against a 0.85 s (1.35 %) spread. So it
+  points to a small gain on long prompts that these four runs cannot separate from the spread.
+- **Generation.** The switch changes no kernel of a generation step: a verify pass of 4 tokens runs the 1-to-8-token
+  kernels, which keep their own scale multiply (Q1558). Over all 12 tasks the FP32 scale's runs generated 0.65 tok/s
+  faster on the means, beyond the 0.43 spread, but that measure carries control a's `complex-numbers` at the cap
+  (38 turns, the day's deepest contexts); without that task the difference is +0.13 against 0.67. The draft's
+  acceptance (0.752 and 0.756 against 0.732 and 0.743) follows what the model wrote.
+- **What follows.** A negligible switch that is not measurably slower stays in the engine behind its switch
+  (`pascal-p106-v5`, off by default) and joins the negligible gains tested together on the cumulative build; it does
+  not join Flash-Next's v5 preset by itself. The same greedy reply with and without it on a P106 (C861) means it
+  changes no answer.
 
 ## Files
 
