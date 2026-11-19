@@ -1,0 +1,10 @@
+scheduler	pass	cause	cards_busy	counted	replans	requests	drain_ms	plan_ms	micro_batch_tokens
+pipelined slot	a pipelined token	outgrew its place: src 'attn_inp_kq_mask' of 'attn_inp_kq_mask (view)' (NONE)	no	1	380	7	7046.4	1029.2	:380
+pipelined slot	a pipelined token	device change: node 'uniform_# (view)' CUDA8 -> CPU	no	0	10	1	72.7	39.9	:10
+shared	a prompt micro-batch	outgrew its place: src 'attn_inp_kq_mask' of 'attn_inp_kq_mask (view)' (NONE)	yes	1	94	40	74604.6	335.2	128:76, 64:16, 63:1, 60:1
+shared	the prompt's last 4 tokens, with the output	outgrew its place: src 'out_ids' of 'out_ids (view)' (NONE)	no	1	75	75	5.4	252.6	4:75
+shared	a 1-token pass (no pipelined guess)	device change: node 'CUDA##l_out-###' CUDA0 -> CUDA1	no	0	64	64	4.4	172.4	1:64
+shared	a prompt micro-batch	device change: node 'ffn_moe_weights-#' CUDA1 -> CUDA0	no	0	64	64	4.3	233.0	64:21, 128:16, 16:8, 15:6, 14:3, 12:2, 32:1, 39:1, 11:1, 56:1, 28:1, 47:1, 40:1, 50:1
+shared	a 1-token pass (no pipelined guess)	outgrew its place: src 'attn_inp_kq_mask' of 'attn_inp_kq_mask (view)' (NONE)	no	1	18	17	1.2	48.9	1:18
+shared	a prompt micro-batch	outgrew its place: node 'embd' (GET_ROWS)	no	1	11	11	0.9	37.4	128:7, 64:4
+shared	a prompt micro-batch	outgrew its place: node 'embd' (GET_ROWS)	yes	1	2	2	1184.6	7.0	67:1, 72:1
