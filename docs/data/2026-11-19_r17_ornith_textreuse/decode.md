@@ -12,10 +12,16 @@
 | o5t0a | 6,000 to 8,000 | 6 | 4945 | 261.3 | 18.92 | 52.84 |
 | o5t0a | 8,000 and over | 5 | 4770 | 266.4 | 17.91 | 55.84 |
 | o5t0a | **all** | 58 | 20554 | 1074.9 | **19.12** | 52.30 |
+| o5t1a | under 3,000 | 12 | 796 | 38.5 | 20.67 | 48.38 |
+| o5t1a | 3,000 to 4,500 | 16 | 3382 | 168.5 | 20.07 | 49.82 |
+| o5t1a | 4,500 to 6,000 | 19 | 6702 | 342.8 | 19.55 | 51.15 |
+| o5t1a | 6,000 to 8,000 | 17 | 6578 | 349.6 | 18.82 | 53.15 |
+| o5t1a | **all** | 64 | 17458 | 899.4 | **19.41** | 51.52 |
 
-At the same mix of contexts (the 5 buckets every run decoded in, weighted by the 40,776 tokens all runs generated there: under 3,000 3.9 %, 3,000 to 4,500 19.7 %, 4,500 to 6,000 31.4 %, 6,000 to 8,000 31.5 %, 8,000 and over 13.4 %):
+At the same mix of contexts (the 4 buckets every run decoded in, weighted by the 52,760 tokens all runs generated there: under 3,000 4.5 %, 3,000 to 4,500 21.7 %, 4,500 to 6,000 37.0 %, 6,000 to 8,000 36.8 %):
 
 | run | ms a token at the same mix | tok/s at the same mix |
 |---|---:|---:|
-| o5oc1 | 52.37 | 19.10 |
-| o5t0a | 52.00 | 19.23 |
+| o5oc1 | 51.58 | 19.39 |
+| o5t0a | 51.42 | 19.45 |
+| o5t1a | 51.47 | 19.43 |
