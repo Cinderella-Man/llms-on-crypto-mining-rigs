@@ -1,0 +1,3 @@
+scheduler	pass	cause	cards_busy	counted	replans	requests	drain_ms	plan_ms	micro_batch_tokens
+pipelined slot	a pipelined token	outgrew its place: src 'attn_inp_kq_mask' of 'attn_inp_kq_mask (view)' (NONE)	no	1	800	11	17208.5	2171.6	:800
+pipelined slot	a pipelined token	device change: node 'uniform_# (view)' CUDA8 -> CPU	no	0	10	1	71.8	44.7	:10

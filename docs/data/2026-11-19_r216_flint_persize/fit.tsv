@@ -1,0 +1,6 @@
+term	ms	standard_error_ms
+intercept (a request)	475.100	69.866
+a prompt token	1.906	0.091
+requests	72	
+re-plans while the cards were busy	0	
+prompt time of all requests (s)	101.8	

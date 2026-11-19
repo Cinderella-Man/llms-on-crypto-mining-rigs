@@ -1,0 +1,13 @@
+run	what	count	median	mean	pre_us	build_us	alloc_us	inputs_us	submit_us	card0_us	total_us
+R216a	one-token gap ms, request 0	27	26.92	28.04							
+R216a	one-token gap ms, request 1	25	28.28	28.93							
+R216a	one-token gap ms, request 2	64	28.63	32.03							
+R216a	one-token gap ms, all requests	2660	28.29	30.62							
+R216a	1-token reused (trace parts)	2653			79	49	0	79	23917	510	24127
+R216a	4-token output pass (trace parts)	72			83	1813	3376	103	109392	6005	114867
+R181	one-token gap ms, request 0	28	24.77	24.65							
+R181	one-token gap ms, request 1	31	25.78	26.04							
+R181	one-token gap ms, request 2	29	25.94	26.13							
+R181	one-token gap ms, all requests	3618	26.51	28.28							
+R181	1-token reused (trace parts)	3600			77	48	0	79	2864	521	3069
+R181	4-token output pass (trace parts)	76			84	2057	6444	105	16194	9355	24988
