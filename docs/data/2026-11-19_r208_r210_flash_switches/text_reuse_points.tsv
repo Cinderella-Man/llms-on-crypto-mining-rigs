@@ -31,3 +31,6 @@ f5t1	bugfix-javascript-complex-numbers	38	12323	13109	25445	25450	25432	18	796.9
 f5t1	bugfix-javascript-complex-numbers	39	12323	13201	26200	26205	25524	681	10704.82	25450	75	-13127		before the previous reply	same
 f5t1	bugfix-javascript-complex-numbers	40	12323	13963	26473	26478	26286	192	2056.117	26205	82	-13882		before the previous reply	same
 f5t1	bugfix-javascript-complex-numbers	41	12323	14242	26846	26851				26478	88	-14155		before the previous reply	same
+f5t2	bugfix-python-pig-latin	3	4091	888	5202	5202	4979	223	2055.261	3423	1557	668	1509	before the tool call	same
+f5t2	bugfix-python-pig-latin	4	4091	1280	5400	5400	5371	29	996.619	5202	170	-1111		before the previous reply	same, arguments re-serialized
+f5t2	bugfix-python-pig-latin	5	4091	1484	5816	5816	5575	241	2060.323	5400	176	-1309		before the previous reply	same

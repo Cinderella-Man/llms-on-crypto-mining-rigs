@@ -4,10 +4,14 @@ Registry rows [Q1602](../../../quants/experiments.md) (R208, the K-quant prompt 
 [Q1604](../../../quants/experiments.md) (R210, text reuse). Both switches are already in the v5 engine; this folder
 decides, on the coding-agent check, whether either goes into Flash-Next's v5 preset.
 
-**Runs 1 to 5 of 6 done; the FP32 scale is judged: negligible.** Its two runs read the 12 requests that every run read
-alike in 91.27 and 91.01 s, against the two controls' 91.56 and 92.43 s: 0.85 s (0.93 %) faster on the means, while the
-controls differ from each other by 0.87 s (0.95 %). It was slower on no measure, so it stays in the engine behind its
-switch, with the other negligible gains, and does not join the preset by itself ([the verdicts](#the-verdicts)). The control ran as the same preset did the day before: on the v4.0 preset and the v5
+**All six runs done; both switches are judged ([the verdicts](#the-verdicts)).** **Text reuse is a gain on the work it
+removes and negligible on every measure of time**, the class that put it into Flint's preset: neither of its two runs
+read an earlier reply again (0 turns, 0 prompt seconds), against 4 and 2 turns (1,806 and 3,533 tokens, 23.6 and 19.3
+prompt seconds) in the two controls, and a task at equal work took 2.43 and 2.37 minutes against the controls' 2.42 and
+2.37. **The FP32 scale is negligible.** Its two runs read the 12 requests that every run read alike in 91.27 and 91.01 s,
+against the two controls' 91.56 and 92.43 s: 0.85 s (0.93 %) faster on the means, while the controls differ from each
+other by 0.87 s (0.95 %). It was slower on no measure, so it stays in the engine behind its switch, with the other
+negligible gains, and does not join the preset by itself. The control ran as the same preset did the day before: on the v4.0 preset and the v5
 engine, 11 of 12 tasks passed (JavaScript `complex-numbers` ran to the 12-minute cap again), a task at equal work took
 2.42 minutes against 2.40 the day before on the same rig, and the model generated at 26.98 tok/s against 27.00. With the
 FP32 scale (run 2) all 12 passed and a task at equal work took 2.38 minutes; the 13 requests that read the same new
@@ -18,7 +22,9 @@ second control (run 4) passed all 12 tasks; a task at equal work took 2.37 minut
 same new tokens on the same cached prefix in every run took 92.43 s against the first control's 91.56 s. How far the two
 controls differ is the spread each switch is judged against: 2.07 % on a task at equal work, 0.95 % on the matched
 requests and 1.59 % in generation (run 4's last column). The FP32 scale's second run (run 5) passed all 12 tasks; a task
-at equal work took 2.35 minutes. Text reuse is judged after its second run (run 6), against the same two controls.
+at equal work took 2.35 minutes. Text reuse's second run (run 6) passed all 12 tasks; a task at equal work took 2.37
+minutes, and the switch kept the cached tokens on 3 requests in one task, the same spot where both controls read a reply
+again.
 
 ## What runs
 
@@ -33,7 +39,7 @@ that both switches share the two control runs and each switch has one run in eac
 | 3 | R210a | `f5t1` | `LLAMA_SERVER_TEXT_REUSE=1` | done 12:44–13:18 |
 | 4 | R208c | `f5c2` | nothing (the control) | done 13:59–14:33 |
 | 5 | R208d | `f5s2` | `GGML_CUDA_MMQ_KQ_FP32SCALE=1 GGML_CUDA_MMQ_KQ_FP32SCALE_TYPES=all` | done 14:43–15:11 |
-| 6 | R210b | `f5t2` | `LLAMA_SERVER_TEXT_REUSE=1` | planned |
+| 6 | R210b | `f5t2` | `LLAMA_SERVER_TEXT_REUSE=1` | done 15:45–16:11 |
 
 - **The FP32 scale** ([C861](../2026-11-17_c861a_fp32_scale/README.md), Q1549 (a)): the K-quant prompt kernels
   multiply each block's scale in one FP32 instruction instead of three integer ones; `TYPES=all` applies it to Q3_K
@@ -410,16 +416,81 @@ class is in [the verdicts](#the-verdicts).
   watchdog stopped nothing. Card peaks 5,190 5,234 5,092 5,250 4,348 5,108 4,502 5,120 5,698 MiB, the same as runs 1
   to 4 on every card.
 
-## Run 6, `f5t2`
+## Run 6, `f5t2` (R210b): text reuse again, 15:45–16:11
 
-Not run yet.
+**Text reuse's second run read no earlier reply again either.** The switch acted at one point: in Python `pig-latin`
+the third prompt split the second reply (1,557 tokens) into other tokens 668 tokens in, before its tool call, and the
+switch kept the cached tokens there and on the task's two later turns. That is the turn on which both controls read the
+previous reply again (1,291 tokens in control a, 3,381 in control b, 15.42 s of prompt). 12 of 12 tasks passed;
+JavaScript `complex-numbers` passed in 7 turns (85 s). A task at equal work took 2.37 minutes, and 2.46 without
+`complex-numbers`; the model generated at 27.68 tok/s. The 12 requests that read the same new tokens on the same cached
+prefix in all seven runs (today's six and C854's) took 90.71 s, and `affine-cipher`'s first turn, the run's first
+request, 28.41 s.
+
+Its started command (1,715 bytes, md5 `5f0cbde4375a316aafaf49ba4660efcc`) equals run 3's and
+[run/dry_line.sh](run/dry_line.sh)'s line for `f5t2` byte for byte, and the server's `switches:` line is run 3's byte
+for byte (40 set). The server started at 15:45:54 and was up after 310 s; the tasks ran 15:51:08–16:11:16 and the report
+ended at 16:11:29. Every card was at stock before and after (75 W, 1,911 / 4,004 MHz maximum, no offset), with no Xid
+line.
+
+| | `f5c1` (run 1, control a) | `f5s1` (run 2) | `f5t1` (run 3, text reuse a) | `f5c2` (run 4, control b) | `f5s2` (run 5) | **`f5t2` (R210b, text reuse b)** |
+|---|---|---|---|---|---|---|
+| passed | 11 / 12 (`complex-numbers` at the time cap, 38 turns) | 12 / 12 | 11 / 12 (`complex-numbers` at the turn cap, 41 turns) | 12 / 12 | 12 / 12 | **12 / 12** (`complex-numbers` in 7 turns) |
+| minutes a task at equal work (R90 `v3`'s work) | 2.42 | 2.38 | 2.43 | 2.37 | 2.35 | **2.37** |
+| the same without `complex-numbers` | 2.44 | 2.47 | 2.45 | 2.46 | 2.44 | **2.46** |
+| the 12 requests that read the same new tokens on the same cached prefix in all seven runs, prompt s | 91.56 | 91.27 | 92.23 | 92.43 | 91.01 | **90.71** |
+| of them, the 11 first turns (all but `pig-latin`'s) | 83.30 | 83.04 | 83.98 | 84.14 | 82.79 | **82.38** |
+| of them, `affine-cipher`'s first turn (2,780 tokens, nothing cached), prompt s | 27.93 | 27.95 | 28.13 | 28.13 | 28.04 | **28.41** |
+| `pig-latin`'s first turn: tokens read; prompt s | 2,324; 12.66 | 775; 6.41 | 2,324; 12.06 | 775; 6.50 | 775; 6.42 | **775; 6.48** |
+| prompt tok/s, the whole session | 133.7 | 137.1 | 129.3 | 148.4 | 150.8 | **142.7** |
+| the same without `complex-numbers` | 141.7 | 132.8 | 141.8 | 145.0 | 147.3 | **139.8** |
+| generation tok/s | 26.98 | 27.85 | 27.07 | 27.41 | 27.84 | **27.68** |
+| the same without `complex-numbers` | 28.07 | 27.90 | 28.00 | 27.40 | 27.82 | **27.70** |
+| first token median s; p90 s | 2.41; 9.04 | 2.13; 8.26 | 2.27; 8.89 | 2.63; 8.45 | 2.48; 8.72 | **2.51; 8.37** |
+| first token on a task's first turn, median s | 6.57 | 6.55 | 6.69 | 6.66 | 6.53 | **6.55** |
+| the longest first-token wait s | 27.97 | 27.99 | 28.19 | 28.16 | 28.08 | **28.46** (`affine-cipher` turn 1) |
+| prompt tokens read a task | 4,760 | 3,541 | 4,354 | 3,710 | 3,411 | **3,240** |
+| the same without `complex-numbers` | 3,499 | 3,428 | 3,309 | 3,610 | 3,286 | **3,034** |
+| tokens generated a task without `complex-numbers` | 2,552 | 2,248 | 2,107 | 3,398 | 2,592 | **2,145** |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 4; 1,806; 23.6 of 427.2 | 3; 2,071; 19.8 of 309.9 | 0; 0; 0.0 of 404.0 | 2; 3,533; 19.3 of 300.0 | 2; 1,870; 15.1 of 271.5 | **0; 0; 0.0 of 272.5** |
+| requests on which text reuse kept the cached tokens (tasks; points) | — | — | 32 (2; 2) | — | — | **3 (1; 1)** |
+| draft acceptance (accepted of drafted tokens) | 0.732 | 0.752 | 0.735 | 0.743 | 0.756 | **0.749** |
+| minutes, all 12 tasks; turns | 33.6; 104 | 21.0; 82 | 27.5; 103 | 28.5; 69 | 22.4; 62 | **20.0; 64** |
+| graph reallocations | 0 in 103 requests | 0 in 82 | 0 in 102 | 0 in 69 | 0 in 62 | **0 in 64** |
+| busy SM clock, mean of the nine cards' medians, MHz | 1,885.3 | 1,885.3 | 1,881.2 | 1,881.2 | 1,879.8 | **1,881.1** |
+| lowest MemAvailable MiB; swap highest MiB | 285; 19 | 295; 19 | 279; 19 | 316; 19 | 300; 18 | **269; 18** |
+
+Each value is one run, from the same files as run 1's table and [text_reuse_points.tsv](text_reuse_points.tsv); C854's
+context figures are in run 1's. Text reuse's class is in [the verdicts](#the-verdicts).
+
+- **Where the switch acted** ([text_reuse_points.tsv](text_reuse_points.tsv)): `pig-latin` turn 3, the ids differed
+  at token 4,091, 668 tokens into turn 2's 1,557-token reply, whose tool call starts at its token 1,509; the switch kept
+  the reply's other 888 cached tokens, so the server read 223 new tokens (2.06 s). The client sent the reply back as
+  the server gave it. Turns 4 and 5 differed from the cache at the same token and were kept the same way (1,280 and
+  1,484 tokens).
+- **The work.** Without `complex-numbers` this run read 3,034 prompt tokens a task and generated 2,145, over 57
+  requests ([work_nocx.tsv](work_nocx.tsv)). The longest replies were JavaScript `variable-length-quantity`'s (5,512
+  tokens over 5 turns, 214 s) and Python `scale-generator`'s (4,806 over 5 turns, 208 s).
+- **The session's prompt tok/s** follows which prompts a run reads: this run read 40 prompts of 511 tokens or fewer
+  (70.6 s) of its 64 ([reallocs.tsv](reallocs.tsv)). The matched requests are the comparison.
+- **`pig-latin`'s first turn** read 775 tokens on the 1,549-token shared system prefix, as in runs 2, 4 and 5, so
+  [same_prompts.md](same_prompts.md) matches the same 12 requests in all seven runs as in six.
+- **JavaScript `variable-length-quantity`'s first turn** (577 tokens on the 1,549-token prefix) took 3.72 s, against
+  4.82, 4.81, 4.78, 4.93 and 4.89 s in runs 1 to 5 and 3.66 s in C854's run; the same cached prefix in every run (its
+  checkpoint restored in 2.3 ms here and in run 5) and no line of the switch on it. Without it the other 11 matched requests took
+  86.99 s here.
+- **Clocks** ([clocks.tsv](clocks.tsv)): busy medians 1,847 1,847 1,898 1,898 1,860 1,911 1,885 1,911 1,873 MHz (cards
+  0–8), run 5's except card 6, one 13 MHz step higher (1,885 against 1,873).
+- **Host** ([host.tsv](host.tsv)): the lowest MemAvailable was 269 MiB at 16:05:34, during JavaScript `complex-numbers`,
+  the day's lowest by 10 MiB. Swap stayed at 18 MiB. The RAM watchdog stopped nothing. Card peaks 5,190 5,234 5,092
+  5,250 4,348 5,108 4,502 5,120 5,698 MiB, the same as runs 1 to 5 on every card.
 
 ## The verdicts
 
 Each switch against the two controls, by R156's rule (a gain or a loss when the difference from the controls' mean is
 larger than their spread, negligible otherwise), on a task at equal work, the matched requests' prompt time and
 generation; for text reuse also the reply re-reads, their prompt seconds and the longest first-token wait. The
-controls' spread on each measure is run 4's last column. Text reuse is judged after run 6.
+controls' spread on each measure is run 4's last column.
 
 ### R208, the FP32 scale (`f5s1`, `f5s2`): negligible
 
@@ -466,6 +537,81 @@ per-request milliseconds.
   (`pascal-p106-v5`, off by default) and joins the negligible gains tested together on the cumulative build; it does
   not join Flash-Next's v5 preset by itself. The same greedy reply with and without it on a P106 (C861) means it
   changes no answer.
+
+### R210, text reuse (`f5t1`, `f5t2`): a gain on the work, negligible on time
+
+**A gain on the work it removes and negligible on every measure of time, as on Flint.** Neither of text reuse's two
+runs read an earlier reply again: 0 turns, 0 tokens and 0 prompt seconds, against 4 and 2 turns, 1,806 and 3,533 tokens
+and 23.6 and 19.3 prompt seconds in the two controls. A task at equal work took 2.43 and 2.37 minutes against 2.42 and
+2.37, and the 12 requests that every run read alike 92.23 and 90.71 s against 91.56 and 92.43 s, both inside the
+controls' spread. Three measures fell outside the controls' spread, all on first turns, where the switch has nothing to
+act on and logged nothing (below).
+
+The difference is text reuse's mean less the controls' mean, with its percent of the controls' mean; the spread is
+control b less control a, with its percent of control a. The work rows are from [work.md](work.md),
+[work_nocx.tsv](work_nocx.tsv) and [rereads_runs.tsv](rereads_runs.tsv), the request rows from
+[same_prompts.md](same_prompts.md).
+
+| | control a `f5c1` | control b `f5c2` | text reuse a `f5t1` | text reuse b `f5t2` | text reuse against the controls | the controls' spread | class |
+|---|---|---|---|---|---|---|---|
+| turns that read a previous reply again | 4 | 2 | 0 | 0 | −3 (−100 %) | 2 (50 %) | **gain** |
+| reply tokens re-read | 1,806 | 3,533 | 0 | 0 | −2,669.5 (−100 %) | 1,727 (95.63 %) | **gain** |
+| the same a task | 150.5 | 294.4 | 0 | 0 | −222.5 (−100 %) | 143.9 (95.63 %) | gain |
+| the prompt s of those turns | 23.6 | 19.3 | 0.0 | 0.0 | −21.45 (−100 %) | 4.3 (18.22 %) | **gain** |
+| the same a task | 1.97 | 1.61 | 0 | 0 | −1.79 (−100 %) | 0.36 (18.22 %) | gain |
+| prompt tokens read a task | 4,760 | 3,710 | 4,354 | 3,240 | −438 (−10.34 %) | 1,050 (22.06 %) | negligible |
+| the same without `complex-numbers` | 3,499 | 3,610 | 3,309 | 3,034 | −383 (−10.78 %) | 111 (3.17 %) | gain, 234 tokens of it the re-reads (below) |
+| the longest first-token wait s (`affine-cipher` turn 1 in every run) | 27.97 | 28.16 | 28.19 | 28.46 | +0.26 (+0.93 %) | 0.19 (0.68 %) | beyond the spread, on a request the switch cannot reach (below) |
+| the 12 matched requests, prompt s | 91.56 | 92.43 | 92.23 | 90.71 | −0.52 (−0.57 %) | 0.87 (0.95 %) | **negligible** |
+| of them, the 11 first turns | 83.30 | 84.14 | 83.98 | 82.38 | −0.54 (−0.65 %) | 0.84 (1.00 %) | negligible |
+| of them, `affine-cipher`'s first turn (2,780 tokens, nothing cached) | 27.93 | 28.13 | 28.13 | 28.41 | +0.24 (+0.85 %) | 0.19 (0.70 %) | beyond the spread, the same request (below) |
+| minutes a task at equal work | 2.42 | 2.37 | 2.43 | 2.37 | +0.005 (+0.21 %) | 0.05 (2.07 %) | **negligible** |
+| the same without `complex-numbers` | 2.44 | 2.46 | 2.45 | 2.46 | +0.005 (+0.20 %) | 0.02 (0.82 %) | negligible |
+| generation tok/s | 26.98 | 27.41 | 27.07 | 27.68 | +0.18 (+0.66 %) | 0.43 (1.59 %) | **negligible** |
+| the same without `complex-numbers` | 28.07 | 27.40 | 28.00 | 27.70 | +0.115 (+0.41 %) | 0.67 (2.39 %) | negligible |
+| prompt tok/s | 133.7 | 148.4 | 129.3 | 142.7 | −5.05 (−3.58 %) | 14.7 (10.99 %) | negligible |
+| the same without `complex-numbers` | 141.7 | 145.0 | 141.8 | 139.8 | −2.55 (−1.78 %) | 3.3 (2.33 %) | negligible |
+| first token median s | 2.41 | 2.63 | 2.27 | 2.51 | −0.13 (−5.16 %) | 0.22 (9.13 %) | negligible |
+| first token p90 s | 9.04 | 8.45 | 8.89 | 8.37 | −0.115 (−1.32 %) | 0.59 (6.53 %) | negligible |
+| first token on a task's first turn, median s | 6.57 | 6.66 | 6.69 | 6.55 | +0.005 (+0.08 %) | 0.09 (1.37 %) | negligible |
+| the same without `complex-numbers` | 6.48 | 6.54 | 6.65 | 6.54 | +0.085 (+1.31 %) | 0.06 (0.93 %) | beyond the spread, on turns the switch cannot reach (below) |
+| passed | 11 / 12 | 12 / 12 | 11 / 12 | 12 / 12 | | | |
+
+- **The re-reads.** Text reuse's runs read no previous reply again in their 90 and 52 turns after a task's first,
+  against 4 in 91 and 2 in 57 in the controls ([rereads_runs.tsv](rereads_runs.tsv)). The four runs without the switch
+  today (both controls and both FP32 scale runs) re-read on 11 of their 268 such turns; at that rate, 0 in the 142 turns
+  of text reuse's two runs has a chance of 0.26 % (est.). The switch kept the cached tokens at 3 points in 2 runs
+  (`scale-generator` and `complex-numbers` in run 3, `pig-latin` in run 6), each in a reply's text before its tool
+  call, each reply sent back as the server gave it ([text_reuse_points.tsv](text_reuse_points.tsv)). `pig-latin`'s
+  third turn is one both controls re-read.
+- **What that is worth on Flash-Next.** The controls' re-reads took 23.6 of 427.2 and 19.3 of 300.0 prompt seconds
+  (5.5 and 6.4 %), about 1.8 s of a 2.4-minute task on their means (est.); nine v4-era runs re-read for 31.0, 6.9,
+  98.3, 80.1, 32.9, 13.1, 11.3, 82.8 and 17.6 s (Q1598). On Flint before the switch they took 67.6 of 222.6 and 141.7 of
+  299.5 s. A task at equal work prices a fixed set of tokens, so it cannot show work left out
+  ([C852](../2026-11-17_c852_agent_work_counts/README.md)); the work counts are the measure the switch changes.
+- **Prompt tokens read a task.** Over all 12 tasks the difference, −438, is inside the controls' 1,050: runs 1 and 3
+  each ran `complex-numbers` 38 and 41 turns deep. Without that task −383 is beyond the controls' 111, and 234 of it
+  are the controls' re-reads (146 and 321 reply tokens a task without `complex-numbers`). The other 149 are the runs'
+  own work: text reuse's runs made 62 and 57 requests without `complex-numbers`, the controls 66 and 64, and every
+  request reads its new tool results.
+- **Time is negligible on every measure the switch can reach.** It acted on none of the 12 matched requests (no line
+  of it on any), and they took −0.52 s (−0.57 %) against a 0.87 s (0.95 %) spread. The switch's own check
+  is not in any prompt time: it runs when the server chooses the slot, and the server went from choosing the slot to
+  processing each request in 0.72 and 0.67 ms on the median with it (4.81 ms at most) against 0.64 and 0.63 ms in the
+  controls (from each run's server log).
+- **The three measures beyond the controls' spread are first turns, which the switch cannot reach.** The longest
+  first-token wait is in every run `affine-cipher`'s first turn, the run's first request: 2,780 tokens and nothing
+  cached, so nothing to compare and no line of the switch. Text reuse's runs read it in 28.13 and 28.41 s against 27.93
+  and 28.13, +0.24 s against the controls' 0.19 s. A task's first turn starts from the shared system prefix or from
+  nothing, and the switch logged nothing on any first turn; without `complex-numbers` their median was +0.085 s against
+  0.06 s. The rule fixed before the runs compares with the controls' spread alone, and on single requests that is
+  narrower than a request's own variation across runs: the same 2,780 tokens took 27.95 and 28.04 s in the FP32 scale's
+  runs, 28.57 s in C854's run the day before, and text reuse's own two runs differ by 0.28 s. By R17's rule (the larger
+  of both arms' spreads, [class_arms.py](../../../bench/agent_check/class_arms.py)) all three are negligible.
+- **What follows.** This is R17's class on Flint (a gain on the work it removes, negligible on every measure of time,
+  [R17](../2026-11-17_r17_flint_textreuse/README.md)), which put the switch into Flint's preset. By the same reading
+  it should go into Flash-Next's v5 preset; the preset itself waits for the owner's word. Until then it stays in the
+  engine behind its switch (off by default).
 
 ## Files
 
