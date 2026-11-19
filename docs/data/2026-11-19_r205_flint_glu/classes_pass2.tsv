@@ -1,0 +1,11 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	u1	off	54.93 54.95	55.29 54.96	0.33	-0.19	-0.3	negligible
+generation	0	u2	off	55.51 55.23	55.29 54.96	0.33	0.24	0.4	negligible
+generation	8192	u1	off	51.16 51.23	51.41 51.35	0.07	-0.19	-0.4	loss
+generation	8192	u2	off	51.71 51.79	51.41 51.35	0.08	0.37	0.7	gain
+generation_all	all	u1	off	52.98 53.02	53.28 53.09	0.19	-0.19	-0.3	negligible
+generation_all	all	u2	off	53.54 53.45	53.28 53.09	0.19	0.31	0.6	gain
+prompt	0	u1	off	91.5 86.8	87.2 88.7	4.7	1.2	1.4	negligible
+prompt	0	u2	off	89.4 88.8	87.2 88.7	1.5	1.2	1.3	negligible
+prompt	8192	u1	off	592.7 445.4	593.3 592.1	147.3	-73.7	-12.4	negligible
+prompt	8192	u2	off	593.4 594.3	593.3 592.1	1.3	1.2	0.2	negligible

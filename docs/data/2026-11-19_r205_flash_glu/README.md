@@ -157,8 +157,10 @@ One request a depth and load, with the preset's sampler and a fixed seed, so the
   `mul_mat_vec_q` on Pascal by default, and a merge of that tag would cost Flash-Next this loss. The fork would then
   need a way to keep the fused launch for Q2_0 experts. That is planned row [Q1613](../../../quants/experiments.md),
   parked until upstream merges it.
-- **Flint Pascal Q8 GGUF** is Q1594's other half: a dense-FFN file, where `1` changes nothing and `2` takes apart its
-  one-token gate, up and GLU. Upstream's own P40 numbers on a dense Llama 3.1 8B were 50.74 → 50.08 tok/s.
+- **Flint Pascal Q8 GGUF** is Q1594's other half
+  ([2026-11-19_r205_flint_glu](../2026-11-19_r205_flint_glu/README.md)). Its routed experts are Q8_0 and Q5_0. There
+  `1` costs a little, and `2` is a small gain: a token on the steady pass is 0.7 % shorter at 8,192 tokens, with the
+  same replies.
 
 ## Files
 
