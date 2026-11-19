@@ -23,9 +23,12 @@ repository. All of them run on the rig as root unless noted.
 
 Steps 4 and 5 left two rigs with 34 and 39 GB free on the SSD. The only warning step 9 gave was a slow USB stick.
 
-**Later, optional: overclocked at every boot.** Once a rig has its own soaked clock-offset profile, a boot service sets
-it at every boot with its checks and the watchdog, off until you enable it for that rig
-([how](../bench/mem_offset/README.md#overclocked-at-every-boot-boot)).
+**Later, optional: overclocked.** Every rig finds its own memory and core clock offsets by the same five steps, each
+on its own boot, with every command written out in the kit's
+[new-rig runbook](../bench/mem_offset/README.md#on-a-new-rig-every-command-from-a-fresh-install) (about 6 h of rig
+time, est.). On the second rig the coding agent then took 1.90 minutes a task instead of 2.00 with Ornith and 2.26
+instead of 2.36 with Flash-Next ([R209](data/2026-11-19_r209_oc_v5/README.md)). A boot service can then set it at every boot with its checks and the
+watchdog, off until you enable it for that rig ([how](../bench/mem_offset/README.md#overclocked-at-every-boot-boot)).
 
 ## What the hardware dictates
 

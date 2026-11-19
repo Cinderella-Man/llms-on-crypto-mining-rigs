@@ -45,8 +45,9 @@ The rules that make the steps repeatable:
   ([Q1563](../../quants/experiments.md)).
 - **One kind of offset at a time:** memory in steps 1 and 2, the core in steps 3 and 4, so a failure names the offset
   that caused it. `climb.py climb` on its own also climbs the core, with each card's memory at its last clean step,
-  where memory errors begin; step 1 leaves that out with `CORE_PEAK_MAX=0` (no target peak lies under 0 MHz, so the
-  core climb has no step; `climb.py plan` lists none).
+  where memory errors begin; step 1 leaves that out with `CORE_PEAK_MAX=0` on its own command line (no target peak
+  lies under 0 MHz, so the core climb has no step; `climb.py plan` lists none). Never put it in `env.sh`, which every
+  step loads: step 3's core climb needs the default.
 - **Each step's failures go to the next, and only those:** the rung files and every `use.json` list the failures
   they used, and step 4's `FAILURES` holds those of steps 1 to 3 in `soak.py --failures`' format (R202b's
   [failures.json](../../docs/data/2026-11-18_r202b_core_soak/run/failures.json)).
@@ -55,6 +56,123 @@ The rules that make the steps repeatable:
   offset failed on that card in these steps ([the rule](#holding-a-profile-soakpy-the-ladder-and-the-whole-memory-check)).
 - **A ladder in which a card differed still gives a `use.json`,** with that card at the highest value it held clean
   (0 if none), and the next step starts from it.
+
+### On a new rig: every command, from a fresh install
+
+As root on the rig, with someone at the console for the five reboots. About 6 h of rig time over five boots (est.),
+most of it in the two ladders. Each step's work folder stays in `/var/tmp`, which survives the reboots; nothing else
+on the rig runs during a step. `K` is the kit's folder on the rig, `CHECKOUT` a checkout of this repository wherever
+the files are copied from.
+
+**Once, before step 1:**
+
+1. The rig set up by [docs/setup.md](../../docs/setup.md), steps 1 to 9: the driver, the engine and the model it serves.
+2. The kit: the tarball [build.sh](build.sh) makes (for `bin/mmvq_pascal`), with this repository's kit files, the
+   watchdog and the two scripts steps 4 and 5 use over it.
+
+   ```bash
+   mkdir -p /var/tmp/oc && tar xzf mem_offset-kit-<date>.tar.gz -C /var/tmp/oc
+   K=/var/tmp/oc/mem_offset-kit-<date> && cd $K && md5sum -c MD5SUMS
+   cp $CHECKOUT/bench/mem_offset/{climb.py,soak.py,soak_chain.sh,model_check.sh,greedy_check.py,nvml_memoc.py,memoc_units.json} \
+      $CHECKOUT/scripts/nvml_watchdog.py $CHECKOUT/docs/data/2026-11-18_r202b_core_soak/run/make_rungs.py \
+      $CHECKOUT/docs/data/2026-11-19_r209_oc_v5/run/apply_check.sh $K/
+   ```
+3. The check model (2.02 GB, Apache-2.0), the one both rigs used:
+
+   ```bash
+   mkdir -p /mnt/models/check && cd /mnt/models/check
+   wget -O granite-3.1-3b-a800m-instruct-Q4_K_M.gguf \
+     https://huggingface.co/bartowski/granite-3.1-3b-a800m-instruct-GGUF/resolve/main/granite-3.1-3b-a800m-instruct-Q4_K_M.gguf
+   md5sum granite-3.1-3b-a800m-instruct-Q4_K_M.gguf      # c8e8b8bc7890057906d99643dbf8063b
+   ```
+4. `$K/env.sh`, which every step loads (never `CORE_PEAK_MAX` in it), and the served model's release settings file
+   copied into `$K` (for example `release/ornith-v4/settings.env` as `$K/ornith-v4.env`, with that release's engine as
+   `BIN`):
+
+   ```bash
+   export BIN=<the engine's bin folder, with llama-server>
+   export CHECK_MODEL=/mnt/models/check/granite-3.1-3b-a800m-instruct-Q4_K_M.gguf
+   export MEM_STEPS="200 400 600 800 900 1000 1100 1200 1300 1400"
+   ```
+5. Only if `nvidia-smi --query-gpu=driver_version --format=csv,noheader` shows another driver than 580.178.04: the
+   offset's unit, measured on card 0, written into the kit's `memoc_units.json`. It sets a raw +100 and then 0, a
+   step down that the kit's ledger does not see, so **reboot after it**:
+
+   ```bash
+   cd $K && python3 nvml_memoc.py --state memoc_units.json units 0 -- env CUDA_DEVICE_ORDER=PCI_BUS_ID \
+     CUDA_VISIBLE_DEVICES=0 bin/mmvq_pascal --types q8_0 --shapes attn_q,moe_gate_up --reps 60
+   ```
+
+**Step 1, the memory climb** (boot 1; the climb 12 min 45 s on nine cards, R217, after the checks before it):
+
+```bash
+cd $K && . ./env.sh && export WORK=/var/tmp/oc-step1
+python3 climb.py state && python3 climb.py start-check
+CORE_PEAK_MAX=0 python3 climb.py plan          # the memory steps and no core row
+python3 climb.py trip-test && python3 climb.py watchdog start
+CORE_PEAK_MAX=0 python3 climb.py climb         # detached; when $WORK/CLIMB_DONE says exit 0:
+python3 climb.py state && python3 climb.py watchdog stop      # every offset 0
+python3 climb.py rungs $WORK/out/profile.json --out $K        # rung1.json, rung2.json, rung3.json, rungs-choice.md
+```
+
+**Step 2, the memory soak ladder** (boot 2; est. 2 h 30 min). `$K/env-step2.sh`:
+
+```bash
+. ./env.sh
+K=/var/tmp/oc/mem_offset-kit-<date>
+export WORK=/var/tmp/oc-step2 PROFILE=$K/rung1.json LADDER="$K/rung2.json $K/rung3.json" FAILURES=$K/rung1.json
+export MODEL=<the served model's .gguf> SETTINGS=$K/<its settings.env> OUT=/var/tmp/oc-step2-model
+export MINUTES=30 MODEL_MINUTES=30 END_BY=21:50
+```
+
+```bash
+cd $K && . ./env-step2.sh && python3 climb.py start-check && mkdir -p $WORK
+ENV_FILE=./env-step2.sh setsid nohup bash soak_chain.sh > $WORK/chain.console 2>&1 < /dev/null &
+cat /var/tmp/oc-step2/CHAIN_DONE                # when it exists; one look every 30 minutes at most
+. ./env-step2.sh && python3 climb.py reset-all && python3 climb.py watchdog stop   # if the offsets stayed set
+```
+
+It gives `/var/tmp/oc-step2/soak/use.json`, whether or not a card differed.
+
+**Step 3, the core climb from the soaked memory** (boot 3; the climb 11 min 55 s on six cards, R202, after the checks
+before it):
+
+```bash
+cd $K && . ./env.sh && export WORK=/var/tmp/oc-step3 P=/var/tmp/oc-step2/soak/use.json
+python3 climb.py start-check && python3 climb.py --from-profile $P plan     # every card climbs the core
+python3 climb.py trip-test && python3 climb.py watchdog start
+python3 climb.py --from-profile $P climb       # detached; when $WORK/CLIMB_DONE says exit 0:
+python3 climb.py state && python3 climb.py watchdog stop
+python3 climb.py rungs $WORK/out/profile.json --failures $P --out $WORK/failures   # its rung1.json lists steps 1-3's failures
+```
+
+**Step 4, the core soak ladder** (boot 4; est. 2 h with the served model's checks). The rungs, by R202b's script:
+each card's memory at step 2's value, its core two climb steps, one climb step and zero steps under step 3's profile
+value, taken from the climb's own steps. Every climbing card needs two clean core steps under that value, and the
+script stops on a card without them; the kit's own `rungs` for a core ladder is [Q1617](../../quants/experiments.md):
+
+```bash
+cd $K && python3 -I make_rungs.py /var/tmp/oc-step2/soak/use.json \
+  /var/tmp/oc-step3/out/steps.csv /var/tmp/oc-step3/out/profile.json $K     # r202b-rung1.json ... r202b-rung3.json
+```
+
+Then as step 2, with `$K/env-step4.sh` = `env-step2.sh` with `WORK=/var/tmp/oc-step4`, `PROFILE=$K/r202b-rung1.json`,
+`LADDER="$K/r202b-rung2.json $K/r202b-rung3.json"`, `FAILURES=/var/tmp/oc-step3/failures/rung1.json` and
+`OUT=/var/tmp/oc-step4-model`. It gives `/var/tmp/oc-step4/soak/use.json`: the rig's profile.
+
+**Step 5, the profile on the served model** (boot 5; `apply` 5 min 18 s on nine cards, R209, then the model's load and
+30 minutes):
+
+```bash
+KIT=$K BIN=<the engine's bin folder> MODEL=<the served model's .gguf> SETTINGS=$K/<its settings.env> \
+  PROFILE=/var/tmp/oc-step4/soak/use.json WORK=/var/tmp/oc-step5 OUT=/var/tmp/oc-step5-model \
+  setsid -f nohup bash $K/apply_check.sh > /var/tmp/oc-step5.console 2>&1 < /dev/null
+cat /var/tmp/oc-step5/R209C_DONE               # "done 0": set and checked; the offsets stay set, the watchdog runs
+```
+
+A pass leaves the rig overclocked until the next reboot. To have it at every boot, install the boot service with
+`/var/tmp/oc-step4/soak/use.json` as its profile ([below](#install-turn-on-check-turn-off)); it stays off until it is
+enabled for that rig.
 
 ## Every card in one sitting: `climb.py`
 
