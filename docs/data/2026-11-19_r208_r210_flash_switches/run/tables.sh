@@ -83,3 +83,6 @@ py $C/run/busy_clocks.py "${cl[@]}" > "$D/clocks.tsv"
   done; } > "$D/host.tsv"
 ra=(); for r in "${RUNS[@]}"; do ra+=("$r=$T/rig/server-$r.log"); done
 py scripts/realloc_counts.py "${ra[@]}" > "$D/reallocs.tsv"
+# text reuse's own cost: the time from choosing the slot to processing each request, per run
+sg=(); for r in "${RUNS[@]}"; do sg+=("$T/rig/server-$r.log"); done
+py $D/run/slot_gap.py "${sg[@]}" > "$D/slot_gap.tsv"

@@ -598,7 +598,7 @@ control b less control a, with its percent of control a. The work rows are from 
   of it on any), and they took −0.52 s (−0.57 %) against a 0.87 s (0.95 %) spread. The switch's own check
   is not in any prompt time: it runs when the server chooses the slot, and the server went from choosing the slot to
   processing each request in 0.72 and 0.67 ms on the median with it (4.81 ms at most) against 0.64 and 0.63 ms in the
-  controls (from each run's server log).
+  controls ([slot_gap.tsv](slot_gap.tsv)).
 - **The three measures beyond the controls' spread are first turns, which the switch cannot reach.** The longest
   first-token wait is in every run `affine-cipher`'s first turn, the run's first request: 2,780 tokens and nothing
   cached, so nothing to compare and no line of the switch. Text reuse's runs read it in 28.13 and 28.41 s against 27.93
@@ -627,11 +627,13 @@ control b less control a, with its percent of control a. The work rows are from 
 | [clocks.tsv](clocks.tsv) | each card's busy SM clock median per run, over the tasks' window |
 | [host.tsv](host.tsv) | lowest MemAvailable, swap at the start and its highest, MemAvailable at the end, each card's peak memory |
 | [reallocs.tsv](reallocs.tsv) | the target graph's reallocations per prompt-size bucket ([scripts/realloc_counts.py](../../../scripts/realloc_counts.py)) |
+| [slot_gap.tsv](slot_gap.tsv) | [run/slot_gap.py](run/slot_gap.py): per run, the time from choosing the slot to processing each request (median, largest, sum), where text reuse's own check runs |
 | [run/flash_switch.sh](run/flash_switch.sh) | the run: the arm's `V4R_ENV`, then C854's [flash_agent.sh](../2026-11-18_c854b_p106_check/run/flash_agent.sh) |
 | [run/dry_line.sh](run/dry_line.sh) | the server line a run would start, built by the unchanged driver chain without a load |
 | [run/tables.sh](run/tables.sh) | every table above from the runs' logs |
 | [run/rename_arm.py](run/rename_arm.py) | the client's tables with the arm renamed |
 | [run/text_reuse_points.py](run/text_reuse_points.py) | the `same text` lines of a run's server log placed on its turns (`tables.sh` runs it) |
+| [run/slot_gap.py](run/slot_gap.py) | the slot-choice-to-processing gaps of each server log (`tables.sh` runs it) |
 
 ## Commands
 

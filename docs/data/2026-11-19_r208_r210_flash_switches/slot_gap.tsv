@@ -1,0 +1,7 @@
+log	requests	median_ms	max_ms	sum_ms
+server-f5c1.log	104	0.64	0.87	67.0
+server-f5s1.log	82	0.62	0.77	51.0
+server-f5t1.log	103	0.72	4.81	148.5
+server-f5c2.log	69	0.63	0.82	44.0
+server-f5s2.log	62	0.64	0.93	39.9
+server-f5t2.log	64	0.67	1.63	49.3
