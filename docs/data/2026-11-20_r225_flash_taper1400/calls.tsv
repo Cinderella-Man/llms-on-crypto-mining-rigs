@@ -1,0 +1,24 @@
+setting	passes	s_by_pass	mean_s	control_mean_s	delta_s	delta_pct	c222_est_delta_s	turns_changed
+short=600:64	p1, p4, p7	220.24, 220.41, 220.55	220.40	220.40	+0.00	+0.00	+0.00	0
+short=1023:64	p3, p5	210.77, 210.95	210.86	220.40	-9.54	-4.33	-9.54	6
+short=1400:64	p2, p6	208.30, 207.38	207.84	220.40	-12.56	-5.70	-12.60	11
+
+task	turn	call_tokens	control_s	short=1023:64_delta_s	short=1400:64_delta_s	c222_control_s	c222_short=2048:64_delta_s
+bugfix-javascript-phone-number	1	610	5.86	-2.31	-2.32	5.93	-2.40
+bugfix-python-pig-latin	1	775	5.87	-1.46	-1.44	5.86	-1.46
+bugfix-javascript-space-age	1	803	5.99	-1.71	-1.67	5.97	-1.68
+bugfix-python-variable-length-quantity	1	815	5.93	-1.48	-1.42	5.92	-1.43
+bugfix-javascript-complex-numbers	1	896	6.28	-1.44	-1.42	6.31	-1.48
+bugfix-javascript-space-age	2	936	6.22	-1.07	-1.06	6.24	-1.09
+bugfix-python-pig-latin	2	1028	6.68	-0.04	-1.23	6.68	-1.24
+bugfix-python-scale-generator	1	1086	6.72	-0.06	-0.67	6.63	-0.79
+bugfix-python-phone-number	1	1130	6.88	+0.02	-0.80	6.85	-0.76
+bugfix-python-affine-cipher	2	1300	7.37	-0.05	-0.22	7.32	-0.22
+bugfix-javascript-triangle	2	1359	7.25	+0.02	-0.08	7.23	-0.05
+bugfix-python-list-ops	2	1534	7.48	-0.00	-0.03	7.48	+0.47
+bugfix-python-scale-generator	2	1567	7.81	+0.03	+0.01	7.81	+0.17
+bugfix-python-pig-latin	3	1578	7.88	+0.01	+0.04	7.92	-0.02
+bugfix-javascript-phone-number	2	1690	7.74	+0.03	-0.02	7.74	+0.79
+bugfix-python-affine-cipher	1	1747	7.59	+0.01	+0.02	7.61	+1.15
+bugfix-javascript-grade-school	2	1985	8.19	-0.03	-0.06	8.20	+1.81
+bugfix-python-variable-length-quantity	2	2007	8.52	-0.02	-0.08	8.44	+1.71

@@ -1,0 +1,4 @@
+setting	turns	points	fixed_s	ms_per_token
+short=600:64	21	63	2.82	3.21
+short=1023:64	21	42	1.52	4.00
+short=1400:64	21	42	1.42	3.97

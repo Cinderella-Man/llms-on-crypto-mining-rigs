@@ -1,0 +1,584 @@
+ubatch taper: 1549 tokens, head 1, tail 1, 5 ubatches: 512x2 9 512 4
+ubatch taper: 896 tokens, head 1, tail 1, 3 ubatches: 380 512 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 3 ubatches: 94 512 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 3 ubatches: 287 512 4
+ubatch taper: 936 tokens, head 1, tail 1, 3 ubatches: 420 512 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 4 ubatches: 512 331 512 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 4 ubatches: 512 272 512 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 4 ubatches: 512 102 512 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 3 ubatches: 259 512 4
+ubatch taper: 1028 tokens, head 1, tail 1, 3 ubatches: 512x2 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 4 ubatches: 512 58 512 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 3 ubatches: 299 512 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 3 ubatches: 380 512 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 3 ubatches: 94 512 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 3 ubatches: 287 512 4
+ubatch taper: 936 tokens, head 1, tail 1, 3 ubatches: 420 512 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 4 ubatches: 512 331 512 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 4 ubatches: 512 272 512 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 4 ubatches: 512 102 512 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 3 ubatches: 259 512 4
+ubatch taper: 1028 tokens, head 1, tail 1, 3 ubatches: 512x2 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 4 ubatches: 512 58 512 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 3 ubatches: 299 512 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 16 ubatches: 64x5 60 5 63 64x6 60 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 12 ubatches: 64 30 34 64x7 30 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 15 ubatches: 64x4 31 33 64x7 31 4
+ubatch taper: 936 tokens, head 1, tail 1, 17 ubatches: 64x6 36 28 64x7 36 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 24 ubatches: 64x13 11 53 64x7 11 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 23 ubatches: 64x12 16 48 64x7 16 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 20 ubatches: 64x9 38 26 64x7 38 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 14 ubatches: 64x3 63 4 61 64x6 67 4
+ubatch taper: 1028 tokens, head 1, tail 1, 17 ubatches: 64x16 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 19 ubatches: 64x8 58 6 64x7 58 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 15 ubatches: 64x4 43 21 64x7 43 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 16 ubatches: 64x5 60 5 63 64x6 60 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 12 ubatches: 64 30 34 64x7 30 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 15 ubatches: 64x4 31 33 64x7 31 4
+ubatch taper: 936 tokens, head 1, tail 1, 17 ubatches: 64x6 36 28 64x7 36 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 4 ubatches: 512 331 512 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 4 ubatches: 512 272 512 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 4 ubatches: 512 102 512 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 14 ubatches: 64x3 63 4 61 64x6 67 4
+ubatch taper: 1028 tokens, head 1, tail 1, 3 ubatches: 512x2 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 4 ubatches: 512 58 512 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 15 ubatches: 64x4 43 21 64x7 43 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 3 ubatches: 380 512 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 3 ubatches: 94 512 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 3 ubatches: 287 512 4
+ubatch taper: 936 tokens, head 1, tail 1, 3 ubatches: 420 512 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 4 ubatches: 512 331 512 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 4 ubatches: 512 272 512 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 4 ubatches: 512 102 512 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 3 ubatches: 259 512 4
+ubatch taper: 1028 tokens, head 1, tail 1, 3 ubatches: 512x2 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 4 ubatches: 512 58 512 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 3 ubatches: 299 512 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 16 ubatches: 64x5 60 5 63 64x6 60 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 12 ubatches: 64 30 34 64x7 30 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 15 ubatches: 64x4 31 33 64x7 31 4
+ubatch taper: 936 tokens, head 1, tail 1, 17 ubatches: 64x6 36 28 64x7 36 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 4 ubatches: 512 331 512 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 4 ubatches: 512 272 512 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 4 ubatches: 512 102 512 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 14 ubatches: 64x3 63 4 61 64x6 67 4
+ubatch taper: 1028 tokens, head 1, tail 1, 3 ubatches: 512x2 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 4 ubatches: 512 58 512 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 15 ubatches: 64x4 43 21 64x7 43 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 16 ubatches: 64x5 60 5 63 64x6 60 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 12 ubatches: 64 30 34 64x7 30 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 15 ubatches: 64x4 31 33 64x7 31 4
+ubatch taper: 936 tokens, head 1, tail 1, 17 ubatches: 64x6 36 28 64x7 36 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 24 ubatches: 64x13 11 53 64x7 11 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 23 ubatches: 64x12 16 48 64x7 16 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 20 ubatches: 64x9 38 26 64x7 38 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 14 ubatches: 64x3 63 4 61 64x6 67 4
+ubatch taper: 1028 tokens, head 1, tail 1, 17 ubatches: 64x16 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 19 ubatches: 64x8 58 6 64x7 58 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 15 ubatches: 64x4 43 21 64x7 43 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 896 tokens, head 1, tail 1, 3 ubatches: 380 512 4
+ubatch taper: 3313 tokens, head 1, tail 1, 8 ubatches: 512x5 237 512 4
+ubatch taper: 302 tokens, head 1, tail 1, 6 ubatches: 64x4 42 4
+ubatch taper: 30 tokens, head 1, tail 1, 2 ubatches: 26 4
+ubatch taper: 92 tokens, head 1, tail 1, 3 ubatches: 64 24 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 403 tokens, head 1, tail 1, 8 ubatches: 64x6 15 4
+ubatch taper: 1985 tokens, head 1, tail 1, 5 ubatches: 512x2 445 512 4
+ubatch taper: 292 tokens, head 1, tail 1, 6 ubatches: 64x4 32 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 97 tokens, head 1, tail 1, 3 ubatches: 64 29 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 610 tokens, head 1, tail 1, 3 ubatches: 94 512 4
+ubatch taper: 1690 tokens, head 1, tail 1, 5 ubatches: 512x2 150 512 4
+ubatch taper: 438 tokens, head 1, tail 1, 8 ubatches: 64x6 50 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 176 tokens, head 1, tail 1, 4 ubatches: 64x2 44 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 803 tokens, head 1, tail 1, 3 ubatches: 287 512 4
+ubatch taper: 936 tokens, head 1, tail 1, 3 ubatches: 420 512 4
+ubatch taper: 306 tokens, head 1, tail 1, 6 ubatches: 64x4 46 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
+ubatch taper: 110 tokens, head 1, tail 1, 3 ubatches: 64 42 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 430 tokens, head 1, tail 1, 8 ubatches: 64x6 42 4
+ubatch taper: 1359 tokens, head 1, tail 1, 4 ubatches: 512 331 512 4
+ubatch taper: 258 tokens, head 1, tail 1, 5 ubatches: 64x3 62 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 71 tokens, head 1, tail 1, 2 ubatches: 67 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 577 tokens, head 1, tail 1, 11 ubatches: 61 5 62 64x6 61 4
+ubatch taper: 2308 tokens, head 1, tail 1, 6 ubatches: 512x3 256 512 4
+ubatch taper: 569 tokens, head 1, tail 1, 11 ubatches: 53 11 64x7 53 4
+ubatch taper: 34 tokens, head 1, tail 1, 2 ubatches: 30 4
+ubatch taper: 126 tokens, head 1, tail 1, 3 ubatches: 64 58 4
+ubatch taper: 1747 tokens, head 1, tail 1, 5 ubatches: 512x2 207 512 4
+ubatch taper: 1300 tokens, head 1, tail 1, 4 ubatches: 512 272 512 4
+ubatch taper: 449 tokens, head 1, tail 1, 8 ubatches: 64x6 61 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 352 tokens, head 1, tail 1, 7 ubatches: 64x5 28 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 441 tokens, head 1, tail 1, 8 ubatches: 64x6 53 4
+ubatch taper: 1534 tokens, head 1, tail 1, 4 ubatches: 512 506 512 4
+ubatch taper: 362 tokens, head 1, tail 1, 7 ubatches: 64x5 38 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 31 tokens, head 1, tail 1, 2 ubatches: 27 4
+ubatch taper: 102 tokens, head 1, tail 1, 3 ubatches: 64 34 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1130 tokens, head 1, tail 1, 4 ubatches: 512 102 512 4
+ubatch taper: 599 tokens, head 1, tail 1, 12 ubatches: 64 19 45 64x7 19 4
+ubatch taper: 461 tokens, head 1, tail 1, 9 ubatches: 64x7 9 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 775 tokens, head 1, tail 1, 3 ubatches: 259 512 4
+ubatch taper: 1028 tokens, head 1, tail 1, 3 ubatches: 512x2 4
+ubatch taper: 1578 tokens, head 1, tail 1, 5 ubatches: 512x2 38 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 144 tokens, head 1, tail 1, 4 ubatches: 64x2 12 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 1086 tokens, head 1, tail 1, 4 ubatches: 512 58 512 4
+ubatch taper: 1567 tokens, head 1, tail 1, 5 ubatches: 512x2 27 512 4
+ubatch taper: 583 tokens, head 1, tail 1, 11 ubatches: 63 4 61 64x6 67 4
+ubatch taper: 32 tokens, head 1, tail 1, 2 ubatches: 28 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 516 tokens, head 1, tail 1, 9 ubatches: 64x8 4
+ubatch taper: 815 tokens, head 1, tail 1, 3 ubatches: 299 512 4
+ubatch taper: 2007 tokens, head 1, tail 1, 5 ubatches: 512x2 467 512 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 33 tokens, head 1, tail 1, 2 ubatches: 29 4
+ubatch taper: 37 tokens, head 1, tail 1, 2 ubatches: 33 4
+ubatch taper: 29 tokens, head 1, tail 1, 2 ubatches: 25 4
