@@ -2,3 +2,8 @@ run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_
 c600a	bugfix-python-pig-latin	4	4311	562	4901	4901	4873	28	850.965	4311	562	0	450	before the tool call	same, arguments re-serialized
 c600a	bugfix-python-pig-latin	5	4311	743	5131	5131	5054	77	1477.436	4901	154	-590		before the previous reply	same
 t1400a	bugfix-python-variable-length-quantity	6	4044	54	4354	4354	4098	256	1918.338	3924	174	120	15	in the tool call	same
+c600b	bugfix-javascript-grade-school	4	4637	17	4684	4685	4654	31	888.108	4458	197	179	84	in the tool call	same, arguments re-serialized
+c600b	bugfix-javascript-grade-school	5	4637	116	4843	4844	4753	91	1536.293	4685	68	-48		before the previous reply	same
+c600b	bugfix-python-pig-latin	3	3648	949	4820	4820	4597	223	1861.096	3457	1141	191	1093	before the tool call	same
+c600b	bugfix-python-pig-latin	4	3648	1386	5066	5066	5034	32	939.132	4820	215	-1172		before the previous reply	same, arguments re-serialized
+c600b	bugfix-python-pig-latin	5	3648	1741	5540	5540	5389	151	1599.836	5066	324	-1418		before the previous reply	same

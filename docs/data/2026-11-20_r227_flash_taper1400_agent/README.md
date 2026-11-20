@@ -27,6 +27,17 @@ turn: 79.93 s on 45 turns under 600, 32.84 s on 7 turns of 600 to 1,023, 65.20 s
 66.51 s on 5 turns of 2,000 or more. The server read `short=1400:64` at its load and its started command differs from
 the control's in that value only. No class is given yet: the verdict compares both arms after all four runs.
 
+**Run 3 of 4 done: the second control, the v5 preset as it is, passed 12 of 12 tasks.** A task took 2.24 minutes at
+equal work (the first control's run: 2.26; `short=1400:64`'s: 2.25), the model generated at 31.46 tok/s (31.05;
+30.71), and the prompts took 21.41 s a task (20.01; 20.37), 256.87 s in all for 39,629 tokens read, with the most work
+of the three runs (68 turns, 29,745 tokens generated). No task ran to its cap. The two controls set the spread the
+setting is judged against: 2.26 and 2.24 minutes a task at equal work, 31.05 and 31.46 tok/s, and 86.07 and 85.71 s on
+the 12 first turns, the same prompt on the same cached prefix in every run, where `short=1400:64` took 76.01 s. On
+the 7 of those first turns of 601 to 1,400 new tokens the controls took 45.78 and 45.61 s, `short=1400:64` 36.80. The
+second control read JavaScript `variable-length-quantity`'s 577-token first turn in 4.41 s (the first: 4.37), so
+`short=1400:64`'s 3.39 s there stays an oddity of that run. The started command is the first control's byte for byte
+and the server read `short=600:64`. No class is given yet: the verdict waits for the fourth run.
+
 ## What runs
 
 Four runs of Flash-Next's agent check ([bench/agent_check](../../../bench/agent_check/README.md): 12 bug-fix tasks,
@@ -37,7 +48,7 @@ alternated so that each arm has one run in each half:
 |---|---|---|---|---|
 | 1 | R227a | `c600a` | `short=600:64`, the v5 preset as it is (the control) | done 16:25–16:46 |
 | 2 | R227b | `t1400a` | `short=1400:64` | done 17:15–17:41 |
-| 3 | R227c | `c600b` | `short=600:64` (the control) | planned |
+| 3 | R227c | `c600b` | `short=600:64` (the control) | done 17:49–18:14 |
 | 4 | R227d | `t1400b` | `short=1400:64` | planned |
 
 Every run: the maker's Swift GSQ-RCO Q2_0 (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, the n-gram
@@ -208,6 +219,85 @@ Each value is one run (the same tables as run 1; the agent check's own report:
 - **Memory:** swap stayed at 50 MiB the whole run; the lowest MemAvailable was 309 MiB at 17:35:19. The RAM watchdog
   stopped nothing.
 - **The kit's watchdog** sampled 2,603 times a card over the tasks: 0 trips, never two samples in a row above 80 W,
+  the offsets the same in every sample.
+
+## Run 3, `c600b` (R227c): the second control, 17:49–18:14
+
+**The v5 preset ran 12 of 12 tasks in 20.5 minutes.** Its started command (1,716 bytes, md5
+`f588628a98483a96e8ceb8f2969d27dc`) equals [run/dry_line.sh](run/dry_line.sh)'s line for `c600b` and the first
+control's started command byte for byte, and passes [run/preset_check.sh](run/preset_check.sh) against `settings.env`
+(40 switches, `PRESET_ARGS` with `--ubatch-taper short=600:64`, plus the harness's `--metrics --no-webui` and the
+draft). The server's `switches:` line is the first control's byte for byte (40 set), and its load logged `micro-batch
+taper of prompt calls: short=600:64 (n_ubatch 512)` ([taper_lines.tsv](taper_lines.tsv)). The server started at
+17:49:33 and was up after 224 s; the tasks ran 17:53:21–18:14:04 and the report ended at 18:14:12. Before and after,
+every card was at the profile's offsets (75 W), the kit's watchdog was running, and the kernel log held no Xid line.
+
+The last column is how far the two controls differ: the spread `short=1400:64`'s two runs are judged against once the
+fourth run is in.
+
+| | `c600a` (R227a, the first control) | `t1400a` (R227b, `short=1400:64`) | **`c600b` (R227c, the second control)** | the two controls differ by |
+|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | **12 / 12** | |
+| minutes a task at equal work (R90 `v3`'s work) | 2.26 | 2.25 | **2.24** | 0.02 |
+| tasks that ran to the 12-minute cap | none | none | **none** | |
+| generation tok/s | 31.05 | 30.71 | **31.46** | 0.41 |
+| prompt tok/s, the whole session | 147.9 | 157.9 | **154.3** | 6.4 |
+| prompt s a task (all prompt s) | 20.01 (240.07) | 20.37 (244.47) | **21.41 (256.87)** | 1.40 (16.80) |
+| prompt tokens read a task | 2,959 | 3,216 | **3,302** | 343 |
+| tokens generated a task | 1,856 | 2,613 | **2,479** | 623 |
+| prompt s by the turn's new tokens: under 600 (turns) | 73.36 (40) | 79.93 (45) | **85.36 (48)** | |
+| 600 to 1,023 | 45.46 (7) | 32.84 (7) | **38.09 (6)** | |
+| 1,024 to 1,999 | 59.97 (8) | 65.20 (9) | **59.23 (8)** | |
+| 2,000 and more | 61.28 (5) | 66.51 (5) | **74.19 (6)** | |
+| ms a prompt token in those buckets: under 600; 600 to 1,023; 1,024 to 1,999; 2,000 and more | 9.249; 8.127; 5.595; 5.442 | 9.061; 6.023; 5.378; 5.450 | **9.567; 7.791; 5.294; 5.072** | 0.318; 0.336; 0.301; 0.370 |
+| the turns of 601 to 1,400 new tokens, where `short=1400:64` acts: turns; tokens; prompt s | 12; 11,421; 81.85 | 12; 11,285; 66.90 | **10; 9,483; 66.17** | |
+| ms a prompt token on those turns | 7.166 | 5.929 | **6.978** | 0.188 |
+| the 12 first turns, the same prompt on the same cached prefix in every run, prompt s | 86.07 | 76.01 | **85.71** | 0.36 |
+| of them, the 7 of 601 to 1,400 new tokens, prompt s | 45.78 | 36.80 | **45.61** | 0.17 |
+| first token median s; p90 s | 2.44; 7.94 | 2.32; 7.88 | **2.26; 8.02** | 0.18; 0.08 |
+| first token on a task's first turn, median s | 6.38 | 4.67 | **6.38** | 0.00 |
+| the longest first-token wait s (`affine-cipher` turn 1, 2,780 tokens, nothing cached) | 27.46 | 27.37 | **27.28** | 0.18 |
+| draft acceptance; tokens a decode step | 0.767; 3.30 | 0.762; 3.29 | **0.785; 3.35** | 0.018; 0.05 |
+| ms a decode step, all requests | 106.56 | 107.18 | **106.88** | 0.32 |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 1; 195; 1.9 of 240.1 | 0; 0; 0.0 of 244.5 | **0; 0; 0.0 of 256.9** | |
+| requests on which text reuse kept the cached tokens | 2 (1 task) | 1 (1 task) | **5 (2 tasks)** | |
+| minutes, all 12 tasks; turns | 16.7; 60 | 21.5; 66 | **20.5; 68** | |
+| tool calls / failed / malformed | 54 / 0 / 0 | 60 / 1 / 0 | **64 / 2 / 0** | |
+| graph reallocations | 0 in 60 requests | 0 in 66 requests | **0 in 68 requests** | |
+| busy SM clock medians, cards 0 to 8, MHz (mean) | 2113 2151 2151 2100 2113 2100 2151 2151 2126 (2,128.4) | 2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0) | **2113 2138 2151 2100 2113 2100 2164 2151 2126 (2,128.4)** | |
+| lowest MemAvailable MiB; swap highest MiB | 318; 50 | 309; 50 | **278; 50** | |
+
+Each value is one run (the same tables as run 1; the agent check's own report:
+[c600b_report_table.md](c600b_report_table.md), [c600b_compare.md](c600b_compare.md),
+[c600b_gonogo.md](c600b_gonogo.md)). R220's two reference runs are in run 1's table and in the same files.
+
+- **The most work of the three runs:** 68 turns, 29,745 tokens generated and 39,629 prompt tokens read, so the plain
+  prompt sums compare different work again; "a task at equal work" prices each run's work at R90 `v3`'s, and the
+  matched first turns compare the same prompts.
+- **The matched first turns** ([same_prompts.md](same_prompts.md)): the two controls read each of the 7 of 601 to
+  1,400 new tokens within 0.15 s of each other (610 tokens 6.33 and 6.44 s, 775 6.17 and 6.15, 803 6.44 and 6.44, 815
+  6.22 and 6.16, 896 6.51 and 6.36, 1,086 6.86 and 6.87, 1,130 7.25 and 7.21); `short=1400:64`'s run read each faster
+  than either control, by 0.22 s at the least (1,086 tokens) and 2.49 s at the most (610 tokens). The 2,780-token turn,
+  read in 512s by every run, took 27.22 s (27.41 and 27.33 in the first two). JavaScript `variable-length-quantity`'s
+  577 tokens, read in 64s by both arms, took 4.41 s (4.37 in the first control, 3.39 in `short=1400:64`'s run), so that
+  3.39 is an oddity of that run, not of the setting.
+- **The turns `short=1400:64` would change** ([prompt_buckets.tsv](prompt_buckets.tsv), `agent/c600b/turns.csv`): 10
+  turns read 601 to 1,400 new tokens (610, 775, 803, 815, 896, 990, 1,051, 1,086, 1,130 and 1,327), 9,483 tokens in
+  66.17 s. The other 58 turns read 30,146 tokens in 190.70 s.
+- **Prompt seconds a task** ([prompt_tasks.tsv](prompt_tasks.tsv)): from 13.79 s (JavaScript `triangle`, 4 turns) to
+  48.35 s (Python `affine-cipher`, 9 turns, its first reading 2,780 tokens with nothing cached); every other task 15.07
+  to 27.49 s.
+- **No reply re-read** ([rereads_runs.tsv](rereads_runs.tsv)): 0 of 56 later turns. Text reuse kept the cached tokens
+  on JavaScript `grade-school` turns 4 and 5 and Python `pig-latin` turns 3, 4 and 5
+  ([text_reuse_points.tsv](text_reuse_points.tsv)); the time from choosing the slot to processing a request was 0.65 ms
+  on the median ([slot_gap.tsv](slot_gap.tsv)).
+- **Answers sound:** every task passed with its hidden tests; 0 of 64 calls malformed, none inside the reasoning; two
+  tool calls failed (one each in Python `affine-cipher` and JavaScript `variable-length-quantity`, which both passed);
+  no NaN or inf, 11 checkpoints restored, 0 full re-processing, 0 graph reallocations. The report's gates are all GO
+  except memory (NO-GO on the 279 MB low), as in every Flash-Next run of this preset.
+- **Memory:** swap stayed at 50 MiB the whole run; the lowest MemAvailable was 278 MiB at 18:14:07, after the last
+  task. The RAM watchdog stopped nothing.
+- **The kit's watchdog** sampled 2,487 times a card over the tasks: 0 trips, never two samples in a row above 80 W,
   the offsets the same in every sample.
 
 ## Files
