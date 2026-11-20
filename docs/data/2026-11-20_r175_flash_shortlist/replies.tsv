@@ -1,0 +1,56 @@
+depth	kind	pass	load	ids_md5	text_md5	first_diff_vs_control	draft
+0	decode	1	ca	2aadc9cf	b5945ac8		147/321
+0	decode	1	fb1a	2aadc9cf	b5945ac8		148/318
+0	decode	1	fb1b	2aadc9cf	b5945ac8		148/318
+0	decode	1	cb	2aadc9cf	b5945ac8		147/321
+# 0 decode 1: groups 2aadc9cf: ca fb1a fb1b cb
+0	decode	2	ca	2aadc9cf	b5945ac8		148/318
+0	decode	2	fb1a	2aadc9cf	b5945ac8		149/315
+0	decode	2	fb1b	2aadc9cf	b5945ac8		149/315
+0	decode	2	cb	2aadc9cf	b5945ac8		148/318
+# 0 decode 2: groups 2aadc9cf: ca fb1a fb1b cb
+0	sample	s	ca	1f333fb2	56f5da22		159/285
+0	sample	s	fb1a	b0ad2a30	c01b9d81	26 ca '\n' -> ' `'	145/329
+0	sample	s	fb1b	b0ad2a30	c01b9d81	26 ca '\n' -> ' `'	145/329
+0	sample	s	cb	1f333fb2	56f5da22		159/285
+# 0 sample s: groups 1f333fb2: ca cb; b0ad2a30: fb1a fb1b
+4096	decode	1	ca	765babe2	e337cd6c		177/231
+4096	decode	1	fb1a	765babe2	e337cd6c		177/231
+4096	decode	1	fb1b	765babe2	e337cd6c		177/231
+4096	decode	1	cb	765babe2	e337cd6c		177/231
+# 4096 decode 1: groups 765babe2: ca fb1a fb1b cb
+4096	decode	2	ca	765babe2	e337cd6c		177/231
+4096	decode	2	fb1a	765babe2	e337cd6c		177/231
+4096	decode	2	fb1b	765babe2	e337cd6c		177/231
+4096	decode	2	cb	765babe2	e337cd6c		177/231
+# 4096 decode 2: groups 765babe2: ca fb1a fb1b cb
+4096	prime	0	ca	016f8c08	68b329da		0/0
+4096	prime	0	fb1a	016f8c08	68b329da		0/0
+4096	prime	0	fb1b	016f8c08	68b329da		0/0
+4096	prime	0	cb	016f8c08	68b329da		0/0
+# 4096 prime 0: groups 016f8c08: ca fb1a fb1b cb
+4096	sample	s	ca	e2a5529b	098b935a		177/232
+4096	sample	s	fb1a	4319fd51	195d2c10	163 ca 'offset' -> 'limit'	179/228
+4096	sample	s	fb1b	4319fd51	195d2c10	163 ca 'offset' -> 'limit'	179/228
+4096	sample	s	cb	e2a5529b	098b935a		177/232
+# 4096 sample s: groups e2a5529b: ca cb; 4319fd51: fb1a fb1b
+8192	decode	1	ca	8a589d39	2e7d0eca		173/245
+8192	decode	1	fb1a	8a589d39	2e7d0eca		173/245
+8192	decode	1	fb1b	8a589d39	2e7d0eca		173/245
+8192	decode	1	cb	8a589d39	2e7d0eca		173/245
+# 8192 decode 1: groups 8a589d39: ca fb1a fb1b cb
+8192	decode	2	ca	8a589d39	2e7d0eca		178/230
+8192	decode	2	fb1a	8a589d39	2e7d0eca		178/230
+8192	decode	2	fb1b	8a589d39	2e7d0eca		178/230
+8192	decode	2	cb	8a589d39	2e7d0eca		178/230
+# 8192 decode 2: groups 8a589d39: ca fb1a fb1b cb
+8192	prime	0	ca	df76ba23	f19317ce		0/0
+8192	prime	0	fb1a	df76ba23	f19317ce		0/0
+8192	prime	0	fb1b	df76ba23	f19317ce		0/0
+8192	prime	0	cb	df76ba23	f19317ce		0/0
+# 8192 prime 0: groups df76ba23: ca fb1a fb1b cb
+8192	sample	s	ca	ad961273	c985fdc5		181/222
+8192	sample	s	fb1a	b768e5e0	d897b601	30 ca '.' -> ' everything'	181/220
+8192	sample	s	fb1b	b768e5e0	d897b601	30 ca '.' -> ' everything'	181/220
+8192	sample	s	cb	ad961273	c985fdc5		181/222
+# 8192 sample s: groups ad961273: ca cb; b768e5e0: fb1a fb1b
