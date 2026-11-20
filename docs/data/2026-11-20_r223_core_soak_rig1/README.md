@@ -144,10 +144,9 @@ to 8, at stock: 179.26, 179.47, 179.34, 179.23, 179.26, 179.24, 179.37, 179.32, 
 201.98, 204.62, 202.25, 207.02, 199.25, 202.15, 197.36. Peak core clock at stock: 1,860, 1,860, 1,911, 1,911, 1,885,
 1,911, 1,885, 1,911, 1,885 MHz; at rung 1: 2,075, 2,062, 2,100, 2,050, 2,037, 2,088, 1,885, 2,138, 2,062 MHz.
 
-### Power, clocks and the watchdog ([tables/heat_power.csv](tables/heat_power.csv))
+### Power, clocks and the watchdog ([tables/power_clocks.csv](tables/power_clocks.csv))
 
-From the watchdog's half-second samples (12:49:29 to 14:34:08): the hottest card was 46 °C (card 1 in rung 3); no
-card was in a thermal or hardware slowdown in any sample; the highest power reading was 83.68 W (card 7 in rung 3).
+From the watchdog's half-second samples (12:49:29 to 14:34:08): no card was in a thermal or hardware slowdown in any sample; the highest power reading was 83.68 W (card 7 in rung 3).
 Readings above 80 W were single samples, never two in a row: 1 in `apply` (card 8) and 87 in the rungs, on every card
 but 6 and 8, against the watchdog's limit of 80 W for 5 s. Each card's peak core clock in rungs 1, 2 and 3:
 
@@ -183,7 +182,7 @@ memory available.
 | [tables/ornith.csv](tables/ornith.csv) | Ornith's rounds (two at stock here): hash, whether it equals stock round 1, prompt and generation tok/s of both prompts |
 | [tables/ornith_load.csv](tables/ornith_load.csv) | Ornith's load: seconds to ready, MiB per card, host memory left, rounds |
 | [tables/apply.csv](tables/apply.csv) | `apply`'s stock round and its round at rung 1: peaks, the greedy and kernel checks, streaming reads |
-| [tables/heat_power.csv](tables/heat_power.csv) | Each phase (apply, the soak's server start, each rung, each raise) and card from the watchdog's samples |
+| [tables/power_clocks.csv](tables/power_clocks.csv) | Each phase (apply, the soak's server start, each rung, each raise) and card from the watchdog's samples: power, samples above 80 W, slowdown flags, peak clocks |
 | [run/env-step4.sh](run/env-step4.sh) | This run's settings for `soak_chain.sh`: work folder, the rungs, steps 1 to 3's failures, Ornith and its settings, the minutes |
 | [run/MD5SUMS-step4](run/MD5SUMS-step4) | The md5 sums of the rungs and settings staged on the rig (`ornith-v4.env` is [release/ornith-v4/settings.env](../../../release/ornith-v4/settings.env)), checked there before the start |
 | [run/tables.py](run/tables.py) | Builds the tables from the work folder and Ornith's folder |

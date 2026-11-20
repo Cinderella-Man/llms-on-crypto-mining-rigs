@@ -6,7 +6,7 @@
 WORK_DIR is soak_chain.sh's work folder (out/apply_steps.csv, soak/soak.csv, soak/rungs.csv, soak/soak.log,
 soak/soaked.json, soak/use.json, wd.csv), ORNITH_DIR model_check.sh's OUT (model.log, with the stock rounds and, when
 the chain ran it, the rounds with the offsets set). R218's tables.py with Ornith's rounds of both tags and the phase
-with the offsets on Ornith in the heat table. Writes:
+with the offsets on Ornith in the power table, which has no temperature columns. Writes:
   cards.csv        one row per card: each rung's offsets and differing checks (empty for the rungs after a card
                    left), the rounds it ran, whether and where it left, the value soaked.json holds, the first
                    difference, the use value
@@ -15,10 +15,10 @@ with the offsets on Ornith in the heat table. Writes:
   rungs.csv        soak.py's rungs.csv as written on the rig (one row per rung and card)
   soak.csv         soak.py's soak.csv (one row per round and card: hash, seconds, verdict)
   apply.csv        climb.py apply's stock round and its check round at rung 1 (peaks, kernel checks, streaming reads)
-  heat_power.csv   one row per phase (apply, the soak's server start, each rung, each raise between rungs, the time
+  power_clocks.csv one row per phase (apply, the soak's server start, each rung, each raise between rungs, the time
                    up to Ornith's load with the offsets, Ornith with the offsets) and card from the watchdog's
-                   half-second samples: peak and mean temperature, peak and mean power, samples and the longest run
-                   above 80 W, samples in a thermal or hardware slowdown, peak core and memory clocks
+                   half-second samples: peak and mean power, samples and the longest run above 80 W, samples in a
+                   thermal or hardware slowdown, peak core and memory clocks
   ornith.csv       one row per round of Ornith (at stock, and with the offsets if it ran): hash, whether it equals
                    stock round 1, prompt and generation tok/s of the two prompts
   ornith_load.csv  one row per Ornith load: seconds to ready, MiB per card, host memory available, rounds, exit
@@ -165,16 +165,16 @@ def main():
         phases.append(("Ornith's load with the offsets", marks[-1][0], r0))
         phases.append(("Ornith with the offsets", r0, stamp(done["profile"][0]) if "profile" in done else rows[-1][0] + 1))
     cards = sorted(int(k[1:k.index("_")]) for k in head if re.fullmatch(r"g\d+_c", k))
-    with open(os.path.join(tables, "heat_power.csv"), "w", newline="") as f:
+    with open(os.path.join(tables, "power_clocks.csv"), "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["phase", "card", "samples", "peak_c", "mean_c", "peak_w", "mean_w", "samples_above_80w",
+        w.writerow(["phase", "card", "samples", "peak_w", "mean_w", "samples_above_80w",
                     "longest_run_above_80w", "samples_slowdown", "peak_sm_mhz", "peak_mem_mhz"])
         for name, t0, t1 in phases:
             sel = [v for t, v in rows if t0 <= t < t1]
             for g in cards:
                 def col(k):
                     return [x for x in (num(v[head[f"g{g}_{k}"]]) for v in sel) if x is not None]
-                temps, watts, sms, mems = col("c"), col("w"), col("sm_mhz"), col("mem_mhz")
+                watts, sms, mems = col("w"), col("sm_mhz"), col("mem_mhz")
                 over = run = longest = 0
                 for x in watts:
                     run = run + 1 if x > 80 else 0
@@ -186,8 +186,7 @@ def main():
                         slow += bool(int(v[head[f"g{g}_reasons"]], 0) & (HW_SLOW | SW_THERMAL | HW_THERMAL | HW_BRAKE))
                     except (KeyError, ValueError, IndexError):
                         pass
-                w.writerow([name, g, len(sel), max(temps, default=""),
-                            f"{statistics.mean(temps):.1f}" if temps else "", max(watts, default=""),
+                w.writerow([name, g, len(sel), max(watts, default=""),
                             f"{statistics.mean(watts):.2f}" if watts else "", over, longest, slow,
                             int(max(sms)) if sms else "", int(max(mems)) if mems else ""])
 
