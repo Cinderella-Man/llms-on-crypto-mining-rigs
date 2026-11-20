@@ -1,0 +1,2 @@
+log	requests	median_ms	max_ms	sum_ms
+server-c600a.log	60	0.67	2.21	46.9

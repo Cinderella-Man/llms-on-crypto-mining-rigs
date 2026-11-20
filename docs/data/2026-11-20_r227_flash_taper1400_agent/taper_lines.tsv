@@ -1,0 +1,3 @@
+r075a	micro-batch taper of prompt calls: short=600:64 (n_ubatch 512)
+r075b	micro-batch taper of prompt calls: short=600:64 (n_ubatch 512)
+c600a	micro-batch taper of prompt calls: short=600:64 (n_ubatch 512)

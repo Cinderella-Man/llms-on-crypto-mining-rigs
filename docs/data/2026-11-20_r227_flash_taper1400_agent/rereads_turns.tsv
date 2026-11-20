@@ -1,0 +1,2 @@
+run	task	turn	reply_tokens	cached	client	reasoning_trimmed	non_ascii_chars	n_tool_calls	lcp_into_reply	lcp_err	grammar_from	where
+c600a	bugfix-python-list-ops	4	195	5218	same, arguments re-serialized	no	1	1	108	2.7	107	at the tool call's start
