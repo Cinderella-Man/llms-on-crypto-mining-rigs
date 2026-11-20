@@ -1,0 +1,39 @@
+{
+ "failures": [
+  {
+   "card": 0,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 1,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 2,
+   "memory_mts": 1300,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,300 MT/s with the core at 0"
+  },
+  {
+   "card": 3,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 7,
+   "memory_mts": 1300,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,300 MT/s with the core at 0"
+  },
+  {
+   "card": 8,
+   "memory_mts": 1100,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,100 MT/s with the core at 0"
+  }
+ ]
+}

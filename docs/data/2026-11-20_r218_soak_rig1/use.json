@@ -1,0 +1,159 @@
+{
+ "what": "P106 clock offsets to use, from bench/mem_offset/soak.py: each card's highest clean rung of the soak, at most two steps under its lowest failure anywhere; `climb.py apply` reads it",
+ "date": "2026-11-20",
+ "complete": true,
+ "climb_boot": null,
+ "rungs": 3,
+ "minutes_a_rung": 30.0,
+ "from": "soaked.json, by soak.py",
+ "each_card": "memory_mts and core_mhz are the card's highest clean rung (soaked.json), each no higher than 2 steps under the lowest value at which that offset failed on the card (memory steps of 100 MT/s, core steps of 2 x 12.66 MHz); 0 if no rung held",
+ "cards": [
+  {
+   "card": 0,
+   "pci": "00000000:03:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1860,
+   "memory_mts": 900,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 1,
+   "pci": "00000000:04:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1860,
+   "memory_mts": 1000,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 2,
+   "pci": "00000000:05:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 1100,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 3,
+   "pci": "00000000:06:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1200,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 4,
+   "pci": "00000000:07:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 1100,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 5,
+   "pci": "00000000:0B:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1300,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 6,
+   "pci": "00000000:0C:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 1000,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 7,
+   "pci": "00000000:0D:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1100,
+   "core_mhz": 0,
+   "core_steps": 0
+  },
+  {
+   "card": 8,
+   "pci": "00000000:0E:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 900,
+   "core_mhz": 0,
+   "core_steps": 0
+  }
+ ],
+ "failures": [
+  {
+   "card": 0,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 0,
+   "memory_mts": 1100,
+   "where": "soak 2026-11-20, rung 2: 2 differing checks at +1,100 MT/s, +0 MHz"
+  },
+  {
+   "card": 1,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 1,
+   "memory_mts": 1200,
+   "where": "soak 2026-11-20, rung 3: 3 differing checks at +1,200 MT/s, +0 MHz"
+  },
+  {
+   "card": 2,
+   "memory_mts": 1300,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,300 MT/s with the core at 0"
+  },
+  {
+   "card": 3,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 4,
+   "memory_mts": 1300,
+   "where": "soak 2026-11-20, rung 3: 1 differing check at +1,300 MT/s, +0 MHz"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1200,
+   "where": "soak 2026-11-20, rung 3: 3 differing checks at +1,200 MT/s, +0 MHz"
+  },
+  {
+   "card": 7,
+   "memory_mts": 1300,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,300 MT/s with the core at 0"
+  },
+  {
+   "card": 8,
+   "memory_mts": 1100,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,100 MT/s with the core at 0"
+  }
+ ]
+}

@@ -1,0 +1,3 @@
+time,round,hash,tokens,prompt1_prompt_tok_s,prompt2_prompt_tok_s,prompt1_gen_tok_s,prompt2_gen_tok_s,same_as_round1
+2026-11-20 09:49:23,1,adf47784f9b02d4b,512,11.88,27.02,14.22,14.76,reference
+2026-11-20 09:49:59,2,adf47784f9b02d4b,512,26.79,29.56,15.63,15.62,yes
