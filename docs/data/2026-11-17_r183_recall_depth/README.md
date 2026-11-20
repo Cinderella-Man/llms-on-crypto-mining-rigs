@@ -7,8 +7,9 @@ planted facts, with no error, while the same binary on the CPU lists all six; th
 tokens. A P106 is compute 6.1 and runs its own kernels, and no rig run of this project had checked an answer past
 49,152 tokens. These are Flash-Next's two runs for registry row Q1546 in
 [quants/experiments.md](../../../quants/experiments.md): R183 first, then R190 (row Q1557), which ran it again on the
-v4 preset's own file with a question the model can answer without listing the conversation. Ornith-1.5-122B's arm is
-still to run.
+v4 preset's own file with a question the model can answer without listing the conversation. Ornith-1.5-122B's arm
+ran on 2026-11-20 with R190's question: 6 of 6 at 8,077, 16,075, 32,025 and 47,012 tokens
+([2026-11-20_r183_ornith_recall](../2026-11-20_r183_ornith_recall/README.md)).
 
 The test is this project's own version of the issue's ([bench/recall_depth](../../../bench/recall_depth/README.md)):
 small talk in which the user states six facts about themselves, planted 48,000, 32,000, 16,000, 4,000, 1,000 and 300

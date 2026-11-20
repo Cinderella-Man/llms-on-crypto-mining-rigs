@@ -74,3 +74,4 @@ prefix.
 |---|---|---|---|---|
 | 2026-11-17 (R183) | Flash-Next (Swift Qwen3.8-Flash-Next Pascal Q2 GGUF), Miner Llama v4.0, the v4 preset | `list` | control 6/6; at 56,437 tokens no answer (the reasoning looped to the cap) | [2026-11-17_r183_recall_depth](../../docs/data/2026-11-17_r183_recall_depth/README.md) |
 | 2026-11-17 (R190) | Flash-Next (UkisAI's Swift-1.5 GSQ-RCO Q2_0, the v4 preset's own file), Miner Llama v4.0, the v4 preset | `kinds` | 6/6 at 8,080, 56,443 and 60,207 tokens | [2026-11-17_r183_recall_depth](../../docs/data/2026-11-17_r183_recall_depth/README.md) |
+| 2026-11-20 (R183, Ornith) | Ornith-1.5-122B Pascal N2P GGUF, the v5 engine (`602691153`), the v5 preset (`CTX=49152`) | `kinds` | 6/6 at 8,077, 16,075, 32,025 and 47,012 tokens | [2026-11-20_r183_ornith_recall](../../docs/data/2026-11-20_r183_ornith_recall/README.md) |
