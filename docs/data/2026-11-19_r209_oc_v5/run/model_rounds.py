@@ -6,14 +6,15 @@ heat, power and clocks from the watchdog's samples while each check's rounds ran
     python3 -I model_rounds.py summary MODEL_LOG > model_check.md
     python3 -I model_rounds.py cards MODEL_LOG WD_CSV > model_cards.md
     python3 -I model_rounds.py again EARLIER_LOG LATER_LOG > r211_model_check.md
+    python3 -I model_rounds.py again EARLIER_LOG LATER_LOG PREVIOUS_LOG > r219_model_check.md
     python3 -I model_rounds.py whole WD_CSV > r211_watchdog.md
 
 MODEL_LOG is model_check.sh's OUT/model.log (both tags in one file), WD_CSV the kit watchdog's WORK/wd.csv (a row
 every 0.5 s). A check's window runs from its "ready" line to its "done" line; `cards` skips a tag the log lacks.
 `again` (R211, Q1621) sets a later boot's check with the offsets (LATER_LOG, profile rounds only, compared with the
-earlier check's stock reference) beside the earlier boot's stock and profile rounds (EARLIER_LOG); `whole` gives each
-card's highest temperature and power over every watchdog sample, `apply`'s check servers included. Standard library
-only.
+earlier check's stock reference) beside the earlier boot's stock and profile rounds (EARLIER_LOG); with PREVIOUS_LOG
+(R219, Q1634), another later boot's check of the same kind goes beside it too. `whole` gives each card's highest
+temperature and power over every watchdog sample, `apply`'s check servers included. Standard library only.
 """
 import csv
 import re
@@ -126,35 +127,50 @@ def cmd_cards(path, wd):
             " (the watchdog was not running yet)"))
 
 
-def cmd_again(earlier, later):
+def cmd_again(earlier, later, previous=None):
     e, e_ready, _ = parse(earlier)
     l, l_ready, l_done = parse(later)
     es = {r["round"]: r for r in e if r["tag"] == "stock"}
     ep = {r["round"]: r for r in e if r["tag"] == "profile"}
     lp = {r["round"]: r for r in l if r["tag"] == "profile"}
-    print("| | stock, earlier boot | with the offsets, earlier boot | **with the offsets, this boot** | "
-          "this boot against the earlier boot's offsets | this boot against stock |")
-    print("|---|---|---|---|---|---|")
-    print(f"| load, s | {e_ready['stock']['load_s']} | {e_ready['profile']['load_s']} | "
-          f"**{l_ready['profile']['load_s']}** | | |")
-    print(f"| host memory available when loaded, MiB | {e_ready['stock']['host']:,} | {e_ready['profile']['host']:,} | "
-          f"**{l_ready['profile']['host']:,}** | | |")
-    print(f"| MiB used, cards 0 to 8 | {' '.join(e_ready['stock']['mib'])} | {' '.join(e_ready['profile']['mib'])} | "
-          f"**{' '.join(l_ready['profile']['mib'])}** | | |")
+    if previous:
+        v, v_ready, _ = parse(previous)
+        vp = {r["round"]: r for r in v if r["tag"] == "profile"}
+
+    def cells(prev_cell, delta=""):
+        # the previous later boot's column, and its comparison column, only when PREVIOUS_LOG is given
+        return (f" {prev_cell} |", f" {delta} |") if previous else ("", "")
+    pc, pd = cells("with the offsets, previous later boot", "this boot against the previous later boot")
+    print(f"| | stock, earlier boot | with the offsets, earlier boot |{pc} **with the offsets, this boot** | "
+          f"this boot against the earlier boot's offsets |{pd} this boot against stock |")
+    print("|---|---|---|---|---|---|" + ("---|---|" if previous else ""))
+    pc, pd = cells(v_ready['profile']['load_s'] if previous else "")
+    print(f"| load, s | {e_ready['stock']['load_s']} | {e_ready['profile']['load_s']} |{pc} "
+          f"**{l_ready['profile']['load_s']}** | |{pd} |")
+    pc, pd = cells(f"{v_ready['profile']['host']:,}" if previous else "")
+    print(f"| host memory available when loaded, MiB | {e_ready['stock']['host']:,} | {e_ready['profile']['host']:,} |{pc} "
+          f"**{l_ready['profile']['host']:,}** | |{pd} |")
+    pc, pd = cells(' '.join(v_ready['profile']['mib']) if previous else "")
+    print(f"| MiB used, cards 0 to 8 | {' '.join(e_ready['stock']['mib'])} | {' '.join(e_ready['profile']['mib'])} |{pc} "
+          f"**{' '.join(l_ready['profile']['mib'])}** | |{pd} |")
+    pc, pd = cells(f"{len(vp)}; {sum(r['vs_stock1'] == 'same' for r in vp.values())} of {len(vp)}" if previous else "")
     print(f"| rounds; the stock hash | {len(es)}; `{es[1]['hash']}` | {len(ep)}; "
-          f"{sum(r['vs_stock1'] == 'same' for r in ep.values())} of {len(ep)} | "
-          f"**{len(lp)}; {sum(r['vs_stock1'] == 'same' for r in lp.values())} of {len(lp)}** | | |")
+          f"{sum(r['vs_stock1'] == 'same' for r in ep.values())} of {len(ep)} |{pc} "
+          f"**{len(lp)}; {sum(r['vs_stock1'] == 'same' for r in lp.values())} of {len(lp)}** | |{pd} |")
+    pc, pd = cells(', '.join('`' + vp[k]['hash'] + '`' for k in sorted(vp)) if previous else "")
     print(f"| hash in each round | {', '.join('`' + es[k]['hash'] + '`' for k in sorted(es))} | "
-          f"{', '.join('`' + h + '`' for h in sorted({r['hash'] for r in ep.values()}))} in every round | "
-          f"**{', '.join('`' + lp[k]['hash'] + '`' for k in sorted(lp))}** | | |")
+          f"{', '.join('`' + h + '`' for h in sorted({r['hash'] for r in ep.values()}))} in every round |{pc} "
+          f"**{', '.join('`' + lp[k]['hash'] + '`' for k in sorted(lp))}** | |{pd} |")
     for k, name in (("gen", "generation"), ("prompt", "prompt processing")):
         for rnd in sorted(lp):
             a = [es[rnd][k + "1"], es[rnd][k + "2"]] if rnd in es else None
             b = [ep[rnd][k + "1"], ep[rnd][k + "2"]]
             c = [lp[rnd][k + "1"], lp[rnd][k + "2"]]
+            d = [vp[rnd][k + "1"], vp[rnd][k + "2"]] if previous and rnd in vp else None
+            pc, pd = cells(f"{d[0]:.2f}, {d[1]:.2f}" if d else "", f"{pct(d[0], c[0])}, {pct(d[1], c[1])}" if d else "")
             print(f"| {name} tok/s in round {rnd} (prompts 1, 2) | "
-                  f"{(f'{a[0]:.2f}, {a[1]:.2f}') if a else ''} | {b[0]:.2f}, {b[1]:.2f} | **{c[0]:.2f}, {c[1]:.2f}** | "
-                  f"{pct(b[0], c[0])}, {pct(b[1], c[1])} | "
+                  f"{(f'{a[0]:.2f}, {a[1]:.2f}') if a else ''} | {b[0]:.2f}, {b[1]:.2f} |{pc} **{c[0]:.2f}, {c[1]:.2f}** | "
+                  f"{pct(b[0], c[0])}, {pct(b[1], c[1])} |{pd} "
                   f"{(f'{pct(a[0], c[0])}, {pct(a[1], c[1])}') if a else ''} |")
     print(f"\nThis boot's check: {len(lp)} rounds in {l_done['profile']['secs']} s, exit {l_done['profile']['exit']}.")
 
@@ -186,8 +202,8 @@ if __name__ == "__main__":
         cmd_summary(sys.argv[2])
     elif cmd == "cards" and len(sys.argv) == 4:
         cmd_cards(sys.argv[2], sys.argv[3])
-    elif cmd == "again" and len(sys.argv) == 4:
-        cmd_again(sys.argv[2], sys.argv[3])
+    elif cmd == "again" and len(sys.argv) in (4, 5):
+        cmd_again(*sys.argv[2:])
     elif cmd == "whole":
         cmd_whole(sys.argv[2])
     else:

@@ -73,7 +73,14 @@ answered the check's two prompts twice with the offsets: both rounds gave this m
 and generated 18.01 and 18.01 tok/s in round 2, against 18.02 and 18.01 with the offsets this morning and 16.66 and
 16.66 at stock. The offsets stay set for the afternoon's runs ([the section](#the-profile-again-on-the-boot-of-1404-2026-11-19)).
 
-Registry rows Q1603 and Q1621 in [quants/experiments.md](../../../quants/experiments.md).
+**The next morning: the profile again on the boot of 2026-11-20 (R219, Q1634): passed.** The rig booted at 09:30 and
+the kit set the same profile once more, this time after its watchdog trip test; all nine cards passed with the same
+offsets read back. Ornith answered the check's two prompts twice with the offsets: both rounds gave the stock answer
+token for token and generated 18.00 and 17.99 tok/s in round 2, against 18.01 and 18.01 on the boot of 14:04, 18.02
+and 18.01 with the offsets on run 3's boot and 16.66 and 16.66 at stock. The offsets stay set for the day's runs
+([the section](#the-profile-again-on-the-boot-of-2026-11-20)).
+
+Registry rows Q1603, Q1621 and Q1634 in [quants/experiments.md](../../../quants/experiments.md).
 
 ## The method
 
@@ -664,6 +671,98 @@ and the boot logged no GPU Xid.
 watchdog running, 0 GPU Xid, 0 step-downs, 3,156 MiB of host memory available; no model server left running. The
 afternoon's runs start from this state.
 
+## The profile again on the boot of 2026-11-20
+
+**In plain words.** Every offset went back to 0 at the end of 2026-11-19, and the rig booted again at 09:30 the next
+morning. The same profile was set on that boot so the day's runs on this rig run overclocked, by the
+same script as on the boot of 14:04, with one step before it: the kit's watchdog trip test. It passed: every card
+took the profile's offsets and gave its stock answer on its own, and Ornith with the offsets gave the stock answer in
+both rounds at the speed of the two earlier boots with the offsets. The offsets stay set and the watchdog runs.
+
+The same engine, preset, profile, kit and [run/apply_again.sh](run/apply_again.sh) as the boot of 14:04 (every file's
+MD5 checked the same on the rig first), with a fresh work folder and model check folder:
+
+1. **Before the start** (09:38, read-only): the rig up since 09:30:09; every card at its stock maximum of 1,911 / 4,004
+   MHz, 0 MiB, P8, at most 27 °C; no model process. **The start check** (09:38:38): every offset 0, no load process, no
+   GPU Xid, no step-down this boot, 3,187 MiB of host memory available: PASS.
+2. **The trip test** (`climb.py trip-test`, 09:38:52–09:39:21, before any offset): the watchdog's four trips with
+   stand-in processes, a temperature limit of 15 °C, a kernel-log line with the test pattern, a power limit of 1 W held
+   for 5 s, and a kernel-log line naming card 0 alone. All four PASS: the first three ended every stand-in, the fourth
+   only card 0's. Afterwards every offset still read 0, the step-down ledger held nothing for this boot and no
+   stand-in was left.
+3. **`apply_again.sh`** from 09:39:30: run 3's stock reference copied in (`adf47784f9b02d4b`), the start check again
+   (PASS), the watchdog (09:39:37, the same limits: 70 °C, 80 W held for 5 s, each card's own Xid, a sample every
+   0.5 s), then **`apply`** of the same [use-profile.json](../2026-11-18_r202b_core_soak/use-profile.json),
+   09:39:43–09:44:52: check servers on every card (1,823 MiB of host memory available with all nine loaded), two
+   stock rounds, every card's offsets set 09:43:51–09:43:58 and each read back as set, then one round with the
+   offsets: every card PASS at 09:44:43.
+4. **Ornith with the offsets**, `model_check.sh` with the v5 engine, Ornith's v5 preset and `ROUNDS=2 MINUTES=0`:
+   loaded in 541 s, two rounds 09:53:56–09:55:07; the script passed at 09:55:11.
+
+**`apply`, card by card** ([r219_apply.md](r219_apply.md); the kit's own table
+[r219_apply_steps.csv](r219_apply_steps.csv)), beside the boot of 14:04 ([r211_apply.md](r211_apply.md)) and run 3
+([apply.md](apply.md)):
+
+| card | memory MT/s | core MHz | streaming read at stock, GB/s | with the offsets | boot of 14:04 with the offsets | run 3 with the offsets | peak core MHz at stock | with the offsets | boot of 14:04 with the offsets | run 3 with the offsets | greedy check | verdict |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | +1,300 | +256 | 179.18 | 207.11 | 207.02 | 206.96 | 1,873 | 2,126 | 2,126 | 2,126 | same as stock | PASS |
+| 1 | +1,000 | +256 | 179.34 | 199.44 | 199.58 | 199.44 | 1,898 | 2,151 | 2,151 | 2,164 | same as stock | PASS |
+| 2 | +1,000 | +269 | 179.11 | 199.41 | 199.60 | 199.52 | 1,885 | 2,151 | 2,164 | 2,151 | same as stock | PASS |
+| 3 | +1,100 | +231 | 179.20 | 201.96 | 202.06 | 201.98 | 1,873 | 2,100 | 2,100 | 2,100 | same as stock | PASS |
+| 4 | +1,100 | +206 | 179.14 | 201.86 | 202.21 | 201.96 | 1,911 | 2,113 | 2,113 | 2,113 | same as stock | PASS |
+| 5 | +1,200 | +206 | 179.12 | 204.72 | 204.44 | 204.62 | 1,898 | 2,100 | 2,100 | 2,100 | same as stock | PASS |
+| 6 | +900 | +282 | 179.14 | 197.40 | 197.25 | 197.34 | 1,885 | 2,151 | 2,164 | 2,164 | same as stock | PASS |
+| 7 | +900 | +256 | 179.24 | 197.36 | 197.49 | 197.49 | 1,898 | 2,151 | 2,151 | 2,151 | same as stock | PASS |
+| 8 | +1,300 | +231 | 179.24 | 206.68 | 207.00 | 207.41 | 1,898 | 2,126 | 2,126 | 2,126 | same as stock | PASS |
+
+Every card's offsets are the profile's, read back as set; every card's check model gave its stock hash
+(`60ee0f178cfd67d5` on all nine) and passed the 31 kernel checks with the offsets. The streaming reads with the
+offsets are within 0.35 GB/s of the boot of 14:04's on every card (card 4 the furthest) and within 0.73 GB/s of run
+3's (card 8). The peaks with the offsets are the boot of 14:04's on seven cards; cards 2 and 6 peaked one driver step
+lower (2,151 against 2,164 MHz) with the same offsets. Three cards' stock peaks were one step lower than on the boot
+of 14:04 too (card 2 1,885 against 1,898 MHz, cards 7 and 8 1,898 against 1,911).
+
+**Ornith's whole-memory check with the offsets** ([r219_model_check.md](r219_model_check.md), both rounds in
+[r219_model_rounds.tsv](r219_model_rounds.tsv)):
+
+| | run 3, stock | run 3, with the offsets | boot of 14:04, with the offsets | **this boot, with the offsets** | against the boot of 14:04 | against run 3's offsets | against stock |
+|---|---|---|---|---|---|---|---|
+| load, s | 658 | 663 | 543 | **541** | | | |
+| host memory available when loaded, MiB | 1,496 | 1,492 | 1,502 | **1,492** | | | |
+| rounds; the stock hash in | 2; round 1 is the reference | 58; 58 | 2; 2 | **2; 2** | | | |
+| hash | `adf47784f9b02d4b` | `adf47784f9b02d4b` in every round | `adf47784f9b02d4b`, `adf47784f9b02d4b` | **`adf47784f9b02d4b`, `adf47784f9b02d4b`** | | | |
+| generation tok/s in round 1 (prompts 1, 2) | 15.27, 16.15 | 16.42, 17.44 | 16.54, 17.47 | **16.61, 17.45** | +0.42 %, −0.11 % | +1.16 %, +0.06 % | +8.78 %, +8.05 % |
+| generation tok/s in round 2 (prompts 1, 2) | 16.66, 16.66 | 18.02, 18.01 | 18.01, 18.01 | **18.00, 17.99** | −0.06 %, −0.11 % | −0.11 %, −0.11 % | +8.04 %, +7.98 % |
+| prompt processing tok/s in round 1 (prompts 1, 2) | 13.05, 27.45 | 12.05, 29.40 | 13.31, 29.58 | **14.80, 29.60** | +11.19 %, +0.07 % | +22.82 %, +0.68 % | +13.41 %, +7.83 % |
+| prompt processing tok/s in round 2 (prompts 1, 2) | 26.95, 29.43 | 29.09, 31.84 | 29.10, 32.01 | **29.01, 31.66** | −0.31 %, −1.09 % | −0.28 %, −0.57 % | +7.64 %, +7.58 % |
+
+- **Round 2 is the steady one** (round 1 is each load's first request): 18.00 and 17.99 tok/s. Run 3's 57 rounds
+  after its warm-up read 17.99 and 17.99 tok/s at the lowest and 18.02 and 18.01 at the highest, so this round sits
+  among them, at their lowest on prompt 2.
+- **The load used the same memory as both earlier boots:** 5,603 5,635 5,549 5,635 5,243 5,351 5,513 5,601 5,009 MiB
+  on cards 0 to 8.
+
+**Heat, power and clocks** ([r219_watchdog.md](r219_watchdog.md), the watchdog's 2,028 samples a card from its start
+at 09:39:37 to 09:56:31, `apply`'s check servers and the load included; [r219_model_cards.md](r219_model_cards.md), its
+143 samples a card over the two rounds):
+
+| card | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| highest °C, whole run | 42 | 39 | 37 | 35 | 40 | 36 | 44 | 40 | 38 |
+| highest W, whole run | 75.64 | 79.18 | 74.81 | 75.39 | 73.40 | 78.32 | 74.24 | 73.91 | 74.52 |
+| SM clock median over the two rounds, MHz | 2,113 | 2,151 | 2,151 | 2,100 | 2,113 | 2,100 | 2,151 | 2,151 | 2,126 |
+| boot of 14:04 | 2,126 | 2,151 | 2,164 | 2,100 | 2,113 | 2,100 | 2,164 | 2,164 | 2,126 |
+| memory clock median over the two rounds, MHz | 4,657 | 4,498 | 4,498 | 4,551 | 4,551 | 4,608 | 4,455 | 4,455 | 4,657 |
+
+The hottest card was card 6 at 44 °C. No sample went above 80 W; the highest was 79.18 W on card 1. No sample
+tripped, and the boot logged no GPU Xid. The SM clock medians over the two rounds are run 3's 30-minute medians on
+eight cards (card 6 one driver step lower); against the boot of 14:04 four cards (0, 2, 6 and 7) sat one step lower,
+with the same memory clocks on all nine.
+
+**The rig at the end** (09:56:09, the kit's `state`): every card at its profile value, P8, 0 MiB, no load process, the
+watchdog running, 0 GPU Xid, 0 step-downs, 3,153 MiB of host memory available; no model server left running. The
+day's runs start from this state.
+
 ## Files
 
 | File | What |
@@ -702,11 +801,14 @@ afternoon's runs start from this state.
 | [apply.md](apply.md), [o5_apply_steps.csv](o5_apply_steps.csv) | run 3's `apply`, card by card (the offsets, the streaming read and peak core clock at stock and with the offsets, the greedy check), and the kit's own table (both stock rounds' times and limits, the round with the offsets) |
 | [model_cards.md](model_cards.md) | each card's highest temperature and power, samples above 80 W, SM and memory clock medians and the offsets the watchdog read, over the 30 minutes with the offsets |
 | [run/apply_check.sh](run/apply_check.sh) | run 3 on the rig: the start check, the whole-memory check at stock, the watchdog, `apply`, the whole-memory check with the offsets; on any failure every offset back to 0 |
-| [run/model_rounds.py](run/model_rounds.py) | `model_rounds.tsv`, `model_check.md` and `model_cards.md` from `model_check.sh`'s log and the watchdog's samples; `again` and `whole` for the boot of 14:04 |
+| [run/model_rounds.py](run/model_rounds.py) | `model_rounds.tsv`, `model_check.md` and `model_cards.md` from `model_check.sh`'s log and the watchdog's samples; `again` and `whole` for the boot of 14:04, and `again` with a third log (the boot of 14:04 beside the boot of 2026-11-20) |
 | [r211_apply.md](r211_apply.md), [r211_apply_steps.csv](r211_apply_steps.csv) | `apply` on the boot of 14:04, card by card, and the kit's own table |
 | [r211_model_check.md](r211_model_check.md), [r211_model_rounds.tsv](r211_model_rounds.tsv) | Ornith's whole-memory check with the offsets on the boot of 14:04 beside run 3's stock and offset rounds, and its two rounds |
 | [r211_model_cards.md](r211_model_cards.md), [r211_watchdog.md](r211_watchdog.md) | each card's heat, power and clocks over the two rounds, and its highest temperature and power over every watchdog sample of the boot of 14:04's run |
 | [run/apply_again.sh](run/apply_again.sh) | the profile again on a later boot: the start check, the watchdog, `apply`, the whole-memory check with the offsets against an earlier check's stock reference; on any failure every offset back to 0 |
+| [r219_apply.md](r219_apply.md), [r219_apply_steps.csv](r219_apply_steps.csv) | `apply` on the boot of 2026-11-20, card by card, and the kit's own table |
+| [r219_model_check.md](r219_model_check.md), [r219_model_rounds.tsv](r219_model_rounds.tsv) | Ornith's whole-memory check with the offsets on the boot of 2026-11-20 beside run 3's stock and offset rounds and the boot of 14:04's rounds, and its two rounds |
+| [r219_model_cards.md](r219_model_cards.md), [r219_watchdog.md](r219_watchdog.md) | each card's heat, power and clocks over the two rounds, and its highest temperature and power over every watchdog sample of the boot of 2026-11-20's run |
 
 ## Commands
 
@@ -848,8 +950,28 @@ python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py whole <work folde
 The run's script was `apply_again.sh` as committed, called with the machine's paths; the watchdog's `wd.csv` was
 copied at 14:24:15, while the watchdog kept running.
 
+The profile again on the boot of 2026-11-20: the same call with a fresh work folder and model check folder, after the
+kit's read-only checks and its trip test (about 18 minutes; `apply` 5 minutes, a 9-minute load, two rounds):
+
+```bash
+cd $KIT && . ./env.sh && export WORK=<fresh work folder>
+python3 climb.py state && python3 climb.py start-check     # read-only: every offset 0, no step-down this boot
+python3 climb.py trip-test                                  # the watchdog's four trips with stand-ins, before any offset
+# then the apply_again.sh call above with this WORK and a fresh OUT; when APPLY_AGAIN_DONE says "done 0":
+
+# the tables, from the folders copied off the rig
+cp <work folder>/out/apply_steps.csv r219_apply_steps.csv
+python3 -I docs/data/2026-11-18_r203_ornith_offsets/run/flash_cards.py apply r219_apply_steps.csv > r219_apply.md
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py again <run 3's model check folder>/model.log <model check folder>/model.log <the boot of 14:04's model check folder>/model.log > r219_model_check.md
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py rounds <model check folder>/model.log > r219_model_rounds.tsv
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py cards <model check folder>/model.log <work folder>/wd.csv > r219_model_cards.md
+python3 -I docs/data/2026-11-19_r209_oc_v5/run/model_rounds.py whole <work folder>/wd.csv > r219_watchdog.md
+```
+
+The watchdog's `wd.csv` was copied at 09:56:31, while the watchdog kept running.
+
 ## Provenance and licence
 
-Measured on the project's own rig on 2026-11-19 with the repository's own scripts; the agent check's tasks are
+Measured on the project's own rig on 2026-11-19 and 2026-11-20 with the repository's own scripts; the agent check's tasks are
 [bench/agent_check](../../../bench/agent_check/README.md)'s (their task IDs are in `agent/o5oc0/attempts.csv`, `agent/o5oc1/attempts.csv`, `agent/f5oc0/attempts.csv` and `agent/f5oc1/attempts.csv`). The
 tables and scripts here are under the repository's licence.
