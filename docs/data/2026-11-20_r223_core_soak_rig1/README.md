@@ -44,8 +44,7 @@ profile is what step 5 sets on the next fresh boot, with Ornith's whole-memory c
 - **The same card at the same setting held 30 minutes on one boot and failed within 9 minutes on the next.** This
   morning card 6 ran 151 rounds at +1,000 MT/s with core 0 and then 151 at +1,100 without a differing check
   (R218). This afternoon, at +1,000 MT/s with core 0 again, it differed in its 43rd round, 8 minutes 26 seconds into
-  the rung. It was not hotter: 37 °C at
-  most in this rung against 43 °C in R218's first rung. Thirty clean minutes show only that a card errs less often
+  the rung. Thirty clean minutes show only that a card errs less often
   than about once in 10 minutes; card 6's +1,000 sat near that line. This is why the kit keeps every value two steps
   under any failure, and why step 5 checks the whole profile again on the served model.
 - **Card 0's top core was one step too many.** It ran +218 and +244 MHz clean for an hour and differed once at +269,
@@ -145,7 +144,7 @@ to 8, at stock: 179.26, 179.47, 179.34, 179.23, 179.26, 179.24, 179.37, 179.32, 
 201.98, 204.62, 202.25, 207.02, 199.25, 202.15, 197.36. Peak core clock at stock: 1,860, 1,860, 1,911, 1,911, 1,885,
 1,911, 1,885, 1,911, 1,885 MHz; at rung 1: 2,075, 2,062, 2,100, 2,050, 2,037, 2,088, 1,885, 2,138, 2,062 MHz.
 
-### Heat, power and clocks ([tables/heat_power.csv](tables/heat_power.csv))
+### Power, clocks and the watchdog ([tables/heat_power.csv](tables/heat_power.csv))
 
 From the watchdog's half-second samples (12:49:29 to 14:34:08): the hottest card was 46 °C (card 1 in rung 3); no
 card was in a thermal or hardware slowdown in any sample; the highest power reading was 83.68 W (card 7 in rung 3).
