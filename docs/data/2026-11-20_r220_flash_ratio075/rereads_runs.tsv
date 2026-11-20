@@ -2,3 +2,4 @@ run	arm	requests	continuation_turns	reply_tokens_before	reread_turns	reread_toke
 c10a	v4r	64	52	14185	0	0	0.0	0	0	0	0	0	0	0	25	0	0.0
 r075a	v4r	63	51	17500	0	0	0.0	0	0	0	0	0	0	0	25	0	0.0
 c10b	v4r	99	86	33899	0	0	0.0	0	0	0	0	0	0	0	42	0	0.0
+r075b	v4r	64	52	24731	0	0	0.0	0	0	0	0	0	0	0	26	0	0.0

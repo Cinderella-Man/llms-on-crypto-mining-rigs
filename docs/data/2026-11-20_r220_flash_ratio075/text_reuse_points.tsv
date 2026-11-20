@@ -55,3 +55,15 @@ c10b	bugfix-javascript-complex-numbers	36	10024	22379	32618	32621	32403	218	1884
 c10b	bugfix-javascript-complex-numbers	37	10024	22758	32811	32814	32782	32	946.939	32621	162	-22597		before the previous reply	same
 c10b	bugfix-javascript-complex-numbers	38	10024	22861	33526	33530	32885	645	10885.783	32814	71	-22790		before the previous reply	same
 c10b	bugfix-javascript-complex-numbers	39	10024	24411	34726	34730				33530	906	-23506		before the previous reply	same
+r075b	bugfix-python-scale-generator	3	5949	216	6572	6573	6165	408	2906.362	4306	1860	1643	1813	before the tool call	same
+r075b	bugfix-python-scale-generator	4	5949	890	6869	6870	6839	31	896.815	6573	267	-624		before the previous reply	same, arguments re-serialized
+r075b	bugfix-python-scale-generator	5	5949	1023	7006	7007	6972	35	936.689	6870	102	-921		before the previous reply	same
+r075b	bugfix-python-pig-latin	3	4577	1395	6195	6195	5972	223	1859.107	3457	2516	1120	2468	before the tool call	same
+r075b	bugfix-python-pig-latin	4	4577	1804	6412	6412	6381	31	892.056	6195	186	-1618		before the previous reply	same, arguments re-serialized
+r075b	bugfix-python-pig-latin	5	4577	2233	7159	7159	6810	349	2396.223	6412	399	-1835		before the previous reply	same
+r075b	bugfix-python-pig-latin	6	4577	3352	7961	7961	7929	32	961.989	7159	771	-2582		before the previous reply	same, arguments re-serialized
+r075b	bugfix-python-pig-latin	7	4577	3901	8868	8868	8478	390	2899.032	7961	518	-3384		before the previous reply	same
+r075b	bugfix-python-pig-latin	8	4577	4729	9494	9496	9306	190	1821.759	8868	439	-4291		before the previous reply	same
+r075b	bugfix-javascript-variable-length-quantity	3	5795	4246	10628	10629	10041	588	4734.103	4261	5781	1534	5740	before the tool call	same
+r075b	bugfix-javascript-variable-length-quantity	4	5795	6128	11955	11956	11923	33	982.896	10629	1295	-4834		before the previous reply	same, arguments re-serialized
+r075b	bugfix-javascript-variable-length-quantity	5	5795	6242	12153	12154	12037	117	1556.834	11956	82	-6161		before the previous reply	same

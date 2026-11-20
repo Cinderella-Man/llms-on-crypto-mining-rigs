@@ -2,3 +2,4 @@ log	requests	median_ms	max_ms	sum_ms
 server-c10a.log	64	0.70	7.57	72.5
 server-r075a.log	63	0.68	14.94	82.7
 server-c10b.log	99	1.19	6.83	217.9
+server-r075b.log	64	0.69	3.96	60.4
