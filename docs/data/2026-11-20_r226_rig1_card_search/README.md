@@ -1,6 +1,14 @@
 # R226: which card of the first rig spoils the served model, found by halves (2026-11-20)
 
-**The answer in plain words.** The first nine-card P106-090 rig's clock profile was split in two
+**Then the whole profile for 90 minutes, in plain words (R228).** On one more fresh boot the whole profile was set
+again, every card passed its own check, and Ornith gave the stock answer **136 rounds in a row, then differed in round
+137, 72.5 minutes after the load** ([below](#whole-profile-90-minutes-r228-2026-11-20-1904-to-2035)). With R224 that is
+two differences in 159 rounds of the whole profile, est. once in about 80 rounds or 42 minutes of steady generation.
+So R224's difference in round 22 came early, and each half's clean 30 minutes is what so rare an error leaves about
+half the time: the halves clear no card. The profile is not exact for Ornith, and the first rig runs at stock.
+Generation ran 6.91 % faster than stock while the profile held (17.79 against 16.64 tok/s on both prompts).
+
+**The halves, in plain words.** The first nine-card P106-090 rig's clock profile was split in two
 halves, each set alone on its own fresh boot with the other cards at stock. Every card passed its own quick check each
 time. Then Ornith-1.5-122B Pascal N2P GGUF, which fills all nine cards, answered the kit's two fixed prompts for 30
 minutes: **with cards 0 to 4 overclocked, 56 rounds out of 56 gave the stock answer token for token; with cards 5, 7
@@ -20,10 +28,9 @@ neither boot logged a GPU error. At the end of each half every offset went back 
   once in about 42 minutes of rounds, and at that rate a clean 30-minute half comes about half the time (est. 49 %),
   so neither clean half clears its cards. Or the error needs cards of both halves overclocked at once, and then both
   halves holding is what one would expect.
-- **Rig 1 stays at stock.** What follows is the owner's choice among
-  [Q1640](../../../quants/experiments.md)'s other options: (a) the whole profile again for longer, (b′) each half again
-  for longer, (c) every card's memory one step (100 MT/s) lower, then step 5 ([run/mem_down.py](run/mem_down.py) makes
-  that profile), or (d) a per-card check model that fills most of each card.
+- **Rig 1 stays at stock.** [Q1640](../../../quants/experiments.md)'s option (a), the whole profile again for 90
+  minutes, ran next and differed in round 137
+  ([below](#whole-profile-90-minutes-r228-2026-11-20-1904-to-2035), with the options after it).
 - **The speed is a single-request diagnostic.** Cards 0 to 4 with their offsets gave +4.21 %, cards 5, 7 and 8 gave
   +2.40 %; all eight cards with offsets gave +6.85 % in R224.
 
@@ -208,11 +215,133 @@ At 18:40:42 the kit's `state` read every offset 0 on all nine cards (and `nvidia
 0 MiB, no load process, the watchdog stopped, no GPU Xid this boot, three offsets lowered since the boot (cards 5, 7
 and 8), 3,161 MiB of host memory available. Any further test needs a fresh boot.
 
+## Whole profile, 90 minutes (R228, 2026-11-20, 19:04 to 20:35)
+
+Neither half alone reproduced R224's difference, so the whole profile ran again with a longer check
+([Q1640](../../../quants/experiments.md), option (a)): all eight overclocked cards at their values, card 6 at stock,
+and Ornith's rounds for 90 minutes instead of 30. The same rig, freshly booted at about 19:00 with nothing run on it
+before. At 19:04:19 the files on the rig were checked ([run/MD5SUMS-full90](run/MD5SUMS-full90); the profile is
+R223's [use.json](../2026-11-20_r223_core_soak_rig1/use.json), md5 `ae91f969c8ddc782698c8fd9d570734d`), the profile
+passed the kit's own profile check (`half_profile.py --check`: cards 0 to 5, 7 and 8 set, card 6 stock), and the kit's
+start check passed: every offset 0, no load process, no GPU Xid this boot, no offset lowered since the boot, 3,168 MiB
+of host memory available.
+
+[run/half_check.sh](run/half_check.sh) ran the boot detached (19:04:32 to 20:35:15) with `MINUTES=90` and the same
+engine, settings and stock reference as the halves:
+
+1. **The stock reference:** R224's stock round 1 (`adf47784f9b02d4b`) copied into a fresh output folder and its hash
+   checked.
+2. **The start check, the trip test** (19:04:32 to 19:05:08: the watchdog's four trips with stand-in processes, each
+   PASS) **and the watchdog** (19:05:11).
+3. **`apply` of the whole profile** (19:05:15 to 19:11:10): the check servers, the stock rounds, every card's offsets
+   set 19:10:08 to 19:10:14 and read back as set, then one round with the offsets: every card PASS at 19:11:00.
+4. **Ornith with the offsets**, rounds for 90 minutes after the load, each against the stored stock answer: loaded in
+   671 s (ready 19:22:25), 137 rounds from 19:23:02 to 20:34:58. **Rounds 1 to 136 gave the stock hash; round 137
+   gave `0e9263fcf6d12ba1`**, so the check stopped there, 72.5 minutes after the load.
+5. **The reset:** every card's offsets to 0 (20:35:04 to 20:35:14), then the watchdog stopped (20:35:15).
+
+### Ornith's whole-memory check ([halves.md](halves.md), row `full90`; every round in [full90/model_rounds.tsv](full90/model_rounds.tsv))
+
+| | R224 stock | R224, the whole profile | half a: cards 0 to 4 | half b: cards 5, 7, 8 | **the whole profile, 90 minutes** | against stock |
+|---|---|---|---|---|---|---|
+| load, s | 673 | 675 | 673 | 672 | **671** | |
+| host memory available when loaded, MiB | 1,496 | 1,502 | 1,489 | 1,502 | **1,506** | |
+| rounds; the stock answer | 2 (round 1 is the reference) | 22; 21 of 22, round 22 differed (11.7 min after the load) | 56; 56 of 56 in 1,831 s | 55; 55 of 55 in 1,832 s | **137; 136 of 137, round 137 differed** (72.5 min after the load; 4,358 s) | |
+| generation tok/s in round 1 (prompts 1, 2) | 15.02, 15.76 | 16.04, 16.72 | 15.71, 16.46 | 15.28, 16.06 | **15.95, 16.83** | +6.19 %, +6.79 % |
+| generation tok/s in round 2 (prompts 1, 2) | 16.64, 16.64 | 17.79, 17.78 | 17.35, 17.34 | 17.04, 17.02 | **17.80, 17.80** | +6.97 %, +6.97 % |
+| generation tok/s, median of rounds 2 on (prompts 1, 2) | 16.64, 16.64 (round 2) | 17.78, 17.78 (21 rounds) | 17.34, 17.34 (55 rounds) | 17.04, 17.04 (54 rounds) | **17.79, 17.79** (136 rounds) | **+6.91 %, +6.91 %** |
+| prompt processing tok/s, median of rounds 2 on (prompts 1, 2) | 26.86, 29.67 (round 2) | 28.66, 31.61 | 28.13, 31.02 | 27.37, 30.25 | **28.74, 31.71** | +7.00 %, +6.88 % |
+
+- From round 2 on, prompt 1 generated 17.79 tok/s in 84 rounds, 17.80 in 49, 17.78 in 2 and 17.77 in 1; prompt 2
+  17.79 in 98, 17.78 in 12, 17.80 in 25 and 17.77 in 1. Round 137 generated 17.80 on both prompts, as fast as the
+  rounds before it.
+- The load used the same memory as R224's and the halves': 5,603 5,635 5,549 5,635 5,243 5,351 5,513 5,601 5,009 MiB
+  on cards 0 to 8.
+
+### How round 137 differs ([full90/ornith_differs.csv](full90/ornith_differs.csv))
+
+| | prompt 1 | prompt 2 |
+|---|---|---|
+| round 137 (this run) | bit-identical to stock | **the same text and the same 256 tokens**; the top-10 log-probabilities part from stock at token 202 and differ on every token after it (54 tokens), the chosen token's by up to 0.138 (token 226) |
+| round 22 (R224) | the text parts from stock at token 184 (72 of 256 tokens differ); the log-probabilities from token 167 | bit-identical to stock |
+
+Both differences start late in one prompt and run to its end, while the other prompt stays bit-identical: one wrong
+value partway through a reply, carried forward by everything computed after it. They fall on different prompts at
+different tokens, so they are not one fixed place in the model or the prompts.
+
+### `apply`, card by card ([full90/apply.md](full90/apply.md); the kit's own table [full90/apply_steps.csv](full90/apply_steps.csv))
+
+| card | memory MT/s | core MHz | streaming read at stock, GB/s | with the offsets | change | peak core MHz at stock | with the offsets | greedy check | verdict |
+|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | +900 | +218 | 179.12 | 197.23 | +10.11 % | 1,873 | 2,088 | same as stock | PASS |
+| 1 | +1,000 | +256 | 179.34 | 199.48 | +11.23 % | 1,860 | 2,113 | same as stock | PASS |
+| 2 | +1,100 | +256 | 179.31 | 202.00 | +12.65 % | 1,911 | 2,164 | same as stock | PASS |
+| 3 | +1,200 | +206 | 179.23 | 204.58 | +14.14 % | 1,911 | 2,113 | same as stock | PASS |
+| 4 | +1,100 | +206 | 179.31 | 202.15 | +12.74 % | 1,885 | 2,088 | same as stock | PASS |
+| 5 | +1,300 | +231 | 179.24 | 206.92 | +15.44 % | 1,911 | 2,138 | same as stock | PASS |
+| 6 | 0 | 0 | 179.37 | 179.20 | −0.09 % | 1,898 | 1,885 | same as stock | PASS |
+| 7 | +1,100 | +282 | 179.26 | 201.96 | +12.66 % | 1,911 | 2,189 | same as stock | PASS |
+| 8 | +900 | +231 | 179.29 | 197.43 | +10.12 % | 1,898 | 2,113 | same as stock | PASS |
+
+Every card's offsets read back as set; every card's check model gave its stock hash and passed the 31 kernel checks
+at stock and with the offsets. Every overclocked card's streaming read came within 0.32 GB/s of its half's with the same
+offsets.
+
+### Power and clocks ([full90/model_cards.md](full90/model_cards.md), the watchdog's 8,716 samples a card over Ornith's rounds; [full90/watchdog.md](full90/watchdog.md), its 10,804 samples a card from 19:05:08 to 20:35:14)
+
+| card | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| SM clock median, MHz | 2,075 | 2,100 | 2,151 | 2,100 | 2,075 | 2,138 | 1,885 | 2,189 | 2,113 |
+| memory clock median, MHz | 4,455 | 4,498 | 4,551 | 4,608 | 4,551 | 4,657 | 4,006 | 4,551 | 4,455 |
+| highest W | 78.21 | 80.93 | 81.94 | 83.32 | 78.64 | 79.66 | 75.94 | 80.59 | 78.94 |
+| samples above 80 W, of 8,716 | 0 | 10 | 7 | 12 | 0 | 0 | 0 | 4 | 0 |
+
+Power went above 80 W only in single samples, never two in a row, against the watchdog's 80 W held for 5 s; the
+highest was 83.32 W on card 3. No sample tripped, and the boot logged no GPU Xid.
+
+### What the two whole-profile runs and the halves allow
+
+- **The whole profile errs on Ornith, rarely:** two differences in 159 rounds (R224's 22 and this run's 137), 5,067 s
+  of rounds, est. once in about 80 rounds or 42 minutes of steady generation. One sample of two events gives a rough
+  rate only.
+- **R224's one difference in 22 rounds came early:** at that rate 136 clean rounds in a row would come only 0.18 % of
+  the time (est.).
+- **The halves clear no card:** at the whole profile's rate a clean 30-minute half (55 or 56 rounds) comes about half
+  the time (est. 49 %) even when that half holds the cause. The error may come from one card or need several together;
+  these runs cannot tell.
+- **Memory or core:** each card's memory and core sit two steps under every failure of steps 1 to 4, and both
+  differences are one wrong value carried to a reply's end; these runs cannot say which clock causes it.
+- **What a next run needs:** at this rate a 90-minute check catches the error with est. 88 %, a 120-minute check with
+  est. 94 %, so a clean 30 minutes says little about any change.
+
+### Options after it ([Q1640](../../../quants/experiments.md))
+
+Each needs a fresh boot; the rigs stop at 22:00.
+
+- **(c) every card's memory one step (100 MT/s) lower, core kept**, then step 5 with 120 minutes of rounds
+  ([run/mem_down.py](run/mem_down.py) makes that profile, md5 `67d8cb5c5685c74d7c461696eea42820` from R223's
+  use.json): one boot, est. 2 h 20 min (90 minutes: est. 1 h 50 min).
+- **(c′) every card's memory and core each one step lower**, then the same 120-minute check: a margin on both clocks,
+  since neither run can say which one errs; `mem_down.py` needs a core step first.
+- **(b″) the halves again, 120 minutes each:** if one card causes it, its half shows it with est. 94 %; two boots, est.
+  2 h 20 min each.
+- **(d) a per-card check model that fills most of each card**, so the kit's own soaks read the memory Ornith uses
+  (code work first).
+- **(e) the profile as it is:** +6.91 % generation on a single request, with Ornith's answer parting from stock est.
+  once in about 42 minutes of steady generation; step 5 asks for the served model's stock answer in every
+  round.
+
+### The end
+
+At 20:40:29 the kit's `state` read every offset 0 on all nine cards (and `nvidia-smi` 1,911 / 4,004 MHz maximum), P8,
+0 MiB, no load process, the watchdog stopped, no GPU Xid this boot, eight offsets lowered since the boot (every card
+but card 6), 3,155 MiB of host memory available. Any further test needs a fresh boot.
+
 ## Files
 
 | File | What it holds |
 |---|---|
-| [halves.md](halves.md) | One row per half: the load, the rounds, how many gave the stock answer, the first differing round, generation tok/s against stock |
+| [halves.md](halves.md) | One row per run (the halves a and b, and `full90`, the whole profile for 90 minutes): the load, the rounds, how many gave the stock answer, the first differing round, generation tok/s against stock |
 | [half-a.json](half-a.json) | Half a's profile: cards 0 to 4 at use.json's values, cards 5 to 8 at 0 |
 | [a/apply.md](a/apply.md), [a/apply_steps.csv](a/apply_steps.csv) | Half a's `apply`, card by card: offsets, streaming reads, peaks, the greedy and kernel checks (the kit's own table) |
 | [a/model_rounds.tsv](a/model_rounds.tsv) | Half a's every round: time, hash, tokens, against stock's round 1, prompt and generation tok/s of both prompts |
@@ -221,11 +350,12 @@ and 8), 3,161 MiB of host memory available. Any further test needs a fresh boot.
 | [a/watchdog.md](a/watchdog.md) | Each card over all the watchdog's samples of half a, `apply`'s check servers included |
 | [half-b.json](half-b.json) | Half b's profile: cards 5, 7 and 8 at use.json's values, cards 0 to 4 and 6 at 0 |
 | [b/](b/) | Half b's tables, the same six files as half a's |
+| [full90/](full90/) | The whole profile for 90 minutes (R228): the same six tables, plus `ornith_differs.csv`, round 137 against stock prompt by prompt |
 | [run/half_profile.py](run/half_profile.py) | Makes a half's profile from use.json and runs the kit's own profile check on it (the one `apply` runs) |
-| [run/half_check.sh](run/half_check.sh) | One half on a fresh boot: start check, trip test, watchdog, `apply`, Ornith for 30 minutes against the stored stock answer, then every offset to 0 |
+| [run/half_check.sh](run/half_check.sh) | One half (or the whole profile) on a fresh boot: start check, trip test, watchdog, `apply`, Ornith for `MINUTES` (30; 90 for `full90`) against the stored stock answer, then every offset to 0 |
 | [run/halves.py](run/halves.py), [run/tables.sh](run/tables.sh) | Build the tables from the folders copied off the rig |
 | [run/mem_down.py](run/mem_down.py) | Q1640's option (c): use.json with every card's memory one step (100 MT/s) lower, core kept; check it with `half_profile.py --check` |
-| [run/MD5SUMS-a](run/MD5SUMS-a), [run/MD5SUMS-b](run/MD5SUMS-b) | The md5 sums of the files on the rig for each half, checked there before the start |
+| [run/MD5SUMS-a](run/MD5SUMS-a), [run/MD5SUMS-b](run/MD5SUMS-b), [run/MD5SUMS-full90](run/MD5SUMS-full90) | The md5 sums of the files on the rig for each run, checked there before the start |
 
 ## Commands
 
@@ -249,12 +379,16 @@ export WORK=/var/tmp/r226a && python3 climb.py state      # every offset 0, the 
 R224's OUT folder holds its stock round 1 (`greedy-stock1.sha` and `greedy-stock1.json`), which `half_check.sh`
 copies into a fresh OUT and checks against `REF_HASH`, so every half is compared with the same stock answer. Half b
 repeated these commands on its own fresh boot with `--stock 0 1 2 3 4 6 --tag b`, `r226-half-b.json`
-([run/MD5SUMS-b](run/MD5SUMS-b)), `WORK=/var/tmp/r226b` and `OUT=/var/tmp/r226b-model`. The tables, on any machine,
-from the two folders copied off the rig:
+([run/MD5SUMS-b](run/MD5SUMS-b)), `WORK=/var/tmp/r226b` and `OUT=/var/tmp/r226b-model`. The whole profile for 90
+minutes (`full90`) repeated them on its own fresh boot with R223's use.json itself as `PROFILE` (the rig's copy from
+step 4, the same md5; [run/MD5SUMS-full90](run/MD5SUMS-full90)), no half profile made, `MINUTES=90`,
+`WORK=/var/tmp/q1640a` and `OUT=/var/tmp/q1640a-model`. The tables, on any machine, from the two folders copied off
+the rig:
 
 ```bash
 bash run/tables.sh a <copy of /var/tmp/r226a> <copy of /var/tmp/r226a-model> .
 bash run/tables.sh b <copy of /var/tmp/r226b> <copy of /var/tmp/r226b-model> .
+bash run/tables.sh full90 <copy of /var/tmp/q1640a> <copy of /var/tmp/q1640a-model> .
 ```
 
 Option (c)'s profile, every card's memory one step lower with the core kept (`67d8cb5c5685c74d7c461696eea42820` from
@@ -267,7 +401,7 @@ cd $K && . ./env.sh && python3 half_profile.py climb.py q1640-c.json --check
 
 ## Provenance and licence
 
-Measured on the first rig on 2026-11-20 (half a: 16:40 to 17:31; half b: 17:49 to 18:41) with the engine builds named above and the kit as published
+Measured on the first rig on 2026-11-20 (half a: 16:40 to 17:31; half b: 17:49 to 18:41; the whole profile for 90 minutes: 19:04 to 20:40) with the engine builds named above and the kit as published
 on this branch. The check model is IBM's Granite 3.1 3B-A800M Instruct (Apache 2.0) quantized to Q4_K_M; Ornith-1.5-122B
 Pascal N2P GGUF and its licence are described in [release/ornith-v3](../../../release/ornith-v3/README.md). Neither
 model is published here, only the hashes of their answers. The tables are this repository's licence.

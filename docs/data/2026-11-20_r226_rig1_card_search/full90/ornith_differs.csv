@@ -1,0 +1,3 @@
+run,check,prompt,tokens,text_identical,first_token_differs,tokens_differ,first_probability_differs,max_chosen_logprob_change_before
+r226full90-ornith,profile137,1,256,True,,0,,0
+r226full90-ornith,profile137,2,256,True,,0,202,0.138
