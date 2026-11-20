@@ -93,6 +93,7 @@ runs its v4 preset; a dash means the preset does not set the switch.
 | `GGML_CUDA_MMID_GLU_UNFUSE` | — (a loss: a step 2.3 % longer at depth 0, the same replies; [data](data/2026-11-19_r205_flash_glu/README.md)) | — (`2` a small gain on the deep lane, a token 0.7 % shorter at 8,192 with the same replies; its agent check is planned; [data](data/2026-11-19_r205_flint_glu/README.md)) | `2` (a decode step 6.3 % shorter on the agent check; [data](data/2026-11-18_r204_ornith_glu_agent/README.md)) |
 | `GGML_CUDA_MMQ_KQ_FP32SCALE` | — (negligible: 0.93 % on matched prompts, inside the controls' 0.95 %; [data](data/2026-11-19_r208_r210_flash_switches/README.md)) | — | — |
 | `GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO` | `0.75` (v4.0: `1.0`; a step 1.71 and 3.50 ms shorter at 6,144 and 7,168 tokens on the deep lane; on the agent check 30.60 and 30.39 tok/s against 30.28 and 29.46, slower on no figure; [data](data/2026-11-20_r220_flash_ratio075/README.md)) | — | — |
+| `--ubatch-taper` | `short=1400:64` (v4.0: `short=600:64`; turns of 601 to 1,400 new tokens about a sixth faster to read on the agent check, a task within the plain runs' spread, slower on no figure; [data](data/2026-11-20_r227_flash_taper1400_agent/README.md)) | — | — |
 
 ### v4.0
 
