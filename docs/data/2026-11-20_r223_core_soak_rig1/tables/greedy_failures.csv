@@ -1,0 +1,9 @@
+run,card,check,prompt,tokens,text_identical,first_token_differs,tokens_differ,first_probability_differs,max_chosen_logprob_change_before
+r223-ladder,0,soak438,1,256,True,,0,,0
+r223-ladder,0,soak438,2,256,True,,0,96,0.0844
+r223-ladder,6,soak43,1,256,False,62,189,22,0.0666
+r223-ladder,6,soak43,2,256,True,,0,,0
+r223-ladder,6,soak55,1,256,True,,0,,0
+r223-ladder,6,soak55,2,256,True,,0,163,0.0866
+r223-ladder,6,soak91,1,256,True,,0,150,0.0715
+r223-ladder,6,soak91,2,256,True,,0,,0

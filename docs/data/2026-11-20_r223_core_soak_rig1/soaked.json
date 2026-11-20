@@ -1,0 +1,365 @@
+{
+ "what": "P106 clock offsets that held a soak, from bench/mem_offset/soak.py; `climb.py apply` reads it",
+ "date": "2026-11-20",
+ "complete": true,
+ "climb_boot": null,
+ "rungs": 3,
+ "minutes_a_rung": 30.0,
+ "each_card": "memory_mts and core_mhz are the highest rung the card held for the full minutes with no differing check, from the first rung on, never at the offsets of a rung where it differed or left; 0 if none",
+ "cards": [
+  {
+   "card": 0,
+   "pci": "00000000:03:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1860,
+   "memory_mts": 900,
+   "core_mhz": 244,
+   "core_steps": 19,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 900,
+      "core_mhz": 218,
+      "core_steps": 17,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 900,
+      "core_mhz": 244,
+      "core_steps": 19,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 900,
+      "core_mhz": 269,
+      "core_steps": 21,
+      "complete": true,
+      "differing_checks": 1,
+      "left": false
+     }
+    ],
+    "first_differed": {
+     "rung": 3,
+     "round": 438,
+     "memory_mts": 900,
+     "core_mhz": 269
+    },
+    "left": null
+   }
+  },
+  {
+   "card": 1,
+   "pci": "00000000:04:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1860,
+   "memory_mts": 1000,
+   "core_mhz": 256,
+   "core_steps": 20,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1000,
+      "core_mhz": 206,
+      "core_steps": 16,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1000,
+      "core_mhz": 231,
+      "core_steps": 18,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1000,
+      "core_mhz": 256,
+      "core_steps": 20,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  },
+  {
+   "card": 2,
+   "pci": "00000000:05:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1898,
+   "memory_mts": 1100,
+   "core_mhz": 256,
+   "core_steps": 20,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1100,
+      "core_mhz": 206,
+      "core_steps": 16,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1100,
+      "core_mhz": 231,
+      "core_steps": 18,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1100,
+      "core_mhz": 256,
+      "core_steps": 20,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  },
+  {
+   "card": 3,
+   "pci": "00000000:06:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1200,
+   "core_mhz": 206,
+   "core_steps": 16,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1200,
+      "core_mhz": 155,
+      "core_steps": 12,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1200,
+      "core_mhz": 180,
+      "core_steps": 14,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1200,
+      "core_mhz": 206,
+      "core_steps": 16,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  },
+  {
+   "card": 4,
+   "pci": "00000000:07:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 1100,
+   "core_mhz": 206,
+   "core_steps": 16,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1100,
+      "core_mhz": 155,
+      "core_steps": 12,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1100,
+      "core_mhz": 180,
+      "core_steps": 14,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1100,
+      "core_mhz": 206,
+      "core_steps": 16,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  },
+  {
+   "card": 5,
+   "pci": "00000000:0B:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1300,
+   "core_mhz": 231,
+   "core_steps": 18,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1300,
+      "core_mhz": 180,
+      "core_steps": 14,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1300,
+      "core_mhz": 206,
+      "core_steps": 16,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1300,
+      "core_mhz": 231,
+      "core_steps": 18,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  },
+  {
+   "card": 6,
+   "pci": "00000000:0C:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 0,
+   "core_mhz": 0,
+   "core_steps": 0,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1000,
+      "core_mhz": 0,
+      "core_steps": 0,
+      "complete": true,
+      "differing_checks": 3,
+      "left": true
+     }
+    ],
+    "first_differed": {
+     "rung": 1,
+     "round": 43,
+     "memory_mts": 1000,
+     "core_mhz": 0
+    },
+    "left": "3 checks differed"
+   }
+  },
+  {
+   "card": 7,
+   "pci": "00000000:0D:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1100,
+   "core_mhz": 282,
+   "core_steps": 22,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 1100,
+      "core_mhz": 231,
+      "core_steps": 18,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1100,
+      "core_mhz": 256,
+      "core_steps": 20,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 1100,
+      "core_mhz": 282,
+      "core_steps": 22,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  },
+  {
+   "card": 8,
+   "pci": "00000000:0E:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 900,
+   "core_mhz": 231,
+   "core_steps": 18,
+   "soak": {
+    "rungs": [
+     {
+      "memory_mts": 900,
+      "core_mhz": 180,
+      "core_steps": 14,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 900,
+      "core_mhz": 206,
+      "core_steps": 16,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     },
+     {
+      "memory_mts": 900,
+      "core_mhz": 231,
+      "core_steps": 18,
+      "complete": true,
+      "differing_checks": 0,
+      "left": false
+     }
+    ],
+    "first_differed": null,
+    "left": null
+   }
+  }
+ ]
+}
