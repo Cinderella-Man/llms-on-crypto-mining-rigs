@@ -1,0 +1,5 @@
+arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref	prompt_read_per_task	reread_per_task	reread_s_per_task	reread_turns	ttft_max_s	energy_kj	joules_per_task	joules_per_token	w_generating	w_prompt	w_idle	equal_work_j_per_task	equal_work_j_vs_ref
+c10a	12/12	64	150.4	30.28	2.30	7.90	6.29	0.755	3.27	13.7	1.16	1.14	+0.0 %	3093	0	0.00	0	27.21	298.16	24847	18.17	357.6	371.5	327.3	24620	+0.0 %
+r075a	12/12	63	154.6	30.60	2.28	7.91	6.22	0.755	3.27	15.9	1.26	1.12	-1.8 %	3324	0	0.00	0	27.48	345.88	28824	16.96	356.2	372.7	327.0	24201	-1.7 %
+c10b	11/12	99	142.4	29.46	2.27	8.94	6.49	0.741	3.22	29.3	1.20	1.18	+3.5 %	4670	0	0.00	0	27.42	633.90	52825	16.88	355.8	374.1	312.6	25431	+3.3 %
+r075b	12/12	64	150.6	30.39	2.64	7.94	6.35	0.743	3.23	19.9	1.14	1.13	-0.9 %	3259	0	0.00	0	27.50	431.41	35950	15.67	357.2	370.9	328.3	24521	-0.4 %

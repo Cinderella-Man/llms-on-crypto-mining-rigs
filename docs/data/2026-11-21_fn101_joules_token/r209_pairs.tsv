@@ -1,0 +1,17 @@
+measure	model	stock	overclocked	diff	diff_pct	flash_control_pairs_pct
+gen_tok_s	Flash-Next	27.82	30.69	+2.87	+10.32 %	-2.71 % +1.32 %
+gen_tok_s	Ornith	17.87	19.26	+1.39	+7.78 %	-2.71 % +1.32 %
+equal_work_min_per_task	Flash-Next	1.54	1.41	-0.13	-8.44 %	+3.51 % -2.16 %
+equal_work_min_per_task	Ornith	1.67	1.59	-0.08	-4.79 %	+3.51 % -2.16 %
+w_generating	Flash-Next	329.6	356.1	+26.50	+8.04 %	-0.50 % -0.70 %
+w_generating	Ornith	344.9	373.4	+28.50	+8.26 %	-0.50 % -0.70 %
+w_prompt	Flash-Next	354.4	370.4	+16.00	+4.51 %	+0.70 % +0.92 %
+w_prompt	Ornith	347.5	358.0	+10.50	+3.02 %	+0.70 % +0.92 %
+w_idle	Flash-Next	302.9	326.9	+24.00	+7.92 %	-4.49 % -0.25 %
+w_idle	Ornith	303.9	329.3	+25.40	+8.36 %	-4.49 % -0.25 %
+equal_work_j_per_task	Flash-Next	30968	30460	-508.00	-1.64 %	+3.29 % -2.22 %
+equal_work_j_per_task	Ornith	34489	35012	+523.00	+1.52 %	+3.29 % -2.22 %
+joules_per_task	Flash-Next	31170	30110	-1060.00	-3.40 %	+112.60 % +22.45 %
+joules_per_task	Ornith	34695	44662	+9967.00	+28.73 %	+112.60 % +22.45 %
+joules_per_token	Flash-Next	16.89	16.23	-0.66	-3.91 %	-7.10 % -8.31 %
+joules_per_token	Ornith	29.21	26.50	-2.71	-9.28 %	-7.10 % -8.31 %

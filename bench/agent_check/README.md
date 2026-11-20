@@ -79,8 +79,9 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [race_proxy.py](race_proxy.py) | The first-finish race: one chat request to N servers with a seed each, the first complete reply to the agent, the others cancelled; a row per sample; a count mode in which every sample runs to its end and each request is logged as a pair; `summary` ([below](#the-first-finish-race-across-servers)) |
 | [race_quant.sh](race_quant.sh), [race_rigs.sh](race_rigs.sh) | The race's runs: one server per card set on a GPU machine with Docker (counts only); one server per rig across rigs, on a release preset (v4's by default), with the client on a second machine or on the one that drives the rigs |
 | [replay.py](replay.py) | Re-sends recorded traces to any server (same prompts, seeds and `max_tokens`); picks traces; summarizes and compares per-token costs |
-| [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn, and the work a run did: prompt tokens read, reply tokens re-read, the longest first-token wait ([below](#the-work-a-run-did-beside-its-speed)) |
-| [agent_tables.py](agent_tables.py), [class_arms.py](class_arms.py) | Runs side by side (`agent.tsv`: speeds, first-token times, minutes at equal work, the work a run did) and an arm's class against a base, measure by measure (`class.tsv`) ([below](#classing-runs-agenttsv-and-classtsv)) |
+| [report.py](report.py) | The per-attempt CSV (the layout of [task_results.py](../task_results.py), read by [paired_tasks.py](../paired_tasks.py)), the per-arm table, the pilot's go/no-go list, arms side by side with the time to first token per turn, and the work a run did: prompt tokens read, reply tokens re-read, the longest first-token wait ([below](#the-work-a-run-did-beside-its-speed)); with the card log, the cards' energy ([below](#the-cards-energy-joules-a-task-and-a-token)) |
+| [agent_tables.py](agent_tables.py), [class_arms.py](class_arms.py) | Runs side by side (`agent.tsv`: speeds, first-token times, minutes at equal work, the work a run did, the cards' energy) and an arm's class against a base, measure by measure (`class.tsv`) ([below](#classing-runs-agenttsv-and-classtsv)) |
+| [energy.py](energy.py) | The cards' energy over a run's session from the card log and the proxy's rows: joules a task and a generated token, the watts while generating, reading the prompt and idle between turns ([below](#the-cards-energy-joules-a-task-and-a-token)) |
 | [token_mark.py](token_mark.py) | The generated-token mark: what a mark would have stopped, lost and saved on recorded runs (`price`), and arms run with it side by side by the try that passed (`arms`) ([below](#the-token-mark-and-a-fresh-attempt)) |
 | [validate.py](validate.py) | Oracle, empty-change and visible-subset checks of every task, no model |
 | [common.py](common.py) | Tasks, the sandbox, the test check, the stream parser |
@@ -91,6 +92,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh), [release.env.example](release.env.example) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
 | [build_bugfix.py](build_bugfix.py), [bugfix_bugs.json](bugfix_bugs.json) | Build the bugfix set from the polyglot tasks and the list of injected bugs |
 | [mock_server.py](mock_server.py), [selftest.sh](selftest.sh), [selftest_pilot.sh](selftest_pilot.sh), [selftest_race.sh](selftest_race.sh) | A stand-in for llama-server and the end-to-end tests that use it (no model) |
+| [selftest_energy.sh](selftest_energy.sh) | The energy columns' test on fixed inputs (Python only) |
 | [build_tasks.py](build_tasks.py), [cut_tests.mjs](cut_tests.mjs), [make_order.py](make_order.py) | Build the task set from the Exercism checkouts |
 | [env/](env/) | The shared test environments: jest (locked) and pytest; `env/setup.sh` creates them |
 
@@ -354,6 +356,91 @@ python3 -I $D/2026-11-17_r17_flint_textreuse/run/merge_rows.py t \
   f4tr=$D/2026-11-17_r17_flint_textreuse/agent/f4tr
 python3 -I bench/agent_check/agent_tables.py t v3p065 f4ta f4tb f4tr          # t/agent.tsv
 python3 -I bench/agent_check/class_arms.py t/agent.tsv f4tr=f4tr f4t=f4ta,f4tb
+```
+
+## The cards' energy: joules a task and a token
+
+The rig's card log (`cards.csv`, [scripts/card_log.py](../../scripts/card_log.py)) records every card's power every
+0.5 s through a run. [energy.py](energy.py) turns it into the energy the cards spent on the agent's work (registry
+Q1518), and the tables carry it beside the speeds:
+
+- **`report.py table` and `compare` with `--cards RIG/cards.csv`**: each arm's row in `table.md` and in `compare.md`'s
+  per-arm table ends with three more columns, and one line under the table says how they are counted.
+  [client_report.sh](client_report.sh) adds `--cards` when the collected folder holds `rig/cards.csv`, so a release
+  check run since the card log (C832) gets them on its own. Without `--cards` the tables are byte for byte as before.
+- **`agent_tables.py`**: eight columns after the work columns, for every run whose card log and proxy rows are in the
+  table folder: `rig_<run>/cards.csv`, else `rig/cards.csv` (one log for every arm of a release check), and
+  `proxy_<run>/proxy.jsonl`, else `proxy.jsonl` (the rows whose tag starts with the run). A run without them gets
+  `nan`; a table without any has no energy columns and is as before.
+- **`energy.py RUN=CARDS.csv=PROXY.jsonl[=ARM] …`** alone: one row a run (`--tsv`), one row a run and card by the
+  card's index (`--cards-tsv`), and `--fit` (below).
+
+| Column (`agent.tsv`) | In plain words | Classed |
+|---|---|---|
+| `energy_kj` | The energy all cards used over the session, in kJ | no |
+| `joules_per_task` | That energy over the tasks | yes |
+| `joules_per_token` | That energy over the tokens the model generated | yes |
+| `w_generating` | All cards' power while a reply was being generated, in W | no |
+| `w_prompt` | All cards' power while the server read a prompt, before the first token | no |
+| `w_idle` | All cards' power in the gaps between turns, while the agent's tools ran | no |
+| `equal_work_j_per_task` | The joules this run's settings would spend on the reference run's work | yes |
+| `equal_work_j_vs_ref` | That against the reference run, in % | no |
+
+`compare.md` and `table.md` show the first five: card energy kJ with the joules a task, the joules a generated token,
+and the three watts.
+
+**How they are computed.**
+
+- **Power** is the sum of every card's `g<i>_w` column: NVML's power draw of each card. The host's own draw (board, CPU,
+  power supply losses) is not in it.
+- **Energy** over a span is each card's power integrated with the trapezoid rule, linear between two samples. Two
+  samples more than 5 s apart (a log that stopped and started again) add nothing; the tables' watts divide by the
+  seconds the log covers.
+- **The session window** runs from the arm's first request to its last request's end, as the proxy logged them (each
+  row's `t_wall`, its start on the client's clock in Unix seconds, plus `t_end`). The agent's tools, the tests and the
+  next task's start between turns are inside it. Only the first task's start before its first request and the last
+  task's check after its last reply, a few seconds of a session, are outside.
+- **The parts:** generating runs from a request's first token to its end; reading the prompt from its start to its
+  first token; idle between turns is the rest of the window.
+- **Joules a task and a generated token** divide the whole window's energy, so they carry the prompt reading and the
+  gaps: the cost of the work as an agent sees it. Every request the arm sent counts, infrastructure tries included.
+- **The joules at equal work** price the reference run's work at this run's speeds and watts: its prompt tokens at this
+  run's prompt speed and prompt watts, its generated tokens at this run's generation speed and generating watts, and
+  its own time outside the server at this run's idle watts, over its tasks. It is the energy counterpart of the
+  minutes a task at equal work.
+- **`SKIP_TASKS`** (agent_tables.py) and `--skip` (energy.py) leave a task's requests out and cut its span, from its
+  first request to its last request's end, out of the window.
+- **The two clocks.** The proxy's times come from the client and the card log's from the rig. `energy.py --fit` finds
+  the shift, between −3 and +3 s, that best lines the requests up with the card power: the most watts inside requests
+  against outside them. It holds the clocks' offset, the relay's delay and the lag of NVML's reading.
+
+**Reading them.**
+
+- **Session joules depend on the work.** A run that generates more spreads its prompt reading and its gaps over more
+  tokens, so the session's joules a token move with what each attempt wrote, as the minutes for all tasks do. Two runs
+  of Flash-Next's v5 preset on the same rig, boot and settings (R220's controls) spent 18.17 and 16.88 J a generated
+  token. The joules at equal work hold the tokens fixed: 24,620 and 25,431 J a task on the first run's work. The class
+  tables judge energy first on those.
+- **The watts are not classed:** they say where the energy went. An overclock draws more watts and can still spend
+  fewer joules on the same work.
+- **The idle watts are those of short pauses.** The agent's tools take about half a second a turn: R220's first control
+  spent 33.1 of its 826.7 s between turns, in 64 gaps. That is about one sample a gap, and NVML's reading lags behind
+  the load, so `w_idle` measures the cards just after a reply, not a rig left idle. Flash-Next's v5 preset also keeps
+  each card busy between turns with its keep-alive block, which holds the clocks up.
+
+**What they show.** On the second rig with its clock profile, Flash-Next's v5 preset (R220's first control) used
+298.2 kJ over a 826.7 s session: 24,847 J a task and 18.17 J a generated token. The nine cards drew 357.6 W while
+generating, 371.5 W while reading prompts and 327.3 W in the gaps. The rig's overclock on the same boot (R209,
+Flash-Next) drew 8.04 % more watts while generating (356.1 against 329.6 W) and generated 10.32 % faster: 1.64 % fewer
+joules a task at equal work, 30,460 against 30,968 J, which is inside the 3.29 % and 2.22 % that two runs of one preset
+moved apart. The tables of twelve runs are in
+[2026-11-21_fn101_joules_token](../../docs/data/2026-11-21_fn101_joules_token/README.md).
+
+```bash
+# one run alone: the energy, each card's share by index, and the clock check
+python3 -I bench/agent_check/energy.py c10a=rig/cards.csv=proxy.jsonl --fit --cards-tsv energy_cards.tsv
+# the release check's tables with the energy columns (the collected folder holds rig/cards.csv)
+python3 -I bench/agent_check/report.py compare res --log proxy.jsonl --cards rig/cards.csv
 ```
 
 ## The first-finish race across servers
@@ -696,6 +783,7 @@ miss_param, long_context).
 ```
 AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest.sh <scratch folder>
 AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <scratch folder>   # FULL=1 for full_run.sh
+bench/agent_check/selftest_energy.sh <scratch folder>   # the energy columns, Python only
 ```
 
 - **`selftest.sh`** drives pi in the sandbox through 12 tasks against [mock_server.py](mock_server.py), 3 at a time.
@@ -722,7 +810,23 @@ AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <
   - the class tables: `agent_tables.py` puts a task's work counts after its other columns, the same as
     `report.py work`'s; `class_arms.py` classes a run that reads fewer tokens a gain beyond the spread while its
     minutes are negligible, gives no share of a base whose mean is 0, and gives the time measures alone on a table
-    without the work columns.
+    without the work columns;
+  - the energy columns: it runs `selftest_energy.sh` (below).
+- **`selftest_energy.sh <scratch folder>`** (Python only: no sandbox, no server) checks the energy columns on a
+  synthetic run whose values are worked out by hand in its header: two cards, four requests in three tasks. It checks
+  that:
+  - `energy.py` gives the window, the energy, the joules a task and a token, and the watts and seconds of each part;
+  - each card's joules come out by its index;
+  - `--skip` cuts a task's span out of the window;
+  - an appended log (a second header, event lines) and two logs of the same samples read as one;
+  - a 6.5 s gap adds nothing and is not covered;
+  - `--fit` finds a proxy clock 0.7 s behind the card log;
+  - `report.py compare` and `table` with `--cards` add the energy cells and one note line, every other line and
+    `turns.csv` and `attempts.csv` as without;
+  - `agent_tables.py` puts the eight energy columns after the work columns, with the joules at equal work by hand,
+    `nan` for a run without a card log, and no energy columns for a folder without card logs;
+  - `class_arms.py` classes the joules at equal work and a token, leaves the watts unclassed, gives `n/a` against a
+    run without a card log and no energy measure on a table without the columns.
 - **`selftest_race.sh`** (`AC_TEST_PORT=… bench/agent_check/selftest_race.sh <scratch folder>`, no sandbox) puts
   race proxies in front of mocks of different speeds, one that answers HTTP 500, one that drops its stream half-way
   and a port nobody listens on. It checks that:

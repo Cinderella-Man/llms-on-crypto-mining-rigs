@@ -1,0 +1,25 @@
+same: r220 c10a: the first 12 columns are the published 2026-11-20_r220_flash_ratio075/agent.tsv row
+same: r220 c10a: the energy columns are energy.py's; same: the turns are its requests (64)
+same: r220 r075a: the first 12 columns are the published 2026-11-20_r220_flash_ratio075/agent.tsv row
+same: r220 r075a: the energy columns are energy.py's; same: the turns are its requests (63)
+same: r220 c10b: the first 12 columns are the published 2026-11-20_r220_flash_ratio075/agent.tsv row
+same: r220 c10b: the energy columns are energy.py's; same: the turns are its requests (99)
+same: r220 r075b: the first 12 columns are the published 2026-11-20_r220_flash_ratio075/agent.tsv row
+same: r220 r075b: the energy columns are energy.py's; same: the turns are its requests (64)
+same: r227 c600a: the first 12 columns are the published 2026-11-20_r227_flash_taper1400_agent/agent.tsv row
+same: r227 c600a: the energy columns are energy.py's; same: the turns are its requests (60)
+same: r227 t1400a: the first 12 columns are the published 2026-11-20_r227_flash_taper1400_agent/agent.tsv row
+same: r227 t1400a: the energy columns are energy.py's; same: the turns are its requests (66)
+same: r227 c600b: the first 12 columns are the published 2026-11-20_r227_flash_taper1400_agent/agent.tsv row
+same: r227 c600b: the energy columns are energy.py's; same: the turns are its requests (68)
+same: r227 t1400b: the first 12 columns are the published 2026-11-20_r227_flash_taper1400_agent/agent.tsv row
+same: r227 t1400b: the energy columns are energy.py's; same: the turns are its requests (67)
+same: r209_flash f5oc0: the first 12 columns are the published 2026-11-19_r209_oc_v5/flash_agent.tsv row
+same: r209_flash f5oc0: the energy columns are energy.py's; same: the turns are its requests (66)
+same: r209_flash f5oc1: the first 12 columns are the published 2026-11-19_r209_oc_v5/flash_agent.tsv row
+same: r209_flash f5oc1: the energy columns are energy.py's; same: the turns are its requests (61)
+same: r209_ornith o5oc0: the first 12 columns are the published 2026-11-19_r209_oc_v5/agent.tsv row
+same: r209_ornith o5oc0: the energy columns are energy.py's; same: the turns are its requests (60)
+same: r209_ornith o5oc1: the first 12 columns are the published 2026-11-19_r209_oc_v5/agent.tsv row
+same: r209_ornith o5oc1: the energy columns are energy.py's; same: the turns are its requests (67)
+all checks passed

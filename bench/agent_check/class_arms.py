@@ -17,10 +17,17 @@ The measures, in this order:
     the prompt seconds of the turns that re-read a reply a task, and the longest first-token wait. They are each run's
     own counts, so a change that reads fewer tokens (text reuse) is classed here while its minutes at equal work, which
     hold the tokens fixed, stay negligible.
-A measure whose column the table lacks (a table made before the work columns) is left out. Prints a TSV. Runs anywhere
-with Python 3 (no packages).
+  - energy (FN101, Q1518), from agent_tables.py's energy columns, better lower: the cards' joules a task at equal work
+    (REF's work at the run's speeds and watts, the counterpart of the minutes at equal work), and the session's joules
+    a task and a generated token. The session's two depend on what each attempt generated, as the minutes for all
+    tasks do; the equal-work joules compare the engines on the same work. The watts columns say where the energy went
+    and are not classed: an overclock draws more watts and can still spend fewer joules on the work.
+A measure whose column the table lacks (a table made before the work or the energy columns) is left out. A measure with
+a run that has no value (nan: a run without a card log) gets the class n/a. Prints a TSV. Runs anywhere with Python 3
+(no packages).
 """
 import csv
+import math
 import sys
 
 MEASURES = [  # column, label, better
@@ -34,6 +41,9 @@ MEASURES = [  # column, label, better
     ("reread_per_task", "reply tokens re-read a task", "lower"),
     ("reread_s_per_task", "prompt s of the turns that re-read a reply, a task", "lower"),
     ("ttft_max_s", "longest first-token wait s", "lower"),
+    ("equal_work_j_per_task", "card joules a task at equal work", "lower"),
+    ("joules_per_task", "card joules a task", "lower"),
+    ("joules_per_token", "card joules a generated token", "lower"),
 ]
 
 path, specs = sys.argv[1], sys.argv[2:]
@@ -56,10 +66,12 @@ for col, label, better in MEASURES:
         b = [float(rows[r][col]) for r in bruns]
         mb, sb = sum(b) / len(b), max(b) - min(b)
         d = ma - mb
-        if abs(d) <= max(sa, sb):
+        if math.isnan(d):
+            cls = "n/a"
+        elif abs(d) <= max(sa, sb):
             cls = "negligible"
         else:
             cls = "gain" if (d < 0) == (better == "lower") else "loss"
-        share = f"{d / mb * 100:+.1f} %" if mb else "—"
+        share = f"{d / mb * 100:+.1f} %" if mb and not math.isnan(d) else "—"
         print(f"{label}\t{name}\t{bname}\t{' '.join(f'{x:g}' for x in a)}\t{' '.join(f'{x:g}' for x in b)}\t"
               f"{ma:.4g}\t{mb:.4g}\t{sa:.4g}\t{sb:.4g}\t{d:+.4g}\t{share}\t{cls}")

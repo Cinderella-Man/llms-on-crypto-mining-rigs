@@ -1,10 +1,10 @@
 """Tables and the pilot's go/no-go checks from run.py's results and the proxy log.
 
-    python3 report.py table RESULTS [--log RESULTS/proxy.jsonl …] [--csv RESULTS/attempts.csv]
+    python3 report.py table RESULTS [--log RESULTS/proxy.jsonl …] [--csv RESULTS/attempts.csv] [--cards RIG/cards.csv]
     python3 report.py gonogo RESULTS --log … [--replay REPLAY.jsonl --replay-label v2-ud --live-arm v2-ud]
                       [--meminfo RIG/meminfo.log] [--server-log RIG/server-*.log …] [--expect-min v2-ud=3.9,v1-ud=5.5]
     python3 report.py compare RESULTS --log … [--arms stock,rel] [--turns-csv RESULTS/turns.csv]
-                      [--server-log RIG/server-*.log …]
+                      [--server-log RIG/server-*.log …] [--cards RIG/cards.csv]
     python3 report.py work [NAME=]TURNS.csv [[NAME=]TURNS.csv …] [--arms stock,rel] [--tsv WORK.tsv]
 
 `table` writes one row per scored attempt in the column layout of ../task_results.py (lane agent_polyglot, file =
@@ -28,6 +28,15 @@ hold the tokens fixed, so a change that removes tokens (text reuse, which stops 
   re-read" and "older checkpoint" below), the tokens of that reply past the cached prefix, which the server reads
   again as prompt; with them the number of such turns and those turns' prompt seconds of the run's prompt seconds;
 - the longest first-token wait: the longest time from a request to its first token, with its task and turn.
+
+The energy columns (FN101, Q1518), with the rig's card log (--cards: scripts/card_log.py's cards.csv, every card's
+power every 0.5 s; several files are read as one log), end both per-arm tables: per arm, the cards' energy over its
+session window (from the arm's first request to its last request's end, as the proxy logged them) in kJ with the
+joules a task, the joules a generated token (that energy over the tokens the arm generated), and the cards' summed
+watts while generating (a request from its first token to its end), while reading the prompt (from its start to its
+first token) and while idle between turns (the rest of the window: tools, tests, the next task's start). energy.py
+counts them (its docstring has the details); every request the arm sent counts, infrastructure tries included. Without
+--cards the tables are as before.
 
 `work` prints the same counts, with the tokens generated, from turns.csv tables alone (compare's per-request rows, the
 layout published in a run's data folder), one row per run, and lists every turn that read a reply again. A run is
@@ -68,6 +77,7 @@ sys.path.insert(0, str(HERE))
 sys.path.append(str(HERE.parent.parent / "scripts"))  # realloc_counts.py; a client's copy has it beside task_results.py
 from task_results import COLUMNS  # noqa: E402
 from replay import costs, load_log, load_replay  # noqa: E402
+import energy as card_energy  # noqa: E402
 try:
     from realloc_counts import requests as realloc_requests, total as realloc_total  # noqa: E402
 except ImportError:
@@ -177,6 +187,28 @@ def work_cells(w, tasks=0):
                           f"{', a re-read' if w['ttft_path'] in REREAD else ''})"]
 
 
+def arm_energy(cards, traces, arm):
+    """An arm's energy summary (energy.py) from the card log and every proxy row of the arm."""
+    return card_energy.summary(cards, card_energy.requests_from_rows(
+        [q for tag, qq in traces.items() if tag.split("/", 1)[0] == arm for q in qq]))
+
+
+def energy_parts(a):
+    """The card log (energy.Cards) and the per-arm tables' extra header and rule, or (None, "", "") without --cards."""
+    if not getattr(a, "cards", None):
+        return None, "", ""
+    return (card_energy.Cards(a.cards), "".join(f" {h} |" for h in card_energy.HEAD),
+            "---|" * len(card_energy.HEAD))
+
+
+def energy_note(cards):
+    return ("\nCard energy (FN101): all cards' power from the rig's card log, over each arm's session window (its first "
+            "request to its last request's end, as the proxy logged them); J a task and J a generated token divide that "
+            "energy; the watts are the cards' sum while generating (first token to end), reading the prompt (start to "
+            "first token) and idle between turns (the rest of the window)."
+            + (f" The log lacks a card's power in {cards.missing} samples." if cards.missing else ""))
+
+
 def attempt_row(r, reqs):
     pre = sum(q.get("prompt_ms") or 0 for q in reqs) / 1000
     dec = sum(q.get("predicted_ms") or 0 for q in reqs) / 1000
@@ -230,10 +262,11 @@ def cmd_table(a):
     by = defaultdict(list)
     for r in rows:
         by[r["file"]].append(r)
+    cards, ehead, erule = energy_parts(a)
     print("| arm | attempts | pass@1 | minutes per task (median, p90) | prefill / decode / fixed / other (s, mean) | "
           "turns (median) | prompt tokens processed per task | cache hit | TTFT p50 s | malformed calls | runaways | "
-          f"prompt tokens read | {WORK_HEAD[0]} | {WORK_HEAD[1]} |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+          f"prompt tokens read | {WORK_HEAD[0]} | {WORK_HEAD[1]} |" + ehead)
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|" + erule)
     for arm, rr in by.items():
         mins = sorted(r["wall_s"] / 60 for r in rr)
         p90 = mins[min(len(mins) - 1, int(0.9 * len(mins)))]
@@ -243,14 +276,17 @@ def cmd_table(a):
         hit = [r["cache_hit"] for r in rr if r["cache_hit"] != ""]
         ttft = [r["ttft_p50"] for r in rr if r["ttft_p50"] != ""]
         cells = " | ".join(work_cells(work([traces.get(r["tag"], []) for r in rr])))
-        print(f"| {arm} | {len(rr)} | {100 * sum(r['pass'] for r in rr) / len(rr):.1f} % | {median(mins):.1f}, "
+        ecells = "".join(f" {c} |" for c in card_energy.cells(arm_energy(cards, traces, arm))) if cards else ""
+        print((f"| {arm} | {len(rr)} | {100 * sum(r['pass'] for r in rr) / len(rr):.1f} % | {median(mins):.1f}, "
               f"{p90:.1f} | {mean('prefill_s'):.0f} / {mean('decode_s'):.0f} / {mean('fixed_s'):.0f} / "
               f"{mean('other_s'):.0f} | {median(r['turns'] for r in rr)} | {mean('prompt_new'):.0f} | "
               f"{100 * sum(hit) / len(hit):.1f} % | {median(ttft) if ttft else float('nan'):.2f} | "
               f"{bad}/{calls} | {sum(r['runaway'] for r in rr)} | {cells} |" if hit else
               f"| {arm} | {len(rr)} | {100 * sum(r['pass'] for r in rr) / len(rr):.1f} % | {median(mins):.1f}, "
               f"{p90:.1f} | (no proxy rows) | {median(r['turns'] for r in rr)} | | | | {bad}/{calls} | "
-              f"{sum(r['runaway'] for r in rr)} | {cells} |")
+              f"{sum(r['runaway'] for r in rr)} | {cells} |") + ecells)
+    if cards:
+        print(energy_note(cards))
 
 
 def verdict(ok):
@@ -446,10 +482,11 @@ def cmd_compare(a):
         print(f"| {t} | " + " | ".join(cells) + " |")
 
     print("\n### Per arm\n")
+    cards, ehead, erule = energy_parts(a)
     print("| arm | tasks passed | minutes, all tasks | minutes per task (median) | TTFT per turn s (median, p90) | "
           "prompt tok/s | generation tok/s | tool calls / failed / malformed | runaways | "
-          f"prompt tokens read (per task) | {WORK_HEAD[0]} | {WORK_HEAD[1]} |")
-    print("|---|---|---|---|---|---|---|---|---|---|---|---|")
+          f"prompt tokens read (per task) | {WORK_HEAD[0]} | {WORK_HEAD[1]} |" + ehead)
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|" + erule)
     for arm in arms:
         rr = [r for r in rows if r["file"] == arm]
         if not rr:
@@ -464,7 +501,10 @@ def cmd_compare(a):
               f"{pct(ttft, 0.9):.2f} | {1000 * pn / pms if pms else float('nan'):.0f} | "
               f"{1000 * gn / gms if gms else float('nan'):.1f} | {sum(r['tool_calls'] for r in rr)} / "
               f"{sum(r['tool_errors'] for r in rr)} / {bad} | {sum(r['runaway'] for r in rr)} | "
-              + " | ".join(work_cells(work([reqs[r["tag"]] for r in rr]), len(rr))) + " |")
+              + " | ".join(work_cells(work([reqs[r["tag"]] for r in rr]), len(rr))) + " |"
+              + ("".join(f" {c} |" for c in card_energy.cells(arm_energy(cards, traces, arm))) if cards else ""))
+    if cards:
+        print(energy_note(cards))
     if len(arms) > 1:
         both = [t for t in tasks if all((arm, t) in by for arm in arms)]
         print(f"\nTasks scored on every arm: {len(both)}.")
@@ -600,6 +640,9 @@ def main():
         p = sub.add_parser(name)
         p.add_argument("results")
         p.add_argument("--log", nargs="*", default=[])
+        if name in ("table", "compare"):
+            p.add_argument("--cards", nargs="*", help="the rig's card log (scripts/card_log.py's cards.csv): the "
+                           "energy columns (FN101)")
         if name == "table":
             p.add_argument("--csv", type=Path)
         elif name == "compare":

@@ -18,8 +18,21 @@ rig/server-<arm>.log. Each ARM is one run (the rows' arm). Per run, against REF:
     seconds a task, the number of such turns, and the longest first-token wait. A task is one attempt with rows in
     turns.csv. These are the run's own counts, not scaled to REF's work: a change that reads fewer tokens shows here
     and not in the equal-work minutes.
+  - the cards' energy (FN101, Q1518; energy.py), where the folder holds the run's card log and proxy rows: the card
+    energy over the run's session window (its first request to its last request's end) in kJ, the joules a task and a
+    generated token, and the cards' summed watts while generating, reading the prompt and idle between turns; and the
+    joules a task at equal work, the counterpart of the minutes at equal work: REF's prompt tokens at the run's prompt
+    speed and watts while reading the prompt, REF's generated tokens at the run's generation speed and watts while
+    generating, and REF's own time outside the server at the run's watts while idle, over REF's tasks. The session's
+    joules a task and a token depend on what each attempt generated (a run that generates more spreads its prompt
+    reading and idle time over more tokens); the joules at equal work compare the engines on the same work. A run's
+    card log is rig_<arm>/cards.csv, else rig/cards.csv (the release check's log of every arm); its proxy rows those of
+    proxy_<arm>/proxy.jsonl whose tag starts with the arm, or every task row in it when none does (one run's log under
+    the harness's own arm name), else the rows of OUT/proxy.jsonl whose tag starts with the arm. SKIP_TASKS also cuts
+    a left-out task's span out of the window.
 The columns up to equal_work_vs_ref are those of docs/data/2026-11-05_keepalive/run/agent_tables.py, cell for cell;
-the work columns follow them.
+the work columns follow them, then the energy columns when any run has a card log and proxy rows (a table without
+them is as before).
 keepalive_blocks.tsv: every ggml_cuda_keepalive_log line of each run's server log, one row a card and a report: runs,
 ended by the host, by the timeout, without a report, seconds, and the SM clock percentiles the block measured.
 SKIP_TASKS (comma-separated task ids) leaves those tasks out of every run; OUT_TAG names the two files' suffix.
@@ -33,10 +46,13 @@ from statistics import median
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from report import load_turns, work  # noqa: E402
+import energy as card_energy  # noqa: E402
 
 NMAX = int(os.environ.get("NMAX", "3"))
 TAG = os.environ.get("OUT_TAG", "")
 WORK_COLS = ["prompt_read_per_task", "reread_per_task", "reread_s_per_task", "reread_turns", "ttft_max_s"]
+ENERGY_COLS = ["energy_kj", "joules_per_task", "joules_per_token", "w_generating", "w_prompt", "w_idle",
+               "equal_work_j_per_task", "equal_work_j_vs_ref"]
 
 
 def pct(xs, q):
@@ -52,6 +68,20 @@ def work_cells(traces):
     w, n = work(traces), len(traces)
     return [f"{w['prompt_n'] / n:.0f}", f"{w['reread_n'] / n:.0f}", f"{w['reread_s'] / n:.2f}", w["reread_turns"],
             "nan" if w["ttft_max"] is None else f"{w['ttft_max']:.2f}"]
+
+
+def energy_summary(out, arm, skip):
+    """A run's energy summary (energy.py), or None when the folder lacks its card log or proxy rows."""
+    cards = next((p for p in (os.path.join(out, f"rig_{arm}", "cards.csv"), os.path.join(out, "rig", "cards.csv"))
+                  if os.path.exists(p)), None)
+    own, shared = os.path.join(out, f"proxy_{arm}", "proxy.jsonl"), os.path.join(out, "proxy.jsonl")
+    if cards is None or not (os.path.exists(own) or os.path.exists(shared)):
+        return None
+    if os.path.exists(own):
+        reqs = card_energy.load_requests(own, arm) or card_energy.load_requests(own)
+    else:
+        reqs = card_energy.load_requests(shared, arm)
+    return card_energy.summary(card_energy.Cards([cards]), reqs, skip)
 
 
 def main():
@@ -89,13 +119,17 @@ def main():
                        pms=f("prompt_ms"), gn=f("predicted_n"), gms=f("predicted_ms"), wall=wall, ttft=ttft,
                        first=first, acc=acc / gen if gen else float("nan"),
                        mins=median(float(a["wall_s"]) / 60 for a in aa) if aa else float("nan"),
-                       work=work_cells([v for k, v in traces.items() if k[0] == arm]))
+                       work=work_cells([v for k, v in traces.items() if k[0] == arm]),
+                       energy=energy_summary(out, arm, skip))
     r = st[ref]
     r_other = r["wall"] - r["pms"] / 1000 - r["gms"] / 1000
     cols = ["arm", "passed", "turns", "prompt_tok_s", "gen_tok_s", "ttft_median_s", "ttft_p90_s", "ttft_turn1_median_s",
             "acceptance", "tokens_per_step", "minutes_all", "minutes_per_task_median", "equal_work_min_per_task",
             "equal_work_vs_ref"] + WORK_COLS
-    rows = []
+    with_energy = any(st[arm]["energy"] for arm in arms)
+    if with_energy:
+        cols += ENERGY_COLS
+    rows, eq_j = [], {}
     for arm in arms:
         s = st[arm]
         pr = s["pn"] / s["pms"] * 1000 if s["pms"] else float("nan")
@@ -105,9 +139,20 @@ def main():
                      f"{pct(s['ttft'], 0.9):.2f}", f"{median(s['first']):.2f}" if s["first"] else "nan",
                      f"{s['acc']:.3f}", f"{1 + NMAX * s['acc']:.2f}", f"{s['wall'] / 60:.1f}", f"{s['mins']:.2f}",
                      f"{eq:.2f}", ""] + s["work"])
+        e = s["energy"]
+        if with_energy and e is None:
+            rows[-1] += ["nan"] * len(ENERGY_COLS)
+        elif with_energy:
+            eq_j[arm] = ((r_other * e["w_idle"] + r["pn"] / pr * e["w_prompt"] + r["gn"] / gr * e["w_generating"])
+                         / r["n"] if r["n"] else float("nan"))
+            cells = dict(zip(card_energy.TSV_COLUMNS[1:], card_energy.tsv_cells(e)))
+            rows[-1] += [cells[c] for c in ENERGY_COLS[:-2]] + [f"{eq_j[arm]:.0f}", ""]
     base = float(rows[arms.index(ref)][12])
     for row in rows:
         row[13] = f"{(float(row[12]) / base - 1) * 100:+.1f} %"
+        if with_energy:
+            row[-1] = (f"{(eq_j[row[0]] / eq_j[ref] - 1) * 100:+.1f} %" if row[0] in eq_j and ref in eq_j
+                       else "nan")
     with open(os.path.join(out, f"agent{TAG}.tsv"), "w") as fh:
         fh.write("\t".join(cols) + "\n")
         for row in rows:

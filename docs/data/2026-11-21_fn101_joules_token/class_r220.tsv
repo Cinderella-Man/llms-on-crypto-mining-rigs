@@ -1,0 +1,14 @@
+measure	arm	base	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+minutes a task at equal work	r075	c10	1.12 1.13	1.14 1.18	1.125	1.16	0.01	0.04	-0.035	-3.0 %	negligible
+generation tok/s	r075	c10	30.6 30.39	30.28 29.46	30.5	29.87	0.21	0.82	+0.625	+2.1 %	negligible
+prompt tok/s	r075	c10	154.6 150.6	150.4 142.4	152.6	146.4	4	8	+6.2	+4.2 %	negligible
+first token median s	r075	c10	2.28 2.64	2.3 2.27	2.46	2.285	0.36	0.03	+0.175	+7.7 %	negligible
+first token p90 s	r075	c10	7.91 7.94	7.9 8.94	7.925	8.42	0.03	1.04	-0.495	-5.9 %	negligible
+first token on a task's first turn, median s	r075	c10	6.22 6.35	6.29 6.49	6.285	6.39	0.13	0.2	-0.105	-1.6 %	negligible
+prompt tokens read a task	r075	c10	3324 3259	3093 4670	3292	3882	65	1577	-590	-15.2 %	negligible
+reply tokens re-read a task	r075	c10	0 0	0 0	0	0	0	0	+0	—	negligible
+prompt s of the turns that re-read a reply, a task	r075	c10	0 0	0 0	0	0	0	0	+0	—	negligible
+longest first-token wait s	r075	c10	27.48 27.5	27.21 27.42	27.49	27.32	0.02	0.21	+0.175	+0.6 %	negligible
+card joules a task at equal work	r075	c10	24201 24521	24620 25431	2.436e+04	2.503e+04	320	811	-664.5	-2.7 %	negligible
+card joules a task	r075	c10	28824 35950	24847 52825	3.239e+04	3.884e+04	7126	2.798e+04	-6449	-16.6 %	negligible
+card joules a generated token	r075	c10	16.96 15.67	18.17 16.88	16.32	17.52	1.29	1.29	-1.21	-6.9 %	negligible

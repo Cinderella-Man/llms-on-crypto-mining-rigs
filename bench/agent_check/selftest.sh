@@ -26,7 +26,8 @@
 #   tokens re-read with their turns and prompt seconds, and the longest first-token wait;
 # - the class tables (C855): agent_tables.py adds a task's work counts after its old columns, the same as report.py
 #   work's; class_arms.py classes a run that reads fewer tokens a gain beyond the spread while its minutes are
-#   negligible, gives no share against a base of 0, and on a table without the work columns gives the time measures.
+#   negligible, gives no share against a base of 0, and on a table without the work columns gives the time measures;
+# - the energy columns (FN101): selftest_energy.sh on its own fixed inputs.
 set -euo pipefail
 OUT=${1:?usage: selftest.sh OUT}
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -283,4 +284,5 @@ arms = (out / "arms.md").read_text()
 check("| mock-mark | 3 | 2 | 1:1 2:1 | 3 |" in arms, "arms: passes by the try that passed, tries stopped at the mark")
 sys.exit(1 if fails else 0)
 EOF
-echo "selftest passed; reports in $OUT (table.md, gonogo.md, replay_summary.md)"
+bash "$HERE/selftest_energy.sh" "$OUT/energy" > "$OUT/energy.txt" || { cat "$OUT/energy.txt"; exit 1; }
+echo "selftest passed; reports in $OUT (table.md, gonogo.md, replay_summary.md, energy.txt)"

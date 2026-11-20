@@ -1,0 +1,14 @@
+measure	arm	base	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+minutes a task at equal work	t1400	c600	1.38 1.37	1.39 1.36	1.375	1.375	0.01	0.03	+0	+0.0 %	negligible
+generation tok/s	t1400	c600	30.71 30.87	31.05 31.46	30.79	31.26	0.16	0.41	-0.465	-1.5 %	loss
+prompt tok/s	t1400	c600	157.9 158.8	147.9 154.3	158.4	151.1	0.9	6.4	+7.25	+4.8 %	gain
+first token median s	t1400	c600	2.32 2.83	2.44 2.26	2.575	2.35	0.51	0.18	+0.225	+9.6 %	negligible
+first token p90 s	t1400	c600	7.88 7.9	7.94 8.02	7.89	7.98	0.02	0.08	-0.09	-1.1 %	gain
+first token on a task's first turn, median s	t1400	c600	4.67 4.62	6.38 6.38	4.645	6.38	0.05	0	-1.735	-27.2 %	gain
+prompt tokens read a task	t1400	c600	3216 3304	2959 3302	3260	3130	88	343	+129.5	+4.1 %	negligible
+reply tokens re-read a task	t1400	c600	0 18	16 0	9	8	18	16	+1	+12.5 %	negligible
+prompt s of the turns that re-read a reply, a task	t1400	c600	0 0.24	0.16 0	0.12	0.08	0.24	0.16	+0.04	+50.0 %	negligible
+longest first-token wait s	t1400	c600	27.37 27.53	27.46 27.28	27.45	27.37	0.16	0.18	+0.08	+0.3 %	negligible
+card joules a task at equal work	t1400	c600	30015 29753	29798 29135	2.988e+04	2.947e+04	262	663	+417.5	+1.4 %	negligible
+card joules a task	t1400	c600	39236 26765	30145 36914	3.3e+04	3.353e+04	1.247e+04	6769	-529	-1.6 %	negligible
+card joules a generated token	t1400	c600	15.01 17.52	16.24 14.89	16.27	15.56	2.51	1.35	+0.7	+4.5 %	negligible
