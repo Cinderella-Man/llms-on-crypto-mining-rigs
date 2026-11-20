@@ -1,0 +1,42 @@
+# the two differing kernels' SASS, base 602691153 (<) against head 3dfad876f (>), addresses and encodings removed
+# (sass_compare.py extract); k_hop_mb_recv first (lines 97-112), then k_hop_mb_send (lines 385-401)
+97c97
+< MOV32I R0, 0x0 ;
+---
+> MOV32I R0, 0x80 ;
+104c104
+< MOV R8, c[0x4][0x78] ;
+---
+> MOV R8, c[0x4][0x70] ;
+106c106
+< MOV R9, c[0x4][0x7c] ;
+---
+> MOV R9, c[0x4][0x74] ;
+110c110
+< MOV R4, c[0x4][0x80] ;
+---
+> MOV R4, c[0x4][0x78] ;
+112c112
+< MOV R5, c[0x4][0x84] ;
+---
+> MOV R5, c[0x4][0x7c] ;
+385c385
+< MOV32I R0, 0x0 ;
+---
+> MOV32I R0, 0x80 ;
+393c393
+< MOV R8, c[0x4][0x70] ;
+---
+> MOV R8, c[0x4][0x68] ;
+395c395
+< MOV R9, c[0x4][0x74] ;
+---
+> MOV R9, c[0x4][0x6c] ;
+399c399
+< MOV R4, c[0x4][0x80] ;
+---
+> MOV R4, c[0x4][0x78] ;
+401c401
+< MOV R5, c[0x4][0x84] ;
+---
+> MOV R5, c[0x4][0x7c] ;

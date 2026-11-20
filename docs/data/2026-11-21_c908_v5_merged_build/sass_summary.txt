@@ -1,0 +1,19 @@
+base kernels (names): 8835; identical in new with kq_fp32 off: 8833; different: 2; missing in new: 0; names only in new (kq_fp32 off): 1; kq_fp32 on kernels: 176
+only in new: k_hop_mb_gate_copy(uint4 const*, uint4*, unsigned long)
+kq_fp32=true kernels' SHA-1, base against head: identical
+kernels compared: 2; differing only in MOV32I constants: 0; differing otherwise: 2
+MOV32I 0 -> 128 (+128): 2 lines
+OTHER: other lines differ k_hop_mb_recv(hop_mb_args)
+OTHER: other lines differ k_hop_mb_send(hop_mb_args)
+
+classes (sass_classify.py):
+kernel	family	instr_base	instr_new	kind	opcode_changes
+k_hop_mb_recv(hop_mb_args)	k_hop_mb_recv	252	252	reorder	
+k_hop_mb_send(hop_mb_args)	k_hop_mb_send	222	222	reorder	
+
+instructions per kernel (base; head):
+base	k_hop_mb_recv(hop_mb_args)	252
+base	k_hop_mb_send(hop_mb_args)	222
+head	k_hop_mb_gate_copy(uint4 const*, uint4*, unsigned long)	42
+head	k_hop_mb_recv(hop_mb_args)	252
+head	k_hop_mb_send(hop_mb_args)	222

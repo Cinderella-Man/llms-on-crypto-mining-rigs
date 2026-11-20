@@ -1,0 +1,9 @@
+run	binary	LLAMA_PIPE_GRAMMAR	flags	pipelined requests	guesses	right	wrong	grammar rejections	same tokens as	grammar mode
+base-plain	602691153	unset	-bs	0	0	0	0	0	-	- (no pipe)
+head-plain	head	unset	-bs	0	0	0	0	0	base-plain: 5 of 5	- (no pipe)
+base-pipe	602691153	unset	-bs --pipe-depth 3	5	370	37	113	- (not printed)	-	off
+head-pipe	head	unset	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	off
+head-pipe-gram-empty	head	empty	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	off
+head-pipe-gram0	head	0	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	off
+head-pipe-gram-true	head	true	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	off
+head-pipe-gram1	head	1	-bs --pipe-depth 3	5	480	45	144	15	base-pipe: 5 of 5	ON

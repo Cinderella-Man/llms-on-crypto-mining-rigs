@@ -1,0 +1,3 @@
+kernel	copies_base	copies_new	identical
+k_hop_mb_recv(hop_mb_args)	1	1	NO
+k_hop_mb_send(hop_mb_args)	1	1	NO
