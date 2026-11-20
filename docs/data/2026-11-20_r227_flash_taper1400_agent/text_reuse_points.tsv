@@ -1,3 +1,4 @@
 run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
 c600a	bugfix-python-pig-latin	4	4311	562	4901	4901	4873	28	850.965	4311	562	0	450	before the tool call	same, arguments re-serialized
 c600a	bugfix-python-pig-latin	5	4311	743	5131	5131	5054	77	1477.436	4901	154	-590		before the previous reply	same
+t1400a	bugfix-python-variable-length-quantity	6	4044	54	4354	4354	4098	256	1918.338	3924	174	120	15	in the tool call	same
