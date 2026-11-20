@@ -31,7 +31,9 @@ came from steps 2 to 5 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/READM
 ([R217](../../docs/data/2026-11-19_r217_climb_rig1/README.md)), step 2
 ([R218](../../docs/data/2026-11-20_r218_soak_rig1/README.md)), step 3
 ([R221](../../docs/data/2026-11-20_r221_core_climb_rig1/README.md)) and step 4
-([R223](../../docs/data/2026-11-20_r223_core_soak_rig1/README.md)).
+([R223](../../docs/data/2026-11-20_r223_core_soak_rig1/README.md)); its step 5
+([R224](../../docs/data/2026-11-20_r224_apply_rig1/README.md)) set the profile and Ornith differed from its stock answer
+once in 22 rounds, so that rig runs at stock.
 
 | Step | What happens | How it runs | What it gives | Time |
 |---|---|---|---|---|
@@ -39,7 +41,7 @@ came from steps 2 to 5 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/READM
 | 2. Memory soak ladder | three rungs of 30 minutes; each card starts two steps under its top value and goes up a rung while it stays clean; every card's differing checks are counted | `python3 climb.py rungs out/profile.json`, then `soak_chain.sh` with `PROFILE=rung1.json LADDER="rung2.json rung3.json" FAILURES=rung1.json` | `soak/use.json`: each card's memory | 1 h 52 min for nine cards with the served model's stock reference (R218, where a card differed so the served model's run with the offsets did not follow); est. 2 h 30 min with it |
 | 3. Core climb from the soaked memory | each card's memory straight to `use.json`'s value and one check round, then every card's core up by target peak clock | `python3 climb.py --from-profile soak/use.json climb` | `out/profile.json`: that memory, and each card's core one step under its last clean step | 11 min 55 s for six cards (R202); 15 min 27 s for nine (R221) |
 | 4. Core soak ladder | the memory fixed at step 2's values; each card's core one climb step higher a rung, up to two steps under its core failure; three rungs of 30 minutes | rungs from step 2's `use.json` and step 3's `steps.csv` and profile by R202b's [make_rungs.py](../../docs/data/2026-11-18_r202b_core_soak/run/make_rungs.py), then `soak_chain.sh` with them | `soak/use.json`: the rig's profile | 90 minutes of soak for nine cards (R202b); 1 h 52 min for nine with the served model's stock reference (R223, where a card differed so the served model's run with the offsets did not follow); est. 2 h 30 min with it |
-| 5. The profile on the served model | `apply` of step 4's `use.json`, then the served model on every card against its stock answer | R209's [apply_check.sh](../../docs/data/2026-11-19_r209_oc_v5/run/apply_check.sh), then the boot service ([below](#overclocked-at-every-boot-boot)) | the rig overclocked, at every boot once the owner enables it | `apply` 5 min 18 s for nine cards (R209), plus the model's check |
+| 5. The profile on the served model | `apply` of step 4's `use.json`, then the served model on every card against its stock answer | R209's [apply_check.sh](../../docs/data/2026-11-19_r209_oc_v5/run/apply_check.sh), then the boot service ([below](#overclocked-at-every-boot-boot)) | the rig overclocked, at every boot once the owner enables it | `apply` 5 min 18 s for nine cards (R209), plus the model's check; 5 min 23 s on the first rig (R224) |
 
 The rules that make the steps repeatable:
 
@@ -178,7 +180,9 @@ cat /var/tmp/oc-step5/R209C_DONE               # "done 0": set and checked; the 
 
 A pass leaves the rig overclocked until the next reboot. To have it at every boot, install the boot service with
 `/var/tmp/oc-step4/soak/use.json` as its profile ([below](#install-turn-on-check-turn-off)); it stays off until it is
-enabled for that rig.
+enabled for that rig. Any other marker means the script has already set every offset to 0 and stopped the
+watchdog: the profile did not hold on the served model, and the next try needs a fresh boot (the first rig, R224:
+one differing round in 22).
 
 ## Every card in one sitting: `climb.py`
 

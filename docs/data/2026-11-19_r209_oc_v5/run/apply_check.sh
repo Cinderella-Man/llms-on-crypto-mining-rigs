@@ -12,7 +12,7 @@
 # The kit's env.sh gives the check model and the memory steps `apply` uses (and an engine for apply's check servers);
 # this script then sets WORK, and BIN only for model_check.sh. SETTINGS is release/ornith-v5/settings.env copied into
 # the kit. The done marker WORK/R209C_DONE says "done 0" on a pass, else what failed.
-: "${KIT:?KIT=<the offset kit folder>}" "${BIN:?BIN=<the v5 tree's bin folder>}" "${MODEL:?MODEL=<the GGUF>}"
+: "${KIT:?KIT=<the offset kit folder>}" "${BIN:?BIN=<the v5 tree bin folder>}" "${MODEL:?MODEL=<the GGUF>}"
 : "${SETTINGS:?SETTINGS=<release settings.env>}" "${PROFILE:?PROFILE=<the use profile>}"
 : "${WORK:?WORK=<fresh work folder>}" "${OUT:?OUT=<fresh model check folder>}"
 V5=$BIN W=$WORK
