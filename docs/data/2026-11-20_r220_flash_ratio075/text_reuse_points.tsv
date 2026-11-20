@@ -1,0 +1,8 @@
+run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
+c10a	bugfix-javascript-triangle	5	4485	79	4648	4648	4564	84	1493.235	4470	95	15	57	before the tool call	same
+c10a	bugfix-python-pig-latin	3	3704	689	4615	4616	4393	223	1846.056	3451	943	253	895	before the tool call	same
+c10a	bugfix-python-pig-latin	4	3704	1091	4823	4824	4795	29	852.698	4616	180	-912		before the previous reply	same, arguments re-serialized
+c10a	bugfix-python-pig-latin	5	3704	1257	5089	5090	4961	129	1585.286	4824	138	-1120		before the previous reply	same
+c10a	bugfix-javascript-variable-length-quantity	3	6061	301	6770	6772	6362	410	2873.21	4565	1797	1496	1762	before the tool call	same
+c10a	bugfix-javascript-variable-length-quantity	4	6061	913	7002	7004	6974	30	903.257	6772	203	-711		before the previous reply	same, arguments re-serialized
+c10a	bugfix-javascript-variable-length-quantity	5	6061	992	7138	7140	7053	87	1438.887	7004	50	-943		before the previous reply	same

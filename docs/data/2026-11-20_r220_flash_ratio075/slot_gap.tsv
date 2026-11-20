@@ -1,0 +1,2 @@
+log	requests	median_ms	max_ms	sum_ms
+server-c10a.log	64	0.70	7.57	72.5

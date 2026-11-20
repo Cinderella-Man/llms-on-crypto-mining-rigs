@@ -1,0 +1,194 @@
+# R220: Flash-Next's sparse attention from 6,153 cells, on the agent check (2026-11-20)
+
+Registry row [Q1635](../../../quants/experiments.md), from R69 ([Q1252](../2026-11-20_r69_sparse_switch/README.md)).
+On the deep lane, `GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=0.75` in place of the v5 preset's 1.0 moves Flash-Next's
+four-token verify pass to the sparse attention kernel from 6,153 cached cells instead of 8,204, which made the steady
+decode step 1.71 ms faster at 6,144 tokens and 3.50 ms faster at 7,168; the replies then differ from the preset's. This
+folder decides, on the coding-agent check, whether 0.75 goes into Flash-Next's v5 preset.
+
+**Run 1 of 4 done: the control, Flash-Next's v5 preset as it is, passed 12 of 12 tasks.** A task took 2.28 minutes at
+equal work, the model generated at 30.28 tok/s over the session, and the prompts took 20.57 s a task (246.9 s in all,
+37,117 tokens read). No turn read an earlier reply again; text reuse kept the cached tokens on 7 requests in 3 tasks.
+For reference only (another boot, v4.0's preset): R209d on the same rig, engine and clock profile the day before took
+2.26 minutes a task at equal work, generated at 30.69 tok/s and read prompts for 20.62 s a task, and the 13 requests
+that read the same prompt on the same cached prefix in both runs took 92.59 s here against 92.67 s there. The started
+command is R210's text-reuse run's byte for byte and matches `settings.env`; every card held the profile, the watchdog
+never tripped and the boot logged no GPU error. No class is given yet: the verdict compares both arms after all four
+runs.
+
+## What runs
+
+Four runs of Flash-Next's agent check ([bench/agent_check](../../../bench/agent_check/README.md): 12 bug-fix tasks,
+Python and JavaScript alternating, a 12-minute cap a task, a 40-minute budget) on one rig, one engine and one boot,
+alternated so that each arm has one run in each half of the day:
+
+| # | Run | Arm | `GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO` | Status |
+|---|---|---|---|---|
+| 1 | R220a | `c10a` | 1.0, the v5 preset as it is (the control) | done 11:21–11:39 |
+| 2 | R220b | `r075a` | 0.75 | planned |
+| 3 | R220c | `c10b` | 1.0 (the control) | planned |
+| 4 | R220d | `r075b` | 0.75 | planned |
+
+Every run: the maker's Swift GSQ-RCO Q2_0 (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, the n-gram
+table in the third shard) with the MTP draft (`mtp-Qwen3.8-Flash-Next-draft.gguf`) at 65,536 tokens on nine P106-090
+cards, Flash-Next's v5 preset ([release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env)) on
+the v5 tree `pascal-p106-v5` `602691153` (`llama-server` md5 `86607661d5a19d1a90d19ee4db10c90b`). The rig is the
+second one, with its own soaked clock profile set on this boot
+([R219](../2026-11-19_r209_oc_v5/r219_apply.md): memory +1,300 +1,000 +1,000 +1,100 +1,100 +1,200 +900 +900 +1,300 MT/s
+and core +256 +256 +269 +231 +206 +206 +282 +256 +231 MHz on cards 0 to 8, 75 W, the kit's watchdog running), as for
+R69. The machine that drives the rig is the agent's client.
+
+**How the preset is started.** [run/flash_ratio.sh](run/flash_ratio.sh) runs C854's launcher
+([flash_agent.sh](../2026-11-18_c854b_p106_check/run/flash_agent.sh): R156's driver
+[r156.sh](../2026-11-13_r156_agent_v4r/run/r156.sh), the harness's arm `v4r`, then the report) with
+`LLAMA_SERVER_TEXT_REUSE=1` added to the driver's `V4R_ENV`. That line is the v5 preset: the same 40 switches in the
+same order as `settings.env`'s `PRESET_ENV`, and its `PRESET_ARGS` (R210's text-reuse arm, which became the preset;
+[R208/R210](../2026-11-19_r208_r210_flash_switches/README.md)). The 0.75 arm replaces the driver's
+`GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=1.0` with `=0.75`, so its started command differs from the control's in that
+one value. [run/preset_check.sh](run/preset_check.sh) checks a started command against `settings.env` (the
+environment byte for byte, each flag with its value), and [run/dry_line.sh](run/dry_line.sh) prints the command an
+arm would start without loading anything.
+
+**The reference run** is R209d's `f5oc1` ([R209](../2026-11-19_r209_oc_v5/README.md), 2026-11-19): the same rig, tree
+and clock profile on another boot, with v4.0's preset (the v5 preset without text reuse). It is shown beside each run
+for reference only; the verdict compares the two arms' runs of this day.
+
+## Run 1, `c10a` (R220a): the control, 11:21–11:39
+
+**The v5 preset ran 12 of 12 tasks in 13.7 minutes.** Its started command (1,715 bytes, md5
+`5f0cbde4375a316aafaf49ba4660efcc`) is R210's text-reuse run's (`f5t2`) byte for byte and passes
+[run/preset_check.sh](run/preset_check.sh) against `settings.env` (40 switches, `PRESET_ARGS` plus the harness's
+`--metrics --no-webui` and the draft). The server started at 11:21:25 and was up after 227 s (R209d: 227 s); the tasks
+ran 11:25:15–11:39:05 and the report ended at 11:39:24. Before and after, every card was at the profile's offsets
+(75 W), the kit's watchdog was running, and the kernel log held no Xid line.
+
+| | R209d `f5oc1` (2026-11-19, reference) | **`c10a` (R220a)** |
+|---|---|---|
+| preset | v4.0's (no text reuse) | **v5, ratio 1.0** |
+| passed | 12 / 12 | **12 / 12** |
+| minutes a task at equal work (R90 `v3`'s work) | 2.26 | **2.28** |
+| the same without JavaScript `complex-numbers` | 2.34 | **2.36** |
+| generation tok/s | 30.69 | **30.28** |
+| prompt tok/s, the whole session | 152.5 | **150.4** |
+| prompt s a task (all prompt s) | 20.62 (247.4) | **20.57 (246.9)** |
+| prompt tokens read a task | 3,145 | **3,093** |
+| tokens generated a task | 1,855 | **1,367** |
+| the 13 requests that read the same prompt on the same cached prefix, prompt s | 92.67 | **92.59** |
+| of them the 12 first turns, prompt s | 84.83 | **84.76** |
+| first token median s; p90 s | 2.66; 7.91 | **2.30; 7.90** |
+| first token on a task's first turn, median s | 6.25 | **6.29** |
+| the longest first-token wait s (`affine-cipher` turn 1, 2,780 tokens, nothing cached) | 27.53 | **27.21** |
+| draft acceptance; tokens a decode step | 0.767; 3.30 | **0.755; 3.27** |
+| ms a decode step, middle context under 4,000 / 4,000 to 8,000 | 104.15 / 108.02 | **105.59 / 108.62** |
+| requests in those buckets | 17 / 39 | **17 / 47** |
+| ms a decode step, all requests | 107.75 | **108.17** |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 1; 941; 6.9 of 247.4 | **0; 0; 0.0 of 246.9** |
+| requests on which text reuse kept the cached tokens | — | **7 (3 tasks)** |
+| minutes, all 12 tasks; turns | 16.7; 61 | **13.7; 64** |
+| tool calls / failed / malformed | 56 / 1 / 0 | **59 / 0 / 0** |
+| graph reallocations | 0 in 61 requests | **0 in 64** |
+| busy SM clock medians, cards 0 to 8, MHz (mean) | 2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0) | **2113 2138 2151 2100 2100 2100 2151 2151 2126 (2,125.6)** |
+| busy memory clock medians, MHz | 4657 4498 4498 4551 4551 4608 4455 4455 4657 | **the same on every card** |
+| hottest card; highest power (card log) | 42 °C; 87.80 W | **44 °C (card 0); 83.35 W (card 3)** |
+| lowest MemAvailable MiB; swap highest MiB | 384; 589 | **379; 999** |
+
+Each value is one run ([agent.tsv](agent.tsv), [agent_nocx.tsv](agent_nocx.tsv), [work.md](work.md),
+[prompt_tasks.tsv](prompt_tasks.tsv), [same_prompts.md](same_prompts.md), [first_token.tsv](first_token.tsv),
+[steps.md](steps.md), [rereads_runs.tsv](rereads_runs.tsv), [text_reuse_points.tsv](text_reuse_points.tsv),
+[clocks.tsv](clocks.tsv), [cards.md](cards.md), [host.tsv](host.tsv), [reallocs.tsv](reallocs.tsv); the agent check's
+own report: [c10a_report_table.md](c10a_report_table.md), [c10a_compare.md](c10a_compare.md),
+[c10a_gonogo.md](c10a_gonogo.md)). R209d's figures are this folder's scripts on R209's published tables and its server
+log.
+
+- **The prompt seconds of every task** ([prompt_tasks.tsv](prompt_tasks.tsv)), which R220 reads for the slower primes
+  R69 saw at 7,168 and 8,192 tokens with the lower ratios: from 15.26 s (`list-ops`) to 40.40 s (`affine-cipher`,
+  whose first turn reads 2,780 tokens with nothing cached). The tasks with more turns read more: Python `phone-number`
+  27.05 s in 7 turns, `scale-generator` 23.52 s in 7.
+- **Where the ratio will act** ([steps_ratio.md](steps_ratio.md)): 11 of the 64 requests had their middle between 6,153
+  and 8,204 cells, where 0.75 moves a four-token verify pass to the sparse kernel; they generated 2,229 tokens (33 to
+  757 a request) at 114.81 ms a decode step, and the 53 requests below 6,153 at 107.07 ms. R209d's same bucket, 9
+  requests at 109.50 ms, is mostly one reply of 5,856 tokens. A step in such a short bucket depends on which replies
+  fall in it, so the verdict compares this bucket between the four runs of this day.
+- **Text reuse** ([text_reuse_points.tsv](text_reuse_points.tsv)): it kept the cached tokens on JavaScript `triangle`
+  turn 5, Python `pig-latin` turns 3 to 5 and JavaScript `variable-length-quantity` turns 3 to 5, each time where the
+  client sent back the model's reply, or its tool call's arguments re-serialized, in other tokens. The time from choosing
+  the slot to processing each request, where its check runs, was 0.70 ms on the median ([slot_gap.tsv](slot_gap.tsv)).
+- **Answers sound:** every task passed with its hidden tests; 0 of 59 calls malformed, none inside the reasoning, no
+  NaN or inf, 11 checkpoints restored, 0 full re-processing. The report's gates are all GO except memory (NO-GO on the
+  379 MB low and the swap), as in every Flash-Next run of this preset.
+- **Memory:** swap grew from 50 MiB at the start to 999 MiB at 11:38:42, written out at about 1 to 2 MB/s through the
+  tasks with almost nothing read back (the rig's vmstat), and was back at 51 MiB once the server stopped; R209d's
+  highest was 589 MiB. The RAM watchdog stopped nothing.
+- **Heat and power** ([cards.md](cards.md), the card log every 0.5 s over the tasks): the hottest card 44 °C, above
+  80 W in 1 2 2 3 1 0 0 1 1 single samples on cards 0 to 8, highest 83.35 W on card 3. The kit's watchdog sampled
+  1,661 times a card over the same window: 0 trips, never 80 W held for 5 s.
+
+## Files
+
+| File | What it holds |
+|---|---|
+| [agent.tsv](agent.tsv), [agent_nocx.tsv](agent_nocx.tsv) | per run: tasks passed, turns, prompt and generation tok/s, first token median and p90, the draft's acceptance, minutes, a task at equal work (R90 `v3`'s work); the second without JavaScript `complex-numbers` |
+| [work.md](work.md), [work.tsv](work.tsv) | per run: prompt tokens read and generated, reply re-reads, prompt seconds, the longest first-token wait |
+| [prompt_tasks.tsv](prompt_tasks.tsv) | per task and run: prompt seconds, prompt tokens read, turns; the mean a task |
+| [same_prompts.md](same_prompts.md) | the requests that read the same prompt on the same cached prefix in every run named, prompt ms each |
+| [first_token.tsv](first_token.tsv) | the longest first-token wait of each run, and the median and p90 of the turns after a task's first |
+| [steps.md](steps.md), [steps_ratio.md](steps_ratio.md) | ms a decode step by the context at each request's middle: R203's buckets, and buckets cut at 6,153 and 8,204 cells, where the ratio moves a four-token verify pass |
+| [rereads_runs.tsv](rereads_runs.tsv), [rereads_turns.tsv](rereads_turns.tsv) | turns whose cached prefix stops inside the previous reply, per run and per turn (C854's [reply_rereads.py](../2026-11-18_c854b_p106_check/run/reply_rereads.py); the second is empty while no run re-read a reply) |
+| [text_reuse_points.tsv](text_reuse_points.tsv) | the turns on which text reuse kept the cached tokens |
+| [slot_gap.tsv](slot_gap.tsv) | the time from choosing the slot to processing each request (text reuse's check runs there) |
+| [clocks.tsv](clocks.tsv) | busy SM clock medians per card over the tasks |
+| [cards.md](cards.md) | per card over the tasks: highest temperature and power, samples above 80 W, busy memory clock (R203's [flash_cards.py](../2026-11-18_r203_ornith_offsets/run/flash_cards.py)) |
+| [host.tsv](host.tsv) | lowest MemAvailable, swap, card memory peaks |
+| [reallocs.tsv](reallocs.tsv) | graph reallocations by prompt size |
+| [agent/](agent/) | each run's per-turn and per-attempt tables (`turns.csv`, `attempts.csv`), the harness's arm `v4r` renamed to the run |
+| `<run>_report_table.md`, `<run>_compare.md`, `<run>_gonogo.md` | the agent check's own report of each run |
+| [run/](run/) | the scripts below |
+
+## Commands
+
+From the repository root on the machine that drives the rig and is the agent's client, one run a session, each with
+its own `OUT`, rig folder, client folder and container prefix; only `ARM` and those names change between the four runs:
+
+```bash
+export ARM=c10a PREFIX=acrel-r220a RIG=<rig alias> CLIENT=local \
+  MODEL=<models>/flash_next/swift_q2_0/Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf \
+  DRAFT=<models>/flash_next/mtp-Qwen3.8-Flash-Next-draft.gguf \
+  NEW=llama.cpp-20261117-602691153-pascal-p106-v5-cand-b12483 REF=<v4.0's build folder, unused by this arm> \
+  RIGDIR=<a folder on the rig>/r220a OUT=<run folder>/out RIG_PORT=8282 RELAY_PORT=8296 PROXY_PORT=18793 \
+  CLIENT_DIR=<client>/bench CLIENT_OUT=<client>/r220a
+unset GAINS_ENV V4R_ENV
+bash docs/data/2026-11-20_r220_flash_ratio075/run/flash_ratio.sh
+```
+
+The runs' `ARM`, `PREFIX` and folder names: R220a `c10a` `r220a`, R220b `r075a` `r220b`, R220c `c10b` `r220c`, R220d
+`r075b` `r220d`. Before a run, the command it will start, and its check against the preset:
+
+```bash
+ARM=r075a WORK=<an empty scratch folder> NEW=llama.cpp-20261117-602691153-pascal-p106-v5-cand-b12483 \
+  DRAFT=<models>/flash_next/mtp-Qwen3.8-Flash-Next-draft.gguf \
+  bash docs/data/2026-11-20_r220_flash_ratio075/run/dry_line.sh > dry_line_r075a.txt
+bash docs/data/2026-11-20_r220_flash_ratio075/run/preset_check.sh dry_line_r075a.txt 0.75   # the control: no ratio
+```
+
+The tables, with Python 3's standard library only, from the runs' collected logs (the inputs are listed at the top of
+[run/tables.sh](run/tables.sh)); the client's `res/` files go into `agent/<run>/` first:
+
+```bash
+python3 -I docs/data/2026-11-19_r208_r210_flash_switches/run/rename_arm.py <run folder>/out/agent/res \
+  docs/data/2026-11-20_r220_flash_ratio075/agent/c10a v4r c10a
+bash docs/data/2026-11-20_r220_flash_ratio075/run/tables.sh <tables folder> c10a [r075a c10b r075b]
+```
+
+| Script | What it does |
+|---|---|
+| [run/flash_ratio.sh](run/flash_ratio.sh) | runs one arm: the v5 preset, or the same with the ratio at 0.75 |
+| [run/dry_line.sh](run/dry_line.sh) | prints the command an arm would start, without loading anything |
+| [run/preset_check.sh](run/preset_check.sh) | checks a started command against `release/flash-next-v5/settings.env` |
+| [run/tables.sh](run/tables.sh) | builds this folder's tables from the runs done so far |
+| [run/steps_ratio.py](run/steps_ratio.py) | ms a decode step in the buckets where the ratio acts (R203's `flash_steps.py` with other buckets) |
+
+## Provenance and licence
+
+Measured on the project's own rig on 2026-11-20 with the repository's own scripts; the agent check's tasks are
+[bench/agent_check](../../../bench/agent_check/README.md)'s (their task IDs are in `agent/<run>/attempts.csv`). No
+model file or task text is in this folder. The tables and scripts here are under the repository's licence.

@@ -1,0 +1,2 @@
+run	arm	lowest_memavailable_mib	at	swap_start_mib	swap_max_mib	swap_max_at	memavailable_end_mib	card_peak_mib_0_to_8
+c10a	c10a	379	11:26:59	50	999	11:38:42	2932	5174,5220,5076,5236,4334,5092,4492,5104,5694
