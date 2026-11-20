@@ -1,0 +1,4 @@
+setting	passes	turns	same_reply_as_control_in_every_pass	control_passes_agree
+short=600:64	3	62	62	62
+short=2048:128	2	62	62	62
+short=2048:64	2	62	62	62

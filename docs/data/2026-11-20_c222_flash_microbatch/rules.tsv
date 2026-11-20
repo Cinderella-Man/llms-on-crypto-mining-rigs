@@ -1,0 +1,40 @@
+setting	est_s_a_pass	delta_s	delta_pct	turns_changed
+short=600:64 (control, passes p3, p6)	220.19	+0.00	+0.00	0
+short=1023:64	210.64	-9.54	-4.33	6
+short=1200:64	207.86	-12.33	-5.60	9
+short=1300:64	207.64	-12.55	-5.70	10
+short=1400:64	207.58	-12.60	-5.72	11
+short=1600:64	208.21	-11.98	-5.44	14
+short=2048:64	213.67	-6.52	-2.96	18
+short=1400:128	213.30	-6.88	-3.13	53
+short=2048:128	214.98	-5.20	-2.36	60
+two rules: 64 to 600, 128 to 1023 (code)	211.70	-8.48	-3.85	6
+two rules: 64 to 600, 128 to 1400 (code)	207.17	-13.02	-5.91	11
+two rules: 64 to 600, 128 to 1600 (code)	206.92	-13.27	-6.03	14
+two rules: 64 to 600, 128 to 2048 (code)	208.85	-11.34	-5.15	18
+
+new_tokens	turns	control_s	short=2048:128_s	short=2048:64_s
+0-99	21	20.37	20.95	20.29
+100-299	7	11.65	15.57	11.59
+300-499	10	25.76	28.05	25.81
+500-599	4	14.22	13.57	14.21
+
+task	turn	call_tokens	control_s	short=2048:128_delta_s	short=2048:64_delta_s
+bugfix-javascript-phone-number	1	610	5.93	-2.39	-2.40
+bugfix-python-pig-latin	1	775	5.86	-1.23	-1.46
+bugfix-javascript-space-age	1	803	5.97	-1.39	-1.68
+bugfix-python-variable-length-quantity	1	815	5.92	-1.19	-1.43
+bugfix-javascript-complex-numbers	1	896	6.31	-1.21	-1.48
+bugfix-javascript-space-age	2	936	6.24	-1.07	-1.09
+bugfix-python-pig-latin	2	1028	6.68	-1.59	-1.24
+bugfix-python-scale-generator	1	1086	6.63	-1.18	-0.79
+bugfix-python-phone-number	1	1130	6.85	-1.21	-0.76
+bugfix-python-affine-cipher	2	1300	7.32	-0.31	-0.22
+bugfix-javascript-triangle	2	1359	7.23	-0.24	-0.05
+bugfix-python-list-ops	2	1534	7.48	+0.34	+0.47
+bugfix-python-scale-generator	2	1567	7.81	-0.22	+0.17
+bugfix-python-pig-latin	3	1578	7.92	-0.37	-0.02
+bugfix-javascript-phone-number	2	1690	7.74	-0.04	+0.79
+bugfix-python-affine-cipher	1	1747	7.61	+0.18	+1.15
+bugfix-javascript-grade-school	2	1985	8.20	+1.00	+1.81
+bugfix-python-variable-length-quantity	2	2007	8.44	+0.80	+1.71
