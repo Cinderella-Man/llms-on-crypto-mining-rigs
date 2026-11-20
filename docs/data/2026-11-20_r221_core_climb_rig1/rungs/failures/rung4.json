@@ -1,0 +1,474 @@
+{
+ "what": "P106 clock-offset soak ladder, rung 4 of 4, from profile.json by bench/mem_offset/climb.py rungs: rung 3's memory with the core added",
+ "date": "2026-11-20",
+ "climb_started": "2026-11-20T11:55:53",
+ "climb_ended": "2026-11-20T12:11:20",
+ "complete": true,
+ "stop_reason": null,
+ "climb_boot": "6e2f0eb7b7f1",
+ "driver": "580.178.04",
+ "check_model": "granite-3.1-3b-a800m-instruct-Q4_K_M.gguf",
+ "check_model_bytes": 2016888384,
+ "greedy_tokens_per_check": 512,
+ "memory_steps_mts": [],
+ "core_step_mhz": 25.32,
+ "core_bin_mhz": 12.66,
+ "stock_peak_window_s": 96,
+ "units": {
+  "memory_mts": "NVML MemClk VF offset in MT/s; +800 is +10 % of the P106-090's 8,008 MT/s",
+  "core_mhz": "NVML GpcClk VF offset in MHz; the driver moves the core in whole steps of core_bin_mhz"
+ },
+ "rules": [
+  "Offsets only go up, and only after a fresh boot: apply refuses a rig that has not rebooted since the climb or since any step down.",
+  "A reboot after any step down: a card whose memory offset went down ran about 8 % slow until the next boot (Q1563).",
+  "The watchdog always on: apply needs it, and it holds the cards so that the offsets stay."
+ ],
+ "each_card": "memory_mts is two steps, one step or no step under the card's top value (rungs 1, 2, 3): the profile's memory_mts, lowered to two steps under the lowest value at which the card's memory failed, if that is lower; core 0. The last rung keeps rung 3's memory and adds the core: the profile's core_mhz, lowered to two steps of the climb under the lowest value at which the card's core failed, if that is lower. Memory steps are memory_step_mts, climb steps core_step_mhz; the failures used are under \"failures\"",
+ "cards": [
+  {
+   "card": 0,
+   "pci": "00000000:03:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1873,
+   "memory_mts": 900,
+   "core_mhz": 269,
+   "core_steps": 21,
+   "memory": {
+    "from_profile_mts": 900,
+    "profile_check": "PASS",
+    "last_clean_mts": 900,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 294,
+    "last_clean_peak_mhz": 2151,
+    "failed_at_mhz": 320,
+    "failed_at_peak_mhz": 2190,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 900,
+    "core": 320,
+    "core_steps": 25,
+    "peak": 2190,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:09:58"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 1,
+   "pci": "00000000:04:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1860,
+   "memory_mts": 1000,
+   "core_mhz": 256,
+   "core_steps": 20,
+   "memory": {
+    "from_profile_mts": 1000,
+    "profile_check": "PASS",
+    "last_clean_mts": 1000,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 282,
+    "last_clean_peak_mhz": 2126,
+    "failed_at_mhz": 307,
+    "failed_at_peak_mhz": 2164,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1000,
+    "core": 307,
+    "core_steps": 24,
+    "peak": 2164,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:09:29"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 2,
+   "pci": "00000000:05:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1100,
+   "core_mhz": 256,
+   "core_steps": 20,
+   "memory": {
+    "from_profile_mts": 1100,
+    "profile_check": "PASS",
+    "last_clean_mts": 1100,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 282,
+    "last_clean_peak_mhz": 2164,
+    "failed_at_mhz": 307,
+    "failed_at_peak_mhz": 2215,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1100,
+    "core": 307,
+    "core_steps": 24,
+    "peak": 2215,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:10:15"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 3,
+   "pci": "00000000:06:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1200,
+   "core_mhz": 206,
+   "core_steps": 16,
+   "memory": {
+    "from_profile_mts": 1200,
+    "profile_check": "PASS",
+    "last_clean_mts": 1200,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 231,
+    "last_clean_peak_mhz": 2126,
+    "failed_at_mhz": 256,
+    "failed_at_peak_mhz": 2164,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1200,
+    "core": 256,
+    "core_steps": 20,
+    "peak": 2164,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:09:31"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 4,
+   "pci": "00000000:07:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 1100,
+   "core_mhz": 206,
+   "core_steps": 16,
+   "memory": {
+    "from_profile_mts": 1100,
+    "profile_check": "PASS",
+    "last_clean_mts": 1100,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 231,
+    "last_clean_peak_mhz": 2100,
+    "failed_at_mhz": 256,
+    "failed_at_peak_mhz": 2138,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1100,
+    "core": 256,
+    "core_steps": 20,
+    "peak": 2138,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:08:49"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 5,
+   "pci": "00000000:0B:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1300,
+   "core_mhz": 231,
+   "core_steps": 18,
+   "memory": {
+    "from_profile_mts": 1300,
+    "profile_check": "PASS",
+    "last_clean_mts": 1300,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 256,
+    "last_clean_peak_mhz": 2164,
+    "failed_at_mhz": 282,
+    "failed_at_peak_mhz": 2190,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1300,
+    "core": 282,
+    "core_steps": 22,
+    "peak": 2190,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:09:59"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 6,
+   "pci": "00000000:0C:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 1000,
+   "core_mhz": 0,
+   "core_steps": 0,
+   "memory": {
+    "from_profile_mts": 1000,
+    "profile_check": "PASS",
+    "last_clean_mts": 1000,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 0,
+    "last_clean_peak_mhz": 1885,
+    "failed_at_mhz": 28,
+    "failed_at_peak_mhz": 1910,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1000,
+    "core": 28,
+    "core_steps": 2,
+    "peak": 1910,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:02:20"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 7,
+   "pci": "00000000:0D:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1911,
+   "memory_mts": 1100,
+   "core_mhz": 282,
+   "core_steps": 22,
+   "memory": {
+    "from_profile_mts": 1100,
+    "profile_check": "PASS",
+    "last_clean_mts": 1100,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 307,
+    "last_clean_peak_mhz": 2214,
+    "failed_at_mhz": 332,
+    "failed_at_peak_mhz": 2240,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 1100,
+    "core": 332,
+    "core_steps": 26,
+    "peak": 2240,
+    "reason": "greedy longer than its limit (37 s)",
+    "time": "2026-11-20T12:10:58"
+   },
+   "needs_reboot_before_use": true
+  },
+  {
+   "card": 8,
+   "pci": "00000000:0E:00.0",
+   "name": "NVIDIA P106-090",
+   "vbios": "86.06.5B.00.0C",
+   "stock_peak_mhz": 1885,
+   "memory_mts": 900,
+   "core_mhz": 231,
+   "core_steps": 18,
+   "memory": {
+    "from_profile_mts": 900,
+    "profile_check": "PASS",
+    "last_clean_mts": 900,
+    "failed_at_mts": null,
+    "limit_found": false
+   },
+   "core": {
+    "took_part": true,
+    "from_profile_mhz": 0,
+    "last_clean_mhz": 256,
+    "last_clean_peak_mhz": 2126,
+    "failed_at_mhz": 282,
+    "failed_at_peak_mhz": 2164,
+    "limit_found": true
+   },
+   "failure": {
+    "phase": "core",
+    "mem": 900,
+    "core": 282,
+    "core_steps": 22,
+    "peak": 2164,
+    "reason": "greedy output differs from stock",
+    "time": "2026-11-20T12:09:32"
+   },
+   "needs_reboot_before_use": true
+  }
+ ],
+ "from_profile": "use.json",
+ "core_climb_cards": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "rung": {
+  "n": 4,
+  "of": 4,
+  "from": "profile.json",
+  "cap_steps": 2,
+  "memory_step_mts": 100
+ },
+ "failures": [
+  {
+   "card": 0,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 0,
+   "memory_mts": 1100,
+   "where": "soak 2026-11-20, rung 2: 2 differing checks at +1,100 MT/s, +0 MHz"
+  },
+  {
+   "card": 1,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 1,
+   "memory_mts": 1200,
+   "where": "soak 2026-11-20, rung 3: 3 differing checks at +1,200 MT/s, +0 MHz"
+  },
+  {
+   "card": 2,
+   "memory_mts": 1300,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,300 MT/s with the core at 0"
+  },
+  {
+   "card": 3,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 4,
+   "memory_mts": 1300,
+   "where": "soak 2026-11-20, rung 3: 1 differing check at +1,300 MT/s, +0 MHz"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1400,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,400 MT/s with the core at 0"
+  },
+  {
+   "card": 6,
+   "memory_mts": 1200,
+   "where": "soak 2026-11-20, rung 3: 3 differing checks at +1,200 MT/s, +0 MHz"
+  },
+  {
+   "card": 7,
+   "memory_mts": 1300,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,300 MT/s with the core at 0"
+  },
+  {
+   "card": 8,
+   "memory_mts": 1100,
+   "where": "R217, the memory climb, 2026-11-19: greedy output differed at +1,100 MT/s with the core at 0"
+  },
+  {
+   "card": 0,
+   "core_mhz": 320,
+   "where": "profile.json: failed at +320 MHz"
+  },
+  {
+   "card": 1,
+   "core_mhz": 307,
+   "where": "profile.json: failed at +307 MHz"
+  },
+  {
+   "card": 2,
+   "core_mhz": 307,
+   "where": "profile.json: failed at +307 MHz"
+  },
+  {
+   "card": 3,
+   "core_mhz": 256,
+   "where": "profile.json: failed at +256 MHz"
+  },
+  {
+   "card": 4,
+   "core_mhz": 256,
+   "where": "profile.json: failed at +256 MHz"
+  },
+  {
+   "card": 5,
+   "core_mhz": 282,
+   "where": "profile.json: failed at +282 MHz"
+  },
+  {
+   "card": 6,
+   "core_mhz": 28,
+   "where": "profile.json: failed at +28 MHz"
+  },
+  {
+   "card": 7,
+   "core_mhz": 332,
+   "where": "profile.json: failed at +332 MHz"
+  },
+  {
+   "card": 8,
+   "core_mhz": 282,
+   "where": "profile.json: failed at +282 MHz"
+  }
+ ]
+}

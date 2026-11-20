@@ -28,14 +28,15 @@ came from steps 2 to 5 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/READM
 [R202b](../../docs/data/2026-11-18_r202b_core_soak/README.md),
 [R209](../../docs/data/2026-11-19_r209_oc_v5/README.md)), after a first climb of memory and core together
 ([R200](../../docs/data/2026-11-17_r200_climb_rig2/README.md)); the first rig's starts at step 1
-([R217](../../docs/data/2026-11-19_r217_climb_rig1/README.md)) and step 2
-([R218](../../docs/data/2026-11-20_r218_soak_rig1/README.md)).
+([R217](../../docs/data/2026-11-19_r217_climb_rig1/README.md)), step 2
+([R218](../../docs/data/2026-11-20_r218_soak_rig1/README.md)) and step 3
+([R221](../../docs/data/2026-11-20_r221_core_climb_rig1/README.md)).
 
 | Step | What happens | How it runs | What it gives | Time |
 |---|---|---|---|---|
 | 1. Memory climb | every card's memory up together, +200 to +1,400 MT/s, the core at stock; every card checked at every step; a card that fails goes back to 0 and leaves | `CORE_PEAK_MAX=0 python3 climb.py climb` | `out/profile.json`: each card one step under its last clean memory step, core 0 | 12 min 45 s for nine cards (R217) |
 | 2. Memory soak ladder | three rungs of 30 minutes; each card starts two steps under its top value and goes up a rung while it stays clean; every card's differing checks are counted | `python3 climb.py rungs out/profile.json`, then `soak_chain.sh` with `PROFILE=rung1.json LADDER="rung2.json rung3.json" FAILURES=rung1.json` | `soak/use.json`: each card's memory | 1 h 52 min for nine cards with the served model's stock reference (R218, where a card differed so the served model's run with the offsets did not follow); est. 2 h 30 min with it |
-| 3. Core climb from the soaked memory | each card's memory straight to `use.json`'s value and one check round, then every card's core up by target peak clock | `python3 climb.py --from-profile soak/use.json climb` | `out/profile.json`: that memory, and each card's core one step under its last clean step | 11 min 55 s for six cards (R202) |
+| 3. Core climb from the soaked memory | each card's memory straight to `use.json`'s value and one check round, then every card's core up by target peak clock | `python3 climb.py --from-profile soak/use.json climb` | `out/profile.json`: that memory, and each card's core one step under its last clean step | 11 min 55 s for six cards (R202); 15 min 27 s for nine (R221) |
 | 4. Core soak ladder | the memory fixed at step 2's values; each card's core one climb step higher a rung, up to two steps under its core failure; three rungs of 30 minutes | rungs from step 2's `use.json` and step 3's `steps.csv` and profile by R202b's [make_rungs.py](../../docs/data/2026-11-18_r202b_core_soak/run/make_rungs.py), then `soak_chain.sh` with them | `soak/use.json`: the rig's profile | 90 minutes of soak for nine cards (R202b) |
 | 5. The profile on the served model | `apply` of step 4's `use.json`, then the served model on every card against its stock answer | R209's [apply_check.sh](../../docs/data/2026-11-19_r209_oc_v5/run/apply_check.sh), then the boot service ([below](#overclocked-at-every-boot-boot)) | the rig overclocked, at every boot once the owner enables it | `apply` 5 min 18 s for nine cards (R209), plus the model's check |
 
@@ -135,7 +136,7 @@ cat /var/tmp/oc-step2/CHAIN_DONE                # when it exists; one look every
 
 It gives `/var/tmp/oc-step2/soak/use.json`, whether or not a card differed.
 
-**Step 3, the core climb from the soaked memory** (boot 3; the climb 11 min 55 s on six cards, R202, after the checks
+**Step 3, the core climb from the soaked memory** (boot 3; the climb 15 min 27 s on nine cards, R221, after the checks
 before it):
 
 ```bash
@@ -150,7 +151,10 @@ python3 climb.py rungs $WORK/out/profile.json --failures $P --out $WORK/failures
 **Step 4, the core soak ladder** (boot 4; est. 2 h with the served model's checks). The rungs, by R202b's script:
 each card's memory at step 2's value, its core two climb steps, one climb step and zero steps under step 3's profile
 value, taken from the climb's own steps. Every climbing card needs two clean core steps under that value, and the
-script stops on a card without them; the kit's own `rungs` for a core ladder is [Q1617](../../quants/experiments.md):
+script stops on a card without them; the kit's own `rungs` for a core ladder is [Q1617](../../quants/experiments.md).
+A card that failed its first core step has none (the first rig's card 6, R221): R221's
+[step4_rungs.py](../../docs/data/2026-11-20_r221_core_climb_rig1/run/step4_rungs.py) runs the same script with
+`--hold <card>`, which keeps that card at step 2's core (0) in all three rungs and names the files `step4-rung<n>.json`:
 
 ```bash
 cd $K && python3 -I make_rungs.py /var/tmp/oc-step2/soak/use.json \

@@ -1,0 +1,10 @@
+card,pci,stock_peak_mhz,profile_mem_mts,profile_core_in_mhz,profile_check,core_climbed,core_last_clean_mhz,core_last_clean_target_peak_mhz,core_last_clean_measured_peak_mhz,core_failed_at_mhz,core_failed_at_target_peak_mhz,core_failed_at_measured_peak_mhz,failure_reason,failure_greedy_s,failure_greedy_limit_s,failure_xid,result_core_mhz,result_expected_peak_mhz,stream_gbs_stock,stream_gbs_profile
+0,03:00.0,1873,900,0,PASS,True,294,2164,2151,320,2189,2176,greedy output differs from stock,8.1,37,0,269,2139,179.17,197.06
+1,04:00.0,1860,1000,0,PASS,True,282,2139,2126,307,2164,2151,greedy output differs from stock,10.1,37,0,256,2113,179.5,199.25
+2,05:00.0,1911,1100,0,PASS,True,282,2189,2164,307,2214,2189,greedy output differs from stock,6.5,35,0,256,2164,179.29,202.12
+3,06:00.0,1911,1200,0,PASS,True,231,2139,2126,256,2164,2151,greedy output differs from stock,11.5,37,0,206,2114,178.85,204.48
+4,07:00.0,1885,1100,0,PASS,True,231,2113,2100,256,2139,2126,greedy output differs from stock,11.2,37,0,206,2088,179.43,201.98
+5,0B:00.0,1911,1300,0,PASS,True,256,2164,2164,282,2189,2189,greedy output differs from stock,9.5,37,0,231,2139,179.41,206.84
+6,0C:00.0,1885,1000,0,PASS,True,0,1885,1885,28,1911,1898,greedy output differs from stock,12.2,37,0,0,1885,179.12,199.46
+7,0D:00.0,1911,1100,0,PASS,True,307,2214,2214,332,2240,2240,greedy longer than its limit (37 s),36.7,37,0,282,2190,179.21,201.86
+8,0E:00.0,1885,900,0,PASS,True,256,2139,2126,282,2164,2164,greedy output differs from stock,12.9,37,0,231,2113,179.2,197.53
