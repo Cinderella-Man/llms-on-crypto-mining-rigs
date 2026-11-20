@@ -1,0 +1,14 @@
+arm (-a ^flint$, LLAMA_UBATCH_TRACE=1, -v 3) rc per_size_schedulers_logged with_1_copy with_4_copies passes_traced passes_on_copies_1_to_3 rebuilt_passes
+v_off 0 0 0 0 43 0 39
+v_base_on 0 0 0 0 43 0 18
+v_new_on 0 8 8 0 43 0 18
+v_new_pp0 0 8 8 0 43 0 18
+v_new_pp2 0 8 0 8 43 0 18
+v_new_pp2_r 0 8 0 8 43 0 18
+logits lines of the traced runs (each against the reference):
+v_base_on.log:flint: logits : nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ
+v_new_on.log:flint: logits : nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ
+v_new_pp0.log:flint: logits : nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ
+v_new_pp2.log:flint: logits : nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ
+v_new_pp2_r.log:flint: logits : nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ
+v_off.log:flint: logits : nmse 0.000e+00, max abs diff 0.000e+00, 0 of 32768 differ

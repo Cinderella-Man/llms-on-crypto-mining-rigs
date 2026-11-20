@@ -1,0 +1,4 @@
+tree	commit	build_rc	build_s	warning_lines	ctest_passed	ctest_failed	ctest_s	note
+base	6644c2bc635aef22adbeb1f242c486fa4335583e	0	19	30	71	11	36	CPU, every target, tests on; seconds from a warm compiler cache
+change	c1772c7fc1e95662966b55a9a456dbea812ae3f3	0	142	30	71	11	43	CPU, every target, tests on; the same warnings and the same 11 failures as base
+change (rig)	c1772c7fc1e95662966b55a9a456dbea812ae3f3	0	-	-	-	-	-	CUDA 12.9, compute 6.1, TESTS=1, HF_UI_VERSION=b12483: llama.cpp-20261120-c1772c7fc-pascal-p106-v5-sched-per-size-pp.tar.gz, md5 85259a404c6fcbf567faa61897a5ea2b, llama-server md5 716f8e99a182c821b20015dc1d6d56b6

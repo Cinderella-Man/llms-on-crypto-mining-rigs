@@ -1,0 +1,12 @@
+arm	per_size_schedulers_logged	lines
+off	0	
+base_on	0	
+new_on	0	
+new_pp0	0	
+new_pp2	5	process_ubatch_graph: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 4 input copies (pipeline parallelism) | process_ubatch_graph: scheduler for 4-token batches (without outputs), 2 per-size schedulers, 4 input copies (pipeline parallelism) | process_ubatch_graph: scheduler for 4-token batches (with outputs), 3 per-size schedulers, 4 input copies (pipeline parallelism) | process_ubatch_graph: scheduler for 6-token batches (without outputs), 4 per-size schedulers, 4 input copies (pipeline parallelism) | process_ubatch_graph: scheduler for 1-token batches (with outputs), 5 per-size schedulers, 4 input copies (pipeline parallelism)
+
+new_pp2 passes by input copy (sched-trace; copy 0 includes every pass of the shared scheduler, which has one copy here)
+copy 0	388
+copy 1	53
+copy 2	43
+copy 3	1
