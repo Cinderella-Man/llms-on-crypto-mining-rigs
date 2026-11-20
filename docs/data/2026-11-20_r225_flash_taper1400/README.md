@@ -13,7 +13,7 @@ bucket.** `short=1023:64` is a gain too (210.77 and 210.95 s, −9.54 s, −4.33
 3.02 s a pass better. Both match C222's composition (est. −12.60 and −9.54 s). The greedy replies are the control's on
 62 of 62 turns in every pass. Each pass replays the agent check's 62 recorded prompts (12 tasks), about 1 s of prompt
 reading saved a task with `short=1400:64` (est. 0.8 % of a task); its agent pair, the measure release settings are
-chosen on, is the next row (R226, [Q1641](../../../quants/experiments.md)).
+chosen on, is the next row (R227, [Q1641](../../../quants/experiments.md)).
 
 ## The run
 
