@@ -1,0 +1,21 @@
+seqrm-base-cpu	OK	rc=0; every architecture; seed 1; no switch; Summary: all 442 test(s) passed; 92144 calls for one sequence (6994 sorted, 111 scanned the used range), 21133 for every sequence, 625071 cells visited; skip ^plamo2.Dense.4.(seq|split)$; 124 s
+seqrm-base-mask	OK	rc=0; every architecture; seed 1; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1; Summary: all 441 test(s) passed; 92026 calls for one sequence (6974 sorted, 107 scanned the used range), 21133 for every sequence, 623731 cells visited; skip ^plamo2.Dense.4.(seq|split)$|^minimax-01.MoE.4.split$; 123 s
+seqrm-base-mask8s2	OK	rc=0; ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; seed 2; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1; Summary: all 27 test(s) passed; 4052 calls for one sequence (367 sorted, 10 scanned the used range), 746 for every sequence, 30993 cells visited; skip ^$; 22 s
+seqrm-base-mask8s3	OK	rc=0; ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; seed 3; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1; Summary: all 27 test(s) passed; 4255 calls for one sequence (360 sorted, 27 scanned the used range), 672 for every sequence, 30961 cells visited; skip ^$; 19 s
+seqrm-base-control	AS-EXPECTED	rc=1; ^(llama|qwen4exp|gemma3)$; seed 1; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1 LLAMA_ARCHS_SEQ_RM_BOUND_ON=2; Summary: 12 test(s) executed, 10 failed; 1098 calls for one sequence (0 sorted, 0 scanned the used range), 111 for every sequence, 7153 cells visited; skip ^$; 2 s
+seqrm-c881-cpu	OK	rc=0; every architecture; seed 1; no switch; Summary: all 442 test(s) passed; 92144 calls for one sequence (0 sorted, 0 scanned the used range), 21133 for every sequence, 624228 cells visited; skip ^plamo2.Dense.4.(seq|split)$; 121 s
+seqrm-c881-mask	OK	rc=0; every architecture; seed 1; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1; Summary: all 441 test(s) passed; 92026 calls for one sequence (4064 sorted, 0 scanned the used range), 21133 for every sequence, 622893 cells visited; skip ^plamo2.Dense.4.(seq|split)$|^minimax-01.MoE.4.split$; 113 s
+seqrm-c881-mask8s2	OK	rc=0; ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; seed 2; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1; Summary: all 27 test(s) passed; 4052 calls for one sequence (203 sorted, 0 scanned the used range), 746 for every sequence, 30778 cells visited; skip ^$; 20 s
+seqrm-c881-mask8s3	OK	rc=0; ^(llama|qwen4exp|qwen3next|qwen35moe|gemma3|mamba2|deepseek2|deepseek4)$; seed 3; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1; Summary: all 27 test(s) passed; 4255 calls for one sequence (189 sorted, 0 scanned the used range), 672 for every sequence, 29604 cells visited; skip ^$; 22 s
+seqrm-c881-control	AS-EXPECTED	rc=1; ^(llama|qwen4exp|gemma3)$; seed 1; LLAMA_GPU_KQ_MASK=1 LLAMA_GPU_KQ_MASK_CHECK=1 LLAMA_ARCHS_SEQ_RM_BOUND_ON=2; Summary: 12 test(s) executed, 9 failed; 1152 calls for one sequence (0 sorted, 0 scanned the used range), 111 for every sequence, 7665 cells visited; skip ^$; 3 s
+trace-cpu	SAME	253112 lines, 176800 edits and 76312 decodes; skip base ^plamo2.Dense.4.(seq|split)$, c881 ^plamo2.Dense.4.(seq|split)$
+trace-mask	SAME	252533 lines, 176400 edits and 76133 decodes; skip base ^plamo2.Dense.4.(seq|split)$|^minimax-01.MoE.4.split$, c881 ^plamo2.Dense.4.(seq|split)$|^minimax-01.MoE.4.split$
+trace-mask8s2	SAME	15691 lines, 10800 edits and 4891 decodes; skip base ^$, c881 ^$
+trace-mask8s3	SAME	15588 lines, 10800 edits and 4788 decodes; skip base ^$, c881 ^$
+kvcache-base-fork	rc=134	test-kv-cache.cpp:164: GGML_ASSERT(add(0, 6, 1) == 0) failed
+kvcache-base-tail0	rc=0	
+archs-base	rc=0 s=7	0 OK lines, 0 FAIL lines
+kvcache-c881-fork	rc=0	
+kvcache-c881-tail0	rc=0	
+archs-c881	rc=0 s=7	0 OK lines, 0 FAIL lines
+archs-compare	SAME	every line but the first (a timestamp)
