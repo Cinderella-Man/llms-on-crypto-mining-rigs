@@ -48,7 +48,7 @@ the next step: Q1545's probe and lane on this build, where the preset's head mus
 [`run/build_check.sh`](run/build_check.sh) drives a build machine over ssh (`BUILDER`, `WORK`, `SEED`, `LOCK` from the
 environment); every step runs in Docker on its CPU, one container at a time under a lock, `--cpu-shares=256`, `-j 8`,
 no network for the CPU builds and tests. `SEED` was the v5 candidate's build folder (its llama.cpp clone and caches).
-The whole run took 23:37 to 23:49 on 2026-11-20, the caches making every build short.
+The whole run took 23:37 to 23:46 on 2026-11-20, the caches making every build short.
 
 ```bash
 B=run/build_check.sh
