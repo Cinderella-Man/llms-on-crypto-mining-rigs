@@ -1,0 +1,141 @@
+depth	kind	pass	load	ids_md5	text_md5	first_diff_vs_control	draft
+4096	decode	1	c10a	5dfcab9a	7af744d7		178/229
+4096	decode	1	r075a	5dfcab9a	7af744d7		178/229
+4096	decode	1	r0625a	5dfcab9a	7af744d7		178/229
+4096	decode	1	r0625b	5dfcab9a	7af744d7		178/229
+4096	decode	1	r075b	5dfcab9a	7af744d7		178/229
+4096	decode	1	c10b	5dfcab9a	7af744d7		178/229
+# 4096 decode 1: groups 5dfcab9a: c10a r075a r0625a r0625b r075b c10b
+4096	decode	2	c10a	5dfcab9a	7af744d7		178/229
+4096	decode	2	r075a	5dfcab9a	7af744d7		178/229
+4096	decode	2	r0625a	5dfcab9a	7af744d7		178/229
+4096	decode	2	r0625b	5dfcab9a	7af744d7		178/229
+4096	decode	2	r075b	5dfcab9a	7af744d7		178/229
+4096	decode	2	c10b	5dfcab9a	7af744d7		178/229
+# 4096 decode 2: groups 5dfcab9a: c10a r075a r0625a r0625b r075b c10b
+4096	prime	0	c10a	016f8c08	68b329da		0/0
+4096	prime	0	r075a	016f8c08	68b329da		0/0
+4096	prime	0	r0625a	016f8c08	68b329da		0/0
+4096	prime	0	r0625b	016f8c08	68b329da		0/0
+4096	prime	0	r075b	016f8c08	68b329da		0/0
+4096	prime	0	c10b	016f8c08	68b329da		0/0
+# 4096 prime 0: groups 016f8c08: c10a r075a r0625a r0625b r075b c10b
+4096	sample	s	c10a	2d1540f7	e23248f4		175/237
+4096	sample	s	r075a	2d1540f7	e23248f4		175/237
+4096	sample	s	r0625a	2d1540f7	e23248f4		175/237
+4096	sample	s	r0625b	2d1540f7	e23248f4		175/237
+4096	sample	s	r075b	2d1540f7	e23248f4		175/237
+4096	sample	s	c10b	2d1540f7	e23248f4		175/237
+# 4096 sample s: groups 2d1540f7: c10a r075a r0625a r0625b r075b c10b
+5120	decode	1	c10a	4b6f350a	50d34064		186/206
+5120	decode	1	r075a	4b6f350a	50d34064		186/206
+5120	decode	1	r0625a	4b6f350a	50d34064		186/206
+5120	decode	1	r0625b	4b6f350a	50d34064		186/206
+5120	decode	1	r075b	4b6f350a	50d34064		186/206
+5120	decode	1	c10b	4b6f350a	50d34064		186/206
+# 5120 decode 1: groups 4b6f350a: c10a r075a r0625a r0625b r075b c10b
+5120	decode	2	c10a	4b6f350a	50d34064		186/206
+5120	decode	2	r075a	4b6f350a	50d34064		186/206
+5120	decode	2	r0625a	4b6f350a	50d34064		186/206
+5120	decode	2	r0625b	4b6f350a	50d34064		186/206
+5120	decode	2	r075b	4b6f350a	50d34064		186/206
+5120	decode	2	c10b	4b6f350a	50d34064		186/206
+# 5120 decode 2: groups 4b6f350a: c10a r075a r0625a r0625b r075b c10b
+5120	prime	0	c10a	60ac310c	8f14e45f		0/0
+5120	prime	0	r075a	60ac310c	8f14e45f		0/0
+5120	prime	0	r0625a	60ac310c	8f14e45f		0/0
+5120	prime	0	r0625b	60ac310c	8f14e45f		0/0
+5120	prime	0	r075b	60ac310c	8f14e45f		0/0
+5120	prime	0	c10b	60ac310c	8f14e45f		0/0
+# 5120 prime 0: groups 60ac310c: c10a r075a r0625a r0625b r075b c10b
+5120	sample	s	c10a	43c60682	d82599b1		180/223
+5120	sample	s	r075a	43c60682	d82599b1		180/223
+5120	sample	s	r0625a	d75ffba4	10c47d6e	5 c10a ' that' -> ' content'	179/226
+5120	sample	s	r0625b	d75ffba4	10c47d6e	5 c10a ' that' -> ' content'	179/226
+5120	sample	s	r075b	43c60682	d82599b1		180/223
+5120	sample	s	c10b	43c60682	d82599b1		180/223
+# 5120 sample s: groups 43c60682: c10a r075a r075b c10b; d75ffba4: r0625a r0625b
+6144	decode	1	c10a	b4b95d75	4f72ccd2		186/204
+6144	decode	1	r075a	aa9fcf32	89f2c299	8 c10a ' sent' -> ' past'	184/210
+6144	decode	1	r0625a	137369df	4b1eead1	180 c10a '\n' -> 'from'	187/203
+6144	decode	1	r0625b	137369df	4b1eead1	180 c10a '\n' -> 'from'	187/203
+6144	decode	1	r075b	aa9fcf32	89f2c299	8 c10a ' sent' -> ' past'	184/210
+6144	decode	1	c10b	b4b95d75	4f72ccd2		186/204
+# 6144 decode 1: groups b4b95d75: c10a c10b; aa9fcf32: r075a r075b; 137369df: r0625a r0625b
+6144	decode	2	c10a	b4b95d75	4f72ccd2		187/201
+6144	decode	2	r075a	aa9fcf32	89f2c299	8 c10a ' sent' -> ' past'	185/207
+6144	decode	2	r0625a	137369df	4b1eead1	180 c10a '\n' -> 'from'	188/200
+6144	decode	2	r0625b	137369df	4b1eead1	180 c10a '\n' -> 'from'	188/200
+6144	decode	2	r075b	aa9fcf32	89f2c299	8 c10a ' sent' -> ' past'	185/207
+6144	decode	2	c10b	b4b95d75	4f72ccd2		187/201
+# 6144 decode 2: groups b4b95d75: c10a c10b; aa9fcf32: r075a r075b; 137369df: r0625a r0625b
+6144	prime	0	c10a	df4a2cba	749faecd		0/0
+6144	prime	0	r075a	df4a2cba	749faecd		0/0
+6144	prime	0	r0625a	df4a2cba	749faecd		0/0
+6144	prime	0	r0625b	df4a2cba	749faecd		0/0
+6144	prime	0	r075b	df4a2cba	749faecd		0/0
+6144	prime	0	c10b	df4a2cba	749faecd		0/0
+# 6144 prime 0: groups df4a2cba: c10a r075a r0625a r0625b r075b c10b
+6144	sample	s	c10a	e7ea1d60	d42fc86c		187/202
+6144	sample	s	r075a	083480a3	77405356	243 c10a 'k' -> 'yb'	186/204
+6144	sample	s	r0625a	8a17def9	b886d5c1	5 c10a ' I' -> '.'	189/195
+6144	sample	s	r0625b	dd5e6c67	42094ce7	5 c10a ' I' -> '.'	189/197
+6144	sample	s	r075b	083480a3	77405356	243 c10a 'k' -> 'yb'	186/204
+6144	sample	s	c10b	e7ea1d60	d42fc86c		187/202
+# 6144 sample s: groups e7ea1d60: c10a c10b; 083480a3: r075a r075b; 8a17def9: r0625a; dd5e6c67: r0625b
+7168	decode	1	c10a	e5d2e02d	7818c9e7		184/210
+7168	decode	1	r075a	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	183/213
+7168	decode	1	r0625a	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	183/213
+7168	decode	1	r0625b	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	183/213
+7168	decode	1	r075b	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	183/213
+7168	decode	1	c10b	e5d2e02d	7818c9e7		184/210
+# 7168 decode 1: groups e5d2e02d: c10a c10b; 2592cb0a: r075a r0625a r0625b r075b
+7168	decode	2	c10a	e5d2e02d	7818c9e7		185/207
+7168	decode	2	r075a	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	184/210
+7168	decode	2	r0625a	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	184/210
+7168	decode	2	r0625b	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	184/210
+7168	decode	2	r075b	2592cb0a	e29bb78f	14 c10a ' odd' -> ' some'	184/210
+7168	decode	2	c10b	e5d2e02d	7818c9e7		185/207
+# 7168 decode 2: groups e5d2e02d: c10a c10b; 2592cb0a: r075a r0625a r0625b r075b
+7168	prime	0	c10a	29fced5a	be58388e		0/0
+7168	prime	0	r075a	a735119a	d9027a94	0 c10a ' punctuation' -> " '"	0/0
+7168	prime	0	r0625a	a735119a	d9027a94	0 c10a ' punctuation' -> " '"	0/0
+7168	prime	0	r0625b	a735119a	d9027a94	0 c10a ' punctuation' -> " '"	0/0
+7168	prime	0	r075b	a735119a	d9027a94	0 c10a ' punctuation' -> " '"	0/0
+7168	prime	0	c10b	29fced5a	be58388e		0/0
+# 7168 prime 0: groups 29fced5a: c10a c10b; a735119a: r075a r0625a r0625b r075b
+7168	sample	s	c10a	556c7e69	ab7a31a7		181/222
+7168	sample	s	r075a	c12a5a58	c5841140	7 c10a ' Let' -> ' Weird'	181/220
+7168	sample	s	r0625a	c12a5a58	c5841140	7 c10a ' Let' -> ' Weird'	181/220
+7168	sample	s	r0625b	c12a5a58	c5841140	7 c10a ' Let' -> ' Weird'	181/220
+7168	sample	s	r075b	c12a5a58	c5841140	7 c10a ' Let' -> ' Weird'	181/220
+7168	sample	s	c10b	556c7e69	ab7a31a7		181/222
+# 7168 sample s: groups 556c7e69: c10a c10b; c12a5a58: r075a r0625a r0625b r075b
+8192	decode	1	c10a	238fa97a	b2a07a31		186/207
+8192	decode	1	r075a	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	1	r0625a	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	1	r0625b	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	1	r075b	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	1	c10b	238fa97a	b2a07a31		186/207
+# 8192 decode 1: groups 238fa97a: c10a c10b; bc1e8242: r075a r0625a r0625b r075b
+8192	decode	2	c10a	238fa97a	b2a07a31		187/204
+8192	decode	2	r075a	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	2	r0625a	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	2	r0625b	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	2	r075b	bc1e8242	b292403c	12 c10a ' re' -> ' verify'	182/218
+8192	decode	2	c10b	238fa97a	b2a07a31		187/204
+# 8192 decode 2: groups 238fa97a: c10a c10b; bc1e8242: r075a r0625a r0625b r075b
+8192	prime	0	c10a	df76ba23	f19317ce		0/0
+8192	prime	0	r075a	df76ba23	f19317ce		0/0
+8192	prime	0	r0625a	df76ba23	f19317ce		0/0
+8192	prime	0	r0625b	df76ba23	f19317ce		0/0
+8192	prime	0	r075b	df76ba23	f19317ce		0/0
+8192	prime	0	c10b	df76ba23	f19317ce		0/0
+# 8192 prime 0: groups df76ba23: c10a r075a r0625a r0625b r075b c10b
+8192	sample	s	c10a	d544a985	b14c897d		180/222
+8192	sample	s	r075a	5494bf41	7f39fed6	2 c10a ' result' -> ' response'	177/233
+8192	sample	s	r0625a	5494bf41	7f39fed6	2 c10a ' result' -> ' response'	177/233
+8192	sample	s	r0625b	5494bf41	7f39fed6	2 c10a ' result' -> ' response'	177/233
+8192	sample	s	r075b	5494bf41	7f39fed6	2 c10a ' result' -> ' response'	177/233
+8192	sample	s	c10b	d544a985	b14c897d		180/222
+# 8192 sample s: groups d544a985: c10a c10b; 5494bf41: r075a r0625a r0625b r075b
