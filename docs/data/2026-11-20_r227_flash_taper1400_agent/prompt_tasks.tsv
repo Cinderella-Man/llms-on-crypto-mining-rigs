@@ -1,14 +1,14 @@
-task	r075a_prompt_s	r075a_prompt_tokens	r075a_turns	r075b_prompt_s	r075b_prompt_tokens	r075b_turns	c600a_prompt_s	c600a_prompt_tokens	c600a_turns	t1400a_prompt_s	t1400a_prompt_tokens	t1400a_turns	c600b_prompt_s	c600b_prompt_tokens	c600b_turns
-bugfix-javascript-complex-numbers	36.36	5852	7	24.68	4828	5	21.44	2526	6	30.72	5460	6	24.52	4805	5
-bugfix-javascript-grade-school	15.42	2856	5	15.87	2936	5	15.69	2883	5	15.42	2860	5	15.66	2855	5
-bugfix-javascript-phone-number	18.12	2828	5	19.64	2916	5	19.00	2830	5	16.37	3211	5	19.12	2864	5
-bugfix-javascript-space-age	17.38	2182	5	18.84	2268	5	18.72	2375	5	14.52	2178	5	17.80	2264	5
-bugfix-javascript-triangle	15.48	2593	5	15.44	2597	5	13.62	2652	4	15.24	2529	5	13.79	2444	4
-bugfix-javascript-variable-length-quantity	19.25	3690	5	19.96	3380	5	18.95	3527	5	17.84	3504	5	27.49	4402	10
-bugfix-python-affine-cipher	42.50	4774	5	43.04	4604	5	41.64	4664	6	45.27	5132	7	48.35	5349	9
-bugfix-python-list-ops	14.08	2164	5	14.38	2296	5	16.10	2624	5	14.73	2312	5	15.07	2433	5
-bugfix-python-phone-number	22.62	4014	6	27.00	4120	6	16.91	2493	4	23.05	3717	6	20.80	3707	5
-bugfix-python-pig-latin	17.38	2207	5	23.68	3041	8	17.98	2150	5	15.55	2065	6	17.15	2232	5
-bugfix-python-scale-generator	19.09	3151	5	19.12	3150	5	20.36	3324	5	22.11	3679	5	18.60	3061	5
-bugfix-python-variable-length-quantity	20.29	3576	5	17.96	2968	5	19.66	3456	5	13.64	1951	6	18.55	3213	5
-mean a task	21.50	3324	5.25	21.64	3259	5.33	20.01	2959	5.00	20.37	3216	5.50	21.41	3302	5.67
+task	r075a_prompt_s	r075a_prompt_tokens	r075a_turns	r075b_prompt_s	r075b_prompt_tokens	r075b_turns	c600a_prompt_s	c600a_prompt_tokens	c600a_turns	t1400a_prompt_s	t1400a_prompt_tokens	t1400a_turns	c600b_prompt_s	c600b_prompt_tokens	c600b_turns	t1400b_prompt_s	t1400b_prompt_tokens	t1400b_turns
+bugfix-javascript-complex-numbers	36.36	5852	7	24.68	4828	5	21.44	2526	6	30.72	5460	6	24.52	4805	5	22.45	4688	5
+bugfix-javascript-grade-school	15.42	2856	5	15.87	2936	5	15.69	2883	5	15.42	2860	5	15.66	2855	5	19.01	3007	6
+bugfix-javascript-phone-number	18.12	2828	5	19.64	2916	5	19.00	2830	5	16.37	3211	5	19.12	2864	5	19.67	3200	5
+bugfix-javascript-space-age	17.38	2182	5	18.84	2268	5	18.72	2375	5	14.52	2178	5	17.80	2264	5	15.84	2328	5
+bugfix-javascript-triangle	15.48	2593	5	15.44	2597	5	13.62	2652	4	15.24	2529	5	13.79	2444	4	16.72	2678	6
+bugfix-javascript-variable-length-quantity	19.25	3690	5	19.96	3380	5	18.95	3527	5	17.84	3504	5	27.49	4402	10	17.88	3295	5
+bugfix-python-affine-cipher	42.50	4774	5	43.04	4604	5	41.64	4664	6	45.27	5132	7	48.35	5349	9	41.58	4733	5
+bugfix-python-list-ops	14.08	2164	5	14.38	2296	5	16.10	2624	5	14.73	2312	5	15.07	2433	5	15.37	2434	5
+bugfix-python-phone-number	22.62	4014	6	27.00	4120	6	16.91	2493	4	23.05	3717	6	20.80	3707	5	23.23	3687	7
+bugfix-python-pig-latin	17.38	2207	5	23.68	3041	8	17.98	2150	5	15.55	2065	6	17.15	2232	5	18.76	2654	7
+bugfix-python-scale-generator	19.09	3151	5	19.12	3150	5	20.36	3324	5	22.11	3679	5	18.60	3061	5	19.31	3323	5
+bugfix-python-variable-length-quantity	20.29	3576	5	17.96	2968	5	19.66	3456	5	13.64	1951	6	18.55	3213	5	19.82	3622	6
+mean a task	21.50	3324	5.25	21.64	3259	5.33	20.01	2959	5.00	20.37	3216	5.50	21.41	3302	5.67	20.80	3304	5.58

@@ -1,0 +1,13 @@
+task	turn	prompt_n	cache_n	bucket	c600a_prompt_ms	t1400a_prompt_ms	c600b_prompt_ms	t1400b_prompt_ms
+bugfix-javascript-complex-numbers	1	896	1549	601-1,400	6509.9	5998.3	6356.6	5023.4
+bugfix-javascript-grade-school	1	403	1549	up to 600	2780.0	2723.6	2769.9	2786.8
+bugfix-javascript-phone-number	1	610	1549	601-1,400	6328.3	3837.7	6436.9	3808.7
+bugfix-javascript-space-age	1	803	1549	601-1,400	6435.7	4794.9	6438.8	5238.7
+bugfix-javascript-triangle	1	430	1549	up to 600	2844.4	2863.2	2827.4	2807.9
+bugfix-javascript-variable-length-quantity	1	577	1549	up to 600	4365.3	3385.1	4407.1	3370.2
+bugfix-python-affine-cipher	1	2780	0	2,048+	27406.7	27334.5	27224.0	27406.9
+bugfix-python-list-ops	1	441	1549	up to 600	2892.1	2905.5	2869.6	2892.7
+bugfix-python-phone-number	1	1130	1549	601-1,400	7254.9	6274.1	7206.8	6192.6
+bugfix-python-pig-latin	1	775	1549	601-1,400	6171.0	4722.1	6148.1	4648.8
+bugfix-python-scale-generator	1	1086	1549	601-1,400	6861.0	6637.3	6865.3	5965.8
+bugfix-python-variable-length-quantity	1	815	1549	601-1,400	6216.9	4536.8	6159.3	4516.1

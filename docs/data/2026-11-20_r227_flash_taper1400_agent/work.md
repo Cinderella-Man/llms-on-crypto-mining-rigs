@@ -9,9 +9,11 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | c600a | 12 | 60 | 35504 (2959) | 22271 (1856) | 195 (1; 1.9 of 240.1) | 27.46 (bugfix-python-affine-cipher, 1) |
 | t1400a | 12 | 66 | 38598 (3216) | 31360 (2613) | 0 (0; 0.0 of 244.5) | 27.37 (bugfix-python-affine-cipher, 1) |
 | c600b | 12 | 68 | 39629 (3302) | 29745 (2479) | 0 (0; 0.0 of 256.9) | 27.28 (bugfix-python-affine-cipher, 1) |
+| t1400b | 12 | 67 | 39649 (3304) | 18328 (1527) | 215 (1; 2.9 of 249.6) | 27.53 (bugfix-python-affine-cipher, 1) |
 
 ### The turns that read a reply again
 
 | arm | task | turn | cache path | previous prompt's end | previous reply's tokens | cached | reply tokens re-read | prompt tokens read | prompt s | first token s |
 |---|---|---|---|---|---|---|---|---|---|---|
 | c600a | bugfix-python-list-ops | 4 | reply re-read | 5222 | 195 | 5218 | 195 | 230 | 1.91 | 1.96 |
+| t1400b | bugfix-python-pig-latin | 7 | reply re-read | 5253 | 215 | 5249 | 215 | 411 | 2.88 | 2.94 |
