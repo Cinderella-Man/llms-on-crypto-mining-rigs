@@ -101,6 +101,6 @@ The published tables come out as before without a card log: `report.py compare`,
 ## Provenance and licence
 
 Measured on the project's own rig on 2026-11-19 and 2026-11-20 with the repository's own scripts; the tables were made
-on 2026-11-21 from the runs' logs. The card logs and proxy rows themselves are not here (they are raw output); every
+from the runs' logs at midnight between 2026-11-20 and 2026-11-21. The card logs and proxy rows themselves are not here (they are raw output); every
 figure here is per card index or summed over the cards. No model file or task text is in this folder. The tables and
 scripts here are under the repository's licence.
