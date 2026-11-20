@@ -14,3 +14,44 @@ r075a	bugfix-python-pig-latin	5	4276	865	5267	5267	5141	126	1519.442	4945	196	-6
 r075a	bugfix-javascript-variable-length-quantity	3	4792	3447	8804	8807	8239	568	3476.682	4574	3666	218	3627	before the tool call	same
 r075a	bugfix-javascript-variable-length-quantity	4	4792	4171	8993	8996	8963	33	965.175	8807	157	-4015		before the previous reply	same, arguments re-serialized
 r075a	bugfix-javascript-variable-length-quantity	5	4792	4279	9217	9220	9071	149	1700.254	8996	76	-4204		before the previous reply	same
+c10b	bugfix-python-affine-cipher	2	2802	49	4033	4035	2851	1184	7187.696	2780	71	22	11	in the tool call	same
+c10b	bugfix-python-affine-cipher	3	2802	1815	5074	5076	4617	459	4186.11	4035	583	-1233		before the previous reply	same
+c10b	bugfix-python-affine-cipher	4	2802	3275	6106	6109	6077	32	1001.843	5076	1002	-2274		before the previous reply	same, arguments re-serialized
+c10b	bugfix-python-affine-cipher	5	2802	3584	6418	6421	6386	35	972.822	6109	278	-3307		before the previous reply	same
+c10b	bugfix-python-scale-generator	3	4701	203	5486	5486	4904	582	3643.988	4303	602	398	555	before the tool call	same
+c10b	bugfix-python-scale-generator	4	4701	1264	5996	5996	5965	31	887.633	5486	480	-785		before the previous reply	same, arguments re-serialized
+c10b	bugfix-python-scale-generator	5	4701	1492	6860	6860	6193	667	6291.123	5996	198	-1295		before the previous reply	same
+c10b	bugfix-python-scale-generator	6	4701	2736	7468	7468	7437	31	918.192	6860	578	-2159		before the previous reply	same, arguments re-serialized
+c10b	bugfix-python-scale-generator	7	4701	2928	7660	7660	7629	31	873.314	7468	162	-2767		before the previous reply	same, arguments re-serialized
+c10b	bugfix-python-scale-generator	8	4701	3106	8215	8215	7807	408	2785.146	7660	148	-2959		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	9	10024	572	10683	10684	10596	88	1500.317	9588	1009	436	775	before the tool call	same
+c10b	bugfix-javascript-complex-numbers	10	10024	1370	11608	11610	11394	216	1910.826	10684	711	-660		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	11	10024	1717	11795	11797	11741	56	1294.502	11610	132	-1586		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	12	10024	1878	12011	12013	11902	111	1612.027	11797	106	-1773		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	13	10024	2440	12930	12932	12464	468	3049.623	12013	452	-1989		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	14	10024	3735	16907	16909	13759	3150	17782.228	12932	828	-2908		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	15	10024	7171	17933	17935	17195	740	8569.31	16909	287	-6885		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	16	10024	8517	19016	19018	18541	477	3162.53	17935	607	-7911		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	17	10024	10034	20597	20599	20058	541	3440.955	19018	1041	-8994		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	18	10024	11017	21330	21332	21041	291	2108.605	20599	442	-10575		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	19	10024	11759	21800	21802	21783	19	880.565	21332	452	-11308		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	20	10024	11922	22286	22288	21946	342	2221.47	21802	145	-11778		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	21	10024	12780	23115	23117	22804	313	2139.15	22288	517	-12264		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	22	10024	13163	23480	23482	23187	295	2100.238	23117	71	-13093		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	23	10024	14080	25633	25635	24104	1531	12214.594	23482	623	-13458		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	24	10024	16646	26983	26985	26670	315	2209.008	25635	1036	-15611		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	25	10024	17474	27515	27517	27498	19	706.136	26985	514	-16961		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	26	10024	17577	27665	27667	27601	66	1413.741	27517	85	-17493		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	27	10024	17721	29048	29050	27745	1305	12548.439	27667	79	-17643		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	28	10024	19100	29518	29521	29124	397	3022.896	29050	75	-19026		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	29	10024	19741	29818	29821	29765	56	1202.338	29521	245	-19497		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	30	10024	19877	29917	29920	29901	19	676.516	29821	81	-19797		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	31	10024	19977	30044	30047	30001	46	1120.346	29920	82	-19896		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	32	10024	20110	30157	30160	30134	26	857.503	30047	88	-20023		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	33	10024	20214	30291	30294	30238	56	1250.772	30160	79	-20136		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	34	10024	20327	30779	30782	30351	431	3028.195	30294	58	-20270		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	35	10024	20872	32201	32204	30896	1308	13187.155	30782	115	-20758		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	36	10024	22379	32618	32621	32403	218	1884.793	32204	199	-22180		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	37	10024	22758	32811	32814	32782	32	946.939	32621	162	-22597		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	38	10024	22861	33526	33530	32885	645	10885.783	32814	71	-22790		before the previous reply	same
+c10b	bugfix-javascript-complex-numbers	39	10024	24411	34726	34730				33530	906	-23506		before the previous reply	same

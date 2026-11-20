@@ -26,6 +26,17 @@ here against 101.57 s. On the 11 requests whose middle lay where 0.75 acts (6,15
 started command differs from the control's only in the ratio; every card held the profile, the watchdog never tripped
 and the boot logged no GPU error. No class yet: the verdict waits for runs 3 and 4.
 
+**Run 3 of 4 done: the control again passed 11 of 12 tasks.** JavaScript `complex-numbers`, which runs 1 and 2 passed
+in 6 and 7 turns, ran to its 12-minute cap in 39 turns with 38 of its 40 tests passing, the long path R72b's run of
+this model took to the cap in 35 turns on 2026-11-12. Over all 12 tasks a task took 2.32 minutes at equal work, the
+model generated at 29.46 tok/s and the prompts took 32.80 s a task (393.6 s, 155.8 s of them in `complex-numbers`).
+Without `complex-numbers` the figures are 2.34 minutes, 30.86 tok/s and 21.62 s a task (run 1: 2.36, 30.20, 20.65; run
+2 with 0.75: 2.34, 30.71, 20.15). **The two controls differ** by 0.04 minutes a task at equal work over all tasks and
+0.02 without `complex-numbers`, by 0.82 and 0.66 tok/s, and by 1.33 ms a decode step on the requests whose middle lay
+where 0.75 acts (113.48 ms on 10 requests here, 114.81 on 11 in run 1; run 2 with 0.75: 108.12 on 11). The started
+command is run 1's byte for byte; every card held the profile, the watchdog never tripped and the boot logged no GPU
+error. No class yet: the verdict waits for run 4.
+
 ## What runs
 
 Four runs of Flash-Next's agent check ([bench/agent_check](../../../bench/agent_check/README.md): 12 bug-fix tasks,
@@ -36,7 +47,7 @@ alternated so that each arm has one run in each half of the day:
 |---|---|---|---|---|
 | 1 | R220a | `c10a` | 1.0, the v5 preset as it is (the control) | done 11:21–11:39 |
 | 2 | R220b | `r075a` | 0.75 | done 11:49–12:10 |
-| 3 | R220c | `c10b` | 1.0 (the control) | planned |
+| 3 | R220c | `c10b` | 1.0 (the control) | done 12:25–12:59 |
 | 4 | R220d | `r075b` | 0.75 | planned |
 
 Every run: the maker's Swift GSQ-RCO Q2_0 (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00003.gguf`, the n-gram
@@ -207,6 +218,101 @@ python3 -I docs/data/2026-11-18_c854b_p106_check/run/same_prompts.py c10a=$D/age
   80 W in 2 3 0 1 4 1 3 1 3 samples on cards 0 to 8, at most two in a row (card 6), highest 84.72 W on card 1. The kit's
   watchdog sampled 1,929 times a card over the same window: 0 trips, above 80 W in 0 1 1 0 0 1 0 1 1 single samples,
   highest 83.50 W on card 7.
+
+## Run 3, `c10b` (R220c): the control again, 12:25–12:59
+
+**The v5 preset ran 11 of 12 tasks in 29.3 minutes.** Its started command (1,715 bytes, md5
+`5f0cbde4375a316aafaf49ba4660efcc`) is `c10a`'s byte for byte and passes [run/preset_check.sh](run/preset_check.sh)
+(40 switches, the same 30 flags); the server's `switches:` line is `c10a`'s too. The server started at 12:25:47 and was
+up after 226 s; the tasks ran 12:29:37–12:59:06 and the report ended at 12:59:17, on the same boot as runs 1 and 2.
+Before and after, every card was at the profile's offsets (75 W), the kit's watchdog was running, and the kernel log
+held no Xid line.
+
+| | `c10a` (R220a, control) | `r075a` (R220b, 0.75) | **`c10b` (R220c, control)** | **`c10b` − `c10a`** |
+|---|---|---|---|---|
+| passed | 12 / 12 | 12 / 12 | **11 / 12** | **JavaScript `complex-numbers` ran to its cap** |
+| minutes a task at equal work (R90 `v3`'s work) | 2.28 | 2.26 | **2.32** | **+0.04** |
+| the same without JavaScript `complex-numbers` | 2.36 | 2.34 | **2.34** | **−0.02** |
+| generation tok/s | 30.28 | 30.60 | **29.46** | **−0.82** |
+| the same without `complex-numbers` | 30.20 | 30.71 | **30.86** | **+0.66** |
+| prompt tok/s, the whole session | 150.4 | 154.6 | **142.4** | |
+| prompt s a task (all prompt s) | 20.57 (246.9) | 21.50 (258.0) | **32.80 (393.6)** | **+12.23** |
+| the same without `complex-numbers` | 20.65 (227.1) | 20.15 (221.6) | **21.62 (237.8)** | **+0.97** |
+| prompt tokens read a task; without `complex-numbers` | 3,093; 3,148 | 3,324; 3,094 | **4,670; 3,337** | |
+| tokens generated a task | 1,367 | 1,699 | **3,129** | |
+| the 12 requests matched in all three runs, prompt s | 86.94 | 87.33 | **90.04** | **+3.10** |
+| the same without `complex-numbers` turn 1 (11 requests) | 80.60 | 80.97 | **81.36** | **+0.76** |
+| first token median s; p90 s | 2.30; 7.90 | 2.28; 7.91 | **2.27; 8.94** | |
+| first token on a task's first turn, median s | 6.29 | 6.22 | **6.49** | |
+| the longest first-token wait s (`affine-cipher` turn 1, 2,780 tokens, nothing cached) | 27.21 | 27.48 | **27.42** | |
+| draft acceptance; tokens a decode step | 0.755; 3.27 | 0.755; 3.27 | **0.741; 3.22** | |
+| ms a decode step, middle under 6,153 cells (both arms on the same kernels) | 107.07 (53 requests) | 106.06 (46) | **106.31 (49)** | **−0.76** |
+| ms a decode step, middle 6,153 to 8,204 cells (where 0.75 acts); requests; tokens | 114.81; 11; 2,229 | 108.12; 11; 6,860 | **113.48; 10; 3,951** | **−1.33** |
+| ms a decode step, middle 8,204 to 16,000 cells; requests | —; 0 | 109.78; 6 | **109.34; 14** | |
+| ms a decode step, middle 16,000 cells and above; requests | —; 0 | —; 0 | **112.82; 25** | |
+| ms a decode step, all requests | 108.17 | 106.97 | **109.63** | **+1.46** |
+| reply re-reads: turns; tokens | 0; 0 | 0; 0 | **0; 0** | |
+| requests on which text reuse kept the cached tokens | 7 (3 tasks) | 8 (3 tasks) | **41 (3 tasks, 31 of them in `complex-numbers`)** | |
+| minutes, all 12 tasks; turns | 13.7; 64 | 15.9; 63 | **29.3; 99** | |
+| tool calls / failed / malformed | 59 / 0 / 0 | 58 / 0 / 0 | **94 / 4 / 0** | |
+| graph reallocations | 0 in 64 requests | 0 in 63 | **0 in 98** | |
+| busy SM clock medians, cards 0 to 8, MHz (mean) | 2113 2138 2151 2100 2100 2100 2151 2151 2126 (2,125.6) | 2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0) | **2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0)** | |
+| busy memory clock medians, MHz | 4657 4498 4498 4551 4551 4608 4455 4455 4657 | the same on every card | **the same on every card** | |
+| hottest card; highest power (card log) | 44 °C (card 0); 83.35 W (card 3) | 44 °C (card 0); 84.72 W (card 1) | **44 °C (card 0); 83.81 W (card 7)** | |
+| lowest MemAvailable MiB; swap highest MiB | 379; 999 | 386; 448 | **367; 1,055** | |
+
+Each value is one run (the same tables as runs 1 and 2; R209d's reference row stays in them; the agent check's own
+report: [c10b_report_table.md](c10b_report_table.md), [c10b_compare.md](c10b_compare.md),
+[c10b_gonogo.md](c10b_gonogo.md)). The 12 requests matched in the three runs of this day are the 11 first turns
+(`pig-latin`'s first turn drops out, below) and turn 2 of Python `phone-number`, 12,019 tokens read; `c10a` and `c10b`
+alone match 13 requests (97.83 s against 94.78 s):
+
+```bash
+D=docs/data/2026-11-20_r220_flash_ratio075
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/same_prompts.py c10a=$D/agent/c10a/turns.csv r075a=$D/agent/r075a/turns.csv c10b=$D/agent/c10b/turns.csv
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/same_prompts.py c10a=$D/agent/c10a/turns.csv c10b=$D/agent/c10b/turns.csv
+```
+
+[same_prompts.md](same_prompts.md) now holds the requests matched in all four runs with R209d's: the 11 first turns,
+78.69, 78.48, 78.84 and 81.54 s for `f5oc1`, `c10a`, `r075a` and `c10b`. The tables of runs 1 and 2 quote it as it was
+before this run, with `pig-latin`'s first turn (12 requests).
+
+- **JavaScript `complex-numbers`** ([prompt_tasks.tsv](prompt_tasks.tsv), `agent/c10b/attempts.csv`): 39 turns, the
+  last cut by the 12-minute cap (720 s), 38 tool calls of which 3 failed, 38 of its 40 tests passing at the end; it read
+  19,337 prompt tokens in 155.77 s and its context reached 33,530 tokens. Runs 1 and 2 passed it in 6 turns (45.5 s) and
+  7 turns (91.8 s). R72b's run of this model on v4's candidate line took it to the cap in 35 turns
+  ([R72](../2026-11-12_r72_agent_v4c2/README.md)), which is why every table here has a column without it. 34 of its
+  requests had their middle past 8,204 cells, of this run's 39 there (run 2: 6, run 1: none), so the rows "all
+  requests" and "8,204 cells and above" compare different work.
+- **Where the ratio acts** ([steps_ratio.md](steps_ratio.md)): 10 requests had their middle between 6,153 and 8,204
+  cells and ran at 113.48 ms a decode step, against 114.81 ms on run 1's 11; both controls run the dense kernel there.
+  The replies differ again: here 3,951 tokens, 148 to 1,358 a request, in six tasks; run 1 2,229 tokens, 33 to 757, in
+  four; run 2 (0.75) 6,860 tokens, 56 to 3,666, in six. Below 6,153 cells, where every run uses the same kernels, the
+  two controls differ by 0.76 ms a step (106.31 against 107.07 ms); run 2's 106.06 ms lies 0.25 ms under this run and
+  1.01 ms under run 1.
+- **Two first turns read slower than in runs 1 and 2:** Python `pig-latin`'s first turn, right after `complex-numbers`,
+  read all 2,324 tokens in 11.90 s instead of 775 in about 6.2 s, because the long task before it had pushed every
+  checkpoint near the start out of the slot's four (the server log: "no checkpoint below 1553"; the report's one full
+  re-processing). JavaScript `complex-numbers`' own first turn read its 896 tokens in 8.67 s against 6.34 and 6.36 s,
+  after restoring the same 1,549-token checkpoint as runs 1 and 2; the task before it (`scale-generator`, 8 turns) had
+  ended at 8,566 tokens. This is not explained yet; in run 2, `pig-latin`'s first turn after a task that ended at
+  8,905 tokens read at the usual speed (6.13 s). Without that turn the requests matched in the three runs read within
+  0.76 s of each other (80.60, 80.97 and 81.36 s).
+- **Text reuse** ([text_reuse_points.tsv](text_reuse_points.tsv)): it kept the cached tokens on Python `affine-cipher`
+  turns 2 to 5, Python `scale-generator` turns 3 to 8 and 31 turns of `complex-numbers`, 454,652 cached tokens kept in
+  all. The time from choosing the slot to processing each request was 1.19 ms on the median
+  ([slot_gap.tsv](slot_gap.tsv)).
+- **Answers sound:** the 11 tasks passed with their hidden tests; 0 of 94 calls malformed, none inside the reasoning,
+  no NaN or inf, 10 checkpoints restored, 1 full re-processing (`pig-latin`, above), 0 graph reallocations. The report's
+  gates are GO except memory (NO-GO on the 368 MB low and the swap, as in every Flash-Next run of this preset) and the
+  proxy rows (NO-GO: `complex-numbers` has 39 rows for 38 replies, its last request cut by the cap).
+- **Memory:** swap grew from 50 MiB to 1,055 MiB at 12:43:26, during `complex-numbers` (run 1: 999 MiB, run 2: 448),
+  and was back at 51 MiB once the server stopped. The lowest MemAvailable was 367 MiB at 12:31:35. The RAM watchdog
+  stopped nothing.
+- **Heat and power** ([cards.md](cards.md), the card log every 0.5 s over the tasks): the hottest card 44 °C, above
+  80 W in 1 4 2 2 1 2 1 1 4 samples on cards 0 to 8, highest 83.81 W on card 7. The kit's watchdog sampled 3,538 times
+  a card over the same window: 0 trips, above 80 W in 3 1 5 5 3 2 1 1 3 samples, at most two in a row (card 2), highest
+  84.15 W on card 0, the offsets the same in every sample.
 
 ## Files
 
