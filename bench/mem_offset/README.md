@@ -33,8 +33,9 @@ came from steps 2 to 5 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/READM
 ([R221](../../docs/data/2026-11-20_r221_core_climb_rig1/README.md)) and step 4
 ([R223](../../docs/data/2026-11-20_r223_core_soak_rig1/README.md)); its step 5
 ([R224](../../docs/data/2026-11-20_r224_apply_rig1/README.md)) set the profile and Ornith differed from its stock answer
-once in 22 rounds, so that rig runs at stock while the card is found by halves
-([R226](../../docs/data/2026-11-20_r226_rig1_card_search/README.md): cards 0 to 4 alone held 56 of 56 rounds).
+once in 22 rounds, so that rig runs at stock; the search by halves named no card
+([R226](../../docs/data/2026-11-20_r226_rig1_card_search/README.md): cards 0 to 4 alone held 56 of 56 rounds, cards
+5, 7 and 8 alone 55 of 55).
 
 | Step | What happens | How it runs | What it gives | Time |
 |---|---|---|---|---|
