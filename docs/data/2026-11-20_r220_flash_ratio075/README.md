@@ -16,6 +16,16 @@ command is R210's text-reuse run's byte for byte and matches `settings.env`; eve
 never tripped and the boot logged no GPU error. No class is given yet: the verdict compares both arms after all four
 runs.
 
+**Run 2 of 4 done: with the ratio at 0.75, Flash-Next also passed 12 of 12 tasks.** A task took 2.26 minutes at equal
+work (the control: 2.28), the model generated at 30.60 tok/s over the session (30.28), and the prompts took 21.50 s a
+task (20.57), 258.0 s in all for 39,887 tokens read (246.9 s for 37,117): this run read more, most of it in one task
+that took two more turns. The 14 requests that read the same prompt on the same cached prefix in both runs took 101.65 s
+here against 101.57 s. On the 11 requests whose middle lay where 0.75 acts (6,153 to 8,204 cells) a decode step took
+108.12 ms against the control's 114.81 ms on 11, but the two runs put different replies there (6,860 tokens against
+2,229), and below 6,153 cells, where both arms run the same kernels, the two runs also differ by 1.01 ms a step. The
+started command differs from the control's only in the ratio; every card held the profile, the watchdog never tripped
+and the boot logged no GPU error. No class yet: the verdict waits for runs 3 and 4.
+
 ## What runs
 
 Four runs of Flash-Next's agent check ([bench/agent_check](../../../bench/agent_check/README.md): 12 bug-fix tasks,
@@ -25,7 +35,7 @@ alternated so that each arm has one run in each half of the day:
 | # | Run | Arm | `GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO` | Status |
 |---|---|---|---|---|
 | 1 | R220a | `c10a` | 1.0, the v5 preset as it is (the control) | done 11:21–11:39 |
-| 2 | R220b | `r075a` | 0.75 | planned |
+| 2 | R220b | `r075a` | 0.75 | done 11:49–12:10 |
 | 3 | R220c | `c10b` | 1.0 (the control) | planned |
 | 4 | R220d | `r075b` | 0.75 | planned |
 
@@ -122,6 +132,81 @@ log.
 - **Heat and power** ([cards.md](cards.md), the card log every 0.5 s over the tasks): the hottest card 44 °C, above
   80 W in 1 2 2 3 1 0 0 1 1 single samples on cards 0 to 8, highest 83.35 W on card 3. The kit's watchdog sampled
   1,661 times a card over the same window: 0 trips, never 80 W held for 5 s.
+
+## Run 2, `r075a` (R220b): ratio 0.75, 11:49–12:10
+
+**Ratio 0.75 ran 12 of 12 tasks in 16.1 minutes.** Its started command (1,716 bytes, md5
+`f588628a98483a96e8ceb8f2969d27dc`) is its dry line byte for byte, differs from `c10a`'s only in
+`GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=0.75`, and passes [run/preset_check.sh](run/preset_check.sh) with 0.75 (40
+switches, the same 30 flags). The server started at 11:49:47 and was up after 227 s; the tasks ran 11:53:37–12:09:41 and
+the report ended at 12:10:00, on the same boot as run 1. Before and after, every card was at the profile's offsets
+(75 W), the kit's watchdog was running, and the kernel log held no Xid line.
+
+| | R209d `f5oc1` (2026-11-19, reference) | `c10a` (R220a) | **`r075a` (R220b)** |
+|---|---|---|---|
+| preset | v4.0's (no text reuse) | v5, ratio 1.0 | **v5, ratio 0.75** |
+| passed | 12 / 12 | 12 / 12 | **12 / 12** |
+| minutes a task at equal work (R90 `v3`'s work) | 2.26 | 2.28 | **2.26** |
+| the same without JavaScript `complex-numbers` | 2.34 | 2.36 | **2.34** |
+| generation tok/s | 30.69 | 30.28 | **30.60** |
+| prompt tok/s, the whole session | 152.5 | 150.4 | **154.6** |
+| prompt s a task (all prompt s) | 20.62 (247.4) | 20.57 (246.9) | **21.50 (258.0)** |
+| prompt tokens read a task | 3,145 | 3,093 | **3,324** |
+| tokens generated a task | 1,855 | 1,367 | **1,699** |
+| the 12 first turns, matched in all three runs, prompt s | 84.83 | 84.76 | **84.97** |
+| the 14 requests matched in `c10a` and `r075a`, prompt s | — | 101.57 | **101.65** |
+| first token median s; p90 s | 2.66; 7.91 | 2.30; 7.90 | **2.28; 7.91** |
+| first token on a task's first turn, median s | 6.25 | 6.29 | **6.22** |
+| the longest first-token wait s (`affine-cipher` turn 1, 2,780 tokens, nothing cached) | 27.53 | 27.21 | **27.48** |
+| draft acceptance; tokens a decode step | 0.767; 3.30 | 0.755; 3.27 | **0.755; 3.27** |
+| ms a decode step, middle context under 4,000 / 4,000 to 8,000 / 8,000 to 16,000 | 104.15 / 108.02 / 110.93 | 105.59 / 108.62 / — | **103.63 / 107.44 / 109.78** |
+| requests in those buckets | 17 / 39 / 5 | 17 / 47 / 0 | **19 / 38 / 6** |
+| ms a decode step, middle context under 6,153 cells (both arms on the same kernels) | 106.62 (47 requests) | 107.07 (53) | **106.06 (46)** |
+| ms a decode step, middle 6,153 to 8,204 cells (where 0.75 acts); requests; tokens | 109.50; 9; 7,341 | 114.81; 11; 2,229 | **108.12; 11; 6,860** |
+| ms a decode step, middle 8,204 cells and above; requests | 110.93; 5 | —; 0 | **109.78; 6** |
+| ms a decode step, all requests | 107.75 | 108.17 | **106.97** |
+| reply re-reads: turns; tokens; their prompt s of all prompt s | 1; 941; 6.9 of 247.4 | 0; 0; 0.0 of 246.9 | **0; 0; 0.0 of 258.0** |
+| requests on which text reuse kept the cached tokens | — | 7 (3 tasks) | **8 (3 tasks)** |
+| minutes, all 12 tasks; turns | 16.7; 61 | 13.7; 64 | **15.9; 63** |
+| tool calls / failed / malformed | 56 / 1 / 0 | 59 / 0 / 0 | **58 / 0 / 0** |
+| graph reallocations | 0 in 61 requests | 0 in 64 | **0 in 63** |
+| busy SM clock medians, cards 0 to 8, MHz (mean) | 2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0) | 2113 2138 2151 2100 2100 2100 2151 2151 2126 (2,125.6) | **2113 2138 2151 2100 2113 2100 2151 2151 2126 (2,127.0)** |
+| busy memory clock medians, MHz | 4657 4498 4498 4551 4551 4608 4455 4455 4657 | the same on every card | **the same on every card** |
+| hottest card; highest power (card log) | 42 °C; 87.80 W | 44 °C (card 0); 83.35 W (card 3) | **44 °C (card 0); 84.72 W (card 1)** |
+| lowest MemAvailable MiB; swap highest MiB | 384; 589 | 379; 999 | **386; 448** |
+
+Each value is one run (the same tables as run 1; the agent check's own report:
+[r075a_report_table.md](r075a_report_table.md), [r075a_compare.md](r075a_compare.md),
+[r075a_gonogo.md](r075a_gonogo.md)). The 14 requests matched in the two arms are the 12 first turns plus turn 2 of
+JavaScript `grade-school` and of Python `phone-number`, 14,833 tokens read, from C854's script with these two runs only:
+
+```bash
+D=docs/data/2026-11-20_r220_flash_ratio075
+python3 -I docs/data/2026-11-18_c854b_p106_check/run/same_prompts.py c10a=$D/agent/c10a/turns.csv r075a=$D/agent/r075a/turns.csv
+```
+
+- **Where the ratio acts** ([steps_ratio.md](steps_ratio.md)): 11 requests had their middle between 6,153 and 8,204
+  cells and ran at 108.12 ms a decode step, against 114.81 ms on the control's 11. The two buckets hold different
+  replies: here 6,860 tokens, 56 to 3,666 a request, in six tasks; in the control 2,229 tokens, 33 to 757 a request, in
+  four. Below 6,153 cells, where both arms run the same kernels, this run's step is 1.01 ms shorter too (106.06 against
+  107.07 ms). This run also had 6 requests past 8,204 cells (109.78 ms), the control none. The verdict reads this bucket
+  over all four runs.
+- **The prompt seconds of every task** ([prompt_tasks.tsv](prompt_tasks.tsv)): 21.50 s a task against 20.57 s, for
+  3,324 tokens read a task against 3,093. Most of the difference is JavaScript `complex-numbers`: 7 turns, 5,852 tokens
+  and 36.36 s here, 6 turns, 2,494 tokens and 19.72 s in the control. The requests matched in both arms read at the
+  same speed (101.65 s against 101.57 s); none of them lies at 7,168 tokens or deeper, where R69 saw slower primes.
+- **Text reuse** ([text_reuse_points.tsv](text_reuse_points.tsv)): it kept the cached tokens on JavaScript
+  `grade-school` turns 4 and 5, Python `pig-latin` turns 3 to 5 and JavaScript `variable-length-quantity` turns 3 to 5.
+  The time from choosing the slot to processing each request was 0.68 ms on the median ([slot_gap.tsv](slot_gap.tsv)).
+- **Answers sound:** every task passed with its hidden tests; 0 of 58 calls malformed, none inside the reasoning, no
+  NaN or inf, 11 checkpoints restored, 0 full re-processing. The report's gates are all GO except memory (NO-GO on the
+  387 MB low and the swap), as in every Flash-Next run of this preset.
+- **Memory:** swap grew from 50 MiB to 448 MiB at 11:58:46 (run 1: 999 MiB) and was back at 50 MiB once the server
+  stopped. The lowest MemAvailable was 386 MiB at 11:54:16. The RAM watchdog stopped nothing.
+- **Heat and power** ([cards.md](cards.md), the card log every 0.5 s over the tasks): the hottest card 44 °C, above
+  80 W in 2 3 0 1 4 1 3 1 3 samples on cards 0 to 8, at most two in a row (card 6), highest 84.72 W on card 1. The kit's
+  watchdog sampled 1,929 times a card over the same window: 0 trips, above 80 W in 0 1 1 0 0 1 0 1 1 single samples,
+  highest 83.50 W on card 7.
 
 ## Files
 

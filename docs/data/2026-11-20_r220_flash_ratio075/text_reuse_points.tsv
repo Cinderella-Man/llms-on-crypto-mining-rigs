@@ -6,3 +6,11 @@ c10a	bugfix-python-pig-latin	5	3704	1257	5089	5090	4961	129	1585.286	4824	138	-1
 c10a	bugfix-javascript-variable-length-quantity	3	6061	301	6770	6772	6362	410	2873.21	4565	1797	1496	1762	before the tool call	same
 c10a	bugfix-javascript-variable-length-quantity	4	6061	913	7002	7004	6974	30	903.257	6772	203	-711		before the previous reply	same, arguments re-serialized
 c10a	bugfix-javascript-variable-length-quantity	5	6061	992	7138	7140	7053	87	1438.887	7004	50	-943		before the previous reply	same
+r075a	bugfix-javascript-grade-school	4	4549	102	4681	4682	4651	31	883.869	4463	189	86	77	in the tool call	same, arguments re-serialized
+r075a	bugfix-javascript-grade-school	5	4549	209	4849	4850	4758	92	1453.858	4682	77	-133		before the previous reply	same
+r075a	bugfix-python-pig-latin	3	4276	129	4628	4628	4405	223	1844.521	3454	952	822	904	before the tool call	same
+r075a	bugfix-python-pig-latin	4	4276	637	4945	4945	4913	32	896.97	4628	286	-352		before the previous reply	same, arguments re-serialized
+r075a	bugfix-python-pig-latin	5	4276	865	5267	5267	5141	126	1519.442	4945	196	-669		before the previous reply	same
+r075a	bugfix-javascript-variable-length-quantity	3	4792	3447	8804	8807	8239	568	3476.682	4574	3666	218	3627	before the tool call	same
+r075a	bugfix-javascript-variable-length-quantity	4	4792	4171	8993	8996	8963	33	965.175	8807	157	-4015		before the previous reply	same, arguments re-serialized
+r075a	bugfix-javascript-variable-length-quantity	5	4792	4279	9217	9220	9071	149	1700.254	8996	76	-4204		before the previous reply	same
