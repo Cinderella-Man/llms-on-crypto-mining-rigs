@@ -1,0 +1,8 @@
+run	reference	what differs	same tokens	drafts	MTP head's top-8 candidates and probabilities	pipeline (run)
+head-plain	base-plain	rig builds, dense model, -bs, nothing set	5 of 5	-	-	-
+head-pipe	base-pipe	rig builds, dense model, -bs --pipe-depth 3, nothing set	5 of 5	-	-	5 pipelined requests, 370 guesses, 37 right, 113 wrong
+head-mtp	base-mtp	rig builds, qwen35moe MTP model, -bs --spec-type draft-mtp, nothing set	5 of 5	identical: 406 verify steps, 1203 drafted tokens	identical at all 1218 positions	-
+rpc-head-nd-1	rpc-base-nd-1	CPU builds on two RPC devices, MTP draft, --mtp-device unset	5 of 5	identical: 406 verify steps, 1203 drafted tokens	identical at all 1218 positions	-
+rpc-base-nd0	rpc-base-nd-1	base: --mtp-device 0 against unset	5 of 5	identical: 406 verify steps, 1203 drafted tokens	identical at all 1218 positions	-
+rpc-head-nd0	rpc-head-nd-1	head: --mtp-device 0 against unset	5 of 5	identical: 406 verify steps, 1203 drafted tokens	identical at all 1218 positions	-
+rpc-head-nd0	rpc-base-nd0	--mtp-device 0: head's bounded copy against base's whole-head copy	5 of 5	identical: 406 verify steps, 1203 drafted tokens	identical at all 1218 positions	-

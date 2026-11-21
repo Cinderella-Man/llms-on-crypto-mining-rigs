@@ -1,0 +1,72 @@
+--- harness-base.log
+load_tensors:          CPU model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =     0.00 MiB
+load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+load_tensors:          CPU model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =     0.00 MiB
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     8.16 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   489.58 MiB
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     8.16 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   489.58 MiB
+load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =   255.23 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   242.50 MiB
+load_tensors: MTP output head copied to RPC0, 242.5 MiB (--mtp-device)
+load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =   255.23 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   242.50 MiB
+load_tensors: MTP output head copied to RPC0, 242.5 MiB (--mtp-device)
+--- harness-head.log
+load_tensors:          CPU model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =     0.00 MiB
+load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+load_tensors:          CPU model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =     0.00 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     0.00 MiB
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     8.16 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   489.58 MiB
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =     8.16 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   489.58 MiB
+load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =   255.23 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =   242.50 MiB
+load_tensors: MTP output head copied to RPC0, 242.5 MiB (--mtp-device)
+load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =   255.23 MiB
+load_tensors: RPC0[127.0.0.1:50053] model buffer size =   242.50 MiB
+load_tensors: RPC0[127.0.0.1:50052] model buffer size =   242.50 MiB
+load_tensors: MTP output head copied to RPC0, 242.5 MiB (--mtp-device)
+--- rpc-base-nd-1.log
+I load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+I load_tensors: RPC0[127.0.0.1:50052] model buffer size =     8.16 MiB
+I load_tensors: RPC0[127.0.0.1:50053] model buffer size =   489.58 MiB
+--- rpc-base-nd0.log
+I load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+I load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+I load_tensors: RPC0[127.0.0.1:50052] model buffer size =   255.23 MiB
+I load_tensors: RPC0[127.0.0.1:50053] model buffer size =   242.50 MiB
+I load_tensors: MTP output head copied to RPC0, 242.5 MiB (--mtp-device)
+--- rpc-head-nd-1.log
+I load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+I load_tensors: RPC0[127.0.0.1:50052] model buffer size =     8.16 MiB
+I load_tensors: RPC0[127.0.0.1:50053] model buffer size =   489.58 MiB
+--- rpc-head-nd0.log
+I load_tensors: nextn layer 2 on RPC0 (--mtp-device)
+I load_tensors:   CPU_Mapped model buffer size =   242.50 MiB
+I load_tensors: RPC0[127.0.0.1:50052] model buffer size =   255.23 MiB
+I load_tensors: RPC0[127.0.0.1:50053] model buffer size =   242.50 MiB
+I load_tensors: RPC0[127.0.0.1:50052] model buffer size =   242.50 MiB
+I load_tensors: MTP output head copied to RPC0, 242.5 MiB (--mtp-device)
