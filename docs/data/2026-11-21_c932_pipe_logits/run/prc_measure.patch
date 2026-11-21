@@ -1,0 +1,121 @@
+--- a/examples/pipe-recurrent-check/pipe-recurrent-check.cpp	2026-11-21 04:37:47.988490018 +0100
++++ b/examples/pipe-recurrent-check/pipe-recurrent-check.cpp	2026-11-21 04:38:19.410394005 +0100
+@@ -16,6 +16,8 @@
+ #include "llama.h"
+ 
+ #include <algorithm>
++#include <cmath>
++#include <cstdlib>
+ #include <cstdio>
+ #include <cstring>
+ #include <vector>
+@@ -48,8 +50,48 @@
+     std::vector<uint64_t>    hashes;
+     uint64_t                 state = 0;
+     uint64_t                 probe = 0;
++    std::vector<float>       all; // C932 measuring patch: every step's logits
+ };
+ 
++// C932 measuring patch: the largest absolute and relative difference between two runs' logits, step by step
++struct diff_stats {
++    double max_abs = 0, max_rel = 0, max_logit = 0, min_margin = 1e30;
++    int    n_steps_diff = 0, n_argmax_diff = 0, first = -1;
++};
++static diff_stats compare_logits(const char * tag, const std::vector<float> & a, const std::vector<float> & b, int n_vocab,
++                                 int n_steps, bool per_step) {
++    diff_stats d;
++    for (int i = 0; i < n_steps; i++) {
++        const float * x = a.data() + (size_t) i*n_vocab;
++        const float * y = b.data() + (size_t) i*n_vocab;
++        double sa = 0, sr = 0;
++        int ax = 0, ay = 0;
++        for (int j = 0; j < n_vocab; j++) {
++            const double e = std::fabs((double) x[j] - (double) y[j]);
++            const double m = std::max(std::fabs((double) x[j]), std::fabs((double) y[j]));
++            sa = std::max(sa, e);
++            if (m > 0) { sr = std::max(sr, e/m); }
++            d.max_logit = std::max(d.max_logit, m);
++            if (x[j] > x[ax]) { ax = j; }
++            if (y[j] > y[ay]) { ay = j; }
++        }
++        float second = -INFINITY;
++        for (int j = 0; j < n_vocab; j++) { if (j != ax) { second = std::max(second, x[j]); } }
++        const double margin = (double) x[ax] - (double) second;
++        d.min_margin = std::min(d.min_margin, margin);
++        if (sa > 0) { d.n_steps_diff++; if (d.first < 0) { d.first = i; } }
++        d.n_argmax_diff += ax != ay;
++        d.max_abs = std::max(d.max_abs, sa);
++        d.max_rel = std::max(d.max_rel, sr);
++        if (per_step) {
++            printf("%s-STEP %d max_abs=%.3e max_rel=%.3e argmax=%d/%d margin=%.4f\n", tag, i, sa, sr, ax, ay, margin);
++        }
++    }
++    printf("%s n_steps=%d steps_diff=%d first_diff=%d max_abs=%.3e max_rel=%.3e max_logit=%.3f min_margin=%.4f argmax_diff=%d\n",
++           tag, n_steps, d.n_steps_diff, d.first, d.max_abs, d.max_rel, d.max_logit, d.min_margin, d.n_argmax_diff);
++    return d;
++}
++
+ int main(int argc, char ** argv) {
+     common_params params;
+     common_init();
+@@ -137,6 +179,7 @@
+         const llama_token tok = argmax(logits);
+         ref.toks.push_back(tok);
+         ref.hashes.push_back(fnv1a(logits.data(), sizeof(float)*n_vocab));
++        ref.all.insert(ref.all.end(), logits.begin(), logits.end());
+         if (i + 1 == n_gen) {
+             break;
+         }
+@@ -149,6 +192,34 @@
+         return fail("plain probe failed", n_gen);
+     }
+ 
++    // C932 measuring patch, PRC_BATCH=1: the yardstick for a changed order of sums. The prompt and the generated
++    // tokens decoded again as one batch (llama_decode splits it into micro-batches), every generated position's
++    // logits against plain decoding's one token at a time.
++    if (getenv("PRC_BATCH") && atoi(getenv("PRC_BATCH")) != 0) {
++        llama_memory_clear(mem, true);
++        const int nb = n_prompt + n_gen - 1;
++        llama_batch batch = llama_batch_init(nb, 0, 1);
++        for (int i = 0; i < nb; i++) {
++            batch.token[i]     = i < n_prompt ? inp[i] : ref.toks[i - n_prompt];
++            batch.pos[i]       = i;
++            batch.n_seq_id[i]  = 1;
++            batch.seq_id[i][0] = 0;
++            batch.logits[i]    = i >= n_prompt - 1;
++        }
++        batch.n_tokens = nb;
++        if (llama_decode(ctx, batch) != 0) {
++            llama_batch_free(batch);
++            return fail("batch decode failed", -1);
++        }
++        std::vector<float> ball;
++        for (int i = 0; i < n_gen; i++) {
++            const float * p = llama_get_logits_ith(ctx, n_prompt - 1 + i);
++            ball.insert(ball.end(), p, p + n_vocab);
++        }
++        llama_batch_free(batch);
++        compare_logits("PRC-BATCH", ref.all, ball, n_vocab, n_gen, false);
++    }
++
+     // pipelined, three slots
+     const int S = 3;
+     if (llama_pipe_init(ctx, S) != 0) {
+@@ -164,6 +235,7 @@
+         const llama_token tok = argmax(logits);
+         pr.toks.push_back(tok);
+         pr.hashes.push_back(fnv1a(logits.data(), sizeof(float)*n_vocab));
++        pr.all.insert(pr.all.end(), logits.begin(), logits.end());
+         if (i + 1 == n_gen) {
+             break;
+         }
+@@ -231,6 +303,9 @@
+         }
+     }
+ 
++    // C932 measuring patch: the size of every difference, PRC_STEPS=1 step by step
++    compare_logits("PRC-PIPE", ref.all, pr.all, n_vocab, n_gen, getenv("PRC_STEPS") && atoi(getenv("PRC_STEPS")) != 0);
++
+     printf("PIPE-RECURRENT-CHECK n_prompt=%d n_gen=%d inplace=%d guesses=%d leave_pipe=%d leave_decode=%d tokens=%s "
+            "logits=%s state=%s probe=%s first_logits_diff=%d\n", n_prompt, n_gen, n_inplace, n_guess, n_leave_pipe,
+            n_leave_decode, same_toks ? "same" : "DIFF", same_logits ? "same" : "DIFF", same_state ? "same" : "DIFF",

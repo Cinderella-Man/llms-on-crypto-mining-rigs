@@ -1,0 +1,17 @@
+build	job	n_gen	guesses	hits	misses	tokens	logits	state	probe	verdict
+base	plain	64	0	0	0	same	same	same	same	same
+base	pipe-d0	23	0	0	0	DIFF	DIFF	DIFF	DIFF	DIFF
+base	oracle-d1-m0	64	63	8	54	DIFF	DIFF	DIFF	DIFF	DIFF
+base	oracle-d1-m0.5	52	51	2	48	DIFF	DIFF	DIFF	DIFF	DIFF
+base	copy2-d1	32	2	0	2	DIFF	DIFF	DIFF	DIFF	DIFF
+base	cont4-d1	16	6	1	5	DIFF	DIFF	DIFF	DIFF	DIFF
+base	simple-d1	23	0	0	0	DIFF	DIFF	DIFF	DIFF	DIFF
+base	mapk-d1	23	0	0	0	DIFF	DIFF	DIFF	DIFF	DIFF
+head	plain	64	0	0	0	same	same	same	same	same
+head	pipe-d0	64	0	0	0	same	same	same	same	same
+head	oracle-d1-m0	64	63	62	0	same	same	same	same	same
+head	oracle-d1-m0.5	64	63	38	24	same	same	same	same	same
+head	copy2-d1	64	27	20	7	same	same	same	same	same
+head	cont4-d1	64	43	26	17	same	same	same	same	same
+head	simple-d1	64	18	16	2	same	same	same	same	same
+head	mapk-d1	64	17	16	1	same	same	same	same	same
