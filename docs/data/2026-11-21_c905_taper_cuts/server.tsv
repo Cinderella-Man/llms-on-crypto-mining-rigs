@@ -1,0 +1,14 @@
+run	reference	rule	verdict	detail
+head-off	base-off	taper unset: replies, probabilities, prompt_n, cache_n, no taper line	OK	16 requests; 0 taper lines the same
+head-v5	base-v5	short=1400:64 (cuts unset): replies, probabilities, counts and every call's pieces the base's	OK	16 requests; 16 taper lines the same
+head-v5c	head-v5	short=1400:64,cuts=1 against short=1400:64: the same replies and counts	OK	16 requests; top-3 probabilities the same
+head-v5c-req	head-v5c	cuts=1 sent per request against set on the server: everything the same	OK	16 requests; 16 taper lines the same
+head-v5	head-off	short=1400:64 against the taper unset (not part of the verdict: no change of this branch)	OK	16 requests; top-3 probabilities the same
+base-off	-	calls with a piece under 9 tokens that is not a whole segment	INFO	0 of 0 calls
+base-v5	-	calls with a piece under 9 tokens that is not a whole segment	INFO	5 of 16 calls
+head-off	-	calls with a piece under 9 tokens that is not a whole segment	INFO	0 of 0 calls
+head-v5	-	calls with a piece under 9 tokens that is not a whole segment	INFO	5 of 16 calls
+head-v5c	-	calls with a piece under 9 tokens that is not a whole segment	INFO	0 of 16 calls
+head-v5c-req	-	calls with a piece under 9 tokens that is not a whole segment	INFO	0 of 16 calls
+head-v5c	-	cuts=1: no piece under 9 tokens but whole segments the cuts make	OK	16 and 16 calls
+all	-	verdict	PASS	
