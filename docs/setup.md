@@ -96,7 +96,9 @@ compute capability 6.1 only, no AVX in the CPU part, and llama.cpp's own librari
 only needs the rig's CUDA 12.9 runtime libraries. It produces a ~160 MB tarball to unpack on the rig. With
 `--cuda-graphs-pascal` it also applies [PR #27721](https://github.com/ggml-org/llama.cpp/pull/27721), which re-enables
 CUDA graphs on Pascal and speeds up generation by 7–16 % in the benchmarks here. New model architectures need a recent
-build: Flint, for example, is supported only from 2026-10-21.
+build: Flint, for example, is supported only from 2026-10-21. Recent versions download llama-server's web page (its
+built-in chat UI) during the build; the script asks for the page of the upstream llama.cpp release the tree is based
+on, also for Miner Llama's branches, and prints which one the build took.
 
 ## Running llama-server on a 4 GB host
 

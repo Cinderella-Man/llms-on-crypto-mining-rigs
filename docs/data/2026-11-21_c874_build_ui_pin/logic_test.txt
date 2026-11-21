@@ -1,0 +1,22 @@
+== 1. host side
+ok   nothing set: 
+ok   environment: HF_UI_VERSION=b111
+ok   DOCKER_ARGS: 1
+ok   both: DOCKER_ARGS only: HF_UI_VERSION=b222
+== 2. the container script parses
+ok   bash -n: 0
+== 3. the version choice in the container
+ok   block extracted (lines): 14
+ok   no tags: result=unset exported=0
+ok   no tags: warning: 1
+ok   only a non-matching tag: result=unset exported=0
+ok   b12483 below HEAD: result=b12483 exported=1
+ok   b12483: printed: web page: HF_UI_VERSION=b12483 (the upstream release this tree sits on)
+ok   b12483: no warning: 0
+ok   given: result=b12360 exported=1
+ok   given: printed: web page: HF_UI_VERSION=b12360 (given)
+== 4. the took parser
+ok   pinned: b12483
+ok   fell back: latest
+ok   failed: 
+== all passed
