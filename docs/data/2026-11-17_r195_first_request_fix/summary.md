@@ -17,7 +17,7 @@ e1: GGML_CUDA_KEEPALIVE_EAGER=1 (the v4 preset as released); k1: =3 (C866). One 
 
 How on cards 0 to 8: E kernel by kernel, C captured, R replayed.
 
-| arm | depth | prompt's last 4 tokens, first | repeat | first verify, first | repeat | second verify, first | repeat | the three, first − repeat | first's last pass (1 token) | first's 60-token micro-batch | slowest draft evaluation, first, ms | largest one-pass difference, ms (pass) |
+| arm | depth | prompt's last 4 tokens, first | repeat | first verify, first | repeat | second verify, first | repeat | the three, first − repeat | first's last pass (2 tokens at 4,096, 1 at 6,144) | first's 60-token micro-batch | slowest draft evaluation, first, ms | largest one-pass difference, ms (pass) |
 |---|---:|---|---|---|---|---|---|---:|---|---|---:|---|
 | e1 | 4,096 | EEEEEEEEE 237.57 | EEEEEEEEE 97.75 | EEEEEEEEE 221.89 | EEEEEEEEE 101.53 | CCCCCCCCC 99.00 | CCCCCCCCC 93.65 | +265.53 | EEEEEEEEE 186.94 | CCCCCCCCC 1,962.81 | 10.01 | +139.81 (0) |
 | e1 | 6,144 | EEEEEEEEE 220.00 | EEEEEEEEE 103.57 | EEEEEEEEE 224.90 | EEEEEEEEE 107.78 | CCCCCCCCC 104.99 | CCCCCCCCC 99.91 | +238.63 | EEEEEEEEE 186.17 | CCCCCCCCC 1,176.78 | 10.10 | +117.12 (1) |

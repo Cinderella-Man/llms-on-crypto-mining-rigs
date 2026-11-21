@@ -1,0 +1,4 @@
+tree	check	verdict	detail
+c878	tree	OK	commit 1d177d31e2cb0114ed9805c0462bf75696d79a63 
+c878	build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+c878	ctest	FAIL	95% tests passed, 4 tests failed out of 75; failed: test-kv-cache test-jinja test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$

@@ -188,7 +188,7 @@ def main():
     print("\n## The passes that run kernel by kernel or are captured (GPU ms summed over the nine cards)\n")
     print("How on cards 0 to 8: E kernel by kernel, C captured, R replayed.\n")
     print("| arm | depth | prompt's last 4 tokens, first | repeat | first verify, first | repeat | second verify, first "
-          "| repeat | the three, first − repeat | first's last pass (1 token) | first's 60-token micro-batch | "
+          "| repeat | the three, first − repeat | first's last pass (2 tokens at 4,096, 1 at 6,144) | first's 60-token micro-batch | "
           "slowest draft evaluation, first, ms | largest one-pass difference, ms (pass) |")
     print("|---|---:|---|---|---|---|---|---|---:|---|---|---:|---|")
     for o in out:

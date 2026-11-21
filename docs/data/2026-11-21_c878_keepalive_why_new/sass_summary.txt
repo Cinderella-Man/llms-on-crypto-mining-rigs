@@ -1,0 +1,14 @@
+cuobjdump -sass of llama-server, one SHA-1 per kernel (sass_compare.py hash), base against C878
+base 3dfad876f (C908's rig build): llama-server md5 5b330eccef892b7dd9f4faf1027319c3
+C878 1d177d31e:                     llama-server md5 5df53fdaa3c6a21aacb510d5b67be266
+
+The two per-kernel tables are the same file: 9,510 rows each (8,836 kernel names; the 176 mul_mat_q kernels with the
+kq_fp32 flag on are rows of their own), md5 2c6539895c6be69fbbf38934088197cc for both. Every kernel is identical,
+none new, none missing.
+
+sass_compare.py compare's own summary, for the record:
+  base kernels (names): 8836; identical in new with kq_fp32 off: 8660; different: 176; missing in new: 0;
+  names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 176
+Its 176 "different" are the base's kq_fp32-on rows set against the new build's kq_fp32-off kernel of the same name
+(the script pairs by name with kq_fp32 off); sass_classify.py finds all 176 differ only in MOV32I constants, which is
+what the flag changes. C908 and C910 dropped those rows before comparing; here the identical tables show it directly.

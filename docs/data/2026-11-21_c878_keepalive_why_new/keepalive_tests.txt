@@ -1,0 +1,6 @@
+# test-cuda-keepalive of the rig builds (CUDA image, driver stub, no card): exit codes and result lines
+base rc=0
+head rc=0
+base: test-cuda-keepalive: 252 checks, 0 failed
+head: test-cuda-keepalive: 294 checks, 0 failed
+failed checks in head: 0

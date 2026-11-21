@@ -3,8 +3,10 @@
 **In plain words:** on Flash-Next's released preset, an agent turn's first request at a new context length runs slower
 than the same request repeated, because the cards drop their clock before a few passes. C866's switch value
 `GGML_CUDA_KEEPALIVE_EAGER=3` cuts most of that: at 4,096 and 6,144 tokens the first request now generates 97.88 and
-107.15 ms faster than with the released setting, the replies are the same, and nothing waits a second. One pass still
-drops the clock where it should not: the main model's last one-token pass of each reply, so the first request is
+107.15 ms faster than with the released setting, the replies are the same, and nothing waits a second. One pass at
+the end of each reply still drops the clock: the 256-token limit leaves room for only part of a draft, so the main
+model's last pass is two tokens long at 4,096 and one at 6,144, and each of those widths runs there for the first time
+since the warm-up, with new kernel picks ([C878](../2026-11-21_c878_keepalive_why_new/README.md)). The first request is
 still 227.23, 301.06 and 306.84 ms slower than its repeat at 4,096, 6,144 and 8,192 tokens.
 
 What this measured: R192 ([2026-11-17_r192_first_request_graphs](../2026-11-17_r192_first_request_graphs/README.md))
@@ -30,10 +32,13 @@ stops, as C866 planned: the prompt's last 4 tokens at 4,096 (the indexer's top-k
 first verify pass at 8,192 (the sparse attention starts taking 4-token passes). The draft's first evaluations still
 stop, and none waited: the slowest took 10.06 ms.
 
-**The miss:** the main model's last pass of each reply (one token, kernel by kernel) still stops on all nine cards at
-6,144, where its picks are the same as at 4,096: 187.11 ms of GPU time (with `=1` 186.17; R191 without any stop on
-v4.0, 70.26). That pass, and the draft's own stops, are most of what is left of the gap. New idea C878 (Q1585): find
-which node of that pass makes the key new.
+**The last pass:** the main model's last pass of each reply (kernel by kernel) still stops on all nine cards at 4,096
+and 6,144: 187.51 and 187.11 ms of GPU time (with `=1` 186.94 and 186.17; R191 at 4,096 without any stop on v4.0,
+70.26). The 256-token limit makes it shorter than a verify pass: two tokens at 4,096 (one token and one draft), one at
+6,144 (no room for a draft). Each of those two graphs had run only at the end of the warm-up request, at 93 and 94
+cells, where the attention and the indexer's top-k take other kernels, so at `=3` both keys are new by design
+([C878](../2026-11-21_c878_keepalive_why_new/README.md), Q1585). That pass, and the draft's own stops, are most of what
+is left of the gap.
 
 ### Generation
 
@@ -68,7 +73,7 @@ The server's generation time of each request (256 tokens, temperature 0), the fi
 How each pass ran on cards 0 to 8 (E kernel by kernel, C captured, R replayed) and its GPU time summed over the nine
 cards, ms. The passes are paired by what they read ([run/summary.py](run/summary.py)):
 
-| Arm | Depth | Prompt's last 4 tokens, first | repeat | First verify, first | repeat | Second verify, first | repeat | The three, first − repeat | First's last pass (1 token) |
+| Arm | Depth | Prompt's last 4 tokens, first | repeat | First verify, first | repeat | Second verify, first | repeat | The three, first − repeat | First's last pass (2 tokens at 4,096, 1 at 6,144) |
 |---|---:|---|---|---|---|---|---|---:|---|
 | `=1` | 4,096 | E 237.57 | E 97.75 | E 221.89 | E 101.53 | C 99.00 | C 93.65 | +265.53 | E 186.94 |
 | `=1` | 6,144 | E 220.00 | E 103.57 | E 224.90 | E 107.78 | C 104.99 | C 99.91 | +238.63 | E 186.17 |
@@ -84,13 +89,16 @@ E and C stand for all nine cards. Bold: the passes `=3` no longer stops.
 - **Where a pick changes,** it stops as `=1` does: the prompt's tail at 4,096 (240.17 against `=1`'s 237.57) and the
   first verify pass at 8,192 (227.31 against 227.96). Each is once a server: the next pass of the same kind keeps its
   block (the first verify pass at 4,096 after the tail's stop).
-- **The last pass:** at 4,096 and 6,144 the first request ends with a one-token pass run kernel by kernel, at 186.94
-  and 186.17 ms with `=1` and 187.51 and 187.11 with `=3`. The repeat's is never written by the profiler (it writes
-  an evaluation when its graph is next evaluated); the repeat ran it kernel by kernel too, without a stop (est. from its
-  27 kernel-by-kernel evaluations and 0 stops). At 4,096 its stop is by design (est.: the indexer's top-k for one row changes path
-  past 2,044 cells, and the load's earlier one-token passes ran at 256 cells). At 6,144 its picks are 4,096's, so at
-  `=3` it should have kept its block; it stopped on all nine cards. At 8,192 the first request ran 21 evaluations
-  kernel by kernel and the last pass was not one of them.
+- **The last pass:** at 4,096 and 6,144 the first request ends with a pass shorter than a verify pass, run kernel by
+  kernel: two tokens at 4,096 (one draft: the 256-token limit leaves two tokens) and one token at 6,144 (it leaves
+  one), at 186.94 and 186.17 ms with `=1` and 187.51 and 187.11 with `=3` (which pass ran on which graph:
+  [C878's tables](../2026-11-21_c878_keepalive_why_new/README.md)). The repeat's is never written by the profiler (it
+  writes an evaluation when its graph is next evaluated); the repeat ends with a pass of the same width and ran it
+  kernel by kernel too, without a stop (est. from its 27 kernel-by-kernel evaluations and 0 stops). Both stops are by
+  design: the two-token and the one-token graphs had run only at the end of the warm-up request, at 93 and 94 cells
+  (64 pools), where the indexer's top-k runs its bitonic kernel and the sparse attention does not take them; at 4,349
+  and 6,398 cells (1,088 and 1,600 pools) the top-k runs another kernel for one or two rows and the sparse attention
+  takes one token (from 2,051 cells), so their picks are new on every card. At 8,192 the reply ends with a full verify pass, and no shorter pass runs.
 - **No wait of about 1 s:** the slowest of the draft's evaluations that ran kernel by kernel or were captured took
   10.06 ms (`=3`, 4,096), and no paired main pass of a first request took more than 142.21 ms over its repeat's
   ([passes-k1-d4096.md](passes-k1-d4096.md) and the other pass tables).
