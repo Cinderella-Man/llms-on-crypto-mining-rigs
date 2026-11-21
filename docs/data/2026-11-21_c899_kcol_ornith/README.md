@@ -138,7 +138,7 @@ RIG=<rig alias> WORK=<run folder on the rig> BIN=<the C899 build on the rig>/bin
   bash docs/data/2026-11-21_c899_kcol_ornith/run/c899_rig.sh
 # then the same without DRY=1, then STEP=wait, then STEP=collect OUT=<folder>; then
 S=<this repository> OUT=<folder> RES=<tables> bash docs/data/2026-11-19_r197_ornith_passes/run/tables.sh
-python3 -I docs/data/2026-11-21_c899_kcol_ornith/run/rule.py <tables>/compare.tsv.gz <tables>
+python3 -I docs/data/2026-11-21_c899_kcol_ornith/run/rule.py <tables>/compare_p2.tsv <tables>
 ```
 
 ## Files

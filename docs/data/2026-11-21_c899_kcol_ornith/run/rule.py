@@ -14,7 +14,7 @@ Q8_0 product (MUL_MAT) it writes:
     ggml/src/ggml-cuda/mmvq-pascal-pick.h) and whether it agrees with the class.
 Then the sum of the products per arm and for the rule (est.: each product's time taken from the arm whose kernel the rule
 picks, the mean of that arm's two loads), against base.
-Usage: python3 -I rule.py <R197 compare.tsv.gz> <out dir>   writes rule.md and rule.tsv
+Usage: python3 -I rule.py <compare.tsv.gz, or compare_p2.tsv from tables.sh> <out dir>   writes rule.md and rule.tsv
 """
 import collections
 import gzip
@@ -46,7 +46,7 @@ def unset_kernel(typ, k):
 def main():
     src, out = sys.argv[1], sys.argv[2]
     d = collections.defaultdict(list)
-    with gzip.open(src, "rt") as f:
+    with (gzip.open(src, "rt") if src.endswith(".gz") else open(src)) as f:
         next(f)
         for line in f:
             table, w, _dep, _req, arm, load, name, val = line.rstrip("\n").split("\t")
