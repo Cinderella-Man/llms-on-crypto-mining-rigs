@@ -142,6 +142,7 @@ yourself: `TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v4.0`
 | [Flint](models/flint/) | 39.8B mixture of experts, 2.5B active per token, 262,144-token context | v4 release: Flint Pascal Q8 GGUF on nine cards, 49.32 and 46.99 tok/s for a coding agent, the first token of a turn after 1.74 and 1.82 s (v3: 48.55 and 48.02 tok/s, 2.65 and 2.61 s; Unsloth's Q8_0 on v3: 45.9 tok/s) |
 | [Qwen3.8-Flash-Next](models/qwen3.8-flash-next/) | 125B mixture of experts, ~6B active per token, plus a 51B-parameter n-gram table | v4 release: UkisAI's Swift-1.5 Q2_0 on nine cards, the table on the SSD, the MTP draft; 27.61 and 26.67 tok/s and 12 of 12 tasks twice for a coding agent (v3: 20.66 and 18.92; stock llama.cpp b12076: 8.20 on the same file) |
 | [Ornith-1.5-122B](models/ornith-1.5-122b/) | 122B hybrid mixture of experts for coding agents | v4 release: Ornith-1.5-122B Pascal N2P GGUF (48.2 GB) on nine cards, 16.52 and 16.13 tok/s and 12 of 12 tasks twice for a coding agent, a task in 2.11 and 2.13 minutes at equal work (v3: 2.52 and 2.54; stock llama.cpp b12076: 6.0 tok/s on Unsloth's UD-Q2_K_XL) |
+| [Qwen3.6-35B-A3B](models/qwen3.6-35b-a3b/) | 35.95B hybrid mixture of experts, ~3B active per token, its own MTP layer | v5 preset on a contributor's four GTX 1070 cards: Unsloth's UD-Q5_K_S, 79.6 and 82.7 tok/s plain, a tool call on a fresh 39k prompt in 69.1 s |
 
 Each model page gives the file, the command line, speed, quality and what is not measured yet. Model names only
 identify the models; this project is not affiliated with their makers.
