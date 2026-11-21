@@ -1,0 +1,2 @@
+base kernels (names): 8836; identical in new with kq_fp32 off: 8836; different: 0; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 0
+kq_fp32=true kernels' SHA-1, base against head: identical (176 and 176)

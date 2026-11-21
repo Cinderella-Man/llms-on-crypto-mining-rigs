@@ -1,0 +1,25 @@
+model	case	verdict	reason
+mamba-dense	store	OK	
+mamba-dense	store_p	OK	
+mamba-dense	store_at	OK	
+mamba-dense	store_at_p	OK	
+mamba-dense	store_nw	OK	
+mamba-dense	store_nw_p	OK	
+qwen35-dense	store	OK	
+qwen35-dense	store_p	OK	
+qwen35-dense	store_at	OK	
+qwen35-dense	store_at_p	OK	
+qwen35-dense	store_nw	OK	
+qwen35-dense	store_nw_p	OK	
+qwen35moe-moe	store	OK	
+qwen35moe-moe	store_p	OK	
+qwen35moe-moe	store_at	OK	
+qwen35moe-moe	store_at_p	OK	
+qwen35moe-moe	store_nw	OK	
+qwen35moe-moe	store_nw_p	OK	
+qwen4exp-moe	store	OK	
+qwen4exp-moe	store_p	OK	
+qwen4exp-moe	store_at	OK	
+qwen4exp-moe	store_at_p	OK	
+qwen4exp-moe	store_nw	OK	
+qwen4exp-moe	store_nw_p	OK	

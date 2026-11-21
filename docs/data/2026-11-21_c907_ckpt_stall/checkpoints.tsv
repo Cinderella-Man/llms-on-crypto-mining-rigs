@@ -1,0 +1,141 @@
+run	req	kind	n_tokens	pos_min	pos_max	no_wait	save_ms	host_mib	device_mib
+base-off	kinds-8000	inside	37	36	36	no			
+base-off	kinds-8000	inside	7561	7560	7560	no			
+base-off	kinds-8000	inside	8035	8034	8034	no			
+base-off	kinds-8000	inside	8073	8072	8072	no			
+base-off	kinds-16000	inside	37	36	36	no			
+base-off	kinds-16000	between	8257	8256	8256	no	0.0	0.000	0.134
+base-off	kinds-16000	inside	15559	15558	15558	no			
+base-off	kinds-16000	inside	16033	16032	16032	no			
+base-off	kinds-16000	inside	16071	16070	16070	no			
+base-off	kinds-32000	inside	37	36	36	no			
+base-off	kinds-32000	between	8232	8231	8231	no	0.0	0.000	0.134
+base-off	kinds-32000	inside	16431	16430	16430	no			
+base-off	kinds-32000	between	24653	24652	24652	no	0.0	0.000	0.134
+base-off	kinds-32000	inside	31509	31508	31508	no			
+base-off	kinds-32000	inside	31983	31982	31982	no			
+base-off	kinds-32000	inside	32021	32020	32020	no			
+base-off	kinds-47000	inside	37	36	36	no			
+base-off	kinds-47000	inside	8232	8231	8231	no			
+base-off	kinds-47000	inside	16425	16424	16424	no			
+base-off	kinds-47000	between	24632	24631	24631	no	0.0	0.000	0.134
+base-off	kinds-47000	between	32827	32826	32826	no	0.0	0.000	0.134
+base-off	kinds-47000	between	41036	41035	41035	no	0.0	0.000	0.134
+base-off	kinds-47000	inside	46496	46495	46495	no			
+base-off	kinds-47000	inside	46970	46969	46969	no			
+base-off	kinds-47000	inside	47008	47007	47007	no			
+base-off	rst-a	inside	15	14	14	no			
+base-off	rst-a	between	8234	8233	8233	no	0.0	0.000	0.134
+base-off	rst-a	inside	15574	15573	15573	no			
+base-off	rst-a	inside	16048	16047	16047	no			
+base-off	rst-a	inside	16086	16085	16085	no			
+base-off	rst-b	inside	15576	15575	15575	no			
+base-off	rst-b	inside	16050	16049	16049	no			
+base-off	rst-b	inside	16088	16087	16087	no			
+head-off	kinds-8000	inside	37	36	36	no			
+head-off	kinds-8000	inside	7561	7560	7560	no			
+head-off	kinds-8000	inside	8035	8034	8034	no			
+head-off	kinds-8000	inside	8073	8072	8072	no			
+head-off	kinds-16000	inside	37	36	36	no			
+head-off	kinds-16000	between	8257	8256	8256	no	0.0	0.000	0.134
+head-off	kinds-16000	inside	15559	15558	15558	no			
+head-off	kinds-16000	inside	16033	16032	16032	no			
+head-off	kinds-16000	inside	16071	16070	16070	no			
+head-off	kinds-32000	inside	37	36	36	no			
+head-off	kinds-32000	between	8232	8231	8231	no	0.0	0.000	0.134
+head-off	kinds-32000	inside	16431	16430	16430	no			
+head-off	kinds-32000	between	24653	24652	24652	no	0.0	0.000	0.134
+head-off	kinds-32000	inside	31509	31508	31508	no			
+head-off	kinds-32000	inside	31983	31982	31982	no			
+head-off	kinds-32000	inside	32021	32020	32020	no			
+head-off	kinds-47000	inside	37	36	36	no			
+head-off	kinds-47000	inside	8232	8231	8231	no			
+head-off	kinds-47000	inside	16425	16424	16424	no			
+head-off	kinds-47000	between	24632	24631	24631	no	0.0	0.000	0.134
+head-off	kinds-47000	between	32827	32826	32826	no	0.0	0.000	0.134
+head-off	kinds-47000	between	41036	41035	41035	no	0.0	0.000	0.134
+head-off	kinds-47000	inside	46496	46495	46495	no			
+head-off	kinds-47000	inside	46970	46969	46969	no			
+head-off	kinds-47000	inside	47008	47007	47007	no			
+head-off	rst-a	inside	15	14	14	no			
+head-off	rst-a	between	8234	8233	8233	no	0.0	0.000	0.134
+head-off	rst-a	inside	15574	15573	15573	no			
+head-off	rst-a	inside	16048	16047	16047	no			
+head-off	rst-a	inside	16086	16085	16085	no			
+head-off	rst-b	inside	15576	15575	15575	no			
+head-off	rst-b	inside	16050	16049	16049	no			
+head-off	rst-b	inside	16088	16087	16087	no			
+head-on	kinds-8000	inside	37	36	36	no			
+head-on	kinds-8000	inside	7561	7560	7560	no			
+head-on	kinds-8000	inside	8035	8034	8034	no			
+head-on	kinds-8000	inside	8073	8072	8072	no			
+head-on	kinds-16000	inside	37	36	36	no			
+head-on	kinds-16000	between	8257	8256	8256	yes	0.0	0.000	0.134
+head-on	kinds-16000	inside	15559	15558	15558	no			
+head-on	kinds-16000	inside	16033	16032	16032	no			
+head-on	kinds-16000	inside	16071	16070	16070	no			
+head-on	kinds-32000	inside	37	36	36	no			
+head-on	kinds-32000	between	8232	8231	8231	yes	0.0	0.000	0.134
+head-on	kinds-32000	inside	16431	16430	16430	no			
+head-on	kinds-32000	between	24653	24652	24652	yes	0.0	0.000	0.134
+head-on	kinds-32000	inside	31509	31508	31508	no			
+head-on	kinds-32000	inside	31983	31982	31982	no			
+head-on	kinds-32000	inside	32021	32020	32020	no			
+head-on	kinds-47000	inside	37	36	36	no			
+head-on	kinds-47000	inside	8232	8231	8231	no			
+head-on	kinds-47000	inside	16425	16424	16424	no			
+head-on	kinds-47000	between	24632	24631	24631	yes	0.0	0.000	0.134
+head-on	kinds-47000	between	32827	32826	32826	yes	0.0	0.000	0.134
+head-on	kinds-47000	between	41036	41035	41035	yes	0.0	0.000	0.134
+head-on	kinds-47000	inside	46496	46495	46495	no			
+head-on	kinds-47000	inside	46970	46969	46969	no			
+head-on	kinds-47000	inside	47008	47007	47007	no			
+head-on	rst-a	inside	15	14	14	no			
+head-on	rst-a	between	8234	8233	8233	yes	0.0	0.000	0.134
+head-on	rst-a	inside	15574	15573	15573	no			
+head-on	rst-a	inside	16048	16047	16047	no			
+head-on	rst-a	inside	16086	16085	16085	no			
+head-on	rst-b	inside	15576	15575	15575	no			
+head-on	rst-b	inside	16050	16049	16049	no			
+head-on	rst-b	inside	16088	16087	16087	no			
+head-cms	kinds-8000	inside	37	36	36	no			
+head-cms	kinds-8000	inside	7561	7560	7560	no			
+head-cms	kinds-8000	inside	7746	7745	7745	no			
+head-cms	kinds-8000	inside	8035	8034	8034	no			
+head-cms	kinds-8000	inside	8073	8072	8072	no			
+head-cms	kinds-16000	inside	37	36	36	no			
+head-cms	kinds-16000	inside	7741	7740	7740	no			
+head-cms	kinds-16000	inside	15450	15449	15449	no			
+head-cms	kinds-16000	between	15559	15558	15558	no	0.0	0.000	0.134
+head-cms	kinds-16000	inside	16033	16032	16032	no			
+head-cms	kinds-16000	inside	16071	16070	16070	no			
+head-cms	kinds-32000	inside	37	36	36	no			
+head-cms	kinds-32000	inside	7730	7729	7729	no			
+head-cms	kinds-32000	inside	15421	15420	15420	no			
+head-cms	kinds-32000	inside	23135	23134	23134	no			
+head-cms	kinds-32000	inside	30831	30830	30830	no			
+head-cms	kinds-32000	inside	31509	31508	31508	no			
+head-cms	kinds-32000	inside	31983	31982	31982	no			
+head-cms	kinds-32000	inside	32021	32020	32020	no			
+head-cms	kinds-47000	inside	37	36	36	no			
+head-cms	kinds-47000	inside	7750	7749	7749	no			
+head-cms	kinds-47000	inside	15468	15467	15467	no			
+head-cms	kinds-47000	inside	23180	23179	23179	no			
+head-cms	kinds-47000	inside	30871	30870	30870	no			
+head-cms	kinds-47000	inside	38563	38562	38562	no			
+head-cms	kinds-47000	inside	46246	46245	46245	no			
+head-cms	kinds-47000	between	46496	46495	46495	no	0.0	0.000	0.134
+head-cms	kinds-47000	inside	46970	46969	46969	no			
+head-cms	kinds-47000	inside	47008	47007	47007	no			
+head-cms	rst-a	inside	15	14	14	no			
+head-cms	rst-a	inside	7720	7719	7719	no			
+head-cms	rst-a	inside	15432	15431	15431	no			
+head-cms	rst-a	between	15574	15573	15573	no	0.0	0.000	0.134
+head-cms	rst-a	inside	16048	16047	16047	no			
+head-cms	rst-a	inside	16086	16085	16085	no			
+head-cms	rst-b	inside	15	14	14	no			
+head-cms	rst-b	inside	7720	7719	7719	no			
+head-cms	rst-b	inside	15434	15433	15433	no			
+head-cms	rst-b	between	15576	15575	15575	no	0.0	0.000	0.134
+head-cms	rst-b	inside	16050	16049	16049	no			
+head-cms	rst-b	inside	16088	16087	16087	no			
