@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # card_log_test.sh: self-test of scripts/card_log.py (the read-only card log), of the drivers that embed or start it,
 # of scripts/card_table.py and of scripts/nvml_watchdog.py's clocks. Sections (SECTIONS, default
-# "sync static fake watchdog drivers"; about 90 s, most of it the drivers' own sleeps):
+# "sync static fake fast watchdog drivers"; about 90 s, most of it the drivers' own sleeps):
 #   sync    the copies embedded in bench/agent_check/rig_server.sh, scripts/bench.sh, scripts/server_bench.sh and R43's
 #           replay driver (docs/data/2026-11-04_prompt_taper/run/rig_taper.sh), and the copies beside
 #           bench/pipespec/rig_*.sh and bench/release_matrix/run_matrix.sh, are byte for byte scripts/card_log.py, and
@@ -12,6 +12,12 @@
 #           columns, the start and stop lines, every NVML call it makes is a Get from the list below, it stops on
 #           --duration, on SIGTERM at once, on the stop file and when its --parent ends; then card_table.py on that log
 #           finds the slow stretch the stand-in put in and none on the other card
+#   fast    --fast, --slow-every and --profile (C942) on scripts/card_log_standin.py's stand-in: --fast makes the same
+#           NVML calls in the same order and the same rows as today's sample, over 40 samples of 3 cards with a slow
+#           stretch and a memory offset set halfway; --slow-every 4 reads the memory clock, temperature and memory used
+#           on every 4th sample and at each P-state change and nothing else differs; from the command line the
+#           environment variables turn each on (and only they), the first row reaches the file at once, SIGTERM keeps
+#           every row, the profile line comes just before the stop line, and a bad CARD_LOG_SLOW_EVERY stops it
 #   watchdog nvml_watchdog.py on the stand-in (scripts/card_log_standin.py's) with its wall clock set back 2 s halfway:
 #           each row's time from one clock reading, mono_s rising through the step, a log started without mono_s
 #           appended to without it; card_table.py orders that log by mono_s
@@ -31,7 +37,7 @@ set -uo pipefail
 REPO=${REPO:-$(cd "$(dirname "$0")/.." && pwd)}
 L=$REPO/scripts/card_log.py
 TAB=$REPO/scripts/card_table.py
-SECTIONS=${SECTIONS:-"sync static fake watchdog drivers"}
+SECTIONS=${SECTIONS:-"sync static fake fast watchdog drivers"}
 STANDIN=$REPO/scripts/card_log_standin.py
 REAL_S=${REAL_S:-5}
 T=$(mktemp -d /tmp/card_log_test.XXXXXX)
@@ -156,6 +162,16 @@ nvmlDeviceGetEnforcedPowerLimit nvmlDeviceGetMemClkVfOffset nvmlDeviceGetGpcClkV
   rows=$(grep -vc '^#' "$log")
   check "--duration 1.2 at 0.05 s: 20 to 27 rows plus the header ($((rows - 1)))" test "$rows" -ge 21 -a "$rows" -le 28
   check "the start line: driver, cards, limits and offsets" grep -q "card_log start: pid [0-9]*, driver 580.178.04, 2 cards (P106-090), interval 0.05 s; g0 limit 75 W, memory offset 0, core offset 0; g1 limit 75 W" "$log"
+  ev=2 fast=0 prof=0  # the # lines: start and stop, plus the fast line and the profile line when they are asked for
+  { [ "${CARD_LOG_FAST:-0}" != 0 ] || [ "${CARD_LOG_SLOW_EVERY:-1}" -gt 1 ] 2> /dev/null; } && fast=1 && ev=$((ev + 1))
+  [ "${CARD_LOG_PROFILE:-0}" != 0 ] && prof=1 && ev=$((ev + 1))
+  if [ $fast = 1 ]; then
+    check "CARD_LOG_FAST or CARD_LOG_SLOW_EVERY is set: the log says the fast sample made it" grep -q "card_log fast: " "$log"
+  fi
+  if [ $prof = 1 ]; then
+    check "CARD_LOG_PROFILE is set: the profile line before the stop line" bash -c "tail -n 2 '$log' | head -n 1 | grep -q 'card_log profile: '"
+  fi
+  check "$ev # lines: start$([ $fast = 1 ] && echo ', fast')$([ $prof = 1 ] && echo ', profile'), stop" test "$(grep -c '^#' "$log")" = $ev
   check "the stop line: CPU seconds and sampling time" grep -qE "s CPU \(user\+sys\), sampling [0-9.]+ ms median, [0-9.]+ ms max, [0-9]+ samples late" "$log"
   check "SIGTERM stops it within 0.3 s of the signal" python3 -I -c "import json,sys; sys.exit(json.load(open('$T/signal.json'))['s'] > 0.8)"
   check "every NVML call is a Get from the list" python3 -I -c "
@@ -172,6 +188,149 @@ sys.exit(1 if extra else 0)"
   check "card_table.py: card 1 has 12 busy samples below 1,800 MHz and power cap in every sample" \
     bash -c "awk -F'\t' 'NR == 1 { for (i = 1; i <= NF; i++) c[\$i] = i } NR == 3 { exit !(\$c[\"busy_below_1800\"] == 12 && \$c[\"reason_power_cap\"] == \$c[\"samples\"] && \$c[\"sm_busy_min\"] == 1354) }' '$T/t.tsv'"
   [ "$fail" = 0 ] || { echo "-- logs:"; tail -n 3 "$T"/*.out "$T/t.err" 2> /dev/null; }
+fi
+
+if has fast; then
+  echo "== fast: --fast, --slow-every and --profile against today's sample, on the stand-in"
+  cat > "$T/fast_check.py" << 'FASTCHECK'
+"""Today's sample (Nvml.sample) against --fast (FastSample) on card_log_standin.py's stand-in, 3 cards, 40 samples,
+the memory offset set from sample 20 on: the NVML calls, in order, and every row. Then --slow-every 4 with a stand-in
+whose temperature counts its reads and whose card 0 sleeps (P8) in samples 10 to 14. Args: card_log.py standin.py."""
+import ctypes, importlib.util, os, sys
+sys.dont_write_bytecode = True
+clpath, stpath = sys.argv[1:3]
+os.environ["STANDIN_CARDS"] = "3"
+os.environ["STANDIN_OFFSET_FILE"] = off = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "fast.offset")
+N, fails = 40, []
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+def check(what, ok, detail=""):
+    print(f"  {'ok' if ok else 'FAIL'}: {what}{' (' + detail + ')' if detail and not ok else ''}")
+    ok or fails.append(what)
+class Recorder:  # the stand-in, with the order of the NVML calls kept
+    def __init__(self, lib):
+        self.lib, self.seq = lib, []
+    def __getattr__(self, name):
+        f = getattr(self.lib, name)
+        def rec(*a):
+            self.seq.append(name)
+            return f(*a)
+        return rec
+def run(st, cl, mode, slow_every=1):
+    st.samples.clear()
+    if os.path.exists(off):
+        os.remove(off)
+    ctypes.CDLL = lambda *a, **k: st.Lib()
+    nv = cl.Nvml()
+    hs = [nv.handle(i) for i in range(nv.count())]
+    nv.lib = rec = Recorder(nv.lib)
+    fast = cl.FastSample(nv, hs, slow_every).row if mode == "fast" else None
+    rows, per = [], []
+    for k in range(N):
+        if k == 20:
+            open(off, "w").close()
+        n0 = len(rec.seq)
+        rows.append(fast() if fast else sum((nv.sample(h) for h in hs), []))
+        per.append(rec.seq[n0:])
+    os.remove(off)
+    return rows, rec.seq, per
+st, cl = load("standin", stpath), load("card_log", clpath)
+r_old, s_old, _ = run(st, cl, "today")
+r_new, s_new, _ = run(st, cl, "fast")
+check("the same NVML calls in the same order (%d calls, 24 a sample)" % len(s_old), s_new == s_old and len(s_old) == 24 * N)
+check("the same rows, field for field (%d rows of 24 fields)" % N, r_new == r_old and all(len(r) == 24 for r in r_old))
+check("the rows show the stand-in's slow stretch and the memory offset",
+      r_old[6][9] == "1354" and r_old[3][9] == "1911" and r_old[19][2] == "4006" and r_old[20][2] == "4304")
+# --slow-every 4: temperature = how often it was read; card 0 in P8 for samples 10 to 14
+reads = {}
+def temp(self, h, which, ref):
+    g = h.value - 1
+    reads[g] = reads.get(g, 0) + 1
+    ref._obj.value = reads[g]
+    return 0
+def pstate(self, h, ref):
+    g = h.value - 1
+    ref._obj.value = 8 if g == 0 and 10 <= st.samples.get(0, 0) <= 14 else 0  # SM clock counts samples; read after
+    return 0
+st.Lib.nvmlDeviceGetTemperature, st.Lib.nvmlDeviceGetPerformanceState = temp, pstate
+r_slow, _, per = run(st, cl, "fast", 4)
+reads.clear()
+r_all, _, _ = run(st, cl, "fast", 1)
+due0 = [k for k in range(N) if k % 4 == 0 or k in (10, 15)]  # card 0: every 4th sample and its two P-state changes
+due1 = [k for k in range(N) if k % 4 == 0]
+want = [[sum(1 for d in due if d <= k) for due in (due0, due1, due1)] for k in range(N)]
+got = [[int(r[8 * g + 4]) for g in range(3)] for r in r_slow]
+check("temperature read on every 4th sample and at card 0's P-state changes (samples 10 and 15)", got == want,
+      f"got {got[:17]}")
+check("P-state, SM clock, power, utilization and reasons as with every read, on every sample",
+      all([r[8 * g + j] for g in range(3) for j in (0, 1, 3, 6, 7)] == [a[8 * g + j] for g in range(3) for j in (0, 1, 3, 6, 7)]
+          for r, a in zip(r_slow, r_all)))
+check("card 0 is P8 in samples 10 to 14 only", [r[0] for r in r_slow[9:16]] == ["P0"] + ["P8"] * 5 + ["P0"])
+check("memory clock and memory used: read on the due samples, repeated in between (the offset seen at sample 20)",
+      all(r_slow[k][8 * g + j] == r_all[max(d for d in (due0 if g == 0 else due1) if d <= k)][8 * g + j]
+          for k in range(N) for g in range(3) for j in (2, 5)) and r_slow[20][2] == "4304" and r_slow[19][2] == "4006")
+calls = [len(p) for p in per]
+want_calls = [sum(5 + 3 * (k in (due0 if g == 0 else due1)) for g in range(3)) for k in range(N)]
+check("NVML calls a sample: 5 a card, 8 on a due sample (%d in %d samples, against %d)" % (sum(calls), N, 24 * N),
+      calls == want_calls, f"{calls}")
+sys.exit(1 if fails else 0)
+FASTCHECK
+  python3 -I "$T/fast_check.py" "$L" "$STANDIN" > "$T/fast_check.out" 2>&1
+  rc=$?
+  sed 's/^/ /' "$T/fast_check.out"
+  check "today's sample and --fast, call for call and row for row; --slow-every 4's schedule" test "$rc" = 0
+  # the command line, on the stand-in the drivers' dry runs use
+  S=(python3 -I "$STANDIN" "$L" --interval 0.05)
+  env -u CARD_LOG_FAST -u CARD_LOG_SLOW_EVERY -u CARD_LOG_PROFILE "${S[@]}" --log "$T/c_def.csv" --duration 1.2 &
+  env -u CARD_LOG_SLOW_EVERY -u CARD_LOG_PROFILE CARD_LOG_FAST=1 "${S[@]}" --log "$T/c_fast.csv" --duration 1.2 &
+  env -u CARD_LOG_FAST -u CARD_LOG_SLOW_EVERY CARD_LOG_PROFILE=1 "${S[@]}" --log "$T/c_prof.csv" --duration 1.2 &
+  env -u CARD_LOG_FAST -u CARD_LOG_PROFILE CARD_LOG_SLOW_EVERY=4 "${S[@]}" --log "$T/c_slow.csv" --duration 1.2 &
+  env -u CARD_LOG_SLOW_EVERY -u CARD_LOG_PROFILE CARD_LOG_FAST=0 "${S[@]}" --log "$T/c_zero.csv" --duration 0.3 &
+  wait
+  same_rows() {  # the header and the first 19 rows of two logs, apart from epoch, time and took_ms
+    [ "$(grep -vc '^#' "$2")" -ge 21 ] && cmp -s <(grep -v '^#' "$1" | cut -d, -f4- | head -n 20) \
+      <(grep -v '^#' "$2" | cut -d, -f4- | head -n 20)
+  }
+  check "CARD_LOG_FAST=1: the header and first 19 rows as today's, apart from epoch, time and took_ms" \
+    same_rows "$T/c_def.csv" "$T/c_fast.csv"
+  check "CARD_LOG_FAST=1: start line, then the fast line, then rows; the stop line last" bash -c \
+    "grep '^#' '$T/c_fast.csv' | sed -n 2p | grep -q 'card_log fast: .* reads every field on every sample\$' && grep -n . '$T/c_fast.csv' | sed -n 2p | grep -q 'card_log start' && tail -n 1 '$T/c_fast.csv' | grep -q 'card_log stop (after 1.2 s): [0-9]* samples'"
+  check "today's log (no option set, and CARD_LOG_FAST=0): no fast line, no profile line" bash -c \
+    "[ \$(grep -c '^#' '$T/c_def.csv') = 2 ] && [ \$(grep -c '^#' '$T/c_zero.csv') = 2 ]"
+  check "CARD_LOG_SLOW_EVERY=4 alone turns on the fast sample and says what it reads" \
+    grep -q "card_log fast: .* reads memory clock, temperature and memory used on one sample in 4 and at a P-state change" "$T/c_slow.csv"
+  check "CARD_LOG_PROFILE=1: one profile line just before the stop line, with each of the 7 sampled functions" bash -c \
+    "[ \$(grep -c 'card_log profile: ' '$T/c_prof.csv') = 1 ] && tail -n 2 '$T/c_prof.csv' | head -n 1 | grep -q 'card_log profile: [0-9]* samples, CPU [0-9.]* ms a sample (user [0-9.]*, system [0-9.]*), in NVML calls [0-9.]* ms a sample' && for f in PerformanceState ClockInfo PowerUsage Temperature MemoryInfo UtilizationRates CurrentClocksEventReasons; do tail -n 2 '$T/c_prof.csv' | head -n 1 | grep -q \"nvmlDeviceGet\$f [0-9.]* a sample, [0-9.]* ms a call\" || exit 1; done"
+  prof_rows() { grep -q 'nvmlDeviceGetClockInfo 4 a sample' "$T/c_prof.csv" && same_rows "$T/c_def.csv" "$T/c_prof.csv"; }
+  check "CARD_LOG_PROFILE=1: the clock calls 4 a sample (2 cards, SM and memory) and rows as today's" prof_rows
+  check "CARD_LOG_SLOW_EVERY=4: rows as today's on the stand-in (its memory clock, temperature and memory stay put)" \
+    same_rows "$T/c_def.csv" "$T/c_slow.csv"
+  # the first row goes to the file at once (the drivers wait for it), the rest at the stop; SIGTERM keeps every row
+  env CARD_LOG_FAST=1 "${S[@]}" --log "$T/c_buf.csv" --duration 3 & pb=$!
+  sleep 0.6
+  first=$(grep -sc '^[0-9]' "$T/c_buf.csv")
+  first=${first:-0}
+  wait $pb
+  rows=$(grep -c '^[0-9]' "$T/c_buf.csv")
+  check "CARD_LOG_FAST=1: the first row in the file at once ($first rows at 0.6 s, before the 5 s write), all at the stop ($rows)" \
+    test "$first" -ge 1 -a "$first" -lt 11 -a "$rows" -ge 50
+  env CARD_LOG_FAST=1 "${S[@]}" --log "$T/c_term.csv" & pt=$!
+  sleep 1.2
+  kill -TERM $pt
+  wait $pt
+  rc=$?
+  n=$(grep -c '^[0-9]' "$T/c_term.csv") s=$(sed -n 's/.*card_log stop (signal): \([0-9]*\) samples.*/\1/p' "$T/c_term.csv")
+  check "CARD_LOG_FAST=1 and SIGTERM: status $rc, every sampled row written ($n rows, stop line says ${s:-none})" \
+    test "$rc" = 0 -a -n "$s" -a "$n" = "$s" -a "$n" -ge 15
+  for v in x 0 -2; do
+    env CARD_LOG_SLOW_EVERY=$v "${S[@]}" --log "$T/c_bad.csv" --duration 0.2 > "$T/c_bad.out" 2>&1
+    rc=$?
+    check "CARD_LOG_SLOW_EVERY=$v: status 2 and a message, no log ($(tail -n 1 "$T/c_bad.out" | head -c 100))" \
+      bash -c "[ $rc = 2 ] && grep -q 'slow-every' '$T/c_bad.out' && [ ! -e '$T/c_bad.csv' ]"
+  done
 fi
 
 if has watchdog; then
@@ -339,6 +498,13 @@ STUB
     "[ \$(cat '$D/sb/die.rc') = 1 ] && grep -q 'server exited during load' '$D/sb/die.console' && grep -q 'card_log stop (signal)' '$D/sb/out_die/cards.csv'"
   check "drivers: no nvidia-smi poll, no logger left" bash -c \
     "! grep -qE -- '(^| )-l(ms)?( |\$)' '$D/smi_calls.log' && ! pgrep -f 'card_log_standi[n].py.*$T/' > /dev/null"
+  if [ "${CARD_LOG_FAST:-0}" != 0 ] || [ "${CARD_LOG_SLOW_EVERY:-1}" -gt 1 ] 2> /dev/null; then
+    check "drivers: CARD_LOG_FAST or CARD_LOG_SLOW_EVERY reached the logger through each of the 6 drivers' runs" bash -c \
+      "for f in '$D/work/rt_ok/cards.csv' '$D'/pipespec/out/{streams,run,prefill,hostloop}/cards.csv '$D/sb/out_ok/cards.csv'; do grep -q 'card_log fast: ' \"\$f\" || { echo \"  no fast line: \$f\"; exit 1; }; done"
+  else
+    check "drivers: no CARD_LOG_FAST, so no fast line in any driver's log" bash -c \
+      "! grep -qs 'card_log fast: ' '$D/work/rt_ok/cards.csv' '$D'/pipespec/out/*/cards.csv '$D/sb/out_ok/cards.csv'"
+  fi
   [ "$fail" = 0 ] || { echo "-- consoles:"; tail -n 4 "$D"/work/*.console "$D"/work/*/run.log "$D"/pipespec/*.console "$D"/sb/*.console 2> /dev/null; }
 fi
 

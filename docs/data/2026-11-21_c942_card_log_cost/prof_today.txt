@@ -1,0 +1,28 @@
+whole sample (today's run loop body)                      64.8 us CPU       64.8 us wall
+  the 9 cards' nv.sample() alone                          54.5 us CPU       54.5 us wall
+  the line: stamp + format + join                          2.4 us CPU        2.4 us wall
+    stamp() alone                                          1.2 us CPU        1.2 us wall
+  write, line-buffered (one write() a row)                 1.4 us CPU        1.4 us wall
+  write, 64 KiB buffer                                     0.2 us CPU        0.2 us wall
+  parent check + stop-file check                           4.0 us CPU        4.0 us wall
+  per call: sint(PerformanceState)                         0.5 us CPU        0.5 us wall
+  per call: uint(ClockInfo, c_int(1))                      0.9 us CPU        0.9 us wall
+  per call: uint(PowerUsage)                               0.7 us CPU        0.7 us wall
+  per call: MemoryInfo struct                              0.6 us CPU        0.6 us wall
+  bare foreign call f(h, byref) with prebuilt args         0.2 us CPU        0.2 us wall
+  python3 function call overhead (lambda: None)            0.0 us CPU        0.0 us wall
+
+whole sample (today's run loop body)                      52.8 us CPU       52.8 us wall
+  the 9 cards' nv.sample() alone                          41.8 us CPU       41.9 us wall
+  the line: stamp + format + join                          1.8 us CPU        1.8 us wall
+    stamp() alone                                          0.9 us CPU        0.9 us wall
+  write, line-buffered (one write() a row)                 1.0 us CPU        1.0 us wall
+  write, 64 KiB buffer                                     0.1 us CPU        0.1 us wall
+  parent check + stop-file check                           2.9 us CPU        2.9 us wall
+  per call: sint(PerformanceState)                         0.4 us CPU        0.4 us wall
+  per call: uint(ClockInfo, c_int(1))                      0.7 us CPU        0.7 us wall
+  per call: uint(PowerUsage)                               0.5 us CPU        0.5 us wall
+  per call: MemoryInfo struct                              0.4 us CPU        0.4 us wall
+  bare foreign call f(h, byref) with prebuilt args         0.2 us CPU        0.2 us wall
+  python3 function call overhead (lambda: None)            0.0 us CPU        0.0 us wall
+
