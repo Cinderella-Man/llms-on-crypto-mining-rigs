@@ -1,0 +1,7 @@
+model	prompt	same_text	same_token_ids	same_drafted_accepted	tokens	chars
+flashnext	code	yes	yes	yes	256	748
+flashnext	prose	yes	yes	yes	256	1206
+flintq8	code	yes	yes	yes	256	1064
+flintq8	prose	yes	yes	yes	256	1244
+ornith	code	yes	yes	yes	256	953
+ornith	prose	yes	yes	yes	256	1233

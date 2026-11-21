@@ -1,0 +1,13 @@
+model	build	prompt	tokens	token_ids	chars	text_md5	token_ids_md5	drafted	accepted	stop	start
+flashnext	new	code	256	256	748	77c584b1a96045488642e17d2f19e4e9	4634f5cdc430e07addf2057632d8a7b2	236	176	limit	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	new	prose	256	256	1206	1147419ab59056bd1d6dda7b9f2111da	72a6bb95e114146531e74d147773975c	276	162	limit	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	ref	code	256	256	748	77c584b1a96045488642e17d2f19e4e9	4634f5cdc430e07addf2057632d8a7b2	236	176	limit	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	ref	prose	256	256	1206	1147419ab59056bd1d6dda7b9f2111da	72a6bb95e114146531e74d147773975c	276	162	limit	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flintq8	new	code	256	256	1064	c1f4fb2fa97a56f3560da6307963e36e	b4fed85421977fbfc2cf175a9682fe80			limit	 The function should handle timezone-aware strings, and the 
+flintq8	new	prose	256	256	1244	797fabcec54777896eaf01fcda0d1257	2eeda9f81bd4e7c210bd926294d2afba			limit	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	ref	code	256	256	1064	c1f4fb2fa97a56f3560da6307963e36e	b4fed85421977fbfc2cf175a9682fe80			limit	 The function should handle timezone-aware strings, and the 
+flintq8	ref	prose	256	256	1244	797fabcec54777896eaf01fcda0d1257	2eeda9f81bd4e7c210bd926294d2afba			limit	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+ornith	new	code	256	256	953	6e8b4b2e241c479b598dd8d36bce1a94	a136e81ff9d074515ddc4b3f263e6956			limit	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	new	prose	256	256	1233	5fb0465e0b1b6e7ccb80bb7c22fcc895	2124f55a2afe6f97e5b9183eb75cdee6			limit	\n\n<think>\nA hash map handles collisions using various strate
+ornith	ref	code	256	256	953	6e8b4b2e241c479b598dd8d36bce1a94	a136e81ff9d074515ddc4b3f263e6956			limit	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	ref	prose	256	256	1233	5fb0465e0b1b6e7ccb80bb7c22fcc895	2124f55a2afe6f97e5b9183eb75cdee6			limit	\n\n<think>\nA hash map handles collisions using various strate

@@ -1,0 +1,5 @@
+share	exit	passed	tests	OK_lines	FAIL_cases	illegal_access_lines
+mul_mat	0	4963	4963	4964	0	0
+mul_mat_id	0	2254	2254	2255	0	0
+rest	1	14153	14154	14153	1	0
+fusion	0	5274	5274	5275	0	0

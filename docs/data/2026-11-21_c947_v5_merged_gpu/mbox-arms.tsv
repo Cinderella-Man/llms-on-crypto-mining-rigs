@@ -1,0 +1,6 @@
+arm	exit	checks	checks_failed	lines_differ	lines_timed_out	lines_cuda_error	settings
+off	0	27	0	0	0	0	9
+g16-b8192	1	27	1	0	0	0	9
+g16-b4096	1	27	8	0	0	0	9
+g1-b64	1	27	8	0	0	0	9
+g64-b4096-r480	1	27	8	0	0	0	9

@@ -1,0 +1,7 @@
+model	build	server	MiB_per_card_20s_after_up	MiB_per_card_after_requests
+flashnext	new	up=1 after 46 s	13917 13191 16009	13999 13269 16097
+flashnext	ref	up=1 after 40 s	13917 13191 16009	13999 13269 16097
+flintq8	new	up=1 after 397 s	15953 17585 13851	16015 17655 13927
+flintq8	ref	up=1 after 10 s	15953 17585 13851	16015 17655 13927
+ornith	new	up=1 after 447 s	15425 16641 15605	15517 16733 15681
+ornith	ref	up=1 after 10 s	15425 16641 15605	15517 16733 15681
