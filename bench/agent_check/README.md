@@ -91,7 +91,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [quant_run.sh](quant_run.sh), [docker/](docker/) | Calibration and file-quality runs on a GPU machine with Docker; the sandbox image |
 | [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh), [release.env.example](release.env.example) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
 | [build_bugfix.py](build_bugfix.py), [bugfix_bugs.json](bugfix_bugs.json) | Build the bugfix set from the polyglot tasks and the list of injected bugs |
-| [mock_server.py](mock_server.py), [selftest.sh](selftest.sh), [selftest_pilot.sh](selftest_pilot.sh), [selftest_race.sh](selftest_race.sh) | A stand-in for llama-server and the end-to-end tests that use it (no model) |
+| [mock_server.py](mock_server.py), [selftest.sh](selftest.sh), [selftest_pilot.sh](selftest_pilot.sh), [selftest_race.sh](selftest_race.sh), [selftest_prefix.sh](selftest_prefix.sh) | A stand-in for llama-server and the end-to-end tests that use it (no model) |
 | [selftest_energy.sh](selftest_energy.sh) | The energy columns' test on fixed inputs (Python only) |
 | [build_tasks.py](build_tasks.py), [cut_tests.mjs](cut_tests.mjs), [make_order.py](make_order.py) | Build the task set from the Exercism checkouts |
 | [env/](env/) | The shared test environments: jest (locked) and pytest; `env/setup.sh` creates them |
@@ -674,7 +674,16 @@ checkpoints:
     in which a busy card ran below 1,800 MHz;
   - a client, any Linux machine with Docker, runs pi, the logging proxy and the tests, each in a container
     ([client_arm.sh](client_arm.sh)), labelled and at a low CPU share (`--cpu-shares 256`), so it can share a machine
-    with other jobs;
+    with other jobs. A run names its containers after its results folder, `acrel-<folder>-<CRC-32 of its path>-<arm>-*`
+    (`PREFIX` sets another), and an arm removes only those when it starts and ends, so two checks share a client at
+    once with no more than their own `CLIENT_OUT` and ports. The drivers work the name out from `CLIENT_OUT`, pass it
+    to the client, print it (`client <arm>: containers …`) and remove the client's containers by it when they are
+    interrupted, so a client folder prepared before this change names its containers per run too; `client_arm.sh`
+    keeps it in `CLIENT_OUT/<arm>.prefix`. An arm refuses to
+    start while another run's proxy holds its container name (one `PREFIX` given to two runs) or its `PROXY_PORT` is
+    in use, and step run checks every port before the relay starts: an ssh forward whose port another check holds
+    only retries, while the client would reach that check's rig through it. Either way the run stops before it starts
+    anything, with the cause named. [selftest_prefix.sh](selftest_prefix.sh) tests it;
   - the controlling machine runs only ssh: it copies the files over, starts and stops everything, and relays the
     client's requests to the rig through two forwards, `ssh -L` to the rig and `ssh -R` to the client. Neither the rig
     nor the client has to reach the other, and the server never listens beyond the rig's loopback.
@@ -684,8 +693,8 @@ checkpoints:
     local shell, there is no `ssh -R`, and the client uses the `ssh -L` relay's own port (`CLIENT_PORT` is
     `RELAY_PORT`), which the containers reach on the host network. Run by a user other than root, every container runs
     as that user (`AC_DOCKER_USER`, read by [common.py](common.py) and [client_arm.sh](client_arm.sh)), so the files
-    the tests and pi leave behind stay the user's to remove. Two checks can share it at once, each with its own ports,
-    arm names and `CLIENT_OUT`.
+    the tests and pi leave behind stay the user's to remove. Two checks can share it at once, each with its own ports
+    and `CLIENT_OUT`.
 - **Run it** from the controlling machine, with the machine-specific values in the environment (the header of
   [release_check.sh](release_check.sh) lists them: ssh aliases, four ports, folders on the client, the two binaries and
   the model on the rig; [release.env.example](release.env.example) has the values of the v2.0 runs to copy and fill
@@ -790,6 +799,7 @@ miss_param, long_context).
 AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest.sh <scratch folder>
 AC_HOME=… AC_NODE_DIR=… AC_PI_ROOT=… bench/agent_check/selftest_pilot.sh <scratch folder>   # FULL=1 for full_run.sh
 bench/agent_check/selftest_energy.sh <scratch folder>   # the energy columns, Python only
+bench/agent_check/selftest_prefix.sh <scratch folder>   # two checks on one client; Docker and the sandbox image
 ```
 
 - **`selftest.sh`** drives pi in the sandbox through 12 tasks against [mock_server.py](mock_server.py), 3 at a time.
@@ -818,6 +828,22 @@ bench/agent_check/selftest_energy.sh <scratch folder>   # the energy columns, Py
     minutes are negligible, gives no share of a base whose mean is 0, and gives the time measures alone on a table
     without the work columns;
   - the energy columns: it runs `selftest_energy.sh` (below).
+- **`selftest_prefix.sh <scratch folder>`** (Docker with the sandbox image, `AC_IMAGE`; ports `AC_TEST_PORT` to
+  `AC_TEST_PORT`+40, default 18270; about 6 minutes) runs agent checks that share one client at once, against the
+  mock; `AC_CLIENT_BENCH=<client folder>` runs its driver part with a client folder prepared earlier. It checks that:
+  - `client_arm.sh` alone behaves as before (every attempt scored, the same files, no container left) and names its
+    containers `acrel-<folder>-<CRC-32>-<arm>`, written to `<arm>.prefix`;
+  - two runs of the same arm at once each finish with every attempt scored and no infrastructure try, and the first is
+    still running, its proxy up, when the second ends; a `PREFIX` given wins;
+  - a run with another run's `PROXY_PORT`, or with another running run's `PREFIX` and arm, is refused before it
+    starts anything (the cause named, no rc file, no container), and the other run goes on;
+  - with a fake rig (an `ssh` stand-in that runs the rig's commands locally and forwards ports, failing as ssh does
+    when a port is taken; the mock as llama-server; no card read, no real-time priority): two
+    `release_check_s12.sh` runs with `CLIENT=local` and the same arm, and a `release_check.sh` run with an `ssh -R`
+    relay, all finish, each with the container names its driver printed; a run with another's `RELAY_PORT` stops
+    before it starts anything; a run whose relay cannot take its port stops before its client starts; a run stopped
+    with TERM, as its client starts or in the middle of an attempt, removes only its own containers; no container and
+    no port of the drivers is left.
 - **`selftest_energy.sh <scratch folder>`** (Python only: no sandbox, no server) checks the energy columns on a
   synthetic run whose values are worked out by hand in its header: two cards, four requests in three tasks. It checks
   that:

@@ -2,8 +2,7 @@
 # release_check_s12.sh OUT: bench/agent_check/release_check.sh (2026-11-03, with MIN_AVAIL_MB) for Q226, with two
 # changes. It runs from outside the bench folder: BENCH names it (bench/agent_check, whose client_arm.sh, rig_server.sh
 # and files it uses). And besides stock and rel it takes any arm name A for which ARGS_A is set: REL_BIN with
-# "$COMMON $ARGS_A" and REL_ENV. The client names an arm's containers acrel-<arm>-*, so two checks that share a client
-# need different arm names (Q226 ran nodraft and mtp while another check ran its rel arm on the same client).
+# "$COMMON $ARGS_A" and REL_ENV.
 # Since 2026-11-13 (C804 step (a), Q1408) the prep also copies scripts/realloc_counts.py beside the bench files, so the
 # client's reports count each server log's graph reallocations.
 # Since 2026-11-14 (C842, Q1485) CLIENT=local makes the controlling machine its own client, for one that has Docker but
@@ -12,7 +11,12 @@
 # containers run on the host network (client_arm.sh, common.py) and reach it on the loopback. A local client that is
 # not root runs every container as its own user (AC_DOCKER_USER), so the files they leave in its folders stay its to
 # remove: run.py replaces each slot's workspace, which fails on a root container's __pycache__. Two checks can share the
-# local client at once with their own ports, arm names and CLIENT_OUT. CLIENT=<ssh alias> runs as before.
+# local client at once with their own ports and CLIENT_OUT. CLIENT=<ssh alias> runs as before.
+# Since 2026-11-21 (C896, Q1619) two checks on one client no longer need their own arm names or PREFIX: the client's
+# containers are named after CLIENT_OUT, acrel-<its folder name>-<CRC-32 of it>-<arm>-* (printed as "client <arm>:
+# containers ..."; PREFIX still wins), passed to the client so that a client folder prepared earlier names them so too;
+# an interrupted run removes only its own; and step run stops before it starts anything when one of its ports is in
+# use, since an ssh forward whose port another check holds would let this run reach that check's rig.
 #
 # release_check.sh OUT: the agent check as a release validation. A coding agent fixes small bugs (the bugfix task set:
 # 12 tasks, Python and JavaScript alternating, 5-10 tool calls each) against llama-server on the rig, once with stock
@@ -44,6 +48,8 @@
 #   RELAY_PORT               this machine's end of the -L forward (loopback)
 #   CLIENT_PORT, PROXY_PORT  the -R forward's end and the proxy, both on the client's loopback (CLIENT=local:
 #                            CLIENT_PORT is RELAY_PORT and need not be set)
+#   (two checks at once need their own RELAY_PORT, CLIENT_PORT, PROXY_PORT and CLIENT_OUT: step run checks the ports
+#   and stops before it starts anything when one is in use)
 #   CLIENT_DIR               folder on the client that receives the bench files (agent_check/ inside)
 #   CLIENT_OUT               results folder on the client
 #   STOCK_BIN, REL_BIN, MODEL   on the rig
@@ -85,6 +91,16 @@ STEPS=${STEPS:-prep run report collect}
 STOCK_ARGS=${STOCK_ARGS:--b 2048 -ub 512}; REL_ARGS=${REL_ARGS:--b 2048 -ub 512 --pipe-depth 3}
 COMMON="-ngl 99 -fa on -c $CTX -np 1 -bs --ctx-checkpoints 4 --cache-ram 0 --jinja --reasoning-format deepseek \
 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --metrics --no-webui"
+run_prefix() {  # acrel-<CLIENT_OUT's folder name, at most 24 of A-Z a-z 0-9 _ ->-<CRC-32 of CLIENT_OUT, 8 hex digits>
+  local d=${CLIENT_OUT%/} name crc
+  name=$(printf %s "${d##*/}" | tr -c 'A-Za-z0-9_-' '-' | cut -c1-24)
+  crc=$(printf %s "$d" | cksum | cut -d' ' -f1)
+  printf 'acrel-%s-%08x\n' "$name" "$crc"
+}
+# the client's container names are RUN_PREFIX-ARM-*: PREFIX, or one of this run's own from CLIENT_OUT, as client_arm.sh
+# names them when PREFIX is unset; passed to the client, so that a client folder prepared before 2026-11-21 (C896)
+# names them per run too, and used by client_stop
+RUN_PREFIX=${PREFIX:-$(run_prefix)}
 CAC="$CLIENT_DIR/agent_check"
 SSH_OPTS=(-o ServerAliveInterval=15 -o ServerAliveCountMax=3)
 mkdir -p "$OUT"
@@ -108,6 +124,27 @@ arm_config() {  # sets SERVER_BIN, SERVER_ENV and SERVER_ARGS for an arm
   [ -n "$SERVER_BIN" ] && [ -n "${MODEL:-}" ] || { say "binary or MODEL for $1 not set"; return 1; }
 }
 
+port_busy() { timeout 3 bash -c 'exec 3<> "/dev/tcp/127.0.0.1/$0"' "$1" 2> /dev/null; }  # something listens there
+cl_port_busy() { cl "timeout 3 bash -c 'exec 3<> /dev/tcp/127.0.0.1/$1' 2> /dev/null"; }  # the same on the client
+
+ports_free() {  # this run's ports must be free before its relay starts. An ssh forward whose port another check holds
+  # only retries (ExitOnForwardFailure) while the client's /health reaches that check's server, so this run would send
+  # its attempts to another rig. Two checks at once each need their own RELAY_PORT, CLIENT_PORT and PROXY_PORT.
+  local bad=()
+  port_busy "$RELAY_PORT" && bad+=("RELAY_PORT $RELAY_PORT is in use here")
+  [ "$CLIENT" = local ] || { cl_port_busy "$CLIENT_PORT" && bad+=("CLIENT_PORT $CLIENT_PORT is in use on the client"); }
+  cl_port_busy "$PROXY_PORT" && bad+=("PROXY_PORT $PROXY_PORT is in use on the client")
+  [ "$PROXY_PORT" = "$CLIENT_PORT" ] && bad+=("PROXY_PORT is CLIENT_PORT")
+  [ ${#bad[@]} = 0 ] && return 0
+  say "nothing started: ${bad[*]}; give this run ports of its own (another agent check may be running)"
+  return 1
+}
+
+relay_refused() {  # an error line of a forward that could not take its port since relay_start (ExitOnForwardFailure)
+  tail -c +$((RELAY_LOG0 + 1)) "$OUT/relay.log" 2> /dev/null \
+    | grep -iE -m 1 'address already in use|cannot listen|forwarding failed|could not request'
+}
+
 relay_loop() {  # relay_loop NAME ssh-arguments…: keeps one forward up until killed
   local name=$1
   shift
@@ -120,6 +157,9 @@ relay_loop() {  # relay_loop NAME ssh-arguments…: keeps one forward up until k
 }
 
 relay_start() {
+  RELAY_LOG0=0
+  [ -f "$OUT/relay.log" ] && RELAY_LOG0=$(wc -c < "$OUT/relay.log")
+  RELAY_CHECK=1  # until the client first reaches a server through this relay
   (relay_loop L -L "127.0.0.1:$RELAY_PORT:127.0.0.1:$RIG_PORT" "$RIG") >> "$OUT/relay.log" 2>&1 &
   RELAY_L=$!
   sleep 2
@@ -151,7 +191,12 @@ server_start() {  # server_start ARM: llama-server on the rig, then /health thro
     bash -s" < "$HERE/rig_server.sh" 2>&1 | tee -a "$OUT/run.log"
   [ "${PIPESTATUS[0]}" = 0 ] || return 1
   for _ in $(seq 40); do
-    cl "curl -sf 127.0.0.1:$CLIENT_PORT/health" > /dev/null 2>&1 && { say "client reaches $1 through the relay"; return 0; }
+    if [ -n "${RELAY_CHECK:-}" ] && r=$(relay_refused); then
+      say "the relay could not take its port ($r): another agent check holds it; stopping"
+      return 1
+    fi
+    cl "curl -sf 127.0.0.1:$CLIENT_PORT/health" > /dev/null 2>&1 \
+      && { RELAY_CHECK=; say "client reaches $1 through the relay"; return 0; }
     sleep 3
   done
   say "the client does not reach the server through the relay (relay.log)"
@@ -176,13 +221,16 @@ rig_end() {  # monitors stopped; the rig's logs appended to the client's CLIENT_
 client_arm() {  # client_arm ARM: start client_arm.sh detached on the client, follow its log until it writes ARM.rc
   local arm=$1 seen=0 n rc
   local budget_var=BUDGET_MIN_$arm
-  # only the setsid command goes to the background, its output in the log, so this ssh returns at once
+  # only the setsid command goes to the background, its output in the log, so this ssh returns at once; CLIENT_ARM is
+  # set first, so that an interrupt while it starts still stops the client (client_stop)
+  CLIENT_ARM=$arm
+  say "client $arm: containers $RUN_PREFIX-$arm-*"
   cl "mkdir -p $CLIENT_OUT && cd $CAC || exit 1; OUT=$CLIENT_OUT ARM=$arm UPSTREAM_PORT=$CLIENT_PORT \
     PROXY_PORT=$PROXY_PORT TASK_SET=$TASK_SET TASKS=$TASKS TIME_CAP_MIN=$TIME_CAP_MIN \
     BUDGET_MIN=${!budget_var:-${BUDGET_MIN:-}} CTX=$CTX CPU_SHARES=$CPU_SHARES IMAGE=$IMAGE LABEL=$LABEL \
-    SAMPLING='${SAMPLING:-}' setsid nohup bash client_arm.sh > $CLIENT_OUT/$arm.log 2>&1 < /dev/null & sleep 1" \
-    || { say "could not start the client for $arm"; return 1; }
-  CLIENT_ARM=$arm
+    PREFIX=$RUN_PREFIX SAMPLING='${SAMPLING:-}' setsid nohup bash client_arm.sh > $CLIENT_OUT/$arm.log 2>&1 \
+    < /dev/null & sleep 1" \
+    || { CLIENT_ARM=; say "could not start the client for $arm"; return 1; }
   while true; do
     sleep 15
     n=$(cl "wc -l < $CLIENT_OUT/$arm.log" 2> /dev/null) || continue
@@ -228,7 +276,7 @@ client_stop() {  # stop a client arm or replay still running (this script interr
   fi
   [ -n "${CLIENT_ARM:-}" ] || return 0
   cl "p=\$(cat $CLIENT_OUT/$CLIENT_ARM.pid 2> /dev/null) && kill -- -\$p 2> /dev/null; sleep 3; \
-    docker ps -aq --filter name=^acrel-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
+    docker ps -aq --filter name=^$RUN_PREFIX-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
   say "client arm $CLIENT_ARM stopped"
 }
 
@@ -257,6 +305,7 @@ if has prep; then
 fi
 
 if has run; then
+  ports_free || exit 1
   relay_start
   RUNNING=1
   for arm in $ARMS; do

@@ -1,0 +1,44 @@
+== part 1: client_arm.sh
+ok   one run alone: exit 0 and same.rc 0
+ok   one run alone: prefix acrel-st-one-0326089f-same is acrel-st-one-<CRC-32>-same
+     <ROOT>/runs/prefix3/c/st-one/res/same: 2 attempts, statuses ['scored'], passed 2, infrastructure tries 0
+ok   one run alone: every attempt scored
+ok   one run alone: the files as before
+ok   one run alone: its proxy and attempt containers carried the prefix
+ok   one run alone: no container left
+ok   C with A's PROXY_PORT: refused (exit 1, the port named, no rc file, no container)
+ok   E with D's PREFIX and arm: refused (exit 1, the other run named, no rc file, no container of its own)
+ok   A's and D's proxies still up after C and E
+ok   A still runs when B ends, its proxy up
+     <ROOT>/runs/prefix3/c/st-b/res/same: 1 attempts, statuses ['scored'], passed 1, infrastructure tries 0
+ok   B: exit 0, every attempt scored
+     <ROOT>/runs/prefix3/c/st-a/res/same: 3 attempts, statuses ['scored'], passed 3, infrastructure tries 0
+ok   A: exit 0, every attempt scored
+     <ROOT>/runs/prefix3/c/st-d/res/same: 2 attempts, statuses ['scored'], passed 2, infrastructure tries 0
+ok   D: exit 0, every attempt scored, its PREFIX in same.prefix
+ok   A, B and D had prefixes of their own (acrel-st-a-ff9dcbc5-same, acrel-st-b-8d769416-same, acpfx-same)
+ok   A's and B's proxies ran at the same time
+ok   part 1: no container left
+== part 2: the drivers against a fake rig
+ok   C2 with A2's RELAY_PORT: stopped before it started anything
+ok   A2's proxy up after C2
+ok   D2 whose relay cannot take its port: stopped before its client started, its rig server stopped
+ok   A2's proxy up after D2
+ok   E2 stopped as its client started: its containers removed, its rig server and relay stopped (acrel-st-e2-96548b4d-v4r)
+ok   A2's proxy up after E2's stop
+ok   F2 stopped mid-attempt: its containers removed, its rig server and relay stopped (acrel-st-f2-943d7ec4-v4r)
+ok   A2's proxy up after F2's stop
+ok   A2 still runs when B2 ends
+     <ROOT>/runs/prefix3/d/out/st-b2/res/v4r: 1 attempts, statuses ['scored'], passed 1, infrastructure tries 0
+ok   B2: exit 0, every attempt scored
+     <ROOT>/runs/prefix3/d/out/st-r2/res/rel: 1 attempts, statuses ['scored'], passed 1, infrastructure tries 0
+ok   R2 (release_check.sh, -R relay): exit 0, every attempt scored
+     <ROOT>/runs/prefix3/d/out/st-a2/res/v4r: 6 attempts, statuses ['scored'], passed 6, infrastructure tries 0
+ok   A2: exit 0, every attempt scored
+ok   A2: report and collect wrote compare.md and res/ into its OUT
+ok   A2, B2, E2 and R2 had prefixes of their own (acrel-st-a2-91363951-v4r, acrel-st-b2-935fccd8-v4r, acrel-st-e2-96548b4d-v4r, acrel-st-r2-8ed504a8-rel)
+ok   this tree's client wrote the same names into <arm>.prefix
+ok   A2's and B2's proxies ran at the same time
+ok   part 2: no container left
+ok   part 2: no port of the drivers still in use (none)
+selftest_prefix: 0 failed

@@ -45,7 +45,9 @@
 # RIG_LOGDIR (/tmp/agent-check-race: rig k logs into RIG_LOGDIR-k, or into RIG_LOGDIR_<k> where that is set; the logs
 # come back to CLIENT_OUT/rig for rig 1 and CLIENT_OUT/rig<k> for the others), MIN_AVAIL_MB (60, the preset's release runs' floor: the host goes below 400 MiB on
 # this line), WD_ENV, LOAD_TIMEOUT_S (1200), CPU_SHARES (256), IMAGE (agent-check:0.87.1), LABEL (pascal-quants=1),
-# PREFIX (acrace), SSH (the ssh command, default ssh; a dry run can pass a wrapper).
+# PREFIX (the client's container names, PREFIX-<label>-*; default one of the run's own, acrel-<CLIENT_OUT's folder
+# name>-<CRC-32 of CLIENT_OUT>, printed), SSH (the ssh command, default ssh; a dry run can pass a wrapper). Another agent check on the same
+# client at once needs ports of its own: step run checks them and stops before it starts anything when one is in use.
 # Dry run without a rig: RIGS="<client> <client>", RIG_PORT_1/RIG_PORT_2 two free ports there, BIN=<CLIENT_DIR>/
 # agent_check/mock_server.py, MODEL=MODEL_DRAFT=/dev/null, PRESET=<a file with PRESET_ENV='' and PRESET_ARGS='' or the
 # mock's options>, ARGS_1/ARGS_2 the mocks' speeds (e.g. "--decode-ms 2", "--decode-ms 6").
@@ -66,7 +68,7 @@ N=${#RIGA[@]}
 RUNS=${RUNS:-one race2 one race2}; STEPS=${STEPS:-prep run report collect}
 TASK_SET=${TASK_SET:-bugfix}; TASKS=${TASKS:-all}; TIME_CAP_MIN=${TIME_CAP_MIN:-15}
 TURN_CAP=${TURN_CAP:-40}; CPU_SHARES=${CPU_SHARES:-256}; IMAGE=${IMAGE:-agent-check:0.87.1}
-LABEL=${LABEL:-pascal-quants=1}; PREFIX=${PREFIX:-acrace}; RIG_LOGDIR=${RIG_LOGDIR:-/tmp/agent-check-race}
+LABEL=${LABEL:-pascal-quants=1}; PREFIX=${PREFIX:-}; RIG_LOGDIR=${RIG_LOGDIR:-/tmp/agent-check-race}
 EXTRA_ARGS=${EXTRA_ARGS---metrics --no-webui}; SSH=${SSH:-ssh}
 PRESET=${PRESET:-flash-next-v4}
 if [ ! -e "$PRESET" ] || [ -d "$PRESET" ]; then
@@ -92,6 +94,16 @@ if [ -z "${SAMPLING:-}" ] && [ -n "$(flag --temp)" ] && [ -n "$(flag --top-p)" ]
   SAMPLING="{\"temperature\":$(flag --temp),\"top_p\":$(flag --top-p),\"top_k\":$(flag --top-k)"
   SAMPLING="$SAMPLING,\"min_p\":$(flag --min-p)}"
 fi
+run_prefix() {  # acrel-<CLIENT_OUT's folder name, at most 24 of A-Z a-z 0-9 _ ->-<CRC-32 of CLIENT_OUT, 8 hex digits>
+  local d=${CLIENT_OUT%/} name crc
+  name=$(printf %s "${d##*/}" | tr -c 'A-Za-z0-9_-' '-' | cut -c1-24)
+  crc=$(printf %s "$d" | cksum | cut -d' ' -f1)
+  printf 'acrel-%s-%08x\n' "$name" "$crc"
+}
+# the client's container names are RUN_PREFIX-ARM-*: PREFIX, or one of this run's own from CLIENT_OUT, as client_arm.sh
+# names them when PREFIX is unset; passed to the client, so that a client folder prepared before 2026-11-21 (C896)
+# names them per run too, and used by client_stop
+RUN_PREFIX=${PREFIX:-$(run_prefix)}
 CAC="$CLIENT_DIR/agent_check"
 SSH_OPTS=(-o ServerAliveInterval=15 -o ServerAliveCountMax=3)
 has() { [[ " $STEPS " == *" $1 "* ]]; }
@@ -161,6 +173,24 @@ relay_loop() {  # relay_loop NAME ssh-arguments…: keeps one forward up until k
     wait $!
     sleep 3
   done
+}
+
+port_busy() { timeout 3 bash -c 'exec 3<> "/dev/tcp/127.0.0.1/$0"' "$1" 2> /dev/null; }  # something listens there
+cl_port_busy() { cl "timeout 3 bash -c 'exec 3<> /dev/tcp/127.0.0.1/$1' 2> /dev/null"; }  # the same on the client
+
+ports_free() {  # every port of this run must be free before its relays start: an ssh forward whose port another check
+  # holds only retries (ExitOnForwardFailure) while the client reaches that check's server through it
+  local bad=() k
+  for k in $(seq "$N"); do
+    port_busy $((RELAY_PORT + k - 1)) && bad+=("RELAY_PORT+$((k - 1)) ($((RELAY_PORT + k - 1))) is in use here")
+    [ "$CLIENT" = local ] || ! cl_port_busy $((CLIENT_PORT + k - 1)) \
+      || bad+=("CLIENT_PORT+$((k - 1)) ($((CLIENT_PORT + k - 1))) is in use on the client")
+    [ "$PROXY_PORT" != $((CLIENT_PORT + k - 1)) ] || bad+=("PROXY_PORT is CLIENT_PORT+$((k - 1))")
+  done
+  cl_port_busy "$PROXY_PORT" && bad+=("PROXY_PORT $PROXY_PORT is in use on the client")
+  [ ${#bad[@]} = 0 ] && return 0
+  say "nothing started: ${bad[*]}; give this run ports of its own (another agent check may be running)"
+  return 1
 }
 
 RELAYS=()
@@ -243,14 +273,16 @@ rigs_end() {  # monitors stopped; rig k's logs appended to the client's CLIENT_O
 client_run() {  # client_run LABEL PORTS RACE [RACE_ARGS]: client_arm.sh detached on the client, followed to LABEL.rc
   local label=$1 ports=$2 race=$3 rargs=${4:-} seen=0 n rc up='' ups=''
   if [ "$race" = 1 ]; then ups=$ports; else up=$ports; fi
-  # only the setsid command goes to the background, its output in the log, so this ssh returns at once
+  # only the setsid command goes to the background, its output in the log, so this ssh returns at once; CLIENT_ARM is
+  # set first, so that an interrupt while it starts still stops the client (client_stop)
+  CLIENT_ARM=$label
+  say "run $label: containers $RUN_PREFIX-$label-*"
   cl "mkdir -p $CLIENT_OUT && cd $CAC || exit 1; OUT=$CLIENT_OUT ARM=$label UPSTREAM_PORT=$up \
     UPSTREAM_PORTS='$ups' RACE_ARGS='$rargs' PROXY_PORT=$PROXY_PORT TASK_SET=$TASK_SET TASKS=$TASKS \
     TIME_CAP_MIN=$TIME_CAP_MIN TURN_CAP=$TURN_CAP BUDGET_MIN=${BUDGET_MIN:-} CTX=$CTX CPU_SHARES=$CPU_SHARES \
-    IMAGE=$IMAGE LABEL=$LABEL PREFIX=$PREFIX SAMPLING='${SAMPLING:-}' \
+    IMAGE=$IMAGE LABEL=$LABEL PREFIX=$RUN_PREFIX SAMPLING='${SAMPLING:-}' \
     setsid nohup bash client_arm.sh > $CLIENT_OUT/$label.log 2>&1 < /dev/null & sleep 1" \
-    || { say "could not start the client for $label"; return 1; }
-  CLIENT_ARM=$label
+    || { CLIENT_ARM=; say "could not start the client for $label"; return 1; }
   while true; do
     sleep 15
     n=$(cl "wc -l < $CLIENT_OUT/$label.log" 2> /dev/null) || continue
@@ -270,7 +302,7 @@ client_run() {  # client_run LABEL PORTS RACE [RACE_ARGS]: client_arm.sh detache
 client_stop() {  # stop a run still going on the client (this script interrupted)
   [ -n "${CLIENT_ARM:-}" ] || return 0
   cl "p=\$(cat $CLIENT_OUT/$CLIENT_ARM.pid 2> /dev/null) && kill -- -\$p 2> /dev/null; sleep 3; \
-    docker ps -aq --filter name=^$PREFIX-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
+    docker ps -aq --filter name=^$RUN_PREFIX-$CLIENT_ARM- | xargs -r docker rm -f > /dev/null" 2> /dev/null
   say "run $CLIENT_ARM stopped"
 }
 
@@ -292,7 +324,7 @@ if has prep; then
     > $CLIENT_OUT/image-build.log 2>&1" || { say "image build failed ($CLIENT_OUT/image-build.log on the client)"; exit 1; }
   say "prep: validating the $TASK_SET tasks in the image"
   cl "cd $CAC && nice -n 19 python3 validate.py --task-set $TASK_SET --sandbox docker --image $IMAGE \
-    --docker-label $LABEL --docker-prefix $PREFIX-val --docker-cpu-shares $CPU_SHARES --jobs 2 \
+    --docker-label $LABEL --docker-prefix ${PREFIX:-acrace}-val --docker-cpu-shares $CPU_SHARES --jobs 2 \
     --out $CLIENT_OUT/validation.json > $CLIENT_OUT/validation.txt 2>&1; rc=\$?; tail -1 $CLIENT_OUT/validation.txt; \
     exit \$rc" | tee -a "$OUT/run.log"
   [ "${PIPESTATUS[0]}" = 0 ] || { say "task validation failed (validation.txt on the client)"; exit 1; }
@@ -302,6 +334,7 @@ LABELS=()
 declare -A seen
 for r in $RUNS; do seen[$r]=$((${seen[$r]:-0} + 1)); LABELS+=("$r-${seen[$r]}"); done
 if has run; then
+  ports_free || exit 1
   relay_start
   RUNNING=1
   servers_start || { say "the servers did not start; stopping"; exit 1; }

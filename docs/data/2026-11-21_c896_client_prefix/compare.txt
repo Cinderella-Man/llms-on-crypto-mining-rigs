@@ -1,0 +1,15 @@
+old: exit 0, 19 s, rc file 0
+new: exit 0, 19 s, rc file 0
+task | old: status, success, try, infrastructure tries, turns | new: the same | equal
+bugfix-javascript-phone-number | ('scored', 1, 1, 0, 5) | ('scored', 1, 1, 0, 5) | True
+bugfix-javascript-space-age | ('scored', 1, 2, 1, 5) | ('scored', 1, 2, 1, 5) | True
+bugfix-javascript-triangle | ('scored', 0, 1, 0, 5) | ('scored', 0, 1, 0, 5) | True
+bugfix-python-affine-cipher | ('scored', 1, 1, 0, 5) | ('scored', 1, 1, 0, 5) | True
+bugfix-python-phone-number | ('scored', 1, 1, 0, 5) | ('scored', 1, 1, 0, 5) | True
+bugfix-python-variable-length-quantity | ('scored', 1, 1, 0, 5) | ('scored', 1, 1, 0, 5) | True
+same status, success, try and infrastructure tries on every task: True
+old OUT: ['proxy-same.out', 'proxy.jsonl', 'proxy.jsonl.bodies.gz', 'res', 'same.rc', 'work']
+old containers seen: ['acrel-same-<pid>-s0', 'acrel-same-<pid>-s0-check', 'acrel-same-proxy']
+new OUT: ['proxy-same.out', 'proxy.jsonl', 'proxy.jsonl.bodies.gz', 'res', 'same.prefix', 'same.rc', 'work']
+new containers seen: ['acrel-new-7f721c94-same-<pid>-s0', 'acrel-new-7f721c94-same-<pid>-s0-check', 'acrel-new-7f721c94-same-proxy']
+left: none
