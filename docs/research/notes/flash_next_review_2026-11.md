@@ -289,8 +289,10 @@ estimate rests on. Ordered by expected value on real tasks, with the probability
 
 Not in the table, with the reason:
 - **Pipelined speculation on the idle cards:** 1.6× slower on v3's base (4.9 against 7.9 tok/s, a wrong guess cost
-  +372 ms), and by reading broken with the default fused conv (Q1042). Its premise, one-token steps cheaper than a
-  verify, no longer holds: a 4-token verify costs 2.0 one-token passes on the release line (101.6 against 51.1 ms).
+  +372 ms), and broken with the default fused conv from 2026-11-05 until Q1670's fix: every pipe slot read a stale
+  conv history (found by reading as Q1042; [audit](flash_next_pipe_audit_2026-11.md)). Its premise, one-token steps
+  cheaper than a verify, no longer holds: a 4-token verify costs 2.0 one-token passes on the release line (101.6
+  against 51.1 ms).
 - **A persistent kernel or an own engine:** launches are ≤ 2.3 ms a token ([floor](flash_next_floor_and_engine.md)),
   and the persistent-pipeline bench found 0.77 ms a token beyond the clock, which the keep-alive already holds.
 - **Lossy acceptance** (AdaptiveSpec, arXiv 2609.02897: up to +56 % over EAGLE-3 with "93 % to fully lossless" task
