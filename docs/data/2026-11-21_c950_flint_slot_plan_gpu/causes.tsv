@@ -1,0 +1,12 @@
+arm	scheduler	cause	replans
+sp0	pipe slot	outgrew its place: 'attn_inp_kq_mask' (NONE) in CUDA_Host	110
+sp0	pipe slot	device change: node 'norm-#' CPU -> CUDA2	40
+sp0	pipe slot	device change: node 'logit_bias (view)' CUDA2 -> CPU	30
+sp0	pipe slot	device change: node 'uniform_# (view)' CUDA2 -> CPU	20
+sp1	pipe slot	device change: node 'norm-#' CPU -> CUDA2	40
+sp1	pipe slot	device change: node 'logit_bias (view)' CUDA2 -> CPU	30
+sp1	pipe slot	device change: node 'uniform_# (view)' CUDA2 -> CPU	20
+base	pipe slot	outgrew its place: 'attn_inp_kq_mask' (NONE) in CUDA_Host	110
+base	pipe slot	device change: node 'norm-#' CPU -> CUDA2	40
+base	pipe slot	device change: node 'logit_bias (view)' CUDA2 -> CPU	30
+base	pipe slot	device change: node 'uniform_# (view)' CUDA2 -> CPU	20

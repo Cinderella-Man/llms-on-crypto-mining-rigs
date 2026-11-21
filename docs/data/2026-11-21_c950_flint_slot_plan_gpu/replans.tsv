@@ -1,0 +1,85 @@
+arm	round	request	kind	task	guesses	right	wrong	pipe_replans_same_devices	pipe_replans_changed_devices	plans_whole_memory	trace_slot_replans	trace_slot_after_device_change	trace_decode_replans	graph_reallocs_same	graph_reallocs_changed
+sp0	r1	R1	plain	0	395	267	32	10	10	0	20	10	0	0	0
+sp0	r1	R2	tool	322	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R3	tool t0.7	347	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R4	tool turn 2	371	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R5	tool turn 3	393	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R6	tool turn 4	415	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R7	tool turn 5	439	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R8	plain turn 6	461	194	70	31	0	10	0	10	10	0	0	0
+sp0	r1	R12	plain turn 7	591	521	325	49	20	10	0	30	10	0	0	0
+sp0	r1	R13	plain turn 8	977	427	367	15	10	0	0	10	0	0	0	0
+sp0	r1	R14	plain turn 9 t0.7	1363	281	241	10	10	10	0	20	10	0	0	0
+sp0	r1	R15	plain turn 10	1621	423	367	14	10	10	0	20	10	0	0	0
+sp0	r1	R10	tool 645 tokens	2007	0	0	0	0	0	0	0	0	0	0	0
+sp0	r1	R11	tool 648 tokens	2031	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R1	plain	2055	395	267	32	0	0	0	0	0	0	0	0
+sp0	r2	R2	tool	2377	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R3	tool t0.7	2402	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R4	tool turn 2	2426	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R5	tool turn 3	2448	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R6	tool turn 4	2470	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R7	tool turn 5	2494	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R8	plain turn 6	2516	194	70	31	0	10	0	10	10	0	0	0
+sp0	r2	R12	plain turn 7	2646	521	325	49	20	10	0	30	10	0	0	0
+sp0	r2	R13	plain turn 8	3032	427	367	15	10	0	0	10	0	0	0	0
+sp0	r2	R14	plain turn 9 t0.7	3418	281	241	10	10	10	0	20	10	0	0	0
+sp0	r2	R15	plain turn 10	3676	423	367	14	10	10	0	20	10	0	0	0
+sp0	r2	R10	tool 645 tokens	4062	0	0	0	0	0	0	0	0	0	0	0
+sp0	r2	R11	tool 648 tokens	4086	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R1	plain	0	395	267	32	0	10	10	10	10	0	0	0
+sp1	r1	R2	tool	322	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R3	tool t0.7	347	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R4	tool turn 2	371	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R5	tool turn 3	393	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R6	tool turn 4	415	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R7	tool turn 5	439	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R8	plain turn 6	461	194	70	31	0	10	10	10	10	0	0	0
+sp1	r1	R12	plain turn 7	591	521	325	49	0	10	10	10	10	0	0	0
+sp1	r1	R13	plain turn 8	977	427	367	15	0	0	0	0	0	0	0	0
+sp1	r1	R14	plain turn 9 t0.7	1363	284	243	11	0	10	10	10	10	0	0	0
+sp1	r1	R15	plain turn 10	1621	418	370	12	0	10	10	10	10	0	0	0
+sp1	r1	R10	tool 645 tokens	2007	0	0	0	0	0	0	0	0	0	0	0
+sp1	r1	R11	tool 648 tokens	2031	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R1	plain	2055	395	267	32	0	0	0	0	0	0	0	0
+sp1	r2	R2	tool	2377	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R3	tool t0.7	2402	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R4	tool turn 2	2426	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R5	tool turn 3	2448	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R6	tool turn 4	2470	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R7	tool turn 5	2494	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R8	plain turn 6	2516	194	70	31	0	10	10	10	10	0	0	0
+sp1	r2	R12	plain turn 7	2646	521	325	49	0	10	10	10	10	0	0	0
+sp1	r2	R13	plain turn 8	3032	427	367	15	0	0	0	0	0	0	0	0
+sp1	r2	R14	plain turn 9 t0.7	3418	284	243	11	0	10	10	10	10	0	0	0
+sp1	r2	R15	plain turn 10	3676	418	370	12	0	10	10	10	10	0	0	0
+sp1	r2	R10	tool 645 tokens	4062	0	0	0	0	0	0	0	0	0	0	0
+sp1	r2	R11	tool 648 tokens	4086	0	0	0	0	0	0	0	0	0	0	0
+base	r1	R1	plain	0	395	267	32				20	10	0	0	0
+base	r1	R2	tool	322	0	0	0				0	0	0	0	0
+base	r1	R3	tool t0.7	347	0	0	0				0	0	0	0	0
+base	r1	R4	tool turn 2	371	0	0	0				0	0	0	0	0
+base	r1	R5	tool turn 3	393	0	0	0				0	0	0	0	0
+base	r1	R6	tool turn 4	415	0	0	0				0	0	0	0	0
+base	r1	R7	tool turn 5	439	0	0	0				0	0	0	0	0
+base	r1	R8	plain turn 6	461	194	70	31				10	10	0	0	0
+base	r1	R12	plain turn 7	591	521	325	49				30	10	0	0	0
+base	r1	R13	plain turn 8	977	427	367	15				10	0	0	0	0
+base	r1	R14	plain turn 9 t0.7	1363	284	243	11				20	10	0	0	0
+base	r1	R15	plain turn 10	1621	418	370	12				20	10	0	0	0
+base	r1	R10	tool 645 tokens	2007	0	0	0				0	0	0	0	0
+base	r1	R11	tool 648 tokens	2031	0	0	0				0	0	0	0	0
+base	r2	R1	plain	2055	395	267	32				0	0	0	0	0
+base	r2	R2	tool	2377	0	0	0				0	0	0	0	0
+base	r2	R3	tool t0.7	2402	0	0	0				0	0	0	0	0
+base	r2	R4	tool turn 2	2426	0	0	0				0	0	0	0	0
+base	r2	R5	tool turn 3	2448	0	0	0				0	0	0	0	0
+base	r2	R6	tool turn 4	2470	0	0	0				0	0	0	0	0
+base	r2	R7	tool turn 5	2494	0	0	0				0	0	0	0	0
+base	r2	R8	plain turn 6	2516	194	70	31				10	10	0	0	0
+base	r2	R12	plain turn 7	2646	521	325	49				30	10	0	0	0
+base	r2	R13	plain turn 8	3032	427	367	15				10	0	0	0	0
+base	r2	R14	plain turn 9 t0.7	3418	281	241	10				20	10	0	0	0
+base	r2	R15	plain turn 10	3676	423	367	14				20	10	0	0	0
+base	r2	R10	tool 645 tokens	4062	0	0	0				0	0	0	0	0
+base	r2	R11	tool 648 tokens	4086	0	0	0				0	0	0	0	0

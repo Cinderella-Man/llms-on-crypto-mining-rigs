@@ -1,0 +1,4 @@
+arm	build	switch	loaded	pipeline_parallelism_line	switch_line	requests	sched_replan_lines	after_device_change	pipe_slot_replans_trace	pipe_counter_same_devices	pipe_counter_changed_devices	plans_whole_memory	mib_card0	mib_card1	mib_card2
+sp0	branch 19048bb6d	unset	up=1	1	0	28	200	90	200	110	90	0	16153	17789	14071
+sp1	branch 19048bb6d	LLAMA_PIPE_SLOT_PLAN=1	up=1	1	1	28	90	90	90	0	90	90	16157	17795	14073
+base	base 3dfad876f	unset (not in this build)	up=1	1	0	28	200	90	200				16153	17793	14075
