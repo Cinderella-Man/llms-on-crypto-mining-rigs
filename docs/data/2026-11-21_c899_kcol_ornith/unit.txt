@@ -1,0 +1,16 @@
+product          type       in    rows | unset: 1..8 tokens                 | MT=2: 1..8 tokens                  | R197 ro (MT=1, KCOL_SKIP=q5_0,q8_0)
+ssm_out          q5_0     8192    3072 | one kcol kcol kcol kcol kcol kcol kcol | one mt mt mt kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+attn_output      q5_0     8192    3072 | one kcol kcol kcol kcol kcol kcol kcol | one mt mt mt kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+attn_qkv         q5_0     3072   12288 | one mc mc mc kcol kcol kcol kcol   | one mc mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+attn_gate        q5_0     3072    8192 | one mc mc mc kcol kcol kcol kcol   | one mc mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+attn_q           q5_0     3072   16384 | one mc mc mc kcol kcol kcol kcol   | one mc mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+output           q5_0     3072  248320 | one mc mc mc kcol kcol kcol kcol   | one mc mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+ffn_gate_shexp   q5_0     3072    1024 | one mc mc mc kcol kcol kcol kcol   | one mt mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+ffn_up_shexp     q5_0     3072    1024 | one mc mc mc kcol kcol kcol kcol   | one mt mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+ssm_alpha        q5_0     3072      64 | one mc mc mc kcol kcol kcol kcol   | one mt mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+ssm_beta         q5_0     3072      64 | one mc mc mc kcol kcol kcol kcol   | one mt mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+ffn_down_shexp   q5_0     1024    3072 | one mc mc mc kcol kcol kcol kcol   | one mc mt mc kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+attn_k           q8_0     3072     512 | one kcol kcol kcol kcol kcol kcol kcol | one mt mt mt kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+attn_v           q8_0     3072     512 | one kcol kcol kcol kcol kcol kcol kcol | one mt mt mt kcol kcol kcol kcol   | one mt mt mt kcol kcol kcol kcol
+112991050 checks, 0 failed
+rc=0
