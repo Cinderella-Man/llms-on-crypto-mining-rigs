@@ -11,7 +11,11 @@ switch adds them (Q1408).
 Every request's print_timing block logs its prompt (`prompt eval time = X ms / N tokens`), the graphs reused and the
 target context's running count of graph reallocations (`graph reallocs = S / D`: S with the graph's size unchanged,
 D changed; both count since the load). The line is logged at the server's default verbosity on Miner Llama's v4 builds.
-The difference to the previous request's count is that request's reallocations. A server start in the log
+The difference to the previous request's count is that request's reallocations. Since C901 (Q1629, v5 builds with
+pipelined speculation) a second line follows it, the pipe slots' own re-plans, which that count leaves out
+(`pipe reallocs = S / D (same devices) / (changed devices), F plans over the whole memory`: S after no change of device,
+D after one, F the plans LLAMA_PIPE_SLOT_PLAN=1 made after them; all since the load); a request's share is again the
+difference to the previous request's. A server start in the log
 (llama-server's `llama_server: initializing`, or rig_server.sh's `=== ` line, as when an agent-check arm is resumed
 into the same log) or a count lower than the one before starts the count from zero again. A reallocation makes the
 scheduler wait for every card before it moves the buffers, so a layer-split prompt call loses the overlap of its
@@ -22,8 +26,9 @@ Outputs (one at a time):
   all), the requests, their prompt seconds, the reallocations of each kind and the requests with at least one: the
   table of docs/data/2026-11-12_r60_taper_v4/run/realloc_counts.py, unchanged;
 - --requests: one row per request (its order in the log, the server's task id, prompt tokens and ms, the
-  reallocations of each kind);
-- --line: one line per log, as a driver's summary prints it;
+  reallocations of each kind, and the pipe slots' re-plans of each kind and plans over the whole memory, empty where
+  the log has no `pipe reallocs` line);
+- --line: one line per log, as a driver's summary prints it (with the pipe slots' re-plans where the log has them);
 - --marks SPEC: per log, the requests with a reallocation against its references' and a mark. SPEC holds
   `load=ref[,ref...]` pairs and the word `ladder`: each load against the loads of the rung before it, where a rung is
   a name and its repeats (the name plus `2` or `-2`, e.g. base2 or a-2) and the rungs follow the order of the logs; a
@@ -39,6 +44,7 @@ import sys
 BUCKETS = ((0, 512), (512, 1024), (1024, 2000), (2000, 10 ** 9), (0, 10 ** 9))
 PE = re.compile(r"prompt eval time =\s*([0-9.]+) ms /\s*([0-9]+) tokens")
 GR = re.compile(r"graph reallocs =\s*([0-9]+)\s*/\s*([0-9]+)")
+PR = re.compile(r"pipe reallocs =\s*([0-9]+)\s*/\s*([0-9]+)(?:.*?,\s*([0-9]+) plans)?")
 GU = re.compile(r"graphs reused =\s*([0-9]+)")
 TASK = re.compile(r"\| task ([0-9]+) \|")
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
@@ -50,18 +56,30 @@ def bname(lo, hi):
 
 
 def requests(path):
-    """The log's requests: dicts of prompt ms and tokens, graphs reused, reallocations of each kind, task id."""
+    """The log's requests: dicts of prompt ms and tokens, graphs reused, reallocations of each kind, task id, and the
+    pipe slots' re-plans of each kind and plans over the whole memory (None where the log has no such line)."""
     reqs, cur, prev = [], None, (0, 0)
+    last, pprev = None, (0, 0, 0)  # the request whose graph reallocs line came last; the pipe count before it
     for line in open(path, errors="replace"):
         line = ANSI.sub("", line)
         if START.search(line):
-            prev, cur = (0, 0), None
+            prev, cur, last, pprev = (0, 0), None, None, (0, 0, 0)
+            continue
+        m = PR.search(line)
+        if m:
+            if last is not None and last["pipe_same"] is None:
+                c = (int(m.group(1)), int(m.group(2)), int(m.group(3) or 0))
+                if any(x < y for x, y in zip(c, pprev)):
+                    pprev = (0, 0, 0)
+                last["pipe_same"], last["pipe_dev"], last["pipe_plans"] = (x - y for x, y in zip(c, pprev))
+                pprev = c
             continue
         m = PE.search(line)
         if m:
             t = TASK.search(line)
             cur = dict(ms=float(m.group(1)), n=int(m.group(2)), reused=0, same=0, diff=0,
-                       task=t.group(1) if t else "-")
+                       task=t.group(1) if t else "-", pipe_same=None, pipe_dev=None, pipe_plans=None)
+            last = None
             continue
         if cur is None:
             continue
@@ -77,13 +95,32 @@ def requests(path):
             cur["same"], cur["diff"] = s - prev[0], d - prev[1]
             prev = (s, d)
             reqs.append(cur)
-            cur = None
+            last, cur = cur, None
     return reqs
 
 
 def total(reqs):
     return (len(reqs), sum(1 for r in reqs if r["same"] + r["diff"] > 0), sum(r["same"] for r in reqs),
             sum(r["diff"] for r in reqs))
+
+
+def pipe_total(reqs):
+    """The pipe slots' re-plans over the requests that log them: (requests, requests with one, after no change of
+    device, after one, plans over the whole memory), or None when no request logs the line (no pipe slots, or a build
+    before C901)."""
+    q = [r for r in reqs if r.get("pipe_same") is not None]
+    if not q:
+        return None
+    return (len(q), sum(1 for r in q if r["pipe_same"] + r["pipe_dev"] > 0), sum(r["pipe_same"] for r in q),
+            sum(r["pipe_dev"] for r in q), sum(r["pipe_plans"] for r in q))
+
+
+def pipe_phrase(p):
+    """The pipe slots' part of a summary line, empty without the count."""
+    if p is None:
+        return ""
+    return (f"; pipe slots' re-plans {p[2] + p[3]} in {p[1]} of {p[0]} requests ({p[2]} same devices, {p[3]} changed "
+            f"devices; {p[4]} plan{'' if p[4] == 1 else 's'} over the whole memory)")
 
 
 def stem(name, names):
@@ -155,14 +192,17 @@ def main(argv):
                       f"{sum(r['same'] for r in b)}\t{sum(r['diff'] for r in b)}\t"
                       f"{sum(1 for r in b if r['same'] + r['diff'] > 0)}\t{sum(r['reused'] for r in b)}")
     elif mode == "requests":
-        print("log\treq\ttask\tprompt_tokens\tprompt_ms\treallocs_same\treallocs_changed")
+        print("log\treq\ttask\tprompt_tokens\tprompt_ms\treallocs_same\treallocs_changed\tpipe_reallocs_same\t"
+              "pipe_reallocs_changed\tpipe_plans_full")
         for name in names:
             for i, r in enumerate(data[name]):
-                print(f"{name}\t{i}\t{r['task']}\t{r['n']}\t{r['ms']:.1f}\t{r['same']}\t{r['diff']}")
+                pipe = "\t".join("" if r.get(k) is None else str(r[k]) for k in ("pipe_same", "pipe_dev", "pipe_plans"))
+                print(f"{name}\t{i}\t{r['task']}\t{r['n']}\t{r['ms']:.1f}\t{r['same']}\t{r['diff']}\t{pipe}")
     elif mode == "line":
         for name in names:
             n, w, s, d = total(data[name])
-            print(f"{name}: graph reallocations: {w} of {n} requests ({s} at the same size, {d} changed)")
+            print(f"{name}: graph reallocations: {w} of {n} requests ({s} at the same size, {d} changed)"
+                  + pipe_phrase(pipe_total(data[name])))
     else:
         refs = references(names, spec)
         print("load\tagainst\trequests\trequests_with_realloc\treallocs_same\treallocs_changed\t"

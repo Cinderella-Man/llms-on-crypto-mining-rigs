@@ -59,7 +59,10 @@ need it, or they are told apart by their paths). --tsv writes the per-run rows a
   screened head's decisions, NaN or watchdog kills; and the target graph's reallocations, `graph reallocations W of N
   requests (S same size, D changed)`: the requests with one, of all, and the reallocations at an unchanged and at a
   changed graph size, from each request's running count in the log (scripts/realloc_counts.py; C804, Q1408). A switch
-  that rebuilds the compute graph on every request shows up there.
+  that rebuilds the compute graph on every request shows up there. Where the log also counts the pipe slots' own
+  re-plans (v5 builds with pipelined speculation since C901, Q1629: `pipe reallocs = S / D`, which the graph count
+  leaves out), the line adds them: `pipe slots' re-plans R in W of N requests (S same devices, D changed devices; F
+  plans over the whole memory)`.
 """
 import argparse
 import csv
@@ -82,6 +85,10 @@ try:
     from realloc_counts import requests as realloc_requests, total as realloc_total  # noqa: E402
 except ImportError:
     realloc_requests = None
+try:
+    from realloc_counts import pipe_total as realloc_pipe_total, pipe_phrase as realloc_pipe_phrase  # noqa: E402
+except ImportError:  # a copy of realloc_counts.py from before C901
+    realloc_pipe_total = None
 
 AGENT_COLUMNS = ["track", "turns", "requests", "wall_s", "prefill_s", "decode_s", "fixed_s", "other_s",
                  "prompt_new", "prompt_cached", "cache_hit", "peak_context", "ttft_p50", "ttft_max",
@@ -310,6 +317,14 @@ def realloc_phrase(t):
     return f"graph reallocations {t[1]} of {t[0]} requests ({t[2]} same size, {t[3]} changed)"
 
 
+def pipe_suffix(paths):
+    """C901: the pipe slots' re-plans in server logs, as a suffix of the graph reallocations' phrase; empty when no log
+    has a `pipe reallocs` line (no pipe slots, a build before C901, or a copy of realloc_counts.py from before it)."""
+    if realloc_requests is None or realloc_pipe_total is None:
+        return ""
+    return realloc_pipe_phrase(realloc_pipe_total([q for p in paths for q in realloc_requests(p)]))
+
+
 def cmd_gonogo(a):
     results, rows, infra, exhausted, traces = build(a)
     lines = []
@@ -415,7 +430,7 @@ def cmd_gonogo(a):
             text = Path(p).read_text(errors="replace")
             counts = {k: len(re.findall(v, text, re.I)) for k, v in pats.items()}
             lines.append(f"- server log {Path(p).name}: " + ", ".join(f"{k} {v}" for k, v in counts.items())
-                         + ", " + realloc_phrase(realloc_count([p])))
+                         + ", " + realloc_phrase(realloc_count([p])) + pipe_suffix([p]))
     print("\n".join(lines))
     print(f"\n**Overall: {verdict(allok)}**")
 
@@ -535,7 +550,7 @@ def cmd_compare(a):
             t = cnt[arm]
             mark = (f": **reallocates** where {', '.join(none)} {'does' if len(none) == 1 else 'do'} not"
                     if isinstance(t, tuple) and t[1] and none else "")
-            print(f"- {arm}: {realloc_phrase(t)}{mark}")
+            print(f"- {arm}: {realloc_phrase(t)}{mark}{pipe_suffix(logs[arm])}")
 
     print("\n### Time to first token per turn\n")
     print("Median over tasks of the seconds from the request to its first token as the client sees it (network "

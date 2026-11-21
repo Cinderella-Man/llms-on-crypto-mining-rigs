@@ -1,0 +1,7 @@
+cpu_off: graph reallocations: 0 of 4 requests (0 at the same size, 0 changed); pipe slots' re-plans 0 in 0 of 4 requests (0 same devices, 0 changed devices; 0 plans over the whole memory)
+cpu_on: graph reallocations: 0 of 4 requests (0 at the same size, 0 changed); pipe slots' re-plans 0 in 0 of 4 requests (0 same devices, 0 changed devices; 0 plans over the whole memory)
+rpc_off: graph reallocations: 0 of 4 requests (0 at the same size, 0 changed); pipe slots' re-plans 120 in 3 of 4 requests (110 same devices, 10 changed devices; 0 plans over the whole memory)
+rpc_on: graph reallocations: 0 of 4 requests (0 at the same size, 0 changed); pipe slots' re-plans 30 in 3 of 4 requests (20 same devices, 10 changed devices; 30 plans over the whole memory)
+- rpc_off: graph reallocations 0 of 4 requests (0 same size, 0 changed); pipe slots' re-plans 120 in 3 of 4 requests (110 same devices, 10 changed devices; 0 plans over the whole memory)
+- rpc_on: graph reallocations 0 of 4 requests (0 same size, 0 changed); pipe slots' re-plans 30 in 3 of 4 requests (20 same devices, 10 changed devices; 30 plans over the whole memory)
+- cpu_off: graph reallocations 0 of 4 requests (0 same size, 0 changed); pipe slots' re-plans 0 in 0 of 4 requests (0 same devices, 0 changed devices; 0 plans over the whole memory)

@@ -1,0 +1,5 @@
+arm	sched_replan_lines	after_device_change	drain_us	plan_us	plan_full_lines	plan_full_fits	plan_full_given_up	plan_full_ms
+cpu_off	0	0	0	0	0	0	0	0.000
+cpu_on	0	0	0	0	0	0	0	0.000
+rpc_off	120	10	6588	12104	0	0	0	0.000
+rpc_on	30	10	871	4890	30	30	0	7.548

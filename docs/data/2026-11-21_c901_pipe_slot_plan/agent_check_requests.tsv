@@ -1,0 +1,17 @@
+log	req	task	prompt_tokens	prompt_ms	reallocs_same	reallocs_changed	pipe_reallocs_same	pipe_reallocs_changed	pipe_plans_full
+cpu_off	0	0	104	6.4	0	0	0	0	0
+cpu_off	1	703	104	4.7	0	0	0	0	0
+cpu_off	2	1406	26	6.6	0	0	0	0	0
+cpu_off	3	1447	104	4.6	0	0	0	0	0
+cpu_on	0	0	104	6.5	0	0	0	0	0
+cpu_on	1	703	104	4.6	0	0	0	0	0
+cpu_on	2	1406	26	7.1	0	0	0	0	0
+cpu_on	3	1447	104	4.8	0	0	0	0	0
+rpc_off	0	0	104	12.1	0	0	30	10	0
+rpc_off	1	703	104	9.1	0	0	40	0	0
+rpc_off	2	1406	26	13.9	0	0	0	0	0
+rpc_off	3	1447	104	8.3	0	0	40	0	0
+rpc_on	0	0	104	12.0	0	0	0	10	10
+rpc_on	1	703	104	9.2	0	0	10	0	10
+rpc_on	2	1406	26	13.5	0	0	0	0	0
+rpc_on	3	1447	104	15.1	0	0	10	0	10

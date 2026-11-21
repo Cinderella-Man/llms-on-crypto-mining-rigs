@@ -1,0 +1,17 @@
+arm	request	tokens	prompt_n	tokens_md5
+cpu_off	Q1	700	104	13046c93f53f
+cpu_off	Q2	700	104	42e3f829214e
+cpu_off	Q3	39	26	42bf0f14000f
+cpu_off	Q4	700	104	7e0c62ba61d5
+cpu_on	Q1	700	104	13046c93f53f
+cpu_on	Q2	700	104	42e3f829214e
+cpu_on	Q3	39	26	42bf0f14000f
+cpu_on	Q4	700	104	7e0c62ba61d5
+rpc_off	Q1	700	104	13046c93f53f
+rpc_off	Q2	700	104	42e3f829214e
+rpc_off	Q3	39	26	42bf0f14000f
+rpc_off	Q4	700	104	7e0c62ba61d5
+rpc_on	Q1	700	104	13046c93f53f
+rpc_on	Q2	700	104	42e3f829214e
+rpc_on	Q3	39	26	42bf0f14000f
+rpc_on	Q4	700	104	7e0c62ba61d5

@@ -20,7 +20,8 @@
 #   sums up the arms by the try that passed;
 # - the graph reallocations from server logs (C804): gonogo's server-log lines gain the count (a resumed load's count
 #   starts again, a log without the count says so), compare marks the arm that reallocates where the other does not,
-#   and compare's other lines are those it writes without the logs;
+#   and compare's other lines are those it writes without the logs; a log with the pipe slots' re-plans (C901) adds
+#   them to its line, a resumed load's counted from its start, and a log without them adds nothing;
 # - the work counts (C852): from a fixed per-request table with every cache path (exact, a reply read again whole and
 #   in part, an older checkpoint, a row without timings), `report.py work` counts the prompt tokens read, the reply
 #   tokens re-read with their turns and prompt seconds, and the longest first-token wait;
@@ -84,9 +85,10 @@ python3 -I "$HERE/report.py" gonogo "$OUT/res" --log "$OUT/proxy.jsonl" --replay
   --replay-label replay-stream > "$OUT/gonogo.md" || true
 pe() { echo "slot print_timing: id  0 | task $1 | prompt eval time =     100.00 ms /   $2 tokens"; }
 gr() { echo "slot print_timing: id  0 | task $1 |   graph reallocs =   $2    /   $3        (same size) / (changed)"; }
+pr() { echo "slot print_timing: id  0 | task $1 |    pipe reallocs =   $2    /   $3        (same devices) / (changed devices), $4 plans over the whole memory"; }
 mkdir -p "$OUT/rig"
-{ echo "=== mock: load 1"; pe 1 600; gr 1 2 1; pe 2 20; gr 2 2 1
-  echo "=== mock: load 2, resumed"; echo "srv  llama_server: initializing ..."; pe 1 900; gr 1 3 1
+{ echo "=== mock: load 1"; pe 1 600; gr 1 2 1; pr 1 10 2 0; pe 2 20; gr 2 2 1; pr 2 10 2 0
+  echo "=== mock: load 2, resumed"; echo "srv  llama_server: initializing ..."; pe 1 900; gr 1 3 1; pr 1 5 0 1
 } > "$OUT/rig/server-mock.log"
 { echo "=== mock-cap: load 1"; pe 1 600; gr 1 0 0; pe 2 30; gr 2 0 0; } > "$OUT/rig/server-mock-cap.log"
 { echo "=== nocount: load 1"; pe 1 600; } > "$OUT/rig/server-nocount.log"
@@ -183,7 +185,10 @@ check(len(r4) == 1 and r4[0]["max_tokens"] == body1[r4[0]["rec_id"]].get("max_to
 check("GO" in (out / "gonogo.md").read_text(), "gonogo report written")
 # graph reallocations (C804)
 gl = {l.split(":")[0]: l for l in (out / "gonogo_realloc.md").read_text().splitlines() if l.startswith("- server log")}
-want = {"mock": "graph reallocations 2 of 3 requests (5 same size, 2 changed)",
+# the pipe slots' re-plans (C901): mock's log has them (a resumed load counted from its start), the others not
+pipe_mock = ("; pipe slots' re-plans 17 in 2 of 3 requests (15 same devices, 2 changed devices; 1 plan over the whole "
+             "memory)")
+want = {"mock": "graph reallocations 2 of 3 requests (5 same size, 2 changed)" + pipe_mock,
         "mock-cap": "graph reallocations 0 of 2 requests (0 same size, 0 changed)",
         "nocount": "graph reallocations not counted (no `graph reallocs` line)"}
 check(len(gl) == 3 and all(gl[f"- server log server-{k}.log"].endswith(", " + v) for k, v in want.items()),
@@ -191,7 +196,8 @@ check(len(gl) == 3 and all(gl[f"- server log server-{k}.log"].endswith(", " + v)
 plain = (out / "compare_plain.md").read_text().splitlines()
 withl = (out / "compare_realloc.md").read_text().splitlines()
 added = [l for l in withl if l.startswith("- mock") and "graph reallocations" in l]
-check(added == [f"- mock: {want['mock']}: **reallocates** where mock-cap does not", f"- mock-cap: {want['mock-cap']}"],
+check(added == [f"- mock: {want['mock'][:-len(pipe_mock)]}: **reallocates** where mock-cap does not{pipe_mock}",
+                f"- mock-cap: {want['mock-cap']}"],
       f"compare: the arm that reallocates is marked where the other does not ({added})")
 i = next((k for k, l in enumerate(withl) if l.startswith("Graph reallocations of the target")), None)
 # sorted: compare orders tasks that started in the same second (the mock's) by Python's per-process set order

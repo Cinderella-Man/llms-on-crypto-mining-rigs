@@ -1,0 +1,17 @@
+arm	request	task	guesses	guesses_right	pipe_replans_same_devices	pipe_replans_changed_devices	plans_whole_memory	graph_reallocs_same	graph_reallocs_changed
+cpu_off	Q1	0	56	0	0	0	0	0	0
+cpu_off	Q2	703	81	1	0	0	0	0	0
+cpu_off	Q3	1406	0	0	0	0	0	0	0
+cpu_off	Q4	1447	73	1	0	0	0	0	0
+cpu_on	Q1	0	56	0	0	0	0	0	0
+cpu_on	Q2	703	81	1	0	0	0	0	0
+cpu_on	Q3	1406	0	0	0	0	0	0	0
+cpu_on	Q4	1447	73	1	0	0	0	0	0
+rpc_off	Q1	0	56	0	30	10	0	0	0
+rpc_off	Q2	703	81	1	40	0	0	0	0
+rpc_off	Q3	1406	0	0	0	0	0	0	0
+rpc_off	Q4	1447	73	1	40	0	0	0	0
+rpc_on	Q1	0	56	0	0	10	10	0	0
+rpc_on	Q2	703	81	1	10	0	10	0	0
+rpc_on	Q3	1406	0	0	0	0	0	0	0
+rpc_on	Q4	1447	73	1	10	0	10	0	0

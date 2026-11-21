@@ -724,6 +724,12 @@ checkpoints:
   42.49 s against 21.14 s without it, FN84, one request each) shows up in its own agent run. The count is
   [scripts/realloc_counts.py](../../scripts/realloc_counts.py)'s, which the prep copies beside the bench files on the
   client; a log without the count line (stock llama.cpp, the mock) says `not counted`.
+- **The pipe slots' re-plans** (C901, Q1629): with pipelined speculation (`--pipe-depth`) each pipe slot has a
+  scheduler of its own, whose re-plans the count above leaves out (R181: 390 in one Flint run, drains 7.12 s). Since
+  C901 the engine logs them per request after the graph count (`pipe reallocs = S / D`, after no change of device and
+  after one, with the plans over the whole memory that `LLAMA_PIPE_SLOT_PLAN=1` made), and the same lines add
+  `pipe slots' re-plans R in W of N requests (S same devices, D changed devices; F plans over the whole memory)`. A log
+  without that line (no pipe slots, an older build) adds nothing.
 - **Times through the relay:** the time to first token is measured at the client, so it includes the relay's two
   hops (the same for both arms); the server's own prompt time is in `turns.csv` (`prompt_ms`).
 - **Dry run without a model:** point `RIG` at the client and both binaries at [mock_server.py](mock_server.py) (it
