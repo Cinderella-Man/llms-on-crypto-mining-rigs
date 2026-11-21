@@ -26,7 +26,8 @@
 #       [NTOK=512] [CHUNK=64] [ARRIVE=64] bash /tmp/pipespec/rig_prefill.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # CTX is per conversation. Each chunk slot holds the compute buffers of a CHUNK-token evaluation on every card, so a
 # large K can fail to fit next to the model: that configuration's process stops at its start and the next one runs.
-# Output in /tmp/pipespec/out/<TAG>/: jobs-<config>.txt, run-<config>.log, results-<config>.txt, gpu.csv, summary.tsv.
+# Output in /tmp/pipespec/out/<TAG>/: jobs-<config>.txt, run-<config>.log, results-<config>.txt, cards.csv (the card
+# log), summary.tsv.
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -44,12 +45,10 @@ mkdir -p "$OUT"
 IFS=',' read -r -a files <<< "$PROMPTS"
 SAMPLING="--temp 1 --top-k 20 --top-p 0.95 --min-p 0 --seed 42 --pipe-backend-sample"
 
-gpu_pid=""
-if command -v nvidia-smi > /dev/null; then
-    nvidia-smi --query-gpu=timestamp,index,clocks.sm,power.draw,temperature.gpu,utilization.gpu --format=csv -l 1 \
-        > "$OUT/gpu.csv" 2>/dev/null &
-    gpu_pid=$!
-fi
+# the card log (card_log.sh): every card every CARD_LOG_S s (0.5) to OUT/cards.csv until this run ends; CARD_LOG=0: off
+. "$HERE/card_log.sh" || {
+    card_log_start() { echo "card log: no card_log.sh beside this script"; }; card_log_stop() { :; }; }
+[ "${CARD_LOG:-1}" = 1 ] && card_log_start "$OUT/cards.csv"
 
 first=1
 for cfg in $CONFIGS; do
@@ -81,7 +80,7 @@ for cfg in $CONFIGS; do
     grep -o 'PIPESPEC.*' "$OUT/run-$cfg.log" | sed "s/^/cfg=$cfg /" > "$OUT/results-$cfg.txt"
     grep -q "name=ref-c" "$OUT/results-$cfg.txt" && first=0
 done
-[ -n "$gpu_pid" ] && kill "$gpu_pid" 2>/dev/null
+card_log_stop
 
 for cfg in $CONFIGS; do cat "$OUT/results-$cfg.txt" 2>/dev/null; done | awk '
 function f(k,   i, a) { for (i = 1; i <= NF; i++) { split($i, a, "="); if (a[1] == k) return a[2] } return "" }

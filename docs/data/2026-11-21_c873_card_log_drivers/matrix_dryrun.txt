@@ -1,0 +1,29 @@
+# 2026-11-21T06:40:28+01:00 bash bench/release_matrix/test/dryrun.sh
+PASS  clean: exit 0
+PASS  clean: both blocks and the gain table
+PASS  clean: untuned v2 generation 39.9, tuned +4.0 %
+PASS  clean: pipelined row has no generation number
+PASS  clean: greedy identical in all 8 served configurations
+PASS  clean: units measured for gpu 2 only
+PASS  clean: offsets set on 3 cards, reset afterwards
+PASS  clean: tuned memory clock logged
+PASS  clean: untuned memory clock from the card log
+PASS  clean: the card log started in both blocks
+PASS  clean: a card log per block with rows for 3 cards
+PASS  clean: each card log stopped with its block (SIGTERM stop line)
+PASS  clean: no nvidia-smi poll
+PASS  clean: no server or card log left
+PASS  diff: exit 3
+PASS  diff: the change is reported, offsets back to 0
+PASS  diff: no server left
+PASS  benchfail: exit 1, untuned only
+PASS  benchfail: stock and v2 measured, failure listed
+PASS  term: interrupted, offsets back to 0
+PASS  term: no server left
+PASS  term: the card log stopped with the run
+0 failed
+outputs kept in /tmp/tmp.NXI02rDddl
+
+real	3m25.326s
+user	0m6.702s
+sys	0m5.880s

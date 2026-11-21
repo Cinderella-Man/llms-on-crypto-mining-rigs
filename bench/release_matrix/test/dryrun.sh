@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # dryrun.sh: runs run_matrix.sh against stub programs (llama-bench, llama-server, nvidia-smi, the memory-offset kit) on
-# any Linux machine with Python 3 and curl, without GPUs and without root, to check its control flow:
+# any Linux machine with Python 3 and curl, without GPUs and without root, to check its control flow; the card log runs
+# on scripts/card_log_standin.py's stand-in for NVML (its memory clock reads 4304 MHz while the stub offset is set):
 #   1. untuned then tuned, two models: tables for both blocks and the tuning gain, offsets set on every card and back to
-#      0, units measured for the cards that lack them, no process left behind;
+#      0, units measured for the cards that lack them, a card log per block that starts and stops with it, no
+#      nvidia-smi poll, no process left behind;
 #   2. an output that changes under the offset: the tuned block stops (exit 3) and the offsets go back to 0;
 #   3. a failing llama-bench for one engine: the others still run, exit 1, the table lists the failure;
 #   4. TERM while a server runs: the trap stops the server and resets the offsets.
@@ -65,17 +67,14 @@ for e in stock v1 v2; do
     cp "$T/stub/llama-bench" "$T/builds/$e/bin/llama-bench"
     printf '#!/usr/bin/env bash\nexec python3 %s "$0" "$@"\n' "$T/stub/llama-server.py" > "$T/builds/$e/bin/llama-server"
 done
-# nvidia-smi: no compute processes; a CSV line per interval for -lms/-l (memory clock 4304 under the stub offset)
+# nvidia-smi: no compute processes; every call is logged (the card log replaced its -lms poll)
 cat > "$T/stub/nvidia-smi" <<'EOF'
 #!/usr/bin/env bash
+echo "$*" >> "$STUB_KIT/smi_calls.log"
 case " $* " in *query-compute-apps*) exit 0;; esac
-case " $* " in *" -lms "*|*" -l "*)
-    while :; do
-        mc=4004; [ -e "$STUB_KIT/offset_set" ] && mc=4304
-        echo "2026/10/25 10:00:00.000, 0, P2, 1835, $mc, 35.00, 45, 0x0000000000000000"; sleep 0.2
-    done;;
-esac
 EOF
+# python3: card_log.py on the stand-in for NVML (3 cards; memory clock 4004 MHz, 4304 while the stub offset is set)
+python3 -I "$M/../../scripts/card_log_standin.py" --shim "$T/stub"
 # the kit: nvml_memoc.py set/reset/clocks write a log and an offset file; memoc_steps.sh units writes a units file
 cat > "$T/kit/nvml_memoc.py" <<'EOF'
 import os, sys
@@ -110,14 +109,16 @@ chmod +x "$T"/stub/* "$T"/builds/*/bin/* "$T/kit/memoc_steps.sh"
 
 run() {  # run NAME [ENV...]: run_matrix.sh with the stubs; output in $T/NAME.out, status in $T/NAME.rc
     local name=$1; shift
-    rm -f "$T/kit/offset_set" "$T/kit/calls.log" "$T/kit/memoc_units_gpu2.json"
+    rm -f "$T/kit/offset_set" "$T/kit/calls.log" "$T/kit/memoc_units_gpu2.json" "$T/kit/smi_calls.log"
     echo '{"factor": 1}' > "$T/kit/memoc_units_gpu0.json"; echo '{"factor": 1}' > "$T/kit/memoc_units_gpu1.json"
     env PATH="$T/stub:$PATH" STUB_KIT="$T/kit" GPUS=0,1,2 PORT=18089 MAX_TOKENS=16 N_GREEDY=8 \
+        STANDIN_CARDS=3 STANDIN_MEM_MHZ=4004 STANDIN_OFFSET_FILE="$T/kit/offset_set" \
         BIN_stock="$T/builds/stock/bin" BIN_v1="$T/builds/v1/bin" BIN_v2="$T/builds/v2/bin" KIT="$T/kit" \
         OUT="$T/out-$name" "$@" bash "$M/run_matrix.sh" > "$T/$name.out" 2>&1
     echo $? > "$T/$name.rc"
 }
 left() { pgrep -f "$T/stub/llama-server.py" > /dev/null; }
+logger_left() { pgrep -f "card_log_standi[n].py.*$T/out-" > /dev/null; }
 
 run clean MODELS="A=$T/models/a.gguf B=$T/models/b.gguf" MEM_OFFSET=600
 check "clean: exit 0" '[ "$(cat $T/clean.rc)" = 0 ]'
@@ -128,7 +129,12 @@ check "clean: greedy identical in all 8 served configurations" 'grep -q "identic
 check "clean: units measured for gpu 2 only" '[ -f $T/kit/memoc_units_gpu2.json ] && [ "$(grep -c "no units file" $T/out-clean/offsets.log)" = 0 ]'
 check "clean: offsets set on 3 cards, reset afterwards" '[ "$(grep -c "^set" $T/kit/calls.log)" = 3 ] && [ ! -e $T/kit/offset_set ] && grep -q "^reset 2" $T/kit/calls.log'
 check "clean: tuned memory clock logged" 'grep -q "4304 MHz tuned" $T/out-clean/tables.md'
-check "clean: no server left" '! left'
+check "clean: untuned memory clock from the card log" 'grep -q "4004 MHz untuned" $T/out-clean/tables.md'
+check "clean: the card log started in both blocks" '[ "$(grep -c "card log: every card every 0.5 s to cards-" $T/out-clean/matrix.log)" = 2 ]'
+check "clean: a card log per block with rows for 3 cards" '(for b in untuned tuned; do grep -q "^epoch,time,took_ms,g0_pstate,.*,g2_reasons\$" $T/out-clean/cards-$b.csv && grep -q "^[0-9].*,P0,1911," $T/out-clean/cards-$b.csv || exit 1; done)'
+check "clean: each card log stopped with its block (SIGTERM stop line)" '(for b in untuned tuned; do grep -q "card_log stop (signal): [0-9]* samples" $T/out-clean/cards-$b.csv || exit 1; done)'
+check "clean: no nvidia-smi poll" '! grep -qE -- "-lms|(^| )-l( |$)" $T/kit/smi_calls.log'
+check "clean: no server or card log left" '! left && ! logger_left'
 
 run diff MODELS="A=$T/models/a.gguf" MEM_OFFSET=600 STUB_DIFF=1
 check "diff: exit 3" '[ "$(cat $T/diff.rc)" = 3 ]'
@@ -145,6 +151,7 @@ sleep 1; pkill -TERM -f "$M/run_matrix.sh"; wait
 check "term: interrupted, offsets back to 0" 'grep -q interrupted $T/term.out && [ ! -e $T/kit/offset_set ] && grep -q "^reset" $T/kit/calls.log'
 sleep 1
 check "term: no server left" '! left'
+check "term: the card log stopped with the run" '! logger_left && grep -q "card_log stop" $T/out-term/cards-tuned.csv'
 
 echo "$fails failed"
 [ "$fails" = 0 ]

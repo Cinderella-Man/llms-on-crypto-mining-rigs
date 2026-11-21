@@ -1,27 +1,41 @@
 #!/usr/bin/env bash
 # card_log_test.sh: self-test of scripts/card_log.py (the read-only card log), of the drivers that embed or start it,
-# and of scripts/card_table.py. Sections (SECTIONS, default "sync static fake"):
-#   sync    the copies embedded in bench/agent_check/rig_server.sh and scripts/bench.sh are byte for byte
-#           scripts/card_log.py, and bench/deep_lane/remote.sh copies it beside deep_lane.sh
+# of scripts/card_table.py and of scripts/nvml_watchdog.py's clocks. Sections (SECTIONS, default
+# "sync static fake watchdog drivers"; about 90 s, most of it the drivers' own sleeps):
+#   sync    the copies embedded in bench/agent_check/rig_server.sh, scripts/bench.sh, scripts/server_bench.sh and R43's
+#           replay driver (docs/data/2026-11-04_prompt_taper/run/rig_taper.sh), and the copies beside
+#           bench/pipespec/rig_*.sh and bench/release_matrix/run_matrix.sh, are byte for byte scripts/card_log.py, and
+#           bench/deep_lane/remote.sh copies it beside deep_lane.sh
 #   static  card_log.py names no NVML function that sets anything, and none that reads a card's PCI fields, UUID or
-#           serial number
+#           serial number; no driver that has the card log still starts an nvidia-smi poll
 #   fake    card_log.py against a stand-in for NVML written in Python (no card and no NVIDIA library is touched): the
 #           columns, the start and stop lines, every NVML call it makes is a Get from the list below, it stops on
 #           --duration, on SIGTERM at once, on the stop file and when its --parent ends; then card_table.py on that log
 #           finds the slow stretch the stand-in put in and none on the other card
+#   watchdog nvml_watchdog.py on the stand-in (scripts/card_log_standin.py's) with its wall clock set back 2 s halfway:
+#           each row's time from one clock reading, mono_s rising through the step, a log started without mono_s
+#           appended to without it; card_table.py orders that log by mono_s
+#   drivers each driver that starts the card log, dry-run in a scratch folder with stub programs (no model, no GPU, no
+#           nvidia-smi: a stub records its calls) and card_log.py on the stand-in: R43's replay driver (a normal run, a
+#           run killed with SIGKILL, NVML missing, CARD_LOG=0), the four bench/pipespec/rig_*.sh from a copy of their
+#           folder, and scripts/server_bench.sh (a normal run and a server that dies while loading): the log starts,
+#           rows are written, it stops with the run and no logger is left (bench/release_matrix/test/dryrun.sh covers
+#           run_matrix.sh)
 #   real    card_log.py on this machine's own cards for REAL_S seconds (default 5): a row about every 0.5 s with a
 #           value in every field. Only on a machine with NVIDIA cards that is not running a timed load.
-#   bash scripts/card_log_test.sh                      # sync, static, fake: no GPU needed
+#   bash scripts/card_log_test.sh                      # everything but real: no GPU needed
 #   SECTIONS=real REAL_S=10 bash scripts/card_log_test.sh
+#   KEEP=1 SECTIONS=drivers bash scripts/card_log_test.sh   # keeps the scratch folder (the dry runs' logs) and names it
 # Prints one line per check and "card_log_test: N passed, M failed"; the exit status is 1 when anything failed.
 set -uo pipefail
 REPO=${REPO:-$(cd "$(dirname "$0")/.." && pwd)}
 L=$REPO/scripts/card_log.py
 TAB=$REPO/scripts/card_table.py
-SECTIONS=${SECTIONS:-"sync static fake"}
+SECTIONS=${SECTIONS:-"sync static fake watchdog drivers"}
+STANDIN=$REPO/scripts/card_log_standin.py
 REAL_S=${REAL_S:-5}
 T=$(mktemp -d /tmp/card_log_test.XXXXXX)
-trap 'rm -rf "$T"' EXIT
+if [ "${KEEP:-0}" = 1 ]; then trap 'echo "outputs kept in $T"' EXIT; else trap 'rm -rf "$T"' EXIT; fi
 pass=0 fail=0
 has() { [[ " $SECTIONS " == *" $1 "* ]]; }
 ok() { pass=$((pass + 1)); echo "ok    $*"; }
@@ -30,9 +44,13 @@ check() { local d=$1; shift; if "$@"; then ok "$d"; else bad "$d"; fi; }
 
 if has sync; then
   echo "== sync: the embedded copies"
-  for f in bench/agent_check/rig_server.sh scripts/bench.sh; do
+  for f in bench/agent_check/rig_server.sh scripts/bench.sh scripts/server_bench.sh \
+    docs/data/2026-11-04_prompt_taper/run/rig_taper.sh; do
     sed -n "/<< 'CARD_LOG'\$/,/^CARD_LOG\$/p" "$REPO/$f" | sed '1d;$d' > "$T/embedded.py"
     check "$f embeds scripts/card_log.py unchanged" cmp -s "$T/embedded.py" "$L"
+  done
+  for f in bench/pipespec/card_log.py bench/release_matrix/card_log.py; do
+    check "$f is scripts/card_log.py unchanged" cmp -s "$REPO/$f" "$L"
   done
   check "bench/deep_lane/remote.sh copies scripts/card_log.py to the rig" \
     grep -q 'scripts/card_log.py' "$REPO/bench/deep_lane/remote.sh"
@@ -42,6 +60,11 @@ if has static; then
   echo "== static: what card_log.py may call"
   check "no NVML function that sets anything" bash -c "! grep -nE 'nvml[A-Za-z_]*Set|nvml[A-Za-z_]*(Reset|Clear)' '$L'"
   check "no PCI, UUID or serial query" bash -c "! grep -nE 'nvml[A-Za-z_]*(Pci|PCI|Uuid|UUID|Serial|Pcie)' '$L'"
+  for f in bench/agent_check/rig_server.sh scripts/bench.sh scripts/server_bench.sh bench/deep_lane/deep_lane.sh \
+    docs/data/2026-11-04_prompt_taper/run/rig_taper.sh bench/release_matrix/run_matrix.sh bench/pipespec/rig_prefill.sh \
+    bench/pipespec/rig_hostloop.sh bench/pipespec/rig_run.sh bench/pipespec/rig_streams.sh; do
+    check "$f starts no nvidia-smi poll" bash -c "! grep -nE 'nvidia-smi.* -l(ms)? ' '$REPO/$f'"
+  done
 fi
 
 if has fake; then
@@ -50,6 +73,7 @@ if has fake; then
 """Runs card_log.main() with ctypes.CDLL replaced by a stand-in: 2 cards; card 0 busy at 1,911 MHz throughout, card 1
 busy at 1,354 MHz from its 5th to its 16th sample (a slow stretch), at 1,911 otherwise. Records every call."""
 import ctypes, importlib.util, json, os, signal, subprocess, sys, threading, time
+sys.dont_write_bytecode = True
 mode, logpath, calls_out = sys.argv[1], sys.argv[2], sys.argv[3]
 calls = set()
 n = {0: 0, 1: 0}
@@ -148,6 +172,174 @@ sys.exit(1 if extra else 0)"
   check "card_table.py: card 1 has 12 busy samples below 1,800 MHz and power cap in every sample" \
     bash -c "awk -F'\t' 'NR == 1 { for (i = 1; i <= NF; i++) c[\$i] = i } NR == 3 { exit !(\$c[\"busy_below_1800\"] == 12 && \$c[\"reason_power_cap\"] == \$c[\"samples\"] && \$c[\"sm_busy_min\"] == 1354) }' '$T/t.tsv'"
   [ "$fail" = 0 ] || { echo "-- logs:"; tail -n 3 "$T"/*.out "$T/t.err" 2> /dev/null; }
+fi
+
+if has watchdog; then
+  echo "== watchdog: nvml_watchdog.py's clocks on the stand-in, then card_table.py"
+  W=$REPO/scripts/nvml_watchdog.py
+  cat > "$T/wd_run.py" << 'WDRUN'
+"""Runs nvml_watchdog.main() on card_log_standin.py's stand-in for NVML (as root, with no kernel log), its wall clock
+set back STEP_S seconds once RUN_S / 2 has passed. Args: standin.py nvml_watchdog.py log marker run_s step_s."""
+import ctypes, importlib.util, os, sys, time, types
+sys.dont_write_bytecode = True
+standin, wdpath, log, marker, run_s, step_s = sys.argv[1:7]
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+st = load("standin", standin)
+ctypes.CDLL = lambda *a, **k: st.Lib()
+wd = load("nvml_watchdog", wdpath)
+class Kmsg:
+    def new_lines(self):
+        return []
+wd.Kmsg = Kmsg
+os.geteuid = lambda: 0
+real, start = time.time, time.time()
+clock = types.SimpleNamespace(**{k: getattr(time, k) for k in dir(time) if not k.startswith("_")})
+clock.time = lambda: real() - (float(step_s) if real() - start > float(run_s) / 2 else 0.0)
+wd.time = clock
+sys.argv = ["nvml_watchdog.py", "--gpu", "0", "--log", log, "--marker", marker, "--interval", "0.1", "--duration", run_s]
+sys.exit(wd.main())
+WDRUN
+  python3 -I "$T/wd_run.py" "$STANDIN" "$W" "$T/wd.csv" "$T/wd.TRIPPED" 3 2 > "$T/wd.out" 2>&1
+  check "the watchdog on the stand-in ends with status 0 ($(tr '\n' ' ' < "$T/wd.out"))" test -s "$T/wd.csv" -a ! -s "$T/wd.out"
+  check "its header ends with mono_s" bash -c "grep -v '^#' '$T/wd.csv' | head -n 1 | grep -q ',g1_reasons,mono_s\$'"
+  check "mono_s rises in every row" bash -c "grep -v '^#' '$T/wd.csv' | awk -F, 'NR > 1 { if (NR > 2 && \$NF <= m) bad = 1; m = \$NF; n++ } END { exit (bad || n < 20) }'"
+  check "the wall clock steps back once, by 2 s, and mono_s does not" python3 -I -c "
+import csv, sys, time
+rows = [r for r in csv.DictReader(l for l in open('$T/wd.csv') if not l.startswith('#'))]
+wall = [time.mktime(time.strptime(r['time'][:19], '%Y-%m-%d %H:%M:%S')) + int(r['time'][20:23]) / 1000 for r in rows]
+mono = [float(r['mono_s']) for r in rows]
+back = [(wall[i] - wall[i - 1]) - (mono[i] - mono[i - 1]) for i in range(1, len(rows)) if wall[i] < wall[i - 1]]
+off = [wall[i] - mono[i] for i in range(len(rows))]
+same = [o for o in off if abs(o - off[0]) < 0.05] + [o for o in off if abs(o - off[0] + 2) < 0.05]
+print('  steps back:', ['%.3f' % b for b in back], 'rows:', len(rows))
+sys.exit(not (len(back) == 1 and abs(back[0] + 2) < 0.05 and len(same) == len(rows)))"
+  check "each time stamp comes from one clock reading" python3 -I -c "
+import importlib.util, sys, time
+sys.dont_write_bytecode = True
+spec = importlib.util.spec_from_file_location('w', '$W'); w = importlib.util.module_from_spec(spec); spec.loader.exec_module(w)
+t = 1795240799.9996  # the last millisecond of a second: a second reading would land in the next one
+sys.exit(w.now(t) != time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t)) + '.999')"
+  python3 -I "$TAB" "$T/wd.csv" --tsv "$T/wd.tsv" > "$T/wd.md" 2> "$T/wd.err"
+  check "card_table.py orders it by mono_s: card 0 at P0 for the whole 3 s ($(awk -F'\t' 'NR == 1 { for (i = 1; i <= NF; i++) c[$i] = i } NR == 2 { print $c["P0_s"] }' "$T/wd.tsv") s)" \
+    bash -c "awk -F'\t' 'NR == 1 { for (i = 1; i <= NF; i++) c[\$i] = i } NR == 2 { exit !(\$c[\"P0_s\"] >= 2.7 && \$c[\"P0_s\"] <= 3.3) }' '$T/wd.tsv'"
+  grep -v '^#' "$T/wd.csv" | head -n 1 | sed 's/,mono_s$//' > "$T/wd_old.csv"
+  grep -v '^#' "$T/wd.csv" | sed -n 2p | sed 's/,[^,]*$//' >> "$T/wd_old.csv"
+  oldn=$(head -n 1 "$T/wd_old.csv" | awk -F, '{ print NF }')
+  python3 -I "$T/wd_run.py" "$STANDIN" "$W" "$T/wd_old.csv" "$T/wd.TRIPPED" 0.5 0 > "$T/wd_old.out" 2>&1
+  check "a log started without mono_s is appended to without it ($oldn fields, one header)" bash -c \
+    "[ \$(grep -vc '^#' '$T/wd_old.csv') -gt 3 ] && grep -v '^#' '$T/wd_old.csv' | awk -F, -v n=$oldn 'NF != n { exit 1 }' && ! grep -q mono_s '$T/wd_old.csv'"
+fi
+
+if has drivers; then
+  echo "== drivers: dry runs with stub programs and card_log.py on the stand-in"
+  D=$T/drv
+  mkdir -p "$D/stub" "$D/work" "$D/builds/b/bin" "$D/sb/bin"
+  python3 -I "$STANDIN" --shim "$D/stub"
+  cat > "$D/stub/nvidia-smi" << 'STUB'
+#!/usr/bin/env bash
+echo "$*" >> "$STUB_LOG/smi_calls.log"
+case " $* " in
+  *query-compute-apps*) exit 0 ;;
+  *memory.used*) printf '0, 4692 MiB, 6144 MiB\n1, 4692 MiB, 6144 MiB\n' ;;
+  *) echo "stub nvidia-smi" ;;
+esac
+STUB
+  printf '#!/usr/bin/env bash\necho "pkill $*" >> "$STUB_LOG/pkill_calls.log"\nexit 1\n' > "$D/stub/pkill"
+  printf '#!/usr/bin/env bash\n[ "$1" = -f ] && shift 2\nexec "$@"\n' > "$D/stub/chrt"
+  printf '#!/usr/bin/env bash\necho "stub llama-server $*"\nsleep "${STUB_UP_S:-1}"\nexit 1\n' > "$D/builds/b/bin/llama-server"
+  printf '#!/usr/bin/env bash\necho "stub llama-pipespec $*"\nsleep 2\necho "PIPESPEC name=warm mode=plain tokens=1 tok_s=1"\n' \
+    > "$D/builds/b/bin/llama-pipespec"
+  cat > "$D/sb/server.py" << 'STUB'
+import os, sys, time
+from http.server import BaseHTTPRequestHandler, HTTPServer
+port = int(sys.argv[sys.argv.index("--port") + 1])
+class H(BaseHTTPRequestHandler):
+    def log_message(self, *a): pass
+    def do_GET(self):
+        self.send_response(200); self.send_header("Content-Length", "2"); self.end_headers(); self.wfile.write(b"{}")
+time.sleep(float(os.environ.get("STUB_LOAD_S", "1")))
+if os.environ.get("STUB_DIE") == "1":
+    sys.exit("stub: died while loading")
+HTTPServer(("127.0.0.1", port), H).serve_forever()
+STUB
+  printf '#!/usr/bin/env bash\nexec python3 %s "$@"\n' "$D/sb/server.py" > "$D/sb/bin/llama-server"
+  chmod +x "$D"/stub/* "$D"/builds/b/bin/* "$D/sb/bin/llama-server"
+  cp "$REPO/docs/data/2026-11-04_prompt_taper/run/rig_taper.sh" "$D/work/"  # a launcher copies this one script
+  cp -r "$REPO/bench/pipespec" "$D/pipespec"                                 # as the README's scp -r
+  rm -rf "$D/pipespec/out"
+  cp "$REPO/scripts/server_bench.sh" "$D/sb/"
+  E=(env PATH="$D/stub:$PATH" STUB_LOG="$D")
+  logger_left() { pgrep -f "card_log_standi[n].py.*$1" > /dev/null; }
+  # R43's replay driver: a normal run, NVML missing, CARD_LOG=0 (in parallel, about 15 s), then one killed with SIGKILL
+  rt() { "${E[@]}" BUILDS="$D/builds" BUILD=b MODEL="$D/m.gguf" OUT="$D/work/$1" LOADS=A PORT=18795 "${@:2}" \
+    bash "$D/work/rig_taper.sh" > "$D/work/$1.console" 2>&1; }
+  rt rt_ok & p1=$!
+  rt rt_fail STANDIN_FAIL=1 & p2=$!
+  rt rt_off CARD_LOG=0 & p3=$!
+  wait $p1 $p2 $p3
+  o=$D/work/rt_ok
+  check "rig_taper: run.log says the card log runs, before the load" bash -c \
+    "grep -n 'card log: every card every 0.5 s to cards.csv' '$o/run.log' | grep -q . && [ \$(grep -n 'card log: every' '$o/run.log' | cut -d: -f1) -lt \$(grep -n 'load A:' '$o/run.log' | head -n 1 | cut -d: -f1) ]"
+  rows=$(grep -c '^[0-9]' "$o/cards.csv" 2> /dev/null || echo 0)
+  check "rig_taper: OUT/cards.csv has rows for the whole run ($rows rows)" test "$rows" -ge 15
+  check "rig_taper: the log stopped with the run (SIGTERM stop line), DONE written, nothing left" bash -c \
+    "grep -q 'card_log stop (signal): [0-9]* samples' '$o/cards.csv' && [ -e '$o/DONE' ] && [ ! -e '$o/card_log.py' ] && [ ! -e '$o/card_log.out' ] && ! pgrep -f 'card_log_standi[n].py.*$o/' > /dev/null"
+  check "rig_taper: its loads ran as before (load lines, memory files, md5 of the driver)" bash -c \
+    "grep -q 'load A: up after' '$o/run.log' && [ -s '$o/load-A/memory_loaded.txt' ] && grep -q 'rig_taper.sh' '$o/md5.txt' && tail -n 1 '$o/run.log' | grep -q ' done\$'"
+  check "rig_taper: NVML missing is reported and the run goes on" bash -c \
+    "grep -q 'card log: not running: card_log: no NVML' '$D/work/rt_fail/run.log' && [ -e '$D/work/rt_fail/DONE' ] && grep -q 'load A: up after' '$D/work/rt_fail/run.log'"
+  check "rig_taper: CARD_LOG=0 starts no card log" bash -c \
+    "[ ! -e '$D/work/rt_off/cards.csv' ] && ! grep -q 'card log' '$D/work/rt_off/run.log' && [ -e '$D/work/rt_off/DONE' ]"
+  rt rt_kill STUB_UP_S=20 & pk=$!
+  for _ in $(seq 40); do grep -qs '^[0-9]' "$D/work/rt_kill/cards.csv" && break; sleep 0.25; done
+  pd=$(pgrep -o -f "bash $D/work/rig_taper.sh")
+  echo "   (killing that run's driver with SIGKILL on purpose: the shell reports it as Killed)"
+  kill -9 "$pd" 2> /dev/null
+  wait $pk 2> /dev/null
+  for _ in $(seq 12); do logger_left "$D/work/rt_kill/" || break; sleep 0.25; done
+  check "rig_taper killed with SIGKILL: the log stops by itself (parent gone)" bash -c \
+    "grep -q 'card_log stop (parent $pd is gone)' '$D/work/rt_kill/cards.csv' && ! pgrep -f 'card_log_standi[n].py.*$D/work/rt_kill/' > /dev/null"
+  pkill -f "$D/builds/b/bin/llama-server" 2> /dev/null
+  check "rig_taper: no nvidia-smi poll in any run" bash -c "! grep -qE -- '(^| )-l(ms)?( |\$)' '$D/smi_calls.log'"
+  # the four pipespec drivers from a copy of their folder, in parallel (about 5 s), and rig_run.sh with GPU_LOG=0
+  ps_run() { "${E[@]}" BIN="$D/builds/b/bin" MODEL="$D/m.gguf" TAG="$1" "${@:3}" bash "$D/pipespec/$2" \
+    > "$D/pipespec/$1.console" 2>&1; }
+  ps_run streams rig_streams.sh NS=1 & q1=$!
+  ps_run run rig_run.sh DEPTHS=1 PROMPTS=chat & q2=$!
+  ps_run prefill rig_prefill.sh CONFIGS=k2 & q3=$!
+  ps_run hostloop rig_hostloop.sh NS=1 CONFIGS=u0 & q4=$!
+  ps_run run_nolog rig_run.sh DEPTHS=1 PROMPTS=chat GPU_LOG=0 & q5=$!
+  wait $q1 $q2 $q3 $q4 $q5
+  for t in streams run prefill hostloop; do
+    o=$D/pipespec/out/$t
+    check "pipespec $t: the log started, rows, stopped with the run, nothing left, summary written" bash -c \
+      "grep -q 'card log: every card every 0.5 s to cards.csv' '$D/pipespec/$t.console' && [ \$(grep -c '^[0-9]' '$o/cards.csv') -ge 3 ] && grep -q 'card_log stop (signal)' '$o/cards.csv' && [ ! -e '$o/card_log.out' ] && [ -e '$o/summary.tsv' ] && ! pgrep -f 'card_log_standi[n].py.*$o/' > /dev/null"
+  done
+  check "pipespec rig_run.sh with GPU_LOG=0: no card log" bash -c \
+    "[ ! -e '$D/pipespec/out/run_nolog/cards.csv' ] && [ -e '$D/pipespec/out/run_nolog/summary.tsv' ]"
+  # server_bench.sh (its OUT is /tmp/server_bench/<TAG>): a normal run with PROMPTS=none, then a server that dies
+  for k in ok die; do
+    tag=card_log_test_$$_$k
+    rm -rf "/tmp/server_bench/$tag"
+    "${E[@]}" BIN="$D/sb/bin" MODEL="$D/m.gguf" TAG="$tag" PROMPTS=none PORT=18796 MIN_AVAIL_MB=0 \
+      $([ $k = die ] && echo STUB_DIE=1) bash "$D/sb/server_bench.sh" > "$D/sb/$k.console" 2>&1
+    echo $? > "$D/sb/$k.rc"
+    cp -r "/tmp/server_bench/$tag" "$D/sb/out_$k" 2> /dev/null
+    rm -rf "/tmp/server_bench/$tag"
+    pkill -f "$D/sb/server.py" 2> /dev/null
+  done
+  o=$D/sb/out_ok
+  check "server_bench: the log started before the load, rows, stopped at the end, nothing left (exit $(cat "$D/sb/ok.rc"))" bash -c \
+    "[ \$(cat '$D/sb/ok.rc') = 0 ] && head -n 1 '$D/sb/ok.console' | grep -q 'card log: every card every 0.5 s to cards.csv' && grep -q '^load time' '$o/summary.txt' && [ \$(grep -c '^[0-9]' '$o/cards.csv') -ge 2 ] && grep -q 'card_log stop (signal)' '$o/cards.csv' && [ ! -e '$o/card_log.py' ] && ! pgrep -f 'card_log_standi[n].py.*card_log_test_$$' > /dev/null"
+  check "server_bench: a server that dies while loading still ends the log (exit $(cat "$D/sb/die.rc"))" bash -c \
+    "[ \$(cat '$D/sb/die.rc') = 1 ] && grep -q 'server exited during load' '$D/sb/die.console' && grep -q 'card_log stop (signal)' '$D/sb/out_die/cards.csv'"
+  check "drivers: no nvidia-smi poll, no logger left" bash -c \
+    "! grep -qE -- '(^| )-l(ms)?( |\$)' '$D/smi_calls.log' && ! pgrep -f 'card_log_standi[n].py.*$T/' > /dev/null"
+  [ "$fail" = 0 ] || { echo "-- consoles:"; tail -n 4 "$D"/work/*.console "$D"/work/*/run.log "$D"/pipespec/*.console "$D"/sb/*.console 2> /dev/null; }
 fi
 
 if has real; then

@@ -1,0 +1,10 @@
+# card_table.py on nvml_watchdog.py's log from the self-test's stand-in run (3 s at 0.1 s, the wall clock set back 2 s
+# halfway), with its mono_s column and with that column cut off (as a log before 2026-11-21 reads)
+with mono_s: card 0, 31 samples, 3.1 s at P0
+without mono_s: card 0, 31 samples, 2.0 s at P0
+# five rows around the step: time, mono_s
+2026-11-21 06:42:17.142, 505835.982
+2026-11-21 06:42:17.242, 505836.082
+2026-11-21 06:42:15.342, 505836.182
+2026-11-21 06:42:15.442, 505836.282
+2026-11-21 06:42:15.542, 505836.382

@@ -15,7 +15,7 @@ Per block (stock clocks, tuned), model file and engine:
 | Served | llama-server with the chat command line of the [model pages](../../models/flint/README.md#command-lines) at the full 262,144-token context, one warm-up request, then one request per prompt and seed (up to 1,000 tokens, the makers' sampling: T 1.0, top-p 0.95, top-k 20, min-p 0); the median of the server's own speeds, reasoning tokens included |
 | Served, pipelined | the same for v2 with `--pipe-depth 3` |
 | Exactness under the offset | the first request on each server is a greedy one; its hash with the offset must equal the stock-clock hash. The engines are deterministic, so with stable memory the output is bit-identical. A changed hash ends the tuned block (`STRICT=1`) |
-| Clocks and errors | the cards' clocks, power and temperature every second per block, the highest memory clock under load, and kernel Xid lines |
+| Clocks and errors | the card log per block (every card's P-state, clocks, power, temperature, memory used, utilization and throttle reasons every 0.5 s, read-only through NVML), the highest memory clock under load, and kernel Xid lines |
 
 The defaults compare stock llama.cpp (`d77256999`), the v1 engine (`eeaa59660`) and the v2 build given as `BIN_v2`,
 on Unsloth's UD-Q4_K_XL and on K2h-r16. Stock and v1 run without environment switches; v2 runs with
@@ -44,7 +44,8 @@ scp -r rig:/tmp/release_matrix/<TAG> ./ && ssh rig "rm -rf /tmp/matrix-kit /tmp/
 ```
 
 Results go to `/tmp/release_matrix/<TAG>/` on the rig: `tables.md`, `results.tsv` (one line per measurement),
-`meta.tsv`, `matrix.log`, `smi-<block>.csv`, `offsets.log` and the raw outputs under `raw/`.
+`meta.tsv`, `matrix.log`, `cards-<block>.csv` (the card log; `python3 -I scripts/card_table.py cards-<block>.csv` gives
+one line per card), `offsets.log` and the raw outputs under `raw/`.
 
 - **Without an offset** it runs the stock-clock block only. `BLOCKS=tuned OUT=<the earlier folder>` adds the tuned block
   later; its exactness check reads the stock-clock hashes from that folder.

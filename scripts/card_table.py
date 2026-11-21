@@ -14,7 +14,9 @@ how long, its lowest clock and the reasons seen. A reply's ramp from a resting c
 Busy is, by default, "a kernel ran": utilization above --util-min (0) %, where the log has utilization (card_log.py).
 A log without it (nvml_watchdog.py) counts as busy a sample that is not in P8 and has no idle reason; --busy picks
 either. Each sample stands for the time to the next one, up to --max-gap seconds (2); time beyond that is reported
-as unlogged.
+as unlogged. A watchdog log with a `mono_s` column (the monotonic clock, since 2026-11-21) is ordered and timed by it,
+placed on the wall clock by the median offset between its `time` and `mono_s` (per boot), so a row whose wall clock
+stepped back stays in its place.
 
   python3 -I card_table.py cards.csv[.gz] [more logs] [--since T] [--until T] [--out cards.md] [--tsv cards.tsv]
           [--low-mhz 1800] [--stretch-s 2] [--busy auto|util|reason] [--util-min 0] [--max-gap 2] [--max-stretches 50]
@@ -81,6 +83,7 @@ def read_logs(paths):
             header = h
         elif h != header:
             sys.exit(f"{p}: its columns differ from the first log's")
+        got = []
         for r in csv.reader(io.StringIO("".join(lines[1:]))):
             if r == h or len(r) != len(h):
                 continue
@@ -94,7 +97,20 @@ def read_logs(paths):
                     t = None
             if t is not None:
                 d["t"] = t
-                rows.append(d)
+                got.append(d)
+        if "epoch" not in h and "mono_s" in h:  # the watchdog's monotonic clock orders and times its samples
+            got = [d for d in got if num(d["mono_s"]) is not None]
+            seg = []  # a stretch of one boot: mono_s starts again after a reboot
+            for d in got + [None]:
+                if seg and (d is None or num(d["mono_s"]) < num(seg[-1]["mono_s"])):
+                    offs = sorted(e["t"] - num(e["mono_s"]) for e in seg)
+                    off = offs[len(offs) // 2]
+                    for e in seg:
+                        e["t"] = num(e["mono_s"]) + off
+                    seg = []
+                if d is not None:
+                    seg.append(d)
+        rows += got
     rows.sort(key=lambda d: d["t"])
     return header or [], rows, events
 

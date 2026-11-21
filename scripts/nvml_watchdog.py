@@ -27,6 +27,12 @@ last boot (Q1563: a card stays slow after a step down until a reboot).
 While it runs it also holds every card open, so a power limit or an offset set by a short-lived process stays in
 place with persistence mode off. Stop it with SIGTERM or SIGINT, or by creating the --stop file.
 
+Each row's `time` is the local wall clock to the millisecond, read in one call. The last column, `mono_s`, is the
+monotonic clock (seconds since boot) at the same moment: it never steps back, so it gives the samples' order and the
+time between them even when the wall clock is set (rows before 2026-11-21 took the milliseconds from a second clock
+call, so a row could read about 1 s early, as 3 of R194's 2,480 did). A log that was started without `mono_s` is
+appended to without it. The power, trip-spacing, --duration and sampling timers run on the monotonic clock.
+
   nvml_watchdog.py (--gpu 0 | --gpus all) --log wd.csv --marker TRIPPED [--temp-max 70] [--power-max 55] [--power-secs 5]
                    [--interval 0.5] [--xid-pattern 'NVRM: Xid'] [--kill mmvq_pascal,cuda_memtest,llama-server,...]
                    [--stop STOPFILE] [--duration SECONDS]
@@ -97,8 +103,10 @@ class MemInfo(ctypes.Structure):  # nvmlMemory_t
     _fields_ = [("total", ctypes.c_ulonglong), ("free", ctypes.c_ulonglong), ("used", ctypes.c_ulonglong)]
 
 
-def now():
-    return time.strftime("%Y-%m-%d %H:%M:%S") + f".{int(time.time() * 1000) % 1000:03d}"
+def now(t=None):
+    """Local time to the millisecond, from one clock reading (t, or now)."""
+    t = time.time() if t is None else t
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t)) + f".{int(t * 1000) % 1000:03d}"
 
 
 class Nvml:
@@ -277,15 +285,20 @@ def main():
     for s in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
         signal.signal(s, lambda *_: stop.__setitem__("now", True))
 
+    cols = ["time", "tripped", "gpu_mem_offset", "gpu_gpc_offset"]
+    for i in range(len(handles)):
+        cols += [f"g{i}_{k}" for k in ("pstate", "sm_mhz", "mem_mhz", "w", "limit_w", "c", "used_mib", "reasons")]
+    if a.gpus:
+        for i in tested:
+            cols += [f"g{i}_mem_off", f"g{i}_gpc_off"]
+    old_header = None  # a log already started: keep its columns (one written before mono_s existed has none)
+    if os.path.exists(a.log):
+        with open(a.log) as f:
+            old_header = next((ln.rstrip("\n").split(",") for ln in f if ln.strip() and not ln.startswith("#")), None)
+    mono_col = old_header is None or "mono_s" in old_header
     log = open(a.log, "a", buffering=1)
-    if log.tell() == 0:
-        cols = ["time", "tripped", "gpu_mem_offset", "gpu_gpc_offset"]
-        for i in range(len(handles)):
-            cols += [f"g{i}_{k}" for k in ("pstate", "sm_mhz", "mem_mhz", "w", "limit_w", "c", "used_mib", "reasons")]
-        if a.gpus:
-            for i in tested:
-                cols += [f"g{i}_mem_off", f"g{i}_gpc_off"]
-        log.write(",".join(cols) + "\n")
+    if log.tell() == 0 or old_header is None:
+        log.write(",".join(cols + (["mono_s"] if mono_col else [])) + "\n")
 
     def event(msg, marker=True):
         line = f"{now()} {msg}"
@@ -312,9 +325,9 @@ def main():
     over_since = {i: None for i in tested}
     last_trip = 0.0
     trips = 0
-    t_end = time.time() + a.duration if a.duration else None
+    t_end = time.monotonic() + a.duration if a.duration else None
     while not stop["now"]:
-        t0 = time.time()
+        t0 = time.monotonic()
         reasons = []
         row = []
         for i, h in enumerate(handles):
@@ -355,7 +368,9 @@ def main():
         if a.gpus:
             for i in tested:
                 row += [nv.vf(handles[i], "MemClk"), nv.vf(handles[i], "GpcClk")]
-        log.write(",".join(str(x) if x is not None else "" for x in [now(), trips, mem_off, gpc_off] + row) + "\n")
+        tw, tm = time.time(), time.monotonic()
+        row += [f"{tm:.3f}"] if mono_col else []
+        log.write(",".join(str(x) if x is not None else "" for x in [now(tw), trips, mem_off, gpc_off] + row) + "\n")
         for g, line in card_trips:
             if reasons or t0 - last_card_trip.get(g, 0.0) < 5:
                 continue  # a global trip below covers it; or this card tripped under 5 s ago
@@ -380,7 +395,7 @@ def main():
             break
         if t_end and t0 >= t_end:
             break
-        time.sleep(max(0.0, a.interval - (time.time() - t0)))
+        time.sleep(max(0.0, a.interval - (time.monotonic() - t0)))
     log.write(f"# {now()} watchdog stop after {trips} trips\n")
     nv.call("nvmlShutdown")
     return 0

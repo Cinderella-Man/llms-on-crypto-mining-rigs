@@ -17,7 +17,7 @@
 #       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [NS='1 2 3 4 6 8'] [CTX=8192] [NTOK=512] \
 #       [BUDGET=8] bash /tmp/pipespec/rig_streams.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # CTX is per conversation (the context holds max(NS) streams of CTX tokens). Output in /tmp/pipespec/out/<TAG>/:
-# jobs.txt, run.log, results.txt, summary.tsv, gpu.csv, host.csv (the process's CPU use each second).
+# jobs.txt, run.log, results.txt, summary.tsv, cards.csv (the card log), host.csv (the process's CPU use each second).
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -58,12 +58,10 @@ common="n=$NTOK chat=1 chunk=$CHUNK"
     echo "name=n$nmax-arrive streams=$nmax prompts=$PROMPTS seed=42 depth=0 guess=none arrive=$ARRIVE $common"
 } > "$jobs"
 
-gpu_pid=""
-if command -v nvidia-smi > /dev/null; then
-    nvidia-smi --query-gpu=timestamp,index,clocks.sm,power.draw,temperature.gpu,utilization.gpu --format=csv -l 1 \
-        > "$OUT/gpu.csv" 2>/dev/null &
-    gpu_pid=$!
-fi
+# the card log (card_log.sh): every card every CARD_LOG_S s (0.5) to OUT/cards.csv until this run ends; CARD_LOG=0: off
+. "$HERE/card_log.sh" || {
+    card_log_start() { echo "card log: no card_log.sh beside this script"; }; card_log_stop() { :; }; }
+[ "${CARD_LOG:-1}" = 1 ] && card_log_start "$OUT/cards.csv"
 
 echo "$(date -Is) start $TAG: $(wc -l < "$jobs") jobs, GPUs $GPUS"
 # shellcheck disable=SC2086
@@ -81,7 +79,7 @@ pid=$!
 ) > "$OUT/host.csv" &
 wait "$pid"
 echo "$(date -Is) exit $? $TAG"
-[ -n "$gpu_pid" ] && kill "$gpu_pid" 2>/dev/null
+card_log_stop
 grep -o 'PIPESPEC.*' "$OUT/run.log" > "$OUT/results.txt"
 
 awk '

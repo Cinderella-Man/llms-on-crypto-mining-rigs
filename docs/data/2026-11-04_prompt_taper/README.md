@@ -222,6 +222,11 @@ taper is off on the server and set per request, so each load runs both arms with
   `checkpoints.txt` and `taper_lines.txt` the server's own lines, `memavail.txt` the host's free memory every 2 s
   (a watchdog stops the server below 150 MiB).
 - **More schedules** go in the same load as passes: `PASSES_A="off on short=2048:128 off short=2048:128 on"` adds Q775.
+- **The card log** (since 2026-11-21, C873): `cards.csv` beside `run.log` holds every card every 0.5 s through the whole
+  run (P-state, SM and memory clock, power, temperature, memory used, utilization, throttle reasons; read-only through
+  NVML, [scripts/card_log.py](../../../scripts/card_log.py) embedded in the driver), so a slow stretch of a pass can be
+  laid beside what each card was doing; `python3 -I scripts/card_table.py cards.csv` gives one line per card and every
+  stretch of 2 s or more below 1,800 MHz. `CARD_LOG=0` turns it off.
 - Est. 1.5 h (load A ~1 h, load B ~0.5 h).
 
 ## Files
@@ -237,7 +242,7 @@ taper is off on the server and set per request, so each load runs both arms with
 | [replay_dry_run.txt](replay_dry_run.txt), [replay_dry_run.tsv](replay_dry_run.tsv) | the rig replay's dry run against the CPU server, two tasks (that it runs and reports; the random model on a CPU has no pipeline, so its speeds mean nothing) |
 | [run/cpu_checks.sh](run/cpu_checks.sh) | the build-and-check chain |
 | [run/server_check.sh](run/server_check.sh) | the llama-server check |
-| [run/rig_taper.sh](run/rig_taper.sh), [run/taper_replay.py](run/taper_replay.py) | the rig run and its replay |
+| [run/rig_taper.sh](run/rig_taper.sh), [run/taper_replay.py](run/taper_replay.py) | the rig run and its replay (the driver also writes the card log, `cards.csv`, since 2026-11-21) |
 
 ## Commands
 

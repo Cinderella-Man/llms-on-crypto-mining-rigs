@@ -10,6 +10,11 @@
 #     whose hash in the tuned block must equal the untuned one (with stable memory the engine's output is
 #     bit-identical); one warm-up request; then one chat request per prompt and seed with the makers' sampling.
 # make_table.py turns $OUT/results.tsv into $OUT/tables.md, ready for the README.
+# Per block, the card log (card_log.py beside this script, scripts/card_log.py byte for byte) samples every card every
+# CARD_LOG_S seconds (0.5) through NVML, read-only, one process: P-state, SM and memory clock, power, temperature, memory
+# used, utilization and throttle reasons, to $OUT/cards-<block>.csv (scripts/card_table.py summarises it); the block's
+# highest memory clock (meta.tsv, tables.md) is read from it, over the cards in GPUS. matrix.log says whether it runs; a
+# log that does not come up is reported (card_log-<block>.out) and the block goes on without it.
 #
 # Run as root on the rig, from a copy of this folder, with nothing else on the cards:
 #   BIN_v2=/opt/llama-builds/<v2 build>/bin ./run_matrix.sh                                        # untuned only
@@ -30,6 +35,7 @@
 #     the kit's `memoc_steps.sh units` first (~1 min)
 #   BLOCKS [untuned, plus tuned when an offset is given], STRICT [1: a changed greedy hash ends the tuned block],
 #   FORCE [0: refuse if a compute process is on the cards], TAG [date and time], OUT [/tmp/release_matrix/$TAG]
+#   CARD_LOG_S [0.5]: seconds between the card log's samples
 # Every offset goes back to 0 when the tuned block ends and whenever the script ends, fails or is interrupted.
 # Time (est.): ~25 min per model and block with the defaults, so ~1 h 40 min for two models in both blocks.
 # Exit status: 0 done, 1 a run failed, 2 usage or preflight, 3 the tuned block stopped on a changed output.
@@ -73,7 +79,7 @@ meta() { printf '%s\t%s\n' "$1" "$2" >> "$META"; }
 var() { local v="$1_$2"; echo "${!v:-}"; }                     # var BIN v2 -> $BIN_v2
 on_cards() { local e=$1; shift; env CUDA_VISIBLE_DEVICES="$GPUS" $e "$@"; }
 
-CHILD="" SRV="" WD="" SMI="" OFFSETS_SET=0 OFFSETS=()
+CHILD="" SRV="" WD="" CL_PID="" CL_OUT="" OFFSETS_SET=0 OFFSETS=()
 killtree() { local p; for p in $(pgrep -P "$1"); do killtree "$p"; done; kill "$1" 2>/dev/null; }
 reset_offsets() {
     local g
@@ -88,7 +94,7 @@ cleanup() {
     local rc=$? p
     trap - EXIT INT TERM HUP
     for p in $CHILD $SRV $WD; do killtree "$p"; done
-    [ -n "$SMI" ] && kill "$SMI" 2>/dev/null
+    [ -n "$CL_PID" ] && kill "$CL_PID" 2>/dev/null  # the card log writes its stop line and ends
     sleep 2  # let the CUDA processes exit before the offsets change under them
     [ "$OFFSETS_SET" = 1 ] && reset_offsets
     exit "$rc"
@@ -142,6 +148,44 @@ set_offsets() {
             || { log "setting +$o MT/s on gpu $g was refused, see $OUT/offsets.log"; return 1; }
         log "gpu $g: memory +$o MT/s | $(python3 "$KIT/nvml_memoc.py" clocks "$g" 2>&1)"
     done
+}
+
+# card_log_start BLOCK: the card log to $OUT/cards-<block>.csv until card_log_stop, until this script is gone (--parent)
+# or until $OUT/cards-<block>.csv.stop exists; its first sample is waited for up to 10 s
+card_log_start() {
+    local csv=$OUT/cards-$1.csv n=0
+    CL_OUT=$OUT/card_log-$1.out
+    rm -f "$csv.stop"
+    python3 -I "$here/card_log.py" --log "$csv" --interval "${CARD_LOG_S:-0.5}" --parent $$ --stop "$csv.stop" \
+        > "$CL_OUT" 2>&1 < /dev/null &
+    CL_PID=$!
+    until grep -qs '^[0-9]' "$csv"; do
+        n=$((n + 1))
+        if ! kill -0 "$CL_PID" 2> /dev/null; then log "card log: not running: $(tr '\n' ' ' < "$CL_OUT")"; CL_PID=""; return 0; fi
+        if [ "$n" -gt 20 ]; then log "card log: no sample after 10 s (it keeps trying; $(basename "$CL_OUT"))"; return 0; fi
+        sleep 0.5
+    done
+    log "card log: every card every ${CARD_LOG_S:-0.5} s to $(basename "$csv")"
+}
+# card_log_stop: ends the card log (SIGTERM: it writes its stop line), waits up to 3 s, never waits on a hung one
+card_log_stop() {
+    local n=0
+    [ -n "$CL_PID" ] || return 0
+    kill "$CL_PID" 2> /dev/null
+    while kill -0 "$CL_PID" 2> /dev/null && [ "$n" -lt 6 ]; do sleep 0.5; n=$((n + 1)); done
+    kill -9 "$CL_PID" 2> /dev/null
+    CL_PID=""
+    [ -s "$CL_OUT" ] || rm -f "$CL_OUT"
+}
+# mem_clock_max CSV: the highest memory clock (MHz) of the cards in GPUS in a card log (0 without one)
+mem_clock_max() {
+    [ -s "$1" ] || { echo 0; return; }
+    awk -F, -v gpus="$GPUS" '
+        BEGIN { n = split(gpus, g, ","); for (i = 1; i <= n; i++) want["g" g[i] "_mem_mhz"] = 1 }
+        /^#/ { next }
+        !hdr { for (i = 1; i <= NF; i++) if ($i in want) col[i] = 1; hdr = 1; next }
+        { for (i in col) if ($i + 0 > m) m = $i + 0 }
+        END { print m + 0 }' "$1"
 }
 
 watchdog() {  # the 4 GB host: stop the server before the out-of-memory killer takes the machine
@@ -230,9 +274,7 @@ block() {  # block untuned|tuned
         meta tuned_offsets "$(IFS=,; echo "${OFFSETS[*]}")"
     fi
     xid0=$(dmesg 2>/dev/null | wc -l); t0=$(date +%s)
-    nvidia-smi -i "$GPUS" --query-gpu=timestamp,index,pstate,clocks.sm,clocks.mem,power.draw,temperature.gpu,clocks_event_reasons.active \
-        --format=csv,noheader,nounits -lms 1000 >> "$OUT/smi-$blk.csv" 2>&1 &
-    SMI=$!
+    card_log_start "$blk"
     for lm in $MODELS; do
         lab=${lm%%=*} m=${lm#*=}
         order=$ENGINES
@@ -242,15 +284,16 @@ block() {  # block untuned|tuned
         done
         for e in $SERVE; do
             serve "$blk" "$lab" "$m" "$e"; rc=$?
-            [ "$rc" = 3 ] && { kill "$SMI"; SMI=""; sleep 2; reset_offsets; return 3; }
+            [ "$rc" = 3 ] && { card_log_stop; sleep 2; reset_offsets; return 3; }
         done
     done
-    kill "$SMI" 2>/dev/null; SMI=""
-    local xid
+    card_log_stop
+    local xid mc
     xid=$({ dmesg 2>/dev/null | tail -n +"$((xid0 + 1))"; journalctl -k -q --since "@$t0" 2>/dev/null; } | grep -i 'NVRM: Xid' | sort -u | wc -l)
     meta "xid_$blk" "$xid"
-    meta "mem_clock_max_$blk" "$(awk -F', ' '$5 + 0 > m { m = $5 + 0 } END { print m + 0 }' "$OUT/smi-$blk.csv")"
-    log "block $blk done: $xid Xid lines; highest memory clock $(awk -F', ' '$5 + 0 > m { m = $5 + 0 } END { print m + 0 }' "$OUT/smi-$blk.csv") MHz"
+    mc=$(mem_clock_max "$OUT/cards-$blk.csv")
+    meta "mem_clock_max_$blk" "$mc"
+    log "block $blk done: $xid Xid lines; highest memory clock $mc MHz"
     [ "$blk" = tuned ] && { sleep 2; reset_offsets; }
     return 0
 }

@@ -22,10 +22,10 @@
 # DRAFT (a staircase drafter file, bench/staircase_drafter/export_gguf.py: adds stair-dD-<prompt> at DEPTHS, the
 # drafter behind the copy lookup; with BG=2 its guess is drawn with the sampler's own uniform), DRAFT_ARGS (more
 # --pipe-draft-* options, e.g. --pipe-draft-stair L9,L17,L33,L41), ONLY_STAIR (1: plain, cont and stair jobs only),
-# TABLE (a continuation table from make_table.py), GPU_LOG (1: nvidia-smi clocks, power and load every second),
+# TABLE (a continuation table from make_table.py), GPU_LOG (1: the card log, card_log.sh: every card every 0.5 s),
 # EXTRA_ARGS. Output in /tmp/pipespec/out/<TAG>/: jobs.txt, run.log, results.txt (one PIPESPEC line per job),
-# summary.tsv, plain.jsonl (the plain outputs), gpu.csv, host.csv (the process's CPU use each second, % of one core),
-# *.trace (summarize with traces.py).
+# summary.tsv, plain.jsonl (the plain outputs), cards.csv (the card log), host.csv (the process's CPU use each second,
+# % of one core), *.trace (summarize with traces.py).
 # summary.tsv's tok_s and speedup come from each job's trace: generated tokens per second from its first sampled token to
 # its last. llama-pipespec's own tok_s (column tok_s_tgen) also counts the wait for its first token, which can include
 # up to several seconds of the prompt still running on the cards (llama_decode returns before they finish), so it is
@@ -88,12 +88,10 @@ if [ -n "$TABLE" ]; then
     done
 fi
 
-gpu_pid=""
-if [ "$GPU_LOG" = 1 ] && command -v nvidia-smi > /dev/null; then
-    nvidia-smi --query-gpu=timestamp,index,clocks.sm,power.draw,temperature.gpu,utilization.gpu --format=csv -l 1 \
-        > "$OUT/gpu.csv" 2>/dev/null &
-    gpu_pid=$!
-fi
+# the card log (card_log.sh): every card every CARD_LOG_S s (0.5) to OUT/cards.csv until this run ends; GPU_LOG=0: off
+. "$HERE/card_log.sh" || {
+    card_log_start() { echo "card log: no card_log.sh beside this script"; }; card_log_stop() { :; }; }
+[ "$GPU_LOG" = 1 ] && card_log_start "$OUT/cards.csv"
 
 run() { # jobs file, log, extra args
     # shellcheck disable=SC2086
@@ -124,7 +122,7 @@ if [ -s "$jobs_table" ]; then
     echo "$(date -Is) table run exit $?"
     grep -o 'PIPESPEC name=conttab.*' "$OUT/run-table.log" >> "$OUT/results.txt"
 fi
-[ -n "$gpu_pid" ] && kill "$gpu_pid" 2>/dev/null
+card_log_stop
 
 # per job with a trace: generated tokens per second from its first sampled token to its last
 for t in "$OUT"/*.trace; do

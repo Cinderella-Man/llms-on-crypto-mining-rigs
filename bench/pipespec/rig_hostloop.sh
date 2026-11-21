@@ -19,8 +19,9 @@
 #       [TS=6,6,6,6,6,6,6,5,2] [ENVS='LLAMA_NO_MOE_DOWN_RESCALE=tg'] [NS='1 4 8'] [CTX=8192] [NTOK=512] \
 #       [CONFIGS='u0 u2 u2f'] bash /tmp/pipespec/rig_hostloop.sh > /tmp/pipespec/<name>.out 2>&1 < /dev/null &"
 # CTX is per conversation. Output in /tmp/pipespec/out/<TAG>/: jobs-<config>.txt, run-<config>.log, results-<config>.txt,
-# host-<config>.csv (the process's CPU use each second), gpu.csv, summary.tsv, and traces of the single-stream pipe jobs
-# (<config>-d0.trace, u2f-d0-fed.trace; traces.py gives the median time from one sampled token to the next).
+# host-<config>.csv (the process's CPU use each second), cards.csv (the card log), summary.tsv, and traces of the
+# single-stream pipe jobs (<config>-d0.trace, u2f-d0-fed.trace; traces.py gives the median time from one sampled token
+# to the next).
 set -uo pipefail
 : "${BIN:?set BIN}" "${MODEL:?set MODEL}" "${TAG:?set TAG}"
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -39,12 +40,10 @@ for n in $NS; do [ "$n" -gt "$nmax" ] && nmax=$n; done
 IFS=',' read -r -a files <<< "$PROMPTS"
 SAMPLING="--temp 1 --top-k 20 --top-p 0.95 --min-p 0 --seed 42 --pipe-backend-sample"
 
-gpu_pid=""
-if command -v nvidia-smi > /dev/null; then
-    nvidia-smi --query-gpu=timestamp,index,clocks.sm,power.draw,temperature.gpu,utilization.gpu --format=csv -l 1 \
-        > "$OUT/gpu.csv" 2>/dev/null &
-    gpu_pid=$!
-fi
+# the card log (card_log.sh): every card every CARD_LOG_S s (0.5) to OUT/cards.csv until this run ends; CARD_LOG=0: off
+. "$HERE/card_log.sh" || {
+    card_log_start() { echo "card log: no card_log.sh beside this script"; }; card_log_stop() { :; }; }
+[ "${CARD_LOG:-1}" = 1 ] && card_log_start "$OUT/cards.csv"
 
 for cfg in $CONFIGS; do
     case $cfg in
@@ -87,7 +86,7 @@ for cfg in $CONFIGS; do
     echo "$(date -Is) exit $? $TAG $cfg"
     grep -o 'PIPESPEC.*' "$OUT/run-$cfg.log" | sed "s/^/cfg=$cfg /" > "$OUT/results-$cfg.txt"
 done
-[ -n "$gpu_pid" ] && kill "$gpu_pid" 2>/dev/null
+card_log_stop
 
 for cfg in $CONFIGS; do cat "$OUT/results-$cfg.txt" 2>/dev/null; done | awk '
 function f(k,   i, a) { for (i = 1; i <= NF; i++) { split($i, a, "="); if (a[1] == k) return a[2] } return "" }

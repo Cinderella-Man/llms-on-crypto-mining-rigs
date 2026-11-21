@@ -1,0 +1,77 @@
+# 2026-11-21T06:39:56+01:00 bash scripts/card_log_test.sh (public v5 worktree, laptop, python 3.14.4)
+== sync: the embedded copies
+ok    bench/agent_check/rig_server.sh embeds scripts/card_log.py unchanged
+ok    scripts/bench.sh embeds scripts/card_log.py unchanged
+ok    scripts/server_bench.sh embeds scripts/card_log.py unchanged
+ok    docs/data/2026-11-04_prompt_taper/run/rig_taper.sh embeds scripts/card_log.py unchanged
+ok    bench/pipespec/card_log.py is scripts/card_log.py unchanged
+ok    bench/release_matrix/card_log.py is scripts/card_log.py unchanged
+ok    bench/deep_lane/remote.sh copies scripts/card_log.py to the rig
+== static: what card_log.py may call
+ok    no NVML function that sets anything
+ok    no PCI, UUID or serial query
+ok    bench/agent_check/rig_server.sh starts no nvidia-smi poll
+ok    scripts/bench.sh starts no nvidia-smi poll
+ok    scripts/server_bench.sh starts no nvidia-smi poll
+ok    bench/deep_lane/deep_lane.sh starts no nvidia-smi poll
+ok    docs/data/2026-11-04_prompt_taper/run/rig_taper.sh starts no nvidia-smi poll
+ok    bench/release_matrix/run_matrix.sh starts no nvidia-smi poll
+ok    bench/pipespec/rig_prefill.sh starts no nvidia-smi poll
+ok    bench/pipespec/rig_hostloop.sh starts no nvidia-smi poll
+ok    bench/pipespec/rig_run.sh starts no nvidia-smi poll
+ok    bench/pipespec/rig_streams.sh starts no nvidia-smi poll
+== fake: card_log.py on a stand-in for NVML, then card_table.py
+ok    duration: the stand-in run ends with status 0
+ok    duration: the stop line names why (after 1.2 s)
+ok    signal: the stand-in run ends with status 0
+ok    signal: the stop line names why (signal)
+ok    stopfile: the stand-in run ends with status 0
+ok    stopfile: the stop line names why (stop file)
+ok    parent: the stand-in run ends with status 0
+ok    parent: the stop line names why (parent [0-9]* is gone)
+ok    the header: epoch, time, took_ms and 8 fields for each of 2 cards
+ok    every row has 19 fields, none empty
+ok    a sample row as the stand-in gave it
+ok    --duration 1.2 at 0.05 s: 20 to 27 rows plus the header (25)
+ok    the start line: driver, cards, limits and offsets
+ok    the stop line: CPU seconds and sampling time
+ok    SIGTERM stops it within 0.3 s of the signal
+ok    every NVML call is a Get from the list
+ok    card_table.py reads the log
+ok    card_table.py: busy by utilization
+ok    card_table.py: card 1's slow stretch, 12 samples at 1,354 MHz
+ok    card_table.py: no stretch on card 0
+ok    card_table.py: card 1 has 12 busy samples below 1,800 MHz and power cap in every sample
+== watchdog: nvml_watchdog.py's clocks on the stand-in, then card_table.py
+ok    the watchdog on the stand-in ends with status 0 ()
+ok    its header ends with mono_s
+ok    mono_s rises in every row
+  steps back: ['-2.000'] rows: 31
+ok    the wall clock steps back once, by 2 s, and mono_s does not
+ok    each time stamp comes from one clock reading
+ok    card_table.py orders it by mono_s: card 0 at P0 for the whole 3 s (3.1 s)
+ok    a log started without mono_s is appended to without it (20 fields, one header)
+== drivers: dry runs with stub programs and card_log.py on the stand-in
+ok    rig_taper: run.log says the card log runs, before the load
+ok    rig_taper: OUT/cards.csv has rows for the whole run (26 rows)
+ok    rig_taper: the log stopped with the run (SIGTERM stop line), DONE written, nothing left
+ok    rig_taper: its loads ran as before (load lines, memory files, md5 of the driver)
+ok    rig_taper: NVML missing is reported and the run goes on
+ok    rig_taper: CARD_LOG=0 starts no card log
+   (killing that run's driver with SIGKILL on purpose: the shell reports it as Killed)
+scripts/card_log_test.sh: line 278: 3282583 Killed                     "${E[@]}" BUILDS="$D/builds" BUILD=b MODEL="$D/m.gguf" OUT="$D/work/$1" LOADS=A PORT=18795 "${@:2}" bash "$D/work/rig_taper.sh" > "$D/work/$1.console" 2>&1
+ok    rig_taper killed with SIGKILL: the log stops by itself (parent gone)
+ok    rig_taper: no nvidia-smi poll in any run
+ok    pipespec streams: the log started, rows, stopped with the run, nothing left, summary written
+ok    pipespec run: the log started, rows, stopped with the run, nothing left, summary written
+ok    pipespec prefill: the log started, rows, stopped with the run, nothing left, summary written
+ok    pipespec hostloop: the log started, rows, stopped with the run, nothing left, summary written
+ok    pipespec rig_run.sh with GPU_LOG=0: no card log
+ok    server_bench: the log started before the load, rows, stopped at the end, nothing left (exit 0)
+ok    server_bench: a server that dies while loading still ends the log (exit 1)
+ok    drivers: no nvidia-smi poll, no logger left
+card_log_test: 63 passed, 0 failed
+
+real	0m31.786s
+user	0m1.258s
+sys	0m1.783s
