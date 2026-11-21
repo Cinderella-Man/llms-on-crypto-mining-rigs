@@ -1,0 +1,21 @@
+model	round	request	sampling	own: branch = base ids	own: branch = base drafts	own branch drafted/accepted	own base drafted/accepted	dist = own ids	dist drafted/accepted	own = plain ids	dist = plain ids	r1 = r2 own-new	r1 = r2 own-ref	r1 = r2 dist-new	r1 = r2 plain-new
+maker	r1	code	greedy	yes	yes	236/176	236/176	yes	236/176	yes	yes	yes	yes	yes	yes
+maker	r1	prose	greedy	yes	yes	276/162	276/162	yes	276/162	no, from token 56	no, from token 56	yes	yes	yes	yes
+maker	r1	deep	greedy	yes	yes	238/174	238/174	yes	250/170	no, from token 32	no, from token 32	yes	yes	yes	yes
+maker	r1	deep-s	sampled, seed 7	yes	yes	236/176	236/176	no, from token 2	189/131	no, from token 2	no, from token 10	NO	NO	NO	yes
+maker	r1	code-s	sampled, seed 7	yes	yes	246/172	246/172	no, from token 14	239/175	no, from token 14	no, from token 48	NO	NO	NO	yes
+maker	r2	code	greedy	yes	yes	236/176	236/176	yes	233/177	yes	yes				
+maker	r2	prose	greedy	yes	yes	270/164	270/164	yes	276/162	no, from token 56	no, from token 56				
+maker	r2	deep	greedy	yes	yes	232/176	232/176	yes	247/171	no, from token 32	no, from token 32				
+maker	r2	deep-s	sampled, seed 7	yes	yes	234/176	234/176	no, from token 2	308/151	no, from token 2	no, from token 10				
+maker	r2	code-s	sampled, seed 7	yes	yes	241/174	241/174	no, from token 14	229/178	no, from token 14	no, from token 48				
+pmix	r1	code	greedy	yes	yes	237/175	237/175	yes	251/171	yes	yes	yes	yes	yes	yes
+pmix	r1	prose	greedy	yes	yes	280/161	280/161	yes	286/159	no, from token 79	no, from token 79	yes	yes	yes	yes
+pmix	r1	deep	greedy	yes	yes	259/168	259/168	yes	271/164	no, from token 20	no, from token 20	yes	yes	yes	yes
+pmix	r1	deep-s	sampled, seed 7	yes	yes	18/11	18/11	no, from token 8	99/74	no, from token 2	no, from token 2	yes	yes	yes	yes
+pmix	r1	code-s	sampled, seed 7	yes	yes	213/184	213/184	no, from token 14	210/184	no, from token 2	no, from token 2	yes	yes	NO	yes
+pmix	r2	code	greedy	yes	yes	234/176	234/176	yes	242/174	yes	yes				
+pmix	r2	prose	greedy	yes	yes	277/162	277/162	yes	280/161	no, from token 79	no, from token 79				
+pmix	r2	deep	greedy	yes	yes	250/171	250/171	yes	259/168	no, from token 20	no, from token 20				
+pmix	r2	deep-s	sampled, seed 7	yes	yes	18/11	18/11	no, from token 8	99/74	no, from token 2	no, from token 2				
+pmix	r2	code-s	sampled, seed 7	yes	yes	213/184	213/184	no, from token 14	213/184	no, from token 2	no, from token 2				

@@ -1,0 +1,11 @@
+model	draft	build	draft head	answered	server exit	indexer cache lines	draft k-pool table lines	draft pool mask lines	assertion	MiB per card after load	MiB per card after requests
+maker	dist	branch c9c3134d4	distilled head (block ratio 0, shared embd,head)	yes		1	0	0		13917 13191 16327	14133 13399 16731
+maker	dist	base 602691153	distilled head (block ratio 0, shared embd,head)	no	134	2	0	1	ggml-backend.cpp:347: GGML_ASSERT(buffer) failed		
+maker	own	branch c9c3134d4	Swift-1.5 MTP head (block ratio 4)	yes		2	1	1		13917 13191 16009	14133 13399 16415
+maker	own	base 602691153	Swift-1.5 MTP head (block ratio 4)	yes		2	1	1		13917 13191 16009	14133 13399 16415
+maker	plain	branch c9c3134d4	none (plain decoding)	yes		1	0	0		13803 13085 12737	14013 13285 12933
+pmix	dist	branch c9c3134d4	distilled head (block ratio 0, shared embd,head)	yes		1	0	0		13915 13207 16317	14133 13419 16721
+pmix	dist	base 602691153	distilled head (block ratio 0, shared embd,head)	no	134	2	0	1	ggml-backend.cpp:347: GGML_ASSERT(buffer) failed		
+pmix	own	branch c9c3134d4	Swift-1.5 MTP head (block ratio 4)	yes		2	1	1		13915 13207 15999	14133 13419 16403
+pmix	own	base 602691153	Swift-1.5 MTP head (block ratio 4)	yes		2	1	1		13915 13207 15999	14133 13419 16403
+pmix	plain	branch c9c3134d4	none (plain decoding)	yes		1	0	0		13801 13101 12727	14011 13305 12923
