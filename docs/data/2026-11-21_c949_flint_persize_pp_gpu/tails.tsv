@@ -1,0 +1,25 @@
+run	arm	call_tokens	micro_batches	last_graph	input_copies
+run3	pp0	129	128+1	rebuilt (in_flight)	3,0
+run3	pp0	129	128+1	rebuilt (in_flight)	3,0
+run3	pp1	129	128+1	rebuilt (in_flight)	3,0
+run3	pp1	129	128+1	rebuilt (in_flight)	3,1
+run3	off	129	128+1	rebuilt (in_flight)	1,2
+run3	off	129	128+1	rebuilt (in_flight)	1,2
+run3	base	129	128+1	rebuilt (in_flight)	3,0
+run3	base	129	128+1	rebuilt (in_flight)	3,0
+run4	pp0	129	128+1	rebuilt (in_flight)	3,0
+run4	pp0	132	128+4	rebuilt (in_flight)	0,0
+run4	pp0	129	128+1	rebuilt (in_flight)	3,0
+run4	pp0	132	128+4	rebuilt (in_flight)	0,0
+run4	pp1	129	128+1	rebuilt (in_flight)	3,0
+run4	pp1	132	128+4	rebuilt (in_flight)	0,0
+run4	pp1	129	128+1	rebuilt (in_flight)	3,1
+run4	pp1	132	128+4	rebuilt (in_flight)	0,1
+run4	off	129	128+1	rebuilt (in_flight)	1,2
+run4	off	132	128+4	rebuilt (in_flight)	1,2
+run4	off	129	128+1	rebuilt (in_flight)	1,2
+run4	off	132	128+4	rebuilt (in_flight)	1,2
+run4	base	129	128+1	rebuilt (in_flight)	3,0
+run4	base	132	128+4	rebuilt (in_flight)	0,0
+run4	base	129	128+1	rebuilt (in_flight)	3,0
+run4	base	132	128+4	rebuilt (in_flight)	0,0

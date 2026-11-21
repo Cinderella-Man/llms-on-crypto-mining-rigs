@@ -1,0 +1,42 @@
+run1-lv3 pp0: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 1 input copies
+run1-lv3 pp0: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 1 input copies
+run1-lv3 pp0: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 1 input copies
+run1-lv3 pp1: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 4 input copies (pipeline parallelism)
+run1-lv3 pp1: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 4 input copies (pipeline parallelism)
+run1-lv3 pp1: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 4 input copies (pipeline parallelism)
+run2 pp0: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 1 input copies
+run2 pp0: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 1 input copies
+run2 pp0: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 1 input copies
+run2 pp1: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 4 input copies (pipeline parallelism)
+run2 pp1: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 4 input copies (pipeline parallelism)
+run2 pp1: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 4 input copies (pipeline parallelism)
+run2 base: scheduler for 2-token batches (with outputs), 1 per-size schedulers
+run2 base: scheduler for 4-token batches (with outputs), 2 per-size schedulers
+run2 base: scheduler for 1-token batches (with outputs), 3 per-size schedulers
+run3 pp0: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 1 input copies
+run3 pp0: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 1 input copies
+run3 pp0: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 1 input copies
+run3 pp0: scheduler for 1-token batches (without outputs), 4 per-size schedulers, 1 input copies
+run3 pp1: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 4 input copies (pipeline parallelism)
+run3 pp1: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 4 input copies (pipeline parallelism)
+run3 pp1: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 4 input copies (pipeline parallelism)
+run3 pp1: scheduler for 1-token batches (without outputs), 4 per-size schedulers, 4 input copies (pipeline parallelism)
+run3 base: scheduler for 2-token batches (with outputs), 1 per-size schedulers
+run3 base: scheduler for 4-token batches (with outputs), 2 per-size schedulers
+run3 base: scheduler for 1-token batches (with outputs), 3 per-size schedulers
+run3 base: scheduler for 1-token batches (without outputs), 4 per-size schedulers
+run4 pp0: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 1 input copies
+run4 pp0: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 1 input copies
+run4 pp0: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 1 input copies
+run4 pp0: scheduler for 1-token batches (without outputs), 4 per-size schedulers, 1 input copies
+run4 pp0: scheduler for 4-token batches (without outputs), 5 per-size schedulers, 1 input copies
+run4 pp1: scheduler for 2-token batches (with outputs), 1 per-size schedulers, 4 input copies (pipeline parallelism)
+run4 pp1: scheduler for 4-token batches (with outputs), 2 per-size schedulers, 4 input copies (pipeline parallelism)
+run4 pp1: scheduler for 1-token batches (with outputs), 3 per-size schedulers, 4 input copies (pipeline parallelism)
+run4 pp1: scheduler for 1-token batches (without outputs), 4 per-size schedulers, 4 input copies (pipeline parallelism)
+run4 pp1: scheduler for 4-token batches (without outputs), 5 per-size schedulers, 4 input copies (pipeline parallelism)
+run4 base: scheduler for 2-token batches (with outputs), 1 per-size schedulers
+run4 base: scheduler for 4-token batches (with outputs), 2 per-size schedulers
+run4 base: scheduler for 1-token batches (with outputs), 3 per-size schedulers
+run4 base: scheduler for 1-token batches (without outputs), 4 per-size schedulers
+run4 base: scheduler for 4-token batches (without outputs), 5 per-size schedulers

@@ -1,0 +1,219 @@
+run	arm	tokens	outputs	graph	input_copy	passes
+run1-lv3	pp0	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run1-lv3	pp0	1	1	rebuilt (not_allocated)	0	6
+run1-lv3	pp0	1	1	rebuilt (params)	0	6
+run1-lv3	pp0	1	1	reused	0	226
+run1-lv3	pp0	2	1	rebuilt (not_allocated)	0	1
+run1-lv3	pp0	2	1	reused	0	1
+run1-lv3	pp0	4	1	rebuilt (not_allocated)	0	8
+run1-lv3	pp0	4	1	rebuilt (params)	0	8
+run1-lv3	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	1
+run1-lv3	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	1	1
+run1-lv3	pp1	1	1	rebuilt (not_allocated)	0	2
+run1-lv3	pp1	1	1	rebuilt (not_allocated)	1	2
+run1-lv3	pp1	1	1	rebuilt (not_allocated)	2	1
+run1-lv3	pp1	1	1	rebuilt (not_allocated)	3	1
+run1-lv3	pp1	1	1	rebuilt (params)	0	1
+run1-lv3	pp1	1	1	rebuilt (params)	1	1
+run1-lv3	pp1	1	1	rebuilt (params)	2	2
+run1-lv3	pp1	1	1	rebuilt (params)	3	2
+run1-lv3	pp1	1	1	reused	0	59
+run1-lv3	pp1	1	1	reused	1	74
+run1-lv3	pp1	1	1	reused	2	54
+run1-lv3	pp1	1	1	reused	3	39
+run1-lv3	pp1	2	1	rebuilt (not_allocated)	0	1
+run1-lv3	pp1	2	1	reused	0	1
+run1-lv3	pp1	4	1	rebuilt (not_allocated)	0	2
+run1-lv3	pp1	4	1	rebuilt (not_allocated)	1	2
+run1-lv3	pp1	4	1	rebuilt (not_allocated)	2	2
+run1-lv3	pp1	4	1	rebuilt (not_allocated)	3	2
+run1-lv3	pp1	4	1	rebuilt (params)	0	2
+run1-lv3	pp1	4	1	rebuilt (params)	1	2
+run1-lv3	pp1	4	1	rebuilt (params)	2	2
+run1-lv3	pp1	4	1	rebuilt (params)	3	2
+run1-lv3	off	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	3	2
+run1-lv3	off	1	1	rebuilt (not_allocated)	1	2
+run1-lv3	off	1	1	rebuilt (not_allocated)	2	10
+run1-lv3	off	1	1	reused	1	36
+run1-lv3	off	1	1	reused	2	154
+run1-lv3	off	1	1	reused	3	36
+run1-lv3	off	2	1	rebuilt (not_allocated)	0	1
+run1-lv3	off	2	1	reused	0	1
+run1-lv3	off	4	1	rebuilt (not_allocated)	0	4
+run1-lv3	off	4	1	rebuilt (not_allocated)	1	12
+run1-lv3	base	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run1-lv3	base	1	1	rebuilt (not_allocated)	0	6
+run1-lv3	base	1	1	rebuilt (params)	0	6
+run1-lv3	base	1	1	reused	0	226
+run1-lv3	base	2	1	rebuilt (not_allocated)	0	1
+run1-lv3	base	2	1	reused	0	1
+run1-lv3	base	4	1	rebuilt (not_allocated)	0	8
+run1-lv3	base	4	1	rebuilt (params)	0	8
+run2	pp0	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run2	pp0	1	1	rebuilt (not_allocated)	0	6
+run2	pp0	1	1	rebuilt (params)	0	6
+run2	pp0	1	1	reused	0	226
+run2	pp0	2	1	rebuilt (not_allocated)	0	1
+run2	pp0	2	1	reused	0	1
+run2	pp0	4	1	rebuilt (not_allocated)	0	8
+run2	pp0	4	1	rebuilt (params)	0	8
+run2	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	1
+run2	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	1	1
+run2	pp1	1	1	rebuilt (not_allocated)	0	2
+run2	pp1	1	1	rebuilt (not_allocated)	1	2
+run2	pp1	1	1	rebuilt (not_allocated)	2	1
+run2	pp1	1	1	rebuilt (not_allocated)	3	1
+run2	pp1	1	1	rebuilt (params)	0	1
+run2	pp1	1	1	rebuilt (params)	1	1
+run2	pp1	1	1	rebuilt (params)	2	2
+run2	pp1	1	1	rebuilt (params)	3	2
+run2	pp1	1	1	reused	0	59
+run2	pp1	1	1	reused	1	74
+run2	pp1	1	1	reused	2	54
+run2	pp1	1	1	reused	3	39
+run2	pp1	2	1	rebuilt (not_allocated)	0	1
+run2	pp1	2	1	reused	0	1
+run2	pp1	4	1	rebuilt (not_allocated)	0	2
+run2	pp1	4	1	rebuilt (not_allocated)	1	2
+run2	pp1	4	1	rebuilt (not_allocated)	2	2
+run2	pp1	4	1	rebuilt (not_allocated)	3	2
+run2	pp1	4	1	rebuilt (params)	0	2
+run2	pp1	4	1	rebuilt (params)	1	2
+run2	pp1	4	1	rebuilt (params)	2	2
+run2	pp1	4	1	rebuilt (params)	3	2
+run2	off	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	3	2
+run2	off	1	1	rebuilt (not_allocated)	1	2
+run2	off	1	1	rebuilt (not_allocated)	2	10
+run2	off	1	1	reused	1	36
+run2	off	1	1	reused	2	154
+run2	off	1	1	reused	3	36
+run2	off	2	1	rebuilt (not_allocated)	0	1
+run2	off	2	1	reused	0	1
+run2	off	4	1	rebuilt (not_allocated)	0	4
+run2	off	4	1	rebuilt (not_allocated)	1	12
+run2	base	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run2	base	1	1	rebuilt (not_allocated)	0	6
+run2	base	1	1	rebuilt (params)	0	6
+run2	base	1	1	reused	0	226
+run2	base	2	1	rebuilt (not_allocated)	0	1
+run2	base	2	1	reused	0	1
+run2	base	4	1	rebuilt (not_allocated)	0	8
+run2	base	4	1	rebuilt (params)	0	8
+run3	pp0	1	0	rebuilt (in_flight)	0	2
+run3	pp0	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run3	pp0	1	1	rebuilt (not_allocated)	0	6
+run3	pp0	1	1	rebuilt (params)	0	8
+run3	pp0	1	1	reused	0	264
+run3	pp0	2	1	rebuilt (not_allocated)	0	1
+run3	pp0	2	1	reused	0	1
+run3	pp0	4	1	rebuilt (not_allocated)	0	8
+run3	pp0	4	1	rebuilt (params)	0	10
+run3	pp1	1	0	rebuilt (in_flight)	0	1
+run3	pp1	1	0	rebuilt (in_flight)	1	1
+run3	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	1	2
+run3	pp1	1	1	rebuilt (not_allocated)	0	2
+run3	pp1	1	1	rebuilt (not_allocated)	1	2
+run3	pp1	1	1	rebuilt (not_allocated)	2	2
+run3	pp1	1	1	rebuilt (params)	0	2
+run3	pp1	1	1	rebuilt (params)	2	2
+run3	pp1	1	1	rebuilt (params)	3	4
+run3	pp1	1	1	reused	0	42
+run3	pp1	1	1	reused	1	76
+run3	pp1	1	1	reused	2	72
+run3	pp1	1	1	reused	3	74
+run3	pp1	2	1	rebuilt (not_allocated)	0	1
+run3	pp1	2	1	reused	0	1
+run3	pp1	4	1	rebuilt (not_allocated)	0	2
+run3	pp1	4	1	rebuilt (not_allocated)	1	2
+run3	pp1	4	1	rebuilt (not_allocated)	2	2
+run3	pp1	4	1	rebuilt (not_allocated)	3	2
+run3	pp1	4	1	rebuilt (params)	0	3
+run3	pp1	4	1	rebuilt (params)	1	3
+run3	pp1	4	1	rebuilt (params)	2	2
+run3	pp1	4	1	rebuilt (params)	3	2
+run3	off	1	0	rebuilt (in_flight)	2	2
+run3	off	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	3	2
+run3	off	1	1	rebuilt (not_allocated)	0	2
+run3	off	1	1	rebuilt (not_allocated)	1	2
+run3	off	1	1	rebuilt (not_allocated)	2	10
+run3	off	1	1	reused	0	38
+run3	off	1	1	reused	1	36
+run3	off	1	1	reused	2	154
+run3	off	1	1	reused	3	36
+run3	off	2	1	rebuilt (not_allocated)	0	1
+run3	off	2	1	reused	0	1
+run3	off	4	1	rebuilt (not_allocated)	0	4
+run3	off	4	1	rebuilt (not_allocated)	1	12
+run3	off	4	1	rebuilt (not_allocated)	3	2
+run3	base	1	0	rebuilt (in_flight)	0	2
+run3	base	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run3	base	1	1	rebuilt (not_allocated)	0	6
+run3	base	1	1	rebuilt (params)	0	8
+run3	base	1	1	reused	0	264
+run3	base	2	1	rebuilt (not_allocated)	0	1
+run3	base	2	1	reused	0	1
+run3	base	4	1	rebuilt (not_allocated)	0	8
+run3	base	4	1	rebuilt (params)	0	10
+run4	pp0	1	0	rebuilt (in_flight)	0	2
+run4	pp0	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run4	pp0	1	1	rebuilt (not_allocated)	0	6
+run4	pp0	1	1	rebuilt (params)	0	10
+run4	pp0	1	1	reused	0	302
+run4	pp0	2	1	rebuilt (not_allocated)	0	1
+run4	pp0	2	1	reused	0	1
+run4	pp0	4	0	rebuilt (in_flight)	0	2
+run4	pp0	4	1	rebuilt (not_allocated)	0	8
+run4	pp0	4	1	rebuilt (params)	0	12
+run4	pp1	1	0	rebuilt (in_flight)	0	1
+run4	pp1	1	0	rebuilt (in_flight)	1	1
+run4	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	1	1
+run4	pp1	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	2	1
+run4	pp1	1	1	rebuilt (not_allocated)	0	1
+run4	pp1	1	1	rebuilt (not_allocated)	1	2
+run4	pp1	1	1	rebuilt (not_allocated)	2	2
+run4	pp1	1	1	rebuilt (not_allocated)	3	1
+run4	pp1	1	1	rebuilt (params)	0	4
+run4	pp1	1	1	rebuilt (params)	1	2
+run4	pp1	1	1	rebuilt (params)	2	1
+run4	pp1	1	1	rebuilt (params)	3	3
+run4	pp1	1	1	reused	0	77
+run4	pp1	1	1	reused	1	78
+run4	pp1	1	1	reused	2	74
+run4	pp1	1	1	reused	3	73
+run4	pp1	2	1	rebuilt (not_allocated)	0	1
+run4	pp1	2	1	reused	0	1
+run4	pp1	4	0	rebuilt (in_flight)	0	1
+run4	pp1	4	0	rebuilt (in_flight)	1	1
+run4	pp1	4	1	rebuilt (not_allocated)	0	2
+run4	pp1	4	1	rebuilt (not_allocated)	1	2
+run4	pp1	4	1	rebuilt (not_allocated)	2	2
+run4	pp1	4	1	rebuilt (not_allocated)	3	2
+run4	pp1	4	1	rebuilt (params)	0	3
+run4	pp1	4	1	rebuilt (params)	1	3
+run4	pp1	4	1	rebuilt (params)	2	3
+run4	pp1	4	1	rebuilt (params)	3	3
+run4	off	1	0	rebuilt (in_flight)	2	2
+run4	off	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	3	2
+run4	off	1	1	rebuilt (not_allocated)	0	4
+run4	off	1	1	rebuilt (not_allocated)	1	2
+run4	off	1	1	rebuilt (not_allocated)	2	10
+run4	off	1	1	reused	0	76
+run4	off	1	1	reused	1	36
+run4	off	1	1	reused	2	154
+run4	off	1	1	reused	3	36
+run4	off	2	1	rebuilt (not_allocated)	0	1
+run4	off	2	1	reused	0	1
+run4	off	4	0	rebuilt (in_flight)	2	2
+run4	off	4	1	rebuilt (not_allocated)	0	4
+run4	off	4	1	rebuilt (not_allocated)	1	12
+run4	off	4	1	rebuilt (not_allocated)	3	4
+run4	base	1	0	rebuilt (in_flight)	0	2
+run4	base	1	1	rebuilt (llm_graph_input_attn_kv_iswa)	0	2
+run4	base	1	1	rebuilt (not_allocated)	0	6
+run4	base	1	1	rebuilt (params)	0	10
+run4	base	1	1	reused	0	302
+run4	base	2	1	rebuilt (not_allocated)	0	1
+run4	base	2	1	reused	0	1
+run4	base	4	0	rebuilt (in_flight)	0	2
+run4	base	4	1	rebuilt (not_allocated)	0	8
+run4	base	4	1	rebuilt (params)	0	12

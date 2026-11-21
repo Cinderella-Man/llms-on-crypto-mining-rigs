@@ -1,0 +1,281 @@
+run	arm	round	request	kind	generated_tokens	prompt_tokens_read	cached_tokens	tokens_md5_12
+run1-lv3	pp0	r1	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	pp0	r1	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	pp0	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	pp0	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	pp0	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	pp0	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	pp0	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	pp0	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	pp0	r2	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	pp0	r2	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	pp0	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	pp0	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	pp0	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	pp0	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	pp0	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	pp0	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	pp1	r1	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	pp1	r1	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	pp1	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	pp1	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	pp1	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	pp1	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	pp1	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	pp1	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	pp1	r2	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	pp1	r2	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	pp1	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	pp1	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	pp1	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	pp1	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	pp1	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	pp1	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	off	r1	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	off	r1	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	off	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	off	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	off	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	off	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	off	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	off	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	off	r2	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	off	r2	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	off	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	off	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	off	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	off	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	off	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	off	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	base	r1	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	base	r1	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	base	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	base	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	base	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	base	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	base	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	base	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run1-lv3	base	r2	R1	plain	320	69	0	1e919fd5b8f5
+run1-lv3	base	r2	R2	tool	23	57	0	4d7c67a5b956
+run1-lv3	base	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run1-lv3	base	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run1-lv3	base	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run1-lv3	base	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run1-lv3	base	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run1-lv3	base	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	pp0	r1	R1	plain	320	69	0	1e919fd5b8f5
+run2	pp0	r1	R2	tool	23	57	0	4d7c67a5b956
+run2	pp0	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run2	pp0	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run2	pp0	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	pp0	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run2	pp0	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	pp0	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	pp0	r2	R1	plain	320	69	0	1e919fd5b8f5
+run2	pp0	r2	R2	tool	23	57	0	4d7c67a5b956
+run2	pp0	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run2	pp0	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run2	pp0	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	pp0	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run2	pp0	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	pp0	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	pp1	r1	R1	plain	320	69	0	1e919fd5b8f5
+run2	pp1	r1	R2	tool	23	57	0	4d7c67a5b956
+run2	pp1	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run2	pp1	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run2	pp1	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	pp1	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run2	pp1	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	pp1	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	pp1	r2	R1	plain	320	69	0	1e919fd5b8f5
+run2	pp1	r2	R2	tool	23	57	0	4d7c67a5b956
+run2	pp1	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run2	pp1	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run2	pp1	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	pp1	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run2	pp1	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	pp1	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	off	r1	R1	plain	320	69	0	1e919fd5b8f5
+run2	off	r1	R2	tool	23	57	0	4d7c67a5b956
+run2	off	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run2	off	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run2	off	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	off	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run2	off	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	off	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	off	r2	R1	plain	320	69	0	1e919fd5b8f5
+run2	off	r2	R2	tool	23	57	0	4d7c67a5b956
+run2	off	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run2	off	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run2	off	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	off	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run2	off	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	off	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	base	r1	R1	plain	320	69	0	1e919fd5b8f5
+run2	base	r1	R2	tool	23	57	0	4d7c67a5b956
+run2	base	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run2	base	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run2	base	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	base	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run2	base	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	base	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run2	base	r2	R1	plain	320	69	0	1e919fd5b8f5
+run2	base	r2	R2	tool	23	57	0	4d7c67a5b956
+run2	base	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run2	base	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run2	base	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run2	base	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run2	base	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run2	base	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	pp0	r1	R1	plain	320	69	0	1e919fd5b8f5
+run3	pp0	r1	R2	tool	23	57	0	4d7c67a5b956
+run3	pp0	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run3	pp0	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run3	pp0	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	pp0	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run3	pp0	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	pp0	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	pp0	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	pp0	r2	R1	plain	320	69	0	1e919fd5b8f5
+run3	pp0	r2	R2	tool	23	57	0	4d7c67a5b956
+run3	pp0	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run3	pp0	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run3	pp0	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	pp0	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run3	pp0	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	pp0	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	pp0	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	pp1	r1	R1	plain	320	69	0	1e919fd5b8f5
+run3	pp1	r1	R2	tool	23	57	0	4d7c67a5b956
+run3	pp1	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run3	pp1	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run3	pp1	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	pp1	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run3	pp1	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	pp1	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	pp1	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	pp1	r2	R1	plain	320	69	0	1e919fd5b8f5
+run3	pp1	r2	R2	tool	23	57	0	4d7c67a5b956
+run3	pp1	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run3	pp1	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run3	pp1	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	pp1	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run3	pp1	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	pp1	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	pp1	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	off	r1	R1	plain	320	69	0	1e919fd5b8f5
+run3	off	r1	R2	tool	23	57	0	4d7c67a5b956
+run3	off	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run3	off	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run3	off	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	off	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run3	off	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	off	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	off	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	off	r2	R1	plain	320	69	0	1e919fd5b8f5
+run3	off	r2	R2	tool	23	57	0	4d7c67a5b956
+run3	off	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run3	off	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run3	off	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	off	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run3	off	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	off	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	off	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	base	r1	R1	plain	320	69	0	1e919fd5b8f5
+run3	base	r1	R2	tool	23	57	0	4d7c67a5b956
+run3	base	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run3	base	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run3	base	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	base	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run3	base	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	base	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	base	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run3	base	r2	R1	plain	320	69	0	1e919fd5b8f5
+run3	base	r2	R2	tool	23	57	0	4d7c67a5b956
+run3	base	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run3	base	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run3	base	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run3	base	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run3	base	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run3	base	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run3	base	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	pp0	r1	R1	plain	320	69	0	1e919fd5b8f5
+run4	pp0	r1	R2	tool	23	57	0	4d7c67a5b956
+run4	pp0	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run4	pp0	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run4	pp0	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	pp0	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run4	pp0	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	pp0	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	pp0	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	pp0	r1	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	pp0	r2	R1	plain	320	69	0	1e919fd5b8f5
+run4	pp0	r2	R2	tool	23	57	0	4d7c67a5b956
+run4	pp0	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run4	pp0	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run4	pp0	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	pp0	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run4	pp0	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	pp0	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	pp0	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	pp0	r2	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	pp1	r1	R1	plain	320	69	0	1e919fd5b8f5
+run4	pp1	r1	R2	tool	23	57	0	4d7c67a5b956
+run4	pp1	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run4	pp1	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run4	pp1	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	pp1	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run4	pp1	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	pp1	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	pp1	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	pp1	r1	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	pp1	r2	R1	plain	320	69	0	1e919fd5b8f5
+run4	pp1	r2	R2	tool	23	57	0	4d7c67a5b956
+run4	pp1	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run4	pp1	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run4	pp1	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	pp1	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run4	pp1	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	pp1	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	pp1	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	pp1	r2	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	off	r1	R1	plain	320	69	0	1e919fd5b8f5
+run4	off	r1	R2	tool	23	57	0	4d7c67a5b956
+run4	off	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run4	off	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run4	off	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	off	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run4	off	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	off	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	off	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	off	r1	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	off	r2	R1	plain	320	69	0	1e919fd5b8f5
+run4	off	r2	R2	tool	23	57	0	4d7c67a5b956
+run4	off	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run4	off	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run4	off	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	off	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run4	off	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	off	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	off	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	off	r2	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	base	r1	R1	plain	320	69	0	1e919fd5b8f5
+run4	base	r1	R2	tool	23	57	0	4d7c67a5b956
+run4	base	r1	R3	tool t0.7	22	57	0	45f26934f6df
+run4	base	r1	R4	tool turn 2	20	72	53	59d4a6353486
+run4	base	r1	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	base	r1	R6	tool turn 4	21	872	407	a176b48ed464
+run4	base	r1	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	base	r1	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	base	r1	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	base	r1	R11	tool 648 tokens	21	648	0	0ba792f5b34f
+run4	base	r2	R1	plain	320	69	0	1e919fd5b8f5
+run4	base	r2	R2	tool	23	57	0	4d7c67a5b956
+run4	base	r2	R3	tool t0.7	22	57	0	45f26934f6df
+run4	base	r2	R4	tool turn 2	20	72	53	59d4a6353486
+run4	base	r2	R5	tool turn 3	20	290	121	e1a8af0e504e
+run4	base	r2	R6	tool turn 4	21	872	407	a176b48ed464
+run4	base	r2	R7	tool turn 5	20	31	1279	d5f28fbf489e
+run4	base	r2	R8	plain turn 6	128	31	1310	48858a1a9beb
+run4	base	r2	R10	tool 645 tokens	21	645	0	0ba792f5b34f
+run4	base	r2	R11	tool 648 tokens	21	648	0	0ba792f5b34f
