@@ -1,0 +1,193 @@
+model	setting	build	round	request	prompt_n	cache_n	n_gen	tokens_md5	drafted	accepted	stop
+fn	def	base	r1	fresh	5956	0	128	7a35643af4c2	111	89	limit
+fn	def	base	r1	turn	17	6083	128	426cf9e30f15	101	93	limit
+fn	def	base	r1	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	def	base	r1	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	def	base	r1	after	26	6158	128	d53cf7b46c3f	95	95	limit
+fn	def	base	r1	back	510	5440	1	56184aa72cc9			eos
+fn	def	base	r2	fresh	5956	0	128	7a35643af4c2	111	90	limit
+fn	def	base	r2	turn	17	6083	128	7695c83cc368	116	88	limit
+fn	def	base	r2	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	def	base	r2	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	def	base	r2	after	26	6158	128	d53cf7b46c3f	96	95	limit
+fn	def	base	r2	back	510	5440	1	56184aa72cc9			eos
+fn	def	new	r1	fresh	5956	0	128	7a35643af4c2	111	89	limit
+fn	def	new	r1	turn	17	6083	128	426cf9e30f15	101	93	limit
+fn	def	new	r1	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	def	new	r1	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	def	new	r1	after	26	6158	128	d53cf7b46c3f	95	95	limit
+fn	def	new	r1	back	510	5440	1	56184aa72cc9			eos
+fn	def	new	r2	fresh	5956	0	128	7a35643af4c2	111	90	limit
+fn	def	new	r2	turn	17	6083	128	7695c83cc368	116	88	limit
+fn	def	new	r2	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	def	new	r2	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	def	new	r2	after	26	6158	128	d53cf7b46c3f	96	95	limit
+fn	def	new	r2	back	510	5440	1	56184aa72cc9			eos
+fn	mask	base	r1	fresh	5956	0	128	7a35643af4c2	111	89	limit
+fn	mask	base	r1	turn	17	6083	128	426cf9e30f15	101	93	limit
+fn	mask	base	r1	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	mask	base	r1	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	mask	base	r1	after	26	6158	128	d53cf7b46c3f	95	95	limit
+fn	mask	base	r1	back	510	5440	1	56184aa72cc9			eos
+fn	mask	base	r2	fresh	5956	0	128	7a35643af4c2	111	90	limit
+fn	mask	base	r2	turn	17	6083	128	7695c83cc368	116	88	limit
+fn	mask	base	r2	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	mask	base	r2	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	mask	base	r2	after	26	6158	128	d53cf7b46c3f	96	95	limit
+fn	mask	base	r2	back	510	5440	1	56184aa72cc9			eos
+fn	mask	new	r1	fresh	5956	0	128	7a35643af4c2	111	89	limit
+fn	mask	new	r1	turn	17	6083	128	426cf9e30f15	101	93	limit
+fn	mask	new	r1	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	mask	new	r1	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	mask	new	r1	after	26	6158	128	d53cf7b46c3f	95	95	limit
+fn	mask	new	r1	back	510	5440	1	56184aa72cc9			eos
+fn	mask	new	r2	fresh	5956	0	128	7a35643af4c2	111	90	limit
+fn	mask	new	r2	turn	17	6083	128	7695c83cc368	116	88	limit
+fn	mask	new	r2	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	mask	new	r2	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	mask	new	r2	after	26	6158	128	d53cf7b46c3f	96	95	limit
+fn	mask	new	r2	back	510	5440	1	56184aa72cc9			eos
+fn	tail0	base	r1	fresh	5956	0	128	7a35643af4c2	111	89	limit
+fn	tail0	base	r1	turn	17	6083	128	426cf9e30f15	101	93	limit
+fn	tail0	base	r1	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	tail0	base	r1	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	tail0	base	r1	after	26	6158	128	d53cf7b46c3f	95	95	limit
+fn	tail0	base	r1	back	510	5440	1	56184aa72cc9			eos
+fn	tail0	base	r2	fresh	5956	0	128	7a35643af4c2	111	90	limit
+fn	tail0	base	r2	turn	17	6083	128	7695c83cc368	116	88	limit
+fn	tail0	base	r2	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	tail0	base	r2	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	tail0	base	r2	after	26	6158	128	d53cf7b46c3f	96	95	limit
+fn	tail0	base	r2	back	510	5440	1	56184aa72cc9			eos
+fn	tail0	new	r1	fresh	5956	0	128	7a35643af4c2	111	89	limit
+fn	tail0	new	r1	turn	17	6083	128	426cf9e30f15	101	93	limit
+fn	tail0	new	r1	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	tail0	new	r1	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	tail0	new	r1	after	26	6158	128	d53cf7b46c3f	95	95	limit
+fn	tail0	new	r1	back	510	5440	1	56184aa72cc9			eos
+fn	tail0	new	r2	fresh	5956	0	128	7a35643af4c2	111	90	limit
+fn	tail0	new	r2	turn	17	6083	128	7695c83cc368	116	88	limit
+fn	tail0	new	r2	edit	574	5440	128	7bd639ccc8f2	102	93	limit
+fn	tail0	new	r2	cancel			24	761cd468dd03			cancelled after 24 chunks
+fn	tail0	new	r2	after	26	6158	128	d53cf7b46c3f	96	95	limit
+fn	tail0	new	r2	back	510	5440	1	56184aa72cc9			eos
+ornith	def	base	r1	fresh	5956	0	128	846d4c123a4a			limit
+ornith	def	base	r1	turn	17	6083	128	1c0f72f66e07			limit
+ornith	def	base	r1	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	def	base	r1	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	def	base	r1	after	26	6161	128	554027b2e750			limit
+ornith	def	base	r1	back	510	5440	128	0daa4913d611			limit
+ornith	def	base	r2	fresh	5956	0	128	846d4c123a4a			limit
+ornith	def	base	r2	turn	17	6083	128	1c0f72f66e07			limit
+ornith	def	base	r2	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	def	base	r2	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	def	base	r2	after	26	6161	128	554027b2e750			limit
+ornith	def	base	r2	back	510	5440	128	0daa4913d611			limit
+ornith	def	new	r1	fresh	5956	0	128	846d4c123a4a			limit
+ornith	def	new	r1	turn	17	6083	128	1c0f72f66e07			limit
+ornith	def	new	r1	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	def	new	r1	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	def	new	r1	after	26	6161	128	554027b2e750			limit
+ornith	def	new	r1	back	510	5440	128	0daa4913d611			limit
+ornith	def	new	r2	fresh	5956	0	128	846d4c123a4a			limit
+ornith	def	new	r2	turn	17	6083	128	1c0f72f66e07			limit
+ornith	def	new	r2	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	def	new	r2	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	def	new	r2	after	26	6161	128	554027b2e750			limit
+ornith	def	new	r2	back	510	5440	128	0daa4913d611			limit
+ornith	mask	base	r1	fresh	5956	0	128	846d4c123a4a			limit
+ornith	mask	base	r1	turn	17	6083	128	1c0f72f66e07			limit
+ornith	mask	base	r1	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	mask	base	r1	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	mask	base	r1	after	26	6161	128	554027b2e750			limit
+ornith	mask	base	r1	back	510	5440	128	0daa4913d611			limit
+ornith	mask	base	r2	fresh	5956	0	128	846d4c123a4a			limit
+ornith	mask	base	r2	turn	17	6083	128	1c0f72f66e07			limit
+ornith	mask	base	r2	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	mask	base	r2	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	mask	base	r2	after	26	6161	128	554027b2e750			limit
+ornith	mask	base	r2	back	510	5440	128	0daa4913d611			limit
+ornith	mask	new	r1	fresh	5956	0	128	846d4c123a4a			limit
+ornith	mask	new	r1	turn	17	6083	128	1c0f72f66e07			limit
+ornith	mask	new	r1	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	mask	new	r1	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	mask	new	r1	after	26	6161	128	554027b2e750			limit
+ornith	mask	new	r1	back	510	5440	128	0daa4913d611			limit
+ornith	mask	new	r2	fresh	5956	0	128	846d4c123a4a			limit
+ornith	mask	new	r2	turn	17	6083	128	1c0f72f66e07			limit
+ornith	mask	new	r2	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	mask	new	r2	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	mask	new	r2	after	26	6161	128	554027b2e750			limit
+ornith	mask	new	r2	back	510	5440	128	0daa4913d611			limit
+ornith	tail0	base	r1	fresh	5956	0	128	846d4c123a4a			limit
+ornith	tail0	base	r1	turn	17	6083	128	1c0f72f66e07			limit
+ornith	tail0	base	r1	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	tail0	base	r1	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	tail0	base	r1	after	26	6161	128	554027b2e750			limit
+ornith	tail0	base	r1	back	510	5440	128	0daa4913d611			limit
+ornith	tail0	base	r2	fresh	5956	0	128	846d4c123a4a			limit
+ornith	tail0	base	r2	turn	17	6083	128	1c0f72f66e07			limit
+ornith	tail0	base	r2	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	tail0	base	r2	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	tail0	base	r2	after	26	6161	128	554027b2e750			limit
+ornith	tail0	base	r2	back	510	5440	128	0daa4913d611			limit
+ornith	tail0	new	r1	fresh	5956	0	128	846d4c123a4a			limit
+ornith	tail0	new	r1	turn	17	6083	128	1c0f72f66e07			limit
+ornith	tail0	new	r1	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	tail0	new	r1	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	tail0	new	r1	after	26	6161	128	554027b2e750			limit
+ornith	tail0	new	r1	back	510	5440	128	0daa4913d611			limit
+ornith	tail0	new	r2	fresh	5956	0	128	846d4c123a4a			limit
+ornith	tail0	new	r2	turn	17	6083	128	1c0f72f66e07			limit
+ornith	tail0	new	r2	edit	577	5440	128	3c1a0e9ab4bf			limit
+ornith	tail0	new	r2	cancel			24	eea95c907b81			cancelled after 24 chunks
+ornith	tail0	new	r2	after	26	6161	128	554027b2e750			limit
+ornith	tail0	new	r2	back	510	5440	128	0daa4913d611			limit
+ornmtp	def	base	r1	fresh	5956	0	128	7e5655b2b10f	117	88	limit
+ornmtp	def	base	r1	turn	17	6083	128	e687cd5625f3	141	80	limit
+ornmtp	def	base	r1	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	def	base	r1	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	def	base	r1	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	def	base	r1	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	def	base	r2	fresh	5956	0	128	7e5655b2b10f	120	87	limit
+ornmtp	def	base	r2	turn	17	6083	128	e687cd5625f3	138	81	limit
+ornmtp	def	base	r2	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	def	base	r2	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	def	base	r2	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	def	base	r2	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	def	new	r1	fresh	5956	0	128	7e5655b2b10f	117	88	limit
+ornmtp	def	new	r1	turn	17	6083	128	e687cd5625f3	141	80	limit
+ornmtp	def	new	r1	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	def	new	r1	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	def	new	r1	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	def	new	r1	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	def	new	r2	fresh	5956	0	128	7e5655b2b10f	120	87	limit
+ornmtp	def	new	r2	turn	17	6083	128	e687cd5625f3	138	81	limit
+ornmtp	def	new	r2	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	def	new	r2	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	def	new	r2	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	def	new	r2	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	mask	base	r1	fresh	5956	0	128	7e5655b2b10f	117	88	limit
+ornmtp	mask	base	r1	turn	17	6083	128	e687cd5625f3	141	80	limit
+ornmtp	mask	base	r1	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	mask	base	r1	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	mask	base	r1	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	mask	base	r1	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	mask	base	r2	fresh	5956	0	128	7e5655b2b10f	120	87	limit
+ornmtp	mask	base	r2	turn	17	6083	128	e687cd5625f3	138	81	limit
+ornmtp	mask	base	r2	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	mask	base	r2	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	mask	base	r2	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	mask	base	r2	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	mask	new	r1	fresh	5956	0	128	7e5655b2b10f	117	88	limit
+ornmtp	mask	new	r1	turn	17	6083	128	e687cd5625f3	141	80	limit
+ornmtp	mask	new	r1	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	mask	new	r1	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	mask	new	r1	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	mask	new	r1	back	510	5440	128	97db2da1141d	112	89	limit
+ornmtp	mask	new	r2	fresh	5956	0	128	7e5655b2b10f	120	87	limit
+ornmtp	mask	new	r2	turn	17	6083	128	e687cd5625f3	138	81	limit
+ornmtp	mask	new	r2	edit	577	5440	128	7e3ebfd1b5a7	130	83	limit
+ornmtp	mask	new	r2	cancel			24	77aa885256e2			cancelled after 24 chunks
+ornmtp	mask	new	r2	after	26	6161	128	4b2d18b08244	117	87	limit
+ornmtp	mask	new	r2	back	510	5440	128	97db2da1141d	112	89	limit

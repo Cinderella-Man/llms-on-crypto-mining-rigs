@@ -1,0 +1,11 @@
+model	build	setting	requests with def's token ids	first request that differs
+fn	base	tail0	12 of 12	none
+fn	base	mask	12 of 12	none
+fn	new	tail0	12 of 12	none
+fn	new	mask	12 of 12	none
+ornith	base	tail0	12 of 12	none
+ornith	base	mask	12 of 12	none
+ornith	new	tail0	12 of 12	none
+ornith	new	mask	12 of 12	none
+ornmtp	base	mask	12 of 12	none
+ornmtp	new	mask	12 of 12	none

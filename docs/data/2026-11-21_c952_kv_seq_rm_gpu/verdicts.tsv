@@ -1,0 +1,9 @@
+model	setting	requests the same (tokens, prompt_n, cache_n, drafts)	event lists	events base/new	restores base/new	full re-reads base/new	asserts or mask mismatches base/new	verdict
+fn	def	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+fn	tail0	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+fn	mask	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+ornith	def	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+ornith	tail0	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+ornith	mask	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+ornmtp	def	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS
+ornmtp	mask	12 of 12	same	40/40	6/6	0/0	0/0	same	PASS

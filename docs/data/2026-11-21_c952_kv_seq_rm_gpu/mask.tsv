@@ -1,0 +1,7 @@
+model	setting	build	masks identical to the host's	from the resident copy	after a full upload	steps with changed cells listed	changed cells summed	largest list	mismatches
+fn	mask	base	0	0	0	0	0	0	0
+fn	mask	new	0	0	0	0	0	0	0
+ornith	mask	base	4110	4080	30	0	0	0	0
+ornith	mask	new	4110	4080	30	0	0	0	0
+ornmtp	mask	base	3312	3276	36	1341	3109	3	0
+ornmtp	mask	new	3312	3276	36	1341	3109	3	0
