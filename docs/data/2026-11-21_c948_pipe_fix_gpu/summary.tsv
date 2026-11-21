@@ -1,0 +1,15 @@
+step	model	build	rc	pipelined jobs	jobs differing	jobs with other tokens	plain tokens hash	plain logits hash
+random	qwen4exp	ref	1	13	13	0	4c74b9f8e110cde1	07ab7e5b03f196e4
+random	qwen4exp	ref-fuse0	0	13	0	0	4c74b9f8e110cde1	07ab7e5b03f196e4
+random	qwen4exp	new	0	13	0	0	4c74b9f8e110cde1	07ab7e5b03f196e4
+random	flint	ref	0	13	0	0	7f02660cc77ddd71	a80fd54f9b84fa1d
+random	flint	ref-fuse0	0	13	0	0	7f02660cc77ddd71	a80fd54f9b84fa1d
+random	flint	new	0	13	0	0	7f02660cc77ddd71	a80fd54f9b84fa1d
+fnreal	swift-q2	ref	1	7	7	7	fc5830f6e0f13ec0	aa85fb9f8145b66c
+fnreal	swift-q2	new	0	7	0	0	fc5830f6e0f13ec0	aa85fb9f8145b66c
+fn	swift-q2	ref	1	13	13	13	1080aa0a831751d6	e1b3af3c4be3e6bc
+fn	swift-q2	new	0	13	0	0	1080aa0a831751d6	e1b3af3c4be3e6bc
+fnp	pmix-q2-fast	ref	1	13	13	13	dd31fa51c5f8d214	2347d1bf176d0b1a
+fnp	pmix-q2-fast	new	0	13	0	0	dd31fa51c5f8d214	2347d1bf176d0b1a
+flint	flint-q8	ref	0	7	0	0	762ba7ad25ca5a25	b75e5a659077b637
+flint	flint-q8	new	0	7	0	0	762ba7ad25ca5a25	b75e5a659077b637
