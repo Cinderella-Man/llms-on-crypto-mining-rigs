@@ -1,0 +1,73 @@
+run	reference	req	pieces	first_different_token	largest_logprob_difference_before	reference_top1_minus_run_token	run_top1_minus_reference_token	first_token_top3_logprob_difference
+head/v5c	head/srv	fresh-30	same	none of 64	0	-	-	0
+head/v5c	head/srv	fresh-302	same	none of 64	0	-	-	0
+head/v5c	head/srv	fresh-516	same	none of 64	0	-	-	0
+head/v5c	head/srv	fresh-520	differ	6	0.252	0.311	0.139	0.163
+head/v5c	head/srv	fresh-569	differ	40	0.568	nan	0.0681	0.0399
+head/v5c	head/srv	fresh-577	differ	35	0.903	0.283	1.25	0.0286
+head/v5c	head/srv	cont-577	differ	22	0.945	0.026	nan	0.491
+head/v5c	head/srv	fresh-583	differ	1	0.172	0.0526	0.0953	0.172
+head/v5c	head/srv	fresh-599	differ	0	0.118	0.139	0.0785	0.118
+head/v5c	head/srv	fresh-610	differ	18	0.621	0.00222	0.0587	0.275
+head/v5c	head/srv	fresh-775	differ	none of 64	0.809	-	-	0.507
+head/v5c	head/srv	fresh-803	differ	30	0.707	0.0391	0.00906	0.00254
+head/v5c	head/srv	fresh-815	differ	10	0.85	0.0258	0.0593	0.172
+head/v5c	head/srv	fresh-896	differ	38	0.318	0.208	0.134	0.0121
+head/v5c	head/srv	fresh-936	differ	7	0.882	0.199	0.175	0.882
+head/v5c	head/srv	fresh-1086	differ	50	2.43	0.0468	0.479	0.0128
+head/v5c	head/srv	fresh-1130	differ	19	0.54	0.00183	0.298	0.0683
+head/v5c	head/srv	fresh-1300	differ	27	0.555	0.00816	0.018	0.0638
+head/v5c	head/srv	fresh-1359	differ	0	0	0.0642	0.457	nan
+head/v5c	head/srv	fresh-1400	differ	56	0.434	nan	0.0644	0.172
+head/v5c	head/srv	fresh-1534	same	none of 64	0	-	-	0
+head/v5c	head/srv	edit-1534	same	none of 64	0	-	-	0
+head/v5c	head/srv	fresh-1985	same	none of 64	0	-	-	0
+head/v5c	head/srv	fresh-3313	same	none of 64	0	-	-	0
+head/s2048c	head/s2048	fresh-30	same	none of 64	0	-	-	0
+head/s2048c	head/s2048	fresh-302	same	none of 64	0	-	-	0
+head/s2048c	head/s2048	fresh-516	same	none of 64	0	-	-	0
+head/s2048c	head/s2048	fresh-520	differ	6	0.252	0.311	0.139	0.163
+head/s2048c	head/s2048	fresh-569	differ	40	0.568	nan	0.0681	0.0399
+head/s2048c	head/s2048	fresh-577	differ	35	0.903	0.283	1.25	0.0286
+head/s2048c	head/s2048	cont-577	differ	22	0.945	0.026	nan	0.491
+head/s2048c	head/s2048	fresh-583	differ	1	0.172	0.0526	0.0953	0.172
+head/s2048c	head/s2048	fresh-599	differ	0	0.118	0.139	0.0785	0.118
+head/s2048c	head/s2048	fresh-610	differ	18	0.621	0.00222	0.0587	0.275
+head/s2048c	head/s2048	fresh-775	differ	none of 64	0.809	-	-	0.507
+head/s2048c	head/s2048	fresh-803	differ	30	0.707	0.0391	0.00906	0.00254
+head/s2048c	head/s2048	fresh-815	differ	10	0.85	0.0258	0.0593	0.172
+head/s2048c	head/s2048	fresh-896	differ	38	0.318	0.208	0.134	0.0121
+head/s2048c	head/s2048	fresh-936	differ	7	0.882	0.199	0.175	0.882
+head/s2048c	head/s2048	fresh-1086	differ	50	2.43	0.0468	0.479	0.0128
+head/s2048c	head/s2048	fresh-1130	differ	19	0.54	0.00183	0.298	0.0683
+head/s2048c	head/s2048	fresh-1300	differ	27	0.555	0.00816	0.018	0.0638
+head/s2048c	head/s2048	fresh-1359	differ	0	0	0.0642	0.457	nan
+head/s2048c	head/s2048	fresh-1400	differ	56	0.434	nan	0.0644	0.172
+head/s2048c	head/s2048	fresh-1534	differ	none of 64	0.548	-	-	0.0862
+head/s2048c	head/s2048	edit-1534	differ	none of 64	0	-	-	0
+head/s2048c	head/s2048	fresh-1985	differ	6	0.651	1.39	0.889	0.651
+head/s2048c	head/s2048	fresh-3313	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-30	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-302	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-516	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-520	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-569	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-577	same	none of 64	0	-	-	0
+head/s2048	head/srv	cont-577	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-583	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-599	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-610	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-775	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-803	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-815	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-896	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-936	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-1086	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-1130	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-1300	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-1359	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-1400	same	none of 64	0	-	-	0
+head/s2048	head/srv	fresh-1534	differ	5	0.211	0.0255	0.246	0.0497
+head/s2048	head/srv	edit-1534	differ	none of 64	0.427	-	-	0.1
+head/s2048	head/srv	fresh-1985	differ	11	1.18	0.196	0.0702	0.846
+head/s2048	head/srv	fresh-3313	same	none of 64	0	-	-	0
