@@ -1,0 +1,9 @@
+arm	load	rss_anon_start_mib	rss_anon_peak_mib	peak_after_s	rss_anon_up_mib	rss_file_peak_mib
+new-unset	1	97	550	8.28	550	46241
+new-unset	2	801	850	2.18	850	46275
+new-dev0	1	97	550	8.75	550	46241
+new-dev0	2	801	903	8.41	903	46275
+base-dev0	1	97	824	8.06	550	46237
+base-dev0	2	851	1352	6.62	852	46266
+base-unset	1	98	550	8.29	550	46237
+base-unset	2	801	849	1.01	849	46266

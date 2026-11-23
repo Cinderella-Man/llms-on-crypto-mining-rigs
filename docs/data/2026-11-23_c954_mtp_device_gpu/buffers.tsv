@@ -1,0 +1,39 @@
+arm	load	line	mib
+new-unset	1	CPU_Mapped model buffer	772.97
+new-unset	1	CUDA0 model buffer	14282.09
+new-unset	1	CUDA1 model buffer	15470.09
+new-unset	1	CUDA2 model buffer	15428.33
+new-unset	2	CPU_Mapped model buffer	772.97
+new-unset	2	CUDA0 model buffer	14282.09
+new-unset	2	CUDA1 model buffer	15470.09
+new-unset	2	CUDA2 model buffer	15428.33
+new-dev0	1	CPU_Mapped model buffer	772.97
+new-dev0	1	CUDA0 model buffer	15184.42
+new-dev0	1	CUDA1 model buffer	15470.09
+new-dev0	1	CUDA2 model buffer	14526.01
+new-dev0	1	CUDA0 model buffer	500.17
+new-dev0	1	MTP output head copied to CUDA0	500.2
+new-dev0	2	CPU_Mapped model buffer	772.97
+new-dev0	2	CUDA0 model buffer	15184.42
+new-dev0	2	CUDA1 model buffer	15470.09
+new-dev0	2	CUDA2 model buffer	14526.01
+new-dev0	2	CUDA0 model buffer	500.17
+new-dev0	2	MTP output head copied to CUDA0	500.2
+base-dev0	1	CPU_Mapped model buffer	772.97
+base-dev0	1	CUDA0 model buffer	15184.42
+base-dev0	1	CUDA1 model buffer	15470.09
+base-dev0	1	CUDA2 model buffer	14526.01
+base-dev0	1	MTP output head copied to CUDA0	500.2
+base-dev0	2	CPU_Mapped model buffer	772.97
+base-dev0	2	CUDA0 model buffer	15184.42
+base-dev0	2	CUDA1 model buffer	15470.09
+base-dev0	2	CUDA2 model buffer	14526.01
+base-dev0	2	MTP output head copied to CUDA0	500.2
+base-unset	1	CPU_Mapped model buffer	772.97
+base-unset	1	CUDA0 model buffer	14282.09
+base-unset	1	CUDA1 model buffer	15470.09
+base-unset	1	CUDA2 model buffer	15428.33
+base-unset	2	CPU_Mapped model buffer	772.97
+base-unset	2	CUDA0 model buffer	14282.09
+base-unset	2	CUDA1 model buffer	15470.09
+base-unset	2	CUDA2 model buffer	15428.33
