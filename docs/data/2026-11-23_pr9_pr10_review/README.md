@@ -19,6 +19,9 @@ Result pages: registry rows Q1702, Q1703, Q1704 (pull request 9) and Q1705 (pull
 - On one RTX 3090 through the compute 6.1 PTX, `test-backend-ops`' attention suite passes 4,679 of 4,679 with nothing
   set and with each new switch and all of them set. The output fault makes 227 cases fail with all switches set: every
   case the base's Pascal kernel takes, the new cases, and the 1–7-row cases `_MIN=1` routes to the Pascal kernels.
+- Both were merged into `pascal-p106-v5` the same day (10 as `7b2b683af`, then 9 as `747d81040`, the review branch's
+  tree). One fix followed on top: the decode kernel now reads its mask as 8-byte vectors
+  ([below](#the-mask-fix-14d679604)). `pascal-p106-v5` is `14d679604`.
 
 ## What was built
 
@@ -28,6 +31,8 @@ Result pages: registry rows Q1702, Q1703, Q1704 (pull request 9) and Q1705 (pull
 | pull request [#9](https://github.com/Cinderella-Man/miner-llama/pull/9) | `a01fe66d1` | three switches, off by default, in `ggml/src/ggml-cuda/fattn-tile-pascal.cu` for a Q8_0 K/V cache on compute 6.1: `GGML_CUDA_FATTN_TILE_PASCAL_LDS=1` (Q8_0 loads decoded at store in the tile kernel), `GGML_CUDA_FATTN_DEC_PASCAL=N` (a decode kernel for head 256 and up to N rows; 1 and 2 rows need `GGML_CUDA_FATTN_TILE_PASCAL_MIN=1`), `GGML_CUDA_FATTN_TILE_PASCAL_KDP=1` (Q8_0 K scored with `dp4a` in the tile kernel at head 256); a routing check in `fattn.cu`; 20 `FLASH_ATTN_EXT` test cases at head 256 |
 | pull request [#10](https://github.com/Cinderella-Man/miner-llama/pull/10) | `debd2adbe` | `LLAMA_PIPE_MEDIA`, off by default: `1` lets text requests use the pipe and in-call checkpoints when an image projector (`--mmproj`) is loaded, `2` also runs the pipe with images in the cache |
 | head | **`82d9eb5ef`** | `c998c6cb4` with both merged (`--no-ff`), branch `pascal-p106-v5-contrib2` |
+| merged | `747d81040` | `pascal-p106-v5` after the pull requests' own merges (10 as `7b2b683af`, then 9): the same tree as the head |
+| fix | **`14d679604`** | the decode kernel's mask read as `uint2`, branch `pascal-p106-v5-dec-mask`; `pascal-p106-v5` was fast-forwarded to it |
 
 ## Builds
 
@@ -97,8 +102,9 @@ is one more copy of each because the decode kernel's launch instantiates `launch
 
 **The decode kernel's mask reads.** In the compute 6.1 PTX, the kernel's two reads of the mask are 16-byte vector
 loads (`ld.global.v4.u32`) at addresses that are 8-byte aligned for every other batch of 4 keys. The sm_61 SASS has
-them as 8-byte loads (`LDG.E.64`): the compiler dropped the unused upper half. The code relies on that. Reading the
-mask as `uint2` (4 halves, the batch's 4 keys) makes it hold without the compiler's help.
+them as 8-byte loads (`LDG.E.64`): the compiler dropped the unused upper half. The fix (`14d679604`,
+[below](#the-mask-fix-14d679604)) reads the mask as `uint2`, 4 halves for the batch's 4 keys, so the PTX itself asks for
+8 aligned bytes inside the slice.
 
 ### The attention suite on an RTX 3090
 
@@ -135,7 +141,22 @@ CUDA and skipped, on both builds alike.
 
     The contributor's own fault count on a GTX 1070 is also 227.
 - **The decode kernel ran through the PTX without a fault**, although its two mask reads are 16-byte vector loads at
-  8-byte-aligned addresses there (the paragraph above on the mask reads). The driver's compiler drops the unused half as ptxas does for sm_61.
+  8-byte-aligned addresses there (the paragraph above on the mask reads). The driver's compiler drops the unused half
+  as ptxas does for sm_61.
+
+### The mask fix (`14d679604`)
+
+`flash_attn_dec_pascal` read each batch's mask as a `uint4` (8 halves), although a batch is 4 keys. The fix reads it
+as one `uint2` and builds the two mask words from `.x` and `.y`. A `static_assert` ties the read to the batch's key
+count. It was built and checked with the same driver against the review branch's build (`82d9eb5ef`, the tree of
+`747d81040`): steps `src rig sass fa`, 15:13–15:35.
+
+| Check | Result |
+|---|---|
+| Rig build ([fix_sass_summary.txt](fix_sass_summary.txt)) | rc 0; `llama.cpp-20261123-14d679604-pascal-p106-v5-dec-mask.tar.gz`, 842,625,429 bytes, md5 `d8dd415dea36f9d064ce67e65840c218`; the same 38 distinct warning lines, none new |
+| Card code against `82d9eb5ef` | **8,840 of 8,841 kernels identical**, none new, none missing. The decode kernel has the same 2,886 instructions, registers (168), stack (0) and shared memory (12,672 bytes). Its 8 differing lines are all zeroing moves (`MOV Rx, RZ`) in another order |
+| The decode kernel's mask reads | PTX: 2 × `ld.global.v2.u32` (were `ld.global.v4.u32`). sm_61 SASS: 2 × `LDG.E.64` at the same two places: 8 bytes each, the batch's 4 keys, inside the warp's 32-key slice |
+| `FLASH_ATTN_EXT` on an RTX 3090 through the compute 6.1 PTX ([fix_fa.tsv](fix_fa.tsv)) | nothing set: 4,679 of 4,679; `=2 _MIN=1 _DEC_PASCAL=4`: 4,679 of 4,679, the decode kernel logged; all switches: 4,679 of 4,679; all switches with `_FAULT=1`: 227 fail, as before the fix |
 
 ## Files
 
@@ -149,6 +170,8 @@ CUDA and skipped, on both builds alike.
 | [sass_differing.tsv](sass_differing.tsv) | the three kernels with one more copy, their SHA-1 and why |
 | [pascal_kernels.tsv](pascal_kernels.tsv) | the Pascal attention kernels: SHA-1, instruction counts, registers, stack and shared memory, base and head |
 | [fa.tsv](fa.tsv) | the attention suite's arms: build, switches, exit code, passed, failed, unsupported, which Pascal kernels logged |
+| [fix_sass_summary.txt](fix_sass_summary.txt) | the mask fix against the review branch: card-code counts, the decode kernel's loads in the SASS and the PTX, its resources |
+| [fix_fa.tsv](fix_fa.tsv) | the mask fix's attention-suite arms |
 | [run/run.sh](run/run.sh) | the driver: steps `src`, `rig`, `cpu`, `archs`, `server`, `sass`, `fa` |
 | [run/client.py](run/client.py), [run/compare.py](run/compare.py) | the server check's client and table |
 
@@ -196,6 +219,17 @@ env $P=2 ${P}_LDS=1 ${P}_KDP=1 ${P}_MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4 ${P}_FAUL
 
 Every container ran with `--cpu-shares=256` (CPU ones also with `--network none --memory=16g`). The GPU arms ran one
 at a time on one card, with the PTX JIT's cache shared between them. No speed was measured.
+
+The mask fix, the same driver against the review branch's build (the name cut applies to both builds, so a base that
+already has the kernel's new flags compares too):
+
+```bash
+W=<work dir> SEED=<the review run's clone> REF=fork/pascal-p106-v5-dec-mask \
+HEAD_SHA=14d67960410bd3d6ff1f9ac819ce69c9c6f9396f BASE_SHA=82d9eb5ef243c6166c5095ead1d7d8e43eb8a9cf \
+BASE_RIG=<the review branch's rig build folder> BASE_RIG_LOG=<its build log> VOCAB=<a gguf with a tokenizer> \
+REPO=<scripts> RIG_CCACHE=<the review run's rig ccache> LOCK=<build lock> JOBS=8 GPU=2 PREFLIGHT=<a CUDA check> \
+STEPS="src rig sass fa" FA_ARMS="head-plain head-dec head-all head-all-fault" bash run.sh
+```
 
 ## Provenance and licence
 

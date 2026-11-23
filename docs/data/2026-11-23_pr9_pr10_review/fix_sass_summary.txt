@@ -1,0 +1,26 @@
+484379ee8d971ce67d5720aca242899a  llama.cpp-20261123-82d9eb5ef-pascal-p106-v5-contrib2/bin/llama-server
+e7f8943ce75c33015d4d7308db252056  llama.cpp-20261123-14d679604-pascal-p106-v5-dec-mask/bin/llama-server
+base kernels (names): 8841; identical in new with kq_fp32 off: 8840; different: 1; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 176
+kq_fp32=true kernels' SHA-1, base against head: identical
+kernels compared: 1; differing only in MOV32I constants: 0; differing otherwise: 1
+OTHER: other lines differ void (anonymous namespace)::flash_attn_dec_pascal<256>(char const*, char const*, char const*, char const*, char const*, int const*, int const*, float*, float2*, float, float, float, float, unsigned int, float, int, uint3, int, int, int, int, int, int, int, int, int, int, int, long, int, int, long, int, int, int, int, long, long)
+flash_attn_dec_pascal	reorder	1
+differing kernels: 1; only in head: 0; missing in head: 0
+flash_attn_dec_pascal<256>, base SHA-1 6f96396b6ebdef53027b317e7f6ddd15db6b0b45, head f05169dca092790dfe0a830a297bf3210c698c89, 2886 instructions on both; the 8 differing lines are all zeroing moves (MOV Rx, RZ) in another order
+decode kernel, sm_61 SASS memory instructions (head):
+      1 LDG.E
+     16 LDG.E.128
+      2 LDG.E.64
+     64 LDG.E.CI
+     72 LDS.U.128
+     16 LDS.U.32
+      4 STG.E.128
+      1 STG.E.64
+     64 STS.128
+decode kernel, compute_61 PTX global loads (head):
+     64 ld.global.nc.s32
+      1 ld.global.u32
+      2 ld.global.v2.u32
+     16 ld.global.v4.f32
+registers, stack, shared (head):
+  REG:168 STACK:0 SHARED:12672 LOCAL:0 CONSTANT[0]:536 TEXTURE:0 SURFACE:0 SAMPLER:0

@@ -17,8 +17,8 @@
 #           compare.py writes server.tsv
 #   sass    cuobjdump -sass of both llama-servers, one SHA-1 per kernel (sass_compare.py, from
 #           docs/data/2026-11-17_c861a_fp32_scale/run/). The head's Pascal tile kernel has two more template flags (lds,
-#           kdp); its name is cut back to the base's form where both are false, so the default kernels are compared
-#           with the base's. Every differing kernel is extracted, compared line by line and classified (sass_classify.py,
+#           kdp); its name is cut back to the old form where both are false (in both builds, so a base that already
+#           has the flags compares too), and the default kernels are compared with the base's. Every differing kernel is extracted, compared line by line and classified (sass_classify.py,
 #           from docs/data/2026-11-17_c854b_upstream_newest/run/); then each build's register, stack and shared memory
 #           use of the Pascal attention kernels (cuobjdump -res-usage), and the decode kernel's global loads in the
 #           SASS and in the compute_61 PTX (the PTX is what a newer card compiles)
@@ -26,6 +26,8 @@
 #           FA_ARMS (below). GGML_CUDA_FATTN_TILE_PASCAL=2 makes the Pascal kernels take their cases on a card that is
 #           not compute 6.1 (on compute 6.1 they do so by default); _FAULT=1 scales their output by 1.05, so every case
 #           they take must fail (a check that the cases reach them)
+# The fix of the decode kernel's mask read (C973) ran the same script with REF=fork/pascal-p106-v5-dec-mask,
+# HEAD_SHA and BASE_SHA set, BASE_RIG the review branch's build and STEPS="src rig sass fa".
 # Usage: W=<work dir> SEED=<llama.cpp clone with the base commit> BASE_RIG=<base rig build folder>
 #   BASE_RIG_LOG=<its build log> VOCAB=<gguf with a tokenizer> REPO=<folder with build_llamacpp_docker.sh cpu_tests.sh
 #   sass_compare.py sass_classify.py client.py compare.py> [RIG_CCACHE=<dir>] [CPU_CCACHE=<dir>] [BASE_CTEST=<ctest
@@ -206,10 +208,10 @@ if step sass; then
     B=$BASE_RIG/bin/llama-server
     N=$T/bin/llama-server
     cuo() { local d; d=$(dirname "$2"); docker run --rm $LBL --cpu-shares=256 --network none -v "$d:$d:ro" "$IMAGE" cuobjdump "$1" "$2"; }
-    # the head's tile kernel with lds = kdp = false gets the base's name: flash_attn_tile_pascal<D, K, V, split>
+    # the tile kernel with lds = kdp = false gets its old name, flash_attn_tile_pascal<D, K, V, split>, in both builds
     cut_flags() { sed -E 's/(flash_attn_tile_pascal<[0-9]+, \(ggml_type\)[0-9]+, \(ggml_type\)[0-9]+, (true|false)), false, false>/\1>/'; }
     md5sum "$B" "$N" > "$S/md5.txt"
-    cuo -sass "$B" | nice -n 19 c++filt > "$S/dump-B.txt"
+    cuo -sass "$B" | nice -n 19 c++filt | cut_flags > "$S/dump-B.txt"
     cuo -sass "$N" | nice -n 19 c++filt | cut_flags > "$S/dump-N.txt"
     nice -n 19 python3 -I "$REPO/sass_compare.py" hash < "$S/dump-B.txt" > "$S/h-B.tsv"
     nice -n 19 python3 -I "$REPO/sass_compare.py" hash < "$S/dump-N.txt" > "$S/h-N.tsv"
