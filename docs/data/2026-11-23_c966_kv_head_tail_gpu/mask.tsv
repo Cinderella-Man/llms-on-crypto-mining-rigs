@@ -1,0 +1,5 @@
+setting	build	masks identical to the host's	from the resident copy	after a full upload	steps with changed cells listed	changed cells summed	largest list	mismatches
+mask	base	9248	9168	80	3789	8997	3	0
+mask	new	9248	9168	80	3789	8997	3	0
+mask0	base	9170	9090	80	3755	8787	3	0
+mask0	new	9170	9090	80	3755	8787	3	0

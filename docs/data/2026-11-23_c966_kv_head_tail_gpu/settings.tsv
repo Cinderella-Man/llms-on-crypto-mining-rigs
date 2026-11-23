@@ -1,0 +1,9 @@
+build	setting	against	requests with the same token ids	requests that differ (at the reply's token index, from 0)
+base	tail0	def	14 of 32	r1 s1-back @29, r1 s0-sturn @25, r1 s0-sedit @108, r1 s1-bturn @8, r1 s1-bedit @20, r2 s0-fresh @28, r2 s1-fresh @26, r2 s0-turn @0, r2 s1-turn @6, r2 s0-edit @3, r2 s1-edit @5, r2 s0-cancel @5, r2 s0-after @13, r2 s1-after @1, r2 s0-sturn @22, r2 s0-sedit @111, r2 s1-bturn @65, r2 s1-bedit @20
+base	mask	def	32 of 32	none
+base	mask0	mask	14 of 32	r1 s1-back @29, r1 s0-sturn @25, r1 s0-sedit @108, r1 s1-bturn @8, r1 s1-bedit @20, r2 s0-fresh @28, r2 s1-fresh @26, r2 s0-turn @0, r2 s1-turn @6, r2 s0-edit @3, r2 s1-edit @5, r2 s0-cancel @5, r2 s0-after @13, r2 s1-after @1, r2 s0-sturn @22, r2 s0-sedit @111, r2 s1-bturn @65, r2 s1-bedit @20
+base	mask0	tail0	32 of 32	none
+new	tail0	def	14 of 32	r1 s1-back @29, r1 s0-sturn @25, r1 s0-sedit @108, r1 s1-bturn @8, r1 s1-bedit @20, r2 s0-fresh @28, r2 s1-fresh @26, r2 s0-turn @0, r2 s1-turn @6, r2 s0-edit @3, r2 s1-edit @5, r2 s0-cancel @5, r2 s0-after @13, r2 s1-after @1, r2 s0-sturn @22, r2 s0-sedit @111, r2 s1-bturn @65, r2 s1-bedit @20
+new	mask	def	32 of 32	none
+new	mask0	mask	14 of 32	r1 s1-back @29, r1 s0-sturn @25, r1 s0-sedit @108, r1 s1-bturn @8, r1 s1-bedit @20, r2 s0-fresh @28, r2 s1-fresh @26, r2 s0-turn @0, r2 s1-turn @6, r2 s0-edit @3, r2 s1-edit @5, r2 s0-cancel @5, r2 s0-after @13, r2 s1-after @1, r2 s0-sturn @22, r2 s0-sedit @111, r2 s1-bturn @65, r2 s1-bedit @20
+new	mask0	tail0	32 of 32	none

@@ -1,0 +1,9 @@
+setting	build	requests whose round-2 token ids are round 1's	requests whose round-2 placements are round 1's (heads and used cells)	round-2 requests that differ in tokens
+def	base	16 of 16	11 of 16	none
+def	new	16 of 16	11 of 16	none
+mask	base	16 of 16	11 of 16	none
+mask	new	16 of 16	11 of 16	none
+mask0	base	3 of 16	0 of 16	s0-fresh, s1-fresh, s0-turn, s1-turn, s0-edit, s1-edit, s0-cancel, s0-after, s1-after, s1-back, s0-sturn, s0-sedit, s1-bturn
+mask0	new	3 of 16	0 of 16	s0-fresh, s1-fresh, s0-turn, s1-turn, s0-edit, s1-edit, s0-cancel, s0-after, s1-after, s1-back, s0-sturn, s0-sedit, s1-bturn
+tail0	base	3 of 16	0 of 16	s0-fresh, s1-fresh, s0-turn, s1-turn, s0-edit, s1-edit, s0-cancel, s0-after, s1-after, s1-back, s0-sturn, s0-sedit, s1-bturn
+tail0	new	3 of 16	0 of 16	s0-fresh, s1-fresh, s0-turn, s1-turn, s0-edit, s1-edit, s0-cancel, s0-after, s1-after, s1-back, s0-sturn, s0-sedit, s1-bturn

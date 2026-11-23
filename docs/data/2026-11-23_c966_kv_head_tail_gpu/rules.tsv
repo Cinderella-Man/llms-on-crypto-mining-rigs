@@ -1,0 +1,5 @@
+build	default	head rule 0	requests whose placements differ	where they first part
+base	def	tail0	21 of 32	r1 s1-back: head 10374/1124, used 5415/5415
+base	mask	mask0	21 of 32	r1 s1-back: head 10374/1124, used 5415/5415
+new	def	tail0	21 of 32	r1 s1-back: head 10374/1124, used 5415/5415
+new	mask	mask0	21 of 32	r1 s1-back: head 10374/1124, used 5415/5415

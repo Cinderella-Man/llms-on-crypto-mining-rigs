@@ -1,0 +1,257 @@
+setting	build	round	request	prompt_n	cache_n	n_gen	tokens_md5	drafted	accepted	stop	placements
+def	base	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+def	base	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+def	base	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+def	base	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+def	base	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+def	base	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+def	base	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+def	base	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+def	base	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+def	base	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+def	base	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+def	base	r1	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+def	base	r1	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+def	base	r1	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+def	base	r1	s1-bturn	16	4928	128	a73e87db6e3d	126	84	limit	216
+def	base	r1	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+def	base	r2	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+def	base	r2	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+def	base	r2	s0-turn	17	6083	128	36052d9a096e	121	86	limit	209
+def	base	r2	s1-turn	17	4934	128	40b3d328eae6	143	79	limit	244
+def	base	r2	s0-edit	576	5440	128	b4794830462a	143	79	limit	246
+def	base	r2	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+def	base	r2	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+def	base	r2	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+def	base	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+def	base	r2	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+def	base	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+def	base	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+def	base	r2	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+def	base	r2	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+def	base	r2	s1-bturn	16	4928	128	a73e87db6e3d	123	85	limit	211
+def	base	r2	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+def	new	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+def	new	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+def	new	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+def	new	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+def	new	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+def	new	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+def	new	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+def	new	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+def	new	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+def	new	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+def	new	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+def	new	r1	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+def	new	r1	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+def	new	r1	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+def	new	r1	s1-bturn	16	4928	128	a73e87db6e3d	126	84	limit	216
+def	new	r1	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+def	new	r2	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+def	new	r2	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+def	new	r2	s0-turn	17	6083	128	36052d9a096e	121	86	limit	209
+def	new	r2	s1-turn	17	4934	128	40b3d328eae6	143	79	limit	244
+def	new	r2	s0-edit	576	5440	128	b4794830462a	143	79	limit	246
+def	new	r2	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+def	new	r2	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+def	new	r2	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+def	new	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+def	new	r2	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+def	new	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+def	new	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+def	new	r2	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+def	new	r2	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+def	new	r2	s1-bturn	16	4928	128	a73e87db6e3d	123	85	limit	211
+def	new	r2	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+mask	base	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+mask	base	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+mask	base	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+mask	base	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+mask	base	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+mask	base	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+mask	base	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+mask	base	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+mask	base	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask	base	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+mask	base	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask	base	r1	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+mask	base	r1	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+mask	base	r1	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+mask	base	r1	s1-bturn	16	4928	128	a73e87db6e3d	126	84	limit	216
+mask	base	r1	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+mask	base	r2	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+mask	base	r2	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+mask	base	r2	s0-turn	17	6083	128	36052d9a096e	121	86	limit	209
+mask	base	r2	s1-turn	17	4934	128	40b3d328eae6	143	79	limit	244
+mask	base	r2	s0-edit	576	5440	128	b4794830462a	143	79	limit	246
+mask	base	r2	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+mask	base	r2	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+mask	base	r2	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+mask	base	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask	base	r2	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+mask	base	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask	base	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+mask	base	r2	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+mask	base	r2	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+mask	base	r2	s1-bturn	16	4928	128	a73e87db6e3d	123	85	limit	211
+mask	base	r2	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+mask	new	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+mask	new	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+mask	new	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+mask	new	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+mask	new	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+mask	new	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+mask	new	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+mask	new	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+mask	new	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask	new	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+mask	new	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask	new	r1	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+mask	new	r1	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+mask	new	r1	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+mask	new	r1	s1-bturn	16	4928	128	a73e87db6e3d	126	84	limit	216
+mask	new	r1	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+mask	new	r2	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+mask	new	r2	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+mask	new	r2	s0-turn	17	6083	128	36052d9a096e	121	86	limit	209
+mask	new	r2	s1-turn	17	4934	128	40b3d328eae6	143	79	limit	244
+mask	new	r2	s0-edit	576	5440	128	b4794830462a	143	79	limit	246
+mask	new	r2	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+mask	new	r2	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+mask	new	r2	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+mask	new	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask	new	r2	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+mask	new	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask	new	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+mask	new	r2	s0-sturn	17	1124	128	906f6221cd5f	132	83	limit	224
+mask	new	r2	s0-sedit	590	481	128	da6965ce18b0	150	76	limit	258
+mask	new	r2	s1-bturn	16	4928	128	a73e87db6e3d	123	85	limit	211
+mask	new	r2	s1-bedit	578	4291	128	71e3b219a471	115	88	limit	201
+mask0	base	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+mask0	base	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+mask0	base	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+mask0	base	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+mask0	base	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+mask0	base	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+mask0	base	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+mask0	base	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+mask0	base	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask0	base	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+mask0	base	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask0	base	r1	s1-back	510	4291	128	65dc28492bc2	110	90	limit	189
+mask0	base	r1	s0-sturn	17	1124	128	f9d4bacb7cfb	139	80	limit	239
+mask0	base	r1	s0-sedit	590	481	128	abe3542a979e	145	77	limit	253
+mask0	base	r1	s1-bturn	17	4928	128	0c31758bbed8	123	85	limit	211
+mask0	base	r1	s1-bedit	573	4291	128	95687f863a36	121	86	limit	211
+mask0	base	r2	s0-fresh	5956	0	128	846d4c123a4a	120	87	limit	226
+mask0	base	r2	s1-fresh	4807	0	128	6146ef86b7ea	129	84	limit	237
+mask0	base	r2	s0-turn	17	6083	128	ef34c301b13f	132	83	limit	224
+mask0	base	r2	s1-turn	17	4934	128	153a48915df1	121	86	limit	209
+mask0	base	r2	s0-edit	577	5440	128	3c1a0e9ab4bf	138	81	limit	236
+mask0	base	r2	s1-edit	581	4291	128	d0aa86376a5c	119	87	limit	206
+mask0	base	r2	s0-cancel			24	41b7a09b7b9a			cancelled after 24 chunks	89
+mask0	base	r2	s0-after	26	6161	128	b4efe8234a97	114	89	limit	194
+mask0	base	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask0	base	r2	s1-after	26	5016	128	883831a77ee9	106	91	limit	184
+mask0	base	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask0	base	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+mask0	base	r2	s0-sturn	17	1124	128	0ea971759254	134	82	limit	229
+mask0	base	r2	s0-sedit	590	481	128	219dc89cf5f6	148	76	limit	258
+mask0	base	r2	s1-bturn	16	4928	128	787323886d00	130	83	limit	224
+mask0	base	r2	s1-bedit	578	4291	128	95687f863a36	118	87	limit	206
+mask0	new	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+mask0	new	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+mask0	new	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+mask0	new	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+mask0	new	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+mask0	new	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+mask0	new	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+mask0	new	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+mask0	new	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask0	new	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+mask0	new	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask0	new	r1	s1-back	510	4291	128	65dc28492bc2	110	90	limit	189
+mask0	new	r1	s0-sturn	17	1124	128	f9d4bacb7cfb	139	80	limit	239
+mask0	new	r1	s0-sedit	590	481	128	abe3542a979e	145	77	limit	253
+mask0	new	r1	s1-bturn	17	4928	128	0c31758bbed8	123	85	limit	211
+mask0	new	r1	s1-bedit	573	4291	128	95687f863a36	121	86	limit	211
+mask0	new	r2	s0-fresh	5956	0	128	846d4c123a4a	120	87	limit	226
+mask0	new	r2	s1-fresh	4807	0	128	6146ef86b7ea	129	84	limit	237
+mask0	new	r2	s0-turn	17	6083	128	ef34c301b13f	132	83	limit	224
+mask0	new	r2	s1-turn	17	4934	128	153a48915df1	121	86	limit	209
+mask0	new	r2	s0-edit	577	5440	128	3c1a0e9ab4bf	138	81	limit	236
+mask0	new	r2	s1-edit	581	4291	128	d0aa86376a5c	119	87	limit	206
+mask0	new	r2	s0-cancel			24	41b7a09b7b9a			cancelled after 24 chunks	89
+mask0	new	r2	s0-after	26	6161	128	b4efe8234a97	114	89	limit	194
+mask0	new	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+mask0	new	r2	s1-after	26	5016	128	883831a77ee9	106	91	limit	184
+mask0	new	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+mask0	new	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+mask0	new	r2	s0-sturn	17	1124	128	0ea971759254	134	82	limit	229
+mask0	new	r2	s0-sedit	590	481	128	219dc89cf5f6	148	76	limit	258
+mask0	new	r2	s1-bturn	16	4928	128	787323886d00	130	83	limit	224
+mask0	new	r2	s1-bedit	578	4291	128	95687f863a36	118	87	limit	206
+tail0	base	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+tail0	base	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+tail0	base	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+tail0	base	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+tail0	base	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+tail0	base	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+tail0	base	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+tail0	base	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+tail0	base	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+tail0	base	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+tail0	base	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+tail0	base	r1	s1-back	510	4291	128	65dc28492bc2	110	90	limit	189
+tail0	base	r1	s0-sturn	17	1124	128	f9d4bacb7cfb	139	80	limit	239
+tail0	base	r1	s0-sedit	590	481	128	abe3542a979e	145	77	limit	253
+tail0	base	r1	s1-bturn	17	4928	128	0c31758bbed8	123	85	limit	211
+tail0	base	r1	s1-bedit	573	4291	128	95687f863a36	121	86	limit	211
+tail0	base	r2	s0-fresh	5956	0	128	846d4c123a4a	120	87	limit	226
+tail0	base	r2	s1-fresh	4807	0	128	6146ef86b7ea	129	84	limit	237
+tail0	base	r2	s0-turn	17	6083	128	ef34c301b13f	132	83	limit	224
+tail0	base	r2	s1-turn	17	4934	128	153a48915df1	121	86	limit	209
+tail0	base	r2	s0-edit	577	5440	128	3c1a0e9ab4bf	138	81	limit	236
+tail0	base	r2	s1-edit	581	4291	128	d0aa86376a5c	119	87	limit	206
+tail0	base	r2	s0-cancel			24	41b7a09b7b9a			cancelled after 24 chunks	89
+tail0	base	r2	s0-after	26	6161	128	b4efe8234a97	114	89	limit	194
+tail0	base	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+tail0	base	r2	s1-after	26	5016	128	883831a77ee9	106	91	limit	184
+tail0	base	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+tail0	base	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+tail0	base	r2	s0-sturn	17	1124	128	0ea971759254	134	82	limit	229
+tail0	base	r2	s0-sedit	590	481	128	219dc89cf5f6	148	76	limit	258
+tail0	base	r2	s1-bturn	16	4928	128	787323886d00	130	83	limit	224
+tail0	base	r2	s1-bedit	578	4291	128	95687f863a36	118	87	limit	206
+tail0	new	r1	s0-fresh	5956	0	128	a2980f188126	125	85	limit	236
+tail0	new	r1	s1-fresh	4807	0	128	f50199fef8b9	136	81	limit	252
+tail0	new	r1	s0-turn	17	6083	128	36052d9a096e	124	85	limit	214
+tail0	new	r1	s1-turn	17	4934	128	40b3d328eae6	140	80	limit	239
+tail0	new	r1	s0-edit	576	5440	128	b4794830462a	146	78	limit	251
+tail0	new	r1	s1-edit	578	4291	128	4a283e5b435d	115	88	limit	201
+tail0	new	r1	s0-cancel			24	88e1a4eb94b6			cancelled after 24 chunks	74
+tail0	new	r1	s0-after	26	6160	128	7e17b2312fce	127	84	limit	219
+tail0	new	r1	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+tail0	new	r1	s1-after	26	5013	128	d53cf7b46c3f	102	92	limit	176
+tail0	new	r1	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+tail0	new	r1	s1-back	510	4291	128	65dc28492bc2	110	90	limit	189
+tail0	new	r1	s0-sturn	17	1124	128	f9d4bacb7cfb	139	80	limit	239
+tail0	new	r1	s0-sedit	590	481	128	abe3542a979e	145	77	limit	253
+tail0	new	r1	s1-bturn	17	4928	128	0c31758bbed8	123	85	limit	211
+tail0	new	r1	s1-bedit	573	4291	128	95687f863a36	121	86	limit	211
+tail0	new	r2	s0-fresh	5956	0	128	846d4c123a4a	120	87	limit	226
+tail0	new	r2	s1-fresh	4807	0	128	6146ef86b7ea	129	84	limit	237
+tail0	new	r2	s0-turn	17	6083	128	ef34c301b13f	132	83	limit	224
+tail0	new	r2	s1-turn	17	4934	128	153a48915df1	121	86	limit	209
+tail0	new	r2	s0-edit	577	5440	128	3c1a0e9ab4bf	138	81	limit	236
+tail0	new	r2	s1-edit	581	4291	128	d0aa86376a5c	119	87	limit	206
+tail0	new	r2	s0-cancel			24	41b7a09b7b9a			cancelled after 24 chunks	89
+tail0	new	r2	s0-after	26	6161	128	b4efe8234a97	114	89	limit	194
+tail0	new	r2	s1-cancel			24	ec4d9307aa48			cancelled after 24 chunks	49
+tail0	new	r2	s1-after	26	5016	128	883831a77ee9	106	91	limit	184
+tail0	new	r2	s0-short	997	0	128	8e0690a3a99c	123	85	limit	216
+tail0	new	r2	s1-back	510	4291	128	9bc22894714e	135	82	limit	229
+tail0	new	r2	s0-sturn	17	1124	128	0ea971759254	134	82	limit	229
+tail0	new	r2	s0-sedit	590	481	128	219dc89cf5f6	148	76	limit	258
+tail0	new	r2	s1-bturn	16	4928	128	787323886d00	130	83	limit	224
+tail0	new	r2	s1-bedit	578	4291	128	95687f863a36	118	87	limit	206

@@ -1,0 +1,5 @@
+setting	requests the same (tokens, prompt_n, cache_n, drafts)	event lists	events base/new	restores base/new	full re-reads base/new	asserts or mask mismatches base/new	mask counts	requests with the same placements	verdict
+def	32 of 32	same	130/130	14/14	0/0	0/0	same	32 of 32	PASS
+tail0	32 of 32	same	130/130	14/14	0/0	0/0	same	32 of 32	PASS
+mask	32 of 32	same	130/130	14/14	0/0	0/0	same	32 of 32	PASS
+mask0	32 of 32	same	130/130	14/14	0/0	0/0	same	32 of 32	PASS
