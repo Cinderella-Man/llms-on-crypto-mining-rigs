@@ -1,0 +1,31 @@
+log	f32-stock-base	f32-stock-head	f32-stock-base2	f32-p106-base	f32-p106-head	q8-p106-base	q8-p106-head	q8-stock-base
+hop-cast-unit	216 checks, 0 failed	216 checks, 0 failed	216 checks, 0 failed	216 checks, 0 failed	216 checks, 0 failed	216 checks, 0 failed	216 checks, 0 failed	216 checks, 0 failed
+hop-cast	236 checks, 0 failed	236 checks, 0 failed	236 checks, 0 failed	236 checks, 0 failed	236 checks, 0 failed	236 checks, 0 failed	236 checks, 0 failed	236 checks, 0 failed
+kpool-dev-seq-k0-u16	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-seq-k0-u512	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-seq-k32-u16	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-seq-k32-u512	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-unified-k0-u16	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-unified-k0-u512	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-unified-k32-u16	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-dev-unified-k32-u512	887 checks, 0 failed	887 checks, 0 failed	887 checks, 0 failed	-	-	-	-	-
+kpool-stage-seq-k0-u16	4064 checks, 0 failed	4064 checks, 0 failed	4064 checks, 0 failed	-	-	-	-	-
+kpool-stage-seq-k0-u512	3564 checks, 0 failed	3564 checks, 0 failed	3564 checks, 0 failed	-	-	-	-	-
+kpool-stage-seq-k32-u16	4064 checks, 0 failed	4064 checks, 0 failed	4064 checks, 0 failed	-	-	-	-	-
+kpool-stage-seq-k32-u512	3564 checks, 0 failed	3564 checks, 0 failed	3564 checks, 0 failed	-	-	-	-	-
+kpool-stage-unified-k0-u16	4064 checks, 0 failed	4064 checks, 0 failed	4064 checks, 0 failed	-	-	-	-	-
+kpool-stage-unified-k0-u512	3564 checks, 0 failed	3564 checks, 0 failed	3564 checks, 0 failed	-	-	-	-	-
+kpool-stage-unified-k32-u16	4064 checks, 0 failed	4064 checks, 0 failed	4064 checks, 0 failed	-	-	-	-	-
+kpool-stage-unified-k32-u512	3564 checks, 0 failed	3564 checks, 0 failed	3564 checks, 0 failed	-	-	-	-	-
+moe-ids	13 checks, 0 failed	13 checks, 0 failed	13 checks, 0 failed	13 checks, 0 failed	13 checks, 0 failed	13 checks, 0 failed	13 checks, 0 failed	13 checks, 0 failed
+pool-mask-dev-seq-k0-u16	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-seq-k0-u512	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-seq-k32-u16	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-seq-k32-u512	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-unified-k0-u16	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-unified-k0-u512	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-unified-k32-u16	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+pool-mask-dev-unified-k32-u512	1172 checks, 0 failed	1172 checks, 0 failed	1172 checks, 0 failed	-	-	-	-	-
+prc	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=2	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=2	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=2	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=2	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=2	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=3	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=3	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=3
+screen-greedy	SCREEN CHECK PASSED	SCREEN CHECK PASSED	SCREEN CHECK PASSED	SCREEN CHECK PASSED	SCREEN CHECK PASSED	-	-	-
+screen-sampled	SCREEN CHECK PASSED	SCREEN CHECK PASSED	SCREEN CHECK PASSED	SCREEN CHECK PASSED	SCREEN CHECK PASSED	-	-	-

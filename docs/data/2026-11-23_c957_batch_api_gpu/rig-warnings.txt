@@ -1,0 +1,1 @@
+rig warnings: base 56 lines (24 deprecated batch API), head 32 (0), only in head: 0

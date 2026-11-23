@@ -1,0 +1,78 @@
+item	kind	base	head	verdict	detail
+ps-greedy	exit code	1	1	same	
+ps-chunk7	exit code	1	1	same	
+ps-seeded	exit code	1	1	same	
+ps-race2	exit code	1	1	same	
+ps-streams	exit code	1	1	same	
+prc	exit code	2	2	same	
+moe-ids	exit code	0	0	same	
+hop-cast-unit	exit code	0	0	same	
+hop-cast-model	exit code	0	0	same	
+ps-chunk7/plain	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 64e0704a7b56d05b/d799717df5f52909, probe 0041f552d8eaffb2/fe84f8bc26cca00b, state 7305ebecd46d1ef9/26870a9352fe6f13
+ps-chunk7/pipe-d0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 26bb7e6b1b440a0e/1aafe855d706ef28, probe ad9a72f58a68009a/786eebed37696975, state 92cf0144e548d608/90d74219e465711e
+ps-chunk7/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits e99034edd4f1c6eb/ee9b69cea3c12814, probe f087c14b06730317/497691d63a81719f, state fef535d53aa741a6/7aad80cb2eb8ea8f
+ps-chunk7/copy2-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 26bb7e6b1b440a0e/1aafe855d706ef28, probe ad9a72f58a68009a/786eebed37696975, state 92cf0144e548d608/90d74219e465711e
+ps-chunk7/cont4-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 402e74c57e9dbd92/097baf23b9089cc4, probe ad6918c2aa46b0a0/c2cebf2dee45d43e, state e13feff980437fa3/3daedabbad5d022a
+ps-chunk7/simple-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 26bb7e6b1b440a0e/1aafe855d706ef28, probe ad9a72f58a68009a/786eebed37696975, state 92cf0144e548d608/90d74219e465711e
+ps-chunk7/mapk-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 26bb7e6b1b440a0e/1aafe855d706ef28, probe ad9a72f58a68009a/786eebed37696975, state 92cf0144e548d608/90d74219e465711e
+ps-greedy/plain	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits e2b012e9706447e3/1dcd40be52f45fb5, probe f3909ef7ad83d4fc/8cfeb9bfceb8826c, state 843b8ae12ed6695f/71870f918189a762
+ps-greedy/pipe-d0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/oracle-d1-m0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits ff5a93fc7eb6b33a/dabadffd8da20df5, probe 0fecaf48fcce0a1c/911e17b4b5302667, state 6129cc0ea812633a/27922f85b43b7f96
+ps-greedy/copy2-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/cont4-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7ad482723854473a/1f2b763db17676e8, probe b4a6ecaf400770e2/7cb42f1beebbd390, state e9f3671dade36fd1/2779b42ee1fd8b22
+ps-greedy/simple-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/mapk-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/oracle-d3-m0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/oracle-d3-m0.5	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits ac7d88e0bb5da257/2f7f375f019746d7, probe f087c14b06730317/497691d63a81719f, state 58a986f63d1359ff/77094f5de4b87036
+ps-greedy/copy2-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/cont4-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8f6df1dad81695ea/a00a4b306281e65c, probe bbf58c12cf0dbdd1/4ef5c6716c7a59dd, state 7531f4bb90e3fe05/64f23b657e9f16d5
+ps-greedy/simple-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-greedy/mapk-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 8e482e801bffc56b/45d837d32e387a1f, probe f087c14b06730317/497691d63a81719f, state 410312c5f014fc2d/4e1869f5d6859085
+ps-race2/plain	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 539031642cdb8810/843a644e8ad1eeb8, probe e38016f839a4bf96/845b705db9488786, race_hash 695dfcc5813bbd6b/cc88a2a43b2a348e, state 2b946560a89ed909/56943d9293a8b976
+ps-race2/pipe-d0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 766ba06f9d1b25fc/f2cd553304f2e986, probe 799fb7a144b30b70/c18b9e5627c7baca, race_hash ac45c820d3f4bb1f/2a871557ebffd279, state 35346c5b4fcf46f9/8d7822e203f905b3
+ps-race2/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 766ba06f9d1b25fc/f2cd553304f2e986, probe 799fb7a144b30b70/c18b9e5627c7baca, race_hash ac45c820d3f4bb1f/2a871557ebffd279, state 35346c5b4fcf46f9/8d7822e203f905b3
+ps-race2/copy2-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 766ba06f9d1b25fc/f2cd553304f2e986, probe 799fb7a144b30b70/c18b9e5627c7baca, race_hash ac45c820d3f4bb1f/2a871557ebffd279, state 35346c5b4fcf46f9/8d7822e203f905b3
+ps-race2/cont4-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 766ba06f9d1b25fc/f2cd553304f2e986, probe 799fb7a144b30b70/c18b9e5627c7baca, race_hash ac45c820d3f4bb1f/2a871557ebffd279, state 35346c5b4fcf46f9/8d7822e203f905b3
+ps-race2/simple-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 766ba06f9d1b25fc/f2cd553304f2e986, probe 799fb7a144b30b70/c18b9e5627c7baca, race_hash ac45c820d3f4bb1f/2a871557ebffd279, state 35346c5b4fcf46f9/8d7822e203f905b3
+ps-race2/mapk-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 766ba06f9d1b25fc/f2cd553304f2e986, probe 799fb7a144b30b70/c18b9e5627c7baca, race_hash ac45c820d3f4bb1f/2a871557ebffd279, state 35346c5b4fcf46f9/8d7822e203f905b3
+ps-seeded/plain	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 06ec22b98c2a1b4d/265d1bb3a9a18ab9, probe ad2411e1b3ac6ba6/7d26f5a9747ed8af, state c8108ca4b82b3d94/bf167524f0b78bfb
+ps-seeded/pipe-d0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7dda1e66e6e8e482/a83c1ffcabb463c8, probe b74b98e8db25d8ba/0a1dc2338264699d, state 70ab08f836014132/46f53870ad90d541
+ps-seeded/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7297cbc235257070/4310ed8ad7062a7a, probe ee3b8195aa6a88dd/7d092d80bbb37063, state 786273c20d30bc9b/88bbbe1d88a4d174
+ps-seeded/copy2-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 6a2d84a6e5eab869/cd0482a691dd4dd7, probe 77af2a384d6f56c1/9016e209efd2a7ce, state a0654264ce52d71f/7bc598ceb3e6d0aa
+ps-seeded/cont4-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 59f8832c559c7466/dd46ac0aa80586d9, probe 6afca02e4ab951b6/d5e14006344bf285, state 100eb0fbba962cb3/b86921e66dc529ae
+ps-seeded/simple-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7dda1e66e6e8e482/a83c1ffcabb463c8, probe b74b98e8db25d8ba/0a1dc2338264699d, state 70ab08f836014132/46f53870ad90d541
+ps-seeded/mapk-d1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7dda1e66e6e8e482/a83c1ffcabb463c8, probe b74b98e8db25d8ba/0a1dc2338264699d, state 70ab08f836014132/46f53870ad90d541
+ps-seeded/oracle-d3-m0.5	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 123a19684b62b487/6890bd677269d533, probe 3ea68038e14e4c66/fe9f49e609ba3014, state 000c322906650076/ba508ab07843fb5c
+ps-seeded/copy2-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 4d72396eddfa3016/3a283a4e81d09873, probe 247e9000a42bdca7/c725b1a6179a817b, state 135ea636b135f2ae/52ff9bcefe0d6fab
+ps-seeded/cont4-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 1195db19ab0a6788/5a8b15482b8f779b, probe 316e43c21d07e26e/68319145af980c57, state 173f8bcec40cdb0c/2d171219421fdf1a
+ps-seeded/simple-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7dda1e66e6e8e482/a83c1ffcabb463c8, probe b74b98e8db25d8ba/0a1dc2338264699d, state 70ab08f836014132/46f53870ad90d541
+ps-seeded/mapk-d3	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 7dda1e66e6e8e482/a83c1ffcabb463c8, probe b74b98e8db25d8ba/0a1dc2338264699d, state 70ab08f836014132/46f53870ad90d541
+ps-streams/ref-c0	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 1cba19c30eeab7d3/6963f08a9ef96067, probe 06f8a5133b4f06ff/73c11ca15f28c73d, state 3797238920e3953f/0c9ca5ccfe544067
+ps-streams/ref-c1	PIPESPEC	26 fields	26 fields	DIFFERS	differ: logits 4d585b78e4905490/faaaaa8b57de5584, probe fdbb17c50cbad87c/150cf2482dc13b8e, state 73a33c3ceb4389c4/c257a094b37a8e1a
+ps-streams/all-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 11357b7238d9feec/21e5ea633ac306d9, probe d7d6b07c04b1a440/038162ab622d0402, state 8beac5aacb9dc80b/d7eef25485d89369
+ps-streams/all-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/all	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/arrive-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 11357b7238d9feec/21e5ea633ac306d9, probe d7d6b07c04b1a440/038162ab622d0402, state 8beac5aacb9dc80b/d7eef25485d89369
+ps-streams/arrive-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/arrive	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/slack-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits d4b32af5c7aeff70/12a722b3f48b7702, probe c1b906668a68c50f/e77417f28003e940, state 86194b074718e724/5faabbfe82cd65b4
+ps-streams/slack-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/slack	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/nobudget-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits d4b32af5c7aeff70/12a722b3f48b7702, probe c1b906668a68c50f/e77417f28003e940, state 86194b074718e724/5faabbfe82cd65b4
+ps-streams/nobudget-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/nobudget	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/multi-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 11357b7238d9feec/21e5ea633ac306d9, probe d7d6b07c04b1a440/038162ab622d0402, state 8beac5aacb9dc80b/d7eef25485d89369
+ps-streams/multi-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/multi	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/multi-arrive-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 11357b7238d9feec/21e5ea633ac306d9, probe d7d6b07c04b1a440/038162ab622d0402, state 8beac5aacb9dc80b/d7eef25485d89369
+ps-streams/multi-arrive-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/multi-arrive	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/multi-gen-c0	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits d4b32af5c7aeff70/12a722b3f48b7702, probe c1b906668a68c50f/e77417f28003e940, state 86194b074718e724/5faabbfe82cd65b4
+ps-streams/multi-gen-c1	PIPESPEC	17 fields	17 fields	DIFFERS	differ: logits 062369ba8d847059/26ebe18de9ba6da6, probe b2dbb5f0b3c3d883/6b6c2878ca9bb3d9, state 65cdd3f7b8733beb/7a3f5b59b7b50860
+ps-streams/multi-gen	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+hop-cast-unit	log	114 lines	114 lines	same	216 checks, 0 failed
+hop-cast	log	365 lines	365 lines	same	236 checks, 0 failed
+moe-ids	log	132 lines	132 lines	same	13 checks, 0 failed
+prc	log	2 lines	2 lines	same	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logi
+hop-cast	tsv	5 lines	5 lines	same	

@@ -1,0 +1,5 @@
+3c1f8f2cc6bd17a424e459ba638650c5  qwen4exp-moe.gguf
+babf1f23bdf1a8fb6de4926e2d5166df  qwen4exp-moe-screen.gguf
+e532a2ffc7861df1cd7d6542836d27de  e32/qwen4exp-moe.gguf
+fa000fd68cdd96edcb5892bbed7d7cac  q8/qwen4exp-moe.gguf
+601067ea2b13d4c10f345f70203163d2  q8/e32/qwen4exp-moe.gguf

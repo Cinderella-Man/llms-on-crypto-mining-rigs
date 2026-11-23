@@ -1,0 +1,7 @@
+run a	run b	what it shows	comparisons	same	differ	what differs
+f32-stock-base	f32-stock-head	the check: base against branch, F32 models, every switch at its default	129	129	0	-
+f32-p106-base	f32-p106-head	the check: base against branch, F32 models, the fork's Pascal kernels forced	81	81	0	-
+q8-p106-base	q8-p106-head	the check: base against branch, Q8_0 models, the fork's Pascal kernels forced	77	77	0	-
+f32-stock-base	f32-stock-base2	the runs repeat: the base twice	129	129	0	-
+f32-stock-base	f32-p106-base	the setting's reach on F32 weights (the p106 run has no pool tests)	129	81	48	48 absent in one run
+q8-stock-base	q8-p106-base	the setting's reach on Q8_0 weights	77	21	56	49 differ: logits, probe, state; 7 differ: logits, probe, race_hash, state

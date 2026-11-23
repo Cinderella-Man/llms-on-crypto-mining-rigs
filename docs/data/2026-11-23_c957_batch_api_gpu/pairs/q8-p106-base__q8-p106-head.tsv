@@ -1,0 +1,78 @@
+item	kind	base	head	verdict	detail
+ps-greedy	exit code	1	1	same	
+ps-chunk7	exit code	1	1	same	
+ps-seeded	exit code	1	1	same	
+ps-race2	exit code	1	1	same	
+ps-streams	exit code	1	1	same	
+prc	exit code	2	2	same	
+moe-ids	exit code	0	0	same	
+hop-cast-unit	exit code	0	0	same	
+hop-cast-model	exit code	0	0	same	
+ps-chunk7/plain	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits d799717df5f52909 state 26870a9352fe6f13 probe fe84f8bc26cca00b
+ps-chunk7/pipe-d0	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 1aafe855d706ef28 state 90d74219e465711e probe 786eebed37696975
+ps-chunk7/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits ee9b69cea3c12814 state 7aad80cb2eb8ea8f probe 497691d63a81719f
+ps-chunk7/copy2-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 1aafe855d706ef28 state 90d74219e465711e probe 786eebed37696975
+ps-chunk7/cont4-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 097baf23b9089cc4 state 3daedabbad5d022a probe c2cebf2dee45d43e
+ps-chunk7/simple-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 1aafe855d706ef28 state 90d74219e465711e probe 786eebed37696975
+ps-chunk7/mapk-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 1aafe855d706ef28 state 90d74219e465711e probe 786eebed37696975
+ps-greedy/plain	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 1dcd40be52f45fb5 state 71870f918189a762 probe 8cfeb9bfceb8826c
+ps-greedy/pipe-d0	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/oracle-d1-m0	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits dabadffd8da20df5 state 27922f85b43b7f96 probe 911e17b4b5302667
+ps-greedy/copy2-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/cont4-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 1f2b763db17676e8 state 2779b42ee1fd8b22 probe 7cb42f1beebbd390
+ps-greedy/simple-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/mapk-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/oracle-d3-m0	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/oracle-d3-m0.5	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 2f7f375f019746d7 state 77094f5de4b87036 probe 497691d63a81719f
+ps-greedy/copy2-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/cont4-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits a00a4b306281e65c state 64f23b657e9f16d5 probe 4ef5c6716c7a59dd
+ps-greedy/simple-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-greedy/mapk-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens cb0669deb36e4f3b logits 45d837d32e387a1f state 4e1869f5d6859085 probe 497691d63a81719f
+ps-race2/plain	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens ca80eaaf3b35d180 logits 843a644e8ad1eeb8 state 56943d9293a8b976 probe 845b705db9488786
+ps-race2/pipe-d0	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens b706c2e5fec94a34 logits f2cd553304f2e986 state 8d7822e203f905b3 probe c18b9e5627c7baca
+ps-race2/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens b706c2e5fec94a34 logits f2cd553304f2e986 state 8d7822e203f905b3 probe c18b9e5627c7baca
+ps-race2/copy2-d1	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens b706c2e5fec94a34 logits f2cd553304f2e986 state 8d7822e203f905b3 probe c18b9e5627c7baca
+ps-race2/cont4-d1	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens b706c2e5fec94a34 logits f2cd553304f2e986 state 8d7822e203f905b3 probe c18b9e5627c7baca
+ps-race2/simple-d1	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens b706c2e5fec94a34 logits f2cd553304f2e986 state 8d7822e203f905b3 probe c18b9e5627c7baca
+ps-race2/mapk-d1	PIPESPEC	26 fields	26 fields	same	n_gen 64 tokens b706c2e5fec94a34 logits f2cd553304f2e986 state 8d7822e203f905b3 probe c18b9e5627c7baca
+ps-seeded/plain	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens 3ee4bec539bb3ce4 logits 265d1bb3a9a18ab9 state bf167524f0b78bfb probe 7d26f5a9747ed8af
+ps-seeded/pipe-d0	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits a83c1ffcabb463c8 state 46f53870ad90d541 probe 0a1dc2338264699d
+ps-seeded/oracle-d1-m0.5	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens 3bcf268214aa8574 logits 4310ed8ad7062a7a state 88bbbe1d88a4d174 probe 7d092d80bbb37063
+ps-seeded/copy2-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits cd0482a691dd4dd7 state 7bc598ceb3e6d0aa probe 9016e209efd2a7ce
+ps-seeded/cont4-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens 54cb67e76f1f202d logits dd46ac0aa80586d9 state b86921e66dc529ae probe d5e14006344bf285
+ps-seeded/simple-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits a83c1ffcabb463c8 state 46f53870ad90d541 probe 0a1dc2338264699d
+ps-seeded/mapk-d1	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits a83c1ffcabb463c8 state 46f53870ad90d541 probe 0a1dc2338264699d
+ps-seeded/oracle-d3-m0.5	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits 6890bd677269d533 state ba508ab07843fb5c probe fe9f49e609ba3014
+ps-seeded/copy2-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits 3a283a4e81d09873 state 52ff9bcefe0d6fab probe c725b1a6179a817b
+ps-seeded/cont4-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens 54cb67e76f1f202d logits 5a8b15482b8f779b state 2d171219421fdf1a probe 68319145af980c57
+ps-seeded/simple-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits a83c1ffcabb463c8 state 46f53870ad90d541 probe 0a1dc2338264699d
+ps-seeded/mapk-d3	PIPESPEC	26 fields	26 fields	same	n_gen 96 tokens e535f834640efefa logits a83c1ffcabb463c8 state 46f53870ad90d541 probe 0a1dc2338264699d
+ps-streams/ref-c0	PIPESPEC	26 fields	26 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 6963f08a9ef96067 state 0c9ca5ccfe544067 probe 73c11ca15f28c73d
+ps-streams/ref-c1	PIPESPEC	26 fields	26 fields	same	n_gen 48 tokens 7b045d60f972ddba logits faaaaa8b57de5584 state c257a094b37a8e1a probe 150cf2482dc13b8e
+ps-streams/all-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 21e5ea633ac306d9 state d7eef25485d89369 probe 038162ab622d0402
+ps-streams/all-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/all	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/arrive-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 21e5ea633ac306d9 state d7eef25485d89369 probe 038162ab622d0402
+ps-streams/arrive-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/arrive	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/slack-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 12a722b3f48b7702 state 5faabbfe82cd65b4 probe e77417f28003e940
+ps-streams/slack-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/slack	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/nobudget-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 12a722b3f48b7702 state 5faabbfe82cd65b4 probe e77417f28003e940
+ps-streams/nobudget-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/nobudget	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/multi-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 21e5ea633ac306d9 state d7eef25485d89369 probe 038162ab622d0402
+ps-streams/multi-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/multi	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/multi-arrive-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 21e5ea633ac306d9 state d7eef25485d89369 probe 038162ab622d0402
+ps-streams/multi-arrive-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/multi-arrive	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+ps-streams/multi-gen-c0	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens b7558e2dca7a3d43 logits 12a722b3f48b7702 state 5faabbfe82cd65b4 probe e77417f28003e940
+ps-streams/multi-gen-c1	PIPESPEC	17 fields	17 fields	same	n_gen 48 tokens 6bee6a03e0c5da5c logits 26ebe18de9ba6da6 state 7a3f5b59b7b50860 probe 6b6c2878ca9bb3d9
+ps-streams/multi-gen	PIPESPEC_STREAMS	10 fields	10 fields	same	n_conv 2 total_tokens 96
+hop-cast-unit	log	114 lines	114 lines	same	216 checks, 0 failed
+hop-cast	log	365 lines	365 lines	same	236 checks, 0 failed
+moe-ids	log	132 lines	132 lines	same	13 checks, 0 failed
+prc	log	2 lines	2 lines	same	PIPE-RECURRENT-CHECK n_prompt=550 n_gen=96 inplace=32 guesses=24 leave_pipe=24 leave_decode=8 tokens=same logits=DIFF state=DIFF probe=DIFF first_logi
+hop-cast	tsv	5 lines	5 lines	same	

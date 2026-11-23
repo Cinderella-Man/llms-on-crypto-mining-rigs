@@ -1,0 +1,5 @@
+qwen4exp-moe.gguf qwen4exp F32=103
+qwen4exp-moe-screen.gguf qwen4exp F32=104
+e32/qwen4exp-moe.gguf qwen4exp F32=103
+q8/qwen4exp-moe.gguf qwen4exp F16=1 F32=78 Q8_0=24
+q8/e32/qwen4exp-moe.gguf qwen4exp F16=1 F32=78 Q8_0=24
