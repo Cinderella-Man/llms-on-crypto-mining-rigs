@@ -1,0 +1,226 @@
+arm	req	kind	n_tokens	pos_min	pos_max	no_wait	store	host_mib	device_mib
+base-off	kinds-8000	inside	37	36	36	no			
+base-off	kinds-8000	inside	7561	7560	7560	no			
+base-off	kinds-8000	inside	8035	8034	8034	no			
+base-off	kinds-8000	inside	8073	8072	8072	no			
+base-off	kinds-16000	inside	37	36	36	no			
+base-off	kinds-16000	between	8257	8256	8256	no	1	0.001	149.062
+base-off	kinds-16000	inside	15559	15558	15558	no			
+base-off	kinds-16000	inside	16033	16032	16032	no			
+base-off	kinds-16000	inside	16071	16070	16070	no			
+base-off	kinds-32000	inside	37	36	36	no			
+base-off	kinds-32000	between	8232	8231	8231	no	1	0.001	149.062
+base-off	kinds-32000	inside	16431	16430	16430	no			
+base-off	kinds-32000	between	24653	24652	24652	no	3	0.001	149.062
+base-off	kinds-32000	inside	31509	31508	31508	no			
+base-off	kinds-32000	inside	31983	31982	31982	no			
+base-off	kinds-32000	inside	32021	32020	32020	no			
+base-off	kinds-47000	inside	37	36	36	no			
+base-off	kinds-47000	inside	8232	8231	8231	no			
+base-off	kinds-47000	inside	16425	16424	16424	no			
+base-off	kinds-47000	between	24632	24631	24631	no	3	0.001	149.062
+base-off	kinds-47000	between	32827	32826	32826	no	0	0.001	149.062
+base-off	kinds-47000	between	41036	41035	41035	no	1	0.001	149.062
+base-off	kinds-47000	inside	46496	46495	46495	no			
+base-off	kinds-47000	inside	46970	46969	46969	no			
+base-off	kinds-47000	inside	47008	47007	47007	no			
+base-off	rst-a	inside	15	14	14	no			
+base-off	rst-a	between	8234	8233	8233	no	1	0.001	149.062
+base-off	rst-a	inside	15574	15573	15573	no			
+base-off	rst-a	inside	16048	16047	16047	no			
+base-off	rst-a	inside	16086	16085	16085	no			
+base-off	rst-b	inside	15576	15575	15575	no			
+base-off	rst-b	inside	16050	16049	16049	no			
+base-off	rst-b	inside	16088	16087	16087	no			
+base-off	rst-c	inside	16	15	15	no			
+base-off	rst-c	between	8212	8211	8211	no	1	0.001	149.062
+base-off	rst-c	between	16405	16404	16404	no	2	0.001	149.062
+base-off	rst-c	between	24609	24608	24608	no	3	0.001	149.062
+base-off	rst-c	between	32804	32803	32803	no	0	0.001	149.062
+base-off	rst-c	between	41016	41015	41015	no	1	0.001	149.062
+base-off	rst-c	inside	46512	46511	46511	no			
+base-off	rst-c	inside	46986	46985	46985	no			
+base-off	rst-c	inside	47024	47023	47023	no			
+base-off	rst-d	inside	46514	46513	46513	no			
+base-off	rst-d	inside	46988	46987	46987	no			
+base-off	rst-d	inside	47026	47025	47025	no			
+head-off	kinds-8000	inside	37	36	36	no			
+head-off	kinds-8000	inside	7561	7560	7560	no			
+head-off	kinds-8000	inside	8035	8034	8034	no			
+head-off	kinds-8000	inside	8073	8072	8072	no			
+head-off	kinds-16000	inside	37	36	36	no			
+head-off	kinds-16000	between	8257	8256	8256	no	1	0.001	149.062
+head-off	kinds-16000	inside	15559	15558	15558	no			
+head-off	kinds-16000	inside	16033	16032	16032	no			
+head-off	kinds-16000	inside	16071	16070	16070	no			
+head-off	kinds-32000	inside	37	36	36	no			
+head-off	kinds-32000	between	8232	8231	8231	no	1	0.001	149.062
+head-off	kinds-32000	inside	16431	16430	16430	no			
+head-off	kinds-32000	between	24653	24652	24652	no	3	0.001	149.062
+head-off	kinds-32000	inside	31509	31508	31508	no			
+head-off	kinds-32000	inside	31983	31982	31982	no			
+head-off	kinds-32000	inside	32021	32020	32020	no			
+head-off	kinds-47000	inside	37	36	36	no			
+head-off	kinds-47000	inside	8232	8231	8231	no			
+head-off	kinds-47000	inside	16425	16424	16424	no			
+head-off	kinds-47000	between	24632	24631	24631	no	3	0.001	149.062
+head-off	kinds-47000	between	32827	32826	32826	no	0	0.001	149.062
+head-off	kinds-47000	between	41036	41035	41035	no	1	0.001	149.062
+head-off	kinds-47000	inside	46496	46495	46495	no			
+head-off	kinds-47000	inside	46970	46969	46969	no			
+head-off	kinds-47000	inside	47008	47007	47007	no			
+head-off	rst-a	inside	15	14	14	no			
+head-off	rst-a	between	8234	8233	8233	no	1	0.001	149.062
+head-off	rst-a	inside	15574	15573	15573	no			
+head-off	rst-a	inside	16048	16047	16047	no			
+head-off	rst-a	inside	16086	16085	16085	no			
+head-off	rst-b	inside	15576	15575	15575	no			
+head-off	rst-b	inside	16050	16049	16049	no			
+head-off	rst-b	inside	16088	16087	16087	no			
+head-off	rst-c	inside	16	15	15	no			
+head-off	rst-c	between	8212	8211	8211	no	1	0.001	149.062
+head-off	rst-c	between	16405	16404	16404	no	2	0.001	149.062
+head-off	rst-c	between	24609	24608	24608	no	3	0.001	149.062
+head-off	rst-c	between	32804	32803	32803	no	0	0.001	149.062
+head-off	rst-c	between	41016	41015	41015	no	1	0.001	149.062
+head-off	rst-c	inside	46512	46511	46511	no			
+head-off	rst-c	inside	46986	46985	46985	no			
+head-off	rst-c	inside	47024	47023	47023	no			
+head-off	rst-d	inside	46514	46513	46513	no			
+head-off	rst-d	inside	46988	46987	46987	no			
+head-off	rst-d	inside	47026	47025	47025	no			
+head-on	kinds-8000	inside	37	36	36	no			
+head-on	kinds-8000	inside	7561	7560	7560	no			
+head-on	kinds-8000	inside	8035	8034	8034	no			
+head-on	kinds-8000	inside	8073	8072	8072	no			
+head-on	kinds-16000	inside	37	36	36	no			
+head-on	kinds-16000	between	8257	8256	8256	yes	1	0.001	149.062
+head-on	kinds-16000	inside	15559	15558	15558	no			
+head-on	kinds-16000	inside	16033	16032	16032	no			
+head-on	kinds-16000	inside	16071	16070	16070	no			
+head-on	kinds-32000	inside	37	36	36	no			
+head-on	kinds-32000	between	8232	8231	8231	yes	1	0.001	149.062
+head-on	kinds-32000	inside	16431	16430	16430	no			
+head-on	kinds-32000	between	24653	24652	24652	yes	3	0.001	149.062
+head-on	kinds-32000	inside	31509	31508	31508	no			
+head-on	kinds-32000	inside	31983	31982	31982	no			
+head-on	kinds-32000	inside	32021	32020	32020	no			
+head-on	kinds-47000	inside	37	36	36	no			
+head-on	kinds-47000	inside	8232	8231	8231	no			
+head-on	kinds-47000	inside	16425	16424	16424	no			
+head-on	kinds-47000	between	24632	24631	24631	yes	3	0.001	149.062
+head-on	kinds-47000	between	32827	32826	32826	yes	0	0.001	149.062
+head-on	kinds-47000	between	41036	41035	41035	yes	1	0.001	149.062
+head-on	kinds-47000	inside	46496	46495	46495	no			
+head-on	kinds-47000	inside	46970	46969	46969	no			
+head-on	kinds-47000	inside	47008	47007	47007	no			
+head-on	rst-a	inside	15	14	14	no			
+head-on	rst-a	between	8234	8233	8233	yes	1	0.001	149.062
+head-on	rst-a	inside	15574	15573	15573	no			
+head-on	rst-a	inside	16048	16047	16047	no			
+head-on	rst-a	inside	16086	16085	16085	no			
+head-on	rst-b	inside	15576	15575	15575	no			
+head-on	rst-b	inside	16050	16049	16049	no			
+head-on	rst-b	inside	16088	16087	16087	no			
+head-on	rst-c	inside	16	15	15	no			
+head-on	rst-c	between	8212	8211	8211	yes	1	0.001	149.062
+head-on	rst-c	between	16405	16404	16404	yes	2	0.001	149.062
+head-on	rst-c	between	24609	24608	24608	yes	3	0.001	149.062
+head-on	rst-c	between	32804	32803	32803	yes	0	0.001	149.062
+head-on	rst-c	between	41016	41015	41015	yes	1	0.001	149.062
+head-on	rst-c	inside	46512	46511	46511	no			
+head-on	rst-c	inside	46986	46985	46985	no			
+head-on	rst-c	inside	47024	47023	47023	no			
+head-on	rst-d	inside	46514	46513	46513	no			
+head-on	rst-d	inside	46988	46987	46987	no			
+head-on	rst-d	inside	47026	47025	47025	no			
+head-off-spill	kinds-8000	inside	37	36	36	no			
+head-off-spill	kinds-8000	inside	7561	7560	7560	no			
+head-off-spill	kinds-8000	inside	8035	8034	8034	no			
+head-off-spill	kinds-8000	between	8073	8072	8072	no	0	0.001	149.062
+head-off-spill	kinds-16000	inside	37	36	36	no			
+head-off-spill	kinds-16000	between	8257	8256	8256	no	1	0.001	149.062
+head-off-spill	kinds-16000	inside	15559	15558	15558	no			
+head-off-spill	kinds-16000	between	16033	16032	16032	no	0	0.001	149.062
+head-off-spill	kinds-16000	inside	16071	16070	16070	no			
+head-off-spill	kinds-32000	inside	37	36	36	no			
+head-off-spill	kinds-32000	between	8232	8231	8231	no	1	0.001	149.062
+head-off-spill	kinds-32000	inside	16431	16430	16430	no			
+head-off-spill	kinds-32000	between	24653	24652	24652	no	0	0.001	149.062
+head-off-spill	kinds-32000	inside	31509	31508	31508	no			
+head-off-spill	kinds-32000	between	31983	31982	31982	no	2	0.001	149.062
+head-off-spill	kinds-32000	inside	32021	32020	32020	no			
+head-off-spill	kinds-47000	inside	37	36	36	no			
+head-off-spill	kinds-47000	inside	8232	8231	8231	no			
+head-off-spill	kinds-47000	inside	16425	16424	16424	no			
+head-off-spill	kinds-47000	between	24632	24631	24631	no	0	0.001	149.062
+head-off-spill	kinds-47000	between	32827	32826	32826	no	1	0.001	149.062
+head-off-spill	kinds-47000	between	41036	41035	41035	no	2	0.001	149.062
+head-off-spill	kinds-47000	inside	46496	46495	46495	no			
+head-off-spill	kinds-47000	between	46970	46969	46969	no	1	0.001	149.062
+head-off-spill	kinds-47000	inside	47008	47007	47007	no			
+head-off-spill	rst-a	inside	15	14	14	no			
+head-off-spill	rst-a	between	8234	8233	8233	no	1	0.001	149.062
+head-off-spill	rst-a	inside	15574	15573	15573	no			
+head-off-spill	rst-a	between	16048	16047	16047	no	0	0.001	149.062
+head-off-spill	rst-a	inside	16086	16085	16085	no			
+head-off-spill	rst-b	inside	15576	15575	15575	no			
+head-off-spill	rst-b	inside	16050	16049	16049	no			
+head-off-spill	rst-b	inside	16088	16087	16087	no			
+head-off-spill	rst-c	inside	16	15	15	no			
+head-off-spill	rst-c	between	8212	8211	8211	no	1	0.001	149.062
+head-off-spill	rst-c	between	16405	16404	16404	no	2	0.001	149.062
+head-off-spill	rst-c	between	24609	24608	24608	no	0	0.001	149.062
+head-off-spill	rst-c	between	32804	32803	32803	no	1	0.001	149.062
+head-off-spill	rst-c	between	41016	41015	41015	no	2	0.001	149.062
+head-off-spill	rst-c	inside	46512	46511	46511	no			
+head-off-spill	rst-c	between	46986	46985	46985	no	1	0.001	149.062
+head-off-spill	rst-c	inside	47024	47023	47023	no			
+head-off-spill	rst-d	inside	46514	46513	46513	no			
+head-off-spill	rst-d	inside	46988	46987	46987	no			
+head-off-spill	rst-d	inside	47026	47025	47025	no			
+head-on-spill	kinds-8000	inside	37	36	36	no			
+head-on-spill	kinds-8000	inside	7561	7560	7560	no			
+head-on-spill	kinds-8000	inside	8035	8034	8034	no			
+head-on-spill	kinds-8000	between	8073	8072	8072	yes	0	0.001	149.062
+head-on-spill	kinds-16000	inside	37	36	36	no			
+head-on-spill	kinds-16000	between	8257	8256	8256	yes	1	0.001	149.062
+head-on-spill	kinds-16000	inside	15559	15558	15558	no			
+head-on-spill	kinds-16000	between	16033	16032	16032	yes	0	0.001	149.062
+head-on-spill	kinds-16000	inside	16071	16070	16070	no			
+head-on-spill	kinds-32000	inside	37	36	36	no			
+head-on-spill	kinds-32000	between	8232	8231	8231	yes	1	0.001	149.062
+head-on-spill	kinds-32000	inside	16431	16430	16430	no			
+head-on-spill	kinds-32000	between	24653	24652	24652	yes	0	0.001	149.062
+head-on-spill	kinds-32000	inside	31509	31508	31508	no			
+head-on-spill	kinds-32000	between	31983	31982	31982	yes	2	0.001	149.062
+head-on-spill	kinds-32000	inside	32021	32020	32020	no			
+head-on-spill	kinds-47000	inside	37	36	36	no			
+head-on-spill	kinds-47000	inside	8232	8231	8231	no			
+head-on-spill	kinds-47000	inside	16425	16424	16424	no			
+head-on-spill	kinds-47000	between	24632	24631	24631	yes	0	0.001	149.062
+head-on-spill	kinds-47000	between	32827	32826	32826	yes	1	0.001	149.062
+head-on-spill	kinds-47000	between	41036	41035	41035	yes	2	0.001	149.062
+head-on-spill	kinds-47000	inside	46496	46495	46495	no			
+head-on-spill	kinds-47000	between	46970	46969	46969	yes	1	0.001	149.062
+head-on-spill	kinds-47000	inside	47008	47007	47007	no			
+head-on-spill	rst-a	inside	15	14	14	no			
+head-on-spill	rst-a	between	8234	8233	8233	yes	1	0.001	149.062
+head-on-spill	rst-a	inside	15574	15573	15573	no			
+head-on-spill	rst-a	between	16048	16047	16047	yes	0	0.001	149.062
+head-on-spill	rst-a	inside	16086	16085	16085	no			
+head-on-spill	rst-b	inside	15576	15575	15575	no			
+head-on-spill	rst-b	inside	16050	16049	16049	no			
+head-on-spill	rst-b	inside	16088	16087	16087	no			
+head-on-spill	rst-c	inside	16	15	15	no			
+head-on-spill	rst-c	between	8212	8211	8211	yes	1	0.001	149.062
+head-on-spill	rst-c	between	16405	16404	16404	yes	2	0.001	149.062
+head-on-spill	rst-c	between	24609	24608	24608	yes	0	0.001	149.062
+head-on-spill	rst-c	between	32804	32803	32803	yes	1	0.001	149.062
+head-on-spill	rst-c	between	41016	41015	41015	yes	2	0.001	149.062
+head-on-spill	rst-c	inside	46512	46511	46511	no			
+head-on-spill	rst-c	between	46986	46985	46985	yes	1	0.001	149.062
+head-on-spill	rst-c	inside	47024	47023	47023	no			
+head-on-spill	rst-d	inside	46514	46513	46513	no			
+head-on-spill	rst-d	inside	46988	46987	46987	no			
+head-on-spill	rst-d	inside	47026	47025	47025	no			

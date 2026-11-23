@@ -1,0 +1,35 @@
+pair	req	prompt_n	reply	logprobs	counters	calls	checkpoints	restored	moved	between_calls	no_wait	nowait_n	verdict
+head-off/base-off	kinds-8000	8077	same	same	same	same (1)	same (4)	same []	same (0)	0	0	0	OK
+head-off/base-off	kinds-16000	16075	same	same	same	same (4)	same (5)	same []	same (0)	1	0	0	OK
+head-off/base-off	kinds-32000	32025	same	same	same	same (9)	same (7)	same []	same (0)	2	0	0	OK
+head-off/base-off	kinds-47000	47012	same	same	same	same (14)	same (9)	same []	same (0)	3	0	0	OK
+head-off/base-off	rst-a	16090	same	same	same	same (4)	same (5)	same []	same (0)	1	0	0	OK
+head-off/base-off	rst-b	7858	same	same	same	same (1)	same (3)	same [8234]	same (0)	0	0	0	OK
+head-off/base-off	rst-c	47028	same	same	same	same (16)	same (9)	same []	same (0)	5	0	0	OK
+head-off/base-off	rst-d	6014	same	same	same	same (1)	same (3)	same [41016]	same (0)	0	0	0	OK
+head-on/head-off	kinds-8000	8077	same	same	same	same (1)	same (4)	same []	same (0)	0	0	0	OK
+head-on/head-off	kinds-16000	16075	same	same	same	same (4)	same (5)	same []	same (0)	1	1	1	OK
+head-on/head-off	kinds-32000	32025	same	same	same	same (9)	same (7)	same []	same (0)	2	2	2	OK
+head-on/head-off	kinds-47000	47012	same	same	same	same (14)	same (9)	same []	same (0)	3	3	3	OK
+head-on/head-off	rst-a	16090	same	same	same	same (4)	same (5)	same []	same (0)	1	1	1	OK
+head-on/head-off	rst-b	7858	same	same	same	same (1)	same (3)	same [8234]	same (0)	0	0	0	OK
+head-on/head-off	rst-c	47028	same	same	same	same (16)	same (9)	same []	same (0)	5	5	5	OK
+head-on/head-off	rst-d	6014	same	same	same	same (1)	same (3)	same [41016]	same (0)	0	0	0	OK
+head-on-spill/head-off-spill	kinds-8000	8077	same	same	same	same (2)	same (4)	same []	same (2)	1	1	1	OK
+head-on-spill/head-off-spill	kinds-16000	16075	same	same	same	same (5)	same (5)	same []	same (3)	2	2	2	OK
+head-on-spill/head-off-spill	kinds-32000	32025	same	same	same	same (10)	same (7)	same []	same (5)	3	3	3	OK
+head-on-spill/head-off-spill	kinds-47000	47012	same	same	same	same (15)	same (9)	same []	same (7)	4	4	4	OK
+head-on-spill/head-off-spill	rst-a	16090	same	same	same	same (5)	same (5)	same []	same (3)	2	2	2	OK
+head-on-spill/head-off-spill	rst-b	7858	same	same	same	same (1)	same (3)	same [8234]	same (1)	0	0	0	OK
+head-on-spill/head-off-spill	rst-c	47028	same	same	same	same (17)	same (9)	same []	same (7)	6	6	6	OK
+head-on-spill/head-off-spill	rst-d	6014	same	same	same	same (1)	same (3)	same [41016]	same (1)	0	0	0	OK
+
+log	base-off	0 error-like lines
+log	head-off	0 error-like lines
+log	head-on	0 error-like lines
+log	head-off-spill	0 error-like lines
+log	head-on-spill	0 error-like lines
+
+verdict	head-off against base-off	PASS	the switch unset: replies, log-probabilities, counters, calls, checkpoints and restores the base's
+verdict	head-on against head-off	PASS	LLAMA_SERVER_CKPT_NOWAIT=1: the same replies, log-probabilities, counters, calls, checkpoints and restores; every checkpoint between calls filled without a wait
+verdict	head-on-spill against head-off-spill	PASS	the same with 8 checkpoints of which the newest 2 stay on the cards (older ones moved to the host): also the same moves

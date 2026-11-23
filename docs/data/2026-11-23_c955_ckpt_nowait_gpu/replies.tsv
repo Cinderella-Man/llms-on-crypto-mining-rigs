@@ -1,0 +1,41 @@
+arm	req	note	finish	reply_tokens	tokens_sha1	same_tokens_as_base-off	same_logprobs_as_base-off	prompt_n	cache_n	restored_n_tokens	restored_from	full_reads	reasoning_start
+base-off	kinds-8000		length	64	c895e65694e1	yes	yes	8077	0			0	The user is asking me to recall details they mentioned throu
+base-off	kinds-16000		length	64	cc6d39d60860	yes	yes	16075	0			0	The user is asking me to recall details they mentioned throu
+base-off	kinds-32000		length	64	c159ecda0d23	yes	yes	32025	0			0	The user is asking me to recall details they mentioned throu
+base-off	kinds-47000		length	64	f94fc138d453	yes	yes	47012	0			0	The user is asking me to recall specific details they mentio
+base-off	rst-a		length	64	3fcfb98de629	yes	yes	16090	0			1	The user is asking me to recall specific details they mentio
+base-off	rst-b	message 541 of 874 changed	length	64	49fe25d3d214	yes	yes	7858	8234	8234	between (cards)	0	The user is asking me to recall information from our convers
+base-off	rst-c		length	64	6df5332ddbda	yes	yes	47028	0			1	The user is asking me to recall specific details from our co
+base-off	rst-d	message 2381 of 2560 changed	length	64	91d9c92004c2	yes	yes	6014	41016	41016	between (cards)	0	The user is asking me to recall specific details from our co
+head-off	kinds-8000		length	64	c895e65694e1	yes	yes	8077	0			0	The user is asking me to recall details they mentioned throu
+head-off	kinds-16000		length	64	cc6d39d60860	yes	yes	16075	0			0	The user is asking me to recall details they mentioned throu
+head-off	kinds-32000		length	64	c159ecda0d23	yes	yes	32025	0			0	The user is asking me to recall details they mentioned throu
+head-off	kinds-47000		length	64	f94fc138d453	yes	yes	47012	0			0	The user is asking me to recall specific details they mentio
+head-off	rst-a		length	64	3fcfb98de629	yes	yes	16090	0			1	The user is asking me to recall specific details they mentio
+head-off	rst-b	message 541 of 874 changed	length	64	49fe25d3d214	yes	yes	7858	8234	8234	between (cards)	0	The user is asking me to recall information from our convers
+head-off	rst-c		length	64	6df5332ddbda	yes	yes	47028	0			1	The user is asking me to recall specific details from our co
+head-off	rst-d	message 2381 of 2560 changed	length	64	91d9c92004c2	yes	yes	6014	41016	41016	between (cards)	0	The user is asking me to recall specific details from our co
+head-on	kinds-8000		length	64	c895e65694e1	yes	yes	8077	0			0	The user is asking me to recall details they mentioned throu
+head-on	kinds-16000		length	64	cc6d39d60860	yes	yes	16075	0			0	The user is asking me to recall details they mentioned throu
+head-on	kinds-32000		length	64	c159ecda0d23	yes	yes	32025	0			0	The user is asking me to recall details they mentioned throu
+head-on	kinds-47000		length	64	f94fc138d453	yes	yes	47012	0			0	The user is asking me to recall specific details they mentio
+head-on	rst-a		length	64	3fcfb98de629	yes	yes	16090	0			1	The user is asking me to recall specific details they mentio
+head-on	rst-b	message 541 of 874 changed	length	64	49fe25d3d214	yes	yes	7858	8234	8234	between no-wait (cards)	0	The user is asking me to recall information from our convers
+head-on	rst-c		length	64	6df5332ddbda	yes	yes	47028	0			1	The user is asking me to recall specific details from our co
+head-on	rst-d	message 2381 of 2560 changed	length	64	91d9c92004c2	yes	yes	6014	41016	41016	between no-wait (cards)	0	The user is asking me to recall specific details from our co
+head-off-spill	kinds-8000		length	64	c895e65694e1	yes	yes	8077	0			0	The user is asking me to recall details they mentioned throu
+head-off-spill	kinds-16000		length	64	cc6d39d60860	yes	yes	16075	0			0	The user is asking me to recall details they mentioned throu
+head-off-spill	kinds-32000		length	64	c159ecda0d23	yes	yes	32025	0			0	The user is asking me to recall details they mentioned throu
+head-off-spill	kinds-47000		length	64	f94fc138d453	yes	yes	47012	0			0	The user is asking me to recall specific details they mentio
+head-off-spill	rst-a		length	64	3fcfb98de629	yes	yes	16090	0			1	The user is asking me to recall specific details they mentio
+head-off-spill	rst-b	message 541 of 874 changed	length	64	49fe25d3d214	yes	yes	7858	8234	8234	between (host)	0	The user is asking me to recall information from our convers
+head-off-spill	rst-c		length	64	6df5332ddbda	yes	yes	47028	0			1	The user is asking me to recall specific details from our co
+head-off-spill	rst-d	message 2381 of 2560 changed	length	64	91d9c92004c2	yes	yes	6014	41016	41016	between (host)	0	The user is asking me to recall specific details from our co
+head-on-spill	kinds-8000		length	64	c895e65694e1	yes	yes	8077	0			0	The user is asking me to recall details they mentioned throu
+head-on-spill	kinds-16000		length	64	cc6d39d60860	yes	yes	16075	0			0	The user is asking me to recall details they mentioned throu
+head-on-spill	kinds-32000		length	64	c159ecda0d23	yes	yes	32025	0			0	The user is asking me to recall details they mentioned throu
+head-on-spill	kinds-47000		length	64	f94fc138d453	yes	yes	47012	0			0	The user is asking me to recall specific details they mentio
+head-on-spill	rst-a		length	64	3fcfb98de629	yes	yes	16090	0			1	The user is asking me to recall specific details they mentio
+head-on-spill	rst-b	message 541 of 874 changed	length	64	49fe25d3d214	yes	yes	7858	8234	8234	between no-wait (host)	0	The user is asking me to recall information from our convers
+head-on-spill	rst-c		length	64	6df5332ddbda	yes	yes	47028	0			1	The user is asking me to recall specific details from our co
+head-on-spill	rst-d	message 2381 of 2560 changed	length	64	91d9c92004c2	yes	yes	6014	41016	41016	between no-wait (host)	0	The user is asking me to recall specific details from our co

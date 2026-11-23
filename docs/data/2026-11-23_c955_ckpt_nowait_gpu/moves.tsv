@@ -1,0 +1,41 @@
+arm	req	moved_to_host_n_tokens
+base-off	kinds-8000	
+base-off	kinds-16000	
+base-off	kinds-32000	
+base-off	kinds-47000	
+base-off	rst-a	
+base-off	rst-b	
+base-off	rst-c	
+base-off	rst-d	
+head-off	kinds-8000	
+head-off	kinds-16000	
+head-off	kinds-32000	
+head-off	kinds-47000	
+head-off	rst-a	
+head-off	rst-b	
+head-off	rst-c	
+head-off	rst-d	
+head-on	kinds-8000	
+head-on	kinds-16000	
+head-on	kinds-32000	
+head-on	kinds-47000	
+head-on	rst-a	
+head-on	rst-b	
+head-on	rst-c	
+head-on	rst-d	
+head-off-spill	kinds-8000	37,7561
+head-off-spill	kinds-16000	37,8257,15559
+head-off-spill	kinds-32000	37,8232,16431,24653,31509
+head-off-spill	kinds-47000	37,8232,16425,24632,32827,41036,46496
+head-off-spill	rst-a	15,8234,15574
+head-off-spill	rst-b	15576
+head-off-spill	rst-c	16,8212,16405,24609,32804,41016,46512
+head-off-spill	rst-d	46514
+head-on-spill	kinds-8000	37,7561
+head-on-spill	kinds-16000	37,8257,15559
+head-on-spill	kinds-32000	37,8232,16431,24653,31509
+head-on-spill	kinds-47000	37,8232,16425,24632,32827,41036,46496
+head-on-spill	rst-a	15,8234,15574
+head-on-spill	rst-b	15576
+head-on-spill	rst-c	16,8212,16405,24609,32804,41016,46512
+head-on-spill	rst-d	46514
