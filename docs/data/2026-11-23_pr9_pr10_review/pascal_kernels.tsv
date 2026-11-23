@@ -1,0 +1,12 @@
+kernel (head's name; lds, kdp = false shown in the base's form)	selected by	SHA-1 base	SHA-1 head	same code	instructions base	instructions head	IDP (dp4a) head	FFMA head	registers base	registers head	stack bytes base	stack bytes head	shared bytes head
+flash_attn_tile_pascal<256, F16, F16, false>	none (default)	5da9ac50439c	5da9ac50439c	yes	2070	2070	0	264	155	155	0	0	30720
+flash_attn_tile_pascal<256, Q8_0, Q8_0, false>	none (default)	8624da7355fe	8624da7355fe	yes	2256	2256	0	264	158	158	0	0	30720
+flash_attn_tile_pascal<256, Q8_0, Q8_0, false, true, false>	GGML_CUDA_FATTN_TILE_PASCAL_LDS	-	ae9dd5f260ad	new	-	2256	0	264	-	159	-	0	30720
+flash_attn_tile_pascal<128, F16, F16, false>	none (default)	97bde2b98232	97bde2b98232	yes	2328	2328	0	520	159	159	0	0	30720
+flash_attn_tile_pascal<128, Q8_0, Q8_0, false>	none (default)	ce5681498edf	ce5681498edf	yes	2508	2508	0	520	160	160	0	0	30720
+flash_attn_tile_pascal<128, Q8_0, Q8_0, false, true, false>	GGML_CUDA_FATTN_TILE_PASCAL_LDS	-	bf226a4542ed	new	-	2502	0	520	-	164	-	0	30720
+flash_attn_tile_pascal<128, F16, F16, true>	none (default)	1f0148d2b33a	1f0148d2b33a	yes	2406	2406	0	520	168	168	0	0	30720
+flash_attn_tile_pascal<128, Q8_0, Q8_0, true>	none (default)	8d2af5c26db8	8d2af5c26db8	yes	2604	2604	0	520	168	168	40	40	30720
+flash_attn_tile_pascal<128, Q8_0, Q8_0, true, true, false>	GGML_CUDA_FATTN_TILE_PASCAL_LDS	-	b1780de2789b	new	-	2616	0	520	-	168	-	56	30720
+flash_attn_tile_pascal<256, Q8_0, Q8_0, false, true, true>	GGML_CUDA_FATTN_TILE_PASCAL_KDP	-	41940ddaf89f	new	-	1908	64	152	-	157	-	0	30720
+flash_attn_dec_pascal<256>	GGML_CUDA_FATTN_DEC_PASCAL	-	6f96396b6ebd	new	-	2886	64	453	-	168	-	0	12672

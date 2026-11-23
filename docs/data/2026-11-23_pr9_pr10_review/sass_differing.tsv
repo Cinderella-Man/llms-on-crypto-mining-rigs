@@ -1,0 +1,4 @@
+kernel	copies base	copies head	SHA-1 of the SASS, every copy in both builds	instructions	why one more copy
+flash_attn_mask_to_KV_max<1>	21	22	f02b6e52e3538d6ed53cec7057d8cae02005dc53	108	launch_fattn<256, 1, 8> is instantiated once more, in fattn-tile-pascal.cu, by the decode kernel's launch
+flash_attn_stream_k_fixup_general<256, 1, 8>	2	3	48896c42f5fde3c7e87e302ba35fb808a54990ba	468	launch_fattn<256, 1, 8> is instantiated once more, in fattn-tile-pascal.cu, by the decode kernel's launch
+flash_attn_stream_k_fixup_uniform<256, 1, 8>	2	3	fbb22c63dcd954f56aa89a76a28add343ed27a90	264	launch_fattn<256, 1, 8> is instantiated once more, in fattn-tile-pascal.cu, by the decode kernel's launch

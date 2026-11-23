@@ -1,0 +1,34 @@
+tree	check	verdict	detail
+base	tree	OK	commit 3dfad876f48a41ab2792b23152f5ddd3418ba953 
+base	build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+base	ctest	FAIL	95% tests passed, 4 tests failed out of 75; failed: test-kv-cache test-jinja test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+base	archs plain	OK	Summary: all 153 test(s) passed; plain rc=0
+base	archs write	OK	Summary: all 153 test(s) passed; write rc=0
+base	archs compare	OK	Summary: all 153 test(s) passed; compare rc=0
+base	archs files	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+base	hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+base	hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+base	hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+base	hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+base	hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+base	hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+base	hand thread-safety	OK	test-thread-safety rc=0: 0.00.029.255 I All threads finished without errors.
+base	hand context-model	OK	test-llama-context rc=0: failed   : 0
+base	hand eval-callback	OK	llama-eval-callback rc=0:     sum = 1.685019
+pr910	tree	OK	commit 82d9eb5ef243c6166c5095ead1d7d8e43eb8a9cf 
+pr910	build	OK	rc=0; BUILD_SHARED_LIBS=ON; all targets; 0 error lines
+pr910	ctest	FAIL	95% tests passed, 4 tests failed out of 75; failed: test-kv-cache test-jinja test-jinja-py test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+pr910	archs plain	OK	Summary: all 153 test(s) passed; plain rc=0
+pr910	archs write	OK	Summary: all 153 test(s) passed; write rc=0
+pr910	archs compare	OK	Summary: all 153 test(s) passed; compare rc=0
+pr910	archs files	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+pr910	ident vs base	SAME	base wrote 148 files; 148 compared, differ: none; written by pr910 only: 0; Summary: all 153 test(s) passed
+pr910	hand hop-cast	OK	test-hop-cast rc=0: 54 checks, 0 failed
+pr910	hand route-once-x1	OK	test-route-once rc=0: 223 checks, 0 failed
+pr910	hand route-once-x30	OK	test-route-once rc=0: 223 checks, 0 failed
+pr910	hand bytes-switches	OK	test-bytes-switches rc=0: 535 checks, 0 failed
+pr910	hand bytes-zero-tail	OK	test-bytes-switches rc=0: 536 checks, 0 failed
+pr910	hand moe-ids	OK	test-moe-ids rc=0: 13 checks, 0 failed
+pr910	hand thread-safety	OK	test-thread-safety rc=0: 0.00.030.989 I All threads finished without errors.
+pr910	hand context-model	OK	test-llama-context rc=0: failed   : 0
+pr910	hand eval-callback	OK	llama-eval-callback rc=0:     sum = 0.360049

@@ -1,0 +1,17 @@
+5b330eccef892b7dd9f4faf1027319c3  llama.cpp-20261120-3dfad876f-pascal-p106-v5-pipe-grammar-off/bin/llama-server
+484379ee8d971ce67d5720aca242899a  llama.cpp-20261123-82d9eb5ef-pascal-p106-v5-contrib2/bin/llama-server
+base kernels (names): 8836; identical in new with kq_fp32 off: 8833; different: 3; missing in new: 0; names only in new (kq_fp32 off): 5; kq_fp32 on kernels: 176
+only in new: void (anonymous namespace)::flash_attn_dec_pascal<256>(char const*, char const*, char const*, char const*, char const*, int const*, int const*, float*, float2*, float, float, float, float, unsigned int, float, int, uint3, int, int, int, int, int, int, int, int, int, int, int, long, int, int, long, int, int, int, int, long, long)
+only in new: void (anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)8, (ggml_type)8, false, true, false>(char const*, char const*, char const*, char const*, char const*, int const*, int const*, float*, float2*, float, float, float, float, unsigned int, float, int, uint3, int, int, int, int, int, int, int, int, int, int, int, long, int, int, long, int, int, int, int, long, long)
+only in new: void (anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)8, (ggml_type)8, true, true, false>(char const*, char const*, char const*, char const*, char const*, int const*, int const*, float*, float2*, float, float, float, float, unsigned int, float, int, uint3, int, int, int, int, int, int, int, int, int, int, int, long, int, int, long, int, int, int, int, long, long)
+only in new: void (anonymous namespace)::flash_attn_tile_pascal<256, (ggml_type)8, (ggml_type)8, false, true, false>(char const*, char const*, char const*, char const*, char const*, int const*, int const*, float*, float2*, float, float, float, float, unsigned int, float, int, uint3, int, int, int, int, int, int, int, int, int, int, int, long, int, int, long, int, int, int, int, long, long)
+only in new: void (anonymous namespace)::flash_attn_tile_pascal<256, (ggml_type)8, (ggml_type)8, false, true, true>(char const*, char const*, char const*, char const*, char const*, int const*, int const*, float*, float2*, float, float, float, float, unsigned int, float, int, uint3, int, int, int, int, int, int, int, int, int, int, int, long, int, int, long, int, int, int, int, long, long)
+kq_fp32=true kernels' SHA-1, base against head: identical
+kernels compared: 3; differing only in MOV32I constants: 0; differing otherwise: 3
+OTHER: copies differ void flash_attn_mask_to_KV_max<1>(__half2 const*, int*, int, long, long)
+OTHER: copies differ void flash_attn_stream_k_fixup_general<256, 1, 8>(float*, float2 const*, int, int, int, int, uint3, uint3, uint3, uint3)
+OTHER: copies differ void flash_attn_stream_k_fixup_uniform<256, 1, 8>(float*, float2 const*, int, int, int, int, int, int, uint3, uint3, uint3)
+flash_attn_mask_to_KV_max	code	1
+flash_attn_stream_k_fixup_general	code	1
+flash_attn_stream_k_fixup_uniform	code	1
+differing kernels: 3; only in head: 5; missing in head: 0

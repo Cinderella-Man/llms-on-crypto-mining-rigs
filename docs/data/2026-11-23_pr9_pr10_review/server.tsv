@@ -1,0 +1,8 @@
+run	binary	LLAMA_PIPE_MEDIA	flags	pipelined requests	guesses	right	wrong	grammar rejections	same tokens as	pipeline counts as base-pipe
+base-plain	3dfad876f	unset	-bs	0	0	0	0	0	-	-
+head-plain	head	unset	-bs	0	0	0	0	0	base-plain: 5 of 5	-
+base-pipe	3dfad876f	unset	-bs --pipe-depth 3	5	370	37	113	0	-	-
+head-pipe	head	unset	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	same
+head-pipe-media0	head	0	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	same
+head-pipe-media1	head	1	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	same
+head-pipe-media2	head	2	-bs --pipe-depth 3	5	370	37	113	0	base-pipe: 5 of 5	same
