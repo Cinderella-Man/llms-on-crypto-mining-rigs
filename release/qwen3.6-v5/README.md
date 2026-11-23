@@ -8,7 +8,8 @@ context, and the model's own MTP head guessing the pipeline's next token. It nee
 **This is a contributor's rig, not the reference rig:** four GTX 1070 8 GB cards (compute 6.1) on PCIe x1 risers, a
 Celeron G3900, 8 GB of host memory, Windows 10 with NVIDIA driver 582.78, and a local CUDA 12.9 sm_61 build. The
 switches are not Windows-specific, but the line has not been run on Linux or on P106 cards. Every number on this page
-was taken on that rig at temperature 0.
+was taken on that rig at temperature 0. Where a setting has two values ("68.5 and 72.9 tok/s"), they are the slowest
+and fastest of the contributor's runs; the runs between them were not recorded.
 
 ## What it gets
 
@@ -65,8 +66,8 @@ $env:LLAMA_SAMPLING_TOP_K_ROWS='1'; $env:LLAMA_KV_SEQ_RM_BOUND='1'
   --spec-ckpt-vram --ctx-checkpoints-incall --cache-ram 3072 --host 127.0.0.1 --port 8080
 ```
 
-On this rig the server process runs at High priority (Windows): a tool call at 39k writes at 42.2–42.4 tok/s against
-38.3–39.3 at Normal (measured 2026-11-16 on an earlier build of this line); plain text at short context gained
+On this rig the server process runs at High priority (Windows): a tool call at 39k writes at 42.2 and 42.4 tok/s against
+38.3 and 39.3 at Normal (measured 2026-11-16 on an earlier build of this line); plain text at short context gained
 ~10 tok/s. A second core made no difference to tool calls.
 
 ## The preset: [settings.env](settings.env)
@@ -75,12 +76,12 @@ On this rig the server process runs at High priority (Windows): a tool call at 3
 |---|---|---|
 | `--spec-type draft-mtp -ctkd q8_0 -ctvd q8_0` | the model's own MTP layer as the draft model, its cache in q8_0 | |
 | `-bs --pipe-depth 2 --pipe-guess mtp` | pipelined speculation with the MTP head guessing each next token, one row launched ahead | 1,290 right / 208 wrong per 1,500 tokens, against 458 / 585 for `cont`; output byte-identical to plain decoding (PR #7) |
-| `--pipe-mtp-walk 1000` | a right guess keeps the MTP chain going instead of re-anchoring every token | 68.5–72.9 against 62.9–65.4 tok/s at depth 2 (PR #7) |
-| `--mtp-device 0` | the MTP layer and a copy of the output head (515 MiB) on GPU 0 | on the last card an MTP row waited behind pipe work under WDDM: 36–47 ms a row, 15.5 tok/s; on GPU 0, 38–40 tok/s. May not matter on Linux (PR #7) |
+| `--pipe-mtp-walk 1000` | a right guess keeps the MTP chain going instead of re-anchoring every token | 68.5 and 72.9 against 62.9 and 65.4 tok/s at depth 2 (PR #7) |
+| `--mtp-device 0` | the MTP layer and a copy of the output head (515 MiB) on GPU 0 | on the last card an MTP row waited behind pipe work under WDDM: 36 to 47 ms a row, 15.5 tok/s; on GPU 0, 38 and 40 tok/s. May not matter on Linux (PR #7) |
 | `LLAMA_DRAFT_SHORTLIST=65536` | the MTP head scores token ids below 65,536, special tokens and the tokens in the context, instead of all 248k | the guesser 50.4 tok/s instead of 29.4 with the same hit rate (PR #6) |
-| `LLAMA_PIPE_GRAMMAR=1` | the pipe keeps running under a grammar; the host checks each drawn token and a rejection counts as a wrong guess | tool call at 39.5k 53.1–55.6 tok/s instead of 31.5–32.1, JSON schema 89 instead of 47; output differs from the batched path at near ties, both valid, and repeats exactly (PR #7) |
-| `GGML_CUDA_HOP_MAILBOX_MAX_KB=0 GGML_CUDA_HOP_MAILBOX_GATE_KB=64` | hops above 64 KiB go through pinned host buffers ordered by CUDA events; smaller ones keep the polling mailbox | fresh prompts 19.3k 763 vs ~390 tok/s, 39.5k 572–591 vs 281–289, 102k 318 vs 122–155; a 125k prompt passes, where the mailbox timed out at ~50–60k and the display driver reset (PR #4) |
-| `--spec-ckpt-vram` | the per-step speculation checkpoint of the recurrent state (62.8 MiB) stays on the card instead of crossing the x1 link every step | 49-token JSON answer 3.9 s → 1.5–1.7 s, tool call 5.3 → 3.8 s, same output (PR #5) |
+| `LLAMA_PIPE_GRAMMAR=1` | the pipe keeps running under a grammar; the host checks each drawn token and a rejection counts as a wrong guess | tool call at 39.5k 53.1 and 55.6 tok/s instead of 31.5 and 32.1, JSON schema 89 instead of 47; output differs from the batched path at near ties, both valid, and repeats exactly (PR #7) |
+| `GGML_CUDA_HOP_MAILBOX_MAX_KB=0 GGML_CUDA_HOP_MAILBOX_GATE_KB=64` | hops above 64 KiB go through pinned host buffers ordered by CUDA events; smaller ones keep the polling mailbox | fresh prompts 19.3k 763 vs ~390 tok/s, 39.5k 572 and 591 vs 281 and 289, 102k 318 vs 122 and 155; a 125k prompt passes, where the mailbox timed out at ~50k to 60k and the display driver reset (PR #4) |
+| `--spec-ckpt-vram` | the per-step speculation checkpoint of the recurrent state (62.8 MiB) stays on the card instead of crossing the x1 link every step | 49-token JSON answer 3.9 s → 1.5 and 1.7 s, tool call 5.3 → 3.8 s, same output (PR #5) |
 | PR #3 (no switch) | at temperature 0 a speculation replay after a checkpoint restore is accepted as it is, as at temperature > 0 | JSON-schema requests that livelocked (the same restore and one-token replay hundreds of times) answer in 2–4 s |
 | `-ctk f16 -ctv f16` | f16 cache for the main model | on Pascal the stock q8_0 decode attention read ~28 GB/s against ~145 for f16: tool-call writing +34 % at 39k, +48 % at ~104k |
 | `-ub 128` | prompt micro-batches of 128 | a ~104k prompt in 263.6 s instead of 278.7 with 256; ~330 MB more free on GPU 0 |
