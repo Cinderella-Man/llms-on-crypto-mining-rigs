@@ -1,0 +1,7 @@
+part	setting	cases	passed	failed	exit
+suite	mtk0	204	204	0	0
+suite	kcol0	204	204	0	0
+suite	kcol2	204	204	0	0
+ornith	mtk0	80	80	0	0
+ornith	kcol0	80	80	0	0
+ornith	kcol2	80	80	0	0

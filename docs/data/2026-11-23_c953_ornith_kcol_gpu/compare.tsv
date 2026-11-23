@@ -1,0 +1,28 @@
+reference (round 1)	model and arm	prompt	plain greedy replies, each round	n_probs reply: first differing token	the reference's two candidates there (id:logprob)	the arm's two candidates there	largest change of the chosen token's logprob before it
+ornith new-unset	ornith new-mt2	code	r1: differs at token 132; r2: differs at token 132	132	23174:-0.922796 12573:-0.935965	12573:-0.911171 23174:-0.933927	0.0562
+ornith new-unset	ornith new-mt2	prose	r1: differs at token 72; r2: differs at token 72	72	579:-0.673058 13:-0.714106	13:-0.656172 579:-0.731978	0.0848
+ornith new-unset	ornith new-mt2	prog	r1: differs at token 64; r2: differs at token 64	64	440:-0.769175 198:-0.852720	198:-0.792185 440:-0.853388	0.0949
+ornith new-unset	ornith base-unset	code	r1: same; r2: same	same			0
+ornith new-unset	ornith base-unset	prose	r1: same; r2: same	same			0
+ornith new-unset	ornith base-unset	prog	r1: same; r2: same	same			0
+ornith new-unset	ornith new-unset	code	r1: same; r2: same	same			0
+ornith new-unset	ornith new-unset	prose	r1: same; r2: same	same			0
+ornith new-unset	ornith new-unset	prog	r1: same; r2: same	same			0
+ornmtp new-unset	ornmtp new-mt2	code	r1: differs at token 69; r2: differs at token 69	69	1518:-1.401961 1510:-1.523024	1510:-1.230504 1518:-1.413682	0.0755
+ornmtp new-unset	ornmtp new-mt2	prose	r1: differs at token 54; r2: differs at token 54	54	2361:-0.736196 4283:-1.195682	4283:-0.865129 2361:-1.128811	0.0752
+ornmtp new-unset	ornmtp new-mt2	prog	r1: differs at token 17; r2: differs at token 17	17	318:-0.691644 6297:-0.694668	6297:-0.658565 318:-0.728986	0.0242
+ornmtp new-unset	ornmtp base-unset	code	r1: same; r2: same	same			0
+ornmtp new-unset	ornmtp base-unset	prose	r1: same; r2: same	same			0
+ornmtp new-unset	ornmtp base-unset	prog	r1: same; r2: same	same			0
+ornmtp new-unset	ornmtp new-unset	code	r1: same; r2: same	same			0
+ornmtp new-unset	ornmtp new-unset	prose	r1: same; r2: same	same			0
+ornmtp new-unset	ornmtp new-unset	prog	r1: same; r2: same	same			0
+ornith new-unset	ornmtp new-unset	code	r1: differs at token 69; r2: differs at token 69	69	1510:-1.273144 1518:-1.416955	1518:-1.401961 1510:-1.523024	0.0673
+ornith new-unset	ornmtp new-unset	prose	r1: differs at token 54; r2: differs at token 54	54	4283:-0.902889 2361:-0.985971	2361:-0.736196 4283:-1.195682	0.0337
+ornith new-unset	ornmtp new-unset	prog	r1: differs at token 17; r2: differs at token 17	17	6297:-0.664910 318:-0.722223	318:-0.691644 6297:-0.694668	0.000164
+ornith new-unset	ornmtp new-mt2	code	r1: differs at token 132; r2: differs at token 132	132	23174:-0.922796 12573:-0.935965	12573:-0.911171 23174:-0.933927	0.0562
+ornith new-unset	ornmtp new-mt2	prose	r1: differs at token 72; r2: differs at token 72	72	579:-0.673058 13:-0.714106	13:-0.656172 579:-0.731978	0.0848
+ornith new-unset	ornmtp new-mt2	prog	r1: differs at token 64; r2: differs at token 64	64	440:-0.769175 198:-0.852720	198:-0.792185 440:-0.853388	0.0949
+ornith new-unset	ornmtp base-unset	code	r1: differs at token 69; r2: differs at token 69	69	1510:-1.273144 1518:-1.416955	1518:-1.401961 1510:-1.523024	0.0673
+ornith new-unset	ornmtp base-unset	prose	r1: differs at token 54; r2: differs at token 54	54	4283:-0.902889 2361:-0.985971	2361:-0.736196 4283:-1.195682	0.0337
+ornith new-unset	ornmtp base-unset	prog	r1: differs at token 17; r2: differs at token 17	17	6297:-0.664910 318:-0.722223	318:-0.691644 6297:-0.694668	0.000164

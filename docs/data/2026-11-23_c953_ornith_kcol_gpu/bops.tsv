@@ -1,0 +1,9 @@
+part	run	GGML_CUDA_MMVQ_PASCAL_MT	cases	passed	failed	exit
+suite	record	unset (live, record written)	204	204	0	0
+suite	replay-unset	unset (replayed)	204	204	0	0
+suite	replay-mt2	=2 (replayed)	204	204	0	0
+suite	live-mt2	=2 (live)	204	204	0	0
+ornith	record	unset (live, record written)	80	80	0	0
+ornith	replay-unset	unset (replayed)	80	80	0	0
+ornith	replay-mt2	=2 (replayed)	80	80	0	0
+ornith	live-mt2	=2 (live)	80	80	0	0

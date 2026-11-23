@@ -1,0 +1,55 @@
+model	arm	round	prompt	tokens	md5 of the token ids	drafted	accepted	stop
+ornith	base-unset	r1	code	256	6bb0265e			limit
+ornith	base-unset	r1	prose	256	8acfb983			limit
+ornith	base-unset	r1	prog	256	4710b7e8			limit
+ornith	base-unset	r2	code	256	6bb0265e			limit
+ornith	base-unset	r2	prose	256	8acfb983			limit
+ornith	base-unset	r2	prog	256	4710b7e8			limit
+ornith	base-unset	p	code	256	6bb0265e			limit
+ornith	base-unset	p	prose	256	8acfb983			limit
+ornith	base-unset	p	prog	256	4710b7e8			limit
+ornith	new-mt2	r1	code	256	685f053a			limit
+ornith	new-mt2	r1	prose	256	86251eac			limit
+ornith	new-mt2	r1	prog	256	acfa134a			limit
+ornith	new-mt2	r2	code	256	685f053a			limit
+ornith	new-mt2	r2	prose	256	86251eac			limit
+ornith	new-mt2	r2	prog	256	acfa134a			limit
+ornith	new-mt2	p	code	256	685f053a			limit
+ornith	new-mt2	p	prose	256	86251eac			limit
+ornith	new-mt2	p	prog	256	acfa134a			limit
+ornith	new-unset	r1	code	256	6bb0265e			limit
+ornith	new-unset	r1	prose	256	8acfb983			limit
+ornith	new-unset	r1	prog	256	4710b7e8			limit
+ornith	new-unset	r2	code	256	6bb0265e			limit
+ornith	new-unset	r2	prose	256	8acfb983			limit
+ornith	new-unset	r2	prog	256	4710b7e8			limit
+ornith	new-unset	p	code	256	6bb0265e			limit
+ornith	new-unset	p	prose	256	8acfb983			limit
+ornith	new-unset	p	prog	256	4710b7e8			limit
+ornmtp	base-unset	r1	code	256	b58454ab	289	158	limit
+ornmtp	base-unset	r1	prose	256	3732e49a	314	150	limit
+ornmtp	base-unset	r1	prog	256	b5128eb1	298	155	limit
+ornmtp	base-unset	r2	code	256	b58454ab	289	158	limit
+ornmtp	base-unset	r2	prose	256	3732e49a	314	150	limit
+ornmtp	base-unset	r2	prog	256	b5128eb1	298	155	limit
+ornmtp	base-unset	p	code	256	b58454ab	289	158	limit
+ornmtp	base-unset	p	prose	256	3732e49a	314	150	limit
+ornmtp	base-unset	p	prog	256	b5128eb1	298	155	limit
+ornmtp	new-mt2	r1	code	256	685f053a	258	168	limit
+ornmtp	new-mt2	r1	prose	256	86251eac	296	156	limit
+ornmtp	new-mt2	r1	prog	256	acfa134a	300	154	limit
+ornmtp	new-mt2	r2	code	256	685f053a	261	167	limit
+ornmtp	new-mt2	r2	prose	256	86251eac	296	156	limit
+ornmtp	new-mt2	r2	prog	256	acfa134a	300	154	limit
+ornmtp	new-mt2	p	code	256	685f053a	261	167	limit
+ornmtp	new-mt2	p	prose	256	86251eac	296	156	limit
+ornmtp	new-mt2	p	prog	256	acfa134a	300	154	limit
+ornmtp	new-unset	r1	code	256	b58454ab	289	158	limit
+ornmtp	new-unset	r1	prose	256	3732e49a	314	150	limit
+ornmtp	new-unset	r1	prog	256	b5128eb1	298	155	limit
+ornmtp	new-unset	r2	code	256	b58454ab	289	158	limit
+ornmtp	new-unset	r2	prose	256	3732e49a	314	150	limit
+ornmtp	new-unset	r2	prog	256	b5128eb1	298	155	limit
+ornmtp	new-unset	p	code	256	b58454ab	289	158	limit
+ornmtp	new-unset	p	prose	256	3732e49a	314	150	limit
+ornmtp	new-unset	p	prog	256	b5128eb1	298	155	limit

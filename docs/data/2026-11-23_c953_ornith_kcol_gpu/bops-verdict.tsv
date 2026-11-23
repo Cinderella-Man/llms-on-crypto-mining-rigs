@@ -1,0 +1,3 @@
+part	cases replayed in both settings	cases the rule takes	of those, =2 gives the read-once kernel's result	cases the rule leaves	of those, =2 gives unset's result	cases whose result =2 changes	cases off the rule
+suite	204	88	88	116	116	6	none
+ornith	80	27	27	53	53	3	none
