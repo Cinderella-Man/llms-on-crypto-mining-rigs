@@ -1,0 +1,4 @@
+share	cases recorded	cases replayed in every setting	unset passed	unset failed	unset2 passed	unset2 failed	p106 passed	p106 failed	fn passed	fn failed	p106-kcol0 passed	p106-kcol0 failed	fn-f32 passed	fn-f32 failed	moved by p106	moved by fn	moved cases of 9+ tokens	unset error not repeated	cases replayed only forced	of them failed in a forced setting
+mul_mat	4946	4946	4946	0	4946	0	4946	0	4946	0	4946	0	4946	0	2264	2258	0	0	0	0
+mul_mat_id	2370	2254	2254	0	2254	0	2254	0	2254	0	2254	0	2254	0	1042	1043	53	0	116	0
+fused	5274	5274	5273	1	5273	1	5273	1	5273	1	5273	1	5273	1	1931	1949	1	0	0	0

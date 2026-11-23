@@ -4,7 +4,11 @@ Registry row [Q1687](../../../quants/experiments.md) (the GPU half of the night'
 C947). The processor half is [2026-11-21_c908_v5_merged_build](../2026-11-21_c908_v5_merged_build/README.md).
 
 **Passed.** The card suite passes 26,644 of its 26,645 cases (every case but the repeated-expert-id ones, the same
-cases as pull request 4's run on these cards); the one failure is the known random rounding tie in a copy to Q8_0. On
+cases as pull request 4's run on these cards); the one failure is the known random rounding tie in a copy to Q8_0.
+On these cards the suite and the loads ran llama.cpp's own matrix-vector kernels for products of 1 to 8 tokens: the
+fork's Pascal kernels for them turn themselves on only on compute 6.1 cards (the P106). Forced on, with a P106's launch
+shapes, they pass the suite's `MUL_MAT`, `MUL_MAT_ID` and fused cases too; one fused case there fails on a router
+tie with them off as well ([2026-11-23_c968_pascal_mmvq_suite](../2026-11-23_c968_pascal_mmvq_suite/README.md)). On
 three cards
 the merged engine runs the three release files exactly as v5 before the contributions does: every greedy reply is the
 same token for token, Flash-Next's draft proposes and lands the same tokens, and every card holds the same memory to
@@ -20,7 +24,7 @@ Nothing here is timed: the speed half of the check is a P106 rig row.
 | Base build | `602691153`: v5 before the contributions ([its build](../2026-11-17_c854b_upstream_newest/README.md)); `llama-server` `86607661d5a19d1a90d19ee4db10c90b` |
 | `test-hop-mailbox` | not in the rig tarball: built from the same tree (`3dfad876f`, clean) with `cmake --build build --target test-hop-mailbox`, nothing else recompiled; md5 `fbb5a351a5e2416ca0b881a0a472ff3e`. `tests/` is the same in both builds |
 | Cards | three RTX 3090 24 GB on a build machine, running the rig build's compute 6.1 PTX through the driver's JIT (the way [pull request 4's GPU tests](https://github.com/Cinderella-Man/miner-llama/pull/4) were run). A CUDA preflight passed on all three first |
-| Settings | every switch a preset does not set at its default; no clock, power or other card setting changed |
+| Settings | every switch a preset does not set at its default; no clock, power or other card setting changed. At these defaults the fork's Pascal matrix-vector kernels stay off on these cards: `GGML_CUDA_MMVQ_PASCAL` and `GGML_CUDA_MMVF_PASCAL` at 1 turn them on only on compute 6.1 cards (the P106), so here llama.cpp's own matrix-vector kernels computed the products of 1 to 8 tokens, in the card suite and in the loads |
 
 Between the two builds 13 files changed. The only card code among them is `ggml/src/ggml-cuda/hop-mailbox.cu` (pull
 request 4), which runs only with `GGML_CUDA_HOP_MAILBOX=1`, a switch no preset sets. Pull requests 3, 5, 6 and 7 and
@@ -55,8 +59,10 @@ used the same file.
 | Flint Pascal Q8 GGUF | the same 256, 1,064 | the same 256, 1,244 | — |
 | Ornith-1.5-122B Pascal N2P GGUF | the same 256, 953 | the same 256, 1,233 | — |
 
-All six replies ran to the 256-token limit. Five of them open with the same 60 characters as the P106 rig's replies to
-the same requests in C854b; Ornith's prose parts from the rig's after "A hash map handles collisions ". The texts are
+On these cards the replies' small products ran on llama.cpp's own matrix-vector kernels on both builds, not on the
+fork's Pascal kernels (Flash-Next's preset switches act inside those kernels, so they changed nothing here); the two
+builds' matrix-vector kernel files are the same. All six replies ran to the 256-token limit. Five of them open with
+the same 60 characters as the P106 rig's replies to the same requests in C854b; Ornith's prose parts from the rig's after "A hash map handles collisions ". The texts are
 not compared with the rig's beyond that, because these cards add up their sums in another order.
 
 **Every card holds the same memory on both builds** ([load-memory.tsv](load-memory.tsv)):
@@ -95,8 +101,12 @@ setting as in pull request 4's run.
 
 `test-backend-ops test -b CUDA0 -p "^(?!.*dup=1)"`: every operator case the CUDA backend supports, computed on one
 card and judged against the processor, every case but the repeated-expert-id ones (`dup=1`). It runs one card at a
-time, so it cannot reach the hop code; it checks every kernel the new build compiled, the fork's Pascal kernels among
-them as the 3090s run them. Split by operator over the three cards, 10:01–10:40 ([bops.tsv](bops.tsv)):
+time, so it cannot reach the hop code. It checks every kernel the new build runs on these cards, which leaves out the
+fork's Pascal matrix-vector kernels (`mul_mat_vec_q_pascal` with its multi-token, k-column and expert kernels, and the
+BF16 kernels): they turn themselves on only on compute 6.1 cards, so here llama.cpp's own matrix-vector kernels
+computed those products. The fork's kernels are checked forced on, with a P106's launch shapes, in
+[2026-11-23_c968_pascal_mmvq_suite](../2026-11-23_c968_pascal_mmvq_suite/README.md). Split by operator over the three
+cards, 10:01–10:40 ([bops.tsv](bops.tsv)):
 
 | Share | Card | Cases | Passed | Failed |
 |---|---|---:|---:|---|
@@ -116,6 +126,9 @@ them as the 3090s run them. Split by operator over the three cards, 10:01–10:4
   runs ([run/ops-testmode-only.txt](run/ops-testmode-only.txt)), started by hand at 10:09 once the first three shares
   showed the gap.
 - No illegal memory access, no crash, every share's exit code 0 except the third's (1, from that failure).
+- **Not run: 278 of the fork's own cases**, the 162 `MUL_MAT` and 116 `MUL_MAT_ID` products with activations large
+  enough that a block's sum passes FP16's range (`test_mul_mat_large_act`). They declare themselves supported only
+  where the fork's Pascal kernels are on, so here they were skipped as not supported; forced on, all 278 pass (C968).
 - **Not run: the repeated-expert-id cases.** The first of them stops with an illegal memory access in llama.cpp's own
   expert kernel on these cards, with v5's own binary too (pull request 4's run); upstream disables them for CUDA, and
   they exercise single-card expert kernels the two builds share.

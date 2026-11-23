@@ -1,0 +1,31 @@
+tbo-record	1
+name	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+key	18test_topk_moe_tail|n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0#0
+index	33496
+class	18test_topk_moe_tail
+mode	graph
+max_err	1e-07
+reference	CPU
+inputs	std::random_device draws, stored (not reproducible from a seed)
+in	66536	6e437510566a7a6eced935e30a04a39c
+ref	5184	b30427b9891103b5b7dbcc90e0d1f7e6
+tensor	0	sent_0	f32	1024,1,1,1	4096
+tensor	1	logits	f32	256,9,1,1	9216
+tensor	2	sent_1	f32	1024,1,1,1	4096
+tensor	3	node_0	f32	256,9,1,1	9216
+tensor	4	node_2	i32	256,9,1,1	9216
+tensor	5	node_4	f32	1,8,9,1	288
+tensor	6	node_6	f32	1,9,1,1	36
+tensor	7	node_7	f32	1,9,1,1	36
+tensor	8	node_8	f32	8,9,1,1	288
+tensor	9	node_10	f32	1,8,9,1	288
+tensor	10	w_cut	f32	1,8,9,1	288
+tensor	11	ids_cut	i32	8,9,1,1	288
+tensor	12	as	f32	1,16,256,1	16384
+tensor	13	sent_2	f32	1024,1,1,1	4096
+tensor	14	out	f32	16,8,9,1	4608
+tensor	15	sent_3	f32	1024,1,1,1	4096
+node	0	11	MOE_TAIL	w_cut	0	72
+node	1	12	MOE_TAIL	ids_cut	0	72
+node	2	13	MUL_MAT_ID	out	0	1152
+live	CUDA0	FAIL	5.19485678e-15,3.51146374e-05,5.67832141e-15

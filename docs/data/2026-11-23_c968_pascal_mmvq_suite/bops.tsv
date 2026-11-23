@@ -1,0 +1,24 @@
+share	run	setting	cases	passed	failed	not recorded	exit	failing cases
+mul_mat	live-p106	p106 (live)	5125	5125	0	0	0	-
+mul_mat	live-fn	fn (live)	5125	5125	0	0	0	-
+mul_mat	record	unset (live, record written)	4946	4946	0	0	0	-
+mul_mat	replay-unset	unset (replayed)	4946	4946	0	17	0	-
+mul_mat	replay-unset2	unset (replayed again)	4946	4946	0	17	0	-
+mul_mat	replay-p106	p106 (replayed)	4946	4946	0	179	0	-
+mul_mat	replay-fn	fn (replayed)	4946	4946	0	179	0	-
+mul_mat	replay-p106-kcol0	p106-kcol0 (replayed)	4946	4946	0	179	0	-
+mul_mat	replay-fn-f32	fn-f32 (replayed)	4946	4946	0	179	0	-
+mul_mat_id	record	p106 (live, record written)	2370	2370	0	0	0	-
+mul_mat_id	replay-unset	unset (replayed)	2254	2254	0	0	0	-
+mul_mat_id	replay-unset2	unset (replayed again)	2254	2254	0	0	0	-
+mul_mat_id	replay-p106	p106 (replayed)	2370	2370	0	0	0	-
+mul_mat_id	replay-fn	fn (replayed)	2370	2370	0	0	0	-
+mul_mat_id	replay-p106-kcol0	p106-kcol0 (replayed)	2370	2370	0	0	0	-
+mul_mat_id	replay-fn-f32	fn-f32 (replayed)	2370	2370	0	0	0	-
+fused	record	p106 (live, record written)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+fused	replay-unset	unset (replayed)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+fused	replay-unset2	unset (replayed again)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+fused	replay-p106	p106 (replayed)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+fused	replay-fn	fn (replayed)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+fused	replay-p106-kcol0	p106-kcol0 (replayed)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
+fused	replay-fn-f32	fn-f32 (replayed)	5274	5273	1	0	1	TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0)
