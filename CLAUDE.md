@@ -32,6 +32,10 @@ card has 5 SMs, and the host has 2 Celeron cores and 4 GB of RAM.
   message. An idea is not a proposal awaiting discussion. Ideas the evidence argues against are kept as planned rows
   marked parked, with the reason and what would reopen them. Tracking every idea is what keeps work from being done
   twice.
+- Each planned or running row has an open GitHub issue labelled `registry` (parked rows a closed one), and its assignee
+  says who is working on it. Search the issues before starting anything, comment on the row's issue to claim it, and
+  open an issue for a new idea. The row stays the record. After changing rows, run `scripts/registry_issues.py` (a dry
+  run by default) to bring the issues in step.
 - Two kinds of ideas belong to the sister repo
   [elixir-agents-on-mining-rigs](https://github.com/Cinderella-Man/elixir-agents-on-mining-rigs), not here:
   - Elixir models and training: fine-tuning, LoRA, distillation, RL, teacher models;
