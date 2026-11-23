@@ -1,0 +1,133 @@
+arm	pipe	request	kind	tokens	prompt_tokens	md5	list	parts_from_A_at_token	note
+pipe-a	yes	session R14	session-R14	256	14	de544dad17e0	A		C950 sp1 r1, sp1 r2, base r1
+pipe-a	yes	greedyprobs-1	greedyprobs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k0-1	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k0-2	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k0-3	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8-1	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8-2	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8-3	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8-4	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8-5	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8p95-1	k8p95	256	2290	f38cbf073acb	A		
+pipe-a	yes	k8p95-2	k8p95	256	2290	f38cbf073acb	A		
+pipe-a	yes	k8p95-3	k8p95	256	2290	f38cbf073acb	A		
+pipe-a	yes	k8probs-1	k8probs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-a	yes	k8probs-2	k8probs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	session R14	session-R14	256	14	de544dad17e0	A		C950 sp1 r1, sp1 r2, base r1
+pipe-b	yes	greedyprobs-1	greedyprobs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k0-1	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k0-2	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k0-3	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8-1	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8-2	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8-3	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8-4	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8-5	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8p95-1	k8p95	256	2290	f38cbf073acb	A		
+pipe-b	yes	k8p95-2	k8p95	256	2290	f38cbf073acb	A		
+pipe-b	yes	k8p95-3	k8p95	256	2290	f38cbf073acb	A		
+pipe-b	yes	k8probs-1	k8probs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-b	yes	k8probs-2	k8probs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	session R14	session-R14	256	14	fe36bf356f32	B	23	C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	greedyprobs-1	greedyprobs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k0-1	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k0-2	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k0-3	k0	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8-1	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8-2	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8-3	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8-4	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8-5	k8	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8p95-1	k8p95	256	2290	f38cbf073acb	A		
+pipe-c	yes	k8p95-2	k8p95	256	2290	f38cbf073acb	A		
+pipe-c	yes	k8p95-3	k8p95	256	2290	f38cbf073acb	A		
+pipe-c	yes	k8probs-1	k8probs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+pipe-c	yes	k8probs-2	k8probs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+nopipe-a	no	session R14	session-R14	256	14	cc2d530a49f2	C	24	
+nopipe-a	no	greedyprobs-1	greedyprobs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+nopipe-a	no	k0-1	k0	256	2290	8a0716dd4e63	B	23	
+nopipe-a	no	k0-2	k0	256	2290	8a0716dd4e63	B	23	
+nopipe-a	no	k0-3	k0	256	2290	8a0716dd4e63	B	23	
+nopipe-a	no	k8-1	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-a	no	k8-2	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-a	no	k8-3	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-a	no	k8-4	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-a	no	k8-5	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-a	no	k8p95-1	k8p95	256	2290	9f96bfa857de	B	23	
+nopipe-a	no	k8p95-2	k8p95	256	2290	9f96bfa857de	B	23	
+nopipe-a	no	k8p95-3	k8p95	256	2290	9f96bfa857de	B	23	
+nopipe-a	no	k8probs-1	k8probs	256	2290	cc2d530a49f2	B	23	
+nopipe-a	no	k8probs-2	k8probs	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	session R14	session-R14	256	14	cc2d530a49f2	C	24	
+nopipe-b	no	greedyprobs-1	greedyprobs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+nopipe-b	no	k0-1	k0	256	2290	8a0716dd4e63	B	23	
+nopipe-b	no	k0-2	k0	256	2290	8a0716dd4e63	B	23	
+nopipe-b	no	k0-3	k0	256	2290	8a0716dd4e63	B	23	
+nopipe-b	no	k8-1	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	k8-2	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	k8-3	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	k8-4	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	k8-5	k8	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	k8p95-1	k8p95	256	2290	9f96bfa857de	B	23	
+nopipe-b	no	k8p95-2	k8p95	256	2290	9f96bfa857de	B	23	
+nopipe-b	no	k8p95-3	k8p95	256	2290	9f96bfa857de	B	23	
+nopipe-b	no	k8probs-1	k8probs	256	2290	cc2d530a49f2	B	23	
+nopipe-b	no	k8probs-2	k8probs	256	2290	cc2d530a49f2	B	23	
+p106k	yes	session R14	session-R14	256	14	1142d6715c9b	D	1	
+p106k	yes	greedyprobs-1	greedyprobs	256	2290	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+p106k	yes	k0-1	k0	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k0-2	k0	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k0-3	k0	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k8-1	k8	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k8-2	k8	256	2290	18ff1823b1d5	D	23	
+p106k	yes	k8-3	k8	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k8-4	k8	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k8-5	k8	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k8p95-1	k8p95	256	2290	80ee625fda28	C	242	
+p106k	yes	k8p95-2	k8p95	256	2290	80ee625fda28	C	242	
+p106k	yes	k8p95-3	k8p95	256	2290	80ee625fda28	C	242	
+p106k	yes	k8probs-1	k8probs	256	2290	76b5050ecdc5	C	110	
+p106k	yes	k8probs-2	k8probs	256	2290	76b5050ecdc5	C	110	
+spipe-a	yes	session v1 R14 pipe	session-R14-pipe	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-a	yes	session v2 R14 probs	session-R14-probs	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-a	yes	session v3 R14 greedy	session-R14-greedy	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-a	yes	session v4 R14 probs	session-R14-probs	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-a	yes	session v5 R14 pipe	session-R14-pipe	256	14	de544dad17e0	B	23	C950 sp1 r1, sp1 r2, base r1
+spipe-a	yes	session v6 R14 probs	session-R14-probs	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-b	yes	session v1 R14 pipe	session-R14-pipe	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-b	yes	session v2 R14 probs	session-R14-probs	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-b	yes	session v3 R14 greedy	session-R14-greedy	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-b	yes	session v4 R14 probs	session-R14-probs	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-b	yes	session v5 R14 pipe	session-R14-pipe	256	14	de544dad17e0	B	23	C950 sp1 r1, sp1 r2, base r1
+spipe-b	yes	session v6 R14 probs	session-R14-probs	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+snopipe-a	no	session v1 R14 pipe	session-R14-pipe	256	14	cc2d530a49f2	C	23	
+snopipe-a	no	session v2 R14 probs	session-R14-probs	256	14	cc2d530a49f2	B	23	
+snopipe-a	no	session v3 R14 greedy	session-R14-greedy	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+snopipe-a	no	session v4 R14 probs	session-R14-probs	256	14	cc2d530a49f2	B	23	
+snopipe-a	no	session v5 R14 pipe	session-R14-pipe	256	14	cc2d530a49f2	C	23	
+snopipe-a	no	session v6 R14 probs	session-R14-probs	256	14	cc2d530a49f2	B	23	
+spipe-c	yes	session v1 R14 pipe	session-R14-pipe	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v2 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v3 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v4 R14 pipe	session-R14-pipe	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v5 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v6 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v7 R14 pipe	session-R14-pipe	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v8 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v9 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v10 R14 pipe	session-R14-pipe	256	14	de544dad17e0	B	23	C950 sp1 r1, sp1 r2, base r1
+spipe-c	yes	session v11 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-c	yes	session v12 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v1 R14 pipe	session-R14-pipe	256	14	de544dad17e0	B	23	C950 sp1 r1, sp1 r2, base r1
+spipe-d	yes	session v2 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v3 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v4 R14 pipe	session-R14-pipe	256	14	de544dad17e0	B	23	C950 sp1 r1, sp1 r2, base r1
+spipe-d	yes	session v5 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v6 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v7 R14 pipe	session-R14-pipe	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v8 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v9 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v10 R14 pipe	session-R14-pipe	256	14	de544dad17e0	B	23	C950 sp1 r1, sp1 r2, base r1
+spipe-d	yes	session v11 R14 p95	session-R14-p95	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2
+spipe-d	yes	session v12 R14 k0	session-R14-k0	256	14	fe36bf356f32	A		C950 sp0 r1, sp0 r2, base r2

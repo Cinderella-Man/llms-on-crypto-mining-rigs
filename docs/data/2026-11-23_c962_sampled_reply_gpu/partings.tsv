@@ -1,0 +1,2 @@
+draws	kernels	run_1	run_2	token	position	u	candidates_the_same_bits	candidates (id:probability, by probability)	sampled_1	sampled_2	descending_probability_pick	pickable_by_some_order (run 1's candidates)
+position-keyed, fresh	p106/stock	p106k/k8probs-1	pipe-a/k8probs-1	110	2399	0.0284972843	no	1910:0.969463 1002:0.030497 198:0.000039 284:0.000000 1235:0.000000 1810:0.000000 368:0.000000 764:0.000000	1002	1910	1910	1002 1910

@@ -1,0 +1,7 @@
+kind	kernels	replies	pairs	positions_compared	positions_with_other_probabilities	largest_difference	first_such (pair, token)
+k8probs	stock	10	21	5376	791	2.38e-07	pipe-a/k8probs-1 pipe-a/k8probs-2 token 3
+k8probs	p106	2	1	256	41	2.38e-07	p106k/k8probs-1 p106k/k8probs-2 token 2
+session-R14-probs	stock	9	18	4608	625	2.38e-07	spipe-a/session v2 R14 probs spipe-a/session v4 R14 probs token 6
+greedyprobs	stock	5	10	2560	0	0	
+greedyprobs	p106	1	0	0	0	0	
+session-R14-greedy	stock	3	3	768	0	0	

@@ -1,0 +1,22 @@
+arm	request	context	draws	tokens	positions_where_the_order_decides	sampled_not_pickable_by_any_order	sampled_eq_descending_probability_pick	at_order_deciding_positions_sampled_eq_descending
+pipe-a	k8probs-1	fresh	position-keyed	256	3	0	254	1
+pipe-a	k8probs-2	fresh	position-keyed	256	3	0	254	1
+pipe-b	k8probs-1	fresh	position-keyed	256	3	0	254	1
+pipe-b	k8probs-2	fresh	position-keyed	256	3	0	254	1
+pipe-c	k8probs-1	fresh	position-keyed	256	3	0	254	1
+pipe-c	k8probs-2	fresh	position-keyed	256	3	0	254	1
+nopipe-a	k8probs-1	fresh	sequential	256	4	0	255	3
+nopipe-a	k8probs-2	fresh	sequential	256	4	0	255	3
+nopipe-b	k8probs-1	fresh	sequential	256	4	0	255	3
+nopipe-b	k8probs-2	fresh	sequential	256	4	0	255	3
+p106k	k8probs-1	fresh	position-keyed	256	5	0	253	2
+p106k	k8probs-2	fresh	position-keyed	256	5	0	253	2
+spipe-a	session v2 R14 probs	session	position-keyed	256	2	0	255	1
+spipe-a	session v4 R14 probs	session	position-keyed	256	2	0	255	1
+spipe-a	session v6 R14 probs	session	position-keyed	256	2	0	255	1
+spipe-b	session v2 R14 probs	session	position-keyed	256	2	0	255	1
+spipe-b	session v4 R14 probs	session	position-keyed	256	2	0	255	1
+spipe-b	session v6 R14 probs	session	position-keyed	256	2	0	255	1
+snopipe-a	session v2 R14 probs	session	sequential	256	5	0	255	4
+snopipe-a	session v4 R14 probs	session	sequential	256	5	0	255	4
+snopipe-a	session v6 R14 probs	session	sequential	256	5	0	255	4
