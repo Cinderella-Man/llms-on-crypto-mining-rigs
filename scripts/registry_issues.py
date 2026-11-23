@@ -148,7 +148,10 @@ def open_step(s):
         return False
     rest = re.split(r"\bbefore:", s[d.end():])[0]
     for m in OPEN_STEP.finditer(rest):
-        if not re.search(r"\b[qcrs]\d+\b[^.;]{0,25}$", rest[:m.start()]):
+        before = rest[:m.start()]
+        if re.search(r"(?<![\w.])\d[\d,]*\s*$|\bnot\s*$", before):  # a count ("702 planned") or "not planned"
+            continue
+        if not re.search(r"\b[qcrs]\d+\b[^.;]{0,25}$", before):
             return True
     return False
 
