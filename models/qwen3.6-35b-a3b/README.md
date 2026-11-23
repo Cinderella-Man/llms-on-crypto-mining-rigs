@@ -1,6 +1,6 @@
 # Qwen3.6-35B-A3B on Pascal mining rigs
 
-[![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-coming%20soon-718096)](#whats-next)
+[![Qwen3.6-35B-A3B](https://img.shields.io/badge/Qwen3.6--35B--A3B-v5%20preset-2b6cb0)](#run-it)
 
 [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) is a 35.95 B-parameter mixture-of-experts model that
 uses about 3 B parameters per token. It is a hybrid: 30 of its 40 layers are linear-attention (Gated DeltaNet) layers
@@ -8,8 +8,15 @@ that keep a fixed-size state, and 10 are full attention. It reads up to 262,144 
 multi-token-prediction (MTP) layer for drafting. Qwen releases it under Apache-2.0; this project is not affiliated with
 Qwen.
 
-**Status: coming soon.** It has run on the reference rig with stock llama.cpp and with the v1 engine's kernels; the v2
-engine, a recommended file and settings follow after the rig's model matrix.
+**Status: runs on a v5 preset.** On four GTX 1070 8 GB cards, Unsloth's UD-Q5_K_S with its MTP layer writes 79.6 and
+82.7 tok/s of plain text and answers a tool call on a fresh 39k-token prompt in 69.1 s (prompt 663 tok/s, writing
+71.7 tok/s), with the model's own MTP head guessing the pipeline's tokens
+([release/qwen3.6-v5](../../release/qwen3.6-v5/README.md); a contributor's rig, Windows 10).
+
+## Run it
+
+The [v5 preset](../../release/qwen3.6-v5/README.md) names the file, the build (the fork's `pascal-p106-v5` with PRs
+#3-#7) and the line; [settings.env](../../release/qwen3.6-v5/settings.env) is the line itself.
 
 ## Measured so far
 
@@ -17,6 +24,7 @@ On the [reference rig](../../docs/mining_rig.md) (P106-090 cards, PCIe 1.0 x1, 4
 
 | Build and file | Generation | Source |
 |---|---|---|
+| Miner Llama v5 + PRs #3-#7, Unsloth UD-Q5_K_S, 4 × GTX 1070 (contributor's rig) | 79.6, 82.7 (71.7 writing a tool call at 39k, 57.7 at 72k) | [release/qwen3.6-v5](../../release/qwen3.6-v5/README.md) |
 | Stock llama.cpp, bartowski's Q4_0, 4–9 cards | 18.5 (14.0 at 32k tokens of context, 8.1 at 64k) | [Qwen baselines](../../docs/benchmarks/2026-10-22-qwen-baselines.md) |
 | Stock llama.cpp with CUDA graphs on Pascal | 19.6 | [speed-ups](../../docs/benchmarks/2026-10-22-speedups.md) |
 | The same, real chat requests with MTP (2 drafted tokens) and GPU sampling | 27.7 | [speed-ups](../../docs/benchmarks/2026-10-22-speedups.md) |
@@ -53,7 +61,8 @@ Pascal one-token kernels for its Q4_K and Q6_K tensors, on by default.
    ([Q149](../../quants/experiments.md#registry)).
 4. **Hybrid-model support** for the on-card attention mask and for pipelined speculation, which keeps a group of
    recurrent states per pipe slot so that wrong guesses can be dropped: built, output identical to plain decoding in the
-   CPU and GPU checks, rig timing next ([Q162](../../quants/experiments.md#registry)).
+   CPU and GPU checks, rig timing next ([Q162](../../quants/experiments.md#registry)). Pipelined speculation with the MTP
+   head as the guesser runs in the [v5 preset](../../release/qwen3.6-v5/README.md) (PR #7).
 5. **GPU sampling for tool requests** (in v2.0 and v3, `-bs`; not timed on this model), worth more here than on Flint: Qwen3.6's 993 KB score row per token would no
    longer cross the PCIe 1.0 link.
 
