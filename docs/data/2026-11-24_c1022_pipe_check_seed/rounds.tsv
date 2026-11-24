@@ -1,0 +1,10 @@
+round	caller env	tree	rc	seconds	seed line	models (md5 of the md5 list)	files	verdicts
+plain	-	base	0	242	model seed 1 (the default)	936d97869d4e6029	10	4 INFO, 60 OK
+plain	-	head	0	242	model seed 1 (the default)	936d97869d4e6029	10	4 INFO, 60 OK
+seedpath	SEED=/some/path	base	0	181	model seed 1 (the default; SEED='/some/path' is not a whole number, so it is not taken as the seed)	936d97869d4e6029	10	4 INFO, 60 OK
+seedpath	SEED=/some/path	head	0	181	model seed 1 (the default; SEED='/some/path' is not a whole number, so it is not taken as the seed)	936d97869d4e6029	10	4 INFO, 60 OK
+model7	MODEL_SEED=7	base	0	181	model seed 7 (from MODEL_SEED)	987d56906a12e02f	10	4 INFO, 60 OK
+model7	MODEL_SEED=7	head	0	181	model seed 7 (from MODEL_SEED)	987d56906a12e02f	10	4 INFO, 60 OK
+badseed	MODEL_SEED=/some/path	-	2	0	MODEL_SEED='/some/path' is not a whole number of at most 19 digits (test-llama-archs -s takes one); nothing was run	-	-	-
+seednum	SEED=7	base	0	203	model seed 7 (from SEED)	987d56906a12e02f	10	4 INFO, 60 OK
+seednum	SEED=7	head	0	203	model seed 7 (from SEED)	987d56906a12e02f	10	4 INFO, 60 OK

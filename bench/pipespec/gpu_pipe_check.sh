@@ -10,7 +10,7 @@
 # For each build of BUILDS, in order:
 #   models  one container on the first card: for each architecture of ARCHS (default: the four llama_pipe_init accepts
 #           as recurrent, qwen4exp qwen35 qwen35moe qwen3next, and flint, a model without recurrent state) the build's
-#           test-llama-archs -a '^<arch>$' -s SEED with a 4,096-token vocabulary, its MoE model where it writes one
+#           test-llama-archs -a '^<arch>$' -s MODEL_SEED with a 4,096-token vocabulary, its MoE model where it writes one
 #           (cpu_tests.sh's models: the same files for the same seed); when an arm names q8, also a Q8_0 copy made by
 #           QUANT, a llama-quantize (QUANT_ARGS keep the hyper-connection and per-layer-embedding norms F32, which the
 #           graph adds and multiplies elementwise). The fork's Pascal matrix-vector kernels take quantized weights only
@@ -52,7 +52,7 @@
 # Usage (on the machine with the cards; this script beside check_identity.sh and prompts/rewrite.txt, as in
 # bench/pipespec):
 #   WORK=<dir> BUILDS='<tag>=<bin dir> ...' [GPUS=0,1,2] [LAYOUTS='one split'] [ARMS='f32-stock q8-p106']
-#   [ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [CHECKS='host fed recurrent kernels'] [SEED=1] [N=64]
+#   [ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [CHECKS='host fed recurrent kernels'] [MODEL_SEED=1] [N=64]
 #   [TIMEOUT=900] [VIRT=3] [IMG=nvidia/cuda:12.9.2-devel-ubuntu24.04] [MOUNTS='<folders mounted read-only>']
 #   [DOCKER_ARGS='<labels, --cpu-shares>'] [PREFLIGHT=<cuda_preflight.sh>] [NAME=gpupipe] [QUANT_ARGS=...]
 #   [P106_ENV=...] [P106ALL_ENV=...] [JITCACHE=<dir>] [QUANT=<llama-quantize>] bash gpu_pipe_check.sh
@@ -62,6 +62,9 @@
 # build (cpu_tests.sh with SHARED=OFF and KEEP_BUILD=1); one QUANT for every build gives every build the same copies
 # (models.md5). Every tool runs in a container (docker run --gpus, no network) of IMG with the build, this folder, MOUNTS
 # and WORK at the same paths.
+# MODEL_SEED, the random models' seed, must be a whole number (test-llama-archs -s); the script stops at once, before it
+# writes anything, on any other value. The older name SEED is still read, but only when it holds a whole number and
+# MODEL_SEED is unset: a caller's own SEED of another kind (a clone's path, say) is left alone and the seed stays 1.
 # The PTX JIT's cache is JITCACHE (default WORK/jitcache), shared by every run: a compute 6.1 build on a newer card
 # compiles its PTX on first use, so several runs of one build can share a JITCACHE.
 # Output: WORK/<tag>/models/<arch>/ (gen.log, the model, q8.gguf and quant.log), WORK/<tag>/models.md5,
@@ -74,7 +77,6 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 SELF=$HERE/$(basename "$0")
 ARCHS=${ARCHS-qwen4exp qwen35 qwen35moe qwen3next flint}
 CHECKS=${CHECKS:-host fed recurrent kernels}
-SEED=${SEED:-1}
 N=${N:-64}
 TIMEOUT=${TIMEOUT:-900}
 VIRT=${VIRT:-3}
@@ -177,6 +179,21 @@ fi
 
 # ---- the driver ----
 : "${WORK:?WORK=<output folder>}" "${BUILDS:?BUILDS=<tag>=<bin dir> ...}"
+# the random models' seed: MODEL_SEED, else SEED only when it is a whole number, else 1 (a caller's SEED of another
+# kind, once a clone's path, made every test-llama-archs -s stop in stoull: C1022)
+SEEDNOTE=""
+if [ -n "${MODEL_SEED:-}" ]; then
+    SEEDNOTE="from MODEL_SEED"
+elif [[ "${SEED:-}" =~ ^[0-9]+$ ]]; then
+    MODEL_SEED=$SEED SEEDNOTE="from SEED"
+else
+    MODEL_SEED=1 SEEDNOTE="the default"
+    [ -n "${SEED:-}" ] && SEEDNOTE="the default; SEED='$SEED' is not a whole number, so it is not taken as the seed"
+fi
+if ! [[ "$MODEL_SEED" =~ ^[0-9]{1,19}$ ]]; then
+    echo "gpu_pipe_check.sh: MODEL_SEED='$MODEL_SEED' is not a whole number of at most 19 digits (test-llama-archs -s takes one); nothing was run" >&2
+    exit 2
+fi
 mkdir -p "$WORK"
 WORK=$(cd "$WORK" && pwd)
 GPUS=${GPUS:-0,1,2}
@@ -208,7 +225,8 @@ rm -f "$WORK/DONE"
     printf 'tree\tarm\tlayout\tarch\tcheck\tverdict\tdetail\tplain tokens hash\tplain logits hash\n' > "$WORK/summary.tsv"
 md5sum "$SELF" "$HERE/check_identity.sh" "$HERE/prompts/rewrite.txt" > "$WORK/scripts.md5"
 needq8=0; [[ " $ARMS " == *" q8-"* ]] && needq8=1
-say "gpu pipe check: builds '$BUILDS', cards $GPUS, layouts '$LAYOUTS', arms '$ARMS', archs '$ARCHS', checks '$CHECKS'"
+say "gpu pipe check: builds '$BUILDS', cards $GPUS, layouts '$LAYOUTS', arms '$ARMS', archs '$ARCHS', checks '$CHECKS', model seed $MODEL_SEED ($SEEDNOTE)"
+echo "$MODEL_SEED" > "$WORK/model_seed.txt"
 if [ -n "$PREFLIGHT" ]; then
     $PREFLIGHT -g "$GPUS" > "$WORK/preflight.txt" 2>&1
     rc=$?
@@ -277,7 +295,7 @@ for spec in $BUILDS; do
                 timeout 600 "$quant" $qargs "$d/$m" "$d/q8.gguf" Q8_0 4 > "$d/quant.log" 2>&1 &&
                     echo "$(md5sum < "$d/q8.gguf" | cut -c1-32)  $a/q8.gguf" || echo "$a: no Q8_0 copy (quant.log)"
             fi
-        done' _ "$T" "$bin" "$SEED" "$needq8" "$QUANT_ARGS" "$quant" $ARCHS > "$T/models.md5" 2>&1
+        done' _ "$T" "$bin" "$MODEL_SEED" "$needq8" "$QUANT_ARGS" "$quant" $ARCHS > "$T/models.md5" 2>&1
     say "$tag models: $(grep -c '\.gguf$' "$T/models.md5") files; $(grep -a 'no ' "$T/models.md5" | tr '\n' ' ')"
     docker rm -f "$NAME-$tag-models" > /dev/null 2>&1
 

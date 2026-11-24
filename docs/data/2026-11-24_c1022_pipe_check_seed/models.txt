@@ -1,0 +1,6 @@
+plain/head vs seedpath/head: same
+plain/head vs plain/base: same
+plain/head vs model7/head: other
+model7/head vs seednum/head: same
+plain/head vs REF: same
+model7 files equal to plain's: 0
