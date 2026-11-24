@@ -1,0 +1,9 @@
+pass	arm	calls_logged	calls_in_plan	as_planned	differ	differences
+0	short=1400:64	73	72	72	0	-
+1	short=1400:64	73	73	73	0	-
+2	short=1400:64,cuts=1	73	73	73	0	-
+3	short=1400:64	73	73	73	0	-
+4	short=1400:64,cuts=1	73	73	73	0	-
+5	short=1400:64	73	73	73	0	-
+6	short=1400:64,cuts=1	73	73	73	0	-
+7	short=1400:64	73	73	73	0	-
