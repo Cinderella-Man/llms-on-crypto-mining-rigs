@@ -10,8 +10,8 @@ on a P106 with each switch unset and set, and how long does one attention call t
 to the preset's 49,152 tokens. Part (b), Ornith's agent check with the Q8_0 cache, is a separate run.
 
 **Result: every case passes, and with a Q8_0 cache the two switches together make Ornith's one-token attention call
-3.9 to 4.5 times faster than the stock kernel from 4,096 tokens on (3.4 at depth 0) and 1.8 to 1.9 times faster than
-the F16 cache the preset uses today.**
+4.34 times faster than the stock kernel at 8,192 tokens (3.93 at 49,152) and 1.85 times faster than the F16 cache the
+preset uses today (1.92 at 49,152).**
 - **Correctness:** 367 of 367 of the suite's head-256 `FLASH_ATTN_EXT` cases and 64 of 64 Ornith-shaped cases pass in
   each of the four arms (nothing set, `_MIN=1`, `_DEC_PASCAL=4`, both), the decode kernel's log line present exactly
   in the arms that set it ([tests.tsv](tests.tsv)).
@@ -120,7 +120,7 @@ was too narrow: pairs of arms whose process runs the same kernel for a case (for
 case) differed by up to 1.71 % at 1 to 8 tokens (−1.71 % on F16 at depth 256 with 4 tokens; −1.51 % on F16 at 32,768
 with 2 tokens), more than their own repeat spread, and by up to 2.69 % on the 512-token prompt case. So the final class
 also asks the change to exceed 1.71 %. That moves 14 F16 results at 3 and 4 tokens (`_MIN=1` and both, −1.66 % to
-+0.33 %) to negligible, 12 from gain and 2 from loss, and none of the Q8_0 results, which are changes of 18 % to 82 %.
++0.33 %) to negligible, 12 from gain and 2 from loss, and none of the Q8_0 results, the smallest of which is 18.5 % (`_DEC_PASCAL=4` at 4 tokens and 49,152).
 
 ## Files
 
