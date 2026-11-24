@@ -21,13 +21,16 @@
 #   hand    the tests the build only compiles, on random models: test-hop-cast --unit-only; test-route-once (routers x1,
 #           x30), test-bytes-switches (head as it is, --zero-tail) and test-moe-ids on a qwen4exp MoE model with 4,096
 #           tokens and 32 experts, 8 used (as their own checks make it); test-thread-safety, test-llama-context -m and
-#           llama-eval-callback, with ctest's arguments, on the llama-dense.gguf test-generate-models wrote (ctest runs
-#           them on the downloaded stories15M model)
+#           llama-eval-callback, with ctest's arguments, on a llama dense model as test-generate-models writes it (ctest
+#           runs them on the downloaded stories15M model); thread-safety also gets --seed HAND_SEED, since without one
+#           its sampler draws a new seed each run. Both models come from this tree's test-llama-archs with -s HAND_SEED,
+#           so every run and every tree gets the same models (without -s it seeds from std::random_device), and two
+#           trees' hand logs compare line by line (compare_hand.py); hand/models.md5 lists the models' checksums
 # TREES: '<tag>=<commit>[+<commit>...][:<targets>][@<base tag>] ...'; a tree with ":<targets>" runs only archs and ident.
 # Usage: WORK=<dir> SRC=<llama.cpp clone holding the commits> TREES='...' [STEPS='tree build ctest archs ident hand']
 #   [JOBS=8] [SHARED=ON] [CTEST_JOBS=8] [THREADS=8] [LOCK=<flock file>] [DOCKER_ARGS=...] [BASE_IMAGE=ubuntu:24.04]
 #   [IMAGE=pq-c565-cpu:24.04] [PIP='<packages>'] [MODEL15M=<file>] [CTEST_EXCLUDE=<names, a|b>] [NET_TESTS=<names>]
-#   [KEEP_BUILD=1] bash cpu_tests.sh
+#   [KEEP_BUILD=1] [HAND_SEED=1] bash cpu_tests.sh
 # Output: $WORK/<tag>/ (tree.txt, build.log, ctest.log, ctest.xml, archs/*.log, ident/*.log, hand/*.log, the logits
 #   in archs/logits/), $WORK/summary.tsv (tree, check, verdict, detail); done when $WORK/DONE exists
 set -uo pipefail
@@ -39,6 +42,7 @@ JOBS=${JOBS:-8}
 SHARED=${SHARED:-ON}
 CTEST_JOBS=${CTEST_JOBS:-8}
 THREADS=${THREADS:-8}
+HAND_SEED=${HAND_SEED:-1}
 BASE_IMAGE=${BASE_IMAGE:-ubuntu:24.04}
 IMAGE=${IMAGE:-pq-c565-cpu:24.04}
 NET_TESTS=${NET_TESTS:-test-arg-parser}
@@ -176,9 +180,14 @@ for spec in $TREES; do
             verdict "hand $n" "$([ $rc = 0 ] && echo OK || echo FAIL)" "$b rc=$rc: $(grep -av '^ *$' "$H/$n.log" | tail -n 1 | cut -c1-160)"
         }
         hand hop-cast test-hop-cast --unit-only
+        # the random models, each with the seed HAND_SEED: qwen4exp's MoE model, and llama's dense model (with its MoE
+        # one, which -a llama also writes) as ctest's test-generate-models makes it, whose own copy has a new seed each run
         M=$H/random/qwen4exp-moe.gguf
+        L=$H/random/llama-dense.gguf
         docker run --rm $D -v "$WORK:$WORK" -e LLAMA_TEST_ARCHS_N_VOCAB=4096 -e LLAMA_TEST_ARCHS_N_EXPERT=32,8 "$IMAGE" \
-            "$B/bin/test-llama-archs" -a qwen4exp -o "$H/random" > "$H/random/archs.log" 2>&1
+            "$B/bin/test-llama-archs" -a qwen4exp -s "$HAND_SEED" -o "$H/random" > "$H/random/archs.log" 2>&1
+        box "$B/bin/test-llama-archs" -a llama -s "$HAND_SEED" -o "$H/random" > "$H/random/dense.log" 2>&1
+        (cd "$H/random" && md5sum -- *.gguf) > "$H/models.md5" 2>&1
         if [ -f "$M" ]; then
             hand route-once-x1   test-route-once -m "$M" -t "$THREADS" -n 16 --router-scale 1
             hand route-once-x30  test-route-once -m "$M" -t "$THREADS" -n 16 --router-scale 30
@@ -188,13 +197,13 @@ for spec in $TREES; do
         else
             verdict "hand random model" FAIL "no $M: $H/random/archs.log"
         fi
-        L=$B/tests/test-models/llama-dense.gguf
         if [ -f "$L" ]; then
-            hand thread-safety test-thread-safety -m "$L" -ngl 99 -p "The meaning of life is" -n 128 -c 256 -ub 32 -np 4 -t 2
+            hand thread-safety test-thread-safety -m "$L" -ngl 99 -p "The meaning of life is" -n 128 -c 256 -ub 32 -np 4 -t 2 \
+                --seed "$HAND_SEED"
             hand context-model test-llama-context -m "$L"
             hand eval-callback llama-eval-callback -m "$L" --prompt hello --seed 42 -ngl 0
         else
-            verdict "hand llama-dense" FAIL "no $L (ctest's test-generate-models writes it)"
+            verdict "hand llama-dense" FAIL "no $L: $H/random/dense.log"
         fi
     fi
 
