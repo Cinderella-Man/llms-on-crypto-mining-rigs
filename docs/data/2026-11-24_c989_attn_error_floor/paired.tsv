@@ -1,0 +1,11 @@
+pass	pair	what	stretches	kld_diff	kld_diff_se	kld_t	top_differs_diff_pct	top_differs_diff_se	top_differs_t	ln_ppl_ratio_diff	ln_ppl_ratio_diff_se	ln_ppl_ratio_t
+g	q8f1 - q8	fault =1 against its own cache	12	0.004280	0.000671	6.38	0.403000	0.036810	10.95	0.000350	0.001178	0.30
+g	q8f3 - q8	fault =3 against its own cache	12	0.359480	0.028256	12.72	12.807000	0.928523	13.79	0.290250	0.023471	12.37
+g	q8f1 - f16u	fault =1 against rounding	12	0.003570	0.000817	4.37	0.224000	0.054435	4.11	-0.001710	0.001622	-1.05
+g	q8f3 - f16u	fault =3 against rounding	12	0.358770	0.028410	12.63	12.628000	0.926021	13.64	0.288190	0.023357	12.34
+g	q8 - f16u	the Q8_0 cache against rounding	12	-0.000710	0.000231	-3.07	-0.179000	0.058287	-3.07	-0.002060	0.000904	-2.28
+h	q8f1 - q8	fault =1 against its own cache	12	0.001470	0.000463	3.17	-0.025000	0.069608	-0.36	0.000360	0.001192	0.30
+h	q8f3 - q8	fault =3 against its own cache	12	0.329850	0.024567	13.43	10.295000	0.722204	14.25	0.290250	0.023474	12.36
+h	q8f1 - f16	fault =1 against C976's F16 cache	12	0.002060	0.000423	4.87	-0.045000	0.061473	-0.73	-0.000420	0.001703	-0.25
+h	q8f3 - f16	fault =3 against C976's F16 cache	12	0.330440	0.024530	13.47	10.275000	0.695468	14.77	0.289470	0.023543	12.30
+h	q8 - f16	the Q8_0 cache against C976's F16 cache (C976's (A) again)	12	0.000590	0.000317	1.86	-0.020000	0.068377	-0.29	-0.000780	0.000742	-1.05

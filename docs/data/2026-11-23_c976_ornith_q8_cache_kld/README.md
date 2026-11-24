@@ -179,6 +179,11 @@ scored on positions 256–511 (255 tokens at a perplexity of 12.34), is too shor
   (0.021592) and moves the perplexity by +0.001113 ± 0.003051. On this model, KLD against a reference cannot tell an
   error of that size from rounding; FN64 found the same for a 1 % error on Flash-Next
   ([2026-11-11_fn64_sparse_prompt_ptx](../2026-11-11_fn64_sparse_prompt_ptx/README.md)).
+  The per-stretch comparison does see it: over the same 12 stretches against the F16 cache, the 5 % error adds
+  0.004280 ± 0.000671 to the KLD (6.4 standard errors), and est. errors down to about 3.4 % are seen; against the
+  Q8_0 model it only just shows (3.2 standard errors), and per-stretch perplexity misses it
+  ([2026-11-24_c989_attn_error_floor](../2026-11-24_c989_attn_error_floor/README.md), the method for later
+  attention-kernel checks).
 
 **Limits.** These cards run the fork's prompt attention and matrix-vector kernels through the compute 6.1 PTX, forced
 on with a P106-090's launch shapes, and llama.cpp's own kernels elsewhere; a P106 runs the same code natively. One load

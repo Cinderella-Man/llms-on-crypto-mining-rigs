@@ -1,0 +1,34 @@
+check	measure	value	rule	result
+g: q8f1 - q8 (fault =1 against its own cache)	kld	0.004280 ± 0.000671 (t 6.38)	t >= 3	seen
+g: q8f1 - q8 (fault =1 against its own cache)	ln_ppl_ratio	0.000350 ± 0.001178 (t 0.30)	|t| >= 3	not seen
+g: q8f3 - q8 (fault =3 against its own cache)	kld	0.359480 ± 0.028256 (t 12.72)	t >= 3	seen
+g: q8f3 - q8 (fault =3 against its own cache)	ln_ppl_ratio	0.290250 ± 0.023471 (t 12.37)	|t| >= 3	seen
+g: q8f1 - f16u (fault =1 against rounding)	kld	0.003570 ± 0.000817 (t 4.37)	t >= 3	seen
+g: q8f1 - f16u (fault =1 against rounding)	ln_ppl_ratio	-0.001710 ± 0.001622 (t -1.05)	|t| >= 3	not seen
+g: q8f3 - f16u (fault =3 against rounding)	kld	0.358770 ± 0.028410 (t 12.63)	t >= 3	seen
+g: q8f3 - f16u (fault =3 against rounding)	ln_ppl_ratio	0.288190 ± 0.023357 (t 12.34)	|t| >= 3	seen
+g: q8 - f16u (the Q8_0 cache against rounding)	kld	-0.000710 ± 0.000231 (t -3.07)	t >= 3	not seen
+g: q8 - f16u (the Q8_0 cache against rounding)	ln_ppl_ratio	-0.002060 ± 0.000904 (t -2.28)	|t| >= 3	not seen
+h: q8f1 - q8 (fault =1 against its own cache)	kld	0.001470 ± 0.000463 (t 3.17)	t >= 3	seen
+h: q8f1 - q8 (fault =1 against its own cache)	ln_ppl_ratio	0.000360 ± 0.001192 (t 0.30)	|t| >= 3	not seen
+h: q8f3 - q8 (fault =3 against its own cache)	kld	0.329850 ± 0.024567 (t 13.43)	t >= 3	seen
+h: q8f3 - q8 (fault =3 against its own cache)	ln_ppl_ratio	0.290250 ± 0.023474 (t 12.36)	|t| >= 3	seen
+h: q8f1 - f16 (fault =1 against C976's F16 cache)	kld	0.002060 ± 0.000423 (t 4.87)	t >= 3	seen
+h: q8f1 - f16 (fault =1 against C976's F16 cache)	ln_ppl_ratio	-0.000420 ± 0.001703 (t -0.25)	|t| >= 3	not seen
+h: q8f3 - f16 (fault =3 against C976's F16 cache)	kld	0.330440 ± 0.024530 (t 13.47)	t >= 3	seen
+h: q8f3 - f16 (fault =3 against C976's F16 cache)	ln_ppl_ratio	0.289470 ± 0.023543 (t 12.30)	|t| >= 3	seen
+h: q8 - f16 (the Q8_0 cache against C976's F16 cache (C976's (A) again))	kld	0.000590 ± 0.000317 (t 1.86)	t >= 3	not seen
+h: q8 - f16 (the Q8_0 cache against C976's F16 cache (C976's (A) again))	ln_ppl_ratio	-0.000780 ± 0.000742 (t -1.05)	|t| >= 3	not seen
+g: smallest output scale error seen, est. 0.05 * sqrt(3 SE / mean)	kld	3.43 %		est.
+g: output scale error whose KLD equals rounding's (f16u), est. 0.05 * sqrt(KLD_f16u / mean)	kld	6.58 %		est.
+h: smallest output scale error seen, est. 0.05 * sqrt(3 SE / mean)	kld	4.86 %		est.
+validity: g q8 stretch 1 repeats C976's pass b q8 at 8,192	kld	0.00989 against 0.009892	equal at 5 decimals	pass
+validity: h q8 repeats C976's pass a q8 on every stretch	ln, kld, top	largest difference 0.00000	<= 0.00002	pass
+validity: g f16 logs the compute 6.1 prompt attention kernel	kernel	head 256, f16 K/V	head 256, f16 K/V	pass
+validity: g f16u logs the compute 6.1 prompt attention kernel	kernel	head 256, f16 K/V	head 256, f16 K/V	pass
+validity: g q8 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: g q8f1 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: g q8f3 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: h q8 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: h q8f1 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: h q8f3 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
